@@ -75,15 +75,16 @@ in detail.
 
 ## Requirements
 
-| Component | Version |
-|---|---|
-| Minecraft | 1.21.1 |
-| NeoForge | 21.1.x |
-| Java | 21 |
-| Create | 6.0.x |
-| CC: Tweaked | 1.113+ |
+| Component | Version | |
+|---|---|---|
+| Minecraft | 1.21.1 | required |
+| NeoForge | 21.1.259+ | required |
+| Java | 21 | required |
+| Create | 6.0.11+ | required |
+| CC: Tweaked | 1.120.2+ | optional, needed for the DCS/SCADA level |
 
-Optional integrations (JEI/EMI, Jade, Serene Seasons, Simple Voice Chat, Sound
+Without CC: Tweaked the plant runs on analog desks, relays and PLCs. Other
+optional integrations (JEI/EMI, Jade, Serene Seasons, Simple Voice Chat, Sound
 Physics Remastered, Xaero's maps, Distant Horizons) are planned as soft
 dependencies.
 
