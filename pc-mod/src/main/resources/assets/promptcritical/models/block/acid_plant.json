@@ -1,0 +1,238 @@
+{
+	"credit": "Made with Blockbench",
+	"textures": {
+		"acid": "promptcritical:block/common/mining_pipe_acid",
+		"end": "promptcritical:block/common/pipe_end",
+		"gas": "promptcritical:block/common/mining_pipe_gas",
+		"lg": "promptcritical:block/common/lamp_green",
+		"lr": "promptcritical:block/common/lamp_red",
+		"p": "promptcritical:block/common/steel_plate",
+		"panel": "promptcritical:block/acid_plant_panel"
+	},
+	"elements": [
+		{
+			"name": "body",
+			"from": [0, 0, 1],
+			"to": [16, 16, 16],
+			"rotation": {
+				"angle": 0,
+				"axis": "y",
+				"origin": [8, 8, 8]
+			},
+			"faces": {
+				"north": {
+					"uv": [0, 0, 16, 16],
+					"texture": "#p"
+				},
+				"east": {
+					"uv": [0, 0, 15, 16],
+					"texture": "#p"
+				},
+				"south": {
+					"uv": [0, 0, 16, 16],
+					"texture": "#p"
+				},
+				"west": {
+					"uv": [0, 0, 15, 16],
+					"texture": "#p"
+				},
+				"up": {
+					"uv": [0, 0, 16, 15],
+					"texture": "#p"
+				},
+				"down": {
+					"uv": [0, 0, 16, 15],
+					"texture": "#p"
+				}
+			}
+		},
+		{
+			"name": "panel",
+			"from": [1, 1, 0.5],
+			"to": [15, 15, 1],
+			"rotation": {
+				"angle": 0,
+				"axis": "y",
+				"origin": [8, 8, 8]
+			},
+			"faces": {
+				"north": {
+					"uv": [0, 0, 16, 16],
+					"texture": "#panel"
+				},
+				"east": {
+					"uv": [0, 0, 0.5, 14],
+					"texture": "#panel"
+				},
+				"south": {
+					"uv": [0, 0, 14, 14],
+					"texture": "#panel"
+				},
+				"west": {
+					"uv": [0, 0, 0.5, 14],
+					"texture": "#panel"
+				},
+				"up": {
+					"uv": [0, 0, 14, 0.5],
+					"texture": "#panel"
+				},
+				"down": {
+					"uv": [0, 0, 14, 0.5],
+					"texture": "#panel"
+				}
+			}
+		},
+		{
+			"name": "glow_lamp_run",
+			"from": [11, 13, 0.25],
+			"to": [12.5, 14, 0.5],
+			"rotation": {
+				"angle": 0,
+				"axis": "y",
+				"origin": [8, 8, 8]
+			},
+			"faces": {
+				"north": {
+					"uv": [0, 0, 1.5, 1],
+					"texture": "#lg"
+				},
+				"east": {
+					"uv": [0, 0, 0.25, 1],
+					"texture": "#lg"
+				},
+				"south": {
+					"uv": [0, 0, 1.5, 1],
+					"texture": "#lg"
+				},
+				"west": {
+					"uv": [0, 0, 0.25, 1],
+					"texture": "#lg"
+				},
+				"up": {
+					"uv": [0, 0, 1.5, 0.25],
+					"texture": "#lg"
+				},
+				"down": {
+					"uv": [0, 0, 1.5, 0.25],
+					"texture": "#lg"
+				}
+			},
+			"neoforge_data": {
+				"block_light": 15,
+				"sky_light": 15
+			}
+		},
+		{
+			"name": "glow_lamp_alarm",
+			"from": [13, 13, 0.25],
+			"to": [14.5, 14, 0.5],
+			"rotation": {
+				"angle": 0,
+				"axis": "y",
+				"origin": [8, 8, 8]
+			},
+			"faces": {
+				"north": {
+					"uv": [0, 0, 1.5, 1],
+					"texture": "#lr"
+				},
+				"east": {
+					"uv": [0, 0, 0.25, 1],
+					"texture": "#lr"
+				},
+				"south": {
+					"uv": [0, 0, 1.5, 1],
+					"texture": "#lr"
+				},
+				"west": {
+					"uv": [0, 0, 0.25, 1],
+					"texture": "#lr"
+				},
+				"up": {
+					"uv": [0, 0, 1.5, 0.25],
+					"texture": "#lr"
+				},
+				"down": {
+					"uv": [0, 0, 1.5, 0.25],
+					"texture": "#lr"
+				}
+			},
+			"neoforge_data": {
+				"block_light": 15,
+				"sky_light": 15
+			}
+		},
+		{
+			"name": "so2_in",
+			"from": [3, 16, 7],
+			"to": [5, 17.5, 9],
+			"rotation": {
+				"angle": 0,
+				"axis": "y",
+				"origin": [8, 8, 8]
+			},
+			"faces": {
+				"north": {
+					"uv": [0, 0, 2, 1.5],
+					"texture": "#gas"
+				},
+				"east": {
+					"uv": [0, 0, 2, 1.5],
+					"texture": "#gas"
+				},
+				"south": {
+					"uv": [0, 0, 2, 1.5],
+					"texture": "#gas"
+				},
+				"west": {
+					"uv": [0, 0, 2, 1.5],
+					"texture": "#gas"
+				},
+				"up": {
+					"uv": [0, 0, 16, 16],
+					"texture": "#end"
+				},
+				"down": {
+					"uv": [0, 0, 2, 2],
+					"texture": "#gas"
+				}
+			}
+		},
+		{
+			"name": "acid_out",
+			"from": [11, 16, 7],
+			"to": [13, 17.5, 9],
+			"rotation": {
+				"angle": 0,
+				"axis": "y",
+				"origin": [8, 8, 8]
+			},
+			"faces": {
+				"north": {
+					"uv": [0, 0, 2, 1.5],
+					"texture": "#acid"
+				},
+				"east": {
+					"uv": [0, 0, 2, 1.5],
+					"texture": "#acid"
+				},
+				"south": {
+					"uv": [0, 0, 2, 1.5],
+					"texture": "#acid"
+				},
+				"west": {
+					"uv": [0, 0, 2, 1.5],
+					"texture": "#acid"
+				},
+				"up": {
+					"uv": [0, 0, 16, 16],
+					"texture": "#end"
+				},
+				"down": {
+					"uv": [0, 0, 2, 2],
+					"texture": "#acid"
+				}
+			}
+		}
+	]
+}

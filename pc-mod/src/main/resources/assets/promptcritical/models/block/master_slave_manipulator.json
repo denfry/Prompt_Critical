@@ -1,0 +1,338 @@
+{
+	"credit": "Made with Blockbench",
+	"textures": {
+		"hc": "promptcritical:block/common/fuelcycle_heavy_concrete",
+		"f": "promptcritical:block/master_slave_manipulator",
+		"lead": "promptcritical:block/common/lead",
+		"st": "promptcritical:block/common/steel_bare",
+		"r": "promptcritical:block/common/rubber",
+		"red": "promptcritical:block/common/paint_red",
+		"d": "promptcritical:block/common/steel_dark"
+	},
+	"elements": [
+		{
+			"name": "wall_plug",
+			"from": [2, 8, 6],
+			"to": [14, 16, 10],
+			"rotation": {
+				"angle": 0,
+				"axis": "y",
+				"origin": [8, 8, 8]
+			},
+			"faces": {
+				"north": {
+					"uv": [0, 0, 12, 8],
+					"texture": "#hc"
+				},
+				"east": {
+					"uv": [0, 0, 4, 8],
+					"texture": "#hc"
+				},
+				"south": {
+					"uv": [0, 0, 12, 8],
+					"texture": "#hc"
+				},
+				"west": {
+					"uv": [0, 0, 4, 8],
+					"texture": "#hc"
+				},
+				"up": {
+					"uv": [0, 0, 12, 4],
+					"texture": "#hc"
+				},
+				"down": {
+					"uv": [0, 0, 12, 4],
+					"texture": "#hc"
+				}
+			}
+		},
+		{
+			"name": "through_tube",
+			"from": [5, 10, 2],
+			"to": [11, 15, 14],
+			"rotation": {
+				"angle": 0,
+				"axis": "y",
+				"origin": [8, 8, 8]
+			},
+			"faces": {
+				"north": {
+					"uv": [0, 0, 16, 16],
+					"texture": "#f"
+				},
+				"east": {
+					"uv": [0, 0, 16, 16],
+					"texture": "#f"
+				},
+				"south": {
+					"uv": [0, 0, 16, 16],
+					"texture": "#f"
+				},
+				"west": {
+					"uv": [0, 0, 16, 16],
+					"texture": "#f"
+				},
+				"up": {
+					"uv": [0, 0, 6, 12],
+					"texture": "#f"
+				},
+				"down": {
+					"uv": [0, 0, 6, 12],
+					"texture": "#f"
+				}
+			}
+		},
+		{
+			"name": "counterweight",
+			"from": [6, 15, 6],
+			"to": [10, 16, 10],
+			"rotation": {
+				"angle": 0,
+				"axis": "y",
+				"origin": [8, 8, 8]
+			},
+			"faces": {
+				"north": {
+					"uv": [0, 0, 4, 1],
+					"texture": "#lead"
+				},
+				"east": {
+					"uv": [0, 0, 4, 1],
+					"texture": "#lead"
+				},
+				"south": {
+					"uv": [0, 0, 4, 1],
+					"texture": "#lead"
+				},
+				"west": {
+					"uv": [0, 0, 4, 1],
+					"texture": "#lead"
+				},
+				"up": {
+					"uv": [0, 0, 4, 4],
+					"texture": "#lead"
+				},
+				"down": {
+					"uv": [0, 0, 4, 4],
+					"texture": "#lead"
+				}
+			}
+		},
+		{
+			"name": "master_arm",
+			"from": [7, 3, 2.5],
+			"to": [9, 10, 4],
+			"rotation": {
+				"angle": 0,
+				"axis": "y",
+				"origin": [8, 8, 8]
+			},
+			"faces": {
+				"north": {
+					"uv": [0, 0, 2, 7],
+					"texture": "#st"
+				},
+				"east": {
+					"uv": [0, 0, 1.5, 7],
+					"texture": "#st"
+				},
+				"south": {
+					"uv": [0, 0, 2, 7],
+					"texture": "#st"
+				},
+				"west": {
+					"uv": [0, 0, 1.5, 7],
+					"texture": "#st"
+				},
+				"up": {
+					"uv": [0, 0, 2, 1.5],
+					"texture": "#st"
+				},
+				"down": {
+					"uv": [0, 0, 2, 1.5],
+					"texture": "#st"
+				}
+			}
+		},
+		{
+			"name": "master_handle",
+			"from": [6.5, 1, 1],
+			"to": [9.5, 3, 3.5],
+			"rotation": {
+				"angle": 0,
+				"axis": "y",
+				"origin": [8, 8, 8]
+			},
+			"faces": {
+				"north": {
+					"uv": [0, 0, 3, 2],
+					"texture": "#r"
+				},
+				"east": {
+					"uv": [0, 0, 2.5, 2],
+					"texture": "#r"
+				},
+				"south": {
+					"uv": [0, 0, 3, 2],
+					"texture": "#r"
+				},
+				"west": {
+					"uv": [0, 0, 2.5, 2],
+					"texture": "#r"
+				},
+				"up": {
+					"uv": [0, 0, 3, 2.5],
+					"texture": "#r"
+				},
+				"down": {
+					"uv": [0, 0, 3, 2.5],
+					"texture": "#r"
+				}
+			}
+		},
+		{
+			"name": "master_trigger",
+			"from": [7.5, 1.5, 0.5],
+			"to": [8.5, 2.5, 1],
+			"rotation": {
+				"angle": 0,
+				"axis": "y",
+				"origin": [8, 8, 8]
+			},
+			"faces": {
+				"north": {
+					"uv": [0, 0, 1, 1],
+					"texture": "#red"
+				},
+				"east": {
+					"uv": [0, 0, 0.5, 1],
+					"texture": "#red"
+				},
+				"south": {
+					"uv": [0, 0, 1, 1],
+					"texture": "#red"
+				},
+				"west": {
+					"uv": [0, 0, 0.5, 1],
+					"texture": "#red"
+				},
+				"up": {
+					"uv": [0, 0, 1, 0.5],
+					"texture": "#red"
+				},
+				"down": {
+					"uv": [0, 0, 1, 0.5],
+					"texture": "#red"
+				}
+			}
+		},
+		{
+			"name": "slave_arm",
+			"from": [7, 2, 12],
+			"to": [9, 10, 13.5],
+			"rotation": {
+				"angle": 0,
+				"axis": "y",
+				"origin": [8, 8, 8]
+			},
+			"faces": {
+				"north": {
+					"uv": [0, 0, 2, 8],
+					"texture": "#st"
+				},
+				"east": {
+					"uv": [0, 0, 1.5, 8],
+					"texture": "#st"
+				},
+				"south": {
+					"uv": [0, 0, 2, 8],
+					"texture": "#st"
+				},
+				"west": {
+					"uv": [0, 0, 1.5, 8],
+					"texture": "#st"
+				},
+				"up": {
+					"uv": [0, 0, 2, 1.5],
+					"texture": "#st"
+				},
+				"down": {
+					"uv": [0, 0, 2, 1.5],
+					"texture": "#st"
+				}
+			}
+		},
+		{
+			"name": "tong_w",
+			"from": [6.5, 0.5, 11.75],
+			"to": [7.5, 2, 13.75],
+			"rotation": {
+				"angle": 0,
+				"axis": "y",
+				"origin": [8, 8, 8]
+			},
+			"faces": {
+				"north": {
+					"uv": [0, 0, 1, 1.5],
+					"texture": "#d"
+				},
+				"east": {
+					"uv": [0, 0, 2, 1.5],
+					"texture": "#d"
+				},
+				"south": {
+					"uv": [0, 0, 1, 1.5],
+					"texture": "#d"
+				},
+				"west": {
+					"uv": [0, 0, 2, 1.5],
+					"texture": "#d"
+				},
+				"up": {
+					"uv": [0, 0, 1, 2],
+					"texture": "#d"
+				},
+				"down": {
+					"uv": [0, 0, 1, 2],
+					"texture": "#d"
+				}
+			}
+		},
+		{
+			"name": "tong_e",
+			"from": [8.5, 0.5, 11.75],
+			"to": [9.5, 2, 13.75],
+			"rotation": {
+				"angle": 0,
+				"axis": "y",
+				"origin": [8, 8, 8]
+			},
+			"faces": {
+				"north": {
+					"uv": [0, 0, 1, 1.5],
+					"texture": "#d"
+				},
+				"east": {
+					"uv": [0, 0, 2, 1.5],
+					"texture": "#d"
+				},
+				"south": {
+					"uv": [0, 0, 1, 1.5],
+					"texture": "#d"
+				},
+				"west": {
+					"uv": [0, 0, 2, 1.5],
+					"texture": "#d"
+				},
+				"up": {
+					"uv": [0, 0, 1, 2],
+					"texture": "#d"
+				},
+				"down": {
+					"uv": [0, 0, 1, 2],
+					"texture": "#d"
+				}
+			}
+		}
+	]
+}

@@ -1,0 +1,232 @@
+{
+	"credit": "Made with Blockbench",
+	"textures": {
+		"d": "promptcritical:block/common/steel_dark",
+		"cab": "promptcritical:block/common/cabinet",
+		"f": "promptcritical:block/pool_boron_sampler",
+		"lr": "promptcritical:block/common/lamp_red",
+		"wpipe": "promptcritical:block/pipe_feedwater"
+	},
+	"elements": [
+		{
+			"name": "back",
+			"from": [1, 1, 15],
+			"to": [15, 15, 16],
+			"rotation": {
+				"angle": 0,
+				"axis": "y",
+				"origin": [8, 8, 8]
+			},
+			"faces": {
+				"north": {
+					"uv": [0, 0, 14, 14],
+					"texture": "#d"
+				},
+				"east": {
+					"uv": [0, 0, 1, 14],
+					"texture": "#d"
+				},
+				"south": {
+					"uv": [0, 0, 14, 14],
+					"texture": "#d"
+				},
+				"west": {
+					"uv": [0, 0, 1, 14],
+					"texture": "#d"
+				},
+				"up": {
+					"uv": [0, 0, 14, 1],
+					"texture": "#d"
+				},
+				"down": {
+					"uv": [0, 0, 14, 1],
+					"texture": "#d"
+				}
+			}
+		},
+		{
+			"name": "cabinet",
+			"from": [2, 2, 8],
+			"to": [14, 14, 15],
+			"rotation": {
+				"angle": 0,
+				"axis": "y",
+				"origin": [8, 8, 8]
+			},
+			"faces": {
+				"north": {
+					"uv": [0, 0, 12, 12],
+					"texture": "#cab"
+				},
+				"east": {
+					"uv": [0, 0, 7, 12],
+					"texture": "#cab"
+				},
+				"south": {
+					"uv": [0, 0, 12, 12],
+					"texture": "#cab"
+				},
+				"west": {
+					"uv": [0, 0, 7, 12],
+					"texture": "#cab"
+				},
+				"up": {
+					"uv": [0, 0, 12, 7],
+					"texture": "#cab"
+				},
+				"down": {
+					"uv": [0, 0, 12, 7],
+					"texture": "#cab"
+				}
+			}
+		},
+		{
+			"name": "front",
+			"from": [2.5, 2.5, 7.5],
+			"to": [13.5, 13.5, 8],
+			"rotation": {
+				"angle": 0,
+				"axis": "y",
+				"origin": [8, 8, 8]
+			},
+			"faces": {
+				"north": {
+					"uv": [0, 0, 16, 16],
+					"texture": "#f"
+				},
+				"east": {
+					"uv": [0, 0, 0.5, 11],
+					"texture": "#f"
+				},
+				"south": {
+					"uv": [0, 0, 11, 11],
+					"texture": "#f"
+				},
+				"west": {
+					"uv": [0, 0, 0.5, 11],
+					"texture": "#f"
+				},
+				"up": {
+					"uv": [0, 0, 11, 0.5],
+					"texture": "#f"
+				},
+				"down": {
+					"uv": [0, 0, 11, 0.5],
+					"texture": "#f"
+				}
+			}
+		},
+		{
+			"name": "glow_display",
+			"from": [4.5, 10, 7.25],
+			"to": [11.5, 12, 7.5],
+			"rotation": {
+				"angle": 0,
+				"axis": "y",
+				"origin": [8, 8, 8]
+			},
+			"faces": {
+				"north": {
+					"uv": [0, 0, 7, 2],
+					"texture": "#lr"
+				},
+				"east": {
+					"uv": [0, 0, 0.25, 2],
+					"texture": "#lr"
+				},
+				"south": {
+					"uv": [0, 0, 7, 2],
+					"texture": "#lr"
+				},
+				"west": {
+					"uv": [0, 0, 0.25, 2],
+					"texture": "#lr"
+				},
+				"up": {
+					"uv": [0, 0, 7, 0.25],
+					"texture": "#lr"
+				},
+				"down": {
+					"uv": [0, 0, 7, 0.25],
+					"texture": "#lr"
+				}
+			},
+			"neoforge_data": {
+				"block_light": 15,
+				"sky_light": 15
+			}
+		},
+		{
+			"name": "sample_in",
+			"from": [11, 0, 10],
+			"to": [12, 2, 11],
+			"rotation": {
+				"angle": 0,
+				"axis": "y",
+				"origin": [8, 8, 8]
+			},
+			"faces": {
+				"north": {
+					"uv": [0, 0, 1, 2],
+					"texture": "#wpipe"
+				},
+				"east": {
+					"uv": [0, 0, 1, 2],
+					"texture": "#wpipe"
+				},
+				"south": {
+					"uv": [0, 0, 1, 2],
+					"texture": "#wpipe"
+				},
+				"west": {
+					"uv": [0, 0, 1, 2],
+					"texture": "#wpipe"
+				},
+				"up": {
+					"uv": [0, 0, 1, 1],
+					"texture": "#wpipe"
+				},
+				"down": {
+					"uv": [0, 0, 1, 1],
+					"texture": "#wpipe"
+				}
+			}
+		},
+		{
+			"name": "sample_out",
+			"from": [4, 0, 10],
+			"to": [5, 2, 11],
+			"rotation": {
+				"angle": 0,
+				"axis": "y",
+				"origin": [8, 8, 8]
+			},
+			"faces": {
+				"north": {
+					"uv": [0, 0, 1, 2],
+					"texture": "#wpipe"
+				},
+				"east": {
+					"uv": [0, 0, 1, 2],
+					"texture": "#wpipe"
+				},
+				"south": {
+					"uv": [0, 0, 1, 2],
+					"texture": "#wpipe"
+				},
+				"west": {
+					"uv": [0, 0, 1, 2],
+					"texture": "#wpipe"
+				},
+				"up": {
+					"uv": [0, 0, 1, 1],
+					"texture": "#wpipe"
+				},
+				"down": {
+					"uv": [0, 0, 1, 1],
+					"texture": "#wpipe"
+				}
+			}
+		}
+	]
+}

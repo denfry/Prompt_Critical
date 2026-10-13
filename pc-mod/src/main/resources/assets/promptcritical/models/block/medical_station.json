@@ -1,0 +1,118 @@
+{
+	"credit": "Made with Blockbench",
+	"textures": {
+		"d": "promptcritical:block/common/steel_dark",
+		"pns": "promptcritical:block/common/plant_panel_smooth",
+		"front": "promptcritical:block/medical_station_front"
+	},
+	"elements": [
+		{
+			"name": "cabinet",
+			"from": [0, 1, 1],
+			"to": [16, 16, 16],
+			"rotation": {
+				"angle": 0,
+				"axis": "y",
+				"origin": [8, 8, 8]
+			},
+			"faces": {
+				"north": {
+					"uv": [0, 0, 16, 16],
+					"texture": "#front"
+				},
+				"east": {
+					"uv": [0, 0, 15, 15],
+					"texture": "#pns"
+				},
+				"south": {
+					"uv": [0, 0, 16, 15],
+					"texture": "#pns"
+				},
+				"west": {
+					"uv": [0, 0, 15, 15],
+					"texture": "#pns"
+				},
+				"up": {
+					"uv": [0, 0, 16, 15],
+					"texture": "#pns"
+				},
+				"down": {
+					"uv": [0, 0, 16, 15],
+					"texture": "#pns"
+				}
+			}
+		},
+		{
+			"name": "plinth",
+			"from": [0.5, 0, 1.5],
+			"to": [15.5, 1, 15.5],
+			"rotation": {
+				"angle": 0,
+				"axis": "y",
+				"origin": [8, 8, 8]
+			},
+			"faces": {
+				"north": {
+					"uv": [0, 0, 15, 1],
+					"texture": "#d"
+				},
+				"east": {
+					"uv": [0, 0, 14, 1],
+					"texture": "#d"
+				},
+				"south": {
+					"uv": [0, 0, 15, 1],
+					"texture": "#d"
+				},
+				"west": {
+					"uv": [0, 0, 14, 1],
+					"texture": "#d"
+				},
+				"up": {
+					"uv": [0, 0, 15, 14],
+					"texture": "#d"
+				},
+				"down": {
+					"uv": [0, 0, 15, 14],
+					"texture": "#d"
+				}
+			}
+		},
+		{
+			"name": "handle",
+			"from": [13.5, 7, 0.25],
+			"to": [14.25, 10, 1],
+			"rotation": {
+				"angle": 0,
+				"axis": "y",
+				"origin": [8, 8, 8]
+			},
+			"faces": {
+				"north": {
+					"uv": [0, 0, 0.75, 3],
+					"texture": "#d"
+				},
+				"east": {
+					"uv": [0, 0, 0.75, 3],
+					"texture": "#d"
+				},
+				"south": {
+					"uv": [0, 0, 0.75, 3],
+					"texture": "#d"
+				},
+				"west": {
+					"uv": [0, 0, 0.75, 3],
+					"texture": "#d"
+				},
+				"up": {
+					"uv": [0, 0, 0.75, 0.75],
+					"texture": "#d"
+				},
+				"down": {
+					"uv": [0, 0, 0.75, 0.75],
+					"texture": "#d"
+				}
+			}
+		}
+	]
+}

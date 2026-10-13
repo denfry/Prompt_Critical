@@ -1,0 +1,335 @@
+{
+	"credit": "Made with Blockbench",
+	"textures": {
+		"d": "promptcritical:block/common/steel_dark",
+		"st": "promptcritical:block/common/steel_bare",
+		"b": "promptcritical:block/common/brass",
+		"dial": "promptcritical:block/instrument_flow_dial"
+	},
+	"elements": [
+		{
+			"name": "mount_plate",
+			"from": [2, 1, 15],
+			"to": [14, 15, 16],
+			"rotation": {
+				"angle": 0,
+				"axis": "y",
+				"origin": [8, 8, 8]
+			},
+			"faces": {
+				"north": {
+					"uv": [0, 0, 12, 14],
+					"texture": "#d"
+				},
+				"east": {
+					"uv": [0, 0, 1, 14],
+					"texture": "#d"
+				},
+				"south": {
+					"uv": [0, 0, 12, 14],
+					"texture": "#d"
+				},
+				"west": {
+					"uv": [0, 0, 1, 14],
+					"texture": "#d"
+				},
+				"up": {
+					"uv": [0, 0, 12, 1],
+					"texture": "#d"
+				},
+				"down": {
+					"uv": [0, 0, 12, 1],
+					"texture": "#d"
+				}
+			}
+		},
+		{
+			"name": "case",
+			"from": [3, 6, 11],
+			"to": [13, 15, 15],
+			"rotation": {
+				"angle": 0,
+				"axis": "y",
+				"origin": [8, 8, 8]
+			},
+			"faces": {
+				"north": {
+					"uv": [0, 0, 10, 9],
+					"texture": "#d"
+				},
+				"east": {
+					"uv": [0, 0, 4, 9],
+					"texture": "#d"
+				},
+				"south": {
+					"uv": [0, 0, 10, 9],
+					"texture": "#d"
+				},
+				"west": {
+					"uv": [0, 0, 4, 9],
+					"texture": "#d"
+				},
+				"up": {
+					"uv": [0, 0, 10, 4],
+					"texture": "#d"
+				},
+				"down": {
+					"uv": [0, 0, 10, 4],
+					"texture": "#d"
+				}
+			}
+		},
+		{
+			"name": "dial_face",
+			"from": [3.5, 6.5, 10.9],
+			"to": [12.5, 14.5, 11],
+			"rotation": {
+				"angle": 0,
+				"axis": "y",
+				"origin": [8, 8, 8]
+			},
+			"faces": {
+				"north": {
+					"uv": [0, 0, 16, 16],
+					"texture": "#dial"
+				},
+				"east": {
+					"uv": [0, 0, 0.1, 8],
+					"texture": "#dial"
+				},
+				"south": {
+					"uv": [0, 0, 9, 8],
+					"texture": "#dial"
+				},
+				"west": {
+					"uv": [0, 0, 0.1, 8],
+					"texture": "#dial"
+				},
+				"up": {
+					"uv": [0, 0, 9, 0.1],
+					"texture": "#dial"
+				},
+				"down": {
+					"uv": [0, 0, 9, 0.1],
+					"texture": "#dial"
+				}
+			}
+		},
+		{
+			"name": "manifold",
+			"from": [4, 2.5, 11.5],
+			"to": [12, 5.5, 14.5],
+			"rotation": {
+				"angle": 0,
+				"axis": "y",
+				"origin": [8, 8, 8]
+			},
+			"faces": {
+				"north": {
+					"uv": [0, 0, 8, 3],
+					"texture": "#b"
+				},
+				"east": {
+					"uv": [0, 0, 3, 3],
+					"texture": "#b"
+				},
+				"south": {
+					"uv": [0, 0, 8, 3],
+					"texture": "#b"
+				},
+				"west": {
+					"uv": [0, 0, 3, 3],
+					"texture": "#b"
+				},
+				"up": {
+					"uv": [0, 0, 8, 3],
+					"texture": "#b"
+				},
+				"down": {
+					"uv": [0, 0, 8, 3],
+					"texture": "#b"
+				}
+			}
+		},
+		{
+			"name": "valve_hp",
+			"from": [4.5, 3, 10.5],
+			"to": [5.5, 5, 11.5],
+			"rotation": {
+				"angle": 0,
+				"axis": "y",
+				"origin": [8, 8, 8]
+			},
+			"faces": {
+				"north": {
+					"uv": [0, 0, 1, 2],
+					"texture": "#st"
+				},
+				"east": {
+					"uv": [0, 0, 1, 2],
+					"texture": "#st"
+				},
+				"south": {
+					"uv": [0, 0, 1, 2],
+					"texture": "#st"
+				},
+				"west": {
+					"uv": [0, 0, 1, 2],
+					"texture": "#st"
+				},
+				"up": {
+					"uv": [0, 0, 1, 1],
+					"texture": "#st"
+				},
+				"down": {
+					"uv": [0, 0, 1, 1],
+					"texture": "#st"
+				}
+			}
+		},
+		{
+			"name": "valve_eq",
+			"from": [7.5, 3, 10.5],
+			"to": [8.5, 5, 11.5],
+			"rotation": {
+				"angle": 0,
+				"axis": "y",
+				"origin": [8, 8, 8]
+			},
+			"faces": {
+				"north": {
+					"uv": [0, 0, 1, 2],
+					"texture": "#st"
+				},
+				"east": {
+					"uv": [0, 0, 1, 2],
+					"texture": "#st"
+				},
+				"south": {
+					"uv": [0, 0, 1, 2],
+					"texture": "#st"
+				},
+				"west": {
+					"uv": [0, 0, 1, 2],
+					"texture": "#st"
+				},
+				"up": {
+					"uv": [0, 0, 1, 1],
+					"texture": "#st"
+				},
+				"down": {
+					"uv": [0, 0, 1, 1],
+					"texture": "#st"
+				}
+			}
+		},
+		{
+			"name": "valve_lp",
+			"from": [10.5, 3, 10.5],
+			"to": [11.5, 5, 11.5],
+			"rotation": {
+				"angle": 0,
+				"axis": "y",
+				"origin": [8, 8, 8]
+			},
+			"faces": {
+				"north": {
+					"uv": [0, 0, 1, 2],
+					"texture": "#st"
+				},
+				"east": {
+					"uv": [0, 0, 1, 2],
+					"texture": "#st"
+				},
+				"south": {
+					"uv": [0, 0, 1, 2],
+					"texture": "#st"
+				},
+				"west": {
+					"uv": [0, 0, 1, 2],
+					"texture": "#st"
+				},
+				"up": {
+					"uv": [0, 0, 1, 1],
+					"texture": "#st"
+				},
+				"down": {
+					"uv": [0, 0, 1, 1],
+					"texture": "#st"
+				}
+			}
+		},
+		{
+			"name": "impulse_hp",
+			"from": [5, 0, 12.5],
+			"to": [6, 2.5, 13.5],
+			"rotation": {
+				"angle": 0,
+				"axis": "y",
+				"origin": [8, 8, 8]
+			},
+			"faces": {
+				"north": {
+					"uv": [0, 0, 1, 2.5],
+					"texture": "#st"
+				},
+				"east": {
+					"uv": [0, 0, 1, 2.5],
+					"texture": "#st"
+				},
+				"south": {
+					"uv": [0, 0, 1, 2.5],
+					"texture": "#st"
+				},
+				"west": {
+					"uv": [0, 0, 1, 2.5],
+					"texture": "#st"
+				},
+				"up": {
+					"uv": [0, 0, 1, 1],
+					"texture": "#st"
+				},
+				"down": {
+					"uv": [0, 0, 1, 1],
+					"texture": "#st"
+				}
+			}
+		},
+		{
+			"name": "impulse_lp",
+			"from": [10, 0, 12.5],
+			"to": [11, 2.5, 13.5],
+			"rotation": {
+				"angle": 0,
+				"axis": "y",
+				"origin": [8, 8, 8]
+			},
+			"faces": {
+				"north": {
+					"uv": [0, 0, 1, 2.5],
+					"texture": "#st"
+				},
+				"east": {
+					"uv": [0, 0, 1, 2.5],
+					"texture": "#st"
+				},
+				"south": {
+					"uv": [0, 0, 1, 2.5],
+					"texture": "#st"
+				},
+				"west": {
+					"uv": [0, 0, 1, 2.5],
+					"texture": "#st"
+				},
+				"up": {
+					"uv": [0, 0, 1, 1],
+					"texture": "#st"
+				},
+				"down": {
+					"uv": [0, 0, 1, 1],
+					"texture": "#st"
+				}
+			}
+		}
+	]
+}

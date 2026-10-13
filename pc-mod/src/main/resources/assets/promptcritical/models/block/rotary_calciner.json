@@ -1,0 +1,307 @@
+{
+	"credit": "Made with Blockbench",
+	"textures": {
+		"and": "promptcritical:block/common/mining_andesite",
+		"c": "promptcritical:block/common/concrete",
+		"end": "promptcritical:block/common/pipe_end",
+		"fb": "promptcritical:block/common/mining_firebrick",
+		"fire": "promptcritical:block/common/mining_glow_fire",
+		"fuel": "promptcritical:block/common/mining_pipe_fuel",
+		"hood": "promptcritical:block/rotary_calciner_hood",
+		"p": "promptcritical:block/common/steel_plate"
+	},
+	"elements": [
+		{
+			"name": "base",
+			"from": [0, 0, 2],
+			"to": [16, 1, 14],
+			"rotation": {
+				"angle": 0,
+				"axis": "y",
+				"origin": [8, 8, 8]
+			},
+			"faces": {
+				"north": {
+					"uv": [0, 0, 16, 1],
+					"texture": "#c"
+				},
+				"east": {
+					"uv": [0, 0, 12, 1],
+					"texture": "#c"
+				},
+				"south": {
+					"uv": [0, 0, 16, 1],
+					"texture": "#c"
+				},
+				"west": {
+					"uv": [0, 0, 12, 1],
+					"texture": "#c"
+				},
+				"up": {
+					"uv": [0, 0, 16, 12],
+					"texture": "#c"
+				},
+				"down": {
+					"uv": [0, 0, 16, 12],
+					"texture": "#c"
+				}
+			}
+		},
+		{
+			"name": "rollers_w",
+			"from": [3, 1, 4],
+			"to": [6, 2.4, 12],
+			"rotation": {
+				"angle": 0,
+				"axis": "y",
+				"origin": [8, 8, 8]
+			},
+			"faces": {
+				"north": {
+					"uv": [0, 0, 3, 1.4],
+					"texture": "#and"
+				},
+				"east": {
+					"uv": [0, 0, 8, 1.4],
+					"texture": "#and"
+				},
+				"south": {
+					"uv": [0, 0, 3, 1.4],
+					"texture": "#and"
+				},
+				"west": {
+					"uv": [0, 0, 8, 1.4],
+					"texture": "#and"
+				},
+				"up": {
+					"uv": [0, 0, 3, 8],
+					"texture": "#and"
+				},
+				"down": {
+					"uv": [0, 0, 3, 8],
+					"texture": "#and"
+				}
+			}
+		},
+		{
+			"name": "rollers_e",
+			"from": [10, 1, 4],
+			"to": [13, 2.4, 12],
+			"rotation": {
+				"angle": 0,
+				"axis": "y",
+				"origin": [8, 8, 8]
+			},
+			"faces": {
+				"north": {
+					"uv": [0, 0, 3, 1.4],
+					"texture": "#and"
+				},
+				"east": {
+					"uv": [0, 0, 8, 1.4],
+					"texture": "#and"
+				},
+				"south": {
+					"uv": [0, 0, 3, 1.4],
+					"texture": "#and"
+				},
+				"west": {
+					"uv": [0, 0, 8, 1.4],
+					"texture": "#and"
+				},
+				"up": {
+					"uv": [0, 0, 3, 8],
+					"texture": "#and"
+				},
+				"down": {
+					"uv": [0, 0, 3, 8],
+					"texture": "#and"
+				}
+			}
+		},
+		{
+			"name": "feed_hood",
+			"from": [0, 1, 2],
+			"to": [2, 14, 14],
+			"rotation": {
+				"angle": 0,
+				"axis": "y",
+				"origin": [8, 8, 8]
+			},
+			"faces": {
+				"north": {
+					"uv": [0, 0, 2, 13],
+					"texture": "#p"
+				},
+				"east": {
+					"uv": [0, 0, 12, 13],
+					"texture": "#p"
+				},
+				"south": {
+					"uv": [0, 0, 2, 13],
+					"texture": "#p"
+				},
+				"west": {
+					"uv": [0, 0, 12, 13],
+					"texture": "#p"
+				},
+				"up": {
+					"uv": [0, 0, 2, 12],
+					"texture": "#p"
+				},
+				"down": {
+					"uv": [0, 0, 2, 12],
+					"texture": "#p"
+				}
+			}
+		},
+		{
+			"name": "feed_chute",
+			"from": [0.25, 14, 5],
+			"to": [1.75, 16, 11],
+			"rotation": {
+				"angle": 0,
+				"axis": "y",
+				"origin": [8, 8, 8]
+			},
+			"faces": {
+				"north": {
+					"uv": [0, 0, 1.5, 2],
+					"texture": "#p"
+				},
+				"east": {
+					"uv": [0, 0, 6, 2],
+					"texture": "#p"
+				},
+				"south": {
+					"uv": [0, 0, 1.5, 2],
+					"texture": "#p"
+				},
+				"west": {
+					"uv": [0, 0, 6, 2],
+					"texture": "#p"
+				},
+				"up": {
+					"uv": [0, 0, 1.5, 6],
+					"texture": "#p"
+				},
+				"down": {
+					"uv": [0, 0, 1.5, 6],
+					"texture": "#p"
+				}
+			}
+		},
+		{
+			"name": "discharge_hood",
+			"from": [14, 1, 2],
+			"to": [16, 15, 14],
+			"rotation": {
+				"angle": 0,
+				"axis": "y",
+				"origin": [8, 8, 8]
+			},
+			"faces": {
+				"north": {
+					"uv": [0, 0, 2, 14],
+					"texture": "#fb"
+				},
+				"east": {
+					"uv": [0, 0, 16, 16],
+					"texture": "#hood"
+				},
+				"south": {
+					"uv": [0, 0, 2, 14],
+					"texture": "#fb"
+				},
+				"west": {
+					"uv": [0, 0, 12, 14],
+					"texture": "#fb"
+				},
+				"up": {
+					"uv": [0, 0, 2, 12],
+					"texture": "#fb"
+				},
+				"down": {
+					"uv": [0, 0, 2, 12],
+					"texture": "#fb"
+				}
+			}
+		},
+		{
+			"name": "glow_hood_port",
+			"from": [14.5, 4, 1.9],
+			"to": [15.5, 7, 2],
+			"rotation": {
+				"angle": 0,
+				"axis": "y",
+				"origin": [8, 8, 8]
+			},
+			"faces": {
+				"north": {
+					"uv": [0, 0, 1, 3],
+					"texture": "#fire"
+				},
+				"east": {
+					"uv": [0, 0, 0.1, 3],
+					"texture": "#fire"
+				},
+				"south": {
+					"uv": [0, 0, 1, 3],
+					"texture": "#fire"
+				},
+				"west": {
+					"uv": [0, 0, 0.1, 3],
+					"texture": "#fire"
+				},
+				"up": {
+					"uv": [0, 0, 1, 0.1],
+					"texture": "#fire"
+				},
+				"down": {
+					"uv": [0, 0, 1, 0.1],
+					"texture": "#fire"
+				}
+			},
+			"neoforge_data": {
+				"block_light": 15,
+				"sky_light": 15
+			}
+		},
+		{
+			"name": "burner",
+			"from": [16, 9, 7],
+			"to": [17.5, 11, 9],
+			"rotation": {
+				"angle": 0,
+				"axis": "y",
+				"origin": [8, 8, 8]
+			},
+			"faces": {
+				"north": {
+					"uv": [0, 0, 1.5, 2],
+					"texture": "#fuel"
+				},
+				"east": {
+					"uv": [0, 0, 16, 16],
+					"texture": "#end"
+				},
+				"south": {
+					"uv": [0, 0, 1.5, 2],
+					"texture": "#fuel"
+				},
+				"west": {
+					"uv": [0, 0, 2, 2],
+					"texture": "#fuel"
+				},
+				"up": {
+					"uv": [0, 0, 1.5, 2],
+					"texture": "#fuel"
+				},
+				"down": {
+					"uv": [0, 0, 1.5, 2],
+					"texture": "#fuel"
+				}
+			}
+		}
+	]
+}

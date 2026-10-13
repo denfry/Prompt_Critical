@@ -1,0 +1,155 @@
+{
+	"credit": "Made with Blockbench",
+	"textures": {
+		"p": "promptcritical:block/common/steel_plate",
+		"f": "promptcritical:block/hlw_tank_purge",
+		"air": "promptcritical:block/common/fuelcycle_pipe_air",
+		"end": "promptcritical:block/common/pipe_end"
+	},
+	"elements": [
+		{
+			"name": "body",
+			"from": [1, 0, 3],
+			"to": [15, 12, 15],
+			"rotation": {
+				"angle": 0,
+				"axis": "y",
+				"origin": [8, 8, 8]
+			},
+			"faces": {
+				"north": {
+					"uv": [0, 0, 14, 12],
+					"texture": "#p"
+				},
+				"east": {
+					"uv": [0, 0, 12, 12],
+					"texture": "#p"
+				},
+				"south": {
+					"uv": [0, 0, 14, 12],
+					"texture": "#p"
+				},
+				"west": {
+					"uv": [0, 0, 12, 12],
+					"texture": "#p"
+				},
+				"up": {
+					"uv": [0, 0, 14, 12],
+					"texture": "#p"
+				},
+				"down": {
+					"uv": [0, 0, 14, 12],
+					"texture": "#p"
+				}
+			}
+		},
+		{
+			"name": "front",
+			"from": [1.5, 0.5, 2.5],
+			"to": [14.5, 11.5, 3],
+			"rotation": {
+				"angle": 0,
+				"axis": "y",
+				"origin": [8, 8, 8]
+			},
+			"faces": {
+				"north": {
+					"uv": [0, 0, 16, 16],
+					"texture": "#f"
+				},
+				"east": {
+					"uv": [0, 0, 0.5, 11],
+					"texture": "#f"
+				},
+				"south": {
+					"uv": [0, 0, 13, 11],
+					"texture": "#f"
+				},
+				"west": {
+					"uv": [0, 0, 0.5, 11],
+					"texture": "#f"
+				},
+				"up": {
+					"uv": [0, 0, 13, 0.5],
+					"texture": "#f"
+				},
+				"down": {
+					"uv": [0, 0, 13, 0.5],
+					"texture": "#f"
+				}
+			}
+		},
+		{
+			"name": "duct_up",
+			"from": [6, 12, 6],
+			"to": [10, 16, 10],
+			"rotation": {
+				"angle": 0,
+				"axis": "y",
+				"origin": [8, 8, 8]
+			},
+			"faces": {
+				"north": {
+					"uv": [0, 0, 4, 4],
+					"texture": "#air"
+				},
+				"east": {
+					"uv": [0, 0, 4, 4],
+					"texture": "#air"
+				},
+				"south": {
+					"uv": [0, 0, 4, 4],
+					"texture": "#air"
+				},
+				"west": {
+					"uv": [0, 0, 4, 4],
+					"texture": "#air"
+				},
+				"up": {
+					"uv": [0, 0, 4, 4],
+					"texture": "#air"
+				},
+				"down": {
+					"uv": [0, 0, 4, 4],
+					"texture": "#air"
+				}
+			}
+		},
+		{
+			"name": "duct_out",
+			"from": [10, 13, 7],
+			"to": [16, 15, 9],
+			"rotation": {
+				"angle": 0,
+				"axis": "y",
+				"origin": [8, 8, 8]
+			},
+			"faces": {
+				"north": {
+					"uv": [0, 0, 6, 2],
+					"texture": "#air"
+				},
+				"east": {
+					"uv": [0, 0, 16, 16],
+					"texture": "#end"
+				},
+				"south": {
+					"uv": [0, 0, 6, 2],
+					"texture": "#air"
+				},
+				"west": {
+					"uv": [0, 0, 2, 2],
+					"texture": "#air"
+				},
+				"up": {
+					"uv": [0, 0, 6, 2],
+					"texture": "#air"
+				},
+				"down": {
+					"uv": [0, 0, 6, 2],
+					"texture": "#air"
+				}
+			}
+		}
+	]
+}

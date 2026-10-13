@@ -1,0 +1,233 @@
+{
+	"credit": "Made with Blockbench",
+	"textures": {
+		"and": "promptcritical:block/common/mining_andesite",
+		"d": "promptcritical:block/common/steel_dark",
+		"ds": "promptcritical:block/common/steel_dark_smooth",
+		"fire": "promptcritical:block/common/mining_glow_fire",
+		"front": "promptcritical:block/pyrite_roaster_front",
+		"gas": "promptcritical:block/common/mining_pipe_gas"
+	},
+	"elements": [
+		{
+			"name": "body",
+			"from": [1, 0, 1],
+			"to": [15, 12, 15],
+			"rotation": {
+				"angle": 0,
+				"axis": "y",
+				"origin": [8, 8, 8]
+			},
+			"faces": {
+				"north": {
+					"uv": [0, 0, 16, 16],
+					"texture": "#front"
+				},
+				"east": {
+					"uv": [0, 0, 14, 12],
+					"texture": "#d"
+				},
+				"south": {
+					"uv": [0, 0, 14, 12],
+					"texture": "#d"
+				},
+				"west": {
+					"uv": [0, 0, 14, 12],
+					"texture": "#d"
+				},
+				"up": {
+					"uv": [0, 0, 14, 14],
+					"texture": "#d"
+				},
+				"down": {
+					"uv": [0, 0, 14, 14],
+					"texture": "#d"
+				}
+			}
+		},
+		{
+			"name": "glow_peephole",
+			"from": [6, 7, 0.75],
+			"to": [10, 9, 1],
+			"rotation": {
+				"angle": 0,
+				"axis": "y",
+				"origin": [8, 8, 8]
+			},
+			"faces": {
+				"north": {
+					"uv": [0, 0, 4, 2],
+					"texture": "#fire"
+				},
+				"east": {
+					"uv": [0, 0, 0.25, 2],
+					"texture": "#fire"
+				},
+				"south": {
+					"uv": [0, 0, 4, 2],
+					"texture": "#fire"
+				},
+				"west": {
+					"uv": [0, 0, 0.25, 2],
+					"texture": "#fire"
+				},
+				"up": {
+					"uv": [0, 0, 4, 0.25],
+					"texture": "#fire"
+				},
+				"down": {
+					"uv": [0, 0, 4, 0.25],
+					"texture": "#fire"
+				}
+			},
+			"neoforge_data": {
+				"block_light": 15,
+				"sky_light": 15
+			}
+		},
+		{
+			"name": "roof",
+			"from": [2, 12, 2],
+			"to": [14, 13.5, 14],
+			"rotation": {
+				"angle": 0,
+				"axis": "y",
+				"origin": [8, 8, 8]
+			},
+			"faces": {
+				"north": {
+					"uv": [0, 0, 12, 1.5],
+					"texture": "#ds"
+				},
+				"east": {
+					"uv": [0, 0, 12, 1.5],
+					"texture": "#ds"
+				},
+				"south": {
+					"uv": [0, 0, 12, 1.5],
+					"texture": "#ds"
+				},
+				"west": {
+					"uv": [0, 0, 12, 1.5],
+					"texture": "#ds"
+				},
+				"up": {
+					"uv": [0, 0, 12, 12],
+					"texture": "#ds"
+				},
+				"down": {
+					"uv": [0, 0, 12, 12],
+					"texture": "#ds"
+				}
+			}
+		},
+		{
+			"name": "so2_duct",
+			"from": [5.5, 13.5, 5.5],
+			"to": [10.5, 16, 10.5],
+			"rotation": {
+				"angle": 0,
+				"axis": "y",
+				"origin": [8, 8, 8]
+			},
+			"faces": {
+				"north": {
+					"uv": [0, 0, 5, 2.5],
+					"texture": "#gas"
+				},
+				"east": {
+					"uv": [0, 0, 5, 2.5],
+					"texture": "#gas"
+				},
+				"south": {
+					"uv": [0, 0, 5, 2.5],
+					"texture": "#gas"
+				},
+				"west": {
+					"uv": [0, 0, 5, 2.5],
+					"texture": "#gas"
+				},
+				"up": {
+					"uv": [0, 0, 5, 5],
+					"texture": "#gas"
+				},
+				"down": {
+					"uv": [0, 0, 5, 5],
+					"texture": "#gas"
+				}
+			}
+		},
+		{
+			"name": "feeder",
+			"from": [0, 8, 5],
+			"to": [1, 12, 11],
+			"rotation": {
+				"angle": 0,
+				"axis": "y",
+				"origin": [8, 8, 8]
+			},
+			"faces": {
+				"north": {
+					"uv": [0, 0, 1, 4],
+					"texture": "#and"
+				},
+				"east": {
+					"uv": [0, 0, 6, 4],
+					"texture": "#and"
+				},
+				"south": {
+					"uv": [0, 0, 1, 4],
+					"texture": "#and"
+				},
+				"west": {
+					"uv": [0, 0, 6, 4],
+					"texture": "#and"
+				},
+				"up": {
+					"uv": [0, 0, 1, 6],
+					"texture": "#and"
+				},
+				"down": {
+					"uv": [0, 0, 1, 6],
+					"texture": "#and"
+				}
+			}
+		},
+		{
+			"name": "calcine_chute",
+			"from": [6, 0, 0],
+			"to": [10, 2, 1],
+			"rotation": {
+				"angle": 0,
+				"axis": "y",
+				"origin": [8, 8, 8]
+			},
+			"faces": {
+				"north": {
+					"uv": [0, 0, 4, 2],
+					"texture": "#d"
+				},
+				"east": {
+					"uv": [0, 0, 1, 2],
+					"texture": "#d"
+				},
+				"south": {
+					"uv": [0, 0, 4, 2],
+					"texture": "#d"
+				},
+				"west": {
+					"uv": [0, 0, 1, 2],
+					"texture": "#d"
+				},
+				"up": {
+					"uv": [0, 0, 4, 1],
+					"texture": "#d"
+				},
+				"down": {
+					"uv": [0, 0, 4, 1],
+					"texture": "#d"
+				}
+			}
+		}
+	]
+}

@@ -1,0 +1,193 @@
+{
+	"credit": "Made with Blockbench",
+	"textures": {
+		"d": "promptcritical:block/common/steel_dark",
+		"wat": "promptcritical:block/common/plant_water_green",
+		"stm": "promptcritical:block/common/plant_steam_red",
+		"end": "promptcritical:block/common/pipe_end",
+		"sh": "promptcritical:block/condenser_shell",
+		"ts": "promptcritical:block/condenser_tubesheet"
+	},
+	"elements": [
+		{
+			"name": "shell",
+			"from": [0, 0, 1],
+			"to": [16, 15, 15],
+			"rotation": {
+				"angle": 0,
+				"axis": "y",
+				"origin": [8, 8, 8]
+			},
+			"faces": {
+				"north": {
+					"uv": [0, 0, 16, 16],
+					"texture": "#ts"
+				},
+				"east": {
+					"uv": [0, 0, 14, 15],
+					"texture": "#sh"
+				},
+				"south": {
+					"uv": [0, 0, 16, 16],
+					"texture": "#ts"
+				},
+				"west": {
+					"uv": [0, 0, 14, 15],
+					"texture": "#sh"
+				},
+				"up": {
+					"uv": [0, 0, 16, 14],
+					"texture": "#sh"
+				},
+				"down": {
+					"uv": [0, 0, 16, 14],
+					"texture": "#sh"
+				}
+			}
+		},
+		{
+			"name": "steam_neck",
+			"from": [2, 15, 3],
+			"to": [14, 16, 13],
+			"rotation": {
+				"angle": 0,
+				"axis": "y",
+				"origin": [8, 8, 8]
+			},
+			"faces": {
+				"north": {
+					"uv": [0, 0, 12, 1],
+					"texture": "#stm"
+				},
+				"east": {
+					"uv": [0, 0, 10, 1],
+					"texture": "#stm"
+				},
+				"south": {
+					"uv": [0, 0, 12, 1],
+					"texture": "#stm"
+				},
+				"west": {
+					"uv": [0, 0, 10, 1],
+					"texture": "#stm"
+				},
+				"up": {
+					"uv": [0, 0, 12, 10],
+					"texture": "#stm"
+				},
+				"down": {
+					"uv": [0, 0, 12, 10],
+					"texture": "#stm"
+				}
+			}
+		},
+		{
+			"name": "cw_in",
+			"from": [2.5, 10, -1.5],
+			"to": [6.5, 14, 1],
+			"rotation": {
+				"angle": 0,
+				"axis": "y",
+				"origin": [8, 8, 8]
+			},
+			"faces": {
+				"north": {
+					"uv": [0, 0, 16, 16],
+					"texture": "#end"
+				},
+				"east": {
+					"uv": [0, 0, 2.5, 4],
+					"texture": "#wat"
+				},
+				"south": {
+					"uv": [0, 0, 4, 4],
+					"texture": "#wat"
+				},
+				"west": {
+					"uv": [0, 0, 2.5, 4],
+					"texture": "#wat"
+				},
+				"up": {
+					"uv": [0, 0, 4, 2.5],
+					"texture": "#wat"
+				},
+				"down": {
+					"uv": [0, 0, 4, 2.5],
+					"texture": "#wat"
+				}
+			}
+		},
+		{
+			"name": "cw_out",
+			"from": [9.5, 2, -1.5],
+			"to": [13.5, 6, 1],
+			"rotation": {
+				"angle": 0,
+				"axis": "y",
+				"origin": [8, 8, 8]
+			},
+			"faces": {
+				"north": {
+					"uv": [0, 0, 16, 16],
+					"texture": "#end"
+				},
+				"east": {
+					"uv": [0, 0, 2.5, 4],
+					"texture": "#wat"
+				},
+				"south": {
+					"uv": [0, 0, 4, 4],
+					"texture": "#wat"
+				},
+				"west": {
+					"uv": [0, 0, 2.5, 4],
+					"texture": "#wat"
+				},
+				"up": {
+					"uv": [0, 0, 4, 2.5],
+					"texture": "#wat"
+				},
+				"down": {
+					"uv": [0, 0, 4, 2.5],
+					"texture": "#wat"
+				}
+			}
+		},
+		{
+			"name": "hotwell",
+			"from": [5, -0.5, 4],
+			"to": [11, 1, 12],
+			"rotation": {
+				"angle": 0,
+				"axis": "y",
+				"origin": [8, 8, 8]
+			},
+			"faces": {
+				"north": {
+					"uv": [0, 0, 6, 1.5],
+					"texture": "#d"
+				},
+				"east": {
+					"uv": [0, 0, 8, 1.5],
+					"texture": "#d"
+				},
+				"south": {
+					"uv": [0, 0, 6, 1.5],
+					"texture": "#d"
+				},
+				"west": {
+					"uv": [0, 0, 8, 1.5],
+					"texture": "#d"
+				},
+				"up": {
+					"uv": [0, 0, 6, 8],
+					"texture": "#d"
+				},
+				"down": {
+					"uv": [0, 0, 6, 8],
+					"texture": "#d"
+				}
+			}
+		}
+	]
+}

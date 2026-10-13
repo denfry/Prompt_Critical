@@ -1,0 +1,344 @@
+{
+	"credit": "Made with Blockbench",
+	"textures": {
+		"acid": "promptcritical:block/common/mining_pipe_acid",
+		"and": "promptcritical:block/common/mining_andesite",
+		"c": "promptcritical:block/common/concrete",
+		"end": "promptcritical:block/common/pipe_end",
+		"fb": "promptcritical:block/common/mining_firebrick",
+		"fire": "promptcritical:block/common/mining_glow_fire",
+		"gas": "promptcritical:block/common/mining_pipe_gas",
+		"jk": "promptcritical:block/hf_kiln_jacket",
+		"p": "promptcritical:block/common/steel_plate"
+	},
+	"elements": [
+		{
+			"name": "base",
+			"from": [0, 0, 2],
+			"to": [16, 1, 14],
+			"rotation": {
+				"angle": 0,
+				"axis": "y",
+				"origin": [8, 8, 8]
+			},
+			"faces": {
+				"north": {
+					"uv": [0, 0, 16, 1],
+					"texture": "#c"
+				},
+				"east": {
+					"uv": [0, 0, 12, 1],
+					"texture": "#c"
+				},
+				"south": {
+					"uv": [0, 0, 16, 1],
+					"texture": "#c"
+				},
+				"west": {
+					"uv": [0, 0, 12, 1],
+					"texture": "#c"
+				},
+				"up": {
+					"uv": [0, 0, 16, 12],
+					"texture": "#c"
+				},
+				"down": {
+					"uv": [0, 0, 16, 12],
+					"texture": "#c"
+				}
+			}
+		},
+		{
+			"name": "rollers_w",
+			"from": [2.5, 1, 4],
+			"to": [4.5, 2.4, 12],
+			"rotation": {
+				"angle": 0,
+				"axis": "y",
+				"origin": [8, 8, 8]
+			},
+			"faces": {
+				"north": {
+					"uv": [0, 0, 2, 1.4],
+					"texture": "#and"
+				},
+				"east": {
+					"uv": [0, 0, 8, 1.4],
+					"texture": "#and"
+				},
+				"south": {
+					"uv": [0, 0, 2, 1.4],
+					"texture": "#and"
+				},
+				"west": {
+					"uv": [0, 0, 8, 1.4],
+					"texture": "#and"
+				},
+				"up": {
+					"uv": [0, 0, 2, 8],
+					"texture": "#and"
+				},
+				"down": {
+					"uv": [0, 0, 2, 8],
+					"texture": "#and"
+				}
+			}
+		},
+		{
+			"name": "rollers_e",
+			"from": [11.5, 1, 4],
+			"to": [13.5, 2.4, 12],
+			"rotation": {
+				"angle": 0,
+				"axis": "y",
+				"origin": [8, 8, 8]
+			},
+			"faces": {
+				"north": {
+					"uv": [0, 0, 2, 1.4],
+					"texture": "#and"
+				},
+				"east": {
+					"uv": [0, 0, 8, 1.4],
+					"texture": "#and"
+				},
+				"south": {
+					"uv": [0, 0, 2, 1.4],
+					"texture": "#and"
+				},
+				"west": {
+					"uv": [0, 0, 8, 1.4],
+					"texture": "#and"
+				},
+				"up": {
+					"uv": [0, 0, 2, 8],
+					"texture": "#and"
+				},
+				"down": {
+					"uv": [0, 0, 2, 8],
+					"texture": "#and"
+				}
+			}
+		},
+		{
+			"name": "jacket",
+			"from": [5, 1.5, 1.5],
+			"to": [11, 14.5, 14.5],
+			"rotation": {
+				"angle": 0,
+				"axis": "y",
+				"origin": [8, 8, 8]
+			},
+			"faces": {
+				"north": {
+					"uv": [0, 0, 16, 16],
+					"texture": "#jk"
+				},
+				"east": {
+					"uv": [0, 0, 13, 13],
+					"texture": "#fb"
+				},
+				"south": {
+					"uv": [0, 0, 16, 16],
+					"texture": "#jk"
+				},
+				"west": {
+					"uv": [0, 0, 13, 13],
+					"texture": "#fb"
+				},
+				"up": {
+					"uv": [0, 0, 6, 13],
+					"texture": "#fb"
+				},
+				"down": {
+					"uv": [0, 0, 6, 13],
+					"texture": "#fb"
+				}
+			}
+		},
+		{
+			"name": "glow_burner",
+			"from": [7, 3, 1.25],
+			"to": [9, 5, 1.5],
+			"rotation": {
+				"angle": 0,
+				"axis": "y",
+				"origin": [8, 8, 8]
+			},
+			"faces": {
+				"north": {
+					"uv": [0, 0, 2, 2],
+					"texture": "#fire"
+				},
+				"east": {
+					"uv": [0, 0, 0.25, 2],
+					"texture": "#fire"
+				},
+				"south": {
+					"uv": [0, 0, 2, 2],
+					"texture": "#fire"
+				},
+				"west": {
+					"uv": [0, 0, 0.25, 2],
+					"texture": "#fire"
+				},
+				"up": {
+					"uv": [0, 0, 2, 0.25],
+					"texture": "#fire"
+				},
+				"down": {
+					"uv": [0, 0, 2, 0.25],
+					"texture": "#fire"
+				}
+			},
+			"neoforge_data": {
+				"block_light": 15,
+				"sky_light": 15
+			}
+		},
+		{
+			"name": "feed_hood",
+			"from": [0, 1, 2],
+			"to": [2, 14, 14],
+			"rotation": {
+				"angle": 0,
+				"axis": "y",
+				"origin": [8, 8, 8]
+			},
+			"faces": {
+				"north": {
+					"uv": [0, 0, 2, 13],
+					"texture": "#p"
+				},
+				"east": {
+					"uv": [0, 0, 12, 13],
+					"texture": "#p"
+				},
+				"south": {
+					"uv": [0, 0, 2, 13],
+					"texture": "#p"
+				},
+				"west": {
+					"uv": [0, 0, 12, 13],
+					"texture": "#p"
+				},
+				"up": {
+					"uv": [0, 0, 2, 12],
+					"texture": "#p"
+				},
+				"down": {
+					"uv": [0, 0, 2, 12],
+					"texture": "#p"
+				}
+			}
+		},
+		{
+			"name": "discharge_hood",
+			"from": [14, 1, 2],
+			"to": [16, 14, 14],
+			"rotation": {
+				"angle": 0,
+				"axis": "y",
+				"origin": [8, 8, 8]
+			},
+			"faces": {
+				"north": {
+					"uv": [0, 0, 2, 13],
+					"texture": "#p"
+				},
+				"east": {
+					"uv": [0, 0, 12, 13],
+					"texture": "#p"
+				},
+				"south": {
+					"uv": [0, 0, 2, 13],
+					"texture": "#p"
+				},
+				"west": {
+					"uv": [0, 0, 12, 13],
+					"texture": "#p"
+				},
+				"up": {
+					"uv": [0, 0, 2, 12],
+					"texture": "#p"
+				},
+				"down": {
+					"uv": [0, 0, 2, 12],
+					"texture": "#p"
+				}
+			}
+		},
+		{
+			"name": "hf_offgas",
+			"from": [0.5, 14, 6.5],
+			"to": [1.75, 16, 9.5],
+			"rotation": {
+				"angle": 0,
+				"axis": "y",
+				"origin": [8, 8, 8]
+			},
+			"faces": {
+				"north": {
+					"uv": [0, 0, 1.25, 2],
+					"texture": "#gas"
+				},
+				"east": {
+					"uv": [0, 0, 3, 2],
+					"texture": "#gas"
+				},
+				"south": {
+					"uv": [0, 0, 1.25, 2],
+					"texture": "#gas"
+				},
+				"west": {
+					"uv": [0, 0, 3, 2],
+					"texture": "#gas"
+				},
+				"up": {
+					"uv": [0, 0, 1.25, 3],
+					"texture": "#gas"
+				},
+				"down": {
+					"uv": [0, 0, 1.25, 3],
+					"texture": "#gas"
+				}
+			}
+		},
+		{
+			"name": "acid_feed",
+			"from": [-1.5, 9, 7],
+			"to": [0, 11, 9],
+			"rotation": {
+				"angle": 0,
+				"axis": "y",
+				"origin": [8, 8, 8]
+			},
+			"faces": {
+				"north": {
+					"uv": [0, 0, 1.5, 2],
+					"texture": "#acid"
+				},
+				"east": {
+					"uv": [0, 0, 2, 2],
+					"texture": "#acid"
+				},
+				"south": {
+					"uv": [0, 0, 1.5, 2],
+					"texture": "#acid"
+				},
+				"west": {
+					"uv": [0, 0, 16, 16],
+					"texture": "#end"
+				},
+				"up": {
+					"uv": [0, 0, 1.5, 2],
+					"texture": "#acid"
+				},
+				"down": {
+					"uv": [0, 0, 1.5, 2],
+					"texture": "#acid"
+				}
+			}
+		}
+	]
+}

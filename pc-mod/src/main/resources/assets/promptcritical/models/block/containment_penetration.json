@@ -1,0 +1,119 @@
+{
+	"credit": "Made with Blockbench",
+	"textures": {
+		"con": "promptcritical:block/common/concrete",
+		"d": "promptcritical:block/common/steel_dark",
+		"end": "promptcritical:block/common/pipe_end",
+		"pen": "promptcritical:block/containment_penetration"
+	},
+	"elements": [
+		{
+			"name": "wall",
+			"from": [0, 0, 0],
+			"to": [16, 16, 16],
+			"rotation": {
+				"angle": 0,
+				"axis": "y",
+				"origin": [8, 8, 8]
+			},
+			"faces": {
+				"north": {
+					"uv": [0, 0, 16, 16],
+					"texture": "#pen"
+				},
+				"east": {
+					"uv": [0, 0, 16, 16],
+					"texture": "#con"
+				},
+				"south": {
+					"uv": [0, 0, 16, 16],
+					"texture": "#pen"
+				},
+				"west": {
+					"uv": [0, 0, 16, 16],
+					"texture": "#con"
+				},
+				"up": {
+					"uv": [0, 0, 16, 16],
+					"texture": "#con"
+				},
+				"down": {
+					"uv": [0, 0, 16, 16],
+					"texture": "#con"
+				}
+			}
+		},
+		{
+			"name": "sleeve_n",
+			"from": [3, 3, -1],
+			"to": [13, 13, 0],
+			"rotation": {
+				"angle": 0,
+				"axis": "y",
+				"origin": [8, 8, 8]
+			},
+			"faces": {
+				"north": {
+					"uv": [0, 0, 16, 16],
+					"texture": "#end"
+				},
+				"east": {
+					"uv": [0, 0, 1, 10],
+					"texture": "#d"
+				},
+				"south": {
+					"uv": [0, 0, 10, 10],
+					"texture": "#d"
+				},
+				"west": {
+					"uv": [0, 0, 1, 10],
+					"texture": "#d"
+				},
+				"up": {
+					"uv": [0, 0, 10, 1],
+					"texture": "#d"
+				},
+				"down": {
+					"uv": [0, 0, 10, 1],
+					"texture": "#d"
+				}
+			}
+		},
+		{
+			"name": "sleeve_s",
+			"from": [3, 3, 16],
+			"to": [13, 13, 17],
+			"rotation": {
+				"angle": 0,
+				"axis": "y",
+				"origin": [8, 8, 8]
+			},
+			"faces": {
+				"north": {
+					"uv": [0, 0, 10, 10],
+					"texture": "#d"
+				},
+				"east": {
+					"uv": [0, 0, 1, 10],
+					"texture": "#d"
+				},
+				"south": {
+					"uv": [0, 0, 16, 16],
+					"texture": "#end"
+				},
+				"west": {
+					"uv": [0, 0, 1, 10],
+					"texture": "#d"
+				},
+				"up": {
+					"uv": [0, 0, 10, 1],
+					"texture": "#d"
+				},
+				"down": {
+					"uv": [0, 0, 10, 1],
+					"texture": "#d"
+				}
+			}
+		}
+	]
+}

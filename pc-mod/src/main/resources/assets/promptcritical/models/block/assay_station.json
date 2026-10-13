@@ -1,0 +1,310 @@
+{
+	"credit": "Made with Blockbench",
+	"textures": {
+		"cab": "promptcritical:block/common/cabinet",
+		"cab_front": "promptcritical:block/assay_station_cabinet",
+		"cores": "promptcritical:block/assay_station_cores",
+		"d": "promptcritical:block/common/steel_dark",
+		"lab": "promptcritical:block/common/mining_lab_white",
+		"lg": "promptcritical:block/common/lamp_green",
+		"scr": "promptcritical:block/assay_station_screen"
+	},
+	"elements": [
+		{
+			"name": "cabinet",
+			"from": [0, 0, 1],
+			"to": [16, 9, 16],
+			"rotation": {
+				"angle": 0,
+				"axis": "y",
+				"origin": [8, 8, 8]
+			},
+			"faces": {
+				"north": {
+					"uv": [0, 0, 16, 16],
+					"texture": "#cab_front"
+				},
+				"east": {
+					"uv": [0, 0, 15, 9],
+					"texture": "#lab"
+				},
+				"south": {
+					"uv": [0, 0, 16, 9],
+					"texture": "#lab"
+				},
+				"west": {
+					"uv": [0, 0, 15, 9],
+					"texture": "#lab"
+				},
+				"up": {
+					"uv": [0, 0, 16, 15],
+					"texture": "#lab"
+				},
+				"down": {
+					"uv": [0, 0, 16, 15],
+					"texture": "#lab"
+				}
+			}
+		},
+		{
+			"name": "worktop",
+			"from": [0, 9, 0.5],
+			"to": [16, 10, 16],
+			"rotation": {
+				"angle": 0,
+				"axis": "y",
+				"origin": [8, 8, 8]
+			},
+			"faces": {
+				"north": {
+					"uv": [0, 0, 16, 1],
+					"texture": "#d"
+				},
+				"east": {
+					"uv": [0, 0, 15.5, 1],
+					"texture": "#d"
+				},
+				"south": {
+					"uv": [0, 0, 16, 1],
+					"texture": "#d"
+				},
+				"west": {
+					"uv": [0, 0, 15.5, 1],
+					"texture": "#d"
+				},
+				"up": {
+					"uv": [0, 0, 16, 15.5],
+					"texture": "#d"
+				},
+				"down": {
+					"uv": [0, 0, 16, 15.5],
+					"texture": "#d"
+				}
+			}
+		},
+		{
+			"name": "xrf_body",
+			"from": [1, 10, 5],
+			"to": [9.5, 15, 15],
+			"rotation": {
+				"angle": 0,
+				"axis": "y",
+				"origin": [8, 8, 8]
+			},
+			"faces": {
+				"north": {
+					"uv": [0, 0, 8.5, 5],
+					"texture": "#lab"
+				},
+				"east": {
+					"uv": [0, 0, 10, 5],
+					"texture": "#lab"
+				},
+				"south": {
+					"uv": [0, 0, 8.5, 5],
+					"texture": "#lab"
+				},
+				"west": {
+					"uv": [0, 0, 10, 5],
+					"texture": "#lab"
+				},
+				"up": {
+					"uv": [0, 0, 8.5, 10],
+					"texture": "#lab"
+				},
+				"down": {
+					"uv": [0, 0, 8.5, 10],
+					"texture": "#lab"
+				}
+			}
+		},
+		{
+			"name": "glow_xrf_screen",
+			"from": [2, 11, 4.9],
+			"to": [8.5, 14.5, 5],
+			"rotation": {
+				"angle": 0,
+				"axis": "y",
+				"origin": [8, 8, 8]
+			},
+			"faces": {
+				"north": {
+					"uv": [0, 0, 16, 16],
+					"texture": "#scr"
+				},
+				"east": {
+					"uv": [0, 0, 0.1, 3.5],
+					"texture": "#scr"
+				},
+				"south": {
+					"uv": [0, 0, 6.5, 3.5],
+					"texture": "#scr"
+				},
+				"west": {
+					"uv": [0, 0, 0.1, 3.5],
+					"texture": "#scr"
+				},
+				"up": {
+					"uv": [0, 0, 6.5, 0.1],
+					"texture": "#scr"
+				},
+				"down": {
+					"uv": [0, 0, 6.5, 0.1],
+					"texture": "#scr"
+				}
+			},
+			"neoforge_data": {
+				"block_light": 15,
+				"sky_light": 15
+			}
+		},
+		{
+			"name": "xrf_lid",
+			"from": [2, 15, 7],
+			"to": [8.5, 15.5, 13],
+			"rotation": {
+				"angle": 0,
+				"axis": "y",
+				"origin": [8, 8, 8]
+			},
+			"faces": {
+				"north": {
+					"uv": [0, 0, 6.5, 0.5],
+					"texture": "#d"
+				},
+				"east": {
+					"uv": [0, 0, 6, 0.5],
+					"texture": "#d"
+				},
+				"south": {
+					"uv": [0, 0, 6.5, 0.5],
+					"texture": "#d"
+				},
+				"west": {
+					"uv": [0, 0, 6, 0.5],
+					"texture": "#d"
+				},
+				"up": {
+					"uv": [0, 0, 6.5, 6],
+					"texture": "#d"
+				},
+				"down": {
+					"uv": [0, 0, 6.5, 6],
+					"texture": "#d"
+				}
+			}
+		},
+		{
+			"name": "fluorimeter",
+			"from": [10.5, 10, 8],
+			"to": [15, 13.5, 14],
+			"rotation": {
+				"angle": 0,
+				"axis": "y",
+				"origin": [8, 8, 8]
+			},
+			"faces": {
+				"north": {
+					"uv": [0, 0, 4.5, 3.5],
+					"texture": "#cab"
+				},
+				"east": {
+					"uv": [0, 0, 6, 3.5],
+					"texture": "#cab"
+				},
+				"south": {
+					"uv": [0, 0, 4.5, 3.5],
+					"texture": "#cab"
+				},
+				"west": {
+					"uv": [0, 0, 6, 3.5],
+					"texture": "#cab"
+				},
+				"up": {
+					"uv": [0, 0, 4.5, 6],
+					"texture": "#cab"
+				},
+				"down": {
+					"uv": [0, 0, 4.5, 6],
+					"texture": "#cab"
+				}
+			}
+		},
+		{
+			"name": "glow_fluor_lamp",
+			"from": [11, 12, 7.9],
+			"to": [12, 13, 8],
+			"rotation": {
+				"angle": 0,
+				"axis": "y",
+				"origin": [8, 8, 8]
+			},
+			"faces": {
+				"north": {
+					"uv": [0, 0, 1, 1],
+					"texture": "#lg"
+				},
+				"east": {
+					"uv": [0, 0, 0.1, 1],
+					"texture": "#lg"
+				},
+				"south": {
+					"uv": [0, 0, 1, 1],
+					"texture": "#lg"
+				},
+				"west": {
+					"uv": [0, 0, 0.1, 1],
+					"texture": "#lg"
+				},
+				"up": {
+					"uv": [0, 0, 1, 0.1],
+					"texture": "#lg"
+				},
+				"down": {
+					"uv": [0, 0, 1, 0.1],
+					"texture": "#lg"
+				}
+			},
+			"neoforge_data": {
+				"block_light": 15,
+				"sky_light": 15
+			}
+		},
+		{
+			"name": "core_box",
+			"from": [10, 10, 1.5],
+			"to": [15.5, 10.75, 6.5],
+			"rotation": {
+				"angle": 0,
+				"axis": "y",
+				"origin": [8, 8, 8]
+			},
+			"faces": {
+				"north": {
+					"uv": [0, 0, 5.5, 0.75],
+					"texture": "#d"
+				},
+				"east": {
+					"uv": [0, 0, 5, 0.75],
+					"texture": "#d"
+				},
+				"south": {
+					"uv": [0, 0, 5.5, 0.75],
+					"texture": "#d"
+				},
+				"west": {
+					"uv": [0, 0, 5, 0.75],
+					"texture": "#d"
+				},
+				"up": {
+					"uv": [0, 0, 16, 16],
+					"texture": "#cores"
+				},
+				"down": {
+					"uv": [0, 0, 5.5, 5],
+					"texture": "#d"
+				}
+			}
+		}
+	]
+}

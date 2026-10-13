@@ -1,0 +1,233 @@
+{
+	"credit": "Made with Blockbench",
+	"textures": {
+		"uf6": "promptcritical:block/common/fuelcycle_pipe_uf6",
+		"end": "promptcritical:block/common/pipe_end",
+		"ss": "promptcritical:block/common/fuelcycle_ss",
+		"f": "promptcritical:block/cascade_isolation_valve",
+		"d": "promptcritical:block/common/steel_dark",
+		"lg": "promptcritical:block/common/lamp_green"
+	},
+	"elements": [
+		{
+			"name": "line",
+			"from": [0, 3, 5],
+			"to": [16, 9, 11],
+			"rotation": {
+				"angle": 0,
+				"axis": "y",
+				"origin": [8, 8, 8]
+			},
+			"faces": {
+				"north": {
+					"uv": [0, 0, 16, 6],
+					"texture": "#uf6"
+				},
+				"east": {
+					"uv": [0, 0, 16, 16],
+					"texture": "#end"
+				},
+				"south": {
+					"uv": [0, 0, 16, 6],
+					"texture": "#uf6"
+				},
+				"west": {
+					"uv": [0, 0, 16, 16],
+					"texture": "#end"
+				},
+				"up": {
+					"uv": [0, 0, 16, 6],
+					"texture": "#uf6"
+				},
+				"down": {
+					"uv": [0, 0, 16, 6],
+					"texture": "#uf6"
+				}
+			}
+		},
+		{
+			"name": "body",
+			"from": [5, 2, 4],
+			"to": [11, 10, 12],
+			"rotation": {
+				"angle": 0,
+				"axis": "y",
+				"origin": [8, 8, 8]
+			},
+			"faces": {
+				"north": {
+					"uv": [0, 0, 6, 8],
+					"texture": "#ss"
+				},
+				"east": {
+					"uv": [0, 0, 8, 8],
+					"texture": "#ss"
+				},
+				"south": {
+					"uv": [0, 0, 6, 8],
+					"texture": "#ss"
+				},
+				"west": {
+					"uv": [0, 0, 8, 8],
+					"texture": "#ss"
+				},
+				"up": {
+					"uv": [0, 0, 6, 8],
+					"texture": "#ss"
+				},
+				"down": {
+					"uv": [0, 0, 6, 8],
+					"texture": "#ss"
+				}
+			}
+		},
+		{
+			"name": "actuator",
+			"from": [4.5, 10, 4.5],
+			"to": [11.5, 15, 11.5],
+			"rotation": {
+				"angle": 0,
+				"axis": "y",
+				"origin": [8, 8, 8]
+			},
+			"faces": {
+				"north": {
+					"uv": [0, 0, 16, 16],
+					"texture": "#f"
+				},
+				"east": {
+					"uv": [0, 0, 16, 16],
+					"texture": "#f"
+				},
+				"south": {
+					"uv": [0, 0, 16, 16],
+					"texture": "#f"
+				},
+				"west": {
+					"uv": [0, 0, 16, 16],
+					"texture": "#f"
+				},
+				"up": {
+					"uv": [0, 0, 7, 7],
+					"texture": "#f"
+				},
+				"down": {
+					"uv": [0, 0, 7, 7],
+					"texture": "#f"
+				}
+			}
+		},
+		{
+			"name": "actuator_cap",
+			"from": [5.5, 15, 5.5],
+			"to": [10.5, 16, 10.5],
+			"rotation": {
+				"angle": 0,
+				"axis": "y",
+				"origin": [8, 8, 8]
+			},
+			"faces": {
+				"north": {
+					"uv": [0, 0, 5, 1],
+					"texture": "#d"
+				},
+				"east": {
+					"uv": [0, 0, 5, 1],
+					"texture": "#d"
+				},
+				"south": {
+					"uv": [0, 0, 5, 1],
+					"texture": "#d"
+				},
+				"west": {
+					"uv": [0, 0, 5, 1],
+					"texture": "#d"
+				},
+				"up": {
+					"uv": [0, 0, 5, 5],
+					"texture": "#d"
+				},
+				"down": {
+					"uv": [0, 0, 5, 5],
+					"texture": "#d"
+				}
+			}
+		},
+		{
+			"name": "solenoid",
+			"from": [11.5, 11, 6],
+			"to": [13.5, 14, 10],
+			"rotation": {
+				"angle": 0,
+				"axis": "y",
+				"origin": [8, 8, 8]
+			},
+			"faces": {
+				"north": {
+					"uv": [0, 0, 2, 3],
+					"texture": "#d"
+				},
+				"east": {
+					"uv": [0, 0, 4, 3],
+					"texture": "#d"
+				},
+				"south": {
+					"uv": [0, 0, 2, 3],
+					"texture": "#d"
+				},
+				"west": {
+					"uv": [0, 0, 4, 3],
+					"texture": "#d"
+				},
+				"up": {
+					"uv": [0, 0, 2, 4],
+					"texture": "#d"
+				},
+				"down": {
+					"uv": [0, 0, 2, 4],
+					"texture": "#d"
+				}
+			}
+		},
+		{
+			"name": "glow_lamp",
+			"from": [12, 12, 5.5],
+			"to": [13, 13, 6],
+			"rotation": {
+				"angle": 0,
+				"axis": "y",
+				"origin": [8, 8, 8]
+			},
+			"faces": {
+				"north": {
+					"uv": [0, 0, 1, 1],
+					"texture": "#lg"
+				},
+				"east": {
+					"uv": [0, 0, 0.5, 1],
+					"texture": "#lg"
+				},
+				"south": {
+					"uv": [0, 0, 1, 1],
+					"texture": "#lg"
+				},
+				"west": {
+					"uv": [0, 0, 0.5, 1],
+					"texture": "#lg"
+				},
+				"up": {
+					"uv": [0, 0, 1, 0.5],
+					"texture": "#lg"
+				},
+				"down": {
+					"uv": [0, 0, 1, 0.5],
+					"texture": "#lg"
+				}
+			},
+			"neoforge_data": {
+				"block_light": 15,
+				"sky_light": 15
+			}
+		}
+	]
+}

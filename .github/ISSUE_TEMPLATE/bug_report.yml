@@ -1,0 +1,38 @@
+name: Bug report
+description: Something in the mod or the build does not work as expected.
+labels: [bug]
+body:
+  - type: textarea
+    id: what
+    attributes:
+      label: What happened
+      description: What you did, what you expected, what you got instead.
+    validations:
+      required: true
+  - type: textarea
+    id: repro
+    attributes:
+      label: Steps to reproduce
+      placeholder: |
+        1. ...
+        2. ...
+    validations:
+      required: true
+  - type: input
+    id: version
+    attributes:
+      label: Mod version or commit
+      placeholder: 0.0.1+1.21.1 / a1b2c3d
+    validations:
+      required: true
+  - type: input
+    id: env
+    attributes:
+      label: NeoForge, Create and CC:Tweaked versions
+      placeholder: NeoForge 21.1.259, Create 6.0.11, CC:Tweaked 1.120.2
+  - type: textarea
+    id: logs
+    attributes:
+      label: Logs
+      description: latest.log or crash report. Use a gist or mclo.gs for long logs.
+      render: text

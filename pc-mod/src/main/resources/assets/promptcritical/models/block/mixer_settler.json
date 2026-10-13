@@ -1,0 +1,339 @@
+{
+	"credit": "Made with Blockbench",
+	"textures": {
+		"acid": "promptcritical:block/common/mining_pipe_acid",
+		"and": "promptcritical:block/common/mining_andesite",
+		"d": "promptcritical:block/common/steel_dark",
+		"emul": "promptcritical:block/mixer_settler_emulsion",
+		"end": "promptcritical:block/common/pipe_end",
+		"frp": "promptcritical:block/common/mining_frp",
+		"fuel": "promptcritical:block/common/mining_pipe_fuel",
+		"win": "promptcritical:block/mixer_settler_window"
+	},
+	"elements": [
+		{
+			"name": "mixer_box",
+			"from": [3, 0, 3],
+			"to": [13, 10, 13],
+			"rotation": {
+				"angle": 0,
+				"axis": "y",
+				"origin": [8, 8, 8]
+			},
+			"faces": {
+				"north": {
+					"uv": [0, 0, 10, 10],
+					"texture": "#frp"
+				},
+				"east": {
+					"uv": [0, 0, 10, 10],
+					"texture": "#frp"
+				},
+				"south": {
+					"uv": [0, 0, 10, 10],
+					"texture": "#frp"
+				},
+				"west": {
+					"uv": [0, 0, 10, 10],
+					"texture": "#frp"
+				},
+				"up": {
+					"uv": [0, 0, 10, 10],
+					"texture": "#emul"
+				},
+				"down": {
+					"uv": [0, 0, 10, 10],
+					"texture": "#frp"
+				}
+			}
+		},
+		{
+			"name": "window",
+			"from": [5, 2, 2.9],
+			"to": [11, 8.5, 3],
+			"rotation": {
+				"angle": 0,
+				"axis": "y",
+				"origin": [8, 8, 8]
+			},
+			"faces": {
+				"north": {
+					"uv": [0, 0, 16, 16],
+					"texture": "#win"
+				},
+				"east": {
+					"uv": [0, 0, 0.1, 6.5],
+					"texture": "#win"
+				},
+				"south": {
+					"uv": [0, 0, 6, 6.5],
+					"texture": "#win"
+				},
+				"west": {
+					"uv": [0, 0, 0.1, 6.5],
+					"texture": "#win"
+				},
+				"up": {
+					"uv": [0, 0, 6, 0.1],
+					"texture": "#win"
+				},
+				"down": {
+					"uv": [0, 0, 6, 0.1],
+					"texture": "#win"
+				}
+			}
+		},
+		{
+			"name": "rim_n",
+			"from": [2.75, 9.5, 2.75],
+			"to": [13.25, 11, 3.25],
+			"rotation": {
+				"angle": 0,
+				"axis": "y",
+				"origin": [8, 8, 8]
+			},
+			"faces": {
+				"north": {
+					"uv": [0, 0, 10.5, 1.5],
+					"texture": "#d"
+				},
+				"east": {
+					"uv": [0, 0, 0.5, 1.5],
+					"texture": "#d"
+				},
+				"south": {
+					"uv": [0, 0, 10.5, 1.5],
+					"texture": "#d"
+				},
+				"west": {
+					"uv": [0, 0, 0.5, 1.5],
+					"texture": "#d"
+				},
+				"up": {
+					"uv": [0, 0, 10.5, 0.5],
+					"texture": "#d"
+				},
+				"down": {
+					"uv": [0, 0, 10.5, 0.5],
+					"texture": "#d"
+				}
+			}
+		},
+		{
+			"name": "rim_s",
+			"from": [2.75, 9.5, 12.75],
+			"to": [13.25, 11, 13.25],
+			"rotation": {
+				"angle": 0,
+				"axis": "y",
+				"origin": [8, 8, 8]
+			},
+			"faces": {
+				"north": {
+					"uv": [0, 0, 10.5, 1.5],
+					"texture": "#d"
+				},
+				"east": {
+					"uv": [0, 0, 0.5, 1.5],
+					"texture": "#d"
+				},
+				"south": {
+					"uv": [0, 0, 10.5, 1.5],
+					"texture": "#d"
+				},
+				"west": {
+					"uv": [0, 0, 0.5, 1.5],
+					"texture": "#d"
+				},
+				"up": {
+					"uv": [0, 0, 10.5, 0.5],
+					"texture": "#d"
+				},
+				"down": {
+					"uv": [0, 0, 10.5, 0.5],
+					"texture": "#d"
+				}
+			}
+		},
+		{
+			"name": "bridge",
+			"from": [3, 11, 7],
+			"to": [13, 12.5, 9],
+			"rotation": {
+				"angle": 0,
+				"axis": "y",
+				"origin": [8, 8, 8]
+			},
+			"faces": {
+				"north": {
+					"uv": [0, 0, 10, 1.5],
+					"texture": "#d"
+				},
+				"east": {
+					"uv": [0, 0, 2, 1.5],
+					"texture": "#d"
+				},
+				"south": {
+					"uv": [0, 0, 10, 1.5],
+					"texture": "#d"
+				},
+				"west": {
+					"uv": [0, 0, 2, 1.5],
+					"texture": "#d"
+				},
+				"up": {
+					"uv": [0, 0, 10, 2],
+					"texture": "#d"
+				},
+				"down": {
+					"uv": [0, 0, 10, 2],
+					"texture": "#d"
+				}
+			}
+		},
+		{
+			"name": "gearbox",
+			"from": [5.5, 12.5, 5.5],
+			"to": [10.5, 15.5, 10.5],
+			"rotation": {
+				"angle": 0,
+				"axis": "y",
+				"origin": [8, 8, 8]
+			},
+			"faces": {
+				"north": {
+					"uv": [0, 0, 5, 3],
+					"texture": "#and"
+				},
+				"east": {
+					"uv": [0, 0, 5, 3],
+					"texture": "#and"
+				},
+				"south": {
+					"uv": [0, 0, 5, 3],
+					"texture": "#and"
+				},
+				"west": {
+					"uv": [0, 0, 5, 3],
+					"texture": "#and"
+				},
+				"up": {
+					"uv": [0, 0, 5, 5],
+					"texture": "#and"
+				},
+				"down": {
+					"uv": [0, 0, 5, 5],
+					"texture": "#and"
+				}
+			}
+		},
+		{
+			"name": "launder",
+			"from": [13, 7, 4],
+			"to": [16, 9.5, 12],
+			"rotation": {
+				"angle": 0,
+				"axis": "y",
+				"origin": [8, 8, 8]
+			},
+			"faces": {
+				"north": {
+					"uv": [0, 0, 3, 2.5],
+					"texture": "#frp"
+				},
+				"east": {
+					"uv": [0, 0, 8, 2.5],
+					"texture": "#frp"
+				},
+				"south": {
+					"uv": [0, 0, 3, 2.5],
+					"texture": "#frp"
+				},
+				"west": {
+					"uv": [0, 0, 8, 2.5],
+					"texture": "#frp"
+				},
+				"up": {
+					"uv": [0, 0, 3, 8],
+					"texture": "#emul"
+				},
+				"down": {
+					"uv": [0, 0, 3, 8],
+					"texture": "#frp"
+				}
+			}
+		},
+		{
+			"name": "aqueous_in",
+			"from": [0, 3, 5],
+			"to": [3, 5, 7],
+			"rotation": {
+				"angle": 0,
+				"axis": "y",
+				"origin": [8, 8, 8]
+			},
+			"faces": {
+				"north": {
+					"uv": [0, 0, 3, 2],
+					"texture": "#acid"
+				},
+				"east": {
+					"uv": [0, 0, 2, 2],
+					"texture": "#acid"
+				},
+				"south": {
+					"uv": [0, 0, 3, 2],
+					"texture": "#acid"
+				},
+				"west": {
+					"uv": [0, 0, 16, 16],
+					"texture": "#end"
+				},
+				"up": {
+					"uv": [0, 0, 3, 2],
+					"texture": "#acid"
+				},
+				"down": {
+					"uv": [0, 0, 3, 2],
+					"texture": "#acid"
+				}
+			}
+		},
+		{
+			"name": "organic_in",
+			"from": [0, 5.5, 9],
+			"to": [3, 7.5, 11],
+			"rotation": {
+				"angle": 0,
+				"axis": "y",
+				"origin": [8, 8, 8]
+			},
+			"faces": {
+				"north": {
+					"uv": [0, 0, 3, 2],
+					"texture": "#fuel"
+				},
+				"east": {
+					"uv": [0, 0, 2, 2],
+					"texture": "#fuel"
+				},
+				"south": {
+					"uv": [0, 0, 3, 2],
+					"texture": "#fuel"
+				},
+				"west": {
+					"uv": [0, 0, 16, 16],
+					"texture": "#end"
+				},
+				"up": {
+					"uv": [0, 0, 3, 2],
+					"texture": "#fuel"
+				},
+				"down": {
+					"uv": [0, 0, 3, 2],
+					"texture": "#fuel"
+				}
+			}
+		}
+	]
+}

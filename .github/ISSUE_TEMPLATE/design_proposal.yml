@@ -1,0 +1,31 @@
+name: Design proposal
+description: Suggest a mechanic, a change to the GDD or a balance tweak.
+labels: [design]
+body:
+  - type: input
+    id: section
+    attributes:
+      label: GDD section
+      description: Which part of docs/gdd this touches, if any.
+      placeholder: 01-physics.md §1.8
+  - type: textarea
+    id: proposal
+    attributes:
+      label: Proposal
+      description: What should change and how it plays in game.
+    validations:
+      required: true
+  - type: textarea
+    id: rationale
+    attributes:
+      label: Rationale
+      description: Why. Real-world references (standards, handbooks, plant data) are welcome.
+    validations:
+      required: true
+  - type: checkboxes
+    id: pillars
+    attributes:
+      label: Design pillars
+      description: See the Overview and Design Pillars wiki page.
+      options:
+        - label: The proposal keeps physics over magic numbers (P1) and links to other industries where relevant (P7).

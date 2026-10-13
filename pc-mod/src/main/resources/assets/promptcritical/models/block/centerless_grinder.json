@@ -1,0 +1,229 @@
+{
+	"credit": "Made with Blockbench",
+	"textures": {
+		"d": "promptcritical:block/common/steel_dark",
+		"f": "promptcritical:block/centerless_grinder",
+		"p": "promptcritical:block/common/steel_plate",
+		"st": "promptcritical:block/common/steel_bare",
+		"ds": "promptcritical:block/common/steel_dark_smooth",
+		"mot": "promptcritical:block/common/motor_blue"
+	},
+	"elements": [
+		{
+			"name": "bed",
+			"from": [0, 0, 1],
+			"to": [16, 3, 15],
+			"rotation": {
+				"angle": 0,
+				"axis": "y",
+				"origin": [8, 8, 8]
+			},
+			"faces": {
+				"north": {
+					"uv": [0, 0, 16, 3],
+					"texture": "#d"
+				},
+				"east": {
+					"uv": [0, 0, 14, 3],
+					"texture": "#d"
+				},
+				"south": {
+					"uv": [0, 0, 16, 3],
+					"texture": "#d"
+				},
+				"west": {
+					"uv": [0, 0, 14, 3],
+					"texture": "#d"
+				},
+				"up": {
+					"uv": [0, 0, 16, 14],
+					"texture": "#d"
+				},
+				"down": {
+					"uv": [0, 0, 16, 14],
+					"texture": "#d"
+				}
+			}
+		},
+		{
+			"name": "housing",
+			"from": [1, 3, 12],
+			"to": [15, 10, 15],
+			"rotation": {
+				"angle": 0,
+				"axis": "y",
+				"origin": [8, 8, 8]
+			},
+			"faces": {
+				"north": {
+					"uv": [0, 0, 16, 16],
+					"texture": "#f"
+				},
+				"east": {
+					"uv": [0, 0, 3, 7],
+					"texture": "#f"
+				},
+				"south": {
+					"uv": [0, 0, 14, 7],
+					"texture": "#f"
+				},
+				"west": {
+					"uv": [0, 0, 3, 7],
+					"texture": "#f"
+				},
+				"up": {
+					"uv": [0, 0, 14, 3],
+					"texture": "#f"
+				},
+				"down": {
+					"uv": [0, 0, 14, 3],
+					"texture": "#f"
+				}
+			}
+		},
+		{
+			"name": "guard",
+			"from": [2.5, 11, 3.5],
+			"to": [13.5, 14, 12.5],
+			"rotation": {
+				"angle": 0,
+				"axis": "y",
+				"origin": [8, 8, 8]
+			},
+			"faces": {
+				"north": {
+					"uv": [0, 0, 16, 16],
+					"texture": "#f"
+				},
+				"east": {
+					"uv": [0, 0, 9, 3],
+					"texture": "#p"
+				},
+				"south": {
+					"uv": [0, 0, 11, 3],
+					"texture": "#p"
+				},
+				"west": {
+					"uv": [0, 0, 9, 3],
+					"texture": "#p"
+				},
+				"up": {
+					"uv": [0, 0, 11, 9],
+					"texture": "#p"
+				},
+				"down": {
+					"uv": [0, 0, 11, 9],
+					"texture": "#p"
+				}
+			}
+		},
+		{
+			"name": "trough",
+			"from": [0, 5.5, 1],
+			"to": [16, 6.5, 3],
+			"rotation": {
+				"angle": 0,
+				"axis": "y",
+				"origin": [8, 8, 8]
+			},
+			"faces": {
+				"north": {
+					"uv": [0, 0, 16, 1],
+					"texture": "#st"
+				},
+				"east": {
+					"uv": [0, 0, 2, 1],
+					"texture": "#st"
+				},
+				"south": {
+					"uv": [0, 0, 16, 1],
+					"texture": "#st"
+				},
+				"west": {
+					"uv": [0, 0, 2, 1],
+					"texture": "#st"
+				},
+				"up": {
+					"uv": [0, 0, 16, 2],
+					"texture": "#st"
+				},
+				"down": {
+					"uv": [0, 0, 16, 2],
+					"texture": "#st"
+				}
+			}
+		},
+		{
+			"name": "work_rest",
+			"from": [0, 3, 1.5],
+			"to": [16, 5.5, 2.5],
+			"rotation": {
+				"angle": 0,
+				"axis": "y",
+				"origin": [8, 8, 8]
+			},
+			"faces": {
+				"north": {
+					"uv": [0, 0, 16, 2.5],
+					"texture": "#ds"
+				},
+				"east": {
+					"uv": [0, 0, 1, 2.5],
+					"texture": "#ds"
+				},
+				"south": {
+					"uv": [0, 0, 16, 2.5],
+					"texture": "#ds"
+				},
+				"west": {
+					"uv": [0, 0, 1, 2.5],
+					"texture": "#ds"
+				},
+				"up": {
+					"uv": [0, 0, 16, 1],
+					"texture": "#ds"
+				},
+				"down": {
+					"uv": [0, 0, 16, 1],
+					"texture": "#ds"
+				}
+			}
+		},
+		{
+			"name": "motor",
+			"from": [10, 10, 12.5],
+			"to": [15, 13, 16],
+			"rotation": {
+				"angle": 0,
+				"axis": "y",
+				"origin": [8, 8, 8]
+			},
+			"faces": {
+				"north": {
+					"uv": [0, 0, 5, 3],
+					"texture": "#mot"
+				},
+				"east": {
+					"uv": [0, 0, 3.5, 3],
+					"texture": "#mot"
+				},
+				"south": {
+					"uv": [0, 0, 5, 3],
+					"texture": "#mot"
+				},
+				"west": {
+					"uv": [0, 0, 3.5, 3],
+					"texture": "#mot"
+				},
+				"up": {
+					"uv": [0, 0, 5, 3.5],
+					"texture": "#mot"
+				},
+				"down": {
+					"uv": [0, 0, 5, 3.5],
+					"texture": "#mot"
+				}
+			}
+		}
+	]
+}

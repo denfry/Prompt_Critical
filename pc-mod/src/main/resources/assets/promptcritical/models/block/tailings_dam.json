@@ -1,0 +1,82 @@
+{
+	"credit": "Made with Blockbench",
+	"textures": {
+		"gauge": "promptcritical:block/tailings_dam_gauge",
+		"side": "promptcritical:block/tailings_dam_side",
+		"top": "promptcritical:block/tailings_dam_top"
+	},
+	"elements": [
+		{
+			"name": "embankment",
+			"from": [0, 0, 0],
+			"to": [16, 16, 16],
+			"rotation": {
+				"angle": 0,
+				"axis": "y",
+				"origin": [8, 8, 8]
+			},
+			"faces": {
+				"north": {
+					"uv": [0, 0, 16, 16],
+					"texture": "#side"
+				},
+				"east": {
+					"uv": [0, 0, 16, 16],
+					"texture": "#side"
+				},
+				"south": {
+					"uv": [0, 0, 16, 16],
+					"texture": "#side"
+				},
+				"west": {
+					"uv": [0, 0, 16, 16],
+					"texture": "#side"
+				},
+				"up": {
+					"uv": [0, 0, 16, 16],
+					"texture": "#top"
+				},
+				"down": {
+					"uv": [0, 0, 16, 16],
+					"texture": "#side"
+				}
+			}
+		},
+		{
+			"name": "staff_gauge",
+			"from": [7, 1, -0.5],
+			"to": [9, 15, 0],
+			"rotation": {
+				"angle": 0,
+				"axis": "y",
+				"origin": [8, 8, 8]
+			},
+			"faces": {
+				"north": {
+					"uv": [0, 0, 16, 16],
+					"texture": "#gauge"
+				},
+				"east": {
+					"uv": [0, 0, 0.5, 14],
+					"texture": "#gauge"
+				},
+				"south": {
+					"uv": [0, 0, 2, 14],
+					"texture": "#gauge"
+				},
+				"west": {
+					"uv": [0, 0, 0.5, 14],
+					"texture": "#gauge"
+				},
+				"up": {
+					"uv": [0, 0, 2, 0.5],
+					"texture": "#gauge"
+				},
+				"down": {
+					"uv": [0, 0, 2, 0.5],
+					"texture": "#gauge"
+				}
+			}
+		}
+	]
+}

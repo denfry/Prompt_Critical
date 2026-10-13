@@ -1,0 +1,381 @@
+{
+	"credit": "Made with Blockbench",
+	"textures": {
+		"and": "promptcritical:block/common/mining_andesite",
+		"c": "promptcritical:block/common/concrete",
+		"cab": "promptcritical:block/common/cabinet",
+		"cas": "promptcritical:block/brine_extractor_casing",
+		"d": "promptcritical:block/common/steel_dark",
+		"end": "promptcritical:block/common/pipe_end",
+		"lg": "promptcritical:block/common/lamp_green",
+		"mb": "promptcritical:block/common/motor_blue",
+		"wat": "promptcritical:block/common/mining_pipe_water",
+		"yel": "promptcritical:block/common/mining_paint_yellow"
+	},
+	"elements": [
+		{
+			"name": "pad",
+			"from": [0, 0, 0],
+			"to": [16, 1.5, 16],
+			"rotation": {
+				"angle": 0,
+				"axis": "y",
+				"origin": [8, 8, 8]
+			},
+			"faces": {
+				"north": {
+					"uv": [0, 0, 16, 1.5],
+					"texture": "#c"
+				},
+				"east": {
+					"uv": [0, 0, 16, 1.5],
+					"texture": "#c"
+				},
+				"south": {
+					"uv": [0, 0, 16, 1.5],
+					"texture": "#c"
+				},
+				"west": {
+					"uv": [0, 0, 16, 1.5],
+					"texture": "#c"
+				},
+				"up": {
+					"uv": [0, 0, 16, 16],
+					"texture": "#c"
+				},
+				"down": {
+					"uv": [0, 0, 16, 16],
+					"texture": "#c"
+				}
+			}
+		},
+		{
+			"name": "motor",
+			"from": [1, 1.5, 4],
+			"to": [8, 7, 9],
+			"rotation": {
+				"angle": 0,
+				"axis": "y",
+				"origin": [8, 8, 8]
+			},
+			"faces": {
+				"north": {
+					"uv": [0, 0, 7, 5.5],
+					"texture": "#mb"
+				},
+				"east": {
+					"uv": [0, 0, 5, 5.5],
+					"texture": "#mb"
+				},
+				"south": {
+					"uv": [0, 0, 7, 5.5],
+					"texture": "#mb"
+				},
+				"west": {
+					"uv": [0, 0, 5, 5.5],
+					"texture": "#mb"
+				},
+				"up": {
+					"uv": [0, 0, 7, 5],
+					"texture": "#mb"
+				},
+				"down": {
+					"uv": [0, 0, 7, 5],
+					"texture": "#mb"
+				}
+			}
+		},
+		{
+			"name": "coupling_guard",
+			"from": [8, 2, 5],
+			"to": [9.5, 6, 8],
+			"rotation": {
+				"angle": 0,
+				"axis": "y",
+				"origin": [8, 8, 8]
+			},
+			"faces": {
+				"north": {
+					"uv": [0, 0, 1.5, 4],
+					"texture": "#yel"
+				},
+				"east": {
+					"uv": [0, 0, 3, 4],
+					"texture": "#yel"
+				},
+				"south": {
+					"uv": [0, 0, 1.5, 4],
+					"texture": "#yel"
+				},
+				"west": {
+					"uv": [0, 0, 3, 4],
+					"texture": "#yel"
+				},
+				"up": {
+					"uv": [0, 0, 1.5, 3],
+					"texture": "#yel"
+				},
+				"down": {
+					"uv": [0, 0, 1.5, 3],
+					"texture": "#yel"
+				}
+			}
+		},
+		{
+			"name": "pump",
+			"from": [9.5, 1.5, 4],
+			"to": [13.5, 7, 9],
+			"rotation": {
+				"angle": 0,
+				"axis": "y",
+				"origin": [8, 8, 8]
+			},
+			"faces": {
+				"north": {
+					"uv": [0, 0, 16, 16],
+					"texture": "#cas"
+				},
+				"east": {
+					"uv": [0, 0, 5, 5.5],
+					"texture": "#and"
+				},
+				"south": {
+					"uv": [0, 0, 4, 5.5],
+					"texture": "#and"
+				},
+				"west": {
+					"uv": [0, 0, 5, 5.5],
+					"texture": "#and"
+				},
+				"up": {
+					"uv": [0, 0, 4, 5],
+					"texture": "#and"
+				},
+				"down": {
+					"uv": [0, 0, 4, 5],
+					"texture": "#and"
+				}
+			}
+		},
+		{
+			"name": "discharge_riser",
+			"from": [10.5, 7, 5.5],
+			"to": [12.5, 12, 7.5],
+			"rotation": {
+				"angle": 0,
+				"axis": "y",
+				"origin": [8, 8, 8]
+			},
+			"faces": {
+				"north": {
+					"uv": [0, 0, 2, 5],
+					"texture": "#wat"
+				},
+				"east": {
+					"uv": [0, 0, 2, 5],
+					"texture": "#wat"
+				},
+				"south": {
+					"uv": [0, 0, 2, 5],
+					"texture": "#wat"
+				},
+				"west": {
+					"uv": [0, 0, 2, 5],
+					"texture": "#wat"
+				},
+				"up": {
+					"uv": [0, 0, 2, 2],
+					"texture": "#wat"
+				},
+				"down": {
+					"uv": [0, 0, 2, 2],
+					"texture": "#wat"
+				}
+			}
+		},
+		{
+			"name": "discharge",
+			"from": [12.5, 10, 5.5],
+			"to": [16, 12, 7.5],
+			"rotation": {
+				"angle": 0,
+				"axis": "y",
+				"origin": [8, 8, 8]
+			},
+			"faces": {
+				"north": {
+					"uv": [0, 0, 3.5, 2],
+					"texture": "#wat"
+				},
+				"east": {
+					"uv": [0, 0, 16, 16],
+					"texture": "#end"
+				},
+				"south": {
+					"uv": [0, 0, 3.5, 2],
+					"texture": "#wat"
+				},
+				"west": {
+					"uv": [0, 0, 2, 2],
+					"texture": "#wat"
+				},
+				"up": {
+					"uv": [0, 0, 3.5, 2],
+					"texture": "#wat"
+				},
+				"down": {
+					"uv": [0, 0, 3.5, 2],
+					"texture": "#wat"
+				}
+			}
+		},
+		{
+			"name": "suction_pipe",
+			"from": [10.5, 1.5, 9],
+			"to": [12.5, 4, 12],
+			"rotation": {
+				"angle": 0,
+				"axis": "y",
+				"origin": [8, 8, 8]
+			},
+			"faces": {
+				"north": {
+					"uv": [0, 0, 2, 2.5],
+					"texture": "#wat"
+				},
+				"east": {
+					"uv": [0, 0, 3, 2.5],
+					"texture": "#wat"
+				},
+				"south": {
+					"uv": [0, 0, 2, 2.5],
+					"texture": "#wat"
+				},
+				"west": {
+					"uv": [0, 0, 3, 2.5],
+					"texture": "#wat"
+				},
+				"up": {
+					"uv": [0, 0, 2, 3],
+					"texture": "#wat"
+				},
+				"down": {
+					"uv": [0, 0, 2, 3],
+					"texture": "#wat"
+				}
+			}
+		},
+		{
+			"name": "intake_head",
+			"from": [9.5, 1.5, 12],
+			"to": [13.5, 3, 15],
+			"rotation": {
+				"angle": 0,
+				"axis": "y",
+				"origin": [8, 8, 8]
+			},
+			"faces": {
+				"north": {
+					"uv": [0, 0, 4, 1.5],
+					"texture": "#d"
+				},
+				"east": {
+					"uv": [0, 0, 3, 1.5],
+					"texture": "#d"
+				},
+				"south": {
+					"uv": [0, 0, 4, 1.5],
+					"texture": "#d"
+				},
+				"west": {
+					"uv": [0, 0, 3, 1.5],
+					"texture": "#d"
+				},
+				"up": {
+					"uv": [0, 0, 4, 3],
+					"texture": "#d"
+				},
+				"down": {
+					"uv": [0, 0, 4, 3],
+					"texture": "#d"
+				}
+			}
+		},
+		{
+			"name": "control_box",
+			"from": [1, 1.5, 11],
+			"to": [5, 8, 15],
+			"rotation": {
+				"angle": 0,
+				"axis": "y",
+				"origin": [8, 8, 8]
+			},
+			"faces": {
+				"north": {
+					"uv": [0, 0, 4, 6.5],
+					"texture": "#cab"
+				},
+				"east": {
+					"uv": [0, 0, 4, 6.5],
+					"texture": "#cab"
+				},
+				"south": {
+					"uv": [0, 0, 4, 6.5],
+					"texture": "#cab"
+				},
+				"west": {
+					"uv": [0, 0, 4, 6.5],
+					"texture": "#cab"
+				},
+				"up": {
+					"uv": [0, 0, 4, 4],
+					"texture": "#cab"
+				},
+				"down": {
+					"uv": [0, 0, 4, 4],
+					"texture": "#cab"
+				}
+			}
+		},
+		{
+			"name": "glow_lamp",
+			"from": [2.5, 6, 10.75],
+			"to": [3.5, 7, 11],
+			"rotation": {
+				"angle": 0,
+				"axis": "y",
+				"origin": [8, 8, 8]
+			},
+			"faces": {
+				"north": {
+					"uv": [0, 0, 1, 1],
+					"texture": "#lg"
+				},
+				"east": {
+					"uv": [0, 0, 0.25, 1],
+					"texture": "#lg"
+				},
+				"south": {
+					"uv": [0, 0, 1, 1],
+					"texture": "#lg"
+				},
+				"west": {
+					"uv": [0, 0, 0.25, 1],
+					"texture": "#lg"
+				},
+				"up": {
+					"uv": [0, 0, 1, 0.25],
+					"texture": "#lg"
+				},
+				"down": {
+					"uv": [0, 0, 1, 0.25],
+					"texture": "#lg"
+				}
+			},
+			"neoforge_data": {
+				"block_light": 15,
+				"sky_light": 15
+			}
+		}
+	]
+}
