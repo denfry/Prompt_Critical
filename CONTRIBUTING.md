@@ -9,9 +9,8 @@ small, focused pull requests.
 - Read the [wiki](https://github.com/denfry/Prompt_Critical/wiki), especially
   [Overview and Design Pillars](https://github.com/denfry/Prompt_Critical/wiki/Overview-and-Design-Pillars)
   and [Architecture](https://github.com/denfry/Prompt_Critical/wiki/Architecture).
-- The design document in [`docs/gdd`](docs/gdd/README.md) is the source of
-  truth. [`00-overview.md`](docs/gdd/00-overview.md) is normative: names,
-  units, time domains and registries come from there.
+- Names, units and numbers come from the game design document, which is
+  private. The wiki summarizes it; ask in an issue if something is unclear.
 - For anything bigger than a bug fix, open an issue first so the design can be
   agreed before code is written.
 
@@ -34,7 +33,7 @@ You need JDK 21. Everything else comes through the Gradle wrapper.
 - Physical constants carry a source. Balance values are marked `[BALANCE]`
   and live in the config.
 - New behaviour comes with tests: JUnit/jqwik in `pc-sim`, GameTest in
-  `pc-mod`. Each GDD section lists validation cases with expected values and
+  `pc-mod`. Design sections list validation cases with expected values and
   tolerances; implement against those.
 - Stay inside the performance budget (≤ 3 ms/tick p95 for the reference
   complex). Hot paths get a JMH benchmark in `pc-sim`.
@@ -51,9 +50,9 @@ You need JDK 21. Everything else comes through the Gradle wrapper.
 ## Pull requests
 
 - One topic per pull request, with a clear description and a link to the
-  issue or GDD section.
+  issue.
 - `./gradlew build` must pass; CI runs the build and GameTests.
-- Update the GDD and the wiki if you change names, mechanics or numbers.
+- Update the wiki if you change names, mechanics or numbers.
 
 ## Licensing of contributions
 

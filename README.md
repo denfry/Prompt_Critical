@@ -15,7 +15,6 @@ run by plant I&C that you design and build yourself.
 [![License](https://img.shields.io/badge/license-All%20Rights%20Reserved-lightgrey)](LICENSE)
 
 [Wiki](https://github.com/denfry/Prompt_Critical/wiki) ·
-[Design document](docs/gdd/README.md) ·
 [Roadmap](https://github.com/denfry/Prompt_Critical/wiki/Roadmap) ·
 [Building](https://github.com/denfry/Prompt_Critical/wiki/Building-from-Source)
 
@@ -109,17 +108,13 @@ pc-sim/      pure-Java simulation domain; must not import net.minecraft (ArchUni
 pc-api/      public API for addons and integrations
 pc-mod/      NeoForge binding: blocks, items, networking, Create and CC: Tweaked glue
 art/         Blockbench sources, preview renders and the asset build scripts
-docs/gdd/    game design document and technical specification (Russian)
 ```
 
 ## Documentation
 
-- **[Wiki](https://github.com/denfry/Prompt_Critical/wiki)** — English overview
-  of the mechanics, integrations, architecture and roadmap.
-- **[docs/gdd](docs/gdd/README.md)** — the full design document in Russian.
-  [`00-overview.md`](docs/gdd/00-overview.md) is normative: units, time
-  domains, name registries and cross-section decisions. Each section ends with
-  validation test cases for JUnit and GameTest.
+The [wiki](https://github.com/denfry/Prompt_Critical/wiki) covers the
+mechanics, integrations, architecture and roadmap. It summarizes the game
+design document, which is kept private.
 
 ## Contributing
 
@@ -128,8 +123,8 @@ Issues and design discussions are welcome. Read
 
 ## License
 
-Copyright © 2026 denfry. All rights reserved. The source is public for reference;
-see [LICENSE](LICENSE).
+Copyright © 2026 denfry. All rights reserved. The source is public for reference.
+Including the unmodified jar in modpacks is allowed; see [LICENSE](LICENSE).
 
 Not affiliated with Mojang Studios, Microsoft, NeoForged, the Create team or the
 CC: Tweaked project.
