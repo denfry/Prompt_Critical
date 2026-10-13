@@ -24,7 +24,7 @@ jobs:
       - name: GameTest
         run: ./gradlew :pc-mod:runGameTestServer --console=plain
 
-      - uses: actions/upload-artifact@v4
+      - uses: actions/upload-artifact@v7
         if: always()
         with:
           name: reports
@@ -33,7 +33,7 @@ jobs:
             **/build/test-results/
           if-no-files-found: ignore
 
-      - uses: actions/upload-artifact@v4
+      - uses: actions/upload-artifact@v7
         with:
           name: promptcritical-jar
           path: pc-mod/build/libs/*.jar
