@@ -1,0 +1,123 @@
+{
+	"credit": "Made with Blockbench",
+	"textures": {
+		"bmsf": "promptcritical:block/tube_furnace_controller_front",
+		"d": "promptcritical:block/common/steel_dark",
+		"ly": "promptcritical:block/common/lamp_yellow",
+		"ral": "promptcritical:block/common/auto_ral7035"
+	},
+	"elements": [
+		{
+			"name": "body",
+			"from": [1, 1, 3],
+			"to": [15, 16, 15],
+			"rotation": {
+				"angle": 0,
+				"axis": "y",
+				"origin": [8, 8, 8]
+			},
+			"faces": {
+				"north": {
+					"uv": [0, 0, 16, 16],
+					"texture": "#bmsf"
+				},
+				"east": {
+					"uv": [0, 0, 12, 15],
+					"texture": "#ral"
+				},
+				"south": {
+					"uv": [0, 0, 14, 15],
+					"texture": "#ral"
+				},
+				"west": {
+					"uv": [0, 0, 12, 15],
+					"texture": "#ral"
+				},
+				"up": {
+					"uv": [0, 0, 14, 12],
+					"texture": "#ral"
+				},
+				"down": {
+					"uv": [0, 0, 14, 12],
+					"texture": "#ral"
+				}
+			}
+		},
+		{
+			"name": "plinth",
+			"from": [1.5, 0, 3.5],
+			"to": [14.5, 1, 14.5],
+			"rotation": {
+				"angle": 0,
+				"axis": "y",
+				"origin": [8, 8, 8]
+			},
+			"faces": {
+				"north": {
+					"uv": [0, 0, 13, 1],
+					"texture": "#d"
+				},
+				"east": {
+					"uv": [0, 0, 11, 1],
+					"texture": "#d"
+				},
+				"south": {
+					"uv": [0, 0, 13, 1],
+					"texture": "#d"
+				},
+				"west": {
+					"uv": [0, 0, 11, 1],
+					"texture": "#d"
+				},
+				"up": {
+					"uv": [0, 0, 13, 11],
+					"texture": "#d"
+				},
+				"down": {
+					"uv": [0, 0, 13, 11],
+					"texture": "#d"
+				}
+			}
+		},
+		{
+			"name": "glow_lamp_state",
+			"from": [12.3, 13.3, 2.4],
+			"to": [13.7, 14.7, 3],
+			"rotation": {
+				"angle": 0,
+				"axis": "y",
+				"origin": [8, 8, 8]
+			},
+			"faces": {
+				"north": {
+					"uv": [0, 0, 1.4, 1.4],
+					"texture": "#ly"
+				},
+				"east": {
+					"uv": [0, 0, 0.6, 1.4],
+					"texture": "#ly"
+				},
+				"south": {
+					"uv": [0, 0, 1.4, 1.4],
+					"texture": "#ly"
+				},
+				"west": {
+					"uv": [0, 0, 0.6, 1.4],
+					"texture": "#ly"
+				},
+				"up": {
+					"uv": [0, 0, 1.4, 0.6],
+					"texture": "#ly"
+				},
+				"down": {
+					"uv": [0, 0, 1.4, 0.6],
+					"texture": "#ly"
+				}
+			},
+			"neoforge_data": {
+				"block_light": 15,
+				"sky_light": 15
+			}
+		}
+	]
+}

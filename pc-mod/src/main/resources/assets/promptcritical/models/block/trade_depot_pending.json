@@ -1,0 +1,197 @@
+{
+	"credit": "Made with Blockbench",
+	"textures": {
+		"c": "promptcritical:block/common/concrete",
+		"dep": "promptcritical:block/trade_depot_door",
+		"dg": "promptcritical:block/common/grid_dark_grey",
+		"ly": "promptcritical:block/common/lamp_yellow",
+		"st": "promptcritical:block/common/steel_bare",
+		"ye": "promptcritical:block/common/w2_yellow"
+	},
+	"elements": [
+		{
+			"name": "frame",
+			"from": [0, 0, 12],
+			"to": [16, 16, 16],
+			"rotation": {
+				"angle": 0,
+				"axis": "y",
+				"origin": [8, 8, 8]
+			},
+			"faces": {
+				"north": {
+					"uv": [0, 0, 16, 16],
+					"texture": "#c"
+				},
+				"east": {
+					"uv": [0, 0, 4, 16],
+					"texture": "#c"
+				},
+				"south": {
+					"uv": [0, 0, 16, 16],
+					"texture": "#c"
+				},
+				"west": {
+					"uv": [0, 0, 4, 16],
+					"texture": "#c"
+				},
+				"up": {
+					"uv": [0, 0, 16, 4],
+					"texture": "#c"
+				},
+				"down": {
+					"uv": [0, 0, 16, 4],
+					"texture": "#c"
+				}
+			}
+		},
+		{
+			"name": "door",
+			"from": [1, 0, 11.5],
+			"to": [15, 13, 12],
+			"rotation": {
+				"angle": 0,
+				"axis": "y",
+				"origin": [8, 8, 8]
+			},
+			"faces": {
+				"north": {
+					"uv": [0, 0, 16, 16],
+					"texture": "#dep"
+				},
+				"east": {
+					"uv": [0, 0, 0.5, 13],
+					"texture": "#dg"
+				},
+				"south": {
+					"uv": [0, 0, 14, 13],
+					"texture": "#dg"
+				},
+				"west": {
+					"uv": [0, 0, 0.5, 13],
+					"texture": "#dg"
+				},
+				"up": {
+					"uv": [0, 0, 14, 0.5],
+					"texture": "#dg"
+				},
+				"down": {
+					"uv": [0, 0, 14, 0.5],
+					"texture": "#dg"
+				}
+			}
+		},
+		{
+			"name": "nozzle",
+			"from": [12, 13.5, 10],
+			"to": [14, 15.5, 12],
+			"rotation": {
+				"angle": 0,
+				"axis": "y",
+				"origin": [8, 8, 8]
+			},
+			"faces": {
+				"north": {
+					"uv": [0, 0, 2, 2],
+					"texture": "#st"
+				},
+				"east": {
+					"uv": [0, 0, 2, 2],
+					"texture": "#st"
+				},
+				"south": {
+					"uv": [0, 0, 2, 2],
+					"texture": "#st"
+				},
+				"west": {
+					"uv": [0, 0, 2, 2],
+					"texture": "#st"
+				},
+				"up": {
+					"uv": [0, 0, 2, 2],
+					"texture": "#st"
+				},
+				"down": {
+					"uv": [0, 0, 2, 2],
+					"texture": "#st"
+				}
+			}
+		},
+		{
+			"name": "floor_mark",
+			"from": [0, 0, 0],
+			"to": [16, 0.25, 11.5],
+			"rotation": {
+				"angle": 0,
+				"axis": "y",
+				"origin": [8, 8, 8]
+			},
+			"faces": {
+				"north": {
+					"uv": [0, 0, 16, 0.25],
+					"texture": "#ye"
+				},
+				"east": {
+					"uv": [0, 0, 11.5, 0.25],
+					"texture": "#ye"
+				},
+				"south": {
+					"uv": [0, 0, 16, 0.25],
+					"texture": "#ye"
+				},
+				"west": {
+					"uv": [0, 0, 11.5, 0.25],
+					"texture": "#ye"
+				},
+				"up": {
+					"uv": [0, 0, 16, 11.5],
+					"texture": "#ye"
+				},
+				"down": {
+					"uv": [0, 0, 16, 11.5],
+					"texture": "#ye"
+				}
+			}
+		},
+		{
+			"name": "glow_lamp_pending",
+			"from": [2.4, 13.9, 11.4],
+			"to": [3.6, 15.1, 12],
+			"rotation": {
+				"angle": 0,
+				"axis": "y",
+				"origin": [8, 8, 8]
+			},
+			"faces": {
+				"north": {
+					"uv": [0, 0, 1.2, 1.2],
+					"texture": "#ly"
+				},
+				"east": {
+					"uv": [0, 0, 0.6, 1.2],
+					"texture": "#ly"
+				},
+				"south": {
+					"uv": [0, 0, 1.2, 1.2],
+					"texture": "#ly"
+				},
+				"west": {
+					"uv": [0, 0, 0.6, 1.2],
+					"texture": "#ly"
+				},
+				"up": {
+					"uv": [0, 0, 1.2, 0.6],
+					"texture": "#ly"
+				},
+				"down": {
+					"uv": [0, 0, 1.2, 0.6],
+					"texture": "#ly"
+				}
+			},
+			"neoforge_data": {
+				"block_light": 15,
+				"sky_light": 15
+			}
+		}
+	]
+}

@@ -1,0 +1,740 @@
+{
+	"credit": "Made with Blockbench",
+	"textures": {
+		"blk": "promptcritical:block/common/w2_black",
+		"lg": "promptcritical:block/common/lamp_green",
+		"loff": "promptcritical:block/common/plant_lamp_off",
+		"srv": "promptcritical:block/common/auto2_server",
+		"vent": "promptcritical:block/common/w2_vents"
+	},
+	"elements": [
+		{
+			"name": "rack",
+			"from": [0.5, 0, 1],
+			"to": [15.5, 31.25, 16],
+			"rotation": {
+				"angle": 0,
+				"axis": "y",
+				"origin": [8, 8, 8]
+			},
+			"faces": {
+				"north": {
+					"uv": [0, 0, 15, 16],
+					"texture": "#blk"
+				},
+				"east": {
+					"uv": [0, 0, 15, 16],
+					"texture": "#blk"
+				},
+				"south": {
+					"uv": [0, 0, 15, 16],
+					"texture": "#blk"
+				},
+				"west": {
+					"uv": [0, 0, 15, 16],
+					"texture": "#blk"
+				},
+				"up": {
+					"uv": [0, 0, 15, 15],
+					"texture": "#blk"
+				},
+				"down": {
+					"uv": [0, 0, 15, 15],
+					"texture": "#blk"
+				}
+			}
+		},
+		{
+			"name": "bays",
+			"from": [1.5, 2, 0.5],
+			"to": [14.5, 28, 1],
+			"rotation": {
+				"angle": 0,
+				"axis": "y",
+				"origin": [8, 8, 8]
+			},
+			"faces": {
+				"north": {
+					"uv": [0, 0, 16, 16],
+					"texture": "#srv"
+				},
+				"east": {
+					"uv": [0, 0, 0.5, 16],
+					"texture": "#blk"
+				},
+				"south": {
+					"uv": [0, 0, 13, 16],
+					"texture": "#blk"
+				},
+				"west": {
+					"uv": [0, 0, 0.5, 16],
+					"texture": "#blk"
+				},
+				"up": {
+					"uv": [0, 0, 13, 0.5],
+					"texture": "#blk"
+				},
+				"down": {
+					"uv": [0, 0, 13, 0.5],
+					"texture": "#blk"
+				}
+			}
+		},
+		{
+			"name": "top_vent",
+			"from": [2, 31.25, 3],
+			"to": [14, 32, 14],
+			"rotation": {
+				"angle": 0,
+				"axis": "y",
+				"origin": [8, 8, 8]
+			},
+			"faces": {
+				"north": {
+					"uv": [0, 0, 12, 0.75],
+					"texture": "#vent"
+				},
+				"east": {
+					"uv": [0, 0, 11, 0.75],
+					"texture": "#vent"
+				},
+				"south": {
+					"uv": [0, 0, 12, 0.75],
+					"texture": "#vent"
+				},
+				"west": {
+					"uv": [0, 0, 11, 0.75],
+					"texture": "#vent"
+				},
+				"up": {
+					"uv": [0, 0, 12, 11],
+					"texture": "#vent"
+				},
+				"down": {
+					"uv": [0, 0, 12, 11],
+					"texture": "#vent"
+				}
+			}
+		},
+		{
+			"name": "glow_led_0",
+			"from": [2.6, 3.6, -0.1],
+			"to": [3.4, 4.4, 0.5],
+			"rotation": {
+				"angle": 0,
+				"axis": "y",
+				"origin": [8, 8, 8]
+			},
+			"faces": {
+				"north": {
+					"uv": [0, 0, 0.8, 0.8],
+					"texture": "#lg"
+				},
+				"east": {
+					"uv": [0, 0, 0.6, 0.8],
+					"texture": "#lg"
+				},
+				"south": {
+					"uv": [0, 0, 0.8, 0.8],
+					"texture": "#lg"
+				},
+				"west": {
+					"uv": [0, 0, 0.6, 0.8],
+					"texture": "#lg"
+				},
+				"up": {
+					"uv": [0, 0, 0.8, 0.6],
+					"texture": "#lg"
+				},
+				"down": {
+					"uv": [0, 0, 0.8, 0.6],
+					"texture": "#lg"
+				}
+			},
+			"neoforge_data": {
+				"block_light": 15,
+				"sky_light": 15
+			}
+		},
+		{
+			"name": "led_1",
+			"from": [5.6, 3.6, -0.1],
+			"to": [6.4, 4.4, 0.5],
+			"rotation": {
+				"angle": 0,
+				"axis": "y",
+				"origin": [8, 8, 8]
+			},
+			"faces": {
+				"north": {
+					"uv": [0, 0, 0.8, 0.8],
+					"texture": "#loff"
+				},
+				"east": {
+					"uv": [0, 0, 0.6, 0.8],
+					"texture": "#loff"
+				},
+				"south": {
+					"uv": [0, 0, 0.8, 0.8],
+					"texture": "#loff"
+				},
+				"west": {
+					"uv": [0, 0, 0.6, 0.8],
+					"texture": "#loff"
+				},
+				"up": {
+					"uv": [0, 0, 0.8, 0.6],
+					"texture": "#loff"
+				},
+				"down": {
+					"uv": [0, 0, 0.8, 0.6],
+					"texture": "#loff"
+				}
+			}
+		},
+		{
+			"name": "glow_led_2",
+			"from": [8.6, 3.6, -0.1],
+			"to": [9.4, 4.4, 0.5],
+			"rotation": {
+				"angle": 0,
+				"axis": "y",
+				"origin": [8, 8, 8]
+			},
+			"faces": {
+				"north": {
+					"uv": [0, 0, 0.8, 0.8],
+					"texture": "#lg"
+				},
+				"east": {
+					"uv": [0, 0, 0.6, 0.8],
+					"texture": "#lg"
+				},
+				"south": {
+					"uv": [0, 0, 0.8, 0.8],
+					"texture": "#lg"
+				},
+				"west": {
+					"uv": [0, 0, 0.6, 0.8],
+					"texture": "#lg"
+				},
+				"up": {
+					"uv": [0, 0, 0.8, 0.6],
+					"texture": "#lg"
+				},
+				"down": {
+					"uv": [0, 0, 0.8, 0.6],
+					"texture": "#lg"
+				}
+			},
+			"neoforge_data": {
+				"block_light": 15,
+				"sky_light": 15
+			}
+		},
+		{
+			"name": "glow_led_3",
+			"from": [11.6, 3.6, -0.1],
+			"to": [12.4, 4.4, 0.5],
+			"rotation": {
+				"angle": 0,
+				"axis": "y",
+				"origin": [8, 8, 8]
+			},
+			"faces": {
+				"north": {
+					"uv": [0, 0, 0.8, 0.8],
+					"texture": "#lg"
+				},
+				"east": {
+					"uv": [0, 0, 0.6, 0.8],
+					"texture": "#lg"
+				},
+				"south": {
+					"uv": [0, 0, 0.8, 0.8],
+					"texture": "#lg"
+				},
+				"west": {
+					"uv": [0, 0, 0.6, 0.8],
+					"texture": "#lg"
+				},
+				"up": {
+					"uv": [0, 0, 0.8, 0.6],
+					"texture": "#lg"
+				},
+				"down": {
+					"uv": [0, 0, 0.8, 0.6],
+					"texture": "#lg"
+				}
+			},
+			"neoforge_data": {
+				"block_light": 15,
+				"sky_light": 15
+			}
+		},
+		{
+			"name": "led_4",
+			"from": [2.6, 9.6, -0.1],
+			"to": [3.4, 10.4, 0.5],
+			"rotation": {
+				"angle": 0,
+				"axis": "y",
+				"origin": [8, 8, 8]
+			},
+			"faces": {
+				"north": {
+					"uv": [0, 0, 0.8, 0.8],
+					"texture": "#loff"
+				},
+				"east": {
+					"uv": [0, 0, 0.6, 0.8],
+					"texture": "#loff"
+				},
+				"south": {
+					"uv": [0, 0, 0.8, 0.8],
+					"texture": "#loff"
+				},
+				"west": {
+					"uv": [0, 0, 0.6, 0.8],
+					"texture": "#loff"
+				},
+				"up": {
+					"uv": [0, 0, 0.8, 0.6],
+					"texture": "#loff"
+				},
+				"down": {
+					"uv": [0, 0, 0.8, 0.6],
+					"texture": "#loff"
+				}
+			}
+		},
+		{
+			"name": "glow_led_5",
+			"from": [5.6, 9.6, -0.1],
+			"to": [6.4, 10.4, 0.5],
+			"rotation": {
+				"angle": 0,
+				"axis": "y",
+				"origin": [8, 8, 8]
+			},
+			"faces": {
+				"north": {
+					"uv": [0, 0, 0.8, 0.8],
+					"texture": "#lg"
+				},
+				"east": {
+					"uv": [0, 0, 0.6, 0.8],
+					"texture": "#lg"
+				},
+				"south": {
+					"uv": [0, 0, 0.8, 0.8],
+					"texture": "#lg"
+				},
+				"west": {
+					"uv": [0, 0, 0.6, 0.8],
+					"texture": "#lg"
+				},
+				"up": {
+					"uv": [0, 0, 0.8, 0.6],
+					"texture": "#lg"
+				},
+				"down": {
+					"uv": [0, 0, 0.8, 0.6],
+					"texture": "#lg"
+				}
+			},
+			"neoforge_data": {
+				"block_light": 15,
+				"sky_light": 15
+			}
+		},
+		{
+			"name": "glow_led_6",
+			"from": [8.6, 9.6, -0.1],
+			"to": [9.4, 10.4, 0.5],
+			"rotation": {
+				"angle": 0,
+				"axis": "y",
+				"origin": [8, 8, 8]
+			},
+			"faces": {
+				"north": {
+					"uv": [0, 0, 0.8, 0.8],
+					"texture": "#lg"
+				},
+				"east": {
+					"uv": [0, 0, 0.6, 0.8],
+					"texture": "#lg"
+				},
+				"south": {
+					"uv": [0, 0, 0.8, 0.8],
+					"texture": "#lg"
+				},
+				"west": {
+					"uv": [0, 0, 0.6, 0.8],
+					"texture": "#lg"
+				},
+				"up": {
+					"uv": [0, 0, 0.8, 0.6],
+					"texture": "#lg"
+				},
+				"down": {
+					"uv": [0, 0, 0.8, 0.6],
+					"texture": "#lg"
+				}
+			},
+			"neoforge_data": {
+				"block_light": 15,
+				"sky_light": 15
+			}
+		},
+		{
+			"name": "led_7",
+			"from": [11.6, 9.6, -0.1],
+			"to": [12.4, 10.4, 0.5],
+			"rotation": {
+				"angle": 0,
+				"axis": "y",
+				"origin": [8, 8, 8]
+			},
+			"faces": {
+				"north": {
+					"uv": [0, 0, 0.8, 0.8],
+					"texture": "#loff"
+				},
+				"east": {
+					"uv": [0, 0, 0.6, 0.8],
+					"texture": "#loff"
+				},
+				"south": {
+					"uv": [0, 0, 0.8, 0.8],
+					"texture": "#loff"
+				},
+				"west": {
+					"uv": [0, 0, 0.6, 0.8],
+					"texture": "#loff"
+				},
+				"up": {
+					"uv": [0, 0, 0.8, 0.6],
+					"texture": "#loff"
+				},
+				"down": {
+					"uv": [0, 0, 0.8, 0.6],
+					"texture": "#loff"
+				}
+			}
+		},
+		{
+			"name": "glow_led_8",
+			"from": [2.6, 15.6, -0.1],
+			"to": [3.4, 16.4, 0.5],
+			"rotation": {
+				"angle": 0,
+				"axis": "y",
+				"origin": [8, 8, 8]
+			},
+			"faces": {
+				"north": {
+					"uv": [0, 0, 0.8, 0.8],
+					"texture": "#lg"
+				},
+				"east": {
+					"uv": [0, 0, 0.6, 0.8],
+					"texture": "#lg"
+				},
+				"south": {
+					"uv": [0, 0, 0.8, 0.8],
+					"texture": "#lg"
+				},
+				"west": {
+					"uv": [0, 0, 0.6, 0.8],
+					"texture": "#lg"
+				},
+				"up": {
+					"uv": [0, 0, 0.8, 0.6],
+					"texture": "#lg"
+				},
+				"down": {
+					"uv": [0, 0, 0.8, 0.6],
+					"texture": "#lg"
+				}
+			},
+			"neoforge_data": {
+				"block_light": 15,
+				"sky_light": 15
+			}
+		},
+		{
+			"name": "glow_led_9",
+			"from": [5.6, 15.6, -0.1],
+			"to": [6.4, 16.4, 0.5],
+			"rotation": {
+				"angle": 0,
+				"axis": "y",
+				"origin": [8, 8, 8]
+			},
+			"faces": {
+				"north": {
+					"uv": [0, 0, 0.8, 0.8],
+					"texture": "#lg"
+				},
+				"east": {
+					"uv": [0, 0, 0.6, 0.8],
+					"texture": "#lg"
+				},
+				"south": {
+					"uv": [0, 0, 0.8, 0.8],
+					"texture": "#lg"
+				},
+				"west": {
+					"uv": [0, 0, 0.6, 0.8],
+					"texture": "#lg"
+				},
+				"up": {
+					"uv": [0, 0, 0.8, 0.6],
+					"texture": "#lg"
+				},
+				"down": {
+					"uv": [0, 0, 0.8, 0.6],
+					"texture": "#lg"
+				}
+			},
+			"neoforge_data": {
+				"block_light": 15,
+				"sky_light": 15
+			}
+		},
+		{
+			"name": "led_10",
+			"from": [8.6, 15.6, -0.1],
+			"to": [9.4, 16.4, 0.5],
+			"rotation": {
+				"angle": 0,
+				"axis": "y",
+				"origin": [8, 8, 8]
+			},
+			"faces": {
+				"north": {
+					"uv": [0, 0, 0.8, 0.8],
+					"texture": "#loff"
+				},
+				"east": {
+					"uv": [0, 0, 0.6, 0.8],
+					"texture": "#loff"
+				},
+				"south": {
+					"uv": [0, 0, 0.8, 0.8],
+					"texture": "#loff"
+				},
+				"west": {
+					"uv": [0, 0, 0.6, 0.8],
+					"texture": "#loff"
+				},
+				"up": {
+					"uv": [0, 0, 0.8, 0.6],
+					"texture": "#loff"
+				},
+				"down": {
+					"uv": [0, 0, 0.8, 0.6],
+					"texture": "#loff"
+				}
+			}
+		},
+		{
+			"name": "glow_led_11",
+			"from": [11.6, 15.6, -0.1],
+			"to": [12.4, 16.4, 0.5],
+			"rotation": {
+				"angle": 0,
+				"axis": "y",
+				"origin": [8, 8, 8]
+			},
+			"faces": {
+				"north": {
+					"uv": [0, 0, 0.8, 0.8],
+					"texture": "#lg"
+				},
+				"east": {
+					"uv": [0, 0, 0.6, 0.8],
+					"texture": "#lg"
+				},
+				"south": {
+					"uv": [0, 0, 0.8, 0.8],
+					"texture": "#lg"
+				},
+				"west": {
+					"uv": [0, 0, 0.6, 0.8],
+					"texture": "#lg"
+				},
+				"up": {
+					"uv": [0, 0, 0.8, 0.6],
+					"texture": "#lg"
+				},
+				"down": {
+					"uv": [0, 0, 0.8, 0.6],
+					"texture": "#lg"
+				}
+			},
+			"neoforge_data": {
+				"block_light": 15,
+				"sky_light": 15
+			}
+		},
+		{
+			"name": "glow_led_12",
+			"from": [2.6, 21.6, -0.1],
+			"to": [3.4, 22.4, 0.5],
+			"rotation": {
+				"angle": 0,
+				"axis": "y",
+				"origin": [8, 8, 8]
+			},
+			"faces": {
+				"north": {
+					"uv": [0, 0, 0.8, 0.8],
+					"texture": "#lg"
+				},
+				"east": {
+					"uv": [0, 0, 0.6, 0.8],
+					"texture": "#lg"
+				},
+				"south": {
+					"uv": [0, 0, 0.8, 0.8],
+					"texture": "#lg"
+				},
+				"west": {
+					"uv": [0, 0, 0.6, 0.8],
+					"texture": "#lg"
+				},
+				"up": {
+					"uv": [0, 0, 0.8, 0.6],
+					"texture": "#lg"
+				},
+				"down": {
+					"uv": [0, 0, 0.8, 0.6],
+					"texture": "#lg"
+				}
+			},
+			"neoforge_data": {
+				"block_light": 15,
+				"sky_light": 15
+			}
+		},
+		{
+			"name": "led_13",
+			"from": [5.6, 21.6, -0.1],
+			"to": [6.4, 22.4, 0.5],
+			"rotation": {
+				"angle": 0,
+				"axis": "y",
+				"origin": [8, 8, 8]
+			},
+			"faces": {
+				"north": {
+					"uv": [0, 0, 0.8, 0.8],
+					"texture": "#loff"
+				},
+				"east": {
+					"uv": [0, 0, 0.6, 0.8],
+					"texture": "#loff"
+				},
+				"south": {
+					"uv": [0, 0, 0.8, 0.8],
+					"texture": "#loff"
+				},
+				"west": {
+					"uv": [0, 0, 0.6, 0.8],
+					"texture": "#loff"
+				},
+				"up": {
+					"uv": [0, 0, 0.8, 0.6],
+					"texture": "#loff"
+				},
+				"down": {
+					"uv": [0, 0, 0.8, 0.6],
+					"texture": "#loff"
+				}
+			}
+		},
+		{
+			"name": "glow_led_14",
+			"from": [8.6, 21.6, -0.1],
+			"to": [9.4, 22.4, 0.5],
+			"rotation": {
+				"angle": 0,
+				"axis": "y",
+				"origin": [8, 8, 8]
+			},
+			"faces": {
+				"north": {
+					"uv": [0, 0, 0.8, 0.8],
+					"texture": "#lg"
+				},
+				"east": {
+					"uv": [0, 0, 0.6, 0.8],
+					"texture": "#lg"
+				},
+				"south": {
+					"uv": [0, 0, 0.8, 0.8],
+					"texture": "#lg"
+				},
+				"west": {
+					"uv": [0, 0, 0.6, 0.8],
+					"texture": "#lg"
+				},
+				"up": {
+					"uv": [0, 0, 0.8, 0.6],
+					"texture": "#lg"
+				},
+				"down": {
+					"uv": [0, 0, 0.8, 0.6],
+					"texture": "#lg"
+				}
+			},
+			"neoforge_data": {
+				"block_light": 15,
+				"sky_light": 15
+			}
+		},
+		{
+			"name": "glow_led_15",
+			"from": [11.6, 21.6, -0.1],
+			"to": [12.4, 22.4, 0.5],
+			"rotation": {
+				"angle": 0,
+				"axis": "y",
+				"origin": [8, 8, 8]
+			},
+			"faces": {
+				"north": {
+					"uv": [0, 0, 0.8, 0.8],
+					"texture": "#lg"
+				},
+				"east": {
+					"uv": [0, 0, 0.6, 0.8],
+					"texture": "#lg"
+				},
+				"south": {
+					"uv": [0, 0, 0.8, 0.8],
+					"texture": "#lg"
+				},
+				"west": {
+					"uv": [0, 0, 0.6, 0.8],
+					"texture": "#lg"
+				},
+				"up": {
+					"uv": [0, 0, 0.8, 0.6],
+					"texture": "#lg"
+				},
+				"down": {
+					"uv": [0, 0, 0.8, 0.6],
+					"texture": "#lg"
+				}
+			},
+			"neoforge_data": {
+				"block_light": 15,
+				"sky_light": 15
+			}
+		}
+	]
+}

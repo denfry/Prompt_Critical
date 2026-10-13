@@ -3,7 +3,7 @@
 usage: python art/tools/build.py <repo_root> <spec_out.json> [--only-check]
 Blockbench step (models -> .bbmodel + Java JSON) reads spec_out.json.
 """
-import glob, importlib, json, os, sys
+import glob, importlib, json, os, sys, zlib
 
 HERE = os.path.dirname(os.path.abspath(__file__))
 sys.path.insert(0, HERE)
@@ -13,13 +13,27 @@ import numpy as np  # noqa: E402
 ROOT = sys.argv[1]
 SPEC_OUT = sys.argv[2]
 CHECK_ONLY = "--only-check" in sys.argv
-ASSETS = os.path.join(ROOT, "src/main/resources/assets/promptcritical")
+ASSETS = os.path.join(ROOT, "pc-mod/src/main/resources/assets/promptcritical")
 pclib.TEX = os.path.join(ASSETS, "textures")
+
+# Шум текстур берётся из общего pclib.rng в порядке регистрации: исходные
+# области грузятся первыми, волна M2–M3 — за ними, вторая волна (artkit2) —
+# последней, чтобы новые модули не сдвигали шум уже готовых PNG.
+LEGACY = ["base", "fuelcycle", "mining", "plant"]
+WAVE1 = ["automation", "content", "decor", "grid", "metallurgy", "metitems"]
+
+
+def module_order(path):
+    area = os.path.basename(path)[:-3].split("_", 1)[1]
+    if area in LEGACY:
+        return (0, LEGACY.index(area))
+    return (1, WAVE1.index(area)) if area in WAVE1 else (2, area)
+
 
 errors = []
 owner = {}
 for kind in ("tex", "spec"):
-    for path in sorted(glob.glob(os.path.join(HERE, f"{kind}_*.py"))):
+    for path in sorted(glob.glob(os.path.join(HERE, f"{kind}_*.py")), key=module_order):
         mod = os.path.basename(path)[:-3]
         before_t, before_m = set(pclib.TEXTURES), len(pclib.M)
         before_i, before_f = len(pclib.ITEMS), len(pclib.FLUIDS)
@@ -56,6 +70,11 @@ for it in pclib.ITEMS:
     item_ids.add(it["id"])
     if it["tex"] not in pclib.TEXTURES:
         errors.append(f"item {it['id']}: texture '{it['tex']}' not registered")
+fluid_ids = set()
+for fl in pclib.FLUIDS:
+    if fl["id"] in fluid_ids:
+        errors.append(f"duplicate fluid {fl['id']}")
+    fluid_ids.add(fl["id"])
 
 if errors:
     print("\n".join(errors))
@@ -78,7 +97,7 @@ for it in pclib.ITEMS:
 def fluid_strip(base, n, frames, gas):
     out = np.zeros((n * frames, n, 4))
     c = pclib.hexc(base)
-    rnd = np.random.default_rng(abs(hash(base)) % 2**32)
+    rnd = np.random.default_rng(zlib.crc32(base.encode()))
     field = rnd.random((n, n))
     for f in range(frames):
         ph = 2 * np.pi * f / frames

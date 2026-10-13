@@ -1,0 +1,265 @@
+{
+	"credit": "Made with Blockbench",
+	"textures": {
+		"bk": "promptcritical:block/common/auto_bakelite",
+		"kn": "promptcritical:block/common/auto_knob",
+		"loff": "promptcritical:block/common/plant_lamp_off",
+		"pnd": "promptcritical:block/common/plant_panel_dark",
+		"st": "promptcritical:block/common/steel_bare",
+		"trd": "promptcritical:block/time_relay_dial"
+	},
+	"elements": [
+		{
+			"name": "back_plate",
+			"from": [1, 1, 15],
+			"to": [15, 15, 16],
+			"rotation": {
+				"angle": 0,
+				"axis": "y",
+				"origin": [8, 8, 8]
+			},
+			"faces": {
+				"north": {
+					"uv": [0, 0, 14, 14],
+					"texture": "#pnd"
+				},
+				"east": {
+					"uv": [0, 0, 1, 14],
+					"texture": "#pnd"
+				},
+				"south": {
+					"uv": [0, 0, 14, 14],
+					"texture": "#pnd"
+				},
+				"west": {
+					"uv": [0, 0, 1, 14],
+					"texture": "#pnd"
+				},
+				"up": {
+					"uv": [0, 0, 14, 1],
+					"texture": "#pnd"
+				},
+				"down": {
+					"uv": [0, 0, 14, 1],
+					"texture": "#pnd"
+				}
+			}
+		},
+		{
+			"name": "din_rail",
+			"from": [0.5, 7, 14.5],
+			"to": [15.5, 9, 15],
+			"rotation": {
+				"angle": 0,
+				"axis": "y",
+				"origin": [8, 8, 8]
+			},
+			"faces": {
+				"north": {
+					"uv": [0, 0, 15, 2],
+					"texture": "#st"
+				},
+				"east": {
+					"uv": [0, 0, 0.5, 2],
+					"texture": "#st"
+				},
+				"south": {
+					"uv": [0, 0, 15, 2],
+					"texture": "#st"
+				},
+				"west": {
+					"uv": [0, 0, 0.5, 2],
+					"texture": "#st"
+				},
+				"up": {
+					"uv": [0, 0, 15, 0.5],
+					"texture": "#st"
+				},
+				"down": {
+					"uv": [0, 0, 15, 0.5],
+					"texture": "#st"
+				}
+			}
+		},
+		{
+			"name": "body",
+			"from": [3, 2, 9],
+			"to": [13, 14, 14.5],
+			"rotation": {
+				"angle": 0,
+				"axis": "y",
+				"origin": [8, 8, 8]
+			},
+			"faces": {
+				"north": {
+					"uv": [0, 0, 10, 12],
+					"texture": "#bk"
+				},
+				"east": {
+					"uv": [0, 0, 5.5, 12],
+					"texture": "#bk"
+				},
+				"south": {
+					"uv": [0, 0, 10, 12],
+					"texture": "#bk"
+				},
+				"west": {
+					"uv": [0, 0, 5.5, 12],
+					"texture": "#bk"
+				},
+				"up": {
+					"uv": [0, 0, 10, 5.5],
+					"texture": "#bk"
+				},
+				"down": {
+					"uv": [0, 0, 10, 5.5],
+					"texture": "#bk"
+				}
+			}
+		},
+		{
+			"name": "face",
+			"from": [3.5, 3.5, 8.9],
+			"to": [12.5, 12.5, 9],
+			"rotation": {
+				"angle": 0,
+				"axis": "y",
+				"origin": [8, 8, 8]
+			},
+			"faces": {
+				"north": {
+					"uv": [0, 0, 16, 16],
+					"texture": "#trd"
+				},
+				"east": {
+					"uv": [0, 0, 0.1, 9],
+					"texture": "#bk"
+				},
+				"south": {
+					"uv": [0, 0, 9, 9],
+					"texture": "#bk"
+				},
+				"west": {
+					"uv": [0, 0, 0.1, 9],
+					"texture": "#bk"
+				},
+				"up": {
+					"uv": [0, 0, 9, 0.1],
+					"texture": "#bk"
+				},
+				"down": {
+					"uv": [0, 0, 9, 0.1],
+					"texture": "#bk"
+				}
+			}
+		},
+		{
+			"name": "knob",
+			"from": [7, 12.8, 8],
+			"to": [9, 13.8, 9],
+			"rotation": {
+				"angle": 0,
+				"axis": "y",
+				"origin": [8, 8, 8]
+			},
+			"faces": {
+				"north": {
+					"uv": [0, 0, 2, 1],
+					"texture": "#kn"
+				},
+				"east": {
+					"uv": [0, 0, 1, 1],
+					"texture": "#kn"
+				},
+				"south": {
+					"uv": [0, 0, 2, 1],
+					"texture": "#kn"
+				},
+				"west": {
+					"uv": [0, 0, 1, 1],
+					"texture": "#kn"
+				},
+				"up": {
+					"uv": [0, 0, 2, 1],
+					"texture": "#kn"
+				},
+				"down": {
+					"uv": [0, 0, 2, 1],
+					"texture": "#kn"
+				}
+			}
+		},
+		{
+			"name": "lamp_run",
+			"from": [4.4, 2.2, 8.4],
+			"to": [5.6, 3.4, 9],
+			"rotation": {
+				"angle": 0,
+				"axis": "y",
+				"origin": [8, 8, 8]
+			},
+			"faces": {
+				"north": {
+					"uv": [0, 0, 1.2, 1.2],
+					"texture": "#loff"
+				},
+				"east": {
+					"uv": [0, 0, 0.6, 1.2],
+					"texture": "#loff"
+				},
+				"south": {
+					"uv": [0, 0, 1.2, 1.2],
+					"texture": "#loff"
+				},
+				"west": {
+					"uv": [0, 0, 0.6, 1.2],
+					"texture": "#loff"
+				},
+				"up": {
+					"uv": [0, 0, 1.2, 0.6],
+					"texture": "#loff"
+				},
+				"down": {
+					"uv": [0, 0, 1.2, 0.6],
+					"texture": "#loff"
+				}
+			}
+		},
+		{
+			"name": "lamp_done",
+			"from": [10.4, 2.2, 8.4],
+			"to": [11.6, 3.4, 9],
+			"rotation": {
+				"angle": 0,
+				"axis": "y",
+				"origin": [8, 8, 8]
+			},
+			"faces": {
+				"north": {
+					"uv": [0, 0, 1.2, 1.2],
+					"texture": "#loff"
+				},
+				"east": {
+					"uv": [0, 0, 0.6, 1.2],
+					"texture": "#loff"
+				},
+				"south": {
+					"uv": [0, 0, 1.2, 1.2],
+					"texture": "#loff"
+				},
+				"west": {
+					"uv": [0, 0, 0.6, 1.2],
+					"texture": "#loff"
+				},
+				"up": {
+					"uv": [0, 0, 1.2, 0.6],
+					"texture": "#loff"
+				},
+				"down": {
+					"uv": [0, 0, 1.2, 0.6],
+					"texture": "#loff"
+				}
+			}
+		}
+	]
+}

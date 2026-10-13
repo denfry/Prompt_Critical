@@ -1,0 +1,164 @@
+{
+	"credit": "Made with Blockbench",
+	"textures": {
+		"fap": "promptcritical:block/fire_alarm_panel_front",
+		"lg": "promptcritical:block/common/lamp_green",
+		"loff": "promptcritical:block/common/plant_lamp_off",
+		"ly": "promptcritical:block/common/lamp_yellow",
+		"rd": "promptcritical:block/common/w2_red"
+	},
+	"elements": [
+		{
+			"name": "box",
+			"from": [2, 2, 12],
+			"to": [14, 14, 16],
+			"rotation": {
+				"angle": 0,
+				"axis": "y",
+				"origin": [8, 8, 8]
+			},
+			"faces": {
+				"north": {
+					"uv": [0, 0, 16, 16],
+					"texture": "#fap"
+				},
+				"east": {
+					"uv": [0, 0, 4, 12],
+					"texture": "#rd"
+				},
+				"south": {
+					"uv": [0, 0, 12, 12],
+					"texture": "#rd"
+				},
+				"west": {
+					"uv": [0, 0, 4, 12],
+					"texture": "#rd"
+				},
+				"up": {
+					"uv": [0, 0, 12, 4],
+					"texture": "#rd"
+				},
+				"down": {
+					"uv": [0, 0, 12, 4],
+					"texture": "#rd"
+				}
+			}
+		},
+		{
+			"name": "lamp_fire",
+			"from": [3.5, 12.5, 11.4],
+			"to": [4.5, 13.5, 12],
+			"rotation": {
+				"angle": 0,
+				"axis": "y",
+				"origin": [8, 8, 8]
+			},
+			"faces": {
+				"north": {
+					"uv": [0, 0, 1, 1],
+					"texture": "#loff"
+				},
+				"east": {
+					"uv": [0, 0, 0.6, 1],
+					"texture": "#loff"
+				},
+				"south": {
+					"uv": [0, 0, 1, 1],
+					"texture": "#loff"
+				},
+				"west": {
+					"uv": [0, 0, 0.6, 1],
+					"texture": "#loff"
+				},
+				"up": {
+					"uv": [0, 0, 1, 0.6],
+					"texture": "#loff"
+				},
+				"down": {
+					"uv": [0, 0, 1, 0.6],
+					"texture": "#loff"
+				}
+			}
+		},
+		{
+			"name": "glow_lamp_fault",
+			"from": [5.5, 12.5, 11.4],
+			"to": [6.5, 13.5, 12],
+			"rotation": {
+				"angle": 0,
+				"axis": "y",
+				"origin": [8, 8, 8]
+			},
+			"faces": {
+				"north": {
+					"uv": [0, 0, 1, 1],
+					"texture": "#ly"
+				},
+				"east": {
+					"uv": [0, 0, 0.6, 1],
+					"texture": "#ly"
+				},
+				"south": {
+					"uv": [0, 0, 1, 1],
+					"texture": "#ly"
+				},
+				"west": {
+					"uv": [0, 0, 0.6, 1],
+					"texture": "#ly"
+				},
+				"up": {
+					"uv": [0, 0, 1, 0.6],
+					"texture": "#ly"
+				},
+				"down": {
+					"uv": [0, 0, 1, 0.6],
+					"texture": "#ly"
+				}
+			},
+			"neoforge_data": {
+				"block_light": 15,
+				"sky_light": 15
+			}
+		},
+		{
+			"name": "glow_lamp_power",
+			"from": [11.5, 12.5, 11.4],
+			"to": [12.5, 13.5, 12],
+			"rotation": {
+				"angle": 0,
+				"axis": "y",
+				"origin": [8, 8, 8]
+			},
+			"faces": {
+				"north": {
+					"uv": [0, 0, 1, 1],
+					"texture": "#lg"
+				},
+				"east": {
+					"uv": [0, 0, 0.6, 1],
+					"texture": "#lg"
+				},
+				"south": {
+					"uv": [0, 0, 1, 1],
+					"texture": "#lg"
+				},
+				"west": {
+					"uv": [0, 0, 0.6, 1],
+					"texture": "#lg"
+				},
+				"up": {
+					"uv": [0, 0, 1, 0.6],
+					"texture": "#lg"
+				},
+				"down": {
+					"uv": [0, 0, 1, 0.6],
+					"texture": "#lg"
+				}
+			},
+			"neoforge_data": {
+				"block_light": 15,
+				"sky_light": 15
+			}
+		}
+	]
+}

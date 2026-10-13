@@ -1,0 +1,231 @@
+{
+	"credit": "Made with Blockbench",
+	"textures": {
+		"brk": "promptcritical:block/common/grid_brick",
+		"d": "promptcritical:block/common/steel_dark",
+		"hot": "promptcritical:block/common/fuelcycle_glow_hot",
+		"ref": "promptcritical:block/common/fuelcycle_refractory"
+	},
+	"elements": [
+		{
+			"name": "hearth",
+			"from": [-16, -16, -15.5],
+			"to": [32, 8, 32],
+			"rotation": {
+				"angle": 0,
+				"axis": "y",
+				"origin": [8, 8, 8]
+			},
+			"faces": {
+				"north": {
+					"uv": [0, 0, 16, 16],
+					"texture": "#brk"
+				},
+				"east": {
+					"uv": [0, 0, 16, 16],
+					"texture": "#brk"
+				},
+				"south": {
+					"uv": [0, 0, 16, 16],
+					"texture": "#brk"
+				},
+				"west": {
+					"uv": [0, 0, 16, 16],
+					"texture": "#brk"
+				},
+				"up": {
+					"uv": [0, 0, 16, 16],
+					"texture": "#brk"
+				},
+				"down": {
+					"uv": [0, 0, 16, 16],
+					"texture": "#brk"
+				}
+			}
+		},
+		{
+			"name": "roof",
+			"from": [-14, 8, -14],
+			"to": [30, 14, 30],
+			"rotation": {
+				"angle": 0,
+				"axis": "y",
+				"origin": [8, 8, 8]
+			},
+			"faces": {
+				"north": {
+					"uv": [0, 0, 16, 6],
+					"texture": "#ref"
+				},
+				"east": {
+					"uv": [0, 0, 16, 6],
+					"texture": "#ref"
+				},
+				"south": {
+					"uv": [0, 0, 16, 6],
+					"texture": "#ref"
+				},
+				"west": {
+					"uv": [0, 0, 16, 6],
+					"texture": "#ref"
+				},
+				"up": {
+					"uv": [0, 0, 16, 16],
+					"texture": "#ref"
+				},
+				"down": {
+					"uv": [0, 0, 16, 16],
+					"texture": "#ref"
+				}
+			}
+		},
+		{
+			"name": "buckstay_n",
+			"from": [-16, -16, -16],
+			"to": [-14, 16, -15],
+			"rotation": {
+				"angle": 0,
+				"axis": "y",
+				"origin": [8, 8, 8]
+			},
+			"faces": {
+				"north": {
+					"uv": [0, 0, 2, 16],
+					"texture": "#d"
+				},
+				"east": {
+					"uv": [0, 0, 1, 16],
+					"texture": "#d"
+				},
+				"south": {
+					"uv": [0, 0, 2, 16],
+					"texture": "#d"
+				},
+				"west": {
+					"uv": [0, 0, 1, 16],
+					"texture": "#d"
+				},
+				"up": {
+					"uv": [0, 0, 2, 1],
+					"texture": "#d"
+				},
+				"down": {
+					"uv": [0, 0, 2, 1],
+					"texture": "#d"
+				}
+			}
+		},
+		{
+			"name": "buckstay_s",
+			"from": [30, -16, -16],
+			"to": [32, 16, -15],
+			"rotation": {
+				"angle": 0,
+				"axis": "y",
+				"origin": [8, 8, 8]
+			},
+			"faces": {
+				"north": {
+					"uv": [0, 0, 2, 16],
+					"texture": "#d"
+				},
+				"east": {
+					"uv": [0, 0, 1, 16],
+					"texture": "#d"
+				},
+				"south": {
+					"uv": [0, 0, 2, 16],
+					"texture": "#d"
+				},
+				"west": {
+					"uv": [0, 0, 1, 16],
+					"texture": "#d"
+				},
+				"up": {
+					"uv": [0, 0, 2, 1],
+					"texture": "#d"
+				},
+				"down": {
+					"uv": [0, 0, 2, 1],
+					"texture": "#d"
+				}
+			}
+		},
+		{
+			"name": "glow_window",
+			"from": [-4, -6, -16],
+			"to": [20, 2, -15.5],
+			"rotation": {
+				"angle": 0,
+				"axis": "y",
+				"origin": [8, 8, 8]
+			},
+			"faces": {
+				"north": {
+					"uv": [0, 0, 16, 8],
+					"texture": "#hot"
+				},
+				"east": {
+					"uv": [0, 0, 0.5, 8],
+					"texture": "#hot"
+				},
+				"south": {
+					"uv": [0, 0, 16, 8],
+					"texture": "#hot"
+				},
+				"west": {
+					"uv": [0, 0, 0.5, 8],
+					"texture": "#hot"
+				},
+				"up": {
+					"uv": [0, 0, 16, 0.5],
+					"texture": "#hot"
+				},
+				"down": {
+					"uv": [0, 0, 16, 0.5],
+					"texture": "#hot"
+				}
+			},
+			"neoforge_data": {
+				"block_light": 15,
+				"sky_light": 15
+			}
+		},
+		{
+			"name": "uptake",
+			"from": [-6, 14, -6],
+			"to": [22, 32, 22],
+			"rotation": {
+				"angle": 0,
+				"axis": "y",
+				"origin": [8, 8, 8]
+			},
+			"faces": {
+				"north": {
+					"uv": [0, 0, 16, 16],
+					"texture": "#brk"
+				},
+				"east": {
+					"uv": [0, 0, 16, 16],
+					"texture": "#brk"
+				},
+				"south": {
+					"uv": [0, 0, 16, 16],
+					"texture": "#brk"
+				},
+				"west": {
+					"uv": [0, 0, 16, 16],
+					"texture": "#brk"
+				},
+				"up": {
+					"uv": [0, 0, 16, 16],
+					"texture": "#brk"
+				},
+				"down": {
+					"uv": [0, 0, 16, 16],
+					"texture": "#brk"
+				}
+			}
+		}
+	]
+}

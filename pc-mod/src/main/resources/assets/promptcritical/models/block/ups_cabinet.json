@@ -1,0 +1,356 @@
+{
+	"credit": "Made with Blockbench",
+	"textures": {
+		"d": "promptcritical:block/common/steel_dark",
+		"lg": "promptcritical:block/common/lamp_green",
+		"loff": "promptcritical:block/common/plant_lamp_off",
+		"r32": "promptcritical:block/common/grid_ral7032",
+		"ups": "promptcritical:block/common/auto2_ups"
+	},
+	"elements": [
+		{
+			"name": "plinth",
+			"from": [0, 0, 1],
+			"to": [16, 1, 16],
+			"rotation": {
+				"angle": 0,
+				"axis": "y",
+				"origin": [8, 8, 8]
+			},
+			"faces": {
+				"north": {
+					"uv": [0, 0, 16, 1],
+					"texture": "#d"
+				},
+				"east": {
+					"uv": [0, 0, 15, 1],
+					"texture": "#d"
+				},
+				"south": {
+					"uv": [0, 0, 16, 1],
+					"texture": "#d"
+				},
+				"west": {
+					"uv": [0, 0, 15, 1],
+					"texture": "#d"
+				},
+				"up": {
+					"uv": [0, 0, 16, 15],
+					"texture": "#d"
+				},
+				"down": {
+					"uv": [0, 0, 16, 15],
+					"texture": "#d"
+				}
+			}
+		},
+		{
+			"name": "body",
+			"from": [0.5, 1, 1],
+			"to": [15.5, 31, 16],
+			"rotation": {
+				"angle": 0,
+				"axis": "y",
+				"origin": [8, 8, 8]
+			},
+			"faces": {
+				"north": {
+					"uv": [0, 0, 15, 16],
+					"texture": "#r32"
+				},
+				"east": {
+					"uv": [0, 0, 15, 16],
+					"texture": "#r32"
+				},
+				"south": {
+					"uv": [0, 0, 15, 16],
+					"texture": "#r32"
+				},
+				"west": {
+					"uv": [0, 0, 15, 16],
+					"texture": "#r32"
+				},
+				"up": {
+					"uv": [0, 0, 15, 15],
+					"texture": "#r32"
+				},
+				"down": {
+					"uv": [0, 0, 15, 15],
+					"texture": "#r32"
+				}
+			}
+		},
+		{
+			"name": "panel",
+			"from": [3, 20, 0.5],
+			"to": [13, 28, 1],
+			"rotation": {
+				"angle": 0,
+				"axis": "y",
+				"origin": [8, 8, 8]
+			},
+			"faces": {
+				"north": {
+					"uv": [0, 0, 16, 16],
+					"texture": "#ups"
+				},
+				"east": {
+					"uv": [0, 0, 0.5, 8],
+					"texture": "#r32"
+				},
+				"south": {
+					"uv": [0, 0, 10, 8],
+					"texture": "#r32"
+				},
+				"west": {
+					"uv": [0, 0, 0.5, 8],
+					"texture": "#r32"
+				},
+				"up": {
+					"uv": [0, 0, 10, 0.5],
+					"texture": "#r32"
+				},
+				"down": {
+					"uv": [0, 0, 10, 0.5],
+					"texture": "#r32"
+				}
+			}
+		},
+		{
+			"name": "glow_lamp_state",
+			"from": [11.25, 28.75, 0.4],
+			"to": [12.75, 30.25, 1],
+			"rotation": {
+				"angle": 0,
+				"axis": "y",
+				"origin": [8, 8, 8]
+			},
+			"faces": {
+				"north": {
+					"uv": [0, 0, 1.5, 1.5],
+					"texture": "#lg"
+				},
+				"east": {
+					"uv": [0, 0, 0.6, 1.5],
+					"texture": "#lg"
+				},
+				"south": {
+					"uv": [0, 0, 1.5, 1.5],
+					"texture": "#lg"
+				},
+				"west": {
+					"uv": [0, 0, 0.6, 1.5],
+					"texture": "#lg"
+				},
+				"up": {
+					"uv": [0, 0, 1.5, 0.6],
+					"texture": "#lg"
+				},
+				"down": {
+					"uv": [0, 0, 1.5, 0.6],
+					"texture": "#lg"
+				}
+			},
+			"neoforge_data": {
+				"block_light": 15,
+				"sky_light": 15
+			}
+		},
+		{
+			"name": "glow_charge_0",
+			"from": [3.5, 18, 0.4],
+			"to": [4.5, 19, 1],
+			"rotation": {
+				"angle": 0,
+				"axis": "y",
+				"origin": [8, 8, 8]
+			},
+			"faces": {
+				"north": {
+					"uv": [0, 0, 1, 1],
+					"texture": "#lg"
+				},
+				"east": {
+					"uv": [0, 0, 0.6, 1],
+					"texture": "#lg"
+				},
+				"south": {
+					"uv": [0, 0, 1, 1],
+					"texture": "#lg"
+				},
+				"west": {
+					"uv": [0, 0, 0.6, 1],
+					"texture": "#lg"
+				},
+				"up": {
+					"uv": [0, 0, 1, 0.6],
+					"texture": "#lg"
+				},
+				"down": {
+					"uv": [0, 0, 1, 0.6],
+					"texture": "#lg"
+				}
+			},
+			"neoforge_data": {
+				"block_light": 15,
+				"sky_light": 15
+			}
+		},
+		{
+			"name": "glow_charge_1",
+			"from": [5.5, 18, 0.4],
+			"to": [6.5, 19, 1],
+			"rotation": {
+				"angle": 0,
+				"axis": "y",
+				"origin": [8, 8, 8]
+			},
+			"faces": {
+				"north": {
+					"uv": [0, 0, 1, 1],
+					"texture": "#lg"
+				},
+				"east": {
+					"uv": [0, 0, 0.6, 1],
+					"texture": "#lg"
+				},
+				"south": {
+					"uv": [0, 0, 1, 1],
+					"texture": "#lg"
+				},
+				"west": {
+					"uv": [0, 0, 0.6, 1],
+					"texture": "#lg"
+				},
+				"up": {
+					"uv": [0, 0, 1, 0.6],
+					"texture": "#lg"
+				},
+				"down": {
+					"uv": [0, 0, 1, 0.6],
+					"texture": "#lg"
+				}
+			},
+			"neoforge_data": {
+				"block_light": 15,
+				"sky_light": 15
+			}
+		},
+		{
+			"name": "glow_charge_2",
+			"from": [7.5, 18, 0.4],
+			"to": [8.5, 19, 1],
+			"rotation": {
+				"angle": 0,
+				"axis": "y",
+				"origin": [8, 8, 8]
+			},
+			"faces": {
+				"north": {
+					"uv": [0, 0, 1, 1],
+					"texture": "#lg"
+				},
+				"east": {
+					"uv": [0, 0, 0.6, 1],
+					"texture": "#lg"
+				},
+				"south": {
+					"uv": [0, 0, 1, 1],
+					"texture": "#lg"
+				},
+				"west": {
+					"uv": [0, 0, 0.6, 1],
+					"texture": "#lg"
+				},
+				"up": {
+					"uv": [0, 0, 1, 0.6],
+					"texture": "#lg"
+				},
+				"down": {
+					"uv": [0, 0, 1, 0.6],
+					"texture": "#lg"
+				}
+			},
+			"neoforge_data": {
+				"block_light": 15,
+				"sky_light": 15
+			}
+		},
+		{
+			"name": "glow_charge_3",
+			"from": [9.5, 18, 0.4],
+			"to": [10.5, 19, 1],
+			"rotation": {
+				"angle": 0,
+				"axis": "y",
+				"origin": [8, 8, 8]
+			},
+			"faces": {
+				"north": {
+					"uv": [0, 0, 1, 1],
+					"texture": "#lg"
+				},
+				"east": {
+					"uv": [0, 0, 0.6, 1],
+					"texture": "#lg"
+				},
+				"south": {
+					"uv": [0, 0, 1, 1],
+					"texture": "#lg"
+				},
+				"west": {
+					"uv": [0, 0, 0.6, 1],
+					"texture": "#lg"
+				},
+				"up": {
+					"uv": [0, 0, 1, 0.6],
+					"texture": "#lg"
+				},
+				"down": {
+					"uv": [0, 0, 1, 0.6],
+					"texture": "#lg"
+				}
+			},
+			"neoforge_data": {
+				"block_light": 15,
+				"sky_light": 15
+			}
+		},
+		{
+			"name": "charge_4",
+			"from": [11.5, 18, 0.4],
+			"to": [12.5, 19, 1],
+			"rotation": {
+				"angle": 0,
+				"axis": "y",
+				"origin": [8, 8, 8]
+			},
+			"faces": {
+				"north": {
+					"uv": [0, 0, 1, 1],
+					"texture": "#loff"
+				},
+				"east": {
+					"uv": [0, 0, 0.6, 1],
+					"texture": "#loff"
+				},
+				"south": {
+					"uv": [0, 0, 1, 1],
+					"texture": "#loff"
+				},
+				"west": {
+					"uv": [0, 0, 0.6, 1],
+					"texture": "#loff"
+				},
+				"up": {
+					"uv": [0, 0, 1, 0.6],
+					"texture": "#loff"
+				},
+				"down": {
+					"uv": [0, 0, 1, 0.6],
+					"texture": "#loff"
+				}
+			}
+		}
+	]
+}

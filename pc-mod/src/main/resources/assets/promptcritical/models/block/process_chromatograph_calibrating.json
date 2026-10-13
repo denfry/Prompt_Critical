@@ -1,0 +1,378 @@
+{
+	"credit": "Made with Blockbench",
+	"textures": {
+		"b": "promptcritical:block/common/brass",
+		"chr": "promptcritical:block/common/auto2_chroma",
+		"d": "promptcritical:block/common/steel_dark",
+		"lab": "promptcritical:block/common/mining_lab_white",
+		"ly": "promptcritical:block/common/lamp_yellow",
+		"ral": "promptcritical:block/common/auto_ral7035",
+		"rals": "promptcritical:block/common/auto_ral7035_smooth"
+	},
+	"elements": [
+		{
+			"name": "plinth",
+			"from": [0, 0, 1],
+			"to": [16, 1, 16],
+			"rotation": {
+				"angle": 0,
+				"axis": "y",
+				"origin": [8, 8, 8]
+			},
+			"faces": {
+				"north": {
+					"uv": [0, 0, 16, 1],
+					"texture": "#d"
+				},
+				"east": {
+					"uv": [0, 0, 15, 1],
+					"texture": "#d"
+				},
+				"south": {
+					"uv": [0, 0, 16, 1],
+					"texture": "#d"
+				},
+				"west": {
+					"uv": [0, 0, 15, 1],
+					"texture": "#d"
+				},
+				"up": {
+					"uv": [0, 0, 16, 15],
+					"texture": "#d"
+				},
+				"down": {
+					"uv": [0, 0, 16, 15],
+					"texture": "#d"
+				}
+			}
+		},
+		{
+			"name": "body",
+			"from": [0.5, 1, 1],
+			"to": [15.5, 30, 16],
+			"rotation": {
+				"angle": 0,
+				"axis": "y",
+				"origin": [8, 8, 8]
+			},
+			"faces": {
+				"north": {
+					"uv": [0, 0, 15, 16],
+					"texture": "#ral"
+				},
+				"east": {
+					"uv": [0, 0, 15, 16],
+					"texture": "#ral"
+				},
+				"south": {
+					"uv": [0, 0, 15, 16],
+					"texture": "#ral"
+				},
+				"west": {
+					"uv": [0, 0, 15, 16],
+					"texture": "#ral"
+				},
+				"up": {
+					"uv": [0, 0, 15, 15],
+					"texture": "#ral"
+				},
+				"down": {
+					"uv": [0, 0, 15, 15],
+					"texture": "#ral"
+				}
+			}
+		},
+		{
+			"name": "roof",
+			"from": [0, 30, 0],
+			"to": [16, 31.5, 16],
+			"rotation": {
+				"angle": 0,
+				"axis": "y",
+				"origin": [8, 8, 8]
+			},
+			"faces": {
+				"north": {
+					"uv": [0, 0, 16, 1.5],
+					"texture": "#rals"
+				},
+				"east": {
+					"uv": [0, 0, 16, 1.5],
+					"texture": "#rals"
+				},
+				"south": {
+					"uv": [0, 0, 16, 1.5],
+					"texture": "#rals"
+				},
+				"west": {
+					"uv": [0, 0, 16, 1.5],
+					"texture": "#rals"
+				},
+				"up": {
+					"uv": [0, 0, 16, 16],
+					"texture": "#rals"
+				},
+				"down": {
+					"uv": [0, 0, 16, 16],
+					"texture": "#rals"
+				}
+			}
+		},
+		{
+			"name": "panel",
+			"from": [3, 14, 0.5],
+			"to": [13, 24, 1],
+			"rotation": {
+				"angle": 0,
+				"axis": "y",
+				"origin": [8, 8, 8]
+			},
+			"faces": {
+				"north": {
+					"uv": [0, 0, 16, 16],
+					"texture": "#chr"
+				},
+				"east": {
+					"uv": [0, 0, 0.5, 10],
+					"texture": "#ral"
+				},
+				"south": {
+					"uv": [0, 0, 10, 10],
+					"texture": "#ral"
+				},
+				"west": {
+					"uv": [0, 0, 0.5, 10],
+					"texture": "#ral"
+				},
+				"up": {
+					"uv": [0, 0, 10, 0.5],
+					"texture": "#ral"
+				},
+				"down": {
+					"uv": [0, 0, 10, 0.5],
+					"texture": "#ral"
+				}
+			}
+		},
+		{
+			"name": "glow_lamp_cycle",
+			"from": [12.75, 26.25, 0.4],
+			"to": [14.25, 27.75, 1],
+			"rotation": {
+				"angle": 0,
+				"axis": "y",
+				"origin": [8, 8, 8]
+			},
+			"faces": {
+				"north": {
+					"uv": [0, 0, 1.5, 1.5],
+					"texture": "#ly"
+				},
+				"east": {
+					"uv": [0, 0, 0.6, 1.5],
+					"texture": "#ly"
+				},
+				"south": {
+					"uv": [0, 0, 1.5, 1.5],
+					"texture": "#ly"
+				},
+				"west": {
+					"uv": [0, 0, 0.6, 1.5],
+					"texture": "#ly"
+				},
+				"up": {
+					"uv": [0, 0, 1.5, 0.6],
+					"texture": "#ly"
+				},
+				"down": {
+					"uv": [0, 0, 1.5, 0.6],
+					"texture": "#ly"
+				}
+			},
+			"neoforge_data": {
+				"block_light": 15,
+				"sky_light": 15
+			}
+		},
+		{
+			"name": "carrier_bottle_0",
+			"from": [16, 1, 7.379],
+			"to": [19, 14, 8.621],
+			"rotation": {
+				"angle": 0,
+				"axis": "y",
+				"origin": [8, 8, 8]
+			},
+			"faces": {
+				"north": {
+					"uv": [0, 0, 3, 13],
+					"texture": "#lab"
+				},
+				"east": {
+					"uv": [0, 0, 1.24, 13],
+					"texture": "#lab"
+				},
+				"south": {
+					"uv": [0, 0, 3, 13],
+					"texture": "#lab"
+				},
+				"west": {
+					"uv": [0, 0, 1.24, 13],
+					"texture": "#lab"
+				},
+				"up": {
+					"uv": [0, 0, 3, 1.24],
+					"texture": "#lab"
+				},
+				"down": {
+					"uv": [0, 0, 3, 1.24],
+					"texture": "#lab"
+				}
+			}
+		},
+		{
+			"name": "carrier_bottle_1",
+			"from": [16.879, 0.99, 6.5],
+			"to": [18.121, 14.01, 9.5],
+			"rotation": {
+				"angle": 0,
+				"axis": "y",
+				"origin": [8, 8, 8]
+			},
+			"faces": {
+				"north": {
+					"uv": [0, 0, 1.24, 13.02],
+					"texture": "#lab"
+				},
+				"east": {
+					"uv": [0, 0, 3, 13.02],
+					"texture": "#lab"
+				},
+				"south": {
+					"uv": [0, 0, 1.24, 13.02],
+					"texture": "#lab"
+				},
+				"west": {
+					"uv": [0, 0, 3, 13.02],
+					"texture": "#lab"
+				},
+				"up": {
+					"uv": [0, 0, 1.24, 3],
+					"texture": "#lab"
+				},
+				"down": {
+					"uv": [0, 0, 1.24, 3],
+					"texture": "#lab"
+				}
+			}
+		},
+		{
+			"name": "carrier_bottle_2",
+			"from": [16, 0.98, 7.379],
+			"to": [19, 14.02, 8.621],
+			"rotation": {
+				"angle": 45,
+				"axis": "y",
+				"origin": [17.5, 8, 8]
+			},
+			"faces": {
+				"north": {
+					"uv": [0, 0, 3, 13.04],
+					"texture": "#lab"
+				},
+				"east": {
+					"uv": [0, 0, 1.24, 13.04],
+					"texture": "#lab"
+				},
+				"south": {
+					"uv": [0, 0, 3, 13.04],
+					"texture": "#lab"
+				},
+				"west": {
+					"uv": [0, 0, 1.24, 13.04],
+					"texture": "#lab"
+				},
+				"up": {
+					"uv": [0, 0, 3, 1.24],
+					"texture": "#lab"
+				},
+				"down": {
+					"uv": [0, 0, 3, 1.24],
+					"texture": "#lab"
+				}
+			}
+		},
+		{
+			"name": "carrier_bottle_3",
+			"from": [16, 0.97, 7.379],
+			"to": [19, 14.03, 8.621],
+			"rotation": {
+				"angle": -45,
+				"axis": "y",
+				"origin": [17.5, 8, 8]
+			},
+			"faces": {
+				"north": {
+					"uv": [0, 0, 3, 13.06],
+					"texture": "#lab"
+				},
+				"east": {
+					"uv": [0, 0, 1.24, 13.06],
+					"texture": "#lab"
+				},
+				"south": {
+					"uv": [0, 0, 3, 13.06],
+					"texture": "#lab"
+				},
+				"west": {
+					"uv": [0, 0, 1.24, 13.06],
+					"texture": "#lab"
+				},
+				"up": {
+					"uv": [0, 0, 3, 1.24],
+					"texture": "#lab"
+				},
+				"down": {
+					"uv": [0, 0, 3, 1.24],
+					"texture": "#lab"
+				}
+			}
+		},
+		{
+			"name": "bottle_valve",
+			"from": [17, 14, 7.5],
+			"to": [18, 15, 8.5],
+			"rotation": {
+				"angle": 0,
+				"axis": "y",
+				"origin": [8, 8, 8]
+			},
+			"faces": {
+				"north": {
+					"uv": [0, 0, 1, 1],
+					"texture": "#b"
+				},
+				"east": {
+					"uv": [0, 0, 1, 1],
+					"texture": "#b"
+				},
+				"south": {
+					"uv": [0, 0, 1, 1],
+					"texture": "#b"
+				},
+				"west": {
+					"uv": [0, 0, 1, 1],
+					"texture": "#b"
+				},
+				"up": {
+					"uv": [0, 0, 1, 1],
+					"texture": "#b"
+				},
+				"down": {
+					"uv": [0, 0, 1, 1],
+					"texture": "#b"
+				}
+			}
+		}
+	]
+}

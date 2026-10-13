@@ -1,0 +1,160 @@
+{
+	"credit": "Made with Blockbench",
+	"textures": {
+		"blk": "promptcritical:block/common/w2_black",
+		"dg": "promptcritical:block/common/grid_dark_grey",
+		"icm": "promptcritical:block/intercom_station_front",
+		"loff": "promptcritical:block/common/plant_lamp_off",
+		"lr": "promptcritical:block/common/lamp_red"
+	},
+	"elements": [
+		{
+			"name": "box",
+			"from": [2, 1, 12],
+			"to": [14, 15, 16],
+			"rotation": {
+				"angle": 0,
+				"axis": "y",
+				"origin": [8, 8, 8]
+			},
+			"faces": {
+				"north": {
+					"uv": [0, 0, 16, 16],
+					"texture": "#icm"
+				},
+				"east": {
+					"uv": [0, 0, 4, 14],
+					"texture": "#dg"
+				},
+				"south": {
+					"uv": [0, 0, 12, 14],
+					"texture": "#dg"
+				},
+				"west": {
+					"uv": [0, 0, 4, 14],
+					"texture": "#dg"
+				},
+				"up": {
+					"uv": [0, 0, 12, 4],
+					"texture": "#dg"
+				},
+				"down": {
+					"uv": [0, 0, 12, 4],
+					"texture": "#dg"
+				}
+			}
+		},
+		{
+			"name": "handset",
+			"from": [12.5, 3, 10.5],
+			"to": [14, 10, 12],
+			"rotation": {
+				"angle": 0,
+				"axis": "y",
+				"origin": [8, 8, 8]
+			},
+			"faces": {
+				"north": {
+					"uv": [0, 0, 1.5, 7],
+					"texture": "#blk"
+				},
+				"east": {
+					"uv": [0, 0, 1.5, 7],
+					"texture": "#blk"
+				},
+				"south": {
+					"uv": [0, 0, 1.5, 7],
+					"texture": "#blk"
+				},
+				"west": {
+					"uv": [0, 0, 1.5, 7],
+					"texture": "#blk"
+				},
+				"up": {
+					"uv": [0, 0, 1.5, 1.5],
+					"texture": "#blk"
+				},
+				"down": {
+					"uv": [0, 0, 1.5, 1.5],
+					"texture": "#blk"
+				}
+			}
+		},
+		{
+			"name": "lamp_talk",
+			"from": [3.5, 13, 11.4],
+			"to": [4.5, 14, 12],
+			"rotation": {
+				"angle": 0,
+				"axis": "y",
+				"origin": [8, 8, 8]
+			},
+			"faces": {
+				"north": {
+					"uv": [0, 0, 1, 1],
+					"texture": "#loff"
+				},
+				"east": {
+					"uv": [0, 0, 0.6, 1],
+					"texture": "#loff"
+				},
+				"south": {
+					"uv": [0, 0, 1, 1],
+					"texture": "#loff"
+				},
+				"west": {
+					"uv": [0, 0, 0.6, 1],
+					"texture": "#loff"
+				},
+				"up": {
+					"uv": [0, 0, 1, 0.6],
+					"texture": "#loff"
+				},
+				"down": {
+					"uv": [0, 0, 1, 0.6],
+					"texture": "#loff"
+				}
+			}
+		},
+		{
+			"name": "glow_lamp_fault",
+			"from": [5.5, 13, 11.4],
+			"to": [6.5, 14, 12],
+			"rotation": {
+				"angle": 0,
+				"axis": "y",
+				"origin": [8, 8, 8]
+			},
+			"faces": {
+				"north": {
+					"uv": [0, 0, 1, 1],
+					"texture": "#lr"
+				},
+				"east": {
+					"uv": [0, 0, 0.6, 1],
+					"texture": "#lr"
+				},
+				"south": {
+					"uv": [0, 0, 1, 1],
+					"texture": "#lr"
+				},
+				"west": {
+					"uv": [0, 0, 0.6, 1],
+					"texture": "#lr"
+				},
+				"up": {
+					"uv": [0, 0, 1, 0.6],
+					"texture": "#lr"
+				},
+				"down": {
+					"uv": [0, 0, 1, 0.6],
+					"texture": "#lr"
+				}
+			},
+			"neoforge_data": {
+				"block_light": 15,
+				"sky_light": 15
+			}
+		}
+	]
+}

@@ -1,0 +1,232 @@
+{
+	"credit": "Made with Blockbench",
+	"textures": {
+		"bms": "promptcritical:block/water_tube_boiler_panel",
+		"loff": "promptcritical:block/common/plant_lamp_off",
+		"lr": "promptcritical:block/common/lamp_red",
+		"r35": "promptcritical:block/common/grid_ral7035",
+		"red": "promptcritical:block/common/paint_red"
+	},
+	"elements": [
+		{
+			"name": "body",
+			"from": [0, 0, 2],
+			"to": [16, 16, 16],
+			"rotation": {
+				"angle": 0,
+				"axis": "y",
+				"origin": [8, 8, 8]
+			},
+			"faces": {
+				"north": {
+					"uv": [0, 0, 16, 16],
+					"texture": "#r35"
+				},
+				"east": {
+					"uv": [0, 0, 14, 16],
+					"texture": "#r35"
+				},
+				"south": {
+					"uv": [0, 0, 16, 16],
+					"texture": "#r35"
+				},
+				"west": {
+					"uv": [0, 0, 14, 16],
+					"texture": "#r35"
+				},
+				"up": {
+					"uv": [0, 0, 16, 14],
+					"texture": "#r35"
+				},
+				"down": {
+					"uv": [0, 0, 16, 14],
+					"texture": "#r35"
+				}
+			}
+		},
+		{
+			"name": "panel",
+			"from": [0.5, 0.5, 1.5],
+			"to": [15.5, 15.5, 2],
+			"rotation": {
+				"angle": 0,
+				"axis": "y",
+				"origin": [8, 8, 8]
+			},
+			"faces": {
+				"north": {
+					"uv": [0, 0, 16, 16],
+					"texture": "#bms"
+				},
+				"east": {
+					"uv": [0, 0, 0.5, 15],
+					"texture": "#bms"
+				},
+				"south": {
+					"uv": [0, 0, 15, 15],
+					"texture": "#bms"
+				},
+				"west": {
+					"uv": [0, 0, 0.5, 15],
+					"texture": "#bms"
+				},
+				"up": {
+					"uv": [0, 0, 15, 0.5],
+					"texture": "#bms"
+				},
+				"down": {
+					"uv": [0, 0, 15, 0.5],
+					"texture": "#bms"
+				}
+			}
+		},
+		{
+			"name": "lamp_flame",
+			"from": [3.25, 1.75, 0.9],
+			"to": [4.75, 3.25, 1.5],
+			"rotation": {
+				"angle": 0,
+				"axis": "y",
+				"origin": [8, 8, 8]
+			},
+			"faces": {
+				"north": {
+					"uv": [0, 0, 1.5, 1.5],
+					"texture": "#loff"
+				},
+				"east": {
+					"uv": [0, 0, 0.6, 1.5],
+					"texture": "#loff"
+				},
+				"south": {
+					"uv": [0, 0, 1.5, 1.5],
+					"texture": "#loff"
+				},
+				"west": {
+					"uv": [0, 0, 0.6, 1.5],
+					"texture": "#loff"
+				},
+				"up": {
+					"uv": [0, 0, 1.5, 0.6],
+					"texture": "#loff"
+				},
+				"down": {
+					"uv": [0, 0, 1.5, 0.6],
+					"texture": "#loff"
+				}
+			}
+		},
+		{
+			"name": "glow_lamp_trip",
+			"from": [7.25, 1.75, 0.9],
+			"to": [8.75, 3.25, 1.5],
+			"rotation": {
+				"angle": 0,
+				"axis": "y",
+				"origin": [8, 8, 8]
+			},
+			"faces": {
+				"north": {
+					"uv": [0, 0, 1.5, 1.5],
+					"texture": "#lr"
+				},
+				"east": {
+					"uv": [0, 0, 0.6, 1.5],
+					"texture": "#lr"
+				},
+				"south": {
+					"uv": [0, 0, 1.5, 1.5],
+					"texture": "#lr"
+				},
+				"west": {
+					"uv": [0, 0, 0.6, 1.5],
+					"texture": "#lr"
+				},
+				"up": {
+					"uv": [0, 0, 1.5, 0.6],
+					"texture": "#lr"
+				},
+				"down": {
+					"uv": [0, 0, 1.5, 0.6],
+					"texture": "#lr"
+				}
+			},
+			"neoforge_data": {
+				"block_light": 15,
+				"sky_light": 15
+			}
+		},
+		{
+			"name": "lamp_ready",
+			"from": [11.25, 1.75, 0.9],
+			"to": [12.75, 3.25, 1.5],
+			"rotation": {
+				"angle": 0,
+				"axis": "y",
+				"origin": [8, 8, 8]
+			},
+			"faces": {
+				"north": {
+					"uv": [0, 0, 1.5, 1.5],
+					"texture": "#loff"
+				},
+				"east": {
+					"uv": [0, 0, 0.6, 1.5],
+					"texture": "#loff"
+				},
+				"south": {
+					"uv": [0, 0, 1.5, 1.5],
+					"texture": "#loff"
+				},
+				"west": {
+					"uv": [0, 0, 0.6, 1.5],
+					"texture": "#loff"
+				},
+				"up": {
+					"uv": [0, 0, 1.5, 0.6],
+					"texture": "#loff"
+				},
+				"down": {
+					"uv": [0, 0, 1.5, 0.6],
+					"texture": "#loff"
+				}
+			}
+		},
+		{
+			"name": "estop",
+			"from": [12, 12, 0.5],
+			"to": [14.5, 14.5, 1.5],
+			"rotation": {
+				"angle": 0,
+				"axis": "y",
+				"origin": [8, 8, 8]
+			},
+			"faces": {
+				"north": {
+					"uv": [0, 0, 2.5, 2.5],
+					"texture": "#red"
+				},
+				"east": {
+					"uv": [0, 0, 1, 2.5],
+					"texture": "#red"
+				},
+				"south": {
+					"uv": [0, 0, 2.5, 2.5],
+					"texture": "#red"
+				},
+				"west": {
+					"uv": [0, 0, 1, 2.5],
+					"texture": "#red"
+				},
+				"up": {
+					"uv": [0, 0, 2.5, 1],
+					"texture": "#red"
+				},
+				"down": {
+					"uv": [0, 0, 2.5, 1],
+					"texture": "#red"
+				}
+			}
+		}
+	]
+}

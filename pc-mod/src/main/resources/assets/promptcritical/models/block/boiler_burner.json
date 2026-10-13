@@ -1,0 +1,192 @@
+{
+	"credit": "Made with Blockbench",
+	"textures": {
+		"air": "promptcritical:block/common/mining_pipe_air",
+		"clad": "promptcritical:block/common/grid_cladding",
+		"d": "promptcritical:block/common/steel_dark",
+		"fb": "promptcritical:block/common/mining_firebrick",
+		"louv": "promptcritical:block/common/plant_louver"
+	},
+	"elements": [
+		{
+			"name": "wall",
+			"from": [0, 0, 8],
+			"to": [16, 16, 16],
+			"rotation": {
+				"angle": 0,
+				"axis": "y",
+				"origin": [8, 8, 8]
+			},
+			"faces": {
+				"north": {
+					"uv": [0, 0, 16, 16],
+					"texture": "#clad"
+				},
+				"east": {
+					"uv": [0, 0, 8, 16],
+					"texture": "#clad"
+				},
+				"south": {
+					"uv": [0, 0, 16, 16],
+					"texture": "#clad"
+				},
+				"west": {
+					"uv": [0, 0, 8, 16],
+					"texture": "#clad"
+				},
+				"up": {
+					"uv": [0, 0, 16, 8],
+					"texture": "#clad"
+				},
+				"down": {
+					"uv": [0, 0, 16, 8],
+					"texture": "#clad"
+				}
+			}
+		},
+		{
+			"name": "register",
+			"from": [3, 3, 4],
+			"to": [13, 13, 8],
+			"rotation": {
+				"angle": 0,
+				"axis": "y",
+				"origin": [8, 8, 8]
+			},
+			"faces": {
+				"north": {
+					"uv": [0, 0, 10, 10],
+					"texture": "#louv"
+				},
+				"east": {
+					"uv": [0, 0, 4, 10],
+					"texture": "#d"
+				},
+				"south": {
+					"uv": [0, 0, 10, 10],
+					"texture": "#d"
+				},
+				"west": {
+					"uv": [0, 0, 4, 10],
+					"texture": "#d"
+				},
+				"up": {
+					"uv": [0, 0, 10, 4],
+					"texture": "#d"
+				},
+				"down": {
+					"uv": [0, 0, 10, 4],
+					"texture": "#d"
+				}
+			}
+		},
+		{
+			"name": "embrasure",
+			"from": [4, 4, 0],
+			"to": [12, 12, 4],
+			"rotation": {
+				"angle": 0,
+				"axis": "y",
+				"origin": [8, 8, 8]
+			},
+			"faces": {
+				"north": {
+					"uv": [0, 0, 8, 8],
+					"texture": "#fb"
+				},
+				"east": {
+					"uv": [0, 0, 4, 8],
+					"texture": "#fb"
+				},
+				"south": {
+					"uv": [0, 0, 8, 8],
+					"texture": "#fb"
+				},
+				"west": {
+					"uv": [0, 0, 4, 8],
+					"texture": "#fb"
+				},
+				"up": {
+					"uv": [0, 0, 8, 4],
+					"texture": "#fb"
+				},
+				"down": {
+					"uv": [0, 0, 8, 4],
+					"texture": "#fb"
+				}
+			}
+		},
+		{
+			"name": "fuel_pipe",
+			"from": [6.5, 6.5, 16],
+			"to": [9.5, 9.5, 16.01],
+			"rotation": {
+				"angle": 0,
+				"axis": "y",
+				"origin": [8, 8, 8]
+			},
+			"faces": {
+				"north": {
+					"uv": [0, 0, 3, 3],
+					"texture": "#d"
+				},
+				"east": {
+					"uv": [0, 0, 0.01, 3],
+					"texture": "#d"
+				},
+				"south": {
+					"uv": [0, 0, 3, 3],
+					"texture": "#d"
+				},
+				"west": {
+					"uv": [0, 0, 0.01, 3],
+					"texture": "#d"
+				},
+				"up": {
+					"uv": [0, 0, 3, 0.01],
+					"texture": "#d"
+				},
+				"down": {
+					"uv": [0, 0, 3, 0.01],
+					"texture": "#d"
+				}
+			}
+		},
+		{
+			"name": "air_box",
+			"from": [2, 12, 9],
+			"to": [14, 16, 15],
+			"rotation": {
+				"angle": 0,
+				"axis": "y",
+				"origin": [8, 8, 8]
+			},
+			"faces": {
+				"north": {
+					"uv": [0, 0, 12, 4],
+					"texture": "#air"
+				},
+				"east": {
+					"uv": [0, 0, 6, 4],
+					"texture": "#air"
+				},
+				"south": {
+					"uv": [0, 0, 12, 4],
+					"texture": "#air"
+				},
+				"west": {
+					"uv": [0, 0, 6, 4],
+					"texture": "#air"
+				},
+				"up": {
+					"uv": [0, 0, 12, 6],
+					"texture": "#air"
+				},
+				"down": {
+					"uv": [0, 0, 12, 6],
+					"texture": "#air"
+				}
+			}
+		}
+	]
+}

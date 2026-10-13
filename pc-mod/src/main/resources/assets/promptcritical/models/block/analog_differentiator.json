@@ -1,0 +1,305 @@
+{
+	"credit": "Made with Blockbench",
+	"textures": {
+		"blk": "promptcritical:block/common/auto_panel_black",
+		"gauge": "promptcritical:block/analog_gauge_dial",
+		"kn": "promptcritical:block/common/auto_knob",
+		"pnd": "promptcritical:block/common/plant_panel_dark",
+		"st": "promptcritical:block/common/steel_bare",
+		"tube": "promptcritical:block/common/auto_glow_tubes"
+	},
+	"elements": [
+		{
+			"name": "chassis",
+			"from": [0, 0, 1],
+			"to": [16, 16, 16],
+			"rotation": {
+				"angle": 0,
+				"axis": "y",
+				"origin": [8, 8, 8]
+			},
+			"faces": {
+				"north": {
+					"uv": [0, 0, 16, 16],
+					"texture": "#pnd"
+				},
+				"east": {
+					"uv": [0, 0, 15, 16],
+					"texture": "#pnd"
+				},
+				"south": {
+					"uv": [0, 0, 16, 16],
+					"texture": "#pnd"
+				},
+				"west": {
+					"uv": [0, 0, 15, 16],
+					"texture": "#pnd"
+				},
+				"up": {
+					"uv": [0, 0, 16, 15],
+					"texture": "#pnd"
+				},
+				"down": {
+					"uv": [0, 0, 16, 15],
+					"texture": "#pnd"
+				}
+			}
+		},
+		{
+			"name": "face",
+			"from": [0.5, 0.5, 0.5],
+			"to": [15.5, 15.5, 1],
+			"rotation": {
+				"angle": 0,
+				"axis": "y",
+				"origin": [8, 8, 8]
+			},
+			"faces": {
+				"north": {
+					"uv": [0, 0, 15, 15],
+					"texture": "#blk"
+				},
+				"east": {
+					"uv": [0, 0, 0.5, 15],
+					"texture": "#blk"
+				},
+				"south": {
+					"uv": [0, 0, 15, 15],
+					"texture": "#blk"
+				},
+				"west": {
+					"uv": [0, 0, 0.5, 15],
+					"texture": "#blk"
+				},
+				"up": {
+					"uv": [0, 0, 15, 0.5],
+					"texture": "#blk"
+				},
+				"down": {
+					"uv": [0, 0, 15, 0.5],
+					"texture": "#blk"
+				}
+			}
+		},
+		{
+			"name": "handle_w",
+			"from": [1, 6, -0.5],
+			"to": [2, 10, 0.5],
+			"rotation": {
+				"angle": 0,
+				"axis": "y",
+				"origin": [8, 8, 8]
+			},
+			"faces": {
+				"north": {
+					"uv": [0, 0, 1, 4],
+					"texture": "#st"
+				},
+				"east": {
+					"uv": [0, 0, 1, 4],
+					"texture": "#st"
+				},
+				"south": {
+					"uv": [0, 0, 1, 4],
+					"texture": "#st"
+				},
+				"west": {
+					"uv": [0, 0, 1, 4],
+					"texture": "#st"
+				},
+				"up": {
+					"uv": [0, 0, 1, 1],
+					"texture": "#st"
+				},
+				"down": {
+					"uv": [0, 0, 1, 1],
+					"texture": "#st"
+				}
+			}
+		},
+		{
+			"name": "handle_e",
+			"from": [14, 6, -0.5],
+			"to": [15, 10, 0.5],
+			"rotation": {
+				"angle": 0,
+				"axis": "y",
+				"origin": [8, 8, 8]
+			},
+			"faces": {
+				"north": {
+					"uv": [0, 0, 1, 4],
+					"texture": "#st"
+				},
+				"east": {
+					"uv": [0, 0, 1, 4],
+					"texture": "#st"
+				},
+				"south": {
+					"uv": [0, 0, 1, 4],
+					"texture": "#st"
+				},
+				"west": {
+					"uv": [0, 0, 1, 4],
+					"texture": "#st"
+				},
+				"up": {
+					"uv": [0, 0, 1, 1],
+					"texture": "#st"
+				},
+				"down": {
+					"uv": [0, 0, 1, 1],
+					"texture": "#st"
+				}
+			}
+		},
+		{
+			"name": "gauge",
+			"from": [4, 8.5, 0.4],
+			"to": [12, 14.5, 0.5],
+			"rotation": {
+				"angle": 0,
+				"axis": "y",
+				"origin": [8, 8, 8]
+			},
+			"faces": {
+				"north": {
+					"uv": [0, 0, 16, 16],
+					"texture": "#gauge"
+				},
+				"east": {
+					"uv": [0, 0, 0.1, 6],
+					"texture": "#blk"
+				},
+				"south": {
+					"uv": [0, 0, 8, 6],
+					"texture": "#blk"
+				},
+				"west": {
+					"uv": [0, 0, 0.1, 6],
+					"texture": "#blk"
+				},
+				"up": {
+					"uv": [0, 0, 8, 0.1],
+					"texture": "#blk"
+				},
+				"down": {
+					"uv": [0, 0, 8, 0.1],
+					"texture": "#blk"
+				}
+			}
+		},
+		{
+			"name": "knob_0",
+			"from": [3.2, 3.2, -0.5],
+			"to": [4.8, 4.8, 0.5],
+			"rotation": {
+				"angle": 0,
+				"axis": "y",
+				"origin": [8, 8, 8]
+			},
+			"faces": {
+				"north": {
+					"uv": [0, 0, 1.6, 1.6],
+					"texture": "#kn"
+				},
+				"east": {
+					"uv": [0, 0, 1, 1.6],
+					"texture": "#kn"
+				},
+				"south": {
+					"uv": [0, 0, 1.6, 1.6],
+					"texture": "#kn"
+				},
+				"west": {
+					"uv": [0, 0, 1, 1.6],
+					"texture": "#kn"
+				},
+				"up": {
+					"uv": [0, 0, 1.6, 1],
+					"texture": "#kn"
+				},
+				"down": {
+					"uv": [0, 0, 1.6, 1],
+					"texture": "#kn"
+				}
+			}
+		},
+		{
+			"name": "knob_1",
+			"from": [7.2, 3.2, -0.5],
+			"to": [8.8, 4.8, 0.5],
+			"rotation": {
+				"angle": 0,
+				"axis": "y",
+				"origin": [8, 8, 8]
+			},
+			"faces": {
+				"north": {
+					"uv": [0, 0, 1.6, 1.6],
+					"texture": "#kn"
+				},
+				"east": {
+					"uv": [0, 0, 1, 1.6],
+					"texture": "#kn"
+				},
+				"south": {
+					"uv": [0, 0, 1.6, 1.6],
+					"texture": "#kn"
+				},
+				"west": {
+					"uv": [0, 0, 1, 1.6],
+					"texture": "#kn"
+				},
+				"up": {
+					"uv": [0, 0, 1.6, 1],
+					"texture": "#kn"
+				},
+				"down": {
+					"uv": [0, 0, 1.6, 1],
+					"texture": "#kn"
+				}
+			}
+		},
+		{
+			"name": "glow_tubes",
+			"from": [1, 15.5, 3],
+			"to": [15, 16.25, 14],
+			"rotation": {
+				"angle": 0,
+				"axis": "y",
+				"origin": [8, 8, 8]
+			},
+			"faces": {
+				"north": {
+					"uv": [0, 0, 14, 0.75],
+					"texture": "#tube"
+				},
+				"east": {
+					"uv": [0, 0, 11, 0.75],
+					"texture": "#tube"
+				},
+				"south": {
+					"uv": [0, 0, 14, 0.75],
+					"texture": "#tube"
+				},
+				"west": {
+					"uv": [0, 0, 11, 0.75],
+					"texture": "#tube"
+				},
+				"up": {
+					"uv": [0, 0, 14, 11],
+					"texture": "#tube"
+				},
+				"down": {
+					"uv": [0, 0, 14, 11],
+					"texture": "#tube"
+				}
+			},
+			"neoforge_data": {
+				"block_light": 15,
+				"sky_light": 15
+			}
+		}
+	]
+}

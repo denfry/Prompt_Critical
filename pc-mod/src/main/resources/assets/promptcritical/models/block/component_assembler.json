@@ -1,0 +1,192 @@
+{
+	"credit": "Made with Blockbench",
+	"textures": {
+		"asm": "promptcritical:block/component_assembler_top",
+		"loff": "promptcritical:block/common/plant_lamp_off",
+		"st": "promptcritical:block/common/steel_bare",
+		"w": "promptcritical:block/common/w2_white",
+		"ye": "promptcritical:block/common/w2_yellow"
+	},
+	"elements": [
+		{
+			"name": "table",
+			"from": [0, 0, 0],
+			"to": [16, 8, 16],
+			"rotation": {
+				"angle": 0,
+				"axis": "y",
+				"origin": [8, 8, 8]
+			},
+			"faces": {
+				"north": {
+					"uv": [0, 0, 16, 8],
+					"texture": "#w"
+				},
+				"east": {
+					"uv": [0, 0, 16, 8],
+					"texture": "#w"
+				},
+				"south": {
+					"uv": [0, 0, 16, 8],
+					"texture": "#w"
+				},
+				"west": {
+					"uv": [0, 0, 16, 8],
+					"texture": "#w"
+				},
+				"up": {
+					"uv": [0, 0, 16, 16],
+					"texture": "#asm"
+				},
+				"down": {
+					"uv": [0, 0, 16, 16],
+					"texture": "#w"
+				}
+			}
+		},
+		{
+			"name": "gantry_w",
+			"from": [0, 8, 0],
+			"to": [1.5, 15, 16],
+			"rotation": {
+				"angle": 0,
+				"axis": "y",
+				"origin": [8, 8, 8]
+			},
+			"faces": {
+				"north": {
+					"uv": [0, 0, 1.5, 7],
+					"texture": "#ye"
+				},
+				"east": {
+					"uv": [0, 0, 16, 7],
+					"texture": "#ye"
+				},
+				"south": {
+					"uv": [0, 0, 1.5, 7],
+					"texture": "#ye"
+				},
+				"west": {
+					"uv": [0, 0, 16, 7],
+					"texture": "#ye"
+				},
+				"up": {
+					"uv": [0, 0, 1.5, 16],
+					"texture": "#ye"
+				},
+				"down": {
+					"uv": [0, 0, 1.5, 16],
+					"texture": "#ye"
+				}
+			}
+		},
+		{
+			"name": "gantry_e",
+			"from": [14.5, 8, 0],
+			"to": [16, 15, 16],
+			"rotation": {
+				"angle": 0,
+				"axis": "y",
+				"origin": [8, 8, 8]
+			},
+			"faces": {
+				"north": {
+					"uv": [0, 0, 1.5, 7],
+					"texture": "#ye"
+				},
+				"east": {
+					"uv": [0, 0, 16, 7],
+					"texture": "#ye"
+				},
+				"south": {
+					"uv": [0, 0, 1.5, 7],
+					"texture": "#ye"
+				},
+				"west": {
+					"uv": [0, 0, 16, 7],
+					"texture": "#ye"
+				},
+				"up": {
+					"uv": [0, 0, 1.5, 16],
+					"texture": "#ye"
+				},
+				"down": {
+					"uv": [0, 0, 1.5, 16],
+					"texture": "#ye"
+				}
+			}
+		},
+		{
+			"name": "rail",
+			"from": [0, 14, 7],
+			"to": [16, 15, 9],
+			"rotation": {
+				"angle": 0,
+				"axis": "y",
+				"origin": [8, 8, 8]
+			},
+			"faces": {
+				"north": {
+					"uv": [0, 0, 16, 1],
+					"texture": "#st"
+				},
+				"east": {
+					"uv": [0, 0, 2, 1],
+					"texture": "#st"
+				},
+				"south": {
+					"uv": [0, 0, 16, 1],
+					"texture": "#st"
+				},
+				"west": {
+					"uv": [0, 0, 2, 1],
+					"texture": "#st"
+				},
+				"up": {
+					"uv": [0, 0, 16, 2],
+					"texture": "#st"
+				},
+				"down": {
+					"uv": [0, 0, 16, 2],
+					"texture": "#st"
+				}
+			}
+		},
+		{
+			"name": "lamp_work",
+			"from": [1.4, 5.4, -0.6],
+			"to": [2.6, 6.6, 0],
+			"rotation": {
+				"angle": 0,
+				"axis": "y",
+				"origin": [8, 8, 8]
+			},
+			"faces": {
+				"north": {
+					"uv": [0, 0, 1.2, 1.2],
+					"texture": "#loff"
+				},
+				"east": {
+					"uv": [0, 0, 0.6, 1.2],
+					"texture": "#loff"
+				},
+				"south": {
+					"uv": [0, 0, 1.2, 1.2],
+					"texture": "#loff"
+				},
+				"west": {
+					"uv": [0, 0, 0.6, 1.2],
+					"texture": "#loff"
+				},
+				"up": {
+					"uv": [0, 0, 1.2, 0.6],
+					"texture": "#loff"
+				},
+				"down": {
+					"uv": [0, 0, 1.2, 0.6],
+					"texture": "#loff"
+				}
+			}
+		}
+	]
+}

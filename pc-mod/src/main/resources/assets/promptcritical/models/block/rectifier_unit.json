@@ -1,0 +1,233 @@
+{
+	"credit": "Made with Blockbench",
+	"textures": {
+		"cub": "promptcritical:block/common/grid_copper_bar",
+		"dg": "promptcritical:block/common/grid_dark_grey",
+		"fef": "promptcritical:block/grid_fe_interface_front",
+		"lg": "promptcritical:block/common/lamp_green",
+		"louv": "promptcritical:block/common/plant_louver",
+		"r35": "promptcritical:block/common/grid_ral7035"
+	},
+	"elements": [
+		{
+			"name": "plinth",
+			"from": [0, 0, 1],
+			"to": [32, 1, 16],
+			"rotation": {
+				"angle": 0,
+				"axis": "y",
+				"origin": [8, 8, 8]
+			},
+			"faces": {
+				"north": {
+					"uv": [0, 0, 16, 1],
+					"texture": "#dg"
+				},
+				"east": {
+					"uv": [0, 0, 15, 1],
+					"texture": "#dg"
+				},
+				"south": {
+					"uv": [0, 0, 16, 1],
+					"texture": "#dg"
+				},
+				"west": {
+					"uv": [0, 0, 15, 1],
+					"texture": "#dg"
+				},
+				"up": {
+					"uv": [0, 0, 16, 15],
+					"texture": "#dg"
+				},
+				"down": {
+					"uv": [0, 0, 16, 15],
+					"texture": "#dg"
+				}
+			}
+		},
+		{
+			"name": "cab_w",
+			"from": [0, 1, 2],
+			"to": [15.5, 31, 16],
+			"rotation": {
+				"angle": 0,
+				"axis": "y",
+				"origin": [8, 8, 8]
+			},
+			"faces": {
+				"north": {
+					"uv": [0, 0, 16, 16],
+					"texture": "#louv"
+				},
+				"east": {
+					"uv": [0, 0, 14, 16],
+					"texture": "#r35"
+				},
+				"south": {
+					"uv": [0, 0, 15.5, 16],
+					"texture": "#r35"
+				},
+				"west": {
+					"uv": [0, 0, 14, 16],
+					"texture": "#r35"
+				},
+				"up": {
+					"uv": [0, 0, 15.5, 14],
+					"texture": "#r35"
+				},
+				"down": {
+					"uv": [0, 0, 15.5, 14],
+					"texture": "#r35"
+				}
+			}
+		},
+		{
+			"name": "cab_e",
+			"from": [16.5, 1, 2],
+			"to": [32, 31, 16],
+			"rotation": {
+				"angle": 0,
+				"axis": "y",
+				"origin": [8, 8, 8]
+			},
+			"faces": {
+				"north": {
+					"uv": [0, 0, 15.5, 16],
+					"texture": "#r35"
+				},
+				"east": {
+					"uv": [0, 0, 14, 16],
+					"texture": "#r35"
+				},
+				"south": {
+					"uv": [0, 0, 15.5, 16],
+					"texture": "#r35"
+				},
+				"west": {
+					"uv": [0, 0, 14, 16],
+					"texture": "#r35"
+				},
+				"up": {
+					"uv": [0, 0, 15.5, 14],
+					"texture": "#r35"
+				},
+				"down": {
+					"uv": [0, 0, 15.5, 14],
+					"texture": "#r35"
+				}
+			}
+		},
+		{
+			"name": "bus_out",
+			"from": [4, 31, 6],
+			"to": [28, 32, 10],
+			"rotation": {
+				"angle": 0,
+				"axis": "y",
+				"origin": [8, 8, 8]
+			},
+			"faces": {
+				"north": {
+					"uv": [0, 0, 16, 1],
+					"texture": "#cub"
+				},
+				"east": {
+					"uv": [0, 0, 4, 1],
+					"texture": "#cub"
+				},
+				"south": {
+					"uv": [0, 0, 16, 1],
+					"texture": "#cub"
+				},
+				"west": {
+					"uv": [0, 0, 4, 1],
+					"texture": "#cub"
+				},
+				"up": {
+					"uv": [0, 0, 16, 4],
+					"texture": "#cub"
+				},
+				"down": {
+					"uv": [0, 0, 16, 4],
+					"texture": "#cub"
+				}
+			}
+		},
+		{
+			"name": "door_e",
+			"from": [17, 2, 1.5],
+			"to": [31.5, 30, 2],
+			"rotation": {
+				"angle": 0,
+				"axis": "y",
+				"origin": [8, 8, 8]
+			},
+			"faces": {
+				"north": {
+					"uv": [0, 0, 16, 16],
+					"texture": "#fef"
+				},
+				"east": {
+					"uv": [0, 0, 0.5, 16],
+					"texture": "#r35"
+				},
+				"south": {
+					"uv": [0, 0, 14.5, 16],
+					"texture": "#r35"
+				},
+				"west": {
+					"uv": [0, 0, 0.5, 16],
+					"texture": "#r35"
+				},
+				"up": {
+					"uv": [0, 0, 14.5, 0.5],
+					"texture": "#r35"
+				},
+				"down": {
+					"uv": [0, 0, 14.5, 0.5],
+					"texture": "#r35"
+				}
+			}
+		},
+		{
+			"name": "glow_lamp",
+			"from": [7, 27, 1.4],
+			"to": [9, 29, 2],
+			"rotation": {
+				"angle": 0,
+				"axis": "y",
+				"origin": [8, 8, 8]
+			},
+			"faces": {
+				"north": {
+					"uv": [0, 0, 2, 2],
+					"texture": "#lg"
+				},
+				"east": {
+					"uv": [0, 0, 0.6, 2],
+					"texture": "#lg"
+				},
+				"south": {
+					"uv": [0, 0, 2, 2],
+					"texture": "#lg"
+				},
+				"west": {
+					"uv": [0, 0, 0.6, 2],
+					"texture": "#lg"
+				},
+				"up": {
+					"uv": [0, 0, 2, 0.6],
+					"texture": "#lg"
+				},
+				"down": {
+					"uv": [0, 0, 2, 0.6],
+					"texture": "#lg"
+				}
+			},
+			"neoforge_data": {
+				"block_light": 15,
+				"sky_light": 15
+			}
+		}
+	]
+}

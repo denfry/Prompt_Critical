@@ -1,0 +1,82 @@
+{
+	"credit": "Made with Blockbench",
+	"textures": {
+		"d": "promptcritical:block/common/steel_dark",
+		"ral": "promptcritical:block/common/auto_ral7035",
+		"sisd": "promptcritical:block/common/auto2_sis_door"
+	},
+	"elements": [
+		{
+			"name": "door",
+			"from": [1, 2, 0],
+			"to": [15, 24, 1],
+			"rotation": {
+				"angle": 0,
+				"axis": "y",
+				"origin": [8, 8, 8]
+			},
+			"faces": {
+				"north": {
+					"uv": [0, 0, 16, 16],
+					"texture": "#sisd"
+				},
+				"east": {
+					"uv": [0, 0, 1, 16],
+					"texture": "#ral"
+				},
+				"south": {
+					"uv": [0, 0, 14, 16],
+					"texture": "#ral"
+				},
+				"west": {
+					"uv": [0, 0, 1, 16],
+					"texture": "#ral"
+				},
+				"up": {
+					"uv": [0, 0, 14, 1],
+					"texture": "#ral"
+				},
+				"down": {
+					"uv": [0, 0, 14, 1],
+					"texture": "#ral"
+				}
+			}
+		},
+		{
+			"name": "handle",
+			"from": [13, 11, -0.6],
+			"to": [13.75, 15, 0],
+			"rotation": {
+				"angle": 0,
+				"axis": "y",
+				"origin": [8, 8, 8]
+			},
+			"faces": {
+				"north": {
+					"uv": [0, 0, 0.75, 4],
+					"texture": "#d"
+				},
+				"east": {
+					"uv": [0, 0, 0.6, 4],
+					"texture": "#d"
+				},
+				"south": {
+					"uv": [0, 0, 0.75, 4],
+					"texture": "#d"
+				},
+				"west": {
+					"uv": [0, 0, 0.6, 4],
+					"texture": "#d"
+				},
+				"up": {
+					"uv": [0, 0, 0.75, 0.6],
+					"texture": "#d"
+				},
+				"down": {
+					"uv": [0, 0, 0.75, 0.6],
+					"texture": "#d"
+				}
+			}
+		}
+	]
+}

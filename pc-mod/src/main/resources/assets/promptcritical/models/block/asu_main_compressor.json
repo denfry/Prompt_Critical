@@ -1,0 +1,264 @@
+{
+	"credit": "Made with Blockbench",
+	"textures": {
+		"air": "promptcritical:block/common/mining_pipe_air",
+		"d": "promptcritical:block/common/steel_dark",
+		"end": "promptcritical:block/common/pipe_end",
+		"mb": "promptcritical:block/common/motor_blue",
+		"p": "promptcritical:block/common/steel_plate"
+	},
+	"elements": [
+		{
+			"name": "skid",
+			"from": [-16, 0, 0],
+			"to": [32, 3, 32],
+			"rotation": {
+				"angle": 0,
+				"axis": "y",
+				"origin": [8, 8, 8]
+			},
+			"faces": {
+				"north": {
+					"uv": [0, 0, 16, 3],
+					"texture": "#d"
+				},
+				"east": {
+					"uv": [0, 0, 16, 3],
+					"texture": "#d"
+				},
+				"south": {
+					"uv": [0, 0, 16, 3],
+					"texture": "#d"
+				},
+				"west": {
+					"uv": [0, 0, 16, 3],
+					"texture": "#d"
+				},
+				"up": {
+					"uv": [0, 0, 16, 16],
+					"texture": "#d"
+				},
+				"down": {
+					"uv": [0, 0, 16, 16],
+					"texture": "#d"
+				}
+			}
+		},
+		{
+			"name": "motor",
+			"from": [-16, 3, 6],
+			"to": [-2, 17, 26],
+			"rotation": {
+				"angle": 0,
+				"axis": "y",
+				"origin": [8, 8, 8]
+			},
+			"faces": {
+				"north": {
+					"uv": [0, 0, 14, 14],
+					"texture": "#mb"
+				},
+				"east": {
+					"uv": [0, 0, 16, 14],
+					"texture": "#mb"
+				},
+				"south": {
+					"uv": [0, 0, 14, 14],
+					"texture": "#mb"
+				},
+				"west": {
+					"uv": [0, 0, 16, 14],
+					"texture": "#mb"
+				},
+				"up": {
+					"uv": [0, 0, 14, 16],
+					"texture": "#mb"
+				},
+				"down": {
+					"uv": [0, 0, 14, 16],
+					"texture": "#mb"
+				}
+			}
+		},
+		{
+			"name": "gearbox",
+			"from": [-2, 3, 8],
+			"to": [6, 15, 24],
+			"rotation": {
+				"angle": 0,
+				"axis": "y",
+				"origin": [8, 8, 8]
+			},
+			"faces": {
+				"north": {
+					"uv": [0, 0, 8, 12],
+					"texture": "#mb"
+				},
+				"east": {
+					"uv": [0, 0, 16, 12],
+					"texture": "#mb"
+				},
+				"south": {
+					"uv": [0, 0, 8, 12],
+					"texture": "#mb"
+				},
+				"west": {
+					"uv": [0, 0, 16, 12],
+					"texture": "#mb"
+				},
+				"up": {
+					"uv": [0, 0, 8, 16],
+					"texture": "#mb"
+				},
+				"down": {
+					"uv": [0, 0, 8, 16],
+					"texture": "#mb"
+				}
+			}
+		},
+		{
+			"name": "stage_1",
+			"from": [6, 3, 6],
+			"to": [16, 21, 26],
+			"rotation": {
+				"angle": 0,
+				"axis": "y",
+				"origin": [8, 8, 8]
+			},
+			"faces": {
+				"north": {
+					"uv": [0, 0, 10, 16],
+					"texture": "#p"
+				},
+				"east": {
+					"uv": [0, 0, 16, 16],
+					"texture": "#p"
+				},
+				"south": {
+					"uv": [0, 0, 10, 16],
+					"texture": "#p"
+				},
+				"west": {
+					"uv": [0, 0, 16, 16],
+					"texture": "#p"
+				},
+				"up": {
+					"uv": [0, 0, 10, 16],
+					"texture": "#p"
+				},
+				"down": {
+					"uv": [0, 0, 10, 16],
+					"texture": "#p"
+				}
+			}
+		},
+		{
+			"name": "stage_2",
+			"from": [18, 3, 8],
+			"to": [28, 19, 24],
+			"rotation": {
+				"angle": 0,
+				"axis": "y",
+				"origin": [8, 8, 8]
+			},
+			"faces": {
+				"north": {
+					"uv": [0, 0, 10, 16],
+					"texture": "#p"
+				},
+				"east": {
+					"uv": [0, 0, 16, 16],
+					"texture": "#p"
+				},
+				"south": {
+					"uv": [0, 0, 10, 16],
+					"texture": "#p"
+				},
+				"west": {
+					"uv": [0, 0, 16, 16],
+					"texture": "#p"
+				},
+				"up": {
+					"uv": [0, 0, 10, 16],
+					"texture": "#p"
+				},
+				"down": {
+					"uv": [0, 0, 10, 16],
+					"texture": "#p"
+				}
+			}
+		},
+		{
+			"name": "inlet",
+			"from": [8, 21, 12],
+			"to": [14, 32, 20],
+			"rotation": {
+				"angle": 0,
+				"axis": "y",
+				"origin": [8, 8, 8]
+			},
+			"faces": {
+				"north": {
+					"uv": [0, 0, 6, 11],
+					"texture": "#air"
+				},
+				"east": {
+					"uv": [0, 0, 8, 11],
+					"texture": "#air"
+				},
+				"south": {
+					"uv": [0, 0, 6, 11],
+					"texture": "#air"
+				},
+				"west": {
+					"uv": [0, 0, 8, 11],
+					"texture": "#air"
+				},
+				"up": {
+					"uv": [0, 0, 6, 8],
+					"texture": "#end"
+				},
+				"down": {
+					"uv": [0, 0, 6, 8],
+					"texture": "#air"
+				}
+			}
+		},
+		{
+			"name": "intercooler",
+			"from": [16, 21, 4],
+			"to": [32, 29, 28],
+			"rotation": {
+				"angle": 0,
+				"axis": "y",
+				"origin": [8, 8, 8]
+			},
+			"faces": {
+				"north": {
+					"uv": [0, 0, 16, 8],
+					"texture": "#air"
+				},
+				"east": {
+					"uv": [0, 0, 16, 8],
+					"texture": "#air"
+				},
+				"south": {
+					"uv": [0, 0, 16, 8],
+					"texture": "#air"
+				},
+				"west": {
+					"uv": [0, 0, 16, 8],
+					"texture": "#air"
+				},
+				"up": {
+					"uv": [0, 0, 16, 16],
+					"texture": "#air"
+				},
+				"down": {
+					"uv": [0, 0, 16, 16],
+					"texture": "#air"
+				}
+			}
+		}
+	]
+}

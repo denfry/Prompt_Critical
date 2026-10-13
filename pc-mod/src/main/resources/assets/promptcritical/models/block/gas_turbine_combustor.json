@@ -1,0 +1,192 @@
+{
+	"credit": "Made with Blockbench",
+	"textures": {
+		"d": "promptcritical:block/common/steel_dark",
+		"gas": "promptcritical:block/common/mining_pipe_gas",
+		"louv": "promptcritical:block/common/plant_louver",
+		"ral": "promptcritical:block/common/auto_ral7035",
+		"rals": "promptcritical:block/common/auto_ral7035_smooth"
+	},
+	"elements": [
+		{
+			"name": "base",
+			"from": [-16, -16, -16],
+			"to": [32, -14, 32],
+			"rotation": {
+				"angle": 0,
+				"axis": "y",
+				"origin": [8, 8, 8]
+			},
+			"faces": {
+				"north": {
+					"uv": [0, 0, 16, 2],
+					"texture": "#d"
+				},
+				"east": {
+					"uv": [0, 0, 16, 2],
+					"texture": "#d"
+				},
+				"south": {
+					"uv": [0, 0, 16, 2],
+					"texture": "#d"
+				},
+				"west": {
+					"uv": [0, 0, 16, 2],
+					"texture": "#d"
+				},
+				"up": {
+					"uv": [0, 0, 16, 16],
+					"texture": "#d"
+				},
+				"down": {
+					"uv": [0, 0, 16, 16],
+					"texture": "#d"
+				}
+			}
+		},
+		{
+			"name": "enclosure",
+			"from": [-14, -14, -16],
+			"to": [30, 18, 32],
+			"rotation": {
+				"angle": 0,
+				"axis": "y",
+				"origin": [8, 8, 8]
+			},
+			"faces": {
+				"north": {
+					"uv": [0, 0, 16, 16],
+					"texture": "#ral"
+				},
+				"east": {
+					"uv": [0, 0, 16, 16],
+					"texture": "#louv"
+				},
+				"south": {
+					"uv": [0, 0, 16, 16],
+					"texture": "#ral"
+				},
+				"west": {
+					"uv": [0, 0, 16, 16],
+					"texture": "#louv"
+				},
+				"up": {
+					"uv": [0, 0, 16, 16],
+					"texture": "#ral"
+				},
+				"down": {
+					"uv": [0, 0, 16, 16],
+					"texture": "#ral"
+				}
+			}
+		},
+		{
+			"name": "roof",
+			"from": [-15, 18, -16],
+			"to": [31, 20, 32],
+			"rotation": {
+				"angle": 0,
+				"axis": "y",
+				"origin": [8, 8, 8]
+			},
+			"faces": {
+				"north": {
+					"uv": [0, 0, 16, 2],
+					"texture": "#rals"
+				},
+				"east": {
+					"uv": [0, 0, 16, 2],
+					"texture": "#rals"
+				},
+				"south": {
+					"uv": [0, 0, 16, 2],
+					"texture": "#rals"
+				},
+				"west": {
+					"uv": [0, 0, 16, 2],
+					"texture": "#rals"
+				},
+				"up": {
+					"uv": [0, 0, 16, 16],
+					"texture": "#rals"
+				},
+				"down": {
+					"uv": [0, 0, 16, 16],
+					"texture": "#rals"
+				}
+			}
+		},
+		{
+			"name": "fuel_line",
+			"from": [-16, 0, 6],
+			"to": [-14, 2, 10],
+			"rotation": {
+				"angle": 0,
+				"axis": "y",
+				"origin": [8, 8, 8]
+			},
+			"faces": {
+				"north": {
+					"uv": [0, 0, 2, 2],
+					"texture": "#gas"
+				},
+				"east": {
+					"uv": [0, 0, 4, 2],
+					"texture": "#gas"
+				},
+				"south": {
+					"uv": [0, 0, 2, 2],
+					"texture": "#gas"
+				},
+				"west": {
+					"uv": [0, 0, 4, 2],
+					"texture": "#gas"
+				},
+				"up": {
+					"uv": [0, 0, 2, 4],
+					"texture": "#gas"
+				},
+				"down": {
+					"uv": [0, 0, 2, 4],
+					"texture": "#gas"
+				}
+			}
+		},
+		{
+			"name": "vent_fan",
+			"from": [2, 20, 2],
+			"to": [14, 22, 14],
+			"rotation": {
+				"angle": 0,
+				"axis": "y",
+				"origin": [8, 8, 8]
+			},
+			"faces": {
+				"north": {
+					"uv": [0, 0, 12, 2],
+					"texture": "#d"
+				},
+				"east": {
+					"uv": [0, 0, 12, 2],
+					"texture": "#d"
+				},
+				"south": {
+					"uv": [0, 0, 12, 2],
+					"texture": "#d"
+				},
+				"west": {
+					"uv": [0, 0, 12, 2],
+					"texture": "#d"
+				},
+				"up": {
+					"uv": [0, 0, 12, 12],
+					"texture": "#d"
+				},
+				"down": {
+					"uv": [0, 0, 12, 12],
+					"texture": "#d"
+				}
+			}
+		}
+	]
+}

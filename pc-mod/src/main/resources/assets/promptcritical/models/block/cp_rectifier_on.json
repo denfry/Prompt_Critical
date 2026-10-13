@@ -1,0 +1,159 @@
+{
+	"credit": "Made with Blockbench",
+	"textures": {
+		"d": "promptcritical:block/common/steel_dark",
+		"lg": "promptcritical:block/common/lamp_green",
+		"r32": "promptcritical:block/common/grid_ral7032",
+		"vent": "promptcritical:block/common/w2_vents"
+	},
+	"elements": [
+		{
+			"name": "body",
+			"from": [1, 1, 3],
+			"to": [15, 30, 15],
+			"rotation": {
+				"angle": 0,
+				"axis": "y",
+				"origin": [8, 8, 8]
+			},
+			"faces": {
+				"north": {
+					"uv": [0, 0, 14, 16],
+					"texture": "#r32"
+				},
+				"east": {
+					"uv": [0, 0, 12, 16],
+					"texture": "#r32"
+				},
+				"south": {
+					"uv": [0, 0, 14, 16],
+					"texture": "#r32"
+				},
+				"west": {
+					"uv": [0, 0, 12, 16],
+					"texture": "#r32"
+				},
+				"up": {
+					"uv": [0, 0, 14, 12],
+					"texture": "#r32"
+				},
+				"down": {
+					"uv": [0, 0, 14, 12],
+					"texture": "#r32"
+				}
+			}
+		},
+		{
+			"name": "plinth",
+			"from": [1.5, 0, 3.5],
+			"to": [14.5, 1, 14.5],
+			"rotation": {
+				"angle": 0,
+				"axis": "y",
+				"origin": [8, 8, 8]
+			},
+			"faces": {
+				"north": {
+					"uv": [0, 0, 13, 1],
+					"texture": "#d"
+				},
+				"east": {
+					"uv": [0, 0, 11, 1],
+					"texture": "#d"
+				},
+				"south": {
+					"uv": [0, 0, 13, 1],
+					"texture": "#d"
+				},
+				"west": {
+					"uv": [0, 0, 11, 1],
+					"texture": "#d"
+				},
+				"up": {
+					"uv": [0, 0, 13, 11],
+					"texture": "#d"
+				},
+				"down": {
+					"uv": [0, 0, 13, 11],
+					"texture": "#d"
+				}
+			}
+		},
+		{
+			"name": "vent",
+			"from": [3, 4, 2.9],
+			"to": [13, 10, 3],
+			"rotation": {
+				"angle": 0,
+				"axis": "y",
+				"origin": [8, 8, 8]
+			},
+			"faces": {
+				"north": {
+					"uv": [0, 0, 10, 6],
+					"texture": "#vent"
+				},
+				"east": {
+					"uv": [0, 0, 0.1, 6],
+					"texture": "#vent"
+				},
+				"south": {
+					"uv": [0, 0, 10, 6],
+					"texture": "#vent"
+				},
+				"west": {
+					"uv": [0, 0, 0.1, 6],
+					"texture": "#vent"
+				},
+				"up": {
+					"uv": [0, 0, 10, 0.1],
+					"texture": "#vent"
+				},
+				"down": {
+					"uv": [0, 0, 10, 0.1],
+					"texture": "#vent"
+				}
+			}
+		},
+		{
+			"name": "glow_lamp_on",
+			"from": [7.3, 25.3, 2.4],
+			"to": [8.7, 26.7, 3],
+			"rotation": {
+				"angle": 0,
+				"axis": "y",
+				"origin": [8, 8, 8]
+			},
+			"faces": {
+				"north": {
+					"uv": [0, 0, 1.4, 1.4],
+					"texture": "#lg"
+				},
+				"east": {
+					"uv": [0, 0, 0.6, 1.4],
+					"texture": "#lg"
+				},
+				"south": {
+					"uv": [0, 0, 1.4, 1.4],
+					"texture": "#lg"
+				},
+				"west": {
+					"uv": [0, 0, 0.6, 1.4],
+					"texture": "#lg"
+				},
+				"up": {
+					"uv": [0, 0, 1.4, 0.6],
+					"texture": "#lg"
+				},
+				"down": {
+					"uv": [0, 0, 1.4, 0.6],
+					"texture": "#lg"
+				}
+			},
+			"neoforge_data": {
+				"block_light": 15,
+				"sky_light": 15
+			}
+		}
+	]
+}

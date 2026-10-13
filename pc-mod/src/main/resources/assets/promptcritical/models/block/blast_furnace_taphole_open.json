@@ -1,0 +1,122 @@
+{
+	"credit": "Made with Blockbench",
+	"textures": {
+		"ci": "promptcritical:block/common/grid_cast_iron",
+		"fb": "promptcritical:block/common/mining_firebrick",
+		"hot": "promptcritical:block/common/fuelcycle_glow_hot"
+	},
+	"elements": [
+		{
+			"name": "brick",
+			"from": [0, 0, 1],
+			"to": [16, 16, 16],
+			"rotation": {
+				"angle": 0,
+				"axis": "y",
+				"origin": [8, 8, 8]
+			},
+			"faces": {
+				"north": {
+					"uv": [0, 0, 16, 16],
+					"texture": "#fb"
+				},
+				"east": {
+					"uv": [0, 0, 15, 16],
+					"texture": "#fb"
+				},
+				"south": {
+					"uv": [0, 0, 16, 16],
+					"texture": "#fb"
+				},
+				"west": {
+					"uv": [0, 0, 15, 16],
+					"texture": "#fb"
+				},
+				"up": {
+					"uv": [0, 0, 16, 15],
+					"texture": "#fb"
+				},
+				"down": {
+					"uv": [0, 0, 16, 15],
+					"texture": "#fb"
+				}
+			}
+		},
+		{
+			"name": "frame",
+			"from": [4, 4, 0],
+			"to": [12, 12, 1],
+			"rotation": {
+				"angle": 0,
+				"axis": "y",
+				"origin": [8, 8, 8]
+			},
+			"faces": {
+				"north": {
+					"uv": [0, 0, 8, 8],
+					"texture": "#ci"
+				},
+				"east": {
+					"uv": [0, 0, 1, 8],
+					"texture": "#ci"
+				},
+				"south": {
+					"uv": [0, 0, 8, 8],
+					"texture": "#ci"
+				},
+				"west": {
+					"uv": [0, 0, 1, 8],
+					"texture": "#ci"
+				},
+				"up": {
+					"uv": [0, 0, 8, 1],
+					"texture": "#ci"
+				},
+				"down": {
+					"uv": [0, 0, 8, 1],
+					"texture": "#ci"
+				}
+			}
+		},
+		{
+			"name": "glow_stream",
+			"from": [6.5, -4, -6],
+			"to": [9.5, 7, 1],
+			"rotation": {
+				"angle": 0,
+				"axis": "y",
+				"origin": [8, 8, 8]
+			},
+			"faces": {
+				"north": {
+					"uv": [0, 0, 3, 11],
+					"texture": "#hot"
+				},
+				"east": {
+					"uv": [0, 0, 7, 11],
+					"texture": "#hot"
+				},
+				"south": {
+					"uv": [0, 0, 3, 11],
+					"texture": "#hot"
+				},
+				"west": {
+					"uv": [0, 0, 7, 11],
+					"texture": "#hot"
+				},
+				"up": {
+					"uv": [0, 0, 3, 7],
+					"texture": "#hot"
+				},
+				"down": {
+					"uv": [0, 0, 3, 7],
+					"texture": "#hot"
+				}
+			},
+			"neoforge_data": {
+				"block_light": 15,
+				"sky_light": 15
+			}
+		}
+	]
+}

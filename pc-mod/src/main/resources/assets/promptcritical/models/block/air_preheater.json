@@ -1,0 +1,82 @@
+{
+	"credit": "Made with Blockbench",
+	"textures": {
+		"air": "promptcritical:block/common/mining_pipe_air",
+		"cair": "promptcritical:block/common/grid_coils_air",
+		"louv": "promptcritical:block/common/plant_louver"
+	},
+	"elements": [
+		{
+			"name": "casing",
+			"from": [0, 0, 0],
+			"to": [16, 16, 16],
+			"rotation": {
+				"angle": 0,
+				"axis": "y",
+				"origin": [8, 8, 8]
+			},
+			"faces": {
+				"north": {
+					"uv": [0, 0, 16, 16],
+					"texture": "#cair"
+				},
+				"east": {
+					"uv": [0, 0, 16, 16],
+					"texture": "#cair"
+				},
+				"south": {
+					"uv": [0, 0, 16, 16],
+					"texture": "#cair"
+				},
+				"west": {
+					"uv": [0, 0, 16, 16],
+					"texture": "#cair"
+				},
+				"up": {
+					"uv": [0, 0, 16, 16],
+					"texture": "#louv"
+				},
+				"down": {
+					"uv": [0, 0, 16, 16],
+					"texture": "#louv"
+				}
+			}
+		},
+		{
+			"name": "duct_n",
+			"from": [3, 3, -0.5],
+			"to": [13, 13, 0.5],
+			"rotation": {
+				"angle": 0,
+				"axis": "y",
+				"origin": [8, 8, 8]
+			},
+			"faces": {
+				"north": {
+					"uv": [0, 0, 10, 10],
+					"texture": "#louv"
+				},
+				"east": {
+					"uv": [0, 0, 1, 10],
+					"texture": "#air"
+				},
+				"south": {
+					"uv": [0, 0, 10, 10],
+					"texture": "#air"
+				},
+				"west": {
+					"uv": [0, 0, 1, 10],
+					"texture": "#air"
+				},
+				"up": {
+					"uv": [0, 0, 10, 1],
+					"texture": "#air"
+				},
+				"down": {
+					"uv": [0, 0, 10, 1],
+					"texture": "#air"
+				}
+			}
+		}
+	]
+}

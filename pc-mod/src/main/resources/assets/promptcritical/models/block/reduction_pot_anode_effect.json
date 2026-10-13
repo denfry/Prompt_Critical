@@ -1,0 +1,195 @@
+{
+	"credit": "Made with Blockbench",
+	"textures": {
+		"al": "promptcritical:block/common/grid_aluminium",
+		"d": "promptcritical:block/common/steel_dark",
+		"hot": "promptcritical:block/common/fuelcycle_glow_hot",
+		"riv": "promptcritical:block/common/grid_riveted"
+	},
+	"elements": [
+		{
+			"name": "shell",
+			"from": [-16, 0, -15],
+			"to": [32, 12, 32],
+			"rotation": {
+				"angle": 0,
+				"axis": "y",
+				"origin": [8, 8, 8]
+			},
+			"faces": {
+				"north": {
+					"uv": [0, 0, 16, 12],
+					"texture": "#riv"
+				},
+				"east": {
+					"uv": [0, 0, 16, 12],
+					"texture": "#riv"
+				},
+				"south": {
+					"uv": [0, 0, 16, 12],
+					"texture": "#riv"
+				},
+				"west": {
+					"uv": [0, 0, 16, 12],
+					"texture": "#riv"
+				},
+				"up": {
+					"uv": [0, 0, 16, 16],
+					"texture": "#riv"
+				},
+				"down": {
+					"uv": [0, 0, 16, 16],
+					"texture": "#riv"
+				}
+			}
+		},
+		{
+			"name": "cradles",
+			"from": [-16, 0, -15.5],
+			"to": [32, 2, -15],
+			"rotation": {
+				"angle": 0,
+				"axis": "y",
+				"origin": [8, 8, 8]
+			},
+			"faces": {
+				"north": {
+					"uv": [0, 0, 16, 2],
+					"texture": "#d"
+				},
+				"east": {
+					"uv": [0, 0, 0.5, 2],
+					"texture": "#d"
+				},
+				"south": {
+					"uv": [0, 0, 16, 2],
+					"texture": "#d"
+				},
+				"west": {
+					"uv": [0, 0, 0.5, 2],
+					"texture": "#d"
+				},
+				"up": {
+					"uv": [0, 0, 16, 0.5],
+					"texture": "#d"
+				},
+				"down": {
+					"uv": [0, 0, 16, 0.5],
+					"texture": "#d"
+				}
+			}
+		},
+		{
+			"name": "glow_bath",
+			"from": [-14, 11, -14],
+			"to": [30, 12, 30],
+			"rotation": {
+				"angle": 0,
+				"axis": "y",
+				"origin": [8, 8, 8]
+			},
+			"faces": {
+				"north": {
+					"uv": [0, 0, 16, 1],
+					"texture": "#hot"
+				},
+				"east": {
+					"uv": [0, 0, 16, 1],
+					"texture": "#hot"
+				},
+				"south": {
+					"uv": [0, 0, 16, 1],
+					"texture": "#hot"
+				},
+				"west": {
+					"uv": [0, 0, 16, 1],
+					"texture": "#hot"
+				},
+				"up": {
+					"uv": [0, 0, 16, 16],
+					"texture": "#hot"
+				},
+				"down": {
+					"uv": [0, 0, 16, 16],
+					"texture": "#hot"
+				}
+			},
+			"neoforge_data": {
+				"block_light": 15,
+				"sky_light": 15
+			}
+		},
+		{
+			"name": "bus_n",
+			"from": [-16, 6, -16],
+			"to": [32, 9, -15.5],
+			"rotation": {
+				"angle": 0,
+				"axis": "y",
+				"origin": [8, 8, 8]
+			},
+			"faces": {
+				"north": {
+					"uv": [0, 0, 16, 3],
+					"texture": "#al"
+				},
+				"east": {
+					"uv": [0, 0, 0.5, 3],
+					"texture": "#al"
+				},
+				"south": {
+					"uv": [0, 0, 16, 3],
+					"texture": "#al"
+				},
+				"west": {
+					"uv": [0, 0, 0.5, 3],
+					"texture": "#al"
+				},
+				"up": {
+					"uv": [0, 0, 16, 0.5],
+					"texture": "#al"
+				},
+				"down": {
+					"uv": [0, 0, 16, 0.5],
+					"texture": "#al"
+				}
+			}
+		},
+		{
+			"name": "superstructure",
+			"from": [-4, 12, -2],
+			"to": [20, 30, 2],
+			"rotation": {
+				"angle": 0,
+				"axis": "y",
+				"origin": [8, 8, 8]
+			},
+			"faces": {
+				"north": {
+					"uv": [0, 0, 16, 16],
+					"texture": "#d"
+				},
+				"east": {
+					"uv": [0, 0, 4, 16],
+					"texture": "#d"
+				},
+				"south": {
+					"uv": [0, 0, 16, 16],
+					"texture": "#d"
+				},
+				"west": {
+					"uv": [0, 0, 4, 16],
+					"texture": "#d"
+				},
+				"up": {
+					"uv": [0, 0, 16, 4],
+					"texture": "#d"
+				},
+				"down": {
+					"uv": [0, 0, 16, 4],
+					"texture": "#d"
+				}
+			}
+		}
+	]
+}

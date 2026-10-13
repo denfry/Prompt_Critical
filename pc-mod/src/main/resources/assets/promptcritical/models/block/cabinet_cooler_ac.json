@@ -1,0 +1,122 @@
+{
+	"credit": "Made with Blockbench",
+	"textures": {
+		"lb": "promptcritical:block/common/plant_lamp_blue",
+		"vent": "promptcritical:block/common/w2_vents",
+		"w": "promptcritical:block/common/w2_white"
+	},
+	"elements": [
+		{
+			"name": "body",
+			"from": [2, 1, 10],
+			"to": [14, 15, 16],
+			"rotation": {
+				"angle": 0,
+				"axis": "y",
+				"origin": [8, 8, 8]
+			},
+			"faces": {
+				"north": {
+					"uv": [0, 0, 12, 14],
+					"texture": "#w"
+				},
+				"east": {
+					"uv": [0, 0, 6, 14],
+					"texture": "#w"
+				},
+				"south": {
+					"uv": [0, 0, 12, 14],
+					"texture": "#w"
+				},
+				"west": {
+					"uv": [0, 0, 6, 14],
+					"texture": "#w"
+				},
+				"up": {
+					"uv": [0, 0, 12, 6],
+					"texture": "#w"
+				},
+				"down": {
+					"uv": [0, 0, 12, 6],
+					"texture": "#w"
+				}
+			}
+		},
+		{
+			"name": "grille",
+			"from": [4, 3, 9.5],
+			"to": [12, 11, 10],
+			"rotation": {
+				"angle": 0,
+				"axis": "y",
+				"origin": [8, 8, 8]
+			},
+			"faces": {
+				"north": {
+					"uv": [0, 0, 8, 8],
+					"texture": "#vent"
+				},
+				"east": {
+					"uv": [0, 0, 0.5, 8],
+					"texture": "#vent"
+				},
+				"south": {
+					"uv": [0, 0, 8, 8],
+					"texture": "#vent"
+				},
+				"west": {
+					"uv": [0, 0, 0.5, 8],
+					"texture": "#vent"
+				},
+				"up": {
+					"uv": [0, 0, 8, 0.5],
+					"texture": "#vent"
+				},
+				"down": {
+					"uv": [0, 0, 8, 0.5],
+					"texture": "#vent"
+				}
+			}
+		},
+		{
+			"name": "glow_led_mode",
+			"from": [11.5, 12.5, 9.4],
+			"to": [12.5, 13.5, 10],
+			"rotation": {
+				"angle": 0,
+				"axis": "y",
+				"origin": [8, 8, 8]
+			},
+			"faces": {
+				"north": {
+					"uv": [0, 0, 1, 1],
+					"texture": "#lb"
+				},
+				"east": {
+					"uv": [0, 0, 0.6, 1],
+					"texture": "#lb"
+				},
+				"south": {
+					"uv": [0, 0, 1, 1],
+					"texture": "#lb"
+				},
+				"west": {
+					"uv": [0, 0, 0.6, 1],
+					"texture": "#lb"
+				},
+				"up": {
+					"uv": [0, 0, 1, 0.6],
+					"texture": "#lb"
+				},
+				"down": {
+					"uv": [0, 0, 1, 0.6],
+					"texture": "#lb"
+				}
+			},
+			"neoforge_data": {
+				"block_light": 15,
+				"sky_light": 15
+			}
+		}
+	]
+}

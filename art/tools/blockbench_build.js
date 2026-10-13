@@ -8,7 +8,7 @@
   const DIRS = ['north', 'south', 'east', 'west', 'up', 'down'];
 
   function build(root, spec) {
-    const texRoot = path.join(root, 'src/main/resources/assets/promptcritical/textures');
+    const texRoot = path.join(root, 'pc-mod/src/main/resources/assets/promptcritical/textures');
     newProject(Formats.java_block);
     Project.name = spec.id.split('/').pop();
     const tm = {};
@@ -28,6 +28,20 @@
     }
     Canvas.updateAll();
     return Project;
+  }
+
+  // Camera along the default diagonal, distance scaled to the model extent (at least one block).
+  function frame(view, spec) {
+    const lo = [Infinity, Infinity, Infinity], hi = [-Infinity, -Infinity, -Infinity];
+    for (const e of spec.elements) {
+      for (let k = 0; k < 3; k++) { lo[k] = Math.min(lo[k], e.from[k]); hi[k] = Math.max(hi[k], e.to[k]); }
+    }
+    const c = [(lo[0] + hi[0]) / 2 - 8, (lo[1] + hi[1]) / 2, (lo[2] + hi[2]) / 2 - 8];
+    const k = Math.max(1, 0.6 * Math.max(hi[0] - lo[0], hi[1] - lo[1], hi[2] - lo[2]) / 16);
+    if (k === 1) { c[0] = 0; c[1] = 12; c[2] = 0; }
+    view.camera.position.set(c[0] - 40 * k, c[1] + 20 * k, c[2] - 40 * k);
+    view.controls.target.set(c[0], c[1], c[2]);
+    view.controls.update();
   }
 
   // Offscreen render with grid/ground hidden and a transparent background.
@@ -55,9 +69,10 @@
     for (const e of j.elements || []) {
       if ((e.name || '').startsWith('glow_')) e.neoforge_data = { block_light: 15, sky_light: 15 };
     }
-    const jp = path.join(root, 'src/main/resources/assets/promptcritical/models', spec.java + '.json');
+    const jp = path.join(root, 'pc-mod/src/main/resources/assets/promptcritical/models', spec.java + '.json');
     fs.mkdirSync(path.dirname(jp), { recursive: true });
     fs.writeFileSync(jp, compileJSON(j));
+    if (view) frame(view, spec);
     if (view) shot(view, path.join(root, 'art/preview/models', spec.cat, spec.id.replace(/\//g, '__') + '.png'));
   }
 
@@ -85,5 +100,16 @@
     }
     window.PC_PENDING = [];
     return done.length;
+  };
+
+  // Whole range in one call: build a batch, wait for textures, flush; returns saved counts per batch.
+  window.pcAll = async function (root, specFile, from, to, step = 20) {
+    const out = [];
+    for (let i = from; i < to; i += step) {
+      pcRun(root, specFile, { from: i, count: Math.min(step, to - i) });
+      await new Promise((res) => setTimeout(res, 1500));
+      out.push(pcFlush());
+    }
+    return out;
   };
 })();

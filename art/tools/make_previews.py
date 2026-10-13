@@ -2,7 +2,7 @@
 
 usage: python art/tools/make_previews.py <repo_root> <registry.json>
 Inputs:  art/preview/models/<category>/<id>.png  (written by blockbench_build.js)
-         src/main/resources/assets/promptcritical/textures/**.png
+         pc-mod/src/main/resources/assets/promptcritical/textures/**.png
 Outputs: art/preview/sheets/*.png
 """
 import json, os, sys
@@ -11,7 +11,7 @@ from PIL import Image, ImageDraw, ImageFont
 
 ROOT = sys.argv[1]
 REG = json.load(open(sys.argv[2], encoding="utf8"))
-TEX = os.path.join(ROOT, "src/main/resources/assets/promptcritical/textures")
+TEX = os.path.join(ROOT, "pc-mod/src/main/resources/assets/promptcritical/textures")
 OUT = os.path.join(ROOT, "art/preview/sheets")
 os.makedirs(OUT, exist_ok=True)
 BG, INK, MUTED = (232, 236, 229), (28, 36, 31), (95, 108, 99)

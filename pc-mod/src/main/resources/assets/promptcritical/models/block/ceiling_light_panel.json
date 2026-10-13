@@ -1,0 +1,85 @@
+{
+	"credit": "Made with Blockbench",
+	"textures": {
+		"ct": "promptcritical:block/decor/ceiling_tile",
+		"lp": "promptcritical:block/decor/ceiling_light_panel"
+	},
+	"elements": [
+		{
+			"name": "frame",
+			"from": [0, 15, 0],
+			"to": [16, 16, 16],
+			"rotation": {
+				"angle": 0,
+				"axis": "y",
+				"origin": [8, 8, 8]
+			},
+			"faces": {
+				"north": {
+					"uv": [0, 0, 16, 1],
+					"texture": "#ct"
+				},
+				"east": {
+					"uv": [0, 0, 16, 1],
+					"texture": "#ct"
+				},
+				"south": {
+					"uv": [0, 0, 16, 1],
+					"texture": "#ct"
+				},
+				"west": {
+					"uv": [0, 0, 16, 1],
+					"texture": "#ct"
+				},
+				"up": {
+					"uv": [0, 0, 16, 16],
+					"texture": "#ct"
+				},
+				"down": {
+					"uv": [0, 0, 16, 16],
+					"texture": "#ct"
+				}
+			}
+		},
+		{
+			"name": "glow_diffuser",
+			"from": [1, 14.5, 1],
+			"to": [15, 15, 15],
+			"rotation": {
+				"angle": 0,
+				"axis": "y",
+				"origin": [8, 8, 8]
+			},
+			"faces": {
+				"north": {
+					"uv": [0, 0, 14, 0.5],
+					"texture": "#lp"
+				},
+				"east": {
+					"uv": [0, 0, 14, 0.5],
+					"texture": "#lp"
+				},
+				"south": {
+					"uv": [0, 0, 14, 0.5],
+					"texture": "#lp"
+				},
+				"west": {
+					"uv": [0, 0, 14, 0.5],
+					"texture": "#lp"
+				},
+				"up": {
+					"uv": [0, 0, 14, 14],
+					"texture": "#lp"
+				},
+				"down": {
+					"uv": [0, 0, 14, 14],
+					"texture": "#lp"
+				}
+			},
+			"neoforge_data": {
+				"block_light": 15,
+				"sky_light": 15
+			}
+		}
+	]
+}

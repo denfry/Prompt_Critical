@@ -1,0 +1,233 @@
+{
+	"credit": "Made with Blockbench",
+	"textures": {
+		"bs": "promptcritical:block/common/brass_smooth",
+		"d": "promptcritical:block/common/steel_dark",
+		"exy": "promptcritical:block/common/auto_ex_yellow",
+		"lr": "promptcritical:block/common/lamp_red",
+		"mesh": "promptcritical:block/common/auto_sensor_mesh",
+		"st": "promptcritical:block/common/steel_bare"
+	},
+	"elements": [
+		{
+			"name": "bracket",
+			"from": [4, 3, 15],
+			"to": [12, 15, 16],
+			"rotation": {
+				"angle": 0,
+				"axis": "y",
+				"origin": [8, 8, 8]
+			},
+			"faces": {
+				"north": {
+					"uv": [0, 0, 8, 12],
+					"texture": "#d"
+				},
+				"east": {
+					"uv": [0, 0, 1, 12],
+					"texture": "#d"
+				},
+				"south": {
+					"uv": [0, 0, 8, 12],
+					"texture": "#d"
+				},
+				"west": {
+					"uv": [0, 0, 1, 12],
+					"texture": "#d"
+				},
+				"up": {
+					"uv": [0, 0, 8, 1],
+					"texture": "#d"
+				},
+				"down": {
+					"uv": [0, 0, 8, 1],
+					"texture": "#d"
+				}
+			}
+		},
+		{
+			"name": "body",
+			"from": [5, 4, 9],
+			"to": [11, 14, 15],
+			"rotation": {
+				"angle": 0,
+				"axis": "y",
+				"origin": [8, 8, 8]
+			},
+			"faces": {
+				"north": {
+					"uv": [0, 0, 6, 10],
+					"texture": "#exy"
+				},
+				"east": {
+					"uv": [0, 0, 6, 10],
+					"texture": "#exy"
+				},
+				"south": {
+					"uv": [0, 0, 6, 10],
+					"texture": "#exy"
+				},
+				"west": {
+					"uv": [0, 0, 6, 10],
+					"texture": "#exy"
+				},
+				"up": {
+					"uv": [0, 0, 6, 6],
+					"texture": "#exy"
+				},
+				"down": {
+					"uv": [0, 0, 6, 6],
+					"texture": "#exy"
+				}
+			}
+		},
+		{
+			"name": "cover",
+			"from": [4.5, 11, 8.5],
+			"to": [11.5, 14.5, 15],
+			"rotation": {
+				"angle": 0,
+				"axis": "y",
+				"origin": [8, 8, 8]
+			},
+			"faces": {
+				"north": {
+					"uv": [0, 0, 7, 3.5],
+					"texture": "#exy"
+				},
+				"east": {
+					"uv": [0, 0, 6.5, 3.5],
+					"texture": "#exy"
+				},
+				"south": {
+					"uv": [0, 0, 7, 3.5],
+					"texture": "#exy"
+				},
+				"west": {
+					"uv": [0, 0, 6.5, 3.5],
+					"texture": "#exy"
+				},
+				"up": {
+					"uv": [0, 0, 7, 6.5],
+					"texture": "#exy"
+				},
+				"down": {
+					"uv": [0, 0, 7, 6.5],
+					"texture": "#exy"
+				}
+			}
+		},
+		{
+			"name": "gland",
+			"from": [10.5, 6, 11],
+			"to": [12.5, 8, 13],
+			"rotation": {
+				"angle": 0,
+				"axis": "y",
+				"origin": [8, 8, 8]
+			},
+			"faces": {
+				"north": {
+					"uv": [0, 0, 2, 2],
+					"texture": "#bs"
+				},
+				"east": {
+					"uv": [0, 0, 2, 2],
+					"texture": "#bs"
+				},
+				"south": {
+					"uv": [0, 0, 2, 2],
+					"texture": "#bs"
+				},
+				"west": {
+					"uv": [0, 0, 2, 2],
+					"texture": "#bs"
+				},
+				"up": {
+					"uv": [0, 0, 2, 2],
+					"texture": "#bs"
+				},
+				"down": {
+					"uv": [0, 0, 2, 2],
+					"texture": "#bs"
+				}
+			}
+		},
+		{
+			"name": "sensor",
+			"from": [6, 2, 10],
+			"to": [10, 4, 14],
+			"rotation": {
+				"angle": 0,
+				"axis": "y",
+				"origin": [8, 8, 8]
+			},
+			"faces": {
+				"north": {
+					"uv": [0, 0, 4, 2],
+					"texture": "#st"
+				},
+				"east": {
+					"uv": [0, 0, 4, 2],
+					"texture": "#st"
+				},
+				"south": {
+					"uv": [0, 0, 4, 2],
+					"texture": "#st"
+				},
+				"west": {
+					"uv": [0, 0, 4, 2],
+					"texture": "#st"
+				},
+				"up": {
+					"uv": [0, 0, 4, 4],
+					"texture": "#st"
+				},
+				"down": {
+					"uv": [0, 0, 4, 4],
+					"texture": "#mesh"
+				}
+			}
+		},
+		{
+			"name": "glow_status",
+			"from": [7, 12, 8],
+			"to": [9, 13.5, 8.5],
+			"rotation": {
+				"angle": 0,
+				"axis": "y",
+				"origin": [8, 8, 8]
+			},
+			"faces": {
+				"north": {
+					"uv": [0, 0, 2, 1.5],
+					"texture": "#lr"
+				},
+				"east": {
+					"uv": [0, 0, 0.5, 1.5],
+					"texture": "#lr"
+				},
+				"south": {
+					"uv": [0, 0, 2, 1.5],
+					"texture": "#lr"
+				},
+				"west": {
+					"uv": [0, 0, 0.5, 1.5],
+					"texture": "#lr"
+				},
+				"up": {
+					"uv": [0, 0, 2, 0.5],
+					"texture": "#lr"
+				},
+				"down": {
+					"uv": [0, 0, 2, 0.5],
+					"texture": "#lr"
+				}
+			},
+			"neoforge_data": {
+				"block_light": 15,
+				"sky_light": 15
+			}
+		}
+	]
+}

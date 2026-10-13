@@ -1,0 +1,159 @@
+{
+	"credit": "Made with Blockbench",
+	"textures": {
+		"ci": "promptcritical:block/common/grid_cast_iron",
+		"d": "promptcritical:block/common/steel_dark",
+		"hot": "promptcritical:block/common/fuelcycle_glow_hot",
+		"st": "promptcritical:block/common/steel_bare"
+	},
+	"elements": [
+		{
+			"name": "base",
+			"from": [0, 0, 0],
+			"to": [16, 2, 16],
+			"rotation": {
+				"angle": 0,
+				"axis": "y",
+				"origin": [8, 8, 8]
+			},
+			"faces": {
+				"north": {
+					"uv": [0, 0, 16, 2],
+					"texture": "#d"
+				},
+				"east": {
+					"uv": [0, 0, 16, 2],
+					"texture": "#d"
+				},
+				"south": {
+					"uv": [0, 0, 16, 2],
+					"texture": "#d"
+				},
+				"west": {
+					"uv": [0, 0, 16, 2],
+					"texture": "#d"
+				},
+				"up": {
+					"uv": [0, 0, 16, 16],
+					"texture": "#d"
+				},
+				"down": {
+					"uv": [0, 0, 16, 16],
+					"texture": "#d"
+				}
+			}
+		},
+		{
+			"name": "half_fixed",
+			"from": [2, 2, 8],
+			"to": [14, 13, 14],
+			"rotation": {
+				"angle": 0,
+				"axis": "y",
+				"origin": [8, 8, 8]
+			},
+			"faces": {
+				"north": {
+					"uv": [0, 0, 12, 11],
+					"texture": "#ci"
+				},
+				"east": {
+					"uv": [0, 0, 6, 11],
+					"texture": "#ci"
+				},
+				"south": {
+					"uv": [0, 0, 12, 11],
+					"texture": "#ci"
+				},
+				"west": {
+					"uv": [0, 0, 6, 11],
+					"texture": "#ci"
+				},
+				"up": {
+					"uv": [0, 0, 12, 6],
+					"texture": "#ci"
+				},
+				"down": {
+					"uv": [0, 0, 12, 6],
+					"texture": "#ci"
+				}
+			}
+		},
+		{
+			"name": "hinge",
+			"from": [1, 2, 7],
+			"to": [2, 13, 9],
+			"rotation": {
+				"angle": 0,
+				"axis": "y",
+				"origin": [8, 8, 8]
+			},
+			"faces": {
+				"north": {
+					"uv": [0, 0, 1, 11],
+					"texture": "#st"
+				},
+				"east": {
+					"uv": [0, 0, 2, 11],
+					"texture": "#st"
+				},
+				"south": {
+					"uv": [0, 0, 1, 11],
+					"texture": "#st"
+				},
+				"west": {
+					"uv": [0, 0, 2, 11],
+					"texture": "#st"
+				},
+				"up": {
+					"uv": [0, 0, 1, 2],
+					"texture": "#st"
+				},
+				"down": {
+					"uv": [0, 0, 1, 2],
+					"texture": "#st"
+				}
+			}
+		},
+		{
+			"name": "glow_gate",
+			"from": [7, 13, 7],
+			"to": [9, 13.5, 9],
+			"rotation": {
+				"angle": 0,
+				"axis": "y",
+				"origin": [8, 8, 8]
+			},
+			"faces": {
+				"north": {
+					"uv": [0, 0, 2, 0.5],
+					"texture": "#hot"
+				},
+				"east": {
+					"uv": [0, 0, 2, 0.5],
+					"texture": "#hot"
+				},
+				"south": {
+					"uv": [0, 0, 2, 0.5],
+					"texture": "#hot"
+				},
+				"west": {
+					"uv": [0, 0, 2, 0.5],
+					"texture": "#hot"
+				},
+				"up": {
+					"uv": [0, 0, 2, 2],
+					"texture": "#hot"
+				},
+				"down": {
+					"uv": [0, 0, 2, 2],
+					"texture": "#hot"
+				}
+			},
+			"neoforge_data": {
+				"block_light": 15,
+				"sky_light": 15
+			}
+		}
+	]
+}
