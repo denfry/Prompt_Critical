@@ -34,6 +34,12 @@ public final class If97 {
 
     /** p_sat(623,15 К) ≈ 16,529 МПа: выше линия насыщения проходит по региону 3. */
     public static final double P_S13 = psat(T_13);
+    /**
+     * Допуск «на линии насыщения» для пара в регионе 3: при T = T_s плотность
+     * {@link #rho3} берётся с жидкой ветви (p = p_s), поэтому корень по T у самой
+     * линии дал бы жидкость. Состояния ближе 10⁻⁹ к h'' или s'' — насыщенный пар.
+     */
+    private static final double SAT_EPS = 1e-9;
 
     private If97() {}
 
@@ -245,7 +251,7 @@ public final class If97 {
             If97Point l = fromRegion3(satDensity3(ts, true), ts);
             If97Point v = fromRegion3(satDensity3(ts, false), ts);
             if (h < l.h()) return solveRegion3T(p, h, T_13, ts);
-            if (h <= v.h()) return mixture(p, h, l, v);
+            if (h <= v.h() + SAT_EPS * Math.abs(v.h())) return mixture(p, h, l, v);
             return solveRegion3T(p, h, ts, tb);
         }
         return solveRegion3T(p, h, T_13, tb);
@@ -257,10 +263,67 @@ public final class If97 {
     }
 
     private static If97Point mixture(double p, double h, If97Point l, If97Point v) {
-        double x = (h - l.h()) / (v.h() - l.h());
+        return mixtureX(p, (h - l.h()) / (v.h() - l.h()), l, v);
+    }
+
+    private static If97Point mixtureX(double p, double x, If97Point l, If97Point v) {
+        double h = l.h() + x * (v.h() - l.h());
         double vm = l.v() + x * (v.v() - l.v());
         return new If97Point(4, p, l.t(), 1.0 / vm, h, l.u() + x * (v.u() - l.u()), l.s() + x * (v.s() - l.s()),
                 Double.NaN, Double.NaN, Double.NaN, x, Double.NaN, Double.NaN, Double.NaN, Double.NaN);
+    }
+
+    // ---------------------------------------------------------------- (p, s)
+
+    /** Состояние по (p, s), включая двухфазную область: изоэнтропа для критического расхода (01 §1.3.9). */
+    public static If97Point ps(double p, double s) {
+        if (p <= P_S13) {
+            double ts = p >= P_MIN ? tsat(p) : T_MIN;
+            if (p >= P_MIN) {
+                If97Point l = inRegion(1, p, ts);
+                if (s < l.s()) return solveGibbsTs(1, p, s, 200.0, ts);
+                If97Point v = inRegion(2, p, ts);
+                if (s <= v.s()) return mixtureX(p, (s - l.s()) / (v.s() - l.s()), l, v);
+            }
+            return vaporSideS(p, s, ts);
+        }
+        if (s <= inRegion(1, p, T_13).s()) return solveGibbsTs(1, p, s, 200.0, T_13);
+        double tb = tB23(p);
+        if (s >= inRegion(2, p, tb).s()) return vaporSideS(p, s, tb);
+        if (p < P_C) {
+            double ts = tsat(p);
+            If97Point l = fromRegion3(satDensity3(ts, true), ts);
+            If97Point v = fromRegion3(satDensity3(ts, false), ts);
+            if (s < l.s()) return solveRegion3Ts(p, s, T_13, ts);
+            if (s <= v.s() + SAT_EPS * v.s()) return mixtureX(p, (s - l.s()) / (v.s() - l.s()), l, v);
+            return solveRegion3Ts(p, s, ts, tb);
+        }
+        return solveRegion3Ts(p, s, T_13, tb);
+    }
+
+    private static If97Point vaporSideS(double p, double s, double tLow) {
+        if (s <= inRegion(2, p, T_25).s()) return solveGibbsTs(2, p, s, tLow, T_25);
+        return solveGibbsTs(5, p, s, T_25, T_MAX);
+    }
+
+    /**
+     * (∂s/∂T)_p = c_p/T. С прижатием к краю: на линии насыщения s границы ветви и
+     * s₀ совпадают с точностью до округления, и смены знака может не оказаться.
+     */
+    private static If97Point solveGibbsTs(int region, double p, double s, double tLo, double tHi) {
+        double t = Roots.solve(tt -> {
+            If97Point st = inRegion(region, p, tt);
+            return new double[] {st.s() - s, st.cp() / tt};
+        }, tLo, tHi, 0.5 * (tLo + tHi), 1e-10, true);
+        return inRegion(region, p, t);
+    }
+
+    private static If97Point solveRegion3Ts(double p, double s, double tLo, double tHi) {
+        double t = Roots.solve(tt -> {
+            If97Point st = fromRegion3(rho3(p, tt), tt);
+            return new double[] {st.s() - s, st.cp() / tt};
+        }, tLo, tHi, 0.5 * (tLo + tHi), 1e-10, true);
+        return fromRegion3(rho3(p, t), t);
     }
 
     // ---------------------------------------------------------------- метастабильные ветви
