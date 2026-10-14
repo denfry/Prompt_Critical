@@ -1,0 +1,51 @@
+package dev.denfry.promptcritical.mod.client;
+
+import dev.denfry.promptcritical.mod.PromptCritical;
+import dev.denfry.promptcritical.mod.registry.PcBlocks;
+import dev.denfry.promptcritical.mod.registry.PcFluids;
+import net.minecraft.client.renderer.ItemBlockRenderTypes;
+import net.minecraft.client.renderer.RenderType;
+import net.minecraft.resources.ResourceLocation;
+import net.neoforged.bus.api.IEventBus;
+import net.neoforged.fml.event.lifecycle.FMLClientSetupEvent;
+import net.neoforged.neoforge.client.extensions.common.IClientFluidTypeExtensions;
+import net.neoforged.neoforge.client.extensions.common.RegisterClientExtensionsEvent;
+
+/** Клиентская регистрация: текстуры жидкостей, слой отрисовки моделей с прозрачностью. Только на клиенте. */
+public final class PcClient {
+    private PcClient() {
+    }
+
+    public static void register(IEventBus modBus) {
+        modBus.addListener(PcClient::registerClientExtensions);
+        modBus.addListener(PcClient::clientSetup);
+    }
+
+    private static void registerClientExtensions(RegisterClientExtensionsEvent event) {
+        for (PcFluids.Entry e : PcFluids.all()) {
+            ResourceLocation still = PromptCritical.id("block/fluid/" + e.name + "_still");
+            ResourceLocation flow = PromptCritical.id("block/fluid/" + e.name + "_flow");
+            event.registerFluidType(new IClientFluidTypeExtensions() {
+                @Override
+                public ResourceLocation getStillTexture() {
+                    return still;
+                }
+
+                @Override
+                public ResourceLocation getFlowingTexture() {
+                    return flow;
+                }
+            }, e.type.get());
+        }
+    }
+
+    /** Плейсхолдер-модели не задают {@code render_type}; решётки, стекло и сетка клети требуют cutout. */
+    @SuppressWarnings("deprecation")
+    private static void clientSetup(FMLClientSetupEvent event) {
+        event.enqueueWork(() -> {
+            for (var b : PcBlocks.withItems()) {
+                if (!PcBlocks.oreDrops().containsKey(b)) ItemBlockRenderTypes.setRenderLayer(b.get(), RenderType.cutout());
+            }
+        });
+    }
+}

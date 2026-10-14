@@ -13,9 +13,9 @@ public final class SimClock {
     /** Монотонный счётчик тиков, сохраняется вместе с миром. */
     private long tick;
     /** Физических секунд на 1 с реального времени в SLOW, ключ {@code time.k_slow} [BALANCE]. */
-    private final double kSlow;
+    private double kSlow;
     /** Физических секунд на 1 с реального времени в STORAGE, ключ {@code storage.k_storage} [BALANCE]. */
-    private final double kStorage;
+    private double kStorage;
 
     public SimClock(double kSlow, double kStorage) {
         this(0L, kSlow, kStorage);
@@ -80,5 +80,17 @@ public final class SimClock {
 
     void advance() {
         tick++;
+    }
+
+    void setTick(long t) {
+        if (t < 0) throw new IllegalArgumentException("tick < 0: " + t);
+        tick = t;
+    }
+
+    /** Новые коэффициенты времени из конфига (граница тика, {@link SimCommand.ReloadConfig}). */
+    void setRates(double kSlow, double kStorage) {
+        if (!(kSlow > 0 && kStorage > 0)) throw new IllegalArgumentException("kSlow/kStorage must be > 0");
+        this.kSlow = kSlow;
+        this.kStorage = kStorage;
     }
 }
