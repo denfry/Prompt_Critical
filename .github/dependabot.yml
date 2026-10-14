@@ -4,3 +4,14 @@ updates:
     directory: /
     schedule:
       interval: monthly
+    groups:
+      actions:
+        patterns: ["*"]
+
+  - package-ecosystem: gradle
+    directory: /
+    schedule:
+      interval: monthly
+    groups:
+      test-and-tooling:
+        patterns: ["*junit*", "*jqwik*", "*archunit*", "*assertj*", "*jmh*"]

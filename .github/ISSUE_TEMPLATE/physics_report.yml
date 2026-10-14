@@ -1,0 +1,46 @@
+name: Physics or engineering error
+description: A number, formula or behaviour in the simulation that contradicts real engineering.
+labels: [physics, needs-triage]
+body:
+  - type: markdown
+    attributes:
+      value: |
+        Prompt Critical aims for physics over magic numbers. If something is wrong, show what the real value or behaviour is and where it comes from.
+  - type: textarea
+    id: what
+    attributes:
+      label: What is wrong
+      description: The quantity, formula or behaviour, and where you saw it (wiki page, site chart, code path, video).
+    validations:
+      required: true
+  - type: textarea
+    id: expected
+    attributes:
+      label: What it should be
+      description: The correct value or behaviour, with units.
+    validations:
+      required: true
+  - type: textarea
+    id: source
+    attributes:
+      label: Source
+      description: Textbook, standard, paper or plant data. Page or section numbers help.
+    validations:
+      required: true
+  - type: dropdown
+    id: area
+    attributes:
+      label: Area
+      options:
+        - Reactor physics
+        - Thermal hydraulics
+        - Combustion and boilers
+        - Mining and ventilation
+        - Metallurgy
+        - Oil and gas
+        - Chemistry
+        - Electrical grid
+        - Automation and protection
+        - Other
+    validations:
+      required: true
