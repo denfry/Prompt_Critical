@@ -90,6 +90,21 @@ public record CoalAssay(double moistureFrac, double ashDryFrac, double sulfurDry
         return w;
     }
 
+    /**
+     * Тот же уголь с другой минеральной частью — продукт обогащения (08 §8.3): органическая масса не меняется,
+     * кислород daf замыкает баланс после смены серы.
+     */
+    public CoalAssay withMineralMatter(double ashDry, double sulfurDry, double pyriticShareNew, float[] fractions) {
+        double s = sulfurDaf(sulfurDry, ashDry);
+        double c = cDaf, o = 1 - cDaf - hDaf - nDaf - s;
+        if (o < 0) {
+            c += o;
+            o = 0;
+        }
+        return new CoalAssay(moistureFrac, ashDry, sulfurDry, pyriticShareNew, volatileDaf, plasticLayerMm, c, hDaf, o,
+                nDaf, fractions, strengthM25, rank);
+    }
+
     /** A^r = A^d·(1 − W^r). */
     public double ashWorking() {
         return ashDryFrac * (1 - moistureFrac);
