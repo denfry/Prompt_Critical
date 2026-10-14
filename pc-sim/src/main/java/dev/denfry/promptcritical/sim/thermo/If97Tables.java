@@ -410,6 +410,7 @@ public final class If97Tables implements WaterProperties {
         out.hG = hg;
         out.cp = sat(SAT_CPF, i, x);
         out.viscosity = sat(SAT_MUF, i, x);
+        out.viscosityG = sat(SAT_MUG, i, x);
         out.conductivity = sat(SAT_KF, i, x);
         out.surfaceTension = sat(SAT_SIGMA, i, x);
         // производные по p вдоль линии насыщения (Клапейрон–Клаузиус), 01 §1.3.3
@@ -439,7 +440,7 @@ public final class If97Tables implements WaterProperties {
         out.enthalpy = h;
         out.specificEnergy = h - p * v;
         out.cp = bic(G_CP, i, j, a, b, 0, 0);
-        out.viscosity = bic(G_MU, i, j, a, b, 0, 0);
+        out.viscosity = out.viscosityG = bic(G_MU, i, j, a, b, 0, 0);
         out.conductivity = bic(G_K, i, j, a, b, 0, 0);
 
         double xs = Math.min(x, sb);

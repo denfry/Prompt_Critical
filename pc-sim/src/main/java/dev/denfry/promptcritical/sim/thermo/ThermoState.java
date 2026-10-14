@@ -16,6 +16,8 @@ public final class ThermoState {
     /** Объёмное паросодержание (гомогенное равновесие). */
     public double voidFraction;
     public double rhoF, rhoG, hF, hG, tSat, cp, viscosity, conductivity, surfaceTension;
+    /** Вязкость насыщенного пара в двухфазной области (двухфазные множители 01 §1.2.4); вне купола — {@code viscosity}. */
+    public double viscosityG;
     /** Производные для линеаризации схемы 01 §1.2.6: (∂p/∂ρ)_u и (∂p/∂u)_ρ. */
     public double dPdRhoAtU, dPdUAtRho;
     public int flags;
