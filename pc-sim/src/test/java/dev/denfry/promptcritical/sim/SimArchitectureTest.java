@@ -40,7 +40,7 @@ public class SimArchitectureTest {
             .withOptionalLayers(true)
             .layer("core").definedBy("..sim.core..")
             .layer("physics").definedBy("..sim.neutronics..", "..sim.thermal..", "..sim.thermo..",
-                    "..sim.hydraulics..", "..sim.reactor..", "..sim.nuclide..")
+                    "..sim.hydraulics..", "..sim.reactor..", "..sim.nuclide..", "..sim.grid..")
             .layer("systems").definedBy("..sim.protection..", "..sim.instrument..", "..sim.alarm..",
                     "..sim.acoustics..", "..sim.accident..", "..sim.radiation..", "..sim.chem..",
                     "..sim.enrichment..", "..sim.consequence..", "..sim.journal..")

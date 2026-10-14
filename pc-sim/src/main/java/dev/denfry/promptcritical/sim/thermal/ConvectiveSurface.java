@@ -36,6 +36,7 @@ public final class ConvectiveSurface {
 
     private final ThermoState bulk = new ThermoState(), scratch = new ThermoState();
     private final double[] satBuf = new double[17];
+    private final SaturationState satState = new SaturationState();
     private SaturationState sat; // null выше критического давления
     private double massFlux, tBulk, drift, beta, qChf = Double.POSITIVE_INFINITY, tMin, capacity, energy;
 
@@ -139,9 +140,7 @@ public final class ConvectiveSurface {
         if (fixedCoefficient > 0) return;
         if (p < CRITICAL_PRESSURE * 0.999) {
             water.saturationP(p, satBuf);
-            double[] s = satBuf;
-            sat = new SaturationState(p, s[0], s[1], s[2], s[3], s[4], s[5], s[6], s[7], s[8], s[9], s[10],
-                    s[11], s[12], s[13], s[14], s[15], s[16]);
+            sat = satState.set(p, satBuf);
             tMin = tMinFilmBoiling(p * 1e-6);
             double hIn = inlet != null ? inlet.enthalpy() : h;
             qChf = chf(sat, massFlux, bulk.quality, hydraulicDiameter, sat.hF() - hIn);

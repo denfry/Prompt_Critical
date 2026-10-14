@@ -13,6 +13,14 @@ dependencies {
     testRuntimeOnly(libs.junit.launcher)
 }
 
+// JMH-бенчмарки горячего цикла (05 §5.7.6): ./gradlew :pc-sim:jmh. Сценарии ПР-300 и эталонной сети —
+// общие с тестами (src/test), поэтому тестовые классы входят в classpath бенчмарков.
+jmh {
+    includeTests = true
+    profilers = listOf("gc")
+    resultFormat = "JSON"
+}
+
 tasks.test {
     useJUnitPlatform { includeEngines("junit-jupiter", "jqwik", "archunit") }
 }

@@ -19,6 +19,8 @@ public final class DnbrCalculator {
     private final HotChannelModel model;
     private final WaterProperties water;
     private final double dP, dG, dT, dN;
+    private final double[] satBuf = new double[17];
+    private final SaturationState satState = new SaturationState(); // буфер: вычислитель не потокобезопасен
 
     public DnbrCalculator(HotChannelModel model, ProtectionConfig cfg, WaterProperties water) {
         this.model = model;
@@ -52,7 +54,8 @@ public final class DnbrCalculator {
         double fz = Double.isNaN(axialPeaking) ? model.conservativeAxialPeaking()
                 : Math.max(1, Math.min(HotChannelModel.MAX_AXIAL_PEAKING, axialPeaking));
 
-        SaturationState sat = water.saturationP(p);
+        water.saturationP(p, satBuf);
+        SaturationState sat = satState.set(p, satBuf);
         double hIn = Math.min(water.enthalpyPT(p, inletTemp + dT), sat.hF());
         double massFlow = Math.max(g * model.flowArea(), 1e-6);
         double hotRise = model.enthalpyRiseFactor() * n * model.nominalPower() / massFlow;
