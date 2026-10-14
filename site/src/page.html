@@ -1,0 +1,253 @@
+<!doctype html>
+<html lang="{{lang}}">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>{{meta.title}}</title>
+<meta name="description" content="{{meta.description}}">
+<link rel="canonical" href="{{url}}">
+<link rel="alternate" hreflang="en" href="{{site}}">
+<link rel="alternate" hreflang="ru" href="{{site}}ru/">
+<link rel="alternate" hreflang="x-default" href="{{site}}">
+<meta property="og:type" content="website">
+<meta property="og:title" content="{{meta.title}}">
+<meta property="og:description" content="{{meta.description}}">
+<meta property="og:url" content="{{url}}">
+<meta property="og:image" content="{{site}}assets/og.png">
+<meta property="og:image:width" content="1200">
+<meta property="og:image:height" content="630">
+<meta property="og:locale" content="{{meta.locale}}">
+<meta name="twitter:card" content="summary_large_image">
+<meta name="theme-color" content="#0b0f12">
+<link rel="icon" href="{{root}}assets/favicon.png" type="image/png">
+<link rel="preload" href="{{root}}assets/fonts/oswald.woff2" as="font" type="font/woff2" crossorigin>
+<style>{{css}}</style>
+<script type="application/ld+json">{{jsonld}}</script>
+</head>
+<body>
+<a class="skip" href="#main">{{nav.skip}}</a>
+<header class="bar">
+  <a class="mark" href="{{root}}{{langPath}}" aria-label="Prompt Critical">PROMPT <span>CRITICAL</span></a>
+  <nav aria-label="{{nav.label}}">
+    <ul>
+      <li><a href="#desk">{{nav.desk}}</a></li>
+      <li><a href="#prompt">{{nav.prompt}}</a></li>
+      <li><a href="#tests">{{nav.tests}}</a></li>
+      <li><a href="#industry">{{nav.industry}}</a></li>
+      <li><a href="#status">{{nav.status}}</a></li>
+    </ul>
+  </nav>
+  <div class="bar-end">
+    <a class="lang" href="{{otherUrl}}" hreflang="{{otherLang}}" lang="{{otherLang}}">{{nav.other}}</a>
+    <a class="gh" href="https://github.com/denfry/Prompt_Critical">GitHub</a>
+  </div>
+</header>
+
+<main id="main">
+  <section id="desk" class="desk" aria-labelledby="desk-h">
+    <div class="lead">
+      <p class="kicker">{{lead.kicker}}</p>
+      <h1 id="desk-h">{{lead.h1}}</h1>
+      <p class="lede">{{lead.lede}}</p>
+      <div class="task">
+        <h2>{{lead.taskTitle}}</h2>
+        <p>{{lead.task}}</p>
+        <ul class="hints">
+          <li>{{lead.hint1}}</li>
+          <li>{{lead.hint2}}</li>
+          <li>{{lead.hint3}}</li>
+        </ul>
+      </div>
+    </div>
+
+    <div class="panel" id="sim" aria-label="{{sim.label}}">
+      <div class="annunciators" role="list" aria-label="{{sim.annLabel}}">
+        <div class="ann" role="listitem" data-ann="source">{{sim.annSource}}</div>
+        <div class="ann" role="listitem" data-ann="period" data-kind="alarm">{{sim.annPeriod}}</div>
+        <div class="ann" role="listitem" data-ann="high" data-kind="alarm">{{sim.annHigh}}</div>
+        <div class="ann" role="listitem" data-ann="prompt" data-kind="trip">{{sim.annPrompt}}</div>
+        <div class="ann" role="listitem" data-ann="band" data-kind="ok">{{sim.annBand}}</div>
+        <div class="ann" role="listitem" data-ann="bypass" data-kind="alarm">{{sim.annBypass}}</div>
+        <div class="ann" role="listitem" data-ann="trip" data-kind="trip">{{sim.annTrip}}</div>
+        <div class="ann" role="listitem" data-ann="damage" data-kind="trip">{{sim.annDamage}}</div>
+      </div>
+
+      <dl class="readouts">
+        <div><dt>{{sim.power}}</dt><dd id="r-power">—</dd></div>
+        <div><dt>{{sim.period}}</dt><dd id="r-period">—</dd></div>
+        <div><dt>{{sim.rho}}</dt><dd id="r-rho">—</dd></div>
+        <div><dt>{{sim.rods}}</dt><dd id="r-rods">—</dd></div>
+        <div><dt>{{sim.time}}</dt><dd id="r-time">—</dd></div>
+      </dl>
+
+      <div class="scope">
+        <canvas id="sim-canvas" width="800" height="320" role="img" aria-label="{{sim.canvasLabel}}"></canvas>
+        <div class="scope-legend" aria-hidden="true">
+          <span><i class="sw sw-power"></i>{{sim.legendPower}}</span>
+          <span><i class="sw sw-rods"></i>{{sim.legendRods}}</span>
+          <span><i class="sw sw-band"></i>{{sim.legendBand}}</span>
+        </div>
+      </div>
+
+      <div class="controls">
+        <div class="rod">
+          <label for="rod">{{sim.rodLabel}} <output id="rod-out" for="rod">0.0 %</output></label>
+          <input id="rod" type="range" min="0" max="100" step="0.1" value="0">
+          <div class="nudge">
+            <button type="button" data-nudge="-1">{{sim.insert}}</button>
+            <button type="button" data-nudge="-0.2">−0.2</button>
+            <button type="button" data-nudge="0.2">+0.2</button>
+            <button type="button" data-nudge="1">{{sim.withdraw}}</button>
+          </div>
+        </div>
+        <div class="right">
+          <fieldset class="speed">
+            <legend>{{sim.speed}}</legend>
+            <label><input type="radio" name="speed" value="1"> ×1</label>
+            <label><input type="radio" name="speed" value="4" checked> ×4</label>
+            <label><input type="radio" name="speed" value="16"> ×16</label>
+          </fieldset>
+          <label class="bypass"><input type="checkbox" id="bypass"> {{sim.bypassLabel}}</label>
+          <div class="acts">
+            <button type="button" id="scram" class="scram">SCRAM</button>
+            <button type="button" id="reset" class="reset">{{sim.reset}}</button>
+          </div>
+        </div>
+      </div>
+      <p class="status" id="sim-status" role="status" aria-live="polite"></p>
+      <p class="fine">{{sim.fine_html}}</p>
+    </div>
+  </section>
+
+  <section id="prompt" class="report" aria-labelledby="prompt-h">
+    <header class="sec-head">
+      <p class="sec-no">01</p>
+      <h2 id="prompt-h">{{prompt.h}}</h2>
+    </header>
+    <div class="cols">
+      <div class="prose">
+        <p>{{prompt.p1}}</p>
+        <p>{{prompt.p2}}</p>
+        <p class="pull"><span class="num">98.6 s</span> {{prompt.vs}} <span class="num hot">0.031 s</span><br><small>{{prompt.pullNote}}</small></p>
+      </div>
+      <figure class="fig" data-chart="inhour">
+        <figcaption><strong>{{prompt.figTitle}}</strong> {{prompt.figCap}}</figcaption>
+      </figure>
+    </div>
+  </section>
+
+  <section id="tests" class="report" aria-labelledby="tests-h">
+    <header class="sec-head">
+      <p class="sec-no">02</p>
+      <h2 id="tests-h">{{tests.h}}</h2>
+      <p class="sec-sub">{{tests.sub}}</p>
+    </header>
+
+    <figure class="fig wide" data-chart="lof">
+      <figcaption><strong>{{tests.lofTitle}}</strong> {{tests.lofCap}}</figcaption>
+    </figure>
+    <ol class="events">
+      <li><span class="t">5.00 s</span>{{tests.ev1}}</li>
+      <li><span class="t" data-bind="lof.tripAt">6.45 s</span>{{tests.ev2}}</li>
+      <li><span class="t">8 s</span>{{tests.ev3}}</li>
+      <li><span class="t">60 s</span>{{tests.ev4}}</li>
+    </ol>
+
+    <div class="pair">
+      <figure class="fig" data-chart="scram">
+        <figcaption><strong>{{tests.scramTitle}}</strong> {{tests.scramCap}}</figcaption>
+      </figure>
+      <figure class="fig" data-chart="water">
+        <figcaption><strong>{{tests.waterTitle}}</strong> {{tests.waterCap}}</figcaption>
+      </figure>
+    </div>
+
+    <div class="perf" id="perf">
+      <div class="perf-num">
+        <p class="big"><span data-bind="perf.mean">0.027</span> <small>ms</small></p>
+        <p>{{tests.perfLabel}}</p>
+      </div>
+      <div class="perf-bar">
+        <div class="track" role="img" aria-label="{{tests.perfAria}}">
+          <div class="used" style="--w: 1%"></div>
+        </div>
+        <div class="perf-scale"><span>0</span><span>{{tests.perfBudget}}</span></div>
+        <p class="perf-note">{{tests.perfNote}}</p>
+      </div>
+    </div>
+  </section>
+
+  <section id="industry" class="report" aria-labelledby="industry-h">
+    <header class="sec-head">
+      <p class="sec-no">03</p>
+      <h2 id="industry-h">{{industry.h}}</h2>
+      <p class="sec-sub">{{industry.sub}}</p>
+    </header>
+    <ol class="spine">
+      <li><img src="{{root}}assets/img/fire_tube_boiler_lit.webp" width="128" height="128" alt="" loading="lazy"><div><p class="era">I0</p><h3>{{industry.i0}}</h3><p>{{industry.i0p}}</p></div></li>
+      <li><img src="{{root}}assets/img/blast_furnace_shell.webp" width="128" height="128" alt="" loading="lazy"><div><p class="era">I1</p><h3>{{industry.i1}}</h3><p>{{industry.i1p}}</p></div></li>
+      <li><img src="{{root}}assets/img/gas_turbine.webp" width="128" height="128" alt="" loading="lazy"><div><p class="era">I2</p><h3>{{industry.i2}}</h3><p>{{industry.i2p}}</p></div></li>
+      <li><img src="{{root}}assets/img/coal_gasifier_lit.webp" width="128" height="128" alt="" loading="lazy"><div><p class="era">I3</p><h3>{{industry.i3}}</h3><p>{{industry.i3p}}</p></div></li>
+      <li><img src="{{root}}assets/img/gas_centrifuge.webp" width="128" height="128" alt="" loading="lazy"><div><p class="era">I4</p><h3>{{industry.i4}}</h3><p>{{industry.i4p}}</p></div></li>
+    </ol>
+
+    <h3 class="ladder-h">{{industry.ladderH}}</h3>
+    <p class="ladder-sub">{{industry.ladderSub}}</p>
+    <ol class="ladder">
+      <li><p class="era">A0</p><p>{{industry.a0}}</p></li>
+      <li><img src="{{root}}assets/img/relay_cabinet.webp" width="96" height="96" alt="" loading="lazy"><p class="era">A1</p><p>{{industry.a1}}</p></li>
+      <li><img src="{{root}}assets/img/analog_integrator.webp" width="96" height="96" alt="" loading="lazy"><p class="era">A2</p><p>{{industry.a2}}</p></li>
+      <li><img src="{{root}}assets/img/plc_controller_run.webp" width="96" height="96" alt="" loading="lazy"><p class="era">A3</p><p>{{industry.a3}}</p></li>
+      <li><img src="{{root}}assets/img/historian_server.webp" width="96" height="96" alt="" loading="lazy"><p class="era">A4</p><p>{{industry.a4}}</p></li>
+      <li><p class="era">A5</p><p>{{industry.a5}}</p></li>
+    </ol>
+    <p class="art-note">{{industry.artNote}}</p>
+  </section>
+
+  <section id="status" class="report" aria-labelledby="status-h">
+    <header class="sec-head">
+      <p class="sec-no">04</p>
+      <h2 id="status-h">{{status.h}}</h2>
+    </header>
+    <div class="ledger">
+      <div>
+        <h3>{{status.hasH}}</h3>
+        <ul class="ok">
+          <li>{{status.has1}}</li>
+          <li>{{status.has2}}</li>
+          <li>{{status.has3}}</li>
+          <li>{{status.has4}}</li>
+          <li>{{status.has5}}</li>
+        </ul>
+      </div>
+      <div>
+        <h3>{{status.notH}}</h3>
+        <ul class="no">
+          <li>{{status.not1}}</li>
+          <li>{{status.not2}}</li>
+          <li>{{status.not3}}</li>
+        </ul>
+      </div>
+    </div>
+    <div class="follow">
+      <p>{{status.follow}}</p>
+      <ul>
+        <li><a class="primary" href="https://github.com/denfry/Prompt_Critical">{{status.gh}}</a></li>
+        <li><a href="https://www.youtube.com/@denfrydev">{{status.yt}}</a></li>
+        <li><a href="https://github.com/denfry/Prompt_Critical/wiki/Roadmap">{{status.roadmap}}</a></li>
+        <li><a href="https://github.com/denfry/Prompt_Critical/wiki">{{status.wiki}}</a></li>
+      </ul>
+    </div>
+  </section>
+</main>
+
+<footer class="foot">
+  <p>{{foot.license}}</p>
+  <p>{{foot.notAffiliated}}</p>
+  <p>{{foot.data_html}}</p>
+</footer>
+
+<script type="application/json" id="i18n">{{i18nJs}}</script>
+<script src="{{root}}assets/app.js" type="module"></script>
+</body>
+</html>

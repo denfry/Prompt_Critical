@@ -1,0 +1,84 @@
+<!doctype html>
+<html>
+<head>
+<meta charset="utf-8">
+<style>
+  @font-face { font-family: "PC Display"; src: url("../src/assets/fonts/oswald.woff2") format("woff2"); font-weight: 200 700; }
+  @font-face { font-family: "PC Mono"; src: url("../src/assets/fonts/jetbrains-mono.woff2") format("woff2"); font-weight: 100 800; }
+  html, body { margin: 0; width: 1200px; height: 630px; overflow: hidden; background: #0b0f12; }
+  #root { position: relative; width: 1200px; height: 630px; color: #ece9df; font-family: "PC Display", sans-serif;
+    background:
+      radial-gradient(700px 400px at 300px 300px, rgba(240,180,41,0.10), transparent 70%),
+      radial-gradient(600px 400px at 950px 330px, rgba(215,50,44,0.08), transparent 70%),
+      linear-gradient(rgba(42,51,56,0.35) 1px, transparent 1px) 0 0 / 64px 64px,
+      linear-gradient(90deg, rgba(42,51,56,0.35) 1px, transparent 1px) 0 0 / 64px 64px,
+      #0b0f12; }
+  #bg { position: absolute; left: 0; top: 0; }
+  /* safe area for every device: 1546x423 centred */
+  #safe { position: absolute; left: 60px; top: 70px; width: 1080px; height: 490px; }
+  .meta { font-family: "PC Mono", monospace; font-weight: 500; font-size: 26px; letter-spacing: 0.06em; color: #8a9a93; }
+  h1 { margin: 0; font-weight: 600; font-size: 96px; line-height: 0.95; letter-spacing: 0.01em; text-transform: uppercase; }
+  h1 span { color: #f0b429; }
+  .sub { margin-top: 18px; font-weight: 400; font-size: 38px; line-height: 1.1; color: #ece9df; }
+  .tags { margin-top: 26px; display: flex; gap: 14px; }
+  .tag { font-family: "PC Mono", monospace; font-weight: 600; font-size: 20px; letter-spacing: 0.04em; padding: 7px 14px;
+    border-left: 4px solid; background: #141a1e; }
+  #left { position: absolute; left: 0; top: 0; }
+  #chart { position: absolute; right: 0; bottom: 0; transform: scale(.72); transform-origin: right bottom; width: 520px; height: 423px; }
+  .legend { font-family: "PC Mono", monospace; font-size: 22px; font-weight: 600; }
+</style>
+</head>
+<body>
+<div id="root">
+  <svg id="bg" width="1200" height="630"></svg>
+  <div id="safe">
+    <div id="left">
+      <div class="meta">pc-sim · NeoForge 1.21.1 · pre-alpha</div>
+      <h1>Prompt <span>Critical</span></h1>
+      <div class="sub">A Minecraft mod with real reactor physics.<br>Try the reactor in your browser.</div>
+    </div>
+    <svg id="chart" width="520" height="423"></svg>
+  </div>
+</div>
+<script src="lof.js"></script>
+<script>
+  const NS = "http://www.w3.org/2000/svg";
+  const el = (parent, tag, attrs, text) => {
+    const e = document.createElementNS(NS, tag);
+    for (const k in attrs) e.setAttribute(k, attrs[k]);
+    if (text) e.textContent = text;
+    parent.appendChild(e);
+    return e;
+  };
+  const d = window.PC_DATA.lof, rows = d.rows, ci = n => d.cols.indexOf(n);
+  const path = (col, x0, y0, w, h, yMin, yMax) => rows.map((r, i) => {
+    const x = x0 + (r[0] / 60) * w, y = y0 + h - ((r[ci(col)] - yMin) / (yMax - yMin)) * h;
+    return (i ? "L" : "M") + x.toFixed(1) + " " + y.toFixed(1);
+  }).join(" ");
+
+  // Mini chart inside the safe area: PR-300 loses pump B, real pc-sim run.
+  const c = document.getElementById("chart");
+  const X0 = 60, Y0 = 70, W = 440, H = 300, MIN = -0.25, MAX = 1.25;
+  for (const v of [0, 0.5, 1]) {
+    const y = Y0 + H - ((v - MIN) / (MAX - MIN)) * H;
+    el(c, "line", { x1: X0, x2: X0 + W, y1: y, y2: y, stroke: "#2a3338", "stroke-width": 2 });
+    el(c, "text", { x: X0 - 14, y: y + 8, "text-anchor": "end", fill: "#8a9a93", "font-family": "PC Mono", "font-size": 22 }, (v * 100) + "");
+  }
+  const xTrip = X0 + (d.tripAt / 60) * W, xPump = X0 + (d.pumpTrip / 60) * W;
+  el(c, "line", { x1: xPump, x2: xPump, y1: Y0, y2: Y0 + H, stroke: "#f0b429", "stroke-dasharray": "6 6", "stroke-width": 2, opacity: 0.7 });
+  el(c, "line", { x1: xTrip, x2: xTrip, y1: Y0, y2: Y0 + H, stroke: "#d7322c", "stroke-dasharray": "6 6", "stroke-width": 2, opacity: 0.7 });
+  el(c, "path", { d: path("flowA", X0, Y0, W, H, MIN, MAX), fill: "none", stroke: "#3fd16b", "stroke-width": 5 });
+  el(c, "path", { d: path("flowB", X0, Y0, W, H, MIN, MAX), fill: "none", stroke: "#f0b429", "stroke-width": 5 });
+  el(c, "path", { d: path("power", X0, Y0, W, H, MIN, MAX), fill: "none", stroke: "#d7322c", "stroke-width": 5 });
+  el(c, "text", { x: X0, y: 34, fill: "#8a9a93", "font-family": "PC Mono", "font-size": 20, "font-weight": 500 }, "PR-300 · pump B lost · trip " + d.tripAt + " s");
+  const lg = el(c, "text", { x: X0, y: Y0 + H + 44, class: "legend" });
+  [["— power  ", "#d7322c"], ["— flow A  ", "#3fd16b"], ["— flow B", "#f0b429"]].forEach(([t, col]) => el(lg, "tspan", { fill: col }, t));
+
+  // Full-width faint traces for wide (desktop/TV) crops.
+  const bg = document.getElementById("bg");
+  el(bg, "path", { d: path("power", -20, 80, 1240, 480, MIN, MAX), fill: "none", stroke: "#d7322c", "stroke-width": 3, opacity: 0.16 });
+  el(bg, "path", { d: path("flowB", -20, 80, 1240, 480, MIN, MAX), fill: "none", stroke: "#f0b429", "stroke-width": 3, opacity: 0.14 });
+  el(bg, "path", { d: path("flowA", -20, 80, 1240, 480, MIN, MAX), fill: "none", stroke: "#3fd16b", "stroke-width": 3, opacity: 0.12 });
+</script>
+</body>
+</html>

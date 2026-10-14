@@ -14,6 +14,7 @@ run by plant I&C that you design and build yourself.
 ![Status](https://img.shields.io/badge/status-pre--alpha-red)
 [![License](https://img.shields.io/badge/license-All%20Rights%20Reserved-lightgrey)](LICENSE)
 
+[Site](https://denfry.github.io/Prompt_Critical/) ·
 [Wiki](https://github.com/denfry/Prompt_Critical/wiki) ·
 [Roadmap](https://github.com/denfry/Prompt_Critical/wiki/Roadmap) ·
 [Building](https://github.com/denfry/Prompt_Critical/wiki/Building-from-Source)

@@ -72,3 +72,13 @@ sourceSets.main {
     resources.srcDir(files(waterTablesDir).builtBy(generateWaterTables))
     resources.srcDir(files(criticalFlowDir).builtBy(generateCriticalFlowTables))
 }
+
+// Данные графиков сайта (site/): настоящие прогоны ПР-300, кинетики и IF97. ./gradlew :pc-sim:siteData
+tasks.register<JavaExec>("siteData") {
+    group = "documentation"
+    description = "Writes pc-sim runs for the project site charts into site/data."
+    classpath = sourceSets.test.get().runtimeClasspath
+    mainClass = "dev.denfry.promptcritical.sim.scenario.SiteData"
+    javaLauncher = javaToolchains.launcherFor { languageVersion = JavaLanguageVersion.of(21) }
+    args(rootProject.layout.projectDirectory.dir("site/data").asFile.absolutePath)
+}
