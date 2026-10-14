@@ -100,16 +100,18 @@ public final class If97 {
         double cp = g.cp(), cv = g.cv(), drhodp = g.drhodpT(p, t);
         double mu = Transport.viscosity(rho, t);
         double k = Transport.conductivity(rho, t, cp, cv, drhodp, mu);
-        return new If97Point(region, p, t, rho, g.h(t), g.u(t), g.s(), cp, cv, g.w(t), Double.NaN, mu, k, drhodp);
+        return new If97Point(region, p, t, rho, g.h(t), g.u(t), g.s(), cp, cv, g.w(t), Double.NaN, mu, k, drhodp,
+                g.dvdT(p));
     }
 
     /** Состояние региона 3 по (ρ, T). */
     public static If97Point fromRegion3(double rho, double t) {
         Region3.Helmholtz f = Region3.helmholtz(rho, t);
-        double cp = f.cp(), cv = f.cv(), drhodp = 1.0 / f.dpdrhoT(t);
+        double cp = f.cp(), cv = f.cv(), dpdrho = f.dpdrhoT(t), drhodp = 1.0 / dpdrho;
         double mu = Transport.viscosity(rho, t);
         double k = Transport.conductivity(rho, t, cp, cv, drhodp, mu);
-        return new If97Point(3, f.p(rho, t), t, rho, f.h(t), f.u(t), f.s(), cp, cv, f.w(t), Double.NaN, mu, k, drhodp);
+        return new If97Point(3, f.p(rho, t), t, rho, f.h(t), f.u(t), f.s(), cp, cv, f.w(t), Double.NaN, mu, k, drhodp,
+                f.dpdTrho(rho) / (rho * rho * dpdrho));
     }
 
     /**
@@ -120,26 +122,34 @@ public final class If97 {
         double lo = 1.0, hi;
         boolean vapor = t < T_C && p < psat(t);
         if (vapor) {
-            hi = satDensities3(t)[1];
-            if (Region3.helmholtz(hi, t).p(hi, t) <= p) return hi; // на линии насыщения с точностью округления
+            hi = satDensity3(t, false);
+            if (p3(hi, t) <= p) return hi; // на линии насыщения с точностью округления
         } else {
             if (t < T_C) {
-                lo = satDensities3(t)[0];
-                if (Region3.helmholtz(lo, t).p(lo, t) >= p) return lo;
+                lo = satDensity3(t, true);
+                if (p3(lo, t) >= p) return lo;
             }
             // полином региона 3 теряет физичность далеко за ρ ≈ 800, поэтому
             // верхнюю границу наращиваем от нижней, а не берём с запасом
             hi = Math.max(lo * 1.05, 50.0);
-            while (Region3.helmholtz(hi, t).p(hi, t) < p) {
+            while (p3(hi, t) < p) {
                 lo = hi;
                 hi *= 1.1;
                 if (hi > 1000.0) throw new IllegalArgumentException("p=" + p + " above region 3 at T=" + t);
             }
         }
+        return solveRho3(p, t, lo, hi);
+    }
+
+    private static double solveRho3(double p, double t, double lo, double hi) {
         return Roots.solve(rho -> {
             Region3.Helmholtz f = Region3.helmholtz(rho, t);
             return new double[] {f.p(rho, t) - p, f.dpdrhoT(t)};
         }, lo, hi, 0.5 * (lo + hi), 1e-11 * hi);
+    }
+
+    private static double p3(double rho, double t) {
+        return Region3.helmholtz(rho, t).p(rho, t);
     }
 
     // ---------------------------------------------------------------- насыщение
@@ -147,35 +157,39 @@ public final class If97 {
     /** Насыщенная жидкость при давлении p (p ≤ p_c). */
     public static If97Point satLiquid(double p) {
         double t = tsat(p);
-        return p <= P_S13 ? inRegion(1, p, t) : fromRegion3(satDensities3(t)[0], t);
+        return p <= P_S13 ? inRegion(1, p, t) : fromRegion3(satDensity3(t, true), t);
     }
 
     /** Насыщенный пар при давлении p (p ≤ p_c). */
     public static If97Point satVapor(double p) {
         double t = tsat(p);
-        return p <= P_S13 ? inRegion(2, p, t) : fromRegion3(satDensities3(t)[1], t);
+        return p <= P_S13 ? inRegion(2, p, t) : fromRegion3(satDensity3(t, false), t);
     }
 
     /**
-     * Плотности насыщения {ρ', ρ''} в регионе 3: корни p₃(ρ, T) = p_s(T) на
-     * жидкой и паровой ветвях; старт — вспомогательные уравнения IAPWS (1992).
+     * Плотность насыщения ρ' ({@code liquid}) или ρ'' в регионе 3: корень
+     * p₃(ρ, T) = p_s(T) на своей ветви; старт — вспомогательные уравнения IAPWS (1992).
      */
-    static double[] satDensities3(double t) {
-        if (t >= T_C) return new double[] {RHO_C, RHO_C};
-        double ps = psat(t);
+    static double satDensity3(double t, boolean liquid) {
+        if (t >= T_C) return RHO_C;
         double th = 1.0 - t / T_C;
-        double c3 = Math.cbrt(th);
-        double rl = RHO_C * (1 + 1.99274064 * c3 + 1.09965342 * c3 * c3 - 0.510839303 * Math.pow(th, 5.0 / 3)
-                - 1.75493479 * Math.pow(th, 16.0 / 3) - 45.5170352 * Math.pow(th, 43.0 / 3)
-                - 6.74694450e5 * Math.pow(th, 110.0 / 3));
-        double rv = RHO_C * Math.exp(-2.03150240 * Math.pow(th, 2.0 / 6) - 2.68302940 * Math.pow(th, 4.0 / 6)
-                - 5.38626492 * Math.pow(th, 8.0 / 6) - 17.2991605 * Math.pow(th, 18.0 / 6)
-                - 44.7586581 * Math.pow(th, 37.0 / 6) - 63.9201063 * Math.pow(th, 71.0 / 6));
-        return new double[] {branchRoot(ps, t, rl, true), branchRoot(ps, t, rv, false)};
+        double guess;
+        if (liquid) {
+            double c3 = Math.cbrt(th);
+            guess = RHO_C * (1 + 1.99274064 * c3 + 1.09965342 * c3 * c3 - 0.510839303 * Math.pow(th, 5.0 / 3)
+                    - 1.75493479 * Math.pow(th, 16.0 / 3) - 45.5170352 * Math.pow(th, 43.0 / 3)
+                    - 6.74694450e5 * Math.pow(th, 110.0 / 3));
+        } else {
+            guess = RHO_C * Math.exp(-2.03150240 * Math.pow(th, 2.0 / 6) - 2.68302940 * Math.pow(th, 4.0 / 6)
+                    - 5.38626492 * Math.pow(th, 8.0 / 6) - 17.2991605 * Math.pow(th, 18.0 / 6)
+                    - 44.7586581 * Math.pow(th, 37.0 / 6) - 63.9201063 * Math.pow(th, 71.0 / 6));
+        }
+        return branchRoot(psat(t), t, guess, liquid);
     }
 
-    private static double branchRoot(double ps, double t, double rho, boolean liquid) {
-        for (int it = 0; it < 100; it++) {
+    private static double branchRoot(double ps, double t, double guess, boolean liquid) {
+        double rho = guess;
+        for (int it = 0; it < 50; it++) {
             Region3.Helmholtz f = Region3.helmholtz(rho, t);
             double dp = f.dpdrhoT(t);
             double next;
@@ -188,7 +202,25 @@ public final class If97 {
             if (Math.abs(next - rho) < 1e-12 * rho) return next;
             rho = next;
         }
-        throw new IllegalStateException("region 3 saturation did not converge at T=" + t);
+        return branchRootBracketed(ps, t, guess, liquid);
+    }
+
+    /**
+     * Запасной путь у самой критической точки, где p(ρ) почти плоская: корень
+     * между спинодалью и устойчивой точкой своей ветви, где p по ρ монотонна.
+     */
+    private static double branchRootBracketed(double ps, double t, double guess, boolean liquid) {
+        double stable = guess;
+        for (int it = 0; it < 200; it++) {
+            Region3.Helmholtz f = Region3.helmholtz(stable, t);
+            boolean beyond = liquid ? f.p(stable, t) > ps : f.p(stable, t) < ps;
+            if (f.dpdrhoT(t) > 0 && beyond) break;
+            stable = liquid ? stable * 1.01 : stable * 0.99;
+        }
+        double sp = spinodal3(t, stable);
+        double psp = p3(sp, t);
+        if (liquid ? psp >= ps : psp <= ps) return sp; // петля вырождена: ρ_sat ≈ спинодаль
+        return liquid ? solveRho3(ps, t, sp, stable) : solveRho3(ps, t, stable, sp);
     }
 
     // ---------------------------------------------------------------- (p, h)
@@ -199,20 +231,19 @@ public final class If97 {
             double ts = p >= P_MIN ? tsat(p) : T_MIN;
             if (p >= P_MIN) {
                 If97Point l = inRegion(1, p, ts);
-                if (h < l.h()) return solveGibbsT(1, p, h, 200.0, ts);
+                if (h < l.h()) return solveGibbsT(1, p, h, 200.0, ts, false);
                 If97Point v = inRegion(2, p, ts);
                 if (h <= v.h()) return mixture(p, h, l, v);
             }
             return vaporSide(p, h, ts);
         }
-        if (h <= inRegion(1, p, T_13).h()) return solveGibbsT(1, p, h, 200.0, T_13);
+        if (h <= inRegion(1, p, T_13).h()) return solveGibbsT(1, p, h, 200.0, T_13, false);
         double tb = tB23(p);
         if (h >= inRegion(2, p, tb).h()) return vaporSide(p, h, tb);
         if (p < P_C) {
             double ts = tsat(p);
-            double[] sat = satDensities3(ts);
-            If97Point l = fromRegion3(sat[0], ts);
-            If97Point v = fromRegion3(sat[1], ts);
+            If97Point l = fromRegion3(satDensity3(ts, true), ts);
+            If97Point v = fromRegion3(satDensity3(ts, false), ts);
             if (h < l.h()) return solveRegion3T(p, h, T_13, ts);
             if (h <= v.h()) return mixture(p, h, l, v);
             return solveRegion3T(p, h, ts, tb);
@@ -221,22 +252,80 @@ public final class If97 {
     }
 
     private static If97Point vaporSide(double p, double h, double tLow) {
-        if (h <= inRegion(2, p, T_25).h()) return solveGibbsT(2, p, h, tLow, T_25);
-        return solveGibbsT(5, p, h, T_25, T_MAX);
+        if (h <= inRegion(2, p, T_25).h()) return solveGibbsT(2, p, h, tLow, T_25, false);
+        return solveGibbsT(5, p, h, T_25, T_MAX, false);
     }
 
     private static If97Point mixture(double p, double h, If97Point l, If97Point v) {
         double x = (h - l.h()) / (v.h() - l.h());
         double vm = l.v() + x * (v.v() - l.v());
         return new If97Point(4, p, l.t(), 1.0 / vm, h, l.u() + x * (v.u() - l.u()), l.s() + x * (v.s() - l.s()),
-                Double.NaN, Double.NaN, Double.NaN, x, Double.NaN, Double.NaN, Double.NaN);
+                Double.NaN, Double.NaN, Double.NaN, x, Double.NaN, Double.NaN, Double.NaN, Double.NaN);
     }
 
-    private static If97Point solveGibbsT(int region, double p, double h, double tLo, double tHi) {
+    // ---------------------------------------------------------------- метастабильные ветви
+
+    /**
+     * Состояние по (p, h) на заданной ветви без учёта купола (p &lt; p_c): внутри
+     * купола — метастабильная перегретая жидкость или переохлаждённый пар,
+     * которыми заполнены узлы таблиц 01 §1.3.2(б). На устойчивой стороне
+     * совпадает с {@link #ph}.
+     *
+     * @return {@code null}, если метастабильного состояния нет (за спинодалью региона 3)
+     */
+    public static If97Point phBranch(double p, double h, boolean liquid) {
+        if (p >= P_C || p < P_MIN) return ph(p, h);
+        If97Point sat = liquid ? satLiquid(p) : satVapor(p);
+        if (liquid ? h <= sat.h() : h >= sat.h()) return ph(p, h);
+        double ts = sat.t();
+        if (p <= P_S13) {
+            return liquid ? solveGibbsT(1, p, h, ts, ts + 60.0, true)
+                    : solveGibbsT(2, p, h, Math.max(200.0, ts - 60.0), ts, true);
+        }
+        return metastable3(p, h, sat.rho(), ts);
+    }
+
+    /**
+     * Метастабильное состояние региона 3: 2D-Ньютон по (ρ, T) из точки насыщения
+     * своей ветви по системе p₃(ρ, T) = p, h₃(ρ, T) = h; выход на (∂p/∂ρ)_T ≤ 0
+     * означает спинодаль.
+     */
+    private static If97Point metastable3(double p, double h, double rho, double t) {
+        for (int it = 0; it < 100; it++) {
+            Region3.Helmholtz f = Region3.helmholtz(rho, t);
+            double dpr = f.dpdrhoT(t);
+            if (dpr <= 0) return null;
+            double f1 = f.p(rho, t) - p, f2 = f.h(t) - h;
+            if (Math.abs(f1) < 1e-10 * p && Math.abs(f2) < 1e-10 * Math.abs(h)) return fromRegion3(rho, t);
+            double dpt = f.dpdTrho(rho), dhr = f.dhdrhoT(t), dht = f.dhdTrho();
+            double det = dpr * dht - dpt * dhr;
+            double dRho = (-f1 * dht + dpt * f2) / det;
+            double dT = (-dpr * f2 + dhr * f1) / det;
+            double lam = 1;
+            while (Math.abs(lam * dRho) > 0.05 * rho || Math.abs(lam * dT) > 5.0) lam *= 0.5;
+            rho += lam * dRho;
+            t += lam * dT;
+        }
+        return null;
+    }
+
+    /** Спинодаль (∂p/∂ρ)_T = 0 между ρ_sat и ρ_c, бисекцией. */
+    private static double spinodal3(double t, double sat) {
+        double stable = sat, unstable = RHO_C;
+        if (Region3.helmholtz(unstable, t).dpdrhoT(t) > 0) return unstable;
+        for (int it = 0; it < 80; it++) {
+            double mid = 0.5 * (stable + unstable);
+            if (Region3.helmholtz(mid, t).dpdrhoT(t) > 0) stable = mid;
+            else unstable = mid;
+        }
+        return stable;
+    }
+
+    private static If97Point solveGibbsT(int region, double p, double h, double tLo, double tHi, boolean clamp) {
         double t = Roots.solve(tt -> {
             If97Point s = inRegion(region, p, tt);
             return new double[] {s.h() - h, s.cp()};
-        }, tLo, tHi, 0.5 * (tLo + tHi), 1e-10);
+        }, tLo, tHi, 0.5 * (tLo + tHi), 1e-10, clamp);
         return inRegion(region, p, t);
     }
 

@@ -12,11 +12,17 @@ final class Roots {
      * @param f функция, возвращающая {f(x), f'(x)}
      */
     static double solve(DoubleFunction<double[]> f, double lo, double hi, double x0, double tol) {
+        return solve(f, lo, hi, x0, tol, false);
+    }
+
+    /** То же; при {@code clamp} без смены знака возвращает конец отрезка с меньшим |f|. */
+    static double solve(DoubleFunction<double[]> f, double lo, double hi, double x0, double tol, boolean clamp) {
         double flo = f.apply(lo)[0];
         if (flo == 0) return lo;
         double fhi = f.apply(hi)[0];
         if (fhi == 0) return hi;
         if (flo * fhi > 0) {
+            if (clamp) return Math.abs(flo) < Math.abs(fhi) ? lo : hi;
             throw new IllegalArgumentException("no sign change on [" + lo + ", " + hi + "]: " + flo + ", " + fhi);
         }
         // xl — сторона с f < 0, xh — с f > 0

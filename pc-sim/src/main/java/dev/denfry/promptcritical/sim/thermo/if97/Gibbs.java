@@ -37,6 +37,11 @@ record Gibbs(double pi, double tau, double g, double gp, double gpp, double gt, 
         return Math.sqrt(If97.R * t * gp * gp / (a * a / (tau * tau * gtt) - gpp));
     }
 
+    /** (∂v/∂T)_p = R π (γ_π − τ γ_πτ) / p. */
+    double dvdT(double p) {
+        return If97.R * pi * (gp - tau * gpt) / p;
+    }
+
     /** (∂ρ/∂p)_T = −ρ² (∂v/∂p)_T, где (∂v/∂p)_T = R T π² γ_ππ / p². */
     double drhodpT(double p, double t) {
         double v = v(p, t);

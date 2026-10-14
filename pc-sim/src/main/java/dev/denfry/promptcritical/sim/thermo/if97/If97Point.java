@@ -6,14 +6,15 @@ package dev.denfry.promptcritical.sim.thermo.if97;
  *
  * <p>В двухфазной области (регион 4) {@code x} — массовое паросодержание,
  * а калорические и транспортные величины, не определённые для смеси
- * ({@code cp}, {@code cv}, {@code w}, {@code mu}, {@code k}, {@code drhodpT}),
- * равны {@code NaN}. В однофазной области {@code x} = {@code NaN}.
+ * ({@code cp}, {@code cv}, {@code w}, {@code mu}, {@code k}, {@code drhodpT},
+ * {@code dvdtP}), равны {@code NaN}. В однофазной области {@code x} = {@code NaN}.
  *
  * @param region  регион IF97: 1, 2, 3, 4 (двухфазная смесь) или 5
  * @param drhodpT (∂ρ/∂p)_T, кг/(м³·Па)
+ * @param dvdtP   (∂v/∂T)_p, м³/(кг·К)
  */
 public record If97Point(int region, double p, double t, double rho, double h, double u, double s,
-        double cp, double cv, double w, double x, double mu, double k, double drhodpT) {
+        double cp, double cv, double w, double x, double mu, double k, double drhodpT, double dvdtP) {
 
     public double v() {
         return 1.0 / rho;

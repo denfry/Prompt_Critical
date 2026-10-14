@@ -99,6 +99,33 @@ class If97VerificationTest {
         close(Transport.conductivity(rho, t, Double.NaN, Double.NaN, Double.NaN, Double.NaN), kMilli * 1e-3, 1e-8);
     }
 
+    /** (∂v/∂T)_p против центральной разности во всех однофазных регионах. */
+    @ParameterizedTest(name = "dv/dT at p={0} MPa, T={1} K")
+    @CsvSource({"3, 300", "15.5, 573.15", "0.1, 500", "20, 650", "25, 700", "0.5, 1500"})
+    void volumeTemperatureDerivative(double pMpa, double t) {
+        double p = pMpa * 1e6, dt = 1e-3;
+        double fd = (If97.pt(p, t + dt).v() - If97.pt(p, t - dt).v()) / (2 * dt);
+        assertThat(If97.pt(p, t).dvdtP()).isCloseTo(fd, within(Math.abs(fd) * 1e-6));
+    }
+
+    /** На устойчивой стороне ветвь совпадает с ph, внутри купола продолжает её непрерывно. */
+    @ParameterizedTest(name = "branches at p={0} MPa")
+    @CsvSource({"0.01", "1", "7", "15.5", "18", "21"})
+    void metastableBranches(double pMpa) {
+        double p = pMpa * 1e6;
+        If97Point l = If97.satLiquid(p), g = If97.satVapor(p);
+        for (double dh : new double[] {-50e3, -1e3}) {
+            assertThat(If97.phBranch(p, l.h() + dh, true).t()).isCloseTo(If97.ph(p, l.h() + dh).t(), within(1e-9));
+            assertThat(If97.phBranch(p, g.h() - dh, false).t()).isCloseTo(If97.ph(p, g.h() - dh).t(), within(1e-9));
+        }
+        // перегретая жидкость горячее, переохлаждённый пар холоднее насыщения; плотность непрерывна
+        If97Point sl = If97.phBranch(p, l.h() + 1e3, true), sg = If97.phBranch(p, g.h() - 1e3, false);
+        assertThat(sl.t()).isGreaterThan(l.t());
+        assertThat(sg.t()).isLessThan(g.t());
+        assertThat(sl.rho()).isCloseTo(l.rho(), within(l.rho() * 1e-2));
+        assertThat(sg.rho()).isCloseTo(g.rho(), within(g.rho() * 1e-2));
+    }
+
     @Test
     void surfaceTension() {
         // IAPWS 2014, таблица 1: 300 К -> 71,69 мН/м; T_s(15,5 МПа) -> 4,67 мН/м (01 T-1.3-02: 0,0047)

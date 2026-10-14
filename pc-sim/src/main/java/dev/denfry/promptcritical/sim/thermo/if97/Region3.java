@@ -58,6 +58,21 @@ final class Region3 {
             return Math.sqrt(If97.R * t * (2 * delta * fd + delta * delta * fdd - a * a / (tau * tau * ftt)));
         }
 
+        /** (∂h/∂ρ)_T. */
+        double dhdrhoT(double t) {
+            return If97.R * t * (tau * fdt + fd + delta * fdd) / If97.RHO_C;
+        }
+
+        /** (∂h/∂T)_ρ. */
+        double dhdTrho() {
+            return If97.R * (-tau * tau * ftt + delta * fd - delta * tau * fdt);
+        }
+
+        /** (∂p/∂T)_ρ. */
+        double dpdTrho(double rho) {
+            return rho * If97.R * delta * (fd - tau * fdt);
+        }
+
         /** (∂p/∂ρ)_T. */
         double dpdrhoT(double t) {
             return If97.R * t * (2 * delta * fd + delta * delta * fdd);
