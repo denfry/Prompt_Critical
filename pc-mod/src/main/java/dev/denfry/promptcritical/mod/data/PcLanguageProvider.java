@@ -120,6 +120,7 @@ public final class PcLanguageProvider extends LanguageProvider {
         FLUIDS.put("mine_methane", new String[] {"Mine Methane", "Шахтный метан"});
         FLUIDS.put("raw_water", new String[] {"Raw Water", "Сырая вода"});
         FLUIDS.put("mine_water", new String[] {"Mine Water", "Шахтная вода"});
+        MISC.put("block.promptcritical.mine_water", new String[] {"Mine Water", "Шахтная вода"});
 
         MISC.put("itemGroup." + PromptCritical.MOD_ID, new String[] {"Prompt Critical", "Prompt Critical"});
         MISC.put("commands.promptcritical.debug.hash", new String[] {"State hash %s at tick %s", "Хеш состояния %s на тике %s"});
@@ -161,6 +162,7 @@ public final class PcLanguageProvider extends LanguageProvider {
                 "%1$s задохнулся рудничным газом, спасаясь от %2$s"});
         MISC.put("commands.promptcritical.profile.reset", new String[] {"Simulation profile reset", "Профиль симуляции сброшен"});
         MISC.putAll(FoundryText.LANG);
+        MISC.putAll(dev.denfry.promptcritical.mod.mine.HoistText.LANG);
     }
 
     @Override

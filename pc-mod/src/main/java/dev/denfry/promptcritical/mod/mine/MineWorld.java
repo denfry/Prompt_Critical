@@ -9,6 +9,7 @@ import dev.denfry.promptcritical.mod.item.MineInstrumentItem;
 import dev.denfry.promptcritical.mod.multiblock.Footprint;
 import dev.denfry.promptcritical.mod.multiblock.MultiblockPartBlock;
 import dev.denfry.promptcritical.mod.registry.PcBlocks;
+import dev.denfry.promptcritical.mod.registry.PcFluids;
 import dev.denfry.promptcritical.mod.registry.PcItems;
 import dev.denfry.promptcritical.mod.registry.PcTags;
 import dev.denfry.promptcritical.mod.worldgen.VeinFields;
@@ -23,6 +24,7 @@ import dev.denfry.promptcritical.sim.mining.GasExposure;
 import dev.denfry.promptcritical.sim.mining.IgnitionSource;
 import dev.denfry.promptcritical.sim.mining.LampState;
 import dev.denfry.promptcritical.sim.mining.MethaneField;
+import dev.denfry.promptcritical.sim.mining.MineDrainage;
 import dev.denfry.promptcritical.sim.mining.MineGas;
 import dev.denfry.promptcritical.sim.mining.MineNetwork;
 import dev.denfry.promptcritical.sim.mining.MineSubsystem;
@@ -61,9 +63,11 @@ import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.block.Block;
+import net.minecraft.world.level.block.Blocks;
 import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.level.block.state.properties.BlockStateProperties;
 import net.minecraft.world.level.levelgen.structure.BoundingBox;
+import net.neoforged.neoforge.common.Tags;
 import org.jetbrains.annotations.Nullable;
 
 /**
@@ -190,6 +194,10 @@ public final class MineWorld {
         if (sim == null) return;
         for (MineNetwork n : sim.networks()) n.drainBurned((node, origin, energy) -> onBurned(n, node, origin, energy));
         if (gameTime % SECOND == 0) {
+            for (MineNetwork n : sim.networks()) {
+                Entry e = entries.get(n.id());
+                if (e != null) flood(n, e);
+            }
             breathe(sim, gameTime);
             canaries();
             alarms(sim);
@@ -367,6 +375,7 @@ public final class MineWorld {
                     capture = Math.max(capture, pump.capture(tick));
             n.field().setDegasification(b.getIntValue(), capture);
         }
+        drainage(n, s, tick);
     }
 
     // --- взрыв ---------------------------------------------------------------------------------------------
@@ -559,6 +568,87 @@ public final class MineWorld {
                 String.format("%.2f", 60 * n.methaneEmissionM3s())));
         if (n.exploding() || n.explosions() > 0)
             player.sendSystemMessage(Component.translatable("promptcritical.mine.report.explosions", n.explosions()).withStyle(ChatFormatting.RED));
+        player.sendSystemMessage(drainageLine(n));
+        if (!n.drainage().capacityOk()) player.sendSystemMessage(HoistText.msg("drainage.small_sump").withStyle(ChatFormatting.RED));
+    }
+
+    /** Строка водоотлива: водосборник, приток, откачка, затопление, кислотность. */
+    public static Component drainageLine(MineNetwork n) {
+        MineDrainage d = n.drainage();
+        Component extra = Component.empty();
+        if (d.floodedM3() > 0) extra = extra.copy().append(HoistText.msg("drainage.flooded", HoistText.num(d.floodedM3())));
+        if (d.acidic()) extra = extra.copy().append(HoistText.msg("drainage.acid"));
+        return HoistText.msg("drainage", HoistText.num(Math.min(d.volumeM3(), d.capacityM3())), HoistText.num(d.capacityM3()),
+                HoistText.num(100 * Math.min(1, d.levelFrac())), HoistText.num(d.inflowM3s() * 3600),
+                HoistText.num(d.pumpedM3s() * 3600), extra).withStyle(d.levelFrac() >= 0.8 ? ChatFormatting.RED : ChatFormatting.AQUA);
+    }
+
+    // --- водоотлив и затопление ---------------------------------------------------------------------------
+
+    /** Руда и порода на блок, т [допущение: 2,5 т/м³]; сера пирита, %. */
+    private static final double ORE_T_PER_BLOCK = 2.5, PYRITE_SULFUR_PCT = 50;
+    /** Сколько блоков воды затопления ставить или снимать за секунду. */
+    private static final int FLOOD_STEP = 16;
+
+    /** Подача насосов шахты на их напорах → домен; откачка прошлого шага → насосам (мощность, вода в трубу). */
+    private void drainage(MineNetwork n, MineScanner.Scan s, long tick) {
+        MineDrainagePumpBlockEntity[] pumps = new MineDrainagePumpBlockEntity[s.pumps.size()];
+        double[] cap = new double[pumps.length];
+        double sum = 0;
+        int i = 0;
+        for (long k : s.pumps) {
+            if (level.getBlockEntity(BlockPos.of(k)) instanceof MineDrainagePumpBlockEntity p) {
+                pumps[i] = p;
+                cap[i] = p.capacityM3s(tick);
+                sum += cap[i];
+            }
+            i++;
+        }
+        MineDrainage d = n.drainage();
+        double load = d.pumpLoad();
+        for (i = 0; i < pumps.length; i++) if (pumps[i] != null) pumps[i].setPumped(cap[i] * load, d.acidic());
+        d.setPumpCapacityM3s(sum);
+    }
+
+    /**
+     * Вода сверх водосборника — блоками шахтной воды в самых низких выработках (1 м³ на блок), откачка снимает их в
+     * обратном порядке. Шахтная вода не превращается в источник, поэтому снятый блок не наполняется заново.
+     */
+    private void flood(MineNetwork n, Entry e) {
+        if (e.scan == null || !n.ready() || !loaded(n, e)) return;
+        long[] placed = n.floodBlocks();
+        int want = (int) Math.floor(n.drainage().floodedM3());
+        if (want == placed.length) return;
+        LongArrayList list = new LongArrayList(placed);
+        if (want > placed.length) {
+            for (long k : lowestAir(e.scan, Math.min(FLOOD_STEP, want - placed.length))) {
+                level.setBlock(BlockPos.of(k), PcBlocks.MINE_WATER.get().defaultBlockState(), Block.UPDATE_ALL);
+                list.add(k);
+            }
+        } else {
+            for (int r = 0; r < FLOOD_STEP && list.size() > want; r++) {
+                BlockPos p = BlockPos.of(list.removeLong(list.size() - 1));
+                if (level.isLoaded(p) && level.getFluidState(p).getType() == PcFluids.MINE_WATER.source.get())
+                    level.setBlock(p, Blocks.AIR.defaultBlockState(), Block.UPDATE_ALL);
+            }
+        }
+        n.setFloodBlocks(list.toLongArray());
+    }
+
+    /** {@code k} самых низких пустых клеток выработки (по y, затем по ключу). */
+    private long[] lowestAir(MineScanner.Scan s, int k) {
+        LongArrayList free = new LongArrayList();
+        BlockPos.MutableBlockPos p = new BlockPos.MutableBlockPos();
+        for (long key : s.nodeBlocks) {
+            BlockState st = level.getBlockState(p.set(key));
+            if (st.isAir() || st.getFluidState().getType() == PcFluids.MINE_WATER.flowing.get()) free.add(key);
+        }
+        long[] a = free.toLongArray();
+        it.unimi.dsi.fastutil.longs.LongArrays.quickSort(a, (x, y) -> {
+            int c = Integer.compare(BlockPos.getY(x), BlockPos.getY(y));
+            return c != 0 ? c : Long.compare(x, y);
+        });
+        return java.util.Arrays.copyOf(a, Math.min(k, a.length));
     }
 
     // --- ручные средства ----------------------------------------------------------------------------------
@@ -631,6 +721,13 @@ public final class MineWorld {
         if (coal && n.ready()) {
             double vdaf = VeinFields.get(level.getSeed()).volatileDafPct(pos.getX(), pos.getY(), pos.getZ()) / 100;
             n.field().onMined(pos.asLong(), MethaneField.gasContent(ServerConfig.MINING_SEAM_GAS_CONTENT.get(), pos.getY()), vdaf);
+        }
+        if (coal) {
+            double sulfur = 100 * VeinFields.get(level.getSeed()).coalAssay(pos.getX(), pos.getY(), pos.getZ()).sulfurDryFrac();
+            n.drainage().onMined(MethaneField.COAL_DENSITY / 1000, sulfur);
+        } else if (state.is(Tags.Blocks.ORES)) {
+            boolean pyrite = state.is(PcBlocks.PYRITE_ORE.get()) || state.is(PcBlocks.DEEPSLATE_PYRITE_ORE.get());
+            n.drainage().onMined(ORE_T_PER_BLOCK, pyrite ? PYRITE_SULFUR_PCT : 0);
         }
         n.markWorkedRoof(pos.above().asLong());
     }

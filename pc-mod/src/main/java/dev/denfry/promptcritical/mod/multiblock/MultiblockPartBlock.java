@@ -17,6 +17,9 @@ import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.level.block.state.StateDefinition;
 import net.minecraft.world.level.block.state.properties.IntegerProperty;
 import net.minecraft.world.phys.BlockHitResult;
+import net.minecraft.world.phys.shapes.CollisionContext;
+import net.minecraft.world.phys.shapes.Shapes;
+import net.minecraft.world.phys.shapes.VoxelShape;
 
 /**
  * Невидимая клетка многоклеточного блока. Свойство {@code cell} кодирует смещение от якоря своего сегмента
@@ -50,6 +53,14 @@ public class MultiblockPartBlock extends Block {
     @Override
     protected void createBlockStateDefinition(StateDefinition.Builder<Block, BlockState> builder) {
         builder.add(CELL);
+    }
+
+    /** Форму клетки задаёт блок якоря ({@link PcBlock#partShape}); в контрапции якорь ищется в её мире. */
+    @Override
+    protected VoxelShape getShape(BlockState state, BlockGetter level, BlockPos pos, CollisionContext context) {
+        BlockPos anchor = anchor(state, pos);
+        BlockState a = level.getBlockState(anchor);
+        return a.getBlock() instanceof PcBlock pc ? pc.partShape(a, level, anchor, pos.subtract(anchor)) : Shapes.block();
     }
 
     @Override
@@ -101,7 +112,7 @@ public class MultiblockPartBlock extends Block {
 
     @Override
     protected void onRemove(BlockState state, Level level, BlockPos pos, BlockState newState, boolean movedByPiston) {
-        if (!level.isClientSide && !newState.is(this)) {
+        if (!level.isClientSide && !newState.is(this) && !PcBlock.isRelocating()) {
             BlockPos controller = PcBlock.structureController(level, anchor(state, pos));
             if (controller != null) {
                 BlockState cs = level.getBlockState(controller);

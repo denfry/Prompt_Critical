@@ -1,5 +1,7 @@
 package dev.denfry.promptcritical.sim.mining;
 
+import dev.denfry.promptcritical.sim.core.StateReader;
+import dev.denfry.promptcritical.sim.core.StateWriter;
 import java.util.Objects;
 
 /**
@@ -78,9 +80,35 @@ public final class Hoist {
         this.tension = staticLoadKg() * G;
     }
 
+    /**
+     * Тот же канат и клеть на новой спецификации ствола (переставили копёр, углубили ствол): износ, груз, защиты и
+     * скорость переносятся, глубина клети ограничивается новым стволом.
+     */
+    public Hoist(Spec spec, Hoist from) {
+        this(spec, from.rope(), from.cfg);
+        travel = from.travel;
+        payloadKg = from.payloadKg;
+        duty = from.duty;
+        state = from.state;
+        speedLimit = from.speedLimit;
+        depth = Math.min(spec.depthM(), from.depth);
+        speedUp = depth == from.depth ? from.speedUp : 0;
+        tension = staticLoadKg() * G;
+    }
+
     /** Масса, висящая на канате: клеть, груз и канат длиной z, кг. */
     private double staticLoadKg() {
         return spec.cageMassKg() + payloadKg + q * depth;
+    }
+
+    /** Масса на канате сейчас (клеть, груз, канат до клети), кг. */
+    public double suspendedMassKg() {
+        return staticLoadKg();
+    }
+
+    /** Приведённая к канату масса привода: J/R² барабана плюс масса на канате, кг. */
+    public double effectiveMassKg() {
+        return spec.drumInertia() / (spec.drumRadiusM() * spec.drumRadiusM()) + staticLoadKg();
     }
 
     /** F_max на полную глубину при проектном ускорении для груза m, Н. */
@@ -121,6 +149,16 @@ public final class Hoist {
     public void setSpeedLimit(double ms) {
         if (!(ms > 0)) throw new IllegalArgumentException("speed limit: " + ms);
         speedLimit = Math.min(MAX_SPEED, ms);
+    }
+
+    /**
+     * Клеть стоит на тормозе на другой глубине (её поставили в ствол блоками): переставить без хода. На ходу не
+     * действует.
+     */
+    public void reposition(double depthM) {
+        if (speedUp != 0 || state.broken()) return;
+        depth = Math.max(0, Math.min(spec.depthM(), depthM));
+        tension = staticLoadKg() * G;
     }
 
     /** Потеря питания привода: тормоз накладывается защитой. */
@@ -278,5 +316,41 @@ public final class Hoist {
 
     public Spec spec() {
         return spec;
+    }
+
+    public double speedLimitMs() {
+        return speedLimit;
+    }
+
+    // --- сохранение (спецификацию и конструкцию каната пишет владелец) ---
+
+    public void save(StateWriter out) {
+        out.putDouble("damage", damage);
+        out.putLong("bends", bendCycles);
+        out.putDouble("tonne_km", tonneKm);
+        out.putDouble("inspected", lastInspected);
+        out.putDouble("travel", travel);
+        out.putDouble("depth", depth);
+        out.putDouble("speed", speedUp);
+        out.putDouble("payload", payloadKg);
+        out.putDouble("speed_limit", speedLimit);
+        out.putString("duty", duty.name());
+        out.putString("state", state.name());
+    }
+
+    public void load(StateReader in) {
+        damage = in.getDouble("damage");
+        bendCycles = in.getLong("bends");
+        tonneKm = in.getDouble("tonne_km");
+        lastInspected = in.getDouble("inspected");
+        travel = in.getDouble("travel");
+        depth = in.getDouble("depth");
+        speedUp = in.getDouble("speed");
+        payloadKg = in.getDouble("payload");
+        speedLimit = in.getDouble("speed_limit");
+        duty = HoistDuty.valueOf(in.getString("duty"));
+        state = HoistState.valueOf(in.getString("state"));
+        accelUp = 0;
+        tension = staticLoadKg() * G;
     }
 }

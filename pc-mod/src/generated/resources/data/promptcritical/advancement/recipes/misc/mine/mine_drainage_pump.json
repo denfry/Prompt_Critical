@@ -1,0 +1,32 @@
+{
+  "parent": "minecraft:recipes/root",
+  "criteria": {
+    "has_mechanical_pump": {
+      "conditions": {
+        "items": [
+          {
+            "items": "create:mechanical_pump"
+          }
+        ]
+      },
+      "trigger": "minecraft:inventory_changed"
+    },
+    "has_the_recipe": {
+      "conditions": {
+        "recipe": "promptcritical:mine/mine_drainage_pump"
+      },
+      "trigger": "minecraft:recipe_unlocked"
+    }
+  },
+  "requirements": [
+    [
+      "has_the_recipe",
+      "has_mechanical_pump"
+    ]
+  ],
+  "rewards": {
+    "recipes": [
+      "promptcritical:mine/mine_drainage_pump"
+    ]
+  }
+}

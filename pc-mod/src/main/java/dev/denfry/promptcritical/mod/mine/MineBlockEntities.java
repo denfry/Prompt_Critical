@@ -11,7 +11,7 @@ import net.neoforged.bus.api.IEventBus;
 import net.neoforged.neoforge.registries.DeferredHolder;
 import net.neoforged.neoforge.registries.DeferredRegister;
 
-/** Типы BE шахты (08 §8.2). */
+/** Типы BE шахты (08 §8.2): вентилятор, насосы, подъём. */
 public final class MineBlockEntities {
     public static final DeferredRegister<BlockEntityType<?>> BLOCK_ENTITIES =
             DeferredRegister.create(Registries.BLOCK_ENTITY_TYPE, PromptCritical.MOD_ID);
@@ -20,6 +20,10 @@ public final class MineBlockEntities {
             type("main_mine_fan", MainMineFanBlockEntity::new, PcBlocks.MAIN_MINE_FAN);
     public static final DeferredHolder<BlockEntityType<?>, BlockEntityType<DegasificationPumpBlockEntity>> DEGASIFICATION_PUMP =
             type("degasification_pump", DegasificationPumpBlockEntity::new, PcBlocks.DEGASIFICATION_PUMP);
+    public static final DeferredHolder<BlockEntityType<?>, BlockEntityType<MineHoistBlockEntity>> MINE_HOIST =
+            type("mine_hoist", MineHoistBlockEntity::new, PcBlocks.MINE_HOIST);
+    public static final DeferredHolder<BlockEntityType<?>, BlockEntityType<MineDrainagePumpBlockEntity>> MINE_DRAINAGE_PUMP =
+            type("mine_drainage_pump", MineDrainagePumpBlockEntity::new, PcBlocks.MINE_DRAINAGE_PUMP);
 
     private MineBlockEntities() {
     }

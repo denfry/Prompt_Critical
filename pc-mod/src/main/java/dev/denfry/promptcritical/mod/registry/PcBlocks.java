@@ -22,6 +22,9 @@ import dev.denfry.promptcritical.mod.foundry.FoundryBlock;
 import dev.denfry.promptcritical.mod.foundry.KineticMachineBlock;
 import dev.denfry.promptcritical.mod.mine.DegasificationPumpBlockEntity;
 import dev.denfry.promptcritical.mod.mine.MainMineFanBlock;
+import dev.denfry.promptcritical.mod.mine.MineCageBlock;
+import dev.denfry.promptcritical.mod.mine.MineDrainagePumpBlockEntity;
+import dev.denfry.promptcritical.mod.mine.MineHoistBlock;
 import dev.denfry.promptcritical.mod.foundry.KineticMachineBlock.ShaftSide;
 import dev.denfry.promptcritical.mod.foundry.MachineToolBlockEntity;
 import dev.denfry.promptcritical.mod.foundry.MoldingStationBlockEntity;
@@ -37,6 +40,8 @@ import java.util.List;
 import java.util.Map;
 import java.util.function.BiFunction;
 import net.minecraft.world.level.block.Block;
+import net.minecraft.world.level.block.Blocks;
+import net.minecraft.world.level.block.LiquidBlock;
 import net.minecraft.world.level.block.SoundType;
 import net.minecraft.world.level.block.state.BlockBehaviour.Properties;
 import net.minecraft.world.level.block.state.properties.BlockStateProperties;
@@ -153,12 +158,14 @@ public final class PcBlocks {
     public static final DeferredBlock<PcDeviceBlock> MINE_DISPATCH_CABINET = device("mine_dispatch_cabinet", machine(),
             Spec.facing(PcProperties.ALARM).footprint(FP_TALL2), MineDispatchCabinetBlock::create);
     public static final DeferredBlock<PcDeviceBlock> MINE_HOIST = device("mine_hoist", machine(),
-            Spec.facing(PcProperties.RUNNING).footprint(Footprint.of(Segment.box(-1, 1, -1, 0, -1, 1))));
+            Spec.facing(PcProperties.RUNNING).footprint(Footprint.of(Segment.box(-1, 1, -1, 0, -1, 1))), MineHoistBlock::create);
     public static final DeferredBlock<HeadframeBlock> HEADFRAME = withItem(BLOCKS.registerBlock("headframe", HeadframeBlock::create, machine()));
-    public static final DeferredBlock<PcBlock> MINE_CAGE = block("mine_cage", machine(),
-            Spec.facing(BlockStateProperties.OPEN).footprint(Footprint.of(Segment.box(0, 1, -1, 1, 0, 1))));
+    public static final DeferredBlock<MineCageBlock> MINE_CAGE = withItem(BLOCKS.registerBlock("mine_cage",
+            p -> MineCageBlock.create(p, Spec.facing(BlockStateProperties.OPEN).footprint(Footprint.of(Segment.box(0, 1, -1, 1, 0, 1)))),
+            machine()));
     public static final DeferredBlock<PcDeviceBlock> MINE_DRAINAGE_PUMP = device("mine_drainage_pump", machine(),
-            Spec.facing(PcProperties.RUNNING).footprint(FP_WIDE2));
+            Spec.facing(PcProperties.RUNNING).footprint(FP_WIDE2),
+            KineticMachineBlock.with(ShaftSide.LEFT, MineDrainagePumpBlockEntity::new));
 
     // --- обогащение, литьё, механический цех (08 §8.3, §8.9, §8.10) ---
     public static final DeferredBlock<PcDeviceBlock> COAL_JIG = device("coal_jig", machine(),
@@ -186,6 +193,11 @@ public final class PcBlocks {
     public static final DeferredBlock<CanaryCageBlock> CANARY_CAGE = withItem(BLOCKS.registerBlock("canary_cage",
             p -> CanaryCageBlock.create(p, Spec.of(PcProperties.BIRD)),
             Properties.of().mapColor(MapColor.METAL).strength(0.5f).sound(SoundType.LANTERN).noOcclusion()));
+
+    /** Шахтная вода в выработках — затопление (08 §8.2.9); предмета нет. */
+    public static final DeferredBlock<LiquidBlock> MINE_WATER = BLOCKS.registerBlock("mine_water",
+            p -> new LiquidBlock(PcFluids.MINE_WATER.source.get(), p),
+            Properties.ofFullCopy(Blocks.WATER).mapColor(MapColor.TERRACOTTA_ORANGE).noLootTable());
 
     // --- служебные ---
     /** Клетка конструкции, через которую машина отдаёт вращение в сеть Create (03a §3a.12.3). */

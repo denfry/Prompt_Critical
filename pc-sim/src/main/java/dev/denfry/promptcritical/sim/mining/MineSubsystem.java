@@ -23,10 +23,16 @@ public final class MineSubsystem implements Subsystem {
 
     private final Map<Long, MineNetwork> networks = new TreeMap<>();
     private MiningConfig cfg;
+    private DrainageConfig drainageCfg;
     private long nextId = 1;
 
     public MineSubsystem(MiningConfig cfg) {
+        this(cfg, DrainageConfig.defaults());
+    }
+
+    public MineSubsystem(MiningConfig cfg, DrainageConfig drainageCfg) {
         this.cfg = cfg;
+        this.drainageCfg = drainageCfg;
     }
 
     @Override
@@ -40,7 +46,7 @@ public final class MineSubsystem implements Subsystem {
 
     /** Новая шахта с якорями; граф — {@link MineNetwork#rebuild}. */
     public MineNetwork create(long[] anchors) {
-        MineNetwork n = new MineNetwork(nextId++, cfg);
+        MineNetwork n = new MineNetwork(nextId++, cfg, drainageCfg);
         n.setAnchors(anchors);
         networks.put(n.id(), n);
         return n;
@@ -75,7 +81,11 @@ public final class MineSubsystem implements Subsystem {
     @Override
     public void onConfigReload(SimConfig config) {
         cfg = config.section(MiningConfig.class, cfg);
-        for (MineNetwork n : networks.values()) n.setConfig(cfg);
+        drainageCfg = config.section(DrainageConfig.class, drainageCfg);
+        for (MineNetwork n : networks.values()) {
+            n.setConfig(cfg);
+            n.setDrainageConfig(drainageCfg);
+        }
     }
 
     @Override
@@ -97,7 +107,7 @@ public final class MineSubsystem implements Subsystem {
         networks.clear();
         nextId = in.getLong("next_id");
         for (long id : in.getLongs("ids")) {
-            MineNetwork n = new MineNetwork(id, cfg);
+            MineNetwork n = new MineNetwork(id, cfg, drainageCfg);
             in.beginObject(Long.toString(id));
             n.load(in);
             in.endObject();

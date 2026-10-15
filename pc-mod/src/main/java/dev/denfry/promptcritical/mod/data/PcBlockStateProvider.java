@@ -42,6 +42,8 @@ public final class PcBlockStateProvider extends BlockStateProvider {
         ModelFile part = models().getBuilder("multiblock_part").texture("particle", modLoc("block/common/steel_dark"));
         simpleBlock(PcBlocks.MULTIBLOCK_PART.get(), part);
         simpleBlock(PcBlocks.KINETIC_PORT.get(), part);
+        // жидкость рисует рендер жидкостей; модели нужна только частица
+        simpleBlock(PcBlocks.MINE_WATER.get(), models().getBuilder("mine_water").texture("particle", modLoc("block/fluid/mine_water_still")));
     }
 
     private ModelFile existing(String name) {

@@ -44,7 +44,9 @@ public final class PcCommands {
                         .then(Commands.literal("info").executes(PcCommands::mineInfo))
                         .then(Commands.literal("gas").then(Commands.argument("ch4_percent", DoubleArgumentType.doubleArg(0, 100))
                                 .executes(PcCommands::mineGas)))
-                        .then(Commands.literal("ignite").executes(PcCommands::mineIgnite)))
+                        .then(Commands.literal("ignite").executes(PcCommands::mineIgnite))
+                        .then(Commands.literal("water").then(Commands.argument("m3", DoubleArgumentType.doubleArg(-1e6, 1e6))
+                                .executes(PcCommands::mineWater))))
                 .then(Commands.literal("boiler")
                         .then(Commands.literal("preset").then(Commands.argument("pressure_mpa", DoubleArgumentType.doubleArg(0.1, 2))
                                 .then(Commands.argument("level_m", DoubleArgumentType.doubleArg(0, 1.6)).executes(PcCommands::boilerPreset))))));
@@ -110,7 +112,17 @@ public final class PcCommands {
                 1e6 * f.concentration(node, MineGas.CO), 100 * f.concentration(node, MineGas.O2), f.nodeVelocity(node),
                 n.surfaceAirflowM3s());
         ctx.getSource().sendSuccess(() -> Component.literal(line), false);
+        ctx.getSource().sendSuccess(() -> dev.denfry.promptcritical.mod.mine.MineWorld.drainageLine(n), false);
         return count;
+    }
+
+    /** Прорыв воды в шахту у глаз исполнителя, м³ (отладка сценариев водоотлива). */
+    private static int mineWater(CommandContext<CommandSourceStack> ctx) {
+        MineNetwork n = binding(ctx).mines().mineAt(eye(ctx));
+        if (n == null) return 0;
+        n.drainage().injectM3(DoubleArgumentType.getDouble(ctx, "m3"));
+        ctx.getSource().sendSuccess(() -> dev.denfry.promptcritical.mod.mine.MineWorld.drainageLine(n), false);
+        return 1;
     }
 
     /** Задать метан в узле у глаз исполнителя (отладка сценариев). */

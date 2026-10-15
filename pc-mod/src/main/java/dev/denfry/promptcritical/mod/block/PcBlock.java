@@ -9,6 +9,9 @@ import java.util.List;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
 import net.minecraft.world.entity.player.Player;
+import net.minecraft.world.level.BlockGetter;
+import net.minecraft.world.phys.shapes.Shapes;
+import net.minecraft.world.phys.shapes.VoxelShape;
 import net.minecraft.world.item.context.BlockPlaceContext;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.block.Block;
@@ -59,6 +62,23 @@ public class PcBlock extends Block {
 
     /** Спецификация на время конструктора: {@link #createBlockStateDefinition} вызывается до присвоения полей. */
     private static final ThreadLocal<Spec> PENDING = new ThreadLocal<>();
+    /** Конструкцию переносит контрапция Create: снятие и постановка клеток её не разрушают и не достраивают. */
+    private static final ThreadLocal<Boolean> RELOCATING = ThreadLocal.withInitial(() -> false);
+
+    /** Выполнить перенос клеток конструкций (снятие или постановка контрапцией). */
+    public static void relocating(Runnable action) {
+        boolean was = RELOCATING.get();
+        RELOCATING.set(true);
+        try {
+            action.run();
+        } finally {
+            RELOCATING.set(was);
+        }
+    }
+
+    public static boolean isRelocating() {
+        return RELOCATING.get();
+    }
 
     protected final Spec spec;
     private final MapCodec<PcBlock> codec;
@@ -159,7 +179,7 @@ public class PcBlock extends Block {
         super.onPlace(state, level, pos, oldState, movedByPiston);
         if (level.isClientSide || oldState.is(this)) return;
         SimBindings.markDirty(level, pos);
-        if (spec.footprint.isSingle() || !isController(state)) return;
+        if (spec.footprint.isSingle() || !isController(state) || isRelocating()) return;
         Direction f = facing(state);
         for (Footprint.Cell c : spec.footprint.cells(pos, f)) {
             if (c.pos().equals(pos)) continue;
@@ -178,11 +198,19 @@ public class PcBlock extends Block {
         return MultiblockPartBlock.forOffset(cell.offsetFromAnchor());
     }
 
+    /**
+     * Форма клетки-части по состоянию якоря её сегмента (смещение — от якоря, уже повёрнутое). По умолчанию — полный
+     * блок; клеть, например, пускает внутрь.
+     */
+    public VoxelShape partShape(BlockState anchor, BlockGetter level, BlockPos anchorPos, BlockPos offsetFromAnchor) {
+        return Shapes.block();
+    }
+
     @Override
     protected void onRemove(BlockState state, Level level, BlockPos pos, BlockState newState, boolean movedByPiston) {
         if (!level.isClientSide && !newState.is(this)) {
             SimBindings.markDirty(level, pos);
-            if (!spec.footprint.isSingle()) breakStructure(state, level, pos);
+            if (!spec.footprint.isSingle() && !isRelocating()) breakStructure(state, level, pos);
         }
         super.onRemove(state, level, pos, newState, movedByPiston);
     }

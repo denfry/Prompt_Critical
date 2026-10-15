@@ -6,6 +6,7 @@ import dev.denfry.promptcritical.sim.consequence.ServerMode;
 import dev.denfry.promptcritical.sim.core.SimConfig;
 import dev.denfry.promptcritical.sim.core.exec.WorkerPool;
 import dev.denfry.promptcritical.sim.metallurgy.MetallurgyConfig;
+import dev.denfry.promptcritical.sim.mining.DrainageConfig;
 import dev.denfry.promptcritical.sim.mining.HoistConfig;
 import dev.denfry.promptcritical.sim.mining.MiningConfig;
 import dev.denfry.promptcritical.sim.mining.VeinConfig;
@@ -31,6 +32,9 @@ public final class SimConfigs {
                 ServerConfig.MINING_HOIST_SF_CARGO.get(), ServerConfig.MINING_ROPE_N0_CYCLES.get(),
                 ServerConfig.MINING_ROPE_CORROSION_PER_DAY.get(), ServerConfig.MINING_ROPE_ITEM_LENGTH_M.get(),
                 ServerConfig.MINING_SAFETY_MODE.get()));
+        sections.put(DrainageConfig.class, new DrainageConfig(ServerConfig.MINING_WATER_YIELD.get(),
+                ServerConfig.MINING_WATER_FILTRATION.get(), ServerConfig.MINING_SUMP_CAPACITY.get(),
+                ServerConfig.MINING_WATER_RELEASE_TAU.get(), ServerConfig.MINING_ACID_WATER_SULFUR.get()));
         sections.put(VeinConfig.class, veins());
         sections.put(dev.denfry.promptcritical.sim.plant.SteamPlantConfig.class, new dev.denfry.promptcritical.sim.plant.SteamPlantConfig(
                 ServerConfig.BOILER_EXPLOSION_BLAST_FRACTION.get(), dev.denfry.promptcritical.sim.plant.SteamPlantConfig.defaults().feedOpenKgS(),

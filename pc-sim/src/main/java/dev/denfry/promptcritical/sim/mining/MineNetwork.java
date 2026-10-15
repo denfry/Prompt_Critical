@@ -24,6 +24,8 @@ public final class MineNetwork {
     private final long id;
     private final MineVentilation ventilation = new MineVentilation();
     private final MethaneField field;
+    private final MineDrainage drainage;
+    private long[] flood = new long[0];
     private long[] anchors = new long[0];
     private final LongIntMap worked = new LongIntMap(64);
     private long[] nodeOrigin = new long[0];
@@ -34,8 +36,13 @@ public final class MineNetwork {
     private int explosions;
 
     public MineNetwork(long id, MiningConfig cfg) {
+        this(id, cfg, DrainageConfig.defaults());
+    }
+
+    public MineNetwork(long id, MiningConfig cfg, DrainageConfig drainageCfg) {
         this.id = id;
         this.field = new MethaneField(cfg);
+        this.drainage = new MineDrainage(drainageCfg);
     }
 
     public long id() {
@@ -59,8 +66,30 @@ public final class MineNetwork {
         return field.topology();
     }
 
+    public MineDrainage drainage() {
+        return drainage;
+    }
+
     void setConfig(MiningConfig cfg) {
         field.setConfig(cfg);
+    }
+
+    void setDrainageConfig(DrainageConfig cfg) {
+        drainage.setConfig(cfg);
+    }
+
+    // --- затопление ----------------------------------------------------------------------------------------
+
+    /**
+     * Блоки воды, которыми привязка показывает затопление (ключи домену непрозрачны), в порядке постановки:
+     * откачка снимает их с конца.
+     */
+    public long[] floodBlocks() {
+        return flood.clone();
+    }
+
+    public void setFloodBlocks(long[] keys) {
+        flood = keys.clone();
     }
 
     // --- якоря ---------------------------------------------------------------------------------------------
@@ -140,6 +169,7 @@ public final class MineNetwork {
     /** Шаг SLOW: сеть, затем газы; открытое пламя во взрывоопасной смеси воспламеняет её. */
     public void stepSlow(double dtPhys) {
         if (!ready()) return;
+        drainage.stepSlow(dtPhys);
         ventilation.solveSlow(dtPhys, VENTILATION_ITERATIONS);
         field.stepSlow(dtPhys, ventilation);
         for (int n = 1; n < nodeFlame.length && !exploding(); n++)
@@ -251,6 +281,10 @@ public final class MineNetwork {
         out.beginObject("field");
         field.save(out);
         out.endObject();
+        out.beginObject("drainage");
+        drainage.save(out);
+        out.putLongs("flood", flood, flood.length);
+        out.endObject();
     }
 
     void load(StateReader in) {
@@ -260,5 +294,11 @@ public final class MineNetwork {
         in.beginObject("field");
         field.load(in);
         in.endObject();
+        if (in.has("drainage")) {
+            in.beginObject("drainage");
+            drainage.load(in);
+            flood = in.getLongs("flood");
+            in.endObject();
+        }
     }
 }

@@ -72,6 +72,8 @@ public final class MineScanner {
         public final Long2IntLinkedOpenHashMap boreholeNode = new Long2IntLinkedOpenHashMap();
         /** Якорные блоки, которых коснулась заливка. */
         public final LongLinkedOpenHashSet anchors = new LongLinkedOpenHashSet();
+        /** Насосы водоотлива (контроллеры), выходящие в выработку. */
+        public final LongLinkedOpenHashSet pumps = new LongLinkedOpenHashSet();
         /** Клетки канареек в выработке. */
         public final LongArrayList cages = new LongArrayList();
         /** Блоки узлов (CSR по индексу узла графа). */
@@ -106,7 +108,7 @@ public final class MineScanner {
         if (b instanceof PcBlock pc && !pc.isController(s)) return false;
         return b == PcBlocks.MAIN_MINE_FAN.get() || b == PcBlocks.VENTILATION_DOOR.get() || b == PcBlocks.MINE_SUPPORT.get()
                 || b == PcBlocks.EXPLOSION_BARRIER.get() || b == PcBlocks.MINE_DISPATCH_CABINET.get()
-                || b == PcBlocks.DEGASIFICATION_BOREHOLE.get();
+                || b == PcBlocks.DEGASIFICATION_BOREHOLE.get() || b == PcBlocks.MINE_DRAINAGE_PUMP.get();
     }
 
     private static boolean minePassable(Block b) {
@@ -218,10 +220,15 @@ public final class MineScanner {
                         else if (s.is(PcBlocks.DEGASIFICATION_BOREHOLE.get())) {
                             boreAir.putIfAbsent(q, p);
                             out.anchors.add(q);
-                        } else if (s.is(PcBlocks.MINE_DISPATCH_CABINET.get()) || s.is(PcBlocks.MULTIBLOCK_PART.get())) {
+                        } else if (s.is(PcBlocks.MINE_DISPATCH_CABINET.get()) || s.is(PcBlocks.MINE_DRAINAGE_PUMP.get())
+                                || s.is(PcBlocks.MULTIBLOCK_PART.get())) {
                             BlockPos ctrl = controller(q, s);
-                            if (ctrl != null && level.getBlockState(ctrl).is(PcBlocks.MINE_DISPATCH_CABINET.get()))
+                            BlockState cs = ctrl == null ? null : level.getBlockState(ctrl);
+                            if (cs != null && cs.is(PcBlocks.MINE_DISPATCH_CABINET.get())) out.anchors.add(ctrl.asLong());
+                            if (cs != null && cs.is(PcBlocks.MINE_DRAINAGE_PUMP.get())) {
                                 out.anchors.add(ctrl.asLong());
+                                out.pumps.add(ctrl.asLong());
+                            }
                         }
                     }
                 }

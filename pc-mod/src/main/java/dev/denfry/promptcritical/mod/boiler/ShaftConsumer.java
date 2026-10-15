@@ -16,4 +16,12 @@ public interface ShaftConsumer {
     double ratedShaftW();
 
     double nominalShaftRpm();
+
+    /**
+     * Свободная мощность сети Create, Вт: ёмкость источников минус нагрузка всех потребителей плюс своя объявленная.
+     * Пишется раз в {@link KineticInputBlockEntity#SPARE_PERIOD_TICKS}; машине с переменной нагрузкой (подъём) — чтобы
+     * не перегрузить сеть.
+     */
+    default void sampleSparePowerW(double watts) {
+    }
 }

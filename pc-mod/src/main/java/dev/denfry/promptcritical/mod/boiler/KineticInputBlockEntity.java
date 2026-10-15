@@ -14,6 +14,9 @@ import org.jetbrains.annotations.Nullable;
  * {@link ShaftConsumer}, обратно объявляет его мощность стрессом через фильтр R4.
  */
 public class KineticInputBlockEntity extends KineticBlockEntity {
+    /** Период пересчёта свободной мощности сети, тиков. */
+    public static final int SPARE_PERIOD_TICKS = 10;
+
     private final StressFilter stress = new StressFilter();
 
     public KineticInputBlockEntity(BlockPos pos, BlockState state) {
@@ -35,8 +38,18 @@ public class KineticInputBlockEntity extends KineticBlockEntity {
         if (o == null) return;
         SimLevelBinding b = SimBindings.get(s);
         o.sampleShaft(getSpeed(), !isOverStressed(), b == null ? s.getGameTime() : b.world().clock().tick());
+        if (s.getGameTime() % SPARE_PERIOD_TICKS == 0) o.sampleSparePowerW(sparePowerW());
         if (stress.update(o.shaftPowerW(), getSpeed(), o.ratedShaftW(), o.nominalShaftRpm(), s.getGameTime()) && hasNetwork())
             getOrCreateNetwork().updateStressFor(this, stress.impact());
+    }
+
+    /** (ёмкость − нагрузка) сети в SU × Вт/SU плюс своя объявленная мощность; без сети — 0. */
+    private double sparePowerW() {
+        if (!hasNetwork() || getSpeed() == 0) return 0;
+        var net = getOrCreateNetwork();
+        double wPerSu = dev.denfry.promptcritical.mod.config.ServerConfig.W_PER_SU.get();
+        double own = stress.impact() * Math.abs(getSpeed());
+        return Math.max(0, (net.calculateCapacity() - net.calculateStress() + own) * wPerSu);
     }
 
     @Override

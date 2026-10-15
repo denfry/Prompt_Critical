@@ -92,6 +92,11 @@ public final class ServerConfig {
     public static final ModConfigSpec.DoubleValue MINING_BARRIER_INERT_KG_PER_BLOCK;
     public static final ModConfigSpec.IntValue MINING_MAX_MINE_BLOCKS;
     public static final ModConfigSpec.BooleanValue MINING_ROOF_COLLAPSE;
+    public static final ModConfigSpec.DoubleValue MINING_WATER_YIELD;
+    public static final ModConfigSpec.DoubleValue MINING_WATER_FILTRATION;
+    public static final ModConfigSpec.DoubleValue MINING_SUMP_CAPACITY;
+    public static final ModConfigSpec.DoubleValue MINING_WATER_RELEASE_TAU;
+    public static final ModConfigSpec.DoubleValue MINING_ACID_WATER_SULFUR;
     public static final ModConfigSpec.DoubleValue CASTING_CHVORINOV_B_SAND_MIN_CM2;
     public static final ModConfigSpec.DoubleValue MACHINING_TAYLOR_N;
     public static final ModConfigSpec.DoubleValue MACHINING_TAYLOR_C_M_MIN;
@@ -258,6 +263,16 @@ public final class ServerConfig {
         MINING_MAX_MINE_BLOCKS = b.comment("Largest mine airway volume traced by the flood fill, blocks; beyond it the mine is truncated (08 §8.2.2)")
                 .defineInRange("max_mine_blocks", 32_768, 64, 1 << 20);
         MINING_ROOF_COLLAPSE = b.comment("Unsupported roof spans collapse after the rock's delay (08 §8.2.2)").define("roof_collapse", true);
+        MINING_WATER_YIELD = b.comment("Water opened up per ton of coal or ore mined, m3/t (08 §8.2.9: 0.5-10)")
+                .defineInRange("water_yield_m3_per_t", 1.0, 0.0, 100.0);
+        MINING_WATER_FILTRATION = b.comment("[BALANCE] Filtration inflow into every mine, m3/h (08 §8.2.9)")
+                .defineInRange("water_filtration_m3_per_h", 2.0, 0.0, 1.0e4);
+        MINING_SUMP_CAPACITY = b.comment("[BALANCE] Sump capacity of a mine, m3; water above it floods the lowest workings (08 §8.2.9)")
+                .defineInRange("sump_capacity_m3", 400.0, 1.0, 1.0e6);
+        MINING_WATER_RELEASE_TAU = b.comment("[BALANCE] Time constant for opened-up water to drain into the sump, physical s (08 §8.2.9)")
+                .defineInRange("water_release_tau_s", 21_600.0, 1.0, 1.0e7);
+        MINING_ACID_WATER_SULFUR = b.comment("[assumption] Coal sulfur S^d, %, from which seam water is acidic mine_water (08 §8.2.9)")
+                .defineInRange("acid_water_sulfur_pct", 1.5, 0.0, 100.0);
         b.pop();
 
         b.push("casting");

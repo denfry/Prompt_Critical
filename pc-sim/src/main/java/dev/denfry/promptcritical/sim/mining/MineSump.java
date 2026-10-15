@@ -41,6 +41,18 @@ public final class MineSump {
     private double volume, pumped, shaftPower;
 
     /**
+     * Водосборник без своего насоса: подачу насосов шахты (у каждого свой напор) складывает владелец.
+     *
+     * @param capacityM3 ёмкость водосборника, м³
+     */
+    public MineSump(double capacityM3) {
+        if (!(capacityM3 > 0)) throw new IllegalArgumentException("sump");
+        this.capacityM3 = capacityM3;
+        this.staticHeadM = 0;
+        this.pump = null;
+    }
+
+    /**
      * @param capacityM3  ёмкость водосборника, м³
      * @param staticHeadM высота подъёма воды (глубина горизонта), м
      * @param pump        насос
@@ -75,12 +87,26 @@ public final class MineSump {
      * @param pumpRpm   частота вала насоса (0 — стоит)
      */
     public void stepSlow(double dt, double inflowM3s, double pumpRpm) {
-        double q = pump.flowAt(Math.abs(pumpRpm), staticHeadM);
-        double available = volume / dt + inflowM3s;
-        q = Math.min(q, available);
+        stepSlowWithCapacity(dt, inflowM3s, pump.flowAt(Math.abs(pumpRpm), staticHeadM));
+        shaftPower = pumped > 0 ? pumpPowerW(pumped, staticHeadM, pump.efficiency()) : 0;
+    }
+
+    /**
+     * Шаг SLOW с готовой подачей насосов (сумма их рабочих точек на своих напорах).
+     *
+     * @return откачано, м³/с — не больше подачи и того, что есть в водосборнике с притоком
+     */
+    public double stepSlowWithCapacity(double dt, double inflowM3s, double pumpCapacityM3s) {
+        double q = Math.min(Math.max(0, pumpCapacityM3s), volume / dt + inflowM3s);
         volume = Math.max(0, volume + (inflowM3s - q) * dt);
         pumped = q;
-        shaftPower = q > 0 ? pumpPowerW(q, staticHeadM, pump.efficiency()) : 0;
+        shaftPower = 0;
+        return q;
+    }
+
+    /** Восстановить объём воды после загрузки, м³. */
+    public void restore(double volumeM3) {
+        volume = Math.max(0, volumeM3);
     }
 
     /** Вода в водосборнике и затопленных выработках, м³. */

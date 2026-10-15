@@ -35,5 +35,6 @@ public final class PcDataGen {
         gen.addProvider(event.includeServer(), new PcTagProviders.ItemTagProvider(out, lookup, blockTags.contentsGetter(), efh));
         gen.addProvider(event.includeServer(), new FoundryRecipes(out, lookup));
         gen.addProvider(event.includeServer(), dev.denfry.promptcritical.mod.boiler.BoilerRecipes.provider(out, lookup));
+        gen.addProvider(event.includeServer(), dev.denfry.promptcritical.mod.mine.HoistRecipes.provider(out, lookup));
     }
 }

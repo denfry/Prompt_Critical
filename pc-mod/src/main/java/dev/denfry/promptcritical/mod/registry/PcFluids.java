@@ -14,8 +14,8 @@ import net.neoforged.neoforge.registries.DeferredRegister;
 import net.neoforged.neoforge.registries.NeoForgeRegistries;
 
 /**
- * Жидкости и газы M2 (07 §7.22, 08 §8.20): существуют в трубах и баках (Create, гидросети); блоков и вёдер нет —
- * газ из ведра в мир не выливается. Плотность газов отрицательная (всплывают), как принято в NeoForge.
+ * Жидкости и газы M2 (07 §7.22, 08 §8.20): существуют в трубах и баках (Create, гидросети); вёдер нет — газ из
+ * ведра в мир не выливается; блок есть только у шахтной воды (затопление). Плотность газов отрицательная (всплывают), как принято в NeoForge.
  */
 public final class PcFluids {
     public static final DeferredRegister<FluidType> TYPES = DeferredRegister.create(NeoForgeRegistries.Keys.FLUID_TYPES, PromptCritical.MOD_ID);
@@ -26,7 +26,12 @@ public final class PcFluids {
     public static final Entry FLUE_GAS = gas("flue_gas", 450, -1);
     public static final Entry MINE_METHANE = gas("mine_methane", 293, -1);
     public static final Entry RAW_WATER = liquid("raw_water", 1000, 1000, 288);
+    /** Шахтная вода: единственная с блоком — ею затапливаются выработки (08 §8.2.9); в источник не превращается. */
     public static final Entry MINE_WATER = liquid("mine_water", 1005, 1050, 293);
+
+    static {
+        MINE_WATER.props.block(PcBlocks.MINE_WATER);
+    }
 
     /** Тип, источник и текущая форма одной жидкости. */
     public static final class Entry {
@@ -34,6 +39,7 @@ public final class PcFluids {
         public final DeferredHolder<FluidType, FluidType> type;
         public final DeferredHolder<Fluid, BaseFlowingFluid.Source> source;
         public final DeferredHolder<Fluid, BaseFlowingFluid.Flowing> flowing;
+        private final BaseFlowingFluid.Properties props;
 
         private Entry(String name, Supplier<FluidType> typeFactory) {
             this.name = name;
@@ -42,6 +48,7 @@ public final class PcFluids {
             this.source = FLUIDS.register(name, () -> new BaseFlowingFluid.Source(props[0]));
             this.flowing = FLUIDS.register("flowing_" + name, () -> new BaseFlowingFluid.Flowing(props[0]));
             props[0] = new BaseFlowingFluid.Properties(type, source, flowing);
+            this.props = props[0];
         }
     }
 

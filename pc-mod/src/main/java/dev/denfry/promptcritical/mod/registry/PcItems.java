@@ -4,6 +4,7 @@ import dev.denfry.promptcritical.mod.PromptCritical;
 import dev.denfry.promptcritical.mod.block.PcBlock;
 import dev.denfry.promptcritical.mod.foundry.CastingPatternItem;
 import dev.denfry.promptcritical.mod.item.MineInstrumentItem;
+import dev.denfry.promptcritical.mod.item.WireRopeItem;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
@@ -57,7 +58,9 @@ public final class PcItems {
     public static final DeferredItem<MineInstrumentItem> SELF_RESCUER = instrument("self_rescuer", MineInstrumentItem.Kind.SELF_RESCUER, 16);
     public static final DeferredItem<MineInstrumentItem> STONE_DUSTER = instrument("stone_duster", MineInstrumentItem.Kind.STONE_DUSTER, 1);
     public static final DeferredItem<MineInstrumentItem> METHANOMETER = instrument("methanometer", MineInstrumentItem.Kind.METHANOMETER, 1);
-    public static final DeferredItem<Item> WIRE_ROPE = item("wire_rope", 16);
+    /** Без компонента {@code rope_state} — канат {@link dev.denfry.promptcritical.mod.item.RopeStateData#DEFAULT}. */
+    public static final DeferredItem<WireRopeItem> WIRE_ROPE = registered(ITEMS.registerItem("wire_rope", WireRopeItem::new,
+            new Item.Properties().stacksTo(16)));
     public static final DeferredItem<Item> CANARY = item("canary", 16);
     // справочник (11)
     public static final DeferredItem<Item> ENGINEERING_HANDBOOK = item("engineering_handbook", 1);

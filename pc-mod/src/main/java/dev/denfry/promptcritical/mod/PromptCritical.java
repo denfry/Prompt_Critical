@@ -10,6 +10,7 @@ import dev.denfry.promptcritical.mod.registry.PcDataComponents;
 import dev.denfry.promptcritical.mod.registry.PcFeatures;
 import dev.denfry.promptcritical.mod.registry.PcLootFunctions;
 import dev.denfry.promptcritical.sim.mining.MineSubsystem;
+import dev.denfry.promptcritical.sim.mining.DrainageConfig;
 import dev.denfry.promptcritical.sim.mining.MiningConfig;
 import dev.denfry.promptcritical.mod.client.PcClient;
 import dev.denfry.promptcritical.mod.config.ServerConfig;
@@ -49,7 +50,9 @@ public final class PromptCritical {
         dev.denfry.promptcritical.mod.boiler.BoilerBinding.register(modBus);
         dev.denfry.promptcritical.mod.mine.MineBlockEntities.register(modBus);
         SimBindings.registerSubsystem(level -> new MineSubsystem(
-                SimConfigs.fromServerConfig().section(MiningConfig.class, MiningConfig.defaults())));
+                SimConfigs.fromServerConfig().section(MiningConfig.class, MiningConfig.defaults()),
+                SimConfigs.fromServerConfig().section(DrainageConfig.class, DrainageConfig.defaults())));
+        dev.denfry.promptcritical.mod.mine.MineHoisting.register(modBus);
         modBus.addListener(PcDataGen::gather);
         if (FMLEnvironment.dist == Dist.CLIENT) PcClient.register(modBus);
         ApiHolder.install(new ApiImpl());
