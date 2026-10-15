@@ -48,6 +48,7 @@ import java.util.UUID;
 import net.minecraft.ChatFormatting;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
+import net.minecraft.core.particles.ParticleTypes;
 import net.minecraft.core.registries.Registries;
 import net.minecraft.network.chat.Component;
 import net.minecraft.resources.ResourceKey;
@@ -389,13 +390,21 @@ public final class MineWorld {
         level.explode(null, o.x() + 0.5, o.y() + 0.5, o.z() + 0.5, (float) power, Level.ExplosionInteraction.NONE);
         Entry e = entries.get(n.id());
         if (e == null || e.scan == null || node >= e.scan.nodeStart.length - 1) return;
-        // крепь узла ломается, двери распахивает
+        // крепь узла ломается, двери распахивает; пламя и дым заполняют выработку узла — фронт видно по всей
+        // длине, а не только ванильным «пыхом» в точке (мощность взрыва узла мала, порода почти не рушится)
         for (int i = e.scan.nodeStart[node]; i < e.scan.nodeStart[node + 1]; i++) {
             BlockPos p = BlockPos.of(e.scan.nodeBlocks[i]);
             BlockState st = level.getBlockState(p);
             if (st.is(PcBlocks.MINE_SUPPORT.get()) && !st.getValue(PcProperties.DAMAGED))
                 level.setBlock(p, st.setValue(PcProperties.DAMAGED, true), Block.UPDATE_CLIENTS);
+            if (st.isAir()) {
+                double x = p.getX() + 0.5, y = p.getY() + 0.5, z = p.getZ() + 0.5;
+                level.sendParticles(ParticleTypes.FLAME, x, y, z, 12, 0.4, 0.4, 0.4, 0.08);
+                level.sendParticles(ParticleTypes.LARGE_SMOKE, x, y, z, 3, 0.4, 0.4, 0.4, 0.03);
+                level.sendParticles(ParticleTypes.CAMPFIRE_COSY_SMOKE, x, y + 0.3, z, 1, 0.3, 0.2, 0.3, 0.01);
+            }
         }
+        level.playSound(null, o.x() + 0.5, o.y() + 0.5, o.z() + 0.5, SoundEvents.GENERIC_EXPLODE.value(), SoundSource.BLOCKS, 6f, 0.6f);
         for (long door : e.scan.doorCtrl) {
             BlockPos p = BlockPos.of(door);
             BlockState st = level.getBlockState(p);
