@@ -5,11 +5,13 @@ import dev.denfry.promptcritical.sim.mining.BiomeClass;
 import dev.denfry.promptcritical.sim.mining.VeinCatalog;
 import dev.denfry.promptcritical.sim.mining.VeinConfig;
 import dev.denfry.promptcritical.sim.mining.VeinField;
-import net.minecraft.core.BlockPos;
 import net.minecraft.core.Holder;
+import net.minecraft.core.QuartPos;
+import net.minecraft.server.level.ServerLevel;
 import net.minecraft.tags.BiomeTags;
-import net.minecraft.world.level.LevelReader;
 import net.minecraft.world.level.biome.Biome;
+import net.minecraft.world.level.biome.BiomeSource;
+import net.minecraft.world.level.biome.Climate;
 import net.neoforged.neoforge.common.Tags;
 
 /**
@@ -34,10 +36,16 @@ public final class VeinFields {
         return f;
     }
 
-    /** Классы биомов для весов жил: биом на уровне моря. */
-    public static VeinField.BiomeProbe biomes(LevelReader level) {
-        int y = level.getSeaLevel();
-        return (x, z) -> classify(level.getBiome(new BlockPos(x, y, z)));
+    /**
+     * Классы биомов для весов жил: шумовой биом на уровне моря прямо из {@link BiomeSource}. Чанки не читаются:
+     * центр ячейки жилы бывает дальше, чем разрешает {@code WorldGenRegion}, а тип жилы должен совпадать у
+     * генератора, пробы и геологической карты независимо от того, сгенерирован ли чанк.
+     */
+    public static VeinField.BiomeProbe biomes(ServerLevel level) {
+        BiomeSource source = level.getChunkSource().getGenerator().getBiomeSource();
+        Climate.Sampler sampler = level.getChunkSource().randomState().sampler();
+        int qy = QuartPos.fromBlock(level.getSeaLevel());
+        return (x, z) -> classify(source.getNoiseBiome(QuartPos.fromBlock(x), qy, QuartPos.fromBlock(z), sampler));
     }
 
     static BiomeClass classify(Holder<Biome> b) {

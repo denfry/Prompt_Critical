@@ -35,7 +35,7 @@ public final class VeinOreFeature extends Feature<NoneFeatureConfiguration> {
         if (!field.config().enabled()) return false;
         ChunkPos chunk = new ChunkPos(ctx.origin());
         return fill(level, field, chunk.getMinBlockX(), chunk.getMinBlockZ(), chunk.getMaxBlockX(), chunk.getMaxBlockZ(),
-                level.getMinBuildHeight(), level.getMaxBuildHeight() - 1, VeinFields.biomes(level)) > 0;
+                level.getMinBuildHeight(), level.getMaxBuildHeight() - 1, VeinFields.biomes(level.getLevel())) > 0;
     }
 
     /**
