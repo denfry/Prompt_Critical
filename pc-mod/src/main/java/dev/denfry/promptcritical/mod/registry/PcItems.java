@@ -2,6 +2,9 @@ package dev.denfry.promptcritical.mod.registry;
 
 import dev.denfry.promptcritical.mod.PromptCritical;
 import dev.denfry.promptcritical.mod.block.PcBlock;
+import dev.denfry.promptcritical.mod.content.EngineeringHandbookItem;
+import dev.denfry.promptcritical.mod.content.GeologicalMapItem;
+import dev.denfry.promptcritical.mod.content.OperatingProcedureItem;
 import dev.denfry.promptcritical.mod.foundry.CastingPatternItem;
 import dev.denfry.promptcritical.mod.item.MineInstrumentItem;
 import dev.denfry.promptcritical.mod.item.WireRopeItem;
@@ -63,9 +66,12 @@ public final class PcItems {
             new Item.Properties().stacksTo(16)));
     public static final DeferredItem<Item> CANARY = item("canary", 16);
     // справочник (11)
-    public static final DeferredItem<Item> ENGINEERING_HANDBOOK = item("engineering_handbook", 1);
-    public static final DeferredItem<Item> OPERATING_PROCEDURE = item("operating_procedure", 1);
-    public static final DeferredItem<Item> GEOLOGICAL_MAP = item("geological_map", 1);
+    public static final DeferredItem<EngineeringHandbookItem> ENGINEERING_HANDBOOK = registered(ITEMS.registerItem("engineering_handbook",
+            EngineeringHandbookItem::new, new Item.Properties().stacksTo(1)));
+    public static final DeferredItem<OperatingProcedureItem> OPERATING_PROCEDURE = registered(ITEMS.registerItem("operating_procedure",
+            OperatingProcedureItem::new, new Item.Properties().stacksTo(1)));
+    public static final DeferredItem<GeologicalMapItem> GEOLOGICAL_MAP = registered(ITEMS.registerItem("geological_map",
+            GeologicalMapItem::new, new Item.Properties().stacksTo(1)));
 
     static {
         for (DeferredBlock<? extends Block> b : PcBlocks.withItems()) {

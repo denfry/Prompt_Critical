@@ -2,6 +2,9 @@ package dev.denfry.promptcritical.mod.registry;
 
 import dev.denfry.promptcritical.mod.PromptCritical;
 import dev.denfry.promptcritical.mod.block.CanaryCageBlock;
+import dev.denfry.promptcritical.mod.content.DecorBlock;
+import dev.denfry.promptcritical.mod.content.DocumentLecternBlock;
+import dev.denfry.promptcritical.mod.content.WallClockBlock;
 import dev.denfry.promptcritical.mod.boiler.FireTubeBoilerBlock;
 import dev.denfry.promptcritical.mod.boiler.GrateStokerBlockEntity;
 import dev.denfry.promptcritical.mod.boiler.KineticPortBlock;
@@ -44,7 +47,10 @@ import java.util.function.BiFunction;
 import net.minecraft.world.level.block.Block;
 import net.minecraft.world.level.block.Blocks;
 import net.minecraft.world.level.block.LiquidBlock;
+import net.minecraft.world.level.block.SlabBlock;
 import net.minecraft.world.level.block.SoundType;
+import net.minecraft.world.level.block.StairBlock;
+import net.minecraft.world.level.block.WallBlock;
 import net.minecraft.world.level.block.state.BlockBehaviour.Properties;
 import net.minecraft.world.level.block.state.properties.BlockStateProperties;
 import net.minecraft.world.level.block.state.properties.NoteBlockInstrument;
@@ -67,6 +73,13 @@ public final class PcBlocks {
     private static final List<DeferredBlock<PcDeviceBlock>> DEVICES = new ArrayList<>();
     /** Руды 02, выпадающие сами собой (с анализом). */
     private static final List<DeferredBlock<PcBlock>> SELF_ASSAYED = new ArrayList<>();
+    /** Декор (11 §11.6): в топологию не входит. */
+    private static final List<DeferredBlock<? extends Block>> DECOR = new ArrayList<>();
+    /** Ванильные формы декора: плита, ступени, стенка → вид и базовый блок (текстура). */
+    private static final Map<DeferredBlock<? extends Block>, Form> DECOR_FORMS = new LinkedHashMap<>();
+
+    public record Form(String kind, String base) {
+    }
 
     // --- свойства по материалам ---
     private static Properties ore() {
@@ -87,6 +100,30 @@ public final class PcBlocks {
     private static Properties wood() {
         return Properties.of().mapColor(MapColor.WOOD).instrument(NoteBlockInstrument.BASS).strength(2.0f, 3.0f)
                 .sound(SoundType.WOOD).noOcclusion().ignitedByLava();
+    }
+
+    private static Properties tile(MapColor color) {
+        return Properties.of().mapColor(color).instrument(NoteBlockInstrument.BASEDRUM).requiresCorrectToolForDrops()
+                .strength(1.5f, 6.0f);
+    }
+
+    private static Properties sheet(MapColor color) {
+        return Properties.of().mapColor(color).requiresCorrectToolForDrops().strength(3.0f, 6.0f).sound(SoundType.METAL)
+                .noOcclusion();
+    }
+
+    private static Properties glassBlock() {
+        return Properties.of().mapColor(MapColor.NONE).instrument(NoteBlockInstrument.HAT).strength(1.5f, 6.0f)
+                .sound(SoundType.GLASS).noOcclusion().isViewBlocking((st, l, p) -> false).isSuffocating((st, l, p) -> false);
+    }
+
+    private static Properties lamp() {
+        return Properties.of().mapColor(MapColor.METAL).strength(1.0f).sound(SoundType.LANTERN).noOcclusion()
+                .lightLevel(st -> st.getValue(BlockStateProperties.LIT) ? 15 : 0);
+    }
+
+    private static Properties plate() {
+        return Properties.of().mapColor(MapColor.METAL).strength(1.0f).sound(SoundType.METAL).noOcclusion().noCollission();
     }
 
     private static Properties lit(Properties p) {
@@ -192,10 +229,55 @@ public final class PcBlocks {
             Spec.facing(PcProperties.RUNNING).footprint(FP_TALL2), KineticMachineBlock.with(ShaftSide.BACK, MachineToolBlockEntity::drillPress));
 
     // --- справочник и мир (11) ---
-    public static final DeferredBlock<PcBlock> DOCUMENT_LECTERN = block("document_lectern", wood(), Spec.facing(PcProperties.HAS_DOCUMENT));
+    public static final DeferredBlock<DocumentLecternBlock> DOCUMENT_LECTERN = withItem(BLOCKS.registerBlock("document_lectern",
+            p -> DocumentLecternBlock.create(p, Spec.facing(PcProperties.HAS_DOCUMENT)), wood()));
     public static final DeferredBlock<CanaryCageBlock> CANARY_CAGE = withItem(BLOCKS.registerBlock("canary_cage",
             p -> CanaryCageBlock.create(p, Spec.of(PcProperties.BIRD)),
             Properties.of().mapColor(MapColor.METAL).strength(0.5f).sound(SoundType.LANTERN).noOcclusion()));
+
+    // --- декор I0 (11 §11.6.2): кафель, керамогранит, крашеный бетон, стеклоблоки, профнастил, площадки, свет ---
+    public static final DeferredBlock<PcBlock> TILE_WHITE = decorCube("tile_white", MapColor.SNOW, true);
+    public static final DeferredBlock<PcBlock> TILE_BLUE = decorCube("tile_blue", MapColor.COLOR_LIGHT_BLUE, true);
+    public static final DeferredBlock<PcBlock> TILE_GREEN = decorCube("tile_green", MapColor.COLOR_LIGHT_GREEN, true);
+    public static final DeferredBlock<PcBlock> PORCELAIN_TILE = decorCube("porcelain_tile", MapColor.STONE, true);
+    public static final DeferredBlock<PcBlock> PORCELAIN_TILE_BEIGE = decorCube("porcelain_tile_beige", MapColor.SAND, true);
+    public static final DeferredBlock<PcBlock> PAINTED_CONCRETE = decorCube("painted_concrete", MapColor.COLOR_LIGHT_GRAY, true);
+    public static final DeferredBlock<PcBlock> PAINTED_CONCRETE_YELLOW = decorCube("painted_concrete_yellow", MapColor.COLOR_YELLOW, true);
+    public static final DeferredBlock<PcBlock> PAINTED_CONCRETE_RED = decorCube("painted_concrete_red", MapColor.COLOR_RED, true);
+    public static final DeferredBlock<PcBlock> PAINTED_CONCRETE_TWO_TONE = decorCube("painted_concrete_two_tone", MapColor.COLOR_GREEN, false);
+    public static final DeferredBlock<PcBlock> PAINTED_CONCRETE_TWO_TONE_BLUE = decorCube("painted_concrete_two_tone_blue", MapColor.COLOR_BLUE, false);
+    public static final DeferredBlock<PcBlock> PAINTED_CONCRETE_TWO_TONE_BEIGE = decorCube("painted_concrete_two_tone_beige", MapColor.SAND, false);
+    public static final DeferredBlock<PcBlock> GLASS_BLOCK = decorPlain("glass_block", glassBlock(), Spec.of());
+    public static final DeferredBlock<PcBlock> GLASS_BLOCK_FROSTED = decorPlain("glass_block_frosted", glassBlock(), Spec.of());
+    public static final DeferredBlock<PcBlock> CORRUGATED_STEEL = decorPlain("corrugated_steel", sheet(MapColor.COLOR_GRAY), Spec.of());
+    public static final DeferredBlock<PcBlock> CORRUGATED_STEEL_BLUE = decorPlain("corrugated_steel_blue", sheet(MapColor.COLOR_BLUE), Spec.of());
+    public static final DeferredBlock<PcBlock> CORRUGATED_STEEL_GREEN = decorPlain("corrugated_steel_green", sheet(MapColor.COLOR_GREEN), Spec.of());
+    public static final DeferredBlock<PcBlock> CORRUGATED_STEEL_RED = decorPlain("corrugated_steel_red", sheet(MapColor.COLOR_RED), Spec.of());
+    public static final DeferredBlock<PcBlock> CORRUGATED_STEEL_WHITE = decorPlain("corrugated_steel_white", sheet(MapColor.SNOW), Spec.of());
+    public static final DeferredBlock<DecorBlock> GRATING = decor("grating", sheet(MapColor.METAL), Spec.of(), 0, 12, 0, 16, 16, 16);
+    public static final DeferredBlock<DecorBlock> GRATING_STEP = decor("grating_step", sheet(MapColor.METAL), Spec.facing(), 0, 0, 0, 16, 16, 16);
+    public static final DeferredBlock<DecorBlock> HANDRAIL = decor("handrail", sheet(MapColor.COLOR_YELLOW), Spec.facing(), 0, 0, 7, 16, 24, 8.5);
+    public static final DeferredBlock<DecorBlock> HANDRAIL_GALVANIZED = decor("handrail_galvanized", sheet(MapColor.METAL), Spec.facing(),
+            0, 0, 7, 16, 24, 8.5);
+    public static final DeferredBlock<DecorBlock> CAGE_LADDER = decorOf(BLOCKS.registerBlock("cage_ladder",
+            p -> DecorBlock.create(p, Spec.facing(), new double[] {1, 0, 13, 15, 16, 15}, true), sheet(MapColor.METAL)));
+    public static final DeferredBlock<DecorBlock> INDUSTRIAL_LIGHT = decor("industrial_light", lamp(),
+            Spec.of(BlockStateProperties.LIT), 3, 5, 3, 13, 16, 13);
+    public static final DeferredBlock<DecorBlock> INDUSTRIAL_LIGHT_STREET = decor("industrial_light_street", lamp(),
+            Spec.facing(BlockStateProperties.LIT), 5, 8.5, 1, 11, 12, 16);
+    public static final DeferredBlock<DecorBlock> INDUSTRIAL_LIGHT_FLOODLIGHT = decor("industrial_light_floodlight", lamp(),
+            Spec.facing(BlockStateProperties.LIT), 3, 0, 3.5, 13, 12, 10);
+    public static final DeferredBlock<DecorBlock> INDUSTRIAL_LIGHT_EXIT = decor("industrial_light_exit", lamp(),
+            Spec.facing(BlockStateProperties.LIT), 3, 5, 13.9, 13, 11, 16);
+    public static final DeferredBlock<DecorBlock> ROOM_SIGN = decor("room_sign", plate(), Spec.facing(), 2, 5, 15.5, 14, 11, 16);
+    public static final DeferredBlock<DecorBlock> ROOM_SIGN_EVAC = decor("room_sign_evac", plate(), Spec.facing(), 2, 5, 15.5, 14, 11, 16);
+    public static final DeferredBlock<WallClockBlock> WALL_CLOCK = decorOf(BLOCKS.registerBlock("wall_clock",
+            p -> WallClockBlock.create(p, Spec.facing(), new double[] {2, 2, 14.4, 14, 14, 16}), plate()));
+    public static final DeferredBlock<DecorBlock> SAFETY_POSTER = decor("safety_poster", plate(), Spec.facing(), 0, 0, 15.75, 16, 16, 16);
+    public static final DeferredBlock<DecorBlock> SAFETY_POSTER_LARGE = decor("safety_poster_large", plate(), Spec.facing(),
+            0, 0, 15.75, 16, 16, 16);
+    public static final DeferredBlock<DecorBlock> CURB = decor("curb", Properties.of().mapColor(MapColor.STONE)
+            .requiresCorrectToolForDrops().strength(1.5f, 6.0f), Spec.facing(), 0, 0, 5, 16, 6, 11);
 
     /** Шахтная вода в выработках — затопление (08 §8.2.9); предмета нет. */
     public static final DeferredBlock<LiquidBlock> MINE_WATER = BLOCKS.registerBlock("mine_water",
@@ -217,6 +299,33 @@ public final class PcBlocks {
     private static <B extends Block> DeferredBlock<B> withItem(DeferredBlock<B> b) {
         WITH_ITEMS.add(b);
         return b;
+    }
+
+    /** Блок декора с формами: плита и ступени, у крашеного бетона ещё стенка (11 §11.6.2). */
+    private static DeferredBlock<PcBlock> decorCube(String name, MapColor color, boolean forms) {
+        DeferredBlock<PcBlock> base = decorPlain(name, tile(color), Spec.of());
+        if (forms) {
+            DECOR_FORMS.put(decorOf(BLOCKS.registerBlock(name + "_slab", SlabBlock::new, tile(color))), new Form("slab", name));
+            DECOR_FORMS.put(decorOf(BLOCKS.registerBlock(name + "_stairs",
+                    p -> new StairBlock(base.get().defaultBlockState(), p), tile(color))), new Form("stairs", name));
+            if (name.startsWith("painted_concrete"))
+                DECOR_FORMS.put(decorOf(BLOCKS.registerBlock(name + "_wall", WallBlock::new, tile(color).forceSolidOn())),
+                        new Form("wall", name));
+        }
+        return base;
+    }
+
+    private static DeferredBlock<DecorBlock> decor(String name, Properties props, Spec spec, double... box) {
+        return decorOf(BLOCKS.registerBlock(name, p -> DecorBlock.create(p, spec, box, false), props));
+    }
+
+    private static DeferredBlock<PcBlock> decorPlain(String name, Properties props, Spec spec) {
+        return decorOf(BLOCKS.registerBlock(name, p -> PcBlock.create(p, spec), props));
+    }
+
+    private static <B extends Block> DeferredBlock<B> decorOf(DeferredBlock<B> b) {
+        DECOR.add(b);
+        return withItem(b);
     }
 
     private static DeferredBlock<PcBlock> block(String name, Properties props, Spec spec) {
@@ -263,15 +372,24 @@ public final class PcBlocks {
         return Collections.unmodifiableList(SELF_ASSAYED);
     }
 
+    public static Map<DeferredBlock<? extends Block>, Form> decorForms() {
+        return Collections.unmodifiableMap(DECOR_FORMS);
+    }
+
     public static List<DeferredBlock<PcDeviceBlock>> devices() {
         return Collections.unmodifiableList(DEVICES);
+    }
+
+    public static List<DeferredBlock<? extends Block>> decor() {
+        return Collections.unmodifiableList(DECOR);
     }
 
     /** Блоки, состояние которых участвует в топологии (05 §5.3.3): всё, кроме руд и декора. */
     public static List<Block> topologyRelevant() {
         List<Block> out = new ArrayList<>();
         for (DeferredBlock<? extends Block> b : WITH_ITEMS) {
-            if (!ORE_DROPS.containsKey(b) && !SELF_ASSAYED.contains(b) && b != FIRECLAY && b != VEIN_QUARTZ) out.add(b.get());
+            if (!ORE_DROPS.containsKey(b) && !SELF_ASSAYED.contains(b) && !DECOR.contains(b) && b != FIRECLAY && b != VEIN_QUARTZ)
+                out.add(b.get());
         }
         out.add(MULTIBLOCK_PART.get());
         out.add(KINETIC_PORT.get());

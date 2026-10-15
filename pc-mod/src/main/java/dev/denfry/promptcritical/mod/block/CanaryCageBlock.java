@@ -2,9 +2,11 @@ package dev.denfry.promptcritical.mod.block;
 
 import dev.denfry.promptcritical.mod.binding.SimBindings;
 import dev.denfry.promptcritical.mod.binding.SimLevelBinding;
+import dev.denfry.promptcritical.mod.content.SimAchievements;
 import dev.denfry.promptcritical.mod.registry.PcItems;
 import net.minecraft.core.BlockPos;
 import net.minecraft.server.level.ServerLevel;
+import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.sounds.SoundEvents;
 import net.minecraft.sounds.SoundSource;
 import net.minecraft.world.InteractionHand;
@@ -40,7 +42,11 @@ public class CanaryCageBlock extends PcBlock {
             level.setBlock(pos, state.setValue(PcProperties.BIRD, PcProperties.Bird.ALIVE), Block.UPDATE_ALL);
             level.playSound(null, pos, SoundEvents.PARROT_AMBIENT, SoundSource.BLOCKS, 1.0f, 1.6f);
             SimLevelBinding b = SimBindings.get((ServerLevel) level);
-            if (b != null) b.mines().onCanaryPlaced(pos);
+            if (b != null) {
+                b.mines().onCanaryPlaced(pos);
+                if (player instanceof ServerPlayer sp && b.mines().inMine(pos))
+                    SimAchievements.direct(sp, SimAchievements.CANARY_PLACED, "", 0);
+            }
         }
         return ItemInteractionResult.sidedSuccess(level.isClientSide);
     }

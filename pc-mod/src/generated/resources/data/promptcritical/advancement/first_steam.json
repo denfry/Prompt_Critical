@@ -1,0 +1,38 @@
+{
+  "parent": "promptcritical:root",
+  "criteria": {
+    "engine_running": {
+      "conditions": {
+        "event": "promptcritical:engine_running",
+        "predicate": {
+          "omega_pu": {
+            "min": 0.2
+          }
+        },
+        "station_member": true
+      },
+      "trigger": "promptcritical:sim_event"
+    }
+  },
+  "display": {
+    "description": {
+      "translate": "advancements.promptcritical.first_steam.description"
+    },
+    "icon": {
+      "count": 1,
+      "id": "promptcritical:steam_engine_cylinder"
+    },
+    "title": {
+      "translate": "advancements.promptcritical.first_steam.title"
+    }
+  },
+  "requirements": [
+    [
+      "engine_running"
+    ]
+  ],
+  "rewards": {
+    "experience": 50
+  },
+  "sends_telemetry_event": true
+}

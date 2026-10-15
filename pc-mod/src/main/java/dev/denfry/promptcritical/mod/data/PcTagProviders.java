@@ -71,6 +71,13 @@ public final class PcTagProviders {
             tag(PcTags.Blocks.ROOF_WEAK).add(PcBlocks.COAL_SEAM.get(), PcBlocks.FIRECLAY.get(), Blocks.GRAVEL, Blocks.DIRT,
                     Blocks.COARSE_DIRT, Blocks.CLAY, Blocks.SAND, Blocks.RED_SAND, Blocks.COAL_ORE, Blocks.DEEPSLATE_COAL_ORE);
             tag(BlockTags.MINEABLE_WITH_PICKAXE).add(PcBlocks.MULTIBLOCK_PART.get(), PcBlocks.KINETIC_PORT.get());
+            // формы декора (11 §11.6.2)
+            PcBlocks.decorForms().forEach((db, form) -> tag(switch (form.kind()) {
+                case "slab" -> BlockTags.SLABS;
+                case "stairs" -> BlockTags.STAIRS;
+                default -> BlockTags.WALLS;
+            }).add(db.get()));
+            tag(BlockTags.CLIMBABLE).add(PcBlocks.CAGE_LADDER.get());
             tag(PcTags.Blocks.TOPOLOGY_RELEVANT).add(PcBlocks.topologyRelevant().toArray(Block[]::new));
             tag(PcTags.Blocks.DAMAGE_IMMUNE).add(Blocks.BEDROCK, Blocks.BARRIER, Blocks.LIGHT, Blocks.END_PORTAL,
                     Blocks.END_PORTAL_FRAME, Blocks.END_GATEWAY, Blocks.NETHER_PORTAL, Blocks.COMMAND_BLOCK,
@@ -88,6 +95,9 @@ public final class PcTagProviders {
         @Override
         protected void addTags(HolderLookup.Provider provider) {
             copy(PcTags.Blocks.ORES, PcTags.Items.ORES);
+            copy(BlockTags.SLABS, net.minecraft.tags.ItemTags.SLABS);
+            copy(BlockTags.STAIRS, net.minecraft.tags.ItemTags.STAIRS);
+            copy(BlockTags.WALLS, net.minecraft.tags.ItemTags.WALLS);
             FoundryTags.addItemTags(this::tag);
             for (String metal : Set.copyOf(METAL.values())) {
                 copy(PcTags.Blocks.common("ores/" + metal), PcTags.Items.common("ores/" + metal));

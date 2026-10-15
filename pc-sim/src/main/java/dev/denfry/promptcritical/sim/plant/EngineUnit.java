@@ -23,6 +23,8 @@ public final class EngineUnit {
     final SteamEngineUnit unit;
     SimId boiler = SimId.NONE;
     boolean stopValveOpen, dashpot;
+    /** Вал отдаёт обороты в сеть Create (R3); для события {@link SteamPlant#ENGINE_RUNNING}. */
+    boolean running;
     double loadPowerW, capacityW;
     FluidNode chest;
     FlowLink throttle;

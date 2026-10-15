@@ -1,0 +1,32 @@
+{
+  "parent": "promptcritical:first_steam",
+  "criteria": {
+    "canary_placed": {
+      "conditions": {
+        "event": "promptcritical:canary_placed"
+      },
+      "trigger": "promptcritical:sim_event"
+    }
+  },
+  "display": {
+    "description": {
+      "translate": "advancements.promptcritical.canary.description"
+    },
+    "icon": {
+      "count": 1,
+      "id": "promptcritical:canary_cage"
+    },
+    "title": {
+      "translate": "advancements.promptcritical.canary.title"
+    }
+  },
+  "requirements": [
+    [
+      "canary_placed"
+    ]
+  ],
+  "rewards": {
+    "experience": 20
+  },
+  "sends_telemetry_event": true
+}

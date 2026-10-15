@@ -2,11 +2,15 @@ package dev.denfry.promptcritical.mod.command;
 
 import com.mojang.brigadier.CommandDispatcher;
 import com.mojang.brigadier.arguments.DoubleArgumentType;
+import com.mojang.brigadier.arguments.IntegerArgumentType;
 import com.mojang.brigadier.context.CommandContext;
+import com.mojang.brigadier.exceptions.CommandSyntaxException;
 import dev.denfry.promptcritical.mod.binding.SimBindings;
 import dev.denfry.promptcritical.mod.binding.SimLevelBinding;
 import dev.denfry.promptcritical.mod.boiler.BoilerGeometry;
 import dev.denfry.promptcritical.mod.boiler.FireTubeBoilerBlockEntity;
+import dev.denfry.promptcritical.mod.content.HandbookManager;
+import dev.denfry.promptcritical.mod.content.HandbookService;
 import dev.denfry.promptcritical.sim.consequence.BudgetStats;
 import dev.denfry.promptcritical.sim.core.GridPos;
 import dev.denfry.promptcritical.sim.core.SimId;
@@ -22,6 +26,7 @@ import dev.denfry.promptcritical.sim.plant.SteamPlant;
 import net.minecraft.core.BlockPos;
 import net.minecraft.commands.CommandSourceStack;
 import net.minecraft.commands.Commands;
+import net.minecraft.commands.arguments.ResourceLocationArgument;
 import net.minecraft.network.chat.Component;
 import net.minecraft.world.phys.BlockHitResult;
 
@@ -49,7 +54,22 @@ public final class PcCommands {
                                 .executes(PcCommands::mineWater))))
                 .then(Commands.literal("boiler")
                         .then(Commands.literal("preset").then(Commands.argument("pressure_mpa", DoubleArgumentType.doubleArg(0.1, 2))
-                                .then(Commands.argument("level_m", DoubleArgumentType.doubleArg(0, 1.6)).executes(PcCommands::boilerPreset))))));
+                                .then(Commands.argument("level_m", DoubleArgumentType.doubleArg(0, 1.6)).executes(PcCommands::boilerPreset)))))
+                .then(Commands.literal("handbook").then(Commands.argument("entry", ResourceLocationArgument.id())
+                        .executes(ctx -> handbook(ctx, 0))
+                        .then(Commands.argument("page", IntegerArgumentType.integer(1))
+                                .executes(ctx -> handbook(ctx, IntegerArgumentType.getInteger(ctx, "page") - 1))))));
+    }
+
+    /** Открыть справочнику игрока главу (и страницу): наладка, сервер с правилами, проверка текстов. */
+    private static int handbook(CommandContext<CommandSourceStack> ctx, int page) throws CommandSyntaxException {
+        var id = ResourceLocationArgument.getId(ctx, "entry");
+        if (HandbookManager.data().entry(id) == null) {
+            ctx.getSource().sendFailure(Component.literal("no handbook entry " + id));
+            return 0;
+        }
+        HandbookService.open(ctx.getSource().getPlayerOrException(), id, false, page);
+        return 1;
     }
 
     private static SimLevelBinding binding(CommandContext<CommandSourceStack> ctx) {

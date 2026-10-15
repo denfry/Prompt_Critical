@@ -56,6 +56,8 @@ public final class PcBlockLoot extends BlockLootSubProvider {
                         .setRolls(ConstantValue.exactly(1)).add(LootItem.lootTableItem(block)
                                 .apply(CopyComponentsFunction.copyComponents(CopyComponentsFunction.Source.BLOCK_ENTITY)
                                         .include(FoundryComponents.SAND_MOLD.get()))))));
+            } else if (block instanceof net.minecraft.world.level.block.SlabBlock) {
+                add(block, createSlabItemTable(block));
             } else if (block instanceof PcBlock pc && pc.spec().segment() != null) {
                 add(block, controllerOnly(pc));
             } else {

@@ -1,0 +1,32 @@
+{
+  "parent": "minecraft:recipes/root",
+  "criteria": {
+    "has_the_recipe": {
+      "conditions": {
+        "recipe": "promptcritical:tile_blue_slab"
+      },
+      "trigger": "minecraft:recipe_unlocked"
+    },
+    "has_tile_blue": {
+      "conditions": {
+        "items": [
+          {
+            "items": "promptcritical:tile_blue"
+          }
+        ]
+      },
+      "trigger": "minecraft:inventory_changed"
+    }
+  },
+  "requirements": [
+    [
+      "has_the_recipe",
+      "has_tile_blue"
+    ]
+  ],
+  "rewards": {
+    "recipes": [
+      "promptcritical:tile_blue_slab"
+    ]
+  }
+}

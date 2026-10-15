@@ -1,0 +1,143 @@
+{
+  "category": "promptcritical:i0",
+  "title": {
+    "en_us": "Raising steam: the first start",
+    "ru_ru": "Растопка котла: первый пар"
+  },
+  "icon": "promptcritical:steam_engine_cylinder",
+  "sort": 10,
+  "unlock": {
+    "type": "always"
+  },
+  "next": {
+    "en_us": "Once the shaft turns, read [The boiler](promptcritical:i0/boiler) and put a pressure gauge on.",
+    "ru_ru": "Когда вал закрутится, прочитайте главу [Котёл](promptcritical:i0/boiler) и поставьте манометр."
+  },
+  "pages": [
+    {
+      "type": "text",
+      "file": "main"
+    },
+    {
+      "type": "multiblock",
+      "name": {
+        "en_us": "Boiler room",
+        "ru_ru": "Котельная"
+      },
+      "blocks": [
+        {
+          "pos": [
+            0,
+            0,
+            0
+          ],
+          "state": "promptcritical:fire_tube_boiler[facing=north,segment=front]"
+        },
+        {
+          "pos": [
+            0,
+            0,
+            3
+          ],
+          "state": "promptcritical:fire_tube_boiler[facing=north,segment=rear]"
+        },
+        {
+          "pos": [
+            0,
+            2,
+            4
+          ],
+          "state": "promptcritical:chimney[part=base]"
+        },
+        {
+          "pos": [
+            0,
+            3,
+            4
+          ],
+          "state": "promptcritical:chimney[part=middle]"
+        },
+        {
+          "pos": [
+            0,
+            4,
+            4
+          ],
+          "state": "promptcritical:chimney[part=middle]"
+        },
+        {
+          "pos": [
+            0,
+            5,
+            4
+          ],
+          "state": "promptcritical:chimney[part=middle]"
+        },
+        {
+          "pos": [
+            0,
+            6,
+            4
+          ],
+          "state": "promptcritical:chimney[part=top]"
+        },
+        {
+          "pos": [
+            3,
+            0,
+            0
+          ],
+          "state": "promptcritical:steam_engine_cylinder[facing=north,segment=cylinder]"
+        },
+        {
+          "pos": [
+            3,
+            0,
+            2
+          ],
+          "state": "promptcritical:steam_engine_cylinder[facing=north,segment=frame]"
+        },
+        {
+          "pos": [
+            0,
+            -1,
+            -2
+          ],
+          "state": "promptcritical:grate_stoker[facing=north]"
+        },
+        {
+          "pos": [
+            0,
+            0,
+            -2
+          ],
+          "state": "promptcritical:instrument_pressure[facing=north]"
+        }
+      ],
+      "caption": {
+        "en_us": "Boiler with chimney, engine at the side, stoker and gauge at the front. The real chimney is taller: 15-20 links.",
+        "ru_ru": "Котёл с трубой, машина сбоку, решётка и манометр у фасада. Настоящая труба выше: 15–20 звеньев."
+      }
+    },
+    {
+      "type": "recipe",
+      "recipe": "promptcritical:boiler/fire_tube_boiler"
+    },
+    {
+      "type": "recipe",
+      "recipe": "promptcritical:boiler/chimney"
+    },
+    {
+      "type": "recipe",
+      "recipe": "promptcritical:boiler/steam_engine_cylinder"
+    },
+    {
+      "type": "recipe",
+      "recipe": "promptcritical:boiler/grate_stoker"
+    },
+    {
+      "type": "text",
+      "file": "steps"
+    }
+  ]
+}

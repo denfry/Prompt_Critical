@@ -108,6 +108,12 @@ public final class ServerConfig {
     public static final ModConfigSpec.DoubleValue MACHINING_TAYLOR_N;
     public static final ModConfigSpec.DoubleValue MACHINING_TAYLOR_C_M_MIN;
 
+    // --- 04d §4d.11, 11 §11.10 ---
+    public static final ModConfigSpec.EnumValue<DifficultyPreset> DIFFICULTY_PRESET;
+    public static final ModConfigSpec.BooleanValue CONTENT_GIVE_HANDBOOK_ON_JOIN;
+    public static final ModConfigSpec.BooleanValue CONTENT_HANDBOOK_ALL_UNLOCKED;
+    public static final ModConfigSpec.BooleanValue CONTENT_HINTS_BY_DIFFICULTY;
+
     static {
         var b = new ModConfigSpec.Builder();
 
@@ -299,6 +305,19 @@ public final class ServerConfig {
         b.push("casting");
         CASTING_CHVORINOV_B_SAND_MIN_CM2 = b.comment("Chvorinov constant B for steel in sand moulds, min/cm2 (08 §8.9)")
                 .defineInRange("chvorinov_b_sand_min_cm2", 2.5, 0.01, 100.0);
+        b.pop();
+
+        b.push("difficulty");
+        DIFFICULTY_PRESET = b.comment("Difficulty preset (04d §4d.11); for now it only selects handbook hints (11 §11.1.1)")
+                .defineEnum("preset", DifficultyPreset.STANDARD);
+        b.pop();
+
+        b.push("content");
+        CONTENT_GIVE_HANDBOOK_ON_JOIN = b.comment("Give engineering_handbook to every player once, on first join (11 §11.1.1)")
+                .define("give_handbook_on_join", true);
+        CONTENT_HANDBOOK_ALL_UNLOCKED = b.comment("Open every handbook chapter at once (11 §11.1.2)").define("handbook_all_unlocked", false);
+        CONTENT_HINTS_BY_DIFFICULTY = b.comment("Show 'what next' hints at the end of chapters on TRAINING (11 §11.1.1)")
+                .define("hints_by_difficulty", true);
         b.pop();
 
         b.push("machining");

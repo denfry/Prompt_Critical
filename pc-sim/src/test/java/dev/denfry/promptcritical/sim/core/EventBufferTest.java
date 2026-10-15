@@ -37,12 +37,14 @@ class EventBufferTest {
         buf.commandResult(5, SRC, 42, CommandStatus.NO_TARGET);
         buf.journal(5, SRC, Severity.CRITICAL, "boiler explosion");
         buf.damageRequested(5, SRC, 9, 100, 3);
+        buf.milestone(5, SRC, "promptcritical:engine_running", "omega_pu", 0.21);
         List<SimEvent> out = new ArrayList<>();
         buf.drain(out::add);
         assertThat(out).containsExactly(
                 new SimEvent.CommandResult(5, SRC, 42, CommandStatus.NO_TARGET),
                 new SimEvent.Journal(5, SRC, Severity.CRITICAL, "boiler explosion"),
-                new SimEvent.DamageRequested(5, SRC, 9, 100, 3));
+                new SimEvent.DamageRequested(5, SRC, 9, 100, 3),
+                new SimEvent.Milestone(5, SRC, "promptcritical:engine_running", "omega_pu", 0.21));
         assertThat(buf.size()).isZero();
     }
 }

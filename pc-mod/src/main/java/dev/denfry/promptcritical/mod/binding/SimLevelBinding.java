@@ -178,6 +178,7 @@ public final class SimLevelBinding {
             }
             case SimEvent.DamageRequested d -> PromptCritical.LOGGER.warn("[{}] damage request {} from {}: {} blocks granted, {} denied",
                     level.dimension().location(), d.requestId(), d.source().hex(), d.blocksGranted(), d.blocksDenied());
+            case SimEvent.Milestone m -> dev.denfry.promptcritical.mod.content.SimAchievements.onMilestone(level, world.topology(), m);
             case SimEvent.CommandResult ignored -> {
                 // итоги команд читают CC и пульты (03b, 03c)
             }

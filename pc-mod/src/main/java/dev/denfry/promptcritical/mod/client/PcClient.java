@@ -1,6 +1,8 @@
 package dev.denfry.promptcritical.mod.client;
 
 import dev.denfry.promptcritical.mod.PromptCritical;
+import dev.denfry.promptcritical.mod.content.ContentRegistries;
+import dev.denfry.promptcritical.mod.content.client.WallClockRenderer;
 import dev.denfry.promptcritical.mod.foundry.client.FoundryClient;
 import dev.denfry.promptcritical.mod.registry.PcBlocks;
 import dev.denfry.promptcritical.mod.registry.PcFluids;
@@ -8,6 +10,7 @@ import net.minecraft.client.renderer.ItemBlockRenderTypes;
 import net.minecraft.client.renderer.RenderType;
 import net.minecraft.resources.ResourceLocation;
 import net.neoforged.bus.api.IEventBus;
+import net.neoforged.neoforge.client.event.EntityRenderersEvent;
 import net.neoforged.fml.event.lifecycle.FMLClientSetupEvent;
 import net.neoforged.neoforge.client.extensions.common.IClientFluidTypeExtensions;
 import net.neoforged.neoforge.client.extensions.common.RegisterClientExtensionsEvent;
@@ -23,6 +26,11 @@ public final class PcClient {
         FoundryClient.register(modBus);
         dev.denfry.promptcritical.mod.boiler.client.BoilerClient.register(modBus);
         dev.denfry.promptcritical.mod.mine.client.MineClient.register(modBus);
+        modBus.addListener(PcClient::renderers);
+    }
+
+    private static void renderers(EntityRenderersEvent.RegisterRenderers event) {
+        event.registerBlockEntityRenderer(ContentRegistries.WALL_CLOCK.get(), WallClockRenderer::new);
     }
 
     private static void registerClientExtensions(RegisterClientExtensionsEvent event) {

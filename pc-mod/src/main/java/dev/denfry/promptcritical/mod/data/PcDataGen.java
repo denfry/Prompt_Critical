@@ -10,6 +10,7 @@ import net.minecraft.data.DataGenerator;
 import net.minecraft.data.PackOutput;
 import net.minecraft.data.loot.LootTableProvider;
 import net.minecraft.world.level.storage.loot.parameters.LootContextParamSets;
+import net.neoforged.neoforge.common.data.AdvancementProvider;
 import net.neoforged.neoforge.common.data.ExistingFileHelper;
 import net.neoforged.neoforge.data.event.GatherDataEvent;
 
@@ -36,5 +37,8 @@ public final class PcDataGen {
         gen.addProvider(event.includeServer(), new FoundryRecipes(out, lookup));
         gen.addProvider(event.includeServer(), dev.denfry.promptcritical.mod.boiler.BoilerRecipes.provider(out, lookup));
         gen.addProvider(event.includeServer(), dev.denfry.promptcritical.mod.mine.HoistRecipes.provider(out, lookup));
+        gen.addProvider(event.includeServer(), dev.denfry.promptcritical.mod.mine.MineSafetyRecipes.provider(out, lookup));
+        gen.addProvider(event.includeServer(), ContentRecipes.provider(out, lookup));
+        gen.addProvider(event.includeServer(), new AdvancementProvider(out, lookup, efh, List.of(new PcAdvancements())));
     }
 }

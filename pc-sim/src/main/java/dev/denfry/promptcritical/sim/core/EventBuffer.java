@@ -9,6 +9,7 @@ public final class EventBuffer {
     private static final byte COMMAND_RESULT = 1;
     private static final byte JOURNAL = 2;
     private static final byte DAMAGE_REQUESTED = 3;
+    private static final byte MILESTONE = 4;
 
     private static final CommandStatus[] STATUSES = CommandStatus.values();
     private static final Severity[] SEVERITIES = Severity.values();
@@ -21,6 +22,8 @@ public final class EventBuffer {
     private final int[] i1;
     private final int[] i2;
     private final String[] text;
+    private final String[] text2;
+    private final double[] d1;
     private int size;
     private int droppedThisTick;
     private long lastTick;
@@ -36,6 +39,8 @@ public final class EventBuffer {
         i1 = new int[capacity];
         i2 = new int[capacity];
         text = new String[capacity];
+        text2 = new String[capacity];
+        d1 = new double[capacity];
     }
 
     public void commandResult(long t, SimId target, long ticket, CommandStatus status) {
@@ -65,6 +70,17 @@ public final class EventBuffer {
         l1[s] = requestId;
         i1[s] = granted;
         i2[s] = denied;
+    }
+
+    /** Событие домена для достижений (11 §11.2.1); {@code event} и {@code tag} — константы. */
+    public void milestone(long t, SimId src, String event, String tag, double value) {
+        int s = slot(t);
+        if (s < 0) return;
+        type[s] = MILESTONE;
+        source[s] = src.raw();
+        text[s] = event;
+        text2[s] = tag;
+        d1[s] = value;
     }
 
     private int slot(long t) {
@@ -99,7 +115,10 @@ public final class EventBuffer {
     }
 
     public void clear() {
-        for (int i = 0; i < size; i++) text[i] = null;
+        for (int i = 0; i < size; i++) {
+            text[i] = null;
+            text2[i] = null;
+        }
         size = 0;
         droppedThisTick = 0;
     }
@@ -110,6 +129,7 @@ public final class EventBuffer {
             case COMMAND_RESULT -> new SimEvent.CommandResult(tick[i], src, l1[i], STATUSES[i1[i]]);
             case JOURNAL -> new SimEvent.Journal(tick[i], src, SEVERITIES[i1[i]], text[i]);
             case DAMAGE_REQUESTED -> new SimEvent.DamageRequested(tick[i], src, l1[i], i1[i], i2[i]);
+            case MILESTONE -> new SimEvent.Milestone(tick[i], src, text[i], text2[i], d1[i]);
             default -> throw new IllegalStateException("event type " + type[i]);
         };
     }

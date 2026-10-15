@@ -1,0 +1,37 @@
+{
+  "category": "promptcritical:i0",
+  "title": {
+    "en_us": "The boiler: water, fuel, pressure",
+    "ru_ru": "Котёл: вода, топливо, давление"
+  },
+  "icon": "promptcritical:fire_tube_boiler",
+  "sort": 20,
+  "unlock": {
+    "type": "advancement",
+    "id": "promptcritical:first_steam"
+  },
+  "hint": {
+    "en_us": "Raise your first steam",
+    "ru_ru": "Получите первый пар"
+  },
+  "pages": [
+    {
+      "type": "text",
+      "file": "main"
+    },
+    {
+      "type": "image",
+      "texture": "promptcritical:textures/gui/handbook/boiler_schematic.png",
+      "width": 192,
+      "height": 160,
+      "caption": {
+        "en_us": "Fire-tube boiler: furnace, fire tubes, water space, steam space, safety valve, feed.",
+        "ru_ru": "Жаротрубный котёл: топка, жаровые и дымогарные трубы, водяное и паровое пространство, клапан, питание."
+      }
+    },
+    {
+      "type": "recipe",
+      "recipe": "promptcritical:boiler/fusible_plug"
+    }
+  ]
+}

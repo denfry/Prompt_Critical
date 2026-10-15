@@ -489,10 +489,18 @@ public final class MineWorld {
         canaries.put(pos.asLong(), GasExposure.canary());
     }
 
-    /** Птицу забирают; {@code true} — живая. */
+    /** Птицу забирают; {@code true} — живая. Упавшую, но живую птицу вынесли — она отойдёт ({@code canary_saved}). */
     public boolean takeCanary(BlockPos pos) {
         GasExposure e = canaries.remove(pos.asLong());
+        if (e != null && e.alive() && e.state() == ExposureState.FALLEN)
+            dev.denfry.promptcritical.mod.content.SimAchievements.nearby(level, pos, dev.denfry.promptcritical.mod.content.SimAchievements.CANARY_REVIVED, "", 0);
         return e == null || e.alive();
+    }
+
+    /** Позиция внутри выработок какой-нибудь шахты. */
+    public boolean inMine(BlockPos pos) {
+        MineNetwork n = mineAt(pos);
+        return n != null && n.nodeOf(pos.asLong()) > 0;
     }
 
     private void canaries() {
@@ -521,7 +529,12 @@ public final class MineWorld {
                     node > 0 ? n.field().concentration(node, MineGas.O2) : MineGas.O2.freshAir);
             ExposureState es = g.state();
             PcProperties.Bird bird = es == ExposureState.FALLEN || es == ExposureState.DEAD ? PcProperties.Bird.FAINTED : PcProperties.Bird.ALIVE;
-            if (st.getValue(PcProperties.BIRD) != bird) level.setBlock(pos, st.setValue(PcProperties.BIRD, bird), Block.UPDATE_ALL);
+            if (st.getValue(PcProperties.BIRD) != bird) {
+                level.setBlock(pos, st.setValue(PcProperties.BIRD, bird), Block.UPDATE_ALL);
+                // упавшая птица пришла в себя на свежем воздухе — её вывели вовремя (11 §11.2.2, canary_saved)
+                if (bird == PcProperties.Bird.ALIVE)
+                    dev.denfry.promptcritical.mod.content.SimAchievements.nearby(level, pos, dev.denfry.promptcritical.mod.content.SimAchievements.CANARY_REVIVED, "", 0);
+            }
             if (es == ExposureState.AGITATED) level.playSound(null, pos, SoundEvents.PARROT_AMBIENT, SoundSource.BLOCKS, 1.0f, 2.0f);
         }
     }

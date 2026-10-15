@@ -1,0 +1,32 @@
+{
+  "parent": "minecraft:recipes/root",
+  "criteria": {
+    "has_cage": {
+      "conditions": {
+        "items": [
+          {
+            "items": "promptcritical:canary_cage"
+          }
+        ]
+      },
+      "trigger": "minecraft:inventory_changed"
+    },
+    "has_the_recipe": {
+      "conditions": {
+        "recipe": "promptcritical:mine/canary"
+      },
+      "trigger": "minecraft:recipe_unlocked"
+    }
+  },
+  "requirements": [
+    [
+      "has_the_recipe",
+      "has_cage"
+    ]
+  ],
+  "rewards": {
+    "recipes": [
+      "promptcritical:mine/canary"
+    ]
+  }
+}

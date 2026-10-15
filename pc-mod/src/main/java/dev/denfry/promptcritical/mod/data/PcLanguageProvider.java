@@ -164,6 +164,53 @@ public final class PcLanguageProvider extends LanguageProvider {
                 "%1$s задохнулся рудничным газом, спасаясь от %2$s"});
         MISC.put("commands.promptcritical.profile.reset", new String[] {"Simulation profile reset", "Профиль симуляции сброшен"});
         MISC.putAll(FoundryText.LANG);
+        MISC.putAll(dev.denfry.promptcritical.mod.content.ContentText.LANG);
+        PcAdvancements.LANG.forEach((id, t) -> {
+            MISC.put("advancements.promptcritical." + id + ".title", new String[] {t[0], t[1]});
+            MISC.put("advancements.promptcritical." + id + ".description", new String[] {t[2], t[3]});
+        });
+        // декор I0 (11 §11.6.2)
+        String[][] decor = {
+                {"tile_white", "White Tile", "Белая плитка"}, {"tile_blue", "Blue Tile", "Голубая плитка"},
+                {"tile_green", "Green Tile", "Зелёная плитка"}, {"porcelain_tile", "Grey Porcelain Tile", "Керамогранит серый"},
+                {"porcelain_tile_beige", "Beige Porcelain Tile", "Керамогранит бежевый"},
+                {"painted_concrete", "Grey Painted Concrete", "Крашеный бетон, серый"},
+                {"painted_concrete_yellow", "Yellow Painted Concrete", "Крашеный бетон, жёлтый"},
+                {"painted_concrete_red", "Fire-Red Painted Concrete", "Крашеный бетон, красный противопожарный"},
+                {"painted_concrete_two_tone", "Two-Tone Painted Wall, Green", "Стена в два цвета, зелёная"},
+                {"painted_concrete_two_tone_blue", "Two-Tone Painted Wall, Blue", "Стена в два цвета, синяя"},
+                {"painted_concrete_two_tone_beige", "Two-Tone Painted Wall, Beige", "Стена в два цвета, бежевая"},
+                {"glass_block", "Glass Block", "Стеклоблок"}, {"glass_block_frosted", "Frosted Glass Block", "Матовый стеклоблок"},
+                {"corrugated_steel", "Grey Corrugated Steel", "Профнастил серый"},
+                {"corrugated_steel_blue", "Blue Corrugated Steel", "Профнастил синий"},
+                {"corrugated_steel_green", "Green Corrugated Steel", "Профнастил зелёный"},
+                {"corrugated_steel_red", "Red Corrugated Steel", "Профнастил красный"},
+                {"corrugated_steel_white", "White Corrugated Steel", "Профнастил белый"},
+                {"grating", "Steel Grating", "Решётчатый настил"}, {"grating_step", "Grating Stair", "Ступени из решётчатого настила"},
+                {"handrail", "Yellow Handrail", "Перила жёлтые"}, {"handrail_galvanized", "Galvanized Handrail", "Перила оцинкованные"},
+                {"cage_ladder", "Caged Ladder", "Лестница с ограждением"},
+                {"industrial_light", "Industrial Pendant Light", "Промышленный светильник"},
+                {"industrial_light_street", "Street Light", "Уличный консольный светильник"},
+                {"industrial_light_floodlight", "Floodlight", "Прожектор"},
+                {"industrial_light_exit", "Exit Sign Light", "Световой указатель «Выход»"},
+                {"room_sign", "Room Sign", "Табличка помещения"}, {"room_sign_evac", "Evacuation Arrow", "Стрелка эвакуации"},
+                {"wall_clock", "Wall Clock", "Настенные часы"}, {"safety_poster", "Safety Poster", "Плакат по технике безопасности"},
+                {"safety_poster_large", "Large Safety Poster", "Большой плакат по технике безопасности"},
+                {"curb", "Curb", "Бордюр"}};
+        java.util.Map<String, String[]> names = new java.util.HashMap<>();
+        for (String[] d : decor) {
+            b(d[0], d[1], d[2]);
+            names.put(d[0], new String[] {d[1], d[2]});
+        }
+        dev.denfry.promptcritical.mod.registry.PcBlocks.decorForms().forEach((db, form) -> {
+            String[] n = names.get(form.base());
+            String[] suffix = switch (form.kind()) {
+                case "slab" -> new String[] {" Slab", "плита"};
+                case "stairs" -> new String[] {" Stairs", "ступени"};
+                default -> new String[] {" Wall", "стенка"};
+            };
+            b(db.getId().getPath(), n[0] + suffix[0], n[1] + " (" + suffix[1] + ")");
+        });
         MISC.putAll(dev.denfry.promptcritical.mod.mine.HoistText.LANG);
     }
 

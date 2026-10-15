@@ -19,6 +19,8 @@ import dev.denfry.promptcritical.sim.hydraulics.FluidNode;
  * чанк выгружен, котёл дорабатывает остаток запаса.
  */
 public final class BoilerUnit {
+    /** Мольная доля CO в дымовых газах, выше которой дым чёрный (≈ α &lt; 1,28 на решётке). */
+    public static final double SMOKY_CO_FRACTION = 0.005;
     final SimId id;
     final FireTubeBoiler boiler;
     final BoilerInputs in = new BoilerInputs();
@@ -131,6 +133,14 @@ public final class BoilerUnit {
     /** Расход пара через ПК и выплавленную пробку, кг/с. */
     public double ventFlowKgS() {
         return (relief != null ? Math.max(0, relief.massFlow()) : 0) + (plug != null ? Math.max(0, plug.massFlow()) : 0);
+    }
+
+    /**
+     * Дым из трубы чёрный: воздуха не хватает на подачу (α ниже порога полноты сгорания решётки, CO в газах больше
+     * {@link #SMOKY_CO_FRACTION}). Кочегар уменьшает подачу, пока дым не посветлеет.
+     */
+    public boolean smoky() {
+        return lit() && out.combustion.xCO > SMOKY_CO_FRACTION;
     }
 
     public BoilerOutputs outputs() {

@@ -87,7 +87,7 @@ public class FireTubeBoilerBlockEntity extends DeviceBlockEntity implements Pres
     // видимое клиенту
     private float pressurePa, glass;
     private int chimneyBlocks;
-    private boolean lit, reliefOpen, plugMelted, venting;
+    private boolean lit, reliefOpen, plugMelted, venting, smoky;
     private float sentP = -1, sentGlass = -1;
     private int sentFlags = -1;
 
@@ -168,6 +168,7 @@ public class FireTubeBoilerBlockEntity extends DeviceBlockEntity implements Pres
         pressurePa = Double.isNaN(u.pressurePa()) ? (float) SteamPlant.ATMOSPHERE_PA : (float) u.pressurePa();
         glass = (float) Math.max(0, Math.min(1, (u.gaugeGlassLevelM() - GLASS_BOTTOM_M) / GLASS_SPAN_M));
         lit = u.lit();
+        smoky = u.smoky();
         reliefOpen = u.reliefOpen();
         plugMelted = u.plugMelted();
         venting = plugMelted && u.ventFlowKgS() > 0.02;
@@ -237,9 +238,11 @@ public class FireTubeBoilerBlockEntity extends DeviceBlockEntity implements Pres
     private void clientTick() {
         var r = level.random;
         if (lit && ticks % 3 == 0) {
+            // чёрный дым — недожог: воздуха не хватает на подачу
             Vec3 p = smokePos();
-            level.addAlwaysVisibleParticle(ParticleTypes.CAMPFIRE_COSY_SMOKE, true, p.x + (r.nextDouble() - 0.5) * 0.3,
-                    p.y, p.z + (r.nextDouble() - 0.5) * 0.3, 0, 0.07, 0);
+            level.addAlwaysVisibleParticle(smoky ? ParticleTypes.LARGE_SMOKE : ParticleTypes.CAMPFIRE_COSY_SMOKE, true,
+                    p.x + (r.nextDouble() - 0.5) * 0.3, p.y, p.z + (r.nextDouble() - 0.5) * 0.3, 0, 0.07, 0);
+            if (smoky) level.addAlwaysVisibleParticle(ParticleTypes.CAMPFIRE_COSY_SMOKE, true, p.x, p.y, p.z, 0, 0.05, 0);
         }
         if (reliefOpen) {
             Vec3 p = valvePos();
@@ -325,7 +328,8 @@ public class FireTubeBoilerBlockEntity extends DeviceBlockEntity implements Pres
     // --- сохранение и клиент ---
 
     private int flags() {
-        return (lit ? 1 : 0) | (reliefOpen ? 2 : 0) | (plugMelted ? 4 : 0) | (venting ? 8 : 0) | chimneyBlocks << 4;
+        return (lit ? 1 : 0) | (reliefOpen ? 2 : 0) | (plugMelted ? 4 : 0) | (venting ? 8 : 0) | (smoky ? 16 : 0)
+                | chimneyBlocks << 5;
     }
 
     private void syncIfChanged() {
@@ -359,7 +363,8 @@ public class FireTubeBoilerBlockEntity extends DeviceBlockEntity implements Pres
             reliefOpen = (f & 2) != 0;
             plugMelted = (f & 4) != 0;
             venting = (f & 8) != 0;
-            chimneyBlocks = f >>> 4;
+            smoky = (f & 16) != 0;
+            chimneyBlocks = f >>> 5;
         }
     }
 

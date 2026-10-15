@@ -1,0 +1,32 @@
+{
+  "parent": "minecraft:recipes/root",
+  "criteria": {
+    "has_stone_dust": {
+      "conditions": {
+        "items": [
+          {
+            "items": "promptcritical:stone_dust"
+          }
+        ]
+      },
+      "trigger": "minecraft:inventory_changed"
+    },
+    "has_the_recipe": {
+      "conditions": {
+        "recipe": "promptcritical:mine/explosion_barrier"
+      },
+      "trigger": "minecraft:recipe_unlocked"
+    }
+  },
+  "requirements": [
+    [
+      "has_the_recipe",
+      "has_stone_dust"
+    ]
+  ],
+  "rewards": {
+    "recipes": [
+      "promptcritical:mine/explosion_barrier"
+    ]
+  }
+}

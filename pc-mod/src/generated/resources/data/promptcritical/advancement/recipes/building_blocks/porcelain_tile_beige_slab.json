@@ -1,0 +1,32 @@
+{
+  "parent": "minecraft:recipes/root",
+  "criteria": {
+    "has_porcelain_tile_beige": {
+      "conditions": {
+        "items": [
+          {
+            "items": "promptcritical:porcelain_tile_beige"
+          }
+        ]
+      },
+      "trigger": "minecraft:inventory_changed"
+    },
+    "has_the_recipe": {
+      "conditions": {
+        "recipe": "promptcritical:porcelain_tile_beige_slab"
+      },
+      "trigger": "minecraft:recipe_unlocked"
+    }
+  },
+  "requirements": [
+    [
+      "has_the_recipe",
+      "has_porcelain_tile_beige"
+    ]
+  ],
+  "rewards": {
+    "recipes": [
+      "promptcritical:porcelain_tile_beige_slab"
+    ]
+  }
+}

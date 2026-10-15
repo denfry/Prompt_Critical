@@ -69,8 +69,18 @@ public final class SteamPlant implements Subsystem {
     /** Действия {@link SimCommand.Operate}. */
     public static final String IGNITE = "ignite", FIT_FUSIBLE_PLUG = "fit_fusible_plug",
             FIT_GOVERNOR_DASHPOT = "fit_governor_dashpot", TOGGLE_STOP_VALVE = "toggle_stop_valve", BAR_OVER = "bar_over";
+    /**
+     * Событие домена: машина набрала обороты R3 (ω ≥ 0,2 ω₀) и отдаёт момент на вал Create — достижение «Первый пар»
+     * (11 §11.2.2); величина {@code omega_pu} — ω/ω₀. Повторно — после остановки ниже 0,1 ω₀.
+     */
+    public static final String ENGINE_RUNNING = "promptcritical:engine_running";
     /** Котёл без давления (налив, замена пробки): ниже атмосферного + 50 кПа. */
     public static final double OPEN_PRESSURE_PA = ATMOSPHERE_PA + 50_000;
+    /**
+     * Низший уровень над потолком жаровых труб, м: до подъёма давления до половины рабочего регулятор питания держит
+     * его, а не нормальный — вода при прогреве расширяется (≈ 6 % до 120 °C), и котёл растапливают при низшем уровне.
+     */
+    public static final double LOW_LEVEL_ABOVE_CROWN_M = 0.10;
     /** Постоянная поплавкового регулятора питания, с. */
     static final double FEED_TIME_S = 30;
     /** Плотность воды для коэффициента регулятора питания, кг/м³. */
@@ -198,7 +208,17 @@ public final class SteamPlant implements Subsystem {
         if (dirty) rebuild();
         double dt = ctx.dt();
         for (BoilerUnit u : boilerArr) stepBoiler(ctx, u, dt);
-        for (int i = 0; i < engineArr.length; i++) stepEngine(engineArr[i], engineBoiler[i], dt);
+        for (int i = 0; i < engineArr.length; i++) {
+            EngineUnit e = engineArr[i];
+            stepEngine(e, engineBoiler[i], dt);
+            double pu = e.unit.omega() / e.unit.nominalOmega();
+            if (!e.running && pu >= 0.2) {
+                e.running = true;
+                ctx.events().milestone(ctx.tick(), e.id, ENGINE_RUNNING, "omega_pu", pu);
+            } else if (e.running && pu < 0.1) {
+                e.running = false;
+            }
+        }
         if (boilerArr.length > 0) net.stepFast(dt);
         for (BoilerUnit u : boilerArr) {
             if (u.boiler.rupture() != BoilerRupture.NONE && !u.exploded) explode(ctx, u);
@@ -223,12 +243,12 @@ public final class SteamPlant implements Subsystem {
         }
         if (u.exploded) return;
 
-        // питание: поплавковый регулятор на нормальный уровень с упреждением по расходу пара
+        // питание: поплавковый регулятор на нормальный уровень (при растопке — на низший) с упреждением по расходу пара
         double steam = Math.max(0, u.relief.massFlow()) + Math.max(0, u.plug.massFlow());
         for (EngineUnit e : u.engines) steam += Math.max(0, e.throttle.massFlow());
         double p = drum.pressure();
         double gain = FEED_RHO * boilerSpec.waterNodeAreaM2() / FEED_TIME_S;
-        double demand = steam + gain * (boilerSpec.normalLevelM() - drum.collapsedLevel());
+        double demand = steam + gain * (feedLevelM(p) - drum.collapsedLevel());
         double cap = p < OPEN_PRESSURE_PA ? config.feedOpenKgS() : config.feedPressurizedKgS();
         double rate = Math.max(0, Math.min(Math.min(demand, cap), u.feedSupplyKg / dt));
         if (rate > 0) {
@@ -237,6 +257,12 @@ public final class SteamPlant implements Subsystem {
             u.feedSupplyKg = Math.max(0, u.feedSupplyKg - rate * dt);
             u.feedUsedKg += rate * dt;
         }
+    }
+
+    /** Уставка регулятора питания, м: низший уровень, пока котёл не поднял давление до половины рабочего. */
+    double feedLevelM(double pressurePa) {
+        return pressurePa < 0.5 * boilerSpec.workingPressurePa()
+                ? boilerSpec.crownHeightM() + LOW_LEVEL_ABOVE_CROWN_M : boilerSpec.normalLevelM();
     }
 
     private void stepEngine(EngineUnit e, BoilerUnit b, double dt) {

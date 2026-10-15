@@ -111,6 +111,12 @@ class SteamPlantTest {
         }
     }
 
+    /**
+     * Критерий M2 (06, 11 §11.1.1): холодный пустой котёл по процедуре справочника — налив до низшего уровня, растопка
+     * тонким слоем (подача растёт, пока дым светлый), стопорный вентиль при половине рабочего давления (раньше машина под нагрузкой
+     * Create встаёт в мёртвой точке). От начала налива до первого оборота вала — не больше 25 мин (было ≈ 38: решётка под
+     * номинальной подачей при холодной трубе горела с α &lt; α_кр в CO).
+     */
     @Test
     void coldBoilerFillsRaisesSteamAndDrivesEngine() {
         SimulationWorld w = world();
@@ -124,28 +130,45 @@ class SteamPlantTest {
         assertThat(u.lit()).as("пустую решётку не разжечь").isFalse();
         assertThat(u.pressurePa()).as("холодный котёл под разрежением").isLessThan(5_000);
 
-        run(w, 5 * 60);
-        assertThat(u.gaugeGlassLevelM()).as("налит до нормального уровня")
-                .isBetween(u.spec().normalLevelM() - 0.03, u.spec().normalLevelM() + 0.03);
-        assertThat(u.takeFeedUsed()).isBetween(9_000.0, 11_000.0);
+        double t = 1;
+        while (u.gaugeGlassLevelM() < u.spec().crownHeightM() + SteamPlant.LOW_LEVEL_ABOVE_CROWN_M - 0.01) {
+            run(w, 1);
+            t++;
+        }
+        run(w, 10);
+        t += 10;
+        assertThat(t / 60).as("мин налива").isLessThan(4);
+        assertThat(u.gaugeGlassLevelM()).as("растапливают при низшем уровне: вода расширится")
+                .isBetween(u.spec().crownHeightM() + 0.08, u.spec().crownHeightM() + 0.12);
+        assertThat(u.takeFeedUsed()).isBetween(7_500.0, 8_700.0);
 
-        command(w, new SimCommand.ChargeFuel(b, PlantFuels.COAL, 180));
+        double feed = 0.15;
+        command(w, new SimCommand.ChargeFuel(b, PlantFuels.COAL, feed * 600));
         command(w, new SimCommand.Operate(b, SteamPlant.IGNITE));
         command(w, new SimCommand.Operate(e, SteamPlant.FIT_GOVERNOR_DASHPOT));
-        double t = 0, firstTurn = Double.NaN;
+        double firstTurn = Double.NaN, smokyS = 0;
         while (m.omega() < 0.95 * m.nominalOmega() && t < 5400) {
-            // машинист открывает стопорный вентиль, когда давление поднялось
+            // кочегар: чёрный дым — убавить подачу, светлый — прибавить
+            if (u.smoky()) smokyS += 10;
+            feed = u.smoky() ? Math.max(0.05, feed - 0.02) : Math.min(0.3, feed + 0.01);
             if (!m.stopValveOpen() && u.pressurePa() > 0.5e6) command(w, new SimCommand.Operate(e, SteamPlant.TOGGLE_STOP_VALVE));
             // как биндинг: сеть Create нагружает машину, только пока вал отдаёт обороты (R3: ω ≥ 0,2 ω₀)
             m.setLoadPower(m.omega() >= 0.2 * m.nominalOmega() ? 10e3 : 0);
-            stoke(w, b, 10, 0.3);
+            stoke(w, b, 10, feed);
             t += 10;
             if (Double.isNaN(firstTurn) && m.omega() >= 0.2 * m.nominalOmega()) firstTurn = t;
         }
-        System.out.printf("first turn %.1f min, nominal speed %.1f min, p %.3f MPa%n", firstTurn / 60, t / 60,
-                u.pressurePa() / 1e6);
-        assertThat(firstTurn / 60).as("мин от холодной воды до первого оборота вала (R3: ω ≥ 0,2 ω₀)").isLessThan(40);
-        assertThat(t / 60).as("мин до номинальных оборотов").isLessThan(45);
+        System.out.printf("first turn %.1f min, nominal speed %.1f min, p %.3f MPa, smoky %.0f s%n", firstTurn / 60,
+                t / 60, u.pressurePa() / 1e6, smokyS);
+        assertThat(firstTurn / 60).as("мин от пустого котла до первого оборота вала (R3: ω ≥ 0,2 ω₀)").isLessThan(25);
+        assertThat(t / 60).as("мин до номинальных оборотов").isLessThan(26);
+        assertThat(smokyS).as("чёрный дым — только первые минуты, пока труба холодная").isLessThan(180);
+        assertThat(events).as("событие «Первый пар» — одно на пуск").filteredOn(ev -> ev instanceof SimEvent.Milestone)
+                .singleElement().isInstanceOfSatisfying(SimEvent.Milestone.class, ms -> {
+                    assertThat(ms.event()).isEqualTo(SteamPlant.ENGINE_RUNNING);
+                    assertThat(ms.source()).isEqualTo(e);
+                    assertThat(ms.value()).isGreaterThanOrEqualTo(0.2);
+                });
         while (u.pressurePa() < 1.1e6 && t < 5400) {
             stoke(w, b, 10, 0.3);
             t += 10;

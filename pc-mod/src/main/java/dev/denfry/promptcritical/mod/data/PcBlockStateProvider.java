@@ -9,6 +9,9 @@ import net.minecraft.core.Direction;
 import net.minecraft.data.PackOutput;
 import net.minecraft.world.item.ItemDisplayContext;
 import net.minecraft.world.level.block.Block;
+import net.minecraft.world.level.block.SlabBlock;
+import net.minecraft.world.level.block.StairBlock;
+import net.minecraft.world.level.block.WallBlock;
 import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.level.block.state.properties.BlockStateProperties;
 import net.neoforged.neoforge.client.model.generators.BlockStateProvider;
@@ -33,6 +36,11 @@ public final class PcBlockStateProvider extends BlockStateProvider {
         for (DeferredBlock<? extends Block> db : PcBlocks.withItems()) {
             Block block = db.get();
             String id = db.getId().getPath();
+            PcBlocks.Form form = PcBlocks.decorForms().get(db);
+            if (form != null) {
+                decorForm(block, id, form);
+                continue;
+            }
             getVariantBuilder(block).forAllStates(state -> ConfiguredModel.builder()
                     .modelFile(existing(modelName(id, state)))
                     .rotationY(rotationY(state))
@@ -44,6 +52,21 @@ public final class PcBlockStateProvider extends BlockStateProvider {
         simpleBlock(PcBlocks.KINETIC_PORT.get(), part);
         // жидкость рисует рендер жидкостей; модели нужна только частица
         simpleBlock(PcBlocks.MINE_WATER.get(), models().getBuilder("mine_water").texture("particle", modLoc("block/fluid/mine_water_still")));
+    }
+
+    /** Плита, ступени и стенка по ванильным шаблонам из текстуры базового блока декора. */
+    private void decorForm(Block block, String id, PcBlocks.Form form) {
+        var tex = modLoc("block/decor/" + form.base());
+        switch (form.kind()) {
+            case "slab" -> slabBlock((SlabBlock) block, modLoc("block/" + form.base()), tex);
+            case "stairs" -> stairsBlock((StairBlock) block, tex);
+            default -> {
+                wallBlock((WallBlock) block, tex);
+                itemModels().wallInventory(id, tex);
+                return;
+            }
+        }
+        itemModels().withExistingParent(id, modLoc("block/" + id));
     }
 
     private ModelFile existing(String name) {
@@ -94,6 +117,8 @@ public final class PcBlockStateProvider extends BlockStateProvider {
                 case COOLING -> id + "_cooling";
             };
             case "document_lectern" -> s.getValue(PcProperties.HAS_DOCUMENT) ? id + "_document" : id;
+            case "industrial_light", "industrial_light_street", "industrial_light_floodlight", "industrial_light_exit" ->
+                    s.getValue(BlockStateProperties.LIT) ? id : id + "_off";
             default -> s.hasProperty(PcProperties.HOST) ? hosted(id, s) : id;
         };
     }

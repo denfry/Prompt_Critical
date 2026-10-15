@@ -1,0 +1,32 @@
+{
+  "parent": "minecraft:recipes/root",
+  "criteria": {
+    "has_grating": {
+      "conditions": {
+        "items": [
+          {
+            "items": "promptcritical:grating"
+          }
+        ]
+      },
+      "trigger": "minecraft:inventory_changed"
+    },
+    "has_the_recipe": {
+      "conditions": {
+        "recipe": "promptcritical:content/grating_step"
+      },
+      "trigger": "minecraft:recipe_unlocked"
+    }
+  },
+  "requirements": [
+    [
+      "has_the_recipe",
+      "has_grating"
+    ]
+  ],
+  "rewards": {
+    "recipes": [
+      "promptcritical:content/grating_step"
+    ]
+  }
+}
