@@ -4,7 +4,6 @@ import com.simibubi.create.content.kinetics.base.KineticBlockEntity;
 import dev.denfry.promptcritical.mod.binding.DeviceHost;
 import dev.denfry.promptcritical.mod.binding.SimBindings;
 import dev.denfry.promptcritical.mod.binding.SimLevelBinding;
-import dev.denfry.promptcritical.mod.config.ServerConfig;
 import dev.denfry.promptcritical.sim.core.DeviceMode;
 import dev.denfry.promptcritical.sim.core.SimId;
 import dev.denfry.promptcritical.sim.mechanics.ShaftInput;
@@ -28,14 +27,9 @@ import org.jetbrains.annotations.Nullable;
  * @param <U> доменный двойник
  */
 public abstract class KineticMachineBlockEntity<U> extends KineticBlockEntity implements DeviceHost, FoundryDevice {
-    private static final long STRESS_PERIOD_TICKS = 20;
-    private static final double STRESS_DEADBAND = 0.05;
-
+    private final StressFilter stress = new StressFilter();
     private SimId simId = SimId.NONE;
     private boolean chunkUnloading;
-    private float impact;
-    private double declaredW = -1;
-    private long lastStressTick = Long.MIN_VALUE / 2;
 
     protected KineticMachineBlockEntity(BlockEntityType<?> type, BlockPos pos, BlockState state) {
         super(type, pos, state);
@@ -81,25 +75,15 @@ public abstract class KineticMachineBlockEntity<U> extends KineticBlockEntity im
         declareStress(powerW(u));
     }
 
-    /** Фильтр R4 (03a §3a.2.4). */
     private void declareStress(double powerW) {
-        long now = level.getGameTime();
-        double p = Math.max(0, powerW);
-        boolean zeroCross = (p == 0) != (declaredW == 0);
-        if (declaredW >= 0 && now - lastStressTick < STRESS_PERIOD_TICKS) return;
-        if (declaredW >= 0 && !zeroCross && Math.abs(p - declaredW) <= STRESS_DEADBAND * declaredW) return;
-        double wPerSu = ServerConfig.W_PER_SU.get();
-        double rpm = Math.abs(getSpeed());
-        impact = (float) (rpm == 0 ? ratedW() / (wPerSu * nominalRpm()) : p / (wPerSu * Math.max(rpm, 0.1 * nominalRpm())));
-        declaredW = p;
-        lastStressTick = now;
-        if (hasNetwork()) getOrCreateNetwork().updateStressFor(this, impact);
+        if (stress.update(powerW, getSpeed(), ratedW(), nominalRpm(), level.getGameTime()) && hasNetwork())
+            getOrCreateNetwork().updateStressFor(this, stress.impact());
     }
 
     @Override
     public float calculateStressApplied() {
-        lastStressApplied = impact;
-        return impact;
+        lastStressApplied = stress.impact();
+        return lastStressApplied;
     }
 
     /** Поставить булево свойство контроллера, если изменилось. */

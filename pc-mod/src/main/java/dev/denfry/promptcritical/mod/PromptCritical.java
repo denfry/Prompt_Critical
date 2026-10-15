@@ -47,6 +47,7 @@ public final class PromptCritical {
         SimBindings.register(modBus);
         FoundryBinding.register(modBus);
         dev.denfry.promptcritical.mod.boiler.BoilerBinding.register(modBus);
+        dev.denfry.promptcritical.mod.mine.MineBlockEntities.register(modBus);
         SimBindings.registerSubsystem(level -> new MineSubsystem(
                 SimConfigs.fromServerConfig().section(MiningConfig.class, MiningConfig.defaults())));
         modBus.addListener(PcDataGen::gather);

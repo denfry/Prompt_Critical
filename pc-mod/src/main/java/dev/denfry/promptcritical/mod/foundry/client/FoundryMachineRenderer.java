@@ -27,12 +27,12 @@ import org.jetbrains.annotations.Nullable;
  */
 public final class FoundryMachineRenderer<T extends BlockEntity> implements BlockEntityRenderer<T> {
     /** Как двигается часть. */
-    public enum Motion { STATIC, SPIN_X, SPIN_Y, JOLT }
+    public enum Motion { STATIC, SPIN_X, SPIN_Y, SPIN_Z, JOLT }
 
     @Nullable
     private final PartialModel part;
     private final Motion motion;
-    /** Ось части (пиксели модели): для SPIN_X — y, z; для SPIN_Y — x, z. */
+    /** Ось части (пиксели модели): для SPIN_X — y, z; для SPIN_Y — x, z; для SPIN_Z — x, y. */
     private final float a, b;
     /** Передаточное число шпинделя к валу. */
     private final float gear;
@@ -64,6 +64,7 @@ public final class FoundryMachineRenderer<T extends BlockEntity> implements Bloc
         switch (motion) {
             case SPIN_X -> buf.translate(0, a, b).rotateXDegrees(angle).translate(0, -a, -b);
             case SPIN_Y -> buf.translate(a, 0, b).rotateYDegrees(angle).translate(-a, 0, -b);
+            case SPIN_Z -> buf.translate(a, b, 0).rotateZDegrees(angle).translate(-a, -b, 0);
             case JOLT -> {
                 boolean running = state.hasProperty(PcProperties.RUNNING) && state.getValue(PcProperties.RUNNING);
                 if (running) buf.translate(0, (float) Math.abs(Math.sin(time * 0.6)) * 1.5f / 16f, 0);

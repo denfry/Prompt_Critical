@@ -13,6 +13,10 @@ public final class PcProperties {
     public static final BooleanProperty FORMED = BooleanProperty.create("formed");
     public static final BooleanProperty TOP = BooleanProperty.create("top");
     public static final BooleanProperty HAS_DOCUMENT = BooleanProperty.create("has_document");
+    /** Котёл: уровень ушёл из водоуказательного стекла. */
+    public static final BooleanProperty LOW_WATER = BooleanProperty.create("low_water");
+    /** Котёл: обечайка разорвана (07 §7.9.6), ставится на оба сегмента. */
+    public static final BooleanProperty EXPLODED = BooleanProperty.create("exploded");
 
     public static final EnumProperty<OreHost> HOST = EnumProperty.create("host", OreHost.class);
     public static final EnumProperty<CoalRank> RANK = EnumProperty.create("rank", CoalRank.class);

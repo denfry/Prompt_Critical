@@ -1,9 +1,12 @@
 package dev.denfry.promptcritical.mod.gametest;
 
+import com.simibubi.create.AllBlocks;
+import com.simibubi.create.content.kinetics.motor.CreativeMotorBlockEntity;
 import dev.denfry.promptcritical.mod.PromptCritical;
 import dev.denfry.promptcritical.mod.binding.SimBindings;
 import dev.denfry.promptcritical.mod.binding.SimLevelBinding;
 import dev.denfry.promptcritical.mod.block.PcProperties;
+import dev.denfry.promptcritical.mod.boiler.KineticInputBlockEntity;
 import dev.denfry.promptcritical.mod.item.CoalAssayData;
 import dev.denfry.promptcritical.mod.item.OreAssayData;
 import dev.denfry.promptcritical.mod.mine.MineScanner;
@@ -160,7 +163,7 @@ public final class MineGameTests {
 
     /**
      * Штрек между двумя стволами: открытый (воздухоподающий) и под вентилятором главного проветривания. Вентилятор от
-     * красного камня гонит воздух; закрытая дверь в штреке режет расход больше чем вдвое.
+     * мотора Create (64 об/мин вала) гонит воздух и нагружает вал; закрытая дверь в штреке режет расход больше чем вдвое.
      */
     @GameTest(template = LONG, timeoutTicks = 600)
     public static void fanVentilatesAndDoorThrottles(GameTestHelper h) {
@@ -170,7 +173,10 @@ public final class MineGameTests {
             h.setBlock(new BlockPos(37, y, Z), Blocks.AIR.defaultBlockState());
         }
         h.setBlock(new BlockPos(37, 7, Z), PcBlocks.MAIN_MINE_FAN.get().defaultBlockState());
-        h.setBlock(new BlockPos(37, 9, Z), Blocks.REDSTONE_BLOCK.defaultBlockState());
+        // вал сзади: клетка-вход (37, 7, Z + 1), мотор за ней
+        BlockPos motor = new BlockPos(37, 7, Z + 2);
+        h.setBlock(motor, AllBlocks.CREATIVE_MOTOR.getDefaultState().setValue(BlockStateProperties.FACING, net.minecraft.core.Direction.NORTH));
+        h.runAfterDelay(1, () -> ((CreativeMotorBlockEntity) h.getBlockEntity(motor)).generatedSpeed.setValue(64));
         BlockPos door = new BlockPos(20, 2, Z);
         h.setBlock(door, PcBlocks.VENTILATION_DOOR.get().defaultBlockState()
                 .setValue(BlockStateProperties.HORIZONTAL_FACING, net.minecraft.core.Direction.EAST));
@@ -187,6 +193,9 @@ public final class MineGameTests {
                             + ", branches " + t.branchCount() + ", it " + n.ventilation().iterations() + ", corr " + n.ventilation().lastCorrection()
                             + ", scan " + scanInfo(h, n));
                     h.assertTrue(h.getBlockState(new BlockPos(37, 7, Z)).getValue(PcProperties.RUNNING), "fan running");
+                    h.assertTrue(Math.abs(n.ventilation().fanSpeed(0) - MineScanner.MAIN_FAN.ratedRpm()) < 1e-6, "rated fan speed at 64 rpm shaft");
+                    h.assertTrue(h.getBlockEntity(new BlockPos(37, 7, Z + 1)) instanceof KineticInputBlockEntity in
+                            && in.calculateStressApplied() > 0, "fan loads the shaft");
                 })
                 .thenIdle(60)
                 .thenExecute(() -> {

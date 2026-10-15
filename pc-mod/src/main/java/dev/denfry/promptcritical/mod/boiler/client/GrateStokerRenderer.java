@@ -4,7 +4,6 @@ import com.mojang.blaze3d.vertex.PoseStack;
 import com.mojang.blaze3d.vertex.VertexConsumer;
 import com.simibubi.create.AllPartialModels;
 import com.simibubi.create.content.kinetics.base.KineticBlockEntityRenderer;
-import dev.denfry.promptcritical.mod.block.PcProperties;
 import dev.denfry.promptcritical.mod.boiler.GrateStokerBlockEntity;
 import dev.denfry.promptcritical.mod.foundry.KineticMachineBlock;
 import net.createmod.catnip.animation.AnimationTickHolder;
@@ -28,11 +27,9 @@ final class GrateStokerRenderer implements BlockEntityRenderer<GrateStokerBlockE
             KineticBlockEntityRenderer.standardKineticRotationTransform(shaft, be, light).renderInto(ms, vc);
         }
         Direction facing = state.getValue(BlockStateProperties.HORIZONTAL_FACING);
-        float offset = 0;
-        if (state.getValue(PcProperties.RUNNING)) {
-            float time = AnimationTickHolder.getRenderTime(be.getLevel());
-            offset = (time * Math.abs(be.getSpeed()) / 32f * 0.2f) % 4f;
-        }
+        // цепь идёт от вала и при пустом бункере; running — только раскалённый слой в модели
+        float time = AnimationTickHolder.getRenderTime(be.getLevel());
+        float offset = (time * Math.abs(be.getSpeed()) / 32f * 0.2f) % 4f;
         SuperByteBuffer chain = CachedBuffers.partial(BoilerClient.CHAIN, state).center()
                 .rotateYDegrees(-(facing.toYRot() + 180)).uncenter().translate(0, 0, (offset - 2) / 16f);
         chain.light(light).renderInto(ms, vc);

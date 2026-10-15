@@ -3,6 +3,7 @@ package dev.denfry.promptcritical.mod.boiler;
 import dev.denfry.promptcritical.mod.binding.SimBindings;
 import dev.denfry.promptcritical.mod.binding.SimLevelBinding;
 import dev.denfry.promptcritical.mod.block.ChimneyBlock;
+import dev.denfry.promptcritical.mod.block.PcProperties;
 import dev.denfry.promptcritical.mod.blockentity.DeviceBlockEntity;
 import dev.denfry.promptcritical.mod.registry.PcFluids;
 import dev.denfry.promptcritical.mod.registry.PcItems;
@@ -170,8 +171,17 @@ public class FireTubeBoilerBlockEntity extends DeviceBlockEntity implements Pres
         reliefOpen = u.reliefOpen();
         plugMelted = u.plugMelted();
         venting = plugMelted && u.ventFlowKgS() > 0.02;
+        boolean exploded = u.rupture() != BoilerRupture.NONE;
+        boolean lowWater = !exploded && u.gaugeGlassLevelM() < GLASS_BOTTOM_M;
         BlockState s = getBlockState();
-        if (s.getValue(BlockStateProperties.LIT) != lit) level.setBlock(worldPosition, s.setValue(BlockStateProperties.LIT, lit), Block.UPDATE_CLIENTS);
+        BlockState t = s.setValue(BlockStateProperties.LIT, lit && !exploded).setValue(PcProperties.LOW_WATER, lowWater)
+                .setValue(PcProperties.EXPLODED, exploded);
+        if (t != s) level.setBlock(worldPosition, t, Block.UPDATE_CLIENTS);
+        if (exploded != s.getValue(PcProperties.EXPLODED)) {
+            BlockPos rear = BoilerGeometry.offset(worldPosition, facing(), 0, 0, 3);
+            BlockState rs = level.getBlockState(rear);
+            if (rs.is(s.getBlock())) level.setBlock(rear, rs.setValue(PcProperties.EXPLODED, exploded), Block.UPDATE_CLIENTS);
+        }
         sounds();
         if (ticks % SYNC_PERIOD == 0) syncIfChanged();
     }

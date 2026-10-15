@@ -7,6 +7,7 @@ import com.simibubi.create.content.kinetics.motor.CreativeMotorBlockEntity;
 import dev.denfry.promptcritical.mod.PromptCritical;
 import dev.denfry.promptcritical.mod.binding.SimBindings;
 import dev.denfry.promptcritical.mod.binding.SimLevelBinding;
+import dev.denfry.promptcritical.mod.block.PcProperties;
 import dev.denfry.promptcritical.mod.boiler.FireTubeBoilerBlockEntity;
 import dev.denfry.promptcritical.mod.boiler.GrateStokerBlockEntity;
 import dev.denfry.promptcritical.mod.boiler.KineticPortBlock;
@@ -145,6 +146,9 @@ public final class BoilerGameTests {
                     BoilerUnit u = unit(h);
                     h.assertTrue(u.pressurePa() < 1.03 * u.spec().reliefSetPressure(), "pressure held by the valve");
                     h.assertTrue(u.rupture() == BoilerRupture.NONE, "boiler intact");
+                    BlockState st = h.getBlockState(BOILER);
+                    h.assertTrue(st.getValue(BlockStateProperties.LIT) && !st.getValue(PcProperties.LOW_WATER)
+                            && !st.getValue(PcProperties.EXPLODED), "lit, water in the glass");
                 })
                 .thenSucceed();
     }
@@ -158,6 +162,8 @@ public final class BoilerGameTests {
                 .thenWaitUntil(() -> h.assertTrue(unit(h).plugMelted(), "plug melted, crown at " + unit(h).boiler().crownTempK()))
                 .thenExecute(() -> {
                     h.assertTrue(!unit(h).lit(), "furnace quenched");
+                    BlockState st = h.getBlockState(BOILER);
+                    h.assertTrue(st.getValue(PcProperties.LOW_WATER) && !st.getValue(PcProperties.EXPLODED), "low water shown");
                     h.assertTrue(unit(h).rupture() == BoilerRupture.NONE, "boiler intact");
                     h.assertBlockPresent(PcBlocks.FIRE_TUBE_BOILER.get(), BOILER);
                 })

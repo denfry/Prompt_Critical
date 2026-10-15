@@ -23,6 +23,8 @@ public final class BoilerBlockEntities {
             type("grate_stoker", GrateStokerBlockEntity::new, PcBlocks.GRATE_STOKER);
     public static final DeferredHolder<BlockEntityType<?>, BlockEntityType<KineticPortBlockEntity>> KINETIC_PORT =
             type("kinetic_port", KineticPortBlockEntity::new, PcBlocks.KINETIC_PORT);
+    public static final DeferredHolder<BlockEntityType<?>, BlockEntityType<KineticInputBlockEntity>> KINETIC_INPUT =
+            type("kinetic_input", KineticInputBlockEntity::new, PcBlocks.KINETIC_PORT);
     public static final DeferredHolder<BlockEntityType<?>, BlockEntityType<PressureGaugeBlockEntity>> PRESSURE_GAUGE =
             type("instrument_pressure", PressureGaugeBlockEntity::new, PcBlocks.INSTRUMENT_PRESSURE);
 

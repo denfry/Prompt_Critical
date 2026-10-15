@@ -337,12 +337,15 @@ public final class MineWorld {
         if (e == null || e.scan == null || !n.ready()) return;
         MineScanner.Scan s = e.scan;
         MineVentilation v = n.ventilation();
+        long tick = binding.world().clock().tick();
         for (int f = 0; f < s.fanCtrl.length; f++) {
             BlockPos p = BlockPos.of(s.fanCtrl[f]);
             BlockState st = level.getBlockState(p);
-            if (!st.is(PcBlocks.MAIN_MINE_FAN.get())) continue;
-            boolean on = powered(p);
-            v.setFanSpeed(f, on ? MineScanner.MAIN_FAN.ratedRpm() : 0);
+            if (!st.is(PcBlocks.MAIN_MINE_FAN.get()) || !(level.getBlockEntity(p) instanceof MainMineFanBlockEntity fan)) continue;
+            fan.setPowerW(v.fanPowerW(f));                           // по прошлому решению: N = hQ/η при старой скорости
+            double rpm = fan.fanRpm(tick);
+            v.setFanSpeed(f, rpm);
+            boolean on = rpm > 0;
             if (st.getValue(PcProperties.RUNNING) != on) level.setBlock(p, st.setValue(PcProperties.RUNNING, on), Block.UPDATE_CLIENTS);
         }
         for (int d = 0; d < s.doorCtrl.length; d++) {
@@ -358,23 +361,12 @@ public final class MineWorld {
         }
         for (var b : s.boreholeNode.long2IntEntrySet()) {
             BlockPos bore = BlockPos.of(b.getLongKey());
-            boolean on = false;
-            for (Direction d : Direction.values()) {
-                BlockPos p = bore.relative(d);
-                BlockState ps = level.getBlockState(p);
-                if (!ps.is(PcBlocks.DEGASIFICATION_PUMP.get())) continue;
-                boolean run = level.hasNeighborSignal(p);
-                if (ps.getValue(PcProperties.RUNNING) != run) level.setBlock(p, ps.setValue(PcProperties.RUNNING, run), Block.UPDATE_CLIENTS);
-                on |= run;
-            }
-            n.field().setDegasification(b.getIntValue(), on ? DEGAS_CAPTURE : 0);
+            double capture = 0;
+            for (Direction d : Direction.values())
+                if (level.getBlockEntity(bore.relative(d)) instanceof DegasificationPumpBlockEntity pump)
+                    capture = Math.max(capture, pump.capture(tick));
+            n.field().setDegasification(b.getIntValue(), capture);
         }
-    }
-
-    /** Вентилятор работает от сигнала красного камня на любой клетке (привод от вала Create — с портом 03a). */
-    private boolean powered(BlockPos ctrl) {
-        for (long c : cells(ctrl)) if (level.hasNeighborSignal(BlockPos.of(c))) return true;
-        return false;
     }
 
     // --- взрыв ---------------------------------------------------------------------------------------------

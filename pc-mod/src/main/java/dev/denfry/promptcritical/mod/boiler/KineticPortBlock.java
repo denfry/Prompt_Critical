@@ -4,6 +4,7 @@ import com.mojang.serialization.MapCodec;
 import com.simibubi.create.content.kinetics.base.IRotate;
 import com.simibubi.create.content.kinetics.base.KineticBlockEntity;
 import com.simibubi.create.foundation.blockEntity.SmartBlockEntity;
+import dev.denfry.promptcritical.mod.foundry.KineticMachineBlock;
 import dev.denfry.promptcritical.mod.multiblock.MultiblockPartBlock;
 import dev.denfry.promptcritical.mod.registry.PcBlocks;
 import net.minecraft.core.BlockPos;
@@ -21,20 +22,24 @@ import net.minecraft.world.level.block.entity.BlockEntityType;
 import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.level.block.state.StateDefinition;
 import net.minecraft.world.level.block.state.properties.BlockStateProperties;
+import net.minecraft.world.level.block.state.properties.BooleanProperty;
 import net.minecraft.world.level.block.state.properties.EnumProperty;
 import org.jetbrains.annotations.Nullable;
 
 /**
- * Клетка конструкции, через которую машина отдаёт вращение в сеть Create (03a §3a.12.3): невидимая, как
- * {@link MultiblockPartBlock}, но с валом по оси {@link #AXIS} и BE-источником {@link KineticPortBlockEntity}. Вал
- * Create подводят к ней снаружи конструкции. Ключ Create меняет передачу машины.
+ * Клетка конструкции, через которую машина обменивается вращением с сетью Create (03a §3a.12): невидимая, как
+ * {@link MultiblockPartBlock}, но с валом по оси {@link #AXIS}. Источник ({@link KineticPortBlockEntity}) — у паровой
+ * машины, при {@link #INPUT} — потребитель ({@link KineticInputBlockEntity}) у машин на валу. Вал Create подводят к
+ * ней снаружи конструкции. Ключ Create меняет передачу машины.
  */
 public final class KineticPortBlock extends MultiblockPartBlock implements IRotate, EntityBlock {
-    public static final EnumProperty<Direction.Axis> AXIS = BlockStateProperties.HORIZONTAL_AXIS;
+    public static final EnumProperty<Direction.Axis> AXIS = BlockStateProperties.AXIS;
+    public static final BooleanProperty INPUT = BooleanProperty.create("input");
     public static final MapCodec<KineticPortBlock> PORT_CODEC = simpleCodec(KineticPortBlock::new);
 
     public KineticPortBlock(Properties props) {
         super(props);
+        registerDefaultState(defaultBlockState().setValue(AXIS, Direction.Axis.X).setValue(INPUT, false));
     }
 
     @Override
@@ -47,10 +52,15 @@ public final class KineticPortBlock extends MultiblockPartBlock implements IRota
         return PcBlocks.KINETIC_PORT.get().defaultBlockState().setValue(CELL, idx).setValue(AXIS, axis);
     }
 
+    /** Клетка-потребитель: вал входит в машину. */
+    public static BlockState inputForOffset(BlockPos offsetFromAnchor, Direction.Axis axis) {
+        return forOffset(offsetFromAnchor, axis).setValue(INPUT, true);
+    }
+
     @Override
     protected void createBlockStateDefinition(StateDefinition.Builder<Block, BlockState> builder) {
         super.createBlockStateDefinition(builder);
-        builder.add(AXIS);
+        builder.add(AXIS, INPUT);
     }
 
     @Override
@@ -66,14 +76,14 @@ public final class KineticPortBlock extends MultiblockPartBlock implements IRota
     @Override
     @Nullable
     public BlockEntity newBlockEntity(BlockPos pos, BlockState state) {
-        return new KineticPortBlockEntity(pos, state);
+        return state.getValue(INPUT) ? new KineticInputBlockEntity(pos, state) : new KineticPortBlockEntity(pos, state);
     }
 
     @Override
     @Nullable
     public <T extends BlockEntity> BlockEntityTicker<T> getTicker(Level level, BlockState state, BlockEntityType<T> type) {
         return (l, p, s, be) -> {
-            if (be instanceof KineticPortBlockEntity k) k.tick();
+            if (be instanceof KineticBlockEntity k) k.tick();
         };
     }
 
@@ -98,7 +108,9 @@ public final class KineticPortBlock extends MultiblockPartBlock implements IRota
     public InteractionResult onWrenched(BlockState state, UseOnContext context) {
         if (context.getLevel().isClientSide) return InteractionResult.SUCCESS;
         BlockPos c = BoilerGeometry.controllerOf(context.getLevel(), context.getClickedPos());
-        return c != null && context.getLevel().getBlockEntity(c) instanceof SteamEngineBlockEntity e
-                ? e.cycleGear(context.getPlayer()) : InteractionResult.PASS;
+        if (c == null) return InteractionResult.PASS;
+        BlockEntity be = context.getLevel().getBlockEntity(c);
+        if (be instanceof SteamEngineBlockEntity e) return e.cycleGear(context.getPlayer());
+        return be instanceof KineticMachineBlock.Wrenchable w ? w.onWrenched(context) : InteractionResult.PASS;
     }
 }

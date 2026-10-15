@@ -57,8 +57,14 @@ public final class PcBlockStateProvider extends BlockStateProvider {
     /** Имя модели состояния; варианты без отдельной модели рисуются базовой. */
     static String modelName(String id, BlockState s) {
         return switch (id) {
-            case "fire_tube_boiler" -> s.getValue(PcProperties.BOILER_SEGMENT) == PcProperties.BoilerSegment.REAR ? id + "_rear"
-                    : s.getValue(BlockStateProperties.LIT) ? id + "_lit" : id;
+            case "fire_tube_boiler" -> {
+                boolean exploded = s.getValue(PcProperties.EXPLODED);
+                if (s.getValue(PcProperties.BOILER_SEGMENT) == PcProperties.BoilerSegment.REAR)
+                    yield exploded ? id + "_rear_exploded" : id + "_rear";
+                if (exploded) yield id + "_exploded";
+                String lit = s.getValue(BlockStateProperties.LIT) ? "_lit" : "";
+                yield id + lit + (s.getValue(PcProperties.LOW_WATER) ? "_low_water" : "");
+            }
             case "steam_engine_cylinder" -> s.getValue(PcProperties.ENGINE_SEGMENT) == PcProperties.EngineSegment.FRAME ? id + "_frame" : id;
             case "grate_stoker", "main_mine_fan" -> s.getValue(PcProperties.RUNNING) ? id + "_running" : id;
             case "chimney" -> switch (s.getValue(PcProperties.CHIMNEY_PART)) {

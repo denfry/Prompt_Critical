@@ -20,6 +20,8 @@ import dev.denfry.promptcritical.mod.foundry.CrucibleBlockEntity;
 import dev.denfry.promptcritical.mod.foundry.CupolaBlockEntity;
 import dev.denfry.promptcritical.mod.foundry.FoundryBlock;
 import dev.denfry.promptcritical.mod.foundry.KineticMachineBlock;
+import dev.denfry.promptcritical.mod.mine.DegasificationPumpBlockEntity;
+import dev.denfry.promptcritical.mod.mine.MainMineFanBlock;
 import dev.denfry.promptcritical.mod.foundry.KineticMachineBlock.ShaftSide;
 import dev.denfry.promptcritical.mod.foundry.MachineToolBlockEntity;
 import dev.denfry.promptcritical.mod.foundry.MoldingStationBlockEntity;
@@ -96,7 +98,8 @@ public final class PcBlocks {
 
     // --- котельная I0 (07) ---
     public static final DeferredBlock<PcDeviceBlock> FIRE_TUBE_BOILER = device("fire_tube_boiler", lit(machine()),
-            Spec.facing(BlockStateProperties.LIT).segments(PcProperties.BOILER_SEGMENT, FP_BOILER), FireTubeBoilerBlock::create);
+            Spec.facing(BlockStateProperties.LIT, PcProperties.LOW_WATER, PcProperties.EXPLODED)
+                    .segments(PcProperties.BOILER_SEGMENT, FP_BOILER), FireTubeBoilerBlock::create);
     public static final DeferredBlock<PcDeviceBlock> GRATE_STOKER = device("grate_stoker", machine(), Spec.facing(PcProperties.RUNNING),
             KineticMachineBlock.with(ShaftSide.LEFT, GrateStokerBlockEntity::new));
     public static final DeferredBlock<ChimneyBlock> CHIMNEY = withItem(BLOCKS.registerBlock("chimney", ChimneyBlock::create, brick()));
@@ -140,12 +143,13 @@ public final class PcBlocks {
     public static final DeferredBlock<PcDeviceBlock> LONGWALL_SHEARER = device("longwall_shearer", machine(),
             Spec.facing(PcProperties.RUNNING).footprint(Footprint.of(Segment.box(-1, 1, 0, 0, 0, 0))));
     public static final DeferredBlock<PcDeviceBlock> MAIN_MINE_FAN = device("main_mine_fan", machine(),
-            Spec.facing(PcProperties.RUNNING).footprint(FP_CUBE3));
+            Spec.facing(PcProperties.RUNNING).footprint(FP_CUBE3), MainMineFanBlock::create);
     public static final DeferredBlock<VentilationDoorBlock> VENTILATION_DOOR = withItem(BLOCKS.registerBlock("ventilation_door",
             p -> VentilationDoorBlock.create(p, Spec.facing(PcProperties.DOOR_KIND, BlockStateProperties.OPEN).footprint(FP_TALL2)), wood()));
     public static final DeferredBlock<PcBlock> EXPLOSION_BARRIER = block("explosion_barrier", wood(), Spec.of(PcProperties.BARRIER_KIND));
     public static final DeferredBlock<PcDeviceBlock> DEGASIFICATION_BOREHOLE = device("degasification_borehole", machine(), Spec.facing());
-    public static final DeferredBlock<PcDeviceBlock> DEGASIFICATION_PUMP = device("degasification_pump", machine(), Spec.facing(PcProperties.RUNNING));
+    public static final DeferredBlock<PcDeviceBlock> DEGASIFICATION_PUMP = device("degasification_pump", machine(), Spec.facing(PcProperties.RUNNING),
+            KineticMachineBlock.with(ShaftSide.BACK, DegasificationPumpBlockEntity::new));
     public static final DeferredBlock<PcDeviceBlock> MINE_DISPATCH_CABINET = device("mine_dispatch_cabinet", machine(),
             Spec.facing(PcProperties.ALARM).footprint(FP_TALL2), MineDispatchCabinetBlock::create);
     public static final DeferredBlock<PcDeviceBlock> MINE_HOIST = device("mine_hoist", machine(),

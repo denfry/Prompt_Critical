@@ -131,6 +131,8 @@ public final class PcLanguageProvider extends LanguageProvider {
         MISC.put("commands.promptcritical.mine.count", new String[] {"Mines: %s", "Шахт: %s"});
         MISC.put("commands.promptcritical.mine.ignited", new String[] {"Methane ignited", "Метан воспламенился"});
         MISC.put("commands.promptcritical.mine.not_ignited", new String[] {"Mixture outside explosive limits", "Смесь вне взрывных пределов"});
+        MISC.put("commands.promptcritical.boiler.preset", new String[] {"Boiler preset: %s MPa, level %s m", "Котёл: %s МПа, уровень %s м"});
+        MISC.put("commands.promptcritical.boiler.no_boiler", new String[] {"Look at a fire-tube boiler", "Посмотрите на жаротрубный котёл"});
         MISC.put("promptcritical.mine.not_in_mine", new String[] {"Not in a mine working", "Вы не в горной выработке"});
         MISC.put("promptcritical.mine.lamp.normal", new String[] {"Lamp: steady flame", "Лампа: пламя ровное"});
         MISC.put("promptcritical.mine.lamp.halo", new String[] {"Lamp: blue cap over the flame, %s %% of full height",

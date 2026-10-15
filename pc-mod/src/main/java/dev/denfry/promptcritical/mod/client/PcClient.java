@@ -22,6 +22,7 @@ public final class PcClient {
         modBus.addListener(PcClient::clientSetup);
         FoundryClient.register(modBus);
         dev.denfry.promptcritical.mod.boiler.client.BoilerClient.register(modBus);
+        dev.denfry.promptcritical.mod.mine.client.MineClient.register(modBus);
     }
 
     private static void registerClientExtensions(RegisterClientExtensionsEvent event) {

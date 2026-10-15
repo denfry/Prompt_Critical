@@ -125,7 +125,7 @@ public final class MineScanner {
         }
         BlockState s = level.getBlockState(pos);
         Block b = s.getBlock();
-        if (b == PcBlocks.MULTIBLOCK_PART.get()) {
+        if (b instanceof MultiblockPartBlock) {
             BlockPos anchor = MultiblockPartBlock.anchor(s, pos);
             BlockPos ctrl = PcBlock.structureController(level, anchor);
             if (ctrl == null) ctrl = anchor;
@@ -256,7 +256,7 @@ public final class MineScanner {
 
     private BlockPos controller(long key, BlockState s) {
         BlockPos pos = BlockPos.of(key);
-        if (!s.is(PcBlocks.MULTIBLOCK_PART.get())) return pos;
+        if (!(s.getBlock() instanceof MultiblockPartBlock)) return pos;
         BlockPos anchor = MultiblockPartBlock.anchor(s, pos);
         BlockPos ctrl = PcBlock.structureController(level, anchor);
         return ctrl != null ? ctrl : anchor;

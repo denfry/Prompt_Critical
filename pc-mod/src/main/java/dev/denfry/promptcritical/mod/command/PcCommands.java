@@ -5,6 +5,8 @@ import com.mojang.brigadier.arguments.DoubleArgumentType;
 import com.mojang.brigadier.context.CommandContext;
 import dev.denfry.promptcritical.mod.binding.SimBindings;
 import dev.denfry.promptcritical.mod.binding.SimLevelBinding;
+import dev.denfry.promptcritical.mod.boiler.BoilerGeometry;
+import dev.denfry.promptcritical.mod.boiler.FireTubeBoilerBlockEntity;
 import dev.denfry.promptcritical.sim.consequence.BudgetStats;
 import dev.denfry.promptcritical.sim.core.GridPos;
 import dev.denfry.promptcritical.sim.core.SimId;
@@ -16,12 +18,14 @@ import dev.denfry.promptcritical.sim.mining.MethaneField;
 import dev.denfry.promptcritical.sim.mining.MineGas;
 import dev.denfry.promptcritical.sim.mining.MineNetwork;
 import dev.denfry.promptcritical.sim.mining.MineSubsystem;
+import dev.denfry.promptcritical.sim.plant.SteamPlant;
 import net.minecraft.core.BlockPos;
 import net.minecraft.commands.CommandSourceStack;
 import net.minecraft.commands.Commands;
 import net.minecraft.network.chat.Component;
+import net.minecraft.world.phys.BlockHitResult;
 
-/** Служебные команды {@code /pc} (05 §5.4.7): хеш состояния, устройства, профиль тика, шахты. */
+/** Служебные команды {@code /pc} (05 §5.4.7): хеш состояния, устройства, профиль тика, шахты, налив котла. */
 public final class PcCommands {
     private static final int LIST_LIMIT = 20;
 
@@ -40,7 +44,10 @@ public final class PcCommands {
                         .then(Commands.literal("info").executes(PcCommands::mineInfo))
                         .then(Commands.literal("gas").then(Commands.argument("ch4_percent", DoubleArgumentType.doubleArg(0, 100))
                                 .executes(PcCommands::mineGas)))
-                        .then(Commands.literal("ignite").executes(PcCommands::mineIgnite))));
+                        .then(Commands.literal("ignite").executes(PcCommands::mineIgnite)))
+                .then(Commands.literal("boiler")
+                        .then(Commands.literal("preset").then(Commands.argument("pressure_mpa", DoubleArgumentType.doubleArg(0.1, 2))
+                                .then(Commands.argument("level_m", DoubleArgumentType.doubleArg(0, 1.6)).executes(PcCommands::boilerPreset))))));
     }
 
     private static SimLevelBinding binding(CommandContext<CommandSourceStack> ctx) {
@@ -124,6 +131,21 @@ public final class PcCommands {
         ctx.getSource().sendSuccess(() -> Component.translatable(ok ? "commands.promptcritical.mine.ignited"
                 : "commands.promptcritical.mine.not_ignited"), true);
         return ok ? 1 : 0;
+    }
+
+    /** Котёл под взглядом исполнителя: вода и пар на линии насыщения при заданном давлении (отладка, как в GameTest). */
+    private static int boilerPreset(CommandContext<CommandSourceStack> ctx) {
+        var e = ctx.getSource().getEntity();
+        var level = ctx.getSource().getLevel();
+        BlockPos c = e != null && e.pick(8, 1, false) instanceof BlockHitResult hit ? BoilerGeometry.controllerOf(level, hit.getBlockPos()) : null;
+        if (c == null || !(level.getBlockEntity(c) instanceof FireTubeBoilerBlockEntity be) || be.simId().isNone()) {
+            ctx.getSource().sendFailure(Component.translatable("commands.promptcritical.boiler.no_boiler"));
+            return 0;
+        }
+        double mpa = DoubleArgumentType.getDouble(ctx, "pressure_mpa"), lv = DoubleArgumentType.getDouble(ctx, "level_m");
+        binding(ctx).world().subsystem(SteamPlant.class).presetWater(be.simId(), mpa * 1e6, lv);
+        ctx.getSource().sendSuccess(() -> Component.translatable("commands.promptcritical.boiler.preset", mpa, lv), true);
+        return 1;
     }
 
     private static BlockPos eye(CommandContext<CommandSourceStack> ctx) {
