@@ -1,0 +1,32 @@
+{
+  "parent": "minecraft:recipes/root",
+  "criteria": {
+    "has_piston": {
+      "conditions": {
+        "items": [
+          {
+            "items": "minecraft:piston"
+          }
+        ]
+      },
+      "trigger": "minecraft:inventory_changed"
+    },
+    "has_the_recipe": {
+      "conditions": {
+        "recipe": "promptcritical:mine/powered_roof_support"
+      },
+      "trigger": "minecraft:recipe_unlocked"
+    }
+  },
+  "requirements": [
+    [
+      "has_the_recipe",
+      "has_piston"
+    ]
+  ],
+  "rewards": {
+    "recipes": [
+      "promptcritical:mine/powered_roof_support"
+    ]
+  }
+}

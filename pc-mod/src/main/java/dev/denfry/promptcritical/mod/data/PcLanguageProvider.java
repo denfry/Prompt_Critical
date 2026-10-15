@@ -143,6 +143,8 @@ public final class PcLanguageProvider extends LanguageProvider {
         MISC.put("promptcritical.mine.lamp.ignites", new String[] {"Lamp: flame passed the gauze!", "Лампа: пламя вышло за сетку!"});
         MISC.put("promptcritical.mine.lamp.extinguished", new String[] {"Lamp: went out (oxygen below 17 %%)",
                 "Лампа: погасла (кислорода меньше 17 %%)"});
+        MISC.put("promptcritical.mine.support.lowering", new String[] {"Support: lowering the legs", "Крепь: разгрузка стоек"});
+        MISC.put("promptcritical.mine.support.setting", new String[] {"Support: setting against the roof", "Крепь: распор в кровлю"});
         MISC.put("promptcritical.mine.methanometer", new String[] {"CH4: %s %%", "CH4: %s %%"});
         MISC.put("promptcritical.mine.self_rescuer.on", new String[] {"Self-rescuer on: breathing from the apparatus",
                 "Самоспасатель включён: дыхание из аппарата"});

@@ -112,7 +112,7 @@ public class MultiblockPartBlock extends Block {
 
     @Override
     protected void onRemove(BlockState state, Level level, BlockPos pos, BlockState newState, boolean movedByPiston) {
-        if (!level.isClientSide && !newState.is(this) && !PcBlock.isRelocating()) {
+        if (!level.isClientSide && !newState.is(this) && !PcBlock.isRelocating() && !movedByPiston) {
             BlockPos controller = PcBlock.structureController(level, anchor(state, pos));
             if (controller != null) {
                 BlockState cs = level.getBlockState(controller);

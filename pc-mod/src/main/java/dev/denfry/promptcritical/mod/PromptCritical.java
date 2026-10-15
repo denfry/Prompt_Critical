@@ -53,6 +53,7 @@ public final class PromptCritical {
                 SimConfigs.fromServerConfig().section(MiningConfig.class, MiningConfig.defaults()),
                 SimConfigs.fromServerConfig().section(DrainageConfig.class, DrainageConfig.defaults())));
         dev.denfry.promptcritical.mod.mine.MineHoisting.register(modBus);
+        dev.denfry.promptcritical.mod.mine.MineLongwall.register(modBus);
         modBus.addListener(PcDataGen::gather);
         if (FMLEnvironment.dist == Dist.CLIENT) PcClient.register(modBus);
         ApiHolder.install(new ApiImpl());

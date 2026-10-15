@@ -97,6 +97,13 @@ public final class ServerConfig {
     public static final ModConfigSpec.DoubleValue MINING_SUMP_CAPACITY;
     public static final ModConfigSpec.DoubleValue MINING_WATER_RELEASE_TAU;
     public static final ModConfigSpec.DoubleValue MINING_ACID_WATER_SULFUR;
+    public static final ModConfigSpec.DoubleValue MINING_LONGWALL_SHEARER_KW;
+    public static final ModConfigSpec.DoubleValue MINING_LONGWALL_MAX_FEED;
+    public static final ModConfigSpec.IntValue MINING_LONGWALL_CUT_HEIGHT;
+    public static final ModConfigSpec.DoubleValue MINING_LONGWALL_ROCK_F;
+    public static final ModConfigSpec.DoubleValue MINING_LONGWALL_SPRAY_WATER;
+    public static final ModConfigSpec.DoubleValue MINING_LONGWALL_SPRAY_DUST_FACTOR;
+    public static final ModConfigSpec.DoubleValue MINING_LONGWALL_SUPPORT_SET_S;
     public static final ModConfigSpec.DoubleValue CASTING_CHVORINOV_B_SAND_MIN_CM2;
     public static final ModConfigSpec.DoubleValue MACHINING_TAYLOR_N;
     public static final ModConfigSpec.DoubleValue MACHINING_TAYLOR_C_M_MIN;
@@ -273,6 +280,20 @@ public final class ServerConfig {
                 .defineInRange("water_release_tau_s", 21_600.0, 1.0, 1.0e7);
         MINING_ACID_WATER_SULFUR = b.comment("[assumption] Coal sulfur S^d, %, from which seam water is acidic mine_water (08 §8.2.9)")
                 .defineInRange("acid_water_sulfur_pct", 1.5, 0.0, 100.0);
+        MINING_LONGWALL_SHEARER_KW = b.comment("[BALANCE] Longwall shearer drive power at 64 RPM of the gantry shaft, kW (08 §8.2.3)")
+                .defineInRange("longwall_shearer_kw", 220.0, 1.0, 1.0e4);
+        MINING_LONGWALL_MAX_FEED = b.comment("Longwall shearer maximum feed rate, m/min (08 §8.2.3: 2-6)")
+                .defineInRange("longwall_max_feed_m_per_min", 6.0, 0.1, 60.0);
+        MINING_LONGWALL_CUT_HEIGHT = b.comment("Height of the strip the shearer cuts, blocks: the leading drum takes the upper rows, the trailing one the floor row")
+                .defineInRange("longwall_cut_height_blocks", 3, 1, 4);
+        MINING_LONGWALL_ROCK_F = b.comment("[BALANCE] Protodyakonov hardness of non-coal blocks cut by the shearer drums")
+                .defineInRange("longwall_rock_protodyakonov", 4.0, 0.1, 20.0);
+        MINING_LONGWALL_SPRAY_WATER = b.comment("[BALANCE] Shearer dust suppression water, l/t, drawn from fluid tanks on the contraption")
+                .defineInRange("longwall_spray_water_l_per_t", 30.0, 0.0, 1000.0);
+        MINING_LONGWALL_SPRAY_DUST_FACTOR = b.comment("Share of coal dust left with water spray (08 §8.2.3: 1/5)")
+                .defineInRange("longwall_spray_dust_factor", 0.2, 0.0, 1.0);
+        MINING_LONGWALL_SUPPORT_SET_S = b.comment("[BALANCE] Time to set or lower a powered roof support, s")
+                .defineInRange("longwall_support_set_s", 2.0, 0.0, 60.0);
         b.pop();
 
         b.push("casting");

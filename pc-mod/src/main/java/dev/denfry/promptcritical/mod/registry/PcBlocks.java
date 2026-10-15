@@ -21,10 +21,12 @@ import dev.denfry.promptcritical.mod.foundry.CupolaBlockEntity;
 import dev.denfry.promptcritical.mod.foundry.FoundryBlock;
 import dev.denfry.promptcritical.mod.foundry.KineticMachineBlock;
 import dev.denfry.promptcritical.mod.mine.DegasificationPumpBlockEntity;
+import dev.denfry.promptcritical.mod.mine.LongwallShearerBlock;
 import dev.denfry.promptcritical.mod.mine.MainMineFanBlock;
 import dev.denfry.promptcritical.mod.mine.MineCageBlock;
 import dev.denfry.promptcritical.mod.mine.MineDrainagePumpBlockEntity;
 import dev.denfry.promptcritical.mod.mine.MineHoistBlock;
+import dev.denfry.promptcritical.mod.mine.PoweredRoofSupportBlock;
 import dev.denfry.promptcritical.mod.foundry.KineticMachineBlock.ShaftSide;
 import dev.denfry.promptcritical.mod.foundry.MachineToolBlockEntity;
 import dev.denfry.promptcritical.mod.foundry.MoldingStationBlockEntity;
@@ -144,9 +146,10 @@ public final class PcBlocks {
     public static final DeferredBlock<PcBlock> MINE_SUPPORT = block("mine_support", wood(),
             Spec.facing(PcProperties.SUPPORT_KIND, PcProperties.DAMAGED).footprint(FP_TALL3));
     public static final DeferredBlock<PcDeviceBlock> POWERED_ROOF_SUPPORT = device("powered_roof_support", machine(),
-            Spec.facing().footprint(Footprint.of(Segment.box(0, 0, -1, 1, 0, 1))));
+            Spec.facing(BlockStateProperties.EXTENDED).footprint(Footprint.of(Segment.box(0, 0, -1, 1, 0, 1))),
+            PoweredRoofSupportBlock::create);
     public static final DeferredBlock<PcDeviceBlock> LONGWALL_SHEARER = device("longwall_shearer", machine(),
-            Spec.facing(PcProperties.RUNNING).footprint(Footprint.of(Segment.box(-1, 1, 0, 0, 0, 0))));
+            Spec.facing(PcProperties.RUNNING).footprint(Footprint.of(Segment.box(-1, 1, 0, 0, 0, 0))), LongwallShearerBlock::create);
     public static final DeferredBlock<PcDeviceBlock> MAIN_MINE_FAN = device("main_mine_fan", machine(),
             Spec.facing(PcProperties.RUNNING).footprint(FP_CUBE3), MainMineFanBlock::create);
     public static final DeferredBlock<VentilationDoorBlock> VENTILATION_DOOR = withItem(BLOCKS.registerBlock("ventilation_door",

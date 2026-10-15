@@ -708,6 +708,11 @@ public final class MineWorld {
      * пройденным блоком попадает под правило пролёта.
      */
     public void onBlockBroken(BlockPos pos, BlockState state) {
+        onBlockBroken(pos, state, 1);
+    }
+
+    /** То же для комбайна: от пыли пласта остаётся доля {@code dustFactor} (орошение, 08 §8.2.3). */
+    public void onBlockBroken(BlockPos pos, BlockState state, double dustFactor) {
         MineSubsystem sim = sim();
         if (sim == null) return;
         MineNetwork n = mineNear(pos);
@@ -720,7 +725,7 @@ public final class MineWorld {
         if (n == null) return;
         if (coal && n.ready()) {
             double vdaf = VeinFields.get(level.getSeed()).volatileDafPct(pos.getX(), pos.getY(), pos.getZ()) / 100;
-            n.field().onMined(pos.asLong(), MethaneField.gasContent(ServerConfig.MINING_SEAM_GAS_CONTENT.get(), pos.getY()), vdaf);
+            n.field().onMined(pos.asLong(), MethaneField.gasContent(ServerConfig.MINING_SEAM_GAS_CONTENT.get(), pos.getY()), vdaf, dustFactor);
         }
         if (coal) {
             double sulfur = 100 * VeinFields.get(level.getSeed()).coalAssay(pos.getX(), pos.getY(), pos.getZ()).sulfurDryFrac();
@@ -754,13 +759,17 @@ public final class MineWorld {
         public MineSupport support(int x, int z) {
             BlockState s = supportState(x, z);
             if (s == null) return null;
+            if (s.is(PcBlocks.POWERED_ROOF_SUPPORT.get())) return MineSupport.POWERED;
             return s.getValue(PcProperties.SUPPORT_KIND) == PcProperties.SupportKind.ARCH ? MineSupport.ARCH : MineSupport.TIMBER;
         }
 
         @Override
         public double supportCondition(int x, int z) {
             BlockState s = supportState(x, z);
-            return s == null ? 0 : s.getValue(PcProperties.DAMAGED) ? 0.4 : 1.0;
+            if (s == null) return 0;
+            // разгруженная секция мехкрепи кровлю не держит
+            if (s.is(PcBlocks.POWERED_ROOF_SUPPORT.get())) return PoweredRoofSupportBlock.set(s) ? 1.0 : 0;
+            return s.getValue(PcProperties.DAMAGED) ? 0.4 : 1.0;
         }
 
         @Nullable
@@ -772,7 +781,7 @@ public final class MineWorld {
                     BlockPos a = MultiblockPartBlock.anchor(s, p);
                     s = level.getBlockState(a);
                 }
-                if (s.is(PcBlocks.MINE_SUPPORT.get())) return s;
+                if (s.is(PcBlocks.MINE_SUPPORT.get()) || s.is(PcBlocks.POWERED_ROOF_SUPPORT.get())) return s;
             }
             return null;
         }

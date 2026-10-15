@@ -179,7 +179,8 @@ public class PcBlock extends Block {
         super.onPlace(state, level, pos, oldState, movedByPiston);
         if (level.isClientSide || oldState.is(this)) return;
         SimBindings.markDirty(level, pos);
-        if (spec.footprint.isSingle() || !isController(state) || isRelocating()) return;
+        // Контрапции Create ставят и снимают блоки с флагом переноса поршнем: конструкция едет целиком.
+        if (spec.footprint.isSingle() || !isController(state) || isRelocating() || movedByPiston) return;
         Direction f = facing(state);
         for (Footprint.Cell c : spec.footprint.cells(pos, f)) {
             if (c.pos().equals(pos)) continue;
@@ -210,7 +211,7 @@ public class PcBlock extends Block {
     protected void onRemove(BlockState state, Level level, BlockPos pos, BlockState newState, boolean movedByPiston) {
         if (!level.isClientSide && !newState.is(this)) {
             SimBindings.markDirty(level, pos);
-            if (!spec.footprint.isSingle() && !isRelocating()) breakStructure(state, level, pos);
+            if (!spec.footprint.isSingle() && !isRelocating() && !movedByPiston) breakStructure(state, level, pos);
         }
         super.onRemove(state, level, pos, newState, movedByPiston);
     }

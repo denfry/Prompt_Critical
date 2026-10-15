@@ -1,0 +1,32 @@
+{
+  "parent": "minecraft:recipes/root",
+  "criteria": {
+    "has_mechanical_drill": {
+      "conditions": {
+        "items": [
+          {
+            "items": "create:mechanical_drill"
+          }
+        ]
+      },
+      "trigger": "minecraft:inventory_changed"
+    },
+    "has_the_recipe": {
+      "conditions": {
+        "recipe": "promptcritical:mine/longwall_shearer"
+      },
+      "trigger": "minecraft:recipe_unlocked"
+    }
+  },
+  "requirements": [
+    [
+      "has_the_recipe",
+      "has_mechanical_drill"
+    ]
+  ],
+  "rewards": {
+    "recipes": [
+      "promptcritical:mine/longwall_shearer"
+    ]
+  }
+}

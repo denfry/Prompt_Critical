@@ -8,6 +8,7 @@ import dev.denfry.promptcritical.sim.core.exec.WorkerPool;
 import dev.denfry.promptcritical.sim.metallurgy.MetallurgyConfig;
 import dev.denfry.promptcritical.sim.mining.DrainageConfig;
 import dev.denfry.promptcritical.sim.mining.HoistConfig;
+import dev.denfry.promptcritical.sim.mining.LongwallConfig;
 import dev.denfry.promptcritical.sim.mining.MiningConfig;
 import dev.denfry.promptcritical.sim.mining.VeinConfig;
 import java.util.HashMap;
@@ -35,6 +36,7 @@ public final class SimConfigs {
         sections.put(DrainageConfig.class, new DrainageConfig(ServerConfig.MINING_WATER_YIELD.get(),
                 ServerConfig.MINING_WATER_FILTRATION.get(), ServerConfig.MINING_SUMP_CAPACITY.get(),
                 ServerConfig.MINING_WATER_RELEASE_TAU.get(), ServerConfig.MINING_ACID_WATER_SULFUR.get()));
+        sections.put(LongwallConfig.class, longwall());
         sections.put(VeinConfig.class, veins());
         sections.put(dev.denfry.promptcritical.sim.plant.SteamPlantConfig.class, new dev.denfry.promptcritical.sim.plant.SteamPlantConfig(
                 ServerConfig.BOILER_EXPLOSION_BLAST_FRACTION.get(), dev.denfry.promptcritical.sim.plant.SteamPlantConfig.defaults().feedOpenKgS(),
@@ -47,6 +49,16 @@ public final class SimConfigs {
                 ServerConfig.PERF_MAX_COMMANDS_PER_TICK.get(), ServerConfig.PERF_EVENT_BUFFER_CAPACITY.get(),
                 ServerConfig.PERF_SNAPSHOT_BUFFERS.get(), ServerConfig.PERF_SLOW_JOIN_TIMEOUT_MS.get(),
                 ServerConfig.PERF_BUDGET_MS.get(), sections);
+    }
+
+    /** Ключи {@code mining.longwall_*}; до загрузки серверного конфига — по умолчанию. */
+    public static LongwallConfig longwall() {
+        if (!ServerConfig.SPEC.isLoaded()) return LongwallConfig.defaults();
+        LongwallConfig d = LongwallConfig.defaults();
+        return new LongwallConfig(ServerConfig.MINING_LONGWALL_SHEARER_KW.get() * 1e3, d.nominalRpm(),
+                ServerConfig.MINING_LONGWALL_MAX_FEED.get(), ServerConfig.MINING_LONGWALL_CUT_HEIGHT.get(),
+                ServerConfig.MINING_LONGWALL_ROCK_F.get(), ServerConfig.MINING_LONGWALL_SPRAY_WATER.get(),
+                ServerConfig.MINING_LONGWALL_SPRAY_DUST_FACTOR.get(), ServerConfig.MINING_LONGWALL_SUPPORT_SET_S.get());
     }
 
     /** Ключи {@code worldgen.veins.*} и {@code worldgen.coal.*}; до загрузки серверного конфига — по умолчанию. */

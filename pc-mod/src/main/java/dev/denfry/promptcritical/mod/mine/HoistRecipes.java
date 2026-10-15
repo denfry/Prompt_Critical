@@ -16,8 +16,8 @@ import net.minecraft.data.recipes.ShapedRecipeBuilder;
 import net.minecraft.world.item.Items;
 
 /**
- * Рецепты подъёма и водоотлива I0 (08 §8.2.8–8.2.9): железо, цепи и детали Create. Канат до канатовьющей машины
- * (M3) вьют из железных цепей — 6×19 ОС ⌀ 32 мм.
+ * Рецепты подъёма, водоотлива и механизированной лавы I0 (08 §8.2.3, 8.2.8–8.2.9): железо, цепи и детали Create.
+ * Канат до канатовьющей машины (M3) вьют из железных цепей — 6×19 ОС ⌀ 32 мм.
  */
 public final class HoistRecipes extends RecipeProvider {
     public HoistRecipes(PackOutput output, CompletableFuture<HolderLookup.Provider> registries) {
@@ -64,5 +64,13 @@ public final class HoistRecipes extends RecipeProvider {
                 .pattern("IPI").pattern("SCS").pattern("III").define('I', Items.IRON_INGOT).define('P', AllBlocks.MECHANICAL_PUMP.get())
                 .define('S', AllBlocks.SHAFT.get()).define('C', AllBlocks.COGWHEEL.get())
                 .unlockedBy("has_mechanical_pump", has(AllBlocks.MECHANICAL_PUMP.get())).save(out, id("mine_drainage_pump"));
+        // механизированная лава (08 §8.2.3): шнеки — буры Create, гидростойки — поршни
+        ShapedRecipeBuilder.shaped(RecipeCategory.MISC, PcBlocks.LONGWALL_SHEARER.get())
+                .pattern("DGD").pattern("III").define('D', AllBlocks.MECHANICAL_DRILL.get()).define('G', AllBlocks.GEARBOX.get())
+                .define('I', Items.IRON_BLOCK)
+                .unlockedBy("has_mechanical_drill", has(AllBlocks.MECHANICAL_DRILL.get())).save(out, id("longwall_shearer"));
+        ShapedRecipeBuilder.shaped(RecipeCategory.MISC, PcBlocks.POWERED_ROOF_SUPPORT.get())
+                .pattern("III").pattern("P P").pattern("III").define('I', Items.IRON_INGOT).define('P', Items.PISTON)
+                .unlockedBy("has_piston", has(Items.PISTON)).save(out, id("powered_roof_support"));
     }
 }

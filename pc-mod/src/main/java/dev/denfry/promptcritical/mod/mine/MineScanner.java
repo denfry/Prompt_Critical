@@ -108,11 +108,13 @@ public final class MineScanner {
         if (b instanceof PcBlock pc && !pc.isController(s)) return false;
         return b == PcBlocks.MAIN_MINE_FAN.get() || b == PcBlocks.VENTILATION_DOOR.get() || b == PcBlocks.MINE_SUPPORT.get()
                 || b == PcBlocks.EXPLOSION_BARRIER.get() || b == PcBlocks.MINE_DISPATCH_CABINET.get()
-                || b == PcBlocks.DEGASIFICATION_BOREHOLE.get() || b == PcBlocks.MINE_DRAINAGE_PUMP.get();
+                || b == PcBlocks.DEGASIFICATION_BOREHOLE.get() || b == PcBlocks.MINE_DRAINAGE_PUMP.get()
+                || b == PcBlocks.POWERED_ROOF_SUPPORT.get();
     }
 
     private static boolean minePassable(Block b) {
-        return b == PcBlocks.MINE_SUPPORT.get() || b == PcBlocks.EXPLOSION_BARRIER.get() || b == PcBlocks.CANARY_CAGE.get();
+        return b == PcBlocks.MINE_SUPPORT.get() || b == PcBlocks.EXPLOSION_BARRIER.get() || b == PcBlocks.CANARY_CAGE.get()
+                || b == PcBlocks.POWERED_ROOF_SUPPORT.get() || b == PcBlocks.LONGWALL_SHEARER.get();
     }
 
     /** Класс клетки; контроллер многоклеточного блока — в {@link #lastCtrl}. */
@@ -277,7 +279,7 @@ public final class MineScanner {
         double sx, sy, sz;
         int minX = Integer.MAX_VALUE, minY = Integer.MAX_VALUE, minZ = Integer.MAX_VALUE;
         int maxX = Integer.MIN_VALUE, maxY = Integer.MIN_VALUE, maxZ = Integer.MIN_VALUE;
-        boolean flame, timber, arch;
+        boolean flame, timber, arch, powered;
         double barrierKg;
         BarrierKind barrierKind;
         int node;
@@ -381,12 +383,15 @@ public final class MineScanner {
                     out.anchors.add(k);
                 } else if (b == PcBlocks.CANARY_CAGE.get()) {
                     out.cages.add(k);
-                } else if (b == PcBlocks.MINE_SUPPORT.get() || b == PcBlocks.MULTIBLOCK_PART.get()) {
+                } else if (b == PcBlocks.MINE_SUPPORT.get() || b == PcBlocks.POWERED_ROOF_SUPPORT.get() || b == PcBlocks.MULTIBLOCK_PART.get()) {
                     BlockPos ctrl = controller(k, s);
                     BlockState cs = level.getBlockState(ctrl);
                     if (cs.is(PcBlocks.MINE_SUPPORT.get())) {
                         if (cs.getValue(PcProperties.SUPPORT_KIND) == PcProperties.SupportKind.ARCH) c.arch = true;
                         else c.timber = true;
+                        out.anchors.add(ctrl.asLong());
+                    } else if (cs.is(PcBlocks.POWERED_ROOF_SUPPORT.get())) {
+                        c.powered = true;
                         out.anchors.add(ctrl.asLong());
                     }
                 }
@@ -564,6 +569,7 @@ public final class MineScanner {
     }
 
     private static double lining(Comp c) {
+        if (c.powered) return AirwayLining.POWERED_FACE.alpha;
         return c.arch ? AirwayLining.ARCH.alpha : c.timber ? AirwayLining.TIMBER.alpha : AirwayLining.ROCK.alpha;
     }
 

@@ -24,6 +24,10 @@ public final class MineBlockEntities {
             type("mine_hoist", MineHoistBlockEntity::new, PcBlocks.MINE_HOIST);
     public static final DeferredHolder<BlockEntityType<?>, BlockEntityType<MineDrainagePumpBlockEntity>> MINE_DRAINAGE_PUMP =
             type("mine_drainage_pump", MineDrainagePumpBlockEntity::new, PcBlocks.MINE_DRAINAGE_PUMP);
+    public static final DeferredHolder<BlockEntityType<?>, BlockEntityType<LongwallShearerBlockEntity>> LONGWALL_SHEARER =
+            type("longwall_shearer", LongwallShearerBlockEntity::new, PcBlocks.LONGWALL_SHEARER);
+    public static final DeferredHolder<BlockEntityType<?>, BlockEntityType<PoweredRoofSupportBlockEntity>> POWERED_ROOF_SUPPORT =
+            type("powered_roof_support", PoweredRoofSupportBlockEntity::new, PcBlocks.POWERED_ROOF_SUPPORT);
 
     private MineBlockEntities() {
     }

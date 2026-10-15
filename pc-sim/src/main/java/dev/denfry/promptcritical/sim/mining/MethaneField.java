@@ -308,6 +308,11 @@ public final class MethaneField {
      * @param volatileDaf V^daf угля — для взрывчатости пыли
      */
     public void onMined(long blockKey, double xCh4, double volatileDaf) {
+        onMined(blockKey, xCh4, volatileDaf, 1);
+    }
+
+    /** То же; от пыли остаётся доля {@code dustFactor} (орошение комбайна — 0,2, 08 §8.2.3). */
+    public void onMined(long blockKey, double xCh4, double volatileDaf, double dustFactor) {
         double tonnes = COAL_DENSITY / 1000;
         int e = expIndex.get(blockKey);
         if (e == LongIntMap.MISSING) {
@@ -318,7 +323,7 @@ public final class MethaneField {
         int n = t.nodeOf(blockKey);
         if (n > 0) {
             double surface = t.perimeter[n] * t.volume[n] / t.section[n];
-            depositCoalDust(n, cfg.dustPerTonKg() * tonnes * 1000 / surface, volatileDaf);
+            depositCoalDust(n, dustFactor * cfg.dustPerTonKg() * tonnes * 1000 / surface, volatileDaf);
         }
     }
 
