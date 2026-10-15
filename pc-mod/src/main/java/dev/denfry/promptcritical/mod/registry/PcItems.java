@@ -2,6 +2,7 @@ package dev.denfry.promptcritical.mod.registry;
 
 import dev.denfry.promptcritical.mod.PromptCritical;
 import dev.denfry.promptcritical.mod.block.PcBlock;
+import dev.denfry.promptcritical.mod.foundry.CastingPatternItem;
 import dev.denfry.promptcritical.mod.item.MineInstrumentItem;
 import java.util.ArrayList;
 import java.util.Collections;
@@ -45,10 +46,13 @@ public final class PcItems {
     public static final DeferredItem<Item> STONE_DUST = item("stone_dust", 64);
     public static final DeferredItem<Item> PIG_IRON = item("pig_iron", 64);
     public static final DeferredItem<Item> FOUNDRY_SAND = item("foundry_sand", 64);
-    public static final DeferredItem<Item> CASTING_PATTERN = item("casting_pattern", 16);
+    public static final DeferredItem<CastingPatternItem> CASTING_PATTERN = registered(ITEMS.registerItem("casting_pattern",
+            CastingPatternItem::new, new Item.Properties().stacksTo(16)));
     public static final DeferredItem<Item> CASTING = item("casting", 16);
     public static final DeferredItem<Item> REFRACTORY_BRICK = item("refractory_brick", 64);
-    public static final DeferredItem<Item> CUTTING_TOOL = item("cutting_tool", 1);
+    /** Быстрорежущий резец: прочность — износ по Тейлору (08 §8.10). */
+    public static final DeferredItem<Item> CUTTING_TOOL = registered(ITEMS.registerSimpleItem("cutting_tool",
+            new Item.Properties().durability(100)));
     public static final DeferredItem<Item> FLAME_SAFETY_LAMP = item("flame_safety_lamp", 1);
     public static final DeferredItem<MineInstrumentItem> SELF_RESCUER = instrument("self_rescuer", MineInstrumentItem.Kind.SELF_RESCUER, 16);
     public static final DeferredItem<MineInstrumentItem> STONE_DUSTER = instrument("stone_duster", MineInstrumentItem.Kind.STONE_DUSTER, 1);
@@ -67,6 +71,11 @@ public final class PcItems {
     }
 
     private PcItems() {
+    }
+
+    private static <I extends Item> DeferredItem<I> registered(DeferredItem<I> i) {
+        PLAIN.add(i);
+        return i;
     }
 
     private static DeferredItem<Item> item(String name, int stack) {

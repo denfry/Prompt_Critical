@@ -1,6 +1,7 @@
 package dev.denfry.promptcritical.mod.data;
 
 import dev.denfry.promptcritical.mod.PromptCritical;
+import dev.denfry.promptcritical.mod.foundry.FoundryText;
 import java.util.LinkedHashMap;
 import java.util.Map;
 import net.minecraft.data.PackOutput;
@@ -155,6 +156,7 @@ public final class PcLanguageProvider extends LanguageProvider {
         MISC.put("death.attack.promptcritical.mine_gas.player", new String[] {"%1$s was overcome by afterdamp while fighting %2$s",
                 "%1$s задохнулся рудничным газом, спасаясь от %2$s"});
         MISC.put("commands.promptcritical.profile.reset", new String[] {"Simulation profile reset", "Профиль симуляции сброшен"});
+        MISC.putAll(FoundryText.LANG);
     }
 
     @Override

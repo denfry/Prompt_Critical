@@ -4,6 +4,7 @@ import com.mojang.logging.LogUtils;
 import dev.denfry.promptcritical.api.ApiHolder;
 import dev.denfry.promptcritical.api.PromptCriticalApi;
 import dev.denfry.promptcritical.mod.binding.SimBindings;
+import dev.denfry.promptcritical.mod.foundry.FoundryBinding;
 import dev.denfry.promptcritical.mod.binding.SimConfigs;
 import dev.denfry.promptcritical.mod.client.PcClient;
 import dev.denfry.promptcritical.mod.config.ServerConfig;
@@ -44,6 +45,7 @@ public final class PromptCritical {
         PcFluids.FLUIDS.register(modBus);
         PcCreativeTabs.TABS.register(modBus);
         SimBindings.register(modBus);
+        FoundryBinding.register(modBus);
         SimBindings.registerSubsystem(level -> new MineSubsystem(
                 SimConfigs.fromServerConfig().section(MiningConfig.class, MiningConfig.defaults())));
         modBus.addListener(PcDataGen::gather);

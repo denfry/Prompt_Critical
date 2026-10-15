@@ -1,6 +1,7 @@
 package dev.denfry.promptcritical.mod.data;
 
 import dev.denfry.promptcritical.mod.PromptCritical;
+import dev.denfry.promptcritical.mod.foundry.FoundryComponents;
 import dev.denfry.promptcritical.mod.block.PcBlock;
 import dev.denfry.promptcritical.mod.loot.AssayFunction;
 import dev.denfry.promptcritical.mod.registry.PcBlocks;
@@ -22,6 +23,7 @@ import net.minecraft.world.level.storage.loot.LootPool;
 import net.minecraft.world.level.storage.loot.LootTable;
 import net.minecraft.world.level.storage.loot.entries.LootItem;
 import net.minecraft.world.level.storage.loot.functions.ApplyBonusCount;
+import net.minecraft.world.level.storage.loot.functions.CopyComponentsFunction;
 import net.minecraft.world.level.storage.loot.predicates.LootItemBlockStatePropertyCondition;
 import net.minecraft.world.level.storage.loot.providers.number.ConstantValue;
 import net.neoforged.neoforge.registries.DeferredBlock;
@@ -48,6 +50,12 @@ public final class PcBlockLoot extends BlockLootSubProvider {
             } else if (PcBlocks.selfAssayed().contains(db)) {
                 add(block, LootTable.lootTable().withPool(applyExplosionCondition(block, LootPool.lootPool()
                         .setRolls(ConstantValue.exactly(1)).add(LootItem.lootTableItem(block).apply(AssayFunction.assay())))));
+            } else if (db == PcBlocks.SAND_MOLD) {
+                // заформованная форма уносит модель и влажность (08 §8.9)
+                add(block, LootTable.lootTable().withPool(applyExplosionCondition(block, LootPool.lootPool()
+                        .setRolls(ConstantValue.exactly(1)).add(LootItem.lootTableItem(block)
+                                .apply(CopyComponentsFunction.copyComponents(CopyComponentsFunction.Source.BLOCK_ENTITY)
+                                        .include(FoundryComponents.SAND_MOLD.get()))))));
             } else if (block instanceof PcBlock pc && pc.spec().segment() != null) {
                 add(block, controllerOnly(pc));
             } else {

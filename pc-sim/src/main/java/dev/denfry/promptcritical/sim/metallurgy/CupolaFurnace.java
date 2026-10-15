@@ -1,5 +1,8 @@
 package dev.denfry.promptcritical.sim.metallurgy;
 
+import dev.denfry.promptcritical.sim.core.StateReader;
+import dev.denfry.promptcritical.sim.core.StateWriter;
+
 /**
  * Вагранка {@code cupola_furnace} (08 §8.9, I0): шахта с колошей чугуна (или лома) и кокса 10–14 %, дутьё
  * вентилятором Create. Лумпед-модель SLOW:
@@ -121,5 +124,23 @@ public final class CupolaFurnace {
     /** CO в колошниковом газе, нм³/с. */
     public double coNm3S() {
         return coRate;
+    }
+
+    public void save(StateWriter out) {
+        out.putDouble("stack_iron", stackIron);
+        out.putDouble("stack_coke", stackCoke);
+        out.putDouble("well", well);
+        out.putDouble("well_h", wellH);
+        out.putDouble("co", coRate);
+        out.putDouble("melt", meltRate);
+    }
+
+    public void load(StateReader in) {
+        stackIron = in.getDouble("stack_iron");
+        stackCoke = in.getDouble("stack_coke");
+        well = in.getDouble("well");
+        wellH = in.getDouble("well_h");
+        coRate = in.getDouble("co");
+        meltRate = in.getDouble("melt");
     }
 }

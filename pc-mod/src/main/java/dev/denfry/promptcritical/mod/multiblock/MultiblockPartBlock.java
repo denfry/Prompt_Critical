@@ -3,7 +3,9 @@ package dev.denfry.promptcritical.mod.multiblock;
 import dev.denfry.promptcritical.mod.block.PcBlock;
 import dev.denfry.promptcritical.mod.registry.PcBlocks;
 import net.minecraft.core.BlockPos;
+import net.minecraft.world.InteractionHand;
 import net.minecraft.world.InteractionResult;
+import net.minecraft.world.ItemInteractionResult;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.level.BlockGetter;
@@ -71,6 +73,15 @@ public final class MultiblockPartBlock extends Block {
         BlockState anchorState = level.getBlockState(anchor);
         if (!(anchorState.getBlock() instanceof PcBlock)) return InteractionResult.PASS;
         return anchorState.useWithoutItem(level, player, hit.withPosition(anchor));
+    }
+
+    @Override
+    protected ItemInteractionResult useItemOn(ItemStack stack, BlockState state, Level level, BlockPos pos, Player player,
+            InteractionHand hand, BlockHitResult hit) {
+        BlockPos anchor = anchor(state, pos);
+        BlockState anchorState = level.getBlockState(anchor);
+        if (!(anchorState.getBlock() instanceof PcBlock)) return ItemInteractionResult.PASS_TO_DEFAULT_BLOCK_INTERACTION;
+        return anchorState.useItemOn(stack, level, player, hand, hit.withPosition(anchor));
     }
 
     @Override

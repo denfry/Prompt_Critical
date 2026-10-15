@@ -12,11 +12,15 @@ import java.util.Objects;
  * @param defect        дефект (скрыт до контроля)
  * @param inspectedMask биты пройденного контроля {@link #RT}, {@link #UT}, {@link #HYDRO}
  * @param serial        заводской номер
+ * @param machinedMask  биты пройденной механообработки {@link #TURNED}, {@link #DRILLED} (в 08 §8.17 поля нет:
+ *                      деталям R22 нужно знать, что корпус обработан)
  */
 public record CastingSpec(CastingKind kind, String alloyId, int dn, CastingDefect defect, int inspectedMask,
-        long serial) {
+        long serial, int machinedMask) {
     /** Радиография (12), УЗК, гидроиспытание (13). */
     public static final int RT = 1, UT = 2, HYDRO = 4;
+    /** Точение ({@code machine_lathe}), сверление ({@code drill_press}). */
+    public static final int TURNED = 1, DRILLED = 2;
     /** Пробное давление гидроиспытания — 1,5 рабочего [сверить]. */
     public static final double HYDROTEST_FACTOR = 1.5;
 
@@ -27,9 +31,19 @@ public record CastingSpec(CastingKind kind, String alloyId, int dn, CastingDefec
         if (dn < 0) throw new IllegalArgumentException("dn: " + dn);
     }
 
+    /** Отливка из формы — без механообработки. */
+    public CastingSpec(CastingKind kind, String alloyId, int dn, CastingDefect defect, int inspectedMask, long serial) {
+        this(kind, alloyId, dn, defect, inspectedMask, serial, 0);
+    }
+
+    /** Отметка механообработки. */
+    public CastingSpec machined(int operation) {
+        return new CastingSpec(kind, alloyId, dn, defect, inspectedMask, serial, machinedMask | operation);
+    }
+
     /** Отметка контроля. */
     public CastingSpec inspected(int method) {
-        return new CastingSpec(kind, alloyId, dn, defect, inspectedMask | method, serial);
+        return new CastingSpec(kind, alloyId, dn, defect, inspectedMask | method, serial, machinedMask);
     }
 
     /** Дефект выявлен пройденным контролем. */

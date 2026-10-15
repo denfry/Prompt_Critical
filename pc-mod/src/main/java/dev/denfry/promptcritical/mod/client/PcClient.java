@@ -1,6 +1,7 @@
 package dev.denfry.promptcritical.mod.client;
 
 import dev.denfry.promptcritical.mod.PromptCritical;
+import dev.denfry.promptcritical.mod.foundry.client.FoundryClient;
 import dev.denfry.promptcritical.mod.registry.PcBlocks;
 import dev.denfry.promptcritical.mod.registry.PcFluids;
 import net.minecraft.client.renderer.ItemBlockRenderTypes;
@@ -19,6 +20,7 @@ public final class PcClient {
     public static void register(IEventBus modBus) {
         modBus.addListener(PcClient::registerClientExtensions);
         modBus.addListener(PcClient::clientSetup);
+        FoundryClient.register(modBus);
     }
 
     private static void registerClientExtensions(RegisterClientExtensionsEvent event) {

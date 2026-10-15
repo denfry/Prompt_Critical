@@ -1,5 +1,7 @@
 package dev.denfry.promptcritical.mod.data;
 
+import dev.denfry.promptcritical.mod.foundry.FoundryRecipes;
+
 import java.util.List;
 import java.util.Set;
 import java.util.concurrent.CompletableFuture;
@@ -31,5 +33,6 @@ public final class PcDataGen {
         PcTagProviders.BlockTagProvider blockTags = gen.addProvider(event.includeServer(),
                 new PcTagProviders.BlockTagProvider(out, lookup, efh));
         gen.addProvider(event.includeServer(), new PcTagProviders.ItemTagProvider(out, lookup, blockTags.contentsGetter(), efh));
+        gen.addProvider(event.includeServer(), new FoundryRecipes(out, lookup));
     }
 }

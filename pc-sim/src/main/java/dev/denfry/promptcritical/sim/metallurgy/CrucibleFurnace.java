@@ -1,5 +1,7 @@
 package dev.denfry.promptcritical.sim.metallurgy;
 
+import dev.denfry.promptcritical.sim.core.StateReader;
+import dev.denfry.promptcritical.sim.core.StateWriter;
 import java.util.Objects;
 
 /**
@@ -77,5 +79,21 @@ public final class CrucibleFurnace {
 
     public CastAlloy alloy() {
         return alloy;
+    }
+
+    public double capacityKg() {
+        return capacityKg;
+    }
+
+    public void save(StateWriter out) {
+        out.putString("alloy", alloy == null ? "" : alloy.id);
+        out.putDouble("mass", mass);
+        out.putDouble("h", h);
+    }
+
+    public void load(StateReader in) {
+        alloy = CastAlloy.byId(in.getString("alloy"));
+        mass = alloy == null ? 0 : in.getDouble("mass");
+        h = alloy == null ? 0 : in.getDouble("h");
     }
 }

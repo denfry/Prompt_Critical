@@ -24,6 +24,15 @@ public final class Machining {
             this.kc = kc;
             this.taylorScale = taylorScale;
         }
+
+        /** Материал заготовки по сплаву отливки; медь и бронза режутся как чугун (k_c ≈ 1100) [допущение]. */
+        public static WorkMaterial of(CastAlloy alloy) {
+            return switch (alloy) {
+                case CARBON_STEEL -> STEEL_45;
+                case ALUMINIUM -> ALUMINIUM;
+                case GRAY_IRON, BRONZE, COPPER -> CAST_IRON;
+            };
+        }
     }
 
     /** Материал резца. Твёрдый сплав — (B): n = 0,25, C_T = 300 м/мин [сверить]. */
@@ -70,7 +79,13 @@ public final class Machining {
         private double wear;
 
         public CuttingTool(ToolMaterial material) {
+            this(material, 0);
+        }
+
+        /** Резец с износом {@code wear} (0 — новый, 1 — тупой). */
+        public CuttingTool(ToolMaterial material, double wear) {
             this.material = Objects.requireNonNull(material, "material");
+            this.wear = Math.max(0, Math.min(1, wear));
         }
 
         public ToolMaterial material() {

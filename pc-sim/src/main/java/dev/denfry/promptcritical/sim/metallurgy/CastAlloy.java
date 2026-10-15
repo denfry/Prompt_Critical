@@ -36,6 +36,12 @@ public enum CastAlloy {
         this.hotShort = hotShort;
     }
 
+    /** Сплав по {@link #id}; {@code null}, если такого нет. */
+    public static CastAlloy byId(String id) {
+        for (CastAlloy a : values()) if (a.id.equals(id)) return a;
+        return null;
+    }
+
     /** Энтальпия от T₀ = 293 К до T, Дж/кг (плавление при ликвидусе). */
     public double enthalpy(double tK) {
         double t0 = 293;

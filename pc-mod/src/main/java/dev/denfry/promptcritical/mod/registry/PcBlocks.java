@@ -10,6 +10,16 @@ import dev.denfry.promptcritical.mod.block.PcBlock.Spec;
 import dev.denfry.promptcritical.mod.block.PcDeviceBlock;
 import dev.denfry.promptcritical.mod.block.PcProperties;
 import dev.denfry.promptcritical.mod.block.VentilationDoorBlock;
+import dev.denfry.promptcritical.mod.foundry.CoalJigBlockEntity;
+import dev.denfry.promptcritical.mod.foundry.CrucibleBlockEntity;
+import dev.denfry.promptcritical.mod.foundry.CupolaBlockEntity;
+import dev.denfry.promptcritical.mod.foundry.FoundryBlock;
+import dev.denfry.promptcritical.mod.foundry.KineticMachineBlock;
+import dev.denfry.promptcritical.mod.foundry.KineticMachineBlock.ShaftSide;
+import dev.denfry.promptcritical.mod.foundry.MachineToolBlockEntity;
+import dev.denfry.promptcritical.mod.foundry.MoldingStationBlockEntity;
+import dev.denfry.promptcritical.mod.foundry.SandMoldBlock;
+import dev.denfry.promptcritical.mod.foundry.ShakeoutGrateBlockEntity;
 import dev.denfry.promptcritical.mod.multiblock.Footprint;
 import dev.denfry.promptcritical.mod.multiblock.Footprint.Segment;
 import dev.denfry.promptcritical.mod.multiblock.MultiblockPartBlock;
@@ -137,20 +147,24 @@ public final class PcBlocks {
 
     // --- обогащение, литьё, механический цех (08 §8.3, §8.9, §8.10) ---
     public static final DeferredBlock<PcDeviceBlock> COAL_JIG = device("coal_jig", machine(),
-            Spec.facing(PcProperties.RUNNING).footprint(Footprint.of(Segment.box(0, 1, 0, 1, 0, 0))));
+            Spec.facing(PcProperties.RUNNING).footprint(Footprint.of(Segment.box(0, 1, 0, 1, 0, 0))),
+            KineticMachineBlock.with(ShaftSide.LEFT, CoalJigBlockEntity::new));
     public static final DeferredBlock<PcDeviceBlock> CUPOLA_FURNACE = device("cupola_furnace", lit(brick()),
-            Spec.of(BlockStateProperties.LIT).footprint(FP_TALL3));
-    public static final DeferredBlock<PcDeviceBlock> CRUCIBLE_FURNACE = device("crucible_furnace", lit(brick()), Spec.facing(BlockStateProperties.LIT));
+            Spec.of(BlockStateProperties.LIT).footprint(FP_TALL3), KineticMachineBlock.with(ShaftSide.X_AXIS, CupolaBlockEntity::new));
+    public static final DeferredBlock<PcDeviceBlock> CRUCIBLE_FURNACE = device("crucible_furnace", lit(brick()), Spec.facing(BlockStateProperties.LIT),
+            FoundryBlock.with(CrucibleBlockEntity::new));
     public static final DeferredBlock<PcDeviceBlock> SAND_MOLD = device("sand_mold",
-            Properties.of().mapColor(MapColor.SAND).strength(0.8f).sound(SoundType.SAND).noOcclusion(), Spec.of(PcProperties.MOLD_STAGE));
+            Properties.of().mapColor(MapColor.SAND).strength(0.8f).sound(SoundType.SAND).noOcclusion(), Spec.of(PcProperties.MOLD_STAGE),
+            SandMoldBlock.factory());
     public static final DeferredBlock<PcDeviceBlock> MOLDING_STATION = device("molding_station", machine(),
-            Spec.facing(PcProperties.RUNNING).footprint(FP_WIDE2));
+            Spec.facing(PcProperties.RUNNING).footprint(FP_WIDE2), KineticMachineBlock.with(ShaftSide.LEFT, MoldingStationBlockEntity::new));
     public static final DeferredBlock<PcDeviceBlock> SHAKEOUT_GRATE = device("shakeout_grate", machine(),
-            Spec.facing(PcProperties.RUNNING).footprint(Footprint.of(Segment.box(0, 1, 0, 0, 0, 1))));
+            Spec.facing(PcProperties.RUNNING).footprint(Footprint.of(Segment.box(0, 1, 0, 0, 0, 1))),
+            KineticMachineBlock.with(ShaftSide.LEFT, ShakeoutGrateBlockEntity::new));
     public static final DeferredBlock<PcDeviceBlock> MACHINE_LATHE = device("machine_lathe", machine(),
-            Spec.facing(PcProperties.RUNNING).footprint(FP_WIDE2));
+            Spec.facing(PcProperties.RUNNING).footprint(FP_WIDE2), KineticMachineBlock.with(ShaftSide.LEFT, MachineToolBlockEntity::lathe));
     public static final DeferredBlock<PcDeviceBlock> DRILL_PRESS = device("drill_press", machine(),
-            Spec.facing(PcProperties.RUNNING).footprint(FP_TALL2));
+            Spec.facing(PcProperties.RUNNING).footprint(FP_TALL2), KineticMachineBlock.with(ShaftSide.BACK, MachineToolBlockEntity::drillPress));
 
     // --- справочник и мир (11) ---
     public static final DeferredBlock<PcBlock> DOCUMENT_LECTERN = block("document_lectern", wood(), Spec.facing(PcProperties.HAS_DOCUMENT));

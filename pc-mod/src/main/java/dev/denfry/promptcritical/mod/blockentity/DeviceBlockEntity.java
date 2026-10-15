@@ -12,6 +12,7 @@ import net.minecraft.core.registries.BuiltInRegistries;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.world.level.block.entity.BlockEntity;
+import net.minecraft.world.level.block.entity.BlockEntityType;
 import net.minecraft.world.level.block.state.BlockState;
 
 /**
@@ -25,6 +26,11 @@ public class DeviceBlockEntity extends BlockEntity implements DeviceHost {
 
     public DeviceBlockEntity(BlockPos pos, BlockState state) {
         super(PcBlockEntities.DEVICE.get(), pos, state);
+    }
+
+    /** BE устройства со своим поведением (этапы 6–8). */
+    protected DeviceBlockEntity(BlockEntityType<?> type, BlockPos pos, BlockState state) {
+        super(type, pos, state);
     }
 
     @Override

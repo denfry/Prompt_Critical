@@ -1,6 +1,7 @@
 package dev.denfry.promptcritical.mod.data;
 
 import dev.denfry.promptcritical.mod.PromptCritical;
+import dev.denfry.promptcritical.mod.foundry.FoundryTags;
 import dev.denfry.promptcritical.mod.block.PcBlock;
 import dev.denfry.promptcritical.mod.registry.PcBlocks;
 import dev.denfry.promptcritical.mod.registry.PcItems;
@@ -87,6 +88,7 @@ public final class PcTagProviders {
         @Override
         protected void addTags(HolderLookup.Provider provider) {
             copy(PcTags.Blocks.ORES, PcTags.Items.ORES);
+            FoundryTags.addItemTags(this::tag);
             for (String metal : Set.copyOf(METAL.values())) {
                 copy(PcTags.Blocks.common("ores/" + metal), PcTags.Items.common("ores/" + metal));
             }
