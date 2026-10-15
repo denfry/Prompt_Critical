@@ -1,5 +1,8 @@
 package dev.denfry.promptcritical.sim.combustion;
 
+import dev.denfry.promptcritical.sim.core.StateReader;
+import dev.denfry.promptcritical.sim.core.StateWriter;
+
 /**
  * Центробежный регулятор Уатта (07 §7.9.7) — механическое звено 2-го порядка, пропорциональное со статизмом:
  * ẍ + 2ζω_g·ẋ + ω_g²·(x − x_eq) = 0, y = 1 − x, где x ∈ [0, 1] — подъём муфты между упорами, y — открытие
@@ -90,6 +93,18 @@ public final class FlyballGovernor {
             v = 0;
         }
         return 1 - x;
+    }
+
+    public void save(StateWriter out) {
+        out.putDouble("zeta", zeta);
+        out.putDouble("x", x);
+        out.putDouble("v", v);
+    }
+
+    public void load(StateReader in) {
+        setDamping(in.getDouble("zeta"));
+        x = in.getDouble("x");
+        v = in.getDouble("v");
     }
 
     private static double clamp01(double a) {

@@ -1,5 +1,7 @@
 package dev.denfry.promptcritical.sim.combustion;
 
+import dev.denfry.promptcritical.sim.core.StateReader;
+import dev.denfry.promptcritical.sim.core.StateWriter;
 import dev.denfry.promptcritical.sim.thermal.HeatTransferCorrelations;
 import java.util.Objects;
 
@@ -55,7 +57,7 @@ public final class FireTubeBoiler implements Boiler {
     private final FireTubeBoilerSpec spec;
     private final double designFluegasKgS;
     private Combustor combustor;
-    private double bedKg, crownK, stackK;
+    private double bedKg, crownK, stackK, chimneyHeightM;
     private boolean lit, plugMelted, plugFitted = true;
     private BoilerRupture rupture = BoilerRupture.NONE;
 
@@ -69,6 +71,7 @@ public final class FireTubeBoiler implements Boiler {
         this.designFluegasKgS = spec.designAirKgS() + spec.nominalFuelKgS();
         this.crownK = initialTempK;
         this.stackK = initialTempK;
+        this.chimneyHeightM = spec.chimneyHeightM();
     }
 
     public FireTubeBoilerSpec spec() {
@@ -141,6 +144,45 @@ public final class FireTubeBoiler implements Boiler {
         return stackK;
     }
 
+    /** Металл потолка и кладка трубы в равновесии с водой (пусконаладка, тесты). */
+    public void setMetalTemperature(double kelvin) {
+        crownK = kelvin;
+        stackK = kelvin;
+    }
+
+    /** Высота трубы над решёткой, м (в мире — по звеньям {@code chimney} над дымоходом котла). */
+    public void setChimneyHeight(double heightM) {
+        if (!(heightM > 0)) throw new IllegalArgumentException("chimney height: " + heightM);
+        chimneyHeightM = heightM;
+    }
+
+    public double chimneyHeightM() {
+        return chimneyHeightM;
+    }
+
+    /** Состояние металла, слоя и топки; топливо сохраняет владелец (по {@link FuelSpec#fuelId()}). */
+    public void save(StateWriter out) {
+        out.putDouble("bed_kg", bedKg);
+        out.putDouble("crown_k", crownK);
+        out.putDouble("stack_k", stackK);
+        out.putDouble("chimney_m", chimneyHeightM);
+        out.putBoolean("lit", lit);
+        out.putBoolean("plug_melted", plugMelted);
+        out.putBoolean("plug_fitted", plugFitted);
+        out.putInt("rupture", rupture.ordinal());
+    }
+
+    public void load(StateReader in) {
+        bedKg = in.getDouble("bed_kg");
+        crownK = in.getDouble("crown_k");
+        stackK = in.getDouble("stack_k");
+        chimneyHeightM = in.getDouble("chimney_m");
+        lit = in.getBoolean("lit");
+        plugMelted = in.getBoolean("plug_melted");
+        plugFitted = in.getBoolean("plug_fitted");
+        rupture = BoilerRupture.values()[in.getInt("rupture")];
+    }
+
     @Override
     public void stepFast(double dtS, BoilerInputs in, BoilerOutputs out) {
         CombustionResult res = out.combustion;
@@ -150,7 +192,7 @@ public final class FireTubeBoiler implements Boiler {
 
         double tw = in.waterTempK, ta0 = in.ambientK;
         double stackGas = lit ? Math.max(stackK, ta0 + KINDLING_DT) : stackK;
-        double draft = Chimney.draftPa(spec.chimneyHeightM(), ta0, in.ambientPa, stackGas, gasMolarMass(res));
+        double draft = Chimney.draftPa(chimneyHeightM, ta0, in.ambientPa, stackGas, gasMolarMass(res));
         double damper = Math.max(0, Math.min(1, in.damper));
         double air = damper * spec.designAirKgS() * Math.sqrt(Math.max(0, draft) / spec.designDraftPa());
         combustor.burn(burn, air, ta0, ta0, res);

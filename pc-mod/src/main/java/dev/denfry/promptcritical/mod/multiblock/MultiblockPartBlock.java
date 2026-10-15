@@ -23,7 +23,7 @@ import net.minecraft.world.phys.BlockHitResult;
  * (dx, dy, dz ∈ −1…1): (dx+1)·9 + (dy+1)·3 + (dz+1). Модель сегмента рисует якорь; клетка даёт объём, проксирует
  * взаимодействие и при разрушении разрушает конструкцию.
  */
-public final class MultiblockPartBlock extends Block {
+public class MultiblockPartBlock extends Block {
     public static final IntegerProperty CELL = IntegerProperty.create("cell", 0, 26);
     public static final com.mojang.serialization.MapCodec<MultiblockPartBlock> CODEC = simpleCodec(MultiblockPartBlock::new);
 

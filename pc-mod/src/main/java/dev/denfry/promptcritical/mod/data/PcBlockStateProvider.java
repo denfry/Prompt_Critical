@@ -41,6 +41,7 @@ public final class PcBlockStateProvider extends BlockStateProvider {
         }
         ModelFile part = models().getBuilder("multiblock_part").texture("particle", modLoc("block/common/steel_dark"));
         simpleBlock(PcBlocks.MULTIBLOCK_PART.get(), part);
+        simpleBlock(PcBlocks.KINETIC_PORT.get(), part);
     }
 
     private ModelFile existing(String name) {

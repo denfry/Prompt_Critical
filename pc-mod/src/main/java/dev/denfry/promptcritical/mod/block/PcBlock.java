@@ -165,12 +165,17 @@ public class PcBlock extends Block {
             if (c.pos().equals(pos)) continue;
             BlockState target = c.isAnchor()
                     ? withSegment(state, c.segment())
-                    : MultiblockPartBlock.forOffset(c.offsetFromAnchor());
+                    : partState(state, c);
             BlockState current = level.getBlockState(c.pos());
             // Игрока проверил getStateForPlacement; /setblock и шаблоны чужие блоки не затирают.
-            if (current != target && (current.canBeReplaced() || current.is(PcBlocks.MULTIBLOCK_PART.get())))
+            if (current != target && (current.canBeReplaced() || current.getBlock() instanceof MultiblockPartBlock))
                 level.setBlock(c.pos(), target, Block.UPDATE_ALL);
         }
+    }
+
+    /** Состояние клетки-части; машины ставят на место вала порт Create ({@code kinetic_port}). */
+    protected BlockState partState(BlockState controller, Footprint.Cell cell) {
+        return MultiblockPartBlock.forOffset(cell.offsetFromAnchor());
     }
 
     @Override
@@ -193,7 +198,7 @@ public class PcBlock extends Block {
         for (Footprint.Cell c : spec.footprint.cells(controller, facing(state))) {
             if (c.pos().equals(pos)) continue;
             BlockState s = level.getBlockState(c.pos());
-            if (s.is(this) || s.is(PcBlocks.MULTIBLOCK_PART.get())) level.removeBlock(c.pos(), false);
+            if (s.is(this) || s.getBlock() instanceof MultiblockPartBlock) level.removeBlock(c.pos(), false);
         }
     }
 

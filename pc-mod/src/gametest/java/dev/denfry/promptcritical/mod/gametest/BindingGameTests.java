@@ -63,7 +63,7 @@ public final class BindingGameTests {
         SimId[] id = new SimId[1];
         h.startSequence()
                 .thenWaitUntil(() -> {
-                    DeviceBlockEntity be = h.getBlockEntity(rel);
+                    var be = (dev.denfry.promptcritical.mod.binding.DeviceHost) h.<net.minecraft.world.level.block.entity.BlockEntity>getBlockEntity(rel);
                     h.assertTrue(!be.simId().isNone() && b.world().topology().exists(be.simId()), "device attached");
                     h.assertTrue(b.world().topology().deviceType(be.simId()).equals("promptcritical:grate_stoker"), "device type");
                     h.assertTrue(b.world().topology().devicePos(be.simId()).equals(SimLevelBinding.gridPos(h.absolutePos(rel))), "device pos");

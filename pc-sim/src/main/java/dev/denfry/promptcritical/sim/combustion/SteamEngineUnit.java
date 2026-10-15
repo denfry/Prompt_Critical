@@ -1,5 +1,7 @@
 package dev.denfry.promptcritical.sim.combustion;
 
+import dev.denfry.promptcritical.sim.core.StateReader;
+import dev.denfry.promptcritical.sim.core.StateWriter;
 import dev.denfry.promptcritical.sim.mechanics.RotatingBody;
 import java.util.Objects;
 
@@ -137,7 +139,8 @@ public final class SteamEngineUnit {
      * @param p1Pa       давление в золотниковой коробке (за дросселем), Па
      * @param rhoSteam   плотность пара там же, кг/м³
      * @param pBackPa    давление выхлопа, Па
-     * @param loadTorque момент нагрузки на валу (сеть Create), Н·м
+     * @param loadTorque момент нагрузки на валу (сеть Create), Н·м; нагрузка пассивная — останавливает вал, но не
+     *                   вращает его назад
      */
     public void step(double dt, double p1Pa, double rhoSteam, double pBackPa, double loadTorque) {
         double h = dt / SUBSTEPS;
@@ -149,7 +152,8 @@ public final class SteamEngineUnit {
             // p_mi < 0 (впуска не хватает на выхлоп) — насосные потери: тормозят, но не крутят назад
             double tau = tMean >= 0 || w0 > 0 ? tMean * engine.torqueShape(crankAngle) : 0;
             body.stepTorque(h, tau, loadTorque);
-            if (tMean < 0 && w0 > 0 && body.omega() < 0) body.setOmega(0);
+            // нагрузка Create и насосные потери только тормозят: назад машину не крутит ничто
+            if (body.omega() < 0) body.setOmega(0);
             double w = body.omega(), wMid = 0.5 * (w0 + w);
             crankAngle += h * wMid;
             if (crankAngle >= 2 * Math.PI) crankAngle -= 2 * Math.PI;
@@ -211,5 +215,26 @@ public final class SteamEngineUnit {
 
     public double maxOmegaLastTick() {
         return maxOmega;
+    }
+
+    /** Вал, кулиса, уставка и регулятор; расходы и мощности — выходы тика, пересчитываются. */
+    public void save(StateWriter out) {
+        out.putDouble("omega", body.omega());
+        out.putDouble("crank", crankAngle);
+        out.putDouble("cutoff", cutoff);
+        out.putDouble("speed_setting", speedSetting);
+        out.beginObject("governor");
+        governor.save(out);
+        out.endObject();
+    }
+
+    public void load(StateReader in) {
+        body.setOmega(in.getDouble("omega"));
+        crankAngle = in.getDouble("crank");
+        setCutoff(in.getDouble("cutoff"));
+        setSpeedSetting(in.getDouble("speed_setting"));
+        in.beginObject("governor");
+        governor.load(in);
+        in.endObject();
     }
 }

@@ -135,6 +135,11 @@ public final class SimLevelBinding {
         return hosts.get(id);
     }
 
+    /** Команда в домен (05 §5.2.6): исполнится в начале ближайшего тика; −1 — очередь переполнена. */
+    public long submit(SimCommand command, CommandSource source) {
+        return world.commands().submit(command, source, commandSeq++);
+    }
+
     // --- тик ---
 
     void preTick() {

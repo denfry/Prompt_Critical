@@ -32,6 +32,9 @@ public final class SimConfigs {
                 ServerConfig.MINING_ROPE_CORROSION_PER_DAY.get(), ServerConfig.MINING_ROPE_ITEM_LENGTH_M.get(),
                 ServerConfig.MINING_SAFETY_MODE.get()));
         sections.put(VeinConfig.class, veins());
+        sections.put(dev.denfry.promptcritical.sim.plant.SteamPlantConfig.class, new dev.denfry.promptcritical.sim.plant.SteamPlantConfig(
+                ServerConfig.BOILER_EXPLOSION_BLAST_FRACTION.get(), dev.denfry.promptcritical.sim.plant.SteamPlantConfig.defaults().feedOpenKgS(),
+                dev.denfry.promptcritical.sim.plant.SteamPlantConfig.defaults().feedPressurizedKgS()));
         sections.put(MetallurgyConfig.class, new MetallurgyConfig(ServerConfig.CASTING_CHVORINOV_B_SAND_MIN_CM2.get(),
                 ServerConfig.MACHINING_TAYLOR_N.get(), ServerConfig.MACHINING_TAYLOR_C_M_MIN.get()));
 

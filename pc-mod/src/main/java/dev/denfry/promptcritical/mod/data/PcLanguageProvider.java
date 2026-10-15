@@ -78,6 +78,8 @@ public final class PcLanguageProvider extends LanguageProvider {
         b("deepslate_galena_ore", "Deepslate Galena Ore", "Галенитовая руда в глубинном сланце");
         b("fluorite_ore", "Fluorite Ore", "Флюоритовая руда");
         b("multiblock_part", "Structure Part", "Часть конструкции");
+        b("kinetic_port", "Shaft Coupling", "Муфта вала");
+        b("instrument_pressure", "Pressure Gauge", "Манометр");
 
         i("fusible_plug", "Fusible Plug", "Легкоплавкая пробка");
         i("governor_dashpot", "Governor Dashpot", "Катаракт регулятора");
@@ -166,5 +168,6 @@ public final class PcLanguageProvider extends LanguageProvider {
         ITEMS.forEach((id, n) -> add("item." + PromptCritical.MOD_ID + "." + id, n[k]));
         FLUIDS.forEach((id, n) -> add("fluid_type." + PromptCritical.MOD_ID + "." + id, n[k]));
         MISC.forEach((key, n) -> add(key, n[k]));
+        dev.denfry.promptcritical.mod.boiler.BoilerText.all().forEach((key, n) -> add(key, n[k]));
     }
 }

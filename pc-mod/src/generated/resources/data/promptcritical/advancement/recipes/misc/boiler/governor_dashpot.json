@@ -1,0 +1,32 @@
+{
+  "parent": "minecraft:recipes/root",
+  "criteria": {
+    "has_engine": {
+      "conditions": {
+        "items": [
+          {
+            "items": "promptcritical:steam_engine_cylinder"
+          }
+        ]
+      },
+      "trigger": "minecraft:inventory_changed"
+    },
+    "has_the_recipe": {
+      "conditions": {
+        "recipe": "promptcritical:boiler/governor_dashpot"
+      },
+      "trigger": "minecraft:recipe_unlocked"
+    }
+  },
+  "requirements": [
+    [
+      "has_the_recipe",
+      "has_engine"
+    ]
+  ],
+  "rewards": {
+    "recipes": [
+      "promptcritical:boiler/governor_dashpot"
+    ]
+  }
+}

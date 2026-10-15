@@ -2,6 +2,11 @@ package dev.denfry.promptcritical.mod.registry;
 
 import dev.denfry.promptcritical.mod.PromptCritical;
 import dev.denfry.promptcritical.mod.block.CanaryCageBlock;
+import dev.denfry.promptcritical.mod.boiler.FireTubeBoilerBlock;
+import dev.denfry.promptcritical.mod.boiler.GrateStokerBlockEntity;
+import dev.denfry.promptcritical.mod.boiler.KineticPortBlock;
+import dev.denfry.promptcritical.mod.boiler.PressureGaugeBlock;
+import dev.denfry.promptcritical.mod.boiler.SteamEngineBlock;
 import dev.denfry.promptcritical.mod.block.ChimneyBlock;
 import dev.denfry.promptcritical.mod.block.HeadframeBlock;
 import dev.denfry.promptcritical.mod.block.MineDispatchCabinetBlock;
@@ -82,7 +87,8 @@ public final class PcBlocks {
     // --- объёмы (модельные координаты, фасад на север) ---
     private static final Segment CUBE3 = Segment.box(-1, 1, -1, 1, -1, 1);
     static final Footprint FP_BOILER = Footprint.of(CUBE3, CUBE3.at(0, 0, 3));
-    static final Footprint FP_ENGINE = Footprint.of(CUBE3, Segment.box(-1, 1, -1, 0, -1, 1).at(0, 0, 3));
+    /** Машина 3×3×5 (арт 07 §7.23): цилиндр 3×3×3 и рама 3×2×2 с коленвалом на якоре рамы. */
+    public static final Footprint FP_ENGINE = Footprint.of(CUBE3, Segment.box(-1, 1, -1, 0, 0, 1).at(0, 0, 2));
     private static final Footprint FP_CUBE3 = Footprint.of(CUBE3);
     private static final Footprint FP_TALL3 = Footprint.of(Segment.box(0, 0, -1, 1, 0, 0));
     private static final Footprint FP_TALL2 = Footprint.of(Segment.box(0, 0, 0, 1, 0, 0));
@@ -90,11 +96,16 @@ public final class PcBlocks {
 
     // --- котельная I0 (07) ---
     public static final DeferredBlock<PcDeviceBlock> FIRE_TUBE_BOILER = device("fire_tube_boiler", lit(machine()),
-            Spec.facing(BlockStateProperties.LIT).segments(PcProperties.BOILER_SEGMENT, FP_BOILER));
-    public static final DeferredBlock<PcDeviceBlock> GRATE_STOKER = device("grate_stoker", machine(), Spec.facing(PcProperties.RUNNING));
+            Spec.facing(BlockStateProperties.LIT).segments(PcProperties.BOILER_SEGMENT, FP_BOILER), FireTubeBoilerBlock::create);
+    public static final DeferredBlock<PcDeviceBlock> GRATE_STOKER = device("grate_stoker", machine(), Spec.facing(PcProperties.RUNNING),
+            KineticMachineBlock.with(ShaftSide.LEFT, GrateStokerBlockEntity::new));
     public static final DeferredBlock<ChimneyBlock> CHIMNEY = withItem(BLOCKS.registerBlock("chimney", ChimneyBlock::create, brick()));
     public static final DeferredBlock<PcDeviceBlock> STEAM_ENGINE_CYLINDER = device("steam_engine_cylinder", machine(),
-            Spec.facing(PcProperties.RUNNING).segments(PcProperties.ENGINE_SEGMENT, FP_ENGINE));
+            Spec.facing(PcProperties.RUNNING).segments(PcProperties.ENGINE_SEGMENT, FP_ENGINE), SteamEngineBlock::create);
+    /** Местный манометр A0 (11 §11.5.4) на любой грани котла или машины. */
+    public static final DeferredBlock<PressureGaugeBlock> INSTRUMENT_PRESSURE = withItem(BLOCKS.registerBlock("instrument_pressure",
+            PressureGaugeBlock::create, Properties.of().mapColor(MapColor.METAL).strength(1.0f).sound(SoundType.COPPER)
+                    .noOcclusion().pushReaction(PushReaction.DESTROY)));
 
     // --- руды и пласты (08 §8.1) ---
     public static final DeferredBlock<PcBlock> MAGNETITE_ORE = ore("magnetite_ore", "raw_magnetite");
@@ -173,6 +184,10 @@ public final class PcBlocks {
             Properties.of().mapColor(MapColor.METAL).strength(0.5f).sound(SoundType.LANTERN).noOcclusion()));
 
     // --- служебные ---
+    /** Клетка конструкции, через которую машина отдаёт вращение в сеть Create (03a §3a.12.3). */
+    public static final DeferredBlock<KineticPortBlock> KINETIC_PORT = BLOCKS.registerBlock("kinetic_port",
+            KineticPortBlock::new, Properties.of().mapColor(MapColor.METAL).strength(3.5f, 6.0f).noOcclusion()
+                    .noLootTable().pushReaction(PushReaction.BLOCK).isViewBlocking((s, l, p) -> false));
     public static final DeferredBlock<MultiblockPartBlock> MULTIBLOCK_PART = BLOCKS.registerBlock("multiblock_part",
             MultiblockPartBlock::new, Properties.of().mapColor(MapColor.METAL).strength(3.5f, 6.0f).noOcclusion()
                     .noLootTable().pushReaction(PushReaction.BLOCK).isViewBlocking((s, l, p) -> false));
@@ -240,6 +255,7 @@ public final class PcBlocks {
             if (!ORE_DROPS.containsKey(b) && !SELF_ASSAYED.contains(b) && b != FIRECLAY && b != VEIN_QUARTZ) out.add(b.get());
         }
         out.add(MULTIBLOCK_PART.get());
+        out.add(KINETIC_PORT.get());
         return out;
     }
 }
