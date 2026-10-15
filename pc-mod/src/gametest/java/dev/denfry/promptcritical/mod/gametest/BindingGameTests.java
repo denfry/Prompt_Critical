@@ -152,6 +152,7 @@ public final class BindingGameTests {
             var nbt = NbtStateTrees.toNbt(b.world().saveTree());
             try (WorkerPool pool = WorkerPool.direct()) {
                 SimulationWorld copy = new SimulationWorld(b.world().config(), b.world().worldSeed(), b.world().dimensionKey(), pool);
+                SimBindings.createSubsystems(h.getLevel()).forEach(copy::register);
                 copy.load(SimulationWorld.upgrade(NbtStateTrees.fromNbt(nbt), new MigrationRegistry()));
                 h.assertTrue(copy.stateHash() == b.world().stateHash(), "state hash after NBT round trip");
                 h.assertTrue(copy.topology().exists(be.simId()), "device restored");

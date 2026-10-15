@@ -20,6 +20,8 @@ import net.neoforged.bus.api.IEventBus;
 import net.neoforged.fml.event.config.ModConfigEvent;
 import net.neoforged.neoforge.common.NeoForge;
 import net.neoforged.neoforge.event.RegisterCommandsEvent;
+import net.neoforged.bus.api.EventPriority;
+import net.neoforged.neoforge.event.level.BlockEvent;
 import net.neoforged.neoforge.event.level.LevelEvent;
 import net.neoforged.neoforge.event.server.ServerStoppedEvent;
 import net.neoforged.neoforge.event.tick.ServerTickEvent;
@@ -47,6 +49,8 @@ public final class SimBindings {
         NeoForge.EVENT_BUS.addListener(SimBindings::onServerTickPost);
         NeoForge.EVENT_BUS.addListener(SimBindings::onServerStopped);
         NeoForge.EVENT_BUS.addListener(SimBindings::onRegisterCommands);
+        NeoForge.EVENT_BUS.addListener(SimBindings::onNeighborNotify);
+        NeoForge.EVENT_BUS.addListener(EventPriority.LOWEST, SimBindings::onBlockBreak);
     }
 
     /**
@@ -55,6 +59,13 @@ public final class SimBindings {
      */
     public static void registerSubsystem(Function<ServerLevel, Subsystem> factory) {
         SUBSYSTEMS.add(factory);
+    }
+
+    /** Новые экземпляры зарегистрированных подсистем — для копии мира (тесты сохранения). */
+    public static List<Subsystem> createSubsystems(ServerLevel level) {
+        List<Subsystem> out = new ArrayList<>();
+        for (Function<ServerLevel, Subsystem> f : SUBSYSTEMS) out.add(f.apply(level));
+        return out;
     }
 
     @Nullable
@@ -72,6 +83,21 @@ public final class SimBindings {
             SimLevelBinding b = BINDINGS.get(s.dimension());
             if (b != null) b.topology().markDirty(pos);
         }
+    }
+
+    /** Любое изменение блока с оповещением соседей: шахты перезаливают затронутые выработки (08 §8.2.2). */
+    private static void onNeighborNotify(BlockEvent.NeighborNotifyEvent event) {
+        if (event.getLevel() instanceof ServerLevel s) {
+            SimLevelBinding b = BINDINGS.get(s.dimension());
+            if (b != null) b.mines().onBlockChanged(event.getPos());
+        }
+    }
+
+    /** Игрок ломает блок: уголь пласта отдаёт газ и пыль, кровля над выработкой — под правило пролёта. */
+    private static void onBlockBreak(BlockEvent.BreakEvent event) {
+        if (event.isCanceled() || !(event.getLevel() instanceof ServerLevel s)) return;
+        SimLevelBinding b = BINDINGS.get(s.dimension());
+        if (b != null) b.mines().onBlockBroken(event.getPos(), event.getState());
     }
 
     private static void onLevelLoad(LevelEvent.Load event) {

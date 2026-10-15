@@ -183,10 +183,9 @@ public final class TopologyEditor {
         slotById.clear();
         typeNames.clear();
         typeIndex.clear();
-        for (int i = 0; i < n; i++) {
-            int idx = typeIndexOf(names.get(types[i]));
-            insert(ids[i], poss[i], idx, MODES[Math.min(modes[i], MODES.length - 1)]);
-        }
+        // таблица типов — в сохранённом порядке, с типами без устройств: иначе индексы сдвигаются и хеш состояния меняется
+        for (String name : names) typeIndexOf(name);
+        for (int i = 0; i < n; i++) insert(ids[i], poss[i], typeIndexOf(names.get(types[i])), MODES[Math.min(modes[i], MODES.length - 1)]);
         long[] pending = in.has("pending_removal") ? in.getLongs("pending_removal") : new long[0];
         pendingCount = 0;
         for (long raw : pending) removeDevice(new SimId(raw));

@@ -1,12 +1,15 @@
 package dev.denfry.promptcritical.mod.registry;
 
 import dev.denfry.promptcritical.mod.PromptCritical;
+import dev.denfry.promptcritical.mod.block.CanaryCageBlock;
 import dev.denfry.promptcritical.mod.block.ChimneyBlock;
 import dev.denfry.promptcritical.mod.block.HeadframeBlock;
+import dev.denfry.promptcritical.mod.block.MineDispatchCabinetBlock;
 import dev.denfry.promptcritical.mod.block.PcBlock;
 import dev.denfry.promptcritical.mod.block.PcBlock.Spec;
 import dev.denfry.promptcritical.mod.block.PcDeviceBlock;
 import dev.denfry.promptcritical.mod.block.PcProperties;
+import dev.denfry.promptcritical.mod.block.VentilationDoorBlock;
 import dev.denfry.promptcritical.mod.multiblock.Footprint;
 import dev.denfry.promptcritical.mod.multiblock.Footprint.Segment;
 import dev.denfry.promptcritical.mod.multiblock.MultiblockPartBlock;
@@ -15,6 +18,7 @@ import java.util.Collections;
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.function.BiFunction;
 import net.minecraft.world.level.block.Block;
 import net.minecraft.world.level.block.SoundType;
 import net.minecraft.world.level.block.state.BlockBehaviour.Properties;
@@ -37,6 +41,8 @@ public final class PcBlocks {
     /** Блок руды → id сырого предмета (выпадение). */
     private static final Map<DeferredBlock<? extends Block>, String> ORE_DROPS = new LinkedHashMap<>();
     private static final List<DeferredBlock<PcDeviceBlock>> DEVICES = new ArrayList<>();
+    /** Руды 02, выпадающие сами собой (с анализом). */
+    private static final List<DeferredBlock<PcBlock>> SELF_ASSAYED = new ArrayList<>();
 
     // --- свойства по материалам ---
     private static Properties ore() {
@@ -98,6 +104,12 @@ public final class PcBlocks {
             Properties.of().mapColor(MapColor.QUARTZ).requiresCorrectToolForDrops().strength(1.5f, 6.0f), Spec.of());
     public static final DeferredBlock<PcBlock> CASSITERITE_ORE = ore("cassiterite_ore", "raw_cassiterite");
     public static final DeferredBlock<PcBlock> BAUXITE_ORE = oreBlock("bauxite_ore", "raw_bauxite", Spec.of());
+    // руды 02 в жилах 08 (отдельные ID глубинного сланца, как в 02 §2.1.2): выпадает сам блок с ore_assay
+    public static final DeferredBlock<PcBlock> PYRITE_ORE = ore02("pyrite_ore");
+    public static final DeferredBlock<PcBlock> DEEPSLATE_PYRITE_ORE = ore02("deepslate_pyrite_ore");
+    public static final DeferredBlock<PcBlock> GALENA_ORE = ore02("galena_ore");
+    public static final DeferredBlock<PcBlock> DEEPSLATE_GALENA_ORE = ore02("deepslate_galena_ore");
+    public static final DeferredBlock<PcBlock> FLUORITE_ORE = ore02("fluorite_ore");
 
     // --- шахта (08 §8.2) ---
     public static final DeferredBlock<PcBlock> MINE_SUPPORT = block("mine_support", wood(),
@@ -108,13 +120,13 @@ public final class PcBlocks {
             Spec.facing(PcProperties.RUNNING).footprint(Footprint.of(Segment.box(-1, 1, 0, 0, 0, 0))));
     public static final DeferredBlock<PcDeviceBlock> MAIN_MINE_FAN = device("main_mine_fan", machine(),
             Spec.facing(PcProperties.RUNNING).footprint(FP_CUBE3));
-    public static final DeferredBlock<PcBlock> VENTILATION_DOOR = block("ventilation_door", wood(),
-            Spec.facing(PcProperties.DOOR_KIND, BlockStateProperties.OPEN).footprint(FP_TALL2));
+    public static final DeferredBlock<VentilationDoorBlock> VENTILATION_DOOR = withItem(BLOCKS.registerBlock("ventilation_door",
+            p -> VentilationDoorBlock.create(p, Spec.facing(PcProperties.DOOR_KIND, BlockStateProperties.OPEN).footprint(FP_TALL2)), wood()));
     public static final DeferredBlock<PcBlock> EXPLOSION_BARRIER = block("explosion_barrier", wood(), Spec.of(PcProperties.BARRIER_KIND));
     public static final DeferredBlock<PcDeviceBlock> DEGASIFICATION_BOREHOLE = device("degasification_borehole", machine(), Spec.facing());
     public static final DeferredBlock<PcDeviceBlock> DEGASIFICATION_PUMP = device("degasification_pump", machine(), Spec.facing(PcProperties.RUNNING));
     public static final DeferredBlock<PcDeviceBlock> MINE_DISPATCH_CABINET = device("mine_dispatch_cabinet", machine(),
-            Spec.facing(PcProperties.ALARM).footprint(FP_TALL2));
+            Spec.facing(PcProperties.ALARM).footprint(FP_TALL2), MineDispatchCabinetBlock::create);
     public static final DeferredBlock<PcDeviceBlock> MINE_HOIST = device("mine_hoist", machine(),
             Spec.facing(PcProperties.RUNNING).footprint(Footprint.of(Segment.box(-1, 1, -1, 0, -1, 1))));
     public static final DeferredBlock<HeadframeBlock> HEADFRAME = withItem(BLOCKS.registerBlock("headframe", HeadframeBlock::create, machine()));
@@ -142,8 +154,9 @@ public final class PcBlocks {
 
     // --- справочник и мир (11) ---
     public static final DeferredBlock<PcBlock> DOCUMENT_LECTERN = block("document_lectern", wood(), Spec.facing(PcProperties.HAS_DOCUMENT));
-    public static final DeferredBlock<PcBlock> CANARY_CAGE = block("canary_cage",
-            Properties.of().mapColor(MapColor.METAL).strength(0.5f).sound(SoundType.LANTERN).noOcclusion(), Spec.of(PcProperties.BIRD));
+    public static final DeferredBlock<CanaryCageBlock> CANARY_CAGE = withItem(BLOCKS.registerBlock("canary_cage",
+            p -> CanaryCageBlock.create(p, Spec.of(PcProperties.BIRD)),
+            Properties.of().mapColor(MapColor.METAL).strength(0.5f).sound(SoundType.LANTERN).noOcclusion()));
 
     // --- служебные ---
     public static final DeferredBlock<MultiblockPartBlock> MULTIBLOCK_PART = BLOCKS.registerBlock("multiblock_part",
@@ -163,8 +176,19 @@ public final class PcBlocks {
     }
 
     private static DeferredBlock<PcDeviceBlock> device(String name, Properties props, Spec spec) {
-        DeferredBlock<PcDeviceBlock> b = withItem(BLOCKS.registerBlock(name, p -> PcDeviceBlock.create(p, spec), props));
+        return device(name, props, spec, PcDeviceBlock::create);
+    }
+
+    private static DeferredBlock<PcDeviceBlock> device(String name, Properties props, Spec spec,
+            BiFunction<Properties, Spec, ? extends PcDeviceBlock> factory) {
+        DeferredBlock<PcDeviceBlock> b = withItem(BLOCKS.registerBlock(name, p -> factory.apply(p, spec), props));
         DEVICES.add(b);
+        return b;
+    }
+
+    private static DeferredBlock<PcBlock> ore02(String name) {
+        DeferredBlock<PcBlock> b = block(name, ore(), Spec.of());
+        SELF_ASSAYED.add(b);
         return b;
     }
 
@@ -186,6 +210,11 @@ public final class PcBlocks {
         return Collections.unmodifiableMap(ORE_DROPS);
     }
 
+    /** Руды, которые выпадают сами и несут {@code ore_assay}. */
+    public static List<DeferredBlock<PcBlock>> selfAssayed() {
+        return Collections.unmodifiableList(SELF_ASSAYED);
+    }
+
     public static List<DeferredBlock<PcDeviceBlock>> devices() {
         return Collections.unmodifiableList(DEVICES);
     }
@@ -194,7 +223,7 @@ public final class PcBlocks {
     public static List<Block> topologyRelevant() {
         List<Block> out = new ArrayList<>();
         for (DeferredBlock<? extends Block> b : WITH_ITEMS) {
-            if (!ORE_DROPS.containsKey(b) && b != FIRECLAY && b != VEIN_QUARTZ) out.add(b.get());
+            if (!ORE_DROPS.containsKey(b) && !SELF_ASSAYED.contains(b) && b != FIRECLAY && b != VEIN_QUARTZ) out.add(b.get());
         }
         out.add(MULTIBLOCK_PART.get());
         return out;

@@ -1,6 +1,7 @@
 package dev.denfry.promptcritical.mod.data;
 
 import dev.denfry.promptcritical.mod.PromptCritical;
+import dev.denfry.promptcritical.mod.block.PcBlock;
 import dev.denfry.promptcritical.mod.registry.PcBlocks;
 import dev.denfry.promptcritical.mod.registry.PcItems;
 import dev.denfry.promptcritical.mod.registry.PcTags;
@@ -55,6 +56,19 @@ public final class PcTagProviders {
                     tag(PcTags.Blocks.common("ores/" + METAL.get(id))).add(b);
                 }
             }
+            for (DeferredBlock<PcBlock> db : PcBlocks.selfAssayed()) {
+                tag(BlockTags.NEEDS_STONE_TOOL).add(db.get());
+                tag(PcTags.Blocks.ORES).add(db.get());
+            }
+            // 08 §8.2.6: открытое пламя в выработке — источник воспламенения
+            tag(PcTags.Blocks.OPEN_FLAME).addTag(BlockTags.FIRE).addTag(BlockTags.CAMPFIRES).addTag(BlockTags.CANDLES)
+                    .add(Blocks.TORCH, Blocks.WALL_TORCH, Blocks.SOUL_TORCH, Blocks.SOUL_WALL_TORCH, Blocks.LANTERN,
+                            Blocks.SOUL_LANTERN, Blocks.LAVA, Blocks.MAGMA_BLOCK);
+            // 08 §8.2.2: кровля — устойчивая (песчаник) и неустойчивая (углистый сланец, рыхлые); прочее — средняя
+            tag(PcTags.Blocks.ROOF_STABLE).add(Blocks.GRANITE, Blocks.DIORITE, Blocks.ANDESITE, Blocks.DEEPSLATE,
+                    Blocks.SANDSTONE, Blocks.RED_SANDSTONE, Blocks.SMOOTH_SANDSTONE, Blocks.SMOOTH_RED_SANDSTONE);
+            tag(PcTags.Blocks.ROOF_WEAK).add(PcBlocks.COAL_SEAM.get(), PcBlocks.FIRECLAY.get(), Blocks.GRAVEL, Blocks.DIRT,
+                    Blocks.COARSE_DIRT, Blocks.CLAY, Blocks.SAND, Blocks.RED_SAND, Blocks.COAL_ORE, Blocks.DEEPSLATE_COAL_ORE);
             tag(BlockTags.MINEABLE_WITH_PICKAXE).add(PcBlocks.MULTIBLOCK_PART.get());
             tag(PcTags.Blocks.TOPOLOGY_RELEVANT).add(PcBlocks.topologyRelevant().toArray(Block[]::new));
             tag(PcTags.Blocks.DAMAGE_IMMUNE).add(Blocks.BEDROCK, Blocks.BARRIER, Blocks.LIGHT, Blocks.END_PORTAL,

@@ -1,0 +1,767 @@
+package dev.denfry.promptcritical.mod.mine;
+
+import dev.denfry.promptcritical.mod.PromptCritical;
+import dev.denfry.promptcritical.mod.binding.SimLevelBinding;
+import dev.denfry.promptcritical.mod.block.PcBlock;
+import dev.denfry.promptcritical.mod.block.PcProperties;
+import dev.denfry.promptcritical.mod.config.ServerConfig;
+import dev.denfry.promptcritical.mod.item.MineInstrumentItem;
+import dev.denfry.promptcritical.mod.multiblock.Footprint;
+import dev.denfry.promptcritical.mod.multiblock.MultiblockPartBlock;
+import dev.denfry.promptcritical.mod.registry.PcBlocks;
+import dev.denfry.promptcritical.mod.registry.PcItems;
+import dev.denfry.promptcritical.mod.registry.PcTags;
+import dev.denfry.promptcritical.mod.worldgen.VeinFields;
+import dev.denfry.promptcritical.sim.consequence.BlastScaling;
+import dev.denfry.promptcritical.sim.consequence.DamageBudgetConfig;
+import dev.denfry.promptcritical.sim.consequence.DamageKind;
+import dev.denfry.promptcritical.sim.consequence.DamageRequest;
+import dev.denfry.promptcritical.sim.core.GridPos;
+import dev.denfry.promptcritical.sim.core.SimId;
+import dev.denfry.promptcritical.sim.mining.ExposureState;
+import dev.denfry.promptcritical.sim.mining.GasExposure;
+import dev.denfry.promptcritical.sim.mining.IgnitionSource;
+import dev.denfry.promptcritical.sim.mining.LampState;
+import dev.denfry.promptcritical.sim.mining.MethaneField;
+import dev.denfry.promptcritical.sim.mining.MineGas;
+import dev.denfry.promptcritical.sim.mining.MineNetwork;
+import dev.denfry.promptcritical.sim.mining.MineSubsystem;
+import dev.denfry.promptcritical.sim.mining.MineSupport;
+import dev.denfry.promptcritical.sim.mining.MineTopology;
+import dev.denfry.promptcritical.sim.mining.MineVentilation;
+import dev.denfry.promptcritical.sim.mining.MiningConfig;
+import dev.denfry.promptcritical.sim.mining.RoofRock;
+import dev.denfry.promptcritical.sim.mining.RoofSpanRule;
+import dev.denfry.promptcritical.sim.mining.SafetyLamp;
+import it.unimi.dsi.fastutil.longs.Long2DoubleOpenHashMap;
+import it.unimi.dsi.fastutil.longs.Long2LongOpenHashMap;
+import it.unimi.dsi.fastutil.longs.Long2ObjectOpenHashMap;
+import it.unimi.dsi.fastutil.longs.LongArrayList;
+import it.unimi.dsi.fastutil.longs.LongLinkedOpenHashSet;
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+import java.util.UUID;
+import net.minecraft.ChatFormatting;
+import net.minecraft.core.BlockPos;
+import net.minecraft.core.Direction;
+import net.minecraft.core.registries.Registries;
+import net.minecraft.network.chat.Component;
+import net.minecraft.resources.ResourceKey;
+import net.minecraft.server.level.ServerLevel;
+import net.minecraft.server.level.ServerPlayer;
+import net.minecraft.sounds.SoundEvents;
+import net.minecraft.sounds.SoundSource;
+import net.minecraft.world.damagesource.DamageSource;
+import net.minecraft.world.damagesource.DamageType;
+import net.minecraft.world.effect.MobEffectInstance;
+import net.minecraft.world.effect.MobEffects;
+import net.minecraft.world.entity.player.Player;
+import net.minecraft.world.item.ItemStack;
+import net.minecraft.world.level.Level;
+import net.minecraft.world.level.block.Block;
+import net.minecraft.world.level.block.state.BlockState;
+import net.minecraft.world.level.block.state.properties.BlockStateProperties;
+import net.minecraft.world.level.levelgen.structure.BoundingBox;
+import org.jetbrains.annotations.Nullable;
+
+/**
+ * Шахты измерения в мире (08 §8.2): якоря, заливка и перестройка графа, устройства (вентилятор, двери, скважины),
+ * физиология игроков и канареек, лампа и метанометр, осланцевание, фронт взрыва → заявки {@code DamageRequest} и
+ * ударная волна, правило пролёта кровли. Только серверный поток: {@link #preTick} — до шага домена,
+ * {@link #postTick} — после.
+ */
+public final class MineWorld {
+    public static final int SECOND = 20;
+    /** Полная перезаливка шахты, даже если событий не было (Create-буры и прочие изменения без событий). */
+    public static final long RESCAN_PERIOD_TICKS = 1200;
+    /** Каптаж дегазации, доля газовыделения узла (08 §8.2.4: 30–60 %). */
+    public static final double DEGAS_CAPTURE = 0.45;
+    /** Изолирующий самоспасатель, тиков (08 §8.2.6: 30–60 мин). */
+    public static final long SELF_RESCUER_TICKS = 30 * 60 * 20;
+    /** Радиус заявки на разрушение от узла взрыва, м (≈ половина ячейки узла). */
+    public static final double BLAST_RADIUS_M = 3;
+    /** Тип урона {@code promptcritical:mine_gas}: удушье рудничным газом. */
+    public static final ResourceKey<DamageType> MINE_GAS = ResourceKey.create(Registries.DAMAGE_TYPE, PromptCritical.id("mine_gas"));
+
+    private static final class Entry {
+        MineScanner.Scan scan;
+        BoundingBox bounds;
+        boolean dirty = true;
+        long due;
+        long lastScan = Long.MIN_VALUE / 2;
+        boolean warnedTruncated;
+    }
+
+    private static final class Breather {
+        final GasExposure exposure;
+        long isolatedUntil;
+
+        Breather(double ratio) {
+            exposure = GasExposure.human(ratio);
+        }
+    }
+
+    private final SimLevelBinding binding;
+    private final ServerLevel level;
+    private final Long2ObjectOpenHashMap<Entry> entries = new Long2ObjectOpenHashMap<>();
+    private final Long2LongOpenHashMap anchorMine = new Long2LongOpenHashMap();
+    private final Map<UUID, Breather> breathers = new HashMap<>();
+    private final Long2ObjectOpenHashMap<GasExposure> canaries = new Long2ObjectOpenHashMap<>();
+    private final Long2DoubleOpenHashMap roofDue = new Long2DoubleOpenHashMap();
+    private long requestSeq = 1L << 40;
+    private int blastRequests;
+    private boolean restored;
+
+    public MineWorld(SimLevelBinding binding) {
+        this.binding = binding;
+        this.level = binding.level();
+        anchorMine.defaultReturnValue(-1);
+    }
+
+    @Nullable
+    public MineSubsystem sim() {
+        return binding.world().subsystem(MineSubsystem.class);
+    }
+
+    private MineScanner scanner() {
+        return new MineScanner(level, ServerConfig.MINING_MAX_MINE_BLOCKS.get(),
+                ServerConfig.MINING_BARRIER_INERT_KG_PER_BLOCK.get(), ServerConfig.MINING_SEAM_GAS_CONTENT.get());
+    }
+
+    private Entry entry(MineNetwork n) {
+        return entries.computeIfAbsent(n.id(), k -> new Entry());
+    }
+
+    /** Заливка шахты (для тестов и команд); {@code null} — шахта ещё не залита. */
+    @Nullable
+    public MineScanner.Scan scanOf(MineNetwork n) {
+        Entry e = entries.get(n.id());
+        return e == null ? null : e.scan;
+    }
+
+    // --- поиск ---------------------------------------------------------------------------------------------
+
+    /** Шахта, которой принадлежит блок (воздух выработки или обнажённый уголь), или {@code null}. */
+    @Nullable
+    public MineNetwork mineAt(BlockPos pos) {
+        MineSubsystem sim = sim();
+        if (sim == null) return null;
+        long key = pos.asLong();
+        for (MineNetwork n : sim.networks()) if (n.nodeOf(key) > 0) return n;
+        return null;
+    }
+
+    @Nullable
+    private MineNetwork mineNear(BlockPos pos) {
+        MineNetwork n = mineAt(pos);
+        if (n != null) return n;
+        for (Direction d : Direction.values()) if ((n = mineAt(pos.relative(d))) != null) return n;
+        return null;
+    }
+
+    // --- тик -----------------------------------------------------------------------------------------------
+
+    public void preTick(long gameTime) {
+        MineSubsystem sim = sim();
+        if (sim == null) return;
+        if (!restored) {
+            restored = true;
+            reindexAnchors();
+            for (MineNetwork n : sim.networks()) entry(n).due = gameTime;
+        }
+        for (MineNetwork n : new ArrayList<>(sim.networks())) {
+            if (sim.network(n.id()) == null) continue;
+            Entry e = entry(n);
+            if (!(e.dirty && gameTime >= e.due || gameTime - e.lastScan >= RESCAN_PERIOD_TICKS)) continue;
+            if (!loaded(n, e)) continue; // выработки в выгруженных чанках не перезаливаются: газ узлов сохраняется
+            for (int pass = 0; pass < 4 && sim.network(n.id()) != null; pass++) {
+                int anchors = n.anchors().length;
+                rescan(sim, n, e, gameTime);
+                if (sim.network(n.id()) == null || n.anchors().length == anchors) break; // заливка нашла новые якоря — ещё раз
+            }
+        }
+        if (gameTime % SECOND == 0) for (MineNetwork n : sim.networks()) applyDevices(n, entries.get(n.id()));
+    }
+
+    public void postTick(long gameTime) {
+        MineSubsystem sim = sim();
+        if (sim == null) return;
+        for (MineNetwork n : sim.networks()) n.drainBurned((node, origin, energy) -> onBurned(n, node, origin, energy));
+        if (gameTime % SECOND == 0) {
+            breathe(sim, gameTime);
+            canaries();
+            alarms(sim);
+            roofTimers(sim);
+        }
+    }
+
+    // --- якоря и перестройка -------------------------------------------------------------------------------
+
+    /** Блок в позиции изменился (событие соседей, поставлен или снят блок мода). */
+    public void onBlockChanged(BlockPos pos) {
+        MineSubsystem sim = sim();
+        if (sim == null) return;
+        long key = pos.asLong(), now = level.getGameTime();
+        for (MineNetwork n : sim.networks()) {
+            Entry e = entries.get(n.id());
+            if (e != null && e.bounds != null && e.bounds.isInside(pos)) markDirty(e, now);
+        }
+        BlockState s = level.getBlockState(pos);
+        long mine = anchorMine.get(key);
+        if (MineScanner.isAnchorBlock(s)) {
+            if (mine < 0) addAnchor(sim, pos, now);
+        } else if (mine >= 0 && !scanner().isMineAir(pos)) {
+            MineNetwork n = sim.network(mine);
+            if (n != null) {
+                LongLinkedOpenHashSet a = new LongLinkedOpenHashSet(n.anchors());
+                a.remove(key);
+                n.setAnchors(a.toLongArray());
+                markDirty(entry(n), now);
+            }
+            anchorMine.remove(key);
+        }
+    }
+
+    private void addAnchor(MineSubsystem sim, BlockPos pos, long now) {
+        long key = pos.asLong();
+        MineNetwork owner = null;
+        for (long c : cells(pos)) {
+            BlockPos cp = BlockPos.of(c);
+            owner = mineNear(cp);
+            if (owner != null) break;
+        }
+        if (owner == null) {
+            owner = sim.create(new long[] {key});
+        } else {
+            long[] a = owner.anchors();
+            long[] b = java.util.Arrays.copyOf(a, a.length + 1);
+            b[a.length] = key;
+            owner.setAnchors(b);
+        }
+        anchorMine.put(key, owner.id());
+        Entry e = entry(owner);
+        e.dirty = true;
+        e.due = now;
+    }
+
+    private long[] cells(BlockPos pos) {
+        BlockState s = level.getBlockState(pos);
+        if (!(s.getBlock() instanceof PcBlock pc) || pc.spec().footprint().isSingle()) return new long[] {pos.asLong()};
+        LongArrayList out = new LongArrayList();
+        for (Footprint.Cell c : pc.spec().footprint().cells(pos, pc.facing(s))) out.add(c.pos().asLong());
+        return out.toLongArray();
+    }
+
+    private void markDirty(Entry e, long now) {
+        if (e.dirty) return;
+        e.dirty = true;
+        e.due = now + 10 + (e.scan == null ? 0 : e.scan.airBlocks / 512);
+    }
+
+    /** Чанки выработок (или якорей, пока шахта не залита) загружены. */
+    private boolean loaded(MineNetwork n, Entry e) {
+        if (e.bounds != null && e.scan != null && e.scan.airBlocks > 0)
+            return level.hasChunksAt(e.bounds.minX(), e.bounds.minY(), e.bounds.minZ(), e.bounds.maxX(), e.bounds.maxY(), e.bounds.maxZ());
+        for (long a : n.anchors()) if (!level.isLoaded(BlockPos.of(a))) return false;
+        return true;
+    }
+
+    private boolean validAnchor(MineScanner scanner, long key) {
+        BlockPos p = BlockPos.of(key);
+        if (!level.isLoaded(p)) return true;
+        return MineScanner.isAnchorBlock(level.getBlockState(p)) || scanner.isMineAir(p);
+    }
+
+    private void rescan(MineSubsystem sim, MineNetwork n, Entry e, long now) {
+        MineScanner scanner = scanner();
+        MineScanner.Scan s = scanner.scan(n.anchors());
+        LongLinkedOpenHashSet keep = new LongLinkedOpenHashSet(s.anchors);
+        for (long a : n.anchors()) {
+            if (s.topology.nodeOf(a) > 0 || keep.contains(a)) {
+                keep.add(a);
+            } else if (validAnchor(scanner, a)) {
+                if (s.airBlocks == 0 || s.truncated) keep.add(a);
+                else entry(sim.create(new long[] {a})).due = now; // выработка разделилась
+            }
+        }
+        for (MineNetwork o : new ArrayList<>(sim.networks())) {
+            if (o == n) continue;
+            for (long a : o.anchors()) {
+                if (!keep.contains(a)) continue;
+                for (long k : o.anchors()) if (validAnchor(scanner, k)) keep.add(k);
+                for (long k : o.workedRoof()) n.markWorkedRoof(k);
+                sim.remove(o.id());
+                entries.remove(o.id());
+                break;
+            }
+        }
+        if (keep.isEmpty()) {
+            sim.remove(n.id());
+            entries.remove(n.id());
+            reindexAnchors();
+            return;
+        }
+        n.setAnchors(keep.toLongArray());
+        n.rebuild(s.topology, s.origins, s.flames, s.coalKeys, s.coalX, s.coalCount);
+        e.scan = s;
+        e.bounds = s.airBlocks > 0 ? s.bounds : null;
+        for (long a : keep) {
+            BlockPos p = BlockPos.of(a);
+            BoundingBox ab = new BoundingBox(p).inflatedBy(2);
+            e.bounds = e.bounds == null ? ab : BoundingBox.encapsulatingBoxes(List.of(e.bounds, ab)).orElse(ab);
+        }
+        e.dirty = false;
+        e.lastScan = now;
+        if (s.truncated && !e.warnedTruncated) {
+            e.warnedTruncated = true;
+            PromptCritical.LOGGER.warn("[{}] mine {} traced {} blocks, stopped at the limit or an unloaded chunk ({}); the rest is closed off",
+                    level.dimension().location(), n.id(), s.airBlocks, BlockPos.of(s.firstUnloaded).toShortString());
+        }
+        reindexAnchors();
+        applyDevices(n, e);
+        evaluateRoof(sim, n);
+    }
+
+    private void reindexAnchors() {
+        anchorMine.clear();
+        MineSubsystem sim = sim();
+        if (sim == null) return;
+        for (MineNetwork n : sim.networks()) for (long a : n.anchors()) anchorMine.put(a, n.id());
+    }
+
+    // --- устройства ----------------------------------------------------------------------------------------
+
+    private void applyDevices(MineNetwork n, @Nullable Entry e) {
+        if (e == null || e.scan == null || !n.ready()) return;
+        MineScanner.Scan s = e.scan;
+        MineVentilation v = n.ventilation();
+        for (int f = 0; f < s.fanCtrl.length; f++) {
+            BlockPos p = BlockPos.of(s.fanCtrl[f]);
+            BlockState st = level.getBlockState(p);
+            if (!st.is(PcBlocks.MAIN_MINE_FAN.get())) continue;
+            boolean on = powered(p);
+            v.setFanSpeed(f, on ? MineScanner.MAIN_FAN.ratedRpm() : 0);
+            if (st.getValue(PcProperties.RUNNING) != on) level.setBlock(p, st.setValue(PcProperties.RUNNING, on), Block.UPDATE_CLIENTS);
+        }
+        for (int d = 0; d < s.doorCtrl.length; d++) {
+            BlockState st = level.getBlockState(BlockPos.of(s.doorCtrl[d]));
+            if (!st.is(PcBlocks.VENTILATION_DOOR.get())) continue;
+            boolean open = st.getValue(BlockStateProperties.OPEN);
+            if (st.getValue(PcProperties.DOOR_KIND) == PcProperties.DoorKind.REGULATOR) {
+                v.setDoorClosed(d, true);
+                v.setRegulatorArea(d, open ? s.doorSection[d] : s.doorSection[d] * MineScanner.REGULATOR_CLOSED_FRACTION);
+            } else {
+                v.setDoorClosed(d, !open);
+            }
+        }
+        for (var b : s.boreholeNode.long2IntEntrySet()) {
+            BlockPos bore = BlockPos.of(b.getLongKey());
+            boolean on = false;
+            for (Direction d : Direction.values()) {
+                BlockPos p = bore.relative(d);
+                BlockState ps = level.getBlockState(p);
+                if (!ps.is(PcBlocks.DEGASIFICATION_PUMP.get())) continue;
+                boolean run = level.hasNeighborSignal(p);
+                if (ps.getValue(PcProperties.RUNNING) != run) level.setBlock(p, ps.setValue(PcProperties.RUNNING, run), Block.UPDATE_CLIENTS);
+                on |= run;
+            }
+            n.field().setDegasification(b.getIntValue(), on ? DEGAS_CAPTURE : 0);
+        }
+    }
+
+    /** Вентилятор работает от сигнала красного камня на любой клетке (привод от вала Create — с портом 03a). */
+    private boolean powered(BlockPos ctrl) {
+        for (long c : cells(ctrl)) if (level.hasNeighborSignal(BlockPos.of(c))) return true;
+        return false;
+    }
+
+    // --- взрыв ---------------------------------------------------------------------------------------------
+
+    private void onBurned(MineNetwork n, int node, long origin, double energyJ) {
+        GridPos o = GridPos.fromLong(origin);
+        binding.damage().submit(new DamageRequest(requestSeq++, SimId.NONE, null, DamageKind.BLAST, o, energyJ, BLAST_RADIUS_M, 2));
+        blastRequests++;
+        DamageBudgetConfig dc = binding.damage().config();
+        double power = Math.max(1, Math.min(4, BlastScaling.power(energyJ, dc.tntReferenceKg(), dc.maxExplosionPower())));
+        level.explode(null, o.x() + 0.5, o.y() + 0.5, o.z() + 0.5, (float) power, Level.ExplosionInteraction.NONE);
+        Entry e = entries.get(n.id());
+        if (e == null || e.scan == null || node >= e.scan.nodeStart.length - 1) return;
+        // крепь узла ломается, двери распахивает
+        for (int i = e.scan.nodeStart[node]; i < e.scan.nodeStart[node + 1]; i++) {
+            BlockPos p = BlockPos.of(e.scan.nodeBlocks[i]);
+            BlockState st = level.getBlockState(p);
+            if (st.is(PcBlocks.MINE_SUPPORT.get()) && !st.getValue(PcProperties.DAMAGED))
+                level.setBlock(p, st.setValue(PcProperties.DAMAGED, true), Block.UPDATE_CLIENTS);
+        }
+        for (long door : e.scan.doorCtrl) {
+            BlockPos p = BlockPos.of(door);
+            BlockState st = level.getBlockState(p);
+            if (st.is(PcBlocks.VENTILATION_DOOR.get()) && !st.getValue(BlockStateProperties.OPEN) && near(p, o, 6))
+                level.setBlock(p, st.setValue(BlockStateProperties.OPEN, true), Block.UPDATE_ALL);
+        }
+        PromptCritical.LOGGER.warn("[{}] mine {} explosion front at {} {} {}: {} kJ", level.dimension().location(), n.id(),
+                o.x(), o.y(), o.z(), Math.round(energyJ / 1e3));
+    }
+
+    private static boolean near(BlockPos p, GridPos o, int r) {
+        return Math.abs(p.getX() - o.x()) <= r && Math.abs(p.getY() - o.y()) <= r && Math.abs(p.getZ() - o.z()) <= r;
+    }
+
+    // --- люди, лампа, канарейки ----------------------------------------------------------------------------
+
+    private void breathe(MineSubsystem sim, long now) {
+        double ratio = sim.config().canaryUptakeRatio();
+        for (ServerPlayer p : level.players()) {
+            if (p.isSpectator()) continue;
+            BlockPos eye = BlockPos.containing(p.getEyePosition());
+            MineNetwork n = mineAt(eye);
+            int node = n == null ? -1 : n.nodeOf(eye.asLong());
+            double co = node > 0 ? n.field().concentration(node, MineGas.CO) : 0;
+            double o2 = node > 0 ? n.field().concentration(node, MineGas.O2) : MineGas.O2.freshAir;
+            Breather b = breathers.computeIfAbsent(p.getUUID(), k -> new Breather(ratio));
+            boolean isolated = b.isolatedUntil > now;
+            if (b.isolatedUntil != 0 && !isolated) {
+                b.isolatedUntil = 0;
+                p.displayClientMessage(Component.translatable("promptcritical.mine.self_rescuer.spent").withStyle(ChatFormatting.GOLD), true);
+            }
+            if (!p.isCreative()) {
+                b.exposure.step(1.0, isolated ? 0 : co, isolated ? MineGas.O2.freshAir : o2);
+                applyExposure(p, b);
+            }
+            if (holding(p, PcItems.FLAME_SAFETY_LAMP.get())) lamp(p, n, node, o2);
+        }
+    }
+
+    private void applyExposure(ServerPlayer p, Breather b) {
+        ExposureState st = b.exposure.state();
+        switch (st) {
+            case CALM -> {
+            }
+            case AGITATED -> {
+                p.addEffect(new MobEffectInstance(MobEffects.CONFUSION, 100, 0, false, false));
+                p.addEffect(new MobEffectInstance(MobEffects.MOVEMENT_SLOWDOWN, 40, 0, false, false));
+            }
+            case FALLEN -> {
+                p.addEffect(new MobEffectInstance(MobEffects.BLINDNESS, 40, 0, false, false));
+                p.addEffect(new MobEffectInstance(MobEffects.MOVEMENT_SLOWDOWN, 40, 3, false, false));
+                p.addEffect(new MobEffectInstance(MobEffects.WEAKNESS, 40, 1, false, false));
+            }
+            case DEAD -> {
+                breathers.remove(p.getUUID());
+                p.hurt(damageSource(), Float.MAX_VALUE);
+            }
+        }
+    }
+
+    private DamageSource damageSource() {
+        return new DamageSource(level.registryAccess().registryOrThrow(Registries.DAMAGE_TYPE).getHolderOrThrow(MINE_GAS));
+    }
+
+    private static boolean holding(Player p, net.minecraft.world.item.Item item) {
+        return p.getMainHandItem().is(item) || p.getOffhandItem().is(item);
+    }
+
+    private void lamp(ServerPlayer p, @Nullable MineNetwork n, int node, double o2) {
+        LampState st;
+        double ch4 = 0;
+        if (node > 0) {
+            ch4 = n.field().roofMethane(node);
+            st = SafetyLamp.state(ch4, o2, n.field().nodeVelocity(node), true);
+        } else {
+            st = LampState.NORMAL;
+        }
+        String key = "promptcritical.mine.lamp." + st.name().toLowerCase(java.util.Locale.ROOT);
+        ChatFormatting color = switch (st) {
+            case NORMAL -> ChatFormatting.YELLOW;
+            case HALO -> ChatFormatting.AQUA;
+            case FLAME_IN_GAUZE, IGNITES -> ChatFormatting.RED;
+            case EXTINGUISHED -> ChatFormatting.DARK_GRAY;
+        };
+        p.displayClientMessage(Component.translatable(key, String.format("%.0f", 100 * SafetyLamp.haloFraction(ch4))).withStyle(color), true);
+        if (st == LampState.IGNITES && n != null) n.ignite(node, IgnitionSource.LAMP);
+    }
+
+    /** Птица посажена в клетку: отравление с нуля. */
+    public void onCanaryPlaced(BlockPos pos) {
+        canaries.put(pos.asLong(), GasExposure.canary());
+    }
+
+    /** Птицу забирают; {@code true} — живая. */
+    public boolean takeCanary(BlockPos pos) {
+        GasExposure e = canaries.remove(pos.asLong());
+        return e == null || e.alive();
+    }
+
+    private void canaries() {
+        for (Entry e : entries.values()) {
+            if (e.scan == null) continue;
+            for (long k : e.scan.cages) {
+                BlockState st = level.getBlockState(BlockPos.of(k));
+                if (st.is(PcBlocks.CANARY_CAGE.get()) && st.getValue(PcProperties.BIRD) != PcProperties.Bird.EMPTY)
+                    canaries.computeIfAbsent(k, x -> GasExposure.canary());
+            }
+        }
+        var it = canaries.long2ObjectEntrySet().fastIterator();
+        while (it.hasNext()) {
+            var en = it.next();
+            BlockPos pos = BlockPos.of(en.getLongKey());
+            if (!level.isLoaded(pos)) continue;
+            BlockState st = level.getBlockState(pos);
+            if (!st.is(PcBlocks.CANARY_CAGE.get()) || st.getValue(PcProperties.BIRD) == PcProperties.Bird.EMPTY) {
+                it.remove();
+                continue;
+            }
+            MineNetwork n = mineAt(pos);
+            int node = n == null ? -1 : n.nodeOf(pos.asLong());
+            GasExposure g = en.getValue();
+            g.step(1.0, node > 0 ? n.field().concentration(node, MineGas.CO) : 0,
+                    node > 0 ? n.field().concentration(node, MineGas.O2) : MineGas.O2.freshAir);
+            ExposureState es = g.state();
+            PcProperties.Bird bird = es == ExposureState.FALLEN || es == ExposureState.DEAD ? PcProperties.Bird.FAINTED : PcProperties.Bird.ALIVE;
+            if (st.getValue(PcProperties.BIRD) != bird) level.setBlock(pos, st.setValue(PcProperties.BIRD, bird), Block.UPDATE_ALL);
+            if (es == ExposureState.AGITATED) level.playSound(null, pos, SoundEvents.PARROT_AMBIENT, SoundSource.BLOCKS, 1.0f, 2.0f);
+        }
+    }
+
+    /** Состояние канарейки в клетке или {@code null}. */
+    @Nullable
+    public GasExposure canary(BlockPos pos) {
+        return canaries.get(pos.asLong());
+    }
+
+    // --- диспетчерская -------------------------------------------------------------------------------------
+
+    private void alarms(MineSubsystem sim) {
+        double trip = ServerConfig.MINING_AGZ_TRIP_FRAC.get();
+        for (MineNetwork n : sim.networks()) {
+            if (!n.ready()) continue;
+            boolean alarm = n.maxConcentration(MineGas.CH4) >= trip;
+            for (long a : n.anchors()) {
+                BlockPos p = BlockPos.of(a);
+                if (!level.isLoaded(p)) continue;
+                BlockState st = level.getBlockState(p);
+                if (st.is(PcBlocks.MINE_DISPATCH_CABINET.get()) && st.getValue(PcProperties.ALARM) != alarm)
+                    level.setBlock(p, st.setValue(PcProperties.ALARM, alarm), Block.UPDATE_CLIENTS);
+            }
+        }
+    }
+
+    /** Сводка диспетчерской шахты игроку. */
+    public void report(BlockPos cabinet, Player player) {
+        MineSubsystem sim = sim();
+        long mine = anchorMine.get(cabinet.asLong());
+        MineNetwork n = sim == null || mine < 0 ? null : sim.network(mine);
+        if (n == null || !n.ready() || n.topology().nodeCount() <= 1) {
+            player.sendSystemMessage(Component.translatable("promptcritical.mine.report.none"));
+            return;
+        }
+        MineTopology t = n.topology();
+        player.sendSystemMessage(Component.translatable("promptcritical.mine.report.header", n.id(), t.nodeCount() - 1,
+                String.format("%.1f", n.surfaceAirflowM3s())).withStyle(ChatFormatting.GOLD));
+        player.sendSystemMessage(Component.translatable("promptcritical.mine.report.gas",
+                String.format("%.2f", 100 * n.maxConcentration(MineGas.CH4)),
+                String.format("%.0f", 1e6 * n.maxConcentration(MineGas.CO)),
+                String.format("%.1f", 100 * n.minOxygen()),
+                String.format("%.2f", 60 * n.methaneEmissionM3s())));
+        if (n.exploding() || n.explosions() > 0)
+            player.sendSystemMessage(Component.translatable("promptcritical.mine.report.explosions", n.explosions()).withStyle(ChatFormatting.RED));
+    }
+
+    // --- ручные средства ----------------------------------------------------------------------------------
+
+    /** Действие предмета {@link MineInstrumentItem}; {@code true} — выполнено. */
+    public boolean useInstrument(MineInstrumentItem.Kind kind, Player player, ItemStack stack) {
+        BlockPos eye = BlockPos.containing(player.getEyePosition());
+        MineNetwork n = mineAt(eye);
+        int node = n == null ? -1 : n.nodeOf(eye.asLong());
+        switch (kind) {
+            case METHANOMETER -> {
+                double ch4 = node > 0 ? n.field().roofMethane(node) : 0;
+                player.displayClientMessage(Component.translatable("promptcritical.mine.methanometer",
+                        String.format("%.1f", Math.round(ch4 * 1000) / 10.0)).withStyle(ch4 >= 0.01 ? ChatFormatting.RED : ChatFormatting.GREEN), true);
+                return true;
+            }
+            case SELF_RESCUER -> {
+                Breather b = breathers.computeIfAbsent(player.getUUID(), k -> new Breather(sim() == null ? 20 : sim().config().canaryUptakeRatio()));
+                b.isolatedUntil = level.getGameTime() + SELF_RESCUER_TICKS;
+                stack.consume(1, player);
+                player.displayClientMessage(Component.translatable("promptcritical.mine.self_rescuer.on").withStyle(ChatFormatting.GREEN), true);
+                return true;
+            }
+            case STONE_DUSTER -> {
+                if (node <= 0) {
+                    player.displayClientMessage(Component.translatable("promptcritical.mine.not_in_mine"), true);
+                    return false;
+                }
+                ItemStack dust = findItem(player, PcItems.STONE_DUST.get());
+                if (dust.isEmpty()) {
+                    player.displayClientMessage(Component.translatable("promptcritical.mine.duster.empty"), true);
+                    return false;
+                }
+                dust.consume(1, player);
+                MineTopology t = n.topology();
+                double surface = t.perimeterM(node) * t.volumeM3(node) / t.sectionM2(node);
+                n.field().depositStoneDust(node, ServerConfig.METALLURGY_BULK_ITEM_MASS_KG.get() * 1000 / surface);
+                player.displayClientMessage(Component.translatable("promptcritical.mine.duster.done",
+                        String.format("%.0f", 100 * n.field().inertFraction(node))), true);
+                level.playSound(null, eye, SoundEvents.SAND_PLACE, SoundSource.PLAYERS, 1.0f, 0.8f);
+                return true;
+            }
+        }
+        return false;
+    }
+
+    private static ItemStack findItem(Player p, net.minecraft.world.item.Item item) {
+        for (ItemStack s : p.getInventory().items) if (s.is(item)) return s;
+        ItemStack off = p.getOffhandItem();
+        return off.is(item) ? off : ItemStack.EMPTY;
+    }
+
+    // --- добыча --------------------------------------------------------------------------------------------
+
+    /**
+     * Игрок ломает блок (до снятия). Уголь пласта отдаёт газ и пыль, у выработки без шахты — заводит шахту; кровля над
+     * пройденным блоком попадает под правило пролёта.
+     */
+    public void onBlockBroken(BlockPos pos, BlockState state) {
+        MineSubsystem sim = sim();
+        if (sim == null) return;
+        MineNetwork n = mineNear(pos);
+        boolean coal = state.is(PcBlocks.COAL_SEAM.get());
+        if (n == null && coal) {
+            n = sim.create(new long[] {pos.asLong()});
+            anchorMine.put(pos.asLong(), n.id());
+            entry(n).due = level.getGameTime() + 1;
+        }
+        if (n == null) return;
+        if (coal && n.ready()) {
+            double vdaf = VeinFields.get(level.getSeed()).volatileDafPct(pos.getX(), pos.getY(), pos.getZ()) / 100;
+            n.field().onMined(pos.asLong(), MethaneField.gasContent(ServerConfig.MINING_SEAM_GAS_CONTENT.get(), pos.getY()), vdaf);
+        }
+        n.markWorkedRoof(pos.above().asLong());
+    }
+
+    // --- кровля --------------------------------------------------------------------------------------------
+
+    private final class Roof implements RoofSpanRule.RoofGrid {
+        final MineNetwork n;
+        final int y;
+
+        Roof(MineNetwork n, int y) {
+            this.n = n;
+            this.y = y;
+        }
+
+        @Override
+        public boolean open(int x, int z) {
+            if (n.nodeOf(BlockPos.asLong(x, y - 1, z)) <= 0) return false;
+            BlockState s = level.getBlockState(new BlockPos(x, y, z));
+            return !s.isAir() && !s.getCollisionShape(level, new BlockPos(x, y, z)).isEmpty();
+        }
+
+        @Override
+        public MineSupport support(int x, int z) {
+            BlockState s = supportState(x, z);
+            if (s == null) return null;
+            return s.getValue(PcProperties.SUPPORT_KIND) == PcProperties.SupportKind.ARCH ? MineSupport.ARCH : MineSupport.TIMBER;
+        }
+
+        @Override
+        public double supportCondition(int x, int z) {
+            BlockState s = supportState(x, z);
+            return s == null ? 0 : s.getValue(PcProperties.DAMAGED) ? 0.4 : 1.0;
+        }
+
+        @Nullable
+        private BlockState supportState(int x, int z) {
+            for (int dy = 1; dy <= 3; dy++) {
+                BlockPos p = new BlockPos(x, y - dy, z);
+                BlockState s = level.getBlockState(p);
+                if (s.is(PcBlocks.MULTIBLOCK_PART.get())) {
+                    BlockPos a = MultiblockPartBlock.anchor(s, p);
+                    s = level.getBlockState(a);
+                }
+                if (s.is(PcBlocks.MINE_SUPPORT.get())) return s;
+            }
+            return null;
+        }
+    }
+
+    private static RoofRock rock(BlockState s) {
+        if (s.is(PcTags.Blocks.ROOF_STABLE)) return RoofRock.SANDSTONE;
+        if (s.is(PcTags.Blocks.ROOF_WEAK)) return RoofRock.CARBONACEOUS_SHALE;
+        return RoofRock.MUDSTONE;
+    }
+
+    private void evaluateRoof(MineSubsystem sim, MineNetwork n) {
+        if (!ServerConfig.MINING_ROOF_COLLAPSE.get()) return;
+        MiningConfig cfg = sim.config();
+        double now = binding.world().clock().slowPhysTime();
+        for (long k : n.workedRoof()) {
+            BlockPos roof = BlockPos.of(k);
+            if (!level.isLoaded(roof)) continue;
+            Roof g = new Roof(n, roof.getY());
+            if (!g.open(roof.getX(), roof.getZ())) {
+                roofDue.remove(k);
+                if (n.nodeOf(roof.asLong()) > 0) n.forgetWorkedRoof(k); // свод выбран: блок стал воздухом
+                continue;
+            }
+            RoofRock r = rock(level.getBlockState(roof));
+            int span = RoofSpanRule.span(g, roof.getX(), roof.getZ());
+            if (span >= RoofSpanRule.MAX_SCAN || RoofSpanRule.supported(g, roof.getX(), roof.getZ(), r, cfg)) roofDue.remove(k);
+            else if (!roofDue.containsKey(k)) roofDue.put(k, now + r.collapseDelayS);
+        }
+    }
+
+    private void roofTimers(MineSubsystem sim) {
+        if (roofDue.isEmpty()) return;
+        double now = binding.world().clock().slowPhysTime();
+        LongArrayList due = new LongArrayList();
+        for (var e : roofDue.long2DoubleEntrySet()) if (e.getDoubleValue() <= now) due.add(e.getLongKey());
+        for (long k : due) {
+            if (!roofDue.containsKey(k)) continue;
+            roofDue.remove(k);
+            BlockPos roof = BlockPos.of(k);
+            MineNetwork n = mineAt(roof.below());
+            if (n == null || !level.isLoaded(roof)) continue;
+            Roof g = new Roof(n, roof.getY());
+            if (!g.open(roof.getX(), roof.getZ())) continue;
+            RoofRock r = rock(level.getBlockState(roof));
+            int span = RoofSpanRule.span(g, roof.getX(), roof.getZ());
+            int adm = RoofSpanRule.admissibleSpan(g, roof.getX(), roof.getZ(), r, sim.config());
+            int h = RoofSpanRule.collapseHeight(span, adm);
+            if (h <= 0 || span >= RoofSpanRule.MAX_SCAN) continue;
+            collapse(roof, h);
+            PromptCritical.LOGGER.info("[{}] mine {} roof fall at {} (span {} > {}, dome {})", level.dimension().location(), n.id(),
+                    roof.toShortString(), span, adm, h);
+        }
+    }
+
+    /** Купол обрушения высотой h — заявка {@code DamageRequest(BLAST, priority 5)} (08 §8.2.2). */
+    private void collapse(BlockPos roof, int h) {
+        double r = 0.5 * h + 0.5;
+        DamageBudgetConfig dc = binding.damage().config();
+        double power = r / BlastScaling.RADIUS_PER_POWER;
+        double energy = dc.tntReferenceKg() * Math.pow(power / BlastScaling.VANILLA_TNT_POWER, 3) * BlastScaling.TNT_J_PER_KG;
+        GridPos o = new GridPos(roof.getX(), roof.getY() + (h - 1) / 2, roof.getZ());
+        binding.damage().submit(new DamageRequest(requestSeq++, SimId.NONE, null, DamageKind.BLAST, o, energy, r, 5));
+        level.playSound(null, roof, SoundEvents.GRAVEL_BREAK, SoundSource.BLOCKS, 2.0f, 0.5f);
+        int rr = (int) Math.ceil(r) + 1;
+        roofDue.long2DoubleEntrySet().removeIf(e -> {
+            BlockPos p = BlockPos.of(e.getLongKey());
+            return Math.abs(p.getX() - roof.getX()) <= rr && Math.abs(p.getZ() - roof.getZ()) <= rr && Math.abs(p.getY() - roof.getY()) <= rr;
+        });
+    }
+
+    /** Заявок {@code DamageRequest(BLAST, priority 2)} от фронтов взрыва с загрузки. */
+    public int blastRequests() {
+        return blastRequests;
+    }
+
+    /** Ожидающих обрушения клеток кровли (для тестов). */
+    public int pendingRoofFalls() {
+        return roofDue.size();
+    }
+}

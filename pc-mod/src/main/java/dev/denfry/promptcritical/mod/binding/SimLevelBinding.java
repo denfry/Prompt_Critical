@@ -1,6 +1,7 @@
 package dev.denfry.promptcritical.mod.binding;
 
 import dev.denfry.promptcritical.mod.PromptCritical;
+import dev.denfry.promptcritical.mod.mine.MineWorld;
 import dev.denfry.promptcritical.sim.consequence.DamageBudget;
 import dev.denfry.promptcritical.sim.consequence.DamageBudgetConfig;
 import dev.denfry.promptcritical.sim.consequence.QueuedDamageBudget;
@@ -45,6 +46,7 @@ public final class SimLevelBinding {
     private final LevelDamageMutator mutator;
     private final SimSavedData data;
     private final TopologyRebuilder topology = new TopologyRebuilder();
+    private final MineWorld mines;
     private final Map<SimId, DeviceHost> hosts = new HashMap<>();
     private final Map<SimId, Long> orphanSince = new HashMap<>();
     private final ExternalInputs inputs = ExternalInputs.NONE;
@@ -57,6 +59,7 @@ public final class SimLevelBinding {
         this.damage = damage;
         this.data = data;
         this.mutator = new LevelDamageMutator(level);
+        this.mines = new MineWorld(this);
     }
 
     static SimLevelBinding create(ServerLevel level, WorkerPool workers, List<Function<ServerLevel, Subsystem>> subsystems) {
@@ -87,6 +90,11 @@ public final class SimLevelBinding {
 
     public TopologyRebuilder topology() {
         return topology;
+    }
+
+    /** Шахты измерения (08 §8.2). */
+    public MineWorld mines() {
+        return mines;
     }
 
     public static GridPos gridPos(BlockPos p) {
@@ -132,6 +140,7 @@ public final class SimLevelBinding {
     void preTick() {
         long gameTime = level.getGameTime();
         topology.process(gameTime, SimConfigs.topologyBudgetNanos());
+        mines.preTick(gameTime);
         try {
             world.tick(inputs);
         } catch (RuntimeException e) {
@@ -143,6 +152,7 @@ public final class SimLevelBinding {
 
     void postTick() {
         long gameTime = level.getGameTime();
+        mines.postTick(gameTime);
         damage.drain(gameTime, mutator, mutator);
         world.drainEvents(this::onEvent);
         if (gameTime % SLOW_PERIOD == 0) {

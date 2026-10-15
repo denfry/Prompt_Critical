@@ -71,6 +71,11 @@ public final class PcLanguageProvider extends LanguageProvider {
         b("drill_press", "Drill Press", "Сверлильный станок");
         b("document_lectern", "Document Lectern", "Пюпитр для документов");
         b("canary_cage", "Canary Cage", "Клетка для канарейки");
+        b("pyrite_ore", "Pyrite Ore", "Пиритовая руда");
+        b("deepslate_pyrite_ore", "Deepslate Pyrite Ore", "Пиритовая руда в глубинном сланце");
+        b("galena_ore", "Galena Ore", "Галенитовая руда");
+        b("deepslate_galena_ore", "Deepslate Galena Ore", "Галенитовая руда в глубинном сланце");
+        b("fluorite_ore", "Fluorite Ore", "Флюоритовая руда");
         b("multiblock_part", "Structure Part", "Часть конструкции");
 
         i("fusible_plug", "Fusible Plug", "Легкоплавкая пробка");
@@ -103,6 +108,7 @@ public final class PcLanguageProvider extends LanguageProvider {
         i("stone_duster", "Stone Duster", "Осланцеватель");
         i("wire_rope", "Wire Rope", "Стальной канат");
         i("canary", "Canary", "Канарейка");
+        i("methanometer", "Methanometer", "Метанометр");
         i("engineering_handbook", "Engineering Handbook", "Справочник инженера");
         i("operating_procedure", "Operating Procedure", "Инструкция по эксплуатации");
         i("geological_map", "Geological Map", "Геологическая карта");
@@ -119,6 +125,35 @@ public final class PcLanguageProvider extends LanguageProvider {
                 "Simulation profile of %s: degradation %s, tick p95 %s ms", "Профиль симуляции %s: деградация %s, p95 тика %s мс"});
         MISC.put("commands.promptcritical.profile.damage", new String[] {
                 "Damage budget: %s blocks applied, %s queued, %s denied", "Бюджет разрушений: применено %s, в очереди %s, отказано %s"});
+        MISC.put("commands.promptcritical.mine.count", new String[] {"Mines: %s", "Шахт: %s"});
+        MISC.put("commands.promptcritical.mine.ignited", new String[] {"Methane ignited", "Метан воспламенился"});
+        MISC.put("commands.promptcritical.mine.not_ignited", new String[] {"Mixture outside explosive limits", "Смесь вне взрывных пределов"});
+        MISC.put("promptcritical.mine.not_in_mine", new String[] {"Not in a mine working", "Вы не в горной выработке"});
+        MISC.put("promptcritical.mine.lamp.normal", new String[] {"Lamp: steady flame", "Лампа: пламя ровное"});
+        MISC.put("promptcritical.mine.lamp.halo", new String[] {"Lamp: blue cap over the flame, %s %% of full height",
+                "Лампа: голубой ореол над пламенем, %s %% высоты"});
+        MISC.put("promptcritical.mine.lamp.flame_in_gauze", new String[] {"Lamp: gas burning inside the gauze, get out!",
+                "Лампа: смесь горит внутри сетки, уходи!"});
+        MISC.put("promptcritical.mine.lamp.ignites", new String[] {"Lamp: flame passed the gauze!", "Лампа: пламя вышло за сетку!"});
+        MISC.put("promptcritical.mine.lamp.extinguished", new String[] {"Lamp: went out (oxygen below 17 %%)",
+                "Лампа: погасла (кислорода меньше 17 %%)"});
+        MISC.put("promptcritical.mine.methanometer", new String[] {"CH4: %s %%", "CH4: %s %%"});
+        MISC.put("promptcritical.mine.self_rescuer.on", new String[] {"Self-rescuer on: breathing from the apparatus",
+                "Самоспасатель включён: дыхание из аппарата"});
+        MISC.put("promptcritical.mine.self_rescuer.spent", new String[] {"Self-rescuer spent", "Самоспасатель отработал"});
+        MISC.put("promptcritical.mine.duster.done", new String[] {"Stone dust applied: inert share %s %%",
+                "Выработка осланцована: инертная доля %s %%"});
+        MISC.put("promptcritical.mine.duster.empty", new String[] {"No stone dust in the inventory", "Нет инертной пыли"});
+        MISC.put("promptcritical.mine.report.none", new String[] {"No mine workings connected", "Выработки не подключены"});
+        MISC.put("promptcritical.mine.report.header", new String[] {"Mine %s: %s airway nodes, intake %s m3/s",
+                "Шахта %s: узлов выработок %s, приток воздуха %s м³/с"});
+        MISC.put("promptcritical.mine.report.gas", new String[] {"CH4 max %s %%, CO max %s ppm, O2 min %s %%, methane emission %s m3/min",
+                "CH4 макс. %s %%, CO макс. %s ppm, O2 мин. %s %%, метановыделение %s м³/мин"});
+        MISC.put("promptcritical.mine.report.explosions", new String[] {"Explosions: %s", "Взрывов: %s"});
+        MISC.put("death.attack.promptcritical.mine_gas", new String[] {"%1$s was overcome by afterdamp",
+                "%1$s задохнулся рудничным газом"});
+        MISC.put("death.attack.promptcritical.mine_gas.player", new String[] {"%1$s was overcome by afterdamp while fighting %2$s",
+                "%1$s задохнулся рудничным газом, спасаясь от %2$s"});
         MISC.put("commands.promptcritical.profile.reset", new String[] {"Simulation profile reset", "Профиль симуляции сброшен"});
     }
 

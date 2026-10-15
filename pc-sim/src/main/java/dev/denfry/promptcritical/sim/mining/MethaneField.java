@@ -1,6 +1,8 @@
 package dev.denfry.promptcritical.sim.mining;
 
 import dev.denfry.promptcritical.sim.combustion.Chimney;
+import dev.denfry.promptcritical.sim.core.StateReader;
+import dev.denfry.promptcritical.sim.core.StateWriter;
 import java.util.Arrays;
 
 /**
@@ -37,7 +39,7 @@ public final class MethaneField {
             O2 = MineGas.O2.ordinal(), G = MineGas.COUNT;
     private static final int MAX_SWEEPS = 40;
 
-    private final MiningConfig cfg;
+    private MiningConfig cfg;
     MineTopology t;
     private double timeS;
 
@@ -71,6 +73,11 @@ public final class MethaneField {
         this.cfg = cfg;
     }
 
+    /** Новые ключи {@code mining.*} (граница тика). */
+    public void setConfig(MiningConfig cfg) {
+        this.cfg = cfg;
+    }
+
     /** Газоносность пласта на отметке y: x = x₀(1 − e^{−(72−y)/40}), м³/т; выше 72 — 0 (08 §8.2.4). */
     public static double gasContent(double x0M3PerT, double y) {
         return y >= 72 ? 0 : x0M3PerT * (1 - Math.exp(-(72 - y) / 40));
@@ -83,29 +90,38 @@ public final class MethaneField {
      */
     public void rebuild(MineTopology topology) {
         MineTopology prev = t;
-        int nn = topology.nodeCount();
+        Saved s = prev == null ? saved : null;
+        saved = null;
+        int nn = topology.nodeCount(), oldNn = prev != null ? prev.nodeCount() : s != null ? s.nodeKeys.length : 0;
+        double[] oc = s != null ? s.c : c, oExt = s != null ? s.external : external;
+        double[] oUniC = s != null ? s.uniCoal : uniCoal, oUniI = s != null ? s.uniInert : uniInert;
+        double[] oUniV = s != null ? s.uniVdaf : uniVdafCoal, oCap = s != null ? s.degasCapture : degasCapture;
         double[] nc = new double[G * nn], nExt = new double[G * nn];
         double[] nUniC = new double[nn], nUniI = new double[nn], nUniV = new double[nn], nCap = new double[nn];
         for (int n = 0; n < nn; n++) {
-            int o = prev == null ? -1 : prev.nodeIndex(topology.nodeKey(n));
+            long key = topology.nodeKey(n);
+            int o = prev != null ? prev.nodeIndex(key) : s != null ? s.nodeIndex.get(key) : -1;
             for (int g = 0; g < G; g++) {
-                nc[g * nn + n] = o >= 0 && n != MineTopology.ATMOSPHERE ? c[g * prev.nodeCount() + o]
-                        : MineGas.of(g).freshAir;
-                nExt[g * nn + n] = o >= 0 ? external[g * prev.nodeCount() + o] : 0;
+                nc[g * nn + n] = o >= 0 && n != MineTopology.ATMOSPHERE ? oc[g * oldNn + o] : MineGas.of(g).freshAir;
+                nExt[g * nn + n] = o >= 0 ? oExt[g * oldNn + o] : 0;
             }
             if (o >= 0) {
-                nUniC[n] = uniCoal[o];
-                nUniI[n] = uniInert[o];
-                nUniV[n] = uniVdafCoal[o];
-                nCap[n] = degasCapture[o];
+                nUniC[n] = oUniC[o];
+                nUniI[n] = oUniI[o];
+                nUniV[n] = oUniV[o];
+                nCap[n] = oCap[o];
             }
         }
         boolean[] nSpent = new boolean[topology.branchCount()];
-        if (prev != null)
-            for (int j = 0; j < nSpent.length; j++) {
-                int o = prev.branchIndex(topology.branchKey(j));
+        for (int j = 0; j < nSpent.length; j++) {
+            long key = topology.branchKey(j);
+            if (prev != null) {
+                int o = prev.branchIndex(key);
                 nSpent[j] = o >= 0 && barrierSpent[o];
+            } else if (s != null) {
+                nSpent[j] = s.spentBranches.get(key) != LongIntMap.MISSING;
             }
+        }
         t = topology;
         c = nc;
         external = nExt;
@@ -136,6 +152,131 @@ public final class MethaneField {
 
     public MineTopology topology() {
         return t;
+    }
+
+    /**
+     * Сверить обнажения с выработкой после перестройки: новые блоки угля у выработки обнажаются сейчас, прежние
+     * необитые обнажения, которых нет в наборе (закладка, перемычка), закрываются.
+     *
+     * @param keys ключи блоков угля, приписанных узлам заливкой
+     * @param xCh4 газоносность каждого, м³/т
+     */
+    public void syncExposures(long[] keys, double[] xCh4, int n) {
+        LongIntMap now = new LongIntMap(Math.max(16, n));
+        for (int i = 0; i < n; i++) {
+            now.put(keys[i], i);
+            onExposed(keys[i], xCh4[i], timeS);
+        }
+        for (int e = expCount - 1; e >= 0; e--)
+            if (!expBroken[e] && now.get(expKey[e]) == LongIntMap.MISSING) removeExposure(e);
+    }
+
+    // --- сохранение ----------------------------------------------------------------------------------------
+
+    /** Состояние узлов по ключам, прочитанное до первого графа: {@link #rebuild} переносит его, как с прежнего. */
+    private static final class Saved {
+        long[] nodeKeys;
+        LongIntMap nodeIndex, spentBranches;
+        double[] c, external, uniCoal, uniInert, uniVdaf, degasCapture;
+    }
+
+    private Saved saved;
+
+    /** Записать состояние: доли газов и слои узлов по ключам, сработавшие заслоны, обнажения, пыль блоков. */
+    public void save(StateWriter out) {
+        out.putDouble("time", timeS);
+        if (t != null) {
+            int nn = t.nodeCount();
+            long[] keys = new long[nn];
+            for (int n = 0; n < nn; n++) keys[n] = t.nodeKey(n);
+            writeNodes(out, keys, c, external, uniCoal, uniInert, uniVdafCoal, degasCapture);
+            long[] spent = new long[barrierSpent.length];
+            int ns = 0;
+            for (int j = 0; j < barrierSpent.length; j++) if (barrierSpent[j]) spent[ns++] = t.branchKey(j);
+            Arrays.sort(spent, 0, ns);
+            out.putLongs("spent", spent, ns);
+        } else if (saved != null) {
+            writeNodes(out, saved.nodeKeys, saved.c, saved.external, saved.uniCoal, saved.uniInert, saved.uniVdaf,
+                    saved.degasCapture);
+            long[] spent = new long[saved.spentBranches.size()];
+            int ns = 0;
+            for (int i = 0; i < saved.spentBranches.capacity(); i++)
+                if (saved.spentBranches.usedAt(i)) spent[ns++] = saved.spentBranches.keyAt(i);
+            Arrays.sort(spent, 0, ns);
+            out.putLongs("spent", spent, ns);
+        }
+        out.putLongs("exp_key", expKey, expCount);
+        out.putDoubles("exp_rem", expRemaining, expCount);
+        out.putDoubles("exp_t", expTonnes, expCount);
+        byte[] broken = new byte[expCount];
+        for (int e = 0; e < expCount; e++) broken[e] = (byte) (expBroken[e] ? 1 : 0);
+        out.putBytes("exp_broken", broken, expCount);
+        out.putLongs("dust_key", dustKey, dustCount);
+        out.putDoubles("dust_coal", dustCoal, dustCount);
+        out.putDoubles("dust_inert", dustInert, dustCount);
+        out.putDoubles("dust_vdaf", dustVdaf, dustCount);
+    }
+
+    private static void writeNodes(StateWriter out, long[] keys, double[] c, double[] ext, double[] uc, double[] ui,
+            double[] uv, double[] cap) {
+        out.putLongs("node_key", keys, keys.length);
+        out.putDoubles("c", c, c.length);
+        out.putDoubles("ext", ext, ext.length);
+        out.putDoubles("uni_coal", uc, uc.length);
+        out.putDoubles("uni_inert", ui, ui.length);
+        out.putDoubles("uni_vdaf", uv, uv.length);
+        out.putDoubles("degas", cap, cap.length);
+    }
+
+    /** Прочитать состояние до первого {@link #rebuild}: узлы и заслоны применятся по ключам нового графа. */
+    public void load(StateReader in) {
+        if (t != null) throw new IllegalStateException("load before the first rebuild");
+        timeS = in.getDouble("time");
+        if (in.has("node_key")) {
+            Saved s = new Saved();
+            s.nodeKeys = in.getLongs("node_key");
+            s.nodeIndex = new LongIntMap(Math.max(16, s.nodeKeys.length));
+            for (int n = 0; n < s.nodeKeys.length; n++) s.nodeIndex.put(s.nodeKeys[n], n);
+            s.c = in.getDoubles("c");
+            s.external = in.getDoubles("ext");
+            s.uniCoal = in.getDoubles("uni_coal");
+            s.uniInert = in.getDoubles("uni_inert");
+            s.uniVdaf = in.getDoubles("uni_vdaf");
+            s.degasCapture = in.getDoubles("degas");
+            long[] spent = in.getLongs("spent");
+            s.spentBranches = new LongIntMap(Math.max(16, spent.length));
+            for (long k : spent) s.spentBranches.put(k, 1);
+            saved = s;
+        }
+        long[] ek = in.getLongs("exp_key");
+        double[] er = in.getDoubles("exp_rem"), et = in.getDoubles("exp_t");
+        byte[] eb = in.getBytes("exp_broken");
+        expCount = 0;
+        expIndex.clear();
+        for (int e = 0; e < ek.length; e++) {
+            if (expCount == expKey.length) growExposures();
+            expKey[e] = ek[e];
+            expNode[e] = -1;
+            expRemaining[e] = er[e];
+            expTonnes[e] = et[e];
+            expBroken[e] = eb[e] != 0;
+            expIndex.put(ek[e], e);
+            expCount++;
+        }
+        long[] dk = in.getLongs("dust_key");
+        double[] dc = in.getDoubles("dust_coal"), di = in.getDoubles("dust_inert"), dv = in.getDoubles("dust_vdaf");
+        dustCount = 0;
+        dustIndex.clear();
+        for (int d = 0; d < dk.length; d++) {
+            if (dustCount == dustKey.length) growDust();
+            dustKey[d] = dk[d];
+            dustNode[d] = -1;
+            dustCoal[d] = dc[d];
+            dustInert[d] = di[d];
+            dustVdaf[d] = dv[d];
+            dustIndex.put(dk[d], d);
+            dustCount++;
+        }
     }
 
     /** Физическое время поля, с. */
@@ -187,15 +328,26 @@ public final class MethaneField {
         if (e != LongIntMap.MISSING) removeExposure(e);
     }
 
+    private void growExposures() {
+        int cap = expKey.length * 2;
+        expKey = Arrays.copyOf(expKey, cap);
+        expNode = Arrays.copyOf(expNode, cap);
+        expRemaining = Arrays.copyOf(expRemaining, cap);
+        expTonnes = Arrays.copyOf(expTonnes, cap);
+        expBroken = Arrays.copyOf(expBroken, cap);
+    }
+
+    private void growDust() {
+        int cap = dustKey.length * 2;
+        dustKey = Arrays.copyOf(dustKey, cap);
+        dustNode = Arrays.copyOf(dustNode, cap);
+        dustCoal = Arrays.copyOf(dustCoal, cap);
+        dustInert = Arrays.copyOf(dustInert, cap);
+        dustVdaf = Arrays.copyOf(dustVdaf, cap);
+    }
+
     private void addExposure(long key, double remaining, double tonnes, boolean broken) {
-        if (expCount == expKey.length) {
-            int cap = expKey.length * 2;
-            expKey = Arrays.copyOf(expKey, cap);
-            expNode = Arrays.copyOf(expNode, cap);
-            expRemaining = Arrays.copyOf(expRemaining, cap);
-            expTonnes = Arrays.copyOf(expTonnes, cap);
-            expBroken = Arrays.copyOf(expBroken, cap);
-        }
+        if (expCount == expKey.length) growExposures();
         int e = expCount++;
         expKey[e] = key;
         expNode[e] = t.nodeOf(key);
@@ -448,14 +600,7 @@ public final class MethaneField {
     private int dustEntry(long key) {
         int d = dustIndex.get(key);
         if (d != LongIntMap.MISSING) return d;
-        if (dustCount == dustKey.length) {
-            int cap = dustKey.length * 2;
-            dustKey = Arrays.copyOf(dustKey, cap);
-            dustNode = Arrays.copyOf(dustNode, cap);
-            dustCoal = Arrays.copyOf(dustCoal, cap);
-            dustInert = Arrays.copyOf(dustInert, cap);
-            dustVdaf = Arrays.copyOf(dustVdaf, cap);
-        }
+        if (dustCount == dustKey.length) growDust();
         d = dustCount++;
         dustKey[d] = key;
         dustNode[d] = t.nodeOf(key);

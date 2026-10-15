@@ -31,12 +31,7 @@ public final class SimConfigs {
                 ServerConfig.MINING_HOIST_SF_CARGO.get(), ServerConfig.MINING_ROPE_N0_CYCLES.get(),
                 ServerConfig.MINING_ROPE_CORROSION_PER_DAY.get(), ServerConfig.MINING_ROPE_ITEM_LENGTH_M.get(),
                 ServerConfig.MINING_SAFETY_MODE.get()));
-        Map<String, Double> weights = new HashMap<>();
-        ServerConfig.VEIN_WEIGHT.forEach((id, w) -> weights.put(id, ServerConfig.VEIN_ENABLED.get(id).get() ? w.get() : 0.0));
-        int seamMin = ServerConfig.COAL_SEAM_THICKNESS_MIN.get();
-        sections.put(VeinConfig.class, new VeinConfig(ServerConfig.VEINS_ENABLED.get(), ServerConfig.VEINS_CELL_CHUNKS.get(),
-                ServerConfig.VEINS_FILL_PROBABILITY.get(), weights, seamMin,
-                Math.max(seamMin, ServerConfig.COAL_SEAM_THICKNESS_MAX.get()), ServerConfig.COAL_RANK_GRADIENT_PER_BLOCK.get()));
+        sections.put(VeinConfig.class, veins());
         sections.put(MetallurgyConfig.class, new MetallurgyConfig(ServerConfig.CASTING_CHVORINOV_B_SAND_MIN_CM2.get(),
                 ServerConfig.MACHINING_TAYLOR_N.get(), ServerConfig.MACHINING_TAYLOR_C_M_MIN.get()));
 
@@ -45,6 +40,17 @@ public final class SimConfigs {
                 ServerConfig.PERF_MAX_COMMANDS_PER_TICK.get(), ServerConfig.PERF_EVENT_BUFFER_CAPACITY.get(),
                 ServerConfig.PERF_SNAPSHOT_BUFFERS.get(), ServerConfig.PERF_SLOW_JOIN_TIMEOUT_MS.get(),
                 ServerConfig.PERF_BUDGET_MS.get(), sections);
+    }
+
+    /** Ключи {@code worldgen.veins.*} и {@code worldgen.coal.*}; до загрузки серверного конфига — по умолчанию. */
+    public static VeinConfig veins() {
+        if (!ServerConfig.SPEC.isLoaded()) return VeinConfig.defaults();
+        Map<String, Double> weights = new HashMap<>();
+        ServerConfig.VEIN_WEIGHT.forEach((id, w) -> weights.put(id, ServerConfig.VEIN_ENABLED.get(id).get() ? w.get() : 0.0));
+        int seamMin = ServerConfig.COAL_SEAM_THICKNESS_MIN.get();
+        return new VeinConfig(ServerConfig.VEINS_ENABLED.get(), ServerConfig.VEINS_CELL_CHUNKS.get(),
+                ServerConfig.VEINS_FILL_PROBABILITY.get(), weights, seamMin,
+                Math.max(seamMin, ServerConfig.COAL_SEAM_THICKNESS_MAX.get()), ServerConfig.COAL_RANK_GRADIENT_PER_BLOCK.get());
     }
 
     public static DamageBudgetConfig damage() {

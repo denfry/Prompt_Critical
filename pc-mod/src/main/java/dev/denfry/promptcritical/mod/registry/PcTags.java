@@ -17,6 +17,12 @@ public final class PcTags {
         public static final TagKey<Block> TOPOLOGY_RELEVANT = mod("topology_relevant");
         /** Блоки, которые {@code DamageBudget} не трогает (04d §4d.2.3, {@code damage.protected_tag}). */
         public static final TagKey<Block> DAMAGE_IMMUNE = mod("damage_immune");
+        /** Открытое пламя в выработке воспламеняет метан (08 §8.2.6). */
+        public static final TagKey<Block> OPEN_FLAME = mod("open_flame");
+        /** Кровля устойчивая — пролёт {@code mining.roof_span_stable} (08 §8.2.2). */
+        public static final TagKey<Block> ROOF_STABLE = mod("roof_stable");
+        /** Кровля неустойчивая — {@code mining.roof_span_weak}; остальное — средняя. */
+        public static final TagKey<Block> ROOF_WEAK = mod("roof_weak");
         public static final TagKey<Block> ORES = common("ores");
         public static final TagKey<Block> COAL_ORES = common("ores/coal");
 

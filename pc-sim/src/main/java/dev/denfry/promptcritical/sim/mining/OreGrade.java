@@ -47,6 +47,12 @@ public record OreGrade(String mineral, String component, double gMed, double gMi
      * Класс G0–G5: шкала [g_min, g_max] делится на 6 равных долей в логарифме (у руд 08 нет урановой таблицы
      * 02 §2.1.3, а логнормальное содержание естественно квантовать по логарифму).
      */
+    /** Середина класса k в логарифме — представительное содержание квантованного предмета (02 §2.0.3). */
+    public double classCenter(int k) {
+        if (gMax <= gMin) return gMax;
+        return gMin * StrictMath.pow(gMax / gMin, (Math.max(0, Math.min(CLASSES - 1, k)) + 0.5) / CLASSES);
+    }
+
     public int gradeClass(double g) {
         if (gMax <= gMin) return CLASSES - 1;
         double x = StrictMath.log(g / gMin) / StrictMath.log(gMax / gMin);

@@ -268,6 +268,8 @@ class SimulationWorldTest {
             w2.register(watcher);
             w2.load(t);
             assertThat(w2.topology().deviceCount()).isEqualTo(1);
+            // тип котла остался без устройств — таблица типов всё равно переживает загрузку без сдвига индексов
+            assertThat(w2.stateHash()).isEqualTo(w.stateHash());
             SimId next = w2.topology().addDevice("promptcritical:chimney", new GridPos(0, 0, 0));
             assertThat(next.serial()).isEqualTo(3);                      // номера не переиспользуются
         }

@@ -88,6 +88,10 @@ public final class ServerConfig {
     public static final ModConfigSpec.DoubleValue MINING_ROPE_CORROSION_PER_DAY;
     public static final ModConfigSpec.DoubleValue MINING_ROPE_ITEM_LENGTH_M;
     public static final ModConfigSpec.EnumValue<HoistConfig.SafetyMode> MINING_SAFETY_MODE;
+    public static final ModConfigSpec.DoubleValue MINING_SEAM_GAS_CONTENT;
+    public static final ModConfigSpec.DoubleValue MINING_BARRIER_INERT_KG_PER_BLOCK;
+    public static final ModConfigSpec.IntValue MINING_MAX_MINE_BLOCKS;
+    public static final ModConfigSpec.BooleanValue MINING_ROOF_COLLAPSE;
     public static final ModConfigSpec.DoubleValue CASTING_CHVORINOV_B_SAND_MIN_CM2;
     public static final ModConfigSpec.DoubleValue MACHINING_TAYLOR_N;
     public static final ModConfigSpec.DoubleValue MACHINING_TAYLOR_C_M_MIN;
@@ -247,6 +251,13 @@ public final class ServerConfig {
         MINING_ROPE_ITEM_LENGTH_M = b.comment("Length of one wire_rope item, m (08 §8.2.8)").defineInRange("rope_item_length_m", 10.0, 0.1, 1000.0);
         MINING_SAFETY_MODE = b.comment("ENFORCED: unsafe hoisting is refused; ADVISORY: allowed and journaled (08 §8.2.8)")
                 .defineEnum("safety_mode", HoistConfig.SafetyMode.ENFORCED);
+        MINING_SEAM_GAS_CONTENT = b.comment("[BALANCE] Seam gas content x0, m3/t; x = x0(1 - exp(-(72 - y)/40)) (08 §8.2.4)")
+                .defineInRange("seam_gas_content_m3_per_t", 15.0, 0.0, 100.0);
+        MINING_BARRIER_INERT_KG_PER_BLOCK = b.comment("[BALANCE] Inert mass held by one explosion_barrier block, kg; >= 400 kg per m2 of airway quenches the flame (08 §8.2.6)")
+                .defineInRange("barrier_inert_kg_per_block", 500.0, 0.0, 1.0e4);
+        MINING_MAX_MINE_BLOCKS = b.comment("Largest mine airway volume traced by the flood fill, blocks; beyond it the mine is truncated (08 §8.2.2)")
+                .defineInRange("max_mine_blocks", 32_768, 64, 1 << 20);
+        MINING_ROOF_COLLAPSE = b.comment("Unsupported roof spans collapse after the rock's delay (08 §8.2.2)").define("roof_collapse", true);
         b.pop();
 
         b.push("casting");

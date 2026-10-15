@@ -2,6 +2,7 @@ package dev.denfry.promptcritical.mod.registry;
 
 import dev.denfry.promptcritical.mod.PromptCritical;
 import dev.denfry.promptcritical.mod.block.PcBlock;
+import dev.denfry.promptcritical.mod.item.MineInstrumentItem;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
@@ -49,8 +50,9 @@ public final class PcItems {
     public static final DeferredItem<Item> REFRACTORY_BRICK = item("refractory_brick", 64);
     public static final DeferredItem<Item> CUTTING_TOOL = item("cutting_tool", 1);
     public static final DeferredItem<Item> FLAME_SAFETY_LAMP = item("flame_safety_lamp", 1);
-    public static final DeferredItem<Item> SELF_RESCUER = item("self_rescuer", 1);
-    public static final DeferredItem<Item> STONE_DUSTER = item("stone_duster", 1);
+    public static final DeferredItem<MineInstrumentItem> SELF_RESCUER = instrument("self_rescuer", MineInstrumentItem.Kind.SELF_RESCUER, 16);
+    public static final DeferredItem<MineInstrumentItem> STONE_DUSTER = instrument("stone_duster", MineInstrumentItem.Kind.STONE_DUSTER, 1);
+    public static final DeferredItem<MineInstrumentItem> METHANOMETER = instrument("methanometer", MineInstrumentItem.Kind.METHANOMETER, 1);
     public static final DeferredItem<Item> WIRE_ROPE = item("wire_rope", 16);
     public static final DeferredItem<Item> CANARY = item("canary", 16);
     // справочник (11)
@@ -69,6 +71,12 @@ public final class PcItems {
 
     private static DeferredItem<Item> item(String name, int stack) {
         DeferredItem<Item> i = ITEMS.registerSimpleItem(name, new Item.Properties().stacksTo(stack));
+        PLAIN.add(i);
+        return i;
+    }
+
+    private static DeferredItem<MineInstrumentItem> instrument(String name, MineInstrumentItem.Kind kind, int stack) {
+        DeferredItem<MineInstrumentItem> i = ITEMS.registerItem(name, p -> new MineInstrumentItem(p, kind), new Item.Properties().stacksTo(stack));
         PLAIN.add(i);
         return i;
     }
