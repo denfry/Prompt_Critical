@@ -3,6 +3,7 @@ package dev.denfry.promptcritical.mod.command;
 import com.mojang.brigadier.CommandDispatcher;
 import com.mojang.brigadier.arguments.DoubleArgumentType;
 import com.mojang.brigadier.arguments.IntegerArgumentType;
+import com.mojang.brigadier.arguments.StringArgumentType;
 import com.mojang.brigadier.context.CommandContext;
 import com.mojang.brigadier.exceptions.CommandSyntaxException;
 import dev.denfry.promptcritical.mod.binding.SimBindings;
@@ -23,12 +24,25 @@ import dev.denfry.promptcritical.sim.mining.MineGas;
 import dev.denfry.promptcritical.sim.mining.MineNetwork;
 import dev.denfry.promptcritical.sim.mining.MineSubsystem;
 import dev.denfry.promptcritical.sim.plant.SteamPlant;
+import dev.denfry.promptcritical.mod.mine.HoistMenu;
+import dev.denfry.promptcritical.mod.mine.MineHoistBlockEntity;
 import net.minecraft.core.BlockPos;
+import net.minecraft.core.Direction;
+import net.minecraft.core.registries.BuiltInRegistries;
 import net.minecraft.commands.CommandSourceStack;
 import net.minecraft.commands.Commands;
 import net.minecraft.commands.arguments.ResourceLocationArgument;
+import net.minecraft.commands.arguments.coordinates.BlockPosArgument;
 import net.minecraft.network.chat.Component;
+import net.minecraft.server.level.ServerLevel;
+import net.minecraft.world.InteractionHand;
+import net.minecraft.world.InteractionResult;
+import net.minecraft.world.entity.player.Player;
+import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.phys.BlockHitResult;
+import net.minecraft.world.phys.Vec3;
+import net.neoforged.neoforge.common.util.FakePlayer;
+import net.neoforged.neoforge.common.util.FakePlayerFactory;
 
 /** Служебные команды {@code /pc} (05 §5.4.7): хеш состояния, устройства, профиль тика, шахты, налив котла. */
 public final class PcCommands {
@@ -53,8 +67,16 @@ public final class PcCommands {
                         .then(Commands.literal("water").then(Commands.argument("m3", DoubleArgumentType.doubleArg(-1e6, 1e6))
                                 .executes(PcCommands::mineWater))))
                 .then(Commands.literal("boiler")
-                        .then(Commands.literal("preset").then(Commands.argument("pressure_mpa", DoubleArgumentType.doubleArg(0.1, 2))
+                        .then(Commands.literal("preset").then(Commands.argument("pressure_mpa", DoubleArgumentType.doubleArg(0.1, 6))
                                 .then(Commands.argument("level_m", DoubleArgumentType.doubleArg(0, 1.6)).executes(PcCommands::boilerPreset)))))
+                .then(Commands.literal("use").then(Commands.argument("pos", BlockPosArgument.blockPos())
+                        .executes(ctx -> use(ctx, ItemStack.EMPTY))
+                        .then(Commands.argument("item", ResourceLocationArgument.id())
+                                .executes(ctx -> use(ctx, stack(ctx, 1)))
+                                .then(Commands.argument("count", IntegerArgumentType.integer(1, 64))
+                                        .executes(ctx -> use(ctx, stack(ctx, IntegerArgumentType.getInteger(ctx, "count"))))))))
+                .then(Commands.literal("hoist").then(Commands.argument("pos", BlockPosArgument.blockPos())
+                        .then(Commands.argument("button", StringArgumentType.word()).executes(PcCommands::hoist))))
                 .then(Commands.literal("handbook").then(Commands.argument("entry", ResourceLocationArgument.id())
                         .executes(ctx -> handbook(ctx, 0))
                         .then(Commands.argument("page", IntegerArgumentType.integer(1))
@@ -177,6 +199,51 @@ public final class PcCommands {
         double mpa = DoubleArgumentType.getDouble(ctx, "pressure_mpa"), lv = DoubleArgumentType.getDouble(ctx, "level_m");
         binding(ctx).world().subsystem(SteamPlant.class).presetWater(be.simId(), mpa * 1e6, lv);
         ctx.getSource().sendSuccess(() -> Component.translatable("commands.promptcritical.boiler.preset", mpa, lv), true);
+        return 1;
+    }
+
+    private static ItemStack stack(CommandContext<CommandSourceStack> ctx, int count) {
+        return new ItemStack(BuiltInRegistries.ITEM.get(ResourceLocationArgument.getId(ctx, "item")), count);
+    }
+
+    /**
+     * Правый клик по блоку от имени фейк-игрока с предметом в руке (сценарии, съёмка, проверка без GUI): розжиг,
+     * вентиль, канат, форма, ведро. Фейк-игрок стоит над верхней гранью блока и после клика остаётся с пустыми руками.
+     */
+    private static int use(CommandContext<CommandSourceStack> ctx, ItemStack stack) throws CommandSyntaxException {
+        ServerLevel level = ctx.getSource().getLevel();
+        BlockPos pos = BlockPosArgument.getLoadedBlockPos(ctx, "pos");
+        FakePlayer fp = FakePlayerFactory.getMinecraft(level);
+        fp.moveTo(pos.getX() + 0.5, pos.getY() + 1, pos.getZ() + 0.5, 0, 90);
+        fp.setItemInHand(InteractionHand.MAIN_HAND, stack);
+        BlockHitResult hit = new BlockHitResult(Vec3.atCenterOf(pos).add(0, 0.5, 0), Direction.UP, pos, false);
+        InteractionResult r = fp.gameMode.useItemOn(fp, level, stack, InteractionHand.MAIN_HAND, hit);
+        fp.setItemInHand(InteractionHand.MAIN_HAND, ItemStack.EMPTY);
+        ctx.getSource().sendSuccess(() -> Component.literal("use " + pos.toShortString() + ": " + r), false);
+        return r.consumesAction() ? 1 : 0;
+    }
+
+    /** Кнопка панели подъёмной машины без GUI: номер посадки (с 0), {@code stop}, {@code reset}, {@code slower}, {@code faster}. */
+    private static int hoist(CommandContext<CommandSourceStack> ctx) throws CommandSyntaxException {
+        ServerLevel level = ctx.getSource().getLevel();
+        if (!(level.getBlockEntity(BlockPosArgument.getLoadedBlockPos(ctx, "pos")) instanceof MineHoistBlockEntity be)) {
+            ctx.getSource().sendFailure(Component.literal("no mine hoist at this position"));
+            return 0;
+        }
+        String b = StringArgumentType.getString(ctx, "button");
+        int id = switch (b) {
+            case "stop" -> HoistMenu.BUTTON_STOP;
+            case "reset" -> HoistMenu.BUTTON_RESET;
+            case "slower" -> HoistMenu.BUTTON_SLOWER;
+            case "faster" -> HoistMenu.BUTTON_FASTER;
+            default -> b.chars().allMatch(Character::isDigit) && !b.isEmpty() ? Integer.parseInt(b) : -1;
+        };
+        if (id < 0) {
+            ctx.getSource().sendFailure(Component.literal("button: landing number, stop, reset, slower or faster"));
+            return 0;
+        }
+        Player p = ctx.getSource().getEntity() instanceof Player pl ? pl : FakePlayerFactory.getMinecraft(level);
+        be.onButton(p, id);
         return 1;
     }
 
