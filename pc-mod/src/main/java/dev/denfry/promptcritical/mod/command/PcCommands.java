@@ -202,8 +202,10 @@ public final class PcCommands {
         return 1;
     }
 
-    private static ItemStack stack(CommandContext<CommandSourceStack> ctx, int count) {
-        return new ItemStack(BuiltInRegistries.ITEM.get(ResourceLocationArgument.getId(ctx, "item")), count);
+    private static ItemStack stack(CommandContext<CommandSourceStack> ctx, int count) throws CommandSyntaxException {
+        var id = ResourceLocationArgument.getId(ctx, "item");
+        if (!BuiltInRegistries.ITEM.containsKey(id)) throw ResourceLocationArgument.ERROR_UNKNOWN_ID.create(id);
+        return new ItemStack(BuiltInRegistries.ITEM.get(id), count);
     }
 
     /**
