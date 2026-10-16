@@ -1,0 +1,77 @@
+<!doctype html>
+<html lang="{{lang}}">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>{{guide.meta.title}}</title>
+<meta name="description" content="{{guide.meta.description}}">
+<link rel="canonical" href="{{url}}">
+<link rel="alternate" hreflang="en" href="{{site}}guide/">
+<link rel="alternate" hreflang="ru" href="{{site}}ru/guide/">
+<link rel="alternate" hreflang="x-default" href="{{site}}guide/">
+<meta property="og:type" content="article">
+<meta property="og:title" content="{{guide.meta.title}}">
+<meta property="og:description" content="{{guide.meta.description}}">
+<meta property="og:url" content="{{url}}">
+<meta property="og:image" content="{{site}}assets/guide/overview.webp">
+<meta property="og:image:width" content="1600">
+<meta property="og:image:height" content="900">
+<meta property="og:locale" content="{{meta.locale}}">
+<meta name="twitter:card" content="summary_large_image">
+<meta name="theme-color" content="#0b0f12">
+<link rel="icon" href="{{root}}assets/favicon.png" type="image/png">
+<link rel="preload" href="{{root}}assets/fonts/oswald.woff2" as="font" type="font/woff2" crossorigin>
+<style>{{css}}</style>
+</head>
+<body class="guide">
+<a class="skip" href="#main">{{nav.skip}}</a>
+<header class="bar">
+  <a class="mark" href="{{root}}{{langPath}}" aria-label="Prompt Critical">PROMPT <span>CRITICAL</span></a>
+  <nav aria-label="{{nav.label}}">
+    <ul>
+      <li><a href="{{root}}{{langPath}}">{{guide.nav.home}}</a></li>
+      <li><a href="#start">{{guide.nav.start}}</a></li>
+      <li><a href="#i0">I0</a></li>
+      <li><a href="#later">I1–I4</a></li>
+      <li><a href="#automation">{{guide.nav.automation}}</a></li>
+      <li><a href="#faq">{{guide.nav.faq}}</a></li>
+    </ul>
+  </nav>
+  <div class="bar-end">
+    <a class="lang" href="{{otherUrl}}" hreflang="{{otherLang}}" lang="{{otherLang}}">{{nav.other}}</a>
+    <a class="gh" href="https://github.com/denfry/Prompt_Critical">GitHub</a>
+  </div>
+</header>
+
+<main id="main">
+{{content}}
+</main>
+
+<footer class="foot">
+  <p>{{guide.foot}}</p>
+  <p>{{foot.license}}</p>
+  <p>{{foot.notAffiliated}}</p>
+</footer>
+<script>
+// Highlights the table-of-contents entry for the section in view.
+(() => {
+  // on narrow screens the contents list sits above the text; keep it folded there
+  if (matchMedia("(max-width: 1099px)").matches) document.querySelector(".toc details").open = false;
+  const links = [...document.querySelectorAll(".toc a[href^='#']")];
+  const targets = links.map(a => document.getElementById(a.hash.slice(1)));
+  let current = -1, queued = false;
+  const update = () => {
+    queued = false;
+    let i = 0;
+    targets.forEach((t, k) => { if (t && t.getBoundingClientRect().top < innerHeight * 0.3) i = k; });
+    if (i === current) return;
+    links[current]?.removeAttribute("aria-current");
+    links[i].setAttribute("aria-current", "true");
+    current = i;
+  };
+  addEventListener("scroll", () => { if (!queued) { queued = true; requestAnimationFrame(update); } }, { passive: true });
+  update();
+})();
+</script>
+</body>
+</html>

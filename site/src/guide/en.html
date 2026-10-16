@@ -1,0 +1,478 @@
+<section class="g-hero" aria-labelledby="guide-h">
+  <div>
+    <p class="kicker">Guide · Minecraft 1.21.1 · NeoForge · Create</p>
+    <h1 id="guide-h">From the first lump of coal to the reactor</h1>
+    <p class="lede">How progress works in Prompt Critical, what to build first and in what order, and how not to blow anything up on the way. Each step has the actual numbers and shows what the instruments are telling you.</p>
+    <div class="note">
+      <p><strong>Status: pre-alpha, nothing to download yet.</strong> Era I0 (coal and steam) is built and runs in development builds. The screenshots come from one of them. Eras I1–I4 are design work, and details will change before they ship.</p>
+    </div>
+  </div>
+  <figure>
+    <img src="{{root}}assets/guide/overview.webp" width="1600" height="900" alt="A test plant in Minecraft from above: boiler house, mine fan, hoist headframe and longwall gallery">
+    <figcaption>I0 test plant. Development build, Complementary Reimagined shaders, placeholder art.</figcaption>
+  </figure>
+</section>
+
+<div class="g-layout">
+  <aside class="toc" aria-label="Contents">
+    <details open>
+      <summary>Contents</summary>
+      <ol>
+        <li><a href="#start">Before you start</a></li>
+        <li><a href="#i0">I0. Coal and steam</a>
+          <ol>
+            <li><a href="#i0-coal">1. Find coal</a></li>
+            <li><a href="#i0-steam">2. Raise first steam</a></li>
+            <li><a href="#i0-run">3. Keep the boiler alive</a></li>
+            <li><a href="#i0-mine">4. Open a mine</a></li>
+            <li><a href="#i0-blast">5. Explosions</a></li>
+            <li><a href="#i0-hoist">6. Hoist and drainage</a></li>
+            <li><a href="#i0-longwall">7. Longwall</a></li>
+            <li><a href="#i0-prep">8. Coal preparation</a></li>
+            <li><a href="#i0-foundry">9. Foundry and machine shop</a></li>
+            <li><a href="#i0-check">I0 checklist</a></li>
+          </ol>
+        </li>
+        <li><a href="#later">I1–I4: what comes next</a>
+          <ol>
+            <li><a href="#i1">I1. Steel and power</a></li>
+            <li><a href="#i2">I2. Oil and gas</a></li>
+            <li><a href="#i3">I3. Chemistry</a></li>
+            <li><a href="#i4">I4. Nuclear</a></li>
+          </ol>
+        </li>
+        <li><a href="#automation">Automation ladder</a></li>
+        <li><a href="#faq">FAQ</a></li>
+      </ol>
+    </details>
+  </aside>
+
+  <article class="g-body">
+
+<section id="start" class="g-sec" aria-labelledby="start-h">
+  <h2 id="start-h">Before you start</h2>
+  <p>Prompt Critical is about a whole industrial complex, from a coal mine to a closed nuclear fuel cycle. It has no blocks that just hand out energy. A boiler builds pressure, a mine fills with methane, a rope wears out, and a casting gets a shrinkage cavity if you forget the riser. The physics core computes all of it from real equations.</p>
+  <p>Create provides the mechanics: shafts, gears and contraptions. The mod adds what turns those shafts and what they drive: the steam engine, the mine fan, the hoist, pumps and machine tools.</p>
+
+  <h3>How progress works</h3>
+  <p>There are no research points and no tech tree. The next step is unlocked by <strong>materials</strong>. Without steel you can't make pipe, without pipe there's no oil, and without electricity there's no reactor graphite. Old industries keep running: a plant in the nuclear era still mines coal and melts steel, because everything else is made from them.</p>
+  <div class="gtable"><table>
+    <thead><tr><th>Ladder</th><th>Steps</th><th>What it measures</th></tr></thead>
+    <tbody>
+      <tr><td class="n">I0–I4</td><td>coal and steam → steel and power → oil and gas → chemistry → nuclear</td><td>what your industry can make</td></tr>
+      <tr><td class="n">T0–T4</td><td>graphite pile → channel reactor → PWR / BWR → heavy water → fast reactor</td><td>which reactor you can build</td></tr>
+      <tr><td class="n">A0–A5</td><td>hands → relays → analog computers → PLC → SCADA → plant level</td><td>how you control the plant</td></tr>
+    </tbody>
+  </table></div>
+
+  <h3>The engineering handbook</h3>
+  <ul class="needs">
+    <li><img src="{{root}}assets/guide/i/engineering_handbook.png" width="16" height="16" alt=""><span><strong>Engineering Handbook.</strong> You get it the first time you join a world. Chapters open as you play: when you place a block, pick up an item or earn an advancement.</span></li>
+    <li><img src="{{root}}assets/guide/i/operating_procedure.png" width="16" height="16" alt=""><span><strong>Operating Procedure.</strong> Building a boiler, hoist or mine fan gives you its procedure. Put it on a Document Lectern by the plant, where anyone can read it.</span></li>
+  </ul>
+  <p>The handbook explains the physics and teaches you to read instruments. It never shows your plant's live values: pressure comes from the gauge, and gas from the lamp and the methanometer.</p>
+  <div class="callout tip">
+    <span class="k">The main rule</span>
+    <p>Every accident has a cause, and the instruments nearly always show it in advance. Black smoke means the furnace is short of air. A whistle from the boiler means too much steam. A canary falling off its perch means carbon monoxide. Learn to read these signs and the mod stops being scary.</p>
+  </div>
+</section>
+
+<section id="i0" class="g-sec" aria-labelledby="i0-h">
+  <p class="era-no">ERA I0</p>
+  <h2 id="i0-h">Coal and steam</h2>
+  <span class="badge live">In the game · development build</span>
+  <p>The first era rests on two things. Coal gives heat, the boiler turns heat into steam, and the steam engine turns a Create shaft. Everything else in I0, from the mine and coal preparation to the foundry and the machine shop, either produces coal or runs off that shaft.</p>
+
+  <h3 id="i0-coal">1. Find coal</h3>
+  <p>Coal lies in <strong>seams</strong>: flat bodies 1–4 blocks thick and 48–160 blocks long, dipping gently. Look under plains, taiga and swamps. Seams come in series, one under another, 6–20 blocks apart. The floor of a seam is usually <strong>fireclay</strong>, which you'll need later for refractory brick. Pyrite and sphalerite turn up nearby.</p>
+  <ul class="needs">
+    <li><img src="{{root}}assets/guide/i/geological_map.png" width="16" height="16" alt=""><span><strong>Geological Map.</strong> Found in abandoned mineshaft chests, cartographers' houses, shipwrecks and dungeons. Right-click it to see the distance, bearing and depth of the centre of the nearest seam or ore body.</span></li>
+    <li><img src="{{root}}assets/guide/i/raw_coal.png" width="16" height="16" alt=""><span><strong>Run-of-Mine Coal.</strong> What a seam drops. Each piece carries the <strong>assay</strong> of the spot it came from, shown in the tooltip. Pieces with different assays don't stack.</span></li>
+  </ul>
+  <p>The assay is four numbers: moisture W, ash A, volatile matter V and sulphur S. Coal is ranked by volatile matter, and rank depends on depth (Hilt's law: the deeper the seam, the higher the rank).</p>
+  <div class="gtable"><table>
+    <thead><tr><th>Rank</th><th>Volatiles</th><th>Use</th></tr></thead>
+    <tbody>
+      <tr><td>Lignite</td><td class="n">&gt; 42 %</td><td>wet and friable, boiler fuel</td></tr>
+      <tr><td>Bituminous</td><td class="n">8–42 %</td><td>steam coals near the surface; coking coals deeper down, for coke in I1</td></tr>
+      <tr><td>Anthracite</td><td class="n">&lt; 8 %</td><td>burns almost smokeless, hard to light</td></tr>
+    </tbody>
+  </table></div>
+  <p>Vanilla Minecraft coal works as a long-flame steam coal, so you can light your first boiler with it.</p>
+  <div class="callout">
+    <span class="k">Plan ahead</span>
+    <p>Write down the depth of every seam you find. I1 needs coking coal, low in ash and sulphur, and it lies deeper than steam coal. At Y = 0 volatiles run about 22 %, which is coking coal.</p>
+  </div>
+
+  <h3 id="i0-steam">2. Raise first steam</h3>
+  <p>The first boiler house is a fire-tube boiler, a chimney over it and a steam engine alongside. The engine sends rotation into the Create network. This is the first goal of the game, and it earns the <strong>First Steam</strong> advancement.</p>
+  <figure class="shot">
+    <img src="{{root}}assets/guide/boiler_front.webp" width="1600" height="900" alt="Boiler house: the boiler with a pressure gauge and stoker in front, the steam engine with a flywheel at the side, the chimney behind" loading="lazy">
+    <figcaption>Boiler house. Gauges on the front of the boiler and engine, the chain grate stoker below, the flywheel on the left.</figcaption>
+  </figure>
+  <h4>What you need</h4>
+  <ul class="renders">
+    <li><img src="{{root}}assets/img/fire_tube_boiler_lit.webp" width="128" height="128" alt="" loading="lazy">Fire-Tube Boiler<br>3×3×6, 5 MW, 1.2 MPa</li>
+    <li><img src="{{root}}assets/guide/r/chimney_top.webp" width="256" height="256" alt="" loading="lazy">Chimney<br>about 17 sections, 20 m</li>
+    <li><img src="{{root}}assets/guide/r/steam_engine_cylinder.webp" width="256" height="256" alt="" loading="lazy">Steam Engine<br>3×3×5, about 119 kW</li>
+    <li><img src="{{root}}assets/guide/r/grate_stoker_running.webp" width="256" height="256" alt="" loading="lazy">Chain Grate Stoker<br>optional</li>
+  </ul>
+  <p>You'll also need water (a bucket or Create pipes), coal, and flint and steel, a torch or a fire charge. A pressure gauge on the front is optional, but without one you're working blind.</p>
+
+  <h4>Why the first light-up goes wrong</h4>
+  <p>A boiler doesn't draw air by itself. The chimney pulls air through the grate: a column of hot gas is lighter than the same column of outside air, and that pressure difference is the <strong>draught</strong>. A cold chimney draws poorly. Load three coal at once and the furnace runs out of air. The coal burns to carbon monoxide, <strong>black smoke</strong> pours from the chimney, efficiency drops to about 0.3, and steam takes more than half an hour. Fire with a <strong>thin bed</strong> instead, and the shaft turns about 20–25 minutes after you start with an empty boiler.</p>
+
+  <h4>Step by step</h4>
+  <ol class="steps">
+    <li><strong>Place the boiler.</strong> It goes down whole, 3×3×6, empty and cold. Leave room at the side for the engine and at the front for the stoker and gauge.</li>
+    <li><strong>Build the chimney</strong> over the rear top edge of the boiler, above the flue. Height is 3 m of flue plus 1 m per section. Aim for 20 m, about 17 sections. A short chimney means weak draught and a long warm-up.</li>
+    <li><strong>Place the steam engine</strong> right against the boiler. It couples to the boiler whose block it touches. Run a Create shaft to the engine's coupling. A Create wrench on the coupling picks the gear: 16, 32 or 64 rpm.</li>
+    <li><strong>Fill with water.</strong> A bucket or a Create pipe into any block of the boiler fills the 4 m³ feed tank. The feed regulator fills the boiler itself in about 3.5 minutes. Don't let the tank run dry.</li>
+    <li><strong>Get coal onto the grate.</strong> Right-click the boiler with coal: one item is 100 kg, up to 500 kg on the grate. Or put a stoker at the front with a Create shaft from the left, which feeds 0.3 kg/s at 32 rpm.</li>
+    <li><strong>Charge one coal and light it</strong> with flint and steel, a torch or a fire charge.</li>
+    <li><strong>Watch the smoke.</strong> Light smoke: add another coal. Black smoke: wait for it to clear. As the chimney warms up, bring the feed up to three coal on the grate, or 0.3 kg/s.</li>
+    <li><strong>Hang the pressure gauge</strong> on the boiler front. Click the boiler with an empty hand to see the bed on the grate, the water in the tank, the furnace state and the plug.</li>
+    <li><strong>Wait for 0.5 MPa</strong>, half of working pressure. The engine's stop valve starts closed: open it with an empty-hand right-click on the engine.</li>
+    <li><strong>Stuck on dead centre?</strong> Sneak and right-click the engine with an empty hand to bar it over by 60°. This only works on an engine that has almost stopped.</li>
+    <li><strong>The shaft is turning: First Steam.</strong> Fit a Governor Dashpot to the engine so its speed stops hunting.</li>
+    <li><strong>Clear the slag</strong> now and then, with an empty hand or a hopper. Each item of Boiler Slag is 10 kg of ash.</li>
+  </ol>
+  <div class="callout warn">
+    <span class="k">Common mistakes</span>
+    <ul>
+      <li>Loading the grate all at once gives black smoke and half an hour of waiting.</li>
+      <li>Opening the stop valve too early stalls the engine on dead centre.</li>
+      <li>Letting the feed tank run dry leaves the regulator nothing to feed, and that leads straight to low water.</li>
+      <li>If the engine takes less steam than the furnace makes, the safety valve whistles. Cut the coal feed.</li>
+    </ul>
+  </div>
+  <div class="shots">
+    <figure class="shot"><img src="{{root}}assets/guide/boiler_engine.webp" width="1600" height="900" alt="Steam engine flywheel driving a Create shaft" loading="lazy"><figcaption>The engine's flywheel and shaft feed the Create network. 1 stress unit is 1 kW.</figcaption></figure>
+    <figure class="shot"><img src="{{root}}assets/guide/boiler_chimney.webp" width="1600" height="900" alt="Brick chimney with light smoke" loading="lazy"><figcaption>Light smoke means the furnace has enough air. Black smoke means stop firing.</figcaption></figure>
+  </div>
+
+  <h3 id="i0-run">3. Keep the boiler alive</h3>
+  <p>A boiler holds 8–10 t of water. It raises steam slowly and loses it just as slowly, so it works as a heat store. It doesn't know how much steam you need. If the engine takes less than the furnace makes, pressure climbs on its own. <strong>You control pressure with the coal feed, not with the valve.</strong></p>
+  <div class="gtable"><table>
+    <thead><tr><th>Number</th><th>Value</th></tr></thead>
+    <tbody>
+      <tr><td>Boiler output</td><td class="n">5 MW to steam, about 6.7 t/h</td></tr>
+      <tr><td>Working pressure / safety valve setting</td><td class="n">1.2 / 1.32 MPa</td></tr>
+      <tr><td>Rated coal feed</td><td class="n">0.3 kg/s; one item lasts 333 s</td></tr>
+      <tr><td>One engine cylinder at 120 rpm</td><td class="n">119 kW, about 0.5 kg/s of steam</td></tr>
+      <tr><td>Engines one boiler can feed</td><td class="n">about 3</td></tr>
+    </tbody>
+  </table></div>
+  <h4>Two protections that need no electricity</h4>
+  <ul class="needs">
+    <li><span class="dot"></span><span><strong>Safety valve.</strong> Built into the boiler. It lifts at 1.32 MPa with a whistle and a cloud of steam. That isn't an accident, it's a signal: cut the coal or give the engine load. Every lift is coal blown into the sky.</span></li>
+    <li><img src="{{root}}assets/guide/i/fusible_plug.png" width="16" height="16" alt=""><span><strong>Fusible Plug.</strong> A tin core in the crown of the furnace tube. If the water drops below the crown, the tin melts and a jet of steam puts the fire out. Keep a spare: they're made from copper and cassiterite, two at a time.</span></li>
+  </ul>
+  <div class="callout warn">
+    <span class="k">Low water</span>
+    <p>The red mark on the gauge glass is the lowest allowed water level. Below it, the furnace crown overheats within minutes. With a plug, the fire goes out. Without one, the boiler explodes with the energy of tens of kilograms of TNT. If the plug has melted: no coal and no relighting. Find the cause, wait until pressure is almost zero, fit a new plug and light up from scratch.</p>
+  </div>
+  <p>The engine's speed is held by a <strong>Watt flyball governor</strong>, the first automatic controller in the game. It runs about 5 % slower under load than at no load. That's normal for a proportional controller. Without a dashpot, the speed swings after every change in load.</p>
+
+  <h3 id="i0-mine">4. Open a mine</h3>
+  <p>A surface seam runs out quickly, and real production is underground. The mine starts with the first block you take out of a seam. From then on the mod tracks the air underground: how much methane, carbon monoxide and oxygen it holds, and where it moves.</p>
+  <p>Every exposed seam block gives off methane: a lot at first, then less and less over a couple of days. Broken coal gives off the rest within an hour. Methane is lighter than air and gathers <strong>under the roof</strong>: in dead ends, high spots and the cavities left by roof falls.</p>
+  <figure class="shot">
+    <img src="{{root}}assets/guide/fan_close.webp" width="1600" height="900" alt="Main mine fan installed at the mouth of a heading" loading="lazy">
+    <figcaption>The Main Mine Fan sits in the mouth of a heading, one side to the outside and one into the mine. Its Create shaft comes in from behind.</figcaption>
+  </figure>
+  <h4>Ventilation</h4>
+  <ol class="steps">
+    <li><strong>Put the fan in a heading mouth</strong> (3×3×3, a Create shaft from behind, 64 rpm rated). It draws air out of the mine, and fresh air comes in through the other openings.</li>
+    <li><strong>Hang Ventilation Doors</strong> so the air can't short-cut to the fan and has to sweep the face. An open door short-circuits the airflow, so close it behind you every time.</li>
+    <li><strong>Keep the fan running all the time</strong> while any seam is open, even with nobody underground. Once it stops, a dead-end heading reaches 1 % methane in tens of seconds, and the whole mine in minutes.</li>
+  </ol>
+  <div class="gtable"><table>
+    <thead><tr><th>Limit</th><th>Value</th></tr></thead>
+    <tbody>
+      <tr><td>Methane in the return from a face</td><td class="n">≤ 1 %</td></tr>
+      <tr><td>Mine return / intake</td><td class="n">≤ 0.75 % / 0.5 %</td></tr>
+      <tr><td>Local accumulation</td><td class="n">≤ 2 %</td></tr>
+      <tr><td>Air velocity</td><td class="n">≥ 0.25 m/s; ≤ 4 m/s on a longwall</td></tr>
+    </tbody>
+  </table></div>
+  <h4>Instruments</h4>
+  <ul class="needs">
+    <li><img src="{{root}}assets/guide/i/canary.png" width="16" height="16" alt=""><span><strong>Canary in a Canary Cage.</strong> It senses carbon monoxide and low oxygen, not methane. If it falls off its perch, get out. Carry a living bird into fresh air and it will come round.</span></li>
+    <li><img src="{{root}}assets/guide/r/flame_safety_lamp.webp" width="256" height="256" alt=""><span><strong>Flame Safety Lamp.</strong> From 1 % methane a blue cap rises over the flame. Above 5 % the gas burns inside the gauze: leave at once. Below 17 % oxygen the lamp goes out.</span></li>
+    <li><img src="{{root}}assets/guide/i/methanometer.png" width="16" height="16" alt=""><span><strong>Methanometer.</strong> Right-click to measure methane at the roof. The reading turns red from 1 %.</span></li>
+    <li><img src="{{root}}assets/guide/r/mine_dispatch_cabinet_alarm.webp" width="256" height="256" alt=""><span><strong>Mine Gas Monitoring Cabinet.</strong> Raises the alarm at 1 % methane anywhere in the mine. Click it with an empty hand for a summary of intake air, gas peaks and drainage.</span></li>
+    <li><img src="{{root}}assets/guide/i/self_rescuer.png" width="16" height="16" alt=""><span><strong>Self-Rescuer.</strong> Single use. For 30 minutes you breathe from the set, not from the heading.</span></li>
+  </ul>
+  <h4>Roof support</h4>
+  <p>The roof holds itself up while the unsupported span is small enough. Go past the span limit and it comes down in a dome after a delay. Bigger excess, bigger dome. A roof fall blocks the heading and changes the ventilation.</p>
+  <div class="gtable"><table>
+    <thead><tr><th>Roof rock</th><th>Span</th><th>How long it holds once exceeded</th></tr></thead>
+    <tbody>
+      <tr><td>Strong: sandstone, granite, diorite, andesite, deepslate</td><td class="n">6 blocks</td><td>about half an hour of physical time</td></tr>
+      <tr><td>Medium: other stone</td><td class="n">4 blocks</td><td>a few minutes</td></tr>
+      <tr><td>Weak: coal, fireclay, gravel, dirt, clay, sand</td><td class="n">2 blocks</td><td>almost none</td></tr>
+    </tbody>
+  </table></div>
+  <p>A <strong>Mine Support</strong> (a timber set, 3 blocks high) adds 2 blocks to the span. Set the support first, then dig the next block. Timber rots in wet headings, and an explosion breaks it. Coal pillars between parallel headings are the most reliable support. Robbing them for extra coal is a common and expensive mistake.</p>
+
+  <h3 id="i0-blast">5. Don't blow up the mine</h3>
+  <p>Coal mine explosions nearly always come in pairs. Methane ignites, the blast wave lifts settled coal dust, and the dust explosion then runs hundreds of metres through the workings.</p>
+  <figure class="shot">
+    <img src="{{root}}assets/guide/gallery_pov.webp" width="1600" height="900" alt="Flame front running through a mine heading behind glass" loading="lazy">
+    <figcaption>The explosion front runs through the headings: supports break and doors are blown open.</figcaption>
+  </figure>
+  <ul>
+    <li><strong>Methane explodes between 5 and 15 %</strong>, worst at about 9.5 %. The edges of a rich pocket pass through that range too.</li>
+    <li><strong>Ignition sources:</strong> torches, lanterns, campfires, fire, lava and shotfiring. In a gassy mine, light it with Industrial Pendant Lights, not torches. A lamp in 5 % methane and an air current faster than 4 m/s blows its flame through the gauze.</li>
+    <li><strong>Stone dusting.</strong> A Stone Duster with Stone Dust (from calcite or diorite) spreads 100 kg per click and shows the inert fraction at that spot. Bituminous coal dust needs 60–80 % inert content. Dust regularly, because fresh coal dust settles on top.</li>
+    <li><strong>Explosion Barriers</strong> go across headings between the faces and the rest of the mine. You need at least 400 kg of dust per m² of cross-section, and one block holds about 500 kg.</li>
+  </ul>
+  <div class="callout warn">
+    <span class="k">After an explosion</span>
+    <p>Afterdamp is the main danger: 1–8 % CO and under 10 % oxygen. Put on a self-rescuer and get to fresh air. Then restore the doors, check the supports and clear the gas. The canary and the methanometer tell you when it's safe to go back. Find the cause before you start mining again.</p>
+  </div>
+
+  <h3 id="i0-hoist">6. Hoist and drainage</h3>
+  <p>A deep mine needs two services that never stop: a hoist to move people and coal, and drainage to keep the mine from flooding.</p>
+  <div class="shots">
+    <figure class="shot"><img src="{{root}}assets/guide/hoist_wide.webp" width="1600" height="900" alt="Headframe with a sheave over the shaft and the mine hoist beside it" loading="lazy"><figcaption>Headframe over the shaft. The hoist stands within 32 blocks of it.</figcaption></figure>
+    <figure class="shot"><img src="{{root}}assets/guide/hoist_ride.webp" width="1600" height="900" alt="Mine cage at the top landing" loading="lazy"><figcaption>The cage at the top landing. It won't start with the door open.</figcaption></figure>
+  </div>
+  <ol class="steps">
+    <li><strong>Mine Hoist:</strong> a drum on a Create shaft, 64 rpm rated, up to 400 kW.</li>
+    <li><strong>Headframe</strong> of 2–4 segments, in front of or behind the hoist, no more than 32 blocks away. The <strong>Mine Cage</strong> runs in the shaft under it.</li>
+    <li><strong>Hang the rope:</strong> right-click the hoist with a stack of Wire Rope (10 m coils). You need enough for the shaft depth plus the run over the sheave.</li>
+    <li><strong>Landings</strong> are wherever there's a way out beside the cage: two free blocks over a solid floor. The bottom one is the sump.</li>
+    <li><strong>Click the hoist with an empty hand</strong> to open the panel: landing buttons, Stop, Reset trip and a speed limit up to 12 m/s.</li>
+  </ol>
+  <p>Before each trip the hoist works out the rope's <strong>safety factor</strong>: breaking force divided by the highest tension, counting the cage, the load (80 kg per person, 300 kg per minecart) and the rope's own weight. If the factor is below the limit, the hoist won't start.</p>
+  <div class="gtable"><table>
+    <thead><tr><th>Duty</th><th>Minimum safety factor</th></tr></thead>
+    <tbody>
+      <tr><td>Man-riding</td><td class="n">9</td></tr>
+      <tr><td>Mixed</td><td class="n">7.5</td></tr>
+      <tr><td>Materials only</td><td class="n">6.5</td></tr>
+    </tbody>
+  </table></div>
+  <p>The rope fatigues on the sheave and corrodes in a wet shaft. When the panel says it's due for replacement, change it at the first stop. A rope worn to the end breaks, and the cage either lands on its safety catches or falls.</p>
+  <p><strong>Drainage.</strong> Every ton mined opens up about a cubic metre of water, and roughly 2 m³/h more seeps in. Water collects in the <strong>sump</strong> (about 400 m³). A Mine Drainage Pump on a Create shaft moves 100 m³/h against 150 m of head at 64 rpm and takes about 58 kW. The sump should hold at least four hours of inflow. If drainage stops, the lowest workings flood within a few hours.</p>
+
+  <h3 id="i0-longwall">7. The longwall</h3>
+  <p>A longwall is a long face along the seam. A shearer travels along it and cuts the coal in strips while powered supports hold up the roof. Behind the supports the roof is left to cave in.</p>
+  <div class="shots">
+    <figure class="shot"><img src="{{root}}assets/guide/longwall_cut.webp" width="1600" height="900" alt="Longwall shearer on a gantry cutting along the face" loading="lazy"><figcaption>The shearer is the head of a Create contraption on a gantry. Its drums cut a strip 3 blocks high.</figcaption></figure>
+    <figure class="shot"><img src="{{root}}assets/guide/longwall_advance.webp" width="1600" height="900" alt="Row of yellow powered roof supports along the longwall" loading="lazy"><figcaption>Powered roof supports advance behind the shearer.</figcaption></figure>
+  </div>
+  <ol class="steps">
+    <li><strong>The shearer cuts a stretch of the face.</strong> About 220 kW at 64 rpm, feed up to 6 m/min. It never skips uncut coal. Lay a Create belt along the face for the coal.</li>
+    <li><strong>Behind it, supports are lowered one at a time</strong> with a redstone signal or the manual lever, pushed 1 block forward with a Create piston, and set again.</li>
+    <li><strong>Behind the advanced supports the roof caves.</strong> That's the goaf, and nobody goes in there.</li>
+  </ol>
+  <p>Put water tanks on the contraption: the drum sprays leave five times less dust. A longwall exposes dozens of coal blocks a minute, and each one gives off methane. It needs plenty of air, but no faster than 4 m/s. The lower–advance–set cycle is easy to build with redstone timers, and later eras hand it to a controller.</p>
+
+  <h3 id="i0-prep">8. Coal preparation</h3>
+  <ul class="renders">
+    <li><img src="{{root}}assets/guide/r/coal_jig.webp" width="256" height="256" alt="" loading="lazy">Coal Jig</li>
+    <li><img src="{{root}}assets/guide/i/washed_coal.png" width="16" height="16" alt="" loading="lazy" style="image-rendering:pixelated">Washed Coal</li>
+  </ul>
+  <p>Run-of-mine coal carries rock, intergrowths and pyrite. The <strong>Coal Jig</strong> separates it by density: water pulses through a screen, heavy pieces settle faster, and the bed sorts into layers. It runs on a Create shaft from the left: 10 kg/s at 64 rpm, about 15 kW. It needs 0.5 l of water per kg of coal (tank 2000 l).</p>
+  <div class="gtable"><table>
+    <thead><tr><th>Product</th><th>Ash</th><th>Use</th></tr></thead>
+    <tbody>
+      <tr><td>Washed Coal</td><td class="n">6–10 %</td><td>better fuel and the feedstock for coke in I1</td></tr>
+      <tr><td>Coal Middlings</td><td class="n">25–40 %</td><td>boiler fuel</td></tr>
+      <tr><td>Coal Refuse</td><td class="n">—</td><td>the tip, or backfill</td></tr>
+    </tbody>
+  </table></div>
+  <p>A Create wrench sets the clean-coal cut density: 1.40, 1.50, 1.60 or 1.70 g/cm³. A lower cut gives cleaner coal but less of it. Pyritic sulphur leaves with the heavy fraction, while organic sulphur stays in the coal.</p>
+
+  <h3 id="i0-foundry">9. Foundry and machine shop</h3>
+  <p>Pump and valve bodies, flywheels and gear blanks aren't crafted. They're cast in sand moulds and finished by machining.</p>
+  <ul class="renders">
+    <li><img src="{{root}}assets/guide/r/cupola_furnace_lit.webp" width="256" height="256" alt="" loading="lazy">Cupola Furnace</li>
+    <li><img src="{{root}}assets/guide/r/crucible_furnace_lit.webp" width="256" height="256" alt="" loading="lazy">Crucible Furnace</li>
+    <li><img src="{{root}}assets/guide/r/molding_station.webp" width="256" height="256" alt="" loading="lazy">Moulding Machine</li>
+    <li><img src="{{root}}assets/guide/r/sand_mold_poured.webp" width="256" height="256" alt="" loading="lazy">Sand Mould</li>
+    <li><img src="{{root}}assets/guide/r/shakeout_grate.webp" width="256" height="256" alt="" loading="lazy">Shakeout Grate</li>
+    <li><img src="{{root}}assets/guide/r/machine_lathe.webp" width="256" height="256" alt="" loading="lazy">Lathe</li>
+    <li><img src="{{root}}assets/guide/r/drill_press.webp" width="256" height="256" alt="" loading="lazy">Drill Press</li>
+  </ul>
+  <ol class="steps">
+    <li><strong>Melt.</strong> The <strong>Cupola Furnace</strong> melts grey iron from pig iron or iron ingots with charcoal (in place of coke for now), blown by a fan on a Create shaft. Fuel at 12 % of the metal gives about 1450 °C, and 10 % gives cold iron at 1345 °C. The <strong>Crucible Furnace</strong> handles copper, bronze and aluminium, one alloy at a time.</li>
+    <li><strong>Prepare the mould.</strong> Right-clicking with a Casting Pattern cycles through the parts: valve body, pump casing, impeller, gear blank, wheel, flywheel, ingot mould and bearing housing. Sneak-click toggles the riser. The Moulding Machine rams foundry sand around the pattern and makes one sand mould per cycle.</li>
+    <li><strong>Pour.</strong> Each furnace taps by itself into a ready mould beside it. A redstone signal keeps the tap hole closed.</li>
+    <li><strong>Wait for it to solidify.</strong> Time grows with the square of the modulus, volume over surface (Chvorinov's rule). The riser's modulus must be at least 1.2 times the casting's.</li>
+    <li><strong>Knock out</strong> cooled moulds on the Shakeout Grate. You get the casting back plus 90 % of the sand.</li>
+    <li><strong>Machine</strong> it on the Lathe and the Drill Press with a Cutting Tool in the tool slot.</li>
+  </ol>
+  <div class="callout warn">
+    <span class="k">Casting defects</span>
+    <ul>
+      <li><strong>Shrinkage cavity:</strong> no riser, or too small a one. The body will leak under pressure.</li>
+      <li><strong>Cold shut:</strong> the metal was less than 50 K above its melting range.</li>
+      <li><strong>Gas porosity:</strong> sand moisture over 6 %. Keep moulds out of the rain.</li>
+      <li><strong>Chill:</strong> iron cooled too fast and went white and hard. No tool will cut it.</li>
+    </ul>
+    <p>Machining doesn't fix a defect, so scrap has to be prevented in the foundry.</p>
+  </div>
+  <p><strong>The machinist's rule.</strong> Tool life falls as the eighth power of cutting speed (Taylor). Double the speed and the tool lasts 256 times less. Pick a gear that keeps the spindle at a moderate speed.</p>
+
+  <h3 id="i0-check">I0 checklist</h3>
+  <ul>
+    <li>The boiler holds pressure on a thin bed with no black smoke, and the engine turns the shaft with a dashpot fitted.</li>
+    <li>A spare fusible plug sits by the boiler, and the procedure is on a lectern.</li>
+    <li>The mine fan runs non-stop, the doors are closed, and the canary is alive.</li>
+    <li>Headings are supported and stone-dusted, with barriers between the faces and the rest of the mine.</li>
+    <li>The hoist runs within its safety factor, and the sump holds four hours of inflow.</li>
+    <li>The jig makes washed coal, and the foundry casts pump and valve bodies with no cavities.</li>
+    <li>You know where the deep coking-coal seams are. That's your ticket to I1.</li>
+  </ul>
+</section>
+
+<section id="later" class="g-sec" aria-labelledby="later-h">
+  <h2 id="later-h">I1–I4: what comes next</h2>
+  <span class="badge plan">Planned · design stage</span>
+  <p>None of this is in the game yet. It's how the next eras are designed to work, and details and numbers will change. The images are placeholder models from the repository.</p>
+
+  <div class="era-card" id="i1">
+    <p class="era-no">ERA I1</p>
+    <h3>Steel and power</h3>
+    <ul class="renders">
+      <li><img src="{{root}}assets/guide/r/coke_battery_wall_hot.webp" width="256" height="256" alt="" loading="lazy">Coke battery</li>
+      <li><img src="{{root}}assets/img/blast_furnace_shell.webp" width="128" height="128" alt="" loading="lazy">Blast furnace</li>
+      <li><img src="{{root}}assets/guide/r/bof_vessel.webp" width="256" height="256" alt="" loading="lazy">Converter</li>
+      <li><img src="{{root}}assets/guide/r/electric_generator.webp" width="256" height="256" alt="" loading="lazy">Generator</li>
+      <li><img src="{{root}}assets/guide/r/instrument_synchroscope.webp" width="256" height="256" alt="" loading="lazy">Synchroscope</li>
+      <li><img src="{{root}}assets/guide/r/moderator_block_graphite.webp" width="256" height="256" alt="" loading="lazy">Reactor graphite</li>
+    </ul>
+    <p><strong>What you'll build.</strong> Coke ovens (coke, gas, tar, pitch and electrodes), a blast furnace, a converter, a rolling mill and seamless pipe. Then a synchronous generator, power lines, transformers and protection relays. Water treatment and air separation for oxygen, nitrogen and argon.</p>
+    <ul>
+      <li>Your I0 coking coal becomes coke, and coke becomes iron and steel.</li>
+      <li>You synchronize the generator to the grid with a synchroscope: match frequency, voltage and phase. Close the breaker out of phase and the machine takes a hit.</li>
+      <li>Under-frequency load shedding drops consumers when the grid runs short of power.</li>
+      <li><strong>First reactor, T0: a graphite pile.</strong> Natural uranium metal, graphite from coke-oven electrodes in an Acheson furnace, a neutron detector and an emergency "zip" rod on a winch. You bring it to criticality by watching the reactor period, exactly as in the <a href="{{root}}{{langPath}}#desk">browser desk</a>.</li>
+      <li>Automation steps up to relay cabinets (A1) and analog computers (A2).</li>
+    </ul>
+  </div>
+
+  <div class="era-card" id="i2">
+    <p class="era-no">ERA I2</p>
+    <h3>Oil and gas</h3>
+    <ul class="renders">
+      <li><img src="{{root}}assets/guide/r/derrick_segment.webp" width="256" height="256" alt="" loading="lazy">Drilling derrick</li>
+      <li><img src="{{root}}assets/guide/r/bop_ram_closed.webp" width="256" height="256" alt="" loading="lazy">Blowout preventer</li>
+      <li><img src="{{root}}assets/guide/r/pumpjack_gearbox.webp" width="256" height="256" alt="" loading="lazy">Pumpjack</li>
+      <li><img src="{{root}}assets/guide/r/column_base.webp" width="256" height="256" alt="" loading="lazy">Distillation column</li>
+      <li><img src="{{root}}assets/guide/r/claus_reaction_furnace_lit.webp" width="256" height="256" alt="" loading="lazy">Claus furnace</li>
+      <li><img src="{{root}}assets/img/gas_turbine.webp" width="128" height="128" alt="" loading="lazy">Gas turbine</li>
+    </ul>
+    <p><strong>What you'll build.</strong> Seismic survey and well logging, drilling with well control, oil field production, oil treatment, pipelines, a refinery, a gas processing plant, gas boilers and gas turbines.</p>
+    <ul>
+      <li>The drill string runs on seamless pipe from I1. A kick in the well is shut in with the blowout preventer and killed by procedure. Ignore it and you get a blowout.</li>
+      <li>The column splits crude into fractions along its true boiling point curve, with reforming, hydrotreating and coking after it.</li>
+      <li>The gas plant gives sulphur (Claus unit), helium and diesel. Each one feeds the fuel cycle later: acid for uranium leaching, helium for fuel rods, diesel for the plant's emergency generators.</li>
+      <li><strong>Reactor T1:</strong> a channel-type uranium-graphite reactor with a turbine on the grid. It teaches the void coefficient (it can be positive) and xenon.</li>
+    </ul>
+  </div>
+
+  <div class="era-card" id="i3">
+    <p class="era-no">ERA I3</p>
+    <h3>Chemistry</h3>
+    <ul class="renders">
+      <li><img src="{{root}}assets/guide/r/tube_furnace_radiant_lit.webp" width="256" height="256" alt="" loading="lazy">Pyrolysis furnace</li>
+      <li><img src="{{root}}assets/guide/r/polymer_extruder.webp" width="256" height="256" alt="" loading="lazy">Polymer extruder</li>
+      <li><img src="{{root}}assets/img/gas_centrifuge.webp" width="128" height="128" alt="" loading="lazy">Gas centrifuge</li>
+      <li><img src="{{root}}assets/guide/r/pellet_press.webp" width="256" height="256" alt="" loading="lazy">Pellet press</li>
+      <li><img src="{{root}}assets/guide/r/pressurizer.webp" width="256" height="256" alt="" loading="lazy">Pressurizer</li>
+      <li><img src="{{root}}assets/guide/r/steam_generator.webp" width="256" height="256" alt="" loading="lazy">Steam generator</li>
+    </ul>
+    <p><strong>What you'll build.</strong> Pyrolysis, polymers and fluoropolymers, chlor-alkali, hydrogen and syngas, ammonia, ion-exchange resins, TBP, and silicon for microchips. With those you build the uranium chain: hydrometallurgy, conversion, a centrifuge cascade, pellets and fuel assemblies.</p>
+    <ul>
+      <li>The cascade needs fluoropolymers for UF₆ service and a lot of shaft power. Enrichment is counted in separative work units (SWU).</li>
+      <li><strong>Reactor T2a:</strong> a PWR-type unit of about 100 MW(t) with a pressurizer, steam generators, boron control and a xenon pit you can see on the trends.</li>
+      <li>Automation reaches PLCs in the IEC 61131-3 languages, safety systems (A3) and SCADA on CC: Tweaked computers (A4).</li>
+    </ul>
+  </div>
+
+  <div class="era-card" id="i4">
+    <p class="era-no">ERA I4</p>
+    <h3>Nuclear</h3>
+    <ul class="renders">
+      <li><img src="{{root}}assets/guide/r/fuel_assembly.webp" width="256" height="256" alt="" loading="lazy">Fuel assembly</li>
+      <li><img src="{{root}}assets/guide/r/control_rod_channel.webp" width="256" height="256" alt="" loading="lazy">Control rod channel</li>
+      <li><img src="{{root}}assets/guide/r/neutron_detector.webp" width="256" height="256" alt="" loading="lazy">Neutron detector</li>
+      <li><img src="{{root}}assets/guide/r/irradiation_channel_loaded.webp" width="256" height="256" alt="" loading="lazy">Irradiation channel</li>
+      <li><img src="{{root}}assets/img/compact_reactor_module.webp" width="128" height="128" alt="" loading="lazy">Compact reactor</li>
+    </ul>
+    <p><strong>What you'll build.</strong> A closed fuel cycle (spent fuel pool, dry storage, PUREX reprocessing, MOX, vitrification and disposal), plus isotopes and RTGs.</p>
+    <ul>
+      <li>Irradiation channels make Co-60, Ir-192, Am-Be and Pu-238. They go into weld radiography, neutron well logging and RTGs.</li>
+      <li>Criticality outside the reactor is real: a solution tank of the wrong shape can go critical.</li>
+      <li>Plant-level optimization (A5), an energy exchange and emission quotas make switching to nuclear power pay off.</li>
+    </ul>
+  </div>
+
+  <h3>Reactor tiers</h3>
+  <p>The core has no idea what reactor "types" are. It computes the physics from the lattice you build: fuel, moderator, coolant and absorbers. A "T2a" is simply what you get when you build an enriched UO₂ lattice in pressurized light water.</p>
+  <div class="gtable"><table>
+    <thead><tr><th>Tier</th><th>Type</th><th>What it teaches</th></tr></thead>
+    <tbody>
+      <tr><td class="n">T0</td><td>Graphite pile (CP-1, X-10)</td><td>criticality, delayed neutrons, reactor period</td></tr>
+      <tr><td class="n">T1</td><td>Channel uranium-graphite</td><td>void coefficient, xenon</td></tr>
+      <tr><td class="n">T2a / T2b</td><td>PWR / BWR</td><td>pressurizer, steam generator, boron; direct cycle</td></tr>
+      <tr><td class="n">T3</td><td>Heavy water (CANDU)</td><td>online refuelling, tritium</td></tr>
+      <tr><td class="n">T4</td><td>Sodium fast reactor, after release</td><td>plutonium breeding, sodium fires</td></tr>
+    </tbody>
+  </table></div>
+</section>
+
+<section id="automation" class="g-sec" aria-labelledby="automation-h">
+  <h2 id="automation-h">Automation ladder</h2>
+  <p>The mod has no ready-made reactor controller. It gives you sensors, function blocks and peripherals, and the control system is yours to design. It grows with the plant.</p>
+  <ol class="alevels">
+    <li><b>A0</b><div><strong>Hands and eyes.</strong><p>Valves, levers, the pressure gauge and the gauge glass. In I0 you're the controller. The flyball governor is the only automatic device.</p></div></li>
+    <li><b>A1</b><div><strong>Relay logic.</strong><p>Relays, contacts and timers as blocks in the world. For example, an interlock that trips a pump when the level is low.</p></div></li>
+    <li><b>A2</b><div><strong>Analog computers.</strong><p>Summers, integrators and controllers. A PI controller without a computer, integrator drift included.</p></div></li>
+    <li><b>A3</b><div><strong>PLC and safety systems.</strong><p>Programs in LD, FBD, SFC and ST, and a cause-and-effect matrix for safety logic.</p></div></li>
+    <li><b>A4</b><div><strong>DCS and SCADA.</strong><p>CC: Tweaked computers, telemetry, trends and a historian.</p></div></li>
+    <li><b>A5</b><div><strong>Plant level.</strong><p>Planning and optimization, with Create logistics driven by Lua.</p></div></li>
+  </ol>
+  <div class="callout">
+    <span class="k">Protection by hardware</span>
+    <p>Reactor protection trips on its own, independently of Lua and the PLC. On loss of drive power the rods fall by gravity. You can automate as much as you like, but a bug in your program won't stop a trip.</p>
+  </div>
+</section>
+
+<section id="faq" class="g-sec faq" aria-labelledby="faq-h">
+  <h2 id="faq-h">FAQ</h2>
+  <details>
+    <summary>When can I download it?</summary>
+    <p>There's no release yet; the mod is in pre-alpha. Follow the <a href="https://github.com/denfry/Prompt_Critical">repository</a> or the <a href="https://www.youtube.com/@denfrydev">YouTube channel</a> to hear when it's out.</p>
+  </details>
+  <details>
+    <summary>Can I try it right now?</summary>
+    <p>Only by building it from source (see the README in the repository). That gets you a development build with era I0. Worlds can break between versions, and the art is placeholder.</p>
+  </details>
+  <details>
+    <summary>What does it need?</summary>
+    <p>Minecraft 1.21.1, NeoForge 21.1.259+, Java 21 and Create 6.0.11+. CC: Tweaked 1.120.2+ is optional and only needed for computer-based control (A4).</p>
+  </details>
+  <details>
+    <summary>Is it too hard?</summary>
+    <p>It's built on real engineering, but you don't need to know any of it in advance. The handbook walks you through it one step at a time, and the first steam takes 20–25 minutes. Mistakes are expensive, but they're always visible on the instruments first.</p>
+  </details>
+
+  <div class="next">
+    <p>Try the reactor kinetics in your browser while you wait.</p>
+    <ul>
+      <li><a class="primary" href="{{root}}{{langPath}}#desk">Reactor desk</a></li>
+      <li><a href="https://github.com/denfry/Prompt_Critical">GitHub</a></li>
+      <li><a href="https://www.youtube.com/@denfrydev">YouTube</a></li>
+      <li><a href="https://github.com/denfry/Prompt_Critical/wiki">Wiki</a></li>
+    </ul>
+  </div>
+</section>
+
+  </article>
+</div>
