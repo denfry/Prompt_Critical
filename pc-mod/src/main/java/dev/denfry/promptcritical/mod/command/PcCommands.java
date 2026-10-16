@@ -6,6 +6,7 @@ import com.mojang.brigadier.arguments.IntegerArgumentType;
 import com.mojang.brigadier.arguments.StringArgumentType;
 import com.mojang.brigadier.context.CommandContext;
 import com.mojang.brigadier.exceptions.CommandSyntaxException;
+import com.mojang.brigadier.exceptions.DynamicCommandExceptionType;
 import dev.denfry.promptcritical.mod.binding.SimBindings;
 import dev.denfry.promptcritical.mod.binding.SimLevelBinding;
 import dev.denfry.promptcritical.mod.boiler.BoilerGeometry;
@@ -47,6 +48,8 @@ import net.neoforged.neoforge.common.util.FakePlayerFactory;
 /** Служебные команды {@code /pc} (05 §5.4.7): хеш состояния, устройства, профиль тика, шахты, налив котла. */
 public final class PcCommands {
     private static final int LIST_LIMIT = 20;
+    private static final DynamicCommandExceptionType UNKNOWN_ITEM =
+            new DynamicCommandExceptionType(id -> Component.literal("Unknown item: " + id));
 
     private PcCommands() {
     }
@@ -204,7 +207,7 @@ public final class PcCommands {
 
     private static ItemStack stack(CommandContext<CommandSourceStack> ctx, int count) throws CommandSyntaxException {
         var id = ResourceLocationArgument.getId(ctx, "item");
-        if (!BuiltInRegistries.ITEM.containsKey(id)) throw ResourceLocationArgument.ERROR_UNKNOWN_ID.create(id);
+        if (!BuiltInRegistries.ITEM.containsKey(id)) throw UNKNOWN_ITEM.create(id);
         return new ItemStack(BuiltInRegistries.ITEM.get(id), count);
     }
 
