@@ -11,7 +11,7 @@ run by plant I&C that you design and build yourself.
 ![Minecraft](https://img.shields.io/badge/Minecraft-1.21.1-62B47A)
 ![NeoForge](https://img.shields.io/badge/NeoForge-21.1-E07B1A)
 ![Java](https://img.shields.io/badge/Java-21-B07219)
-![Status](https://img.shields.io/badge/status-pre--alpha-red)
+![Status](https://img.shields.io/badge/status-alpha-orange)
 [![License](https://img.shields.io/badge/license-All%20Rights%20Reserved-lightgrey)](LICENSE)
 
 [Site](https://denfry.github.io/Prompt_Critical/) ·
@@ -24,9 +24,27 @@ run by plant I&C that you design and build yourself.
 </div>
 
 > [!WARNING]
-> **Pre-alpha.** The project is at milestone M0: the build skeleton, CI and
-> placeholder art exist, gameplay does not yet. Most of what is described below
-> and in the wiki is the design, not a playable feature. There are no releases.
+> **Alpha (0.1.0-alpha).** Milestone M2 is playable: era I0, coal and steam. Later
+> eras described below and in the wiki are the design, not yet features. Expect
+> balance changes and breaking world changes between alpha versions; back up
+> your worlds.
+
+### What is in the alpha
+
+- **Coal mine**: vein worldgen with assays, methane and ventilation network with
+  a main fan, ventilation doors and regulators, degasification, canaries and
+  flame safety lamps, methane explosions with explosion barriers, timber and
+  powered roof supports, a longwall shearer on a Create gantry, a mine hoist with
+  headframe and cage, mine drainage and flooding.
+- **Boiler room**: a Lancashire fire-tube boiler in brick setting with a chain
+  grate stoker, chimney draft, fusible plug and relief valve, and a horizontal
+  steam engine driving a Create shaft.
+- **Foundry and machine shop**: cupola and crucible furnaces, sand moulds and a
+  moulding machine, shakeout grate, lathe and drill press, coal jig.
+- **Local instrument panels (A0)** on every machine: dial gauges, gauge glass,
+  signal lamps, buttons and machine slots.
+- **Engineering handbook**, operating procedures, a geological map,
+  advancements and I0 decor blocks.
 
 ## About
 
