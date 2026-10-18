@@ -62,7 +62,9 @@ def trailer(shots, music, out):
              ("tr03_firing_floor", 0.0, 4.0), ("tr04_stoker", 0.3, 2.4), ("tr05_panel_boiler", 0.0, 6.0),
              ("tr07_panel_engine", 0.0, 5.0), ("tr08_foundry_aisle", 0.0, 4.0),
              ("tr09_cupola", 0.3, 2.4), ("tr10_lathe", 0.3, 2.4), ("tr11_panel_lathe", 0.2, 4.8),
-             ("tr12_drill", 0.3, 2.4)]
+             ("tr12_drill", 0.3, 2.4),
+             ("tr14_hill", 0.0, 4.8), ("tr15_cage", 0.0, 6.0), ("tr16_drift", 0.0, 6.0), ("tr17_longwall", 0.2, 4.8),
+             ("tr18_shearer", 0.2, 3.6), ("tr19_panel_cabinet", 0.0, 4.8), ("tr20_fan", 0.3, 2.4)]
     t = 0
     starts = {}
     for name, _, d in parts:
@@ -78,11 +80,17 @@ def trailer(shots, music, out):
         text("Live gauges, lamps and buttons", s["tr07_panel_engine"] + 0.3, s["tr07_panel_engine"] + 4.6, 44, "h*0.88", x="80", font=FONT2, box=True),
         text("Foundry and machine shop", s["tr08_foundry_aisle"] + 0.3, s["tr09_cupola"] + 2.3, 44, "h*0.86", x="80", font=FONT2, box=True),
         text("Cupola, moulds, lathe, drill press", s["tr10_lathe"] + 0.2, s["tr11_panel_lathe"] + 4.6, 44, "h*0.88", x="80", font=FONT2, box=True),
+        text("THE COAL MINE", s["tr14_hill"] + 0.4, s["tr14_hill"] + 4.6, 96, "(h-text_h)/2"),
+        text("Headframe and hoist over a working shaft", s["tr15_cage"] + 0.4, s["tr15_cage"] + 5.8, 44, "h*0.88", x="80", font=FONT2, box=True),
+        text("Timbered drifts", s["tr16_drift"] + 2.0, s["tr16_drift"] + 5.8, 44, "h*0.88", x="80", font=FONT2, box=True),
+        text("Powered roof supports and a longwall shearer", s["tr17_longwall"] + 0.3, s["tr18_shearer"] + 3.4, 44, "h*0.88", x="80", font=FONT2, box=True),
+        text("Mine dispatch: methane, ventilation, water", s["tr19_panel_cabinet"] + 0.3, s["tr19_panel_cabinet"] + 4.6, 44, "h*0.88", x="80", font=FONT2, box=True),
         text("PROMPT CRITICAL", t + 0.3, t + 6.8, 72, "h*0.72"),
-        text("0.1.0-alpha  ·  NeoForge 1.21.1  ·  CurseForge and Modrinth", t + 0.6, t + 6.8, 38, "h*0.72+90", font=FONT2, color="0xE0B040"),
+        text("0.1.0-alpha  ·  NeoForge 1.21.1", t + 0.6, t + 6.8, 38, "h*0.72+90", font=FONT2, color="0xE0B040"),
+        text("Available on CurseForge and Modrinth", t + 0.9, t + 6.8, 46, "h*0.72+150", font=FONT2),
     ]
-    # score: intro 0-10.9 + climax 76.3-end, joined with a short crossfade
-    af = ("asplit=2[m1][m2];[m1]atrim=0:11.2,asetpts=PTS-STARTPTS[i1];[m2]atrim=76.0,asetpts=PTS-STARTPTS[i2];"
+    # score: intro 0-10.9, then from 42.9 so the mine starts on the climax at 76.3; short crossfade at the join
+    af = ("asplit=2[m1][m2];[m1]atrim=0:11.2,asetpts=PTS-STARTPTS[i1];[m2]atrim=42.6,asetpts=PTS-STARTPTS[i2];"
           "[i1][i2]acrossfade=d=0.3")
     cut(shots, parts, (1920, 1080), texts, af, os.path.join(music, "trailer.wav"),
         os.path.join(out, "PromptCritical_M2_trailer.mp4"), 7.0)
@@ -91,7 +99,7 @@ def trailer(shots, music, out):
 def short(shots, music, out):
     parts = [("sh01_panel_boiler", 0.0, 6.0), ("sh02_firing_floor", 0.3, 2.1), ("sh03_stoker", 0.0, 3.0),
              ("sh04_engine", 0.0, 3.0), ("sh05_panel_engine", 0.0, 5.0), ("sh06_foundry", 0.0, 3.0),
-             ("sh07_cupola", 0.0, 3.0), ("sh08_panel_cupola", 0.0, 5.0), ("sh09_chimneys", 0.0, 4.5)]
+             ("sh07_cupola", 0.0, 3.0), ("sh08_panel_cupola", 0.0, 5.0), ("sh09_mine", 0.0, 5.0)]
     t = 0
     s = {}
     for name, _, d in parts:
@@ -105,11 +113,14 @@ def short(shots, music, out):
         text("Every machine has a panel", s["sh05_panel_engine"], s["sh05_panel_engine"] + 4.9, 64, "h*0.08"),
         text("Foundry", s["sh06_foundry"], s["sh07_cupola"] + 2.9, 72, "h*0.12"),
         text("Cupola furnace panel", s["sh08_panel_cupola"], s["sh08_panel_cupola"] + 4.9, 64, "h*0.08"),
-        text("PROMPT CRITICAL", s["sh09_chimneys"] + 0.4, t + 2.9, 92, "h*0.10"),
-        text("alpha out now", s["sh09_chimneys"] + 0.8, t + 2.9, 56, "h*0.10+110", font=FONT2, color="0xFFC040"),
+        text("PROMPT CRITICAL", s["sh09_mine"] + 0.4, s["sh09_mine"] + 4.9, 92, "h*0.10"),
+        text("alpha out now", s["sh09_mine"] + 0.8, s["sh09_mine"] + 4.9, 56, "h*0.10+110", font=FONT2, color="0xFFC040"),
+        text("PROMPT CRITICAL", t + 0.2, t + 3.4, 84, "h*0.68"),
+        text("Available on", t + 0.4, t + 3.4, 52, "h*0.68+120", font=FONT2),
+        text("CurseForge and Modrinth", t + 0.4, t + 3.4, 64, "h*0.68+190", color="0xFFC040"),
     ]
     cut(shots, parts, (1080, 1920), texts, "anull", os.path.join(music, "short.wav"),
-        os.path.join(out, "PromptCritical_M2_short.mp4"), 3.0)
+        os.path.join(out, "PromptCritical_M2_short.mp4"), 3.5)
 
 
 if __name__ == "__main__":

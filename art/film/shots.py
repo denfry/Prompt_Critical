@@ -1,6 +1,6 @@
 """Shot list for the M2 trailer (1920x1080) and the vertical short (1080x1920): writes film.json for FilmRecorder.
 
-    python art/film/shots.py pc-mod/run-film/film.json
+    python art/film/shots.py pc-mod/run-film/film.json [shot ...]   — only the named shots (plus the warm-up)
 """
 import json
 import sys
@@ -52,6 +52,27 @@ def trailer():
             {"t": 2.8, "at": [100, 40], "dur": 0.8}]),
         move("tr12_drill", 3.0, [60.5, -58.8, 46.0], [59.0, -58.8, 45.6], [58, -59.5, 49], fov=(50, 50)),
         move("tr13_outro", 7.0, [12, -57.5, 30], [30, -46, 6], [8, -50, 50], [8, -46, 50], fov=(50, 55)),
+    ] + mine()
+
+
+HOIST_UP = ["pc hoist 112 -44 72 0"]
+HOIST_DOWN = "pc hoist 112 -44 72 1"
+
+
+def mine():
+    return [
+        move("tr14_hill", 6.0, [155, -39, 72], [148, -40, 62], [112, -40, 64], [112, -39, 64], fov=(45, 40)),
+        move("tr15_cage", 6.0, [120, -40.5, 56], [119, -41.5, 58], [112, -41, 64], [112, -43.5, 64], fov=(55, 55),
+             settle=200, setup=["function filmset:refresh"] + HOIST_UP, events=[{"t": 0.8, "cmd": HOIST_DOWN}]),
+        {"name": "tr16_drift", "duration": 6.0, "size": WIDE, "scale": WIDE, "time": DUSK, "ease": "inOut", "gamma": 0.6,
+         "keys": [key(0, [112.5, -57.5, 24], [112.5, -58.5, 40], 60), key(3, [112.5, -58.6, 36], [112.5, -59, 48], 60),
+                  key(6, [112.5, -59, 47], [112.5, -59.2, 60], 60)]},
+        move("tr17_longwall", 5.0, [118, -59.0, 62.5], [131, -59.0, 62.5], [121, -59.4, 65], [134, -59.4, 65], fov=(60, 60), ease="linear"),
+        move("tr18_shearer", 4.0, [133, -59.2, 66.3], [130, -59.3, 66.3], [126, -59.6, 66.3], fov=(60, 60)),
+        panel("tr19_panel_cabinet", 5.0, None, [112.0, -43.6, 74.2], [109.0, -44.5, 74.0], [109, -45, 74], [
+            {"t": 1.0, "at": [30, 40], "dur": 0.8},
+            {"t": 2.8, "at": [120, 40], "dur": 0.8}]),
+        move("tr20_fan", 3.0, [95, -43.5, 56], [101, -43.5, 57], [98, -44, 64], fov=(55, 55)),
     ]
 
 
@@ -73,20 +94,20 @@ def short():
         panel("sh08_panel_cupola", 5.0, None, [36.0, -58.0, 45.0], [36.0, -58.5, 49.0], [36, -59, 49], [
             {"t": 0.8, "at": [30, 40], "dur": 0.6},
             {"t": 2.4, "at": [100, 40], "dur": 0.6}], size=TALL),
-        move("sh09_chimneys", 5.0, [14, -58, 33], [16, -50, 30], [8, -48, 50], [7, -36, 53], fov=(65, 60), size=TALL),
+        move("sh09_mine", 5.0, [150, -41, 70], [146, -40, 64], [112, -38, 64], [112, -38, 64], fov=(60, 55), size=TALL),
     ]
 
 
-def main(path):
+def main(path, only=None):
     warm = {"name": "warm", "duration": 0.1, "fps": 10, "stills": True, "size": [640, 360], "scale": [640, 360],
             "time": DUSK, "settle": 400, "setup": ["function filmset:refresh", "tick sprint 2400"],
             "keys": [key(0, [12, -55, 30], [8, -50, 50])]}
     plan = {"ffmpeg": FFMPEG, "out": "film/m2", "quit": True, "fps": 60, "crf": 14,
-            "shots": [warm] + trailer() + short()}
+            "shots": [warm] + [s for s in trailer() + short() if not only or s["name"] in only]}
     with open(path, "w") as fh:
         json.dump(plan, fh, indent=1)
     print(len(plan["shots"]), "shots")
 
 
 if __name__ == "__main__":
-    main(sys.argv[1])
+    main(sys.argv[1], sys.argv[2:])

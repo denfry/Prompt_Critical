@@ -16,7 +16,7 @@ import os
 import random
 import sys
 
-VERSION = 9
+VERSION = 10
 BOILERS = (4, 9)
 G = -61  # floor layer
 rng = random.Random(1924)
@@ -54,7 +54,7 @@ def motor_gearbox(f, x, y, z, axis, rpm=64, shaft_below=0):
     f.setb(x, y, z, f"create:gearbox[axis={axis}]")
     for i in range(shaft_below):
         f.setb(x, y - 1 - i, z, "create:shaft[axis=y]")
-    f.setb(x, G, z, f"create:creative_motor[facing=up]{{ScrollValue:{rpm}}}")
+    f.setb(x, y - 1 - shaft_below, z, f"create:creative_motor[facing=up]{{ScrollValue:{rpm}}}")
 
 
 # ------------------------------------------------------------------------------------------------ terrain / yard
@@ -306,6 +306,140 @@ def foundry(f):
     f.setb(X2 - 1, -56, 47, PC + "wall_clock[facing=west]")
 
 
+# ------------------------------------------------------------------------------------------------ coal mine in a hill
+
+HILL_X, HILL_Z, HILL_RX, HILL_RZ = 112, 62, 30, 34
+TOPY = -46            # plateau surface block
+SHAFT = (112, 64)     # shaft axis under the headframe
+CAGE_Y = -44          # cage controller at the top landing (cage stands on the plateau over the shaft)
+HOIST = (112, -44, 72)
+FAN = (98, -44, 64)
+
+
+def hill_top(x, z):
+    """Surface block y of the hill at (x, z), or None outside it."""
+    import math
+    dx, dz = (x - HILL_X) / HILL_RX, (z - HILL_Z) / HILL_RZ
+    wob = 0.06 * math.sin(x * 0.37 + z * 0.11) + 0.05 * math.sin(z * 0.29 - x * 0.07) + 0.03 * math.sin(x * 0.9 + z * 0.8)
+    d = math.hypot(dx, dz) + wob
+    if d >= 1.0:
+        return None
+    if 107 <= x <= 117 and z < 37:      # cutting in front of the adit portal
+        return None
+    if d < 0.55:
+        return TOPY
+    return round(TOPY - (d - 0.55) / 0.45 * (TOPY - G))
+
+
+def mine(f):
+    import math
+    tops = {}
+    for x in range(HILL_X - HILL_RX - 1, HILL_X + HILL_RX + 2):
+        for z in range(HILL_Z - HILL_RZ - 1, HILL_Z + HILL_RZ + 2):
+            t = hill_top(x, z)
+            if t is not None and t > G:
+                tops[(x, z)] = t
+    for (x, z), t in tops.items():
+        steep = max(t - tops.get((x + dx, z + dz), G) for dx, dz in ((1, 0), (-1, 0), (0, 1), (0, -1)))
+        rock = rng.choice(["stone", "stone", "andesite", "tuff"])
+        f.fill(x, G, z, x, t - 1, z, rock)
+        if steep >= 3:
+            f.setb(x, t, z, rng.choice(["stone", "andesite", "gravel", "coarse_dirt"]))
+        else:
+            f.setb(x, t - 1, z, "dirt")
+            f.setb(x, t, z, "grass_block")
+    # retaining walls of the cutting and the portal
+    for x in (106, 118):
+        for z in range(28, 37):
+            h = max(hill_top(x + (1 if x == 118 else -1), z) or G, -57)
+            f.fill(x, -60, z, x, h, z, "stone_bricks")
+    f.fill(107, G, 26, 117, G, 36, "gravel")
+    sx, sz = SHAFT
+
+    # --- adit: portal on the face of the cutting, drift south to the shaft bottom
+    f.fill(111, -60, 37, 113, -58, sz - 2, "air")
+    f.fill(111, G, 37, 113, G, sz - 2, "gravel")
+    f.fill(110, -60, 37, 110, -56, 37, "dark_oak_log[axis=y]")
+    f.fill(114, -60, 37, 114, -56, 37, "dark_oak_log[axis=y]")
+    f.fill(110, -57, 37, 114, -57, 37, "dark_oak_log[axis=x]")
+    f.fill(111, -60, 37, 113, -58, 37, "air")
+    f.setb(112, -56, 36, PC + "room_sign[facing=north]")
+    f.setb(109, -58, 36, PC + "industrial_light_floodlight[facing=north,lit=true]")
+    for z in range(39, sz - 2, 3):
+        f.setb(112, -59, z, PC + "mine_support[facing=north]")
+    for z in range(37, sz - 1):
+        if (z - 39) % 3:
+            f.setb(111, -60, z, "rail[shape=north_south]")
+    for z in range(26, 37):
+        f.setb(111, -60, z, "rail[shape=north_south]")
+    for z in range(42, sz - 2, 8):
+        f.setb(113, -58, z, PC + "industrial_light[lit=true]")
+    for z in (47, 53):
+        f.setb(111, -58, z, PC + "explosion_barrier[kind=water]")
+    # coal seam showing in the drift walls
+    for _ in range(70):
+        x = rng.choice([110, 114])
+        f.setb(x, rng.randint(-60, -58), rng.randint(38, sz - 2), PC + "coal_seam")
+
+    # --- shaft 3x3 from the drift level up through the plateau
+    f.fill(sx - 1, -60, sz - 1, sx + 1, TOPY, sz + 1, "air")
+    f.fill(sx - 1, G, sz - 1, sx + 1, G, sz + 1, "stone_bricks")
+    # shaft collar on the plateau
+    f.fill(sx - 2, TOPY, sz - 2, sx + 2, TOPY, sz + 2, "polished_andesite")
+    f.fill(sx - 1, TOPY, sz - 1, sx + 1, TOPY, sz + 1, "air")
+    f.setb(sx, CAGE_Y, sz, PC + "mine_cage[facing=north]")
+    for i in range(3):
+        f.setb(sx, CAGE_Y + 3 + 3 * i, sz, PC + "headframe[facing=north]")
+
+    # --- shaft bottom: crosscut east to the longwall, sump and drainage pump west
+    f.fill(sx + 2, -60, sz - 1, 116, -58, sz + 1, "air")
+    f.fill(108, -60, sz - 1, sx - 2, -58, sz + 1, "air")
+    f.setb(109, -60, sz, PC + "mine_drainage_pump[facing=east]")
+    motor_gearbox(f, 109, -60, sz - 1, "x")
+    f.fill(108, G, sz + 1, 109, G, sz + 1, PC + "mine_water")
+    f.setb(115, -60, sz - 1, PC + "canary_cage[bird=alive]")
+    f.setb(sx + 2, -58, sz, PC + "industrial_light[lit=true]")
+
+    # --- longwall: face of coal along z = sz + 3, powered roof supports, the shearer on the face
+    f.fill(117, -60, sz - 2, 135, -58, sz + 2, "air")
+    f.fill(117, G, sz - 2, 135, G, sz + 2, "deepslate")
+    f.fill(116, -61, sz + 3, 136, -57, sz + 3, PC + "coal_seam")
+    f.fill(117, -57, sz - 2, 135, -57, sz + 2, "deepslate")
+    for x in range(118, 135):
+        f.setb(x, -59, sz, PC + "powered_roof_support[facing=south,extended=true]")
+    f.setb(126, -60, sz + 2, PC + "longwall_shearer[facing=south,running=true]")
+    for x in (120, 127, 134):
+        f.setb(x, -58, sz - 2, PC + "industrial_light[lit=true]")
+    f.setb(135, -60, sz - 2, PC + "degasification_borehole[facing=west]")
+
+    # --- surface: hoist house, the hoist on the plateau, main fan, degassing pump, trees
+    hx, hy, hz = HOIST
+    f.fill(hx - 4, TOPY, hz - 3, hx + 4, TOPY, hz + 4, "stone_bricks")
+    for x in (hx - 4, hx + 4):
+        f.fill(x, TOPY + 1, hz - 3, x, TOPY + 6, hz + 4, "bricks")
+    f.fill(hx - 4, TOPY + 1, hz + 4, hx + 4, TOPY + 6, hz + 4, "bricks")
+    for x in (hx - 4, hx - 2, hx + 2, hx + 4):
+        f.fill(x, TOPY + 1, hz - 3, x, TOPY + 6, hz - 3, "bricks")
+    f.fill(hx - 4, TOPY + 7, hz - 4, hx + 4, TOPY + 7, hz + 5, "deepslate_tile_slab[type=bottom]")
+    f.fill(hx - 4, TOPY + 3, hz, hx - 4, TOPY + 5, hz + 2, "light_gray_stained_glass_pane")
+    f.setb(hx, hy, hz, PC + "mine_hoist[facing=north]")
+    f.setb(hx + 2, hy, hz, "create:creative_motor[facing=west]{ScrollValue:64}")
+    f.setb(hx - 3, TOPY + 1, hz + 2, PC + "mine_dispatch_cabinet[facing=east]")
+    f.setb(hx, TOPY + 6, hz + 1, PC + "industrial_light[lit=true]")
+    fx_, fy, fz = FAN
+    f.setb(fx_, fy, fz, PC + "main_mine_fan[facing=north]")
+    f.setb(fx_, fy, fz + 2, "create:creative_motor[facing=north]{ScrollValue:64}")
+    f.fill(fx_ - 1, TOPY + 1, fz + 2, fx_ + 1, TOPY + 3, fz + 3, "bricks")
+    f.setb(fx_, fy, fz + 2, "create:creative_motor[facing=north]{ScrollValue:64}")
+    f.setb(126, -45, 56, PC + "degasification_pump[facing=north]")
+    motor_gearbox(f, 126, -45, 57, "x")
+    f.setb(sx + 3, TOPY + 1, sz - 4, PC + "industrial_light_floodlight[facing=south,lit=true]")
+    for x, z in [(92, 52), (95, 78), (128, 80), (133, 66), (124, 48), (100, 84), (90, 66)]:
+        t = hill_top(x, z)
+        if t is not None:
+            f(f"place feature minecraft:spruce {x} {t + 1} {z}")
+
+
 # ------------------------------------------------------------------------------------------------ prime / refresh
 
 def prime(f):
@@ -316,6 +450,8 @@ def prime(f):
             f(f"pc use {bx} -59 49 minecraft:coal")
         f(f"pc use {bx} -59 49 minecraft:flint_and_steel")
     f("schedule function filmset:open_valve 200t")
+    hx, hy, hz = HOIST
+    f(f"pc use {hx} {hy} {hz} promptcritical:wire_rope 16")
 
 
 def refresh(f):
@@ -351,13 +487,13 @@ def write(world):
     fns["load"] = load
 
     build = Fn()
-    for part in ("clear", "yard", "boiler_house", "foundry"):
+    for part in ("clear", "yard", "boiler_house", "foundry", "mine"):
         build(f"function filmset:{part}")
     build(f"scoreboard players set #built filmset {VERSION}")
     build("schedule function filmset:prime 40t")
     fns["build"] = build
 
-    for name, fn in (("clear", clear), ("yard", yard), ("boiler_house", boiler_house), ("foundry", foundry),
+    for name, fn in (("clear", clear), ("yard", yard), ("boiler_house", boiler_house), ("foundry", foundry), ("mine", mine),
                      ("prime", prime), ("refresh", refresh)):
         f = Fn()
         fn(f)
