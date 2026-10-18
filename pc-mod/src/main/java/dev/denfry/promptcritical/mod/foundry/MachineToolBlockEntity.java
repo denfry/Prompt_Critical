@@ -2,12 +2,15 @@ package dev.denfry.promptcritical.mod.foundry;
 
 import dev.denfry.promptcritical.mod.binding.SimLevelBinding;
 import dev.denfry.promptcritical.mod.block.PcProperties;
+import dev.denfry.promptcritical.mod.panel.PanelHost;
+import dev.denfry.promptcritical.mod.panel.PanelLayout;
 import dev.denfry.promptcritical.mod.registry.PcItems;
 import dev.denfry.promptcritical.sim.mechanics.ShaftInput;
 import dev.denfry.promptcritical.sim.metallurgy.CastingDefect;
 import dev.denfry.promptcritical.sim.metallurgy.CastingSpec;
 import dev.denfry.promptcritical.sim.metallurgy.FoundrySubsystem;
 import dev.denfry.promptcritical.sim.metallurgy.MachineToolUnit;
+import java.util.Arrays;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
 import net.minecraft.core.HolderLookup;
@@ -20,6 +23,7 @@ import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.level.block.entity.BlockEntityType;
 import net.minecraft.world.level.block.state.BlockState;
 import net.neoforged.neoforge.items.IItemHandler;
+import net.neoforged.neoforge.items.IItemHandlerModifiable;
 import org.jetbrains.annotations.Nullable;
 
 /**
@@ -27,7 +31,7 @@ import org.jetbrains.annotations.Nullable;
  * служебном слоте (его износ — прочность предмета), обработанная отливка на выходе. Резец и заготовка в работе живут в
  * домене ({@link MachineToolUnit}); предмет резца в слоте зеркалит износ.
  */
-public final class MachineToolBlockEntity extends KineticMachineBlockEntity<MachineToolUnit> {
+public final class MachineToolBlockEntity extends KineticMachineBlockEntity<MachineToolUnit> implements PanelHost {
     private static final MachineInventory.Role[] ROLES = {MachineInventory.Role.INPUT, MachineInventory.Role.SERVICE,
             MachineInventory.Role.OUTPUT};
 
@@ -141,6 +145,31 @@ public final class MachineToolBlockEntity extends KineticMachineBlockEntity<Mach
                 : FoundryText.msg("tool", FoundryText.kind(u.work().kind()), FoundryText.num(u.progress() * 100),
                         FoundryText.num(u.spindleRpm()), wear), true);
         return InteractionResult.SUCCESS;
+    }
+
+    @Override
+    public PanelLayout panelLayout() {
+        return kind == MachineToolUnit.Kind.LATHE ? FoundryPanels.LATHE : FoundryPanels.DRILL_PRESS;
+    }
+
+    @Override
+    public IItemHandlerModifiable panelItems() {
+        return inv;
+    }
+
+    @Override
+    public void readPanel(int[] out) {
+        Arrays.fill(out, 0);
+        out[FoundryPanels.SHAFT_RPM10] = shaftRpm10();
+        out[FoundryPanels.L_KIND] = -1;
+        out[FoundryPanels.L_WEAR_PERMIL] = -1;
+        MachineToolUnit u = unit();
+        if (u == null) return;
+        out[FoundryPanels.FLAGS] = u.running() ? 1 << FoundryPanels.F_RUNNING : 0;
+        out[FoundryPanels.L_SPINDLE_RPM] = (int) Math.round(u.spindleRpm());
+        out[FoundryPanels.L_PROGRESS_PERMIL] = (int) Math.round(u.progress() * 1000);
+        if (!Double.isNaN(u.toolWear())) out[FoundryPanels.L_WEAR_PERMIL] = (int) Math.round(u.toolWear() * 1000);
+        if (u.work() != null) out[FoundryPanels.L_KIND] = u.work().kind().ordinal();
     }
 
     @Override

@@ -9,10 +9,12 @@ import com.mojang.brigadier.exceptions.CommandSyntaxException;
 import com.mojang.brigadier.exceptions.DynamicCommandExceptionType;
 import dev.denfry.promptcritical.mod.binding.SimBindings;
 import dev.denfry.promptcritical.mod.binding.SimLevelBinding;
+import dev.denfry.promptcritical.mod.block.PcBlock;
 import dev.denfry.promptcritical.mod.boiler.BoilerGeometry;
 import dev.denfry.promptcritical.mod.boiler.FireTubeBoilerBlockEntity;
 import dev.denfry.promptcritical.mod.content.HandbookManager;
 import dev.denfry.promptcritical.mod.content.HandbookService;
+import dev.denfry.promptcritical.mod.panel.PanelHost;
 import dev.denfry.promptcritical.sim.consequence.BudgetStats;
 import dev.denfry.promptcritical.sim.core.GridPos;
 import dev.denfry.promptcritical.sim.core.SimId;
@@ -40,6 +42,7 @@ import net.minecraft.world.InteractionHand;
 import net.minecraft.world.InteractionResult;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.ItemStack;
+import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.phys.BlockHitResult;
 import net.minecraft.world.phys.Vec3;
 import net.neoforged.neoforge.common.util.FakePlayer;
@@ -78,6 +81,8 @@ public final class PcCommands {
                                 .executes(ctx -> use(ctx, stack(ctx, 1)))
                                 .then(Commands.argument("count", IntegerArgumentType.integer(1, 64))
                                         .executes(ctx -> use(ctx, stack(ctx, IntegerArgumentType.getInteger(ctx, "count"))))))))
+                .then(Commands.literal("panel").then(Commands.argument("pos", BlockPosArgument.blockPos())
+                        .then(Commands.argument("button", IntegerArgumentType.integer(0)).executes(PcCommands::panel))))
                 .then(Commands.literal("hoist").then(Commands.argument("pos", BlockPosArgument.blockPos())
                         .then(Commands.argument("button", StringArgumentType.word()).executes(PcCommands::hoist))))
                 .then(Commands.literal("handbook").then(Commands.argument("entry", ResourceLocationArgument.id())
@@ -213,7 +218,7 @@ public final class PcCommands {
 
     /**
      * Правый клик по блоку от имени фейк-игрока с предметом в руке (сценарии, съёмка, проверка без GUI): розжиг,
-     * вентиль, канат, форма, ведро. Фейк-игрок стоит над верхней гранью блока и после клика остаётся с пустыми руками.
+     * канат, форма, ведро. Кнопки местных щитов (вентиль машины и т. п.) — {@code /pc panel}. Фейк-игрок стоит над верхней гранью блока и после клика остаётся с пустыми руками.
      */
     private static int use(CommandContext<CommandSourceStack> ctx, ItemStack stack) throws CommandSyntaxException {
         ServerLevel level = ctx.getSource().getLevel();
@@ -226,6 +231,22 @@ public final class PcCommands {
         fp.setItemInHand(InteractionHand.MAIN_HAND, ItemStack.EMPTY);
         ctx.getSource().sendSuccess(() -> Component.literal("use " + pos.toShortString() + ": " + r), false);
         return r.consumesAction() ? 1 : 0;
+    }
+
+    /** Кнопка местного щита машины без GUI: номер кнопки раскладки (вентиль машины — 0, проворот — 1, передача — 2). */
+    private static int panel(CommandContext<CommandSourceStack> ctx) throws CommandSyntaxException {
+        ServerLevel level = ctx.getSource().getLevel();
+        BlockPos pos = BlockPosArgument.getLoadedBlockPos(ctx, "pos");
+        BlockState st = level.getBlockState(pos);
+        BlockPos c = st.getBlock() instanceof PcBlock b ? b.controllerPos(st, pos) : pos;
+        if (!(level.getBlockEntity(c) instanceof PanelHost host)) {
+            ctx.getSource().sendFailure(Component.literal("no machine panel at this position"));
+            return 0;
+        }
+        int button = IntegerArgumentType.getInteger(ctx, "button");
+        host.onPanelButton(FakePlayerFactory.getMinecraft(level), button);
+        ctx.getSource().sendSuccess(() -> Component.literal("panel " + c.toShortString() + ": button " + button), false);
+        return 1;
     }
 
     /** Кнопка панели подъёмной машины без GUI: номер посадки (с 0), {@code stop}, {@code reset}, {@code slower}, {@code faster}. */

@@ -6,12 +6,15 @@ import dev.denfry.promptcritical.mod.block.PcProperties;
 import dev.denfry.promptcritical.mod.blockentity.DeviceBlockEntity;
 import dev.denfry.promptcritical.mod.config.ServerConfig;
 import dev.denfry.promptcritical.mod.multiblock.Footprint;
+import dev.denfry.promptcritical.mod.panel.PanelHost;
+import dev.denfry.promptcritical.mod.panel.PanelLayout;
 import dev.denfry.promptcritical.mod.registry.PcBlocks;
 import dev.denfry.promptcritical.sim.core.CommandSource;
 import dev.denfry.promptcritical.sim.core.SimCommand;
 import dev.denfry.promptcritical.sim.core.SimId;
 import dev.denfry.promptcritical.sim.plant.EngineUnit;
 import dev.denfry.promptcritical.sim.plant.SteamPlant;
+import java.util.Arrays;
 import java.util.Locale;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
@@ -22,6 +25,7 @@ import net.minecraft.network.protocol.Packet;
 import net.minecraft.network.protocol.game.ClientGamePacketListener;
 import net.minecraft.network.protocol.game.ClientboundBlockEntityDataPacket;
 import net.minecraft.server.level.ServerLevel;
+import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.sounds.SoundEvents;
 import net.minecraft.sounds.SoundSource;
 import net.minecraft.world.InteractionResult;
@@ -45,7 +49,7 @@ import org.jetbrains.annotations.Nullable;
  *       заслонке при нынешнем давлении в котле; обновление не чаще 1 Гц, мёртвая зона 2 %.</li>
  * </ul>
  */
-public class SteamEngineBlockEntity extends DeviceBlockEntity implements PressureSource {
+public class SteamEngineBlockEntity extends DeviceBlockEntity implements PressureSource, PanelHost {
     public static final int[] GEARS = {16, 32, 64};
     private static final int LINK_PERIOD = 20, SYNC_PERIOD = 2;
     private static final double HYSTERESIS = 0.02, CAPACITY_DEADBAND = 0.02;
@@ -177,22 +181,63 @@ public class SteamEngineBlockEntity extends DeviceBlockEntity implements Pressur
 
     // --- игрок ---
 
-    public InteractionResult use(Player player) {
+    /** Провернуть машину ломом с мёртвой точки. Только сервер. */
+    public InteractionResult barOver(Player player) {
+        SimLevelBinding b = SimBindings.get((ServerLevel) level);
+        if (b == null || unit() == null) return InteractionResult.PASS;
+        b.submit(new SimCommand.Operate(simId(), SteamPlant.BAR_OVER), new CommandSource.Panel(player.getUUID(), worldPosition.asLong()));
+        player.displayClientMessage(Component.translatable(BoilerText.BARRED_OVER), true);
+        level.playSound(null, worldPosition, SoundEvents.ANVIL_PLACE, SoundSource.BLOCKS, 0.3f, 1.6f);
+        return InteractionResult.SUCCESS;
+    }
+
+    /** Открыть или закрыть стопорный вентиль. Только сервер. */
+    public InteractionResult toggleValve(Player player) {
         SimLevelBinding b = SimBindings.get((ServerLevel) level);
         EngineUnit e = unit();
         if (b == null || e == null) return InteractionResult.PASS;
-        CommandSource source = new CommandSource.Panel(player.getUUID(), worldPosition.asLong());
-        if (player.isShiftKeyDown()) {
-            b.submit(new SimCommand.Operate(simId(), SteamPlant.BAR_OVER), source);
-            player.displayClientMessage(Component.translatable(BoilerText.BARRED_OVER), true);
-            level.playSound(null, worldPosition, SoundEvents.ANVIL_PLACE, SoundSource.BLOCKS, 0.3f, 1.6f);
-            return InteractionResult.SUCCESS;
-        }
         if (e.boiler().isNone()) player.displayClientMessage(Component.translatable(BoilerText.NO_BOILER), true);
         else player.displayClientMessage(Component.translatable(e.stopValveOpen() ? BoilerText.VALVE_CLOSED : BoilerText.VALVE_OPEN), true);
-        b.submit(new SimCommand.Operate(simId(), SteamPlant.TOGGLE_STOP_VALVE), source);
+        b.submit(new SimCommand.Operate(simId(), SteamPlant.TOGGLE_STOP_VALVE), new CommandSource.Panel(player.getUUID(), worldPosition.asLong()));
         level.playSound(null, worldPosition, SoundEvents.IRON_TRAPDOOR_OPEN, SoundSource.BLOCKS, 0.6f, 0.7f);
         return InteractionResult.SUCCESS;
+    }
+
+    // --- щит ---
+
+    @Override
+    public PanelLayout panelLayout() {
+        return BoilerPanels.ENGINE;
+    }
+
+    @Override
+    public void readPanel(int[] out) {
+        Arrays.fill(out, 0);
+        out[BoilerPanels.E_GEAR] = GEARS[gear];
+        EngineUnit e = unit();
+        if (e == null) return;
+        out[BoilerPanels.E_RPM10] = (int) Math.round(e.omega() * 60 / (2 * Math.PI) * 10);
+        out[BoilerPanels.E_CHEST_KPA] = (int) Math.round(gaugePressurePa() / 1000);
+        out[BoilerPanels.E_OUT_RPM10] = Math.round(portRpm() * 10);
+        out[BoilerPanels.E_CAPACITY_SU] = Math.round(lastCapacitySu);
+        out[BoilerPanels.E_LOAD_KW10] = (int) Math.round(portLoadW / 100);
+        out[BoilerPanels.E_STEAM_KGH] = FireTubeBoilerBlockEntity.finite(e.steamFlowKgS() * 3600);
+        out[BoilerPanels.E_THROTTLE_PERMIL] = FireTubeBoilerBlockEntity.finite(e.throttle() * 1000);
+        out[BoilerPanels.E_FLAGS] = (e.stopValveOpen() ? 1 << BoilerPanels.EF_VALVE : 0)
+                | (e.dashpotFitted() ? 1 << BoilerPanels.EF_DASHPOT : 0)
+                | (e.boiler().isNone() ? 0 : 1 << BoilerPanels.EF_BOILER)
+                | (level4 > 0 ? 1 << BoilerPanels.EF_RUNNING : 0);
+    }
+
+    @Override
+    public void onPanelButton(ServerPlayer player, int id) {
+        switch (id) {
+            case BoilerPanels.BUTTON_VALVE -> toggleValve(player);
+            case BoilerPanels.BUTTON_BAR -> barOver(player);
+            case BoilerPanels.BUTTON_GEAR -> cycleGear(player);
+            default -> {
+            }
+        }
     }
 
     public ItemInteractionResult fitDashpot(Player player, ItemStack stack) {

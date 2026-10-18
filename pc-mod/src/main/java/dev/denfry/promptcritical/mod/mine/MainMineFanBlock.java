@@ -4,15 +4,21 @@ import dev.denfry.promptcritical.mod.block.PcDeviceBlock;
 import dev.denfry.promptcritical.mod.boiler.BoilerGeometry;
 import dev.denfry.promptcritical.mod.boiler.KineticPortBlock;
 import dev.denfry.promptcritical.mod.multiblock.Footprint;
+import dev.denfry.promptcritical.mod.panel.PanelHost;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
+import net.minecraft.server.level.ServerPlayer;
+import net.minecraft.world.InteractionResult;
+import net.minecraft.world.entity.player.Player;
+import net.minecraft.world.level.Level;
 import net.minecraft.world.level.block.entity.BlockEntity;
 import net.minecraft.world.level.block.state.BlockState;
+import net.minecraft.world.phys.BlockHitResult;
 import org.jetbrains.annotations.Nullable;
 
 /**
  * Вентилятор главного проветривания 3×3×3 (08 §8.2.7): контроллер в центре, крыльчатка на оси фасада. Вал Create
- * подводят сзади к клетке {@code kinetic_port} на оси (клетка (0, 0, 1) модели).
+ * подводят сзади к клетке {@code kinetic_port} на оси (клетка (0, 0, 1) модели). Пустая рука — местный щит.
  */
 public final class MainMineFanBlock extends PcDeviceBlock {
     private MainMineFanBlock(Properties props, Spec spec) {
@@ -33,6 +39,13 @@ public final class MainMineFanBlock extends PcDeviceBlock {
         if (cell.offsetFromAnchor().equals(new BlockPos(0, 0, 1).rotate(Footprint.rotation(f))))
             return KineticPortBlock.inputForOffset(cell.offsetFromAnchor(), f.getAxis());
         return super.partState(controller, cell);
+    }
+
+    @Override
+    protected InteractionResult useWithoutItem(BlockState state, Level level, BlockPos pos, Player player, BlockHitResult hit) {
+        if (!(level.getBlockEntity(controllerPos(state, pos)) instanceof MainMineFanBlockEntity be)) return InteractionResult.PASS;
+        if (!level.isClientSide && player instanceof ServerPlayer sp) PanelHost.open(sp, be);
+        return InteractionResult.sidedSuccess(level.isClientSide);
     }
 
     @Override

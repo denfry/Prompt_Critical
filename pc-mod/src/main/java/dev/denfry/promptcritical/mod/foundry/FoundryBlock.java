@@ -1,8 +1,10 @@
 package dev.denfry.promptcritical.mod.foundry;
 
 import dev.denfry.promptcritical.mod.block.PcDeviceBlock;
+import dev.denfry.promptcritical.mod.panel.PanelHost;
 import java.util.function.BiFunction;
 import net.minecraft.core.BlockPos;
+import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.world.InteractionHand;
 import net.minecraft.world.InteractionResult;
 import net.minecraft.world.ItemInteractionResult;
@@ -18,7 +20,8 @@ import org.jetbrains.annotations.Nullable;
 
 /**
  * Устройство литейки и цеха (08 §8.9–8.10): свой BE на контроллере, тик и руки игрока передаются ему ({@link
- * FoundryDevice}). Клик по любой клетке конструкции приходит на контроллер.
+ * FoundryDevice}). Клик по любой клетке конструкции приходит на контроллер; пустая рука открывает местный щит
+ * ({@link PanelHost}), с Shift — быстрое действие {@link FoundryDevice#use}.
  */
 public class FoundryBlock extends PcDeviceBlock {
     private final BiFunction<BlockPos, BlockState, ? extends BlockEntity> factory;
@@ -65,6 +68,11 @@ public class FoundryBlock extends PcDeviceBlock {
     protected InteractionResult useWithoutItem(BlockState state, Level level, BlockPos pos, Player player, BlockHitResult hit) {
         FoundryDevice d = device(level, pos, state);
         if (d == null) return InteractionResult.PASS;
-        return level.isClientSide ? InteractionResult.SUCCESS : d.use(player);
+        if (level.isClientSide) return InteractionResult.SUCCESS;
+        if (d instanceof PanelHost h && !player.isShiftKeyDown() && player instanceof ServerPlayer sp) {
+            PanelHost.open(sp, h);
+            return InteractionResult.CONSUME;
+        }
+        return d.use(player);
     }
 }

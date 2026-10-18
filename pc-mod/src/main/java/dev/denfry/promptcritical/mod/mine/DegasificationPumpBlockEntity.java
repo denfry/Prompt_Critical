@@ -3,7 +3,10 @@ package dev.denfry.promptcritical.mod.mine;
 import dev.denfry.promptcritical.mod.binding.SimLevelBinding;
 import dev.denfry.promptcritical.mod.block.PcProperties;
 import dev.denfry.promptcritical.mod.foundry.KineticMachineBlockEntity;
+import dev.denfry.promptcritical.mod.panel.PanelHost;
+import dev.denfry.promptcritical.mod.panel.PanelLayout;
 import dev.denfry.promptcritical.sim.mechanics.ShaftInput;
+import java.util.Arrays;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
 import net.minecraft.world.InteractionHand;
@@ -20,7 +23,7 @@ import org.jetbrains.annotations.Nullable;
  * мощность ∝ n при неизменном разрежении; каптаж скважины растёт с подачей до {@link MineWorld#DEGAS_CAPTURE} на
  * номинале и выше не поднимается (газоотдача пласта).
  */
-public final class DegasificationPumpBlockEntity extends KineticMachineBlockEntity<ShaftInput> {
+public final class DegasificationPumpBlockEntity extends KineticMachineBlockEntity<ShaftInput> implements PanelHost {
     public static final double NOMINAL_RPM = 64;
     /** Мощность на номинале, Вт [BALANCE: ВВН-12 ≈ 20–30 кВт на группу скважин, на одну — меньше]. */
     public static final double RATED_W = 15_000;
@@ -87,5 +90,20 @@ public final class DegasificationPumpBlockEntity extends KineticMachineBlockEnti
     @Override
     public InteractionResult use(Player player) {
         return InteractionResult.PASS;
+    }
+
+    @Override
+    public PanelLayout panelLayout() {
+        return MinePanels.DEGAS;
+    }
+
+    @Override
+    public void readPanel(int[] out) {
+        Arrays.fill(out, 0);
+        double rpm = shaft.rpm(tick);
+        out[MinePanels.SHAFT_RPM10] = (int) Math.round(rpm * 10);
+        out[MinePanels.DEGAS_CAPTURE_PERMIL] = (int) Math.round(capture(tick) * 1000);
+        out[MinePanels.DEGAS_KW10] = (int) Math.round(powerW(shaft) / 100);
+        out[MinePanels.FLAGS] = rpm > 0 ? 1 << MinePanels.F_RUNNING : 0;
     }
 }

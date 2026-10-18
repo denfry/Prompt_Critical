@@ -2,10 +2,13 @@ package dev.denfry.promptcritical.mod.foundry;
 
 import dev.denfry.promptcritical.mod.binding.SimLevelBinding;
 import dev.denfry.promptcritical.mod.config.ServerConfig;
+import dev.denfry.promptcritical.mod.panel.PanelHost;
+import dev.denfry.promptcritical.mod.panel.PanelLayout;
 import dev.denfry.promptcritical.sim.mechanics.ShaftInput;
 import dev.denfry.promptcritical.sim.metallurgy.CupolaFurnace;
 import dev.denfry.promptcritical.sim.metallurgy.CupolaUnit;
 import dev.denfry.promptcritical.sim.metallurgy.FoundrySubsystem;
+import java.util.Arrays;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
 import net.minecraft.core.HolderLookup;
@@ -18,6 +21,7 @@ import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.level.block.state.properties.BlockStateProperties;
 import net.neoforged.neoforge.items.IItemHandler;
+import net.neoforged.neoforge.items.IItemHandlerModifiable;
 import org.jetbrains.annotations.Nullable;
 
 /**
@@ -25,7 +29,7 @@ import org.jetbrains.annotations.Nullable;
  * валу Create, выпуск — сам, в заформованную форму у подножия (рядом с нижней клеткой или ниже на блок). Сигнал
  * красного камня держит лётку закрытой.
  */
-public final class CupolaBlockEntity extends KineticMachineBlockEntity<CupolaUnit> {
+public final class CupolaBlockEntity extends KineticMachineBlockEntity<CupolaUnit> implements PanelHost {
     private static final MachineInventory.Role[] ROLES = {MachineInventory.Role.INPUT, MachineInventory.Role.INPUT};
     static final int POUR_PERIOD_TICKS = 10;
 
@@ -106,6 +110,34 @@ public final class CupolaBlockEntity extends KineticMachineBlockEntity<CupolaUni
                     FoundryText.num(f.wellKg()), FoundryText.num(f.wellTemperatureK() - 273.15), FoundryText.num(u.airNm3S())), true);
         }
         return InteractionResult.SUCCESS;
+    }
+
+    @Override
+    public PanelLayout panelLayout() {
+        return FoundryPanels.CUPOLA;
+    }
+
+    @Override
+    public IItemHandlerModifiable panelItems() {
+        return inv;
+    }
+
+    @Override
+    public void readPanel(int[] out) {
+        Arrays.fill(out, 0);
+        out[FoundryPanels.SHAFT_RPM10] = shaftRpm10();
+        boolean held = level.hasNeighborSignal(worldPosition) || level.hasNeighborSignal(worldPosition.below());
+        CupolaUnit u = unit();
+        out[FoundryPanels.FLAGS] = held ? 1 << FoundryPanels.F_HELD : 0;
+        if (u == null) return;
+        CupolaFurnace f = u.furnace();
+        out[FoundryPanels.C_WELL_C] = (int) Math.round(f.wellTemperatureK() - 273.15);
+        out[FoundryPanels.C_WELL_KG10] = (int) Math.round(f.wellKg() * 10);
+        out[FoundryPanels.C_IRON_KG] = (int) Math.round(f.stackIronKg());
+        out[FoundryPanels.C_COKE_KG] = (int) Math.round(f.stackCokeKg());
+        out[FoundryPanels.C_AIR_NM3H] = (int) Math.round(u.airNm3S() * 3600);
+        out[FoundryPanels.C_MELT_KGH] = (int) Math.round(f.meltRateKgS() * 3600);
+        if (u.lit()) out[FoundryPanels.FLAGS] |= 1 << FoundryPanels.F_RUNNING;
     }
 
     @Override

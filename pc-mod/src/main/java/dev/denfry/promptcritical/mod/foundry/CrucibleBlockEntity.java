@@ -4,10 +4,13 @@ import dev.denfry.promptcritical.mod.binding.SimBindings;
 import dev.denfry.promptcritical.mod.binding.SimLevelBinding;
 import dev.denfry.promptcritical.mod.blockentity.DeviceBlockEntity;
 import dev.denfry.promptcritical.mod.config.ServerConfig;
+import dev.denfry.promptcritical.mod.panel.PanelHost;
+import dev.denfry.promptcritical.mod.panel.PanelLayout;
 import dev.denfry.promptcritical.sim.metallurgy.CastAlloy;
 import dev.denfry.promptcritical.sim.metallurgy.CrucibleFurnace;
 import dev.denfry.promptcritical.sim.metallurgy.CrucibleUnit;
 import dev.denfry.promptcritical.sim.metallurgy.FoundrySubsystem;
+import java.util.Arrays;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
 import net.minecraft.core.HolderLookup;
@@ -22,6 +25,7 @@ import net.minecraft.world.level.block.Block;
 import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.level.block.state.properties.BlockStateProperties;
 import net.neoforged.neoforge.items.IItemHandler;
+import net.neoforged.neoforge.items.IItemHandlerModifiable;
 import org.jetbrains.annotations.Nullable;
 
 /**
@@ -29,7 +33,7 @@ import org.jetbrains.annotations.Nullable;
  * горн; расплав выливается в заформованную форму перед печью (на уровне печи или на блок ниже). Сигнал красного
  * камня держит тигель.
  */
-public final class CrucibleBlockEntity extends DeviceBlockEntity implements FoundryDevice {
+public final class CrucibleBlockEntity extends DeviceBlockEntity implements FoundryDevice, PanelHost {
     private static final MachineInventory.Role[] ROLES = {MachineInventory.Role.INPUT, MachineInventory.Role.INPUT};
 
     private final MachineInventory inv = new MachineInventory(ROLES,
@@ -107,6 +111,34 @@ public final class CrucibleBlockEntity extends DeviceBlockEntity implements Foun
                         FoundryText.num(f.temperatureK() - 273.15), FoundryText.num(f.liquidFraction() * 100), FoundryText.num(u.fuelKg()))
                 : FoundryText.msg("crucible_empty", FoundryText.num(u.fuelKg())), true);
         return InteractionResult.SUCCESS;
+    }
+
+    @Override
+    public PanelLayout panelLayout() {
+        return FoundryPanels.CRUCIBLE;
+    }
+
+    @Override
+    public IItemHandlerModifiable panelItems() {
+        return inv;
+    }
+
+    @Override
+    public void readPanel(int[] out) {
+        Arrays.fill(out, 0);
+        out[FoundryPanels.T_ALLOY] = -1;
+        out[FoundryPanels.FLAGS] = level.hasNeighborSignal(worldPosition) ? 1 << FoundryPanels.F_HELD : 0;
+        CrucibleUnit u = unit();
+        if (u == null) return;
+        CrucibleFurnace f = u.furnace();
+        out[FoundryPanels.T_TEMP_C] = (int) Math.round(f.temperatureK() - 273.15);
+        out[FoundryPanels.T_FUEL_KG10] = (int) Math.round(u.fuelKg() * 10);
+        if (f.massKg() > 0) {
+            out[FoundryPanels.T_MASS_KG10] = (int) Math.round(f.massKg() * 10);
+            out[FoundryPanels.T_LIQUID_PERMIL] = (int) Math.round(f.liquidFraction() * 1000);
+            out[FoundryPanels.T_ALLOY] = f.alloy().ordinal();
+        }
+        if (u.lit()) out[FoundryPanels.FLAGS] |= 1 << FoundryPanels.F_RUNNING;
     }
 
     @Override

@@ -3,6 +3,7 @@ package dev.denfry.promptcritical.mod.blockentity;
 import dev.denfry.promptcritical.mod.binding.DeviceHost;
 import dev.denfry.promptcritical.mod.binding.SimBindings;
 import dev.denfry.promptcritical.mod.binding.SimLevelBinding;
+import dev.denfry.promptcritical.mod.panel.PanelHost;
 import dev.denfry.promptcritical.mod.registry.PcBlockEntities;
 import dev.denfry.promptcritical.sim.core.DeviceMode;
 import dev.denfry.promptcritical.sim.core.SimId;
@@ -10,7 +11,9 @@ import net.minecraft.core.BlockPos;
 import net.minecraft.core.HolderLookup;
 import net.minecraft.core.registries.BuiltInRegistries;
 import net.minecraft.nbt.CompoundTag;
+import net.minecraft.network.chat.Component;
 import net.minecraft.server.level.ServerLevel;
+import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.level.block.entity.BlockEntity;
 import net.minecraft.world.level.block.entity.BlockEntityType;
 import net.minecraft.world.level.block.state.BlockState;
@@ -103,5 +106,19 @@ public class DeviceBlockEntity extends BlockEntity implements DeviceHost {
     protected void loadAdditional(CompoundTag tag, HolderLookup.Provider registries) {
         super.loadAdditional(tag, registries);
         simId = new SimId(tag.getLong("sim_id"));
+    }
+
+    // --- местный щит (для наследников, реализующих PanelHost) ---
+
+    public Component panelTitle() {
+        return getBlockState().getBlock().getName();
+    }
+
+    public BlockPos panelPos() {
+        return worldPosition;
+    }
+
+    public boolean panelValid(Player player) {
+        return PanelHost.near(this, player);
     }
 }

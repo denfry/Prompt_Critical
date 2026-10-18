@@ -2,6 +2,8 @@ package dev.denfry.promptcritical.mod.foundry;
 
 import dev.denfry.promptcritical.mod.binding.SimLevelBinding;
 import dev.denfry.promptcritical.mod.block.PcProperties;
+import dev.denfry.promptcritical.mod.panel.PanelHost;
+import dev.denfry.promptcritical.mod.panel.PanelLayout;
 import dev.denfry.promptcritical.mod.registry.PcBlocks;
 import dev.denfry.promptcritical.mod.registry.PcFluids;
 import dev.denfry.promptcritical.mod.registry.PcItems;
@@ -10,6 +12,7 @@ import dev.denfry.promptcritical.sim.metallurgy.CastingGeometry;
 import dev.denfry.promptcritical.sim.metallurgy.CyclicMachine;
 import dev.denfry.promptcritical.sim.metallurgy.FoundrySubsystem;
 import dev.denfry.promptcritical.sim.metallurgy.SandMoldUnit;
+import java.util.Arrays;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
 import net.minecraft.core.HolderLookup;
@@ -26,6 +29,7 @@ import net.neoforged.neoforge.fluids.FluidStack;
 import net.neoforged.neoforge.fluids.capability.IFluidHandler;
 import net.neoforged.neoforge.fluids.capability.templates.FluidTank;
 import net.neoforged.neoforge.items.IItemHandler;
+import net.neoforged.neoforge.items.IItemHandlerModifiable;
 import org.jetbrains.annotations.Nullable;
 
 /**
@@ -33,7 +37,7 @@ import org.jetbrains.annotations.Nullable;
  * с водой вокруг {@code casting_pattern} — за цикл одна заформованная {@code sand_mold}. Модель не расходуется.
  * Вода — 5 мБ на предмет смеси (влажность 5 % на 100 кг); без воды форма выходит сухой (2 %).
  */
-public final class MoldingStationBlockEntity extends KineticMachineBlockEntity<CyclicMachine> {
+public final class MoldingStationBlockEntity extends KineticMachineBlockEntity<CyclicMachine> implements PanelHost {
     public static final int WATER_PER_SAND_MB = 5;
     public static final float DRY_MOISTURE = 0.02f;
     private static final MachineInventory.Role[] ROLES = {MachineInventory.Role.INPUT, MachineInventory.Role.SERVICE,
@@ -140,6 +144,31 @@ public final class MoldingStationBlockEntity extends KineticMachineBlockEntity<C
                 : FoundryText.msg("molding", FoundryText.pattern(p), inv.getStackInSlot(0).getCount(),
                         CastingGeometry.of(p.kind()).sandItems(), water.getFluidAmount()), true);
         return InteractionResult.SUCCESS;
+    }
+
+    @Override
+    public PanelLayout panelLayout() {
+        return FoundryPanels.MOLDING;
+    }
+
+    @Override
+    public IItemHandlerModifiable panelItems() {
+        return inv;
+    }
+
+    @Override
+    public void readPanel(int[] out) {
+        Arrays.fill(out, 0);
+        out[FoundryPanels.SHAFT_RPM10] = shaftRpm10();
+        FoundryComponents.Pattern p = pattern();
+        out[FoundryPanels.M_KIND] = p == null ? -1 : p.kind().ordinal();
+        out[FoundryPanels.M_NEED] = p == null ? 0 : CastingGeometry.of(p.kind()).sandItems();
+        out[FoundryPanels.M_SAND] = inv.getStackInSlot(0).getCount();
+        out[FoundryPanels.M_WATER_MB] = water.getFluidAmount();
+        CyclicMachine u = unit();
+        if (u == null) return;
+        out[FoundryPanels.FLAGS] = u.running() ? 1 << FoundryPanels.F_RUNNING : 0;
+        out[FoundryPanels.M_PROGRESS_PERMIL] = (int) Math.round(u.progress() * 1000);
     }
 
     @Override

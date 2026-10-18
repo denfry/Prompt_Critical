@@ -5,13 +5,17 @@ import dev.denfry.promptcritical.mod.binding.SimLevelBinding;
 import dev.denfry.promptcritical.mod.block.ChimneyBlock;
 import dev.denfry.promptcritical.mod.block.PcProperties;
 import dev.denfry.promptcritical.mod.blockentity.DeviceBlockEntity;
+import dev.denfry.promptcritical.mod.panel.PanelHost;
+import dev.denfry.promptcritical.mod.panel.PanelLayout;
 import dev.denfry.promptcritical.mod.registry.PcFluids;
 import dev.denfry.promptcritical.mod.registry.PcItems;
+import dev.denfry.promptcritical.sim.combustion.BoilerOutputs;
 import dev.denfry.promptcritical.sim.combustion.BoilerRupture;
 import dev.denfry.promptcritical.sim.core.CommandSource;
 import dev.denfry.promptcritical.sim.core.SimCommand;
 import dev.denfry.promptcritical.sim.plant.BoilerUnit;
 import dev.denfry.promptcritical.sim.plant.SteamPlant;
+import java.util.Arrays;
 import java.util.Locale;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
@@ -23,6 +27,7 @@ import net.minecraft.network.protocol.Packet;
 import net.minecraft.network.protocol.game.ClientGamePacketListener;
 import net.minecraft.network.protocol.game.ClientboundBlockEntityDataPacket;
 import net.minecraft.server.level.ServerLevel;
+import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.sounds.SoundEvents;
 import net.minecraft.sounds.SoundSource;
 import net.minecraft.tags.FluidTags;
@@ -42,7 +47,9 @@ import net.neoforged.neoforge.fluids.FluidUtil;
 import net.neoforged.neoforge.fluids.capability.IFluidHandler;
 import net.neoforged.neoforge.fluids.capability.templates.FluidTank;
 import net.neoforged.neoforge.items.IItemHandler;
+import net.neoforged.neoforge.items.IItemHandlerModifiable;
 import net.neoforged.neoforge.items.ItemStackHandler;
+import net.neoforged.neoforge.items.wrapper.CombinedInvWrapper;
 import org.jetbrains.annotations.Nullable;
 
 /**
@@ -54,7 +61,7 @@ import org.jetbrains.annotations.Nullable;
  * и {@code raw_water}. Топливо — руками в топку или цепной решёткой; зола выдаётся шлаком {@code boiler_slag}
  * (по {@link #SLAG_ASH_KG} кг на предмет) — воронками или пустой рукой.
  */
-public class FireTubeBoilerBlockEntity extends DeviceBlockEntity implements PressureSource {
+public class FireTubeBoilerBlockEntity extends DeviceBlockEntity implements PressureSource, PanelHost {
     public static final int FEED_TANK_MB = 4000;
     /** Температура наружного воздуха, К (климат биомов 07 §7.13.1 — позже). */
     public static final double AMBIENT_K = 288.15;
@@ -81,6 +88,19 @@ public class FireTubeBoilerBlockEntity extends DeviceBlockEntity implements Pres
         }
     };
     private final IItemHandler slagOutput = new ExtractOnly(slag);
+    /** Совок щита: топливо, которое кнопка «Забросить» кидает на решётку. */
+    private final ItemStackHandler shovel = new ItemStackHandler(1) {
+        @Override
+        public boolean isItemValid(int slot, ItemStack stack) {
+            return BoilerFuels.key(stack) != null;
+        }
+
+        @Override
+        protected void onContentsChanged(int slot) {
+            setChanged();
+        }
+    };
+    private final IItemHandlerModifiable panelItems = new CombinedInvWrapper(shovel, slag);
     private double feedDebtKg;
     private int ticks, whistleCooldown;
     private boolean plugWasMelted;
@@ -277,17 +297,8 @@ public class FireTubeBoilerBlockEntity extends DeviceBlockEntity implements Pres
             player.displayClientMessage(Component.translatable(BoilerText.RUPTURED), true);
             return ItemInteractionResult.CONSUME;
         }
-        String fuel = BoilerFuels.key(stack);
-        if (fuel != null) {
-            double kg = BoilerFuels.itemMassKg();
-            if (u.boiler().bedKg() + kg > MAX_BED_KG) {
-                player.displayClientMessage(Component.translatable(BoilerText.BED_FULL), true);
-                return ItemInteractionResult.CONSUME;
-            }
-            b.submit(new SimCommand.ChargeFuel(simId(), fuel, kg), source);
-            stack.consume(1, player);
-            player.displayClientMessage(Component.translatable(BoilerText.CHARGED, String.format(Locale.ROOT, "%.0f", kg)), true);
-            playAt(doorPos(), SoundEvents.GRAVEL_PLACE, 0.8f, 0.8f);
+        if (BoilerFuels.key(stack) != null) {
+            if (charge(player, stack, b, u)) stack.consume(1, player);
             return ItemInteractionResult.SUCCESS;
         }
         if (stack.is(Items.FLINT_AND_STEEL) || stack.is(Items.FIRE_CHARGE) || stack.is(Items.TORCH)) {
@@ -312,7 +323,81 @@ public class FireTubeBoilerBlockEntity extends DeviceBlockEntity implements Pres
         return ItemInteractionResult.PASS_TO_DEFAULT_BLOCK_INTERACTION;
     }
 
-    /** Пустая рука: забрать шлак, показать слой, бак, топку и пробку. Только сервер. */
+    /** Забросить одну порцию топлива {@code stack} на решётку; {@code false} — некуда или котёл разрушен. Сервер. */
+    private boolean charge(Player player, ItemStack stack, SimLevelBinding b, BoilerUnit u) {
+        String fuel = BoilerFuels.key(stack);
+        if (fuel == null) return false;
+        if (u.rupture() != BoilerRupture.NONE) {
+            player.displayClientMessage(Component.translatable(BoilerText.RUPTURED), true);
+            return false;
+        }
+        double kg = BoilerFuels.itemMassKg();
+        if (u.boiler().bedKg() + kg > MAX_BED_KG) {
+            player.displayClientMessage(Component.translatable(BoilerText.BED_FULL), true);
+            return false;
+        }
+        b.submit(new SimCommand.ChargeFuel(simId(), fuel, kg), new CommandSource.Panel(player.getUUID(), worldPosition.asLong()));
+        player.displayClientMessage(Component.translatable(BoilerText.CHARGED, String.format(Locale.ROOT, "%.0f", kg)), true);
+        playAt(doorPos(), SoundEvents.GRAVEL_PLACE, 0.8f, 0.8f);
+        return true;
+    }
+
+    // --- щит ---
+
+    @Override
+    public PanelLayout panelLayout() {
+        return BoilerPanels.BOILER;
+    }
+
+    @Override
+    public IItemHandlerModifiable panelItems() {
+        return panelItems;
+    }
+
+    @Override
+    public void readPanel(int[] out) {
+        BoilerUnit u = unit();
+        Arrays.fill(out, 0);
+        out[BoilerPanels.B_FEED_L] = feed.getFluidAmount();
+        if (u == null) return;
+        BoilerOutputs o = u.outputs();
+        out[BoilerPanels.B_P_KPA] = (int) Math.round(gaugePressurePa() / 1000);
+        out[BoilerPanels.B_GLASS_PERMIL] = Math.round(glass * 1000);
+        out[BoilerPanels.B_BED_KG10] = (int) Math.round(u.boiler().bedKg() * 10);
+        out[BoilerPanels.B_FLUE_C10] = celsius10(o.fluegasExitK);
+        out[BoilerPanels.B_DRAFT_PA10] = finite(o.draftPa * 10);
+        out[BoilerPanels.B_WATER_C10] = celsius10(u.waterTempK());
+        out[BoilerPanels.B_CROWN_C10] = celsius10(o.crownTempK);
+        out[BoilerPanels.B_EFF_PERMIL] = Double.isNaN(o.efficiency) ? -1 : (int) Math.round(o.efficiency * 1000);
+        out[BoilerPanels.B_RELIEF_KPA] = (int) Math.round((u.spec().reliefSetPressure() - SteamPlant.ATMOSPHERE_PA) / 1000);
+        boolean ruptured = u.rupture() != BoilerRupture.NONE;
+        out[BoilerPanels.B_FLAGS] = (u.lit() && !ruptured ? 1 << BoilerPanels.F_LIT : 0)
+                | (u.reliefOpen() ? 1 << BoilerPanels.F_RELIEF : 0)
+                | (u.plugMelted() ? 1 << BoilerPanels.F_PLUG : 0)
+                | (u.smoky() ? 1 << BoilerPanels.F_SMOKY : 0)
+                | (!ruptured && u.gaugeGlassLevelM() < GLASS_BOTTOM_M ? 1 << BoilerPanels.F_LOW_WATER : 0)
+                | (ruptured ? 1 << BoilerPanels.F_RUPTURED : 0);
+    }
+
+    static int celsius10(double kelvin) {
+        return finite((kelvin - 273.15) * 10);
+    }
+
+    static int finite(double v) {
+        return Double.isFinite(v) ? (int) Math.round(v) : 0;
+    }
+
+    @Override
+    public void onPanelButton(ServerPlayer player, int id) {
+        if (id != BoilerPanels.BUTTON_CHARGE) return;
+        BoilerUnit u = unit();
+        SimLevelBinding b = SimBindings.get((ServerLevel) level);
+        ItemStack s = shovel.getStackInSlot(0);
+        if (u == null || b == null || s.isEmpty()) return;
+        if (charge(player, s, b, u)) shovel.extractItem(0, 1, false);
+    }
+
+    /** Пустая рука с Shift: забрать шлак, показать слой, бак, топку и пробку. Только сервер. */
     public InteractionResult use(Player player) {
         BoilerUnit u = unit();
         if (u == null) return InteractionResult.PASS;
@@ -346,6 +431,7 @@ public class FireTubeBoilerBlockEntity extends DeviceBlockEntity implements Pres
         super.saveAdditional(tag, registries);
         tag.put("feed", feed.writeToNBT(registries, new CompoundTag()));
         tag.put("slag", slag.serializeNBT(registries));
+        tag.put("shovel", shovel.serializeNBT(registries));
         tag.putDouble("feed_debt", feedDebtKg);
     }
 
@@ -354,6 +440,7 @@ public class FireTubeBoilerBlockEntity extends DeviceBlockEntity implements Pres
         super.loadAdditional(tag, registries);
         if (tag.contains("feed")) feed.readFromNBT(registries, tag.getCompound("feed"));
         if (tag.contains("slag")) slag.deserializeNBT(registries, tag.getCompound("slag"));
+        if (tag.contains("shovel")) shovel.deserializeNBT(registries, tag.getCompound("shovel"));
         feedDebtKg = tag.getDouble("feed_debt");
         if (tag.contains("view_p")) {
             pressurePa = tag.getFloat("view_p");

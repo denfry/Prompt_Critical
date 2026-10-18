@@ -3,9 +3,12 @@ package dev.denfry.promptcritical.mod.mine;
 import dev.denfry.promptcritical.mod.binding.SimLevelBinding;
 import dev.denfry.promptcritical.mod.block.PcProperties;
 import dev.denfry.promptcritical.mod.foundry.KineticMachineBlockEntity;
+import dev.denfry.promptcritical.mod.panel.PanelHost;
+import dev.denfry.promptcritical.mod.panel.PanelLayout;
 import dev.denfry.promptcritical.mod.registry.PcFluids;
 import dev.denfry.promptcritical.sim.mechanics.ShaftInput;
 import dev.denfry.promptcritical.sim.mining.MineSump;
+import java.util.Arrays;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
 import net.minecraft.world.InteractionHand;
@@ -29,7 +32,7 @@ import org.jetbrains.annotations.Nullable;
  * домен; откачанная вода ({@code mine_water} у сернистых пластов, иначе вода) уходит в трубу на верхней грани, без
  * трубы — по ставу на поверхность [допущение].
  */
-public final class MineDrainagePumpBlockEntity extends KineticMachineBlockEntity<ShaftInput> {
+public final class MineDrainagePumpBlockEntity extends KineticMachineBlockEntity<ShaftInput> implements PanelHost {
     public static final double NOMINAL_RPM = 64;
     public static final MineSump.PumpSpec PUMP = new MineSump.PumpSpec(100.0 / 3600, 150, 0.7, NOMINAL_RPM);
     public static final double RATED_W = MineSump.pumpPowerW(PUMP.ratedFlowM3s(), PUMP.ratedHeadM(), PUMP.efficiency());
@@ -117,6 +120,22 @@ public final class MineDrainagePumpBlockEntity extends KineticMachineBlockEntity
     @Override
     public ItemInteractionResult useItem(Player player, InteractionHand hand, ItemStack stack) {
         return ItemInteractionResult.PASS_TO_DEFAULT_BLOCK_INTERACTION;
+    }
+
+    @Override
+    public PanelLayout panelLayout() {
+        return MinePanels.DRAINAGE;
+    }
+
+    @Override
+    public void readPanel(int[] out) {
+        Arrays.fill(out, 0);
+        double rpm = shaft.rpm(tick);
+        out[MinePanels.SHAFT_RPM10] = (int) Math.round(rpm * 10);
+        out[MinePanels.PUMP_FLOW_M3H10] = (int) Math.round(pumpedM3s * 3600 * 10);
+        out[MinePanels.PUMP_HEAD_M] = (int) Math.round(headM());
+        out[MinePanels.PUMP_KW10] = (int) Math.round(powerW(shaft) / 100);
+        out[MinePanels.FLAGS] = (pumpedM3s > 0 ? 1 << MinePanels.F_RUNNING : 0) | (acidic ? 1 << MinePanels.F_ACID : 0);
     }
 
     @Override

@@ -4,6 +4,8 @@ import dev.denfry.promptcritical.mod.binding.SimLevelBinding;
 import dev.denfry.promptcritical.mod.block.PcBlock;
 import dev.denfry.promptcritical.mod.block.PcProperties;
 import dev.denfry.promptcritical.mod.multiblock.Footprint;
+import dev.denfry.promptcritical.mod.panel.PanelHost;
+import dev.denfry.promptcritical.mod.panel.PanelLayout;
 import dev.denfry.promptcritical.mod.registry.PcItems;
 import dev.denfry.promptcritical.sim.mechanics.ShaftInput;
 import dev.denfry.promptcritical.sim.metallurgy.CastingSpec;
@@ -24,13 +26,14 @@ import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.level.block.state.BlockState;
 import net.neoforged.neoforge.items.IItemHandler;
+import net.neoforged.neoforge.items.IItemHandlerModifiable;
 import org.jetbrains.annotations.Nullable;
 
 /**
  * Выбивная решётка {@code shakeout_grate} (08 §8.9): формы ставятся на решётку, остывшие выбиваются за цикл
  * (вал Create) — отливка с {@code casting_spec} и 90 % формовочной смеси на склад решётки.
  */
-public final class ShakeoutGrateBlockEntity extends KineticMachineBlockEntity<CyclicMachine> {
+public final class ShakeoutGrateBlockEntity extends KineticMachineBlockEntity<CyclicMachine> implements PanelHost {
     /** Возврат формовочной смеси после выбивки. */
     public static final double SAND_RECOVERY = 0.9;
     private static final MachineInventory.Role[] ROLES = new MachineInventory.Role[9];
@@ -136,6 +139,28 @@ public final class ShakeoutGrateBlockEntity extends KineticMachineBlockEntity<Cy
         readyMold();
         player.displayClientMessage(FoundryText.msg("shakeout", readyCount), true);
         return InteractionResult.SUCCESS;
+    }
+
+    @Override
+    public PanelLayout panelLayout() {
+        return FoundryPanels.SHAKEOUT;
+    }
+
+    @Override
+    public IItemHandlerModifiable panelItems() {
+        return inv;
+    }
+
+    @Override
+    public void readPanel(int[] out) {
+        Arrays.fill(out, 0);
+        out[FoundryPanels.SHAFT_RPM10] = shaftRpm10();
+        readyMold();
+        out[FoundryPanels.K_READY] = readyCount;
+        CyclicMachine u = unit();
+        if (u == null) return;
+        out[FoundryPanels.FLAGS] = u.running() ? 1 << FoundryPanels.F_RUNNING : 0;
+        out[FoundryPanels.K_PROGRESS_PERMIL] = (int) Math.round(u.progress() * 1000);
     }
 
     @Override

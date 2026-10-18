@@ -2,9 +2,11 @@ package dev.denfry.promptcritical.mod.boiler;
 
 import dev.denfry.promptcritical.mod.block.PcDeviceBlock;
 import dev.denfry.promptcritical.mod.multiblock.Footprint;
+import dev.denfry.promptcritical.mod.panel.PanelHost;
 import dev.denfry.promptcritical.mod.registry.PcItems;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
+import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.world.InteractionHand;
 import net.minecraft.world.InteractionResult;
 import net.minecraft.world.ItemInteractionResult;
@@ -21,7 +23,8 @@ import org.jetbrains.annotations.Nullable;
 /**
  * Паровая машина 3×3×5 (07 §7.9.7): цилиндр с золотником и рама с коленвалом и маховиком. Конец коленвала со
  * стороны маховика — клетка {@code kinetic_port}: к ней снаружи подводят вал Create (ось коленвала — X модели).
- * Пустая рука — стопорный вентиль, с Shift — провернуть машину ломом; катаракт ставится предметом.
+ * Пустая рука — местный щит (вентиль, проворот, передача), с Shift — провернуть машину ломом; катаракт ставится
+ * предметом.
  */
 public final class SteamEngineBlock extends PcDeviceBlock {
     /** Клетка вала от контроллера в модели (якорь рамы (0, 0, 2) + 1 по оси коленвала). */
@@ -85,6 +88,9 @@ public final class SteamEngineBlock extends PcDeviceBlock {
     protected InteractionResult useWithoutItem(BlockState state, Level level, BlockPos pos, Player player, BlockHitResult hit) {
         SteamEngineBlockEntity be = controller(level, pos, state);
         if (be == null) return InteractionResult.PASS;
-        return level.isClientSide ? InteractionResult.SUCCESS : be.use(player);
+        if (level.isClientSide) return InteractionResult.SUCCESS;
+        if (player.isShiftKeyDown()) return be.barOver(player);
+        if (player instanceof ServerPlayer sp) PanelHost.open(sp, be);
+        return InteractionResult.CONSUME;
     }
 }

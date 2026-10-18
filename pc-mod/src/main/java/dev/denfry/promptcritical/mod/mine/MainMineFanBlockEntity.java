@@ -1,10 +1,16 @@
 package dev.denfry.promptcritical.mod.mine;
 
+import dev.denfry.promptcritical.mod.binding.SimBindings;
+import dev.denfry.promptcritical.mod.binding.SimLevelBinding;
 import dev.denfry.promptcritical.mod.blockentity.DeviceBlockEntity;
 import dev.denfry.promptcritical.mod.boiler.ShaftConsumer;
+import dev.denfry.promptcritical.mod.panel.PanelHost;
+import dev.denfry.promptcritical.mod.panel.PanelLayout;
 import dev.denfry.promptcritical.sim.mechanics.ShaftInput;
 import dev.denfry.promptcritical.sim.mining.FanSpec;
+import java.util.Arrays;
 import net.minecraft.core.BlockPos;
+import net.minecraft.server.level.ServerLevel;
 import net.minecraft.world.level.block.state.BlockState;
 
 /**
@@ -12,7 +18,7 @@ import net.minecraft.world.level.block.state.BlockState;
  * характеристики {@link MineScanner#MAIN_FAN}; подобие Q ∝ n, h ∝ n² считает решатель вентиляции. Мощность
  * N = hQ/η_f из последнего решения сети {@link MineWorld} возвращает сюда — её и видит сеть Create.
  */
-public final class MainMineFanBlockEntity extends DeviceBlockEntity implements ShaftConsumer {
+public final class MainMineFanBlockEntity extends DeviceBlockEntity implements ShaftConsumer, PanelHost {
     /** Номинальная скорость вала, об/мин [BALANCE: как у машин литейки]. */
     public static final double NOMINAL_RPM = 64;
     /** Передаточное число редуктора: n₀ крыльчатки / номинал вала. */
@@ -55,5 +61,23 @@ public final class MainMineFanBlockEntity extends DeviceBlockEntity implements S
     @Override
     public double nominalShaftRpm() {
         return NOMINAL_RPM;
+    }
+
+    @Override
+    public PanelLayout panelLayout() {
+        return MinePanels.FAN;
+    }
+
+    @Override
+    public void readPanel(int[] out) {
+        Arrays.fill(out, 0);
+        SimLevelBinding b = level instanceof ServerLevel s ? SimBindings.get(s) : null;
+        if (b == null) return;
+        long tick = b.world().clock().tick();
+        double rpm = shaft.rpm(tick);
+        out[MinePanels.SHAFT_RPM10] = (int) Math.round(rpm * 10);
+        out[MinePanels.FAN_RPM] = (int) Math.round(fanRpm(tick));
+        out[MinePanels.FAN_KW10] = (int) Math.round(powerW / 100);
+        out[MinePanels.FLAGS] = rpm > 0 ? 1 << MinePanels.F_RUNNING : 0;
     }
 }

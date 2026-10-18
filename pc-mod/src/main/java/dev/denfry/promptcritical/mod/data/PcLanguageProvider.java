@@ -212,6 +212,7 @@ public final class PcLanguageProvider extends LanguageProvider {
             b(db.getId().getPath(), n[0] + suffix[0], n[1] + " (" + suffix[1] + ")");
         });
         MISC.putAll(dev.denfry.promptcritical.mod.mine.HoistText.LANG);
+        MISC.putAll(dev.denfry.promptcritical.mod.panel.PanelText.lang());
     }
 
     @Override

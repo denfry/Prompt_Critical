@@ -54,6 +54,8 @@ neoForge {
             client()
             sourceSet = gametest
             systemProperty("neoforge.enabledGameTestNamespaces", modId)
+            // ./gradlew :pc-mod:runClient -PquickPlay=<мир> — сразу войти в мир из run/saves
+            providers.gradleProperty("quickPlay").orNull?.let { programArguments.addAll("--quickPlaySingleplayer", it) }
         }
         register("server") {
             server()

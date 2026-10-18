@@ -4,6 +4,8 @@ import dev.denfry.promptcritical.mod.binding.SimLevelBinding;
 import dev.denfry.promptcritical.mod.block.PcProperties;
 import dev.denfry.promptcritical.mod.config.ServerConfig;
 import dev.denfry.promptcritical.mod.item.CoalAssayData;
+import dev.denfry.promptcritical.mod.panel.PanelHost;
+import dev.denfry.promptcritical.mod.panel.PanelLayout;
 import dev.denfry.promptcritical.mod.registry.PcDataComponents;
 import dev.denfry.promptcritical.mod.registry.PcFluids;
 import dev.denfry.promptcritical.mod.registry.PcItems;
@@ -11,10 +13,12 @@ import dev.denfry.promptcritical.sim.mechanics.ShaftInput;
 import dev.denfry.promptcritical.sim.mining.CoalAssay;
 import dev.denfry.promptcritical.sim.mining.CoalJig;
 import dev.denfry.promptcritical.sim.mining.CoalPrepSubsystem;
+import java.util.Arrays;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
 import net.minecraft.core.HolderLookup;
 import net.minecraft.nbt.CompoundTag;
+import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.world.InteractionHand;
 import net.minecraft.world.InteractionResult;
 import net.minecraft.world.ItemInteractionResult;
@@ -28,13 +32,14 @@ import net.minecraft.world.level.material.Fluids;
 import net.neoforged.neoforge.fluids.FluidStack;
 import net.neoforged.neoforge.fluids.capability.IFluidHandler;
 import net.neoforged.neoforge.items.IItemHandler;
+import net.neoforged.neoforge.items.IItemHandlerModifiable;
 import org.jetbrains.annotations.Nullable;
 
 /**
  * Отсадочная машина {@code coal_jig} (08 §8.3): рядовой уголь на входе, три продукта с {@code coal_assay} на выходе,
  * подпиточная вода — трубой или ведром (в домене, {@link CoalJig}). Ключ Create меняет плотность разделения.
  */
-public final class CoalJigBlockEntity extends KineticMachineBlockEntity<CoalJig> implements KineticMachineBlock.Wrenchable {
+public final class CoalJigBlockEntity extends KineticMachineBlockEntity<CoalJig> implements KineticMachineBlock.Wrenchable, PanelHost {
     /** Уголь без анализа — уголь Г из T8.1. */
     static final CoalAssayData DEFAULT_ASSAY = new CoalAssayData(37, 21, 6, 20);
     private static final MachineInventory.Role[] ROLES = {MachineInventory.Role.INPUT, MachineInventory.Role.OUTPUT,
@@ -143,6 +148,36 @@ public final class CoalJigBlockEntity extends KineticMachineBlockEntity<CoalJig>
         double rho = u.cycleRhoClean();
         if (ctx.getPlayer() != null) ctx.getPlayer().displayClientMessage(FoundryText.msg("jig_cut", FoundryText.num(rho)), true);
         return InteractionResult.SUCCESS;
+    }
+
+    @Override
+    public PanelLayout panelLayout() {
+        return FoundryPanels.COAL_JIG;
+    }
+
+    @Override
+    public IItemHandlerModifiable panelItems() {
+        return inv;
+    }
+
+    @Override
+    public void readPanel(int[] out) {
+        Arrays.fill(out, 0);
+        out[FoundryPanels.SHAFT_RPM10] = shaftRpm10();
+        CoalJig u = unit();
+        if (u == null) return;
+        out[FoundryPanels.FLAGS] = u.running() ? 1 << FoundryPanels.F_RUNNING : 0;
+        out[FoundryPanels.J_FEED_KG] = (int) Math.round(u.feedKg());
+        out[FoundryPanels.J_WATER_L] = (int) Math.round(u.waterL());
+        out[FoundryPanels.J_RHO_CLEAN] = (int) Math.round(u.rhoClean() * 100);
+        out[FoundryPanels.J_RHO_REFUSE] = (int) Math.round(u.rhoRefuse() * 100);
+    }
+
+    @Override
+    public void onPanelButton(ServerPlayer player, int id) {
+        CoalJig u = unit();
+        if (id != FoundryPanels.BUTTON_JIG_CUT || u == null) return;
+        player.displayClientMessage(FoundryText.msg("jig_cut", FoundryText.num(u.cycleRhoClean())), true);
     }
 
     @Override

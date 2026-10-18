@@ -53,6 +53,7 @@ public final class PromptCritical {
                 SimConfigs.fromServerConfig().section(MiningConfig.class, MiningConfig.defaults()),
                 SimConfigs.fromServerConfig().section(DrainageConfig.class, DrainageConfig.defaults())));
         dev.denfry.promptcritical.mod.mine.MineHoisting.register(modBus);
+        dev.denfry.promptcritical.mod.panel.PanelLayouts.register(modBus);
         dev.denfry.promptcritical.mod.mine.MineLongwall.register(modBus);
         dev.denfry.promptcritical.mod.content.ContentRegistries.register(modBus);
         modBus.addListener(PcDataGen::gather);

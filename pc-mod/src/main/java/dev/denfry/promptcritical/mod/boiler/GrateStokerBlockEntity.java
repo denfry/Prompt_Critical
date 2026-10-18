@@ -3,6 +3,8 @@ package dev.denfry.promptcritical.mod.boiler;
 import dev.denfry.promptcritical.mod.binding.SimLevelBinding;
 import dev.denfry.promptcritical.mod.block.PcProperties;
 import dev.denfry.promptcritical.mod.foundry.KineticMachineBlockEntity;
+import dev.denfry.promptcritical.mod.panel.PanelHost;
+import dev.denfry.promptcritical.mod.panel.PanelLayout;
 import dev.denfry.promptcritical.sim.core.CommandSource;
 import dev.denfry.promptcritical.sim.core.SimCommand;
 import dev.denfry.promptcritical.sim.mechanics.ShaftInput;
@@ -20,6 +22,7 @@ import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.level.block.state.properties.BlockStateProperties;
 import net.neoforged.neoforge.items.IItemHandler;
+import net.neoforged.neoforge.items.IItemHandlerModifiable;
 import net.neoforged.neoforge.items.ItemStackHandler;
 import org.jetbrains.annotations.Nullable;
 
@@ -30,7 +33,7 @@ import org.jetbrains.annotations.Nullable;
  * порции уходят командой {@link SimCommand.ChargeFuel} раз в секунду. Пока слой больше
  * {@link FireTubeBoilerBlockEntity#MAX_BED_KG} (котёл погас), цепь не подаёт.
  */
-public class GrateStokerBlockEntity extends KineticMachineBlockEntity<GrateStokerBlockEntity> {
+public class GrateStokerBlockEntity extends KineticMachineBlockEntity<GrateStokerBlockEntity> implements PanelHost {
     /** Привод цепи, Вт, при номинальных оборотах. */
     public static final double RATED_W = 1_500;
     public static final double NOMINAL_RPM = 32;
@@ -153,6 +156,27 @@ public class GrateStokerBlockEntity extends KineticMachineBlockEntity<GrateStoke
                     String.format(Locale.ROOT, "%.2f", feedKgS)), true);
         }
         return InteractionResult.SUCCESS;
+    }
+
+    @Override
+    public PanelLayout panelLayout() {
+        return BoilerPanels.STOKER;
+    }
+
+    @Override
+    public IItemHandlerModifiable panelItems() {
+        return hopper;
+    }
+
+    @Override
+    public void readPanel(int[] out) {
+        Direction back = getBlockState().getValue(BlockStateProperties.HORIZONTAL_FACING).getOpposite();
+        FireTubeBoilerBlockEntity boiler = FireTubeBoilerBlockEntity.at(level, worldPosition.relative(back));
+        var u = boiler == null ? null : boiler.unit();
+        out[BoilerPanels.S_FEED_KGH] = (int) Math.round(feedKgS * 3600);
+        out[BoilerPanels.S_RPM10] = (int) Math.round(rpmNow * 10);
+        out[BoilerPanels.S_BED_KG10] = u == null ? 0 : (int) Math.round(u.boiler().bedKg() * 10);
+        out[BoilerPanels.S_FLAGS] = (feedKgS > 0 ? 1 << BoilerPanels.SF_RUNNING : 0) | (boiler != null ? 1 << BoilerPanels.SF_BOILER : 0);
     }
 
     @Override

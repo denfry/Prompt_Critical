@@ -594,6 +594,34 @@ public final class MineWorld {
         if (!n.drainage().capacityOk()) player.sendSystemMessage(HoistText.msg("drainage.small_sump").withStyle(ChatFormatting.RED));
     }
 
+    /** Показания щита шкафа газовой защиты ({@link MinePanels#CABINET}). */
+    public void readCabinet(BlockPos cabinet, int[] out) {
+        java.util.Arrays.fill(out, 0);
+        out[MinePanels.D_TRIP_X100] = (int) Math.round(100 * 100 * ServerConfig.MINING_AGZ_TRIP_FRAC.get());
+        MineSubsystem sim = sim();
+        long mine = anchorMine.get(cabinet.asLong());
+        MineNetwork n = sim == null || mine < 0 ? null : sim.network(mine);
+        if (n == null || !n.ready() || n.topology().nodeCount() <= 1) return;
+        MineDrainage d = n.drainage();
+        double ch4 = n.maxConcentration(MineGas.CH4);
+        out[MinePanels.D_CH4_X100] = (int) Math.round(100 * 100 * ch4);
+        out[MinePanels.D_CO_PPM] = (int) Math.round(1e6 * n.maxConcentration(MineGas.CO));
+        out[MinePanels.D_O2_X10] = (int) Math.round(10 * 100 * n.minOxygen());
+        out[MinePanels.D_EMISSION_X100] = (int) Math.round(100 * 60 * n.methaneEmissionM3s());
+        out[MinePanels.D_AIR_X10] = (int) Math.round(10 * n.surfaceAirflowM3s());
+        out[MinePanels.D_SUMP_PERMIL] = (int) Math.round(1000 * Math.min(1, d.levelFrac()));
+        out[MinePanels.D_INFLOW_X10] = (int) Math.round(10 * 3600 * d.inflowM3s());
+        out[MinePanels.D_PUMPED_X10] = (int) Math.round(10 * 3600 * d.pumpedM3s());
+        out[MinePanels.D_EXPLOSIONS] = n.explosions();
+        out[MinePanels.D_NODES] = n.topology().nodeCount() - 1;
+        out[MinePanels.D_FLAGS] = 1 << MinePanels.DF_READY
+                | (ch4 >= ServerConfig.MINING_AGZ_TRIP_FRAC.get() ? 1 << MinePanels.DF_ALARM : 0)
+                | (n.exploding() || n.explosions() > 0 ? 1 << MinePanels.DF_EXPLOSION : 0)
+                | (d.floodedM3() > 0 ? 1 << MinePanels.DF_FLOODED : 0)
+                | (d.acidic() ? 1 << MinePanels.DF_ACID : 0)
+                | (!d.capacityOk() ? 1 << MinePanels.DF_SUMP_SMALL : 0);
+    }
+
     /** Строка водоотлива: водосборник, приток, откачка, затопление, кислотность. */
     public static Component drainageLine(MineNetwork n) {
         MineDrainage d = n.drainage();

@@ -1,7 +1,9 @@
 package dev.denfry.promptcritical.mod.boiler;
 
 import dev.denfry.promptcritical.mod.block.PcDeviceBlock;
+import dev.denfry.promptcritical.mod.panel.PanelHost;
 import net.minecraft.core.BlockPos;
+import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.world.InteractionHand;
 import net.minecraft.world.InteractionResult;
 import net.minecraft.world.ItemInteractionResult;
@@ -57,6 +59,9 @@ public final class FireTubeBoilerBlock extends PcDeviceBlock {
     protected InteractionResult useWithoutItem(BlockState state, Level level, BlockPos pos, Player player, BlockHitResult hit) {
         FireTubeBoilerBlockEntity be = controller(level, pos, state);
         if (be == null) return InteractionResult.PASS;
-        return level.isClientSide ? InteractionResult.SUCCESS : be.use(player);
+        if (level.isClientSide) return InteractionResult.SUCCESS;
+        if (player.isShiftKeyDown()) return be.use(player);
+        if (player instanceof ServerPlayer sp) PanelHost.open(sp, be);
+        return InteractionResult.CONSUME;
     }
 }

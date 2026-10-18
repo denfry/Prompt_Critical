@@ -211,6 +211,8 @@ public class PcBlock extends Block {
     protected void onRemove(BlockState state, Level level, BlockPos pos, BlockState newState, boolean movedByPiston) {
         if (!level.isClientSide && !newState.is(this)) {
             SimBindings.markDirty(level, pos);
+            if (isController(state) && !isRelocating() && !movedByPiston)
+                dev.denfry.promptcritical.mod.panel.PanelHost.dropItems(level, pos, level.getBlockEntity(pos));
             if (!spec.footprint.isSingle() && !isRelocating() && !movedByPiston) breakStructure(state, level, pos);
         }
         super.onRemove(state, level, pos, newState, movedByPiston);

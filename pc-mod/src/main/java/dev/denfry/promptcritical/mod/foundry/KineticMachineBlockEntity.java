@@ -4,6 +4,7 @@ import com.simibubi.create.content.kinetics.base.KineticBlockEntity;
 import dev.denfry.promptcritical.mod.binding.DeviceHost;
 import dev.denfry.promptcritical.mod.binding.SimBindings;
 import dev.denfry.promptcritical.mod.binding.SimLevelBinding;
+import dev.denfry.promptcritical.mod.panel.PanelHost;
 import dev.denfry.promptcritical.sim.core.DeviceMode;
 import dev.denfry.promptcritical.sim.core.SimId;
 import dev.denfry.promptcritical.sim.mechanics.ShaftInput;
@@ -11,7 +12,9 @@ import net.minecraft.core.BlockPos;
 import net.minecraft.core.HolderLookup;
 import net.minecraft.core.registries.BuiltInRegistries;
 import net.minecraft.nbt.CompoundTag;
+import net.minecraft.network.chat.Component;
 import net.minecraft.server.level.ServerLevel;
+import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.level.block.Block;
 import net.minecraft.world.level.block.entity.BlockEntityType;
 import net.minecraft.world.level.block.state.BlockState;
@@ -84,6 +87,11 @@ public abstract class KineticMachineBlockEntity<U> extends KineticBlockEntity im
     public float calculateStressApplied() {
         lastStressApplied = stress.impact();
         return lastStressApplied;
+    }
+
+    /** Обороты вала Create для тахометра щита, ×10. */
+    protected int shaftRpm10() {
+        return Math.round(Math.abs(getSpeed()) * 10);
     }
 
     /** Поставить булево свойство контроллера, если изменилось. */
@@ -164,5 +172,19 @@ public abstract class KineticMachineBlockEntity<U> extends KineticBlockEntity im
     protected void read(CompoundTag tag, HolderLookup.Provider registries, boolean clientPacket) {
         super.read(tag, registries, clientPacket);
         if (!clientPacket) simId = new SimId(tag.getLong("sim_id"));
+    }
+
+    // --- местный щит (для наследников, реализующих PanelHost) ---
+
+    public Component panelTitle() {
+        return getBlockState().getBlock().getName();
+    }
+
+    public BlockPos panelPos() {
+        return worldPosition;
+    }
+
+    public boolean panelValid(Player player) {
+        return PanelHost.near(this, player);
     }
 }
