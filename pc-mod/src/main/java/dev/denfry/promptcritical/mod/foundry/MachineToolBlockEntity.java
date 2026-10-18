@@ -2,6 +2,7 @@ package dev.denfry.promptcritical.mod.foundry;
 
 import dev.denfry.promptcritical.mod.binding.SimLevelBinding;
 import dev.denfry.promptcritical.mod.block.PcProperties;
+import dev.denfry.promptcritical.mod.fx.MachineFx;
 import dev.denfry.promptcritical.mod.panel.PanelHost;
 import dev.denfry.promptcritical.mod.panel.PanelLayout;
 import dev.denfry.promptcritical.mod.registry.PcItems;
@@ -15,6 +16,7 @@ import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
 import net.minecraft.core.HolderLookup;
 import net.minecraft.nbt.CompoundTag;
+import net.minecraft.sounds.SoundEvents;
 import net.minecraft.world.InteractionHand;
 import net.minecraft.world.InteractionResult;
 import net.minecraft.world.ItemInteractionResult;
@@ -145,6 +147,15 @@ public final class MachineToolBlockEntity extends KineticMachineBlockEntity<Mach
                 : FoundryText.msg("tool", FoundryText.kind(u.work().kind()), FoundryText.num(u.progress() * 100),
                         FoundryText.num(u.spindleRpm()), wear), true);
         return InteractionResult.SUCCESS;
+    }
+
+    @Override
+    protected void clientTick() {
+        MachineFx fx = fx();
+        if (fx == null || !runningState()) return;
+        boolean lathe = kind == MachineToolUnit.Kind.LATHE;
+        if (fx.chance(12)) fx.chips(lathe ? fx.at(17, 14.5, 9.6) : fx.at(8, 11, 7), 1);
+        if (level.getGameTime() % 25 == 0) fx.sound(fx.at(8, 12, 8), SoundEvents.GRINDSTONE_USE, 0.15f, 1.6f);
     }
 
     @Override

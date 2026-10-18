@@ -2,8 +2,8 @@
 	"credit": "Made with Blockbench",
 	"textures": {
 		"particle": "promptcritical:block/common/graphite",
-		"g": "promptcritical:block/common/graphite",
-		"hot": "promptcritical:block/common/fuelcycle_glow_hot"
+		"graph": "promptcritical:block/common/graphite",
+		"melt": "promptcritical:block/common/m2_glow_metal"
 	},
 	"elements": [
 		{
@@ -18,27 +18,27 @@
 			"faces": {
 				"north": {
 					"uv": [0, 0, 8, 9],
-					"texture": "#g"
+					"texture": "#graph"
 				},
 				"east": {
 					"uv": [0, 0, 3.31, 9],
-					"texture": "#g"
+					"texture": "#graph"
 				},
 				"south": {
 					"uv": [0, 0, 8, 9],
-					"texture": "#g"
+					"texture": "#graph"
 				},
 				"west": {
 					"uv": [0, 0, 3.31, 9],
-					"texture": "#g"
+					"texture": "#graph"
 				},
 				"up": {
 					"uv": [0, 0, 8, 3.31],
-					"texture": "#g"
+					"texture": "#graph"
 				},
 				"down": {
 					"uv": [0, 0, 8, 3.31],
-					"texture": "#g"
+					"texture": "#graph"
 				}
 			}
 		},
@@ -54,27 +54,27 @@
 			"faces": {
 				"north": {
 					"uv": [0, 0, 3.31, 9.02],
-					"texture": "#g"
+					"texture": "#graph"
 				},
 				"east": {
 					"uv": [0, 0, 8, 9.02],
-					"texture": "#g"
+					"texture": "#graph"
 				},
 				"south": {
 					"uv": [0, 0, 3.31, 9.02],
-					"texture": "#g"
+					"texture": "#graph"
 				},
 				"west": {
 					"uv": [0, 0, 8, 9.02],
-					"texture": "#g"
+					"texture": "#graph"
 				},
 				"up": {
 					"uv": [0, 0, 3.31, 8],
-					"texture": "#g"
+					"texture": "#graph"
 				},
 				"down": {
 					"uv": [0, 0, 3.31, 8],
-					"texture": "#g"
+					"texture": "#graph"
 				}
 			}
 		},
@@ -90,27 +90,27 @@
 			"faces": {
 				"north": {
 					"uv": [0, 0, 8, 9.04],
-					"texture": "#g"
+					"texture": "#graph"
 				},
 				"east": {
 					"uv": [0, 0, 3.31, 9.04],
-					"texture": "#g"
+					"texture": "#graph"
 				},
 				"south": {
 					"uv": [0, 0, 8, 9.04],
-					"texture": "#g"
+					"texture": "#graph"
 				},
 				"west": {
 					"uv": [0, 0, 3.31, 9.04],
-					"texture": "#g"
+					"texture": "#graph"
 				},
 				"up": {
 					"uv": [0, 0, 8, 3.31],
-					"texture": "#g"
+					"texture": "#graph"
 				},
 				"down": {
 					"uv": [0, 0, 8, 3.31],
-					"texture": "#g"
+					"texture": "#graph"
 				}
 			}
 		},
@@ -126,27 +126,27 @@
 			"faces": {
 				"north": {
 					"uv": [0, 0, 8, 9.06],
-					"texture": "#g"
+					"texture": "#graph"
 				},
 				"east": {
 					"uv": [0, 0, 3.31, 9.06],
-					"texture": "#g"
+					"texture": "#graph"
 				},
 				"south": {
 					"uv": [0, 0, 8, 9.06],
-					"texture": "#g"
+					"texture": "#graph"
 				},
 				"west": {
 					"uv": [0, 0, 3.31, 9.06],
-					"texture": "#g"
+					"texture": "#graph"
 				},
 				"up": {
 					"uv": [0, 0, 8, 3.31],
-					"texture": "#g"
+					"texture": "#graph"
 				},
 				"down": {
 					"uv": [0, 0, 8, 3.31],
-					"texture": "#g"
+					"texture": "#graph"
 				}
 			}
 		},
@@ -162,32 +162,68 @@
 			"faces": {
 				"north": {
 					"uv": [0, 0, 6, 0.5],
-					"texture": "#hot"
+					"texture": "#melt"
 				},
 				"east": {
 					"uv": [0, 0, 6, 0.5],
-					"texture": "#hot"
+					"texture": "#melt"
 				},
 				"south": {
 					"uv": [0, 0, 6, 0.5],
-					"texture": "#hot"
+					"texture": "#melt"
 				},
 				"west": {
 					"uv": [0, 0, 6, 0.5],
-					"texture": "#hot"
+					"texture": "#melt"
 				},
 				"up": {
 					"uv": [0, 0, 6, 6],
-					"texture": "#hot"
+					"texture": "#melt"
 				},
 				"down": {
 					"uv": [0, 0, 6, 6],
-					"texture": "#hot"
+					"texture": "#melt"
 				}
 			},
 			"neoforge_data": {
 				"block_light": 15,
 				"sky_light": 15
+			}
+		},
+		{
+			"name": "lip",
+			"from": [7, 11.5, 3.6],
+			"to": [9, 12.2, 4.2],
+			"rotation": {
+				"angle": 0,
+				"axis": "y",
+				"origin": [8, 8, 8]
+			},
+			"faces": {
+				"north": {
+					"uv": [0, 0, 2, 0.7],
+					"texture": "#graph"
+				},
+				"east": {
+					"uv": [0, 0, 0.6, 0.7],
+					"texture": "#graph"
+				},
+				"south": {
+					"uv": [0, 0, 2, 0.7],
+					"texture": "#graph"
+				},
+				"west": {
+					"uv": [0, 0, 0.6, 0.7],
+					"texture": "#graph"
+				},
+				"up": {
+					"uv": [0, 0, 2, 0.6],
+					"texture": "#graph"
+				},
+				"down": {
+					"uv": [0, 0, 2, 0.6],
+					"texture": "#graph"
+				}
 			}
 		}
 	]

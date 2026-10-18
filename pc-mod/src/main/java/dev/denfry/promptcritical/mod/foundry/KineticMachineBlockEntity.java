@@ -4,11 +4,15 @@ import com.simibubi.create.content.kinetics.base.KineticBlockEntity;
 import dev.denfry.promptcritical.mod.binding.DeviceHost;
 import dev.denfry.promptcritical.mod.binding.SimBindings;
 import dev.denfry.promptcritical.mod.binding.SimLevelBinding;
+import dev.denfry.promptcritical.mod.block.PcBlock;
+import dev.denfry.promptcritical.mod.block.PcProperties;
+import dev.denfry.promptcritical.mod.fx.MachineFx;
 import dev.denfry.promptcritical.mod.panel.PanelHost;
 import dev.denfry.promptcritical.sim.core.DeviceMode;
 import dev.denfry.promptcritical.sim.core.SimId;
 import dev.denfry.promptcritical.sim.mechanics.ShaftInput;
 import net.minecraft.core.BlockPos;
+import net.minecraft.core.Direction;
 import net.minecraft.core.HolderLookup;
 import net.minecraft.core.registries.BuiltInRegistries;
 import net.minecraft.nbt.CompoundTag;
@@ -69,7 +73,10 @@ public abstract class KineticMachineBlockEntity<U> extends KineticBlockEntity im
     @Override
     public void tick() {
         super.tick();
-        if (!(level instanceof ServerLevel s)) return;
+        if (!(level instanceof ServerLevel s)) {
+            if (level != null) clientTick();
+            return;
+        }
         SimLevelBinding b = SimBindings.get(s);
         U u = b == null || simId.isNone() ? null : unit(b);
         if (u == null) return;
@@ -87,6 +94,22 @@ public abstract class KineticMachineBlockEntity<U> extends KineticBlockEntity im
     public float calculateStressApplied() {
         lastStressApplied = stress.impact();
         return lastStressApplied;
+    }
+
+    /** Клиентский тик: частицы и звуки работы по состоянию блока ({@code running}, {@code lit}). */
+    protected void clientTick() {
+    }
+
+    /** Эффекты машины в модельных координатах контроллера (только клиент). */
+    protected MachineFx fx() {
+        BlockState s = getBlockState();
+        return MachineFx.of(level, worldPosition, s.getBlock() instanceof PcBlock b ? b.facing(s) : Direction.NORTH);
+    }
+
+    /** Машина работает (свойство {@code running} блока). */
+    protected boolean runningState() {
+        BlockState s = getBlockState();
+        return s.hasProperty(PcProperties.RUNNING) && s.getValue(PcProperties.RUNNING);
     }
 
     /** Обороты вала Create для тахометра щита, ×10. */

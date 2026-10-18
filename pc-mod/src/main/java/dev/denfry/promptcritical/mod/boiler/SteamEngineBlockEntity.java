@@ -5,6 +5,7 @@ import dev.denfry.promptcritical.mod.binding.SimLevelBinding;
 import dev.denfry.promptcritical.mod.block.PcProperties;
 import dev.denfry.promptcritical.mod.blockentity.DeviceBlockEntity;
 import dev.denfry.promptcritical.mod.config.ServerConfig;
+import dev.denfry.promptcritical.mod.fx.MachineFx;
 import dev.denfry.promptcritical.mod.multiblock.Footprint;
 import dev.denfry.promptcritical.mod.panel.PanelHost;
 import dev.denfry.promptcritical.mod.panel.PanelLayout;
@@ -35,6 +36,7 @@ import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.level.block.Block;
 import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.level.block.state.properties.BlockStateProperties;
+import net.minecraft.world.phys.Vec3;
 import org.jetbrains.annotations.Nullable;
 
 /**
@@ -126,7 +128,9 @@ public class SteamEngineBlockEntity extends DeviceBlockEntity implements Pressur
     public void tick() {
         ticks++;
         if (level.isClientSide) {
+            float before = clientCrank;
             clientCrank = (float) ((clientCrank + omega * 0.05) % (2 * Math.PI));
+            exhaust(before);
             return;
         }
         SimLevelBinding b = SimBindings.get((ServerLevel) level);
@@ -159,6 +163,15 @@ public class SteamEngineBlockEntity extends DeviceBlockEntity implements Pressur
         BlockState s = getBlockState();
         if (s.getValue(PcProperties.RUNNING) != running) level.setBlock(worldPosition, s.setValue(PcProperties.RUNNING, running), Block.UPDATE_CLIENTS);
         if (ticks % SYNC_PERIOD == 0) syncIfChanged();
+    }
+
+    /** Клуб пара из выхлопной трубы, когда поршень проходит мёртвую точку (каждые полоборота). */
+    private void exhaust(float before) {
+        if (!valveOpen || omega < 0.5f || (int) (before / Math.PI) == (int) (clientCrank / Math.PI)) return;
+        MachineFx fx = MachineFx.of(level, worldPosition, facing());
+        if (fx == null) return;
+        fx.puff(fx.at(-0.5, 32.5, -4), new Vec3(0, 0.12, 0), 3);
+        fx.sound(fx.at(-0.5, 32, -4), BoilerSounds.steam(), 0.15f, 1.7f);
     }
 
     private static int level4(double r) {

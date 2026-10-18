@@ -3,6 +3,7 @@ package dev.denfry.promptcritical.mod.foundry;
 import dev.denfry.promptcritical.mod.binding.SimLevelBinding;
 import dev.denfry.promptcritical.mod.block.PcProperties;
 import dev.denfry.promptcritical.mod.config.ServerConfig;
+import dev.denfry.promptcritical.mod.fx.MachineFx;
 import dev.denfry.promptcritical.mod.item.CoalAssayData;
 import dev.denfry.promptcritical.mod.panel.PanelHost;
 import dev.denfry.promptcritical.mod.panel.PanelLayout;
@@ -19,6 +20,7 @@ import net.minecraft.core.Direction;
 import net.minecraft.core.HolderLookup;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.server.level.ServerPlayer;
+import net.minecraft.sounds.SoundEvents;
 import net.minecraft.world.InteractionHand;
 import net.minecraft.world.InteractionResult;
 import net.minecraft.world.ItemInteractionResult;
@@ -148,6 +150,14 @@ public final class CoalJigBlockEntity extends KineticMachineBlockEntity<CoalJig>
         double rho = u.cycleRhoClean();
         if (ctx.getPlayer() != null) ctx.getPlayer().displayClientMessage(FoundryText.msg("jig_cut", FoundryText.num(rho)), true);
         return InteractionResult.SUCCESS;
+    }
+
+    @Override
+    protected void clientTick() {
+        MachineFx fx = fx();
+        if (fx == null || !runningState()) return;
+        if (fx.chance(10)) fx.splash(fx.at(16, 24.2, 8), 1.6, 2);
+        if (fx.chance(0.5)) fx.sound(fx.at(16, 24, 8), SoundEvents.WATER_AMBIENT, 0.25f, 1.2f);
     }
 
     @Override

@@ -3,6 +3,7 @@ package dev.denfry.promptcritical.mod.mine;
 import dev.denfry.promptcritical.mod.binding.SimLevelBinding;
 import dev.denfry.promptcritical.mod.block.PcProperties;
 import dev.denfry.promptcritical.mod.foundry.KineticMachineBlockEntity;
+import dev.denfry.promptcritical.mod.fx.MachineFx;
 import dev.denfry.promptcritical.mod.panel.PanelHost;
 import dev.denfry.promptcritical.mod.panel.PanelLayout;
 import dev.denfry.promptcritical.mod.registry.PcFluids;
@@ -120,6 +121,14 @@ public final class MineDrainagePumpBlockEntity extends KineticMachineBlockEntity
     @Override
     public ItemInteractionResult useItem(Player player, InteractionHand hand, ItemStack stack) {
         return ItemInteractionResult.PASS_TO_DEFAULT_BLOCK_INTERACTION;
+    }
+
+    @Override
+    protected void clientTick() {
+        MachineFx fx = fx();
+        if (fx == null || !runningState()) return;
+        if (fx.chance(1.5)) fx.leak(fx.at(4.5, 5, 8));
+        if (fx.chance(1.5)) fx.leak(fx.at(27, 5, 8));
     }
 
     @Override

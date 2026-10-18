@@ -3,6 +3,7 @@ package dev.denfry.promptcritical.mod.boiler;
 import dev.denfry.promptcritical.mod.binding.SimLevelBinding;
 import dev.denfry.promptcritical.mod.block.PcProperties;
 import dev.denfry.promptcritical.mod.foundry.KineticMachineBlockEntity;
+import dev.denfry.promptcritical.mod.fx.MachineFx;
 import dev.denfry.promptcritical.mod.panel.PanelHost;
 import dev.denfry.promptcritical.mod.panel.PanelLayout;
 import dev.denfry.promptcritical.sim.core.CommandSource;
@@ -156,6 +157,15 @@ public class GrateStokerBlockEntity extends KineticMachineBlockEntity<GrateStoke
                     String.format(Locale.ROOT, "%.2f", feedKgS)), true);
         }
         return InteractionResult.SUCCESS;
+    }
+
+    @Override
+    protected void clientTick() {
+        MachineFx fx = fx();
+        if (fx == null || !runningState()) return;
+        var r = fx.random();
+        if (fx.chance(6)) fx.flame(fx.at(3 + r.nextDouble() * 10, 8.8, 8 + r.nextDouble() * 7), 0.05);
+        if (fx.chance(1)) fx.wisp(fx.at(8, 9, 12), 0.4);
     }
 
     @Override

@@ -2,6 +2,7 @@ package dev.denfry.promptcritical.mod.foundry;
 
 import dev.denfry.promptcritical.mod.binding.SimLevelBinding;
 import dev.denfry.promptcritical.mod.config.ServerConfig;
+import dev.denfry.promptcritical.mod.fx.MachineFx;
 import dev.denfry.promptcritical.mod.panel.PanelHost;
 import dev.denfry.promptcritical.mod.panel.PanelLayout;
 import dev.denfry.promptcritical.sim.mechanics.ShaftInput;
@@ -13,6 +14,7 @@ import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
 import net.minecraft.core.HolderLookup;
 import net.minecraft.nbt.CompoundTag;
+import net.minecraft.sounds.SoundEvents;
 import net.minecraft.world.InteractionHand;
 import net.minecraft.world.InteractionResult;
 import net.minecraft.world.ItemInteractionResult;
@@ -110,6 +112,17 @@ public final class CupolaBlockEntity extends KineticMachineBlockEntity<CupolaUni
                     FoundryText.num(f.wellKg()), FoundryText.num(f.wellTemperatureK() - 273.15), FoundryText.num(u.airNm3S())), true);
         }
         return InteractionResult.SUCCESS;
+    }
+
+    @Override
+    protected void clientTick() {
+        MachineFx fx = fx();
+        if (fx == null || !getBlockState().getValue(BlockStateProperties.LIT)) return;
+        if (fx.chance(3)) fx.sparks(fx.at(8, 32, 8), 1);
+        if (fx.chance(4)) fx.smoke(fx.at(8, 32, 8), false, 0.3);
+        if (fx.chance(3)) fx.flame(fx.at(8, -4, 0.6), 0.1);
+        if (fx.chance(0.6)) fx.drip(fx.at(8, -6, -2.5));
+        if (fx.chance(0.4)) fx.sound(fx.at(8, 20, 8), SoundEvents.FIRE_AMBIENT, 0.8f, 0.8f);
     }
 
     @Override

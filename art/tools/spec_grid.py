@@ -470,101 +470,17 @@ m("energy_meter", "instruments", [
 # ======================================================================
 
 
-# жаротрубный котёл Ланкашир 3×3×6: передний сегмент (топочная дверца) и задний; якорь — центр
-def fire_tube(lit=False):
-    return disc("shell", "z", 15, -15.2, 31.9, "riv", faces={"north": "ci"}) + [
-        el("front_plate", [-12, -12, -15.5], [28, 28, -15.2], "ci"),
-        el("door_l", [-8, -10, -16], [6, 2, -15.5], "fdoorl" if lit else "fdoor", full=["north"]),
-        el(("glow_" if lit else "") + "door_r", [10, -10, -16], [24, 2, -15.5], "fdoorl" if lit else "fdoor", full=["north"]),
-        el("gauge_glass", [-6, 10, -16], [-4, 18, -15.5], "gl"),
-        el("safety_valve", [6, 23, 4], [10, 28, 8], "bs"),
-        el("manhole", [4, 22, 14], [12, 24, 22], "d"),
-        el("saddle_w", [-10, -16, 0], [-4, -5, 4], "brk"),
-        el("saddle_e", [20, -16, 0], [26, -5, 4], "brk"),
-    ]
-
-
-m("fire_tube_boiler", "boilers", fire_tube())
-m("fire_tube_boiler_lit", "boilers", fire_tube(True))
-m("fire_tube_boiler_rear", "boilers", disc("shell", "z", 15, -15.9, 28, "riv", faces={"south": "ci"}) + [
-    el("smokebox", [-10, -16, 28], [26, 20, 32], "ci"),
-    el("uptake", [4, 20, 26], [12, 32, 32], "d"),
-    el("feed_check", [24, 4, 6], [29, 8, 10], "bs"),
-])
-
-
-# цепная решётка ЛЦР: чугунные колосники, раскалённый слой; полотно — partial
-def stoker(running=False):
-    return [el("frame_w", [0, 0, 0], [2, 9, 16], "ci"),
-            el("frame_e", [14, 0, 0], [16, 9, 16], "ci"),
-            el("hopper", [2, 9, 0], [14, 16, 4], "d"),
-            el("gate", [2, 9, 4], [14, 11, 5], "ci"),
-            el(("glow_" if running else "") + "fire_bed", [2, 7.5, 5], [14, 8.5, 16], "grate" if running else "ci"),
-            el("sprocket_housing", [0.5, 2, 13], [15.5, 6, 16], "d")]
-
-
-m("grate_stoker", "boilers", stoker())
-m("grate_stoker_running", "boilers", stoker(True))
-m("grate_stoker/chain", "boilers", [
-    el("chain_top", [2, 6.5, 0], [14, 7.5, 16], "ci"),
-    el("chain_bottom", [2, 1, 0], [14, 2, 16], "ci"),
-] + [el(f"link_{i}", [2, 6.25, i * 4], [14, 7.75, i * 4 + 1], "st") for i in range(4)], kind="partial")
-
-
-# дымовая труба: кирпичная (I0) и железобетонная с поясами (I1+), звенья base/middle/top
+# дымовая труба: железобетонная с поясами (I1+), звенья middle/top; кирпичная I0 — spec_visual
 def chimney(tex, part, r=6):
     els = disc("stack", "y", r, 0, 16, tex, 8)
-    if part == "base":
-        els += [el("plinth", [1, 0, 1], [15, 3, 15], "c"),
-                el("flue_inlet", [5, 3, -0.5], [11, 9, 2], "ci")]
     if part == "top":
-        els += disc("cornice", "y", r + 1, 14, 16, "ci" if tex == "brk" else "rcb", 8)
+        els += disc("cornice", "y", r + 1, 14, 16, "rcb", 8)
         els.append(el("lightning_rod", [7.75, 16, 7.75], [8.25, 22, 8.25], "cus"))
     return els
 
 
-m("chimney", "boilers", chimney("brk", "middle"))
-m("chimney_base", "boilers", chimney("brk", "base"))
-m("chimney_top", "boilers", chimney("brk", "top"))
 m("chimney_concrete", "boilers", chimney("rcw", "middle"))
 m("chimney_concrete_top", "boilers", chimney("rcb", "top"))
-
-# паровая машина 3×3×5: цилиндр с золотниковой коробкой + станина; движущиеся части — partial (вал по X)
-m("steam_engine_cylinder", "boilers", [
-    el("bedplate", [-14, -16, -14], [30, -12, 30], "ci"),
-] + disc("cylinder", "z", 8, -14, 6, "riv", faces={"north": "ci", "south": "ci"}, c=(8, 4, 8))
-  + [el("valve_chest", [-2, 12, -12], [18, 18, 4], "ci"),
-     el("steam_inlet", [5, 18, -6], [11, 28, 0], "steam"),
-     el("governor_post", [14, 12, -10], [16, 26, -8], "bs"),
-     el("guide_top", [2, 7, 6], [14, 8, 30], "st"),
-     el("guide_bottom", [2, 0, 6], [14, 1, 30], "st"),
-     el("cylinder_drain", [7, -12, -10], [9, -4, -8], "bs")])
-m("steam_engine_cylinder_frame", "boilers", [
-    el("bedplate", [-14, -16, -14], [30, -12, 18], "ci"),
-    el("bearing_w", [-14, -12, 2], [-8, 10, 14], "ci"),
-    el("bearing_e", [24, -12, 2], [30, 10, 14], "ci"),
-    el("cap_w", [-14, 10, 4], [-8, 12, 12], "bs"),
-    el("cap_e", [24, 10, 4], [30, 12, 12], "bs"),
-    el("crank_pit", [-6, -12, -2], [22, -10, 18], "d"),
-])
-m("steam_engine_cylinder/flywheel", "boilers",
-  disc("rim", "x", 15, 20, 24, "ci") + disc("hub", "x", 2.5, 18, 26, "st", 8)
-  + [el("spoke_v", [21, -6, 7], [23, 22, 9], "ci"), el("spoke_h", [21, 7, -6], [23, 9, 22], "ci")],
-  kind="partial")
-m("steam_engine_cylinder/crank", "boilers", disc("shaft", "x", 2, -14, 30, "st", 8) + [
-    el("web_w", [-4, 6, 6], [-2, 16, 10], "ci"),
-    el("web_e", [6, 6, 6], [8, 16, 10], "ci"),
-    el("pin", [-2, 12, 7], [6, 14, 9], "st"),
-], kind="partial")
-m("steam_engine_cylinder/con_rod", "boilers", [
-    el("rod", [1, -1, 0], [3, 1, 20], "st"),
-    el("big_end", [0, -2, -1], [4, 2, 1], "bs"),
-    el("small_end", [0.5, -1.5, 19], [3.5, 1.5, 21], "bs"),
-], kind="partial")
-m("steam_engine_cylinder/piston_rod", "boilers", [
-    el("rod", [7.5, 3.5, -10], [8.5, 4.5, 14], "st"),
-    el("crosshead", [5, 1, 14], [11, 7, 18], "bs"),
-], kind="partial")
 
 
 # водотрубный котёл ТП-35 / БКЗ-75: щит котла (контроллер) с лампами BMS

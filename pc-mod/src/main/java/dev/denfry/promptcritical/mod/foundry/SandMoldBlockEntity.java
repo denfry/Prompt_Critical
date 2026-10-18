@@ -4,6 +4,7 @@ import dev.denfry.promptcritical.mod.binding.SimBindings;
 import dev.denfry.promptcritical.mod.binding.SimLevelBinding;
 import dev.denfry.promptcritical.mod.block.PcProperties;
 import dev.denfry.promptcritical.mod.blockentity.DeviceBlockEntity;
+import dev.denfry.promptcritical.mod.fx.MachineFx;
 import dev.denfry.promptcritical.mod.registry.PcItems;
 import dev.denfry.promptcritical.sim.metallurgy.CastingGeometry;
 import dev.denfry.promptcritical.sim.metallurgy.CastingSpec;
@@ -72,11 +73,31 @@ public final class SandMoldBlockEntity extends DeviceBlockEntity implements Foun
 
     @Override
     public void tickDevice() {
-        if (!(level instanceof ServerLevel)) return;
+        if (!(level instanceof ServerLevel)) {
+            clientTick();
+            return;
+        }
         SandMoldUnit u = unit();
         if (u == null) return;
         if (u.stage() == SandMoldUnit.Stage.EMPTY && level.isRainingAt(worldPosition.above())) u.wet(0.05);
         if (level.getGameTime() % SYNC_PERIOD_TICKS == 0) syncStage(u);
+    }
+
+    /** Залитая форма дымит и вспыхивает над литником, остывающая — парит. */
+    private void clientTick() {
+        MachineFx fx = MachineFx.of(level, worldPosition, Direction.NORTH);
+        if (fx == null) return;
+        switch (getBlockState().getValue(PcProperties.MOLD_STAGE)) {
+            case POURED -> {
+                if (fx.chance(4)) fx.wisp(fx.at(10.5, 13, 10.5), 0.2);
+                if (fx.chance(1.5)) fx.flame(fx.at(4, 12.8, 11), 0.1);
+            }
+            case COOLING -> {
+                if (fx.chance(1)) fx.wisp(fx.at(8, 13, 8), 0.5);
+            }
+            default -> {
+            }
+        }
     }
 
     void syncStage(SandMoldUnit u) {

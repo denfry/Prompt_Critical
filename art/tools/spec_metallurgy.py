@@ -93,61 +93,19 @@ m("vein_quartz", "ores", [el("block", [0, 0, 0], [16, 16, 16], "qtz")])
 # ======================================================================
 # шахта
 # ======================================================================
-# шахтная крепь 1×3×1 (якорь — средний блок): деревянная рама / арка СВП
-def support(kind="timber", damaged=False):
-    if kind == "timber":
-        els = [el("post_w", [1, -16, 6], [4, 28, 10], "tim"),
-               el("post_e", [12, -16, 6], [15, 28, 10], "tim"),
-               el("lagging", [0, 31, 0], [16, 32, 16], "tim")]
-        cap = el("cap", [-1, 28, 5.5], [17, 31, 10.5], "tim",
-                 rot=("z", -22.5, [8, 29.5, 8]) if damaged else None)
-        return els + [cap]
-    els = [el("arch_w", [0, -16, 7], [2, 18, 9], "rust"),
-           el("arch_e", [14, -16, 7], [16, 18, 9], "rust"),
-           el("arch_nw", [0, 16, 7], [2, 28, 9], "rust", rot=("z", -22.5, [1, 18, 8])),
-           el("arch_ne", [14, 16, 7], [16, 28, 9], "rust", rot=("z", 22.5, [15, 18, 8])),
-           el("arch_top", [3, 28, 7], [13, 30, 9], "rust"),
-           el("clamp_w", [-0.5, 16, 6.5], [2.5, 18, 9.5], "d"),
-           el("clamp_e", [13.5, 16, 6.5], [16.5, 18, 9.5], "d"),
-           el("mesh", [2, 29, 0], [14, 29.5, 16], "mesh")]
-    return els
+# шахтная крепь: арка СВП (деревянный оклад и мехкрепь — spec_visual)
+def support_arch():
+    return [el("arch_w", [0, -16, 7], [2, 18, 9], "rust"),
+            el("arch_e", [14, -16, 7], [16, 18, 9], "rust"),
+            el("arch_nw", [0, 16, 7], [2, 28, 9], "rust", rot=("z", -22.5, [1, 18, 8])),
+            el("arch_ne", [14, 16, 7], [16, 28, 9], "rust", rot=("z", 22.5, [15, 18, 8])),
+            el("arch_top", [3, 28, 7], [13, 30, 9], "rust"),
+            el("clamp_w", [-0.5, 16, 6.5], [2.5, 18, 9.5], "d"),
+            el("clamp_e", [13.5, 16, 6.5], [16.5, 18, 9.5], "d"),
+            el("mesh", [2, 29, 0], [14, 29.5, 16], "mesh")]
 
 
-m("mine_support", "mining", support())
-m("mine_support_damaged", "mining", support(damaged=True))
-m("mine_support_arch", "mining", support("arch"))
-
-# механизированная крепь 1×3×2: основание, перекрытие, ограждение; гидростойки — partial (ход по Y)
-m("powered_roof_support", "mining", [
-    el("base", [1, -16, 0], [15, -12, 30], "cy"),
-    el("canopy", [0, 28, -2], [16, 31, 32], "cy"),
-    el("shield", [2, 10, 22], [14, 28, 26], "cys", rot=("x", -45, [8, 28, 24])),
-    el("lemniscate", [3, -12, 22], [13, -4, 28], "cys"),
-    el("control_block", [5, -12, 12], [11, -8, 16], "dg"),
-    el("hose", [6, -8, 13], [7, 28, 14], "r"),
-])
-m("powered_roof_support/legs", "mining", [
-    el("cyl_w", [2.5, -12, 6], [6.5, 8, 10], "cys"),
-    el("rod_w", [3.5, 8, 7], [5.5, 28, 9], "sm"),
-    el("cyl_e", [9.5, -12, 6], [13.5, 8, 10], "cys"),
-    el("rod_e", [10.5, 8, 7], [12.5, 28, 9], "sm"),
-], kind="partial")
-
-# очистной комбайн 3×2×1: оранжевая рама, поворотные рукояти; шнеки — partial (ось X)
-m("longwall_shearer", "mining", [
-    el("body", [-10, 0, 2], [26, 10, 14], "or"),
-    el("motor_hood", [-2, 10, 4], [18, 14, 12], "or"),
-    el("cab_guard", [2, 14, 6], [14, 15, 10], "d"),
-    el("arm_w", [-16, 4, 5], [-8, 10, 11], "or", rot=("z", 22.5, [-8, 7, 8])),
-    el("arm_e", [24, 4, 5], [32, 10, 11], "or", rot=("z", -22.5, [24, 7, 8])),
-    el("skid", [-10, -0.01, 3], [26, 1, 13], "d"),
-    el("cable_chain", [-10, 2, 14], [26, 5, 16], "r"),
-])
-_drum = hcyl("drum", "x", 7, 0.1, 6.9, "st", c=(8, 16, 8)) + [
-    el(f"pick_{i}", [1 + i * 1.6, 23, 7.5], [2 + i * 1.6, 25, 8.5], "d") for i in range(4)]
-m("longwall_shearer/drum_a", "mining", [dict(e, **{"from": [e["from"][0] - 16, *e["from"][1:]], "to": [e["to"][0] - 16, *e["to"][1:]]}) for e in _drum], kind="partial")
-m("longwall_shearer/drum_b", "mining", [dict(e, **{"from": [e["from"][0] + 25, *e["from"][1:]], "to": [e["to"][0] + 25, *e["to"][1:]]}) for e in _drum], kind="partial")
-
+m("mine_support_arch", "mining", support_arch())
 
 # главный вентилятор ВОД-21 3×3×3: кожух с жалюзи, электродвигатель; крыльчатка — partial (ось Z)
 def main_fan(running=False):
@@ -204,17 +162,6 @@ m("degasification_borehole", "mining", [
     el("riser", [6.5, 10, 6.5], [9.5, 13, 9.5], "gas"),
     el("elbow", [6.5, 13, 6.5], [16, 16, 9.5], "gas", faces={"east": "end"}),
 ])
-# вакуум-насос ВВН: серый корпус, жёлтые патрубки; ротор — partial
-m("degasification_pump", "mining", [
-    el("base", [0, 0, 1], [16, 2, 15], "d"),
-    el("casing", [2, 2, 3], [14, 12, 13], "dg"),
-    el("end_n", [3, 3, 1.5], [13, 11, 3], "d"),
-    el("inlet", [5, 12, 5], [9, 16, 9], "gas", faces={"up": "end"}),
-    el("outlet", [14, 4, 6], [16, 8, 10], "gas", faces={"east": "end"}),
-])
-m("degasification_pump/rotor", "mining", disc("rotor", "z", 3.5, 3.5, 12.5, "sm") + shaft_z(), kind="partial")
-
-
 # шкаф АГЗ «Метан» 1×2×1: табло газа (подложка 32×32)
 def agz(alarm=False):
     return [el("body", [0, 0, 2], [16, 31.5, 16], "r35"),
@@ -226,21 +173,6 @@ def agz(alarm=False):
 
 m("mine_dispatch_cabinet", "mining", agz())
 m("mine_dispatch_cabinet_alarm", "mining", agz(True))
-
-# подъёмная машина Ц-2,5 3×3×3: зелёная станина, тормозные стойки; барабан — partial (ось X)
-m("mine_hoist", "mining", [
-    el("foundation", [-16, -16, -16], [32, -12, 32], "c"),
-    el("bearing_w", [-16, -12, 2], [-12, 10, 14], "grn"),
-    el("bearing_e", [28, -12, 2], [32, 10, 14], "grn"),
-    el("brake_post_n", [-10, -12, -6], [26, 8, -3], "grn"),
-    el("brake_post_s", [-10, -12, 19], [26, 8, 22], "grn"),
-    el("brake_cyl", [0, -12, 24], [16, -4, 32], "dg"),
-    el("console", [-14, -12, -16], [-4, 0, -10], "r35"),
-])
-m("mine_hoist/drum", "mining", hcyl("drum", "x", 11, -12, 28, "st") + hcyl("rope", "x", 11.3, -10, 26, "rope")
-  + hcyl("flange_w", "x", 13, -12, -10, "grn") + hcyl("flange_e", "x", 13, 26, 28, "grn") + shaft_x(1.5, -16, 32),
-  kind="partial")
-
 
 # копёр: секции клёпаной фермы 3×3×3, верхняя — подшкивная площадка; шкив — partial (ось X)
 def headframe_section(top=False):
@@ -285,29 +217,10 @@ def cage(door_open=False):
 m("mine_cage", "mining", cage())
 m("mine_cage_open", "mining", cage(True))
 
-# насос водоотлива ЦНС 300 2×1×1: синий секционный корпус, зелёные патрубки; вал — partial (ось X)
-m("mine_drainage_pump", "mining", [el("frame", [0, 0, 2], [32, 2, 14], "d")]
-  + [x for i in range(5) for x in hcyl(f"section_{i}", "x", 5.5 - (i % 2) * 0.5, 4 + i * 4, 8 + i * 4, "mb", sides=8)]
-  + [el("suction", [3, 8, 3], [7, 16, 7], "wat", faces={"up": "end"}),
-     el("discharge", [25, 8, 9], [29, 16, 13], "wat", faces={"up": "end"}),
-     el("bearing_n", [0, 3, 5], [4, 11, 11], "d"),
-     el("bearing_s", [28, 3, 5], [32, 11, 11], "d")])
-m("mine_drainage_pump/shaft", "mining", shaft_x(1, -0.01, 32), kind="partial")
-
-
 # ======================================================================
 # углеобогащение
 # ======================================================================
-# отсадочная машина ОМ 2×2×1: бак с водой; пульсатор — partial
-m("coal_jig", "coal_prep", [
-    el("tank_w", [0, 0, 0], [1, 24, 16], "p"), el("tank_e", [31, 0, 0], [32, 24, 16], "p"),
-    el("tank_n", [1, 0, 0], [31, 24, 1], "p"), el("tank_s", [1, 0, 15], [31, 24, 16], "p"),
-    el("hopper", [1, 0, 1], [31, 10, 15], "dg"),
-    el("water", [1, 22, 1], [31, 23, 15], "water"),
-    el("bed", [1, 18, 1], [31, 20, 15], "g"),
-    el("air_box", [4, 24, 3], [12, 30, 13], "mb"),
-    el("valve_drive", [6, 30, 6], [10, 32, 10], "d"),
-])
+# отсадочная машина ОМ — корпус в spec_visual; пульсатор (ось X на y 27, z 8)
 m("coal_jig/pulsator", "coal_prep", shaft_x(1.5, 12, 28, (8, 27, 8)) + [el("eccentric", [18, 23, 5], [22, 31, 11], "st")], kind="partial")
 
 # тяжелосредный сепаратор СКВ 2×2×2: опорная рама, жёлоб суспензии; барабан — partial (ось X)
@@ -947,24 +860,6 @@ m("electrorefining_cell_ni", "nonferrous", refining(True))
 # ======================================================================
 
 
-# вагранка 1×3×1: клёпаная труба на ножках, фурменный пояс, лётка
-def cupola(lit=False):
-    return hcyl("shaft", "y", 6.5, -10, 32, "riv", sides=8) + [
-        el("wind_box", [0.5, -6, 0.5], [15.5, -2, 15.5], "d"),
-        el("charge_door", [5, 18, -0.6], [11, 24, 1.5], "ci"),
-        el(("glow_" if lit else "") + "taphole", [6.5, -9, -0.6], [9.5, -7, 1.5], "hot" if lit else "ci"),
-        el("spout", [6, -10, -4], [10, -9, 1], "ref")] + [
-        el(f"leg_{i}", [x, -16, z], [x + 2, -10, z + 2], "d") for i, (x, z) in enumerate(((2, 2), (12, 2), (2, 12), (12, 12)))]
-
-
-m("cupola_furnace", "foundry", cupola())
-m("cupola_furnace_lit", "foundry", cupola(True))
-# тигельная печь: кожух, крышка; тигель — partial (наклон)
-m("crucible_furnace", "foundry", hcyl("casing", "y", 7, 0, 12, "riv", sides=8) + [el("lid", [3, 12, 3], [13, 13, 13], "ci")])
-m("crucible_furnace_lit", "foundry", hcyl("casing", "y", 7, 0, 12, "riv", sides=8) + [el("glow_flue", [6, 12, 6], [10, 12.5, 10], "fire")])
-m("crucible_furnace/crucible", "foundry", hcyl("crucible", "y", 4, 3, 12, "g", sides=8) + [el("glow_melt", [5, 11.5, 5], [11, 12, 11], "hot")], kind="partial")
-
-
 # индукционная печь ИСТ-1 1×2×1: медный индуктор, площадка; тигель — partial
 def induction(melting=False):
     return [el("frame", [0, 0, 0], [16, 4, 16], "d"),
@@ -978,23 +873,6 @@ def induction(melting=False):
 m("induction_furnace", "foundry", induction())
 m("induction_furnace_melting", "foundry", induction(True))
 m("induction_furnace/crucible", "foundry", hcyl("crucible", "y", 5, 8, 24, "ref", sides=8) + [el("glow_melt", [4, 23.5, 4], [12, 24, 12], "hot")], kind="partial")
-
-
-# песчаная форма в опоке: пустая / залита (литник светится) / остывает
-def sand_mold(state="empty"):
-    els = [el("flask_bottom", [1, 0, 1], [15, 6, 15], "ci", faces={"up": "sand"}),
-           el("flask_top", [1, 6, 1], [15, 12, 15], "ci", faces={"up": "sand"}),
-           el("weight", [3, 12, 3], [6, 14, 6], "d")]
-    if state == "poured":
-        els.append(el("glow_sprue", [9, 12, 9], [12, 12.5, 12], "hot"))
-    else:
-        els.append(el("sprue", [9, 11.9, 9], [12, 12.1, 12], "soot" if state == "cooling" else "d"))
-    return els
-
-
-m("sand_mold", "foundry", sand_mold())
-m("sand_mold_poured", "foundry", sand_mold("poured"))
-m("sand_mold_cooling", "foundry", sand_mold("cooling"))
 
 
 # кокиль: неподвижная половина; подвижная — partial на петле
@@ -1011,34 +889,9 @@ m("permanent_mold", "foundry", perm_mold())
 m("permanent_mold_poured", "foundry", perm_mold(True))
 m("permanent_mold/half", "foundry", [el("half", [2, 2, 2], [14, 13, 8], "ci"), el("handle", [7, 6, 0.5], [9, 9, 2], "st")], kind="partial")
 
-# формовочная машина 2×1×1: станина, бункер песка; стол — partial (встряхивание)
-m("molding_station", "foundry", [
-    el("base", [0, 0, 2], [20, 6, 14], "mach"),
-    el("column", [20, 0, 4], [28, 16, 12], "mach"),
-    el("hopper", [18, 10, 2], [32, 16, 14], "p", faces={"up": "sand"}),
-    el("chute", [12, 9, 6], [20, 11, 10], "p"),
-])
-m("molding_station/table", "foundry", [el("table", [1, 6, 2], [19, 8, 14], "st"), el("pattern_plate", [3, 8, 4], [17, 9, 12], "ci")], kind="partial")
-# выбивная решётка 2×1×2
-m("shakeout_grate", "foundry", [el("frame", [0, 0, 0], [32, 6, 32], "d", faces={"up": "bed"}),
-                                el("grate", [1, 6, 1], [31, 7, 31], "bed"),
-                                el("sand_pile", [6, -0.01, 6], [26, 2, 26], "sand"),
-                                el("vibrator", [28, 2, 12], [32, 6, 20], "mb")])
-
 # ======================================================================
-# механический цех (серо-зелёная станочная эмаль)
+# механический цех (серо-зелёная станочная эмаль); токарный и сверлильный станки — spec_visual
 # ======================================================================
-m("machine_lathe", "machine_shop", [
-    el("bed", [0, 6, 4], [32, 10, 12], "mach"),
-    el("legs_w", [1, 0, 3], [6, 6, 13], "mach"), el("legs_e", [26, 0, 3], [31, 6, 13], "mach"),
-    el("headstock", [0, 10, 3], [8, 18, 13], "mach"),
-    el("carriage", [14, 10, 2], [20, 13, 14], "machs"),
-    el("toolpost", [16, 13, 5], [18, 15, 7], "d"),
-    el("tailstock", [26, 10, 5], [31, 16, 11], "mach"),
-    el("lead_screw", [0, 7, 2.5], [32, 8, 3.5], "st"),
-])
-m("machine_lathe/spindle", "machine_shop", hcyl("chuck", "x", 3.5, 8, 10.5, "sm", c=(8, 14, 8)) + [
-    el("jaw", [9.5, 15, 7.5], [11, 17.5, 8.5], "st")], kind="partial")
 m("milling_machine", "machine_shop", [
     el("column", [3, 0, 8], [13, 28, 16], "mach"),
     el("knee", [2, 6, 0], [14, 12, 8], "mach"),
@@ -1047,14 +900,6 @@ m("milling_machine", "machine_shop", [
     el("head", [5, 20, 2], [11, 28, 8], "mach"),
 ])
 m("milling_machine/spindle", "machine_shop", vcyl("spindle", 8, 5, 1, 16, 20, "st", 8) + vcyl("cutter", 8, 5, 2, 15, 17, "d", 8), kind="partial")
-m("drill_press", "machine_shop", [
-    el("base", [1, 0, 1], [15, 2, 15], "mach"),
-    el("column", [6, 2, 11], [10, 28, 15], "mach"),
-    el("table", [3, 10, 2], [13, 11.5, 12], "machs"),
-    el("head", [4, 20, 4], [12, 28, 15], "mach"),
-    el("motor", [5, 28, 9], [11, 32, 15], "mb"),
-])
-m("drill_press/spindle", "machine_shop", vcyl("quill", 8, 7, 1, 14, 20, "st", 8) + vcyl("bit", 8, 7, 0.4, 12, 14, "d", 8), kind="partial")
 m("surface_grinder", "machine_shop", [
     el("base", [0, 0, 2], [32, 8, 14], "mach"),
     el("table", [2, 8, 3], [26, 10, 13], "machs"),

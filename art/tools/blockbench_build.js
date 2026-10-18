@@ -26,6 +26,8 @@
       c.mapAutoUV();
       if (e.full) { c.autouv = 0; for (const d of e.full) c.faces[d].uv = [0, 0, 16, 16]; }
     }
+    // частицы разрушения — текстура первого элемента (обычно корпус)
+    if (spec.elements.length) tm[spec.elements[0].tex].particle = true;
     Canvas.updateAll();
     return Project;
   }

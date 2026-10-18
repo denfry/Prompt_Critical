@@ -1,11 +1,19 @@
 {
 	"credit": "Made with Blockbench",
 	"textures": {
+		"br": "promptcritical:block/common/m2_brass",
 		"particle": "promptcritical:block/common/concrete",
 		"c": "promptcritical:block/common/concrete",
+		"d": "promptcritical:block/common/steel_dark",
 		"dg": "promptcritical:block/common/grid_dark_grey",
-		"grn": "promptcritical:block/common/metal_green",
-		"r35": "promptcritical:block/common/grid_ral7035"
+		"gas": "promptcritical:block/common/mining_pipe_gas",
+		"gauge": "promptcritical:block/analog_gauge_dial",
+		"mgrn": "promptcritical:block/common/metal_green",
+		"plank": "promptcritical:block/common/m2_plank",
+		"pol": "promptcritical:block/common/m2_steel_polished",
+		"r35": "promptcritical:block/common/grid_ral7035",
+		"red": "promptcritical:block/common/paint_red",
+		"ribs": "promptcritical:block/common/m2_motor_ribs"
 	},
 	"elements": [
 		{
@@ -46,8 +54,8 @@
 		},
 		{
 			"name": "bearing_w",
-			"from": [-16, -12, 2],
-			"to": [-12, 10, 14],
+			"from": [-16, -12, 3],
+			"to": [-12, 10, 13],
 			"rotation": {
 				"angle": 0,
 				"axis": "y",
@@ -56,34 +64,34 @@
 			"faces": {
 				"north": {
 					"uv": [0, 0, 4, 16],
-					"texture": "#grn"
+					"texture": "#mgrn"
 				},
 				"east": {
-					"uv": [0, 0, 12, 16],
-					"texture": "#grn"
+					"uv": [0, 0, 10, 16],
+					"texture": "#mgrn"
 				},
 				"south": {
 					"uv": [0, 0, 4, 16],
-					"texture": "#grn"
+					"texture": "#mgrn"
 				},
 				"west": {
-					"uv": [0, 0, 12, 16],
-					"texture": "#grn"
+					"uv": [0, 0, 10, 16],
+					"texture": "#mgrn"
 				},
 				"up": {
-					"uv": [0, 0, 4, 12],
-					"texture": "#grn"
+					"uv": [0, 0, 4, 10],
+					"texture": "#mgrn"
 				},
 				"down": {
-					"uv": [0, 0, 4, 12],
-					"texture": "#grn"
+					"uv": [0, 0, 4, 10],
+					"texture": "#mgrn"
 				}
 			}
 		},
 		{
 			"name": "bearing_e",
-			"from": [28, -12, 2],
-			"to": [32, 10, 14],
+			"from": [28, -12, 3],
+			"to": [32, 10, 13],
 			"rotation": {
 				"angle": 0,
 				"axis": "y",
@@ -92,34 +100,574 @@
 			"faces": {
 				"north": {
 					"uv": [0, 0, 4, 16],
-					"texture": "#grn"
+					"texture": "#mgrn"
 				},
 				"east": {
-					"uv": [0, 0, 12, 16],
-					"texture": "#grn"
+					"uv": [0, 0, 10, 16],
+					"texture": "#mgrn"
 				},
 				"south": {
 					"uv": [0, 0, 4, 16],
-					"texture": "#grn"
+					"texture": "#mgrn"
 				},
 				"west": {
-					"uv": [0, 0, 12, 16],
-					"texture": "#grn"
+					"uv": [0, 0, 10, 16],
+					"texture": "#mgrn"
 				},
 				"up": {
-					"uv": [0, 0, 4, 12],
-					"texture": "#grn"
+					"uv": [0, 0, 4, 10],
+					"texture": "#mgrn"
 				},
 				"down": {
-					"uv": [0, 0, 4, 12],
-					"texture": "#grn"
+					"uv": [0, 0, 4, 10],
+					"texture": "#mgrn"
 				}
 			}
 		},
 		{
-			"name": "brake_post_n",
-			"from": [-10, -12, -6],
-			"to": [26, 8, -3],
+			"name": "cap_w",
+			"from": [-16, 10, 4],
+			"to": [-12, 11.5, 12],
+			"rotation": {
+				"angle": 0,
+				"axis": "y",
+				"origin": [8, 8, 8]
+			},
+			"faces": {
+				"north": {
+					"uv": [0, 0, 4, 1.5],
+					"texture": "#br"
+				},
+				"east": {
+					"uv": [0, 0, 8, 1.5],
+					"texture": "#br"
+				},
+				"south": {
+					"uv": [0, 0, 4, 1.5],
+					"texture": "#br"
+				},
+				"west": {
+					"uv": [0, 0, 8, 1.5],
+					"texture": "#br"
+				},
+				"up": {
+					"uv": [0, 0, 4, 8],
+					"texture": "#br"
+				},
+				"down": {
+					"uv": [0, 0, 4, 8],
+					"texture": "#br"
+				}
+			}
+		},
+		{
+			"name": "cap_e",
+			"from": [28, 10, 4],
+			"to": [32, 11.5, 12],
+			"rotation": {
+				"angle": 0,
+				"axis": "y",
+				"origin": [8, 8, 8]
+			},
+			"faces": {
+				"north": {
+					"uv": [0, 0, 4, 1.5],
+					"texture": "#br"
+				},
+				"east": {
+					"uv": [0, 0, 8, 1.5],
+					"texture": "#br"
+				},
+				"south": {
+					"uv": [0, 0, 4, 1.5],
+					"texture": "#br"
+				},
+				"west": {
+					"uv": [0, 0, 8, 1.5],
+					"texture": "#br"
+				},
+				"up": {
+					"uv": [0, 0, 4, 8],
+					"texture": "#br"
+				},
+				"down": {
+					"uv": [0, 0, 4, 8],
+					"texture": "#br"
+				}
+			}
+		},
+		{
+			"name": "brake_post_nw",
+			"from": [-12, -12, -9],
+			"to": [-9, 14, -7],
+			"rotation": {
+				"angle": 0,
+				"axis": "y",
+				"origin": [8, 8, 8]
+			},
+			"faces": {
+				"north": {
+					"uv": [0, 0, 3, 16],
+					"texture": "#mgrn"
+				},
+				"east": {
+					"uv": [0, 0, 2, 16],
+					"texture": "#mgrn"
+				},
+				"south": {
+					"uv": [0, 0, 3, 16],
+					"texture": "#mgrn"
+				},
+				"west": {
+					"uv": [0, 0, 2, 16],
+					"texture": "#mgrn"
+				},
+				"up": {
+					"uv": [0, 0, 3, 2],
+					"texture": "#mgrn"
+				},
+				"down": {
+					"uv": [0, 0, 3, 2],
+					"texture": "#mgrn"
+				}
+			}
+		},
+		{
+			"name": "brake_post_ne",
+			"from": [25, -12, -9],
+			"to": [28, 14, -7],
+			"rotation": {
+				"angle": 0,
+				"axis": "y",
+				"origin": [8, 8, 8]
+			},
+			"faces": {
+				"north": {
+					"uv": [0, 0, 3, 16],
+					"texture": "#mgrn"
+				},
+				"east": {
+					"uv": [0, 0, 2, 16],
+					"texture": "#mgrn"
+				},
+				"south": {
+					"uv": [0, 0, 3, 16],
+					"texture": "#mgrn"
+				},
+				"west": {
+					"uv": [0, 0, 2, 16],
+					"texture": "#mgrn"
+				},
+				"up": {
+					"uv": [0, 0, 3, 2],
+					"texture": "#mgrn"
+				},
+				"down": {
+					"uv": [0, 0, 3, 2],
+					"texture": "#mgrn"
+				}
+			}
+		},
+		{
+			"name": "brake_post_sw",
+			"from": [-12, -12, 23],
+			"to": [-9, 14, 25],
+			"rotation": {
+				"angle": 0,
+				"axis": "y",
+				"origin": [8, 8, 8]
+			},
+			"faces": {
+				"north": {
+					"uv": [0, 0, 3, 16],
+					"texture": "#mgrn"
+				},
+				"east": {
+					"uv": [0, 0, 2, 16],
+					"texture": "#mgrn"
+				},
+				"south": {
+					"uv": [0, 0, 3, 16],
+					"texture": "#mgrn"
+				},
+				"west": {
+					"uv": [0, 0, 2, 16],
+					"texture": "#mgrn"
+				},
+				"up": {
+					"uv": [0, 0, 3, 2],
+					"texture": "#mgrn"
+				},
+				"down": {
+					"uv": [0, 0, 3, 2],
+					"texture": "#mgrn"
+				}
+			}
+		},
+		{
+			"name": "brake_post_se",
+			"from": [25, -12, 23],
+			"to": [28, 14, 25],
+			"rotation": {
+				"angle": 0,
+				"axis": "y",
+				"origin": [8, 8, 8]
+			},
+			"faces": {
+				"north": {
+					"uv": [0, 0, 3, 16],
+					"texture": "#mgrn"
+				},
+				"east": {
+					"uv": [0, 0, 2, 16],
+					"texture": "#mgrn"
+				},
+				"south": {
+					"uv": [0, 0, 3, 16],
+					"texture": "#mgrn"
+				},
+				"west": {
+					"uv": [0, 0, 2, 16],
+					"texture": "#mgrn"
+				},
+				"up": {
+					"uv": [0, 0, 3, 2],
+					"texture": "#mgrn"
+				},
+				"down": {
+					"uv": [0, 0, 3, 2],
+					"texture": "#mgrn"
+				}
+			}
+		},
+		{
+			"name": "brake_shoe_nw",
+			"from": [-12, 2, -7],
+			"to": [-9, 14, -5.5],
+			"rotation": {
+				"angle": 0,
+				"axis": "y",
+				"origin": [8, 8, 8]
+			},
+			"faces": {
+				"north": {
+					"uv": [0, 0, 3, 12],
+					"texture": "#plank"
+				},
+				"east": {
+					"uv": [0, 0, 1.5, 12],
+					"texture": "#plank"
+				},
+				"south": {
+					"uv": [0, 0, 3, 12],
+					"texture": "#plank"
+				},
+				"west": {
+					"uv": [0, 0, 1.5, 12],
+					"texture": "#plank"
+				},
+				"up": {
+					"uv": [0, 0, 3, 1.5],
+					"texture": "#plank"
+				},
+				"down": {
+					"uv": [0, 0, 3, 1.5],
+					"texture": "#plank"
+				}
+			}
+		},
+		{
+			"name": "brake_shoe_ne",
+			"from": [25, 2, -7],
+			"to": [28, 14, -5.5],
+			"rotation": {
+				"angle": 0,
+				"axis": "y",
+				"origin": [8, 8, 8]
+			},
+			"faces": {
+				"north": {
+					"uv": [0, 0, 3, 12],
+					"texture": "#plank"
+				},
+				"east": {
+					"uv": [0, 0, 1.5, 12],
+					"texture": "#plank"
+				},
+				"south": {
+					"uv": [0, 0, 3, 12],
+					"texture": "#plank"
+				},
+				"west": {
+					"uv": [0, 0, 1.5, 12],
+					"texture": "#plank"
+				},
+				"up": {
+					"uv": [0, 0, 3, 1.5],
+					"texture": "#plank"
+				},
+				"down": {
+					"uv": [0, 0, 3, 1.5],
+					"texture": "#plank"
+				}
+			}
+		},
+		{
+			"name": "brake_shoe_sw",
+			"from": [-12, 2, 21.5],
+			"to": [-9, 14, 23],
+			"rotation": {
+				"angle": 0,
+				"axis": "y",
+				"origin": [8, 8, 8]
+			},
+			"faces": {
+				"north": {
+					"uv": [0, 0, 3, 12],
+					"texture": "#plank"
+				},
+				"east": {
+					"uv": [0, 0, 1.5, 12],
+					"texture": "#plank"
+				},
+				"south": {
+					"uv": [0, 0, 3, 12],
+					"texture": "#plank"
+				},
+				"west": {
+					"uv": [0, 0, 1.5, 12],
+					"texture": "#plank"
+				},
+				"up": {
+					"uv": [0, 0, 3, 1.5],
+					"texture": "#plank"
+				},
+				"down": {
+					"uv": [0, 0, 3, 1.5],
+					"texture": "#plank"
+				}
+			}
+		},
+		{
+			"name": "brake_shoe_se",
+			"from": [25, 2, 21.5],
+			"to": [28, 14, 23],
+			"rotation": {
+				"angle": 0,
+				"axis": "y",
+				"origin": [8, 8, 8]
+			},
+			"faces": {
+				"north": {
+					"uv": [0, 0, 3, 12],
+					"texture": "#plank"
+				},
+				"east": {
+					"uv": [0, 0, 1.5, 12],
+					"texture": "#plank"
+				},
+				"south": {
+					"uv": [0, 0, 3, 12],
+					"texture": "#plank"
+				},
+				"west": {
+					"uv": [0, 0, 1.5, 12],
+					"texture": "#plank"
+				},
+				"up": {
+					"uv": [0, 0, 3, 1.5],
+					"texture": "#plank"
+				},
+				"down": {
+					"uv": [0, 0, 3, 1.5],
+					"texture": "#plank"
+				}
+			}
+		},
+		{
+			"name": "brake_beam_n",
+			"from": [-12, 14, -9],
+			"to": [28, 15.5, -7],
+			"rotation": {
+				"angle": 0,
+				"axis": "y",
+				"origin": [8, 8, 8]
+			},
+			"faces": {
+				"north": {
+					"uv": [0, 0, 16, 1.5],
+					"texture": "#mgrn"
+				},
+				"east": {
+					"uv": [0, 0, 2, 1.5],
+					"texture": "#mgrn"
+				},
+				"south": {
+					"uv": [0, 0, 16, 1.5],
+					"texture": "#mgrn"
+				},
+				"west": {
+					"uv": [0, 0, 2, 1.5],
+					"texture": "#mgrn"
+				},
+				"up": {
+					"uv": [0, 0, 16, 2],
+					"texture": "#mgrn"
+				},
+				"down": {
+					"uv": [0, 0, 16, 2],
+					"texture": "#mgrn"
+				}
+			}
+		},
+		{
+			"name": "brake_beam_s",
+			"from": [-12, 14, 23],
+			"to": [28, 15.5, 25],
+			"rotation": {
+				"angle": 0,
+				"axis": "y",
+				"origin": [8, 8, 8]
+			},
+			"faces": {
+				"north": {
+					"uv": [0, 0, 16, 1.5],
+					"texture": "#mgrn"
+				},
+				"east": {
+					"uv": [0, 0, 2, 1.5],
+					"texture": "#mgrn"
+				},
+				"south": {
+					"uv": [0, 0, 16, 1.5],
+					"texture": "#mgrn"
+				},
+				"west": {
+					"uv": [0, 0, 2, 1.5],
+					"texture": "#mgrn"
+				},
+				"up": {
+					"uv": [0, 0, 16, 2],
+					"texture": "#mgrn"
+				},
+				"down": {
+					"uv": [0, 0, 16, 2],
+					"texture": "#mgrn"
+				}
+			}
+		},
+		{
+			"name": "brake_engine",
+			"from": [2, -12, 26],
+			"to": [14, -2, 32],
+			"rotation": {
+				"angle": 0,
+				"axis": "y",
+				"origin": [8, 8, 8]
+			},
+			"faces": {
+				"north": {
+					"uv": [0, 0, 12, 10],
+					"texture": "#dg"
+				},
+				"east": {
+					"uv": [0, 0, 6, 10],
+					"texture": "#dg"
+				},
+				"south": {
+					"uv": [0, 0, 12, 10],
+					"texture": "#dg"
+				},
+				"west": {
+					"uv": [0, 0, 6, 10],
+					"texture": "#dg"
+				},
+				"up": {
+					"uv": [0, 0, 12, 6],
+					"texture": "#dg"
+				},
+				"down": {
+					"uv": [0, 0, 12, 6],
+					"texture": "#dg"
+				}
+			}
+		},
+		{
+			"name": "brake_rod",
+			"from": [7, -2, 24],
+			"to": [9, 14, 26],
+			"rotation": {
+				"angle": 0,
+				"axis": "y",
+				"origin": [8, 8, 8]
+			},
+			"faces": {
+				"north": {
+					"uv": [0, 0, 2, 16],
+					"texture": "#pol"
+				},
+				"east": {
+					"uv": [0, 0, 2, 16],
+					"texture": "#pol"
+				},
+				"south": {
+					"uv": [0, 0, 2, 16],
+					"texture": "#pol"
+				},
+				"west": {
+					"uv": [0, 0, 2, 16],
+					"texture": "#pol"
+				},
+				"up": {
+					"uv": [0, 0, 2, 2],
+					"texture": "#pol"
+				},
+				"down": {
+					"uv": [0, 0, 2, 2],
+					"texture": "#pol"
+				}
+			}
+		},
+		{
+			"name": "indicator_column",
+			"from": [-14, -12, -15],
+			"to": [-8, 12, -11],
+			"rotation": {
+				"angle": 0,
+				"axis": "y",
+				"origin": [8, 8, 8]
+			},
+			"faces": {
+				"north": {
+					"uv": [0, 0, 6, 16],
+					"texture": "#mgrn"
+				},
+				"east": {
+					"uv": [0, 0, 4, 16],
+					"texture": "#mgrn"
+				},
+				"south": {
+					"uv": [0, 0, 6, 16],
+					"texture": "#mgrn"
+				},
+				"west": {
+					"uv": [0, 0, 4, 16],
+					"texture": "#mgrn"
+				},
+				"up": {
+					"uv": [0, 0, 6, 4],
+					"texture": "#mgrn"
+				},
+				"down": {
+					"uv": [0, 0, 6, 4],
+					"texture": "#mgrn"
+				}
+			}
+		},
+		{
+			"name": "indicator_face",
+			"from": [-14, 0, -15.5],
+			"to": [-8, 12, -15],
 			"rotation": {
 				"angle": 0,
 				"axis": "y",
@@ -128,106 +676,34 @@
 			"faces": {
 				"north": {
 					"uv": [0, 0, 16, 16],
-					"texture": "#grn"
+					"texture": "#gauge"
 				},
 				"east": {
-					"uv": [0, 0, 3, 16],
-					"texture": "#grn"
+					"uv": [0, 0, 0.5, 12],
+					"texture": "#gauge"
 				},
 				"south": {
-					"uv": [0, 0, 16, 16],
-					"texture": "#grn"
+					"uv": [0, 0, 6, 12],
+					"texture": "#gauge"
 				},
 				"west": {
-					"uv": [0, 0, 3, 16],
-					"texture": "#grn"
+					"uv": [0, 0, 0.5, 12],
+					"texture": "#gauge"
 				},
 				"up": {
-					"uv": [0, 0, 16, 3],
-					"texture": "#grn"
+					"uv": [0, 0, 6, 0.5],
+					"texture": "#gauge"
 				},
 				"down": {
-					"uv": [0, 0, 16, 3],
-					"texture": "#grn"
-				}
-			}
-		},
-		{
-			"name": "brake_post_s",
-			"from": [-10, -12, 19],
-			"to": [26, 8, 22],
-			"rotation": {
-				"angle": 0,
-				"axis": "y",
-				"origin": [8, 8, 8]
-			},
-			"faces": {
-				"north": {
-					"uv": [0, 0, 16, 16],
-					"texture": "#grn"
-				},
-				"east": {
-					"uv": [0, 0, 3, 16],
-					"texture": "#grn"
-				},
-				"south": {
-					"uv": [0, 0, 16, 16],
-					"texture": "#grn"
-				},
-				"west": {
-					"uv": [0, 0, 3, 16],
-					"texture": "#grn"
-				},
-				"up": {
-					"uv": [0, 0, 16, 3],
-					"texture": "#grn"
-				},
-				"down": {
-					"uv": [0, 0, 16, 3],
-					"texture": "#grn"
-				}
-			}
-		},
-		{
-			"name": "brake_cyl",
-			"from": [0, -12, 24],
-			"to": [16, -4, 32],
-			"rotation": {
-				"angle": 0,
-				"axis": "y",
-				"origin": [8, 8, 8]
-			},
-			"faces": {
-				"north": {
-					"uv": [0, 0, 16, 8],
-					"texture": "#dg"
-				},
-				"east": {
-					"uv": [0, 0, 8, 8],
-					"texture": "#dg"
-				},
-				"south": {
-					"uv": [0, 0, 16, 8],
-					"texture": "#dg"
-				},
-				"west": {
-					"uv": [0, 0, 8, 8],
-					"texture": "#dg"
-				},
-				"up": {
-					"uv": [0, 0, 16, 8],
-					"texture": "#dg"
-				},
-				"down": {
-					"uv": [0, 0, 16, 8],
-					"texture": "#dg"
+					"uv": [0, 0, 6, 0.5],
+					"texture": "#gauge"
 				}
 			}
 		},
 		{
 			"name": "console",
-			"from": [-14, -12, -16],
-			"to": [-4, 0, -10],
+			"from": [18, -12, -16],
+			"to": [30, -2, -11],
 			"rotation": {
 				"angle": 0,
 				"axis": "y",
@@ -235,28 +711,172 @@
 			},
 			"faces": {
 				"north": {
-					"uv": [0, 0, 10, 12],
+					"uv": [0, 0, 12, 10],
 					"texture": "#r35"
 				},
 				"east": {
-					"uv": [0, 0, 6, 12],
+					"uv": [0, 0, 5, 10],
 					"texture": "#r35"
 				},
 				"south": {
-					"uv": [0, 0, 10, 12],
+					"uv": [0, 0, 12, 10],
 					"texture": "#r35"
 				},
 				"west": {
-					"uv": [0, 0, 6, 12],
+					"uv": [0, 0, 5, 10],
 					"texture": "#r35"
 				},
 				"up": {
-					"uv": [0, 0, 10, 6],
+					"uv": [0, 0, 12, 5],
 					"texture": "#r35"
 				},
 				"down": {
-					"uv": [0, 0, 10, 6],
+					"uv": [0, 0, 12, 5],
 					"texture": "#r35"
+				}
+			}
+		},
+		{
+			"name": "console_top",
+			"from": [18, -2, -16],
+			"to": [30, -1, -9],
+			"rotation": {
+				"angle": 0,
+				"axis": "y",
+				"origin": [8, 8, 8]
+			},
+			"faces": {
+				"north": {
+					"uv": [0, 0, 12, 1],
+					"texture": "#d"
+				},
+				"east": {
+					"uv": [0, 0, 7, 1],
+					"texture": "#d"
+				},
+				"south": {
+					"uv": [0, 0, 12, 1],
+					"texture": "#d"
+				},
+				"west": {
+					"uv": [0, 0, 7, 1],
+					"texture": "#d"
+				},
+				"up": {
+					"uv": [0, 0, 12, 7],
+					"texture": "#d"
+				},
+				"down": {
+					"uv": [0, 0, 12, 7],
+					"texture": "#d"
+				}
+			}
+		},
+		{
+			"name": "lever_speed",
+			"from": [21, -1, -12],
+			"to": [22, 6, -11],
+			"rotation": {
+				"angle": 0,
+				"axis": "y",
+				"origin": [8, 8, 8]
+			},
+			"faces": {
+				"north": {
+					"uv": [0, 0, 1, 7],
+					"texture": "#red"
+				},
+				"east": {
+					"uv": [0, 0, 1, 7],
+					"texture": "#red"
+				},
+				"south": {
+					"uv": [0, 0, 1, 7],
+					"texture": "#red"
+				},
+				"west": {
+					"uv": [0, 0, 1, 7],
+					"texture": "#red"
+				},
+				"up": {
+					"uv": [0, 0, 1, 1],
+					"texture": "#red"
+				},
+				"down": {
+					"uv": [0, 0, 1, 1],
+					"texture": "#red"
+				}
+			}
+		},
+		{
+			"name": "lever_brake",
+			"from": [26, -1, -12],
+			"to": [27, 6, -11],
+			"rotation": {
+				"angle": 0,
+				"axis": "y",
+				"origin": [8, 8, 8]
+			},
+			"faces": {
+				"north": {
+					"uv": [0, 0, 1, 7],
+					"texture": "#gas"
+				},
+				"east": {
+					"uv": [0, 0, 1, 7],
+					"texture": "#gas"
+				},
+				"south": {
+					"uv": [0, 0, 1, 7],
+					"texture": "#gas"
+				},
+				"west": {
+					"uv": [0, 0, 1, 7],
+					"texture": "#gas"
+				},
+				"up": {
+					"uv": [0, 0, 1, 1],
+					"texture": "#gas"
+				},
+				"down": {
+					"uv": [0, 0, 1, 1],
+					"texture": "#gas"
+				}
+			}
+		},
+		{
+			"name": "motor",
+			"from": [-16, -12, 16],
+			"to": [-4, 0, 30],
+			"rotation": {
+				"angle": 0,
+				"axis": "y",
+				"origin": [8, 8, 8]
+			},
+			"faces": {
+				"north": {
+					"uv": [0, 0, 12, 12],
+					"texture": "#ribs"
+				},
+				"east": {
+					"uv": [0, 0, 14, 12],
+					"texture": "#ribs"
+				},
+				"south": {
+					"uv": [0, 0, 12, 12],
+					"texture": "#ribs"
+				},
+				"west": {
+					"uv": [0, 0, 14, 12],
+					"texture": "#ribs"
+				},
+				"up": {
+					"uv": [0, 0, 12, 14],
+					"texture": "#ribs"
+				},
+				"down": {
+					"uv": [0, 0, 12, 14],
+					"texture": "#ribs"
 				}
 			}
 		}

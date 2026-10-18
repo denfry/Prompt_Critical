@@ -3,6 +3,7 @@ package dev.denfry.promptcritical.mod.foundry;
 import dev.denfry.promptcritical.mod.binding.SimLevelBinding;
 import dev.denfry.promptcritical.mod.block.PcBlock;
 import dev.denfry.promptcritical.mod.block.PcProperties;
+import dev.denfry.promptcritical.mod.fx.MachineFx;
 import dev.denfry.promptcritical.mod.multiblock.Footprint;
 import dev.denfry.promptcritical.mod.panel.PanelHost;
 import dev.denfry.promptcritical.mod.panel.PanelLayout;
@@ -18,6 +19,7 @@ import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
 import net.minecraft.core.HolderLookup;
 import net.minecraft.nbt.CompoundTag;
+import net.minecraft.sounds.SoundEvents;
 import net.minecraft.world.Containers;
 import net.minecraft.world.InteractionHand;
 import net.minecraft.world.InteractionResult;
@@ -139,6 +141,14 @@ public final class ShakeoutGrateBlockEntity extends KineticMachineBlockEntity<Cy
         readyMold();
         player.displayClientMessage(FoundryText.msg("shakeout", readyCount), true);
         return InteractionResult.SUCCESS;
+    }
+
+    @Override
+    protected void clientTick() {
+        MachineFx fx = fx();
+        if (fx == null || !runningState()) return;
+        if (fx.chance(12)) fx.dust(fx.at(16, 8, 16), 1.6, 2);
+        if (level.getGameTime() % 5 == 0) fx.sound(fx.at(16, 6, 16), SoundEvents.CHAIN_STEP, 0.35f, 0.7f);
     }
 
     @Override

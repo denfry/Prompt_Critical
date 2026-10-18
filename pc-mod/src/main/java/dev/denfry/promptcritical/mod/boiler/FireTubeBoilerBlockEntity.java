@@ -5,6 +5,7 @@ import dev.denfry.promptcritical.mod.binding.SimLevelBinding;
 import dev.denfry.promptcritical.mod.block.ChimneyBlock;
 import dev.denfry.promptcritical.mod.block.PcProperties;
 import dev.denfry.promptcritical.mod.blockentity.DeviceBlockEntity;
+import dev.denfry.promptcritical.mod.fx.MachineFx;
 import dev.denfry.promptcritical.mod.panel.PanelHost;
 import dev.denfry.promptcritical.mod.panel.PanelLayout;
 import dev.denfry.promptcritical.mod.registry.PcFluids;
@@ -257,6 +258,12 @@ public class FireTubeBoilerBlockEntity extends DeviceBlockEntity implements Pres
 
     private void clientTick() {
         var r = level.random;
+        MachineFx fx = MachineFx.of(level, worldPosition, facing());
+        if (fx != null && lit) {
+            if (fx.chance(3)) fx.flame(fx.at(0.5, 0.5, -16.3), 0.15);
+            if (fx.chance(3)) fx.flame(fx.at(15.5, 0.5, -16.3), 0.15);
+            if (fx.chance(0.5)) fx.sound(doorPos(), SoundEvents.FIRE_AMBIENT, 0.9f, 0.9f);
+        }
         if (lit && ticks % 3 == 0) {
             // чёрный дым — недожог: воздуха не хватает на подачу
             Vec3 p = smokePos();

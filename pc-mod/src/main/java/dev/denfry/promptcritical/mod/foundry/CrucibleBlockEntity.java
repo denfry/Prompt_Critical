@@ -4,6 +4,7 @@ import dev.denfry.promptcritical.mod.binding.SimBindings;
 import dev.denfry.promptcritical.mod.binding.SimLevelBinding;
 import dev.denfry.promptcritical.mod.blockentity.DeviceBlockEntity;
 import dev.denfry.promptcritical.mod.config.ServerConfig;
+import dev.denfry.promptcritical.mod.fx.MachineFx;
 import dev.denfry.promptcritical.mod.panel.PanelHost;
 import dev.denfry.promptcritical.mod.panel.PanelLayout;
 import dev.denfry.promptcritical.sim.metallurgy.CastAlloy;
@@ -60,7 +61,10 @@ public final class CrucibleBlockEntity extends DeviceBlockEntity implements Foun
 
     @Override
     public void tickDevice() {
-        if (!(level instanceof ServerLevel s)) return;
+        if (!(level instanceof ServerLevel s)) {
+            clientTick();
+            return;
+        }
         SimLevelBinding b = SimBindings.get(s);
         CrucibleUnit u = unit();
         if (b == null || u == null) return;
@@ -77,6 +81,14 @@ public final class CrucibleBlockEntity extends DeviceBlockEntity implements Foun
         BlockState st = getBlockState();
         if (st.getValue(BlockStateProperties.LIT) != u.lit())
             level.setBlock(worldPosition, st.setValue(BlockStateProperties.LIT, u.lit()), Block.UPDATE_ALL);
+    }
+
+    /** Пламя и дым над летком крышки горящей печи. */
+    private void clientTick() {
+        MachineFx fx = MachineFx.of(level, worldPosition, getBlockState().getValue(BlockStateProperties.HORIZONTAL_FACING));
+        if (fx == null || !getBlockState().getValue(BlockStateProperties.LIT)) return;
+        if (fx.chance(5)) fx.flame(fx.at(8, 13.6, 8), 0.15);
+        if (fx.chance(2)) fx.smoke(fx.at(8, 14, 8), false, 0.1);
     }
 
     @Override

@@ -2,6 +2,7 @@ package dev.denfry.promptcritical.mod.foundry;
 
 import dev.denfry.promptcritical.mod.binding.SimLevelBinding;
 import dev.denfry.promptcritical.mod.block.PcProperties;
+import dev.denfry.promptcritical.mod.fx.MachineFx;
 import dev.denfry.promptcritical.mod.panel.PanelHost;
 import dev.denfry.promptcritical.mod.panel.PanelLayout;
 import dev.denfry.promptcritical.mod.registry.PcBlocks;
@@ -17,6 +18,7 @@ import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
 import net.minecraft.core.HolderLookup;
 import net.minecraft.nbt.CompoundTag;
+import net.minecraft.sounds.SoundEvents;
 import net.minecraft.world.InteractionHand;
 import net.minecraft.world.InteractionResult;
 import net.minecraft.world.ItemInteractionResult;
@@ -144,6 +146,14 @@ public final class MoldingStationBlockEntity extends KineticMachineBlockEntity<C
                 : FoundryText.msg("molding", FoundryText.pattern(p), inv.getStackInSlot(0).getCount(),
                         CastingGeometry.of(p.kind()).sandItems(), water.getFluidAmount()), true);
         return InteractionResult.SUCCESS;
+    }
+
+    @Override
+    protected void clientTick() {
+        MachineFx fx = fx();
+        if (fx == null || !runningState() || level.getGameTime() % 11 != 0) return;
+        fx.dust(fx.at(10, 10, 8), 0.6, 4);
+        fx.sound(fx.at(10, 8, 8), SoundEvents.SAND_PLACE, 0.6f, 0.6f);
     }
 
     @Override

@@ -7,7 +7,6 @@ import dev.denfry.promptcritical.mod.boiler.BoilerGeometry;
 import dev.denfry.promptcritical.mod.mine.HoistGeometry;
 import dev.denfry.promptcritical.mod.mine.MineHoistBlockEntity;
 import dev.denfry.promptcritical.mod.registry.PcBlocks;
-import dev.engine_room.flywheel.lib.model.baked.PartialModel;
 import net.createmod.catnip.render.CachedBuffers;
 import net.createmod.catnip.render.SuperByteBuffer;
 import net.minecraft.client.Minecraft;
@@ -27,8 +26,6 @@ import net.minecraft.world.phys.Vec3;
  * вокруг оси X его модели (pivot [8, 16, 8]) и канат — от барабана к шкиву и от шкива вниз к крыше клети.
  */
 final class HoistRenderer implements BlockEntityRenderer<MineHoistBlockEntity> {
-    static final PartialModel DRUM = PartialModel.of(PromptCritical.id("block/mine_hoist/partial/drum"));
-    static final PartialModel SHEAVE = PartialModel.of(PromptCritical.id("block/headframe/partial/sheave"));
     /** Видимые радиусы барабана и шкива по моделям, блоков. */
     private static final double DRUM_R = 13 / 16.0, SHEAVE_R = 13 / 16.0, ROPE_W = 0.07;
 
@@ -39,7 +36,7 @@ final class HoistRenderer implements BlockEntityRenderer<MineHoistBlockEntity> {
         Direction facing = be.facing();
         VertexConsumer vc = buffers.getBuffer(RenderType.cutoutMipped());
         float drum = be.drumAngle(partialTicks);
-        SuperByteBuffer d = CachedBuffers.partial(DRUM, state);
+        SuperByteBuffer d = CachedBuffers.partial(MineClient.HOIST_DRUM, state);
         d.center().rotateYDegrees(-(facing.toYRot() + 180)).uncenter()
                 .translate(0, 0.5f, 0.5f).rotateX(drum).translate(0, -0.5f, -0.5f)
                 .light(light).renderInto(ms, vc);
@@ -53,7 +50,7 @@ final class HoistRenderer implements BlockEntityRenderer<MineHoistBlockEntity> {
         int sheaveLight = LevelRenderer.getLightColor(be.getLevel(), sheave.above());
         ms.pushPose();
         ms.translate(sheave.getX() - origin.getX(), sheave.getY() - origin.getY(), sheave.getZ() - origin.getZ());
-        SuperByteBuffer s = CachedBuffers.partial(SHEAVE, hs);
+        SuperByteBuffer s = CachedBuffers.partial(MineClient.SHEAVE, hs);
         s.center().rotateYDegrees(-(hf.toYRot() + 180)).uncenter()
                 .translate(0, 1f, 0.5f).rotateX(sheaveAngle).translate(0, -1f, -0.5f)
                 .light(sheaveLight).renderInto(ms, vc);

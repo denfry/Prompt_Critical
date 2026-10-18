@@ -34,6 +34,9 @@ public final class MineClient {
     private static final PartialModel DRUM_A = partial("longwall_shearer/partial/drum_a");
     private static final PartialModel DRUM_B = partial("longwall_shearer/partial/drum_b");
     private static final PartialModel LEGS = partial("powered_roof_support/partial/legs");
+    /** Барабан подъёма и шкив копра: частичные модели Flywheel объявляются до загрузки моделей, здесь, а не в рендерере. */
+    static final PartialModel HOIST_DRUM = partial("mine_hoist/partial/drum");
+    static final PartialModel SHEAVE = partial("headframe/partial/sheave");
     /** Шнеки в контрапции вращаются, град/тик (≈ 40 об/мин). */
     private static final float DRUM_DEG_PER_TICK = 12f;
 
