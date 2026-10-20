@@ -11,4 +11,12 @@ public interface GridInputs {
     default double createShaftPowerW(int machine) {
         return Double.NaN;
     }
+
+    /**
+     * Момент нагрузки на валу {@code electric_motor} от сети Create, о.е. на P_ном/ω_s (§7.6.3);
+     * NaN — держать заданный {@link PowerGrid#setMotorLoadTorque}.
+     */
+    default double motorLoadTorquePu(int motor) {
+        return Double.NaN;
+    }
 }

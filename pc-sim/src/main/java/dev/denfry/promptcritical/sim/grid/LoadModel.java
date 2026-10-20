@@ -30,6 +30,30 @@ public record LoadModel(double p0W, double q0Var, double aZ, double aI, double a
         return new LoadModel(pW, qVar, 1, 0, 0, 0, UflsStage.NONE, kind);
     }
 
+    /**
+     * Нагрузка вида {@code kind} с ZIP, cos φ и D_f по таблице §7.6.1. Двигатели — отдельная модель
+     * ({@link InductionMotorSpec}), дуга ЭДП (§7.6.5) пока не моделируется.
+     */
+    public static LoadModel typical(LoadKind kind, double pW) {
+        return switch (kind) {
+            case HEATER -> new LoadModel(pW, 0, 1, 0, 0, 0, UflsStage.NONE, kind);
+            case LIGHTING -> new LoadModel(pW, reactive(pW, 0.95), 0.5, 0.5, 0, 0, UflsStage.NONE, kind);
+            case RECTIFIER -> new LoadModel(pW, reactive(pW, 0.92), 0, 0, 1, 0, UflsStage.NONE, kind);
+            case PROCESS -> new LoadModel(pW, reactive(pW, 0.9), 0.2, 0, 0.8, 0.5, UflsStage.NONE, kind);
+            case NPC_CONSUMER -> new LoadModel(pW, reactive(pW, 0.9), 0.3, 0.2, 0.5, 1.5, UflsStage.NONE, kind);
+            case FE_IMPORT -> new LoadModel(pW, 0, 0, 0, 1, 0, UflsStage.NONE, kind);
+            case ARC_FURNACE -> throw new UnsupportedOperationException("arc furnace load (§7.6.5) is not modelled yet");
+        };
+    }
+
+    private static double reactive(double p, double cosPhi) {
+        return p * Math.tan(Math.acos(cosPhi));
+    }
+
+    public LoadModel withUflsStage(UflsStage stage) {
+        return new LoadModel(p0W, q0Var, aZ, aI, aP, dF, stage, kind);
+    }
+
     public LoadModel withDamping(double dF) {
         return new LoadModel(p0W, q0Var, aZ, aI, aP, dF, uflsStage, kind);
     }

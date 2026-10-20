@@ -38,6 +38,14 @@ public record MachineParams(double sRatedVa, double vRatedV, int polePairs, doub
         return new MachineParams(sRatedVa, vRatedV, 1, 2.0, 0.30, 0.20, 2.5, 0.6, 1, 0.01, 0.94);
     }
 
+    /**
+     * Номинальный ток возбуждения i_f,ном = E_q при V = 1, I = 1, cos φ = 0,8 (табл. §7.3.1),
+     * о.е. тока холостого хода: |1 + j·x_d·(0,8 − j0,6)| (§7.3.2, ≈ 2,5 у турбогенератора).
+     */
+    public double ratedFieldPu() {
+        return Math.hypot(1 + 0.6 * xd, 0.8 * xd);
+    }
+
     /** Момент инерции J = 2HS/ω_m0², кг·м² (§7.2.1). */
     public double inertiaKgM2(double nominalFrequencyHz) {
         double wm = 2 * Math.PI * nominalFrequencyHz / polePairs;

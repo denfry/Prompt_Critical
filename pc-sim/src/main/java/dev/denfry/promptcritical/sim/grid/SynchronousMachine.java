@@ -14,6 +14,7 @@ public final class SynchronousMachine {
     PowerGrid grid;
     private int i = -1;
     private double pendingLoadW, pendingVoltagePu = 1;
+    private boolean pendingPin;
 
     public SynchronousMachine(MachineParams p, ExciterSpec exc, PrimeMover mover) {
         this.params = Objects.requireNonNull(p, "params");
@@ -26,6 +27,7 @@ public final class SynchronousMachine {
         i = index;
         g.setLoadTarget(i, pendingLoadW);
         g.vSetPu[i] = pendingVoltagePu;
+        g.setShearPinCoupling(i, pendingPin);
     }
 
     public MachineParams params() {
@@ -94,15 +96,74 @@ public final class SynchronousMachine {
         return live() ? grid.slips[i] : 0;
     }
 
+    /**
+     * {@code DAMAGED} — вал сломан; {@code ASYNC} — был проворот; одна в острове и без нагрузки —
+     * {@code EXCITED} или {@code ROLLING} (не возбуждена); иначе {@code LOADED} выше 5 % S_ном.
+     */
     public MachineState state() {
-        if (!live()) return MachineState.STOPPED;
-        if (grid.slips[i] > 0) return MachineState.ASYNC;
-        return grid.pe[i] * grid.sb > 0.05 * params.sRatedVa() ? MachineState.LOADED : MachineState.SYNCHRONIZED;
+        return live() ? grid.machineState(i) : MachineState.STOPPED;
     }
 
-    /** Повреждение вала (несинхронное включение, §7.3.5) — после M1. */
+    /** Усталостное повреждение валопровода D_shaft (несинхронное включение, §7.3.5); ≥ 1 — излом. */
     public double shaftDamage() {
-        return 0;
+        return grid == null ? 0 : grid.shaftDmg[i];
+    }
+
+    /** Повреждение обмоток статора (смещение лобовых частей при T_pk ≥ 3 о.е., §7.3.5). */
+    public double statorDamage() {
+        return grid == null ? 0 : grid.statorDmg[i];
+    }
+
+    /** Агрегат разъединён: срезана муфта (штифт) или сломан вал — первичный двигатель не передаёт момент. */
+    public boolean couplingSheared() {
+        return grid != null && grid.sheared[i];
+    }
+
+    /** Ограничитель перевозбуждения держит E_fd на номинальном токе возбуждения (§7.3.4). */
+    public boolean overExcitationLimited() {
+        return grid != null && grid.oelOn[i];
+    }
+
+    public ExcitationMode excitationMode() {
+        return grid == null ? exciter.defaultMode() : grid.excMode[i];
+    }
+
+    /** Q_max при активной мощности {@code pW} и текущем напряжении (диаграмма §7.3.4), вар. */
+    public double maxReactiveVar(double pW) {
+        double v = live() ? grid.vt[i] : 1;
+        return requireGrid().maxReactivePu(i, pW / params.sRatedVa(), v) * params.sRatedVa();
+    }
+
+    /** Q_min при активной мощности {@code pW} (статор и UEL), вар. */
+    public double minReactiveVar(double pW) {
+        double v = live() ? grid.vt[i] : 1;
+        return requireGrid().minReactivePu(i, pW / params.sRatedVa(), v) * params.sRatedVa();
+    }
+
+    /** {@code generator_coupling} со срезным штифтом; установка новой соединяет срезанный агрегат с целым валом. */
+    public void setShearPinCoupling(boolean installed) {
+        if (grid == null) pendingPin = installed;
+        else grid.setShearPinCoupling(i, installed);
+    }
+
+    /** Ремонт срезанной муфты без штифта; со сломанным валом — {@link IllegalStateException}. */
+    public void repairCoupling() {
+        requireGrid().repairCoupling(i);
+    }
+
+    /** Уставка Q в режиме {@code REACTIVE}, вар; вне диаграммы мощности — {@link IllegalArgumentException}. */
+    public void setReactiveTarget(double var) {
+        requireGrid().setReactiveTarget(i, var / params.sRatedVa());
+    }
+
+    /** Уставка cos φ в режиме {@code POWER_FACTOR}: > 0 — выдача Q, < 0 — потребление, |cos φ| ≥ 0,5. */
+    public void setPowerFactorTarget(double pf) {
+        requireGrid().setPowerFactorTarget(i, pf);
+    }
+
+    private PowerGrid requireGrid() {
+        if (grid == null) throw new IllegalStateException("add the machine to a grid first");
+        return grid;
     }
 
     /** Задание мощности: уставка регулятора y₀ или мощность вала Create без входа от Create. */

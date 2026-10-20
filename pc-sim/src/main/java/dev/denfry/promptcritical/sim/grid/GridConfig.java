@@ -11,9 +11,16 @@ package dev.denfry.promptcritical.sim.grid;
  * @param maxRefactorPerTick  {@code grid.max_refactor_per_tick} — переразложений островов за тик
  * @param loadDamping         {@code grid.load_damping} [BALANCE] — D_L нагрузок без своего D_f
  * @param governorDeadbandHz  {@code grid.governor_deadband_hz} [сверить] — мёртвая зона регуляторов
+ * @param syncMaxAngleDeg     {@code grid.sync_max_angle_deg} — окно реле 25 по углу (IEEE C50.13)
+ * @param syncMaxDv           {@code grid.sync_max_dv} — окно по напряжению, генератор не ниже сети
+ * @param syncMaxSlipHz       {@code grid.sync_max_slip_hz} — окно по скольжению
+ * @param syncTorqueDamagePu  {@code grid.sync_torque_damage_pu} [BALANCE] — T_pk, с которого копится D_shaft
+ * @param couplingShearPu     {@code grid.coupling_shear_pu} [BALANCE] — T_pk среза муфты
  */
 public record GridConfig(double baseMva, double nominalFrequencyHz, int substeps, int solverIterations,
-        double solverRelaxation, int maxRefactorPerTick, double loadDamping, double governorDeadbandHz) {
+        double solverRelaxation, int maxRefactorPerTick, double loadDamping, double governorDeadbandHz,
+        double syncMaxAngleDeg, double syncMaxDv, double syncMaxSlipHz, double syncTorqueDamagePu,
+        double couplingShearPu) {
     public GridConfig {
         if (!(baseMva > 0)) throw new IllegalArgumentException("baseMva");
         if (nominalFrequencyHz != 50 && nominalFrequencyHz != 60) throw new IllegalArgumentException("nominalFrequencyHz");
@@ -23,15 +30,21 @@ public record GridConfig(double baseMva, double nominalFrequencyHz, int substeps
         if (maxRefactorPerTick < 1) throw new IllegalArgumentException("maxRefactorPerTick");
         if (!(loadDamping >= 0)) throw new IllegalArgumentException("loadDamping");
         if (!(governorDeadbandHz >= 0)) throw new IllegalArgumentException("governorDeadbandHz");
+        if (!(syncMaxAngleDeg > 0 && syncMaxAngleDeg < 180)) throw new IllegalArgumentException("syncMaxAngleDeg");
+        if (!(syncMaxDv > 0)) throw new IllegalArgumentException("syncMaxDv");
+        if (!(syncMaxSlipHz > 0)) throw new IllegalArgumentException("syncMaxSlipHz");
+        if (!(syncTorqueDamagePu > 0 && couplingShearPu > syncTorqueDamagePu))
+            throw new IllegalArgumentException("sync torque thresholds");
     }
 
     public static GridConfig defaults() {
-        return new GridConfig(100, 50, 2, 2, 0.8, 2, 1.5, 0.075);
+        return new GridConfig(100, 50, 2, 2, 0.8, 2, 1.5, 0.075, 10, 0.05, 0.067, 1.5, 5.0);
     }
 
     public GridConfig withGovernorDeadbandHz(double hz) {
         return new GridConfig(baseMva, nominalFrequencyHz, substeps, solverIterations, solverRelaxation,
-                maxRefactorPerTick, loadDamping, hz);
+                maxRefactorPerTick, loadDamping, hz, syncMaxAngleDeg, syncMaxDv, syncMaxSlipHz, syncTorqueDamagePu,
+                couplingShearPu);
     }
 
     /** S_b, В·А. */
