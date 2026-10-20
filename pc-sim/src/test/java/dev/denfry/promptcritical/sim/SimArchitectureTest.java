@@ -44,7 +44,8 @@ public class SimArchitectureTest {
                     "..sim.combustion..", "..sim.mining..", "..sim.mechanics..", "..sim.metallurgy..")
             .layer("systems").definedBy("..sim.protection..", "..sim.instrument..", "..sim.alarm..",
                     "..sim.acoustics..", "..sim.accident..", "..sim.radiation..", "..sim.chem..",
-                    "..sim.enrichment..", "..sim.consequence..", "..sim.journal..", "..sim.plant..")
+                    "..sim.enrichment..", "..sim.consequence..", "..sim.journal..", "..sim.plant..",
+                    "..sim.automation..")
             .whereLayer("physics").mayOnlyAccessLayers("core") // физика не знает о приборах и сигнализации
             .whereLayer("physics").mayOnlyBeAccessedByLayers("systems", "core");
 }
