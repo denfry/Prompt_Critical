@@ -45,6 +45,20 @@ public final class CombustionResult {
         return Combustor.sensibleHeat(productMolS, tK);
     }
 
+    /**
+     * Температура газов с потоком физического тепла {@code heatRateW} (относительно 298,15 К): Ньютон от оценки
+     * {@code guessK}, К.
+     */
+    public double temperatureForHeatRate(double heatRateW, double guessK) {
+        double t = guessK;
+        for (int it = 0; it < 4; it++) {
+            double d = fluegasHeatRateW(t + 0.5) - fluegasHeatRateW(t - 0.5);
+            if (!(d > 0)) break;
+            t -= (fluegasHeatRateW(t) - heatRateW) / d;
+        }
+        return t;
+    }
+
     void clear(double airTempK) {
         heatReleaseW = fluegasKgS = ashKgS = flyAshKgS = excessAir = 0;
         xCO2 = xH2O = xN2 = xO2 = xSO2 = xCO = xO2Dry = noxMgPerNm3Dry6 = dryFluegasNm3S = q3 = q4 = 0;

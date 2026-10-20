@@ -1,5 +1,6 @@
 package dev.denfry.promptcritical.sim.metallurgy;
 
+import dev.denfry.promptcritical.sim.combustion.LarsonMiller;
 import java.util.Map;
 
 /**
@@ -26,6 +27,15 @@ public enum SteelFamily {
     TOOL_HSS("Р6М5", 2000, 2400, HeatTreatState.QUENCHED_TEMPERED, Hardening.TOOL, 0.0003,
             Map.of(AlloyElement.MO, 0.05, AlloyElement.CR, 0.04, AlloyElement.V, 0.02)),
     RAIL_WIRE("65Г", 700, 1000, HeatTreatState.AS_ROLLED, Hardening.FERRITIC, 0.0004, Map.of(AlloyElement.C, 0.006));
+
+    /** Длительная прочность металла труб котлов (07 §7.9.3) по классу стали. */
+    public LarsonMiller creep() {
+        return switch (this) {
+            case HEAT_RESISTANT -> LarsonMiller.CR_MO_V;
+            case STAINLESS_304, STAINLESS_316, INCONEL -> LarsonMiller.AUSTENITIC;
+            default -> LarsonMiller.CARBON;
+        };
+    }
 
     /** Обозначение по умолчанию (первый пример таблицы 08 §8.6.4). */
     public final String designation;

@@ -31,6 +31,11 @@ import java.util.Objects;
  * имеет температуру водяной стороны стенки и выплавляется при 232 °C (олово): струя пара гасит топку, биндинг
  * открывает течь {@link #FUSIBLE_PLUG_AREA_M2} из водяного узла в топку. Без пробки оголённый потолок греется до
  * {@link #CROWN_FAILURE_K} и сминается — взрыв котла ({@link BoilerExplosion}).
+ *
+ * <p>Накипь (07 §7.9.3, {@link BoilerScale}) растёт в {@link #stepSlow} по жёсткости питательной воды и тепловому
+ * потоку жаровых труб (один слой на всю водяную сторону): добавляет δ/λ_н в стенку потолка — тот перегревается,
+ * вплоть до смятия — и в UA дымогарных труб (площадь — UA/{@link #TUBE_U}) — растут уходящие газы, падает КПД.
+ * Пробка греется водяной плёнкой q/h и от накипи не зависит.
  */
 public final class FireTubeBoiler implements Boiler {
     /** Уставка ПК в долях рабочего давления. */
@@ -45,6 +50,8 @@ public final class FireTubeBoiler implements Boiler {
     public static final double KINDLING_DT = 40;
     /** Постоянная прогрева трубы, с. */
     public static final double STACK_TIME_S = 120;
+    /** Коэффициент теплопередачи дымогарных труб в расчётном режиме, Вт/(м²·К): площадь пучка = UA/U [BALANCE]. */
+    public static final double TUBE_U = 80;
     /** Слой тоньше этого гаснет, кг. */
     public static final double MIN_BED_KG = 1;
 
@@ -57,7 +64,7 @@ public final class FireTubeBoiler implements Boiler {
     private final FireTubeBoilerSpec spec;
     private final double designFluegasKgS;
     private Combustor combustor;
-    private double bedKg, crownK, stackK, chimneyHeightM;
+    private double bedKg, crownK, stackK, chimneyHeightM, scaleM, lastFluxWm2;
     private boolean lit, plugMelted, plugFitted = true;
     private BoilerRupture rupture = BoilerRupture.NONE;
 
@@ -160,6 +167,38 @@ public final class FireTubeBoiler implements Boiler {
         return chimneyHeightM;
     }
 
+    /** Котёл без BMS: «горит» — {@link BmsState#RUNNING}. */
+    @Override
+    public BmsState bms() {
+        return lit ? BmsState.RUNNING : BmsState.OFF;
+    }
+
+    /** Толщина накипи, м. */
+    public double scaleM() {
+        return scaleM;
+    }
+
+    /** Механическая очистка ({@code boiler_scraper}) на холодном котле: снимает до {@code thicknessM} накипи. */
+    public void removeScale(double thicknessM) {
+        if (!(thicknessM >= 0)) throw new IllegalArgumentException("thickness: " + thicknessM);
+        scaleM = Math.max(0, scaleM - thicknessM);
+    }
+
+    /** Накипь задана (пусконаладка, тесты), м. */
+    public void setScale(double thicknessM) {
+        if (!(thicknessM >= 0)) throw new IllegalArgumentException("thickness: " + thicknessM);
+        scaleM = thicknessM;
+    }
+
+    /**
+     * Шаг SLOW: рост накипи по жёсткости питательной воды при тепловом потоке жаровых труб последнего тика FAST.
+     *
+     * @param hardnessMolEqM3 жёсткость питательной воды, моль-экв/м³ (= мг-экв/л)
+     */
+    public void stepSlow(double dtPhysS, double hardnessMolEqM3) {
+        scaleM += BoilerScale.growthRate(hardnessMolEqM3, lastFluxWm2) * dtPhysS;
+    }
+
     /** Состояние металла, слоя и топки; топливо сохраняет владелец (по {@link FuelSpec#fuelId()}). */
     public void save(StateWriter out) {
         out.putDouble("bed_kg", bedKg);
@@ -170,6 +209,7 @@ public final class FireTubeBoiler implements Boiler {
         out.putBoolean("plug_melted", plugMelted);
         out.putBoolean("plug_fitted", plugFitted);
         out.putInt("rupture", rupture.ordinal());
+        out.putDouble("scale_m", scaleM);
     }
 
     public void load(StateReader in) {
@@ -181,6 +221,7 @@ public final class FireTubeBoiler implements Boiler {
         plugMelted = in.getBoolean("plug_melted");
         plugFitted = in.getBoolean("plug_fitted");
         rupture = BoilerRupture.values()[in.getInt("rupture")];
+        scaleM = in.optDouble("scale_m", 0);
     }
 
     @Override
@@ -220,9 +261,10 @@ public final class FireTubeBoiler implements Boiler {
         if (res.fluegasKgS > 0 && Math.abs(exit - tw) > 1e-6) {
             double c = (hExit - res.fluegasHeatRateW(tw)) / (exit - tw);
             double ua = spec.convectiveUA() * Math.pow(res.fluegasKgS / designFluegasKgS, GAS_FLOW_EXPONENT);
+            if (scaleM > 0 && ua > 0) ua = 1 / (1 / ua + BoilerScale.resistance(scaleM) * TUBE_U / spec.convectiveUA());
             double eps = 1 - Math.exp(-ua / c);
             qConv = eps * c * (exit - tw);
-            gasExit = exitTemperature(res, hExit - qConv, exit - qConv / c);
+            gasExit = res.temperatureForHeatRate(hExit - qConv, exit - qConv / c);
         }
         double qShell = spec.shellLossWPerK() * (tw - ta0);
         stackK += (res.fluegasKgS > 0 ? gasExit - stackK : ta0 - stackK) * Math.min(1, dtS / STACK_TIME_S);
@@ -248,8 +290,9 @@ public final class FireTubeBoiler implements Boiler {
     private void stepCrown(double dt, BoilerInputs in, BoilerOutputs out, double qFurnace) {
         boolean uncovered = in.waterLevelM < spec.crownHeightM();
         double q = qFurnace / spec.furnaceWallAreaM2();
+        lastFluxWm2 = q;
         double h = uncovered ? STEAM_H : boilingH(in.waterPressurePa, q);
-        double r = 1 / h + spec.crownWallM() / (2 * STEEL_K);
+        double r = 1 / h + BoilerScale.resistance(scaleM) + spec.crownWallM() / (2 * STEEL_K);
         double cap = STEEL_RHO_C * spec.crownWallM();
         double tw = in.waterTempK;
         crownK = (crownK + dt / cap * (q + tw / r)) / (1 + dt / (cap * r));
@@ -265,22 +308,11 @@ public final class FireTubeBoiler implements Boiler {
     }
 
     /** Кипение в большом объёме по Куперу при тепловом потоке q, не ниже {@link #MIN_BOILING_H}. */
-    private static double boilingH(double pressurePa, double q) {
+    static double boilingH(double pressurePa, double q) {
         if (!(q > 0)) return MIN_BOILING_H;
         double pr = Math.min(0.9, Math.max(1e-4, pressurePa / HeatTransferCorrelations.CRITICAL_PRESSURE));
         return Math.max(MIN_BOILING_H,
                 HeatTransferCorrelations.cooperPool(pr, HeatTransferCorrelations.WATER_MOLAR_MASS, q));
-    }
-
-    /** Температура газов с потоком физического тепла {@code heatRate}: Ньютон от оценки по средней теплоёмкости. */
-    private static double exitTemperature(CombustionResult res, double heatRate, double guess) {
-        double t = guess;
-        for (int it = 0; it < 4; it++) {
-            double d = res.fluegasHeatRateW(t + 0.5) - res.fluegasHeatRateW(t - 0.5);
-            if (!(d > 0)) break;
-            t -= (res.fluegasHeatRateW(t) - heatRate) / d;
-        }
-        return t;
     }
 
     /** Молярная масса газов прошлого тика, кг/моль (воздух, если газов не было). */
