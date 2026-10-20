@@ -11,11 +11,13 @@ import dev.denfry.promptcritical.mod.boiler.SteamEngineBlock;
 import dev.denfry.promptcritical.mod.boiler.SteamEngineBlockEntity;
 import dev.denfry.promptcritical.mod.content.DocumentLecternBlockEntity;
 import dev.denfry.promptcritical.mod.content.GeologicalMapItem;
+import dev.denfry.promptcritical.mod.content.HandbookCategory;
 import dev.denfry.promptcritical.mod.content.HandbookEntry;
 import dev.denfry.promptcritical.mod.content.HandbookManager;
 import dev.denfry.promptcritical.mod.content.HandbookMarkdown;
 import dev.denfry.promptcritical.mod.content.HandbookPage;
 import dev.denfry.promptcritical.mod.content.HandbookService;
+import dev.denfry.promptcritical.mod.content.Localized;
 import dev.denfry.promptcritical.mod.content.MapTargetData;
 import dev.denfry.promptcritical.mod.content.RouteCondition;
 import dev.denfry.promptcritical.mod.content.RouteService;
@@ -409,6 +411,27 @@ public final class ContentGameTests {
         h.assertTrue(HandbookManager.routeCycle(loop) != null, "a → c → b → a is a cycle");
         loop.remove(ResourceLocation.parse("t:a"));
         h.assertTrue(HandbookManager.routeCycle(loop) == null, "without a there is no cycle");
+        h.succeed();
+    }
+
+    /** Таблицы handbook/lang (Crowdin): ключ разворачивается в строки по языкам, неизвестный ключ — проблема загрузки. */
+    @GameTest(template = SMALL)
+    public static void handbookTranslationKeys(GameTestHelper h) {
+        HandbookCategory i0 = HandbookManager.data().categories().stream()
+                .filter(c -> c.id().equals(PromptCritical.id("i0"))).findFirst().orElseThrow();
+        h.assertTrue(i0.title().get("en_us").equals("I0 Coal and Steam"), "en: " + i0.title().get("en_us"));
+        h.assertTrue(i0.title().get("ru_ru").equals("I0 Уголь и пар"), "ru: " + i0.title().get("ru_ru"));
+        h.assertTrue(i0.title().get("de_de").equals("I0 Coal and Steam"), "untranslated falls back to English");
+
+        JsonObject t = new JsonObject();
+        t.addProperty("en_us", "Hello");
+        List<String> problems = new java.util.ArrayList<>();
+        JsonObject o = JsonParser.parseString("{\"a\": \"handbook.x.hello\", \"b\": [\"handbook.x.missing\"],"
+                + " \"icon\": \"minecraft:book\"}").getAsJsonObject();
+        HandbookManager.localize(o, Map.of("handbook.x.hello", t), problems);
+        h.assertTrue(Localized.of(o, "a").get("en_us").equals("Hello"), "key resolved");
+        h.assertTrue(o.get("icon").getAsString().equals("minecraft:book"), "ids untouched");
+        h.assertTrue(problems.equals(List.of("missing translation key handbook.x.missing")), "problems: " + problems);
         h.succeed();
     }
 

@@ -1,19 +1,13 @@
 {
   "category": "promptcritical:i0",
-  "title": {
-    "en_us": "The steam engine",
-    "ru_ru": "Паровая машина"
-  },
+  "title": "handbook.promptcritical.entry.i0.steam_engine.title",
   "icon": "promptcritical:governor_dashpot",
   "sort": 30,
   "unlock": {
     "type": "block_placed",
     "block": "promptcritical:steam_engine_cylinder"
   },
-  "hint": {
-    "en_us": "Place a steam engine",
-    "ru_ru": "Поставьте паровую машину"
-  },
+  "hint": "handbook.promptcritical.entry.i0.steam_engine.hint",
   "pages": [
     {
       "type": "text",
@@ -25,52 +19,31 @@
       "vars": [
         {
           "symbol": "pₘᵢ",
-          "text": {
-            "en_us": "mean indicated pressure, Pa",
-            "ru_ru": "среднее индикаторное давление, Па"
-          }
+          "text": "handbook.promptcritical.entry.i0.steam_engine.pages.1.vars.0.text"
         },
         {
           "symbol": "p₁, p_b",
-          "text": {
-            "en_us": "admission and back pressure, Pa",
-            "ru_ru": "давление впуска и противодавление, Па"
-          }
+          "text": "handbook.promptcritical.entry.i0.steam_engine.pages.1.vars.1.text"
         },
         {
           "symbol": "ε",
-          "text": {
-            "en_us": "cut-off: share of the stroke with steam admitted",
-            "ru_ru": "наполнение (отсечка): доля хода с впуском пара"
-          }
+          "text": "handbook.promptcritical.entry.i0.steam_engine.pages.1.vars.2.text"
         },
         {
           "symbol": "k_d",
-          "text": {
-            "en_us": "diagram factor",
-            "ru_ru": "коэффициент полноты диаграммы"
-          }
+          "text": "handbook.promptcritical.entry.i0.steam_engine.pages.1.vars.3.text"
         },
         {
           "symbol": "Vₛ, n, z",
-          "text": {
-            "en_us": "swept volume, revolutions per second, cylinders",
-            "ru_ru": "рабочий объём, обороты в секунду, число цилиндров"
-          }
+          "text": "handbook.promptcritical.entry.i0.steam_engine.pages.1.vars.4.text"
         }
       ],
-      "caption": {
-        "en_us": "Indicated power. Earlier cut-off saves steam but lowers power.",
-        "ru_ru": "Индикаторная мощность. Ранняя отсечка экономит пар, но снижает мощность."
-      }
+      "caption": "handbook.promptcritical.entry.i0.steam_engine.pages.1.caption"
     },
     {
       "type": "ponder",
       "item": "create:shaft",
-      "caption": {
-        "en_us": "How Create shafts carry the engine's rotation.",
-        "ru_ru": "Как валы Create передают вращение машины."
-      }
+      "caption": "handbook.promptcritical.entry.i0.steam_engine.pages.2.caption"
     },
     {
       "type": "recipe",

@@ -1,0 +1,72 @@
+#
+# Crowdin configuration for Prompt Critical translations.
+#
+# Source language is English. Russian is maintained in this repository
+# (datagen and the handbook ru_ru files), so do not enable it as a target
+# language in the Crowdin project.
+#
+# Crowdin language codes are mapped to lowercase Minecraft locale codes.
+# The mapping is defined on the first file and reused by the others.
+# Add a line to it when a new language is enabled in Crowdin.
+#
+project_id_env: CROWDIN_PROJECT_ID
+api_token_env: CROWDIN_PERSONAL_TOKEN
+base_path: "."
+preserve_hierarchy: true
+
+files:
+  # Blocks, items, fluids, GUI, advancements, chat messages. The source file is
+  # produced by `./gradlew :pc-mod:runData`; translations live outside the
+  # generated folder so datagen never overwrites them.
+  - source: /pc-mod/src/generated/resources/assets/promptcritical/lang/en_us.json
+    translation: /pc-mod/src/main/resources/assets/promptcritical/lang/%locale_with_underscore%.json
+    languages_mapping: &minecraft_locales
+      locale_with_underscore:
+        ar: ar_sa
+        be: be_by
+        bg: bg_bg
+        cs: cs_cz
+        da: da_dk
+        de: de_de
+        el: el_gr
+        es-ES: es_es
+        es-MX: es_mx
+        et: et_ee
+        fi: fi_fi
+        fr: fr_fr
+        he: he_il
+        hr: hr_hr
+        hu: hu_hu
+        id: id_id
+        it: it_it
+        ja: ja_jp
+        kk: kk_kz
+        ko: ko_kr
+        lt: lt_lt
+        lv: lv_lv
+        nb: nb_no
+        nl: nl_nl
+        pl: pl_pl
+        pt-BR: pt_br
+        pt-PT: pt_pt
+        ro: ro_ro
+        sk: sk_sk
+        sl: sl_si
+        sv-SE: sv_se
+        th: th_th
+        tr: tr_tr
+        uk: uk_ua
+        vi: vi_vn
+        zh-CN: zh_cn
+        zh-TW: zh_tw
+
+  # Handbook titles, captions, hints and the route (keys used by
+  # handbook/categories, handbook/entries and handbook/route).
+  - source: /pc-mod/src/main/resources/data/promptcritical/handbook/lang/en_us.json
+    translation: /pc-mod/src/main/resources/data/promptcritical/handbook/lang/%locale_with_underscore%.json
+    languages_mapping: *minecraft_locales
+
+  # Handbook chapter text.
+  - source: /pc-mod/src/main/resources/data/promptcritical/handbook/pages/en_us/**/*.md
+    translation: /pc-mod/src/main/resources/data/promptcritical/handbook/pages/%locale_with_underscore%/**/%original_file_name%
+    languages_mapping: *minecraft_locales

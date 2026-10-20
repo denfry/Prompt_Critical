@@ -32,7 +32,8 @@ import org.jetbrains.annotations.Nullable;
 /**
  * Содержимое справочника из датапака (11 §11.1.2): {@code handbook/categories/*.json}, {@code handbook/entries/**.json}
  * (ID главы — путь без расширения), {@code handbook/pages/<lang>/<глава>/<file>.md}, «Маршрут» {@code handbook/route/<эпоха>.json}
- * (11 §11.1.5). Сервер может переопределить или дополнить любой файл. Битая глава или задание пропускаются с
+ * (11 §11.1.5). Строки JSON — ключи таблиц {@code handbook/lang/<язык>.json} (их переводят в Crowdin) или встроенные
+ * {@code {"en_us": …, "ru_ru": …}}. Сервер может переопределить или дополнить любой файл. Битая глава или задание пропускаются с
  * предупреждением в лог, остальные грузятся.
  */
 public final class HandbookManager extends SimplePreparableReloadListener<HandbookManager.Data> {
@@ -73,11 +74,12 @@ public final class HandbookManager extends SimplePreparableReloadListener<Handbo
     @Override
     protected Data prepare(ResourceManager rm, ProfilerFiller profiler) {
         List<String> problems = new ArrayList<>();
+        Map<String, JsonObject> lang = loadLang(rm, problems);
         List<HandbookCategory> categories = new ArrayList<>();
         for (Map.Entry<ResourceLocation, Resource> r : rm.listResources(ROOT + "/categories", p -> p.getPath().endsWith(".json")).entrySet()) {
             ResourceLocation id = idOf(r.getKey(), ROOT + "/categories/", ".json");
             try {
-                JsonObject o = read(r.getValue()).getAsJsonObject();
+                JsonObject o = localize(read(r.getValue()), lang, problems).getAsJsonObject();
                 categories.add(new HandbookCategory(id, Localized.of(o, "title"),
                         ResourceLocation.parse(GsonHelper.getAsString(o, "icon", "minecraft:book")), GsonHelper.getAsInt(o, "sort", 0)));
             } catch (RuntimeException | IOException e) {
@@ -90,7 +92,7 @@ public final class HandbookManager extends SimplePreparableReloadListener<Handbo
         for (Map.Entry<ResourceLocation, Resource> r : rm.listResources(ROOT + "/entries", p -> p.getPath().endsWith(".json")).entrySet()) {
             ResourceLocation id = idOf(r.getKey(), ROOT + "/entries/", ".json");
             try {
-                list.add(parseEntry(id, read(r.getValue()).getAsJsonObject()));
+                list.add(parseEntry(id, localize(read(r.getValue()), lang, problems).getAsJsonObject()));
             } catch (RuntimeException | IOException e) {
                 problems.add("entry " + id + ": " + e.getMessage());
             }
@@ -126,7 +128,7 @@ public final class HandbookManager extends SimplePreparableReloadListener<Handbo
         for (Map.Entry<ResourceLocation, Resource> r : rm.listResources(ROOT + "/route", p -> p.getPath().endsWith(".json")).entrySet()) {
             ResourceLocation id = idOf(r.getKey(), ROOT + "/route/", ".json");
             try {
-                RouteTask.Era era = parseEra(id, read(r.getValue()).getAsJsonObject(), problems);
+                RouteTask.Era era = parseEra(id, localize(read(r.getValue()), lang, problems).getAsJsonObject(), problems);
                 route.add(era);
                 for (RouteTask t : era.tasks()) {
                     if (tasks.putIfAbsent(t.id(), t) != null) problems.add("route " + id + ": duplicate task " + t.id());
@@ -353,6 +355,52 @@ public final class HandbookManager extends SimplePreparableReloadListener<Handbo
     private static ResourceLocation idOf(ResourceLocation file, String prefix, String suffix) {
         String p = file.getPath();
         return ResourceLocation.fromNamespaceAndPath(file.getNamespace(), p.substring(prefix.length(), p.length() - suffix.length()));
+    }
+
+    /**
+     * Таблицы переводов {@code handbook/lang/<язык>.json} всех пространств имён (плоские «ключ → строка», формат
+     * Crowdin), развёрнутые в {@code ключ → {язык: строка}}. Пакет с более высоким приоритетом перекрывает ключ.
+     */
+    private static Map<String, JsonObject> loadLang(ResourceManager rm, List<String> problems) {
+        Map<String, JsonObject> out = new HashMap<>();
+        for (Map.Entry<ResourceLocation, List<Resource>> r
+                : rm.listResourceStacks(ROOT + "/lang", p -> p.getPath().endsWith(".json")).entrySet()) {
+            String path = r.getKey().getPath();
+            String code = path.substring(path.lastIndexOf('/') + 1, path.length() - ".json".length());
+            for (Resource res : r.getValue()) {
+                try {
+                    for (Map.Entry<String, JsonElement> e : read(res).getAsJsonObject().entrySet())
+                        out.computeIfAbsent(e.getKey(), k -> new JsonObject()).addProperty(code, e.getValue().getAsString());
+                } catch (RuntimeException | IOException e) {
+                    problems.add("lang " + r.getKey() + ": " + e.getMessage());
+                }
+            }
+        }
+        return out;
+    }
+
+    /**
+     * Строка-ключ из таблиц переводов заменяется на {@code {язык: строка}}, который понимает {@link Localized}; прочие
+     * строки (ID, иконки, буквальный текст) не меняются. Ключ {@code handbook.*} без перевода — в список проблем.
+     */
+    public static JsonElement localize(JsonElement e, Map<String, JsonObject> lang, List<String> problems) {
+        if (e.isJsonObject()) {
+            JsonObject o = e.getAsJsonObject();
+            for (Map.Entry<String, JsonElement> en : o.entrySet()) en.setValue(localize(en.getValue(), lang, problems));
+            return o;
+        }
+        if (e.isJsonArray()) {
+            JsonArray a = e.getAsJsonArray();
+            for (int i = 0; i < a.size(); i++) a.set(i, localize(a.get(i), lang, problems));
+            return a;
+        }
+        if (e.isJsonPrimitive() && e.getAsJsonPrimitive().isString()) {
+            String s = e.getAsString();
+            JsonObject t = lang.get(s);
+            if (t != null) return t.deepCopy();
+            if (s.startsWith(ROOT + ".") && s.indexOf(' ') < 0) problems.add("missing translation key " + s);
+        }
+        return e;
     }
 
     private static JsonElement read(Resource r) throws IOException {
