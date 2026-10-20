@@ -183,3 +183,94 @@ tasks.jar {
     from(simMain.output)
     from(apiMain.output)
 }
+
+// Переводы приходят pull request'ами (CONTRIBUTING.md, «Translations»): проверка в `check`, отчёт — translationStatus.
+val langDirs = listOf(
+    layout.projectDirectory.dir("src/generated/resources/assets/$modId/lang"),
+    layout.projectDirectory.dir("src/main/resources/assets/$modId/lang"),
+)
+val handbookLangDir = layout.projectDirectory.dir("src/main/resources/data/$modId/handbook/lang")
+val handbookPagesDir = layout.projectDirectory.dir("src/main/resources/data/$modId/handbook/pages")
+
+/** Плоская таблица ключ → строка; не-строковое значение — ошибка. */
+fun readLangTable(f: File): Map<String, String> {
+    @Suppress("UNCHECKED_CAST")
+    val m = groovy.json.JsonSlurper().parse(f, "UTF-8") as? Map<String, Any?>
+        ?: throw GradleException("${f.name}: expected a JSON object")
+    return m.mapValues { (k, v) -> v as? String ?: throw GradleException("${f.path}: value of $k is not a string") }
+}
+
+/** Таблицы по языкам: assets/lang (datagen + ручные) и handbook/lang. */
+fun langTables(dirs: List<File>): Map<String, Map<String, String>> {
+    val out = sortedMapOf<String, MutableMap<String, String>>()
+    for (d in dirs) d.listFiles { f -> f.extension == "json" }?.forEach { f ->
+        out.getOrPut(f.nameWithoutExtension) { linkedMapOf() }.putAll(readLangTable(f))
+    }
+    return out
+}
+
+val placeholder = Regex("""%(\d+\$)?[sdf%]""")
+val mdLink = Regex("""\]\(([^)\s]+)\)""")
+
+val checkTranslations by tasks.registering {
+    group = "verification"
+    description = "Checks translation files against English: no unknown keys, same placeholders and page links"
+    val assetDirs = langDirs.map { it.asFile }
+    val bookLang = handbookLangDir.asFile
+    val pages = handbookPagesDir.asFile
+    inputs.files(assetDirs + listOf(bookLang, pages)).optional()
+    doLast {
+        val problems = mutableListOf<String>()
+        for ((name, tables) in listOf("assets/lang" to langTables(assetDirs), "handbook/lang" to langTables(listOf(bookLang)))) {
+            val en = tables["en_us"] ?: throw GradleException("$name: no en_us")
+            for ((lang, t) in tables) {
+                if (lang == "en_us") continue
+                if (!Regex("[a-z]{2,3}_[a-z]{2,4}").matches(lang)) problems += "$name/$lang.json: file name must be a lowercase Minecraft locale code"
+                for ((k, v) in t) {
+                    val src = en[k]
+                    if (src == null) problems += "$name/$lang.json: unknown key $k"
+                    else if (placeholder.findAll(src).map { it.value }.sorted().toList()
+                        != placeholder.findAll(v).map { it.value }.sorted().toList())
+                        problems += "$name/$lang.json: placeholders of $k differ from English"
+                }
+            }
+        }
+        val enPages = pages.resolve("en_us")
+        pages.listFiles { f -> f.isDirectory && f.name != "en_us" }?.forEach { dir ->
+            dir.walk().filter { it.extension == "md" }.forEach { f ->
+                val rel = f.relativeTo(dir).invariantSeparatorsPath
+                val en = enPages.resolve(rel)
+                if (!en.isFile) problems += "pages/${dir.name}/$rel: no English page"
+                else if (mdLink.findAll(en.readText()).map { it.groupValues[1] }.sorted().toList()
+                    != mdLink.findAll(f.readText()).map { it.groupValues[1] }.sorted().toList())
+                    problems += "pages/${dir.name}/$rel: link targets differ from English"
+            }
+        }
+        if (problems.isNotEmpty()) throw GradleException("translation problems:\n  " + problems.joinToString("\n  "))
+    }
+}
+tasks.named("check") { dependsOn(checkTranslations) }
+
+val translationStatus by tasks.registering {
+    group = "help"
+    description = "Prints how much of each language is translated"
+    val assetDirs = langDirs.map { it.asFile }
+    val bookLang = handbookLangDir.asFile
+    val pages = handbookPagesDir.asFile
+    doLast {
+        val strings = langTables(assetDirs + listOf(bookLang))
+        val en = strings["en_us"] ?: emptyMap()
+        val enPages = pages.resolve("en_us").walk().filter { it.extension == "md" }
+            .map { it.relativeTo(pages.resolve("en_us")).invariantSeparatorsPath }.toSet()
+        val langs = (strings.keys + (pages.listFiles { f -> f.isDirectory }?.map { it.name } ?: emptyList())).toSortedSet()
+        println("language   strings            handbook pages")
+        for (lang in langs) {
+            if (lang == "en_us") continue
+            val t = strings[lang] ?: emptyMap()
+            val done = en.keys.count { it in t }
+            val dir = pages.resolve(lang)
+            val p = enPages.count { dir.resolve(it).isFile }
+            println("%-10s %5d / %-5d %3d %%   %3d / %d".format(lang, done, en.size, if (en.isEmpty()) 0 else done * 100 / en.size, p, enPages.size))
+        }
+    }
+}

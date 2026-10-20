@@ -1,0 +1,40 @@
+name: Translation
+description: Start a translation into a new language, or report a wrong translation.
+labels: [translation, needs-triage]
+body:
+  - type: markdown
+    attributes:
+      value: |
+        Translations are sent as pull requests. See the **Translations** section of
+        [CONTRIBUTING.md](https://github.com/denfry/Prompt_Critical/blob/main/CONTRIBUTING.md#translations).
+        Opening this issue first tells others that the language is taken, so two people do not translate the same files.
+  - type: dropdown
+    id: kind
+    attributes:
+      label: What is this about
+      options:
+        - I want to translate into a new language
+        - I want to continue or review an existing translation
+        - A string is translated wrongly
+    validations:
+      required: true
+  - type: input
+    id: locale
+    attributes:
+      label: Language
+      description: Name and Minecraft locale code.
+      placeholder: German, de_de
+    validations:
+      required: true
+  - type: textarea
+    id: details
+    attributes:
+      label: Details
+      description: For a wrong translation, give the key or the handbook page, the current text and the suggested text.
+  - type: checkboxes
+    id: terms
+    attributes:
+      label: Terms
+      options:
+        - label: I have read the "Licensing of contributions" section of CONTRIBUTING.md.
+          required: true
