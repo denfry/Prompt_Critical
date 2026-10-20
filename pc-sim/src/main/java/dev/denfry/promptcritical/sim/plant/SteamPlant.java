@@ -74,6 +74,12 @@ public final class SteamPlant implements Subsystem {
      * (11 §11.2.2); величина {@code omega_pu} — ω/ω₀. Повторно — после остановки ниже 0,1 ω₀.
      */
     public static final String ENGINE_RUNNING = "promptcritical:engine_running";
+    /**
+     * Замеры для заданий маршрута {@code reach}/{@code operate} (11 §11.1.5): раз в {@link #SAMPLE_TICKS} тиков каждый
+     * котёл шлёт давление барабана {@code drum_pressure_mpa}, МПа, каждая машина — {@code omega_pu}.
+     */
+    public static final String BOILER_STATE = "promptcritical:boiler_state", ENGINE_STATE = "promptcritical:engine_state";
+    public static final int SAMPLE_TICKS = 20;
     /** Котёл без давления (налив, замена пробки): ниже атмосферного + 50 кПа. */
     public static final double OPEN_PRESSURE_PA = ATMOSPHERE_PA + 50_000;
     /**
@@ -207,6 +213,7 @@ public final class SteamPlant implements Subsystem {
     public void stepFast(FastContext ctx) {
         if (dirty) rebuild();
         double dt = ctx.dt();
+        boolean sample = ctx.tick() % SAMPLE_TICKS == 0;
         for (BoilerUnit u : boilerArr) stepBoiler(ctx, u, dt);
         for (int i = 0; i < engineArr.length; i++) {
             EngineUnit e = engineArr[i];
@@ -218,10 +225,13 @@ public final class SteamPlant implements Subsystem {
             } else if (e.running && pu < 0.1) {
                 e.running = false;
             }
+            if (sample) ctx.events().milestone(ctx.tick(), e.id, ENGINE_STATE, "omega_pu", pu);
         }
         if (boilerArr.length > 0) net.stepFast(dt);
         for (BoilerUnit u : boilerArr) {
             if (u.boiler.rupture() != BoilerRupture.NONE && !u.exploded) explode(ctx, u);
+            if (sample && !u.exploded && u.drum != null)
+                ctx.events().milestone(ctx.tick(), u.id, BOILER_STATE, "drum_pressure_mpa", u.drum.pressure() / 1e6);
         }
     }
 

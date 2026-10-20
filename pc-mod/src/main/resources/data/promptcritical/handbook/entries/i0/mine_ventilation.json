@@ -15,8 +15,50 @@
       "file": "main"
     },
     {
+      "type": "formula",
+      "formula": "promptcritical:atkinson",
+      "vars": [
+        {
+          "symbol": "R",
+          "text": {
+            "en_us": "airway resistance, N·s²/m⁸",
+            "ru_ru": "сопротивление выработки, Н·с²/м⁸"
+          }
+        },
+        {
+          "symbol": "α",
+          "text": {
+            "en_us": "friction factor of the lining, N·s²/m⁴",
+            "ru_ru": "коэффициент трения крепи, Н·с²/м⁴"
+          }
+        },
+        {
+          "symbol": "P, L, S",
+          "text": {
+            "en_us": "perimeter, length and cross-section of the airway",
+            "ru_ru": "периметр, длина и сечение выработки"
+          }
+        },
+        {
+          "symbol": "h, Q",
+          "text": {
+            "en_us": "pressure drop, Pa, and airflow, m³/s",
+            "ru_ru": "депрессия, Па, и расход воздуха, м³/с"
+          }
+        }
+      ],
+      "caption": {
+        "en_us": "Atkinson's law: halving the section multiplies the resistance eightfold.",
+        "ru_ru": "Закон Аткинсона: сечение вдвое меньше — сопротивление в восемь раз больше."
+      }
+    },
+    {
       "type": "recipe",
       "recipe": "promptcritical:mine/main_mine_fan"
+    },
+    {
+      "type": "recipe",
+      "recipe": "promptcritical:mine/ventilation_regulator"
     },
     {
       "type": "recipe",

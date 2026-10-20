@@ -51,8 +51,6 @@ public final class MineScanner {
     public static final FanSpec MAIN_FAN = FanSpec.of(1200, 12, 300, 0.7);
     /** Температура наружного воздуха и геотермический градиент [допущение: 3 К на 100 м]. */
     public static final double SURFACE_TEMP_K = 288.15, GEOTHERMAL_K_PER_M = 0.03;
-    /** Окно регулятора в положении «закрыто», доля сечения проёма. */
-    public static final double REGULATOR_CLOSED_FRACTION = 0.25;
 
     private static final byte SOLID = 0, AIR = 1, OUTSIDE = 2, DOOR = 3, FAN = 4;
     private static final Direction[] DIRS = Direction.values();

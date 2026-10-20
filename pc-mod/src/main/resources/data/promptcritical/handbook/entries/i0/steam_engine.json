@@ -20,6 +20,59 @@
       "file": "main"
     },
     {
+      "type": "formula",
+      "formula": "promptcritical:steam_engine_power",
+      "vars": [
+        {
+          "symbol": "pₘᵢ",
+          "text": {
+            "en_us": "mean indicated pressure, Pa",
+            "ru_ru": "среднее индикаторное давление, Па"
+          }
+        },
+        {
+          "symbol": "p₁, p_b",
+          "text": {
+            "en_us": "admission and back pressure, Pa",
+            "ru_ru": "давление впуска и противодавление, Па"
+          }
+        },
+        {
+          "symbol": "ε",
+          "text": {
+            "en_us": "cut-off: share of the stroke with steam admitted",
+            "ru_ru": "наполнение (отсечка): доля хода с впуском пара"
+          }
+        },
+        {
+          "symbol": "k_d",
+          "text": {
+            "en_us": "diagram factor",
+            "ru_ru": "коэффициент полноты диаграммы"
+          }
+        },
+        {
+          "symbol": "Vₛ, n, z",
+          "text": {
+            "en_us": "swept volume, revolutions per second, cylinders",
+            "ru_ru": "рабочий объём, обороты в секунду, число цилиндров"
+          }
+        }
+      ],
+      "caption": {
+        "en_us": "Indicated power. Earlier cut-off saves steam but lowers power.",
+        "ru_ru": "Индикаторная мощность. Ранняя отсечка экономит пар, но снижает мощность."
+      }
+    },
+    {
+      "type": "ponder",
+      "item": "create:shaft",
+      "caption": {
+        "en_us": "How Create shafts carry the engine's rotation.",
+        "ru_ru": "Как валы Create передают вращение машины."
+      }
+    },
+    {
       "type": "recipe",
       "recipe": "promptcritical:boiler/governor_dashpot"
     }

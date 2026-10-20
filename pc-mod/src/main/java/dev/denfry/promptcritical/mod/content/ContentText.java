@@ -20,6 +20,24 @@ public final class ContentText {
     public static final String HANDBOOK_LAYER = "promptcritical.handbook.layer";
     public static final String HANDBOOK_ALL_LAYERS = "promptcritical.handbook.all_layers";
     public static final String HANDBOOK_DOCUMENT = "promptcritical.handbook.document";
+    public static final String HANDBOOK_WHERE = "promptcritical.handbook.where";
+    public static final String HANDBOOK_PONDER_SHOW = "promptcritical.handbook.ponder_show";
+    public static final String HANDBOOK_PONDER_NONE = "promptcritical.handbook.ponder_none";
+    public static final String HANDBOOK_TAB_HANDBOOK = "promptcritical.handbook.tab_handbook";
+    public static final String HANDBOOK_TAB_ROUTE = "promptcritical.handbook.tab_route";
+    public static final String ROUTE_DONE = "promptcritical.route.done";
+    public static final String ROUTE_STATUS_DONE = "promptcritical.route.status_done";
+    public static final String ROUTE_STATUS_OPEN = "promptcritical.route.status_open";
+    public static final String ROUTE_STATUS_LOCKED = "promptcritical.route.status_locked";
+    public static final String ROUTE_REQUIRES = "promptcritical.route.requires";
+    public static final String ROUTE_UNLOCKS = "promptcritical.route.unlocks";
+    public static final String ROUTE_OPTIONS = "promptcritical.route.options";
+    public static final String ROUTE_HOW = "promptcritical.route.how";
+    public static final String ROUTE_GOAL_COUNT = "promptcritical.route.goal_count";
+    public static final String ROUTE_GOAL_HOLD = "promptcritical.route.goal_hold";
+    public static final String ROUTE_REWARD = "promptcritical.route.reward";
+    public static final String ROUTE_CHAPTER = "promptcritical.route.chapter";
+    public static final String ROUTE_EMPTY = "promptcritical.route.empty";
     public static final String COAL_ASSAY = "promptcritical.assay.coal";
     public static final String ORE_GRADE = "promptcritical.assay.ore_grade";
     public static final String ORE_BYPRODUCT = "promptcritical.assay.ore_byproduct";
@@ -57,6 +75,24 @@ public final class ContentText {
         LANG.put(ORE_GRADE, new String[] {"Grade class G%s, %s", "Класс содержания G%s, %s"});
         LANG.put(ORE_BYPRODUCT, new String[] {"By-product %s: about %s ppm", "Попутно %s: около %s ppm"});
         LANG.put(HANDBOOK_DOCUMENT, new String[] {"Operating procedure", "Инструкция по эксплуатации"});
+        LANG.put(HANDBOOK_WHERE, new String[] {"where:", "где:"});
+        LANG.put(HANDBOOK_PONDER_SHOW, new String[] {"Show (Ponder)", "Показать (Ponder)"});
+        LANG.put(HANDBOOK_PONDER_NONE, new String[] {"No Ponder scenes for this item yet", "Сцен Ponder для этого предмета пока нет"});
+        LANG.put(HANDBOOK_TAB_HANDBOOK, new String[] {"Handbook", "Справочник"});
+        LANG.put(HANDBOOK_TAB_ROUTE, new String[] {"Route", "Маршрут"});
+        LANG.put(ROUTE_DONE, new String[] {"Route: \"%s\" done (+%s XP)", "Маршрут: «%s» выполнено (+%s опыта)"});
+        LANG.put(ROUTE_STATUS_DONE, new String[] {"Done", "Выполнено"});
+        LANG.put(ROUTE_STATUS_OPEN, new String[] {"Open", "Открыто"});
+        LANG.put(ROUTE_STATUS_LOCKED, new String[] {"Earlier steps first", "Сначала предыдущие шаги"});
+        LANG.put(ROUTE_REQUIRES, new String[] {"After:", "После:"});
+        LANG.put(ROUTE_UNLOCKS, new String[] {"Leads to:", "Ведёт к:"});
+        LANG.put(ROUTE_OPTIONS, new String[] {"Any of:", "Любое из:"});
+        LANG.put(ROUTE_HOW, new String[] {"How:", "Как:"});
+        LANG.put(ROUTE_GOAL_COUNT, new String[] {"%s × %s", "%s × %s"});
+        LANG.put(ROUTE_GOAL_HOLD, new String[] {"Held %s of %s min", "Держится %s из %s мин"});
+        LANG.put(ROUTE_REWARD, new String[] {"Reward: %s XP", "Награда: %s опыта"});
+        LANG.put(ROUTE_CHAPTER, new String[] {"Chapter", "Глава"});
+        LANG.put(ROUTE_EMPTY, new String[] {"No route tasks", "Заданий маршрута нет"});
     }
 
     private ContentText() {

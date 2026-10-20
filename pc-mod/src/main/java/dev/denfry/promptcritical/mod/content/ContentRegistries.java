@@ -25,6 +25,7 @@ import net.neoforged.neoforge.event.LootTableLoadEvent;
 import net.neoforged.neoforge.event.entity.player.ItemTooltipEvent;
 import net.neoforged.neoforge.event.entity.player.PlayerEvent;
 import net.neoforged.neoforge.event.level.BlockEvent;
+import net.neoforged.neoforge.event.tick.PlayerTickEvent;
 import net.neoforged.neoforge.network.event.RegisterPayloadHandlersEvent;
 import net.neoforged.neoforge.registries.DeferredHolder;
 import net.neoforged.neoforge.registries.DeferredRegister;
@@ -62,6 +63,8 @@ public final class ContentRegistries {
         modBus.addListener(ContentRegistries::payloads);
         NeoForge.EVENT_BUS.addListener(ContentRegistries::reload);
         NeoForge.EVENT_BUS.addListener(ContentRegistries::login);
+        NeoForge.EVENT_BUS.addListener(ContentRegistries::logout);
+        NeoForge.EVENT_BUS.addListener(ContentRegistries::playerTick);
         NeoForge.EVENT_BUS.addListener(ContentRegistries::placed);
         NeoForge.EVENT_BUS.addListener(ContentRegistries::loot);
         NeoForge.EVENT_BUS.addListener(ContentRegistries::tooltip);
@@ -81,6 +84,14 @@ public final class ContentRegistries {
 
     private static void login(PlayerEvent.PlayerLoggedInEvent event) {
         if (event.getEntity() instanceof ServerPlayer p) HandbookService.giveOnJoin(p);
+    }
+
+    private static void logout(PlayerEvent.PlayerLoggedOutEvent event) {
+        if (event.getEntity() instanceof ServerPlayer p) RouteService.forget(p);
+    }
+
+    private static void playerTick(PlayerTickEvent.Post event) {
+        if (event.getEntity() instanceof ServerPlayer p && p.tickCount % RouteService.POLL_TICKS == 0) RouteService.poll(p);
     }
 
     private static void placed(BlockEvent.EntityPlaceEvent event) {

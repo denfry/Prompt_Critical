@@ -97,8 +97,9 @@ public class MultiblockPartBlock extends Block {
 
     @Override
     public ItemStack getCloneItemStack(LevelReader level, BlockPos pos, BlockState state) {
-        BlockState anchorState = level.getBlockState(anchor(state, pos));
-        return anchorState.getBlock() instanceof PcBlock b ? new ItemStack(b) : ItemStack.EMPTY;
+        BlockPos anchor = anchor(state, pos);
+        BlockState anchorState = level.getBlockState(anchor);
+        return anchorState.getBlock() instanceof PcBlock b ? b.getCloneItemStack(level, anchor, anchorState) : ItemStack.EMPTY;
     }
 
     @Override

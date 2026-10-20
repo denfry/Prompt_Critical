@@ -12,6 +12,8 @@ Gas is not removed; it is diluted and carried out by fresh air. That is the job 
 
 Air takes the path of least resistance. To make it sweep the face rather than short-cut straight to the fan, fit [ventilation doors](item:promptcritical:ventilation_door). A closed door is almost a wall to the air, with a few per cent leakage. An open door short-circuits the air current and leaves the face without air. Open doors with a right-click and close them behind you at once.
 
+Where a branch must get only part of the air, put a [ventilation regulator](item:promptcritical:ventilation_regulator) instead of a door: a steel shield with a window. A right-click sets the window to 10, 25, 50 or 100 % of the opening (Shift steps back). A smaller window means more resistance and less air in that branch, and more air for the others.
+
 Fan flow is proportional to speed, pressure to speed squared. When the fan stops, gas starts to build. In a large mine 1 % methane gathers in minutes, in a dead-end heading in tens of seconds. Ventilation is a duty that never stops.
 
 ## Limits

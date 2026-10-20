@@ -17,6 +17,9 @@ import dev.denfry.promptcritical.mod.content.HandbookMarkdown;
 import dev.denfry.promptcritical.mod.content.HandbookPage;
 import dev.denfry.promptcritical.mod.content.HandbookService;
 import dev.denfry.promptcritical.mod.content.MapTargetData;
+import dev.denfry.promptcritical.mod.content.RouteCondition;
+import dev.denfry.promptcritical.mod.content.RouteService;
+import dev.denfry.promptcritical.mod.content.RouteTask;
 import dev.denfry.promptcritical.mod.content.SimAchievements;
 import dev.denfry.promptcritical.mod.content.UnlockCondition;
 import dev.denfry.promptcritical.mod.registry.PcBlocks;
@@ -33,7 +36,11 @@ import java.io.IOException;
 import java.io.UncheckedIOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
+import com.google.gson.JsonObject;
+import com.google.gson.JsonParser;
+import java.util.LinkedHashMap;
 import java.util.List;
+import java.util.Set;
 import java.util.UUID;
 import java.util.concurrent.atomic.AtomicInteger;
 import java.util.Map;
@@ -42,6 +49,10 @@ import net.minecraft.commands.arguments.blocks.BlockStateParser;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
 import net.minecraft.core.registries.BuiltInRegistries;
+import net.minecraft.core.registries.Registries;
+import net.minecraft.resources.ResourceLocation;
+import net.minecraft.stats.Stats;
+import net.minecraft.tags.TagKey;
 import net.minecraft.gametest.framework.GameTest;
 import net.minecraft.gametest.framework.GameTestHelper;
 import net.minecraft.network.chat.ClickEvent;
@@ -64,7 +75,8 @@ import net.neoforged.neoforge.gametest.PrefixGameTestTemplate;
 /**
  * Контент 11 в мире (11 §11.13): выдача справочника (T11.1), открытие главы (T11.2), целостность справочника
  * (по образцу T11.17), триггер {@code sim_event} — «Первый пар» у смены рядом и не у дальнего игрока (T11.4), награды —
- * только опыт (T11.5), инструкция и пюпитр, геологическая карта, декор.
+ * только опыт (T11.5), инструкция и пюпитр, геологическая карта, декор; «Маршрут» — целостность (T11.17), задание
+ * {@code reach} (T11.18), предметы, постройки и развилка.
  */
 @GameTestHolder(PromptCritical.MOD_ID)
 @PrefixGameTestTemplate(false)
@@ -153,7 +165,10 @@ public final class ContentGameTests {
         h.succeed();
     }
 
-    /** Справочник грузится без ошибок, ссылки на рецепты, достижения, предметы и блоки существуют, тексты на двух языках. */
+    /**
+     * Справочник грузится без ошибок, ссылки на рецепты, достижения, предметы и блоки существуют, тексты на двух языках,
+     * у формул есть PNG из сборки.
+     */
     @GameTest(template = SMALL)
     public static void handbookIsConsistent(GameTestHelper h) {
         HandbookManager.Data d = HandbookManager.data();
@@ -192,6 +207,11 @@ public final class ContentGameTests {
                     }
                     case HandbookPage.ImagePage ignored -> {
                     }
+                    case HandbookPage.FormulaPage f -> h.assertTrue(ContentGameTests.class.getResource("/assets/"
+                            + f.texture().getNamespace() + "/" + f.texture().getPath()) != null && !f.vars().isEmpty(),
+                            e.id() + ": formula " + f.formula() + " (renderHandbookFormulas)");
+                    case HandbookPage.PonderPage pp -> h.assertTrue(BuiltInRegistries.ITEM.containsKey(pp.item()),
+                            e.id() + ": ponder item " + pp.item());
                 }
             }
         }
@@ -333,6 +353,116 @@ public final class ContentGameTests {
             Block block = form.get();
             h.assertTrue(BuiltInRegistries.ITEM.containsKey(BuiltInRegistries.BLOCK.getKey(block)), "item of " + form.getId());
         }
+        h.succeed();
+    }
+
+    // --- «Маршрут» (11 §11.1.5) ---
+
+    /** События домена и мира, на которые могут ссылаться задания маршрута. */
+    private static final Set<String> ROUTE_EVENTS = Set.of(SteamPlant.ENGINE_RUNNING, SteamPlant.BOILER_STATE, SteamPlant.ENGINE_STATE,
+            SimAchievements.CANARY_PLACED, SimAchievements.CANARY_REVIVED);
+
+    private static RouteTask task(String id) {
+        RouteTask t = HandbookManager.data().tasks().get(PromptCritical.id(id));
+        if (t == null) throw new net.minecraft.gametest.framework.GameTestAssertException("no route task " + id);
+        return t;
+    }
+
+    /**
+     * T11.17: файлы маршрута грузятся без ошибок, {@code requires} и варианты развилок существуют, граф без циклов, ID
+     * предметов, блоков, тегов, событий и глав есть; в I0 не меньше 30 заданий с текстом на двух языках.
+     */
+    @GameTest(template = SMALL)
+    public static void routeIsConsistent(GameTestHelper h) {
+        HandbookManager.Data d = HandbookManager.data();
+        h.assertTrue(d.problems().isEmpty(), "handbook problems: " + d.problems());
+        h.assertTrue(HandbookManager.routeCycle(d.tasks()) == null, "route graph has no cycles");
+        long i0 = d.tasks().values().stream().filter(t -> t.era().equals("I0")).count();
+        h.assertTrue(i0 >= 30, "I0 route tasks: " + i0);
+        for (RouteTask t : d.tasks().values()) {
+            for (String ref : RouteService.registryRefs(t)) {
+                String kind = ref.substring(0, ref.indexOf(':'));
+                ResourceLocation id = ResourceLocation.parse(ref.substring(kind.length() + 1));
+                boolean ok = switch (kind) {
+                    case "item" -> BuiltInRegistries.ITEM.containsKey(id);
+                    case "block" -> BuiltInRegistries.BLOCK.containsKey(id);
+                    case "item_tag" -> BuiltInRegistries.ITEM.getTag(TagKey.create(Registries.ITEM, id)).map(n -> n.size() > 0).orElse(false);
+                    case "block_tag" -> BuiltInRegistries.BLOCK.getTag(TagKey.create(Registries.BLOCK, id)).map(n -> n.size() > 0).orElse(false);
+                    default -> false;
+                };
+                h.assertTrue(ok, t.id() + ": " + ref);
+            }
+            if (t.condition() instanceof RouteCondition.Event e)
+                h.assertTrue(ROUTE_EVENTS.contains(e.event().toString()), t.id() + ": event " + e.event());
+            h.assertTrue(t.entry() != null && d.entry(t.entry()) != null, t.id() + ": chapter " + t.entry());
+            for (String lang : List.of("ru_ru", "en_us"))
+                h.assertTrue(t.title().byLang().containsKey(lang) && t.text().byLang().containsKey(lang), t.id() + ": " + lang + " text");
+        }
+        // цикл и висячая ссылка ловятся
+        Map<ResourceLocation, RouteTask> loop = new LinkedHashMap<>();
+        for (String[] e : new String[][] {{"a", "c"}, {"b", "a"}, {"c", "b"}}) {
+            JsonObject o = JsonParser.parseString("{\"id\": \"t:" + e[0] + "\", \"requires\": [\"t:" + e[1]
+                    + "\"], \"type\": \"obtain\", \"condition\": {\"item\": \"minecraft:coal\"}}").getAsJsonObject();
+            RouteTask t = HandbookManager.parseTask("I0", o);
+            loop.put(t.id(), t);
+        }
+        h.assertTrue(HandbookManager.routeCycle(loop) != null, "a → c → b → a is a cycle");
+        loop.remove(ResourceLocation.parse("t:a"));
+        h.assertTrue(HandbookManager.routeCycle(loop) == null, "without a there is no cycle");
+        h.succeed();
+    }
+
+    /**
+     * T11.18: давление барабана 1,2 МПа держится 9 мин — задание не выполнено, 10 мин — выполнено, награда только
+     * опыт; промах мимо диапазона и перерыв в замерах начинают отсчёт заново.
+     */
+    @GameTest(template = SMALL)
+    public static void routeReachNeedsTheWholeHold(GameTestHelper h) {
+        RouteTask t = task("i0/steady_pressure");
+        h.assertTrue(t.condition() instanceof RouteCondition.Event e && e.durationS() == 600, "steady_pressure holds 10 min");
+        ServerPlayer p = player(h, new BlockPos(1, 1, 1));
+        int xp0 = p.totalExperience;
+        long t0 = 1_000;
+        for (int s = 0; s <= 540; s++)
+            RouteService.onEvent(p, SteamPlant.BOILER_STATE, "drum_pressure_mpa", 1.2, t0 + s * 20L);
+        h.assertFalse(RouteService.done(p, t.id()), "9 minutes are not enough");
+        h.assertTrue(Math.abs(RouteService.heldSeconds(p, t.id()) - 540) < 1e-9, "held 540 s: " + RouteService.heldSeconds(p, t.id()));
+        for (int s = 541; s <= 600; s++)
+            RouteService.onEvent(p, SteamPlant.BOILER_STATE, "drum_pressure_mpa", 1.2, t0 + s * 20L);
+        h.assertTrue(RouteService.done(p, t.id()), "10 minutes complete the task");
+        h.assertTrue(p.totalExperience == xp0 + t.xp(), "reward is experience only: " + (p.totalExperience - xp0));
+        h.assertTrue(p.getInventory().isEmpty(), "no items given");
+
+        ServerPlayer q = player(h, new BlockPos(1, 1, 1));
+        for (int s = 0; s <= 300; s++) RouteService.onEvent(q, SteamPlant.BOILER_STATE, "drum_pressure_mpa", 1.25, t0 + s * 20L);
+        RouteService.onEvent(q, SteamPlant.BOILER_STATE, "drum_pressure_mpa", 1.4, t0 + 301 * 20L);
+        h.assertTrue(RouteService.heldSeconds(q, t.id()) == 0, "a miss resets the hold");
+        for (int s = 302; s <= 700; s++) RouteService.onEvent(q, SteamPlant.BOILER_STATE, "drum_pressure_mpa", 1.2, t0 + s * 20L);
+        RouteService.onEvent(q, SteamPlant.BOILER_STATE, "drum_pressure_mpa", 1.2, t0 + 760 * 20L);
+        h.assertTrue(RouteService.heldSeconds(q, t.id()) == 0, "a gap in samples restarts the hold");
+        h.assertFalse(RouteService.done(q, t.id()), "no task after a broken hold");
+        h.succeed();
+    }
+
+    /** Предметы и постройки засчитываются раз в секунду, в любом порядке; развилка закрывается любым вариантом. */
+    @GameTest(template = SMALL)
+    public static void routeObtainBuildAndChoice(GameTestHelper h) {
+        ServerPlayer p = player(h, new BlockPos(1, 1, 1));
+        p.getInventory().add(new ItemStack(PcItems.RAW_COAL.get(), 15));
+        RouteService.poll(p);
+        h.assertFalse(RouteService.done(p, task("i0/raw_coal").id()), "15 raw coal are not 16");
+        p.getInventory().add(new ItemStack(PcItems.RAW_COAL.get(), 1));
+        RouteService.poll(p);
+        h.assertTrue(RouteService.done(p, task("i0/raw_coal").id()), "16 raw coal, even before the seam task");
+        h.assertFalse(RouteService.done(p, task("i0/coal_seam").id()), "earlier step stays open");
+        h.assertTrue(count(p, PcItems.RAW_COAL.get()) == 16, "the route takes nothing");
+        p.getStats().setValue(p, Stats.ITEM_USED.get(PcBlocks.CRUCIBLE_FURNACE.get().asItem()), 1); // FakePlayer не пишет статистику
+        RouteService.poll(p);
+        h.assertTrue(RouteService.done(p, task("i0/crucible").id()) && RouteService.done(p, task("i0/melting").id()),
+                "a placed crucible closes the furnace choice");
+        h.assertFalse(RouteService.done(p, task("i0/cupola").id()), "the other option stays undone");
+        JsonObject v = RouteService.view(p, "ru_ru");
+        h.assertTrue(v.getAsJsonArray("eras").size() >= 1, "route view has eras");
         h.succeed();
     }
 }

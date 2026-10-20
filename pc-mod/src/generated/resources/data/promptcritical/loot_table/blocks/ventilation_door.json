@@ -10,8 +10,26 @@
       ],
       "entries": [
         {
-          "type": "minecraft:item",
-          "name": "promptcritical:ventilation_door"
+          "type": "minecraft:alternatives",
+          "children": [
+            {
+              "type": "minecraft:item",
+              "conditions": [
+                {
+                  "block": "promptcritical:ventilation_door",
+                  "condition": "minecraft:block_state_property",
+                  "properties": {
+                    "kind": "regulator"
+                  }
+                }
+              ],
+              "name": "promptcritical:ventilation_regulator"
+            },
+            {
+              "type": "minecraft:item",
+              "name": "promptcritical:ventilation_door"
+            }
+          ]
         }
       ],
       "rolls": 1.0

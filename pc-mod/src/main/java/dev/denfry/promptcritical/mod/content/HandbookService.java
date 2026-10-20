@@ -143,6 +143,7 @@ public final class HandbookService {
             entries.add(o);
         }
         root.add("entries", entries);
+        if (!document) root.add("route", RouteService.view(player, lang));
         return root;
     }
 
@@ -193,6 +194,24 @@ public final class HandbookService {
                     blocks.add(bo);
                 }
                 o.add("blocks", blocks);
+            }
+            case HandbookPage.FormulaPage f -> {
+                o.addProperty("type", "formula");
+                o.addProperty("texture", f.texture().toString());
+                o.addProperty("caption", f.caption().get(lang));
+                JsonArray vars = new JsonArray();
+                for (HandbookPage.Variable v : f.vars()) {
+                    JsonObject vo = new JsonObject();
+                    vo.addProperty("symbol", v.symbol());
+                    vo.addProperty("text", v.text().get(lang));
+                    vars.add(vo);
+                }
+                o.add("vars", vars);
+            }
+            case HandbookPage.PonderPage pp -> {
+                o.addProperty("type", "ponder");
+                o.addProperty("item", pp.item().toString());
+                o.addProperty("caption", pp.caption().get(lang));
             }
         }
         return o;

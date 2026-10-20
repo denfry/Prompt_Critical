@@ -8,8 +8,8 @@ import net.minecraft.server.level.ServerLevel;
 import net.minecraft.server.level.ServerPlayer;
 
 /**
- * Доставка событий домена и мира в триггер {@code sim_event} (11 §11.2.1). События эпохи I0: пуск паровой машины
- * (домен), канарейка посажена в шахте и откачана (мир).
+ * Доставка событий домена и мира в триггер {@code sim_event} (11 §11.2.1) и в задания маршрута (11 §11.1.5). События
+ * эпохи I0: пуск паровой машины и замеры котлов и машин (домен), канарейка посажена в шахте и откачана (мир).
  */
 public final class SimAchievements {
     /** Радиус «смены» вокруг источника события, м (11 §11.2.1). */
@@ -40,13 +40,16 @@ public final class SimAchievements {
     public static void nearby(Iterable<? extends ServerPlayer> players, BlockPos pos, String event, String tag, double value) {
         double r2 = RADIUS_M * RADIUS_M;
         for (ServerPlayer p : players) {
-            if (!p.isSpectator() && p.distanceToSqr(pos.getCenter()) <= r2)
+            if (!p.isSpectator() && p.distanceToSqr(pos.getCenter()) <= r2) {
                 PcTriggers.SIM_EVENT.get().trigger(p, event, tag, value, false);
+                RouteService.onEvent(p, event, tag, value, p.server.getTickCount());
+            }
         }
     }
 
     /** Событие, автор которого — игрок. */
     public static void direct(ServerPlayer player, String event, String tag, double value) {
         PcTriggers.SIM_EVENT.get().trigger(player, event, tag, value, true);
+        RouteService.onEvent(player, event, tag, value, player.server.getTickCount());
     }
 }

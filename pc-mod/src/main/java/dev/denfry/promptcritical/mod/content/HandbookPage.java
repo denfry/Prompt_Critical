@@ -4,11 +4,11 @@ import java.util.List;
 import net.minecraft.resources.ResourceLocation;
 
 /**
- * Страница главы (11 §11.1.2). Вехе M2 — базовые типы: текст, иллюстрация, рецепт, мультиблок; {@code ponder},
- * {@code formula}, {@code register_map} и {@code lesson} добавляются в своих вехах.
+ * Страница главы (11 §11.1.2): текст, иллюстрация, рецепт, мультиблок, формула, Ponder; {@code register_map} (из
+ * {@code DeviceDescriptor}, вместе с Modbus) и {@code lesson} добавляются в своих вехах.
  */
 public sealed interface HandbookPage permits HandbookPage.TextPage, HandbookPage.ImagePage, HandbookPage.RecipePage,
-        HandbookPage.MultiblockPage {
+        HandbookPage.MultiblockPage, HandbookPage.FormulaPage, HandbookPage.PonderPage {
 
     /** Упрощённый Markdown из {@code pages/<lang>/<глава>/<file>.md}. */
     record TextPage(String file) implements HandbookPage {
@@ -34,5 +34,23 @@ public sealed interface HandbookPage permits HandbookPage.TextPage, HandbookPage
     }
 
     record Placed(int x, int y, int z, String state) {
+    }
+
+    /**
+     * Формула, отрисованная при сборке из {@code src/main/formulas/<путь>.tex} в
+     * {@code textures/gui/handbook/formula/<путь>.png} (задача {@code renderHandbookFormulas}); {@code vars} —
+     * расшифровка обозначений.
+     */
+    record FormulaPage(ResourceLocation formula, List<Variable> vars, Localized caption) implements HandbookPage {
+        public ResourceLocation texture() {
+            return ResourceLocation.fromNamespaceAndPath(formula.getNamespace(), "textures/gui/handbook/formula/" + formula.getPath() + ".png");
+        }
+    }
+
+    record Variable(String symbol, Localized text) {
+    }
+
+    /** Кнопка «Показать»: Ponder-сцены предмета {@code item} (11 §11.1.4). */
+    record PonderPage(ResourceLocation item, Localized caption) implements HandbookPage {
     }
 }

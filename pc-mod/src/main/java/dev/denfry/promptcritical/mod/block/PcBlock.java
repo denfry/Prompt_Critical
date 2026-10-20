@@ -125,6 +125,7 @@ public class PcBlock extends Block {
     protected BlockState defaults(BlockState state) {
         if (state.hasProperty(PcProperties.RANK)) state = state.setValue(PcProperties.RANK, PcProperties.CoalRank.BITUMINOUS);
         if (state.hasProperty(PcProperties.CHIMNEY_PART)) state = state.setValue(PcProperties.CHIMNEY_PART, PcProperties.ChimneyPart.MIDDLE);
+        if (state.hasProperty(PcProperties.WINDOW)) state = state.setValue(PcProperties.WINDOW, 1);
         if (state.hasProperty(BlockStateProperties.HORIZONTAL_FACING)) state = state.setValue(BlockStateProperties.HORIZONTAL_FACING, Direction.NORTH);
         for (Property<?> p : state.getProperties()) {
             if (p instanceof net.minecraft.world.level.block.state.properties.BooleanProperty b) state = state.setValue(b, false);

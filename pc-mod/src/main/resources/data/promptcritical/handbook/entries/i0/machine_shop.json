@@ -15,6 +15,37 @@
       "file": "main"
     },
     {
+      "type": "formula",
+      "formula": "promptcritical:taylor",
+      "vars": [
+        {
+          "symbol": "v_c",
+          "text": {
+            "en_us": "cutting speed, m/min",
+            "ru_ru": "скорость резания, м/мин"
+          }
+        },
+        {
+          "symbol": "T",
+          "text": {
+            "en_us": "tool life, min",
+            "ru_ru": "стойкость резца, мин"
+          }
+        },
+        {
+          "symbol": "n, C_T",
+          "text": {
+            "en_us": "Taylor exponent and constant: 0.125 and about 70 m/min for high-speed steel",
+            "ru_ru": "показатель и постоянная Тейлора: 0,125 и около 70 м/мин для быстрорежущей стали"
+          }
+        }
+      ],
+      "caption": {
+        "en_us": "Taylor's tool life: a slightly faster cut wears the tool out many times sooner.",
+        "ru_ru": "Стойкость по Тейлору: чуть быстрее резание — в разы быстрее износ резца."
+      }
+    },
+    {
       "type": "recipe",
       "recipe": "promptcritical:foundry/machine_lathe"
     },

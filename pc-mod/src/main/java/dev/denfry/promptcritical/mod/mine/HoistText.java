@@ -10,7 +10,7 @@ import java.util.Map;
 import net.minecraft.network.chat.Component;
 import net.minecraft.network.chat.MutableComponent;
 
-/** Тексты подъёма и водоотлива: ключи перевода и их ru/en значения для datagen. */
+/** Тексты подъёма, водоотлива и регулятора проветривания: ключи перевода и их ru/en значения для datagen. */
 public final class HoistText {
     private static final String P = "message." + PromptCritical.MOD_ID + ".";
     /** Ключ → {английский, русский}. */
@@ -20,6 +20,7 @@ public final class HoistText {
     public enum Problem { NONE, NO_HEADFRAME, NOT_FORMED, NO_CAGE, NO_SHAFT, NO_ROPE }
 
     static {
+        msg("regulator.window", "Regulator window: %s%% of the opening", "Окно регулятора: %s %% сечения");
         msg("hoist.title", "Mine hoist", "Шахтный подъём");
         msg("hoist.landing.top", "Top landing", "Верхняя посадка");
         msg("hoist.landing.level", "Level −%s m", "Горизонт −%s м");

@@ -4,6 +4,7 @@ import java.util.Locale;
 import net.minecraft.util.StringRepresentable;
 import net.minecraft.world.level.block.state.properties.BooleanProperty;
 import net.minecraft.world.level.block.state.properties.EnumProperty;
+import net.minecraft.world.level.block.state.properties.IntegerProperty;
 
 /** Свойства блоков мода; значения — состояния из арт-реестров 07 §7.23 и 08 §8.21. */
 public final class PcProperties {
@@ -25,6 +26,8 @@ public final class PcProperties {
     public static final EnumProperty<ChimneyPart> CHIMNEY_PART = EnumProperty.create("part", ChimneyPart.class);
     public static final EnumProperty<SupportKind> SUPPORT_KIND = EnumProperty.create("kind", SupportKind.class);
     public static final EnumProperty<DoorKind> DOOR_KIND = EnumProperty.create("kind", DoorKind.class);
+    /** Ступень окна регулятора проветривания ({@code VentilationDoorBlock#WINDOW_FRACTIONS}). */
+    public static final IntegerProperty WINDOW = IntegerProperty.create("window", 0, 3);
     public static final EnumProperty<BarrierKind> BARRIER_KIND = EnumProperty.create("kind", BarrierKind.class);
     public static final EnumProperty<MoldStage> MOLD_STAGE = EnumProperty.create("stage", MoldStage.class);
     public static final EnumProperty<Bird> BIRD = EnumProperty.create("bird", Bird.class);

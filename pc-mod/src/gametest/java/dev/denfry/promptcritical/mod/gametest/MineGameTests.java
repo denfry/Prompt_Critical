@@ -211,6 +211,53 @@ public final class MineGameTests {
                 .thenSucceed();
     }
 
+    /**
+     * Регулятор вместо двери в том же штреке (08 §8.2.7): окно 10 % режет расход, окно 100 % пускает воздух; при
+     * разрушении выпадает предмет регулятора, а не дверь.
+     */
+    @GameTest(template = LONG, timeoutTicks = 600)
+    public static void regulatorWindowSetsAirflow(GameTestHelper h) {
+        drift(h, 2, 37);
+        for (int y = 4; y <= 5; y++) {
+            h.setBlock(new BlockPos(2, y, Z), Blocks.AIR.defaultBlockState());
+            h.setBlock(new BlockPos(37, y, Z), Blocks.AIR.defaultBlockState());
+        }
+        h.setBlock(new BlockPos(37, 7, Z), PcBlocks.MAIN_MINE_FAN.get().defaultBlockState());
+        BlockPos motor = new BlockPos(37, 7, Z + 2);
+        h.setBlock(motor, AllBlocks.CREATIVE_MOTOR.getDefaultState().setValue(BlockStateProperties.FACING, net.minecraft.core.Direction.NORTH));
+        h.runAfterDelay(1, () -> ((CreativeMotorBlockEntity) h.getBlockEntity(motor)).generatedSpeed.setValue(64));
+        BlockPos reg = new BlockPos(20, 2, Z);
+        h.setBlock(reg, PcBlocks.VENTILATION_DOOR.get().defaultBlockState()
+                .setValue(BlockStateProperties.HORIZONTAL_FACING, net.minecraft.core.Direction.EAST)
+                .setValue(PcProperties.DOOR_KIND, PcProperties.DoorKind.REGULATOR).setValue(PcProperties.WINDOW, 0));
+        double[] narrow = new double[1];
+        h.startSequence()
+                .thenWaitUntil(() -> {
+                    MineNetwork n = mine(h, new BlockPos(10, 2, Z));
+                    h.assertTrue(n.topology().fanCount() == 1 && n.topology().doorCount() == 1, "fan and regulator in the graph");
+                    h.assertTrue(n.surfaceAirflowM3s() > 0.5, "fan draws air through the 10 % window: " + n.surfaceAirflowM3s());
+                })
+                .thenIdle(60)
+                .thenExecute(() -> {
+                    narrow[0] = mine(h, new BlockPos(10, 2, Z)).surfaceAirflowM3s();
+                    h.setBlock(reg, h.getBlockState(reg).setValue(PcProperties.WINDOW, 3));
+                })
+                .thenWaitUntil(() -> {
+                    double wide = mine(h, new BlockPos(10, 2, Z)).surfaceAirflowM3s();
+                    h.assertTrue(wide > 1.5 * narrow[0], "100 % window: " + wide + " vs 10 % " + narrow[0] + " m3/s");
+                })
+                .thenExecute(() -> {
+                    List<ItemStack> drops = Block.getDrops(h.getBlockState(reg), h.getLevel(), h.absolutePos(reg), null);
+                    h.assertTrue(drops.size() == 1 && drops.getFirst().is(PcItems.VENTILATION_REGULATOR.get()),
+                            "regulator drops itself: " + drops);
+                    BlockState door = PcBlocks.VENTILATION_DOOR.get().defaultBlockState();
+                    h.assertTrue(Block.getDrops(door, h.getLevel(), h.absolutePos(reg), null).getFirst().is(PcBlocks.VENTILATION_DOOR.get().asItem()),
+                            "door drops the door");
+                    h.assertTrue(PcBlocks.VENTILATION_DOOR.get().asItem() != PcItems.VENTILATION_REGULATOR.get(), "door item stays the door");
+                })
+                .thenSucceed();
+    }
+
     // --- канарейка ------------------------------------------------------------------------------------------
 
     /** Канарейка в клетке падает в угарном газе (CO 1 %: B = 0,6 за ≈ 7 с) — раньше людей. */

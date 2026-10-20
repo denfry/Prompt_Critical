@@ -7,6 +7,7 @@ import dev.denfry.promptcritical.mod.content.GeologicalMapItem;
 import dev.denfry.promptcritical.mod.content.OperatingProcedureItem;
 import dev.denfry.promptcritical.mod.foundry.CastingPatternItem;
 import dev.denfry.promptcritical.mod.item.MineInstrumentItem;
+import dev.denfry.promptcritical.mod.item.VentilationRegulatorItem;
 import dev.denfry.promptcritical.mod.item.WireRopeItem;
 import java.util.ArrayList;
 import java.util.Collections;
@@ -73,6 +74,10 @@ public final class PcItems {
     public static final DeferredItem<GeologicalMapItem> GEOLOGICAL_MAP = registered(ITEMS.registerItem("geological_map",
             GeologicalMapItem::new, new Item.Properties().stacksTo(1)));
 
+    /** Регулятор проветривания — второй предмет блока {@code ventilation_door} (08 §8.2.7). */
+    public static final DeferredItem<VentilationRegulatorItem> VENTILATION_REGULATOR = registered(ITEMS.registerItem("ventilation_regulator",
+            p -> new VentilationRegulatorItem(PcBlocks.VENTILATION_DOOR.get(), p)));
+
     static {
         for (DeferredBlock<? extends Block> b : PcBlocks.withItems()) {
             ITEMS.register(b.getId().getPath(), () -> new PcBlockItem(b.get(), new Item.Properties()));
@@ -104,7 +109,7 @@ public final class PcItems {
     }
 
     /** Предмет блока; многоклеточный блок с клетками ниже якоря ставится так, чтобы нижний слой лёг на землю. */
-    public static final class PcBlockItem extends BlockItem {
+    public static class PcBlockItem extends BlockItem {
         public PcBlockItem(Block block, Properties props) {
             super(block, props);
         }

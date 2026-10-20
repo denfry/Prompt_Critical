@@ -4,6 +4,7 @@ import dev.denfry.promptcritical.mod.PromptCritical;
 import dev.denfry.promptcritical.mod.binding.SimLevelBinding;
 import dev.denfry.promptcritical.mod.block.PcBlock;
 import dev.denfry.promptcritical.mod.block.PcProperties;
+import dev.denfry.promptcritical.mod.block.VentilationDoorBlock;
 import dev.denfry.promptcritical.mod.config.ServerConfig;
 import dev.denfry.promptcritical.mod.item.MineInstrumentItem;
 import dev.denfry.promptcritical.mod.multiblock.Footprint;
@@ -360,12 +361,11 @@ public final class MineWorld {
         for (int d = 0; d < s.doorCtrl.length; d++) {
             BlockState st = level.getBlockState(BlockPos.of(s.doorCtrl[d]));
             if (!st.is(PcBlocks.VENTILATION_DOOR.get())) continue;
-            boolean open = st.getValue(BlockStateProperties.OPEN);
             if (st.getValue(PcProperties.DOOR_KIND) == PcProperties.DoorKind.REGULATOR) {
                 v.setDoorClosed(d, true);
-                v.setRegulatorArea(d, open ? s.doorSection[d] : s.doorSection[d] * MineScanner.REGULATOR_CLOSED_FRACTION);
+                v.setRegulatorArea(d, s.doorSection[d] * VentilationDoorBlock.windowFraction(st));
             } else {
-                v.setDoorClosed(d, !open);
+                v.setDoorClosed(d, !st.getValue(BlockStateProperties.OPEN));
             }
         }
         for (var b : s.boreholeNode.long2IntEntrySet()) {

@@ -15,6 +15,37 @@
       "file": "main"
     },
     {
+      "type": "formula",
+      "formula": "promptcritical:chvorinov",
+      "vars": [
+        {
+          "symbol": "tₛ",
+          "text": {
+            "en_us": "solidification time, min",
+            "ru_ru": "время затвердевания, мин"
+          }
+        },
+        {
+          "symbol": "V/A",
+          "text": {
+            "en_us": "casting modulus: volume over cooling surface, cm",
+            "ru_ru": "модуль отливки: объём на поверхность охлаждения, см"
+          }
+        },
+        {
+          "symbol": "B",
+          "text": {
+            "en_us": "mould constant: about 2–3 min/cm² for sand",
+            "ru_ru": "постоянная формы: для песка около 2–3 мин/см²"
+          }
+        }
+      ],
+      "caption": {
+        "en_us": "Chvorinov's rule: the riser must freeze last, so its modulus is at least 1.2 times the casting's.",
+        "ru_ru": "Правило Чворинова: прибыль должна застыть последней, поэтому её модуль не меньше 1,2 модуля отливки."
+      }
+    },
+    {
       "type": "recipe",
       "recipe": "promptcritical:foundry/cupola_furnace"
     },

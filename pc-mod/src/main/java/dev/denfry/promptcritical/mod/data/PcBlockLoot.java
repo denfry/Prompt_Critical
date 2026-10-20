@@ -4,7 +4,9 @@ import dev.denfry.promptcritical.mod.PromptCritical;
 import dev.denfry.promptcritical.mod.foundry.FoundryComponents;
 import dev.denfry.promptcritical.mod.block.PcBlock;
 import dev.denfry.promptcritical.mod.loot.AssayFunction;
+import dev.denfry.promptcritical.mod.block.PcProperties;
 import dev.denfry.promptcritical.mod.registry.PcBlocks;
+import dev.denfry.promptcritical.mod.registry.PcItems;
 import java.util.Map;
 import java.util.Set;
 import net.minecraft.advancements.critereon.StatePropertiesPredicate;
@@ -56,6 +58,14 @@ public final class PcBlockLoot extends BlockLootSubProvider {
                         .setRolls(ConstantValue.exactly(1)).add(LootItem.lootTableItem(block)
                                 .apply(CopyComponentsFunction.copyComponents(CopyComponentsFunction.Source.BLOCK_ENTITY)
                                         .include(FoundryComponents.SAND_MOLD.get()))))));
+            } else if (db == PcBlocks.VENTILATION_DOOR) {
+                // регулятор — свой предмет того же блока (08 §8.2.7)
+                add(block, LootTable.lootTable().withPool(applyExplosionCondition(block, LootPool.lootPool()
+                        .setRolls(ConstantValue.exactly(1))
+                        .add(LootItem.lootTableItem(PcItems.VENTILATION_REGULATOR.get())
+                                .when(LootItemBlockStatePropertyCondition.hasBlockStateProperties(block).setProperties(
+                                        StatePropertiesPredicate.Builder.properties().hasProperty(PcProperties.DOOR_KIND, PcProperties.DoorKind.REGULATOR)))
+                                .otherwise(LootItem.lootTableItem(block))))));
             } else if (block instanceof net.minecraft.world.level.block.SlabBlock) {
                 add(block, createSlabItemTable(block));
             } else if (block instanceof PcBlock pc && pc.spec().segment() != null) {

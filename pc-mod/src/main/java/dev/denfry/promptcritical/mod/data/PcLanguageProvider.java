@@ -110,6 +110,7 @@ public final class PcLanguageProvider extends LanguageProvider {
         i("self_rescuer", "Self-Rescuer", "Самоспасатель");
         i("stone_duster", "Stone Duster", "Осланцеватель");
         i("wire_rope", "Wire Rope", "Стальной канат");
+        i("ventilation_regulator", "Ventilation Regulator", "Вентиляционный регулятор");
         i("canary", "Canary", "Канарейка");
         i("methanometer", "Methanometer", "Метанометр");
         i("engineering_handbook", "Engineering Handbook", "Справочник инженера");

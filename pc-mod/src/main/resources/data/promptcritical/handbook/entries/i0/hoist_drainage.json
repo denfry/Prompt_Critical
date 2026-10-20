@@ -15,6 +15,51 @@
       "file": "main"
     },
     {
+      "type": "formula",
+      "formula": "promptcritical:rope_safety_factor",
+      "vars": [
+        {
+          "symbol": "F_max",
+          "text": {
+            "en_us": "greatest rope load, N",
+            "ru_ru": "наибольшее усилие в канате, Н"
+          }
+        },
+        {
+          "symbol": "m_c, m_l",
+          "text": {
+            "en_us": "cage and payload mass, kg",
+            "ru_ru": "масса клети и груза, кг"
+          }
+        },
+        {
+          "symbol": "q_k L",
+          "text": {
+            "en_us": "weight per metre times hanging length",
+            "ru_ru": "погонная масса каната на длину отвеса"
+          }
+        },
+        {
+          "symbol": "a",
+          "text": {
+            "en_us": "acceleration of the cage, m/s²",
+            "ru_ru": "ускорение клети, м/с²"
+          }
+        },
+        {
+          "symbol": "SF, F_br",
+          "text": {
+            "en_us": "safety factor and breaking load of the rope",
+            "ru_ru": "запас прочности и разрывное усилие каната"
+          }
+        }
+      ],
+      "caption": {
+        "en_us": "People ride only at SF ≥ 9, goods at SF ≥ 6.5.",
+        "ru_ru": "Людей возят только при SF ≥ 9, грузы — при SF ≥ 6,5."
+      }
+    },
+    {
       "type": "recipe",
       "recipe": "promptcritical:mine/mine_hoist"
     },

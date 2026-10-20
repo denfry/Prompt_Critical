@@ -5,6 +5,7 @@ import dev.denfry.promptcritical.mod.block.PcBlock;
 import dev.denfry.promptcritical.mod.block.PcProperties;
 import dev.denfry.promptcritical.mod.multiblock.Footprint;
 import dev.denfry.promptcritical.mod.registry.PcBlocks;
+import dev.denfry.promptcritical.mod.registry.PcItems;
 import net.minecraft.core.Direction;
 import net.minecraft.data.PackOutput;
 import net.minecraft.world.item.ItemDisplayContext;
@@ -47,6 +48,8 @@ public final class PcBlockStateProvider extends BlockStateProvider {
                     .build());
             itemModel(id, block);
         }
+        // второй предмет двери — регулятор (08 §8.2.7)
+        itemModel(PcItems.VENTILATION_REGULATOR.getId().getPath(), "ventilation_door_regulator", PcBlocks.VENTILATION_DOOR.get());
         ModelFile part = models().getBuilder("multiblock_part").texture("particle", modLoc("block/common/steel_dark"));
         simpleBlock(PcBlocks.MULTIBLOCK_PART.get(), part);
         simpleBlock(PcBlocks.KINETIC_PORT.get(), part);
@@ -133,7 +136,11 @@ public final class PcBlockStateProvider extends BlockStateProvider {
 
     /** Предмет блока — модель состояния по умолчанию; многоклеточные уменьшены по наибольшему габариту. */
     private void itemModel(String id, Block block) {
-        ItemModelBuilder item = itemModels().withExistingParent(id, modLoc("block/" + modelName(id, block.defaultBlockState())));
+        itemModel(id, modelName(id, block.defaultBlockState()), block);
+    }
+
+    private void itemModel(String id, String model, Block block) {
+        ItemModelBuilder item = itemModels().withExistingParent(id, modLoc("block/" + model));
         if (!(block instanceof PcBlock pc) || pc.spec().footprint().isSingle()) return;
         int extent = 1;
         for (Footprint.Segment seg : pc.spec().footprint().segments()) {

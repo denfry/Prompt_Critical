@@ -1,3 +1,17 @@
+import java.awt.Color
+import java.awt.Insets
+import java.awt.RenderingHints
+import java.awt.image.BufferedImage
+import javax.imageio.ImageIO
+import org.scilab.forge.jlatexmath.TeXConstants
+import org.scilab.forge.jlatexmath.TeXFormula
+
+// Формулы справочника рисует JLaTeXMath прямо в сборке (11 §11.12), TeX в системе не нужен.
+buildscript {
+    repositories { mavenCentral() }
+    dependencies { classpath(libs.jlatexmath) }
+}
+
 plugins {
     `java-library`
     alias(libs.plugins.moddev)
@@ -122,6 +136,47 @@ tasks.processResources {
     inputs.properties(props)
     filesMatching("META-INF/neoforge.mods.toml") { expand(props) }
 }
+
+// Формулы справочника (11 §11.1.2, §11.12): src/main/formulas/<имя>.tex → PNG в generated, вдвое крупнее, чем на
+// листе. Страница formula ссылается на <мод>:<имя>; формула без исходника — ошибка сборки.
+val formulaSrc = layout.projectDirectory.dir("src/main/formulas")
+val formulaOut = layout.projectDirectory.dir("src/generated/resources/assets/$modId/textures/gui/handbook/formula")
+val handbookEntries = layout.projectDirectory.dir("src/main/resources/data/$modId/handbook/entries")
+val renderHandbookFormulas by tasks.registering {
+    group = "build"
+    description = "Renders handbook formula pages from LaTeX to PNG"
+    inputs.dir(formulaSrc)
+    inputs.dir(handbookEntries)
+    outputs.dir(formulaOut)
+    doLast {
+        System.setProperty("java.awt.headless", "true")
+        val src = formulaSrc.asFile
+        val out = formulaOut.asFile
+        val refs = handbookEntries.asFile.walk().filter { it.extension == "json" }
+            .flatMap { Regex("\"formula\"\\s*:\\s*\"[a-z0-9_.-]+:([a-z0-9_/.-]+)\"").findAll(it.readText()).map { m -> m.groupValues[1] } }
+            .toSet()
+        val missing = refs.filter { !src.resolve("$it.tex").isFile }
+        if (missing.isNotEmpty()) throw GradleException("handbook formulas without .tex: $missing")
+        out.deleteRecursively()
+        src.walk().filter { it.extension == "tex" }.forEach { f ->
+            val name = f.relativeTo(src).invariantSeparatorsPath.removeSuffix(".tex")
+            val icon = TeXFormula(f.readText().trim())
+                .createTeXIcon(TeXConstants.STYLE_DISPLAY, 36f)
+            icon.insets = Insets(2, 2, 2, 2)
+            icon.setForeground(Color(0x2B, 0x2B, 0x2B))
+            val img = BufferedImage(icon.iconWidth, icon.iconHeight, BufferedImage.TYPE_INT_ARGB)
+            val g = img.createGraphics()
+            g.setRenderingHint(RenderingHints.KEY_ANTIALIASING, RenderingHints.VALUE_ANTIALIAS_ON)
+            g.setRenderingHint(RenderingHints.KEY_TEXT_ANTIALIASING, RenderingHints.VALUE_TEXT_ANTIALIAS_ON)
+            icon.paintIcon(null, g, 0, 0)
+            g.dispose()
+            val target = out.resolve("$name.png")
+            target.parentFile.mkdirs()
+            ImageIO.write(img, "png", target)
+        }
+    }
+}
+tasks.processResources { dependsOn(renderHandbookFormulas) }
 
 // pc-sim и pc-api упаковываются классами в jar мода: один мод, один classloader (05 §5.1.1).
 tasks.jar {

@@ -1,17 +1,24 @@
 package dev.denfry.promptcritical.mod.content.client;
 
+import com.google.gson.JsonArray;
 import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
 import com.mojang.blaze3d.platform.Lighting;
+import com.mojang.blaze3d.platform.NativeImage;
 import com.mojang.blaze3d.vertex.PoseStack;
 import com.mojang.math.Axis;
 import dev.denfry.promptcritical.mod.content.ContentText;
 import dev.denfry.promptcritical.mod.content.HandbookMarkdown;
+import java.io.IOException;
+import java.io.InputStream;
 import java.util.ArrayDeque;
 import java.util.ArrayList;
 import java.util.Deque;
 import java.util.List;
 import java.util.Optional;
+import net.createmod.catnip.gui.ScreenOpener;
+import net.createmod.ponder.foundation.PonderIndex;
+import net.createmod.ponder.foundation.ui.PonderUI;
 import net.minecraft.client.gui.GuiGraphics;
 import net.minecraft.client.gui.screens.Screen;
 import net.minecraft.client.renderer.LightTexture;
@@ -41,12 +48,16 @@ import org.lwjgl.glfw.GLFW;
  * «Справочник инженера» (11 §11.1.2): слева оглавление по разделам (закрытые главы — «???» с намёком), справа страницы
  * главы. Текст переносится и режется на страницы по высоте; ссылки ведут к главам, наведение на предмет показывает
  * его. Рецепт — сетка верстака или вход → выход; мультиблок — вращаемая мышью схема со слоями. Режим документа —
- * одна глава во весь лист (инструкция по эксплуатации).
+ * одна глава во весь лист (инструкция по эксплуатации). Формула — PNG из сборки с расшифровкой обозначений; Ponder —
+ * кнопка «Показать», открывающая сцены предмета. Закладка «Маршрут» — задания по эпохам ({@link RoutePane}).
  */
 public class HandbookScreen extends Screen {
-    private static final int PAPER = 0xFFF3EBD7, PAPER_EDGE = 0xFFB9A57E, COVER = 0xFF1F2F4A, INK = 0xFF2B2B2B,
-            MUTED = 0xFF7A715F, SELECTED = 0x332A5DB0, SLOT = 0xFFD9CCAE, SLOT_EDGE = 0xFF8C7B57;
-    private static final int LINE_H = 10, ROW_H = 12, INDEX_W = 116, BULLET_INDENT = 8;
+    static final int PAPER = 0xFFF3EBD7, PAPER_EDGE = 0xFFB9A57E, COVER = 0xFF1F2F4A, INK = 0xFF2B2B2B,
+            MUTED = 0xFF7A715F, SELECTED = 0x332A5DB0, SLOT = 0xFFD9CCAE, SLOT_EDGE = 0xFF8C7B57,
+            HEADING = HandbookMarkdown.HEADING_COLOR | 0xFF000000;
+    static final int LINE_H = 10, ROW_H = 12, INDEX_W = 116, BULLET_INDENT = 8;
+    /** Над оглавлением — закладки «Справочник» и «Маршрут» (11 §11.1.5). */
+    static final int TABS_H = 20;
 
     private final HandbookClient.View view;
     private final Deque<String> history = new ArrayDeque<>();
@@ -56,8 +67,10 @@ public class HandbookScreen extends Screen {
     private int left, top, w, h;
     private float rotY = 225, rotX = 30;
     private int layer = -1;
+    private RoutePane routePane;
+    private boolean routeMode;
 
-    private sealed interface Page permits TextPage, ImagePage, RecipePage, MultiblockPage {
+    private sealed interface Page permits TextPage, ImagePage, RecipePage, MultiblockPage, FormulaPage, PonderPage {
     }
 
     private record Line(FormattedCharSequence seq, int indent, boolean bullet) {
@@ -73,6 +86,13 @@ public class HandbookScreen extends Screen {
     }
 
     private record MultiblockPage(JsonObject json, List<int[]> pos, List<BlockState> states) implements Page {
+    }
+
+    /** Формула: PNG вдвое крупнее листа ({@code w}×{@code h} — его размер в пикселях) и расшифровка. */
+    private record FormulaPage(JsonObject json, ResourceLocation texture, int w, int h, List<Line> legend) implements Page {
+    }
+
+    private record PonderPage(JsonObject json, ResourceLocation item) implements Page {
     }
 
     public HandbookScreen(HandbookClient.View view) {
@@ -93,6 +113,47 @@ public class HandbookScreen extends Screen {
         boolean first = entry == null;
         if (e != null) show(e, false);
         if (first) page = Mth.clamp(view.page(), 0, Math.max(0, pages.size() - 1));
+        if (!view.document() && view.route() != null) {
+            if (routePane == null) routePane = new RoutePane(view.route(), font, this::openFromRoute);
+            routePane.layout(left, top, w, h, INDEX_W);
+        }
+    }
+
+    private void openFromRoute(String id) {
+        HandbookClient.Entry e = view.entry(id);
+        if (e == null) return;
+        routeMode = false;
+        show(e, true);
+    }
+
+    private boolean tabs() {
+        return routePane != null;
+    }
+
+    private int indexTop() {
+        return top + (tabs() ? TABS_H : 6);
+    }
+
+    /** Закладка {@code i} (0 — справочник, 1 — маршрут): x, y, ширина, высота. */
+    private int[] tab(int i) {
+        int tw = (INDEX_W - 10) / 2;
+        return new int[] {left + 4 + i * (tw + 2), top + 5, tw, 12};
+    }
+
+    private void renderTabs(GuiGraphics g, int mx, int my) {
+        String[] keys = {ContentText.HANDBOOK_TAB_HANDBOOK, ContentText.HANDBOOK_TAB_ROUTE};
+        for (int i = 0; i < 2; i++) {
+            int[] b = tab(i);
+            boolean active = (i == 1) == routeMode, over = mx >= b[0] && mx < b[0] + b[2] && my >= b[1] && my < b[1] + b[3];
+            g.fill(b[0], b[1], b[0] + b[2], b[1] + b[3], PAPER_EDGE);
+            g.fill(b[0] + 1, b[1] + 1, b[0] + b[2] - 1, b[1] + b[3] - (active ? 0 : 1), active ? PAPER : SLOT);
+            String s = font.plainSubstrByWidth(Component.translatable(keys[i]).getString(), b[2] - 4);
+            g.drawString(font, s, b[0] + (b[2] - font.width(s)) / 2, b[1] + 2, active ? INK : over ? 0xFF2A5DB0 : MUTED, false);
+        }
+    }
+
+    void drawIcon(GuiGraphics g, String id, int x, int y) {
+        icon(g, id, x, y);
     }
 
     private HandbookClient.Entry firstUnlocked() {
@@ -155,6 +216,8 @@ public class HandbookScreen extends Screen {
                 case "image" -> pages.add(new ImagePage(p));
                 case "recipe" -> pages.add(new RecipePage(p));
                 case "multiblock" -> pages.add(multiblock(p));
+                case "formula" -> pages.add(formula(p, cw));
+                case "ponder" -> pages.add(new PonderPage(p, ResourceLocation.parse(GsonHelper.getAsString(p, "item"))));
                 default -> {
                 }
             }
@@ -207,6 +270,27 @@ public class HandbookScreen extends Screen {
         return new MultiblockPage(p, pos, states);
     }
 
+    private FormulaPage formula(JsonObject p, int cw) {
+        ResourceLocation tex = ResourceLocation.parse(GsonHelper.getAsString(p, "texture"));
+        int[] size = {0, 0};
+        try (InputStream in = minecraft.getResourceManager().open(tex); NativeImage img = NativeImage.read(in)) {
+            size[0] = img.getWidth();
+            size[1] = img.getHeight();
+        } catch (IOException ex) {
+            // нет PNG — задача renderHandbookFormulas не запускалась; лист покажет только расшифровку
+        }
+        List<Line> legend = new ArrayList<>();
+        JsonArray vars = GsonHelper.getAsJsonArray(p, "vars", new JsonArray());
+        if (!vars.isEmpty()) wrap(legend, Component.translatable(ContentText.HANDBOOK_WHERE).withStyle(st -> st.withItalic(true)), cw, 0, false);
+        for (JsonElement v : vars) {
+            JsonObject o = v.getAsJsonObject();
+            Component line = Component.literal(GsonHelper.getAsString(o, "symbol")).withStyle(st -> st.withBold(true))
+                    .append(Component.literal(" — " + GsonHelper.getAsString(o, "text", "")).withStyle(st -> st.withBold(false)));
+            wrap(legend, line, cw - BULLET_INDENT, BULLET_INDENT, false);
+        }
+        return new FormulaPage(p, tex, size[0], size[1], legend);
+    }
+
     // --- отрисовка ---
 
     @Override
@@ -216,6 +300,11 @@ public class HandbookScreen extends Screen {
         g.fill(left, top, left + w, top + h, PAPER);
         if (!view.document()) {
             g.fill(left + INDEX_W, top + 4, left + INDEX_W + 1, top + h - 4, PAPER_EDGE);
+            if (tabs()) renderTabs(g, mx, my);
+            if (routeMode) {
+                routePane.render(g, mx, my, this);
+                return;
+            }
             renderIndex(g, mx, my);
         }
         if (entry == null) return;
@@ -234,6 +323,8 @@ public class HandbookScreen extends Screen {
             case ImagePage i -> renderImage(g, i, cx, cw, mx, my);
             case RecipePage r -> hoverItem = renderRecipe(g, r, cx, cw, mx, my);
             case MultiblockPage m -> renderMultiblock(g, m, cx, cw, pt);
+            case FormulaPage f -> renderFormula(g, f, cx, cw);
+            case PonderPage pp -> renderPonder(g, pp, cx, cw, mx, my);
             case null -> {
             }
         }
@@ -265,13 +356,13 @@ public class HandbookScreen extends Screen {
     }
 
     private void renderIndex(GuiGraphics g, int mx, int my) {
-        int x = left + 6, y0 = top + 6, bottom = top + h - 6;
+        int x = left + 6, y0 = indexTop(), bottom = top + h - 6;
         g.enableScissor(left, y0, left + INDEX_W, bottom);
         int y = y0 - indexScroll;
         for (HandbookClient.Category c : view.categories()) {
             if (y + ROW_H > y0 && y < bottom) {
                 icon(g, c.icon(), x, y);
-                g.drawString(font, font.plainSubstrByWidth(c.title(), INDEX_W - 22), x + 12, y + 2, HandbookMarkdown.HEADING_COLOR | 0xFF000000, false);
+                g.drawString(font, font.plainSubstrByWidth(c.title(), INDEX_W - 22), x + 12, y + 2, HEADING, false);
             }
             y += ROW_H + 1;
             for (HandbookClient.Entry e : view.entries()) {
@@ -306,8 +397,8 @@ public class HandbookScreen extends Screen {
     }
 
     private HandbookClient.Entry indexEntryAt(double mx, double my) {
-        if (view.document() || mx < left || mx >= left + INDEX_W || my < top + 6 || my >= top + h - 6) return null;
-        int y = top + 6 - indexScroll;
+        if (view.document() || mx < left || mx >= left + INDEX_W || my < indexTop() || my >= top + h - 6) return null;
+        int y = indexTop() - indexScroll;
         for (HandbookClient.Category c : view.categories()) {
             y += ROW_H + 1;
             for (HandbookClient.Entry e : view.entries()) {
@@ -501,10 +592,68 @@ public class HandbookScreen extends Screen {
         caption(g, GsonHelper.getAsString(j, "caption", ""), cx, cw, areaTop + areaH + 2);
     }
 
+    private void renderFormula(GuiGraphics g, FormulaPage f, int cx, int cw) {
+        int y = bodyTop() + 4;
+        if (f.w() > 0) {
+            // PNG нарисован вдвое крупнее: на листе — половина, широкая формула ужимается по ширине
+            float k = Math.min(0.5f, cw / (float) f.w());
+            int dw = Math.round(f.w() * k), dh = Math.round(f.h() * k);
+            g.blit(f.texture(), cx + (cw - dw) / 2, y, dw, dh, 0, 0, f.w(), f.h(), f.w(), f.h());
+            y += dh + 8;
+        }
+        for (Line l : f.legend()) {
+            if (y > top + h - 26) break;
+            g.drawString(font, l.seq(), cx + l.indent(), y, INK, false);
+            y += LINE_H;
+        }
+        caption(g, GsonHelper.getAsString(f.json(), "caption", ""), cx, cw, y + 4);
+    }
+
+    /** Прямоугольник кнопки «Показать»: x, y, ширина, высота. */
+    private int[] ponderButton(int cx, int cw) {
+        int bw = Math.min(cw, font.width(Component.translatable(ContentText.HANDBOOK_PONDER_SHOW)) + 16);
+        return new int[] {cx + (cw - bw) / 2, bodyTop() + 64, bw, 16};
+    }
+
+    private void renderPonder(GuiGraphics g, PonderPage pp, int cx, int cw, int mx, int my) {
+        ItemStack s = new ItemStack(BuiltInRegistries.ITEM.get(pp.item()));
+        PoseStack ps = g.pose();
+        ps.pushPose();
+        ps.translate(cx + cw / 2f - 16, bodyTop() + 4, 0);
+        ps.scale(2, 2, 1);
+        g.renderItem(s, 0, 0);
+        ps.popPose();
+        Component name = s.getHoverName();
+        g.drawString(font, name, cx + (cw - font.width(name)) / 2, bodyTop() + 42, INK, false);
+        int[] b = ponderButton(cx, cw);
+        if (PonderIndex.getSceneAccess().doScenesExistForId(pp.item())) {
+            boolean over = mx >= b[0] && mx < b[0] + b[2] && my >= b[1] && my < b[1] + b[3];
+            g.fill(b[0], b[1], b[0] + b[2], b[1] + b[3], SLOT_EDGE);
+            g.fill(b[0] + 1, b[1] + 1, b[0] + b[2] - 1, b[1] + b[3] - 1, over ? 0xFFE8DCBC : SLOT);
+            Component lbl = Component.translatable(ContentText.HANDBOOK_PONDER_SHOW);
+            g.drawString(font, lbl, b[0] + (b[2] - font.width(lbl)) / 2, b[1] + 4, over ? 0xFF2A5DB0 : INK, false);
+        } else {
+            Component none = Component.translatable(ContentText.HANDBOOK_PONDER_NONE);
+            g.drawString(font, none, cx + (cw - font.width(none)) / 2, b[1] + 4, MUTED, false);
+        }
+        caption(g, GsonHelper.getAsString(pp.json(), "caption", ""), cx, cw, b[1] + b[3] + 8);
+    }
+
     // --- ввод ---
 
     @Override
     public boolean mouseClicked(double mx, double my, int button) {
+        if (tabs() && button == 0) {
+            for (int i = 0; i < 2; i++) {
+                int[] b = tab(i);
+                if (mx >= b[0] && mx < b[0] + b[2] && my >= b[1] && my < b[1] + b[3]) {
+                    routeMode = i == 1;
+                    return true;
+                }
+            }
+            if (routeMode) return routePane.click(mx, my) || super.mouseClicked(mx, my, button);
+        }
+        if (routeMode) return super.mouseClicked(mx, my, button);
         if (entry != null && button == 0) {
             int cx = contentX(), cw = contentW(), fy = top + h - 16;
             if (pages.size() > 1 && page > 0 && overArrow(cx, fy, mx, my)) return turn(-1);
@@ -520,6 +669,13 @@ public class HandbookScreen extends Screen {
                 return follow(s.getClickEvent().getValue());
             Page p = pages.isEmpty() ? null : pages.get(page);
             if (p instanceof ImagePage i && zoneClick(i.json(), cx, cw, mx, my)) return true;
+            if (p instanceof PonderPage pp && PonderIndex.getSceneAccess().doScenesExistForId(pp.item())) {
+                int[] b = ponderButton(cx, cw);
+                if (mx >= b[0] && mx < b[0] + b[2] && my >= b[1] && my < b[1] + b[3]) {
+                    ScreenOpener.transitionTo(PonderUI.of(pp.item()));
+                    return true;
+                }
+            }
             if (p instanceof MultiblockPage m) {
                 int[] ly = layers(m);
                 Component lbl = Component.translatable(ContentText.HANDBOOK_ALL_LAYERS);
@@ -565,7 +721,7 @@ public class HandbookScreen extends Screen {
 
     @Override
     public boolean mouseDragged(double mx, double my, int button, double dx, double dy) {
-        if (!pages.isEmpty() && pages.get(page) instanceof MultiblockPage && mx >= contentX()) {
+        if (!routeMode && !pages.isEmpty() && pages.get(page) instanceof MultiblockPage && mx >= contentX()) {
             rotY += (float) dx * 2;
             rotX = Mth.clamp(rotX + (float) dy * 2, -90, 90);
             return true;
@@ -575,8 +731,9 @@ public class HandbookScreen extends Screen {
 
     @Override
     public boolean mouseScrolled(double mx, double my, double sx, double sy) {
+        if (routeMode) return routePane.scroll(mx, sy);
         if (!view.document() && mx < left + INDEX_W) {
-            indexScroll = Mth.clamp(indexScroll - (int) (sy * ROW_H * 2), 0, Math.max(0, indexHeight() - (h - 12)));
+            indexScroll = Mth.clamp(indexScroll - (int) (sy * ROW_H * 2), 0, Math.max(0, indexHeight() - (top + h - 6 - indexTop())));
             return true;
         }
         return turn(sy > 0 ? -1 : 1);
@@ -584,6 +741,7 @@ public class HandbookScreen extends Screen {
 
     @Override
     public boolean keyPressed(int key, int scan, int mods) {
+        if (routeMode) return super.keyPressed(key, scan, mods);
         if (key == GLFW.GLFW_KEY_LEFT || key == GLFW.GLFW_KEY_PAGE_UP) return turn(-1);
         if (key == GLFW.GLFW_KEY_RIGHT || key == GLFW.GLFW_KEY_PAGE_DOWN) return turn(1);
         if (key == GLFW.GLFW_KEY_BACKSPACE && !history.isEmpty()) return back();

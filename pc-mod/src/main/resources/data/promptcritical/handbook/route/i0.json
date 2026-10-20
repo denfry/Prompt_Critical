@@ -1,0 +1,1307 @@
+{
+  "era": "I0",
+  "sort": 0,
+  "title": {
+    "en_us": "Coal and steam",
+    "ru_ru": "Уголь и пар"
+  },
+  "tasks": [
+    {
+      "id": "promptcritical:i0/handbook",
+      "type": "obtain",
+      "condition": {
+        "item": "promptcritical:engineering_handbook"
+      },
+      "entry": "promptcritical:i0/coal_and_steam",
+      "icon": "promptcritical:engineering_handbook",
+      "title": {
+        "en_us": "The engineer's handbook",
+        "ru_ru": "Справочник инженера"
+      },
+      "text": {
+        "en_us": "Keep the handbook at hand: every route step opens the chapter that explains it.",
+        "ru_ru": "Держите справочник под рукой: каждый шаг маршрута открывает главу, где он объяснён."
+      },
+      "hint": {
+        "en_us": "The book is handed out once, on first join. If it is lost, it is crafted from a book and coal.",
+        "ru_ru": "Книгу выдают один раз, при первом входе. Если потеряли — она крафтится из книги и угля."
+      },
+      "reward": {
+        "xp": 5
+      }
+    },
+    {
+      "id": "promptcritical:i0/coal_seam",
+      "requires": [
+        "promptcritical:i0/handbook"
+      ],
+      "type": "discover",
+      "condition": {
+        "block": "promptcritical:coal_seam"
+      },
+      "entry": "promptcritical:i0/coal",
+      "icon": "promptcritical:raw_coal",
+      "title": {
+        "en_us": "Find a coal seam",
+        "ru_ru": "Найдите угольный пласт"
+      },
+      "text": {
+        "en_us": "Mine a block of a coal seam: a flat layer of coal in the rock, not a scattered ore.",
+        "ru_ru": "Добудьте блок угольного пласта: это ровный слой угля в породе, а не рассыпанная руда."
+      },
+      "hint": {
+        "en_us": "Seams lie flat and stretch far. Look at cliff faces, ravines and caves at the depth the chapter names.",
+        "ru_ru": "Пласт лежит ровно и тянется далеко. Ищите в обрывах, оврагах и пещерах на глубине, указанной в главе."
+      },
+      "reward": {
+        "xp": 10
+      }
+    },
+    {
+      "id": "promptcritical:i0/raw_coal",
+      "requires": [
+        "promptcritical:i0/coal_seam"
+      ],
+      "type": "obtain",
+      "condition": {
+        "item": "promptcritical:raw_coal",
+        "count": 16
+      },
+      "entry": "promptcritical:i0/coal",
+      "icon": "promptcritical:raw_coal",
+      "title": {
+        "en_us": "Sixteen of raw coal",
+        "ru_ru": "Шестнадцать рядового угля"
+      },
+      "text": {
+        "en_us": "Collect 16 raw coal. Read the assay on the tooltip: volatiles, ash and moisture decide what it is good for.",
+        "ru_ru": "Наберите 16 рядового угля. Прочтите анализ во всплывающей подсказке: летучие, зола и влага решают, на что он годится."
+      },
+      "hint": {
+        "en_us": "Coal from different seams differs. Keep the best-assayed coal for the boiler.",
+        "ru_ru": "Уголь разных пластов разный. Лучший по анализу оставьте для котла."
+      },
+      "reward": {
+        "xp": 10
+      }
+    },
+    {
+      "id": "promptcritical:i0/mine_support",
+      "requires": [
+        "promptcritical:i0/raw_coal"
+      ],
+      "type": "build",
+      "condition": {
+        "block": "promptcritical:mine_support",
+        "count": 4
+      },
+      "entry": "promptcritical:i0/mine_support",
+      "icon": "promptcritical:mine_support",
+      "title": {
+        "en_us": "Support the roof",
+        "ru_ru": "Закрепите кровлю"
+      },
+      "text": {
+        "en_us": "Set 4 mine supports. A wide working under weak rock collapses without them.",
+        "ru_ru": "Поставьте 4 стойки крепи. Широкая выработка под слабой кровлей без крепи обрушится."
+      },
+      "hint": {
+        "en_us": "Put a support every few blocks along the drift, right under the roof.",
+        "ru_ru": "Ставьте крепь через несколько блоков вдоль выработки, вплотную под кровлю."
+      },
+      "reward": {
+        "xp": 15
+      }
+    },
+    {
+      "id": "promptcritical:i0/safety_lamp",
+      "requires": [
+        "promptcritical:i0/mine_support"
+      ],
+      "type": "obtain",
+      "condition": {
+        "item": "promptcritical:flame_safety_lamp"
+      },
+      "entry": "promptcritical:i0/mine_explosions",
+      "icon": "promptcritical:flame_safety_lamp",
+      "title": {
+        "en_us": "A safety lamp",
+        "ru_ru": "Безопасная лампа"
+      },
+      "text": {
+        "en_us": "Carry a flame safety lamp underground: it gives light and its flame shows firedamp.",
+        "ru_ru": "Берите в шахту безопасную лампу: она светит, а её пламя показывает рудничный газ."
+      },
+      "hint": {
+        "en_us": "A taller, bluish flame means methane. Leave the working and ventilate it.",
+        "ru_ru": "Пламя вытянулось и посинело — это метан. Уходите из выработки и проветривайте."
+      },
+      "reward": {
+        "xp": 10
+      }
+    },
+    {
+      "id": "promptcritical:i0/canary",
+      "requires": [
+        "promptcritical:i0/mine_support"
+      ],
+      "type": "reach",
+      "condition": {
+        "event": "promptcritical:canary_placed"
+      },
+      "entry": "promptcritical:i0/mine_explosions",
+      "icon": "promptcritical:canary",
+      "title": {
+        "en_us": "A canary in the mine",
+        "ru_ru": "Канарейка в шахте"
+      },
+      "text": {
+        "en_us": "Hang a canary cage in the mine. The bird reacts to bad air before people do.",
+        "ru_ru": "Повесьте клетку с канарейкой в шахте. Птица почувствует плохой воздух раньше людей."
+      },
+      "hint": {
+        "en_us": "Place the cage underground, in the working where people stay.",
+        "ru_ru": "Ставьте клетку под землёй, в выработке, где работают люди."
+      },
+      "reward": {
+        "xp": 10
+      }
+    },
+    {
+      "id": "promptcritical:i0/canary_saved",
+      "requires": [
+        "promptcritical:i0/canary"
+      ],
+      "type": "reach",
+      "condition": {
+        "event": "promptcritical:canary_revived"
+      },
+      "entry": "promptcritical:i0/mine_explosions",
+      "icon": "promptcritical:canary_cage",
+      "title": {
+        "en_us": "Bring the canary round",
+        "ru_ru": "Откачайте канарейку"
+      },
+      "text": {
+        "en_us": "If the canary faints, take it to fresh air and revive it. Then find out why the air went bad.",
+        "ru_ru": "Если канарейка упала, вынесите её на свежий воздух и откачайте. Потом выясните, почему испортился воздух."
+      },
+      "hint": {
+        "en_us": "Take a fallen bird out of the cage while it is still alive: away from the bad air it recovers.",
+        "ru_ru": "Заберите упавшую птицу из клетки, пока она жива: вдали от плохого воздуха она отойдёт."
+      },
+      "reward": {
+        "xp": 20
+      }
+    },
+    {
+      "id": "promptcritical:i0/methanometer",
+      "requires": [
+        "promptcritical:i0/safety_lamp"
+      ],
+      "type": "obtain",
+      "condition": {
+        "item": "promptcritical:methanometer"
+      },
+      "entry": "promptcritical:i0/mine_explosions",
+      "icon": "promptcritical:methanometer",
+      "title": {
+        "en_us": "Measure the methane",
+        "ru_ru": "Измерьте метан"
+      },
+      "text": {
+        "en_us": "Make a methanometer: a lamp only warns, the instrument gives the percentage.",
+        "ru_ru": "Сделайте метанометр: лампа лишь предупреждает, прибор показывает процент."
+      },
+      "hint": {
+        "en_us": "Above 1 % stop work in the face, above 2 % take the people out.",
+        "ru_ru": "Выше 1 % — работу в забое прекратить, выше 2 % — людей вывести."
+      },
+      "reward": {
+        "xp": 10
+      }
+    },
+    {
+      "id": "promptcritical:i0/self_rescuer",
+      "requires": [
+        "promptcritical:i0/safety_lamp"
+      ],
+      "type": "obtain",
+      "condition": {
+        "item": "promptcritical:self_rescuer"
+      },
+      "entry": "promptcritical:i0/mine_explosions",
+      "icon": "promptcritical:self_rescuer",
+      "title": {
+        "en_us": "A self-rescuer",
+        "ru_ru": "Самоспасатель"
+      },
+      "text": {
+        "en_us": "Carry a self-rescuer. After an explosion the air is full of carbon monoxide.",
+        "ru_ru": "Носите самоспасатель. После взрыва воздух полон угарного газа."
+      },
+      "hint": {
+        "en_us": "Put it on at the first sign of smoke and walk to fresh air against the smoke.",
+        "ru_ru": "Надевайте при первом признаке дыма и идите к свежей струе навстречу дыму."
+      },
+      "reward": {
+        "xp": 10
+      }
+    },
+    {
+      "id": "promptcritical:i0/main_fan",
+      "requires": [
+        "promptcritical:i0/mine_support"
+      ],
+      "type": "build",
+      "condition": {
+        "block": "promptcritical:main_mine_fan"
+      },
+      "entry": "promptcritical:i0/mine_ventilation",
+      "icon": "promptcritical:main_mine_fan",
+      "title": {
+        "en_us": "The main fan",
+        "ru_ru": "Вентилятор главного проветривания"
+      },
+      "text": {
+        "en_us": "Build a main mine fan at the shaft mouth. It drives fresh air through the whole mine.",
+        "ru_ru": "Поставьте вентилятор главного проветривания у устья ствола. Он гонит свежий воздух по всей шахте."
+      },
+      "hint": {
+        "en_us": "The fan needs rotation from Create. Fresh air must go in by one way and out by another.",
+        "ru_ru": "Вентилятору нужно вращение Create. Свежий воздух должен входить одним путём и выходить другим."
+      },
+      "reward": {
+        "xp": 25
+      }
+    },
+    {
+      "id": "promptcritical:i0/ventilation_door",
+      "requires": [
+        "promptcritical:i0/main_fan"
+      ],
+      "type": "build",
+      "condition": {
+        "block": "promptcritical:ventilation_door",
+        "count": 2
+      },
+      "entry": "promptcritical:i0/mine_ventilation",
+      "icon": "promptcritical:ventilation_door",
+      "title": {
+        "en_us": "Ventilation doors",
+        "ru_ru": "Вентиляционные двери"
+      },
+      "text": {
+        "en_us": "Set 2 ventilation doors so that air does not short-circuit to the exit and reaches the faces.",
+        "ru_ru": "Поставьте 2 вентиляционные двери, чтобы воздух не уходил накоротко к выходу, а доходил до забоев."
+      },
+      "hint": {
+        "en_us": "Two doors in a row make an air lock: one is always closed.",
+        "ru_ru": "Две двери подряд — шлюз: одна всегда закрыта."
+      },
+      "reward": {
+        "xp": 15
+      }
+    },
+    {
+      "id": "promptcritical:i0/regulator",
+      "requires": [
+        "promptcritical:i0/ventilation_door"
+      ],
+      "type": "obtain",
+      "condition": {
+        "item": "promptcritical:ventilation_regulator"
+      },
+      "entry": "promptcritical:i0/mine_ventilation",
+      "icon": "promptcritical:ventilation_regulator",
+      "title": {
+        "en_us": "Share the air",
+        "ru_ru": "Распределите воздух"
+      },
+      "text": {
+        "en_us": "Make a ventilation regulator: set in a branch drift, its window decides how much air the branch receives.",
+        "ru_ru": "Сделайте регулятор проветривания: поставленный в ветви, он окном задаёт, сколько воздуха она получает."
+      },
+      "hint": {
+        "en_us": "A narrower window adds resistance, and the air goes to the branches that need it more.",
+        "ru_ru": "Узкое окно добавляет сопротивление, и воздух уходит в ветви, где он нужнее."
+      },
+      "reward": {
+        "xp": 15
+      }
+    },
+    {
+      "id": "promptcritical:i0/degasification",
+      "requires": [
+        "promptcritical:i0/main_fan"
+      ],
+      "type": "build",
+      "condition": {
+        "block": "promptcritical:degasification_borehole"
+      },
+      "entry": "promptcritical:i0/mine_ventilation",
+      "icon": "promptcritical:degasification_borehole",
+      "title": {
+        "en_us": "Drain the gas",
+        "ru_ru": "Дегазация"
+      },
+      "text": {
+        "en_us": "Drill a degasification borehole: it takes methane out of the coal before it reaches the air.",
+        "ru_ru": "Пробурите дегазационную скважину: она забирает метан из угля, пока он не попал в воздух."
+      },
+      "hint": {
+        "en_us": "Connect the borehole to a degasification pump.",
+        "ru_ru": "Подключите скважину к дегазационному насосу."
+      },
+      "reward": {
+        "xp": 20
+      }
+    },
+    {
+      "id": "promptcritical:i0/dispatch",
+      "requires": [
+        "promptcritical:i0/main_fan"
+      ],
+      "type": "build",
+      "condition": {
+        "block": "promptcritical:mine_dispatch_cabinet"
+      },
+      "entry": "promptcritical:i0/mine_ventilation",
+      "icon": "promptcritical:mine_dispatch_cabinet",
+      "title": {
+        "en_us": "The dispatch board",
+        "ru_ru": "Диспетчерская"
+      },
+      "text": {
+        "en_us": "Set up a mine dispatch cabinet to see the air and gas of the mine in one place.",
+        "ru_ru": "Поставьте шкаф горного диспетчера, чтобы видеть воздух и газ всей шахты в одном месте."
+      },
+      "hint": {
+        "en_us": "Put it on the surface, near the shaft.",
+        "ru_ru": "Ставьте его на поверхности, возле ствола."
+      },
+      "reward": {
+        "xp": 20
+      }
+    },
+    {
+      "id": "promptcritical:i0/stone_dust",
+      "requires": [
+        "promptcritical:i0/safety_lamp"
+      ],
+      "type": "obtain",
+      "condition": {
+        "item": "promptcritical:stone_dust",
+        "count": 16
+      },
+      "entry": "promptcritical:i0/mine_explosions",
+      "icon": "promptcritical:stone_dust",
+      "title": {
+        "en_us": "Stone dust",
+        "ru_ru": "Инертная пыль"
+      },
+      "text": {
+        "en_us": "Grind 16 stone dust. Spread on the floor, it keeps coal dust from carrying an explosion.",
+        "ru_ru": "Намелите 16 инертной пыли. Рассыпанная по почве, она не даёт угольной пыли разнести взрыв."
+      },
+      "hint": {
+        "en_us": "Spread it with a stone duster along the drifts.",
+        "ru_ru": "Рассыпайте её осланцевателем вдоль выработок."
+      },
+      "reward": {
+        "xp": 10
+      }
+    },
+    {
+      "id": "promptcritical:i0/barrier",
+      "requires": [
+        "promptcritical:i0/stone_dust"
+      ],
+      "type": "build",
+      "condition": {
+        "block": "promptcritical:explosion_barrier"
+      },
+      "entry": "promptcritical:i0/mine_explosions",
+      "icon": "promptcritical:explosion_barrier",
+      "title": {
+        "en_us": "An explosion barrier",
+        "ru_ru": "Заслон"
+      },
+      "text": {
+        "en_us": "Build an explosion barrier: the blast tips the shelves and the dust cloud stops the flame.",
+        "ru_ru": "Поставьте сланцевый заслон: ударная волна опрокидывает полки, и облако пыли гасит пламя."
+      },
+      "hint": {
+        "en_us": "Put barriers in the drifts between the faces and the shaft.",
+        "ru_ru": "Ставьте заслоны в выработках между забоями и стволом."
+      },
+      "reward": {
+        "xp": 15
+      }
+    },
+    {
+      "id": "promptcritical:i0/coal_jig",
+      "requires": [
+        "promptcritical:i0/raw_coal"
+      ],
+      "type": "build",
+      "condition": {
+        "block": "promptcritical:coal_jig"
+      },
+      "entry": "promptcritical:i0/coal_prep",
+      "icon": "promptcritical:coal_jig",
+      "title": {
+        "en_us": "Wash the coal",
+        "ru_ru": "Обогатите уголь"
+      },
+      "text": {
+        "en_us": "Build a coal jig. Water pulses separate clean coal from the heavy rock.",
+        "ru_ru": "Поставьте отсадочную машину. Пульсация воды отделяет чистый уголь от тяжёлой породы."
+      },
+      "hint": {
+        "en_us": "The jig needs rotation and water.",
+        "ru_ru": "Машине нужны вращение и вода."
+      },
+      "reward": {
+        "xp": 20
+      }
+    },
+    {
+      "id": "promptcritical:i0/washed_coal",
+      "requires": [
+        "promptcritical:i0/coal_jig"
+      ],
+      "type": "obtain",
+      "condition": {
+        "item": "promptcritical:washed_coal",
+        "count": 32
+      },
+      "entry": "promptcritical:i0/coal_prep",
+      "icon": "promptcritical:washed_coal",
+      "title": {
+        "en_us": "Washed coal",
+        "ru_ru": "Мытый уголь"
+      },
+      "text": {
+        "en_us": "Get 32 washed coal: less ash, more heat in the boiler.",
+        "ru_ru": "Получите 32 мытого угля: меньше золы, больше тепла в котле."
+      },
+      "hint": {
+        "en_us": "Middlings burn too, refuse goes to the dump.",
+        "ru_ru": "Промпродукт тоже горит, отходы — в отвал."
+      },
+      "reward": {
+        "xp": 15
+      }
+    },
+    {
+      "id": "promptcritical:i0/boiler",
+      "requires": [
+        "promptcritical:i0/raw_coal"
+      ],
+      "type": "build",
+      "condition": {
+        "block": "promptcritical:fire_tube_boiler"
+      },
+      "entry": "promptcritical:i0/boiler",
+      "icon": "promptcritical:fire_tube_boiler",
+      "title": {
+        "en_us": "A fire-tube boiler",
+        "ru_ru": "Жаротрубный котёл"
+      },
+      "text": {
+        "en_us": "Build a fire-tube boiler: the heart of the steam plant.",
+        "ru_ru": "Поставьте жаротрубный котёл: сердце паросиловой установки."
+      },
+      "hint": {
+        "en_us": "Fill it with water before lighting. A boiler fired dry is ruined.",
+        "ru_ru": "Заполните водой до розжига. Котёл, растопленный без воды, погибает."
+      },
+      "reward": {
+        "xp": 25
+      }
+    },
+    {
+      "id": "promptcritical:i0/stoker",
+      "requires": [
+        "promptcritical:i0/boiler"
+      ],
+      "type": "build",
+      "condition": {
+        "block": "promptcritical:grate_stoker"
+      },
+      "entry": "promptcritical:i0/boiler",
+      "icon": "promptcritical:grate_stoker",
+      "title": {
+        "en_us": "A grate stoker",
+        "ru_ru": "Решётка с механической подачей"
+      },
+      "text": {
+        "en_us": "Fit a grate stoker so the coal feeds itself.",
+        "ru_ru": "Поставьте механическую решётку, чтобы уголь подавался сам."
+      },
+      "hint": {
+        "en_us": "The stoker needs a slow shaft from Create.",
+        "ru_ru": "Решётке нужен медленный вал Create."
+      },
+      "reward": {
+        "xp": 10
+      }
+    },
+    {
+      "id": "promptcritical:i0/chimney",
+      "requires": [
+        "promptcritical:i0/boiler"
+      ],
+      "type": "build",
+      "condition": {
+        "block": "promptcritical:chimney",
+        "count": 2
+      },
+      "entry": "promptcritical:i0/boiler",
+      "icon": "promptcritical:chimney",
+      "title": {
+        "en_us": "A chimney",
+        "ru_ru": "Дымовая труба"
+      },
+      "text": {
+        "en_us": "Raise the chimney by 2 sections. A taller stack draws better.",
+        "ru_ru": "Нарастите трубу на 2 звена. Чем выше труба, тем сильнее тяга."
+      },
+      "hint": {
+        "en_us": "A cold stack draws weakly. The draught grows as the flue gas warms the stack.",
+        "ru_ru": "Холодная труба тянет слабо. Тяга растёт, когда дым прогреет трубу."
+      },
+      "reward": {
+        "xp": 10
+      }
+    },
+    {
+      "id": "promptcritical:i0/gauge",
+      "requires": [
+        "promptcritical:i0/boiler"
+      ],
+      "type": "build",
+      "condition": {
+        "block": "promptcritical:instrument_pressure"
+      },
+      "entry": "promptcritical:i0/safety_valves",
+      "icon": "promptcritical:instrument_pressure",
+      "title": {
+        "en_us": "A pressure gauge",
+        "ru_ru": "Манометр"
+      },
+      "text": {
+        "en_us": "Mount a pressure gauge on the boiler. You cannot keep a pressure you cannot see.",
+        "ru_ru": "Поставьте на котёл манометр. Давление, которого не видно, не удержать."
+      },
+      "hint": {
+        "en_us": "The red mark is the working pressure. The safety valve lifts a little above it.",
+        "ru_ru": "Красная черта — рабочее давление. Предохранительный клапан поднимается чуть выше."
+      },
+      "reward": {
+        "xp": 10
+      }
+    },
+    {
+      "id": "promptcritical:i0/fusible_plug",
+      "requires": [
+        "promptcritical:i0/boiler"
+      ],
+      "type": "obtain",
+      "condition": {
+        "item": "promptcritical:fusible_plug"
+      },
+      "entry": "promptcritical:i0/safety_valves",
+      "icon": "promptcritical:fusible_plug",
+      "title": {
+        "en_us": "A spare fusible plug",
+        "ru_ru": "Запасная легкоплавкая пробка"
+      },
+      "text": {
+        "en_us": "Keep a spare fusible plug. When the water drops too low the plug melts and puts the fire out.",
+        "ru_ru": "Держите запасную легкоплавкую пробку. Когда вода падает слишком низко, пробка плавится и гасит топку."
+      },
+      "hint": {
+        "en_us": "A melted plug is a warning, not a fault: find out why the water went down.",
+        "ru_ru": "Расплавленная пробка — предупреждение, а не поломка: выясните, почему упала вода."
+      },
+      "reward": {
+        "xp": 10
+      }
+    },
+    {
+      "id": "promptcritical:i0/engine",
+      "requires": [
+        "promptcritical:i0/boiler"
+      ],
+      "type": "build",
+      "condition": {
+        "block": "promptcritical:steam_engine_cylinder"
+      },
+      "entry": "promptcritical:i0/steam_engine",
+      "icon": "promptcritical:steam_engine_cylinder",
+      "title": {
+        "en_us": "A steam engine",
+        "ru_ru": "Паровая машина"
+      },
+      "text": {
+        "en_us": "Build a steam engine next to the boiler.",
+        "ru_ru": "Поставьте паровую машину рядом с котлом."
+      },
+      "hint": {
+        "en_us": "The engine takes steam from the boiler it touches.",
+        "ru_ru": "Машина берёт пар из котла, которого касается."
+      },
+      "reward": {
+        "xp": 25
+      }
+    },
+    {
+      "id": "promptcritical:i0/first_steam",
+      "requires": [
+        "promptcritical:i0/stoker",
+        "promptcritical:i0/chimney",
+        "promptcritical:i0/engine"
+      ],
+      "type": "reach",
+      "condition": {
+        "event": "promptcritical:engine_running"
+      },
+      "entry": "promptcritical:i0/first_steam",
+      "icon": "promptcritical:steam_engine_cylinder",
+      "title": {
+        "en_us": "First steam",
+        "ru_ru": "Первый пар"
+      },
+      "text": {
+        "en_us": "Raise steam and start the engine: it turns a Create shaft.",
+        "ru_ru": "Поднимите пар и пустите машину: она вращает вал Create."
+      },
+      "hint": {
+        "en_us": "Light the fire, wait for pressure, open the stop valve. If the crank sits on dead centre, bar it over.",
+        "ru_ru": "Разожгите топку, дождитесь давления, откройте стопорный вентиль. Кривошип в мёртвой точке — проверните его ломом."
+      },
+      "reward": {
+        "xp": 40
+      }
+    },
+    {
+      "id": "promptcritical:i0/steady_pressure",
+      "requires": [
+        "promptcritical:i0/first_steam",
+        "promptcritical:i0/gauge"
+      ],
+      "type": "reach",
+      "condition": {
+        "event": "promptcritical:boiler_state",
+        "predicate": {
+          "drum_pressure_mpa": {
+            "min": 1.1,
+            "max": 1.3
+          }
+        },
+        "duration_s": 600
+      },
+      "entry": "promptcritical:i0/boiler",
+      "icon": "promptcritical:instrument_pressure",
+      "title": {
+        "en_us": "Hold the pressure",
+        "ru_ru": "Держите давление"
+      },
+      "text": {
+        "en_us": "Keep the drum pressure at 1.2 ± 0.1 MPa for 10 minutes without a break.",
+        "ru_ru": "Держите давление в барабане 1,2 ± 0,1 МПа 10 минут без перерыва."
+      },
+      "hint": {
+        "en_us": "Fire to the load: more steam taken, more coal on the grate. Stay within 64 blocks of the boiler.",
+        "ru_ru": "Топите по нагрузке: больше отбор пара — больше угля на решётку. Будьте не дальше 64 блоков от котла."
+      },
+      "reward": {
+        "xp": 50
+      }
+    },
+    {
+      "id": "promptcritical:i0/governor",
+      "requires": [
+        "promptcritical:i0/first_steam"
+      ],
+      "type": "obtain",
+      "condition": {
+        "item": "promptcritical:governor_dashpot"
+      },
+      "entry": "promptcritical:i0/steam_engine",
+      "icon": "promptcritical:governor_dashpot",
+      "title": {
+        "en_us": "Calm the governor",
+        "ru_ru": "Успокойте регулятор"
+      },
+      "text": {
+        "en_us": "Make a governor dashpot. Without damping the flyball governor hunts and the speed swings.",
+        "ru_ru": "Сделайте катаракт регулятора. Без демпфера центробежный регулятор раскачивается, обороты гуляют."
+      },
+      "hint": {
+        "en_us": "Use the dashpot on the engine to fit it.",
+        "ru_ru": "Примените катаракт к машине, чтобы установить его."
+      },
+      "reward": {
+        "xp": 15
+      }
+    },
+    {
+      "id": "promptcritical:i0/engine_shift",
+      "requires": [
+        "promptcritical:i0/governor"
+      ],
+      "type": "operate",
+      "condition": {
+        "event": "promptcritical:engine_state",
+        "predicate": {
+          "omega_pu": {
+            "min": 0.2
+          }
+        },
+        "duration_s": 1200
+      },
+      "entry": "promptcritical:i0/steam_engine",
+      "icon": "promptcritical:steam_engine_cylinder",
+      "title": {
+        "en_us": "A full shift",
+        "ru_ru": "Полная смена"
+      },
+      "text": {
+        "en_us": "Keep the engine running for 20 minutes without stopping.",
+        "ru_ru": "Пусть машина проработает 20 минут без остановки."
+      },
+      "hint": {
+        "en_us": "Keep water and coal coming. Below a fifth of rated speed the engine counts as stopped.",
+        "ru_ru": "Подавайте воду и уголь. Ниже пятой части номинальных оборотов машина считается стоящей."
+      },
+      "reward": {
+        "xp": 60
+      }
+    },
+    {
+      "id": "promptcritical:i0/hoist",
+      "requires": [
+        "promptcritical:i0/first_steam"
+      ],
+      "type": "build",
+      "condition": {
+        "block": "promptcritical:mine_hoist"
+      },
+      "entry": "promptcritical:i0/hoist_drainage",
+      "icon": "promptcritical:mine_hoist",
+      "title": {
+        "en_us": "A mine hoist",
+        "ru_ru": "Подъёмная машина"
+      },
+      "text": {
+        "en_us": "Build a mine hoist: the coal goes up the shaft, not by the stairs.",
+        "ru_ru": "Поставьте шахтную подъёмную машину: уголь поднимают по стволу, а не по лестнице."
+      },
+      "hint": {
+        "en_us": "The hoist drum needs a shaft from the steam engine.",
+        "ru_ru": "Барабану подъёмной машины нужен вал от паровой машины."
+      },
+      "reward": {
+        "xp": 25
+      }
+    },
+    {
+      "id": "promptcritical:i0/headframe",
+      "requires": [
+        "promptcritical:i0/hoist"
+      ],
+      "type": "build",
+      "condition": {
+        "block": "promptcritical:headframe",
+        "count": 2
+      },
+      "entry": "promptcritical:i0/hoist_drainage",
+      "icon": "promptcritical:headframe",
+      "title": {
+        "en_us": "A headframe",
+        "ru_ru": "Копёр"
+      },
+      "text": {
+        "en_us": "Stack 2 or more headframe sections over the shaft.",
+        "ru_ru": "Поставьте над стволом копёр из 2 секций или выше."
+      },
+      "hint": {
+        "en_us": "The sheave at the top carries the rope from the drum down the shaft.",
+        "ru_ru": "Шкив наверху ведёт канат от барабана в ствол."
+      },
+      "reward": {
+        "xp": 15
+      }
+    },
+    {
+      "id": "promptcritical:i0/wire_rope",
+      "requires": [
+        "promptcritical:i0/hoist"
+      ],
+      "type": "obtain",
+      "condition": {
+        "item": "promptcritical:wire_rope"
+      },
+      "entry": "promptcritical:i0/hoist_drainage",
+      "icon": "promptcritical:wire_rope",
+      "title": {
+        "en_us": "A wire rope",
+        "ru_ru": "Стальной канат"
+      },
+      "text": {
+        "en_us": "Make a wire rope for the hoist.",
+        "ru_ru": "Сделайте стальной канат для подъёма."
+      },
+      "hint": {
+        "en_us": "A rope wears with every trip. Check its safety factor in the chapter.",
+        "ru_ru": "Канат изнашивается с каждым подъёмом. Запас прочности — в главе."
+      },
+      "reward": {
+        "xp": 10
+      }
+    },
+    {
+      "id": "promptcritical:i0/cage",
+      "requires": [
+        "promptcritical:i0/headframe",
+        "promptcritical:i0/wire_rope"
+      ],
+      "type": "build",
+      "condition": {
+        "block": "promptcritical:mine_cage"
+      },
+      "entry": "promptcritical:i0/hoist_drainage",
+      "icon": "promptcritical:mine_cage",
+      "title": {
+        "en_us": "A cage in the shaft",
+        "ru_ru": "Клеть в стволе"
+      },
+      "text": {
+        "en_us": "Hang a mine cage in the shaft.",
+        "ru_ru": "Повесьте клеть в ствол."
+      },
+      "hint": {
+        "en_us": "Do not overload the cage: the rope load includes its own weight down the shaft.",
+        "ru_ru": "Не перегружайте клеть: в нагрузку каната входит и его собственный вес по стволу."
+      },
+      "reward": {
+        "xp": 20
+      }
+    },
+    {
+      "id": "promptcritical:i0/drainage",
+      "requires": [
+        "promptcritical:i0/first_steam"
+      ],
+      "type": "build",
+      "condition": {
+        "block": "promptcritical:mine_drainage_pump"
+      },
+      "entry": "promptcritical:i0/hoist_drainage",
+      "icon": "promptcritical:mine_drainage_pump",
+      "title": {
+        "en_us": "Pump out the water",
+        "ru_ru": "Водоотлив"
+      },
+      "text": {
+        "en_us": "Set a mine drainage pump. Water keeps seeping into the workings.",
+        "ru_ru": "Поставьте водоотливной насос. Вода всё время поступает в выработки."
+      },
+      "hint": {
+        "en_us": "Put the pump at the lowest point of the mine.",
+        "ru_ru": "Ставьте насос в самой низкой точке шахты."
+      },
+      "reward": {
+        "xp": 20
+      }
+    },
+    {
+      "id": "promptcritical:i0/cupola",
+      "requires": [
+        "promptcritical:i0/first_steam"
+      ],
+      "type": "build",
+      "condition": {
+        "block": "promptcritical:cupola_furnace"
+      },
+      "entry": "promptcritical:i0/foundry",
+      "icon": "promptcritical:cupola_furnace",
+      "title": {
+        "en_us": "A cupola",
+        "ru_ru": "Вагранка"
+      },
+      "text": {
+        "en_us": "Build a cupola: a shaft furnace that melts iron with coke and blast air.",
+        "ru_ru": "Поставьте вагранку: шахтную печь, где чугун плавят коксом на дутье."
+      },
+      "hint": {
+        "en_us": "The blower takes rotation. Until there is coke, charcoal will do.",
+        "ru_ru": "Воздуходувке нужно вращение. Пока нет кокса, годится древесный уголь."
+      },
+      "reward": {
+        "xp": 20
+      }
+    },
+    {
+      "id": "promptcritical:i0/crucible",
+      "requires": [
+        "promptcritical:i0/raw_coal"
+      ],
+      "type": "build",
+      "condition": {
+        "block": "promptcritical:crucible_furnace"
+      },
+      "entry": "promptcritical:i0/foundry",
+      "icon": "promptcritical:crucible_furnace",
+      "title": {
+        "en_us": "A crucible furnace",
+        "ru_ru": "Тигельная печь"
+      },
+      "text": {
+        "en_us": "Build a crucible furnace: slow and small, but it needs no blast.",
+        "ru_ru": "Поставьте тигельную печь: медленно и понемногу, зато без дутья."
+      },
+      "hint": {
+        "en_us": "Feed it with coal.",
+        "ru_ru": "Топите её углём."
+      },
+      "reward": {
+        "xp": 20
+      }
+    },
+    {
+      "id": "promptcritical:i0/melting",
+      "requires": [
+        "promptcritical:i0/raw_coal"
+      ],
+      "type": "choice",
+      "condition": {
+        "options": [
+          "promptcritical:i0/cupola",
+          "promptcritical:i0/crucible"
+        ]
+      },
+      "entry": "promptcritical:i0/foundry",
+      "icon": "promptcritical:cupola_furnace",
+      "title": {
+        "en_us": "Choose a melting furnace",
+        "ru_ru": "Выберите плавильную печь"
+      },
+      "text": {
+        "en_us": "A cupola or a crucible: either melts iron for castings.",
+        "ru_ru": "Вагранка или тигель: любая печь плавит чугун для отливок."
+      },
+      "hint": {
+        "en_us": "The cupola is faster but needs steam power for the blower.",
+        "ru_ru": "Вагранка быстрее, но ей нужна сила пара для воздуходувки."
+      },
+      "reward": {
+        "xp": 10
+      }
+    },
+    {
+      "id": "promptcritical:i0/iron_ore",
+      "requires": [
+        "promptcritical:i0/handbook"
+      ],
+      "type": "discover",
+      "condition": {
+        "tag": "c:ores/iron"
+      },
+      "entry": "promptcritical:i0/coal_and_steam",
+      "icon": "promptcritical:raw_magnetite",
+      "title": {
+        "en_us": "Find iron ore",
+        "ru_ru": "Найдите железную руду"
+      },
+      "text": {
+        "en_us": "Mine iron ore: magnetite or hematite.",
+        "ru_ru": "Добудьте железную руду: магнетит или гематит."
+      },
+      "hint": {
+        "en_us": "Ore bodies are veins: where you find one block, more lie nearby.",
+        "ru_ru": "Руда залегает жилами: где нашли один блок, рядом ещё."
+      },
+      "reward": {
+        "xp": 10
+      }
+    },
+    {
+      "id": "promptcritical:i0/iron_charge",
+      "requires": [
+        "promptcritical:i0/melting",
+        "promptcritical:i0/iron_ore"
+      ],
+      "type": "obtain",
+      "condition": {
+        "tag": "promptcritical:cupola_iron",
+        "count": 8
+      },
+      "entry": "promptcritical:i0/foundry",
+      "icon": "promptcritical:pig_iron",
+      "title": {
+        "en_us": "Metal for the melt",
+        "ru_ru": "Металл для плавки"
+      },
+      "text": {
+        "en_us": "Gather 8 iron for the charge: pig iron or iron ingots.",
+        "ru_ru": "Соберите 8 железа для шихты: чугун или железные слитки."
+      },
+      "hint": {
+        "en_us": "Until there is a blast furnace, smelt iron ingots from ore.",
+        "ru_ru": "Пока нет домны, выплавляйте железные слитки из руды."
+      },
+      "reward": {
+        "xp": 10
+      }
+    },
+    {
+      "id": "promptcritical:i0/molding",
+      "requires": [
+        "promptcritical:i0/melting"
+      ],
+      "type": "build",
+      "condition": {
+        "block": "promptcritical:molding_station"
+      },
+      "entry": "promptcritical:i0/foundry",
+      "icon": "promptcritical:molding_station",
+      "title": {
+        "en_us": "A molding station",
+        "ru_ru": "Формовочная машина"
+      },
+      "text": {
+        "en_us": "Build a molding station to ram sand molds around a pattern.",
+        "ru_ru": "Поставьте формовочную машину, чтобы набивать песчаные формы по модели."
+      },
+      "hint": {
+        "en_us": "Mold sand must be dry: rain spoils an open mold.",
+        "ru_ru": "Формовочная смесь должна быть сухой: дождь портит открытую форму."
+      },
+      "reward": {
+        "xp": 15
+      }
+    },
+    {
+      "id": "promptcritical:i0/casting",
+      "requires": [
+        "promptcritical:i0/iron_charge",
+        "promptcritical:i0/molding"
+      ],
+      "type": "obtain",
+      "condition": {
+        "item": "promptcritical:casting"
+      },
+      "entry": "promptcritical:i0/foundry",
+      "icon": "promptcritical:casting",
+      "title": {
+        "en_us": "Your first casting",
+        "ru_ru": "Первая отливка"
+      },
+      "text": {
+        "en_us": "Pour a mold and get a casting.",
+        "ru_ru": "Залейте форму и получите отливку."
+      },
+      "hint": {
+        "en_us": "Thick sections cool slowly: let the casting solidify before shaking it out.",
+        "ru_ru": "Толстые сечения стынут долго: дайте отливке затвердеть, прежде чем выбивать."
+      },
+      "reward": {
+        "xp": 30
+      }
+    },
+    {
+      "id": "promptcritical:i0/shakeout",
+      "requires": [
+        "promptcritical:i0/molding"
+      ],
+      "type": "build",
+      "condition": {
+        "block": "promptcritical:shakeout_grate"
+      },
+      "entry": "promptcritical:i0/foundry",
+      "icon": "promptcritical:shakeout_grate",
+      "title": {
+        "en_us": "A shakeout grate",
+        "ru_ru": "Выбивная решётка"
+      },
+      "text": {
+        "en_us": "Build a shakeout grate to break castings out of the sand.",
+        "ru_ru": "Поставьте выбивную решётку, чтобы освобождать отливки из песка."
+      },
+      "hint": {
+        "en_us": "Put the molds on the grate.",
+        "ru_ru": "Ставьте формы на решётку."
+      },
+      "reward": {
+        "xp": 10
+      }
+    },
+    {
+      "id": "promptcritical:i0/lathe",
+      "requires": [
+        "promptcritical:i0/casting"
+      ],
+      "type": "build",
+      "condition": {
+        "block": "promptcritical:machine_lathe"
+      },
+      "entry": "promptcritical:i0/machine_shop",
+      "icon": "promptcritical:machine_lathe",
+      "title": {
+        "en_us": "A lathe",
+        "ru_ru": "Токарный станок"
+      },
+      "text": {
+        "en_us": "Build a lathe to turn castings to size.",
+        "ru_ru": "Поставьте токарный станок, чтобы точить отливки в размер."
+      },
+      "hint": {
+        "en_us": "Cutting speed matters: too fast and the tool wears out.",
+        "ru_ru": "Важна скорость резания: слишком быстро — и резец изнашивается."
+      },
+      "reward": {
+        "xp": 20
+      }
+    },
+    {
+      "id": "promptcritical:i0/drill",
+      "requires": [
+        "promptcritical:i0/casting"
+      ],
+      "type": "build",
+      "condition": {
+        "block": "promptcritical:drill_press"
+      },
+      "entry": "promptcritical:i0/machine_shop",
+      "icon": "promptcritical:drill_press",
+      "title": {
+        "en_us": "A drill press",
+        "ru_ru": "Сверлильный станок"
+      },
+      "text": {
+        "en_us": "Build a drill press for holes in the castings.",
+        "ru_ru": "Поставьте сверлильный станок для отверстий в отливках."
+      },
+      "hint": {
+        "en_us": "It runs from the same shaft as the lathe.",
+        "ru_ru": "Он работает от того же вала, что и токарный."
+      },
+      "reward": {
+        "xp": 15
+      }
+    },
+    {
+      "id": "promptcritical:i0/cutting_tool",
+      "requires": [
+        "promptcritical:i0/lathe"
+      ],
+      "type": "obtain",
+      "condition": {
+        "item": "promptcritical:cutting_tool"
+      },
+      "entry": "promptcritical:i0/machine_shop",
+      "icon": "promptcritical:cutting_tool",
+      "title": {
+        "en_us": "A spare cutter",
+        "ru_ru": "Запасной резец"
+      },
+      "text": {
+        "en_us": "Make a spare cutting tool.",
+        "ru_ru": "Сделайте запасной резец."
+      },
+      "hint": {
+        "en_us": "Tool life follows Taylor's law, given in the chapter.",
+        "ru_ru": "Стойкость резца подчиняется закону Тейлора, он приведён в главе."
+      },
+      "reward": {
+        "xp": 10
+      }
+    },
+    {
+      "id": "promptcritical:i0/longwall",
+      "requires": [
+        "promptcritical:i0/cage"
+      ],
+      "type": "build",
+      "condition": {
+        "block": "promptcritical:longwall_shearer"
+      },
+      "entry": "promptcritical:i0/longwall",
+      "icon": "promptcritical:longwall_shearer",
+      "title": {
+        "en_us": "A longwall shearer",
+        "ru_ru": "Очистной комбайн"
+      },
+      "text": {
+        "en_us": "Build a longwall shearer: it cuts the coal along the whole face.",
+        "ru_ru": "Поставьте очистной комбайн: он вынимает уголь по всей длине лавы."
+      },
+      "hint": {
+        "en_us": "The shearer runs on a Create contraption along the face.",
+        "ru_ru": "Комбайн ходит вдоль лавы на контрапции Create."
+      },
+      "reward": {
+        "xp": 30
+      }
+    },
+    {
+      "id": "promptcritical:i0/roof_supports",
+      "requires": [
+        "promptcritical:i0/longwall"
+      ],
+      "type": "build",
+      "condition": {
+        "block": "promptcritical:powered_roof_support",
+        "count": 4
+      },
+      "entry": "promptcritical:i0/longwall",
+      "icon": "promptcritical:powered_roof_support",
+      "title": {
+        "en_us": "Powered supports",
+        "ru_ru": "Механизированная крепь"
+      },
+      "text": {
+        "en_us": "Set 4 powered roof supports along the face.",
+        "ru_ru": "Поставьте 4 секции механизированной крепи вдоль лавы."
+      },
+      "hint": {
+        "en_us": "The supports advance behind the shearer, and the roof caves in behind them.",
+        "ru_ru": "Секции передвигаются вслед за комбайном, кровля за ними обрушается."
+      },
+      "reward": {
+        "xp": 25
+      }
+    },
+    {
+      "id": "promptcritical:i0/lectern",
+      "requires": [
+        "promptcritical:i0/boiler"
+      ],
+      "type": "build",
+      "condition": {
+        "block": "promptcritical:document_lectern"
+      },
+      "entry": "promptcritical:i0/procedure_boiler",
+      "icon": "promptcritical:document_lectern",
+      "title": {
+        "en_us": "Rules on the wall",
+        "ru_ru": "Инструкция на месте"
+      },
+      "text": {
+        "en_us": "Put the boiler operating procedure on a document lectern next to the boiler.",
+        "ru_ru": "Положите инструкцию по эксплуатации котла на пюпитр рядом с котлом."
+      },
+      "hint": {
+        "en_us": "The procedure is issued when you build the boiler.",
+        "ru_ru": "Инструкцию выдают при постройке котла."
+      },
+      "reward": {
+        "xp": 10
+      }
+    }
+  ]
+}

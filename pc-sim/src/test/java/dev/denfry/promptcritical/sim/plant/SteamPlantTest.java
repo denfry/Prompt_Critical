@@ -163,7 +163,8 @@ class SteamPlantTest {
         assertThat(firstTurn / 60).as("мин от пустого котла до первого оборота вала (R3: ω ≥ 0,2 ω₀)").isLessThan(25);
         assertThat(t / 60).as("мин до номинальных оборотов").isLessThan(26);
         assertThat(smokyS).as("чёрный дым — только первые минуты, пока труба холодная").isLessThan(180);
-        assertThat(events).as("событие «Первый пар» — одно на пуск").filteredOn(ev -> ev instanceof SimEvent.Milestone)
+        assertThat(events).as("событие «Первый пар» — одно на пуск (замеры boiler_state/engine_state не в счёт)")
+                .filteredOn(ev -> ev instanceof SimEvent.Milestone ms && ms.event().equals(SteamPlant.ENGINE_RUNNING))
                 .singleElement().isInstanceOfSatisfying(SimEvent.Milestone.class, ms -> {
                     assertThat(ms.event()).isEqualTo(SteamPlant.ENGINE_RUNNING);
                     assertThat(ms.source()).isEqualTo(e);

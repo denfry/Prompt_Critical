@@ -55,6 +55,9 @@ public final class MineSafetyRecipes extends RecipeProvider {
         ShapedRecipeBuilder.shaped(RecipeCategory.REDSTONE, PcBlocks.VENTILATION_DOOR.get())
                 .pattern("PP").pattern("LP").pattern("PP").define('P', ItemTags.PLANKS).define('L', Items.LEATHER)
                 .unlockedBy("has_planks", has(ItemTags.PLANKS)).save(out, id("ventilation_door"));
+        ShapedRecipeBuilder.shaped(RecipeCategory.REDSTONE, PcItems.VENTILATION_REGULATOR.get())
+                .pattern("SS").pattern("SD").pattern("SS").define('S', AllItems.IRON_SHEET.get()).define('D', PcBlocks.VENTILATION_DOOR.get())
+                .unlockedBy("has_ventilation_door", has(PcBlocks.VENTILATION_DOOR.get())).save(out, id("ventilation_regulator"));
         ShapelessRecipeBuilder.shapeless(RecipeCategory.MISC, PcItems.STONE_DUST.get(), 4).requires(Items.CALCITE)
                 .unlockedBy("has_calcite", has(Items.CALCITE)).save(out, id("stone_dust"));
         ShapelessRecipeBuilder.shapeless(RecipeCategory.MISC, PcItems.STONE_DUST.get(), 2).requires(Items.DIORITE)
