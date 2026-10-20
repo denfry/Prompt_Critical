@@ -148,7 +148,8 @@ class GridSynchronizationTest {
     @Tag("T7.25")
     void syncCheckRelayBlocksClosingOutOfWindowAndAllowsAtTheRightMoment() {
         SyncRig r = new SyncRig(false);
-        r.g.setSyncCheck(r.cb, true);
+        r.g.addRelay(ProtectionRelay.SyncCheck.of(RelayGeneration.A1_ELECTROMECHANICAL, r.g.config()),
+                new RelayMount.Feeder(r.cb, true));
         r.waitAngle(120);
         assertThat(r.g.operateBreaker(r.cb, true)).isEqualTo(BreakerResponse.INTERLOCK);
         assertThat(r.g.breakerState(r.cb)).isEqualTo(BreakerState.OPEN);

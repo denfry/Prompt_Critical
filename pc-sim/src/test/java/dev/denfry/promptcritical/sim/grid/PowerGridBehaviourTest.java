@@ -101,8 +101,8 @@ class PowerGridBehaviourTest {
     @Test
     void rejectsWhatTheSkeletonDoesNotModel() {
         ReferenceGrid r = ReferenceGrid.build();
-        assertThatThrownBy(() -> r.grid.applyFault(r.hv.get(0), FaultType.SINGLE_LINE_GROUND, 0))
-                .isInstanceOf(UnsupportedOperationException.class);
+        assertThatThrownBy(() -> r.grid.applyFault(r.hv.get(0), FaultType.SINGLE_LINE_GROUND, -1))
+                .isInstanceOf(IllegalArgumentException.class);
         assertThatThrownBy(() -> r.grid.addBranch(new Branch.Tie(r.hv.get(0), r.hv.get(0), 0.1, 1)))
                 .isInstanceOf(IllegalArgumentException.class);
         assertThatThrownBy(() -> r.grid.addLoad(LoadModel.constantPower(1, 0, LoadKind.HEATER), new BusId(99)))

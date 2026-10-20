@@ -4,6 +4,7 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 import java.util.Objects;
+import java.util.SplittableRandom;
 
 /**
  * Корень электрической модели мира (07 §7.1–7.3). Тикается в FAST из SimulationWorld (05).
@@ -18,7 +19,9 @@ import java.util.Objects;
  *
  * <p>Выключатели с временем хода (§7.4.7) и броском момента при включении на параллельную работу
  * (§7.3.5), АРВ всех режимов с ограничителями OEL/UEL (§7.3.3–7.3.4), асинхронные двигатели с
- * моментом Клосса (§7.6.3). Нет несимметричных КЗ, РЗА и тепла трансформаторов — следующий этап M3.
+ * моментом Клосса (§7.6.3). КЗ всех видов — шунтом в схеме прямой последовательности (§7.5.1), на шине
+ * или внутри ветви (исключение временного узла по Крону). РЗА и автоматы 0,4 кВ — {@link GridProtection}
+ * после измерений тика; нагрев проводов, трансформаторов и двигателей — в {@link #stepSlow}.
  */
 public final class PowerGrid {
     /** Ниже этого напряжения P и I-доли нагрузки ведут себя как сопротивление (PSS/E «PQ → Z»). */
@@ -42,11 +45,22 @@ public final class PowerGrid {
     static final double SHEAR_PIN_PU = 2;
     /** С этого момента при включении повреждаются обмотки статора: stator_damage += 0,1 (§7.3.5). */
     static final double STATOR_DAMAGE_PU = 3, STATOR_DAMAGE_STEP = 0.1;
+    /** Бросок намагничивания: h₂ = 0,6·e^{−t/τ}, τ = 0,3 с; ниже 0,01 бросок окончен (§7.5.2). */
+    static final double INRUSH_H2 = 0.6, INRUSH_TAU_S = 0.3, INRUSH_END_H2 = 0.01;
+    /** Дифзащита без гармонической блокировки отключает трансформатор при включении с этой вероятностью. */
+    static final double INRUSH_TRIP_PROBABILITY = 0.3;
+    /** Провод разрушается (отжиг алюминия) выше 90 °C: dD/dt = 2^((T − 90)/10)/3600 с⁻¹ [BALANCE]. */
+    static final double CONDUCTOR_ANNEAL_C = 90, CONDUCTOR_LIFE_S = 3600, CONDUCTOR_DOUBLING_K = 10;
+    /** Двигатель: превышение температуры обмотки при номинальном токе (класс B) и τ нагрева [BALANCE]. */
+    static final double MOTOR_RATED_RISE_K = 80, MOTOR_TAU_S = 900;
     private static final double MIN_SPEED = 0.1;
     private static final int EVENT_CAPACITY = 256, EVENT_VALUES = 7;
     private static final int EV_TOPOLOGY = 0, EV_DEENERGIZED = 1, EV_POLE_SLIP = 2, EV_BREAKER = 3, EV_SYNC = 4;
+    private static final int EV_RELAY = 5, EV_GROUND = 6, EV_LOAD = 7, EV_CONDUCTOR = 8, EV_BREAKDOWN = 9;
     private static final BreakerState[] BREAKER_STATES = BreakerState.values();
     private static final SyncResult[] SYNC_RESULTS = SyncResult.values();
+    private static final ProtectionFunction[] FUNCTIONS = ProtectionFunction.values();
+    private static final FaultSite[] NO_FAULTS = new FaultSite[0];
 
     final GridConfig cfg;
     final double sb, ws, f0;
@@ -58,7 +72,6 @@ public final class PowerGrid {
     double[] vRe = new double[0], vIm = new double[0]; // решение сети (измерения)
     double[] vtRe = new double[0], vtIm = new double[0]; // итерация (следящий режим, §7.1.3)
     double[] thetaPrev = new double[0], fBus = new double[0];
-    double[] faultG = new double[0];
     double[] gRe = new double[0], gIm = new double[0]; // токи Нортона машин по шинам
     double[] lRe = new double[0], lIm = new double[0]; // токи нагрузок по шинам
     int[] busIsland = new int[0], busLocal = new int[0];
@@ -70,13 +83,32 @@ public final class PowerGrid {
     double[] yRe = new double[0], yIm = new double[0], tap = new double[0];
     double[] shFG = new double[0], shFB = new double[0], shTG = new double[0], shTB = new double[0];
     boolean[] closed = new boolean[0];
+    /** Элементы Y ветви: Y_ff, Y_ft = Y_tf, Y_tt (с отпайкой, шунтами и КЗ внутри ветви). */
+    double[] sFFr = new double[0], sFFi = new double[0], sFTr = new double[0], sFTi = new double[0];
+    double[] sTTr = new double[0], sTTi = new double[0];
+
+    // ---------------------------------------------------------------- КЗ (§7.5.1)
+    FaultType[] fType = new FaultType[0], bfType = new FaultType[0]; // на шине / внутри ветви; null — нет
+    double[] fZf = new double[0], bfZf = new double[0], bfPos = new double[0];
+    boolean[] fSelf = new boolean[0], bfSelf = new boolean[0]; // самоустраняется, когда место обесточено
+    int[] fMachine = new int[0], fMotor = new int[0]; // КЗ внутри машины или двигателя на этой шине; −1 — нет
+    double[] fYRe = new double[0], fYIm = new double[0]; // шунт y_Δ в Y
 
     // ---------------------------------------------------------------- выключатели (§7.4.6–7.4.7)
-    private final List<BreakerSpec> breakerSpec = new ArrayList<>(); // null — идеальный ключ
-    private BreakerState[] brState = new BreakerState[0];
+    final List<BreakerSpec> breakerSpec = new ArrayList<>(); // null — идеальный ключ
+    BreakerState[] brState = new BreakerState[0];
     private double[] brTimer = new double[0], brWear = new double[0];
     private int[] brOps = new int[0];
-    private boolean[] brDc = new boolean[0], brSyncCheck = new boolean[0];
+    boolean[] brDc = new boolean[0];
+    /** Последнюю команду «откл» подала защита; сброс — команда оператора или включение. */
+    boolean[] brProtTrip = new boolean[0];
+    /** Время от включения трансформатора под напряжение (бросок), с; NaN — броска нет. */
+    double[] inrushT = new double[0], inrushRoll = new double[0];
+
+    // ---------------------------------------------------------------- нагрев (§7.4.1, §7.4.4)
+    double[] brAmbientC = new double[0], brTempC = new double[0], brDamage = new double[0];
+    double[] trOilRise = new double[0], trHsRise = new double[0], trLifeH = new double[0];
+    private double convectionWm2K = 15, solarWPerM, ambientC = 20;
 
     // ---------------------------------------------------------------- машины
     int nm;
@@ -116,10 +148,18 @@ public final class PowerGrid {
     double[] moLoss = new double[0], moQm = new double[0], moKq = new double[0], moH = new double[0];
     double[] moW = new double[0], moTl = new double[0], moTlUsed = new double[0], moTe = new double[0];
     double[] moIRe = new double[0], moIIm = new double[0];
+    /** Номинальный ток двигателя, о.е. на S_b; температура обмотки, °C. */
+    double[] moRatedI = new double[0], moTempC = new double[0];
+    boolean[] moFaulted = new boolean[0];
+    /** Напряжение шины, о.е., выше которого изоляция двигателя (машины) пробивается: U_исп/U_ном её класса (§7.4.8). */
+    double[] moBreakdownPu = new double[0], mBreakdownPu = new double[0];
 
     // ---------------------------------------------------------------- острова
     private Island[] islands = new Island[0];
     private boolean topologyDirty = true, initialized;
+
+    final GridProtection protection = new GridProtection(this);
+    SplittableRandom rng = new SplittableRandom(0);
 
     private final int[] evKind = new int[EVENT_CAPACITY], evArg = new int[EVENT_CAPACITY];
     private final int[] evArg2 = new int[EVENT_CAPACITY], evArg3 = new int[EVENT_CAPACITY];
@@ -151,7 +191,14 @@ public final class PowerGrid {
         vtIm = grow(vtIm, nb);
         thetaPrev = grow(thetaPrev, nb);
         fBus = grow(fBus, nb);
-        faultG = grow(faultG, nb);
+        fType = grow(fType, nb);
+        fZf = grow(fZf, nb);
+        fSelf = grow(fSelf, nb);
+        fMachine = grow(fMachine, nb);
+        fMotor = grow(fMotor, nb);
+        fYRe = grow(fYRe, nb);
+        fYIm = grow(fYIm, nb);
+        fMachine[i] = fMotor[i] = -1;
         gRe = grow(gRe, nb);
         gIm = grow(gIm, nb);
         lRe = grow(lRe, nb);
@@ -185,8 +232,29 @@ public final class PowerGrid {
         brWear = grow(brWear, nbr);
         brOps = grow(brOps, nbr);
         brDc = grow(brDc, nbr);
-        brSyncCheck = grow(brSyncCheck, nbr);
+        brProtTrip = grow(brProtTrip, nbr);
+        inrushT = grow(inrushT, nbr);
+        inrushRoll = grow(inrushRoll, nbr);
+        sFFr = grow(sFFr, nbr);
+        sFFi = grow(sFFi, nbr);
+        sFTr = grow(sFTr, nbr);
+        sFTi = grow(sFTi, nbr);
+        sTTr = grow(sTTr, nbr);
+        sTTi = grow(sTTi, nbr);
+        bfType = grow(bfType, nbr);
+        bfZf = grow(bfZf, nbr);
+        bfPos = grow(bfPos, nbr);
+        bfSelf = grow(bfSelf, nbr);
+        brAmbientC = grow(brAmbientC, nbr);
+        brTempC = grow(brTempC, nbr);
+        brDamage = grow(brDamage, nbr);
+        trOilRise = grow(trOilRise, nbr);
+        trHsRise = grow(trHsRise, nbr);
+        trLifeH = grow(trLifeH, nbr);
+        protection.growBranches(nbr);
         brDc[k] = true;
+        inrushT[k] = Double.NaN;
+        brAmbientC[k] = brTempC[k] = ambientC;
         bFrom[k] = f;
         bTo[k] = t;
         tap[k] = 1;
@@ -205,6 +273,7 @@ public final class PowerGrid {
                 tap[k] = tr.tap().ratio(0);
             }
         }
+        intactStamp(k);
         topologyDirty = true;
         return new BranchId(k);
     }
@@ -217,6 +286,17 @@ public final class PowerGrid {
         shTB[k] = b / 2;
     }
 
+    /** Y_ff = y/t² + y_ш,f, Y_ft = −y/t, Y_tt = y + y_ш,t — ветвь без КЗ (идеальный трансформатор на стороне from). */
+    private void intactStamp(int k) {
+        double t = tap[k];
+        sFFr[k] = yRe[k] / (t * t) + shFG[k];
+        sFFi[k] = yIm[k] / (t * t) + shFB[k];
+        sFTr[k] = -yRe[k] / t;
+        sFTi[k] = -yIm[k] / t;
+        sTTr[k] = yRe[k] + shTG[k];
+        sTTi[k] = yIm[k] + shTB[k];
+    }
+
     public MachineId addMachine(SynchronousMachine m, BusId at) {
         Objects.requireNonNull(m, "machine");
         if (m.grid != null) throw new IllegalStateException("machine already added");
@@ -226,6 +306,7 @@ public final class PowerGrid {
         MachineParams p = m.params();
         ExciterSpec e = m.exciter();
         mBus[i] = bus;
+        mBreakdownPu[i] = VoltageClass.nearest(p.vRatedV()).breakdownRatio() * p.vRatedV() / busClass.get(bus).volts;
         mS[i] = p.sRatedVa() / sb;
         mXd[i] = p.xd();
         mXdP[i] = p.xdP();
@@ -322,6 +403,10 @@ public final class PowerGrid {
         moTe = grow(moTe, nmo);
         moIRe = grow(moIRe, nmo);
         moIIm = grow(moIIm, nmo);
+        moRatedI = grow(moRatedI, nmo);
+        moTempC = grow(moTempC, nmo);
+        moFaulted = grow(moFaulted, nmo);
+        moBreakdownPu = grow(moBreakdownPu, nmo);
         moBus[j] = bus;
         moOn[j] = true;
         moScale[j] = spec.pRatedW() / sb;
@@ -334,6 +419,10 @@ public final class PowerGrid {
         moQm[j] = c[1];
         moKq[j] = c[2];
         moH[j] = spec.inertiaS();
+        double sN = spec.ratedSlip();
+        moRatedI[j] = Math.hypot(motorP(j, sN, 1), motorQ(j, sN, 1)) * moScale[j] * vr; // при U_ном двигателя
+        moTempC[j] = ambientC;
+        moBreakdownPu[j] = VoltageClass.nearest(spec.vRatedV()).breakdownRatio() / vr;
         if (!topologyDirty) {
             Island isl = islands[busIsland[bus]];
             isl.motors = Arrays.copyOf(isl.motors, isl.motors.length + 1);
@@ -351,6 +440,8 @@ public final class PowerGrid {
      */
     public void setBreaker(BranchId id, boolean close) {
         int k = branch(id);
+        if (close && protection.fuseBlown(k)) throw new IllegalStateException("fuse blown: replaceFuse() first");
+        brProtTrip[k] = false;
         if (brState[k] != null) {
             brTimer[k] = 0;
             brState[k] = close ? BreakerState.CLOSED : BreakerState.OPEN;
@@ -380,40 +471,55 @@ public final class PowerGrid {
     }
 
     /**
-     * Команда «вкл»/«откл» (§7.4.7). Без оперативного тока команды не исполняются; включение
-     * проверяет реле контроля синхронизма, если оно стоит. Контакты замкнутся через t_вкл
+     * Команда оператора «вкл»/«откл» (§7.4.7). Без оперативного тока команды не исполняются; включение
+     * проверяет реле контроля синхронизма 25, если оно стоит на ветви. Контакты замкнутся через t_вкл
      * (разомкнутся через t_откл) в конце тика, когда выдержка истечёт; «откл» во время хода
      * включения — свободное расцепление.
      */
     public BreakerResponse operateBreaker(BranchId id, boolean close) {
         int k = breaker(id);
+        brProtTrip[k] = false;
+        return command(k, close);
+    }
+
+    /** Команда автомату §7.4.7 от оператора, РЗА или АПВ. */
+    BreakerResponse command(int k, boolean close) {
         BreakerState s = brState[k];
         if (s == BreakerState.FAULTED || s == BreakerState.FAILED_TO_INTERRUPT) return BreakerResponse.UNAVAILABLE;
         if (!brDc[k]) return BreakerResponse.NO_CONTROL_POWER;
         if (close) {
             if (s == BreakerState.OPENING) return BreakerResponse.BUSY;
             if (s != BreakerState.OPEN) return BreakerResponse.ACCEPTED;
-            if (brSyncCheck[k] && !syncPermits(k)) return BreakerResponse.INTERLOCK;
+            if (!protection.syncPermits(k)) return BreakerResponse.INTERLOCK;
             brTimer[k] = breakerSpec.get(k).closeTimeS();
             setBreakerState(k, BreakerState.CLOSING);
-        } else if (s == BreakerState.CLOSING) {
+        } else {
+            beginOpening(k);
+        }
+        return BreakerResponse.ACCEPTED;
+    }
+
+    /** «Откл»: из хода включения — свободное расцепление, из включённого — ход отключения. */
+    void beginOpening(int k) {
+        BreakerState s = brState[k];
+        if (s == BreakerState.CLOSING) {
             brTimer[k] = 0;
             setBreakerState(k, BreakerState.OPEN);
         } else if (s == BreakerState.CLOSED) {
             brTimer[k] = breakerSpec.get(k).openTimeS();
             setBreakerState(k, BreakerState.OPENING);
         }
-        return BreakerResponse.ACCEPTED;
+    }
+
+    /** Отключение от РЗА: команда идёт через привод и требует оперативного тока; УРОВ видит её и без него. */
+    void protectionTrip(int k) {
+        brProtTrip[k] = true;
+        command(k, false);
     }
 
     /** Оперативный постоянный ток привода (§7.11.5): без него выключатель не включается и не отключается. */
     public void setBreakerControlPower(BranchId id, boolean dcOk) {
         brDc[breaker(id)] = dcOk;
-    }
-
-    /** Реле контроля синхронизма ANSI 25 (§7.3.5) с окном {@code grid.sync_max_*}. */
-    public void setSyncCheck(BranchId id, boolean installed) {
-        brSyncCheck[breaker(id)] = installed;
     }
 
     /** Ремонт: {@code FAULTED} или {@code FAILED_TO_INTERRUPT} → {@code OPEN}, износ сброшен. */
@@ -456,9 +562,30 @@ public final class PowerGrid {
         lOn[load(id)] = on;
     }
 
-    /** Контактор двигателя: отключённый выбегает, включённый на стоящем двигателе — прямой пуск. */
+    /**
+     * Контактор двигателя: отключённый выбегает, включённый на стоящем двигателе — прямой пуск.
+     * Двигатель с пробитой изоляцией уносит КЗ с собой и возвращает его при включении.
+     */
     public void setMotorConnected(MotorId id, boolean on) {
-        moOn[motor(id)] = on;
+        int j = motor(id);
+        moOn[j] = on;
+        motorFaultFollowsContactor(j);
+    }
+
+    void motorFaultFollowsContactor(int j) {
+        int b = moBus[j];
+        if (moOn[j] && moFaulted[j] && fType[b] == null) {
+            setBusFault(b, FaultType.THREE_PHASE, 0, false, -1, j);
+        } else if (!moOn[j] && fMotor[b] == j) {
+            clearBusFault(b);
+        }
+    }
+
+    /** Перемотка обмотки (13, R22): двигатель исправен, его КЗ снято. */
+    public void repairMotor(MotorId id) {
+        int j = motor(id);
+        moFaulted[j] = false;
+        if (fMotor[moBus[j]] == j) clearBusFault(moBus[j]);
     }
 
     /** Момент нагрузки двигателя без входа от Create, о.е. на P_ном/ω_s. */
@@ -474,26 +601,116 @@ public final class PowerGrid {
         if (step < tr.tap().minStep() || step > tr.tap().maxStep()) throw new IllegalArgumentException("tap step " + step);
         tapStep[k] = step;
         tap[k] = tr.tap().ratio(step);
+        intactStamp(k);
         markY(bFrom[k]);
     }
 
-    /** КЗ в узле (§7.5.1): шунт 1/z_f. Каркас M1 — только трёхфазное. */
+    /** Устойчивое КЗ на шине (§7.5.1). */
     public void applyFault(BusId at, FaultType type, double zfPu) {
+        applyFault(at, type, zfPu, false);
+    }
+
+    /**
+     * КЗ на шине (§7.5.1): шунт z_Δ в схеме прямой последовательности по виду КЗ и режиму нейтрали
+     * класса шины; однофазное в сети с изолированной нейтралью — не КЗ, а «земля». Новое КЗ на той же
+     * шине заменяет прежнее.
+     *
+     * @param zfPu         сопротивление дуги z_f, о.е. на S_b
+     * @param selfClearing дуга гаснет, когда шина обесточена (перекрытие изоляции)
+     */
+    public void applyFault(BusId at, FaultType type, double zfPu, boolean selfClearing) {
         int b = bus(at);
         Objects.requireNonNull(type, "type");
-        if (type != FaultType.THREE_PHASE)
-            throw new UnsupportedOperationException("unsymmetrical faults need negative/zero sequence networks (M3)");
         if (!(zfPu >= 0)) throw new IllegalArgumentException("zfPu");
-        faultG[b] = 1 / Math.max(zfPu, MIN_FAULT_IMPEDANCE_PU);
-        markY(b);
+        setBusFault(b, type, zfPu, selfClearing, -1, -1);
     }
 
     public void clearFault(BusId at) {
-        int b = bus(at);
-        if (faultG[b] != 0) {
-            faultG[b] = 0;
-            markY(b);
+        clearBusFault(bus(at));
+    }
+
+    /**
+     * КЗ внутри ветви на доле {@code position} длины от конца {@code from} (§7.5.1): временный узел
+     * исключается по Крону, топология не меняется. Попадает в зону дифзащиты ветви; у трансформатора —
+     * дуга в баке (газовая защита).
+     *
+     * @param selfClearing перекрытие гаснет, когда ветвь отключена (молния, схлёстывание)
+     */
+    public void applyBranchFault(BranchId id, double position, FaultType type, double zfPu, boolean selfClearing) {
+        int k = branch(id);
+        Objects.requireNonNull(type, "type");
+        if (!(position > 0 && position < 1)) throw new IllegalArgumentException("position must be inside (0, 1)");
+        if (!(zfPu >= 0)) throw new IllegalArgumentException("zfPu");
+        boolean wasGround = groundType(bfType[k], branchFaultClass(k));
+        bfType[k] = type;
+        bfPos[k] = position;
+        bfZf[k] = zfPu;
+        bfSelf[k] = selfClearing;
+        groundEvent(bFrom[k], wasGround, groundType(type, branchFaultClass(k)));
+        markY(bFrom[k]);
+    }
+
+    public void clearBranchFault(BranchId id) {
+        clearBranchFault(branch(id));
+    }
+
+    private void clearBranchFault(int k) {
+        if (bfType[k] == null) return;
+        groundEvent(bFrom[k], groundType(bfType[k], branchFaultClass(k)), false);
+        bfType[k] = null;
+        intactStamp(k);
+        markY(bFrom[k]);
+    }
+
+    void setBusFault(int b, FaultType type, double zf, boolean selfClearing, int machine, int motor) {
+        boolean wasGround = groundType(fType[b], busClass.get(b));
+        fType[b] = type;
+        fZf[b] = zf;
+        fSelf[b] = selfClearing;
+        fMachine[b] = machine;
+        fMotor[b] = motor;
+        groundEvent(b, wasGround, groundType(type, busClass.get(b)));
+        markY(b);
+    }
+
+    void clearBusFault(int b) {
+        if (fType[b] == null) return;
+        groundEvent(b, groundType(fType[b], busClass.get(b)), false);
+        fType[b] = null;
+        fMachine[b] = fMotor[b] = -1;
+        markY(b);
+    }
+
+    /** «Земля» перешла в двойное замыкание на землю — по току это двухфазное КЗ (§7.5.1). */
+    void escalateGround(FaultSite s) {
+        if (!s.onBranch) {
+            int b = s.index;
+            setBusFault(b, FaultType.LINE_LINE_GROUND, fZf[b], fSelf[b], fMachine[b], fMotor[b]);
+        } else {
+            applyBranchFault(new BranchId(s.index), bfPos[s.index], FaultType.LINE_LINE_GROUND, bfZf[s.index],
+                    bfSelf[s.index]);
         }
+    }
+
+    /** Ветвь без выключателя размыкается мгновенно (перегорела вставка). */
+    void openSwitch(int k) {
+        if (!closed[k]) return;
+        closed[k] = false;
+        topologyDirty = true;
+    }
+
+    /** Однофазное замыкание в сети с изолированной нейтралью — «земля», а не КЗ. */
+    private static boolean groundType(FaultType t, VoltageClass c) {
+        return t == FaultType.SINGLE_LINE_GROUND && c.isolatedNeutral();
+    }
+
+    private void groundEvent(int bus, boolean was, boolean now) {
+        if (was != now && event(EV_GROUND, bus)) evArg3[evCount - 1] = now ? 1 : 0;
+    }
+
+    /** Класс места КЗ внутри ветви: у трансформатора — обмотка ближе к месту КЗ. */
+    VoltageClass branchFaultClass(int k) {
+        return busClass.get(bfPos[k] < 0.5 ? bFrom[k] : bTo[k]);
     }
 
     private void markY(int bus) {
@@ -599,11 +816,68 @@ public final class PowerGrid {
         for (int s = 0; s < n; s++) substep(h, in);
         measure(dtS, out);
         advanceBreakers(dtS);
+        protection.step(dtS);
     }
 
-    /** SLOW-шаг: тепло трансформаторов и старение — после M1. */
+    /**
+     * SLOW-шаг по токам последнего решения: нагрев проводов (§7.4.1) с отжигом и обрывом выше 90 °C,
+     * тепловая модель и старение трансформаторов (§7.4.4), тепловой образ обмоток двигателей.
+     */
     public void stepSlow(double dtPhysS) {
         if (!(dtPhysS > 0)) throw new IllegalArgumentException("dt");
+        for (int k = 0; k < nbr; k++) {
+            Branch b = branchSpec.get(k);
+            double ta = brAmbientC[k];
+            if (b instanceof Branch.Line l && l.spec() != null) {
+                double t = l.spec().stepTemperatureC(brTempC[k], branchCurrentA(k), ta, convectionWm2K, solarWPerM,
+                        dtPhysS);
+                brTempC[k] = t;
+                if (t > CONDUCTOR_ANNEAL_C && brDamage[k] < 1) {
+                    brDamage[k] += dtPhysS * Math.pow(2, (t - CONDUCTOR_ANNEAL_C) / CONDUCTOR_DOUBLING_K)
+                            / CONDUCTOR_LIFE_S;
+                    if (brDamage[k] >= 1) { // обрыв: провод падает на землю до ремонта
+                        brDamage[k] = 1;
+                        applyBranchFault(new BranchId(k), 0.5, FaultType.SINGLE_LINE_GROUND, 0, false);
+                        event(EV_CONDUCTOR, k);
+                    }
+                }
+            } else if (b instanceof Branch.Transformer tr && tr.thermal() != null) {
+                TransformerThermal th = tr.thermal();
+                double kLoad = branchApparentPu(k) * sb / tr.sRatedVa();
+                trOilRise[k] += (th.steadyTopOilRiseK(kLoad) - trOilRise[k]) * (1 - Math.exp(-dtPhysS / th.tauOilS()));
+                trHsRise[k] += (th.steadyHotSpotRiseK(kLoad) - trHsRise[k])
+                        * (1 - Math.exp(-dtPhysS / th.tauWindingS()));
+                brTempC[k] = ta + trOilRise[k] + trHsRise[k];
+                trLifeH[k] += TransformerThermal.agingRate(brTempC[k]) * dtPhysS / 3600;
+            }
+        }
+        for (int j = 0; j < nmo; j++) {
+            double x = Math.hypot(moIRe[j], moIIm[j]) / moRatedI[j];
+            double target = ambientC + MOTOR_RATED_RISE_K * x * x;
+            moTempC[j] += (target - moTempC[j]) * (1 - Math.exp(-dtPhysS / MOTOR_TAU_S));
+        }
+    }
+
+    /** Окружающая среда (§7.13.1): температура у всех ветвей и двигателей, теплоотдача провода и солнце. */
+    public void setWeather(double ambientC, double convectionWm2K, double solarWPerM) {
+        if (!(convectionWm2K > 0 && solarWPerM >= 0)) throw new IllegalArgumentException("weather");
+        Arrays.fill(brAmbientC, 0, nbr, ambientC);
+        this.convectionWm2K = convectionWm2K;
+        this.solarWPerM = solarWPerM;
+        this.ambientC = ambientC;
+    }
+
+    /** Температура воздуха у ветви (климат биома трансформатора или пролёта), °C. */
+    public void setBranchAmbient(BranchId id, double ambientC) {
+        brAmbientC[branch(id)] = ambientC;
+    }
+
+    /** Ремонт провода новой катушкой: повреждение снято, обрыв устранён. */
+    public void repairConductor(BranchId id) {
+        int k = branch(id);
+        brDamage[k] = 0;
+        brTempC[k] = brAmbientC[k];
+        clearBranchFault(id);
     }
 
     private void substep(double h, GridInputs in) {
@@ -912,7 +1186,8 @@ public final class PowerGrid {
                 }
                 isl.loss = 0;
                 for (int k : isl.branches) isl.loss += branchLoss(k);
-                for (int b : isl.buses) isl.loss += faultG[b] * (vRe[b] * vRe[b] + vIm[b] * vIm[b]);
+                for (int b : isl.buses) isl.loss += fYRe[b] * (vRe[b] * vRe[b] + vIm[b] * vIm[b]);
+                for (FaultSite s : isl.faults) updateSite(s);
                 step = Math.max(step, isl.solverStep);
             }
             gen += isl.gen;
@@ -952,12 +1227,13 @@ public final class PowerGrid {
             if (brTimer[k] > 1e-9) continue;
             brTimer[k] = 0;
             if (s == BreakerState.CLOSING) {
+                brProtTrip[k] = false;
                 setBreakerState(k, BreakerState.CLOSED);
                 contactsClosed(k);
                 continue;
             }
             BreakerSpec spec = breakerSpec.get(k);
-            double ka = branchCurrentPu(k) * sb / (Math.sqrt(3) * busClass.get(bFrom[k]).volts) / 1e3;
+            double ka = branchCurrentA(k) / 1e3;
             if (ka > spec.interruptKa()) { // дуга не гаснет: ветвь под током, ждёт УРОВ (§7.5.5)
                 setBreakerState(k, BreakerState.FAILED_TO_INTERRUPT);
                 continue;
@@ -981,9 +1257,28 @@ public final class PowerGrid {
         if (initialized && !topologyDirty) {
             Island a = islands[busIsland[bFrom[k]]], b = islands[busIsland[bTo[k]]];
             if (a != b && a.solvable() && b.solvable()) synchronize(k, a, b);
+            // трансформатор под напряжение с одной стороны — бросок тока намагничивания (§7.5.2)
+            if (branchSpec.get(k) instanceof Branch.Transformer && a != b && a.energized != b.energized) {
+                inrushT[k] = 0;
+                inrushRoll[k] = rng.nextDouble();
+            }
         }
         closed[k] = true;
         topologyDirty = true;
+    }
+
+    /** Доля 2-й гармоники броска намагничивания ветви; 0 — броска нет. */
+    double inrushH2(int k) {
+        double t = inrushT[k];
+        return Double.isNaN(t) ? 0 : INRUSH_H2 * Math.exp(-t / INRUSH_TAU_S);
+    }
+
+    void advanceInrush(double dt) {
+        for (int k = 0; k < nbr; k++) {
+            if (Double.isNaN(inrushT[k])) continue;
+            inrushT[k] = closed[k] ? inrushT[k] + dt : Double.NaN;
+            if (inrushH2(k) < INRUSH_END_H2) inrushT[k] = Double.NaN;
+        }
     }
 
     private SyncScope scope(int k, boolean fromIncoming) {
@@ -998,11 +1293,14 @@ public final class PowerGrid {
         return inertia(islands[busIsland[bFrom[k]]]) <= inertia(islands[busIsland[bTo[k]]]);
     }
 
-    /** Реле 25: включение на обесточенную сторону разрешено, иначе — окно {@code grid.sync_max_*}. */
-    private boolean syncPermits(int k) {
-        if (!islands[busIsland[bFrom[k]]].energized || !islands[busIsland[bTo[k]]].energized) return true;
-        SyncScope sc = scope(k, incomingIsFrom(k));
-        return sc.inWindow(Math.toRadians(cfg.syncMaxAngleDeg()), cfg.syncMaxDv(), cfg.syncMaxSlipHz());
+    /** Хотя бы одна сторона ветви обесточена — включение «на мёртвую шину» (реле 25). */
+    boolean deadSide(int k) {
+        return !islands[busIsland[bFrom[k]]].energized || !islands[busIsland[bTo[k]]].energized;
+    }
+
+    /** Синхроноскоп ветви, ориентированный по входящей стороне. */
+    SyncScope scope(int k) {
+        return scope(k, incomingIsFrom(k));
     }
 
     /**
@@ -1084,20 +1382,146 @@ public final class PowerGrid {
         thIm = isl.bIm[l];
     }
 
-    /** Активные потери ветви: Re(S_ij + S_ji), включая шунты П-схемы. */
+    /** Активные потери ветви: Re(S_ij + S_ji), включая шунты П-схемы и КЗ внутри ветви. */
     private double branchLoss(int k) {
         int f = bFrom[k], t = bTo[k];
+        endCurrent(k, true);
+        double p = vRe[f] * ecRe + vIm[f] * ecIm;
+        endCurrent(k, false);
+        return p + vRe[t] * ecRe + vIm[t] * ecIm;
+    }
+
+    double ecRe, ecIm; // результат endCurrent()
+
+    /** Ток прямой последовательности, втекающий в ветвь с конца, по решению сети: I_f = Y_ff·V_f + Y_ft·V_t. */
+    void endCurrent(int k, boolean atFrom) {
+        int f = bFrom[k], t = bTo[k];
+        double ar = atFrom ? sFFr[k] : sFTr[k], ai = atFrom ? sFFi[k] : sFTi[k];
+        double br = atFrom ? sFTr[k] : sTTr[k], bi = atFrom ? sFTi[k] : sTTi[k];
+        ecRe = ar * vRe[f] - ai * vIm[f] + br * vRe[t] - bi * vIm[t];
+        ecIm = ar * vIm[f] + ai * vRe[f] + br * vIm[t] + bi * vRe[t];
+    }
+
+    /**
+     * Ток с конца ветви при единичном токе, втекающем в место КЗ {@code s}, по столбцу отклика (схема
+     * обратной последовательности = прямой без КЗ; отпайка внутри повреждённой ветви не учитывается).
+     */
+    private void unitEndCurrent(int k, boolean atFrom, FaultSite s) {
+        int lf = busLocal[bFrom[k]], lt = busLocal[bTo[k]];
+        double fr = s.cRe[lf], fi = s.cIm[lf], tr = s.cRe[lt], ti = s.cIm[lt];
+        if (s.onBranch && s.index == k) { // y₁(V_f − V_m) + y_ш·V_f, V_m = z₁
+            double yr = atFrom ? s.y1Re : s.y2Re, yi = atFrom ? s.y1Im : s.y2Im;
+            double vr = (atFrom ? fr : tr) - s.z1Re, vi = (atFrom ? fi : ti) - s.z1Im;
+            double gr = atFrom ? shFG[k] : shTG[k], gb = atFrom ? shFB[k] : shTB[k];
+            double er = atFrom ? fr : tr, ei = atFrom ? fi : ti;
+            ecRe = yr * vr - yi * vi + gr * er - gb * ei;
+            ecIm = yr * vi + yi * vr + gr * ei + gb * er;
+            return;
+        }
         double t1 = tap[k];
-        double fr = vRe[f], fi = vIm[f], tr = vRe[t], ti = vIm[t];
-        // I_f = (y/t² + ysh_f)·V_f − (y/t)·V_t;  I_t = −(y/t)·V_f + (y + ysh_t)·V_t
-        double aRe = yRe[k] / (t1 * t1) + shFG[k], aIm = yIm[k] / (t1 * t1) + shFB[k];
-        double mRe = -yRe[k] / t1, mIm = -yIm[k] / t1;
-        double cRe = yRe[k] + shTG[k], cIm = yIm[k] + shTB[k];
-        double ifr = aRe * fr - aIm * fi + mRe * tr - mIm * ti;
-        double ifi = aRe * fi + aIm * fr + mRe * ti + mIm * tr;
-        double itr = mRe * fr - mIm * fi + cRe * tr - cIm * ti;
-        double iti = mRe * fi + mIm * fr + cRe * ti + cIm * tr;
-        return fr * ifr + fi * ifi + tr * itr + ti * iti;
+        double ar, ai, br, bi;
+        if (atFrom) {
+            ar = yRe[k] / (t1 * t1) + shFG[k];
+            ai = yIm[k] / (t1 * t1) + shFB[k];
+            br = -yRe[k] / t1;
+            bi = -yIm[k] / t1;
+        } else {
+            ar = -yRe[k] / t1;
+            ai = -yIm[k] / t1;
+            br = yRe[k] + shTG[k];
+            bi = yIm[k] + shTB[k];
+        }
+        ecRe = ar * fr - ai * fi + br * tr - bi * ti;
+        ecIm = ar * fi + ai * fr + br * ti + bi * tr;
+    }
+
+    /**
+     * Наибольший фазный ток на конце ветви, о.е. на S_b: прямая последовательность — из решения, обратная
+     * и нулевая — откликом сети на токи I₂, I₀ всех КЗ острова (нулевая — только в классе места КЗ и не
+     * через трансформаторы).
+     */
+    double endPhaseCurrentPu(int k, boolean atFrom) {
+        if (!closed[k]) return 0;
+        endCurrent(k, atFrom);
+        double r1 = ecRe, i1 = ecIm;
+        Island isl = islands[busIsland[bFrom[k]]];
+        if (isl.faults.length == 0 || !isl.solvable()) return Math.hypot(r1, i1);
+        double r2 = 0, i2 = 0, r0 = 0, i0 = 0;
+        VoltageClass end = busClass.get(atFrom ? bFrom[k] : bTo[k]);
+        boolean transformer = branchSpec.get(k) instanceof Branch.Transformer;
+        for (FaultSite s : isl.faults) {
+            if (s.k2Re == 0 && s.k2Im == 0 && s.k0Re == 0 && s.k0Im == 0) continue;
+            unitEndCurrent(k, atFrom, s); // ток КЗ вытекает из сети: инжекция −I₂ (−I₀)
+            r2 -= ecRe * s.i2Re - ecIm * s.i2Im;
+            i2 -= ecRe * s.i2Im + ecIm * s.i2Re;
+            if (!transformer && s.zeroReaches(end)) {
+                r0 -= ecRe * s.i0Re - ecIm * s.i0Im;
+                i0 -= ecRe * s.i0Im + ecIm * s.i0Re;
+            }
+        }
+        return FaultSite.phaseMax(r1, i1, r2, i2, r0, i0);
+    }
+
+    /** Наибольший фазный ток машины, о.е. на S_b: обратная последовательность — через 1/(jx'_d) на её шине. */
+    double machinePhaseCurrentPu(int i) {
+        double r1 = ioRe[i], i1 = ioIm[i];
+        int b = mBus[i];
+        Island isl = islands[busIsland[b]];
+        if (isl.faults.length == 0 || !isl.solvable()) return Math.hypot(r1, i1);
+        double r2 = 0, i2 = 0;
+        int l = busLocal[b];
+        for (FaultSite s : isl.faults) {
+            // V₂ = c·(−I₂); ток из машины −Y_m·V₂ = Y_m·c·I₂, Y_m = −j·y
+            double cr = s.cRe[l], ci = s.cIm[l], y = mYgen[i];
+            double ur = y * ci, ui = -y * cr;
+            r2 += ur * s.i2Re - ui * s.i2Im;
+            i2 += ur * s.i2Im + ui * s.i2Re;
+        }
+        return FaultSite.phaseMax(r1, i1, r2, i2, 0, 0);
+    }
+
+    /** Ток в месте КЗ на шине (внутри машины или вне её), фазный максимум, о.е. на S_b; 0 — КЗ нет. */
+    double busFaultPhasePu(int b, boolean machineZone) {
+        Island isl = islands[busIsland[b]];
+        for (FaultSite s : isl.faults) {
+            if (!s.onBranch && s.index == b && (fMachine[b] >= 0) == machineZone) return s.phaseCurrentPu();
+        }
+        return 0;
+    }
+
+    /** КЗ внутри ветви в её острове; null — нет. */
+    FaultSite branchSite(int k) {
+        if (!closed[k]) return null;
+        for (FaultSite s : islands[busIsland[bFrom[k]]].faults) if (s.onBranch && s.index == k) return s;
+        return null;
+    }
+
+    /** |S| с конца from, о.е. на S_b. */
+    double branchApparentPu(int k) {
+        if (!closed[k]) return 0;
+        endCurrent(k, true);
+        int f = bFrom[k];
+        return Math.hypot(vRe[f], vIm[f]) * Math.hypot(ecRe, ecIm);
+    }
+
+    /** Фазный ток с конца from, А. */
+    double branchCurrentA(int k) {
+        return endPhaseCurrentPu(k, true) * sb / (Math.sqrt(3) * busClass.get(bFrom[k]).volts);
+    }
+
+    /** Напряжение места КЗ и токи последовательностей по решению. */
+    private void updateSite(FaultSite s) {
+        if (!s.onBranch) {
+            s.update(vRe[s.index], vIm[s.index]);
+            return;
+        }
+        int k = s.index, f = bFrom[k], t = bTo[k];
+        // V_m = (y₁·V_f/t + y₂·V_t)/(y₁ + y₂ + y_Δ)
+        double fr = vRe[f] / s.tap, fi = vIm[f] / s.tap;
+        double nr = s.y1Re * fr - s.y1Im * fi + s.y2Re * vRe[t] - s.y2Im * vIm[t];
+        double ni = s.y1Re * fi + s.y1Im * fr + s.y2Re * vIm[t] + s.y2Im * vRe[t];
+        double dr = s.y1Re + s.y2Re + s.yRe, di = s.y1Im + s.y2Im + s.yIm, d2 = dr * dr + di * di;
+        s.update((nr * dr + ni * di) / d2, (ni * dr - nr * di) / d2);
     }
 
     // ================================================================ топология
@@ -1155,6 +1579,12 @@ public final class PowerGrid {
                 rebaseAngles(isl);
             }
         }
+        // перекрытие гаснет, когда место КЗ обесточено (бестоковая пауза АПВ, §7.5.5)
+        for (int b = 0; b < nb; b++) if (fType[b] != null && fSelf[b] && !next[busIsland[b]].energized) clearBusFault(b);
+        for (int k = 0; k < nbr; k++) {
+            if (bfType[k] != null && bfSelf[k] && (!closed[k] || !next[busIsland[bFrom[k]]].energized))
+                clearBranchFault(k);
+        }
         islands = next;
         topologyDirty = false;
         if (initialized) event(EV_TOPOLOGY, islands.length);
@@ -1211,24 +1641,131 @@ public final class PowerGrid {
             for (int a = 0; a < n; a++) adjacency[a] = adj.get(a).stream().mapToInt(Integer::intValue).toArray();
             isl.lu = new ComplexSparseLU(n, adjacency);
         }
-        ComplexSparseLU lu = isl.lu;
-        lu.clear();
-        for (int k : isl.branches) {
-            int a = busLocal[bFrom[k]], c = busLocal[bTo[k]];
-            double t = tap[k];
-            lu.add(lu.position(a, a), yRe[k] / (t * t) + shFG[k], yIm[k] / (t * t) + shFB[k]);
-            lu.add(lu.position(c, c), yRe[k] + shTG[k], yIm[k] + shTB[k]);
-            lu.add(lu.position(a, c), -yRe[k] / t, -yIm[k] / t);
-            lu.add(lu.position(c, a), -yRe[k] / t, -yIm[k] / t);
+        for (int k : isl.branches) intactStamp(k);
+        for (int b : isl.buses) fYRe[b] = fYIm[b] = 0;
+        FaultSite[] sites = collectFaults(isl);
+        stampAndFactor(isl);
+        if (sites.length > 0) { // z₁ и отклик сети — по Y без КЗ, затем шунты z_Δ и повторное разложение
+            for (FaultSite s : sites) prepareSite(isl, s);
+            for (FaultSite s : sites) {
+                if (!s.onBranch) {
+                    fYRe[s.index] += s.yRe;
+                    fYIm[s.index] += s.yIm;
+                } else {
+                    kronStamp(s);
+                }
+            }
+            stampAndFactor(isl);
         }
-        for (int b : isl.buses) if (faultG[b] != 0) lu.add(lu.position(busLocal[b], busLocal[b]), faultG[b], 0);
-        for (int i : isl.machines) lu.add(lu.position(busLocal[mBus[i]], busLocal[mBus[i]]), 0, -mYgen[i]);
-        if (!lu.factor()) throw new IllegalStateException("singular admittance matrix in island " + isl.id);
+        isl.faults = sites;
         isl.factored = true;
         isl.yDirty = false;
     }
 
+    private void stampAndFactor(Island isl) {
+        ComplexSparseLU lu = isl.lu;
+        lu.clear();
+        for (int k : isl.branches) {
+            int a = busLocal[bFrom[k]], c = busLocal[bTo[k]];
+            lu.add(lu.position(a, a), sFFr[k], sFFi[k]);
+            lu.add(lu.position(c, c), sTTr[k], sTTi[k]);
+            lu.add(lu.position(a, c), sFTr[k], sFTi[k]);
+            lu.add(lu.position(c, a), sFTr[k], sFTi[k]);
+        }
+        for (int b : isl.buses) {
+            if (fYRe[b] != 0 || fYIm[b] != 0) lu.add(lu.position(busLocal[b], busLocal[b]), fYRe[b], fYIm[b]);
+        }
+        for (int i : isl.machines) lu.add(lu.position(busLocal[mBus[i]], busLocal[mBus[i]]), 0, -mYgen[i]);
+        if (!lu.factor()) throw new IllegalStateException("singular admittance matrix in island " + isl.id);
+    }
+
+    private FaultSite[] collectFaults(Island isl) {
+        int n = 0;
+        for (int b : isl.buses) if (fType[b] != null) n++;
+        for (int k : isl.branches) if (bfType[k] != null) n++;
+        if (n == 0) return NO_FAULTS;
+        FaultSite[] sites = new FaultSite[n];
+        int m = 0, size = isl.buses.length;
+        for (int b : isl.buses) {
+            if (fType[b] != null) sites[m++] = new FaultSite(false, b, fType[b], busClass.get(b), size);
+        }
+        for (int k : isl.branches) {
+            if (bfType[k] != null) sites[m++] = new FaultSite(true, k, bfType[k], branchFaultClass(k), size);
+        }
+        return sites;
+    }
+
+    /**
+     * Столбец отклика c = Y⁻¹·e и z₁ в месте КЗ (§7.5.1). Ток J в точке x ветви — это (1 − x)·J в
+     * {@code from} и x·J в {@code to} плюс падение на x(1 − x)·z: z₁ = x(1 − x)z + (1 − x)c_f + x·c_t.
+     */
+    private void prepareSite(Island isl, FaultSite s) {
+        Arrays.fill(isl.bRe, 0);
+        Arrays.fill(isl.bIm, 0);
+        double zf;
+        if (!s.onBranch) {
+            isl.bRe[busLocal[s.index]] = 1;
+            zf = fZf[s.index];
+        } else {
+            int k = s.index;
+            double x = bfPos[k];
+            s.position = x;
+            isl.bRe[busLocal[bFrom[k]]] += 1 - x;
+            isl.bRe[busLocal[bTo[k]]] += x;
+            zf = bfZf[k];
+            s.tap = tap[k];
+            s.y1Re = yRe[k] / x;
+            s.y1Im = yIm[k] / x;
+            s.y2Re = yRe[k] / (1 - x);
+            s.y2Im = yIm[k] / (1 - x);
+        }
+        isl.lu.solve(isl.bRe, isl.bIm, s.cRe, s.cIm);
+        if (!s.onBranch) {
+            s.z1Re = s.cRe[busLocal[s.index]];
+            s.z1Im = s.cIm[busLocal[s.index]];
+        } else {
+            int k = s.index, lf = busLocal[bFrom[k]], lt = busLocal[bTo[k]];
+            double x = s.position, y2 = yRe[k] * yRe[k] + yIm[k] * yIm[k];
+            double zr = yRe[k] / y2, zi = -yIm[k] / y2;
+            s.z1Re = x * (1 - x) * zr + (1 - x) * s.cRe[lf] + x * s.cRe[lt];
+            s.z1Im = x * (1 - x) * zi + (1 - x) * s.cIm[lf] + x * s.cIm[lt];
+        }
+        s.shunt(zf);
+    }
+
+    /**
+     * КЗ внутри ветви без временного узла: Y_ff = (y₁ − y₁²/Y_m)/t² + y_ш,f, Y_ft = −y₁y₂/(Y_m·t),
+     * Y_tt = y₂ − y₂²/Y_m + y_ш,t, Y_m = y₁ + y₂ + y_Δ.
+     */
+    private void kronStamp(FaultSite s) {
+        int k = s.index;
+        double t = s.tap;
+        double mr = s.y1Re + s.y2Re + s.yRe, mi = s.y1Im + s.y2Im + s.yIm, m2 = mr * mr + mi * mi;
+        double ir = mr / m2, ii = -mi / m2; // 1/Y_m
+        double a2r = s.y1Re * s.y1Re - s.y1Im * s.y1Im, a2i = 2 * s.y1Re * s.y1Im;
+        double b2r = s.y2Re * s.y2Re - s.y2Im * s.y2Im, b2i = 2 * s.y2Re * s.y2Im;
+        double abr = s.y1Re * s.y2Re - s.y1Im * s.y2Im, abi = s.y1Re * s.y2Im + s.y1Im * s.y2Re;
+        sFFr[k] = (s.y1Re - (a2r * ir - a2i * ii)) / (t * t) + shFG[k];
+        sFFi[k] = (s.y1Im - (a2r * ii + a2i * ir)) / (t * t) + shFB[k];
+        sFTr[k] = -(abr * ir - abi * ii) / t;
+        sFTi[k] = -(abr * ii + abi * ir) / t;
+        sTTr[k] = s.y2Re - (b2r * ir - b2i * ii) + shTG[k];
+        sTTi[k] = s.y2Im - (b2r * ii + b2i * ir) + shTB[k];
+    }
+
     // ================================================================ события и виды
+
+    void relayEvent(int relay, ProtectionFunction f) {
+        if (event(EV_RELAY, relay)) evArg3[evCount - 1] = f.ordinal();
+    }
+
+    void loadEvent(int load, boolean connected) {
+        if (event(EV_LOAD, load)) evArg3[evCount - 1] = connected ? 1 : 0;
+    }
+
+    void breakdownEvent(int bus) {
+        event(EV_BREAKDOWN, bus);
+    }
 
     /** false — буфер полон, событие потеряно (старые события важнее). */
     private boolean event(int kind, int arg) {
@@ -1246,6 +1783,11 @@ public final class PowerGrid {
                 case EV_DEENERGIZED -> sink.islandDeenergized(evArg[e]);
                 case EV_POLE_SLIP -> sink.poleSlip(evArg[e]);
                 case EV_BREAKER -> sink.breakerStateChanged(evArg[e], BREAKER_STATES[evArg3[e]]);
+                case EV_RELAY -> sink.relayOperated(evArg[e], FUNCTIONS[evArg3[e]]);
+                case EV_GROUND -> sink.groundFault(evArg[e], evArg3[e] != 0);
+                case EV_LOAD -> sink.loadSwitched(evArg[e], evArg3[e] != 0);
+                case EV_CONDUCTOR -> sink.conductorBroken(evArg[e]);
+                case EV_BREAKDOWN -> sink.insulationBreakdown(evArg[e]);
                 default -> {
                     int o = e * EVENT_VALUES;
                     SyncScope sc = new SyncScope(evVal[o], evVal[o + 1], evVal[o + 2], evVal[o + 3]);
@@ -1298,31 +1840,71 @@ public final class PowerGrid {
 
     /** Активная мощность, втекающая в ветвь с конца {@code from}, Вт. */
     public double branchPowerFromW(BranchId id) {
-        int k = branch(id), f = bFrom[k], t = bTo[k];
+        int k = branch(id), f = bFrom[k];
         if (!closed[k]) return 0;
-        double t1 = tap[k];
-        double aRe = yRe[k] / (t1 * t1) + shFG[k], aIm = yIm[k] / (t1 * t1) + shFB[k];
-        double mRe = -yRe[k] / t1, mIm = -yIm[k] / t1;
-        double ir = aRe * vRe[f] - aIm * vIm[f] + mRe * vRe[t] - mIm * vIm[t];
-        double ii = aRe * vIm[f] + aIm * vRe[f] + mRe * vIm[t] + mIm * vRe[t];
-        return (vRe[f] * ir + vIm[f] * ii) * sb;
+        endCurrent(k, true);
+        return (vRe[f] * ecRe + vIm[f] * ecIm) * sb;
     }
 
-    /** Ток с конца {@code from}, А: I = i·S_b/(√3·U_b). */
+    /** Наибольший фазный ток с конца {@code from}, А: I = i·S_b/(√3·U_b); при несимметричном КЗ — с I₂ и I₀. */
     public double branchCurrentA(BranchId id) {
-        int k = branch(id);
-        return branchCurrentPu(k) * sb / (Math.sqrt(3) * busClass.get(bFrom[k]).volts);
+        return branchCurrentA(branch(id));
     }
 
-    private double branchCurrentPu(int k) {
-        int f = bFrom[k], t = bTo[k];
-        if (!closed[k]) return 0;
-        double t1 = tap[k];
-        double aRe = yRe[k] / (t1 * t1) + shFG[k], aIm = yIm[k] / (t1 * t1) + shFB[k];
-        double mRe = -yRe[k] / t1, mIm = -yIm[k] / t1;
-        double ir = aRe * vRe[f] - aIm * vIm[f] + mRe * vRe[t] - mIm * vIm[t];
-        double ii = aRe * vIm[f] + aIm * vRe[f] + mRe * vIm[t] + mIm * vRe[t];
-        return Math.hypot(ir, ii);
+    /** Фазный ток в месте КЗ на шине (наибольший), А; 0 — КЗ нет или это «земля». */
+    public double faultCurrentA(BusId at) {
+        int b = bus(at);
+        Island isl = islands[busIsland[b]];
+        if (!isl.solvable()) return 0;
+        for (FaultSite s : isl.faults) {
+            if (!s.onBranch && s.index == b) return s.phaseCurrentPu() * sb / (Math.sqrt(3) * busClass.get(b).volts);
+        }
+        return 0;
+    }
+
+    /** Фазный ток в месте КЗ внутри ветви, А (в классе конца, ближайшего к месту КЗ). */
+    public double branchFaultCurrentA(BranchId id) {
+        int k = branch(id);
+        FaultSite s = branchSite(k);
+        if (s == null || !islands[busIsland[bFrom[k]]].solvable()) return 0;
+        return s.phaseCurrentPu() * sb / (Math.sqrt(3) * s.cls.volts);
+    }
+
+    /**
+     * В сети с изолированной нейтралью шины есть однофазное замыкание на землю (§7.5.1): сигнал «земля»
+     * в пределах класса напряжения места замыкания.
+     */
+    public boolean groundFaultPresent(BusId at) {
+        int b = bus(at);
+        Island isl = islands[busIsland[b]];
+        if (!isl.energized) return false;
+        for (FaultSite s : isl.faults) if (s.ground && s.cls == busClass.get(b)) return true;
+        return false;
+    }
+
+    /**
+     * Наибольшее фазное напряжение шины, о.е. фазного номинала: при «земле» в сети с изолированной
+     * нейтралью здоровые фазы — √3·V; при КЗ — V₁ + V₂ + V₀ по откликам сети.
+     */
+    public double busMaxPhaseVoltagePu(BusId at) {
+        int b = bus(at);
+        double v1r = vRe[b], v1i = vIm[b];
+        Island isl = islands[busIsland[b]];
+        if (!isl.solvable() || isl.faults.length == 0) return Math.hypot(v1r, v1i);
+        if (groundFaultPresent(at)) return Math.sqrt(3) * Math.hypot(v1r, v1i);
+        int l = busLocal[b];
+        double v2r = 0, v2i = 0, v0r = 0, v0i = 0;
+        for (FaultSite s : isl.faults) {
+            double cr = s.cRe[l], ci = s.cIm[l];
+            v2r -= cr * s.i2Re - ci * s.i2Im;
+            v2i -= cr * s.i2Im + ci * s.i2Re;
+            if (s.zeroReaches(busClass.get(b))) {
+                double f0 = s.cls.zeroSequenceRatio;
+                v0r -= f0 * (cr * s.i0Re - ci * s.i0Im);
+                v0i -= f0 * (cr * s.i0Im + ci * s.i0Re);
+            }
+        }
+        return FaultSite.phaseMax(v1r, v1i, v2r, v2i, v0r, v0i);
     }
 
     /** Активная мощность нагрузки на последнем решении, Вт. */
@@ -1333,6 +1915,74 @@ public final class PowerGrid {
 
     public SynchronousMachine machine(MachineId id) {
         return machines.get(machineIndex(id));
+    }
+
+    // ================================================================ РЗА и нагрев: API
+
+    /**
+     * Ставит модуль РЗА (§7.5.2). Реле, действующие на отключение, требуют выключателя на ветви
+     * присоединения; реле частоты и АЧР получают смещение уставки на погрешность поколения.
+     */
+    public RelayId addRelay(ProtectionRelay relay, RelayMount mount) {
+        return new RelayId(protection.add(relay, mount));
+    }
+
+    /** Память реле: выход на последнем тике, у АПВ — фаза цикла. */
+    public RelayState relayState(RelayId id) {
+        return protection.state(id.index());
+    }
+
+    /** Расцепитель автомата или плавкая вставка 0,4 кВ на ветви (§7.4.6). */
+    public void attachTripUnit(BranchId id, LvTripUnit unit) {
+        protection.attachTripUnit(branch(id), Objects.requireNonNull(unit, "unit"));
+    }
+
+    /** Плавкая вставка ветви перегорела и ждёт замены. */
+    public boolean fuseBlown(BranchId id) {
+        return protection.fuseBlown(branch(id));
+    }
+
+    /** Новая вставка того же номинала; ветвь остаётся отключённой до включения. */
+    public void replaceFuse(BranchId id) {
+        protection.replaceFuse(branch(id));
+    }
+
+    /** Зерно случайности сети (броски намагничивания, переход «земли» в двойное замыкание, погрешности реле). */
+    public void setRandomSeed(long seed) {
+        rng = new SplittableRandom(seed);
+    }
+
+    /** Температура провода ВЛ или наиболее нагретой точки трансформатора, °C. */
+    public double branchTemperatureC(BranchId id) {
+        return brTempC[branch(id)];
+    }
+
+    /** Повреждение провода от отжига выше 90 °C; 1 — обрыв (§7.4.1). */
+    public double conductorDamage(BranchId id) {
+        return brDamage[branch(id)];
+    }
+
+    /** Израсходованный ресурс изоляции трансформатора, ч нормального старения (§7.4.4). */
+    public double transformerLossOfLifeH(BranchId id) {
+        return trLifeH[branch(id)];
+    }
+
+    /** Идёт бросок тока намагничивания трансформатора. */
+    public boolean inrushActive(BranchId id) {
+        return inrushH2(branch(id)) > 0;
+    }
+
+    /** Температура обмотки двигателя по тепловому образу, °C. */
+    public double motorWindingTemperatureC(MotorId id) {
+        return moTempC[motor(id)];
+    }
+
+    Branch branchSpecAt(int k) {
+        return branchSpec.get(k);
+    }
+
+    VoltageClass busClassAt(int b) {
+        return busClass.get(b);
     }
 
     public InductionMotorSpec motorSpec(MotorId id) {
@@ -1380,6 +2030,7 @@ public final class PowerGrid {
     public MotorState motorState(MotorId id) {
         int j = motor(id);
         Island isl = islands[busIsland[moBus[j]]];
+        if (moFaulted[j]) return MotorState.FAULTED;
         if (!moOn[j] || !isl.energized) return MotorState.OFF;
         if (1 - moW[j] / isl.omegaCoi <= motorSpec.get(j).sK()) return MotorState.RUNNING;
         return moTe[j] > moTlUsed[j] ? MotorState.STARTING : MotorState.STALLED;
@@ -1442,25 +2093,25 @@ public final class PowerGrid {
         return id.index();
     }
 
-    private int branch(BranchId id) {
+    int branch(BranchId id) {
         Objects.requireNonNull(id, "branch");
         if (id.index() >= nbr) throw new IllegalArgumentException("unknown branch " + id.index());
         return id.index();
     }
 
-    private int machineIndex(MachineId id) {
+    int machineIndex(MachineId id) {
         Objects.requireNonNull(id, "machine");
         if (id.index() >= nm) throw new IllegalArgumentException("unknown machine " + id.index());
         return id.index();
     }
 
-    private int load(LoadId id) {
+    int load(LoadId id) {
         Objects.requireNonNull(id, "load");
         if (id.index() >= nl) throw new IllegalArgumentException("unknown load " + id.index());
         return id.index();
     }
 
-    private int motor(MotorId id) {
+    int motor(MotorId id) {
         Objects.requireNonNull(id, "motor");
         if (id.index() >= nmo) throw new IllegalArgumentException("unknown motor " + id.index());
         return id.index();
@@ -1479,6 +2130,10 @@ public final class PowerGrid {
 
     boolean initialized() {
         return initialized;
+    }
+
+    boolean topologyPending() {
+        return topologyDirty;
     }
 
     void setVoltageReference(int i, double pu) {
@@ -1539,7 +2194,7 @@ public final class PowerGrid {
     }
 
     MachineState machineState(int i) {
-        if (shaftDmg[i] >= 1) return MachineState.DAMAGED;
+        if (shaftDmg[i] >= 1 || statorDmg[i] >= 1) return MachineState.DAMAGED;
         if (slips[i] > 0) return MachineState.ASYNC;
         boolean loaded = pe[i] > 0.05 * mS[i];
         if (!loaded && islands[busIsland[mBus[i]]].machines.length == 1)
@@ -1556,6 +2211,12 @@ public final class PowerGrid {
     void repairCoupling(int i) {
         if (shaftDmg[i] >= 1) throw new IllegalStateException("the shaft is broken");
         sheared[i] = false;
+    }
+
+    /** Перемотка статора: повреждение снято, КЗ внутри машины устранено. */
+    void repairStator(int i) {
+        statorDmg[i] = 0;
+        if (fMachine[mBus[i]] == i) clearBusFault(mBus[i]);
     }
 
     private void growMachines() {
@@ -1613,6 +2274,7 @@ public final class PowerGrid {
         vt = grow(vt, n);
         pTargetW = grow(pTargetW, n);
         vSetPu = grow(vSetPu, n);
+        mBreakdownPu = grow(mBreakdownPu, n);
     }
 
     private static double[] grow(double[] a, int n) {
@@ -1636,6 +2298,7 @@ public final class PowerGrid {
         final int id;
         final int[] buses;
         int[] machines, loads, motors, branches;
+        FaultSite[] faults = NO_FAULTS;
         final double[] bRe, bIm;
         ComplexSparseLU lu;
         boolean energized, factored, yDirty;

@@ -147,6 +147,11 @@ public final class SynchronousMachine {
     }
 
     /** Ремонт срезанной муфты без штифта; со сломанным валом — {@link IllegalStateException}. */
+    /** Перемотка статора после пробоя изоляции или ударов несинхронного включения. */
+    public void repairStator() {
+        requireGrid().repairStator(i);
+    }
+
     public void repairCoupling() {
         requireGrid().repairCoupling(i);
     }

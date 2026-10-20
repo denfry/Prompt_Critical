@@ -20,6 +20,19 @@ public sealed interface Branch permits Branch.Line, Branch.Transformer, Branch.C
             if (!(rPu >= 0 && xPu >= 0 && rPu + xPu > 0)) throw new IllegalArgumentException("impedance");
             if (!(bPu >= 0)) throw new IllegalArgumentException("bPu");
         }
+
+        /**
+         * ВЛ из провода {@code spec} длиной {@code lengthM} в классе {@code vc}: r₀ — паспорт провода,
+         * x₀ = 0,1445·lg(D_ср/r_э) Ом/км задаёт опора, b₀ ≈ 7,58·10⁻⁶/lg(D_ср/r_э) См/км (§7.4.1).
+         */
+        public static Line overhead(BusId from, BusId to, ConductorSpec spec, double x0OhmPerKm, double lengthM,
+                VoltageClass vc, double baseVa) {
+            if (!(x0OhmPerKm > 0 && lengthM > 0)) throw new IllegalArgumentException("line data");
+            double zb = vc.volts * vc.volts / baseVa, km = lengthM / 1e3;
+            double b0 = 7.58e-6 / (x0OhmPerKm / 0.1445);
+            return new Line(from, to, spec.r20OhmPerKm() * km / zb, x0OhmPerKm * km / zb, b0 * km * zb,
+                    spec.ampacityA(), spec, lengthM);
+        }
     }
 
     record Cable(BusId from, BusId to, double rPu, double xPu, double bPu, double iMaxA, double lengthM)

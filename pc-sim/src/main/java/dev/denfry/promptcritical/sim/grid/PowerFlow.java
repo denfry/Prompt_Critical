@@ -110,7 +110,7 @@ final class PowerFlow {
             yr[c][a] -= g.yRe[k] / t;
             yi[c][a] -= g.yIm[k] / t;
         }
-        for (int b : isl.buses) yr[g.busLocal[b]][g.busLocal[b]] += g.faultG[b];
+        // КЗ в потокораспределение не входят: это доаварийный режим, КЗ появляется с первого тика
     }
 
     /** S_k = V_k·conj((Y V)_k). */
