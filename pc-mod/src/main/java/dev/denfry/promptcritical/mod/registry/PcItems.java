@@ -90,6 +90,10 @@ public final class PcItems {
     public static final DeferredItem<RelayModuleItem> RELAY_AUTORECLOSE = relay("relay_autoreclose", RelaySetting.Kind.AUTORECLOSE);
     public static final DeferredItem<RelayModuleItem> RELAY_BREAKER_FAILURE = relay("relay_breaker_failure",
             RelaySetting.Kind.BREAKER_FAILURE);
+    // --- автоматика A1–A2 (03d, этап 9 M3) ---
+    public static final DeferredItem<dev.denfry.promptcritical.mod.automation.WiringToolItem> WIRING_TOOL = registered(ITEMS.registerItem(
+            "wiring_tool", dev.denfry.promptcritical.mod.automation.WiringToolItem::new, new Item.Properties().stacksTo(1)));
+    public static final DeferredItem<Item> RELAY_COIL = item("relay_coil", 64);
     // справочник (11)
     public static final DeferredItem<EngineeringHandbookItem> ENGINEERING_HANDBOOK = registered(ITEMS.registerItem("engineering_handbook",
             EngineeringHandbookItem::new, new Item.Properties().stacksTo(1)));

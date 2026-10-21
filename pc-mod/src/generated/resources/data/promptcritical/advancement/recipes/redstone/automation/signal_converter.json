@@ -1,0 +1,32 @@
+{
+  "parent": "minecraft:recipes/root",
+  "criteria": {
+    "has_coil": {
+      "conditions": {
+        "items": [
+          {
+            "items": "promptcritical:relay_coil"
+          }
+        ]
+      },
+      "trigger": "minecraft:inventory_changed"
+    },
+    "has_the_recipe": {
+      "conditions": {
+        "recipe": "promptcritical:automation/signal_converter"
+      },
+      "trigger": "minecraft:recipe_unlocked"
+    }
+  },
+  "requirements": [
+    [
+      "has_the_recipe",
+      "has_coil"
+    ]
+  ],
+  "rewards": {
+    "recipes": [
+      "promptcritical:automation/signal_converter"
+    ]
+  }
+}

@@ -35,6 +35,12 @@ public final class PcProperties {
     public static final EnumProperty<BarrierKind> BARRIER_KIND = EnumProperty.create("kind", BarrierKind.class);
     public static final EnumProperty<MoldStage> MOLD_STAGE = EnumProperty.create("stage", MoldStage.class);
     public static final EnumProperty<Bird> BIRD = EnumProperty.create("bird", Bird.class);
+    /** Автоматика A1–A2 (03d, этап 9 M3): якорь реле притянут, выдержка истекла, станция в РУЧ. */
+    public static final BooleanProperty PICKED = BooleanProperty.create("picked");
+    public static final BooleanProperty DONE = BooleanProperty.create("done");
+    public static final BooleanProperty MANUAL = BooleanProperty.create("manual");
+    public static final EnumProperty<ProcessKind> PROCESS_KIND = EnumProperty.create("kind", ProcessKind.class);
+    public static final EnumProperty<GasAlarm> GAS_ALARM = EnumProperty.create("alarm", GasAlarm.class);
 
     private PcProperties() {
     }
@@ -70,4 +76,10 @@ public final class PcProperties {
     public enum MoldStage implements Named { EMPTY, POURED, COOLING }
 
     public enum Bird implements Named { EMPTY, ALIVE, FAINTED }
+
+    /** Вид реле процесса (порядок — {@code ProcessSwitchKind}). */
+    public enum ProcessKind implements Named { PRESSURE, LEVEL, TEMPERATURE, FLOW }
+
+    /** Порог газоанализатора. */
+    public enum GasAlarm implements Named { NONE, WARN, ALARM }
 }

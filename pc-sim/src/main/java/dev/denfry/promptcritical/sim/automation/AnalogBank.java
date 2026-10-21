@@ -427,6 +427,36 @@ public final class AnalogBank {
         return size;
     }
 
+    // ---------------------------------------------------------------- перенос при пересборке схемы
+
+    /** Память блока для новой схемы: состояние и индивидуальные погрешности, разыгранные при установке. */
+    double[] memo(int b) {
+        checkBlock(b);
+        return new double[] {y[b], xPrev[b], eps[b], noise[b], gainErr[b], offset[b], staticErr[b], sinceCalS[b],
+                failed[b] ? 1 : 0, mode[b], p0[b], p1[b], p2[b], p3[b]};
+    }
+
+    /** Восстановить память; уставки (T_i, пределы, режим интегратора) остаются от новой схемы, у станции — из памяти. */
+    void restore(int b, double[] m) {
+        checkBlock(b);
+        if (m == null || m.length < 14) return;
+        y[b] = m[0];
+        xPrev[b] = m[1];
+        eps[b] = m[2];
+        noise[b] = m[3];
+        if (!ideal[b]) {
+            gainErr[b] = m[4];
+            offset[b] = m[5];
+            staticErr[b] = m[6];
+        }
+        sinceCalS[b] = m[7];
+        failed[b] = m[8] != 0;
+        if (KINDS[kind[b]] == AnalogKind.MANUAL_STATION) {
+            mode[b] = (byte) m[9];
+            p1[b] = m[11];
+        }
+    }
+
     // ---------------------------------------------------------------- внутреннее
 
     private void evaluate(int b) {

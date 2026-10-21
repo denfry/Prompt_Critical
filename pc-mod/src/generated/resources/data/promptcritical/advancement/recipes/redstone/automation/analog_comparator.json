@@ -1,0 +1,32 @@
+{
+  "parent": "minecraft:recipes/root",
+  "criteria": {
+    "has_summer": {
+      "conditions": {
+        "items": [
+          {
+            "items": "promptcritical:analog_summer"
+          }
+        ]
+      },
+      "trigger": "minecraft:inventory_changed"
+    },
+    "has_the_recipe": {
+      "conditions": {
+        "recipe": "promptcritical:automation/analog_comparator"
+      },
+      "trigger": "minecraft:recipe_unlocked"
+    }
+  },
+  "requirements": [
+    [
+      "has_the_recipe",
+      "has_summer"
+    ]
+  ],
+  "rewards": {
+    "recipes": [
+      "promptcritical:automation/analog_comparator"
+    ]
+  }
+}

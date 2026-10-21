@@ -31,7 +31,7 @@ public final class SwitchUnit extends GridUnit {
 
     final Kind kind;
     int rating = 7;
-    boolean fuseInstalled = true, earthed, interlock;
+    boolean fuseInstalled = true, earthed, interlock, controlPower = true;
     /** Контакты разомкнуты/замкнуты, пока сети ещё нет (новая ячейка, разрыв цепи). */
     boolean closedIdle;
     BranchId branch;
@@ -79,6 +79,21 @@ public final class SwitchUnit extends GridUnit {
                 changed();
             }
         }
+    }
+
+    /**
+     * Оперативный ток привода (03d §3d.13.4): без него выключатель не исполняет ни команд, ни отключений РЗА
+     * ({@link BreakerResponse#NO_CONTROL_POWER}). Пока цепь «+/−» ячейки не подключена к автоматике — встроенный.
+     */
+    public void setControlPower(boolean dc) {
+        if (controlPower == dc) return;
+        controlPower = dc;
+        if (branch != null && owner.ready() && (kind == Kind.MV_BREAKER || kind == Kind.LV_BREAKER))
+            owner.grid().setBreakerControlPower(branch, dc);
+    }
+
+    public boolean controlPower() {
+        return controlPower;
     }
 
     public boolean interlocked() {
@@ -263,6 +278,7 @@ public final class SwitchUnit extends GridUnit {
             g.importBranch(branch, s);
         }
         if (kind == Kind.FUSE && !fuseInstalled) g.setBreaker(branch, false);
+        if (kind == Kind.MV_BREAKER || kind == Kind.LV_BREAKER) g.setBreakerControlPower(branch, controlPower);
         if (kind == Kind.DISCONNECTOR && earthed) g.applyFault(b.bus(node(1)), FaultType.THREE_PHASE, 0, false);
     }
 

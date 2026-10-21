@@ -173,6 +173,9 @@ public final class PcBlocks {
             PressureGaugeBlock::create, Properties.of().mapColor(MapColor.METAL).strength(1.0f).sound(SoundType.COPPER)
                     .noOcclusion().pushReaction(PushReaction.DESTROY)));
 
+    /** Реле на DIN-рейке: корпус у стены (модель {@code relay}). */
+    private static final double[] RELAY_BOX = {0.5, 1, 5.9, 15.5, 15, 16};
+
     // --- электросеть I1 (07 §7.3–7.6, этап 8 M3) ---
     private static final Footprint FP_DISCONNECTOR = Footprint.of(Segment.box(-1, 1, 0, 1, 0, 0));
     public static final DeferredBlock<PcDeviceBlock> SHAFT_GENERATOR = device("shaft_generator", machine(),
@@ -352,6 +355,41 @@ public final class PcBlocks {
     public static final DeferredBlock<MultiblockPartBlock> MULTIBLOCK_PART = BLOCKS.registerBlock("multiblock_part",
             MultiblockPartBlock::new, Properties.of().mapColor(MapColor.METAL).strength(3.5f, 6.0f).noOcclusion()
                     .noLootTable().pushReaction(PushReaction.BLOCK).isViewBlocking((s, l, p) -> false));
+    // --- автоматика A1–A2 и пульт (03d, 03c, этап 9 M3) ---
+    public static final DeferredBlock<PcDeviceBlock> RELAY = automationWall("relay", Spec.facing(PcProperties.PICKED), RELAY_BOX);
+    public static final DeferredBlock<PcDeviceBlock> RELAY_LATCHING = automationWall("relay_latching", Spec.facing(PcProperties.PICKED),
+            RELAY_BOX);
+    public static final DeferredBlock<PcDeviceBlock> TIME_RELAY = automationWall("time_relay",
+            Spec.facing(PcProperties.RUNNING, PcProperties.DONE), 0.5, 1, 8, 15.5, 15, 16);
+    public static final DeferredBlock<PcDeviceBlock> STEPPING_SWITCH = automationBlock("stepping_switch", Spec.facing());
+    public static final DeferredBlock<PcDeviceBlock> CAM_CONTROLLER = automationBlock("cam_controller", Spec.facing());
+    public static final DeferredBlock<PcDeviceBlock> PROCESS_SWITCH = automationWall("process_switch",
+            Spec.facing(PcProperties.PROCESS_KIND, PcProperties.ALARM), 4, 0, 9.4, 12, 15.5, 16);
+    public static final DeferredBlock<PcDeviceBlock> RELAY_POWER_SUPPLY = automationWall("relay_power_supply",
+            Spec.facing(BlockStateProperties.POWERED, PcProperties.ALARM), 0.5, 1, 8.4, 15.5, 15, 16);
+    public static final DeferredBlock<PcDeviceBlock> RELAY_RACK = device("relay_rack", machine(),
+            Spec.facing(BlockStateProperties.OPEN).footprint(FP_TALL2),
+            FoundryBlock.with(dev.denfry.promptcritical.mod.automation.RelayRackBlockEntity::new));
+    public static final DeferredBlock<PcDeviceBlock> REDSTONE_INTERFACE = automationWall("redstone_interface",
+            Spec.facing(BlockStateProperties.POWERED), RELAY_BOX);
+    public static final DeferredBlock<PcDeviceBlock> PUSHBUTTON = automationWall("pushbutton", Spec.facing(BlockStateProperties.LIT),
+            0, 0, 10.97, 16, 16, 16);
+    public static final DeferredBlock<PcDeviceBlock> SELECTOR_SWITCH = automationWall("selector_switch", Spec.facing(), 0, 0, 12.5, 16, 16, 16);
+    public static final DeferredBlock<PcDeviceBlock> KEY_SWITCH = automationWall("key_switch", Spec.facing(), 0, 0, 12.5, 16, 16, 16);
+    public static final DeferredBlock<PcDeviceBlock> INDICATOR_LAMP = automationWall("indicator_lamp", Spec.facing(BlockStateProperties.LIT),
+            0, 0, 10.5, 16, 16, 16);
+    public static final DeferredBlock<PcDeviceBlock> GAS_DETECTOR = automationWall("gas_detector", Spec.facing(PcProperties.GAS_ALARM),
+            4, 2, 8, 12.5, 15, 16);
+    public static final DeferredBlock<PcDeviceBlock> ANALOG_SUMMER = automationBlock("analog_summer", Spec.facing());
+    public static final DeferredBlock<PcDeviceBlock> ANALOG_INTEGRATOR = automationBlock("analog_integrator", Spec.facing());
+    public static final DeferredBlock<PcDeviceBlock> ANALOG_DIFFERENTIATOR = automationBlock("analog_differentiator", Spec.facing());
+    public static final DeferredBlock<PcDeviceBlock> ANALOG_MULTIPLIER = automationBlock("analog_multiplier", Spec.facing());
+    public static final DeferredBlock<PcDeviceBlock> ANALOG_FUNCTION = automationBlock("analog_function", Spec.facing());
+    public static final DeferredBlock<PcDeviceBlock> ANALOG_COMPARATOR = automationBlock("analog_comparator", Spec.facing(PcProperties.ALARM));
+    public static final DeferredBlock<PcDeviceBlock> MANUAL_STATION = automationWall("manual_station", Spec.facing(PcProperties.MANUAL),
+            0, 0, 4.5, 16, 16, 16);
+    public static final DeferredBlock<PcDeviceBlock> SIGNAL_CONVERTER = automationWall("signal_converter", Spec.facing(), 0.5, 1, 9, 15.5, 15, 16);
+
 
     private PcBlocks() {
     }
@@ -390,6 +428,16 @@ public final class PcBlocks {
 
     private static DeferredBlock<PcBlock> block(String name, Properties props, Spec spec) {
         return withItem(BLOCKS.registerBlock(name, p -> PcBlock.create(p, spec), props));
+    }
+
+    private static DeferredBlock<PcDeviceBlock> automationWall(String name, Spec spec, double... box) {
+        return device(name, instrument(), spec, dev.denfry.promptcritical.mod.automation.AutomationWallBlock.wall(
+                (pos, state) -> dev.denfry.promptcritical.mod.automation.AutomationBlockEntities.create(name, pos, state), box));
+    }
+
+    private static DeferredBlock<PcDeviceBlock> automationBlock(String name, Spec spec) {
+        return device(name, machine(), spec,
+                FoundryBlock.with((pos, state) -> dev.denfry.promptcritical.mod.automation.AutomationBlockEntities.create(name, pos, state)));
     }
 
     private static DeferredBlock<PcDeviceBlock> device(String name, Properties props, Spec spec) {

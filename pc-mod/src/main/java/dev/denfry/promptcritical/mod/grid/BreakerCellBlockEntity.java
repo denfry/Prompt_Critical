@@ -1,5 +1,10 @@
 package dev.denfry.promptcritical.mod.grid;
 
+import dev.denfry.promptcritical.mod.automation.MechanismWiring;
+import dev.denfry.promptcritical.mod.automation.WiredDevice;
+import dev.denfry.promptcritical.sim.automation.AutomationKind;
+import dev.denfry.promptcritical.sim.automation.AutomationSubsystem;
+import dev.denfry.promptcritical.sim.automation.AutomationUnit;
 import dev.denfry.promptcritical.mod.block.PcProperties;
 import dev.denfry.promptcritical.mod.panel.PanelHost;
 import dev.denfry.promptcritical.mod.panel.PanelLayout;
@@ -27,8 +32,11 @@ import org.jetbrains.annotations.Nullable;
  * шина — боковые грани (ряд ячеек = шина), присоединение — задняя грань и верх; у щита ввод — сзади, отходящие —
  * по бокам и сверху. Модули РЗА — в соседнем шкафу {@code relay_cabinet}.
  */
-public class BreakerCellBlockEntity extends GridDeviceBlockEntity<SwitchUnit> implements PanelHost {
+public class BreakerCellBlockEntity extends GridDeviceBlockEntity<SwitchUnit> implements PanelHost, WiredDevice {
     private final SwitchUnit.Kind kind;
+    private final MechanismWiring wiring = new MechanismWiring();
+    /** Электромагниты включения/отключения под напряжением на прошлом тике (команда — по фронту). */
+    private boolean lastClose, lastTrip;
 
     public BreakerCellBlockEntity(BlockPos pos, BlockState state, SwitchUnit.Kind kind) {
         super(kind == SwitchUnit.Kind.MV_BREAKER ? GridBlockEntities.SWITCHGEAR_CELL.get() : GridBlockEntities.LV_SWITCHBOARD.get(),
@@ -85,6 +93,17 @@ public class BreakerCellBlockEntity extends GridDeviceBlockEntity<SwitchUnit> im
     @Override
     protected void serverTick(SwitchUnit u) {
         if (ticks % 20 == 3) u.setRelays(cabinetRelays());
+        AutomationUnit a = MechanismWiring.unit(level, simId(), AutomationKind.BREAKER_IO);
+        if (a != null) {
+            // клеммы «+/−» подключены — привод питается от цепи оперативного тока; иначе встроенный
+            a.setInput(AutomationUnit.IN_MAIN, u.closed() ? 1 : 0);
+            u.setControlPower(!(a.wired(0) || a.wired(1)) || a.loadEnergized(0));
+            boolean close = a.loadEnergized(1), trip = a.loadEnergized(2);
+            if (trip && !lastTrip) operate(null, false);
+            else if (close && !lastClose) operate(null, true);
+            lastClose = close;
+            lastTrip = trip;
+        }
         if (ticks % 5 == 0) {
             BreakerState s = u.breakerState();
             setFlag(BlockStateProperties.OPEN, !u.closed());
@@ -149,5 +168,80 @@ public class BreakerCellBlockEntity extends GridDeviceBlockEntity<SwitchUnit> im
             default -> {
             }
         }
+    }
+
+    // --- клеммы автоматики (03d, этап 9) ---
+
+    @Override
+    protected void saveAdditional(net.minecraft.nbt.CompoundTag tag, net.minecraft.core.HolderLookup.Provider registries) {
+        super.saveAdditional(tag, registries);
+        wiring.save(tag);
+    }
+
+    @Override
+    protected void loadAdditional(net.minecraft.nbt.CompoundTag tag, net.minecraft.core.HolderLookup.Provider registries) {
+        super.loadAdditional(tag, registries);
+        wiring.load(tag);
+    }
+
+    @Override
+    public BlockPos wiredPos() {
+        return worldPosition;
+    }
+
+    @Override
+    public AutomationKind wiredKind() {
+        return AutomationKind.BREAKER_IO;
+    }
+
+    @Override
+    public Direction wiredFacing() {
+        return facing();
+    }
+
+    @Override
+    public List<WiredDevice.Wire> wires() {
+        return wiring.wires();
+    }
+
+    @Override
+    public void wiresChanged() {
+        MechanismWiring.changed(this);
+    }
+
+    @Override
+    @Nullable
+    public AutomationUnit automationUnit(AutomationSubsystem automation) {
+        return simId().isNone() ? null : automation.unit(simId(), AutomationKind.BREAKER_IO);
+    }
+
+    @Override
+    public void onLoad() {
+        super.onLoad();
+        wiring.onLoad(this, this);
+    }
+
+    @Override
+    public void onChunkUnloaded() {
+        super.onChunkUnloaded();
+        wiring.onChunkUnloaded();
+    }
+
+    @Override
+    public void setRemoved() {
+        super.setRemoved();
+        wiring.setRemoved(this, this);
+    }
+
+    @Override
+    public net.minecraft.nbt.CompoundTag getUpdateTag(net.minecraft.core.HolderLookup.Provider registries) {
+        net.minecraft.nbt.CompoundTag tag = new net.minecraft.nbt.CompoundTag();
+        wiring.save(tag);
+        return tag;
+    }
+
+    @Override
+    public net.minecraft.network.protocol.Packet<net.minecraft.network.protocol.game.ClientGamePacketListener> getUpdatePacket() {
+        return net.minecraft.network.protocol.game.ClientboundBlockEntityDataPacket.create(this);
     }
 }

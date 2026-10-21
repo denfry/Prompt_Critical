@@ -156,6 +156,28 @@ public final class PcBlockStateProvider extends BlockStateProvider {
             case "relay_cabinet" -> s.getValue(PcProperties.ALARM) ? id + "_tripped" : id;
             case "lv_distribution_box" -> s.getValue(PcProperties.ALARM) ? id + "_tripped" : id;
             case "grid_consumer" -> s.getValue(BlockStateProperties.LIT) ? id : id + "_dark";
+            // автоматика (этап 9 M3)
+            case "relay" -> s.getValue(PcProperties.PICKED) ? id + "_picked" : id;
+            case "relay_latching" -> s.getValue(PcProperties.PICKED) ? id + "_set" : id;
+            case "redstone_interface" -> s.getValue(BlockStateProperties.POWERED) ? id + "_powered" : id;
+            case "time_relay" -> s.getValue(PcProperties.DONE) ? id + "_done" : s.getValue(PcProperties.RUNNING) ? id + "_running" : id;
+            case "process_switch" -> s.getValue(PcProperties.ALARM) ? id + "_tripped" : switch (s.getValue(PcProperties.PROCESS_KIND)) {
+                case PRESSURE -> id;
+                case LEVEL -> id + "_level";
+                case TEMPERATURE -> id + "_temperature";
+                case FLOW -> id + "_flow";
+            };
+            case "relay_power_supply" -> s.getValue(PcProperties.ALARM) ? id + "_overload"
+                    : s.getValue(BlockStateProperties.POWERED) ? id + "_powered" : id;
+            case "pushbutton" -> s.getValue(BlockStateProperties.LIT) ? id + "_lit" : id;
+            case "indicator_lamp" -> s.getValue(BlockStateProperties.LIT) ? id : id + "_off";
+            case "gas_detector" -> switch (s.getValue(PcProperties.GAS_ALARM)) {
+                case NONE -> id;
+                case WARN -> id + "_warn";
+                case ALARM -> id + "_alarm";
+            };
+            case "analog_comparator" -> s.getValue(PcProperties.ALARM) ? id + "_tripped" : id;
+            case "manual_station" -> s.getValue(PcProperties.MANUAL) ? id + "_manual" : id;
             case "wooden_pole", "concrete_pole" -> switch (s.getValue(PcProperties.CHIMNEY_PART)) {
                 case BASE -> id + "_bottom";
                 case TOP -> id + "_top";

@@ -22,7 +22,7 @@ public final class GridBlocks {
             blocks = Set.of(PcBlocks.SHAFT_GENERATOR.get(), PcBlocks.ELECTRIC_MOTOR.get(), PcBlocks.SWITCHGEAR_CELL.get(),
                     PcBlocks.LV_SWITCHBOARD.get(), PcBlocks.DISTRIBUTION_TRANSFORMER.get(), PcBlocks.DISCONNECTOR.get(),
                     PcBlocks.GRID_CONSUMER.get(), PcBlocks.LV_DISTRIBUTION_BOX.get(), PcBlocks.WIRE_CONNECTOR_LV.get(),
-                    PcBlocks.WIRE_CONNECTOR_MV.get());
+                    PcBlocks.WIRE_CONNECTOR_MV.get(), PcBlocks.RELAY_POWER_SUPPLY.get());
         }
         return blocks;
     }

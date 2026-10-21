@@ -1,5 +1,10 @@
 package dev.denfry.promptcritical.mod.grid;
 
+import dev.denfry.promptcritical.mod.automation.MechanismWiring;
+import dev.denfry.promptcritical.mod.automation.WiredDevice;
+import dev.denfry.promptcritical.sim.automation.AutomationKind;
+import dev.denfry.promptcritical.sim.automation.AutomationSubsystem;
+import dev.denfry.promptcritical.sim.automation.AutomationUnit;
 import dev.denfry.promptcritical.mod.panel.PanelHost;
 import dev.denfry.promptcritical.mod.panel.PanelLayout;
 import dev.denfry.promptcritical.sim.grid.ConsumerUnit;
@@ -24,7 +29,8 @@ import org.jetbrains.annotations.Nullable;
  * Потребитель-посёлок ({@code grid_consumer}, 3×3×3, 07 §7.6.1): ТП 6 кВ, кабель — к любой наружной грани. Мощность и
  * рубильник — на щите; два места под модули АЧР, 27, 81, 51 ({@code relay_ufls} ставит в очередь АЧР).
  */
-public class ConsumerBlockEntity extends GridDeviceBlockEntity<ConsumerUnit> implements PanelHost {
+public class ConsumerBlockEntity extends GridDeviceBlockEntity<ConsumerUnit> implements PanelHost, WiredDevice {
+    private final MechanismWiring wiring = new MechanismWiring();
     public static final int SLOTS = 2;
 
     private final ItemStackHandler modules = new ItemStackHandler(SLOTS) {
@@ -87,6 +93,8 @@ public class ConsumerBlockEntity extends GridDeviceBlockEntity<ConsumerUnit> imp
 
     @Override
     protected void serverTick(ConsumerUnit u) {
+        AutomationUnit a = MechanismWiring.unit(level, simId(), AutomationKind.CONSUMER_IO);
+        if (a != null) a.setInput(AutomationUnit.IN_MAIN, u.energized() ? 1 : 0);
         if (ticks % 20 == 7) u.setRelays(settings());
         if (ticks % 10 == 0) setFlag(BlockStateProperties.LIT, u.energized());
     }
@@ -124,12 +132,77 @@ public class ConsumerBlockEntity extends GridDeviceBlockEntity<ConsumerUnit> imp
     @Override
     protected void saveAdditional(CompoundTag tag, HolderLookup.Provider registries) {
         super.saveAdditional(tag, registries);
+        wiring.save(tag);
         tag.put("modules", modules.serializeNBT(registries));
     }
 
     @Override
     protected void loadAdditional(CompoundTag tag, HolderLookup.Provider registries) {
         super.loadAdditional(tag, registries);
+        wiring.load(tag);
         if (tag.contains("modules")) modules.deserializeNBT(registries, tag.getCompound("modules"));
+    }
+
+    // --- клеммы автоматики (03d, этап 9) ---
+
+    @Override
+    public BlockPos wiredPos() {
+        return worldPosition;
+    }
+
+    @Override
+    public AutomationKind wiredKind() {
+        return AutomationKind.CONSUMER_IO;
+    }
+
+    @Override
+    public Direction wiredFacing() {
+        return facing();
+    }
+
+    @Override
+    public List<WiredDevice.Wire> wires() {
+        return wiring.wires();
+    }
+
+    @Override
+    public void wiresChanged() {
+        MechanismWiring.changed(this);
+    }
+
+    @Override
+    @Nullable
+    public AutomationUnit automationUnit(AutomationSubsystem automation) {
+        return simId().isNone() ? null : automation.unit(simId(), AutomationKind.CONSUMER_IO);
+    }
+
+    @Override
+    public void onLoad() {
+        super.onLoad();
+        wiring.onLoad(this, this);
+    }
+
+    @Override
+    public void onChunkUnloaded() {
+        super.onChunkUnloaded();
+        wiring.onChunkUnloaded();
+    }
+
+    @Override
+    public void setRemoved() {
+        super.setRemoved();
+        wiring.setRemoved(this, this);
+    }
+
+    @Override
+    public net.minecraft.nbt.CompoundTag getUpdateTag(net.minecraft.core.HolderLookup.Provider registries) {
+        net.minecraft.nbt.CompoundTag tag = new net.minecraft.nbt.CompoundTag();
+        wiring.save(tag);
+        return tag;
+    }
+
+    @Override
+    public net.minecraft.network.protocol.Packet<net.minecraft.network.protocol.game.ClientGamePacketListener> getUpdatePacket() {
+        return net.minecraft.network.protocol.game.ClientboundBlockEntityDataPacket.create(this);
     }
 }

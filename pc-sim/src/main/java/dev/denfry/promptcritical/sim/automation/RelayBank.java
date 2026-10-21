@@ -578,6 +578,70 @@ public final class RelayBank {
         return relays;
     }
 
+    // ---------------------------------------------------------------- перенос при пересборке схемы
+
+    /** Память реле для новой схемы (банк только растёт, поэтому мир пересобирает его целиком). */
+    double[] memoRelay(int r) {
+        checkRelay(r);
+        return new double[] {state[r], pendingFault[r], opTimer[r], weldedGroup[r], opsCount[r], weldArmature[r] ? 1 : 0,
+                tBias[r], tCount[r], tOut[r] ? 1 : 0, tPrev[r] ? 1 : 0};
+    }
+
+    void restoreRelay(int r, double[] m) {
+        checkRelay(r);
+        if (m == null || m.length < 10) return;
+        state[r] = (byte) Math.max(0, Math.min(STATES.length - 1, (int) m[0]));
+        pendingFault[r] = (byte) m[1];
+        opTimer[r] = (int) m[2];
+        weldedGroup[r] = (int) m[3];
+        opsCount[r] = (long) m[4];
+        weldArmature[r] = m[5] != 0;
+        if (tMode[r] != null) {
+            tBias[r] = m[6];
+            setTimeSetpoint(r, tSetS[r]);
+            tCount[r] = (int) m[7];
+            tOut[r] = m[8] != 0;
+            tPrev[r] = m[9] != 0;
+        }
+        setCoilOpen(r, STATES[state[r]] == RelayState.COIL_OPEN);
+    }
+
+    double[] memoStepper(int s) {
+        checkIndex(s, steppers, "stepper");
+        return new double[] {stPos[s], stSteps[s], stMissed[s], stStuck[s] ? 1 : 0, stPrevStep[s] ? 1 : 0,
+                Math.min(1e6, tick - stLastStep[s])};
+    }
+
+    void restoreStepper(int s, double[] m) {
+        checkIndex(s, steppers, "stepper");
+        if (m == null || m.length < 6) return;
+        stPos[s] = Math.max(1, Math.min(STEPPER_POSITIONS, (int) m[0]));
+        stSteps[s] = (long) m[1];
+        stMissed[s] = (long) m[2];
+        stStuck[s] = m[3] != 0;
+        stPrevStep[s] = m[4] != 0;
+        stLastStep[s] = tick - (long) m[5];
+    }
+
+    void restoreCamAngle(int c, double deg) {
+        checkIndex(c, cams, "controller");
+        if (Double.isFinite(deg)) camAngle[c] = Math.floorMod((long) Math.floor(deg * 1000), 360_000L) / 1000.0;
+    }
+
+    double[] memoProcess(int p) {
+        checkIndex(p, procs, "processSwitch");
+        return new double[] {psBias[p], psLag[p], psOut[p] ? 1 : 0, psStuck[p] ? 1 : 0};
+    }
+
+    void restoreProcess(int p, double[] m) {
+        checkIndex(p, procs, "processSwitch");
+        if (m == null || m.length < 4) return;
+        psBias[p] = m[0];
+        psLag[p] = m[1];
+        psOut[p] = m[2] != 0;
+        psStuck[p] = m[3] != 0;
+    }
+
     // ---------------------------------------------------------------- внутреннее
 
     private int loadCabinet(int l) {

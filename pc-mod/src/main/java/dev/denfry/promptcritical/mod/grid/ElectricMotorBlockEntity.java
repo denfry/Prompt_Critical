@@ -1,5 +1,10 @@
 package dev.denfry.promptcritical.mod.grid;
 
+import dev.denfry.promptcritical.mod.automation.MechanismWiring;
+import dev.denfry.promptcritical.mod.automation.WiredDevice;
+import dev.denfry.promptcritical.sim.automation.AutomationKind;
+import dev.denfry.promptcritical.sim.automation.AutomationSubsystem;
+import dev.denfry.promptcritical.sim.automation.AutomationUnit;
 import com.simibubi.create.content.kinetics.base.GeneratingKineticBlockEntity;
 import dev.denfry.promptcritical.mod.binding.DeviceHost;
 import dev.denfry.promptcritical.mod.binding.SimBindings;
@@ -47,7 +52,7 @@ import org.jetbrains.annotations.Nullable;
  * 49, АЧР, 27, 51.
  */
 public class ElectricMotorBlockEntity extends GeneratingKineticBlockEntity implements DeviceHost, GridDevice, FoundryDevice,
-        PanelHost {
+        PanelHost, WiredDevice {
     public static final BooleanProperty MV = PcProperties.MEDIUM_VOLTAGE;
     public static final int SLOTS = 2;
     private static final double HYSTERESIS = 0.02;
@@ -70,6 +75,9 @@ public class ElectricMotorBlockEntity extends GeneratingKineticBlockEntity imple
     };
     private SimId simId = SimId.NONE;
     private boolean chunkUnloading, registered;
+    private final MechanismWiring wiring = new MechanismWiring();
+    /** Катушка пускателя на прошлом тике: пока клеммы A1–A2 подключены, пускатель включается и отключается ею. */
+    private boolean lastCoil;
     private int level4, ticks;
     private float capacityPerRpm, lastRpm;
 
@@ -141,6 +149,15 @@ public class ElectricMotorBlockEntity extends GeneratingKineticBlockEntity imple
         MotorUnit u = unit();
         if (u == null) return;
         if (ticks % 20 == 9) u.setRelays(settings());
+        AutomationUnit a = MechanismWiring.unit(level, simId, AutomationKind.MOTOR_IO);
+        if (a != null) {
+            a.setInput(AutomationUnit.IN_MAIN, u.contactorClosed() ? 1 : 0);
+            if (a.wired(0) || a.wired(1)) {
+                boolean coil = a.loadEnergized(0);
+                if (coil != lastCoil) u.setContactor(coil); // по фронту: отключение защитой не перекрывается
+                lastCoil = coil;
+            }
+        }
         double r = u.speedPu();
         int next = level4(r);
         if (next > level4) next = Math.max(level4, level4(r / (1 + HYSTERESIS)));
@@ -328,6 +345,7 @@ public class ElectricMotorBlockEntity extends GeneratingKineticBlockEntity imple
     @Override
     public void onLoad() {
         super.onLoad();
+        wiring.onLoad(this, this);
         chunkUnloading = false;
         if (level instanceof ServerLevel s) {
             SimLevelBinding b = SimBindings.get(s);
@@ -342,12 +360,14 @@ public class ElectricMotorBlockEntity extends GeneratingKineticBlockEntity imple
     @Override
     public void onChunkUnloaded() {
         super.onChunkUnloaded();
+        wiring.onChunkUnloaded();
         chunkUnloading = true;
     }
 
     @Override
     public void invalidate() {
         super.invalidate();
+        wiring.setRemoved(this, this);
         if (level instanceof ServerLevel s) {
             SimLevelBinding b = SimBindings.get(s);
             if (b != null) {
@@ -366,6 +386,7 @@ public class ElectricMotorBlockEntity extends GeneratingKineticBlockEntity imple
             tag.put("modules", modules.serializeNBT(registries));
         }
         tag.putFloat("rpm", lastRpm);
+        wiring.save(tag);
     }
 
     @Override
@@ -376,5 +397,40 @@ public class ElectricMotorBlockEntity extends GeneratingKineticBlockEntity imple
             if (tag.contains("modules")) modules.deserializeNBT(registries, tag.getCompound("modules"));
         }
         lastRpm = tag.getFloat("rpm");
+        wiring.load(tag);
+    }
+
+    // --- клеммы автоматики (03d, этап 9): катушка пускателя A1–A2, блок-контакт 13–14 ---
+
+    @Override
+    public BlockPos wiredPos() {
+        return worldPosition;
+    }
+
+    @Override
+    public AutomationKind wiredKind() {
+        return AutomationKind.MOTOR_IO;
+    }
+
+    @Override
+    public Direction wiredFacing() {
+        return facing();
+    }
+
+    @Override
+    public List<WiredDevice.Wire> wires() {
+        return wiring.wires();
+    }
+
+    @Override
+    public void wiresChanged() {
+        sendData();
+        setChanged();
+    }
+
+    @Override
+    @Nullable
+    public AutomationUnit automationUnit(AutomationSubsystem automation) {
+        return simId.isNone() ? null : automation.unit(simId, AutomationKind.MOTOR_IO);
     }
 }

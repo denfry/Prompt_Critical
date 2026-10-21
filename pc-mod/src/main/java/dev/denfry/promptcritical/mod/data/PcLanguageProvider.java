@@ -98,6 +98,29 @@ public final class PcLanguageProvider extends LanguageProvider {
         b("energy_meter", "Energy Meter", "Счётчик электроэнергии");
         b("wire_connector_lv", "LV Wire Connector", "Коннектор провода 0,4 кВ");
         b("wire_connector_mv", "Pin Insulator Head", "Изолятор ВЛ 6 кВ");
+        // автоматика A1–A2 и пульт (03d, 03c, этап 9 M3)
+        b("relay", "Control Relay", "Промежуточное реле");
+        b("relay_latching", "Latching Relay", "Бистабильное реле");
+        b("time_relay", "Time Relay", "Реле времени");
+        b("stepping_switch", "Stepping Switch", "Шаговый искатель");
+        b("cam_controller", "Cam Controller", "Командоаппарат");
+        b("process_switch", "Process Switch", "Реле процесса");
+        b("relay_power_supply", "24 V DC Power Supply", "Блок питания 24 В");
+        b("relay_rack", "Relay Rack", "Релейный шкаф");
+        b("redstone_interface", "Relay–Redstone Interface", "Переходник реле — редстоун");
+        b("pushbutton", "Pushbutton", "Кнопка");
+        b("selector_switch", "Selector Switch", "Переключатель");
+        b("key_switch", "Control Key", "Ключ управления");
+        b("indicator_lamp", "Indicator Lamp", "Сигнальная лампа");
+        b("gas_detector", "Fixed Gas Detector", "Стационарный газоанализатор");
+        b("analog_summer", "Summing Amplifier", "Сумматор");
+        b("analog_integrator", "Integrator", "Интегратор");
+        b("analog_differentiator", "Differentiator", "Дифференциатор");
+        b("analog_multiplier", "Multiplier", "Множительный блок");
+        b("analog_function", "Diode Function Generator", "Функциональный преобразователь");
+        b("analog_comparator", "Comparator", "Компаратор");
+        b("manual_station", "Manual/Auto Station", "Станция РУЧ/АВТ");
+        b("signal_converter", "Signal Converter", "Нормирующий преобразователь");
         b("lv_distribution_box", "Fuse Box", "Распределительный ящик с предохранителями");
 
         i("fusible_plug", "Fusible Plug", "Легкоплавкая пробка");
@@ -141,6 +164,8 @@ public final class PcLanguageProvider extends LanguageProvider {
         i("interlock_module", "Interlock Module", "Модуль блокировки");
         i("insulator_pin", "Pin Insulator", "Штыревой изолятор");
         i("wire_coil_lv", "Insulated Wire Coil", "Бухта самонесущего провода");
+        i("wiring_tool", "Wiring Tool", "Монтажный инструмент");
+        i("relay_coil", "Relay Coil", "Катушка реле");
         i("overhead_conductor", "Bare Overhead Conductor", "Голый провод ВЛ");
         i("relay_overcurrent", "Overcurrent Relay", "Реле максимального тока");
         i("relay_sync_check", "Sync-Check Relay", "Реле контроля синхронизма");
@@ -201,6 +226,7 @@ public final class PcLanguageProvider extends LanguageProvider {
         MISC.put("commands.promptcritical.profile.reset", new String[] {"Simulation profile reset", "Профиль симуляции сброшен"});
         MISC.putAll(FoundryText.LANG);
         MISC.putAll(dev.denfry.promptcritical.mod.grid.GridText.LANG);
+        MISC.putAll(dev.denfry.promptcritical.mod.automation.AutomationText.LANG);
         MISC.putAll(dev.denfry.promptcritical.mod.content.ContentText.LANG);
         PcAdvancements.LANG.forEach((id, t) -> {
             MISC.put("advancements.promptcritical." + id + ".title", new String[] {t[0], t[1]});
