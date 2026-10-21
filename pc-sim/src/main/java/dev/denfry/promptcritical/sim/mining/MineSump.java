@@ -28,11 +28,28 @@ public final class MineSump {
 
         /** Подача на статический напор при частоте n, м³/с. */
         public double flowAt(double rpm, double staticHeadM) {
+            return flowAt(rpm, staticHeadM, 1);
+        }
+
+        /**
+         * Подача, когда вся характеристика H(Q) сжата в {@code headFactor} раз (13 §13.6.6–13.6.7): обратное
+         * вращение 0,4, эрозия колеса 1 − e.
+         */
+        public double flowAt(double rpm, double staticHeadM, double headFactor) {
+            if (!(headFactor > 0)) return 0;
             double r = rpm / ratedRpm;
             double h0 = 1.25 * ratedHeadM * r * r;
-            if (h0 <= staticHeadM) return 0;
+            double hs = staticHeadM / headFactor;
+            if (h0 <= hs) return 0;
             double k = 0.25 * ratedHeadM / (ratedFlowM3s * ratedFlowM3s);
-            return Math.sqrt((h0 - staticHeadM) / k);
+            return Math.sqrt((h0 - hs) / k);
+        }
+
+        /** Напор при подаче Q и частоте n, м (≥ 0). */
+        public double headAt(double rpm, double flowM3s, double headFactor) {
+            double r = rpm / ratedRpm;
+            double k = 0.25 * ratedHeadM / (ratedFlowM3s * ratedFlowM3s);
+            return Math.max(0, headFactor * (1.25 * ratedHeadM * r * r - k * flowM3s * flowM3s));
         }
     }
 

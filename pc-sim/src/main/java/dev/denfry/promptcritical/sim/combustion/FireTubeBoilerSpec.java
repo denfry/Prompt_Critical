@@ -57,6 +57,13 @@ public record FireTubeBoilerSpec(double workingPressurePa, double burstPressureF
                 2_070, 15, 1.6, 0.67);
     }
 
+    /** Та же конструкция с другим давлением разрыва: шов с монтажным дефектом (13 §13.6.6, {@code SEAM_WEEP}). */
+    public FireTubeBoilerSpec withBurstPressureFactor(double factor) {
+        return new FireTubeBoilerSpec(workingPressurePa, factor, nominalFuelKgS, bedBurnoutTimeS, furnaceWallAreaM2,
+                furnaceEmissivity, screenEfficiency, convectiveUA, chimneyHeightM, designAirKgS, designDraftPa,
+                crownHeightM, crownWallM, shellLossWPerK, waterNodeAreaM2, waterNodeHeightM, normalLevelM);
+    }
+
     /** Уставка предохранительного клапана p_set = 1,1·p_раб, Па. */
     public double reliefSetPressure() {
         return FireTubeBoiler.RELIEF_FACTOR * workingPressurePa;
