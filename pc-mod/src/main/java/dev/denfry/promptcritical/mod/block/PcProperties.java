@@ -49,6 +49,12 @@ public final class PcProperties {
     public static final EnumProperty<ByproductKind> BYPRODUCT_KIND = EnumProperty.create("kind", ByproductKind.class);
     public static final EnumProperty<CastHouseKind> CAST_HOUSE_KIND = EnumProperty.create("kind", CastHouseKind.class);
     public static final EnumProperty<StoveSegment> STOVE_SEGMENT = EnumProperty.create("segment", StoveSegment.class);
+    // сталь, прокат, ВРУ (этап 10б M3)
+    public static final BooleanProperty LOWERED = BooleanProperty.create("lowered");
+    public static final BooleanProperty BURST = BooleanProperty.create("burst");
+    public static final EnumProperty<RollerKind> ROLLER_KIND = EnumProperty.create("kind", RollerKind.class);
+    public static final EnumProperty<QuenchMedium> QUENCH_MEDIUM = EnumProperty.create("medium", QuenchMedium.class);
+    public static final EnumProperty<CryoKind> CRYO_KIND = EnumProperty.create("kind", CryoKind.class);
 
     private PcProperties() {
     }
@@ -102,4 +108,13 @@ public final class PcProperties {
 
     /** Секции воздухонагревателя 3×9×3: низ, середина, купол. */
     public enum StoveSegment implements Named { BOTTOM, MIDDLE, DOME }
+
+    /** Рольганг или холодильник (08 §8.7.2). */
+    public enum RollerKind implements Named { TABLE, COOLING_BED }
+
+    /** Закалочная среда: вода или масло. */
+    public enum QuenchMedium implements Named { WATER, OIL }
+
+    /** Криогенный бак или испаритель (08 §8.11). */
+    public enum CryoKind implements Named { STORAGE, VAPORIZER }
 }

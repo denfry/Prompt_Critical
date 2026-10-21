@@ -1,5 +1,7 @@
 package dev.denfry.promptcritical.sim.metallurgy;
 
+import dev.denfry.promptcritical.sim.core.StateReader;
+import dev.denfry.promptcritical.sim.core.StateWriter;
 import java.util.EnumMap;
 import java.util.Map;
 import java.util.Objects;
@@ -228,6 +230,45 @@ public final class Converter {
         tempK = 298.15;
         setPhase(ConverterPhase.EMPTY);
         return melt;
+    }
+
+    public void save(StateWriter out) {
+        out.putInt("phase", phase.ordinal());
+        out.putDoubles("bath", new double[] {metalKg, c, si, mn, p, s, tempK, scrapKg, limeKg, mnCharged, pCharged,
+            chargeSi}, 12);
+        out.putDoubles("slag", new double[] {feo, sio2, mno, p2o5, cao}, 5);
+        out.putDoubles("blow", new double[] {blowS, o2Blown}, 2);
+        out.putInt("latches", (slopped ? 1 : 0) | (overblownLatched ? 2 : 0) | (lanceLatched ? 4 : 0));
+    }
+
+    public void load(StateReader in) {
+        phase = ConverterPhase.values()[in.getInt("phase")];
+        double[] b = in.getDoubles("bath");
+        metalKg = b[0];
+        c = b[1];
+        si = b[2];
+        mn = b[3];
+        p = b[4];
+        s = b[5];
+        tempK = b[6];
+        scrapKg = b[7];
+        limeKg = b[8];
+        mnCharged = b[9];
+        pCharged = b[10];
+        chargeSi = b[11];
+        double[] sl = in.getDoubles("slag");
+        feo = sl[0];
+        sio2 = sl[1];
+        mno = sl[2];
+        p2o5 = sl[3];
+        cao = sl[4];
+        double[] bl = in.getDoubles("blow");
+        blowS = bl[0];
+        o2Blown = bl[1];
+        int l = in.getInt("latches");
+        slopped = (l & 1) != 0;
+        overblownLatched = (l & 2) != 0;
+        lanceLatched = (l & 4) != 0;
     }
 
     private void scaleSlag(double k) {

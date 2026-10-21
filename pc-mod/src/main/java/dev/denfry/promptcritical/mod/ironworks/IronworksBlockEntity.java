@@ -7,7 +7,13 @@ import dev.denfry.promptcritical.mod.fx.MachineFx;
 import dev.denfry.promptcritical.mod.panel.PanelHost;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
+import net.minecraft.core.HolderLookup;
+import net.minecraft.nbt.CompoundTag;
+import net.minecraft.network.Connection;
 import net.minecraft.network.chat.Component;
+import net.minecraft.network.protocol.Packet;
+import net.minecraft.network.protocol.game.ClientGamePacketListener;
+import net.minecraft.network.protocol.game.ClientboundBlockEntityDataPacket;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.world.InteractionHand;
 import net.minecraft.world.InteractionResult;
@@ -85,6 +91,43 @@ public abstract class IronworksBlockEntity extends BlockEntity implements Foundr
     protected boolean stateFlag(BooleanProperty prop) {
         BlockState s = getBlockState();
         return s.hasProperty(prop) && s.getValue(prop);
+    }
+
+    // --- данные для клиента (рендер частей): только то, что пишет writeClient ---
+
+    /** Что видит клиент (наклон, ход фурмы, заготовка на рольганге); по умолчанию — ничего. */
+    protected void writeClient(CompoundTag tag, HolderLookup.Provider registries) {
+    }
+
+    protected void readClient(CompoundTag tag, HolderLookup.Provider registries) {
+    }
+
+    /** Отправить клиенту {@link #writeClient}. */
+    protected void syncClient() {
+        if (level != null && !level.isClientSide)
+            level.sendBlockUpdated(worldPosition, getBlockState(), getBlockState(), Block.UPDATE_CLIENTS);
+    }
+
+    @Override
+    public CompoundTag getUpdateTag(HolderLookup.Provider registries) {
+        CompoundTag tag = new CompoundTag();
+        writeClient(tag, registries);
+        return tag;
+    }
+
+    @Override
+    public Packet<ClientGamePacketListener> getUpdatePacket() {
+        return ClientboundBlockEntityDataPacket.create(this);
+    }
+
+    @Override
+    public void handleUpdateTag(CompoundTag tag, HolderLookup.Provider registries) {
+        readClient(tag, registries);
+    }
+
+    @Override
+    public void onDataPacket(Connection net, ClientboundBlockEntityDataPacket pkt, HolderLookup.Provider registries) {
+        readClient(pkt.getTag(), registries);
     }
 
     // --- местный щит (для наследников, реализующих PanelHost) ---

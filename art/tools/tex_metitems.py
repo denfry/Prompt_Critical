@@ -174,6 +174,8 @@ ICONS = {
     "coal_tar_pitch": lump(["#141416", "#1d1d20"], "#8a8e96"),
     "steel_ingot": ingot("#5a5e62", "#3a3d40"),
     "steel_rod": rod,
+    # лист проката (этап 10б M3)
+    "steel_plate": plate("#4e5256"),
     "wire_rope": coil("#7d8288", "#4a2e18"),
     "aluminium_ingot": ingot("#d0d4d8", "#a4a8ac"),
     "copper_wire": coil("#c27a43"),

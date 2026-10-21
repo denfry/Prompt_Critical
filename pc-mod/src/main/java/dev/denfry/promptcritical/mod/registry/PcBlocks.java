@@ -42,6 +42,22 @@ import dev.denfry.promptcritical.mod.ironworks.MagneticSeparatorBlockEntity;
 import dev.denfry.promptcritical.mod.ironworks.QuenchTowerBlockEntity;
 import dev.denfry.promptcritical.mod.ironworks.SinterStrandBlock;
 import dev.denfry.promptcritical.mod.ironworks.SlagGranulatorBlockEntity;
+import dev.denfry.promptcritical.mod.steelworks.AirSeparatorBlockEntity;
+import dev.denfry.promptcritical.mod.steelworks.AsuCompressorBlockEntity;
+import dev.denfry.promptcritical.mod.steelworks.BofVesselBlockEntity;
+import dev.denfry.promptcritical.mod.steelworks.CryoTankBlockEntity;
+import dev.denfry.promptcritical.mod.steelworks.HeatTreatFurnaceBlockEntity;
+import dev.denfry.promptcritical.mod.steelworks.HydrotestBenchBlockEntity;
+import dev.denfry.promptcritical.mod.steelworks.IngotMoldBlockEntity;
+import dev.denfry.promptcritical.mod.steelworks.LadleStationBlockEntity;
+import dev.denfry.promptcritical.mod.steelworks.MillStandBlockEntity;
+import dev.denfry.promptcritical.mod.steelworks.OxygenLanceBlockEntity;
+import dev.denfry.promptcritical.mod.steelworks.PiercingMillBlockEntity;
+import dev.denfry.promptcritical.mod.steelworks.PipeWelderBlockEntity;
+import dev.denfry.promptcritical.mod.steelworks.PortMachineBlock;
+import dev.denfry.promptcritical.mod.steelworks.QuenchTankBlockEntity;
+import dev.denfry.promptcritical.mod.steelworks.ReheatingFurnaceBlockEntity;
+import dev.denfry.promptcritical.mod.steelworks.RollerTableBlockEntity;
 import dev.denfry.promptcritical.mod.mine.DegasificationPumpBlockEntity;
 import dev.denfry.promptcritical.mod.mine.LongwallShearerBlock;
 import dev.denfry.promptcritical.mod.mine.MainMineFanBlock;
@@ -76,6 +92,7 @@ import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.function.BiFunction;
+import net.minecraft.core.BlockPos;
 import net.minecraft.world.level.block.Block;
 import net.minecraft.world.level.block.Blocks;
 import net.minecraft.world.level.block.LiquidBlock;
@@ -377,6 +394,49 @@ public final class PcBlocks {
             .footprint(Footprint.of(Segment.box(0, 1, 0, 1, 0, 1))), FoundryBlock.with(LadleBlockEntity::new));
     public static final DeferredBlock<PcDeviceBlock> SLAG_GRANULATOR = device("slag_granulator", machine(),
             Spec.facing(PcProperties.RUNNING).footprint(FP_WIDE2), FoundryBlock.with(SlagGranulatorBlockEntity::new));
+
+    // --- сталь, прокат, трубы, ВРУ (08 §8.6–8.7, §8.11, этап 10б M3) ---
+    public static final DeferredBlock<PcDeviceBlock> BOF_VESSEL = device("bof_vessel", lit(machine()),
+            Spec.facing(PcProperties.RUNNING).footprint(FP_FURNACE3),
+            PortMachineBlock.with(new BlockPos(-1, 0, 0), false, BofVesselBlockEntity::new));
+    public static final DeferredBlock<PcDeviceBlock> OXYGEN_LANCE = device("oxygen_lance", machine(),
+            Spec.of(PcProperties.LOWERED), FoundryBlock.with(OxygenLanceBlockEntity::new));
+    public static final DeferredBlock<PcDeviceBlock> LADLE_STATION = device("ladle_station", machine(),
+            Spec.facing(PcProperties.RUNNING).footprint(FP_FURNACE3), FoundryBlock.with(LadleStationBlockEntity::new));
+    public static final DeferredBlock<PcDeviceBlock> INGOT_MOLD = device("ingot_mold", movable().lightLevel(s ->
+            s.hasProperty(PcProperties.FILLED) && s.getValue(PcProperties.FILLED) ? 10 : 0),
+            Spec.of(PcProperties.FILLED).footprint(FP_TALL2), FoundryBlock.with(IngotMoldBlockEntity::new));
+    public static final DeferredBlock<PcDeviceBlock> REHEATING_FURNACE = device("reheating_furnace", lit(brick()),
+            Spec.facing(BlockStateProperties.LIT).footprint(FP_FURNACE3), FoundryBlock.with(ReheatingFurnaceBlockEntity::new));
+    public static final DeferredBlock<PcDeviceBlock> ROLLER_TABLE = device("roller_table", machine(),
+            Spec.facing(PcProperties.ROLLER_KIND), KineticMachineBlock.with(ShaftSide.THROUGH, RollerTableBlockEntity::new));
+    public static final DeferredBlock<PcDeviceBlock> ROLLING_MILL_STAND = device("rolling_mill_stand", machine(),
+            Spec.facing(PcProperties.RUNNING).footprint(Footprint.of(Segment.box(-1, 1, -1, 1, 0, 0))),
+            PortMachineBlock.with(new BlockPos(-1, 0, 0), false, MillStandBlockEntity::new));
+    public static final DeferredBlock<PcDeviceBlock> PIERCING_MILL = device("piercing_mill", machine(),
+            Spec.facing(PcProperties.RUNNING).footprint(Footprint.of(Segment.box(-1, 1, 0, 1, 0, 0))),
+            PortMachineBlock.with(new BlockPos(-1, 0, 0), true, PiercingMillBlockEntity::new));
+    public static final DeferredBlock<PcDeviceBlock> PIPE_WELDER = device("pipe_welder", machine(),
+            Spec.facing(PcProperties.RUNNING).footprint(Footprint.of(Segment.box(-1, 1, 0, 1, 0, 0))),
+            PortMachineBlock.with(new BlockPos(-1, 0, 0), true, PipeWelderBlockEntity::new));
+    public static final DeferredBlock<PcDeviceBlock> HYDROTEST_BENCH = device("hydrotest_bench", machine(),
+            Spec.facing(PcProperties.RUNNING, PcProperties.BURST).footprint(Footprint.of(Segment.box(-1, 1, 0, 0, 0, 0))),
+            FoundryBlock.with(HydrotestBenchBlockEntity::new));
+    public static final DeferredBlock<PcDeviceBlock> HEAT_TREATMENT_FURNACE = device("heat_treatment_furnace", lit(brick()),
+            Spec.facing(BlockStateProperties.LIT, BlockStateProperties.OPEN).footprint(Footprint.of(Segment.box(0, 1, 0, 1, 0, 1))),
+            FoundryBlock.with(HeatTreatFurnaceBlockEntity::new));
+    public static final DeferredBlock<PcDeviceBlock> QUENCH_TANK = device("quench_tank", machine(),
+            Spec.facing(PcProperties.QUENCH_MEDIUM).footprint(Footprint.of(Segment.box(0, 1, 0, 0, 0, 1))),
+            FoundryBlock.with(QuenchTankBlockEntity::new));
+    public static final DeferredBlock<PcDeviceBlock> AIR_SEPARATOR = device("air_separator", machine(),
+            Spec.facing(PcProperties.RUNNING), FoundryBlock.with(AirSeparatorBlockEntity::new));
+    public static final DeferredBlock<PcDeviceBlock> ASU_MAIN_COMPRESSOR = device("asu_main_compressor", machine(),
+            Spec.facing(PcProperties.RUNNING).footprint(Footprint.of(Segment.box(-1, 1, 0, 1, 0, 1))),
+            PortMachineBlock.with(new BlockPos(-1, 0, 0), false, AsuCompressorBlockEntity::new));
+    public static final DeferredBlock<PcBlock> ASU_MOLSIEVE = block("asu_molsieve", machine(), Spec.facing().footprint(FP_TALL3));
+    public static final DeferredBlock<PcBlock> ASU_EXPANDER = block("asu_expander", machine(), Spec.facing());
+    public static final DeferredBlock<PcDeviceBlock> CRYOGENIC_TANK = device("cryogenic_tank", machine(),
+            Spec.facing(PcProperties.CRYO_KIND).footprint(FP_TALL3), FoundryBlock.with(CryoTankBlockEntity::new));
 
     // --- справочник и мир (11) ---
     public static final DeferredBlock<DocumentLecternBlock> DOCUMENT_LECTERN = withItem(BLOCKS.registerBlock("document_lectern",

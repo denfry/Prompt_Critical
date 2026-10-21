@@ -8,8 +8,8 @@ import dev.denfry.promptcritical.sim.core.StateWriter;
 import dev.denfry.promptcritical.sim.core.TimeDomain;
 
 /**
- * Коксохим и домна в мире (08 §8.4–8.5, этап 10 M3): коксовая батарея, домна, воздухонагреватели, обжиговая печь
- * электродов. Агрегаты — класс 1 §8.0.3 (лумпед SLOW, дешёвые), шаг идёт на серверном потоке в FAST-тике с периодом
+ * Коксохим, домна и сталь в мире (08 §8.4–8.7, этап 10 M3): коксовая батарея, домна, воздухонагреватели, обжиговая
+ * печь электродов, конвертер, нагревательная и термическая печи. Агрегаты — класс 1 §8.0.3 (лумпед SLOW, дешёвые), шаг идёт на серверном потоке в FAST-тике с периодом
  * SLOW, как у литейки. Машины на валу (сепаратор, агломашина, пресс, воздуходувка, эксгаустер) — в
  * {@link FoundrySubsystem}.
  */
@@ -19,6 +19,9 @@ public final class IronmakingSubsystem extends DeviceSubsystem<IronmakingUnit> {
     public static final String BLAST_FURNACE = "promptcritical:blast_furnace_controller";
     public static final String HOT_BLAST_STOVE = "promptcritical:hot_blast_stove";
     public static final String BAKING_FURNACE = "promptcritical:baking_furnace";
+    public static final String CONVERTER = "promptcritical:bof_vessel";
+    public static final String REHEATING_FURNACE = "promptcritical:reheating_furnace";
+    public static final String HEAT_TREATMENT_FURNACE = "promptcritical:heat_treatment_furnace";
     private static final int SLOW_PHASE = 5;
 
     private SimConfig config;
@@ -36,6 +39,9 @@ public final class IronmakingSubsystem extends DeviceSubsystem<IronmakingUnit> {
             case BLAST_FURNACE -> new BlastFurnaceUnit();
             case HOT_BLAST_STOVE -> new HotBlastStoveUnit();
             case BAKING_FURNACE -> new BakingFurnaceUnit();
+            case CONVERTER -> new ConverterUnit();
+            case REHEATING_FURNACE -> new BatchFurnaceUnit(REHEATING_FURNACE, BatchFurnaceUnit.Spec.REHEATING);
+            case HEAT_TREATMENT_FURNACE -> new BatchFurnaceUnit(HEAT_TREATMENT_FURNACE, BatchFurnaceUnit.Spec.HEAT_TREATMENT);
             default -> null;
         };
     }

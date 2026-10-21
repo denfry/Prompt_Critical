@@ -54,4 +54,18 @@ public final class HeatTreatment {
         if (g.family().hardening != SteelFamily.Hardening.MARAGING || Math.abs(tempK - AGE_K) > AGE_TOL_K) return g;
         return g.withState(HeatTreatState.AGED);
     }
+
+    /**
+     * Выгрузка на воздух из печи при {@code tempK}: закалённая — отпуск; мартенситно-стареющая — старение;
+     * аустенитная и никелевая — аустенизация (тонкие сечения охлаждаются на воздухе достаточно быстро) [моё];
+     * в окне нормализации — нормализация; в окне 600–650 °C — снятие напряжений. Вне окон — без изменений.
+     */
+    public static SteelGrade airCool(SteelGrade g, double tempK) {
+        if (g.state() == HeatTreatState.QUENCHED) return temper(g, tempK);
+        SteelFamily.Hardening h = g.family().hardening;
+        if (h == SteelFamily.Hardening.MARAGING && g.state() == HeatTreatState.SOLUTION_ANNEALED) return age(g, tempK);
+        if (h == SteelFamily.Hardening.AUSTENITIC || h == SteelFamily.Hardening.MARAGING) return quench(g, tempK);
+        SteelGrade n = normalize(g, tempK);
+        return n != g ? n : temper(g, tempK);
+    }
 }

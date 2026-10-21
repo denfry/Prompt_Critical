@@ -21,8 +21,11 @@ import net.minecraft.world.level.block.state.BlockState;
  * поверх объёма и свойств {@link dev.denfry.promptcritical.mod.block.PcBlock}.
  */
 public class KineticMachineBlock extends FoundryBlock implements IRotate {
-    /** Где вал: слева от фасада (−x модели), сзади (+z модели), спереди (выход двигателя) или по оси X без фасада. */
-    public enum ShaftSide { LEFT, BACK, FRONT, X_AXIS }
+    /**
+     * Где вал: слева от фасада (−x модели), сзади (+z модели), спереди (выход двигателя), по оси X без фасада или
+     * насквозь вдоль фасада (рольганг: блоки в ряд — одна линия вала).
+     */
+    public enum ShaftSide { LEFT, BACK, FRONT, X_AXIS, THROUGH }
 
     private final ShaftSide side;
 
@@ -42,7 +45,7 @@ public class KineticMachineBlock extends FoundryBlock implements IRotate {
         return switch (side) {
             case LEFT -> facing(state).getCounterClockWise();
             case BACK -> facing(state).getOpposite();
-            case FRONT -> facing(state);
+            case FRONT, THROUGH -> facing(state);
             case X_AXIS -> Direction.WEST;
         };
     }
@@ -50,7 +53,9 @@ public class KineticMachineBlock extends FoundryBlock implements IRotate {
     @Override
     public boolean hasShaftTowards(LevelReader level, BlockPos pos, BlockState state, Direction face) {
         if (!isController(state)) return false;
-        return side == ShaftSide.X_AXIS ? face.getAxis() == Direction.Axis.X : face == shaftFace(state);
+        if (side == ShaftSide.X_AXIS) return face.getAxis() == Direction.Axis.X;
+        if (side == ShaftSide.THROUGH) return face.getAxis() == facing(state).getAxis();
+        return face == shaftFace(state);
     }
 
     @Override

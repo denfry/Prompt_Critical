@@ -1,5 +1,7 @@
 package dev.denfry.promptcritical.sim.utilities;
 
+import dev.denfry.promptcritical.sim.core.StateReader;
+import dev.denfry.promptcritical.sim.core.StateWriter;
 import java.util.Objects;
 
 /**
@@ -282,5 +284,83 @@ public final class AirSeparationUnit {
     /** Энергия ударной волны взрыва конденсатора-испарителя, Дж (0 — не было). */
     public double explosionEnergyJ() {
         return explosionJ;
+    }
+
+    /** Сохранение: блок, адсорберы, куб; расходы продукта пересчитает следующий шаг. */
+    public void save(StateWriter out) {
+        out.putInt("state", state.ordinal());
+        out.putDoubles("asu", new double[] {tempK, ambientK, inletC2h2Ppm, liquidFraction, bedLoading, spareLoading,
+            cycleS, regenS, iceKg, hydrocarbonKg, explosionJ}, 11);
+        out.putInt("flags", (liquidOxygen ? 1 : 0) | (regenHeater ? 2 : 0) | (hydrocarbonTrip ? 4 : 0)
+                | (breakthrough ? 8 : 0) | (alarmed ? 16 : 0));
+    }
+
+    public void load(StateReader in) {
+        state = AsuState.values()[in.getInt("state")];
+        double[] a = in.getDoubles("asu");
+        tempK = a[0];
+        ambientK = a[1];
+        inletC2h2Ppm = a[2];
+        liquidFraction = a[3];
+        bedLoading = a[4];
+        spareLoading = a[5];
+        cycleS = a[6];
+        regenS = a[7];
+        iceKg = a[8];
+        hydrocarbonKg = a[9];
+        explosionJ = a[10];
+        int f = in.getInt("flags");
+        liquidOxygen = (f & 1) != 0;
+        regenHeater = (f & 2) != 0;
+        hydrocarbonTrip = (f & 4) != 0;
+        breakthrough = (f & 8) != 0;
+        alarmed = (f & 16) != 0;
+    }
+
+    /** Нагреватель регенерации включён. */
+    public boolean regenerationHeater() {
+        return regenHeater;
+    }
+
+    /** Защита по углеводородам включена. */
+    public boolean hydrocarbonTrip() {
+        return hydrocarbonTrip;
+    }
+
+    /** Доля мощности на жидкий продукт. */
+    public double liquidFraction() {
+        return liquidFraction;
+    }
+
+    /** Ожижается кислород (иначе азот). */
+    public boolean liquidOxygen() {
+        return liquidOxygen;
+    }
+
+    /** Второй адсорбер ещё не отрегенерирован (идёт регенерация). */
+    public boolean regenerating() {
+        return spareLoading > 0;
+    }
+
+    /** Азот и аргон продукта за последний шаг, нм³/с. */
+    public double nitrogenNm3S() {
+        return n2Nm3S;
+    }
+
+    public double argonNm3S() {
+        return arNm3S;
+    }
+
+    /** Жидкий продукт за последний шаг, кг/с. */
+    public double liquidKgS() {
+        return liquidKgS;
+    }
+
+    /** Сброс после взрыва: блок собран заново, холодный запуск. */
+    public void rebuild() {
+        state = AsuState.OFF;
+        tempK = ambientK;
+        bedLoading = spareLoading = cycleS = regenS = iceKg = hydrocarbonKg = explosionJ = 0;
+        breakthrough = alarmed = false;
     }
 }

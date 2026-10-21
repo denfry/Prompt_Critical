@@ -98,6 +98,9 @@ public final class IronworksText {
         msg("ladle", "Ladle: %s t at %s °C; C %s%%, Si %s%%, S %s%%", "Ковш: %s т при %s °C; C %s%%, Si %s%%, S %s%%");
         msg("ladle_skull", "Ladle: %s t frozen into a skull (%s °C); C %s%%, Si %s%%, S %s%% — Shift-click to knock it out",
                 "Ковш: %s т застыло «козлом» (%s °C); C %s%%, Si %s%%, S %s%% — Shift + ПКМ, чтобы выбить");
+        msg("ladle_steel", "Steel ladle: %s t at %s °C; C %s%%, Mn %s%%, O %s ppm", "Сталеразливочный ковш: %s т при %s °C; C %s%%, Mn %s%%, O %s ppm");
+        msg("ladle_steel_skull", "Steel ladle: %s t frozen into a skull (%s °C); C %s%%, Mn %s%%, O %s ppm — Shift-click to knock it out",
+                "Сталеразливочный ковш: %s т застыло «козлом» (%s °C); C %s%%, Mn %s%%, O %s ppm — Shift + ПКМ, чтобы выбить");
         msg("ladle_empty", "Ladle empty; lining %s °C, wear %s%%", "Ковш пуст; футеровка %s °C, износ %s%%");
         msg("granulator", "Slag granulator: water %s mB, %s kg pending", "Грануляция шлака: вода %s мБ, накоплено %s кг");
         // подсказки предметов

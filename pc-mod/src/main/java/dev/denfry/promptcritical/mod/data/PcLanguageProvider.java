@@ -265,6 +265,7 @@ public final class PcLanguageProvider extends LanguageProvider {
         MISC.put("commands.promptcritical.profile.reset", new String[] {"Simulation profile reset", "Профиль симуляции сброшен"});
         MISC.putAll(FoundryText.LANG);
         MISC.putAll(dev.denfry.promptcritical.mod.ironworks.IronworksText.LANG);
+        MISC.putAll(dev.denfry.promptcritical.mod.steelworks.SteelworksText.LANG);
         MISC.putAll(dev.denfry.promptcritical.mod.grid.GridText.LANG);
         MISC.putAll(dev.denfry.promptcritical.mod.automation.AutomationText.LANG);
         MISC.putAll(dev.denfry.promptcritical.mod.content.ContentText.LANG);

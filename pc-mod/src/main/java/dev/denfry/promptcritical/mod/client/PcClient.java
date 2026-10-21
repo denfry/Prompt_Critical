@@ -28,6 +28,7 @@ public final class PcClient {
         modBus.addListener(PcClient::clientSetup);
         FoundryClient.register(modBus);
         dev.denfry.promptcritical.mod.ironworks.client.IronworksClient.register(modBus);
+        dev.denfry.promptcritical.mod.steelworks.client.SteelworksClient.register(modBus);
         dev.denfry.promptcritical.mod.boiler.client.BoilerClient.register(modBus);
         dev.denfry.promptcritical.mod.mine.client.MineClient.register(modBus);
         dev.denfry.promptcritical.mod.grid.client.GridClient.register(modBus);

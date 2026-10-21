@@ -108,7 +108,8 @@ public final class PcBlockStateProvider extends BlockStateProvider {
 
     /** Блоки с неподвижными частями из арт-реестра (partial): части добавляются мультипартом к модели состояния. */
     private static final java.util.Set<String> PARTS = java.util.Set.of("coke_pusher_ram", "sinter_strand", "blast_furnace_top",
-            "cast_house_machine", "ladle");
+            "cast_house_machine", "ladle", "roller_table", "rolling_mill_stand", "piercing_mill", "pipe_welder", "asu_main_compressor",
+            "asu_expander", "air_separator");
 
     /** Модели состояния мультипартом: основная и части, все с поворотом по {@code facing}. */
     private void parts(Block block, String id) {
@@ -138,6 +139,12 @@ public final class PcBlockStateProvider extends BlockStateProvider {
                     ? id + "/partial/piston" : id + "/partial/bit");
             case "ladle" -> s.getValue(PcProperties.FILLED) ? java.util.List.of(base, id + "/partial/body", id + "/partial/melt")
                     : java.util.List.of(base, id + "/partial/body");
+            case "roller_table" -> java.util.List.of(base, id + "/partial/rollers");
+            case "rolling_mill_stand" -> java.util.List.of(base, id + "/partial/roll_top", id + "/partial/roll_bottom");
+            case "piercing_mill" -> java.util.List.of(base, id + "/partial/roll_l", id + "/partial/roll_r");
+            case "pipe_welder" -> java.util.List.of(base, id + "/partial/forming_rolls");
+            case "asu_main_compressor", "asu_expander" -> java.util.List.of(base, id + "/partial/rotor");
+            case "air_separator" -> java.util.List.of(base, id + "/partial/fan");
             default -> java.util.List.of(base);
         };
     }
@@ -247,7 +254,15 @@ public final class PcBlockStateProvider extends BlockStateProvider {
             case "blast_furnace_controller" -> s.getValue(PcProperties.ALARM) ? id + "_alarm" : id;
             case "hot_blast_stove" -> s.getValue(PcProperties.STOVE_SEGMENT) == PcProperties.StoveSegment.DOME ? id + "_dome" : id;
             case "cast_house_machine" -> s.getValue(PcProperties.CAST_HOUSE_KIND) == PcProperties.CastHouseKind.MUD_GUN ? id + "_mud_gun" : id;
-            case "iron_runner" -> s.getValue(PcProperties.FILLED) ? id + "_filled" : id;
+            case "iron_runner", "ingot_mold" -> s.getValue(PcProperties.FILLED) ? id + "_filled" : id;
+            case "reheating_furnace" -> s.getValue(BlockStateProperties.LIT) ? id + "_lit" : id;
+            case "heat_treatment_furnace" -> s.getValue(BlockStateProperties.OPEN) ? id + "_open"
+                    : s.getValue(BlockStateProperties.LIT) ? id + "_lit" : id;
+            case "pipe_welder" -> s.getValue(PcProperties.RUNNING) ? id + "_welding" : id;
+            case "hydrotest_bench" -> s.getValue(PcProperties.BURST) ? id + "_burst" : id;
+            case "roller_table" -> s.getValue(PcProperties.ROLLER_KIND) == PcProperties.RollerKind.COOLING_BED ? id + "_cooling_bed" : id;
+            case "quench_tank" -> s.getValue(PcProperties.QUENCH_MEDIUM) == PcProperties.QuenchMedium.OIL ? id + "_oil" : id;
+            case "cryogenic_tank" -> s.getValue(PcProperties.CRYO_KIND) == PcProperties.CryoKind.VAPORIZER ? id + "_vaporizer" : id;
             case "wooden_pole", "concrete_pole" -> switch (s.getValue(PcProperties.CHIMNEY_PART)) {
                 case BASE -> id + "_bottom";
                 case TOP -> id + "_top";

@@ -33,6 +33,13 @@ public final class PcFluids {
     public static final Entry BLAST_FURNACE_GAS = gas("blast_furnace_gas", 313, -1);
     public static final Entry COAL_TAR = liquid("coal_tar", 1170, 6000, 333);
     public static final Entry CRUDE_BENZOL = liquid("crude_benzol", 880, 700, 293);
+    // сталь и ВРУ (08 §8.6, §8.11, этап 10б M3): газы — 1 мБ = 1 нм³, жидкости — 1 мБ = 1 л
+    public static final Entry CONVERTER_GAS = gas("converter_gas", 303, -1);
+    public static final Entry OXYGEN = gas("oxygen", 293, -1);
+    public static final Entry NITROGEN = gas("nitrogen", 293, -1);
+    public static final Entry ARGON = gas("argon", 293, -1);
+    public static final Entry LIQUID_OXYGEN = liquid("liquid_oxygen", 1141, 200, 90);
+    public static final Entry LIQUID_NITROGEN = liquid("liquid_nitrogen", 807, 160, 77);
 
     static {
         MINE_WATER.props.block(PcBlocks.MINE_WATER);

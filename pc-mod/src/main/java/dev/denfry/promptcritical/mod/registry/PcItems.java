@@ -12,6 +12,8 @@ import dev.denfry.promptcritical.mod.foundry.CastingPatternItem;
 import dev.denfry.promptcritical.mod.item.MineInstrumentItem;
 import dev.denfry.promptcritical.mod.item.VentilationRegulatorItem;
 import dev.denfry.promptcritical.mod.item.WireRopeItem;
+import dev.denfry.promptcritical.mod.steelworks.FerroalloyItem;
+import dev.denfry.promptcritical.mod.steelworks.SteelStockItem;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
@@ -110,6 +112,20 @@ public final class PcItems {
     public static final DeferredItem<Item> SILICA_BRICK = item("silica_brick", 64);
     public static final DeferredItem<Item> TUYERE_SPARE = item("tuyere_spare", 16);
     public static final DeferredItem<Item> GRANULATED_SLAG = item("granulated_slag", 64);
+    // --- сталь, прокат, трубы (08 §8.6–8.7, этап 10б M3): компонент steel_stock, у труб ещё pipe_spec ---
+    public static final DeferredItem<SteelStockItem> STEEL_INGOT = stock("steel_ingot", 16);
+    public static final DeferredItem<SteelStockItem> STEEL_BILLET = stock("steel_billet", 16);
+    public static final DeferredItem<SteelStockItem> STEEL_PLATE = stock("steel_plate", 16);
+    public static final DeferredItem<SteelStockItem> STEEL_ROD = stock("steel_rod", 16);
+    public static final DeferredItem<SteelStockItem> STEEL_BEAM = stock("steel_beam", 16);
+    /** Труба: 1 предмет = 1 м (08 §8.0.2). */
+    public static final DeferredItem<SteelStockItem> SEAMLESS_PIPE = stock("seamless_pipe", 64);
+    public static final DeferredItem<SteelStockItem> WELDED_PIPE = stock("welded_pipe", 64);
+    public static final DeferredItem<Item> STEEL_SCRAP = item("steel_scrap", 64);
+    public static final DeferredItem<Item> BURNT_LIME = item("burnt_lime", 64);
+    /** Ферросплав: вид — компонентом {@code ferroalloy}. */
+    public static final DeferredItem<FerroalloyItem> FERROALLOY = registered(ITEMS.registerItem("ferroalloy", FerroalloyItem::new,
+            new Item.Properties().stacksTo(64)));
     // справочник (11)
     public static final DeferredItem<EngineeringHandbookItem> ENGINEERING_HANDBOOK = registered(ITEMS.registerItem("engineering_handbook",
             EngineeringHandbookItem::new, new Item.Properties().stacksTo(1)));
@@ -140,6 +156,10 @@ public final class PcItems {
         DeferredItem<Item> i = ITEMS.registerSimpleItem(name, new Item.Properties().stacksTo(stack));
         PLAIN.add(i);
         return i;
+    }
+
+    private static DeferredItem<SteelStockItem> stock(String name, int stack) {
+        return registered(ITEMS.registerItem(name, SteelStockItem::new, new Item.Properties().stacksTo(stack)));
     }
 
     private static DeferredItem<RelayModuleItem> relay(String name, RelaySetting.Kind kind) {
