@@ -54,10 +54,15 @@ public final class PowerGrid {
     /** Двигатель: превышение температуры обмотки при номинальном токе (класс B) и τ нагрева [BALANCE]. */
     static final double MOTOR_RATED_RISE_K = 80, MOTOR_TAU_S = 900;
     private static final double MIN_SPEED = 0.1;
+    /** Ниже этой скорости ЭДС машины падает пропорционально ω (поток постоянен, E = ω·ψ). */
+    private static final double EMF_KNEE_SPEED = 0.95;
+    /** Длина массивов {@link #exportMachine}, {@link #exportBranch}, {@link #exportMotor}. */
+    public static final int MACHINE_STATE = 17, BRANCH_STATE = 10, MOTOR_STATE = 4;
     private static final int EVENT_CAPACITY = 256, EVENT_VALUES = 7;
     private static final int EV_TOPOLOGY = 0, EV_DEENERGIZED = 1, EV_POLE_SLIP = 2, EV_BREAKER = 3, EV_SYNC = 4;
     private static final int EV_RELAY = 5, EV_GROUND = 6, EV_LOAD = 7, EV_CONDUCTOR = 8, EV_BREAKDOWN = 9;
     private static final BreakerState[] BREAKER_STATES = BreakerState.values();
+    private static final ExcitationMode[] EXCITATION_MODES = ExcitationMode.values();
     private static final SyncResult[] SYNC_RESULTS = SyncResult.values();
     private static final ProtectionFunction[] FUNCTIONS = ProtectionFunction.values();
     private static final FaultSite[] NO_FAULTS = new FaultSite[0];
@@ -107,6 +112,8 @@ public final class PowerGrid {
 
     // ---------------------------------------------------------------- нагрев (§7.4.1, §7.4.4)
     double[] brAmbientC = new double[0], brTempC = new double[0], brDamage = new double[0];
+    /** Последний ток концов ветви по согласованному решению, о.е. ({@link #endPhaseCurrentPu}). */
+    private double[] brLastIFrom = new double[0], brLastITo = new double[0];
     double[] trOilRise = new double[0], trHsRise = new double[0], trLifeH = new double[0];
     private double convectionWm2K = 15, solarWPerM, ambientC = 20;
 
@@ -116,6 +123,8 @@ public final class PowerGrid {
     int[] mBus = new int[0], slipIndex = new int[0], slips = new int[0];
     boolean[] createShaft = new boolean[0], sheared = new boolean[0], pinCoupling = new boolean[0];
     boolean[] oelOn = new boolean[0];
+    /** Машина в сети; вне сети (агрегат стоит или выбегает) она не входит в острова и не тикается. */
+    boolean[] mOnline = new boolean[0];
     ExcitationMode[] excMode = new ExcitationMode[0];
     double[] mS = new double[0], mXd = new double[0], mXdP = new double[0], mXdPP = new double[0], mYgen = new double[0];
     double[] ifNom = new double[0], qRef = new double[0], qPerP = new double[0], oelAcc = new double[0];
@@ -145,6 +154,12 @@ public final class PowerGrid {
     int[] moBus = new int[0];
     boolean[] moOn = new boolean[0];
     double[] moScale = new double[0], moVr2 = new double[0], moX = new double[0], moRr = new double[0];
+    /**
+     * Проводимость двигателя, вписанная в Y при разложении острова (по скольжению того момента); в итерацию
+     * идёт только разность с текущей. Иначе инжекция тока большого двигателя на слабой сети (пуск, двигатель не
+     * своего класса) делает итерацию Якоби расходящейся.
+     */
+    private double[] moYsRe = new double[0], moYsIm = new double[0];
     double[] moLoss = new double[0], moQm = new double[0], moKq = new double[0], moH = new double[0];
     double[] moW = new double[0], moTl = new double[0], moTlUsed = new double[0], moTe = new double[0];
     double[] moIRe = new double[0], moIIm = new double[0];
@@ -248,6 +263,8 @@ public final class PowerGrid {
         brAmbientC = grow(brAmbientC, nbr);
         brTempC = grow(brTempC, nbr);
         brDamage = grow(brDamage, nbr);
+        brLastIFrom = grow(brLastIFrom, nbr);
+        brLastITo = grow(brLastITo, nbr);
         trOilRise = grow(trOilRise, nbr);
         trHsRise = grow(trHsRise, nbr);
         trLifeH = grow(trLifeH, nbr);
@@ -306,6 +323,7 @@ public final class PowerGrid {
         MachineParams p = m.params();
         ExciterSpec e = m.exciter();
         mBus[i] = bus;
+        mOnline[i] = true;
         mBreakdownPu[i] = VoltageClass.nearest(p.vRatedV()).breakdownRatio() * p.vRatedV() / busClass.get(bus).volts;
         mS[i] = p.sRatedVa() / sb;
         mXd[i] = p.xd();
@@ -391,6 +409,8 @@ public final class PowerGrid {
         moOn = grow(moOn, nmo);
         moScale = grow(moScale, nmo);
         moVr2 = grow(moVr2, nmo);
+        moYsRe = grow(moYsRe, nmo);
+        moYsIm = grow(moYsIm, nmo);
         moX = grow(moX, nmo);
         moRr = grow(moRr, nmo);
         moLoss = grow(moLoss, nmo);
@@ -427,6 +447,7 @@ public final class PowerGrid {
             Island isl = islands[busIsland[bus]];
             isl.motors = Arrays.copyOf(isl.motors, isl.motors.length + 1);
             isl.motors[isl.motors.length - 1] = j;
+            isl.yDirty = true;
         }
         return new MotorId(j);
     }
@@ -557,6 +578,14 @@ public final class PowerGrid {
         return scope(k, incomingIsFrom(k));
     }
 
+    /**
+     * Синхроноскоп ветви с заданной стороной «генератора» (прибор на ячейке смотрит со стороны присоединения):
+     * Δf &gt; 0 — эта сторона быстрее, стрелка по часовой.
+     */
+    public SyncScope syncScope(BranchId id, boolean generatorAtFrom) {
+        return scope(branch(id), generatorAtFrom);
+    }
+
     /** Отключение и подключение нагрузки (АЧР, потребитель) — без переразложения. */
     public void setLoadConnected(LoadId id, boolean on) {
         lOn[load(id)] = on;
@@ -574,11 +603,18 @@ public final class PowerGrid {
 
     void motorFaultFollowsContactor(int j) {
         int b = moBus[j];
+        // включённый двигатель вписывается в Y до первого решения (пусковой ток на слабой сети)
+        if (moOn[j] && !topologyDirty && moYsRe[j] == 0 && moYsIm[j] == 0) islands[busIsland[b]].yDirty = true;
         if (moOn[j] && moFaulted[j] && fType[b] == null) {
             setBusFault(b, FaultType.THREE_PHASE, 0, false, -1, j);
         } else if (!moOn[j] && fMotor[b] == j) {
             clearBusFault(b);
         }
+    }
+
+    /** Контактор двигателя замкнут (оператором; РЗА двигателя его размыкает). */
+    public boolean motorConnected(MotorId id) {
+        return moOn[motor(id)];
     }
 
     /** Перемотка обмотки (13, R22): двигатель исправен, его КЗ снято. */
@@ -739,7 +775,7 @@ public final class PowerGrid {
             thetaPrev[b] = Math.atan2(vIm[b], vRe[b]);
             fBus[b] = islands[busIsland[b]].energized ? f0 : 0;
         }
-        for (int i = 0; i < nm; i++) machineFromTerminal(i);
+        for (int i = 0; i < nm; i++) if (mOnline[i]) machineFromTerminal(i);
         for (int j = 0; j < nmo; j++) {
             int b = moBus[j];
             double v = Math.sqrt((vRe[b] * vRe[b] + vIm[b] * vIm[b]) * moVr2[j]);
@@ -754,6 +790,177 @@ public final class PowerGrid {
         GridOutputs scratch = new GridOutputs();
         solveNetwork();
         measure(Double.POSITIVE_INFINITY, scratch);
+    }
+
+    /**
+     * Пуск модели без потокораспределения: сеть мира собирается из стоящих машин, а при пересборке состояние
+     * переносится {@link #importMachine}/{@link #importBranch}/{@link #importMotor} до вызова. Напряжения шин —
+     * из решения сети по текущим ЭДС машин.
+     */
+    public void startCold() {
+        rebuildTopology();
+        evCount = 0;
+        for (Island isl : islands) factorIsland(isl);
+        for (int b = 0; b < nb; b++) {
+            vRe[b] = vIm[b] = vtRe[b] = vtIm[b] = 0;
+        }
+        for (Island isl : islands) {
+            if (!isl.energized) continue;
+            double hs = 0, hw = 0;
+            for (int i : isl.machines) {
+                hs += mH[i] * mS[i];
+                hw += mH[i] * mS[i] * omega[i];
+            }
+            isl.omegaCoi = hw / hs;
+            isl.fCoi = f0 * isl.omegaCoi;
+            isl.rocof = 0;
+        }
+        initialized = true;
+        for (int it = 0; it < 4; it++) solveNetwork(); // следящая итерация стартует с нуля
+        for (int b = 0; b < nb; b++) {
+            thetaPrev[b] = Math.atan2(vIm[b], vRe[b]);
+            fBus[b] = islands[busIsland[b]].energized ? islands[busIsland[b]].fCoi : 0;
+        }
+        measure(Double.POSITIVE_INFINITY, new GridOutputs());
+    }
+
+    /**
+     * Ввести машину в сеть или вывести из неё (агрегат стоит или выбегает): вне сети она не входит в остров, её
+     * ротор крутит владелец через {@link #setMachineSpeed}. Меняет топологию.
+     */
+    public void setMachineOnline(MachineId id, boolean online) {
+        int i = machineIndex(id);
+        if (mOnline[i] == online) return;
+        mOnline[i] = online;
+        if (!online) {
+            pe[i] = qe[i] = ioRe[i] = ioIm[i] = vt[i] = 0;
+            slipIndex[i] = 0;
+        }
+        topologyDirty = true;
+    }
+
+    public boolean machineOnline(MachineId id) {
+        return mOnline[machineIndex(id)];
+    }
+
+    /** Скорость машины вне сети, о.е. */
+    public void setMachineSpeed(MachineId id, double pu) {
+        int i = machineIndex(id);
+        if (mOnline[i]) throw new IllegalStateException("machine is online: its speed follows the swing equation");
+        if (!(pu >= 0)) throw new IllegalArgumentException("pu");
+        omega[i] = pu;
+    }
+
+    /**
+     * Динамическое состояние машины ({@link #MACHINE_STATE} чисел): угол, скорость, поток, возбуждение и АРВ,
+     * уставки, повреждения — для пересборки сети мира и сохранения.
+     */
+    public void exportMachine(MachineId id, double[] out) {
+        int i = machineIndex(id);
+        out[0] = delta[i];
+        out[1] = omega[i];
+        out[2] = eq[i];
+        out[3] = efd[i];
+        out[4] = xLL[i];
+        out[5] = vref[i];
+        out[6] = efdManual[i];
+        out[7] = pTargetW[i];
+        out[8] = qRef[i];
+        out[9] = qPerP[i];
+        out[10] = oelAcc[i];
+        out[11] = uelBias[i];
+        out[12] = shaftDmg[i];
+        out[13] = statorDmg[i];
+        out[14] = sheared[i] ? 1 : 0;
+        out[15] = excMode[i].ordinal();
+        out[16] = vSetPu[i];
+    }
+
+    /** Обратное {@link #exportMachine}; до {@link #startCold}. */
+    public void importMachine(MachineId id, double[] in) {
+        int i = machineIndex(id);
+        delta[i] = in[0];
+        omega[i] = in[1];
+        eq[i] = in[2];
+        efd[i] = in[3];
+        xLL[i] = in[4];
+        vref[i] = in[5];
+        efdManual[i] = in[6];
+        pTargetW[i] = in[7];
+        qRef[i] = in[8];
+        qPerP[i] = in[9];
+        oelAcc[i] = in[10];
+        uelBias[i] = in[11];
+        shaftDmg[i] = in[12];
+        statorDmg[i] = in[13];
+        sheared[i] = in[14] != 0;
+        excMode[i] = EXCITATION_MODES[(int) in[15]];
+        vSetPu[i] = in[16];
+    }
+
+    /**
+     * Состояние ветви ({@link #BRANCH_STATE} чисел): контакты, автомат выключателя (−1 — его нет), износ и число
+     * операций, нагрев провода и трансформатора, старение, вставка.
+     */
+    public void exportBranch(BranchId id, double[] out) {
+        int k = branch(id);
+        out[0] = closed[k] ? 1 : 0;
+        out[1] = brState[k] == null ? -1 : brState[k].ordinal();
+        out[2] = brWear[k];
+        out[3] = brOps[k];
+        out[4] = brTempC[k];
+        out[5] = brDamage[k];
+        out[6] = trOilRise[k];
+        out[7] = trHsRise[k];
+        out[8] = trLifeH[k];
+        out[9] = protection.fuseBlown(k) ? 1 : 0;
+    }
+
+    /**
+     * Обратное {@link #exportBranch}; до {@link #startCold}, после {@link #attachBreaker} и
+     * {@link #attachTripUnit}. Ход выключателя (включение, отключение) завершается мгновенно.
+     */
+    public void importBranch(BranchId id, double[] in) {
+        int k = branch(id);
+        boolean close = in[0] != 0;
+        if (closed[k] != close) {
+            closed[k] = close;
+            topologyDirty = true;
+        }
+        if (brState[k] != null && in[1] >= 0) {
+            BreakerState s = BREAKER_STATES[(int) in[1]];
+            if (s == BreakerState.CLOSING || s == BreakerState.OPENING)
+                s = close ? BreakerState.CLOSED : BreakerState.OPEN;
+            brState[k] = s;
+            brTimer[k] = 0;
+            brWear[k] = in[2];
+            brOps[k] = (int) in[3];
+        }
+        brTempC[k] = in[4];
+        brDamage[k] = in[5];
+        trOilRise[k] = in[6];
+        trHsRise[k] = in[7];
+        trLifeH[k] = in[8];
+        if (in[9] != 0) protection.markFuseBlown(k);
+    }
+
+    /** Состояние двигателя ({@link #MOTOR_STATE} чисел): скорость, температура обмотки, пробой, контактор. */
+    public void exportMotor(MotorId id, double[] out) {
+        int j = motor(id);
+        out[0] = moW[j];
+        out[1] = moTempC[j];
+        out[2] = moFaulted[j] ? 1 : 0;
+        out[3] = moOn[j] ? 1 : 0;
+    }
+
+    /** Обратное {@link #exportMotor}; до {@link #startCold}. */
+    public void importMotor(MotorId id, double[] in) {
+        int j = motor(id);
+        moW[j] = in[0];
+        moTempC[j] = in[1];
+        moFaulted[j] = in[2] != 0;
+        moOn[j] = in[3] != 0;
+        motorFaultFollowsContactor(j);
     }
 
     /** Состояние машины по P, Q и напряжению её шины (vRe/vIm, pe/qe — на S_b). */
@@ -806,7 +1013,7 @@ public final class PowerGrid {
         int budget = cfg.maxRefactorPerTick();
         for (Island isl : islands) {
             if (budget == 0) break;
-            if (!isl.factored || isl.yDirty) {
+            if (!isl.factored || isl.yDirty || isl.restamp) {
                 factorIsland(isl);
                 budget--;
             }
@@ -917,7 +1124,7 @@ public final class PowerGrid {
                 gIm[b] = 0;
             }
             for (int i : isl.machines) {
-                double er = eq[i] * Math.cos(delta[i]), ei = eq[i] * Math.sin(delta[i]);
+                double e = emf(i), er = e * Math.cos(delta[i]), ei = e * Math.sin(delta[i]);
                 gRe[mBus[i]] += ei * mYgen[i]; // E'/(j x') = −j·E'·y
                 gIm[mBus[i]] -= er * mYgen[i];
             }
@@ -952,7 +1159,7 @@ public final class PowerGrid {
             if (!isl.solvable()) continue;
             for (int i : isl.machines) {
                 int b = mBus[i];
-                double er = eq[i] * Math.cos(delta[i]), ei = eq[i] * Math.sin(delta[i]);
+                double e = emf(i), er = e * Math.cos(delta[i]), ei = e * Math.sin(delta[i]);
                 double y = mYgen[i];
                 double ir = (ei - vIm[b]) * y, ii = -(er - vRe[b]) * y; // (E' − V)/(j x')
                 ioRe[i] = ir;
@@ -962,6 +1169,12 @@ public final class PowerGrid {
                 vt[i] = Math.hypot(vRe[b], vIm[b]);
             }
         }
+    }
+
+    /** ЭДС за x'_d: E'_q, а на выбеге и при разгоне ниже {@link #EMF_KNEE_SPEED} — пропорционально скорости. */
+    private double emf(int i) {
+        double w = omega[i];
+        return w >= EMF_KNEE_SPEED ? eq[i] : eq[i] * Math.max(0, w) / EMF_KNEE_SPEED;
     }
 
     /** Токи нагрузок по напряжению итерации; ниже 0,7 о.е. — как сопротивление (§7.1.3). */
@@ -1000,21 +1213,38 @@ public final class PowerGrid {
         for (int j = 0; j < nmo; j++) {
             int b = moBus[j];
             Island isl = islands[busIsland[b]];
-            double vr = vtRe[b], vi = vtIm[b], v2 = vr * vr + vi * vi;
-            if (!moOn[j] || !isl.solvable() || v2 == 0) {
+            double vr = vtRe[b], vi = vtIm[b];
+            if (!isl.solvable()) {
                 moIRe[j] = 0;
                 moIIm[j] = 0;
                 continue;
             }
-            // при заданном скольжении P и Q ∝ v²: двигатель — сопротивление, ток ∝ V
-            double s = 1 - moW[j] / isl.omegaCoi, vm2 = v2 * moVr2[j];
-            double p = motorP(j, s, vm2) * moScale[j], q = motorQ(j, s, vm2) * moScale[j];
-            double ir = (p * vr + q * vi) / v2, ii = (p * vi - q * vr) / v2;
-            moIRe[j] = ir;
-            moIIm[j] = ii;
-            lRe[b] += ir;
-            lIm[b] += ii;
+            // при заданном скольжении P и Q ∝ v²: двигатель — проводимость y_m = P₁ − jQ₁, ток y_m·V
+            motorAdmittance(j, isl.omegaCoi);
+            double yr = ymRe, yi = ymIm;
+            moIRe[j] = yr * vr - yi * vi;
+            moIIm[j] = yr * vi + yi * vr;
+            double dr = yr - moYsRe[j], di = yi - moYsIm[j]; // вписанная часть уже в Y
+            lRe[b] += dr * vr - di * vi;
+            lIm[b] += dr * vi + di * vr;
+            double ys = Math.hypot(moYsRe[j], moYsIm[j]), y = Math.hypot(yr, yi);
+            if (Math.hypot(dr, di) > RESTAMP_FRACTION * Math.max(ys, y)) isl.restamp = true;
         }
+    }
+
+    /** Доля расхождения проводимости двигателя с вписанной, после которой остров переразлагается. */
+    private static final double RESTAMP_FRACTION = 0.3;
+    private double ymRe, ymIm;
+
+    /** Проводимость двигателя {@code j} при частоте острова {@code omegaCoi}, о.е. на S_b → {@link #ymRe}, {@link #ymIm}. */
+    private void motorAdmittance(int j, double omegaCoi) {
+        if (!moOn[j]) {
+            ymRe = ymIm = 0;
+            return;
+        }
+        double s = 1 - moW[j] / omegaCoi;
+        ymRe = motorP(j, s, moVr2[j]) * moScale[j];
+        ymIm = -motorQ(j, s, moVr2[j]) * moScale[j];
     }
 
     /** I_r² схемы замещения двигателя, о.е. на P_ном. */
@@ -1441,11 +1671,16 @@ public final class PowerGrid {
      * через трансформаторы).
      */
     double endPhaseCurrentPu(int k, boolean atFrom) {
-        if (!closed[k]) return 0;
+        double[] last = atFrom ? brLastIFrom : brLastITo;
+        if (!closed[k]) return last[k] = 0;
+        // контакты сомкнулись или Y изменилась после решения тика (пробой, КЗ): напряжения ещё от старой схемы,
+        // ток по ним бессмыслен (ΔU старой схемы на x кабеля) — до переразложения острова держим последний верный
+        if (topologyDirty || busIsland[bTo[k]] != busIsland[bFrom[k]]) return last[k];
+        Island isl = islands[busIsland[bFrom[k]]];
+        if (isl.energized && !isl.solvable()) return last[k];
         endCurrent(k, atFrom);
         double r1 = ecRe, i1 = ecIm;
-        Island isl = islands[busIsland[bFrom[k]]];
-        if (isl.faults.length == 0 || !isl.solvable()) return Math.hypot(r1, i1);
+        if (isl.faults.length == 0 || !isl.solvable()) return last[k] = Math.hypot(r1, i1);
         double r2 = 0, i2 = 0, r0 = 0, i0 = 0;
         VoltageClass end = busClass.get(atFrom ? bFrom[k] : bTo[k]);
         boolean transformer = branchSpec.get(k) instanceof Branch.Transformer;
@@ -1459,7 +1694,7 @@ public final class PowerGrid {
                 i0 -= ecRe * s.i0Im + ecIm * s.i0Re;
             }
         }
-        return FaultSite.phaseMax(r1, i1, r2, i2, r0, i0);
+        return last[k] = FaultSite.phaseMax(r1, i1, r2, i2, r0, i0);
     }
 
     /** Наибольший фазный ток машины, о.е. на S_b: обратная последовательность — через 1/(jx'_d) на её шине. */
@@ -1557,7 +1792,7 @@ public final class PowerGrid {
         }
         List<List<Integer>> mach = lists(next.length), lds = lists(next.length), br = lists(next.length);
         List<List<Integer>> mot = lists(next.length);
-        for (int i = 0; i < nm; i++) mach.get(busIsland[mBus[i]]).add(i);
+        for (int i = 0; i < nm; i++) if (mOnline[i]) mach.get(busIsland[mBus[i]]).add(i);
         for (int j = 0; j < nl; j++) lds.get(busIsland[lBus[j]]).add(j);
         for (int j = 0; j < nmo; j++) mot.get(busIsland[moBus[j]]).add(j);
         for (int k = 0; k < nbr; k++) if (closed[k]) br.get(busIsland[bFrom[k]]).add(k);
@@ -1676,6 +1911,13 @@ public final class PowerGrid {
             if (fYRe[b] != 0 || fYIm[b] != 0) lu.add(lu.position(busLocal[b], busLocal[b]), fYRe[b], fYIm[b]);
         }
         for (int i : isl.machines) lu.add(lu.position(busLocal[mBus[i]], busLocal[mBus[i]]), 0, -mYgen[i]);
+        for (int j : isl.motors) {
+            motorAdmittance(j, isl.omegaCoi);
+            moYsRe[j] = ymRe;
+            moYsIm[j] = ymIm;
+            if (ymRe != 0 || ymIm != 0) lu.add(lu.position(busLocal[moBus[j]], busLocal[moBus[j]]), ymRe, ymIm);
+        }
+        isl.restamp = false;
         if (!lu.factor()) throw new IllegalStateException("singular admittance matrix in island " + isl.id);
     }
 
@@ -1908,6 +2150,11 @@ public final class PowerGrid {
     }
 
     /** Активная мощность нагрузки на последнем решении, Вт. */
+    /** Нагрузка подключена (оператором и не отключена АЧР, 27). */
+    public boolean loadConnected(LoadId id) {
+        return lOn[load(id)];
+    }
+
     public double loadPowerW(LoadId id) {
         int j = load(id), b = lBus[j];
         return (vRe[b] * liRe[j] + vIm[b] * liIm[j]) * sb;
@@ -2195,6 +2442,7 @@ public final class PowerGrid {
 
     MachineState machineState(int i) {
         if (shaftDmg[i] >= 1 || statorDmg[i] >= 1) return MachineState.DAMAGED;
+        if (!mOnline[i]) return omega[i] > 0.01 ? MachineState.ROLLING : MachineState.STOPPED;
         if (slips[i] > 0) return MachineState.ASYNC;
         boolean loaded = pe[i] > 0.05 * mS[i];
         if (!loaded && islands[busIsland[mBus[i]]].machines.length == 1)
@@ -2228,6 +2476,7 @@ public final class PowerGrid {
         sheared = grow(sheared, n);
         pinCoupling = grow(pinCoupling, n);
         oelOn = grow(oelOn, n);
+        mOnline = grow(mOnline, n);
         excMode = grow(excMode, n);
         mS = grow(mS, n);
         mXd = grow(mXd, n);
@@ -2302,6 +2551,8 @@ public final class PowerGrid {
         final double[] bRe, bIm;
         ComplexSparseLU lu;
         boolean energized, factored, yDirty;
+        /** Проводимости двигателей ушли от вписанных в Y — переразложить при случае (решение остаётся верным). */
+        boolean restamp;
         double omegaCoi = 1, fCoi, rocof, gen, load, loss, solverStep;
 
         Island(int id, int[] buses) {

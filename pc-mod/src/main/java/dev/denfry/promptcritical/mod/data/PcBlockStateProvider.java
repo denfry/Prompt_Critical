@@ -3,6 +3,7 @@ package dev.denfry.promptcritical.mod.data;
 import dev.denfry.promptcritical.mod.PromptCritical;
 import dev.denfry.promptcritical.mod.block.PcBlock;
 import dev.denfry.promptcritical.mod.block.PcProperties;
+import dev.denfry.promptcritical.mod.grid.CableBlock;
 import dev.denfry.promptcritical.mod.multiblock.Footprint;
 import dev.denfry.promptcritical.mod.registry.PcBlocks;
 import dev.denfry.promptcritical.mod.registry.PcItems;
@@ -42,6 +43,10 @@ public final class PcBlockStateProvider extends BlockStateProvider {
                 decorForm(block, id, form);
                 continue;
             }
+            if (block instanceof CableBlock cable) {
+                cable(cable, id);
+                continue;
+            }
             getVariantBuilder(block).forAllStates(state -> ConfiguredModel.builder()
                     .modelFile(existing(modelName(id, state)))
                     .rotationY(rotationY(state))
@@ -68,6 +73,25 @@ public final class PcBlockStateProvider extends BlockStateProvider {
                 itemModels().wallInventory(id, tex);
                 return;
             }
+        }
+        itemModels().withExistingParent(id, modLoc("block/" + id));
+    }
+
+    /**
+     * Кабель и шина — сердечник и плечи к соединённым граням; модель плеча смотрит на север. Шина — только
+     * горизонтальные плечи (её плечо у верха блока).
+     */
+    private void cable(CableBlock block, String id) {
+        var mp = getMultipartBuilder(block);
+        mp.part().modelFile(existing(id)).addModel().end();
+        ModelFile side = existing(id + "_side");
+        boolean vertical = block != PcBlocks.BUSBAR.get();
+        for (Direction d : Direction.values()) {
+            if (d.getAxis() == Direction.Axis.Y && !vertical) continue;
+            int x = d == Direction.UP ? 270 : d == Direction.DOWN ? 90 : 0;
+            int y = d.getAxis() == Direction.Axis.Y ? 0 : ((int) d.toYRot() + 180) % 360;
+            mp.part().modelFile(side).rotationX(x).rotationY(y).uvLock(false).addModel()
+                    .condition(CableBlock.SIDES.get(d), true).end();
         }
         itemModels().withExistingParent(id, modLoc("block/" + id));
     }
@@ -122,6 +146,21 @@ public final class PcBlockStateProvider extends BlockStateProvider {
             case "document_lectern" -> s.getValue(PcProperties.HAS_DOCUMENT) ? id + "_document" : id;
             case "industrial_light", "industrial_light_street", "industrial_light_floodlight", "industrial_light_exit" ->
                     s.getValue(BlockStateProperties.LIT) ? id : id + "_off";
+            // электросеть I1 (этап 8 M3)
+            case "electric_motor" -> s.getValue(PcProperties.MEDIUM_VOLTAGE) ? id + "_mv" : id;
+            case "disconnector" -> s.getValue(PcProperties.EARTHED) ? id + "_earthed" : id;
+            case "switchgear_cell" -> s.getValue(PcProperties.ALARM) ? id + "_alarm"
+                    : s.getValue(BlockStateProperties.OPEN) ? id + "_open" : id;
+            case "lv_switchboard" -> s.getValue(PcProperties.ALARM) ? id + "_overload"
+                    : s.getValue(BlockStateProperties.OPEN) ? id + "_off" : id;
+            case "relay_cabinet" -> s.getValue(PcProperties.ALARM) ? id + "_tripped" : id;
+            case "lv_distribution_box" -> s.getValue(PcProperties.ALARM) ? id + "_tripped" : id;
+            case "grid_consumer" -> s.getValue(BlockStateProperties.LIT) ? id : id + "_dark";
+            case "wooden_pole", "concrete_pole" -> switch (s.getValue(PcProperties.CHIMNEY_PART)) {
+                case BASE -> id + "_bottom";
+                case TOP -> id + "_top";
+                case MIDDLE -> id;
+            };
             default -> s.hasProperty(PcProperties.HOST) ? hosted(id, s) : id;
         };
     }

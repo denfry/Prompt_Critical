@@ -32,6 +32,19 @@ import dev.denfry.promptcritical.mod.mine.MineHoistBlock;
 import dev.denfry.promptcritical.mod.mine.PoweredRoofSupportBlock;
 import dev.denfry.promptcritical.mod.foundry.KineticMachineBlock.ShaftSide;
 import dev.denfry.promptcritical.mod.foundry.MachineToolBlockEntity;
+import dev.denfry.promptcritical.mod.grid.BreakerCellBlockEntity;
+import dev.denfry.promptcritical.mod.grid.CableBlock;
+import dev.denfry.promptcritical.mod.grid.ConnectorBlockEntity;
+import dev.denfry.promptcritical.mod.grid.ConsumerBlockEntity;
+import dev.denfry.promptcritical.mod.grid.DisconnectorBlockEntity;
+import dev.denfry.promptcritical.mod.grid.DistributionBoxBlockEntity;
+import dev.denfry.promptcritical.mod.grid.ElectricMotorBlockEntity;
+import dev.denfry.promptcritical.mod.grid.GridMountedBlock;
+import dev.denfry.promptcritical.mod.grid.InstrumentBlockEntity;
+import dev.denfry.promptcritical.mod.grid.PoleBlock;
+import dev.denfry.promptcritical.mod.grid.RelayCabinetBlockEntity;
+import dev.denfry.promptcritical.mod.grid.ShaftGeneratorBlockEntity;
+import dev.denfry.promptcritical.mod.grid.TransformerBlockEntity;
 import dev.denfry.promptcritical.mod.foundry.MoldingStationBlockEntity;
 import dev.denfry.promptcritical.mod.foundry.SandMoldBlock;
 import dev.denfry.promptcritical.mod.foundry.ShakeoutGrateBlockEntity;
@@ -60,7 +73,7 @@ import net.neoforged.neoforge.registries.DeferredBlock;
 import net.neoforged.neoforge.registries.DeferredRegister;
 
 /**
- * Блоки вехи M2 (эпоха I0): реестры 07 §7.22 и 08 §8.20, состояния — по арт-реестрам. Поведение устройств добавляют
+ * Блоки вех M2–M3 (эпохи I0–I1): реестры 07 §7.22 и 08 §8.20, состояния — по арт-реестрам. Поведение устройств добавляют
  * этапы 6–8; здесь — свойства, объём ({@link Footprint}) и доменный двойник.
  */
 public final class PcBlocks {
@@ -122,6 +135,12 @@ public final class PcBlocks {
                 .lightLevel(st -> st.getValue(BlockStateProperties.LIT) ? 15 : 0);
     }
 
+    /** Щитовой прибор, изолятор: снимается рукой, разрушается поршнем. */
+    private static Properties instrument() {
+        return Properties.of().mapColor(MapColor.METAL).strength(1.0f).sound(SoundType.COPPER).noOcclusion()
+                .pushReaction(PushReaction.DESTROY);
+    }
+
     private static Properties plate() {
         return Properties.of().mapColor(MapColor.METAL).strength(1.0f).sound(SoundType.METAL).noOcclusion().noCollission();
     }
@@ -153,6 +172,47 @@ public final class PcBlocks {
     public static final DeferredBlock<PressureGaugeBlock> INSTRUMENT_PRESSURE = withItem(BLOCKS.registerBlock("instrument_pressure",
             PressureGaugeBlock::create, Properties.of().mapColor(MapColor.METAL).strength(1.0f).sound(SoundType.COPPER)
                     .noOcclusion().pushReaction(PushReaction.DESTROY)));
+
+    // --- электросеть I1 (07 §7.3–7.6, этап 8 M3) ---
+    private static final Footprint FP_DISCONNECTOR = Footprint.of(Segment.box(-1, 1, 0, 1, 0, 0));
+    public static final DeferredBlock<PcDeviceBlock> SHAFT_GENERATOR = device("shaft_generator", machine(),
+            Spec.facing(PcProperties.RUNNING), KineticMachineBlock.with(ShaftSide.BACK, ShaftGeneratorBlockEntity::new));
+    public static final DeferredBlock<PcBlock> GENERATOR_EXCITER = block("generator_exciter", machine(), Spec.facing());
+    public static final DeferredBlock<PcDeviceBlock> INSTRUMENT_SYNCHROSCOPE = device("instrument_synchroscope", instrument(),
+            Spec.facing(), GridMountedBlock.wall(InstrumentBlockEntity::synchroscope, 2, 2, 10.9, 14, 14, 16));
+    public static final DeferredBlock<PcDeviceBlock> ELECTRIC_MOTOR = device("electric_motor", machine(),
+            Spec.facing(PcProperties.RUNNING, PcProperties.MEDIUM_VOLTAGE),
+            KineticMachineBlock.with(ShaftSide.FRONT, ElectricMotorBlockEntity::new));
+    public static final DeferredBlock<CableBlock> BUSBAR = withItem(BLOCKS.registerBlock("busbar", CableBlock::create,
+            sheet(MapColor.METAL)));
+    public static final DeferredBlock<PcDeviceBlock> DISCONNECTOR = device("disconnector", machine(),
+            Spec.facing(BlockStateProperties.OPEN, PcProperties.EARTHED).footprint(FP_DISCONNECTOR),
+            FoundryBlock.with(DisconnectorBlockEntity::new));
+    public static final DeferredBlock<PcDeviceBlock> SWITCHGEAR_CELL = device("switchgear_cell", machine(),
+            Spec.facing(BlockStateProperties.OPEN, PcProperties.ALARM).footprint(FP_TALL2), FoundryBlock.with(BreakerCellBlockEntity::mv));
+    public static final DeferredBlock<PcDeviceBlock> LV_SWITCHBOARD = device("lv_switchboard", machine(),
+            Spec.facing(BlockStateProperties.OPEN, PcProperties.ALARM).footprint(FP_TALL2), FoundryBlock.with(BreakerCellBlockEntity::lv));
+    public static final DeferredBlock<PcDeviceBlock> RELAY_CABINET = device("relay_cabinet", machine(),
+            Spec.facing(PcProperties.ALARM).footprint(FP_TALL2), FoundryBlock.with(RelayCabinetBlockEntity::new));
+    public static final DeferredBlock<PcDeviceBlock> DISTRIBUTION_TRANSFORMER = device("distribution_transformer", machine(),
+            Spec.facing().footprint(FP_TALL2), FoundryBlock.with(TransformerBlockEntity::new));
+    public static final DeferredBlock<PoleBlock> WOODEN_POLE = withItem(BLOCKS.registerBlock("wooden_pole",
+            p -> PoleBlock.create(p, 2.5), wood()));
+    public static final DeferredBlock<PoleBlock> CONCRETE_POLE = withItem(BLOCKS.registerBlock("concrete_pole",
+            p -> PoleBlock.create(p, 3), Properties.of().mapColor(MapColor.STONE).requiresCorrectToolForDrops().strength(2.0f, 6.0f)
+                    .noOcclusion()));
+    public static final DeferredBlock<CableBlock> POWER_CABLE = withItem(BLOCKS.registerBlock("power_cable", CableBlock::create,
+            Properties.of().mapColor(MapColor.COLOR_BLACK).strength(0.6f).sound(SoundType.WOOL).noOcclusion()));
+    public static final DeferredBlock<PcDeviceBlock> GRID_CONSUMER = device("grid_consumer", brick(),
+            Spec.facing(BlockStateProperties.LIT).footprint(FP_CUBE3), FoundryBlock.with(ConsumerBlockEntity::new));
+    public static final DeferredBlock<PcDeviceBlock> ENERGY_METER = device("energy_meter", instrument(), Spec.facing(),
+            GridMountedBlock.wall(InstrumentBlockEntity::meter, 3, 0.5, 10.9, 13, 15, 16));
+    public static final DeferredBlock<PcDeviceBlock> WIRE_CONNECTOR_LV = device("wire_connector_lv", instrument(), Spec.facing(),
+            GridMountedBlock.wall(ConnectorBlockEntity::lv, 6, 4, 5.4, 10, 10, 16));
+    public static final DeferredBlock<PcDeviceBlock> WIRE_CONNECTOR_MV = device("wire_connector_mv", instrument(), Spec.of(),
+            GridMountedBlock.floor(ConnectorBlockEntity::mv, 5.5, 0, 5.5, 10.5, 12, 10.5));
+    public static final DeferredBlock<PcDeviceBlock> LV_DISTRIBUTION_BOX = device("lv_distribution_box", machine(),
+            Spec.facing(PcProperties.ALARM), GridMountedBlock.wall(DistributionBoxBlockEntity::new, 2, 0.5, 10.4, 14, 14, 16));
 
     // --- руды и пласты (08 §8.1) ---
     public static final DeferredBlock<PcBlock> MAGNETITE_ORE = ore("magnetite_ore", "raw_magnetite");

@@ -38,7 +38,7 @@ public final class BoilerClient {
     }
 
     /** Повернуть позу в систему модели (фасад на север) для блока с фасадом {@code facing}. */
-    static void toModel(PoseStack ms, Direction facing) {
+    public static void toModel(PoseStack ms, Direction facing) {
         ms.translate(0.5, 0.5, 0.5);
         ms.mulPose(Axis.YP.rotationDegrees(-(facing.toYRot() + 180)));
         ms.translate(-0.5, -0.5, -0.5);
@@ -56,7 +56,7 @@ public final class BoilerClient {
     }
 
     /** Четырёхугольник по четырём точкам (x, y) в плоскости z, видимый с обеих сторон. */
-    static void quad(VertexConsumer vc, PoseStack ms, float[][] pts, float z, int argb) {
+    public static void quad(VertexConsumer vc, PoseStack ms, float[][] pts, float z, int argb) {
         Matrix4f m = ms.last().pose();
         float a = (argb >>> 24) / 255f, r = (argb >> 16 & 255) / 255f, g = (argb >> 8 & 255) / 255f, b = (argb & 255) / 255f;
         for (float[] p : pts) vc.addVertex(m, p[0] / 16, p[1] / 16, z / 16).setColor(r, g, b, a);

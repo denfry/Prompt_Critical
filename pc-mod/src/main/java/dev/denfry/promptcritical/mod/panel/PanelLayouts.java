@@ -3,6 +3,7 @@ package dev.denfry.promptcritical.mod.panel;
 import dev.denfry.promptcritical.mod.PromptCritical;
 import dev.denfry.promptcritical.mod.boiler.BoilerPanels;
 import dev.denfry.promptcritical.mod.foundry.FoundryPanels;
+import dev.denfry.promptcritical.mod.grid.GridPanels;
 import dev.denfry.promptcritical.mod.mine.MinePanels;
 import java.util.LinkedHashMap;
 import java.util.List;
@@ -23,7 +24,7 @@ public final class PanelLayouts {
     private static final Map<String, PanelLayout> BY_ID = new LinkedHashMap<>();
 
     static {
-        for (List<PanelLayout> group : List.of(BoilerPanels.all(), FoundryPanels.all(), MinePanels.all())) {
+        for (List<PanelLayout> group : List.of(BoilerPanels.all(), FoundryPanels.all(), MinePanels.all(), GridPanels.all())) {
             for (PanelLayout l : group) {
                 if (BY_ID.put(l.id, l) != null) throw new IllegalStateException("duplicate panel " + l.id);
             }

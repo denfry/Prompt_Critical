@@ -52,6 +52,13 @@ public final class ServerConfig {
     public static final ModConfigSpec.DoubleValue COMBUSTION_THERMAL_NOX_REF_G_PER_GJ;
     public static final ModConfigSpec.DoubleValue COMBUSTION_CO_TRANSITION_WIDTH;
     public static final ModConfigSpec.DoubleValue BOILER_EXPLOSION_BLAST_FRACTION;
+    public static final ModConfigSpec.DoubleValue GRID_SYNC_MAX_ANGLE_DEG;
+    public static final ModConfigSpec.DoubleValue GRID_SYNC_MAX_DV;
+    public static final ModConfigSpec.DoubleValue GRID_SYNC_MAX_SLIP_HZ;
+    public static final ModConfigSpec.DoubleValue GRID_SYNC_TORQUE_DAMAGE_PU;
+    public static final ModConfigSpec.DoubleValue GRID_COUPLING_SHEAR_PU;
+    public static final ModConfigSpec.DoubleValue GRID_AR_SUCCESS_LIGHTNING;
+    public static final ModConfigSpec.DoubleValue GRID_LV_BREAKER_THERMAL_K_S;
     public static final ModConfigSpec.DoubleValue BOILER_FURNACE_EXPLOSION_BLAST_FRACTION;
     public static final ModConfigSpec.DoubleValue BOILER_PURGE_MIN_S;
     public static final ModConfigSpec.IntValue BOILER_PURGE_MIN_VOLUME_CHANGES;
@@ -200,6 +207,23 @@ public final class ServerConfig {
                 .defineInRange("thermal_nox_ref_g_per_gj", 80.0, 0.0, 10_000.0);
         COMBUSTION_CO_TRANSITION_WIDTH = b.comment("[BALANCE] Width of the CO transition near the critical excess air (07 §7.8.3)")
                 .defineInRange("co_transition_width", 0.03, 0.001, 1.0);
+        b.pop();
+
+        b.push("grid");
+        GRID_SYNC_MAX_ANGLE_DEG = b.comment("Synchronism check window: phase angle at closing, degrees (07 §7.3.5, IEEE C50.13)")
+                .defineInRange("sync_max_angle_deg", 10.0, 1.0, 90.0);
+        GRID_SYNC_MAX_DV = b.comment("Synchronism check window: generator voltage above the bus, pu")
+                .defineInRange("sync_max_dv", 0.05, 0.005, 0.5);
+        GRID_SYNC_MAX_SLIP_HZ = b.comment("Synchronism check window: slip, Hz")
+                .defineInRange("sync_max_slip_hz", 0.067, 0.005, 2.0);
+        GRID_SYNC_TORQUE_DAMAGE_PU = b.comment("[BALANCE] Closing torque above which shaft fatigue accumulates, pu")
+                .defineInRange("sync_torque_damage_pu", 1.5, 0.5, 10.0);
+        GRID_COUPLING_SHEAR_PU = b.comment("[BALANCE] Closing torque that shears a rigid coupling, pu")
+                .defineInRange("coupling_shear_pu", 5.0, 1.0, 20.0);
+        GRID_AR_SUCCESS_LIGHTNING = b.comment("[BALANCE] Share of lightning flashovers that clear in the auto-reclose dead time (07 §7.15.1)")
+                .defineInRange("ar_success_lightning", 0.8, 0.0, 1.0);
+        GRID_LV_BREAKER_THERMAL_K_S = b.comment("Thermal constant of 0.4 kV breaker and fuse curves, s (07 §7.4.6)")
+                .defineInRange("lv_breaker_thermal_k_s", 40.0, 1.0, 1000.0);
         b.pop();
 
         b.push("boiler");

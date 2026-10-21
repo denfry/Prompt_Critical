@@ -21,8 +21,8 @@ import net.minecraft.world.level.block.state.BlockState;
  * поверх объёма и свойств {@link dev.denfry.promptcritical.mod.block.PcBlock}.
  */
 public class KineticMachineBlock extends FoundryBlock implements IRotate {
-    /** Где вал: слева от фасада (−x модели), сзади (+z модели) или по оси X у блоков без фасада. */
-    public enum ShaftSide { LEFT, BACK, X_AXIS }
+    /** Где вал: слева от фасада (−x модели), сзади (+z модели), спереди (выход двигателя) или по оси X без фасада. */
+    public enum ShaftSide { LEFT, BACK, FRONT, X_AXIS }
 
     private final ShaftSide side;
 
@@ -42,6 +42,7 @@ public class KineticMachineBlock extends FoundryBlock implements IRotate {
         return switch (side) {
             case LEFT -> facing(state).getCounterClockWise();
             case BACK -> facing(state).getOpposite();
+            case FRONT -> facing(state);
             case X_AXIS -> Direction.WEST;
         };
     }

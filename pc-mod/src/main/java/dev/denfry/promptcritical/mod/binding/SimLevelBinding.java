@@ -47,6 +47,7 @@ public final class SimLevelBinding {
     private final SimSavedData data;
     private final TopologyRebuilder topology = new TopologyRebuilder();
     private final MineWorld mines;
+    private final dev.denfry.promptcritical.mod.grid.GridWorld grids;
     private final Map<SimId, DeviceHost> hosts = new HashMap<>();
     private final Map<SimId, Long> orphanSince = new HashMap<>();
     private final ExternalInputs inputs = ExternalInputs.NONE;
@@ -60,6 +61,7 @@ public final class SimLevelBinding {
         this.data = data;
         this.mutator = new LevelDamageMutator(level);
         this.mines = new MineWorld(this);
+        this.grids = new dev.denfry.promptcritical.mod.grid.GridWorld(this);
     }
 
     static SimLevelBinding create(ServerLevel level, WorkerPool workers, List<Function<ServerLevel, Subsystem>> subsystems) {
@@ -95,6 +97,11 @@ public final class SimLevelBinding {
     /** Шахты измерения (08 §8.2). */
     public MineWorld mines() {
         return mines;
+    }
+
+    /** Электросеть измерения со стороны мира (07). */
+    public dev.denfry.promptcritical.mod.grid.GridWorld grids() {
+        return grids;
     }
 
     public static GridPos gridPos(BlockPos p) {
@@ -146,6 +153,7 @@ public final class SimLevelBinding {
         long gameTime = level.getGameTime();
         topology.process(gameTime, SimConfigs.topologyBudgetNanos());
         mines.preTick(gameTime);
+        grids.preTick(gameTime);
         try {
             world.tick(inputs);
         } catch (RuntimeException e) {

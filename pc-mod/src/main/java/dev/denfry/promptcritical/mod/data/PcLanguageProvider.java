@@ -80,6 +80,25 @@ public final class PcLanguageProvider extends LanguageProvider {
         b("multiblock_part", "Structure Part", "Часть конструкции");
         b("kinetic_port", "Shaft Coupling", "Муфта вала");
         b("instrument_pressure", "Pressure Gauge", "Манометр");
+        // электросеть I1 (07 §7.22)
+        b("shaft_generator", "Shaft Generator", "Генератор на валу");
+        b("generator_exciter", "Generator Exciter", "Возбудитель генератора");
+        b("instrument_synchroscope", "Synchroscope", "Синхроноскоп");
+        b("electric_motor", "Electric Motor", "Электродвигатель");
+        b("busbar", "Busbar", "Шина");
+        b("disconnector", "Disconnector", "Разъединитель");
+        b("switchgear_cell", "Switchgear Cell 6 kV", "Ячейка КРУ 6 кВ");
+        b("lv_switchboard", "LV Switchboard 0.4 kV", "Щит 0,4 кВ");
+        b("relay_cabinet", "Relay Protection Cabinet", "Шкаф релейной защиты");
+        b("distribution_transformer", "Distribution Transformer 6/0.4 kV", "Трансформатор 6/0,4 кВ");
+        b("wooden_pole", "Wooden Pole", "Деревянная опора");
+        b("concrete_pole", "Concrete Pole", "Железобетонная опора");
+        b("power_cable", "Power Cable", "Силовой кабель");
+        b("grid_consumer", "Settlement Load", "Посёлок-потребитель");
+        b("energy_meter", "Energy Meter", "Счётчик электроэнергии");
+        b("wire_connector_lv", "LV Wire Connector", "Коннектор провода 0,4 кВ");
+        b("wire_connector_mv", "Pin Insulator Head", "Изолятор ВЛ 6 кВ");
+        b("lv_distribution_box", "Fuse Box", "Распределительный ящик с предохранителями");
 
         i("fusible_plug", "Fusible Plug", "Легкоплавкая пробка");
         i("governor_dashpot", "Governor Dashpot", "Катаракт регулятора");
@@ -116,6 +135,22 @@ public final class PcLanguageProvider extends LanguageProvider {
         i("engineering_handbook", "Engineering Handbook", "Справочник инженера");
         i("operating_procedure", "Operating Procedure", "Инструкция по эксплуатации");
         i("geological_map", "Geological Map", "Геологическая карта");
+        i("copper_wire", "Copper Wire", "Медная проволока");
+        i("generator_coupling", "Shear-Pin Coupling", "Муфта со срезным штифтом");
+        i("lv_fuse", "LV Fuse Link", "Плавкая вставка");
+        i("interlock_module", "Interlock Module", "Модуль блокировки");
+        i("insulator_pin", "Pin Insulator", "Штыревой изолятор");
+        i("wire_coil_lv", "Insulated Wire Coil", "Бухта самонесущего провода");
+        i("overhead_conductor", "Bare Overhead Conductor", "Голый провод ВЛ");
+        i("relay_overcurrent", "Overcurrent Relay", "Реле максимального тока");
+        i("relay_sync_check", "Sync-Check Relay", "Реле контроля синхронизма");
+        i("relay_reverse_power", "Reverse Power Relay", "Реле обратной мощности");
+        i("relay_frequency", "Underfrequency Relay", "Реле понижения частоты");
+        i("relay_voltage", "Undervoltage Relay", "Реле минимального напряжения");
+        i("relay_thermal", "Thermal Overload Relay", "Тепловое реле");
+        i("relay_ufls", "Load-Shedding Relay (UFLS)", "Реле АЧР");
+        i("relay_autoreclose", "Auto-Reclose Relay", "Реле АПВ");
+        i("relay_breaker_failure", "Breaker Failure Relay", "Реле УРОВ");
 
         FLUIDS.put("flue_gas", new String[] {"Flue Gas", "Дымовые газы"});
         FLUIDS.put("mine_methane", new String[] {"Mine Methane", "Шахтный метан"});
@@ -165,6 +200,7 @@ public final class PcLanguageProvider extends LanguageProvider {
                 "%1$s задохнулся рудничным газом, спасаясь от %2$s"});
         MISC.put("commands.promptcritical.profile.reset", new String[] {"Simulation profile reset", "Профиль симуляции сброшен"});
         MISC.putAll(FoundryText.LANG);
+        MISC.putAll(dev.denfry.promptcritical.mod.grid.GridText.LANG);
         MISC.putAll(dev.denfry.promptcritical.mod.content.ContentText.LANG);
         PcAdvancements.LANG.forEach((id, t) -> {
             MISC.put("advancements.promptcritical." + id + ".title", new String[] {t[0], t[1]});

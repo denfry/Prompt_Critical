@@ -81,7 +81,10 @@ public final class SimBindings {
     public static void markDirty(Level level, BlockPos pos) {
         if (level instanceof ServerLevel s) {
             SimLevelBinding b = BINDINGS.get(s.dimension());
-            if (b != null) b.topology().markDirty(pos);
+            if (b != null) {
+                b.topology().markDirty(pos);
+                b.grids().markDirty();
+            }
         }
     }
 
@@ -89,7 +92,10 @@ public final class SimBindings {
     private static void onNeighborNotify(BlockEvent.NeighborNotifyEvent event) {
         if (event.getLevel() instanceof ServerLevel s) {
             SimLevelBinding b = BINDINGS.get(s.dimension());
-            if (b != null) b.mines().onBlockChanged(event.getPos());
+            if (b != null) {
+                b.mines().onBlockChanged(event.getPos());
+                b.grids().onBlockChanged(event.getPos());
+            }
         }
     }
 

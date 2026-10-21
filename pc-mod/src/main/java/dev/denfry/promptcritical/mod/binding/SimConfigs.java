@@ -41,6 +41,7 @@ public final class SimConfigs {
         sections.put(dev.denfry.promptcritical.sim.plant.SteamPlantConfig.class, new dev.denfry.promptcritical.sim.plant.SteamPlantConfig(
                 ServerConfig.BOILER_EXPLOSION_BLAST_FRACTION.get(), dev.denfry.promptcritical.sim.plant.SteamPlantConfig.defaults().feedOpenKgS(),
                 dev.denfry.promptcritical.sim.plant.SteamPlantConfig.defaults().feedPressurizedKgS()));
+        sections.put(dev.denfry.promptcritical.sim.grid.GridConfig.class, grid());
         sections.put(MetallurgyConfig.class, new MetallurgyConfig(ServerConfig.CASTING_CHVORINOV_B_SAND_MIN_CM2.get(),
                 ServerConfig.MACHINING_TAYLOR_N.get(), ServerConfig.MACHINING_TAYLOR_C_M_MIN.get()));
 
@@ -70,6 +71,19 @@ public final class SimConfigs {
         return new VeinConfig(ServerConfig.VEINS_ENABLED.get(), ServerConfig.VEINS_CELL_CHUNKS.get(),
                 ServerConfig.VEINS_FILL_PROBABILITY.get(), weights, seamMin,
                 Math.max(seamMin, ServerConfig.COAL_SEAM_THICKNESS_MAX.get()), ServerConfig.COAL_RANK_GRADIENT_PER_BLOCK.get());
+    }
+
+    /** Ключи {@code grid.*}; остальное — по умолчанию 07 §7.21. */
+    public static dev.denfry.promptcritical.sim.grid.GridConfig grid() {
+        dev.denfry.promptcritical.sim.grid.GridConfig d = dev.denfry.promptcritical.sim.grid.GridConfig.defaults();
+        if (!ServerConfig.SPEC.isLoaded()) return d;
+        return new dev.denfry.promptcritical.sim.grid.GridConfig(d.baseMva(), d.nominalFrequencyHz(), d.substeps(),
+                d.solverIterations(), d.solverRelaxation(), d.maxRefactorPerTick(), d.loadDamping(), d.governorDeadbandHz(),
+                ServerConfig.GRID_SYNC_MAX_ANGLE_DEG.get(), ServerConfig.GRID_SYNC_MAX_DV.get(), ServerConfig.GRID_SYNC_MAX_SLIP_HZ.get(),
+                ServerConfig.GRID_SYNC_TORQUE_DAMAGE_PU.get(), Math.max(ServerConfig.GRID_COUPLING_SHEAR_PU.get(),
+                        ServerConfig.GRID_SYNC_TORQUE_DAMAGE_PU.get() + 0.1), d.lofTripDelayS(),
+                ServerConfig.GRID_AR_SUCCESS_LIGHTNING.get(), d.groundFaultEscalationPerS(), d.overvoltageAgingExponent(),
+                ServerConfig.GRID_LV_BREAKER_THERMAL_K_S.get());
     }
 
     public static DamageBudgetConfig damage() {

@@ -36,6 +36,8 @@ import org.jetbrains.annotations.Nullable;
 public abstract class KineticMachineBlockEntity<U> extends KineticBlockEntity implements DeviceHost, FoundryDevice {
     private final StressFilter stress = new StressFilter();
     private SimId simId = SimId.NONE;
+    /** Тиков до снятия разового скачка стресса ({@link #spikeStress}). */
+    private int spikeTicks;
     private boolean chunkUnloading;
 
     protected KineticMachineBlockEntity(BlockEntityType<?> type, BlockPos pos, BlockState state) {
@@ -82,7 +84,21 @@ public abstract class KineticMachineBlockEntity<U> extends KineticBlockEntity im
         if (u == null) return;
         shaft(u).sample(getSpeed(), !isOverStressed(), b.world().clock().tick());
         serverTick(b, u);
-        declareStress(powerW(u));
+        if (spikeTicks > 0 && --spikeTicks == 0 && hasNetwork()) getOrCreateNetwork().updateStressFor(this, stress.impact());
+        if (spikeTicks == 0) declareStress(powerW(u));
+    }
+
+    /**
+     * Разовый скачок нагрузки на сеть Create (бросок момента при несинхронном включении генератора, 07 §7.3.5): на один
+     * тик к объявленной мощности добавляется {@code extraW}; почти всегда это overstress всей сети.
+     */
+    protected void spikeStress(double extraW) {
+        if (!hasNetwork()) return;
+        double wPerSu = dev.denfry.promptcritical.mod.config.ServerConfig.W_PER_SU.get();
+        double rpm = Math.max(1, Math.abs(getSpeed()));
+        float impact = (float) (stress.impact() + extraW / (wPerSu * rpm));
+        getOrCreateNetwork().updateStressFor(this, impact);
+        spikeTicks = 2;
     }
 
     private void declareStress(double powerW) {

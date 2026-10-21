@@ -1,0 +1,32 @@
+{
+  "parent": "minecraft:recipes/root",
+  "criteria": {
+    "has_fuse": {
+      "conditions": {
+        "items": [
+          {
+            "items": "promptcritical:lv_fuse"
+          }
+        ]
+      },
+      "trigger": "minecraft:inventory_changed"
+    },
+    "has_the_recipe": {
+      "conditions": {
+        "recipe": "promptcritical:grid/lv_distribution_box"
+      },
+      "trigger": "minecraft:recipe_unlocked"
+    }
+  },
+  "requirements": [
+    [
+      "has_the_recipe",
+      "has_fuse"
+    ]
+  ],
+  "rewards": {
+    "recipes": [
+      "promptcritical:grid/lv_distribution_box"
+    ]
+  }
+}

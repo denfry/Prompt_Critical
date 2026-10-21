@@ -29,6 +29,7 @@ public final class PcClient {
         FoundryClient.register(modBus);
         dev.denfry.promptcritical.mod.boiler.client.BoilerClient.register(modBus);
         dev.denfry.promptcritical.mod.mine.client.MineClient.register(modBus);
+        dev.denfry.promptcritical.mod.grid.client.GridClient.register(modBus);
         modBus.addListener(PcClient::renderers);
         modBus.addListener(PcClient::screens);
     }

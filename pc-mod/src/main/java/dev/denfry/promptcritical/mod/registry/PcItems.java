@@ -1,5 +1,8 @@
 package dev.denfry.promptcritical.mod.registry;
 
+import dev.denfry.promptcritical.mod.grid.RelayModuleItem;
+import dev.denfry.promptcritical.mod.grid.WireCoilItem;
+import dev.denfry.promptcritical.sim.grid.RelaySetting;
 import dev.denfry.promptcritical.mod.PromptCritical;
 import dev.denfry.promptcritical.mod.block.PcBlock;
 import dev.denfry.promptcritical.mod.content.EngineeringHandbookItem;
@@ -66,6 +69,27 @@ public final class PcItems {
     public static final DeferredItem<WireRopeItem> WIRE_ROPE = registered(ITEMS.registerItem("wire_rope", WireRopeItem::new,
             new Item.Properties().stacksTo(16)));
     public static final DeferredItem<Item> CANARY = item("canary", 16);
+
+    // --- электросеть I1 (07 §7.22) ---
+    public static final DeferredItem<Item> COPPER_WIRE = item("copper_wire", 64);
+    public static final DeferredItem<Item> GENERATOR_COUPLING = item("generator_coupling", 16);
+    public static final DeferredItem<Item> LV_FUSE = item("lv_fuse", 64);
+    public static final DeferredItem<Item> INTERLOCK_MODULE = item("interlock_module", 16);
+    public static final DeferredItem<Item> INSULATOR_PIN = item("insulator_pin", 64);
+    public static final DeferredItem<WireCoilItem> WIRE_COIL_LV = registered(ITEMS.registerItem("wire_coil_lv",
+            p -> new WireCoilItem(p, true), new Item.Properties().stacksTo(16)));
+    public static final DeferredItem<WireCoilItem> OVERHEAD_CONDUCTOR = registered(ITEMS.registerItem("overhead_conductor",
+            p -> new WireCoilItem(p, false), new Item.Properties().stacksTo(16)));
+    public static final DeferredItem<RelayModuleItem> RELAY_OVERCURRENT = relay("relay_overcurrent", RelaySetting.Kind.OVERCURRENT);
+    public static final DeferredItem<RelayModuleItem> RELAY_SYNC_CHECK = relay("relay_sync_check", RelaySetting.Kind.SYNC_CHECK);
+    public static final DeferredItem<RelayModuleItem> RELAY_REVERSE_POWER = relay("relay_reverse_power", RelaySetting.Kind.REVERSE_POWER);
+    public static final DeferredItem<RelayModuleItem> RELAY_FREQUENCY = relay("relay_frequency", RelaySetting.Kind.UNDERFREQUENCY);
+    public static final DeferredItem<RelayModuleItem> RELAY_VOLTAGE = relay("relay_voltage", RelaySetting.Kind.UNDERVOLTAGE);
+    public static final DeferredItem<RelayModuleItem> RELAY_THERMAL = relay("relay_thermal", RelaySetting.Kind.THERMAL);
+    public static final DeferredItem<RelayModuleItem> RELAY_UFLS = relay("relay_ufls", RelaySetting.Kind.UFLS);
+    public static final DeferredItem<RelayModuleItem> RELAY_AUTORECLOSE = relay("relay_autoreclose", RelaySetting.Kind.AUTORECLOSE);
+    public static final DeferredItem<RelayModuleItem> RELAY_BREAKER_FAILURE = relay("relay_breaker_failure",
+            RelaySetting.Kind.BREAKER_FAILURE);
     // справочник (11)
     public static final DeferredItem<EngineeringHandbookItem> ENGINEERING_HANDBOOK = registered(ITEMS.registerItem("engineering_handbook",
             EngineeringHandbookItem::new, new Item.Properties().stacksTo(1)));
@@ -96,6 +120,10 @@ public final class PcItems {
         DeferredItem<Item> i = ITEMS.registerSimpleItem(name, new Item.Properties().stacksTo(stack));
         PLAIN.add(i);
         return i;
+    }
+
+    private static DeferredItem<RelayModuleItem> relay(String name, RelaySetting.Kind kind) {
+        return registered(ITEMS.registerItem(name, p -> new RelayModuleItem(p, kind), new Item.Properties().stacksTo(1)));
     }
 
     private static DeferredItem<MineInstrumentItem> instrument(String name, MineInstrumentItem.Kind kind, int stack) {

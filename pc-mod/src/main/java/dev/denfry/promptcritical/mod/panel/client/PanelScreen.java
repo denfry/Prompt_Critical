@@ -68,6 +68,7 @@ public final class PanelScreen extends AbstractContainerScreen<PanelMenu> {
             switch (e) {
                 case PanelLayout.Dial d -> PanelArt.dial(g, font, d, smooth(d, menu.get(d.ch(), d.scale()), dt), ex, ey);
                 case PanelLayout.Glass gl -> PanelArt.glass(g, font, gl, smooth(gl, menu.get(gl.ch(), 1000), dt), ex, ey);
+                case PanelLayout.Scope sc -> PanelArt.scope(g, font, sc, menu.raw(sc.ch()), ex, ey);
                 case PanelLayout.Bar b -> PanelArt.bar(g, font, b, smooth(b, menu.get(b.ch(), b.scale()) / b.max(), dt), ex, ey);
                 case PanelLayout.Lamp l -> PanelArt.lamp(g, font, l, menu.bit(l.ch(), l.bit()), ex, ey);
                 case PanelLayout.Readout r -> PanelArt.window(g, font, r.text().apply(menu), ex, ey, r.w());
@@ -120,6 +121,10 @@ public final class PanelScreen extends AbstractContainerScreen<PanelMenu> {
                     else lines.add(Component.empty().append(d.label()).append(": " + menu.num(d.ch(), d.scale(), d.decimals()) + " ")
                             .append(d.unit()));
                     yield inside(mx, my, d.x(), d.y(), d.size(), d.size() + 12);
+                }
+                case PanelLayout.Scope sc -> {
+                    lines.add(sc.tip() != null ? sc.tip().apply(menu) : sc.label());
+                    yield inside(mx, my, sc.x(), sc.y(), PanelLayout.Scope.SIZE, PanelLayout.Scope.SIZE + 12);
                 }
                 case PanelLayout.Glass gl -> {
                     lines.add(gl.tip() != null ? gl.tip().apply(menu) : gl.label());

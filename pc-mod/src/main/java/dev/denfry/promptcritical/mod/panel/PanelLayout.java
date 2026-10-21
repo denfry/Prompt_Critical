@@ -65,7 +65,7 @@ public final class PanelLayout {
     public interface Tip extends Function<PanelValues, Component> {
     }
 
-    public sealed interface Element permits Dial, Glass, Bar, Lamp, Readout, Caption, Button {
+    public sealed interface Element permits Dial, Scope, Glass, Bar, Lamp, Readout, Caption, Button {
         int x();
 
         int y();
@@ -80,6 +80,15 @@ public final class PanelLayout {
         public int size() {
             return large ? 64 : 48;
         }
+    }
+
+    /**
+     * Синхроноскоп (07 §7.3.5): стрелка на полный оборот, канал — угол в десятых градуса (0 — «12 часов», по часовой —
+     * генератор быстрее); вне синхронизации (канал {@link Integer#MIN_VALUE}) стрелка стоит внизу и не светится.
+     */
+    public record Scope(int x, int y, int ch, Component label, @Nullable Tip tip) implements Element {
+        public static final int SIZE = 64;
+        public static final int OFF = Integer.MIN_VALUE;
     }
 
     /** Водомерное стекло или указатель уровня: канал — доля в тысячных; метки — доли шкалы (NaN — нет). */
@@ -131,6 +140,11 @@ public final class PanelLayout {
         public Builder dial(int x, int y, boolean large, int ch, double scale, double max, double redFrom, int decimals,
                 Component unit, Component label, @Nullable Tip tip) {
             elements.add(new Dial(x, y, large, ch, scale, max, redFrom, decimals, unit, label, tip));
+            return this;
+        }
+
+        public Builder scope(int x, int y, int ch, Component label, @Nullable Tip tip) {
+            elements.add(new Scope(x, y, ch, label, tip));
             return this;
         }
 

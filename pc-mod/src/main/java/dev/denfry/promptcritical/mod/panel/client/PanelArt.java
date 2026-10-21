@@ -121,6 +121,33 @@ public final class PanelArt {
         paintCentered(g, font, d.label(), (int) cx, y + size + 2);
     }
 
+    /** Синхроноскоп: циферблат без шкалы, риска «12 часов», надписи «быстрее»/«медленнее», стрелка на полный оборот. */
+    public static void scope(GuiGraphics g, Font font, PanelLayout.Scope s, int raw, int x, int y) {
+        int size = PanelLayout.Scope.SIZE;
+        g.blitSprite(DIAL_LARGE, x, y, size, size);
+        float cx = x + size / 2f, cy = y + size / 2f;
+        g.fill((int) cx - 1, (int) cy - 27, (int) cx + 1, (int) cy - 20, RED_ZONE);
+        g.pose().pushPose();
+        g.pose().translate(cx, cy + 12, 0);
+        g.pose().scale(0.6f, 0.6f, 1);
+        g.drawString(font, "SLOW", -36, -4, DIAL_INK, false);
+        g.drawString(font, "FAST", 14, -4, DIAL_INK, false);
+        g.pose().popPose();
+        boolean live = raw != PanelLayout.Scope.OFF;
+        float deg = live ? raw / 10f : 180;
+        for (int pass = 0; pass < 2; pass++) {
+            g.pose().pushPose();
+            g.pose().translate(cx + (pass == 0 ? 1 : 0), cy + (pass == 0 ? 1 : 0), 0);
+            g.pose().mulPose(Axis.ZP.rotationDegrees(deg));
+            int c = pass == 0 ? 0x40000000 : live ? DIAL_INK : 0xFF8A8270;
+            g.fill(-1, -24, 1, 6, c);
+            g.fill(-2, -24, 2, -20, c);
+            g.pose().popPose();
+        }
+        g.blitSprite(HUB, (int) cx - 3, (int) cy - 3, 6, 6);
+        paintCentered(g, font, s.label(), (int) cx, y + size + 2);
+    }
+
     private static String tick(double v) {
         return Math.abs(v - Math.rint(v)) < 1e-6 ? String.valueOf((long) Math.rint(v)) : String.format(java.util.Locale.ROOT, "%.1f", v);
     }

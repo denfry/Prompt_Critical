@@ -36,8 +36,15 @@ public final class FoundryMachineRenderer<T extends BlockEntity> implements Bloc
     private final float a, b;
     /** Передаточное число шпинделя к валу. */
     private final float gear;
+    /** Рисовать полувал Create в грани входа (нет, если вал есть в самой части). */
+    private final boolean halfShaft;
 
     public FoundryMachineRenderer(@Nullable PartialModel part, Motion motion, float a, float b, float gear) {
+        this(part, motion, a, b, gear, true);
+    }
+
+    public FoundryMachineRenderer(@Nullable PartialModel part, Motion motion, float a, float b, float gear, boolean halfShaft) {
+        this.halfShaft = halfShaft;
         this.part = part;
         this.motion = motion;
         this.a = a / 16f;
@@ -50,7 +57,7 @@ public final class FoundryMachineRenderer<T extends BlockEntity> implements Bloc
         BlockState state = be.getBlockState();
         VertexConsumer vc = buffers.getBuffer(RenderType.cutoutMipped());
         KineticBlockEntity kbe = be instanceof KineticBlockEntity k ? k : null;
-        if (kbe != null && state.getBlock() instanceof KineticMachineBlock km) {
+        if (halfShaft && kbe != null && state.getBlock() instanceof KineticMachineBlock km) {
             SuperByteBuffer shaft = CachedBuffers.partialFacing(AllPartialModels.SHAFT_HALF, state, km.shaftFace(state));
             KineticBlockEntityRenderer.standardKineticRotationTransform(shaft, kbe, light).renderInto(ms, vc);
         }

@@ -1,0 +1,32 @@
+{
+  "parent": "minecraft:recipes/root",
+  "criteria": {
+    "has_generator": {
+      "conditions": {
+        "items": [
+          {
+            "items": "promptcritical:shaft_generator"
+          }
+        ]
+      },
+      "trigger": "minecraft:inventory_changed"
+    },
+    "has_the_recipe": {
+      "conditions": {
+        "recipe": "promptcritical:grid/instrument_synchroscope"
+      },
+      "trigger": "minecraft:recipe_unlocked"
+    }
+  },
+  "requirements": [
+    [
+      "has_the_recipe",
+      "has_generator"
+    ]
+  ],
+  "rewards": {
+    "recipes": [
+      "promptcritical:grid/instrument_synchroscope"
+    ]
+  }
+}

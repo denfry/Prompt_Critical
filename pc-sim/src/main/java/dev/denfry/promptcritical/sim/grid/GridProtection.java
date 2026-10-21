@@ -148,6 +148,11 @@ final class GridProtection {
         return blown[k];
     }
 
+    /** Вставка перегорела до пересборки сети или сохранения. */
+    void markFuseBlown(int k) {
+        blown[k] = true;
+    }
+
     void replaceFuse(int k) {
         blown[k] = false;
         tuHeat[k] = 0;
@@ -199,7 +204,9 @@ final class GridProtection {
             if (!g.moOn[j] || g.moFaulted[j]) continue;
             int b = g.moBus[j];
             if (!g.islands()[g.busIsland[b]].solvable()) continue;
-            if (Math.hypot(g.vRe[b], g.vIm[b]) > g.moBreakdownPu[j]) {
+            // двигатель ниже класса шины пробивается при подаче напряжения — раньше, чем его пусковой ток
+            // посадит слабый источник (номинал шины уже выше испытательного)
+            if (g.moBreakdownPu[j] < 1 || Math.hypot(g.vRe[b], g.vIm[b]) > g.moBreakdownPu[j]) {
                 g.moFaulted[j] = true;
                 g.motorFaultFollowsContactor(j);
                 g.breakdownEvent(b);
