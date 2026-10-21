@@ -41,6 +41,14 @@ public final class PcProperties {
     public static final BooleanProperty MANUAL = BooleanProperty.create("manual");
     public static final EnumProperty<ProcessKind> PROCESS_KIND = EnumProperty.create("kind", ProcessKind.class);
     public static final EnumProperty<GasAlarm> GAS_ALARM = EnumProperty.create("alarm", GasAlarm.class);
+    // коксохим и домна (этап 10 M3)
+    public static final BooleanProperty HOT = BooleanProperty.create("hot");
+    public static final BooleanProperty BURNT = BooleanProperty.create("burnt");
+    public static final BooleanProperty FILLED = BooleanProperty.create("filled");
+    public static final EnumProperty<OvenLook> OVEN_STATE = EnumProperty.create("state", OvenLook.class);
+    public static final EnumProperty<ByproductKind> BYPRODUCT_KIND = EnumProperty.create("kind", ByproductKind.class);
+    public static final EnumProperty<CastHouseKind> CAST_HOUSE_KIND = EnumProperty.create("kind", CastHouseKind.class);
+    public static final EnumProperty<StoveSegment> STOVE_SEGMENT = EnumProperty.create("segment", StoveSegment.class);
 
     private PcProperties() {
     }
@@ -82,4 +90,16 @@ public final class PcProperties {
 
     /** Порог газоанализатора. */
     public enum GasAlarm implements Named { NONE, WARN, ALARM }
+
+    /** Камера коксовой батареи на вид: пусто, коксуется (в т. ч. загрузка), готов. */
+    public enum OvenLook implements Named { EMPTY, COKING, READY }
+
+    /** Аппарат улавливания (08 §8.4.4). */
+    public enum ByproductKind implements Named { COOLER, PRECIPITATOR, SATURATOR, SCRUBBER }
+
+    /** Машина литейного двора: бурмашина или пушка. */
+    public enum CastHouseKind implements Named { DRILL, MUD_GUN }
+
+    /** Секции воздухонагревателя 3×9×3: низ, середина, купол. */
+    public enum StoveSegment implements Named { BOTTOM, MIDDLE, DOME }
 }

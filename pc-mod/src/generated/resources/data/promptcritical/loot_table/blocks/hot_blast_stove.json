@@ -1,0 +1,28 @@
+{
+  "type": "minecraft:block",
+  "pools": [
+    {
+      "bonus_rolls": 0.0,
+      "conditions": [
+        {
+          "block": "promptcritical:hot_blast_stove",
+          "condition": "minecraft:block_state_property",
+          "properties": {
+            "segment": "bottom"
+          }
+        },
+        {
+          "condition": "minecraft:survives_explosion"
+        }
+      ],
+      "entries": [
+        {
+          "type": "minecraft:item",
+          "name": "promptcritical:hot_blast_stove"
+        }
+      ],
+      "rolls": 1.0
+    }
+  ],
+  "random_sequence": "promptcritical:blocks/hot_blast_stove"
+}

@@ -2,6 +2,8 @@ package dev.denfry.promptcritical.sim.metallurgy;
 
 import dev.denfry.promptcritical.sim.combustion.CombustionResult;
 import dev.denfry.promptcritical.sim.combustion.Combustor;
+import dev.denfry.promptcritical.sim.core.StateReader;
+import dev.denfry.promptcritical.sim.core.StateWriter;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -73,6 +75,36 @@ public final class BakingFurnace {
         soakS = 0;
         crackedRun = false;
         return out;
+    }
+
+    public void save(StateWriter out) {
+        out.putDoubles("t", new double[] {tempK, soakS, rateKH, fuelKgS, airKgS}, 5);
+        out.putBoolean("cracked_run", crackedRun);
+        double[] e = new double[charge.size() * 3];
+        int[] flags = new int[charge.size()];
+        for (int i = 0; i < charge.size(); i++) {
+            ElectrodeState s = charge.get(i);
+            e[3 * i] = s.lengthM();
+            e[3 * i + 1] = s.diameterM();
+            flags[i] = s.stage() | (s.cracked() ? 1 << 8 : 0);
+        }
+        out.putDoubles("charge", e, e.length);
+        out.putInts("charge_flags", flags, flags.length);
+    }
+
+    public void load(StateReader in) {
+        double[] t = in.getDoubles("t");
+        tempK = t[0];
+        soakS = t[1];
+        rateKH = t[2];
+        fuelKgS = t[3];
+        airKgS = t[4];
+        crackedRun = in.getBoolean("cracked_run");
+        charge.clear();
+        double[] e = in.getDoubles("charge");
+        int[] flags = in.getInts("charge_flags");
+        for (int i = 0; i < flags.length && charge.size() < capacity; i++)
+            charge.add(new ElectrodeState(e[3 * i], e[3 * i + 1], (flags[i] & 1 << 8) != 0, flags[i] & 0xFF));
     }
 
     public double tempK() {

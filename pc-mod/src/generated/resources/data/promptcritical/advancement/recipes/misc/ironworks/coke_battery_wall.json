@@ -1,0 +1,32 @@
+{
+  "parent": "minecraft:recipes/root",
+  "criteria": {
+    "has_silica_brick": {
+      "conditions": {
+        "items": [
+          {
+            "items": "promptcritical:silica_brick"
+          }
+        ]
+      },
+      "trigger": "minecraft:inventory_changed"
+    },
+    "has_the_recipe": {
+      "conditions": {
+        "recipe": "promptcritical:ironworks/coke_battery_wall"
+      },
+      "trigger": "minecraft:recipe_unlocked"
+    }
+  },
+  "requirements": [
+    [
+      "has_the_recipe",
+      "has_silica_brick"
+    ]
+  ],
+  "rewards": {
+    "recipes": [
+      "promptcritical:ironworks/coke_battery_wall"
+    ]
+  }
+}

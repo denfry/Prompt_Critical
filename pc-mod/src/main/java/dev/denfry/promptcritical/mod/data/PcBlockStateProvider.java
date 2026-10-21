@@ -4,6 +4,7 @@ import dev.denfry.promptcritical.mod.PromptCritical;
 import dev.denfry.promptcritical.mod.block.PcBlock;
 import dev.denfry.promptcritical.mod.block.PcProperties;
 import dev.denfry.promptcritical.mod.grid.CableBlock;
+import dev.denfry.promptcritical.mod.ironworks.GasMainBlock;
 import dev.denfry.promptcritical.mod.multiblock.Footprint;
 import dev.denfry.promptcritical.mod.registry.PcBlocks;
 import dev.denfry.promptcritical.mod.registry.PcItems;
@@ -47,9 +48,18 @@ public final class PcBlockStateProvider extends BlockStateProvider {
                 cable(cable, id);
                 continue;
             }
+            if (block instanceof GasMainBlock) {
+                gasMain(block, id);
+                continue;
+            }
+            if (PARTS.contains(id)) {
+                parts(block, id);
+                itemModel(id, block);
+                continue;
+            }
             getVariantBuilder(block).forAllStates(state -> ConfiguredModel.builder()
                     .modelFile(existing(modelName(id, state)))
-                    .rotationY(rotationY(state))
+                    .rotationY(rotationY(id, state))
                     .build());
             itemModel(id, block);
         }
@@ -96,14 +106,64 @@ public final class PcBlockStateProvider extends BlockStateProvider {
         itemModels().withExistingParent(id, modLoc("block/" + id));
     }
 
+    /** Блоки с неподвижными частями из арт-реестра (partial): части добавляются мультипартом к модели состояния. */
+    private static final java.util.Set<String> PARTS = java.util.Set.of("coke_pusher_ram", "sinter_strand", "blast_furnace_top",
+            "cast_house_machine", "ladle");
+
+    /** Модели состояния мультипартом: основная и части, все с поворотом по {@code facing}. */
+    private void parts(Block block, String id) {
+        var mp = getMultipartBuilder(block);
+        for (BlockState state : block.getStateDefinition().getPossibleStates()) {
+            for (String model : partModels(id, state)) {
+                var part = mp.part().modelFile(existing(model)).rotationY(rotationY(id, state)).addModel();
+                for (var prop : state.getProperties()) condition(part, prop, state);
+                part.end();
+            }
+        }
+    }
+
+    @SuppressWarnings({"unchecked", "rawtypes"})
+    private static void condition(net.neoforged.neoforge.client.model.generators.MultiPartBlockStateBuilder.PartBuilder part,
+            net.minecraft.world.level.block.state.properties.Property prop, BlockState state) {
+        part.condition(prop, state.getValue(prop));
+    }
+
+    static java.util.List<String> partModels(String id, BlockState s) {
+        String base = modelName(id, s);
+        return switch (id) {
+            case "coke_pusher_ram" -> java.util.List.of(base, id + "/partial/ram");
+            case "sinter_strand" -> java.util.List.of(base, id + "/partial/pallets");
+            case "blast_furnace_top" -> java.util.List.of(base, id + "/partial/cone");
+            case "cast_house_machine" -> java.util.List.of(base, s.getValue(PcProperties.CAST_HOUSE_KIND) == PcProperties.CastHouseKind.MUD_GUN
+                    ? id + "/partial/piston" : id + "/partial/bit");
+            case "ladle" -> s.getValue(PcProperties.FILLED) ? java.util.List.of(base, id + "/partial/body", id + "/partial/melt")
+                    : java.util.List.of(base, id + "/partial/body");
+            default -> java.util.List.of(base);
+        };
+    }
+
+    /** Газосборник: труба и горизонтальные плечи к соседям; модель плеча смотрит на запад. */
+    private void gasMain(Block block, String id) {
+        var mp = getMultipartBuilder(block);
+        mp.part().modelFile(existing(id)).addModel().end();
+        ModelFile side = existing(id + "_side");
+        for (Direction d : Direction.Plane.HORIZONTAL) {
+            mp.part().modelFile(side).rotationY(((int) d.toYRot() + 270) % 360).uvLock(false).addModel()
+                    .condition(GasMainBlock.SIDES.get(d), true).end();
+        }
+        itemModels().withExistingParent(id, modLoc("block/" + id));
+    }
+
     private ModelFile existing(String name) {
         return models().getExistingFile(modLoc("block/" + name));
     }
 
-    private static int rotationY(BlockState state) {
+    private static int rotationY(String id, BlockState state) {
         if (!state.hasProperty(BlockStateProperties.HORIZONTAL_FACING)) return 0;
         Direction f = state.getValue(BlockStateProperties.HORIZONTAL_FACING);
-        return ((int) f.toYRot() + 180) % 360;
+        // жёлоб в модели идёт вдоль X: по направлению взгляда при установке
+        int extra = id.equals("iron_runner") ? 90 : 0;
+        return ((int) f.toYRot() + 180 + extra) % 360;
     }
 
     /** Имя модели состояния; варианты без отдельной модели рисуются базовой. */
@@ -178,6 +238,16 @@ public final class PcBlockStateProvider extends BlockStateProvider {
             };
             case "analog_comparator" -> s.getValue(PcProperties.ALARM) ? id + "_tripped" : id;
             case "manual_station" -> s.getValue(PcProperties.MANUAL) ? id + "_manual" : id;
+            case "coke_battery_wall" -> s.getValue(PcProperties.HOT) ? id + "_hot" : id;
+            case "byproduct_plant" -> s.getValue(PcProperties.BYPRODUCT_KIND) == PcProperties.ByproductKind.COOLER ? id
+                    : id + "_" + s.getValue(PcProperties.BYPRODUCT_KIND).getSerializedName();
+            case "baking_furnace", "sinter_strand" -> s.getValue(BlockStateProperties.LIT) ? id + "_lit" : id;
+            case "blast_furnace_tuyere" -> s.getValue(PcProperties.BURNT) ? id + "_burnt" : id;
+            case "blast_furnace_taphole" -> s.getValue(BlockStateProperties.OPEN) ? id + "_open" : id;
+            case "blast_furnace_controller" -> s.getValue(PcProperties.ALARM) ? id + "_alarm" : id;
+            case "hot_blast_stove" -> s.getValue(PcProperties.STOVE_SEGMENT) == PcProperties.StoveSegment.DOME ? id + "_dome" : id;
+            case "cast_house_machine" -> s.getValue(PcProperties.CAST_HOUSE_KIND) == PcProperties.CastHouseKind.MUD_GUN ? id + "_mud_gun" : id;
+            case "iron_runner" -> s.getValue(PcProperties.FILLED) ? id + "_filled" : id;
             case "wooden_pole", "concrete_pole" -> switch (s.getValue(PcProperties.CHIMNEY_PART)) {
                 case BASE -> id + "_bottom";
                 case TOP -> id + "_top";

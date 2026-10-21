@@ -28,6 +28,11 @@ public final class PcFluids {
     public static final Entry RAW_WATER = liquid("raw_water", 1000, 1000, 288);
     /** Шахтная вода: единственная с блоком — ею затапливаются выработки (08 §8.2.9); в источник не превращается. */
     public static final Entry MINE_WATER = liquid("mine_water", 1005, 1050, 293);
+    // коксохим и домна (08 §8.4–8.5, этап 10 M3): газы в трубах Create — 1 мБ = 1 нм³
+    public static final Entry COKE_OVEN_GAS = gas("coke_oven_gas", 303, -1);
+    public static final Entry BLAST_FURNACE_GAS = gas("blast_furnace_gas", 313, -1);
+    public static final Entry COAL_TAR = liquid("coal_tar", 1170, 6000, 333);
+    public static final Entry CRUDE_BENZOL = liquid("crude_benzol", 880, 700, 293);
 
     static {
         MINE_WATER.props.block(PcBlocks.MINE_WATER);

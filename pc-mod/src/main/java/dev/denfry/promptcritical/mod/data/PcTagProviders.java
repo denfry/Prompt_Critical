@@ -100,6 +100,7 @@ public final class PcTagProviders {
             copy(BlockTags.STAIRS, net.minecraft.tags.ItemTags.STAIRS);
             copy(BlockTags.WALLS, net.minecraft.tags.ItemTags.WALLS);
             FoundryTags.addItemTags(this::tag);
+            dev.denfry.promptcritical.mod.ironworks.IronworksTags.addItemTags(this::tag);
             for (String metal : Set.copyOf(METAL.values())) {
                 copy(PcTags.Blocks.common("ores/" + metal), PcTags.Items.common("ores/" + metal));
             }

@@ -25,6 +25,7 @@ public final class PanelLayouts {
 
     static {
         for (List<PanelLayout> group : List.of(BoilerPanels.all(), FoundryPanels.all(), MinePanels.all(), GridPanels.all(),
+                dev.denfry.promptcritical.mod.ironworks.IronworksPanels.all(),
                 dev.denfry.promptcritical.mod.automation.AutomationPanels.all())) {
             for (PanelLayout l : group) {
                 if (BY_ID.put(l.id, l) != null) throw new IllegalStateException("duplicate panel " + l.id);

@@ -405,11 +405,11 @@ m("blast_furnace_controller_alarm", "ironmaking", bf_ctrl(True))
 
 # кожух домны: сегменты 3×3×3 — шахта (прямой) и заплечики (конус); холодильники-плиты
 def bf_shell(bosh=False):
-    r0 = 13 if bosh else 15
-    els = hcyl("shell", "y", r0, -16, 32, "riv")
-    for i, y in enumerate((-10, 6, 22)):
-        els.append(el(f"stave_band_{i}", [-r0 + 7.5, y, -r0 + 7.5], [r0 + 8.5, y + 2, r0 + 8.5], "rust"))
-    els.append(el("cooling_pipe", [r0 + 8, -16, 6], [r0 + 10, 32, 8], "wat"))
+    # кожух свободной сборки (кольцо 5×5): клёпаный лист, пояс холодильников; у заплечиков — труба охлаждения
+    els = [el("shell", [0, 0, 0], [16, 16, 16], "riv"),
+           el("stave_band", [-0.5, 6, -0.5], [16.5, 8, 16.5], "rust")]
+    if bosh:
+        els.append(el("cooling_pipe", [6, 0, -1.5], [8, 16, -0.5], "wat"))
     return els
 
 

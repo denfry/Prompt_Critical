@@ -47,6 +47,7 @@ public final class PromptCritical {
         PcCreativeTabs.TABS.register(modBus);
         SimBindings.register(modBus);
         FoundryBinding.register(modBus);
+        dev.denfry.promptcritical.mod.ironworks.IronworksBinding.register(modBus);
         dev.denfry.promptcritical.mod.boiler.BoilerBinding.register(modBus);
         dev.denfry.promptcritical.mod.grid.GridBinding.register(modBus);
         dev.denfry.promptcritical.mod.automation.AutomationBinding.register(modBus);

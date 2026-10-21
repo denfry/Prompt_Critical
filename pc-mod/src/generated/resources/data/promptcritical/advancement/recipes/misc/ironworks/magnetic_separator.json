@@ -1,0 +1,32 @@
+{
+  "parent": "minecraft:recipes/root",
+  "criteria": {
+    "has_magnetite": {
+      "conditions": {
+        "items": [
+          {
+            "items": "promptcritical:raw_magnetite"
+          }
+        ]
+      },
+      "trigger": "minecraft:inventory_changed"
+    },
+    "has_the_recipe": {
+      "conditions": {
+        "recipe": "promptcritical:ironworks/magnetic_separator"
+      },
+      "trigger": "minecraft:recipe_unlocked"
+    }
+  },
+  "requirements": [
+    [
+      "has_the_recipe",
+      "has_magnetite"
+    ]
+  ],
+  "rewards": {
+    "recipes": [
+      "promptcritical:ironworks/magnetic_separator"
+    ]
+  }
+}

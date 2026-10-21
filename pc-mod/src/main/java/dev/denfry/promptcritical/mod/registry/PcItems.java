@@ -94,6 +94,22 @@ public final class PcItems {
     public static final DeferredItem<dev.denfry.promptcritical.mod.automation.WiringToolItem> WIRING_TOOL = registered(ITEMS.registerItem(
             "wiring_tool", dev.denfry.promptcritical.mod.automation.WiringToolItem::new, new Item.Properties().stacksTo(1)));
     public static final DeferredItem<Item> RELAY_COIL = item("relay_coil", 64);
+    // --- коксохим и домна (08 §8.4–8.5, этап 10 M3) ---
+    /** Кокс: компонент {@code coke_assay} (зола, сера, M₂₅, влага; горячий — до тушения). */
+    public static final DeferredItem<Item> COKE = item("coke", 64);
+    public static final DeferredItem<Item> COKE_BREEZE = item("coke_breeze", 64);
+    public static final DeferredItem<Item> PITCH_COKE = item("pitch_coke", 64);
+    public static final DeferredItem<Item> COAL_TAR_PITCH = item("coal_tar_pitch", 64);
+    /** Электрод: компонент {@code electrode_state} (сырой или обожжённый, трещины). */
+    public static final DeferredItem<Item> GREEN_ELECTRODE = item("green_electrode", 16);
+    public static final DeferredItem<Item> AMMONIUM_SULFATE = item("ammonium_sulfate", 64);
+    public static final DeferredItem<Item> IRON_ORE_CONCENTRATE = item("iron_ore_concentrate", 64);
+    /** Агломерат: компонент {@code sinter_assay} (Fe, SiO₂, CaO). */
+    public static final DeferredItem<Item> SINTER = item("sinter", 64);
+    public static final DeferredItem<Item> TAPHOLE_CLAY = item("taphole_clay", 64);
+    public static final DeferredItem<Item> SILICA_BRICK = item("silica_brick", 64);
+    public static final DeferredItem<Item> TUYERE_SPARE = item("tuyere_spare", 16);
+    public static final DeferredItem<Item> GRANULATED_SLAG = item("granulated_slag", 64);
     // справочник (11)
     public static final DeferredItem<EngineeringHandbookItem> ENGINEERING_HANDBOOK = registered(ITEMS.registerItem("engineering_handbook",
             EngineeringHandbookItem::new, new Item.Properties().stacksTo(1)));

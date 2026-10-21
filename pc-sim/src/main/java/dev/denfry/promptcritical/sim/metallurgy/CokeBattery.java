@@ -4,6 +4,8 @@ import dev.denfry.promptcritical.sim.combustion.CombustionResult;
 import dev.denfry.promptcritical.sim.combustion.Combustor;
 import dev.denfry.promptcritical.sim.combustion.FuelGas;
 import dev.denfry.promptcritical.sim.combustion.FuelSpec;
+import dev.denfry.promptcritical.sim.core.StateReader;
+import dev.denfry.promptcritical.sim.core.StateWriter;
 import dev.denfry.promptcritical.sim.mining.CoalAssay;
 import dev.denfry.promptcritical.sim.mining.CoalRank;
 
@@ -78,7 +80,7 @@ public final class CokeBattery {
     private final boolean[] pitch;
     private final double[] wet, dry, water, ash, sulfur, vdaf, daf, plastic, progress, readyS;
     private final double[] byproducts = new double[CokeByproduct.values().length];
-    private double wallK, damage, fuelKgS, airKgS, gasRate;
+    private double wallK, damage, fuelKgS, airKgS, gasRate, extraHeatW, demandW, lossW;
     private boolean hot, failed;
 
     /**
@@ -117,6 +119,13 @@ public final class CokeBattery {
     public void setHeating(double fuelKgS, double airKgS) {
         this.fuelKgS = Math.max(0, fuelKgS);
         this.airKgS = Math.max(0, airKgS);
+    }
+
+    /**
+     * Тепло в простенки помимо газовых горелок, Вт (топки разогрева на твёрдом топливе — пока своего газа нет).
+     */
+    public void setExtraHeat(double watts) {
+        extraHeatW = Math.max(0, watts);
     }
 
     /**
@@ -224,6 +233,7 @@ public final class CokeBattery {
             heating.burn(fuelKgS, airKgS, T0, T0, burn);
             heatIn = HEATING_EFFICIENCY * burn.heatReleaseW;
         }
+        heatIn += extraHeatW;
         double demand = 0;
         gasRate = 0;
         for (int i = 0; i < ovens; i++) {
@@ -247,6 +257,8 @@ public final class CokeBattery {
             }
         }
         double loss = WALL_LOSS_W_K * ovens * (wallK - T0);
+        demandW = demand;
+        lossW = loss;
         double before = wallK;
         wallK += (heatIn - demand - loss) * dt / (WALL_HEAT_CAPACITY_J_K * ovens);
         checkRefractory(before, dt);
@@ -311,9 +323,14 @@ public final class CokeBattery {
 
     /** Анализ кокса: сухой, летучих 1 %, органическая масса почти чистый углерод. */
     static CoalAssay cokeAssay(double ashDry, double sulfurDry, double m25) {
+        return cokeAssay(ashDry, sulfurDry, m25, 0);
+    }
+
+    /** Анализ кокса с влагой (после мокрого тушения ≈ 4 %), для колош домны. */
+    public static CoalAssay cokeAssay(double ashDry, double sulfurDry, double m25, double moisture) {
         double sDaf = sulfurDry / (1 - ashDry);
         double c = 1 - COKE_HDAF - COKE_NDAF - COKE_ODAF - sDaf;
-        return new CoalAssay(0, ashDry, sulfurDry, 0, COKE_VDAF, 0, c, COKE_HDAF, COKE_ODAF, COKE_NDAF,
+        return new CoalAssay(moisture, ashDry, sulfurDry, 0, COKE_VDAF, 0, c, COKE_HDAF, COKE_ODAF, COKE_NDAF,
                 CoalAssay.densityProfile(ashDry), m25, CoalRank.classify(COKE_VDAF, 0));
     }
 
@@ -387,6 +404,16 @@ public final class CokeBattery {
         return readyS[i];
     }
 
+    /** Тепло коксования и потери простенков последнего шага, Вт (для регулятора обогрева). */
+    public double coolingW() {
+        return demandW + lossW;
+    }
+
+    /** Теплоёмкость простенков всей батареи, Дж/К. */
+    public double wallHeatCapacityJK() {
+        return WALL_HEAT_CAPACITY_J_K * ovens;
+    }
+
     public double wallTempK() {
         return wallK;
     }
@@ -409,6 +436,93 @@ public final class CokeBattery {
     /** Последнее горение обогрева. */
     public CombustionResult heatingResult() {
         return burn;
+    }
+
+    // --- перестройка батареи и сохранение ---
+
+    /**
+     * Перенять у прежней батареи простенки (температура, повреждение, разогрев) и камеры по карте: камера {@code i}
+     * новой батареи — камера {@code map[i]} прежней или пустая при −1. Шихта при другой проектной загрузке не
+     * обрезается: камера коксует то, что в ней есть.
+     */
+    public void inherit(CokeBattery old, int[] map) {
+        wallK = old.wallK;
+        damage = old.damage;
+        hot = old.hot;
+        failed = old.failed;
+        fuelKgS = old.fuelKgS;
+        airKgS = old.airKgS;
+        System.arraycopy(old.byproducts, 0, byproducts, 0, byproducts.length);
+        for (int i = 0; i < ovens && i < map.length; i++) {
+            int j = map[i];
+            if (j < 0 || j >= old.ovens) continue;
+            state[i] = old.state[j];
+            pitch[i] = old.pitch[j];
+            wet[i] = old.wet[j];
+            dry[i] = old.dry[j];
+            water[i] = old.water[j];
+            ash[i] = old.ash[j];
+            sulfur[i] = old.sulfur[j];
+            vdaf[i] = old.vdaf[j];
+            daf[i] = old.daf[j];
+            plastic[i] = old.plastic[j];
+            progress[i] = old.progress[j];
+            readyS[i] = old.readyS[j];
+        }
+    }
+
+    public void save(StateWriter out) {
+        out.putDouble("wall_k", wallK);
+        out.putDouble("damage", damage);
+        out.putBoolean("hot", hot);
+        out.putBoolean("failed", failed);
+        out.putDouble("fuel_kg_s", fuelKgS);
+        out.putDouble("air_kg_s", airKgS);
+        out.putDoubles("byproducts", byproducts, byproducts.length);
+        int[] st = new int[ovens];
+        for (int i = 0; i < ovens; i++) st[i] = state[i].ordinal() | (pitch[i] ? 1 << 8 : 0);
+        out.putInts("state", st, ovens);
+        out.putDoubles("wet", wet, ovens);
+        out.putDoubles("dry", dry, ovens);
+        out.putDoubles("water", water, ovens);
+        out.putDoubles("ash", ash, ovens);
+        out.putDoubles("sulfur", sulfur, ovens);
+        out.putDoubles("vdaf", vdaf, ovens);
+        out.putDoubles("daf", daf, ovens);
+        out.putDoubles("plastic", plastic, ovens);
+        out.putDoubles("progress", progress, ovens);
+        out.putDoubles("ready_s", readyS, ovens);
+    }
+
+    /** Загрузка в батарею того же числа камер (иначе лишние камеры остаются пустыми). */
+    public void load(StateReader in) {
+        wallK = in.getDouble("wall_k");
+        damage = in.getDouble("damage");
+        hot = in.getBoolean("hot");
+        failed = in.getBoolean("failed");
+        fuelKgS = in.getDouble("fuel_kg_s");
+        airKgS = in.getDouble("air_kg_s");
+        copy(in.getDoubles("byproducts"), byproducts);
+        int[] st = in.getInts("state");
+        OvenState[] all = OvenState.values();
+        for (int i = 0; i < ovens && i < st.length; i++) {
+            state[i] = all[Math.min(all.length - 1, st[i] & 0xFF)];
+            pitch[i] = (st[i] & 1 << 8) != 0;
+        }
+        copy(in.getDoubles("wet"), wet);
+        copy(in.getDoubles("dry"), dry);
+        copy(in.getDoubles("water"), water);
+        copy(in.getDoubles("ash"), ash);
+        copy(in.getDoubles("sulfur"), sulfur);
+        copy(in.getDoubles("vdaf"), vdaf);
+        copy(in.getDoubles("daf"), daf);
+        copy(in.getDoubles("plastic"), plastic);
+        copy(in.getDoubles("progress"), progress);
+        copy(in.getDoubles("ready_s"), readyS);
+    }
+
+    private static void copy(double[] from, double[] to) {
+        System.arraycopy(from, 0, to, 0, Math.min(from.length, to.length));
     }
 
     /**

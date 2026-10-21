@@ -177,6 +177,8 @@ ICONS = {
     "wire_rope": coil("#7d8288", "#4a2e18"),
     "aluminium_ingot": ingot("#d0d4d8", "#a4a8ac"),
     "copper_wire": coil("#c27a43"),
+    # граншлак доменного шлака (этап 10 M3; ID не из реестра 08 — продукт slag_granulator)
+    "granulated_slag": powder("#c8c49a", "#e8e4c0"),
 }
 for _id, draw in ICONS.items():
     TEXTURES[f"item/{_id}.png"] = icon(draw)

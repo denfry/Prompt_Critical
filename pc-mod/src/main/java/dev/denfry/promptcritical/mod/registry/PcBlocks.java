@@ -23,6 +23,25 @@ import dev.denfry.promptcritical.mod.foundry.CrucibleBlockEntity;
 import dev.denfry.promptcritical.mod.foundry.CupolaBlockEntity;
 import dev.denfry.promptcritical.mod.foundry.FoundryBlock;
 import dev.denfry.promptcritical.mod.foundry.KineticMachineBlock;
+import dev.denfry.promptcritical.mod.ironworks.BakingFurnaceBlockEntity;
+import dev.denfry.promptcritical.mod.ironworks.BlastBlowerBlockEntity;
+import dev.denfry.promptcritical.mod.ironworks.BlastFurnaceControllerBlockEntity;
+import dev.denfry.promptcritical.mod.ironworks.BlastFurnaceTopBlockEntity;
+import dev.denfry.promptcritical.mod.ironworks.ByproductPlantBlockEntity;
+import dev.denfry.promptcritical.mod.ironworks.CastHouseMachineBlockEntity;
+import dev.denfry.promptcritical.mod.ironworks.CokeOvenBlock;
+import dev.denfry.promptcritical.mod.ironworks.DustCatcherBlockEntity;
+import dev.denfry.promptcritical.mod.ironworks.ElectrodeExtruderBlockEntity;
+import dev.denfry.promptcritical.mod.ironworks.FurnacePartBlock;
+import dev.denfry.promptcritical.mod.ironworks.GasExhausterBlockEntity;
+import dev.denfry.promptcritical.mod.ironworks.GasMainBlock;
+import dev.denfry.promptcritical.mod.ironworks.HotBlastStoveBlockEntity;
+import dev.denfry.promptcritical.mod.ironworks.IronRunnerBlock;
+import dev.denfry.promptcritical.mod.ironworks.LadleBlockEntity;
+import dev.denfry.promptcritical.mod.ironworks.MagneticSeparatorBlockEntity;
+import dev.denfry.promptcritical.mod.ironworks.QuenchTowerBlockEntity;
+import dev.denfry.promptcritical.mod.ironworks.SinterStrandBlock;
+import dev.denfry.promptcritical.mod.ironworks.SlagGranulatorBlockEntity;
 import dev.denfry.promptcritical.mod.mine.DegasificationPumpBlockEntity;
 import dev.denfry.promptcritical.mod.mine.LongwallShearerBlock;
 import dev.denfry.promptcritical.mod.mine.MainMineFanBlock;
@@ -145,6 +164,18 @@ public final class PcBlocks {
         return Properties.of().mapColor(MapColor.METAL).strength(1.0f).sound(SoundType.METAL).noOcclusion().noCollission();
     }
 
+    /** Клёпаный кожух печи: непрозрачный, поршнем не двигается. */
+    private static Properties shell() {
+        return Properties.of().mapColor(MapColor.COLOR_GRAY).requiresCorrectToolForDrops().strength(5.0f, 12.0f)
+                .sound(SoundType.METAL).pushReaction(PushReaction.BLOCK);
+    }
+
+    /** Машина, которую возят контрапции Create (штанга выталкивателя, ковш). */
+    private static Properties movable() {
+        return Properties.of().mapColor(MapColor.METAL).requiresCorrectToolForDrops().strength(3.5f, 6.0f)
+                .sound(SoundType.METAL).noOcclusion();
+    }
+
     private static Properties lit(Properties p) {
         return p.lightLevel(s -> s.hasProperty(BlockStateProperties.LIT) && s.getValue(BlockStateProperties.LIT) ? 13 : 0);
     }
@@ -158,6 +189,8 @@ public final class PcBlocks {
     private static final Footprint FP_TALL3 = Footprint.of(Segment.box(0, 0, -1, 1, 0, 0));
     private static final Footprint FP_TALL2 = Footprint.of(Segment.box(0, 0, 0, 1, 0, 0));
     private static final Footprint FP_WIDE2 = Footprint.of(Segment.box(0, 1, 0, 0, 0, 0));
+    /** Печь 3×2×3 (обжиговая, агломашина, колошник). */
+    private static final Footprint FP_FURNACE3 = Footprint.of(Segment.box(-1, 1, 0, 1, -1, 1));
 
     // --- котельная I0 (07) ---
     public static final DeferredBlock<PcDeviceBlock> FIRE_TUBE_BOILER = device("fire_tube_boiler", lit(machine()),
@@ -290,6 +323,60 @@ public final class PcBlocks {
             Spec.facing(PcProperties.RUNNING).footprint(FP_WIDE2), KineticMachineBlock.with(ShaftSide.LEFT, MachineToolBlockEntity::lathe));
     public static final DeferredBlock<PcDeviceBlock> DRILL_PRESS = device("drill_press", machine(),
             Spec.facing(PcProperties.RUNNING).footprint(FP_TALL2), KineticMachineBlock.with(ShaftSide.BACK, MachineToolBlockEntity::drillPress));
+
+    // --- коксохим и домна (08 §8.4–8.5, этап 10 M3) ---
+    public static final DeferredBlock<PcDeviceBlock> COKE_OVEN = device("coke_oven", brick().pushReaction(PushReaction.BLOCK),
+            Spec.of(PcProperties.OVEN_STATE), CokeOvenBlock::create);
+    public static final DeferredBlock<PcBlock> COKE_BATTERY_WALL = block("coke_battery_wall",
+            brick().mapColor(MapColor.TERRACOTTA_WHITE).pushReaction(PushReaction.BLOCK), Spec.of(PcProperties.HOT));
+    public static final DeferredBlock<GasMainBlock> GAS_COLLECTOR_MAIN = withItem(BLOCKS.registerBlock("gas_collector_main",
+            GasMainBlock::create, machine()));
+    public static final DeferredBlock<PcBlock> COKE_PUSHER_RAM = block("coke_pusher_ram", movable(), Spec.facing());
+    public static final DeferredBlock<PcDeviceBlock> GAS_EXHAUSTER = device("gas_exhauster", machine(),
+            Spec.facing(PcProperties.RUNNING).footprint(Footprint.of(Segment.box(0, 1, 0, 1, 0, 0))),
+            KineticMachineBlock.with(ShaftSide.FRONT, GasExhausterBlockEntity::new));
+    public static final DeferredBlock<PcDeviceBlock> BYPRODUCT_PLANT = device("byproduct_plant", machine(),
+            Spec.facing(PcProperties.BYPRODUCT_KIND).footprint(Footprint.of(Segment.box(0, 1, -1, 1, 0, 1))),
+            FoundryBlock.with(ByproductPlantBlockEntity::new));
+    public static final DeferredBlock<PcDeviceBlock> QUENCH_TOWER = device("quench_tower", brick().mapColor(MapColor.STONE),
+            Spec.facing(PcProperties.RUNNING).footprint(FP_CUBE3), FoundryBlock.with(QuenchTowerBlockEntity::new));
+    public static final DeferredBlock<PcDeviceBlock> ELECTRODE_EXTRUDER = device("electrode_extruder", machine(),
+            Spec.facing(PcProperties.RUNNING).footprint(Footprint.of(Segment.box(-1, 1, 0, 0, 0, 0))),
+            KineticMachineBlock.with(ShaftSide.FRONT, ElectrodeExtruderBlockEntity::new));
+    public static final DeferredBlock<PcDeviceBlock> BAKING_FURNACE = device("baking_furnace", lit(brick()),
+            Spec.facing(BlockStateProperties.LIT).footprint(FP_FURNACE3), FoundryBlock.with(BakingFurnaceBlockEntity::new));
+    public static final DeferredBlock<PcDeviceBlock> MAGNETIC_SEPARATOR = device("magnetic_separator", machine(),
+            Spec.facing(PcProperties.RUNNING).footprint(FP_WIDE2), KineticMachineBlock.with(ShaftSide.LEFT, MagneticSeparatorBlockEntity::new));
+    public static final DeferredBlock<PcDeviceBlock> SINTER_STRAND = device("sinter_strand", lit(machine()),
+            Spec.facing(PcProperties.RUNNING, BlockStateProperties.LIT).footprint(FP_FURNACE3), SinterStrandBlock::create);
+    public static final DeferredBlock<FurnacePartBlock> BLAST_FURNACE_SHELL = withItem(BLOCKS.registerBlock("blast_furnace_shell",
+            p -> FurnacePartBlock.create(p, Spec.of()), shell()));
+    public static final DeferredBlock<FurnacePartBlock> BLAST_FURNACE_TUYERE = withItem(BLOCKS.registerBlock("blast_furnace_tuyere",
+            p -> FurnacePartBlock.create(p, Spec.facing(PcProperties.BURNT)), shell().noOcclusion()));
+    public static final DeferredBlock<FurnacePartBlock> BLAST_FURNACE_TAPHOLE = withItem(BLOCKS.registerBlock("blast_furnace_taphole",
+            p -> FurnacePartBlock.create(p, Spec.facing(BlockStateProperties.OPEN)),
+            shell().noOcclusion().lightLevel(s -> s.getValue(BlockStateProperties.OPEN) ? 12 : 0)));
+    public static final DeferredBlock<PcDeviceBlock> BLAST_FURNACE_CONTROLLER = device("blast_furnace_controller", machine(),
+            Spec.facing(PcProperties.ALARM), FoundryBlock.with(BlastFurnaceControllerBlockEntity::new));
+    public static final DeferredBlock<PcDeviceBlock> BLAST_FURNACE_TOP = device("blast_furnace_top", machine(),
+            Spec.of().footprint(FP_FURNACE3), FoundryBlock.with(BlastFurnaceTopBlockEntity::new));
+    public static final DeferredBlock<PcDeviceBlock> HOT_BLAST_STOVE = device("hot_blast_stove", shell().noOcclusion(),
+            Spec.facing().segments(PcProperties.STOVE_SEGMENT, Footprint.of(CUBE3, CUBE3.at(0, 3, 0), CUBE3.at(0, 6, 0))),
+            FoundryBlock.with(HotBlastStoveBlockEntity::new));
+    public static final DeferredBlock<PcDeviceBlock> BLAST_BLOWER = device("blast_blower", machine(),
+            Spec.facing(PcProperties.RUNNING).footprint(Footprint.of(Segment.box(0, 1, 0, 1, 0, 1))),
+            KineticMachineBlock.with(ShaftSide.FRONT, BlastBlowerBlockEntity::new));
+    public static final DeferredBlock<PcDeviceBlock> DUST_CATCHER = device("dust_catcher", machine(),
+            Spec.facing().footprint(Footprint.of(Segment.box(0, 1, -1, 1, 0, 1))), FoundryBlock.with(DustCatcherBlockEntity::new));
+    public static final DeferredBlock<PcDeviceBlock> CAST_HOUSE_MACHINE = device("cast_house_machine", machine(),
+            Spec.facing(PcProperties.CAST_HOUSE_KIND).footprint(FP_WIDE2), FoundryBlock.with(CastHouseMachineBlockEntity::new));
+    public static final DeferredBlock<IronRunnerBlock> IRON_RUNNER = withItem(BLOCKS.registerBlock("iron_runner", IronRunnerBlock::create,
+            brick().pushReaction(PushReaction.BLOCK).lightLevel(s -> s.getValue(PcProperties.FILLED) ? 12 : 0)));
+    public static final DeferredBlock<PcDeviceBlock> LADLE = device("ladle", movable().lightLevel(s -> s.hasProperty(PcProperties.FILLED)
+            && s.getValue(PcProperties.FILLED) ? 10 : 0), Spec.facing(PcProperties.FILLED, PcProperties.HOT)
+            .footprint(Footprint.of(Segment.box(0, 1, 0, 1, 0, 1))), FoundryBlock.with(LadleBlockEntity::new));
+    public static final DeferredBlock<PcDeviceBlock> SLAG_GRANULATOR = device("slag_granulator", machine(),
+            Spec.facing(PcProperties.RUNNING).footprint(FP_WIDE2), FoundryBlock.with(SlagGranulatorBlockEntity::new));
 
     // --- справочник и мир (11) ---
     public static final DeferredBlock<DocumentLecternBlock> DOCUMENT_LECTERN = withItem(BLOCKS.registerBlock("document_lectern",

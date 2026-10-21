@@ -63,6 +63,11 @@ public final class CyclicMachine implements FoundryUnit {
         return progress;
     }
 
+    /** Скорость вала относительно номинальной (0 — стоит или ниже минимальной). */
+    public double speedRatio() {
+        return speedRatio;
+    }
+
     public boolean running() {
         return loaded && speedRatio > 0;
     }

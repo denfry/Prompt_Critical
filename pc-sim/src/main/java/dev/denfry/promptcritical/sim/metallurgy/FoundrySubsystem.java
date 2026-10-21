@@ -25,6 +25,12 @@ public final class FoundrySubsystem extends DeviceSubsystem<FoundryUnit> {
     public static final String SHAKEOUT_GRATE = "promptcritical:shakeout_grate";
     public static final String MACHINE_LATHE = "promptcritical:machine_lathe";
     public static final String DRILL_PRESS = "promptcritical:drill_press";
+    // машины коксохима и домны на валу Create (этап 10 M3): цикл и мощность, остальное — в мире
+    public static final String MAGNETIC_SEPARATOR = "promptcritical:magnetic_separator";
+    public static final String SINTER_STRAND = "promptcritical:sinter_strand";
+    public static final String ELECTRODE_EXTRUDER = "promptcritical:electrode_extruder";
+    public static final String BLAST_BLOWER = "promptcritical:blast_blower";
+    public static final String GAS_EXHAUSTER = "promptcritical:gas_exhauster";
     /** Фаза SLOW подсистемы. */
     private static final int SLOW_PHASE = 3;
 
@@ -49,6 +55,13 @@ public final class FoundrySubsystem extends DeviceSubsystem<FoundryUnit> {
             case SHAKEOUT_GRATE -> CyclicMachine.shakeoutGrate();
             case MACHINE_LATHE -> new MachineToolUnit(MachineToolUnit.Kind.LATHE);
             case DRILL_PRESS -> new MachineToolUnit(MachineToolUnit.Kind.DRILL_PRESS);
+            // [BALANCE]: сепаратор 6 с / 11 кВт, агломашина 20 с / 30 кВт, пресс 15 с / 22 кВт; воздуходувка и
+            // эксгаустер — по расходу (BlastBlower.RATED_W, GasMain.EXHAUSTER_RATED_W), цикл не используется
+            case MAGNETIC_SEPARATOR -> new CyclicMachine(MAGNETIC_SEPARATOR, 6, 11_000);
+            case SINTER_STRAND -> new CyclicMachine(SINTER_STRAND, 20, 30_000);
+            case ELECTRODE_EXTRUDER -> new CyclicMachine(ELECTRODE_EXTRUDER, 15, 22_000);
+            case BLAST_BLOWER -> new CyclicMachine(BLAST_BLOWER, 1, BlastFurnaceUnit.BLOWER_RATED_W);
+            case GAS_EXHAUSTER -> new CyclicMachine(GAS_EXHAUSTER, 1, GasMain.EXHAUSTER_RATED_W);
             default -> null;
         };
     }

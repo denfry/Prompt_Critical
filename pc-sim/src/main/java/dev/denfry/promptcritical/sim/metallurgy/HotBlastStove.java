@@ -2,6 +2,8 @@ package dev.denfry.promptcritical.sim.metallurgy;
 
 import dev.denfry.promptcritical.sim.combustion.CombustionResult;
 import dev.denfry.promptcritical.sim.combustion.Combustor;
+import dev.denfry.promptcritical.sim.core.StateReader;
+import dev.denfry.promptcritical.sim.core.StateWriter;
 
 /**
  * Воздухонагреватель (каупер) {@code hot_blast_stove} (08 §8.5.2): насадка из огнеупора, два узла — верх (купол)
@@ -87,6 +89,22 @@ public final class HotBlastStove {
                 bottomK = T0 + (bottomK - T0) * k;
             }
         }
+    }
+
+    public void save(StateWriter out) {
+        out.putInt("mode", mode.ordinal());
+        out.putDoubles("t", new double[] {topK, bottomK, fuelKgS, airKgS, hotBlastK}, 5);
+    }
+
+    public void load(StateReader in) {
+        StoveMode[] all = StoveMode.values();
+        mode = all[Math.min(all.length - 1, Math.max(0, in.getInt("mode")))];
+        double[] t = in.getDoubles("t");
+        topK = t[0];
+        bottomK = t[1];
+        fuelKgS = t[2];
+        airKgS = t[3];
+        hotBlastK = t[4];
     }
 
     public StoveMode mode() {

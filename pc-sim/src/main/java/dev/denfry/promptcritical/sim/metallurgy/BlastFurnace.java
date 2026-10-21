@@ -2,6 +2,8 @@ package dev.denfry.promptcritical.sim.metallurgy;
 
 import dev.denfry.promptcritical.sim.combustion.FuelGas;
 import dev.denfry.promptcritical.sim.combustion.FuelSpec;
+import dev.denfry.promptcritical.sim.core.StateReader;
+import dev.denfry.promptcritical.sim.core.StateWriter;
 import dev.denfry.promptcritical.sim.mining.CoalAssay;
 
 /**
@@ -662,6 +664,71 @@ public final class BlastFurnace {
 
     public void replaceTuyere() {
         tuyereLeak = false;
+    }
+
+    public void save(StateWriter out) {
+        double[][] cols = {ore, fe, sio2, cao, coke, cokeC, cokeAsh, cokeS, cokeH, m25, lime};
+        String[] names = {"ore", "fe", "sio2", "cao", "coke", "coke_c", "coke_ash", "coke_s", "coke_h", "m25", "lime"};
+        double[] tmp = new double[count];
+        for (int c = 0; c < cols.length; c++) {
+            for (int k = 0; k < count; k++) tmp[k] = cols[c][(head + k) % MAX_LAYERS];
+            out.putDoubles(names[c], tmp, count);
+        }
+        out.putInt("state", state.ordinal());
+        out.putDoubles("scalars", new double[] {hearthK, ironKg, ironC, ironSi, ironS, slagKg, slagCaO, slagSiO2, slagS,
+                blowInS, lowBlastS, noBlastS, noCoolingS, hangS, raftK, etaCo, hang, rd, hmRate, productivity, topK,
+                blastFrac, topGasRate, tapholeD, wear}, 25);
+        out.putDoubles("top_gas", topGas, topGas.length);
+        out.putInt("flags", (tapOpen ? 1 : 0) | (overflowLatched ? 2 : 0) | (tuyereLeak ? 4 : 0));
+        out.putInt("burnt_tuyeres", burntTuyeres);
+    }
+
+    public void load(StateReader in) {
+        double[][] cols = {ore, fe, sio2, cao, coke, cokeC, cokeAsh, cokeS, cokeH, m25, lime};
+        String[] names = {"ore", "fe", "sio2", "cao", "coke", "coke_c", "coke_ash", "coke_s", "coke_h", "m25", "lime"};
+        head = 0;
+        count = 0;
+        for (int c = 0; c < cols.length; c++) {
+            double[] a = in.getDoubles(names[c]);
+            count = Math.min(MAX_LAYERS, a.length);
+            System.arraycopy(a, 0, cols[c], 0, count);
+        }
+        BlastFurnaceState[] all = BlastFurnaceState.values();
+        state = all[Math.min(all.length - 1, Math.max(0, in.getInt("state")))];
+        double[] v = in.getDoubles("scalars");
+        int i = 0;
+        hearthK = v[i++];
+        ironKg = v[i++];
+        ironC = v[i++];
+        ironSi = v[i++];
+        ironS = v[i++];
+        slagKg = v[i++];
+        slagCaO = v[i++];
+        slagSiO2 = v[i++];
+        slagS = v[i++];
+        blowInS = v[i++];
+        lowBlastS = v[i++];
+        noBlastS = v[i++];
+        noCoolingS = v[i++];
+        hangS = v[i++];
+        raftK = v[i++];
+        etaCo = v[i++];
+        hang = v[i++];
+        rd = v[i++];
+        hmRate = v[i++];
+        productivity = v[i++];
+        topK = v[i++];
+        blastFrac = v[i++];
+        topGasRate = v[i++];
+        tapholeD = v[i++];
+        wear = v[i];
+        double[] g = in.getDoubles("top_gas");
+        System.arraycopy(g, 0, topGas, 0, Math.min(g.length, topGas.length));
+        int f = in.getInt("flags");
+        tapOpen = (f & 1) != 0;
+        overflowLatched = (f & 2) != 0;
+        tuyereLeak = (f & 4) != 0;
+        burntTuyeres = in.getInt("burnt_tuyeres");
     }
 
     public BlastFurnaceSpec spec() {
