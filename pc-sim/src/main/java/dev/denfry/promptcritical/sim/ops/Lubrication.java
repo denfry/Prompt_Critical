@@ -1,5 +1,8 @@
 package dev.denfry.promptcritical.sim.ops;
 
+import dev.denfry.promptcritical.sim.core.StateReader;
+import dev.denfry.promptcritical.sim.core.StateWriter;
+
 /**
  * Смазка узла (13 §13.6.7): доливка {@code oil_can} на ходу, интервал {@code lube.tallow_interval_h} у {@code tallow},
  * 2000 ч у масла (04a §4a.7.5). Счётчик идёт по наработке; израсходованная смазка — a_lub = 0,05, как сухой ход.
@@ -49,6 +52,16 @@ public final class Lubrication implements FaultSource {
     /** a_lub; при сухом ходе насоса (без заливки) — 0,05 независимо от смазки. */
     public double factor(boolean dryRunning) {
         return dryRunning || remaining() <= 0 ? Lubricant.NONE.factor() : lubricant.factor();
+    }
+
+    public void save(StateWriter out) {
+        out.putInt("lubricant", lubricant.ordinal());
+        out.putDouble("hours_since", hoursSince);
+    }
+
+    public void load(StateReader in) {
+        lubricant = Lubricant.values()[in.getInt("lubricant")];
+        hoursSince = in.getDouble("hours_since");
     }
 
     @Override

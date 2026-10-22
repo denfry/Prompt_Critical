@@ -2,6 +2,8 @@ package dev.denfry.promptcritical.sim.ops;
 
 import dev.denfry.promptcritical.sim.core.SimClock;
 import dev.denfry.promptcritical.sim.core.SimId;
+import dev.denfry.promptcritical.sim.core.StateReader;
+import dev.denfry.promptcritical.sim.core.StateWriter;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -14,7 +16,7 @@ public final class MaintenancePanel {
     public static final long DEBOUNCE_TICKS = Math.round(600 / SimClock.FAST_DT);
 
     private static final class Entry {
-        final FaultSource source;
+        FaultSource source;
         double measured = Double.NaN;
         long measuredAt = -1, since = -1, lastEventTick = Long.MIN_VALUE / 2;
         int reported;
@@ -39,6 +41,11 @@ public final class MaintenancePanel {
     public int add(FaultSource source) {
         entries.add(new Entry(source));
         return entries.size() - 1;
+    }
+
+    /** Заменить источник строки (строка, восстановленная из сохранения, получает модель-владельца), состояние строки — то же. */
+    public void replace(int index, FaultSource source) {
+        entries.get(index).source = source;
     }
 
     public int size() {
@@ -139,6 +146,42 @@ public final class MaintenancePanel {
             sum += cfg.coefficients(k).trip() * s * s;
         }
         return lambda0 * (1 + sum);
+    }
+
+    /** Замеры и сообщённая тяжесть по строкам; сами переменные износа сохраняют владельцы. */
+    public void save(StateWriter out) {
+        int n = entries.size();
+        double[] measured = new double[n];
+        long[] at = new long[n], since = new long[n], last = new long[n];
+        int[] reported = new int[n];
+        for (int i = 0; i < n; i++) {
+            Entry e = entries.get(i);
+            measured[i] = e.measured;
+            at[i] = e.measuredAt;
+            since[i] = e.since;
+            last[i] = e.lastEventTick;
+            reported[i] = e.reported;
+        }
+        out.putDoubles("measured", measured, n);
+        out.putLongs("measured_at", at, n);
+        out.putLongs("since", since, n);
+        out.putLongs("last_event", last, n);
+        out.putInts("reported", reported, n);
+    }
+
+    /** Строки уже добавлены в том же порядке, что при сохранении; лишние сохранённые отбрасываются. */
+    public void load(StateReader in) {
+        double[] measured = in.getDoubles("measured");
+        long[] at = in.getLongs("measured_at"), since = in.getLongs("since"), last = in.getLongs("last_event");
+        int[] reported = in.getInts("reported");
+        for (int i = 0; i < Math.min(entries.size(), measured.length); i++) {
+            Entry e = entries.get(i);
+            e.measured = measured[i];
+            e.measuredAt = at[i];
+            e.since = since[i];
+            e.lastEventTick = last[i];
+            e.reported = reported[i];
+        }
     }
 
     /** {@code MAINTENANCE_DONE}: сброс у владельца; прошлый замер больше не действует. */

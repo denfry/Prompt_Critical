@@ -1,5 +1,9 @@
 package dev.denfry.promptcritical.mod.registry;
 
+import dev.denfry.promptcritical.mod.ops.HydrotestPumpBlockEntity;
+import dev.denfry.promptcritical.mod.ops.MaintenancePanelBlockEntity;
+import dev.denfry.promptcritical.mod.ops.RecordingGaugeBlockEntity;
+import dev.denfry.promptcritical.mod.ops.WaterTreatmentBlockEntity;
 import dev.denfry.promptcritical.mod.PromptCritical;
 import dev.denfry.promptcritical.mod.block.CanaryCageBlock;
 import dev.denfry.promptcritical.mod.content.DecorBlock;
@@ -437,6 +441,19 @@ public final class PcBlocks {
     public static final DeferredBlock<PcBlock> ASU_EXPANDER = block("asu_expander", machine(), Spec.facing());
     public static final DeferredBlock<PcDeviceBlock> CRYOGENIC_TANK = device("cryogenic_tank", machine(),
             Spec.facing(PcProperties.CRYO_KIND).footprint(FP_TALL3), FoundryBlock.with(CryoTankBlockEntity::new));
+    // --- эксплуатация и водоподготовка (13 §13.6.5–13.6.7, 08 §8.12, этап 11а M3) ---
+    public static final DeferredBlock<PcDeviceBlock> MAINTENANCE_PANEL = device("maintenance_panel", instrument(),
+            Spec.facing(PcProperties.SEVERITY), GridMountedBlock.wall(MaintenancePanelBlockEntity::new, 1, 1, 13, 15, 15, 16));
+    public static final DeferredBlock<PcDeviceBlock> HYDROTEST_PUMP = device("hydrotest_pump", machine(),
+            Spec.facing(PcProperties.PUMPING), FoundryBlock.with(HydrotestPumpBlockEntity::new));
+    public static final DeferredBlock<PcDeviceBlock> RECORDING_GAUGE = device("recording_gauge", instrument(),
+            Spec.facing(PcProperties.PAPER), GridMountedBlock.wall(RecordingGaugeBlockEntity::new, 3, 2, 12, 13, 15, 16));
+    public static final DeferredBlock<PcDeviceBlock> WATER_CLARIFIER = device("water_clarifier", machine(),
+            Spec.facing(PcProperties.RUNNING, PcProperties.ALARM).footprint(FP_FURNACE3), FoundryBlock.with(WaterTreatmentBlockEntity::new));
+    public static final DeferredBlock<PcDeviceBlock> SAND_FILTER = device("sand_filter", machine(),
+            Spec.facing(PcProperties.RUNNING, PcProperties.ALARM).footprint(FP_TALL2), FoundryBlock.with(WaterTreatmentBlockEntity::new));
+    public static final DeferredBlock<PcDeviceBlock> ION_EXCHANGE_COLUMN = device("ion_exchange_column", machine(),
+            Spec.facing(PcProperties.RUNNING, PcProperties.ALARM), FoundryBlock.with(WaterTreatmentBlockEntity::new));
 
     // --- справочник и мир (11) ---
     public static final DeferredBlock<DocumentLecternBlock> DOCUMENT_LECTERN = withItem(BLOCKS.registerBlock("document_lectern",

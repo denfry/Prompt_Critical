@@ -22,7 +22,7 @@ public final class EngineUnit {
     final SimId id;
     final SteamEngineUnit unit;
     SimId boiler = SimId.NONE;
-    boolean stopValveOpen, dashpot;
+    boolean stopValveOpen, dashpot, seized;
     /** Вал отдаёт обороты в сеть Create (R3); для события {@link SteamPlant#ENGINE_RUNNING}. */
     boolean running;
     double loadPowerW, capacityW;
@@ -88,6 +88,15 @@ public final class EngineUnit {
 
     public boolean stopValveOpen() {
         return stopValveOpen;
+    }
+
+    /** Подшипник заплавлен (13 §13.6.7): вал стоит, пока вкладыш не заменят. Вход биндинга, не сохраняется. */
+    public void setSeized(boolean seized) {
+        this.seized = seized;
+    }
+
+    public boolean seized() {
+        return seized;
     }
 
     public boolean dashpotFitted() {

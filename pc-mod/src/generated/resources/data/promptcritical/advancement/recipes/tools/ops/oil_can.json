@@ -1,0 +1,32 @@
+{
+  "parent": "minecraft:recipes/root",
+  "criteria": {
+    "has_sheet": {
+      "conditions": {
+        "items": [
+          {
+            "items": "create:iron_sheet"
+          }
+        ]
+      },
+      "trigger": "minecraft:inventory_changed"
+    },
+    "has_the_recipe": {
+      "conditions": {
+        "recipe": "promptcritical:ops/oil_can"
+      },
+      "trigger": "minecraft:recipe_unlocked"
+    }
+  },
+  "requirements": [
+    [
+      "has_the_recipe",
+      "has_sheet"
+    ]
+  ],
+  "rewards": {
+    "recipes": [
+      "promptcritical:ops/oil_can"
+    ]
+  }
+}

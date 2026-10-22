@@ -3,6 +3,8 @@ package dev.denfry.promptcritical.sim.ops;
 import dev.denfry.promptcritical.sim.combustion.FireTubeBoiler;
 import dev.denfry.promptcritical.sim.core.SimId;
 import dev.denfry.promptcritical.sim.core.SimRandom;
+import dev.denfry.promptcritical.sim.core.StateReader;
+import dev.denfry.promptcritical.sim.core.StateWriter;
 import java.util.ArrayList;
 import java.util.EnumMap;
 import java.util.EnumSet;
@@ -12,6 +14,7 @@ import java.util.Map;
 import java.util.Optional;
 import java.util.Set;
 import java.util.SplittableRandom;
+import java.util.TreeMap;
 import java.util.UUID;
 
 /**
@@ -49,10 +52,10 @@ public final class CommissioningService {
         boolean primed;
     }
 
-    private final OpsConfig cfg;
+    private OpsConfig cfg;
     private final OpsEvents events;
     private final long worldSeed;
-    private final Map<SimId, Unit> units = new HashMap<>();
+    private final Map<SimId, Unit> units = new TreeMap<>();
 
     public CommissioningService(OpsConfig cfg, long worldSeed, OpsEvents events) {
         this.cfg = cfg;
@@ -62,6 +65,22 @@ public final class CommissioningService {
 
     public OpsConfig config() {
         return cfg;
+    }
+
+    /** Перезагрузка конфига: режим и параметры проверок действуют сразу, разыгранные дефекты остаются. */
+    public void reconfigure(OpsConfig cfg) {
+        this.cfg = cfg;
+    }
+
+    /** Установка снята из мира. */
+    public void unregister(SimId unit) {
+        units.remove(unit);
+    }
+
+    /** Состав установки, с которым она зарегистрирована. */
+    public Optional<UnitAssembly> assembly(SimId unit) {
+        Unit u = units.get(unit);
+        return u == null ? Optional.empty() : Optional.of(u.asm);
     }
 
     /**
@@ -422,6 +441,165 @@ public final class CommissioningService {
         Unit u = units.get(unit);
         CommissioningDefect d = u == null ? null : find(u, CommissioningDefectKind.BRAKE_MISADJUSTED);
         return d == null ? 1 : d.magnitude();
+    }
+
+    // ---- Сохранение ----
+
+    public void save(StateWriter out) {
+        out.putInt("units", units.size());
+        int i = 0;
+        for (Unit u : units.values()) {
+            out.beginObject("u" + i++);
+            saveAssembly(out, u.asm);
+            out.putInt("state", u.state.ordinal());
+            out.putLong("formed", u.formedTick);
+            out.putLong("accepted", u.acceptedTick);
+            putUuid(out, "accepted_by", u.acceptedBy);
+            out.putBoolean("primed", u.primed);
+            Baseline b = u.baseline;
+            out.putDoubles("baseline", new double[] {b.efficiency(), b.flueGasK(), b.headM(), b.bearingK(),
+                    b.speedRadS(), b.dpPa()}, 6);
+            saveDefects(out, "defects", u.defects);
+            out.putInt("passed", u.passed.size());
+            int j = 0;
+            for (CheckResult r : u.passed.values()) {
+                out.beginObject("p" + j++);
+                out.putInt("check", r.check().ordinal());
+                out.putLong("tick", r.tick());
+                putUuid(out, "by", r.by());
+                saveDefects(out, "found", r.found());
+                String[] keys = r.readings().keySet().stream().sorted().toArray(String[]::new);
+                out.putInt("readings", keys.length);
+                for (int k = 0; k < keys.length; k++) {
+                    out.putString("rk" + k, keys[k]);
+                    out.putDouble("rv" + k, r.readings().get(keys[k]));
+                }
+                out.endObject();
+            }
+            out.putInt("history", u.history.size());
+            for (int k = 0; k < u.history.size(); k++) {
+                PassportEntry e = u.history.get(k);
+                out.beginObject("h" + k);
+                out.putLong("tick", e.tick());
+                out.putInt("kind", e.kind().ordinal());
+                out.putString("text", e.text());
+                putUuid(out, "by", e.by());
+                out.endObject();
+            }
+            out.endObject();
+        }
+    }
+
+    public void load(StateReader in) {
+        units.clear();
+        int n = in.getInt("units");
+        for (int i = 0; i < n; i++) {
+            in.beginObject("u" + i);
+            Unit u = new Unit();
+            u.asm = loadAssembly(in);
+            u.state = CommissioningState.values()[in.getInt("state")];
+            u.formedTick = in.getLong("formed");
+            u.acceptedTick = in.getLong("accepted");
+            u.acceptedBy = getUuid(in, "accepted_by");
+            u.primed = in.getBoolean("primed");
+            double[] b = in.getDoubles("baseline");
+            u.baseline = new Baseline(b[0], b[1], b[2], b[3], b[4], b[5]);
+            u.defects.addAll(loadDefects(in, "defects"));
+            int np = in.getInt("passed");
+            for (int j = 0; j < np; j++) {
+                in.beginObject("p" + j);
+                CommissioningCheck c = CommissioningCheck.values()[in.getInt("check")];
+                long tick = in.getLong("tick");
+                UUID by = getUuid(in, "by");
+                List<CommissioningDefect> found = loadDefects(in, "found");
+                Map<String, Double> readings = new HashMap<>();
+                int nr = in.getInt("readings");
+                for (int k = 0; k < nr; k++) readings.put(in.getString("rk" + k), in.getDouble("rv" + k));
+                u.passed.put(c, new CheckResult(c, CheckResult.Outcome.PASSED, Set.of(), found, readings, tick, by));
+                in.endObject();
+            }
+            int nh = in.getInt("history");
+            for (int k = 0; k < nh; k++) {
+                in.beginObject("h" + k);
+                u.history.add(new PassportEntry(in.getLong("tick"), PassportEntry.Kind.values()[in.getInt("kind")],
+                        in.getString("text"), getUuid(in, "by")));
+                in.endObject();
+            }
+            in.endObject();
+            units.put(u.asm.unit(), u);
+        }
+    }
+
+    private static void saveAssembly(StateWriter out, UnitAssembly a) {
+        out.putLong("unit", a.unit().raw());
+        out.putInt("kind", a.kind().ordinal());
+        long[] comps = new long[UnitComponent.values().length];
+        for (Map.Entry<UnitComponent, SimId> e : a.components().entrySet()) comps[e.getKey().ordinal()] = e.getValue().raw();
+        out.putLongs("components", comps, comps.length);
+        out.putDouble("p_work", a.workingPressurePa());
+        out.putBoolean("reversed", a.reversedRotation());
+        int porous = 0;
+        for (UnitComponent c : a.porousCastings()) porous |= 1 << c.ordinal();
+        out.putInt("porous", porous);
+        out.putBoolean("dashpot", a.dashpotFitted());
+    }
+
+    private static UnitAssembly loadAssembly(StateReader in) {
+        UnitKind kind = UnitKind.values()[in.getInt("kind")];
+        long[] comps = in.getLongs("components");
+        Map<UnitComponent, SimId> m = new EnumMap<>(UnitComponent.class);
+        for (int i = 0; i < Math.min(comps.length, UnitComponent.values().length); i++)
+            if (comps[i] != 0) m.put(UnitComponent.values()[i], new SimId(comps[i]));
+        int porous = in.getInt("porous");
+        Set<UnitComponent> p = EnumSet.noneOf(UnitComponent.class);
+        for (UnitComponent c : UnitComponent.values()) if ((porous & 1 << c.ordinal()) != 0) p.add(c);
+        return new UnitAssembly(new SimId(in.getLong("unit")), kind, m, in.getDouble("p_work"),
+                in.getBoolean("reversed"), p, in.getBoolean("dashpot"));
+    }
+
+    private static void saveDefects(StateWriter out, String key, List<CommissioningDefect> defects) {
+        int n = defects.size();
+        int[] kind = new int[n], found = new int[n];
+        long[] comp = new long[n];
+        double[] mag = new double[n], limit = new double[n];
+        for (int i = 0; i < n; i++) {
+            CommissioningDefect d = defects.get(i);
+            kind[i] = d.kind().ordinal();
+            comp[i] = d.component().raw();
+            mag[i] = d.magnitude();
+            limit[i] = d.limit();
+            found[i] = d.found() ? 1 : 0;
+        }
+        out.beginObject(key);
+        out.putInts("kind", kind, n);
+        out.putLongs("component", comp, n);
+        out.putDoubles("magnitude", mag, n);
+        out.putDoubles("limit", limit, n);
+        out.putInts("found", found, n);
+        out.endObject();
+    }
+
+    private static List<CommissioningDefect> loadDefects(StateReader in, String key) {
+        in.beginObject(key);
+        int[] kind = in.getInts("kind"), found = in.getInts("found");
+        long[] comp = in.getLongs("component");
+        double[] mag = in.getDoubles("magnitude"), limit = in.getDoubles("limit");
+        in.endObject();
+        List<CommissioningDefect> out = new ArrayList<>(kind.length);
+        for (int i = 0; i < kind.length; i++)
+            out.add(new CommissioningDefect(CommissioningDefectKind.values()[kind[i]], new SimId(comp[i]), mag[i],
+                    limit[i], found[i] != 0));
+        return out;
+    }
+
+    private static void putUuid(StateWriter out, String key, UUID id) {
+        out.putLongs(key, id == null ? new long[0] : new long[] {id.getMostSignificantBits(),
+                id.getLeastSignificantBits()}, id == null ? 0 : 2);
+    }
+
+    private static UUID getUuid(StateReader in, String key) {
+        long[] a = in.getLongs(key);
+        return a.length == 2 ? new UUID(a[0], a[1]) : null;
     }
 
     private Unit require(SimId unit) {

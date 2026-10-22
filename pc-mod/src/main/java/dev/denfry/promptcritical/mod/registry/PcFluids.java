@@ -40,6 +40,10 @@ public final class PcFluids {
     public static final Entry ARGON = gas("argon", 293, -1);
     public static final Entry LIQUID_OXYGEN = liquid("liquid_oxygen", 1141, 200, 90);
     public static final Entry LIQUID_NITROGEN = liquid("liquid_nitrogen", 807, 160, 77);
+    // водоподготовка (08 §8.12, этап 11 M3): сорт воды — номинальное качество WaterGrade
+    public static final Entry CLARIFIED_WATER = liquid("clarified_water", 1000, 1000, 288);
+    public static final Entry FILTERED_WATER = liquid("filtered_water", 1000, 1000, 288);
+    public static final Entry SOFTENED_WATER = liquid("softened_water", 1000, 1000, 288);
 
     static {
         MINE_WATER.props.block(PcBlocks.MINE_WATER);

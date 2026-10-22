@@ -313,3 +313,48 @@ m("plant_loudspeaker_active", "ops", loudspeaker(active=True))
 m("fire_extinguisher", "items", vcyl("body", 8, 8, 3, 1, 12, "rd", 8) + vcyl("head", 8, 8, 1.4, 12, 14, "b", 8)
   + [el("handle", [6, 14, 7.5], [11, 14.75, 8.5], "d"), el("label", [6, 4, 4.9], [10, 9, 5.1], "ws"),
      el("hose", [10, 6, 7.5], [11, 13, 8.5], "blk")], kind="item")
+
+
+# ======================================================================
+# срез обслуживания I0–I1 (13 §13.6.5–13.6.7, M3)
+# ======================================================================
+OWN.update({"mpf": B("maintenance_panel_front"), "rgf": B("recording_gauge_face")})
+_SEV = {0: None, 1: "ly", 2: "lo", 3: "lr"}
+
+
+def maint_panel(sev=0):  # настенный щит 14×14×3: 6 ламп категорий цветом наивысшей тяжести
+    els = [el("box", [1, 1, 13], [15, 15, 16], "en", faces={"north": "mpf"}, full=["north"])]
+    for i in range(6):
+        x = 3.5 + (i % 3) * 4
+        y = 15 - (7.5 + (i // 3) * 4)
+        els.append(lamp(f"lamp_{i}", x, y, 13, sev > 0 and i == 0, _SEV[sev] or "lg", 0.9))
+    return els
+
+
+m("maintenance_panel", "ops", maint_panel())
+for _s in (1, 2, 3):
+    m(f"maintenance_panel_severity{_s}", "ops", maint_panel(_s))
+
+
+def hydrotest_pump(pumping=False):  # ручной опрессовочный насос: бачок, плунжер, манометр, шланг
+    return [el("tank", [3, 0, 4], [13, 6, 13], "ci"),
+            el("plunger", [6, 6, 6], [10, 11, 10], "st"),
+            el("gauge", [11, 7, 7], [14, 10, 8], "blk"),
+            el("hose", [7, 1, 13], [9, 3, 16], "r"),
+            el("pivot", [7, 11, 7], [9, 12, 9], "d")]
+
+
+m("hydrotest_pump", "ops", hydrotest_pump())
+m("hydrotest_pump/lever", "ops", [el("lever", [7.5, 11, 1], [8.5, 12, 15], "d"),
+                                  el("grip", [7, 10.5, 1], [9, 12.5, 3], "r")], kind="partial")
+
+
+def recording_gauge(paper=True):  # самописец на установке 10×12×4: латунный корпус, дверца с лентой
+    return [el("case", [3, 2, 12], [13, 14, 16], "b", faces={"north": "rgf" if paper else "b"},
+               full=["north"] if paper else None),
+            el("clock_knob", [7, 14, 13], [9, 15, 15], "d")]
+
+
+m("recording_gauge", "instruments", recording_gauge())
+m("recording_gauge_empty", "instruments", recording_gauge(False))
+m("recording_gauge/drum", "instruments", [el("drum", [5, 4, 11.5], [11, 12, 12], "w")], kind="partial")

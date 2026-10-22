@@ -19,8 +19,9 @@ public final class BoilerPanels {
     // --- котёл ---
     public static final int B_P_KPA = 0, B_GLASS_PERMIL = 1, B_BED_KG10 = 2, B_FEED_L = 3, B_FLUE_C10 = 4, B_DRAFT_PA10 = 5,
             B_WATER_C10 = 6, B_FLAGS = 7, B_EFF_PERMIL = 8, B_CROWN_C10 = 9, B_RELIEF_KPA = 10, B_CHANNELS = 11;
-    public static final int F_LIT = 0, F_RELIEF = 1, F_PLUG = 2, F_SMOKY = 3, F_LOW_WATER = 4, F_RUPTURED = 5;
-    public static final int BUTTON_CHARGE = 0;
+    public static final int F_LIT = 0, F_RELIEF = 1, F_PLUG = 2, F_SMOKY = 3, F_LOW_WATER = 4, F_RUPTURED = 5, F_UNACCEPTED = 6,
+            F_DRAIN = 7;
+    public static final int BUTTON_CHARGE = 0, BUTTON_DRAIN = 1;
     /** Склад щита котла: совок с топливом, шлак. */
     public static final int SLOT_FUEL = 0, SLOT_SLAG = 1;
 
@@ -42,6 +43,11 @@ public final class BoilerPanels {
             RELIEF = PanelText.tr("boiler.relief", "Relief", "Клапан"),
             PLUG = PanelText.tr("boiler.plug", "Plug", "Пробка"),
             LOW = PanelText.tr("boiler.low_water", "Low wtr", "Упуск"),
+            UNACCEPTED = PanelText.tr("boiler.unaccepted", "Not acc.", "Не принят"),
+            DRAIN_LAMP = PanelText.tr("boiler.drain_lamp", "Drain", "Дренаж"),
+            DRAIN = PanelText.tr("boiler.drain", "Drain", "Дренаж"),
+            DRAIN_TIP = PanelText.tr("boiler.drain_tip", "Open or close the boiler blowdown drain (empties a cold boiler)",
+                    "Открыть или закрыть дренаж котла (спускает воду из холодного котла)"),
             BED = PanelText.tr("boiler.bed", "Fire bed", "Слой на решётке"),
             FEED = PanelText.tr("boiler.feed", "Feed tank", "Питательный бак"),
             CHARGE = PanelText.tr("boiler.charge", "Fire", "Забросить"),
@@ -113,6 +119,8 @@ public final class BoilerPanels {
             .lamp(104, 104, B_FLAGS, F_RELIEF, LampColor.WHITE, RELIEF.get())
             .lamp(162, 88, B_FLAGS, F_PLUG, LampColor.RED, PLUG.get())
             .lamp(162, 104, B_FLAGS, F_LOW_WATER, LampColor.RED, LOW.get())
+            .lamp(104, 118, B_FLAGS, F_UNACCEPTED, LampColor.RED, UNACCEPTED.get())
+            .lamp(162, 118, B_FLAGS, F_DRAIN, LampColor.WHITE, DRAIN_LAMP.get())
             .bar(8, 132, 98, B_BED_KG10, 10, FireTubeBoilerBlockEntity.MAX_BED_KG, 0xFFE07828, BED.get(),
                     v -> BED_TIP.get(v.num(B_BED_KG10, 10, 0), PanelText.num(FireTubeBoilerBlockEntity.MAX_BED_KG, 0)))
             .bar(114, 132, 98, B_FEED_L, 1, FireTubeBoilerBlockEntity.FEED_TANK_MB, 0xFF3F78B8, FEED.get(),
@@ -120,6 +128,7 @@ public final class BoilerPanels {
             .readout(8, 143, 204, BoilerPanels::boilerStatus, null)
             .slot(10, 159, SLOT_FUEL, s -> BoilerFuels.key(s) != null, FUEL_SLOT.get())
             .button(30, 160, 64, BUTTON_CHARGE, CHARGE.get(), CHARGE_TIP.get())
+            .button(98, 160, 56, BUTTON_DRAIN, DRAIN.get(), DRAIN_TIP.get())
             .caption(166, 164, SLAG.get())
             .output(194, 159, SLOT_SLAG, SLAG_SLOT.get())
             .build();

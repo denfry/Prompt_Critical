@@ -1,5 +1,7 @@
 package dev.denfry.promptcritical.sim.ops;
 
+import dev.denfry.promptcritical.sim.core.StateReader;
+import dev.denfry.promptcritical.sim.core.StateWriter;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.SplittableRandom;
@@ -73,6 +75,44 @@ public final class MachineWear {
         if (packing != null && MaintenanceFaultKind.PACKING_LEAK.severity(packing.wear()) > 0)
             return StethoscopeSound.HISS;
         return StethoscopeSound.HUM;
+    }
+
+    public void save(StateWriter out) {
+        out.beginObject("bearing");
+        bearing.save(out);
+        out.endObject();
+        out.beginObject("lube");
+        lubrication.save(out);
+        out.endObject();
+        if (packing != null) {
+            out.beginObject("packing");
+            packing.save(out);
+            out.endObject();
+        }
+        if (impeller != null) {
+            out.beginObject("impeller");
+            impeller.save(out);
+            out.endObject();
+        }
+    }
+
+    public void load(StateReader in) {
+        in.beginObject("bearing");
+        bearing.load(in);
+        in.endObject();
+        in.beginObject("lube");
+        lubrication.load(in);
+        in.endObject();
+        if (packing != null && in.has("packing")) {
+            in.beginObject("packing");
+            packing.load(in);
+            in.endObject();
+        }
+        if (impeller != null && in.has("impeller")) {
+            in.beginObject("impeller");
+            impeller.load(in);
+            in.endObject();
+        }
     }
 
     /** Источники для {@link MaintenancePanel}. */

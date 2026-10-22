@@ -62,6 +62,8 @@ public final class FireTubeBoiler implements Boiler {
     private static final int FURNACE_ITERATIONS = 4;
 
     private final FireTubeBoilerSpec spec;
+    /** Давление разрыва обечайки в долях p_раб: конструкционное или k_b шва с дефектом (13 §13.6.6). */
+    private double burstFactor;
     private final double designFluegasKgS;
     private Combustor combustor;
     private double bedKg, crownK, stackK, chimneyHeightM, scaleM, lastFluxWm2;
@@ -79,6 +81,17 @@ public final class FireTubeBoiler implements Boiler {
         this.crownK = initialTempK;
         this.stackK = initialTempK;
         this.chimneyHeightM = spec.chimneyHeightM();
+        this.burstFactor = spec.burstPressureFactor();
+    }
+
+    /** Давление разрыва обечайки в долях p_раб: шов с {@code SEAM_WEEP} рвётся при k_b вместо конструкционного. */
+    public void setBurstPressureFactor(double factor) {
+        if (!(factor > RELIEF_FACTOR)) throw new IllegalArgumentException("burst factor: " + factor);
+        burstFactor = factor;
+    }
+
+    public double burstPressureFactor() {
+        return burstFactor;
     }
 
     public FireTubeBoilerSpec spec() {
@@ -270,7 +283,7 @@ public final class FireTubeBoiler implements Boiler {
         stackK += (res.fluegasKgS > 0 ? gasExit - stackK : ta0 - stackK) * Math.min(1, dtS / STACK_TIME_S);
 
         stepCrown(dtS, in, out, qFurnace);
-        if (in.waterPressurePa >= spec.burstPressureFactor() * spec.workingPressurePa()
+        if (in.waterPressurePa >= burstFactor * spec.workingPressurePa()
                 && rupture == BoilerRupture.NONE) rupture = BoilerRupture.SHELL_OVERPRESSURE;
         if (rupture != BoilerRupture.NONE) lit = false;
 

@@ -24,6 +24,7 @@ import dev.denfry.promptcritical.sim.core.SimId;
 import dev.denfry.promptcritical.sim.core.StateReader;
 import dev.denfry.promptcritical.sim.core.StateWriter;
 import dev.denfry.promptcritical.sim.core.Subsystem;
+import dev.denfry.promptcritical.sim.core.TimeDomain;
 import dev.denfry.promptcritical.sim.hydraulics.FlowLink;
 import dev.denfry.promptcritical.sim.hydraulics.FlowLinkSpec;
 import dev.denfry.promptcritical.sim.hydraulics.FluidNetwork;
@@ -68,7 +69,7 @@ public final class SteamPlant implements Subsystem {
     public static final double UPTAKE_HEIGHT_M = 3;
     /** Действия {@link SimCommand.Operate}. */
     public static final String IGNITE = "ignite", FIT_FUSIBLE_PLUG = "fit_fusible_plug",
-            FIT_GOVERNOR_DASHPOT = "fit_governor_dashpot", TOGGLE_STOP_VALVE = "toggle_stop_valve", BAR_OVER = "bar_over";
+            FIT_GOVERNOR_DASHPOT = "fit_governor_dashpot", DRAIN = "drain", TOGGLE_STOP_VALVE = "toggle_stop_valve", BAR_OVER = "bar_over";
     /**
      * Событие домена: машина набрала обороты R3 (ω ≥ 0,2 ω₀) и отдаёт момент на вал Create — достижение «Первый пар»
      * (11 §11.2.2); величина {@code omega_pu} — ω/ω₀. Повторно — после остановки ниже 0,1 ω₀.
@@ -80,6 +81,9 @@ public final class SteamPlant implements Subsystem {
      */
     public static final String BOILER_STATE = "promptcritical:boiler_state", ENGINE_STATE = "promptcritical:engine_state";
     public static final int SAMPLE_TICKS = 20;
+    private static final int SLOW_PHASE = 3;
+    /** Дренаж котла (спуск воды перед чисткой накипи), кг/с — только без давления. */
+    public static final double DRAIN_KG_S = 50;
     /** Котёл без давления (налив, замена пробки): ниже атмосферного + 50 кПа. */
     public static final double OPEN_PRESSURE_PA = ATMOSPHERE_PA + 50_000;
     /**
@@ -211,8 +215,13 @@ public final class SteamPlant implements Subsystem {
 
     @Override
     public void stepFast(FastContext ctx) {
+        for (BoilerUnit u : boilerArr) if (Double.compare(u.reliefLiftPa(), u.builtReliefPa) != 0) dirty = true;
         if (dirty) rebuild();
         double dt = ctx.dt();
+        if (ctx.clock().due(TimeDomain.SLOW, SLOW_PHASE)) {
+            double slowDt = ctx.clock().slowDtPhys();
+            for (BoilerUnit u : boilerArr) u.boiler.stepSlow(slowDt, u.feedHardness);
+        }
         boolean sample = ctx.tick() % SAMPLE_TICKS == 0;
         for (BoilerUnit u : boilerArr) stepBoiler(ctx, u, dt);
         for (int i = 0; i < engineArr.length; i++) {
@@ -252,6 +261,14 @@ public final class SteamPlant implements Subsystem {
             ctx.events().journal(ctx.tick(), u.id, Severity.WARNING, "fusible plug melted: low water, furnace quenched");
         }
         if (u.exploded) return;
+        if (u.draining) {
+            // дренаж открыт: питание отключено, вода уходит, пока котёл без давления
+            if (drum.pressure() < OPEN_PRESSURE_PA && drum.mass() > 0) {
+                double kg = Math.min(DRAIN_KG_S, drum.mass() / dt * 0.5);
+                drum.addSource(-kg, water.saturationP(Math.max(drum.pressure(), 1000)).hF());
+            }
+            return;
+        }
 
         // питание: поплавковый регулятор на нормальный уровень (при растопке — на низший) с упреждением по расходу пара
         double steam = Math.max(0, u.relief.massFlow()) + Math.max(0, u.plug.massFlow());
@@ -285,6 +302,7 @@ public final class SteamPlant implements Subsystem {
         }
         FluidNode chest = e.chest;
         m.step(dt, chest.pressure(), chest.density(), EXHAUST_PA, tau);
+        if (e.seized) m.shaft().setOmega(0);
         chest.addSource(-m.steamFlowKgS(), 0);
         e.throttle.setValvePosition(e.stopValveOpen && !b.exploded ? m.throttle() : 0);
         SteamEngineUnit.Spec s = m.spec();
@@ -338,6 +356,10 @@ public final class SteamPlant implements Subsystem {
         if (u != null) {
             return switch (o.action()) {
                 case IGNITE -> u.boiler.ignite() ? CommandStatus.OK : CommandStatus.REJECTED;
+                case DRAIN -> {
+                    u.draining = !u.draining;
+                    yield CommandStatus.OK;
+                }
                 case FIT_FUSIBLE_PLUG -> {
                     boolean needed = u.boiler.plugMelted() || !u.boiler.plugFitted();
                     boolean open = u.drum == null || u.drum.pressure() < OPEN_PRESSURE_PA;
@@ -403,8 +425,9 @@ public final class SteamPlant implements Subsystem {
             if (!Double.isNaN(u.initPressure)) init.put(d, new double[] {u.initPressure, u.initEnthalpy});
             init.put(a, new double[] {ATMOSPHERE_PA, hAir});
             long relief = nodeId(u.id, RELIEF);
+            u.builtReliefPa = u.reliefLiftPa();
             links.add(link(relief, LinkKind.VALVE_RELIEF, d, a, RELIEF_AREA, 1, top, 2,
-                    ValveModel.Spec.relief(boilerSpec.reliefSetPressure(), 1)));
+                    ValveModel.Spec.relief(u.builtReliefPa, 1)));
             links.add(link(nodeId(u.id, PLUG), LinkKind.VALVE_CONTROL, d, a, plugArea, 1, boilerSpec.crownHeightM(), 2,
                     ValveModel.Spec.control(ValveModel.Characteristic.LINEAR, 1, 0)));
             reliefLinks.put(relief, u);
@@ -493,9 +516,11 @@ public final class SteamPlant implements Subsystem {
             out.putDouble("feed_supply_kg", u.feedSupplyKg);
             out.putDouble("feed_used_kg", u.feedUsedKg);
             out.putDouble("feed_temp_k", u.feedTempK);
+            out.putDouble("feed_hardness", u.feedHardness);
             out.putLong("relief_lifts", u.reliefLifts);
             out.putBoolean("relief_open", u.reliefOpen);
             out.putBoolean("exploded", u.exploded);
+            out.putBoolean("draining", u.draining);
             out.putDouble("p", u.drum != null ? u.drum.pressure() : u.initPressure);
             out.putDouble("h", u.drum != null ? u.drum.enthalpy() : u.initEnthalpy);
             out.putDouble("relief_flow", flow(u.relief, nodeId(u.id, RELIEF)));
@@ -553,9 +578,11 @@ public final class SteamPlant implements Subsystem {
             u.feedSupplyKg = in.getDouble("feed_supply_kg");
             u.feedUsedKg = in.getDouble("feed_used_kg");
             u.feedTempK = in.getDouble("feed_temp_k");
+            u.feedHardness = in.optDouble("feed_hardness", BoilerUnit.RAW_HARDNESS);
             u.reliefLifts = in.getLong("relief_lifts");
             u.reliefOpen = in.getBoolean("relief_open");
             u.exploded = in.getBoolean("exploded");
+            u.draining = in.optInt("draining", 0) != 0;
             u.initPressure = in.getDouble("p");
             u.initEnthalpy = in.getDouble("h");
             savedFlows.put(nodeId(id, RELIEF), in.getDouble("relief_flow"));

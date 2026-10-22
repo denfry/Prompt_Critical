@@ -2,6 +2,7 @@ package dev.denfry.promptcritical.mod.config;
 
 import dev.denfry.promptcritical.sim.consequence.ServerMode;
 import dev.denfry.promptcritical.sim.mining.HoistConfig;
+import dev.denfry.promptcritical.sim.ops.CommissioningMode;
 import dev.denfry.promptcritical.sim.mining.VeinCatalog;
 import dev.denfry.promptcritical.sim.mining.VeinType;
 import java.util.LinkedHashMap;
@@ -52,6 +53,11 @@ public final class ServerConfig {
     public static final ModConfigSpec.DoubleValue COMBUSTION_THERMAL_NOX_REF_G_PER_GJ;
     public static final ModConfigSpec.DoubleValue COMBUSTION_CO_TRANSITION_WIDTH;
     public static final ModConfigSpec.DoubleValue BOILER_EXPLOSION_BLAST_FRACTION;
+    public static final ModConfigSpec.EnumValue<CommissioningMode> OPS_COMMISSIONING;
+    public static final ModConfigSpec.DoubleValue OPS_DEFECT_RATE;
+    public static final ModConfigSpec.DoubleValue OPS_TRIAL_RUN_S;
+    public static final ModConfigSpec.DoubleValue OPS_TRIAL_MIN_LOAD;
+    public static final ModConfigSpec.DoubleValue OPS_TALLOW_INTERVAL_H;
     public static final ModConfigSpec.DoubleValue GRID_SYNC_MAX_ANGLE_DEG;
     public static final ModConfigSpec.DoubleValue GRID_SYNC_MAX_DV;
     public static final ModConfigSpec.DoubleValue GRID_SYNC_MAX_SLIP_HZ;
@@ -224,6 +230,17 @@ public final class ServerConfig {
                 .defineInRange("ar_success_lightning", 0.8, 0.0, 1.0);
         GRID_LV_BREAKER_THERMAL_K_S = b.comment("Thermal constant of 0.4 kV breaker and fuse curves, s (07 §7.4.6)")
                 .defineInRange("lv_breaker_thermal_k_s", 40.0, 1.0, 1000.0);
+        b.pop();
+
+        b.push("ops");
+        OPS_COMMISSIONING = b.comment("Commissioning: OFF — no defects; ADVISORY — unaccepted units may start (journaled); ENFORCED — start is refused until all checks but the trial run pass (13 §13.6.6)")
+                .defineEnum("commissioning", CommissioningMode.ADVISORY);
+        OPS_DEFECT_RATE = b.comment("[BALANCE] Multiplier of installation defect probabilities; 0 — no defects (13 §13.6.6)")
+                .defineInRange("defect_rate", 1.0, 0.0, 10.0);
+        OPS_TRIAL_RUN_S = b.comment("Trial run length, real seconds (13 §13.6.6)").defineInRange("trial_run_s", 600.0, 1.0, 86400.0);
+        OPS_TRIAL_MIN_LOAD = b.comment("Minimum load in the trial run, share of rated (13 §13.6.6)").defineInRange("trial_min_load", 0.7, 0.0, 1.0);
+        OPS_TALLOW_INTERVAL_H = b.comment("[BALANCE] Tallow top-up interval, physics hours (13 §13.6.7)")
+                .defineInRange("tallow_interval_h", 500.0, 1.0, 1.0e5);
         b.pop();
 
         b.push("boiler");

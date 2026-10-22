@@ -6,16 +6,27 @@ import dev.denfry.promptcritical.mod.block.ChimneyBlock;
 import dev.denfry.promptcritical.mod.block.PcProperties;
 import dev.denfry.promptcritical.mod.blockentity.DeviceBlockEntity;
 import dev.denfry.promptcritical.mod.fx.MachineFx;
+import dev.denfry.promptcritical.mod.ops.OpsActions;
+import dev.denfry.promptcritical.mod.ops.OpsMachine;
+import dev.denfry.promptcritical.mod.ops.OpsText;
+import dev.denfry.promptcritical.mod.ops.OpsWorld;
+import dev.denfry.promptcritical.mod.ops.WaterTreatmentBlockEntity;
 import dev.denfry.promptcritical.mod.panel.PanelHost;
 import dev.denfry.promptcritical.mod.panel.PanelLayout;
-import dev.denfry.promptcritical.mod.registry.PcFluids;
 import dev.denfry.promptcritical.mod.registry.PcItems;
 import dev.denfry.promptcritical.sim.combustion.BoilerOutputs;
 import dev.denfry.promptcritical.sim.combustion.BoilerRupture;
 import dev.denfry.promptcritical.sim.core.CommandSource;
 import dev.denfry.promptcritical.sim.core.SimCommand;
+import dev.denfry.promptcritical.sim.ops.Baseline;
+import dev.denfry.promptcritical.sim.ops.CommissioningDefectKind;
+import dev.denfry.promptcritical.sim.ops.FaultSource;
+import dev.denfry.promptcritical.sim.ops.MaintenanceFaultKind;
+import dev.denfry.promptcritical.sim.ops.OpsSubsystem;
+import dev.denfry.promptcritical.sim.ops.UnitKind;
 import dev.denfry.promptcritical.sim.plant.BoilerUnit;
 import dev.denfry.promptcritical.sim.plant.SteamPlant;
+import dev.denfry.promptcritical.sim.utilities.WaterGrade;
 import java.util.Arrays;
 import java.util.Locale;
 import net.minecraft.core.BlockPos;
@@ -58,11 +69,13 @@ import org.jetbrains.annotations.Nullable;
  * каждый тик отдаёт ему запас питательного бака и высоту трубы, списывает взятую воду, выгружает золу шлаком и
  * показывает состояние (топка, свист ПК, струя пара из выплавленной пробки, дым из трубы, водоуказательное стекло).
  *
- * <p>Питательный бак 4 м³ наполняют трубы Create (любая грань любой клетки) или ведро; вода — {@code #minecraft:water}
- * и {@code raw_water}. Топливо — руками в топку или цепной решёткой; зола выдаётся шлаком {@code boiler_slag}
+ * <p>Питательный бак 4 м³ наполняют трубы Create (любая грань любой клетки) или ведро; вода — {@code #minecraft:water},
+ * {@code raw_water} и вода водоподготовки: жёсткость сорта ({@link WaterGrade}) растит накипь (13 §13.6.7).
+ * Пусконаладка и обслуживание — {@link OpsMachine}: смещённый манометр, засорённое стекло, подрыв ПК и шов по
+ * дефектам монтажа, розжиг через разрешение пуска, пробный пуск. Топливо — руками в топку или цепной решёткой; зола выдаётся шлаком {@code boiler_slag}
  * (по {@link #SLAG_ASH_KG} кг на предмет) — воронками или пустой рукой.
  */
-public class FireTubeBoilerBlockEntity extends DeviceBlockEntity implements PressureSource, PanelHost {
+public class FireTubeBoilerBlockEntity extends DeviceBlockEntity implements PressureSource, PanelHost, OpsMachine {
     public static final int FEED_TANK_MB = 4000;
     /** Температура наружного воздуха, К (климат биомов 07 §7.13.1 — позже). */
     public static final double AMBIENT_K = 288.15;
@@ -73,9 +86,14 @@ public class FireTubeBoilerBlockEntity extends DeviceBlockEntity implements Pres
     /** Шкала водоуказательного стекла: от потолка жаровой трубы − 0,10 м до + 0,45 м. */
     public static final double GLASS_BOTTOM_M = 0.35, GLASS_SPAN_M = 0.55;
     private static final int SYNC_PERIOD = 4, CHIMNEY_PERIOD = 20, WHISTLE_PERIOD = 30;
+    /** Проектная толщина накипи — 100 % строки HX_FOULING щита обслуживания, м (13 §13.6.7). */
+    public static final double DESIGN_SCALE_M = 1e-3;
+    /** Шкала манометра, Па: смещение нуля — в её долях. */
+    public static final double GAUGE_SCALE_PA = 1.6e6;
+    private static final double TICK_S = 0.05;
 
     private final FluidTank feed = new FluidTank(FEED_TANK_MB,
-            fs -> fs.is(FluidTags.WATER) || fs.is(PcFluids.RAW_WATER.source.get())) {
+            fs -> fs.is(FluidTags.WATER) || WaterTreatmentBlockEntity.grade(fs.getFluid()) != null) {
         @Override
         protected void onContentsChanged() {
             setChanged();
@@ -109,6 +127,7 @@ public class FireTubeBoilerBlockEntity extends DeviceBlockEntity implements Pres
     private float pressurePa, glass;
     private int chimneyBlocks;
     private boolean lit, reliefOpen, plugMelted, venting, smoky;
+    private boolean unaccepted, lowShown;
     private float sentP = -1, sentGlass = -1;
     private int sentFlags = -1;
 
@@ -177,6 +196,10 @@ public class FireTubeBoilerBlockEntity extends DeviceBlockEntity implements Pres
         }
         if (feed.isEmpty()) feedDebtKg = 0;
         u.setFeedSupply(Math.max(0, feed.getFluidAmount() - feedDebtKg), feedTempK());
+        WaterGrade grade = feed.isEmpty() ? null : WaterTreatmentBlockEntity.grade(feed.getFluid().getFluid());
+        u.setFeedHardness(grade == null ? BoilerUnit.RAW_HARDNESS : grade.quality().hardnessMolEqM3());
+        OpsSubsystem ops = OpsWorld.ops(level);
+        if (ops != null && (ops.unit(simId()) == null || ticks % CHIMNEY_PERIOD == 1)) commissioning(u);
         if (ticks % CHIMNEY_PERIOD == 1) {
             chimneyBlocks = countChimney();
             u.setChimneyHeight(SteamPlant.UPTAKE_HEIGHT_M + chimneyBlocks);
@@ -186,15 +209,35 @@ public class FireTubeBoilerBlockEntity extends DeviceBlockEntity implements Pres
             u.removeAsh(SLAG_ASH_KG);
         }
 
-        pressurePa = Double.isNaN(u.pressurePa()) ? (float) SteamPlant.ATMOSPHERE_PA : (float) u.pressurePa();
-        glass = (float) Math.max(0, Math.min(1, (u.gaugeGlassLevelM() - GLASS_BOTTOM_M) / GLASS_SPAN_M));
+        double gauge = Double.isNaN(u.pressurePa()) ? 0 : u.pressurePa() - SteamPlant.ATMOSPHERE_PA;
+        boolean glassBlocked = false;
+        if (ops != null && ops.unit(simId()) != null) {
+            u.setCommissioning(ops.reliefLiftPa(simId(), u.spec().reliefSetPressure()),
+                    ops.burstFactor(simId(), u.spec().burstPressureFactor()));
+            gauge = ops.commissioning().gaugeReading(simId(), gauge, GAUGE_SCALE_PA);
+            glassBlocked = ops.commissioning().has(simId(), CommissioningDefectKind.GAUGE_GLASS_BLOCKED);
+            unaccepted = !ops.canStart(simId()).accepted();
+            boolean tripped = u.plugMelted() || u.rupture() != BoilerRupture.NONE;
+            double load = u.outputs().fuelBurnKgS / u.spec().nominalFuelKgS();
+            ops.observeTrial(simId(), TICK_S, u.lit(), Double.isFinite(load) ? load : 0, tripped, opsCurrent());
+            if (ticks % 10 == 0 && ops.seamWeeping(simId(), gauge) && level instanceof ServerLevel sl) {
+                Vec3 p = BoilerGeometry.world(worldPosition, facing(), 8, 16, 30);
+                sl.sendParticles(ParticleTypes.DRIPPING_WATER, p.x, p.y, p.z, 2, 0.7, 0.3, 0.7, 0);
+                sl.sendParticles(ParticleTypes.CLOUD, p.x, p.y + 0.6, p.z, 1, 0.5, 0.1, 0.5, 0.01);
+            }
+        }
+        pressurePa = (float) (SteamPlant.ATMOSPHERE_PA + gauge);
+        float realGlass = (float) Math.max(0, Math.min(1, (u.gaugeGlassLevelM() - GLASS_BOTTOM_M) / GLASS_SPAN_M));
+        // засорённое стекло не показывает падения уровня
+        glass = glassBlocked ? Math.max(glass, realGlass) : realGlass;
         lit = u.lit();
         smoky = u.smoky();
         reliefOpen = u.reliefOpen();
         plugMelted = u.plugMelted();
         venting = plugMelted && u.ventFlowKgS() > 0.02;
         boolean exploded = u.rupture() != BoilerRupture.NONE;
-        boolean lowWater = !exploded && u.gaugeGlassLevelM() < GLASS_BOTTOM_M;
+        lowShown = !exploded && u.gaugeGlassLevelM() < GLASS_BOTTOM_M && glass <= 0;
+        boolean lowWater = lowShown;
         BlockState s = getBlockState();
         BlockState t = s.setValue(BlockStateProperties.LIT, lit && !exploded).setValue(PcProperties.LOW_WATER, lowWater)
                 .setValue(PcProperties.EXPLODED, exploded);
@@ -206,6 +249,14 @@ public class FireTubeBoilerBlockEntity extends DeviceBlockEntity implements Pres
         }
         sounds();
         if (ticks % SYNC_PERIOD == 0) syncIfChanged();
+    }
+
+    /** Установка в пусконаладке и накипь строкой щита обслуживания. */
+    private void commissioning(BoilerUnit u) {
+        OpsSubsystem.Unit ou = OpsWorld.ensure(level, simId(), UnitKind.FIRE_TUBE_BOILER, u.spec().workingPressurePa(), false);
+        OpsSubsystem ops = OpsWorld.ops(level);
+        if (ou != null && ops != null) ops.attach(simId(), FaultSource.of(MaintenanceFaultKind.HX_FOULING,
+                () -> u.boiler().scaleM() / DESIGN_SCALE_M, () -> u.boiler().setScale(0)));
     }
 
     private double feedTempK() {
@@ -309,6 +360,7 @@ public class FireTubeBoilerBlockEntity extends DeviceBlockEntity implements Pres
             return ItemInteractionResult.SUCCESS;
         }
         if (stack.is(Items.FLINT_AND_STEEL) || stack.is(Items.FIRE_CHARGE) || stack.is(Items.TORCH)) {
+            if (!u.lit() && !OpsActions.startAllowed(player, level, this)) return ItemInteractionResult.CONSUME;
             b.submit(new SimCommand.Operate(simId(), SteamPlant.IGNITE), source);
             if (stack.is(Items.FLINT_AND_STEEL)) stack.hurtAndBreak(1, player, hand == InteractionHand.MAIN_HAND ? EquipmentSlot.MAINHAND : EquipmentSlot.OFFHAND);
             else if (stack.is(Items.FIRE_CHARGE)) stack.consume(1, player);
@@ -382,8 +434,10 @@ public class FireTubeBoilerBlockEntity extends DeviceBlockEntity implements Pres
                 | (u.reliefOpen() ? 1 << BoilerPanels.F_RELIEF : 0)
                 | (u.plugMelted() ? 1 << BoilerPanels.F_PLUG : 0)
                 | (u.smoky() ? 1 << BoilerPanels.F_SMOKY : 0)
-                | (!ruptured && u.gaugeGlassLevelM() < GLASS_BOTTOM_M ? 1 << BoilerPanels.F_LOW_WATER : 0)
-                | (ruptured ? 1 << BoilerPanels.F_RUPTURED : 0);
+                | (!ruptured && lowShown ? 1 << BoilerPanels.F_LOW_WATER : 0)
+                | (ruptured ? 1 << BoilerPanels.F_RUPTURED : 0)
+                | (unaccepted ? 1 << BoilerPanels.F_UNACCEPTED : 0)
+                | (u.draining() ? 1 << BoilerPanels.F_DRAIN : 0);
     }
 
     static int celsius10(double kelvin) {
@@ -396,9 +450,15 @@ public class FireTubeBoilerBlockEntity extends DeviceBlockEntity implements Pres
 
     @Override
     public void onPanelButton(ServerPlayer player, int id) {
-        if (id != BoilerPanels.BUTTON_CHARGE) return;
         BoilerUnit u = unit();
         SimLevelBinding b = SimBindings.get((ServerLevel) level);
+        if (id == BoilerPanels.BUTTON_DRAIN && u != null && b != null) {
+            b.submit(new SimCommand.Operate(simId(), SteamPlant.DRAIN), new CommandSource.Panel(player.getUUID(), worldPosition.asLong()));
+            player.displayClientMessage(OpsText.msg(u.draining() ? "drain_closed" : "drain_open"), true);
+            playAt(doorPos(), SoundEvents.BUCKET_EMPTY, 0.8f, 0.7f);
+            return;
+        }
+        if (id != BoilerPanels.BUTTON_CHARGE) return;
         ItemStack s = shovel.getStackInSlot(0);
         if (u == null || b == null || s.isEmpty()) return;
         if (charge(player, s, b, u)) shovel.extractItem(0, 1, false);
@@ -475,6 +535,32 @@ public class FireTubeBoilerBlockEntity extends DeviceBlockEntity implements Pres
     @Override
     public Packet<ClientGamePacketListener> getUpdatePacket() {
         return ClientboundBlockEntityDataPacket.create(this);
+    }
+
+    // --- эксплуатация ---
+
+    @Override
+    public UnitKind opsKind() {
+        return UnitKind.FIRE_TUBE_BOILER;
+    }
+
+    @Override
+    public boolean opsStopped() {
+        BoilerUnit u = unit();
+        return u == null || !u.lit();
+    }
+
+    @Override
+    public Vec3 opsBearingPos() {
+        return doorPos();
+    }
+
+    @Override
+    public Baseline opsCurrent() {
+        BoilerUnit u = unit();
+        if (u == null) return Baseline.NONE;
+        BoilerOutputs o = u.outputs();
+        return new Baseline(o.efficiency, o.fluegasExitK, Double.NaN, Double.NaN, Double.NaN, Double.NaN);
     }
 
     /** Котёл по клетке конструкции. */

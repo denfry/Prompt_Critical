@@ -1,5 +1,7 @@
 package dev.denfry.promptcritical.sim.ops;
 
+import dev.denfry.promptcritical.sim.core.StateReader;
+import dev.denfry.promptcritical.sim.core.StateWriter;
 import java.util.SplittableRandom;
 
 /**
@@ -101,6 +103,25 @@ public final class PlainBearing implements FaultSource {
     @Override
     public double value() {
         return damage;
+    }
+
+    /** Повреждение задано (сценарии 11 §11.3, тесты); D_b = 1 — заплавлен. */
+    public void setDamage(double d) {
+        if (!(d >= 0 && d <= 1)) throw new IllegalArgumentException("damage: " + d);
+        damage = d;
+        seized = d >= 1;
+    }
+
+    public void save(StateWriter out) {
+        out.putDouble("damage", damage);
+        out.putDouble("life_factor", lifeFactor);
+        out.putBoolean("seized", seized);
+    }
+
+    public void load(StateReader in) {
+        damage = in.getDouble("damage");
+        lifeFactor = in.getDouble("life_factor");
+        seized = in.getBoolean("seized");
     }
 
     /** Ремонт с панели без своего зерна: u_b прежний. Мир с зерном вызывает {@link #replace(double)}. */

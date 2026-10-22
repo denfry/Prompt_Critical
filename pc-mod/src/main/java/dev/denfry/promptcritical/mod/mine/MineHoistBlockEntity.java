@@ -12,11 +12,20 @@ import dev.denfry.promptcritical.mod.config.ServerConfig;
 import dev.denfry.promptcritical.mod.item.RopeStateData;
 import dev.denfry.promptcritical.mod.item.WireRopeItem;
 import dev.denfry.promptcritical.mod.multiblock.Footprint;
+import dev.denfry.promptcritical.mod.ops.OpsActions;
+import dev.denfry.promptcritical.mod.ops.OpsMachine;
+import dev.denfry.promptcritical.mod.ops.OpsWorld;
 import dev.denfry.promptcritical.sim.mining.Hoist;
 import dev.denfry.promptcritical.sim.mining.HoistDuty;
 import dev.denfry.promptcritical.sim.mining.HoistSubsystem;
 import dev.denfry.promptcritical.sim.mining.HoistUnit;
 import dev.denfry.promptcritical.sim.mining.RopeState;
+import dev.denfry.promptcritical.sim.ops.Baseline;
+import dev.denfry.promptcritical.sim.ops.CheckInput;
+import dev.denfry.promptcritical.sim.ops.FaultSource;
+import dev.denfry.promptcritical.sim.ops.MaintenanceFaultKind;
+import dev.denfry.promptcritical.sim.ops.OpsSubsystem;
+import dev.denfry.promptcritical.sim.ops.UnitKind;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
 import net.minecraft.core.HolderLookup;
@@ -37,6 +46,7 @@ import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.level.block.Block;
 import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.phys.AABB;
+import net.minecraft.world.phys.Vec3;
 import org.jetbrains.annotations.Nullable;
 
 /**
@@ -45,17 +55,27 @@ import org.jetbrains.annotations.Nullable;
  * ведёт по глубине двойника (контроллер {@link IControlContraption}), а на посадке разбирается обратно. Груз —
  * люди (80 кг), тележки и предметы в клети на момент отправки; назначение (людской, грузо-людской, грузовой) — по
  * тому, кто в клети. Клиент получает глубину и скорость и сам ведёт клеть между пакетами.
+ *
+ * <p>Эксплуатация ({@link OpsMachine}, 13 §13.6.5–13.6.7): тормоз со сбитым зазором держит только долю расчётного
+ * момента до испытания ключом под грузом; пробный пуск — один рейс на всю глубину ствола; износ каната — строкой
+ * щита обслуживания; заплавленный подшипник клинит вал.
  */
-public final class MineHoistBlockEntity extends DeviceBlockEntity implements ShaftConsumer, IControlContraption {
+public final class MineHoistBlockEntity extends DeviceBlockEntity implements ShaftConsumer, IControlContraption, OpsMachine {
     /** Масса человека, тележки, предмета в клети, кг [BALANCE]. */
     public static final double PERSON_KG = 80, CART_KG = 300, ITEM_KG = 1;
     private static final int SCAN_PERIOD_TICKS = 100, SYNC_PERIOD_TICKS = 2;
+    /** Груз, от которого считается доля для испытания тормоза, кг [BALANCE]. */
+    public static final double RATED_PAYLOAD_KG = 1000;
+    /** Пробный пуск — рейс не короче этой доли глубины ствола. */
+    public static final double TRIAL_TRIP_FRACTION = 0.9;
 
     @Nullable private HoistGeometry.Headframe headframe;
     @Nullable private HoistGeometry.Shaft shaft;
     @Nullable private ControlledContraptionEntity cage;
     private HoistText.Problem problem = HoistText.Problem.NO_HEADFRAME;
-    private boolean chunkUnloading, dirtySync;
+    private boolean chunkUnloading, dirtySync, seized;
+    /** Глубина начала рейса; NaN — клеть стоит. */
+    private double tripFromM = Double.NaN;
     private long nextScan;
 
     // синхронизируется клиенту
@@ -97,6 +117,7 @@ public final class MineHoistBlockEntity extends DeviceBlockEntity implements Sha
             nextScan = now + SCAN_PERIOD_TICKS;
         }
         double d = u.positionM(), v = u.speedMs();
+        operations(u, d, v);
         if (d != depth || v != speed) dirtySync = true;
         depth = d;
         speed = v;
@@ -113,6 +134,38 @@ public final class MineHoistBlockEntity extends DeviceBlockEntity implements Sha
             dirtySync = false;
             level.sendBlockUpdated(worldPosition, s, s, Block.UPDATE_CLIENTS);
         }
+    }
+
+    /** Тормоз по пусконаладке, канат и подшипник на щите обслуживания, пробный рейс (13 §13.6.6). */
+    private void operations(HoistUnit u, double d, double v) {
+        OpsSubsystem ops = OpsWorld.ops(level);
+        OpsSubsystem.Unit ou = OpsWorld.ensure(level, simId(), UnitKind.MINE_HOIST, 0, false);
+        if (ops == null || ou == null) return;
+        if (level.getGameTime() % 20 == 0) ops.attach(simId(), FaultSource.of(MaintenanceFaultKind.ROPE_WEAR,
+                () -> u.rope() == null ? 0 : u.rope().damage(), () -> { }));
+        if (u.hoist() != null) u.hoist().setBrakeFactor(ops.commissioning().brakeTorqueFactor(simId()));
+        ou.setRunning(v != 0, false, Double.NaN);
+        seized = ou.seized();
+        if (v != 0 && Double.isNaN(tripFromM)) tripFromM = d;
+        else if (v == 0 && !Double.isNaN(tripFromM)) {
+            if (shaft != null && Math.abs(d - tripFromM) >= TRIAL_TRIP_FRACTION * shaft.depth()) {
+                ops.perform(simId(), new CheckInput.TrialRun(ops.config().trialRunS(), 1, false, true, opsCurrent()), null);
+            }
+            tripFromM = Double.NaN;
+        }
+    }
+
+    /** Груз в клети к доле {@link #RATED_PAYLOAD_KG}: клеть на посадке — по содержимому, в пути — по рейсу. */
+    public double cageLoadFraction() {
+        HoistUnit u = unit();
+        if (u == null) return 0;
+        double kg = u.hoist() == null ? 0 : u.hoist().payloadKg();
+        if (cage == null && shaft != null) {
+            BlockPos cagePos = shaft.cageAt((int) Math.round(u.positionM()));
+            BlockState cs = level.getBlockState(cagePos);
+            if (cs.getBlock() instanceof MineCageBlock mc && mc.isController(cs)) kg = load(cagePos, mc, cs).kg();
+        }
+        return kg / RATED_PAYLOAD_KG;
     }
 
     private void clientTick() {
@@ -257,6 +310,7 @@ public final class MineHoistBlockEntity extends DeviceBlockEntity implements Sha
     }
 
     private void depart(Player player, HoistUnit u, int landing) {
+        if (!OpsActions.startAllowed(player, level, this)) return;
         if (shaft == null || !u.ready()) {
             player.displayClientMessage(HoistText.msg("hoist.blocked", HoistText.problem(problem == HoistText.Problem.NONE
                     ? HoistText.Problem.NO_ROPE : problem)), true);
@@ -386,7 +440,32 @@ public final class MineHoistBlockEntity extends DeviceBlockEntity implements Sha
     @Override
     public double shaftPowerW() {
         HoistUnit u = unit();
+        if (seized) return 100 * HoistUnit.RATED_W;
         return u == null ? 0 : u.powerW();
+    }
+
+    // --- эксплуатация ---
+
+    @Override
+    public UnitKind opsKind() {
+        return UnitKind.MINE_HOIST;
+    }
+
+    @Override
+    public boolean opsStopped() {
+        return speed == 0;
+    }
+
+    /** Подшипник барабана. */
+    @Override
+    public Vec3 opsBearingPos() {
+        return Vec3.atCenterOf(worldPosition).add(0, 0.4, 0);
+    }
+
+    @Override
+    public Baseline opsCurrent() {
+        HoistUnit u = unit();
+        return u == null || u.hoist() == null ? Baseline.NONE : new Baseline(Double.NaN, Double.NaN, Double.NaN, Double.NaN, u.hoist().drumOmega(), Double.NaN);
     }
 
     @Override

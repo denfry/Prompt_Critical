@@ -1,0 +1,32 @@
+{
+  "parent": "minecraft:recipes/root",
+  "criteria": {
+    "has_tallow": {
+      "conditions": {
+        "items": [
+          {
+            "items": "promptcritical:tallow"
+          }
+        ]
+      },
+      "trigger": "minecraft:inventory_changed"
+    },
+    "has_the_recipe": {
+      "conditions": {
+        "recipe": "promptcritical:ops/gland_packing"
+      },
+      "trigger": "minecraft:recipe_unlocked"
+    }
+  },
+  "requirements": [
+    [
+      "has_the_recipe",
+      "has_tallow"
+    ]
+  ],
+  "rewards": {
+    "recipes": [
+      "promptcritical:ops/gland_packing"
+    ]
+  }
+}

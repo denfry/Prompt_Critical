@@ -48,6 +48,12 @@ public record OpsConfig(CommissioningMode commissioning, double defectRate, doub
                 maintenance);
     }
 
+    public OpsConfig withTrialRunS(double seconds) {
+        return new OpsConfig(commissioning, defectRate, seconds, trialMinLoad, hydrotestFactor, hydrotestMarginPa,
+                hydrotestHoldPhysS, recordingPeriodS, recordingSampleS, tallowIntervalH, bearingWearMultiplier,
+                maintenance);
+    }
+
     public OpsConfig withDefectRate(double rate) {
         return new OpsConfig(commissioning, rate, trialRunS, trialMinLoad, hydrotestFactor, hydrotestMarginPa,
                 hydrotestHoldPhysS, recordingPeriodS, recordingSampleS, tallowIntervalH, bearingWearMultiplier,

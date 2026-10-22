@@ -42,6 +42,7 @@ public final class SimConfigs {
                 ServerConfig.BOILER_EXPLOSION_BLAST_FRACTION.get(), dev.denfry.promptcritical.sim.plant.SteamPlantConfig.defaults().feedOpenKgS(),
                 dev.denfry.promptcritical.sim.plant.SteamPlantConfig.defaults().feedPressurizedKgS()));
         sections.put(dev.denfry.promptcritical.sim.grid.GridConfig.class, grid());
+        sections.put(dev.denfry.promptcritical.sim.ops.OpsConfig.class, ops());
         sections.put(MetallurgyConfig.class, new MetallurgyConfig(ServerConfig.CASTING_CHVORINOV_B_SAND_MIN_CM2.get(),
                 ServerConfig.MACHINING_TAYLOR_N.get(), ServerConfig.MACHINING_TAYLOR_C_M_MIN.get()));
 
@@ -103,5 +104,14 @@ public final class SimConfigs {
 
     public static long topologyBudgetNanos() {
         return ServerConfig.PERF_TOPOLOGY_BUDGET_US.get() * 1_000L;
+    }
+
+    /** Эксплуатация (13 §13.11): режим пусконаладки, дефекты, пробный пуск, смазка. */
+    public static dev.denfry.promptcritical.sim.ops.OpsConfig ops() {
+        var d = dev.denfry.promptcritical.sim.ops.OpsConfig.defaults();
+        return new dev.denfry.promptcritical.sim.ops.OpsConfig(ServerConfig.OPS_COMMISSIONING.get(), ServerConfig.OPS_DEFECT_RATE.get(),
+                ServerConfig.OPS_TRIAL_RUN_S.get(), ServerConfig.OPS_TRIAL_MIN_LOAD.get(), d.hydrotestFactor(), d.hydrotestMarginPa(),
+                d.hydrotestHoldPhysS(), d.recordingPeriodS(), d.recordingSampleS(), ServerConfig.OPS_TALLOW_INTERVAL_H.get(),
+                d.bearingWearMultiplier(), d.maintenance());
     }
 }

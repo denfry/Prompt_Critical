@@ -20,7 +20,9 @@ import net.minecraft.network.chat.Component;
 public final class MinePanels {
     // машины на валу: тахометр вала, флаги, свои каналы
     public static final int SHAFT_RPM10 = 0, FLAGS = 1;
-    public static final int F_RUNNING = 0, F_ACID = 1;
+    public static final int F_RUNNING = 0, F_ACID = 1, F_DRY = 2;
+    /** Кнопка толчка у вентилятора и насоса (проверка вращения, 13 §13.6.6). */
+    public static final int BUTTON_BUMP = 0;
     public static final int FAN_RPM = 2, FAN_KW10 = 3, FAN_CHANNELS = 4;
     public static final int DEGAS_CAPTURE_PERMIL = 2, DEGAS_KW10 = 3, DEGAS_CHANNELS = 4;
     public static final int PUMP_FLOW_M3H10 = 2, PUMP_HEAD_M = 3, PUMP_KW10 = 4, PUMP_CHANNELS = 5;
@@ -36,6 +38,10 @@ public final class MinePanels {
             DEGAS_STATUS = PanelText.tr("degas.status", "Pump power %s kW", "Мощность насоса %s кВт"),
             FLOW = PanelText.tr("pump.flow", "Flow", "Подача"),
             ACID = PanelText.tr("pump.acid", "Acid", "Кислая"),
+            DRY = PanelText.tr("pump.dry", "Dry", "Не залит"),
+            BUMP = PanelText.tr("machine.bump", "Bump", "Толчок"),
+            BUMP_TIP = PanelText.tr("machine.bump_tip", "Bump test: check the rotation direction of the running shaft",
+                    "Толчок: проверить направление вращения вала"),
             PUMP_STATUS = PanelText.tr("pump.status", "Head %s m · %s kW · water goes up the pipe on top",
                     "Напор %s м · %s кВт · вода — в трубу сверху");
 
@@ -64,6 +70,7 @@ public final class MinePanels {
             .dial(8, 24, false, SHAFT_RPM10, 10, 256, Double.NaN, 0, RPM.get(), SHAFT.get(), shaftTip())
             .dial(64, 24, false, FAN_RPM, 1, 400, Double.NaN, 0, RPM.get(), IMPELLER.get(), null)
             .lamp(122, 26, FLAGS, F_RUNNING, LampColor.GREEN, RUNNING.get())
+            .button(122, 60, 46, BUTTON_BUMP, BUMP.get(), BUMP_TIP.get())
             .readout(8, 84, 160, v -> FAN_STATUS.get(v.num(FAN_KW10, 10, 1), PanelText.num(MainMineFanBlockEntity.GEAR, 2)), null)
             .noInventory().build();
 
@@ -79,6 +86,8 @@ public final class MinePanels {
             .dial(64, 24, false, PUMP_FLOW_M3H10, 10, 160, Double.NaN, 0, M3H.get(), FLOW.get(), null)
             .lamp(122, 26, FLAGS, F_RUNNING, LampColor.GREEN, RUNNING.get())
             .lamp(122, 42, FLAGS, F_ACID, LampColor.AMBER, ACID.get())
+            .lamp(122, 58, FLAGS, F_DRY, LampColor.RED, DRY.get())
+            .button(122, 70, 46, BUTTON_BUMP, BUMP.get(), BUMP_TIP.get())
             .readout(8, 84, 160, v -> PUMP_STATUS.get(v.raw(PUMP_HEAD_M), v.num(PUMP_KW10, 10, 1)), null)
             .noInventory().build();
 

@@ -228,6 +228,27 @@ public final class PcLanguageProvider extends LanguageProvider {
         b("asu_molsieve", "Molecular Sieve Adsorber", "Блок осушки на молекулярных ситах");
         b("asu_expander", "Turboexpander", "Турбодетандер");
         b("cryogenic_tank", "Cryogenic Tank", "Криогенная ёмкость");
+        // эксплуатация и водоподготовка (этап 11а M3)
+        b("maintenance_panel", "Maintenance Panel", "Щит обслуживания");
+        b("hydrotest_pump", "Hand Test Pump", "Ручной опрессовочный насос");
+        b("recording_gauge", "Recording Gauge", "Самопишущий прибор");
+        b("water_clarifier", "Lime Clarifier", "Осветлитель с известкованием");
+        b("sand_filter", "Sand Filter", "Механический фильтр");
+        b("ion_exchange_column", "Sodium Ion Exchange Column", "Na-катионитный фильтр");
+        i("mechanic_stethoscope", "Mechanic's Stethoscope", "Слуховая трубка механика");
+        i("torque_wrench", "Torque Wrench", "Динамометрический ключ");
+        i("test_pressure_gauge", "Test Pressure Gauge", "Контрольный манометр");
+        i("caulking_hammer", "Caulking Hammer", "Чеканочный молоток");
+        i("oil_can", "Oil Can", "Маслёнка");
+        i("boiler_scraper", "Boiler Scale Scraper", "Скребок для накипи");
+        i("safety_valve", "Safety Valve", "Предохранительный клапан");
+        i("bronze_bearing_shell", "Bronze Bearing Shell", "Бронзовый вкладыш подшипника");
+        i("pump_impeller", "Pump Impeller", "Рабочее колесо насоса");
+        i("gland_packing", "Gland Packing", "Сальниковая набивка");
+        i("tallow", "Tallow", "Технический жир");
+        i("chart_paper", "Chart Paper", "Диаграммная лента");
+        i("recorded_chart", "Recorded Chart", "Записанная диаграмма");
+        i("salt", "Salt", "Соль");
         i("steel_ingot", "Steel Ingot", "Стальной слиток");
         i("steel_billet", "Steel Billet", "Стальная заготовка");
         i("steel_plate", "Steel Plate", "Стальной лист");
@@ -253,6 +274,9 @@ public final class PcLanguageProvider extends LanguageProvider {
         FLUIDS.put("argon", new String[] {"Argon", "Аргон"});
         FLUIDS.put("liquid_oxygen", new String[] {"Liquid Oxygen", "Жидкий кислород"});
         FLUIDS.put("liquid_nitrogen", new String[] {"Liquid Nitrogen", "Жидкий азот"});
+        FLUIDS.put("clarified_water", new String[] {"Clarified Water", "Осветлённая вода"});
+        FLUIDS.put("filtered_water", new String[] {"Filtered Water", "Фильтрованная вода"});
+        FLUIDS.put("softened_water", new String[] {"Softened Water", "Умягчённая вода"});
         MISC.put("block.promptcritical.mine_water", new String[] {"Mine Water", "Шахтная вода"});
 
         MISC.put("itemGroup." + PromptCritical.MOD_ID, new String[] {"Prompt Critical", "Prompt Critical"});
@@ -299,6 +323,7 @@ public final class PcLanguageProvider extends LanguageProvider {
         MISC.putAll(FoundryText.LANG);
         MISC.putAll(dev.denfry.promptcritical.mod.ironworks.IronworksText.LANG);
         MISC.putAll(dev.denfry.promptcritical.mod.steelworks.SteelworksText.LANG);
+        MISC.putAll(dev.denfry.promptcritical.mod.ops.OpsText.LANG);
         MISC.putAll(dev.denfry.promptcritical.mod.grid.GridText.LANG);
         MISC.putAll(dev.denfry.promptcritical.mod.automation.AutomationText.LANG);
         MISC.putAll(dev.denfry.promptcritical.mod.content.ContentText.LANG);

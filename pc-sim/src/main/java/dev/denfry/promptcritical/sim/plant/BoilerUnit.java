@@ -21,6 +21,8 @@ import dev.denfry.promptcritical.sim.hydraulics.FluidNode;
 public final class BoilerUnit {
     /** Мольная доля CO в дымовых газах, выше которой дым чёрный (≈ α &lt; 1,28 на решётке). */
     public static final double SMOKY_CO_FRACTION = 0.005;
+    /** Жёсткость сырой воды, моль-экв/м³. */
+    public static final double RAW_HARDNESS = 5;
     final SimId id;
     final FireTubeBoiler boiler;
     final BoilerInputs in = new BoilerInputs();
@@ -31,7 +33,11 @@ public final class BoilerUnit {
     FlowLink relief, plug;
     EngineUnit[] engines = new EngineUnit[0];
     double ashKg, feedSupplyKg, feedUsedKg, feedTempK = 288.15;
-    boolean reliefOpen, exploded;
+    /** Жёсткость питательной воды, моль-экв/м³ (сырая вода 5 мг-экв/л, 13 §13.6.7). */
+    double feedHardness = RAW_HARDNESS;
+    /** Давление подрыва ПК по пусконаладке, Па; NaN — уставка; {@link #builtReliefPa} — с каким собрана сеть. */
+    double reliefLiftPa = Double.NaN, builtReliefPa = Double.NaN;
+    boolean reliefOpen, exploded, draining;
     long reliefLifts;
     /** Начальное состояние водяного узла для ближайшей пересборки сети (новый котёл или загрузка); NaN — нет. */
     double initPressure = Double.NaN, initEnthalpy = Double.NaN;
@@ -71,6 +77,29 @@ public final class BoilerUnit {
     public void setFeedSupply(double kg, double tempK) {
         feedSupplyKg = Math.max(0, kg);
         feedTempK = tempK;
+    }
+
+    /** Жёсткость питательной воды в баке блока, моль-экв/м³ (= мг-экв/л): от неё растёт накипь (SLOW). */
+    public void setFeedHardness(double molEqM3) {
+        feedHardness = Math.max(0, molEqM3);
+    }
+
+    public double feedHardness() {
+        return feedHardness;
+    }
+
+    /**
+     * Дефекты пусконаладки (13 §13.6.6): фактическое давление подрыва ПК, Па (NaN — уставка), и давление разрыва
+     * обечайки в долях p_раб. Смена подрыва пересобирает сеть в начале следующего тика.
+     */
+    public void setCommissioning(double reliefLiftPa, double burstFactor) {
+        this.reliefLiftPa = reliefLiftPa;
+        boiler.setBurstPressureFactor(burstFactor);
+    }
+
+    /** Давление подрыва ПК, Па. */
+    public double reliefLiftPa() {
+        return Double.isNaN(reliefLiftPa) ? boiler.spec().reliefSetPressure() : reliefLiftPa;
     }
 
     /** Взятая доменом вода с прошлого вызова, кг; счётчик обнуляется. */
@@ -119,6 +148,11 @@ public final class BoilerUnit {
 
     public BoilerRupture rupture() {
         return boiler.rupture();
+    }
+
+    /** Дренаж открыт ({@link SteamPlant#DRAIN}): питание отключено, вода спускается, пока нет давления. */
+    public boolean draining() {
+        return draining;
     }
 
     /** ПК сейчас открыт (свист). */

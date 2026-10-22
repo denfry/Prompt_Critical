@@ -52,6 +52,10 @@ public final class PcProperties {
     // сталь, прокат, ВРУ (этап 10б M3)
     public static final BooleanProperty LOWERED = BooleanProperty.create("lowered");
     public static final BooleanProperty BURST = BooleanProperty.create("burst");
+    // эксплуатация (13 §13.6.5–13.6.7, этап 11 M3)
+    public static final IntegerProperty SEVERITY = IntegerProperty.create("severity", 0, 3);
+    public static final BooleanProperty PUMPING = BooleanProperty.create("pumping");
+    public static final BooleanProperty PAPER = BooleanProperty.create("paper");
     public static final EnumProperty<RollerKind> ROLLER_KIND = EnumProperty.create("kind", RollerKind.class);
     public static final EnumProperty<QuenchMedium> QUENCH_MEDIUM = EnumProperty.create("medium", QuenchMedium.class);
     public static final EnumProperty<CryoKind> CRYO_KIND = EnumProperty.create("kind", CryoKind.class);

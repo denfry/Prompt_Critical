@@ -61,6 +61,8 @@ public final class Hoist {
     private long bendCycles;
 
     private double depth, speedUp, accelUp, tension, payloadKg, speedLimit = MAX_SPEED;
+    /** Доля расчётного тормозного момента (13 §13.6.6, {@code BRAKE_MISADJUSTED}); не сохраняется — вход биндинга. */
+    private double brakeFactor = 1;
     private HoistDuty duty = HoistDuty.CARGO;
     private HoistState state = HoistState.HELD;
 
@@ -178,20 +180,27 @@ public final class Hoist {
      * @param torqueNm момент на валу барабана (+ — подъём), Н·м
      * @param brake    рабочий тормоз наложен
      */
+    /** Тормоз отрегулирован на долю расчётного момента (пусконаладка: {@code BRAKE_MISADJUSTED} — 0,5–0,9). */
+    public void setBrakeFactor(double f) {
+        if (!(f > 0 && f <= 1)) throw new IllegalArgumentException("brake factor: " + f);
+        brakeFactor = f;
+    }
+
     public void stepFast(double dt, double torqueNm, boolean brake) {
         if (state.broken() || !(dt > 0)) return;
+        double brakeN = spec.brakeForceN() * brakeFactor;
         boolean braking = brake || state.tripped();
         double m = staticLoadKg();
         double mEff = spec.drumInertia() / (spec.drumRadiusM() * spec.drumRadiusM()) + m;
         double drive = torqueNm / spec.drumRadiusM() - m * G;
         double u = speedUp, a, uNew;
         if (u == 0) {
-            double hold = (braking ? spec.brakeForceN() : 0) + spec.guideFrictionN();
+            double hold = (braking ? brakeN : 0) + spec.guideFrictionN();
             double net = Math.abs(drive) <= hold ? 0 : drive - Math.signum(drive) * hold;
             a = net / mEff;
             uNew = a * dt;
         } else {
-            double resist = spec.guideFrictionN() + (braking ? spec.brakeForceN() : 0);
+            double resist = spec.guideFrictionN() + (braking ? brakeN : 0);
             a = (drive - Math.signum(u) * resist) / mEff;
             uNew = u + a * dt;
             if (Math.signum(uNew) != Math.signum(u) && (braking || Math.abs(drive) <= spec.guideFrictionN())) {

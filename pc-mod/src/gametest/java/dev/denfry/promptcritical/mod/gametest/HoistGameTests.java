@@ -98,6 +98,8 @@ public final class HoistGameTests {
                     h.assertTrue(be.shaft() != null, "shaft found under the headframe");
                     h.assertValueEqual(java.util.Arrays.toString(be.shaft().landings()), "[0, 7, 13]", "landings");
                 })
+                .thenWaitUntil(() -> h.assertTrue(OpsGameTests.defects(h, h.<MineHoistBlockEntity>getBlockEntity(hoist)),
+                        "hoist without installation defects"))
                 .thenExecute(() -> {
                     MineHoistBlockEntity be = h.getBlockEntity(hoist);
                     be.installRope(player, new ItemStack(PcItems.WIRE_ROPE.get(), 16));
@@ -225,6 +227,8 @@ public final class HoistGameTests {
                     BlockPos abs = h.absolutePos(pump);
                     h.assertTrue(binding(h).mines().scanOf(n[0]).pumps.contains(abs.asLong()), "pump found by the mine scan");
                 })
+                .thenWaitUntil(() -> h.assertTrue(OpsGameTests.defects(h, h.<MineDrainagePumpBlockEntity>getBlockEntity(pump)),
+                        "pump primed, without installation defects"))
                 .thenExecute(() -> {
                     n[0].drainage().injectM3(50);
                     start[0] = n[0].drainage().volumeM3();

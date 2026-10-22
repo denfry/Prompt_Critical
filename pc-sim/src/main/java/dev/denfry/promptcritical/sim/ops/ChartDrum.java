@@ -1,5 +1,7 @@
 package dev.denfry.promptcritical.sim.ops;
 
+import dev.denfry.promptcritical.sim.core.StateReader;
+import dev.denfry.promptcritical.sim.core.StateWriter;
 import java.util.Arrays;
 
 /**
@@ -47,6 +49,39 @@ public final class ChartDrum {
         short[] out = trace.clone();
         Arrays.fill(trace, EMPTY);
         return out;
+    }
+
+    public double min() {
+        return min;
+    }
+
+    public double max() {
+        return max;
+    }
+
+    /** Лента и положение пера из сохранения владельца; лента другой длины не восстанавливается. */
+    public void restore(short[] points, long sampleCount) {
+        samples = sampleCount;
+        if (points.length == trace.length) System.arraycopy(points, 0, trace, 0, trace.length);
+        else Arrays.fill(trace, EMPTY);
+    }
+
+    public void save(StateWriter out) {
+        out.putLong("samples", samples);
+        int[] t = new int[trace.length];
+        for (int i = 0; i < t.length; i++) t[i] = trace[i];
+        out.putInts("trace", t, t.length);
+    }
+
+    /** Лента другой длины (сменился {@code period_s}/{@code sample_s}) не восстанавливается. */
+    public void load(StateReader in) {
+        samples = in.getLong("samples");
+        int[] t = in.getInts("trace");
+        if (t.length != trace.length) {
+            Arrays.fill(trace, EMPTY);
+            return;
+        }
+        for (int i = 0; i < t.length; i++) trace[i] = (short) t[i];
     }
 
     public short encode(double v) {

@@ -1,5 +1,8 @@
 package dev.denfry.promptcritical.sim.ops;
 
+import dev.denfry.promptcritical.sim.core.StateReader;
+import dev.denfry.promptcritical.sim.core.StateWriter;
+
 /**
  * Сальник штока машины или вала насоса (13 §13.6.7): износ набивки w от наработки, ×10 на сухом ходу (13 §13.6.6,
  * {@code DRY_PUMP}). Подтяжка {@code torque_wrench} на ходу снимает половину износа, не больше трёх раз; замена
@@ -44,6 +47,16 @@ public final class GlandPacking implements FaultSource {
     public void replace() {
         wear = 0;
         tightenings = 0;
+    }
+
+    public void save(StateWriter out) {
+        out.putDouble("wear", wear);
+        out.putInt("tightenings", tightenings);
+    }
+
+    public void load(StateReader in) {
+        wear = in.getDouble("wear");
+        tightenings = in.getInt("tightenings");
     }
 
     @Override

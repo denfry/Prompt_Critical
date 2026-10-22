@@ -24,6 +24,11 @@ public final class ShaftInput {
         this.sampledTick = tick;
     }
 
+    /** Скорость вала со знаком направления Create, об/мин (толчок 13 §13.6.6); 0 — как у {@link #rpm}. */
+    public double signedRpm(long tick) {
+        return healthy && tick - sampledTick <= STALE_TICKS ? rpm : 0;
+    }
+
     /** Модуль скорости вала на тике {@code tick}, об/мин; 0 — вала нет, сеть перегружена или отсчёт устарел. */
     public double rpm(long tick) {
         return healthy && tick - sampledTick <= STALE_TICKS ? Math.abs(rpm) : 0;

@@ -1,5 +1,7 @@
 package dev.denfry.promptcritical.mod.registry;
 
+import dev.denfry.promptcritical.mod.ops.OpsItem;
+import dev.denfry.promptcritical.mod.ops.RecordedChartItem;
 import dev.denfry.promptcritical.mod.grid.RelayModuleItem;
 import dev.denfry.promptcritical.mod.grid.WireCoilItem;
 import dev.denfry.promptcritical.sim.grid.RelaySetting;
@@ -126,6 +128,22 @@ public final class PcItems {
     /** Ферросплав: вид — компонентом {@code ferroalloy}. */
     public static final DeferredItem<FerroalloyItem> FERROALLOY = registered(ITEMS.registerItem("ferroalloy", FerroalloyItem::new,
             new Item.Properties().stacksTo(64)));
+    // --- эксплуатация (13 §13.6.5–13.6.7, этап 11а M3): инструменты, запчасти, расходники ---
+    public static final DeferredItem<OpsItem> MECHANIC_STETHOSCOPE = ops("mechanic_stethoscope", OpsItem.Kind.STETHOSCOPE, 1);
+    public static final DeferredItem<OpsItem> TORQUE_WRENCH = ops("torque_wrench", OpsItem.Kind.TORQUE_WRENCH, 1);
+    public static final DeferredItem<OpsItem> TEST_PRESSURE_GAUGE = ops("test_pressure_gauge", OpsItem.Kind.TEST_GAUGE, 1);
+    public static final DeferredItem<OpsItem> CAULKING_HAMMER = ops("caulking_hammer", OpsItem.Kind.CAULKING_HAMMER, 1);
+    public static final DeferredItem<OpsItem> OIL_CAN = ops("oil_can", OpsItem.Kind.OIL_CAN, 1);
+    public static final DeferredItem<OpsItem> BOILER_SCRAPER = ops("boiler_scraper", OpsItem.Kind.BOILER_SCRAPER, 1);
+    public static final DeferredItem<OpsItem> SAFETY_VALVE = ops("safety_valve", OpsItem.Kind.SAFETY_VALVE, 4);
+    public static final DeferredItem<OpsItem> BRONZE_BEARING_SHELL = ops("bronze_bearing_shell", OpsItem.Kind.BEARING_SHELL, 16);
+    public static final DeferredItem<OpsItem> PUMP_IMPELLER = ops("pump_impeller", OpsItem.Kind.IMPELLER, 4);
+    public static final DeferredItem<OpsItem> GLAND_PACKING = ops("gland_packing", OpsItem.Kind.GLAND_PACKING, 16);
+    public static final DeferredItem<Item> TALLOW = item("tallow", 64);
+    public static final DeferredItem<Item> CHART_PAPER = item("chart_paper", 64);
+    public static final DeferredItem<RecordedChartItem> RECORDED_CHART = registered(ITEMS.registerItem("recorded_chart",
+            RecordedChartItem::new, new Item.Properties().stacksTo(1)));
+    public static final DeferredItem<Item> SALT = item("salt", 64);
     // справочник (11)
     public static final DeferredItem<EngineeringHandbookItem> ENGINEERING_HANDBOOK = registered(ITEMS.registerItem("engineering_handbook",
             EngineeringHandbookItem::new, new Item.Properties().stacksTo(1)));
@@ -156,6 +174,10 @@ public final class PcItems {
         DeferredItem<Item> i = ITEMS.registerSimpleItem(name, new Item.Properties().stacksTo(stack));
         PLAIN.add(i);
         return i;
+    }
+
+    private static DeferredItem<OpsItem> ops(String name, OpsItem.Kind kind, int stack) {
+        return registered(ITEMS.registerItem(name, p -> new OpsItem(p, kind), new Item.Properties().stacksTo(stack)));
     }
 
     private static DeferredItem<SteelStockItem> stock(String name, int stack) {

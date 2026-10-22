@@ -1,6 +1,7 @@
 package dev.denfry.promptcritical.sim.plant;
 
 import static org.assertj.core.api.Assertions.assertThat;
+import static org.assertj.core.api.Assertions.within;
 
 import dev.denfry.promptcritical.sim.combustion.BoilerRupture;
 import dev.denfry.promptcritical.sim.combustion.FlyballGovernor;
@@ -185,6 +186,83 @@ class SteamPlantTest {
         assertThat(u.pressurePa()).isLessThan(1.03 * u.spec().reliefSetPressure());
         assertThat(u.gaugeGlassLevelM()).isBetween(u.spec().normalLevelM() - 0.05, u.spec().normalLevelM() + 0.05);
         assertThat(u.ashKg()).isPositive();
+    }
+
+    /**
+     * Домен T-13-28 через котельную: прикипевший ПК (подрыв 1,9 уставки) и шов с k_b = 2,0 — обечайка рвётся при
+     * 2,40 МПа раньше подрыва ПК.
+     */
+    @Test
+    void stuckReliefValveAndWeakSeamBurstTheShell() {
+        SimulationWorld w = world();
+        SimId b = boiler(w, 0);
+        engine(w, b, 0);
+        BoilerUnit u = plant(w).boiler(b);
+        u.setFeedSupply(1e5, 288.15);
+        u.setCommissioning(1.9 * u.spec().reliefSetPressure(), 2.0);
+        hotBoiler(w, b, 1.25e6, 0.67);
+        double pMax = 0;
+        for (int s = 0; s < 1800 && u.rupture() == BoilerRupture.NONE; s++) {
+            stoke(w, b, 1, 0.3);
+            pMax = Math.max(pMax, u.pressurePa());
+        }
+        assertThat(u.rupture()).isEqualTo(BoilerRupture.SHELL_OVERPRESSURE);
+        assertThat(u.reliefLifts()).isZero();
+        assertThat(pMax).isCloseTo(2.0 * u.spec().workingPressurePa(), within(0.02e6));
+        assertThat(damage).isNotEmpty();
+    }
+
+    /** Накипь растёт от жёсткости питательной воды: сырая против умягчённой. */
+    @Test
+    void hardFeedWaterGrowsScale() {
+        SimulationWorld w = world();
+        SimId hard = boiler(w, 0), soft = boiler(w, 8);
+        for (SimId b : List.of(hard, soft)) {
+            plant(w).boiler(b).setFeedSupply(1e5, 288.15);
+            hotBoiler(w, b, 0.8e6, 0.67);
+        }
+        plant(w).boiler(soft).setFeedHardness(0.016);
+        for (int s = 0; s < 120; s++) {
+            command(w, new SimCommand.ChargeFuel(hard, PlantFuels.COAL, 0.2));
+            command(w, new SimCommand.ChargeFuel(soft, PlantFuels.COAL, 0.2));
+            run(w, 1);
+        }
+        double h = plant(w).boiler(hard).boiler().scaleM(), sft = plant(w).boiler(soft).boiler().scaleM();
+        assertThat(h).isPositive();
+        assertThat(sft).isLessThan(h * 0.01);
+    }
+
+    /** Дренаж спускает воду из котла без давления (перед чисткой накипи), питание при этом не идёт. */
+    @Test
+    void drainEmptiesColdBoiler() {
+        SimulationWorld w = world();
+        SimId b = boiler(w, 0);
+        BoilerUnit u = plant(w).boiler(b);
+        u.setFeedSupply(1e5, 288.15);
+        plant(w).presetWater(b, 0.1e6, 0.67);
+        run(w, 1);
+        double full = u.waterMassKg();
+        command(w, new SimCommand.Operate(b, SteamPlant.DRAIN));
+        run(w, 300);
+        assertThat(u.draining()).isTrue();
+        assertThat(u.waterMassKg()).isLessThan(0.05 * full);
+    }
+
+    /** Заплавленный подшипник останавливает машину. */
+    @Test
+    void seizedEngineStops() {
+        SimulationWorld w = world();
+        SimId b = boiler(w, 0);
+        SimId e = engine(w, b, 0);
+        BoilerUnit u = plant(w).boiler(b);
+        u.setFeedSupply(1e5, 288.15);
+        hotBoiler(w, b, 1.1e6, 0.67);
+        command(w, new SimCommand.Operate(e, SteamPlant.TOGGLE_STOP_VALVE));
+        stoke(w, b, 20, 0.3);
+        assertThat(plant(w).engine(e).omega()).isPositive();
+        plant(w).engine(e).setSeized(true);
+        run(w, 1);
+        assertThat(plant(w).engine(e).omega()).isZero();
     }
 
     @Test

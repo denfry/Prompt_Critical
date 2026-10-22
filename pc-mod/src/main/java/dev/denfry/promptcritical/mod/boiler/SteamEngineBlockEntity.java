@@ -7,12 +7,19 @@ import dev.denfry.promptcritical.mod.blockentity.DeviceBlockEntity;
 import dev.denfry.promptcritical.mod.config.ServerConfig;
 import dev.denfry.promptcritical.mod.fx.MachineFx;
 import dev.denfry.promptcritical.mod.multiblock.Footprint;
+import dev.denfry.promptcritical.mod.ops.OpsActions;
+import dev.denfry.promptcritical.mod.ops.OpsMachine;
+import dev.denfry.promptcritical.mod.ops.OpsWorld;
 import dev.denfry.promptcritical.mod.panel.PanelHost;
 import dev.denfry.promptcritical.mod.panel.PanelLayout;
 import dev.denfry.promptcritical.mod.registry.PcBlocks;
 import dev.denfry.promptcritical.sim.core.CommandSource;
 import dev.denfry.promptcritical.sim.core.SimCommand;
 import dev.denfry.promptcritical.sim.core.SimId;
+import dev.denfry.promptcritical.sim.ops.Baseline;
+import dev.denfry.promptcritical.sim.ops.MaintenanceFaultKind;
+import dev.denfry.promptcritical.sim.ops.OpsSubsystem;
+import dev.denfry.promptcritical.sim.ops.UnitKind;
 import dev.denfry.promptcritical.sim.plant.EngineUnit;
 import dev.denfry.promptcritical.sim.plant.SteamPlant;
 import java.util.Arrays;
@@ -50,11 +57,18 @@ import org.jetbrains.annotations.Nullable;
  *   <li>ёмкость C_SU = P_расп/W_PER_SU, где P_расп — мощность на валу при номинальных оборотах и полностью открытой
  *       заслонке при нынешнем давлении в котле; обновление не чаще 1 Гц, мёртвая зона 2 %.</li>
  * </ul>
+ *
+ * <p>Износ и пусконаладка — {@link OpsMachine}: заплавленный подшипник останавливает вал, сальник парит, стопорный
+ * вентиль открывается только с разрешения пуска (13 §13.6.6).
  */
-public class SteamEngineBlockEntity extends DeviceBlockEntity implements PressureSource, PanelHost {
+public class SteamEngineBlockEntity extends DeviceBlockEntity implements PressureSource, PanelHost, OpsMachine {
     public static final int[] GEARS = {16, 32, 64};
     private static final int LINK_PERIOD = 20, SYNC_PERIOD = 2;
     private static final double HYSTERESIS = 0.02, CAPACITY_DEADBAND = 0.02;
+    /** p_раб машины = p_раб котла I0 (избыточное), Па. */
+    public static final double WORKING_PA = 1.2e6;
+    /** Износ набивки, с которого сальник заметно парит (порог «внимание» строки PACKING_LEAK). */
+    private static final double PACKING_STEAM = 0.6, TICK_S = 0.05;
 
     private int gear = 1, level4, ticks;
     private double portLoadW;
@@ -138,6 +152,7 @@ public class SteamEngineBlockEntity extends DeviceBlockEntity implements Pressur
         if (b == null || e == null) return;
         if (ticks % LINK_PERIOD == 1) b.world().subsystem(SteamPlant.class).connect(simId(), findBoiler());
         e.setLoadPower(portLoadW);
+        operations(e);
 
         double r = e.omega() / e.nominalOmega();
         int next = level4(r);
@@ -163,6 +178,24 @@ public class SteamEngineBlockEntity extends DeviceBlockEntity implements Pressur
         BlockState s = getBlockState();
         if (s.getValue(PcProperties.RUNNING) != running) level.setBlock(worldPosition, s.setValue(PcProperties.RUNNING, running), Block.UPDATE_CLIENTS);
         if (ticks % SYNC_PERIOD == 0) syncIfChanged();
+    }
+
+    /** Износ, заклинивание, сальник и пробный пуск (13 §13.6.5–13.6.7). */
+    private void operations(EngineUnit e) {
+        OpsSubsystem ops = OpsWorld.ops(level);
+        OpsSubsystem.Unit u = OpsWorld.ensure(level, simId(), UnitKind.STEAM_ENGINE, WORKING_PA, e.dashpotFitted());
+        if (ops == null || u == null) return;
+        boolean running = e.omega() > 0.05 * e.nominalOmega();
+        u.setRunning(running, false, Double.NaN);
+        e.setSeized(u.seized());
+        double load = e.capacityW() > 0 ? portLoadW / e.capacityW() : 0;
+        ops.observeTrial(simId(), TICK_S, running, load, false, opsCurrent());
+        int i = OpsWorld.index(u, MaintenanceFaultKind.PACKING_LEAK);
+        if (running && i >= 0 && ticks % 8 == 0 && u.panel().source(i).value() >= PACKING_STEAM
+                && level instanceof ServerLevel sl) {
+            Vec3 p = opsBearingPos();
+            sl.sendParticles(net.minecraft.core.particles.ParticleTypes.CLOUD, p.x, p.y, p.z, 2, 0.15, 0.05, 0.15, 0.02);
+        }
     }
 
     /** Клуб пара из выхлопной трубы, когда поршень проходит мёртвую точку (каждые полоборота). */
@@ -209,6 +242,7 @@ public class SteamEngineBlockEntity extends DeviceBlockEntity implements Pressur
         SimLevelBinding b = SimBindings.get((ServerLevel) level);
         EngineUnit e = unit();
         if (b == null || e == null) return InteractionResult.PASS;
+        if (!e.stopValveOpen() && !OpsActions.startAllowed(player, level, this)) return InteractionResult.SUCCESS;
         if (e.boiler().isNone()) player.displayClientMessage(Component.translatable(BoilerText.NO_BOILER), true);
         else player.displayClientMessage(Component.translatable(e.stopValveOpen() ? BoilerText.VALVE_CLOSED : BoilerText.VALVE_OPEN), true);
         b.submit(new SimCommand.Operate(simId(), SteamPlant.TOGGLE_STOP_VALVE), new CommandSource.Panel(player.getUUID(), worldPosition.asLong()));
@@ -265,6 +299,31 @@ public class SteamEngineBlockEntity extends DeviceBlockEntity implements Pressur
         stack.consume(1, player);
         player.displayClientMessage(Component.translatable(BoilerText.DASHPOT_FITTED), true);
         return ItemInteractionResult.SUCCESS;
+    }
+
+    // --- эксплуатация ---
+
+    @Override
+    public UnitKind opsKind() {
+        return UnitKind.STEAM_ENGINE;
+    }
+
+    @Override
+    public boolean opsStopped() {
+        EngineUnit e = level != null && !level.isClientSide ? unit() : null;
+        return e == null ? omega < 0.05f : e.omega() < 0.05;
+    }
+
+    /** Коренной подшипник у маховика. */
+    @Override
+    public Vec3 opsBearingPos() {
+        return BoilerGeometry.world(worldPosition, facing(), 8, 12, 8);
+    }
+
+    @Override
+    public Baseline opsCurrent() {
+        EngineUnit e = unit();
+        return e == null ? Baseline.NONE : new Baseline(Double.NaN, Double.NaN, Double.NaN, Double.NaN, e.omega(), Double.NaN);
     }
 
     /** Строка состояния для отладки и тестов. */

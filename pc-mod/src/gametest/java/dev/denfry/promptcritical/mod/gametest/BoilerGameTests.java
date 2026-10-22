@@ -108,6 +108,7 @@ public final class BoilerGameTests {
                     h.assertTrue(plant(h).engine(e.simId()) != null
                             && plant(h).engine(e.simId()).boiler().equals(boiler(h).simId()), "engine takes steam from the boiler");
                 })
+                .thenWaitUntil(() -> h.assertTrue(OpsGameTests.defects(h, boiler(h)), "boiler without installation defects"))
                 .thenExecute(() -> {
                     fire(h, 1.2e6, 0.67);
                     SteamEngineBlockEntity e = h.getBlockEntity(ENGINE);
@@ -140,6 +141,7 @@ public final class BoilerGameTests {
         placeBoiler(h);
         h.startSequence()
                 .thenWaitUntil(() -> h.assertTrue(!boiler(h).simId().isNone() && plant(h).boiler(boiler(h).simId()) != null, "boiler twin"))
+                .thenWaitUntil(() -> h.assertTrue(OpsGameTests.defects(h, boiler(h)), "boiler without installation defects"))
                 .thenExecute(() -> fire(h, 1.3e6, 0.67))
                 .thenWaitUntil(() -> h.assertTrue(unit(h).reliefLifts() > 0, "relief valve lifts at " + unit(h).pressurePa()))
                 .thenExecute(() -> {
@@ -158,6 +160,7 @@ public final class BoilerGameTests {
         placeBoiler(h);
         h.startSequence()
                 .thenWaitUntil(() -> h.assertTrue(!boiler(h).simId().isNone() && plant(h).boiler(boiler(h).simId()) != null, "boiler twin"))
+                .thenWaitUntil(() -> h.assertTrue(OpsGameTests.defects(h, boiler(h)), "boiler without installation defects"))
                 .thenExecute(() -> fire(h, 1.2e6, 0.25))
                 .thenWaitUntil(() -> h.assertTrue(unit(h).plugMelted(), "plug melted, crown at " + unit(h).boiler().crownTempK()))
                 .thenExecute(() -> {
@@ -175,6 +178,7 @@ public final class BoilerGameTests {
         placeBoiler(h);
         h.startSequence()
                 .thenWaitUntil(() -> h.assertTrue(!boiler(h).simId().isNone() && plant(h).boiler(boiler(h).simId()) != null, "boiler twin"))
+                .thenWaitUntil(() -> h.assertTrue(OpsGameTests.defects(h, boiler(h)), "boiler without installation defects"))
                 .thenExecute(() -> {
                     BoilerUnit u = unit(h);
                     u.boiler().setPlugFitted(false);
@@ -195,6 +199,7 @@ public final class BoilerGameTests {
         h.runAfterDelay(1, () -> ((CreativeMotorBlockEntity) h.getBlockEntity(motor)).generatedSpeed.setValue(32));
         h.startSequence()
                 .thenWaitUntil(() -> h.assertTrue(!boiler(h).simId().isNone() && plant(h).boiler(boiler(h).simId()) != null, "boiler twin"))
+                .thenWaitUntil(() -> h.assertTrue(OpsGameTests.defects(h, boiler(h)), "boiler without installation defects"))
                 .thenExecute(() -> {
                     GrateStokerBlockEntity g = h.getBlockEntity(stoker);
                     ItemStack rest = g.items(null).insertItem(0, new ItemStack(Items.COAL, 8), false);

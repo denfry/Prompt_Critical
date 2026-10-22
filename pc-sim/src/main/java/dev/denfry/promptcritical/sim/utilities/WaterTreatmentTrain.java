@@ -1,5 +1,7 @@
 package dev.denfry.promptcritical.sim.utilities;
 
+import dev.denfry.promptcritical.sim.core.StateReader;
+import dev.denfry.promptcritical.sim.core.StateWriter;
 import java.util.ArrayList;
 import java.util.EnumMap;
 import java.util.List;
@@ -195,6 +197,35 @@ public final class WaterTreatmentTrain {
 
     public double deaeratorSteamKgS() {
         return deaeratorSteamKgS;
+    }
+
+    /** Состояние колонн и фильтра; состав цепочки (ступени, колонны) задаёт владелец до загрузки. */
+    public void save(StateWriter out) {
+        int n = columns.size();
+        double[] loading = new double[n], fouling = new double[n];
+        int[] online = new int[n];
+        for (int i = 0; i < n; i++) {
+            Column c = columns.get(i);
+            loading[i] = c.loading;
+            fouling[i] = c.fouling;
+            online[i] = c.online ? 1 : 0;
+        }
+        out.putDoubles("loading", loading, n);
+        out.putDoubles("fouling", fouling, n);
+        out.putInts("online", online, n);
+        out.putDouble("filter_load_kg", filterLoadKg);
+    }
+
+    public void load(StateReader in) {
+        double[] loading = in.getDoubles("loading"), fouling = in.getDoubles("fouling");
+        int[] online = in.getInts("online");
+        for (int i = 0; i < Math.min(columns.size(), loading.length); i++) {
+            Column c = columns.get(i);
+            c.loading = loading[i];
+            c.fouling = fouling[i];
+            c.online = online[i] != 0;
+        }
+        filterLoadKg = in.getDouble("filter_load_kg");
     }
 
     private double capacityEqM3() {
