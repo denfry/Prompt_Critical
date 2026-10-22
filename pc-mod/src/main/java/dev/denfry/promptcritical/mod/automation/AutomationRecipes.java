@@ -72,14 +72,14 @@ public final class AutomationRecipes extends RecipeProvider {
                 .define('W', wire).define('C', coil).define('B', AllItems.BRASS_INGOT.get()).define('S', AllBlocks.SHAFT.get())
                 .unlockedBy("has_coil", hasCoil).save(out, id("stepping_switch"));
         ShapedRecipeBuilder.shaped(RecipeCategory.REDSTONE, PcBlocks.CAM_CONTROLLER.get()).pattern("WWW").pattern("BSB").pattern("III")
-                .define('W', wire).define('B', AllItems.BRASS_INGOT.get()).define('S', AllBlocks.SHAFT.get()).define('I', Items.IRON_INGOT)
+                .define('W', wire).define('B', AllItems.BRASS_INGOT.get()).define('S', AllBlocks.SHAFT.get()).define('I', PcItems.STEEL_PLATE.get())
                 .unlockedBy("has_wire", hasWire).save(out, id("cam_controller"));
         ShapelessRecipeBuilder.shapeless(RecipeCategory.REDSTONE, PcBlocks.PROCESS_SWITCH.get()).requires(relay).requires(Items.COPPER_INGOT)
                 .requires(AllBlocks.FLUID_PIPE.get()).unlockedBy("has_relay", has(relay)).save(out, id("process_switch"));
         ShapelessRecipeBuilder.shapeless(RecipeCategory.REDSTONE, PcBlocks.RELAY_POWER_SUPPLY.get()).requires(Items.IRON_INGOT, 2)
                 .requires(wire, 4).requires(coil).requires(Items.QUARTZ).unlockedBy("has_coil", hasCoil).save(out, id("relay_power_supply"));
         ShapedRecipeBuilder.shaped(RecipeCategory.REDSTONE, PcBlocks.RELAY_RACK.get()).pattern("III").pattern("IDI").pattern("III")
-                .define('I', Items.IRON_INGOT).define('D', Items.IRON_DOOR)
+                .define('I', PcItems.STEEL_PLATE.get()).define('D', Items.IRON_DOOR)
                 .unlockedBy("has_relay", has(relay)).save(out, id("relay_rack"));
         ShapelessRecipeBuilder.shapeless(RecipeCategory.REDSTONE, PcBlocks.REDSTONE_INTERFACE.get()).requires(relay).requires(Items.REDSTONE_TORCH)
                 .unlockedBy("has_relay", has(relay)).save(out, id("redstone_interface"));

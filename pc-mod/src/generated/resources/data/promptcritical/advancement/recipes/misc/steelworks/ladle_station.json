@@ -1,0 +1,32 @@
+{
+  "parent": "minecraft:recipes/root",
+  "criteria": {
+    "has_bof": {
+      "conditions": {
+        "items": [
+          {
+            "items": "promptcritical:bof_vessel"
+          }
+        ]
+      },
+      "trigger": "minecraft:inventory_changed"
+    },
+    "has_the_recipe": {
+      "conditions": {
+        "recipe": "promptcritical:steelworks/ladle_station"
+      },
+      "trigger": "minecraft:recipe_unlocked"
+    }
+  },
+  "requirements": [
+    [
+      "has_the_recipe",
+      "has_bof"
+    ]
+  ],
+  "rewards": {
+    "recipes": [
+      "promptcritical:steelworks/ladle_station"
+    ]
+  }
+}

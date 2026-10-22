@@ -1,0 +1,74 @@
+{
+  "multipart": [
+    {
+      "apply": {
+        "model": "promptcritical:block/asu_expander"
+      },
+      "when": {
+        "facing": "north"
+      }
+    },
+    {
+      "apply": {
+        "model": "promptcritical:block/asu_expander/partial/rotor"
+      },
+      "when": {
+        "facing": "north"
+      }
+    },
+    {
+      "apply": {
+        "model": "promptcritical:block/asu_expander",
+        "y": 180
+      },
+      "when": {
+        "facing": "south"
+      }
+    },
+    {
+      "apply": {
+        "model": "promptcritical:block/asu_expander/partial/rotor",
+        "y": 180
+      },
+      "when": {
+        "facing": "south"
+      }
+    },
+    {
+      "apply": {
+        "model": "promptcritical:block/asu_expander",
+        "y": 270
+      },
+      "when": {
+        "facing": "west"
+      }
+    },
+    {
+      "apply": {
+        "model": "promptcritical:block/asu_expander/partial/rotor",
+        "y": 270
+      },
+      "when": {
+        "facing": "west"
+      }
+    },
+    {
+      "apply": {
+        "model": "promptcritical:block/asu_expander",
+        "y": 90
+      },
+      "when": {
+        "facing": "east"
+      }
+    },
+    {
+      "apply": {
+        "model": "promptcritical:block/asu_expander/partial/rotor",
+        "y": 90
+      },
+      "when": {
+        "facing": "east"
+      }
+    }
+  ]
+}

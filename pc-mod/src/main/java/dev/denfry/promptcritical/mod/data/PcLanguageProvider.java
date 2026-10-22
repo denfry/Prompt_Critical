@@ -211,6 +211,33 @@ public final class PcLanguageProvider extends LanguageProvider {
         i("silica_brick", "Silica Brick", "Динасовый кирпич");
         i("tuyere_spare", "Spare Tuyere", "Запасная фурма");
         i("granulated_slag", "Granulated Slag", "Гранулированный шлак");
+        b("bof_vessel", "Basic Oxygen Converter", "Кислородный конвертер");
+        b("oxygen_lance", "Oxygen Lance", "Кислородная фурма");
+        b("ladle_station", "Ladle Treatment Station", "Установка доводки в ковше");
+        b("ingot_mold", "Ingot Mold", "Изложница");
+        b("reheating_furnace", "Reheating Furnace", "Нагревательная печь");
+        b("heat_treatment_furnace", "Heat Treatment Furnace", "Термическая печь");
+        b("quench_tank", "Quench Tank", "Закалочный бак");
+        b("roller_table", "Roller Table", "Рольганг");
+        b("rolling_mill_stand", "Rolling Mill Stand", "Прокатная клеть");
+        b("piercing_mill", "Piercing Mill", "Прошивной стан");
+        b("pipe_welder", "Induction Pipe Welder", "Трубосварочный стан ТВЧ");
+        b("hydrotest_bench", "Hydrostatic Test Bench", "Стенд гидроиспытаний");
+        b("air_separator", "Air Separation Unit", "Воздухоразделительная установка");
+        b("asu_main_compressor", "ASU Main Air Compressor", "Воздушный компрессор ВРУ");
+        b("asu_molsieve", "Molecular Sieve Adsorber", "Блок осушки на молекулярных ситах");
+        b("asu_expander", "Turboexpander", "Турбодетандер");
+        b("cryogenic_tank", "Cryogenic Tank", "Криогенная ёмкость");
+        i("steel_ingot", "Steel Ingot", "Стальной слиток");
+        i("steel_billet", "Steel Billet", "Стальная заготовка");
+        i("steel_plate", "Steel Plate", "Стальной лист");
+        i("steel_rod", "Steel Rod", "Стальной пруток");
+        i("steel_beam", "Steel Beam", "Стальная балка");
+        i("steel_scrap", "Steel Scrap", "Стальной лом");
+        i("burnt_lime", "Burnt Lime", "Обожжённая известь");
+        i("ferroalloy", "Ferroalloy", "Ферросплав");
+        i("seamless_pipe", "Seamless Pipe", "Бесшовная труба");
+        i("welded_pipe", "Welded Pipe", "Сварная труба");
 
         FLUIDS.put("flue_gas", new String[] {"Flue Gas", "Дымовые газы"});
         FLUIDS.put("mine_methane", new String[] {"Mine Methane", "Шахтный метан"});
@@ -220,6 +247,12 @@ public final class PcLanguageProvider extends LanguageProvider {
         FLUIDS.put("blast_furnace_gas", new String[] {"Blast Furnace Gas", "Доменный газ"});
         FLUIDS.put("coal_tar", new String[] {"Coal Tar", "Каменноугольная смола"});
         FLUIDS.put("crude_benzol", new String[] {"Crude Benzol", "Сырой бензол"});
+        FLUIDS.put("converter_gas", new String[] {"Converter Gas", "Конвертерный газ"});
+        FLUIDS.put("oxygen", new String[] {"Oxygen", "Кислород"});
+        FLUIDS.put("nitrogen", new String[] {"Nitrogen", "Азот"});
+        FLUIDS.put("argon", new String[] {"Argon", "Аргон"});
+        FLUIDS.put("liquid_oxygen", new String[] {"Liquid Oxygen", "Жидкий кислород"});
+        FLUIDS.put("liquid_nitrogen", new String[] {"Liquid Nitrogen", "Жидкий азот"});
         MISC.put("block.promptcritical.mine_water", new String[] {"Mine Water", "Шахтная вода"});
 
         MISC.put("itemGroup." + PromptCritical.MOD_ID, new String[] {"Prompt Critical", "Prompt Critical"});

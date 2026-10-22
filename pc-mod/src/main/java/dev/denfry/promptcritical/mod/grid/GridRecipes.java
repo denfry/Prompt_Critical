@@ -70,7 +70,7 @@ public final class GridRecipes extends RecipeProvider {
                 .requires(Items.BRICK).requires(wire).requires(Items.SAND).requires(Items.IRON_NUGGET)
                 .unlockedBy("has_wire", hasWire).save(out, id("lv_fuse"));
         ShapedRecipeBuilder.shaped(RecipeCategory.MISC, PcItems.GENERATOR_COUPLING.get()).pattern(" N ").pattern("ISI").pattern(" N ")
-                .define('N', Items.IRON_NUGGET).define('I', Items.IRON_INGOT).define('S', AllBlocks.SHAFT.get())
+                .define('N', Items.IRON_NUGGET).define('I', PcItems.STEEL_ROD.get()).define('S', AllBlocks.SHAFT.get())
                 .unlockedBy("has_shaft", has(AllBlocks.SHAFT.get())).save(out, id("generator_coupling"));
         ShapelessRecipeBuilder.shapeless(RecipeCategory.MISC, PcItems.INTERLOCK_MODULE.get())
                 .requires(Items.IRON_INGOT).requires(Items.TRIPWIRE_HOOK).requires(Items.REDSTONE)
@@ -87,28 +87,28 @@ public final class GridRecipes extends RecipeProvider {
                 .requires(pin).requires(wire).requires(Items.IRON_NUGGET)
                 .unlockedBy("has_pin", has(pin)).save(out, id("wire_connector_lv"));
         ShapelessRecipeBuilder.shapeless(RecipeCategory.MISC, PcBlocks.WIRE_CONNECTOR_MV.get())
-                .requires(pin, 2).requires(Items.IRON_INGOT)
+                .requires(pin, 2).requires(PcItems.STEEL_ROD.get())
                 .unlockedBy("has_pin", has(pin)).save(out, id("wire_connector_mv"));
         ShapedRecipeBuilder.shaped(RecipeCategory.BUILDING_BLOCKS, PcBlocks.WOODEN_POLE.get(), 3).pattern("L").pattern("L").pattern("L")
                 .define('L', ItemTags.LOGS)
                 .unlockedBy("has_pin", has(pin)).save(out, id("wooden_pole"));
         ShapedRecipeBuilder.shaped(RecipeCategory.BUILDING_BLOCKS, PcBlocks.CONCRETE_POLE.get(), 3).pattern("S").pattern("I").pattern("S")
-                .define('S', Items.SMOOTH_STONE).define('I', Items.IRON_INGOT)
+                .define('S', Items.SMOOTH_STONE).define('I', PcItems.STEEL_ROD.get())
                 .unlockedBy("has_pin", has(pin)).save(out, id("concrete_pole"));
 
         // машины
         ShapedRecipeBuilder.shaped(RecipeCategory.MISC, PcBlocks.SHAFT_GENERATOR.get()).pattern("IWI").pattern("WSW").pattern("IBI")
-                .define('I', Items.IRON_INGOT).define('W', wire).define('S', AllBlocks.SHAFT.get()).define('B', Items.IRON_BLOCK)
+                .define('I', PcItems.STEEL_PLATE.get()).define('W', wire).define('S', AllBlocks.SHAFT.get()).define('B', PcItems.STEEL_BEAM.get())
                 .unlockedBy("has_wire", hasWire).save(out, id("shaft_generator"));
         ShapedRecipeBuilder.shaped(RecipeCategory.MISC, PcBlocks.GENERATOR_EXCITER.get()).pattern("BWB").pattern("WSW").pattern("BRB")
                 .define('B', AllItems.BRASS_INGOT.get()).define('W', wire).define('S', AllBlocks.SHAFT.get()).define('R', Items.REDSTONE)
                 .unlockedBy("has_generator", has(PcBlocks.SHAFT_GENERATOR.get())).save(out, id("generator_exciter"));
         ShapedRecipeBuilder.shaped(RecipeCategory.MISC, PcBlocks.ELECTRIC_MOTOR.get()).pattern("IWI").pattern("WSW").pattern("ICI")
-                .define('I', Items.IRON_INGOT).define('W', wire).define('S', AllBlocks.SHAFT.get())
+                .define('I', PcItems.STEEL_PLATE.get()).define('W', wire).define('S', AllBlocks.SHAFT.get())
                 .define('C', AllBlocks.ANDESITE_CASING.get())
                 .unlockedBy("has_wire", hasWire).save(out, id("electric_motor"));
         ShapedRecipeBuilder.shaped(RecipeCategory.MISC, PcBlocks.DISTRIBUTION_TRANSFORMER.get()).pattern("PPP").pattern("WBW").pattern("IWI")
-                .define('P', pin).define('W', wire).define('B', Items.IRON_BLOCK).define('I', Items.IRON_INGOT)
+                .define('P', pin).define('W', wire).define('B', PcItems.STEEL_PLATE.get()).define('I', PcItems.STEEL_BEAM.get())
                 .unlockedBy("has_pin", has(pin)).save(out, id("distribution_transformer"));
         ShapedRecipeBuilder.shaped(RecipeCategory.MISC, PcBlocks.GRID_CONSUMER.get()).pattern("BLB").pattern("BWB").pattern("BDB")
                 .define('B', Items.BRICKS).define('L', Items.LANTERN).define('W', wire).define('D', ItemTags.WOODEN_DOORS)
@@ -120,7 +120,7 @@ public final class GridRecipes extends RecipeProvider {
                 .unlockedBy("has_pin", has(pin)).save(out, id("disconnector"));
         ShapedRecipeBuilder.shaped(RecipeCategory.MISC, PcBlocks.SWITCHGEAR_CELL.get()).pattern("SLS").pattern("PWP").pattern("SBS")
                 .define('S', AllItems.IRON_SHEET.get()).define('L', Items.LEVER).define('P', pin).define('W', wire)
-                .define('B', Items.IRON_BLOCK)
+                .define('B', PcItems.STEEL_BEAM.get())
                 .unlockedBy("has_pin", has(pin)).save(out, id("switchgear_cell"));
         ShapedRecipeBuilder.shaped(RecipeCategory.MISC, PcBlocks.LV_SWITCHBOARD.get()).pattern("SLS").pattern("WRW").pattern("SSS")
                 .define('S', AllItems.IRON_SHEET.get()).define('L', Items.LEVER).define('W', wire).define('R', Items.REDSTONE)
