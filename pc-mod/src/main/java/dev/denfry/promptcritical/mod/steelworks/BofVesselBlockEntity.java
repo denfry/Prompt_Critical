@@ -1,5 +1,7 @@
 package dev.denfry.promptcritical.mod.steelworks;
 
+import dev.denfry.promptcritical.mod.content.SimAchievements;
+import net.minecraft.server.level.ServerLevel;
 import dev.denfry.promptcritical.mod.binding.SimLevelBinding;
 import dev.denfry.promptcritical.mod.block.PcProperties;
 import dev.denfry.promptcritical.mod.boiler.ShaftConsumer;
@@ -173,6 +175,8 @@ public final class BofVesselBlockEntity extends IronworksDeviceBlockEntity<Conve
         if (ladle != null && (ladle.metalKg() > 0 && !ladle.steel() || ladle.frozen())) ladle = null;
         SteelMelt steel = c.tap();
         if (steel == null) return;
+        if (level instanceof ServerLevel sl)
+            SimAchievements.nearby(sl, worldPosition, SimAchievements.STEEL_TAPPED, "steel_kg", steel.massKg());
         double rest = steel.massKg() - (ladle == null ? 0 : ladle.receive(steel, true));
         if (rest > 1) {
             // мимо ковша: сталь на площадку — лом

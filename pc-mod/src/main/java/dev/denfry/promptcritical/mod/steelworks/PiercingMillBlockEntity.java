@@ -1,5 +1,7 @@
 package dev.denfry.promptcritical.mod.steelworks;
 
+import dev.denfry.promptcritical.mod.content.SimAchievements;
+import net.minecraft.server.level.ServerLevel;
 import dev.denfry.promptcritical.mod.binding.SimLevelBinding;
 import dev.denfry.promptcritical.mod.block.PcProperties;
 import dev.denfry.promptcritical.mod.boiler.ShaftConsumer;
@@ -142,6 +144,7 @@ public final class PiercingMillBlockEntity extends IronworksBlockEntity implemen
         int n = (int) Math.floor(s.massKg() / SteelworksComponents.PipeData.kgPerM(od, wall) + 1e-9);
         lastPipes = n;
         if (n <= 0) return;
+        if (level instanceof ServerLevel sl) SimAchievements.nearby(sl, worldPosition, SimAchievements.SEAMLESS_PIPE, "pipes", n);
         ItemStack pipes = new ItemStack(PcItems.SEAMLESS_PIPE.get(), n);
         pipes.set(SteelworksComponents.PIPE_SPEC.get(), SteelworksComponents.PipeData.of(p));
         pipes.set(SteelworksComponents.STEEL_STOCK.get(), SteelworksComponents.SteelStock.of(s.grade(), wall, od, s.porous(), s.cracked(),

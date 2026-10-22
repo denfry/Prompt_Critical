@@ -1,0 +1,32 @@
+{
+  "parent": "minecraft:recipes/root",
+  "criteria": {
+    "has_the_recipe": {
+      "conditions": {
+        "recipe": "promptcritical:content/cable_tray_tee_stonecutting"
+      },
+      "trigger": "minecraft:recipe_unlocked"
+    },
+    "has_tray": {
+      "conditions": {
+        "items": [
+          {
+            "items": "promptcritical:cable_tray_cables"
+          }
+        ]
+      },
+      "trigger": "minecraft:inventory_changed"
+    }
+  },
+  "requirements": [
+    [
+      "has_the_recipe",
+      "has_tray"
+    ]
+  ],
+  "rewards": {
+    "recipes": [
+      "promptcritical:content/cable_tray_tee_stonecutting"
+    ]
+  }
+}

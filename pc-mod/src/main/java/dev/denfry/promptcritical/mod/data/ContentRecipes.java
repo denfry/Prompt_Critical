@@ -3,6 +3,7 @@ package dev.denfry.promptcritical.mod.data;
 import dev.denfry.promptcritical.mod.PromptCritical;
 import dev.denfry.promptcritical.mod.registry.PcBlocks;
 import dev.denfry.promptcritical.mod.registry.PcItems;
+import java.util.List;
 import java.util.concurrent.CompletableFuture;
 import net.minecraft.core.HolderLookup;
 import net.minecraft.data.CachedOutput;
@@ -122,6 +123,32 @@ public final class ContentRecipes extends RecipeProvider {
                 .unlockedBy("has_poster", has(PcBlocks.SAFETY_POSTER.get())).save(out, id("safety_poster_large"));
         SingleItemRecipeBuilder.stonecutting(Ingredient.of(Items.STONE), RecipeCategory.BUILDING_BLOCKS, PcBlocks.CURB.get(), 2)
                 .unlockedBy("has_stone", has(Items.STONE)).save(out, id("curb_stonecutting"));
+        // декор I1
+        square(out, PcBlocks.LINOLEUM_CONTROL, Items.GRAY_CARPET);
+        dyed(out, PcBlocks.LINOLEUM_CONTROL_BEIGE, PcBlocks.LINOLEUM_CONTROL.get(), Items.YELLOW_DYE);
+        dyed(out, PcBlocks.LINOLEUM_CONTROL_PARQUET, PcBlocks.LINOLEUM_CONTROL.get(), Items.BROWN_DYE);
+        square(out, PcBlocks.CEILING_TILE, Items.WHITE_CARPET);
+        ShapelessRecipeBuilder.shapeless(RecipeCategory.DECORATIONS, PcBlocks.CEILING_LIGHT_PANEL.get())
+                .requires(PcBlocks.CEILING_TILE.get()).requires(Items.GLOWSTONE_DUST)
+                .unlockedBy("has_ceiling", has(PcBlocks.CEILING_TILE.get())).save(out, id("ceiling_light_panel"));
+        ShapedRecipeBuilder.shaped(RecipeCategory.DECORATIONS, PcBlocks.CABLE_TRAY.get(), 6)
+                .pattern("N N").pattern("NNN").define('N', Items.IRON_NUGGET)
+                .unlockedBy("has_nugget", has(Items.IRON_NUGGET)).save(out, id("cable_tray"));
+        ShapelessRecipeBuilder.shapeless(RecipeCategory.DECORATIONS, PcBlocks.CABLE_TRAY_CABLES.get())
+                .requires(PcBlocks.CABLE_TRAY.get()).requires(PcItems.COPPER_WIRE.get())
+                .unlockedBy("has_tray", has(PcBlocks.CABLE_TRAY.get())).save(out, id("cable_tray_cables"));
+        for (DeferredBlock<? extends Block> t : List.of(PcBlocks.CABLE_TRAY_CORNER, PcBlocks.CABLE_TRAY_TEE, PcBlocks.CABLE_TRAY_VERTICAL))
+            SingleItemRecipeBuilder.stonecutting(Ingredient.of(PcBlocks.CABLE_TRAY_CABLES.get()), RecipeCategory.DECORATIONS, t.get())
+                    .unlockedBy("has_tray", has(PcBlocks.CABLE_TRAY_CABLES.get())).save(out, id(t.getId().getPath() + "_stonecutting"));
+        ShapelessRecipeBuilder.shapeless(RecipeCategory.DECORATIONS, PcBlocks.ROOM_SIGN_ELECTRICAL.get())
+                .requires(PcBlocks.ROOM_SIGN.get()).requires(Items.YELLOW_DYE)
+                .unlockedBy("has_sign", has(PcBlocks.ROOM_SIGN.get())).save(out, id("room_sign_electrical"));
+        ShapelessRecipeBuilder.shapeless(RecipeCategory.DECORATIONS, PcBlocks.ROOM_SIGN_PUMP.get())
+                .requires(PcBlocks.ROOM_SIGN.get()).requires(Items.BUCKET)
+                .unlockedBy("has_sign", has(PcBlocks.ROOM_SIGN.get())).save(out, id("room_sign_pump"));
+        ShapelessRecipeBuilder.shapeless(RecipeCategory.DECORATIONS, PcBlocks.ROOM_SIGN_CONTROL.get())
+                .requires(PcBlocks.ROOM_SIGN.get()).requires(Items.REDSTONE)
+                .unlockedBy("has_sign", has(PcBlocks.ROOM_SIGN.get())).save(out, id("room_sign_control"));
 
         PcBlocks.decorForms().forEach((db, form) -> {
             Block base = PcBlocks.withItems().stream().filter(b -> b.getId().getPath().equals(form.base())).findFirst()

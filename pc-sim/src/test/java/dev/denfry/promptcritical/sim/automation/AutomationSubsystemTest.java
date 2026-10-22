@@ -9,6 +9,7 @@ import dev.denfry.promptcritical.sim.core.MigrationRegistry;
 import dev.denfry.promptcritical.sim.core.MutableStateTree;
 import dev.denfry.promptcritical.sim.core.Quality;
 import dev.denfry.promptcritical.sim.core.SimConfig;
+import dev.denfry.promptcritical.sim.core.SimEvent;
 import dev.denfry.promptcritical.sim.core.SimId;
 import dev.denfry.promptcritical.sim.core.SimulationWorld;
 import dev.denfry.promptcritical.sim.core.exec.WorkerPool;
@@ -204,5 +205,53 @@ class AutomationSubsystemTest {
         run(c, 5);
         assertThat(k1.relayPicked()).isTrue();
         assertThat(k1.relayOps()).isEqualTo(1);
+    }
+
+    /** ПУСК подаёт катушки {@code relays} реле, контакт 11-14 первого включает переходник «реле → редстоун». */
+    private List<SimEvent.Milestone> relayScheme(int relays) {
+        SimulationWorld w = world();
+        AutomationUnit psu = unit(w, AutomationKind.POWER_SUPPLY, P, Z);
+        psu.setInput(AutomationUnit.IN_MAIN, 1);
+        AutomationUnit start = unit(w, AutomationKind.PUSHBUTTON, P, S1, 0, 0);
+        unit(w, AutomationKind.RELAY, S1, Z, P, 0, L, 0, 0, 0);
+        for (int i = 1; i < relays; i++) unit(w, AutomationKind.RELAY, S1, Z, 0, 0, 0, 0, 0, 0);
+        AutomationUnit out = unit(w, AutomationKind.REDSTONE_INTERFACE, L, Z, 0, 0);
+        run(w, 5);
+        start.setInput(AutomationUnit.IN_MAIN, 1);
+        List<SimEvent.Milestone> events = milestones(w, AutomationSubsystem.RELAY_LOGIC, 20);
+        assertThat(out.loadEnergized(0)).isTrue();
+        return events;
+    }
+
+    private static List<SimEvent.Milestone> milestones(SimulationWorld w, String event, int ticks) {
+        List<SimEvent.Milestone> out = new ArrayList<>();
+        for (int i = 0; i < ticks; i++) {
+            w.tick(ExternalInputs.NONE);
+            w.drainEvents(e -> {
+                if (e instanceof SimEvent.Milestone m && m.event().equals(event)) out.add(m);
+            });
+        }
+        return out;
+    }
+
+    @Test
+    void fiveRelaysDrivingAMechanismAreRelayLogic() {
+        assertThat(relayScheme(5)).singleElement().satisfies(m -> assertThat(m.value()).isEqualTo(5));
+        assertThat(relayScheme(4)).as("four relays are not enough").isEmpty();
+    }
+
+    @Test
+    void autoStationHeldAtSetpointForADayWithAnIntegrator() {
+        SimulationWorld w = world();
+        AutomationUnit station = unit(w, AutomationKind.MANUAL_STATION, 0, SP, 0, 0, SP, 0, 0, 0, 0);
+        station.setParam(AutomationUnit.D_SET, 3);
+        station.setStationManual(false);
+        unit(w, AutomationKind.ANALOG_INTEGRATOR, SP, 0, 0, 0, N, 0, 0, 0);
+        run(w, 5);
+        assertThat(station.stationPv()).as("PV").isCloseTo(3, within(0.2));
+        assertThat(station.output(1)).as("SP").isCloseTo(3, within(0.2));
+        assertThat(station.stationMode()).isEqualTo(StationMode.AUTO);
+        int day = (int) Math.round(AutomationSubsystem.LOOP_HOLD_S / 0.05);
+        assertThat(milestones(w, AutomationSubsystem.ANALOG_LOOP_HELD, day + 20)).singleElement().satisfies(m -> assertThat(m.value()).isCloseTo(1200 / 3600.0, within(0.01)));
     }
 }

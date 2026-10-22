@@ -39,6 +39,13 @@ public final class AutomationSubsystem implements Subsystem {
     static final int SLOW_PHASE = 7;
     /** Ёмкость банков измерения. */
     static final int WORLD_LIMIT = 4096;
+    /** Механизм под током от схемы из ≥ {@link #RELAY_LOGIC_MIN} реле (11 §11.2.2 «Щёлк-щёлк»); значение — число реле. */
+    public static final String RELAY_LOGIC = "promptcritical:relay_logic";
+    /** Станция в АВТ с интегратором в схеме держит PV у SP {@link #LOOP_HOLD_S} (11 §11.2.2 «Без компьютера»); значение — ч. */
+    public static final String ANALOG_LOOP_HELD = "promptcritical:analog_loop_held";
+    public static final int RELAY_LOGIC_MIN = 5;
+    /** Допуск |PV − SP|, В (2 % шкалы 10 В), и выдержка — игровые сутки [моё]. */
+    public static final double LOOP_BAND_V = 0.2, LOOP_HOLD_S = 1200;
 
     private AutomationConfig cfg;
     private final NavigableMap<SimId, AutomationUnit> units = new TreeMap<>();
@@ -52,6 +59,12 @@ public final class AutomationSubsystem implements Subsystem {
     private int[] optoLoad = new int[0], optoSignal = new int[0];
     private int[] bridgeSwitch = new int[0], bridgeSignal = new int[0];
     private boolean[] bridgeInvert = new boolean[0];
+    // достижения: механизмы и реле их схем, станции с интегратором в схеме и выдержка у уставки
+    private AutomationUnit[] actuators = new AutomationUnit[0];
+    private int[] actuatorRelays = new int[0];
+    private boolean[] actuatorLit = new boolean[0];
+    private AutomationUnit[] loopStations = new AutomationUnit[0];
+    private double[] loopHeldS = new double[0];
 
     public AutomationSubsystem(AutomationConfig cfg) {
         this.cfg = Objects.requireNonNull(cfg, "cfg");
@@ -121,6 +134,7 @@ public final class AutomationSubsystem implements Subsystem {
         if (dirty) rebuild();
         for (AutomationUnit u : order) applyInputs(u);
         relay.stepFast();
+        observeAchievements(ctx);
         for (int i = 0; i < optoLoad.length; i++) analog.setSignal(optoSignal[i], relay.lampLit(optoLoad[i]) ? 1 : 0);
         analog.stepFast();
         for (int i = 0; i < bridgeSwitch.length; i++)
@@ -197,8 +211,94 @@ public final class AutomationSubsystem implements Subsystem {
         bridgeSignal = b.bridgeSignal.stream().mapToInt(Integer::intValue).toArray();
         bridgeInvert = new boolean[b.bridgeInvert.size()];
         for (int i = 0; i < bridgeInvert.length; i++) bridgeInvert[i] = b.bridgeInvert.get(i);
+        indexSchemes(built);
         dirty = false;
         rebuilds++;
+    }
+
+    /** Схемы — связные части цепей через блоки (все клеммы блока — одна схема): механизмы, их реле, станции с интегратором. */
+    private void indexSchemes(List<AutomationUnit> built) {
+        Map<Long, Long> parent = new HashMap<>();
+        for (AutomationUnit u : built) {
+            long first = AutomationUnit.NO_NET;
+            for (int t = 0; t < u.kind.terminalCount(); t++) {
+                long n = u.net(t);
+                if (n == AutomationUnit.NO_NET) continue;
+                if (first == AutomationUnit.NO_NET) first = n;
+                else parent.put(find(parent, n), find(parent, first));
+            }
+        }
+        Map<Long, Integer> relays = new HashMap<>(), integrators = new HashMap<>();
+        for (AutomationUnit u : built) {
+            long root = scheme(parent, u);
+            if (root == AutomationUnit.NO_NET) continue;
+            switch (u.kind) {
+                case RELAY, RELAY_LATCHING, TIME_RELAY -> relays.merge(root, 1, Integer::sum);
+                case ANALOG_INTEGRATOR -> integrators.merge(root, 1, Integer::sum);
+                default -> {
+                }
+            }
+        }
+        List<AutomationUnit> acts = new ArrayList<>(), stations = new ArrayList<>();
+        for (AutomationUnit u : built) {
+            long root = scheme(parent, u);
+            switch (u.kind) {
+                case REDSTONE_INTERFACE, MOTOR_IO, BREAKER_IO -> {
+                    if (relays.getOrDefault(root, 0) >= RELAY_LOGIC_MIN) acts.add(u);
+                }
+                case MANUAL_STATION -> {
+                    if (integrators.getOrDefault(root, 0) > 0) stations.add(u);
+                }
+                default -> {
+                }
+            }
+        }
+        actuators = acts.toArray(new AutomationUnit[0]);
+        actuatorRelays = new int[actuators.length];
+        actuatorLit = new boolean[actuators.length];
+        for (int i = 0; i < actuators.length; i++) {
+            actuatorRelays[i] = relays.get(scheme(parent, actuators[i]));
+            actuatorLit[i] = energized(actuators[i]);
+        }
+        // выдержка станций не переживает пересборку схемы [моё]
+        loopStations = stations.toArray(new AutomationUnit[0]);
+        loopHeldS = new double[loopStations.length];
+    }
+
+    private static long scheme(Map<Long, Long> parent, AutomationUnit u) {
+        for (int t = 0; t < u.kind.terminalCount(); t++) if (u.net(t) != AutomationUnit.NO_NET) return find(parent, u.net(t));
+        return AutomationUnit.NO_NET;
+    }
+
+    private static long find(Map<Long, Long> parent, long n) {
+        long r = n;
+        for (Long p = parent.get(r); p != null && p != r; p = parent.get(r)) r = p;
+        return r;
+    }
+
+    private static boolean energized(AutomationUnit u) {
+        return u.kind == AutomationKind.BREAKER_IO ? u.loadEnergized(1) || u.loadEnergized(2) : u.loadEnergized(0);
+    }
+
+    private void observeAchievements(FastContext ctx) {
+        for (int i = 0; i < actuators.length; i++) {
+            boolean lit = energized(actuators[i]);
+            if (lit && !actuatorLit[i]) {
+                ctx.events().milestone(ctx.tick(), actuators[i].id, RELAY_LOGIC, "relays", actuatorRelays[i]);
+            }
+            actuatorLit[i] = lit;
+        }
+        for (int i = 0; i < loopStations.length; i++) {
+            AutomationUnit st = loopStations[i];
+            double pv = st.stationPv();
+            boolean held = st.stationMode() == StationMode.AUTO && !Double.isNaN(pv)
+                    && Math.abs(pv - st.output(1)) <= LOOP_BAND_V;
+            double before = loopHeldS[i];
+            loopHeldS[i] = held ? before + SimClock.FAST_DT : 0;
+            if (before < LOOP_HOLD_S && loopHeldS[i] >= LOOP_HOLD_S) {
+                ctx.events().milestone(ctx.tick(), st.id, ANALOG_LOOP_HELD, "hours", loopHeldS[i] / 3600);
+            }
+        }
     }
 
     /** Узлы A1, источники сигналов A2 и мосты собираемой схемы. */

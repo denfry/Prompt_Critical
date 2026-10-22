@@ -28,6 +28,7 @@ public final class PcDataGen {
         gen.addProvider(event.includeClient(), new PcBlockStateProvider(out, efh));
         gen.addProvider(event.includeClient(), new PcLanguageProvider(out, "en_us"));
         gen.addProvider(event.includeClient(), new PcLanguageProvider(out, "ru_ru"));
+        gen.addProvider(event.includeClient(), new PcPonderSchematics(out));
 
         gen.addProvider(event.includeServer(), new LootTableProvider(out, Set.of(),
                 List.of(new LootTableProvider.SubProviderEntry(PcBlockLoot::new, LootContextParamSets.BLOCK)), lookup));

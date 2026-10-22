@@ -1,5 +1,6 @@
 package dev.denfry.promptcritical.mod.ironworks;
 
+import dev.denfry.promptcritical.mod.content.SimAchievements;
 import dev.denfry.promptcritical.mod.binding.DeviceHost;
 import dev.denfry.promptcritical.mod.binding.SimLevelBinding;
 import dev.denfry.promptcritical.mod.block.PcProperties;
@@ -304,6 +305,8 @@ public final class CokeOvenBlockEntity extends BlockEntity implements DeviceHost
         if (r == null) return before == OvenState.COKING || before == OvenState.STICKER ? PushOutcome.OVERLOAD : PushOutcome.NONE;
         BlockPos door = shape.oven(i, fromLow ? shape.length() : -1, 0);
         deliver(r, door, ramFacing);
+        if (level instanceof ServerLevel sl)
+            SimAchievements.nearby(sl, door, SimAchievements.COKE_PUSHED, r.pitchCoke() ? "pitch_coke" : "coke", r.cokeKg());
         looks(bat);
         level.playSound(null, door, SoundEvents.LAVA_EXTINGUISH, SoundSource.BLOCKS, 1.0f, 0.6f);
         return PushOutcome.PUSHED;

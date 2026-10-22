@@ -372,7 +372,20 @@ public final class PcLanguageProvider extends LanguageProvider {
                 {"room_sign", "Room Sign", "Табличка помещения"}, {"room_sign_evac", "Evacuation Arrow", "Стрелка эвакуации"},
                 {"wall_clock", "Wall Clock", "Настенные часы"}, {"safety_poster", "Safety Poster", "Плакат по технике безопасности"},
                 {"safety_poster_large", "Large Safety Poster", "Большой плакат по технике безопасности"},
-                {"curb", "Curb", "Бордюр"}};
+                {"curb", "Curb", "Бордюр"},
+                // I1
+                {"linoleum_control", "Grey Control Room Linoleum", "Линолеум серый"},
+                {"linoleum_control_beige", "Beige Control Room Linoleum", "Линолеум бежевый"},
+                {"linoleum_control_parquet", "Parquet-Pattern Linoleum", "Линолеум «под паркет»"},
+                {"ceiling_tile", "Suspended Ceiling Tile", "Плита подвесного потолка"},
+                {"ceiling_light_panel", "Ceiling Light Panel", "Светильник подвесного потолка"},
+                {"cable_tray", "Cable Tray", "Кабельный лоток"}, {"cable_tray_cables", "Cable Tray with Cables", "Кабельный лоток с кабелями"},
+                {"cable_tray_corner", "Cable Tray Bend", "Кабельный лоток, угол"},
+                {"cable_tray_tee", "Cable Tray Tee", "Кабельный лоток, тройник"},
+                {"cable_tray_vertical", "Vertical Cable Tray", "Кабельный лоток вертикальный"},
+                {"room_sign_electrical", "Sign: Switchgear Room", "Табличка «Электрощитовая»"},
+                {"room_sign_pump", "Sign: Pump Room", "Табличка «Насосная»"},
+                {"room_sign_control", "Sign: Main Control Room", "Табличка «ГЩУ»"}};
         java.util.Map<String, String[]> names = new java.util.HashMap<>();
         for (String[] d : decor) {
             b(d[0], d[1], d[2]);
@@ -388,6 +401,12 @@ public final class PcLanguageProvider extends LanguageProvider {
             b(db.getId().getPath(), n[0] + suffix[0], n[1] + " (" + suffix[1] + ")");
         });
         MISC.putAll(dev.denfry.promptcritical.mod.mine.HoistText.LANG);
+        // сцены Ponder (11 §11.1.4)
+        dev.denfry.promptcritical.mod.content.PonderLayouts.TEXTS.forEach((scene, t) -> {
+            MISC.put(dev.denfry.promptcritical.mod.content.PonderLayouts.langKey(scene, "header"), t.header());
+            for (int i = 0; i < t.lines().size(); i++)
+                MISC.put(dev.denfry.promptcritical.mod.content.PonderLayouts.langKey(scene, "text_" + (i + 1)), t.lines().get(i));
+        });
         MISC.putAll(dev.denfry.promptcritical.mod.panel.PanelText.lang());
     }
 

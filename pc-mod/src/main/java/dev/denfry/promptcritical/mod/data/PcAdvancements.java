@@ -5,6 +5,8 @@ import dev.denfry.promptcritical.mod.content.SimAchievements;
 import dev.denfry.promptcritical.mod.content.SimEventTrigger;
 import dev.denfry.promptcritical.mod.registry.PcBlocks;
 import dev.denfry.promptcritical.mod.registry.PcItems;
+import dev.denfry.promptcritical.sim.automation.AutomationSubsystem;
+import dev.denfry.promptcritical.sim.grid.GridSubsystem;
 import dev.denfry.promptcritical.sim.plant.SteamPlant;
 import java.util.LinkedHashMap;
 import java.util.Map;
@@ -23,7 +25,7 @@ import net.neoforged.neoforge.common.data.AdvancementProvider;
 import net.neoforged.neoforge.common.data.ExistingFileHelper;
 
 /**
- * Достижения эпохи I0 (11 §11.2.2): ванильные, условия — через {@code promptcritical:sim_event}, награда — только
+ * Достижения эпох I0–I1 и автоматизации A1–A2 (11 §11.2.2): ванильные, условия — через {@code promptcritical:sim_event}, награда — только
  * опыт (C2, T11.5). Остальные ветки каталога добавляются в своих вехах.
  */
 public final class PcAdvancements implements AdvancementProvider.AdvancementGenerator {
@@ -39,6 +41,22 @@ public final class PcAdvancements implements AdvancementProvider.AdvancementGene
                 "Поставьте клетку с канарейкой в шахте"});
         LANG.put("canary_saved", new String[] {"The Bird Lives", "Птичка жива", "A canary that fell from its perch came round in fresh air",
                 "Упавшая с жёрдочки канарейка очнулась на свежем воздухе — её вынесли вовремя"});
+        LANG.put("coke", new String[] {"Coke and Gas", "Кокс и газ", "Push the first coke out of a coke oven battery",
+                "Выдайте первую партию кокса из коксовой батареи"});
+        LANG.put("pig_iron", new String[] {"Pig Iron", "Чугун", "Tap the first iron from a blast furnace",
+                "Первый выпуск чугуна из домны"});
+        LANG.put("steel", new String[] {"Steel", "Сталь", "Tap the first heat from a converter",
+                "Первая плавка в конвертере"});
+        LANG.put("seamless", new String[] {"No Seam", "Без шва", "Pierce the first seamless pipe",
+                "Первая бесшовная труба"});
+        LANG.put("synchronized", new String[] {"On the Grid", "В сеть",
+                "Close a generator onto the grid with a torque shock of no more than 10 %",
+                "Генератор включён в сеть без броска момента больше 10 %"});
+        LANG.put("relay_logic", new String[] {"Click-Clack", "Щёлк-щёлк", "A circuit of at least five relays drives a mechanism",
+                "Схема из пяти и более реле управляет механизмом"});
+        LANG.put("analog_pid", new String[] {"No Computer Needed", "Без компьютера",
+                "A PI controller built from analog blocks holds its setpoint for a whole day",
+                "ПИ-регулятор на аналоговых блоках держит параметр целые сутки"});
     }
 
     @Override
@@ -61,6 +79,36 @@ public final class PcAdvancements implements AdvancementProvider.AdvancementGene
                 .addCriterion("canary_revived", SimEventTrigger.TriggerInstance.of(ResourceLocation.parse(SimAchievements.CANARY_REVIVED),
                         Map.of(), true))
                 .save(saver, id("canary_saved"), efh);
+        // I1: сталь и ток
+        AdvancementHolder coke = task(steam, PcItems.COKE.get(), "coke", AdvancementType.TASK, false, 30)
+                .addCriterion("coke_pushed", event(SimAchievements.COKE_PUSHED, Map.of()))
+                .save(saver, id("coke"), efh);
+        AdvancementHolder iron = task(coke, PcItems.PIG_IRON.get(), "pig_iron", AdvancementType.TASK, false, 40)
+                .addCriterion("iron_tapped", event(SimAchievements.IRON_TAPPED, Map.of()))
+                .save(saver, id("pig_iron"), efh);
+        AdvancementHolder steel = task(iron, PcItems.STEEL_INGOT.get(), "steel", AdvancementType.GOAL, false, 60)
+                .addCriterion("steel_tapped", event(SimAchievements.STEEL_TAPPED, Map.of()))
+                .save(saver, id("steel"), efh);
+        task(steel, PcItems.SEAMLESS_PIPE.get(), "seamless", AdvancementType.TASK, false, 40)
+                .addCriterion("seamless_pipe", event(SimAchievements.SEAMLESS_PIPE, Map.of()))
+                .save(saver, id("seamless"), efh);
+        task(steam, PcBlocks.SHAFT_GENERATOR.get(), "synchronized", AdvancementType.GOAL, false, 50)
+                .addCriterion("sync_closed", event(GridSubsystem.SYNC_CLOSED, Map.of("ok", MinMaxBounds.Doubles.atMost(0.10))))
+                .save(saver, id("synchronized"), efh);
+        // автоматизация A1–A2
+        AdvancementHolder relays = task(root, PcBlocks.RELAY.get(), "relay_logic", AdvancementType.TASK, false, 30)
+                .addCriterion("relay_logic", event(AutomationSubsystem.RELAY_LOGIC,
+                        Map.of("relays", MinMaxBounds.Doubles.atLeast(AutomationSubsystem.RELAY_LOGIC_MIN))))
+                .save(saver, id("relay_logic"), efh);
+        task(relays, PcBlocks.MANUAL_STATION.get(), "analog_pid", AdvancementType.GOAL, false, 60)
+                .addCriterion("analog_loop_held", event(AutomationSubsystem.ANALOG_LOOP_HELD, Map.of()))
+                .save(saver, id("analog_pid"), efh);
+    }
+
+    /** Событие мира или домена у игрока в радиусе смены. */
+    private static net.minecraft.advancements.Criterion<SimEventTrigger.TriggerInstance> event(String event,
+            Map<String, MinMaxBounds.Doubles> predicate) {
+        return SimEventTrigger.TriggerInstance.of(ResourceLocation.parse(event), predicate, true);
     }
 
     private static Advancement.Builder task(AdvancementHolder parent, ItemLike icon, String name, AdvancementType type,

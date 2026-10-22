@@ -9,13 +9,17 @@ import net.minecraft.server.level.ServerPlayer;
 
 /**
  * Доставка событий домена и мира в триггер {@code sim_event} (11 §11.2.1) и в задания маршрута (11 §11.1.5). События
- * эпохи I0: пуск паровой машины и замеры котлов и машин (домен), канарейка посажена в шахте и откачана (мир).
+ * эпохи I0: пуск паровой машины и замеры котлов и машин (домен), канарейка посажена в шахте и откачана (мир); I1 —
+ * синхронизация, релейная схема и аналоговый контур (домен), кокс, чугун, сталь и бесшовная труба (мир).
  */
 public final class SimAchievements {
     /** Радиус «смены» вокруг источника события, м (11 §11.2.1). */
     public static final double RADIUS_M = 64;
     public static final String CANARY_PLACED = "promptcritical:canary_placed";
     public static final String CANARY_REVIVED = "promptcritical:canary_revived";
+    /** События мира эпохи I1: выдача кокса из камеры, выпуск чугуна, слив плавки конвертера, бесшовная труба. */
+    public static final String COKE_PUSHED = "promptcritical:coke_pushed", IRON_TAPPED = "promptcritical:iron_tapped",
+            STEEL_TAPPED = "promptcritical:steel_tapped", SEAMLESS_PIPE = "promptcritical:seamless_pipe";
 
     private SimAchievements() {
     }

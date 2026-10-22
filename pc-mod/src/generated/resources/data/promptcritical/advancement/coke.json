@@ -1,0 +1,33 @@
+{
+  "parent": "promptcritical:first_steam",
+  "criteria": {
+    "coke_pushed": {
+      "conditions": {
+        "event": "promptcritical:coke_pushed",
+        "station_member": true
+      },
+      "trigger": "promptcritical:sim_event"
+    }
+  },
+  "display": {
+    "description": {
+      "translate": "advancements.promptcritical.coke.description"
+    },
+    "icon": {
+      "count": 1,
+      "id": "promptcritical:coke"
+    },
+    "title": {
+      "translate": "advancements.promptcritical.coke.title"
+    }
+  },
+  "requirements": [
+    [
+      "coke_pushed"
+    ]
+  ],
+  "rewards": {
+    "experience": 30
+  },
+  "sends_telemetry_event": true
+}

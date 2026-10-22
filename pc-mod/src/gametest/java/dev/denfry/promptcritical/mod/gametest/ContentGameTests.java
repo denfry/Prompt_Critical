@@ -27,10 +27,13 @@ import dev.denfry.promptcritical.mod.content.UnlockCondition;
 import dev.denfry.promptcritical.mod.registry.PcBlocks;
 import dev.denfry.promptcritical.mod.registry.PcDataComponents;
 import dev.denfry.promptcritical.mod.registry.PcItems;
+import dev.denfry.promptcritical.mod.content.PonderLayouts;
+import dev.denfry.promptcritical.sim.automation.AutomationSubsystem;
 import dev.denfry.promptcritical.sim.core.CommandSource;
 import dev.denfry.promptcritical.sim.core.SimCommand;
 import dev.denfry.promptcritical.sim.core.SimEvent;
 import dev.denfry.promptcritical.sim.core.SimId;
+import dev.denfry.promptcritical.sim.grid.GridSubsystem;
 import dev.denfry.promptcritical.sim.plant.PlantFuels;
 import dev.denfry.promptcritical.sim.plant.SteamPlant;
 import com.mojang.authlib.GameProfile;
@@ -358,11 +361,86 @@ public final class ContentGameTests {
         h.succeed();
     }
 
+    // --- контент I1 (этап 12 M3) ---
+
+    /** Глава I1 и регламенты на месте; инструкцию батареи дают один раз, сколько бы камер ни ставили. */
+    @GameTest(template = SMALL)
+    public static void ironAndPowerChaptersAndProcedures(GameTestHelper h) {
+        HandbookManager.Data d = HandbookManager.data();
+        long i1 = d.entries().values().stream().filter(e -> e.category().equals(PromptCritical.id("i1"))).count();
+        h.assertTrue(i1 >= 10, "I1 chapters: " + i1);
+        for (String proc : List.of("i1/procedure_coke_battery", "i1/procedure_blast_furnace", "i1/procedure_generator"))
+            h.assertTrue(d.entry(PromptCritical.id(proc)) != null, "procedure " + proc);
+        ServerPlayer p = player(h, new BlockPos(1, 1, 1));
+        for (int i = 0; i < 3; i++) HandbookService.issueProcedure(p, PcBlocks.COKE_OVEN.get());
+        h.assertTrue(count(p, PcItems.OPERATING_PROCEDURE.get()) == 1, "one coke battery procedure");
+        HandbookService.issueProcedure(p, PcBlocks.SHAFT_GENERATOR.get());
+        h.assertTrue(count(p, PcItems.OPERATING_PROCEDURE.get()) == 2, "generator procedure as well");
+        h.succeed();
+    }
+
+    /**
+     * Достижения I1 и автоматики по событиям у смены: кокс → чугун → сталь → бесшовная труба; «В сеть» — только при
+     * броске момента ≤ 10 %; «Щёлк-щёлк» — от пяти реле.
+     */
+    @GameTest(template = SMALL)
+    public static void ironAndPowerAdvancements(GameTestHelper h) {
+        ServerPlayer p = player(h, new BlockPos(1, 1, 1));
+        List<ServerPlayer> shift = List.of(p);
+        BlockPos at = h.absolutePos(new BlockPos(1, 1, 1));
+        String[][] chain = {{SimAchievements.COKE_PUSHED, "coke"}, {SimAchievements.IRON_TAPPED, "pig_iron"},
+                {SimAchievements.STEEL_TAPPED, "steel"}, {SimAchievements.SEAMLESS_PIPE, "seamless"}};
+        for (String[] c : chain) {
+            SimAchievements.nearby(shift, at, c[0], "x", 1);
+            h.assertTrue(done(p, c[1]), c[1] + " after " + c[0]);
+        }
+        SimAchievements.nearby(shift, at, GridSubsystem.SYNC_CLOSED, "damage", 0.4);
+        SimAchievements.nearby(shift, at, GridSubsystem.SYNC_CLOSED, "ok", 0.2);
+        h.assertFalse(done(p, "synchronized"), "a 20 % torque shock is not a clean synchronisation");
+        SimAchievements.nearby(shift, at, GridSubsystem.SYNC_CLOSED, "ok", 0.05);
+        h.assertTrue(done(p, "synchronized"), "synchronised with a 5 % shock");
+        SimAchievements.nearby(shift, at, AutomationSubsystem.RELAY_LOGIC, "relays", 4);
+        h.assertFalse(done(p, "relay_logic"), "four relays are not enough");
+        SimAchievements.nearby(shift, at, AutomationSubsystem.RELAY_LOGIC, "relays", 5);
+        h.assertTrue(done(p, "relay_logic"), "five relays drive a mechanism");
+        SimAchievements.nearby(shift, at, AutomationSubsystem.ANALOG_LOOP_HELD, "hours", 1200 / 3600.0);
+        h.assertTrue(done(p, "analog_pid"), "analog loop held for a day");
+        h.succeed();
+    }
+
+    /** Схемы и тексты сцен Ponder 28–31 и 36: файл схемы есть, ключи text_N идут по числу реплик. */
+    @GameTest(template = SMALL)
+    public static void ponderScenesHaveSchematicsAndTexts(GameTestHelper h) {
+        h.assertTrue(PonderLayouts.LAYOUTS.size() == 5 && PonderLayouts.TEXTS.keySet().equals(PonderLayouts.LAYOUTS.keySet()),
+                "five scenes with texts");
+        for (String scene : PonderLayouts.LAYOUTS.keySet()) {
+            h.assertTrue(ContentGameTests.class.getResource("/assets/promptcritical/ponder/" + scene + ".nbt") != null,
+                    scene + ": schematic (runData)");
+            h.assertTrue(PonderLayouts.TEXTS.get(scene).lines().size() >= 5, scene + ": lines");
+        }
+        h.succeed();
+    }
+
+    /** Декор I1: светильник потолка светит, таблички и лотки ставятся, у линолеума есть плита и ступени. */
+    @GameTest(template = SMALL)
+    public static void ironAndPowerDecor(GameTestHelper h) {
+        BlockPos panel = new BlockPos(1, 2, 1);
+        h.setBlock(panel, PcBlocks.CEILING_LIGHT_PANEL.get().defaultBlockState());
+        h.assertTrue(h.getBlockState(panel).getLightEmission() == 15, "ceiling light panel gives light 15");
+        h.setBlock(new BlockPos(0, 1, 0), PcBlocks.CABLE_TRAY_TEE.get().defaultBlockState());
+        h.setBlock(new BlockPos(2, 1, 0), PcBlocks.ROOM_SIGN_ELECTRICAL.get().defaultBlockState());
+        long linoleum = PcBlocks.decorForms().values().stream().filter(f -> f.base().equals("linoleum_control")).count();
+        h.assertTrue(linoleum == 2, "linoleum slab and stairs: " + linoleum);
+        h.succeed();
+    }
+
     // --- «Маршрут» (11 §11.1.5) ---
 
     /** События домена и мира, на которые могут ссылаться задания маршрута. */
     private static final Set<String> ROUTE_EVENTS = Set.of(SteamPlant.ENGINE_RUNNING, SteamPlant.BOILER_STATE, SteamPlant.ENGINE_STATE,
-            SimAchievements.CANARY_PLACED, SimAchievements.CANARY_REVIVED);
+            SimAchievements.CANARY_PLACED, SimAchievements.CANARY_REVIVED, SimAchievements.COKE_PUSHED, SimAchievements.IRON_TAPPED,
+            SimAchievements.STEEL_TAPPED, SimAchievements.SEAMLESS_PIPE, GridSubsystem.SYNC_CLOSED, GridSubsystem.LOAD_SHED,
+            AutomationSubsystem.RELAY_LOGIC, AutomationSubsystem.ANALOG_LOOP_HELD);
 
     private static RouteTask task(String id) {
         RouteTask t = HandbookManager.data().tasks().get(PromptCritical.id(id));
@@ -381,6 +459,9 @@ public final class ContentGameTests {
         h.assertTrue(HandbookManager.routeCycle(d.tasks()) == null, "route graph has no cycles");
         long i0 = d.tasks().values().stream().filter(t -> t.era().equals("I0")).count();
         h.assertTrue(i0 >= 30, "I0 route tasks: " + i0);
+        long i1 = d.tasks().values().stream().filter(t -> t.era().equals("I1")).count();
+        h.assertTrue(i1 >= 35, "I1 route tasks: " + i1);
+        h.assertTrue(task("i1/first_sync").requires().contains(PromptCritical.id("i1/synchroscope")), "first_sync after the synchroscope");
         for (RouteTask t : d.tasks().values()) {
             for (String ref : RouteService.registryRefs(t)) {
                 String kind = ref.substring(0, ref.indexOf(':'));

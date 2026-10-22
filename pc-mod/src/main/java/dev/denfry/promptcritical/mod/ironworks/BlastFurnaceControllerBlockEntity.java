@@ -1,5 +1,6 @@
 package dev.denfry.promptcritical.mod.ironworks;
 
+import dev.denfry.promptcritical.mod.content.SimAchievements;
 import dev.denfry.promptcritical.mod.binding.SimLevelBinding;
 import dev.denfry.promptcritical.mod.block.PcProperties;
 import dev.denfry.promptcritical.mod.foundry.MachineInventory;
@@ -74,7 +75,7 @@ public final class BlastFurnaceControllerBlockEntity extends IronworksDeviceBloc
     private final MachineInventory inv = new MachineInventory(new MachineInventory.Role[] {MachineInventory.Role.INPUT,
             MachineInventory.Role.INPUT, MachineInventory.Role.INPUT}, BlastFurnaceControllerBlockEntity::slotValid, this::setChanged);
     private List<BlockPos> blowers = List.of(), stoves = List.of(), catchers = List.of();
-    private boolean autoCycle = true, blowingWarned, spillWarned;
+    private boolean autoCycle = true, blowingWarned, spillWarned, ironAnnounced;
     private int bleedTicks, fillTicks;
     /** Фурмы, отмеченные прогоревшими на блоках. */
     private final Set<BlockPos> burnt = new LinkedHashSet<>();
@@ -230,6 +231,7 @@ public final class BlastFurnaceControllerBlockEntity extends IronworksDeviceBloc
         setTaphole(f.tapholeOpen());
         if (!f.tapholeOpen()) {
             blowingWarned = false;
+            ironAnnounced = false;
             return;
         }
         TapResult r = f.tap(TAP_DT_REAL);
@@ -243,6 +245,10 @@ public final class BlastFurnaceControllerBlockEntity extends IronworksDeviceBloc
         fillTicks = FILL_HOLD;
         deliverIron(r);
         deliverSlag(r.slagKg());
+        if (r.ironKg() > 0 && !ironAnnounced && level instanceof ServerLevel sl) {
+            ironAnnounced = true;
+            SimAchievements.nearby(sl, shape.taphole(), SimAchievements.IRON_TAPPED, "iron_kg", r.ironKg());
+        }
         if (level instanceof ServerLevel sl && level.getGameTime() % 4 == 0) {
             Vec3 at = Vec3.atCenterOf(shape.taphole().relative(shape.outward(shape.taphole())));
             sl.sendParticles(ParticleTypes.LAVA, at.x, at.y, at.z, 2, 0.2, 0.1, 0.2, 0.0);

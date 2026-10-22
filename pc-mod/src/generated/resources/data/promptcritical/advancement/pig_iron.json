@@ -1,0 +1,33 @@
+{
+  "parent": "promptcritical:coke",
+  "criteria": {
+    "iron_tapped": {
+      "conditions": {
+        "event": "promptcritical:iron_tapped",
+        "station_member": true
+      },
+      "trigger": "promptcritical:sim_event"
+    }
+  },
+  "display": {
+    "description": {
+      "translate": "advancements.promptcritical.pig_iron.description"
+    },
+    "icon": {
+      "count": 1,
+      "id": "promptcritical:pig_iron"
+    },
+    "title": {
+      "translate": "advancements.promptcritical.pig_iron.title"
+    }
+  },
+  "requirements": [
+    [
+      "iron_tapped"
+    ]
+  ],
+  "rewards": {
+    "experience": 40
+  },
+  "sends_telemetry_event": true
+}

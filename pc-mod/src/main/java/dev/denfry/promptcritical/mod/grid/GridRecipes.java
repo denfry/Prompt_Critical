@@ -15,8 +15,10 @@ import net.minecraft.data.recipes.RecipeOutput;
 import net.minecraft.data.recipes.RecipeProvider;
 import net.minecraft.data.recipes.ShapedRecipeBuilder;
 import net.minecraft.data.recipes.ShapelessRecipeBuilder;
+import net.minecraft.data.recipes.SimpleCookingRecipeBuilder;
 import net.minecraft.tags.ItemTags;
 import net.minecraft.world.item.Items;
+import net.minecraft.world.item.crafting.Ingredient;
 import net.minecraft.world.level.ItemLike;
 
 /**
@@ -57,6 +59,12 @@ public final class GridRecipes extends RecipeProvider {
         // материалы и расходники
         ShapelessRecipeBuilder.shapeless(RecipeCategory.MISC, wire, 3).requires(Items.COPPER_INGOT)
                 .unlockedBy("has_copper", has(Items.COPPER_INGOT)).save(out, id("copper_wire"));
+        // медь из халькопирита: упрощённо плавка концентрата в штейн и черновую медь сведена к печи
+        SimpleCookingRecipeBuilder.smelting(Ingredient.of(PcItems.RAW_CHALCOPYRITE.get()), RecipeCategory.MISC, Items.COPPER_INGOT, 0.7f, 200)
+                .unlockedBy("has_chalcopyrite", has(PcItems.RAW_CHALCOPYRITE.get())).save(out, id("copper_ingot_from_chalcopyrite"));
+        SimpleCookingRecipeBuilder.blasting(Ingredient.of(PcItems.RAW_CHALCOPYRITE.get()), RecipeCategory.MISC, Items.COPPER_INGOT, 0.7f, 100)
+                .unlockedBy("has_chalcopyrite", has(PcItems.RAW_CHALCOPYRITE.get()))
+                .save(out, id("copper_ingot_from_chalcopyrite_blasting"));
         ShapedRecipeBuilder.shaped(RecipeCategory.MISC, pin, 2).pattern("G").pattern("N")
                 .define('G', Items.GLASS).define('N', Items.IRON_NUGGET)
                 .unlockedBy("has_wire", hasWire).save(out, id("insulator_pin"));

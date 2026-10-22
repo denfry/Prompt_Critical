@@ -67,6 +67,7 @@ public final class PcClient {
     /** Плейсхолдер-модели не задают {@code render_type}; решётки, стекло и сетка клети требуют cutout. */
     @SuppressWarnings("deprecation")
     private static void clientSetup(FMLClientSetupEvent event) {
+        net.createmod.ponder.foundation.PonderIndex.addPlugin(new dev.denfry.promptcritical.mod.content.client.PcPonderPlugin());
         event.enqueueWork(() -> {
             for (var b : PcBlocks.withItems()) {
                 if (!PcBlocks.oreDrops().containsKey(b)) ItemBlockRenderTypes.setRenderLayer(b.get(), RenderType.cutout());

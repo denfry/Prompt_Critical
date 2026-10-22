@@ -526,6 +526,29 @@ public final class PcBlocks {
     public static final DeferredBlock<DecorBlock> CURB = decor("curb", Properties.of().mapColor(MapColor.STONE)
             .requiresCorrectToolForDrops().strength(1.5f, 6.0f), Spec.facing(), 0, 0, 5, 16, 6, 11);
 
+    // --- декор I1 (11 §11.6.2): линолеум щита управления, подвесной потолок, кабельные лотки, таблички ---
+    public static final DeferredBlock<PcBlock> LINOLEUM_CONTROL = decorCube("linoleum_control", MapColor.COLOR_GRAY, true);
+    public static final DeferredBlock<PcBlock> LINOLEUM_CONTROL_BEIGE = decorCube("linoleum_control_beige", MapColor.SAND, true);
+    public static final DeferredBlock<PcBlock> LINOLEUM_CONTROL_PARQUET = decorCube("linoleum_control_parquet", MapColor.WOOD, true);
+    public static final DeferredBlock<PcBlock> CEILING_TILE = decorCube("ceiling_tile", MapColor.SNOW, true);
+    /** Светящаяся панель подвесного потолка: горит всегда, висит под перекрытием. */
+    public static final DeferredBlock<DecorBlock> CEILING_LIGHT_PANEL = decor("ceiling_light_panel", Properties.of()
+            .mapColor(MapColor.SNOW).strength(1.0f).sound(SoundType.METAL).noOcclusion().lightLevel(st -> 15), Spec.of(),
+            0, 14.5, 0, 16, 16, 16);
+    public static final DeferredBlock<DecorBlock> CABLE_TRAY = decor("cable_tray", sheet(MapColor.METAL), Spec.facing(), 3, 0, 0, 13, 3, 16);
+    public static final DeferredBlock<DecorBlock> CABLE_TRAY_CABLES = decor("cable_tray_cables", sheet(MapColor.METAL), Spec.facing(),
+            3, 0, 0, 13, 3, 16);
+    public static final DeferredBlock<DecorBlock> CABLE_TRAY_CORNER = decor("cable_tray_corner", sheet(MapColor.METAL), Spec.facing(),
+            3, 0, 0, 16, 3, 13);
+    public static final DeferredBlock<DecorBlock> CABLE_TRAY_TEE = decor("cable_tray_tee", sheet(MapColor.METAL), Spec.facing(),
+            3, 0, 0, 16, 3, 16);
+    public static final DeferredBlock<DecorBlock> CABLE_TRAY_VERTICAL = decor("cable_tray_vertical", sheet(MapColor.METAL), Spec.facing(),
+            3, 0, 12.5, 13, 16, 16);
+    public static final DeferredBlock<DecorBlock> ROOM_SIGN_ELECTRICAL = decor("room_sign_electrical", plate(), Spec.facing(),
+            2, 5, 15.5, 14, 11, 16);
+    public static final DeferredBlock<DecorBlock> ROOM_SIGN_PUMP = decor("room_sign_pump", plate(), Spec.facing(), 2, 5, 15.5, 14, 11, 16);
+    public static final DeferredBlock<DecorBlock> ROOM_SIGN_CONTROL = decor("room_sign_control", plate(), Spec.facing(), 2, 5, 15.5, 14, 11, 16);
+
     /** Шахтная вода в выработках — затопление (08 §8.2.9); предмета нет. */
     public static final DeferredBlock<LiquidBlock> MINE_WATER = BLOCKS.registerBlock("mine_water",
             p -> new LiquidBlock(PcFluids.MINE_WATER.source.get(), p),

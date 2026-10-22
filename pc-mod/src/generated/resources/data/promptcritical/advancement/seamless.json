@@ -1,0 +1,33 @@
+{
+  "parent": "promptcritical:steel",
+  "criteria": {
+    "seamless_pipe": {
+      "conditions": {
+        "event": "promptcritical:seamless_pipe",
+        "station_member": true
+      },
+      "trigger": "promptcritical:sim_event"
+    }
+  },
+  "display": {
+    "description": {
+      "translate": "advancements.promptcritical.seamless.description"
+    },
+    "icon": {
+      "count": 1,
+      "id": "promptcritical:seamless_pipe"
+    },
+    "title": {
+      "translate": "advancements.promptcritical.seamless.title"
+    }
+  },
+  "requirements": [
+    [
+      "seamless_pipe"
+    ]
+  ],
+  "rewards": {
+    "experience": 40
+  },
+  "sends_telemetry_event": true
+}

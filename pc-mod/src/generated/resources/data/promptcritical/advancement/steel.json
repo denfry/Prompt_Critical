@@ -1,0 +1,34 @@
+{
+  "parent": "promptcritical:pig_iron",
+  "criteria": {
+    "steel_tapped": {
+      "conditions": {
+        "event": "promptcritical:steel_tapped",
+        "station_member": true
+      },
+      "trigger": "promptcritical:sim_event"
+    }
+  },
+  "display": {
+    "description": {
+      "translate": "advancements.promptcritical.steel.description"
+    },
+    "frame": "goal",
+    "icon": {
+      "count": 1,
+      "id": "promptcritical:steel_ingot"
+    },
+    "title": {
+      "translate": "advancements.promptcritical.steel.title"
+    }
+  },
+  "requirements": [
+    [
+      "steel_tapped"
+    ]
+  ],
+  "rewards": {
+    "experience": 60
+  },
+  "sends_telemetry_event": true
+}

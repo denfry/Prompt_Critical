@@ -33,7 +33,10 @@ public final class HandbookService {
     public static final Map<ResourceLocation, ResourceLocation> PROCEDURES = Map.of(
             PcBlocks.FIRE_TUBE_BOILER.getId(), PromptCritical.id("i0/procedure_boiler"),
             PcBlocks.MINE_HOIST.getId(), PromptCritical.id("i0/procedure_hoist"),
-            PcBlocks.MAIN_MINE_FAN.getId(), PromptCritical.id("i0/procedure_ventilation"));
+            PcBlocks.MAIN_MINE_FAN.getId(), PromptCritical.id("i0/procedure_ventilation"),
+            PcBlocks.COKE_OVEN.getId(), PromptCritical.id("i1/procedure_coke_battery"),
+            PcBlocks.BLAST_FURNACE_CONTROLLER.getId(), PromptCritical.id("i1/procedure_blast_furnace"),
+            PcBlocks.SHAFT_GENERATOR.getId(), PromptCritical.id("i1/procedure_generator"));
 
     private HandbookService() {
     }
@@ -59,10 +62,13 @@ public final class HandbookService {
         return true;
     }
 
-    /** Инструкция по эксплуатации установки {@code block}, если она у этой установки есть. */
+    /**
+     * Инструкция по эксплуатации установки {@code block}, если она у этой установки есть и её ещё нет в инвентаре
+     * (батарею собирают из десятков камер).
+     */
     public static void issueProcedure(ServerPlayer player, Block block) {
         ResourceLocation ref = PROCEDURES.get(BuiltInRegistries.BLOCK.getKey(block));
-        if (ref == null) return;
+        if (ref == null || player.getInventory().hasAnyMatching(s -> ref.equals(s.get(PcDataComponents.PROCEDURE_REF.get())))) return;
         player.addItem(procedure(ref, lang(player)));
     }
 

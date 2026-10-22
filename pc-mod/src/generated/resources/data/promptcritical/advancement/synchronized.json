@@ -1,0 +1,39 @@
+{
+  "parent": "promptcritical:first_steam",
+  "criteria": {
+    "sync_closed": {
+      "conditions": {
+        "event": "promptcritical:sync_closed",
+        "predicate": {
+          "ok": {
+            "max": 0.1
+          }
+        },
+        "station_member": true
+      },
+      "trigger": "promptcritical:sim_event"
+    }
+  },
+  "display": {
+    "description": {
+      "translate": "advancements.promptcritical.synchronized.description"
+    },
+    "frame": "goal",
+    "icon": {
+      "count": 1,
+      "id": "promptcritical:shaft_generator"
+    },
+    "title": {
+      "translate": "advancements.promptcritical.synchronized.title"
+    }
+  },
+  "requirements": [
+    [
+      "sync_closed"
+    ]
+  ],
+  "rewards": {
+    "experience": 50
+  },
+  "sends_telemetry_event": true
+}
