@@ -235,6 +235,17 @@ public final class PcLanguageProvider extends LanguageProvider {
         b("water_clarifier", "Lime Clarifier", "Осветлитель с известкованием");
         b("sand_filter", "Sand Filter", "Механический фильтр");
         b("ion_exchange_column", "Sodium Ion Exchange Column", "Na-катионитный фильтр");
+        // котёл I1 и деаэратор (этап 11б M3)
+        b("water_tube_boiler", "Water-Tube Boiler Panel (BMS)", "Щит водотрубного котла (BMS)");
+        b("boiler_wall", "Water Wall", "Экран топки");
+        b("boiler_burner", "Boiler Burner", "Горелка котла");
+        b("steam_drum", "Steam Drum", "Барабан котла");
+        b("boiler_superheater", "Superheater", "Пароперегреватель");
+        b("boiler_economizer", "Economizer", "Экономайзер");
+        b("air_preheater", "Air Preheater", "Воздухоподогреватель");
+        b("forced_draft_fan", "Forced Draft Fan", "Дутьевой вентилятор");
+        b("induced_draft_fan", "Induced Draft Fan", "Дымосос");
+        b("deaerator", "Deaerator", "Деаэратор");
         i("mechanic_stethoscope", "Mechanic's Stethoscope", "Слуховая трубка механика");
         i("torque_wrench", "Torque Wrench", "Динамометрический ключ");
         i("test_pressure_gauge", "Test Pressure Gauge", "Контрольный манометр");
@@ -249,6 +260,7 @@ public final class PcLanguageProvider extends LanguageProvider {
         i("chart_paper", "Chart Paper", "Диаграммная лента");
         i("recorded_chart", "Recorded Chart", "Записанная диаграмма");
         i("salt", "Salt", "Соль");
+        i("coal_dust", "Coal Dust", "Угольная пыль");
         i("steel_ingot", "Steel Ingot", "Стальной слиток");
         i("steel_billet", "Steel Billet", "Стальная заготовка");
         i("steel_plate", "Steel Plate", "Стальной лист");
@@ -277,6 +289,7 @@ public final class PcLanguageProvider extends LanguageProvider {
         FLUIDS.put("clarified_water", new String[] {"Clarified Water", "Осветлённая вода"});
         FLUIDS.put("filtered_water", new String[] {"Filtered Water", "Фильтрованная вода"});
         FLUIDS.put("softened_water", new String[] {"Softened Water", "Умягчённая вода"});
+        FLUIDS.put("boiler_feedwater", new String[] {"Boiler Feedwater", "Питательная вода"});
         MISC.put("block.promptcritical.mine_water", new String[] {"Mine Water", "Шахтная вода"});
 
         MISC.put("itemGroup." + PromptCritical.MOD_ID, new String[] {"Prompt Critical", "Prompt Critical"});
@@ -324,6 +337,7 @@ public final class PcLanguageProvider extends LanguageProvider {
         MISC.putAll(dev.denfry.promptcritical.mod.ironworks.IronworksText.LANG);
         MISC.putAll(dev.denfry.promptcritical.mod.steelworks.SteelworksText.LANG);
         MISC.putAll(dev.denfry.promptcritical.mod.ops.OpsText.LANG);
+        MISC.putAll(dev.denfry.promptcritical.mod.powerhouse.PowerhouseText.LANG);
         MISC.putAll(dev.denfry.promptcritical.mod.grid.GridText.LANG);
         MISC.putAll(dev.denfry.promptcritical.mod.automation.AutomationText.LANG);
         MISC.putAll(dev.denfry.promptcritical.mod.content.ContentText.LANG);

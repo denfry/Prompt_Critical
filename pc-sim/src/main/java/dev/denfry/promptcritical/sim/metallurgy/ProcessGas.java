@@ -38,6 +38,11 @@ public enum ProcessGas {
         return new Combustor(fuel, BurnerSpec.of(burner, nominalFuelKgS));
     }
 
+    /** Мольные доли компонентов по порядку {@link FuelGas}. */
+    public double[] composition() {
+        return composition(fluidId);
+    }
+
     /** Газ по id жидкости; {@code null} — не горючий газ завода. */
     public static ProcessGas byFluid(String fluidId) {
         for (ProcessGas g : values()) if (g.fluidId.equals(fluidId)) return g;

@@ -1,5 +1,7 @@
 package dev.denfry.promptcritical.sim.combustion;
 
+import dev.denfry.promptcritical.sim.core.StateReader;
+import dev.denfry.promptcritical.sim.core.StateWriter;
 import java.util.Arrays;
 import java.util.Objects;
 
@@ -108,6 +110,72 @@ public final class BurnerManagementSystem {
 
     public void setFlameDetectorFault(int b, FlameDetectorFault f) {
         fault[b] = Objects.requireNonNull(f, "fault");
+    }
+
+    public boolean flameDetectorBypass(int b) {
+        return bypass[b];
+    }
+
+    public FlameDetectorFault flameDetectorFault(int b) {
+        return fault[b];
+    }
+
+    /** Время в текущем состоянии котла (окно запальника, пост-продувка), с. */
+    public double stateTimerS() {
+        return timer;
+    }
+
+    public void save(StateWriter out) {
+        out.putInt("state", state.ordinal());
+        out.putInt("cause", lastCause == null ? -1 : lastCause.ordinal());
+        out.putDouble("timer", timer);
+        out.putDouble("purge_s", purgeS);
+        out.putDouble("purge_changes", purgeChanges);
+        out.putBoolean("fans", fansRunning);
+        int[] ph = new int[n], fl = new int[n];
+        byte[] by = new byte[n];
+        for (int b = 0; b < n; b++) {
+            ph[b] = phase[b].ordinal();
+            fl[b] = fault[b].ordinal();
+            by[b] = (byte) ((bypass[b] ? 1 : 0) | (seen[b] ? 2 : 0));
+        }
+        out.putInts("phase", ph, n);
+        out.putInts("fault", fl, n);
+        out.putBytes("flags", by, n);
+        out.putDoubles("phase_timer", phaseTimer, n);
+        out.putDoubles("valve", valve, n);
+    }
+
+    /** Загрузка; число горелок в сохранении может отличаться — лишние отбрасываются, недостающие выключены. */
+    public void load(StateReader in) {
+        state = BmsState.values()[in.getInt("state")];
+        int c = in.getInt("cause");
+        lastCause = c < 0 ? null : MftCause.values()[c];
+        timer = in.getDouble("timer");
+        purgeS = in.getDouble("purge_s");
+        purgeChanges = in.getDouble("purge_changes");
+        fansRunning = in.getBoolean("fans");
+        int[] ph = in.getInts("phase"), fl = in.getInts("fault");
+        byte[] by = in.getBytes("flags");
+        double[] pt = in.getDoubles("phase_timer"), va = in.getDoubles("valve");
+        for (int b = 0; b < n; b++) {
+            boolean has = b < ph.length;
+            phase[b] = has ? BurnerPhase.values()[ph[b]] : BurnerPhase.OFF;
+            fault[b] = has ? FlameDetectorFault.values()[fl[b]] : FlameDetectorFault.NONE;
+            bypass[b] = has && (by[b] & 1) != 0;
+            seen[b] = has && (by[b] & 2) != 0;
+            phaseTimer[b] = has ? pt[b] : 0;
+            valve[b] = has ? va[b] : 0;
+        }
+    }
+
+    /** Продувка засчитана без 300 с ожидания — для тестов и отладки: из {@code OFF} сразу {@code PURGE_COMPLETE}. */
+    public void presetPurged() {
+        if (state != BmsState.OFF) return;
+        purgeS = PURGE_MIN_S;
+        purgeChanges = PURGE_MIN_VOLUME_CHANGES;
+        timer = 0;
+        setState(BmsState.PURGE_COMPLETE);
     }
 
     // --- команды оператора ---

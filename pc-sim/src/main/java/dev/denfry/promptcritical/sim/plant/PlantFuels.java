@@ -26,6 +26,8 @@ public final class PlantFuels {
     public static final String CHARCOAL = "charcoal";
     /** Дрова воздушной сушки. */
     public static final String WOOD = "wood";
+    /** Угольная пыль котла I1 (помол и сушка ванильного угля): Г, A^d 21 %, W 1,5 %. */
+    public static final String COAL_DUST = "coal_dust";
 
     private static final Map<String, FuelSpec> FUELS = Map.of(
             COAL, CoalAssay.typical(0.37, 0.213, 0.06, 0.016, 10).toFuel(),
@@ -33,7 +35,8 @@ public final class PlantFuels {
             WASHED_COAL, CoalAssay.typical(0.37, 0.09, 0.09, 0.012, 10).toFuel(),
             MIDDLINGS, CoalAssay.typical(0.37, 0.40, 0.08, 0.025, 10).toFuel(),
             CHARCOAL, FuelSpec.ofElemental(CHARCOAL, FuelPhase.SOLID, 0.84, 0.03, 0.06, 0.005, 0, 0.025, 0.04, 0, 0.1),
-            WOOD, FuelSpec.ofElemental(WOOD, FuelPhase.SOLID, 0.40, 0.048, 0.337, 0.003, 0, 0.012, 0.20, 0, 0.1));
+            WOOD, FuelSpec.ofElemental(WOOD, FuelPhase.SOLID, 0.40, 0.048, 0.337, 0.003, 0, 0.012, 0.20, 0, 0.1),
+            COAL_DUST, CoalAssay.typical(0.37, 0.213, 0.015, 0.016, 10).toFuel());
 
     private static final String ASSAY_PREFIX = "coal_assay:";
     private static final Map<String, FuelSpec> ASSAYED = new HashMap<>();

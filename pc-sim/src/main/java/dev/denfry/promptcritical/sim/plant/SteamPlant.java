@@ -2,7 +2,11 @@ package dev.denfry.promptcritical.sim.plant;
 
 import dev.denfry.promptcritical.sim.combustion.BoilerExplosion;
 import dev.denfry.promptcritical.sim.combustion.BoilerInputs;
+import dev.denfry.promptcritical.sim.combustion.BmsResponse;
+import dev.denfry.promptcritical.sim.combustion.BmsState;
 import dev.denfry.promptcritical.sim.combustion.BoilerRupture;
+import dev.denfry.promptcritical.sim.combustion.BurnerKind;
+import dev.denfry.promptcritical.sim.combustion.BurnerManagementSystem;
 import dev.denfry.promptcritical.sim.combustion.FireTubeBoiler;
 import dev.denfry.promptcritical.sim.combustion.FireTubeBoilerSpec;
 import dev.denfry.promptcritical.sim.combustion.FlyballGovernor;
@@ -68,6 +72,13 @@ public final class SteamPlant implements Subsystem {
     /** Высота газохода котла без звеньев трубы над решёткой, м; звено {@code chimney} — 1 м. */
     public static final double UPTAKE_HEIGHT_M = 3;
     /** Действия {@link SimCommand.Operate}. */
+    /**
+     * Команды BMS котла I1 (07 §7.9.6): продувка, запальник следующей горелки, основное топливо на горелки с
+     * запальником, останов, байпас датчиков пламени ключом. Отказ BMS — {@code REJECTED} ({@code E_INTERLOCK}),
+     * причина — {@link #lastBmsResponse}.
+     */
+    public static final String BMS_PURGE = "bms_purge", BMS_IGNITER = "bms_igniter", BMS_MAIN_FUEL = "bms_main_fuel",
+            BMS_SHUTDOWN = "bms_shutdown", BMS_TOGGLE_BYPASS = "bms_toggle_bypass";
     public static final String IGNITE = "ignite", FIT_FUSIBLE_PLUG = "fit_fusible_plug",
             FIT_GOVERNOR_DASHPOT = "fit_governor_dashpot", DRAIN = "drain", TOGGLE_STOP_VALVE = "toggle_stop_valve", BAR_OVER = "bar_over";
     /**
@@ -102,8 +113,10 @@ public final class SteamPlant implements Subsystem {
     /** Радиус тяжёлых разрушений Z = 4,5 м/кг^⅓ (ΔP ≈ 50 кПа, Кингери — Булмаш). */
     private static final double DAMAGE_SCALED_DISTANCE = 4.5;
     // роли в id узлов и связей: серийный номер устройства << 3 | роль
-    private static final int DRUM = 0, AIR = 1, CHEST = 2;
-    private static final int RELIEF = 0, PLUG = 1, THROTTLE = 2;
+    private static final int DRUM = 0, AIR = 1, CHEST = 2, SUPERHEATER = 3;
+    private static final int RELIEF = 0, PLUG = 1, THROTTLE = 2, SUPERHEAT = 3;
+    /** Пароперегреватель котла I1: коллектор 0,5 м³ над барабаном, связь от барабана ∅ 113 мм. */
+    private static final double SH_VOLUME = 0.5, SH_LINK_AREA = 0.01;
 
     private final WaterProperties water = WaterProperties.tables();
     private final FluidNetwork net;
@@ -112,10 +125,26 @@ public final class SteamPlant implements Subsystem {
     private final NavigableMap<SimId, BoilerUnit> boilers = new TreeMap<>();
     private final NavigableMap<SimId, EngineUnit> engines = new TreeMap<>();
     private final Map<Long, BoilerUnit> reliefLinks = new HashMap<>();
+    private final NavigableMap<SimId, WaterTubeUnit> waterTubes = new TreeMap<>();
+    private final Map<Long, WaterTubeUnit> wtReliefLinks = new HashMap<>();
+    private final Map<SimId, BmsResponse> bmsResponses = new HashMap<>();
     private final Map<Long, Double> savedFlows = new HashMap<>();
+    private final WaterTubeUnit.WaterPackageView waterView = new WaterTubeUnit.WaterPackageView() {
+        @Override
+        public double liquidEnthalpy(double pressurePa, double tempK) {
+            return water.enthalpyPT(pressurePa, tempK);
+        }
+
+        @Override
+        public double vaporEnthalpy(double pressurePa) {
+            return water.saturationP(pressurePa).hG();
+        }
+    };
     private BoilerUnit[] boilerArr = new BoilerUnit[0];
+    private WaterTubeUnit[] wtArr = new WaterTubeUnit[0];
     private EngineUnit[] engineArr = new EngineUnit[0];
     private BoilerUnit[] engineBoiler = new BoilerUnit[0];
+    private WaterTubeUnit[] engineWt = new WaterTubeUnit[0];
     private SteamPlantConfig config;
     private boolean dirty;
     private long nextDamageRequest = 1;
@@ -130,9 +159,15 @@ public final class SteamPlant implements Subsystem {
             @Override
             public void reliefLift(long linkId, boolean open) {
                 BoilerUnit u = reliefLinks.get(linkId);
-                if (u == null) return;
-                u.reliefOpen = open;
-                if (open) u.reliefLifts++;
+                if (u != null) {
+                    u.reliefOpen = open;
+                    if (open) u.reliefLifts++;
+                }
+                WaterTubeUnit w = wtReliefLinks.get(linkId);
+                if (w != null) {
+                    w.reliefOpen = open;
+                    if (open) w.reliefLifts++;
+                }
             }
         });
     }
@@ -165,6 +200,54 @@ public final class SteamPlant implements Subsystem {
         return u;
     }
 
+    /**
+     * Водотрубный котёл I1 устройства {@code id} под конструкцию мира. Новый — холодный и пустой, как котёл I0.
+     * Существующий с другой конструкцией перестраивается только остановленным (BMS {@code OFF}): иначе вызов
+     * ничего не меняет и биндинг повторит его позже.
+     *
+     * @param kind         тип горелок (по топливу, {@link WaterTubeUnit#burnerKind})
+     * @param volumeM3     объём топки, м³
+     * @param wallAreaM2   площадь экранов, м²
+     * @param superheaters блоков пароперегревателя; так же экономайзера и воздухоподогревателя
+     * @param fuelKey      топливо ({@link WaterTubeUnit#fuelSpec})
+     */
+    public WaterTubeUnit addWaterTubeBoiler(SimId id, BurnerKind kind, int burners, double volumeM3, double wallAreaM2,
+            int superheaters, int economizers, int airPreheaters, String fuelKey, double ambientK) {
+        WaterTubeUnit u = waterTubes.get(id);
+        if (u == null) {
+            u = new WaterTubeUnit(id, kind, burners, volumeM3, wallAreaM2, superheaters, economizers, airPreheaters,
+                    fuelKey, ambientK);
+            u.in.ambientK = ambientK;
+            u.initPressure = water.saturationPressure(ambientK);
+            u.initEnthalpy = water.saturationP(u.initPressure).hG();
+            waterTubes.put(id, u);
+            dirty = true;
+            return u;
+        }
+        var sp = u.spec();
+        boolean same = sp.burnerKind() == kind && sp.burners() == burners && sp.furnaceVolumeM3() == volumeM3
+                && sp.furnaceWallAreaM2() == wallAreaM2 && u.superheaterBlocks == superheaters
+                && u.economizerBlocks == economizers && u.airPreheaterBlocks == airPreheaters && u.fuelKey.equals(fuelKey);
+        if (same || u.bms() != BmsState.OFF) return u;
+        boolean resize = WaterTubeUnit.drumArea(volumeM3) != u.drumArea();
+        u.configure(kind, burners, volumeM3, wallAreaM2, superheaters, economizers, airPreheaters, fuelKey, ambientK);
+        if (resize) dirty = true;
+        return u;
+    }
+
+    public WaterTubeUnit waterTube(SimId id) {
+        return waterTubes.get(id);
+    }
+
+    public int waterTubeCount() {
+        return waterTubes.size();
+    }
+
+    /** Ответ BMS на последнюю команду котлу I1; null — команд не было. */
+    public BmsResponse lastBmsResponse(SimId boiler) {
+        return bmsResponses.get(boiler);
+    }
+
     public EngineUnit addEngine(SimId id) {
         EngineUnit e = engines.get(id);
         if (e != null) return e;
@@ -178,7 +261,7 @@ public final class SteamPlant implements Subsystem {
     public void connect(SimId engine, SimId boiler) {
         EngineUnit e = engines.get(engine);
         if (e == null) throw new IllegalArgumentException("no engine " + engine.hex());
-        SimId b = boilers.containsKey(boiler) ? boiler : SimId.NONE;
+        SimId b = boilers.containsKey(boiler) || waterTubes.containsKey(boiler) ? boiler : SimId.NONE;
         if (!b.equals(e.boiler)) {
             e.boiler = b;
             dirty = true;
@@ -203,8 +286,9 @@ public final class SteamPlant implements Subsystem {
 
     @Override
     public void onDeviceRemoved(SimId device) {
-        if (boilers.remove(device) != null) {
+        if (boilers.remove(device) != null || waterTubes.remove(device) != null) {
             for (EngineUnit e : engines.values()) if (e.boiler.equals(device)) e.boiler = SimId.NONE;
+            bmsResponses.remove(device);
             dirty = true;
         } else if (engines.remove(device) != null) {
             dirty = true;
@@ -221,12 +305,14 @@ public final class SteamPlant implements Subsystem {
         if (ctx.clock().due(TimeDomain.SLOW, SLOW_PHASE)) {
             double slowDt = ctx.clock().slowDtPhys();
             for (BoilerUnit u : boilerArr) u.boiler.stepSlow(slowDt, u.feedHardness);
+            for (WaterTubeUnit u : wtArr) u.boiler.stepSlow(slowDt, u.feedHardness, u.feedO2, u.feedChloride);
         }
         boolean sample = ctx.tick() % SAMPLE_TICKS == 0;
         for (BoilerUnit u : boilerArr) stepBoiler(ctx, u, dt);
+        for (WaterTubeUnit u : wtArr) u.step(dt, waterView);
         for (int i = 0; i < engineArr.length; i++) {
             EngineUnit e = engineArr[i];
-            stepEngine(e, engineBoiler[i], dt);
+            stepEngine(e, engineBoiler[i], engineWt[i], dt);
             double pu = e.unit.omega() / e.unit.nominalOmega();
             if (!e.running && pu >= 0.2) {
                 e.running = true;
@@ -236,12 +322,33 @@ public final class SteamPlant implements Subsystem {
             }
             if (sample) ctx.events().milestone(ctx.tick(), e.id, ENGINE_STATE, "omega_pu", pu);
         }
-        if (boilerArr.length > 0) net.stepFast(dt);
+        if (boilerArr.length > 0 || wtArr.length > 0) net.stepFast(dt);
         for (BoilerUnit u : boilerArr) {
             if (u.boiler.rupture() != BoilerRupture.NONE && !u.exploded) explode(ctx, u);
             if (sample && !u.exploded && u.drum != null)
                 ctx.events().milestone(ctx.tick(), u.id, BOILER_STATE, "drum_pressure_mpa", u.drum.pressure() / 1e6);
         }
+        for (WaterTubeUnit u : wtArr) {
+            for (WaterTubeUnit.Note n : u.notes)
+                ctx.events().journal(ctx.tick(), u.id, n.critical() ? Severity.CRITICAL : Severity.INFO, n.text());
+            u.notes.clear();
+            if (u.boiler.rupture() != BoilerRupture.NONE && !u.exploded) furnaceExplosion(ctx, u);
+            if (sample && !u.exploded)
+                ctx.events().milestone(ctx.tick(), u.id, BOILER_STATE, "drum_pressure_mpa", u.drum.pressure() / 1e6);
+        }
+    }
+
+    /** Взрыв топки котла I1: {@code DamageRequest(BLAST)} с энергией облака E = m·Q_н·f_blast. */
+    private void furnaceExplosion(FastContext ctx, WaterTubeUnit u) {
+        u.exploded = true;
+        double energy = u.boiler.explosionEnergyJ();
+        DamageBudget budget = ctx.service(DamageBudget.class);
+        if (budget == null || !(energy > 0) || !ctx.topology().exists(u.id)) return;
+        GridPos origin = ctx.topology().devicePos(u.id);
+        double radius = DAMAGE_SCALED_DISTANCE * Math.cbrt(BlastScaling.tntEquivalentKg(energy));
+        long req = nextDamageRequest++;
+        DamageGrant g = budget.submit(new DamageRequest(req, u.id, null, DamageKind.BLAST, origin, energy, radius, 0));
+        ctx.events().damageRequested(ctx.tick(), u.id, req, g.blocksGranted(), g.blocksDenied());
     }
 
     private void stepBoiler(FastContext ctx, BoilerUnit u, double dt) {
@@ -292,7 +399,7 @@ public final class SteamPlant implements Subsystem {
                 ? boilerSpec.crownHeightM() + LOW_LEVEL_ABOVE_CROWN_M : boilerSpec.normalLevelM();
     }
 
-    private void stepEngine(EngineUnit e, BoilerUnit b, double dt) {
+    private void stepEngine(EngineUnit e, BoilerUnit b, WaterTubeUnit w, double dt) {
         SteamEngineUnit m = e.unit;
         double tau = e.loadPowerW / Math.max(m.omega(), 0.2 * m.nominalOmega());
         if (e.chest == null) {
@@ -304,10 +411,12 @@ public final class SteamPlant implements Subsystem {
         m.step(dt, chest.pressure(), chest.density(), EXHAUST_PA, tau);
         if (e.seized) m.shaft().setOmega(0);
         chest.addSource(-m.steamFlowKgS(), 0);
-        e.throttle.setValvePosition(e.stopValveOpen && !b.exploded ? m.throttle() : 0);
+        boolean dead = b != null ? b.exploded : w.exploded;
+        double supply = b != null ? b.drum.pressure() : w.superheater.pressure();
+        e.throttle.setValvePosition(e.stopValveOpen && !dead ? m.throttle() : 0);
         SteamEngineUnit.Spec s = m.spec();
-        double pi = m.engine().indicatedPowerW(b.drum.pressure(), EXHAUST_PA, m.cutoff(), s.nominalRevPerS());
-        e.capacityW = e.stopValveOpen && !b.exploded ? s.mechanicalEfficiency() * Math.max(0, pi) : 0;
+        double pi = m.engine().indicatedPowerW(supply, EXHAUST_PA, m.cutoff(), s.nominalRevPerS());
+        e.capacityW = e.stopValveOpen && !dead ? s.mechanicalEfficiency() * Math.max(0, pi) : 0;
     }
 
     private void explode(FastContext ctx, BoilerUnit u) {
@@ -352,6 +461,8 @@ public final class SteamPlant implements Subsystem {
     }
 
     private CommandStatus operate(SimCommand.Operate o) {
+        WaterTubeUnit w = waterTubes.get(o.target());
+        if (w != null) return operateWaterTube(w, o.action());
         BoilerUnit u = boilers.get(o.target());
         if (u != null) {
             return switch (o.action()) {
@@ -395,6 +506,47 @@ public final class SteamPlant implements Subsystem {
         };
     }
 
+    private CommandStatus operateWaterTube(WaterTubeUnit w, String action) {
+        BurnerManagementSystem bms = w.boiler.bmsControl();
+        BmsResponse r;
+        switch (action) {
+            case BMS_PURGE -> r = bms.requestPurge();
+            case BMS_IGNITER -> {
+                // запальник первой горелки без факела; в RUNNING — следующей
+                r = BmsResponse.INTERLOCK_STATE;
+                for (int b = 0; b < bms.burners(); b++) {
+                    if (bms.burnerPhase(b) != BurnerManagementSystem.BurnerPhase.OFF) continue;
+                    r = bms.requestIgniter(b);
+                    break;
+                }
+            }
+            case BMS_MAIN_FUEL -> {
+                // основное топливо на все горелки с запальником
+                r = null;
+                for (int b = 0; b < bms.burners(); b++) {
+                    if (bms.burnerPhase(b) != BurnerManagementSystem.BurnerPhase.IGNITER_ON) continue;
+                    BmsResponse x = bms.requestMainFuel(b);
+                    if (r == null || x.accepted()) r = x;
+                }
+                if (r == null) r = bms.requestMainFuel(0);
+            }
+            case BMS_SHUTDOWN -> {
+                bms.requestShutdown();
+                r = BmsResponse.ACCEPTED;
+            }
+            case BMS_TOGGLE_BYPASS -> {
+                boolean on = !bms.flameDetectorBypass(0);
+                for (int b = 0; b < bms.burners(); b++) bms.setFlameDetectorBypass(b, on);
+                r = BmsResponse.ACCEPTED;
+            }
+            default -> {
+                return CommandStatus.REJECTED;
+            }
+        }
+        bmsResponses.put(w.id, r);
+        return r.accepted() ? CommandStatus.OK : CommandStatus.REJECTED;
+    }
+
     @Override
     public void onConfigReload(SimConfig cfg) {
         config = cfg.section(SteamPlantConfig.class, config);
@@ -403,6 +555,7 @@ public final class SteamPlant implements Subsystem {
     @Override
     public void resetToSafeState() {
         for (BoilerUnit u : boilers.values()) u.boiler.extinguish();
+        for (WaterTubeUnit u : waterTubes.values()) u.boiler.bmsControl().requestShutdown();
     }
 
     // --- сеть ---
@@ -432,19 +585,43 @@ public final class SteamPlant implements Subsystem {
                     ValveModel.Spec.control(ValveModel.Characteristic.LINEAR, 1, 0)));
             reliefLinks.put(relief, u);
         }
+        wtReliefLinks.clear();
+        double drumH = WaterTubeUnit.DRUM_HEIGHT_M;
+        for (WaterTubeUnit u : waterTubes.values()) {
+            long d = nodeId(u.id, DRUM), a = nodeId(u.id, AIR), sh = nodeId(u.id, SUPERHEATER);
+            nodes.add(FluidNodeSpec.separated(d, 0, drumH, u.drumArea()));
+            nodes.add(FluidNodeSpec.hem(sh, SH_VOLUME, drumH + 0.5, 1));
+            nodes.add(FluidNodeSpec.boundary(a, drumH + 2));
+            if (!Double.isNaN(u.initPressure)) init.put(d, new double[] {u.initPressure, u.initEnthalpy});
+            if (!Double.isNaN(u.initShPressure)) {
+                init.put(sh, new double[] {u.initShPressure, u.initShEnthalpy});
+            } else if (!Double.isNaN(u.initPressure)) {
+                init.put(sh, new double[] {u.initPressure, water.saturationP(u.initPressure).hG()});
+            }
+            init.put(a, new double[] {ATMOSPHERE_PA, hAir});
+            long relief = nodeId(u.id, RELIEF);
+            links.add(link(relief, LinkKind.VALVE_RELIEF, d, a, WaterTubeUnit.RELIEF_AREA_M2, 1, drumH - 0.05, drumH + 2,
+                    ValveModel.Spec.relief(u.reliefLiftPa(), 1)));
+            links.add(link(nodeId(u.id, SUPERHEAT), LinkKind.VALVE_CONTROL, d, sh, SH_LINK_AREA, 2, drumH - 0.05,
+                    drumH + 0.5, ValveModel.Spec.control(ValveModel.Characteristic.LINEAR, 2, 0)));
+            wtReliefLinks.put(relief, u);
+        }
         List<EngineUnit> linked = new ArrayList<>();
         for (EngineUnit e : engines.values()) {
             BoilerUnit b = boilers.get(e.boiler);
-            if (b == null) continue;
+            WaterTubeUnit w = waterTubes.get(e.boiler);
+            if (b == null && w == null) continue;
             long c = nodeId(e.id, CHEST);
             nodes.add(FluidNodeSpec.hem(c, CHEST_VOLUME, 2, 0.5));
             if (!Double.isNaN(e.initPressure)) {
                 init.put(c, new double[] {e.initPressure, e.initEnthalpy});
             } else {
-                double pb = b.drum != null ? b.drum.pressure() : b.initPressure;
+                double pb = b != null ? (b.drum != null ? b.drum.pressure() : b.initPressure)
+                        : w.superheater != null ? w.superheater.pressure() : w.initPressure;
                 init.put(c, new double[] {pb, water.saturationP(pb).hG()});
             }
-            links.add(link(nodeId(e.id, THROTTLE), LinkKind.VALVE_CONTROL, nodeId(b.id, DRUM), c, throttleArea, 0, top,
+            long src = b != null ? nodeId(b.id, DRUM) : nodeId(w.id, SUPERHEATER);
+            links.add(link(nodeId(e.id, THROTTLE), LinkKind.VALVE_CONTROL, src, c, throttleArea, 0, top,
                     2.25, ValveModel.Spec.control(ValveModel.Characteristic.EQUAL_PERCENTAGE,
                             SteamEngineUnit.THROTTLE_ZETA, 0)));
             linked.add(e);
@@ -477,14 +654,27 @@ public final class SteamPlant implements Subsystem {
             u.engines = byBoiler.getOrDefault(u.id, List.of()).toArray(new EngineUnit[0]);
             u.initPressure = u.initEnthalpy = Double.NaN;
         }
+        wtArr = waterTubes.values().toArray(new WaterTubeUnit[0]);
+        for (WaterTubeUnit u : wtArr) {
+            u.drum = net.node(nodeId(u.id, DRUM));
+            u.superheater = net.node(nodeId(u.id, SUPERHEATER));
+            u.relief = net.link(nodeId(u.id, RELIEF));
+            u.superheatLink = net.link(nodeId(u.id, SUPERHEAT));
+            u.superheatLink.setValvePosition(1);
+            u.initPressure = u.initEnthalpy = u.initShPressure = u.initShEnthalpy = Double.NaN;
+        }
         engineArr = engines.values().toArray(new EngineUnit[0]);
         engineBoiler = new BoilerUnit[engineArr.length];
+        engineWt = new WaterTubeUnit[engineArr.length];
         for (int i = 0; i < engineArr.length; i++) {
             EngineUnit e = engineArr[i];
             BoilerUnit b = boilers.get(e.boiler);
+            WaterTubeUnit w = b == null ? waterTubes.get(e.boiler) : null;
             engineBoiler[i] = b;
-            e.chest = b != null ? net.node(nodeId(e.id, CHEST)) : null;
-            e.throttle = b != null ? net.link(nodeId(e.id, THROTTLE)) : null;
+            engineWt[i] = w;
+            boolean on = b != null || w != null;
+            e.chest = on ? net.node(nodeId(e.id, CHEST)) : null;
+            e.throttle = on ? net.link(nodeId(e.id, THROTTLE)) : null;
             e.initPressure = e.initEnthalpy = Double.NaN;
         }
         dirty = false;
@@ -525,6 +715,20 @@ public final class SteamPlant implements Subsystem {
             out.putDouble("h", u.drum != null ? u.drum.enthalpy() : u.initEnthalpy);
             out.putDouble("relief_flow", flow(u.relief, nodeId(u.id, RELIEF)));
             out.putDouble("plug_flow", flow(u.plug, nodeId(u.id, PLUG)));
+            out.endObject();
+        }
+        out.putInt("water_tubes", waterTubes.size());
+        i = 0;
+        for (WaterTubeUnit u : waterTubes.values()) {
+            out.beginObject("w" + i++);
+            out.putLong("id", u.id.raw());
+            u.save(out);
+            out.putDouble("p", u.drum != null ? u.drum.pressure() : u.initPressure);
+            out.putDouble("h", u.drum != null ? u.drum.enthalpy() : u.initEnthalpy);
+            out.putDouble("sh_p", u.superheater != null ? u.superheater.pressure() : u.initShPressure);
+            out.putDouble("sh_h", u.superheater != null ? u.superheater.enthalpy() : u.initShEnthalpy);
+            out.putDouble("relief_flow", flow(u.relief, nodeId(u.id, RELIEF)));
+            out.putDouble("sh_flow", flow(u.superheatLink, nodeId(u.id, SUPERHEAT)));
             out.endObject();
         }
         out.putInt("engines", engines.size());
@@ -590,6 +794,25 @@ public final class SteamPlant implements Subsystem {
             in.endObject();
             boilers.put(id, u);
         }
+        waterTubes.clear();
+        int nw = in.optInt("water_tubes", 0);
+        for (int i = 0; i < nw; i++) {
+            in.beginObject("w" + i);
+            SimId id = new SimId(in.getLong("id"));
+            WaterTubeUnit u = WaterTubeUnit.load(id, in);
+            u.initPressure = in.getDouble("p");
+            u.initEnthalpy = in.getDouble("h");
+            u.initShPressure = in.getDouble("sh_p");
+            u.initShEnthalpy = in.getDouble("sh_h");
+            if (Double.isNaN(u.initShPressure) && !Double.isNaN(u.initPressure)) {
+                u.initShPressure = u.initPressure;
+                u.initShEnthalpy = water.saturationP(u.initPressure).hG();
+            }
+            savedFlows.put(nodeId(id, RELIEF), in.getDouble("relief_flow"));
+            savedFlows.put(nodeId(id, SUPERHEAT), in.getDouble("sh_flow"));
+            in.endObject();
+            waterTubes.put(id, u);
+        }
         int ne = in.getInt("engines");
         for (int i = 0; i < ne; i++) {
             in.beginObject("e" + i);
@@ -609,6 +832,39 @@ public final class SteamPlant implements Subsystem {
             engines.put(e.id, e);
         }
         dirty = true;
+    }
+
+    /**
+     * Котёл I1 для тестов и отладки: барабан при давлении {@code pressurePa} с уровнем {@code levelM} от низа,
+     * пароперегреватель — насыщенным паром того же давления, топка и стены прогреты до насыщения.
+     */
+    public void presetWaterTube(SimId boiler, double pressurePa, double levelM) {
+        WaterTubeUnit u = waterTubes.get(boiler);
+        if (u == null) throw new IllegalArgumentException("no water-tube boiler " + boiler.hex());
+        var s = water.saturationP(pressurePa);
+        double area = u.drumArea(), h = WaterTubeUnit.DRUM_HEIGHT_M;
+        double vl = Math.min(levelM, h) * area, vg = h * area - vl;
+        double mf = vl / s.vF(), mg = vg / s.vG();
+        waterTubes.remove(boiler);
+        List<EngineUnit> detached = new ArrayList<>();
+        for (EngineUnit e : engines.values()) {
+            if (e.boiler.equals(boiler)) {
+                detached.add(e);
+                e.boiler = SimId.NONE;
+            }
+        }
+        rebuild();
+        waterTubes.put(boiler, u);
+        for (EngineUnit e : detached) {
+            e.boiler = boiler;
+            e.initPressure = pressurePa;
+            e.initEnthalpy = s.hG();
+        }
+        u.initPressure = pressurePa;
+        u.initEnthalpy = s.hF() + mg / (mf + mg) * (s.hG() - s.hF());
+        u.initShPressure = pressurePa;
+        u.initShEnthalpy = s.hG();
+        rebuild();
     }
 
     /** Котёл для тестов и отладки: состояние воды задаётся до ближайшей пересборки сети. */

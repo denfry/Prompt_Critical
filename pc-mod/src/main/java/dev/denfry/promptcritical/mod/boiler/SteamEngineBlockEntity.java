@@ -218,8 +218,15 @@ public class SteamEngineBlockEntity extends DeviceBlockEntity implements Pressur
         Footprint fp = PcBlocks.FP_ENGINE;
         for (Footprint.Cell c : fp.cells(worldPosition, facing())) {
             for (Direction d : Direction.values()) {
-                FireTubeBoilerBlockEntity boiler = FireTubeBoilerBlockEntity.at(level, c.pos().relative(d));
+                var n = c.pos().relative(d);
+                FireTubeBoilerBlockEntity boiler = FireTubeBoilerBlockEntity.at(level, n);
                 if (boiler != null && !boiler.simId().isNone()) return boiler.simId();
+                // котёл I1: машина касается барабана, экрана или щита
+                var s = level.getBlockState(n);
+                if (s.is(PcBlocks.STEAM_DRUM.get()) || s.is(PcBlocks.BOILER_WALL.get()) || s.is(PcBlocks.WATER_TUBE_BOILER.get())) {
+                    var wt = dev.denfry.promptcritical.mod.powerhouse.WaterTubeBoilerBlockEntity.of(level, n);
+                    if (wt != null && wt.shape() != null && !wt.simId().isNone()) return wt.simId();
+                }
             }
         }
         return SimId.NONE;

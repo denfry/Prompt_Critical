@@ -1,5 +1,7 @@
 package dev.denfry.promptcritical.sim.combustion;
 
+import dev.denfry.promptcritical.sim.core.StateReader;
+import dev.denfry.promptcritical.sim.core.StateWriter;
 import java.util.Objects;
 
 /**
@@ -68,13 +70,13 @@ public final class WaterTubeBoiler implements Boiler {
     private final BoilerEvents events;
     private final BurnerManagementSystem bms;
     private final double designFluegasKgS, blowoutAlpha;
-    private final boolean[] igniterFlame, mainFlame, igniterFault, disturbed;
+    private final boolean[] igniterFlame, mainFlame, igniterFault, disturbed, sparkCmd;
     private final double[] burnerFuel, igniterFuel;
     private double airPreheatK, refractoryK, gasK, accumulatedKg;
     private double scaleM, wallM, creepDamage, lastFluxWm2, lastMetalK, lastPressurePa;
     private boolean tubeLeak;
     private BoilerRupture rupture = BoilerRupture.NONE;
-    private double explosionJ;
+    private double explosionJ, admittedKgS;
 
     /**
      * @param fuel         топливо горелок
@@ -97,6 +99,7 @@ public final class WaterTubeBoiler implements Boiler {
         mainFlame = new boolean[n];
         igniterFault = new boolean[n];
         disturbed = new boolean[n];
+        sparkCmd = new boolean[n];
         burnerFuel = new double[n];
         igniterFuel = new double[n];
         airPreheatK = refractoryK = gasK = initialTempK;
@@ -159,6 +162,11 @@ public final class WaterTubeBoiler implements Boiler {
         return accumulatedKg / spec.furnaceVolumeM3() * gasK / 293.15;
     }
 
+    /** Топливо, прошедшее отсечные клапаны и запальники за последний тик, кг/с (горит или копится в топке). */
+    public double admittedFuelKgS() {
+        return admittedKgS;
+    }
+
     public BoilerRupture rupture() {
         return rupture;
     }
@@ -202,6 +210,68 @@ public final class WaterTubeBoiler implements Boiler {
         tubeLeak = false;
     }
 
+    public void save(StateWriter out) {
+        out.beginObject("bms");
+        bms.save(out);
+        out.endObject();
+        int n = spec.burners();
+        byte[] f = new byte[n];
+        for (int b = 0; b < n; b++) f[b] = (byte) ((igniterFlame[b] ? 1 : 0) | (mainFlame[b] ? 2 : 0) | (igniterFault[b] ? 4 : 0));
+        out.putBytes("flames", f, n);
+        out.putDouble("air_preheat_k", airPreheatK);
+        out.putDouble("refractory_k", refractoryK);
+        out.putDouble("gas_k", gasK);
+        out.putDouble("accumulated_kg", accumulatedKg);
+        out.putDouble("scale_m", scaleM);
+        out.putDouble("wall_m", wallM);
+        out.putDouble("creep", creepDamage);
+        out.putDouble("flux", lastFluxWm2);
+        out.putDouble("metal_k", lastMetalK);
+        out.putDouble("pressure", lastPressurePa);
+        out.putBoolean("tube_leak", tubeLeak);
+        out.putInt("rupture", rupture.ordinal());
+        out.putDouble("explosion_j", explosionJ);
+    }
+
+    public void load(StateReader in) {
+        in.beginObject("bms");
+        bms.load(in);
+        in.endObject();
+        byte[] f = in.getBytes("flames");
+        for (int b = 0; b < spec.burners(); b++) {
+            byte v = b < f.length ? f[b] : 0;
+            igniterFlame[b] = (v & 1) != 0;
+            mainFlame[b] = (v & 2) != 0;
+            igniterFault[b] = (v & 4) != 0;
+        }
+        airPreheatK = in.getDouble("air_preheat_k");
+        refractoryK = in.getDouble("refractory_k");
+        gasK = in.getDouble("gas_k");
+        accumulatedKg = in.getDouble("accumulated_kg");
+        scaleM = in.getDouble("scale_m");
+        wallM = in.getDouble("wall_m");
+        creepDamage = in.getDouble("creep");
+        lastFluxWm2 = in.getDouble("flux");
+        lastMetalK = in.getDouble("metal_k");
+        lastPressurePa = in.getDouble("pressure");
+        tubeLeak = in.getBoolean("tube_leak");
+        rupture = BoilerRupture.values()[in.getInt("rupture")];
+        explosionJ = in.getDouble("explosion_j");
+    }
+
+    /** Перенос износа экранов (накипь, стенка, ползучесть, течь) и прогрева топки из прежнего котла (перестройка). */
+    public void inheritFrom(WaterTubeBoiler old) {
+        scaleM = old.scaleM;
+        wallM = Math.min(old.wallM, spec.screenWallM());
+        creepDamage = old.creepDamage;
+        tubeLeak = old.tubeLeak;
+        rupture = old.rupture;
+        refractoryK = old.refractoryK;
+        airPreheatK = old.airPreheatK;
+        gasK = old.gasK;
+        accumulatedKg = old.accumulatedKg;
+    }
+
     /**
      * Шаг SLOW: накипь, коррозия и ползучесть экранов по режиму последнего тика FAST.
      *
@@ -236,6 +306,8 @@ public final class WaterTubeBoiler implements Boiler {
             fans = false;
             air = 0;
         }
+        // искра пробы запальника — по команде до шага BMS: с байпасом датчика проба кончается в этом же шаге
+        for (int b = 0; b < n; b++) sparkCmd[b] = bms.spark(b);
         bms.step(dt, fans, air / spec.ratedAirKgS(), ventPerS, igniterFlame, mainFlame);
 
         // топливо по горелкам и факелы
@@ -246,6 +318,7 @@ public final class WaterTubeBoiler implements Boiler {
             fuel += burnerFuel[b] + igniterFuel[b];
         }
         if (rupture != BoilerRupture.NONE) fuel = 0;
+        admittedKgS = fuel;
         double burnerAir = air / n;
         boolean flameBefore = anyFlame();
         boolean hotWalls = refractoryK >= AUTOIGNITION_K;
@@ -254,7 +327,7 @@ public final class WaterTubeBoiler implements Boiler {
             boolean quench = air <= 0 || tubeLeak || rupture != BoilerRupture.NONE;
             if (igniterFuel[b] <= 0 || quench) {
                 igniterFlame[b] = false;
-            } else if (!igniterFlame[b] && bms.spark(b) && !igniterFault[b]) {
+            } else if (!igniterFlame[b] && (bms.spark(b) || sparkCmd[b]) && !igniterFault[b]) {
                 igniterFlame[b] = true;
                 ignition = true;
             }

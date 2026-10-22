@@ -42,6 +42,7 @@ public final class PcDataGen {
         gen.addProvider(event.includeServer(), dev.denfry.promptcritical.mod.ironworks.IronworksRecipes.provider(out, lookup));
         gen.addProvider(event.includeServer(), dev.denfry.promptcritical.mod.steelworks.SteelworksRecipes.provider(out, lookup));
         gen.addProvider(event.includeServer(), dev.denfry.promptcritical.mod.ops.OpsRecipes.provider(out, lookup));
+        gen.addProvider(event.includeServer(), dev.denfry.promptcritical.mod.powerhouse.PowerhouseRecipes.provider(out, lookup));
         gen.addProvider(event.includeServer(), dev.denfry.promptcritical.mod.grid.GridRecipes.provider(out, lookup));
         gen.addProvider(event.includeServer(), dev.denfry.promptcritical.mod.automation.AutomationRecipes.provider(out, lookup));
         gen.addProvider(event.includeServer(), new AdvancementProvider(out, lookup, efh, List.of(new PcAdvancements())));

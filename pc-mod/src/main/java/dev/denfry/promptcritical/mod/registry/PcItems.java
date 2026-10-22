@@ -144,6 +144,8 @@ public final class PcItems {
     public static final DeferredItem<RecordedChartItem> RECORDED_CHART = registered(ITEMS.registerItem("recorded_chart",
             RecordedChartItem::new, new Item.Properties().stacksTo(1)));
     public static final DeferredItem<Item> SALT = item("salt", 64);
+    /** Угольная пыль для пылеугольных горелок котла I1 (помол угля жерновами Create). */
+    public static final DeferredItem<Item> COAL_DUST = item("coal_dust", 64);
     // справочник (11)
     public static final DeferredItem<EngineeringHandbookItem> ENGINEERING_HANDBOOK = registered(ITEMS.registerItem("engineering_handbook",
             EngineeringHandbookItem::new, new Item.Properties().stacksTo(1)));

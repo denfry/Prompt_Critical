@@ -13,7 +13,10 @@ public enum WaterGrade {
     /** После песчаного фильтра. */
     FILTERED("filtered_water", WaterQuality.of(1.6, 9e-6, 30e-6, 10e-6, 20e-6, WaterTreatmentTrain.LIMED_PH, 0.0003, 0.6)),
     /** После Na-катионитной колонны: жёсткость заменена натрием. */
-    SOFTENED("softened_water", WaterQuality.of(0.016, 9e-6, 30e-6, 10e-6, 56e-6, WaterTreatmentTrain.LIMED_PH, 0.0003, 0.6));
+    SOFTENED("softened_water", WaterQuality.of(0.016, 9e-6, 30e-6, 10e-6, 56e-6, WaterTreatmentTrain.LIMED_PH, 0.0003, 0.6)),
+    /** Умягчённая после деаэратора ({@link Deaerator}): O₂ до 15 мкг/кг, 104 °C. */
+    DEAERATED("boiler_feedwater", WaterQuality.of(0.016, Deaerator.OUTLET_O2, 30e-6, 10e-6, 56e-6,
+            WaterTreatmentTrain.LIMED_PH, 0.0003, 0.6));
 
     private final String fluidId;
     private final WaterQuality quality;

@@ -1,0 +1,32 @@
+{
+  "parent": "minecraft:recipes/root",
+  "criteria": {
+    "has_the_recipe": {
+      "conditions": {
+        "recipe": "promptcritical:powerhouse/air_preheater"
+      },
+      "trigger": "minecraft:recipe_unlocked"
+    },
+    "has_welded_pipe": {
+      "conditions": {
+        "items": [
+          {
+            "items": "promptcritical:welded_pipe"
+          }
+        ]
+      },
+      "trigger": "minecraft:inventory_changed"
+    }
+  },
+  "requirements": [
+    [
+      "has_the_recipe",
+      "has_welded_pipe"
+    ]
+  ],
+  "rewards": {
+    "recipes": [
+      "promptcritical:powerhouse/air_preheater"
+    ]
+  }
+}

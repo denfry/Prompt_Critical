@@ -48,6 +48,7 @@ public final class PromptCritical {
         SimBindings.register(modBus);
         FoundryBinding.register(modBus);
         dev.denfry.promptcritical.mod.ironworks.IronworksBinding.register(modBus);
+        dev.denfry.promptcritical.mod.powerhouse.PowerhouseBinding.register(modBus);
         dev.denfry.promptcritical.mod.steelworks.SteelworksBinding.register(modBus);
         dev.denfry.promptcritical.mod.ops.OpsBinding.register(modBus);
         dev.denfry.promptcritical.mod.boiler.BoilerBinding.register(modBus);

@@ -270,6 +270,11 @@ public final class PcBlockStateProvider extends BlockStateProvider {
             case "maintenance_panel" -> s.getValue(PcProperties.SEVERITY) == 0 ? id : id + "_severity" + s.getValue(PcProperties.SEVERITY);
             case "recording_gauge" -> s.getValue(PcProperties.PAPER) ? id : id + "_empty";
             case "sand_filter" -> s.getValue(PcProperties.ALARM) ? id + "_backwash" : id;
+            // котёл I1 (этап 11б M3)
+            case "water_tube_boiler" -> s.getValue(PcProperties.ALARM) ? id + "_trip"
+                    : s.getValue(BlockStateProperties.LIT) ? id + "_firing" : id;
+            case "boiler_burner" -> id + (s.getValue(PcProperties.GAS_FIRED) ? "_gas" : "")
+                    + (s.getValue(BlockStateProperties.LIT) ? "_lit" : "");
             case "wooden_pole", "concrete_pole" -> switch (s.getValue(PcProperties.CHIMNEY_PART)) {
                 case BASE -> id + "_bottom";
                 case TOP -> id + "_top";

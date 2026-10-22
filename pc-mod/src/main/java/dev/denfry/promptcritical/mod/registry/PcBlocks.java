@@ -454,6 +454,26 @@ public final class PcBlocks {
             Spec.facing(PcProperties.RUNNING, PcProperties.ALARM).footprint(FP_TALL2), FoundryBlock.with(WaterTreatmentBlockEntity::new));
     public static final DeferredBlock<PcDeviceBlock> ION_EXCHANGE_COLUMN = device("ion_exchange_column", machine(),
             Spec.facing(PcProperties.RUNNING, PcProperties.ALARM), FoundryBlock.with(WaterTreatmentBlockEntity::new));
+    // --- котёл I1 и деаэратор (07 §7.9.5–7.9.6, 08 §8.12, этап 11б M3) ---
+    public static final DeferredBlock<PcDeviceBlock> WATER_TUBE_BOILER = device("water_tube_boiler", machine(),
+            Spec.facing(BlockStateProperties.LIT, PcProperties.ALARM),
+            FoundryBlock.with(dev.denfry.promptcritical.mod.powerhouse.WaterTubeBoilerBlockEntity::new));
+    public static final DeferredBlock<PcBlock> BOILER_WALL = block("boiler_wall", shell(), Spec.of());
+    public static final DeferredBlock<PcBlock> BOILER_BURNER = block("boiler_burner", lit(shell()),
+            Spec.facing(BlockStateProperties.LIT, PcProperties.GAS_FIRED));
+    public static final DeferredBlock<PcBlock> STEAM_DRUM = block("steam_drum", shell().noOcclusion(), Spec.facing());
+    public static final DeferredBlock<PcBlock> BOILER_SUPERHEATER = block("boiler_superheater", shell().noOcclusion(), Spec.of());
+    public static final DeferredBlock<PcBlock> BOILER_ECONOMIZER = block("boiler_economizer", shell().noOcclusion(), Spec.of());
+    public static final DeferredBlock<PcBlock> AIR_PREHEATER = block("air_preheater", shell().noOcclusion(), Spec.of());
+    public static final DeferredBlock<PcDeviceBlock> FORCED_DRAFT_FAN = device("forced_draft_fan", machine(),
+            Spec.facing(PcProperties.RUNNING),
+            KineticMachineBlock.with(ShaftSide.FRONT, dev.denfry.promptcritical.mod.powerhouse.DraftFanBlockEntity::forced));
+    public static final DeferredBlock<PcDeviceBlock> INDUCED_DRAFT_FAN = device("induced_draft_fan", machine(),
+            Spec.facing(PcProperties.RUNNING),
+            KineticMachineBlock.with(ShaftSide.FRONT, dev.denfry.promptcritical.mod.powerhouse.DraftFanBlockEntity::induced));
+    public static final DeferredBlock<PcDeviceBlock> DEAERATOR = device("deaerator", machine(),
+            Spec.facing(PcProperties.RUNNING).footprint(Footprint.of(Segment.box(-1, 1, 0, 1, 0, 0))),
+            FoundryBlock.with(dev.denfry.promptcritical.mod.powerhouse.DeaeratorBlockEntity::new));
 
     // --- справочник и мир (11) ---
     public static final DeferredBlock<DocumentLecternBlock> DOCUMENT_LECTERN = withItem(BLOCKS.registerBlock("document_lectern",

@@ -31,6 +31,13 @@ public final class FoundrySubsystem extends DeviceSubsystem<FoundryUnit> {
     public static final String ELECTRODE_EXTRUDER = "promptcritical:electrode_extruder";
     public static final String BLAST_BLOWER = "promptcritical:blast_blower";
     public static final String GAS_EXHAUSTER = "promptcritical:gas_exhauster";
+    /** Дутьевой вентилятор и дымосос котла I1 (07 §7.9.5): машины на валу, расход — в {@code WaterTubeUnit}. */
+    public static final String FORCED_DRAFT_FAN = "promptcritical:forced_draft_fan", INDUCED_DRAFT_FAN = "promptcritical:induced_draft_fan";
+    /**
+     * Мощность вентиляторов на номинальных оборотах, Вт: дутьевой 3 кг/с воздуха при 2 кПа, дымосос 3,5 кг/с газов
+     * 150 °C при 2,5 кПа, КПД 0,7.
+     */
+    public static final double FORCED_DRAFT_FAN_W = 7_000, INDUCED_DRAFT_FAN_W = 15_000;
     /** Фаза SLOW подсистемы. */
     private static final int SLOW_PHASE = 3;
 
@@ -62,6 +69,8 @@ public final class FoundrySubsystem extends DeviceSubsystem<FoundryUnit> {
             case ELECTRODE_EXTRUDER -> new CyclicMachine(ELECTRODE_EXTRUDER, 15, 22_000);
             case BLAST_BLOWER -> new CyclicMachine(BLAST_BLOWER, 1, BlastFurnaceUnit.BLOWER_RATED_W);
             case GAS_EXHAUSTER -> new CyclicMachine(GAS_EXHAUSTER, 1, GasMain.EXHAUSTER_RATED_W);
+            case FORCED_DRAFT_FAN -> new CyclicMachine(FORCED_DRAFT_FAN, 1, FORCED_DRAFT_FAN_W);
+            case INDUCED_DRAFT_FAN -> new CyclicMachine(INDUCED_DRAFT_FAN, 1, INDUCED_DRAFT_FAN_W);
             default -> null;
         };
     }

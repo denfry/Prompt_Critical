@@ -44,6 +44,8 @@ public final class PcFluids {
     public static final Entry CLARIFIED_WATER = liquid("clarified_water", 1000, 1000, 288);
     public static final Entry FILTERED_WATER = liquid("filtered_water", 1000, 1000, 288);
     public static final Entry SOFTENED_WATER = liquid("softened_water", 1000, 1000, 288);
+    /** Питательная вода котла I1 после деаэратора: 104 °C, O₂ ≤ 15 мкг/кг (этап 11б M3). */
+    public static final Entry BOILER_FEEDWATER = liquid("boiler_feedwater", 955, 300, 377);
 
     static {
         MINE_WATER.props.block(PcBlocks.MINE_WATER);

@@ -6,12 +6,12 @@ import net.minecraft.sounds.SoundEvent;
 import net.minecraft.sounds.SoundEvents;
 
 /** Звуки котельной — свистки и пар Create (обязательная зависимость мода); без них — ванильное шипение. */
-final class BoilerSounds {
+public final class BoilerSounds {
     private BoilerSounds() {
     }
 
     /** Свист предохранительного клапана. */
-    static SoundEvent whistle() {
+    public static SoundEvent whistle() {
         return lookup("create:whistle_high");
     }
 
