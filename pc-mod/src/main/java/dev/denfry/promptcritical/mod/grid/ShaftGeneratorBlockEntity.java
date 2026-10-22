@@ -4,6 +4,8 @@ import dev.denfry.promptcritical.mod.binding.SimBindings;
 import dev.denfry.promptcritical.mod.binding.SimLevelBinding;
 import dev.denfry.promptcritical.mod.block.PcProperties;
 import dev.denfry.promptcritical.mod.foundry.KineticMachineBlockEntity;
+import dev.denfry.promptcritical.mod.pa.PaAnnouncer;
+import dev.denfry.promptcritical.mod.pa.PaLine;
 import dev.denfry.promptcritical.mod.panel.PanelHost;
 import dev.denfry.promptcritical.mod.panel.PanelLayout;
 import dev.denfry.promptcritical.mod.registry.PcBlocks;
@@ -39,6 +41,11 @@ import org.jetbrains.annotations.Nullable;
  */
 public class ShaftGeneratorBlockEntity extends KineticMachineBlockEntity<GeneratorUnit> implements GridDevice, PanelHost {
     private int ticks;
+    /** Что уже объявлено по громкой связи; null — машину ещё не наблюдали после загрузки. */
+    private MachineState heardState;
+    private int heardSyncs;
+    /** Полоса частоты: −1 понижена, 0 норма, 1 повышена. */
+    private int heardFreq;
     private boolean registered;
     /** Тик, когда сеть Create была перегружена в последний раз (журнал и тесты). */
     private long overstressedAt = Long.MIN_VALUE;
@@ -115,6 +122,30 @@ public class ShaftGeneratorBlockEntity extends KineticMachineBlockEntity<Generat
         }
         if (isOverStressed()) overstressedAt = level.getGameTime();
         if (ticks % 5 == 0) setStateFlag(PcProperties.RUNNING, u.speedPu() > GeneratorUnit.ONLINE_SPEED);
+        if (ticks % 10 == 0) announce(u);
+    }
+
+    /** Громкая связь: включение в сеть, выход из синхронизма, отключение, частота сети. */
+    private void announce(GeneratorUnit u) {
+        MachineState was = heardState, s = u.state();
+        int syncs = heardSyncs, band = heardFreq;
+        boolean online = s == MachineState.SYNCHRONIZED || s == MachineState.LOADED;
+        double f = u.frequencyHz();
+        heardState = s;
+        heardSyncs = u.syncCount();
+        heardFreq = !online ? 0 : f < 49.5 ? -1 : f > 50.5 ? 1 : Math.abs(f - 50) < 0.2 ? 0 : band;
+        if (was == null || !(level instanceof ServerLevel sl)) return;
+        PaLine line = null;
+        if (heardSyncs > syncs && u.lastSync() != null) line = switch (u.lastSync().result()) {
+            case OK -> PaLine.GEN_SYNCHRONIZED;
+            case DAMAGE -> PaLine.GEN_OUT_OF_PHASE;
+            case SHEARED -> PaLine.GEN_SHEAR_PIN;
+        };
+        else if (s != was && s == MachineState.ASYNC) line = PaLine.GEN_POLE_SLIP;
+        else if (s != was && s == MachineState.TRIPPED) line = PaLine.GEN_TRIPPED;
+        else if (online && heardFreq != band)
+            line = heardFreq < 0 ? PaLine.GRID_FREQ_LOW : heardFreq > 0 ? PaLine.GRID_FREQ_HIGH : PaLine.GRID_FREQ_NORMAL;
+        if (line != null) PaAnnouncer.announce(sl, worldPosition, line);
     }
 
     /** Сеть Create была перегружена на тике {@code gameTime} или позже. */

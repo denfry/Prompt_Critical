@@ -12,7 +12,10 @@ import dev.denfry.promptcritical.mod.panel.PanelLayout;
 import dev.denfry.promptcritical.mod.registry.PcItems;
 import dev.denfry.promptcritical.mod.boiler.BoilerFuels;
 import dev.denfry.promptcritical.sim.combustion.BmsResponse;
+import dev.denfry.promptcritical.mod.pa.PaAnnouncer;
+import dev.denfry.promptcritical.mod.pa.PaLine;
 import dev.denfry.promptcritical.sim.combustion.BmsState;
+import dev.denfry.promptcritical.sim.combustion.MftCause;
 import dev.denfry.promptcritical.sim.combustion.BoilerOutputs;
 import dev.denfry.promptcritical.sim.combustion.BurnerKind;
 import dev.denfry.promptcritical.sim.core.CommandSource;
@@ -76,6 +79,9 @@ public final class WaterTubeBoilerBlockEntity extends IronworksBlockEntity imple
     /** Шаг ручного задания и уставки давления кнопками щита. */
     public static final double MANUAL_STEP = 0.05, SETPOINT_STEP_PA = 0.05e6;
     private static final int VALIDATE_PERIOD = 40, LOOK_PERIOD = 4;
+    /** Что уже объявлено по громкой связи; null — котёл ещё не наблюдали после загрузки. */
+    private BmsState heardBms;
+    private long heardLifts;
 
     @Nullable
     private WaterTubeBoilerShape shape;
@@ -210,7 +216,52 @@ public final class WaterTubeBoilerBlockEntity extends IronworksBlockEntity imple
         u.setDeaeratorDemand(deaeratorDemandKgS);
         deaeratorDemandKgS = 0;
         deaeratorSteamKg += u.takeDeaeratorSteam();
-        if (now % LOOK_PERIOD == 0) looks(u);
+        if (now % LOOK_PERIOD == 0) {
+            looks(u);
+            announce(u);
+        }
+    }
+
+    /** Громкая связь: смена состояния BMS, причина отсечки, подрыв предохранительного клапана. */
+    private void announce(WaterTubeUnit u) {
+        BmsState was = heardBms, s = u.bms();
+        long lifts = heardLifts;
+        heardBms = s;
+        heardLifts = u.reliefLifts();
+        if (was == null || u.exploded() || !(level instanceof ServerLevel sl)) return;
+        PaLine line = null;
+        boolean tripped = s == BmsState.MFT || s == BmsState.POST_PURGE;
+        if (s != was && !(tripped && (was == BmsState.MFT || was == BmsState.POST_PURGE))) line = switch (s) {
+            case PURGE -> PaLine.BOILER_PURGE_STARTED;
+            case PURGE_COMPLETE -> PaLine.BOILER_PURGE_COMPLETE;
+            case RUNNING -> PaLine.BOILER_ON_LINE;
+            case MFT, POST_PURGE -> tripLine(u);
+            default -> null;
+        };
+        if (line == null && heardLifts > lifts) line = PaLine.BOILER_SAFETY_VALVE;
+        if (line != null) PaAnnouncer.announce(sl, worldPosition, line);
+    }
+
+    private static PaLine tripLine(WaterTubeUnit u) {
+        MftCause cause = u.boiler().bmsControl().lastMftCause();
+        if (cause == null) return null;
+        return switch (cause) {
+            case IGNITER_TRIAL_FAILED -> PaLine.BOILER_IGNITER_FAILED;
+            case MAIN_TRIAL_FAILED -> PaLine.BOILER_MAIN_FLAME_FAILED;
+            case FLAME_LOSS -> PaLine.BOILER_FLAME_LOSS;
+            case FANS_LOST -> PaLine.BOILER_FANS_LOST;
+            case OPERATOR -> PaLine.BOILER_SHUTDOWN;
+            case PROTECTION -> u.lastTrip() == null ? null : switch (u.lastTrip()) {
+                case DRUM_LEVEL_LOW_LOW -> PaLine.BOILER_DRUM_LEVEL_LOW;
+                case DRUM_LEVEL_HIGH_HIGH -> PaLine.BOILER_DRUM_LEVEL_HIGH;
+                case STEAM_PRESSURE_HIGH -> PaLine.BOILER_STEAM_PRESSURE_HIGH;
+                case FURNACE_PRESSURE_HIGH -> PaLine.BOILER_FURNACE_PRESSURE_HIGH;
+                case FURNACE_PRESSURE_LOW -> PaLine.BOILER_FURNACE_PRESSURE_LOW;
+                case FUEL_PRESSURE_LOW -> PaLine.BOILER_FUEL_PRESSURE_LOW;
+                case FLUE_CO_HIGH -> PaLine.BOILER_FLUE_CO_HIGH;
+                case TUBE_LEAK -> PaLine.BOILER_TUBE_LEAK;
+            };
+        };
     }
 
     private void validate(SimLevelBinding b) {

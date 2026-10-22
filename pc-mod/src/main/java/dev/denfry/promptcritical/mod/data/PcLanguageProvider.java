@@ -341,6 +341,8 @@ public final class PcLanguageProvider extends LanguageProvider {
         MISC.putAll(dev.denfry.promptcritical.mod.grid.GridText.LANG);
         MISC.putAll(dev.denfry.promptcritical.mod.automation.AutomationText.LANG);
         MISC.putAll(dev.denfry.promptcritical.mod.content.ContentText.LANG);
+        for (dev.denfry.promptcritical.mod.pa.PaLine l : dev.denfry.promptcritical.mod.pa.PaLine.values())
+            MISC.put(l.subtitleKey(), new String[] {l.en, l.ru});
         PcAdvancements.LANG.forEach((id, t) -> {
             MISC.put("advancements.promptcritical." + id + ".title", new String[] {t[0], t[1]});
             MISC.put("advancements.promptcritical." + id + ".description", new String[] {t[2], t[3]});
