@@ -5,6 +5,7 @@ import dev.denfry.promptcritical.mod.content.ContentRegistries;
 import dev.denfry.promptcritical.mod.content.client.WallClockRenderer;
 import dev.denfry.promptcritical.mod.foundry.client.FoundryClient;
 import dev.denfry.promptcritical.mod.panel.PanelLayouts;
+import dev.denfry.promptcritical.mod.panel.PanelMenu;
 import dev.denfry.promptcritical.mod.panel.client.PanelScreen;
 import dev.denfry.promptcritical.mod.registry.PcBlocks;
 import dev.denfry.promptcritical.mod.registry.PcFluids;
@@ -40,6 +41,11 @@ public final class PcClient {
 
     private static void screens(RegisterMenuScreensEvent event) {
         event.register(PanelLayouts.MENU.get(), PanelScreen::new);
+        // щит с инвентарём снизу выше экрана — инвентарь справа, если по ширине помещается
+        PanelMenu.sideInventory = l -> {
+            var w = net.minecraft.client.Minecraft.getInstance().getWindow();
+            return l.imageHeight(false) > w.getGuiScaledHeight() - 4 && l.imageWidth(true) <= w.getGuiScaledWidth() - 4;
+        };
     }
 
     private static void renderers(EntityRenderersEvent.RegisterRenderers event) {

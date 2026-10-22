@@ -69,7 +69,7 @@ public final class HoistScreen extends AbstractContainerScreen<HoistMenu> {
     @Override
     protected void renderBg(GuiGraphics g, float partialTick, int mouseX, int mouseY) {
         PanelArt.background(g, leftPos, topPos, imageWidth, imageHeight);
-        PanelArt.plate(g, font, title, leftPos + imageWidth / 2, topPos + 5);
+        PanelArt.plate(g, font, title, leftPos + imageWidth / 2, topPos + 5, Math.min(font.width(title), W - 22));
         for (int i = 0; i < STATUS_LINES; i++) PanelArt.window(g, font, Component.empty(), leftPos + PAD, topPos + TOP + i * LINE, W - 2 * PAD);
     }
 
@@ -85,24 +85,31 @@ public final class HoistScreen extends AbstractContainerScreen<HoistMenu> {
             return;
         }
         HoistState s = HoistState.values()[state];
-        g.drawString(font, HoistText.state(s), x, y, s.tripped() || s.broken() ? ALARM : TEXT, false);
+        int room = W - 2 * PAD - 8;
+        PanelArt.text(g, font, HoistText.state(s), x, y, room, s.tripped() || s.broken() ? ALARM : TEXT);
         y += LINE;
-        g.drawString(font, HoistText.msg("hoist.position", HoistText.num(menu.get(HoistMenu.D_DEPTH_DM) / 10.0),
-                HoistText.num(menu.get(HoistMenu.D_SPEED_CMS) / 100.0)), x, y, TEXT, false);
+        PanelArt.text(g, font, HoistText.msg("hoist.position", HoistText.num(menu.get(HoistMenu.D_DEPTH_DM) / 10.0),
+                HoistText.num(menu.get(HoistMenu.D_SPEED_CMS) / 100.0)), x, y, room, TEXT);
         y += LINE;
         double sf = menu.get(HoistMenu.D_SF_X10) / 10.0, need = menu.get(HoistMenu.D_SF_NEED_X10) / 10.0;
         HoistDuty duty = HoistDuty.values()[Math.max(0, Math.min(2, menu.get(HoistMenu.D_DUTY)))];
-        g.drawString(font, HoistText.msg("hoist.load", menu.get(HoistMenu.D_PAYLOAD_KG), HoistText.duty(duty),
-                HoistText.num(sf), HoistText.num(need)), x, y, sf < need ? ALARM : DIM, false);
+        PanelArt.text(g, font, HoistText.msg("hoist.load", menu.get(HoistMenu.D_PAYLOAD_KG), HoistText.duty(duty),
+                HoistText.num(sf), HoistText.num(need)), x, y, room, sf < need ? ALARM : DIM);
         y += LINE;
-        g.drawString(font, HoistText.msg("hoist.power", menu.get(HoistMenu.D_POWER_KW), menu.get(HoistMenu.D_AVAILABLE_KW)),
-                x, y, DIM, false);
+        PanelArt.text(g, font, HoistText.msg("hoist.power", menu.get(HoistMenu.D_POWER_KW), menu.get(HoistMenu.D_AVAILABLE_KW)),
+                x, y, room, DIM);
         y += LINE;
         Component rope = menu.get(HoistMenu.D_ROPE_WEAR) != 0 ? HoistText.msg("hoist.rope_wear")
                 : HoistText.msg("hoist.rope", menu.get(HoistMenu.D_ROPE_MM));
-        g.drawString(font, rope, x, y, menu.get(HoistMenu.D_ROPE_WEAR) != 0 ? ALARM : DIM, false);
-        g.drawString(font, HoistText.msg("hoist.speed", HoistText.num(menu.get(HoistMenu.D_LIMIT_DMS) / 10.0)),
-                x + 110, y, DIM, false);
+        Component speed = HoistText.msg("hoist.speed", HoistText.num(menu.get(HoistMenu.D_LIMIT_DMS) / 10.0));
+        // канат слева, предел скорости справа; при нехватке места делят строку пропорционально длине
+        int rw = font.width(rope), sw = font.width(speed), gap = 8;
+        if (rw + sw + gap > room) {
+            rw = (room - gap) * rw / (rw + sw);
+            sw = room - gap - rw;
+        }
+        PanelArt.text(g, font, rope, x, y, rw, menu.get(HoistMenu.D_ROPE_WEAR) != 0 ? ALARM : DIM);
+        PanelArt.text(g, font, speed, x + room - Math.min(sw, font.width(speed)), y, sw, DIM);
     }
 
     @Override

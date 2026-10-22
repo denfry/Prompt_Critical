@@ -2,6 +2,7 @@ package dev.denfry.promptcritical.mod.ops.client;
 
 import dev.denfry.promptcritical.mod.ops.OpsComponents;
 import dev.denfry.promptcritical.mod.ops.OpsText;
+import dev.denfry.promptcritical.mod.panel.client.PanelArt;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.GuiGraphics;
 import net.minecraft.client.gui.screens.Screen;
@@ -31,7 +32,7 @@ public final class ChartScreen extends Screen {
         int w = Math.min(W, width - 8), h = Math.min(H, height - 8);
         int left = (width - w) / 2, top = (height - h) / 2;
         g.fill(left, top, left + w, top + h, PAPER);
-        int x0 = left + PAD, y0 = top + 14, x1 = left + w - 6, y1 = top + h - 14;
+        int x0 = left + PAD, y0 = top + 18, x1 = left + w - 6, y1 = top + h - 14;
         for (int i = 0; i <= 10; i++) {
             int y = y1 - (y1 - y0) * i / 10;
             g.fill(x0, y, x1, y + 1, i % 5 == 0 ? GRID_MAJOR : GRID);
@@ -41,8 +42,11 @@ public final class ChartScreen extends Screen {
             g.fill(x, y0, x + 1, y1, i % 3 == 0 ? GRID_MAJOR : GRID);
         }
         g.drawString(font, title, left + 6, top + 3, TEXT, false);
-        g.drawString(font, OpsText.num(trace.max(), 0), left + 2, y0 - 4, TEXT, false);
-        g.drawString(font, OpsText.num(trace.min(), 0), left + 2, y1 - 4, TEXT, false);
+        // шкала слева от сетки, по правому краю у её начала
+        for (double[] mark : new double[][] {{trace.max(), y0}, {trace.min(), y1}}) {
+            String v = OpsText.num(mark[0], 0);
+            PanelArt.text(g, font, Component.literal(v), Math.max(left + 2, x0 - 3 - font.width(v)), (int) mark[1] - 4, PAD - 5, TEXT);
+        }
         int n = trace.points().size();
         if (n < 2) return;
         double prevX = Double.NaN, prevY = Double.NaN;
@@ -60,7 +64,8 @@ public final class ChartScreen extends Screen {
             prevX = x;
             prevY = y;
         }
-        g.drawString(font, Component.literal(trace.sampleS() * n / 3600 + " h"), x1 - 30, y1 + 3, TEXT, false);
+        Component span = Component.literal(trace.sampleS() * n / 3600 + " h");
+        g.drawString(font, span, x1 - font.width(span), y1 + 3, TEXT, false);
     }
 
     private static void line(GuiGraphics g, double ax, double ay, double bx, double by) {

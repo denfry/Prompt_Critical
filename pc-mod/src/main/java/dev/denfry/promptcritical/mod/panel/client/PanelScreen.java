@@ -24,17 +24,19 @@ public final class PanelScreen extends AbstractContainerScreen<PanelMenu> {
     private final PanelLayout layout;
     private final Map<PanelLayout.Element, Double> shown = new IdentityHashMap<>();
     private long lastFrame = Util.getMillis();
+    private PanelFit fit;
 
     public PanelScreen(PanelMenu menu, Inventory inv, Component title) {
         super(menu, inv, title);
         this.layout = menu.layout();
-        this.imageWidth = layout.width;
-        this.imageHeight = layout.imageHeight();
+        this.imageWidth = layout.imageWidth(menu.side());
+        this.imageHeight = layout.imageHeight(menu.side());
     }
 
     @Override
     protected void init() {
         super.init();
+        fit = PanelFit.of(layout, font, title);
         for (PanelLayout.Element e : layout.elements) {
             if (e instanceof PanelLayout.Button b) {
                 addRenderableWidget(new PanelButton(leftPos + b.x(), topPos + b.y(), b.w(), 16, b.label(), b.tip(),
@@ -61,18 +63,22 @@ public final class PanelScreen extends AbstractContainerScreen<PanelMenu> {
         double dt = Math.min(0.25, (now - lastFrame) / 1000.0);
         lastFrame = now;
         int x = leftPos, y = topPos;
-        PanelArt.background(g, x, y, imageWidth, imageHeight);
-        PanelArt.plate(g, font, title, x + imageWidth / 2, y + 5);
+        PanelArt.background(g, x, y, layout.width, imageHeight);
+        if (menu.side()) PanelArt.background(g, x + layout.width, y, imageWidth - layout.width, imageHeight);
+        PanelArt.plate(g, font, title, x + layout.width / 2, y + 5, fit.titleRoom());
         for (PanelLayout.Element e : layout.elements) {
             int ex = x + e.x(), ey = y + e.y();
             switch (e) {
-                case PanelLayout.Dial d -> PanelArt.dial(g, font, d, smooth(d, menu.get(d.ch(), d.scale()), dt), ex, ey);
-                case PanelLayout.Glass gl -> PanelArt.glass(g, font, gl, smooth(gl, menu.get(gl.ch(), 1000), dt), ex, ey);
-                case PanelLayout.Scope sc -> PanelArt.scope(g, font, sc, menu.raw(sc.ch()), ex, ey);
-                case PanelLayout.Bar b -> PanelArt.bar(g, font, b, smooth(b, menu.get(b.ch(), b.scale()) / b.max(), dt), ex, ey);
-                case PanelLayout.Lamp l -> PanelArt.lamp(g, font, l, menu.bit(l.ch(), l.bit()), ex, ey);
+                case PanelLayout.Dial d -> PanelArt.dial(g, font, d, smooth(d, menu.get(d.ch(), d.scale()), dt), ex, ey,
+                        fit.room(d, font.width(d.label())));
+                case PanelLayout.Glass gl -> PanelArt.glass(g, font, gl, smooth(gl, menu.get(gl.ch(), 1000), dt), ex, ey,
+                        fit.room(gl, font.width(gl.label())));
+                case PanelLayout.Scope sc -> PanelArt.scope(g, font, sc, menu.raw(sc.ch()), ex, ey, fit.room(sc, font.width(sc.label())));
+                case PanelLayout.Bar b -> PanelArt.bar(g, font, b, smooth(b, menu.get(b.ch(), b.scale()) / b.max(), dt), ex, ey,
+                        fit.room(b, font.width(b.label())));
+                case PanelLayout.Lamp l -> PanelArt.lamp(g, font, l, menu.bit(l.ch(), l.bit()), ex, ey, fit.room(l, font.width(l.label())));
                 case PanelLayout.Readout r -> PanelArt.window(g, font, r.text().apply(menu), ex, ey, r.w());
-                case PanelLayout.Caption c -> PanelArt.paint(g, font, c.text(), ex, ey);
+                case PanelLayout.Caption c -> PanelArt.paint(g, font, c.text(), ex, ey, fit.room(c, font.width(c.text())));
                 case PanelLayout.Button b -> {
                 }
             }
@@ -82,7 +88,7 @@ public final class PanelScreen extends AbstractContainerScreen<PanelMenu> {
             PanelArt.slot(g, x + s.x, y + s.y, layout.slots.get(i).output());
         }
         if (!layout.inventory) return;
-        int ix = x + layout.inventoryX(), iy = y + layout.inventoryY();
+        int ix = x + layout.inventoryX(menu.side()), iy = y + layout.inventoryY(menu.side());
         PanelArt.inset(g, ix - 4, iy - 4, 9 * 18 + 6, 3 * 18 + 4 + 18 + 6 + 4);
         for (int i = menu.machineSlots(); i < menu.slots.size(); i++) {
             Slot s = menu.slots.get(i);
@@ -92,7 +98,8 @@ public final class PanelScreen extends AbstractContainerScreen<PanelMenu> {
 
     @Override
     protected void renderLabels(GuiGraphics g, int mouseX, int mouseY) {
-        if (layout.inventory) PanelArt.paint(g, font, PanelText.INVENTORY.get(), layout.inventoryX() - 1, layout.inventoryY() - 13);
+        if (layout.inventory) PanelArt.paint(g, font, PanelText.INVENTORY.get(), layout.inventoryX(menu.side()) - 1,
+                layout.inventoryY(menu.side()) - 13);
     }
 
     @Override
@@ -108,8 +115,8 @@ public final class PanelScreen extends AbstractContainerScreen<PanelMenu> {
 
     private void elementTooltip(GuiGraphics g, int mouseX, int mouseY) {
         int mx = mouseX - leftPos, my = mouseY - topPos;
-        int plate = font.width(title) / 2 + 8;
-        if (inside(mx, my, imageWidth / 2 - plate, 5, plate * 2, 14)) {
+        int plate = fit.titleRoom() / 2 + 8;
+        if (inside(mx, my, layout.width / 2 - plate, 5, plate * 2, 14)) {
             g.renderTooltip(font, PanelText.SHIFT_HINT.get(), mouseX, mouseY);
             return;
         }

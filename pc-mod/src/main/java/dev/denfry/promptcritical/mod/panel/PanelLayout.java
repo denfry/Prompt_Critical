@@ -37,17 +37,38 @@ public final class PanelLayout {
         this.slots = List.copyOf(b.slots);
     }
 
+    /** Ширина отсека инвентаря справа от поля, когда щит с инвентарём снизу не помещается по высоте экрана. */
+    public static final int SIDE_WIDTH = 176;
+
     public int imageHeight() {
-        return inventory ? height + INVENTORY_HEIGHT : height;
+        return imageHeight(false);
+    }
+
+    /** Высота экрана: инвентарь снизу или справа ({@code side}). */
+    public int imageHeight(boolean side) {
+        if (!inventory) return height;
+        return side ? Math.max(height, INVENTORY_HEIGHT + 8) : height + INVENTORY_HEIGHT;
+    }
+
+    public int imageWidth(boolean side) {
+        return inventory && side ? width + SIDE_WIDTH : width;
     }
 
     /** Левый край инвентаря игрока (слот 9×18 по центру). */
     public int inventoryX() {
-        return (width - 162) / 2 + 1;
+        return inventoryX(false);
     }
 
     public int inventoryY() {
-        return height + 14;
+        return inventoryY(false);
+    }
+
+    public int inventoryX(boolean side) {
+        return side ? width + (SIDE_WIDTH - 162) / 2 + 1 : (width - 162) / 2 + 1;
+    }
+
+    public int inventoryY(boolean side) {
+        return side ? (imageHeight(true) - INVENTORY_HEIGHT) / 2 + 14 : height + 14;
     }
 
     /** Наибольший индекс слота машины + 1 — размер склада клиента. */

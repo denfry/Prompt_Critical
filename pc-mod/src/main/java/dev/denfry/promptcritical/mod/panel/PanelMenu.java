@@ -12,6 +12,7 @@ import net.minecraft.world.item.ItemStack;
 import net.neoforged.neoforge.items.IItemHandlerModifiable;
 import net.neoforged.neoforge.items.ItemStackHandler;
 import net.neoforged.neoforge.items.SlotItemHandler;
+import java.util.function.Predicate;
 import org.jetbrains.annotations.Nullable;
 
 /**
@@ -24,6 +25,13 @@ public final class PanelMenu extends AbstractContainerMenu implements PanelValue
     private final BlockPos pos;
     private final int[] values;
     private final int machineSlots;
+    /** Инвентарь справа от поля (экран низкий для щита с инвентарём снизу). */
+    private final boolean side;
+    /**
+     * Клиент решает, ставить ли инвентарь справа: экран знает свою высоту, меню строит слоты раньше экрана. Сервер
+     * позиции слотов не использует.
+     */
+    public static Predicate<PanelLayout> sideInventory = l -> false;
 
     /** Сервер. */
     PanelMenu(int id, Inventory inv, PanelHost host) {
@@ -40,6 +48,7 @@ public final class PanelMenu extends AbstractContainerMenu implements PanelValue
             @Nullable IItemHandlerModifiable items) {
         super(PanelLayouts.MENU.get(), id);
         this.layout = layout;
+        this.side = host == null && layout.inventory && sideInventory.test(layout);
         this.host = host;
         this.pos = pos;
         this.values = new int[layout.channels];
@@ -47,7 +56,7 @@ public final class PanelMenu extends AbstractContainerMenu implements PanelValue
         for (PanelLayout.SlotSpec s : layout.slots) addSlot(new PanelSlot(store, s));
         machineSlots = slots.size();
         if (layout.inventory) {
-            int ix = layout.inventoryX(), iy = layout.inventoryY();
+            int ix = layout.inventoryX(side), iy = layout.inventoryY(side);
             for (int r = 0; r < 3; r++)
                 for (int c = 0; c < 9; c++) addSlot(new Slot(inv, 9 + r * 9 + c, ix + c * 18, iy + r * 18));
             for (int c = 0; c < 9; c++) addSlot(new Slot(inv, c, ix + c * 18, iy + 58));
@@ -60,6 +69,10 @@ public final class PanelMenu extends AbstractContainerMenu implements PanelValue
 
     public PanelLayout layout() {
         return layout;
+    }
+
+    public boolean side() {
+        return side;
     }
 
     public BlockPos pos() {

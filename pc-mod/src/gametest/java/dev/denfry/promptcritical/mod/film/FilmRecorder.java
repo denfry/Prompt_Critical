@@ -148,6 +148,8 @@ public final class FilmRecorder {
             if (queue.isEmpty()) return;
             saved = Saved.capture(mc);
         }
+        // плана нет (нет film.json) — съёмки не было, игрой управляет игрок
+        if (saved == null) return;
         try {
             if (shot == null) {
                 shot = queue.poll();

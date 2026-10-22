@@ -37,19 +37,50 @@ public final class PanelArt {
 
     /** Латунная табличка с гравировкой по центру {@code cx}. */
     public static void plate(GuiGraphics g, Font font, Component text, int cx, int y) {
-        int w = font.width(text) + 16;
+        plate(g, font, text, cx, y, font.width(text));
+    }
+
+    /** Табличка, гравировка сжата до {@code room}. */
+    public static void plate(GuiGraphics g, Font font, Component text, int cx, int y, int room) {
+        int tw = Math.min(font.width(text), room), w = tw + 16;
         g.blitSprite(PLATE, cx - w / 2, y, w, 14);
-        g.drawString(font, text, cx - font.width(text) / 2, y + 3, PLATE_INK, false);
+        text(g, font, text, cx - tw / 2, y + 3, room, PLATE_INK);
+    }
+
+    /**
+     * Строка без тени, сжатая по ширине до {@code room} (если не помещается) с сохранением средней линии строки.
+     */
+    public static void text(GuiGraphics g, Font font, Component text, int x, int y, int room, int color) {
+        int tw = font.width(text);
+        if (tw <= room || tw == 0) {
+            g.drawString(font, text, x, y, color, false);
+            return;
+        }
+        float k = Math.max(0.01f, (float) room / tw);
+        g.pose().pushPose();
+        g.pose().translate(x, y + (1 - k) * 4, 0);
+        g.pose().scale(k, k, 1);
+        g.drawString(font, text, 0, 0, color, false);
+        g.pose().popPose();
     }
 
     /** Надпись краской по трафарету. */
     public static void paint(GuiGraphics g, Font font, Component text, int x, int y) {
-        g.drawString(font, text, x + 1, y + 1, PAINT_SHADOW, false);
-        g.drawString(font, text, x, y, PAINT, false);
+        paint(g, font, text, x, y, font.width(text));
+    }
+
+    /** Надпись краской, сжатая до {@code room}. */
+    public static void paint(GuiGraphics g, Font font, Component text, int x, int y, int room) {
+        text(g, font, text, x + 1, y + 1, room, PAINT_SHADOW);
+        text(g, font, text, x, y, room, PAINT);
     }
 
     public static void paintCentered(GuiGraphics g, Font font, Component text, int cx, int y) {
-        paint(g, font, text, cx - font.width(text) / 2, y);
+        paintCentered(g, font, text, cx, y, font.width(text));
+    }
+
+    public static void paintCentered(GuiGraphics g, Font font, Component text, int cx, int y, int room) {
+        paint(g, font, text, cx - Math.min(room, font.width(text)) / 2, y, room);
     }
 
     /** Фон слота; {@code x, y} — угол предмета. */
@@ -60,21 +91,11 @@ public final class PanelArt {
     /** Окно табло со строкой; длинная строка сжимается по ширине. */
     public static void window(GuiGraphics g, Font font, Component text, int x, int y, int w) {
         g.blitSprite(WINDOW, x, y, w, 13);
-        int tw = font.width(text), room = w - 7;
-        if (tw <= room) {
-            g.drawString(font, text, x + 4, y + 3, WINDOW_TEXT, false);
-            return;
-        }
-        float k = (float) room / tw;
-        g.pose().pushPose();
-        g.pose().translate(x + 4, y + 3 + (1 - k) * 4, 0);
-        g.pose().scale(k, k, 1);
-        g.drawString(font, text, 0, 0, WINDOW_TEXT, false);
-        g.pose().popPose();
+        text(g, font, text, x + 4, y + 3, w - 7, WINDOW_TEXT);
     }
 
     /** Стрелочный прибор; {@code shown} — показание стрелки в единицах шкалы. */
-    public static void dial(GuiGraphics g, Font font, PanelLayout.Dial d, double shown, int x, int y) {
+    public static void dial(GuiGraphics g, Font font, PanelLayout.Dial d, double shown, int x, int y, int room) {
         int size = d.size();
         g.blitSprite(d.large() ? DIAL_LARGE : DIAL_MEDIUM, x, y, size, size);
         float cx = x + size / 2f, cy = y + size / 2f;
@@ -89,22 +110,30 @@ public final class PanelArt {
                 g.pose().popPose();
             }
         }
+        // оцифровка внутри шкалы: у малого прибора — начало, середина и конец; единица — в просвете шкалы под осью
         double[] marks = d.large() ? new double[] {0, 0.25, 0.5, 0.75, 1} : new double[] {0, 0.5, 1};
-        float labelR = d.large() ? 15.5f : 10.5f, k = d.large() ? 1f : 0.75f;
+        float labelR = d.large() ? 18f : 12.5f, k = d.large() ? 0.75f : 0.6f, face = d.large() ? 27f : 19f;
         for (double f : marks) {
             String s = tick(f * d.max());
             double a = Math.toRadians(-135 + 270 * f);
-            float lx = cx + labelR * (float) Math.sin(a), ly = cy - labelR * (float) Math.cos(a);
+            float lx = labelR * (float) Math.sin(a), ly = -labelR * (float) Math.cos(a);
+            float half = font.width(s) * k / 2, edge = Math.abs(ly) + 4 * k;
+            float chord = (float) Math.sqrt(Math.max(0, face * face - edge * edge)) - 1;
+            lx = Math.max(-chord + half, Math.min(chord - half, lx));
             g.pose().pushPose();
-            g.pose().translate(lx, ly, 0);
+            g.pose().translate(cx + lx, cy + ly, 0);
             g.pose().scale(k, k, 1);
             g.drawString(font, s, -font.width(s) / 2, -4, DIAL_INK, false);
             g.pose().popPose();
         }
         g.pose().pushPose();
-        g.pose().translate(cx, cy + (d.large() ? 13 : 9), 0);
-        g.pose().scale(0.75f, 0.75f, 1);
-        g.drawString(font, d.unit(), -font.width(d.unit()) / 2, -4, 0xFF4A4436, false);
+        float uy = d.large() ? 21f : 15f, uk = d.large() ? 0.7f : 0.6f;
+        g.pose().translate(cx, cy + uy, 0);
+        g.pose().scale(uk, uk, 1);
+        float uEdge = uy + 4 * uk;
+        int unitRoom = (int) (2 * (Math.sqrt(Math.max(0, face * face - uEdge * uEdge)) - 1) / uk);
+        int uw = Math.min(font.width(d.unit()), unitRoom);
+        text(g, font, d.unit(), -uw / 2, -4, unitRoom, 0xFF4A4436);
         g.pose().popPose();
         double f = Math.max(-0.03, Math.min(1.04, shown / d.max()));
         int len = (int) arcR - 2;
@@ -118,11 +147,11 @@ public final class PanelArt {
             g.pose().popPose();
         }
         g.blitSprite(HUB, (int) cx - 3, (int) cy - 3, 6, 6);
-        paintCentered(g, font, d.label(), (int) cx, y + size + 2);
+        paintCentered(g, font, d.label(), (int) cx, y + size + 2, room);
     }
 
     /** Синхроноскоп: циферблат без шкалы, риска «12 часов», надписи «быстрее»/«медленнее», стрелка на полный оборот. */
-    public static void scope(GuiGraphics g, Font font, PanelLayout.Scope s, int raw, int x, int y) {
+    public static void scope(GuiGraphics g, Font font, PanelLayout.Scope s, int raw, int x, int y, int room) {
         int size = PanelLayout.Scope.SIZE;
         g.blitSprite(DIAL_LARGE, x, y, size, size);
         float cx = x + size / 2f, cy = y + size / 2f;
@@ -145,7 +174,7 @@ public final class PanelArt {
             g.pose().popPose();
         }
         g.blitSprite(HUB, (int) cx - 3, (int) cy - 3, 6, 6);
-        paintCentered(g, font, s.label(), (int) cx, y + size + 2);
+        paintCentered(g, font, s.label(), (int) cx, y + size + 2, room);
     }
 
     private static String tick(double v) {
@@ -153,7 +182,7 @@ public final class PanelArt {
     }
 
     /** Водомерное стекло: заполнение долей {@code frac}, красная метка низшего уровня и метка нормального. */
-    public static void glass(GuiGraphics g, Font font, PanelLayout.Glass e, double frac, int x, int y) {
+    public static void glass(GuiGraphics g, Font font, PanelLayout.Glass e, double frac, int x, int y, int room) {
         int h = e.h();
         g.blitSprite(GLASS, x, y, 12, h);
         int top = y + 5, bottom = y + h - 5, inner = bottom - top;
@@ -172,12 +201,12 @@ public final class PanelArt {
             g.fill(x - 2, my, x + 1, my + 1, PAINT);
             g.fill(x + 11, my, x + 14, my + 1, PAINT);
         }
-        paintCentered(g, font, e.label(), x + 6, y + h + 2);
+        paintCentered(g, font, e.label(), x + 6, y + h + 2, room);
     }
 
     /** Горизонтальная шкала с подписью над ней. */
-    public static void bar(GuiGraphics g, Font font, PanelLayout.Bar e, double frac, int x, int y) {
-        paint(g, font, e.label(), x, y - 10);
+    public static void bar(GuiGraphics g, Font font, PanelLayout.Bar e, double frac, int x, int y, int room) {
+        paint(g, font, e.label(), x, y - 10, room);
         g.blitSprite(TRACK, x, y, e.w(), 8);
         int fill = (int) Math.round(Math.max(0, Math.min(1, frac)) * (e.w() - 2));
         if (fill > 0) {
@@ -191,10 +220,10 @@ public final class PanelArt {
         }
     }
 
-    public static void lamp(GuiGraphics g, Font font, PanelLayout.Lamp e, boolean on, int x, int y) {
+    public static void lamp(GuiGraphics g, Font font, PanelLayout.Lamp e, boolean on, int x, int y, int room) {
         String color = e.color().name().toLowerCase(java.util.Locale.ROOT);
         g.blitSprite(sprite("lamp_" + color + (on ? "_on" : "_off")), x, y, 14, 14);
-        paint(g, font, e.label(), x + 16, y + 3);
+        paint(g, font, e.label(), x + 16, y + 3, room);
     }
 
     public static int lighten(int argb, float k) {
