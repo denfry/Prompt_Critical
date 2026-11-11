@@ -75,6 +75,35 @@ public final class CompatGameTests {
         h.succeed();
     }
 
+    @GameTest(template = EMPTY)
+    public static void modOresStayOutOfPerMetalTagsUnlessOpenCompatIsEnabled(GameTestHelper h) {
+        // строгая совместимость: руды мода в тегах по металлу приходят только из пака open_compat (сервер гейм-тестов
+        // включает все доступные паки, поэтому проверяем источник, а не членство)
+        var server = h.getLevel().getServer();
+        for (String path : List.of("tags/item/raw_materials/iron.json", "tags/item/ores/iron.json", "tags/block/ores/iron.json")) {
+            for (var res : server.getResourceManager().getResourceStack(ResourceLocation.fromNamespaceAndPath("c", path))) {
+                String json;
+                try (var in = res.open()) {
+                    json = new String(in.readAllBytes(), java.nio.charset.StandardCharsets.UTF_8);
+                } catch (java.io.IOException e) {
+                    throw new IllegalStateException(e);
+                }
+                if (json.contains(PromptCritical.MOD_ID + ":")) {
+                    h.assertTrue(res.sourcePackId().contains("open_compat"), "c:" + path + " from " + res.sourcePackId());
+                }
+            }
+        }
+        h.assertTrue(PcItems.RAW_MAGNETITE.get().getDefaultInstance().is(PcTags.Items.RAW_MATERIALS), "still c:raw_materials");
+        var ore = dev.denfry.promptcritical.mod.registry.PcBlocks.MAGNETITE_ORE.get().defaultBlockState();
+        h.assertTrue(ore.is(PcTags.Blocks.ORES), "still c:ores");
+        h.assertTrue(ore.is(PcTags.Blocks.IRON_ORES), "route I0 still finds magnetite");
+        h.assertTrue(net.minecraft.world.level.block.Blocks.IRON_ORE.defaultBlockState().is(PcTags.Blocks.IRON_ORES),
+                "route I0 also accepts any c:ores/iron");
+        h.assertTrue(h.getLevel().getServer().getPackRepository().getAvailableIds().stream()
+                .anyMatch(id -> id.contains("open_compat")), "open compat pack is available");
+        h.succeed();
+    }
+
     private static List<Part> concat(List<Part> a, List<Part> b) {
         return java.util.stream.Stream.concat(a.stream(), b.stream()).toList();
     }

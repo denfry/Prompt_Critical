@@ -25,6 +25,11 @@ public final class CompatText {
 
         LANG.put("config.jade.plugin_" + PromptCritical.MOD_ID + ".hide_fluids", new String[] {
                 "Hide tank levels of Prompt Critical machines", "Скрыть уровни баков машин Prompt Critical"});
+        LANG.put("pack." + PromptCritical.MOD_ID + ".open_compat.title", new String[] {
+                "Prompt Critical: Open Ore Compatibility", "Prompt Critical: открытая совместимость руд"});
+        LANG.put("pack." + PromptCritical.MOD_ID + ".open_compat.description", new String[] {
+                "Lets other mods process Prompt Critical ores and raw ores (c:ores/<metal>)",
+                "Другие моды смогут перерабатывать руды и сырьё Prompt Critical (c:ores/<металл>)"});
         add("amount_by_mode", "Amount depends on the operating mode; shown nominally",
                 "Количество зависит от режима; показано условно");
         add("info.raw_coal", "Mined from coal seams underground. Each piece carries a coal assay: volatiles, ash, "

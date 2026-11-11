@@ -24,6 +24,8 @@ public final class PcTags {
         /** Кровля неустойчивая — {@code mining.roof_span_weak}; остальное — средняя. */
         public static final TagKey<Block> ROOF_WEAK = mod("roof_weak");
         public static final TagKey<Block> ORES = common("ores");
+        /** Железные руды для заданий: свои и любые {@code c:ores/iron}. */
+        public static final TagKey<Block> IRON_ORES = mod("iron_ores");
         public static final TagKey<Block> COAL_ORES = common("ores/coal");
 
         private Blocks() {
