@@ -104,6 +104,43 @@ public final class CompatGameTests {
         h.succeed();
     }
 
+    @GameTest(template = EMPTY)
+    public static void coldSweatHeatSourcesMatchBlockStates(GameTestHelper h) {
+        // данные Cold Sweat не проверяются без самого мода: сверяем id блоков и свойства состояний, чтобы
+        // переименование блока или свойства не отключало интеграцию молча
+        var files = h.getLevel().getServer().getResourceManager().listResources("cold_sweat/block/block_temp",
+                id -> id.getNamespace().equals(PromptCritical.MOD_ID) && id.getPath().endsWith(".json"));
+        h.assertTrue(files.size() >= 10, "cold sweat heat sources: " + files.size());
+        files.forEach((id, res) -> {
+            com.google.gson.JsonObject json;
+            try (var reader = res.openAsReader()) {
+                json = com.google.gson.JsonParser.parseReader(reader).getAsJsonObject();
+            } catch (java.io.IOException e) {
+                throw new IllegalStateException(e);
+            }
+            h.assertTrue(json.get("temperature").getAsDouble() > 0, "temperature in " + id);
+            h.assertTrue(json.get("range").getAsInt() > 0, "range in " + id);
+            var block = json.getAsJsonObject("block");
+            var state = block.getAsJsonObject("state");
+            for (var name : block.getAsJsonArray("blocks")) {
+                var blockId = ResourceLocation.parse(name.getAsString());
+                h.assertTrue(net.minecraft.core.registries.BuiltInRegistries.BLOCK.containsKey(blockId), "block " + blockId + " in " + id);
+                var definition = net.minecraft.core.registries.BuiltInRegistries.BLOCK.get(blockId).getStateDefinition();
+                for (var entry : state.entrySet()) {
+                    var property = definition.getProperty(entry.getKey());
+                    h.assertTrue(property != null, "property " + entry.getKey() + " of " + blockId + " in " + id);
+                    var values = entry.getValue().isJsonArray() ? entry.getValue().getAsJsonArray().asList()
+                            : List.of(entry.getValue());
+                    for (var value : values) {
+                        h.assertTrue(property.getValue(value.getAsString()).isPresent(),
+                                entry.getKey() + "=" + value + " of " + blockId + " in " + id);
+                    }
+                }
+            }
+        });
+        h.succeed();
+    }
+
     private static List<Part> concat(List<Part> a, List<Part> b) {
         return java.util.stream.Stream.concat(a.stream(), b.stream()).toList();
     }
