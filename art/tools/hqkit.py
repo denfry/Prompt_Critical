@@ -55,6 +55,10 @@ _RAMPS = {
     "hot": "590d03 8e1b05 c33509 ed590f ff891d ffb73b ffe179",       # раскал
     "lamp_g": "06250f 0b3d17 125c22 1d8231 33ab45 63cf6d a5eaa4",
     "lamp_r": "350505 5a0808 890d0c bb1611 e3302a f4685c fbaa9c",
+    "pgrey": "3c3b33 504f45 666459 7d7b6f 959384 aca99a c2bfb0",     # щиты и пульты, RAL 7032
+    "clay": "33241a 4a3524 624731 7b5b40 937051 aa8765 c1a080",      # лёточная масса, глина
+    "sinter": "1e1714 2b211c 3a2c25 4b3830 5e463b 735649 896858",    # агломерат, шлак
+    "water": "0b2430 10333f 174552 205a69 2e7282 4a8f9e 74b0bc",
     # опознавательная окраска по ГОСТ 14202
     "p_water": "0c2a17 124021 1a592e 24743d 359050 54aa6c 82c794",
     "p_steam": "3a0a0a 571010 781717 9b201d bc2f28 d54b3d e97360",
@@ -431,6 +435,48 @@ class Model:
                 paint[face] = Planar(sheet, face, cf, ct)
                 self.box(f"{name}_cap{end}_{q}", f, t, mat, paint=paint, bevel=False)
         return Cyl(wrap, cap0, cap1, r, rc)
+
+    def ring(self, name, axis, c, r_out, th, a0, a1, mat, inner=None, n=16, lvl=3.0, paint_out=None):
+        """Полое кольцо (стенка ковша, обечайка, обод): n плит толщиной th по внешнему радиусу r_out.
+
+        Плита ставится по ближайшему из четырёх основных направлений и доворачивается на ±22,5/±45,
+        поэтому годится и для 16 граней. inner — материал внутренней стороны, paint_out(s) — рисунок наружной.
+        """
+        a = AX[axis]
+        plane = [i for i in range(3) if i != a]
+        cc = np.zeros(3)
+        cc[plane[0]], cc[plane[1]] = c
+        w = 2 * r_out * math.tan(math.pi / n) + 0.02
+        names = {(0, -1): "west", (0, 1): "east", (1, -1): "down", (1, 1): "up", (2, -1): "north", (2, 1): "south"}
+
+        def d3(deg):
+            v = np.zeros(3)
+            v[plane[0]], v[plane[1]] = math.sin(math.radians(deg)), math.cos(math.radians(deg))
+            return v
+        for k in range(n):
+            th_deg = k * 360 / n
+            base = (round(th_deg / 90) * 90) % 360
+            delta = th_deg - base
+            delta = (delta + 180) % 360 - 180
+            out = d3(base)
+            if delta:
+                sgn = 1 if np.allclose(rotmat(axis, delta) @ out, d3(base + delta), atol=1e-6) else -1
+                delta *= sgn
+            na = int(np.argmax(np.abs(out)))
+            perp = [i for i in plane if i != na][0]
+            f, t = cc.copy(), cc.copy()
+            mid = r_out - th / 2
+            f[na] += out[na] * mid - th / 2; t[na] += out[na] * mid + th / 2
+            f[perp] -= w / 2; t[perp] += w / 2
+            f[a], t[a] = a0, a1
+            o_name = names[(na, 1 if out[na] > 0 else -1)]
+            i_name = names[(na, -1 if out[na] > 0 else 1)]
+            paint = {i_name: (lambda s, m_=inner or mat: s.fill(mat=m_, lvl=lvl - 0.5).grain(seed_of(self.id, name, "in"), mat=m_))}
+            if paint_out:
+                paint[o_name] = paint_out
+            self.box(f"{name}_{k}", [round(float(v), 4) for v in f], [round(float(v), 4) for v in t], mat,
+                     rot=(axis, delta, [round(float(v), 4) for v in cc]) if delta else None, paint=paint, bevel=False,
+                     share=f"{name}@{base}", lvl=lvl)  # одна роль граней — один базовый поворот
 
     # ---- сборка
     def _inside(self, P):
