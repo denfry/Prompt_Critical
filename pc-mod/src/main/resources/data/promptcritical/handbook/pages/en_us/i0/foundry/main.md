@@ -3,7 +3,7 @@ Pump and valve bodies, flywheels, wheels and gear blanks are not forged or craft
 ## Melting
 
 - The [cupola furnace](item:promptcritical:cupola_furnace) is a shaft furnace for grey iron. Charges go in at the top: [pig iron](item:promptcritical:pig_iron) or iron ingots, with charcoal in place of coke, 100 kg per item. Air comes from a blower on a Create shaft. The fuel share sets the temperature: 12 % of the metal gives about 1450 °C, 10 % gives 1345 °C, cold iron; 14 % gives 1545 °C. The top gas is carbon monoxide.
-- The [crucible furnace](item:promptcritical:crucible_furnace) is for copper, bronze and aluminium. Ingot into the crucible, coal into the hearth. The crucible holds one alloy at a time: change alloy only after pouring.
+- The [crucible furnace](item:promptcritical:crucible_furnace) is for copper, bronze and aluminium. Ingot into the crucible, coal into the hearth. The crucible holds one alloy at a time: change alloy only after pouring. [Tin bronze](item:promptcritical:bronze_ingot) is crafted from three copper ingots, [cassiterite](item:promptcritical:raw_cassiterite) and coal; it goes into bearing housings, and a turned housing gives two bearing shells.
 
 Both furnaces tap by themselves into a prepared mould beside them: the cupola at its foot, the crucible furnace in front of it, at the same level or one block lower. A redstone signal holds the tap hole closed. An empty-hand click on a furnace shows mass, temperature and fuel.
 

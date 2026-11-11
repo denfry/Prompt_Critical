@@ -162,6 +162,8 @@ ICONS = {
     "copper_cathode": plate("#e0907a"),
     "nickel_ingot": ingot("#c8c4a8", "#9a9680"),
     "tin_ingot": ingot("#e0e2e4", "#b4b8bc"),
+    # оловянная бронза: медь, сплавленная с касситеритом под углём
+    "bronze_ingot": ingot("#b08d57", "#7a5e34"),
     "foundry_sand": powder("#5a4a34", "#3a2e20"),
     "casting_pattern": pattern,
     "refractory_brick": brick_icon("#c89a5a", "#a07a44"),

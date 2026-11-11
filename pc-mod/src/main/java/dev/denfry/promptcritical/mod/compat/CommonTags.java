@@ -24,6 +24,7 @@ public final class CommonTags {
     public static void addItemTags(Function<TagKey<Item>, IntrinsicTagAppender<Item>> tag) {
         item(tag, "ingots", "steel", PcItems.STEEL_INGOT);
         item(tag, "ingots", "pig_iron", PcItems.PIG_IRON);
+        item(tag, "ingots", "bronze", PcItems.BRONZE_INGOT);
         item(tag, "plates", "steel", PcItems.STEEL_PLATE);
         item(tag, "rods", "steel", PcItems.STEEL_ROD);
         item(tag, "wires", "copper", PcItems.COPPER_WIRE);

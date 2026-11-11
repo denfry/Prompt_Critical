@@ -58,6 +58,8 @@ public final class PcItems {
     public static final DeferredItem<Item> STONE_DUST = item("stone_dust", 64);
     public static final DeferredItem<Item> PIG_IRON = item("pig_iron", 64);
     public static final DeferredItem<Item> FOUNDRY_SAND = item("foundry_sand", 64);
+    /** Оловянная бронза для тигля: медь, сплавленная с касситеритом под углём (вкладыши подшипников I0). */
+    public static final DeferredItem<Item> BRONZE_INGOT = item("bronze_ingot", 64);
     public static final DeferredItem<CastingPatternItem> CASTING_PATTERN = registered(ITEMS.registerItem("casting_pattern",
             CastingPatternItem::new, new Item.Properties().stacksTo(16)));
     public static final DeferredItem<Item> CASTING = item("casting", 16);

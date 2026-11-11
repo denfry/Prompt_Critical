@@ -167,6 +167,7 @@ public final class PcLanguageProvider extends LanguageProvider {
         i("stone_dust", "Stone Dust", "Инертная пыль");
         i("pig_iron", "Pig Iron", "Чугун");
         i("foundry_sand", "Foundry Sand", "Формовочная смесь");
+        i("bronze_ingot", "Tin Bronze Ingot", "Слиток оловянной бронзы");
         i("casting_pattern", "Casting Pattern", "Модель отливки");
         i("casting", "Casting", "Отливка");
         i("refractory_brick", "Refractory Brick", "Огнеупорный кирпич");
