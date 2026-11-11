@@ -411,4 +411,16 @@ public final class OpsGameTests {
                 .thenWaitUntil(() -> h.assertTrue(h.getBlockState(panel).getValue(PcProperties.SEVERITY) == 0, "panel lamp off"))
                 .thenSucceed();
     }
+
+    /** Сало для маслёнки вытапливается в обычной печи — без ифрита и Незера в I0; помол мытого угля даёт пыль горелок. */
+    @GameTest(template = LARGE)
+    public static void tallowAndCoalDustNeedNoNether(GameTestHelper h) {
+        var level = h.getLevel();
+        h.assertTrue(level.getRecipeManager().getAllRecipesFor(net.minecraft.world.item.crafting.RecipeType.SMELTING).stream()
+                .anyMatch(r -> r.value().getResultItem(level.registryAccess()).is(PcItems.TALLOW.get())
+                        && r.value().getIngredients().get(0).test(new ItemStack(Items.MUTTON))), "tallow rendered from mutton");
+        h.assertTrue(level.getRecipeManager().byKey(PromptCritical.id("powerhouse/coal_dust_from_washed_coal")).isPresent(),
+                "coal dust from washed coal");
+        h.succeed();
+    }
 }
