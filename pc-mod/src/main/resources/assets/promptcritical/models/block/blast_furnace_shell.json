@@ -1,164 +1,494 @@
 {
 	"credit": "Made with Blockbench",
+	"texture_size": [64, 64],
 	"textures": {
-		"particle": "promptcritical:block/common/grid_riveted",
-		"riv": "promptcritical:block/common/grid_riveted",
-		"rust": "promptcritical:block/common/metal_rust"
+		"particle": "promptcritical:block/hq/blast_furnace_shell",
+		"t": "promptcritical:block/hq/blast_furnace_shell"
 	},
 	"elements": [
 		{
 			"name": "shell",
-			"from": [
-				0,
-				0,
-				0
-			],
-			"to": [
-				16,
-				16,
-				16
-			],
+			"from": [0, 0, 0],
+			"to": [16, 16, 16],
 			"rotation": {
 				"angle": 0,
 				"axis": "y",
-				"origin": [
-					8,
-					8,
-					8
-				]
+				"origin": [8, 8, 8]
 			},
 			"faces": {
 				"north": {
-					"uv": [
-						0,
-						0,
-						16,
-						16
-					],
-					"texture": "#riv"
-				},
-				"south": {
-					"uv": [
-						0,
-						0,
-						16,
-						16
-					],
-					"texture": "#riv"
+					"uv": [0, 0, 4, 4],
+					"texture": "#t",
+					"cullface": "north"
 				},
 				"east": {
-					"uv": [
-						0,
-						0,
-						16,
-						16
-					],
-					"texture": "#riv"
+					"uv": [0, 4.25, 4, 8.25],
+					"texture": "#t",
+					"cullface": "east"
+				},
+				"south": {
+					"uv": [4.25, 0, 8.25, 4],
+					"texture": "#t",
+					"cullface": "south"
 				},
 				"west": {
-					"uv": [
-						0,
-						0,
-						16,
-						16
-					],
-					"texture": "#riv"
+					"uv": [8.5, 0, 12.5, 4],
+					"texture": "#t",
+					"cullface": "west"
 				},
 				"up": {
-					"uv": [
-						0,
-						0,
-						16,
-						16
-					],
-					"texture": "#riv"
+					"uv": [4.25, 4.25, 8.25, 8.25],
+					"texture": "#t",
+					"cullface": "up"
 				},
 				"down": {
-					"uv": [
-						0,
-						0,
-						16,
-						16
-					],
-					"texture": "#riv"
+					"uv": [8.5, 4.25, 12.5, 8.25],
+					"texture": "#t",
+					"cullface": "down"
 				}
 			}
 		},
 		{
-			"name": "stave_band",
-			"from": [
-				-0.5,
-				6,
-				-0.5
-			],
-			"to": [
-				16.5,
-				8,
-				16.5
-			],
+			"name": "cooler_n",
+			"from": [5, 2, -1],
+			"to": [11, 6, 0],
 			"rotation": {
 				"angle": 0,
 				"axis": "y",
-				"origin": [
-					8,
-					8,
-					8
-				]
+				"origin": [8, 8, 8]
 			},
 			"faces": {
 				"north": {
-					"uv": [
-						0,
-						0,
-						16,
-						2
-					],
-					"texture": "#rust"
-				},
-				"south": {
-					"uv": [
-						0,
-						0,
-						16,
-						2
-					],
-					"texture": "#rust"
+					"uv": [13.75, 4.25, 15.25, 5.25],
+					"texture": "#t",
+					"cullface": "north"
 				},
 				"east": {
-					"uv": [
-						0,
-						0,
-						16,
-						2
-					],
-					"texture": "#rust"
+					"uv": [5.75, 8.5, 6, 9.5],
+					"texture": "#t",
+					"cullface": "north"
 				},
 				"west": {
-					"uv": [
-						0,
-						0,
-						16,
-						2
-					],
-					"texture": "#rust"
+					"uv": [5.25, 8.5, 5.5, 9.5],
+					"texture": "#t",
+					"cullface": "north"
 				},
 				"up": {
-					"uv": [
-						0,
-						0,
-						16,
-						16
-					],
-					"texture": "#rust"
+					"uv": [7.25, 8.5, 8.75, 8.75],
+					"texture": "#t",
+					"cullface": "north"
 				},
 				"down": {
-					"uv": [
-						0,
-						0,
-						16,
-						16
-					],
-					"texture": "#rust"
+					"uv": [9, 8.5, 10.5, 8.75],
+					"texture": "#t",
+					"cullface": "north"
+				}
+			}
+		},
+		{
+			"name": "cooler_stub0_n",
+			"from": [6, 3.5, -2],
+			"to": [7, 4.5, -1],
+			"rotation": {
+				"angle": 0,
+				"axis": "y",
+				"origin": [8, 8, 8]
+			},
+			"faces": {
+				"north": {
+					"uv": [10.75, 8.5, 11, 8.75],
+					"texture": "#t",
+					"cullface": "north"
+				},
+				"east": {
+					"uv": [11.75, 8.5, 12, 8.75],
+					"texture": "#t",
+					"cullface": "north"
+				},
+				"west": {
+					"uv": [11.25, 8.5, 11.5, 8.75],
+					"texture": "#t",
+					"cullface": "north"
+				},
+				"up": {
+					"uv": [12.25, 8.5, 12.5, 8.75],
+					"texture": "#t",
+					"cullface": "north"
+				},
+				"down": {
+					"uv": [12.75, 8.5, 13, 8.75],
+					"texture": "#t",
+					"cullface": "north"
+				}
+			}
+		},
+		{
+			"name": "cooler_stub1_n",
+			"from": [9, 3.5, -2],
+			"to": [10, 4.5, -1],
+			"rotation": {
+				"angle": 0,
+				"axis": "y",
+				"origin": [8, 8, 8]
+			},
+			"faces": {
+				"north": {
+					"uv": [10.75, 8.5, 11, 8.75],
+					"texture": "#t",
+					"cullface": "north"
+				},
+				"east": {
+					"uv": [11.75, 8.5, 12, 8.75],
+					"texture": "#t",
+					"cullface": "north"
+				},
+				"west": {
+					"uv": [11.25, 8.5, 11.5, 8.75],
+					"texture": "#t",
+					"cullface": "north"
+				},
+				"up": {
+					"uv": [12.25, 8.5, 12.5, 8.75],
+					"texture": "#t",
+					"cullface": "north"
+				},
+				"down": {
+					"uv": [12.75, 8.5, 13, 8.75],
+					"texture": "#t",
+					"cullface": "north"
+				}
+			}
+		},
+		{
+			"name": "cooler_e",
+			"from": [16, 2, 5],
+			"to": [17, 6, 11],
+			"rotation": {
+				"angle": 0,
+				"axis": "y",
+				"origin": [8, 8, 8]
+			},
+			"faces": {
+				"north": {
+					"uv": [6.25, 8.5, 6.5, 9.5],
+					"texture": "#t",
+					"cullface": "east"
+				},
+				"east": {
+					"uv": [0, 8.5, 1.5, 9.5],
+					"texture": "#t",
+					"cullface": "east"
+				},
+				"south": {
+					"uv": [6.75, 8.5, 7, 9.5],
+					"texture": "#t",
+					"cullface": "east"
+				},
+				"up": {
+					"uv": [12.75, 4.25, 13, 5.75],
+					"texture": "#t",
+					"cullface": "east"
+				},
+				"down": {
+					"uv": [13.25, 4.25, 13.5, 5.75],
+					"texture": "#t",
+					"cullface": "east"
+				}
+			}
+		},
+		{
+			"name": "cooler_stub0_e",
+			"from": [17, 3.5, 6],
+			"to": [18, 4.5, 7],
+			"rotation": {
+				"angle": 0,
+				"axis": "y",
+				"origin": [8, 8, 8]
+			},
+			"faces": {
+				"north": {
+					"uv": [10.75, 8.5, 11, 8.75],
+					"texture": "#t",
+					"cullface": "east"
+				},
+				"east": {
+					"uv": [11.75, 8.5, 12, 8.75],
+					"texture": "#t",
+					"cullface": "east"
+				},
+				"south": {
+					"uv": [13.25, 8.5, 13.5, 8.75],
+					"texture": "#t",
+					"cullface": "east"
+				},
+				"up": {
+					"uv": [12.25, 8.5, 12.5, 8.75],
+					"texture": "#t",
+					"cullface": "east"
+				},
+				"down": {
+					"uv": [12.75, 8.5, 13, 8.75],
+					"texture": "#t",
+					"cullface": "east"
+				}
+			}
+		},
+		{
+			"name": "cooler_stub1_e",
+			"from": [17, 3.5, 9],
+			"to": [18, 4.5, 10],
+			"rotation": {
+				"angle": 0,
+				"axis": "y",
+				"origin": [8, 8, 8]
+			},
+			"faces": {
+				"north": {
+					"uv": [10.75, 8.5, 11, 8.75],
+					"texture": "#t",
+					"cullface": "east"
+				},
+				"east": {
+					"uv": [11.75, 8.5, 12, 8.75],
+					"texture": "#t",
+					"cullface": "east"
+				},
+				"south": {
+					"uv": [13.25, 8.5, 13.5, 8.75],
+					"texture": "#t",
+					"cullface": "east"
+				},
+				"up": {
+					"uv": [12.25, 8.5, 12.5, 8.75],
+					"texture": "#t",
+					"cullface": "east"
+				},
+				"down": {
+					"uv": [12.75, 8.5, 13, 8.75],
+					"texture": "#t",
+					"cullface": "east"
+				}
+			}
+		},
+		{
+			"name": "cooler_s",
+			"from": [5, 2, 16],
+			"to": [11, 6, 17],
+			"rotation": {
+				"angle": 0,
+				"axis": "y",
+				"origin": [8, 8, 8]
+			},
+			"faces": {
+				"east": {
+					"uv": [5.75, 8.5, 6, 9.5],
+					"texture": "#t",
+					"cullface": "south"
+				},
+				"south": {
+					"uv": [1.75, 8.5, 3.25, 9.5],
+					"texture": "#t",
+					"cullface": "south"
+				},
+				"west": {
+					"uv": [5.25, 8.5, 5.5, 9.5],
+					"texture": "#t",
+					"cullface": "south"
+				},
+				"up": {
+					"uv": [7.25, 8.5, 8.75, 8.75],
+					"texture": "#t",
+					"cullface": "south"
+				},
+				"down": {
+					"uv": [9, 8.5, 10.5, 8.75],
+					"texture": "#t",
+					"cullface": "south"
+				}
+			}
+		},
+		{
+			"name": "cooler_stub0_s",
+			"from": [9, 3.5, 17],
+			"to": [10, 4.5, 18],
+			"rotation": {
+				"angle": 0,
+				"axis": "y",
+				"origin": [8, 8, 8]
+			},
+			"faces": {
+				"east": {
+					"uv": [11.75, 8.5, 12, 8.75],
+					"texture": "#t",
+					"cullface": "south"
+				},
+				"south": {
+					"uv": [13.25, 8.5, 13.5, 8.75],
+					"texture": "#t",
+					"cullface": "south"
+				},
+				"west": {
+					"uv": [11.25, 8.5, 11.5, 8.75],
+					"texture": "#t",
+					"cullface": "south"
+				},
+				"up": {
+					"uv": [12.25, 8.5, 12.5, 8.75],
+					"texture": "#t",
+					"cullface": "south"
+				},
+				"down": {
+					"uv": [12.75, 8.5, 13, 8.75],
+					"texture": "#t",
+					"cullface": "south"
+				}
+			}
+		},
+		{
+			"name": "cooler_stub1_s",
+			"from": [6, 3.5, 17],
+			"to": [7, 4.5, 18],
+			"rotation": {
+				"angle": 0,
+				"axis": "y",
+				"origin": [8, 8, 8]
+			},
+			"faces": {
+				"east": {
+					"uv": [11.75, 8.5, 12, 8.75],
+					"texture": "#t",
+					"cullface": "south"
+				},
+				"south": {
+					"uv": [13.25, 8.5, 13.5, 8.75],
+					"texture": "#t",
+					"cullface": "south"
+				},
+				"west": {
+					"uv": [11.25, 8.5, 11.5, 8.75],
+					"texture": "#t",
+					"cullface": "south"
+				},
+				"up": {
+					"uv": [12.25, 8.5, 12.5, 8.75],
+					"texture": "#t",
+					"cullface": "south"
+				},
+				"down": {
+					"uv": [12.75, 8.5, 13, 8.75],
+					"texture": "#t",
+					"cullface": "south"
+				}
+			}
+		},
+		{
+			"name": "cooler_w",
+			"from": [-1, 2, 5],
+			"to": [0, 6, 11],
+			"rotation": {
+				"angle": 0,
+				"axis": "y",
+				"origin": [8, 8, 8]
+			},
+			"faces": {
+				"north": {
+					"uv": [6.25, 8.5, 6.5, 9.5],
+					"texture": "#t",
+					"cullface": "west"
+				},
+				"south": {
+					"uv": [6.75, 8.5, 7, 9.5],
+					"texture": "#t",
+					"cullface": "west"
+				},
+				"west": {
+					"uv": [3.5, 8.5, 5, 9.5],
+					"texture": "#t",
+					"cullface": "west"
+				},
+				"up": {
+					"uv": [12.75, 4.25, 13, 5.75],
+					"texture": "#t",
+					"cullface": "west"
+				},
+				"down": {
+					"uv": [13.25, 4.25, 13.5, 5.75],
+					"texture": "#t",
+					"cullface": "west"
+				}
+			}
+		},
+		{
+			"name": "cooler_stub0_w",
+			"from": [-2, 3.5, 9],
+			"to": [-1, 4.5, 10],
+			"rotation": {
+				"angle": 0,
+				"axis": "y",
+				"origin": [8, 8, 8]
+			},
+			"faces": {
+				"north": {
+					"uv": [10.75, 8.5, 11, 8.75],
+					"texture": "#t",
+					"cullface": "west"
+				},
+				"south": {
+					"uv": [13.25, 8.5, 13.5, 8.75],
+					"texture": "#t",
+					"cullface": "west"
+				},
+				"west": {
+					"uv": [11.25, 8.5, 11.5, 8.75],
+					"texture": "#t",
+					"cullface": "west"
+				},
+				"up": {
+					"uv": [12.25, 8.5, 12.5, 8.75],
+					"texture": "#t",
+					"cullface": "west"
+				},
+				"down": {
+					"uv": [12.75, 8.5, 13, 8.75],
+					"texture": "#t",
+					"cullface": "west"
+				}
+			}
+		},
+		{
+			"name": "cooler_stub1_w",
+			"from": [-2, 3.5, 6],
+			"to": [-1, 4.5, 7],
+			"rotation": {
+				"angle": 0,
+				"axis": "y",
+				"origin": [8, 8, 8]
+			},
+			"faces": {
+				"north": {
+					"uv": [10.75, 8.5, 11, 8.75],
+					"texture": "#t",
+					"cullface": "west"
+				},
+				"south": {
+					"uv": [13.25, 8.5, 13.5, 8.75],
+					"texture": "#t",
+					"cullface": "west"
+				},
+				"west": {
+					"uv": [11.25, 8.5, 11.5, 8.75],
+					"texture": "#t",
+					"cullface": "west"
+				},
+				"up": {
+					"uv": [12.25, 8.5, 12.5, 8.75],
+					"texture": "#t",
+					"cullface": "west"
+				},
+				"down": {
+					"uv": [12.75, 8.5, 13, 8.75],
+					"texture": "#t",
+					"cullface": "west"
 				}
 			}
 		}

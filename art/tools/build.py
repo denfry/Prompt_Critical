@@ -1,7 +1,8 @@
 """Generate all placeholder textures, item models, fluid textures and the Blockbench spec.
 
-usage: python art/tools/build.py <repo_root> <spec_out.json> [--only-check]
+usage: python art/tools/build.py <repo_root> <spec_out.json> [--only-check] [--hq-only]
 Blockbench step (models -> .bbmodel + Java JSON) reads spec_out.json.
+--hq-only writes only the HQ atlases (hq_*.py) and puts only their models into the spec.
 """
 import glob, importlib, json, os, sys, zlib
 
@@ -13,6 +14,7 @@ import numpy as np  # noqa: E402
 ROOT = sys.argv[1]
 SPEC_OUT = sys.argv[2]
 CHECK_ONLY = "--only-check" in sys.argv
+HQ_ONLY = "--hq-only" in sys.argv
 ASSETS = os.path.join(ROOT, "pc-mod/src/main/resources/assets/promptcritical")
 pclib.TEX = os.path.join(ASSETS, "textures")
 
@@ -42,6 +44,24 @@ for kind in ("tex", "spec"):
             owner[k] = mod
         for m in pclib.M[before_m:]:
             m["_mod"] = mod
+
+# ---- HQ: модели hq_*.py подменяют плейсхолдеры с тем же id, атлас у каждой свой ----
+import hqkit  # noqa: E402
+
+for path in sorted(glob.glob(os.path.join(HERE, "hq_*.py"))):
+    importlib.import_module(os.path.basename(path)[:-3])
+at = {m["id"]: i for i, m in enumerate(pclib.M)}
+for hm in hqkit.MODELS:
+    els, img = hm.build()
+    rel = hqkit.tex_rel(hm.id)
+    pclib.TEXTURES[rel] = (lambda a=img: a)
+    owner[rel] = "hq"
+    entry = {"id": hm.id, "cat": hm.cat, "textures": {"t": rel}, "elements": els,
+             "java": hqkit.java_path(hm.id, hm.kind), "kind": hm.kind, "hq": True, "size": hm.size, "_mod": "hq"}
+    if hm.id in at:
+        pclib.M[at[hm.id]] = entry
+    else:
+        pclib.M.append(entry)
 
 # ---- validation ----
 ids = {}
@@ -84,6 +104,16 @@ if CHECK_ONLY:
     sys.exit(0)
 
 # ---- write ----
+if HQ_ONLY:
+    for rel, fn in pclib.TEXTURES.items():
+        if owner.get(rel) == "hq":
+            pclib.save(fn(), rel)
+    json.dump([m for m in pclib.M if m.get("hq")], open(SPEC_OUT, "w"), indent=1, ensure_ascii=False)
+    json.dump({"items": pclib.ITEMS, "fluids": pclib.FLUIDS, "texture_owner": owner},
+              open(os.path.join(os.path.dirname(SPEC_OUT), "registry.json"), "w"), indent=1)
+    print("written (hq only)")
+    sys.exit(0)
+
 for rel, fn in pclib.TEXTURES.items():
     pclib.save(fn(), rel)
 
