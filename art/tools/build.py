@@ -57,7 +57,8 @@ for hm in hqkit.MODELS:
     pclib.TEXTURES[rel] = (lambda a=img: a)
     owner[rel] = "hq"
     entry = {"id": hm.id, "cat": hm.cat, "textures": {"t": rel}, "elements": els,
-             "java": hqkit.java_path(hm.id, hm.kind), "kind": hm.kind, "hq": True, "size": hm.size, "_mod": "hq"}
+             "java": hqkit.java_path(hm.id, hm.kind), "kind": hm.kind, "hq": True, "size": hm.size,
+             "cutout": hm.cutout, "_mod": "hq"}
     if hm.id in at:
         pclib.M[at[hm.id]] = entry
     else:

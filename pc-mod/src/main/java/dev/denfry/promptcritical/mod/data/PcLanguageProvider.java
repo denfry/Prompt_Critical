@@ -145,6 +145,7 @@ public final class PcLanguageProvider extends LanguageProvider {
         b("manual_station", "Manual/Auto Station", "Станция РУЧ/АВТ");
         b("signal_converter", "Signal Converter", "Нормирующий преобразователь");
         b("lv_distribution_box", "Fuse Box", "Распределительный ящик с предохранителями");
+        b("lighting_board", "Lighting Board", "Щиток освещения");
 
         i("fusible_plug", "Fusible Plug", "Легкоплавкая пробка");
         i("governor_dashpot", "Governor Dashpot", "Катаракт регулятора");
@@ -371,6 +372,12 @@ public final class PcLanguageProvider extends LanguageProvider {
                 {"industrial_light_street", "Street Light", "Уличный консольный светильник"},
                 {"industrial_light_floodlight", "Floodlight", "Прожектор"},
                 {"industrial_light_exit", "Exit Sign Light", "Световой указатель «Выход»"},
+                {"lamp_fluorescent", "Fluorescent Batten", "Люминесцентный светильник ЛСП"},
+                {"lamp_bulkhead", "Bulkhead Light", "Светильник НПП «тарелка»"},
+                {"lamp_explosion_proof", "Explosion-Proof Light", "Взрывозащищённый светильник"},
+                {"lamp_emergency", "Emergency Light", "Аварийный светильник"},
+                {"lamp_high_bay", "High-Bay Light", "Светильник «колокол»"},
+                {"warning_beacon", "Warning Beacon", "Проблесковый маячок"},
                 {"room_sign", "Room Sign", "Табличка помещения"}, {"room_sign_evac", "Evacuation Arrow", "Стрелка эвакуации"},
                 {"wall_clock", "Wall Clock", "Настенные часы"}, {"safety_poster", "Safety Poster", "Плакат по технике безопасности"},
                 {"safety_poster_large", "Large Safety Poster", "Большой плакат по технике безопасности"},
@@ -387,7 +394,27 @@ public final class PcLanguageProvider extends LanguageProvider {
                 {"cable_tray_vertical", "Vertical Cable Tray", "Кабельный лоток вертикальный"},
                 {"room_sign_electrical", "Sign: Switchgear Room", "Табличка «Электрощитовая»"},
                 {"room_sign_pump", "Sign: Pump Room", "Табличка «Насосная»"},
-                {"room_sign_control", "Sign: Main Control Room", "Табличка «ГЩУ»"}};
+                {"room_sign_control", "Sign: Main Control Room", "Табличка «ГЩУ»"},
+                {"electrical_cabinet", "Distribution Cabinet", "Распределительный шкаф"},
+                {"junction_box", "Junction Box", "Распаечная коробка"},
+                {"wall_socket", "Industrial Sockets", "Силовые розетки"},
+                {"knife_switch", "Knife Switch", "Рубильник"},
+                {"voltage_warning_sign", "Sign: Danger, High Voltage", "Плакат «Стой! Напряжение»"},
+                {"cable_drum", "Cable Drum", "Кабельный барабан"},
+                {"dielectric_mat", "Dielectric Mat", "Диэлектрический коврик"},
+                {"conduit", "Wiring Conduit", "Труба электропроводки"},
+                {"conduit_vertical", "Vertical Wiring Conduit", "Труба электропроводки вертикальная"},
+                {"workbench", "Fitter's Workbench", "Слесарный верстак"},
+                {"locker", "Changing Room Locker", "Шкафчик раздевалки"},
+                {"shelving", "Storage Shelving", "Стеллаж"},
+                {"fire_extinguisher_wall", "Wall Fire Extinguisher", "Огнетушитель на стене"},
+                {"fire_hose_cabinet", "Fire Hose Cabinet", "Пожарный шкаф"},
+                {"first_aid_box", "First Aid Box", "Аптечка"},
+                {"oil_drum", "Oil Drum", "Бочка с маслом"},
+                {"gas_cylinders", "Gas Cylinder Rack", "Стойка с баллонами"},
+                {"column_i_beam", "I-Beam Column", "Колонна из двутавра"},
+                {"floor_marking", "Floor Marking Line", "Разметка пола"},
+                {"floor_marking_hazard", "Hazard Floor Marking", "Разметка пола «опасная зона»"}};
         java.util.Map<String, String[]> names = new java.util.HashMap<>();
         for (String[] d : decor) {
             b(d[0], d[1], d[2]);

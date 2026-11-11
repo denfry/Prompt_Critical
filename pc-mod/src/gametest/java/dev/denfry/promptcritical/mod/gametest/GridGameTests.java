@@ -12,6 +12,7 @@ import dev.denfry.promptcritical.mod.grid.GridComponents;
 import dev.denfry.promptcritical.mod.grid.ElectricMotorBlockEntity;
 import dev.denfry.promptcritical.mod.grid.GridPanels;
 import dev.denfry.promptcritical.mod.grid.InstrumentBlockEntity;
+import dev.denfry.promptcritical.mod.grid.LightingBoardBlockEntity;
 import dev.denfry.promptcritical.mod.grid.RelayCabinetBlockEntity;
 import dev.denfry.promptcritical.mod.grid.ShaftGeneratorBlockEntity;
 import dev.denfry.promptcritical.mod.registry.PcBlocks;
@@ -20,6 +21,7 @@ import dev.denfry.promptcritical.sim.grid.BreakerResponse;
 import dev.denfry.promptcritical.sim.grid.BreakerState;
 import dev.denfry.promptcritical.sim.grid.ConsumerUnit;
 import dev.denfry.promptcritical.sim.grid.GeneratorUnit;
+import dev.denfry.promptcritical.sim.grid.LightingBoardUnit;
 import dev.denfry.promptcritical.sim.grid.MachineState;
 import dev.denfry.promptcritical.sim.grid.MotorState;
 import dev.denfry.promptcritical.sim.grid.RelaySetting;
@@ -377,6 +379,59 @@ public final class GridGameTests {
                     h.assertBlockPresent(PcBlocks.ELECTRIC_MOTOR.get(), G2); // защита сработала — разрушений нет
                     h.assertBlockPresent(PcBlocks.SWITCHGEAR_CELL.get(), CELL);
                 })
+                .thenSucceed();
+    }
+
+    // --- освещение: генератор 6,3 кВ → трансформатор 6/0,4 кВ → щиток освещения → светильники ---
+
+    private static final BlockPos TRAFO = new BlockPos(1, 1, 5), BOARD = new BlockPos(1, 1, 7),
+            PENDANT = new BlockPos(3, 4, 8), EMERGENCY = new BlockPos(0, 2, 8);
+
+    private static boolean lit(GameTestHelper h, BlockPos pos) {
+        BlockState s = h.getBlockState(pos);
+        return s.hasProperty(BlockStateProperties.LIT) && s.getValue(BlockStateProperties.LIT);
+    }
+
+    private static LightingBoardUnit board(GameTestHelper h) {
+        LightingBoardBlockEntity be = h.getBlockEntity(BOARD);
+        LightingBoardUnit u = be.unit();
+        h.assertTrue(u != null, "lighting board twin");
+        return u;
+    }
+
+    // своя партия: пересборка сети от новых кабелей сдвигает на тик тесты с допуском в 2 тика
+    @GameTest(template = LARGE, timeoutTicks = 3000, batch = "grid_lighting")
+    public static void lightingBoardFeedsItsLampsAndTheEmergencyLightRunsOnBattery(GameTestHelper h) {
+        placeGenerator(h, G1, 64);
+        // ВН: западная грань генератора → кабель → верхняя клетка трансформатора; НН: нижняя клетка → кабель → щиток
+        for (BlockPos c : new BlockPos[] {new BlockPos(3, 1, 5), new BlockPos(3, 2, 5), new BlockPos(2, 2, 5), new BlockPos(1, 1, 6)})
+            h.setBlock(c, PcBlocks.POWER_CABLE.get().defaultBlockState());
+        h.setBlock(TRAFO, facing(PcBlocks.DISTRIBUTION_TRANSFORMER.get().defaultBlockState(), Direction.NORTH));
+        h.setBlock(BOARD, facing(PcBlocks.LIGHTING_BOARD.get().defaultBlockState(), Direction.SOUTH));
+        h.setBlock(PENDANT, PcBlocks.INDUSTRIAL_LIGHT.get().defaultBlockState());
+        h.setBlock(EMERGENCY, facing(PcBlocks.LAMP_EMERGENCY.get().defaultBlockState(), Direction.NORTH));
+        h.startSequence()
+                .thenWaitUntil(() -> {
+                    gen(h, G1);
+                    board(h);
+                })
+                .thenExecute(() -> {
+                    h.assertFalse(lit(h, PENDANT), "dark before the machine runs");
+                    configure(h, G1, 64, 0);
+                })
+                .thenWaitUntil(() -> h.assertTrue(running(gen(h, G1)), "machine runs"))
+                .thenWaitUntil(() -> h.assertTrue(lit(h, PENDANT) && lit(h, EMERGENCY),
+                        "lamps lit: board " + board(h).inputPu() + " pu, " + board(h).demandW() + " W"))
+                .thenWaitUntil(() -> h.assertTrue(Math.abs(board(h).demandW() - 258) < 1 && board(h).powerW() > 150,
+                        "group demand and draw: " + board(h).demandW() + " W, " + board(h).powerW() + " W"))
+                .thenIdle(200) // аккумулятор аварийного светильника подзаряжается
+                .thenExecute(() -> board(h).setSwitchedOn(false))
+                .thenWaitUntil(() -> h.assertFalse(lit(h, PENDANT), "group breaker puts the pendant out"))
+                .thenExecute(() -> {
+                    h.assertTrue(lit(h, EMERGENCY), "emergency light runs on its battery");
+                    h.assertTrue(board(h).powerW() == 0, "no draw with the breaker open");
+                })
+                .thenWaitUntil(() -> h.assertFalse(lit(h, EMERGENCY), "battery runs down"))
                 .thenSucceed();
     }
 }

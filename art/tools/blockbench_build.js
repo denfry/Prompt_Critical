@@ -81,6 +81,7 @@
     let j = Codecs.java_block.compile();
     if (typeof j === 'string') j = JSON.parse(j);
     delete j.format_version;
+    if (spec.cutout) j.render_type = 'minecraft:cutout';
     for (const e of j.elements || []) {
       if ((e.name || '').startsWith('glow_')) e.neoforge_data = { block_light: 15, sky_light: 15 };
     }

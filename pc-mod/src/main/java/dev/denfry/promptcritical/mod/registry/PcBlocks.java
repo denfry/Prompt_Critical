@@ -79,6 +79,9 @@ import dev.denfry.promptcritical.mod.grid.DisconnectorBlockEntity;
 import dev.denfry.promptcritical.mod.grid.DistributionBoxBlockEntity;
 import dev.denfry.promptcritical.mod.grid.ElectricMotorBlockEntity;
 import dev.denfry.promptcritical.mod.grid.GridMountedBlock;
+import dev.denfry.promptcritical.mod.grid.LampBlock;
+import dev.denfry.promptcritical.mod.grid.LampKind;
+import dev.denfry.promptcritical.mod.grid.LightingBoardBlockEntity;
 import dev.denfry.promptcritical.mod.grid.InstrumentBlockEntity;
 import dev.denfry.promptcritical.mod.grid.PoleBlock;
 import dev.denfry.promptcritical.mod.grid.RelayCabinetBlockEntity;
@@ -130,6 +133,8 @@ public final class PcBlocks {
     private static final List<DeferredBlock<? extends Block>> DECOR = new ArrayList<>();
     /** Ванильные формы декора: плита, ступени, стенка → вид и базовый блок (текстура). */
     private static final Map<DeferredBlock<? extends Block>, Form> DECOR_FORMS = new LinkedHashMap<>();
+    /** Светильники с питанием от щитка освещения (один тип BE на все). */
+    public static final List<DeferredBlock<LampBlock>> LAMPS = new ArrayList<>();
 
     public record Form(String kind, String base) {
     }
@@ -168,11 +173,6 @@ public final class PcBlocks {
     private static Properties glassBlock() {
         return Properties.of().mapColor(MapColor.NONE).instrument(NoteBlockInstrument.HAT).strength(1.5f, 6.0f)
                 .sound(SoundType.GLASS).noOcclusion().isViewBlocking((st, l, p) -> false).isSuffocating((st, l, p) -> false);
-    }
-
-    private static Properties lamp() {
-        return Properties.of().mapColor(MapColor.METAL).strength(1.0f).sound(SoundType.LANTERN).noOcclusion()
-                .lightLevel(st -> st.getValue(BlockStateProperties.LIT) ? 15 : 0);
     }
 
     /** Щитовой прибор, изолятор: снимается рукой, разрушается поршнем. */
@@ -268,6 +268,8 @@ public final class PcBlocks {
             GridMountedBlock.wall(ConnectorBlockEntity::lv, 6, 4, 5.4, 10, 10, 16));
     public static final DeferredBlock<PcDeviceBlock> WIRE_CONNECTOR_MV = device("wire_connector_mv", instrument(), Spec.of(),
             GridMountedBlock.floor(ConnectorBlockEntity::mv, 5.5, 0, 5.5, 10.5, 12, 10.5));
+    public static final DeferredBlock<PcDeviceBlock> LIGHTING_BOARD = device("lighting_board", machine(),
+            Spec.facing(BlockStateProperties.LIT), GridMountedBlock.wall(LightingBoardBlockEntity::new, 3, 1, 12.5, 13, 15, 16));
     public static final DeferredBlock<PcDeviceBlock> LV_DISTRIBUTION_BOX = device("lv_distribution_box", machine(),
             Spec.facing(PcProperties.ALARM), GridMountedBlock.wall(DistributionBoxBlockEntity::new, 2, 0.5, 10.4, 14, 14, 16));
 
@@ -508,14 +510,27 @@ public final class PcBlocks {
             0, 0, 7, 16, 24, 8.5);
     public static final DeferredBlock<DecorBlock> CAGE_LADDER = decorOf(BLOCKS.registerBlock("cage_ladder",
             p -> DecorBlock.create(p, Spec.facing(), new double[] {1, 0, 13, 15, 16, 15}, true), sheet(MapColor.METAL)));
-    public static final DeferredBlock<DecorBlock> INDUSTRIAL_LIGHT = decor("industrial_light", lamp(),
+    // светильники горят от щитка освещения (lighting_board) в радиусе группы
+    public static final DeferredBlock<LampBlock> INDUSTRIAL_LIGHT = lampBlock("industrial_light", LampKind.PENDANT,
             Spec.of(BlockStateProperties.LIT), 3, 5, 3, 13, 16, 13);
-    public static final DeferredBlock<DecorBlock> INDUSTRIAL_LIGHT_STREET = decor("industrial_light_street", lamp(),
+    public static final DeferredBlock<LampBlock> INDUSTRIAL_LIGHT_STREET = lampBlock("industrial_light_street", LampKind.STREET,
             Spec.facing(BlockStateProperties.LIT), 5, 8.5, 1, 11, 12, 16);
-    public static final DeferredBlock<DecorBlock> INDUSTRIAL_LIGHT_FLOODLIGHT = decor("industrial_light_floodlight", lamp(),
-            Spec.facing(BlockStateProperties.LIT), 3, 0, 3.5, 13, 12, 10);
-    public static final DeferredBlock<DecorBlock> INDUSTRIAL_LIGHT_EXIT = decor("industrial_light_exit", lamp(),
+    public static final DeferredBlock<LampBlock> INDUSTRIAL_LIGHT_FLOODLIGHT = lampBlock("industrial_light_floodlight",
+            LampKind.FLOODLIGHT, Spec.facing(BlockStateProperties.LIT), 3, 0, 3.5, 13, 12, 10);
+    public static final DeferredBlock<LampBlock> INDUSTRIAL_LIGHT_EXIT = lampBlock("industrial_light_exit", LampKind.EXIT,
             Spec.facing(BlockStateProperties.LIT), 3, 5, 13.9, 13, 11, 16);
+    public static final DeferredBlock<LampBlock> LAMP_FLUORESCENT = lampBlock("lamp_fluorescent", LampKind.FLUORESCENT,
+            Spec.facing(BlockStateProperties.LIT), 0, 13.5, 5, 16, 16, 11);
+    public static final DeferredBlock<LampBlock> LAMP_BULKHEAD = lampBlock("lamp_bulkhead", LampKind.BULKHEAD,
+            Spec.facing(BlockStateProperties.LIT), 4, 4, 12.5, 12, 12, 16);
+    public static final DeferredBlock<LampBlock> LAMP_EXPLOSION_PROOF = lampBlock("lamp_explosion_proof", LampKind.EXPLOSION_PROOF,
+            Spec.facing(BlockStateProperties.LIT), 5, 2, 6, 11, 14, 16);
+    public static final DeferredBlock<LampBlock> LAMP_EMERGENCY = lampBlock("lamp_emergency", LampKind.EMERGENCY,
+            Spec.facing(BlockStateProperties.LIT), 3, 6, 14, 13, 10, 16);
+    public static final DeferredBlock<LampBlock> LAMP_HIGH_BAY = lampBlock("lamp_high_bay", LampKind.HIGH_BAY,
+            Spec.of(BlockStateProperties.LIT), 2, 0, 2, 14, 16, 14);
+    public static final DeferredBlock<LampBlock> WARNING_BEACON = lampBlock("warning_beacon", LampKind.BEACON,
+            Spec.of(BlockStateProperties.LIT), 5, 0, 5, 11, 7, 11);
     public static final DeferredBlock<DecorBlock> ROOM_SIGN = decor("room_sign", plate(), Spec.facing(), 2, 5, 15.5, 14, 11, 16);
     public static final DeferredBlock<DecorBlock> ROOM_SIGN_EVAC = decor("room_sign_evac", plate(), Spec.facing(), 2, 5, 15.5, 14, 11, 16);
     public static final DeferredBlock<WallClockBlock> WALL_CLOCK = decorOf(BLOCKS.registerBlock("wall_clock",
@@ -531,10 +546,9 @@ public final class PcBlocks {
     public static final DeferredBlock<PcBlock> LINOLEUM_CONTROL_BEIGE = decorCube("linoleum_control_beige", MapColor.SAND, true);
     public static final DeferredBlock<PcBlock> LINOLEUM_CONTROL_PARQUET = decorCube("linoleum_control_parquet", MapColor.WOOD, true);
     public static final DeferredBlock<PcBlock> CEILING_TILE = decorCube("ceiling_tile", MapColor.SNOW, true);
-    /** Светящаяся панель подвесного потолка: горит всегда, висит под перекрытием. */
-    public static final DeferredBlock<DecorBlock> CEILING_LIGHT_PANEL = decor("ceiling_light_panel", Properties.of()
-            .mapColor(MapColor.SNOW).strength(1.0f).sound(SoundType.METAL).noOcclusion().lightLevel(st -> 15), Spec.of(),
-            0, 14.5, 0, 16, 16, 16);
+    /** Светильник подвесного потолка: висит под перекрытием, питается от щитка освещения. */
+    public static final DeferredBlock<LampBlock> CEILING_LIGHT_PANEL = lampBlock("ceiling_light_panel", LampKind.CEILING_PANEL,
+            Spec.of(BlockStateProperties.LIT), 0, 14.5, 0, 16, 16, 16);
     public static final DeferredBlock<DecorBlock> CABLE_TRAY = decor("cable_tray", sheet(MapColor.METAL), Spec.facing(), 3, 0, 0, 13, 3, 16);
     public static final DeferredBlock<DecorBlock> CABLE_TRAY_CABLES = decor("cable_tray_cables", sheet(MapColor.METAL), Spec.facing(),
             3, 0, 0, 13, 3, 16);
@@ -548,6 +562,28 @@ public final class PcBlocks {
             2, 5, 15.5, 14, 11, 16);
     public static final DeferredBlock<DecorBlock> ROOM_SIGN_PUMP = decor("room_sign_pump", plate(), Spec.facing(), 2, 5, 15.5, 14, 11, 16);
     public static final DeferredBlock<DecorBlock> ROOM_SIGN_CONTROL = decor("room_sign_control", plate(), Spec.facing(), 2, 5, 15.5, 14, 11, 16);
+
+    // --- декор завода: электрооборудование и интерьер цеха ---
+    public static final DeferredBlock<DecorBlock> ELECTRICAL_CABINET = decor("electrical_cabinet", sheet(MapColor.METAL), Spec.facing(), 0, 0, 0.5, 16, 16, 16);
+    public static final DeferredBlock<DecorBlock> JUNCTION_BOX = decor("junction_box", sheet(MapColor.METAL), Spec.facing(), 3, 3, 14, 13, 13, 16);
+    public static final DeferredBlock<DecorBlock> WALL_SOCKET = decor("wall_socket", plate(), Spec.facing(), 3, 3, 12.4, 13, 13, 16);
+    public static final DeferredBlock<DecorBlock> KNIFE_SWITCH = decor("knife_switch", plate(), Spec.facing(), 3, 2, 10, 13, 14, 16);
+    public static final DeferredBlock<DecorBlock> VOLTAGE_WARNING_SIGN = decor("voltage_warning_sign", plate(), Spec.facing(), 3, 4, 15.6, 13, 12, 16);
+    public static final DeferredBlock<DecorBlock> CABLE_DRUM = decor("cable_drum", sheet(MapColor.WOOD), Spec.facing(), 0, 0.5, 0.5, 16, 15.5, 15.5);
+    public static final DeferredBlock<DecorBlock> DIELECTRIC_MAT = decor("dielectric_mat", sheet(MapColor.COLOR_BLACK), Spec.of(), 0, 0, 0, 16, 0.5, 16);
+    public static final DeferredBlock<DecorBlock> CONDUIT = decor("conduit", plate(), Spec.facing(), 0, 6, 14, 16, 10, 16);
+    public static final DeferredBlock<DecorBlock> CONDUIT_VERTICAL = decor("conduit_vertical", plate(), Spec.facing(), 6, 0, 14, 10, 16, 16);
+    public static final DeferredBlock<DecorBlock> WORKBENCH = decor("workbench", sheet(MapColor.METAL), Spec.facing(), 0, 0, 0, 16, 15, 16);
+    public static final DeferredBlock<DecorBlock> LOCKER = decor("locker", sheet(MapColor.COLOR_GREEN), Spec.facing(), 1, 0, 2, 15, 16, 16);
+    public static final DeferredBlock<DecorBlock> SHELVING = decor("shelving", sheet(MapColor.METAL), Spec.facing(), 0, 0, 1, 16, 16, 15);
+    public static final DeferredBlock<DecorBlock> FIRE_EXTINGUISHER_WALL = decor("fire_extinguisher_wall", plate(), Spec.facing(), 5, 1, 11, 11, 13, 16);
+    public static final DeferredBlock<DecorBlock> FIRE_HOSE_CABINET = decor("fire_hose_cabinet", sheet(MapColor.COLOR_RED), Spec.facing(), 1, 1, 13, 15, 15, 16);
+    public static final DeferredBlock<DecorBlock> FIRST_AID_BOX = decor("first_aid_box", plate(), Spec.facing(), 4, 5, 14, 12, 11, 16);
+    public static final DeferredBlock<DecorBlock> OIL_DRUM = decor("oil_drum", sheet(MapColor.COLOR_BLUE), Spec.of(), 1.5, 0, 1.5, 14.5, 15, 14.5);
+    public static final DeferredBlock<DecorBlock> GAS_CYLINDERS = decor("gas_cylinders", sheet(MapColor.METAL), Spec.facing(), 0, 0, 7, 16, 15, 16);
+    public static final DeferredBlock<DecorBlock> COLUMN_I_BEAM = decor("column_i_beam", sheet(MapColor.COLOR_BROWN), Spec.facing(), 3, 0, 3, 13, 16, 13);
+    public static final DeferredBlock<DecorBlock> FLOOR_MARKING = decor("floor_marking", plate(), Spec.facing(), 0, 0, 0, 16, 0.1, 16);
+    public static final DeferredBlock<DecorBlock> FLOOR_MARKING_HAZARD = decor("floor_marking_hazard", plate(), Spec.facing(), 0, 0, 0, 16, 0.1, 16);
 
     /** Шахтная вода в выработках — затопление (08 §8.2.9); предмета нет. */
     public static final DeferredBlock<LiquidBlock> MINE_WATER = BLOCKS.registerBlock("mine_water",
@@ -622,6 +658,14 @@ public final class PcBlocks {
 
     private static DeferredBlock<DecorBlock> decor(String name, Properties props, Spec spec, double... box) {
         return decorOf(BLOCKS.registerBlock(name, p -> DecorBlock.create(p, spec, box, false), props));
+    }
+
+    private static DeferredBlock<LampBlock> lampBlock(String name, LampKind kind, Spec spec, double... box) {
+        Properties props = Properties.of().mapColor(MapColor.METAL).strength(1.0f).sound(SoundType.LANTERN).noOcclusion()
+                .lightLevel(st -> st.hasProperty(BlockStateProperties.LIT) && st.getValue(BlockStateProperties.LIT) ? kind.light() : 0);
+        DeferredBlock<LampBlock> b = decorOf(BLOCKS.registerBlock(name, p -> LampBlock.create(p, spec, box, kind), props));
+        LAMPS.add(b);
+        return b;
     }
 
     private static DeferredBlock<PcBlock> decorPlain(String name, Properties props, Spec spec) {

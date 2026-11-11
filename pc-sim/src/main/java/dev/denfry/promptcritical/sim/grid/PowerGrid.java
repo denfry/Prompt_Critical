@@ -586,6 +586,22 @@ public final class PowerGrid {
         return scope(branch(id), generatorAtFrom);
     }
 
+    /**
+     * Новая мощность нагрузки при том же составе ZIP и cos φ — без переразложения: нагрузка входит в расчёт
+     * током инъекции, а не проводимостью матрицы (щит освещения при смене числа светильников).
+     */
+    public void setLoadPowerW(LoadId id, double pW) {
+        if (!Double.isFinite(pW)) throw new IllegalArgumentException("power");
+        int j = load(id);
+        LoadModel m = loadSpec.get(j);
+        double qPerP = m.p0W() == 0 ? 0 : m.q0Var() / m.p0W();
+        if (m.p0W() == 0 && m.kind() != LoadKind.FE_IMPORT) qPerP = LoadModel.typical(m.kind(), 1).q0Var();
+        LoadModel n = new LoadModel(pW, pW * qPerP, m.aZ(), m.aI(), m.aP(), m.dF(), m.uflsStage(), m.kind());
+        loadSpec.set(j, n);
+        lp0[j] = n.p0W() / sb;
+        lq0[j] = n.q0Var() / sb;
+    }
+
     /** Отключение и подключение нагрузки (АЧР, потребитель) — без переразложения. */
     public void setLoadConnected(LoadId id, boolean on) {
         lOn[load(id)] = on;

@@ -1,14 +1,14 @@
 {
 	"credit": "Made with Blockbench",
+	"texture_size": [32, 32],
 	"textures": {
-		"particle": "promptcritical:block/common/grid_ral7035",
-		"ex": "promptcritical:block/decor/industrial_light_exit",
-		"r35": "promptcritical:block/common/grid_ral7035"
+		"particle": "promptcritical:block/hq/industrial_light_exit",
+		"t": "promptcritical:block/hq/industrial_light_exit"
 	},
 	"elements": [
 		{
 			"name": "box",
-			"from": [3, 5, 14],
+			"from": [3, 5, 14.5],
 			"to": [13, 11, 16],
 			"rotation": {
 				"angle": 0,
@@ -17,35 +17,36 @@
 			},
 			"faces": {
 				"north": {
-					"uv": [0, 0, 10, 6],
-					"texture": "#r35"
+					"uv": [0, 0, 5, 3],
+					"texture": "#t"
 				},
 				"east": {
-					"uv": [0, 0, 2, 6],
-					"texture": "#r35"
+					"uv": [12.5, 0, 13.25, 3],
+					"texture": "#t"
 				},
 				"south": {
-					"uv": [0, 0, 10, 6],
-					"texture": "#r35"
+					"uv": [5.5, 0, 10.5, 3],
+					"texture": "#t",
+					"cullface": "south"
 				},
 				"west": {
-					"uv": [0, 0, 2, 6],
-					"texture": "#r35"
+					"uv": [11, 0, 11.75, 3],
+					"texture": "#t"
 				},
 				"up": {
-					"uv": [0, 0, 10, 2],
-					"texture": "#r35"
+					"uv": [5, 3.5, 10, 4.25],
+					"texture": "#t"
 				},
 				"down": {
-					"uv": [0, 0, 10, 2],
-					"texture": "#r35"
+					"uv": [10.5, 3.5, 15.5, 4.25],
+					"texture": "#t"
 				}
 			}
 		},
 		{
-			"name": "glow_sign",
-			"from": [3.5, 5.5, 13.9],
-			"to": [12.5, 10.5, 14],
+			"name": "glow_face",
+			"from": [3.5, 5.5, 14.4],
+			"to": [12.5, 10.5, 14.5],
 			"rotation": {
 				"angle": 0,
 				"axis": "y",
@@ -53,28 +54,8 @@
 			},
 			"faces": {
 				"north": {
-					"uv": [0, 0, 16, 16],
-					"texture": "#ex"
-				},
-				"east": {
-					"uv": [0, 0, 0.1, 5],
-					"texture": "#ex"
-				},
-				"south": {
-					"uv": [0, 0, 9, 5],
-					"texture": "#ex"
-				},
-				"west": {
-					"uv": [0, 0, 0.1, 5],
-					"texture": "#ex"
-				},
-				"up": {
-					"uv": [0, 0, 9, 0.1],
-					"texture": "#ex"
-				},
-				"down": {
-					"uv": [0, 0, 9, 0.1],
-					"texture": "#ex"
+					"uv": [0, 3.5, 4.5, 6],
+					"texture": "#t"
 				}
 			},
 			"neoforge_data": {

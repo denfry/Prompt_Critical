@@ -45,6 +45,13 @@ public final class GridBlockEntities {
     private GridBlockEntities() {
     }
 
+    public static final DeferredHolder<BlockEntityType<?>, BlockEntityType<LightingBoardBlockEntity>> LIGHTING_BOARD =
+            type("lighting_board", LightingBoardBlockEntity::new, PcBlocks.LIGHTING_BOARD);
+    /** Все светильники с питанием от щитка освещения. */
+    public static final DeferredHolder<BlockEntityType<?>, BlockEntityType<LampBlock.LampBlockEntity>> LAMP =
+            BLOCK_ENTITIES.register("lamp", () -> BlockEntityType.Builder.of(LampBlock.LampBlockEntity::new,
+                    PcBlocks.LAMPS.stream().map(java.util.function.Supplier::get).toArray(net.minecraft.world.level.block.Block[]::new)).build(null));
+
     private static <T extends BlockEntity> DeferredHolder<BlockEntityType<?>, BlockEntityType<T>> type(String name,
             BlockEntityType.BlockEntitySupplier<T> factory, Supplier<? extends Block> block) {
         return BLOCK_ENTITIES.register(name, () -> BlockEntityType.Builder.of(factory, block.get()).build(null));

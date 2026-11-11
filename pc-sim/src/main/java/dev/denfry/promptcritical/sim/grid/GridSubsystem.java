@@ -97,6 +97,11 @@ public final class GridSubsystem implements Subsystem, GridEventSink {
         return unit(id, AuxSupplyUnit.class, () -> new AuxSupplyUnit(id));
     }
 
+    /** Щиток освещения на шине 0,4 кВ. */
+    public LightingBoardUnit lightingBoard(SimId id) {
+        return unit(id, LightingBoardUnit.class, () -> new LightingBoardUnit(id));
+    }
+
     public ConnectorUnit connector(SimId id, boolean mediumVoltage) {
         GridUnit u = units.get(id);
         if (u instanceof ConnectorUnit c && c.mediumVoltage == mediumVoltage) return c;
@@ -544,6 +549,7 @@ public final class GridSubsystem implements Subsystem, GridEventSink {
             case ConsumerUnit c -> "consumer";
             case ConnectorUnit c -> c.mediumVoltage ? "connector:mv" : "connector:lv";
             case AuxSupplyUnit a -> "aux_supply";
+            case LightingBoardUnit l -> "lighting_board";
         };
     }
 
@@ -569,6 +575,7 @@ public final class GridSubsystem implements Subsystem, GridEventSink {
                 case "connector:mv" -> new ConnectorUnit(id, true);
                 case "connector:lv" -> new ConnectorUnit(id, false);
                 case "aux_supply" -> new AuxSupplyUnit(id);
+                case "lighting_board" -> new LightingBoardUnit(id);
                 default -> type.startsWith("switch:") ? new SwitchUnit(id, SwitchUnit.Kind.valueOf(type.substring(7))) : null;
             };
             if (u != null) {
