@@ -33,6 +33,17 @@ repositories {
         name = "CC: Tweaked"
         content { includeGroup("cc.tweaked") }
     }
+    maven("https://maven.blamejared.com") {
+        name = "JEI"
+        content {
+            includeGroup("mezz.jei")
+            includeGroup("net.mezzdev.config")
+        }
+    }
+    maven("https://api.modrinth.com/maven") {
+        name = "Modrinth"
+        content { includeGroup("maven.modrinth") }
+    }
 }
 
 val gametest: SourceSet by sourceSets.creating {
@@ -118,6 +129,13 @@ dependencies {
     compileOnly(libs.cctweaked.common.api)
     compileOnly(libs.cctweaked.forge.api)
     runtimeOnly(libs.cctweaked)
+
+    // Просмотр рецептов и подсказка при наведении — опциональные интеграции: компилируемся против API,
+    // сами моды — только в dev-запусках. EMI читает плагин JEI сам.
+    compileOnly(libs.jei.common.api)
+    compileOnly(libs.jei.neoforge.api)
+    runtimeOnly(libs.jei.neoforge)
+    compileOnly(libs.jade)
 }
 
 tasks.processResources {

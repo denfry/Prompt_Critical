@@ -1,6 +1,7 @@
 package dev.denfry.promptcritical.mod.data;
 
 import dev.denfry.promptcritical.mod.PromptCritical;
+import dev.denfry.promptcritical.mod.compat.CommonTags;
 import dev.denfry.promptcritical.mod.foundry.FoundryTags;
 import dev.denfry.promptcritical.mod.block.PcBlock;
 import dev.denfry.promptcritical.mod.registry.PcBlocks;
@@ -12,6 +13,7 @@ import java.util.Set;
 import java.util.concurrent.CompletableFuture;
 import net.minecraft.core.HolderLookup;
 import net.minecraft.data.PackOutput;
+import net.minecraft.data.tags.FluidTagsProvider;
 import net.minecraft.data.tags.ItemTagsProvider;
 import net.minecraft.tags.BlockTags;
 import net.minecraft.tags.TagKey;
@@ -101,6 +103,7 @@ public final class PcTagProviders {
             copy(BlockTags.WALLS, net.minecraft.tags.ItemTags.WALLS);
             FoundryTags.addItemTags(this::tag);
             dev.denfry.promptcritical.mod.ironworks.IronworksTags.addItemTags(this::tag);
+            CommonTags.addItemTags(this::tag);
             for (String metal : Set.copyOf(METAL.values())) {
                 copy(PcTags.Blocks.common("ores/" + metal), PcTags.Items.common("ores/" + metal));
             }
@@ -112,6 +115,18 @@ public final class PcTagProviders {
                 tag(PcTags.Items.RAW_MATERIALS).add(raw.get());
                 tag(PcTags.Items.common("raw_materials/" + METAL.get(ore))).add(raw.get());
             }
+        }
+    }
+
+    /** Теги жидкостей: экспорт газов в {@code c:} ({@link CommonTags}). */
+    public static final class FluidTagProvider extends FluidTagsProvider {
+        public FluidTagProvider(PackOutput output, CompletableFuture<HolderLookup.Provider> lookup, ExistingFileHelper efh) {
+            super(output, lookup, PromptCritical.MOD_ID, efh);
+        }
+
+        @Override
+        protected void addTags(HolderLookup.Provider provider) {
+            CommonTags.addFluidTags(this::tag);
         }
     }
 }
