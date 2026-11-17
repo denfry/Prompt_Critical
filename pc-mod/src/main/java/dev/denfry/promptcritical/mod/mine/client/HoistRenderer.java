@@ -28,7 +28,7 @@ import net.minecraft.world.phys.Vec3;
  */
 final class HoistRenderer implements BlockEntityRenderer<MineHoistBlockEntity> {
     /** Видимые радиусы навитого каната на барабане и шкива по моделям, блоков. */
-    private static final double DRUM_R = 14.6 / 16.0, SHEAVE_R = 13 / 16.0, ROPE_W = 0.07;
+    private static final double DRUM_R = 14.6 / 16.0, SHEAVE_R = 14.6 / 16.0, ROPE_W = 0.07;
     /** Ход курсора указателя глубины по шкале модели (y 12 → −10), блоков. */
     private static final float CURSOR_TRAVEL = 22 / 16f;
 
