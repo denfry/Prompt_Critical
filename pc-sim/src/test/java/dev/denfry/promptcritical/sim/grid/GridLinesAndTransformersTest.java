@@ -72,6 +72,17 @@ class GridLinesAndTransformersTest {
         assertThat((t5 - 20) / (t - 20)).as("τ 5–15 мин").isBetween(0.28, 0.7);
     }
 
+    /** ПУЭ табл. 1.3.29 (вне помещений) дана на +70 °C провода при +25 °C воздуха: каждая марка при своём токе. */
+    @Test
+    void everyConductorSettlesNearSeventyDegreesAtItsRating() {
+        for (ConductorSpec c : new ConductorSpec[] {ConductorSpec.m35(), ConductorSpec.m70(), ConductorSpec.ac70(),
+                ConductorSpec.ac120(), ConductorSpec.ac240()}) {
+            double t = 25;
+            for (int k = 0; k < 720; k++) t = c.stepTemperatureC(t, c.ampacityA(), 25, 15, 0, 10);
+            assertThat(t).as("%s мм² %s", c.crossSectionMm2(), c.material()).isBetween(58.0, 85.0);
+        }
+    }
+
     @Test
     void overloadedLineAnnealsAndBreaksIntoAGroundFault() {
         Line35 l = new Line35(60e6, 2, 1.05); // ≈ 1100 А на АС-120 (390 А)

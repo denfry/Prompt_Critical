@@ -16,6 +16,11 @@ public record ConductorSpec(Conductor material, double crossSectionMm2, double r
     /** Повив: наружный диаметр больше диаметра круга того же сечения. */
     static final double STRANDING = 1.15;
     private static final double SIGMA = 5.670e-8;
+    /**
+     * Конвекция от диаметра: h ∝ d^−0,48 (вынужденная конвекция IEEE Std 738, Nu ∝ Re^0,52); заданный h_c — для
+     * диаметра провода АС-120.
+     */
+    static final double CONVECTION_D_EXPONENT = -0.48, CONVECTION_REF_D_M = STRANDING * Math.sqrt(4 * 120e-6 / Math.PI);
     /** Шаг явного интегрирования нагрева при длинном SLOW-шаге, с (τ провода — минуты). */
     private static final double MAX_THERMAL_STEP_S = 10;
 
@@ -25,13 +30,14 @@ public record ConductorSpec(Conductor material, double crossSectionMm2, double r
             throw new IllegalArgumentException("conductor data");
     }
 
-    // Каталог §7.4.1; масса и разрывное усилие — [сверить] по ГОСТ 839-2019.
+    // Каталог §7.4.1; ток — ПУЭ табл. 1.3.29, вне помещений, как для ВЛ; масса и разрывное усилие — [сверить] по
+    // ГОСТ 839-2019.
     public static ConductorSpec m35() {
-        return new ConductorSpec(Conductor.COPPER, 35, 0.52, 170, 0.311, 13.6e3);
+        return new ConductorSpec(Conductor.COPPER, 35, 0.52, 223, 0.311, 13.6e3);
     }
 
     public static ConductorSpec m70() {
-        return new ConductorSpec(Conductor.COPPER, 70, 0.27, 265, 0.618, 26.8e3);
+        return new ConductorSpec(Conductor.COPPER, 70, 0.27, 337, 0.618, 26.8e3);
     }
 
     public static ConductorSpec ac70() {
@@ -64,18 +70,19 @@ public record ConductorSpec(Conductor material, double crossSectionMm2, double r
     /**
      * Температура провода через {@code dtS}: m·c_p·dT/dt = I²R(T) + q_s − h_c·πd·(T − T_a) − εσπd(T⁴ − T_a⁴).
      *
-     * @param convectionWm2K h_c — 5–15 Вт/(м²·К) при ветре 0–2 м/с
+     * @param convectionWm2K h_c провода АС-120 — 5–15 Вт/(м²·К) при ветре 0–2 м/с; у других ×(d/d₁₂₀)^−0,48
      * @param solarWPerM     q_s — 0–15 Вт/м днём
      */
     public double stepTemperatureC(double tempC, double currentA, double ambientC, double convectionWm2K,
             double solarWPerM, double dtS) {
         double mc = massKgPerM * material.specificHeat, pd = Math.PI * diameterM();
+        double hc = convectionWm2K * Math.pow(diameterM() / CONVECTION_REF_D_M, CONVECTION_D_EXPONENT);
         double ta = ambientC + 273.15, ta4 = ta * ta * ta * ta;
         int n = (int) Math.ceil(dtS / MAX_THERMAL_STEP_S);
         double h = dtS / n, t = tempC;
         for (int k = 0; k < n; k++) {
             double tk = t + 273.15;
-            double q = currentA * currentA * resistanceOhmPerM(t) + solarWPerM - convectionWm2K * pd * (t - ambientC)
+            double q = currentA * currentA * resistanceOhmPerM(t) + solarWPerM - hc * pd * (t - ambientC)
                     - EMISSIVITY * SIGMA * pd * (tk * tk * tk * tk - ta4);
             t += h * q / mc;
         }
