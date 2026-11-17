@@ -32,3 +32,9 @@ The 3×3×3 [settlement load](item:promptcritical:grid_consumer) is a 6 kV subst
 ## Frequency and reserve
 
 The generator drive has droop: as load grows, frequency sags a little and the machines share the load between them. Bringing it back to 50 Hz is the operator's job, with the generator trim. Generators need **reserve**: a machine at its limit cannot add power, and a load step pulls the frequency down until load shedding acts.
+
+## Capacitor bank
+
+Induction motors draw reactive power from the grid to magnetise themselves: at a power factor of 0.88 that is more than half the active power. Generators have to produce it and lines have to carry it, which means losses and voltage drop. A [capacitor bank](item:promptcritical:capacitor_bank) supplies reactive power on the spot: steps of 150 kvar at 6.3 kV switch with a right-click, and the output grows as U² with voltage.
+
+Do not install more than the grid can take. An idling generator absorbs at most S/x_d: about 250 kvar for a 500 kVA machine with x_d = 2. More capacitance than that excites the generator by itself, the voltage runs away, and the winding breaks down. Switch steps in under motor load, not onto an empty bus.
