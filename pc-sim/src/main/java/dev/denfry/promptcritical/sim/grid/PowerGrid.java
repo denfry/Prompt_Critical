@@ -587,6 +587,17 @@ public final class PowerGrid {
     }
 
     /** Отключение и подключение нагрузки (АЧР, потребитель) — без переразложения. */
+    /**
+     * Новая мощность нагрузки постоянной мощности на ходу, без пересборки (дуговая печь). Нагрузкам с долей
+     * постоянного сопротивления менять так нельзя: она сидит в матрице проводимостей.
+     */
+    public void setLoadPower(LoadId id, double pW, double qVar) {
+        int i = load(id);
+        if (laZ[i] != 0) throw new IllegalStateException("constant-impedance loads are in the admittance matrix");
+        lp0[i] = pW / sb;
+        lq0[i] = qVar / sb;
+    }
+
     public void setLoadConnected(LoadId id, boolean on) {
         lOn[load(id)] = on;
     }

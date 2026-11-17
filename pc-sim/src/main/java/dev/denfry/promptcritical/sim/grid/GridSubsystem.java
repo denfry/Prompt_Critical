@@ -92,6 +92,10 @@ public final class GridSubsystem implements Subsystem, GridEventSink {
         return unit(id, ConsumerUnit.class, () -> new ConsumerUnit(id));
     }
 
+    public ArcFurnaceUnit arcFurnace(SimId id) {
+        return unit(id, ArcFurnaceUnit.class, () -> new ArcFurnaceUnit(id));
+    }
+
     /** Вход блока питания автоматики от шины 0,4 кВ (этап 9). */
     public AuxSupplyUnit auxSupply(SimId id) {
         return unit(id, AuxSupplyUnit.class, () -> new AuxSupplyUnit(id));
@@ -542,6 +546,7 @@ public final class GridSubsystem implements Subsystem, GridEventSink {
             case TransformerUnit t -> "transformer";
             case MotorUnit m -> "motor";
             case ConsumerUnit c -> "consumer";
+            case ArcFurnaceUnit a -> "arc_furnace";
             case ConnectorUnit c -> c.mediumVoltage ? "connector:mv" : "connector:lv";
             case AuxSupplyUnit a -> "aux_supply";
         };
@@ -566,6 +571,7 @@ public final class GridSubsystem implements Subsystem, GridEventSink {
                 case "transformer" -> new TransformerUnit(id);
                 case "motor" -> new MotorUnit(id);
                 case "consumer" -> new ConsumerUnit(id);
+                case "arc_furnace" -> new ArcFurnaceUnit(id);
                 case "connector:mv" -> new ConnectorUnit(id, true);
                 case "connector:lv" -> new ConnectorUnit(id, false);
                 case "aux_supply" -> new AuxSupplyUnit(id);
