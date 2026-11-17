@@ -2,6 +2,7 @@ package dev.denfry.promptcritical.sim.thermal;
 
 import dev.denfry.promptcritical.sim.thermo.SaturationState;
 import dev.denfry.promptcritical.sim.thermo.VoidFraction;
+import dev.denfry.promptcritical.sim.thermo.if97.If97;
 
 /**
  * Корреляции теплообмена и теплофизика топлива (01 §1.4) — чистые функции, тестируемые
@@ -167,14 +168,20 @@ public final class HeatTransferCorrelations {
 
     // ---------------------------------------------------------------- закризисный теплообмен, §1.4.5
 
-    /** Минимальная температура плёночного кипения (Groeneveld–Stewart), К; выше 9 МПа — линейно к T_c. */
+    /**
+     * Минимальная температура плёночного кипения насыщенной жидкости (Groeneveld–Stewart, 1982), К:
+     * T_MFB = 284,7 + 44,1·P − 3,72·P² °C при P ≤ 9 МПа; выше 9 МПа перегрев над T_s(9 МПа)
+     * спадает линейно до нуля к критическому давлению.
+     */
     public static double tMinFilmBoiling(double pMPa) {
         double pc = CRITICAL_PRESSURE * 1e-6;
         if (pMPa >= pc) return CRITICAL_TEMPERATURE;
-        if (pMPa <= 9) return 557.85 + 44.1 * pMPa - 3.72 * pMPa * pMPa + 273.15;
-        double t9 = tMinFilmBoiling(9);
-        return t9 + (CRITICAL_TEMPERATURE - t9) * (pMPa - 9) / (pc - 9);
+        if (pMPa <= 9) return 284.7 + 44.1 * pMPa - 3.72 * pMPa * pMPa + 273.15;
+        return If97.tsat(pMPa * 1e6) + MFB_SUPERHEAT_9MPA * (pc - pMPa) / (pc - 9);
     }
+
+    /** ΔT_MFB при 9 МПа, К — опорный перегрев для ветви выше 9 МПа. */
+    private static final double MFB_SUPERHEAT_9MPA = tMinFilmBoiling(9) - If97.tsat(9e6);
 
     /** Длина волны Тейлора 2π [σ/(g Δρ)]^½, м. */
     public static double taylorWavelength(SaturationState sat) {

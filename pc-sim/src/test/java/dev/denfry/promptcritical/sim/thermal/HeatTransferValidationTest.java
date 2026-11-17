@@ -173,7 +173,7 @@ class HeatTransferValidationTest {
         Wall w = Wall.slab(1, 2e-3, 1, 3, WallMaterial.STAINLESS_STEEL, null, s, CFG);
         w.setUniformTemperature(900);
         double tMin = tMinFilmBoiling(0.1);
-        assertThat(tMin).isCloseTo(835.3, within(0.5));
+        assertThat(tMin).isCloseTo(562.2, within(0.5)); // 284,7 + 4,41 − 0,04 °C, Groeneveld–Stewart
         w.step(0.05);
         double hFb = w.heatFlux(1) / (w.surfaceTemperature(1) - W.saturationP(0.1e6).tSat());
         assertThat(hFb).isBetween(200.0, 700.0);

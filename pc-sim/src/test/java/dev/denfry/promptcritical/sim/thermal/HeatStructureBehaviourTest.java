@@ -199,7 +199,13 @@ class HeatStructureBehaviourTest {
 
     @Test
     void correlationReferenceValues() {
-        assertThat(tMinFilmBoiling(5) - 273.15).isCloseTo(685, within(1.0));
+        // Groeneveld–Stewart в кельвинах: 284,7 + 44,1·P − 3,72·P² °C + 273,15
+        assertThat(tMinFilmBoiling(0.1)).isCloseTo(562.2, within(0.1));
+        assertThat(tMinFilmBoiling(5)).isCloseTo(685.4, within(0.1));
+        assertThat(tMinFilmBoiling(7)).isCloseTo(684.3, within(0.1));
+        assertThat(tMinFilmBoiling(9)).isCloseTo(653.4, within(0.1));
+        // выше 9 МПа: T_s(15 МПа) = 615,31 К, перегрев (653,43 − 576,53)·(22,064 − 15)/(22,064 − 9)
+        assertThat(tMinFilmBoiling(15)).isCloseTo(656.9, within(0.2));
         assertThat(tMinFilmBoiling(22.064)).isCloseTo(CRITICAL_TEMPERATURE, within(1e-9));
         assertThat(rel(cooperPool(6.4e6 / CRITICAL_PRESSURE, WATER_MOLAR_MASS, 150e3), 4.6e4)).isLessThan(0.02);
         double pr = 6.4e6 / CRITICAL_PRESSURE, h = cooperPool(pr, WATER_MOLAR_MASS, 150e3);
