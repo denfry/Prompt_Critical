@@ -1,57 +1,20 @@
 {
 	"credit": "Made with Blockbench",
 	"textures": {
-		"br": "promptcritical:block/common/m2_brass",
-		"particle": "promptcritical:block/common/steel_dark",
-		"d": "promptcritical:block/common/steel_dark",
-		"end": "promptcritical:block/common/pipe_end",
-		"gauge": "promptcritical:block/analog_gauge_dial",
-		"haz": "promptcritical:block/common/m2_hazard_band",
-		"mb": "promptcritical:block/common/motor_blue",
-		"pol": "promptcritical:block/common/m2_steel_polished",
-		"wat": "promptcritical:block/common/mining_pipe_water"
+		"material_cast_iron": "promptcritical:block/material/cast_iron",
+		"particle": "promptcritical:block/mine_drainage_pump/casing",
+		"mine_drainage_pump_casing": "promptcritical:block/mine_drainage_pump/casing",
+		"material_brass": "promptcritical:block/material/brass",
+		"material_bright_steel": "promptcritical:block/material/bright_steel",
+		"material_steel": "promptcritical:block/material/steel",
+		"material_paint_red": "promptcritical:block/material/paint_red",
+		"mine_drainage_pump_gauge": "promptcritical:block/mine_drainage_pump/gauge"
 	},
 	"elements": [
 		{
-			"name": "frame",
-			"from": [0, 0, 2],
-			"to": [32, 2, 14],
-			"rotation": {
-				"angle": 0,
-				"axis": "y",
-				"origin": [8, 8, 8]
-			},
-			"faces": {
-				"north": {
-					"uv": [0, 0, 16, 2],
-					"texture": "#d"
-				},
-				"east": {
-					"uv": [0, 0, 12, 2],
-					"texture": "#d"
-				},
-				"south": {
-					"uv": [0, 0, 16, 2],
-					"texture": "#d"
-				},
-				"west": {
-					"uv": [0, 0, 12, 2],
-					"texture": "#d"
-				},
-				"up": {
-					"uv": [0, 0, 16, 12],
-					"texture": "#d"
-				},
-				"down": {
-					"uv": [0, 0, 16, 12],
-					"texture": "#d"
-				}
-			}
-		},
-		{
-			"name": "frame_rail_n",
+			"name": "bed_0",
 			"from": [0, 0, 1.5],
-			"to": [32, 1, 2],
+			"to": [16, 1.5, 14.5],
 			"rotation": {
 				"angle": 0,
 				"axis": "y",
@@ -59,35 +22,35 @@
 			},
 			"faces": {
 				"north": {
-					"uv": [0, 0, 16, 1],
-					"texture": "#haz"
+					"uv": [0, 14.5, 16, 16],
+					"texture": "#material_cast_iron"
 				},
 				"east": {
-					"uv": [0, 0, 0.5, 1],
-					"texture": "#haz"
+					"uv": [1.5, 14.5, 14.5, 16],
+					"texture": "#material_cast_iron"
 				},
 				"south": {
-					"uv": [0, 0, 16, 1],
-					"texture": "#haz"
+					"uv": [0, 14.5, 16, 16],
+					"texture": "#material_cast_iron"
 				},
 				"west": {
-					"uv": [0, 0, 0.5, 1],
-					"texture": "#haz"
+					"uv": [1.5, 14.5, 14.5, 16],
+					"texture": "#material_cast_iron"
 				},
 				"up": {
-					"uv": [0, 0, 16, 0.5],
-					"texture": "#haz"
+					"uv": [0, 1.5, 16, 14.5],
+					"texture": "#material_cast_iron"
 				},
 				"down": {
-					"uv": [0, 0, 16, 0.5],
-					"texture": "#haz"
+					"uv": [0, 1.5, 16, 14.5],
+					"texture": "#material_cast_iron"
 				}
 			}
 		},
 		{
-			"name": "section_0_0",
-			"from": [5, 2.5, 5.722],
-			"to": [9, 13.5, 10.278],
+			"name": "bed_1",
+			"from": [16, 0, 1.5],
+			"to": [32, 1.5, 14.5],
 			"rotation": {
 				"angle": 0,
 				"axis": "y",
@@ -95,35 +58,35 @@
 			},
 			"faces": {
 				"north": {
-					"uv": [0, 0, 4, 11],
-					"texture": "#mb"
+					"uv": [0, 14.5, 16, 16],
+					"texture": "#material_cast_iron"
 				},
 				"east": {
-					"uv": [0, 0, 4.56, 11],
-					"texture": "#mb"
+					"uv": [1.5, 14.5, 14.5, 16],
+					"texture": "#material_cast_iron"
 				},
 				"south": {
-					"uv": [0, 0, 4, 11],
-					"texture": "#mb"
+					"uv": [0, 14.5, 16, 16],
+					"texture": "#material_cast_iron"
 				},
 				"west": {
-					"uv": [0, 0, 4.56, 11],
-					"texture": "#mb"
+					"uv": [1.5, 14.5, 14.5, 16],
+					"texture": "#material_cast_iron"
 				},
 				"up": {
-					"uv": [0, 0, 4, 4.56],
-					"texture": "#mb"
+					"uv": [0, 1.5, 16, 14.5],
+					"texture": "#material_cast_iron"
 				},
 				"down": {
-					"uv": [0, 0, 4, 4.56],
-					"texture": "#mb"
+					"uv": [0, 1.5, 16, 14.5],
+					"texture": "#material_cast_iron"
 				}
 			}
 		},
 		{
-			"name": "section_0_1",
-			"from": [4.99, 5.722, 2.5],
-			"to": [9.01, 10.278, 13.5],
+			"name": "bed_lip_n_0",
+			"from": [0, 1.5, 1.5],
+			"to": [16, 2, 2],
 			"rotation": {
 				"angle": 0,
 				"axis": "y",
@@ -131,35 +94,479 @@
 			},
 			"faces": {
 				"north": {
-					"uv": [0, 0, 4.02, 4.56],
-					"texture": "#mb"
+					"uv": [0, 14, 16, 14.5],
+					"texture": "#material_cast_iron"
 				},
 				"east": {
-					"uv": [0, 0, 11, 4.56],
-					"texture": "#mb"
+					"uv": [14, 14, 14.5, 14.5],
+					"texture": "#material_cast_iron"
 				},
 				"south": {
-					"uv": [0, 0, 4.02, 4.56],
-					"texture": "#mb"
+					"uv": [0, 14, 16, 14.5],
+					"texture": "#material_cast_iron"
 				},
 				"west": {
-					"uv": [0, 0, 11, 4.56],
-					"texture": "#mb"
+					"uv": [1.5, 14, 2, 14.5],
+					"texture": "#material_cast_iron"
 				},
 				"up": {
-					"uv": [0, 0, 4.02, 11],
-					"texture": "#mb"
+					"uv": [0, 1.5, 16, 2],
+					"texture": "#material_cast_iron"
 				},
 				"down": {
-					"uv": [0, 0, 4.02, 11],
-					"texture": "#mb"
+					"uv": [0, 14, 16, 14.5],
+					"texture": "#material_cast_iron"
 				}
 			}
 		},
 		{
-			"name": "section_0_2",
-			"from": [4.98, 2.5, 5.722],
-			"to": [9.02, 13.5, 10.278],
+			"name": "bed_lip_n_1",
+			"from": [16, 1.5, 1.5],
+			"to": [32, 2, 2],
+			"rotation": {
+				"angle": 0,
+				"axis": "y",
+				"origin": [8, 8, 8]
+			},
+			"faces": {
+				"north": {
+					"uv": [0, 14, 16, 14.5],
+					"texture": "#material_cast_iron"
+				},
+				"east": {
+					"uv": [14, 14, 14.5, 14.5],
+					"texture": "#material_cast_iron"
+				},
+				"south": {
+					"uv": [0, 14, 16, 14.5],
+					"texture": "#material_cast_iron"
+				},
+				"west": {
+					"uv": [1.5, 14, 2, 14.5],
+					"texture": "#material_cast_iron"
+				},
+				"up": {
+					"uv": [0, 1.5, 16, 2],
+					"texture": "#material_cast_iron"
+				},
+				"down": {
+					"uv": [0, 14, 16, 14.5],
+					"texture": "#material_cast_iron"
+				}
+			}
+		},
+		{
+			"name": "bed_lip_s_0",
+			"from": [0, 1.5, 14],
+			"to": [16, 2, 14.5],
+			"rotation": {
+				"angle": 0,
+				"axis": "y",
+				"origin": [8, 8, 8]
+			},
+			"faces": {
+				"north": {
+					"uv": [0, 14, 16, 14.5],
+					"texture": "#material_cast_iron"
+				},
+				"east": {
+					"uv": [1.5, 14, 2, 14.5],
+					"texture": "#material_cast_iron"
+				},
+				"south": {
+					"uv": [0, 14, 16, 14.5],
+					"texture": "#material_cast_iron"
+				},
+				"west": {
+					"uv": [14, 14, 14.5, 14.5],
+					"texture": "#material_cast_iron"
+				},
+				"up": {
+					"uv": [0, 14, 16, 14.5],
+					"texture": "#material_cast_iron"
+				},
+				"down": {
+					"uv": [0, 1.5, 16, 2],
+					"texture": "#material_cast_iron"
+				}
+			}
+		},
+		{
+			"name": "bed_lip_s_1",
+			"from": [16, 1.5, 14],
+			"to": [32, 2, 14.5],
+			"rotation": {
+				"angle": 0,
+				"axis": "y",
+				"origin": [8, 8, 8]
+			},
+			"faces": {
+				"north": {
+					"uv": [0, 14, 16, 14.5],
+					"texture": "#material_cast_iron"
+				},
+				"east": {
+					"uv": [1.5, 14, 2, 14.5],
+					"texture": "#material_cast_iron"
+				},
+				"south": {
+					"uv": [0, 14, 16, 14.5],
+					"texture": "#material_cast_iron"
+				},
+				"west": {
+					"uv": [14, 14, 14.5, 14.5],
+					"texture": "#material_cast_iron"
+				},
+				"up": {
+					"uv": [0, 14, 16, 14.5],
+					"texture": "#material_cast_iron"
+				},
+				"down": {
+					"uv": [0, 1.5, 16, 2],
+					"texture": "#material_cast_iron"
+				}
+			}
+		},
+		{
+			"name": "bearing_de_foot",
+			"from": [3, 1.5, 4],
+			"to": [7.5, 2.5, 12],
+			"rotation": {
+				"angle": 0,
+				"axis": "y",
+				"origin": [8, 8, 8]
+			},
+			"faces": {
+				"north": {
+					"uv": [8.5, 13.5, 13, 14.5],
+					"texture": "#mine_drainage_pump_casing"
+				},
+				"east": {
+					"uv": [4, 13.5, 12, 14.5],
+					"texture": "#mine_drainage_pump_casing"
+				},
+				"south": {
+					"uv": [3, 13.5, 7.5, 14.5],
+					"texture": "#mine_drainage_pump_casing"
+				},
+				"west": {
+					"uv": [4, 13.5, 12, 14.5],
+					"texture": "#mine_drainage_pump_casing"
+				},
+				"up": {
+					"uv": [3, 4, 7.5, 12],
+					"texture": "#mine_drainage_pump_casing"
+				},
+				"down": {
+					"uv": [3, 4, 7.5, 12],
+					"texture": "#mine_drainage_pump_casing"
+				}
+			}
+		},
+		{
+			"name": "bearing_de_body",
+			"from": [3.5, 2.5, 5],
+			"to": [7, 8, 11],
+			"rotation": {
+				"angle": 0,
+				"axis": "y",
+				"origin": [8, 8, 8]
+			},
+			"faces": {
+				"north": {
+					"uv": [9, 8, 12.5, 13.5],
+					"texture": "#mine_drainage_pump_casing"
+				},
+				"east": {
+					"uv": [5, 8, 11, 13.5],
+					"texture": "#mine_drainage_pump_casing"
+				},
+				"south": {
+					"uv": [3.5, 8, 7, 13.5],
+					"texture": "#mine_drainage_pump_casing"
+				},
+				"west": {
+					"uv": [5, 8, 11, 13.5],
+					"texture": "#mine_drainage_pump_casing"
+				},
+				"up": {
+					"uv": [3.5, 5, 7, 11],
+					"texture": "#mine_drainage_pump_casing"
+				},
+				"down": {
+					"uv": [3.5, 5, 7, 11],
+					"texture": "#mine_drainage_pump_casing"
+				}
+			}
+		},
+		{
+			"name": "bearing_de_cap",
+			"from": [3.7, 8, 5.4],
+			"to": [6.8, 11, 10.6],
+			"rotation": {
+				"angle": 0,
+				"axis": "y",
+				"origin": [8, 8, 8]
+			},
+			"faces": {
+				"north": {
+					"uv": [9.2, 5, 12.3, 8],
+					"texture": "#mine_drainage_pump_casing"
+				},
+				"east": {
+					"uv": [5.4, 5, 10.6, 8],
+					"texture": "#mine_drainage_pump_casing"
+				},
+				"south": {
+					"uv": [3.7, 5, 6.8, 8],
+					"texture": "#mine_drainage_pump_casing"
+				},
+				"west": {
+					"uv": [5.4, 5, 10.6, 8],
+					"texture": "#mine_drainage_pump_casing"
+				},
+				"up": {
+					"uv": [3.7, 5.4, 6.8, 10.6],
+					"texture": "#mine_drainage_pump_casing"
+				},
+				"down": {
+					"uv": [3.7, 5.4, 6.8, 10.6],
+					"texture": "#mine_drainage_pump_casing"
+				}
+			}
+		},
+		{
+			"name": "bearing_de_oiler",
+			"from": [4.75, 11, 7.5],
+			"to": [5.75, 12.4, 8.5],
+			"rotation": {
+				"angle": 0,
+				"axis": "y",
+				"origin": [8, 8, 8]
+			},
+			"faces": {
+				"north": {
+					"uv": [10.25, 3.6, 11.25, 5],
+					"texture": "#material_brass"
+				},
+				"east": {
+					"uv": [7.5, 3.6, 8.5, 5],
+					"texture": "#material_brass"
+				},
+				"south": {
+					"uv": [4.75, 3.6, 5.75, 5],
+					"texture": "#material_brass"
+				},
+				"west": {
+					"uv": [7.5, 3.6, 8.5, 5],
+					"texture": "#material_brass"
+				},
+				"up": {
+					"uv": [4.75, 7.5, 5.75, 8.5],
+					"texture": "#material_brass"
+				},
+				"down": {
+					"uv": [4.75, 7.5, 5.75, 8.5],
+					"texture": "#material_brass"
+				}
+			}
+		},
+		{
+			"name": "bearing_be_foot",
+			"from": [28, 1.5, 4],
+			"to": [32, 2.5, 12],
+			"rotation": {
+				"angle": 0,
+				"axis": "y",
+				"origin": [8, 8, 8]
+			},
+			"faces": {
+				"north": {
+					"uv": [0, 13.5, 4, 14.5],
+					"texture": "#mine_drainage_pump_casing"
+				},
+				"east": {
+					"uv": [4, 13.5, 12, 14.5],
+					"texture": "#mine_drainage_pump_casing"
+				},
+				"south": {
+					"uv": [12, 13.5, 16, 14.5],
+					"texture": "#mine_drainage_pump_casing"
+				},
+				"west": {
+					"uv": [4, 13.5, 12, 14.5],
+					"texture": "#mine_drainage_pump_casing"
+				},
+				"up": {
+					"uv": [12, 4, 16, 12],
+					"texture": "#mine_drainage_pump_casing"
+				},
+				"down": {
+					"uv": [12, 4, 16, 12],
+					"texture": "#mine_drainage_pump_casing"
+				}
+			}
+		},
+		{
+			"name": "bearing_be_body",
+			"from": [28.5, 2.5, 5],
+			"to": [31.5, 8, 11],
+			"rotation": {
+				"angle": 0,
+				"axis": "y",
+				"origin": [8, 8, 8]
+			},
+			"faces": {
+				"north": {
+					"uv": [0.5, 8, 3.5, 13.5],
+					"texture": "#mine_drainage_pump_casing"
+				},
+				"east": {
+					"uv": [5, 8, 11, 13.5],
+					"texture": "#mine_drainage_pump_casing"
+				},
+				"south": {
+					"uv": [12.5, 8, 15.5, 13.5],
+					"texture": "#mine_drainage_pump_casing"
+				},
+				"west": {
+					"uv": [5, 8, 11, 13.5],
+					"texture": "#mine_drainage_pump_casing"
+				},
+				"up": {
+					"uv": [12.5, 5, 15.5, 11],
+					"texture": "#mine_drainage_pump_casing"
+				},
+				"down": {
+					"uv": [12.5, 5, 15.5, 11],
+					"texture": "#mine_drainage_pump_casing"
+				}
+			}
+		},
+		{
+			"name": "bearing_be_cap",
+			"from": [28.7, 8, 5.4],
+			"to": [31.3, 11, 10.6],
+			"rotation": {
+				"angle": 0,
+				"axis": "y",
+				"origin": [8, 8, 8]
+			},
+			"faces": {
+				"north": {
+					"uv": [0.7, 5, 3.3, 8],
+					"texture": "#mine_drainage_pump_casing"
+				},
+				"east": {
+					"uv": [5.4, 5, 10.6, 8],
+					"texture": "#mine_drainage_pump_casing"
+				},
+				"south": {
+					"uv": [12.7, 5, 15.3, 8],
+					"texture": "#mine_drainage_pump_casing"
+				},
+				"west": {
+					"uv": [5.4, 5, 10.6, 8],
+					"texture": "#mine_drainage_pump_casing"
+				},
+				"up": {
+					"uv": [12.7, 5.4, 15.3, 10.6],
+					"texture": "#mine_drainage_pump_casing"
+				},
+				"down": {
+					"uv": [12.7, 5.4, 15.3, 10.6],
+					"texture": "#mine_drainage_pump_casing"
+				}
+			}
+		},
+		{
+			"name": "bearing_be_oiler",
+			"from": [29.5, 11, 7.5],
+			"to": [30.5, 12.4, 8.5],
+			"rotation": {
+				"angle": 0,
+				"axis": "y",
+				"origin": [8, 8, 8]
+			},
+			"faces": {
+				"north": {
+					"uv": [1.5, 3.6, 2.5, 5],
+					"texture": "#material_brass"
+				},
+				"east": {
+					"uv": [7.5, 3.6, 8.5, 5],
+					"texture": "#material_brass"
+				},
+				"south": {
+					"uv": [13.5, 3.6, 14.5, 5],
+					"texture": "#material_brass"
+				},
+				"west": {
+					"uv": [7.5, 3.6, 8.5, 5],
+					"texture": "#material_brass"
+				},
+				"up": {
+					"uv": [13.5, 7.5, 14.5, 8.5],
+					"texture": "#material_brass"
+				},
+				"down": {
+					"uv": [13.5, 7.5, 14.5, 8.5],
+					"texture": "#material_brass"
+				}
+			}
+		},
+		{
+			"name": "suction_casing_0",
+			"from": [7.5, 6.84631, 2.2],
+			"to": [11, 9.15369, 13.8],
+			"rotation": {
+				"angle": 0,
+				"axis": "y",
+				"origin": [8, 8, 8]
+			},
+			"faces": {
+				"north": {
+					"uv": [5, 6.84631, 8.5, 9.15369],
+					"texture": "#mine_drainage_pump_casing"
+				},
+				"south": {
+					"uv": [7.5, 6.84631, 11, 9.15369],
+					"texture": "#mine_drainage_pump_casing"
+				},
+				"west": {
+					"uv": [2.2, 6.84631, 13.8, 9.15369],
+					"texture": "#mine_drainage_pump_casing"
+				}
+			}
+		},
+		{
+			"name": "suction_casing_1",
+			"from": [7.5, 6.84631, 2.2],
+			"to": [11, 9.15369, 13.8],
+			"rotation": {
+				"angle": 22.5,
+				"axis": "x",
+				"origin": [8, 8, 8]
+			},
+			"faces": {
+				"north": {
+					"uv": [5, 6.84631, 8.5, 9.15369],
+					"texture": "#mine_drainage_pump_casing"
+				},
+				"south": {
+					"uv": [7.5, 6.84631, 11, 9.15369],
+					"texture": "#mine_drainage_pump_casing"
+				},
+				"west": {
+					"uv": [2.2, 6.84631, 13.8, 9.15369],
+					"texture": "#mine_drainage_pump_casing"
+				}
+			}
+		},
+		{
+			"name": "suction_casing_2",
+			"from": [7.5, 6.84631, 2.2],
+			"to": [11, 9.15369, 13.8],
 			"rotation": {
 				"angle": 45,
 				"axis": "x",
@@ -167,35 +574,47 @@
 			},
 			"faces": {
 				"north": {
-					"uv": [0, 0, 4.04, 11],
-					"texture": "#mb"
-				},
-				"east": {
-					"uv": [0, 0, 4.56, 11],
-					"texture": "#mb"
+					"uv": [5, 6.84631, 8.5, 9.15369],
+					"texture": "#mine_drainage_pump_casing"
 				},
 				"south": {
-					"uv": [0, 0, 4.04, 11],
-					"texture": "#mb"
+					"uv": [7.5, 6.84631, 11, 9.15369],
+					"texture": "#mine_drainage_pump_casing"
 				},
 				"west": {
-					"uv": [0, 0, 4.56, 11],
-					"texture": "#mb"
-				},
-				"up": {
-					"uv": [0, 0, 4.04, 4.56],
-					"texture": "#mb"
-				},
-				"down": {
-					"uv": [0, 0, 4.04, 4.56],
-					"texture": "#mb"
+					"uv": [2.2, 6.84631, 13.8, 9.15369],
+					"texture": "#mine_drainage_pump_casing"
 				}
 			}
 		},
 		{
-			"name": "section_0_3",
-			"from": [4.97, 2.5, 5.722],
-			"to": [9.03, 13.5, 10.278],
+			"name": "suction_casing_3",
+			"from": [7.5, 6.84631, 2.2],
+			"to": [11, 9.15369, 13.8],
+			"rotation": {
+				"angle": -22.5,
+				"axis": "x",
+				"origin": [8, 8, 8]
+			},
+			"faces": {
+				"north": {
+					"uv": [5, 6.84631, 8.5, 9.15369],
+					"texture": "#mine_drainage_pump_casing"
+				},
+				"south": {
+					"uv": [7.5, 6.84631, 11, 9.15369],
+					"texture": "#mine_drainage_pump_casing"
+				},
+				"west": {
+					"uv": [2.2, 6.84631, 13.8, 9.15369],
+					"texture": "#mine_drainage_pump_casing"
+				}
+			}
+		},
+		{
+			"name": "suction_casing_4",
+			"from": [7.5, 6.84631, 2.2],
+			"to": [11, 9.15369, 13.8],
 			"rotation": {
 				"angle": -45,
 				"axis": "x",
@@ -203,35 +622,95 @@
 			},
 			"faces": {
 				"north": {
-					"uv": [0, 0, 4.06, 11],
-					"texture": "#mb"
-				},
-				"east": {
-					"uv": [0, 0, 4.56, 11],
-					"texture": "#mb"
+					"uv": [5, 6.84631, 8.5, 9.15369],
+					"texture": "#mine_drainage_pump_casing"
 				},
 				"south": {
-					"uv": [0, 0, 4.06, 11],
-					"texture": "#mb"
+					"uv": [7.5, 6.84631, 11, 9.15369],
+					"texture": "#mine_drainage_pump_casing"
 				},
 				"west": {
-					"uv": [0, 0, 4.56, 11],
-					"texture": "#mb"
-				},
-				"up": {
-					"uv": [0, 0, 4.06, 4.56],
-					"texture": "#mb"
-				},
-				"down": {
-					"uv": [0, 0, 4.06, 4.56],
-					"texture": "#mb"
+					"uv": [2.2, 6.84631, 13.8, 9.15369],
+					"texture": "#mine_drainage_pump_casing"
 				}
 			}
 		},
 		{
-			"name": "section_1_0",
-			"from": [9, 3, 5.929],
-			"to": [13, 13, 10.071],
+			"name": "suction_casing_5",
+			"from": [7.5, 2.2, 6.84631],
+			"to": [11, 13.8, 9.15369],
+			"rotation": {
+				"angle": 0,
+				"axis": "y",
+				"origin": [8, 8, 8]
+			},
+			"faces": {
+				"west": {
+					"uv": [6.84631, 2.2, 9.15369, 13.8],
+					"texture": "#mine_drainage_pump_casing"
+				},
+				"up": {
+					"uv": [7.5, 6.84631, 11, 9.15369],
+					"texture": "#mine_drainage_pump_casing"
+				},
+				"down": {
+					"uv": [7.5, 6.84631, 11, 9.15369],
+					"texture": "#mine_drainage_pump_casing"
+				}
+			}
+		},
+		{
+			"name": "suction_casing_6",
+			"from": [7.5, 2.2, 6.84631],
+			"to": [11, 13.8, 9.15369],
+			"rotation": {
+				"angle": 22.5,
+				"axis": "x",
+				"origin": [8, 8, 8]
+			},
+			"faces": {
+				"west": {
+					"uv": [6.84631, 2.2, 9.15369, 13.8],
+					"texture": "#mine_drainage_pump_casing"
+				},
+				"up": {
+					"uv": [7.5, 6.84631, 11, 9.15369],
+					"texture": "#mine_drainage_pump_casing"
+				},
+				"down": {
+					"uv": [7.5, 6.84631, 11, 9.15369],
+					"texture": "#mine_drainage_pump_casing"
+				}
+			}
+		},
+		{
+			"name": "suction_casing_7",
+			"from": [7.5, 2.2, 6.84631],
+			"to": [11, 13.8, 9.15369],
+			"rotation": {
+				"angle": -22.5,
+				"axis": "x",
+				"origin": [8, 8, 8]
+			},
+			"faces": {
+				"west": {
+					"uv": [6.84631, 2.2, 9.15369, 13.8],
+					"texture": "#mine_drainage_pump_casing"
+				},
+				"up": {
+					"uv": [7.5, 6.84631, 11, 9.15369],
+					"texture": "#mine_drainage_pump_casing"
+				},
+				"down": {
+					"uv": [7.5, 6.84631, 11, 9.15369],
+					"texture": "#mine_drainage_pump_casing"
+				}
+			}
+		},
+		{
+			"name": "stage_0_0",
+			"from": [11, 6.96566, 2.8],
+			"to": [13.6, 9.03434, 13.2],
 			"rotation": {
 				"angle": 0,
 				"axis": "y",
@@ -239,71 +718,39 @@
 			},
 			"faces": {
 				"north": {
-					"uv": [0, 0, 4, 10],
-					"texture": "#mb"
-				},
-				"east": {
-					"uv": [0, 0, 4.14, 10],
-					"texture": "#mb"
+					"uv": [2.4, 6.96566, 5, 9.03434],
+					"texture": "#mine_drainage_pump_casing"
 				},
 				"south": {
-					"uv": [0, 0, 4, 10],
-					"texture": "#mb"
-				},
-				"west": {
-					"uv": [0, 0, 4.14, 10],
-					"texture": "#mb"
-				},
-				"up": {
-					"uv": [0, 0, 4, 4.14],
-					"texture": "#mb"
-				},
-				"down": {
-					"uv": [0, 0, 4, 4.14],
-					"texture": "#mb"
+					"uv": [11, 6.96566, 13.6, 9.03434],
+					"texture": "#mine_drainage_pump_casing"
 				}
 			}
 		},
 		{
-			"name": "section_1_1",
-			"from": [8.99, 5.929, 3],
-			"to": [13.01, 10.071, 13],
+			"name": "stage_0_1",
+			"from": [11, 6.96566, 2.8],
+			"to": [13.6, 9.03434, 13.2],
 			"rotation": {
-				"angle": 0,
-				"axis": "y",
+				"angle": 22.5,
+				"axis": "x",
 				"origin": [8, 8, 8]
 			},
 			"faces": {
 				"north": {
-					"uv": [0, 0, 4.02, 4.14],
-					"texture": "#mb"
-				},
-				"east": {
-					"uv": [0, 0, 10, 4.14],
-					"texture": "#mb"
+					"uv": [2.4, 6.96566, 5, 9.03434],
+					"texture": "#mine_drainage_pump_casing"
 				},
 				"south": {
-					"uv": [0, 0, 4.02, 4.14],
-					"texture": "#mb"
-				},
-				"west": {
-					"uv": [0, 0, 10, 4.14],
-					"texture": "#mb"
-				},
-				"up": {
-					"uv": [0, 0, 4.02, 10],
-					"texture": "#mb"
-				},
-				"down": {
-					"uv": [0, 0, 4.02, 10],
-					"texture": "#mb"
+					"uv": [11, 6.96566, 13.6, 9.03434],
+					"texture": "#mine_drainage_pump_casing"
 				}
 			}
 		},
 		{
-			"name": "section_1_2",
-			"from": [8.98, 3, 5.929],
-			"to": [13.02, 13, 10.071],
+			"name": "stage_0_2",
+			"from": [11, 6.96566, 2.8],
+			"to": [13.6, 9.03434, 13.2],
 			"rotation": {
 				"angle": 45,
 				"axis": "x",
@@ -311,35 +758,39 @@
 			},
 			"faces": {
 				"north": {
-					"uv": [0, 0, 4.04, 10],
-					"texture": "#mb"
-				},
-				"east": {
-					"uv": [0, 0, 4.14, 10],
-					"texture": "#mb"
+					"uv": [2.4, 6.96566, 5, 9.03434],
+					"texture": "#mine_drainage_pump_casing"
 				},
 				"south": {
-					"uv": [0, 0, 4.04, 10],
-					"texture": "#mb"
-				},
-				"west": {
-					"uv": [0, 0, 4.14, 10],
-					"texture": "#mb"
-				},
-				"up": {
-					"uv": [0, 0, 4.04, 4.14],
-					"texture": "#mb"
-				},
-				"down": {
-					"uv": [0, 0, 4.04, 4.14],
-					"texture": "#mb"
+					"uv": [11, 6.96566, 13.6, 9.03434],
+					"texture": "#mine_drainage_pump_casing"
 				}
 			}
 		},
 		{
-			"name": "section_1_3",
-			"from": [8.97, 3, 5.929],
-			"to": [13.03, 13, 10.071],
+			"name": "stage_0_3",
+			"from": [11, 6.96566, 2.8],
+			"to": [13.6, 9.03434, 13.2],
+			"rotation": {
+				"angle": -22.5,
+				"axis": "x",
+				"origin": [8, 8, 8]
+			},
+			"faces": {
+				"north": {
+					"uv": [2.4, 6.96566, 5, 9.03434],
+					"texture": "#mine_drainage_pump_casing"
+				},
+				"south": {
+					"uv": [11, 6.96566, 13.6, 9.03434],
+					"texture": "#mine_drainage_pump_casing"
+				}
+			}
+		},
+		{
+			"name": "stage_0_4",
+			"from": [11, 6.96566, 2.8],
+			"to": [13.6, 9.03434, 13.2],
 			"rotation": {
 				"angle": -45,
 				"axis": "x",
@@ -347,35 +798,79 @@
 			},
 			"faces": {
 				"north": {
-					"uv": [0, 0, 4.06, 10],
-					"texture": "#mb"
-				},
-				"east": {
-					"uv": [0, 0, 4.14, 10],
-					"texture": "#mb"
+					"uv": [2.4, 6.96566, 5, 9.03434],
+					"texture": "#mine_drainage_pump_casing"
 				},
 				"south": {
-					"uv": [0, 0, 4.06, 10],
-					"texture": "#mb"
-				},
-				"west": {
-					"uv": [0, 0, 4.14, 10],
-					"texture": "#mb"
-				},
-				"up": {
-					"uv": [0, 0, 4.06, 4.14],
-					"texture": "#mb"
-				},
-				"down": {
-					"uv": [0, 0, 4.06, 4.14],
-					"texture": "#mb"
+					"uv": [11, 6.96566, 13.6, 9.03434],
+					"texture": "#mine_drainage_pump_casing"
 				}
 			}
 		},
 		{
-			"name": "section_2_0",
-			"from": [13, 2.5, 5.722],
-			"to": [17, 13.5, 10.278],
+			"name": "stage_0_5",
+			"from": [11, 2.8, 6.96566],
+			"to": [13.6, 13.2, 9.03434],
+			"rotation": {
+				"angle": 0,
+				"axis": "y",
+				"origin": [8, 8, 8]
+			},
+			"faces": {
+				"up": {
+					"uv": [11, 6.96566, 13.6, 9.03434],
+					"texture": "#mine_drainage_pump_casing"
+				},
+				"down": {
+					"uv": [11, 6.96566, 13.6, 9.03434],
+					"texture": "#mine_drainage_pump_casing"
+				}
+			}
+		},
+		{
+			"name": "stage_0_6",
+			"from": [11, 2.8, 6.96566],
+			"to": [13.6, 13.2, 9.03434],
+			"rotation": {
+				"angle": 22.5,
+				"axis": "x",
+				"origin": [8, 8, 8]
+			},
+			"faces": {
+				"up": {
+					"uv": [11, 6.96566, 13.6, 9.03434],
+					"texture": "#mine_drainage_pump_casing"
+				},
+				"down": {
+					"uv": [11, 6.96566, 13.6, 9.03434],
+					"texture": "#mine_drainage_pump_casing"
+				}
+			}
+		},
+		{
+			"name": "stage_0_7",
+			"from": [11, 2.8, 6.96566],
+			"to": [13.6, 13.2, 9.03434],
+			"rotation": {
+				"angle": -22.5,
+				"axis": "x",
+				"origin": [8, 8, 8]
+			},
+			"faces": {
+				"up": {
+					"uv": [11, 6.96566, 13.6, 9.03434],
+					"texture": "#mine_drainage_pump_casing"
+				},
+				"down": {
+					"uv": [11, 6.96566, 13.6, 9.03434],
+					"texture": "#mine_drainage_pump_casing"
+				}
+			}
+		},
+		{
+			"name": "stage_0_rim_0",
+			"from": [13.6, 6.88609, 2.4],
+			"to": [14, 9.11391, 13.6],
 			"rotation": {
 				"angle": 0,
 				"axis": "y",
@@ -383,71 +878,55 @@
 			},
 			"faces": {
 				"north": {
-					"uv": [0, 0, 4, 11],
-					"texture": "#mb"
+					"uv": [2, 6.88609, 2.4, 9.11391],
+					"texture": "#mine_drainage_pump_casing"
 				},
 				"east": {
-					"uv": [0, 0, 4.56, 11],
-					"texture": "#mb"
+					"uv": [2.4, 6.88609, 13.6, 9.11391],
+					"texture": "#mine_drainage_pump_casing"
 				},
 				"south": {
-					"uv": [0, 0, 4, 11],
-					"texture": "#mb"
+					"uv": [13.6, 6.88609, 14, 9.11391],
+					"texture": "#mine_drainage_pump_casing"
 				},
 				"west": {
-					"uv": [0, 0, 4.56, 11],
-					"texture": "#mb"
-				},
-				"up": {
-					"uv": [0, 0, 4, 4.56],
-					"texture": "#mb"
-				},
-				"down": {
-					"uv": [0, 0, 4, 4.56],
-					"texture": "#mb"
+					"uv": [2.4, 6.88609, 13.6, 9.11391],
+					"texture": "#mine_drainage_pump_casing"
 				}
 			}
 		},
 		{
-			"name": "section_2_1",
-			"from": [12.99, 5.722, 2.5],
-			"to": [17.01, 10.278, 13.5],
+			"name": "stage_0_rim_1",
+			"from": [13.6, 6.88609, 2.4],
+			"to": [14, 9.11391, 13.6],
 			"rotation": {
-				"angle": 0,
-				"axis": "y",
+				"angle": 22.5,
+				"axis": "x",
 				"origin": [8, 8, 8]
 			},
 			"faces": {
 				"north": {
-					"uv": [0, 0, 4.02, 4.56],
-					"texture": "#mb"
+					"uv": [2, 6.88609, 2.4, 9.11391],
+					"texture": "#mine_drainage_pump_casing"
 				},
 				"east": {
-					"uv": [0, 0, 11, 4.56],
-					"texture": "#mb"
+					"uv": [2.4, 6.88609, 13.6, 9.11391],
+					"texture": "#mine_drainage_pump_casing"
 				},
 				"south": {
-					"uv": [0, 0, 4.02, 4.56],
-					"texture": "#mb"
+					"uv": [13.6, 6.88609, 14, 9.11391],
+					"texture": "#mine_drainage_pump_casing"
 				},
 				"west": {
-					"uv": [0, 0, 11, 4.56],
-					"texture": "#mb"
-				},
-				"up": {
-					"uv": [0, 0, 4.02, 11],
-					"texture": "#mb"
-				},
-				"down": {
-					"uv": [0, 0, 4.02, 11],
-					"texture": "#mb"
+					"uv": [2.4, 6.88609, 13.6, 9.11391],
+					"texture": "#mine_drainage_pump_casing"
 				}
 			}
 		},
 		{
-			"name": "section_2_2",
-			"from": [12.98, 2.5, 5.722],
-			"to": [17.02, 13.5, 10.278],
+			"name": "stage_0_rim_2",
+			"from": [13.6, 6.88609, 2.4],
+			"to": [14, 9.11391, 13.6],
 			"rotation": {
 				"angle": 45,
 				"axis": "x",
@@ -455,35 +934,55 @@
 			},
 			"faces": {
 				"north": {
-					"uv": [0, 0, 4.04, 11],
-					"texture": "#mb"
+					"uv": [2, 6.88609, 2.4, 9.11391],
+					"texture": "#mine_drainage_pump_casing"
 				},
 				"east": {
-					"uv": [0, 0, 4.56, 11],
-					"texture": "#mb"
+					"uv": [2.4, 6.88609, 13.6, 9.11391],
+					"texture": "#mine_drainage_pump_casing"
 				},
 				"south": {
-					"uv": [0, 0, 4.04, 11],
-					"texture": "#mb"
+					"uv": [13.6, 6.88609, 14, 9.11391],
+					"texture": "#mine_drainage_pump_casing"
 				},
 				"west": {
-					"uv": [0, 0, 4.56, 11],
-					"texture": "#mb"
-				},
-				"up": {
-					"uv": [0, 0, 4.04, 4.56],
-					"texture": "#mb"
-				},
-				"down": {
-					"uv": [0, 0, 4.04, 4.56],
-					"texture": "#mb"
+					"uv": [2.4, 6.88609, 13.6, 9.11391],
+					"texture": "#mine_drainage_pump_casing"
 				}
 			}
 		},
 		{
-			"name": "section_2_3",
-			"from": [12.97, 2.5, 5.722],
-			"to": [17.03, 13.5, 10.278],
+			"name": "stage_0_rim_3",
+			"from": [13.6, 6.88609, 2.4],
+			"to": [14, 9.11391, 13.6],
+			"rotation": {
+				"angle": -22.5,
+				"axis": "x",
+				"origin": [8, 8, 8]
+			},
+			"faces": {
+				"north": {
+					"uv": [2, 6.88609, 2.4, 9.11391],
+					"texture": "#mine_drainage_pump_casing"
+				},
+				"east": {
+					"uv": [2.4, 6.88609, 13.6, 9.11391],
+					"texture": "#mine_drainage_pump_casing"
+				},
+				"south": {
+					"uv": [13.6, 6.88609, 14, 9.11391],
+					"texture": "#mine_drainage_pump_casing"
+				},
+				"west": {
+					"uv": [2.4, 6.88609, 13.6, 9.11391],
+					"texture": "#mine_drainage_pump_casing"
+				}
+			}
+		},
+		{
+			"name": "stage_0_rim_4",
+			"from": [13.6, 6.88609, 2.4],
+			"to": [14, 9.11391, 13.6],
 			"rotation": {
 				"angle": -45,
 				"axis": "x",
@@ -491,35 +990,111 @@
 			},
 			"faces": {
 				"north": {
-					"uv": [0, 0, 4.06, 11],
-					"texture": "#mb"
+					"uv": [2, 6.88609, 2.4, 9.11391],
+					"texture": "#mine_drainage_pump_casing"
 				},
 				"east": {
-					"uv": [0, 0, 4.56, 11],
-					"texture": "#mb"
+					"uv": [2.4, 6.88609, 13.6, 9.11391],
+					"texture": "#mine_drainage_pump_casing"
 				},
 				"south": {
-					"uv": [0, 0, 4.06, 11],
-					"texture": "#mb"
+					"uv": [13.6, 6.88609, 14, 9.11391],
+					"texture": "#mine_drainage_pump_casing"
 				},
 				"west": {
-					"uv": [0, 0, 4.56, 11],
-					"texture": "#mb"
-				},
-				"up": {
-					"uv": [0, 0, 4.06, 4.56],
-					"texture": "#mb"
-				},
-				"down": {
-					"uv": [0, 0, 4.06, 4.56],
-					"texture": "#mb"
+					"uv": [2.4, 6.88609, 13.6, 9.11391],
+					"texture": "#mine_drainage_pump_casing"
 				}
 			}
 		},
 		{
-			"name": "section_3_0",
-			"from": [17, 3, 5.929],
-			"to": [21, 13, 10.071],
+			"name": "stage_0_rim_5",
+			"from": [13.6, 2.4, 6.88609],
+			"to": [14, 13.6, 9.11391],
+			"rotation": {
+				"angle": 0,
+				"axis": "y",
+				"origin": [8, 8, 8]
+			},
+			"faces": {
+				"east": {
+					"uv": [6.88609, 2.4, 9.11391, 13.6],
+					"texture": "#mine_drainage_pump_casing"
+				},
+				"west": {
+					"uv": [6.88609, 2.4, 9.11391, 13.6],
+					"texture": "#mine_drainage_pump_casing"
+				},
+				"up": {
+					"uv": [13.6, 6.88609, 14, 9.11391],
+					"texture": "#mine_drainage_pump_casing"
+				},
+				"down": {
+					"uv": [13.6, 6.88609, 14, 9.11391],
+					"texture": "#mine_drainage_pump_casing"
+				}
+			}
+		},
+		{
+			"name": "stage_0_rim_6",
+			"from": [13.6, 2.4, 6.88609],
+			"to": [14, 13.6, 9.11391],
+			"rotation": {
+				"angle": 22.5,
+				"axis": "x",
+				"origin": [8, 8, 8]
+			},
+			"faces": {
+				"east": {
+					"uv": [6.88609, 2.4, 9.11391, 13.6],
+					"texture": "#mine_drainage_pump_casing"
+				},
+				"west": {
+					"uv": [6.88609, 2.4, 9.11391, 13.6],
+					"texture": "#mine_drainage_pump_casing"
+				},
+				"up": {
+					"uv": [13.6, 6.88609, 14, 9.11391],
+					"texture": "#mine_drainage_pump_casing"
+				},
+				"down": {
+					"uv": [13.6, 6.88609, 14, 9.11391],
+					"texture": "#mine_drainage_pump_casing"
+				}
+			}
+		},
+		{
+			"name": "stage_0_rim_7",
+			"from": [13.6, 2.4, 6.88609],
+			"to": [14, 13.6, 9.11391],
+			"rotation": {
+				"angle": -22.5,
+				"axis": "x",
+				"origin": [8, 8, 8]
+			},
+			"faces": {
+				"east": {
+					"uv": [6.88609, 2.4, 9.11391, 13.6],
+					"texture": "#mine_drainage_pump_casing"
+				},
+				"west": {
+					"uv": [6.88609, 2.4, 9.11391, 13.6],
+					"texture": "#mine_drainage_pump_casing"
+				},
+				"up": {
+					"uv": [13.6, 6.88609, 14, 9.11391],
+					"texture": "#mine_drainage_pump_casing"
+				},
+				"down": {
+					"uv": [13.6, 6.88609, 14, 9.11391],
+					"texture": "#mine_drainage_pump_casing"
+				}
+			}
+		},
+		{
+			"name": "stage_1_0",
+			"from": [14, 6.96566, 2.8],
+			"to": [16.6, 9.03434, 13.2],
 			"rotation": {
 				"angle": 0,
 				"axis": "y",
@@ -527,71 +1102,39 @@
 			},
 			"faces": {
 				"north": {
-					"uv": [0, 0, 4, 10],
-					"texture": "#mb"
-				},
-				"east": {
-					"uv": [0, 0, 4.14, 10],
-					"texture": "#mb"
+					"uv": [0, 6.96566, 2, 9.03434],
+					"texture": "#mine_drainage_pump_casing"
 				},
 				"south": {
-					"uv": [0, 0, 4, 10],
-					"texture": "#mb"
-				},
-				"west": {
-					"uv": [0, 0, 4.14, 10],
-					"texture": "#mb"
-				},
-				"up": {
-					"uv": [0, 0, 4, 4.14],
-					"texture": "#mb"
-				},
-				"down": {
-					"uv": [0, 0, 4, 4.14],
-					"texture": "#mb"
+					"uv": [14, 6.96566, 16, 9.03434],
+					"texture": "#mine_drainage_pump_casing"
 				}
 			}
 		},
 		{
-			"name": "section_3_1",
-			"from": [16.99, 5.929, 3],
-			"to": [21.01, 10.071, 13],
+			"name": "stage_1_1",
+			"from": [14, 6.96566, 2.8],
+			"to": [16.6, 9.03434, 13.2],
 			"rotation": {
-				"angle": 0,
-				"axis": "y",
+				"angle": 22.5,
+				"axis": "x",
 				"origin": [8, 8, 8]
 			},
 			"faces": {
 				"north": {
-					"uv": [0, 0, 4.02, 4.14],
-					"texture": "#mb"
-				},
-				"east": {
-					"uv": [0, 0, 10, 4.14],
-					"texture": "#mb"
+					"uv": [0, 6.96566, 2, 9.03434],
+					"texture": "#mine_drainage_pump_casing"
 				},
 				"south": {
-					"uv": [0, 0, 4.02, 4.14],
-					"texture": "#mb"
-				},
-				"west": {
-					"uv": [0, 0, 10, 4.14],
-					"texture": "#mb"
-				},
-				"up": {
-					"uv": [0, 0, 4.02, 10],
-					"texture": "#mb"
-				},
-				"down": {
-					"uv": [0, 0, 4.02, 10],
-					"texture": "#mb"
+					"uv": [14, 6.96566, 16, 9.03434],
+					"texture": "#mine_drainage_pump_casing"
 				}
 			}
 		},
 		{
-			"name": "section_3_2",
-			"from": [16.98, 3, 5.929],
-			"to": [21.02, 13, 10.071],
+			"name": "stage_1_2",
+			"from": [14, 6.96566, 2.8],
+			"to": [16.6, 9.03434, 13.2],
 			"rotation": {
 				"angle": 45,
 				"axis": "x",
@@ -599,35 +1142,39 @@
 			},
 			"faces": {
 				"north": {
-					"uv": [0, 0, 4.04, 10],
-					"texture": "#mb"
-				},
-				"east": {
-					"uv": [0, 0, 4.14, 10],
-					"texture": "#mb"
+					"uv": [0, 6.96566, 2, 9.03434],
+					"texture": "#mine_drainage_pump_casing"
 				},
 				"south": {
-					"uv": [0, 0, 4.04, 10],
-					"texture": "#mb"
-				},
-				"west": {
-					"uv": [0, 0, 4.14, 10],
-					"texture": "#mb"
-				},
-				"up": {
-					"uv": [0, 0, 4.04, 4.14],
-					"texture": "#mb"
-				},
-				"down": {
-					"uv": [0, 0, 4.04, 4.14],
-					"texture": "#mb"
+					"uv": [14, 6.96566, 16, 9.03434],
+					"texture": "#mine_drainage_pump_casing"
 				}
 			}
 		},
 		{
-			"name": "section_3_3",
-			"from": [16.97, 3, 5.929],
-			"to": [21.03, 13, 10.071],
+			"name": "stage_1_3",
+			"from": [14, 6.96566, 2.8],
+			"to": [16.6, 9.03434, 13.2],
+			"rotation": {
+				"angle": -22.5,
+				"axis": "x",
+				"origin": [8, 8, 8]
+			},
+			"faces": {
+				"north": {
+					"uv": [0, 6.96566, 2, 9.03434],
+					"texture": "#mine_drainage_pump_casing"
+				},
+				"south": {
+					"uv": [14, 6.96566, 16, 9.03434],
+					"texture": "#mine_drainage_pump_casing"
+				}
+			}
+		},
+		{
+			"name": "stage_1_4",
+			"from": [14, 6.96566, 2.8],
+			"to": [16.6, 9.03434, 13.2],
 			"rotation": {
 				"angle": -45,
 				"axis": "x",
@@ -635,35 +1182,79 @@
 			},
 			"faces": {
 				"north": {
-					"uv": [0, 0, 4.06, 10],
-					"texture": "#mb"
-				},
-				"east": {
-					"uv": [0, 0, 4.14, 10],
-					"texture": "#mb"
+					"uv": [0, 6.96566, 2, 9.03434],
+					"texture": "#mine_drainage_pump_casing"
 				},
 				"south": {
-					"uv": [0, 0, 4.06, 10],
-					"texture": "#mb"
-				},
-				"west": {
-					"uv": [0, 0, 4.14, 10],
-					"texture": "#mb"
-				},
-				"up": {
-					"uv": [0, 0, 4.06, 4.14],
-					"texture": "#mb"
-				},
-				"down": {
-					"uv": [0, 0, 4.06, 4.14],
-					"texture": "#mb"
+					"uv": [14, 6.96566, 16, 9.03434],
+					"texture": "#mine_drainage_pump_casing"
 				}
 			}
 		},
 		{
-			"name": "section_4_0",
-			"from": [21, 2.5, 5.722],
-			"to": [25, 13.5, 10.278],
+			"name": "stage_1_5",
+			"from": [14, 2.8, 6.96566],
+			"to": [16.6, 13.2, 9.03434],
+			"rotation": {
+				"angle": 0,
+				"axis": "y",
+				"origin": [8, 8, 8]
+			},
+			"faces": {
+				"up": {
+					"uv": [14, 6.96566, 16, 9.03434],
+					"texture": "#mine_drainage_pump_casing"
+				},
+				"down": {
+					"uv": [14, 6.96566, 16, 9.03434],
+					"texture": "#mine_drainage_pump_casing"
+				}
+			}
+		},
+		{
+			"name": "stage_1_6",
+			"from": [14, 2.8, 6.96566],
+			"to": [16.6, 13.2, 9.03434],
+			"rotation": {
+				"angle": 22.5,
+				"axis": "x",
+				"origin": [8, 8, 8]
+			},
+			"faces": {
+				"up": {
+					"uv": [14, 6.96566, 16, 9.03434],
+					"texture": "#mine_drainage_pump_casing"
+				},
+				"down": {
+					"uv": [14, 6.96566, 16, 9.03434],
+					"texture": "#mine_drainage_pump_casing"
+				}
+			}
+		},
+		{
+			"name": "stage_1_7",
+			"from": [14, 2.8, 6.96566],
+			"to": [16.6, 13.2, 9.03434],
+			"rotation": {
+				"angle": -22.5,
+				"axis": "x",
+				"origin": [8, 8, 8]
+			},
+			"faces": {
+				"up": {
+					"uv": [14, 6.96566, 16, 9.03434],
+					"texture": "#mine_drainage_pump_casing"
+				},
+				"down": {
+					"uv": [14, 6.96566, 16, 9.03434],
+					"texture": "#mine_drainage_pump_casing"
+				}
+			}
+		},
+		{
+			"name": "stage_1_rim_0",
+			"from": [16.6, 6.88609, 2.4],
+			"to": [17, 9.11391, 13.6],
 			"rotation": {
 				"angle": 0,
 				"axis": "y",
@@ -671,71 +1262,55 @@
 			},
 			"faces": {
 				"north": {
-					"uv": [0, 0, 4, 11],
-					"texture": "#mb"
+					"uv": [15, 6.88609, 15.4, 9.11391],
+					"texture": "#mine_drainage_pump_casing"
 				},
 				"east": {
-					"uv": [0, 0, 4.56, 11],
-					"texture": "#mb"
+					"uv": [2.4, 6.88609, 13.6, 9.11391],
+					"texture": "#mine_drainage_pump_casing"
 				},
 				"south": {
-					"uv": [0, 0, 4, 11],
-					"texture": "#mb"
+					"uv": [0.6, 6.88609, 1, 9.11391],
+					"texture": "#mine_drainage_pump_casing"
 				},
 				"west": {
-					"uv": [0, 0, 4.56, 11],
-					"texture": "#mb"
-				},
-				"up": {
-					"uv": [0, 0, 4, 4.56],
-					"texture": "#mb"
-				},
-				"down": {
-					"uv": [0, 0, 4, 4.56],
-					"texture": "#mb"
+					"uv": [2.4, 6.88609, 13.6, 9.11391],
+					"texture": "#mine_drainage_pump_casing"
 				}
 			}
 		},
 		{
-			"name": "section_4_1",
-			"from": [20.99, 5.722, 2.5],
-			"to": [25.01, 10.278, 13.5],
+			"name": "stage_1_rim_1",
+			"from": [16.6, 6.88609, 2.4],
+			"to": [17, 9.11391, 13.6],
 			"rotation": {
-				"angle": 0,
-				"axis": "y",
+				"angle": 22.5,
+				"axis": "x",
 				"origin": [8, 8, 8]
 			},
 			"faces": {
 				"north": {
-					"uv": [0, 0, 4.02, 4.56],
-					"texture": "#mb"
+					"uv": [15, 6.88609, 15.4, 9.11391],
+					"texture": "#mine_drainage_pump_casing"
 				},
 				"east": {
-					"uv": [0, 0, 11, 4.56],
-					"texture": "#mb"
+					"uv": [2.4, 6.88609, 13.6, 9.11391],
+					"texture": "#mine_drainage_pump_casing"
 				},
 				"south": {
-					"uv": [0, 0, 4.02, 4.56],
-					"texture": "#mb"
+					"uv": [0.6, 6.88609, 1, 9.11391],
+					"texture": "#mine_drainage_pump_casing"
 				},
 				"west": {
-					"uv": [0, 0, 11, 4.56],
-					"texture": "#mb"
-				},
-				"up": {
-					"uv": [0, 0, 4.02, 11],
-					"texture": "#mb"
-				},
-				"down": {
-					"uv": [0, 0, 4.02, 11],
-					"texture": "#mb"
+					"uv": [2.4, 6.88609, 13.6, 9.11391],
+					"texture": "#mine_drainage_pump_casing"
 				}
 			}
 		},
 		{
-			"name": "section_4_2",
-			"from": [20.98, 2.5, 5.722],
-			"to": [25.02, 13.5, 10.278],
+			"name": "stage_1_rim_2",
+			"from": [16.6, 6.88609, 2.4],
+			"to": [17, 9.11391, 13.6],
 			"rotation": {
 				"angle": 45,
 				"axis": "x",
@@ -743,35 +1318,55 @@
 			},
 			"faces": {
 				"north": {
-					"uv": [0, 0, 4.04, 11],
-					"texture": "#mb"
+					"uv": [15, 6.88609, 15.4, 9.11391],
+					"texture": "#mine_drainage_pump_casing"
 				},
 				"east": {
-					"uv": [0, 0, 4.56, 11],
-					"texture": "#mb"
+					"uv": [2.4, 6.88609, 13.6, 9.11391],
+					"texture": "#mine_drainage_pump_casing"
 				},
 				"south": {
-					"uv": [0, 0, 4.04, 11],
-					"texture": "#mb"
+					"uv": [0.6, 6.88609, 1, 9.11391],
+					"texture": "#mine_drainage_pump_casing"
 				},
 				"west": {
-					"uv": [0, 0, 4.56, 11],
-					"texture": "#mb"
-				},
-				"up": {
-					"uv": [0, 0, 4.04, 4.56],
-					"texture": "#mb"
-				},
-				"down": {
-					"uv": [0, 0, 4.04, 4.56],
-					"texture": "#mb"
+					"uv": [2.4, 6.88609, 13.6, 9.11391],
+					"texture": "#mine_drainage_pump_casing"
 				}
 			}
 		},
 		{
-			"name": "section_4_3",
-			"from": [20.97, 2.5, 5.722],
-			"to": [25.03, 13.5, 10.278],
+			"name": "stage_1_rim_3",
+			"from": [16.6, 6.88609, 2.4],
+			"to": [17, 9.11391, 13.6],
+			"rotation": {
+				"angle": -22.5,
+				"axis": "x",
+				"origin": [8, 8, 8]
+			},
+			"faces": {
+				"north": {
+					"uv": [15, 6.88609, 15.4, 9.11391],
+					"texture": "#mine_drainage_pump_casing"
+				},
+				"east": {
+					"uv": [2.4, 6.88609, 13.6, 9.11391],
+					"texture": "#mine_drainage_pump_casing"
+				},
+				"south": {
+					"uv": [0.6, 6.88609, 1, 9.11391],
+					"texture": "#mine_drainage_pump_casing"
+				},
+				"west": {
+					"uv": [2.4, 6.88609, 13.6, 9.11391],
+					"texture": "#mine_drainage_pump_casing"
+				}
+			}
+		},
+		{
+			"name": "stage_1_rim_4",
+			"from": [16.6, 6.88609, 2.4],
+			"to": [17, 9.11391, 13.6],
 			"rotation": {
 				"angle": -45,
 				"axis": "x",
@@ -779,35 +1374,111 @@
 			},
 			"faces": {
 				"north": {
-					"uv": [0, 0, 4.06, 11],
-					"texture": "#mb"
+					"uv": [15, 6.88609, 15.4, 9.11391],
+					"texture": "#mine_drainage_pump_casing"
 				},
 				"east": {
-					"uv": [0, 0, 4.56, 11],
-					"texture": "#mb"
+					"uv": [2.4, 6.88609, 13.6, 9.11391],
+					"texture": "#mine_drainage_pump_casing"
 				},
 				"south": {
-					"uv": [0, 0, 4.06, 11],
-					"texture": "#mb"
+					"uv": [0.6, 6.88609, 1, 9.11391],
+					"texture": "#mine_drainage_pump_casing"
 				},
 				"west": {
-					"uv": [0, 0, 4.56, 11],
-					"texture": "#mb"
-				},
-				"up": {
-					"uv": [0, 0, 4.06, 4.56],
-					"texture": "#mb"
-				},
-				"down": {
-					"uv": [0, 0, 4.06, 4.56],
-					"texture": "#mb"
+					"uv": [2.4, 6.88609, 13.6, 9.11391],
+					"texture": "#mine_drainage_pump_casing"
 				}
 			}
 		},
 		{
-			"name": "suction_cover_0",
-			"from": [3.5, 2, 5.515],
-			"to": [5, 14, 10.485],
+			"name": "stage_1_rim_5",
+			"from": [16.6, 2.4, 6.88609],
+			"to": [17, 13.6, 9.11391],
+			"rotation": {
+				"angle": 0,
+				"axis": "y",
+				"origin": [8, 8, 8]
+			},
+			"faces": {
+				"east": {
+					"uv": [6.88609, 2.4, 9.11391, 13.6],
+					"texture": "#mine_drainage_pump_casing"
+				},
+				"west": {
+					"uv": [6.88609, 2.4, 9.11391, 13.6],
+					"texture": "#mine_drainage_pump_casing"
+				},
+				"up": {
+					"uv": [0.6, 6.88609, 1, 9.11391],
+					"texture": "#mine_drainage_pump_casing"
+				},
+				"down": {
+					"uv": [0.6, 6.88609, 1, 9.11391],
+					"texture": "#mine_drainage_pump_casing"
+				}
+			}
+		},
+		{
+			"name": "stage_1_rim_6",
+			"from": [16.6, 2.4, 6.88609],
+			"to": [17, 13.6, 9.11391],
+			"rotation": {
+				"angle": 22.5,
+				"axis": "x",
+				"origin": [8, 8, 8]
+			},
+			"faces": {
+				"east": {
+					"uv": [6.88609, 2.4, 9.11391, 13.6],
+					"texture": "#mine_drainage_pump_casing"
+				},
+				"west": {
+					"uv": [6.88609, 2.4, 9.11391, 13.6],
+					"texture": "#mine_drainage_pump_casing"
+				},
+				"up": {
+					"uv": [0.6, 6.88609, 1, 9.11391],
+					"texture": "#mine_drainage_pump_casing"
+				},
+				"down": {
+					"uv": [0.6, 6.88609, 1, 9.11391],
+					"texture": "#mine_drainage_pump_casing"
+				}
+			}
+		},
+		{
+			"name": "stage_1_rim_7",
+			"from": [16.6, 2.4, 6.88609],
+			"to": [17, 13.6, 9.11391],
+			"rotation": {
+				"angle": -22.5,
+				"axis": "x",
+				"origin": [8, 8, 8]
+			},
+			"faces": {
+				"east": {
+					"uv": [6.88609, 2.4, 9.11391, 13.6],
+					"texture": "#mine_drainage_pump_casing"
+				},
+				"west": {
+					"uv": [6.88609, 2.4, 9.11391, 13.6],
+					"texture": "#mine_drainage_pump_casing"
+				},
+				"up": {
+					"uv": [0.6, 6.88609, 1, 9.11391],
+					"texture": "#mine_drainage_pump_casing"
+				},
+				"down": {
+					"uv": [0.6, 6.88609, 1, 9.11391],
+					"texture": "#mine_drainage_pump_casing"
+				}
+			}
+		},
+		{
+			"name": "stage_2_0",
+			"from": [17, 6.96566, 2.8],
+			"to": [19.6, 9.03434, 13.2],
 			"rotation": {
 				"angle": 0,
 				"axis": "y",
@@ -815,71 +1486,39 @@
 			},
 			"faces": {
 				"north": {
-					"uv": [0, 0, 1.5, 12],
-					"texture": "#d"
-				},
-				"east": {
-					"uv": [0, 0, 4.97, 12],
-					"texture": "#d"
+					"uv": [12.4, 6.96566, 15, 9.03434],
+					"texture": "#mine_drainage_pump_casing"
 				},
 				"south": {
-					"uv": [0, 0, 1.5, 12],
-					"texture": "#d"
-				},
-				"west": {
-					"uv": [0, 0, 4.97, 12],
-					"texture": "#d"
-				},
-				"up": {
-					"uv": [0, 0, 1.5, 4.97],
-					"texture": "#d"
-				},
-				"down": {
-					"uv": [0, 0, 1.5, 4.97],
-					"texture": "#d"
+					"uv": [1, 6.96566, 3.6, 9.03434],
+					"texture": "#mine_drainage_pump_casing"
 				}
 			}
 		},
 		{
-			"name": "suction_cover_1",
-			"from": [3.49, 5.515, 2],
-			"to": [5.01, 10.485, 14],
+			"name": "stage_2_1",
+			"from": [17, 6.96566, 2.8],
+			"to": [19.6, 9.03434, 13.2],
 			"rotation": {
-				"angle": 0,
-				"axis": "y",
+				"angle": 22.5,
+				"axis": "x",
 				"origin": [8, 8, 8]
 			},
 			"faces": {
 				"north": {
-					"uv": [0, 0, 1.52, 4.97],
-					"texture": "#d"
-				},
-				"east": {
-					"uv": [0, 0, 12, 4.97],
-					"texture": "#d"
+					"uv": [12.4, 6.96566, 15, 9.03434],
+					"texture": "#mine_drainage_pump_casing"
 				},
 				"south": {
-					"uv": [0, 0, 1.52, 4.97],
-					"texture": "#d"
-				},
-				"west": {
-					"uv": [0, 0, 12, 4.97],
-					"texture": "#d"
-				},
-				"up": {
-					"uv": [0, 0, 1.52, 12],
-					"texture": "#d"
-				},
-				"down": {
-					"uv": [0, 0, 1.52, 12],
-					"texture": "#d"
+					"uv": [1, 6.96566, 3.6, 9.03434],
+					"texture": "#mine_drainage_pump_casing"
 				}
 			}
 		},
 		{
-			"name": "suction_cover_2",
-			"from": [3.48, 2, 5.515],
-			"to": [5.02, 14, 10.485],
+			"name": "stage_2_2",
+			"from": [17, 6.96566, 2.8],
+			"to": [19.6, 9.03434, 13.2],
 			"rotation": {
 				"angle": 45,
 				"axis": "x",
@@ -887,35 +1526,39 @@
 			},
 			"faces": {
 				"north": {
-					"uv": [0, 0, 1.54, 12],
-					"texture": "#d"
-				},
-				"east": {
-					"uv": [0, 0, 4.97, 12],
-					"texture": "#d"
+					"uv": [12.4, 6.96566, 15, 9.03434],
+					"texture": "#mine_drainage_pump_casing"
 				},
 				"south": {
-					"uv": [0, 0, 1.54, 12],
-					"texture": "#d"
-				},
-				"west": {
-					"uv": [0, 0, 4.97, 12],
-					"texture": "#d"
-				},
-				"up": {
-					"uv": [0, 0, 1.54, 4.97],
-					"texture": "#d"
-				},
-				"down": {
-					"uv": [0, 0, 1.54, 4.97],
-					"texture": "#d"
+					"uv": [1, 6.96566, 3.6, 9.03434],
+					"texture": "#mine_drainage_pump_casing"
 				}
 			}
 		},
 		{
-			"name": "suction_cover_3",
-			"from": [3.47, 2, 5.515],
-			"to": [5.03, 14, 10.485],
+			"name": "stage_2_3",
+			"from": [17, 6.96566, 2.8],
+			"to": [19.6, 9.03434, 13.2],
+			"rotation": {
+				"angle": -22.5,
+				"axis": "x",
+				"origin": [8, 8, 8]
+			},
+			"faces": {
+				"north": {
+					"uv": [12.4, 6.96566, 15, 9.03434],
+					"texture": "#mine_drainage_pump_casing"
+				},
+				"south": {
+					"uv": [1, 6.96566, 3.6, 9.03434],
+					"texture": "#mine_drainage_pump_casing"
+				}
+			}
+		},
+		{
+			"name": "stage_2_4",
+			"from": [17, 6.96566, 2.8],
+			"to": [19.6, 9.03434, 13.2],
 			"rotation": {
 				"angle": -45,
 				"axis": "x",
@@ -923,35 +1566,79 @@
 			},
 			"faces": {
 				"north": {
-					"uv": [0, 0, 1.56, 12],
-					"texture": "#d"
-				},
-				"east": {
-					"uv": [0, 0, 4.97, 12],
-					"texture": "#d"
+					"uv": [12.4, 6.96566, 15, 9.03434],
+					"texture": "#mine_drainage_pump_casing"
 				},
 				"south": {
-					"uv": [0, 0, 1.56, 12],
-					"texture": "#d"
-				},
-				"west": {
-					"uv": [0, 0, 4.97, 12],
-					"texture": "#d"
-				},
-				"up": {
-					"uv": [0, 0, 1.56, 4.97],
-					"texture": "#d"
-				},
-				"down": {
-					"uv": [0, 0, 1.56, 4.97],
-					"texture": "#d"
+					"uv": [1, 6.96566, 3.6, 9.03434],
+					"texture": "#mine_drainage_pump_casing"
 				}
 			}
 		},
 		{
-			"name": "discharge_cover_0",
-			"from": [25, 2, 5.515],
-			"to": [26.5, 14, 10.485],
+			"name": "stage_2_5",
+			"from": [17, 2.8, 6.96566],
+			"to": [19.6, 13.2, 9.03434],
+			"rotation": {
+				"angle": 0,
+				"axis": "y",
+				"origin": [8, 8, 8]
+			},
+			"faces": {
+				"up": {
+					"uv": [1, 6.96566, 3.6, 9.03434],
+					"texture": "#mine_drainage_pump_casing"
+				},
+				"down": {
+					"uv": [1, 6.96566, 3.6, 9.03434],
+					"texture": "#mine_drainage_pump_casing"
+				}
+			}
+		},
+		{
+			"name": "stage_2_6",
+			"from": [17, 2.8, 6.96566],
+			"to": [19.6, 13.2, 9.03434],
+			"rotation": {
+				"angle": 22.5,
+				"axis": "x",
+				"origin": [8, 8, 8]
+			},
+			"faces": {
+				"up": {
+					"uv": [1, 6.96566, 3.6, 9.03434],
+					"texture": "#mine_drainage_pump_casing"
+				},
+				"down": {
+					"uv": [1, 6.96566, 3.6, 9.03434],
+					"texture": "#mine_drainage_pump_casing"
+				}
+			}
+		},
+		{
+			"name": "stage_2_7",
+			"from": [17, 2.8, 6.96566],
+			"to": [19.6, 13.2, 9.03434],
+			"rotation": {
+				"angle": -22.5,
+				"axis": "x",
+				"origin": [8, 8, 8]
+			},
+			"faces": {
+				"up": {
+					"uv": [1, 6.96566, 3.6, 9.03434],
+					"texture": "#mine_drainage_pump_casing"
+				},
+				"down": {
+					"uv": [1, 6.96566, 3.6, 9.03434],
+					"texture": "#mine_drainage_pump_casing"
+				}
+			}
+		},
+		{
+			"name": "stage_2_rim_0",
+			"from": [19.6, 6.88609, 2.4],
+			"to": [20, 9.11391, 13.6],
 			"rotation": {
 				"angle": 0,
 				"axis": "y",
@@ -959,71 +1646,55 @@
 			},
 			"faces": {
 				"north": {
-					"uv": [0, 0, 1.5, 12],
-					"texture": "#d"
+					"uv": [12, 6.88609, 12.4, 9.11391],
+					"texture": "#mine_drainage_pump_casing"
 				},
 				"east": {
-					"uv": [0, 0, 4.97, 12],
-					"texture": "#d"
+					"uv": [2.4, 6.88609, 13.6, 9.11391],
+					"texture": "#mine_drainage_pump_casing"
 				},
 				"south": {
-					"uv": [0, 0, 1.5, 12],
-					"texture": "#d"
+					"uv": [3.6, 6.88609, 4, 9.11391],
+					"texture": "#mine_drainage_pump_casing"
 				},
 				"west": {
-					"uv": [0, 0, 4.97, 12],
-					"texture": "#d"
-				},
-				"up": {
-					"uv": [0, 0, 1.5, 4.97],
-					"texture": "#d"
-				},
-				"down": {
-					"uv": [0, 0, 1.5, 4.97],
-					"texture": "#d"
+					"uv": [2.4, 6.88609, 13.6, 9.11391],
+					"texture": "#mine_drainage_pump_casing"
 				}
 			}
 		},
 		{
-			"name": "discharge_cover_1",
-			"from": [24.99, 5.515, 2],
-			"to": [26.51, 10.485, 14],
+			"name": "stage_2_rim_1",
+			"from": [19.6, 6.88609, 2.4],
+			"to": [20, 9.11391, 13.6],
 			"rotation": {
-				"angle": 0,
-				"axis": "y",
+				"angle": 22.5,
+				"axis": "x",
 				"origin": [8, 8, 8]
 			},
 			"faces": {
 				"north": {
-					"uv": [0, 0, 1.52, 4.97],
-					"texture": "#d"
+					"uv": [12, 6.88609, 12.4, 9.11391],
+					"texture": "#mine_drainage_pump_casing"
 				},
 				"east": {
-					"uv": [0, 0, 12, 4.97],
-					"texture": "#d"
+					"uv": [2.4, 6.88609, 13.6, 9.11391],
+					"texture": "#mine_drainage_pump_casing"
 				},
 				"south": {
-					"uv": [0, 0, 1.52, 4.97],
-					"texture": "#d"
+					"uv": [3.6, 6.88609, 4, 9.11391],
+					"texture": "#mine_drainage_pump_casing"
 				},
 				"west": {
-					"uv": [0, 0, 12, 4.97],
-					"texture": "#d"
-				},
-				"up": {
-					"uv": [0, 0, 1.52, 12],
-					"texture": "#d"
-				},
-				"down": {
-					"uv": [0, 0, 1.52, 12],
-					"texture": "#d"
+					"uv": [2.4, 6.88609, 13.6, 9.11391],
+					"texture": "#mine_drainage_pump_casing"
 				}
 			}
 		},
 		{
-			"name": "discharge_cover_2",
-			"from": [24.98, 2, 5.515],
-			"to": [26.52, 14, 10.485],
+			"name": "stage_2_rim_2",
+			"from": [19.6, 6.88609, 2.4],
+			"to": [20, 9.11391, 13.6],
 			"rotation": {
 				"angle": 45,
 				"axis": "x",
@@ -1031,35 +1702,55 @@
 			},
 			"faces": {
 				"north": {
-					"uv": [0, 0, 1.54, 12],
-					"texture": "#d"
+					"uv": [12, 6.88609, 12.4, 9.11391],
+					"texture": "#mine_drainage_pump_casing"
 				},
 				"east": {
-					"uv": [0, 0, 4.97, 12],
-					"texture": "#d"
+					"uv": [2.4, 6.88609, 13.6, 9.11391],
+					"texture": "#mine_drainage_pump_casing"
 				},
 				"south": {
-					"uv": [0, 0, 1.54, 12],
-					"texture": "#d"
+					"uv": [3.6, 6.88609, 4, 9.11391],
+					"texture": "#mine_drainage_pump_casing"
 				},
 				"west": {
-					"uv": [0, 0, 4.97, 12],
-					"texture": "#d"
-				},
-				"up": {
-					"uv": [0, 0, 1.54, 4.97],
-					"texture": "#d"
-				},
-				"down": {
-					"uv": [0, 0, 1.54, 4.97],
-					"texture": "#d"
+					"uv": [2.4, 6.88609, 13.6, 9.11391],
+					"texture": "#mine_drainage_pump_casing"
 				}
 			}
 		},
 		{
-			"name": "discharge_cover_3",
-			"from": [24.97, 2, 5.515],
-			"to": [26.53, 14, 10.485],
+			"name": "stage_2_rim_3",
+			"from": [19.6, 6.88609, 2.4],
+			"to": [20, 9.11391, 13.6],
+			"rotation": {
+				"angle": -22.5,
+				"axis": "x",
+				"origin": [8, 8, 8]
+			},
+			"faces": {
+				"north": {
+					"uv": [12, 6.88609, 12.4, 9.11391],
+					"texture": "#mine_drainage_pump_casing"
+				},
+				"east": {
+					"uv": [2.4, 6.88609, 13.6, 9.11391],
+					"texture": "#mine_drainage_pump_casing"
+				},
+				"south": {
+					"uv": [3.6, 6.88609, 4, 9.11391],
+					"texture": "#mine_drainage_pump_casing"
+				},
+				"west": {
+					"uv": [2.4, 6.88609, 13.6, 9.11391],
+					"texture": "#mine_drainage_pump_casing"
+				}
+			}
+		},
+		{
+			"name": "stage_2_rim_4",
+			"from": [19.6, 6.88609, 2.4],
+			"to": [20, 9.11391, 13.6],
 			"rotation": {
 				"angle": -45,
 				"axis": "x",
@@ -1067,35 +1758,111 @@
 			},
 			"faces": {
 				"north": {
-					"uv": [0, 0, 1.56, 12],
-					"texture": "#d"
+					"uv": [12, 6.88609, 12.4, 9.11391],
+					"texture": "#mine_drainage_pump_casing"
 				},
 				"east": {
-					"uv": [0, 0, 4.97, 12],
-					"texture": "#d"
+					"uv": [2.4, 6.88609, 13.6, 9.11391],
+					"texture": "#mine_drainage_pump_casing"
 				},
 				"south": {
-					"uv": [0, 0, 1.56, 12],
-					"texture": "#d"
+					"uv": [3.6, 6.88609, 4, 9.11391],
+					"texture": "#mine_drainage_pump_casing"
 				},
 				"west": {
-					"uv": [0, 0, 4.97, 12],
-					"texture": "#d"
-				},
-				"up": {
-					"uv": [0, 0, 1.56, 4.97],
-					"texture": "#d"
-				},
-				"down": {
-					"uv": [0, 0, 1.56, 4.97],
-					"texture": "#d"
+					"uv": [2.4, 6.88609, 13.6, 9.11391],
+					"texture": "#mine_drainage_pump_casing"
 				}
 			}
 		},
 		{
-			"name": "tie_rod_0",
-			"from": [3.5, 13, 3.5],
-			"to": [26.5, 13.6, 4.1],
+			"name": "stage_2_rim_5",
+			"from": [19.6, 2.4, 6.88609],
+			"to": [20, 13.6, 9.11391],
+			"rotation": {
+				"angle": 0,
+				"axis": "y",
+				"origin": [8, 8, 8]
+			},
+			"faces": {
+				"east": {
+					"uv": [6.88609, 2.4, 9.11391, 13.6],
+					"texture": "#mine_drainage_pump_casing"
+				},
+				"west": {
+					"uv": [6.88609, 2.4, 9.11391, 13.6],
+					"texture": "#mine_drainage_pump_casing"
+				},
+				"up": {
+					"uv": [3.6, 6.88609, 4, 9.11391],
+					"texture": "#mine_drainage_pump_casing"
+				},
+				"down": {
+					"uv": [3.6, 6.88609, 4, 9.11391],
+					"texture": "#mine_drainage_pump_casing"
+				}
+			}
+		},
+		{
+			"name": "stage_2_rim_6",
+			"from": [19.6, 2.4, 6.88609],
+			"to": [20, 13.6, 9.11391],
+			"rotation": {
+				"angle": 22.5,
+				"axis": "x",
+				"origin": [8, 8, 8]
+			},
+			"faces": {
+				"east": {
+					"uv": [6.88609, 2.4, 9.11391, 13.6],
+					"texture": "#mine_drainage_pump_casing"
+				},
+				"west": {
+					"uv": [6.88609, 2.4, 9.11391, 13.6],
+					"texture": "#mine_drainage_pump_casing"
+				},
+				"up": {
+					"uv": [3.6, 6.88609, 4, 9.11391],
+					"texture": "#mine_drainage_pump_casing"
+				},
+				"down": {
+					"uv": [3.6, 6.88609, 4, 9.11391],
+					"texture": "#mine_drainage_pump_casing"
+				}
+			}
+		},
+		{
+			"name": "stage_2_rim_7",
+			"from": [19.6, 2.4, 6.88609],
+			"to": [20, 13.6, 9.11391],
+			"rotation": {
+				"angle": -22.5,
+				"axis": "x",
+				"origin": [8, 8, 8]
+			},
+			"faces": {
+				"east": {
+					"uv": [6.88609, 2.4, 9.11391, 13.6],
+					"texture": "#mine_drainage_pump_casing"
+				},
+				"west": {
+					"uv": [6.88609, 2.4, 9.11391, 13.6],
+					"texture": "#mine_drainage_pump_casing"
+				},
+				"up": {
+					"uv": [3.6, 6.88609, 4, 9.11391],
+					"texture": "#mine_drainage_pump_casing"
+				},
+				"down": {
+					"uv": [3.6, 6.88609, 4, 9.11391],
+					"texture": "#mine_drainage_pump_casing"
+				}
+			}
+		},
+		{
+			"name": "stage_3_0",
+			"from": [20, 6.96566, 2.8],
+			"to": [22.6, 9.03434, 13.2],
 			"rotation": {
 				"angle": 0,
 				"axis": "y",
@@ -1103,35 +1870,159 @@
 			},
 			"faces": {
 				"north": {
-					"uv": [0, 0, 16, 0.6],
-					"texture": "#pol"
-				},
-				"east": {
-					"uv": [0, 0, 0.6, 0.6],
-					"texture": "#pol"
+					"uv": [9.4, 6.96566, 12, 9.03434],
+					"texture": "#mine_drainage_pump_casing"
 				},
 				"south": {
-					"uv": [0, 0, 16, 0.6],
-					"texture": "#pol"
-				},
-				"west": {
-					"uv": [0, 0, 0.6, 0.6],
-					"texture": "#pol"
-				},
-				"up": {
-					"uv": [0, 0, 16, 0.6],
-					"texture": "#pol"
-				},
-				"down": {
-					"uv": [0, 0, 16, 0.6],
-					"texture": "#pol"
+					"uv": [4, 6.96566, 6.6, 9.03434],
+					"texture": "#mine_drainage_pump_casing"
 				}
 			}
 		},
 		{
-			"name": "tie_rod_1",
-			"from": [3.5, 13, 11.9],
-			"to": [26.5, 13.6, 12.5],
+			"name": "stage_3_1",
+			"from": [20, 6.96566, 2.8],
+			"to": [22.6, 9.03434, 13.2],
+			"rotation": {
+				"angle": 22.5,
+				"axis": "x",
+				"origin": [8, 8, 8]
+			},
+			"faces": {
+				"north": {
+					"uv": [9.4, 6.96566, 12, 9.03434],
+					"texture": "#mine_drainage_pump_casing"
+				},
+				"south": {
+					"uv": [4, 6.96566, 6.6, 9.03434],
+					"texture": "#mine_drainage_pump_casing"
+				}
+			}
+		},
+		{
+			"name": "stage_3_2",
+			"from": [20, 6.96566, 2.8],
+			"to": [22.6, 9.03434, 13.2],
+			"rotation": {
+				"angle": 45,
+				"axis": "x",
+				"origin": [8, 8, 8]
+			},
+			"faces": {
+				"north": {
+					"uv": [9.4, 6.96566, 12, 9.03434],
+					"texture": "#mine_drainage_pump_casing"
+				},
+				"south": {
+					"uv": [4, 6.96566, 6.6, 9.03434],
+					"texture": "#mine_drainage_pump_casing"
+				}
+			}
+		},
+		{
+			"name": "stage_3_3",
+			"from": [20, 6.96566, 2.8],
+			"to": [22.6, 9.03434, 13.2],
+			"rotation": {
+				"angle": -22.5,
+				"axis": "x",
+				"origin": [8, 8, 8]
+			},
+			"faces": {
+				"north": {
+					"uv": [9.4, 6.96566, 12, 9.03434],
+					"texture": "#mine_drainage_pump_casing"
+				},
+				"south": {
+					"uv": [4, 6.96566, 6.6, 9.03434],
+					"texture": "#mine_drainage_pump_casing"
+				}
+			}
+		},
+		{
+			"name": "stage_3_4",
+			"from": [20, 6.96566, 2.8],
+			"to": [22.6, 9.03434, 13.2],
+			"rotation": {
+				"angle": -45,
+				"axis": "x",
+				"origin": [8, 8, 8]
+			},
+			"faces": {
+				"north": {
+					"uv": [9.4, 6.96566, 12, 9.03434],
+					"texture": "#mine_drainage_pump_casing"
+				},
+				"south": {
+					"uv": [4, 6.96566, 6.6, 9.03434],
+					"texture": "#mine_drainage_pump_casing"
+				}
+			}
+		},
+		{
+			"name": "stage_3_5",
+			"from": [20, 2.8, 6.96566],
+			"to": [22.6, 13.2, 9.03434],
+			"rotation": {
+				"angle": 0,
+				"axis": "y",
+				"origin": [8, 8, 8]
+			},
+			"faces": {
+				"up": {
+					"uv": [4, 6.96566, 6.6, 9.03434],
+					"texture": "#mine_drainage_pump_casing"
+				},
+				"down": {
+					"uv": [4, 6.96566, 6.6, 9.03434],
+					"texture": "#mine_drainage_pump_casing"
+				}
+			}
+		},
+		{
+			"name": "stage_3_6",
+			"from": [20, 2.8, 6.96566],
+			"to": [22.6, 13.2, 9.03434],
+			"rotation": {
+				"angle": 22.5,
+				"axis": "x",
+				"origin": [8, 8, 8]
+			},
+			"faces": {
+				"up": {
+					"uv": [4, 6.96566, 6.6, 9.03434],
+					"texture": "#mine_drainage_pump_casing"
+				},
+				"down": {
+					"uv": [4, 6.96566, 6.6, 9.03434],
+					"texture": "#mine_drainage_pump_casing"
+				}
+			}
+		},
+		{
+			"name": "stage_3_7",
+			"from": [20, 2.8, 6.96566],
+			"to": [22.6, 13.2, 9.03434],
+			"rotation": {
+				"angle": -22.5,
+				"axis": "x",
+				"origin": [8, 8, 8]
+			},
+			"faces": {
+				"up": {
+					"uv": [4, 6.96566, 6.6, 9.03434],
+					"texture": "#mine_drainage_pump_casing"
+				},
+				"down": {
+					"uv": [4, 6.96566, 6.6, 9.03434],
+					"texture": "#mine_drainage_pump_casing"
+				}
+			}
+		},
+		{
+			"name": "stage_3_rim_0",
+			"from": [22.6, 6.88609, 2.4],
+			"to": [23, 9.11391, 13.6],
 			"rotation": {
 				"angle": 0,
 				"axis": "y",
@@ -1139,35 +2030,223 @@
 			},
 			"faces": {
 				"north": {
-					"uv": [0, 0, 16, 0.6],
-					"texture": "#pol"
+					"uv": [9, 6.88609, 9.4, 9.11391],
+					"texture": "#mine_drainage_pump_casing"
 				},
 				"east": {
-					"uv": [0, 0, 0.6, 0.6],
-					"texture": "#pol"
+					"uv": [2.4, 6.88609, 13.6, 9.11391],
+					"texture": "#mine_drainage_pump_casing"
 				},
 				"south": {
-					"uv": [0, 0, 16, 0.6],
-					"texture": "#pol"
+					"uv": [6.6, 6.88609, 7, 9.11391],
+					"texture": "#mine_drainage_pump_casing"
 				},
 				"west": {
-					"uv": [0, 0, 0.6, 0.6],
-					"texture": "#pol"
-				},
-				"up": {
-					"uv": [0, 0, 16, 0.6],
-					"texture": "#pol"
-				},
-				"down": {
-					"uv": [0, 0, 16, 0.6],
-					"texture": "#pol"
+					"uv": [2.4, 6.88609, 13.6, 9.11391],
+					"texture": "#mine_drainage_pump_casing"
 				}
 			}
 		},
 		{
-			"name": "tie_rod_2",
-			"from": [3.5, 2.4, 3.5],
-			"to": [26.5, 3, 4.1],
+			"name": "stage_3_rim_1",
+			"from": [22.6, 6.88609, 2.4],
+			"to": [23, 9.11391, 13.6],
+			"rotation": {
+				"angle": 22.5,
+				"axis": "x",
+				"origin": [8, 8, 8]
+			},
+			"faces": {
+				"north": {
+					"uv": [9, 6.88609, 9.4, 9.11391],
+					"texture": "#mine_drainage_pump_casing"
+				},
+				"east": {
+					"uv": [2.4, 6.88609, 13.6, 9.11391],
+					"texture": "#mine_drainage_pump_casing"
+				},
+				"south": {
+					"uv": [6.6, 6.88609, 7, 9.11391],
+					"texture": "#mine_drainage_pump_casing"
+				},
+				"west": {
+					"uv": [2.4, 6.88609, 13.6, 9.11391],
+					"texture": "#mine_drainage_pump_casing"
+				}
+			}
+		},
+		{
+			"name": "stage_3_rim_2",
+			"from": [22.6, 6.88609, 2.4],
+			"to": [23, 9.11391, 13.6],
+			"rotation": {
+				"angle": 45,
+				"axis": "x",
+				"origin": [8, 8, 8]
+			},
+			"faces": {
+				"north": {
+					"uv": [9, 6.88609, 9.4, 9.11391],
+					"texture": "#mine_drainage_pump_casing"
+				},
+				"east": {
+					"uv": [2.4, 6.88609, 13.6, 9.11391],
+					"texture": "#mine_drainage_pump_casing"
+				},
+				"south": {
+					"uv": [6.6, 6.88609, 7, 9.11391],
+					"texture": "#mine_drainage_pump_casing"
+				},
+				"west": {
+					"uv": [2.4, 6.88609, 13.6, 9.11391],
+					"texture": "#mine_drainage_pump_casing"
+				}
+			}
+		},
+		{
+			"name": "stage_3_rim_3",
+			"from": [22.6, 6.88609, 2.4],
+			"to": [23, 9.11391, 13.6],
+			"rotation": {
+				"angle": -22.5,
+				"axis": "x",
+				"origin": [8, 8, 8]
+			},
+			"faces": {
+				"north": {
+					"uv": [9, 6.88609, 9.4, 9.11391],
+					"texture": "#mine_drainage_pump_casing"
+				},
+				"east": {
+					"uv": [2.4, 6.88609, 13.6, 9.11391],
+					"texture": "#mine_drainage_pump_casing"
+				},
+				"south": {
+					"uv": [6.6, 6.88609, 7, 9.11391],
+					"texture": "#mine_drainage_pump_casing"
+				},
+				"west": {
+					"uv": [2.4, 6.88609, 13.6, 9.11391],
+					"texture": "#mine_drainage_pump_casing"
+				}
+			}
+		},
+		{
+			"name": "stage_3_rim_4",
+			"from": [22.6, 6.88609, 2.4],
+			"to": [23, 9.11391, 13.6],
+			"rotation": {
+				"angle": -45,
+				"axis": "x",
+				"origin": [8, 8, 8]
+			},
+			"faces": {
+				"north": {
+					"uv": [9, 6.88609, 9.4, 9.11391],
+					"texture": "#mine_drainage_pump_casing"
+				},
+				"east": {
+					"uv": [2.4, 6.88609, 13.6, 9.11391],
+					"texture": "#mine_drainage_pump_casing"
+				},
+				"south": {
+					"uv": [6.6, 6.88609, 7, 9.11391],
+					"texture": "#mine_drainage_pump_casing"
+				},
+				"west": {
+					"uv": [2.4, 6.88609, 13.6, 9.11391],
+					"texture": "#mine_drainage_pump_casing"
+				}
+			}
+		},
+		{
+			"name": "stage_3_rim_5",
+			"from": [22.6, 2.4, 6.88609],
+			"to": [23, 13.6, 9.11391],
+			"rotation": {
+				"angle": 0,
+				"axis": "y",
+				"origin": [8, 8, 8]
+			},
+			"faces": {
+				"east": {
+					"uv": [6.88609, 2.4, 9.11391, 13.6],
+					"texture": "#mine_drainage_pump_casing"
+				},
+				"west": {
+					"uv": [6.88609, 2.4, 9.11391, 13.6],
+					"texture": "#mine_drainage_pump_casing"
+				},
+				"up": {
+					"uv": [6.6, 6.88609, 7, 9.11391],
+					"texture": "#mine_drainage_pump_casing"
+				},
+				"down": {
+					"uv": [6.6, 6.88609, 7, 9.11391],
+					"texture": "#mine_drainage_pump_casing"
+				}
+			}
+		},
+		{
+			"name": "stage_3_rim_6",
+			"from": [22.6, 2.4, 6.88609],
+			"to": [23, 13.6, 9.11391],
+			"rotation": {
+				"angle": 22.5,
+				"axis": "x",
+				"origin": [8, 8, 8]
+			},
+			"faces": {
+				"east": {
+					"uv": [6.88609, 2.4, 9.11391, 13.6],
+					"texture": "#mine_drainage_pump_casing"
+				},
+				"west": {
+					"uv": [6.88609, 2.4, 9.11391, 13.6],
+					"texture": "#mine_drainage_pump_casing"
+				},
+				"up": {
+					"uv": [6.6, 6.88609, 7, 9.11391],
+					"texture": "#mine_drainage_pump_casing"
+				},
+				"down": {
+					"uv": [6.6, 6.88609, 7, 9.11391],
+					"texture": "#mine_drainage_pump_casing"
+				}
+			}
+		},
+		{
+			"name": "stage_3_rim_7",
+			"from": [22.6, 2.4, 6.88609],
+			"to": [23, 13.6, 9.11391],
+			"rotation": {
+				"angle": -22.5,
+				"axis": "x",
+				"origin": [8, 8, 8]
+			},
+			"faces": {
+				"east": {
+					"uv": [6.88609, 2.4, 9.11391, 13.6],
+					"texture": "#mine_drainage_pump_casing"
+				},
+				"west": {
+					"uv": [6.88609, 2.4, 9.11391, 13.6],
+					"texture": "#mine_drainage_pump_casing"
+				},
+				"up": {
+					"uv": [6.6, 6.88609, 7, 9.11391],
+					"texture": "#mine_drainage_pump_casing"
+				},
+				"down": {
+					"uv": [6.6, 6.88609, 7, 9.11391],
+					"texture": "#mine_drainage_pump_casing"
+				}
+			}
+		},
+		{
+			"name": "stage_4_0",
+			"from": [23, 6.96566, 2.8],
+			"to": [25.6, 9.03434, 13.2],
 			"rotation": {
 				"angle": 0,
 				"axis": "y",
@@ -1175,35 +2254,159 @@
 			},
 			"faces": {
 				"north": {
-					"uv": [0, 0, 16, 0.6],
-					"texture": "#pol"
-				},
-				"east": {
-					"uv": [0, 0, 0.6, 0.6],
-					"texture": "#pol"
+					"uv": [6.4, 6.96566, 9, 9.03434],
+					"texture": "#mine_drainage_pump_casing"
 				},
 				"south": {
-					"uv": [0, 0, 16, 0.6],
-					"texture": "#pol"
-				},
-				"west": {
-					"uv": [0, 0, 0.6, 0.6],
-					"texture": "#pol"
-				},
-				"up": {
-					"uv": [0, 0, 16, 0.6],
-					"texture": "#pol"
-				},
-				"down": {
-					"uv": [0, 0, 16, 0.6],
-					"texture": "#pol"
+					"uv": [7, 6.96566, 9.6, 9.03434],
+					"texture": "#mine_drainage_pump_casing"
 				}
 			}
 		},
 		{
-			"name": "tie_rod_3",
-			"from": [3.5, 2.4, 11.9],
-			"to": [26.5, 3, 12.5],
+			"name": "stage_4_1",
+			"from": [23, 6.96566, 2.8],
+			"to": [25.6, 9.03434, 13.2],
+			"rotation": {
+				"angle": 22.5,
+				"axis": "x",
+				"origin": [8, 8, 8]
+			},
+			"faces": {
+				"north": {
+					"uv": [6.4, 6.96566, 9, 9.03434],
+					"texture": "#mine_drainage_pump_casing"
+				},
+				"south": {
+					"uv": [7, 6.96566, 9.6, 9.03434],
+					"texture": "#mine_drainage_pump_casing"
+				}
+			}
+		},
+		{
+			"name": "stage_4_2",
+			"from": [23, 6.96566, 2.8],
+			"to": [25.6, 9.03434, 13.2],
+			"rotation": {
+				"angle": 45,
+				"axis": "x",
+				"origin": [8, 8, 8]
+			},
+			"faces": {
+				"north": {
+					"uv": [6.4, 6.96566, 9, 9.03434],
+					"texture": "#mine_drainage_pump_casing"
+				},
+				"south": {
+					"uv": [7, 6.96566, 9.6, 9.03434],
+					"texture": "#mine_drainage_pump_casing"
+				}
+			}
+		},
+		{
+			"name": "stage_4_3",
+			"from": [23, 6.96566, 2.8],
+			"to": [25.6, 9.03434, 13.2],
+			"rotation": {
+				"angle": -22.5,
+				"axis": "x",
+				"origin": [8, 8, 8]
+			},
+			"faces": {
+				"north": {
+					"uv": [6.4, 6.96566, 9, 9.03434],
+					"texture": "#mine_drainage_pump_casing"
+				},
+				"south": {
+					"uv": [7, 6.96566, 9.6, 9.03434],
+					"texture": "#mine_drainage_pump_casing"
+				}
+			}
+		},
+		{
+			"name": "stage_4_4",
+			"from": [23, 6.96566, 2.8],
+			"to": [25.6, 9.03434, 13.2],
+			"rotation": {
+				"angle": -45,
+				"axis": "x",
+				"origin": [8, 8, 8]
+			},
+			"faces": {
+				"north": {
+					"uv": [6.4, 6.96566, 9, 9.03434],
+					"texture": "#mine_drainage_pump_casing"
+				},
+				"south": {
+					"uv": [7, 6.96566, 9.6, 9.03434],
+					"texture": "#mine_drainage_pump_casing"
+				}
+			}
+		},
+		{
+			"name": "stage_4_5",
+			"from": [23, 2.8, 6.96566],
+			"to": [25.6, 13.2, 9.03434],
+			"rotation": {
+				"angle": 0,
+				"axis": "y",
+				"origin": [8, 8, 8]
+			},
+			"faces": {
+				"up": {
+					"uv": [7, 6.96566, 9.6, 9.03434],
+					"texture": "#mine_drainage_pump_casing"
+				},
+				"down": {
+					"uv": [7, 6.96566, 9.6, 9.03434],
+					"texture": "#mine_drainage_pump_casing"
+				}
+			}
+		},
+		{
+			"name": "stage_4_6",
+			"from": [23, 2.8, 6.96566],
+			"to": [25.6, 13.2, 9.03434],
+			"rotation": {
+				"angle": 22.5,
+				"axis": "x",
+				"origin": [8, 8, 8]
+			},
+			"faces": {
+				"up": {
+					"uv": [7, 6.96566, 9.6, 9.03434],
+					"texture": "#mine_drainage_pump_casing"
+				},
+				"down": {
+					"uv": [7, 6.96566, 9.6, 9.03434],
+					"texture": "#mine_drainage_pump_casing"
+				}
+			}
+		},
+		{
+			"name": "stage_4_7",
+			"from": [23, 2.8, 6.96566],
+			"to": [25.6, 13.2, 9.03434],
+			"rotation": {
+				"angle": -22.5,
+				"axis": "x",
+				"origin": [8, 8, 8]
+			},
+			"faces": {
+				"up": {
+					"uv": [7, 6.96566, 9.6, 9.03434],
+					"texture": "#mine_drainage_pump_casing"
+				},
+				"down": {
+					"uv": [7, 6.96566, 9.6, 9.03434],
+					"texture": "#mine_drainage_pump_casing"
+				}
+			}
+		},
+		{
+			"name": "stage_4_rim_0",
+			"from": [25.6, 6.88609, 2.4],
+			"to": [26, 9.11391, 13.6],
 			"rotation": {
 				"angle": 0,
 				"axis": "y",
@@ -1211,35 +2414,223 @@
 			},
 			"faces": {
 				"north": {
-					"uv": [0, 0, 16, 0.6],
-					"texture": "#pol"
+					"uv": [6, 6.88609, 6.4, 9.11391],
+					"texture": "#mine_drainage_pump_casing"
 				},
 				"east": {
-					"uv": [0, 0, 0.6, 0.6],
-					"texture": "#pol"
+					"uv": [2.4, 6.88609, 13.6, 9.11391],
+					"texture": "#mine_drainage_pump_casing"
 				},
 				"south": {
-					"uv": [0, 0, 16, 0.6],
-					"texture": "#pol"
+					"uv": [9.6, 6.88609, 10, 9.11391],
+					"texture": "#mine_drainage_pump_casing"
 				},
 				"west": {
-					"uv": [0, 0, 0.6, 0.6],
-					"texture": "#pol"
-				},
-				"up": {
-					"uv": [0, 0, 16, 0.6],
-					"texture": "#pol"
-				},
-				"down": {
-					"uv": [0, 0, 16, 0.6],
-					"texture": "#pol"
+					"uv": [2.4, 6.88609, 13.6, 9.11391],
+					"texture": "#mine_drainage_pump_casing"
 				}
 			}
 		},
 		{
-			"name": "suction",
-			"from": [5, 13, 5],
-			"to": [9, 16, 9],
+			"name": "stage_4_rim_1",
+			"from": [25.6, 6.88609, 2.4],
+			"to": [26, 9.11391, 13.6],
+			"rotation": {
+				"angle": 22.5,
+				"axis": "x",
+				"origin": [8, 8, 8]
+			},
+			"faces": {
+				"north": {
+					"uv": [6, 6.88609, 6.4, 9.11391],
+					"texture": "#mine_drainage_pump_casing"
+				},
+				"east": {
+					"uv": [2.4, 6.88609, 13.6, 9.11391],
+					"texture": "#mine_drainage_pump_casing"
+				},
+				"south": {
+					"uv": [9.6, 6.88609, 10, 9.11391],
+					"texture": "#mine_drainage_pump_casing"
+				},
+				"west": {
+					"uv": [2.4, 6.88609, 13.6, 9.11391],
+					"texture": "#mine_drainage_pump_casing"
+				}
+			}
+		},
+		{
+			"name": "stage_4_rim_2",
+			"from": [25.6, 6.88609, 2.4],
+			"to": [26, 9.11391, 13.6],
+			"rotation": {
+				"angle": 45,
+				"axis": "x",
+				"origin": [8, 8, 8]
+			},
+			"faces": {
+				"north": {
+					"uv": [6, 6.88609, 6.4, 9.11391],
+					"texture": "#mine_drainage_pump_casing"
+				},
+				"east": {
+					"uv": [2.4, 6.88609, 13.6, 9.11391],
+					"texture": "#mine_drainage_pump_casing"
+				},
+				"south": {
+					"uv": [9.6, 6.88609, 10, 9.11391],
+					"texture": "#mine_drainage_pump_casing"
+				},
+				"west": {
+					"uv": [2.4, 6.88609, 13.6, 9.11391],
+					"texture": "#mine_drainage_pump_casing"
+				}
+			}
+		},
+		{
+			"name": "stage_4_rim_3",
+			"from": [25.6, 6.88609, 2.4],
+			"to": [26, 9.11391, 13.6],
+			"rotation": {
+				"angle": -22.5,
+				"axis": "x",
+				"origin": [8, 8, 8]
+			},
+			"faces": {
+				"north": {
+					"uv": [6, 6.88609, 6.4, 9.11391],
+					"texture": "#mine_drainage_pump_casing"
+				},
+				"east": {
+					"uv": [2.4, 6.88609, 13.6, 9.11391],
+					"texture": "#mine_drainage_pump_casing"
+				},
+				"south": {
+					"uv": [9.6, 6.88609, 10, 9.11391],
+					"texture": "#mine_drainage_pump_casing"
+				},
+				"west": {
+					"uv": [2.4, 6.88609, 13.6, 9.11391],
+					"texture": "#mine_drainage_pump_casing"
+				}
+			}
+		},
+		{
+			"name": "stage_4_rim_4",
+			"from": [25.6, 6.88609, 2.4],
+			"to": [26, 9.11391, 13.6],
+			"rotation": {
+				"angle": -45,
+				"axis": "x",
+				"origin": [8, 8, 8]
+			},
+			"faces": {
+				"north": {
+					"uv": [6, 6.88609, 6.4, 9.11391],
+					"texture": "#mine_drainage_pump_casing"
+				},
+				"east": {
+					"uv": [2.4, 6.88609, 13.6, 9.11391],
+					"texture": "#mine_drainage_pump_casing"
+				},
+				"south": {
+					"uv": [9.6, 6.88609, 10, 9.11391],
+					"texture": "#mine_drainage_pump_casing"
+				},
+				"west": {
+					"uv": [2.4, 6.88609, 13.6, 9.11391],
+					"texture": "#mine_drainage_pump_casing"
+				}
+			}
+		},
+		{
+			"name": "stage_4_rim_5",
+			"from": [25.6, 2.4, 6.88609],
+			"to": [26, 13.6, 9.11391],
+			"rotation": {
+				"angle": 0,
+				"axis": "y",
+				"origin": [8, 8, 8]
+			},
+			"faces": {
+				"east": {
+					"uv": [6.88609, 2.4, 9.11391, 13.6],
+					"texture": "#mine_drainage_pump_casing"
+				},
+				"west": {
+					"uv": [6.88609, 2.4, 9.11391, 13.6],
+					"texture": "#mine_drainage_pump_casing"
+				},
+				"up": {
+					"uv": [9.6, 6.88609, 10, 9.11391],
+					"texture": "#mine_drainage_pump_casing"
+				},
+				"down": {
+					"uv": [9.6, 6.88609, 10, 9.11391],
+					"texture": "#mine_drainage_pump_casing"
+				}
+			}
+		},
+		{
+			"name": "stage_4_rim_6",
+			"from": [25.6, 2.4, 6.88609],
+			"to": [26, 13.6, 9.11391],
+			"rotation": {
+				"angle": 22.5,
+				"axis": "x",
+				"origin": [8, 8, 8]
+			},
+			"faces": {
+				"east": {
+					"uv": [6.88609, 2.4, 9.11391, 13.6],
+					"texture": "#mine_drainage_pump_casing"
+				},
+				"west": {
+					"uv": [6.88609, 2.4, 9.11391, 13.6],
+					"texture": "#mine_drainage_pump_casing"
+				},
+				"up": {
+					"uv": [9.6, 6.88609, 10, 9.11391],
+					"texture": "#mine_drainage_pump_casing"
+				},
+				"down": {
+					"uv": [9.6, 6.88609, 10, 9.11391],
+					"texture": "#mine_drainage_pump_casing"
+				}
+			}
+		},
+		{
+			"name": "stage_4_rim_7",
+			"from": [25.6, 2.4, 6.88609],
+			"to": [26, 13.6, 9.11391],
+			"rotation": {
+				"angle": -22.5,
+				"axis": "x",
+				"origin": [8, 8, 8]
+			},
+			"faces": {
+				"east": {
+					"uv": [6.88609, 2.4, 9.11391, 13.6],
+					"texture": "#mine_drainage_pump_casing"
+				},
+				"west": {
+					"uv": [6.88609, 2.4, 9.11391, 13.6],
+					"texture": "#mine_drainage_pump_casing"
+				},
+				"up": {
+					"uv": [9.6, 6.88609, 10, 9.11391],
+					"texture": "#mine_drainage_pump_casing"
+				},
+				"down": {
+					"uv": [9.6, 6.88609, 10, 9.11391],
+					"texture": "#mine_drainage_pump_casing"
+				}
+			}
+		},
+		{
+			"name": "discharge_casing_0",
+			"from": [26, 6.84631, 2.2],
+			"to": [28.5, 9.15369, 13.8],
 			"rotation": {
 				"angle": 0,
 				"axis": "y",
@@ -1247,35 +2638,191 @@
 			},
 			"faces": {
 				"north": {
-					"uv": [0, 0, 4, 3],
-					"texture": "#wat"
+					"uv": [3.5, 6.84631, 6, 9.15369],
+					"texture": "#mine_drainage_pump_casing"
 				},
 				"east": {
-					"uv": [0, 0, 4, 3],
-					"texture": "#wat"
+					"uv": [2.2, 6.84631, 13.8, 9.15369],
+					"texture": "#mine_drainage_pump_casing"
 				},
 				"south": {
-					"uv": [0, 0, 4, 3],
-					"texture": "#wat"
-				},
-				"west": {
-					"uv": [0, 0, 4, 3],
-					"texture": "#wat"
-				},
-				"up": {
-					"uv": [0, 0, 4, 4],
-					"texture": "#end"
-				},
-				"down": {
-					"uv": [0, 0, 4, 4],
-					"texture": "#wat"
+					"uv": [10, 6.84631, 12.5, 9.15369],
+					"texture": "#mine_drainage_pump_casing"
 				}
 			}
 		},
 		{
-			"name": "discharge",
-			"from": [23, 13, 7],
-			"to": [27, 16, 11],
+			"name": "discharge_casing_1",
+			"from": [26, 6.84631, 2.2],
+			"to": [28.5, 9.15369, 13.8],
+			"rotation": {
+				"angle": 22.5,
+				"axis": "x",
+				"origin": [8, 8, 8]
+			},
+			"faces": {
+				"north": {
+					"uv": [3.5, 6.84631, 6, 9.15369],
+					"texture": "#mine_drainage_pump_casing"
+				},
+				"east": {
+					"uv": [2.2, 6.84631, 13.8, 9.15369],
+					"texture": "#mine_drainage_pump_casing"
+				},
+				"south": {
+					"uv": [10, 6.84631, 12.5, 9.15369],
+					"texture": "#mine_drainage_pump_casing"
+				}
+			}
+		},
+		{
+			"name": "discharge_casing_2",
+			"from": [26, 6.84631, 2.2],
+			"to": [28.5, 9.15369, 13.8],
+			"rotation": {
+				"angle": 45,
+				"axis": "x",
+				"origin": [8, 8, 8]
+			},
+			"faces": {
+				"north": {
+					"uv": [3.5, 6.84631, 6, 9.15369],
+					"texture": "#mine_drainage_pump_casing"
+				},
+				"east": {
+					"uv": [2.2, 6.84631, 13.8, 9.15369],
+					"texture": "#mine_drainage_pump_casing"
+				},
+				"south": {
+					"uv": [10, 6.84631, 12.5, 9.15369],
+					"texture": "#mine_drainage_pump_casing"
+				}
+			}
+		},
+		{
+			"name": "discharge_casing_3",
+			"from": [26, 6.84631, 2.2],
+			"to": [28.5, 9.15369, 13.8],
+			"rotation": {
+				"angle": -22.5,
+				"axis": "x",
+				"origin": [8, 8, 8]
+			},
+			"faces": {
+				"north": {
+					"uv": [3.5, 6.84631, 6, 9.15369],
+					"texture": "#mine_drainage_pump_casing"
+				},
+				"east": {
+					"uv": [2.2, 6.84631, 13.8, 9.15369],
+					"texture": "#mine_drainage_pump_casing"
+				},
+				"south": {
+					"uv": [10, 6.84631, 12.5, 9.15369],
+					"texture": "#mine_drainage_pump_casing"
+				}
+			}
+		},
+		{
+			"name": "discharge_casing_4",
+			"from": [26, 6.84631, 2.2],
+			"to": [28.5, 9.15369, 13.8],
+			"rotation": {
+				"angle": -45,
+				"axis": "x",
+				"origin": [8, 8, 8]
+			},
+			"faces": {
+				"north": {
+					"uv": [3.5, 6.84631, 6, 9.15369],
+					"texture": "#mine_drainage_pump_casing"
+				},
+				"east": {
+					"uv": [2.2, 6.84631, 13.8, 9.15369],
+					"texture": "#mine_drainage_pump_casing"
+				},
+				"south": {
+					"uv": [10, 6.84631, 12.5, 9.15369],
+					"texture": "#mine_drainage_pump_casing"
+				}
+			}
+		},
+		{
+			"name": "discharge_casing_5",
+			"from": [26, 2.2, 6.84631],
+			"to": [28.5, 13.8, 9.15369],
+			"rotation": {
+				"angle": 0,
+				"axis": "y",
+				"origin": [8, 8, 8]
+			},
+			"faces": {
+				"east": {
+					"uv": [6.84631, 2.2, 9.15369, 13.8],
+					"texture": "#mine_drainage_pump_casing"
+				},
+				"up": {
+					"uv": [10, 6.84631, 12.5, 9.15369],
+					"texture": "#mine_drainage_pump_casing"
+				},
+				"down": {
+					"uv": [10, 6.84631, 12.5, 9.15369],
+					"texture": "#mine_drainage_pump_casing"
+				}
+			}
+		},
+		{
+			"name": "discharge_casing_6",
+			"from": [26, 2.2, 6.84631],
+			"to": [28.5, 13.8, 9.15369],
+			"rotation": {
+				"angle": 22.5,
+				"axis": "x",
+				"origin": [8, 8, 8]
+			},
+			"faces": {
+				"east": {
+					"uv": [6.84631, 2.2, 9.15369, 13.8],
+					"texture": "#mine_drainage_pump_casing"
+				},
+				"up": {
+					"uv": [10, 6.84631, 12.5, 9.15369],
+					"texture": "#mine_drainage_pump_casing"
+				},
+				"down": {
+					"uv": [10, 6.84631, 12.5, 9.15369],
+					"texture": "#mine_drainage_pump_casing"
+				}
+			}
+		},
+		{
+			"name": "discharge_casing_7",
+			"from": [26, 2.2, 6.84631],
+			"to": [28.5, 13.8, 9.15369],
+			"rotation": {
+				"angle": -22.5,
+				"axis": "x",
+				"origin": [8, 8, 8]
+			},
+			"faces": {
+				"east": {
+					"uv": [6.84631, 2.2, 9.15369, 13.8],
+					"texture": "#mine_drainage_pump_casing"
+				},
+				"up": {
+					"uv": [10, 6.84631, 12.5, 9.15369],
+					"texture": "#mine_drainage_pump_casing"
+				},
+				"down": {
+					"uv": [10, 6.84631, 12.5, 9.15369],
+					"texture": "#mine_drainage_pump_casing"
+				}
+			}
+		},
+		{
+			"name": "casing_foot_7.5",
+			"from": [7.8, 1.5, 3],
+			"to": [10.7, 3.5, 13],
 			"rotation": {
 				"angle": 0,
 				"axis": "y",
@@ -1283,35 +2830,35 @@
 			},
 			"faces": {
 				"north": {
-					"uv": [0, 0, 4, 3],
-					"texture": "#wat"
+					"uv": [5.3, 12.5, 8.2, 14.5],
+					"texture": "#mine_drainage_pump_casing"
 				},
 				"east": {
-					"uv": [0, 0, 4, 3],
-					"texture": "#wat"
+					"uv": [3, 12.5, 13, 14.5],
+					"texture": "#mine_drainage_pump_casing"
 				},
 				"south": {
-					"uv": [0, 0, 4, 3],
-					"texture": "#wat"
+					"uv": [7.8, 12.5, 10.7, 14.5],
+					"texture": "#mine_drainage_pump_casing"
 				},
 				"west": {
-					"uv": [0, 0, 4, 3],
-					"texture": "#wat"
+					"uv": [3, 12.5, 13, 14.5],
+					"texture": "#mine_drainage_pump_casing"
 				},
 				"up": {
-					"uv": [0, 0, 4, 4],
-					"texture": "#end"
+					"uv": [7.8, 3, 10.7, 13],
+					"texture": "#mine_drainage_pump_casing"
 				},
 				"down": {
-					"uv": [0, 0, 4, 4],
-					"texture": "#wat"
+					"uv": [7.8, 3, 10.7, 13],
+					"texture": "#mine_drainage_pump_casing"
 				}
 			}
 		},
 		{
-			"name": "gate_valve",
-			"from": [22.5, 15, 6.5],
-			"to": [27.5, 16, 11.5],
+			"name": "casing_foot_26",
+			"from": [26.3, 1.5, 3],
+			"to": [28.2, 3.5, 13],
 			"rotation": {
 				"angle": 0,
 				"axis": "y",
@@ -1319,35 +2866,35 @@
 			},
 			"faces": {
 				"north": {
-					"uv": [0, 0, 5, 1],
-					"texture": "#d"
+					"uv": [3.8, 12.5, 5.7, 14.5],
+					"texture": "#mine_drainage_pump_casing"
 				},
 				"east": {
-					"uv": [0, 0, 5, 1],
-					"texture": "#d"
+					"uv": [3, 12.5, 13, 14.5],
+					"texture": "#mine_drainage_pump_casing"
 				},
 				"south": {
-					"uv": [0, 0, 5, 1],
-					"texture": "#d"
+					"uv": [10.3, 12.5, 12.2, 14.5],
+					"texture": "#mine_drainage_pump_casing"
 				},
 				"west": {
-					"uv": [0, 0, 5, 1],
-					"texture": "#d"
+					"uv": [3, 12.5, 13, 14.5],
+					"texture": "#mine_drainage_pump_casing"
 				},
 				"up": {
-					"uv": [0, 0, 5, 5],
-					"texture": "#d"
+					"uv": [10.3, 3, 12.2, 13],
+					"texture": "#mine_drainage_pump_casing"
 				},
 				"down": {
-					"uv": [0, 0, 5, 5],
-					"texture": "#d"
+					"uv": [10.3, 3, 12.2, 13],
+					"texture": "#mine_drainage_pump_casing"
 				}
 			}
 		},
 		{
-			"name": "bearing_w",
-			"from": [0.5, 3, 5],
-			"to": [3.5, 11, 11],
+			"name": "tie_13_3_0",
+			"from": [7.2, 13, 3],
+			"to": [16, 13.6, 3.6],
 			"rotation": {
 				"angle": 0,
 				"axis": "y",
@@ -1355,35 +2902,35 @@
 			},
 			"faces": {
 				"north": {
-					"uv": [0, 0, 3, 8],
-					"texture": "#d"
+					"uv": [0, 2.4, 8.8, 3],
+					"texture": "#material_bright_steel"
 				},
 				"east": {
-					"uv": [0, 0, 6, 8],
-					"texture": "#d"
+					"uv": [12.4, 2.4, 13, 3],
+					"texture": "#material_bright_steel"
 				},
 				"south": {
-					"uv": [0, 0, 3, 8],
-					"texture": "#d"
+					"uv": [7.2, 2.4, 16, 3],
+					"texture": "#material_bright_steel"
 				},
 				"west": {
-					"uv": [0, 0, 6, 8],
-					"texture": "#d"
+					"uv": [3, 2.4, 3.6, 3],
+					"texture": "#material_bright_steel"
 				},
 				"up": {
-					"uv": [0, 0, 3, 6],
-					"texture": "#d"
+					"uv": [7.2, 3, 16, 3.6],
+					"texture": "#material_bright_steel"
 				},
 				"down": {
-					"uv": [0, 0, 3, 6],
-					"texture": "#d"
+					"uv": [7.2, 12.4, 16, 13],
+					"texture": "#material_bright_steel"
 				}
 			}
 		},
 		{
-			"name": "bearing_e",
-			"from": [28, 3, 5],
-			"to": [32, 11, 11],
+			"name": "tie_13_3_1",
+			"from": [16, 13, 3],
+			"to": [28.8, 13.6, 3.6],
 			"rotation": {
 				"angle": 0,
 				"axis": "y",
@@ -1391,35 +2938,35 @@
 			},
 			"faces": {
 				"north": {
-					"uv": [0, 0, 4, 8],
-					"texture": "#d"
+					"uv": [3.2, 2.4, 16, 3],
+					"texture": "#material_bright_steel"
 				},
 				"east": {
-					"uv": [0, 0, 6, 8],
-					"texture": "#d"
+					"uv": [12.4, 2.4, 13, 3],
+					"texture": "#material_bright_steel"
 				},
 				"south": {
-					"uv": [0, 0, 4, 8],
-					"texture": "#d"
+					"uv": [0, 2.4, 12.8, 3],
+					"texture": "#material_bright_steel"
 				},
 				"west": {
-					"uv": [0, 0, 6, 8],
-					"texture": "#d"
+					"uv": [3, 2.4, 3.6, 3],
+					"texture": "#material_bright_steel"
 				},
 				"up": {
-					"uv": [0, 0, 4, 6],
-					"texture": "#d"
+					"uv": [0, 3, 12.8, 3.6],
+					"texture": "#material_bright_steel"
 				},
 				"down": {
-					"uv": [0, 0, 4, 6],
-					"texture": "#d"
+					"uv": [0, 12.4, 12.8, 13],
+					"texture": "#material_bright_steel"
 				}
 			}
 		},
 		{
-			"name": "gauge",
-			"from": [16, 13, 10],
-			"to": [19, 16, 10.5],
+			"name": "tie_nut_13_3_6.6",
+			"from": [6.6, 12.8, 2.8],
+			"to": [7.2, 13.8, 3.8],
 			"rotation": {
 				"angle": 0,
 				"axis": "y",
@@ -1427,35 +2974,1791 @@
 			},
 			"faces": {
 				"north": {
-					"uv": [0, 0, 3, 3],
-					"texture": "#gauge"
+					"uv": [8.8, 2.2, 9.4, 3.2],
+					"texture": "#material_steel"
 				},
 				"east": {
-					"uv": [0, 0, 0.5, 3],
-					"texture": "#gauge"
+					"uv": [12.2, 2.2, 13.2, 3.2],
+					"texture": "#material_steel"
+				},
+				"south": {
+					"uv": [6.6, 2.2, 7.2, 3.2],
+					"texture": "#material_steel"
+				},
+				"west": {
+					"uv": [2.8, 2.2, 3.8, 3.2],
+					"texture": "#material_steel"
+				},
+				"up": {
+					"uv": [6.6, 2.8, 7.2, 3.8],
+					"texture": "#material_steel"
+				},
+				"down": {
+					"uv": [6.6, 12.2, 7.2, 13.2],
+					"texture": "#material_steel"
+				}
+			}
+		},
+		{
+			"name": "tie_nut_13_3_28.8",
+			"from": [28.8, 12.8, 2.8],
+			"to": [29.4, 13.8, 3.8],
+			"rotation": {
+				"angle": 0,
+				"axis": "y",
+				"origin": [8, 8, 8]
+			},
+			"faces": {
+				"north": {
+					"uv": [2.6, 2.2, 3.2, 3.2],
+					"texture": "#material_steel"
+				},
+				"east": {
+					"uv": [12.2, 2.2, 13.2, 3.2],
+					"texture": "#material_steel"
+				},
+				"south": {
+					"uv": [12.8, 2.2, 13.4, 3.2],
+					"texture": "#material_steel"
+				},
+				"west": {
+					"uv": [2.8, 2.2, 3.8, 3.2],
+					"texture": "#material_steel"
+				},
+				"up": {
+					"uv": [12.8, 2.8, 13.4, 3.8],
+					"texture": "#material_steel"
+				},
+				"down": {
+					"uv": [12.8, 12.2, 13.4, 13.2],
+					"texture": "#material_steel"
+				}
+			}
+		},
+		{
+			"name": "tie_13_12.4_0",
+			"from": [7.2, 13, 12.4],
+			"to": [16, 13.6, 13],
+			"rotation": {
+				"angle": 0,
+				"axis": "y",
+				"origin": [8, 8, 8]
+			},
+			"faces": {
+				"north": {
+					"uv": [0, 2.4, 8.8, 3],
+					"texture": "#material_bright_steel"
+				},
+				"east": {
+					"uv": [3, 2.4, 3.6, 3],
+					"texture": "#material_bright_steel"
+				},
+				"south": {
+					"uv": [7.2, 2.4, 16, 3],
+					"texture": "#material_bright_steel"
+				},
+				"west": {
+					"uv": [12.4, 2.4, 13, 3],
+					"texture": "#material_bright_steel"
+				},
+				"up": {
+					"uv": [7.2, 12.4, 16, 13],
+					"texture": "#material_bright_steel"
+				},
+				"down": {
+					"uv": [7.2, 3, 16, 3.6],
+					"texture": "#material_bright_steel"
+				}
+			}
+		},
+		{
+			"name": "tie_13_12.4_1",
+			"from": [16, 13, 12.4],
+			"to": [28.8, 13.6, 13],
+			"rotation": {
+				"angle": 0,
+				"axis": "y",
+				"origin": [8, 8, 8]
+			},
+			"faces": {
+				"north": {
+					"uv": [3.2, 2.4, 16, 3],
+					"texture": "#material_bright_steel"
+				},
+				"east": {
+					"uv": [3, 2.4, 3.6, 3],
+					"texture": "#material_bright_steel"
+				},
+				"south": {
+					"uv": [0, 2.4, 12.8, 3],
+					"texture": "#material_bright_steel"
+				},
+				"west": {
+					"uv": [12.4, 2.4, 13, 3],
+					"texture": "#material_bright_steel"
+				},
+				"up": {
+					"uv": [0, 12.4, 12.8, 13],
+					"texture": "#material_bright_steel"
+				},
+				"down": {
+					"uv": [0, 3, 12.8, 3.6],
+					"texture": "#material_bright_steel"
+				}
+			}
+		},
+		{
+			"name": "tie_nut_13_12.4_6.6",
+			"from": [6.6, 12.8, 12.2],
+			"to": [7.2, 13.8, 13.2],
+			"rotation": {
+				"angle": 0,
+				"axis": "y",
+				"origin": [8, 8, 8]
+			},
+			"faces": {
+				"north": {
+					"uv": [8.8, 2.2, 9.4, 3.2],
+					"texture": "#material_steel"
+				},
+				"east": {
+					"uv": [2.8, 2.2, 3.8, 3.2],
+					"texture": "#material_steel"
+				},
+				"south": {
+					"uv": [6.6, 2.2, 7.2, 3.2],
+					"texture": "#material_steel"
+				},
+				"west": {
+					"uv": [12.2, 2.2, 13.2, 3.2],
+					"texture": "#material_steel"
+				},
+				"up": {
+					"uv": [6.6, 12.2, 7.2, 13.2],
+					"texture": "#material_steel"
+				},
+				"down": {
+					"uv": [6.6, 2.8, 7.2, 3.8],
+					"texture": "#material_steel"
+				}
+			}
+		},
+		{
+			"name": "tie_nut_13_12.4_28.8",
+			"from": [28.8, 12.8, 12.2],
+			"to": [29.4, 13.8, 13.2],
+			"rotation": {
+				"angle": 0,
+				"axis": "y",
+				"origin": [8, 8, 8]
+			},
+			"faces": {
+				"north": {
+					"uv": [2.6, 2.2, 3.2, 3.2],
+					"texture": "#material_steel"
+				},
+				"east": {
+					"uv": [2.8, 2.2, 3.8, 3.2],
+					"texture": "#material_steel"
+				},
+				"south": {
+					"uv": [12.8, 2.2, 13.4, 3.2],
+					"texture": "#material_steel"
+				},
+				"west": {
+					"uv": [12.2, 2.2, 13.2, 3.2],
+					"texture": "#material_steel"
+				},
+				"up": {
+					"uv": [12.8, 12.2, 13.4, 13.2],
+					"texture": "#material_steel"
+				},
+				"down": {
+					"uv": [12.8, 2.8, 13.4, 3.8],
+					"texture": "#material_steel"
+				}
+			}
+		},
+		{
+			"name": "tie_3_3_0",
+			"from": [7.2, 3, 3],
+			"to": [16, 3.6, 3.6],
+			"rotation": {
+				"angle": 0,
+				"axis": "y",
+				"origin": [8, 8, 8]
+			},
+			"faces": {
+				"north": {
+					"uv": [0, 12.4, 8.8, 13],
+					"texture": "#material_bright_steel"
+				},
+				"east": {
+					"uv": [12.4, 12.4, 13, 13],
+					"texture": "#material_bright_steel"
+				},
+				"south": {
+					"uv": [7.2, 12.4, 16, 13],
+					"texture": "#material_bright_steel"
+				},
+				"west": {
+					"uv": [3, 12.4, 3.6, 13],
+					"texture": "#material_bright_steel"
+				},
+				"up": {
+					"uv": [7.2, 3, 16, 3.6],
+					"texture": "#material_bright_steel"
+				},
+				"down": {
+					"uv": [7.2, 12.4, 16, 13],
+					"texture": "#material_bright_steel"
+				}
+			}
+		},
+		{
+			"name": "tie_3_3_1",
+			"from": [16, 3, 3],
+			"to": [28.8, 3.6, 3.6],
+			"rotation": {
+				"angle": 0,
+				"axis": "y",
+				"origin": [8, 8, 8]
+			},
+			"faces": {
+				"north": {
+					"uv": [3.2, 12.4, 16, 13],
+					"texture": "#material_bright_steel"
+				},
+				"east": {
+					"uv": [12.4, 12.4, 13, 13],
+					"texture": "#material_bright_steel"
+				},
+				"south": {
+					"uv": [0, 12.4, 12.8, 13],
+					"texture": "#material_bright_steel"
+				},
+				"west": {
+					"uv": [3, 12.4, 3.6, 13],
+					"texture": "#material_bright_steel"
+				},
+				"up": {
+					"uv": [0, 3, 12.8, 3.6],
+					"texture": "#material_bright_steel"
+				},
+				"down": {
+					"uv": [0, 12.4, 12.8, 13],
+					"texture": "#material_bright_steel"
+				}
+			}
+		},
+		{
+			"name": "tie_nut_3_3_6.6",
+			"from": [6.6, 2.8, 2.8],
+			"to": [7.2, 3.8, 3.8],
+			"rotation": {
+				"angle": 0,
+				"axis": "y",
+				"origin": [8, 8, 8]
+			},
+			"faces": {
+				"north": {
+					"uv": [8.8, 12.2, 9.4, 13.2],
+					"texture": "#material_steel"
+				},
+				"east": {
+					"uv": [12.2, 12.2, 13.2, 13.2],
+					"texture": "#material_steel"
+				},
+				"south": {
+					"uv": [6.6, 12.2, 7.2, 13.2],
+					"texture": "#material_steel"
+				},
+				"west": {
+					"uv": [2.8, 12.2, 3.8, 13.2],
+					"texture": "#material_steel"
+				},
+				"up": {
+					"uv": [6.6, 2.8, 7.2, 3.8],
+					"texture": "#material_steel"
+				},
+				"down": {
+					"uv": [6.6, 12.2, 7.2, 13.2],
+					"texture": "#material_steel"
+				}
+			}
+		},
+		{
+			"name": "tie_nut_3_3_28.8",
+			"from": [28.8, 2.8, 2.8],
+			"to": [29.4, 3.8, 3.8],
+			"rotation": {
+				"angle": 0,
+				"axis": "y",
+				"origin": [8, 8, 8]
+			},
+			"faces": {
+				"north": {
+					"uv": [2.6, 12.2, 3.2, 13.2],
+					"texture": "#material_steel"
+				},
+				"east": {
+					"uv": [12.2, 12.2, 13.2, 13.2],
+					"texture": "#material_steel"
+				},
+				"south": {
+					"uv": [12.8, 12.2, 13.4, 13.2],
+					"texture": "#material_steel"
+				},
+				"west": {
+					"uv": [2.8, 12.2, 3.8, 13.2],
+					"texture": "#material_steel"
+				},
+				"up": {
+					"uv": [12.8, 2.8, 13.4, 3.8],
+					"texture": "#material_steel"
+				},
+				"down": {
+					"uv": [12.8, 12.2, 13.4, 13.2],
+					"texture": "#material_steel"
+				}
+			}
+		},
+		{
+			"name": "tie_3_12.4_0",
+			"from": [7.2, 3, 12.4],
+			"to": [16, 3.6, 13],
+			"rotation": {
+				"angle": 0,
+				"axis": "y",
+				"origin": [8, 8, 8]
+			},
+			"faces": {
+				"north": {
+					"uv": [0, 12.4, 8.8, 13],
+					"texture": "#material_bright_steel"
+				},
+				"east": {
+					"uv": [3, 12.4, 3.6, 13],
+					"texture": "#material_bright_steel"
+				},
+				"south": {
+					"uv": [7.2, 12.4, 16, 13],
+					"texture": "#material_bright_steel"
+				},
+				"west": {
+					"uv": [12.4, 12.4, 13, 13],
+					"texture": "#material_bright_steel"
+				},
+				"up": {
+					"uv": [7.2, 12.4, 16, 13],
+					"texture": "#material_bright_steel"
+				},
+				"down": {
+					"uv": [7.2, 3, 16, 3.6],
+					"texture": "#material_bright_steel"
+				}
+			}
+		},
+		{
+			"name": "tie_3_12.4_1",
+			"from": [16, 3, 12.4],
+			"to": [28.8, 3.6, 13],
+			"rotation": {
+				"angle": 0,
+				"axis": "y",
+				"origin": [8, 8, 8]
+			},
+			"faces": {
+				"north": {
+					"uv": [3.2, 12.4, 16, 13],
+					"texture": "#material_bright_steel"
+				},
+				"east": {
+					"uv": [3, 12.4, 3.6, 13],
+					"texture": "#material_bright_steel"
+				},
+				"south": {
+					"uv": [0, 12.4, 12.8, 13],
+					"texture": "#material_bright_steel"
+				},
+				"west": {
+					"uv": [12.4, 12.4, 13, 13],
+					"texture": "#material_bright_steel"
+				},
+				"up": {
+					"uv": [0, 12.4, 12.8, 13],
+					"texture": "#material_bright_steel"
+				},
+				"down": {
+					"uv": [0, 3, 12.8, 3.6],
+					"texture": "#material_bright_steel"
+				}
+			}
+		},
+		{
+			"name": "tie_nut_3_12.4_6.6",
+			"from": [6.6, 2.8, 12.2],
+			"to": [7.2, 3.8, 13.2],
+			"rotation": {
+				"angle": 0,
+				"axis": "y",
+				"origin": [8, 8, 8]
+			},
+			"faces": {
+				"north": {
+					"uv": [8.8, 12.2, 9.4, 13.2],
+					"texture": "#material_steel"
+				},
+				"east": {
+					"uv": [2.8, 12.2, 3.8, 13.2],
+					"texture": "#material_steel"
+				},
+				"south": {
+					"uv": [6.6, 12.2, 7.2, 13.2],
+					"texture": "#material_steel"
+				},
+				"west": {
+					"uv": [12.2, 12.2, 13.2, 13.2],
+					"texture": "#material_steel"
+				},
+				"up": {
+					"uv": [6.6, 12.2, 7.2, 13.2],
+					"texture": "#material_steel"
+				},
+				"down": {
+					"uv": [6.6, 2.8, 7.2, 3.8],
+					"texture": "#material_steel"
+				}
+			}
+		},
+		{
+			"name": "tie_nut_3_12.4_28.8",
+			"from": [28.8, 2.8, 12.2],
+			"to": [29.4, 3.8, 13.2],
+			"rotation": {
+				"angle": 0,
+				"axis": "y",
+				"origin": [8, 8, 8]
+			},
+			"faces": {
+				"north": {
+					"uv": [2.6, 12.2, 3.2, 13.2],
+					"texture": "#material_steel"
+				},
+				"east": {
+					"uv": [2.8, 12.2, 3.8, 13.2],
+					"texture": "#material_steel"
+				},
+				"south": {
+					"uv": [12.8, 12.2, 13.4, 13.2],
+					"texture": "#material_steel"
+				},
+				"west": {
+					"uv": [12.2, 12.2, 13.2, 13.2],
+					"texture": "#material_steel"
+				},
+				"up": {
+					"uv": [12.8, 12.2, 13.4, 13.2],
+					"texture": "#material_steel"
+				},
+				"down": {
+					"uv": [12.8, 2.8, 13.4, 3.8],
+					"texture": "#material_steel"
+				}
+			}
+		},
+		{
+			"name": "suction_pipe_0",
+			"from": [7, 13.8, 7.56239],
+			"to": [11.4, 16, 8.43761],
+			"rotation": {
+				"angle": 0,
+				"axis": "y",
+				"origin": [8, 8, 8]
+			},
+			"faces": {
+				"east": {
+					"uv": [7.56239, 0, 8.43761, 2.2],
+					"texture": "#mine_drainage_pump_casing"
+				},
+				"west": {
+					"uv": [7.56239, 0, 8.43761, 2.2],
+					"texture": "#mine_drainage_pump_casing"
+				}
+			}
+		},
+		{
+			"name": "suction_pipe_1",
+			"from": [7, 13.8, 7.56239],
+			"to": [11.4, 16, 8.43761],
+			"rotation": {
+				"angle": 22.5,
+				"axis": "y",
+				"origin": [9.2, 8, 8]
+			},
+			"faces": {
+				"east": {
+					"uv": [7.56239, 0, 8.43761, 2.2],
+					"texture": "#mine_drainage_pump_casing"
+				},
+				"west": {
+					"uv": [7.56239, 0, 8.43761, 2.2],
+					"texture": "#mine_drainage_pump_casing"
+				}
+			}
+		},
+		{
+			"name": "suction_pipe_2",
+			"from": [7, 13.8, 7.56239],
+			"to": [11.4, 16, 8.43761],
+			"rotation": {
+				"angle": 45,
+				"axis": "y",
+				"origin": [9.2, 8, 8]
+			},
+			"faces": {
+				"east": {
+					"uv": [7.56239, 0, 8.43761, 2.2],
+					"texture": "#mine_drainage_pump_casing"
+				},
+				"west": {
+					"uv": [7.56239, 0, 8.43761, 2.2],
+					"texture": "#mine_drainage_pump_casing"
+				}
+			}
+		},
+		{
+			"name": "suction_pipe_3",
+			"from": [7, 13.8, 7.56239],
+			"to": [11.4, 16, 8.43761],
+			"rotation": {
+				"angle": -22.5,
+				"axis": "y",
+				"origin": [9.2, 8, 8]
+			},
+			"faces": {
+				"east": {
+					"uv": [7.56239, 0, 8.43761, 2.2],
+					"texture": "#mine_drainage_pump_casing"
+				},
+				"west": {
+					"uv": [7.56239, 0, 8.43761, 2.2],
+					"texture": "#mine_drainage_pump_casing"
+				}
+			}
+		},
+		{
+			"name": "suction_pipe_4",
+			"from": [7, 13.8, 7.56239],
+			"to": [11.4, 16, 8.43761],
+			"rotation": {
+				"angle": -45,
+				"axis": "y",
+				"origin": [9.2, 8, 8]
+			},
+			"faces": {
+				"east": {
+					"uv": [7.56239, 0, 8.43761, 2.2],
+					"texture": "#mine_drainage_pump_casing"
+				},
+				"west": {
+					"uv": [7.56239, 0, 8.43761, 2.2],
+					"texture": "#mine_drainage_pump_casing"
+				}
+			}
+		},
+		{
+			"name": "suction_pipe_5",
+			"from": [8.76239, 13.8, 5.8],
+			"to": [9.63761, 16, 10.2],
+			"rotation": {
+				"angle": 0,
+				"axis": "y",
+				"origin": [8, 8, 8]
+			},
+			"faces": {
+				"north": {
+					"uv": [6.36239, 0, 7.23761, 2.2],
+					"texture": "#mine_drainage_pump_casing"
+				},
+				"south": {
+					"uv": [8.76239, 0, 9.63761, 2.2],
+					"texture": "#mine_drainage_pump_casing"
+				}
+			}
+		},
+		{
+			"name": "suction_pipe_6",
+			"from": [8.76239, 13.8, 5.8],
+			"to": [9.63761, 16, 10.2],
+			"rotation": {
+				"angle": 22.5,
+				"axis": "y",
+				"origin": [9.2, 8, 8]
+			},
+			"faces": {
+				"north": {
+					"uv": [6.36239, 0, 7.23761, 2.2],
+					"texture": "#mine_drainage_pump_casing"
+				},
+				"south": {
+					"uv": [8.76239, 0, 9.63761, 2.2],
+					"texture": "#mine_drainage_pump_casing"
+				}
+			}
+		},
+		{
+			"name": "suction_pipe_7",
+			"from": [8.76239, 13.8, 5.8],
+			"to": [9.63761, 16, 10.2],
+			"rotation": {
+				"angle": -22.5,
+				"axis": "y",
+				"origin": [9.2, 8, 8]
+			},
+			"faces": {
+				"north": {
+					"uv": [6.36239, 0, 7.23761, 2.2],
+					"texture": "#mine_drainage_pump_casing"
+				},
+				"south": {
+					"uv": [8.76239, 0, 9.63761, 2.2],
+					"texture": "#mine_drainage_pump_casing"
+				}
+			}
+		},
+		{
+			"name": "suction_flange_0",
+			"from": [6, 15, 7.36348],
+			"to": [12.4, 16, 8.63652],
+			"rotation": {
+				"angle": 0,
+				"axis": "y",
+				"origin": [8, 8, 8]
+			},
+			"faces": {
+				"east": {
+					"uv": [7.36348, 0, 8.63652, 1],
+					"texture": "#mine_drainage_pump_casing"
+				},
+				"west": {
+					"uv": [7.36348, 0, 8.63652, 1],
+					"texture": "#mine_drainage_pump_casing"
+				},
+				"up": {
+					"uv": [6, 7.36348, 12.4, 8.63652],
+					"texture": "#mine_drainage_pump_casing"
+				},
+				"down": {
+					"uv": [6, 7.36348, 12.4, 8.63652],
+					"texture": "#mine_drainage_pump_casing"
+				}
+			}
+		},
+		{
+			"name": "suction_flange_1",
+			"from": [6, 15, 7.36348],
+			"to": [12.4, 16, 8.63652],
+			"rotation": {
+				"angle": 22.5,
+				"axis": "y",
+				"origin": [9.2, 8, 8]
+			},
+			"faces": {
+				"east": {
+					"uv": [7.36348, 0, 8.63652, 1],
+					"texture": "#mine_drainage_pump_casing"
+				},
+				"west": {
+					"uv": [7.36348, 0, 8.63652, 1],
+					"texture": "#mine_drainage_pump_casing"
+				},
+				"up": {
+					"uv": [6, 7.36348, 12.4, 8.63652],
+					"texture": "#mine_drainage_pump_casing"
+				},
+				"down": {
+					"uv": [6, 7.36348, 12.4, 8.63652],
+					"texture": "#mine_drainage_pump_casing"
+				}
+			}
+		},
+		{
+			"name": "suction_flange_2",
+			"from": [6, 15, 7.36348],
+			"to": [12.4, 16, 8.63652],
+			"rotation": {
+				"angle": 45,
+				"axis": "y",
+				"origin": [9.2, 8, 8]
+			},
+			"faces": {
+				"east": {
+					"uv": [7.36348, 0, 8.63652, 1],
+					"texture": "#mine_drainage_pump_casing"
+				},
+				"west": {
+					"uv": [7.36348, 0, 8.63652, 1],
+					"texture": "#mine_drainage_pump_casing"
+				},
+				"up": {
+					"uv": [6, 7.36348, 12.4, 8.63652],
+					"texture": "#mine_drainage_pump_casing"
+				},
+				"down": {
+					"uv": [6, 7.36348, 12.4, 8.63652],
+					"texture": "#mine_drainage_pump_casing"
+				}
+			}
+		},
+		{
+			"name": "suction_flange_3",
+			"from": [6, 15, 7.36348],
+			"to": [12.4, 16, 8.63652],
+			"rotation": {
+				"angle": -22.5,
+				"axis": "y",
+				"origin": [9.2, 8, 8]
+			},
+			"faces": {
+				"east": {
+					"uv": [7.36348, 0, 8.63652, 1],
+					"texture": "#mine_drainage_pump_casing"
+				},
+				"west": {
+					"uv": [7.36348, 0, 8.63652, 1],
+					"texture": "#mine_drainage_pump_casing"
+				},
+				"up": {
+					"uv": [6, 7.36348, 12.4, 8.63652],
+					"texture": "#mine_drainage_pump_casing"
+				},
+				"down": {
+					"uv": [6, 7.36348, 12.4, 8.63652],
+					"texture": "#mine_drainage_pump_casing"
+				}
+			}
+		},
+		{
+			"name": "suction_flange_4",
+			"from": [6, 15, 7.36348],
+			"to": [12.4, 16, 8.63652],
+			"rotation": {
+				"angle": -45,
+				"axis": "y",
+				"origin": [9.2, 8, 8]
+			},
+			"faces": {
+				"east": {
+					"uv": [7.36348, 0, 8.63652, 1],
+					"texture": "#mine_drainage_pump_casing"
+				},
+				"west": {
+					"uv": [7.36348, 0, 8.63652, 1],
+					"texture": "#mine_drainage_pump_casing"
+				},
+				"up": {
+					"uv": [6, 7.36348, 12.4, 8.63652],
+					"texture": "#mine_drainage_pump_casing"
+				},
+				"down": {
+					"uv": [6, 7.36348, 12.4, 8.63652],
+					"texture": "#mine_drainage_pump_casing"
+				}
+			}
+		},
+		{
+			"name": "suction_flange_5",
+			"from": [8.56348, 15, 4.8],
+			"to": [9.83652, 16, 11.2],
+			"rotation": {
+				"angle": 0,
+				"axis": "y",
+				"origin": [8, 8, 8]
+			},
+			"faces": {
+				"north": {
+					"uv": [6.16348, 0, 7.43652, 1],
+					"texture": "#mine_drainage_pump_casing"
+				},
+				"south": {
+					"uv": [8.56348, 0, 9.83652, 1],
+					"texture": "#mine_drainage_pump_casing"
+				},
+				"up": {
+					"uv": [8.56348, 4.8, 9.83652, 11.2],
+					"texture": "#mine_drainage_pump_casing"
+				},
+				"down": {
+					"uv": [8.56348, 4.8, 9.83652, 11.2],
+					"texture": "#mine_drainage_pump_casing"
+				}
+			}
+		},
+		{
+			"name": "suction_flange_6",
+			"from": [8.56348, 15, 4.8],
+			"to": [9.83652, 16, 11.2],
+			"rotation": {
+				"angle": 22.5,
+				"axis": "y",
+				"origin": [9.2, 8, 8]
+			},
+			"faces": {
+				"north": {
+					"uv": [6.16348, 0, 7.43652, 1],
+					"texture": "#mine_drainage_pump_casing"
+				},
+				"south": {
+					"uv": [8.56348, 0, 9.83652, 1],
+					"texture": "#mine_drainage_pump_casing"
+				},
+				"up": {
+					"uv": [8.56348, 4.8, 9.83652, 11.2],
+					"texture": "#mine_drainage_pump_casing"
+				},
+				"down": {
+					"uv": [8.56348, 4.8, 9.83652, 11.2],
+					"texture": "#mine_drainage_pump_casing"
+				}
+			}
+		},
+		{
+			"name": "suction_flange_7",
+			"from": [8.56348, 15, 4.8],
+			"to": [9.83652, 16, 11.2],
+			"rotation": {
+				"angle": -22.5,
+				"axis": "y",
+				"origin": [9.2, 8, 8]
+			},
+			"faces": {
+				"north": {
+					"uv": [6.16348, 0, 7.43652, 1],
+					"texture": "#mine_drainage_pump_casing"
+				},
+				"south": {
+					"uv": [8.56348, 0, 9.83652, 1],
+					"texture": "#mine_drainage_pump_casing"
+				},
+				"up": {
+					"uv": [8.56348, 4.8, 9.83652, 11.2],
+					"texture": "#mine_drainage_pump_casing"
+				},
+				"down": {
+					"uv": [8.56348, 4.8, 9.83652, 11.2],
+					"texture": "#mine_drainage_pump_casing"
+				}
+			}
+		},
+		{
+			"name": "suction_neck_0",
+			"from": [7, 13, 7.56239],
+			"to": [11.4, 13.8, 8.43761],
+			"rotation": {
+				"angle": 0,
+				"axis": "y",
+				"origin": [8, 8, 8]
+			},
+			"faces": {
+				"east": {
+					"uv": [7.56239, 2.2, 8.43761, 3],
+					"texture": "#mine_drainage_pump_casing"
+				},
+				"west": {
+					"uv": [7.56239, 2.2, 8.43761, 3],
+					"texture": "#mine_drainage_pump_casing"
+				}
+			}
+		},
+		{
+			"name": "suction_neck_1",
+			"from": [7, 13, 7.56239],
+			"to": [11.4, 13.8, 8.43761],
+			"rotation": {
+				"angle": 22.5,
+				"axis": "y",
+				"origin": [9.2, 8, 8]
+			},
+			"faces": {
+				"east": {
+					"uv": [7.56239, 2.2, 8.43761, 3],
+					"texture": "#mine_drainage_pump_casing"
+				},
+				"west": {
+					"uv": [7.56239, 2.2, 8.43761, 3],
+					"texture": "#mine_drainage_pump_casing"
+				}
+			}
+		},
+		{
+			"name": "suction_neck_2",
+			"from": [7, 13, 7.56239],
+			"to": [11.4, 13.8, 8.43761],
+			"rotation": {
+				"angle": 45,
+				"axis": "y",
+				"origin": [9.2, 8, 8]
+			},
+			"faces": {
+				"east": {
+					"uv": [7.56239, 2.2, 8.43761, 3],
+					"texture": "#mine_drainage_pump_casing"
+				},
+				"west": {
+					"uv": [7.56239, 2.2, 8.43761, 3],
+					"texture": "#mine_drainage_pump_casing"
+				}
+			}
+		},
+		{
+			"name": "suction_neck_3",
+			"from": [7, 13, 7.56239],
+			"to": [11.4, 13.8, 8.43761],
+			"rotation": {
+				"angle": -22.5,
+				"axis": "y",
+				"origin": [9.2, 8, 8]
+			},
+			"faces": {
+				"east": {
+					"uv": [7.56239, 2.2, 8.43761, 3],
+					"texture": "#mine_drainage_pump_casing"
+				},
+				"west": {
+					"uv": [7.56239, 2.2, 8.43761, 3],
+					"texture": "#mine_drainage_pump_casing"
+				}
+			}
+		},
+		{
+			"name": "suction_neck_4",
+			"from": [7, 13, 7.56239],
+			"to": [11.4, 13.8, 8.43761],
+			"rotation": {
+				"angle": -45,
+				"axis": "y",
+				"origin": [9.2, 8, 8]
+			},
+			"faces": {
+				"east": {
+					"uv": [7.56239, 2.2, 8.43761, 3],
+					"texture": "#mine_drainage_pump_casing"
+				},
+				"west": {
+					"uv": [7.56239, 2.2, 8.43761, 3],
+					"texture": "#mine_drainage_pump_casing"
+				}
+			}
+		},
+		{
+			"name": "suction_neck_5",
+			"from": [8.76239, 13, 5.8],
+			"to": [9.63761, 13.8, 10.2],
+			"rotation": {
+				"angle": 0,
+				"axis": "y",
+				"origin": [8, 8, 8]
+			},
+			"faces": {
+				"north": {
+					"uv": [6.36239, 2.2, 7.23761, 3],
+					"texture": "#mine_drainage_pump_casing"
+				},
+				"south": {
+					"uv": [8.76239, 2.2, 9.63761, 3],
+					"texture": "#mine_drainage_pump_casing"
+				}
+			}
+		},
+		{
+			"name": "suction_neck_6",
+			"from": [8.76239, 13, 5.8],
+			"to": [9.63761, 13.8, 10.2],
+			"rotation": {
+				"angle": 22.5,
+				"axis": "y",
+				"origin": [9.2, 8, 8]
+			},
+			"faces": {
+				"north": {
+					"uv": [6.36239, 2.2, 7.23761, 3],
+					"texture": "#mine_drainage_pump_casing"
+				},
+				"south": {
+					"uv": [8.76239, 2.2, 9.63761, 3],
+					"texture": "#mine_drainage_pump_casing"
+				}
+			}
+		},
+		{
+			"name": "suction_neck_7",
+			"from": [8.76239, 13, 5.8],
+			"to": [9.63761, 13.8, 10.2],
+			"rotation": {
+				"angle": -22.5,
+				"axis": "y",
+				"origin": [9.2, 8, 8]
+			},
+			"faces": {
+				"north": {
+					"uv": [6.36239, 2.2, 7.23761, 3],
+					"texture": "#mine_drainage_pump_casing"
+				},
+				"south": {
+					"uv": [8.76239, 2.2, 9.63761, 3],
+					"texture": "#mine_drainage_pump_casing"
+				}
+			}
+		},
+		{
+			"name": "prime_pipe",
+			"from": [10.6, 13, 11.4],
+			"to": [11.2, 14.4, 12],
+			"rotation": {
+				"angle": 0,
+				"axis": "y",
+				"origin": [8, 8, 8]
+			},
+			"faces": {
+				"north": {
+					"uv": [4.8, 1.6, 5.4, 3],
+					"texture": "#material_brass"
+				},
+				"east": {
+					"uv": [4, 1.6, 4.6, 3],
+					"texture": "#material_brass"
+				},
+				"south": {
+					"uv": [10.6, 1.6, 11.2, 3],
+					"texture": "#material_brass"
+				},
+				"west": {
+					"uv": [11.4, 1.6, 12, 3],
+					"texture": "#material_brass"
+				},
+				"up": {
+					"uv": [10.6, 11.4, 11.2, 12],
+					"texture": "#material_brass"
+				},
+				"down": {
+					"uv": [10.6, 4, 11.2, 4.6],
+					"texture": "#material_brass"
+				}
+			}
+		},
+		{
+			"name": "prime_cock",
+			"from": [10.2, 14.4, 11],
+			"to": [11.6, 15, 12.4],
+			"rotation": {
+				"angle": 0,
+				"axis": "y",
+				"origin": [8, 8, 8]
+			},
+			"faces": {
+				"north": {
+					"uv": [4.4, 1, 5.8, 1.6],
+					"texture": "#material_brass"
+				},
+				"east": {
+					"uv": [3.6, 1, 5, 1.6],
+					"texture": "#material_brass"
+				},
+				"south": {
+					"uv": [10.2, 1, 11.6, 1.6],
+					"texture": "#material_brass"
+				},
+				"west": {
+					"uv": [11, 1, 12.4, 1.6],
+					"texture": "#material_brass"
+				},
+				"up": {
+					"uv": [10.2, 11, 11.6, 12.4],
+					"texture": "#material_brass"
+				},
+				"down": {
+					"uv": [10.2, 3.6, 11.6, 5],
+					"texture": "#material_brass"
+				}
+			}
+		},
+		{
+			"name": "prime_funnel",
+			"from": [9.9, 15, 10.7],
+			"to": [11.9, 16, 12.7],
+			"rotation": {
+				"angle": 0,
+				"axis": "y",
+				"origin": [8, 8, 8]
+			},
+			"faces": {
+				"north": {
+					"uv": [4.1, 0, 6.1, 1],
+					"texture": "#material_brass"
+				},
+				"east": {
+					"uv": [3.3, 0, 5.3, 1],
+					"texture": "#material_brass"
+				},
+				"south": {
+					"uv": [9.9, 0, 11.9, 1],
+					"texture": "#material_brass"
+				},
+				"west": {
+					"uv": [10.7, 0, 12.7, 1],
+					"texture": "#material_brass"
+				},
+				"up": {
+					"uv": [9.9, 10.7, 11.9, 12.7],
+					"texture": "#material_brass"
+				},
+				"down": {
+					"uv": [9.9, 3.3, 11.9, 5.3],
+					"texture": "#material_brass"
+				}
+			}
+		},
+		{
+			"name": "discharge_neck_0",
+			"from": [21.4, 13, 7.48283],
+			"to": [26.6, 14, 8.51717],
+			"rotation": {
+				"angle": 0,
+				"axis": "y",
+				"origin": [8, 8, 8]
+			},
+			"faces": {
+				"east": {
+					"uv": [7.48283, 2, 8.51717, 3],
+					"texture": "#mine_drainage_pump_casing"
+				},
+				"west": {
+					"uv": [7.48283, 2, 8.51717, 3],
+					"texture": "#mine_drainage_pump_casing"
+				}
+			}
+		},
+		{
+			"name": "discharge_neck_1",
+			"from": [21.4, 13, 7.48283],
+			"to": [26.6, 14, 8.51717],
+			"rotation": {
+				"angle": 22.5,
+				"axis": "y",
+				"origin": [24, 8, 8]
+			},
+			"faces": {
+				"east": {
+					"uv": [7.48283, 2, 8.51717, 3],
+					"texture": "#mine_drainage_pump_casing"
+				},
+				"west": {
+					"uv": [7.48283, 2, 8.51717, 3],
+					"texture": "#mine_drainage_pump_casing"
+				}
+			}
+		},
+		{
+			"name": "discharge_neck_2",
+			"from": [21.4, 13, 7.48283],
+			"to": [26.6, 14, 8.51717],
+			"rotation": {
+				"angle": 45,
+				"axis": "y",
+				"origin": [24, 8, 8]
+			},
+			"faces": {
+				"east": {
+					"uv": [7.48283, 2, 8.51717, 3],
+					"texture": "#mine_drainage_pump_casing"
+				},
+				"west": {
+					"uv": [7.48283, 2, 8.51717, 3],
+					"texture": "#mine_drainage_pump_casing"
+				}
+			}
+		},
+		{
+			"name": "discharge_neck_3",
+			"from": [21.4, 13, 7.48283],
+			"to": [26.6, 14, 8.51717],
+			"rotation": {
+				"angle": -22.5,
+				"axis": "y",
+				"origin": [24, 8, 8]
+			},
+			"faces": {
+				"east": {
+					"uv": [7.48283, 2, 8.51717, 3],
+					"texture": "#mine_drainage_pump_casing"
+				},
+				"west": {
+					"uv": [7.48283, 2, 8.51717, 3],
+					"texture": "#mine_drainage_pump_casing"
+				}
+			}
+		},
+		{
+			"name": "discharge_neck_4",
+			"from": [21.4, 13, 7.48283],
+			"to": [26.6, 14, 8.51717],
+			"rotation": {
+				"angle": -45,
+				"axis": "y",
+				"origin": [24, 8, 8]
+			},
+			"faces": {
+				"east": {
+					"uv": [7.48283, 2, 8.51717, 3],
+					"texture": "#mine_drainage_pump_casing"
+				},
+				"west": {
+					"uv": [7.48283, 2, 8.51717, 3],
+					"texture": "#mine_drainage_pump_casing"
+				}
+			}
+		},
+		{
+			"name": "discharge_neck_5",
+			"from": [23.48283, 13, 5.4],
+			"to": [24.51717, 14, 10.6],
+			"rotation": {
+				"angle": 0,
+				"axis": "y",
+				"origin": [8, 8, 8]
+			},
+			"faces": {
+				"north": {
+					"uv": [7.48283, 2, 8.51717, 3],
+					"texture": "#mine_drainage_pump_casing"
+				},
+				"south": {
+					"uv": [7.48283, 2, 8.51717, 3],
+					"texture": "#mine_drainage_pump_casing"
+				}
+			}
+		},
+		{
+			"name": "discharge_neck_6",
+			"from": [23.48283, 13, 5.4],
+			"to": [24.51717, 14, 10.6],
+			"rotation": {
+				"angle": 22.5,
+				"axis": "y",
+				"origin": [24, 8, 8]
+			},
+			"faces": {
+				"north": {
+					"uv": [7.48283, 2, 8.51717, 3],
+					"texture": "#mine_drainage_pump_casing"
+				},
+				"south": {
+					"uv": [7.48283, 2, 8.51717, 3],
+					"texture": "#mine_drainage_pump_casing"
+				}
+			}
+		},
+		{
+			"name": "discharge_neck_7",
+			"from": [23.48283, 13, 5.4],
+			"to": [24.51717, 14, 10.6],
+			"rotation": {
+				"angle": -22.5,
+				"axis": "y",
+				"origin": [24, 8, 8]
+			},
+			"faces": {
+				"north": {
+					"uv": [7.48283, 2, 8.51717, 3],
+					"texture": "#mine_drainage_pump_casing"
+				},
+				"south": {
+					"uv": [7.48283, 2, 8.51717, 3],
+					"texture": "#mine_drainage_pump_casing"
+				}
+			}
+		},
+		{
+			"name": "nrv_body",
+			"from": [21.4, 13.6, 5.6],
+			"to": [26.6, 15, 10.4],
+			"rotation": {
+				"angle": 0,
+				"axis": "y",
+				"origin": [8, 8, 8]
+			},
+			"faces": {
+				"north": {
+					"uv": [5.4, 1, 10.6, 2.4],
+					"texture": "#mine_drainage_pump_casing"
+				},
+				"east": {
+					"uv": [5.6, 1, 10.4, 2.4],
+					"texture": "#mine_drainage_pump_casing"
+				},
+				"south": {
+					"uv": [5.4, 1, 10.6, 2.4],
+					"texture": "#mine_drainage_pump_casing"
+				},
+				"west": {
+					"uv": [5.6, 1, 10.4, 2.4],
+					"texture": "#mine_drainage_pump_casing"
+				},
+				"up": {
+					"uv": [5.4, 5.6, 10.6, 10.4],
+					"texture": "#mine_drainage_pump_casing"
+				},
+				"down": {
+					"uv": [5.4, 5.6, 10.6, 10.4],
+					"texture": "#mine_drainage_pump_casing"
+				}
+			}
+		},
+		{
+			"name": "nrv_cover",
+			"from": [22.4, 15, 6.4],
+			"to": [25.6, 15.6, 9.6],
+			"rotation": {
+				"angle": 0,
+				"axis": "y",
+				"origin": [8, 8, 8]
+			},
+			"faces": {
+				"north": {
+					"uv": [6.4, 0.4, 9.6, 1],
+					"texture": "#mine_drainage_pump_casing"
+				},
+				"east": {
+					"uv": [6.4, 0.4, 9.6, 1],
+					"texture": "#mine_drainage_pump_casing"
+				},
+				"south": {
+					"uv": [6.4, 0.4, 9.6, 1],
+					"texture": "#mine_drainage_pump_casing"
+				},
+				"west": {
+					"uv": [6.4, 0.4, 9.6, 1],
+					"texture": "#mine_drainage_pump_casing"
+				},
+				"up": {
+					"uv": [6.4, 6.4, 9.6, 9.6],
+					"texture": "#mine_drainage_pump_casing"
+				},
+				"down": {
+					"uv": [6.4, 6.4, 9.6, 9.6],
+					"texture": "#mine_drainage_pump_casing"
+				}
+			}
+		},
+		{
+			"name": "discharge_flange_0",
+			"from": [20.6, 15.6, 7.3237],
+			"to": [27.4, 16, 8.6763],
+			"rotation": {
+				"angle": 0,
+				"axis": "y",
+				"origin": [8, 8, 8]
+			},
+			"faces": {
+				"east": {
+					"uv": [7.3237, 0, 8.6763, 0.4],
+					"texture": "#mine_drainage_pump_casing"
+				},
+				"west": {
+					"uv": [7.3237, 0, 8.6763, 0.4],
+					"texture": "#mine_drainage_pump_casing"
+				},
+				"up": {
+					"uv": [4.6, 7.3237, 11.4, 8.6763],
+					"texture": "#mine_drainage_pump_casing"
+				}
+			}
+		},
+		{
+			"name": "discharge_flange_1",
+			"from": [20.6, 15.6, 7.3237],
+			"to": [27.4, 16, 8.6763],
+			"rotation": {
+				"angle": 22.5,
+				"axis": "y",
+				"origin": [24, 8, 8]
+			},
+			"faces": {
+				"east": {
+					"uv": [7.3237, 0, 8.6763, 0.4],
+					"texture": "#mine_drainage_pump_casing"
+				},
+				"west": {
+					"uv": [7.3237, 0, 8.6763, 0.4],
+					"texture": "#mine_drainage_pump_casing"
+				},
+				"up": {
+					"uv": [4.6, 7.3237, 11.4, 8.6763],
+					"texture": "#mine_drainage_pump_casing"
+				}
+			}
+		},
+		{
+			"name": "discharge_flange_2",
+			"from": [20.6, 15.6, 7.3237],
+			"to": [27.4, 16, 8.6763],
+			"rotation": {
+				"angle": 45,
+				"axis": "y",
+				"origin": [24, 8, 8]
+			},
+			"faces": {
+				"east": {
+					"uv": [7.3237, 0, 8.6763, 0.4],
+					"texture": "#mine_drainage_pump_casing"
+				},
+				"west": {
+					"uv": [7.3237, 0, 8.6763, 0.4],
+					"texture": "#mine_drainage_pump_casing"
+				},
+				"up": {
+					"uv": [4.6, 7.3237, 11.4, 8.6763],
+					"texture": "#mine_drainage_pump_casing"
+				}
+			}
+		},
+		{
+			"name": "discharge_flange_3",
+			"from": [20.6, 15.6, 7.3237],
+			"to": [27.4, 16, 8.6763],
+			"rotation": {
+				"angle": -22.5,
+				"axis": "y",
+				"origin": [24, 8, 8]
+			},
+			"faces": {
+				"east": {
+					"uv": [7.3237, 0, 8.6763, 0.4],
+					"texture": "#mine_drainage_pump_casing"
+				},
+				"west": {
+					"uv": [7.3237, 0, 8.6763, 0.4],
+					"texture": "#mine_drainage_pump_casing"
+				},
+				"up": {
+					"uv": [4.6, 7.3237, 11.4, 8.6763],
+					"texture": "#mine_drainage_pump_casing"
+				}
+			}
+		},
+		{
+			"name": "discharge_flange_4",
+			"from": [20.6, 15.6, 7.3237],
+			"to": [27.4, 16, 8.6763],
+			"rotation": {
+				"angle": -45,
+				"axis": "y",
+				"origin": [24, 8, 8]
+			},
+			"faces": {
+				"east": {
+					"uv": [7.3237, 0, 8.6763, 0.4],
+					"texture": "#mine_drainage_pump_casing"
+				},
+				"west": {
+					"uv": [7.3237, 0, 8.6763, 0.4],
+					"texture": "#mine_drainage_pump_casing"
+				},
+				"up": {
+					"uv": [4.6, 7.3237, 11.4, 8.6763],
+					"texture": "#mine_drainage_pump_casing"
+				}
+			}
+		},
+		{
+			"name": "discharge_flange_5",
+			"from": [23.3237, 15.6, 4.6],
+			"to": [24.6763, 16, 11.4],
+			"rotation": {
+				"angle": 0,
+				"axis": "y",
+				"origin": [8, 8, 8]
+			},
+			"faces": {
+				"north": {
+					"uv": [7.3237, 0, 8.6763, 0.4],
+					"texture": "#mine_drainage_pump_casing"
+				},
+				"south": {
+					"uv": [7.3237, 0, 8.6763, 0.4],
+					"texture": "#mine_drainage_pump_casing"
+				},
+				"up": {
+					"uv": [7.3237, 4.6, 8.6763, 11.4],
+					"texture": "#mine_drainage_pump_casing"
+				}
+			}
+		},
+		{
+			"name": "discharge_flange_6",
+			"from": [23.3237, 15.6, 4.6],
+			"to": [24.6763, 16, 11.4],
+			"rotation": {
+				"angle": 22.5,
+				"axis": "y",
+				"origin": [24, 8, 8]
+			},
+			"faces": {
+				"north": {
+					"uv": [7.3237, 0, 8.6763, 0.4],
+					"texture": "#mine_drainage_pump_casing"
+				},
+				"south": {
+					"uv": [7.3237, 0, 8.6763, 0.4],
+					"texture": "#mine_drainage_pump_casing"
+				},
+				"up": {
+					"uv": [7.3237, 4.6, 8.6763, 11.4],
+					"texture": "#mine_drainage_pump_casing"
+				}
+			}
+		},
+		{
+			"name": "discharge_flange_7",
+			"from": [23.3237, 15.6, 4.6],
+			"to": [24.6763, 16, 11.4],
+			"rotation": {
+				"angle": -22.5,
+				"axis": "y",
+				"origin": [24, 8, 8]
+			},
+			"faces": {
+				"north": {
+					"uv": [7.3237, 0, 8.6763, 0.4],
+					"texture": "#mine_drainage_pump_casing"
+				},
+				"south": {
+					"uv": [7.3237, 0, 8.6763, 0.4],
+					"texture": "#mine_drainage_pump_casing"
+				},
+				"up": {
+					"uv": [7.3237, 4.6, 8.6763, 11.4],
+					"texture": "#mine_drainage_pump_casing"
+				}
+			}
+		},
+		{
+			"name": "gate_spindle",
+			"from": [23.7, 13, 2.4],
+			"to": [24.3, 13.6, 5.6],
+			"rotation": {
+				"angle": 0,
+				"axis": "y",
+				"origin": [8, 8, 8]
+			},
+			"faces": {
+				"north": {
+					"uv": [7.7, 2.4, 8.3, 3],
+					"texture": "#material_bright_steel"
+				},
+				"east": {
+					"uv": [10.4, 2.4, 13.6, 3],
+					"texture": "#material_bright_steel"
+				},
+				"south": {
+					"uv": [7.7, 2.4, 8.3, 3],
+					"texture": "#material_bright_steel"
+				},
+				"west": {
+					"uv": [2.4, 2.4, 5.6, 3],
+					"texture": "#material_bright_steel"
+				},
+				"up": {
+					"uv": [7.7, 2.4, 8.3, 5.6],
+					"texture": "#material_bright_steel"
+				},
+				"down": {
+					"uv": [7.7, 10.4, 8.3, 13.6],
+					"texture": "#material_bright_steel"
+				}
+			}
+		},
+		{
+			"name": "gate_wheel_h",
+			"from": [21.8, 12.6, 1.6],
+			"to": [26.2, 13.4, 2.4],
+			"rotation": {
+				"angle": 0,
+				"axis": "y",
+				"origin": [8, 8, 8]
+			},
+			"faces": {
+				"north": {
+					"uv": [5.8, 2.6, 10.2, 3.4],
+					"texture": "#material_paint_red"
+				},
+				"east": {
+					"uv": [13.6, 2.6, 14.4, 3.4],
+					"texture": "#material_paint_red"
+				},
+				"south": {
+					"uv": [5.8, 2.6, 10.2, 3.4],
+					"texture": "#material_paint_red"
+				},
+				"west": {
+					"uv": [1.6, 2.6, 2.4, 3.4],
+					"texture": "#material_paint_red"
+				},
+				"up": {
+					"uv": [5.8, 1.6, 10.2, 2.4],
+					"texture": "#material_paint_red"
+				},
+				"down": {
+					"uv": [5.8, 13.6, 10.2, 14.4],
+					"texture": "#material_paint_red"
+				}
+			}
+		},
+		{
+			"name": "gate_wheel_v",
+			"from": [23.6, 11, 1.6],
+			"to": [24.4, 15, 2.4],
+			"rotation": {
+				"angle": 0,
+				"axis": "y",
+				"origin": [8, 8, 8]
+			},
+			"faces": {
+				"north": {
+					"uv": [7.6, 1, 8.4, 5],
+					"texture": "#material_paint_red"
+				},
+				"east": {
+					"uv": [13.6, 1, 14.4, 5],
+					"texture": "#material_paint_red"
+				},
+				"south": {
+					"uv": [7.6, 1, 8.4, 5],
+					"texture": "#material_paint_red"
+				},
+				"west": {
+					"uv": [1.6, 1, 2.4, 5],
+					"texture": "#material_paint_red"
+				},
+				"up": {
+					"uv": [7.6, 1.6, 8.4, 2.4],
+					"texture": "#material_paint_red"
+				},
+				"down": {
+					"uv": [7.6, 13.6, 8.4, 14.4],
+					"texture": "#material_paint_red"
+				}
+			}
+		},
+		{
+			"name": "gauge_siphon",
+			"from": [28.6, 12, 11],
+			"to": [29.2, 14.6, 11.6],
+			"rotation": {
+				"angle": 0,
+				"axis": "y",
+				"origin": [8, 8, 8]
+			},
+			"faces": {
+				"north": {
+					"uv": [2.8, 1.4, 3.4, 4],
+					"texture": "#material_brass"
+				},
+				"east": {
+					"uv": [4.4, 1.4, 5, 4],
+					"texture": "#material_brass"
+				},
+				"south": {
+					"uv": [12.6, 1.4, 13.2, 4],
+					"texture": "#material_brass"
+				},
+				"west": {
+					"uv": [11, 1.4, 11.6, 4],
+					"texture": "#material_brass"
+				},
+				"up": {
+					"uv": [12.6, 11, 13.2, 11.6],
+					"texture": "#material_brass"
+				},
+				"down": {
+					"uv": [12.6, 4.4, 13.2, 5],
+					"texture": "#material_brass"
+				}
+			}
+		},
+		{
+			"name": "gauge_case",
+			"from": [27.4, 14.2, 11.6],
+			"to": [30.4, 17.2, 12.2],
+			"rotation": {
+				"angle": 0,
+				"axis": "y",
+				"origin": [8, 8, 8]
+			},
+			"faces": {
+				"north": {
+					"uv": [1.6, 0, 4.6, 1.8],
+					"texture": "#material_cast_iron"
+				},
+				"east": {
+					"uv": [3.8, 0, 4.4, 1.8],
+					"texture": "#material_cast_iron"
+				},
+				"south": {
+					"uv": [11.4, 0, 14.4, 1.8],
+					"texture": "#material_cast_iron"
+				},
+				"west": {
+					"uv": [11.6, 0, 12.2, 1.8],
+					"texture": "#material_cast_iron"
+				},
+				"up": {
+					"uv": [11.4, 11.6, 14.4, 12.2],
+					"texture": "#material_cast_iron"
+				},
+				"down": {
+					"uv": [11.4, 3.8, 14.4, 4.4],
+					"texture": "#material_cast_iron"
+				}
+			}
+		},
+		{
+			"name": "gauge_face",
+			"from": [27.6, 14.4, 12.2],
+			"to": [30.2, 17, 12.3],
+			"rotation": {
+				"angle": 0,
+				"axis": "y",
+				"origin": [8, 8, 8]
+			},
+			"faces": {
+				"east": {
+					"uv": [3.7, 0, 3.8, 1.6],
+					"texture": "#material_cast_iron"
 				},
 				"south": {
 					"uv": [0, 0, 16, 16],
-					"texture": "#gauge"
+					"texture": "#mine_drainage_pump_gauge"
 				},
 				"west": {
-					"uv": [0, 0, 0.5, 3],
-					"texture": "#gauge"
+					"uv": [12.2, 0, 12.3, 1.6],
+					"texture": "#material_cast_iron"
 				},
 				"up": {
-					"uv": [0, 0, 3, 0.5],
-					"texture": "#gauge"
+					"uv": [11.6, 12.2, 14.2, 12.3],
+					"texture": "#material_cast_iron"
 				},
 				"down": {
-					"uv": [0, 0, 3, 0.5],
-					"texture": "#gauge"
+					"uv": [11.6, 3.7, 14.2, 3.8],
+					"texture": "#material_cast_iron"
 				}
 			}
 		},
 		{
-			"name": "drain",
-			"from": [14, 2, 12],
-			"to": [15, 4, 13],
+			"name": "leakoff",
+			"from": [29.6, 3, 12.6],
+			"to": [30.2, 6, 13.2],
 			"rotation": {
 				"angle": 0,
 				"axis": "y",
@@ -1463,28 +4766,172 @@
 			},
 			"faces": {
 				"north": {
-					"uv": [0, 0, 1, 2],
-					"texture": "#br"
+					"uv": [1.8, 10, 2.4, 13],
+					"texture": "#material_brass"
 				},
 				"east": {
-					"uv": [0, 0, 1, 2],
-					"texture": "#br"
+					"uv": [2.8, 10, 3.4, 13],
+					"texture": "#material_brass"
 				},
 				"south": {
-					"uv": [0, 0, 1, 2],
-					"texture": "#br"
+					"uv": [13.6, 10, 14.2, 13],
+					"texture": "#material_brass"
 				},
 				"west": {
-					"uv": [0, 0, 1, 2],
-					"texture": "#br"
+					"uv": [12.6, 10, 13.2, 13],
+					"texture": "#material_brass"
 				},
 				"up": {
-					"uv": [0, 0, 1, 1],
-					"texture": "#br"
+					"uv": [13.6, 12.6, 14.2, 13.2],
+					"texture": "#material_brass"
 				},
 				"down": {
-					"uv": [0, 0, 1, 1],
-					"texture": "#br"
+					"uv": [13.6, 2.8, 14.2, 3.4],
+					"texture": "#material_brass"
+				}
+			}
+		},
+		{
+			"name": "leakoff_down",
+			"from": [29.6, 2, 13.2],
+			"to": [30.2, 3, 13.8],
+			"rotation": {
+				"angle": 0,
+				"axis": "y",
+				"origin": [8, 8, 8]
+			},
+			"faces": {
+				"north": {
+					"uv": [1.8, 13, 2.4, 14],
+					"texture": "#material_brass"
+				},
+				"east": {
+					"uv": [2.2, 13, 2.8, 14],
+					"texture": "#material_brass"
+				},
+				"south": {
+					"uv": [13.6, 13, 14.2, 14],
+					"texture": "#material_brass"
+				},
+				"west": {
+					"uv": [13.2, 13, 13.8, 14],
+					"texture": "#material_brass"
+				},
+				"up": {
+					"uv": [13.6, 13.2, 14.2, 13.8],
+					"texture": "#material_brass"
+				},
+				"down": {
+					"uv": [13.6, 2.2, 14.2, 2.8],
+					"texture": "#material_brass"
+				}
+			}
+		},
+		{
+			"name": "guard_top",
+			"from": [0, 11, 3.5],
+			"to": [3.5, 11.5, 12.5],
+			"rotation": {
+				"angle": 0,
+				"axis": "y",
+				"origin": [8, 8, 8]
+			},
+			"faces": {
+				"north": {
+					"uv": [12.5, 4.5, 16, 5],
+					"texture": "#material_paint_red"
+				},
+				"east": {
+					"uv": [3.5, 4.5, 12.5, 5],
+					"texture": "#material_paint_red"
+				},
+				"south": {
+					"uv": [0, 4.5, 3.5, 5],
+					"texture": "#material_paint_red"
+				},
+				"west": {
+					"uv": [3.5, 4.5, 12.5, 5],
+					"texture": "#material_paint_red"
+				},
+				"up": {
+					"uv": [0, 3.5, 3.5, 12.5],
+					"texture": "#material_paint_red"
+				},
+				"down": {
+					"uv": [0, 3.5, 3.5, 12.5],
+					"texture": "#material_paint_red"
+				}
+			}
+		},
+		{
+			"name": "guard_side_3.5",
+			"from": [0, 2, 3.5],
+			"to": [3.5, 11, 4],
+			"rotation": {
+				"angle": 0,
+				"axis": "y",
+				"origin": [8, 8, 8]
+			},
+			"faces": {
+				"north": {
+					"uv": [12.5, 5, 16, 14],
+					"texture": "#material_paint_red"
+				},
+				"east": {
+					"uv": [12, 5, 12.5, 14],
+					"texture": "#material_paint_red"
+				},
+				"south": {
+					"uv": [0, 5, 3.5, 14],
+					"texture": "#material_paint_red"
+				},
+				"west": {
+					"uv": [3.5, 5, 4, 14],
+					"texture": "#material_paint_red"
+				},
+				"up": {
+					"uv": [0, 3.5, 3.5, 4],
+					"texture": "#material_paint_red"
+				},
+				"down": {
+					"uv": [0, 12, 3.5, 12.5],
+					"texture": "#material_paint_red"
+				}
+			}
+		},
+		{
+			"name": "guard_side_12",
+			"from": [0, 2, 12],
+			"to": [3.5, 11, 12.5],
+			"rotation": {
+				"angle": 0,
+				"axis": "y",
+				"origin": [8, 8, 8]
+			},
+			"faces": {
+				"north": {
+					"uv": [12.5, 5, 16, 14],
+					"texture": "#material_paint_red"
+				},
+				"east": {
+					"uv": [3.5, 5, 4, 14],
+					"texture": "#material_paint_red"
+				},
+				"south": {
+					"uv": [0, 5, 3.5, 14],
+					"texture": "#material_paint_red"
+				},
+				"west": {
+					"uv": [12, 5, 12.5, 14],
+					"texture": "#material_paint_red"
+				},
+				"up": {
+					"uv": [0, 12, 3.5, 12.5],
+					"texture": "#material_paint_red"
+				},
+				"down": {
+					"uv": [0, 3.5, 3.5, 4],
+					"texture": "#material_paint_red"
 				}
 			}
 		}

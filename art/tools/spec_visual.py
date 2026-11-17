@@ -211,22 +211,7 @@ m("degasification_pump", "mining", [
 m("degasification_pump/rotor", "mining", hcyl("rotor", "z", 3.5, 3.5, 12.5, "sm")
   + hcyl("shaft", "z", 1, 12.5, 16, "pol", sides=8) + hcyl("coupling", "z", 2.5, 14.2, 15.6, "d", sides=8), kind="partial")
 
-# насос водоотлива ЦНС 2×1×1: секционный корпус на стяжках, всасывающий и напорный патрубки, задвижка; вал — partial
-m("mine_drainage_pump", "mining", [
-    el("frame", [0, 0, 2], [32, 2, 14], "d"),
-    el("frame_rail_n", [0, 0, 1.5], [32, 1, 2], "haz"),
-] + [x for i in range(5) for x in hcyl(f"section_{i}", "x", 5.5 - (i % 2) * 0.5, 5 + i * 4, 9 + i * 4, "mb", sides=8)]
-  + hcyl("suction_cover", "x", 6, 3.5, 5, "d", sides=8) + hcyl("discharge_cover", "x", 6, 25, 26.5, "d", sides=8)
-  + [el(f"tie_rod_{i}", [3.5, y, z], [26.5, y + 0.6, z + 0.6], "pol") for i, (y, z) in enumerate(((13, 3.5), (13, 11.9), (2.4, 3.5), (2.4, 11.9)))]
-  + [el("suction", [5, 13, 5], [9, 16, 9], "wat", faces={"up": "end"}),
-     el("discharge", [23, 13, 7], [27, 16, 11], "wat", faces={"up": "end"}),
-     el("gate_valve", [22.5, 15, 6.5], [27.5, 16, 11.5], "d"),
-     el("bearing_w", [0.5, 3, 5], [3.5, 11, 11], "d"),
-     el("bearing_e", [28, 3, 5], [32, 11, 11], "d"),
-     el("gauge", [16, 13, 10], [19, 16, 10.5], "gauge", full=["south"]),
-     el("drain", [14, 2, 12], [15, 4, 13], "br")])
-m("mine_drainage_pump/shaft", "mining", hcyl("shaft", "x", 1, -0.01, 31.99, "pol", sides=8)
-  + hcyl("coupling", "x", 2.5, 0.5, 2.5, "d", sides=8), kind="partial")
+# насос водоотлива нарисован вручную в Blockbench: art/blockbench/mining/mine_drainage_pump.author.js
 
 # подъёмная машина нарисована вручную в Blockbench: art/blockbench/mining/mine_hoist.author.js
 # (модель, барабан и курсор указателя глубины — partial, текстуры textures/block/mine_hoist/)

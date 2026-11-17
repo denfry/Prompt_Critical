@@ -27,6 +27,8 @@ public final class MinePanels {
     public static final int FAN_RPM = 2, FAN_KW10 = 3, FAN_PA = 4, FAN_Q10 = 5, FAN_CHANNELS = 6;
     public static final int DEGAS_CAPTURE_PERMIL = 2, DEGAS_KW10 = 3, DEGAS_CHANNELS = 4;
     public static final int PUMP_FLOW_M3H10 = 2, PUMP_HEAD_M = 3, PUMP_KW10 = 4, PUMP_CHANNELS = 5;
+    /** Метров водяного столба на 1 МПа: 10⁶ / (ρg) при ρ = 1000 кг/м³. */
+    private static final double M_PER_MPA = 1e6 / (1000 * 9.80665);
 
     // шкаф АГЗ
     public static final int D_CH4_X100 = 0, D_CO_PPM = 1, D_O2_X10 = 2, D_EMISSION_X100 = 3, D_AIR_X10 = 4, D_SUMP_PERMIL = 5,
@@ -43,6 +45,9 @@ public final class MinePanels {
             FLOW = PanelText.tr("pump.flow", "Flow", "Подача"),
             ACID = PanelText.tr("pump.acid", "Acid", "Кислая"),
             DRY = PanelText.tr("pump.dry", "Dry", "Не залит"),
+            DISCHARGE = PanelText.tr("pump.discharge", "Discharge", "Нагнетание"),
+            DISCHARGE_TIP = PanelText.tr("pump.discharge_tip", "Discharge %s MPa: the water column of %s m in the rising main",
+                    "Нагнетание %s МПа: столб воды %s м в ставе"),
             BUMP = PanelText.tr("machine.bump", "Bump", "Толчок"),
             BUMP_TIP = PanelText.tr("machine.bump_tip", "Bump test: check the rotation direction of the running shaft",
                     "Толчок: проверить направление вращения вала"),
@@ -90,14 +95,21 @@ public final class MinePanels {
             .readout(8, 84, 160, v -> DEGAS_STATUS.get(v.num(DEGAS_KW10, 10, 1)), null)
             .noInventory().build();
 
-    public static final PanelLayout DRAINAGE = PanelLayout.builder("mine_drainage_pump", 176, 100, PUMP_CHANNELS)
+    /**
+     * Фон — art/blockbench/mining/mine_drainage_pump.author.js ({@code guiPump}). Манометр нагнетания показывает
+     * статический напор става ρgH: обратный клапан держит столб воды и на остановленном насосе.
+     */
+    public static final PanelLayout DRAINAGE = PanelLayout.builder("mine_drainage_pump", 232, 108, PUMP_CHANNELS)
+            .art(PromptCritical.id("textures/gui/panel/mine_drainage_pump.png"))
             .dial(8, 24, false, SHAFT_RPM10, 10, 256, Double.NaN, 0, RPM.get(), SHAFT.get(), shaftTip())
             .dial(64, 24, false, PUMP_FLOW_M3H10, 10, 160, Double.NaN, 0, M3H.get(), FLOW.get(), null)
-            .lamp(122, 26, FLAGS, F_RUNNING, LampColor.GREEN, RUNNING.get())
-            .lamp(122, 42, FLAGS, F_ACID, LampColor.AMBER, ACID.get())
-            .lamp(122, 58, FLAGS, F_DRY, LampColor.RED, DRY.get())
-            .button(122, 70, 46, BUTTON_BUMP, BUMP.get(), BUMP_TIP.get())
-            .readout(8, 84, 160, v -> PUMP_STATUS.get(v.raw(PUMP_HEAD_M), v.num(PUMP_KW10, 10, 1)), null)
+            .dial(120, 24, false, PUMP_HEAD_M, M_PER_MPA, 2.5, 2.0, 1, PanelText.MPA.get(), DISCHARGE.get(),
+                    v -> DISCHARGE_TIP.get(PanelText.num(v.raw(PUMP_HEAD_M) / M_PER_MPA, 2), v.raw(PUMP_HEAD_M)))
+            .lamp(178, 26, FLAGS, F_RUNNING, LampColor.GREEN, RUNNING.get())
+            .lamp(178, 42, FLAGS, F_ACID, LampColor.AMBER, ACID.get())
+            .lamp(178, 58, FLAGS, F_DRY, LampColor.RED, DRY.get())
+            .button(178, 74, 44, BUTTON_BUMP, BUMP.get(), BUMP_TIP.get())
+            .readout(8, 92, 216, v -> PUMP_STATUS.get(v.raw(PUMP_HEAD_M), v.num(PUMP_KW10, 10, 1)), null)
             .noInventory().build();
 
     public static final PanelLayout CABINET = PanelLayout.builder("mine_dispatch_cabinet", 230, 156, D_CHANNELS)
