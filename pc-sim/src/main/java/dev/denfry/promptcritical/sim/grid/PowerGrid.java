@@ -62,7 +62,7 @@ public final class PowerGrid {
     /** Ниже этой скорости ЭДС машины падает пропорционально ω (поток постоянен, E = ω·ψ). */
     private static final double EMF_KNEE_SPEED = 0.95;
     /** Длина массивов {@link #exportMachine}, {@link #exportBranch}, {@link #exportMotor}. */
-    public static final int MACHINE_STATE = 18, BRANCH_STATE = 11, MOTOR_STATE = 4;
+    public static final int MACHINE_STATE = 18, BRANCH_STATE = 12, MOTOR_STATE = 4;
     private static final int EVENT_CAPACITY = 256, EVENT_VALUES = 7;
     private static final int EV_TOPOLOGY = 0, EV_DEENERGIZED = 1, EV_POLE_SLIP = 2, EV_BREAKER = 3, EV_SYNC = 4;
     private static final int EV_RELAY = 5, EV_GROUND = 6, EV_LOAD = 7, EV_CONDUCTOR = 8, EV_BREAKDOWN = 9;
@@ -937,11 +937,13 @@ public final class PowerGrid {
         out[8] = trLifeH[k];
         out[9] = protection.fuseBlown(k) ? 1 : 0;
         out[10] = trHs2[k];
+        out[11] = brState[k] == BreakerState.CLOSING || brState[k] == BreakerState.OPENING ? brTimer[k] : 0;
     }
 
     /**
      * Обратное {@link #exportBranch}; до {@link #startCold}, после {@link #attachBreaker} и
-     * {@link #attachTripUnit}. Ход выключателя (включение, отключение) начинается заново и доходит до конца.
+     * {@link #attachTripUnit}. Ход выключателя (включение, отключение) продолжается с того места, где его застала
+     * пересборка.
      */
     public void importBranch(BranchId id, double[] in) {
         int k = branch(id);
@@ -953,10 +955,12 @@ public final class PowerGrid {
         if (brState[k] != null && in[1] >= 0) {
             BreakerState s = BREAKER_STATES[(int) in[1]];
             brState[k] = s;
-            // ход привода начинается заново: пересборка сети (любая смена топологии в измерении) посреди хода
-            // включения раньше превращала его в «отключено», и команда терялась без следа
+            // ход привода продолжается: пересборка сети (любая смена топологии в измерении) посреди хода включения
+            // раньше превращала его в «отключено», а перезапуск хода при частых пересборках не давал включиться вовсе
             BreakerSpec spec = breakerSpec.get(k);
-            brTimer[k] = s == BreakerState.CLOSING ? spec.closeTimeS() : s == BreakerState.OPENING ? spec.openTimeS() : 0;
+            double full = s == BreakerState.CLOSING ? spec.closeTimeS() : s == BreakerState.OPENING ? spec.openTimeS() : 0;
+            double left = in.length > 11 ? in[11] : 0;
+            brTimer[k] = left > 0 ? Math.min(left, full) : full;
             brWear[k] = in[2];
             brOps[k] = (int) in[3];
         }
@@ -972,12 +976,12 @@ public final class PowerGrid {
     }
 
     /**
-     * Сохранённое состояние ветви, приведённое к {@link #BRANCH_STATE} числам: старое из 10 чисел дополняется
-     * (Δθ_h2 восстанавливает {@link #importBranch}); null — состояние не распознано.
+     * Сохранённое состояние ветви: старые форматы из 10 чисел (до Δθ_h2) и 11 (до остатка хода привода) принимает
+     * {@link #importBranch} как есть — Δθ_h2 он восстанавливает, ход начинает заново; null — состояние не распознано.
      */
     public static double[] savedBranchState(double[] saved) {
         if (saved == null || saved.length == BRANCH_STATE) return saved;
-        return saved.length == BRANCH_STATE - 1 ? saved : null;
+        return saved.length == BRANCH_STATE - 1 || saved.length == BRANCH_STATE - 2 ? saved : null;
     }
 
     /** Состояние двигателя ({@link #MOTOR_STATE} чисел): скорость, температура обмотки, пробой, контактор. */

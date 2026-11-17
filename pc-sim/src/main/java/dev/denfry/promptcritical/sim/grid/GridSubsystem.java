@@ -51,6 +51,9 @@ public final class GridSubsystem implements Subsystem, GridEventSink {
     private ConsumerUnit[] loadUnits = new ConsumerUnit[0];
     private MotorUnit[] motorUnits = new MotorUnit[0];
     private GridUnit[] relayOwners = new GridUnit[0];
+    /** Номер уставки в {@link GridUnit#relays} у каждого реле сети — для переноса памяти реле через пересборку. */
+    private int[] relaySlots = new int[0];
+    private final java.util.List<Integer> buildingSlots = new java.util.ArrayList<>();
     private double ambientC = 15, convectionWm2K = 15, solarWPerM;
     private FastContext ctx;
     private int rebuilds;
@@ -213,9 +216,14 @@ public final class GridSubsystem implements Subsystem, GridEventSink {
         dirty = true;
     }
 
-    /** Сеть собрана по нынешней схеме: юниты читают её напрямую. */
+    /**
+     * Сеть собрана хотя бы раз: юниты читают и командуют ей напрямую. Пока новая схема ждёт пересборки (до
+     * следующего FAST-шага), это прежняя сеть: её индексы согласованы с юнитами до самой пересборки, а команды
+     * переносятся в новую через {@link GridUnit#capture}. Иначе любая постройка в измерении на тик показывала все
+     * выключатели отключёнными, а токи и напряжения — нулевыми.
+     */
     public boolean ready() {
-        return grid != null && !dirty;
+        return grid != null;
     }
 
     /** Модель сети (тесты и отладка); {@code null} до первой сборки. */
@@ -286,10 +294,21 @@ public final class GridSubsystem implements Subsystem, GridEventSink {
     }
 
     private void rebuild() {
+        // память реле (выдержки МТЗ, циклы АПВ, защёлки АЧР) переживает пересборку: иначе любая постройка в
+        // измерении обнуляла все идущие выдержки защит
+        Map<GridUnit, Map<Integer, Map.Entry<RelaySetting, RelayState>>> carried = new java.util.IdentityHashMap<>();
         if (grid != null) {
             for (GridUnit u : units.values()) u.capture(grid);
             for (LineUnit l : lines.values()) l.capture(grid);
+            for (int r = 0; r < relayOwners.length; r++) {
+                GridUnit u = relayOwners[r];
+                int slot = relaySlots[r];
+                if (slot < u.relays.size())
+                    carried.computeIfAbsent(u, x -> new java.util.HashMap<>())
+                            .put(slot, Map.entry(u.relays.get(slot), grid.relayState(new RelayId(r))));
+            }
         }
+        buildingSlots.clear();
         for (GridUnit u : units.values()) u.unbind();
         for (LineUnit l : lines.values()) l.branch = null;
         grid = new PowerGrid(cfg);
@@ -321,7 +340,7 @@ public final class GridSubsystem implements Subsystem, GridEventSink {
             }
             l.build(b, va, buses.get(na), buses.get(nb));
         }
-        for (GridUnit u : units.values()) mountRelays(b, u);
+        for (GridUnit u : units.values()) mountRelays(b, u, carried.get(u));
         grid.setWeather(ambientC, convectionWm2K, solarWPerM);
         grid.startCold();
         machineUnits = b.machines.toArray(new GeneratorUnit[0]);
@@ -329,6 +348,7 @@ public final class GridSubsystem implements Subsystem, GridEventSink {
         loadUnits = b.loads.toArray(new ConsumerUnit[0]);
         motorUnits = b.motors.toArray(new MotorUnit[0]);
         relayOwners = b.relays.toArray(new GridUnit[0]);
+        relaySlots = buildingSlots.stream().mapToInt(Integer::intValue).toArray();
         dirty = false;
         rebuilds++;
     }
@@ -337,14 +357,18 @@ public final class GridSubsystem implements Subsystem, GridEventSink {
         m.merge(node, vc, (x, y) -> x.volts >= y.volts ? x : y);
     }
 
-    private void mountRelays(Build b, GridUnit u) {
-        for (RelaySetting s : u.relays) {
+    private void mountRelays(Build b, GridUnit u, Map<Integer, Map.Entry<RelaySetting, RelayState>> carried) {
+        for (int i = 0; i < u.relays.size(); i++) {
+            RelaySetting s = u.relays.get(i);
             ProtectionRelay relay = s.toRelay(cfg);
             RelayMount mount = mount(u, s);
             if (relay == null || mount == null) continue;
             try {
-                grid.addRelay(relay, mount);
+                RelayId id = grid.addRelay(relay, mount);
                 b.relays.add(u);
+                buildingSlots.add(i);
+                Map.Entry<RelaySetting, RelayState> old = carried == null ? null : carried.get(i);
+                if (old != null && old.getKey().equals(s)) grid.relayState(id).carryFrom(old.getValue());
             } catch (IllegalArgumentException | IllegalStateException e) {
                 // модуль не применим к присоединению: в шкафу он стоит, но не работает
             }

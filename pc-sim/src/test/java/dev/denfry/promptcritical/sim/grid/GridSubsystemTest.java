@@ -265,6 +265,31 @@ class GridSubsystemTest {
         assertThat(feeder.protectionTrips()).isEqualTo(1);
     }
 
+    /**
+     * Постройки рядом пересобирают сеть каждые 4 тика, пока идёт КЗ: выдержка МТЗ при этом не сбрасывается, и
+     * защита отключает в те же 2 с. Раньше каждая пересборка обнуляла интеграл обратнозависимой характеристики.
+     */
+    @Test
+    void overcurrentTimerSurvivesNetworkRebuilds() {
+        SimulationWorld w = world();
+        generator(w, BUS_A, 0);
+        SwitchUnit feeder = cell(w, BUS_A, BUS_B, false);
+        feeder.setRelays(List.of(new RelaySetting(RelaySetting.Kind.OVERCURRENT, RelayGeneration.A1_ELECTROMECHANICAL, 50, 0.05)));
+        MotorUnit motor = grid(w).motor(device(w, "electric_motor"));
+        motor.setNodes(BUS_B);
+        motor.setContactor(true);
+        run(w, 25);
+        feeder.operate(true);
+        int ticks = 0, rebuilds = grid(w).rebuilds();
+        while (feeder.closed() || feeder.breakerState() != BreakerState.OPEN) {
+            if (ticks % 4 == 3) grid(w).connector(device(w, "wire_connector_lv"), false).setNodes(5000 + ticks);
+            tick(w);
+            assertThat(++ticks).isLessThan(20 * 2);
+        }
+        assertThat(grid(w).rebuilds() - rebuilds).isGreaterThanOrEqualTo(3);
+        assertThat(feeder.protectionTrips()).isEqualTo(1);
+    }
+
     @Test
     void overheadSpanFeedsTheFarConsumerAndATouchingBlockGroundsIt() {
         SimulationWorld w = world();
