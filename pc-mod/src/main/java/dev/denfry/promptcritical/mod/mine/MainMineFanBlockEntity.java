@@ -3,6 +3,7 @@ package dev.denfry.promptcritical.mod.mine;
 import dev.denfry.promptcritical.mod.binding.SimBindings;
 import dev.denfry.promptcritical.mod.binding.SimLevelBinding;
 import dev.denfry.promptcritical.mod.blockentity.DeviceBlockEntity;
+import dev.denfry.promptcritical.mod.boiler.BoilerGeometry;
 import dev.denfry.promptcritical.mod.boiler.ShaftConsumer;
 import dev.denfry.promptcritical.mod.ops.OpsActions;
 import dev.denfry.promptcritical.mod.ops.OpsMachine;
@@ -39,7 +40,7 @@ public final class MainMineFanBlockEntity extends DeviceBlockEntity implements S
     public static final double SEIZED_FACTOR = 100;
 
     private final ShaftInput shaft = new ShaftInput();
-    private double powerW;
+    private double powerW, pressurePa, flowM3s;
     private boolean seized;
 
     public MainMineFanBlockEntity(BlockPos pos, BlockState state) {
@@ -54,6 +55,12 @@ public final class MainMineFanBlockEntity extends DeviceBlockEntity implements S
     /** Мощность на валу из решения сети вентиляции, Вт. */
     public void setPowerW(double w) {
         powerW = Math.max(0, w);
+    }
+
+    /** Давление (депрессия) и подача вентилятора из того же решения сети, Па и м³/с. */
+    public void setAir(double pa, double m3s) {
+        pressurePa = Double.isFinite(pa) ? pa : 0;
+        flowM3s = Double.isFinite(m3s) ? m3s : 0;
     }
 
     @Override
@@ -100,6 +107,8 @@ public final class MainMineFanBlockEntity extends DeviceBlockEntity implements S
         out[MinePanels.SHAFT_RPM10] = (int) Math.round(rpm * 10);
         out[MinePanels.FAN_RPM] = (int) Math.round(fanRpm(tick));
         out[MinePanels.FAN_KW10] = (int) Math.round(powerW / 100);
+        out[MinePanels.FAN_PA] = (int) Math.round(Math.max(0, pressurePa));
+        out[MinePanels.FAN_Q10] = (int) Math.round(Math.max(0, flowM3s) * 10);
         out[MinePanels.FLAGS] = rpm > 0 ? 1 << MinePanels.F_RUNNING : 0;
     }
 
@@ -138,7 +147,7 @@ public final class MainMineFanBlockEntity extends DeviceBlockEntity implements S
 
     @Override
     public Vec3 opsBearingPos() {
-        return Vec3.atCenterOf(worldPosition);
+        return BoilerGeometry.world(worldPosition, MainMineFanBlock.class.cast(getBlockState().getBlock()).facing(getBlockState()), 8, 8, 25); // редуктор
     }
 
     @Override

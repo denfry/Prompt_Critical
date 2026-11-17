@@ -292,9 +292,11 @@ public final class PanelArt {
         int lx = x + 5, rx = x + w - 9, top = y + 4, bottom = y + h - 6, mid = (top + bottom) / 2;
         double half = (bottom - top) / 2.0 - 2;
         double mmFull = e.max() / 9.80665;
-        for (int mm = -(int) mmFull; mm <= (int) mmFull; mm++) {
+        // по миллиметру на малых шкалах; на шкалах больше 40 мм — по 10 мм, иначе риски сливаются
+        int step = mmFull > 40 ? 10 : 1;
+        for (int mm = -(int) mmFull / step * step; mm <= (int) mmFull; mm += step) {
             int ty = mid - (int) Math.round(mm / mmFull * half);
-            int len = mm % 5 == 0 ? 4 : 2;
+            int len = mm % (5 * step) == 0 ? 4 : 2;
             g.fill(x + w / 2 - len / 2, ty, x + w / 2 - len / 2 + len, ty + 1, mm == 0 ? 0xFF1C1C1C : 0xFF6E665A);
         }
         double d = Math.max(-1.05, Math.min(1.05, draftPa / e.max())) * half / 2;

@@ -107,19 +107,7 @@ def support_arch():
 
 m("mine_support_arch", "mining", support_arch())
 
-# главный вентилятор ВОД-21 3×3×3: кожух с жалюзи, электродвигатель; крыльчатка — partial (ось Z)
-def main_fan(running=False):
-    return hcyl("housing", "z", 15, -15.5, 26, "p") + [
-        el("louver_face", [-12, -12, -16], [28, 28, -15.5], "louv", full=["north"]),
-        el("diffuser", [-10, -10, 26], [26, 26, 32], "p"),
-        el("motor", [-16, -16, 20], [0, -4, 32], "mb"),
-        el("foundation", [-16, -16, -16], [32, -14, 20], "c"),
-        lamp("lamp_run", 28, 26, -15.4, running, "lg", 1.25)]
-
-
-m("main_mine_fan", "mining", main_fan())
-m("main_mine_fan_running", "mining", main_fan(True))
-m("main_mine_fan/impeller", "mining", disc("hub", "z", 3, -10, 6, "st", 8) + impeller_z(-6, 2, 13), kind="partial")
+# главный вентилятор нарисован вручную в Blockbench: art/blockbench/mining/main_mine_fan.author.js
 
 
 # вентиляционная дверь 1×2×1: дощатая с резиной / стальной регулятор с окном

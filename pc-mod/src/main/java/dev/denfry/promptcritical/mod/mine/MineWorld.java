@@ -353,6 +353,7 @@ public final class MineWorld {
             BlockState st = level.getBlockState(p);
             if (!st.is(PcBlocks.MAIN_MINE_FAN.get()) || !(level.getBlockEntity(p) instanceof MainMineFanBlockEntity fan)) continue;
             fan.setPowerW(v.fanPowerW(f));                           // по прошлому решению: N = hQ/η при старой скорости
+            fan.setAir(v.fanPressurePa(f), v.fanFlowM3s(f));
             double rpm = fan.fanRpm(tick);
             v.setFanSpeed(f, rpm);
             boolean on = rpm > 0;

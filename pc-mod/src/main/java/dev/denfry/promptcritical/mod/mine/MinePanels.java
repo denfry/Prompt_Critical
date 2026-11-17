@@ -7,6 +7,7 @@ import static dev.denfry.promptcritical.mod.panel.PanelText.RUNNING;
 import static dev.denfry.promptcritical.mod.panel.PanelText.SHAFT;
 import static dev.denfry.promptcritical.mod.panel.PanelText.SHAFT_TIP;
 
+import dev.denfry.promptcritical.mod.PromptCritical;
 import dev.denfry.promptcritical.mod.panel.PanelLayout;
 import dev.denfry.promptcritical.mod.panel.PanelLayout.LampColor;
 import dev.denfry.promptcritical.mod.panel.PanelText;
@@ -23,7 +24,7 @@ public final class MinePanels {
     public static final int F_RUNNING = 0, F_ACID = 1, F_DRY = 2;
     /** Кнопка толчка у вентилятора и насоса (проверка вращения, 13 §13.6.6). */
     public static final int BUTTON_BUMP = 0;
-    public static final int FAN_RPM = 2, FAN_KW10 = 3, FAN_CHANNELS = 4;
+    public static final int FAN_RPM = 2, FAN_KW10 = 3, FAN_PA = 4, FAN_Q10 = 5, FAN_CHANNELS = 6;
     public static final int DEGAS_CAPTURE_PERMIL = 2, DEGAS_KW10 = 3, DEGAS_CHANNELS = 4;
     public static final int PUMP_FLOW_M3H10 = 2, PUMP_HEAD_M = 3, PUMP_KW10 = 4, PUMP_CHANNELS = 5;
 
@@ -33,7 +34,10 @@ public final class MinePanels {
     public static final int DF_READY = 0, DF_ALARM = 1, DF_EXPLOSION = 2, DF_FLOODED = 3, DF_ACID = 4, DF_SUMP_SMALL = 5;
 
     private static final Tr IMPELLER = PanelText.tr("fan.impeller", "Impeller", "Крыльчатка"),
-            FAN_STATUS = PanelText.tr("fan.status", "Shaft power %s kW · gear ×%s", "Мощность на валу %s кВт · редуктор ×%s"),
+            FAN_STATUS = PanelText.tr("fan.status", "Flow %s m³/s · shaft %s kW · gear ×%s", "Подача %s м³/с · вал %s кВт · редуктор ×%s"),
+            DEPRESSION = PanelText.tr("fan.depression", "Depression", "Депрессия"),
+            DEPRESSION_TIP = PanelText.tr("fan.depression_tip", "Fan pressure %s Pa (%s mm w.g.) across the fan drift",
+                    "Давление вентилятора %s Па (%s мм вод. ст.) на канале"),
             CAPTURE = PanelText.tr("degas.capture", "Capture", "Каптаж"),
             DEGAS_STATUS = PanelText.tr("degas.status", "Pump power %s kW", "Мощность насоса %s кВт"),
             FLOW = PanelText.tr("pump.flow", "Flow", "Подача"),
@@ -66,12 +70,17 @@ public final class MinePanels {
             EXPLOSIONS = PanelText.tr("agz.explosions", "Explosions: %s", "Взрывов: %s"),
             NO_MINE = PanelText.tr("agz.no_mine", "No mine workings found next to the cabinet", "Рядом со шкафом нет выработок шахты");
 
-    public static final PanelLayout FAN = PanelLayout.builder("main_mine_fan", 176, 100, FAN_CHANNELS)
+    /** Фон — art/blockbench/mining/main_mine_fan.author.js ({@code guiFan}): кольца за приборами, ниша тягомера. */
+    public static final PanelLayout FAN = PanelLayout.builder("main_mine_fan", 208, 108, FAN_CHANNELS)
+            .art(PromptCritical.id("textures/gui/panel/main_mine_fan.png"))
             .dial(8, 24, false, SHAFT_RPM10, 10, 256, Double.NaN, 0, RPM.get(), SHAFT.get(), shaftTip())
             .dial(64, 24, false, FAN_RPM, 1, 400, Double.NaN, 0, RPM.get(), IMPELLER.get(), null)
-            .lamp(122, 26, FLAGS, F_RUNNING, LampColor.GREEN, RUNNING.get())
-            .button(122, 60, 46, BUTTON_BUMP, BUMP.get(), BUMP_TIP.get())
-            .readout(8, 84, 160, v -> FAN_STATUS.get(v.num(FAN_KW10, 10, 1), PanelText.num(MainMineFanBlockEntity.GEAR, 2)), null)
+            .utube(122, 24, 56, FAN_PA, 1, 1.1 * MineScanner.MAIN_FAN.h0Pa(), DEPRESSION.get(),
+                    v -> DEPRESSION_TIP.get(v.raw(FAN_PA), PanelText.num(v.raw(FAN_PA) / 9.80665, 0)))
+            .lamp(156, 26, FLAGS, F_RUNNING, LampColor.GREEN, RUNNING.get())
+            .button(156, 60, 44, BUTTON_BUMP, BUMP.get(), BUMP_TIP.get())
+            .readout(8, 92, 192, v -> FAN_STATUS.get(v.num(FAN_Q10, 10, 1), v.num(FAN_KW10, 10, 1),
+                    PanelText.num(MainMineFanBlockEntity.GEAR, 2)), null)
             .noInventory().build();
 
     public static final PanelLayout DEGAS = PanelLayout.builder("degasification_pump", 176, 100, DEGAS_CHANNELS)
