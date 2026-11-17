@@ -79,14 +79,14 @@ class PowerGridValidationTest {
             terminal = g.addBus(VoltageClass.MV_10_5, "gen");
             BusId inf = g.addBus(VoltageClass.HV_110, "infinite");
             g.addBranch(new Branch.Line(terminal, inf, 0, 0.25 - 1e-5, 0, 1000, null, 1));
-            // классическая модель: E' постоянна (T'_d0 → ∞, ручное возбуждение), без демпфирования
-            gen = new SynchronousMachine(new MachineParams(100e6, 10.5e3, 1, 1.8, 0.25, 0.18, 1e9, 4, 0, 0, 0.98),
+            // классическая модель: E' постоянна (T'_d0, T'_q0 → ∞, x_q = x'_d, ручное возбуждение), без демпфирования
+            gen = new SynchronousMachine(new MachineParams(100e6, 10.5e3, 1, 1.8, 0.25, 0.25, 0.18, 1e9, 1e9, 4, 0, 0, 0.98),
                     ExciterSpec.manual(), PrimeMover.Governed.constantPower(100e6));
             gen.setLoadTarget(80e6);
             gen.setVoltageReference(0.97890); // даёт E' = 1 при P = 0,8 и X_Σ = 0,5
             g.addMachine(gen, terminal);
             SynchronousMachine source = new SynchronousMachine(
-                    new MachineParams(1e9, 110e3, 1, 1e-4, 1e-4, 1e-4, 1e9, 1e7, 0, 0, 1), ExciterSpec.manual(),
+                    new MachineParams(1e9, 110e3, 1, 1e-4, 1e-4, 1e-4, 1e-4, 1e9, 1e9, 1e7, 0, 0, 1), ExciterSpec.manual(),
                     new PrimeMover.CreateShaft(1, 1e9));
             g.addMachine(source, inf); // самая мощная машина — балансирующая, V = 1∠0
             g.initializePowerFlow();

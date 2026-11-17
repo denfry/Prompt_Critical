@@ -184,6 +184,45 @@ class GridMachinesTest {
         assertThat(r.m.reactivePowerVar()).isCloseTo(q, within(0.05e6));
     }
 
+    /**
+     * Установившийся режим неявнополюсной машины — по векторной диаграмме с x_q, а не с x'_d
+     * (Kundur §3.6): ось q по E_Q = V + j·x_q·I, E_fd = |E_Q| + (x_d − x_q)·i_d. При номинале
+     * (V = 1, I = 1, cos φ = 0,8) угол нагрузки ≈ 34°, а не ≈ 10°, как давала машина с x_q = x'_d.
+     */
+    @Test
+    void steadyStateFollowsThePhasorDiagramWithXq() {
+        GenRig r = new GenRig(ExciterSpec.thyristor());
+        r.m.setExcitationMode(ExcitationMode.REACTIVE);
+        r.m.setReactiveTarget(28e6); // у границы диаграммы мощности, cos φ ≈ 0,82
+        r.seconds(60);
+        MachineParams mp = r.m.params();
+        int b = r.g.mBus[1];
+        double vr = r.g.vRe[b], vi = r.g.vIm[b], v2 = vr * vr + vi * vi;
+        double p = r.m.electricalPowerW() / 50e6, q = r.m.reactivePowerVar() / 50e6;
+        assertThat(p).isCloseTo(0.8, within(0.01));
+        assertThat(q).isCloseTo(0.56, within(0.02));
+        // ток в о.е. машины, I = conj(S/V)
+        double ir = (p * vr + q * vi) / v2, ii = (p * vi - q * vr) / v2;
+        double qr = vr - mp.xq() * ii, qi = vi + mp.xq() * ir, delta = Math.atan2(qi, qr);
+        double id = ir * Math.sin(delta) - ii * Math.cos(delta);
+        double efd = Math.hypot(qr, qi) + (mp.xd() - mp.xq()) * id;
+        assertThat(r.m.fieldVoltagePu()).isCloseTo(efd, within(0.01 * efd));
+        double loadAngle = Math.toDegrees(r.m.deltaRad() - Math.atan2(vi, vr));
+        assertThat(loadAngle).isCloseTo(Math.toDegrees(delta - Math.atan2(vi, vr)), within(0.5));
+        assertThat(loadAngle).isBetween(30.0, 38.0);
+    }
+
+    /** Без возбуждения неявнополюсная машина не держит нагрузку: реактивного момента у неё почти нет. */
+    @Test
+    void loadedRoundRotorMachineWithoutFieldSlipsPoles() {
+        GenRig r = new GenRig(ExciterSpec.thyristor());
+        r.seconds(2);
+        r.m.setExcitationMode(ExcitationMode.MANUAL);
+        r.m.setFieldVoltage(0); // автомат гашения поля отключён
+        r.seconds(20);
+        assertThat(r.m.poleSlips()).isPositive();
+    }
+
     @Test
     void overExcitationLimiterActsAfterInverseTime() {
         GenRig r = new GenRig(ExciterSpec.thyristor());

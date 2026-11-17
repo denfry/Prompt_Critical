@@ -33,7 +33,12 @@ public final class PowerGrid {
     static final double K_UEL = 0.1;
     /** Внешний контур Q и cos φ: dV_ref/dt = K·ΔQ; τ ≈ 5 с при x_внеш = 0,1 о.е. (§7.3.3). */
     static final double REACTIVE_LOOP_GAIN = 0.1 / 5;
-    static final double UEL_GAIN = 0.2;
+    /**
+     * UEL — ПИ-звено на входе АРВ: K_p·max(0, Q_min − Q) перехватывает возбудитель со скоростью
+     * самого АРВ (иначе быстрый тиристорный возбудитель уводит машину за предел устойчивости раньше,
+     * чем сработает интегратор), K_i убирает остаточную ошибку.
+     */
+    static final double UEL_GAIN = 0.2, UEL_KP = 0.5;
     /** Уставки внешнего контура Q держат V_t в 0,9–1,1 ном. (§7.17.1). */
     static final double VT_MIN = 0.9, VT_MAX = 1.1;
     /**
@@ -57,7 +62,7 @@ public final class PowerGrid {
     /** Ниже этой скорости ЭДС машины падает пропорционально ω (поток постоянен, E = ω·ψ). */
     private static final double EMF_KNEE_SPEED = 0.95;
     /** Длина массивов {@link #exportMachine}, {@link #exportBranch}, {@link #exportMotor}. */
-    public static final int MACHINE_STATE = 17, BRANCH_STATE = 10, MOTOR_STATE = 4;
+    public static final int MACHINE_STATE = 18, BRANCH_STATE = 10, MOTOR_STATE = 4;
     private static final int EVENT_CAPACITY = 256, EVENT_VALUES = 7;
     private static final int EV_TOPOLOGY = 0, EV_DEENERGIZED = 1, EV_POLE_SLIP = 2, EV_BREAKER = 3, EV_SYNC = 4;
     private static final int EV_RELAY = 5, EV_GROUND = 6, EV_LOAD = 7, EV_CONDUCTOR = 8, EV_BREAKDOWN = 9;
@@ -129,12 +134,12 @@ public final class PowerGrid {
     double[] mS = new double[0], mXd = new double[0], mXdP = new double[0], mXdPP = new double[0], mYgen = new double[0];
     double[] ifNom = new double[0], qRef = new double[0], qPerP = new double[0], oelAcc = new double[0];
     double[] uelBias = new double[0], shaftDmg = new double[0], statorDmg = new double[0];
-    double[] mTd0 = new double[0], mH = new double[0], mD = new double[0];
+    double[] mTd0 = new double[0], mTq0 = new double[0], mXq = new double[0], mH = new double[0], mD = new double[0];
     double[] exK = new double[0], exTe = new double[0], exR = new double[0], exTb = new double[0];
     double[] exMin = new double[0], exMax = new double[0];
     double[] gvRated = new double[0], gvDroop = new double[0], gvTs = new double[0], gvOpen = new double[0];
     double[] gvClose = new double[0], gvFast = new double[0], gvMin = new double[0];
-    double[] delta = new double[0], omega = new double[0], eq = new double[0], efd = new double[0];
+    double[] delta = new double[0], omega = new double[0], eq = new double[0], ed = new double[0], efd = new double[0];
     double[] xLL = new double[0], vref = new double[0], efdManual = new double[0];
     double[] valve = new double[0], valve0 = new double[0], pm = new double[0];
     double[] pe = new double[0], qe = new double[0], ioRe = new double[0], ioIm = new double[0], vt = new double[0];
@@ -331,6 +336,8 @@ public final class PowerGrid {
         mXdPP[i] = p.xdPP();
         mYgen[i] = mS[i] / p.xdP(); // 1/x'_d на S_b
         mTd0[i] = p.td0PS();
+        mTq0[i] = p.tq0PS();
+        mXq[i] = p.xq();
         mH[i] = p.hS();
         mD[i] = p.dPu();
         ifNom[i] = p.ratedFieldPu();
@@ -358,6 +365,7 @@ public final class PowerGrid {
         }
         omega[i] = 1;
         eq[i] = 1;
+        ed[i] = 0;
         efd[i] = 1;
         vSetPu[i] = 1;
         m.bind(this, i);
@@ -853,7 +861,7 @@ public final class PowerGrid {
 
     /**
      * Динамическое состояние машины ({@link #MACHINE_STATE} чисел): угол, скорость, поток, возбуждение и АРВ,
-     * уставки, повреждения — для пересборки сети мира и сохранения.
+     * уставки, повреждения — для пересборки сети мира и сохранения. E'_d — последним, [17].
      */
     public void exportMachine(MachineId id, double[] out) {
         int i = machineIndex(id);
@@ -874,9 +882,10 @@ public final class PowerGrid {
         out[14] = sheared[i] ? 1 : 0;
         out[15] = excMode[i].ordinal();
         out[16] = vSetPu[i];
+        out[17] = ed[i];
     }
 
-    /** Обратное {@link #exportMachine}; до {@link #startCold}. */
+    /** Обратное {@link #exportMachine}; до {@link #startCold}. Состояние из 17 чисел (до E'_d) — с E'_d = 0. */
     public void importMachine(MachineId id, double[] in) {
         int i = machineIndex(id);
         delta[i] = in[0];
@@ -896,6 +905,7 @@ public final class PowerGrid {
         sheared[i] = in[14] != 0;
         excMode[i] = EXCITATION_MODES[(int) in[15]];
         vSetPu[i] = in[16];
+        ed[i] = in.length > 17 ? in[17] : 0;
     }
 
     /**
@@ -969,12 +979,15 @@ public final class PowerGrid {
         double vr = vRe[b], vi = vIm[b], v2 = vr * vr + vi * vi;
         double p = pe[i], q = qe[i];
         double ir = (p * vr + q * vi) / v2, ii = (p * vi - q * vr) / v2;
-        double x = 1 / mYgen[i];
+        double x = 1 / mYgen[i], xq = mXq[i] / mS[i];
+        // ось q — по E_Q = V + j·x_q·I; ЭДС за x'_d раскладывается на E'_q и E'_d = (x_q − x'_d)·i_q
+        delta[i] = Math.atan2(vi + xq * ir, vr - xq * ii);
+        double s = Math.sin(delta[i]), c = Math.cos(delta[i]);
         double er = vr - x * ii, ei = vi + x * ir;
-        delta[i] = Math.atan2(ei, er);
-        eq[i] = Math.hypot(er, ei);
+        eq[i] = er * c + ei * s;
+        ed[i] = er * s - ei * c;
         omega[i] = 1;
-        double id = (ir * Math.sin(delta[i]) - ii * Math.cos(delta[i])) / mS[i];
+        double id = (ir * s - ii * c) / mS[i];
         efd[i] = eq[i] + (mXd[i] - mXdP[i]) * id;
         vt[i] = Math.sqrt(v2);
         xLL[i] = efd[i] / exK[i];
@@ -1124,7 +1137,7 @@ public final class PowerGrid {
                 gIm[b] = 0;
             }
             for (int i : isl.machines) {
-                double e = emf(i), er = e * Math.cos(delta[i]), ei = e * Math.sin(delta[i]);
+                double er = emfRe(i), ei = emfIm(i);
                 gRe[mBus[i]] += ei * mYgen[i]; // E'/(j x') = −j·E'·y
                 gIm[mBus[i]] -= er * mYgen[i];
             }
@@ -1159,7 +1172,7 @@ public final class PowerGrid {
             if (!isl.solvable()) continue;
             for (int i : isl.machines) {
                 int b = mBus[i];
-                double e = emf(i), er = e * Math.cos(delta[i]), ei = e * Math.sin(delta[i]);
+                double er = emfRe(i), ei = emfIm(i);
                 double y = mYgen[i];
                 double ir = (ei - vIm[b]) * y, ii = -(er - vRe[b]) * y; // (E' − V)/(j x')
                 ioRe[i] = ir;
@@ -1171,10 +1184,21 @@ public final class PowerGrid {
         }
     }
 
-    /** ЭДС за x'_d: E'_q, а на выбеге и при разгоне ниже {@link #EMF_KNEE_SPEED} — пропорционально скорости. */
-    private double emf(int i) {
+    /**
+     * ЭДС за x'_d в осях сети: (E'_d + j·E'_q)·e^{j(δ − π/2)}; на выбеге и при разгоне ниже
+     * {@link #EMF_KNEE_SPEED} — пропорционально скорости.
+     */
+    private double emfRe(int i) {
+        return emfScale(i) * (ed[i] * Math.sin(delta[i]) + eq[i] * Math.cos(delta[i]));
+    }
+
+    private double emfIm(int i) {
+        return emfScale(i) * (eq[i] * Math.sin(delta[i]) - ed[i] * Math.cos(delta[i]));
+    }
+
+    private double emfScale(int i) {
         double w = omega[i];
-        return w >= EMF_KNEE_SPEED ? eq[i] : eq[i] * Math.max(0, w) / EMF_KNEE_SPEED;
+        return w >= EMF_KNEE_SPEED ? 1 : Math.max(0, w) / EMF_KNEE_SPEED;
     }
 
     /** Токи нагрузок по напряжению итерации; ниже 0,7 о.е. — как сопротивление (§7.1.3). */
@@ -1312,9 +1336,12 @@ public final class PowerGrid {
         delta[i] += h * ws * (omega[i] - 1);
 
         double s = Math.sin(delta[i]), c = Math.cos(delta[i]);
-        double id = (ioRe[i] * s - ioIm[i] * c) / mS[i];
+        double id = (ioRe[i] * s - ioIm[i] * c) / mS[i], iq = (ioRe[i] * c + ioIm[i] * s) / mS[i];
         double eqTarget = efd[i] - (mXd[i] - mXdP[i]) * id;
         eq[i] += (eqTarget - eq[i]) * (1 - Math.exp(-h / mTd0[i]));
+        // T'_q0·dE'_d/dt = −E'_d + (x_q − x'_q)·i_q, x'_q = x'_d
+        double edTarget = (mXq[i] - mXdP[i]) * iq;
+        ed[i] += (edTarget - ed[i]) * (1 - Math.exp(-h / mTq0[i]));
         exciter(i, h);
     }
 
@@ -1339,7 +1366,7 @@ public final class PowerGrid {
             if (!held) vref[i] += h * REACTIVE_LOOP_GAIN * dq;
         }
         uelBias[i] = Math.max(0, uelBias[i] + h * UEL_GAIN * (qMin - q));
-        double err = vref[i] - vt[i] + uelBias[i];
+        double err = vref[i] - vt[i] + uelBias[i] + UEL_KP * Math.max(0, qMin - q);
         double r = exR[i];
         double ll = r * err + (1 - r) * xLL[i];
         xLL[i] += (err - xLL[i]) * (1 - Math.exp(-h / exTb[i]));
@@ -2492,6 +2519,8 @@ public final class PowerGrid {
         statorDmg = grow(statorDmg, n);
         mYgen = grow(mYgen, n);
         mTd0 = grow(mTd0, n);
+        mTq0 = grow(mTq0, n);
+        mXq = grow(mXq, n);
         mH = grow(mH, n);
         mD = grow(mD, n);
         exK = grow(exK, n);
@@ -2510,6 +2539,7 @@ public final class PowerGrid {
         delta = grow(delta, n);
         omega = grow(omega, n);
         eq = grow(eq, n);
+        ed = grow(ed, n);
         efd = grow(efd, n);
         xLL = grow(xLL, n);
         vref = grow(vref, n);

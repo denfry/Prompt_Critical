@@ -15,7 +15,7 @@ class GridSynchronizationTest {
 
     /** Источник бесконечной мощности: x ≈ 0, H огромна, ручное возбуждение. */
     static SynchronousMachine infiniteSource(double vRatedV) {
-        return new SynchronousMachine(new MachineParams(1e9, vRatedV, 1, 1e-4, 1e-4, 1e-4, 1e9, 1e7, 0, 0, 1),
+        return new SynchronousMachine(new MachineParams(1e9, vRatedV, 1, 1e-4, 1e-4, 1e-4, 1e-4, 1e9, 1e9, 1e7, 0, 0, 1),
                 ExciterSpec.manual(), new PrimeMover.CreateShaft(1, 1e9));
     }
 

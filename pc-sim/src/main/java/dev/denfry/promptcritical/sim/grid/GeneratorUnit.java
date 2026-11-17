@@ -339,6 +339,9 @@ public final class GeneratorUnit extends GridUnit {
         vrefPu = in.getDouble("vref");
         speedPu = in.getDouble("speed");
         carried = in.has("machine") ? in.getDoubles("machine") : null;
+        // сохранение до двухосной модели — 17 чисел без E'_d; E'_d = 0, машина наберёт его за T'_q0
+        if (carried != null && carried.length == PowerGrid.MACHINE_STATE - 1)
+            carried = java.util.Arrays.copyOf(carried, PowerGrid.MACHINE_STATE);
         if (carried != null && carried.length != PowerGrid.MACHINE_STATE) carried = null;
     }
 }
