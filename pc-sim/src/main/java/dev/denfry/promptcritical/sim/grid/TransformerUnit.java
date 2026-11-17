@@ -114,6 +114,6 @@ public final class TransformerUnit extends GridUnit {
         loadCommon(in);
         tap = in.getInt("tap");
         carried = in.has("branch") ? in.getDoubles("branch") : null;
-        if (carried != null && carried.length != PowerGrid.BRANCH_STATE) carried = null;
+        carried = PowerGrid.branchStateOf(carried);
     }
 }

@@ -26,6 +26,19 @@ public final class RelayState {
         this.zones = new double[zones];
     }
 
+    /**
+     * Память реле из прежней сети при её пересборке: выдержка, ступени, цикл АПВ, выход, защёлка АЧР. Смещение
+     * уставки задаётся заново при установке.
+     */
+    void carryFrom(RelayState o) {
+        timer = o.timer;
+        if (o.zones.length == zones.length) System.arraycopy(o.zones, 0, zones, 0, zones.length);
+        phase = o.phase;
+        count = o.count;
+        output = o.output;
+        latched = o.latched;
+    }
+
     /** Выход реле (команда отключения, у АЧР — нагрузка отключена) на последнем тике. */
     public boolean operated() {
         return output;

@@ -330,6 +330,6 @@ public final class SwitchUnit extends GridUnit {
         energyReverseJ = in.getDouble("energy_rev_j");
         trips = in.optInt("trips", 0);
         carried = in.has("branch") ? in.getDoubles("branch") : null;
-        if (carried != null && carried.length != PowerGrid.BRANCH_STATE) carried = null;
+        carried = PowerGrid.branchStateOf(carried);
     }
 }
