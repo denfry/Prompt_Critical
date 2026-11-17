@@ -268,7 +268,8 @@ public final class MineHoistBlockEntity extends DeviceBlockEntity implements Sha
         int people = 0, cargo = 0;
         for (Entity e : level.getEntities((Entity) null, box, e -> e instanceof LivingEntity || e instanceof AbstractMinecart || e instanceof ItemEntity)) {
             if (e instanceof Player || e instanceof LivingEntity) {
-                kg += PERSON_KG;
+                // игрок — со своей массой тела и снаряжением; прочие живые — опорный человек
+                kg += e instanceof Player pl ? dev.denfry.promptcritical.mod.body.BodyService.loadedMassKg(pl) : PERSON_KG;
                 people++;
             } else if (e instanceof AbstractMinecart) {
                 kg += CART_KG;

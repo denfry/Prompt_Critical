@@ -127,6 +127,7 @@ public final class ServerConfig {
     public static final ModConfigSpec.BooleanValue CONTENT_HANDBOOK_ALL_UNLOCKED;
     public static final ModConfigSpec.BooleanValue CONTENT_HINTS_BY_DIFFICULTY;
     public static final ModConfigSpec.IntValue ENVIRONMENT_DAYS_PER_SEASON;
+    public static final ModConfigSpec.BooleanValue BODY_ELECTRIC_SHOCK;
 
     static {
         var b = new ModConfigSpec.Builder();
@@ -365,6 +366,11 @@ public final class ServerConfig {
         b.push("environment");
         ENVIRONMENT_DAYS_PER_SEASON = b.comment("Game days per season of the built-in calendar (24 = Serene Seasons default)")
                 .defineInRange("days_per_season", 24, 1, 1000);
+        b.pop();
+
+        b.push("body");
+        BODY_ELECTRIC_SHOCK = b.comment("A player touching a live bare busbar while earthed gets an electric shock (IEC 60479-1, Dalziel)")
+                .define("electric_shock", true);
         b.pop();
 
         b.push("machining");

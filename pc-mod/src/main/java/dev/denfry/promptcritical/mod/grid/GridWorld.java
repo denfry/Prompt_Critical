@@ -3,6 +3,7 @@ package dev.denfry.promptcritical.mod.grid;
 import dev.denfry.promptcritical.mod.environment.EnvironmentService;
 import dev.denfry.promptcritical.sim.environment.Environment;
 import dev.denfry.promptcritical.sim.grid.ConductorSpec;
+import dev.denfry.promptcritical.mod.registry.PcBlocks;
 import dev.denfry.promptcritical.mod.binding.SimLevelBinding;
 import dev.denfry.promptcritical.sim.grid.GridSubsystem;
 import dev.denfry.promptcritical.sim.grid.GridUnit;
@@ -48,6 +49,8 @@ public final class GridWorld {
     private final Set<BlockPos> devices = new TreeSet<>();
     private final List<SpanView> spans = new ArrayList<>();
     private final Set<Long> touchDirty = new HashSet<>();
+    /** Голые шины, подключённые к устройствам: позиция → узел сети (для поражения током). */
+    private final Map<Long, Long> busbarNodes = new HashMap<>();
     private boolean dirty = true;
     private long lastScan = Long.MIN_VALUE / 2;
     private int scans;
@@ -66,6 +69,18 @@ public final class GridWorld {
 
     private GridSubsystem grid() {
         return binding.world().subsystem(GridSubsystem.class);
+    }
+
+    /** Есть ли в мире голые шины под сетью: без них проверка касаний не нужна. */
+    public boolean hasBusbars() {
+        return !busbarNodes.isEmpty();
+    }
+
+    /** Линейное напряжение голой шины в {@code pos}, В; 0 — не шина, не подключена или без напряжения. */
+    public double busbarVoltageV(BlockPos pos) {
+        Long node = busbarNodes.get(pos.asLong());
+        GridSubsystem g = node == null ? null : grid();
+        return g == null ? 0 : g.voltageV(node);
     }
 
     public void register(BlockPos controller) {
@@ -149,6 +164,10 @@ public final class GridWorld {
             long[] nodes = new long[ids.length];
             for (int t = 0; t < ids.length; t++) nodes[t] = uf.key(ids[t]);
             if (nodes.length == u.terminals()) u.setNodes(nodes);
+        }
+        busbarNodes.clear();
+        for (Map.Entry<Long, Integer> c : cableSet.entrySet()) {
+            if (level.getBlockState(BlockPos.of(c.getKey())).is(PcBlocks.BUSBAR.get())) busbarNodes.put(c.getKey(), uf.key(c.getValue()));
         }
         refreshSpans(g);
     }

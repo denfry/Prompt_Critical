@@ -344,6 +344,37 @@ public final class PcLanguageProvider extends LanguageProvider {
         MISC.put("promptcritical.mine.self_rescuer.on", new String[] {"Self-rescuer on: breathing from the apparatus",
                 "Самоспасатель включён: дыхание из аппарата"});
         MISC.put("promptcritical.mine.self_rescuer.spent", new String[] {"Self-rescuer spent", "Самоспасатель отработал"});
+        MISC.put("promptcritical.body.title_button", new String[] {"Character body", "Тело персонажа"});
+        MISC.put("promptcritical.body.title", new String[] {"Character body", "Тело персонажа"});
+        MISC.put("promptcritical.body.hint_title", new String[] {"Saved for every new world; you confirm it on first join",
+                "Сохранится для новых миров; при первом входе вы его подтвердите"});
+        MISC.put("promptcritical.body.hint_world", new String[] {"Chosen once per world: only an operator can reset it",
+                "Выбирается один раз на мир: сбросить может только оператор"});
+        MISC.put("promptcritical.body.confirm", new String[] {"Confirm", "Подтвердить"});
+        MISC.put("promptcritical.body.sex", new String[] {"Sex", "Пол"});
+        MISC.put("promptcritical.body.sex.male", new String[] {"Male", "Мужской"});
+        MISC.put("promptcritical.body.sex.female", new String[] {"Female", "Женский"});
+        MISC.put("promptcritical.body.height", new String[] {"Height: %s cm", "Рост: %s см"});
+        MISC.put("promptcritical.body.mass", new String[] {"Mass: %s kg", "Масса: %s кг"});
+        MISC.put("promptcritical.body.age", new String[] {"Age: %s", "Возраст: %s"});
+        MISC.put("promptcritical.body.info.bmi", new String[] {"Body mass index: %s", "Индекс массы тела: %s"});
+        MISC.put("promptcritical.body.info.blood", new String[] {"Blood volume: %s L", "Объём крови: %s л"});
+        MISC.put("promptcritical.body.info.bmr", new String[] {"Basal metabolism: %s W", "Основной обмен: %s Вт"});
+        MISC.put("promptcritical.body.info.hitbox", new String[] {"Hitbox height: %s blocks", "Высота хитбокса: %s блока"});
+        MISC.put("promptcritical.body.info.stride", new String[] {"Walking speed: %s %%", "Скорость шага: %s %%"});
+        MISC.put("promptcritical.body.info.gas_rest", new String[] {"Mine gas at rest: ×%s", "Газ в шахте стоя: ×%s"});
+        MISC.put("promptcritical.body.info.gas_sprint", new String[] {"Mine gas running: ×%s", "Газ в шахте на бегу: ×%s"});
+        MISC.put("promptcritical.body.info.knockback", new String[] {"Knockback resistance: %s %%",
+                "Сопротивление отбрасыванию: %s %%"});
+        MISC.put("promptcritical.body.info.cage", new String[] {"In the hoist cage: %s kg", "В клети подъёма: %s кг"});
+        MISC.put("promptcritical.body.info.let_go", new String[] {"Let-go current: %s mA", "Ток отпускания: %s мА"});
+        MISC.put("promptcritical.body.shock.felt", new String[] {"Electric shock: %s mA through the body",
+                "Бьёт током: %s мА через тело"});
+        MISC.put("promptcritical.body.shock.held", new String[] {"%s mA: the hand will not let go!",
+                "%s мА: руку свело, не отпустить!"});
+        MISC.put("death.attack.promptcritical.electrocution", new String[] {"%1$s was electrocuted", "%1$s убит током"});
+        MISC.put("death.attack.promptcritical.electrocution.player", new String[] {"%1$s was electrocuted while fighting %2$s",
+                "%1$s убит током в схватке с %2$s"});
         MISC.put("promptcritical.mine.duster.done", new String[] {"Stone dust applied: inert share %s %%",
                 "Выработка осланцована: инертная доля %s %%"});
         MISC.put("promptcritical.mine.duster.empty", new String[] {"No stone dust in the inventory", "Нет инертной пыли"});

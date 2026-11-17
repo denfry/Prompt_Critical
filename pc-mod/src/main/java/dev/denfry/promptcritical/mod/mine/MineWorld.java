@@ -22,6 +22,8 @@ import dev.denfry.promptcritical.sim.core.GridPos;
 import dev.denfry.promptcritical.sim.core.SimId;
 import dev.denfry.promptcritical.sim.mining.ExposureState;
 import dev.denfry.promptcritical.sim.mining.GasExposure;
+import dev.denfry.promptcritical.sim.body.Physiology;
+import dev.denfry.promptcritical.mod.body.BodyService;
 import dev.denfry.promptcritical.sim.mining.IgnitionSource;
 import dev.denfry.promptcritical.sim.mining.LampState;
 import dev.denfry.promptcritical.sim.mining.MethaneField;
@@ -69,6 +71,7 @@ import net.minecraft.world.level.block.Blocks;
 import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.level.block.state.properties.BlockStateProperties;
 import net.minecraft.world.level.levelgen.structure.BoundingBox;
+import net.minecraft.world.phys.Vec3;
 import net.neoforged.neoforge.common.Tags;
 import org.jetbrains.annotations.Nullable;
 
@@ -103,6 +106,8 @@ public final class MineWorld {
     private static final class Breather {
         final GasExposure exposure;
         long isolatedUntil;
+        /** Позиция на прошлом вдохе (1 Гц): скорость ходьбы видна серверу только по смещению. */
+        Vec3 last;
 
         Breather(double ratio) {
             exposure = GasExposure.human(ratio);
@@ -444,12 +449,25 @@ public final class MineWorld {
                 b.isolatedUntil = 0;
                 p.displayClientMessage(Component.translatable("promptcritical.mine.self_rescuer.spent").withStyle(ChatFormatting.GOLD), true);
             }
+            Physiology.Activity activity = activity(p, b.last);
+            b.last = p.position();
             if (!p.isCreative()) {
-                b.exposure.step(1.0, isolated ? 0 : co, isolated ? MineGas.O2.freshAir : o2);
+                // время отравления идёт с «физиологическими часами» тела: бег и лестница — в разы быстрее
+                double clock = Physiology.gasClock(BodyService.profile(p), activity);
+                b.exposure.step(clock, isolated ? 0 : co, isolated ? MineGas.O2.freshAir : o2);
                 applyExposure(p, b);
             }
             if (holding(p, PcItems.FLAME_SAFETY_LAMP.get())) lamp(p, n, node, o2);
         }
+    }
+
+    /** Нагрузка игрока за прошедшую секунду: плывёт, лезет, бежит, идёт (≥ 1 м/с по горизонтали) или стоит. */
+    static Physiology.Activity activity(ServerPlayer p, Vec3 last) {
+        if (p.isSwimming() || p.isUnderWater()) return Physiology.Activity.SWIM;
+        if (p.onClimbable() && last != null && Math.abs(p.getY() - last.y) > 0.5) return Physiology.Activity.CLIMB;
+        if (p.isSprinting()) return Physiology.Activity.SPRINT;
+        if (last != null && Math.hypot(p.getX() - last.x, p.getZ() - last.z) >= 1.0) return Physiology.Activity.WALK;
+        return Physiology.Activity.REST;
     }
 
     private void applyExposure(ServerPlayer p, Breather b) {
