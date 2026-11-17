@@ -32,7 +32,7 @@ public record LoadModel(double p0W, double q0Var, double aZ, double aI, double a
 
     /**
      * Нагрузка вида {@code kind} с ZIP, cos φ и D_f по таблице §7.6.1. Двигатели — отдельная модель
-     * ({@link InductionMotorSpec}), дуга ЭДП (§7.6.5) пока не моделируется.
+     * ({@link InductionMotorSpec}), дуга ЭДП (§7.6.5) — {@link ArcFurnaceUnit}.
      */
     public static LoadModel typical(LoadKind kind, double pW) {
         return switch (kind) {
@@ -44,7 +44,8 @@ public record LoadModel(double p0W, double q0Var, double aZ, double aI, double a
             case FE_IMPORT -> new LoadModel(pW, 0, 0, 0, 1, 0, UflsStage.NONE, kind);
             // батарея конденсаторов: pW — номинальная реактивная мощность, отдаётся в сеть, Q ∝ v²
             case CAPACITOR -> new LoadModel(0, -pW, 1, 0, 0, 0, UflsStage.NONE, kind);
-            case ARC_FURNACE -> throw new UnsupportedOperationException("arc furnace load (§7.6.5) is not modelled yet");
+            // дуговая печь: мощность задаёт сама печь каждый тик (ArcFurnaceUnit), здесь — cos φ 0,8 без регулирующего эффекта
+            case ARC_FURNACE -> new LoadModel(pW, reactive(pW, 0.8), 0, 0, 1, 0, UflsStage.NONE, kind);
         };
     }
 

@@ -131,6 +131,7 @@ public final class PcLanguageProvider extends LanguageProvider {
         b("electric_motor", "Electric Motor", "Электродвигатель");
         b("station_battery", "Station Battery", "Аккумуляторная батарея");
         b("capacitor_bank", "Capacitor Bank", "Батарея конденсаторов");
+        b("electric_arc_furnace", "Electric Arc Furnace", "Дуговая сталеплавильная печь");
         b("busbar", "Busbar", "Шина");
         b("disconnector", "Disconnector", "Разъединитель");
         b("switchgear_cell", "Switchgear Cell 6 kV", "Ячейка КРУ 6 кВ");
@@ -384,6 +385,15 @@ public final class PcLanguageProvider extends LanguageProvider {
                 "Батарея 24 В: заряд %s %%, %s В без нагрузки, %s А"});
         MISC.put("message.promptcritical.capacitor_bank", new String[] {"Capacitor bank: %s of %s steps, %s kvar at 6.3 kV",
                 "Батарея конденсаторов: ступеней %s из %s, %s квар при 6,3 кВ"});
+        MISC.put("message.promptcritical.eaf.no_ladle", new String[] {"No ladle in front of the spout", "Перед носком печи нет ковша"});
+        MISC.put("message.promptcritical.eaf.tapped", new String[] {"Tapped %s kg of steel at %s °C", "Выпущено %s кг стали при %s °C"});
+        MISC.put("message.promptcritical.eaf.full", new String[] {"The furnace is full (6 t)", "Печь полна (6 т)"});
+        MISC.put("message.promptcritical.eaf.not_molten", new String[] {"Not all melted yet", "Ещё не всё расплавилось"});
+        MISC.put("message.promptcritical.eaf.empty", new String[] {"Charge steel scrap first", "Сначала загрузите стальной лом"});
+        MISC.put("message.promptcritical.eaf.arc_on", new String[] {"Arc struck · %s kg, %s %% molten, %s °C, %s MW",
+                "Дуга зажжена · %s кг, расплав %s %%, %s °C, %s МВт"});
+        MISC.put("message.promptcritical.eaf.arc_off", new String[] {"Electrodes raised · %s kg, %s %% molten, %s °C, %s MW",
+                "Электроды подняты · %s кг, расплав %s %%, %s °C, %s МВт"});
         MISC.put("promptcritical.mine.duster.done", new String[] {"Stone dust applied: inert share %s %%",
                 "Выработка осланцована: инертная доля %s %%"});
         MISC.put("promptcritical.mine.duster.empty", new String[] {"No stone dust in the inventory", "Нет инертной пыли"});

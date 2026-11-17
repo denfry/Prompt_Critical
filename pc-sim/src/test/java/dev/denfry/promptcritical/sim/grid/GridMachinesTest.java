@@ -264,7 +264,8 @@ class GridMachinesTest {
         assertThat(LoadModel.typical(LoadKind.HEATER, 1e6).q0Var()).isZero();
         assertThat(LoadModel.typical(LoadKind.PROCESS, 1e6).withUflsStage(UflsStage.ACHR1_2).uflsStage())
                 .isEqualTo(UflsStage.ACHR1_2);
-        assertThatThrownBy(() -> LoadModel.typical(LoadKind.ARC_FURNACE, 1e6))
-                .isInstanceOf(UnsupportedOperationException.class);
+        LoadModel eaf = LoadModel.typical(LoadKind.ARC_FURNACE, 1e6);
+        assertThat(eaf.aP()).isEqualTo(1); // мощность задаёт печь каждый тик
+        assertThat(eaf.p0W() / Math.hypot(eaf.p0W(), eaf.q0Var())).isCloseTo(0.8, within(1e-12));
     }
 }

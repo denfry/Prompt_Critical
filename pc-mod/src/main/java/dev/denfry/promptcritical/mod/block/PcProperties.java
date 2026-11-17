@@ -52,6 +52,7 @@ public final class PcProperties {
     public static final EnumProperty<CastHouseKind> CAST_HOUSE_KIND = EnumProperty.create("kind", CastHouseKind.class);
     public static final EnumProperty<StoveSegment> STOVE_SEGMENT = EnumProperty.create("segment", StoveSegment.class);
     public static final EnumProperty<GasTurbineSegment> GAS_TURBINE_SEGMENT = EnumProperty.create("segment", GasTurbineSegment.class);
+    public static final EnumProperty<ArcFurnaceSegment> ARC_FURNACE_SEGMENT = EnumProperty.create("segment", ArcFurnaceSegment.class);
     // сталь, прокат, ВРУ (этап 10б M3)
     public static final BooleanProperty LOWERED = BooleanProperty.create("lowered");
     public static final BooleanProperty BURST = BooleanProperty.create("burst");
@@ -117,6 +118,8 @@ public final class PcProperties {
 
     /** Секции газотурбинной установки 3×3×9: компрессор, камера сгорания, турбина. */
     public enum GasTurbineSegment implements Named { COMPRESSOR, COMBUSTOR, TURBINE }
+    /** Секции дуговой печи: корпус 3×3×3 и свод над ним. */
+    public enum ArcFurnaceSegment implements Named { SHELL, ROOF }
 
     /** Секции воздухонагревателя 3×9×3: низ, середина, купол. */
     public enum StoveSegment implements Named { BOTTOM, MIDDLE, DOME }

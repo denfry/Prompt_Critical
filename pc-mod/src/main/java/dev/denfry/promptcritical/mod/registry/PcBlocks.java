@@ -271,6 +271,11 @@ public final class PcBlocks {
     /** Батарея статических конденсаторов 6 кВ: ступени по 150 квар. */
     public static final DeferredBlock<PcDeviceBlock> CAPACITOR_BANK = device("capacitor_bank", machine().noOcclusion(),
             Spec.facing(BlockStateProperties.LIT), FoundryBlock.with(dev.denfry.promptcritical.mod.grid.CapacitorBankBlockEntity::new));
+    /** Дуговая печь ДСП-6: корпус 3×3×3, свод сверху; 6 кВ — кабелем к корпусу, ковш — перед носком. */
+    public static final DeferredBlock<PcDeviceBlock> ELECTRIC_ARC_FURNACE = device("electric_arc_furnace", machine().noOcclusion(),
+            Spec.facing(BlockStateProperties.LIT).segments(PcProperties.ARC_FURNACE_SEGMENT,
+                    Footprint.of(CUBE3, Segment.box(-1, 1, -1, 0, -1, 1).at(0, 3, 0))),
+            FoundryBlock.with(dev.denfry.promptcritical.mod.steelworks.ArcFurnaceBlockEntity::new));
     public static final DeferredBlock<PcDeviceBlock> ENERGY_METER = device("energy_meter", instrument(), Spec.facing(),
             GridMountedBlock.wall(InstrumentBlockEntity::meter, 3, 0.5, 10.9, 13, 15, 16));
     public static final DeferredBlock<PcDeviceBlock> WIRE_CONNECTOR_LV = device("wire_connector_lv", instrument(), Spec.facing(),

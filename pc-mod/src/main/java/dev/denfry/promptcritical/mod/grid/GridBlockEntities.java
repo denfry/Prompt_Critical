@@ -33,6 +33,8 @@ public final class GridBlockEntities {
             type("relay_cabinet", RelayCabinetBlockEntity::new, PcBlocks.RELAY_CABINET);
     public static final DeferredHolder<BlockEntityType<?>, BlockEntityType<CapacitorBankBlockEntity>> CAPACITOR_BANK =
             type("capacitor_bank", CapacitorBankBlockEntity::new, PcBlocks.CAPACITOR_BANK);
+    public static final DeferredHolder<BlockEntityType<?>, BlockEntityType<dev.denfry.promptcritical.mod.steelworks.ArcFurnaceBlockEntity>> ARC_FURNACE =
+            type("electric_arc_furnace", dev.denfry.promptcritical.mod.steelworks.ArcFurnaceBlockEntity::new, PcBlocks.ELECTRIC_ARC_FURNACE);
     public static final DeferredHolder<BlockEntityType<?>, BlockEntityType<ConsumerBlockEntity>> GRID_CONSUMER =
             type("grid_consumer", ConsumerBlockEntity::new, PcBlocks.GRID_CONSUMER);
     public static final DeferredHolder<BlockEntityType<?>, BlockEntityType<ConnectorBlockEntity>> WIRE_CONNECTOR_LV =
