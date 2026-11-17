@@ -1485,8 +1485,13 @@ public final class PowerGrid {
 
     /** Контакты замкнулись; если ветвь связала два острова под напряжением — бросок момента (§7.3.5). */
     private void contactsClosed(int k) {
-        if (initialized && !topologyDirty) {
+        if (initialized) {
+            // острова до замыкания должны быть собраны и разложены: перестройка от чужого переключения или
+            // исчерпанный бюджет переразложений за тик иначе молча отменяли толчок синхронизации
+            if (topologyDirty) rebuildTopology();
             Island a = islands[busIsland[bFrom[k]]], b = islands[busIsland[bTo[k]]];
+            if (a != b && !a.solvable()) factorIsland(a);
+            if (a != b && !b.solvable()) factorIsland(b);
             if (a != b && a.solvable() && b.solvable()) synchronize(k, a, b);
             // трансформатор под напряжение с одной стороны — бросок тока намагничивания (§7.5.2)
             if (branchSpec.get(k) instanceof Branch.Transformer && a != b && a.energized != b.energized) {
