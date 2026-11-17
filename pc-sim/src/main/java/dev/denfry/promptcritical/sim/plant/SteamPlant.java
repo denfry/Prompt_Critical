@@ -440,20 +440,21 @@ public final class SteamPlant implements Subsystem {
     private void stepTurbine(EngineUnit e, BoilerUnit b, WaterTubeUnit w, double dt) {
         SteamTurbine t = e.turbine;
         double tau = e.loadPowerW / Math.max(t.omega(), 0.2 * t.spec().nominalOmega());
+        double back = e.exhaustPa;
         if (e.chest == null) {
-            t.step(dt, EXHAUST_PA, 0, EXHAUST_PA, tau, false);
+            t.step(dt, back, 0, back, tau, false);
             e.capacityW = 0;
             return;
         }
         FluidNode chest = e.chest;
         boolean dead = b != null ? b.exploded : w.exploded;
         boolean open = e.stopValveOpen && !dead;
-        t.step(dt, chest.pressure(), chest.enthalpy(), EXHAUST_PA, tau, open);
+        t.step(dt, chest.pressure(), chest.enthalpy(), back, tau, open);
         if (e.seized) t.setOmega(0);
         chest.addSource(-t.steamFlowKgS(), 0);
         e.throttle.setValvePosition(open ? t.valve() : 0);
         double supply = b != null ? b.drum.pressure() : w.superheater.pressure();
-        e.capacityW = open && !t.tripped() ? t.capacityW(supply, chest.enthalpy(), EXHAUST_PA) : 0;
+        e.capacityW = open && !t.tripped() ? t.capacityW(supply, chest.enthalpy(), back) : 0;
     }
 
     private void explode(FastContext ctx, BoilerUnit u) {

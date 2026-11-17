@@ -93,6 +93,15 @@ public final class Environment {
     }
 
     /**
+     * Температура воды реки или пруда, °C: годовая волна воздуха, сглаженная (амплитуда 0,7) и запаздывающая на
+     * ≈ 3 недели (0,06 года) из-за теплоёмкости воды; не ниже 0,5 °C — подо льдом вода не холоднее [BALANCE].
+     */
+    public double waterTempC(long gameTime, double climateC) {
+        double year = seasons.yearFraction(gameTime);
+        return Math.max(0.5, climateC + 0.7 * TEMP_SEASONAL_K * Math.cos(2 * Math.PI * (year - 0.375 - 0.06)));
+    }
+
+    /**
      * Средняя годовая температура климата по температуре биома Minecraft (равнины 0,8, пустыня 2,0, снежная
      * тундра 0,0): 15 °C у равнин, ±18 К на единицу, от −20 до +30 °C [BALANCE].
      */

@@ -63,6 +63,25 @@ class SteamTurbineTest {
         assertThat(t.valve()).isCloseTo(0.5, within(1e-3));
     }
 
+    /**
+     * Конденсатор: вода 15 °C — насыщение 28 °C, ≈ 3,8 кПа; 25 °C — 38 °C, ≈ 6,6 кПа. Изоэнтропийный перепад тем же
+     * паром до вакуума — 870 против 485 кДж/кг, с влажностью на выходе ≈ 7 % мощность вдвое больше, чем в атмосферу;
+     * летняя вода съедает часть выигрыша.
+     */
+    @Test
+    void condenserVacuumMultipliesTheWorkAndSummerWaterCostsSomeOfIt() {
+        double cold = SteamTurbine.condenserPressurePa(W, 288.15), warm = SteamTurbine.condenserPressurePa(W, 298.15);
+        assertThat(cold).isCloseTo(3.78e3, within(0.1e3));
+        assertThat(warm).isCloseTo(6.62e3, within(0.15e3));
+        SteamTurbine t = new SteamTurbine(REF, W);
+        double atm = t.capacityW(REF.inletPa(), REF.inletEnthalpy(), REF.exhaustPa());
+        double vacCold = t.capacityW(REF.inletPa(), REF.inletEnthalpy(), cold);
+        double vacWarm = t.capacityW(REF.inletPa(), REF.inletEnthalpy(), warm);
+        assertThat(vacCold / atm).isBetween(1.85, 2.1);
+        assertThat(vacWarm).isLessThan(vacCold);
+        assertThat(1 - vacWarm / vacCold).isBetween(0.02, 0.08);
+    }
+
     /** Насыщенный пар 1 МПа в атмосферу: выход влажный, Бауман срезает работу на половину выходной влажности. */
     @Test
     void wetExpansionLosesEfficiencyByBaumann() {

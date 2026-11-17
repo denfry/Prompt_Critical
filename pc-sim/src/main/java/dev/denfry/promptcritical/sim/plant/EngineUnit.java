@@ -33,6 +33,8 @@ public final class EngineUnit {
     FluidNode chest;
     FlowLink throttle;
     double initPressure = Double.NaN, initEnthalpy = Double.NaN;
+    /** Противодавление турбины, Па: атмосфера или конденсатор (биндинг). */
+    double exhaustPa = SteamPlant.EXHAUST_PA;
 
     EngineUnit(SimId id) {
         this.id = id;
@@ -47,6 +49,15 @@ public final class EngineUnit {
         this.id = id;
         this.unit = null;
         this.turbine = turbine;
+    }
+
+    /** Противодавление турбины: конденсатор под ней — вакуум, иначе атмосфера {@link SteamPlant#EXHAUST_PA}. */
+    public void setExhaustPressure(double pa) {
+        exhaustPa = Math.max(1000, pa);
+    }
+
+    public double exhaustPressurePa() {
+        return exhaustPa;
     }
 
     /** Турбина, а не поршневая машина. */
