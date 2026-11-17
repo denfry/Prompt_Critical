@@ -80,6 +80,14 @@ public final class PumpModel {
         return rho * VoidFraction.GRAVITY * spec.ratedHead() * curve.head(nu, v);
     }
 
+    /**
+     * Мощность, которую вал отдаёт жидкости, T_гидр·ω, Вт: напор ṁΔp/ρ плюс гидравлические потери (1/η − 1), которые
+     * тоже остаются в жидкости теплом. При обратном потоке против напора (турбинный режим) — отрицательна.
+     */
+    double hydraulicPowerAt(double massFlow, double rho) {
+        return torqueAt(omega, massFlow, rho) * omega;
+    }
+
     private double torqueAt(double w, double massFlow, double rho) {
         double v = massFlow / (rho * spec.ratedFlow()), nu = w / spec.ratedSpeed();
         return spec.ratedTorque() * curve.torque(nu, v) * rho / spec.ratedDensity();

@@ -802,7 +802,8 @@ final class LumpedFluidNetwork implements FluidNetwork {
             double slope = (pm.headAt(m + eps, rhoS[j]) - pm.headAt(m - eps, rhoS[j])) / (2 * eps);
             sm = Math.max(0, -slope);
             int down = m >= 0 ? tt : f;
-            if (comp[down] >= 0) work[down] += m * pp / rhoS[j];
+            // жидкости — вся гидравлическая мощность вала T_гидр·ω, а не только ṁΔp/ρ: потери насоса — тоже её тепло
+            if (comp[down] >= 0) work[down] += pm.hydraulicPowerAt(m, rhoS[j]);
         }
         pumpDp[j] = pp;
         double in = inertia[j];

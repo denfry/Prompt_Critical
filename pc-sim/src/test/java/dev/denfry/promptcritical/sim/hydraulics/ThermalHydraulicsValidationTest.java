@@ -140,6 +140,11 @@ class ThermalHydraulicsValidationTest {
         assertThat(rel(n.totalMass(), m0)).isLessThan(1e-9);
         double balance = n.totalEnergy() - u0 - (heatIn + n.pumpWorkInput());
         assertThat(Math.abs(balance) / u0).isLessThan(1e-9);
+        // жидкость получает всю гидравлическую мощность вала T_гидр·ω — напор ṁΔp/ρ и потери насоса (1/η − 1)
+        PumpModel pm = n.link(14).pump();
+        double toFluid = (n.pumpWorkInput() - lastWork) / DT;
+        assertThat(rel(toFluid, pm.hydraulicTorque() * pm.speed())).isLessThan(0.01);
+        assertThat(toFluid).isGreaterThan(n.link(14).massFlow() * pm.head() / rho);
         // физическая разумность: расход держится, давление в пределах таблиц
         assertThat(n.link(14).massFlow()).isBetween(0.8 * mdot, 1.2 * mdot);
         assertThat(n.node(5).pressure()).isBetween(10e6, 20e6);
