@@ -373,7 +373,8 @@ public final class GridGameTests {
                 .thenWaitUntil(() -> h.assertTrue(hasRelay(cell(h), RelaySetting.Kind.OVERCURRENT), "cabinet module reaches the cell"))
                 .thenExecute(() -> h.assertTrue(cell(h).operate(true) == BreakerResponse.ACCEPTED, "feeder closing"))
                 .thenWaitUntil(() -> {
-                    h.assertTrue(cell(h).closed(), "contacts closed");
+                    h.assertTrue(cell(h).closed(), "contacts closed " + diag(h) + " state " + cell(h).breakerState()
+                            + " faulted " + faultedAt[0] + " tripped " + trippedAt[0]);
                     if (closedAt[0] < 0) closedAt[0] = h.getLevel().getGameTime();
                 })
                 .thenWaitUntil(() -> h.assertTrue(trippedAt[0] >= 0, "overcurrent trip"))
@@ -383,7 +384,8 @@ public final class GridGameTests {
                     // пробой — при подаче напряжения; пересборка сети соседним тестом добавляет такт-другой до новой топологии
                     h.assertTrue(faultedAt[0] - closedAt[0] <= 5, "breakdown on energizing: " + (faultedAt[0] - closedAt[0]));
                     h.assertTrue(trippedAt[0] - faultedAt[0] <= 40, "overcurrent trip within 2 s: " + (trippedAt[0] - faultedAt[0]));
-                    h.assertTrue(cell(h).protectionTrips() == 1, "one protection trip");
+                    h.assertTrue(cell(h).protectionTrips() == 1, "one protection trip: " + cell(h).protectionTrips() + " " + diag(h)
+                            + " closed " + closedAt[0] + " faulted " + faultedAt[0] + " tripped " + trippedAt[0]);
                     h.assertTrue(((ElectricMotorBlockEntity) h.getBlockEntity(G2)).unit().state() == MotorState.FAULTED, "motor faulted");
                     h.assertBlockPresent(PcBlocks.ELECTRIC_MOTOR.get(), G2); // защита сработала — разрушений нет
                     h.assertBlockPresent(PcBlocks.SWITCHGEAR_CELL.get(), CELL);
