@@ -10,7 +10,10 @@ import com.mojang.brigadier.exceptions.DynamicCommandExceptionType;
 import dev.denfry.promptcritical.mod.binding.SimBindings;
 import dev.denfry.promptcritical.mod.binding.SimLevelBinding;
 import dev.denfry.promptcritical.mod.block.PcBlock;
+import dev.denfry.promptcritical.mod.body.BodyService;
+import dev.denfry.promptcritical.mod.body.PlayerBody;
 import dev.denfry.promptcritical.mod.boiler.BoilerGeometry;
+import dev.denfry.promptcritical.sim.body.BodyProfile;
 import dev.denfry.promptcritical.mod.boiler.FireTubeBoilerBlockEntity;
 import dev.denfry.promptcritical.mod.content.HandbookManager;
 import dev.denfry.promptcritical.mod.content.HandbookService;
@@ -34,10 +37,12 @@ import net.minecraft.core.Direction;
 import net.minecraft.core.registries.BuiltInRegistries;
 import net.minecraft.commands.CommandSourceStack;
 import net.minecraft.commands.Commands;
+import net.minecraft.commands.arguments.EntityArgument;
 import net.minecraft.commands.arguments.ResourceLocationArgument;
 import net.minecraft.commands.arguments.coordinates.BlockPosArgument;
 import net.minecraft.network.chat.Component;
 import net.minecraft.server.level.ServerLevel;
+import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.world.InteractionHand;
 import net.minecraft.world.InteractionResult;
 import net.minecraft.world.entity.player.Player;
@@ -88,7 +93,29 @@ public final class PcCommands {
                 .then(Commands.literal("handbook").then(Commands.argument("entry", ResourceLocationArgument.id())
                         .executes(ctx -> handbook(ctx, 0))
                         .then(Commands.argument("page", IntegerArgumentType.integer(1))
-                                .executes(ctx -> handbook(ctx, IntegerArgumentType.getInteger(ctx, "page") - 1))))));
+                                .executes(ctx -> handbook(ctx, IntegerArgumentType.getInteger(ctx, "page") - 1)))))
+                .then(Commands.literal("body").then(Commands.argument("player", EntityArgument.player())
+                        .executes(PcCommands::bodyShow)
+                        .then(Commands.literal("reset").executes(PcCommands::bodyReset)))));
+    }
+
+    /** Тело игрока: профиль и подтверждён ли он. */
+    private static int bodyShow(CommandContext<CommandSourceStack> ctx) throws CommandSyntaxException {
+        ServerPlayer p = EntityArgument.getPlayer(ctx, "player");
+        PlayerBody b = BodyService.body(p);
+        BodyProfile f = b.profile();
+        ctx.getSource().sendSuccess(() -> Component.literal(String.format(java.util.Locale.ROOT,
+                "%s: %s, %d cm, %d kg, %d y, confirmed=%s", p.getGameProfile().getName(), f.sex(), f.heightCm(),
+                f.massKg(), f.ageYears(), b.confirmed())), false);
+        return 1;
+    }
+
+    /** Сбросить выбор тела: игрок снова видит экран выбора (тело выбирается один раз на мир). */
+    private static int bodyReset(CommandContext<CommandSourceStack> ctx) throws CommandSyntaxException {
+        ServerPlayer p = EntityArgument.getPlayer(ctx, "player");
+        BodyService.reset(p);
+        ctx.getSource().sendSuccess(() -> Component.literal("body reset: " + p.getGameProfile().getName()), true);
+        return 1;
     }
 
     /** Открыть справочнику игрока главу (и страницу): наладка, сервер с правилами, проверка текстов. */
