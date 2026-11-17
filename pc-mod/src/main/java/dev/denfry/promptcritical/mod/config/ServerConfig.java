@@ -223,9 +223,9 @@ public final class ServerConfig {
         GRID_SYNC_MAX_SLIP_HZ = b.comment("Synchronism check window: slip, Hz")
                 .defineInRange("sync_max_slip_hz", 0.067, 0.005, 2.0);
         GRID_SYNC_TORQUE_DAMAGE_PU = b.comment("[BALANCE] Closing torque above which shaft fatigue accumulates, pu")
-                .defineInRange("sync_torque_damage_pu", 1.5, 0.5, 10.0);
+                .defineInRange("sync_torque_damage_pu", 3.0, 0.5, 10.0);
         GRID_COUPLING_SHEAR_PU = b.comment("[BALANCE] Closing torque that shears a rigid coupling, pu")
-                .defineInRange("coupling_shear_pu", 5.0, 1.0, 20.0);
+                .defineInRange("coupling_shear_pu", 7.0, 1.0, 20.0);
         GRID_AR_SUCCESS_LIGHTNING = b.comment("[BALANCE] Share of lightning flashovers that clear in the auto-reclose dead time (07 §7.15.1)")
                 .defineInRange("ar_success_lightning", 0.8, 0.0, 1.0);
         GRID_LV_BREAKER_THERMAL_K_S = b.comment("Thermal constant of 0.4 kV breaker and fuse curves, s (07 §7.4.6)")

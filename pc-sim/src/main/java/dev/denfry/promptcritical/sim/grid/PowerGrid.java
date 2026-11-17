@@ -42,9 +42,9 @@ public final class PowerGrid {
      */
     static final double OEL_PICKUP = 1.05, OEL_K_S = 10, OEL_EXPONENT = Math.log(3) / Math.log(5), OEL_RESET_S = 60;
     /** Срезной штифт {@code generator_coupling} ломается выше этого момента и спасает вал Create (§7.3.5). */
-    static final double SHEAR_PIN_PU = 2;
-    /** С этого момента при включении повреждаются обмотки статора: stator_damage += 0,1 (§7.3.5). */
-    static final double STATOR_DAMAGE_PU = 3, STATOR_DAMAGE_STEP = 0.1;
+    static final double SHEAR_PIN_PU = 4;
+    /** С этого ударного тока (о.е.) при включении повреждаются обмотки статора: stator_damage += 0,1 (§7.3.5). */
+    static final double STATOR_CURRENT_DAMAGE_PU = 3, STATOR_DAMAGE_STEP = 0.1;
     /** Бросок намагничивания: h₂ = 0,6·e^{−t/τ}, τ = 0,3 с; ниже 0,01 бросок окончен (§7.5.2). */
     static final double INRUSH_H2 = 0.6, INRUSH_TAU_S = 0.3, INRUSH_END_H2 = 0.01;
     /** Дифзащита без гармонической блокировки отключает трансформатор при включении с этой вероятностью. */
@@ -1557,17 +1557,18 @@ public final class PowerGrid {
         }
         zi -= 1 / yP - 1 / yPP;
         SyncScope sc = scope(k, fromIncoming);
-        double ePP = Math.hypot(vRe[bi], vIm[bi]);
-        double torque = sc.closingTorquePu(ePP, Math.hypot(zr, zi) * sInc);
-        for (int i : inc.machines) shock(i, k, sc, torque);
+        double ePP = Math.hypot(vRe[bi], vIm[bi]), xPP = Math.hypot(zr, zi) * sInc;
+        double torque = sc.closingTorquePu(ePP, xPP), current = sc.closingCurrentPu(ePP, xPP);
+        for (int i : inc.machines) shock(i, k, sc, torque, current);
     }
 
     /**
-     * Последствия броска момента для машины (таблица §7.3.5). Срезной штифт ломается выше 2 о.е. и
-     * пропускает на вал не больше 2 о.е.; муфта без штифта срезается с {@code grid.coupling_shear_pu}
-     * и сама разгружает вал — ΔD = ((T − 1,5)/3,5)³ копится только ниже среза.
+     * Последствия броска момента для машины (таблица §7.3.5). Срезной штифт ломается выше 4 о.е. и
+     * пропускает на вал не больше 4 о.е.; муфта без штифта срезается с {@code grid.coupling_shear_pu}
+     * и сама разгружает вал — ΔD = ((T − T_dmg)/(T_shear − T_dmg))³ копится только ниже среза.
+     * Обмотки статора страдают от тока, а не от момента: с 3 о.е. ударного тока.
      */
-    private void shock(int i, int k, SyncScope sc, double torque) {
+    private void shock(int i, int k, SyncScope sc, double torque, double current) {
         double tDmg = cfg.syncTorqueDamagePu(), tShear = cfg.couplingShearPu();
         boolean pinBreaks = pinCoupling[i] && !sheared[i] && torque > SHEAR_PIN_PU;
         boolean couplingShears = !pinBreaks && !sheared[i] && torque >= tShear;
@@ -1580,7 +1581,7 @@ public final class PowerGrid {
         }
         shaftDmg[i] += dmg;
         if (shaftDmg[i] >= 1) sheared[i] = true; // излом вала
-        if (torque >= STATOR_DAMAGE_PU) statorDmg[i] += STATOR_DAMAGE_STEP;
+        if (current >= STATOR_CURRENT_DAMAGE_PU) statorDmg[i] += STATOR_DAMAGE_STEP;
         double shock = createShaft[i] && !pinBreaks ? transmitted * mS[i] * sb * omega[i] : 0;
         if (!event(EV_SYNC, i)) return;
         int e = evCount - 1, o = e * EVENT_VALUES;

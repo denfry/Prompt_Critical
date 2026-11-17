@@ -34,15 +34,17 @@ The cell's oil breaker closes 0.45 s after the command. In that time the pointer
 
 ## The blow of a bad closure
 
-At the instant of closing, only the machine's subtransient reactance limits the current. Peak shaft torque with equal voltages is about 2·sin(Δθ/2)/X″, in per unit of rated:
+At the instant of closing, only the machine's subtransient reactance limits the current. On top of the alternating current comes a decaying direct component, and it swings the torque one way. Peak shaft torque with equal voltages is (2·sin(Δθ/2) + sin Δθ)/X″, in per unit of rated:
 
-- 10°: 0.5; 30°: 1.5; 60°: 2.9; 120°: 5; 180°: 5.7.
+- 10°: 1.0; 30°: 2.9; 60°: 5.3; 120°: 7.4; 180°: 5.7.
 
-Up to 1 pu is normal, a jolt. 1–1.5 is a heavy blow. Above 1.5 the shaft collects fatigue damage, above 3 the stator windings too. At 5 pu the coupling shears. When accumulated damage runs out, the machine is damaged and disconnected. The same blow reaches the Create kinetic network as a sudden load and nearly always overstresses all of it.
+The shaft takes the hardest blow near 120°. At 180° the torque is lower, but the current is the largest, and the windings suffer most.
 
-The cheap protection is a [shear-pin coupling](item:promptcritical:generator_coupling), fitted by right-clicking the generator. The pin breaks above 2 pu and keeps the blow out of the Create shaft. A sheared pin is replaced with a new coupling.
+Up to 1 pu is normal, a jolt. 1–3 is a heavy blow. Above 3 the shaft collects fatigue damage. A closing current above 3 pu, from about 60°, damages the stator windings too. At 7 pu the coupling shears. When accumulated damage runs out, the machine is damaged and disconnected. The same blow reaches the Create kinetic network as a sudden load and nearly always overstresses all of it.
 
-A clean closure is a torque blow of 0.1 pu or less: 1–2° at the moment of closing.
+The cheap protection is a [shear-pin coupling](item:promptcritical:generator_coupling), fitted by right-clicking the generator. The pin breaks above 4 pu and keeps the blow out of the Create shaft. A sheared pin is replaced with a new coupling.
+
+A clean closure is a torque blow of 0.2 pu or less: 1–2° at the moment of closing.
 
 ## Synchronism check relay
 

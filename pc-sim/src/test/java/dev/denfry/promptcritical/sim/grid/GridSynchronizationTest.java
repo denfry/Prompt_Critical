@@ -98,8 +98,22 @@ class GridSynchronizationTest {
     @Test
     @Tag("T7.6")
     void torqueOnNonSynchronousClosing() {
-        assertThat(new SyncScope(0, Math.toRadians(10), 0, 0).closingTorquePu(1, 0.35)).isCloseTo(0.50, within(0.005));
-        assertThat(new SyncScope(0, Math.toRadians(120), 0, 0).closingTorquePu(1, 0.35)).isCloseTo(4.95, within(0.0495));
+        // (E''/X'')·(|E'' − V·e^{−jΔθ}| + V·|sin Δθ|), E'' = V = 1, X'' = 0,35
+        assertThat(new SyncScope(0, Math.toRadians(10), 0, 0).closingTorquePu(1, 0.35)).isCloseTo(0.994, within(0.001));
+        assertThat(new SyncScope(0, Math.toRadians(60), 0, 0).closingTorquePu(1, 0.35)).isCloseTo(5.331, within(0.001));
+        assertThat(new SyncScope(0, Math.toRadians(120), 0, 0).closingTorquePu(1, 0.35)).isCloseTo(7.423, within(0.001));
+        assertThat(new SyncScope(0, Math.toRadians(-120), 0, 0).closingTorquePu(1, 0.35)).isCloseTo(7.423, within(0.001));
+        assertThat(new SyncScope(0, Math.PI, 0, 0).closingTorquePu(1, 0.35)).isCloseTo(5.714, within(0.001));
+        // V = 0 — пик момента трёхфазного КЗ на выводах, E''²/X''
+        assertThat(new SyncScope(0, Math.toRadians(37), 1, 0).closingTorquePu(1, 0.35)).isCloseTo(1 / 0.35, within(1e-12));
+        // худший угол для вала — 120°, для обмоток (ток) — 180°
+        double worst = 0, worstDeg = 0;
+        for (int d = 0; d <= 180; d++) {
+            double t = new SyncScope(0, Math.toRadians(d), 0, 0).closingTorquePu(1, 0.35);
+            if (t > worst) { worst = t; worstDeg = d; }
+        }
+        assertThat(worstDeg).isEqualTo(120);
+        assertThat(new SyncScope(0, Math.PI, 0, 0).closingCurrentPu(1, 0.35)).isCloseTo(2 / 0.35, within(1e-12));
     }
 
     @Test
@@ -132,7 +146,7 @@ class GridSynchronizationTest {
         assertThat(Math.toDegrees(dTheta)).isBetween(125.0, 132.0); // + угол за 0,45 с хода
         // E'' ≈ 1,02 (уставка генератора), V = 1
         assertThat(c.torquePu()).isCloseTo(c.scope().closingTorquePu(1.02, r.xSigmaPP()), within(0.02 * c.torquePu()));
-        assertThat(c.torquePu()).isGreaterThan(5); // ≥ grid.coupling_shear_pu
+        assertThat(c.torquePu()).isGreaterThan(7); // ≥ grid.coupling_shear_pu
         assertThat(c.result()).isEqualTo(SyncResult.SHEARED);
         assertThat(c.createShockW()).isCloseTo(c.torquePu() * 1e6, within(0.01 * c.torquePu() * 1e6));
         assertThat(r.m.couplingSheared()).isTrue();
@@ -170,23 +184,23 @@ class GridSynchronizationTest {
     }
 
     @Test
-    void closingAt60DegreesDamagesTheShaftOrBreaksTheShearPin() {
+    void closingAt40DegreesDamagesTheShaftOrBreaksTheShearPin() {
         SyncRig r = new SyncRig(false);
-        r.waitAngle(52);
+        r.waitAngle(32); // + угол за 0,45 с хода ≈ 40°
         SyncClosing c = r.close();
         double t = c.torquePu();
-        assertThat(t).isBetween(3.0, 5.0);
+        assertThat(t).isBetween(PowerGrid.SHEAR_PIN_PU, 7.0); // выше штифта, ниже среза муфты
         assertThat(c.result()).isEqualTo(SyncResult.DAMAGE);
-        assertThat(c.shaftDamage()).isCloseTo(Math.pow((t - 1.5) / 3.5, 3), within(1e-12));
+        assertThat(c.shaftDamage()).isCloseTo(Math.pow((t - 3.0) / 4.0, 3), within(1e-12));
         assertThat(r.m.shaftDamage()).isEqualTo(c.shaftDamage());
         assertThat(c.createShockW()).isPositive();
 
         SyncRig pin = new SyncRig(true);
-        pin.waitAngle(52);
+        pin.waitAngle(32);
         SyncClosing p = pin.close();
         assertThat(p.result()).isEqualTo(SyncResult.SHEARED);
         assertThat(p.createShockW()).isZero(); // штифт спас вал Create
-        assertThat(p.shaftDamage()).isCloseTo(Math.pow(0.5 / 3.5, 3), within(1e-12));
+        assertThat(p.shaftDamage()).isCloseTo(Math.pow((PowerGrid.SHEAR_PIN_PU - 3.0) / 4.0, 3), within(1e-12));
         assertThat(pin.m.couplingSheared()).isTrue();
         pin.m.setShearPinCoupling(true); // новая муфта
         assertThat(pin.m.couplingSheared()).isFalse();
@@ -195,8 +209,9 @@ class GridSynchronizationTest {
     @Test
     void repeatedBadClosingsBreakTheShaft() {
         SyncRig r = new SyncRig(false);
-        for (int n = 0; n < 4 && r.m.state() != MachineState.DAMAGED; n++) {
-            r.waitAngle(52);
+        int n = 0;
+        for (; n < 12 && r.m.state() != MachineState.DAMAGED; n++) {
+            r.waitAngle(32);
             r.closings.clear();
             r.close();
             r.g.setBreaker(r.cb, false);
@@ -205,6 +220,7 @@ class GridSynchronizationTest {
             r.shaftPowerW = 0;
             for (int k = 0; k < 40; k++) r.step();
         }
+        assertThat(n).isGreaterThan(2); // усталость, а не один удар
         assertThat(r.m.shaftDamage()).isGreaterThanOrEqualTo(1);
         assertThat(r.m.state()).isEqualTo(MachineState.DAMAGED);
         assertThat(r.m.couplingSheared()).isTrue();

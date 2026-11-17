@@ -16,15 +16,31 @@ public record SyncScope(double slipHz, double angleRad, double dvPu, double adva
     }
 
     /**
-     * Пиковый момент при включении сейчас, о.е.: T_pk ≈ E''·|E'' − V·e^{−jΔθ}|/X''_Σ, V = E'' − ΔV.
+     * Пиковый момент при включении сейчас, о.е.:
+     * T_pk = (E''/X''_Σ)·(|E'' − V·e^{−jΔθ}| + V·|sin Δθ|), V = E'' − ΔV.
+     * <p>
+     * Потокосцепление статора в момент замыкания сохраняется, поэтому ток — периодическая
+     * составляющая плюс апериодическая: i(t) = i_ac·(1 − e^{−jωt}). Мощность в зазоре
+     * P(t) = P₀·(1 − cos ωt) + Q₀·sin ωt, P₀ = E''V·sin Δθ/X'', Q₀ = E''(E'' − V cos Δθ)/X'',
+     * её максимум |P₀| + √(P₀² + Q₀²). При V = 0 — E''²/X'', пик трёхфазного КЗ на выводах;
+     * худший угол для вала около 120°, а не 180°.
      *
      * @param ePP       E'' входящей машины, о.е.
      * @param xSigmaPP  X''_Σ = x''_d + x_T + x_sys на S_ном машины
      */
     public double closingTorquePu(double ePP, double xSigmaPP) {
+        double v = ePP - dvPu;
+        return ePP * (closingCurrentPu(ePP, xSigmaPP) + v * Math.abs(Math.sin(angleRad)) / xSigmaPP);
+    }
+
+    /**
+     * Амплитуда периодической составляющей тока включения, о.е.: |E'' − V·e^{−jΔθ}|/X''_Σ.
+     * Нагрев и электродинамические силы в обмотках идут от тока, худший угол — 180°.
+     */
+    public double closingCurrentPu(double ePP, double xSigmaPP) {
         if (!(xSigmaPP > 0)) throw new IllegalArgumentException("xSigmaPP");
         double v = ePP - dvPu;
-        return ePP * Math.sqrt(Math.max(0, ePP * ePP + v * v - 2 * ePP * v * Math.cos(angleRad))) / xSigmaPP;
+        return Math.sqrt(Math.max(0, ePP * ePP + v * v - 2 * ePP * v * Math.cos(angleRad))) / xSigmaPP;
     }
 
     /** Угол, при котором коснутся контакты, если дать команду сейчас. */

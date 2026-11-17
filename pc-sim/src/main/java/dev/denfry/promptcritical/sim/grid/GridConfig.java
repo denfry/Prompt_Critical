@@ -50,7 +50,7 @@ public record GridConfig(double baseMva, double nominalFrequencyHz, int substeps
     }
 
     public static GridConfig defaults() {
-        return new GridConfig(100, 50, 2, 2, 0.8, 2, 1.5, 0.075, 10, 0.05, 0.067, 1.5, 5.0, 5, 0.8, 1e-3, 12, 40);
+        return new GridConfig(100, 50, 2, 2, 0.8, 2, 1.5, 0.075, 10, 0.05, 0.067, 3.0, 7.0, 5, 0.8, 1e-3, 12, 40);
     }
 
     public GridConfig withGovernorDeadbandHz(double hz) {
