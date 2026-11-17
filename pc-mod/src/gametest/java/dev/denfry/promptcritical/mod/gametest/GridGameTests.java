@@ -95,6 +95,11 @@ public final class GridGameTests {
         return u.speedPu() > 0.95 && u.terminalVoltageV() > 6000;
     }
 
+    /** На ручном приводе: обороты держатся, напряжение — в пределах толчка от смены привода (0,9 о.е.). */
+    private static boolean onCranks(GeneratorUnit u) {
+        return u.speedPu() > 0.95 && u.terminalVoltageV() > 0.9 * 6300;
+    }
+
     private static SwitchUnit cell(GameTestHelper h) {
         BreakerCellBlockEntity be = h.getBlockEntity(CELL);
         SwitchUnit u = be.unit();
@@ -162,6 +167,9 @@ public final class GridGameTests {
                 })
                 .thenWaitUntil(() -> h.assertTrue(running(gen(h, G1)) && running(gen(h, G2)),
                         "machines up: " + gen(h, G1).speedPu() + " / " + gen(h, G2).speedPu()))
+                // возбуждение после разгона ещё качается (заброс АРВ): приводы меняем, когда напряжение установилось
+                .thenWaitUntil(() -> h.assertTrue(Math.abs(gen(h, G1).terminalVoltageV() - 6300) < 190
+                        && Math.abs(gen(h, G2).terminalVoltageV() - 6300) < 190, "voltage settled"))
                 .thenExecute(() -> {
                     for (BlockPos g : new BlockPos[] {G1, G2}) {
                         h.setBlock(g.south(), AllBlocks.HAND_CRANK.getDefaultState().setValue(BlockStateProperties.FACING, Direction.SOUTH));
@@ -173,7 +181,7 @@ public final class GridGameTests {
                     ShaftGeneratorBlockEntity a = h.getBlockEntity(G1), b = h.getBlockEntity(G2);
                     long since = h.getLevel().getGameTime() - 40;
                     h.assertTrue(!a.overstressedSince(since) && !b.overstressedSince(since), "idle machines fit the cranks");
-                    h.assertTrue(running(gen(h, G1)) && running(gen(h, G2)), "machines still at speed on the cranks: "
+                    h.assertTrue(onCranks(gen(h, G1)) && onCranks(gen(h, G2)), "machines still at speed on the cranks: "
                             + gen(h, G1).speedPu() + "/" + gen(h, G1).terminalVoltageV() + " and " + gen(h, G2).speedPu() + "/"
                             + gen(h, G2).terminalVoltageV() + " " + diag(h));
                 })
