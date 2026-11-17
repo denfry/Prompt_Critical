@@ -263,6 +263,34 @@ class GraphitePileTest {
         assertThat(q.powerW()).isCloseTo(p.powerW(), within(p.powerW() * 0.2));
     }
 
+    /**
+     * Разгон без стержней до мегаватт: продукты деления копят ксенон и остаточное тепло, после разгона тепло
+     * остаётся (несколько процентов мощности), а ксенон и тепло переживают сохранение. На ваттах CP-1 — ничтожны.
+     */
+    @Test
+    void poisonsAndDecayHeatFollowTheFissionPower() {
+        GraphitePile cp1 = Piles.pile(Piles.cube(4, 1, 8, true, true, true));
+        cp1.setRodInsertion(Piles.ZIP_KEY, 0);
+        cp1.setRodInsertion(Piles.CONTROL_KEY, 0.95);
+        Piles.run(cp1, 30, random);
+        assertThat(cp1.decayHeatW()).isLessThan(1);
+        assertThat(cp1.xenonAbs()).isLessThan(1e-12);
+
+        Recorder ev = new Recorder();
+        GraphitePile p = Piles.pile(Piles.cube(5, 1, 8, false, false, true));
+        Piles.run(p, 600, random, ev);
+        assertThat(p.decayHeatW()).isPositive();
+        assertThat(p.xenonAbs()).isPositive();
+
+        MutableStateTree tree = new MutableStateTree();
+        p.save(new TreeStateWriter(tree));
+        GraphitePile q = new GraphitePile();
+        q.load(new TreeStateReader(tree));
+        q.form(Piles.cube(5, 1, 8, false, false, true));
+        assertThat(q.decayHeatW()).isCloseTo(p.decayHeatW(), within(1e-9 * p.decayHeatW()));
+        assertThat(q.xenonAbs()).isCloseTo(p.xenonAbs(), within(1e-9 * p.xenonAbs()));
+    }
+
     /** Безопасное состояние без сохранения: защита сработала, все стержни внизу. */
     @Test
     void safeStateDropsAllRods() {

@@ -7,6 +7,9 @@ import dev.denfry.promptcritical.sim.neutronics.CellComposition;
 import dev.denfry.promptcritical.sim.neutronics.CellFeedbackState;
 import dev.denfry.promptcritical.sim.neutronics.CoolantKind;
 import dev.denfry.promptcritical.sim.neutronics.DelayedGroups;
+import dev.denfry.promptcritical.sim.neutronics.Westcott;
+import dev.denfry.promptcritical.sim.neutronics.DecayHeat;
+import dev.denfry.promptcritical.sim.neutronics.FissionPoisons;
 import dev.denfry.promptcritical.sim.neutronics.LatticeDesign;
 import dev.denfry.promptcritical.sim.neutronics.LatticeDesigns;
 import dev.denfry.promptcritical.sim.neutronics.LatticeModel;
@@ -39,8 +42,12 @@ import java.util.SplittableRandom;
  * стержни «zip» (падают под весом), регулирующие идут вниз приводом. Снять защиту можно только ниже уставок;
  * регулирующие не выводятся, пока аварийные не взведены.
  *
- * <p>Чего нет: выгорания и отравления ксеноном (мощности CP-1 — ватты), энергии Вигнера, принудительного
- * охлаждения X-10. Температура — по двум сосредоточенным ёмкостям, топливо и графит.
+ * <p>Отравление Xe-135 и Sm-149 и остаточное тепловыделение — точечные, по средней по топливным узлам скорости
+ * делений ({@link FissionPoisons}, {@link DecayHeat}); на ваттах CP-1 они ничтожны, на мегаваттах X-10 — нет.
+ * Поглощение ядов входит в константы топливных узлов (STATIC), XENON и SAMARIUM баланса — только для показа.
+ *
+ * <p>Чего нет: выгорания, энергии Вигнера, принудительного охлаждения X-10, разницы потока в топливе и в ячейке для
+ * ядов. Температура — по двум сосредоточенным ёмкостям, топливо и графит.
  */
 public final class GraphitePile {
     /** Шаг FAST, с. */
@@ -81,7 +88,12 @@ public final class GraphitePile {
     private double[] absorberNow = new double[0], absorberRef = new double[0];
     private double[] fuelTemps = new double[0], modTemps = new double[0];
     private double[] cps = new double[0], trueCps = new double[0];
-    private double constTf = Double.NaN, constTm = Double.NaN;
+    private double constTf = Double.NaN, constTm = Double.NaN, constXe = 0, constSm = 0;
+    private final FissionPoisons poisons = new FissionPoisons();
+    private final DecayHeat decayHeat = new DecayHeat();
+    /** Топливных узлов и средняя ячейка последнего STATIC: для скорости делений и потока ядов. */
+    private int fuelNodes;
+    private SixFactor averageFuel;
     private double keff, generationTime = 1e-3, sourceNorm;
     private double power, fuelTempK, graphiteTempK;
     private double savedPower = PointKinetics.MIN_POWER;
@@ -164,7 +176,9 @@ public final class GraphitePile {
             power = kinetics.step(DT, budget.total(), sourceNorm);
         }
         double pW = powerW();
-        stepThermal(pW);
+        advancePoisons(pW);
+        decayHeat.step(DT, pW);
+        stepThermal(pW + decayHeat.powerW());
         periodMeter.sample(fissile ? power : PointKinetics.MIN_POWER);
         protect(pW, events);
         count(random);
@@ -233,19 +247,26 @@ public final class GraphitePile {
 
     /** Константы узлов при текущих температурах и стержнях, нодальная задача, STATIC, веса квазистатики. */
     private void solveStatic() {
-        CellFeedbackState s = new CellFeedbackState(fuelTempK, 1.2, graphiteTempK, 0, 0, 0);
-        if (Math.abs(fuelTempK - constTf) > 0.5 || Math.abs(graphiteTempK - constTm) > 0.5 || graphite == null) {
+        double tn = graphiteTempK + LatticeModel.NEUTRON_GAS_OFFSET;
+        double xe = poisons.xenonAbs(sigmaXeB(tn)), sm = poisons.samariumAbs(sigmaSmB(tn));
+        CellFeedbackState s = new CellFeedbackState(fuelTempK, 1.2, graphiteTempK, 0, xe, sm);
+        if (Math.abs(fuelTempK - constTf) > 0.5 || Math.abs(graphiteTempK - constTm) > 0.5 || graphite == null
+                || poisonMoved(xe, constXe) || poisonMoved(sm, constSm)) {
             constTf = fuelTempK;
             constTm = graphiteTempK;
+            constXe = xe;
+            constSm = sm;
             java.util.Arrays.fill(fuelByLoad, null);
             graphite = model.evaluate(graphiteCell(0), null, s);
         }
         int n = layout.nodeCount(), maxLoad = 0;
+        fuelNodes = 0;
         for (int i = 0; i < n; i++) {
             PileLayout.NodeKind k = layout.kind(i);
             int load = layout.load(i);
             if (k == PileLayout.NodeKind.FUEL && load > 0) {
                 maxLoad = Math.max(maxLoad, load);
+                fuelNodes++;
                 nodeCell[i] = fuelCell(load);
                 if (fuelByLoad[load] == null) fuelByLoad[load] = model.evaluate(nodeCell[i], fuel, s);
                 nodeConst[i] = fuelByLoad[load];
@@ -274,6 +295,10 @@ public final class GraphitePile {
         budget.resetFastComponents();
 
         SixFactor avg = fuelByLoad[maxLoad];
+        averageFuel = avg;
+        // показ: ρ ядов ≈ −Σ_яда/Σ_a ячейки (через коэффициент использования f)
+        budget.set(ReactivityComponent.XENON, -xe / avg.sigmaA());
+        budget.set(ReactivityComponent.SAMARIUM, -sm / avg.sigmaA());
         double b2 = Math.max(0, (avg.kInf() / keff - 1) / avg.migrationArea());
         groups = model.delayedGroups(model.fissionFractions(fuelCell(maxLoad), fuel, s), b2, avg);
         generationTime = model.generationTime(avg, graphiteTempK + LatticeModel.NEUTRON_GAS_OFFSET);
@@ -293,6 +318,43 @@ public final class GraphitePile {
             kinetics.setParameters(groups, generationTime);
         }
         structural = false;
+    }
+
+    /** Яды сместились на 1 % (или появились): константы топливных узлов пересчитать. */
+    private static boolean poisonMoved(double now, double ref) {
+        return Math.abs(now - ref) > 0.01 * Math.max(now, ref) && Math.abs(now - ref) > 1e-9;
+    }
+
+    private static double sigmaXeB(double tn) {
+        return FissionPoisons.SIGMA_XE_B * Westcott.g(Westcott.Factor.XE135_A, tn) * Westcott.oneOverV(tn);
+    }
+
+    private static double sigmaSmB(double tn) {
+        return FissionPoisons.SIGMA_SM_B * Westcott.g(Westcott.Factor.SM149_A, tn) * Westcott.oneOverV(tn);
+    }
+
+    /**
+     * Шаг ядов: средняя по топливным узлам (1 м³) скорость делений F = P/(E_f·V) и поток φ = F/Σ_f средней ячейки.
+     * После останова и без топлива — только распад.
+     */
+    private void advancePoisons(double pW) {
+        double f = 0, phi = 0;
+        if (fissile && fuelNodes > 0 && averageFuel != null && averageFuel.sigmaF() > 0) {
+            f = pW / (PointKinetics.FISSION_ENERGY * fuelNodes * 1e6);
+            phi = f / averageFuel.sigmaF();
+        }
+        double tn = graphiteTempK + LatticeModel.NEUTRON_GAS_OFFSET;
+        poisons.step(DT, f, phi, sigmaXeB(tn), sigmaSmB(tn));
+    }
+
+    /** Остаточное тепловыделение, Вт: греет топливо, но ионизационная камера его не видит. */
+    public double decayHeatW() {
+        return decayHeat.powerW();
+    }
+
+    /** Σ_a Xe-135 средней топливной ячейки, см⁻¹. */
+    public double xenonAbs() {
+        return poisons.xenonAbs(sigmaXeB(graphiteTempK + LatticeModel.NEUTRON_GAS_OFFSET));
     }
 
     private boolean rodsMoved() {
@@ -627,6 +689,8 @@ public final class GraphitePile {
 
     public void save(StateWriter out) {
         out.putDouble("power", kinetics != null ? kinetics.power() : savedPower);
+        poisons.save(out);
+        decayHeat.save(out);
         double[] c = precursors();
         out.putDoubles("precursors", c, c.length);
         out.putDouble("fuel_k", fuelTempK);
@@ -650,6 +714,8 @@ public final class GraphitePile {
 
     public void load(StateReader in) {
         savedPower = Math.max(PointKinetics.MIN_POWER, in.getDouble("power"));
+        poisons.load(in);
+        decayHeat.load(in);
         double[] c = in.has("precursors") ? in.getDoubles("precursors") : new double[0];
         fuelTempK = in.getDouble("fuel_k");
         graphiteTempK = in.getDouble("graphite_k");
