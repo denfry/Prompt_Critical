@@ -220,6 +220,7 @@ public final class PcBlockStateProvider extends BlockStateProvider {
             case "electric_motor" -> s.getValue(PcProperties.MEDIUM_VOLTAGE) ? id + "_mv" : id;
             case "disconnector" -> s.getValue(PcProperties.EARTHED) ? id + "_earthed" : id;
             case "dam_gate" -> s.getValue(BlockStateProperties.OPEN) ? id : id + "_closed";
+            case "cooling_tower_cell" -> s.getValue(PcProperties.ICED) ? id + "_iced" : id;
             case "gas_turbine" -> switch (s.getValue(PcProperties.GAS_TURBINE_SEGMENT)) {
                 case COMPRESSOR -> id;
                 case COMBUSTOR -> id + "_combustor";

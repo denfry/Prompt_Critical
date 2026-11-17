@@ -18,6 +18,8 @@ public final class PcProperties {
     public static final BooleanProperty LOW_WATER = BooleanProperty.create("low_water");
     /** Котёл: обечайка разорвана (07 §7.9.6), ставится на оба сегмента. */
     public static final BooleanProperty EXPLODED = BooleanProperty.create("exploded");
+    /** Секция градирни обмёрзла. */
+    public static final BooleanProperty ICED = BooleanProperty.create("iced");
     /** Разъединитель: заземляющие ножи включены (07 §7.4.6). */
     public static final BooleanProperty EARTHED = BooleanProperty.create("earthed");
     /** Двигатель в исполнении 6 кВ ({@code voltage=mv} арт-реестра 07 §7.23). */

@@ -93,6 +93,26 @@ public final class Environment {
     }
 
     /**
+     * Относительная влажность, %: 70 % в среднем, днём суше (минимум к 15 часам, ±15 %), в дождь 95 % [BALANCE,
+     * умеренный пояс].
+     */
+    public double relativeHumidity(long gameTime, boolean raining) {
+        if (raining) return 95;
+        double hour = (Math.floorMod(gameTime, SeasonProvider.TICKS_PER_DAY) / 1000.0 + 6) % 24;
+        return 70 - 15 * Math.cos(2 * Math.PI * (hour - 15) / 24);
+    }
+
+    /**
+     * Температура мокрого термометра, °C — формула Stull (2011), J. Appl. Meteor. Climatol. 50: ±0,3 °C при
+     * RH 5–99 % и T от −20 до 50 °C.
+     */
+    public static double wetBulbC(double tC, double rhPercent) {
+        double rh = Math.max(5, Math.min(99, rhPercent));
+        return tC * Math.atan(0.151977 * Math.sqrt(rh + 8.313659)) + Math.atan(tC + rh) - Math.atan(rh - 1.676331)
+                + 0.00391838 * Math.pow(rh, 1.5) * Math.atan(0.023101 * rh) - 4.686035;
+    }
+
+    /**
      * Температура воды реки или пруда, °C: годовая волна воздуха, сглаженная (амплитуда 0,7) и запаздывающая на
      * ≈ 3 недели (0,06 года) из-за теплоёмкости воды; не ниже 0,5 °C — подо льдом вода не холоднее [BALANCE].
      */

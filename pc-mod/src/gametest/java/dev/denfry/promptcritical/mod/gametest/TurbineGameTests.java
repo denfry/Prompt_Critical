@@ -58,4 +58,21 @@ public final class TurbineGameTests {
                 })
                 .thenSucceed();
     }
+
+    /** Конденсатор, касающийся секции градирни, получает холодную воду с неё: вакуум без реки. */
+    @GameTest(template = "gametest/empty_12x12x12")
+    public static void condenserOnACoolingTowerGivesVacuum(GameTestHelper h) {
+        BlockPos at = new BlockPos(2, 3, 5), cond = at.below(), tower = new BlockPos(3, 2, 5); // части секции GameTest не ставит: якорь вплотную
+        h.setBlock(at, PcBlocks.STEAM_TURBINE.get().defaultBlockState().setValue(BlockStateProperties.HORIZONTAL_FACING, Direction.NORTH));
+        h.setBlock(cond, PcBlocks.CONDENSER.get().defaultBlockState());
+        h.setBlock(tower, PcBlocks.COOLING_TOWER_CELL.get().defaultBlockState().setValue(dev.denfry.promptcritical.mod.block.PcProperties.RUNNING, true));
+        h.startSequence()
+                .thenWaitUntil(() -> h.assertTrue(((SteamTurbineBlockEntity) h.getBlockEntity(at)).unit() != null, "turbine twin"))
+                .thenIdle(25)
+                .thenExecute(() -> {
+                    double p = ((SteamTurbineBlockEntity) h.getBlockEntity(at)).unit().exhaustPressurePa();
+                    h.assertTrue(p > 1e3 && p < 12e3, "the cooling tower holds the condenser vacuum: " + p);
+                })
+                .thenSucceed();
+    }
 }
