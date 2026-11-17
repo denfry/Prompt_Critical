@@ -1,5 +1,5 @@
-"""Детальные модели M2 (06 §6.2, статус MODELED): котельная I0 — кирпичная
-труба. Заменяют плейсхолдеры `spec_grid`/`spec_states`."""
+"""Детальные модели M2 (06 §6.2, статус MODELED): ещё не перерисованные вручную
+в Blockbench (котельная I0 — в art/blockbench/boilers/*.author.js). Заменяют плейсхолдеры `spec_grid`/`spec_states`."""
 import math
 
 from artkit import *
@@ -77,28 +77,9 @@ def wheel(name, axis, r, a0, a1, c, spokes_tex="hw"):
 
 
 # ======================================================================
-# кирпичная дымовая труба I0: цоколь с газоходом, ствол с обручами, оголовок с карнизом
+# кирпичная дымовая труба нарисована вручную в Blockbench: art/blockbench/boilers/chimney.author.js
+# (модели chimney, chimney_base, chimney_top, текстуры textures/block/chimney/)
 # ======================================================================
-
-def chimney(part):
-    els = disc("stack", "y", 6, 0, 16, "chb")
-    if part == "middle":
-        els += ring("band", "y", 6.2, 0.8, 7, 8.5, "band", c=(8, 8, 8))
-    if part == "base":
-        els += [el("plinth", [0.5, 0, 0.5], [15.5, 4, 15.5], "sb"),
-                el("plinth_cap", [1, 4, 1], [15, 5, 15], "ci"),
-                el("flue_inlet", [4.5, 1, -0.01], [11.5, 9, 2], "smk"),
-                el("cleanout", [5.5, 0.5, 13.99], [10.5, 3.5, 16.01], "ci")]
-    if part == "top":
-        els += disc("cornice", "y", 7, 12, 14, "chb", sides=8) + disc("cap", "y", 7.3, 14, 15, "band", sides=8)
-        els += [el("soot_mouth", [3, 15.01, 3], [13, 15.02, 13], "sootc"),
-                el("lightning_rod", [7.75, 15, 7.75], [8.25, 24, 8.25], "pol")]
-    return els
-
-
-m("chimney", "boilers", chimney("middle"))
-m("chimney_base", "boilers", chimney("base"))
-m("chimney_top", "boilers", chimney("top"))
 
 
 # ======================================================================

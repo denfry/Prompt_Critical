@@ -375,6 +375,38 @@
       }
     }
   };
+  // Upright 16-gon prism (chimney stacks, columns) from 8 boxes turned about y, centre c = [x, z], y0..y1 inside
+  // one block. o.tex gives the sides their own texture (P = 16), each facet a different slice of it so a brick
+  // bond does not repeat facet by facet; without it the sides take `mat`. o.cap puts a radial texture on the top
+  // (the boxes step up by 0.01 so the overlapping tops do not fight); o.ends lists end faces kept in `mat`.
+  Model.prototype.prismY = function (name, c, r, y0, y1, mat, o = {}) {
+    const h = r * TAN16, w = 2 * h, k = 16 / (2 * r), ends = o.ends || [];
+    const boxes = [];
+    for (const a of [0, 22.5, 45, -22.5, -45]) boxes.push([true, a]);
+    for (const a of [0, 22.5, -22.5]) boxes.push([false, a]);
+    let facet = o.seed || 0;
+    boxes.forEach(([wide, a], i) => {
+      const top = y1 + (o.cap ? i * 0.01 : 0);
+      const f = wide ? [c[0] - r, y0, c[1] - h] : [c[0] - h, y0, c[1] - r];
+      const t = wide ? [c[0] + r, top, c[1] + h] : [c[0] + h, top, c[1] + r];
+      const sides = wide ? ['east', 'west'] : ['north', 'south'];
+      const face = {}, hide = [];
+      for (const d of DIRS) {
+        if (sides.includes(d)) {
+          if (o.tex) {
+            const u0 = ((facet++ * 0.6180339) % 1) * (16 - w);
+            face[d] = { tex: o.tex, uv: [u0, 16 - y1, u0 + w, 16 - y0] };
+          }
+        } else if (d === 'up' && o.cap) {
+          face.up = { tex: o.cap, uv: [(f[0] - c[0] + r) * k, (f[2] - c[1] + r) * k, (t[0] - c[0] + r) * k, (t[2] - c[1] + r) * k] };
+        } else if (!ends.includes(d)) hide.push(d);
+      }
+      this.els.push({
+        name: `${name}_${i}`, from: f, to: t, mat, hide, face,
+        rot: a ? { axis: 'y', angle: a, origin: [c[0], 8, c[1]] } : undefined,
+      });
+    });
+  };
   // Disc facing `dir` ('north' for z discs, 'east' for x discs) with a radial texture about the centre.
   Model.prototype.disc = function (name, axis, c, R, a0, a1, mat, radialTex, dir) {
     const h = R * TAN16, k = 16 / (2 * R);
