@@ -31,6 +31,10 @@
 - Hydro power: hydro turbine, dam intake gate, penstock water hammer.
 - Gas turbine unit on mine methane or coke-oven gas, with a turbine gearbox.
 
+### Steelmaking
+- Electric arc furnace: melts 6 t of steel scrap on a 6 kV bus at about 600 kWh/t and taps into a ladle; the
+  arc load swings its reactive power and makes the bus flicker.
+
 ### Grid
 - Capacitor bank: 6 kV steps of 150 kvar for reactive compensation; too large a bank self-excites a small
   idling generator.
