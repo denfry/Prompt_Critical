@@ -92,6 +92,11 @@ public final class SteelworksRecipes extends RecipeProvider {
         ShapedRecipeBuilder.shaped(RecipeCategory.MISC, PcBlocks.BOF_VESSEL.get())
                 .pattern("R R").pattern("RBR").pattern("ISI").define('R', brick).define('B', Items.IRON_BLOCK).define('I', sheet)
                 .define('S', shaft).unlockedBy("has_pig_iron", has(PcItems.PIG_IRON.get())).save(out, id("bof_vessel"));
+        // дуговая печь: три графитовых электрода в своде, кожух из листа на огнеупоре, медная ошиновка
+        ShapedRecipeBuilder.shaped(RecipeCategory.MISC, PcBlocks.ELECTRIC_ARC_FURNACE.get())
+                .pattern("EEE").pattern("RBR").pattern("ICI").define('E', PcItems.GRAPHITE_ELECTRODE.get()).define('R', brick)
+                .define('B', Items.IRON_BLOCK).define('I', sheet).define('C', Items.COPPER_BLOCK)
+                .unlockedBy("has_graphite_electrode", has(PcItems.GRAPHITE_ELECTRODE.get())).save(out, id("electric_arc_furnace"));
         ShapedRecipeBuilder.shaped(RecipeCategory.MISC, PcBlocks.OXYGEN_LANCE.get())
                 .pattern(" P ").pattern(" P ").pattern("CTC").define('P', pipe).define('C', Items.COPPER_INGOT).define('T', AllItems.BRASS_INGOT.get())
                 .unlockedBy("has_bof", has(PcBlocks.BOF_VESSEL.get())).save(out, id("oxygen_lance"));

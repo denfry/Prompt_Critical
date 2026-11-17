@@ -1,0 +1,28 @@
+{
+  "type": "minecraft:block",
+  "pools": [
+    {
+      "bonus_rolls": 0.0,
+      "conditions": [
+        {
+          "block": "promptcritical:electric_arc_furnace",
+          "condition": "minecraft:block_state_property",
+          "properties": {
+            "segment": "shell"
+          }
+        },
+        {
+          "condition": "minecraft:survives_explosion"
+        }
+      ],
+      "entries": [
+        {
+          "type": "minecraft:item",
+          "name": "promptcritical:electric_arc_furnace"
+        }
+      ],
+      "rolls": 1.0
+    }
+  ],
+  "random_sequence": "promptcritical:blocks/electric_arc_furnace"
+}

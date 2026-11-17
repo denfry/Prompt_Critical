@@ -226,6 +226,8 @@ public final class PcBlockStateProvider extends BlockStateProvider {
             case "relay_cabinet" -> s.getValue(PcProperties.ALARM) ? id + "_tripped" : id;
             case "lv_distribution_box" -> s.getValue(PcProperties.ALARM) ? id + "_tripped" : id;
             case "grid_consumer" -> s.getValue(BlockStateProperties.LIT) ? id : id + "_dark";
+            case "electric_arc_furnace" -> s.getValue(PcProperties.ARC_FURNACE_SEGMENT) == PcProperties.ArcFurnaceSegment.SHELL ? id
+                    : s.getValue(BlockStateProperties.LIT) ? id + "_roof_arcing" : id + "_roof";
             // автоматика (этап 9 M3)
             case "relay" -> s.getValue(PcProperties.PICKED) ? id + "_picked" : id;
             case "relay_latching" -> s.getValue(PcProperties.PICKED) ? id + "_set" : id;
