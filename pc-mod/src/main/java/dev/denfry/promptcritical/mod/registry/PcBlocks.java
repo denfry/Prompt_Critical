@@ -602,6 +602,10 @@ public final class PcBlocks {
             Spec.facing(PcProperties.PROCESS_KIND, PcProperties.ALARM), 4, 0, 9.4, 12, 15.5, 16);
     public static final DeferredBlock<PcDeviceBlock> RELAY_POWER_SUPPLY = automationWall("relay_power_supply",
             Spec.facing(BlockStateProperties.POWERED, PcProperties.ALARM), 0.5, 1, 8.4, 15.5, 15, 16);
+    /** Аккумуляторная батарея оперативного тока 24 В рядом с выпрямителем реле. */
+    public static final DeferredBlock<PcDeviceBlock> STATION_BATTERY = device("station_battery", machine().noOcclusion(),
+            Spec.facing(PcProperties.CHARGE), dev.denfry.promptcritical.mod.foundry.FoundryBlock.with(
+                    dev.denfry.promptcritical.mod.automation.StationBatteryBlockEntity::new));
     public static final DeferredBlock<PcDeviceBlock> RELAY_RACK = device("relay_rack", machine(),
             Spec.facing(BlockStateProperties.OPEN).footprint(FP_TALL2),
             FoundryBlock.with(dev.denfry.promptcritical.mod.automation.RelayRackBlockEntity::new));

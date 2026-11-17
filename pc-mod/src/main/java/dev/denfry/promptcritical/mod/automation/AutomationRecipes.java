@@ -15,6 +15,7 @@ import net.minecraft.data.recipes.RecipeOutput;
 import net.minecraft.data.recipes.RecipeProvider;
 import net.minecraft.data.recipes.ShapedRecipeBuilder;
 import net.minecraft.data.recipes.ShapelessRecipeBuilder;
+import net.minecraft.tags.ItemTags;
 import net.minecraft.world.item.Items;
 import net.minecraft.world.level.ItemLike;
 
@@ -78,6 +79,10 @@ public final class AutomationRecipes extends RecipeProvider {
                 .requires(AllBlocks.FLUID_PIPE.get()).unlockedBy("has_relay", has(relay)).save(out, id("process_switch"));
         ShapelessRecipeBuilder.shapeless(RecipeCategory.REDSTONE, PcBlocks.RELAY_POWER_SUPPLY.get()).requires(Items.IRON_INGOT, 2)
                 .requires(wire, 4).requires(coil).requires(Items.QUARTZ).unlockedBy("has_coil", hasCoil).save(out, id("relay_power_supply"));
+        // батарея: стеклянные банки на деревянном стеллаже, пластины и перемычки
+        ShapedRecipeBuilder.shaped(RecipeCategory.REDSTONE, PcBlocks.STATION_BATTERY.get()).pattern("GWG").pattern("GIG").pattern("PPP")
+                .define('G', Items.GLASS).define('W', wire).define('I', Items.IRON_INGOT).define('P', ItemTags.PLANKS)
+                .unlockedBy("has_coil", hasCoil).save(out, id("station_battery"));
         ShapedRecipeBuilder.shaped(RecipeCategory.REDSTONE, PcBlocks.RELAY_RACK.get()).pattern("III").pattern("IDI").pattern("III")
                 .define('I', PcItems.STEEL_PLATE.get()).define('D', Items.IRON_DOOR)
                 .unlockedBy("has_relay", has(relay)).save(out, id("relay_rack"));

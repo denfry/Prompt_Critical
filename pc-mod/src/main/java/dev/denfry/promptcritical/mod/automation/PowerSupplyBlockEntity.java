@@ -24,6 +24,8 @@ import org.jetbrains.annotations.Nullable;
  * (GameTest): вход в о.е. вместо шины.
  */
 public class PowerSupplyBlockEntity extends AutomationPanelBlockEntity implements GridDevice {
+    /** Ниже этого входа выпрямителя питание берёт батарея, о.е. */
+    static final double BATTERY_TAKEOVER_PU = 0.85;
     private boolean gridRegistered;
     private double benchInput = Double.NaN;
 
@@ -42,6 +44,12 @@ public class PowerSupplyBlockEntity extends AutomationPanelBlockEntity implement
         double rated = u.supplyRatedA();
         if (aux != null) aux.setRatedPowerW(rated * 24 / AuxSupplyUnit.EFFICIENCY);
         double in = !Double.isNaN(benchInput) ? benchInput : aux == null ? 0 : aux.inputPu();
+        // батарея рядом: при шине — подзаряд, без шины — питает реле, пока не разрядится
+        StationBatteryBlockEntity battery = StationBatteryBlockEntity.adjacent(level, worldPosition);
+        if (battery != null) {
+            if (in >= BATTERY_TAKEOVER_PU) battery.floatCharge(0.05);
+            else in = Math.max(in, battery.supply(Math.max(0, u.supplyCurrent()), 0.05));
+        }
         u.setInput(AutomationUnit.IN_MAIN, in);
         super.serverTick(u);
         setFlag(BlockStateProperties.POWERED, u.supplyVoltage() > 1);
