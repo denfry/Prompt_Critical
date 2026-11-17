@@ -93,6 +93,16 @@ public final class PowerhouseText {
         msg("hydro.kind.kaplan", "Kaplan runner (low head)", "поворотно-лопастная (низкий напор)");
         msg("hydro.kind.francis", "Francis runner", "радиально-осевая (Френсис)");
         msg("hydro.kind.pelton", "Pelton wheel (high head)", "ковшовая (Пельтон, высокий напор)");
+        msg("gt.no_fuel", "No fuel gas in the turbine: pipe in mine methane or coke-oven gas",
+                "В турбине нет газа: подведите трубой шахтный метан или коксовый газ");
+        msg("gt.start", "Start: starter on · %s %% speed, %s of %s kW, air %s °C, exhaust %s °C",
+                "Пуск: пусковой двигатель · %s %% оборотов, %s из %s кВт, воздух %s °C, выхлоп %s °C");
+        msg("gt.stop", "Stop: fuel shut · %s %% speed, %s of %s kW, air %s °C, exhaust %s °C",
+                "Останов: топливо отсечено · %s %% оборотов, %s из %s кВт, воздух %s °C, выхлоп %s °C");
+        msg("gt.reset", "Gas turbine overspeed trip reset", "Автомат безопасности ГТУ взведён");
+        msg("gearbox.no_turbine", "The gearbox must touch the gas turbine with its back face",
+                "Редуктор должен касаться газовой турбины задней гранью");
+        msg("gearbox.linked", "Gearbox on the gas turbine: %s rpm", "Редуктор на газовой турбине: %s об/мин");
         msg("turbine.reset", "Overspeed trip reset", "Автомат безопасности взведён");
         msg("turbine.not_tripped", "The overspeed trip is set (reset only below rated speed)",
                 "Автомат безопасности не сработал (взводится ниже номинальных оборотов)");

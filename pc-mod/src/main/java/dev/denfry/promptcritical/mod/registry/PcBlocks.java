@@ -507,6 +507,15 @@ public final class PcBlocks {
     public static final DeferredBlock<dev.denfry.promptcritical.mod.powerhouse.DamGateBlock> DAM_GATE = withItem(BLOCKS.registerBlock(
             "dam_gate", p -> dev.denfry.promptcritical.mod.powerhouse.DamGateBlock.create(p, Spec.facing(BlockStateProperties.OPEN)),
             machine().noOcclusion()));
+    /** ГТУ 3×3×9: компрессор, камера сгорания, турбина; газ — по трубе, вал — через редуктор у компрессора. */
+    public static final DeferredBlock<PcDeviceBlock> GAS_TURBINE = device("gas_turbine", machine(),
+            Spec.facing(PcProperties.RUNNING).segments(PcProperties.GAS_TURBINE_SEGMENT,
+                    Footprint.of(CUBE3, CUBE3.at(0, 0, 3), CUBE3.at(0, 0, 6))),
+            FoundryBlock.with(dev.denfry.promptcritical.mod.powerhouse.GasTurbineBlockEntity::new));
+    /** Редуктор турбины: задней гранью к агрегату, вал Create спереди. */
+    public static final DeferredBlock<PcDeviceBlock> TURBINE_GEARBOX = device("turbine_gearbox", machine(),
+            Spec.facing(PcProperties.RUNNING),
+            KineticMachineBlock.with(ShaftSide.FRONT, dev.denfry.promptcritical.mod.powerhouse.TurbineGearboxBlockEntity::new));
     /** Паровая турбина с противодавлением: вал Create спереди, пар — от котла, которого касается. */
     public static final DeferredBlock<PcDeviceBlock> STEAM_TURBINE = device("steam_turbine", machine(),
             Spec.facing(PcProperties.RUNNING),

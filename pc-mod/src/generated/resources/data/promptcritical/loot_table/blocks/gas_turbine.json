@@ -1,0 +1,28 @@
+{
+  "type": "minecraft:block",
+  "pools": [
+    {
+      "bonus_rolls": 0.0,
+      "conditions": [
+        {
+          "block": "promptcritical:gas_turbine",
+          "condition": "minecraft:block_state_property",
+          "properties": {
+            "segment": "compressor"
+          }
+        },
+        {
+          "condition": "minecraft:survives_explosion"
+        }
+      ],
+      "entries": [
+        {
+          "type": "minecraft:item",
+          "name": "promptcritical:gas_turbine"
+        }
+      ],
+      "rolls": 1.0
+    }
+  ],
+  "random_sequence": "promptcritical:blocks/gas_turbine"
+}
