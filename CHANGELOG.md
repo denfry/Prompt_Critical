@@ -26,7 +26,8 @@
 - Rivers carry rain floods and a spring snowmelt flood.
 
 ### Power generation
-- Steam turbine: a back-pressure turbine that takes steam from the boiler it touches.
+- Steam turbine: a back-pressure turbine that takes steam from the boiler it touches; a condenser under it,
+  cooled by river or pond water, gives vacuum and about twice the power, less in late summer.
 - Hydro power: hydro turbine, dam intake gate, penstock water hammer.
 - Gas turbine unit on mine methane or coke-oven gas, with a turbine gearbox.
 
