@@ -12,7 +12,7 @@ A [roller table](item:promptcritical:roller_table) carries the piece on its roll
 
 The [rolling mill stand](item:promptcritical:rolling_mill_stand) is a 3×3×1 two-high stand: two rolls of 0.3 m radius, Create shaft through the port on the left. The piece arrives on a roller table along the front, passes the rolls at the gap set on the panel and leaves on the table at the other side. For the next pass, reverse the table shaft and close the gap. That is how rolling goes: back and forth, pass after pass.
 
-The rolls draw the piece in by friction. Reduction per pass is at most μ²R, about 37 mm with these rolls. More, and the piece is not bitten and stays on the table. Roll force grows with reduction, width, and the hardening of cooling metal. A 150 mm billet reduced by 30 mm at 60 RPM takes 1.12 MW from the shaft. Torque above 300 kN·m shears the coupling **pin**: the stand stays down until a new one goes in, an iron nugget, right-click.
+The rolls draw the piece in by friction. Reduction per pass is at most μ²R, about 37 mm with these rolls. More, and the piece is not bitten and stays on the table. Roll force grows with reduction, width, and the hardening of cooling metal. A 150 mm billet reduced by 30 mm at 60 RPM takes 0.9 MW from the shaft. Torque above 300 kN·m shears the coupling **pin**: the stand stays down until a new one goes in, an iron nugget, right-click.
 
 Each hot pass costs about 15 K. Below 850 °C the steel is no longer austenite: cracks and overload. When the piece gets cold, send it back to the furnace.
 

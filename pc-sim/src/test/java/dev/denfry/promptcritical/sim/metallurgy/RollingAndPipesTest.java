@@ -94,8 +94,9 @@ class RollingAndPipesTest {
         RollingMill mill = new RollingMill(MillRollKind.FLAT, 0.3, 0.35, 1e6);
         PassResult r = mill.pass(billet(0.15, 1373.15), 0.12, 2 * Math.PI);
         assertThat(r.outcome()).isEqualTo(PassResult.Outcome.ROLLED);
-        assertThat(r.forceN()).isCloseTo(1.88e6, within(0.02 * 1.88e6));
-        assertThat(r.powerW()).isCloseTo(1.12e6, within(0.02 * 1.12e6));
+        // Ст3 (C 0,18 %) при 1100 °C, ε = ln(0,15/0,12) = 0,223, ε̇ = ε·ωR/√(RΔh) = 4,43 с⁻¹ → k_f по Мисаке 97,0 МПа
+        assertThat(r.forceN()).isCloseTo(1.518e6, within(0.01 * 1.518e6));
+        assertThat(r.powerW()).isCloseTo(0.905e6, within(0.01 * 0.905e6));
         assertThat(r.out().massKg()).isCloseTo(billet(0.15, 1373.15).massKg(), within(1e-6));
         assertThat(r.out().widthM()).isGreaterThan(0.15);
         assertThat(r.out().cracked()).isFalse();
@@ -110,7 +111,10 @@ class RollingAndPipesTest {
         assertThat(pin.outcome()).isEqualTo(PassResult.Outcome.SHEAR_PIN);
         assertThat(pin.out()).isEqualTo(billet(0.15, 1373.15));
 
-        assertThat(RollingMill.flowStressPa(billet(0.15, 1273.15))).isCloseTo(240e6, within(1.0));
+        // Мисака для Ст3, ε 0,3, ε̇ 10 с⁻¹, ×2/√3: 138,9 МПа при 1000 °C, ≈ 1,25 раза на 100 К
+        assertThat(RollingMill.flowStressPa(billet(0.15, 1273.15))).isCloseTo(138.9e6, within(0.1e6));
+        assertThat(RollingMill.flowStressPa(billet(0.15, 1173.15))).isCloseTo(173.9e6, within(0.1e6));
+        assertThat(RollingMill.flowStressPa(billet(0.15, 1473.15))).isCloseTo(97.2e6, within(0.1e6));
         assertThat(RollingMill.flowStressPa(billet(0.15, 293.15))).isCloseTo(1.8 * 245e6, within(1.0));
         PassResult warm = mill.pass(billet(0.15, 1073.15), 0.14, 6);
         assertThat(warm.out().cracked()).as("ниже Ar₃").isTrue();

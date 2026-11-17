@@ -104,6 +104,11 @@ public record SteelGrade(SteelFamily family, String designation, Map<String, Flo
                 + (pct(chemPct, AlloyElement.NI) + pct(chemPct, AlloyElement.CU)) / 15;
     }
 
+    /** Углерод марки, % по массе. */
+    public double carbonPct() {
+        return pct(chemPct, AlloyElement.C);
+    }
+
     private static double pct(Map<String, Float> m, AlloyElement e) {
         Float v = m.get(e.symbol);
         return v == null ? 0 : v;
