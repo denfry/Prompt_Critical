@@ -930,7 +930,7 @@ public final class PowerGrid {
 
     /**
      * Обратное {@link #exportBranch}; до {@link #startCold}, после {@link #attachBreaker} и
-     * {@link #attachTripUnit}. Ход выключателя (включение, отключение) завершается мгновенно.
+     * {@link #attachTripUnit}. Ход выключателя (включение, отключение) начинается заново и доходит до конца.
      */
     public void importBranch(BranchId id, double[] in) {
         int k = branch(id);
@@ -941,10 +941,11 @@ public final class PowerGrid {
         }
         if (brState[k] != null && in[1] >= 0) {
             BreakerState s = BREAKER_STATES[(int) in[1]];
-            if (s == BreakerState.CLOSING || s == BreakerState.OPENING)
-                s = close ? BreakerState.CLOSED : BreakerState.OPEN;
             brState[k] = s;
-            brTimer[k] = 0;
+            // ход привода начинается заново: пересборка сети (любая смена топологии в измерении) посреди хода
+            // включения раньше превращала его в «отключено», и команда терялась без следа
+            BreakerSpec spec = breakerSpec.get(k);
+            brTimer[k] = s == BreakerState.CLOSING ? spec.closeTimeS() : s == BreakerState.OPENING ? spec.openTimeS() : 0;
             brWear[k] = in[2];
             brOps[k] = (int) in[3];
         }
