@@ -27,7 +27,8 @@
 
 ### Power generation
 - Steam turbine: a back-pressure turbine that takes steam from the boiler it touches; a condenser under it,
-  cooled by river or pond water, gives vacuum and about twice the power, less in late summer.
+  cooled by river or pond water or by a cooling tower cell, gives vacuum and about twice the power, less in
+  late summer; tower water depends on the wet-bulb temperature and the cell ices up in frost.
 - Hydro power: hydro turbine, dam intake gate, penstock water hammer.
 - Gas turbine unit on mine methane or coke-oven gas, with a turbine gearbox.
 
@@ -44,8 +45,8 @@
   blackout (Peukert discharge, float charge, cut-off at 1.75 V per cell).
 
 ### Fixes
-- A grid rebuild in the middle of a breaker's travel no longer drops the closing command; this also fixes
-  the flaky switchgear game tests.
+- A grid rebuild in the middle of a breaker's travel no longer drops the closing command; this was one cause
+  of flaky switchgear game tests (others, from parallel tests rebuilding shared networks, remain).
 
 ## 0.1.0-alpha (M2: era I0, coal and steam)
 
