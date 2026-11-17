@@ -233,6 +233,38 @@ class GridSynchronizationTest {
         }
     }
 
+    /**
+     * Пересборка сети посреди хода выключателя (в мире — любая смена топологии в измерении) не теряет команду:
+     * ход включения доходит до конца, ход отключения тоже. Раньше включение превращалось в «отключено».
+     */
+    @Test
+    void breakerTravelSurvivesANetworkRebuild() {
+        FaultRig r = new FaultRig(0.1);
+        r.g.operateBreaker(r.cb, false);
+        r.ticks(3);
+        assertThat(r.g.breakerState(r.cb)).isEqualTo(BreakerState.OPEN);
+        assertThat(r.g.operateBreaker(r.cb, true)).isEqualTo(BreakerResponse.ACCEPTED);
+        r.ticks(1);
+        assertThat(r.g.breakerState(r.cb)).isEqualTo(BreakerState.CLOSING);
+        double[] state = new double[PowerGrid.BRANCH_STATE];
+        r.g.exportBranch(r.cb, state);
+        r.g.importBranch(r.cb, state);
+        assertThat(r.g.breakerState(r.cb)).isEqualTo(BreakerState.CLOSING);
+        r.ticks(12);
+        assertThat(r.g.breakerState(r.cb)).isEqualTo(BreakerState.CLOSED);
+        r.ticks(1);
+        assertThat(r.g.busVoltagePu(r.far)).isGreaterThan(0.9);
+
+        r.g.operateBreaker(r.cb, false);
+        r.ticks(1);
+        assertThat(r.g.breakerState(r.cb)).isEqualTo(BreakerState.OPENING);
+        r.g.exportBranch(r.cb, state);
+        r.g.importBranch(r.cb, state);
+        assertThat(r.g.breakerState(r.cb)).isEqualTo(BreakerState.OPENING);
+        r.ticks(4);
+        assertThat(r.g.breakerState(r.cb)).isEqualTo(BreakerState.OPEN);
+    }
+
     @Test
     void breakerTravelTimesAndFreeTrip() {
         FaultRig r = new FaultRig(0.1);
