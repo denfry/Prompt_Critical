@@ -34,6 +34,12 @@ public final class EnvironmentService {
                 level.isThundering() && biome.value().hasPrecipitation());
     }
 
+    /** Температура воды реки или пруда у {@code pos}, °C. */
+    public static double waterTempC(ServerLevel level, BlockPos pos) {
+        return environment(level).waterTempC(level.getGameTime(),
+                Environment.climateC(level.getBiome(pos).value().getBaseTemperature()));
+    }
+
     /** Средняя годовая температура климата в точке, К: столько держит порода под ней. */
     public static double climateK(ServerLevel level, BlockPos pos) {
         return Environment.climateC(level.getBiome(pos).value().getBaseTemperature()) + 273.15;

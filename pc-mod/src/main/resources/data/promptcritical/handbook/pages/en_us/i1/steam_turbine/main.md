@@ -15,3 +15,9 @@ The blades are designed for rated speed. At low speed the steam flows over them 
 A centrifugal governor holds speed with a 5 % droop: 100 % speed at full load, 105 % at no load. Throw off the load suddenly and the speed jumps, but the governor closes the valve in time.
 
 If the speed still reaches 110 %, the overspeed trip fires: the stop valve shuts and the turbine runs down. Reset the trip with Shift and right-click, and only once the speed is below rated. On turbines of that era, a rotor that burst at runaway went through the casing.
+
+## Condenser
+
+Put a [condenser](item:promptcritical:condenser) under the turbine so that it touches water: a river, pond or lake. The steam then exhausts into vacuum instead of the atmosphere. Condenser pressure is the saturation pressure at the water temperature plus about 13 K (water rise and terminal difference): about 4 kPa with 15 °C water. The same steam then expands through 870 kJ/kg instead of 485, and the shaft gets roughly twice the power.
+
+River water is warmest at the end of summer, and the vacuum is worse then: the plant loses a few percent. In winter the water is near zero and the vacuum is best. Right-clicking the turbine shows the exhaust pressure.

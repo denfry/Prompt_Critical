@@ -108,10 +108,10 @@ public final class PowerhouseText {
                 "Автомат безопасности не сработал (взводится ниже номинальных оборотов)");
         msg("turbine.no_boiler", "The turbine touches no boiler: put it against a drum, water wall or boiler panel",
                 "Турбина не касается котла: поставьте её к барабану, экрану или щиту котла");
-        msg("turbine.valve_open", "Stop valve opened · %s rpm, %s kW, steam %s kg/s",
-                "Стопорный клапан открыт · %s об/мин, %s кВт, пар %s кг/с");
-        msg("turbine.valve_closed", "Stop valve closed · %s rpm, %s kW, steam %s kg/s",
-                "Стопорный клапан закрыт · %s об/мин, %s кВт, пар %s кг/с");
+        msg("turbine.valve_open", "Stop valve opened · %s rpm, %s kW, steam %s kg/s, exhaust %s kPa",
+                "Стопорный клапан открыт · %s об/мин, %s кВт, пар %s кг/с, выхлоп %s кПа");
+        msg("turbine.valve_closed", "Stop valve closed · %s rpm, %s kW, steam %s kg/s, exhaust %s kPa",
+                "Стопорный клапан закрыт · %s об/мин, %s кВт, пар %s кг/с, выхлоп %s кПа");
     }
 
     private PowerhouseText() {

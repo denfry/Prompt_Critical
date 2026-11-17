@@ -100,6 +100,14 @@ class EnvironmentTest {
         assertThat(Environment.climateC(2.0)).isEqualTo(30);
     }
 
+    /** Вода теплее всего в конце лета и не замерзает ниже 0,5 °C; её размах меньше воздушного. */
+    @Test
+    void waterTemperatureLagsAndDampsTheAir() {
+        double summer = ENV.waterTempC(42 * DAY, 15), winter = ENV.waterTempC(90 * DAY, 15);
+        assertThat(summer - winter).isBetween(10.0, 14.1);
+        assertThat(ENV.waterTempC(90 * DAY, -10)).isEqualTo(0.5);
+    }
+
     /**
      * IEEE 738: в штиль — естественная конвекция ≈ 9 Вт/(м²·К) у АС-120 при перегреве 40 К; при 0,6 м/с
      * (расчётный ветер стандарта) — около 18; при 10 м/с (Re ≈ 9000, формула 3b) — около 85.

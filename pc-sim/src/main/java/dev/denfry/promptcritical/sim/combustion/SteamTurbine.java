@@ -28,6 +28,17 @@ public final class SteamTurbine {
     public static final double VALVE_DROP = 0.05;
     /** ζ регулирующего клапана (как у дроссельной заслонки машины). */
     public static final double THROTTLE_ZETA = SteamEngineUnit.THROTTLE_ZETA;
+    /** Конденсатор: нагрев охлаждающей воды и недогрев до насыщения в расчётной точке, К. */
+    public static final double CW_RISE_K = 10, CONDENSER_TTD_K = 3;
+
+    /**
+     * Давление в конденсаторе при температуре охлаждающей воды на входе, Па: насыщение при
+     * T_вх + {@link #CW_RISE_K} + {@link #CONDENSER_TTD_K} (15 °C → 28 °C, ≈ 3,8 кПа; 25 °C → 38 °C, ≈ 6,6 кПа).
+     */
+    public static double condenserPressurePa(WaterProperties w, double coolingWaterK) {
+        return w.saturationPressure(coolingWaterK + CW_RISE_K + CONDENSER_TTD_K);
+    }
+
     /** Потери на вентиляцию и трение при номинальных оборотах, доля мощности; ∝ ω³. */
     static final double WINDAGE = 0.01;
 
