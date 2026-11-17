@@ -11,9 +11,9 @@ class HomologousCurveTest {
 
     @Test
     void ratedPoint() {
-        // 225° попадает между узлами 220° и 230°: погрешность линейной интерполяции
-        assertThat(c.head(1, 1)).isCloseTo(1, within(0.01));
-        assertThat(c.torque(1, 1)).isCloseTo(1, within(0.01));
+        // 225° — узел таблицы с шагом 5°: номинал без погрешности интерполяции
+        assertThat(c.head(1, 1)).isCloseTo(1, within(1e-12));
+        assertThat(c.torque(1, 1)).isCloseTo(1, within(1e-12));
     }
 
     @Test

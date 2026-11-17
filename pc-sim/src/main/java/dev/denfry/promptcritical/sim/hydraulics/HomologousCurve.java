@@ -5,10 +5,11 @@ import java.util.function.DoubleBinaryOperator;
 /**
  * Гомологические характеристики насоса в форме Сютера (01 §1.2.7): одна функция угла
  * θ = π + atan2(v, ν) во всех четырёх квадрантах, h/(ν² + v²) = W_H(θ),
- * β/(ν² + v²) = W_B(θ). Таблицы по 36 точек с шагом 10°, линейная интерполяция.
+ * β/(ν² + v²) = W_B(θ). Таблицы по 72 точки с шагом 5°, линейная интерполяция: номинал θ = 225° — узел
+ * таблицы, h(1, 1) = β(1, 1) ровно 1 (у Wylie–Streeter 89 точек; при 10° номинал падал между узлами).
  */
 public final class HomologousCurve {
-    public static final int POINTS = 36;
+    public static final int POINTS = 72;
     public static final String DEFAULT_ID = "default";
     private static final double STEP = 2 * Math.PI / POINTS;
 
