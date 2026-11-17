@@ -8,7 +8,11 @@ package dev.denfry.promptcritical.sim.grid;
  */
 final class PowerFlow {
     private static final int MAX_ITERATIONS = 40;
-    private static final double TOLERANCE = 1e-11, EPS = 1e-7;
+    /**
+     * Допуск небаланса, о.е.: абсолютный, но не ниже ошибки округления суммы Y·V — у коротких перемычек
+     * |Y| ~ 10⁸ о.е., и 10⁻¹¹ недостижимо в double.
+     */
+    private static final double TOLERANCE = 1e-11, ROUNDING_PER_Y = 1e-13, EPS = 1e-7;
     private static final int PQ = 0, PV = 1, SLACK = 2;
 
     private final PowerGrid g;
@@ -65,11 +69,14 @@ final class PowerFlow {
         double[] f = new double[vars], f1 = new double[vars], dx = new double[vars];
         double[][] jac = new double[vars][vars];
         boolean converged = vars == 0;
+        double yMax = 0;
+        for (int a = 0; a < n; a++) yMax = Math.max(yMax, Math.hypot(yr[a][a], yi[a][a]));
+        double tolerance = Math.max(TOLERANCE, ROUNDING_PER_Y * yMax);
         for (int it = 0; it < MAX_ITERATIONS && !converged; it++) {
             mismatch(f);
             double norm = 0;
             for (double x : f) norm = Math.max(norm, Math.abs(x));
-            if (norm < TOLERANCE) {
+            if (norm < tolerance) {
                 converged = true;
                 break;
             }

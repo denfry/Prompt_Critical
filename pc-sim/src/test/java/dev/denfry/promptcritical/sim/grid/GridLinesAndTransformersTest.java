@@ -44,6 +44,18 @@ class GridLinesAndTransformersTest {
         }
     }
 
+    /**
+     * Перемычка 1 см на 35 кВ: |Y| ≈ 10⁸ о.е., и ошибка округления небаланса (≈ 10⁻¹⁶·|Y|) выше абсолютного
+     * допуска 10⁻¹¹ — допуск масштабируется по наибольшей проводимости острова.
+     */
+    @Test
+    void powerFlowConvergesOverAVeryShortLine() {
+        for (double km : new double[] {1e-5, 1e-3, 1}) {
+            Line35 l = new Line35(5e6, km, 1);
+            assertThat(l.g.busVoltagePu(l.end)).as("%s км", km).isCloseTo(1, within(0.01));
+        }
+    }
+
     @Test
     @Tag("T7.4")
     void lineLossesAt35kV() {
