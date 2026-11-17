@@ -45,8 +45,11 @@
   blackout (Peukert discharge, float charge, cut-off at 1.75 V per cell).
 
 ### Fixes
-- A grid rebuild in the middle of a breaker's travel no longer drops the closing command; this was one cause
-  of flaky switchgear game tests (others, from parallel tests rebuilding shared networks, remain).
+- Building anything in a dimension rebuilds its grid and relay schemes, and that used to disturb running
+  equipment everywhere: a breaker mid-travel lost its command or restarted its travel, overcurrent time
+  delays, reclosing cycles and under-frequency latches reset, a synchronizing shock could be skipped, and for
+  one tick every breaker read open, every current zero and every relay dropped. All of these now carry
+  through the rebuild. This was also the cause of the flaky switchgear and relay-logic game tests.
 
 ## 0.1.0-alpha (M2: era I0, coal and steam)
 
