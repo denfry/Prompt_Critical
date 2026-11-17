@@ -57,6 +57,33 @@ public record ConductorSpec(Conductor material, double crossSectionMm2, double r
         return STRANDING * Math.sqrt(4 * crossSectionMm2 * 1e-6 / Math.PI);
     }
 
+    /**
+     * h_c провода АС-120 по ветру — IEEE Std 738-2012, формулы 3a, 3b и 5a (СИ): вынужденная конвекция
+     * q = K_угла·[1,01 + 1,35·Re^0,52]·k_f·ΔT, при больших Re — 0,754·K_угла·Re^0,6·k_f·ΔT, естественная
+     * 3,645·ρ_f^0,5·D^0,75·ΔT^1,25; берётся наибольшая, h_c = q/(πD·ΔT). Свойства воздуха плёнки — формулы 13a–15a
+     * того же стандарта. Ветер под 45° к проводу (K_угла = 0,855) и перегрев 40 К для естественной конвекции
+     * [допущение: направление пролётов не учитывается].
+     *
+     * @param windMs      скорость ветра на высоте провода, м/с
+     * @param airTempC    температура воздуха, °C
+     * @param elevationM  высота над уровнем моря, м
+     */
+    public static double convectionWm2K(double windMs, double airTempC, double elevationM) {
+        double d = CONVECTION_REF_D_M, dT = 40, tFilm = airTempC + dT / 2;
+        double mu = 1.458e-6 * Math.pow(tFilm + 273, 1.5) / (tFilm + 383.4);
+        double rho = (1.293 - 1.525e-4 * elevationM + 6.379e-9 * elevationM * elevationM) / (1 + 0.00367 * tFilm);
+        double k = 2.424e-2 + 7.477e-5 * tFilm - 4.407e-9 * tFilm * tFilm;
+        double re = d * rho * Math.max(0, windMs) / mu, kAngle = 0.855;
+        double forced = Math.max(kAngle * (1.01 + 1.35 * Math.pow(re, 0.52)), kAngle * 0.754 * Math.pow(re, 0.6)) * k * dT;
+        double natural = 3.645 * Math.sqrt(rho) * Math.pow(d, 0.75) * Math.pow(dT, 1.25);
+        return Math.max(forced, natural) / (Math.PI * d * dT);
+    }
+
+    /** Нагрев солнцем провода АС-120, Вт/м: поглощение 0,5 × радиация × диаметр (IEEE Std 738, формула 8). */
+    public static double solarWPerM(double irradianceWm2) {
+        return 0.5 * Math.max(0, irradianceWm2) * CONVECTION_REF_D_M;
+    }
+
     /** R(T) = R₂₀(1 + 0,004(T − 20)), Ом/м. */
     public double resistanceOhmPerM(double tempC) {
         return r20OhmPerKm * 1e-3 * (1 + RESISTANCE_TEMP_COEFF * (tempC - 20));
