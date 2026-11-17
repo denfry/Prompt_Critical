@@ -114,10 +114,11 @@ class GridLinesAndTransformersTest {
     void transformerHotSpotAndAging() {
         TransformerThermal th = TransformerThermal.onanPower();
         assertThat(th.steadyTopOilRiseK(1.3)).isCloseTo(75.4, within(0.1));
-        assertThat(th.steadyHotSpotRiseK(1.3)).isCloseTo(39.6, within(0.1));
+        // силовой ONAN: y = 1,3 (IEC 60076-7, табл. 4) — 26·1,3^1,3 = 36,6 К; 20 + 75,4 + 36,6 = 132 °C, V = 2^(34/6) ≈ 51
+        assertThat(th.steadyHotSpotRiseK(1.3)).isCloseTo(36.6, within(0.1));
         double hs = th.steadyHotSpotC(1.3, 20);
-        assertThat(hs).isCloseTo(135, within(2.0));
-        assertThat(rel(TransformerThermal.agingRate(hs), 72)).isLessThan(0.05);
+        assertThat(hs).isCloseTo(132, within(0.5));
+        assertThat(rel(TransformerThermal.agingRate(hs), 50.7)).isLessThan(0.02);
 
         // в сети: трансформатор 10 МВ·А 35/10,5 с нагрузкой 13 МВт; 30 ч SLOW-шагами по 60 с
         PowerGrid g = new PowerGrid(GridConfig.defaults());

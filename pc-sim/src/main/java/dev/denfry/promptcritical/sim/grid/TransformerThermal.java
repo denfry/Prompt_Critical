@@ -17,14 +17,14 @@ public record TransformerThermal(double dThetaOrK, double hgrK, double r, double
             throw new IllegalArgumentException("thermal data");
     }
 
-    /** Распределительный ONAN (таблица §7.4.4, [сверить] по IEC 60076-7). */
+    /** Распределительный ONAN: x = 0,8, y = 1,6 (IEC 60076-7, табл. 4; τ и превышения — таблица §7.4.4). */
     public static TransformerThermal onanDistribution() {
         return new TransformerThermal(55, 23, 5, 0.8, 1.6, 180 * 60, 4 * 60);
     }
 
-    /** Силовой ONAN. */
+    /** Силовой ONAN средней и большой мощности: x = 0,8, y = 1,3 (IEC 60076-7, табл. 4). */
     public static TransformerThermal onanPower() {
-        return new TransformerThermal(52, 26, 6, 0.8, 1.6, 210 * 60, 10 * 60);
+        return new TransformerThermal(52, 26, 6, 0.8, 1.3, 210 * 60, 10 * 60);
     }
 
     /** Относительная скорость старения IEC 60076-7 (не термостабилизированная бумага). */
