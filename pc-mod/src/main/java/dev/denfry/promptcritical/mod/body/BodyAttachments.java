@@ -11,7 +11,7 @@ import net.neoforged.neoforge.network.event.RegisterPayloadHandlersEvent;
 import net.neoforged.neoforge.registries.DeferredRegister;
 import net.neoforged.neoforge.registries.NeoForgeRegistries;
 
-/** Регистрация тела игрока: данные (переживают смерть), пакеты выбора, события входа и возрождения. */
+/** Регистрация тела игрока: данные (переживают смерть), пакеты выбора, события входа и возрождения, касание шин. */
 public final class BodyAttachments {
     public static final DeferredRegister<AttachmentType<?>> TYPES =
             DeferredRegister.create(NeoForgeRegistries.ATTACHMENT_TYPES, PromptCritical.MOD_ID);
@@ -30,6 +30,12 @@ public final class BodyAttachments {
         });
         NeoForge.EVENT_BUS.addListener((PlayerEvent.PlayerRespawnEvent e) -> BodyService.apply(e.getEntity()));
         NeoForge.EVENT_BUS.addListener((PlayerEvent.PlayerChangedDimensionEvent e) -> BodyService.apply(e.getEntity()));
+        NeoForge.EVENT_BUS.addListener((net.neoforged.neoforge.event.tick.PlayerTickEvent.Post e) -> {
+            if (e.getEntity() instanceof net.minecraft.server.level.ServerPlayer p) ShockService.tick(p);
+        });
+        NeoForge.EVENT_BUS.addListener((PlayerEvent.PlayerLoggedOutEvent e) -> {
+            if (e.getEntity() instanceof net.minecraft.server.level.ServerPlayer p) ShockService.forget(p);
+        });
     }
 
     private static void payloads(RegisterPayloadHandlersEvent event) {

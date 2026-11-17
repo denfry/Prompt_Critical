@@ -364,6 +364,14 @@ public final class PcLanguageProvider extends LanguageProvider {
         MISC.put("promptcritical.body.info.knockback", new String[] {"Knockback resistance: %s %%",
                 "Сопротивление отбрасыванию: %s %%"});
         MISC.put("promptcritical.body.info.cage", new String[] {"In the hoist cage: %s kg", "В клети подъёма: %s кг"});
+        MISC.put("promptcritical.body.info.let_go", new String[] {"Let-go current: %s mA", "Ток отпускания: %s мА"});
+        MISC.put("promptcritical.body.shock.felt", new String[] {"Electric shock: %s mA through the body",
+                "Бьёт током: %s мА через тело"});
+        MISC.put("promptcritical.body.shock.held", new String[] {"%s mA: the hand will not let go!",
+                "%s мА: руку свело, не отпустить!"});
+        MISC.put("death.attack.promptcritical.electrocution", new String[] {"%1$s was electrocuted", "%1$s убит током"});
+        MISC.put("death.attack.promptcritical.electrocution.player", new String[] {"%1$s was electrocuted while fighting %2$s",
+                "%1$s убит током в схватке с %2$s"});
         MISC.put("promptcritical.mine.duster.done", new String[] {"Stone dust applied: inert share %s %%",
                 "Выработка осланцована: инертная доля %s %%"});
         MISC.put("promptcritical.mine.duster.empty", new String[] {"No stone dust in the inventory", "Нет инертной пыли"});

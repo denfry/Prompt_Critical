@@ -17,3 +17,11 @@ Carbon monoxide binds to haemoglobin. Blood saturation moves towards an equilibr
 - **The body** changes the rate by about ±10 %. Blood volume follows Nadler, basal metabolism follows Mifflin–St Jeor, which also depends on age. A light, young character is poisoned a little faster than a heavy one.
 
 The equilibrium itself depends on neither body nor activity: no mass and no careful pace will save you from a lethal concentration. A self-rescuer will.
+
+## Electricity
+
+A bare live [busbar](item:promptcritical:busbar) gives you a shock if you touch it while standing on the ground, in water or on a ladder. An insulated [power cable](item:promptcritical:power_cable) does not. The current through the body is the phase voltage divided by the body impedance. Dry-skin impedance follows IEC 60479-1: about 1 kΩ at 230 V, and above 700 V the skin breaks down, leaving 620 Ω of internal tissue. Wet skin (rain, water) gives those 620 Ω straight away.
+
+- **Let-go current** (Dalziel): 16 mA for men, 10.5 mA for women. Above it the hand cramps, and you cannot step away while the current flows. That is why portable tools run on 36 V.
+- **Fibrillation** (Dalziel): the threshold is K/√t, where K grows with body mass: 0.116 at 50 kg, 0.157 at 70 kg. A 0.4 kV busbar drives about 240 mA and kills in a fraction of a second, a light body sooner and a heavy one a little later. At 6 kV the current is in amperes: instant death and an arc burn.
+- **Protection**: a wool carpet or wool block underfoot works as a dielectric mat and holds up to 1 kV. Against 6 kV it is useless. The real protection is to switch off, verify there is no voltage, and earth.

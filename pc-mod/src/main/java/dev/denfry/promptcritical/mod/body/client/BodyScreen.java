@@ -2,6 +2,7 @@ package dev.denfry.promptcritical.mod.body.client;
 
 import dev.denfry.promptcritical.mod.body.BodyPayloads;
 import dev.denfry.promptcritical.sim.body.BodyProfile;
+import dev.denfry.promptcritical.sim.body.ElectricShock;
 import dev.denfry.promptcritical.sim.body.Physiology;
 import java.util.Locale;
 import java.util.function.IntConsumer;
@@ -98,6 +99,7 @@ final class BodyScreen extends Screen {
         line(g, x, y += 12, "promptcritical.body.info.gas_sprint", fmt(Physiology.gasClock(p, Physiology.Activity.SPRINT), 2));
         line(g, x, y += 12, "promptcritical.body.info.knockback", fmt(100 * Physiology.knockbackResistance(p), 0));
         line(g, x, y += 12, "promptcritical.body.info.cage", fmt(Physiology.loadedMassKg(p), 0));
+        line(g, x, y += 12, "promptcritical.body.info.let_go", fmt(1000 * ElectricShock.letGoA(p.sex()), 1));
     }
 
     private void line(GuiGraphics g, int x, int y, String key, String value) {
