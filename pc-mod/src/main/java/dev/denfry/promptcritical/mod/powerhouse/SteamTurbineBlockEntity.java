@@ -98,7 +98,10 @@ public class SteamTurbineBlockEntity extends GeneratingKineticBlockEntity
         SimLevelBinding b = SimBindings.get(sl);
         EngineUnit e = unit();
         if (b == null || e == null) return;
-        if (ticks % LINK_PERIOD == 1) b.world().subsystem(SteamPlant.class).connect(simId, findBoiler());
+        if (ticks % LINK_PERIOD == 1) {
+            b.world().subsystem(SteamPlant.class).connect(simId, findBoiler());
+            e.setExhaustPressure(exhaustPa(sl));
+        }
 
         double r = e.omega() / e.nominalOmega();
         int next = level4(r);
@@ -134,6 +137,21 @@ public class SteamTurbineBlockEntity extends GeneratingKineticBlockEntity
         if (r >= 0.95) return 4;
         if (r >= 0.2) return Math.max(1, Math.min(3, (int) Math.floor(4 * r)));
         return 0;
+    }
+
+    /**
+     * Противодавление: конденсатор под турбиной, который касается воды, держит вакуум по температуре этой воды;
+     * без него — выхлоп в атмосферу.
+     */
+    private double exhaustPa(ServerLevel sl) {
+        BlockPos c = worldPosition.below();
+        if (!sl.getBlockState(c).is(PcBlocks.CONDENSER.get())) return SteamPlant.EXHAUST_PA;
+        boolean water = sl.getFluidState(c.below()).is(net.minecraft.tags.FluidTags.WATER);
+        for (Direction d : Direction.Plane.HORIZONTAL) water |= sl.getFluidState(c.relative(d)).is(net.minecraft.tags.FluidTags.WATER);
+        if (!water) return SteamPlant.EXHAUST_PA;
+        double tw = dev.denfry.promptcritical.mod.environment.EnvironmentService.waterTempC(sl, c) + 273.15;
+        return dev.denfry.promptcritical.sim.combustion.SteamTurbine.condenserPressurePa(
+                dev.denfry.promptcritical.sim.thermo.WaterProperties.tables(), tw);
     }
 
     /** Котёл, которого турбина касается гранью; {@link SimId#NONE} — нет. */
@@ -194,7 +212,8 @@ public class SteamTurbineBlockEntity extends GeneratingKineticBlockEntity
         b.submit(new SimCommand.Operate(simId, SteamPlant.TOGGLE_STOP_VALVE), src);
         player.displayClientMessage(PowerhouseText.msg(e.stopValveOpen() ? "turbine.valve_closed" : "turbine.valve_open",
                 String.format(Locale.ROOT, "%.0f", 60 * e.omega() / (2 * Math.PI)),
-                String.format(Locale.ROOT, "%.0f", e.shaftPowerW() / 1e3), String.format(Locale.ROOT, "%.2f", e.steamFlowKgS())), true);
+                String.format(Locale.ROOT, "%.0f", e.shaftPowerW() / 1e3), String.format(Locale.ROOT, "%.2f", e.steamFlowKgS()),
+                String.format(Locale.ROOT, "%.1f", e.exhaustPressurePa() / 1e3)), true);
         level.playSound(null, worldPosition, SoundEvents.IRON_TRAPDOOR_OPEN, SoundSource.BLOCKS, 0.6f, 0.6f);
         return InteractionResult.SUCCESS;
     }

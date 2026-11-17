@@ -108,5 +108,9 @@ public final class PowerhouseRecipes extends RecipeProvider {
                 .pattern("PCP").pattern("SLS").pattern("PCP").define('P', plate).define('C', AllBlocks.COGWHEEL.get())
                 .define('L', AllBlocks.LARGE_COGWHEEL.get()).define('S', shaft)
                 .unlockedBy("has_steel_plate", has(plate)).save(out, id("turbine_gearbox"));
+        // конденсатор: корпус из листа, трубный пучок — трубы
+        ShapedRecipeBuilder.shaped(RecipeCategory.MISC, PcBlocks.CONDENSER.get())
+                .pattern("PPP").pattern("FFF").pattern("PPP").define('P', plate).define('F', pipe)
+                .unlockedBy("has_steel_plate", has(plate)).save(out, id("condenser"));
     }
 }
