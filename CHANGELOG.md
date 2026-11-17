@@ -31,6 +31,10 @@
 - Hydro power: hydro turbine, dam intake gate, penstock water hammer.
 - Gas turbine unit on mine methane or coke-oven gas, with a turbine gearbox.
 
+### Control power
+- Station battery: a 24 V lead-acid battery next to the relay rectifier carries control power through a
+  blackout (Peukert discharge, float charge, cut-off at 1.75 V per cell).
+
 ### Fixes
 - A grid rebuild in the middle of a breaker's travel no longer drops the closing command; this also fixes
   the flaky switchgear game tests.
