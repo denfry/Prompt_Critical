@@ -37,16 +37,20 @@ class CombustionValidationTest {
     void t7_11_coalGradeG() {
         assertThat(COAL_G.lhv()).isCloseTo(23.916e6, within(0.005 * 23.92e6));
         assertThat(COAL_G.stoichAirKgPerKg()).isCloseTo(8.11, within(0.005 * 8.11));
+        // Пример §7.8.2 считает полное выгорание: O₂ 4,26 %, 92,0 г CO₂/МДж, CO₂ 14,5 %, α по O₂ 1,25. Пылеугольная
+        // горелка теряет q₄ = 1 %: 0,01·23,92/32,76 = 0,0073 кг C/кг в шлак и унос — этот углерод не берёт O₂ и не
+        // даёт CO₂; сухих газов столько же (CO₂ сменяется O₂ моль на моль), а O₂ — 4,44 %, CO₂ — 14,36 %.
         CombustionResult r = burn(COAL_G, BurnerKind.PULVERIZED_COAL, 1.25, 298.15);
-        assertThat(r.xO2Dry).isCloseTo(0.0426, within(0.0005));
-        assertThat(co2PerMJ(r, COAL_G)).isCloseTo(92.0, within(0.005 * 92.0));
-        // остальные числа примера §7.8.2
-        assertThat(r.fluegasKgS).isCloseTo(10.94, within(0.02));
+        double carbonLeft = 0.01 * COAL_G.lhv() / 32.76e6;
+        assertThat(r.xO2Dry).isCloseTo(0.0444, within(0.0005));
+        assertThat(co2PerMJ(r, COAL_G)).isCloseTo(92.0 * (1 - carbonLeft / 0.60), within(0.005 * 92.0));
+        assertThat(r.fluegasKgS).isCloseTo(10.93, within(0.02));
         assertThat(r.dryFluegasNm3S).isCloseTo(7.71, within(0.02));
         double xCo2Dry = r.xCO2 / (1 - r.xH2O);
-        assertThat(xCo2Dry).isCloseTo(0.145, within(0.001));
+        assertThat(xCo2Dry).isCloseTo(0.1436, within(0.001));
         assertThat(r.so2KgS * 1e6 / r.dryFluegasNm3S).isCloseTo(3890, within(20.0));
-        assertThat(21 / (21 - 100 * r.xO2Dry)).as("α по O₂").isCloseTo(1.25, within(0.01));
+        assertThat(r.ashKgS).isCloseTo(0.20 + carbonLeft, within(1e-9)); // кокс недожога — в шлаке и уносе
+        assertThat(21 / (21 - 100 * r.xO2Dry)).as("α по O₂ завышено недожогом").isCloseTo(1.27, within(0.01));
     }
 
     @Test

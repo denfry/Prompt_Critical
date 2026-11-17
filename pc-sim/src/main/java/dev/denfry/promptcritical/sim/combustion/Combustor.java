@@ -38,6 +38,10 @@ public final class Combustor {
     private final FuelSpec fuel;
     private final BurnerSpec burner;
     private final double lhv, o2st, l0, alphaCrit, q4;
+    /** Углерод механического недожога q₄, кг/кг топлива: q₄·Q / 32,76 МДж/кг C — в шлак и унос, не в газ. */
+    private final double carbonLeft;
+    /** Теплота сгорания углерода до CO₂, Дж/кг. */
+    static final double C_TO_CO2_J_PER_KG = 32.76e6;
     /** Мольные количества продуктов на кг топлива (рабочий буфер). */
     private final double[] n = new double[SPECIES.length];
 
@@ -49,6 +53,7 @@ public final class Combustor {
         this.l0 = fuel.stoichAirKgPerKg();
         this.alphaCrit = Double.isNaN(fuel.alphaCrit()) ? burner.kind().alphaCrit : fuel.alphaCrit();
         this.q4 = fuel.phase() == FuelPhase.SOLID ? burner.kind().mechanicalLoss : 0;
+        this.carbonLeft = Math.min(fuel.c(), q4 * fuel.lhv() / C_TO_CO2_J_PER_KG);
     }
 
     public FuelSpec fuel() {
@@ -93,7 +98,9 @@ public final class Combustor {
             passAir(Math.max(airKgS, 0), out);
             return;
         }
-        double c = fuel.c(), h = fuel.h(), s = fuel.s();
+        // механический недожог не горит: его углерод не берёт кислород и не даёт CO₂
+        double c = fuel.c() - carbonLeft, h = fuel.h(), s = fuel.s();
+        double o2st = this.o2st - FuelSpec.O2_PER_C * carbonLeft;
         double alpha = airKgS / (fuelKgS * l0);
         double fCo = clamp01(0.5 * (1 - Math.tanh((alpha - alphaCrit) / W_ALPHA)) * burner.mixingQuality());
         double o2Avail = AIR_O2 * alpha * l0;
@@ -144,7 +151,7 @@ public final class Combustor {
         out.dryFluegasNm3S = fuelKgS * dry * FuelGas.NORMAL_MOLAR_VOLUME;
         for (int k = 0; k < n.length; k++) out.productMolS[k] = n[k] * fuelKgS;
 
-        out.ashKgS = fuelKgS * fuel.ash();
+        out.ashKgS = fuelKgS * (fuel.ash() + carbonLeft);
         out.flyAshKgS = out.ashKgS * burner.kind().flyAshFraction;
         out.co2KgS = fuelKgS * mCo2;
         out.coKgS = fuelKgS * mCo;
