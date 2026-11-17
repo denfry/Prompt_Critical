@@ -3,7 +3,7 @@ package dev.denfry.promptcritical.sim.neutronics;
 /**
  * Ключи {@code neutronics.*} (01 §1.15).
  *
- * @param maxDelayedGroups           {@code max_delayed_groups} — 6 групп Кипина + до 3 фотонейтронных
+ * @param maxDelayedGroups           {@code max_delayed_groups} — 6 групп Кипина + 9 фотонейтронных
  * @param kineticsMaxSubsteps        {@code kinetics_max_substeps}
  * @param photoneutronBetaD2o        {@code photoneutron_beta_d2o} [BALANCE]
  * @param photoneutronBetaBe         {@code photoneutron_beta_be} [BALANCE]
@@ -31,7 +31,7 @@ public record NeutronicsConfig(int maxDelayedGroups, int kineticsMaxSubsteps, do
     }
 
     public static NeutronicsConfig defaults() {
-        return new NeutronicsConfig(9, 4096, 5e-4, 1e-4, 1.2, 0.05, 4, 1.15, 1.08);
+        return new NeutronicsConfig(15, 4096, 5e-4, 1e-4, 1.2, 0.05, 4, 1.15, 1.08);
     }
 
     public NeutronicsConfig withCoolantAdjacencyFactor(double g) {

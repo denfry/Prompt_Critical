@@ -27,10 +27,14 @@ class KineticsBehaviourTest {
     @Test
     void photoneutronGroupsJoinFromEquilibrium() {
         PointKinetics k = new PointKinetics(LWR, 9e-4, 1);
-        k.setParameters(DelayedNeutronData.withPhotoneutrons(LWR.scaledTo(0.0058), 5e-4, 9), 9e-4);
-        assertThat(k.groupCount()).isEqualTo(9);
-        double longest = 0.1 * 5e-4 / (9e-4 * Math.log(2) / (12.8 * 86400)); // c = β n / (Λ λ)
-        assertThat(k.precursor(8)).isCloseTo(longest, within(1e-9 * longest));
+        DelayedGroups withPhoto = DelayedNeutronData.withPhotoneutrons(LWR.scaledTo(0.0058), 5e-4, 15);
+        k.setParameters(withPhoto, 9e-4);
+        assertThat(k.groupCount()).isEqualTo(15);
+        // Bernstein–Keepin (ANL TM-30, табл. 5, Σβ_i = 100,323·10⁻⁵): 2,5 с и 41 с — 85 % фотонейтронов, 12,8 сут — 0,05 %
+        assertThat(withPhoto.beta(6) + withPhoto.beta(7)).isCloseTo(85.15 / 100.323 * 5e-4, within(1e-12));
+        assertThat(withPhoto.lambda(6)).isCloseTo(Math.log(2) / 2.5, within(1e-12));
+        double longest = 0.05 / 100.323 * 5e-4 / (9e-4 * Math.log(2) / (12.8 * 86400)); // c = β n / (Λ λ)
+        assertThat(k.precursor(14)).isCloseTo(longest, within(1e-9 * longest));
         // Длинная группа держит хвост мощности после АЗ.
         PointKinetics plain = new PointKinetics(LWR.scaledTo(0.0058), 9e-4, 1);
         for (int i = 0; i < 20 * 600; i++) {

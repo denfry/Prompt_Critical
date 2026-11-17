@@ -131,7 +131,7 @@ class LatticeValidationTest {
         // GDD: 0,0058 (НК). γ_d = exp(B²Δτ)/ε ≈ 0,965 не опускает β_eff ниже β^mix природного U (0,0069).
         assertThat(keepin).isBetween(0.0058, DelayedNeutronData.mixedBeta(fr));
         DelayedGroups all = MODEL.delayedGroups(fr, B2_T3, x, MODEL.photoneutronBeta(referenceCell(T3_CLUSTER_D2O)));
-        assertThat(all.count()).isEqualTo(9);
+        assertThat(all.count()).isEqualTo(15); // 6 групп Кипина + 9 фотонейтронных
         assertThat(all.betaTotal() - keepin).isCloseTo(5e-4, within(1e-12));
         assertThat(generationTime(T3_CLUSTER_D2O)).isBetween(4.5e-4, 1.8e-3);
     }

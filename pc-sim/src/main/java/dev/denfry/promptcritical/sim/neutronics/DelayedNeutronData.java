@@ -27,11 +27,27 @@ public final class DelayedNeutronData {
             {0.010, 0.229, 0.173, 0.390, 0.182, 0.016},
     };
 
-    /** Фотонейтронные группы: T½ = 2,5 мин, 1,1 ч, 12,8 сут; доли 0,6/0,3/0,1. */
-    private static final double[] PHOTO_HALF_LIFE = {150, 1.1 * 3600, 12.8 * 86400};
-    private static final double[] PHOTO_SPLIT = {0.6, 0.3, 0.1};
+    /**
+     * Девять фотонейтронных групп D₂O от γ осколков U-235: восемь групп Bernstein et al. (1947) в нормировке
+     * Keepin и группа 12,8 сут (Ergen) — по табл. 5 отчёта ANL/RERTR/TM-30. Две короткие группы дают 85 %
+     * фотонейтронов, 12,8 сут — 0,05 %. Для бериллия берутся те же группы [допущение: у Be порог 1,67 МэВ,
+     * и доли сдвинуты к более мягким γ].
+     */
+    private static final double[] PHOTO_HALF_LIFE = {2.5, 41, 2.4 * 60, 7.7 * 60, 27 * 60, 1.65 * 3600, 4.4 * 3600,
+            53 * 3600, 12.8 * 86400};
+    /** β_i групп из той же таблицы, 10⁻⁵ (сумма 100,32); доли — нормированные β_i. */
+    private static final double[] PHOTO_BETA_1E5 = {64.84, 20.31, 6.98, 3.34, 2.06, 2.32, 0.320, 0.103, 0.05};
+    private static final double[] PHOTO_SPLIT = normalized(PHOTO_BETA_1E5);
 
     private DelayedNeutronData() {}
+
+    private static double[] normalized(double[] v) {
+        double s = 0;
+        for (double x : v) s += x;
+        double[] r = new double[v.length];
+        for (int i = 0; i < v.length; i++) r[i] = v[i] / s;
+        return r;
+    }
 
     /** β нуклида (0..3). */
     public static double beta(int nuclide) {
@@ -85,7 +101,7 @@ public final class DelayedNeutronData {
         return Math.exp(buckling2 * (agePrompt - ageDelayed)) / epsilon;
     }
 
-    /** Добавляет три фотонейтронные группы с суммарной долей {@code betaPhoto} (D₂O, Be). */
+    /** Добавляет девять фотонейтронных групп с суммарной долей {@code betaPhoto} (D₂O, Be). */
     public static DelayedGroups withPhotoneutrons(DelayedGroups groups, double betaPhoto, int maxGroups) {
         if (betaPhoto <= 0) return groups;
         int g = groups.count();
