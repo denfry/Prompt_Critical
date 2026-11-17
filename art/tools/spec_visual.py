@@ -1,7 +1,5 @@
-"""Детальные модели M2 (06 §6.2, статус MODELED): котельная I0 — цепная
-решётка, кирпичная труба. Заменяют плейсхолдеры `spec_grid`/`spec_states`.
-
-Кинематика, на которую завязан рендерер, сохранена: шаг цепи 4 px — `GrateStokerRenderer`."""
+"""Детальные модели M2 (06 §6.2, статус MODELED): котельная I0 — кирпичная
+труба. Заменяют плейсхолдеры `spec_grid`/`spec_states`."""
 import math
 
 from artkit import *
@@ -74,34 +72,8 @@ def wheel(name, axis, r, a0, a1, c, spokes_tex="hw"):
 
 
 # ======================================================================
-# цепная решётка ЛЦР: бункер с северной стороны, слой идёт к котлу (юг); вал Create слева (запад)
+# цепная решётка нарисована вручную в Blockbench: art/blockbench/boilers/grate_stoker.author.js
 # ======================================================================
-
-def stoker(running=False):
-    bed = "coall" if running else "coal"
-    return [el("frame_w", [0, 0, 0], [2, 10, 16], "ci"),
-            el("frame_e", [14, 0, 0], [16, 10, 16], "ci"),
-            el("foot_w", [-0.01, 0, 0], [2.5, 1.5, 16], "engp"),
-            el("foot_e", [13.5, 0, 0], [16.01, 1.5, 16], "engp"),
-            el("hopper_low", [2, 9, 0], [14, 12, 6], "engp"),
-            el("hopper_high", [1, 12, 0], [15, 16, 7.5], "engp"),
-            el("hopper_coal", [2, 15, 1], [14, 15.6, 6.5], "coal"),
-            el("gate", [2, 8.6, 6], [14, 12, 7], "ci"),
-            el("gate_handle", [7, 12, 6.25], [9, 14, 6.75], "br"),
-            el(("glow_" if running else "") + "fire_bed", [2, 7.5, 7], [14, 8.6, 16], bed),
-            el("arch", [2, 11, 8], [14, 13, 12], "sb"),
-            el("sprocket_housing", [0.5, 2, 0], [15.5, 6, 3], "ci"),
-            el("bearing_w", [-0.01, 5.5, 5.5], [1, 10.5, 10.5], "ci"),
-            el("bearing_cap_w", [-0.02, 6.5, 6.5], [0.5, 9.5, 9.5], "br")]
-
-
-m("grate_stoker", "boilers", stoker())
-m("grate_stoker_running", "boilers", stoker(True))
-m("grate_stoker/chain", "boilers", [
-    el("chain_top", [2, 6.5, 0], [14, 7.5, 16], "chain"),
-    el("chain_bottom", [2, 1, 0], [14, 2, 16], "chain"),
-] + [el(f"bar_{i}", [2, 6.2, i * 4 + 0.5], [14, 7.8, i * 4 + 1.5], "pol") for i in range(4)]
-  + [el(f"bar_low_{i}", [2, 0.7, i * 4 + 2.5], [14, 2.3, i * 4 + 3.5], "pol") for i in range(4)], kind="partial")
 
 
 # ======================================================================

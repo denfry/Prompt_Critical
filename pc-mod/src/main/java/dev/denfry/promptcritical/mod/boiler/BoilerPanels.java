@@ -107,6 +107,9 @@ public final class BoilerPanels {
             HOPPER = PanelText.tr("stoker.hopper", "Hopper: coal, washed coal, charcoal, coke",
                     "Бункер: уголь, концентрат, древесный уголь, кокс"),
             CHAIN = PanelText.tr("stoker.chain", "Chain", "Цепь"),
+            CHAIN_SPEED = PanelText.tr("stoker.chain_speed", "Chain shaft", "Вал цепи"),
+            CHAIN_SPEED_TIP = PanelText.tr("stoker.chain_speed_tip", "Chain shaft %s rpm (nominal %s): the feed follows the speed",
+                    "Вал цепи %s об/мин (номинал %s): подача идёт по скорости"),
             STOKER_STATUS = PanelText.tr("stoker.status", "Shaft %s rpm · bed %s kg", "Вал %s об/мин · слой %s кг"),
             STOKER_NO_BOILER = PanelText.tr("stoker.no_boiler", "Back the stoker onto a boiler", "Решётку нужно примкнуть задом к котлу");
 
@@ -176,12 +179,16 @@ public final class BoilerPanels {
             .button(152, 187, 80, BUTTON_GEAR, GEAR_BUTTON.get(), GEAR_TIP.get())
             .build();
 
-    public static final PanelLayout STOKER = PanelLayout.builder("grate_stoker", 176, 100, S_CHANNELS)
+    /** Щит решётки: подача угля, обороты вала цепи, лампы, бункер. Фон — {@code grate_stoker.author.js}, {@code GST.paintGui}. */
+    public static final PanelLayout STOKER = PanelLayout.builder("grate_stoker", 176, 104, S_CHANNELS)
+            .art(PromptCritical.id("textures/gui/panel/grate_stoker.png"))
             .dial(8, 24, false, S_FEED_KGH, 1, 1500, Double.NaN, 0, KGH.get(), FEED_RATE.get(), null)
-            .lamp(64, 26, S_FLAGS, SF_BOILER, LampColor.GREEN, BOILER_LAMP.get())
-            .lamp(64, 42, S_FLAGS, SF_RUNNING, LampColor.AMBER, CHAIN.get())
-            .slot(140, 34, 0, s -> BoilerFuels.key(s) != null, HOPPER.get())
-            .readout(64, 62, 104, v -> v.bit(S_FLAGS, SF_BOILER)
+            .dial(64, 24, false, S_RPM10, 10, 2 * GrateStokerBlockEntity.NOMINAL_RPM, Double.NaN, 0, RPM.get(), CHAIN_SPEED.get(),
+                    v -> CHAIN_SPEED_TIP.get(v.num(S_RPM10, 10, 0), PanelText.num(GrateStokerBlockEntity.NOMINAL_RPM, 0)))
+            .lamp(120, 26, S_FLAGS, SF_BOILER, LampColor.GREEN, BOILER_LAMP.get())
+            .lamp(120, 42, S_FLAGS, SF_RUNNING, LampColor.AMBER, CHAIN.get())
+            .slot(122, 62, 0, s -> BoilerFuels.key(s) != null, HOPPER.get())
+            .readout(8, 87, 160, v -> v.bit(S_FLAGS, SF_BOILER)
                     ? STOKER_STATUS.get(v.num(S_RPM10, 10, 0), v.num(S_BED_KG10, 10, 0))
                     : STOKER_NO_BOILER.get().withStyle(ChatFormatting.RED), null)
             .build();
