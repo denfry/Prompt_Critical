@@ -22,12 +22,15 @@ import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.phys.Vec3;
 
 /**
- * Подъём на клиенте (арт 08 §8.21): барабан машины вокруг оси X модели (pivot [8, 8, 8]), шкив на оголовке копра
- * вокруг оси X его модели (pivot [8, 16, 8]) и канат — от барабана к шкиву и от шкива вниз к крыше клети.
+ * Подъём на клиенте (арт 08 §8.21): барабан машины вокруг оси X модели (pivot [8, 0, 8], art/blockbench/mining/
+ * mine_hoist.author.js), курсор указателя глубины, шкив на оголовке копра вокруг оси X его модели (pivot [8, 16, 8])
+ * и канат — от барабана к шкиву и от шкива вниз к крыше клети.
  */
 final class HoistRenderer implements BlockEntityRenderer<MineHoistBlockEntity> {
-    /** Видимые радиусы барабана и шкива по моделям, блоков. */
-    private static final double DRUM_R = 13 / 16.0, SHEAVE_R = 13 / 16.0, ROPE_W = 0.07;
+    /** Видимые радиусы навитого каната на барабане и шкива по моделям, блоков. */
+    private static final double DRUM_R = 14.6 / 16.0, SHEAVE_R = 13 / 16.0, ROPE_W = 0.07;
+    /** Ход курсора указателя глубины по шкале модели (y 12 → −10), блоков. */
+    private static final float CURSOR_TRAVEL = 22 / 16f;
 
     @Override
     public void render(MineHoistBlockEntity be, float partialTicks, PoseStack ms, MultiBufferSource buffers, int light, int overlay) {
@@ -38,7 +41,16 @@ final class HoistRenderer implements BlockEntityRenderer<MineHoistBlockEntity> {
         float drum = be.drumAngle(partialTicks);
         SuperByteBuffer d = CachedBuffers.partial(MineClient.HOIST_DRUM, state);
         d.center().rotateYDegrees(-(facing.toYRot() + 180)).uncenter()
-                .translate(0, 0.5f, 0.5f).rotateX(drum).translate(0, -0.5f, -0.5f)
+                .translate(0, 0, 0.5f).rotateX(drum).translate(0, 0, -0.5f)
+                .light(light).renderInto(ms, vc);
+
+        HoistGeometry.Shaft shaft = be.shaft();
+        double depthNow = be.renderDepth(partialTicks);
+        float travel = shaft == null || shaft.depth() <= 0 ? 0
+                : (float) Math.max(0, Math.min(1, depthNow / shaft.depth())) * CURSOR_TRAVEL;
+        CachedBuffers.partial(MineClient.HOIST_CURSOR, state)
+                .center().rotateYDegrees(-(facing.toYRot() + 180)).uncenter()
+                .translate(0, -travel, 0)
                 .light(light).renderInto(ms, vc);
 
         BlockPos sheave = be.sheave();
@@ -60,14 +72,12 @@ final class HoistRenderer implements BlockEntityRenderer<MineHoistBlockEntity> {
         TextureAtlasSprite rope = Minecraft.getInstance().getTextureAtlas(InventoryMenu.BLOCK_ATLAS)
                 .apply(PromptCritical.id("block/common/plant_rope"));
         Vec3 o = Vec3.atLowerCornerOf(origin);
-        Vec3 drumC = BoilerGeometry.world(origin, facing, 8, 8, 8).subtract(o);
+        Vec3 drumC = BoilerGeometry.world(origin, facing, 8, 0, 8).subtract(o);
         Vec3 sheaveC = new Vec3(sheave.getX() + 0.5, sheave.getY() + 1.0, sheave.getZ() + 0.5).subtract(o);
         Vec3 toDrum = horizontal(drumC.subtract(sheaveC));
         draw(vc, ms, drumC.add(0, DRUM_R, 0), sheaveC.add(toDrum.scale(SHEAVE_R)).add(0, 0.1, 0), rope, light);
-        HoistGeometry.Shaft shaft = be.shaft();
         if (shaft == null) return;
-        double depth = be.renderDepth(partialTicks);
-        Vec3 cageTop = cageTop(shaft, depth).subtract(o);
+        Vec3 cageTop = cageTop(shaft, depthNow).subtract(o);
         Vec3 toCage = horizontal(cageTop.subtract(sheaveC));
         Vec3 from = sheaveC.add(toCage.scale(Math.min(SHEAVE_R, cageTop.subtract(sheaveC).multiply(1, 0, 1).length())));
         int cageLight = LevelRenderer.getLightColor(be.getLevel(), BlockPos.containing(cageTop.add(o)));

@@ -1,17 +1,18 @@
 {
 	"credit": "Made with Blockbench",
 	"textures": {
-		"mgrn": "promptcritical:block/common/metal_green",
-		"pol": "promptcritical:block/common/m2_steel_polished",
-		"rope": "promptcritical:block/common/plant_rope",
-		"particle": "promptcritical:block/common/steel_bare",
-		"st": "promptcritical:block/common/steel_bare"
+		"particle": "promptcritical:block/mine_hoist/drum",
+		"mine_hoist_drum": "promptcritical:block/mine_hoist/drum",
+		"mine_hoist_rope": "promptcritical:block/mine_hoist/rope",
+		"material_bright_steel": "promptcritical:block/material/bright_steel",
+		"mine_hoist_drum_end": "promptcritical:block/mine_hoist/drum_end",
+		"material_cast_iron": "promptcritical:block/material/cast_iron"
 	},
 	"elements": [
 		{
-			"name": "drum_0",
-			"from": [-10, -3, 5.812],
-			"to": [26, 19, 10.188],
+			"name": "barrel_0_0",
+			"from": [-10, -2.78477, -6],
+			"to": [0, 2.78477, 22],
 			"rotation": {
 				"angle": 0,
 				"axis": "y",
@@ -19,863 +20,479 @@
 			},
 			"faces": {
 				"north": {
-					"uv": [0, 0, 16, 16],
-					"texture": "#st"
-				},
-				"east": {
-					"uv": [0, 0, 4.38, 16],
-					"texture": "#st"
+					"uv": [0, 13.21523, 10, 16],
+					"texture": "#mine_hoist_drum"
 				},
 				"south": {
-					"uv": [0, 0, 16, 16],
-					"texture": "#st"
-				},
-				"west": {
-					"uv": [0, 0, 4.38, 16],
-					"texture": "#st"
-				},
-				"up": {
-					"uv": [0, 0, 16, 4.38],
-					"texture": "#st"
-				},
-				"down": {
-					"uv": [0, 0, 16, 4.38],
-					"texture": "#st"
+					"uv": [6, 13.21523, 16, 16],
+					"texture": "#mine_hoist_drum"
 				}
 			}
 		},
 		{
-			"name": "drum_1",
-			"from": [-10.01, -3, 5.812],
-			"to": [26.01, 19, 10.188],
+			"name": "barrel_0_1",
+			"from": [0, -2.78477, -6],
+			"to": [16, 2.78477, 22],
 			"rotation": {
-				"angle": 22.5,
-				"axis": "x",
+				"angle": 0,
+				"axis": "y",
 				"origin": [8, 8, 8]
 			},
 			"faces": {
 				"north": {
-					"uv": [0, 0, 16, 16],
-					"texture": "#st"
-				},
-				"east": {
-					"uv": [0, 0, 4.38, 16],
-					"texture": "#st"
+					"uv": [0, 13.21523, 16, 16],
+					"texture": "#mine_hoist_drum"
 				},
 				"south": {
-					"uv": [0, 0, 16, 16],
-					"texture": "#st"
-				},
-				"west": {
-					"uv": [0, 0, 4.38, 16],
-					"texture": "#st"
-				},
-				"up": {
-					"uv": [0, 0, 16, 4.38],
-					"texture": "#st"
-				},
-				"down": {
-					"uv": [0, 0, 16, 4.38],
-					"texture": "#st"
+					"uv": [0, 13.21523, 16, 16],
+					"texture": "#mine_hoist_drum"
 				}
 			}
 		},
 		{
-			"name": "drum_2",
-			"from": [-10.02, -3, 5.812],
-			"to": [26.02, 19, 10.188],
+			"name": "barrel_0_2",
+			"from": [16, -2.78477, -6],
+			"to": [26, 2.78477, 22],
+			"rotation": {
+				"angle": 0,
+				"axis": "y",
+				"origin": [8, 8, 8]
+			},
+			"faces": {
+				"north": {
+					"uv": [6, 13.21523, 16, 16],
+					"texture": "#mine_hoist_drum"
+				},
+				"south": {
+					"uv": [0, 13.21523, 10, 16],
+					"texture": "#mine_hoist_drum"
+				}
+			}
+		},
+		{
+			"name": "barrel_1_0",
+			"from": [-10, -2.78477, -6],
+			"to": [0, 2.78477, 22],
+			"rotation": {
+				"angle": 22.5,
+				"axis": "x",
+				"origin": [8, 0, 8]
+			},
+			"faces": {
+				"north": {
+					"uv": [0, 13.21523, 10, 16],
+					"texture": "#mine_hoist_drum"
+				},
+				"south": {
+					"uv": [6, 13.21523, 16, 16],
+					"texture": "#mine_hoist_drum"
+				}
+			}
+		},
+		{
+			"name": "barrel_1_1",
+			"from": [0, -2.78477, -6],
+			"to": [16, 2.78477, 22],
+			"rotation": {
+				"angle": 22.5,
+				"axis": "x",
+				"origin": [8, 0, 8]
+			},
+			"faces": {
+				"north": {
+					"uv": [0, 13.21523, 16, 16],
+					"texture": "#mine_hoist_drum"
+				},
+				"south": {
+					"uv": [0, 13.21523, 16, 16],
+					"texture": "#mine_hoist_drum"
+				}
+			}
+		},
+		{
+			"name": "barrel_1_2",
+			"from": [16, -2.78477, -6],
+			"to": [26, 2.78477, 22],
+			"rotation": {
+				"angle": 22.5,
+				"axis": "x",
+				"origin": [8, 0, 8]
+			},
+			"faces": {
+				"north": {
+					"uv": [6, 13.21523, 16, 16],
+					"texture": "#mine_hoist_drum"
+				},
+				"south": {
+					"uv": [0, 13.21523, 10, 16],
+					"texture": "#mine_hoist_drum"
+				}
+			}
+		},
+		{
+			"name": "barrel_2_0",
+			"from": [-10, -2.78477, -6],
+			"to": [0, 2.78477, 22],
 			"rotation": {
 				"angle": 45,
 				"axis": "x",
-				"origin": [8, 8, 8]
+				"origin": [8, 0, 8]
 			},
 			"faces": {
 				"north": {
-					"uv": [0, 0, 16, 16],
-					"texture": "#st"
-				},
-				"east": {
-					"uv": [0, 0, 4.38, 16],
-					"texture": "#st"
+					"uv": [0, 13.21523, 10, 16],
+					"texture": "#mine_hoist_drum"
 				},
 				"south": {
-					"uv": [0, 0, 16, 16],
-					"texture": "#st"
-				},
-				"west": {
-					"uv": [0, 0, 4.38, 16],
-					"texture": "#st"
-				},
-				"up": {
-					"uv": [0, 0, 16, 4.38],
-					"texture": "#st"
-				},
-				"down": {
-					"uv": [0, 0, 16, 4.38],
-					"texture": "#st"
+					"uv": [6, 13.21523, 16, 16],
+					"texture": "#mine_hoist_drum"
 				}
 			}
 		},
 		{
-			"name": "drum_3",
-			"from": [-10.03, -3, 5.812],
-			"to": [26.03, 19, 10.188],
-			"rotation": {
-				"angle": -22.5,
-				"axis": "x",
-				"origin": [8, 8, 8]
-			},
-			"faces": {
-				"north": {
-					"uv": [0, 0, 16, 16],
-					"texture": "#st"
-				},
-				"east": {
-					"uv": [0, 0, 4.38, 16],
-					"texture": "#st"
-				},
-				"south": {
-					"uv": [0, 0, 16, 16],
-					"texture": "#st"
-				},
-				"west": {
-					"uv": [0, 0, 4.38, 16],
-					"texture": "#st"
-				},
-				"up": {
-					"uv": [0, 0, 16, 4.38],
-					"texture": "#st"
-				},
-				"down": {
-					"uv": [0, 0, 16, 4.38],
-					"texture": "#st"
-				}
-			}
-		},
-		{
-			"name": "drum_4",
-			"from": [-10.04, -3, 5.812],
-			"to": [26.04, 19, 10.188],
-			"rotation": {
-				"angle": -45,
-				"axis": "x",
-				"origin": [8, 8, 8]
-			},
-			"faces": {
-				"north": {
-					"uv": [0, 0, 16, 16],
-					"texture": "#st"
-				},
-				"east": {
-					"uv": [0, 0, 4.38, 16],
-					"texture": "#st"
-				},
-				"south": {
-					"uv": [0, 0, 16, 16],
-					"texture": "#st"
-				},
-				"west": {
-					"uv": [0, 0, 4.38, 16],
-					"texture": "#st"
-				},
-				"up": {
-					"uv": [0, 0, 16, 4.38],
-					"texture": "#st"
-				},
-				"down": {
-					"uv": [0, 0, 16, 4.38],
-					"texture": "#st"
-				}
-			}
-		},
-		{
-			"name": "drum_5",
-			"from": [-10.05, 5.812, -3],
-			"to": [26.05, 10.188, 19],
-			"rotation": {
-				"angle": 0,
-				"axis": "y",
-				"origin": [8, 8, 8]
-			},
-			"faces": {
-				"north": {
-					"uv": [0, 0, 16, 4.38],
-					"texture": "#st"
-				},
-				"east": {
-					"uv": [0, 0, 16, 4.38],
-					"texture": "#st"
-				},
-				"south": {
-					"uv": [0, 0, 16, 4.38],
-					"texture": "#st"
-				},
-				"west": {
-					"uv": [0, 0, 16, 4.38],
-					"texture": "#st"
-				},
-				"up": {
-					"uv": [0, 0, 16, 16],
-					"texture": "#st"
-				},
-				"down": {
-					"uv": [0, 0, 16, 16],
-					"texture": "#st"
-				}
-			}
-		},
-		{
-			"name": "drum_6",
-			"from": [-10.06, 5.812, -3],
-			"to": [26.06, 10.188, 19],
-			"rotation": {
-				"angle": 22.5,
-				"axis": "x",
-				"origin": [8, 8, 8]
-			},
-			"faces": {
-				"north": {
-					"uv": [0, 0, 16, 4.38],
-					"texture": "#st"
-				},
-				"east": {
-					"uv": [0, 0, 16, 4.38],
-					"texture": "#st"
-				},
-				"south": {
-					"uv": [0, 0, 16, 4.38],
-					"texture": "#st"
-				},
-				"west": {
-					"uv": [0, 0, 16, 4.38],
-					"texture": "#st"
-				},
-				"up": {
-					"uv": [0, 0, 16, 16],
-					"texture": "#st"
-				},
-				"down": {
-					"uv": [0, 0, 16, 16],
-					"texture": "#st"
-				}
-			}
-		},
-		{
-			"name": "drum_7",
-			"from": [-10.07, 5.812, -3],
-			"to": [26.07, 10.188, 19],
-			"rotation": {
-				"angle": -22.5,
-				"axis": "x",
-				"origin": [8, 8, 8]
-			},
-			"faces": {
-				"north": {
-					"uv": [0, 0, 16, 4.38],
-					"texture": "#st"
-				},
-				"east": {
-					"uv": [0, 0, 16, 4.38],
-					"texture": "#st"
-				},
-				"south": {
-					"uv": [0, 0, 16, 4.38],
-					"texture": "#st"
-				},
-				"west": {
-					"uv": [0, 0, 16, 4.38],
-					"texture": "#st"
-				},
-				"up": {
-					"uv": [0, 0, 16, 16],
-					"texture": "#st"
-				},
-				"down": {
-					"uv": [0, 0, 16, 16],
-					"texture": "#st"
-				}
-			}
-		},
-		{
-			"name": "rope_0",
-			"from": [-9, -3.3, 5.752],
-			"to": [25, 19.3, 10.248],
-			"rotation": {
-				"angle": 0,
-				"axis": "y",
-				"origin": [8, 8, 8]
-			},
-			"faces": {
-				"north": {
-					"uv": [0, 0, 16, 16],
-					"texture": "#rope"
-				},
-				"east": {
-					"uv": [0, 0, 4.5, 16],
-					"texture": "#rope"
-				},
-				"south": {
-					"uv": [0, 0, 16, 16],
-					"texture": "#rope"
-				},
-				"west": {
-					"uv": [0, 0, 4.5, 16],
-					"texture": "#rope"
-				},
-				"up": {
-					"uv": [0, 0, 16, 4.5],
-					"texture": "#rope"
-				},
-				"down": {
-					"uv": [0, 0, 16, 4.5],
-					"texture": "#rope"
-				}
-			}
-		},
-		{
-			"name": "rope_1",
-			"from": [-9.01, -3.3, 5.752],
-			"to": [25.01, 19.3, 10.248],
-			"rotation": {
-				"angle": 22.5,
-				"axis": "x",
-				"origin": [8, 8, 8]
-			},
-			"faces": {
-				"north": {
-					"uv": [0, 0, 16, 16],
-					"texture": "#rope"
-				},
-				"east": {
-					"uv": [0, 0, 4.5, 16],
-					"texture": "#rope"
-				},
-				"south": {
-					"uv": [0, 0, 16, 16],
-					"texture": "#rope"
-				},
-				"west": {
-					"uv": [0, 0, 4.5, 16],
-					"texture": "#rope"
-				},
-				"up": {
-					"uv": [0, 0, 16, 4.5],
-					"texture": "#rope"
-				},
-				"down": {
-					"uv": [0, 0, 16, 4.5],
-					"texture": "#rope"
-				}
-			}
-		},
-		{
-			"name": "rope_2",
-			"from": [-9.02, -3.3, 5.752],
-			"to": [25.02, 19.3, 10.248],
+			"name": "barrel_2_1",
+			"from": [0, -2.78477, -6],
+			"to": [16, 2.78477, 22],
 			"rotation": {
 				"angle": 45,
 				"axis": "x",
-				"origin": [8, 8, 8]
+				"origin": [8, 0, 8]
 			},
 			"faces": {
 				"north": {
-					"uv": [0, 0, 16, 16],
-					"texture": "#rope"
-				},
-				"east": {
-					"uv": [0, 0, 4.5, 16],
-					"texture": "#rope"
+					"uv": [0, 13.21523, 16, 16],
+					"texture": "#mine_hoist_drum"
 				},
 				"south": {
-					"uv": [0, 0, 16, 16],
-					"texture": "#rope"
-				},
-				"west": {
-					"uv": [0, 0, 4.5, 16],
-					"texture": "#rope"
-				},
-				"up": {
-					"uv": [0, 0, 16, 4.5],
-					"texture": "#rope"
-				},
-				"down": {
-					"uv": [0, 0, 16, 4.5],
-					"texture": "#rope"
+					"uv": [0, 13.21523, 16, 16],
+					"texture": "#mine_hoist_drum"
 				}
 			}
 		},
 		{
-			"name": "rope_3",
-			"from": [-9.03, -3.3, 5.752],
-			"to": [25.03, 19.3, 10.248],
-			"rotation": {
-				"angle": -22.5,
-				"axis": "x",
-				"origin": [8, 8, 8]
-			},
-			"faces": {
-				"north": {
-					"uv": [0, 0, 16, 16],
-					"texture": "#rope"
-				},
-				"east": {
-					"uv": [0, 0, 4.5, 16],
-					"texture": "#rope"
-				},
-				"south": {
-					"uv": [0, 0, 16, 16],
-					"texture": "#rope"
-				},
-				"west": {
-					"uv": [0, 0, 4.5, 16],
-					"texture": "#rope"
-				},
-				"up": {
-					"uv": [0, 0, 16, 4.5],
-					"texture": "#rope"
-				},
-				"down": {
-					"uv": [0, 0, 16, 4.5],
-					"texture": "#rope"
-				}
-			}
-		},
-		{
-			"name": "rope_4",
-			"from": [-9.04, -3.3, 5.752],
-			"to": [25.04, 19.3, 10.248],
-			"rotation": {
-				"angle": -45,
-				"axis": "x",
-				"origin": [8, 8, 8]
-			},
-			"faces": {
-				"north": {
-					"uv": [0, 0, 16, 16],
-					"texture": "#rope"
-				},
-				"east": {
-					"uv": [0, 0, 4.5, 16],
-					"texture": "#rope"
-				},
-				"south": {
-					"uv": [0, 0, 16, 16],
-					"texture": "#rope"
-				},
-				"west": {
-					"uv": [0, 0, 4.5, 16],
-					"texture": "#rope"
-				},
-				"up": {
-					"uv": [0, 0, 16, 4.5],
-					"texture": "#rope"
-				},
-				"down": {
-					"uv": [0, 0, 16, 4.5],
-					"texture": "#rope"
-				}
-			}
-		},
-		{
-			"name": "rope_5",
-			"from": [-9.05, 5.752, -3.3],
-			"to": [25.05, 10.248, 19.3],
-			"rotation": {
-				"angle": 0,
-				"axis": "y",
-				"origin": [8, 8, 8]
-			},
-			"faces": {
-				"north": {
-					"uv": [0, 0, 16, 4.5],
-					"texture": "#rope"
-				},
-				"east": {
-					"uv": [0, 0, 16, 4.5],
-					"texture": "#rope"
-				},
-				"south": {
-					"uv": [0, 0, 16, 4.5],
-					"texture": "#rope"
-				},
-				"west": {
-					"uv": [0, 0, 16, 4.5],
-					"texture": "#rope"
-				},
-				"up": {
-					"uv": [0, 0, 16, 16],
-					"texture": "#rope"
-				},
-				"down": {
-					"uv": [0, 0, 16, 16],
-					"texture": "#rope"
-				}
-			}
-		},
-		{
-			"name": "rope_6",
-			"from": [-9.06, 5.752, -3.3],
-			"to": [25.06, 10.248, 19.3],
-			"rotation": {
-				"angle": 22.5,
-				"axis": "x",
-				"origin": [8, 8, 8]
-			},
-			"faces": {
-				"north": {
-					"uv": [0, 0, 16, 4.5],
-					"texture": "#rope"
-				},
-				"east": {
-					"uv": [0, 0, 16, 4.5],
-					"texture": "#rope"
-				},
-				"south": {
-					"uv": [0, 0, 16, 4.5],
-					"texture": "#rope"
-				},
-				"west": {
-					"uv": [0, 0, 16, 4.5],
-					"texture": "#rope"
-				},
-				"up": {
-					"uv": [0, 0, 16, 16],
-					"texture": "#rope"
-				},
-				"down": {
-					"uv": [0, 0, 16, 16],
-					"texture": "#rope"
-				}
-			}
-		},
-		{
-			"name": "rope_7",
-			"from": [-9.07, 5.752, -3.3],
-			"to": [25.07, 10.248, 19.3],
-			"rotation": {
-				"angle": -22.5,
-				"axis": "x",
-				"origin": [8, 8, 8]
-			},
-			"faces": {
-				"north": {
-					"uv": [0, 0, 16, 4.5],
-					"texture": "#rope"
-				},
-				"east": {
-					"uv": [0, 0, 16, 4.5],
-					"texture": "#rope"
-				},
-				"south": {
-					"uv": [0, 0, 16, 4.5],
-					"texture": "#rope"
-				},
-				"west": {
-					"uv": [0, 0, 16, 4.5],
-					"texture": "#rope"
-				},
-				"up": {
-					"uv": [0, 0, 16, 16],
-					"texture": "#rope"
-				},
-				"down": {
-					"uv": [0, 0, 16, 16],
-					"texture": "#rope"
-				}
-			}
-		},
-		{
-			"name": "brake_path_w_0",
-			"from": [-12, 19.8, 4.934],
-			"to": [-10, 21.4, 11.066],
-			"rotation": {
-				"angle": 0,
-				"axis": "y",
-				"origin": [8, 8, 8]
-			},
-			"faces": {
-				"north": {
-					"uv": [0, 0, 2, 1.6],
-					"texture": "#pol"
-				},
-				"east": {
-					"uv": [0, 0, 6.13, 1.6],
-					"texture": "#pol"
-				},
-				"south": {
-					"uv": [0, 0, 2, 1.6],
-					"texture": "#pol"
-				},
-				"west": {
-					"uv": [0, 0, 6.13, 1.6],
-					"texture": "#pol"
-				},
-				"up": {
-					"uv": [0, 0, 2, 6.13],
-					"texture": "#pol"
-				},
-				"down": {
-					"uv": [0, 0, 2, 6.13],
-					"texture": "#pol"
-				}
-			}
-		},
-		{
-			"name": "brake_path_w_1",
-			"from": [-12, 19.8, 4.934],
-			"to": [-10, 21.4, 11.066],
-			"rotation": {
-				"angle": 22.5,
-				"axis": "x",
-				"origin": [8, 8, 8]
-			},
-			"faces": {
-				"north": {
-					"uv": [0, 0, 2, 1.6],
-					"texture": "#pol"
-				},
-				"east": {
-					"uv": [0, 0, 6.13, 1.6],
-					"texture": "#pol"
-				},
-				"south": {
-					"uv": [0, 0, 2, 1.6],
-					"texture": "#pol"
-				},
-				"west": {
-					"uv": [0, 0, 6.13, 1.6],
-					"texture": "#pol"
-				},
-				"up": {
-					"uv": [0, 0, 2, 6.13],
-					"texture": "#pol"
-				},
-				"down": {
-					"uv": [0, 0, 2, 6.13],
-					"texture": "#pol"
-				}
-			}
-		},
-		{
-			"name": "brake_path_w_2",
-			"from": [-12, 19.8, 4.934],
-			"to": [-10, 21.4, 11.066],
+			"name": "barrel_2_2",
+			"from": [16, -2.78477, -6],
+			"to": [26, 2.78477, 22],
 			"rotation": {
 				"angle": 45,
 				"axis": "x",
-				"origin": [8, 8, 8]
+				"origin": [8, 0, 8]
 			},
 			"faces": {
 				"north": {
-					"uv": [0, 0, 2, 1.6],
-					"texture": "#pol"
-				},
-				"east": {
-					"uv": [0, 0, 6.13, 1.6],
-					"texture": "#pol"
+					"uv": [6, 13.21523, 16, 16],
+					"texture": "#mine_hoist_drum"
 				},
 				"south": {
-					"uv": [0, 0, 2, 1.6],
-					"texture": "#pol"
-				},
-				"west": {
-					"uv": [0, 0, 6.13, 1.6],
-					"texture": "#pol"
-				},
-				"up": {
-					"uv": [0, 0, 2, 6.13],
-					"texture": "#pol"
-				},
-				"down": {
-					"uv": [0, 0, 2, 6.13],
-					"texture": "#pol"
+					"uv": [0, 13.21523, 10, 16],
+					"texture": "#mine_hoist_drum"
 				}
 			}
 		},
 		{
-			"name": "brake_path_w_3",
-			"from": [-12, 4.934, 19.8],
-			"to": [-10, 11.066, 21.4],
+			"name": "barrel_3_0",
+			"from": [-10, -2.78477, -6],
+			"to": [0, 2.78477, 22],
 			"rotation": {
 				"angle": -22.5,
 				"axis": "x",
-				"origin": [8, 8, 8]
+				"origin": [8, 0, 8]
 			},
 			"faces": {
 				"north": {
-					"uv": [0, 0, 2, 6.13],
-					"texture": "#pol"
-				},
-				"east": {
-					"uv": [0, 0, 1.6, 6.13],
-					"texture": "#pol"
+					"uv": [0, 13.21523, 10, 16],
+					"texture": "#mine_hoist_drum"
 				},
 				"south": {
-					"uv": [0, 0, 2, 6.13],
-					"texture": "#pol"
-				},
-				"west": {
-					"uv": [0, 0, 1.6, 6.13],
-					"texture": "#pol"
-				},
-				"up": {
-					"uv": [0, 0, 2, 1.6],
-					"texture": "#pol"
-				},
-				"down": {
-					"uv": [0, 0, 2, 1.6],
-					"texture": "#pol"
+					"uv": [6, 13.21523, 16, 16],
+					"texture": "#mine_hoist_drum"
 				}
 			}
 		},
 		{
-			"name": "brake_path_w_4",
-			"from": [-12, 4.934, 19.8],
-			"to": [-10, 11.066, 21.4],
+			"name": "barrel_3_1",
+			"from": [0, -2.78477, -6],
+			"to": [16, 2.78477, 22],
 			"rotation": {
-				"angle": 0,
-				"axis": "y",
-				"origin": [8, 8, 8]
-			},
-			"faces": {
-				"north": {
-					"uv": [0, 0, 2, 6.13],
-					"texture": "#pol"
-				},
-				"east": {
-					"uv": [0, 0, 1.6, 6.13],
-					"texture": "#pol"
-				},
-				"south": {
-					"uv": [0, 0, 2, 6.13],
-					"texture": "#pol"
-				},
-				"west": {
-					"uv": [0, 0, 1.6, 6.13],
-					"texture": "#pol"
-				},
-				"up": {
-					"uv": [0, 0, 2, 1.6],
-					"texture": "#pol"
-				},
-				"down": {
-					"uv": [0, 0, 2, 1.6],
-					"texture": "#pol"
-				}
-			}
-		},
-		{
-			"name": "brake_path_w_5",
-			"from": [-12, 4.934, 19.8],
-			"to": [-10, 11.066, 21.4],
-			"rotation": {
-				"angle": 22.5,
+				"angle": -22.5,
 				"axis": "x",
-				"origin": [8, 8, 8]
+				"origin": [8, 0, 8]
 			},
 			"faces": {
 				"north": {
-					"uv": [0, 0, 2, 6.13],
-					"texture": "#pol"
-				},
-				"east": {
-					"uv": [0, 0, 1.6, 6.13],
-					"texture": "#pol"
+					"uv": [0, 13.21523, 16, 16],
+					"texture": "#mine_hoist_drum"
 				},
 				"south": {
-					"uv": [0, 0, 2, 6.13],
-					"texture": "#pol"
-				},
-				"west": {
-					"uv": [0, 0, 1.6, 6.13],
-					"texture": "#pol"
-				},
-				"up": {
-					"uv": [0, 0, 2, 1.6],
-					"texture": "#pol"
-				},
-				"down": {
-					"uv": [0, 0, 2, 1.6],
-					"texture": "#pol"
+					"uv": [0, 13.21523, 16, 16],
+					"texture": "#mine_hoist_drum"
 				}
 			}
 		},
 		{
-			"name": "brake_path_w_6",
-			"from": [-12, -5.4, 4.934],
-			"to": [-10, -3.8, 11.066],
+			"name": "barrel_3_2",
+			"from": [16, -2.78477, -6],
+			"to": [26, 2.78477, 22],
+			"rotation": {
+				"angle": -22.5,
+				"axis": "x",
+				"origin": [8, 0, 8]
+			},
+			"faces": {
+				"north": {
+					"uv": [6, 13.21523, 16, 16],
+					"texture": "#mine_hoist_drum"
+				},
+				"south": {
+					"uv": [0, 13.21523, 10, 16],
+					"texture": "#mine_hoist_drum"
+				}
+			}
+		},
+		{
+			"name": "barrel_4_0",
+			"from": [-10, -2.78477, -6],
+			"to": [0, 2.78477, 22],
 			"rotation": {
 				"angle": -45,
 				"axis": "x",
-				"origin": [8, 8, 8]
+				"origin": [8, 0, 8]
 			},
 			"faces": {
 				"north": {
-					"uv": [0, 0, 2, 1.6],
-					"texture": "#pol"
-				},
-				"east": {
-					"uv": [0, 0, 6.13, 1.6],
-					"texture": "#pol"
+					"uv": [0, 13.21523, 10, 16],
+					"texture": "#mine_hoist_drum"
 				},
 				"south": {
-					"uv": [0, 0, 2, 1.6],
-					"texture": "#pol"
-				},
-				"west": {
-					"uv": [0, 0, 6.13, 1.6],
-					"texture": "#pol"
-				},
-				"up": {
-					"uv": [0, 0, 2, 6.13],
-					"texture": "#pol"
-				},
-				"down": {
-					"uv": [0, 0, 2, 6.13],
-					"texture": "#pol"
+					"uv": [6, 13.21523, 16, 16],
+					"texture": "#mine_hoist_drum"
 				}
 			}
 		},
 		{
-			"name": "brake_path_w_7",
-			"from": [-12, -5.4, 4.934],
-			"to": [-10, -3.8, 11.066],
+			"name": "barrel_4_1",
+			"from": [0, -2.78477, -6],
+			"to": [16, 2.78477, 22],
+			"rotation": {
+				"angle": -45,
+				"axis": "x",
+				"origin": [8, 0, 8]
+			},
+			"faces": {
+				"north": {
+					"uv": [0, 13.21523, 16, 16],
+					"texture": "#mine_hoist_drum"
+				},
+				"south": {
+					"uv": [0, 13.21523, 16, 16],
+					"texture": "#mine_hoist_drum"
+				}
+			}
+		},
+		{
+			"name": "barrel_4_2",
+			"from": [16, -2.78477, -6],
+			"to": [26, 2.78477, 22],
+			"rotation": {
+				"angle": -45,
+				"axis": "x",
+				"origin": [8, 0, 8]
+			},
+			"faces": {
+				"north": {
+					"uv": [6, 13.21523, 16, 16],
+					"texture": "#mine_hoist_drum"
+				},
+				"south": {
+					"uv": [0, 13.21523, 10, 16],
+					"texture": "#mine_hoist_drum"
+				}
+			}
+		},
+		{
+			"name": "barrel_5_0",
+			"from": [-10, -14, 5.21523],
+			"to": [0, 14, 10.78477],
+			"rotation": {
+				"angle": 0,
+				"axis": "y",
+				"origin": [8, 8, 8]
+			},
+			"faces": {
+				"up": {
+					"uv": [6, 5.21523, 16, 10.78477],
+					"texture": "#mine_hoist_drum"
+				},
+				"down": {
+					"uv": [6, 5.21523, 16, 10.78477],
+					"texture": "#mine_hoist_drum"
+				}
+			}
+		},
+		{
+			"name": "barrel_5_1",
+			"from": [0, -14, 5.21523],
+			"to": [16, 14, 10.78477],
+			"rotation": {
+				"angle": 0,
+				"axis": "y",
+				"origin": [8, 8, 8]
+			},
+			"faces": {
+				"up": {
+					"uv": [0, 5.21523, 16, 10.78477],
+					"texture": "#mine_hoist_drum"
+				},
+				"down": {
+					"uv": [0, 5.21523, 16, 10.78477],
+					"texture": "#mine_hoist_drum"
+				}
+			}
+		},
+		{
+			"name": "barrel_5_2",
+			"from": [16, -14, 5.21523],
+			"to": [26, 14, 10.78477],
+			"rotation": {
+				"angle": 0,
+				"axis": "y",
+				"origin": [8, 8, 8]
+			},
+			"faces": {
+				"up": {
+					"uv": [0, 5.21523, 10, 10.78477],
+					"texture": "#mine_hoist_drum"
+				},
+				"down": {
+					"uv": [0, 5.21523, 10, 10.78477],
+					"texture": "#mine_hoist_drum"
+				}
+			}
+		},
+		{
+			"name": "barrel_6_0",
+			"from": [-10, -14, 5.21523],
+			"to": [0, 14, 10.78477],
+			"rotation": {
+				"angle": 22.5,
+				"axis": "x",
+				"origin": [8, 0, 8]
+			},
+			"faces": {
+				"up": {
+					"uv": [6, 5.21523, 16, 10.78477],
+					"texture": "#mine_hoist_drum"
+				},
+				"down": {
+					"uv": [6, 5.21523, 16, 10.78477],
+					"texture": "#mine_hoist_drum"
+				}
+			}
+		},
+		{
+			"name": "barrel_6_1",
+			"from": [0, -14, 5.21523],
+			"to": [16, 14, 10.78477],
+			"rotation": {
+				"angle": 22.5,
+				"axis": "x",
+				"origin": [8, 0, 8]
+			},
+			"faces": {
+				"up": {
+					"uv": [0, 5.21523, 16, 10.78477],
+					"texture": "#mine_hoist_drum"
+				},
+				"down": {
+					"uv": [0, 5.21523, 16, 10.78477],
+					"texture": "#mine_hoist_drum"
+				}
+			}
+		},
+		{
+			"name": "barrel_6_2",
+			"from": [16, -14, 5.21523],
+			"to": [26, 14, 10.78477],
+			"rotation": {
+				"angle": 22.5,
+				"axis": "x",
+				"origin": [8, 0, 8]
+			},
+			"faces": {
+				"up": {
+					"uv": [0, 5.21523, 10, 10.78477],
+					"texture": "#mine_hoist_drum"
+				},
+				"down": {
+					"uv": [0, 5.21523, 10, 10.78477],
+					"texture": "#mine_hoist_drum"
+				}
+			}
+		},
+		{
+			"name": "barrel_7_0",
+			"from": [-10, -14, 5.21523],
+			"to": [0, 14, 10.78477],
 			"rotation": {
 				"angle": -22.5,
 				"axis": "x",
-				"origin": [8, 8, 8]
+				"origin": [8, 0, 8]
 			},
 			"faces": {
-				"north": {
-					"uv": [0, 0, 2, 1.6],
-					"texture": "#pol"
-				},
-				"east": {
-					"uv": [0, 0, 6.13, 1.6],
-					"texture": "#pol"
-				},
-				"south": {
-					"uv": [0, 0, 2, 1.6],
-					"texture": "#pol"
-				},
-				"west": {
-					"uv": [0, 0, 6.13, 1.6],
-					"texture": "#pol"
-				},
 				"up": {
-					"uv": [0, 0, 2, 6.13],
-					"texture": "#pol"
+					"uv": [6, 5.21523, 16, 10.78477],
+					"texture": "#mine_hoist_drum"
 				},
 				"down": {
-					"uv": [0, 0, 2, 6.13],
-					"texture": "#pol"
+					"uv": [6, 5.21523, 16, 10.78477],
+					"texture": "#mine_hoist_drum"
 				}
 			}
 		},
 		{
-			"name": "brake_path_w_8",
-			"from": [-12, -5.4, 4.934],
-			"to": [-10, -3.8, 11.066],
+			"name": "barrel_7_1",
+			"from": [0, -14, 5.21523],
+			"to": [16, 14, 10.78477],
+			"rotation": {
+				"angle": -22.5,
+				"axis": "x",
+				"origin": [8, 0, 8]
+			},
+			"faces": {
+				"up": {
+					"uv": [0, 5.21523, 16, 10.78477],
+					"texture": "#mine_hoist_drum"
+				},
+				"down": {
+					"uv": [0, 5.21523, 16, 10.78477],
+					"texture": "#mine_hoist_drum"
+				}
+			}
+		},
+		{
+			"name": "barrel_7_2",
+			"from": [16, -14, 5.21523],
+			"to": [26, 14, 10.78477],
+			"rotation": {
+				"angle": -22.5,
+				"axis": "x",
+				"origin": [8, 0, 8]
+			},
+			"faces": {
+				"up": {
+					"uv": [0, 5.21523, 10, 10.78477],
+					"texture": "#mine_hoist_drum"
+				},
+				"down": {
+					"uv": [0, 5.21523, 10, 10.78477],
+					"texture": "#mine_hoist_drum"
+				}
+			}
+		},
+		{
+			"name": "rope_0_0",
+			"from": [-9.5, -2.90412, -6.6],
+			"to": [0, 2.90412, 22.6],
 			"rotation": {
 				"angle": 0,
 				"axis": "y",
@@ -883,575 +500,319 @@
 			},
 			"faces": {
 				"north": {
-					"uv": [0, 0, 2, 1.6],
-					"texture": "#pol"
-				},
-				"east": {
-					"uv": [0, 0, 6.13, 1.6],
-					"texture": "#pol"
+					"uv": [0, 13.09588, 9.5, 16],
+					"texture": "#mine_hoist_rope"
 				},
 				"south": {
-					"uv": [0, 0, 2, 1.6],
-					"texture": "#pol"
-				},
-				"west": {
-					"uv": [0, 0, 6.13, 1.6],
-					"texture": "#pol"
-				},
-				"up": {
-					"uv": [0, 0, 2, 6.13],
-					"texture": "#pol"
-				},
-				"down": {
-					"uv": [0, 0, 2, 6.13],
-					"texture": "#pol"
+					"uv": [6.5, 13.09588, 16, 16],
+					"texture": "#mine_hoist_rope"
 				}
 			}
 		},
 		{
-			"name": "brake_path_w_9",
-			"from": [-12, -5.4, 4.934],
-			"to": [-10, -3.8, 11.066],
+			"name": "rope_0_1",
+			"from": [0, -2.90412, -6.6],
+			"to": [9, 2.90412, 22.6],
 			"rotation": {
-				"angle": 22.5,
-				"axis": "x",
+				"angle": 0,
+				"axis": "y",
 				"origin": [8, 8, 8]
 			},
 			"faces": {
 				"north": {
-					"uv": [0, 0, 2, 1.6],
-					"texture": "#pol"
-				},
-				"east": {
-					"uv": [0, 0, 6.13, 1.6],
-					"texture": "#pol"
+					"uv": [7, 13.09588, 16, 16],
+					"texture": "#mine_hoist_rope"
 				},
 				"south": {
-					"uv": [0, 0, 2, 1.6],
-					"texture": "#pol"
-				},
-				"west": {
-					"uv": [0, 0, 6.13, 1.6],
-					"texture": "#pol"
-				},
-				"up": {
-					"uv": [0, 0, 2, 6.13],
-					"texture": "#pol"
-				},
-				"down": {
-					"uv": [0, 0, 2, 6.13],
-					"texture": "#pol"
+					"uv": [0, 13.09588, 9, 16],
+					"texture": "#mine_hoist_rope"
 				}
 			}
 		},
 		{
-			"name": "brake_path_w_10",
-			"from": [-12, -5.4, 4.934],
-			"to": [-10, -3.8, 11.066],
+			"name": "rope_1_0",
+			"from": [-9.5, -2.90412, -6.6],
+			"to": [0, 2.90412, 22.6],
+			"rotation": {
+				"angle": 22.5,
+				"axis": "x",
+				"origin": [8, 0, 8]
+			},
+			"faces": {
+				"north": {
+					"uv": [0, 13.09588, 9.5, 16],
+					"texture": "#mine_hoist_rope"
+				},
+				"south": {
+					"uv": [6.5, 13.09588, 16, 16],
+					"texture": "#mine_hoist_rope"
+				}
+			}
+		},
+		{
+			"name": "rope_1_1",
+			"from": [0, -2.90412, -6.6],
+			"to": [9, 2.90412, 22.6],
+			"rotation": {
+				"angle": 22.5,
+				"axis": "x",
+				"origin": [8, 0, 8]
+			},
+			"faces": {
+				"north": {
+					"uv": [7, 13.09588, 16, 16],
+					"texture": "#mine_hoist_rope"
+				},
+				"south": {
+					"uv": [0, 13.09588, 9, 16],
+					"texture": "#mine_hoist_rope"
+				}
+			}
+		},
+		{
+			"name": "rope_2_0",
+			"from": [-9.5, -2.90412, -6.6],
+			"to": [0, 2.90412, 22.6],
 			"rotation": {
 				"angle": 45,
 				"axis": "x",
-				"origin": [8, 8, 8]
+				"origin": [8, 0, 8]
 			},
 			"faces": {
 				"north": {
-					"uv": [0, 0, 2, 1.6],
-					"texture": "#pol"
-				},
-				"east": {
-					"uv": [0, 0, 6.13, 1.6],
-					"texture": "#pol"
+					"uv": [0, 13.09588, 9.5, 16],
+					"texture": "#mine_hoist_rope"
 				},
 				"south": {
-					"uv": [0, 0, 2, 1.6],
-					"texture": "#pol"
-				},
-				"west": {
-					"uv": [0, 0, 6.13, 1.6],
-					"texture": "#pol"
-				},
-				"up": {
-					"uv": [0, 0, 2, 6.13],
-					"texture": "#pol"
-				},
-				"down": {
-					"uv": [0, 0, 2, 6.13],
-					"texture": "#pol"
+					"uv": [6.5, 13.09588, 16, 16],
+					"texture": "#mine_hoist_rope"
 				}
 			}
 		},
 		{
-			"name": "brake_path_w_11",
-			"from": [-12, 4.934, -5.4],
-			"to": [-10, 11.066, -3.8],
-			"rotation": {
-				"angle": -22.5,
-				"axis": "x",
-				"origin": [8, 8, 8]
-			},
-			"faces": {
-				"north": {
-					"uv": [0, 0, 2, 6.13],
-					"texture": "#pol"
-				},
-				"east": {
-					"uv": [0, 0, 1.6, 6.13],
-					"texture": "#pol"
-				},
-				"south": {
-					"uv": [0, 0, 2, 6.13],
-					"texture": "#pol"
-				},
-				"west": {
-					"uv": [0, 0, 1.6, 6.13],
-					"texture": "#pol"
-				},
-				"up": {
-					"uv": [0, 0, 2, 1.6],
-					"texture": "#pol"
-				},
-				"down": {
-					"uv": [0, 0, 2, 1.6],
-					"texture": "#pol"
-				}
-			}
-		},
-		{
-			"name": "brake_path_w_12",
-			"from": [-12, 4.934, -5.4],
-			"to": [-10, 11.066, -3.8],
-			"rotation": {
-				"angle": 0,
-				"axis": "y",
-				"origin": [8, 8, 8]
-			},
-			"faces": {
-				"north": {
-					"uv": [0, 0, 2, 6.13],
-					"texture": "#pol"
-				},
-				"east": {
-					"uv": [0, 0, 1.6, 6.13],
-					"texture": "#pol"
-				},
-				"south": {
-					"uv": [0, 0, 2, 6.13],
-					"texture": "#pol"
-				},
-				"west": {
-					"uv": [0, 0, 1.6, 6.13],
-					"texture": "#pol"
-				},
-				"up": {
-					"uv": [0, 0, 2, 1.6],
-					"texture": "#pol"
-				},
-				"down": {
-					"uv": [0, 0, 2, 1.6],
-					"texture": "#pol"
-				}
-			}
-		},
-		{
-			"name": "brake_path_w_13",
-			"from": [-12, 4.934, -5.4],
-			"to": [-10, 11.066, -3.8],
-			"rotation": {
-				"angle": 22.5,
-				"axis": "x",
-				"origin": [8, 8, 8]
-			},
-			"faces": {
-				"north": {
-					"uv": [0, 0, 2, 6.13],
-					"texture": "#pol"
-				},
-				"east": {
-					"uv": [0, 0, 1.6, 6.13],
-					"texture": "#pol"
-				},
-				"south": {
-					"uv": [0, 0, 2, 6.13],
-					"texture": "#pol"
-				},
-				"west": {
-					"uv": [0, 0, 1.6, 6.13],
-					"texture": "#pol"
-				},
-				"up": {
-					"uv": [0, 0, 2, 1.6],
-					"texture": "#pol"
-				},
-				"down": {
-					"uv": [0, 0, 2, 1.6],
-					"texture": "#pol"
-				}
-			}
-		},
-		{
-			"name": "brake_path_w_14",
-			"from": [-12, 19.8, 4.934],
-			"to": [-10, 21.4, 11.066],
-			"rotation": {
-				"angle": -45,
-				"axis": "x",
-				"origin": [8, 8, 8]
-			},
-			"faces": {
-				"north": {
-					"uv": [0, 0, 2, 1.6],
-					"texture": "#pol"
-				},
-				"east": {
-					"uv": [0, 0, 6.13, 1.6],
-					"texture": "#pol"
-				},
-				"south": {
-					"uv": [0, 0, 2, 1.6],
-					"texture": "#pol"
-				},
-				"west": {
-					"uv": [0, 0, 6.13, 1.6],
-					"texture": "#pol"
-				},
-				"up": {
-					"uv": [0, 0, 2, 6.13],
-					"texture": "#pol"
-				},
-				"down": {
-					"uv": [0, 0, 2, 6.13],
-					"texture": "#pol"
-				}
-			}
-		},
-		{
-			"name": "brake_path_w_15",
-			"from": [-12, 19.8, 4.934],
-			"to": [-10, 21.4, 11.066],
-			"rotation": {
-				"angle": -22.5,
-				"axis": "x",
-				"origin": [8, 8, 8]
-			},
-			"faces": {
-				"north": {
-					"uv": [0, 0, 2, 1.6],
-					"texture": "#pol"
-				},
-				"east": {
-					"uv": [0, 0, 6.13, 1.6],
-					"texture": "#pol"
-				},
-				"south": {
-					"uv": [0, 0, 2, 1.6],
-					"texture": "#pol"
-				},
-				"west": {
-					"uv": [0, 0, 6.13, 1.6],
-					"texture": "#pol"
-				},
-				"up": {
-					"uv": [0, 0, 2, 6.13],
-					"texture": "#pol"
-				},
-				"down": {
-					"uv": [0, 0, 2, 6.13],
-					"texture": "#pol"
-				}
-			}
-		},
-		{
-			"name": "brake_path_e_0",
-			"from": [26, 19.8, 4.934],
-			"to": [28, 21.4, 11.066],
-			"rotation": {
-				"angle": 0,
-				"axis": "y",
-				"origin": [8, 8, 8]
-			},
-			"faces": {
-				"north": {
-					"uv": [0, 0, 2, 1.6],
-					"texture": "#pol"
-				},
-				"east": {
-					"uv": [0, 0, 6.13, 1.6],
-					"texture": "#pol"
-				},
-				"south": {
-					"uv": [0, 0, 2, 1.6],
-					"texture": "#pol"
-				},
-				"west": {
-					"uv": [0, 0, 6.13, 1.6],
-					"texture": "#pol"
-				},
-				"up": {
-					"uv": [0, 0, 2, 6.13],
-					"texture": "#pol"
-				},
-				"down": {
-					"uv": [0, 0, 2, 6.13],
-					"texture": "#pol"
-				}
-			}
-		},
-		{
-			"name": "brake_path_e_1",
-			"from": [26, 19.8, 4.934],
-			"to": [28, 21.4, 11.066],
-			"rotation": {
-				"angle": 22.5,
-				"axis": "x",
-				"origin": [8, 8, 8]
-			},
-			"faces": {
-				"north": {
-					"uv": [0, 0, 2, 1.6],
-					"texture": "#pol"
-				},
-				"east": {
-					"uv": [0, 0, 6.13, 1.6],
-					"texture": "#pol"
-				},
-				"south": {
-					"uv": [0, 0, 2, 1.6],
-					"texture": "#pol"
-				},
-				"west": {
-					"uv": [0, 0, 6.13, 1.6],
-					"texture": "#pol"
-				},
-				"up": {
-					"uv": [0, 0, 2, 6.13],
-					"texture": "#pol"
-				},
-				"down": {
-					"uv": [0, 0, 2, 6.13],
-					"texture": "#pol"
-				}
-			}
-		},
-		{
-			"name": "brake_path_e_2",
-			"from": [26, 19.8, 4.934],
-			"to": [28, 21.4, 11.066],
+			"name": "rope_2_1",
+			"from": [0, -2.90412, -6.6],
+			"to": [9, 2.90412, 22.6],
 			"rotation": {
 				"angle": 45,
 				"axis": "x",
-				"origin": [8, 8, 8]
+				"origin": [8, 0, 8]
 			},
 			"faces": {
 				"north": {
-					"uv": [0, 0, 2, 1.6],
-					"texture": "#pol"
-				},
-				"east": {
-					"uv": [0, 0, 6.13, 1.6],
-					"texture": "#pol"
+					"uv": [7, 13.09588, 16, 16],
+					"texture": "#mine_hoist_rope"
 				},
 				"south": {
-					"uv": [0, 0, 2, 1.6],
-					"texture": "#pol"
-				},
-				"west": {
-					"uv": [0, 0, 6.13, 1.6],
-					"texture": "#pol"
-				},
-				"up": {
-					"uv": [0, 0, 2, 6.13],
-					"texture": "#pol"
-				},
-				"down": {
-					"uv": [0, 0, 2, 6.13],
-					"texture": "#pol"
+					"uv": [0, 13.09588, 9, 16],
+					"texture": "#mine_hoist_rope"
 				}
 			}
 		},
 		{
-			"name": "brake_path_e_3",
-			"from": [26, 4.934, 19.8],
-			"to": [28, 11.066, 21.4],
+			"name": "rope_3_0",
+			"from": [-9.5, -2.90412, -6.6],
+			"to": [0, 2.90412, 22.6],
 			"rotation": {
 				"angle": -22.5,
 				"axis": "x",
-				"origin": [8, 8, 8]
+				"origin": [8, 0, 8]
 			},
 			"faces": {
 				"north": {
-					"uv": [0, 0, 2, 6.13],
-					"texture": "#pol"
-				},
-				"east": {
-					"uv": [0, 0, 1.6, 6.13],
-					"texture": "#pol"
+					"uv": [0, 13.09588, 9.5, 16],
+					"texture": "#mine_hoist_rope"
 				},
 				"south": {
-					"uv": [0, 0, 2, 6.13],
-					"texture": "#pol"
-				},
-				"west": {
-					"uv": [0, 0, 1.6, 6.13],
-					"texture": "#pol"
-				},
-				"up": {
-					"uv": [0, 0, 2, 1.6],
-					"texture": "#pol"
-				},
-				"down": {
-					"uv": [0, 0, 2, 1.6],
-					"texture": "#pol"
+					"uv": [6.5, 13.09588, 16, 16],
+					"texture": "#mine_hoist_rope"
 				}
 			}
 		},
 		{
-			"name": "brake_path_e_4",
-			"from": [26, 4.934, 19.8],
-			"to": [28, 11.066, 21.4],
+			"name": "rope_3_1",
+			"from": [0, -2.90412, -6.6],
+			"to": [9, 2.90412, 22.6],
 			"rotation": {
-				"angle": 0,
-				"axis": "y",
-				"origin": [8, 8, 8]
-			},
-			"faces": {
-				"north": {
-					"uv": [0, 0, 2, 6.13],
-					"texture": "#pol"
-				},
-				"east": {
-					"uv": [0, 0, 1.6, 6.13],
-					"texture": "#pol"
-				},
-				"south": {
-					"uv": [0, 0, 2, 6.13],
-					"texture": "#pol"
-				},
-				"west": {
-					"uv": [0, 0, 1.6, 6.13],
-					"texture": "#pol"
-				},
-				"up": {
-					"uv": [0, 0, 2, 1.6],
-					"texture": "#pol"
-				},
-				"down": {
-					"uv": [0, 0, 2, 1.6],
-					"texture": "#pol"
-				}
-			}
-		},
-		{
-			"name": "brake_path_e_5",
-			"from": [26, 4.934, 19.8],
-			"to": [28, 11.066, 21.4],
-			"rotation": {
-				"angle": 22.5,
+				"angle": -22.5,
 				"axis": "x",
-				"origin": [8, 8, 8]
+				"origin": [8, 0, 8]
 			},
 			"faces": {
 				"north": {
-					"uv": [0, 0, 2, 6.13],
-					"texture": "#pol"
-				},
-				"east": {
-					"uv": [0, 0, 1.6, 6.13],
-					"texture": "#pol"
+					"uv": [7, 13.09588, 16, 16],
+					"texture": "#mine_hoist_rope"
 				},
 				"south": {
-					"uv": [0, 0, 2, 6.13],
-					"texture": "#pol"
-				},
-				"west": {
-					"uv": [0, 0, 1.6, 6.13],
-					"texture": "#pol"
-				},
-				"up": {
-					"uv": [0, 0, 2, 1.6],
-					"texture": "#pol"
-				},
-				"down": {
-					"uv": [0, 0, 2, 1.6],
-					"texture": "#pol"
+					"uv": [0, 13.09588, 9, 16],
+					"texture": "#mine_hoist_rope"
 				}
 			}
 		},
 		{
-			"name": "brake_path_e_6",
-			"from": [26, -5.4, 4.934],
-			"to": [28, -3.8, 11.066],
+			"name": "rope_4_0",
+			"from": [-9.5, -2.90412, -6.6],
+			"to": [0, 2.90412, 22.6],
 			"rotation": {
 				"angle": -45,
 				"axis": "x",
-				"origin": [8, 8, 8]
+				"origin": [8, 0, 8]
 			},
 			"faces": {
 				"north": {
-					"uv": [0, 0, 2, 1.6],
-					"texture": "#pol"
-				},
-				"east": {
-					"uv": [0, 0, 6.13, 1.6],
-					"texture": "#pol"
+					"uv": [0, 13.09588, 9.5, 16],
+					"texture": "#mine_hoist_rope"
 				},
 				"south": {
-					"uv": [0, 0, 2, 1.6],
-					"texture": "#pol"
-				},
-				"west": {
-					"uv": [0, 0, 6.13, 1.6],
-					"texture": "#pol"
-				},
-				"up": {
-					"uv": [0, 0, 2, 6.13],
-					"texture": "#pol"
-				},
-				"down": {
-					"uv": [0, 0, 2, 6.13],
-					"texture": "#pol"
+					"uv": [6.5, 13.09588, 16, 16],
+					"texture": "#mine_hoist_rope"
 				}
 			}
 		},
 		{
-			"name": "brake_path_e_7",
-			"from": [26, -5.4, 4.934],
-			"to": [28, -3.8, 11.066],
+			"name": "rope_4_1",
+			"from": [0, -2.90412, -6.6],
+			"to": [9, 2.90412, 22.6],
+			"rotation": {
+				"angle": -45,
+				"axis": "x",
+				"origin": [8, 0, 8]
+			},
+			"faces": {
+				"north": {
+					"uv": [7, 13.09588, 16, 16],
+					"texture": "#mine_hoist_rope"
+				},
+				"south": {
+					"uv": [0, 13.09588, 9, 16],
+					"texture": "#mine_hoist_rope"
+				}
+			}
+		},
+		{
+			"name": "rope_5_0",
+			"from": [-9.5, -14.6, 5.09588],
+			"to": [0, 14.6, 10.90412],
+			"rotation": {
+				"angle": 0,
+				"axis": "y",
+				"origin": [8, 8, 8]
+			},
+			"faces": {
+				"up": {
+					"uv": [6.5, 5.09588, 16, 10.90412],
+					"texture": "#mine_hoist_rope"
+				},
+				"down": {
+					"uv": [6.5, 5.09588, 16, 10.90412],
+					"texture": "#mine_hoist_rope"
+				}
+			}
+		},
+		{
+			"name": "rope_5_1",
+			"from": [0, -14.6, 5.09588],
+			"to": [9, 14.6, 10.90412],
+			"rotation": {
+				"angle": 0,
+				"axis": "y",
+				"origin": [8, 8, 8]
+			},
+			"faces": {
+				"up": {
+					"uv": [0, 5.09588, 9, 10.90412],
+					"texture": "#mine_hoist_rope"
+				},
+				"down": {
+					"uv": [0, 5.09588, 9, 10.90412],
+					"texture": "#mine_hoist_rope"
+				}
+			}
+		},
+		{
+			"name": "rope_6_0",
+			"from": [-9.5, -14.6, 5.09588],
+			"to": [0, 14.6, 10.90412],
+			"rotation": {
+				"angle": 22.5,
+				"axis": "x",
+				"origin": [8, 0, 8]
+			},
+			"faces": {
+				"up": {
+					"uv": [6.5, 5.09588, 16, 10.90412],
+					"texture": "#mine_hoist_rope"
+				},
+				"down": {
+					"uv": [6.5, 5.09588, 16, 10.90412],
+					"texture": "#mine_hoist_rope"
+				}
+			}
+		},
+		{
+			"name": "rope_6_1",
+			"from": [0, -14.6, 5.09588],
+			"to": [9, 14.6, 10.90412],
+			"rotation": {
+				"angle": 22.5,
+				"axis": "x",
+				"origin": [8, 0, 8]
+			},
+			"faces": {
+				"up": {
+					"uv": [0, 5.09588, 9, 10.90412],
+					"texture": "#mine_hoist_rope"
+				},
+				"down": {
+					"uv": [0, 5.09588, 9, 10.90412],
+					"texture": "#mine_hoist_rope"
+				}
+			}
+		},
+		{
+			"name": "rope_7_0",
+			"from": [-9.5, -14.6, 5.09588],
+			"to": [0, 14.6, 10.90412],
 			"rotation": {
 				"angle": -22.5,
 				"axis": "x",
-				"origin": [8, 8, 8]
+				"origin": [8, 0, 8]
 			},
 			"faces": {
-				"north": {
-					"uv": [0, 0, 2, 1.6],
-					"texture": "#pol"
-				},
-				"east": {
-					"uv": [0, 0, 6.13, 1.6],
-					"texture": "#pol"
-				},
-				"south": {
-					"uv": [0, 0, 2, 1.6],
-					"texture": "#pol"
-				},
-				"west": {
-					"uv": [0, 0, 6.13, 1.6],
-					"texture": "#pol"
-				},
 				"up": {
-					"uv": [0, 0, 2, 6.13],
-					"texture": "#pol"
+					"uv": [6.5, 5.09588, 16, 10.90412],
+					"texture": "#mine_hoist_rope"
 				},
 				"down": {
-					"uv": [0, 0, 2, 6.13],
-					"texture": "#pol"
+					"uv": [6.5, 5.09588, 16, 10.90412],
+					"texture": "#mine_hoist_rope"
 				}
 			}
 		},
 		{
-			"name": "brake_path_e_8",
-			"from": [26, -5.4, 4.934],
-			"to": [28, -3.8, 11.066],
+			"name": "rope_7_1",
+			"from": [0, -14.6, 5.09588],
+			"to": [9, 14.6, 10.90412],
+			"rotation": {
+				"angle": -22.5,
+				"axis": "x",
+				"origin": [8, 0, 8]
+			},
+			"faces": {
+				"up": {
+					"uv": [0, 5.09588, 9, 10.90412],
+					"texture": "#mine_hoist_rope"
+				},
+				"down": {
+					"uv": [0, 5.09588, 9, 10.90412],
+					"texture": "#mine_hoist_rope"
+				}
+			}
+		},
+		{
+			"name": "end_w_0",
+			"from": [-12, -2.98369, -7],
+			"to": [-10, 2.98369, 23],
 			"rotation": {
 				"angle": 0,
 				"axis": "y",
@@ -1459,143 +820,159 @@
 			},
 			"faces": {
 				"north": {
-					"uv": [0, 0, 2, 1.6],
-					"texture": "#pol"
-				},
-				"east": {
-					"uv": [0, 0, 6.13, 1.6],
-					"texture": "#pol"
+					"uv": [10, 13.01631, 12, 16],
+					"texture": "#material_bright_steel"
 				},
 				"south": {
-					"uv": [0, 0, 2, 1.6],
-					"texture": "#pol"
+					"uv": [4, 13.01631, 6, 16],
+					"texture": "#material_bright_steel"
 				},
 				"west": {
-					"uv": [0, 0, 6.13, 1.6],
-					"texture": "#pol"
+					"uv": [0, 6.4087, 16, 9.5913],
+					"texture": "#mine_hoist_drum_end"
 				},
 				"up": {
-					"uv": [0, 0, 2, 6.13],
-					"texture": "#pol"
+					"uv": [4, 0, 6, 16],
+					"texture": "#material_bright_steel"
 				},
 				"down": {
-					"uv": [0, 0, 2, 6.13],
-					"texture": "#pol"
+					"uv": [4, 0, 6, 16],
+					"texture": "#material_bright_steel"
 				}
 			}
 		},
 		{
-			"name": "brake_path_e_9",
-			"from": [26, -5.4, 4.934],
-			"to": [28, -3.8, 11.066],
+			"name": "end_w_1",
+			"from": [-12.01, -2.98369, -7],
+			"to": [-9.99, 2.98369, 23],
 			"rotation": {
 				"angle": 22.5,
 				"axis": "x",
-				"origin": [8, 8, 8]
+				"origin": [8, 0, 8]
 			},
 			"faces": {
 				"north": {
-					"uv": [0, 0, 2, 1.6],
-					"texture": "#pol"
-				},
-				"east": {
-					"uv": [0, 0, 6.13, 1.6],
-					"texture": "#pol"
+					"uv": [9.99, 13.01631, 12.01, 16],
+					"texture": "#material_bright_steel"
 				},
 				"south": {
-					"uv": [0, 0, 2, 1.6],
-					"texture": "#pol"
+					"uv": [3.99, 13.01631, 6.01, 16],
+					"texture": "#material_bright_steel"
 				},
 				"west": {
-					"uv": [0, 0, 6.13, 1.6],
-					"texture": "#pol"
+					"uv": [0, 6.4087, 16, 9.5913],
+					"texture": "#mine_hoist_drum_end"
 				},
 				"up": {
-					"uv": [0, 0, 2, 6.13],
-					"texture": "#pol"
+					"uv": [3.99, 0, 6.01, 16],
+					"texture": "#material_bright_steel"
 				},
 				"down": {
-					"uv": [0, 0, 2, 6.13],
-					"texture": "#pol"
+					"uv": [3.99, 0, 6.01, 16],
+					"texture": "#material_bright_steel"
 				}
 			}
 		},
 		{
-			"name": "brake_path_e_10",
-			"from": [26, -5.4, 4.934],
-			"to": [28, -3.8, 11.066],
+			"name": "end_w_2",
+			"from": [-12.02, -2.98369, -7],
+			"to": [-9.98, 2.98369, 23],
 			"rotation": {
 				"angle": 45,
 				"axis": "x",
-				"origin": [8, 8, 8]
+				"origin": [8, 0, 8]
 			},
 			"faces": {
 				"north": {
-					"uv": [0, 0, 2, 1.6],
-					"texture": "#pol"
-				},
-				"east": {
-					"uv": [0, 0, 6.13, 1.6],
-					"texture": "#pol"
+					"uv": [9.98, 13.01631, 12.02, 16],
+					"texture": "#material_bright_steel"
 				},
 				"south": {
-					"uv": [0, 0, 2, 1.6],
-					"texture": "#pol"
+					"uv": [3.98, 13.01631, 6.02, 16],
+					"texture": "#material_bright_steel"
 				},
 				"west": {
-					"uv": [0, 0, 6.13, 1.6],
-					"texture": "#pol"
+					"uv": [0, 6.4087, 16, 9.5913],
+					"texture": "#mine_hoist_drum_end"
 				},
 				"up": {
-					"uv": [0, 0, 2, 6.13],
-					"texture": "#pol"
+					"uv": [3.98, 0, 6.02, 16],
+					"texture": "#material_bright_steel"
 				},
 				"down": {
-					"uv": [0, 0, 2, 6.13],
-					"texture": "#pol"
+					"uv": [3.98, 0, 6.02, 16],
+					"texture": "#material_bright_steel"
 				}
 			}
 		},
 		{
-			"name": "brake_path_e_11",
-			"from": [26, 4.934, -5.4],
-			"to": [28, 11.066, -3.8],
+			"name": "end_w_3",
+			"from": [-12.03, -2.98369, -7],
+			"to": [-9.97, 2.98369, 23],
 			"rotation": {
 				"angle": -22.5,
 				"axis": "x",
-				"origin": [8, 8, 8]
+				"origin": [8, 0, 8]
 			},
 			"faces": {
 				"north": {
-					"uv": [0, 0, 2, 6.13],
-					"texture": "#pol"
-				},
-				"east": {
-					"uv": [0, 0, 1.6, 6.13],
-					"texture": "#pol"
+					"uv": [9.97, 13.01631, 12.03, 16],
+					"texture": "#material_bright_steel"
 				},
 				"south": {
-					"uv": [0, 0, 2, 6.13],
-					"texture": "#pol"
+					"uv": [3.97, 13.01631, 6.03, 16],
+					"texture": "#material_bright_steel"
 				},
 				"west": {
-					"uv": [0, 0, 1.6, 6.13],
-					"texture": "#pol"
+					"uv": [0, 6.4087, 16, 9.5913],
+					"texture": "#mine_hoist_drum_end"
 				},
 				"up": {
-					"uv": [0, 0, 2, 1.6],
-					"texture": "#pol"
+					"uv": [3.97, 0, 6.03, 16],
+					"texture": "#material_bright_steel"
 				},
 				"down": {
-					"uv": [0, 0, 2, 1.6],
-					"texture": "#pol"
+					"uv": [3.97, 0, 6.03, 16],
+					"texture": "#material_bright_steel"
 				}
 			}
 		},
 		{
-			"name": "brake_path_e_12",
-			"from": [26, 4.934, -5.4],
-			"to": [28, 11.066, -3.8],
+			"name": "end_w_4",
+			"from": [-12.04, -2.98369, -7],
+			"to": [-9.96, 2.98369, 23],
+			"rotation": {
+				"angle": -45,
+				"axis": "x",
+				"origin": [8, 0, 8]
+			},
+			"faces": {
+				"north": {
+					"uv": [9.96, 13.01631, 12.04, 16],
+					"texture": "#material_bright_steel"
+				},
+				"south": {
+					"uv": [3.96, 13.01631, 6.04, 16],
+					"texture": "#material_bright_steel"
+				},
+				"west": {
+					"uv": [0, 6.4087, 16, 9.5913],
+					"texture": "#mine_hoist_drum_end"
+				},
+				"up": {
+					"uv": [3.96, 0, 6.04, 16],
+					"texture": "#material_bright_steel"
+				},
+				"down": {
+					"uv": [3.96, 0, 6.04, 16],
+					"texture": "#material_bright_steel"
+				}
+			}
+		},
+		{
+			"name": "end_w_5",
+			"from": [-12.05, -15, 5.01631],
+			"to": [-9.95, 15, 10.98369],
 			"rotation": {
 				"angle": 0,
 				"axis": "y",
@@ -1603,143 +980,351 @@
 			},
 			"faces": {
 				"north": {
-					"uv": [0, 0, 2, 6.13],
-					"texture": "#pol"
-				},
-				"east": {
-					"uv": [0, 0, 1.6, 6.13],
-					"texture": "#pol"
+					"uv": [9.95, 1, 12.05, 16],
+					"texture": "#material_bright_steel"
 				},
 				"south": {
-					"uv": [0, 0, 2, 6.13],
-					"texture": "#pol"
+					"uv": [3.95, 1, 6.05, 16],
+					"texture": "#material_bright_steel"
 				},
 				"west": {
-					"uv": [0, 0, 1.6, 6.13],
-					"texture": "#pol"
+					"uv": [6.4087, 0, 9.5913, 16],
+					"texture": "#mine_hoist_drum_end"
 				},
 				"up": {
-					"uv": [0, 0, 2, 1.6],
-					"texture": "#pol"
+					"uv": [3.95, 5.01631, 6.05, 10.98369],
+					"texture": "#material_bright_steel"
 				},
 				"down": {
-					"uv": [0, 0, 2, 1.6],
-					"texture": "#pol"
+					"uv": [3.95, 5.01631, 6.05, 10.98369],
+					"texture": "#material_bright_steel"
 				}
 			}
 		},
 		{
-			"name": "brake_path_e_13",
-			"from": [26, 4.934, -5.4],
-			"to": [28, 11.066, -3.8],
+			"name": "end_w_6",
+			"from": [-12.06, -15, 5.01631],
+			"to": [-9.94, 15, 10.98369],
 			"rotation": {
 				"angle": 22.5,
 				"axis": "x",
-				"origin": [8, 8, 8]
+				"origin": [8, 0, 8]
 			},
 			"faces": {
 				"north": {
-					"uv": [0, 0, 2, 6.13],
-					"texture": "#pol"
-				},
-				"east": {
-					"uv": [0, 0, 1.6, 6.13],
-					"texture": "#pol"
+					"uv": [9.94, 1, 12.06, 16],
+					"texture": "#material_bright_steel"
 				},
 				"south": {
-					"uv": [0, 0, 2, 6.13],
-					"texture": "#pol"
+					"uv": [3.94, 1, 6.06, 16],
+					"texture": "#material_bright_steel"
 				},
 				"west": {
-					"uv": [0, 0, 1.6, 6.13],
-					"texture": "#pol"
+					"uv": [6.4087, 0, 9.5913, 16],
+					"texture": "#mine_hoist_drum_end"
 				},
 				"up": {
-					"uv": [0, 0, 2, 1.6],
-					"texture": "#pol"
+					"uv": [3.94, 5.01631, 6.06, 10.98369],
+					"texture": "#material_bright_steel"
 				},
 				"down": {
-					"uv": [0, 0, 2, 1.6],
-					"texture": "#pol"
+					"uv": [3.94, 5.01631, 6.06, 10.98369],
+					"texture": "#material_bright_steel"
 				}
 			}
 		},
 		{
-			"name": "brake_path_e_14",
-			"from": [26, 19.8, 4.934],
-			"to": [28, 21.4, 11.066],
-			"rotation": {
-				"angle": -45,
-				"axis": "x",
-				"origin": [8, 8, 8]
-			},
-			"faces": {
-				"north": {
-					"uv": [0, 0, 2, 1.6],
-					"texture": "#pol"
-				},
-				"east": {
-					"uv": [0, 0, 6.13, 1.6],
-					"texture": "#pol"
-				},
-				"south": {
-					"uv": [0, 0, 2, 1.6],
-					"texture": "#pol"
-				},
-				"west": {
-					"uv": [0, 0, 6.13, 1.6],
-					"texture": "#pol"
-				},
-				"up": {
-					"uv": [0, 0, 2, 6.13],
-					"texture": "#pol"
-				},
-				"down": {
-					"uv": [0, 0, 2, 6.13],
-					"texture": "#pol"
-				}
-			}
-		},
-		{
-			"name": "brake_path_e_15",
-			"from": [26, 19.8, 4.934],
-			"to": [28, 21.4, 11.066],
+			"name": "end_w_7",
+			"from": [-12.07, -15, 5.01631],
+			"to": [-9.93, 15, 10.98369],
 			"rotation": {
 				"angle": -22.5,
 				"axis": "x",
+				"origin": [8, 0, 8]
+			},
+			"faces": {
+				"north": {
+					"uv": [9.93, 1, 12.07, 16],
+					"texture": "#material_bright_steel"
+				},
+				"south": {
+					"uv": [3.93, 1, 6.07, 16],
+					"texture": "#material_bright_steel"
+				},
+				"west": {
+					"uv": [6.4087, 0, 9.5913, 16],
+					"texture": "#mine_hoist_drum_end"
+				},
+				"up": {
+					"uv": [3.93, 5.01631, 6.07, 10.98369],
+					"texture": "#material_bright_steel"
+				},
+				"down": {
+					"uv": [3.93, 5.01631, 6.07, 10.98369],
+					"texture": "#material_bright_steel"
+				}
+			}
+		},
+		{
+			"name": "end_e_0",
+			"from": [26, -2.98369, -7],
+			"to": [28, 2.98369, 23],
+			"rotation": {
+				"angle": 0,
+				"axis": "y",
 				"origin": [8, 8, 8]
 			},
 			"faces": {
 				"north": {
-					"uv": [0, 0, 2, 1.6],
-					"texture": "#pol"
+					"uv": [4, 13.01631, 6, 16],
+					"texture": "#material_bright_steel"
 				},
 				"east": {
-					"uv": [0, 0, 6.13, 1.6],
-					"texture": "#pol"
+					"uv": [0, 6.4087, 16, 9.5913],
+					"texture": "#mine_hoist_drum_end"
 				},
 				"south": {
-					"uv": [0, 0, 2, 1.6],
-					"texture": "#pol"
-				},
-				"west": {
-					"uv": [0, 0, 6.13, 1.6],
-					"texture": "#pol"
+					"uv": [10, 13.01631, 12, 16],
+					"texture": "#material_bright_steel"
 				},
 				"up": {
-					"uv": [0, 0, 2, 6.13],
-					"texture": "#pol"
+					"uv": [10, 0, 12, 16],
+					"texture": "#material_bright_steel"
 				},
 				"down": {
-					"uv": [0, 0, 2, 6.13],
-					"texture": "#pol"
+					"uv": [10, 0, 12, 16],
+					"texture": "#material_bright_steel"
+				}
+			}
+		},
+		{
+			"name": "end_e_1",
+			"from": [25.99, -2.98369, -7],
+			"to": [28.01, 2.98369, 23],
+			"rotation": {
+				"angle": 22.5,
+				"axis": "x",
+				"origin": [8, 0, 8]
+			},
+			"faces": {
+				"north": {
+					"uv": [3.99, 13.01631, 6.01, 16],
+					"texture": "#material_bright_steel"
+				},
+				"east": {
+					"uv": [0, 6.4087, 16, 9.5913],
+					"texture": "#mine_hoist_drum_end"
+				},
+				"south": {
+					"uv": [9.99, 13.01631, 12.01, 16],
+					"texture": "#material_bright_steel"
+				},
+				"up": {
+					"uv": [9.99, 0, 12.01, 16],
+					"texture": "#material_bright_steel"
+				},
+				"down": {
+					"uv": [9.99, 0, 12.01, 16],
+					"texture": "#material_bright_steel"
+				}
+			}
+		},
+		{
+			"name": "end_e_2",
+			"from": [25.98, -2.98369, -7],
+			"to": [28.02, 2.98369, 23],
+			"rotation": {
+				"angle": 45,
+				"axis": "x",
+				"origin": [8, 0, 8]
+			},
+			"faces": {
+				"north": {
+					"uv": [3.98, 13.01631, 6.02, 16],
+					"texture": "#material_bright_steel"
+				},
+				"east": {
+					"uv": [0, 6.4087, 16, 9.5913],
+					"texture": "#mine_hoist_drum_end"
+				},
+				"south": {
+					"uv": [9.98, 13.01631, 12.02, 16],
+					"texture": "#material_bright_steel"
+				},
+				"up": {
+					"uv": [9.98, 0, 12.02, 16],
+					"texture": "#material_bright_steel"
+				},
+				"down": {
+					"uv": [9.98, 0, 12.02, 16],
+					"texture": "#material_bright_steel"
+				}
+			}
+		},
+		{
+			"name": "end_e_3",
+			"from": [25.97, -2.98369, -7],
+			"to": [28.03, 2.98369, 23],
+			"rotation": {
+				"angle": -22.5,
+				"axis": "x",
+				"origin": [8, 0, 8]
+			},
+			"faces": {
+				"north": {
+					"uv": [3.97, 13.01631, 6.03, 16],
+					"texture": "#material_bright_steel"
+				},
+				"east": {
+					"uv": [0, 6.4087, 16, 9.5913],
+					"texture": "#mine_hoist_drum_end"
+				},
+				"south": {
+					"uv": [9.97, 13.01631, 12.03, 16],
+					"texture": "#material_bright_steel"
+				},
+				"up": {
+					"uv": [9.97, 0, 12.03, 16],
+					"texture": "#material_bright_steel"
+				},
+				"down": {
+					"uv": [9.97, 0, 12.03, 16],
+					"texture": "#material_bright_steel"
+				}
+			}
+		},
+		{
+			"name": "end_e_4",
+			"from": [25.96, -2.98369, -7],
+			"to": [28.04, 2.98369, 23],
+			"rotation": {
+				"angle": -45,
+				"axis": "x",
+				"origin": [8, 0, 8]
+			},
+			"faces": {
+				"north": {
+					"uv": [3.96, 13.01631, 6.04, 16],
+					"texture": "#material_bright_steel"
+				},
+				"east": {
+					"uv": [0, 6.4087, 16, 9.5913],
+					"texture": "#mine_hoist_drum_end"
+				},
+				"south": {
+					"uv": [9.96, 13.01631, 12.04, 16],
+					"texture": "#material_bright_steel"
+				},
+				"up": {
+					"uv": [9.96, 0, 12.04, 16],
+					"texture": "#material_bright_steel"
+				},
+				"down": {
+					"uv": [9.96, 0, 12.04, 16],
+					"texture": "#material_bright_steel"
+				}
+			}
+		},
+		{
+			"name": "end_e_5",
+			"from": [25.95, -15, 5.01631],
+			"to": [28.05, 15, 10.98369],
+			"rotation": {
+				"angle": 0,
+				"axis": "y",
+				"origin": [8, 8, 8]
+			},
+			"faces": {
+				"north": {
+					"uv": [3.95, 1, 6.05, 16],
+					"texture": "#material_bright_steel"
+				},
+				"east": {
+					"uv": [6.4087, 0, 9.5913, 16],
+					"texture": "#mine_hoist_drum_end"
+				},
+				"south": {
+					"uv": [9.95, 1, 12.05, 16],
+					"texture": "#material_bright_steel"
+				},
+				"up": {
+					"uv": [9.95, 5.01631, 12.05, 10.98369],
+					"texture": "#material_bright_steel"
+				},
+				"down": {
+					"uv": [9.95, 5.01631, 12.05, 10.98369],
+					"texture": "#material_bright_steel"
+				}
+			}
+		},
+		{
+			"name": "end_e_6",
+			"from": [25.94, -15, 5.01631],
+			"to": [28.06, 15, 10.98369],
+			"rotation": {
+				"angle": 22.5,
+				"axis": "x",
+				"origin": [8, 0, 8]
+			},
+			"faces": {
+				"north": {
+					"uv": [3.94, 1, 6.06, 16],
+					"texture": "#material_bright_steel"
+				},
+				"east": {
+					"uv": [6.4087, 0, 9.5913, 16],
+					"texture": "#mine_hoist_drum_end"
+				},
+				"south": {
+					"uv": [9.94, 1, 12.06, 16],
+					"texture": "#material_bright_steel"
+				},
+				"up": {
+					"uv": [9.94, 5.01631, 12.06, 10.98369],
+					"texture": "#material_bright_steel"
+				},
+				"down": {
+					"uv": [9.94, 5.01631, 12.06, 10.98369],
+					"texture": "#material_bright_steel"
+				}
+			}
+		},
+		{
+			"name": "end_e_7",
+			"from": [25.93, -15, 5.01631],
+			"to": [28.07, 15, 10.98369],
+			"rotation": {
+				"angle": -22.5,
+				"axis": "x",
+				"origin": [8, 0, 8]
+			},
+			"faces": {
+				"north": {
+					"uv": [3.93, 1, 6.07, 16],
+					"texture": "#material_bright_steel"
+				},
+				"east": {
+					"uv": [6.4087, 0, 9.5913, 16],
+					"texture": "#mine_hoist_drum_end"
+				},
+				"south": {
+					"uv": [9.93, 1, 12.07, 16],
+					"texture": "#material_bright_steel"
+				},
+				"up": {
+					"uv": [9.93, 5.01631, 12.07, 10.98369],
+					"texture": "#material_bright_steel"
+				},
+				"down": {
+					"uv": [9.93, 5.01631, 12.07, 10.98369],
+					"texture": "#material_bright_steel"
 				}
 			}
 		},
 		{
 			"name": "flange_w_0",
-			"from": [-12, -3.8, 5.653],
-			"to": [-10, 19.8, 10.347],
+			"from": [-10.5, -2.98369, -7],
+			"to": [-10, 2.98369, 23],
 			"rotation": {
 				"angle": 0,
 				"axis": "y",
@@ -1747,179 +1332,159 @@
 			},
 			"faces": {
 				"north": {
-					"uv": [0, 0, 2, 16],
-					"texture": "#mgrn"
+					"uv": [10, 13.01631, 10.5, 16],
+					"texture": "#material_bright_steel"
 				},
 				"east": {
-					"uv": [0, 0, 4.69, 16],
-					"texture": "#mgrn"
+					"uv": [0, 6.4087, 16, 9.5913],
+					"texture": "#mine_hoist_drum_end"
 				},
 				"south": {
-					"uv": [0, 0, 2, 16],
-					"texture": "#mgrn"
-				},
-				"west": {
-					"uv": [0, 0, 4.69, 16],
-					"texture": "#mgrn"
+					"uv": [5.5, 13.01631, 6, 16],
+					"texture": "#material_bright_steel"
 				},
 				"up": {
-					"uv": [0, 0, 2, 4.69],
-					"texture": "#mgrn"
+					"uv": [5.5, 0, 6, 16],
+					"texture": "#material_bright_steel"
 				},
 				"down": {
-					"uv": [0, 0, 2, 4.69],
-					"texture": "#mgrn"
+					"uv": [5.5, 0, 6, 16],
+					"texture": "#material_bright_steel"
 				}
 			}
 		},
 		{
 			"name": "flange_w_1",
-			"from": [-12.01, -3.8, 5.653],
-			"to": [-9.99, 19.8, 10.347],
+			"from": [-10.51, -2.98369, -7],
+			"to": [-9.99, 2.98369, 23],
 			"rotation": {
 				"angle": 22.5,
 				"axis": "x",
-				"origin": [8, 8, 8]
+				"origin": [8, 0, 8]
 			},
 			"faces": {
 				"north": {
-					"uv": [0, 0, 2.02, 16],
-					"texture": "#mgrn"
+					"uv": [9.99, 13.01631, 10.51, 16],
+					"texture": "#material_bright_steel"
 				},
 				"east": {
-					"uv": [0, 0, 4.69, 16],
-					"texture": "#mgrn"
+					"uv": [0, 6.4087, 16, 9.5913],
+					"texture": "#mine_hoist_drum_end"
 				},
 				"south": {
-					"uv": [0, 0, 2.02, 16],
-					"texture": "#mgrn"
-				},
-				"west": {
-					"uv": [0, 0, 4.69, 16],
-					"texture": "#mgrn"
+					"uv": [5.49, 13.01631, 6.01, 16],
+					"texture": "#material_bright_steel"
 				},
 				"up": {
-					"uv": [0, 0, 2.02, 4.69],
-					"texture": "#mgrn"
+					"uv": [5.49, 0, 6.01, 16],
+					"texture": "#material_bright_steel"
 				},
 				"down": {
-					"uv": [0, 0, 2.02, 4.69],
-					"texture": "#mgrn"
+					"uv": [5.49, 0, 6.01, 16],
+					"texture": "#material_bright_steel"
 				}
 			}
 		},
 		{
 			"name": "flange_w_2",
-			"from": [-12.02, -3.8, 5.653],
-			"to": [-9.98, 19.8, 10.347],
+			"from": [-10.52, -2.98369, -7],
+			"to": [-9.98, 2.98369, 23],
 			"rotation": {
 				"angle": 45,
 				"axis": "x",
-				"origin": [8, 8, 8]
+				"origin": [8, 0, 8]
 			},
 			"faces": {
 				"north": {
-					"uv": [0, 0, 2.04, 16],
-					"texture": "#mgrn"
+					"uv": [9.98, 13.01631, 10.52, 16],
+					"texture": "#material_bright_steel"
 				},
 				"east": {
-					"uv": [0, 0, 4.69, 16],
-					"texture": "#mgrn"
+					"uv": [0, 6.4087, 16, 9.5913],
+					"texture": "#mine_hoist_drum_end"
 				},
 				"south": {
-					"uv": [0, 0, 2.04, 16],
-					"texture": "#mgrn"
-				},
-				"west": {
-					"uv": [0, 0, 4.69, 16],
-					"texture": "#mgrn"
+					"uv": [5.48, 13.01631, 6.02, 16],
+					"texture": "#material_bright_steel"
 				},
 				"up": {
-					"uv": [0, 0, 2.04, 4.69],
-					"texture": "#mgrn"
+					"uv": [5.48, 0, 6.02, 16],
+					"texture": "#material_bright_steel"
 				},
 				"down": {
-					"uv": [0, 0, 2.04, 4.69],
-					"texture": "#mgrn"
+					"uv": [5.48, 0, 6.02, 16],
+					"texture": "#material_bright_steel"
 				}
 			}
 		},
 		{
 			"name": "flange_w_3",
-			"from": [-12.03, -3.8, 5.653],
-			"to": [-9.97, 19.8, 10.347],
+			"from": [-10.53, -2.98369, -7],
+			"to": [-9.97, 2.98369, 23],
 			"rotation": {
 				"angle": -22.5,
 				"axis": "x",
-				"origin": [8, 8, 8]
+				"origin": [8, 0, 8]
 			},
 			"faces": {
 				"north": {
-					"uv": [0, 0, 2.06, 16],
-					"texture": "#mgrn"
+					"uv": [9.97, 13.01631, 10.53, 16],
+					"texture": "#material_bright_steel"
 				},
 				"east": {
-					"uv": [0, 0, 4.69, 16],
-					"texture": "#mgrn"
+					"uv": [0, 6.4087, 16, 9.5913],
+					"texture": "#mine_hoist_drum_end"
 				},
 				"south": {
-					"uv": [0, 0, 2.06, 16],
-					"texture": "#mgrn"
-				},
-				"west": {
-					"uv": [0, 0, 4.69, 16],
-					"texture": "#mgrn"
+					"uv": [5.47, 13.01631, 6.03, 16],
+					"texture": "#material_bright_steel"
 				},
 				"up": {
-					"uv": [0, 0, 2.06, 4.69],
-					"texture": "#mgrn"
+					"uv": [5.47, 0, 6.03, 16],
+					"texture": "#material_bright_steel"
 				},
 				"down": {
-					"uv": [0, 0, 2.06, 4.69],
-					"texture": "#mgrn"
+					"uv": [5.47, 0, 6.03, 16],
+					"texture": "#material_bright_steel"
 				}
 			}
 		},
 		{
 			"name": "flange_w_4",
-			"from": [-12.04, -3.8, 5.653],
-			"to": [-9.96, 19.8, 10.347],
+			"from": [-10.54, -2.98369, -7],
+			"to": [-9.96, 2.98369, 23],
 			"rotation": {
 				"angle": -45,
 				"axis": "x",
-				"origin": [8, 8, 8]
+				"origin": [8, 0, 8]
 			},
 			"faces": {
 				"north": {
-					"uv": [0, 0, 2.08, 16],
-					"texture": "#mgrn"
+					"uv": [9.96, 13.01631, 10.54, 16],
+					"texture": "#material_bright_steel"
 				},
 				"east": {
-					"uv": [0, 0, 4.69, 16],
-					"texture": "#mgrn"
+					"uv": [0, 6.4087, 16, 9.5913],
+					"texture": "#mine_hoist_drum_end"
 				},
 				"south": {
-					"uv": [0, 0, 2.08, 16],
-					"texture": "#mgrn"
-				},
-				"west": {
-					"uv": [0, 0, 4.69, 16],
-					"texture": "#mgrn"
+					"uv": [5.46, 13.01631, 6.04, 16],
+					"texture": "#material_bright_steel"
 				},
 				"up": {
-					"uv": [0, 0, 2.08, 4.69],
-					"texture": "#mgrn"
+					"uv": [5.46, 0, 6.04, 16],
+					"texture": "#material_bright_steel"
 				},
 				"down": {
-					"uv": [0, 0, 2.08, 4.69],
-					"texture": "#mgrn"
+					"uv": [5.46, 0, 6.04, 16],
+					"texture": "#material_bright_steel"
 				}
 			}
 		},
 		{
 			"name": "flange_w_5",
-			"from": [-12.05, 5.653, -3.8],
-			"to": [-9.95, 10.347, 19.8],
+			"from": [-10.55, -15, 5.01631],
+			"to": [-9.95, 15, 10.98369],
 			"rotation": {
 				"angle": 0,
 				"axis": "y",
@@ -1927,107 +1492,95 @@
 			},
 			"faces": {
 				"north": {
-					"uv": [0, 0, 2.1, 4.69],
-					"texture": "#mgrn"
+					"uv": [9.95, 1, 10.55, 16],
+					"texture": "#material_bright_steel"
 				},
 				"east": {
-					"uv": [0, 0, 16, 4.69],
-					"texture": "#mgrn"
+					"uv": [6.4087, 0, 9.5913, 16],
+					"texture": "#mine_hoist_drum_end"
 				},
 				"south": {
-					"uv": [0, 0, 2.1, 4.69],
-					"texture": "#mgrn"
-				},
-				"west": {
-					"uv": [0, 0, 16, 4.69],
-					"texture": "#mgrn"
+					"uv": [5.45, 1, 6.05, 16],
+					"texture": "#material_bright_steel"
 				},
 				"up": {
-					"uv": [0, 0, 2.1, 16],
-					"texture": "#mgrn"
+					"uv": [5.45, 5.01631, 6.05, 10.98369],
+					"texture": "#material_bright_steel"
 				},
 				"down": {
-					"uv": [0, 0, 2.1, 16],
-					"texture": "#mgrn"
+					"uv": [5.45, 5.01631, 6.05, 10.98369],
+					"texture": "#material_bright_steel"
 				}
 			}
 		},
 		{
 			"name": "flange_w_6",
-			"from": [-12.06, 5.653, -3.8],
-			"to": [-9.94, 10.347, 19.8],
+			"from": [-10.56, -15, 5.01631],
+			"to": [-9.94, 15, 10.98369],
 			"rotation": {
 				"angle": 22.5,
 				"axis": "x",
-				"origin": [8, 8, 8]
+				"origin": [8, 0, 8]
 			},
 			"faces": {
 				"north": {
-					"uv": [0, 0, 2.12, 4.69],
-					"texture": "#mgrn"
+					"uv": [9.94, 1, 10.56, 16],
+					"texture": "#material_bright_steel"
 				},
 				"east": {
-					"uv": [0, 0, 16, 4.69],
-					"texture": "#mgrn"
+					"uv": [6.4087, 0, 9.5913, 16],
+					"texture": "#mine_hoist_drum_end"
 				},
 				"south": {
-					"uv": [0, 0, 2.12, 4.69],
-					"texture": "#mgrn"
-				},
-				"west": {
-					"uv": [0, 0, 16, 4.69],
-					"texture": "#mgrn"
+					"uv": [5.44, 1, 6.06, 16],
+					"texture": "#material_bright_steel"
 				},
 				"up": {
-					"uv": [0, 0, 2.12, 16],
-					"texture": "#mgrn"
+					"uv": [5.44, 5.01631, 6.06, 10.98369],
+					"texture": "#material_bright_steel"
 				},
 				"down": {
-					"uv": [0, 0, 2.12, 16],
-					"texture": "#mgrn"
+					"uv": [5.44, 5.01631, 6.06, 10.98369],
+					"texture": "#material_bright_steel"
 				}
 			}
 		},
 		{
 			"name": "flange_w_7",
-			"from": [-12.07, 5.653, -3.8],
-			"to": [-9.93, 10.347, 19.8],
+			"from": [-10.57, -15, 5.01631],
+			"to": [-9.93, 15, 10.98369],
 			"rotation": {
 				"angle": -22.5,
 				"axis": "x",
-				"origin": [8, 8, 8]
+				"origin": [8, 0, 8]
 			},
 			"faces": {
 				"north": {
-					"uv": [0, 0, 2.14, 4.69],
-					"texture": "#mgrn"
+					"uv": [9.93, 1, 10.57, 16],
+					"texture": "#material_bright_steel"
 				},
 				"east": {
-					"uv": [0, 0, 16, 4.69],
-					"texture": "#mgrn"
+					"uv": [6.4087, 0, 9.5913, 16],
+					"texture": "#mine_hoist_drum_end"
 				},
 				"south": {
-					"uv": [0, 0, 2.14, 4.69],
-					"texture": "#mgrn"
-				},
-				"west": {
-					"uv": [0, 0, 16, 4.69],
-					"texture": "#mgrn"
+					"uv": [5.43, 1, 6.07, 16],
+					"texture": "#material_bright_steel"
 				},
 				"up": {
-					"uv": [0, 0, 2.14, 16],
-					"texture": "#mgrn"
+					"uv": [5.43, 5.01631, 6.07, 10.98369],
+					"texture": "#material_bright_steel"
 				},
 				"down": {
-					"uv": [0, 0, 2.14, 16],
-					"texture": "#mgrn"
+					"uv": [5.43, 5.01631, 6.07, 10.98369],
+					"texture": "#material_bright_steel"
 				}
 			}
 		},
 		{
 			"name": "flange_e_0",
-			"from": [26, -3.8, 5.653],
-			"to": [28, 19.8, 10.347],
+			"from": [26, -2.98369, -7],
+			"to": [26.5, 2.98369, 23],
 			"rotation": {
 				"angle": 0,
 				"axis": "y",
@@ -2035,179 +1588,159 @@
 			},
 			"faces": {
 				"north": {
-					"uv": [0, 0, 2, 16],
-					"texture": "#mgrn"
-				},
-				"east": {
-					"uv": [0, 0, 4.69, 16],
-					"texture": "#mgrn"
+					"uv": [5.5, 13.01631, 6, 16],
+					"texture": "#material_bright_steel"
 				},
 				"south": {
-					"uv": [0, 0, 2, 16],
-					"texture": "#mgrn"
+					"uv": [10, 13.01631, 10.5, 16],
+					"texture": "#material_bright_steel"
 				},
 				"west": {
-					"uv": [0, 0, 4.69, 16],
-					"texture": "#mgrn"
+					"uv": [0, 6.4087, 16, 9.5913],
+					"texture": "#mine_hoist_drum_end"
 				},
 				"up": {
-					"uv": [0, 0, 2, 4.69],
-					"texture": "#mgrn"
+					"uv": [10, 0, 10.5, 16],
+					"texture": "#material_bright_steel"
 				},
 				"down": {
-					"uv": [0, 0, 2, 4.69],
-					"texture": "#mgrn"
+					"uv": [10, 0, 10.5, 16],
+					"texture": "#material_bright_steel"
 				}
 			}
 		},
 		{
 			"name": "flange_e_1",
-			"from": [25.99, -3.8, 5.653],
-			"to": [28.01, 19.8, 10.347],
+			"from": [25.99, -2.98369, -7],
+			"to": [26.51, 2.98369, 23],
 			"rotation": {
 				"angle": 22.5,
 				"axis": "x",
-				"origin": [8, 8, 8]
+				"origin": [8, 0, 8]
 			},
 			"faces": {
 				"north": {
-					"uv": [0, 0, 2.02, 16],
-					"texture": "#mgrn"
-				},
-				"east": {
-					"uv": [0, 0, 4.69, 16],
-					"texture": "#mgrn"
+					"uv": [5.49, 13.01631, 6.01, 16],
+					"texture": "#material_bright_steel"
 				},
 				"south": {
-					"uv": [0, 0, 2.02, 16],
-					"texture": "#mgrn"
+					"uv": [9.99, 13.01631, 10.51, 16],
+					"texture": "#material_bright_steel"
 				},
 				"west": {
-					"uv": [0, 0, 4.69, 16],
-					"texture": "#mgrn"
+					"uv": [0, 6.4087, 16, 9.5913],
+					"texture": "#mine_hoist_drum_end"
 				},
 				"up": {
-					"uv": [0, 0, 2.02, 4.69],
-					"texture": "#mgrn"
+					"uv": [9.99, 0, 10.51, 16],
+					"texture": "#material_bright_steel"
 				},
 				"down": {
-					"uv": [0, 0, 2.02, 4.69],
-					"texture": "#mgrn"
+					"uv": [9.99, 0, 10.51, 16],
+					"texture": "#material_bright_steel"
 				}
 			}
 		},
 		{
 			"name": "flange_e_2",
-			"from": [25.98, -3.8, 5.653],
-			"to": [28.02, 19.8, 10.347],
+			"from": [25.98, -2.98369, -7],
+			"to": [26.52, 2.98369, 23],
 			"rotation": {
 				"angle": 45,
 				"axis": "x",
-				"origin": [8, 8, 8]
+				"origin": [8, 0, 8]
 			},
 			"faces": {
 				"north": {
-					"uv": [0, 0, 2.04, 16],
-					"texture": "#mgrn"
-				},
-				"east": {
-					"uv": [0, 0, 4.69, 16],
-					"texture": "#mgrn"
+					"uv": [5.48, 13.01631, 6.02, 16],
+					"texture": "#material_bright_steel"
 				},
 				"south": {
-					"uv": [0, 0, 2.04, 16],
-					"texture": "#mgrn"
+					"uv": [9.98, 13.01631, 10.52, 16],
+					"texture": "#material_bright_steel"
 				},
 				"west": {
-					"uv": [0, 0, 4.69, 16],
-					"texture": "#mgrn"
+					"uv": [0, 6.4087, 16, 9.5913],
+					"texture": "#mine_hoist_drum_end"
 				},
 				"up": {
-					"uv": [0, 0, 2.04, 4.69],
-					"texture": "#mgrn"
+					"uv": [9.98, 0, 10.52, 16],
+					"texture": "#material_bright_steel"
 				},
 				"down": {
-					"uv": [0, 0, 2.04, 4.69],
-					"texture": "#mgrn"
+					"uv": [9.98, 0, 10.52, 16],
+					"texture": "#material_bright_steel"
 				}
 			}
 		},
 		{
 			"name": "flange_e_3",
-			"from": [25.97, -3.8, 5.653],
-			"to": [28.03, 19.8, 10.347],
+			"from": [25.97, -2.98369, -7],
+			"to": [26.53, 2.98369, 23],
 			"rotation": {
 				"angle": -22.5,
 				"axis": "x",
-				"origin": [8, 8, 8]
+				"origin": [8, 0, 8]
 			},
 			"faces": {
 				"north": {
-					"uv": [0, 0, 2.06, 16],
-					"texture": "#mgrn"
-				},
-				"east": {
-					"uv": [0, 0, 4.69, 16],
-					"texture": "#mgrn"
+					"uv": [5.47, 13.01631, 6.03, 16],
+					"texture": "#material_bright_steel"
 				},
 				"south": {
-					"uv": [0, 0, 2.06, 16],
-					"texture": "#mgrn"
+					"uv": [9.97, 13.01631, 10.53, 16],
+					"texture": "#material_bright_steel"
 				},
 				"west": {
-					"uv": [0, 0, 4.69, 16],
-					"texture": "#mgrn"
+					"uv": [0, 6.4087, 16, 9.5913],
+					"texture": "#mine_hoist_drum_end"
 				},
 				"up": {
-					"uv": [0, 0, 2.06, 4.69],
-					"texture": "#mgrn"
+					"uv": [9.97, 0, 10.53, 16],
+					"texture": "#material_bright_steel"
 				},
 				"down": {
-					"uv": [0, 0, 2.06, 4.69],
-					"texture": "#mgrn"
+					"uv": [9.97, 0, 10.53, 16],
+					"texture": "#material_bright_steel"
 				}
 			}
 		},
 		{
 			"name": "flange_e_4",
-			"from": [25.96, -3.8, 5.653],
-			"to": [28.04, 19.8, 10.347],
+			"from": [25.96, -2.98369, -7],
+			"to": [26.54, 2.98369, 23],
 			"rotation": {
 				"angle": -45,
 				"axis": "x",
-				"origin": [8, 8, 8]
+				"origin": [8, 0, 8]
 			},
 			"faces": {
 				"north": {
-					"uv": [0, 0, 2.08, 16],
-					"texture": "#mgrn"
-				},
-				"east": {
-					"uv": [0, 0, 4.69, 16],
-					"texture": "#mgrn"
+					"uv": [5.46, 13.01631, 6.04, 16],
+					"texture": "#material_bright_steel"
 				},
 				"south": {
-					"uv": [0, 0, 2.08, 16],
-					"texture": "#mgrn"
+					"uv": [9.96, 13.01631, 10.54, 16],
+					"texture": "#material_bright_steel"
 				},
 				"west": {
-					"uv": [0, 0, 4.69, 16],
-					"texture": "#mgrn"
+					"uv": [0, 6.4087, 16, 9.5913],
+					"texture": "#mine_hoist_drum_end"
 				},
 				"up": {
-					"uv": [0, 0, 2.08, 4.69],
-					"texture": "#mgrn"
+					"uv": [9.96, 0, 10.54, 16],
+					"texture": "#material_bright_steel"
 				},
 				"down": {
-					"uv": [0, 0, 2.08, 4.69],
-					"texture": "#mgrn"
+					"uv": [9.96, 0, 10.54, 16],
+					"texture": "#material_bright_steel"
 				}
 			}
 		},
 		{
 			"name": "flange_e_5",
-			"from": [25.95, 5.653, -3.8],
-			"to": [28.05, 10.347, 19.8],
+			"from": [25.95, -15, 5.01631],
+			"to": [26.55, 15, 10.98369],
 			"rotation": {
 				"angle": 0,
 				"axis": "y",
@@ -2215,107 +1748,95 @@
 			},
 			"faces": {
 				"north": {
-					"uv": [0, 0, 2.1, 4.69],
-					"texture": "#mgrn"
-				},
-				"east": {
-					"uv": [0, 0, 16, 4.69],
-					"texture": "#mgrn"
+					"uv": [5.45, 1, 6.05, 16],
+					"texture": "#material_bright_steel"
 				},
 				"south": {
-					"uv": [0, 0, 2.1, 4.69],
-					"texture": "#mgrn"
+					"uv": [9.95, 1, 10.55, 16],
+					"texture": "#material_bright_steel"
 				},
 				"west": {
-					"uv": [0, 0, 16, 4.69],
-					"texture": "#mgrn"
+					"uv": [6.4087, 0, 9.5913, 16],
+					"texture": "#mine_hoist_drum_end"
 				},
 				"up": {
-					"uv": [0, 0, 2.1, 16],
-					"texture": "#mgrn"
+					"uv": [9.95, 5.01631, 10.55, 10.98369],
+					"texture": "#material_bright_steel"
 				},
 				"down": {
-					"uv": [0, 0, 2.1, 16],
-					"texture": "#mgrn"
+					"uv": [9.95, 5.01631, 10.55, 10.98369],
+					"texture": "#material_bright_steel"
 				}
 			}
 		},
 		{
 			"name": "flange_e_6",
-			"from": [25.94, 5.653, -3.8],
-			"to": [28.06, 10.347, 19.8],
+			"from": [25.94, -15, 5.01631],
+			"to": [26.56, 15, 10.98369],
 			"rotation": {
 				"angle": 22.5,
 				"axis": "x",
-				"origin": [8, 8, 8]
+				"origin": [8, 0, 8]
 			},
 			"faces": {
 				"north": {
-					"uv": [0, 0, 2.12, 4.69],
-					"texture": "#mgrn"
-				},
-				"east": {
-					"uv": [0, 0, 16, 4.69],
-					"texture": "#mgrn"
+					"uv": [5.44, 1, 6.06, 16],
+					"texture": "#material_bright_steel"
 				},
 				"south": {
-					"uv": [0, 0, 2.12, 4.69],
-					"texture": "#mgrn"
+					"uv": [9.94, 1, 10.56, 16],
+					"texture": "#material_bright_steel"
 				},
 				"west": {
-					"uv": [0, 0, 16, 4.69],
-					"texture": "#mgrn"
+					"uv": [6.4087, 0, 9.5913, 16],
+					"texture": "#mine_hoist_drum_end"
 				},
 				"up": {
-					"uv": [0, 0, 2.12, 16],
-					"texture": "#mgrn"
+					"uv": [9.94, 5.01631, 10.56, 10.98369],
+					"texture": "#material_bright_steel"
 				},
 				"down": {
-					"uv": [0, 0, 2.12, 16],
-					"texture": "#mgrn"
+					"uv": [9.94, 5.01631, 10.56, 10.98369],
+					"texture": "#material_bright_steel"
 				}
 			}
 		},
 		{
 			"name": "flange_e_7",
-			"from": [25.93, 5.653, -3.8],
-			"to": [28.07, 10.347, 19.8],
+			"from": [25.93, -15, 5.01631],
+			"to": [26.57, 15, 10.98369],
 			"rotation": {
 				"angle": -22.5,
 				"axis": "x",
-				"origin": [8, 8, 8]
+				"origin": [8, 0, 8]
 			},
 			"faces": {
 				"north": {
-					"uv": [0, 0, 2.14, 4.69],
-					"texture": "#mgrn"
-				},
-				"east": {
-					"uv": [0, 0, 16, 4.69],
-					"texture": "#mgrn"
+					"uv": [5.43, 1, 6.07, 16],
+					"texture": "#material_bright_steel"
 				},
 				"south": {
-					"uv": [0, 0, 2.14, 4.69],
-					"texture": "#mgrn"
+					"uv": [9.93, 1, 10.57, 16],
+					"texture": "#material_bright_steel"
 				},
 				"west": {
-					"uv": [0, 0, 16, 4.69],
-					"texture": "#mgrn"
+					"uv": [6.4087, 0, 9.5913, 16],
+					"texture": "#mine_hoist_drum_end"
 				},
 				"up": {
-					"uv": [0, 0, 2.14, 16],
-					"texture": "#mgrn"
+					"uv": [9.93, 5.01631, 10.57, 10.98369],
+					"texture": "#material_bright_steel"
 				},
 				"down": {
-					"uv": [0, 0, 2.14, 16],
-					"texture": "#mgrn"
+					"uv": [9.93, 5.01631, 10.57, 10.98369],
+					"texture": "#material_bright_steel"
 				}
 			}
 		},
 		{
 			"name": "shaft_0",
-			"from": [-15.92, 6.5, 7.379],
-			"to": [31.92, 9.5, 8.621],
+			"from": [-16, -0.31826, 6.4],
+			"to": [32, 0.31826, 9.6],
 			"rotation": {
 				"angle": 0,
 				"axis": "y",
@@ -2323,35 +1844,159 @@
 			},
 			"faces": {
 				"north": {
-					"uv": [0, 0, 16, 3],
-					"texture": "#pol"
-				},
-				"east": {
-					"uv": [0, 0, 1.24, 3],
-					"texture": "#pol"
+					"uv": [0, 15.68174, 16, 16],
+					"texture": "#material_bright_steel"
 				},
 				"south": {
-					"uv": [0, 0, 16, 3],
-					"texture": "#pol"
-				},
-				"west": {
-					"uv": [0, 0, 1.24, 3],
-					"texture": "#pol"
-				},
-				"up": {
-					"uv": [0, 0, 16, 1.24],
-					"texture": "#pol"
-				},
-				"down": {
-					"uv": [0, 0, 16, 1.24],
-					"texture": "#pol"
+					"uv": [0, 15.68174, 16, 16],
+					"texture": "#material_bright_steel"
 				}
 			}
 		},
 		{
 			"name": "shaft_1",
-			"from": [-15.93, 7.379, 6.5],
-			"to": [31.93, 8.621, 9.5],
+			"from": [-16, -0.31826, 6.4],
+			"to": [32, 0.31826, 9.6],
+			"rotation": {
+				"angle": 22.5,
+				"axis": "x",
+				"origin": [8, 0, 8]
+			},
+			"faces": {
+				"north": {
+					"uv": [0, 15.68174, 16, 16],
+					"texture": "#material_bright_steel"
+				},
+				"south": {
+					"uv": [0, 15.68174, 16, 16],
+					"texture": "#material_bright_steel"
+				}
+			}
+		},
+		{
+			"name": "shaft_2",
+			"from": [-16, -0.31826, 6.4],
+			"to": [32, 0.31826, 9.6],
+			"rotation": {
+				"angle": 45,
+				"axis": "x",
+				"origin": [8, 0, 8]
+			},
+			"faces": {
+				"north": {
+					"uv": [0, 15.68174, 16, 16],
+					"texture": "#material_bright_steel"
+				},
+				"south": {
+					"uv": [0, 15.68174, 16, 16],
+					"texture": "#material_bright_steel"
+				}
+			}
+		},
+		{
+			"name": "shaft_3",
+			"from": [-16, -0.31826, 6.4],
+			"to": [32, 0.31826, 9.6],
+			"rotation": {
+				"angle": -22.5,
+				"axis": "x",
+				"origin": [8, 0, 8]
+			},
+			"faces": {
+				"north": {
+					"uv": [0, 15.68174, 16, 16],
+					"texture": "#material_bright_steel"
+				},
+				"south": {
+					"uv": [0, 15.68174, 16, 16],
+					"texture": "#material_bright_steel"
+				}
+			}
+		},
+		{
+			"name": "shaft_4",
+			"from": [-16, -0.31826, 6.4],
+			"to": [32, 0.31826, 9.6],
+			"rotation": {
+				"angle": -45,
+				"axis": "x",
+				"origin": [8, 0, 8]
+			},
+			"faces": {
+				"north": {
+					"uv": [0, 15.68174, 16, 16],
+					"texture": "#material_bright_steel"
+				},
+				"south": {
+					"uv": [0, 15.68174, 16, 16],
+					"texture": "#material_bright_steel"
+				}
+			}
+		},
+		{
+			"name": "shaft_5",
+			"from": [-16, -1.6, 7.68174],
+			"to": [32, 1.6, 8.31826],
+			"rotation": {
+				"angle": 0,
+				"axis": "y",
+				"origin": [8, 8, 8]
+			},
+			"faces": {
+				"up": {
+					"uv": [0, 7.68174, 16, 8.31826],
+					"texture": "#material_bright_steel"
+				},
+				"down": {
+					"uv": [0, 7.68174, 16, 8.31826],
+					"texture": "#material_bright_steel"
+				}
+			}
+		},
+		{
+			"name": "shaft_6",
+			"from": [-16, -1.6, 7.68174],
+			"to": [32, 1.6, 8.31826],
+			"rotation": {
+				"angle": 22.5,
+				"axis": "x",
+				"origin": [8, 0, 8]
+			},
+			"faces": {
+				"up": {
+					"uv": [0, 7.68174, 16, 8.31826],
+					"texture": "#material_bright_steel"
+				},
+				"down": {
+					"uv": [0, 7.68174, 16, 8.31826],
+					"texture": "#material_bright_steel"
+				}
+			}
+		},
+		{
+			"name": "shaft_7",
+			"from": [-16, -1.6, 7.68174],
+			"to": [32, 1.6, 8.31826],
+			"rotation": {
+				"angle": -22.5,
+				"axis": "x",
+				"origin": [8, 0, 8]
+			},
+			"faces": {
+				"up": {
+					"uv": [0, 7.68174, 16, 8.31826],
+					"texture": "#material_bright_steel"
+				},
+				"down": {
+					"uv": [0, 7.68174, 16, 8.31826],
+					"texture": "#material_bright_steel"
+				}
+			}
+		},
+		{
+			"name": "boss_-12.6_0",
+			"from": [-12.6, -0.51717, 5.4],
+			"to": [-12, 0.51717, 10.6],
 			"rotation": {
 				"angle": 0,
 				"axis": "y",
@@ -2359,100 +2004,440 @@
 			},
 			"faces": {
 				"north": {
-					"uv": [0, 0, 16, 1.24],
-					"texture": "#pol"
+					"uv": [12, 15.48283, 12.6, 16],
+					"texture": "#material_cast_iron"
 				},
 				"east": {
-					"uv": [0, 0, 3, 1.24],
-					"texture": "#pol"
+					"uv": [5.4, 15.48283, 10.6, 16],
+					"texture": "#material_cast_iron"
 				},
 				"south": {
-					"uv": [0, 0, 16, 1.24],
-					"texture": "#pol"
+					"uv": [3.4, 15.48283, 4, 16],
+					"texture": "#material_cast_iron"
 				},
 				"west": {
-					"uv": [0, 0, 3, 1.24],
-					"texture": "#pol"
-				},
-				"up": {
-					"uv": [0, 0, 16, 3],
-					"texture": "#pol"
-				},
-				"down": {
-					"uv": [0, 0, 16, 3],
-					"texture": "#pol"
+					"uv": [5.4, 15.48283, 10.6, 16],
+					"texture": "#material_cast_iron"
 				}
 			}
 		},
 		{
-			"name": "shaft_2",
-			"from": [-15.94, 6.5, 7.379],
-			"to": [31.94, 9.5, 8.621],
+			"name": "boss_-12.6_1",
+			"from": [-12.6, -0.51717, 5.4],
+			"to": [-12, 0.51717, 10.6],
+			"rotation": {
+				"angle": 22.5,
+				"axis": "x",
+				"origin": [8, 0, 8]
+			},
+			"faces": {
+				"north": {
+					"uv": [12, 15.48283, 12.6, 16],
+					"texture": "#material_cast_iron"
+				},
+				"east": {
+					"uv": [5.4, 15.48283, 10.6, 16],
+					"texture": "#material_cast_iron"
+				},
+				"south": {
+					"uv": [3.4, 15.48283, 4, 16],
+					"texture": "#material_cast_iron"
+				},
+				"west": {
+					"uv": [5.4, 15.48283, 10.6, 16],
+					"texture": "#material_cast_iron"
+				}
+			}
+		},
+		{
+			"name": "boss_-12.6_2",
+			"from": [-12.6, -0.51717, 5.4],
+			"to": [-12, 0.51717, 10.6],
 			"rotation": {
 				"angle": 45,
 				"axis": "x",
-				"origin": [8, 8, 8]
+				"origin": [8, 0, 8]
 			},
 			"faces": {
 				"north": {
-					"uv": [0, 0, 16, 3],
-					"texture": "#pol"
+					"uv": [12, 15.48283, 12.6, 16],
+					"texture": "#material_cast_iron"
 				},
 				"east": {
-					"uv": [0, 0, 1.24, 3],
-					"texture": "#pol"
+					"uv": [5.4, 15.48283, 10.6, 16],
+					"texture": "#material_cast_iron"
 				},
 				"south": {
-					"uv": [0, 0, 16, 3],
-					"texture": "#pol"
+					"uv": [3.4, 15.48283, 4, 16],
+					"texture": "#material_cast_iron"
 				},
 				"west": {
-					"uv": [0, 0, 1.24, 3],
-					"texture": "#pol"
-				},
-				"up": {
-					"uv": [0, 0, 16, 1.24],
-					"texture": "#pol"
-				},
-				"down": {
-					"uv": [0, 0, 16, 1.24],
-					"texture": "#pol"
+					"uv": [5.4, 15.48283, 10.6, 16],
+					"texture": "#material_cast_iron"
 				}
 			}
 		},
 		{
-			"name": "shaft_3",
-			"from": [-15.95, 6.5, 7.379],
-			"to": [31.95, 9.5, 8.621],
+			"name": "boss_-12.6_3",
+			"from": [-12.6, -0.51717, 5.4],
+			"to": [-12, 0.51717, 10.6],
+			"rotation": {
+				"angle": -22.5,
+				"axis": "x",
+				"origin": [8, 0, 8]
+			},
+			"faces": {
+				"north": {
+					"uv": [12, 15.48283, 12.6, 16],
+					"texture": "#material_cast_iron"
+				},
+				"east": {
+					"uv": [5.4, 15.48283, 10.6, 16],
+					"texture": "#material_cast_iron"
+				},
+				"south": {
+					"uv": [3.4, 15.48283, 4, 16],
+					"texture": "#material_cast_iron"
+				},
+				"west": {
+					"uv": [5.4, 15.48283, 10.6, 16],
+					"texture": "#material_cast_iron"
+				}
+			}
+		},
+		{
+			"name": "boss_-12.6_4",
+			"from": [-12.6, -0.51717, 5.4],
+			"to": [-12, 0.51717, 10.6],
 			"rotation": {
 				"angle": -45,
 				"axis": "x",
+				"origin": [8, 0, 8]
+			},
+			"faces": {
+				"north": {
+					"uv": [12, 15.48283, 12.6, 16],
+					"texture": "#material_cast_iron"
+				},
+				"east": {
+					"uv": [5.4, 15.48283, 10.6, 16],
+					"texture": "#material_cast_iron"
+				},
+				"south": {
+					"uv": [3.4, 15.48283, 4, 16],
+					"texture": "#material_cast_iron"
+				},
+				"west": {
+					"uv": [5.4, 15.48283, 10.6, 16],
+					"texture": "#material_cast_iron"
+				}
+			}
+		},
+		{
+			"name": "boss_-12.6_5",
+			"from": [-12.6, -2.6, 7.48283],
+			"to": [-12, 2.6, 8.51717],
+			"rotation": {
+				"angle": 0,
+				"axis": "y",
+				"origin": [8, 8, 8]
+			},
+			"faces": {
+				"east": {
+					"uv": [7.48283, 13.4, 8.51717, 16],
+					"texture": "#material_cast_iron"
+				},
+				"west": {
+					"uv": [7.48283, 13.4, 8.51717, 16],
+					"texture": "#material_cast_iron"
+				},
+				"up": {
+					"uv": [3.4, 7.48283, 4, 8.51717],
+					"texture": "#material_cast_iron"
+				},
+				"down": {
+					"uv": [3.4, 7.48283, 4, 8.51717],
+					"texture": "#material_cast_iron"
+				}
+			}
+		},
+		{
+			"name": "boss_-12.6_6",
+			"from": [-12.6, -2.6, 7.48283],
+			"to": [-12, 2.6, 8.51717],
+			"rotation": {
+				"angle": 22.5,
+				"axis": "x",
+				"origin": [8, 0, 8]
+			},
+			"faces": {
+				"east": {
+					"uv": [7.48283, 13.4, 8.51717, 16],
+					"texture": "#material_cast_iron"
+				},
+				"west": {
+					"uv": [7.48283, 13.4, 8.51717, 16],
+					"texture": "#material_cast_iron"
+				},
+				"up": {
+					"uv": [3.4, 7.48283, 4, 8.51717],
+					"texture": "#material_cast_iron"
+				},
+				"down": {
+					"uv": [3.4, 7.48283, 4, 8.51717],
+					"texture": "#material_cast_iron"
+				}
+			}
+		},
+		{
+			"name": "boss_-12.6_7",
+			"from": [-12.6, -2.6, 7.48283],
+			"to": [-12, 2.6, 8.51717],
+			"rotation": {
+				"angle": -22.5,
+				"axis": "x",
+				"origin": [8, 0, 8]
+			},
+			"faces": {
+				"east": {
+					"uv": [7.48283, 13.4, 8.51717, 16],
+					"texture": "#material_cast_iron"
+				},
+				"west": {
+					"uv": [7.48283, 13.4, 8.51717, 16],
+					"texture": "#material_cast_iron"
+				},
+				"up": {
+					"uv": [3.4, 7.48283, 4, 8.51717],
+					"texture": "#material_cast_iron"
+				},
+				"down": {
+					"uv": [3.4, 7.48283, 4, 8.51717],
+					"texture": "#material_cast_iron"
+				}
+			}
+		},
+		{
+			"name": "boss_28_0",
+			"from": [28, -0.51717, 5.4],
+			"to": [28.6, 0.51717, 10.6],
+			"rotation": {
+				"angle": 0,
+				"axis": "y",
 				"origin": [8, 8, 8]
 			},
 			"faces": {
 				"north": {
-					"uv": [0, 0, 16, 3],
-					"texture": "#pol"
+					"uv": [3.4, 15.48283, 4, 16],
+					"texture": "#material_cast_iron"
 				},
 				"east": {
-					"uv": [0, 0, 1.24, 3],
-					"texture": "#pol"
+					"uv": [5.4, 15.48283, 10.6, 16],
+					"texture": "#material_cast_iron"
 				},
 				"south": {
-					"uv": [0, 0, 16, 3],
-					"texture": "#pol"
+					"uv": [12, 15.48283, 12.6, 16],
+					"texture": "#material_cast_iron"
 				},
 				"west": {
-					"uv": [0, 0, 1.24, 3],
-					"texture": "#pol"
+					"uv": [5.4, 15.48283, 10.6, 16],
+					"texture": "#material_cast_iron"
+				}
+			}
+		},
+		{
+			"name": "boss_28_1",
+			"from": [28, -0.51717, 5.4],
+			"to": [28.6, 0.51717, 10.6],
+			"rotation": {
+				"angle": 22.5,
+				"axis": "x",
+				"origin": [8, 0, 8]
+			},
+			"faces": {
+				"north": {
+					"uv": [3.4, 15.48283, 4, 16],
+					"texture": "#material_cast_iron"
+				},
+				"east": {
+					"uv": [5.4, 15.48283, 10.6, 16],
+					"texture": "#material_cast_iron"
+				},
+				"south": {
+					"uv": [12, 15.48283, 12.6, 16],
+					"texture": "#material_cast_iron"
+				},
+				"west": {
+					"uv": [5.4, 15.48283, 10.6, 16],
+					"texture": "#material_cast_iron"
+				}
+			}
+		},
+		{
+			"name": "boss_28_2",
+			"from": [28, -0.51717, 5.4],
+			"to": [28.6, 0.51717, 10.6],
+			"rotation": {
+				"angle": 45,
+				"axis": "x",
+				"origin": [8, 0, 8]
+			},
+			"faces": {
+				"north": {
+					"uv": [3.4, 15.48283, 4, 16],
+					"texture": "#material_cast_iron"
+				},
+				"east": {
+					"uv": [5.4, 15.48283, 10.6, 16],
+					"texture": "#material_cast_iron"
+				},
+				"south": {
+					"uv": [12, 15.48283, 12.6, 16],
+					"texture": "#material_cast_iron"
+				},
+				"west": {
+					"uv": [5.4, 15.48283, 10.6, 16],
+					"texture": "#material_cast_iron"
+				}
+			}
+		},
+		{
+			"name": "boss_28_3",
+			"from": [28, -0.51717, 5.4],
+			"to": [28.6, 0.51717, 10.6],
+			"rotation": {
+				"angle": -22.5,
+				"axis": "x",
+				"origin": [8, 0, 8]
+			},
+			"faces": {
+				"north": {
+					"uv": [3.4, 15.48283, 4, 16],
+					"texture": "#material_cast_iron"
+				},
+				"east": {
+					"uv": [5.4, 15.48283, 10.6, 16],
+					"texture": "#material_cast_iron"
+				},
+				"south": {
+					"uv": [12, 15.48283, 12.6, 16],
+					"texture": "#material_cast_iron"
+				},
+				"west": {
+					"uv": [5.4, 15.48283, 10.6, 16],
+					"texture": "#material_cast_iron"
+				}
+			}
+		},
+		{
+			"name": "boss_28_4",
+			"from": [28, -0.51717, 5.4],
+			"to": [28.6, 0.51717, 10.6],
+			"rotation": {
+				"angle": -45,
+				"axis": "x",
+				"origin": [8, 0, 8]
+			},
+			"faces": {
+				"north": {
+					"uv": [3.4, 15.48283, 4, 16],
+					"texture": "#material_cast_iron"
+				},
+				"east": {
+					"uv": [5.4, 15.48283, 10.6, 16],
+					"texture": "#material_cast_iron"
+				},
+				"south": {
+					"uv": [12, 15.48283, 12.6, 16],
+					"texture": "#material_cast_iron"
+				},
+				"west": {
+					"uv": [5.4, 15.48283, 10.6, 16],
+					"texture": "#material_cast_iron"
+				}
+			}
+		},
+		{
+			"name": "boss_28_5",
+			"from": [28, -2.6, 7.48283],
+			"to": [28.6, 2.6, 8.51717],
+			"rotation": {
+				"angle": 0,
+				"axis": "y",
+				"origin": [8, 8, 8]
+			},
+			"faces": {
+				"east": {
+					"uv": [7.48283, 13.4, 8.51717, 16],
+					"texture": "#material_cast_iron"
+				},
+				"west": {
+					"uv": [7.48283, 13.4, 8.51717, 16],
+					"texture": "#material_cast_iron"
 				},
 				"up": {
-					"uv": [0, 0, 16, 1.24],
-					"texture": "#pol"
+					"uv": [12, 7.48283, 12.6, 8.51717],
+					"texture": "#material_cast_iron"
 				},
 				"down": {
-					"uv": [0, 0, 16, 1.24],
-					"texture": "#pol"
+					"uv": [12, 7.48283, 12.6, 8.51717],
+					"texture": "#material_cast_iron"
+				}
+			}
+		},
+		{
+			"name": "boss_28_6",
+			"from": [28, -2.6, 7.48283],
+			"to": [28.6, 2.6, 8.51717],
+			"rotation": {
+				"angle": 22.5,
+				"axis": "x",
+				"origin": [8, 0, 8]
+			},
+			"faces": {
+				"east": {
+					"uv": [7.48283, 13.4, 8.51717, 16],
+					"texture": "#material_cast_iron"
+				},
+				"west": {
+					"uv": [7.48283, 13.4, 8.51717, 16],
+					"texture": "#material_cast_iron"
+				},
+				"up": {
+					"uv": [12, 7.48283, 12.6, 8.51717],
+					"texture": "#material_cast_iron"
+				},
+				"down": {
+					"uv": [12, 7.48283, 12.6, 8.51717],
+					"texture": "#material_cast_iron"
+				}
+			}
+		},
+		{
+			"name": "boss_28_7",
+			"from": [28, -2.6, 7.48283],
+			"to": [28.6, 2.6, 8.51717],
+			"rotation": {
+				"angle": -22.5,
+				"axis": "x",
+				"origin": [8, 0, 8]
+			},
+			"faces": {
+				"east": {
+					"uv": [7.48283, 13.4, 8.51717, 16],
+					"texture": "#material_cast_iron"
+				},
+				"west": {
+					"uv": [7.48283, 13.4, 8.51717, 16],
+					"texture": "#material_cast_iron"
+				},
+				"up": {
+					"uv": [12, 7.48283, 12.6, 8.51717],
+					"texture": "#material_cast_iron"
+				},
+				"down": {
+					"uv": [12, 7.48283, 12.6, 8.51717],
+					"texture": "#material_cast_iron"
 				}
 			}
 		}

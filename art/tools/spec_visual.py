@@ -228,38 +228,8 @@ m("mine_drainage_pump", "mining", [
 m("mine_drainage_pump/shaft", "mining", hcyl("shaft", "x", 1, -0.01, 31.99, "pol", sides=8)
   + hcyl("coupling", "x", 2.5, 0.5, 2.5, "d", sides=8), kind="partial")
 
-# подъёмная машина 3×2×3 (y −16…16): станина, коренные подшипники, колодочный тормоз, указатель глубины, пульт
-m("mine_hoist", "mining", [
-    el("foundation", [-16, -16, -16], [32, -12, 32], "c"),
-    el("bearing_w", [-16, -12, 3], [-12, 10, 13], "mgrn"),
-    el("bearing_e", [28, -12, 3], [32, 10, 13], "mgrn"),
-    el("cap_w", [-16, 10, 4], [-12, 11.5, 12], "br"),
-    el("cap_e", [28, 10, 4], [32, 11.5, 12], "br"),
-    el("brake_post_nw", [-12, -12, -9], [-9, 14, -7], "mgrn"),
-    el("brake_post_ne", [25, -12, -9], [28, 14, -7], "mgrn"),
-    el("brake_post_sw", [-12, -12, 23], [-9, 14, 25], "mgrn"),
-    el("brake_post_se", [25, -12, 23], [28, 14, 25], "mgrn"),
-    el("brake_shoe_nw", [-12, 2, -7], [-9, 14, -5.5], "plank"),
-    el("brake_shoe_ne", [25, 2, -7], [28, 14, -5.5], "plank"),
-    el("brake_shoe_sw", [-12, 2, 21.5], [-9, 14, 23], "plank"),
-    el("brake_shoe_se", [25, 2, 21.5], [28, 14, 23], "plank"),
-    el("brake_beam_n", [-12, 14, -9], [28, 15.5, -7], "mgrn"),
-    el("brake_beam_s", [-12, 14, 23], [28, 15.5, 25], "mgrn"),
-    el("brake_engine", [2, -12, 26], [14, -2, 32], "dg"),
-    el("brake_rod", [7, -2, 24], [9, 14, 26], "pol"),
-    el("indicator_column", [-14, -12, -15], [-8, 12, -11], "mgrn"),
-    el("indicator_face", [-14, 0, -15.5], [-8, 12, -15], "gauge", full=["north"]),
-    el("console", [18, -12, -16], [30, -2, -11], "r35"),
-    el("console_top", [18, -2, -16], [30, -1, -9], "d"),
-    el("lever_speed", [21, -1, -12], [22, 6, -11], "red"),
-    el("lever_brake", [26, -1, -12], [27, 6, -11], "gas"),
-    el("motor", [-16, -12, 16], [-4, 0, 30], "ribs"),
-])
-m("mine_hoist/drum", "mining", hcyl("drum", "x", 11, -10, 26, "st") + hcyl("rope", "x", 11.3, -9, 25, "rope")
-  + ring("brake_path_w", "x", 12.6, 1.6, -12, -10, "pol") + ring("brake_path_e", "x", 12.6, 1.6, 26, 28, "pol")
-  + hcyl("flange_w", "x", 11.8, -12, -10, "mgrn") + hcyl("flange_e", "x", 11.8, 26, 28, "mgrn")
-  + hcyl("shaft", "x", 1.5, -16, 32, "pol", sides=8),
-  kind="partial")
+# подъёмная машина нарисована вручную в Blockbench: art/blockbench/mining/mine_hoist.author.js
+# (модель, барабан и курсор указателя глубины — partial, текстуры textures/block/mine_hoist/)
 
 
 # ======================================================================

@@ -34,6 +34,18 @@ public final class HoistText {
         msg("hoist.rope", "Rope ⌀%s mm", "Канат ⌀%s мм");
         msg("hoist.rope_wear", "ROPE_WEAR: replace the rope", "ROPE_WEAR: канат под замену");
         msg("hoist.going", "Going to: %s", "Идёт на: %s");
+        msg("hoist.landing.short_top", "Top", "Верх");
+        msg("hoist.landing.short_level", "−%s m", "−%s м");
+        msg("hoist.landing.short_bottom", "Sump −%s", "Зумпф −%s");
+        msg("hoist.load_short", "Load %s kg, %s", "Груз %s кг, %s");
+        msg("hoist.safety", "Rope SF %s, norm %s", "Запас каната %s, норма %s");
+        msg("hoist.dial.speed", "Cage speed", "Скорость клети");
+        msg("hoist.dial.power", "Drum shaft", "Вал барабана");
+        msg("hoist.unit.ms", "m/s", "м/с");
+        msg("hoist.unit.kw", "kW", "кВт");
+        msg("hoist.depth_tip", "Depth indicator: cage −%s m of %s m; landings marked across the scale",
+                "Указатель глубины: клеть −%s м из %s м; посадки — риски поперёк шкалы");
+        msg("hoist.power_tip", "Shaft %s kW of %s kW available", "Вал %s кВт из %s кВт доступных");
         problem(Problem.NO_HEADFRAME, "No headframe in front of or behind the hoist (within 32 blocks)",
                 "Нет копра перед машиной или за ней (до 32 блоков)");
         problem(Problem.NOT_FORMED, "Headframe is not complete: 2–4 segments", "Копёр не собран: 2–4 сегмента");
@@ -122,6 +134,12 @@ public final class HoistText {
     }
 
     /** Название посадки по глубине. */
+    /** Короткое имя посадки для кнопки щита. */
+    public static MutableComponent landingShort(int[] depths, int i) {
+        if (i == 0) return msg("hoist.landing.short_top");
+        return msg(i == depths.length - 1 ? "hoist.landing.short_bottom" : "hoist.landing.short_level", depths[i]);
+    }
+
     public static MutableComponent landing(int[] depths, int i) {
         if (i == 0) return msg("hoist.landing.top");
         return msg(i == depths.length - 1 ? "hoist.landing.bottom" : "hoist.landing.level", depths[i]);
