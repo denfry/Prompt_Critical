@@ -31,6 +31,8 @@ public final class GridBlockEntities {
             type("distribution_transformer", TransformerBlockEntity::new, PcBlocks.DISTRIBUTION_TRANSFORMER);
     public static final DeferredHolder<BlockEntityType<?>, BlockEntityType<RelayCabinetBlockEntity>> RELAY_CABINET =
             type("relay_cabinet", RelayCabinetBlockEntity::new, PcBlocks.RELAY_CABINET);
+    public static final DeferredHolder<BlockEntityType<?>, BlockEntityType<CapacitorBankBlockEntity>> CAPACITOR_BANK =
+            type("capacitor_bank", CapacitorBankBlockEntity::new, PcBlocks.CAPACITOR_BANK);
     public static final DeferredHolder<BlockEntityType<?>, BlockEntityType<ConsumerBlockEntity>> GRID_CONSUMER =
             type("grid_consumer", ConsumerBlockEntity::new, PcBlocks.GRID_CONSUMER);
     public static final DeferredHolder<BlockEntityType<?>, BlockEntityType<ConnectorBlockEntity>> WIRE_CONNECTOR_LV =

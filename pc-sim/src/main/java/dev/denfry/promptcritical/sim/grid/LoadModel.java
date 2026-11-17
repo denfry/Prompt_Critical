@@ -42,6 +42,8 @@ public record LoadModel(double p0W, double q0Var, double aZ, double aI, double a
             case PROCESS -> new LoadModel(pW, reactive(pW, 0.9), 0.2, 0, 0.8, 0.5, UflsStage.NONE, kind);
             case NPC_CONSUMER -> new LoadModel(pW, reactive(pW, 0.9), 0.3, 0.2, 0.5, 1.5, UflsStage.NONE, kind);
             case FE_IMPORT -> new LoadModel(pW, 0, 0, 0, 1, 0, UflsStage.NONE, kind);
+            // батарея конденсаторов: pW — номинальная реактивная мощность, отдаётся в сеть, Q ∝ v²
+            case CAPACITOR -> new LoadModel(0, -pW, 1, 0, 0, 0, UflsStage.NONE, kind);
             case ARC_FURNACE -> throw new UnsupportedOperationException("arc furnace load (§7.6.5) is not modelled yet");
         };
     }

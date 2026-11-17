@@ -268,6 +268,9 @@ public final class PcBlocks {
             Properties.of().mapColor(MapColor.COLOR_BLACK).strength(0.6f).sound(SoundType.WOOL).noOcclusion()));
     public static final DeferredBlock<PcDeviceBlock> GRID_CONSUMER = device("grid_consumer", brick(),
             Spec.facing(BlockStateProperties.LIT).footprint(FP_CUBE3), FoundryBlock.with(ConsumerBlockEntity::new));
+    /** Батарея статических конденсаторов 6 кВ: ступени по 150 квар. */
+    public static final DeferredBlock<PcDeviceBlock> CAPACITOR_BANK = device("capacitor_bank", machine().noOcclusion(),
+            Spec.facing(BlockStateProperties.LIT), FoundryBlock.with(dev.denfry.promptcritical.mod.grid.CapacitorBankBlockEntity::new));
     public static final DeferredBlock<PcDeviceBlock> ENERGY_METER = device("energy_meter", instrument(), Spec.facing(),
             GridMountedBlock.wall(InstrumentBlockEntity::meter, 3, 0.5, 10.9, 13, 15, 16));
     public static final DeferredBlock<PcDeviceBlock> WIRE_CONNECTOR_LV = device("wire_connector_lv", instrument(), Spec.facing(),

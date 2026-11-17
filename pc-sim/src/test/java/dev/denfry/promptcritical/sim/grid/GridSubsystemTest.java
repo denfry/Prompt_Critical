@@ -294,6 +294,35 @@ class GridSubsystemTest {
         assertThat(c.energized()).isFalse();
     }
 
+    /**
+     * Батарея конденсаторов на шине генератора 500 кВА (x_d = 2): одна ступень 150 квар — генератор её поглощает
+     * (Q &lt; 0), прикрыв поле. Четыре ступени — 600 квар больше, чем S/x_d = 250 квар, которые машина может принять на
+     * холостом ходу: ёмкость сама возбуждает генератор, напряжение уходит вверх, и машину повреждает перенапряжением.
+     */
+    @Test
+    void capacitorBankSuppliesReactivePowerAndSelfExcitesASmallMachine() {
+        SimulationWorld w = world();
+        GeneratorUnit g = generator(w, BUS_A, 0);
+        CapacitorBankUnit c = grid(w).capacitorBank(device(w, "capacitor_bank"));
+        c.setNodes(BUS_A);
+        run(w, 20);
+        assertThat(g.reactivePowerVar()).isCloseTo(0, within(20e3));
+        c.setSteps(1);
+        run(w, 10);
+        assertThat(c.reactiveVar()).isCloseTo(150e3, within(15e3));
+        assertThat(g.reactivePowerVar()).isCloseTo(-c.reactiveVar(), within(15e3));
+        assertThat(g.terminalVoltageV()).isCloseTo(6300, within(6300 * 0.05));
+
+        c.setSteps(4);
+        double vMax = 0;
+        for (int k = 0; k < 40; k++) {
+            run(w, 0.25);
+            vMax = Math.max(vMax, g.terminalVoltageV());
+        }
+        assertThat(vMax).isGreaterThan(1.3 * 6300);
+        assertThat(g.state()).isEqualTo(MachineState.DAMAGED);
+    }
+
     @Test
     void rebuildCarriesTheRunningMachine() {
         SimulationWorld w = world();

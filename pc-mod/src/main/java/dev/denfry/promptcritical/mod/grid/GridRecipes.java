@@ -121,6 +121,10 @@ public final class GridRecipes extends RecipeProvider {
         ShapedRecipeBuilder.shaped(RecipeCategory.MISC, PcBlocks.GRID_CONSUMER.get()).pattern("BLB").pattern("BWB").pattern("BDB")
                 .define('B', Items.BRICKS).define('L', Items.LANTERN).define('W', wire).define('D', ItemTags.WOODEN_DOORS)
                 .unlockedBy("has_wire", hasWire).save(out, id("grid_consumer"));
+        // конденсаторы: обкладки — фольга из листа, диэлектрик — бумага в масле (банки на стеллаже)
+        ShapedRecipeBuilder.shaped(RecipeCategory.MISC, PcBlocks.CAPACITOR_BANK.get()).pattern("SPS").pattern("SPS").pattern("WBW")
+                .define('S', AllItems.IRON_SHEET.get()).define('P', Items.PAPER).define('W', wire).define('B', PcItems.STEEL_PLATE.get())
+                .unlockedBy("has_wire", hasWire).save(out, id("capacitor_bank"));
 
         // коммутация и щиты
         ShapedRecipeBuilder.shaped(RecipeCategory.MISC, PcBlocks.DISCONNECTOR.get()).pattern("WLW").pattern("P P")
