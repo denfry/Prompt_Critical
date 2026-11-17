@@ -39,8 +39,11 @@ public final class WaterTreatmentTrain {
     public static final double DECARBONIZED_CO2 = 0.11, AIR_SATURATED_O2 = 9e-6;
     /** Кислород после термического деаэратора (10–20 мкг/кг) и после гидразина, кг/кг. */
     public static final double DEAERATED_O2 = 15e-9, HYDRAZINE_O2 = 5e-9;
-    /** Пар на деаэратор, доля расхода воды [BALANCE]. */
-    public static final double DEAERATOR_STEAM_FRACTION = 0.02;
+    /**
+     * Греющий пар деаэратора по умолчанию: сухой насыщенный из барабана при 1,4 МПа [допущение], вода на входе
+     * 25 °C — тогда пара ≈ 14 % расхода воды ({@link Deaerator#waterPerSteam}).
+     */
+    public static final double DEFAULT_HEATING_STEAM_PA = 1.4e6, DEFAULT_FEED_TEMP_K = 298.15;
     /** Цель коррекционной обработки. */
     public static final double DOSED_PH = 9.1;
     /** Реагенты: CaO на моль-экв, коагулянт Al₂(SO₄)₃ на м³, аммиак сверх нейтрализации и избыток гидразина, кг. */
@@ -71,6 +74,8 @@ public final class WaterTreatmentTrain {
     private boolean liming, coagulation, decarbonizer, deaerator, dosing;
     private double filterCapacityKg, filterLoadKg, hydrogenFraction;
     private double limeKgS, coagulantKgS, ammoniaKgS, hydrazineKgS, deaeratorSteamKgS;
+    private double heatingSteamEnthalpy = dev.denfry.promptcritical.sim.thermo.WaterProperties.tables()
+            .saturationP(DEFAULT_HEATING_STEAM_PA).hG(), feedTempK = DEFAULT_FEED_TEMP_K;
 
     public WaterTreatmentTrain(UtilitiesConfig cfg, UtilitiesEvents events) {
         this.cfg = Objects.requireNonNull(cfg, "cfg");
@@ -140,6 +145,13 @@ public final class WaterTreatmentTrain {
     /** Термический деаэратор в работе (пар 07 подан). */
     public void setDeaerator(boolean on) {
         deaerator = on;
+    }
+
+    /** Греющий пар деаэратора (энтальпия, Дж/кг) и температура воды перед ним, К — для расхода пара. */
+    public void setDeaeratorHeating(double steamEnthalpy, double waterTempK) {
+        if (!(steamEnthalpy > 0 && waterTempK > 0)) throw new IllegalArgumentException("deaerator heating");
+        heatingSteamEnthalpy = steamEnthalpy;
+        feedTempK = waterTempK;
     }
 
     /** Дозирование NH₃ и N₂H₄ ({@code chemical_dosing_skid}). */
@@ -329,7 +341,9 @@ public final class WaterTreatmentTrain {
         outlets.put(TreatmentStage.DECARBONIZER, quality(h, o2, na, ph, ss, alk, fma));
 
         if (deaerator) {
-            deaeratorSteamKgS = q * WaterQuality.WATER_DENSITY * DEAERATOR_STEAM_FRACTION;
+            // тепловой баланс смешения: пар греет воду до кипения при 0,12 МПа
+            double waterPerSteam = Deaerator.waterPerSteam(heatingSteamEnthalpy, feedTempK);
+            deaeratorSteamKgS = waterPerSteam > 0 ? q * WaterQuality.WATER_DENSITY / waterPerSteam : 0;
             o2 = Math.min(o2, DEAERATED_O2);
             co2 = 0;
             ph = phOf(alk, co2, fma);

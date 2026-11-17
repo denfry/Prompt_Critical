@@ -23,8 +23,11 @@ public record WaterQuality(double hardnessMolEqM3, double o2KgKg, double chlorid
     public static final double SODIUM_KG_PER_EQ = 0.02299;
     /** Солесодержание по проводимости: TDS, мг/л = 0,64·κ, мкСм/см — то есть 6400·κ в См/м. */
     public static final double TDS_MG_L_PER_SM = 6400;
-    /** Эквивалентная электропроводность нейтральных солей и сильной кислоты (H⁺), См·м²/моль-экв. */
-    public static final double SALT_CONDUCTANCE = 0.01, ACID_CONDUCTANCE = 0.035;
+    /**
+     * Эквивалентная электропроводность нейтральных солей и сильной кислоты, См·м²/моль-экв. Кислота — ион H⁺ вместе
+     * с анионом: HCl при бесконечном разбавлении, 25 °C — 349,8 + 76,3 = 426 См·см²/моль-экв (у H₂SO₄ — 430).
+     */
+    public static final double SALT_CONDUCTANCE = 0.01, ACID_CONDUCTANCE = 0.0426;
     /** Плотность воды для перевода кг/кг ↔ кг/м³, кг/м³ (без поправки на температуру). */
     public static final double WATER_DENSITY = 1000;
 

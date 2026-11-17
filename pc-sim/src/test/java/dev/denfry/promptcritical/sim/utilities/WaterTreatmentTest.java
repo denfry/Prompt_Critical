@@ -185,7 +185,12 @@ class WaterTreatmentTest {
         assertThat(feed.o2KgKg()).isEqualTo(5e-9);
         assertThat(feed.ph()).isEqualTo(9.1);
         assertThat(feed.hardnessMolEqM3()).isCloseTo(0.05, within(1e-9));
-        assertThat(t.deaeratorSteamKgS()).isCloseTo(0.1, within(1e-12));
+        // 5 кг/с воды от 25 °C до 104,8 °C паром 1,4 МПа: (2788 − 439)/(439 − 105) ≈ 7,0 кг воды на кг пара
+        assertThat(t.deaeratorSteamKgS()).isCloseTo(0.71, within(0.02));
+        t.setDeaeratorHeating(2788e3, 353.15); // вода уже подогрета до 80 °C — пара втрое меньше
+        t.stepSlow(60);
+        assertThat(t.deaeratorSteamKgS()).isCloseTo(5 / Deaerator.waterPerSteam(2788e3, 353.15), within(1e-9));
+        assertThat(t.deaeratorSteamKgS()).isLessThan(0.3);
         assertThat(t.ammoniaKgS()).isPositive();
         assertThat(t.hydrazineKgS()).isCloseTo(0.005 * (10e-9 * 1000 + WaterTreatmentTrain.N2H4_EXCESS_KG_M3),
                 within(1e-15));
