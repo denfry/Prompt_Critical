@@ -348,6 +348,14 @@ public final class MineWorld {
         MineScanner.Scan s = e.scan;
         MineVentilation v = n.ventilation();
         long tick = binding.world().clock().tick();
+        if (e.bounds != null) { // наружный воздух над шахтой: сезонная естественная тяга, шаг 0,5 К
+            BlockPos c = e.bounds.getCenter();
+            if (level.isLoaded(c)) {
+                BlockPos top = level.getHeightmapPos(net.minecraft.world.level.levelgen.Heightmap.Types.MOTION_BLOCKING_NO_LEAVES, c);
+                double airC = dev.denfry.promptcritical.mod.environment.EnvironmentService.sample(level, top, 2).airTempC();
+                v.setSurfaceTempK(Math.round(airC * 2) / 2.0 + 273.15);
+            }
+        }
         for (int f = 0; f < s.fanCtrl.length; f++) {
             BlockPos p = BlockPos.of(s.fanCtrl[f]);
             BlockState st = level.getBlockState(p);

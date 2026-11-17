@@ -126,6 +126,7 @@ public final class ServerConfig {
     public static final ModConfigSpec.BooleanValue CONTENT_GIVE_HANDBOOK_ON_JOIN;
     public static final ModConfigSpec.BooleanValue CONTENT_HANDBOOK_ALL_UNLOCKED;
     public static final ModConfigSpec.BooleanValue CONTENT_HINTS_BY_DIFFICULTY;
+    public static final ModConfigSpec.IntValue ENVIRONMENT_DAYS_PER_SEASON;
 
     static {
         var b = new ModConfigSpec.Builder();
@@ -359,6 +360,11 @@ public final class ServerConfig {
         CONTENT_HANDBOOK_ALL_UNLOCKED = b.comment("Open every handbook chapter at once (11 §11.1.2)").define("handbook_all_unlocked", false);
         CONTENT_HINTS_BY_DIFFICULTY = b.comment("Show 'what next' hints at the end of chapters on TRAINING (11 §11.1.1)")
                 .define("hints_by_difficulty", true);
+        b.pop();
+
+        b.push("environment");
+        ENVIRONMENT_DAYS_PER_SEASON = b.comment("Game days per season of the built-in calendar (24 = Serene Seasons default)")
+                .defineInRange("days_per_season", 24, 1, 1000);
         b.pop();
 
         b.push("machining");

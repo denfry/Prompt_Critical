@@ -65,6 +65,7 @@ public final class PcCommands {
                 .then(Commands.literal("profile")
                         .then(Commands.literal("report").executes(PcCommands::profileReport))
                         .then(Commands.literal("reset").executes(PcCommands::profileReset)))
+                .then(Commands.literal("env").executes(PcCommands::env))
                 .then(Commands.literal("mine")
                         .then(Commands.literal("info").executes(PcCommands::mineInfo))
                         .then(Commands.literal("gas").then(Commands.argument("ch4_percent", DoubleArgumentType.doubleArg(0, 100))
@@ -89,6 +90,18 @@ public final class PcCommands {
                         .executes(ctx -> handbook(ctx, 0))
                         .then(Commands.argument("page", IntegerArgumentType.integer(1))
                                 .executes(ctx -> handbook(ctx, IntegerArgumentType.getInteger(ctx, "page") - 1))))));
+    }
+
+    /** Погода у источника команды: воздух, ветер на 10 м, солнце, сезон. */
+    private static int env(CommandContext<CommandSourceStack> ctx) {
+        ServerLevel level = ctx.getSource().getLevel();
+        BlockPos pos = BlockPos.containing(ctx.getSource().getPosition());
+        var s = dev.denfry.promptcritical.mod.environment.EnvironmentService.sample(level, pos, 10);
+        ctx.getSource().sendSuccess(() -> Component.literal(String.format(java.util.Locale.ROOT,
+                "%s (%.2f of year): air %.1f C, %.3f kg/m3, %.0f Pa; wind 10 m %.1f m/s (gust now %.1f) from %.0f deg; sun %.0f W/m2",
+                s.season(), s.yearFraction(), s.airTempC(), s.densityKgM3(), s.pressurePa(), s.meanWindMs(), s.windMs(),
+                (Math.toDegrees(s.windDirRad()) % 360 + 360) % 360, s.solarWm2())), false);
+        return 1;
     }
 
     /** Открыть справочнику игрока главу (и страницу): наладка, сервер с правилами, проверка текстов. */

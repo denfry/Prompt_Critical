@@ -140,6 +140,34 @@ class MineVentilationTest {
         assertThat(v.flow(in)).isPositive().isCloseTo(Math.sqrt(he / 0.9), within(1e-5));
     }
 
+    /**
+     * Сезонная тяга: два ствола в породу +10 °C. Зимой (−10 °C) холодный воздух тяжелее воздуха в выработках и
+     * опускается в ствол, летом (+25 °C) тёплый наружный — легче, и поток идёт в обратную сторону.
+     */
+    @Test
+    void naturalDraftReversesWithTheSeason() {
+        MineTopology.Builder b = MineTopology.builder(64, 283.15);
+        int bottomIn = b.node(1, 1000, -136, 9, 12, 283.15);
+        int bottomOut = b.node(2, 1000, -100, 9, 12, 283.15);
+        int in = branchR(b, 1, ATMOSPHERE, bottomIn, 0.2, BranchKind.SHAFT);
+        branchR(b, 2, bottomIn, bottomOut, 0.5, BranchKind.DRIFT);
+        branchR(b, 3, bottomOut, ATMOSPHERE, 0.2, BranchKind.SHAFT);
+        MineTopology topology = b.build();
+        MineVentilation v = new MineVentilation();
+        v.rebuild(topology);
+        v.setSurfaceTempK(263.15);
+        settle(v);
+        double winter = v.flow(in);
+        v.setSurfaceTempK(298.15);
+        settle(v);
+        double summer = v.flow(in);
+        assertThat(winter).isPositive();
+        assertThat(summer).isNegative();
+        v.rebuild(topology); // пересборка сети не забывает наружную температуру
+        settle(v);
+        assertThat(v.flow(in)).isCloseTo(summer, within(1e-6));
+    }
+
     /** Требуемый расход по газу и пределы скорости. */
     @Test
     void requiredFlowAndVelocityLimits() {

@@ -33,6 +33,8 @@ public final class MineVentilation {
     private boolean[] doorClosed = new boolean[0];
     private double[] regulatorArea = new double[0], fanRpm = new double[0];
     private boolean dirty = true;
+    /** Температура наружного воздуха, К; NaN — как в топологии (на момент сборки). */
+    private double surfaceTempK = Double.NaN;
     private int iterations;
     private double lastCorrection;
 
@@ -85,9 +87,28 @@ public final class MineVentilation {
         cgZ = new double[cg];
         cgP = new double[cg];
         cgAp = new double[cg];
-        for (int j = 0; j < nb; j++) {
+        updateNaturalDraft();
+    }
+
+    /**
+     * Наружный воздух сменился (сезон, сутки, погода): пересчитать плотности и естественную тягу. Порода держит
+     * свою температуру, поэтому зимой холодный воздух опускается стволом, летом тяга слабеет и может развернуться.
+     */
+    public void setSurfaceTempK(double kelvin) {
+        if (!(kelvin > 0)) throw new IllegalArgumentException("kelvin");
+        if (kelvin == surfaceTempK) return;
+        surfaceTempK = kelvin;
+        updateNaturalDraft();
+    }
+
+    private double nodeTempK(int node) {
+        return node == MineTopology.ATMOSPHERE && !Double.isNaN(surfaceTempK) ? surfaceTempK : t.tempK[node];
+    }
+
+    private void updateNaturalDraft() {
+        for (int j = 0; j < natural.length; j++) {
             int a = t.from[j], b = t.to[j];
-            double tMean = 0.5 * (t.tempK[a] + t.tempK[b]);
+            double tMean = 0.5 * (nodeTempK(a) + nodeTempK(b));
             rho[j] = AIR_PRESSURE * Chimney.AIR_MOLAR_MASS / (Chimney.GAS_CONSTANT * tMean);
             natural[j] = rho[j] * Chimney.GRAVITY * (t.elevation[a] - t.elevation[b]);
         }

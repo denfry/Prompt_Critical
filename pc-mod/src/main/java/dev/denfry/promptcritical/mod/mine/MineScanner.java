@@ -27,6 +27,7 @@ import java.util.Arrays;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
 import net.minecraft.server.level.ServerLevel;
+import dev.denfry.promptcritical.mod.environment.EnvironmentService;
 import net.minecraft.world.level.block.Block;
 import net.minecraft.world.level.block.Blocks;
 import net.minecraft.world.level.block.state.BlockState;
@@ -414,7 +415,16 @@ public final class MineScanner {
         }
         double surface = groundN > 0 ? groundSum / groundN : level.getSeaLevel();
 
-        MineTopology.Builder tb = MineTopology.builder(surface, SURFACE_TEMP_K);
+        // порода держит среднюю годовую температуру климата над шахтой (+ геотермический градиент); наружный воздух
+        // меняется по погоде — его задаёт MineWorld каждую секунду
+        double mx = 0, mz = 0;
+        for (Comp c : comps) {
+            mx += c.sx / c.members.size();
+            mz += c.sz / c.members.size();
+        }
+        double rockK = comps.isEmpty() ? SURFACE_TEMP_K
+                : EnvironmentService.climateK(level, BlockPos.containing(mx / comps.size(), surface, mz / comps.size()));
+        MineTopology.Builder tb = MineTopology.builder(surface, rockK);
         int nn = comps.size();
         long[] origins = new long[nn + 1];
         boolean[] flames = new boolean[nn + 1];
@@ -430,7 +440,7 @@ public final class MineScanner {
             int a, b;
             if (len == dx) { a = dy; b = dz; } else if (len == dy) { a = dx; b = dz; } else { a = dx; b = dy; }
             double section = Math.max(1.0, (double) n / len), perimeter = 2.0 * (a + b);
-            double temp = SURFACE_TEMP_K + GEOTHERMAL_K_PER_M * Math.max(0, surface - cy);
+            double temp = rockK + GEOTHERMAL_K_PER_M * Math.max(0, surface - cy);
             c.node = tb.node(c.key, n, cy + 0.5, section, perimeter, temp);
             long best = 0;
             double bestD = Double.MAX_VALUE;

@@ -1,5 +1,8 @@
 package dev.denfry.promptcritical.mod.grid;
 
+import dev.denfry.promptcritical.mod.environment.EnvironmentService;
+import dev.denfry.promptcritical.sim.environment.Environment;
+import dev.denfry.promptcritical.sim.grid.ConductorSpec;
 import dev.denfry.promptcritical.mod.binding.SimLevelBinding;
 import dev.denfry.promptcritical.sim.grid.GridSubsystem;
 import dev.denfry.promptcritical.sim.grid.GridUnit;
@@ -298,11 +301,16 @@ public final class GridWorld {
 
     // ================================================================ погода и молния
 
+    /**
+     * Погода для проводов: воздух, ветер на высоте подвеса 10 м и солнце у точки появления мира (измерение одно на
+     * всю сеть). Конвекция — IEEE 738 по среднему ветру: τ нагрева провода — минуты, порывы усредняются.
+     */
     private void weather(GridSubsystem g) {
         ServerLevel level = level();
-        double h = level.isThundering() ? 35 : level.isRaining() ? 25 : 10;
-        double solar = level.isDay() && !level.isRaining() ? 10 : 0;
-        g.setWeather(level.isRaining() ? 12 : 18, h, solar);
+        BlockPos at = level.getSharedSpawnPos();
+        Environment.Sample s = EnvironmentService.sample(level, at, 10);
+        g.setWeather(s.airTempC(), ConductorSpec.convectionWm2K(s.meanWindMs(), s.airTempC(), at.getY() - level.getSeaLevel()),
+                ConductorSpec.solarWPerM(s.solarWm2()));
     }
 
     /** Удар молнии в точку: ближайший пролёт в радиусе получает перекрытие изоляции. */
