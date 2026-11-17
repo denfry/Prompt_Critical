@@ -499,6 +499,10 @@ public final class PcBlocks {
     public static final DeferredBlock<PcDeviceBlock> INDUCED_DRAFT_FAN = device("induced_draft_fan", machine(),
             Spec.facing(PcProperties.RUNNING),
             KineticMachineBlock.with(ShaftSide.FRONT, dev.denfry.promptcritical.mod.powerhouse.DraftFanBlockEntity::induced));
+    /** Паровая турбина с противодавлением: вал Create спереди, пар — от котла, которого касается. */
+    public static final DeferredBlock<PcDeviceBlock> STEAM_TURBINE = device("steam_turbine", machine(),
+            Spec.facing(PcProperties.RUNNING),
+            KineticMachineBlock.with(ShaftSide.FRONT, dev.denfry.promptcritical.mod.powerhouse.SteamTurbineBlockEntity::new));
     public static final DeferredBlock<PcDeviceBlock> DEAERATOR = device("deaerator", machine(),
             Spec.facing(PcProperties.RUNNING).footprint(Footprint.of(Segment.box(-1, 1, 0, 1, 0, 0))),
             FoundryBlock.with(dev.denfry.promptcritical.mod.powerhouse.DeaeratorBlockEntity::new));

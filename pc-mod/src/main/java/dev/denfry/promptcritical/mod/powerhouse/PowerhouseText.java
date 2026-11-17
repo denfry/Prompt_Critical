@@ -80,6 +80,16 @@ public final class PowerhouseText {
         msg("fan", "%s: %s kg/s at %s rpm · %s", "%s: %s кг/с при %s об/мин · %s");
         msg("fan.linked", "serving a boiler", "работает на котёл");
         msg("fan.unlinked", "no water-tube boiler within 12 blocks", "нет водотрубного котла в 12 блоках");
+        msg("turbine.gear", "Turbine reduction gear: %s rpm", "Редуктор турбины: %s об/мин");
+        msg("turbine.reset", "Overspeed trip reset", "Автомат безопасности взведён");
+        msg("turbine.not_tripped", "The overspeed trip is set (reset only below rated speed)",
+                "Автомат безопасности не сработал (взводится ниже номинальных оборотов)");
+        msg("turbine.no_boiler", "The turbine touches no boiler: put it against a drum, water wall or boiler panel",
+                "Турбина не касается котла: поставьте её к барабану, экрану или щиту котла");
+        msg("turbine.valve_open", "Stop valve opened · %s rpm, %s kW, steam %s kg/s",
+                "Стопорный клапан открыт · %s об/мин, %s кВт, пар %s кг/с");
+        msg("turbine.valve_closed", "Stop valve closed · %s rpm, %s kW, steam %s kg/s",
+                "Стопорный клапан закрыт · %s об/мин, %s кВт, пар %s кг/с");
     }
 
     private PowerhouseText() {

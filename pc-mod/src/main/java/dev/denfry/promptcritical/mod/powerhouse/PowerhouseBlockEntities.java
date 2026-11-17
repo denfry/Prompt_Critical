@@ -23,6 +23,8 @@ public final class PowerhouseBlockEntities {
             type("induced_draft_fan", DraftFanBlockEntity::induced, PcBlocks.INDUCED_DRAFT_FAN);
     public static final DeferredHolder<BlockEntityType<?>, BlockEntityType<DeaeratorBlockEntity>> DEAERATOR =
             type("deaerator", DeaeratorBlockEntity::new, PcBlocks.DEAERATOR);
+    public static final DeferredHolder<BlockEntityType<?>, BlockEntityType<SteamTurbineBlockEntity>> STEAM_TURBINE =
+            type("steam_turbine", SteamTurbineBlockEntity::new, PcBlocks.STEAM_TURBINE);
 
     private PowerhouseBlockEntities() {
     }

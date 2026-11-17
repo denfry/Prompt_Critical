@@ -86,5 +86,10 @@ public final class PowerhouseRecipes extends RecipeProvider {
         ShapedRecipeBuilder.shaped(RecipeCategory.MISC, PcBlocks.DEAERATOR.get())
                 .pattern("PTP").pattern("FVF").define('P', plate).define('T', AllBlocks.FLUID_TANK.get()).define('F', pipe)
                 .define('V', AllBlocks.FLUID_VALVE.get()).unlockedBy("has_steel_plate", has(plate)).save(out, id("deaerator"));
+        // турбина: корпус из листа, ротор — лопатки (пропеллеры Create) на валу, клапан на подводе пара
+        ShapedRecipeBuilder.shaped(RecipeCategory.MISC, PcBlocks.STEAM_TURBINE.get())
+                .pattern("PVP").pattern("FSF").pattern("PGP").define('P', plate).define('V', AllBlocks.FLUID_VALVE.get())
+                .define('F', AllItems.PROPELLER.get()).define('S', shaft).define('G', AllBlocks.COGWHEEL.get())
+                .unlockedBy("has_seamless_pipe", hasSeamless).save(out, id("steam_turbine"));
     }
 }
