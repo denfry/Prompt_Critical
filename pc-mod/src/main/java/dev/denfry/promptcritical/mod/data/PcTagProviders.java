@@ -32,8 +32,10 @@ public final class PcTagProviders {
             Map.entry("magnetite_ore", "iron"), Map.entry("hematite_ore", "iron"), Map.entry("pyrolusite_ore", "manganese"),
             Map.entry("pentlandite_ore", "nickel"), Map.entry("chalcopyrite_ore", "copper"), Map.entry("sperrylite_ore", "platinum"),
             Map.entry("molybdenite_ore", "molybdenum"), Map.entry("sphalerite_ore", "zinc"), Map.entry("chromite_ore", "chromium"),
-            Map.entry("cassiterite_ore", "tin"), Map.entry("bauxite_ore", "aluminum"), Map.entry("coal_seam", "coal"));
-    private static final Set<String> IRON_TOOL = Set.of("pentlandite_ore", "sperrylite_ore", "molybdenite_ore", "chromite_ore");
+            Map.entry("cassiterite_ore", "tin"), Map.entry("bauxite_ore", "aluminum"), Map.entry("coal_seam", "coal"),
+            Map.entry("uraninite_ore", "uranium"), Map.entry("deepslate_uraninite_ore", "uranium"));
+    private static final Set<String> IRON_TOOL = Set.of("pentlandite_ore", "sperrylite_ore", "molybdenite_ore", "chromite_ore",
+            "uraninite_ore", "deepslate_uraninite_ore");
     private static final Set<String> AXE = Set.of("mine_support", "ventilation_door", "explosion_barrier", "document_lectern",
             "wooden_pole");
     private static final Set<String> SHOVEL = Set.of("fireclay", "sand_mold");
@@ -114,7 +116,8 @@ public final class PcTagProviders {
 
     private static final List<DeferredItem<Item>> RAWS = List.of(PcItems.RAW_MAGNETITE, PcItems.RAW_HEMATITE,
             PcItems.RAW_PYROLUSITE, PcItems.RAW_PENTLANDITE, PcItems.RAW_CHALCOPYRITE, PcItems.RAW_SPERRYLITE,
-            PcItems.RAW_MOLYBDENITE, PcItems.RAW_SPHALERITE, PcItems.RAW_CHROMITE, PcItems.RAW_CASSITERITE, PcItems.RAW_BAUXITE);
+            PcItems.RAW_MOLYBDENITE, PcItems.RAW_SPHALERITE, PcItems.RAW_CHROMITE, PcItems.RAW_CASSITERITE, PcItems.RAW_BAUXITE,
+            PcItems.RAW_URANINITE);
 
     /** Металл сырья {@code raw_<руда>}. */
     private static String metalOfRaw(DeferredItem<Item> raw) {

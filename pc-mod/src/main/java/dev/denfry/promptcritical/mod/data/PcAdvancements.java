@@ -3,6 +3,7 @@ package dev.denfry.promptcritical.mod.data;
 import dev.denfry.promptcritical.mod.PromptCritical;
 import dev.denfry.promptcritical.mod.content.SimAchievements;
 import dev.denfry.promptcritical.mod.content.SimEventTrigger;
+import dev.denfry.promptcritical.sim.reactor.ReactorSubsystem;
 import dev.denfry.promptcritical.mod.registry.PcBlocks;
 import dev.denfry.promptcritical.mod.registry.PcItems;
 import dev.denfry.promptcritical.sim.automation.AutomationSubsystem;
@@ -52,6 +53,11 @@ public final class PcAdvancements implements AdvancementProvider.AdvancementGene
         LANG.put("synchronized", new String[] {"On the Grid", "В сеть",
                 "Close a generator onto the grid with a torque shock of no more than 10 %",
                 "Генератор включён в сеть без броска момента больше 10 %"});
+        LANG.put("first_criticality", new String[] {"Prompt Is Not Yet Critical", "Пока не мгновенно",
+                "Hold a graphite pile self-sustaining for five seconds without help from the source",
+                "Удержите графитовый котёл на самоподдерживающейся реакции пять секунд без помощи источника"});
+        LANG.put("pile_scram", new String[] {"Zip!", "Зип!",
+                "See the pile's zip rods fall on a scram", "Увидеть, как падают аварийные стержни котла"});
         LANG.put("relay_logic", new String[] {"Click-Clack", "Щёлк-щёлк", "A circuit of at least five relays drives a mechanism",
                 "Схема из пяти и более реле управляет механизмом"});
         LANG.put("analog_pid", new String[] {"No Computer Needed", "Без компьютера",
@@ -92,9 +98,17 @@ public final class PcAdvancements implements AdvancementProvider.AdvancementGene
         task(steel, PcItems.SEAMLESS_PIPE.get(), "seamless", AdvancementType.TASK, false, 40)
                 .addCriterion("seamless_pipe", event(SimAchievements.SEAMLESS_PIPE, Map.of()))
                 .save(saver, id("seamless"), efh);
-        task(steam, PcBlocks.SHAFT_GENERATOR.get(), "synchronized", AdvancementType.GOAL, false, 50)
+        AdvancementHolder sync = task(steam, PcBlocks.SHAFT_GENERATOR.get(), "synchronized", AdvancementType.GOAL, false, 50)
                 .addCriterion("sync_closed", event(GridSubsystem.SYNC_CLOSED, Map.of("ok", MinMaxBounds.Doubles.atMost(0.10))))
                 .save(saver, id("synchronized"), efh);
+        // графитовый котёл T0
+        AdvancementHolder pile = task(sync, PcBlocks.REACTOR_CONTROLLER.get(), "first_criticality", AdvancementType.CHALLENGE,
+                false, 100)
+                .addCriterion("critical", event(ReactorSubsystem.PILE_STATE, Map.of("critical", MinMaxBounds.Doubles.atLeast(0))))
+                .save(saver, id("first_criticality"), efh);
+        task(pile, PcBlocks.SCRAM_BUTTON.get(), "pile_scram", AdvancementType.TASK, true, 20)
+                .addCriterion("scram", event(ReactorSubsystem.PILE_STATE, Map.of("scram", MinMaxBounds.Doubles.atLeast(1))))
+                .save(saver, id("pile_scram"), efh);
         // автоматизация A1–A2
         AdvancementHolder relays = task(root, PcBlocks.RELAY.get(), "relay_logic", AdvancementType.TASK, false, 30)
                 .addCriterion("relay_logic", event(AutomationSubsystem.RELAY_LOGIC,

@@ -79,6 +79,27 @@ public final class PcLanguageProvider extends LanguageProvider {
         b("quench_tower", "Coke Quench Tower", "Тушильная башня");
         b("electrode_extruder", "Electrode Extrusion Press", "Электродный пресс");
         b("baking_furnace", "Electrode Baking Furnace", "Обжиговая печь электродов");
+        // графитовый котёл T0 (I1)
+        b("uraninite_ore", "Pitchblende Ore", "Урановая смолка");
+        b("deepslate_uraninite_ore", "Deepslate Pitchblende Ore", "Урановая смолка в глубинном сланце");
+        b("moderator_block_graphite", "Reactor Graphite", "Реакторный графит");
+        b("fuel_channel", "Graphite Fuel Channel Block", "Графитовый блок с топливными каналами");
+        b("control_rod_channel", "Graphite Rod Channel Block", "Графитовый блок с каналом стержня");
+        b("startup_source", "Radium-Beryllium Neutron Source", "Радий-бериллиевый источник нейтронов");
+        b("control_rod_drive", "Control Rod Drive", "Привод регулирующего стержня");
+        b("zip_rod_winch", "Zip Rod Winch", "Лебёдка аварийного стержня");
+        b("neutron_detector", "BF3 Neutron Counter", "Нейтронный счётчик BF₃");
+        b("reactor_controller", "Pile Control Desk", "Пульт графитового котла");
+        b("scram_button", "Scram Button", "Кнопка аварийной защиты");
+        b("acheson_furnace", "Acheson Graphitizing Furnace", "Печь графитации Ачесона");
+        i("graphite_electrode", "Graphite Electrode", "Графитированный электрод");
+        i("raw_uraninite", "Raw Pitchblende", "Урановая смолка (сырьё)");
+        i("crushed_uranium_ore", "Crushed Uranium Ore", "Дроблёная урановая руда");
+        i("ground_uranium_ore", "Ground Uranium Ore", "Молотая урановая руда");
+        i("yellowcake", "Yellowcake", "Жёлтый кек");
+        i("uo2_powder", "Uranium Dioxide Powder", "Порошок диоксида урана");
+        i("magnesium_ingot", "Magnesium Ingot", "Слиток магния");
+        i("uranium_slug", "Natural Uranium Slug Cassette", "Кассета блочков природного урана");
         b("magnetic_separator", "Magnetic Separator", "Магнитный сепаратор");
         b("sinter_strand", "Sinter Strand", "Агломашина");
         b("blast_furnace_shell", "Blast Furnace Shell", "Кожух домны");

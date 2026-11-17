@@ -1,0 +1,32 @@
+{
+  "parent": "minecraft:recipes/root",
+  "criteria": {
+    "has_graphite_electrode": {
+      "conditions": {
+        "items": [
+          {
+            "items": "promptcritical:graphite_electrode"
+          }
+        ]
+      },
+      "trigger": "minecraft:inventory_changed"
+    },
+    "has_the_recipe": {
+      "conditions": {
+        "recipe": "promptcritical:reactor/moderator_block_graphite"
+      },
+      "trigger": "minecraft:recipe_unlocked"
+    }
+  },
+  "requirements": [
+    [
+      "has_the_recipe",
+      "has_graphite_electrode"
+    ]
+  ],
+  "rewards": {
+    "recipes": [
+      "promptcritical:reactor/moderator_block_graphite"
+    ]
+  }
+}

@@ -1,0 +1,39 @@
+{
+  "parent": "promptcritical:first_criticality",
+  "criteria": {
+    "scram": {
+      "conditions": {
+        "event": "promptcritical:pile_state",
+        "predicate": {
+          "scram": {
+            "min": 1.0
+          }
+        },
+        "station_member": true
+      },
+      "trigger": "promptcritical:sim_event"
+    }
+  },
+  "display": {
+    "description": {
+      "translate": "advancements.promptcritical.pile_scram.description"
+    },
+    "hidden": true,
+    "icon": {
+      "count": 1,
+      "id": "promptcritical:scram_button"
+    },
+    "title": {
+      "translate": "advancements.promptcritical.pile_scram.title"
+    }
+  },
+  "requirements": [
+    [
+      "scram"
+    ]
+  ],
+  "rewards": {
+    "experience": 20
+  },
+  "sends_telemetry_event": true
+}
