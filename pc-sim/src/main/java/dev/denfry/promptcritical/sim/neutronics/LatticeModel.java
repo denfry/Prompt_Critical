@@ -40,13 +40,18 @@ public final class LatticeModel {
     private static final double AGE_NO_MODERATOR = 1e4;
     private static final double SQRT_300 = Math.sqrt(300);
 
-    // Тепловые данные тяжёлых металлов при 2200 м/с (ENDF/B-VII.1, округлено; §1.6.2).
+    /*
+     * Тепловые сечения тяжёлых металлов при 0,0253 эВ, б (§1.6.2) — все из одной библиотеки ENDF/B-VII.1
+     * по сводке Pritychenko, Mughabghab, Nucl. Data Sheets 113 (2012) 3120, табл. III и IV:
+     * σ_a = σ_γ + σ_f. Деление ниже 0,02 б (U-236, U-238, Np-239, Pu-242) не учитывается.
+     */
     private static final Nuclide[] HEAVY = {Nuclide.U235, Nuclide.U236, Nuclide.U238, Nuclide.NP237, Nuclide.NP239,
             Nuclide.PU238, Nuclide.PU239, Nuclide.PU240, Nuclide.PU241, Nuclide.PU242, Nuclide.AM241, Nuclide.AM243,
             Nuclide.CM242, Nuclide.CM244};
-    private static final double[] SIGMA_A = {680.9, 5.1, 2.68, 175.9, 45, 558, 1017.3, 289.5, 1373, 18.5, 603, 79,
-            20, 15};
-    private static final double[] SIGMA_F = {585.1, 0, 0, 0.02, 0, 17.9, 747.4, 0.06, 1011.1, 0, 3.1, 0.1, 5, 1};
+    private static final double[] SIGMA_A = {683.7, 5.18, 2.683, 175.4, 45.04, 430.7, 1018.6, 287.7, 1375, 21.28, 687.4,
+            80.50, 23.80, 16.26};
+    private static final double[] SIGMA_F = {585.0, 0, 0, 0.02, 0, 17.77, 747.9, 0.064, 1012, 0, 3.122, 0.081, 4.665,
+            1.022};
     private static final double[] NU = {2.43, 0, 0, 2.6, 0, 2.9, 2.88, 2.8, 2.93, 0, 3.2, 3.3, 3.4, 3.4};
     private static final Westcott.Factor[] G_A = {Westcott.Factor.U235_A, null, Westcott.Factor.U238_A, null, null,
             null, Westcott.Factor.PU239_A, Westcott.Factor.PU240_A, Westcott.Factor.PU241_A, null, null, null, null,
