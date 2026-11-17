@@ -6,6 +6,7 @@ import static dev.denfry.promptcritical.sim.mining.Mines.node;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.within;
 
+import dev.denfry.promptcritical.sim.combustion.Chimney;
 import org.junit.jupiter.api.Test;
 
 /** Взрыв метана и пыли, осланцевание, заслоны (08 §8.2.6). */
@@ -70,11 +71,11 @@ class ExplosionFrontTest {
         assertThat(front.burnedAtTick(1)).isEqualTo(1);
         assertThat(front.burnedAtTick(2)).isEqualTo(2);
 
-        double f = MiningConfig.defaults().explosionBlastFraction();
-        double dustE = 60 * V / 1000 * MethaneField.Q_DUST;
-        assertThat(front.energyJ(0)).isCloseTo(f * (0.09 * V * MethaneField.Q_CH4 + dustE), within(1.0));
-        assertThat(front.energyJ(1)).isCloseTo(f * dustE, within(1.0));
-        assertThat(front.totalEnergyJ()).isCloseTo(front.energyJ(0) + 2 * f * dustE, within(1.0));
+        // очаг — метан и пыль, дальше одна пыль; энергия узлов с одинаковой пылью одна и та же
+        assertThat(front.energyJ(1)).isPositive();
+        assertThat(front.energyJ(0)).isGreaterThan(front.energyJ(1));
+        assertThat(front.energyJ(2)).isCloseTo(front.energyJ(1), within(1e-6 * front.energyJ(1)));
+        assertThat(front.totalEnergyJ()).isCloseTo(front.energyJ(0) + 2 * front.energyJ(1), within(1.0));
 
         // рудничный газ в очаге; пыль пройденных узлов сгорела, инертная осталась
         assertThat(g.f.concentration(g.n1, MineGas.CH4)).isZero();
@@ -84,6 +85,51 @@ class ExplosionFrontTest {
         assertThat(g.f.meanCoalDust(g.n2)).isZero();
         assertThat(g.f.inertFraction(g.n2)).isEqualTo(1);
         assertThat(g.f.meanCoalDust(g.n5)).isPositive();
+    }
+
+    /**
+     * Энергия взрыва ограничена кислородом. Теплота на моль смеси — по стадиям H → H₂O, C → CO, CO → CO₂
+     * (энтальпии NIST, ≥ 10 % углерода в CO), посчитана вручную; кислород воздуха (1 − x)·20,95 %:
+     * 6 % CH₄ — всё сгорает, 46,44 кДж/моль; 9,5 % — 73,53; 15 % — O₂ хватает на водород и часть
+     * углерода в CO, 67,53. Пыль 720 г/м³ с V^daf 30 % — кислород кончается на водороде, 0,2095·408,79.
+     */
+    @Test
+    void explosionEnergyIsLimitedByOxygen() {
+        double f = MiningConfig.defaults().explosionBlastFraction();
+        double molesPerM3 = MineVentilation.AIR_PRESSURE / (Chimney.GAS_CONSTANT * Mines.T);
+        double e6 = methaneEnergy(0.06), e95 = methaneEnergy(0.095), e15 = methaneEnergy(0.15);
+        assertThat(e6).isCloseTo(f * V * molesPerM3 * 46.44e3, within(1e-3 * e6));
+        assertThat(e95).isCloseTo(f * V * molesPerM3 * 73.53e3, within(1e-3 * e95));
+        assertThat(e15).isCloseTo(f * V * molesPerM3 * 67.53e3, within(1e-3 * e15));
+        assertThat(e15).isLessThan(e95); // пик — у стехиометрии, а не на верхнем пределе
+
+        MineTopology.Builder b = MineTopology.builder(0, Mines.T);
+        int n = node(b, 1, V);
+        branchR(b, 1, ATMOSPHERE, n, 0.1, BranchKind.SHAFT);
+        MethaneField field = new MethaneField(MiningConfig.defaults());
+        field.rebuild(b.build());
+        field.depositCoalDust(n, 720 * Mines.S / Mines.P, 0.30);
+        assertThat(field.raisedDustGm3(n)).isCloseTo(720, within(1e-6));
+        field.setConcentration(n, MineGas.O2, 0.2095);
+        ExplosionFront dust = field.ignite(n, IgnitionSource.BLASTING);
+        assertThat(dust.ignited()).isTrue();
+        double eDust = dust.energyJ(0);
+        assertThat(eDust).isCloseTo(f * V * molesPerM3 * 0.2095 * 408.79e3, within(1e-3 * eDust));
+        assertThat(field.concentration(n, MineGas.O2)).isZero();
+    }
+
+    /** Энергия очага одного узла с метаном x в воздухе, без пыли. */
+    private static double methaneEnergy(double x) {
+        MineTopology.Builder b = MineTopology.builder(0, Mines.T);
+        int n = node(b, 1, V);
+        branchR(b, 1, ATMOSPHERE, n, 0.1, BranchKind.SHAFT);
+        MethaneField field = new MethaneField(MiningConfig.defaults());
+        field.rebuild(b.build());
+        field.setConcentration(n, MineGas.CH4, x);
+        field.setConcentration(n, MineGas.O2, (1 - x) * 0.2095);
+        ExplosionFront front = field.ignite(n, IgnitionSource.SPARK);
+        assertThat(front.ignited()).isTrue();
+        return front.energyJ(0);
     }
 
     /** Заслон легче 400 кг/м² фронт не гасит; без осланцевания фронт проходит всё. */

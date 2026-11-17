@@ -31,7 +31,12 @@ public final class MethaneField {
     /** Слоевое скопление: ниже этой скорости показания CH₄ у кровли удваиваются. */
     public static final double LAYERING_VELOCITY = 0.5, LAYERING_FACTOR = 2;
     /** Низшая теплота сгорания метана, Дж/нм³, и угольной пыли, Дж/кг (середина 25–30). */
-    public static final double Q_CH4 = 35.8e6, Q_DUST = 27.5e6;
+    /**
+     * Теплота стадий горения во фронте, Дж/моль (энтальпии образования NIST при 298 К, вода — пар):
+     * CH₄ → C + 2H₂O — 2·241,83 − 74,87; C → CO — 110,53; CO → CO₂ — 393,51 − 110,53.
+     * Сумма — низшая теплота сгорания метана, 802,3 кДж/моль.
+     */
+    static final double H_CH4_TO_WATER = 408.79e3, H_C_TO_CO = 110.53e3, H_CO_TO_CO2 = 282.98e3;
     /** Порог остатка газа отбитого угля, ниже которого запись снимается, м³. */
     static final double DEPLETED_M3 = 1e-4;
 
@@ -640,10 +645,11 @@ public final class MethaneField {
     }
 
     /**
-     * Сжечь узел фронта: энергия в разрушение E = f_blast(V_CH4·Q_CH4 + m_d·Q_d) (пыль — если взрывоопасна),
-     * в узле остаётся рудничный газ. Кислород идёт сначала на водород, затем на углерод в CO и дальше в CO₂;
-     * не меньше {@link ExplosionFront#CO_MIN_SHARE} углерода остаётся в CO (диссоциация, закалка пламени).
-     * Летучие пыли (V^daf от массы) горят как метан по массе, кокс пыли во фронте не догорает [допущение].
+     * Сжечь узел фронта, в узле остаётся рудничный газ. Кислород идёт сначала на водород, затем на углерод
+     * в CO и дальше в CO₂; не меньше {@link ExplosionFront#CO_MIN_SHARE} углерода остаётся в CO (диссоциация,
+     * закалка пламени). Летучие пыли (V^daf от массы) горят как метан по массе, кокс пыли во фронте не
+     * догорает [допущение]. Энергия в разрушение — f_blast от теплоты тех же стадий: сколько кислорода есть,
+     * столько и сгорает, поэтому пик — у стехиометрии (≈ 9,5 % CH₄), а не на верхнем пределе.
      *
      * @return E_mech, Дж
      */
@@ -652,16 +658,17 @@ public final class MethaneField {
         double xCh4 = concentration(node, MineGas.CH4), vol = t.volume[node];
         boolean dust = dustExplosive(node);
         double cd = dust ? raisedDustGm3(node) : 0;
-        double energy = cfg.explosionBlastFraction() * (xCh4 * vol * Q_CH4 + cd * vol / 1000 * Q_DUST);
-
         double molesPerM3 = MineVentilation.AIR_PRESSURE / (Chimney.GAS_CONSTANT * t.tempK[node]);
         double fuel = xCh4 + cd * dustVolatileDaf(node) / 16.04 / molesPerM3; // CH₄-эквивалент, мольн. доля
         double o2 = concentration(node, MineGas.O2);
-        double r = Math.max(0, o2 - fuel); // водород: CH₄ → 2H₂O требует 1 O₂ на моль
+        double toWater = Math.min(fuel, o2); // водород: CH₄ → 2H₂O требует 1 O₂ на моль
+        double r = o2 - toWater;
         double toCo = Math.min(fuel, 2 * r);
         r -= toCo / 2;
         double toCo2 = Math.min(toCo * (1 - ExplosionFront.CO_MIN_SHARE), 2 * r);
         r -= toCo2 / 2;
+        double heatPerMol = toWater * H_CH4_TO_WATER + toCo * H_C_TO_CO + toCo2 * H_CO_TO_CO2;
+        double energy = cfg.explosionBlastFraction() * heatPerMol * molesPerM3 * vol;
         c[CH4 * nn + node] = 0;
         c[O2 * nn + node] = r;
         c[CO * nn + node] = Math.min(1, c[CO * nn + node] + toCo - toCo2);
