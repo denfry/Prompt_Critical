@@ -6,7 +6,11 @@ public enum CladMaterial {
     /** Zr + 1 % Nb (Э110, Э125). */
     ZR_NB(6.55, 91.40, 0.195, 6.4),
     ALUMINIUM(2.70, 26.98, 0.231, 1.4),
-    STEEL(7.90, 55.85, 2.56, 11.0);
+    /**
+     * Нержавеющая 08Х18Н10Т (AISI 321): Fe 69, Cr 18, Ni 10, Mn 2, Ti и Si по 0,5 % по массе; σ смеси по атомам
+     * (ENDF/B-VII.1: Fe 2,56, Cr 3,05, Ni 4,49, Mn 13,3, Ti 6,09 б). Чистое железо занижало поглощение на 16 %.
+     */
+    STEEL(7.90, 55.04, 3.05, 10.4);
 
     private final double density, molarMass, sigmaA, sigmaS;
 

@@ -327,9 +327,9 @@ public final class LatticeModel {
                 + sq(Math.PI / (shape.sizeZ() * 100 + delta));
     }
 
-    /** Экстраполированная добавка голой зоны δ = 0,71 λ_tr ≈ 2D, м. */
+    /** Экстраполированная добавка голой зоны δ = 0,71 λ_tr = 2,13 D (λ_tr = 3D), м. */
     public double bareSavings(SixFactor core) {
-        return 2 * core.thermalDiffusion() / 100;
+        return 0.71 * 3 * core.thermalDiffusion() / 100;
     }
 
     /** Добавка отражателя толщины {@code thicknessM}: δ = (D_c/D_r) M_r tanh(T/M_r), м (одногрупповая теория). */

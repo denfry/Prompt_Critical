@@ -9,7 +9,10 @@ public final class VoidFraction {
     /** Конфиг {@code hydraulics.void_model}. */
     public enum Model { DRIFT_FLUX, HEM }
 
-    /** Параметр распределения: пузырьковый/снарядный режим, круглые каналы (Ishii 1977). */
+    /**
+     * Параметр распределения: пузырьковый/снарядный режим, круглые каналы (Zuber, Findlay 1965). У Ishii 1977 —
+     * C₀ = 1,2 − 0,2·√(ρ_g/ρ_f), ≈ 1,19 при атмосферном давлении.
+     */
     public static final double C0 = 1.13;
     public static final double GRAVITY = 9.80665;
 
