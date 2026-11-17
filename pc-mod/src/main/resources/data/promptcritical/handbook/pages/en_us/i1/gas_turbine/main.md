@@ -8,7 +8,7 @@ Right-clicking the unit starts and stops it. A starter spins the rotor up to 25 
 
 ## Air decides
 
-The 3 MW rating is at 15 °C and sea level. A compressor swallows volume, not mass, so hot or thin air gives less: at +35 °C the unit loses about 15 %, at 1000 m about 11 %. On a −10 °C winter day it delivers more than its rating. The exhaust temperature limit will not let you feed more gas than the air allows.
+The 3 MW rating is at 15 °C and sea level. A compressor swallows volume, not mass, so hot or thin air gives less: at +35 °C the unit loses about 13 %, at 1000 m about 11 %. On a −10 °C winter day it delivers 17 % more than its rating. The exhaust temperature limit will not let you feed more gas than the air allows.
 
 Simple-cycle efficiency is about 28 %. The exhaust leaves at 470 °C, heat a waste-heat boiler can use.
 
