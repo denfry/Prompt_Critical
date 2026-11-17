@@ -34,3 +34,9 @@ The classic motor starter: one rung "STOP (NC), START (NO), contactor coil KM1",
 ## Failures
 
 Relays wear out with operations. A coil can open, a contact can weld, an armature can stick. A welded contact keeps a circuit made after the coil has let go, the circuit behaves "impossibly", and you find the bad relay by working through the ladder rung by rung. The relay's state shows on its panel; the "Replace" button swaps it. Safety circuits use force-guided relays: if one contact welds, its normally closed contacts will not close after the coil drops out, and a monitoring circuit sees it.
+
+## Station battery
+
+The rectifier takes its power from the 0.4 kV bus. If the station goes dark, the relays drop out and nothing can close a breaker. That is why a [station battery](item:promptcritical:station_battery) stands next to the rectifier: 24 V, 100 Ah, lead-acid. While the bus is live, the rectifier keeps it on float charge. When the bus is lost, the battery feeds the relays and breaker drives, and the station can be brought back from black.
+
+Capacity is not endless, and at high current it is smaller (Peukert's law): at 10 A the battery lasts 10 hours, at 50 A only 1 hour 20 minutes. Below 1.75 V per cell the battery is disconnected to save the plates. Right-click shows the charge.

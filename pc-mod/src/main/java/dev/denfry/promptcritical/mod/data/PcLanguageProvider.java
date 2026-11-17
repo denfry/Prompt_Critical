@@ -129,6 +129,7 @@ public final class PcLanguageProvider extends LanguageProvider {
         b("generator_exciter", "Generator Exciter", "Возбудитель генератора");
         b("instrument_synchroscope", "Synchroscope", "Синхроноскоп");
         b("electric_motor", "Electric Motor", "Электродвигатель");
+        b("station_battery", "Station Battery", "Аккумуляторная батарея");
         b("busbar", "Busbar", "Шина");
         b("disconnector", "Disconnector", "Разъединитель");
         b("switchgear_cell", "Switchgear Cell 6 kV", "Ячейка КРУ 6 кВ");
@@ -378,6 +379,8 @@ public final class PcLanguageProvider extends LanguageProvider {
         MISC.put("death.attack.promptcritical.electrocution", new String[] {"%1$s was electrocuted", "%1$s убит током"});
         MISC.put("death.attack.promptcritical.electrocution.player", new String[] {"%1$s was electrocuted while fighting %2$s",
                 "%1$s убит током в схватке с %2$s"});
+        MISC.put("message.promptcritical.station_battery", new String[] {"Battery 24 V: charge %s %%, %s V open circuit, %s A",
+                "Батарея 24 В: заряд %s %%, %s В без нагрузки, %s А"});
         MISC.put("promptcritical.mine.duster.done", new String[] {"Stone dust applied: inert share %s %%",
                 "Выработка осланцована: инертная доля %s %%"});
         MISC.put("promptcritical.mine.duster.empty", new String[] {"No stone dust in the inventory", "Нет инертной пыли"});

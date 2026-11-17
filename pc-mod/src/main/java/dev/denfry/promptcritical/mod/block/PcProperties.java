@@ -32,6 +32,8 @@ public final class PcProperties {
     public static final EnumProperty<DoorKind> DOOR_KIND = EnumProperty.create("kind", DoorKind.class);
     /** Ступень окна регулятора проветривания ({@code VentilationDoorBlock#WINDOW_FRACTIONS}). */
     public static final IntegerProperty WINDOW = IntegerProperty.create("window", 0, 3);
+    /** Заряд аккумуляторной батареи по банкам, 0…4. */
+    public static final IntegerProperty CHARGE = IntegerProperty.create("charge", 0, 4);
     public static final EnumProperty<BarrierKind> BARRIER_KIND = EnumProperty.create("kind", BarrierKind.class);
     public static final EnumProperty<MoldStage> MOLD_STAGE = EnumProperty.create("stage", MoldStage.class);
     public static final EnumProperty<Bird> BIRD = EnumProperty.create("bird", Bird.class);

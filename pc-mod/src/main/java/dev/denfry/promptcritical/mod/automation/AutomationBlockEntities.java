@@ -41,6 +41,9 @@ public final class AutomationBlockEntities {
     public static final DeferredHolder<BlockEntityType<?>, BlockEntityType<PowerSupplyBlockEntity>> RELAY_POWER_SUPPLY =
             BLOCK_ENTITIES.register("relay_power_supply", () -> BlockEntityType.Builder.of(PowerSupplyBlockEntity::new,
                     PcBlocks.RELAY_POWER_SUPPLY.get()).build(null));
+    public static final DeferredHolder<BlockEntityType<?>, BlockEntityType<StationBatteryBlockEntity>> STATION_BATTERY =
+            BLOCK_ENTITIES.register("station_battery", () -> BlockEntityType.Builder.of(StationBatteryBlockEntity::new,
+                    PcBlocks.STATION_BATTERY.get()).build(null));
     public static final DeferredHolder<BlockEntityType<?>, BlockEntityType<RelayRackBlockEntity>> RELAY_RACK =
             BLOCK_ENTITIES.register("relay_rack", () -> BlockEntityType.Builder.of(RelayRackBlockEntity::new,
                     PcBlocks.RELAY_RACK.get()).build(null));
