@@ -81,6 +81,18 @@ public final class PowerhouseText {
         msg("fan.linked", "serving a boiler", "работает на котёл");
         msg("fan.unlinked", "no water-tube boiler within 12 blocks", "нет водотрубного котла в 12 блоках");
         msg("turbine.gear", "Turbine reduction gear: %s rpm", "Редуктор турбины: %s об/мин");
+        msg("dam_gate.open", "Intake gate raised: water goes to the penstock", "Затвор поднят: вода идёт в водовод");
+        msg("dam_gate.closed", "Intake gate lowered: the turbine closes its wicket gates", "Затвор опущен: турбина закрывает направляющий аппарат");
+        msg("hydro.no_gate", "No intake: put a dam gate in water at least 3 blocks above the turbine, within 48 blocks",
+                "Нет водозабора: поставьте затвор в воду не ниже 3 блоков над турбиной, в пределах 48 блоков");
+        msg("hydro.burst", "The penstock burst from water hammer: Shift-right-click to replace it",
+                "Водовод порвало гидроударом: Shift и правый клик — заменить");
+        msg("hydro.repaired", "Penstock replaced", "Водовод заменён");
+        msg("hydro.state", "Head %s m · flow %s of %s m³/s · %s of %s kW · %s rpm · Tw %s s · %s",
+                "Напор %s м · расход %s из %s м³/с · %s из %s кВт · %s об/мин · Tw %s с · %s");
+        msg("hydro.kind.kaplan", "Kaplan runner (low head)", "поворотно-лопастная (низкий напор)");
+        msg("hydro.kind.francis", "Francis runner", "радиально-осевая (Френсис)");
+        msg("hydro.kind.pelton", "Pelton wheel (high head)", "ковшовая (Пельтон, высокий напор)");
         msg("turbine.reset", "Overspeed trip reset", "Автомат безопасности взведён");
         msg("turbine.not_tripped", "The overspeed trip is set (reset only below rated speed)",
                 "Автомат безопасности не сработал (взводится ниже номинальных оборотов)");

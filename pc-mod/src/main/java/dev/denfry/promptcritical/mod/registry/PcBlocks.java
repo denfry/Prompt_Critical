@@ -499,6 +499,14 @@ public final class PcBlocks {
     public static final DeferredBlock<PcDeviceBlock> INDUCED_DRAFT_FAN = device("induced_draft_fan", machine(),
             Spec.facing(PcProperties.RUNNING),
             KineticMachineBlock.with(ShaftSide.FRONT, dev.denfry.promptcritical.mod.powerhouse.DraftFanBlockEntity::induced));
+    /** Гидроагрегат 3×2×3: вертикальный вал Create вверх, вода — от затвора водозабора выше по склону. */
+    public static final DeferredBlock<PcDeviceBlock> HYDRO_TURBINE = device("hydro_turbine", machine(),
+            Spec.facing(PcProperties.RUNNING).footprint(Footprint.of(Segment.box(-1, 1, -1, 0, -1, 1))),
+            KineticMachineBlock.with(ShaftSide.UP, dev.denfry.promptcritical.mod.powerhouse.HydroTurbineBlockEntity::new));
+    /** Затвор водозабора ГЭС: ставится в воду, поднимается и опускается рукой. */
+    public static final DeferredBlock<dev.denfry.promptcritical.mod.powerhouse.DamGateBlock> DAM_GATE = withItem(BLOCKS.registerBlock(
+            "dam_gate", p -> dev.denfry.promptcritical.mod.powerhouse.DamGateBlock.create(p, Spec.facing(BlockStateProperties.OPEN)),
+            machine().noOcclusion()));
     /** Паровая турбина с противодавлением: вал Create спереди, пар — от котла, которого касается. */
     public static final DeferredBlock<PcDeviceBlock> STEAM_TURBINE = device("steam_turbine", machine(),
             Spec.facing(PcProperties.RUNNING),

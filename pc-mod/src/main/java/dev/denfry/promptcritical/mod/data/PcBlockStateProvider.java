@@ -219,6 +219,7 @@ public final class PcBlockStateProvider extends BlockStateProvider {
             // электросеть I1 (этап 8 M3)
             case "electric_motor" -> s.getValue(PcProperties.MEDIUM_VOLTAGE) ? id + "_mv" : id;
             case "disconnector" -> s.getValue(PcProperties.EARTHED) ? id + "_earthed" : id;
+            case "dam_gate" -> s.getValue(BlockStateProperties.OPEN) ? id : id + "_closed";
             case "switchgear_cell" -> s.getValue(PcProperties.ALARM) ? id + "_alarm"
                     : s.getValue(BlockStateProperties.OPEN) ? id + "_open" : id;
             case "lv_switchboard" -> s.getValue(PcProperties.ALARM) ? id + "_overload"

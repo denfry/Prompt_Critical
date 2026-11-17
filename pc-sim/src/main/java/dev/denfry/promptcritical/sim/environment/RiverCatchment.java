@@ -21,6 +21,8 @@ import dev.denfry.promptcritical.sim.core.StateWriter;
 public final class RiverCatchment {
     public static final double RAIN_MM_H = 2, STORM_MM_H = 8;
     public static final double DEGREE_DAY_MM = 3, RUNOFF_COEFF = 0.4, RESPONSE_DAYS = 5, BASEFLOW_MM_DAY = 0.5;
+    /** Средний годовой удельный сток умеренного пояса, мм/сут (≈ 550 мм/год) — для расчётного расхода ГЭС. */
+    public static final double MEAN_RUNOFF_MM_DAY = 1.5;
     private static final double DAY_S = 86_400;
 
     /** Запас воды в снегу и в резервуаре стока, мм слоя. */
@@ -56,7 +58,12 @@ public final class RiverCatchment {
 
     /** Расход реки с водосбора {@code areaKm2}, м³/с. */
     public double dischargeM3s(double areaKm2) {
-        return areaKm2 * 1e6 * runoffMmPerDay() * 1e-3 / DAY_S;
+        return dischargeM3s(areaKm2, runoffMmPerDay());
+    }
+
+    /** Расход с водосбора {@code areaKm2} при удельном стоке {@code mmPerDay}, м³/с. */
+    public static double dischargeM3s(double areaKm2, double mmPerDay) {
+        return areaKm2 * 1e6 * mmPerDay * 1e-3 / DAY_S;
     }
 
     public double snowMm() {
@@ -65,6 +72,12 @@ public final class RiverCatchment {
 
     public double storeMm() {
         return storeMm;
+    }
+
+    /** Восстановить запасы из сохранения мода, мм. */
+    public void restore(double snow, double store) {
+        snowMm = Math.max(0, snow);
+        storeMm = Math.max(0, store);
     }
 
     public void save(StateWriter out) {

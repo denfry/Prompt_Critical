@@ -91,5 +91,13 @@ public final class PowerhouseRecipes extends RecipeProvider {
                 .pattern("PVP").pattern("FSF").pattern("PGP").define('P', plate).define('V', AllBlocks.FLUID_VALVE.get())
                 .define('F', AllItems.PROPELLER.get()).define('S', shaft).define('G', AllBlocks.COGWHEEL.get())
                 .unlockedBy("has_seamless_pipe", hasSeamless).save(out, id("steam_turbine"));
+        // гидроагрегат: спиральная камера из листа, рабочее колесо — лопатки на валу; затвор — щит в направляющих
+        ShapedRecipeBuilder.shaped(RecipeCategory.MISC, PcBlocks.HYDRO_TURBINE.get())
+                .pattern("PSP").pattern("FWF").pattern("PCP").define('P', plate).define('S', shaft)
+                .define('F', AllItems.PROPELLER.get()).define('W', AllBlocks.WATER_WHEEL.get()).define('C', AllBlocks.COGWHEEL.get())
+                .unlockedBy("has_steel_plate", has(plate)).save(out, id("hydro_turbine"));
+        ShapedRecipeBuilder.shaped(RecipeCategory.MISC, PcBlocks.DAM_GATE.get())
+                .pattern("PCP").pattern("P P").define('P', plate).define('C', AllBlocks.COGWHEEL.get())
+                .unlockedBy("has_steel_plate", has(plate)).save(out, id("dam_gate"));
     }
 }

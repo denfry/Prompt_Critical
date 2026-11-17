@@ -23,9 +23,9 @@ import net.minecraft.world.level.block.state.BlockState;
 public class KineticMachineBlock extends FoundryBlock implements IRotate {
     /**
      * Где вал: слева от фасада (−x модели), сзади (+z модели), спереди (выход двигателя), по оси X без фасада или
-     * насквозь вдоль фасада (рольганг: блоки в ряд — одна линия вала).
+     * насквозь вдоль фасада (рольганг: блоки в ряд — одна линия вала), вверх (вертикальный агрегат ГЭС).
      */
-    public enum ShaftSide { LEFT, BACK, FRONT, X_AXIS, THROUGH }
+    public enum ShaftSide { LEFT, BACK, FRONT, X_AXIS, THROUGH, UP }
 
     private final ShaftSide side;
 
@@ -47,6 +47,7 @@ public class KineticMachineBlock extends FoundryBlock implements IRotate {
             case BACK -> facing(state).getOpposite();
             case FRONT, THROUGH -> facing(state);
             case X_AXIS -> Direction.WEST;
+            case UP -> Direction.UP;
         };
     }
 

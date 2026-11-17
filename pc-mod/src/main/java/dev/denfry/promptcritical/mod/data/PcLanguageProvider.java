@@ -267,6 +267,8 @@ public final class PcLanguageProvider extends LanguageProvider {
         b("air_preheater", "Air Preheater", "Воздухоподогреватель");
         b("forced_draft_fan", "Forced Draft Fan", "Дутьевой вентилятор");
         b("steam_turbine", "Steam Turbine", "Паровая турбина");
+        b("hydro_turbine", "Hydro Turbine", "Гидротурбина");
+        b("dam_gate", "Dam Intake Gate", "Затвор водозабора");
         b("induced_draft_fan", "Induced Draft Fan", "Дымосос");
         b("deaerator", "Deaerator", "Деаэратор");
         i("mechanic_stethoscope", "Mechanic's Stethoscope", "Слуховая трубка механика");

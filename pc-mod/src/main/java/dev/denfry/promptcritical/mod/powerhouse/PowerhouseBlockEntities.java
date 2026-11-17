@@ -25,6 +25,8 @@ public final class PowerhouseBlockEntities {
             type("deaerator", DeaeratorBlockEntity::new, PcBlocks.DEAERATOR);
     public static final DeferredHolder<BlockEntityType<?>, BlockEntityType<SteamTurbineBlockEntity>> STEAM_TURBINE =
             type("steam_turbine", SteamTurbineBlockEntity::new, PcBlocks.STEAM_TURBINE);
+    public static final DeferredHolder<BlockEntityType<?>, BlockEntityType<HydroTurbineBlockEntity>> HYDRO_TURBINE =
+            type("hydro_turbine", HydroTurbineBlockEntity::new, PcBlocks.HYDRO_TURBINE);
 
     private PowerhouseBlockEntities() {
     }

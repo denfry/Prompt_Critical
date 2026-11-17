@@ -64,6 +64,7 @@ public final class PromptCritical {
         dev.denfry.promptcritical.mod.panel.PanelLayouts.register(modBus);
         dev.denfry.promptcritical.mod.mine.MineLongwall.register(modBus);
         dev.denfry.promptcritical.mod.content.ContentRegistries.register(modBus);
+        dev.denfry.promptcritical.mod.environment.RiverService.register();
         modBus.addListener(PcDataGen::gather);
         dev.denfry.promptcritical.mod.compat.OpenCompatPack.register(modBus);
         if (FMLEnvironment.dist == Dist.CLIENT) PcClient.register(modBus);
