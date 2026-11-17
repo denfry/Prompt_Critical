@@ -516,6 +516,10 @@ public final class PcBlocks {
     public static final DeferredBlock<PcDeviceBlock> TURBINE_GEARBOX = device("turbine_gearbox", machine(),
             Spec.facing(PcProperties.RUNNING),
             KineticMachineBlock.with(ShaftSide.FRONT, dev.denfry.promptcritical.mod.powerhouse.TurbineGearboxBlockEntity::new));
+    /** Секция вентиляторной градирни 3×3×3: холодная вода для конденсатора, который её касается. */
+    public static final DeferredBlock<dev.denfry.promptcritical.mod.powerhouse.CoolingTowerBlock> COOLING_TOWER_CELL = withItem(
+            BLOCKS.registerBlock("cooling_tower_cell", p -> dev.denfry.promptcritical.mod.powerhouse.CoolingTowerBlock.create(p,
+                    Spec.facing(PcProperties.RUNNING, PcProperties.ICED).footprint(FP_CUBE3)), machine().noOcclusion()));
     /** Конденсатор под паровой турбиной: охлаждается водой, которой касается (река, пруд). */
     public static final DeferredBlock<PcBlock> CONDENSER = block("condenser", machine().noOcclusion(), Spec.facing());
     /** Паровая турбина с противодавлением: вал Create спереди, пар — от котла, которого касается. */

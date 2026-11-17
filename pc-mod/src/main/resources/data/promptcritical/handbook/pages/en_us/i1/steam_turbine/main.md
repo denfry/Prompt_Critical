@@ -21,3 +21,7 @@ If the speed still reaches 110 %, the overspeed trip fires: the stop valve shuts
 Put a [condenser](item:promptcritical:condenser) under the turbine so that it touches water: a river, pond or lake. The steam then exhausts into vacuum instead of the atmosphere. Condenser pressure is the saturation pressure at the water temperature plus about 13 K (water rise and terminal difference): about 4 kPa with 15 °C water. The same steam then expands through 870 kJ/kg instead of 485, and the shaft gets roughly twice the power.
 
 River water is warmest at the end of summer, and the vacuum is worse then: the plant loses a few percent. In winter the water is near zero and the vacuum is best. Right-clicking the turbine shows the exhaust pressure.
+
+## Cooling tower
+
+With no river nearby, put the condenser right against a [cooling tower cell](item:promptcritical:cooling_tower_cell). Water in it cools by evaporation, and it cannot get colder than the wet-bulb temperature: in dry heat at 30 °C and 40 % humidity that is about 20 °C. The approach adds about 5 K on top, more under higher load. Right-click switches the fan; without it the draft is natural and the approach triples. Every 5 MW of heat evaporates about 2 kg of water per second. In frost a cell with its fan running ices up.

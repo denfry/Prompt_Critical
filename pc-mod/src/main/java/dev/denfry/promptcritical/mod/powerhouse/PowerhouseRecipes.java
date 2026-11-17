@@ -112,5 +112,10 @@ public final class PowerhouseRecipes extends RecipeProvider {
         ShapedRecipeBuilder.shaped(RecipeCategory.MISC, PcBlocks.CONDENSER.get())
                 .pattern("PPP").pattern("FFF").pattern("PPP").define('P', plate).define('F', pipe)
                 .unlockedBy("has_steel_plate", has(plate)).save(out, id("condenser"));
+        // секция градирни: обшивка и ороситель из досок, вентилятор — пропеллер Create
+        ShapedRecipeBuilder.shaped(RecipeCategory.MISC, PcBlocks.COOLING_TOWER_CELL.get())
+                .pattern("PFP").pattern("WWW").pattern("PBP").define('P', plate).define('F', AllItems.PROPELLER.get())
+                .define('W', net.minecraft.tags.ItemTags.PLANKS).define('B', brick)
+                .unlockedBy("has_steel_plate", has(plate)).save(out, id("cooling_tower_cell"));
     }
 }

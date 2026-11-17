@@ -93,6 +93,8 @@ public final class PowerhouseText {
         msg("hydro.kind.kaplan", "Kaplan runner (low head)", "поворотно-лопастная (низкий напор)");
         msg("hydro.kind.francis", "Francis runner", "радиально-осевая (Френсис)");
         msg("hydro.kind.pelton", "Pelton wheel (high head)", "ковшовая (Пельтон, высокий напор)");
+        msg("cooling_tower.fan_on", "Cooling tower fan on", "Вентилятор градирни включён");
+        msg("cooling_tower.fan_off", "Cooling tower fan off: natural draft only", "Вентилятор градирни выключен: только естественная тяга");
         msg("gt.no_fuel", "No fuel gas in the turbine: pipe in mine methane or coke-oven gas",
                 "В турбине нет газа: подведите трубой шахтный метан или коксовый газ");
         msg("gt.start", "Start: starter on · %s %% speed, %s of %s kW, air %s °C, exhaust %s °C",

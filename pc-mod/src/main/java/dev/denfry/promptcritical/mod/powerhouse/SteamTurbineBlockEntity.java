@@ -146,12 +146,35 @@ public class SteamTurbineBlockEntity extends GeneratingKineticBlockEntity
     private double exhaustPa(ServerLevel sl) {
         BlockPos c = worldPosition.below();
         if (!sl.getBlockState(c).is(PcBlocks.CONDENSER.get())) return SteamPlant.EXHAUST_PA;
+        Double twC = coolingWaterC(sl, c);
+        if (twC == null) return SteamPlant.EXHAUST_PA;
+        return dev.denfry.promptcritical.sim.combustion.SteamTurbine.condenserPressurePa(
+                dev.denfry.promptcritical.sim.thermo.WaterProperties.tables(), twC + 273.15);
+    }
+
+    /**
+     * Температура охлаждающей воды конденсатора {@code c}, °C: от градирни, которой он касается (мокрый термометр плюс
+     * недоохлаждение по тепловой нагрузке пара), иначе от реки или пруда рядом; {@code null} — охлаждения нет.
+     */
+    @Nullable
+    private Double coolingWaterC(ServerLevel sl, BlockPos c) {
+        for (Direction d : Direction.Plane.HORIZONTAL) {
+            BlockPos tower = CoolingTowerBlock.controller(sl, c.relative(d));
+            if (tower == null) continue;
+            BlockState ts = sl.getBlockState(tower);
+            boolean fan = ts.getValue(PcProperties.RUNNING);
+            var env = dev.denfry.promptcritical.mod.environment.EnvironmentService.sample(sl, tower, 2);
+            double rh = dev.denfry.promptcritical.mod.environment.EnvironmentService.environment(sl)
+                    .relativeHumidity(sl.getGameTime(), sl.isRaining());
+            EngineUnit e = unit();
+            double heat = e == null ? 0 : e.steamFlowKgS() * 2.3e6; // теплота конденсации отработавшего пара
+            boolean iced = dev.denfry.promptcritical.sim.thermal.CoolingTowerCell.icing(env.airTempC(), fan);
+            if (ts.getValue(PcProperties.ICED) != iced) sl.setBlock(tower, ts.setValue(PcProperties.ICED, iced), Block.UPDATE_CLIENTS);
+            return dev.denfry.promptcritical.sim.thermal.CoolingTowerCell.coldWaterC(env.airTempC(), rh, heat, fan);
+        }
         boolean water = sl.getFluidState(c.below()).is(net.minecraft.tags.FluidTags.WATER);
         for (Direction d : Direction.Plane.HORIZONTAL) water |= sl.getFluidState(c.relative(d)).is(net.minecraft.tags.FluidTags.WATER);
-        if (!water) return SteamPlant.EXHAUST_PA;
-        double tw = dev.denfry.promptcritical.mod.environment.EnvironmentService.waterTempC(sl, c) + 273.15;
-        return dev.denfry.promptcritical.sim.combustion.SteamTurbine.condenserPressurePa(
-                dev.denfry.promptcritical.sim.thermo.WaterProperties.tables(), tw);
+        return water ? dev.denfry.promptcritical.mod.environment.EnvironmentService.waterTempC(sl, c) : null;
     }
 
     /** Котёл, которого турбина касается гранью; {@link SimId#NONE} — нет. */
