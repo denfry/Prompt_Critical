@@ -278,14 +278,14 @@
   const BUILDS = {
     steam_engine_cylinder: { model: cylinder },
     steam_engine_cylinder_frame: { model: frame },
-    steam_engine_cylinder__crank: { model: crank, java: P + 'crank' },
-    steam_engine_cylinder__flywheel: { model: flywheel, java: P + 'flywheel' },
-    steam_engine_cylinder__con_rod: { model: conRod, java: P + 'con_rod' },
-    steam_engine_cylinder__piston_rod: { model: pistonRod, java: P + 'piston_rod' },
-    steam_engine_cylinder__ecc_rod: { model: eccRod, java: P + 'ecc_rod' },
-    steam_engine_cylinder__valve_rod: { model: valveRod, java: P + 'valve_rod' },
-    steam_engine_cylinder__gov_head: { model: govHead, java: P + 'gov_head' },
-    steam_engine_cylinder__gov_arm: { model: govArm, java: P + 'gov_arm' },
+    'steam_engine_cylinder/crank': { model: crank, java: P + 'crank' },
+    'steam_engine_cylinder/flywheel': { model: flywheel, java: P + 'flywheel' },
+    'steam_engine_cylinder/con_rod': { model: conRod, java: P + 'con_rod' },
+    'steam_engine_cylinder/piston_rod': { model: pistonRod, java: P + 'piston_rod' },
+    'steam_engine_cylinder/ecc_rod': { model: eccRod, java: P + 'ecc_rod' },
+    'steam_engine_cylinder/valve_rod': { model: valveRod, java: P + 'valve_rod' },
+    'steam_engine_cylinder/gov_head': { model: govHead, java: P + 'gov_head' },
+    'steam_engine_cylinder/gov_arm': { model: govArm, java: P + 'gov_arm' },
   };
 
   // Whole engine at crank angle 0 for inspection: frame and crank moved 32 units south, rods placed by hand.

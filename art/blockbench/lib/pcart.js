@@ -467,7 +467,7 @@
 
   // Writes the open project as art/blockbench/<cat>/<id>.bbmodel and models/block/<javaPath>.json.
   function save(root, cat, id, javaPath) {
-    const bb = path.join(root, 'art/blockbench', cat, id.replace(/\//g, '__') + '.bbmodel');
+    const bb = path.join(root, 'art/blockbench', cat, id + '.bbmodel');
     fs.mkdirSync(path.dirname(bb), { recursive: true });
     fs.writeFileSync(bb, Codecs.project.compile());
     let j = Codecs.java_block.compile();
