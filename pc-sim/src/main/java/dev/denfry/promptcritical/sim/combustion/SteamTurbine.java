@@ -19,6 +19,7 @@ import dev.denfry.promptcritical.sim.thermo.WaterProperties;
  *   <li>Автомат безопасности: при 110 % оборотов стопорный клапан закрывается и остаётся закрытым до взвода.</li>
  * </ul>
  * Расчётный КПД небольших турбин начала XX века (Кёртис, Рато) — 0,6–0,7 [порядок]; механический 0,97.
+ * Без конденсатора: отработавший пар уходит на отопление, деаэратор или в атмосферу.
  */
 public final class SteamTurbine {
     /** Обороты срабатывания автомата безопасности, доля номинальных. */
@@ -63,12 +64,16 @@ public final class SteamTurbine {
             double flow = ratedPowerW / (etaM * work);
             double k = flow / Math.sqrt(inletPa * rho1 * (1 - sq(exhaustPa / inletPa)));
             double j = 2 * hInertiaS * ratedPowerW / (omega * omega);
-            return new Spec(ratedPowerW, inletPa, h1, exhaustPa, omega, internalEfficiency, etaM, j, 0.05, 0.3, k, flow, rho1);
+            return new Spec(ratedPowerW, inletPa, h1, exhaustPa, omega, internalEfficiency, etaM, j, 0.05, 0.2, k, flow, rho1);
         }
 
-        /** Турбина электростанции I1: 1,5 МВт, 3,5 МПа и 400 °C, выхлоп в атмосферу 0,12 МПа, 3000 об/мин. */
+        /**
+         * Турбина заводской станции I1 под пар котла ДКВР: 750 кВт, 1,3 МПа и 250 °C, выхлоп на отопление и
+         * деаэратор 0,12 МПа, 3000 об/мин; расход ≈ 2,5 кг/с — в пределах одного котла (≈ 2,9 кг/с). H = 3 с — ротор
+         * с редуктором и генератором; сервомотор 0,2 с.
+         */
         public static Spec reference(WaterProperties w) {
-            return design(w, 1.5e6, 3.5e6, 673.15, 0.12e6, 3000, 0.65, 1.5);
+            return design(w, 750e3, 1.3e6, 523.15, 0.12e6, 3000, 0.65, 3.0);
         }
 
         /** Площадь регулирующего клапана: при полном открытии и расчётном расходе на нём {@link #VALVE_DROP}. */

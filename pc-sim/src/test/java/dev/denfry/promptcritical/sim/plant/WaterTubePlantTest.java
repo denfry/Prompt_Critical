@@ -27,6 +27,7 @@ import dev.denfry.promptcritical.sim.core.SimulationWorld;
 import dev.denfry.promptcritical.sim.core.exec.WorkerPool;
 import dev.denfry.promptcritical.sim.metallurgy.ProcessGas;
 import dev.denfry.promptcritical.sim.utilities.Deaerator;
+import dev.denfry.promptcritical.sim.combustion.SteamTurbine;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
@@ -167,6 +168,40 @@ class WaterTubePlantTest {
         assertThat(u.outputs().combustion.excessAir).isBetween(1.05, 1.2);
         for (SimId e : engines) assertThat(plant(w).engine(e).omega() / plant(w).engine(e).nominalOmega()).isGreaterThan(0.9);
         assertThat(u.lastTrip()).isNull();
+    }
+
+    /**
+     * Турбина 750 кВт на ДКВР: регулятор держит обороты в полосе статизма под нагрузкой 600 кВт, котёл — давление;
+     * при сбросе нагрузки обороты растут, но регулятор прикрывает клапан раньше автомата безопасности (110 %).
+     */
+    @Test
+    void turbineRunsOnTheDkvrUnderItsGovernor() {
+        SimulationWorld w = world();
+        SimId b = boiler(w);
+        SimId t = w.topology().addDevice("promptcritical:steam_turbine", new GridPos(0, 64, 6));
+        plant(w).addTurbine(t);
+        plant(w).connect(t, b);
+        lightOff(w, b);
+        w.commands().submit(new SimCommand.Operate(t, SteamPlant.TOGGLE_STOP_VALVE),
+                new CommandSource.Panel(new java.util.UUID(1, 1), 0L), seq++);
+        drive(w, List.of(t), 300, 600e3);
+        EngineUnit e = plant(w).engine(t);
+        double pu = e.omega() / e.nominalOmega();
+        assertThat(e.isTurbine()).isTrue();
+        assertThat(pu).isBetween(0.97, 1.05);
+        assertThat(e.shaftPowerW()).isCloseTo(600e3, within(30e3));
+        assertThat(e.steamFlowKgS()).isBetween(1.6, 2.6);
+        assertThat(plant(w).waterTube(b).drumPressurePa()).isCloseTo(WaterTubeUnit.PRESSURE_SET_PA, within(0.1e6));
+
+        double peak = 0;
+        e.setLoadPower(0);
+        for (int s = 0; s < 60 * TICKS_PER_S; s++) {
+            w.tick(ExternalInputs.NONE);
+            peak = Math.max(peak, e.omega() / e.nominalOmega());
+        }
+        assertThat(e.turbine().tripped()).isFalse();
+        assertThat(peak).isLessThan(SteamTurbine.OVERSPEED_TRIP);
+        assertThat(e.omega() / e.nominalOmega()).isCloseTo(1.05, within(0.01)); // холостой ход по статизму
     }
 
     /** T7.24 (домен): топливо без продувки — {@code E_INTERLOCK}; продувка без вентиляторов — тоже. */

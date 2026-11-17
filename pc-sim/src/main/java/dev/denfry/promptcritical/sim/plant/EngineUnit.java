@@ -2,6 +2,7 @@ package dev.denfry.promptcritical.sim.plant;
 
 import dev.denfry.promptcritical.sim.combustion.FlyballGovernor;
 import dev.denfry.promptcritical.sim.combustion.SteamEngineUnit;
+import dev.denfry.promptcritical.sim.combustion.SteamTurbine;
 import dev.denfry.promptcritical.sim.core.SimId;
 import dev.denfry.promptcritical.sim.hydraulics.FlowLink;
 import dev.denfry.promptcritical.sim.hydraulics.FluidNode;
@@ -20,7 +21,10 @@ import dev.denfry.promptcritical.sim.hydraulics.FluidNode;
  */
 public final class EngineUnit {
     final SimId id;
+    /** Паровая машина; у турбины — null. */
     final SteamEngineUnit unit;
+    /** Паровая турбина ({@link SteamPlant#addTurbine}); у машины — null. */
+    final SteamTurbine turbine;
     SimId boiler = SimId.NONE;
     boolean stopValveOpen, dashpot, seized;
     /** Вал отдаёт обороты в сеть Create (R3); для события {@link SteamPlant#ENGINE_RUNNING}. */
@@ -34,8 +38,25 @@ public final class EngineUnit {
         this.id = id;
         this.unit = new SteamEngineUnit(SteamEngineUnit.Spec.reference(1, SteamEngineUnit.FLYWHEEL_INERTIA),
                 FlyballGovernor.bare());
+        this.turbine = null;
         // машину останавливают не в мёртвой точке, иначе одноцилиндровую пришлось бы сразу проворачивать
         unit.setCrankAngle(Math.PI / 2);
+    }
+
+    EngineUnit(SimId id, SteamTurbine turbine) {
+        this.id = id;
+        this.unit = null;
+        this.turbine = turbine;
+    }
+
+    /** Турбина, а не поршневая машина. */
+    public boolean isTurbine() {
+        return turbine != null;
+    }
+
+    /** Турбина ({@code null} у паровой машины). */
+    public SteamTurbine turbine() {
+        return turbine;
     }
 
     public SimId id() {
@@ -57,15 +78,15 @@ public final class EngineUnit {
     }
 
     public double omega() {
-        return unit.omega();
+        return turbine != null ? turbine.omega() : unit.omega();
     }
 
     public double nominalOmega() {
-        return unit.nominalOmega();
+        return turbine != null ? turbine.spec().nominalOmega() : unit.nominalOmega();
     }
 
     public double crankAngle() {
-        return unit.crankAngle();
+        return turbine != null ? 0 : unit.crankAngle();
     }
 
     /** Мощность на валу при номинальных оборотах и полностью открытой заслонке при нынешнем давлении в котле, Вт. */
@@ -74,11 +95,11 @@ public final class EngineUnit {
     }
 
     public double shaftPowerW() {
-        return unit.shaftPowerW();
+        return turbine != null ? turbine.shaftPowerW() : unit.shaftPowerW();
     }
 
     public double steamFlowKgS() {
-        return unit.steamFlowKgS();
+        return turbine != null ? turbine.steamFlowKgS() : unit.steamFlowKgS();
     }
 
     /** Давление в золотниковой коробке, Па; NaN без подключения к котлу. */

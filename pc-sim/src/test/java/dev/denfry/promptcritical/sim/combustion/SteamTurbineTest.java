@@ -12,12 +12,12 @@ class SteamTurbineTest {
     private static final SteamTurbine.Spec REF = SteamTurbine.Spec.reference(W);
 
     /**
-     * 3,5 МПа, 400 °C → 0,12 МПа: изоэнтропийный перепад ≈ 690 кДж/кг (h₁ 3222, s₁ 6,84, на выходе — влажный пар),
-     * при η 0,65 и поправке Баумана — около 430 кДж/кг; 1,5 МВт требуют ≈ 3,6 кг/с, т. е. ≈ 13 т/ч.
+     * 1,3 МПа, 250 °C → 0,12 МПа: h₁ ≈ 2934 кДж/кг, изоэнтропийный перепад ≈ 480 кДж/кг до влажного пара; при η 0,65 и
+     * поправке Баумана — около 300 кДж/кг; 750 кВт требуют ≈ 2,5 кг/с (9 т/ч) — один ДКВР-10.
      */
     @Test
     void designPointGivesRatedPowerAtRatedSpeed() {
-        assertThat(REF.ratedFlowKgS()).isBetween(3.3, 3.9);
+        assertThat(REF.ratedFlowKgS()).isBetween(2.3, 2.8);
         SteamTurbine t = new SteamTurbine(REF, W);
         t.setOmega(REF.nominalOmega());
         double torque = REF.ratedPowerW() / REF.nominalOmega();

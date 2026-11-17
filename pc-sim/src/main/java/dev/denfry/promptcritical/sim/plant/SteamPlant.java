@@ -12,6 +12,7 @@ import dev.denfry.promptcritical.sim.combustion.FireTubeBoilerSpec;
 import dev.denfry.promptcritical.sim.combustion.FlyballGovernor;
 import dev.denfry.promptcritical.sim.combustion.FuelSpec;
 import dev.denfry.promptcritical.sim.combustion.SteamEngineUnit;
+import dev.denfry.promptcritical.sim.combustion.SteamTurbine;
 import dev.denfry.promptcritical.sim.consequence.BlastScaling;
 import dev.denfry.promptcritical.sim.consequence.DamageBudget;
 import dev.denfry.promptcritical.sim.consequence.DamageGrant;
@@ -81,6 +82,8 @@ public final class SteamPlant implements Subsystem {
             BMS_SHUTDOWN = "bms_shutdown", BMS_TOGGLE_BYPASS = "bms_toggle_bypass";
     public static final String IGNITE = "ignite", FIT_FUSIBLE_PLUG = "fit_fusible_plug",
             FIT_GOVERNOR_DASHPOT = "fit_governor_dashpot", DRAIN = "drain", TOGGLE_STOP_VALVE = "toggle_stop_valve", BAR_OVER = "bar_over";
+    /** Турбина: взвести автомат безопасности; синхронизатор — обороты холостого хода ±0,5 %. */
+    public static final String RESET_TRIP = "reset_trip", SPEEDER_UP = "speeder_up", SPEEDER_DOWN = "speeder_down";
     /**
      * Событие домена: машина набрала обороты R3 (ω ≥ 0,2 ω₀) и отдаёт момент на вал Create — достижение «Первый пар»
      * (11 §11.2.2); величина {@code omega_pu} — ω/ω₀. Повторно — после остановки ниже 0,1 ω₀.
@@ -257,6 +260,16 @@ public final class SteamPlant implements Subsystem {
         return e;
     }
 
+    /** Паровая турбина {@link SteamTurbine.Spec#reference} — подключается к котлу, как машина ({@link #connect}). */
+    public EngineUnit addTurbine(SimId id) {
+        EngineUnit e = engines.get(id);
+        if (e != null) return e;
+        e = new EngineUnit(id, new SteamTurbine(SteamTurbine.Spec.reference(water), water));
+        engines.put(id, e);
+        dirty = true;
+        return e;
+    }
+
     /** Подключить машину к котлу ({@link SimId#NONE} — отключить). */
     public void connect(SimId engine, SimId boiler) {
         EngineUnit e = engines.get(engine);
@@ -313,7 +326,7 @@ public final class SteamPlant implements Subsystem {
         for (int i = 0; i < engineArr.length; i++) {
             EngineUnit e = engineArr[i];
             stepEngine(e, engineBoiler[i], engineWt[i], dt);
-            double pu = e.unit.omega() / e.unit.nominalOmega();
+            double pu = e.omega() / e.nominalOmega();
             if (!e.running && pu >= 0.2) {
                 e.running = true;
                 ctx.events().milestone(ctx.tick(), e.id, ENGINE_RUNNING, "omega_pu", pu);
@@ -400,6 +413,10 @@ public final class SteamPlant implements Subsystem {
     }
 
     private void stepEngine(EngineUnit e, BoilerUnit b, WaterTubeUnit w, double dt) {
+        if (e.turbine != null) {
+            stepTurbine(e, b, w, dt);
+            return;
+        }
         SteamEngineUnit m = e.unit;
         double tau = e.loadPowerW / Math.max(m.omega(), 0.2 * m.nominalOmega());
         if (e.chest == null) {
@@ -417,6 +434,26 @@ public final class SteamPlant implements Subsystem {
         SteamEngineUnit.Spec s = m.spec();
         double pi = m.engine().indicatedPowerW(supply, EXHAUST_PA, m.cutoff(), s.nominalRevPerS());
         e.capacityW = e.stopValveOpen && !dead ? s.mechanicalEfficiency() * Math.max(0, pi) : 0;
+    }
+
+    /** Турбина: пар из паровой коробки, регулирующий клапан — открытие регулятора, противодавление — атмосфера. */
+    private void stepTurbine(EngineUnit e, BoilerUnit b, WaterTubeUnit w, double dt) {
+        SteamTurbine t = e.turbine;
+        double tau = e.loadPowerW / Math.max(t.omega(), 0.2 * t.spec().nominalOmega());
+        if (e.chest == null) {
+            t.step(dt, EXHAUST_PA, 0, EXHAUST_PA, tau, false);
+            e.capacityW = 0;
+            return;
+        }
+        FluidNode chest = e.chest;
+        boolean dead = b != null ? b.exploded : w.exploded;
+        boolean open = e.stopValveOpen && !dead;
+        t.step(dt, chest.pressure(), chest.enthalpy(), EXHAUST_PA, tau, open);
+        if (e.seized) t.setOmega(0);
+        chest.addSource(-t.steamFlowKgS(), 0);
+        e.throttle.setValvePosition(open ? t.valve() : 0);
+        double supply = b != null ? b.drum.pressure() : w.superheater.pressure();
+        e.capacityW = open && !t.tripped() ? t.capacityW(supply, chest.enthalpy(), EXHAUST_PA) : 0;
     }
 
     private void explode(FastContext ctx, BoilerUnit u) {
@@ -483,6 +520,7 @@ public final class SteamPlant implements Subsystem {
         }
         EngineUnit e = engines.get(o.target());
         if (e == null) return CommandStatus.NOT_HANDLED;
+        if (e.turbine != null) return operateTurbine(e, o.action());
         return switch (o.action()) {
             case FIT_GOVERNOR_DASHPOT -> {
                 if (e.dashpot) yield CommandStatus.REJECTED;
@@ -500,6 +538,27 @@ public final class SteamPlant implements Subsystem {
             case BAR_OVER -> {
                 if (Math.abs(e.unit.omega()) > BAR_OVER_MAX_OMEGA) yield CommandStatus.REJECTED;
                 e.unit.setCrankAngle((e.unit.crankAngle() + Math.PI / 3) % (2 * Math.PI));
+                yield CommandStatus.OK;
+            }
+            default -> CommandStatus.REJECTED;
+        };
+    }
+
+    private static CommandStatus operateTurbine(EngineUnit e, String action) {
+        SteamTurbine t = e.turbine;
+        double step = 0.005 * t.spec().nominalOmega();
+        return switch (action) {
+            case TOGGLE_STOP_VALVE -> {
+                e.stopValveOpen = !e.stopValveOpen;
+                yield CommandStatus.OK;
+            }
+            case RESET_TRIP -> t.resetTrip() ? CommandStatus.OK : CommandStatus.REJECTED;
+            case SPEEDER_UP -> {
+                t.setNoLoadOmega(t.noLoadOmega() + step);
+                yield CommandStatus.OK;
+            }
+            case SPEEDER_DOWN -> {
+                t.setNoLoadOmega(t.noLoadOmega() - step);
                 yield CommandStatus.OK;
             }
             default -> CommandStatus.REJECTED;
@@ -621,9 +680,10 @@ public final class SteamPlant implements Subsystem {
                 init.put(c, new double[] {pb, water.saturationP(pb).hG()});
             }
             long src = b != null ? nodeId(b.id, DRUM) : nodeId(w.id, SUPERHEATER);
-            links.add(link(nodeId(e.id, THROTTLE), LinkKind.VALVE_CONTROL, src, c, throttleArea, 0, top,
-                    2.25, ValveModel.Spec.control(ValveModel.Characteristic.EQUAL_PERCENTAGE,
-                            SteamEngineUnit.THROTTLE_ZETA, 0)));
+            double throttleA = e.turbine != null ? e.turbine.spec().throttleAreaM2() : throttleArea;
+            links.add(link(nodeId(e.id, THROTTLE), LinkKind.VALVE_CONTROL, src, c, throttleA, 0, top,
+                    2.25, ValveModel.Spec.control(e.turbine != null ? ValveModel.Characteristic.LINEAR // садится плотно
+                            : ValveModel.Characteristic.EQUAL_PERCENTAGE, SteamEngineUnit.THROTTLE_ZETA, 0)));
             linked.add(e);
         }
         net.rebuild(nodes, links, new StateCarryOver() {
@@ -741,8 +801,10 @@ public final class SteamPlant implements Subsystem {
             out.putBoolean("dashpot", e.dashpot);
             out.putDouble("load_w", e.loadPowerW);
             out.putDouble("capacity_w", e.capacityW);
+            out.putBoolean("turbine", e.turbine != null);
             out.beginObject("unit");
-            e.unit.save(out);
+            if (e.turbine != null) e.turbine.save(out);
+            else e.unit.save(out);
             out.endObject();
             out.putDouble("p", e.chest != null ? e.chest.pressure() : e.initPressure);
             out.putDouble("h", e.chest != null ? e.chest.enthalpy() : e.initEnthalpy);
@@ -816,14 +878,17 @@ public final class SteamPlant implements Subsystem {
         int ne = in.getInt("engines");
         for (int i = 0; i < ne; i++) {
             in.beginObject("e" + i);
-            EngineUnit e = new EngineUnit(new SimId(in.getLong("id")));
+            SimId eid = new SimId(in.getLong("id"));
+            EngineUnit e = in.has("turbine") && in.getBoolean("turbine")
+                    ? new EngineUnit(eid, new SteamTurbine(SteamTurbine.Spec.reference(water), water)) : new EngineUnit(eid);
             e.boiler = new SimId(in.getLong("boiler"));
             e.stopValveOpen = in.getBoolean("stop_valve_open");
             e.dashpot = in.getBoolean("dashpot");
             e.loadPowerW = in.getDouble("load_w");
             e.capacityW = in.getDouble("capacity_w");
             in.beginObject("unit");
-            e.unit.load(in);
+            if (e.turbine != null) e.turbine.load(in);
+            else e.unit.load(in);
             in.endObject();
             e.initPressure = in.getDouble("p");
             e.initEnthalpy = in.getDouble("h");
