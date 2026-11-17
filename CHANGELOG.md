@@ -1,5 +1,39 @@
 # Changelog
 
+## Unreleased
+
+### Physics corrections
+- Physics audit fixed throughout `pc-sim`: minimum film boiling temperature, out-of-phase closing torque,
+  two-axis synchronous machine with the under-excitation limiter, oxygen-limited methane and dust explosion
+  energy, Xe-135 Westcott factors, ENDF/B-VII.1 cross sections, photoneutron groups, blast furnace oxygen
+  balance and Si/Mn reduction heat, Misaka flow stress, cast alloy heat capacity, unburnt carbon,
+  flammability of inert-diluted gas, PUE conductor ampacity, transformer heating to IEC 60076-7, pump energy,
+  and the low-severity list.
+- Xenon, samarium and fission product decay heat in the graphite pile.
+
+### Character body
+- Choose sex, height, mass and age on the title screen or on first join; locked per world, an operator can reset.
+- Height scales the player model and stride; mass sets knockback resistance and the load in the hoist cage;
+  mine gas poisons faster when running or climbing (Coburn–Forster–Kane).
+- Touching a live bare busbar while earthed gives an electric shock (IEC 60479-1, Dalziel); wool works as a
+  dielectric mat up to 1 kV.
+
+### Environment
+- Weather layer: air temperature by biome, season and time of day, wind with gusts and height profile, sun;
+  seasons from Serene Seasons when installed. `/pc env` shows it.
+- Overhead line cooling follows the wind (IEEE 738); mine natural draft follows the outside air and reverses
+  with the season; the water-tube boiler takes the outside air temperature.
+- Rivers carry rain floods and a spring snowmelt flood.
+
+### Power generation
+- Steam turbine: a back-pressure turbine that takes steam from the boiler it touches.
+- Hydro power: hydro turbine, dam intake gate, penstock water hammer.
+- Gas turbine unit on mine methane or coke-oven gas, with a turbine gearbox.
+
+### Fixes
+- A grid rebuild in the middle of a breaker's travel no longer drops the closing command; this also fixes
+  the flaky switchgear game tests.
+
 ## 0.1.0-alpha (M2: era I0, coal and steam)
 
 First public alpha. Requires Minecraft 1.21.1, NeoForge 21.1.259+, Create 6.0.11+;
