@@ -149,4 +149,11 @@ class FoundryTest {
         assertThat(m.cut(1, tool, Machining.WorkMaterial.ALUMINIUM, 100, rpm, 2, 0.2))
                 .isCloseTo(700 * 2 * 0.2 * 70 / 60.0, within(1e-6));
     }
+
+    /** Нагрев до плавления — по Shomate NIST: Cu 466,9 кДж/кг (298–1358 К), Al 666,5 кДж/кг (298–933 К). */
+    @Test
+    void heatToMeltingFollowsNist() {
+        assertThat(CastAlloy.COPPER.enthalpy(1358)).isCloseTo(466.9e3, within(0.01 * 466.9e3));
+        assertThat(CastAlloy.ALUMINIUM.enthalpy(933)).isCloseTo(666.5e3, within(0.01 * 666.5e3));
+    }
 }

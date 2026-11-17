@@ -8,17 +8,20 @@ package dev.denfry.promptcritical.sim.metallurgy;
 public enum CastAlloy {
     /** Серый чугун (C ≈ 3,5 %): графит не даёт горячих трещин; быстрое охлаждение — отбел. */
     GRAY_IRON("gray_iron", 1473, 6980, 680, 830, 230e3, false),
-    CARBON_STEEL("carbon_steel", 1793, 7000, 620, 820, 270e3, true),
-    BRONZE("bronze", 1300, 8600, 380, 470, 190e3, false),
-    COPPER("copper", 1358, 8020, 385, 495, 205e3, false),
-    ALUMINIUM("aluminium", 933, 2375, 900, 1180, 397e3, true);
+    CARBON_STEEL("carbon_steel", 1793, 7000, 690, 820, 270e3, true),
+    BRONZE("bronze", 1300, 8600, 420, 470, 190e3, false),
+    COPPER("copper", 1358, 8020, 440, 495, 205e3, false),
+    ALUMINIUM("aluminium", 933, 2375, 1050, 1180, 397e3, true);
 
     public final String id;
     /** Ликвидус (у чистых металлов — точка плавления), К. */
     public final double liquidusK;
     /** Плотность расплава, кг/м³. */
     public final double densityLiquid;
-    /** c_p твёрдого и жидкого, Дж/(кг·К). */
+    /**
+     * c_p твёрдого — среднее от 20 °C до ликвидуса (по Shomate NIST: Cu 467 кДж/кг до 1358 К, Al 667 кДж/кг до 933 К;
+     * у стали с α→γ, у бронзы — по меди), и жидкого, Дж/(кг·К).
+     */
     public final double cSolid, cLiquid;
     /** Теплота плавления, Дж/кг. */
     public final double latentHeat;
