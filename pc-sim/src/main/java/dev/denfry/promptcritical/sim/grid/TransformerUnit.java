@@ -93,7 +93,7 @@ public final class TransformerUnit extends GridUnit {
     @Override
     void capture(PowerGrid g) {
         if (branch == null) return;
-        if (carried == null) carried = new double[PowerGrid.BRANCH_STATE];
+        if (carried == null || carried.length != PowerGrid.BRANCH_STATE) carried = new double[PowerGrid.BRANCH_STATE];
         g.exportBranch(branch, carried);
     }
 
@@ -114,6 +114,6 @@ public final class TransformerUnit extends GridUnit {
         loadCommon(in);
         tap = in.getInt("tap");
         carried = in.has("branch") ? in.getDoubles("branch") : null;
-        if (carried != null && carried.length != PowerGrid.BRANCH_STATE) carried = null;
+        carried = PowerGrid.savedBranchState(carried);
     }
 }

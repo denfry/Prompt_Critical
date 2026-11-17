@@ -285,7 +285,7 @@ public final class SwitchUnit extends GridUnit {
     @Override
     void capture(PowerGrid g) {
         if (branch == null) return;
-        if (carried == null) carried = new double[PowerGrid.BRANCH_STATE];
+        if (carried == null || carried.length != PowerGrid.BRANCH_STATE) carried = new double[PowerGrid.BRANCH_STATE];
         g.exportBranch(branch, carried);
         closedIdle = carried[0] != 0;
     }
@@ -330,6 +330,6 @@ public final class SwitchUnit extends GridUnit {
         energyReverseJ = in.getDouble("energy_rev_j");
         trips = in.optInt("trips", 0);
         carried = in.has("branch") ? in.getDoubles("branch") : null;
-        if (carried != null && carried.length != PowerGrid.BRANCH_STATE) carried = null;
+        carried = PowerGrid.savedBranchState(carried);
     }
 }

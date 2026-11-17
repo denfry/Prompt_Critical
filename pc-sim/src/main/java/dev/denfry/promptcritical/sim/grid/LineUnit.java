@@ -112,7 +112,7 @@ public final class LineUnit {
 
     void capture(PowerGrid g) {
         if (branch == null) return;
-        if (carried == null) carried = new double[PowerGrid.BRANCH_STATE];
+        if (carried == null || carried.length != PowerGrid.BRANCH_STATE) carried = new double[PowerGrid.BRANCH_STATE];
         g.exportBranch(branch, carried);
     }
 
@@ -134,7 +134,7 @@ public final class LineUnit {
         l.touchAt = in.getDouble("touch_at");
         l.broken = in.getBoolean("broken");
         l.carried = in.has("branch") ? in.getDoubles("branch") : null;
-        if (l.carried != null && l.carried.length != PowerGrid.BRANCH_STATE) l.carried = null;
+        l.carried = PowerGrid.savedBranchState(l.carried);
         return l;
     }
 }

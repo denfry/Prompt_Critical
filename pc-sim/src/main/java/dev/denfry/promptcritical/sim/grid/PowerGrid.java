@@ -62,7 +62,7 @@ public final class PowerGrid {
     /** Ниже этой скорости ЭДС машины падает пропорционально ω (поток постоянен, E = ω·ψ). */
     private static final double EMF_KNEE_SPEED = 0.95;
     /** Длина массивов {@link #exportMachine}, {@link #exportBranch}, {@link #exportMotor}. */
-    public static final int MACHINE_STATE = 18, BRANCH_STATE = 10, MOTOR_STATE = 4;
+    public static final int MACHINE_STATE = 18, BRANCH_STATE = 11, MOTOR_STATE = 4;
     private static final int EVENT_CAPACITY = 256, EVENT_VALUES = 7;
     private static final int EV_TOPOLOGY = 0, EV_DEENERGIZED = 1, EV_POLE_SLIP = 2, EV_BREAKER = 3, EV_SYNC = 4;
     private static final int EV_RELAY = 5, EV_GROUND = 6, EV_LOAD = 7, EV_CONDUCTOR = 8, EV_BREAKDOWN = 9;
@@ -119,7 +119,7 @@ public final class PowerGrid {
     double[] brAmbientC = new double[0], brTempC = new double[0], brDamage = new double[0];
     /** Последний ток концов ветви по согласованному решению, о.е. ({@link #endPhaseCurrentPu}). */
     private double[] brLastIFrom = new double[0], brLastITo = new double[0];
-    double[] trOilRise = new double[0], trHsRise = new double[0], trLifeH = new double[0];
+    double[] trOilRise = new double[0], trHsRise = new double[0], trHs2 = new double[0], trLifeH = new double[0];
     private double convectionWm2K = 15, solarWPerM, ambientC = 20;
 
     // ---------------------------------------------------------------- машины
@@ -272,6 +272,7 @@ public final class PowerGrid {
         brLastITo = grow(brLastITo, nbr);
         trOilRise = grow(trOilRise, nbr);
         trHsRise = grow(trHsRise, nbr);
+        trHs2 = grow(trHs2, nbr);
         trLifeH = grow(trLifeH, nbr);
         protection.growBranches(nbr);
         brDc[k] = true;
@@ -910,7 +911,7 @@ public final class PowerGrid {
 
     /**
      * Состояние ветви ({@link #BRANCH_STATE} чисел): контакты, автомат выключателя (−1 — его нет), износ и число
-     * операций, нагрев провода и трансформатора, старение, вставка.
+     * операций, нагрев провода и трансформатора, старение, вставка; [10] — второй член горячей точки Δθ_h2.
      */
     public void exportBranch(BranchId id, double[] out) {
         int k = branch(id);
@@ -924,6 +925,7 @@ public final class PowerGrid {
         out[7] = trHsRise[k];
         out[8] = trLifeH[k];
         out[9] = protection.fuseBlown(k) ? 1 : 0;
+        out[10] = trHs2[k];
     }
 
     /**
@@ -952,6 +954,18 @@ public final class PowerGrid {
         trHsRise[k] = in[7];
         trLifeH[k] = in[8];
         if (in[9] != 0) protection.markFuseBlown(k);
+        // сохранение из 10 чисел (до Δθ_h2) — как будто в установившемся режиме: Δθ_h2 = (k21 − 1)·Δθ_h
+        TransformerThermal th = branchSpec.get(k) instanceof Branch.Transformer tr ? tr.thermal() : null;
+        trHs2[k] = in.length > 10 ? in[10] : th == null ? 0 : (th.k21() - 1) * in[7];
+    }
+
+    /**
+     * Сохранённое состояние ветви, приведённое к {@link #BRANCH_STATE} числам: старое из 10 чисел дополняется
+     * (Δθ_h2 восстанавливает {@link #importBranch}); null — состояние не распознано.
+     */
+    public static double[] savedBranchState(double[] saved) {
+        if (saved == null || saved.length == BRANCH_STATE) return saved;
+        return saved.length == BRANCH_STATE - 1 ? saved : null;
     }
 
     /** Состояние двигателя ({@link #MOTOR_STATE} чисел): скорость, температура обмотки, пробой, контактор. */
@@ -1063,10 +1077,12 @@ public final class PowerGrid {
                 }
             } else if (b instanceof Branch.Transformer tr && tr.thermal() != null) {
                 TransformerThermal th = tr.thermal();
-                double kLoad = branchApparentPu(k) * sb / tr.sRatedVa();
-                trOilRise[k] += (th.steadyTopOilRiseK(kLoad) - trOilRise[k]) * (1 - Math.exp(-dtPhysS / th.tauOilS()));
-                trHsRise[k] += (th.steadyHotSpotRiseK(kLoad) - trHsRise[k])
-                        * (1 - Math.exp(-dtPhysS / th.tauWindingS()));
+                // K = I/I_ном (IEC 60076-7 §3): при пониженном напряжении ток и потери больше, чем по S/S_ном
+                double kLoad = endPhaseCurrentPu(k, true) * sb / tr.sRatedVa();
+                trOilRise[k] = th.stepTopOilRiseK(trOilRise[k], kLoad, dtPhysS);
+                double h1 = th.stepWindingRise1K(trHsRise[k] + trHs2[k], kLoad, dtPhysS);
+                trHs2[k] = th.stepWindingRise2K(trHs2[k], kLoad, dtPhysS);
+                trHsRise[k] = h1 - trHs2[k];
                 brTempC[k] = ta + trOilRise[k] + trHsRise[k];
                 trLifeH[k] += TransformerThermal.agingRate(brTempC[k]) * dtPhysS / 3600;
             }

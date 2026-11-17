@@ -129,7 +129,7 @@ class GridLinesAndTransformersTest {
         g.initializePowerFlow();
         GridOutputs out = new GridOutputs();
         g.stepFast(DT, GridInputs.NONE, out);
-        double k = g.branchCurrentA(tr) * Math.sqrt(3) * g.busVoltageV(hv) / 10e6; // K = S/S_ном
+        double k = g.branchCurrentA(tr) * Math.sqrt(3) * 35e3 / 10e6; // K = I/I_ном
         for (int s = 0; s < 30 * 60; s++) g.stepSlow(60);
         assertThat(g.branchTemperatureC(tr)).isCloseTo(th.steadyHotSpotC(k, 20), within(0.5));
         double life = g.transformerLossOfLifeH(tr);
@@ -138,6 +138,45 @@ class GridLinesAndTransformersTest {
         g.setBranchAmbient(tr, 40); // пустыня: та же нагрузка — горячее
         for (int s = 0; s < 30 * 60; s++) g.stepSlow(60);
         assertThat(g.branchTemperatureC(tr)).isCloseTo(th.steadyHotSpotC(k, 40), within(0.5));
+
+        // сохранение из 10 чисел (до Δθ_h2) читается как установившийся режим: температура не прыгает
+        double[] full = new double[PowerGrid.BRANCH_STATE];
+        g.exportBranch(tr, full);
+        double[] old = PowerGrid.savedBranchState(java.util.Arrays.copyOf(full, PowerGrid.BRANCH_STATE - 1));
+        g.importBranch(tr, old);
+        g.stepSlow(60);
+        assertThat(g.branchTemperatureC(tr)).isCloseTo(th.steadyHotSpotC(k, 40), within(0.5));
+        assertThat(PowerGrid.savedBranchState(new double[7])).isNull();
+    }
+
+    /**
+     * Скачок нагрузки 0,5 → 1,3 у силового ONAN: горячая точка над маслом (k21 = 2) сначала перескакивает
+     * установившиеся 36,6 К — масло в каналах обмотки разгоняется за τ_o/k22 = 105 мин, а обмотка греется за
+     * k22·τ_w = 20 мин (IEC 60076-7 прил. B, рис. B.2). У распределительного (k21 = 1) перескока нет.
+     */
+    @Test
+    void hotSpotOvershootsAfterALoadStep() {
+        TransformerThermal th = TransformerThermal.onanPower();
+        double h1 = th.k21() * th.steadyHotSpotRiseK(0.5), h2 = (th.k21() - 1) * th.steadyHotSpotRiseK(0.5);
+        double peak = 0;
+        for (int m = 0; m < 30 * 60; m++) {
+            h1 = th.stepWindingRise1K(h1, 1.3, 60);
+            h2 = th.stepWindingRise2K(h2, 1.3, 60);
+            peak = Math.max(peak, h1 - h2);
+        }
+        assertThat(peak).isGreaterThan(1.3 * th.steadyHotSpotRiseK(1.3));
+        assertThat(h1 - h2).isCloseTo(th.steadyHotSpotRiseK(1.3), within(0.01));
+
+        TransformerThermal dist = TransformerThermal.onanDistribution();
+        double d1 = dist.steadyHotSpotRiseK(0.5), d2 = 0, dPeak = 0;
+        for (int m = 0; m < 600; m++) {
+            d1 = dist.stepWindingRise1K(d1, 1.3, 60);
+            d2 = dist.stepWindingRise2K(d2, 1.3, 60);
+            dPeak = Math.max(dPeak, d1 - d2);
+        }
+        assertThat(dPeak).isCloseTo(dist.steadyHotSpotRiseK(1.3), within(1e-6));
+        // масло ONAN большой мощности: k11·τ_o = 105 мин
+        assertThat(th.stepTopOilRiseK(0, 1, 105 * 60)).isCloseTo(52 * (1 - Math.exp(-1)), within(1e-9));
     }
 
     @Test
