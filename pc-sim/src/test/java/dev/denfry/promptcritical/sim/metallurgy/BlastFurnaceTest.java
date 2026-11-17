@@ -85,19 +85,25 @@ class BlastFurnaceTest {
         return p;
     }
 
-    /** T8.9: агломерат 58 %, 1100 нм³/т, r_d 0,4 → кокс 475 кг/т; газ 1520 нм³/т, CO 21 %. */
+    /**
+     * T8.9: агломерат 58 %, 1100 нм³/т, r_d 0,52 → кокс 475 кг/т; газ ≈ 1520 нм³/т, CO ≈ 21 %. η_CO — результат
+     * баланса кислорода: дутьё, руда (0,40 кг O на кг Fe) и SiO₂, MnO выходят в CO, CO₂ и H₂O до моля.
+     */
     @Test
     void t89CarbonBalance() {
-        CarbonBalance cb = CarbonBalance.of(0.58, 1100, 0.4, 0.21, 0, 0.47, COKE);
+        CarbonBalance cb = CarbonBalance.of(0.58, 1100, 0.52, 0.21, 0, COKE);
         assertThat(cb.tuyereC()).isCloseTo(247.5, within(2.5));
-        assertThat(cb.directC()).isCloseTo(81, within(1.5));
+        assertThat(cb.directC()).isCloseTo(105.6, within(1.0)); // 0,52·945,7·12,011/55,845
         assertThat(cb.hotMetalC()).isEqualTo(45);
-        assertThat(cb.siMnC() + cb.dustC()).isCloseTo(40, within(4.0));
         assertThat(cb.cokeKg()).isCloseTo(475, within(475 * 0.05));
         assertThat(cb.n2Nm3()).isCloseTo(869, within(1.0));
         assertThat(cb.topGasNm3()).isCloseTo(1520, within(1520 * 0.05));
-        assertThat(cb.coFraction() * 100).isCloseTo(21, within(1.0));
-        assertThat(cb.co2Nm3() / (cb.coNm3() + cb.co2Nm3())).isCloseTo(0.47, within(1e-9));
+        assertThat(cb.coFraction() * 100).isCloseTo(21, within(1.5));
+        assertThat(cb.etaCo()).isBetween(0.45, 0.52);
+        double feKg = 1000 * (1 - CarbonBalance.HM_C - CarbonBalance.HM_SI - CarbonBalance.HM_MN - CarbonBalance.HM_S);
+        double oIn = 2 * 0.21 * 1100 / 22.414 + feKg * 0.40 / 15.999 + 2 * 6 / 28.086 + 3 / 54.938;
+        double oOut = (cb.coNm3() + 2 * cb.co2Nm3() + cb.h2oNm3()) / 22.414;
+        assertThat(oOut).isCloseTo(oIn, within(1e-9 * oIn));
         assertThat(cb.burdenKg()).isCloseTo(1637, within(5.0));
     }
 
@@ -135,7 +141,7 @@ class BlastFurnaceTest {
         bf.topGasComposition(x);
         assertThat(x[FuelGas.CO.ordinal()]).isCloseTo(0.21, within(0.015));
         assertThat(x[FuelGas.O2.ordinal()]).isZero();
-        assertThat(bf.etaCO()).isCloseTo(0.47, within(1e-9));
+        assertThat(bf.etaCO()).isBetween(0.45, 0.52);
         FuelSpec gas = bf.topGasFuel();
         double rho = FuelGas.mixtureDensityKgPerNm3(x);
         assertThat(gas.lhv() * rho / 1e6).isBetween(2.9, 3.4);

@@ -9,7 +9,7 @@ package dev.denfry.promptcritical.sim.metallurgy;
  * @param heatupDaysPhys          {@code coke.heatup_days_phys} [BALANCE] — разогрев динаса, сут физ. (7)
  * @param minWallTempK            {@code coke.min_wall_temp_k} — ниже этого разогретый динас рвётся, К (873)
  * @param maxProductivityTM3Day   {@code blast_furnace.max_productivity_t_m3_day} — предел газодинамики (2,5)
- * @param directReductionDefault  {@code blast_furnace.direct_reduction_default} — r_d при прочном коксе (0,4)
+ * @param directReductionDefault  {@code blast_furnace.direct_reduction_default} — r_d при прочном коксе (0,52; при η_CO ≈ 0,48 замыкает баланс кислорода)
  * @param lsC0                    {@code blast_furnace.ls_coeffs}[0] [BALANCE] (0,9)
  * @param lsCB                    {@code blast_furnace.ls_coeffs}[1] — при основности (2,0)
  * @param lsCT                    {@code blast_furnace.ls_coeffs}[2] — при T − 1773 К (0,01)
@@ -29,7 +29,7 @@ public record IronmakingConfig(double cokeChamberWidthM, double cokingConstantHM
     }
 
     public static IronmakingConfig defaults() {
-        return new IronmakingConfig(0.45, 80, 7, 873, 2.5, 0.4, 0.9, 2.0, 0.01);
+        return new IronmakingConfig(0.45, 80, 7, 873, 2.5, 0.52, 0.9, 2.0, 0.01);
     }
 
     /** L_S = (S)/[S] = exp(c₀ + c_B·B + c_T·(T − 1773)) (08 §8.5.3). */
