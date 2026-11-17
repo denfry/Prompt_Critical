@@ -24,9 +24,11 @@ class GridSynchronizationTest {
      * через трансформатор 1 МВ·А (u_k 5,5 %) с масляным выключателем, выключатель отключён.
      */
     static final class SyncRig {
-        final PowerGrid g = new PowerGrid(GridConfig.defaults());
+        final PowerGrid g;
         final BusId gen, net;
         final BranchId cb;
+        /** Выключатель между двумя мёртвыми шинами в стороне: его переключение перестраивает сеть. */
+        BranchId spare;
         final SynchronousMachine m;
         final MachineId id;
         final GridOutputs out = new GridOutputs();
@@ -41,6 +43,11 @@ class GridSynchronizationTest {
         };
 
         SyncRig(boolean shearPin) {
+            this(shearPin, GridConfig.defaults());
+        }
+
+        SyncRig(boolean shearPin, GridConfig cfg) {
+            g = new PowerGrid(cfg);
             net = g.addBus(VoltageClass.MV_6_3, "net");
             gen = g.addBus(VoltageClass.LV_0_4, "gen");
             g.addMachine(infiniteSource(6300), net);
@@ -52,6 +59,10 @@ class GridSynchronizationTest {
             m.setVoltageReference(1.02); // генератор не ниже сети (окно реле 25)
             m.setShearPinCoupling(shearPin);
             id = g.addMachine(m, gen);
+            BusId sa = g.addBus(VoltageClass.LV_0_4, "spare_a"), sb = g.addBus(VoltageClass.LV_0_4, "spare_b");
+            spare = g.addBranch(new Branch.Transformer(sa, sb, 1e6, 0.055, 10e3, 2e3, 0.01, TapChanger.NONE, null));
+            g.attachBreaker(spare, BreakerSpec.oil());
+            g.setBreaker(spare, false);
             g.initializePowerFlow();
             // толчок мощностью Create на один тик: скольжение ≈ 0,05 Гц, дальше вал держит скорость
             shaftPowerW = 0.025e6;
@@ -122,6 +133,27 @@ class GridSynchronizationTest {
         SyncScope s = SyncScope.of(50.1, 50, 0, 0, 1, 1, 0.08);
         assertThat(Math.toDegrees(s.advanceAngleRad())).isCloseTo(2.88, within(0.01));
         assertThat(s.slipHz()).isCloseTo(0.1, within(1e-12));
+    }
+
+    /**
+     * Контакты замыкаются в тик, когда острова по обе стороны ещё не переразложены (сеть только что перестроена
+     * чужим переключением, а бюджет переразложений за тик исчерпан): толчок всё равно считается. Раньше синхронизация
+     * в этот тик молча пропускалась — ни броска момента, ни события.
+     */
+    @Test
+    void closingRightAfterARebuildStillCountsTheShock() {
+        SyncRig r = new SyncRig(false, GridConfig.defaults().withMaxRefactorPerTick(1));
+        r.waitAngle(120);
+        assertThat(r.g.operateBreaker(r.cb, true)).isEqualTo(BreakerResponse.ACCEPTED);
+        boolean spareClosed = false;
+        for (int k = 0; k < 20 && r.g.breakerState(r.cb) != BreakerState.CLOSED; k++) {
+            spareClosed = !spareClosed;
+            r.g.setBreaker(r.spare, spareClosed); // чужое переключение каждый тик: острова переразлагаются заново
+            r.step();
+        }
+        assertThat(r.g.breakerState(r.cb)).isEqualTo(BreakerState.CLOSED);
+        assertThat(r.closings).hasSize(1);
+        assertThat(r.closings.getFirst().torquePu()).isGreaterThan(5);
     }
 
     @Test

@@ -80,6 +80,25 @@ class AutomationSubsystemTest {
         run(w, 3);
     }
 
+    /**
+     * Проводка где угодно в измерении помечает схему к пересборке; до неё показания блоков — по прежней схеме, а не
+     * нули: иначе на тик гаснут флаги реле и питания у всех, и сравнения в тестах ловят этот ноль.
+     */
+    @Test
+    void readingsSurviveAPendingRebuild() {
+        Ladder l = ladder();
+        press(l.w, l.start);
+        run(l.w, 20);
+        assertThat(l.k1.relayPicked()).isTrue();
+        unit(l.w, AutomationKind.RELAY, 0, 0, 0, 0, 0, 0, 0, 0); // новый блок в другом месте: схема грязная
+        assertThat(l.psu.supplyVoltage()).isCloseTo(24, within(1e-9));
+        assertThat(l.k1.relayPicked()).isTrue();
+        assertThat(l.lamp.loadEnergized(0)).isTrue();
+        run(l.w, 1);
+        assertThat(l.psu.supplyVoltage()).isCloseTo(24, within(1e-9));
+        assertThat(l.k1.relayPicked()).isTrue();
+    }
+
     @Test
     void startStopLadderSealsInAndDropsOut() {
         Ladder l = ladder();

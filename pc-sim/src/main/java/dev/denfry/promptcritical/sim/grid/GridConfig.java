@@ -60,6 +60,13 @@ public record GridConfig(double baseMva, double nominalFrequencyHz, int substeps
                 overvoltageAgingExponent, lvBreakerThermalKS);
     }
 
+    public GridConfig withMaxRefactorPerTick(int n) {
+        return new GridConfig(baseMva, nominalFrequencyHz, substeps, solverIterations, solverRelaxation,
+                n, loadDamping, governorDeadbandHz, syncMaxAngleDeg, syncMaxDv, syncMaxSlipHz, syncTorqueDamagePu,
+                couplingShearPu, lofTripDelayS, arSuccessLightning, groundFaultEscalationPerS,
+                overvoltageAgingExponent, lvBreakerThermalKS);
+    }
+
     public GridConfig withGroundFaultEscalationPerS(double perS) {
         return new GridConfig(baseMva, nominalFrequencyHz, substeps, solverIterations, solverRelaxation,
                 maxRefactorPerTick, loadDamping, governorDeadbandHz, syncMaxAngleDeg, syncMaxDv, syncMaxSlipHz,
