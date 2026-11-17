@@ -180,4 +180,26 @@ class CombustionValidationTest {
             x[((FuelGas) componentFraction[i]).ordinal()] = ((Number) componentFraction[i + 1]).doubleValue();
         return x;
     }
+
+    /**
+     * Доменный газ CO 25 %, H₂ 3 %, CO₂ 17 %, N₂ 55 %: снизу Ле Шателье, 0,28/(0,25/0,125 + 0,03/0,04)/0,28 = 36 %;
+     * сверху кислород смеси не ниже LOC ≈ 5,45 %: 1 − 0,0545/0,2095 = 74 % (справочно 35–74 %), а не 100 %.
+     */
+    @Test
+    void blastFurnaceGasIsNotExplosiveWithoutAir() {
+        double[] x = new double[FuelGas.values().length];
+        x[FuelGas.CO.ordinal()] = 0.25;
+        x[FuelGas.H2.ordinal()] = 0.03;
+        x[FuelGas.CO2.ordinal()] = 0.17;
+        x[FuelGas.N2.ordinal()] = 0.55;
+        FlammabilityLimits lim = FlammabilityLimits.ofGas(x);
+        double rho = FuelGas.mixtureDensityKgPerNm3(x) * 273.15 / 293.15;
+        assertThat(lim.lowerKgM3() / rho).isCloseTo(0.364, within(0.005));
+        assertThat(lim.upperKgM3() / rho).isCloseTo(0.740, within(0.005));
+        assertThat(lim.flammable(rho)).isFalse(); // чистый газ без воздуха
+        double[] flue = new double[FuelGas.values().length];
+        flue[FuelGas.CO.ordinal()] = 0.05;
+        flue[FuelGas.N2.ordinal()] = 0.95;
+        assertThat(FlammabilityLimits.ofGas(flue)).isEqualTo(FlammabilityLimits.NOT_FLAMMABLE);
+    }
 }
