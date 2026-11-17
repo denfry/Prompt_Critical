@@ -176,7 +176,8 @@ class HeatTransferValidationTest {
         assertThat(tMin).isCloseTo(562.2, within(0.5)); // 284,7 + 4,41 − 0,04 °C, Groeneveld–Stewart
         w.step(0.05);
         double hFb = w.heatFlux(1) / (w.surfaceTemperature(1) - W.saturationP(0.1e6).tSat());
-        assertThat(hFb).isBetween(200.0, 700.0);
+        // модифицированный Бромли (0,62, длина λ_c ≈ 2,7 см) ≈ 120 Вт/(м²·К) при ΔT ≈ 530 К и излучение ≈ 60
+        assertThat(hFb).isBetween(150.0, 300.0);
         boolean rewetted = false;
         for (int k = 0; k < 20_000 && !rewetted; k++) {
             w.step(0.05);

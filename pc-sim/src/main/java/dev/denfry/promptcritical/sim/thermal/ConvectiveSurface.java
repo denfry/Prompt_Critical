@@ -62,7 +62,7 @@ public final class ConvectiveSurface {
 
     /**
      * @param hydraulicDiameter D_h канала (для конденсации на горизонтальных трубах — наружный диаметр)
-     * @param heatedLength      обогреваемая высота, м (Бромли, вертикальная конденсация)
+     * @param heatedLength      обогреваемая высота, м (вертикальная конденсация)
      */
     public static Builder builder(FluidNode node, double hydraulicDiameter, double heatedLength) {
         return new Builder(node, hydraulicDiameter, heatedLength);
@@ -276,7 +276,7 @@ public final class ConvectiveSurface {
 
     private double film(double tw) {
         double ts = sat.tSat();
-        double h = bromley(sat, tw, heatedLength);
+        double h = bromley(sat, tw);
         if (massFlux > FORCED_FILM_MASS_FLUX) {
             h = Math.max(h, dougallRohsenow(massFlux, bulk.quality, hydraulicDiameter, sat));
         }

@@ -189,17 +189,18 @@ public final class HeatTransferCorrelations {
     }
 
     /**
-     * Плёночное кипение по Бромли на вертикальной поверхности, Вт/(м²·К), свойства пара — на
-     * насыщении. Характерная длина не больше длины волны Тейлора (модифицированный Бромли, как в
-     * TRACE): у высокой стенки плёнка волнистая, и h перестаёт падать как L^−¼.
+     * Плёночное кипение на вертикальной поверхности — модифицированный Бромли, Вт/(м²·К), свойства пара на
+     * насыщении. Плёнка на высокой стенке волнистая, и характерная длина — критическая длина волны Тейлора λ_c,
+     * а не высота (Leonard et al.); коэффициент 0,62 — как в CTF Theory Manual (CASL-U-2016-1110), ур. 4.79–4.80.
+     * Множитель CTF (D_h/λ_c)^0,172 опущен: при D_h 1–2 см он меняет h не больше чем на 8 %.
      */
-    public static double bromley(SaturationState sat, double tWall, double length) {
+    public static double bromley(SaturationState sat, double tWall) {
         double dT = tWall - sat.tSat();
         if (dT <= 0) return 0;
-        double l = Math.min(length, taylorWavelength(sat));
+        double l = taylorWavelength(sat);
         double hfg = sat.latentHeat() + 0.4 * sat.cpG() * dT;
         double kg = sat.kG();
-        return 0.943 * Math.pow(kg * kg * kg * sat.rhoG() * (sat.rhoF() - sat.rhoG()) * GRAVITY * hfg
+        return 0.62 * Math.pow(kg * kg * kg * sat.rhoG() * (sat.rhoF() - sat.rhoG()) * GRAVITY * hfg
                 / (sat.muG() * l * dT), 0.25);
     }
 
