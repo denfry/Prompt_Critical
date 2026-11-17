@@ -17,6 +17,10 @@ public final class BoilerClient {
     static final PartialModel CRANK = partial("steam_engine_cylinder/partial/crank");
     static final PartialModel CON_ROD = partial("steam_engine_cylinder/partial/con_rod");
     static final PartialModel PISTON_ROD = partial("steam_engine_cylinder/partial/piston_rod");
+    static final PartialModel ECC_ROD = partial("steam_engine_cylinder/partial/ecc_rod");
+    static final PartialModel VALVE_ROD = partial("steam_engine_cylinder/partial/valve_rod");
+    static final PartialModel GOV_HEAD = partial("steam_engine_cylinder/partial/gov_head");
+    static final PartialModel GOV_ARM = partial("steam_engine_cylinder/partial/gov_arm");
     static final PartialModel CHAIN = partial("grate_stoker/partial/chain");
 
     private BoilerClient() {

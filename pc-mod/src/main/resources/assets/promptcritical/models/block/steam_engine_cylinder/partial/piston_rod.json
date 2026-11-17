@@ -1,14 +1,15 @@
 {
 	"credit": "Made with Blockbench",
 	"textures": {
-		"br": "promptcritical:block/common/m2_brass",
-		"particle": "promptcritical:block/common/m2_steel_polished",
-		"pol": "promptcritical:block/common/m2_steel_polished"
+		"particle": "promptcritical:block/material/bright_steel",
+		"material_bright_steel": "promptcritical:block/material/bright_steel",
+		"material_steel": "promptcritical:block/material/steel",
+		"material_gunmetal": "promptcritical:block/material/gunmetal"
 	},
 	"elements": [
 		{
 			"name": "rod",
-			"from": [7.5, 3.5, -4],
+			"from": [7.5, 3.5, -9],
 			"to": [8.5, 4.5, 14],
 			"rotation": {
 				"angle": 0,
@@ -17,28 +18,28 @@
 			},
 			"faces": {
 				"north": {
-					"uv": [0, 0, 1, 1],
-					"texture": "#pol"
+					"uv": [7.5, 11.5, 8.5, 12.5],
+					"texture": "#material_bright_steel"
 				},
 				"east": {
-					"uv": [0, 0, 16, 1],
-					"texture": "#pol"
+					"uv": [2, 11.5, 16, 12.5],
+					"texture": "#material_bright_steel"
 				},
 				"south": {
-					"uv": [0, 0, 1, 1],
-					"texture": "#pol"
+					"uv": [7.5, 11.5, 8.5, 12.5],
+					"texture": "#material_bright_steel"
 				},
 				"west": {
-					"uv": [0, 0, 16, 1],
-					"texture": "#pol"
+					"uv": [0, 11.5, 14, 12.5],
+					"texture": "#material_bright_steel"
 				},
 				"up": {
-					"uv": [0, 0, 1, 16],
-					"texture": "#pol"
+					"uv": [7.5, 0, 8.5, 14],
+					"texture": "#material_bright_steel"
 				},
 				"down": {
-					"uv": [0, 0, 1, 16],
-					"texture": "#pol"
+					"uv": [7.5, 2, 8.5, 16],
+					"texture": "#material_bright_steel"
 				}
 			}
 		},
@@ -53,35 +54,35 @@
 			},
 			"faces": {
 				"north": {
-					"uv": [0, 0, 5, 5],
-					"texture": "#br"
+					"uv": [5.5, 9.5, 10.5, 14.5],
+					"texture": "#material_steel"
 				},
 				"east": {
-					"uv": [0, 0, 4, 5],
-					"texture": "#br"
+					"uv": [14, 9.5, 16, 14.5],
+					"texture": "#material_steel"
 				},
 				"south": {
-					"uv": [0, 0, 5, 5],
-					"texture": "#br"
+					"uv": [5.5, 9.5, 10.5, 14.5],
+					"texture": "#material_steel"
 				},
 				"west": {
-					"uv": [0, 0, 4, 5],
-					"texture": "#br"
+					"uv": [0, 9.5, 2, 14.5],
+					"texture": "#material_steel"
 				},
 				"up": {
-					"uv": [0, 0, 5, 4],
-					"texture": "#br"
+					"uv": [5.5, 0, 10.5, 2],
+					"texture": "#material_steel"
 				},
 				"down": {
-					"uv": [0, 0, 5, 4],
-					"texture": "#br"
+					"uv": [5.5, 14, 10.5, 16],
+					"texture": "#material_steel"
 				}
 			}
 		},
 		{
 			"name": "slipper_top",
 			"from": [5, 6.5, 13.5],
-			"to": [11, 8, 18.5],
+			"to": [11, 7.5, 18.5],
 			"rotation": {
 				"angle": 0,
 				"axis": "y",
@@ -89,34 +90,34 @@
 			},
 			"faces": {
 				"north": {
-					"uv": [0, 0, 6, 1.5],
-					"texture": "#pol"
+					"uv": [5, 8.5, 11, 9.5],
+					"texture": "#material_gunmetal"
 				},
 				"east": {
-					"uv": [0, 0, 5, 1.5],
-					"texture": "#pol"
+					"uv": [13.5, 8.5, 16, 9.5],
+					"texture": "#material_gunmetal"
 				},
 				"south": {
-					"uv": [0, 0, 6, 1.5],
-					"texture": "#pol"
+					"uv": [5, 8.5, 11, 9.5],
+					"texture": "#material_gunmetal"
 				},
 				"west": {
-					"uv": [0, 0, 5, 1.5],
-					"texture": "#pol"
+					"uv": [0, 8.5, 2.5, 9.5],
+					"texture": "#material_gunmetal"
 				},
 				"up": {
-					"uv": [0, 0, 6, 5],
-					"texture": "#pol"
+					"uv": [5, 0, 11, 2.5],
+					"texture": "#material_gunmetal"
 				},
 				"down": {
-					"uv": [0, 0, 6, 5],
-					"texture": "#pol"
+					"uv": [5, 13.5, 11, 16],
+					"texture": "#material_gunmetal"
 				}
 			}
 		},
 		{
 			"name": "slipper_bottom",
-			"from": [5, 0, 13.5],
+			"from": [5, 0.5, 13.5],
 			"to": [11, 1.5, 18.5],
 			"rotation": {
 				"angle": 0,
@@ -125,28 +126,64 @@
 			},
 			"faces": {
 				"north": {
-					"uv": [0, 0, 6, 1.5],
-					"texture": "#pol"
+					"uv": [5, 14.5, 11, 15.5],
+					"texture": "#material_gunmetal"
 				},
 				"east": {
-					"uv": [0, 0, 5, 1.5],
-					"texture": "#pol"
+					"uv": [13.5, 14.5, 16, 15.5],
+					"texture": "#material_gunmetal"
 				},
 				"south": {
-					"uv": [0, 0, 6, 1.5],
-					"texture": "#pol"
+					"uv": [5, 14.5, 11, 15.5],
+					"texture": "#material_gunmetal"
 				},
 				"west": {
-					"uv": [0, 0, 5, 1.5],
-					"texture": "#pol"
+					"uv": [0, 14.5, 2.5, 15.5],
+					"texture": "#material_gunmetal"
 				},
 				"up": {
-					"uv": [0, 0, 6, 5],
-					"texture": "#pol"
+					"uv": [5, 0, 11, 2.5],
+					"texture": "#material_gunmetal"
 				},
 				"down": {
-					"uv": [0, 0, 6, 5],
-					"texture": "#pol"
+					"uv": [5, 13.5, 11, 16],
+					"texture": "#material_gunmetal"
+				}
+			}
+		},
+		{
+			"name": "crosshead_pin",
+			"from": [5, 3.5, 15.5],
+			"to": [11, 4.5, 16.5],
+			"rotation": {
+				"angle": 0,
+				"axis": "y",
+				"origin": [8, 8, 8]
+			},
+			"faces": {
+				"north": {
+					"uv": [5, 11.5, 11, 12.5],
+					"texture": "#material_bright_steel"
+				},
+				"east": {
+					"uv": [15.5, 11.5, 16, 12.5],
+					"texture": "#material_bright_steel"
+				},
+				"south": {
+					"uv": [5, 11.5, 11, 12.5],
+					"texture": "#material_bright_steel"
+				},
+				"west": {
+					"uv": [0, 11.5, 0.5, 12.5],
+					"texture": "#material_bright_steel"
+				},
+				"up": {
+					"uv": [5, 0, 11, 0.5],
+					"texture": "#material_bright_steel"
+				},
+				"down": {
+					"uv": [5, 15.5, 11, 16],
+					"texture": "#material_bright_steel"
 				}
 			}
 		}

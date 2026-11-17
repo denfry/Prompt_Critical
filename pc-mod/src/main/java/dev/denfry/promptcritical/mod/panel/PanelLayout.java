@@ -91,7 +91,7 @@ public final class PanelLayout {
     public interface Tip extends Function<PanelValues, Component> {
     }
 
-    public sealed interface Element permits Dial, Scope, Glass, Bar, Lamp, Readout, Caption, Button, Firebox, UTube {
+    public sealed interface Element permits Dial, Scope, Glass, Bar, Lamp, Readout, Caption, Button, Firebox, UTube, IndicatorCard {
         int x();
 
         int y();
@@ -157,6 +157,51 @@ public final class PanelLayout {
      */
     public record UTube(int x, int y, int h, int ch, double scale, double max, Component label, @Nullable Tip tip) implements Element {
         public static final int W = 24;
+    }
+
+    /**
+     * Индикаторная диаграмма p–V паровой машины: впуск при давлении канала {@code chestCh} (избыточное, кПа) до отсечки
+     * {@code cutoff} хода, расширение pV = const, выпуск при {@code backPa} (абсолютное), сжатие; вредное пространство
+     * {@code clearance} доли хода. Рисуется, пока установлен бит {@code runBit} канала {@code flagsCh}. Шкала давлений до
+     * {@code pMaxPa} (абсолютное).
+     */
+    public record IndicatorCard(int x, int y, int w, int h, int chestCh, int flagsCh, int runBit, double cutoff, double clearance,
+            double backPa, double pMaxPa, Component label, @Nullable Tip tip) implements Element {
+        /** Начало сжатия: доля хода до мёртвой точки, на которой закрывается выпуск. */
+        public static final double COMPRESSION = 0.1;
+        /** Мятие пара в золотнике к отсечке: давление в конце впуска — эта доля давления в коробке. */
+        public static final double WIRE_DRAWING = 0.97;
+
+        /**
+         * Теоретическая диаграмма как ломаная (V в долях рабочего объёма от 0, p абсолютное, Па) при давлении в коробке
+         * {@code chestPa} (абсолютное): впуск, расширение, выпуск, выталкивание, сжатие.
+         */
+        public double[][] loop(double chestPa) {
+            double c = clearance, vc = c + cutoff, v2 = 1 + c, vk = c + COMPRESSION, pc = chestPa * WIRE_DRAWING;
+            java.util.List<double[]> pts = new java.util.ArrayList<>();
+            pts.add(new double[] {c, chestPa});
+            pts.add(new double[] {vc, pc});
+            for (int i = 1; i <= 24; i++) {
+                double v = vc + (v2 - vc) * i / 24;
+                pts.add(new double[] {v, Math.max(backPa, pc * vc / v)});
+            }
+            pts.add(new double[] {v2, backPa});
+            pts.add(new double[] {vk, backPa});
+            for (int i = 1; i <= 12; i++) {
+                double v = vk - (vk - c) * i / 12;
+                pts.add(new double[] {v, Math.min(chestPa, backPa * vk / v)});
+            }
+            pts.add(new double[] {c, chestPa});
+            return pts.toArray(new double[0][]);
+        }
+
+        /** Среднее индикаторное давление теоретической диаграммы, Па: площадь петли на рабочий объём. */
+        public double meanEffectivePa(double chestPa) {
+            double[][] p = loop(chestPa);
+            double area = 0;
+            for (int i = 1; i < p.length; i++) area += (p[i][0] - p[i - 1][0]) * (p[i][1] + p[i - 1][1]) / 2;
+            return Math.max(0, area);
+        }
     }
 
     public enum LampColor { GREEN, RED, AMBER, WHITE }
@@ -231,6 +276,12 @@ public final class PanelLayout {
 
         public Builder utube(int x, int y, int h, int ch, double scale, double max, Component label, @Nullable Tip tip) {
             elements.add(new UTube(x, y, h, ch, scale, max, label, tip));
+            return this;
+        }
+
+        public Builder indicator(int x, int y, int w, int h, int chestCh, int flagsCh, int runBit, double cutoff, double clearance,
+                double backPa, double pMaxPa, Component label, @Nullable Tip tip) {
+            elements.add(new IndicatorCard(x, y, w, h, chestCh, flagsCh, runBit, cutoff, clearance, backPa, pMaxPa, label, tip));
             return this;
         }
 

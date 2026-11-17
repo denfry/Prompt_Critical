@@ -11,6 +11,7 @@ import static dev.denfry.promptcritical.mod.panel.PanelText.PA;
 import static dev.denfry.promptcritical.mod.panel.PanelText.RPM;
 import dev.denfry.promptcritical.mod.panel.PanelText.Tr;
 import dev.denfry.promptcritical.mod.panel.PanelValues;
+import dev.denfry.promptcritical.sim.combustion.SteamEngineUnit;
 import java.util.List;
 import net.minecraft.ChatFormatting;
 import net.minecraft.network.chat.Component;
@@ -97,7 +98,10 @@ public final class BoilerPanels {
             STEAM = PanelText.tr("engine.steam", "Steam %s kg/h", "Пар %s кг/ч"),
             NO_BOILER = PanelText.tr("engine.no_boiler", "No boiler touching the engine", "Машина не примыкает к котлу"),
             TACHO_TIP = PanelText.tr("engine.tacho_tip", "Engine %s rpm (rated 120)", "Машина %s об/мин (номинал 120)"),
-            CHEST_TIP = PanelText.tr("engine.chest_tip", "Steam at the valve chest %s MPa", "Пар перед золотником %s МПа");
+            CHEST_TIP = PanelText.tr("engine.chest_tip", "Steam at the valve chest %s MPa", "Пар перед золотником %s МПа"),
+            CARD = PanelText.tr("engine.card", "Indicator card", "Индикаторная диаграмма"),
+            CARD_TIP = PanelText.tr("engine.card_tip", "Theoretical card: cut-off at %s%% of the stroke, mean effective pressure %s MPa",
+                    "Теоретическая диаграмма: отсечка на %s%% хода, среднее индикаторное давление %s МПа");
 
     private static final Tr FEED_RATE = PanelText.tr("stoker.feed", "Coal feed", "Подача угля"),
             HOPPER = PanelText.tr("stoker.hopper", "Hopper: coal, washed coal, charcoal, coke",
@@ -140,21 +144,36 @@ public final class BoilerPanels {
             .output(216, 184, SLOT_SLAG, SLAG_SLOT.get())
             .build();
 
-    public static final PanelLayout ENGINE = PanelLayout.builder("steam_engine", 220, 168, E_CHANNELS)
+    /** Эталонная машина: отсечка и противодавление для индикаторной диаграммы щита. */
+    private static final SteamEngineUnit.Spec ENGINE_SPEC = SteamEngineUnit.Spec.reference(1, SteamEngineUnit.FLYWHEEL_INERTIA);
+    /** Вредное пространство цилиндра, доля рабочего объёма (у машин с плоским золотником 7–10 %). */
+    private static final double CLEARANCE = 0.08;
+    private static final PanelLayout.IndicatorCard CARD_SHAPE = new PanelLayout.IndicatorCard(0, 0, 0, 0, E_CHEST_KPA, E_FLAGS,
+            EF_RUNNING, ENGINE_SPEC.nominalCutoff(), CLEARANCE, ENGINE_SPEC.nominalBackPa(), 1.6e6, Component.empty(), null);
+
+    /**
+     * Щит машины: тахометр, манометр золотниковой коробки, индикаторная диаграмма, лампы, дроссель регулятора. Фон —
+     * доска машинного зала ({@code art/blockbench/boilers/steam_engine.author.js}, {@code SEN.paintGui}).
+     */
+    public static final PanelLayout ENGINE = PanelLayout.builder("steam_engine", 240, 206, E_CHANNELS)
+            .art(PromptCritical.id("textures/gui/panel/steam_engine.png"))
             .dial(8, 24, true, E_RPM10, 10, 160, 140, 0, RPM.get(), TACHO.get(), v -> TACHO_TIP.get(v.num(E_RPM10, 10, 0)))
             .dial(80, 24, false, E_CHEST_KPA, 1000, 1.6, 1.32, 2, MPA.get(), CHEST.get(),
                     v -> CHEST_TIP.get(v.num(E_CHEST_KPA, 1000, 2)))
-            .lamp(140, 26, E_FLAGS, EF_BOILER, LampColor.GREEN, BOILER_LAMP.get())
-            .lamp(140, 42, E_FLAGS, EF_VALVE, LampColor.GREEN, VALVE_LAMP.get())
-            .lamp(140, 58, E_FLAGS, EF_DASHPOT, LampColor.WHITE, DASHPOT.get())
-            .lamp(140, 74, E_FLAGS, EF_RUNNING, LampColor.AMBER, DRIVE.get())
-            .bar(80, 100, 132, E_THROTTLE_PERMIL, 1000, 1, 0xFFC8A050, THROTTLE.get(),
+            .indicator(136, 24, 96, 60, E_CHEST_KPA, E_FLAGS, EF_RUNNING, CARD_SHAPE.cutoff(), CLEARANCE, CARD_SHAPE.backPa(),
+                    CARD_SHAPE.pMaxPa(), CARD.get(), v -> CARD_TIP.get(PanelText.num(ENGINE_SPEC.nominalCutoff() * 100, 0),
+                            PanelText.num(CARD_SHAPE.meanEffectivePa(v.get(E_CHEST_KPA, 1) * 1000 + 101_325) / 1e6, 2)))
+            .lamp(80, 92, E_FLAGS, EF_BOILER, LampColor.GREEN, BOILER_LAMP.get())
+            .lamp(80, 108, E_FLAGS, EF_VALVE, LampColor.GREEN, VALVE_LAMP.get())
+            .lamp(160, 100, E_FLAGS, EF_DASHPOT, LampColor.WHITE, DASHPOT.get())
+            .lamp(160, 116, E_FLAGS, EF_RUNNING, LampColor.AMBER, DRIVE.get())
+            .bar(8, 142, 224, E_THROTTLE_PERMIL, 1000, 1, 0xFFC8A050, THROTTLE.get(),
                     v -> THROTTLE_TIP.get(v.num(E_THROTTLE_PERMIL, 10, 0)))
-            .readout(8, 114, 204, BoilerPanels::engineStatus, null)
-            .readout(8, 129, 204, v -> STEAM.get(v.num(E_STEAM_KGH, 1, 0)), null)
-            .button(8, 146, 80, BUTTON_VALVE, VALVE.get(), VALVE_TIP.get())
-            .button(92, 146, 56, BUTTON_BAR, BAR.get(), BAR_TIP.get())
-            .button(152, 146, 60, BUTTON_GEAR, GEAR_BUTTON.get(), GEAR_TIP.get())
+            .readout(8, 154, 224, BoilerPanels::engineStatus, null)
+            .readout(8, 170, 224, v -> STEAM.get(v.num(E_STEAM_KGH, 1, 0)), null)
+            .button(8, 187, 80, BUTTON_VALVE, VALVE.get(), VALVE_TIP.get())
+            .button(92, 187, 56, BUTTON_BAR, BAR.get(), BAR_TIP.get())
+            .button(152, 187, 80, BUTTON_GEAR, GEAR_BUTTON.get(), GEAR_TIP.get())
             .build();
 
     public static final PanelLayout STOKER = PanelLayout.builder("grate_stoker", 176, 100, S_CHANNELS)

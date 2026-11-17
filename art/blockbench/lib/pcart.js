@@ -153,7 +153,7 @@
   M.bright_steel = () => {
     const im = img(32, 32), r = rng(201), n = vnoise(r, 32, 32, 16);
     for (let y = 0; y < 32; y++) for (let x = 0; x < 32; x++) {
-      put(im, x, y, add([176, 180, 184], (y % 4 === 0 ? -8 : 0) + (n(x, y) - 0.5) * 18 + (r() - 0.5) * 5));
+      put(im, x, y, add([142, 146, 150], (y % 4 === 0 ? -10 : 0) + (n(x, y) - 0.5) * 24 + (r() - 0.5) * 6));
     }
     return im;
   };

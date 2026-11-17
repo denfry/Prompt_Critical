@@ -313,6 +313,39 @@ public final class PanelArt {
         paintCentered(g, font, e.label(), x + w / 2, y + h + 2, room);
     }
 
+    /**
+     * Индикаторная карта в латунной рамке: миллиметровка, атмосферная линия штрихом, петля p–V карандашом. Пока машина
+     * стоит, на карте только атмосферная линия — индикатор не пишет.
+     */
+    public static void indicator(GuiGraphics g, Font font, PanelLayout.IndicatorCard e, double chestPa, boolean running,
+            int x, int y, int room) {
+        int w = e.w(), h = e.h();
+        g.fill(x, y, x + w, y + h, 0xFF8A6A34);
+        g.fill(x + 1, y + 1, x + w - 1, y + h - 1, 0xFFC8A45A);
+        int px0 = x + 3, py0 = y + 3, px1 = x + w - 3, py1 = y + h - 3;
+        g.fill(px0, py0, px1, py1, 0xFFEFE9D6);
+        for (int gx = px0 + 5; gx < px1; gx += 5) g.fill(gx, py0, gx + 1, py1, (gx - px0) % 25 == 0 ? 0x40C05040 : 0x20C05040);
+        for (int gy = py1 - 5; gy > py0; gy -= 5) g.fill(px0, gy, px1, gy + 1, (py1 - gy) % 25 == 0 ? 0x40C05040 : 0x20C05040);
+        double vMax = 1 + e.clearance();
+        int iw = px1 - px0 - 4, ih = py1 - py0 - 4;
+        int bx = px0 + 2, by = py1 - 2;
+        int atm = by - (int) Math.round(101_325 / e.pMaxPa() * ih);
+        for (int ax = px0; ax < px1; ax += 4) g.fill(ax, atm, Math.min(ax + 2, px1), atm + 1, 0xFF5A5650);
+        if (running) {
+            double[][] pts = e.loop(chestPa);
+            for (int i = 1; i < pts.length; i++) {
+                double x0 = bx + pts[i - 1][0] / vMax * iw, y0 = by - pts[i - 1][1] / e.pMaxPa() * ih;
+                double x1 = bx + pts[i][0] / vMax * iw, y1 = by - pts[i][1] / e.pMaxPa() * ih;
+                int n = (int) Math.ceil(Math.max(Math.abs(x1 - x0), Math.abs(y1 - y0)) * 2) + 1;
+                for (int k = 0; k <= n; k++) {
+                    int qx = (int) Math.round(x0 + (x1 - x0) * k / n), qy = (int) Math.round(y0 + (y1 - y0) * k / n);
+                    g.fill(qx, qy, qx + 1, qy + 1, 0xFF2A2A30);
+                }
+            }
+        }
+        paintCentered(g, font, e.label(), x + w / 2, y + h + 2, room);
+    }
+
     private static int hash(int a, int b) {
         int h = a * 73856093 ^ b * 19349663;
         h ^= h >>> 13;

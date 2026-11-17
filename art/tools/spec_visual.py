@@ -1,9 +1,7 @@
 """Детальные модели M2 (06 §6.2, статус MODELED): котельная I0 — цепная
-решётка, кирпичная труба, горизонтальная паровая машина. Заменяют плейсхолдеры `spec_grid`/`spec_states`.
+решётка, кирпичная труба. Заменяют плейсхолдеры `spec_grid`/`spec_states`.
 
-Кинематика, на которую завязаны рендереры, сохранена: ось цилиндра
-y = 4 и крейцкопф z ≈ 16, коленвал рамы на (y, z) = (8, 8), кривошип 5 px, шатун 20 px — `SteamEngineRenderer`,
-шаг цепи 4 px — `GrateStokerRenderer`."""
+Кинематика, на которую завязан рендерер, сохранена: шаг цепи 4 px — `GrateStokerRenderer`."""
 import math
 
 from artkit import *
@@ -132,77 +130,9 @@ m("chimney_top", "boilers", chimney("top"))
 
 
 # ======================================================================
-# горизонтальная паровая машина 3×3×5: цилиндр в деревянной обшивке, золотник, параллели крейцкопфа, рама
+# горизонтальная паровая машина 3×3×5 нарисована вручную в Blockbench:
+# art/blockbench/boilers/steam_engine.author.js (модели, подвижные части, текстуры textures/block/steam_engine/)
 # ======================================================================
-
-m("steam_engine_cylinder", "boilers", [
-    el("bedplate", [-6, -16, -14], [22, -12, 32], "eng"),
-    el("cylinder_foot", [0, -12, -10], [16, -4, 2], "engp"),
-] + disc("cylinder", "z", 8, -11, 3, "lag", c=(8, 4, 8))
-  + disc("cover_front", "z", 9, -13, -11, "ci", c=(8, 4, 8))
-  + disc("cover_back", "z", 9, 3, 6, "ci", c=(8, 4, 8))
-  + [el("gland", [6, 2, 6], [10, 6, 9], "br"),
-     el("valve_chest", [2, 11.5, -10], [14, 17, 2], "ci"),
-     el("chest_cover", [1.5, 17, -10.5], [14.5, 18, 2.5], "eng"),
-     el("steam_pipe", [6, 18, -7], [10, 22, -3], "vb"),
-     el("throttle_valve", [5, 22, -8], [11, 25, -2], "vb"),
-     el("throttle_spindle", [7.5, 25, -5.5], [8.5, 27, -4.5], "pol")]
-  + wheel("throttle_wheel", "y", 3, 27, 28, (8, 27.5, -5))
-  + [el("steam_main", [6.5, 25, -15], [9.5, 28, -8], "vb"),
-     el("exhaust", [-2, 13, -6], [2, 16, -2], "ci"),
-     el("exhaust_stack", [-2, 16, -5.5], [1, 32, -2.5], "ci"),
-     el("guide_top", [4, 8, 6], [12, 9, 32], "pol"),
-     el("guide_bottom", [4, -1, 6], [12, 0, 32], "pol"),
-     el("guide_post_w", [3, -12, 28], [5, 9, 31], "engp"),
-     el("guide_post_e", [11, -12, 28], [13, 9, 31], "engp"),
-     el("governor_post", [16, 12, -2], [18, 24, 0], "br"),
-     el("governor_head", [15, 24, -3], [19, 26, 1], "br"),
-     el("governor_ball_w", [13, 21, -2], [15, 23, 0], "pol"),
-     el("governor_ball_e", [19, 21, -2], [21, 23, 0], "pol"),
-     el("drain_cock_f", [7, -5, -12], [9, -2, -10], "br"),
-     el("lubricator", [7, 12, 3], [9, 15, 5], "br")])
-
-m("steam_engine_cylinder_frame", "boilers", [
-    el("bedplate", [-6, -16, 0], [30, -12, 26], "eng"),
-    el("crank_pit", [2, -12, 0], [14, -9, 22], "ci"),
-    el("pedestal_w", [-2, -12, 2], [2, 10, 14], "engp"),
-    el("pedestal_e", [14, -12, 2], [18, 10, 14], "engp"),
-    el("cap_w", [-2.5, 10, 3], [2.5, 12, 13], "br"),
-    el("cap_e", [13.5, 10, 3], [18.5, 12, 13], "br"),
-    el("cap_nut_w", [-1, 12, 4], [1, 13, 5], "ci"),
-    el("cap_nut_w2", [-1, 12, 11], [1, 13, 12], "ci"),
-    el("cap_nut_e", [15, 12, 4], [17, 13, 5], "ci"),
-    el("cap_nut_e2", [15, 12, 11], [17, 13, 12], "ci"),
-    el("outboard_bearing", [26, -12, 3], [30, 10, 13], "engp"),
-    el("port_bearing", [30, 4, 4], [31.95, 12, 12], "ci"),
-    el("outboard_cap", [25.5, 10, 4], [30.5, 12, 12], "br"),
-    el("flywheel_pit", [18, -12, -2], [26, -11, 18], "ci"),
-])
-
-m("steam_engine_cylinder/flywheel", "boilers",
-  ring("rim", "x", 13.5, 3, 20, 24, "ci") + disc("hub", "x", 2.6, 19, 25, "pol", 8)
-  + [el("spoke_v", [21, -5, 7], [23, 21, 9], "ci"), el("spoke_h", [21, 7, -5], [23, 9, 21], "ci"),
-     el("spoke_d1", [21, -5, 7], [23, 21, 9], "ci", rot=("x", 45, [22, 8, 8])),
-     el("spoke_d2", [21, -5, 7], [23, 21, 9], "ci", rot=("x", -45, [22, 8, 8]))],
-  kind="partial")
-m("steam_engine_cylinder/crank", "boilers", disc("shaft", "x", 2, -6, 31.9, "pol", 8) + [
-    el("web_w", [4.5, 6, 6], [6, 15.5, 10], "ci"),
-    el("web_e", [10, 6, 6], [11.5, 15.5, 10], "ci"),
-    el("pin", [6, 12, 7], [10, 14, 9], "pol"),
-    el("eccentric", [12, 5, 5], [13.5, 12, 12], "br"),
-], kind="partial")
-m("steam_engine_cylinder/con_rod", "boilers", [
-    el("rod", [7.25, -0.75, 1.5], [8.75, 0.75, 18.5], "pol"),
-    el("big_end", [6.25, -2, -2], [9.75, 2, 2], "br"),
-    el("big_end_cap", [6, -2.5, -0.5], [10, 2.5, 0.5], "ci"),
-    el("small_end", [6.75, -1.5, 18.5], [9.25, 1.5, 21.5], "br"),
-], kind="partial")
-m("steam_engine_cylinder/piston_rod", "boilers", [
-    el("rod", [7.5, 3.5, -4], [8.5, 4.5, 14], "pol"),
-    el("crosshead", [5.5, 1.5, 14], [10.5, 6.5, 18], "br"),
-    el("slipper_top", [5, 6.5, 13.5], [11, 8, 18.5], "pol"),
-    el("slipper_bottom", [5, 0, 13.5], [11, 1.5, 18.5], "pol"),
-], kind="partial")
 
 
 # ======================================================================
