@@ -99,5 +99,14 @@ public final class PowerhouseRecipes extends RecipeProvider {
         ShapedRecipeBuilder.shaped(RecipeCategory.MISC, PcBlocks.DAM_GATE.get())
                 .pattern("PCP").pattern("P P").define('P', plate).define('C', AllBlocks.COGWHEEL.get())
                 .unlockedBy("has_steel_plate", has(plate)).save(out, id("dam_gate"));
+        // ГТУ: компрессор и турбина — пропеллеры на валу в кожухе, камера сгорания — горелка; редуктор — шестерни
+        ShapedRecipeBuilder.shaped(RecipeCategory.MISC, PcBlocks.GAS_TURBINE.get())
+                .pattern("PFP").pattern("BSB").pattern("PFP").define('P', plate).define('F', AllItems.PROPELLER.get())
+                .define('B', PcBlocks.BOILER_BURNER.get()).define('S', shaft)
+                .unlockedBy("has_boiler_wall", has(wall)).save(out, id("gas_turbine"));
+        ShapedRecipeBuilder.shaped(RecipeCategory.MISC, PcBlocks.TURBINE_GEARBOX.get())
+                .pattern("PCP").pattern("SLS").pattern("PCP").define('P', plate).define('C', AllBlocks.COGWHEEL.get())
+                .define('L', AllBlocks.LARGE_COGWHEEL.get()).define('S', shaft)
+                .unlockedBy("has_steel_plate", has(plate)).save(out, id("turbine_gearbox"));
     }
 }

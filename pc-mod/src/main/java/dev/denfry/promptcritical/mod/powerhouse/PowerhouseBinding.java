@@ -24,6 +24,12 @@ public final class PowerhouseBinding {
     private static void registerCapabilities(RegisterCapabilitiesEvent event) {
         caps(event, PowerhouseBlockEntities.WATER_TUBE_BOILER.get());
         caps(event, PowerhouseBlockEntities.DEAERATOR.get());
+        caps(event, PowerhouseBlockEntities.GAS_TURBINE.get());
+        // якоря второй и третьей секций ГТУ — без BE: трубы к ним идут на контроллер
+        event.registerBlock(Capabilities.FluidHandler.BLOCK, (level, pos, state, be, side) -> {
+            GasTurbineBlockEntity g = GasTurbineBlockEntity.at(level, pos);
+            return g == null ? null : g.fluids(side);
+        }, PcBlocks.GAS_TURBINE.get());
         event.registerBlock(Capabilities.FluidHandler.BLOCK, (level, pos, state, be, side) -> {
             WaterTubeBoilerBlockEntity b = WaterTubeBoilerBlockEntity.of(level, pos);
             return b == null ? null : b.fluids(side);
