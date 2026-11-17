@@ -26,7 +26,7 @@ class GridMachinesTest {
             tr = g.addBranch(new Branch.Transformer(src, bus, 1e9, 0.1, 1e6, 0, 0,
                     new TapChanger(0, 10, 1 / 15.0, 5, true), null));
             motor = g.addMotor(InductionMotorSpec.standard(1e6, 6300), bus);
-            g.setMotorLoadTorque(motor, 1);
+            g.setMotorLoadTorque(motor, g.motorSpec(motor).ratedTorquePu());
             g.initializePowerFlow();
         }
 
@@ -41,18 +41,18 @@ class GridMachinesTest {
         MotorRig ok = new MotorRig();
         InductionMotorSpec spec = ok.g.motorSpec(ok.motor);
         assertThat(spec.ratedSlip()).isCloseTo(0.031, within(0.0005));
-        assertThat(spec.torquePu(1, 1)).isCloseTo(0.73, within(0.005));
+        assertThat(spec.torquePu(1, 1) / spec.ratedTorquePu()).isCloseTo(0.73, within(0.005));
         assertThat(ok.g.motorState(ok.motor)).isEqualTo(MotorState.RUNNING);
-        ok.g.setTap(ok.tr, 5); // v = 1/(1 + 5/15) = 0,75: T_max = 1,41
+        ok.g.setTap(ok.tr, 5); // v = 1/(1 + 5/15) = 0,75: T_max = 1,41·T_н
         ok.ticks(20);
         double v = ok.g.busVoltagePu(ok.bus);
         assertThat(v).isCloseTo(0.75, within(0.005));
         assertThat(ok.g.motorState(ok.motor)).isEqualTo(MotorState.RUNNING);
-        assertThat(ok.g.motorSlip(ok.motor)).isCloseTo(spec.slipAt(1, v), within(1e-3));
-        assertThat(ok.g.motorTorquePu(ok.motor)).isCloseTo(1, within(1e-3));
+        assertThat(ok.g.motorSlip(ok.motor)).isCloseTo(spec.slipAt(spec.ratedTorquePu(), v), within(1e-3));
+        assertThat(ok.g.motorTorquePu(ok.motor)).isCloseTo(spec.ratedTorquePu(), within(1e-3));
 
         MotorRig stall = new MotorRig();
-        stall.g.setTap(stall.tr, 10); // v = 0,6: T_max = 0,90 < T_нагр
+        stall.g.setTap(stall.tr, 10); // v = 0,6: T_max = 0,90·T_н < T_нагр
         int t = 0;
         while (stall.g.motorState(stall.motor) != MotorState.STALLED && t < 40) {
             stall.ticks(1);
@@ -71,8 +71,9 @@ class GridMachinesTest {
         r.ticks(20);
         InductionMotorSpec spec = r.g.motorSpec(r.motor);
         double p = r.g.motorPowerW(r.motor), q = r.g.motorReactiveVar(r.motor);
-        double pEl = (1 - spec.ratedSlip()) / spec.ratedEfficiency();
+        double pEl = 1 / spec.ratedEfficiency(); // на валу — ровно P_ном
         assertThat(p).isCloseTo(pEl * 1e6, within(1e-3 * p));
+        assertThat(r.g.motorTorquePu(r.motor) * r.g.motorSpeedPu(r.motor)).isCloseTo(1, within(1e-3));
         assertThat(p / Math.hypot(p, q)).isCloseTo(spec.ratedPowerFactor(), within(1e-3));
         assertThat(spec.ratedPowerFactor()).isCloseTo(0.88, within(1e-12));
         assertThat(InductionMotorSpec.standard(15e3, 400).ratedEfficiency()).isCloseTo(0.91, within(1e-12));
@@ -94,7 +95,7 @@ class GridMachinesTest {
         GridOutputs out = new GridOutputs();
         g.stepFast(DT, GridInputs.NONE, out);
         assertThat(g.motorState(m)).isEqualTo(MotorState.STARTING);
-        double pEl = (1 - spec.ratedSlip()) / spec.ratedEfficiency();
+        double pEl = 1 / spec.ratedEfficiency();
         double iRated = pEl / spec.ratedPowerFactor() * 1e6 / (Math.sqrt(3) * 6300);
         assertThat(g.motorCurrentA(m) / iRated).isCloseTo(spec.iStartPu(), within(0.03 * spec.iStartPu()));
         for (int k = 0; k < 100; k++) g.stepFast(DT, GridInputs.NONE, out);

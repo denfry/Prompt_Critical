@@ -5,11 +5,12 @@ package dev.denfry.promptcritical.sim.grid;
  *
  * <p>Схема замещения без сопротивления статора: ротор Z_r = R_r/s + jX, поэтому момент — ровно
  * формула Клосса T = 2·T_max·v²/(s/s_k + s_k/s) при X = 1/(2T_max), R_r = s_k·X. Величины — о.е. на
- * P_ном (момент — на P_ном/ω_s). Потери статора ∝ I_r², реактивная мощность Q = Q_μ·v² + k_q·I_r²:
+ * P_ном (момент — на P_ном/ω_s). P_ном — мощность на валу, поэтому номинальный момент T_н = 1/(1 − s_н)
+ * и T_max = (T_max/T_н)·T_н в этих единицах. Потери статора ∝ I_r², реактивная мощность Q = Q_μ·v² + k_q·I_r²:
  * Q_μ и k_q подобраны так, что номинальный режим даёт cos φ_ном, а пуск — ток I_пуск. КПД и cos φ
  * при номинале — интерполяция таблицы §7.6.3 по lg P.
  *
- * @param tMaxPu      T_max,ном, о.е. номинального момента
+ * @param tMaxPu      T_max/T_н, кратность максимального момента по каталогу
  * @param sK          критическое скольжение s_k
  * @param iStartPu    пусковой ток, о.е. номинального
  * @param inertiaKgM2 момент инерции двигателя с механизмом, кг·м²
@@ -49,23 +50,33 @@ public record InductionMotorSpec(double pRatedW, double vRatedV, double tMaxPu, 
         return table(TABLE_POWER_FACTOR, pRatedW);
     }
 
-    /** Момент Клосса при скольжении s и напряжении v, о.е. */
+    /** Момент Клосса при скольжении s и напряжении v, о.е. на P_ном/ω_s. */
     public double torquePu(double s, double v) {
         if (s == 0) return 0;
-        return 2 * tMaxPu * v * v / (s / sK + sK / s);
+        return 2 * maxTorque() * v * v / (s / sK + sK / s);
+    }
+
+    /** Номинальный момент T_н = P_ном/ω_н, о.е. на P_ном/ω_s: на валу ровно P_ном. */
+    public double ratedTorquePu() {
+        return 1 / (1 - ratedSlip());
+    }
+
+    /** T_max при v = 1, о.е. на P_ном/ω_s. */
+    private double maxTorque() {
+        return tMaxPu * ratedTorquePu();
     }
 
     /** Скольжение установившегося режима на рабочей ветви; 1 — момент нагрузки больше T_max(v). */
     public double slipAt(double loadTorquePu, double v) {
         if (loadTorquePu <= 0) return 0;
-        double r = tMaxPu * v * v / loadTorquePu;
+        double r = maxTorque() * v * v / loadTorquePu;
         if (r < 1) return 1;
         return sK * (r - Math.sqrt(r * r - 1));
     }
 
-    /** Номинальное скольжение: T(s_н) = 1 при v = 1. */
+    /** Номинальное скольжение: T(s_н) = T_н при v = 1 — по форме Клосса зависит только от T_max/T_н. */
     public double ratedSlip() {
-        return slipAt(1, 1);
+        return sK * (tMaxPu - Math.sqrt(tMaxPu * tMaxPu - 1));
     }
 
     /** H = J·ω_s²/(2P_ном), с. */
@@ -76,7 +87,7 @@ public record InductionMotorSpec(double pRatedW, double vRatedV, double tMaxPu, 
 
     /** Реактивное сопротивление рассеяния X, о.е. на P_ном. */
     double reactance() {
-        return 1 / (2 * tMaxPu);
+        return 1 / (2 * maxTorque());
     }
 
     /** Приведённое сопротивление ротора R_r = s_k·X. */
@@ -92,15 +103,15 @@ public record InductionMotorSpec(double pRatedW, double vRatedV, double tMaxPu, 
 
     /**
      * Калибровка потерь и реактивной мощности: {потери на единицу I_r², Q_μ, k_q}. Номинальный режим
-     * T = 1 даёт P_эл = (1 − s_н)/η_ном и Q = P_эл·tg φ_ном; пуск — |S| = I_пуск·S_ном. Если КПД
-     * таблицы выше 1 − s_н, потери статора принимаются нулевыми.
+     * T = T_н (P_вала = 1, мощность в зазоре T_н) даёт P_эл = 1/η_ном и Q = P_эл·tg φ_ном; пуск —
+     * |S| = I_пуск·S_ном. Если КПД таблицы выше 1 − s_н, потери статора принимаются нулевыми.
      */
     double[] calibration() {
         double sn = ratedSlip(), rr = rotorResistance(), x = reactance();
         double irn2 = rotorCurrentSq(sn, 1);
         double pf = ratedPowerFactor();
-        double pEl = Math.max(1, (1 - sn) / ratedEfficiency());
-        double loss = (pEl - 1) / irn2;
+        double pAirGap = ratedTorquePu(), pEl = Math.max(pAirGap, 1 / ratedEfficiency());
+        double loss = (pEl - pAirGap) / irn2;
         double qn = pEl * Math.tan(Math.acos(pf));
         double ir2s = 1 / (rr * rr + x * x);
         double ps = (rr + loss) * ir2s, ss = iStartPu * pEl / pf;
