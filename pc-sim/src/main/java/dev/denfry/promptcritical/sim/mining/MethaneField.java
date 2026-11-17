@@ -26,11 +26,13 @@ public final class MethaneField {
     public static final double BROKEN_TAU_S = 1200;
     /** Поглощение O₂ углём 0,1–0,5 м³/(т·сут) — середина, м³/(т·с) при свежем воздухе. */
     public static final double O2_UPTAKE_M3_PER_T_S = 0.3 / 86_400;
-    /** Выход CO₂ и CO на объём поглощённого O₂ при низкотемпературном окислении [допущение, в GDD нет]. */
-    public static final double OXIDATION_CO2_PER_O2 = 0.5, OXIDATION_CO_PER_O2 = 0.01;
+    /**
+     * Выход CO₂ и CO на объём поглощённого O₂ при низкотемпературном окислении [допущение, в GDD нет]. CO —
+     * отношение Грэма 0,3 %: фон до 0,4 % — норма, около 1 % — уже признак самонагревания.
+     */
+    public static final double OXIDATION_CO2_PER_O2 = 0.5, OXIDATION_CO_PER_O2 = 0.003;
     /** Слоевое скопление: ниже этой скорости показания CH₄ у кровли удваиваются. */
     public static final double LAYERING_VELOCITY = 0.5, LAYERING_FACTOR = 2;
-    /** Низшая теплота сгорания метана, Дж/нм³, и угольной пыли, Дж/кг (середина 25–30). */
     /**
      * Теплота стадий горения во фронте, Дж/моль (энтальпии образования NIST при 298 К, вода — пар):
      * CH₄ → C + 2H₂O — 2·241,83 − 74,87; C → CO — 110,53; CO → CO₂ — 393,51 − 110,53.

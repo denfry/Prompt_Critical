@@ -7,7 +7,8 @@ package dev.denfry.promptcritical.sim.metallurgy;
  *   <li>нормализация: A_c3 + 30…50 К, воздух;</li>
  *   <li>закалка: от A_c3 + 30 К (860–900 °C у углеродистой); отпуск закалённой 550–650 °C → Q+T;</li>
  *   <li>старение мартенситно-стареющей 480 °C (±20 К);</li>
- *   <li>аустенизация нержавеющей и никелевой 1050 °C (от 1030 °C);</li>
+ *   <li>аустенизация нержавеющей и никелевой 1050 °C (от 1030 °C); закалка мартенситно-стареющей Н18К9М5Т
+ *   на твёрдый раствор — от 820 °C (практика 820–850 °C, выше растёт зерно);</li>
  *   <li>отпуск шва и снятие напряжений 600–650 °C у незакалённой.</li>
  * </ul>
  * A_c3 = 910 − 203√C, °C (Эндрюс без легирующих) [аппрокс.].
@@ -17,7 +18,7 @@ public final class HeatTreatment {
     public static final double TEMPER_MIN_K = 823.15, TEMPER_MAX_K = 923.15;
     public static final double STRESS_RELIEF_MIN_K = 873.15, STRESS_RELIEF_MAX_K = 923.15;
     public static final double AGE_K = 753.15, AGE_TOL_K = 20;
-    public static final double SOLUTION_MIN_K = 1303.15;
+    public static final double SOLUTION_MIN_K = 1303.15, MARAGING_SOLUTION_MIN_K = 1093.15;
 
     private HeatTreatment() {}
 
@@ -35,8 +36,10 @@ public final class HeatTreatment {
 
     public static SteelGrade quench(SteelGrade g, double tempK) {
         SteelFamily.Hardening h = g.family().hardening;
-        if (h == SteelFamily.Hardening.AUSTENITIC || h == SteelFamily.Hardening.MARAGING)
+        if (h == SteelFamily.Hardening.AUSTENITIC)
             return tempK >= SOLUTION_MIN_K ? g.withState(HeatTreatState.SOLUTION_ANNEALED) : g;
+        if (h == SteelFamily.Hardening.MARAGING)
+            return tempK >= MARAGING_SOLUTION_MIN_K ? g.withState(HeatTreatState.SOLUTION_ANNEALED) : g;
         return tempK >= ac3K(g) + AC3_MARGIN_K ? g.withState(HeatTreatState.QUENCHED) : g;
     }
 

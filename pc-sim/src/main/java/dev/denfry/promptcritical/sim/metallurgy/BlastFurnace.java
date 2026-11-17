@@ -38,8 +38,11 @@ public final class BlastFurnace {
     /** Углерод кокса, унесённый пылью и мелочью, ≈ 8 кг/т при 475 кг/т кокса [BALANCE]. */
     public static final double DUST_LOSS = 0.02;
     public static final double HM_MN = 0.003, HM_S_GUESS = 0.0003;
-    /** C → CO у фурм; C + H₂O → CO + H₂ (поглощение); прямое восстановление, Дж/кг C. */
-    public static final double C_TUYERE_HEAT = 9.2e6, C_STEAM_HEAT = 10.93e6, DIRECT_HEAT = 12.7e6;
+    /**
+     * C → CO у фурм; C + H₂O → CO + H₂ (поглощение); прямое восстановление FeO + C → Fe + CO, Дж/кг C — все по
+     * энтальпиям образования NIST при 298 К (FeO −272,0, CO −110,53 кДж/моль: 161,5 кДж/моль = 13,45 МДж/кг).
+     */
+    public static final double C_TUYERE_HEAT = 9.2e6, C_STEAM_HEAT = 10.93e6, DIRECT_HEAT = 13.45e6;
     /** Чугун и шлак при 1500 °C, Дж/кг, и их c_p, Дж/(кг·К). */
     public static final double HM_HEAT = 1.25e6, HM_CP = 850, SLAG_HEAT = 1.8e6, SLAG_CP = 1200;
     public static final double REF_HEARTH_K = 1773.15;
@@ -67,10 +70,10 @@ public final class BlastFurnace {
     public static final double TOP_GAS_REF_K = 473.15, TOP_GAS_SLOPE = 2;
     /**
      * Теплоёмкость горна и заплечиков на м³ V_u, Дж/(К·м³); потери кладки нижней зоны при 1500 °C, Вт/м³
-     * [BALANCE: ≈ 0,17 ГДж/т при 2 т/(м³·сут) — часть полных 0,3–0,5 ГДж/т печи; холодильники шахты в баланс
+     * [BALANCE: ≈ 0,11 ГДж/т при 2 т/(м³·сут) — часть полных 0,3–0,5 ГДж/т печи; холодильники шахты в баланс
      * горна не входят].
      */
-    public static final double HEARTH_HEAT_CAPACITY = 0.6e6, LOSS_W_PER_M3 = 4_000;
+    public static final double HEARTH_HEAT_CAPACITY = 0.6e6, LOSS_W_PER_M3 = 2_500;
     public static final double BANKED_LOSS_FACTOR = 0.1;
     /** Горн застыл (выпуск невозможен, закозление); отогрет; потолок, К. */
     public static final double CHILL_K = 1573.15, FREE_K = 1723.15, MAX_HEARTH_K = 1923.15, RAFT_MARGIN_K = 300;
@@ -481,7 +484,8 @@ public final class BlastFurnace {
     }
 
     /**
-     * Работа политропного сжатия воздуха, Дж/кг: c_p·T₁·(π^((k−1)/(k·η)) − 1); π = 3, η 0,82 — ≈ 125 кДж/кг
+     * Работа политропного сжатия воздуха, Дж/кг: c_p·T₁·(π^((k−1)/(k·η)) − 1); π = 3, η 0,82 — 128 кДж/кг
+     * при 0 °C на всасе, 137 при 20 °C
      * (§8.5.4).
      */
     public static double blowerWorkJPerKg(double pressureRatio, double inletK, double polytropicEff) {
