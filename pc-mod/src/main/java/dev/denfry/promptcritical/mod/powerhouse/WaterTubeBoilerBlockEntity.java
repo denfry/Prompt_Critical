@@ -202,6 +202,9 @@ public final class WaterTubeBoilerBlockEntity extends IronworksBlockEntity imple
         if (now % VALIDATE_PERIOD == Math.floorMod(worldPosition.asLong(), VALIDATE_PERIOD)) validate(b);
         WaterTubeUnit u = unit();
         if (u == null) return;
+        // наружный воздух: дутьё, тяга трубы, потери обмуровки (раз в 5 с — погода медленная)
+        if (now % 100 == 0 && level instanceof net.minecraft.server.level.ServerLevel sl)
+            u.setAmbient(dev.denfry.promptcritical.mod.environment.EnvironmentService.sample(sl, worldPosition, 2).airTempC() + 273.15);
         supplyFuel(u);
         supplyFeed(u);
         double fd = 0, id = 0;
