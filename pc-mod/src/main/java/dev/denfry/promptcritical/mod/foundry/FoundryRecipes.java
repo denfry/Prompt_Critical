@@ -34,6 +34,11 @@ public final class FoundryRecipes extends RecipeProvider {
         ShapelessRecipeBuilder.shapeless(RecipeCategory.MISC, PcItems.FOUNDRY_SAND.get(), 4)
                 .requires(Items.SAND, 3).requires(Items.CLAY_BALL)
                 .unlockedBy("has_sand", has(Items.SAND)).save(out, id("foundry_sand"));
+        // оловянная бронза: медь, сплавленная с касситеритом под углём (~10 % олова); единственный источник
+        // бронзы в моде без других модов — нужна тиглю для корпуса подшипника и вкладышей
+        ShapelessRecipeBuilder.shapeless(RecipeCategory.MISC, PcItems.BRONZE_INGOT.get(), 3)
+                .requires(Items.COPPER_INGOT, 3).requires(PcItems.RAW_CASSITERITE.get()).requires(ItemTags.COALS)
+                .unlockedBy("has_cassiterite", has(PcItems.RAW_CASSITERITE.get())).save(out, id("bronze_ingot"));
         ShapedRecipeBuilder.shaped(RecipeCategory.MISC, PcItems.CASTING_PATTERN.get())
                 .pattern(" P ").pattern("PSP").pattern(" P ").define('P', ItemTags.PLANKS).define('S', Items.STICK)
                 .unlockedBy("has_planks", has(ItemTags.PLANKS)).save(out, id("casting_pattern"));

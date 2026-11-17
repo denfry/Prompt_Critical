@@ -1,6 +1,7 @@
 package dev.denfry.promptcritical.mod.data;
 
 import dev.denfry.promptcritical.mod.PromptCritical;
+import dev.denfry.promptcritical.mod.compat.CommonTags;
 import dev.denfry.promptcritical.mod.foundry.FoundryTags;
 import dev.denfry.promptcritical.mod.block.PcBlock;
 import dev.denfry.promptcritical.mod.registry.PcBlocks;
@@ -12,6 +13,7 @@ import java.util.Set;
 import java.util.concurrent.CompletableFuture;
 import net.minecraft.core.HolderLookup;
 import net.minecraft.data.PackOutput;
+import net.minecraft.data.tags.FluidTagsProvider;
 import net.minecraft.data.tags.ItemTagsProvider;
 import net.minecraft.tags.BlockTags;
 import net.minecraft.tags.TagKey;
@@ -30,8 +32,10 @@ public final class PcTagProviders {
             Map.entry("magnetite_ore", "iron"), Map.entry("hematite_ore", "iron"), Map.entry("pyrolusite_ore", "manganese"),
             Map.entry("pentlandite_ore", "nickel"), Map.entry("chalcopyrite_ore", "copper"), Map.entry("sperrylite_ore", "platinum"),
             Map.entry("molybdenite_ore", "molybdenum"), Map.entry("sphalerite_ore", "zinc"), Map.entry("chromite_ore", "chromium"),
-            Map.entry("cassiterite_ore", "tin"), Map.entry("bauxite_ore", "aluminum"), Map.entry("coal_seam", "coal"));
-    private static final Set<String> IRON_TOOL = Set.of("pentlandite_ore", "sperrylite_ore", "molybdenite_ore", "chromite_ore");
+            Map.entry("cassiterite_ore", "tin"), Map.entry("bauxite_ore", "aluminum"), Map.entry("coal_seam", "coal"),
+            Map.entry("uraninite_ore", "uranium"), Map.entry("deepslate_uraninite_ore", "uranium"));
+    private static final Set<String> IRON_TOOL = Set.of("pentlandite_ore", "sperrylite_ore", "molybdenite_ore", "chromite_ore",
+            "uraninite_ore", "deepslate_uraninite_ore");
     private static final Set<String> AXE = Set.of("mine_support", "ventilation_door", "explosion_barrier", "document_lectern",
             "wooden_pole");
     private static final Set<String> SHOVEL = Set.of("fireclay", "sand_mold");
@@ -55,13 +59,15 @@ public final class PcTagProviders {
                 if (PcBlocks.oreDrops().containsKey(db)) {
                     tag(IRON_TOOL.contains(id) ? BlockTags.NEEDS_IRON_TOOL : BlockTags.NEEDS_STONE_TOOL).add(b);
                     tag(PcTags.Blocks.ORES).add(b);
-                    tag(PcTags.Blocks.common("ores/" + METAL.get(id))).add(b);
                 }
             }
             for (DeferredBlock<PcBlock> db : PcBlocks.selfAssayed()) {
                 tag(BlockTags.NEEDS_STONE_TOOL).add(db.get());
                 tag(PcTags.Blocks.ORES).add(db.get());
             }
+            // железные руды для маршрута I0: свои и любые c:ores/iron (свои в c:ores/<металл> — только в OpenCompatPack)
+            tag(PcTags.Blocks.IRON_ORES).add(PcBlocks.MAGNETITE_ORE.get(), PcBlocks.HEMATITE_ORE.get())
+                    .addOptionalTag(PcTags.Blocks.common("ores/iron"));
             // 08 §8.2.6: открытое пламя в выработке — источник воспламенения
             tag(PcTags.Blocks.OPEN_FLAME).addTag(BlockTags.FIRE).addTag(BlockTags.CAMPFIRES).addTag(BlockTags.CANDLES)
                     .add(Blocks.TORCH, Blocks.WALL_TORCH, Blocks.SOUL_TORCH, Blocks.SOUL_WALL_TORCH, Blocks.LANTERN,
@@ -101,17 +107,74 @@ public final class PcTagProviders {
             copy(BlockTags.WALLS, net.minecraft.tags.ItemTags.WALLS);
             FoundryTags.addItemTags(this::tag);
             dev.denfry.promptcritical.mod.ironworks.IronworksTags.addItemTags(this::tag);
+            CommonTags.addItemTags(this::tag);
+            // руды и сырьё мода — только в общих c:ores и c:raw_materials: в теги по металлам их не кладём, иначе
+            // Mekanism, IE и подобные удвоят их в слитки мимо цепочки мода (открытый вариант — OpenCompatPack)
+            for (DeferredItem<Item> raw : RAWS) tag(PcTags.Items.RAW_MATERIALS).add(raw.get());
+        }
+    }
+
+    private static final List<DeferredItem<Item>> RAWS = List.of(PcItems.RAW_MAGNETITE, PcItems.RAW_HEMATITE,
+            PcItems.RAW_PYROLUSITE, PcItems.RAW_PENTLANDITE, PcItems.RAW_CHALCOPYRITE, PcItems.RAW_SPERRYLITE,
+            PcItems.RAW_MOLYBDENITE, PcItems.RAW_SPHALERITE, PcItems.RAW_CHROMITE, PcItems.RAW_CASSITERITE, PcItems.RAW_BAUXITE,
+            PcItems.RAW_URANINITE);
+
+    /** Металл сырья {@code raw_<руда>}. */
+    private static String metalOfRaw(DeferredItem<Item> raw) {
+        return METAL.get(raw.getId().getPath().substring("raw_".length()) + "_ore");
+    }
+
+    /**
+     * Датапак открытой совместимости ({@code OpenCompatPack}): руды и сырьё мода в {@code c:ores/<металл>} и
+     * {@code c:raw_materials/<металл>} — для сборок, где переработка руд другими модами желательна.
+     */
+    public static final class OpenCompatBlockTags extends BlockTagsProvider {
+        public OpenCompatBlockTags(PackOutput output, CompletableFuture<HolderLookup.Provider> lookup, ExistingFileHelper efh) {
+            super(output, lookup, PromptCritical.MOD_ID, efh);
+        }
+
+        @Override
+        public String getName() {
+            return "Open compat block tags";
+        }
+
+        @Override
+        protected void addTags(HolderLookup.Provider provider) {
+            for (DeferredBlock<? extends Block> db : PcBlocks.oreDrops().keySet()) {
+                tag(PcTags.Blocks.common("ores/" + METAL.get(db.getId().getPath()))).add(db.get());
+            }
+        }
+    }
+
+    public static final class OpenCompatItemTags extends ItemTagsProvider {
+        public OpenCompatItemTags(PackOutput output, CompletableFuture<HolderLookup.Provider> lookup,
+                CompletableFuture<TagLookup<Block>> blockTags, ExistingFileHelper efh) {
+            super(output, lookup, blockTags, PromptCritical.MOD_ID, efh);
+        }
+
+        @Override
+        public String getName() {
+            return "Open compat item tags";
+        }
+
+        @Override
+        protected void addTags(HolderLookup.Provider provider) {
             for (String metal : Set.copyOf(METAL.values())) {
                 copy(PcTags.Blocks.common("ores/" + metal), PcTags.Items.common("ores/" + metal));
             }
-            List<DeferredItem<Item>> raws = List.of(PcItems.RAW_MAGNETITE, PcItems.RAW_HEMATITE, PcItems.RAW_PYROLUSITE,
-                    PcItems.RAW_PENTLANDITE, PcItems.RAW_CHALCOPYRITE, PcItems.RAW_SPERRYLITE, PcItems.RAW_MOLYBDENITE,
-                    PcItems.RAW_SPHALERITE, PcItems.RAW_CHROMITE, PcItems.RAW_CASSITERITE, PcItems.RAW_BAUXITE);
-            for (DeferredItem<Item> raw : raws) {
-                String ore = raw.getId().getPath().substring("raw_".length()) + "_ore";
-                tag(PcTags.Items.RAW_MATERIALS).add(raw.get());
-                tag(PcTags.Items.common("raw_materials/" + METAL.get(ore))).add(raw.get());
-            }
+            for (DeferredItem<Item> raw : RAWS) tag(PcTags.Items.common("raw_materials/" + metalOfRaw(raw))).add(raw.get());
+        }
+    }
+
+    /** Теги жидкостей: экспорт газов в {@code c:} ({@link CommonTags}). */
+    public static final class FluidTagProvider extends FluidTagsProvider {
+        public FluidTagProvider(PackOutput output, CompletableFuture<HolderLookup.Provider> lookup, ExistingFileHelper efh) {
+            super(output, lookup, PromptCritical.MOD_ID, efh);
+        }
+
+        @Override
+        protected void addTags(HolderLookup.Provider provider) {
+            CommonTags.addFluidTags(this::tag);
         }
     }
 }

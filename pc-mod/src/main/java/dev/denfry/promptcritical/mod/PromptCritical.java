@@ -49,6 +49,7 @@ public final class PromptCritical {
         SimBindings.register(modBus);
         FoundryBinding.register(modBus);
         dev.denfry.promptcritical.mod.ironworks.IronworksBinding.register(modBus);
+        dev.denfry.promptcritical.mod.reactor.ReactorBinding.register(modBus);
         dev.denfry.promptcritical.mod.powerhouse.PowerhouseBinding.register(modBus);
         dev.denfry.promptcritical.mod.steelworks.SteelworksBinding.register(modBus);
         dev.denfry.promptcritical.mod.ops.OpsBinding.register(modBus);
@@ -64,6 +65,7 @@ public final class PromptCritical {
         dev.denfry.promptcritical.mod.mine.MineLongwall.register(modBus);
         dev.denfry.promptcritical.mod.content.ContentRegistries.register(modBus);
         modBus.addListener(PcDataGen::gather);
+        dev.denfry.promptcritical.mod.compat.OpenCompatPack.register(modBus);
         if (FMLEnvironment.dist == Dist.CLIENT) PcClient.register(modBus);
         ApiHolder.install(new ApiImpl());
         LOGGER.info("Prompt Critical initialized (API v{})", PromptCriticalApi.CURRENT_API_VERSION);

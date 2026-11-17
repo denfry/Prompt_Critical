@@ -49,7 +49,7 @@
       "type": "obtain",
       "condition": {
         "item": "promptcritical:silica_brick",
-        "count": 32
+        "count": 64
       },
       "entry": "promptcritical:i1/coke_plant",
       "icon": "promptcritical:silica_brick",
@@ -68,7 +68,7 @@
       "type": "build",
       "condition": {
         "block": "promptcritical:coke_oven",
-        "count": 8
+        "count": 36
       },
       "entry": "promptcritical:i1/coke_plant",
       "icon": "promptcritical:coke_oven",
@@ -451,7 +451,8 @@
     {
       "id": "promptcritical:i1/generator_built",
       "requires": [
-        "promptcritical:i1/copper_wire"
+        "promptcritical:i1/copper_wire",
+        "promptcritical:i1/steel_plate"
       ],
       "type": "build",
       "condition": {
@@ -842,6 +843,171 @@
       "hint": "handbook.promptcritical.task.i1.recorded_chart.hint",
       "reward": {
         "xp": 15
+      }
+    },
+    {
+      "id": "promptcritical:i1/acheson_furnace",
+      "requires": [
+        "promptcritical:i1/first_sync"
+      ],
+      "type": "build",
+      "condition": {
+        "block": "promptcritical:acheson_furnace"
+      },
+      "entry": "promptcritical:i1/graphite_pile",
+      "icon": "promptcritical:acheson_furnace",
+      "title": "handbook.promptcritical.task.i1.acheson_furnace.title",
+      "text": "handbook.promptcritical.task.i1.acheson_furnace.text",
+      "hint": "handbook.promptcritical.task.i1.acheson_furnace.hint",
+      "reward": {
+        "xp": 20
+      }
+    },
+    {
+      "id": "promptcritical:i1/reactor_graphite",
+      "requires": [
+        "promptcritical:i1/acheson_furnace"
+      ],
+      "type": "obtain",
+      "condition": {
+        "item": "promptcritical:moderator_block_graphite",
+        "count": 64
+      },
+      "entry": "promptcritical:i1/graphite_pile",
+      "icon": "promptcritical:moderator_block_graphite",
+      "title": "handbook.promptcritical.task.i1.reactor_graphite.title",
+      "text": "handbook.promptcritical.task.i1.reactor_graphite.text",
+      "hint": "handbook.promptcritical.task.i1.reactor_graphite.hint",
+      "reward": {
+        "xp": 30
+      }
+    },
+    {
+      "id": "promptcritical:i1/pitchblende",
+      "requires": [
+        "promptcritical:i1/first_steel"
+      ],
+      "type": "obtain",
+      "condition": {
+        "item": "promptcritical:raw_uraninite",
+        "count": 16
+      },
+      "entry": "promptcritical:i1/graphite_pile",
+      "icon": "promptcritical:raw_uraninite",
+      "title": "handbook.promptcritical.task.i1.pitchblende.title",
+      "text": "handbook.promptcritical.task.i1.pitchblende.text",
+      "hint": "handbook.promptcritical.task.i1.pitchblende.hint",
+      "reward": {
+        "xp": 20
+      }
+    },
+    {
+      "id": "promptcritical:i1/uranium_slugs",
+      "requires": [
+        "promptcritical:i1/pitchblende"
+      ],
+      "type": "obtain",
+      "condition": {
+        "item": "promptcritical:uranium_slug",
+        "count": 64
+      },
+      "entry": "promptcritical:i1/graphite_pile",
+      "icon": "promptcritical:uranium_slug",
+      "title": "handbook.promptcritical.task.i1.uranium_slugs.title",
+      "text": "handbook.promptcritical.task.i1.uranium_slugs.text",
+      "hint": "handbook.promptcritical.task.i1.uranium_slugs.hint",
+      "reward": {
+        "xp": 30
+      }
+    },
+    {
+      "id": "promptcritical:i1/pile_desk",
+      "requires": [
+        "promptcritical:i1/reactor_graphite",
+        "promptcritical:i1/uranium_slugs"
+      ],
+      "type": "build",
+      "condition": {
+        "block": "promptcritical:reactor_controller"
+      },
+      "entry": "promptcritical:i1/graphite_pile",
+      "icon": "promptcritical:reactor_controller",
+      "title": "handbook.promptcritical.task.i1.pile_desk.title",
+      "text": "handbook.promptcritical.task.i1.pile_desk.text",
+      "hint": "handbook.promptcritical.task.i1.pile_desk.hint",
+      "reward": {
+        "xp": 20
+      }
+    },
+    {
+      "id": "promptcritical:i1/source_counts",
+      "requires": [
+        "promptcritical:i1/pile_desk"
+      ],
+      "type": "reach",
+      "condition": {
+        "event": "promptcritical:pile_state",
+        "predicate": {
+          "counts_cps": {
+            "min": 10
+          }
+        }
+      },
+      "entry": "promptcritical:i1/graphite_pile",
+      "icon": "promptcritical:neutron_detector",
+      "title": "handbook.promptcritical.task.i1.source_counts.title",
+      "text": "handbook.promptcritical.task.i1.source_counts.text",
+      "hint": "handbook.promptcritical.task.i1.source_counts.hint",
+      "reward": {
+        "xp": 20
+      }
+    },
+    {
+      "id": "promptcritical:i1/first_criticality",
+      "requires": [
+        "promptcritical:i1/source_counts"
+      ],
+      "type": "reach",
+      "condition": {
+        "event": "promptcritical:pile_state",
+        "predicate": {
+          "critical": {
+            "min": 0
+          }
+        }
+      },
+      "entry": "promptcritical:i1/graphite_pile",
+      "icon": "promptcritical:reactor_controller",
+      "title": "handbook.promptcritical.task.i1.first_criticality.title",
+      "text": "handbook.promptcritical.task.i1.first_criticality.text",
+      "hint": "handbook.promptcritical.task.i1.first_criticality.hint",
+      "reward": {
+        "xp": 60
+      }
+    },
+    {
+      "id": "promptcritical:i1/pile_steady",
+      "requires": [
+        "promptcritical:i1/first_criticality"
+      ],
+      "type": "reach",
+      "condition": {
+        "event": "promptcritical:pile_state",
+        "predicate": {
+          "power_w": {
+            "min": 10,
+            "max": 200
+          }
+        },
+        "duration_s": 300
+      },
+      "entry": "promptcritical:i1/graphite_pile",
+      "icon": "promptcritical:control_rod_drive",
+      "title": "handbook.promptcritical.task.i1.pile_steady.title",
+      "text": "handbook.promptcritical.task.i1.pile_steady.text",
+      "hint": "handbook.promptcritical.task.i1.pile_steady.hint",
+      "reward": {
+        "xp": 40
       }
     }
   ]

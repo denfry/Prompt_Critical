@@ -94,6 +94,17 @@ public final class PointKinetics {
         lastSource = 0;
     }
 
+    /**
+     * Восстановить состояние из сохранения: n и предшественники как были (не равновесие — после АЗ они держат
+     * мощность на спаде). Лишние значения игнорируются, недостающие группы — в равновесии с n.
+     */
+    public void restore(double n, double[] precursors) {
+        resetToEquilibrium(n);
+        for (int i = 0; i < Math.min(groups, precursors.length); i++) {
+            if (Double.isFinite(precursors[i]) && precursors[i] >= 0) c[i] = precursors[i];
+        }
+    }
+
     /** Один FAST-тик; подшаги выбираются автоматически. Возвращает n в конце тика. */
     public double step(double dt, double reactivity, double sourceNormalized) {
         return step(dt, reactivity, sourceNormalized, 0);

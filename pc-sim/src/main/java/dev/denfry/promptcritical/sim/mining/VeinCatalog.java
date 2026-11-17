@@ -41,6 +41,8 @@ public final class VeinCatalog {
     private static final OreGrade CASSITERITE = OreGrade.of("cassiterite_ore", "Sn", 0.0125, 0.005, 0.02, 0.9, 0);
     private static final OreGrade FLUORITE = OreGrade.of("fluorite_ore", "CaF2", 0.30, 0.15, 0.60, 0.5, 0);
     private static final OreGrade CHROMITE = OreGrade.of("chromite_ore", "Cr2O3", 0.425, 0.35, 0.50, 0.5, 0);
+    /** Урановая смолка гидротермальных жил (Яхимов, Шинколобве): U₃O₈ 0,2–5 %, богатые гнёзда — десятки процентов. */
+    private static final OreGrade URANINITE = OreGrade.of("uraninite_ore", "U3O8", 0.01, 0.002, 0.05, 0.9, 0);
 
     /** Каталог M2 в порядке таблицы 08 §8.1.2. */
     public static final List<VeinType> M2 = List.of(
@@ -61,7 +63,10 @@ public final class VeinCatalog {
             new VeinType("quartz_greisen", false, roles(QUARTZ, CASSITERITE, FLUORITE, MOLYBDENITE), -32, 64, 24, 0.50,
                     7, Map.of(BiomeClass.MOUNTAINS, 2.0)),
             new VeinType("chromite_ultramafic", false, roles(CHROMITE, MAGNETITE, PYRITE, SPERRYLITE), -64, 0, -40, 0.45,
-                    5, Map.of(BiomeClass.MOUNTAINS, 1.5)));
+                    5, Map.of(BiomeClass.MOUNTAINS, 1.5)),
+            // веса нормируются по сумме: в ещё не созданных чанках старых миров выбор типов жил сдвигается
+            new VeinType("pitchblende", false, roles(URANINITE, GALENA, PYRITE, QUARTZ), -48, 32, -8, 0.40, 4,
+                    Map.of(BiomeClass.MOUNTAINS, 1.5, BiomeClass.TAIGA, 1.0, BiomeClass.TUNDRA, 1.0)));
 
     private VeinCatalog() {}
 

@@ -127,6 +127,27 @@ public final class FoundryGameTests {
         });
     }
 
+    /** Бронза есть без других модов: крафт из меди, касситерита и угля, тигель её принимает (вкладыши подшипников I0). */
+    @GameTest(template = SMALL)
+    public static void bronzeIsCraftedFromCopperAndCassiteriteAndFitsTheCrucible(GameTestHelper h) {
+        var grid = new java.util.ArrayList<ItemStack>(java.util.Collections.nCopies(9, ItemStack.EMPTY));
+        grid.set(0, new ItemStack(Items.COPPER_INGOT));
+        grid.set(1, new ItemStack(Items.COPPER_INGOT));
+        grid.set(2, new ItemStack(Items.COPPER_INGOT));
+        grid.set(3, new ItemStack(PcItems.RAW_CASSITERITE.get()));
+        grid.set(4, new ItemStack(Items.CHARCOAL));
+        var input = net.minecraft.world.item.crafting.CraftingInput.of(3, 3, grid);
+        var recipe = h.getLevel().getRecipeManager()
+                .getRecipeFor(net.minecraft.world.item.crafting.RecipeType.CRAFTING, input, h.getLevel());
+        h.assertTrue(recipe.isPresent(), "bronze recipe");
+        ItemStack out = recipe.get().value().assemble(input, h.getLevel().registryAccess());
+        h.assertTrue(out.is(PcItems.BRONZE_INGOT.get()) && out.getCount() == 3, "3 bronze ingots, got " + out);
+        h.assertTrue(out.is(dev.denfry.promptcritical.mod.foundry.FoundryTags.BRONZE_INGOTS), "c:ingots/bronze");
+        h.setBlock(new BlockPos(1, 1, 1), PcBlocks.CRUCIBLE_FURNACE.get().defaultBlockState());
+        h.assertTrue(h.getBlockEntity(new BlockPos(1, 1, 1)) instanceof FoundryDevice d && d.accepts(out), "crucible takes bronze");
+        h.succeed();
+    }
+
     /** Токарный на валу 64 об/мин: корпус задвижки точится ≈ 41 с, резец изнашивается, нагрузка видна в сети Create. */
     @GameTest(template = LARGE, timeoutTicks = 1400)
     public static void latheTurnsACastingOnACreateShaft(GameTestHelper h) {

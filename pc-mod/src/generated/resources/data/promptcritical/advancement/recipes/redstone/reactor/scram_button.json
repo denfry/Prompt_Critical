@@ -1,0 +1,32 @@
+{
+  "parent": "minecraft:recipes/root",
+  "criteria": {
+    "has_controller": {
+      "conditions": {
+        "items": [
+          {
+            "items": "promptcritical:reactor_controller"
+          }
+        ]
+      },
+      "trigger": "minecraft:inventory_changed"
+    },
+    "has_the_recipe": {
+      "conditions": {
+        "recipe": "promptcritical:reactor/scram_button"
+      },
+      "trigger": "minecraft:recipe_unlocked"
+    }
+  },
+  "requirements": [
+    [
+      "has_the_recipe",
+      "has_controller"
+    ]
+  ],
+  "rewards": {
+    "recipes": [
+      "promptcritical:reactor/scram_button"
+    ]
+  }
+}

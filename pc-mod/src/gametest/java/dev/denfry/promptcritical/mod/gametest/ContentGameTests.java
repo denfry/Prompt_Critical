@@ -440,7 +440,8 @@ public final class ContentGameTests {
     private static final Set<String> ROUTE_EVENTS = Set.of(SteamPlant.ENGINE_RUNNING, SteamPlant.BOILER_STATE, SteamPlant.ENGINE_STATE,
             SimAchievements.CANARY_PLACED, SimAchievements.CANARY_REVIVED, SimAchievements.COKE_PUSHED, SimAchievements.IRON_TAPPED,
             SimAchievements.STEEL_TAPPED, SimAchievements.SEAMLESS_PIPE, GridSubsystem.SYNC_CLOSED, GridSubsystem.LOAD_SHED,
-            AutomationSubsystem.RELAY_LOGIC, AutomationSubsystem.ANALOG_LOOP_HELD);
+            AutomationSubsystem.RELAY_LOGIC, AutomationSubsystem.ANALOG_LOOP_HELD,
+            dev.denfry.promptcritical.sim.reactor.ReactorSubsystem.PILE_STATE);
 
     private static RouteTask task(String id) {
         RouteTask t = HandbookManager.data().tasks().get(PromptCritical.id(id));

@@ -1,5 +1,6 @@
 package dev.denfry.promptcritical.mod.data;
 
+import dev.denfry.promptcritical.mod.compat.OpenCompatPack;
 import dev.denfry.promptcritical.mod.foundry.FoundryRecipes;
 
 import java.util.List;
@@ -35,12 +36,19 @@ public final class PcDataGen {
         PcTagProviders.BlockTagProvider blockTags = gen.addProvider(event.includeServer(),
                 new PcTagProviders.BlockTagProvider(out, lookup, efh));
         gen.addProvider(event.includeServer(), new PcTagProviders.ItemTagProvider(out, lookup, blockTags.contentsGetter(), efh));
+        gen.addProvider(event.includeServer(), new PcTagProviders.FluidTagProvider(out, lookup, efh));
+        PackOutput openCompat = new PackOutput(out.getOutputFolder().resolve(OpenCompatPack.SOURCE));
+        PcTagProviders.OpenCompatBlockTags openBlocks = gen.addProvider(event.includeServer(),
+                new PcTagProviders.OpenCompatBlockTags(openCompat, lookup, efh));
+        gen.addProvider(event.includeServer(),
+                new PcTagProviders.OpenCompatItemTags(openCompat, lookup, openBlocks.contentsGetter(), efh));
         gen.addProvider(event.includeServer(), new FoundryRecipes(out, lookup));
         gen.addProvider(event.includeServer(), dev.denfry.promptcritical.mod.boiler.BoilerRecipes.provider(out, lookup));
         gen.addProvider(event.includeServer(), dev.denfry.promptcritical.mod.mine.HoistRecipes.provider(out, lookup));
         gen.addProvider(event.includeServer(), dev.denfry.promptcritical.mod.mine.MineSafetyRecipes.provider(out, lookup));
         gen.addProvider(event.includeServer(), ContentRecipes.provider(out, lookup));
         gen.addProvider(event.includeServer(), dev.denfry.promptcritical.mod.ironworks.IronworksRecipes.provider(out, lookup));
+        gen.addProvider(event.includeServer(), dev.denfry.promptcritical.mod.reactor.ReactorRecipes.provider(out, lookup));
         gen.addProvider(event.includeServer(), dev.denfry.promptcritical.mod.steelworks.SteelworksRecipes.provider(out, lookup));
         gen.addProvider(event.includeServer(), dev.denfry.promptcritical.mod.ops.OpsRecipes.provider(out, lookup));
         gen.addProvider(event.includeServer(), dev.denfry.promptcritical.mod.powerhouse.PowerhouseRecipes.provider(out, lookup));

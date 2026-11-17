@@ -12,7 +12,7 @@ Six lamps on the face of the panel show the colour of the worst fault in their c
 ## Faults
 
 - **Bearing.** The steam engine, fan, pump and hoist run on plain bearings with bronze shells. Their life is about 12 hours of play when greased with tallow. At the end the shell seizes and the machine stops. Repair: a [bronze bearing shell](item:promptcritical:bronze_bearing_shell), machine stopped, 60 s. Shells are cast in your own foundry: one bronze bearing housing casting gives two.
-- **Lubrication.** An [oil can](item:promptcritical:oil_can) with [tallow](item:promptcritical:tallow) in your inventory, allowed while running. Without lubrication the bearing wears many times faster. Tallow comes from mixing rotten flesh in Create.
+- **Lubrication.** An [oil can](item:promptcritical:oil_can) with [tallow](item:promptcritical:tallow) in your inventory, allowed while running. Without lubrication the bearing wears many times faster. Tallow is rendered from raw mutton or beef in a furnace, or mixed from rotten flesh in a heated Create basin.
 - **Scale** in the fire-tube boiler: a [scraper](item:promptcritical:boiler_scraper) on a boiler that is stopped, cooled and drained. The boiler drain is opened on its panel.
 - **Gland** on the engine rod or pump shaft steams or leaks. Tighten it with a [wrench](item:promptcritical:torque_wrench) while running, up to three times; then replace the [packing](item:promptcritical:gland_packing) with the machine stopped.
 - **Impeller** of the drainage pump is eaten by acid mine water three times faster than by neutral water. Head falls below the passport. Replace with a [pump impeller](item:promptcritical:pump_impeller), stopped, 120 s.

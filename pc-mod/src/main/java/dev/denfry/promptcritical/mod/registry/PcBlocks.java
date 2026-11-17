@@ -197,6 +197,12 @@ public final class PcBlocks {
                 .sound(SoundType.METAL).noOcclusion();
     }
 
+    /** Графит ядерной чистоты: кладка котла, колется киркой. */
+    private static Properties graphite() {
+        return Properties.of().mapColor(MapColor.COLOR_BLACK).instrument(NoteBlockInstrument.BASEDRUM)
+                .requiresCorrectToolForDrops().strength(2.0f, 6.0f).sound(SoundType.STONE).noOcclusion();
+    }
+
     private static Properties lit(Properties p) {
         return p.lightLevel(s -> s.hasProperty(BlockStateProperties.LIT) && s.getValue(BlockStateProperties.LIT) ? 13 : 0);
     }
@@ -295,6 +301,28 @@ public final class PcBlocks {
     public static final DeferredBlock<PcBlock> GALENA_ORE = ore02("galena_ore");
     public static final DeferredBlock<PcBlock> DEEPSLATE_GALENA_ORE = ore02("deepslate_galena_ore");
     public static final DeferredBlock<PcBlock> FLUORITE_ORE = ore02("fluorite_ore");
+    // урановая смолка в гидротермальных жилах (уранинит, I1): выпадает сырой уранинит
+    public static final DeferredBlock<PcBlock> URANINITE_ORE = oreBlock("uraninite_ore", "raw_uraninite", Spec.of());
+    public static final DeferredBlock<PcBlock> DEEPSLATE_URANINITE_ORE = oreBlock("deepslate_uraninite_ore", "raw_uraninite",
+            Spec.of());
+
+    // --- графитовый котёл T0 (I1, 01 §1.14.4) ---
+    public static final DeferredBlock<PcBlock> MODERATOR_BLOCK_GRAPHITE = block("moderator_block_graphite", graphite(), Spec.of());
+    public static final DeferredBlock<PcDeviceBlock> FUEL_CHANNEL = device("fuel_channel", graphite(), Spec.of(),
+            dev.denfry.promptcritical.mod.foundry.FoundryBlock.with(dev.denfry.promptcritical.mod.reactor.FuelChannelBlockEntity::new));
+    public static final DeferredBlock<PcBlock> CONTROL_ROD_CHANNEL = block("control_rod_channel", graphite(), Spec.of());
+    public static final DeferredBlock<PcBlock> STARTUP_SOURCE = block("startup_source", instrument(), Spec.of());
+    public static final DeferredBlock<PcBlock> CONTROL_ROD_DRIVE = block("control_rod_drive", machine(), Spec.facing());
+    public static final DeferredBlock<PcBlock> ZIP_ROD_WINCH = block("zip_rod_winch", machine(), Spec.facing());
+    public static final DeferredBlock<PcBlock> NEUTRON_DETECTOR = block("neutron_detector", instrument(), Spec.facing());
+    public static final DeferredBlock<PcDeviceBlock> REACTOR_CONTROLLER = device("reactor_controller", machine(), Spec.facing(),
+            dev.denfry.promptcritical.mod.foundry.FoundryBlock.with(dev.denfry.promptcritical.mod.reactor.PileControllerBlockEntity::new));
+    public static final DeferredBlock<dev.denfry.promptcritical.mod.reactor.ScramButtonBlock> SCRAM_BUTTON = withItem(BLOCKS.registerBlock(
+            "scram_button", p -> dev.denfry.promptcritical.mod.reactor.ScramButtonBlock.create(p, Spec.facing(BlockStateProperties.POWERED)),
+            instrument()));
+    public static final DeferredBlock<PcDeviceBlock> ACHESON_FURNACE = device("acheson_furnace", lit(brick()),
+            Spec.facing(BlockStateProperties.LIT),
+            dev.denfry.promptcritical.mod.foundry.FoundryBlock.with(dev.denfry.promptcritical.mod.reactor.AchesonFurnaceBlockEntity::new));
 
     // --- шахта (08 §8.2) ---
     public static final DeferredBlock<PcBlock> MINE_SUPPORT = block("mine_support", wood(),

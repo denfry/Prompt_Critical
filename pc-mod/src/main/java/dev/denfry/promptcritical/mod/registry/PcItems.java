@@ -58,6 +58,8 @@ public final class PcItems {
     public static final DeferredItem<Item> STONE_DUST = item("stone_dust", 64);
     public static final DeferredItem<Item> PIG_IRON = item("pig_iron", 64);
     public static final DeferredItem<Item> FOUNDRY_SAND = item("foundry_sand", 64);
+    /** Оловянная бронза для тигля: медь, сплавленная с касситеритом под углём (вкладыши подшипников I0). */
+    public static final DeferredItem<Item> BRONZE_INGOT = item("bronze_ingot", 64);
     public static final DeferredItem<CastingPatternItem> CASTING_PATTERN = registered(ITEMS.registerItem("casting_pattern",
             CastingPatternItem::new, new Item.Properties().stacksTo(16)));
     public static final DeferredItem<Item> CASTING = item("casting", 16);
@@ -106,6 +108,18 @@ public final class PcItems {
     public static final DeferredItem<Item> COAL_TAR_PITCH = item("coal_tar_pitch", 64);
     /** Электрод: компонент {@code electrode_state} (сырой или обожжённый, трещины). */
     public static final DeferredItem<Item> GREEN_ELECTRODE = item("green_electrode", 16);
+    /** Графитированный электрод из печи Ачесона: сырьё реакторного графита. */
+    public static final DeferredItem<Item> GRAPHITE_ELECTRODE = item("graphite_electrode", 16);
+
+    // --- уран для графитового котла T0 (I1) ---
+    public static final DeferredItem<Item> RAW_URANINITE = item("raw_uraninite", 64);
+    public static final DeferredItem<Item> CRUSHED_URANIUM_ORE = item("crushed_uranium_ore", 64);
+    public static final DeferredItem<Item> GROUND_URANIUM_ORE = item("ground_uranium_ore", 64);
+    public static final DeferredItem<Item> YELLOWCAKE = item("yellowcake", 64);
+    public static final DeferredItem<Item> UO2_POWDER = item("uo2_powder", 64);
+    public static final DeferredItem<Item> MAGNESIUM_INGOT = item("magnesium_ingot", 64);
+    /** Блочок природного металлического урана: кассета топливного канала котла. */
+    public static final DeferredItem<Item> URANIUM_SLUG = item("uranium_slug", 16);
     public static final DeferredItem<Item> AMMONIUM_SULFATE = item("ammonium_sulfate", 64);
     public static final DeferredItem<Item> IRON_ORE_CONCENTRATE = item("iron_ore_concentrate", 64);
     /** Агломерат: компонент {@code sinter_assay} (Fe, SiO₂, CaO). */
