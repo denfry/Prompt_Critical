@@ -226,6 +226,110 @@ public final class PanelArt {
         paint(g, font, e.label(), x + 16, y + 3, room);
     }
 
+    /** Нарисованный фон поля машины: картинка ровно {@code w}×{@code h}. */
+    public static void art(GuiGraphics g, ResourceLocation texture, int x, int y, int w, int h) {
+        g.blit(texture, x, y, 0, 0, w, h, w, h);
+    }
+
+    /**
+     * Глазок в топку: чугунная рамка, колосники, слой топлива долей {@code bed}, при горении — жар по слою, языки
+     * пламени и отсвет на своде, при неполном горении — дым. Мерцание от времени, без случайных чисел: картина
+     * повторяется от кадра к кадру, пока не меняются показания.
+     */
+    public static void firebox(GuiGraphics g, Font font, PanelLayout.Firebox e, double bed, boolean lit, boolean smoky,
+            int x, int y, int room) {
+        int w = e.w(), h = e.h();
+        g.fill(x, y, x + w, y + h, 0xFF26282A);
+        g.fill(x, y, x + w, y + 1, 0xFF4A4D50);
+        g.fill(x, y, x + 1, y + h, 0xFF4A4D50);
+        g.fill(x, y + h - 1, x + w, y + h, 0xFF141516);
+        g.fill(x + w - 1, y, x + w, y + h, 0xFF141516);
+        int ix0 = x + 3, iy0 = y + 3, ix1 = x + w - 3, iy1 = y + h - 3;
+        double t = net.minecraft.Util.getMillis() / 1000.0;
+        float glow = lit ? (float) (0.85 + 0.15 * Math.sin(t * 7.3) * Math.sin(t * 2.9)) : 0;
+        g.fillGradient(ix0, iy0, ix1, iy1, lit ? mix(0xFF2A0C04, 0xFF000000, 1 - glow) : 0xFF0C0B0A,
+                lit ? mix(0xFF8A2A08, 0xFF000000, 1 - glow) : 0xFF151312);
+        int grate = iy1 - 4;
+        for (int gx = ix0; gx < ix1; gx += 3) {
+            g.fill(gx, grate, Math.min(gx + 2, ix1), iy1, 0xFF3A3836);
+            if (gx + 2 < ix1) g.fill(gx + 2, grate, gx + 3, iy1, lit ? mix(0xFFFF8020, 0xFF200800, 1 - glow) : 0xFF050404);
+        }
+        int bedH = (int) Math.round(Math.max(0, Math.min(1, bed)) * (grate - iy0 - 8));
+        int top = grate - bedH;
+        for (int cy = top; cy < grate; cy += 2) {
+            for (int cx = ix0; cx < ix1; cx += 2) {
+                int n = hash(cx - x, cy - y);
+                int c;
+                if (!lit) c = 0xFF000000 | grey(22 + (n & 15));
+                else {
+                    // воздух идёт снизу через колосники: ниже по слою — жарче, свежий уголь сверху темнее
+                    double heat = 0.25 + 0.45 * (cy - top) / Math.max(4.0, bedH) + 0.4 * ((n & 63) / 63.0)
+                            + 0.1 * Math.sin(t * 5 + (n & 7));
+                    c = heat > 0.82 ? 0xFFFFD27A : heat > 0.62 ? 0xFFFF9A2E : heat > 0.42 ? 0xFFD0461A : 0xFF5A1C10;
+                }
+                g.fill(cx, cy, Math.min(cx + 2, ix1), Math.min(cy + 2, grate), c);
+            }
+        }
+        if (lit && bedH > 0) {
+            for (int k = 0; k < 7; k++) {
+                int fx = ix0 + 3 + k * (ix1 - ix0 - 6) / 7;
+                double s = 0.5 + 0.5 * Math.sin(t * (4.1 + k * 0.7) + k * 1.9);
+                int fh = (int) ((top - iy0) * (0.35 + 0.45 * s) * Math.min(1, bed * 3));
+                g.fillGradient(fx, top - fh, fx + 3, top, 0x00FF7A20, 0xD0FFB040);
+                g.fillGradient(fx + 1, top - fh / 2, fx + 2, top, 0x00FFF0C0, 0xE0FFE8A0);
+            }
+        }
+        if (smoky) g.fillGradient(ix0, iy0, ix1, top, 0xA0403A36, 0x20403A36);
+        g.fill(ix0, iy0, ix1, iy0 + 1, 0x60000000);
+        paintCentered(g, font, e.label(), x + w / 2, y + h + 2, room);
+    }
+
+    /** U-образный тягомер: доска со шкалой в мм вод. ст., два стеклянных колена, подкрашенная вода. */
+    public static void utube(GuiGraphics g, Font font, PanelLayout.UTube e, double draftPa, int x, int y, int room) {
+        int w = PanelLayout.UTube.W, h = e.h();
+        g.fill(x, y, x + w, y + h, 0xFF6A5232);
+        g.fill(x + 1, y + 1, x + w - 1, y + h - 1, 0xFFE4DCC4);
+        int lx = x + 5, rx = x + w - 9, top = y + 4, bottom = y + h - 6, mid = (top + bottom) / 2;
+        double half = (bottom - top) / 2.0 - 2;
+        double mmFull = e.max() / 9.80665;
+        for (int mm = -(int) mmFull; mm <= (int) mmFull; mm++) {
+            int ty = mid - (int) Math.round(mm / mmFull * half);
+            int len = mm % 5 == 0 ? 4 : 2;
+            g.fill(x + w / 2 - len / 2, ty, x + w / 2 - len / 2 + len, ty + 1, mm == 0 ? 0xFF1C1C1C : 0xFF6E665A);
+        }
+        double d = Math.max(-1.05, Math.min(1.05, draftPa / e.max())) * half / 2;
+        int lLevel = mid - (int) Math.round(d), rLevel = mid + (int) Math.round(d);
+        int water = 0xFFB0281E;
+        g.fill(lx, top, lx + 4, bottom, 0x50FFFFFF);
+        g.fill(rx, top, rx + 4, bottom, 0x50FFFFFF);
+        g.fill(lx + 1, lLevel, lx + 3, bottom + 2, water);
+        g.fill(rx + 1, rLevel, rx + 3, bottom + 2, water);
+        g.fill(lx + 1, bottom + 1, rx + 3, bottom + 3, water);
+        g.fill(lx, bottom + 3, rx + 4, bottom + 4, 0xFF8A8478);
+        g.fill(lx + 1, lLevel, lx + 3, lLevel + 1, lighten(water, 0.4f));
+        g.fill(rx + 1, rLevel, rx + 3, rLevel + 1, lighten(water, 0.4f));
+        g.fill(lx, top, lx + 1, bottom, 0x60FFFFFF);
+        g.fill(rx, top, rx + 1, bottom, 0x60FFFFFF);
+        paintCentered(g, font, e.label(), x + w / 2, y + h + 2, room);
+    }
+
+    private static int hash(int a, int b) {
+        int h = a * 73856093 ^ b * 19349663;
+        h ^= h >>> 13;
+        h *= 0x5bd1e995;
+        return (h ^ h >>> 15) & 0x7fffffff;
+    }
+
+    private static int grey(int v) {
+        return v << 16 | v << 8 | v;
+    }
+
+    private static int mix(int a, int b, float k) {
+        int r = (int) ((a >> 16 & 255) * (1 - k) + (b >> 16 & 255) * k), gr = (int) ((a >> 8 & 255) * (1 - k) + (b >> 8 & 255) * k),
+                bl = (int) ((a & 255) * (1 - k) + (b & 255) * k);
+        return a & 0xFF000000 | r << 16 | gr << 8 | bl;
+    }
+
     public static int lighten(int argb, float k) {
         int r = argb >> 16 & 255, gr = argb >> 8 & 255, b = argb & 255;
         return argb & 0xFF000000 | (int) (r + (255 - r) * k) << 16 | (int) (gr + (255 - gr) * k) << 8 | (int) (b + (255 - b) * k);

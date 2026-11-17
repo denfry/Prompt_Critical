@@ -135,6 +135,20 @@ public final class GuiCheck {
                         j.addProperty("tw", font.width(lp.label()));
                         j.addProperty("t", lp.label().getString());
                     }
+                    case PanelLayout.Firebox f -> {
+                        j.addProperty("k", "firebox");
+                        j.addProperty("w", f.w());
+                        j.addProperty("h", f.h());
+                        j.addProperty("tw", font.width(f.label()));
+                        j.addProperty("t", f.label().getString());
+                    }
+                    case PanelLayout.UTube u -> {
+                        j.addProperty("k", "utube");
+                        j.addProperty("w", PanelLayout.UTube.W);
+                        j.addProperty("h", u.h());
+                        j.addProperty("tw", font.width(u.label()));
+                        j.addProperty("t", u.label().getString());
+                    }
                     case PanelLayout.Readout r -> {
                         j.addProperty("k", "readout");
                         j.addProperty("w", r.w());

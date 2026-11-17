@@ -5,6 +5,7 @@ import java.util.List;
 import java.util.function.Function;
 import java.util.function.Predicate;
 import net.minecraft.network.chat.Component;
+import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.item.ItemStack;
 import org.jetbrains.annotations.Nullable;
 
@@ -26,6 +27,9 @@ public final class PanelLayout {
     public final boolean inventory;
     public final List<Element> elements;
     public final List<SlotSpec> slots;
+    /** Свой фон поля машины (картинка width×height, рисуется вместо крашеной панели); {@code null} — общая панель. */
+    @Nullable
+    public final ResourceLocation art;
 
     private PanelLayout(Builder b) {
         this.id = b.id;
@@ -35,6 +39,7 @@ public final class PanelLayout {
         this.inventory = b.inventory;
         this.elements = List.copyOf(b.elements);
         this.slots = List.copyOf(b.slots);
+        this.art = b.art;
     }
 
     /** Ширина отсека инвентаря справа от поля, когда щит с инвентарём снизу не помещается по высоте экрана. */
@@ -86,7 +91,7 @@ public final class PanelLayout {
     public interface Tip extends Function<PanelValues, Component> {
     }
 
-    public sealed interface Element permits Dial, Scope, Glass, Bar, Lamp, Readout, Caption, Button {
+    public sealed interface Element permits Dial, Scope, Glass, Bar, Lamp, Readout, Caption, Button, Firebox, UTube {
         int x();
 
         int y();
@@ -138,6 +143,22 @@ public final class PanelLayout {
     public record Button(int x, int y, int w, int id, Component label, @Nullable Component tip) implements Element {
     }
 
+    /**
+     * Глазок в топку: решётка, слой топлива высотой по каналу {@code bedCh} / {@code bedScale} из {@code bedMax}, жар и пламя,
+     * пока установлен бит {@code litBit} канала {@code flagsCh}, дым при бите {@code smokyBit}.
+     */
+    public record Firebox(int x, int y, int w, int h, int bedCh, double bedScale, double bedMax, int flagsCh, int litBit,
+            int smokyBit, Component label, @Nullable Tip tip) implements Element {
+    }
+
+    /**
+     * U-образный тягомер с подкрашенной водой: разрежение канала {@code ch} / {@code scale} в паскалях поднимает воду в
+     * колене, соединённом с газоходом; шкала ±{@code max} Па в миллиметрах водяного столба.
+     */
+    public record UTube(int x, int y, int h, int ch, double scale, double max, Component label, @Nullable Tip tip) implements Element {
+        public static final int W = 24;
+    }
+
     public enum LampColor { GREEN, RED, AMBER, WHITE }
 
     /** Слот машины: индекс в складе хоста, выход (класть нельзя), что принимает (проверяется и на клиенте). */
@@ -150,6 +171,8 @@ public final class PanelLayout {
         private final List<Element> elements = new ArrayList<>();
         private final List<SlotSpec> slots = new ArrayList<>();
         private boolean inventory = true;
+        @Nullable
+        private ResourceLocation art;
 
         private Builder(String id, int width, int height, int channels) {
             this.id = id;
@@ -197,6 +220,23 @@ public final class PanelLayout {
 
         public Builder button(int x, int y, int w, int id, Component label, @Nullable Component tip) {
             elements.add(new Button(x, y, w, id, label, tip));
+            return this;
+        }
+
+        public Builder firebox(int x, int y, int w, int h, int bedCh, double bedScale, double bedMax, int flagsCh, int litBit,
+                int smokyBit, Component label, @Nullable Tip tip) {
+            elements.add(new Firebox(x, y, w, h, bedCh, bedScale, bedMax, flagsCh, litBit, smokyBit, label, tip));
+            return this;
+        }
+
+        public Builder utube(int x, int y, int h, int ch, double scale, double max, Component label, @Nullable Tip tip) {
+            elements.add(new UTube(x, y, h, ch, scale, max, label, tip));
+            return this;
+        }
+
+        /** Нарисованный фон поля машины: {@code textures/gui/panel/<id>.png} размером с поле. */
+        public Builder art(ResourceLocation texture) {
+            art = texture;
             return this;
         }
 

@@ -1,5 +1,6 @@
 package dev.denfry.promptcritical.mod.boiler;
 
+import dev.denfry.promptcritical.mod.PromptCritical;
 import dev.denfry.promptcritical.mod.panel.PanelLayout;
 import dev.denfry.promptcritical.mod.panel.PanelLayout.LampColor;
 import dev.denfry.promptcritical.mod.panel.PanelText;
@@ -61,8 +62,8 @@ public final class BoilerPanels {
                     "Давление пара %s МПа (рабочее %s, клапан открывается при %s)"),
             GLASS_TIP = PanelText.tr("boiler.glass_tip", "Gauge glass %s%% · red line — furnace crown and fusible plug",
                     "Водоуказательное стекло %s%% · красная черта — потолок жаровой трубы и пробка"),
-            DRAFT_TIP = PanelText.tr("boiler.draft_tip", "Chimney draft %s Pa — more chimney, more air",
-                    "Тяга трубы %s Па — выше труба, больше воздуха"),
+            DRAFT_TIP = PanelText.tr("boiler.draft_tip", "Chimney draft %s Pa (%s mm w.g.) — more chimney, more air",
+                    "Тяга трубы %s Па (%s мм вод. ст.) — выше труба, больше воздуха"),
             FLUE_TIP = PanelText.tr("boiler.flue_tip", "Flue gas leaving the boiler %s °C", "Уходящие газы %s °C"),
             BED_TIP = PanelText.tr("boiler.bed_tip", "Coal on the grate %s of %s kg", "Угля на решётке %s из %s кг"),
             FEED_TIP = PanelText.tr("boiler.feed_tip", "Feed water %s of %s L — fill by pipe or bucket",
@@ -105,32 +106,38 @@ public final class BoilerPanels {
             STOKER_STATUS = PanelText.tr("stoker.status", "Shaft %s rpm · bed %s kg", "Вал %s об/мин · слой %s кг"),
             STOKER_NO_BOILER = PanelText.tr("stoker.no_boiler", "Back the stoker onto a boiler", "Решётку нужно примкнуть задом к котлу");
 
-    public static final PanelLayout BOILER = PanelLayout.builder("fire_tube_boiler", 220, 178, B_CHANNELS)
+    /**
+     * Фронт котла: манометр, водоуказательное стекло, глазок в топку, U-образный тягомер, термометр уходящих газов.
+     * Фон нарисован под эту раскладку ({@code art/blockbench/boilers/fire_tube_boiler.author.js}, {@code FTB.paintGui}):
+     * при переносе приборов перерисуйте его.
+     */
+    public static final PanelLayout BOILER = PanelLayout.builder("fire_tube_boiler", 240, 202, B_CHANNELS)
+            .art(PromptCritical.id("textures/gui/panel/fire_tube_boiler.png"))
             .dial(8, 24, true, B_P_KPA, 1000, 1.6, 1.32, 2, MPA.get(), PRESSURE.get(),
                     v -> PRESSURE_TIP.get(v.num(B_P_KPA, 1000, 2), "1.20", v.num(B_RELIEF_KPA, 1000, 2)))
-            .glass(80, 24, 74, B_GLASS_PERMIL, 0xFF3F78B8, (0.45 - FireTubeBoilerBlockEntity.GLASS_BOTTOM_M) / FireTubeBoilerBlockEntity.GLASS_SPAN_M,
+            .glass(82, 24, 76, B_GLASS_PERMIL, 0xFF3F78B8, (0.45 - FireTubeBoilerBlockEntity.GLASS_BOTTOM_M) / FireTubeBoilerBlockEntity.GLASS_SPAN_M,
                     (0.67 - FireTubeBoilerBlockEntity.GLASS_BOTTOM_M) / FireTubeBoilerBlockEntity.GLASS_SPAN_M, GLASS.get(),
                     v -> GLASS_TIP.get(v.num(B_GLASS_PERMIL, 10, 0)))
-            .dial(104, 24, false, B_DRAFT_PA10, 10, 200, Double.NaN, 0, PA.get(), DRAFT.get(),
-                    v -> DRAFT_TIP.get(v.num(B_DRAFT_PA10, 10, 0)))
-            .dial(162, 24, false, B_FLUE_C10, 10, 600, 450, 0, CELSIUS.get(), FLUE.get(),
-                    v -> FLUE_TIP.get(v.num(B_FLUE_C10, 10, 0)))
-            .lamp(104, 88, B_FLAGS, F_LIT, LampColor.AMBER, LIT.get())
-            .lamp(104, 104, B_FLAGS, F_RELIEF, LampColor.WHITE, RELIEF.get())
-            .lamp(162, 88, B_FLAGS, F_PLUG, LampColor.RED, PLUG.get())
-            .lamp(162, 104, B_FLAGS, F_LOW_WATER, LampColor.RED, LOW.get())
-            .lamp(104, 118, B_FLAGS, F_UNACCEPTED, LampColor.RED, UNACCEPTED.get())
-            .lamp(162, 118, B_FLAGS, F_DRAIN, LampColor.WHITE, DRAIN_LAMP.get())
-            .bar(8, 132, 98, B_BED_KG10, 10, FireTubeBoilerBlockEntity.MAX_BED_KG, 0xFFE07828, BED.get(),
+            .firebox(106, 24, 76, 50, B_BED_KG10, 10, FireTubeBoilerBlockEntity.MAX_BED_KG, B_FLAGS, F_LIT, F_SMOKY, BED.get(),
                     v -> BED_TIP.get(v.num(B_BED_KG10, 10, 0), PanelText.num(FireTubeBoilerBlockEntity.MAX_BED_KG, 0)))
-            .bar(114, 132, 98, B_FEED_L, 1, FireTubeBoilerBlockEntity.FEED_TANK_MB, 0xFF3F78B8, FEED.get(),
+            .utube(198, 24, 64, B_DRAFT_PA10, 10, 200, DRAFT.get(),
+                    v -> DRAFT_TIP.get(v.num(B_DRAFT_PA10, 10, 0), PanelText.num(v.get(B_DRAFT_PA10, 10) / 9.80665, 1)))
+            .dial(184, 104, false, B_FLUE_C10, 10, 600, 450, 0, CELSIUS.get(), FLUE.get(),
+                    v -> FLUE_TIP.get(v.num(B_FLUE_C10, 10, 0)))
+            .lamp(8, 114, B_FLAGS, F_LIT, LampColor.AMBER, LIT.get())
+            .lamp(62, 114, B_FLAGS, F_RELIEF, LampColor.WHITE, RELIEF.get())
+            .lamp(118, 114, B_FLAGS, F_DRAIN, LampColor.WHITE, DRAIN_LAMP.get())
+            .lamp(8, 130, B_FLAGS, F_PLUG, LampColor.RED, PLUG.get())
+            .lamp(62, 130, B_FLAGS, F_LOW_WATER, LampColor.RED, LOW.get())
+            .lamp(118, 130, B_FLAGS, F_UNACCEPTED, LampColor.RED, UNACCEPTED.get())
+            .bar(8, 156, 170, B_FEED_L, 1, FireTubeBoilerBlockEntity.FEED_TANK_MB, 0xFF3F78B8, FEED.get(),
                     v -> FEED_TIP.get(v.num(B_FEED_L, 1, 0), FireTubeBoilerBlockEntity.FEED_TANK_MB))
-            .readout(8, 143, 204, BoilerPanels::boilerStatus, null)
-            .slot(10, 159, SLOT_FUEL, s -> BoilerFuels.key(s) != null, FUEL_SLOT.get())
-            .button(30, 160, 64, BUTTON_CHARGE, CHARGE.get(), CHARGE_TIP.get())
-            .button(98, 160, 56, BUTTON_DRAIN, DRAIN.get(), DRAIN_TIP.get())
-            .caption(166, 164, SLAG.get())
-            .output(194, 159, SLOT_SLAG, SLAG_SLOT.get())
+            .readout(8, 167, 170, BoilerPanels::boilerStatus, null)
+            .slot(10, 184, SLOT_FUEL, s -> BoilerFuels.key(s) != null, FUEL_SLOT.get())
+            .button(30, 184, 64, BUTTON_CHARGE, CHARGE.get(), CHARGE_TIP.get())
+            .button(98, 184, 56, BUTTON_DRAIN, DRAIN.get(), DRAIN_TIP.get())
+            .caption(184, 188, SLAG.get())
+            .output(216, 184, SLOT_SLAG, SLAG_SLOT.get())
             .build();
 
     public static final PanelLayout ENGINE = PanelLayout.builder("steam_engine", 220, 168, E_CHANNELS)

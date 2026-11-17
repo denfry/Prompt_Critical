@@ -108,6 +108,14 @@ public final class PanelFit {
                     bodies.add(new Box("lamp " + str(l.label()), x, y, x + 14, y + 14));
                     labels.add(new Label(e, str(l.label()), false, x + 16, y + 3, font.width(l.label())));
                 }
+                case PanelLayout.Firebox f -> {
+                    bodies.add(new Box("firebox", x, y, x + f.w(), y + f.h()));
+                    labels.add(new Label(e, str(f.label()), true, x + f.w() / 2, y + f.h() + 2, font.width(f.label())));
+                }
+                case PanelLayout.UTube u -> {
+                    bodies.add(new Box("utube " + str(u.label()), x, y, x + PanelLayout.UTube.W, y + u.h()));
+                    labels.add(new Label(e, str(u.label()), true, x + PanelLayout.UTube.W / 2, y + u.h() + 2, font.width(u.label())));
+                }
                 case PanelLayout.Readout r -> bodies.add(new Box("readout", x, y, x + r.w(), y + 13));
                 case PanelLayout.Caption c -> labels.add(new Label(e, str(c.text()), false, x, y, font.width(c.text())));
                 case PanelLayout.Button b -> bodies.add(new Box("button " + str(b.label()), x, y, x + b.w(), y + 16));

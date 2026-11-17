@@ -292,11 +292,12 @@ public class FireTubeBoilerBlockEntity extends DeviceBlockEntity implements Pres
     }
 
     Vec3 valvePos() {
-        return BoilerGeometry.world(worldPosition, facing(), 8, 28, 6);
+        return BoilerGeometry.world(worldPosition, facing(), 12, 30.5, 6); // выхлопная труба рычажного предохранительного клапана
     }
 
     Vec3 doorPos() {
-        return BoilerGeometry.world(worldPosition, facing(), 8, -4, -17);
+        return BoilerGeometry.world(worldPosition, facing(), 8, 3.5, -16.5); // между двумя топочными дверцами
+
     }
 
     private Vec3 smokePos() {
