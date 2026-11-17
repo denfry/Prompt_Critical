@@ -31,6 +31,10 @@
 - Hydro power: hydro turbine, dam intake gate, penstock water hammer.
 - Gas turbine unit on mine methane or coke-oven gas, with a turbine gearbox.
 
+### Grid
+- Capacitor bank: 6 kV steps of 150 kvar for reactive compensation; too large a bank self-excites a small
+  idling generator.
+
 ### Control power
 - Station battery: a 24 V lead-acid battery next to the relay rectifier carries control power through a
   blackout (Peukert discharge, float charge, cut-off at 1.75 V per cell).
