@@ -126,8 +126,8 @@
   }
 
   // ---------------------------------------------------------------- roller table and cooling bed
-  // Roller table: channel side frames, cross bearers, the line shaft with bevel boxes on the east side; the
-  // cooling bed carries the notched rack over the frame instead of rollers.
+  // Roller table: channel side frames, cross bearers, bevel boxes on the Create shaft line, roller bearings; the
+  // cooling bed carries notched skids over the frame instead of rollers.
   function rollerTable(bed) {
     const m = mk('material/steel');
     for (const [n, x0] of [['w', 0], ['e', 14.4]]) {
@@ -136,27 +136,29 @@
     }
     for (const z of [1, 14.6]) m.box(`bearer_${z}`, [1.6, 0, z], [14.4, 1.4, z + 0.4], 'frame', { split: '' });
     if (bed) {
-      for (let i = 0; i < 5; i++) {
-        const x = 2.2 + i * 2.9;
-        m.box(`skid_${i}`, [x, 6, 0], [x + 0.8, 8, 16], 'st', { split: 'z', face: { up: 'rack' } });
-      }
+      // skids clear of the Create shaft that the renderer runs through the centre (x 8, y 8, along z)
+      for (const x of [1.8, 3.9, 11.3, 13.4]) m.box(`skid_${x}`, [x, 6, 0], [x + 0.8, 9, 16], 'st', { split: 'z', face: { up: 'rack' } });
       m.box('rack_beam_n', [1.6, 4.6, 3], [14.4, 6, 4], 'frame', { split: '' });
       m.box('rack_beam_s', [1.6, 4.6, 12], [14.4, 6, 13], 'frame', { split: '' });
+      for (const z of [0.4, 15]) m.box(`shaft_bearing_${z}`, [6.6, 6.2, z], [9.4, 9.8, z + 0.6], 'ci', { split: '' });
     } else {
-      m.prism('line_shaft', 'z', [15.2, 2.6], 0.6, 0, 16, 'bright', { split: '' });
+      // bevel boxes where the rollers meet the Create shaft (the renderer's shaft runs along z through x 8, y 8)
       for (const z of [4, 12]) {
-        m.box(`bevel_${z}`, [14.6, 1.4, z - 1.2], [16, 4.2, z + 1.2], 'ci', { split: '' });
-        m.box(`bearing_w_${z}`, [0.2, 5, z - 1], [1.4, 7.6, z + 1], 'ci', { split: '' });
+        m.box(`bevel_${z}`, [6, 5.6, z - 1.8], [10, 8.8, z + 1.8], 'ci', { split: '' });
+        m.box(`bearing_w_${z}`, [0.2, 6, z - 1], [1.4, 8.8, z + 1], 'ci', { split: '' });
+        m.box(`bearing_e_${z}`, [14.6, 6, z - 1], [15.8, 8.8, z + 1], 'ci', { split: '' });
       }
     }
     m.box('scale_pan', [1.6, 0, 1.4], [14.4, 0.4, 14.6], 'bed', { split: '' });
     return m;
   }
+  // Two rollers across the table, each in two halves either side of its bevel box; tops at y 9 under the piece
+  // the renderer lays at y 9.5.
   function tableRollers() {
     const m = mk(TEX + 'roll');
-    for (const z of [4, 12]) {
-      m.prism(`roller_${z}`, 'x', [6.4, z], 1.8, 1.6, 14.4, 'roll', { split: '', ends: ['east', 'west'] });
-      m.prism(`journal_${z}`, 'x', [6.4, z], 0.7, 0.4, 15.6, 'bright', { split: '' });
+    for (const z of [4, 12]) for (const [n, x0, x1] of [['w', 1.6, 6], ['e', 10, 14.4]]) {
+      m.prism(`roller_${z}_${n}`, 'x', [7.4, z], 1.6, x0, x1, 'roll', { split: '', ends: ['east', 'west'] });
+      m.prism(`journal_${z}_${n}`, 'x', [7.4, z], 0.6, n === 'w' ? 0.4 : 14.4, n === 'w' ? 1.6 : 15.6, 'bright', { split: '' });
     }
     return m;
   }
