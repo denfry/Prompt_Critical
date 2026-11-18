@@ -10,7 +10,7 @@ import net.neoforged.neoforge.capabilities.RegisterCapabilitiesEvent;
 import net.neoforged.neoforge.registries.DeferredHolder;
 import net.neoforged.neoforge.registries.DeferredRegister;
 
-/** Типы BE облагораживания на НПЗ: гидроочистка и установка Клауса. */
+/** Типы BE облагораживания на НПЗ: гидроочистка, установка Клауса и каталитический риформинг. */
 public final class RefineryBlockEntities {
     public static final DeferredRegister<BlockEntityType<?>> BLOCK_ENTITIES =
             DeferredRegister.create(Registries.BLOCK_ENTITY_TYPE, PromptCritical.MOD_ID);
@@ -21,6 +21,10 @@ public final class RefineryBlockEntities {
     public static final DeferredHolder<BlockEntityType<?>, BlockEntityType<ClausUnitBlockEntity>> CLAUS_UNIT =
             BLOCK_ENTITIES.register("claus_unit",
                     () -> BlockEntityType.Builder.of(ClausUnitBlockEntity::new, PcBlocks.CLAUS_UNIT.get()).build(null));
+
+    public static final DeferredHolder<BlockEntityType<?>, BlockEntityType<CatalyticReformerBlockEntity>> CATALYTIC_REFORMER =
+            BLOCK_ENTITIES.register("catalytic_reformer",
+                    () -> BlockEntityType.Builder.of(CatalyticReformerBlockEntity::new, PcBlocks.CATALYTIC_REFORMER.get()).build(null));
 
     private RefineryBlockEntities() {
     }
@@ -33,5 +37,6 @@ public final class RefineryBlockEntities {
     private static void capabilities(RegisterCapabilitiesEvent event) {
         event.registerBlockEntity(Capabilities.FluidHandler.BLOCK, HYDROTREATER.get(), (be, side) -> be.fluids(side));
         event.registerBlockEntity(Capabilities.ItemHandler.BLOCK, CLAUS_UNIT.get(), (be, side) -> be.items(side));
+        event.registerBlockEntity(Capabilities.FluidHandler.BLOCK, CATALYTIC_REFORMER.get(), (be, side) -> be.fluids(side));
     }
 }

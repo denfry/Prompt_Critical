@@ -509,6 +509,8 @@ public final class PcBlocks {
             dev.denfry.promptcritical.mod.refinery.HydrotreaterBlockEntity::new);
     public static final DeferredBlock<PcDeviceBlock> CLAUS_UNIT = uranium("claus_unit",
             dev.denfry.promptcritical.mod.refinery.ClausUnitBlockEntity::new);
+    public static final DeferredBlock<PcDeviceBlock> CATALYTIC_REFORMER = uranium("catalytic_reformer",
+            dev.denfry.promptcritical.mod.refinery.CatalyticReformerBlockEntity::new);
 
     // --- передел урана: от руды до UF₆ (I4) ---
     public static final DeferredBlock<PcDeviceBlock> ACID_PLANT = uranium("acid_plant",

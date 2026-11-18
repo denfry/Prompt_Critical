@@ -8,11 +8,13 @@ import dev.denfry.promptcritical.mod.registry.PcItems;
 import java.util.List;
 import net.minecraft.network.chat.Component;
 
-/** Щиты A0 гидроочистки и установки Клауса: температура, четыре величины, бак продукта, флаги. */
+/** Щиты A0 гидроочистки, установки Клауса и риформинга: температура, четыре величины, бак продукта, флаги. */
 public final class RefineryPanels {
     public static final int T_C = 0, A = 1, B = 2, C = 3, D = 4, TANK = 5, FLAGS = 6, CHANNELS = 7;
     public static final int F_ON = 0, F_RUN = 1, F_WARN = 2, F_AUX = 3;
-    public static final int B_RUN = 0, B_T_DOWN = 1, B_T_UP = 2, B_AIR_DOWN = 3, B_AIR_UP = 4;
+    public static final int B_RUN = 0, B_T_DOWN = 1, B_T_UP = 2, B_AIR_DOWN = 3, B_AIR_UP = 4, B_REGEN_CL = 5, B_REGEN = 6;
+    /** Риформинг: перепад в первом реакторе, К, и кокс ×1000; щит риформинга длиннее остальных. */
+    public static final int DT = 7, COKE = 8, REFORMER_CHANNELS = 9;
 
     private static final Tr RUN = PanelText.tr("refinery.run", "Run", "Пуск/стоп"), ON = PanelText.tr("refinery.on", "On", "Вкл."),
             WORKING = PanelText.tr("refinery.working", "Working", "Работа"),
@@ -32,7 +34,21 @@ public final class RefineryPanels {
             RATIO = PanelText.tr("refinery.ratio", "H₂S : SO₂ off 2 : 1", "H₂S : SO₂ не 2 : 1"),
             SULFUR_ITEM = PanelText.tr("refinery.sulfur_item", "Sulphur", "Сера"),
             CLAUS_STATUS = PanelText.tr("refinery.claus_status", "Sulphur %s kg/h · SO₂ to stack %s kg/h · air error %s %%",
-                    "Сера %s кг/ч · SO₂ в трубу %s кг/ч · ошибка воздуха %s %%");
+                    "Сера %s кг/ч · SO₂ в трубу %s кг/ч · ошибка воздуха %s %%"),
+            INLET = PanelText.tr("refinery.inlet", "Inlet", "Вход"), RON = PanelText.tr("refinery.ron", "RON", "ОЧИ"),
+            RON_UNIT = PanelText.tr("refinery.ron_unit", "RON", "ОЧИ"),
+            REFORMATE = PanelText.tr("refinery.reformate", "Reformate", "Риформат"),
+            REGEN_CL = PanelText.tr("refinery.regen_cl", "Regen+Cl", "Рег.+Cl"),
+            REGEN_CL_TIP = PanelText.tr("refinery.regen_cl_tip", "Stopped unit only: burn off coke and oxychlorinate (100 mB chlorine)",
+                    "Только на остановленной установке: выжиг кокса и оксихлорирование (100 мБ хлора)"),
+            REGEN = PanelText.tr("refinery.regen", "Regen", "Регенер."),
+            REGEN_TIP = PanelText.tr("refinery.regen_tip", "Stopped unit only: burn off coke without chlorine, platinum loses 15 %",
+                    "Только на остановленной установке: выжиг кокса без хлора, платина теряет 15 %"),
+            SPENT = PanelText.tr("refinery.spent", "Activity below 50 %: regenerate", "Активность ниже 50 %: регенерация"),
+            NO_FUEL = PanelText.tr("refinery.no_fuel", "Reheat furnaces short of fuel gas", "Печам не хватает топливного газа"),
+            PT_CATALYST = PanelText.tr("refinery.pt_catalyst", "Pt-Re catalyst", "Катализатор Pt-Re"),
+            REFORMER_STATUS = PanelText.tr("refinery.reformer_status", "H₂ %s %% wt · ΔT₁ %s K · coke %s · feed %s l/h",
+                    "H₂ %s %% масс. · ΔT₁ %s К · кокс %s · сырьё %s л/ч");
 
     public static final PanelLayout HYDROTREATER = PanelLayout.builder("hydrotreater", 232, 140, CHANNELS)
             .dial(8, 24, false, T_C, 1, 450, 420, 0, PanelText.CELSIUS.get(), BED.get(), null)
@@ -58,10 +74,24 @@ public final class RefineryPanels {
             .output(138, 42, 3, SULFUR_ITEM.get())
             .readout(8, 118, 216, v -> CLAUS_STATUS.get(v.raw(B), v.num(C, 10, 1), v.raw(D)), null).build();
 
+    public static final PanelLayout REFORMER = PanelLayout.builder("catalytic_reformer", 232, 140, REFORMER_CHANNELS)
+            .dial(8, 24, false, T_C, 1, 560, 540, 0, PanelText.CELSIUS.get(), INLET.get(), null)
+            .dial(64, 24, false, A, 10, 110, Double.NaN, 1, RON_UNIT.get(), RON.get(), null)
+            .dial(120, 24, false, B, 10, 100, Double.NaN, 0, PCT.get(), ACTIVITY.get(), null)
+            .glass(176, 24, 56, TANK, 0xFFE0C060, Double.NaN, Double.NaN, REFORMATE.get(), null)
+            .lamp(200, 22, FLAGS, F_ON, LampColor.GREEN, ON.get()).lamp(200, 36, FLAGS, F_RUN, LampColor.GREEN, WORKING.get())
+            .lamp(200, 50, FLAGS, F_WARN, LampColor.AMBER, SPENT.get()).lamp(200, 64, FLAGS, F_AUX, LampColor.RED, NO_FUEL.get())
+            .button(8, 92, 44, B_RUN, RUN.get(), null)
+            .button(56, 92, 20, B_T_DOWN, Component.literal("−"), T_DOWN.get()).button(78, 92, 20, B_T_UP, Component.literal("+"), T_UP.get())
+            .button(102, 92, 48, B_REGEN_CL, REGEN_CL.get(), REGEN_CL_TIP.get())
+            .button(152, 92, 48, B_REGEN, REGEN.get(), REGEN_TIP.get())
+            .slot(208, 92, 0, s -> s.is(PcItems.CATALYST_REFORMING.get()), PT_CATALYST.get())
+            .readout(8, 118, 216, v -> REFORMER_STATUS.get(v.num(C, 100, 2), v.raw(DT), v.num(COKE, 1000, 2), v.raw(D)), null).build();
+
     private RefineryPanels() {
     }
 
     public static List<PanelLayout> all() {
-        return List.of(HYDROTREATER, CLAUS);
+        return List.of(HYDROTREATER, CLAUS, REFORMER);
     }
 }

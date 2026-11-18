@@ -265,6 +265,7 @@ public final class PcBlockStateProvider extends BlockStateProvider {
             case "methanol_converter" -> "fixed_bed_reactor";
             case "hydrotreater" -> "fixed_bed_reactor_large";
             case "claus_unit" -> "claus_reaction_furnace";
+            case "catalytic_reformer" -> "fixed_bed_reactor_regen";
             case "methanol_column" -> "fractionating_column";
             // ядерное топливо I4
             case "centrifuge_cascade" -> "cascade_header";
