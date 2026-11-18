@@ -286,21 +286,4 @@ m("drill_press", "machine_shop", [
 m("drill_press/spindle", "machine_shop", vcyl("quill", 8, 7, 1, 14, 20, "pol", 8) + vcyl("chuck", 8, 7, 1.6, 13, 15, "d", 8)
   + vcyl("bit", 8, 7, 0.4, 11, 13, "d", 8), kind="partial")
 
-# отсадочная машина ОМ 2×2×1: клёпаный бак с водой и постелью, воздушная камера с пульсатором, жёлоб питания, разгрузка
-m("coal_jig", "coal_prep", [
-    el("leg_w", [1, 0, 1], [4, 6, 15], "d"), el("leg_e", [28, 0, 1], [31, 6, 15], "d"),
-    el("bearing_w", [-0.01, 5.5, 5.5], [2, 10.5, 10.5], "ci"),
-    el("hopper", [2, 6, 1], [30, 12, 15], "ci"),
-    el("tank_w", [0, 12, 0], [1, 25, 16], "shell"), el("tank_e", [31, 12, 0], [32, 25, 16], "shell"),
-    el("tank_n", [1, 12, 0], [31, 25, 1], "shell"), el("tank_s", [1, 12, 15], [31, 25, 16], "shell"),
-    el("rim", [0, 25, 0], [32, 26, 16], "d"),
-    el("bed", [1, 18, 1], [31, 20, 15], "coal"),
-    el("water", [1, 23, 1], [31, 24, 15], "water"),
-    el("air_box", [4, 24, 3], [12, 30, 13], "mb"),
-    el("valve_drive", [12, 25, 5], [14, 29, 11], "d"),
-    el("feed_chute", [1, 26, 4], [10, 28, 12], "d", rot=("z", -22.5, [10, 26, 8])),
-    el("spout_clean", [31, 21, 5], [32.0, 23, 11], "d"),
-    el("spout_mid", [31, 14, 5], [32.0, 16, 11], "d"),
-    el("spout_refuse", [14, 6, -0.01], [18, 9, 1], "d"),
-    el("water_inlet", [24, 25, 6], [27, 31, 9], "wat", faces={"up": "end"}),
-])
+# отсадочная машина нарисована вручную в Blockbench: art/blockbench/coal_prep/coal_jig.author.js

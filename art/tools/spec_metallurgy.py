@@ -112,7 +112,7 @@ m("vein_quartz", "ores", [el("block", [0, 0, 0], [16, 16, 16], "qtz")])
 # углеобогащение
 # ======================================================================
 # отсадочная машина ОМ — корпус в spec_visual; пульсатор (ось X на y 27, z 8)
-m("coal_jig/pulsator", "coal_prep", shaft_x(1.5, 12, 28, (8, 27, 8)) + [el("eccentric", [18, 23, 5], [22, 31, 11], "st")], kind="partial")
+# пульсатор отсадочной машины — art/blockbench/coal_prep/coal_jig.author.js
 
 # тяжелосредный сепаратор СКВ 2×2×2: опорная рама, жёлоб суспензии; барабан — partial (ось X)
 m("dense_medium_separator", "coal_prep", [

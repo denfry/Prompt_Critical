@@ -1,6 +1,7 @@
 package dev.denfry.promptcritical.mod.mine;
 
 import dev.denfry.promptcritical.mod.binding.SimLevelBinding;
+import dev.denfry.promptcritical.mod.block.ModelPoints;
 import dev.denfry.promptcritical.mod.block.PcBlock;
 import dev.denfry.promptcritical.mod.block.PcProperties;
 import dev.denfry.promptcritical.mod.foundry.KineticMachineBlockEntity;
@@ -19,6 +20,7 @@ import net.minecraft.world.ItemInteractionResult;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.level.block.state.BlockState;
+import net.minecraft.world.phys.Vec3;
 import net.neoforged.neoforge.items.IItemHandler;
 import org.jetbrains.annotations.Nullable;
 
@@ -90,13 +92,10 @@ public final class DegasificationPumpBlockEntity extends KineticMachineBlockEnti
         puff(server, f, 9.7, 3, 14.2, ParticleTypes.DRIPPING_WATER, 1); // подпиточный кран
     }
 
-    /** Частицы в точке модели (px, фасад модели на север), повёрнутой к {@code facing} как в рендере блока. */
+    /** Частицы в точке модели (px), повёрнутой к {@code facing} как в рендере блока. */
     private void puff(ServerLevel server, Direction facing, double x, double y, double z, SimpleParticleType type, int count) {
-        double lx = x / 16 - 0.5, lz = z / 16 - 0.5;
-        double wx = switch (facing) { case SOUTH -> -lx; case EAST -> -lz; case WEST -> lz; default -> lx; };
-        double wz = switch (facing) { case SOUTH -> -lz; case EAST -> lx; case WEST -> -lx; default -> lz; };
-        server.sendParticles(type, worldPosition.getX() + 0.5 + wx, worldPosition.getY() + y / 16, worldPosition.getZ() + 0.5 + wz,
-                count, 0.04, 0.08, 0.04, 0.01);
+        Vec3 p = ModelPoints.toWorld(worldPosition, facing, x, y, z);
+        server.sendParticles(type, p.x, p.y, p.z, count, 0.04, 0.08, 0.04, 0.01);
     }
 
     @Override
