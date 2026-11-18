@@ -21,6 +21,7 @@ import net.minecraft.server.level.ServerLevel;
 import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.sounds.SoundEvents;
 import net.minecraft.sounds.SoundSource;
+import net.minecraft.tags.BlockTags;
 import net.minecraft.tags.FluidTags;
 import net.minecraft.world.effect.MobEffectInstance;
 import net.minecraft.world.effect.MobEffects;
@@ -184,6 +185,8 @@ public final class NoiseService {
         if (id.contains("pane")) return BarrierMaterial.PANE;
         if (id.contains("glass")) return BarrierMaterial.GLASS;
         if (id.contains("wool") || id.contains("carpet")) return BarrierMaterial.SOFT;
+        // листва — рыхлая преграда: ISO 9613-2, прил. A — доли дБ на метр, а не изоляция сплошной стены
+        if (s.is(BlockTags.LEAVES)) return BarrierMaterial.PLANT;
         if (!s.blocksMotion()) return s.isSolid() ? BarrierMaterial.PANE : BarrierMaterial.PLANT;
         SoundType t = s.getSoundType();
         if (t == SoundType.METAL || t == SoundType.COPPER || t == SoundType.NETHERITE_BLOCK || t == SoundType.ANVIL

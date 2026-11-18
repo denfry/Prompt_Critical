@@ -8,6 +8,7 @@ import dev.denfry.promptcritical.mod.acoustics.NoiseService;
 import dev.denfry.promptcritical.mod.acoustics.VibrationTransmitterBlockEntity;
 import dev.denfry.promptcritical.mod.registry.PcBlocks;
 import dev.denfry.promptcritical.mod.registry.PcItems;
+import dev.denfry.promptcritical.sim.acoustics.BarrierMaterial;
 import dev.denfry.promptcritical.sim.acoustics.NoiseExposure;
 import dev.denfry.promptcritical.sim.acoustics.SoundLevel;
 import dev.denfry.promptcritical.sim.acoustics.VibrationSpectrum;
@@ -148,6 +149,9 @@ public final class AcousticsGameTests {
                         each[i] = SoundLevel.atDistance(sources.get(i).lwDb(), Vec3.atCenterOf(sources.get(i).pos()).distanceTo(ear), 0);
                     open[0] = NoiseService.levelAt(h.getLevel(), ear);
                     h.assertTrue(Math.abs(open[0] - SoundLevel.sum(each)) < 1e-6, "open air: " + open[0] + " vs " + SoundLevel.sum(each));
+                    // листва почти прозрачна для звука, бетон — нет
+                    h.assertTrue(NoiseService.material(Blocks.OAK_LEAVES.defaultBlockState()) == BarrierMaterial.PLANT, "leaves");
+                    h.assertTrue(NoiseService.material(Blocks.WHITE_CONCRETE.defaultBlockState()) == BarrierMaterial.CONCRETE, "concrete");
                     for (int x = 0; x <= 6; x++)
                         for (int y = 1; y <= 4; y++) h.setBlock(new BlockPos(x, y, 6), Blocks.WHITE_CONCRETE);
                 })

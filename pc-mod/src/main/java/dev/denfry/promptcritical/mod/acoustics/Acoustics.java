@@ -1,5 +1,6 @@
 package dev.denfry.promptcritical.mod.acoustics;
 
+import com.simibubi.create.content.kinetics.base.KineticBlockEntity;
 import dev.denfry.promptcritical.mod.PromptCritical;
 import dev.denfry.promptcritical.mod.registry.PcBlocks;
 import java.util.LinkedHashMap;
@@ -7,6 +8,7 @@ import java.util.Map;
 import net.minecraft.core.registries.Registries;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.world.level.block.entity.BlockEntityType;
+import net.neoforged.bus.api.EventPriority;
 import net.neoforged.bus.api.IEventBus;
 import net.neoforged.fml.loading.FMLEnvironment;
 import net.neoforged.neoforge.common.NeoForge;
@@ -33,8 +35,10 @@ public final class Acoustics {
         BLOCK_ENTITIES.register(modBus);
         modBus.addListener(Acoustics::payloads);
         NoiseService.register();
-        NeoForge.EVENT_BUS.addListener((BlockEvent.BreakEvent e) -> {
-            if (e.getLevel() instanceof ServerLevel s) MachineAcoustics.forget(s, e.getPos());
+        // последним из слушателей: отменённая ломка сюда не доходит, и машина сохраняет свой подшипник
+        NeoForge.EVENT_BUS.addListener(EventPriority.LOWEST, (BlockEvent.BreakEvent e) -> {
+            if (e.getLevel() instanceof ServerLevel s && s.getBlockEntity(e.getPos()) instanceof KineticBlockEntity)
+                MachineAcoustics.forget(s, e.getPos());
         });
     }
 
