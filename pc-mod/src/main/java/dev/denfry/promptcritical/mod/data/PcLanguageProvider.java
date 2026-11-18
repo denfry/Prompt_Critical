@@ -308,6 +308,7 @@ public final class PcLanguageProvider extends LanguageProvider {
         b("hydrotreater", "Diesel Hydrotreater", "Установка гидроочистки дизельного топлива");
         b("claus_unit", "Claus Sulphur Recovery Unit", "Установка Клауса");
         b("catalytic_reformer", "Catalytic Reformer", "Установка каталитического риформинга");
+        b("delayed_coker", "Delayed Coker", "Установка замедленного коксования");
         b("hf_kiln", "Hydrogen Fluoride Kiln", "Печь фтористого водорода");
         b("leach_tank", "Uranium Leach and CCD Train", "Выщелачивание урана с противоточной декантацией");
         b("uranium_ion_exchange", "Uranium Ion Exchange Unit", "Ионообменная установка урана");
@@ -356,6 +357,7 @@ public final class PcLanguageProvider extends LanguageProvider {
         i("resistor", "Resistor", "Резистор");
         i("capacitor", "Capacitor", "Конденсатор");
         i("printed_circuit_board", "Printed Circuit Board", "Печатная плата");
+        i("phenolic_resin", "Phenolic Resin", "Фенолоформальдегидная смола");
         i("cathode_ray_tube", "Cathode-Ray Tube", "Электронно-лучевая трубка");
         i("stepper_lens", "Stepper Projection Lens", "Объектив степпера");
         b("electrostatic_precipitator", "Electrostatic Precipitator", "Электрофильтр");
@@ -411,6 +413,7 @@ public final class PcLanguageProvider extends LanguageProvider {
         i("coke", "Coke", "Кокс");
         i("coke_breeze", "Coke Breeze", "Коксовая мелочь");
         i("pitch_coke", "Pitch Coke", "Пековый кокс");
+        i("petroleum_coke", "Petroleum Coke", "Нефтяной кокс");
         i("coal_tar_pitch", "Coal Tar Pitch", "Каменноугольный пек");
         i("green_electrode", "Carbon Electrode", "Угольный электрод");
         i("ammonium_sulfate", "Ammonium Sulfate", "Сульфат аммония");

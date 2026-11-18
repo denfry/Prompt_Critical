@@ -171,6 +171,16 @@ public final class PcItems {
     public static final DeferredItem<Item> GREEN_ELECTRODE = item("green_electrode", 16);
     /** Графитированный электрод из печи Ачесона: сырьё реакторного графита. */
     public static final DeferredItem<Item> GRAPHITE_ELECTRODE = item("graphite_electrode", 16);
+    /**
+     * Нефтяной кокс замедленного коксования: топливо (теплота сгорания ~33 МДж/кг против ~29 у угля — 1800 тиков в
+     * печи) и наполнитель электродной массы наравне с пековым коксом.
+     */
+    public static final DeferredItem<Item> PETROLEUM_COKE = registered(ITEMS.registerItem("petroleum_coke", p -> new Item(p) {
+        @Override
+        public int getBurnTime(net.minecraft.world.item.ItemStack stack, @org.jetbrains.annotations.Nullable net.minecraft.world.item.crafting.RecipeType<?> type) {
+            return 1800;
+        }
+    }, new Item.Properties().stacksTo(64)));
 
     // --- уран для графитового котла T0 (I1) ---
     public static final DeferredItem<Item> RAW_URANINITE = item("raw_uraninite", 64);
@@ -217,6 +227,8 @@ public final class PcItems {
     public static final DeferredItem<Item> RESISTOR = item("resistor", 64);
     public static final DeferredItem<Item> CAPACITOR = item("capacitor", 64);
     public static final DeferredItem<Item> PRINTED_CIRCUIT_BOARD = item("printed_circuit_board", 64);
+    /** Резольная фенолоформальдегидная смола: связующее гетинакса плат (фенол из каменноугольной смолы + формалин). */
+    public static final DeferredItem<Item> PHENOLIC_RESIN = item("phenolic_resin", 64);
     public static final DeferredItem<Item> CATHODE_RAY_TUBE = item("cathode_ray_tube", 16);
     /** Объектив проекционного степпера g-line из плавленого кварца. */
     public static final DeferredItem<Item> STEPPER_LENS = item("stepper_lens", 1);

@@ -39,7 +39,7 @@ public final class ElectrodeExtruderBlockEntity extends KineticMachineBlockEntit
             MachineInventory.Role.OUTPUT};
 
     private final MachineInventory inv = new MachineInventory(ROLES,
-            (slot, s) -> slot == 0 ? s.is(PcItems.PITCH_COKE.get()) : s.is(PcItems.COAL_TAR_PITCH.get()), this::setChanged);
+            (slot, s) -> slot == 0 ? isFiller(s) : s.is(PcItems.COAL_TAR_PITCH.get()), this::setChanged);
     /** Пек в бункере, кг (предметы пека тают в массу). */
     private double pitchKg;
     private int binderPct = 27;
@@ -111,7 +111,12 @@ public final class ElectrodeExtruderBlockEntity extends KineticMachineBlockEntit
 
     @Override
     public boolean accepts(ItemStack stack) {
-        return stack.is(PcItems.PITCH_COKE.get()) || stack.is(PcItems.COAL_TAR_PITCH.get());
+        return isFiller(stack) || stack.is(PcItems.COAL_TAR_PITCH.get());
+    }
+
+    /** Наполнитель электродной массы: пековый или нефтяной кокс замедленного коксования. */
+    public static boolean isFiller(ItemStack stack) {
+        return stack.is(PcItems.PITCH_COKE.get()) || stack.is(PcItems.PETROLEUM_COKE.get());
     }
 
     @Override

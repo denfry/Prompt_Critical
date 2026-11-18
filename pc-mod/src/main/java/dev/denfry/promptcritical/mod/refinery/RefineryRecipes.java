@@ -56,6 +56,11 @@ public final class RefineryRecipes extends RecipeProvider {
                 .pattern("SPS").pattern("BTB").pattern("SVS").define('S', AllItems.IRON_SHEET.get()).define('P', pipe)
                 .define('B', Items.BLAST_FURNACE).define('T', AllBlocks.FLUID_TANK.get()).define('V', AllBlocks.FLUID_VALVE.get())
                 .unlockedBy("has_hydrotreater", has(PcBlocks.HYDROTREATER.get())).save(out, id("claus_unit"));
+        // трубчатая печь и две коксовые камеры с гидрорезкой
+        ShapedRecipeBuilder.shaped(RecipeCategory.MISC, PcBlocks.DELAYED_COKER.get())
+                .pattern("SRS").pattern("RTR").pattern("SPS").define('S', plate).define('P', pipe)
+                .define('T', PcBlocks.TUBE_FURNACE.get()).define('R', AllBlocks.FLUID_TANK.get())
+                .unlockedBy("has_hydrotreater", has(PcBlocks.HYDROTREATER.get())).save(out, id("delayed_coker"));
         // CoMo/Al₂O₃: кобальт, молибденит, боксит на глинозём
         ShapelessRecipeBuilder.shapeless(RecipeCategory.MISC, PcItems.CATALYST_HYDROTREATING.get())
                 .requires(PcItems.COBALT_INGOT.get()).requires(PcItems.RAW_MOLYBDENITE.get(), 2).requires(PcItems.RAW_BAUXITE.get())

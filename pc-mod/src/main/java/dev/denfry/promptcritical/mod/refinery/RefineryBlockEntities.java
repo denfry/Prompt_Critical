@@ -21,6 +21,9 @@ public final class RefineryBlockEntities {
     public static final DeferredHolder<BlockEntityType<?>, BlockEntityType<ClausUnitBlockEntity>> CLAUS_UNIT =
             BLOCK_ENTITIES.register("claus_unit",
                     () -> BlockEntityType.Builder.of(ClausUnitBlockEntity::new, PcBlocks.CLAUS_UNIT.get()).build(null));
+    public static final DeferredHolder<BlockEntityType<?>, BlockEntityType<DelayedCokerBlockEntity>> DELAYED_COKER =
+            BLOCK_ENTITIES.register("delayed_coker",
+                    () -> BlockEntityType.Builder.of(DelayedCokerBlockEntity::new, PcBlocks.DELAYED_COKER.get()).build(null));
 
     public static final DeferredHolder<BlockEntityType<?>, BlockEntityType<CatalyticReformerBlockEntity>> CATALYTIC_REFORMER =
             BLOCK_ENTITIES.register("catalytic_reformer",
@@ -38,5 +41,7 @@ public final class RefineryBlockEntities {
         event.registerBlockEntity(Capabilities.FluidHandler.BLOCK, HYDROTREATER.get(), (be, side) -> be.fluids(side));
         event.registerBlockEntity(Capabilities.ItemHandler.BLOCK, CLAUS_UNIT.get(), (be, side) -> be.items(side));
         event.registerBlockEntity(Capabilities.FluidHandler.BLOCK, CATALYTIC_REFORMER.get(), (be, side) -> be.fluids(side));
+        event.registerBlockEntity(Capabilities.FluidHandler.BLOCK, DELAYED_COKER.get(), (be, side) -> be.fluids(side));
+        event.registerBlockEntity(Capabilities.ItemHandler.BLOCK, DELAYED_COKER.get(), (be, side) -> be.items(side));
     }
 }

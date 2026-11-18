@@ -9,6 +9,7 @@ import java.util.List;
 import net.minecraft.network.chat.Component;
 
 /** Щиты A0 гидроочистки, установки Клауса и риформинга: температура, четыре величины, бак продукта, флаги. */
+/** Щиты A0 гидроочистки, установки Клауса и замедленного коксования: температура, четыре величины, бак продукта, флаги. */
 public final class RefineryPanels {
     public static final int T_C = 0, A = 1, B = 2, C = 3, D = 4, TANK = 5, FLAGS = 6, CHANNELS = 7;
     public static final int F_ON = 0, F_RUN = 1, F_WARN = 2, F_AUX = 3;
@@ -33,6 +34,15 @@ public final class RefineryPanels {
             DEW = PanelText.tr("refinery.dew", "Bed below sulphur dew point + 10 K", "Слой ниже точки росы серы + 10 К"),
             RATIO = PanelText.tr("refinery.ratio", "H₂S : SO₂ off 2 : 1", "H₂S : SO₂ не 2 : 1"),
             SULFUR_ITEM = PanelText.tr("refinery.sulfur_item", "Sulphur", "Сера"),
+            COIL = PanelText.tr("refinery.coil", "Coil outlet", "Выход печи"),
+            COKE_YIELD = PanelText.tr("refinery.coke_yield", "Coke yield", "Выход кокса"),
+            DRUM_FILL = PanelText.tr("refinery.drum_fill", "Drum fill", "Заполнение камеры"),
+            GAS_OIL = PanelText.tr("refinery.gas_oil", "Coker gas oil", "Газойль коксования"),
+            TUBE_COKING = PanelText.tr("refinery.tube_coking", "Coil above 505 °C: tubes coking", "Печь выше 505 °C: коксуются трубы"),
+            SOFT_COKE = PanelText.tr("refinery.soft_coke", "Soft coke or H₂S holdup full", "Мягкий кокс или некуда сдать H₂S"),
+            PET_COKE = PanelText.tr("refinery.pet_coke", "Petroleum coke", "Нефтяной кокс"),
+            COKER_STATUS = PanelText.tr("refinery.coker_status", "Fuel oil %s l/h · second drum: %s",
+                    "Мазут %s л/ч · вторая камера: %s"),
             CLAUS_STATUS = PanelText.tr("refinery.claus_status", "Sulphur %s kg/h · SO₂ to stack %s kg/h · air error %s %%",
                     "Сера %s кг/ч · SO₂ в трубу %s кг/ч · ошибка воздуха %s %%"),
             INLET = PanelText.tr("refinery.inlet", "Inlet", "Вход"), RON = PanelText.tr("refinery.ron", "RON", "ОЧИ"),
@@ -87,11 +97,28 @@ public final class RefineryPanels {
             .button(152, 92, 48, B_REGEN, REGEN.get(), REGEN_TIP.get())
             .slot(208, 92, 0, s -> s.is(PcItems.CATALYST_REFORMING.get()), PT_CATALYST.get())
             .readout(8, 118, 216, v -> REFORMER_STATUS.get(v.num(C, 100, 2), v.raw(DT), v.num(COKE, 1000, 2), v.raw(D)), null).build();
+    private static final Tr[] PHASES = {PanelText.tr("refinery.phase.fill", "standby", "резерв"),
+            PanelText.tr("refinery.phase.steam", "steaming", "пропарка"), PanelText.tr("refinery.phase.quench", "water quench", "охлаждение водой"),
+            PanelText.tr("refinery.phase.decoke", "hydraulic decoking", "гидрорезка")};
+
+    public static final PanelLayout COKER = PanelLayout.builder("delayed_coker", 232, 140, CHANNELS)
+            .dial(8, 24, false, T_C, 1, 550, 505, 0, PanelText.CELSIUS.get(), COIL.get(), null)
+            .dial(64, 24, false, A, 10, 50, Double.NaN, 1, PCT.get(), COKE_YIELD.get(), null)
+            .dial(120, 24, false, B, 1, 100, Double.NaN, 0, PCT.get(), DRUM_FILL.get(), null)
+            .glass(176, 24, 56, TANK, 0xFF5A4A30, Double.NaN, Double.NaN, GAS_OIL.get(), null)
+            .lamp(200, 22, FLAGS, F_ON, LampColor.GREEN, ON.get()).lamp(200, 36, FLAGS, F_RUN, LampColor.GREEN, WORKING.get())
+            .lamp(200, 50, FLAGS, F_WARN, LampColor.RED, TUBE_COKING.get()).lamp(200, 64, FLAGS, F_AUX, LampColor.AMBER, SOFT_COKE.get())
+            .button(8, 92, 44, B_RUN, RUN.get(), null)
+            .button(56, 92, 20, B_T_DOWN, Component.literal("−"), T_DOWN.get()).button(78, 92, 20, B_T_UP, Component.literal("+"), T_UP.get())
+            .output(104, 92, 0, PET_COKE.get()).output(122, 92, 1, PET_COKE.get()).output(140, 92, 2, PET_COKE.get())
+            .output(158, 92, 3, PET_COKE.get())
+            .readout(8, 118, 216, v -> COKER_STATUS.get(v.raw(D), PHASES[Math.clamp(v.raw(C), 0, PHASES.length - 1)].get()), null).build();
 
     private RefineryPanels() {
     }
 
     public static List<PanelLayout> all() {
         return List.of(HYDROTREATER, CLAUS, REFORMER);
+        return List.of(HYDROTREATER, CLAUS, COKER);
     }
 }

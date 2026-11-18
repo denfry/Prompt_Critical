@@ -190,7 +190,7 @@ public final class IronworksPanels {
             .readout(66, 50, 126, v -> BINDER.get(v.raw(E_BINDER_PCT), v.raw(E_PITCH_KG)), null)
             .button(66, 64, 20, BTN_DOWN, MINUS.get(), BINDER_TIP.get())
             .button(88, 64, 20, BTN_UP, PLUS.get(), BINDER_TIP.get())
-            .slot(16, 120, 0, s -> s.is(PcItems.PITCH_COKE.get()), FILLER.get())
+            .slot(16, 120, 0, ElectrodeExtruderBlockEntity::isFiller, FILLER.get())
             .slot(40, 120, 1, s -> s.is(PcItems.COAL_TAR_PITCH.get()), PITCH.get())
             .caption(70, 125, Component.literal("→"))
             .output(104, 120, 2, ELECTRODE.get())

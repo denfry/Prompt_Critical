@@ -68,9 +68,10 @@ public final class ElectronicsRecipes extends RecipeProvider {
                 .unlockedBy("has_wire", has(wire)).save(out, id("resistor"));
         ShapelessRecipeBuilder.shapeless(RecipeCategory.MISC, PcItems.CAPACITOR.get(), 4).requires(foil, 2).requires(Items.PAPER)
                 .unlockedBy("has_foil", has(foil)).save(out, id("capacitor"));
-        // плата: гетинакс (бумага на связующем) с медной фольгой, рисунок травлением
+        // плата: гетинакс — бумага, пропитанная резольной фенолоформальдегидной смолой (create:mixing в ресурсах:
+        // фенолы каменноугольной смолы + формальдегид из метанола), с медной фольгой, рисунок травлением
         ShapedRecipeBuilder.shaped(RecipeCategory.MISC, PcItems.PRINTED_CIRCUIT_BOARD.get(), 2).pattern("FFF").pattern("PBP")
-                .define('F', foil).define('P', Items.PAPER).define('B', Items.SLIME_BALL)
+                .define('F', foil).define('P', Items.PAPER).define('B', PcItems.PHENOLIC_RESIN.get())
                 .unlockedBy("has_foil", has(foil)).save(out, id("printed_circuit_board"));
         // ЭЛТ: электронная пушка на лампе, люминофор, отклоняющие катушки, свинцовое стекло горловины
         ShapedRecipeBuilder.shaped(RecipeCategory.MISC, PcItems.CATHODE_RAY_TUBE.get()).pattern("GPG").pattern("GTG").pattern("WLW")
