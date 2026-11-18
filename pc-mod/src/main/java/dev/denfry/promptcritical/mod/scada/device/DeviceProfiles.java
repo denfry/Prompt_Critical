@@ -153,12 +153,63 @@ public final class DeviceProfiles {
                     .button("wobDown", DrillingPanels.B_WOB_DOWN).button("wobUp", DrillingPanels.B_WOB_UP)
                     .button("spmDown", DrillingPanels.B_SPM_DOWN).button("spmUp", DrillingPanels.B_SPM_UP)
                     .button("toggleBop", DrillingPanels.B_BOP).button("advanceKill", DrillingPanels.B_KILL)
-                    .button("zeroPitTotalizer", DrillingPanels.B_ZERO).build());
+                    .button("zeroPitTotalizer", DrillingPanels.B_ZERO).button("workPipe", DrillingPanels.B_WORK)
+                    .read("getBop", 4, DeviceProfiles::bopState)
+                    .command("closeBop", a -> {
+                        var comp = bopComponent(a);
+                        return t -> ((dev.denfry.promptcritical.mod.drilling.DrillersConsoleBlockEntity) t).closeComponent(comp, null);
+                    })
+                    .command("openBop", a -> {
+                        var comp = bopComponent(a);
+                        return t -> ((dev.denfry.promptcritical.mod.drilling.DrillersConsoleBlockEntity) t).openComponent(comp, null);
+                    }).build());
             default -> {
                 String type = GENERIC.getOrDefault(simple, "pc_device");
                 yield CACHE.computeIfAbsent(simple, k -> generic(type, subtype(simple)));
             }
         };
+    }
+
+    /** Элемент стека ПВО по имени 09 §9.13.2: {@code "ANNULAR"}, {@code "PIPE_RAM"}, {@code "BLIND_RAM"}, {@code "SHEAR_RAM"}. */
+    private static dev.denfry.promptcritical.sim.drilling.BopStack.Component bopComponent(Object[] a) throws DeviceException {
+        String name = LuaArgs.string(a, 0).toUpperCase(java.util.Locale.ROOT);
+        for (var c : dev.denfry.promptcritical.sim.drilling.BopStack.Component.values()) if (c.name().equals(name)) return c;
+        throw LuaArgs.arg(0, "ANNULAR, PIPE_RAM, BLIND_RAM or SHEAR_RAM");
+    }
+
+    /** {@code getBop()} 09 §9.13.2: элементы стека и аккумулятор. */
+    private static Object bopState(BlockEntity be, DeviceRuntime.Snapshot s, Object[] args) {
+        var c = (dev.denfry.promptcritical.mod.drilling.DrillersConsoleBlockEntity) be;
+        var stack = c.bopStack();
+        List<Map<String, Object>> list = new ArrayList<>();
+        if (stack != null) for (var e : stack.elements()) {
+            Map<String, Object> m = new LinkedHashMap<>();
+            m.put("component", e.kind.name());
+            m.put("closed", e.closed());
+            m.put("sealing", e.sealing());
+            m.put("pressureRating", e.holdingPa(!stack.pipeSheared()));
+            m.put("closures", e.closures());
+            m.put("lastTest", Double.isFinite(e.lastTestDay()) ? e.lastTestDay() : null);
+            m.put("fault", e.fault().name());
+            list.add(m);
+        }
+        Map<String, Object> out = new LinkedHashMap<>();
+        out.put("elements", list);
+        out.put("pipeSheared", stack != null && stack.pipeSheared());
+        var acc = c.accumulator();
+        if (acc != null) {
+            Map<String, Object> a = new LinkedHashMap<>();
+            a.put("pressure", acc.pressurePa());
+            a.put("precharge", dev.denfry.promptcritical.sim.drilling.BopAccumulator.PRECHARGE_PA);
+            a.put("bottles", acc.bottles());
+            a.put("api53", stack != null && acc.meetsApi53(stack.requiredVolumeM3()));
+            out.put("accumulator", a);
+        }
+        out.put("stuck", c.sticking().stuck());
+        out.put("stickingForce", c.sticking().stickingForceN());
+        var w = c.well();
+        out.put("lossRate", w == null ? 0.0 : w.lossM3s());
+        return out;
     }
 
     private static String subtype(String simpleClassName) {

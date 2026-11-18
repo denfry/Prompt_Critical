@@ -81,6 +81,15 @@ public final class DrillingRecipes extends RecipeProvider {
                 .pattern("ISI").pattern("PRP").pattern("ISI").define('I', Items.IRON_BLOCK).define('S', sheet)
                 .define('P', AllBlocks.FLUID_PIPE.get()).define('R', Items.DRIED_KELP_BLOCK)
                 .unlockedBy("has_fluid_pipe", has(AllBlocks.FLUID_PIPE.get())).save(out, id("bop_annular"));
+        // плашечный превентор: корпус и два гидроцилиндра плашек; аккумулятор — баллоны (баки) с насосом и рычагами
+        ShapedRecipeBuilder.shaped(RecipeCategory.MISC, PcBlocks.BOP_RAM.get())
+                .pattern("ISI").pattern("TBT").pattern("ISI").define('I', Items.IRON_BLOCK).define('S', sheet)
+                .define('T', Items.PISTON).define('B', Items.IRON_BARS)
+                .unlockedBy("has_bop_annular", has(PcBlocks.BOP_ANNULAR.get())).save(out, id("bop_ram"));
+        ShapedRecipeBuilder.shaped(RecipeCategory.MISC, PcBlocks.BOP_ACCUMULATOR.get())
+                .pattern("LLL").pattern("TMT").pattern("SPS").define('L', Items.LEVER).define('T', AllBlocks.FLUID_TANK.get())
+                .define('M', AllBlocks.MECHANICAL_PUMP.get()).define('S', sheet).define('P', AllBlocks.FLUID_PIPE.get())
+                .unlockedBy("has_bop_annular", has(PcBlocks.BOP_ANNULAR.get())).save(out, id("bop_accumulator"));
         ShapedRecipeBuilder.shaped(RecipeCategory.MISC, PcBlocks.CHOKE_MANIFOLD.get())
                 .pattern("VPV").pattern("PGP").pattern("VPV").define('V', AllBlocks.FLUID_VALVE.get()).define('P', AllBlocks.FLUID_PIPE.get())
                 .define('G', Items.CLOCK).unlockedBy("has_fluid_valve", has(AllBlocks.FLUID_VALVE.get())).save(out, id("choke_manifold"));

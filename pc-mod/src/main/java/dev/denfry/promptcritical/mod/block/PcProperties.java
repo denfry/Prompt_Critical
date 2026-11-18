@@ -77,10 +77,13 @@ public final class PcProperties {
     public static final BooleanProperty GAS_FIRED = BooleanProperty.create("gas");
     // буровая I2: превентор закрыт, уровень раствора в ёмкости (пусто, рабочий, полно)
     public static final BooleanProperty SHUT = BooleanProperty.create("shut");
+    public static final BooleanProperty CHARGED = BooleanProperty.create("charged");
     public static final IntegerProperty MUD_LEVEL = IntegerProperty.create("level", 0, 2);
     public static final EnumProperty<RollerKind> ROLLER_KIND = EnumProperty.create("kind", RollerKind.class);
     public static final EnumProperty<QuenchMedium> QUENCH_MEDIUM = EnumProperty.create("medium", QuenchMedium.class);
     public static final EnumProperty<CryoKind> CRYO_KIND = EnumProperty.create("kind", CryoKind.class);
+    /** Плашки превентора 09 §9.5.7. */
+    public static final EnumProperty<RamKind> RAM_KIND = EnumProperty.create("ram", RamKind.class);
 
     private PcProperties() {
     }
@@ -173,4 +176,7 @@ public final class PcProperties {
 
     /** Криогенный бак или испаритель (08 §8.11). */
     public enum CryoKind implements Named { STORAGE, VAPORIZER }
+
+    /** Плашки превентора (09 §9.5.7): трубные, глухие, срезающие. */
+    public enum RamKind implements Named { PIPE, BLIND, SHEAR }
 }

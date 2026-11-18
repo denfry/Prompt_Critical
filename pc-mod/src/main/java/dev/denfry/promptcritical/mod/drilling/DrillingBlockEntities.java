@@ -26,6 +26,10 @@ public final class DrillingBlockEntities {
             type("mud_pump", MudPumpBlockEntity::new, PcBlocks.MUD_PUMP);
     public static final DeferredHolder<BlockEntityType<?>, BlockEntityType<MudHopperBlockEntity>> MUD_MIXING_HOPPER =
             type("mud_mixing_hopper", MudHopperBlockEntity::new, PcBlocks.MUD_MIXING_HOPPER);
+    public static final DeferredHolder<BlockEntityType<?>, BlockEntityType<BopRamBlockEntity>> BOP_RAM =
+            type("bop_ram", BopRamBlockEntity::new, PcBlocks.BOP_RAM);
+    public static final DeferredHolder<BlockEntityType<?>, BlockEntityType<BopAccumulatorBlockEntity>> BOP_ACCUMULATOR =
+            type("bop_accumulator", BopAccumulatorBlockEntity::new, PcBlocks.BOP_ACCUMULATOR);
 
     private DrillingBlockEntities() {
     }

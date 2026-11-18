@@ -45,6 +45,31 @@ public final class DrillingText {
         put("part.bop_annular", "annular preventer", "кольцевой превентор");
         put("part.choke_manifold", "choke manifold", "манифольд дросселирования");
         put("part.mud_tank", "mud tanks (at least %s)", "ёмкости раствора (не меньше %s)");
+        put("part.bop_accumulator", "BOP accumulator unit", "аккумуляторная установка ПВО");
+        // прихваты и поглощения 09 §9.5.10
+        put("stuck", "Pipe stuck: the rotary cannot turn it (sticking force %s t, overpull allowed %s t)",
+                "Прихват: ротор не проворачивает колонну (сила прихвата %s т, допустимая натяжка %s т)");
+        put("work_free", "Worked the pipe free (needed %s t of %s t allowed)", "Колонну расходили (понадобилось %s т из %s т допустимых)");
+        put("work_fail", "Pipe does not move: sticking %s t is above the allowed overpull %s t. Cut the overbalance",
+                "Колонна не идёт: прихват %s т больше допустимой натяжки %s т. Снизьте репрессию");
+        put("lcm", "Loss circulation material %s kg added: %s kg/m³ in the pits", "Добавлено наполнителя %s кг: %s кг/м³ в ёмкостях");
+        // ПВО 09 §9.5.7
+        put("bop_fault.no_pressure", "%s: not enough accumulator pressure to close", "%s: не хватает давления аккумулятора");
+        put("bop_fault.ram_mismatch", "%s: rams do not fit what is in the bore", "%s: плашки не подходят к тому, что в стволе");
+        put("bop_fault.tool_joint_in_ram", "%s: a tool joint is in the shear rams, they stall", "%s: в зоне плашек замок трубы — не режут");
+        put("bop_fault.worn_element", "%s: packer worn after 20 closures, holds 80 %%", "%s: уплотнитель изношен после 20 закрытий, держит 80 %%");
+        put("bop_fault.untested_failure", "%s: untested element failed to seal", "%s: неиспытанный элемент не загерметизировал");
+        put("bop_none", "No %s in the stack", "В стеке нет: %s");
+        put("bop_tested", "BOP pressure test: %s elements tested", "Опрессовка ПВО: испытано элементов — %s");
+        put("bop_packer", "Annular packer replaced", "Уплотнитель кольцевого превентора заменён");
+        put("bop_sheared", "Drill pipe sheared: the string is lost, circulation is impossible",
+                "Бурильная колонна срезана: колонна потеряна, циркуляция невозможна");
+        put("ram_kind", "Rams: %s", "Плашки: %s");
+        put("ram_closed", "Open the rams before changing them", "Сначала откройте плашки");
+        put("component.annular", "annular", "кольцевой");
+        put("component.pipe_ram", "pipe rams", "трубные плашки");
+        put("component.blind_ram", "blind rams", "глухие плашки");
+        put("component.shear_ram", "shear rams", "срезающие плашки");
         for (String s : new String[] {"idle", "first_circulation", "weight_up", "second_circulation", "done"}) {
             put("stage." + s, switch (s) {
                 case "idle" -> "not started";

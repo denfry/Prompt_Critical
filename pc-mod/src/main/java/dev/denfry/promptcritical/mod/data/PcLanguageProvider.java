@@ -323,6 +323,8 @@ public final class PcLanguageProvider extends LanguageProvider {
         b("drawworks", "Drawworks", "Буровая лебёдка");
         b("derrick_segment", "Derrick Section", "Секция вышки");
         b("bop_annular", "Annular Preventer", "Кольцевой превентор");
+        b("bop_ram", "Ram Preventer", "Плашечный превентор");
+        b("bop_accumulator", "BOP Accumulator Unit", "Аккумуляторная установка ПВО");
         b("choke_manifold", "Choke Manifold", "Манифольд дросселирования");
         b("mud_tank", "Mud Tank", "Ёмкость бурового раствора");
         b("mud_mixing_hopper", "Mud Mixing Hopper", "Гидроворонка");

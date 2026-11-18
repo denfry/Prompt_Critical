@@ -129,7 +129,7 @@ public final class PcBlockStateProvider extends BlockStateProvider {
             "cast_house_machine", "ladle", "roller_table", "rolling_mill_stand", "piercing_mill", "pipe_welder", "asu_main_compressor",
             "asu_expander", "air_separator", "hydrotest_pump", "recording_gauge", "water_clarifier", "rotary_table", "mud_pump",
             "pumpjack", "gas_compressor", "pvc_reactor", "leach_tank", "rotary_calciner", "hf_kiln", "mixer_settler",
-            "pellet_press");
+            "pellet_press", "bop_accumulator");
 
     /** Модели состояния мультипартом: основная и части, все с поворотом по {@code facing}. */
     private void parts(Block block, String id) {
@@ -170,6 +170,7 @@ public final class PcBlockStateProvider extends BlockStateProvider {
             case "water_clarifier" -> java.util.List.of(base, id + "/partial/rake");
             case "rotary_table" -> java.util.List.of(base, id + "/partial/turntable", id + "/partial/kelly");
             case "mud_pump" -> java.util.List.of(base, id + "/partial/crankshaft");
+            case "bop_accumulator" -> java.util.List.of(base, id + "/partial/levers");
             case "leach_tank" -> java.util.List.of(base, id + "/partial/agitator");
             case "rotary_calciner", "hf_kiln" -> java.util.List.of(base, id + "/partial/shell");
             case "mixer_settler" -> java.util.List.of(base, id + "/partial/impeller");
@@ -303,6 +304,12 @@ public final class PcBlockStateProvider extends BlockStateProvider {
             case "tube_furnace" -> s.getValue(BlockStateProperties.LIT) ? id + "_lit" : id;
             case "drillers_console", "seismic_recorder" -> s.getValue(BlockStateProperties.LIT) ? id + "_on" : id;
             case "bop_annular" -> s.getValue(PcProperties.SHUT) ? id + "_closed" : id;
+            case "bop_ram" -> s.getValue(PcProperties.SHUT) ? id + "_closed" : switch (s.getValue(PcProperties.RAM_KIND)) {
+                case PIPE -> id;
+                case BLIND -> id + "_blind";
+                case SHEAR -> id + "_shear";
+            };
+            case "bop_accumulator" -> s.getValue(PcProperties.CHARGED) ? id + "_charged" : id;
             case "mud_tank" -> switch (s.getValue(PcProperties.MUD_LEVEL)) {
                 case 0 -> id + "_empty";
                 case 2 -> id + "_full";

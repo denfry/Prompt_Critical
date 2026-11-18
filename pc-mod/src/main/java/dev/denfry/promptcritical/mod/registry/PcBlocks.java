@@ -467,6 +467,11 @@ public final class PcBlocks {
             Spec.facing().footprint(Footprint.of(Segment.box(-1, 1, 0, 1, 0, 1))));
     public static final DeferredBlock<PcBlock> DERRICK_SEGMENT = block("derrick_segment", machine(), Spec.facing().footprint(FP_CUBE3));
     public static final DeferredBlock<PcBlock> BOP_ANNULAR = block("bop_annular", machine(), Spec.facing(PcProperties.SHUT));
+    // стек ПВО 09 §9.5.7: плашечный превентор (вид плашек — пустой рукой на открытом) и аккумуляторная установка
+    public static final DeferredBlock<PcDeviceBlock> BOP_RAM = device("bop_ram", machine(), Spec.facing(PcProperties.RAM_KIND, PcProperties.SHUT),
+            FoundryBlock.with(dev.denfry.promptcritical.mod.drilling.BopRamBlockEntity::new));
+    public static final DeferredBlock<PcDeviceBlock> BOP_ACCUMULATOR = device("bop_accumulator", machine(),
+            Spec.facing(PcProperties.CHARGED).footprint(FP_WIDE2), dev.denfry.promptcritical.mod.drilling.BopAccumulatorBlock::create);
     public static final DeferredBlock<PcBlock> CHOKE_MANIFOLD = block("choke_manifold", machine(), Spec.facing().footprint(FP_WIDE2));
     public static final DeferredBlock<PcBlock> MUD_TANK = block("mud_tank", machine(), Spec.facing(PcProperties.MUD_LEVEL));
     public static final DeferredBlock<PcDeviceBlock> MUD_MIXING_HOPPER = device("mud_mixing_hopper", machine(), Spec.facing(),

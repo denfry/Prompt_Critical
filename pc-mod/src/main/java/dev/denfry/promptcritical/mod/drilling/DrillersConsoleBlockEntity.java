@@ -9,6 +9,9 @@ import dev.denfry.promptcritical.mod.ironworks.Ironworks;
 import dev.denfry.promptcritical.mod.panel.PanelHost;
 import dev.denfry.promptcritical.mod.panel.PanelLayout;
 import dev.denfry.promptcritical.mod.registry.PcBlocks;
+import dev.denfry.promptcritical.sim.drilling.BopAccumulator;
+import dev.denfry.promptcritical.sim.drilling.BopStack;
+import dev.denfry.promptcritical.sim.drilling.DifferentialSticking;
 import dev.denfry.promptcritical.sim.drilling.DrillersMethod;
 import dev.denfry.promptcritical.sim.drilling.FormationFluid;
 import dev.denfry.promptcritical.sim.drilling.KillSheet;
@@ -54,6 +57,12 @@ import org.jetbrains.annotations.Nullable;
  * <p>Щит: нагрузка на долото и ходы насосов — кнопками, превентор, глушение методом бурильщика
  * ({@link DrillersMethod}), обнуление счётчика прироста. Открытый фонтан газа воспламеняется на буровой и идёт
  * в бюджет разрушений как взрыв ({@link Ironworks#blast}).
+ *
+ * <p>Стек ПВО (09 §9.5.7): кольцевой и плашечные превенторы в радиусе буровой, сверху вниз, закрываются жидкостью
+ * аккумуляторной установки ({@link BopAccumulatorBlockEntity}) за 30 с; скважина закрыта, пока хоть один элемент
+ * держит, а давление удержания — по самому прочному из них ({@link BopStack}). Срезанная колонна — конец циркуляции и
+ * бурения. Прихват (09 §9.5.10, {@link DifferentialSticking}): колонна без вращения против вскрытого пласта при
+ * репрессии прилипает; прихваченную ротор не вращает, расхаживание — кнопкой щита.
  */
 public final class DrillersConsoleBlockEntity extends DeviceBlockEntity implements FoundryDevice, PanelHost {
     public static final int RIG_RADIUS = 8, SCAN_PERIOD = 40, MIN_TANKS = 4;
@@ -72,7 +81,18 @@ public final class DrillersConsoleBlockEntity extends DeviceBlockEntity implemen
     @Nullable
     private BlockPos rotaryPos;
     private final List<BlockPos> pumps = new ArrayList<>(), bops = new ArrayList<>(), tanks = new ArrayList<>();
-    private double[] pendingWell, pendingProspect;
+    /** Элементы стека ПВО: позиции блоков сверху вниз. */
+    private final List<BlockPos> stackPos = new ArrayList<>();
+    @Nullable
+    private BopStack stack;
+    private String stackSig = "";
+    @Nullable
+    private BlockPos accumulatorPos;
+    private final DifferentialSticking sticking = new DifferentialSticking();
+    private double[] pendingWell, pendingProspect, pendingStack;
+    private String pendingStackSig;
+    private double pendingLcm;
+    private boolean savedStack;
     private int ticks;
 
     public DrillersConsoleBlockEntity(BlockPos pos, BlockState state) {
@@ -118,6 +138,7 @@ public final class DrillersConsoleBlockEntity extends DeviceBlockEntity implemen
     /** Осмотреть блоки вокруг пульта; возвращает {@code true}, если буровая собрана. */
     public boolean scan() {
         rotaryPos = null;
+        accumulatorPos = null;
         pumps.clear();
         bops.clear();
         tanks.clear();
@@ -130,8 +151,10 @@ public final class DrillersConsoleBlockEntity extends DeviceBlockEntity implemen
                 if (rotaryPos == null || p.distSqr(worldPosition) < rotaryPos.distSqr(worldPosition)) rotaryPos = p.immutable();
             } else if (s.is(PcBlocks.MUD_PUMP.get()) && level.getBlockEntity(p) instanceof MudPumpBlockEntity) {
                 pumps.add(p.immutable());
-            } else if (s.is(PcBlocks.BOP_ANNULAR.get())) {
+            } else if (s.is(PcBlocks.BOP_ANNULAR.get()) || s.is(PcBlocks.BOP_RAM.get())) {
                 bops.add(p.immutable());
+            } else if (s.is(PcBlocks.BOP_ACCUMULATOR.get()) && level.getBlockEntity(p) instanceof BopAccumulatorBlockEntity) {
+                if (accumulatorPos == null || p.distSqr(worldPosition) < accumulatorPos.distSqr(worldPosition)) accumulatorPos = p.immutable();
             } else if (s.is(PcBlocks.MUD_TANK.get())) {
                 tanks.add(p.immutable());
             } else if (s.is(PcBlocks.DRAWWORKS.get())) {
@@ -150,12 +173,65 @@ public final class DrillersConsoleBlockEntity extends DeviceBlockEntity implemen
         if (!derrick) missing.add("derrick_segment");
         if (!drawworks) missing.add("drawworks");
         if (pumps.isEmpty()) missing.add("mud_pump");
-        if (bops.isEmpty()) missing.add("bop_annular");
+        boolean annular = false;
+        for (BlockPos p : bops) annular |= level.getBlockState(p).is(PcBlocks.BOP_ANNULAR.get());
+        if (!annular) missing.add("bop_annular");
+        if (accumulatorPos == null) missing.add("bop_accumulator");
         if (!choke) missing.add("choke_manifold");
         if (tanks.size() < MIN_TANKS) missing.add("mud_tank");
         rigOk = missing.isEmpty();
         if (well != null) well.setPitCapacityM3(Math.max(tanks.size(), 1) * TANK_M3);
+        rebuildStack();
         return rigOk;
+    }
+
+    /** Игровые сутки (для срока испытания ПВО). */
+    public double day() {
+        return level == null ? 0 : level.getGameTime() / 24000.0;
+    }
+
+    /** Стек по блокам превенторов сверху вниз; при смене состава — новый стек, опрессованный при монтаже. */
+    private void rebuildStack() {
+        List<BlockPos> order = new ArrayList<>(bops);
+        order.sort((a, b) -> a.getY() != b.getY() ? Integer.compare(b.getY(), a.getY()) : Long.compare(a.asLong(), b.asLong()));
+        StringBuilder sig = new StringBuilder();
+        List<BopStack.Component> kinds = new ArrayList<>();
+        for (BlockPos p : order) {
+            BlockState s = level.getBlockState(p);
+            BopStack.Component k = s.is(PcBlocks.BOP_RAM.get()) ? BopRamBlockEntity.component(s) : BopStack.Component.ANNULAR;
+            kinds.add(k);
+            sig.append(p.asLong()).append(':').append(k.ordinal()).append(';');
+        }
+        String key = sig.toString();
+        if (stack != null && key.equals(stackSig)) return;
+        BopStack fresh = new BopStack(worldPosition.asLong());
+        for (BopStack.Component k : kinds) fresh.add(k);
+        fresh.markInstalled(day());
+        if (stack == null && pendingStack != null && key.equals(pendingStackSig)) fresh.restore(pendingStack);
+        pendingStack = null;
+        pendingStackSig = null;
+        stack = fresh;
+        stackSig = key;
+        stackPos.clear();
+        stackPos.addAll(order);
+    }
+
+    @Nullable
+    public BopStack bopStack() {
+        return stack;
+    }
+
+    @Nullable
+    public BopAccumulator accumulator() {
+        return accumulatorPos != null && level.getBlockEntity(accumulatorPos) instanceof BopAccumulatorBlockEntity a ? a.accumulator() : null;
+    }
+
+    public DifferentialSticking sticking() {
+        return sticking;
+    }
+
+    private double pipeOdM() {
+        return stack != null && stack.pipeSheared() ? 0 : WellGeometry.STANDARD.pipeOuterM();
     }
 
     private Component missingText() {
@@ -218,9 +294,26 @@ public final class DrillersConsoleBlockEntity extends DeviceBlockEntity implemen
             q += pumpBes.get(i).drive(set) / 60 * MudPumpBlockEntity.M3_PER_STROKE;
         }
         double rpm = rigOk && rotary != null ? rotary.tableRpm() : 0;
-        if (bops.isEmpty() && well.bopClosed()) well.setBopClosed(false);
+        boolean sheared = stack != null && stack.pipeSheared();
+        if (sheared) q = 0;
+        if (sticking.stuck() || sheared) rpm = 0;
+        if (stack != null) {
+            stack.step(dt);
+            boolean sealed = stack.sealed();
+            if (well.bopClosed() != sealed) well.setBopClosed(sealed);
+            well.setBopRatedPa(sealed ? stack.holdingPa(pipeOdM()) : Well.BOP_RATED_PA);
+        } else if (well.bopClosed()) {
+            well.setBopClosed(false);
+        }
         boolean wasBlowout = well.blowout();
-        well.step(dt, q, rpm, rigOk ? wobSetN : 0);
+        well.step(dt, q, rpm, rigOk && !sheared && !sticking.stuck() ? wobSetN : 0);
+        boolean wasStuck = sticking.stuck();
+        sticking.step(dt, rpm > 0, well.overbalancePa(), well.collarsAcrossPayM(), freeHookLoadN());
+        if (sticking.stuck() && !wasStuck) {
+            Player p = s.getNearestPlayer(worldPosition.getX(), worldPosition.getY(), worldPosition.getZ(), 16, false);
+            if (p != null) p.displayClientMessage(DrillingText.msg("stuck", DrillingText.num(sticking.stickingForceN() / 9.80665e3, 1),
+                    DrillingText.num(DifferentialSticking.overpullN(freeHookLoadN()) / 9.80665e3, 1)).withStyle(ChatFormatting.RED), false);
+        }
         kill.track(well, dt);
         if (kill.stage() == dev.denfry.promptcritical.sim.drilling.DrillersMethod.Stage.DONE && !well.blowout())
             dev.denfry.promptcritical.mod.content.SimAchievements.once(this, dev.denfry.promptcritical.mod.content.SimAchievements.WELL_KILLED, "", 1);
@@ -242,9 +335,10 @@ public final class DrillersConsoleBlockEntity extends DeviceBlockEntity implemen
             BlockState s = level.getBlockState(p);
             if (s.is(PcBlocks.MUD_TANK.get())) setState(p, s.setValue(PcProperties.MUD_LEVEL, lvl));
         }
-        for (BlockPos p : bops) {
+        for (int i = 0; stack != null && i < stackPos.size() && i < stack.size(); i++) {
+            BlockPos p = stackPos.get(i);
             BlockState s = level.getBlockState(p);
-            if (s.is(PcBlocks.BOP_ANNULAR.get())) setState(p, s.setValue(PcProperties.SHUT, well.bopClosed()));
+            if (s.is(PcBlocks.BOP_ANNULAR.get()) || s.is(PcBlocks.BOP_RAM.get())) setState(p, s.setValue(PcProperties.SHUT, stack.get(i).closed()));
         }
     }
 
@@ -305,27 +399,124 @@ public final class DrillersConsoleBlockEntity extends DeviceBlockEntity implemen
             case DrillingPanels.B_BOP -> toggleBop(player);
             case DrillingPanels.B_KILL -> advanceKill(player);
             case DrillingPanels.B_ZERO -> well.zeroPitTotalizer();
+            case DrillingPanels.B_WORK -> workPipe(player);
             default -> {
             }
         }
         setChanged();
     }
 
-    /** Закрыть или открыть превентор; без превентора под буровой — нечем. */
+    /** Закрыть или открыть кольцевой превентор (кнопка ПВО на пульте); без превентора под буровой — нечем. */
     public void toggleBop(@Nullable Player player) {
+        toggleComponent(BopStack.Component.ANNULAR, player);
+    }
+
+    /** Закрыть все элементы вида {@code kind}, если среди них нет закрытых, иначе — открыть. */
+    public void toggleComponent(BopStack.Component kind, @Nullable Player player) {
+        if (stack == null) scan();
+        boolean anyClosed = false;
+        for (BopStack.Element e : stack.elements()) anyClosed |= e.kind == kind && e.closed();
+        if (anyClosed) openComponent(kind, player);
+        else closeComponent(kind, player);
+    }
+
+    /** Закрыть элементы вида {@code kind}; первый отказ — в ответ ({@code NONE} — все закрываются). */
+    public BopStack.Fault closeComponent(BopStack.Component kind, @Nullable Player player) {
+        if (stack == null) scan();
+        BopAccumulator acc = accumulator();
+        String name = kind.name().toLowerCase(java.util.Locale.ROOT);
+        boolean found = false;
+        BopStack.Fault first = BopStack.Fault.NONE;
+        boolean joint = well != null && BopStack.toolJointInRams(well.holeDepthM(), WellGeometry.STANDARD.bhaLengthM());
+        for (int i = 0; i < stack.size(); i++) {
+            if (stack.get(i).kind != kind) continue;
+            found = true;
+            BopStack.Fault f = acc == null ? BopStack.Fault.NO_PRESSURE : stack.close(i, acc, pipeOdM(), joint, day());
+            if (f != BopStack.Fault.NONE && first == BopStack.Fault.NONE) first = f;
+        }
+        if (!found) {
+            if (player != null) player.displayClientMessage(kind == BopStack.Component.ANNULAR ? DrillingText.msg("bop_needs")
+                    : DrillingText.msg("bop_none", DrillingText.msg("component." + name)), true);
+            return BopStack.Fault.NO_PRESSURE;
+        }
+        if (first != BopStack.Fault.NONE && player != null)
+            player.displayClientMessage(DrillingText.msg("bop_fault." + first.name().toLowerCase(java.util.Locale.ROOT),
+                    DrillingText.msg("component." + name)).withStyle(ChatFormatting.RED), true);
+        if (stack.pipeSheared() && player != null) player.displayClientMessage(DrillingText.msg("bop_sheared").withStyle(ChatFormatting.RED), false);
+        spmSet = 0;
+        wobSetN = 0;
+        if (!stackPos.isEmpty()) level.playSound(null, stackPos.getFirst(), SoundEvents.PISTON_EXTEND, SoundSource.BLOCKS, 1.0f, 0.5f);
+        if (well != null) updateStates();
+        setChanged();
+        return first;
+    }
+
+    /** Открыть элементы вида {@code kind}. */
+    public BopStack.Fault openComponent(BopStack.Component kind, @Nullable Player player) {
+        if (stack == null) scan();
+        BopAccumulator acc = accumulator();
+        BopStack.Fault first = BopStack.Fault.NONE;
+        for (int i = 0; i < stack.size(); i++) {
+            if (stack.get(i).kind != kind || !stack.get(i).closed()) continue;
+            BopStack.Fault f = acc == null ? BopStack.Fault.NO_PRESSURE : stack.open(i, acc);
+            if (f != BopStack.Fault.NONE) first = f;
+        }
+        if (first != BopStack.Fault.NONE && player != null)
+            player.displayClientMessage(DrillingText.msg("bop_fault.no_pressure",
+                    DrillingText.msg("component." + kind.name().toLowerCase(java.util.Locale.ROOT))).withStyle(ChatFormatting.RED), true);
+        if (!stackPos.isEmpty()) level.playSound(null, stackPos.getFirst(), SoundEvents.PISTON_CONTRACT, SoundSource.BLOCKS, 1.0f, 0.5f);
+        if (well != null) updateStates();
+        setChanged();
+        return first;
+    }
+
+    /** Опрессовка стека; число испытанных элементов. */
+    public int pressureTest(@Nullable Player player) {
+        if (stack == null) scan();
+        BopAccumulator acc = accumulator();
+        int n = acc == null ? 0 : stack.pressureTest(acc, pipeOdM(), day());
+        if (player != null) player.displayClientMessage(DrillingText.msg("bop_tested", n), true);
+        setChanged();
+        return n;
+    }
+
+    /** Заменить уплотнитель открытого кольцевого превентора; {@code false} — нечего менять. */
+    public boolean replacePacker() {
+        if (stack == null) scan();
+        boolean done = false;
+        for (int i = 0; i < stack.size(); i++)
+            if (stack.get(i).kind == BopStack.Component.ANNULAR && !stack.get(i).closed()) {
+                stack.replacePacker(i);
+                done = true;
+            }
+        if (done) setChanged();
+        return done;
+    }
+
+    /** Вес свободной колонны на крюке, Н. */
+    private double freeHookLoadN() {
+        return well == null ? 0 : well.hookLoadN() + well.wobN();
+    }
+
+    /** Расходить колонну; {@code true} — свободна. */
+    public boolean workPipe(@Nullable Player player) {
+        if (well == null) return false;
+        double free = freeHookLoadN(), allowed = DifferentialSticking.overpullN(free), need = sticking.stickingForceN();
+        boolean ok = sticking.workPipe(free);
+        if (player != null) player.displayClientMessage(ok
+                ? DrillingText.msg("work_free", DrillingText.num(need / 9.80665e3, 1), DrillingText.num(allowed / 9.80665e3, 1))
+                : DrillingText.msg("work_fail", DrillingText.num(need / 9.80665e3, 1), DrillingText.num(allowed / 9.80665e3, 1)), true);
+        level.playSound(null, rotaryPos != null ? rotaryPos : worldPosition, SoundEvents.CHAIN_HIT, SoundSource.BLOCKS, 1.0f, 0.6f);
+        setChanged();
+        return ok;
+    }
+
+    /** Наполнитель поглощения через гидроворонку, кг. */
+    public void addLcm(double kg, @Nullable Player player) {
         if (well == null) return;
-        if (bops.isEmpty()) {
-            if (player != null) player.displayClientMessage(DrillingText.msg("bop_needs"), true);
-            return;
-        }
-        boolean close = !well.bopClosed();
-        well.setBopClosed(close);
-        if (close) {
-            spmSet = 0;
-            wobSetN = 0;
-        }
-        level.playSound(null, bops.getFirst(), SoundEvents.PISTON_EXTEND, SoundSource.BLOCKS, 1.0f, 0.5f);
-        updateStates();
+        well.addLcm(kg);
+        setChanged();
+        if (player != null) player.displayClientMessage(DrillingText.msg("lcm", DrillingText.num(kg, 0), DrillingText.num(well.pitLcmKgM3(), 1)), true);
     }
 
     /** Следующий шаг метода бурильщика. */
@@ -414,7 +605,12 @@ public final class DrillersConsoleBlockEntity extends DeviceBlockEntity implemen
             if (well.gasOutMolS() > 0) flags |= 1 << DrillingPanels.F_GAS;
             if (well.blowout()) flags |= 1 << DrillingPanels.F_BLOWOUT;
             if (kill.stage() != DrillersMethod.Stage.IDLE) flags |= 1 << DrillingPanels.F_KILL;
-            if (well.shoeFractured()) flags |= 1 << DrillingPanels.F_SHOE;
+            if (well.shoeFractured() || well.lossM3s() > 0) flags |= 1 << DrillingPanels.F_SHOE;
+            if (sticking.stuck()) flags |= 1 << DrillingPanels.F_STUCK;
+            out[DrillingPanels.C_LOSS_LS10] = (int) Math.round(well.lossM3s() * 1e4);
+            out[DrillingPanels.C_STICK_T10] = (int) Math.round(sticking.stickingForceN() / 9.80665e3 * 10);
+            out[DrillingPanels.C_OVERPULL_T10] = (int) Math.round(DifferentialSticking.overpullN(freeHookLoadN()) / 9.80665e3 * 10);
+            out[DrillingPanels.C_LCM] = (int) Math.round(well.pitLcmKgM3());
         }
         out[DrillingPanels.C_FLAGS] = flags;
     }
@@ -427,7 +623,14 @@ public final class DrillersConsoleBlockEntity extends DeviceBlockEntity implemen
         tag.putDouble("wob", wobSetN);
         tag.putDouble("spm", spmSet);
         tag.putBoolean("blowout_handled", blowoutHandled);
+        tag.putDouble("stick_s", sticking.contactSeconds());
+        tag.putBoolean("stuck", sticking.stuck());
+        if (stack != null) {
+            tag.putLongArray("bop_stack", bits(stack.exportState()));
+            tag.putString("bop_sig", stackSig);
+        }
         if (well != null) {
+            tag.putDouble("lcm", well.pitLcmKgM3());
             tag.putLongArray("well", bits(well.exportState()));
             Prospect p = well.prospect();
             if (p != null) {
@@ -444,6 +647,11 @@ public final class DrillersConsoleBlockEntity extends DeviceBlockEntity implemen
         wobSetN = tag.getDouble("wob");
         spmSet = tag.getDouble("spm");
         blowoutHandled = tag.getBoolean("blowout_handled");
+        sticking.restore(tag.getDouble("stick_s"), tag.getBoolean("stuck"));
+        savedStack = tag.contains("bop_stack");
+        pendingStack = savedStack ? doubles(tag.getLongArray("bop_stack")) : null;
+        pendingStackSig = tag.contains("bop_sig") ? tag.getString("bop_sig") : null;
+        pendingLcm = tag.getDouble("lcm");
         pendingWell = tag.contains("well") ? doubles(tag.getLongArray("well")) : null;
         pendingProspect = tag.contains("prospect") ? doubles(tag.getLongArray("prospect")) : null;
     }
@@ -462,6 +670,13 @@ public final class DrillersConsoleBlockEntity extends DeviceBlockEntity implemen
         }
         well = Well.restore(WellGeometry.STANDARD, p, Math.max(tanks.size(), 1) * TANK_M3, pendingWell);
         pendingWell = pendingProspect = null;
+        if (well != null) {
+            well.setPitLcmKgM3(pendingLcm);
+            if (well.bopClosed() && !savedStack && stack != null) {
+                // старое сохранение без стека: закрытый кольцевой остаётся закрытым
+                for (int i = 0; i < stack.size(); i++) if (stack.get(i).kind == BopStack.Component.ANNULAR) stack.restoreClosed(i);
+            }
+        }
     }
 
     private static long[] bits(double[] v) {
