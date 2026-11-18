@@ -3,6 +3,7 @@ package dev.denfry.promptcritical.mod.automation.client;
 import dev.denfry.promptcritical.mod.automation.AutomationText;
 import dev.denfry.promptcritical.mod.automation.PlcNet;
 import dev.denfry.promptcritical.sim.automation.plc.IlCompiler;
+import dev.denfry.promptcritical.sim.automation.plc.PlcLanguage;
 import java.util.Locale;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.GuiGraphics;
@@ -97,6 +98,10 @@ public final class PlcScreen extends Screen {
         g.drawString(font, AutomationText.msg(AutomationText.PLC_ANALOG, ai.toString().strip(), ao.toString().strip()), bx, y, DIM);
         // ошибки компиляции или «без ошибок»; предупреждение, если текст в окне не тот, что в ПЛК
         int ey = editor.getY() + editor.getHeight() + 8;
+        // язык определяется по тексту: PROGRAM или (*ST*) в начале — ST, иначе IL
+        boolean st = PlcLanguage.of(editor.getValue()) == PlcLanguage.ST;
+        g.drawString(font, AutomationText.msg(AutomationText.PLC_LANGUAGE, st ? "Structured Text" : "Instruction List"), 12, ey, DIM);
+        ey += 11;
         if (!editor.getValue().equals(loaded)) {
             g.drawString(font, AutomationText.msg(AutomationText.PLC_UNSAVED), 12, ey, 0xFFE0C040);
             ey += 11;
