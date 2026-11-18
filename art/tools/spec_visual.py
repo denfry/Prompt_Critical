@@ -121,40 +121,7 @@ def support(damaged=False):
 m("mine_support", "mining", support())
 m("mine_support_damaged", "mining", support(True))
 
-# механизированная крепь 1×3×2 (x 0…16, y −16…32, z 0…32): основание, перекрытие, ограждение, лемнискатный механизм
-m("powered_roof_support", "mining", [
-    el("base_w", [1, -16, 1], [6.5, -11, 30], "yel"),
-    el("base_e", [9.5, -16, 1], [15, -11, 30], "yel"),
-    el("base_bridge", [6.5, -15, 18], [9.5, -12, 28], "yel"),
-    el("toe_w", [1, -16, 0], [6.5, -13, 1], "haz"),
-    el("toe_e", [9.5, -16, 0], [15, -13, 1], "haz"),
-    el("canopy", [0, 28, -2], [16, 31, 30], "yel"),
-    el("canopy_tip", [1, 28.5, -4], [15, 30.5, -2], "yel"),
-    el("canopy_hinge", [3, 26, 26], [13, 28, 30], "d"),
-    el("shield", [1, 9, 23], [15, 27, 26], "yel", rot=("x", -22.5, [8, 27, 26])),
-    el("lemniscate_upper", [3, -2, 22], [13, 2, 29], "d", rot=("x", 22.5, [8, 0, 26])),
-    el("lemniscate_lower", [3, -11, 21], [13, -6, 29], "d"),
-    el("spill_plate", [2, -16, -2], [14, -9, 0], "yel"),
-    el("push_ram", [7, -14, 0], [9, -12, 18], "sm"),
-    el("valve_bank", [4, -11, 12], [12, -7, 17], "dg"),
-    el("lever_1", [5, -7, 13], [6, -4, 14], "red"),
-    el("lever_2", [7, -7, 13], [8, -4, 14], "gas"),
-    el("lever_3", [10, -7, 13], [11, -4, 14], "mb"),
-    el("hose_w", [2, -11, 15], [3, 26, 16], "r"),
-    el("hose_e", [13, -11, 15], [14, 26, 16], "r"),
-    el("leg_socket_w", [2, -12, 5], [7, -10, 11], "d"),
-    el("leg_socket_e", [9, -12, 5], [14, -10, 11], "d"),
-    el("leg_cap_w", [2.5, 26, 5.5], [6.5, 28, 10.5], "d"),
-    el("leg_cap_e", [9.5, 26, 5.5], [13.5, 28, 10.5], "d"),
-])
-m("powered_roof_support/legs", "mining", [
-    el("cyl_w", [2.5, -10, 6], [6.5, 9, 10], "yel"),
-    el("collar_w", [2, 9, 5.5], [7, 10.5, 10.5], "d"),
-    el("rod_w", [3.5, 10.5, 7], [5.5, 26, 9], "pol"),
-    el("cyl_e", [9.5, -10, 6], [13.5, 9, 10], "yel"),
-    el("collar_e", [9, 9, 5.5], [14, 10.5, 10.5], "d"),
-    el("rod_e", [10.5, 10.5, 7], [12.5, 26, 9], "pol"),
-], kind="partial")
+# механизированная крепь нарисована вручную в Blockbench: art/blockbench/mining/powered_roof_support.author.js
 
 # очистной комбайн нарисован вручную в Blockbench: art/blockbench/mining/longwall_shearer.author.js
 
