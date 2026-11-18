@@ -44,6 +44,19 @@
 - NGL fractionation into propane, butane and natural gasoline through a deethanizer, depropanizer and debutanizer
   on the Fenske–Underwood–Gilliland column. Sales gas and associated gas fire the gas turbine and furnaces.
 
+### Nitrogen chemistry (I3)
+- Steam reformer: sales gas and steam over nickel in a tube furnace (Xu and Froment kinetics), a secondary reformer on
+  process air held at three hydrogen to one nitrogen by a ratio controller, and high and low temperature CO shift.
+  Running short of steam lays carbon on the nickel. Catalysts are charged by hand.
+- CO₂ removal with MEA (Kremser absorber, regeneration on the process heat) and a methanator that trips above 450 °C
+  when CO₂ slips; off-spec gas goes to the vent.
+- Ammonia synthesis loop on a Create shaft: three adiabatic beds of iron catalyst (Temkin–Pyzhev), equilibrium tested
+  against the Larson–Dodge table, a separator on an ammonia chiller and a purge. The loop pressure finds its own level,
+  and without a purge the inerts choke it. The purge gas fires the reformer.
+- Nitric acid by Ostwald at atmospheric, 0.42 or 0.73 MPa: platinum-rhodium gauze with platinum loss, a flash above the
+  lower explosive limit, Bodenstein NO oxidation and tray absorption limited by acid strength, a brown tail plume and
+  tail gas reduction. Magnesium nitrate concentration to 98 % on the existing column code.
+
 ### Telemetry and SCADA (A4)
 - Telemetry gateway (RTU): scans the local panels of every machine within 8 blocks once a second and serves the
   snapshot to a CC: Tweaked computer as the `pc_rtu` peripheral — machines, named instruments with units, lamps as

@@ -451,6 +451,24 @@ public final class PcBlocks {
             Spec.facing(PcProperties.RUNNING).footprint(Footprint.of(Segment.box(-1, 1, 0, 0, 0, 0))),
             KineticMachineBlock.with(ShaftSide.BACK, dev.denfry.promptcritical.mod.chem.LdpeReactorBlockEntity::new));
 
+    // --- химия I3: азот — синтез-газ, аммиак, азотная кислота ---
+    private static final Footprint FP_COLUMN3 = Footprint.of(Segment.box(0, 0, 0, 2, 0, 0));
+    public static final DeferredBlock<PcDeviceBlock> STEAM_REFORMER = device("steam_reformer", lit(brick()),
+            Spec.facing(BlockStateProperties.LIT).footprint(FP_CUBE3),
+            FoundryBlock.with(dev.denfry.promptcritical.mod.nitrogen.SteamReformerBlockEntity::new));
+    public static final DeferredBlock<PcDeviceBlock> CO2_ABSORBER = device("co2_absorber", machine(),
+            Spec.facing(BlockStateProperties.LIT).footprint(FP_COLUMN3),
+            FoundryBlock.with(dev.denfry.promptcritical.mod.nitrogen.Co2AbsorberBlockEntity::new));
+    public static final DeferredBlock<PcDeviceBlock> AMMONIA_CONVERTER = device("ammonia_converter", machine(),
+            Spec.facing(PcProperties.RUNNING).footprint(FP_COLUMN3),
+            KineticMachineBlock.with(ShaftSide.BACK, dev.denfry.promptcritical.mod.nitrogen.AmmoniaConverterBlockEntity::new));
+    public static final DeferredBlock<PcDeviceBlock> NITRIC_ACID_UNIT = device("nitric_acid_unit", machine(),
+            Spec.facing(PcProperties.RUNNING).footprint(Footprint.of(Segment.box(-1, 1, 0, 0, 0, 0))),
+            KineticMachineBlock.with(ShaftSide.BACK, dev.denfry.promptcritical.mod.nitrogen.NitricAcidBlockEntity::new));
+    public static final DeferredBlock<PcDeviceBlock> ACID_CONCENTRATOR = device("acid_concentrator", machine(),
+            Spec.facing(BlockStateProperties.LIT).footprint(FP_COLUMN3),
+            FoundryBlock.with(dev.denfry.promptcritical.mod.nitrogen.AcidConcentratorBlockEntity::new));
+
     // --- обогащение, литьё, механический цех (08 §8.3, §8.9, §8.10) ---
     public static final DeferredBlock<PcDeviceBlock> COAL_JIG = device("coal_jig", machine(),
             Spec.facing(PcProperties.RUNNING).footprint(Footprint.of(Segment.box(0, 1, 0, 1, 0, 0))),

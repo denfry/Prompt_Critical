@@ -72,6 +72,12 @@ public final class PcFluids {
     public static final Entry C4_FRACTION = liquid("c4_fraction", 620, 180, 288);
     public static final Entry PYROLYSIS_GASOLINE = liquid("pyrolysis_gasoline", 830, 500, 293);
     public static final Entry PYROLYSIS_FUEL_OIL = liquid("pyrolysis_fuel_oil", 1080, 20000, 343);
+    // химия I3, азот: азотоводородная смесь (H₂:N₂ = 3) — 1 мБ = 1 нм³; жидкий аммиак, слабая (56 %) и
+    // концентрированная (98 %) азотная кислота — 1 мБ = 1 л
+    public static final Entry SYNGAS = gas("syngas", 313, -1);
+    public static final Entry AMMONIA = liquid("ammonia", 682, 250, 240);
+    public static final Entry NITRIC_ACID = liquid("nitric_acid", 1345, 2000, 293);
+    public static final Entry CONCENTRATED_NITRIC_ACID = liquid("concentrated_nitric_acid", 1500, 900, 293);
 
     static {
         MINE_WATER.props.block(PcBlocks.MINE_WATER);

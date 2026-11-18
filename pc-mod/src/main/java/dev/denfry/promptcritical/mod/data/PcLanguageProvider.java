@@ -210,6 +210,11 @@ public final class PcLanguageProvider extends LanguageProvider {
         i("ground_plate", "Ground Plate", "Шлифованная плита");
         i("flame_safety_lamp", "Flame Safety Lamp", "Бензиновая лампа");
         i("polyethylene", "Polyethylene Pellets (25 kg bag)", "Гранулы полиэтилена (мешок 25 кг)");
+        i("catalyst_steam_reforming", "Nickel Reforming Catalyst", "Никелевый катализатор конверсии метана");
+        i("catalyst_shift_ht", "Iron-Chromium Shift Catalyst", "Железохромовый катализатор конверсии CO");
+        i("catalyst_shift_lt", "Copper-Zinc Shift Catalyst", "Медноцинковый катализатор конверсии CO");
+        i("pt_rh_gauze", "Platinum-Rhodium Gauze Pack", "Пакет платинородиевых сеток");
+        i("catalyst_denox", "Tail Gas Reduction Catalyst", "Катализатор очистки хвостовых газов");
         i("cap_lamp", "Miner's Cap Lamp", "Головной шахтный светильник");
         b("lamp_rack", "Lamp Room Charging Rack", "Зарядный стеллаж ламповой");
         b("cap_lamp_light", "Cap Lamp Light", "Свет фары");
@@ -251,6 +256,11 @@ public final class PcLanguageProvider extends LanguageProvider {
         b("pyrolysis_furnace", "Pyrolysis Furnace", "Печь пиролиза");
         b("cracked_gas_unit", "Cracked Gas Separation Unit", "Установка газоразделения пирогаза");
         b("ldpe_reactor", "LDPE Unit", "Установка ПЭВД");
+        b("steam_reformer", "Steam Reformer", "Печь паровой конверсии метана");
+        b("co2_absorber", "CO₂ Removal and Methanation Column", "Колонна очистки от CO₂ с метанатором");
+        b("ammonia_converter", "Ammonia Synthesis Loop", "Колонна синтеза аммиака");
+        b("nitric_acid_unit", "Nitric Acid Unit", "Агрегат азотной кислоты");
+        b("acid_concentrator", "Nitric Acid Concentrator", "Колонна концентрирования азотной кислоты");
         b("wellhead", "Wellhead", "Колонная головка");
         b("christmas_tree", "Christmas Tree", "Фонтанная арматура");
         b("pumpjack", "Pumpjack", "Станок-качалка");
@@ -379,6 +389,10 @@ public final class PcLanguageProvider extends LanguageProvider {
         FLUIDS.put("c4_fraction", new String[] {"C4 Cut", "C4-фракция пиролиза"});
         FLUIDS.put("pyrolysis_gasoline", new String[] {"Pyrolysis Gasoline", "Пиробензин"});
         FLUIDS.put("pyrolysis_fuel_oil", new String[] {"Pyrolysis Fuel Oil", "Тяжёлая смола пиролиза"});
+        FLUIDS.put("syngas", new String[] {"Ammonia Syngas (3 H₂ + N₂)", "Азотоводородная смесь"});
+        FLUIDS.put("ammonia", new String[] {"Liquid Ammonia", "Жидкий аммиак"});
+        FLUIDS.put("nitric_acid", new String[] {"Nitric Acid (56 %)", "Азотная кислота 56 %"});
+        FLUIDS.put("concentrated_nitric_acid", new String[] {"Concentrated Nitric Acid (98 %)", "Концентрированная азотная кислота 98 %"});
         FLUIDS.put("produced_water", new String[] {"Produced Water", "Пластовая вода"});
         FLUIDS.put("associated_gas", new String[] {"Associated Gas", "Попутный нефтяной газ"});
         FLUIDS.put("gasoline", new String[] {"Straight-Run Gasoline", "Прямогонный бензин"});
@@ -608,6 +622,7 @@ public final class PcLanguageProvider extends LanguageProvider {
         MISC.putAll(dev.denfry.promptcritical.mod.scada.ScadaText.lang());
         MISC.putAll(dev.denfry.promptcritical.mod.gas.GasText.lang());
         MISC.putAll(dev.denfry.promptcritical.mod.chem.ChemText.lang());
+        MISC.putAll(dev.denfry.promptcritical.mod.nitrogen.NitrogenText.lang());
     }
 
     @Override

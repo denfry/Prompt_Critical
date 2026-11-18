@@ -88,6 +88,11 @@ public final class NitricAcidPlant {
         gauzePtG = GAUZE_PT_G;
     }
 
+    /** Сетки порваны вспышкой смеси: пакет менять. */
+    public void tearGauze() {
+        gauzePtG = 0;
+    }
+
     public double denox() {
         return denox;
     }
