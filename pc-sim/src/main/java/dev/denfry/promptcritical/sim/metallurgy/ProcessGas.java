@@ -18,7 +18,14 @@ public enum ProcessGas {
     MINE_METHANE("mine_methane", mineMethane(), BurnerKind.GAS),
     /** Конвертерный газ (08 §8.6.1) после газоочистки без дожигания: CO 65 %, ≈ 8,4 МДж/нм³. */
     CONVERTER("converter_gas", FuelSpec.fromGasComposition("converter_gas", composition("converter_gas")),
-            BurnerKind.LOW_BTU_GAS);
+            BurnerKind.LOW_BTU_GAS),
+    /**
+     * Товарный газ после НТС (I2): CH₄ 88, C₂H₆ 7, C₃H₈ 2, C₄H₁₀ 0,5, N₂ 2, CO₂ 0,5 % — сухой газ для турбин и печей
+     * (ГОСТ 5542 по теплоте сгорания: около 37 МДж/нм³ высшей).
+     */
+    SALES("sales_gas", FuelSpec.fromGasComposition("sales_gas", composition("sales_gas")), BurnerKind.GAS),
+    /** Попутный нефтяной газ сепаратора (I2), жирный: C₄₊ учтён как бутан. */
+    ASSOCIATED("associated_gas", FuelSpec.fromGasComposition("associated_gas", composition("associated_gas")), BurnerKind.GAS);
 
     public final String fluidId;
     public final FuelSpec fuel;
@@ -71,6 +78,22 @@ public enum ProcessGas {
                 x[FuelGas.CO2.ordinal()] = 0.15;
                 x[FuelGas.H2.ordinal()] = 0.02;
                 x[FuelGas.N2.ordinal()] = 0.18;
+            }
+            case "sales_gas" -> {
+                x[FuelGas.CH4.ordinal()] = 0.88;
+                x[FuelGas.C2H6.ordinal()] = 0.07;
+                x[FuelGas.C3H8.ordinal()] = 0.02;
+                x[FuelGas.C4H10.ordinal()] = 0.005;
+                x[FuelGas.N2.ordinal()] = 0.02;
+                x[FuelGas.CO2.ordinal()] = 0.005;
+            }
+            case "associated_gas" -> {
+                x[FuelGas.CH4.ordinal()] = 0.73;
+                x[FuelGas.C2H6.ordinal()] = 0.10;
+                x[FuelGas.C3H8.ordinal()] = 0.08;
+                x[FuelGas.C4H10.ordinal()] = 0.06;
+                x[FuelGas.N2.ordinal()] = 0.02;
+                x[FuelGas.CO2.ordinal()] = 0.01;
             }
             default -> {
                 x[FuelGas.CH4.ordinal()] = 0.95;
