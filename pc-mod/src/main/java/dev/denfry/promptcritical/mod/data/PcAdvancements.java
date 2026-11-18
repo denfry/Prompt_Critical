@@ -63,6 +63,12 @@ public final class PcAdvancements implements AdvancementProvider.AdvancementGene
         LANG.put("analog_pid", new String[] {"No Computer Needed", "Без компьютера",
                 "A PI controller built from analog blocks holds its setpoint for a whole day",
                 "ПИ-регулятор на аналоговых блоках держит параметр целые сутки"});
+        LANG.put("digital_twin", new String[] {"Twin First", "Сначала на двойнике",
+                "A PLC program passed its acceptance test on the digital twin, then went into the real PLC",
+                "Программа прошла испытания на цифровом двойнике, затем загружена в реальный ПЛК"});
+        LANG.put("operator_license", new String[] {"Licensed", "Допуск",
+                "Pass the simulator lessons of a plant and get an operator license",
+                "Сдайте уроки тренажёра по установке и получите удостоверение оператора"});
     }
 
     @Override
@@ -117,6 +123,16 @@ public final class PcAdvancements implements AdvancementProvider.AdvancementGene
         task(relays, PcBlocks.MANUAL_STATION.get(), "analog_pid", AdvancementType.GOAL, false, 60)
                 .addCriterion("analog_loop_held", event(AutomationSubsystem.ANALOG_LOOP_HELD, Map.of()))
                 .save(saver, id("analog_pid"), efh);
+        // A5 и тренажёр (03d §3d.9.1, 11 §11.3.5)
+        task(relays, PcBlocks.SIMULATION_WORKSTATION.get(), "digital_twin", AdvancementType.GOAL, false, 80)
+                .addCriterion("deployed", SimEventTrigger.TriggerInstance.of(
+                        ResourceLocation.parse(dev.denfry.promptcritical.mod.scada.TwinWorkstationBlockEntity.DIGITAL_TWIN), Map.of(), false))
+                .save(saver, id("digital_twin"), efh);
+        task(root, PcItems.OPERATOR_LICENSE.get(), "operator_license", AdvancementType.GOAL, false, 60)
+                .addCriterion("licensed", SimEventTrigger.TriggerInstance.of(
+                        ResourceLocation.parse(dev.denfry.promptcritical.mod.scada.SimulatorDeskBlockEntity.OPERATOR_LICENSE),
+                        Map.of("level", MinMaxBounds.Doubles.atLeast(1)), false))
+                .save(saver, id("operator_license"), efh);
     }
 
     /** Событие мира или домена у игрока в радиусе смены. */

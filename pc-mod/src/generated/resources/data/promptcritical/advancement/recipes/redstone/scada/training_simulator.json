@@ -1,0 +1,32 @@
+{
+  "parent": "minecraft:recipes/root",
+  "criteria": {
+    "has_microprocessor": {
+      "conditions": {
+        "items": [
+          {
+            "items": "promptcritical:microprocessor"
+          }
+        ]
+      },
+      "trigger": "minecraft:inventory_changed"
+    },
+    "has_the_recipe": {
+      "conditions": {
+        "recipe": "promptcritical:scada/training_simulator"
+      },
+      "trigger": "minecraft:recipe_unlocked"
+    }
+  },
+  "requirements": [
+    [
+      "has_the_recipe",
+      "has_microprocessor"
+    ]
+  ],
+  "rewards": {
+    "recipes": [
+      "promptcritical:scada/training_simulator"
+    ]
+  }
+}

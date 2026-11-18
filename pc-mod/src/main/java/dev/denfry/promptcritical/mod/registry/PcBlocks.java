@@ -529,6 +529,20 @@ public final class PcBlocks {
     public static final DeferredBlock<PcDeviceBlock> HISTORIAN_SERVER = device("historian_server", machine(),
             Spec.facing(BlockStateProperties.LIT).footprint(FP_TALL2),
             FoundryBlock.with(dev.denfry.promptcritical.mod.scada.HistorianBlockEntity::new));
+    /** Инженерная станция 03d §3d.9.1: цифровой двойник для FAT программ ПЛК, стол 2×1×1. */
+    public static final DeferredBlock<PcDeviceBlock> SIMULATION_WORKSTATION = device("simulation_workstation", machine(),
+            Spec.facing().footprint(FP_WIDE2),
+            FoundryBlock.with(dev.denfry.promptcritical.mod.scada.TwinWorkstationBlockEntity::new));
+    /** Тренажёр 11 §11.3.2: вычислительный шкаф 1×2×1, пульт оператора и место инструктора 2×1×1. */
+    public static final DeferredBlock<PcDeviceBlock> TRAINING_SIMULATOR = device("training_simulator", machine(),
+            Spec.facing(PcProperties.RUNNING).footprint(FP_TALL2),
+            FoundryBlock.with(dev.denfry.promptcritical.mod.scada.TrainingSimulatorBlockEntity::new));
+    public static final DeferredBlock<PcDeviceBlock> SIMULATOR_CONSOLE = device("simulator_console", machine(),
+            Spec.facing(BlockStateProperties.LIT),
+            FoundryBlock.with(dev.denfry.promptcritical.mod.scada.SimulatorDeskBlockEntity::console));
+    public static final DeferredBlock<PcDeviceBlock> INSTRUCTOR_STATION = device("instructor_station", machine(),
+            Spec.facing(BlockStateProperties.LIT).footprint(FP_WIDE2),
+            FoundryBlock.with(dev.denfry.promptcritical.mod.scada.SimulatorDeskBlockEntity::instructor));
     public static final DeferredBlock<PcDeviceBlock> RTU_STATION = device("rtu_station", machine(),
             Spec.facing(BlockStateProperties.LIT).footprint(FP_TALL2),
             FoundryBlock.with(dev.denfry.promptcritical.mod.scada.TelemetryGatewayBlockEntity::new));

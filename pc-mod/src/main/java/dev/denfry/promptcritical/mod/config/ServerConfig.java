@@ -129,6 +129,8 @@ public final class ServerConfig {
     public static final ModConfigSpec.EnumValue<DifficultyPreset> DIFFICULTY_PRESET;
     public static final ModConfigSpec.BooleanValue CONTENT_GIVE_HANDBOOK_ON_JOIN;
     public static final ModConfigSpec.BooleanValue CONTENT_HANDBOOK_ALL_UNLOCKED;
+    public static final ModConfigSpec.IntValue TWIN_MAX_SESSIONS, TWIN_MAX_SPEED, TWIN_MAX_DURATION_S, CONTENT_MAX_SIMULATORS;
+    public static final ModConfigSpec.DoubleValue TWIN_CPU_MS_PER_TICK, CONTENT_LICENSE_PASS_SCORE;
     public static final ModConfigSpec.BooleanValue CONTENT_HINTS_BY_DIFFICULTY;
     public static final ModConfigSpec.BooleanValue CONTENT_CC_RECIPE_OVERRIDE;
     public static final ModConfigSpec.IntValue ENVIRONMENT_DAYS_PER_SEASON;
@@ -378,6 +380,18 @@ public final class ServerConfig {
                 .define("hints_by_difficulty", true);
         CONTENT_CC_RECIPE_OVERRIDE = b.comment("CC: Tweaked computers and monitors are crafted from this mod's chips, boards and tubes (11 §11.5.4, K20). "
                 + "Read when datapacks load; the default applies to a world's first load").define("cc_recipe_override", true);
+        CONTENT_MAX_SIMULATORS = b.comment("Training simulators running at once on the server (11 §11.3)")
+                .defineInRange("max_simulators_running", 2, 0, 64);
+        CONTENT_LICENSE_PASS_SCORE = b.comment("Lesson score an operator license needs (11 §11.3.5)")
+                .defineInRange("license_pass_score", 0.75, 0.0, 1.0);
+        b.pop();
+
+        b.push("twin");
+        TWIN_MAX_SESSIONS = b.comment("Digital twin sessions open at once on the server (03d §3d.9.1)").defineInRange("max_sessions", 4, 0, 64);
+        TWIN_MAX_SPEED = b.comment("Twin steps per server tick at most (03d §3d.9.1)").defineInRange("max_speed", 10, 1, 100);
+        TWIN_CPU_MS_PER_TICK = b.comment("Server time all twins and simulators may spend per tick, ms; short of it they slow down, not the world")
+                .defineInRange("cpu_ms_per_tick", 2.0, 0.1, 50.0);
+        TWIN_MAX_DURATION_S = b.comment("Real seconds a twin session or a lesson may run (03d §3d.9.1)").defineInRange("max_duration_s", 3600, 60, 86400);
         b.pop();
 
         b.push("environment");

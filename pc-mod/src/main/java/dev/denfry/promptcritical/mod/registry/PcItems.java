@@ -337,6 +337,10 @@ public final class PcItems {
             "shift_log", dev.denfry.promptcritical.mod.paperwork.DocumentItem::new, new Item.Properties().stacksTo(1)));
     public static final DeferredItem<dev.denfry.promptcritical.mod.paperwork.DocumentItem> WORK_PERMIT = registered(ITEMS.registerItem(
             "work_permit", dev.denfry.promptcritical.mod.paperwork.DocumentItem::new, new Item.Properties().stacksTo(16)));
+    /** Удостоверение оператора 11 §11.3.5: выдаёт место инструктора тренажёра. */
+    public static final DeferredItem<dev.denfry.promptcritical.mod.scada.OperatorLicenseItem> OPERATOR_LICENSE = registered(
+            ITEMS.registerItem("operator_license", dev.denfry.promptcritical.mod.scada.OperatorLicenseItem::new,
+                    new Item.Properties().stacksTo(1)));
     public static final DeferredItem<OperatingProcedureItem> OPERATING_PROCEDURE = registered(ITEMS.registerItem("operating_procedure",
             OperatingProcedureItem::new, new Item.Properties().stacksTo(1)));
     // нефть и газ I2: утяжелитель (мешок 50 кг, API 13A), заряд для шурфа, сейсмический разрез

@@ -299,6 +299,7 @@ public final class PcLanguageProvider extends LanguageProvider {
         i("methanometer", "Methanometer", "Метанометр");
         i("engineering_handbook", "Engineering Handbook", "Справочник инженера");
         i("operating_procedure", "Operating Procedure", "Инструкция по эксплуатации");
+        i("operator_license", "Operator License", "Удостоверение оператора");
         i("shift_log", "Shift Log", "Оперативный журнал");
         i("work_permit", "Work Permit Form", "Бланк наряда-допуска");
         i("geological_map", "Geological Map", "Геологическая карта");
@@ -327,6 +328,10 @@ public final class PcLanguageProvider extends LanguageProvider {
         b("ngl_fractionator", "NGL Fractionation Unit", "Газофракционирующая установка");
         b("rtu_station", "Telemetry Gateway (RTU)", "Шлюз телемеханики (КП)");
         b("historian_server", "Historian Server", "Сервер историана");
+        b("simulation_workstation", "Simulation Workstation", "Инженерная станция");
+        b("training_simulator", "Training Simulator", "Шкаф тренажёра");
+        b("simulator_console", "Simulator Console", "Пульт тренажёра");
+        b("instructor_station", "Instructor Station", "Место инструктора");
         b("mes_server", "Plant Server (MES)", "Сервер завода (MES)");
         b("pyrolysis_furnace", "Pyrolysis Furnace", "Печь пиролиза");
         b("cracked_gas_unit", "Cracked Gas Separation Unit", "Установка газоразделения пирогаза");

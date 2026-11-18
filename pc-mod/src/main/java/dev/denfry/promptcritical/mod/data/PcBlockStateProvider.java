@@ -399,6 +399,8 @@ public final class PcBlockStateProvider extends BlockStateProvider {
             case "fire_alarm_panel" -> s.getValue(PcProperties.ALARM) ? id + "_fire"
                     : s.getValue(BlockStateProperties.POWERED) ? id + "_fault" : id;
             case "historian_server" -> s.getValue(BlockStateProperties.LIT) ? id + "_busy" : id;
+            case "training_simulator" -> s.getValue(PcProperties.RUNNING) ? id + "_running" : id;
+            case "simulator_console", "instructor_station" -> s.getValue(BlockStateProperties.LIT) ? id + "_active" : id;
             case "grid_dispatch_center" -> s.getValue(PcProperties.ALARM) ? id + "_alarm" : id;
             case "lockout_box" -> switch (s.getValue(PcProperties.LOCKS)) {
                 case 0 -> id;
