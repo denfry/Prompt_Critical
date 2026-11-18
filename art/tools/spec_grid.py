@@ -45,22 +45,8 @@ def insulator(name, x, z, y0, h, tex="por", r=1.5):
 # ======================================================================
 # генераторы и двигатели на валу Create
 # ======================================================================
-# синхронный генератор СГ-500: оребрённый статор, медные выводы, ротор — partial
-m("shaft_generator", "grid", [
-    el("feet", [1, 0, 2], [15, 2, 14], "d"),
-    el("stator_w", [1, 2, 2], [3.5, 14, 14], "enf"),
-    el("stator_e", [12.5, 2, 2], [15, 14, 14], "enf"),
-    el("stator_t", [3.5, 11.5, 2], [12.5, 14, 14], "enf", faces={"up": "en"}),
-    el("stator_b", [3.5, 2, 2], [12.5, 4.5, 14], "en"),
-    el("end_shield_n", [3, 3, 0.5], [13, 13, 2], "en"),
-    el("end_shield_s", [3, 3, 14], [13, 13, 15.5], "en"),
-    el("terminal_box", [5, 14, 6], [11, 16, 11], "en"),
-    el("lead_1", [5.5, 15, 11], [6.5, 16, 12.5], "cub"),
-    el("lead_2", [7.5, 15, 11], [8.5, 16, 12.5], "cub"),
-    el("lead_3", [9.5, 15, 11], [10.5, 16, 12.5], "cub"),
-])
-m("shaft_generator/rotor", "grid",
-  disc("rotor", "z", 3.5, 2.5, 13.5, "cus") + disc("shaft", "z", 1, -0.01, 16.01, "st", 8), kind="partial")
+# синхронный генератор, возбудитель и асинхронный двигатель нарисованы вручную в Blockbench:
+# art/blockbench/grid/rotating_machines.author.js (варианты возбудителя ниже — бэклог, блоков нет)
 
 
 # возбудитель ВТ-450: машинный (коллектор — partial), тиристорный шкаф, бесщёточный
@@ -83,7 +69,6 @@ def exciter(kind="machine", forcing=False):
     return els
 
 
-m("generator_exciter", "grid", exciter())
 m("generator_exciter_forcing", "grid", exciter(forcing=True))
 m("generator_exciter_thyristor", "grid", exciter("thyristor"))
 m("generator_exciter_brushless", "grid", exciter("brushless"))
@@ -100,26 +85,6 @@ m("instrument_synchroscope", "instruments", [
 ])
 
 
-# асинхронный двигатель АИР: оребрённый корпус RAL 5010, клеммная коробка; вал — partial
-def motor(mv=False):
-    r0 = 1 if mv else 2
-    return [
-        el("feet", [r0, 0, 2], [16 - r0, 1.5, 14], "d"),
-        el("body_w", [r0, 1.5, 2.5], [r0 + 2.5, 13.5, 13.5], "mf"),
-        el("body_e", [13.5 - r0, 1.5, 2.5], [16 - r0, 13.5, 13.5], "mf"),
-        el("body_t", [r0 + 2.5, 11, 2.5], [13.5 - r0, 13.5 + (1 if mv else 0), 13.5], "mf", faces={"up": "mb"}),
-        el("body_b", [r0 + 2.5, 1.5, 2.5], [13.5 - r0, 4, 13.5], "mb"),
-        el("flange", [3, 3, 1], [13, 13, 2.5], "mb"),
-        el("fan_cowl", [3, 3, 13.5], [13, 13, 15.5], "mb", faces={"south": "louv"}, full=["south"]),
-        el("terminal_box", [5, 13.5 + (1 if mv else 0), 6], [11, 15.5 + (1 if mv else 0), 11], "mb"),
-        el("gland", [11, 13.5, 8], [12.5, 15, 9.5], "bs"),
-    ]
-
-
-m("electric_motor", "grid", motor())
-m("electric_motor_mv", "grid", motor(True))
-m("electric_motor/shaft", "grid", disc("shaft", "z", 1, -0.01, 3, "st", 8) + [
-    el("key", [7.75, 8.75, 0], [8.25, 9.25, 1.5], "d")], kind="partial")
 
 # ======================================================================
 # шины, кабели, изоляторы (multipart: центр + рукав к грани north)
