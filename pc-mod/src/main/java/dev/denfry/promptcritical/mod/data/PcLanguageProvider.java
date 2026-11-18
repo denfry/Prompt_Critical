@@ -310,6 +310,9 @@ public final class PcLanguageProvider extends LanguageProvider {
         b("sintering_furnace", "Pellet Sintering Furnace", "Печь спекания таблеток");
         b("rod_loading_station", "Fuel Rod Loading and Welding Station", "Участок снаряжения и заварки твэлов");
         b("assembly_jig", "Fuel Assembly Jig", "Стапель сборки ТВС");
+        b("power_reactor", "Channel Power Reactor (AM-1 type)", "Канальный энергетический реактор (типа АМ-1)");
+        b("primary_pump", "Primary Circulation Pump", "Главный циркуляционный насос");
+        b("steam_generator", "Steam Generator", "Парогенератор");
         b("wellhead", "Wellhead", "Колонная головка");
         b("christmas_tree", "Christmas Tree", "Фонтанная арматура");
         b("pumpjack", "Pumpjack", "Станок-качалка");
@@ -689,6 +692,7 @@ public final class PcLanguageProvider extends LanguageProvider {
         MISC.putAll(dev.denfry.promptcritical.mod.gas.GasText.lang());
         MISC.putAll(dev.denfry.promptcritical.mod.chem.ChemText.lang());
         MISC.putAll(dev.denfry.promptcritical.mod.nuclear.NuclearText.lang());
+        MISC.putAll(dev.denfry.promptcritical.mod.npp.NppText.lang());
         MISC.putAll(dev.denfry.promptcritical.mod.chlor.ChlorText.lang());
         MISC.putAll(dev.denfry.promptcritical.mod.environment.ToxicReleaseService.lang());
         MISC.putAll(dev.denfry.promptcritical.mod.environment.RadiationService.lang());

@@ -81,6 +81,19 @@
 - Nuclear material accounting of uranium and U-235 on every station's panel. Zirconium from zircon washed out of sand,
   reduced with magnesium (hafnium separated), alloyed with tin, rolled into cladding tubes and made into spacer grids.
 
+### First nuclear power plant (T1)
+- A uranium-graphite channel power reactor after AM-1 of Obninsk: 128 channels with pressurised water at 10 MPa,
+  30 MW of heat, fuelled by AM-1 channel assemblies from the fuel shop. Point kinetics with six delayed groups, Doppler
+  and graphite coefficients from the lattice model, a negative water coefficient from the 1954 critical experiment,
+  xenon and samarium with the iodine pit, decay heat and burnup by channel with U-236 and plutonium build-up.
+- Control and protection: scram, shim and automatic regulator rods; the scram trips on period, power, flow, outlet
+  temperature, the button or an external signal, and process trips can be bypassed by key. Control cabinet terminals
+  give power as 4-20 mA, a scram contact and an external scram coil for safety logic and PLCs.
+- Primary circulation pumps on Create shafts with flywheel coastdown and steam generators that put the primary heat
+  into an existing boiler for the turbines. Dryout fails a channel, lets water into the stack and releases iodine
+  into the hall; the reactor is a radiation source for the dose model. Spent channel fuel carries burnup, U-236 and
+  plutonium.
+
 ### Telemetry and SCADA (A4)
 - Telemetry gateway (RTU): scans the local panels of every machine within 8 blocks once a second and serves the
   snapshot to a CC: Tweaked computer as the `pc_rtu` peripheral — machines, named instruments with units, lamps as

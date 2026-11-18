@@ -218,6 +218,10 @@ public final class AutomationSubsystem implements Subsystem {
                 relay.setSwitch(sw[0], x > 0);
                 relay.setSwitch(sw[1], x <= 0);
             }
+            case REACTOR_IO -> {
+                relay.setSwitch(sw[0], x > 0);
+                analog.setSignal(u.signals[0], Math.max(3.8, Math.min(20.5, 4 + 16 * u.in[AutomationUnit.IN_AUX] / 1.2)));
+            }
             case GAS_DETECTOR -> {
                 boolean warn = x >= u.dp[AutomationUnit.D_SET], alarm = x >= u.dp[AutomationUnit.D_RETURN];
                 relay.setSwitch(sw[0], !warn);
@@ -490,6 +494,15 @@ public final class AutomationSubsystem implements Subsystem {
                 u.switches = new int[] {relay.addSwitch(b.node(u, "13"), b.node(u, "14"), false)};
             }
             case CONSUMER_IO -> u.switches = new int[] {relay.addSwitch(b.node(u, "13"), b.node(u, "14"), false)};
+            case REACTOR_IO -> {
+                int minus = b.node(u, "-");
+                u.loads = new int[] {relay.addLamp(b.node(u, "+"), minus, AutomationUnit.MONITOR_W),
+                        relay.addLamp(b.node(u, "SCRAM"), minus, AutomationUnit.BREAKER_COIL_W)};
+                u.switches = new int[] {relay.addSwitch(b.node(u, "13"), b.node(u, "14"), false)};
+                u.signals = new int[] {analog.newSignal()};
+                analog.setSignal(u.signals[0], 4);
+                b.drive(u, "N", u.signals[0]);
+            }
             case ANALOG_SUMMER -> {
                 double[] k = new double[4];
                 for (int i = 0; i < 4; i++) k[i] = dp[AutomationUnit.D_TABLE + i];
@@ -621,6 +634,7 @@ public final class AutomationSubsystem implements Subsystem {
         }
         if (u.kind.indexOf("Y") >= 0 && b.conflicts.contains(u.net(u.kind.indexOf("Y")))) u.conflict = true;
         if (u.kind == AutomationKind.GAS_DETECTOR && b.conflicts.contains(u.net(u.kind.indexOf("OUT")))) u.conflict = true;
+        if (u.kind == AutomationKind.REACTOR_IO && b.conflicts.contains(u.net(u.kind.indexOf("N")))) u.conflict = true;
     }
 
     /** Снять память элементов со старых банков. */

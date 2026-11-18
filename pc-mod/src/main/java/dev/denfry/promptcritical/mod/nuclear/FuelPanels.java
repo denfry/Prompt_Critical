@@ -74,11 +74,11 @@ public final class FuelPanels {
             P_DOWN = PanelText.tr("fuel.p_down", "Pressing −25 MPa", "Давление прессования −25 МПа"),
             P_UP = PanelText.tr("fuel.p_up", "Pressing +25 MPa", "Давление прессования +25 МПа"),
             DESIGN_BTN = PanelText.tr("fuel.design_btn", "Design", "Тип"),
-            DESIGN_TIP = PanelText.tr("fuel.design_tip", "Pellet design: VVER-440, VVER-1000 or PWR 17×17 (with an empty buffer)",
-                    "Таблетка: ВВЭР-440, ВВЭР-1000 или PWR 17×17 (при пустом бункере)"),
+            DESIGN_TIP = PanelText.tr("fuel.design_tip", "Pellet design: VVER-440, VVER-1000, PWR 17×17 or AM-1 (with an empty buffer)",
+                    "Таблетка: ВВЭР-440, ВВЭР-1000, PWR 17×17 или АМ-1 (при пустом бункере)"),
             PRESS_STATUS = PanelText.tr("fuel.press_status", "%s · green %s %% TD · pressing rejects %s %% · powder in hopper %s kg U",
                     "%s · сырая %s %% ТП · брак прессования %s %% · в бункере %s кг U");
-    private static final String[] DESIGNS = {"VVER-440", "VVER-1000", "PWR 17×17"};
+    private static final String[] DESIGNS = {"VVER-440", "VVER-1000", "PWR 17×17", "AM-1"};
     public static final PanelLayout PRESS = PanelLayout.builder("pellet_press", 232, 124, P_CHANNELS)
             .dial(8, 24, false, P_MPA, 1, 600, 450, 0, MPA.get(), PRESSURE.get(), null)
             .lamp(64, 22, FLAGS, F_RUN, LampColor.GREEN, WORKING.get())

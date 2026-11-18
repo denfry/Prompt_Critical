@@ -9,7 +9,7 @@ import java.util.Set;
  * вместе с биндингом 02.
  */
 public final class LatticeDesigns {
-    public static final String T0_SLUG = "t0_slug", T1_CLUSTER = "t1_cluster", T2_HEX = "t2_hex",
+    public static final String T0_SLUG = "t0_slug", T1_CLUSTER = "t1_cluster", T2_HEX = "t2_hex", T1_AM1 = "t1_am1",
             T3_CLUSTER_D2O = "t3_cluster_d2o";
 
     /**
@@ -19,6 +19,12 @@ public final class LatticeDesigns {
     public static final double NUCLEAR_GRAPHITE_IMPURITY_PPM = 2.0;
 
     private static final Map<String, LatticeDesign> DESIGNS = Map.of(
+            // АМ-1 (Обнинск, 1954): канал — 4 трубчатых твэла (стальные трубки ⌀14×0,2 и ⌀9×0,4 мм, топливо в кольце
+            // между ними) и центральная труба подвода воды в отверстии графита ⌀44 мм, шаг 120 мм (69 каналов/м²).
+            // Топливо — кольцевой UO₂ 5 % вместо исторической крупки U-Mo в магнии [замена материала].
+            T1_AM1, new LatticeDesign(T1_AM1, FuelGeometry.CLUSTER_IN_TUBE, FuelMaterial.UO2, CladMaterial.STEEL,
+                    CoolantKind.H2O, ModeratorKind.GRAPHITE, 0.007, 0.0068, 0.0002, 0.12, 4, 0.022, 0, 69, 276,
+                    0.0193, 0.0054, 0.020, 0.895),
             // Блочки ⌀28 мм прир. U в Al-оболочке, каналы 44×44 мм, шаг 203 мм (24 канала/м²).
             T0_SLUG, new LatticeDesign(T0_SLUG, FuelGeometry.SLUG_IN_CHANNEL, FuelMaterial.U_METAL,
                     CladMaterial.ALUMINIUM, CoolantKind.AIR, ModeratorKind.GRAPHITE, 0.0145, 0.014, 0.0005, 0.203,
@@ -37,6 +43,7 @@ public final class LatticeDesigns {
                     0.0517, 0.0042, 12, 444, 0.053, 0.045, 0.037, 0.83));
 
     private static final Map<String, CellFeedbackState> REFERENCE = Map.of(
+            T1_AM1, new CellFeedbackState(700, 830, 800, 0, 0, 0),
             T0_SLUG, new CellFeedbackState(300, 1.2, 300, 0, 0, 0),
             T1_CLUSTER, new CellFeedbackState(900, 450, 800, 0, 0, 0),
             T2_HEX, new CellFeedbackState(900, 715, 578, 0, 0, 0),
@@ -44,7 +51,7 @@ public final class LatticeDesigns {
 
     /** Обогащение (массовая доля U-235) референсного свежего топлива. */
     private static final Map<String, Double> ENRICHMENT = Map.of(
-            T0_SLUG, 0.00711, T1_CLUSTER, 0.020, T2_HEX, 0.040, T3_CLUSTER_D2O, 0.00711);
+            T0_SLUG, 0.00711, T1_AM1, 0.050, T1_CLUSTER, 0.020, T2_HEX, 0.040, T3_CLUSTER_D2O, 0.00711);
 
     private LatticeDesigns() {}
 

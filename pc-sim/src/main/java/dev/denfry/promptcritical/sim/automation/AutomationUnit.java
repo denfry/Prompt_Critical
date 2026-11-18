@@ -51,7 +51,7 @@ public final class AutomationUnit {
     // --- входы мира ---
     /** PUSHBUTTON: нажата; KEY_SWITCH: импульс «ВКЛ»; PROCESS_SWITCH: величина; CAM_CONTROLLER: об/мин вала;
      * POWER_SUPPLY: вход, о.е.; REDSTONE_INTERFACE: сигнал; GAS_DETECTOR: % НКПР; MANUAL_STATION: ручка −1/0/+1;
-     * *_IO: выключатель включён / пускатель включён / потребитель под напряжением. */
+     * *_IO: выключатель включён / пускатель включён / потребитель под напряжением; REACTOR_IO: АЗ сработала (IN_AUX — мощность, о.е.). */
     public static final int IN_MAIN = 0;
     /** KEY_SWITCH: импульс «ОТКЛ». */
     public static final int IN_AUX = 1;

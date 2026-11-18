@@ -536,6 +536,16 @@ public final class PcBlocks {
     public static final DeferredBlock<PcDeviceBlock> ASSEMBLY_JIG = device("assembly_jig", machine(), Spec.facing(BlockStateProperties.LIT),
             FoundryBlock.with(dev.denfry.promptcritical.mod.nuclear.AssemblyJigBlockEntity::new));
 
+    // --- АЭС T1: канальный уран-графитовый реактор (АМ-1), ГЦН, парогенератор ---
+    /** Кладка 3×6×3: нижний куб — активная зона с отражателем, верхний — приводы СУЗ; контроллер — в центре низа. */
+    private static final Footprint FP_POWER_REACTOR = Footprint.of(CUBE3, CUBE3.at(0, 3, 0));
+    public static final DeferredBlock<PcDeviceBlock> POWER_REACTOR = device("power_reactor", machine(), Spec.facing().footprint(FP_POWER_REACTOR),
+            FoundryBlock.with(dev.denfry.promptcritical.mod.npp.PowerReactorBlockEntity::new));
+    public static final DeferredBlock<PcDeviceBlock> PRIMARY_PUMP = device("primary_pump", machine(), Spec.facing(PcProperties.RUNNING),
+            KineticMachineBlock.with(ShaftSide.BACK, dev.denfry.promptcritical.mod.npp.PrimaryPumpBlockEntity::new));
+    public static final DeferredBlock<PcDeviceBlock> STEAM_GENERATOR = device("steam_generator", machine(),
+            Spec.facing(BlockStateProperties.LIT), FoundryBlock.with(dev.denfry.promptcritical.mod.npp.SteamGeneratorBlockEntity::new));
+
     // --- обогащение, литьё, механический цех (08 §8.3, §8.9, §8.10) ---
     public static final DeferredBlock<PcDeviceBlock> COAL_JIG = device("coal_jig", machine(),
             Spec.facing(PcProperties.RUNNING).footprint(Footprint.of(Segment.box(0, 1, 0, 1, 0, 0))),
