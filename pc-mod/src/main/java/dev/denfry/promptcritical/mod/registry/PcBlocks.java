@@ -968,6 +968,9 @@ public final class PcBlocks {
             FoundryBlock.with(dev.denfry.promptcritical.mod.safety.RescueTripodBlockEntity::new));
     public static final DeferredBlock<PcDeviceBlock> PORTABLE_VENTILATOR = device("portable_ventilator", machine().noOcclusion(),
             Spec.facing(PcProperties.RUNNING), FoundryBlock.with(dev.denfry.promptcritical.mod.safety.PortableVentilatorBlockEntity::new));
+    /** Метка маршрута обхода 13 §13.3.1. */
+    public static final DeferredBlock<PcDeviceBlock> PATROL_CHECKPOINT = device("patrol_checkpoint", instrument().noOcclusion(),
+            Spec.facing(PcProperties.ALARM), FoundryBlock.with(dev.denfry.promptcritical.mod.safety.PatrolCheckpointBlockEntity::new));
     public static final DeferredBlock<PcDeviceBlock> HYDROTEST_PUMP = device("hydrotest_pump", machine(),
             Spec.facing(PcProperties.PUMPING), FoundryBlock.with(HydrotestPumpBlockEntity::new));
     public static final DeferredBlock<PcDeviceBlock> RECORDING_GAUGE = device("recording_gauge", instrument(),

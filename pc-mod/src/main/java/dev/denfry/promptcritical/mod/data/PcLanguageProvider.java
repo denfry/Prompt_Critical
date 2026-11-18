@@ -962,6 +962,8 @@ public final class PcLanguageProvider extends LanguageProvider {
         b("manway", "Manway", "Люк-лаз");
         b("rescue_tripod", "Rescue Tripod", "Спасательная тренога");
         b("portable_ventilator", "Portable Ventilator", "Переносной вентилятор");
+        b("patrol_checkpoint", "Patrol Checkpoint", "Метка обхода");
+        i("patrol_reader", "Patrol Reader", "Считыватель обходчика");
         MISC.putAll(dev.denfry.promptcritical.mod.safety.SafetyText.LANG);
     }
 

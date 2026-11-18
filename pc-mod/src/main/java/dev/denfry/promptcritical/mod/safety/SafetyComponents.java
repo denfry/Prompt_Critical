@@ -29,6 +29,20 @@ public final class SafetyComponents {
         public static final StreamCodec<ByteBuf, Filter> STREAM = ByteBufCodecs.fromCodec(CODEC);
     }
 
+    /** Маршрут обхода в считывателе (13 §13.3.1): метки по порядку, ожидаемая, начало круга, последний круг. */
+    public record Route(java.util.List<Long> points, int next, long start, long last) {
+        public static final Route EMPTY = new Route(java.util.List.of(), 0, -1, -1);
+        public static final Codec<Route> CODEC = RecordCodecBuilder.create(i -> i.group(
+                Codec.LONG.listOf().fieldOf("points").forGetter(Route::points),
+                Codec.INT.optionalFieldOf("next", 0).forGetter(Route::next),
+                Codec.LONG.optionalFieldOf("start", -1L).forGetter(Route::start),
+                Codec.LONG.optionalFieldOf("last", -1L).forGetter(Route::last)).apply(i, Route::new));
+        public static final StreamCodec<ByteBuf, Route> STREAM = ByteBufCodecs.fromCodec(CODEC);
+    }
+
+    public static final DeferredHolder<DataComponentType<?>, DataComponentType<Route>> PATROL_ROUTE =
+            COMPONENTS.registerComponentType("patrol_route", b -> b.persistent(Route.CODEC).networkSynchronized(Route.STREAM));
+
     /** Вставка в каску (13 §13.7): противогаз или противошумные наушники. */
     public static final DeferredHolder<DataComponentType<?>, DataComponentType<ItemContainerContents>> PPE_ATTACHMENTS =
             COMPONENTS.registerComponentType("ppe_attachments", b -> b.persistent(ItemContainerContents.CODEC)

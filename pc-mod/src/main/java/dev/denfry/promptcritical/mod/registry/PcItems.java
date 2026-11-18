@@ -437,6 +437,10 @@ public final class PcItems {
     public static final DeferredItem<dev.denfry.promptcritical.mod.safety.LifelineItem> LIFELINE = registered(ITEMS.registerItem(
             "lifeline", dev.denfry.promptcritical.mod.safety.LifelineItem::new, new Item.Properties()));
 
+    /** Считыватель обходчика (13 §13.3.1). */
+    public static final DeferredItem<dev.denfry.promptcritical.mod.safety.PatrolReaderItem> PATROL_READER = registered(ITEMS.registerItem(
+            "patrol_reader", dev.denfry.promptcritical.mod.safety.PatrolReaderItem::new, new Item.Properties()));
+
     private static DeferredItem<dev.denfry.promptcritical.mod.safety.PpeItem> ppe(String name, dev.denfry.promptcritical.mod.safety.PpeItem.Kind kind) {
         return registered(ITEMS.registerItem(name, p -> new dev.denfry.promptcritical.mod.safety.PpeItem(p, kind), new Item.Properties()));
     }

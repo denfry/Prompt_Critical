@@ -25,6 +25,9 @@ public final class SafetyBlockEntities {
     public static final DeferredHolder<BlockEntityType<?>, BlockEntityType<PortableVentilatorBlockEntity>> PORTABLE_VENTILATOR =
             type("portable_ventilator", PortableVentilatorBlockEntity::new, PcBlocks.PORTABLE_VENTILATOR);
 
+    public static final DeferredHolder<BlockEntityType<?>, BlockEntityType<PatrolCheckpointBlockEntity>> PATROL_CHECKPOINT =
+            type("patrol_checkpoint", PatrolCheckpointBlockEntity::new, PcBlocks.PATROL_CHECKPOINT);
+
     private SafetyBlockEntities() {
     }
 

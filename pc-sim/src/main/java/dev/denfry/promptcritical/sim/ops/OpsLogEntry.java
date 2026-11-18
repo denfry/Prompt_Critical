@@ -17,6 +17,8 @@ public record OpsLogEntry(long tick, SimId unit, Kind kind, String detail) {
         /** Наряды 13 §13.2, §13.12.3: смена состояния наряда, замер газа, огневые работы без наряда, фаза остановочного ремонта. */
         PERMIT_STATE, GAS_TEST, UNAUTHORIZED_WORK, TURNAROUND_PHASE,
         /** Вход в замкнутое пространство через люк (13 §13.2.6). */
-        CONFINED_ENTRY
+        CONFINED_ENTRY,
+        /** Обход просрочен (13 §13.3.1, P4 «ОБХОД ПРОСРОЧЕН»). */
+        PATROL_OVERDUE
     }
 }

@@ -84,6 +84,13 @@ public final class SafetyRecipes extends RecipeProvider {
                 .pattern("SSS").pattern("S N").define('S', Items.STRING).define('N', Items.IRON_INGOT)
                 .unlockedBy("has_harness", has(PcItems.SAFETY_HARNESS.get())).save(out, id("lifeline"));
         confined(out, sheet);
+        // обходы §13.3.1
+        ShapedRecipeBuilder.shaped(RecipeCategory.MISC, dev.denfry.promptcritical.mod.registry.PcBlocks.PATROL_CHECKPOINT.get(), 4)
+                .pattern(" N ").pattern("NRN").pattern(" N ").define('N', Items.IRON_NUGGET).define('R', Items.REDSTONE)
+                .unlockedBy("has_redstone", has(Items.REDSTONE)).save(out, id("patrol_checkpoint"));
+        ShapedRecipeBuilder.shaped(RecipeCategory.TOOLS, PcItems.PATROL_READER.get())
+                .pattern("GC").pattern("RC").define('G', Items.GLASS_PANE).define('C', Items.COPPER_INGOT).define('R', Items.REDSTONE)
+                .unlockedBy("has_copper", has(Items.COPPER_INGOT)).save(out, id("patrol_reader"));
     }
 
     /** Замкнутые пространства §13.2.6. */

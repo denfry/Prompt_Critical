@@ -8,6 +8,9 @@ import dev.denfry.promptcritical.mod.registry.PcFluids;
 import dev.denfry.promptcritical.mod.registry.PcItems;
 import dev.denfry.promptcritical.mod.safety.ConfinedSpaces;
 import dev.denfry.promptcritical.mod.safety.ManwayBlockEntity;
+import dev.denfry.promptcritical.mod.safety.PatrolCheckpointBlockEntity;
+import dev.denfry.promptcritical.mod.safety.PatrolReaderItem;
+import dev.denfry.promptcritical.mod.safety.Patrols;
 import dev.denfry.promptcritical.mod.safety.RescueTripodBlockEntity;
 import dev.denfry.promptcritical.sim.ops.ConfinedSpaceAtmosphere;
 import dev.denfry.promptcritical.mod.safety.GasMaskFilterItem;
@@ -15,6 +18,7 @@ import dev.denfry.promptcritical.mod.safety.PpeService;
 import dev.denfry.promptcritical.mod.safety.SafetyComponents;
 import dev.denfry.promptcritical.sim.ops.Contaminant;
 import dev.denfry.promptcritical.sim.ops.FilterType;
+import dev.denfry.promptcritical.sim.ops.PatrolRound;
 import dev.denfry.promptcritical.sim.ops.Ppe;
 import dev.denfry.promptcritical.sim.ops.Scba;
 import net.minecraft.core.BlockPos;
@@ -216,5 +220,35 @@ public final class SafetyGameTests {
             ManwayBlockEntity m = h.getBlockEntity(manway);
             h.assertFalse(m.inside(in), "still inside after the winch");
         }).thenExecute(() -> strip(in)).thenSucceed();
+    }
+
+    /** Обход §13.3.1: круг по порядку, просрочка зажигает лампу метки, на слух — изношенный подшипник вентилятора. */
+    @GameTest(template = LARGE, timeoutTicks = 200)
+    public static void patrolRoundOverdueAndListening(GameTestHelper h) {
+        BlockPos a = new BlockPos(2, 1, 2), b = new BlockPos(8, 1, 2), motor = new BlockPos(2, 2, 4), fan = new BlockPos(3, 2, 4);
+        h.setBlock(a, PcBlocks.PATROL_CHECKPOINT.get().defaultBlockState());
+        h.setBlock(b, PcBlocks.PATROL_CHECKPOINT.get().defaultBlockState());
+        h.setBlock(motor, com.simibubi.create.AllBlocks.CREATIVE_MOTOR.getDefaultState()
+                .setValue(net.minecraft.world.level.block.state.properties.BlockStateProperties.FACING, net.minecraft.core.Direction.EAST));
+        h.setBlock(fan, com.simibubi.create.AllBlocks.ENCASED_FAN.getDefaultState()
+                .setValue(net.minecraft.world.level.block.state.properties.BlockStateProperties.FACING, net.minecraft.core.Direction.EAST));
+        h.runAfterDelay(1, () -> ((com.simibubi.create.content.kinetics.motor.CreativeMotorBlockEntity) h.getBlockEntity(motor)).generatedSpeed.setValue(64));
+        FakePlayer p = bare(h);
+        ItemStack reader = new ItemStack(PcItems.PATROL_READER.get());
+        h.startSequence().thenIdle(20).thenExecute(() -> {
+            PatrolCheckpointBlockEntity ca = h.getBlockEntity(a), cb = h.getBlockEntity(b);
+            h.assertTrue(PatrolReaderItem.program(p, reader, h.absolutePos(a)), "first checkpoint");
+            h.assertTrue(PatrolReaderItem.program(p, reader, h.absolutePos(b)), "second checkpoint");
+            h.assertTrue(PatrolReaderItem.visit(p, reader, cb) == PatrolRound.Result.OUT_OF_ORDER, "started at the end");
+            h.assertTrue(PatrolReaderItem.visit(p, reader, ca) == PatrolRound.Result.STARTED, "start");
+            h.assertTrue(PatrolReaderItem.visit(p, reader, cb) == PatrolRound.Result.COMPLETE, "round");
+            h.assertFalse(ca.overdue(), "fresh visit overdue");
+            ca.setLastVisit(h.getLevel().getGameTime() - (long) (PatrolRound.PERIOD_S * PatrolRound.TICKS_PER_S) - 10);
+            h.assertTrue(ca.overdue(), "overdue checkpoint");
+            h.assertTrue(h.getBlockState(a).getValue(PcProperties.ALARM), "no alarm lamp");
+            dev.denfry.promptcritical.mod.acoustics.MachineAcoustics.setBearingDamage(h.getLevel(), h.absolutePos(fan), 0.6);
+            Patrols.Card card = Patrols.card(h.getLevel(), h.absolutePos(a));
+            h.assertTrue(card.findings().contains(Patrols.Finding.BEARING_NOISE), "bearing not heard: " + card);
+        }).thenExecute(() -> strip(p)).thenSucceed();
     }
 }

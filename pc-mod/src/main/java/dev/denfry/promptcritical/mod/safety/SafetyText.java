@@ -63,6 +63,28 @@ public final class SafetyText {
         t("death.attack.promptcritical.asphyxiation", "%1$s suffocated in a confined space", "%1$s задохнулся в замкнутом пространстве");
         t("death.attack.promptcritical.asphyxiation.player", "%1$s suffocated in a confined space while fighting %2$s",
                 "%1$s задохнулся в замкнутом пространстве, спасаясь от %2$s");
+        // обходы 13 §13.3.1
+        m("checkpoint_hint", "Right-click with a patrol reader to stamp the visit; sneak + right-click to add it to the route",
+                "ПКМ считывателем обходчика — отметить посещение; Shift + ПКМ — добавить метку в маршрут");
+        m("patrol_already", "This checkpoint is already point %s of the route", "Эта метка уже пункт %s маршрута");
+        m("patrol_added", "Added to the route as point %s", "Добавлена в маршрут пунктом %s");
+        m("patrol_unknown", "This checkpoint is not on the route of the reader", "Этой метки нет в маршруте считывателя");
+        m("patrol_out_of_order", "Out of order: the route waits for point %s", "Не по порядку: маршрут ждёт пункт %s");
+        m("patrol_complete", "Round complete", "Обход пройден");
+        m("patrol_point", "Point %s of %s stamped", "Пункт %s из %s отмечен");
+        m("patrol_status_new", "Route of %s points, no round walked yet", "Маршрут из %s пунктов, обходов ещё не было");
+        m("patrol_status", "Route of %s points, next %s, %s min left until the round is overdue",
+                "Маршрут из %s пунктов, следующий %s, до просрочки обхода %s мин");
+        m("patrol_card", "Point card: %s running machines nearby", "Карточка пункта: работающих машин рядом %s");
+        m("patrol_ok", "Nothing wrong seen or heard", "Замечаний нет");
+        m("patrol.bearing_noise", "Listen: bearing noise (%s) — order a bearing repair", "Послушать: шум подшипника (%s) — нужен ремонт подшипника");
+        m("patrol.hum", "Listen: hum and beating (%s) — balance or align", "Послушать: гул и биение (%s) — балансировка или центровка");
+        m("patrol.locked_point", "Inspect: locked isolation points (%s)", "Осмотр: запертые точки изоляции (%s)");
+        m("patrol.open_permit", "Inspect: open work permit nearby", "Осмотр: рядом открытый наряд-допуск");
+        m("patrol.bad_air", "Inspect: confined space unfit to enter (%s)", "Осмотр: замкнутое пространство непригодно для входа (%s)");
+        t("item.promptcritical.patrol_reader.hint", "Sneak + right-click checkpoints to build the route; right-click them in order on the round",
+                "Shift + ПКМ по меткам — составить маршрут; на обходе — ПКМ по ним по порядку");
+        t("item.promptcritical.patrol_reader.route", "Route: %s points, next %s", "Маршрут: %s пунктов, следующий %s");
         for (String[] c : new String[][] {{"organic_vapour", "organic vapours (A)", "органические пары (A)"},
                 {"low_boiling_organic", "low-boiling organics (AX)", "низкокипящие органические (AX)"},
                 {"inorganic_gas", "Cl₂, H₂S (B)", "Cl₂, H₂S (B)"}, {"acid_gas", "SO₂, HCl, HF (E)", "SO₂, HCl, HF (E)"},
