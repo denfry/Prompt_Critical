@@ -235,6 +235,29 @@ class StCompilerTest {
     }
 
     @Test
+    void handbookExampleRuns() {
+        PlcCpu cpu = running("""
+                PROGRAM Pump
+                VAR
+                    Start AT %IX0.0 : BOOL;
+                    Stop  AT %IX0.1 : BOOL;   (* normally closed *)
+                    Motor AT %QX0.0 : BOOL;
+                    Delay : TON;
+                END_VAR
+                Motor := (Start OR Motor) AND Stop;
+                Delay(IN := Motor, PT := T#5s);
+                %QX0.1 := Delay.Q;
+                END_PROGRAM
+                """);
+        scan(cpu, di(i -> i <= 1), 1);
+        scan(cpu, di(i -> i == 1), 98);
+        assertThat(cpu.output(0)).isTrue();
+        assertThat(cpu.output(1)).as("4.95 s").isFalse();
+        scan(cpu, di(i -> i == 1), 1);
+        assertThat(cpu.output(1)).as("after 5 s").isTrue();
+    }
+
+    @Test
     void ilModWorks() {
         PlcCpu cpu = running("LD 17\nMOD 5\nST %MW0\n");
         scan(cpu, di(i -> false), 1);
