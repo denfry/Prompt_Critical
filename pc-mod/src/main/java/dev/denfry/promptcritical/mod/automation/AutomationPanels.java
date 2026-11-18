@@ -31,6 +31,8 @@ import org.jetbrains.annotations.Nullable;
 public final class AutomationPanels {
     public static final int BUTTON_REPLACE = 100, BUTTON_CALIBRATE = 101, BUTTON_AUTO = 102, BUTTON_MAN = 103,
             BUTTON_DOWN = 104, BUTTON_UP = 105, BUTTON_SIS_RESET = 106, BUTTON_SIS_BYPASS = 107;
+    /** Периодическая проверка ПАЗ 03d §3d.6.8: начать/прервать, имитация на следующем канале, подпись. */
+    public static final int BUTTON_SIS_TEST = 108, BUTTON_SIS_TEST_CHANNEL = 109, BUTTON_SIS_SIGN = 110;
     private static final int W = 232, ROW = 16, TOP = 22;
 
     /** Значение строки для канала (сервер). */
@@ -117,6 +119,13 @@ public final class AutomationPanels {
             SIS_BYPASS = tr("sis.bypass", "Bypass", "Байпас"), SIS_HIGH = tr("sis.high", "rising", "превышении"),
             SIS_LOW = tr("sis.low", "falling", "понижении"), SIS_EVERY = tr("sis.every", "every %s mo", "раз в %s мес"),
             SIS_FAULT = tr("sis.fault", "loop fault", "обрыв линии");
+    private static final Tr SIS_HOURS = tr("sis.hours", "%s h", "%s ч"),
+            SIS_PROOF = tr("sis.proof", "Proof test", "Проверка"), SIS_IN_DATE = tr("sis.in_date", "in date", "в срок"),
+            SIS_OVERDUE = tr("sis.overdue", "OVERDUE", "ПРОСРОЧЕНА"), SIS_TESTING = tr("sis.testing", "testing: %s", "идёт: %s"),
+            SIS_PFD_NOW = tr("sis.pfd_now", "PFD now", "PFD сейчас"), SIS_CABINET = tr("sis.cabinet", "Cabinet", "Шкаф"),
+            SIS_CAUSES = tr("sis.causes", "%s causes · %s × 2oo3", "причин %s · 2oo3: %s"),
+            SIS_TEST = tr("sis.test", "Test", "Проверка"), SIS_TEST_CH = tr("sis.test_ch", "Inject", "Имитация"),
+            SIS_SIGN = tr("sis.sign", "Sign", "Подпись");
     private static final Tr[] SIS_STATES = {tr("sis.state.normal", "Normal", "Норма"), tr("sis.state.tripped", "TRIPPED", "СРАБОТАЛА"),
             tr("sis.state.bypassed", "BYPASSED", "В БАЙПАСЕ"), tr("sis.state.off", "No 24 V — tripped", "Нет 24 В — сработала")};
     private static final String[] VOTINGS = {"1oo1", "1oo2", "2oo2", "2oo3"};
@@ -254,12 +263,22 @@ public final class AutomationPanels {
                 new Row(SIS_PFD.get(), (u, c) -> (int) Math.min(Integer.MAX_VALUE, Math.round(u.sisPfdAvg() * 1e8)),
                         v -> Component.literal(String.format(java.util.Locale.ROOT, "%.1e · SIL %d", v / 1e8,
                                 dev.denfry.promptcritical.sim.automation.sis.SisLogic.sil(v / 1e8))), null)));
+        sis.add(new Row(SIS_PROOF.get(), (u, c) -> u.sis().testing() ? -(1 + u.sis().testedMask() + 8 * u.sis().failedMask())
+                : (int) Math.min(Integer.MAX_VALUE / 4, Math.round(u.sis().sinceTestH())) * 2 + (u.sis().proofTestOverdue(u.sisProofIntervalH()) ? 1 : 0),
+                AutomationPanels::proofStatus, null));
+        sis.add(new Row(SIS_PFD_NOW.get(), (u, c) -> (int) Math.min(Integer.MAX_VALUE, Math.round(u.sisPfdNow() * 1e8)),
+                v -> Component.literal(String.format(java.util.Locale.ROOT, "%.1e", v / 1e8)), null));
+        sis.add(new Row(SIS_CABINET.get(), (u, c) -> {
+            dev.denfry.promptcritical.sim.automation.sis.SisCabinet cab = u.sisCabinet();
+            return cab.causes() * 100 + Math.min(99, cab.twoOutOfThree());
+        }, v -> SIS_CAUSES.get(v / 100, v % 100), null));
         for (int i = 0; i < 3; i++) {
             int ch = i;
             sis.add(new Row(Component.literal("AI" + (i + 1)), (u, c) -> u.sis().channelFault(ch) ? -1 : (int) Math.round(u.sisChannelMa(ch) * 10),
                     v -> v < 0 ? SIS_FAULT.get() : Component.literal(PanelText.num(v / 10.0, 1) + " mA"), null));
         }
-        SPECS.put(AutomationKind.SIS_LOGIC, spec(AutomationKind.SIS_LOGIC, sis, BUTTON_SIS_RESET, BUTTON_SIS_BYPASS));
+        SPECS.put(AutomationKind.SIS_LOGIC, spec(AutomationKind.SIS_LOGIC, sis, BUTTON_SIS_RESET, BUTTON_SIS_BYPASS,
+                BUTTON_SIS_TEST, BUTTON_SIS_TEST_CHANNEL, BUTTON_SIS_SIGN));
         SPECS.put(AutomationKind.SIGNAL_CONVERTER, spec(AutomationKind.SIGNAL_CONVERTER, List.of(
                 new Row(DIRECTION.get(), (u, c) -> u.intParam(AutomationUnit.I_POSITION), v -> name(DIRECTIONS, v),
                         (u, c, d, f) -> cycle(u, AutomationUnit.I_POSITION, d, 2)),
@@ -283,7 +302,8 @@ public final class AutomationPanels {
     }
 
     private static Spec spec(AutomationKind kind, List<Row> rows, int... extra) {
-        int h = TOP + rows.size() * ROW + (extra.length > 0 ? 26 : 6);
+        int perLine = Math.max(1, (W - 8) / 56), lines = (extra.length + perLine - 1) / perLine;
+        int h = TOP + rows.size() * ROW + (extra.length > 0 ? 6 + 20 * lines : 6);
         PanelLayout.Builder b = PanelLayout.builder("automation_" + kind.name().toLowerCase(Locale.ROOT), W, h, rows.size()).noInventory();
         for (int i = 0; i < rows.size(); i++) {
             Row r = rows.get(i);
@@ -305,8 +325,15 @@ public final class AutomationPanels {
                 case BUTTON_DOWN -> DOWN;
                 case BUTTON_SIS_RESET -> SIS_RESET;
                 case BUTTON_SIS_BYPASS -> SIS_BYPASS;
+                case BUTTON_SIS_TEST -> SIS_TEST;
+                case BUTTON_SIS_TEST_CHANNEL -> SIS_TEST_CH;
+                case BUTTON_SIS_SIGN -> SIS_SIGN;
                 default -> UP;
             };
+            if (x + 52 > W) {
+                x = 8;
+                y += 20;
+            }
             b.button(x, y, 52, id, label.get(), null);
             x += 56;
         }
@@ -314,6 +341,21 @@ public final class AutomationPanels {
     }
 
     // ================================================================ строки
+
+    /**
+     * Строка проверки ПАЗ: v ≥ 0 — часы с проверки ×2 + просрочка; v &lt; 0 — идёт проверка, −(1 + проверенные каналы +
+     * 8 × отказавшие).
+     */
+    private static Component proofStatus(int v) {
+        if (v >= 0) return SIS_HOURS.get(v / 2).append(" · ").append((v % 2 == 1 ? SIS_OVERDUE : SIS_IN_DATE).get());
+        int bits = -v - 1, tested = bits % 8, failed = bits / 8;
+        StringBuilder sb = new StringBuilder();
+        for (int i = 0; i < 3; i++) {
+            if (i > 0) sb.append(' ');
+            sb.append("AI").append(i + 1).append((failed & 1 << i) != 0 ? "✗" : (tested & 1 << i) != 0 ? "✓" : "–");
+        }
+        return SIS_TESTING.get(sb.toString());
+    }
 
     private static Row relayState() {
         return new Row(STATE.get(), (u, c) -> u.relayState().ordinal(), v -> name(RELAY_STATES, v), null);

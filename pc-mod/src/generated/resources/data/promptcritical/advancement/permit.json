@@ -1,0 +1,33 @@
+{
+  "parent": "promptcritical:lockout",
+  "criteria": {
+    "hot_work": {
+      "conditions": {
+        "event": "promptcritical:hot_work_permit",
+        "station_member": true
+      },
+      "trigger": "promptcritical:sim_event"
+    }
+  },
+  "display": {
+    "description": {
+      "translate": "advancements.promptcritical.permit.description"
+    },
+    "icon": {
+      "count": 1,
+      "id": "promptcritical:work_permit"
+    },
+    "title": {
+      "translate": "advancements.promptcritical.permit.title"
+    }
+  },
+  "requirements": [
+    [
+      "hot_work"
+    ]
+  ],
+  "rewards": {
+    "experience": 30
+  },
+  "sends_telemetry_event": true
+}

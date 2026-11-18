@@ -45,6 +45,24 @@ public final class AutomationText {
     // ПАЗ (A3): байпас — событие для журнала смены
     public static final String SIS_BYPASS_ON = t("sis.bypass_on", "Safety function BYPASSED by %s — the protection is off until the bypass is removed",
             "Защита ВЫВЕДЕНА в байпас (%s) — до снятия байпаса она не сработает");
+    // периодическая проверка ПАЗ 03d §3d.6.8
+    public static final String SIS_PROOF_STARTED = t("sis.proof_started", "Proof test started: inject a trip on each sensor channel, then remove the bypass and sign",
+            "Проверка начата: подайте имитацию срабатывания на каждый канал датчика, затем снимите байпас и подпишите");
+    public static final String SIS_PROOF_ABORTED = t("sis.proof_aborted", "Proof test aborted", "Проверка прервана");
+    public static final String SIS_PROOF_CHANNEL_OK = t("sis.proof_channel_ok", "AI%s answers the injected trip: the logic counts its vote",
+            "AI%s отвечает на имитацию: логика засчитывает его голос");
+    public static final String SIS_PROOF_CHANNEL_FAILED = t("sis.proof_channel_failed", "AI%s does not answer: loop fault found, repair it before signing",
+            "AI%s не отвечает: найден отказ линии, устраните его до подписи");
+    public static final String SIS_PROOF_ON_TIME = t("sis.proof_on_time", "Proof test signed by %s in time: the PFD starts again from zero",
+            "Проверку подписал %s в срок: PFD снова растёт от нуля");
+    public static final String SIS_PROOF_LATE = t("sis.proof_late", "Proof test signed by %s, but it was overdue", "Проверку подписал %s, но она была просрочена");
+    public static final String SIS_PROOF_NEEDS_BYPASS = t("sis.proof_needs_bypass", "Bypass the function first: an injected trip would stop the process",
+            "Сначала поставьте функцию в байпас: имитация остановит процесс");
+    public static final String SIS_PROOF_BYPASS_ON = t("sis.proof_bypass_on", "Remove the bypass before signing", "Перед подписью снимите байпас");
+    public static final String SIS_PROOF_NOT_TESTING = t("sis.proof_not_testing", "No proof test in progress", "Проверка не начата");
+    public static final String SIS_PROOF_UNTESTED = t("sis.proof_untested", "Not every sensor channel has been tested", "Проверены не все каналы датчиков");
+    public static final String SIS_PROOF_FAILED = t("sis.proof_failed", "A failed channel was found: repair it and test again",
+            "Найден отказавший канал: отремонтируйте и проверьте заново");
     public static final String SIS_BYPASS_OFF = t("sis.bypass_off", "Bypass removed by %s — the protection is back in service",
             "Байпас снят (%s) — защита снова в работе");
 

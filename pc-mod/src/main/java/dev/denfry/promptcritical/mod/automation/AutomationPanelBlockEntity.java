@@ -38,7 +38,14 @@ public class AutomationPanelBlockEntity extends AutomationBlockEntity implements
         if (kind == AutomationKind.SIS_LOGIC) {
             if (resetTicks > 0) resetTicks--;
             u.setInput(AutomationUnit.IN_MAIN, resetTicks > 0 ? 1 : 0);
-            setFlag(PcProperties.ALARM, u.sis().tripped() || u.sis().bypass() || !u.sisPowered());
+            setFlag(PcProperties.ALARM, u.sis().tripped() || u.sis().bypass() || !u.sisPowered()
+                    || u.sis().proofTestOverdue(u.sisProofIntervalH()));
+            // 11 sis_matrix: шкаф — МПС из 10+ причин с голосованием 2oo3 (03d §3d.6.3)
+            if (level.getGameTime() % 100 == 0 && level instanceof net.minecraft.server.level.ServerLevel sl) {
+                dev.denfry.promptcritical.sim.automation.sis.SisCabinet cab = u.sisCabinet();
+                if (cab.matrix()) dev.denfry.promptcritical.mod.content.SimAchievements.nearby(sl, worldPosition,
+                        dev.denfry.promptcritical.mod.content.SimAchievements.SIS_MATRIX, "causes", cab.causes());
+            }
         }
         if (kind == AutomationKind.MANUAL_STATION) {
             if (rampTicks > 0) rampTicks--;
@@ -96,6 +103,9 @@ public class AutomationPanelBlockEntity extends AutomationBlockEntity implements
                                 player.getName()), false);
                     }
                 }
+                case AutomationPanels.BUTTON_SIS_TEST, AutomationPanels.BUTTON_SIS_TEST_CHANNEL, AutomationPanels.BUTTON_SIS_SIGN -> {
+                    if (u.sis() != null) proofTest(player, u, id);
+                }
                 case AutomationPanels.BUTTON_DOWN, AutomationPanels.BUTTON_UP -> {
                     rampDir = id == AutomationPanels.BUTTON_UP ? 1 : -1;
                     rampTicks = RAMP_TICKS;
@@ -105,6 +115,63 @@ public class AutomationPanelBlockEntity extends AutomationBlockEntity implements
             }
         }
         sync();
+    }
+
+    /** Периодическая проверка функции ПАЗ по шагам 03d §3d.6.8. */
+    private static void proofTest(ServerPlayer player, AutomationUnit u, int id) {
+        dev.denfry.promptcritical.sim.automation.sis.SisLogic sis = u.sis();
+        dev.denfry.promptcritical.sim.automation.sis.SisLogic.Voting v = u.sisVoting();
+        dev.denfry.promptcritical.sim.automation.sis.SisLogic.ProofResult r;
+        switch (id) {
+            case AutomationPanels.BUTTON_SIS_TEST -> {
+                if (sis.testing()) {
+                    sis.abortProofTest();
+                    player.displayClientMessage(AutomationText.msg(AutomationText.SIS_PROOF_ABORTED), true);
+                    return;
+                }
+                r = sis.startProofTest();
+                if (r == dev.denfry.promptcritical.sim.automation.sis.SisLogic.ProofResult.OK) {
+                    player.displayClientMessage(AutomationText.msg(AutomationText.SIS_PROOF_STARTED), false);
+                    return;
+                }
+            }
+            case AutomationPanels.BUTTON_SIS_TEST_CHANNEL -> {
+                int ch = 0;
+                while (ch < v.n && (sis.testedMask() & 1 << ch) != 0) ch++;
+                if (ch >= v.n) ch = 0;
+                r = sis.testChannel(ch, v);
+                if (r == dev.denfry.promptcritical.sim.automation.sis.SisLogic.ProofResult.OK) {
+                    player.displayClientMessage(AutomationText.msg(AutomationText.SIS_PROOF_CHANNEL_OK, ch + 1), true);
+                    return;
+                }
+                if (r == dev.denfry.promptcritical.sim.automation.sis.SisLogic.ProofResult.CHANNEL_FAILED) {
+                    player.displayClientMessage(AutomationText.msg(AutomationText.SIS_PROOF_CHANNEL_FAILED, ch + 1)
+                            .withStyle(net.minecraft.ChatFormatting.GOLD), false);
+                    return;
+                }
+            }
+            default -> {
+                r = sis.signProofTest(v, u.sisProofIntervalH());
+                if (r == dev.denfry.promptcritical.sim.automation.sis.SisLogic.ProofResult.PASSED_ON_TIME) {
+                    player.displayClientMessage(AutomationText.msg(AutomationText.SIS_PROOF_ON_TIME, player.getName())
+                            .withStyle(net.minecraft.ChatFormatting.GREEN), false);
+                    dev.denfry.promptcritical.mod.content.SimAchievements.direct(player,
+                            dev.denfry.promptcritical.mod.content.SimAchievements.PROOF_TEST, "", 1);
+                    return;
+                }
+                if (r == dev.denfry.promptcritical.sim.automation.sis.SisLogic.ProofResult.PASSED_LATE) {
+                    player.displayClientMessage(AutomationText.msg(AutomationText.SIS_PROOF_LATE, player.getName()), false);
+                    return;
+                }
+            }
+        }
+        player.displayClientMessage(AutomationText.msg(switch (r) {
+            case NEEDS_BYPASS -> AutomationText.SIS_PROOF_NEEDS_BYPASS;
+            case BYPASS_STILL_ON -> AutomationText.SIS_PROOF_BYPASS_ON;
+            case NOT_TESTING -> AutomationText.SIS_PROOF_NOT_TESTING;
+            case CHANNELS_UNTESTED, LOGIC_NOT_SEEN -> AutomationText.SIS_PROOF_UNTESTED;
+            default -> AutomationText.SIS_PROOF_FAILED;
+        }).withStyle(net.minecraft.ChatFormatting.GOLD), true);
     }
 
     @Override

@@ -100,6 +100,16 @@ public final class PcAdvancements implements AdvancementProvider.AdvancementGene
         LANG.put("telemetry", new String[] {"Telemechanics", "Телемеханика", "Ten telemetry gateways report to one historian", "Десять шлюзов телемеханики у одного историана"});
         LANG.put("dosimeter", new String[] {"Count the Dose", "Считай дозу", "Carry a dosimeter for a game day", "Носите дозиметр игровые сутки"});
         LANG.put("lockout", new String[] {"Padlock", "Замок", "Hang your first LOTO padlock", "Повесьте первый замок LOTO"});
+        LANG.put("permit", new String[] {"By the Permit", "По наряду", "Do hot work under a work permit with a gas test",
+                "Проведите огневые работы по наряду-допуску с газоанализом"});
+        LANG.put("turnaround", new String[] {"Turnaround", "Остановочный ремонт", "Shut a plant down, repair it under permits and start it again",
+                "Установка остановлена, отремонтирована по нарядам и пущена"});
+        LANG.put("alara", new String[] {"ALARA", "ALARA", "Repair a main coolant pump with a crew collective dose under 10 mSv",
+                "Отремонтируйте ГЦН с коллективной дозой бригады меньше 10 мЗв"});
+        LANG.put("proof_test", new String[] {"Proof Tested", "Поверено", "Proof-test a SIS function before it is overdue",
+                "Выполните периодическую проверку ПАЗ до просрочки"});
+        LANG.put("sis_matrix", new String[] {"The Matrix", "Матрица", "A SIS cause and effect matrix with ten causes or more and 2oo3 voting",
+                "МПС ПАЗ с десятью и более причинами и голосованием 2oo3"});
         LANG.put("own_sun", new String[] {"Own Sun", "Своё солнце", "Get the first sealed radioactive source", "Получите первый закрытый радионуклидный источник"});
         LANG.put("through_steel", new String[] {"Through Steel", "Сквозь сталь", "Find a weld defect on a radiograph", "Найдите дефект шва на рентгенограмме"});
         LANG.put("pitch_lake", new String[] {"Asphalt Lake", "Асфальтовое озеро", "Find a natural bitumen lake",
@@ -225,6 +235,22 @@ public final class PcAdvancements implements AdvancementProvider.AdvancementGene
                 .addCriterion("rtus", event(dev.denfry.promptcritical.mod.content.SimAchievements.TELEMETRY, Map.of())).save(saver, id("telemetry"), efh);
         AdvancementHolder lock = task(root, PcItems.LOCKOUT_PADLOCK.get(), "lockout", AdvancementType.TASK, false, 20)
                 .addCriterion("lock", event(dev.denfry.promptcritical.mod.content.SimAchievements.LOCKOUT, Map.of())).save(saver, id("lockout"), efh);
+        // наряды-допуски, остановочный ремонт, ALARA (13 §13.2, §13.6.2; 04b), проверка и матрица ПАЗ (03d §3d.6)
+        AdvancementHolder permit = task(lock, PcItems.WORK_PERMIT.get(), "permit", AdvancementType.TASK, false, 30)
+                .addCriterion("hot_work", event(dev.denfry.promptcritical.mod.content.SimAchievements.HOT_WORK_PERMIT, Map.of()))
+                .save(saver, id("permit"), efh);
+        task(permit, PcBlocks.PERMIT_BOARD.get(), "turnaround", AdvancementType.GOAL, false, 100)
+                .addCriterion("turnaround", event(dev.denfry.promptcritical.mod.content.SimAchievements.TURNAROUND,
+                        Map.of("repairs", MinMaxBounds.Doubles.atLeast(1)))).save(saver, id("turnaround"), efh);
+        task(permit, PcBlocks.PRIMARY_PUMP.get(), "alara", AdvancementType.CHALLENGE, false, 150)
+                .addCriterion("alara", event(dev.denfry.promptcritical.mod.content.SimAchievements.ALARA,
+                        Map.of("dose_msv", MinMaxBounds.Doubles.atMost(10)))).save(saver, id("alara"), efh);
+        AdvancementHolder proof = task(relays, PcBlocks.SIS_LOGIC.get(), "proof_test", AdvancementType.TASK, false, 30)
+                .addCriterion("proof_test", event(dev.denfry.promptcritical.mod.content.SimAchievements.PROOF_TEST, Map.of()))
+                .save(saver, id("proof_test"), efh);
+        task(proof, PcBlocks.SIS_LOGIC.get(), "sis_matrix", AdvancementType.TASK, false, 50)
+                .addCriterion("matrix", event(dev.denfry.promptcritical.mod.content.SimAchievements.SIS_MATRIX,
+                        Map.of("causes", MinMaxBounds.Doubles.atLeast(10)))).save(saver, id("sis_matrix"), efh);
         AdvancementHolder dose = task(lock, PcItems.DOSIMETER.get(), "dosimeter", AdvancementType.TASK, false, 30)
                 .addCriterion("day", event(dev.denfry.promptcritical.mod.content.SimAchievements.DOSIMETER_DAY, Map.of())).save(saver, id("dosimeter"), efh);
         AdvancementHolder sun = task(dose, PcItems.SEALED_SOURCE.get(), "own_sun", AdvancementType.TASK, false, 40)

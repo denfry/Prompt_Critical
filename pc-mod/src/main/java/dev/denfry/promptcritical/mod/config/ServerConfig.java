@@ -26,6 +26,7 @@ public final class ServerConfig {
     public static final ModConfigSpec.DoubleValue W_PER_SU;
     public static final ModConfigSpec.DoubleValue DIESEL_FAIL_TO_START_BASE;
     public static final ModConfigSpec.IntValue OPS_MAX_LOCKS_PER_PLAYER;
+    public static final ModConfigSpec.EnumValue<dev.denfry.promptcritical.sim.ops.PermitEnforcement> OPS_PERMIT_ENFORCEMENT;
     public static final ModConfigSpec.DoubleValue J_PER_FE;
     public static final ModConfigSpec.IntValue CC_TOKEN_RATE;
     public static final ModConfigSpec.IntValue CC_TOKEN_BURST;
@@ -167,6 +168,8 @@ public final class ServerConfig {
         b.push("ops");
         OPS_MAX_LOCKS_PER_PLAYER = b.comment("LOTO padlocks one player can have hung at once (13 §13.14)")
                 .defineInRange("max_locks_per_player", 8, 1, 64);
+        OPS_PERMIT_ENFORCEMENT = b.comment("Work permits: OFF — no checks; ADVISORY — hot work without a permit is warned and journaled; ENFORCED — it is refused (13 §13.0.3)")
+                .defineEnum("permit_enforcement", dev.denfry.promptcritical.sim.ops.PermitEnforcement.ADVISORY);
         b.pop();
 
         b.push("diesel");

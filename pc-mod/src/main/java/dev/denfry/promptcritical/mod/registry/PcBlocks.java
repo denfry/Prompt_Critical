@@ -878,6 +878,9 @@ public final class PcBlocks {
             Spec.facing(BlockStateProperties.OPEN), FoundryBlock.with(dev.denfry.promptcritical.mod.ops.LineBlindBlockEntity::new));
     public static final DeferredBlock<PcDeviceBlock> LOCKOUT_BOX = device("lockout_box", instrument(),
             Spec.facing(PcProperties.LOCKS), FoundryBlock.with(dev.denfry.promptcritical.mod.ops.LockoutBoxBlockEntity::new));
+    /** Наряды-допуски 13 §13.2.2: стенд нарядов в операторной, 2×1×1, ведёт остановочный ремонт установки (§13.6.2). */
+    public static final DeferredBlock<PcDeviceBlock> PERMIT_BOARD = device("permit_board", instrument(),
+            Spec.facing().footprint(FP_WIDE2), FoundryBlock.with(dev.denfry.promptcritical.mod.ops.PermitBoardBlockEntity::new));
     public static final DeferredBlock<dev.denfry.promptcritical.mod.ops.MechanicalDisconnectBlock> MECHANICAL_DISCONNECT =
             withItem(BLOCKS.registerBlock("mechanical_disconnect", dev.denfry.promptcritical.mod.ops.MechanicalDisconnectBlock::new, machine()));
     public static final DeferredBlock<PcDeviceBlock> HYDROTEST_PUMP = device("hydrotest_pump", machine(),

@@ -37,6 +37,12 @@ public final class OpsBinding {
         NeoForge.EVENT_BUS.addListener(Lockouts::onBreak);
         NeoForge.EVENT_BUS.addListener(Lockouts::onExplosion);
         NeoForge.EVENT_BUS.addListener(OpsActions::onRightClick);
+        // наряды-допуски и огневые работы 13 §13.2
+        Permits.COMPONENTS.register(modBus);
+        NeoForge.EVENT_BUS.addListener(Permits::onRightClick);
+        NeoForge.EVENT_BUS.addListener(Permits::onLevelTick);
+        NeoForge.EVENT_BUS.addListener(HotWorks::onRightClick);
+        NeoForge.EVENT_BUS.addListener(HotWorks::onPlace);
         TankFires.register();
         modBus.addListener((net.neoforged.fml.event.lifecycle.FMLCommonSetupEvent e) -> e.enqueueWork(() ->
                 // нефтепроявление горит и выгорает, как горючий блок (13 §13.5.4, пролив класса B)

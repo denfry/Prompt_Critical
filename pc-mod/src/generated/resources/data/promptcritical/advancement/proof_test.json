@@ -1,0 +1,33 @@
+{
+  "parent": "promptcritical:relay_logic",
+  "criteria": {
+    "proof_test": {
+      "conditions": {
+        "event": "promptcritical:sis_proof_test",
+        "station_member": true
+      },
+      "trigger": "promptcritical:sim_event"
+    }
+  },
+  "display": {
+    "description": {
+      "translate": "advancements.promptcritical.proof_test.description"
+    },
+    "icon": {
+      "count": 1,
+      "id": "promptcritical:sis_logic_solver"
+    },
+    "title": {
+      "translate": "advancements.promptcritical.proof_test.title"
+    }
+  },
+  "requirements": [
+    [
+      "proof_test"
+    ]
+  ],
+  "rewards": {
+    "experience": 30
+  },
+  "sends_telemetry_event": true
+}

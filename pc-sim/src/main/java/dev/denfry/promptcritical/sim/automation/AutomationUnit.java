@@ -448,6 +448,36 @@ public final class AutomationUnit {
         return SisLogic.pfdAvg(v, dp[D_RETURN] * 1e-6, dp[D_SPAN] * 730, dp[D_TABLE] / 100);
     }
 
+    /** Схема голосования блока ПАЗ. */
+    public SisLogic.Voting sisVoting() {
+        return SisLogic.Voting.values()[Math.floorMod(ip[I_MODE], SisLogic.Voting.values().length)];
+    }
+
+    /** Интервал периодической проверки T, ч физики (уставка блока в месяцах × 730 ч). */
+    public double sisProofIntervalH() {
+        return dp[D_SPAN] * 730;
+    }
+
+    /**
+     * Текущая PFD(t) функции через время с последней проверки (03d §3d.6.7): растёт пилой от нуля после каждой
+     * подписанной проверки, при просрочке уходит выше расчётной PFDavg.
+     */
+    public double sisPfdNow() {
+        return SisLogic.pfdInstant(sisVoting(), dp[D_RETURN] * 1e-6, sis == null ? 0 : sis.sinceTestH(), dp[D_TABLE] / 100);
+    }
+
+    /** Шкаф ПАЗ блока как матрица причин и следствий (03d §3d.6.3). */
+    public dev.denfry.promptcritical.sim.automation.sis.SisCabinet sisCabinet() {
+        return owner == null ? dev.denfry.promptcritical.sim.automation.sis.SisCabinet.NONE : owner.sisCabinet(this);
+    }
+
+    /** Подключено ли к блоку ПАЗ {@code n} первых датчиков (источники сигналов AI). */
+    boolean sisChannelsWired(int n) {
+        if (aiSources.length < n) return false;
+        for (int i = 0; i < n; i++) if (aiSources[i] < 0) return false;
+        return true;
+    }
+
     /** Процессор ПЛК; {@code null} — блок не ПЛК. */
     public PlcCpu plc() {
         return plc;

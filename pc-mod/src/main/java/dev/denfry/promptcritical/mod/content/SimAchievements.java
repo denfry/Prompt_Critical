@@ -40,6 +40,13 @@ public final class SimAchievements {
      */
     public static final String XENON_PIT = "promptcritical:xenon_pit", HUNDRED_DAYS = "promptcritical:hundred_days",
             INDUSTRIAL_COMPLEX = "promptcritical:industrial_complex", LOAD_FOLLOW = "promptcritical:load_follow";
+    /**
+     * Эксплуатация 13 и ПАЗ 03d (11 §11.2.2): огневые работы по наряду с газоанализом, остановочный ремонт (тег
+     * {@code repairs}), ремонт ГЦН по плану дозы (тег {@code dose_msv} — коллективная доза бригады), проверка ПАЗ в срок,
+     * матрица причин ПАЗ (тег {@code causes}).
+     */
+    public static final String HOT_WORK_PERMIT = "promptcritical:hot_work_permit", TURNAROUND = "promptcritical:turnaround",
+            ALARA = "promptcritical:alara", PROOF_TEST = "promptcritical:sis_proof_test", SIS_MATRIX = "promptcritical:sis_matrix";
     /** Источники, уже объявившие событие: повторно не шлют (сбрасывается с выгрузкой блока). */
     private static final java.util.Map<Object, java.util.Set<String>> ONCE = new java.util.WeakHashMap<>();
 
