@@ -97,9 +97,12 @@ neoForge {
             type = "gameTestServer"
             sourceSet = gametest
             systemProperty("neoforge.enabledGameTestNamespaces", modId)
+            // без потолка JVM берёт четверть ОЗУ; несколько параллельных прогонов на 16 ГБ выбивали машину
+            jvmArgument("-Xmx2G")
         }
         register("data") {
             data()
+            jvmArgument("-Xmx2G")
             programArguments.addAll(
                 "--mod", modId, "--all",
                 "--output", file("src/generated/resources").absolutePath,
