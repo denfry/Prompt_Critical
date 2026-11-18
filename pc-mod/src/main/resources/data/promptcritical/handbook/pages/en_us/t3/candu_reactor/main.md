@@ -4,7 +4,7 @@ CANDU burns natural uranium — 0.711 % U-235, no enrichment. Heavy water makes 
 
 The plant is 3×6×3. Below is the calandria, a tank of cold heavy water (70 °C) crossed by 97 horizontal channels. Each channel holds 12 bundles of 37 elements and about 19 kg of uranium per bundle. The coolant is D₂O too, at 10 MPa and 266 → 310 °C. Above is the fuelling machine bridge.
 
-Within 12 blocks of the desk you need coolant pumps and steam generators against secondary boilers.
+Within 12 blocks of the desk you need coolant pumps and steam generators against secondary boilers. A new reactor comes dry: fill it with heavy water first (see the heavy water chapter).
 
 Neutrons live about a millisecond here, thirty times longer than in a VVER: slowing down in D₂O is slow and diffusion is long.
 

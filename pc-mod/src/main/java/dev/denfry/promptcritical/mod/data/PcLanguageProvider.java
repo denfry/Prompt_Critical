@@ -384,6 +384,9 @@ public final class PcLanguageProvider extends LanguageProvider {
         b("hydrogen_recombiner", "Passive Hydrogen Recombiner", "Пассивный каталитический рекомбинатор водорода");
         b("pressurizer", "Pressurizer", "Компенсатор давления");
         b("candu_reactor", "Heavy Water Reactor (CANDU type)", "Тяжеловодный реактор (типа CANDU)");
+        b("gs_exchange_tower", "Girdler Sulfide Heavy Water Plant", "Сероводородный завод тяжёлой воды");
+        b("heavy_water_column", "Heavy Water Finishing Column", "Колонна доводки тяжёлой воды");
+        i("heavy_water_bucket", "Heavy Water Bucket", "Ведро тяжёлой воды");
         b("bwr_reactor", "Boiling Water Reactor", "Кипящий корпусной реактор");
         b("sfr_reactor", "Sodium-Cooled Fast Reactor", "Реактор на быстрых нейтронах с натрием");
         b("wellhead", "Wellhead", "Колонная головка");
@@ -547,6 +550,9 @@ public final class PcLanguageProvider extends LanguageProvider {
         FLUIDS.put("mine_methane", new String[] {"Mine Methane", "Шахтный метан"});
         FLUIDS.put("raw_water", new String[] {"Raw Water", "Сырая вода"});
         FLUIDS.put("mine_water", new String[] {"Mine Water", "Шахтная вода"});
+        FLUIDS.put("heavy_water", new String[] {"Heavy Water (99.75 % D₂O)", "Тяжёлая вода (99,75 % D₂O)"});
+        FLUIDS.put("downgraded_heavy_water", new String[] {"Downgraded Heavy Water (90 % D)", "Разбавленная тяжёлая вода (90 % D)"});
+        FLUIDS.put("deuterium_enriched_water", new String[] {"Deuterium-Enriched Water (15 % D)", "Вода, обогащённая дейтерием (15 % D)"});
         FLUIDS.put("coke_oven_gas", new String[] {"Coke Oven Gas", "Коксовый газ"});
         FLUIDS.put("blast_furnace_gas", new String[] {"Blast Furnace Gas", "Доменный газ"});
         FLUIDS.put("coal_tar", new String[] {"Coal Tar", "Каменноугольная смола"});
@@ -562,6 +568,7 @@ public final class PcLanguageProvider extends LanguageProvider {
         FLUIDS.put("softened_water", new String[] {"Softened Water", "Умягчённая вода"});
         FLUIDS.put("boiler_feedwater", new String[] {"Boiler Feedwater", "Питательная вода"});
         MISC.put("block.promptcritical.mine_water", new String[] {"Mine Water", "Шахтная вода"});
+        MISC.put("block.promptcritical.heavy_water", new String[] {"Heavy Water", "Тяжёлая вода"});
 
         MISC.put("itemGroup." + PromptCritical.MOD_ID, new String[] {"Prompt Critical", "Prompt Critical"});
         MISC.put("commands.promptcritical.debug.hash", new String[] {"State hash %s at tick %s", "Хеш состояния %s на тике %s"});
@@ -786,6 +793,7 @@ public final class PcLanguageProvider extends LanguageProvider {
         MISC.putAll(dev.denfry.promptcritical.mod.mes.MesText.lang());
         MISC.putAll(dev.denfry.promptcritical.mod.gas.GasText.lang());
         MISC.putAll(dev.denfry.promptcritical.mod.chem.ChemText.lang());
+        MISC.putAll(dev.denfry.promptcritical.mod.heavywater.HeavyWaterText.lang());
         MISC.putAll(dev.denfry.promptcritical.mod.nuclear.NuclearText.lang());
         MISC.putAll(dev.denfry.promptcritical.mod.npp.NppText.lang());
         MISC.putAll(dev.denfry.promptcritical.mod.isotopes.IsotopeText.lang());

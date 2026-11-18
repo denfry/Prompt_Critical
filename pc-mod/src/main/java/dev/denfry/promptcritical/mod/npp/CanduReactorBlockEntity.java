@@ -9,10 +9,14 @@ import dev.denfry.promptcritical.mod.block.PcBlock;
 import dev.denfry.promptcritical.mod.blockentity.DeviceBlockEntity;
 import dev.denfry.promptcritical.mod.environment.RadiationService;
 import dev.denfry.promptcritical.mod.foundry.FoundryDevice;
+import dev.denfry.promptcritical.mod.heavywater.GradedWaterPort;
+import dev.denfry.promptcritical.mod.heavywater.HeavyWaterFluids;
+import dev.denfry.promptcritical.mod.heavywater.HeavyWaterText;
 import dev.denfry.promptcritical.mod.ironworks.Ironworks;
 import dev.denfry.promptcritical.mod.nuclear.FuelLot;
 import dev.denfry.promptcritical.mod.panel.PanelHost;
 import dev.denfry.promptcritical.mod.panel.PanelLayout;
+import dev.denfry.promptcritical.mod.production.ProductTank;
 import dev.denfry.promptcritical.mod.registry.PcItems;
 import dev.denfry.promptcritical.sim.automation.AutomationKind;
 import dev.denfry.promptcritical.sim.automation.AutomationSubsystem;
@@ -21,11 +25,14 @@ import dev.denfry.promptcritical.sim.core.MutableStateTree;
 import dev.denfry.promptcritical.sim.core.TreeStateReader;
 import dev.denfry.promptcritical.sim.core.TreeStateWriter;
 import dev.denfry.promptcritical.sim.fuel.FuelDesign;
+import dev.denfry.promptcritical.sim.heavywater.HeavyWater;
+import dev.denfry.promptcritical.sim.heavywater.HeavyWaterGrade;
 import dev.denfry.promptcritical.sim.npp.CanduReactor;
 import dev.denfry.promptcritical.sim.npp.LightWaterCore;
 import dev.denfry.promptcritical.sim.radiation.FissionSource;
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.EnumSet;
 import java.util.List;
 import net.minecraft.ChatFormatting;
 import net.minecraft.core.BlockPos;
@@ -43,6 +50,7 @@ import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.phys.AABB;
+import net.neoforged.neoforge.fluids.capability.IFluidHandler;
 import net.neoforged.neoforge.items.IItemHandler;
 import net.neoforged.neoforge.items.IItemHandlerModifiable;
 import net.neoforged.neoforge.items.ItemStackHandler;
@@ -55,11 +63,22 @@ import org.jetbrains.annotations.Nullable;
  * из слота щита уходят в магазин перегрузочной машины (до 24): кнопка «Перегрузка» на заглушенном реакторе заполняет следующий пустой канал (12 пучков), на мощности
  * вдвигает 8 свежих в самый выгоревший канал и выдаёт 8 выгоревших одним пеналом (перегрузка на ходу). Тритий в замедлителе —
  * на щите: чистый β-излучатель, внешней дозы не даёт.
+ *
+ * <p>Тяжёлая вода — по трубам: снизу — в контур теплоносителя, с остальных сторон — в каландр (замедлитель).
+ * Принимается любой сорт воды, даже обычная: она честно разбавляет D₂O, и реактивность падает. Новый реактор сухой
+ * ({@link CanduReactor#dry}): без замедлителя он не критичен. Кнопка «Слив» отбирает кубометр замедлителя в бак
+ * сорта не выше его чистоты ({@link HeavyWaterGrade#atMost}) — оттуда трубой на колонну доводки; уровень и
+ * реактивность при этом падают, как при сливе замедлителя в бак на Пикеринге.
  */
 public final class CanduReactorBlockEntity extends DeviceBlockEntity implements FoundryDevice, PanelHost, WiredDevice {
     public static final int LINK_RADIUS = 12;
 
-    private final CanduReactor reactor = new CanduReactor();
+    public static final int DRAIN_MB = 4000, DRAIN_STEP_L = 1000;
+
+    private final CanduReactor reactor = CanduReactor.dry();
+    /** Баки слива по сортам (индекс — {@link HeavyWaterGrade#ordinal}). */
+    private final ProductTank[] drains = new ProductTank[HeavyWaterGrade.values().length];
+    private final GradedWaterPort moderatorPort, coolantPort;
     private final MechanismWiring wiring = new MechanismWiring();
     private final ItemStackHandler fuel = new ItemStackHandler(2) {
         @Override
@@ -83,6 +102,72 @@ public final class CanduReactorBlockEntity extends DeviceBlockEntity implements 
 
     public CanduReactorBlockEntity(BlockPos pos, BlockState state) {
         super(NppBlockEntities.CANDU_REACTOR.get(), pos, state);
+        for (HeavyWaterGrade g : HeavyWaterGrade.values()) drains[g.ordinal()] = new ProductTank(HeavyWaterFluids.fluid(g), DRAIN_MB);
+        EnumSet<HeavyWaterGrade> any = EnumSet.allOf(HeavyWaterGrade.class);
+        List<ProductTank> outlets = List.of(drains);
+        moderatorPort = new GradedWaterPort(new GradedWaterPort.Sink() {
+            @Override
+            public double roomKg() {
+                return reactor.moderatorCapacityKg() - reactor.moderator().kg();
+            }
+
+            @Override
+            public void add(double kg, double x) {
+                reactor.addModerator(kg, x);
+                setChanged();
+            }
+
+            @Override
+            public int shownMb() {
+                return (int) HeavyWater.litres(reactor.moderatorCapacityKg(), HeavyWater.REACTOR_GRADE_X);
+            }
+        }, any, outlets);
+        coolantPort = new GradedWaterPort(new GradedWaterPort.Sink() {
+            @Override
+            public double roomKg() {
+                return reactor.coolantCapacityKg() - reactor.coolant().kg();
+            }
+
+            @Override
+            public void add(double kg, double x) {
+                reactor.addCoolant(kg, x);
+                setChanged();
+            }
+
+            @Override
+            public int shownMb() {
+                return (int) HeavyWater.litres(reactor.coolantCapacityKg(), HeavyWater.REACTOR_GRADE_X);
+            }
+        }, any, outlets);
+    }
+
+    /** Патрубок: снизу — контур теплоносителя, иначе — каландр; слив — из баков слива. */
+    @Override
+    public IFluidHandler fluids(@Nullable Direction side) {
+        return side == Direction.DOWN ? coolantPort : moderatorPort;
+    }
+
+    public ProductTank drainTank(HeavyWaterGrade g) {
+        return drains[g.ordinal()];
+    }
+
+    /** Слить {@value #DRAIN_STEP_L} л замедлителя в бак его сорта; false — бак полон или каландр пуст. */
+    public boolean drainModerator(@Nullable ServerPlayer player) {
+        double x = reactor.moderator().purity();
+        HeavyWaterGrade g = HeavyWaterGrade.atMost(x);
+        ProductTank t = drains[g.ordinal()];
+        double litres = Math.min(DRAIN_STEP_L, Math.min(t.room(), HeavyWater.litres(reactor.moderator().kg(), x)));
+        if (litres < 1) {
+            if (player != null && reactor.moderator().kg() > 0)
+                player.displayClientMessage(HeavyWaterText.msg("candu.drain_full").withStyle(ChatFormatting.GOLD), true);
+            return false;
+        }
+        double kg = reactor.drainModerator(HeavyWater.kgFromLitres(litres, x));
+        t.add(HeavyWater.litres(kg, x));
+        if (player != null) player.displayClientMessage(HeavyWaterText.msg("candu.drained", Math.round(litres),
+                net.minecraft.network.chat.Component.translatable(HeavyWaterFluids.fluid(g).getFluidType().getDescriptionId())), true);
+        setChanged();
+        return true;
     }
 
     public CanduReactor reactor() {
@@ -239,8 +324,17 @@ public final class CanduReactorBlockEntity extends DeviceBlockEntity implements 
         v[CanduPanels.TRITIUM_GBQ] = (int) Math.min(Integer.MAX_VALUE, Math.round(r.tritiumBq() / 1e9));
         v[CanduPanels.TRIP] = r.trip().ordinal();
         v[CanduPanels.MAGAZINE] = magazine;
+        v[CanduPanels.MOD_LEVEL] = (int) Math.round(r.moderatorLevel() * 1000);
+        v[CanduPanels.MOD_PURITY] = (int) Math.round(r.moderator().purity() * 10000);
+        v[CanduPanels.COOL_FILL] = (int) Math.round(r.coolantFill() * 1000);
+        v[CanduPanels.COOL_PURITY] = (int) Math.round(r.coolant().purity() * 10000);
+        int drained = 0;
+        for (ProductTank tank : drains) drained += (int) Math.floor(tank.amount());
+        v[CanduPanels.DRAIN_L] = drained;
         v[CanduPanels.FLAGS] = (r.trip() != CanduReactor.Trip.NONE ? 1 << CanduPanels.F_TRIPPED : 0)
-                | (generators.isEmpty() ? 1 << CanduPanels.F_NO_SG : 0);
+                | (generators.isEmpty() ? 1 << CanduPanels.F_NO_SG : 0)
+                | (r.moderator().kg() > 0 && r.moderator().purity() < HeavyWater.REACTOR_GRADE_X - 5e-4 ? 1 << CanduPanels.F_DOWNGRADED : 0)
+                | (r.moderatorLevel() < 0.999 || r.coolantFill() < 0.999 ? 1 << CanduPanels.F_LOW_D2O : 0);
     }
 
     @Override
@@ -252,6 +346,7 @@ public final class CanduReactorBlockEntity extends DeviceBlockEntity implements 
             case CanduPanels.B_STOP -> reactor.driveControl(0);
             case CanduPanels.B_DOWN -> reactor.driveControl(1);
             case CanduPanels.B_REFUEL -> refuel(player);
+            case CanduPanels.B_DRAIN -> drainModerator(player);
             default -> {
             }
         }
@@ -331,6 +426,7 @@ public final class CanduReactorBlockEntity extends DeviceBlockEntity implements 
         tag.putDouble("mag_kg", magKg);
         tag.putDouble("mag_u235", magU235);
         tag.putDouble("mag_u234", magU234);
+        for (HeavyWaterGrade g : HeavyWaterGrade.values()) drains[g.ordinal()].save(tag, "drain_" + g.name().toLowerCase(java.util.Locale.ROOT));
         wiring.save(tag);
     }
 
@@ -343,6 +439,7 @@ public final class CanduReactorBlockEntity extends DeviceBlockEntity implements 
         magKg = tag.getDouble("mag_kg");
         magU235 = tag.getDouble("mag_u235");
         magU234 = tag.getDouble("mag_u234");
+        for (HeavyWaterGrade g : HeavyWaterGrade.values()) drains[g.ordinal()].load(tag, "drain_" + g.name().toLowerCase(java.util.Locale.ROOT));
         wiring.load(tag);
         lastTrip = reactor.trip();
     }

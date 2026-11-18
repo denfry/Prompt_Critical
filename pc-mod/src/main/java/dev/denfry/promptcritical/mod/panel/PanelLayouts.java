@@ -40,6 +40,7 @@ public final class PanelLayouts {
                 dev.denfry.promptcritical.mod.refinery.RefineryPanels.all(),
                 dev.denfry.promptcritical.mod.gas.GasPanels.all(),
                 dev.denfry.promptcritical.mod.chem.ChemPanels.all(),
+                dev.denfry.promptcritical.mod.heavywater.HeavyWaterPanels.all(),
                 dev.denfry.promptcritical.mod.chlor.ChlorPanels.all(),
                 dev.denfry.promptcritical.mod.gas.HeliumPanels.all(),
                 dev.denfry.promptcritical.mod.radiation.RackPanels.all(),
