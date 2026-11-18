@@ -36,6 +36,8 @@ public enum PcSfx {
     MOLDING_JOLT("molding_jolt", "Moulding table jolts", "Стучит стол формовочной машины"),
     BREAKER_OPERATE("breaker_operate", "Breaker operates", "Срабатывает выключатель"),
     RELAY_CLICK("relay_click", "Relay clicks", "Щёлкает реле"),
+    /** Щелчок газоразрядного счётчика дозиметра: синтез ffmpeg, разряд 30 мс. */
+    GEIGER_CLICK("geiger_click", "Dosimeter clicks", "Щёлкает дозиметр"),
     ROOF_SUPPORT("roof_support", "Hydraulic support sets", "Шипит гидравлика крепи");
 
     public static final DeferredRegister<SoundEvent> SOUNDS = DeferredRegister.create(Registries.SOUND_EVENT, PromptCritical.MOD_ID);

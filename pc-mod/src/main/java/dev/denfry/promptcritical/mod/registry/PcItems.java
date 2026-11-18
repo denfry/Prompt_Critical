@@ -237,6 +237,10 @@ public final class PcItems {
                 new Item.Properties()));
     }
 
+    /** Дозиметр-радиометр ДКС-04: мощность дозы и накопленная доза, щелчки счётчика. */
+    public static final DeferredItem<dev.denfry.promptcritical.mod.environment.DosimeterItem> DOSIMETER = registered(ITEMS.registerItem(
+            "dosimeter_radiometer", dev.denfry.promptcritical.mod.environment.DosimeterItem::new, new Item.Properties()));
+
     private static <I extends Item> DeferredItem<I> registered(DeferredItem<I> i) {
         PLAIN.add(i);
         return i;

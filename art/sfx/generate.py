@@ -48,6 +48,10 @@ RECIPES = {
                   f"lowpass=f=3000,{ROADWAY},afade=t=in:d=0.02,afade=t=out:st=1.97:d=0.03", False),
     "electric_motor": (f"aevalsrc='{MOTOR}':s=44100:d=2", "lowpass=f=2500", True),
     "transformer_hum": (f"aevalsrc='{TRANSFORMER}':s=44100:d=2", "lowpass=f=1200", True),
+    # Щелчок счётчика СБМ-20 в динамике дозиметра: разряд — короткий спад шума и звон корпуса 3,2 кГц, 30 мс.
+    # Частоту щелчков задаёт дозиметр (пуассоновский поток ∝ мощности дозы), здесь — один щелчок.
+    "geiger_click": ("aevalsrc='0.8*exp(-t*2500)*(2*random(0)-1)+0.5*exp(-t*600)*sin(2*PI*3200*t)':s=44100:d=0.03",
+                     "highpass=f=500,afade=t=out:st=0.024:d=0.006", False),
 }
 
 

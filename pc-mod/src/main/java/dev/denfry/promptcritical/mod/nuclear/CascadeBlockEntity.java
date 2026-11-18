@@ -34,8 +34,6 @@ import net.minecraft.sounds.SoundSource;
 import net.minecraft.world.InteractionHand;
 import net.minecraft.world.InteractionResult;
 import net.minecraft.world.ItemInteractionResult;
-import net.minecraft.world.effect.MobEffectInstance;
-import net.minecraft.world.effect.MobEffects;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.level.block.state.BlockState;
@@ -50,7 +48,9 @@ import org.jetbrains.annotations.Nullable;
  * заданные отбор и отвал и питает их от вала Create (сзади) через преобразователь частоты: 50 кВт·ч на ЕРР. Баллоны —
  * в слоты щита или воронкой: питание (любой баллон с UF₆), отбор (30B до 5 % или 5A), отвал (48Y). Отбор копится в
  * десублиматоре, пока его некуда слить. Ротор, разорвавшийся от перегрузки или усталости, разбивает свою секцию и
- * с вероятностью 30 % соседнюю. Вспышка СЦР в десублиматоре облучает всех вокруг: доза — {@link Criticality#doseGy}.
+ * с вероятностью 30 % соседнюю. Вспышка СЦР в десублиматоре облучает всех вокруг: источник —
+ * {@link dev.denfry.promptcritical.sim.radiation.FissionSource#solutionBurst}, доза с ослаблением стенами и лучевая
+ * болезнь — {@link dev.denfry.promptcritical.mod.environment.RadiationService}.
  */
 public final class CascadeBlockEntity extends KineticMachineBlockEntity<ShaftInput> implements PanelHost {
     public static final int RADIUS = 8, MACHINES_PER_SECTION = 20, SCAN_TICKS = 20;
@@ -206,22 +206,15 @@ public final class CascadeBlockEntity extends KineticMachineBlockEntity<ShaftInp
         sl.sendParticles(ParticleTypes.CRIT, p.getX() + 0.5, p.getY() + 0.8, p.getZ() + 0.5, 20, 0.3, 0.3, 0.3, 0.3);
     }
 
-    /** Вспышка СЦР: голубое свечение, доза всем вокруг по обратному квадрату расстояния. */
+    /** Вспышка СЦР: голубое свечение, доза всем вокруг — общей моделью излучения, со стенами. */
     private void excursion(ServerLevel sl, double fissions) {
         excursion = true;
         sl.sendParticles(ParticleTypes.GLOW, worldPosition.getX() + 0.5, worldPosition.getY() + 1, worldPosition.getZ() + 0.5, 60, 0.6, 0.6, 0.6, 0.1);
         sl.playSound(null, worldPosition, SoundEvents.BEACON_DEACTIVATE, SoundSource.BLOCKS, 1.5f, 1.4f);
-        for (ServerPlayer p : sl.getPlayers(p -> p.distanceToSqr(worldPosition.getCenter()) < 64 * 64)) {
-            double dose = Criticality.doseGy(fissions, Math.sqrt(p.distanceToSqr(worldPosition.getCenter())));
-            p.displayClientMessage(NuclearText.msg("cascade.excursion", NuclearText.num(dose, 2)).withStyle(ChatFormatting.RED), false);
-            if (dose >= 0.25) {
-                p.addEffect(new MobEffectInstance(MobEffects.CONFUSION, 200));
-                p.addEffect(new MobEffectInstance(MobEffects.WEAKNESS, (int) Math.min(24000, dose * 2400)));
-            }
-            if (dose >= 1) p.addEffect(new MobEffectInstance(MobEffects.WITHER, (int) Math.min(2400, dose * 200), dose >= 4 ? 1 : 0));
-            // острая лучевая болезнь: при ≈ 8 Гр смерть почти неизбежна
-            if (dose >= 0.5) p.hurt(sl.damageSources().magic(), (float) Math.min(1000, dose * 2.5));
-        }
+        var doses = dev.denfry.promptcritical.mod.environment.RadiationService.burst(sl, worldPosition.getCenter(),
+                dev.denfry.promptcritical.sim.radiation.FissionSource.solutionBurst(fissions), false);
+        doses.forEach((p, sv) -> p.displayClientMessage(NuclearText.msg("cascade.excursion", NuclearText.num(sv, 2))
+                .withStyle(ChatFormatting.RED), false));
         setChanged();
     }
 
