@@ -130,7 +130,9 @@ public final class FoundryPanels {
             .slot(170, 126, 1, s -> s.is(FoundryTags.CUPOLA_COKE), CUPOLA_COKE.get())
             .build();
 
+    /** Фон — art/blockbench/foundry/crucible_furnace.author.js ({@code guiCrucible}). */
     public static final PanelLayout CRUCIBLE = PanelLayout.builder("crucible_furnace", 200, 150, T_CHANNELS)
+            .art(PromptCritical.id("textures/gui/panel/crucible_furnace.png"))
             .dial(8, 24, true, T_TEMP_C, 1, 1600, Double.NaN, 0, CELSIUS.get(), MELT.get(), null)
             .lamp(84, 26, FLAGS, F_RUNNING, LampColor.AMBER, LIT.get())
             .lamp(84, 42, FLAGS, F_HELD, LampColor.RED, TAP.get())
