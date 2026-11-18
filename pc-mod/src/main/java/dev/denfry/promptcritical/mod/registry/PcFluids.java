@@ -113,7 +113,8 @@ public final class PcFluids {
     public static final Entry URANIUM_ELUATE = liquid("uranium_eluate", 1060, 1100, 303);
     /**
      * Жидкие радиоактивные отходы АЭС: трапные воды, регенерационные растворы фильтров СВО, сбросы дезактивации —
-     * солесодержание порядка граммов на литр, Cs-137, Cs-134 и Co-60 около 10⁻⁴ Ки/л (3,7·10⁶ Бк/л). Идут на выпарку.
+     * солесодержание порядка граммов на литр, Cs-137, Cs-134 и Co-60 около 10⁻⁶ Ки/л (3,7·10⁴ Бк/л, состав — в
+     * {@link dev.denfry.promptcritical.mod.waste.LrwPool}). Идут на выпарку.
      */
     public static final Entry LIQUID_RADIOACTIVE_WASTE = liquid("liquid_radioactive_waste", 1005, 1000, 303);
     public static final Entry ETHYLENE_DICHLORIDE = liquid("ethylene_dichloride", 1253, 840, 293);

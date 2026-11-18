@@ -145,7 +145,7 @@ public final class ReactorWaterCleanupBlockEntity extends DeviceBlockEntity impl
         boolean run = thermalW > 0;
         if (st.hasProperty(PcProperties.RUNNING) && st.getValue(PcProperties.RUNNING) != run)
             level.setBlock(worldPosition, st.setValue(PcProperties.RUNNING, run), Block.UPDATE_CLIENTS);
-        if (resinBed.totalBq() > 0) RadiationService.source(s, worldPosition.getCenter(), resinBed.source().plus(filterBed.source()));
+        if (resinBed.totalBq() + filterBed.totalBq() > 0) RadiationService.source(s, worldPosition.getCenter(), resinBed.source().plus(filterBed.source()));
         if (now % 100 == 0) setChanged();
     }
 
