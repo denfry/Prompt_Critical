@@ -38,6 +38,9 @@ public final class SafetyBlockEntities {
     public static final DeferredHolder<BlockEntityType<?>, BlockEntityType<TurningGearBlockEntity>> TURBINE_TURNING_GEAR =
             type("turbine_turning_gear", TurningGearBlockEntity::new, PcBlocks.TURBINE_TURNING_GEAR);
 
+    public static final DeferredHolder<BlockEntityType<?>, BlockEntityType<VentStackBlockEntity>> VENT_STACK =
+            type("vent_stack", VentStackBlockEntity::new, PcBlocks.VENT_STACK);
+
     private SafetyBlockEntities() {
     }
 

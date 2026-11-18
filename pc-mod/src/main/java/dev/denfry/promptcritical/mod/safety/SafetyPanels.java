@@ -93,6 +93,33 @@ public final class SafetyPanels {
             .readout(8, 128, 284, v -> FLARE_STATUS.get(v.num(FL_RATIO_X100, 100, 2), v.raw(FL_PILOTS), v.raw(FL_FUEL), v.raw(FL_SAFE_M)), null)
             .noInventory().build();
 
+    // ------------------------------------------------------------------ вытяжка зала со спецфильтрами (03a §3a.9.3)
+    public static final int VS_DF_I_LOG10 = 0, VS_DF_CS_LOG10 = 1, VS_HEPA = 2, VS_CHARCOAL = 3, VS_RET_I_MBQ = 4, VS_RET_CS_MBQ = 5,
+            VS_OUT_KBQS = 6, VS_IN_KBQS = 7, VS_HEIGHT = 8, VS_FLAGS = 9, VS_CHANNELS = 10;
+    public static final int F_VS_ON = 0, F_VS_HUMID = 1, F_VS_NO_FILTERS = 2, F_VS_NOT_BASE = 3;
+    private static final Tr LOG_DF = PanelText.tr("safety.log_df", "lg DF", "lg DF"),
+            DF_I = PanelText.tr("safety.df_iodine", "Iodine (charcoal)", "Йод (уголь)"),
+            DF_CS = PanelText.tr("safety.df_aerosol", "Aerosol (HEPA)", "Аэрозоль (HEPA)"),
+            VS_ON = PanelText.tr("safety.vent_on", "Exhaust running", "Вытяжка работает"),
+            VS_HUMID = PanelText.tr("safety.vent_humid", "Humid air: charcoal holds organic iodine worse", "Влажный воздух: уголь хуже держит органический йод"),
+            VS_NO_FILTERS = PanelText.tr("safety.vent_no_filters", "No filters within 2 blocks", "Нет фильтров в 2 блоках"),
+            VS_NOT_BASE = PanelText.tr("safety.vent_not_base", "Not the base of the stack", "Не основание трубы"),
+            VS_TOGGLE = PanelText.tr("safety.vent_toggle", "Exhaust", "Вытяжка"),
+            VS_STATUS = PanelText.tr("safety.vent_status", "In %s kBq/s · out %s kBq/s · HEPA %s, charcoal %s · held I-131 %s MBq, Cs-137 %s MBq · stack %s m",
+                    "Вход %s кБк/с · выход %s кБк/с · HEPA %s, уголь %s · задержано I-131 %s МБк, Cs-137 %s МБк · труба %s м");
+
+    public static final PanelLayout VENT_STACK = PanelLayout.builder("vent_stack", 300, 132, VS_CHANNELS)
+            .dial(8, 24, false, VS_DF_I_LOG10, 100, 8, Double.NaN, 1, LOG_DF.get(), DF_I.get(), null)
+            .dial(64, 24, false, VS_DF_CS_LOG10, 100, 8, Double.NaN, 1, LOG_DF.get(), DF_CS.get(), null)
+            .lamp(176, 22, VS_FLAGS, F_VS_ON, LampColor.GREEN, VS_ON.get())
+            .lamp(176, 36, VS_FLAGS, F_VS_HUMID, LampColor.AMBER, VS_HUMID.get())
+            .lamp(176, 50, VS_FLAGS, F_VS_NO_FILTERS, LampColor.RED, VS_NO_FILTERS.get())
+            .lamp(176, 64, VS_FLAGS, F_VS_NOT_BASE, LampColor.AMBER, VS_NOT_BASE.get())
+            .button(8, 92, 60, B_HATCH, VS_TOGGLE.get(), null)
+            .readout(8, 112, 284, v -> VS_STATUS.get(v.raw(VS_IN_KBQS), v.raw(VS_OUT_KBQS), v.raw(VS_HEPA), v.raw(VS_CHARCOAL),
+                    v.raw(VS_RET_I_MBQ), v.raw(VS_RET_CS_MBQ), v.raw(VS_HEIGHT)), null)
+            .noInventory().build();
+
     private SafetyPanels() {
     }
 
@@ -100,6 +127,7 @@ public final class SafetyPanels {
         List<PanelLayout> out = new ArrayList<>();
         out.add(MANWAY);
         out.add(FLARE);
+        out.add(VENT_STACK);
         return out;
     }
 }

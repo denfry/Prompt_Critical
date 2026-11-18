@@ -363,6 +363,10 @@ public final class PcBlocks {
     public static final DeferredBlock<PcBlock> CLEANROOM_PANEL = block("cleanroom_panel", machine(), Spec.of());
     public static final DeferredBlock<PcBlock> CLEANROOM_WINDOW = block("cleanroom_window", glassBlock(), Spec.of());
     public static final DeferredBlock<PcBlock> HEPA_FILTER = block("hepa_filter", machine(), Spec.of());
+    /** Вытяжка реакторного зала со спецфильтрами (03a §3a.9.1, §3a.9.3): йодный угольный фильтр и вентиляционная труба. */
+    public static final DeferredBlock<PcBlock> CHARCOAL_FILTER = block("charcoal_filter", machine(), Spec.of());
+    public static final DeferredBlock<PcDeviceBlock> VENT_STACK = device("vent_stack", machine().noOcclusion(), Spec.facing(PcProperties.RUNNING),
+            FoundryBlock.with(dev.denfry.promptcritical.mod.safety.VentStackBlockEntity::new));
     // --- очистка дымовых газов и САКВ (14 §14.2) ---
     public static final DeferredBlock<PcDeviceBlock> ELECTROSTATIC_PRECIPITATOR = device("electrostatic_precipitator", machine(),
             Spec.facing(BlockStateProperties.POWERED),

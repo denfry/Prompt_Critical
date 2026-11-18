@@ -12,6 +12,7 @@ import dev.denfry.promptcritical.mod.safety.FlareKnockoutDrumBlockEntity;
 import dev.denfry.promptcritical.mod.safety.FlareSealDrumBlockEntity;
 import dev.denfry.promptcritical.mod.safety.Flares;
 import dev.denfry.promptcritical.mod.safety.ManwayBlockEntity;
+import dev.denfry.promptcritical.mod.safety.VentStackBlockEntity;
 import dev.denfry.promptcritical.mod.safety.TurningGearBlockEntity;
 import dev.denfry.promptcritical.mod.safety.PatrolCheckpointBlockEntity;
 import dev.denfry.promptcritical.mod.safety.PatrolReaderItem;
@@ -328,6 +329,35 @@ public final class SafetyGameTests {
             TurningGearBlockEntity g = h.getBlockEntity(gear);
             h.assertTrue(g.turning(), "the shaft does not turn the rotor");
             h.assertTrue(g.rotor().bow() < u0[1], "bow did not straighten: " + g.rotor().bow() + " vs " + u0[1]);
+        }).thenSucceed();
+    }
+
+    /** Вытяжка зала 03a §3a.9.3: выброс рядом уходит через HEPA и уголь, выходит с верха трубы, фильтры копят активность. */
+    @GameTest(template = LARGE, timeoutTicks = 200)
+    public static void ventStackFiltersHallReleases(GameTestHelper h) {
+        BlockPos base = new BlockPos(5, 1, 5);
+        for (int y = 0; y < 4; y++) h.setBlock(base.above(y), PcBlocks.VENT_STACK.get().defaultBlockState());
+        h.setBlock(base.east(), PcBlocks.HEPA_FILTER.get().defaultBlockState());
+        h.setBlock(base.west(), PcBlocks.CHARCOAL_FILTER.get().defaultBlockState());
+        h.startSequence().thenIdle(25).thenExecute(() -> {
+            VentStackBlockEntity v = h.getBlockEntity(base);
+            v.survey(h.getLevel());
+            h.assertTrue(v.bank().hepaStages() == 1 && v.bank().charcoalStages() == 1, "filters " + v.bank().hepaStages() + "/" + v.bank().charcoalStages());
+            // вытяжка включена только на время этого шага: испытания в общем мире, чужие выбросы в 16 блоках она бы забрала
+            v.setExhaust(true);
+            try {
+                net.minecraft.world.phys.Vec3 reactor = h.absoluteVec(new net.minecraft.world.phys.Vec3(9.5, 2, 9.5));
+                h.assertTrue(VentStackBlockEntity.capture(h.getLevel(), reactor) == v, "the hall release is not captured");
+                h.assertTrue(Math.abs(v.releasePoint().y - h.absoluteVec(new net.minecraft.world.phys.Vec3(0, 5.5, 0)).y) < 1e-6, "release height " + v.releasePoint());
+                double cs = v.filter(dev.denfry.promptcritical.sim.radiation.Emitter.CS137, 1e9);
+                h.assertTrue(Math.abs(cs - 1e9 / dev.denfry.promptcritical.sim.radiation.VentFilterBank.HEPA_DF) < 1, "after HEPA " + cs);
+                h.assertTrue(v.bank().retainedCs137Bq() > 9e8, "HEPA did not keep the caesium");
+                dev.denfry.promptcritical.mod.environment.RadiationService.airRelease(h.getLevel(), reactor, dev.denfry.promptcritical.sim.radiation.Emitter.I131, 1e9);
+                h.assertTrue(v.bank().retainedI131Bq() > 9e8, "charcoal did not keep the iodine through airRelease");
+            } finally {
+                v.setExhaust(false);
+                v.bank().setRetained(0, 0); // не оставлять источник в общем мире
+            }
         }).thenSucceed();
     }
 }

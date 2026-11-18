@@ -176,6 +176,13 @@ public final class RadiationService {
      */
     public static void airRelease(ServerLevel level, Vec3 stack, dev.denfry.promptcritical.sim.radiation.Emitter nuclide, double bqS) {
         if (bqS <= 0) return;
+        // вытяжка зала со спецфильтрами (03a §3a.9.3): выброс в зале уходит через фильтры и выходит с верха трубы
+        var vent = dev.denfry.promptcritical.mod.safety.VentStackBlockEntity.capture(level, stack);
+        if (vent != null) {
+            bqS = vent.filter(nuclide, bqS);
+            stack = vent.releasePoint();
+            if (bqS <= 0) return;
+        }
         var list = RELEASES.computeIfAbsent(level, l -> new HashMap<>()).computeIfAbsent(stack, k -> new java.util.ArrayList<>());
         list.removeIf(r -> r.nuclide == nuclide);
         list.add(new Release(nuclide, bqS, level.getGameTime() + HOLD_TICKS));

@@ -84,6 +84,13 @@ public final class SafetyRecipes extends RecipeProvider {
                 .pattern("SSS").pattern("S N").define('S', Items.STRING).define('N', Items.IRON_INGOT)
                 .unlockedBy("has_harness", has(PcItems.SAFETY_HARNESS.get())).save(out, id("lifeline"));
         confined(out, sheet);
+        // вытяжка зала 03a §3a.9.3: йодный фильтр — уголь с TEDA (здесь — древесный уголь), труба
+        ShapedRecipeBuilder.shaped(RecipeCategory.MISC, dev.denfry.promptcritical.mod.registry.PcBlocks.CHARCOAL_FILTER.get())
+                .pattern("SSS").pattern("CCC").pattern("SSS").define('S', sheet).define('C', Items.CHARCOAL)
+                .unlockedBy("has_charcoal", has(Items.CHARCOAL)).save(out, id("charcoal_filter"));
+        ShapedRecipeBuilder.shaped(RecipeCategory.MISC, dev.denfry.promptcritical.mod.registry.PcBlocks.VENT_STACK.get(), 4)
+                .pattern("S S").pattern("SFS").pattern("S S").define('S', sheet).define('F', com.simibubi.create.AllBlocks.ENCASED_FAN.get())
+                .unlockedBy("has_sheet", has(sheet)).save(out, id("vent_stack"));
         ShapedRecipeBuilder.shaped(RecipeCategory.MISC, dev.denfry.promptcritical.mod.registry.PcBlocks.TURBINE_TURNING_GEAR.get())
                 .pattern("SCS").pattern("GMG").pattern("SSS").define('S', sheet).define('C', com.simibubi.create.AllBlocks.COGWHEEL.get())
                 .define('G', com.simibubi.create.AllBlocks.LARGE_COGWHEEL.get()).define('M', com.simibubi.create.AllBlocks.GEARBOX.get())

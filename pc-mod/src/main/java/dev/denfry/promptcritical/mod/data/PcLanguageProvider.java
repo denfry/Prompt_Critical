@@ -968,6 +968,8 @@ public final class PcLanguageProvider extends LanguageProvider {
         b("flare_knockout_drum", "Flare Knock-out Drum", "Факельный сепаратор капель");
         b("flare_seal_drum", "Flare Seal Drum", "Гидрозатвор факела");
         b("turbine_turning_gear", "Turbine Turning Gear", "Валоповоротное устройство");
+        b("charcoal_filter", "Charcoal Iodine Filter", "Йодный угольный фильтр");
+        b("vent_stack", "Ventilation Stack", "Вентиляционная труба");
         MISC.putAll(dev.denfry.promptcritical.mod.safety.SafetyText.LANG);
     }
 
