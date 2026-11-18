@@ -374,6 +374,9 @@ public final class PcLanguageProvider extends LanguageProvider {
         b("primary_pump", "Primary Circulation Pump", "Главный циркуляционный насос");
         b("steam_generator", "Steam Generator", "Парогенератор");
         b("pwr_reactor", "Pressurized Water Reactor (VVER type)", "Водо-водяной энергетический реактор (типа ВВЭР)");
+        b("containment_wall", "Containment Wall", "Стена гермооболочки");
+        b("containment_hatch", "Containment Personnel Hatch", "Шлюзовой люк гермооболочки");
+        b("hydrogen_recombiner", "Passive Hydrogen Recombiner", "Пассивный каталитический рекомбинатор водорода");
         b("pressurizer", "Pressurizer", "Компенсатор давления");
         b("bwr_reactor", "Boiling Water Reactor", "Кипящий корпусной реактор");
         b("wellhead", "Wellhead", "Колонная головка");

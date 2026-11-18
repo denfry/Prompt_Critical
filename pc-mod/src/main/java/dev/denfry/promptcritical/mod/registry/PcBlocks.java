@@ -152,6 +152,11 @@ public final class PcBlocks {
                 .sound(SoundType.METAL).noOcclusion().pushReaction(PushReaction.BLOCK);
     }
 
+    private static Properties containment() {
+        return Properties.of().mapColor(MapColor.STONE).instrument(NoteBlockInstrument.BASEDRUM)
+                .requiresCorrectToolForDrops().strength(50.0f, 1200.0f).pushReaction(PushReaction.BLOCK);
+    }
+
     private static Properties brick() {
         return Properties.of().mapColor(MapColor.COLOR_RED).instrument(NoteBlockInstrument.BASEDRUM)
                 .requiresCorrectToolForDrops().strength(2.0f, 6.0f).noOcclusion();
@@ -610,6 +615,11 @@ public final class PcBlocks {
     private static final Footprint FP_PWR_REACTOR = Footprint.of(CUBE3, CUBE3.at(0, 3, 0));
     public static final DeferredBlock<PcDeviceBlock> PWR_REACTOR = device("pwr_reactor", machine(), Spec.facing().segments(PcProperties.PWR_SEGMENT, FP_PWR_REACTOR),
             FoundryBlock.with(dev.denfry.promptcritical.mod.npp.PwrReactorBlockEntity::new));
+    // --- гермооболочка ВВЭР/PWR (04c, M10): стена, люк и пассивный рекомбинатор водорода ---
+    public static final DeferredBlock<PcBlock> CONTAINMENT_WALL = block("containment_wall", containment(), Spec.of());
+    public static final DeferredBlock<dev.denfry.promptcritical.mod.npp.ContainmentHatchBlock> CONTAINMENT_HATCH = withItem(
+            BLOCKS.registerBlock("containment_hatch", dev.denfry.promptcritical.mod.npp.ContainmentHatchBlock::create, containment()));
+    public static final DeferredBlock<PcBlock> HYDROGEN_RECOMBINER = block("hydrogen_recombiner", machine(), Spec.of());
     /** Кипящий реактор T2b 3×6×3: внизу корпус с зоной, вверху сепараторы и осушители; пульт — в центре низа. */
     private static final Footprint FP_BWR_REACTOR = Footprint.of(CUBE3, CUBE3.at(0, 3, 0));
     public static final DeferredBlock<PcDeviceBlock> BWR_REACTOR = device("bwr_reactor", machine(), Spec.facing().segments(PcProperties.BWR_SEGMENT, FP_BWR_REACTOR),
