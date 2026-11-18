@@ -18,9 +18,10 @@ import net.minecraft.network.chat.Component;
 public final class CanduPanels {
     public static final int POWER = 0, PERIOD = 1, RHO_PCM = 2, SHUTOFF = 3, CONTROL = 4, OUT_C = 5, FLOW = 6, FUEL_C = 7, XE_PCM = 8,
             LOADED = 9, BURNUP = 10, REFUELLED = 11, TRITIUM_GBQ = 12, TRIP = 13, FLAGS = 14, MAGAZINE = 15, MOD_LEVEL = 16,
-            MOD_PURITY = 17, COOL_FILL = 18, COOL_PURITY = 19, DRAIN_L = 20, CHANNELS = 21;
+            MOD_PURITY = 17, COOL_FILL = 18, COOL_PURITY = 19, DRAIN_L = 20, ACCIDENT = 21,
+            CHANNELS = ACCIDENT + AccidentPanels.COUNT;
     public static final int F_TRIPPED = 0, F_NO_SG = 1, F_DOWNGRADED = 2, F_LOW_D2O = 3;
-    public static final int B_SCRAM = 0, B_RESET = 1, B_UP = 2, B_STOP = 3, B_DOWN = 4, B_REFUEL = 5, B_DRAIN = 6;
+    public static final int B_SCRAM = 0, B_RESET = 1, B_UP = 2, B_STOP = 3, B_DOWN = 4, B_REFUEL = 5, B_DRAIN = 6, B_LOCA = 7;
     public static final int SLOT_FRESH = 0, SLOT_SPENT = 1;
 
     private static final Tr PCT = PanelText.PERCENT, CELSIUS = PanelText.CELSIUS, SEC = PanelText.tr("unit.s", "s", "с"),
@@ -73,7 +74,7 @@ public final class CanduPanels {
             PanelText.tr("npp.trip.external", "SCRAM: external (ESD)", "АЗ: внешняя (ПАЗ)"),
             PanelText.tr("npp.trip.manual", "SCRAM: manual", "АЗ: ручная")};
 
-    public static final PanelLayout REACTOR = PanelLayout.builder("candu_reactor", 248, 200, CHANNELS)
+    public static final PanelLayout REACTOR = PanelLayout.builder("candu_reactor", 248, 220, CHANNELS)
             .dial(8, 24, false, POWER, 10, 130, CanduReactor.TRIP_POWER * 100, 0, PCT.get(), N.get(),
                     v -> POWER_TIP.get(v.num(POWER, 10, 1), v.raw(RHO_PCM), 100))
             .dial(64, 24, false, PERIOD, 10, 100, Double.NaN, 0, SEC.get(), T_PERIOD.get(), null)
@@ -97,7 +98,9 @@ public final class CanduPanels {
             .bar(108, 128, 92, COOL_FILL, 10, 100, 0xFF7FA8C8, COOLANT.get(),
                     v -> COOL_TIP.get(v.num(COOL_FILL, 10, 1), v.num(COOL_PURITY, 100, 2)))
             .button(206, 124, 36, B_DRAIN, DRAIN.get(), DRAIN_TIP.get())
+            .button(206, 144, 36, B_LOCA, AccidentPanels.DRILL.get(), AccidentPanels.DRILL_TIP.get())
             .readout(8, 164, 232, CanduPanels::status, v -> DRAINED_TIP.get(v.raw(DRAIN_L)))
+            .readout(8, 184, 232, v -> AccidentPanels.line(v, ACCIDENT), v -> AccidentPanels.tip(v, ACCIDENT))
             .build();
 
     private CanduPanels() {

@@ -18,6 +18,7 @@ import dev.denfry.promptcritical.mod.panel.PanelHost;
 import dev.denfry.promptcritical.mod.panel.PanelLayout;
 import dev.denfry.promptcritical.mod.production.ProductTank;
 import dev.denfry.promptcritical.mod.registry.PcItems;
+import dev.denfry.promptcritical.sim.accident.PlantAccident;
 import dev.denfry.promptcritical.sim.automation.AutomationKind;
 import dev.denfry.promptcritical.sim.automation.AutomationSubsystem;
 import dev.denfry.promptcritical.sim.automation.AutomationUnit;
@@ -96,6 +97,12 @@ public final class CanduReactorBlockEntity extends DeviceBlockEntity implements 
     };
     private final List<BlockPos> pumps = new ArrayList<>(), generators = new ArrayList<>();
     private CanduReactor.Trip lastTrip = CanduReactor.Trip.MANUAL;
+    /** LOCA и обесточивание (04c §4c.11.2): слой аварии {@link PlantAccident#CANDU_T3}; паровой эффект — у реактора. */
+    private final ReactorAccidentSystems accident = new ReactorAccidentSystems(PlantAccident.CANDU_T3);
+
+    public ReactorAccidentSystems accident() {
+        return accident;
+    }
     private int ticks;
     /** Магазин перегрузочной машины: свежие пучки (предмет — один пучок), их уран на пучок и доли U-235, U-234. */
     private int magazine;
@@ -187,6 +194,10 @@ public final class CanduReactorBlockEntity extends DeviceBlockEntity implements 
         AABB box = new AABB(worldPosition).inflate(LINK_RADIUS);
         for (PrimaryPumpBlockEntity p : Ironworks.blockEntities(sl, box, PrimaryPumpBlockEntity.class)) pumps.add(p.getBlockPos());
         for (SteamGeneratorBlockEntity g : Ironworks.blockEntities(sl, box, SteamGeneratorBlockEntity.class)) generators.add(g.getBlockPos());
+        // насос, сорванный с контура под давлением, — разрыв коллектора
+        java.util.Map<BlockPos, ReactorAccidentSystems.LoopPart> loop = new java.util.LinkedHashMap<>();
+        for (BlockPos p : pumps) loop.put(p, ReactorAccidentSystems.LoopPart.PUMP);
+        accident.link(sl, worldPosition, loop, reactor.core().loadedAssemblies() > 0 && reactor.coolantFill() > 0.5);
     }
 
     @Override
@@ -200,16 +211,33 @@ public final class CanduReactorBlockEntity extends DeviceBlockEntity implements 
         if (b == null) return;
         if (ticks++ % 20 == 0) link(sl);
         double flow = 0;
-        for (BlockPos p : pumps) if (level.getBlockEntity(p) instanceof PrimaryPumpBlockEntity pump) flow += pump.flowShare();
+        boolean pumpsDriven = false;
+        for (BlockPos p : pumps)
+            if (level.getBlockEntity(p) instanceof PrimaryPumpBlockEntity pump) {
+                flow += pump.flowShare();
+                pumpsDriven |= pump.drive() > 0.5;
+            }
         reactor.setFlow(flow);
+        // потеря теплоносителя по слою аварии — осушение каналов: пустотный эффект CANDU положительный (04c §4c.11.2)
+        PlantAccident acc = accident.accident();
+        reactor.setCoolantVoid(acc.active() ? 1 - Math.min(1, acc.levelFraction()) : 0);
         AutomationUnit a = MechanismWiring.unit(level, simId(), AutomationKind.REACTOR_IO);
-        reactor.setExternalTrip(a != null && a.loadEnergized(1));
-        reactor.step(CanduReactor.DT * b.world().clock().kSlow());
+        reactor.setExternalTrip(a != null && a.loadEnergized(1) || accident.demandsTrip());
+        double gameDt = CanduReactor.DT * b.world().clock().kSlow();
+        reactor.step(gameDt);
         List<SteamGeneratorBlockEntity> sgs = new ArrayList<>();
         for (BlockPos p : generators)
             if (level.getBlockEntity(p) instanceof SteamGeneratorBlockEntity sg && !Double.isNaN(sg.secondaryK())) sgs.add(sg);
         double q = reactor.steamGeneratorW();
         for (SteamGeneratorBlockEntity sg : sgs) sg.deliver(q / sgs.size());
+        if (ticks % 100 == 1) accident.scan(sl, worldPosition);
+        int breach = accident.step(sl, b, simId(), worldPosition, gameDt, reactor.core().fissionW() + reactor.core().decayHeatW(),
+                sgs.isEmpty() ? 0 : q, CanduReactor.P_COOLANT, pumpsDriven, reactor.core().loadedAssemblies(),
+                reactor.core().failedAssemblies());
+        if (breach > 0 && reactor.core().failHottest(breach) > 0)
+            for (ServerPlayer p : sl.getPlayers(p -> p.distanceToSqr(worldPosition.getCenter()) < 64 * 64))
+                p.displayClientMessage(NppText.msg("accident_clad", reactor.core().failedAssemblies()).withStyle(ChatFormatting.DARK_RED), false);
+        accident.radiation(sl, worldPosition, reactor.core().failedAssemblies());
         if (a != null) {
             a.setInput(AutomationUnit.IN_MAIN, reactor.trip() != CanduReactor.Trip.NONE ? 1 : 0);
             a.setInput(AutomationUnit.IN_AUX, reactor.power());
@@ -396,6 +424,7 @@ public final class CanduReactorBlockEntity extends DeviceBlockEntity implements 
                 | (generators.isEmpty() ? 1 << CanduPanels.F_NO_SG : 0)
                 | (r.moderator().kg() > 0 && r.moderator().purity() < HeavyWater.REACTOR_GRADE_X - 5e-4 ? 1 << CanduPanels.F_DOWNGRADED : 0)
                 | (r.moderatorLevel() < 0.999 || r.coolantFill() < 0.999 ? 1 << CanduPanels.F_LOW_D2O : 0);
+        accident.readPanel(v, CanduPanels.ACCIDENT);
     }
 
     @Override
@@ -408,6 +437,7 @@ public final class CanduReactorBlockEntity extends DeviceBlockEntity implements 
             case CanduPanels.B_DOWN -> reactor.driveControl(1);
             case CanduPanels.B_REFUEL -> refuel(player);
             case CanduPanels.B_DRAIN -> drainModerator(player);
+            case CanduPanels.B_LOCA -> accident.cycleDrill(player);
             default -> {
             }
         }
@@ -496,6 +526,7 @@ public final class CanduReactorBlockEntity extends DeviceBlockEntity implements 
         tag.putDouble("mag_pu242", magPu.pu242Kg());
         for (HeavyWaterGrade g : HeavyWaterGrade.values()) drains[g.ordinal()].save(tag, "drain_" + g.name().toLowerCase(java.util.Locale.ROOT));
         wiring.save(tag);
+        accident.save(tag);
     }
 
     @Override
@@ -517,5 +548,6 @@ public final class CanduReactorBlockEntity extends DeviceBlockEntity implements 
             refuelTick = tag.getLong("view_refuel_t");
             refuelChannel = tag.getInt("view_refuel_ch");
         }
+        accident.load(tag);
     }
 }

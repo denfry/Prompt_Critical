@@ -105,6 +105,8 @@ public final class ChannelReactor {
     // состояние
     private double fuelK = 293.15, graphiteK = 293.15, loopK = 293.15, flowFraction, flowActual, inletK = 293.15, outletK = 293.15;
     private double waterDensity = Water10MPa.density(293.15), exitQuality, qSgW;
+    /** Доля теплоносителя, потерянная при аварии (разрыв, выкипание): каналы осушены на эту долю. */
+    private double coolantLoss;
     private Trip trip = Trip.MANUAL;
     private boolean externalTrip, protection = true;
     private DelayedGroups groups = dev.denfry.promptcritical.sim.neutronics.DelayedNeutronData.keepin(0);
@@ -507,6 +509,9 @@ public final class ChannelReactor {
         // средняя плотность воды в каналах: жидкость при средней температуре, при кипении — смесь на выходе пополам
         double liquid = Water10MPa.density((inletK + outletK) / 2);
         waterDensity = exitQuality > 0 ? 0.5 * (liquid + Water10MPa.mixtureDensity(exitQuality)) : liquid;
+        // потеря теплоносителя (слой аварии 04c): осушенная доля каналов заполнена паром — паровой эффект воды
+        // отрицательный, реактивность падает (опыт 1954 г., см. выше)
+        waterDensity = (1 - coolantLoss) * waterDensity + coolantLoss * Water10MPa.mixtureDensity(1);
         // кризис теплообмена по каналам
         for (int i = 0; i < CHANNELS; i++) {
             if (share[i] <= 0 || failed[i]) continue;
@@ -641,6 +646,33 @@ public final class ChannelReactor {
 
     public double exitQuality() {
         return exitQuality;
+    }
+
+    /** Потеря теплоносителя от слоя аварии, доля (0 — контур полон). */
+    public void setCoolantLoss(double fraction) {
+        coolantLoss = Math.max(0, Math.min(1, fraction));
+    }
+
+    public double coolantLoss() {
+        return coolantLoss;
+    }
+
+    /**
+     * Разрушить оболочки {@code n} самых нагруженных целых каналов (разогрев зоны при оголении, 04c §4c.8).
+     *
+     * @return сколько каналов разрушено
+     */
+    public int failHottest(int n) {
+        int done = 0;
+        while (done < n) {
+            int best = -1;
+            for (int i = 0; i < CHANNELS; i++)
+                if (share[i] > 0 && !failed[i] && (best < 0 || share[i] > share[best])) best = i;
+            if (best < 0) break;
+            failed[best] = true;
+            done++;
+        }
+        return done;
     }
 
     public double waterDensity() {
