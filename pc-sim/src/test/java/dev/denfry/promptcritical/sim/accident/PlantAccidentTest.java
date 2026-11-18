@@ -230,6 +230,15 @@ class PlantAccidentTest {
         assertTrue(breach, "containment " + a.containmentPa());
         assertTrue(a.containmentBreached());
         assertFalse(a.hasContainment());
+        // a save and load during the accident does not rebuild the torn shell
+        MutableStateTree tree = new MutableStateTree();
+        a.save(new TreeStateWriter(tree));
+        PlantAccident b = new PlantAccident(PlantAccident.PWR_T2A);
+        b.load(new TreeStateReader(tree));
+        assertTrue(b.active() && b.containmentBreached());
+        assertFalse(b.hasContainment(), "torn containment rebuilt on load");
+        b.setContainment(500, 0);
+        assertFalse(b.hasContainment(), "the same walls do not close the shell again during the accident");
     }
 
     /** About 600 m³ per tonne of primary water holds the same blowdown for the first ten minutes (no sprays modelled). */

@@ -645,10 +645,17 @@ public final class PlantAccident {
         }
         containment = null;
         containmentM3 = 0;
-        boolean wasActive = active;
-        active = false;
-        setContainment(in.optInt("cv", 0), in.optInt("pars", 0));
-        active = wasActive;
+        int cv = in.optInt("cv", 0), pars = in.optInt("pars", 0);
+        if (active && breached) {
+            // the shell this accident tore stays open: only the walls' volume is remembered, as in play
+            containmentM3 = Math.max(0, cv);
+            recombiners = Math.max(0, pars);
+        } else {
+            boolean wasActive = active;
+            active = false;
+            setContainment(cv, pars);
+            active = wasActive;
+        }
         if (containment != null && in.has("ct")) {
             in.beginObject("ct");
             containment.load(in);
