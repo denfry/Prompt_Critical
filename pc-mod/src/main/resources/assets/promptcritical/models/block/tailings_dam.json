@@ -1,14 +1,13 @@
 {
 	"credit": "Made with Blockbench",
 	"textures": {
-		"particle": "promptcritical:block/tailings_dam_side",
-		"gauge": "promptcritical:block/tailings_dam_gauge",
-		"side": "promptcritical:block/tailings_dam_side",
-		"top": "promptcritical:block/tailings_dam_top"
+		"particle": "promptcritical:block/m15late/soil",
+		"m15late_soil": "promptcritical:block/m15late/soil",
+		"m6auto_white": "promptcritical:block/m6auto/white"
 	},
 	"elements": [
 		{
-			"name": "embankment",
+			"name": "berm",
 			"from": [0, 0, 0],
 			"to": [16, 16, 16],
 			"rotation": {
@@ -19,34 +18,34 @@
 			"faces": {
 				"north": {
 					"uv": [0, 0, 16, 16],
-					"texture": "#side"
+					"texture": "#m15late_soil"
 				},
 				"east": {
 					"uv": [0, 0, 16, 16],
-					"texture": "#side"
+					"texture": "#m15late_soil"
 				},
 				"south": {
 					"uv": [0, 0, 16, 16],
-					"texture": "#side"
+					"texture": "#m15late_soil"
 				},
 				"west": {
 					"uv": [0, 0, 16, 16],
-					"texture": "#side"
+					"texture": "#m15late_soil"
 				},
 				"up": {
 					"uv": [0, 0, 16, 16],
-					"texture": "#top"
+					"texture": "#m15late_soil"
 				},
 				"down": {
 					"uv": [0, 0, 16, 16],
-					"texture": "#side"
+					"texture": "#m15late_soil"
 				}
 			}
 		},
 		{
-			"name": "staff_gauge",
-			"from": [7, 1, -0.5],
-			"to": [9, 15, 0],
+			"name": "gauge",
+			"from": [7.4, 16, -0.5],
+			"to": [8.6, 24, 0.5],
 			"rotation": {
 				"angle": 0,
 				"axis": "y",
@@ -54,28 +53,28 @@
 			},
 			"faces": {
 				"north": {
-					"uv": [0, 0, 16, 16],
-					"texture": "#gauge"
+					"uv": [7.4, 8, 8.6, 16],
+					"texture": "#m6auto_white"
 				},
 				"east": {
-					"uv": [0, 0, 0.5, 14],
-					"texture": "#gauge"
+					"uv": [15.5, 8, 16, 16],
+					"texture": "#m6auto_white"
 				},
 				"south": {
-					"uv": [0, 0, 2, 14],
-					"texture": "#gauge"
+					"uv": [7.4, 8, 8.6, 16],
+					"texture": "#m6auto_white"
 				},
 				"west": {
-					"uv": [0, 0, 0.5, 14],
-					"texture": "#gauge"
+					"uv": [0, 8, 0.5, 16],
+					"texture": "#m6auto_white"
 				},
 				"up": {
-					"uv": [0, 0, 2, 0.5],
-					"texture": "#gauge"
+					"uv": [7.4, 0, 8.6, 0.5],
+					"texture": "#m6auto_white"
 				},
 				"down": {
-					"uv": [0, 0, 2, 0.5],
-					"texture": "#gauge"
+					"uv": [7.4, 15.5, 8.6, 16],
+					"texture": "#m6auto_white"
 				}
 			}
 		}
