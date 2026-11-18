@@ -26,7 +26,8 @@ import net.minecraft.world.phys.BlockHitResult;
 import org.jetbrains.annotations.Nullable;
 
 /**
- * Пюпитр для документов (11 §11.1.2): на него кладут инструкцию по эксплуатации (или справочник), и любой игрок рядом
+ * Пюпитр для документов (11 §11.1.2): на него кладут инструкцию по эксплуатации, справочник, оперативный журнал или
+ * наряд-допуск, и любой игрок рядом
  * читает её, не забирая. Пустая рука — читать, присесть с пустой рукой — забрать.
  */
 public class DocumentLecternBlock extends PcBlock implements EntityBlock {
@@ -44,7 +45,8 @@ public class DocumentLecternBlock extends PcBlock implements EntityBlock {
     }
 
     public static boolean isDocument(ItemStack stack) {
-        return stack.is(PcItems.OPERATING_PROCEDURE.get()) || stack.is(PcItems.ENGINEERING_HANDBOOK.get());
+        return stack.is(PcItems.OPERATING_PROCEDURE.get()) || stack.is(PcItems.ENGINEERING_HANDBOOK.get())
+                || dev.denfry.promptcritical.mod.paperwork.Paperwork.isDocument(stack);
     }
 
     @Override
@@ -75,6 +77,9 @@ public class DocumentLecternBlock extends PcBlock implements EntityBlock {
             if (!player.addItem(doc)) player.drop(doc, false);
             level.setBlock(pos, state.setValue(PcProperties.HAS_DOCUMENT, false), Block.UPDATE_ALL);
             level.playSound(null, pos, SoundEvents.BOOK_PAGE_TURN, SoundSource.BLOCKS, 1.0f, 1.0f);
+        } else if (player instanceof ServerPlayer sp && dev.denfry.promptcritical.mod.paperwork.Paperwork.isDocument(be.document())) {
+            // журнал и наряд лежат у пульта: их читает любой, а пишут — взяв в руки
+            dev.denfry.promptcritical.mod.paperwork.Paperwork.show(sp, be.document());
         } else if (player instanceof ServerPlayer sp) {
             ResourceLocation ref = be.document().get(PcDataComponents.PROCEDURE_REF.get());
             HandbookService.open(sp, ref, ref != null);

@@ -76,6 +76,14 @@ CC: Tweaked 1.120.2+ is optional.
   output gears 16/32/64 RPM on a Create shaft.
 - Local pressure gauge block.
 
+### Plant paperwork
+- Shift log: a hand-written book; right-click a machine to log its panel readings with the day and time, Shift + use
+  to sign the shift handover. Reads on the document lectern.
+- Work permit for electrical work: written on an open breaker or disconnector, it locks the apparatus open and hangs
+  the "Do not switch on! People at work" poster; admission waits for proved absence of voltage and earthing, the
+  earthing stays on until the permit is closed, and the breaker's control power is withdrawn so auto-reclose cannot
+  close it. A lost permit is closed on the second copy.
+
 ### Foundry and machine shop
 - Cupola and crucible furnaces, sand moulds, moulding machine, shakeout grate.
 - Lathe and drill press with cutting tool wear; castings with defects.

@@ -105,6 +105,7 @@ public class BreakerCellBlockEntity extends GridDeviceBlockEntity<SwitchUnit> im
             lastTrip = trip;
         }
         if (ticks % 5 == 0) {
+            setPosterHung(u.openPermits() > 0);
             BreakerState s = u.breakerState();
             setFlag(BlockStateProperties.OPEN, !u.closed());
             setFlag(PcProperties.ALARM, s == BreakerState.FAULTED || s == BreakerState.FAILED_TO_INTERRUPT);
@@ -129,6 +130,7 @@ public class BreakerCellBlockEntity extends GridDeviceBlockEntity<SwitchUnit> im
             case NO_CONTROL_POWER -> GridText.NO_CONTROL_POWER;
             case BUSY -> GridText.BUSY;
             case UNAVAILABLE -> GridText.UNAVAILABLE;
+            case PERMIT -> GridText.PERMIT;
         });
     }
 
@@ -235,7 +237,7 @@ public class BreakerCellBlockEntity extends GridDeviceBlockEntity<SwitchUnit> im
 
     @Override
     public net.minecraft.nbt.CompoundTag getUpdateTag(net.minecraft.core.HolderLookup.Provider registries) {
-        net.minecraft.nbt.CompoundTag tag = new net.minecraft.nbt.CompoundTag();
+        net.minecraft.nbt.CompoundTag tag = super.getUpdateTag(registries);
         wiring.save(tag);
         return tag;
     }

@@ -65,6 +65,7 @@ public final class PromptCritical {
         dev.denfry.promptcritical.mod.panel.PanelLayouts.register(modBus);
         dev.denfry.promptcritical.mod.mine.MineLongwall.register(modBus);
         dev.denfry.promptcritical.mod.content.ContentRegistries.register(modBus);
+        dev.denfry.promptcritical.mod.paperwork.Paperwork.register(modBus);
         dev.denfry.promptcritical.mod.environment.RiverService.register();
         dev.denfry.promptcritical.mod.body.BodyAttachments.register(modBus);
         modBus.addListener(PcDataGen::gather);

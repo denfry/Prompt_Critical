@@ -36,11 +36,12 @@ public final class GridClient {
         event.registerBlockEntityRenderer(GridBlockEntities.ELECTRIC_MOTOR.get(),
                 c -> new WireRenderer<>(new FoundryMachineRenderer<>(MOTOR_SHAFT, Motion.SPIN_Z, 8, 8, 1, false)));
         // клеммы автоматики механизмов (этап 9): катушки и блок-контакты
-        event.registerBlockEntityRenderer(GridBlockEntities.SWITCHGEAR_CELL.get(), c -> new WireRenderer<>(null));
-        event.registerBlockEntityRenderer(GridBlockEntities.LV_SWITCHBOARD.get(), c -> new WireRenderer<>(null));
+        // плакат наряда-допуска на дверце ячейки и на приводе разъединителя
+        event.registerBlockEntityRenderer(GridBlockEntities.SWITCHGEAR_CELL.get(), c -> new WireRenderer<>(new PosterRenderer<>(null, 5, 20)));
+        event.registerBlockEntityRenderer(GridBlockEntities.LV_SWITCHBOARD.get(), c -> new WireRenderer<>(new PosterRenderer<>(null, 5, 20)));
         event.registerBlockEntityRenderer(GridBlockEntities.GRID_CONSUMER.get(), c -> new WireRenderer<>(null));
         event.registerBlockEntityRenderer(GridBlockEntities.SYNCHROSCOPE.get(), c -> new SynchroscopeRenderer());
-        event.registerBlockEntityRenderer(GridBlockEntities.DISCONNECTOR.get(), c -> new DisconnectorRenderer());
+        event.registerBlockEntityRenderer(GridBlockEntities.DISCONNECTOR.get(), c -> new PosterRenderer<>(new DisconnectorRenderer(), 5, 3));
         event.registerBlockEntityRenderer(GridBlockEntities.WIRE_CONNECTOR_LV.get(), c -> new SpanRenderer());
         event.registerBlockEntityRenderer(GridBlockEntities.WIRE_CONNECTOR_MV.get(), c -> new SpanRenderer());
     }

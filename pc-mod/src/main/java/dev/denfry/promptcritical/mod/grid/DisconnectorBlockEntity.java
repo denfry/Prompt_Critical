@@ -61,6 +61,7 @@ public class DisconnectorBlockEntity extends GridDeviceBlockEntity<SwitchUnit> {
         if (ticks % 5 == 0) {
             setFlag(BlockStateProperties.OPEN, !u.closed());
             setFlag(PcProperties.EARTHED, u.earthed());
+            setPosterHung(u.openPermits() > 0);
         }
     }
 
@@ -85,7 +86,8 @@ public class DisconnectorBlockEntity extends GridDeviceBlockEntity<SwitchUnit> {
         if (u == null) return InteractionResult.PASS;
         if (player.isShiftKeyDown()) {
             boolean on = !u.earthed();
-            if (!u.setEarthed(on)) player.displayClientMessage(GridText.msg(GridText.EARTH_REFUSED), true);
+            if (!u.setEarthed(on))
+                player.displayClientMessage(GridText.msg(!on && u.openPermits() > 0 ? GridText.PERMIT_EARTH : GridText.EARTH_REFUSED), true);
             else player.displayClientMessage(GridText.msg(on ? GridText.EARTHED : GridText.UNEARTHED), true);
             return InteractionResult.SUCCESS;
         }

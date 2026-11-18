@@ -51,6 +51,13 @@ public final class ContentRecipes extends RecipeProvider {
 
     @Override
     protected void buildRecipes(RecipeOutput out) {
+        // документы I0: книга, бумага, чернила из чернильного мешка и перо — пишут от руки
+        ShapelessRecipeBuilder.shapeless(RecipeCategory.MISC, PcItems.SHIFT_LOG.get())
+                .requires(Items.BOOK).requires(Items.INK_SAC).requires(Items.FEATHER)
+                .unlockedBy("has_book", has(Items.BOOK)).save(out, id("shift_log"));
+        ShapelessRecipeBuilder.shapeless(RecipeCategory.MISC, PcItems.WORK_PERMIT.get(), 3)
+                .requires(Items.PAPER, 3).requires(Items.INK_SAC).requires(Items.FEATHER)
+                .unlockedBy("has_paper", has(Items.PAPER)).save(out, id("work_permit"));
         ShapelessRecipeBuilder.shapeless(RecipeCategory.MISC, PcItems.ENGINEERING_HANDBOOK.get())
                 .requires(Items.BOOK).requires(Items.COAL)
                 .unlockedBy("has_book", has(Items.BOOK)).save(out, id("engineering_handbook"));

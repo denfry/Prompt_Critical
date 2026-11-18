@@ -16,6 +16,10 @@ public final class GridText {
     public static final String NO_CONTROL_POWER = t("response.no_control_power", "no control power", "нет оперативного тока");
     public static final String BUSY = t("response.busy", "mechanism is moving", "привод в ходе");
     public static final String UNAVAILABLE = t("response.unavailable", "out of service — repair needed", "неисправен — нужен ремонт");
+    public static final String PERMIT = t("response.permit", "under a work permit — do not switch on, people at work",
+            "выписан наряд — не включать, работают люди");
+    public static final String PERMIT_EARTH = t("permit_earth", "The earthing stays on until the work permit is closed",
+            "Заземление снимают только после закрытия наряда");
     public static final String ARC = t("arc", "Arc! The disconnector was opened under load", "Дуга! Разъединитель отключили под нагрузкой");
     public static final String EARTHED = t("earthed", "Earthing switch closed", "Заземляющие ножи включены");
     public static final String UNEARTHED = t("unearthed", "Earthing switch opened", "Заземляющие ножи отключены");
