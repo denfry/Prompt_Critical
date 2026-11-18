@@ -1,6 +1,7 @@
 package dev.denfry.promptcritical.mod.chlor;
 
 import dev.denfry.promptcritical.mod.block.PcProperties;
+import dev.denfry.promptcritical.mod.grid.DcLoad;
 import dev.denfry.promptcritical.mod.grid.GridDeviceBlockEntity;
 import dev.denfry.promptcritical.mod.panel.PanelHost;
 import dev.denfry.promptcritical.mod.panel.PanelLayout;
@@ -21,7 +22,8 @@ import net.minecraft.world.level.block.state.BlockState;
 
 /**
  * Выпрямительный агрегат электролиза ({@link RectifierUnit}) 2×2×1: ввод 6,3 кВ кабелем к любой грани, кроме
- * лицевой; постоянный ток — шинопроводом к серии ванн ({@link CellRoomBlockEntity}) в {@value #REACH} блоках. Берёт из
+ * лицевой; постоянный ток — шинопроводом к ближайшей серии электролизёров ({@link DcLoad}: хлорной или фторной) в
+ * {@value #REACH} блоках. Берёт из
  * сети мощность серии при заданном токе, делённую на КПД; при просадке напряжения снижает ток.
  */
 public class RectifierBlockEntity extends GridDeviceBlockEntity<RectifierUnit> implements PanelHost {
@@ -50,10 +52,10 @@ public class RectifierBlockEntity extends GridDeviceBlockEntity<RectifierUnit> i
     @Override
     protected void serverTick(RectifierUnit u) {
         // серию ищем раз в секунду; между поисками — по запомненной позиции
-        CellRoomBlockEntity cells = cellsPos != null && level.getBlockEntity(cellsPos) instanceof CellRoomBlockEntity c ? c : null;
+        DcLoad cells = cellsPos != null && level.getBlockEntity(cellsPos) instanceof DcLoad c ? c : null;
         if (cells == null && ticks % 20 == 0) {
-            cells = CellRoomBlockEntity.near(level, worldPosition, REACH);
-            cellsPos = cells == null ? null : cells.getBlockPos();
+            cells = DcLoad.near(level, worldPosition, REACH);
+            cellsPos = cells instanceof net.minecraft.world.level.block.entity.BlockEntity be ? be.getBlockPos() : null;
         }
         noCells = cells == null;
         double demand = cells == null ? 0 : cells.dcDemandW();
@@ -61,7 +63,7 @@ public class RectifierBlockEntity extends GridDeviceBlockEntity<RectifierUnit> i
         double fraction = u.currentFraction();
         // мощность выше паспортной — ток снижается пропорционально
         double cap = demand > RectifierUnit.RATED_DC_W ? RectifierUnit.RATED_DC_W / demand : 1;
-        if (cells != null) cells.supply(cells.cells().currentKa() * 1000 * fraction * cap);
+        if (cells != null) cells.supply(cells.dcSetpointA() * fraction * cap);
         if (ticks % 10 == 0) {
             setFlag(PcProperties.RUNNING, u.powerW() > 1e3);
             setFlag(PcProperties.ALARM, u.switchedOn() && demand > 0 && fraction == 0);

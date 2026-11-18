@@ -27,10 +27,6 @@ public final class ChlorText {
         put("cracker.decoked", "EDC furnace coil decoked with steam and air", "Змеевик печи ДХЭ выжжен паровоздушной смесью");
         put("pvc.auto_on", "PVC autoclave: automatic batch cycle on", "Автоклав ПВХ: автоматический цикл включён");
         put("pvc.auto_off", "PVC autoclave: automatic cycle off", "Автоклав ПВХ: автоматический цикл отключён");
-        put("cloud.smell", "A sharp, bleach-like smell: chlorine in the air", "Резкий запах хлорки: в воздухе хлор");
-        put("cloud.idlh", "Chlorine above 10 ppm: eyes and throat burn. Get out across the wind and uphill",
-                "Хлора больше 10 ppm: режет глаза и горло. Уходите поперёк ветра и на возвышенность");
-        put("cloud.aegl3", "Chlorine above 50 ppm: choking, lungs are being damaged", "Хлора больше 50 ppm: удушье, поражение лёгких");
     }
 
     private ChlorText() {

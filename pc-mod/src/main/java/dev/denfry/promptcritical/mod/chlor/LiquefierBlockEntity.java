@@ -6,6 +6,7 @@ import dev.denfry.promptcritical.mod.binding.SimLevelBinding;
 import dev.denfry.promptcritical.mod.block.PcProperties;
 import dev.denfry.promptcritical.mod.blockentity.DeviceBlockEntity;
 import dev.denfry.promptcritical.mod.chem.PyrolysisFurnaceBlockEntity.MultiInlet;
+import dev.denfry.promptcritical.mod.environment.ToxicReleaseService;
 import dev.denfry.promptcritical.mod.foundry.FoundryDevice;
 import dev.denfry.promptcritical.mod.panel.PanelHost;
 import dev.denfry.promptcritical.mod.panel.PanelLayout;
@@ -13,6 +14,7 @@ import dev.denfry.promptcritical.mod.production.FeedTank;
 import dev.denfry.promptcritical.mod.production.ProductTank;
 import dev.denfry.promptcritical.mod.registry.PcFluids;
 import dev.denfry.promptcritical.sim.chlor.ChlorineLiquefier;
+import dev.denfry.promptcritical.sim.consequence.ToxicGas;
 import dev.denfry.promptcritical.sim.core.MutableStateTree;
 import dev.denfry.promptcritical.sim.core.TreeStateReader;
 import dev.denfry.promptcritical.sim.core.TreeStateWriter;
@@ -106,7 +108,7 @@ public final class LiquefierBlockEntity extends DeviceBlockEntity implements Fou
         naoh.take(naohL * absorbed);
         vent += tail * (1 - absorbed);
         ventKgS = vent / dt;
-        if (ventKgS > 1e-6) ChlorineReleaseService.vent(s, worldPosition.above(2), ventKgS);
+        if (ventKgS > 1e-6) ToxicReleaseService.vent(s, worldPosition.above(2), ToxicGas.CHLORINE, ventKgS);
         if (level.getGameTime() % 10 == 0) {
             BlockState st = getBlockState();
             boolean run = unit.liquidKgS() > 0;

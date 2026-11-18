@@ -91,6 +91,13 @@ public final class PcItems {
     /** Пакет платинородиевых сеток (Pt 92,5 %, Rh 7,5 %) и катализатор очистки хвостовых газов. */
     public static final DeferredItem<Item> PT_RH_GAUZE = item("pt_rh_gauze", 4);
     public static final DeferredItem<Item> CATALYST_DENOX = item("catalyst_denox", 16);
+    /** Баллоны UF₆ (ANSI N14.1): содержимое — компонент {@code uf6}. */
+    public static final DeferredItem<dev.denfry.promptcritical.mod.nuclear.Uf6CylinderItem> UF6_CYLINDER_48Y = uf6("uf6_cylinder_48y",
+            dev.denfry.promptcritical.mod.nuclear.Uf6CylinderItem.Type.Y48);
+    public static final DeferredItem<dev.denfry.promptcritical.mod.nuclear.Uf6CylinderItem> UF6_CYLINDER_30B = uf6("uf6_cylinder_30b",
+            dev.denfry.promptcritical.mod.nuclear.Uf6CylinderItem.Type.B30);
+    public static final DeferredItem<dev.denfry.promptcritical.mod.nuclear.Uf6CylinderItem> UF6_CYLINDER_5A = uf6("uf6_cylinder_5a",
+            dev.denfry.promptcritical.mod.nuclear.Uf6CylinderItem.Type.A5);
     /** Головной шахтный светильник: щелочная батарея на поясе, фара на каске (слот головы). */
     public static final DeferredItem<dev.denfry.promptcritical.mod.mine.CapLampItem> CAP_LAMP = registered(ITEMS.registerItem("cap_lamp",
             dev.denfry.promptcritical.mod.mine.CapLampItem::new, new Item.Properties()));
@@ -143,6 +150,12 @@ public final class PcItems {
     public static final DeferredItem<Item> GROUND_URANIUM_ORE = item("ground_uranium_ore", 64);
     public static final DeferredItem<Item> YELLOWCAKE = item("yellowcake", 64);
     public static final DeferredItem<Item> UO2_POWDER = item("uo2_powder", 64);
+    /** Трёхокись урана после прокалки ДУА: мешок на 1 кг урана. */
+    public static final DeferredItem<Item> UO3_POWDER = item("uo3_powder", 64);
+    /** Тетрафторид урана, «зелёная соль»: мешок на 1 кг урана. */
+    public static final DeferredItem<Item> UF4_POWDER = item("uf4_powder", 64);
+    /** Сильноосновный анионит: мешок 100 л. */
+    public static final DeferredItem<Item> ION_EXCHANGE_RESIN_SBA = item("ion_exchange_resin_sba", 16);
     public static final DeferredItem<Item> MAGNESIUM_INGOT = item("magnesium_ingot", 64);
     /** Блочок природного металлического урана: кассета топливного канала котла. */
     public static final DeferredItem<Item> URANIUM_SLUG = item("uranium_slug", 16);
@@ -216,6 +229,12 @@ public final class PcItems {
     }
 
     private PcItems() {
+    }
+
+    private static DeferredItem<dev.denfry.promptcritical.mod.nuclear.Uf6CylinderItem> uf6(String name,
+            dev.denfry.promptcritical.mod.nuclear.Uf6CylinderItem.Type type) {
+        return registered(ITEMS.registerItem(name, p -> new dev.denfry.promptcritical.mod.nuclear.Uf6CylinderItem(p, type),
+                new Item.Properties()));
     }
 
     private static <I extends Item> DeferredItem<I> registered(DeferredItem<I> i) {

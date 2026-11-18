@@ -451,6 +451,27 @@ public final class PcBlocks {
             Spec.facing(PcProperties.RUNNING).footprint(Footprint.of(Segment.box(-1, 1, 0, 0, 0, 0))),
             KineticMachineBlock.with(ShaftSide.BACK, dev.denfry.promptcritical.mod.chem.LdpeReactorBlockEntity::new));
 
+    // --- передел урана: от руды до UF₆ (I4) ---
+    public static final DeferredBlock<PcDeviceBlock> ACID_PLANT = uranium("acid_plant",
+            dev.denfry.promptcritical.mod.uranium.AcidPlantBlockEntity::new);
+    public static final DeferredBlock<PcDeviceBlock> HF_KILN = uranium("hf_kiln", dev.denfry.promptcritical.mod.uranium.HfKilnBlockEntity::new);
+    public static final DeferredBlock<PcDeviceBlock> LEACH_TANK = uranium("leach_tank",
+            dev.denfry.promptcritical.mod.uranium.LeachTankBlockEntity::new);
+    public static final DeferredBlock<PcDeviceBlock> URANIUM_ION_EXCHANGE = uranium("uranium_ion_exchange",
+            dev.denfry.promptcritical.mod.uranium.IonExchangeBlockEntity::new);
+    public static final DeferredBlock<PcDeviceBlock> PRECIPITATION_TANK = uranium("precipitation_tank",
+            dev.denfry.promptcritical.mod.uranium.PrecipitationBlockEntity::new);
+    public static final DeferredBlock<PcDeviceBlock> ROTARY_CALCINER = uranium("rotary_calciner",
+            dev.denfry.promptcritical.mod.uranium.ConversionBlockEntity::calciner);
+    public static final DeferredBlock<PcDeviceBlock> REDUCTION_FURNACE = uranium("reduction_furnace",
+            dev.denfry.promptcritical.mod.uranium.ConversionBlockEntity::reduction);
+    public static final DeferredBlock<PcDeviceBlock> HYDROFLUORINATION_REACTOR = uranium("hydrofluorination_reactor",
+            dev.denfry.promptcritical.mod.uranium.ConversionBlockEntity::hydrofluorination);
+    public static final DeferredBlock<PcDeviceBlock> FLUORINATION_REACTOR = uranium("fluorination_reactor",
+            dev.denfry.promptcritical.mod.uranium.FluorinationBlockEntity::new);
+    public static final DeferredBlock<PcDeviceBlock> FLUORINE_CELL = uranium("fluorine_cell",
+            dev.denfry.promptcritical.mod.uranium.FluorineCellBlockEntity::new);
+
     // --- хлор-щелочное производство и ПВХ (I3) ---
     public static final DeferredBlock<PcDeviceBlock> BRINE_TREATER = device("brine_treater", machine(),
             Spec.facing(PcProperties.RUNNING).footprint(FP_FURNACE3),
@@ -947,6 +968,11 @@ public final class PcBlocks {
     /** Породы разреза I2: вне топологии, как руды. */
     public static List<DeferredBlock<PcBlock>> geology() {
         return Collections.unmodifiableList(GEOLOGY);
+    }
+
+    /** Аппарат передела урана: один блок, фасад и флаг работы. */
+    private static DeferredBlock<PcDeviceBlock> uranium(String name, BiFunction<BlockPos, net.minecraft.world.level.block.state.BlockState, ? extends net.minecraft.world.level.block.entity.BlockEntity> be) {
+        return device(name, machine(), Spec.facing(PcProperties.RUNNING), FoundryBlock.with(be));
     }
 
     private static DeferredBlock<PcBlock> ore02(String name) {
