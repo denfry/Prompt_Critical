@@ -273,6 +273,8 @@ public final class PcLanguageProvider extends LanguageProvider {
         b("ammonia_converter", "Ammonia Synthesis Loop", "Колонна синтеза аммиака");
         b("nitric_acid_unit", "Nitric Acid Unit", "Агрегат азотной кислоты");
         b("acid_concentrator", "Nitric Acid Concentrator", "Колонна концентрирования азотной кислоты");
+        b("gas_centrifuge", "Gas Centrifuge Section", "Секция газовых центрифуг");
+        b("centrifuge_cascade", "Centrifuge Cascade Control", "Пульт каскада газовых центрифуг");
         b("wellhead", "Wellhead", "Колонная головка");
         b("christmas_tree", "Christmas Tree", "Фонтанная арматура");
         b("pumpjack", "Pumpjack", "Станок-качалка");
