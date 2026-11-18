@@ -557,34 +557,14 @@ def reheat(lit=False):
     return els
 
 
-m("reheating_furnace", "rolling", reheat())
-m("reheating_furnace_lit", "rolling", reheat(True))
+# нарисовано вручную в Blockbench: art/blockbench/rolling/rolling_mill.author.js
 # клеть дуо 500 3×3×1: синяя станина, нажимные винты; валки — partial (ось X)
-m("rolling_mill_stand", "rolling", [
-    el("housing_w", [-16, -16, 2], [-10, 30, 14], "mb"), el("housing_e", [26, -16, 2], [32, 30, 14], "mb"),
-    el("cap", [-16, 26, 2], [32, 32, 14], "mb"),
-    el("screw_w", [-14, 20, 6], [-12, 26, 10], "st"), el("screw_e", [28, 20, 6], [30, 26, 10], "st"),
-    el("chock_w", [-10, -4, 4], [-6, 20, 12], "d"), el("chock_e", [22, -4, 4], [26, 20, 12], "d"),
-    el("sole", [-16, -16, 0], [32, -14, 16], "d"),
-])
-m("rolling_mill_stand/roll_top", "rolling", hcyl("roll", "x", 5, -10, 26, "sm", c=(8, 14, 8)) + shaft_x(2, -16, 32, (8, 14, 8)), kind="partial")
-m("rolling_mill_stand/roll_bottom", "rolling", hcyl("roll", "x", 5, -10, 26, "sm", c=(8, 2, 8)) + shaft_x(2, -16, 32, (8, 2, 8)), kind="partial")
+# нарисовано вручную в Blockbench: art/blockbench/rolling/rolling_mill.author.js
 # рольганг / холодильник; ролики — partial (ось X)
-m("roller_table", "rolling", [el("frame_w", [0, 0, 0], [2, 8, 16], "d"), el("frame_e", [14, 0, 0], [16, 8, 16], "d")])
-m("roller_table_cooling_bed", "rolling", [el("frame_w", [0, 0, 0], [2, 8, 16], "d"), el("frame_e", [14, 0, 0], [16, 8, 16], "d"),
-                                          el("bed", [2, 7, 0], [14, 8, 16], "bed")])
-m("roller_table/rollers", "rolling", hcyl("roll_n", "x", 1.5, 2, 14, "st", c=(8, 7, 4), sides=8)
-  + hcyl("roll_s", "x", 1.5, 2, 14, "st", c=(8, 7, 12), sides=8), kind="partial")
+# нарисовано вручную в Blockbench: art/blockbench/rolling/rolling_mill.author.js
 
 # прошивной стан 3×2×1: станина; бочковидные валки — partial (ось X с перекосом 22,5°)
-m("piercing_mill", "rolling", [
-    el("bed", [-16, 0, 0], [32, 3, 16], "dg"),
-    el("housing_n", [-6, 3, 0], [22, 26, 3], "dg"), el("housing_s", [-6, 3, 13], [22, 26, 16], "dg"),
-    el("mandrel_bar", [22, 9, 7], [32, 11, 9], "st"),
-    el("thrust_block", [26, 3, 5], [32, 15, 11], "d"),
-])
-m("piercing_mill/roll_l", "rolling", [el("barrel", [-4, 6, 2], [20, 12, 6], "sm", rot=("y", 22.5, [8, 9, 4]))], kind="partial")
-m("piercing_mill/roll_r", "rolling", [el("barrel", [-4, 6, 10], [20, 12, 14], "sm", rot=("y", -22.5, [8, 9, 12]))], kind="partial")
+# нарисовано вручную в Blockbench: art/blockbench/rolling/rolling_mill.author.js
 
 
 # трубоэлектросварочный стан 3×2×1: формовочные клети, индуктор ТВЧ
@@ -597,10 +577,7 @@ def welder(welding=False):
             el("hf_cabinet", [10, 14, 2], [20, 28, 14], "r35")]
 
 
-m("pipe_welder", "rolling", welder())
-m("pipe_welder_welding", "rolling", welder(True))
-m("pipe_welder/forming_rolls", "rolling", hcyl("roll_a", "z", 3, 2, 14, "st", c=(-11, 11, 8), sides=8)
-  + hcyl("roll_b", "z", 3, 2, 14, "st", c=(1, 11, 8), sides=8), kind="partial")
+# нарисовано вручную в Blockbench: art/blockbench/rolling/rolling_mill.author.js
 
 
 # гидропресс труб 3×1×1: заглушки, труба, манометр
@@ -616,8 +593,7 @@ def hydrotest(burst=False):
     return els
 
 
-m("hydrotest_bench", "rolling", hydrotest())
-m("hydrotest_bench_burst", "rolling", hydrotest(True))
+# нарисовано вручную в Blockbench: art/blockbench/rolling/rolling_mill.author.js
 
 
 # термическая печь 2×2×2: футерованная камера, подъёмная дверь
@@ -634,9 +610,7 @@ def heat_treat(lit=False, door_open=False):
     return els
 
 
-m("heat_treatment_furnace", "rolling", heat_treat())
-m("heat_treatment_furnace_lit", "rolling", heat_treat(True))
-m("heat_treatment_furnace_open", "rolling", heat_treat(True, True))
+# нарисовано вручную в Blockbench: art/blockbench/rolling/rolling_mill.author.js
 
 
 # закалочный бак 2×1×2: вода / масло
@@ -648,8 +622,7 @@ def quench(medium="water"):
             el("rim", [0, 14, 0], [32, 15, 2], "d")]
 
 
-m("quench_tank", "rolling", quench())
-m("quench_tank_oil", "rolling", quench("oil"))
+# нарисовано вручную в Blockbench: art/blockbench/rolling/rolling_mill.author.js
 
 # волочильный стан 2×1×1: волоки; барабан — partial (ось Y)
 m("wire_drawing_bench", "rolling", [

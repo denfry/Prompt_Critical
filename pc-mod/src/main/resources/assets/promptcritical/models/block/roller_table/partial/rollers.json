@@ -1,14 +1,15 @@
 {
 	"credit": "Made with Blockbench",
 	"textures": {
-		"particle": "promptcritical:block/common/steel_bare",
-		"st": "promptcritical:block/common/steel_bare"
+		"particle": "promptcritical:block/rolling/roll",
+		"rolling_roll": "promptcritical:block/rolling/roll",
+		"material_bright_steel": "promptcritical:block/material/bright_steel"
 	},
 	"elements": [
 		{
-			"name": "roll_n_0",
-			"from": [2, 5.5, 3.379],
-			"to": [14, 8.5, 4.621],
+			"name": "roller_4_0",
+			"from": [1.6, 6.04196, 2.2],
+			"to": [14.4, 6.75804, 5.8],
 			"rotation": {
 				"angle": 0,
 				"axis": "y",
@@ -16,143 +17,223 @@
 			},
 			"faces": {
 				"north": {
-					"uv": [0, 0, 12, 3],
-					"texture": "#st"
+					"uv": [1.6, 9.24196, 14.4, 9.95804],
+					"texture": "#rolling_roll"
 				},
 				"east": {
-					"uv": [0, 0, 1.24, 3],
-					"texture": "#st"
+					"uv": [10.2, 9.24196, 13.8, 9.95804],
+					"texture": "#rolling_roll"
 				},
 				"south": {
-					"uv": [0, 0, 12, 3],
-					"texture": "#st"
+					"uv": [1.6, 9.24196, 14.4, 9.95804],
+					"texture": "#rolling_roll"
 				},
 				"west": {
-					"uv": [0, 0, 1.24, 3],
-					"texture": "#st"
-				},
-				"up": {
-					"uv": [0, 0, 12, 1.24],
-					"texture": "#st"
-				},
-				"down": {
-					"uv": [0, 0, 12, 1.24],
-					"texture": "#st"
+					"uv": [2.2, 9.24196, 5.8, 9.95804],
+					"texture": "#rolling_roll"
 				}
 			}
 		},
 		{
-			"name": "roll_n_1",
-			"from": [1.99, 6.379, 2.5],
-			"to": [14.01, 7.621, 5.5],
+			"name": "roller_4_1",
+			"from": [1.6, 6.04196, 2.2],
+			"to": [14.4, 6.75804, 5.8],
 			"rotation": {
-				"angle": 0,
-				"axis": "y",
-				"origin": [8, 8, 8]
+				"angle": 22.5,
+				"axis": "x",
+				"origin": [8, 6.4, 4]
 			},
 			"faces": {
 				"north": {
-					"uv": [0, 0, 12.02, 1.24],
-					"texture": "#st"
+					"uv": [1.6, 9.24196, 14.4, 9.95804],
+					"texture": "#rolling_roll"
 				},
 				"east": {
-					"uv": [0, 0, 3, 1.24],
-					"texture": "#st"
+					"uv": [10.2, 9.24196, 13.8, 9.95804],
+					"texture": "#rolling_roll"
 				},
 				"south": {
-					"uv": [0, 0, 12.02, 1.24],
-					"texture": "#st"
+					"uv": [1.6, 9.24196, 14.4, 9.95804],
+					"texture": "#rolling_roll"
 				},
 				"west": {
-					"uv": [0, 0, 3, 1.24],
-					"texture": "#st"
-				},
-				"up": {
-					"uv": [0, 0, 12.02, 3],
-					"texture": "#st"
-				},
-				"down": {
-					"uv": [0, 0, 12.02, 3],
-					"texture": "#st"
+					"uv": [2.2, 9.24196, 5.8, 9.95804],
+					"texture": "#rolling_roll"
 				}
 			}
 		},
 		{
-			"name": "roll_n_2",
-			"from": [1.98, 5.5, 3.379],
-			"to": [14.02, 8.5, 4.621],
+			"name": "roller_4_2",
+			"from": [1.6, 6.04196, 2.2],
+			"to": [14.4, 6.75804, 5.8],
 			"rotation": {
 				"angle": 45,
 				"axis": "x",
-				"origin": [8, 7, 4]
+				"origin": [8, 6.4, 4]
 			},
 			"faces": {
 				"north": {
-					"uv": [0, 0, 12.04, 3],
-					"texture": "#st"
+					"uv": [1.6, 9.24196, 14.4, 9.95804],
+					"texture": "#rolling_roll"
 				},
 				"east": {
-					"uv": [0, 0, 1.24, 3],
-					"texture": "#st"
+					"uv": [10.2, 9.24196, 13.8, 9.95804],
+					"texture": "#rolling_roll"
 				},
 				"south": {
-					"uv": [0, 0, 12.04, 3],
-					"texture": "#st"
+					"uv": [1.6, 9.24196, 14.4, 9.95804],
+					"texture": "#rolling_roll"
 				},
 				"west": {
-					"uv": [0, 0, 1.24, 3],
-					"texture": "#st"
-				},
-				"up": {
-					"uv": [0, 0, 12.04, 1.24],
-					"texture": "#st"
-				},
-				"down": {
-					"uv": [0, 0, 12.04, 1.24],
-					"texture": "#st"
+					"uv": [2.2, 9.24196, 5.8, 9.95804],
+					"texture": "#rolling_roll"
 				}
 			}
 		},
 		{
-			"name": "roll_n_3",
-			"from": [1.97, 5.5, 3.379],
-			"to": [14.03, 8.5, 4.621],
+			"name": "roller_4_3",
+			"from": [1.6, 6.04196, 2.2],
+			"to": [14.4, 6.75804, 5.8],
+			"rotation": {
+				"angle": -22.5,
+				"axis": "x",
+				"origin": [8, 6.4, 4]
+			},
+			"faces": {
+				"north": {
+					"uv": [1.6, 9.24196, 14.4, 9.95804],
+					"texture": "#rolling_roll"
+				},
+				"east": {
+					"uv": [10.2, 9.24196, 13.8, 9.95804],
+					"texture": "#rolling_roll"
+				},
+				"south": {
+					"uv": [1.6, 9.24196, 14.4, 9.95804],
+					"texture": "#rolling_roll"
+				},
+				"west": {
+					"uv": [2.2, 9.24196, 5.8, 9.95804],
+					"texture": "#rolling_roll"
+				}
+			}
+		},
+		{
+			"name": "roller_4_4",
+			"from": [1.6, 6.04196, 2.2],
+			"to": [14.4, 6.75804, 5.8],
 			"rotation": {
 				"angle": -45,
 				"axis": "x",
-				"origin": [8, 7, 4]
+				"origin": [8, 6.4, 4]
 			},
 			"faces": {
 				"north": {
-					"uv": [0, 0, 12.06, 3],
-					"texture": "#st"
+					"uv": [1.6, 9.24196, 14.4, 9.95804],
+					"texture": "#rolling_roll"
 				},
 				"east": {
-					"uv": [0, 0, 1.24, 3],
-					"texture": "#st"
+					"uv": [10.2, 9.24196, 13.8, 9.95804],
+					"texture": "#rolling_roll"
 				},
 				"south": {
-					"uv": [0, 0, 12.06, 3],
-					"texture": "#st"
+					"uv": [1.6, 9.24196, 14.4, 9.95804],
+					"texture": "#rolling_roll"
 				},
 				"west": {
-					"uv": [0, 0, 1.24, 3],
-					"texture": "#st"
-				},
-				"up": {
-					"uv": [0, 0, 12.06, 1.24],
-					"texture": "#st"
-				},
-				"down": {
-					"uv": [0, 0, 12.06, 1.24],
-					"texture": "#st"
+					"uv": [2.2, 9.24196, 5.8, 9.95804],
+					"texture": "#rolling_roll"
 				}
 			}
 		},
 		{
-			"name": "roll_s_0",
-			"from": [2, 5.5, 11.379],
-			"to": [14, 8.5, 12.621],
+			"name": "roller_4_5",
+			"from": [1.6, 4.6, 3.64196],
+			"to": [14.4, 8.2, 4.35804],
+			"rotation": {
+				"angle": 0,
+				"axis": "y",
+				"origin": [8, 8, 8]
+			},
+			"faces": {
+				"east": {
+					"uv": [11.64196, 7.8, 12.35804, 11.4],
+					"texture": "#rolling_roll"
+				},
+				"west": {
+					"uv": [3.64196, 7.8, 4.35804, 11.4],
+					"texture": "#rolling_roll"
+				},
+				"up": {
+					"uv": [1.6, 3.64196, 14.4, 4.35804],
+					"texture": "#rolling_roll"
+				},
+				"down": {
+					"uv": [1.6, 11.64196, 14.4, 12.35804],
+					"texture": "#rolling_roll"
+				}
+			}
+		},
+		{
+			"name": "roller_4_6",
+			"from": [1.6, 4.6, 3.64196],
+			"to": [14.4, 8.2, 4.35804],
+			"rotation": {
+				"angle": 22.5,
+				"axis": "x",
+				"origin": [8, 6.4, 4]
+			},
+			"faces": {
+				"east": {
+					"uv": [11.64196, 7.8, 12.35804, 11.4],
+					"texture": "#rolling_roll"
+				},
+				"west": {
+					"uv": [3.64196, 7.8, 4.35804, 11.4],
+					"texture": "#rolling_roll"
+				},
+				"up": {
+					"uv": [1.6, 3.64196, 14.4, 4.35804],
+					"texture": "#rolling_roll"
+				},
+				"down": {
+					"uv": [1.6, 11.64196, 14.4, 12.35804],
+					"texture": "#rolling_roll"
+				}
+			}
+		},
+		{
+			"name": "roller_4_7",
+			"from": [1.6, 4.6, 3.64196],
+			"to": [14.4, 8.2, 4.35804],
+			"rotation": {
+				"angle": -22.5,
+				"axis": "x",
+				"origin": [8, 6.4, 4]
+			},
+			"faces": {
+				"east": {
+					"uv": [11.64196, 7.8, 12.35804, 11.4],
+					"texture": "#rolling_roll"
+				},
+				"west": {
+					"uv": [3.64196, 7.8, 4.35804, 11.4],
+					"texture": "#rolling_roll"
+				},
+				"up": {
+					"uv": [1.6, 3.64196, 14.4, 4.35804],
+					"texture": "#rolling_roll"
+				},
+				"down": {
+					"uv": [1.6, 11.64196, 14.4, 12.35804],
+					"texture": "#rolling_roll"
+				}
+			}
+		},
+		{
+			"name": "journal_4_0",
+			"from": [0.4, 6.26076, 3.3],
+			"to": [15.6, 6.53924, 4.7],
 			"rotation": {
 				"angle": 0,
 				"axis": "y",
@@ -160,136 +241,536 @@
 			},
 			"faces": {
 				"north": {
-					"uv": [0, 0, 12, 3],
-					"texture": "#st"
-				},
-				"east": {
-					"uv": [0, 0, 1.24, 3],
-					"texture": "#st"
+					"uv": [0.4, 9.46076, 15.6, 9.73924],
+					"texture": "#material_bright_steel"
 				},
 				"south": {
-					"uv": [0, 0, 12, 3],
-					"texture": "#st"
-				},
-				"west": {
-					"uv": [0, 0, 1.24, 3],
-					"texture": "#st"
-				},
-				"up": {
-					"uv": [0, 0, 12, 1.24],
-					"texture": "#st"
-				},
-				"down": {
-					"uv": [0, 0, 12, 1.24],
-					"texture": "#st"
+					"uv": [0.4, 9.46076, 15.6, 9.73924],
+					"texture": "#material_bright_steel"
 				}
 			}
 		},
 		{
-			"name": "roll_s_1",
-			"from": [1.99, 6.379, 10.5],
-			"to": [14.01, 7.621, 13.5],
+			"name": "journal_4_1",
+			"from": [0.4, 6.26076, 3.3],
+			"to": [15.6, 6.53924, 4.7],
 			"rotation": {
-				"angle": 0,
-				"axis": "y",
-				"origin": [8, 8, 8]
+				"angle": 22.5,
+				"axis": "x",
+				"origin": [8, 6.4, 4]
 			},
 			"faces": {
 				"north": {
-					"uv": [0, 0, 12.02, 1.24],
-					"texture": "#st"
-				},
-				"east": {
-					"uv": [0, 0, 3, 1.24],
-					"texture": "#st"
+					"uv": [0.4, 9.46076, 15.6, 9.73924],
+					"texture": "#material_bright_steel"
 				},
 				"south": {
-					"uv": [0, 0, 12.02, 1.24],
-					"texture": "#st"
-				},
-				"west": {
-					"uv": [0, 0, 3, 1.24],
-					"texture": "#st"
-				},
-				"up": {
-					"uv": [0, 0, 12.02, 3],
-					"texture": "#st"
-				},
-				"down": {
-					"uv": [0, 0, 12.02, 3],
-					"texture": "#st"
+					"uv": [0.4, 9.46076, 15.6, 9.73924],
+					"texture": "#material_bright_steel"
 				}
 			}
 		},
 		{
-			"name": "roll_s_2",
-			"from": [1.98, 5.5, 11.379],
-			"to": [14.02, 8.5, 12.621],
+			"name": "journal_4_2",
+			"from": [0.4, 6.26076, 3.3],
+			"to": [15.6, 6.53924, 4.7],
 			"rotation": {
 				"angle": 45,
 				"axis": "x",
-				"origin": [8, 7, 12]
+				"origin": [8, 6.4, 4]
 			},
 			"faces": {
 				"north": {
-					"uv": [0, 0, 12.04, 3],
-					"texture": "#st"
-				},
-				"east": {
-					"uv": [0, 0, 1.24, 3],
-					"texture": "#st"
+					"uv": [0.4, 9.46076, 15.6, 9.73924],
+					"texture": "#material_bright_steel"
 				},
 				"south": {
-					"uv": [0, 0, 12.04, 3],
-					"texture": "#st"
-				},
-				"west": {
-					"uv": [0, 0, 1.24, 3],
-					"texture": "#st"
-				},
-				"up": {
-					"uv": [0, 0, 12.04, 1.24],
-					"texture": "#st"
-				},
-				"down": {
-					"uv": [0, 0, 12.04, 1.24],
-					"texture": "#st"
+					"uv": [0.4, 9.46076, 15.6, 9.73924],
+					"texture": "#material_bright_steel"
 				}
 			}
 		},
 		{
-			"name": "roll_s_3",
-			"from": [1.97, 5.5, 11.379],
-			"to": [14.03, 8.5, 12.621],
+			"name": "journal_4_3",
+			"from": [0.4, 6.26076, 3.3],
+			"to": [15.6, 6.53924, 4.7],
 			"rotation": {
-				"angle": -45,
+				"angle": -22.5,
 				"axis": "x",
-				"origin": [8, 7, 12]
+				"origin": [8, 6.4, 4]
 			},
 			"faces": {
 				"north": {
-					"uv": [0, 0, 12.06, 3],
-					"texture": "#st"
-				},
-				"east": {
-					"uv": [0, 0, 1.24, 3],
-					"texture": "#st"
+					"uv": [0.4, 9.46076, 15.6, 9.73924],
+					"texture": "#material_bright_steel"
 				},
 				"south": {
-					"uv": [0, 0, 12.06, 3],
-					"texture": "#st"
+					"uv": [0.4, 9.46076, 15.6, 9.73924],
+					"texture": "#material_bright_steel"
+				}
+			}
+		},
+		{
+			"name": "journal_4_4",
+			"from": [0.4, 6.26076, 3.3],
+			"to": [15.6, 6.53924, 4.7],
+			"rotation": {
+				"angle": -45,
+				"axis": "x",
+				"origin": [8, 6.4, 4]
+			},
+			"faces": {
+				"north": {
+					"uv": [0.4, 9.46076, 15.6, 9.73924],
+					"texture": "#material_bright_steel"
 				},
-				"west": {
-					"uv": [0, 0, 1.24, 3],
-					"texture": "#st"
-				},
+				"south": {
+					"uv": [0.4, 9.46076, 15.6, 9.73924],
+					"texture": "#material_bright_steel"
+				}
+			}
+		},
+		{
+			"name": "journal_4_5",
+			"from": [0.4, 5.7, 3.86076],
+			"to": [15.6, 7.1, 4.13924],
+			"rotation": {
+				"angle": 0,
+				"axis": "y",
+				"origin": [8, 8, 8]
+			},
+			"faces": {
 				"up": {
-					"uv": [0, 0, 12.06, 1.24],
-					"texture": "#st"
+					"uv": [0.4, 3.86076, 15.6, 4.13924],
+					"texture": "#material_bright_steel"
 				},
 				"down": {
-					"uv": [0, 0, 12.06, 1.24],
-					"texture": "#st"
+					"uv": [0.4, 11.86076, 15.6, 12.13924],
+					"texture": "#material_bright_steel"
+				}
+			}
+		},
+		{
+			"name": "journal_4_6",
+			"from": [0.4, 5.7, 3.86076],
+			"to": [15.6, 7.1, 4.13924],
+			"rotation": {
+				"angle": 22.5,
+				"axis": "x",
+				"origin": [8, 6.4, 4]
+			},
+			"faces": {
+				"up": {
+					"uv": [0.4, 3.86076, 15.6, 4.13924],
+					"texture": "#material_bright_steel"
+				},
+				"down": {
+					"uv": [0.4, 11.86076, 15.6, 12.13924],
+					"texture": "#material_bright_steel"
+				}
+			}
+		},
+		{
+			"name": "journal_4_7",
+			"from": [0.4, 5.7, 3.86076],
+			"to": [15.6, 7.1, 4.13924],
+			"rotation": {
+				"angle": -22.5,
+				"axis": "x",
+				"origin": [8, 6.4, 4]
+			},
+			"faces": {
+				"up": {
+					"uv": [0.4, 3.86076, 15.6, 4.13924],
+					"texture": "#material_bright_steel"
+				},
+				"down": {
+					"uv": [0.4, 11.86076, 15.6, 12.13924],
+					"texture": "#material_bright_steel"
+				}
+			}
+		},
+		{
+			"name": "roller_12_0",
+			"from": [1.6, 6.04196, 10.2],
+			"to": [14.4, 6.75804, 13.8],
+			"rotation": {
+				"angle": 0,
+				"axis": "y",
+				"origin": [8, 8, 8]
+			},
+			"faces": {
+				"north": {
+					"uv": [1.6, 9.24196, 14.4, 9.95804],
+					"texture": "#rolling_roll"
+				},
+				"east": {
+					"uv": [2.2, 9.24196, 5.8, 9.95804],
+					"texture": "#rolling_roll"
+				},
+				"south": {
+					"uv": [1.6, 9.24196, 14.4, 9.95804],
+					"texture": "#rolling_roll"
+				},
+				"west": {
+					"uv": [10.2, 9.24196, 13.8, 9.95804],
+					"texture": "#rolling_roll"
+				}
+			}
+		},
+		{
+			"name": "roller_12_1",
+			"from": [1.6, 6.04196, 10.2],
+			"to": [14.4, 6.75804, 13.8],
+			"rotation": {
+				"angle": 22.5,
+				"axis": "x",
+				"origin": [8, 6.4, 12]
+			},
+			"faces": {
+				"north": {
+					"uv": [1.6, 9.24196, 14.4, 9.95804],
+					"texture": "#rolling_roll"
+				},
+				"east": {
+					"uv": [2.2, 9.24196, 5.8, 9.95804],
+					"texture": "#rolling_roll"
+				},
+				"south": {
+					"uv": [1.6, 9.24196, 14.4, 9.95804],
+					"texture": "#rolling_roll"
+				},
+				"west": {
+					"uv": [10.2, 9.24196, 13.8, 9.95804],
+					"texture": "#rolling_roll"
+				}
+			}
+		},
+		{
+			"name": "roller_12_2",
+			"from": [1.6, 6.04196, 10.2],
+			"to": [14.4, 6.75804, 13.8],
+			"rotation": {
+				"angle": 45,
+				"axis": "x",
+				"origin": [8, 6.4, 12]
+			},
+			"faces": {
+				"north": {
+					"uv": [1.6, 9.24196, 14.4, 9.95804],
+					"texture": "#rolling_roll"
+				},
+				"east": {
+					"uv": [2.2, 9.24196, 5.8, 9.95804],
+					"texture": "#rolling_roll"
+				},
+				"south": {
+					"uv": [1.6, 9.24196, 14.4, 9.95804],
+					"texture": "#rolling_roll"
+				},
+				"west": {
+					"uv": [10.2, 9.24196, 13.8, 9.95804],
+					"texture": "#rolling_roll"
+				}
+			}
+		},
+		{
+			"name": "roller_12_3",
+			"from": [1.6, 6.04196, 10.2],
+			"to": [14.4, 6.75804, 13.8],
+			"rotation": {
+				"angle": -22.5,
+				"axis": "x",
+				"origin": [8, 6.4, 12]
+			},
+			"faces": {
+				"north": {
+					"uv": [1.6, 9.24196, 14.4, 9.95804],
+					"texture": "#rolling_roll"
+				},
+				"east": {
+					"uv": [2.2, 9.24196, 5.8, 9.95804],
+					"texture": "#rolling_roll"
+				},
+				"south": {
+					"uv": [1.6, 9.24196, 14.4, 9.95804],
+					"texture": "#rolling_roll"
+				},
+				"west": {
+					"uv": [10.2, 9.24196, 13.8, 9.95804],
+					"texture": "#rolling_roll"
+				}
+			}
+		},
+		{
+			"name": "roller_12_4",
+			"from": [1.6, 6.04196, 10.2],
+			"to": [14.4, 6.75804, 13.8],
+			"rotation": {
+				"angle": -45,
+				"axis": "x",
+				"origin": [8, 6.4, 12]
+			},
+			"faces": {
+				"north": {
+					"uv": [1.6, 9.24196, 14.4, 9.95804],
+					"texture": "#rolling_roll"
+				},
+				"east": {
+					"uv": [2.2, 9.24196, 5.8, 9.95804],
+					"texture": "#rolling_roll"
+				},
+				"south": {
+					"uv": [1.6, 9.24196, 14.4, 9.95804],
+					"texture": "#rolling_roll"
+				},
+				"west": {
+					"uv": [10.2, 9.24196, 13.8, 9.95804],
+					"texture": "#rolling_roll"
+				}
+			}
+		},
+		{
+			"name": "roller_12_5",
+			"from": [1.6, 4.6, 11.64196],
+			"to": [14.4, 8.2, 12.35804],
+			"rotation": {
+				"angle": 0,
+				"axis": "y",
+				"origin": [8, 8, 8]
+			},
+			"faces": {
+				"east": {
+					"uv": [3.64196, 7.8, 4.35804, 11.4],
+					"texture": "#rolling_roll"
+				},
+				"west": {
+					"uv": [11.64196, 7.8, 12.35804, 11.4],
+					"texture": "#rolling_roll"
+				},
+				"up": {
+					"uv": [1.6, 11.64196, 14.4, 12.35804],
+					"texture": "#rolling_roll"
+				},
+				"down": {
+					"uv": [1.6, 3.64196, 14.4, 4.35804],
+					"texture": "#rolling_roll"
+				}
+			}
+		},
+		{
+			"name": "roller_12_6",
+			"from": [1.6, 4.6, 11.64196],
+			"to": [14.4, 8.2, 12.35804],
+			"rotation": {
+				"angle": 22.5,
+				"axis": "x",
+				"origin": [8, 6.4, 12]
+			},
+			"faces": {
+				"east": {
+					"uv": [3.64196, 7.8, 4.35804, 11.4],
+					"texture": "#rolling_roll"
+				},
+				"west": {
+					"uv": [11.64196, 7.8, 12.35804, 11.4],
+					"texture": "#rolling_roll"
+				},
+				"up": {
+					"uv": [1.6, 11.64196, 14.4, 12.35804],
+					"texture": "#rolling_roll"
+				},
+				"down": {
+					"uv": [1.6, 3.64196, 14.4, 4.35804],
+					"texture": "#rolling_roll"
+				}
+			}
+		},
+		{
+			"name": "roller_12_7",
+			"from": [1.6, 4.6, 11.64196],
+			"to": [14.4, 8.2, 12.35804],
+			"rotation": {
+				"angle": -22.5,
+				"axis": "x",
+				"origin": [8, 6.4, 12]
+			},
+			"faces": {
+				"east": {
+					"uv": [3.64196, 7.8, 4.35804, 11.4],
+					"texture": "#rolling_roll"
+				},
+				"west": {
+					"uv": [11.64196, 7.8, 12.35804, 11.4],
+					"texture": "#rolling_roll"
+				},
+				"up": {
+					"uv": [1.6, 11.64196, 14.4, 12.35804],
+					"texture": "#rolling_roll"
+				},
+				"down": {
+					"uv": [1.6, 3.64196, 14.4, 4.35804],
+					"texture": "#rolling_roll"
+				}
+			}
+		},
+		{
+			"name": "journal_12_0",
+			"from": [0.4, 6.26076, 11.3],
+			"to": [15.6, 6.53924, 12.7],
+			"rotation": {
+				"angle": 0,
+				"axis": "y",
+				"origin": [8, 8, 8]
+			},
+			"faces": {
+				"north": {
+					"uv": [0.4, 9.46076, 15.6, 9.73924],
+					"texture": "#material_bright_steel"
+				},
+				"south": {
+					"uv": [0.4, 9.46076, 15.6, 9.73924],
+					"texture": "#material_bright_steel"
+				}
+			}
+		},
+		{
+			"name": "journal_12_1",
+			"from": [0.4, 6.26076, 11.3],
+			"to": [15.6, 6.53924, 12.7],
+			"rotation": {
+				"angle": 22.5,
+				"axis": "x",
+				"origin": [8, 6.4, 12]
+			},
+			"faces": {
+				"north": {
+					"uv": [0.4, 9.46076, 15.6, 9.73924],
+					"texture": "#material_bright_steel"
+				},
+				"south": {
+					"uv": [0.4, 9.46076, 15.6, 9.73924],
+					"texture": "#material_bright_steel"
+				}
+			}
+		},
+		{
+			"name": "journal_12_2",
+			"from": [0.4, 6.26076, 11.3],
+			"to": [15.6, 6.53924, 12.7],
+			"rotation": {
+				"angle": 45,
+				"axis": "x",
+				"origin": [8, 6.4, 12]
+			},
+			"faces": {
+				"north": {
+					"uv": [0.4, 9.46076, 15.6, 9.73924],
+					"texture": "#material_bright_steel"
+				},
+				"south": {
+					"uv": [0.4, 9.46076, 15.6, 9.73924],
+					"texture": "#material_bright_steel"
+				}
+			}
+		},
+		{
+			"name": "journal_12_3",
+			"from": [0.4, 6.26076, 11.3],
+			"to": [15.6, 6.53924, 12.7],
+			"rotation": {
+				"angle": -22.5,
+				"axis": "x",
+				"origin": [8, 6.4, 12]
+			},
+			"faces": {
+				"north": {
+					"uv": [0.4, 9.46076, 15.6, 9.73924],
+					"texture": "#material_bright_steel"
+				},
+				"south": {
+					"uv": [0.4, 9.46076, 15.6, 9.73924],
+					"texture": "#material_bright_steel"
+				}
+			}
+		},
+		{
+			"name": "journal_12_4",
+			"from": [0.4, 6.26076, 11.3],
+			"to": [15.6, 6.53924, 12.7],
+			"rotation": {
+				"angle": -45,
+				"axis": "x",
+				"origin": [8, 6.4, 12]
+			},
+			"faces": {
+				"north": {
+					"uv": [0.4, 9.46076, 15.6, 9.73924],
+					"texture": "#material_bright_steel"
+				},
+				"south": {
+					"uv": [0.4, 9.46076, 15.6, 9.73924],
+					"texture": "#material_bright_steel"
+				}
+			}
+		},
+		{
+			"name": "journal_12_5",
+			"from": [0.4, 5.7, 11.86076],
+			"to": [15.6, 7.1, 12.13924],
+			"rotation": {
+				"angle": 0,
+				"axis": "y",
+				"origin": [8, 8, 8]
+			},
+			"faces": {
+				"up": {
+					"uv": [0.4, 11.86076, 15.6, 12.13924],
+					"texture": "#material_bright_steel"
+				},
+				"down": {
+					"uv": [0.4, 3.86076, 15.6, 4.13924],
+					"texture": "#material_bright_steel"
+				}
+			}
+		},
+		{
+			"name": "journal_12_6",
+			"from": [0.4, 5.7, 11.86076],
+			"to": [15.6, 7.1, 12.13924],
+			"rotation": {
+				"angle": 22.5,
+				"axis": "x",
+				"origin": [8, 6.4, 12]
+			},
+			"faces": {
+				"up": {
+					"uv": [0.4, 11.86076, 15.6, 12.13924],
+					"texture": "#material_bright_steel"
+				},
+				"down": {
+					"uv": [0.4, 3.86076, 15.6, 4.13924],
+					"texture": "#material_bright_steel"
+				}
+			}
+		},
+		{
+			"name": "journal_12_7",
+			"from": [0.4, 5.7, 11.86076],
+			"to": [15.6, 7.1, 12.13924],
+			"rotation": {
+				"angle": -22.5,
+				"axis": "x",
+				"origin": [8, 6.4, 12]
+			},
+			"faces": {
+				"up": {
+					"uv": [0.4, 11.86076, 15.6, 12.13924],
+					"texture": "#material_bright_steel"
+				},
+				"down": {
+					"uv": [0.4, 3.86076, 15.6, 4.13924],
+					"texture": "#material_bright_steel"
 				}
 			}
 		}
