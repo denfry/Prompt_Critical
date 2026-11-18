@@ -177,66 +177,13 @@ m("hv_circuit_breaker_sf6", "grid", hv_breaker(sf6=True))
 
 
 # разъединитель РДЗ-110: рама, три фарфоровые колонки; главный нож — partial
-def disconnector(earthed=False):
-    els = [el("frame", [-15, 0, 6], [31, 2, 10], "gal")]
-    for x in (-10, 26):
-        els += insulator(f"post_{x}", x, 8, 2, 14, "por", 2)
-        els.append(el(f"contact_{x}", [x - 2, 17, 6.5], [x + 2, 19, 9.5], "cus"))
-    els.append(el("drive_rod", [-11, 2, 11], [-10, 14, 12], "gal"))
-    if earthed:
-        els.append(el("earth_blade", [24.5, 2, 10], [25.5, 18, 11], "red"))
-    else:
-        els.append(el("earth_blade", [25.5, 2, 10], [31, 3, 11], "red"))
-    return els
+# разъединитель с ножом — art/blockbench/grid/switchgear.author.js
 
 
-m("disconnector", "grid", disconnector())
-m("disconnector_earthed", "grid", disconnector(True))
-m("disconnector/blade", "grid", [
-    el("hinge", [-12, 17, 6.5], [-8, 19.5, 9.5], "cus"),
-    el("blade", [-10, 17.5, 7.25], [26, 18.5, 8.75], "cus"),
-], kind="partial")
+# ячейка КРУ — art/blockbench/grid/switchgear.author.js
 
 
-# ячейка КРУ К-104 1×2×1: шкаф RAL 7035, мнемосхема на двери; выкатной элемент
-def switchgear(state="closed"):
-    els = [el("body", [0, 0, 1], [16, 31.5, 16], "r35"),
-           el("relay_compartment", [0.5, 24, 0.5], [15.5, 31.5, 1], "pns"),
-           el("door", [0.5, 1, 0.5], [15.5, 23, 1], "r35", faces={"north": "swd"}, full=["north"]),
-           el("handle", [13, 9, -0.5], [14, 14, 0.5], "d"),
-           el("bushing_box", [3, 31.5, 5], [13, 32, 13], "dg")]
-    on = {"closed": "lr", "open": "lg", "racked_out": "lg", "alarm": "ly"}[state]
-    els += [lamp("lamp_state", 4, 28, 0.5, True, on), lamp("lamp_off", 8, 28, 0.5, False, "lg"),
-            el("ammeter", [10.5, 26.5, 0], [13.5, 29.5, 0.5], "dial", full=["north"])]
-    if state == "racked_out":
-        els = [e for e in els if e["name"] not in ("door", "handle")]
-        els += [el("trolley", [2, 0, -6], [14, 10, 6], "r35"),
-                el("contacts", [4, 7, 6], [12, 9, 8], "cus"),
-                el("wheel_w", [2.5, 0, -5], [4, 1.5, -2], "r"),
-                el("wheel_e", [12, 0, -5], [13.5, 1.5, -2], "r")]
-    return els
-
-
-m("switchgear_cell", "grid", switchgear())
-m("switchgear_cell_open", "grid", switchgear("open"))
-m("switchgear_cell_racked_out", "grid", switchgear("racked_out"))
-m("switchgear_cell_alarm", "grid", switchgear("alarm"))
-
-
-# щит 0,4 кВ ЩО-70 1×2×1: рубильники, амперметры, лампы
-def lv_board(state="on"):
-    return [el("body", [0, 0, 2], [16, 31.5, 16], "r35"),
-            el("panel_low", [0.5, 1, 1.5], [15.5, 15, 2], "pns"),
-            el("panel_high", [0.5, 15.5, 1.5], [15.5, 31, 2], "r35", faces={"north": "lvf"}, full=["north"]),
-            el("cable_duct", [2, 31.5, 4], [14, 32, 14], "dg")]\
-        + [el(f"handle_{i}", [3 + i * 5, 6, 0], [4 + i * 5, 10, 1.5], "red") for i in range(3)]\
-        + [lamp(f"lamp_{i}", 3.5 + i * 4.5, 13, 1.5, state != "off",
-                {"on": "lg", "off": "lg", "overload": "lr"}[state]) for i in range(3)]
-
-
-m("lv_switchboard", "grid", lv_board())
-m("lv_switchboard_off", "grid", lv_board("off"))
-m("lv_switchboard_overload", "grid", lv_board("overload"))
+# щит 0,4 кВ — art/blockbench/grid/switchgear.author.js
 
 
 # панель РЗА ЭПЗ-1636 1×2×1: стеклянная дверь, ряды реле, блинкеры
@@ -257,17 +204,7 @@ m("relay_cabinet", "control", relay_cab())
 m("relay_cabinet_picked", "control", relay_cab("picked"))
 m("relay_cabinet_tripped", "control", relay_cab("tripped"))
 
-# масляный трансформатор ТМГ-1000/10 1×2×1: гофробак RAL 7032, вводы ВН сверху, НН сбоку
-m("distribution_transformer", "grid", [
-    el("skid", [1, 0, 2], [15, 1.5, 14], "d"),
-    el("tank", [2, 1.5, 3], [14, 18, 13], "cor", faces={"up": "r32", "down": "r32"}),
-    el("cover", [1.5, 18, 2.5], [14.5, 19, 13.5], "r32"),
-    el("lv_box", [4, 9, 1.5], [12, 15, 3], "r32"),
-] + [x for i, xx in enumerate((4.5, 8, 11.5)) for x in insulator(f"hv_{i}", xx, 8, 19, 9, "por", 1.25)]
-  + [el(f"lv_{i}", [4.5 + i * 2.2, 15, 1.75], [5.5 + i * 2.2, 17, 2.75], "porg") for i in range(4)]
-  + [el("oil_gauge", [12, 15, 6], [14.5, 17, 9], "dial", faces={"east": "dial"})])
-
-
+# масляный трансформатор ТМГ — art/blockbench/grid/switchgear.author.js
 # силовой трансформатор ТДН-16000/110: сегмент «бак с вводами» и сегмент радиаторов; якорь — центр 3×3×3
 def power_tx_tank(hv="por", hv_h=16, cons=True):
     els = [el("rails", [-14, -16, -10], [30, -15, 26], "d"),

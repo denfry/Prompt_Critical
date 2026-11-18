@@ -1,21 +1,21 @@
 {
 	"credit": "Made with Blockbench",
 	"textures": {
-		"particle": "promptcritical:block/common/grid_ral7035",
-		"d": "promptcritical:block/common/steel_dark",
-		"dg": "promptcritical:block/common/grid_dark_grey",
-		"dial": "promptcritical:block/instrument_dial",
-		"lg": "promptcritical:block/common/lamp_green",
-		"loff": "promptcritical:block/common/plant_lamp_off",
-		"pns": "promptcritical:block/common/plant_panel_smooth",
-		"r35": "promptcritical:block/common/grid_ral7035",
-		"swd": "promptcritical:block/switchgear_cell_door"
+		"particle": "promptcritical:block/switchgear_cell/enamel",
+		"switchgear_cell_enamel": "promptcritical:block/switchgear_cell/enamel",
+		"switchgear_cell_relay": "promptcritical:block/switchgear_cell/relay",
+		"material_steel": "promptcritical:block/material/steel",
+		"material_paint_green": "promptcritical:block/material/paint_green",
+		"material_soot": "promptcritical:block/material/soot",
+		"material_gauge_dial": "promptcritical:block/material/gauge_dial",
+		"switchgear_cell_door": "promptcritical:block/switchgear_cell/door",
+		"material_bright_steel": "promptcritical:block/material/bright_steel"
 	},
 	"elements": [
 		{
-			"name": "body",
+			"name": "body_0",
 			"from": [0, 0, 1],
-			"to": [16, 31.5, 16],
+			"to": [16, 16, 16],
 			"rotation": {
 				"angle": 0,
 				"axis": "y",
@@ -24,34 +24,70 @@
 			"faces": {
 				"north": {
 					"uv": [0, 0, 16, 16],
-					"texture": "#r35"
+					"texture": "#switchgear_cell_enamel"
 				},
 				"east": {
 					"uv": [0, 0, 15, 16],
-					"texture": "#r35"
+					"texture": "#switchgear_cell_enamel"
 				},
 				"south": {
 					"uv": [0, 0, 16, 16],
-					"texture": "#r35"
+					"texture": "#switchgear_cell_enamel"
 				},
 				"west": {
-					"uv": [0, 0, 15, 16],
-					"texture": "#r35"
+					"uv": [1, 0, 16, 16],
+					"texture": "#switchgear_cell_enamel"
 				},
 				"up": {
+					"uv": [0, 1, 16, 16],
+					"texture": "#switchgear_cell_enamel"
+				},
+				"down": {
 					"uv": [0, 0, 16, 15],
-					"texture": "#r35"
+					"texture": "#switchgear_cell_enamel"
+				}
+			}
+		},
+		{
+			"name": "body_1",
+			"from": [0, 16, 1],
+			"to": [16, 31.6, 16],
+			"rotation": {
+				"angle": 0,
+				"axis": "y",
+				"origin": [8, 8, 8]
+			},
+			"faces": {
+				"north": {
+					"uv": [0, 0.4, 16, 16],
+					"texture": "#switchgear_cell_enamel"
+				},
+				"east": {
+					"uv": [0, 0.4, 15, 16],
+					"texture": "#switchgear_cell_enamel"
+				},
+				"south": {
+					"uv": [0, 0.4, 16, 16],
+					"texture": "#switchgear_cell_enamel"
+				},
+				"west": {
+					"uv": [1, 0.4, 16, 16],
+					"texture": "#switchgear_cell_enamel"
+				},
+				"up": {
+					"uv": [0, 1, 16, 16],
+					"texture": "#switchgear_cell_enamel"
 				},
 				"down": {
 					"uv": [0, 0, 16, 15],
-					"texture": "#r35"
+					"texture": "#switchgear_cell_enamel"
 				}
 			}
 		},
 		{
-			"name": "relay_compartment",
-			"from": [0.5, 24, 0.5],
-			"to": [15.5, 31.5, 1],
+			"name": "relay_panel",
+			"from": [0.5, 24, 0.6],
+			"to": [15.5, 31.4, 1],
 			"rotation": {
 				"angle": 0,
 				"axis": "y",
@@ -59,106 +95,34 @@
 			},
 			"faces": {
 				"north": {
-					"uv": [0, 0, 15, 7.5],
-					"texture": "#pns"
+					"uv": [0.5, 0.6, 15.5, 8],
+					"texture": "#switchgear_cell_relay"
 				},
 				"east": {
-					"uv": [0, 0, 0.5, 7.5],
-					"texture": "#pns"
+					"uv": [15, 0.6, 15.4, 8],
+					"texture": "#switchgear_cell_relay"
 				},
 				"south": {
-					"uv": [0, 0, 15, 7.5],
-					"texture": "#pns"
+					"uv": [0.5, 0.6, 15.5, 8],
+					"texture": "#switchgear_cell_relay"
 				},
 				"west": {
-					"uv": [0, 0, 0.5, 7.5],
-					"texture": "#pns"
+					"uv": [0.6, 0.6, 1, 8],
+					"texture": "#switchgear_cell_relay"
 				},
 				"up": {
-					"uv": [0, 0, 15, 0.5],
-					"texture": "#pns"
+					"uv": [0.5, 0.6, 15.5, 1],
+					"texture": "#switchgear_cell_relay"
 				},
 				"down": {
-					"uv": [0, 0, 15, 0.5],
-					"texture": "#pns"
-				}
-			}
-		},
-		{
-			"name": "door",
-			"from": [0.5, 1, 0.5],
-			"to": [15.5, 23, 1],
-			"rotation": {
-				"angle": 0,
-				"axis": "y",
-				"origin": [8, 8, 8]
-			},
-			"faces": {
-				"north": {
-					"uv": [0, 0, 16, 16],
-					"texture": "#swd"
-				},
-				"east": {
-					"uv": [0, 0, 0.5, 16],
-					"texture": "#r35"
-				},
-				"south": {
-					"uv": [0, 0, 15, 16],
-					"texture": "#r35"
-				},
-				"west": {
-					"uv": [0, 0, 0.5, 16],
-					"texture": "#r35"
-				},
-				"up": {
-					"uv": [0, 0, 15, 0.5],
-					"texture": "#r35"
-				},
-				"down": {
-					"uv": [0, 0, 15, 0.5],
-					"texture": "#r35"
-				}
-			}
-		},
-		{
-			"name": "handle",
-			"from": [13, 9, -0.5],
-			"to": [14, 14, 0.5],
-			"rotation": {
-				"angle": 0,
-				"axis": "y",
-				"origin": [8, 8, 8]
-			},
-			"faces": {
-				"north": {
-					"uv": [0, 0, 1, 5],
-					"texture": "#d"
-				},
-				"east": {
-					"uv": [0, 0, 1, 5],
-					"texture": "#d"
-				},
-				"south": {
-					"uv": [0, 0, 1, 5],
-					"texture": "#d"
-				},
-				"west": {
-					"uv": [0, 0, 1, 5],
-					"texture": "#d"
-				},
-				"up": {
-					"uv": [0, 0, 1, 1],
-					"texture": "#d"
-				},
-				"down": {
-					"uv": [0, 0, 1, 1],
-					"texture": "#d"
+					"uv": [0.5, 15, 15.5, 15.4],
+					"texture": "#switchgear_cell_relay"
 				}
 			}
 		},
 		{
 			"name": "bushing_box",
-			"from": [3, 31.5, 5],
+			"from": [3, 31.6, 5],
 			"to": [13, 32, 13],
 			"rotation": {
 				"angle": 0,
@@ -167,35 +131,35 @@
 			},
 			"faces": {
 				"north": {
-					"uv": [0, 0, 10, 0.5],
-					"texture": "#dg"
+					"uv": [3, 0, 13, 0.4],
+					"texture": "#switchgear_cell_enamel"
 				},
 				"east": {
-					"uv": [0, 0, 8, 0.5],
-					"texture": "#dg"
+					"uv": [3, 0, 11, 0.4],
+					"texture": "#switchgear_cell_enamel"
 				},
 				"south": {
-					"uv": [0, 0, 10, 0.5],
-					"texture": "#dg"
+					"uv": [3, 0, 13, 0.4],
+					"texture": "#switchgear_cell_enamel"
 				},
 				"west": {
-					"uv": [0, 0, 8, 0.5],
-					"texture": "#dg"
+					"uv": [5, 0, 13, 0.4],
+					"texture": "#switchgear_cell_enamel"
 				},
 				"up": {
-					"uv": [0, 0, 10, 8],
-					"texture": "#dg"
+					"uv": [3, 5, 13, 13],
+					"texture": "#switchgear_cell_enamel"
 				},
 				"down": {
-					"uv": [0, 0, 10, 8],
-					"texture": "#dg"
+					"uv": [3, 3, 13, 11],
+					"texture": "#switchgear_cell_enamel"
 				}
 			}
 		},
 		{
-			"name": "glow_lamp_state",
-			"from": [3.25, 27.25, -0.1],
-			"to": [4.75, 28.75, 0.5],
+			"name": "lamp_state_bezel",
+			"from": [2.5, 27.5, 0.2],
+			"to": [4.3, 29.3, 0.6],
 			"rotation": {
 				"angle": 0,
 				"axis": "y",
@@ -203,28 +167,64 @@
 			},
 			"faces": {
 				"north": {
-					"uv": [0, 0, 1.5, 1.5],
-					"texture": "#lg"
+					"uv": [11.7, 2.7, 13.5, 4.5],
+					"texture": "#material_steel"
 				},
 				"east": {
-					"uv": [0, 0, 0.6, 1.5],
-					"texture": "#lg"
+					"uv": [15.4, 2.7, 15.8, 4.5],
+					"texture": "#material_steel"
 				},
 				"south": {
-					"uv": [0, 0, 1.5, 1.5],
-					"texture": "#lg"
+					"uv": [2.5, 2.7, 4.3, 4.5],
+					"texture": "#material_steel"
 				},
 				"west": {
-					"uv": [0, 0, 0.6, 1.5],
-					"texture": "#lg"
+					"uv": [0.2, 2.7, 0.6, 4.5],
+					"texture": "#material_steel"
 				},
 				"up": {
-					"uv": [0, 0, 1.5, 0.6],
-					"texture": "#lg"
+					"uv": [2.5, 0.2, 4.3, 0.6],
+					"texture": "#material_steel"
 				},
 				"down": {
-					"uv": [0, 0, 1.5, 0.6],
-					"texture": "#lg"
+					"uv": [2.5, 15.4, 4.3, 15.8],
+					"texture": "#material_steel"
+				}
+			}
+		},
+		{
+			"name": "glow_lamp_state",
+			"from": [2.8, 27.8, 0],
+			"to": [4, 29, 0.2],
+			"rotation": {
+				"angle": 0,
+				"axis": "y",
+				"origin": [8, 8, 8]
+			},
+			"faces": {
+				"north": {
+					"uv": [12, 3, 13.2, 4.2],
+					"texture": "#material_paint_green"
+				},
+				"east": {
+					"uv": [15.8, 3, 16, 4.2],
+					"texture": "#material_paint_green"
+				},
+				"south": {
+					"uv": [2.8, 3, 4, 4.2],
+					"texture": "#material_paint_green"
+				},
+				"west": {
+					"uv": [0, 3, 0.2, 4.2],
+					"texture": "#material_paint_green"
+				},
+				"up": {
+					"uv": [2.8, 0, 4, 0.2],
+					"texture": "#material_paint_green"
+				},
+				"down": {
+					"uv": [2.8, 15.8, 4, 16],
+					"texture": "#material_paint_green"
 				}
 			},
 			"neoforge_data": {
@@ -233,9 +233,9 @@
 			}
 		},
 		{
-			"name": "lamp_off",
-			"from": [7.25, 27.25, -0.1],
-			"to": [8.75, 28.75, 0.5],
+			"name": "lamp_spare_bezel",
+			"from": [5.7, 27.5, 0.2],
+			"to": [7.5, 29.3, 0.6],
 			"rotation": {
 				"angle": 0,
 				"axis": "y",
@@ -243,35 +243,71 @@
 			},
 			"faces": {
 				"north": {
-					"uv": [0, 0, 1.5, 1.5],
-					"texture": "#loff"
+					"uv": [8.5, 2.7, 10.3, 4.5],
+					"texture": "#material_steel"
 				},
 				"east": {
-					"uv": [0, 0, 0.6, 1.5],
-					"texture": "#loff"
+					"uv": [15.4, 2.7, 15.8, 4.5],
+					"texture": "#material_steel"
 				},
 				"south": {
-					"uv": [0, 0, 1.5, 1.5],
-					"texture": "#loff"
+					"uv": [5.7, 2.7, 7.5, 4.5],
+					"texture": "#material_steel"
 				},
 				"west": {
-					"uv": [0, 0, 0.6, 1.5],
-					"texture": "#loff"
+					"uv": [0.2, 2.7, 0.6, 4.5],
+					"texture": "#material_steel"
 				},
 				"up": {
-					"uv": [0, 0, 1.5, 0.6],
-					"texture": "#loff"
+					"uv": [5.7, 0.2, 7.5, 0.6],
+					"texture": "#material_steel"
 				},
 				"down": {
-					"uv": [0, 0, 1.5, 0.6],
-					"texture": "#loff"
+					"uv": [5.7, 15.4, 7.5, 15.8],
+					"texture": "#material_steel"
+				}
+			}
+		},
+		{
+			"name": "lamp_spare",
+			"from": [6, 27.8, 0],
+			"to": [7.2, 29, 0.2],
+			"rotation": {
+				"angle": 0,
+				"axis": "y",
+				"origin": [8, 8, 8]
+			},
+			"faces": {
+				"north": {
+					"uv": [8.8, 3, 10, 4.2],
+					"texture": "#material_soot"
+				},
+				"east": {
+					"uv": [15.8, 3, 16, 4.2],
+					"texture": "#material_soot"
+				},
+				"south": {
+					"uv": [6, 3, 7.2, 4.2],
+					"texture": "#material_soot"
+				},
+				"west": {
+					"uv": [0, 3, 0.2, 4.2],
+					"texture": "#material_soot"
+				},
+				"up": {
+					"uv": [6, 0, 7.2, 0.2],
+					"texture": "#material_soot"
+				},
+				"down": {
+					"uv": [6, 15.8, 7.2, 16],
+					"texture": "#material_soot"
 				}
 			}
 		},
 		{
 			"name": "ammeter",
-			"from": [10.5, 26.5, 0],
-			"to": [13.5, 29.5, 0.5],
+			"from": [10, 26.4, 0.4],
+			"to": [14, 30.4, 0.6],
 			"rotation": {
 				"angle": 0,
 				"axis": "y",
@@ -280,27 +316,199 @@
 			"faces": {
 				"north": {
 					"uv": [0, 0, 16, 16],
-					"texture": "#dial"
+					"texture": "#material_gauge_dial"
 				},
 				"east": {
-					"uv": [0, 0, 0.5, 3],
-					"texture": "#dial"
-				},
-				"south": {
-					"uv": [0, 0, 3, 3],
-					"texture": "#dial"
+					"uv": [15.4, 1.6, 15.6, 5.6],
+					"texture": "#switchgear_cell_relay"
 				},
 				"west": {
-					"uv": [0, 0, 0.5, 3],
-					"texture": "#dial"
+					"uv": [0.4, 1.6, 0.6, 5.6],
+					"texture": "#switchgear_cell_relay"
 				},
 				"up": {
-					"uv": [0, 0, 3, 0.5],
-					"texture": "#dial"
+					"uv": [10, 0.4, 14, 0.6],
+					"texture": "#switchgear_cell_relay"
 				},
 				"down": {
-					"uv": [0, 0, 3, 0.5],
-					"texture": "#dial"
+					"uv": [10, 15.4, 14, 15.6],
+					"texture": "#switchgear_cell_relay"
+				}
+			}
+		},
+		{
+			"name": "key_switch",
+			"from": [7.8, 25, 0.2],
+			"to": [9, 26.2, 0.6],
+			"rotation": {
+				"angle": 0,
+				"axis": "y",
+				"origin": [8, 8, 8]
+			},
+			"faces": {
+				"north": {
+					"uv": [7, 5.8, 8.2, 7],
+					"texture": "#material_steel"
+				},
+				"east": {
+					"uv": [15.4, 5.8, 15.8, 7],
+					"texture": "#material_steel"
+				},
+				"south": {
+					"uv": [7.8, 5.8, 9, 7],
+					"texture": "#material_steel"
+				},
+				"west": {
+					"uv": [0.2, 5.8, 0.6, 7],
+					"texture": "#material_steel"
+				},
+				"up": {
+					"uv": [7.8, 0.2, 9, 0.6],
+					"texture": "#material_steel"
+				},
+				"down": {
+					"uv": [7.8, 15.4, 9, 15.8],
+					"texture": "#material_steel"
+				}
+			}
+		},
+		{
+			"name": "door",
+			"from": [0.5, 1, 0.5],
+			"to": [15.5, 23.4, 0.6],
+			"rotation": {
+				"angle": 0,
+				"axis": "y",
+				"origin": [8, 8, 8]
+			},
+			"faces": {
+				"north": {
+					"uv": [0, 0, 16, 16],
+					"texture": "#switchgear_cell_door"
+				},
+				"east": {
+					"uv": [15.4, 0, 15.5, 15],
+					"texture": "#switchgear_cell_enamel"
+				},
+				"west": {
+					"uv": [0.5, 0, 0.6, 15],
+					"texture": "#switchgear_cell_enamel"
+				},
+				"up": {
+					"uv": [0.5, 0.5, 15.5, 0.6],
+					"texture": "#switchgear_cell_enamel"
+				},
+				"down": {
+					"uv": [0.5, 15.4, 15.5, 15.5],
+					"texture": "#switchgear_cell_enamel"
+				}
+			}
+		},
+		{
+			"name": "handle",
+			"from": [12.8, 9, -0.4],
+			"to": [13.8, 14, 0.5],
+			"rotation": {
+				"angle": 0,
+				"axis": "y",
+				"origin": [8, 8, 8]
+			},
+			"faces": {
+				"north": {
+					"uv": [2.2, 2, 3.2, 7],
+					"texture": "#material_bright_steel"
+				},
+				"east": {
+					"uv": [15.5, 2, 16, 7],
+					"texture": "#material_bright_steel"
+				},
+				"south": {
+					"uv": [12.8, 2, 13.8, 7],
+					"texture": "#material_bright_steel"
+				},
+				"west": {
+					"uv": [0, 2, 0.5, 7],
+					"texture": "#material_bright_steel"
+				},
+				"up": {
+					"uv": [12.8, 0, 13.8, 0.5],
+					"texture": "#material_bright_steel"
+				},
+				"down": {
+					"uv": [12.8, 15.5, 13.8, 16],
+					"texture": "#material_bright_steel"
+				}
+			}
+		},
+		{
+			"name": "hinge_3",
+			"from": [0, 3, 0.2],
+			"to": [0.6, 4.6, 0.8],
+			"rotation": {
+				"angle": 0,
+				"axis": "y",
+				"origin": [8, 8, 8]
+			},
+			"faces": {
+				"north": {
+					"uv": [15.4, 11.4, 16, 13],
+					"texture": "#material_steel"
+				},
+				"east": {
+					"uv": [15.2, 11.4, 15.8, 13],
+					"texture": "#material_steel"
+				},
+				"south": {
+					"uv": [0, 11.4, 0.6, 13],
+					"texture": "#material_steel"
+				},
+				"west": {
+					"uv": [0.2, 11.4, 0.8, 13],
+					"texture": "#material_steel"
+				},
+				"up": {
+					"uv": [0, 0.2, 0.6, 0.8],
+					"texture": "#material_steel"
+				},
+				"down": {
+					"uv": [0, 15.2, 0.6, 15.8],
+					"texture": "#material_steel"
+				}
+			}
+		},
+		{
+			"name": "hinge_19",
+			"from": [0, 19, 0.2],
+			"to": [0.6, 20.6, 0.8],
+			"rotation": {
+				"angle": 0,
+				"axis": "y",
+				"origin": [8, 8, 8]
+			},
+			"faces": {
+				"north": {
+					"uv": [15.4, 11.4, 16, 13],
+					"texture": "#material_steel"
+				},
+				"east": {
+					"uv": [15.2, 11.4, 15.8, 13],
+					"texture": "#material_steel"
+				},
+				"south": {
+					"uv": [0, 11.4, 0.6, 13],
+					"texture": "#material_steel"
+				},
+				"west": {
+					"uv": [0.2, 11.4, 0.8, 13],
+					"texture": "#material_steel"
+				},
+				"up": {
+					"uv": [0, 0.2, 0.6, 0.8],
+					"texture": "#material_steel"
+				},
+				"down": {
+					"uv": [0, 15.2, 0.6, 15.8],
+					"texture": "#material_steel"
 				}
 			}
 		}
