@@ -90,4 +90,25 @@ public final class TelemetryGameTests {
                 })
                 .thenSucceed();
     }
+
+    /** Историан (03d §3d.9.5) рядом со шлюзом сам архивирует его аналоговые точки как теги «машина/точка». */
+    @GameTest(template = LARGE, timeoutTicks = 400)
+    public static void historianArchivesTheGatewaysAnalogPoints(GameTestHelper h) {
+        var facing = BlockStateProperties.HORIZONTAL_FACING;
+        BlockPos hist = new BlockPos(9, 2, 7);
+        h.setBlock(COLUMN, PcBlocks.CRUDE_COLUMN.get().defaultBlockState().setValue(facing, Direction.NORTH));
+        h.setBlock(RTU, PcBlocks.RTU_STATION.get().defaultBlockState().setValue(facing, Direction.NORTH));
+        h.setBlock(hist, PcBlocks.HISTORIAN_SERVER.get().defaultBlockState().setValue(facing, Direction.NORTH));
+        String tag = TelemetryGatewayBlockEntity.id("crude_column", h.absolutePos(COLUMN)) + "/prod.outlet";
+        h.startSequence()
+                .thenWaitUntil(() -> {
+                    var server = (dev.denfry.promptcritical.mod.scada.HistorianBlockEntity) h.getBlockEntity(hist);
+                    var a = server.archive(tag);
+                    h.assertTrue(a != null && a.size() >= 1, "tag archived: " + server.listTags());
+                    h.assertTrue(Math.abs(a.valueAt(a.lastT()) - 360) < 1, "outlet 360 C in the archive");
+                    h.assertTrue(((Number) server.stats().get("tags")).intValue() > 1, "several points of the column archived");
+                })
+                .thenSucceed();
+    }
+
 }

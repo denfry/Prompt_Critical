@@ -17,6 +17,9 @@ public final class ScadaBlockEntities {
     public static final DeferredRegister<BlockEntityType<?>> BLOCK_ENTITIES =
             DeferredRegister.create(Registries.BLOCK_ENTITY_TYPE, PromptCritical.MOD_ID);
 
+    public static final DeferredHolder<BlockEntityType<?>, BlockEntityType<HistorianBlockEntity>> HISTORIAN =
+            BLOCK_ENTITIES.register("historian_server",
+                    () -> BlockEntityType.Builder.of(HistorianBlockEntity::new, PcBlocks.HISTORIAN_SERVER.get()).build(null));
     public static final DeferredHolder<BlockEntityType<?>, BlockEntityType<TelemetryGatewayBlockEntity>> TELEMETRY_GATEWAY =
             BLOCK_ENTITIES.register("rtu_station",
                     () -> BlockEntityType.Builder.of(TelemetryGatewayBlockEntity::new, PcBlocks.RTU_STATION.get()).build(null));

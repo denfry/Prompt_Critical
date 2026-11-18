@@ -25,3 +25,8 @@ With CC: Tweaked, a computer attached to the server sees the **pc_mes** peripher
 ## Closed loop
 
 The "Closed loop" button (or `mes.setAuto(true)` in Lua) turns the server from an adviser into a controller. Every cycle it compares each unit's output with its economic dispatch setpoint. If a unit is off by more than 5 % of its rating, the server sends a "raise" or "lower" pulse to its panel through the RTU: the trim of a shaft generator, the setpoint of a diesel generator or the set point of a pumped-storage unit. This is how secondary control from a dispatch desk works. A unit without such buttons stays under manual control.
+
+
+## Historian
+
+The [historian server](item:promptcritical:historian_server) polls the telemetry gateways within 16 blocks once a second by itself and archives each of their analog measurements as a "machine/point" tag. No Lua tokens are spent on it. The archive is compressed: values that have barely changed are dropped, and of the rest only the bends of the trend are kept (the swinging door algorithm). The restored curve stays within about a quarter of a percent of the value. Process trends compress tens of times this way. The panel shows the number of tags and the compression, and for the selected tag the current value and the hour's average, minimum and maximum. Through the `pc_historian` peripheral a CC: Tweaked computer gets `listTags()`, `query(tag, t0, t1)`, `interpolate(tag, t0, t1, step)`, `aggregate(tag, t0, t1, "avg"|"min"|"max"|"count"|"integral"|"stdev")` and `getStats()`. Times are in seconds; the current one is `getStats().now`.

@@ -15,6 +15,7 @@ public final class CcIntegration {
     }
 
     private static void capabilities(RegisterCapabilitiesEvent event) {
+        event.registerBlockEntity(PeripheralCapability.get(), ScadaBlockEntities.HISTORIAN.get(), (be, side) -> new HistorianPeripheral(be));
         event.registerBlockEntity(PeripheralCapability.get(), ScadaBlockEntities.TELEMETRY_GATEWAY.get(),
                 (be, side) -> new RtuPeripheral(be));
         event.registerBlockEntity(PeripheralCapability.get(),

@@ -525,6 +525,10 @@ public final class PcBlocks {
             Spec.facing().footprint(FP_CUBE3), FoundryBlock.with(dev.denfry.promptcritical.mod.gas.NglFractionatorBlockEntity::new));
 
     // --- телемеханика A4: шлюз (КП) для диспетчерского компьютера CC: Tweaked ---
+    /** Историан 03d §3d.9.5: стойка 1×2×1, CC-периферия {@code pc_historian}. */
+    public static final DeferredBlock<PcDeviceBlock> HISTORIAN_SERVER = device("historian_server", machine(),
+            Spec.facing(BlockStateProperties.LIT).footprint(FP_TALL2),
+            FoundryBlock.with(dev.denfry.promptcritical.mod.scada.HistorianBlockEntity::new));
     public static final DeferredBlock<PcDeviceBlock> RTU_STATION = device("rtu_station", machine(),
             Spec.facing(BlockStateProperties.LIT).footprint(FP_TALL2),
             FoundryBlock.with(dev.denfry.promptcritical.mod.scada.TelemetryGatewayBlockEntity::new));

@@ -326,6 +326,7 @@ public final class PcLanguageProvider extends LanguageProvider {
         b("low_temperature_separator", "Low-Temperature Separation Unit", "Установка НТС");
         b("ngl_fractionator", "NGL Fractionation Unit", "Газофракционирующая установка");
         b("rtu_station", "Telemetry Gateway (RTU)", "Шлюз телемеханики (КП)");
+        b("historian_server", "Historian Server", "Сервер историана");
         b("mes_server", "Plant Server (MES)", "Сервер завода (MES)");
         b("pyrolysis_furnace", "Pyrolysis Furnace", "Печь пиролиза");
         b("cracked_gas_unit", "Cracked Gas Separation Unit", "Установка газоразделения пирогаза");
