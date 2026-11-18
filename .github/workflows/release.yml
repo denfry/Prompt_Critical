@@ -1,0 +1,48 @@
+name: release
+
+# Выпуск по тегу v* (например v1.0.0-rc.1): те же проверки, что в build, затем GitHub Release с jar мода.
+# Тег с дефисом (rc, beta) публикуется как pre-release.
+on:
+  push:
+    tags: ['v*']
+
+permissions:
+  contents: write
+
+jobs:
+  release:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-java@v4
+        with:
+          distribution: temurin
+          java-version: 21
+
+      - uses: gradle/actions/setup-gradle@v4
+
+      - name: Version matches the tag
+        run: |
+          v=$(grep '^mod_version=' gradle.properties | cut -d= -f2)
+          test "v$v" = "$GITHUB_REF_NAME" || { echo "gradle.properties mod_version=$v, tag $GITHUB_REF_NAME"; exit 1; }
+
+      - name: Build and unit tests
+        run: ./gradlew build --console=plain
+
+      - name: GameTest
+        run: ./gradlew :pc-mod:runGameTestServer --console=plain
+
+      - name: Release notes from CHANGELOG.md
+        run: |
+          v=${GITHUB_REF_NAME#v}
+          awk -v v="$v" '$0 ~ "^## " v {p=1; next} /^## / && p {exit} p' CHANGELOG.md > notes.md
+          test -s notes.md || echo "See CHANGELOG.md" > notes.md
+
+      - name: GitHub Release
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: |
+          pre=""
+          case "$GITHUB_REF_NAME" in *-*) pre="--prerelease" ;; esac
+          gh release create "$GITHUB_REF_NAME" pc-mod/build/libs/*.jar --title "Prompt Critical $GITHUB_REF_NAME" --notes-file notes.md $pre
