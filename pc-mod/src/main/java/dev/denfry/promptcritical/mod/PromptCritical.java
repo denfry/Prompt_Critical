@@ -81,6 +81,7 @@ public final class PromptCritical {
         dev.denfry.promptcritical.mod.nuclear.FuelLot.register(modBus);
         dev.denfry.promptcritical.mod.npp.NppBlockEntities.register(modBus);
         dev.denfry.promptcritical.mod.isotopes.IsotopeBlockEntities.register(modBus);
+        dev.denfry.promptcritical.mod.market.MarketBlockEntities.register(modBus);
         SimBindings.registerSubsystem(level -> new MineSubsystem(
                 SimConfigs.fromServerConfig().section(MiningConfig.class, MiningConfig.defaults()),
                 SimConfigs.fromServerConfig().section(DrainageConfig.class, DrainageConfig.defaults())));

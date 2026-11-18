@@ -340,6 +340,9 @@ public final class PcBlocks {
     public static final DeferredBlock<PcDeviceBlock> RTG_THERMOELECTRIC = device("rtg_thermoelectric", machine(),
             Spec.of(net.minecraft.world.level.block.state.properties.BlockStateProperties.LIT),
             dev.denfry.promptcritical.mod.foundry.FoundryBlock.with(dev.denfry.promptcritical.mod.isotopes.RtgBlockEntity::new));
+    // --- биржа (14 §14.6): терминал продажи товара NPC-рынку ---
+    public static final DeferredBlock<PcDeviceBlock> MARKET_TERMINAL = device("market_terminal", instrument(), Spec.facing(),
+            dev.denfry.promptcritical.mod.foundry.FoundryBlock.with(dev.denfry.promptcritical.mod.market.MarketTerminalBlockEntity::new));
     public static final DeferredBlock<PcBlock> CONTROL_ROD_DRIVE = block("control_rod_drive", machine(), Spec.facing());
     public static final DeferredBlock<PcBlock> ZIP_ROD_WINCH = block("zip_rod_winch", machine(), Spec.facing());
     public static final DeferredBlock<PcBlock> NEUTRON_DETECTOR = block("neutron_detector", instrument(), Spec.facing());

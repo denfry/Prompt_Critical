@@ -329,6 +329,7 @@ public final class PcLanguageProvider extends LanguageProvider {
         b("electrostatic_precipitator", "Electrostatic Precipitator", "Электрофильтр");
         b("fgd_absorber", "Limestone Flue Gas Desulfurisation Absorber", "Абсорбер мокрой известняковой сероочистки");
         b("cems_analyzer", "Continuous Emission Monitoring Analyzer", "Анализатор САКВ");
+        b("market_terminal", "Exchange Terminal", "Биржевой терминал");
         i("cobalt_ingot", "Cobalt Ingot", "Слиток кобальта");
         i("iridium_ingot", "Iridium Ingot", "Слиток иридия");
         i("npo2_powder", "Neptunium Dioxide (Np-237)", "Диоксид нептуния (Np-237)");
@@ -725,6 +726,7 @@ public final class PcLanguageProvider extends LanguageProvider {
         MISC.putAll(dev.denfry.promptcritical.mod.npp.NppText.lang());
         MISC.putAll(dev.denfry.promptcritical.mod.isotopes.IsotopeText.lang());
         MISC.putAll(dev.denfry.promptcritical.mod.environment.AirQualityService.lang());
+        MISC.putAll(dev.denfry.promptcritical.mod.market.MarketText.lang());
         MISC.putAll(dev.denfry.promptcritical.mod.chlor.ChlorText.lang());
         MISC.putAll(dev.denfry.promptcritical.mod.environment.ToxicReleaseService.lang());
         MISC.putAll(dev.denfry.promptcritical.mod.environment.RadiationService.lang());
