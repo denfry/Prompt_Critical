@@ -326,6 +326,10 @@ public final class PcLanguageProvider extends LanguageProvider {
         b("drawworks", "Drawworks", "Буровая лебёдка");
         b("derrick_segment", "Derrick Section", "Секция вышки");
         b("bop_annular", "Annular Preventer", "Кольцевой превентор");
+        b("bop_ram", "Ram Preventer", "Плашечный превентор");
+        b("logging_unit", "Logging Unit", "Каротажный подъёмник");
+        b("core_analysis_station", "Core Analysis Station", "Станция анализа керна");
+        b("bop_accumulator", "BOP Accumulator Unit", "Аккумуляторная установка ПВО");
         b("choke_manifold", "Choke Manifold", "Манифольд дросселирования");
         b("mud_tank", "Mud Tank", "Ёмкость бурового раствора");
         b("mud_mixing_hopper", "Mud Mixing Hopper", "Гидроворонка");
@@ -480,6 +484,14 @@ public final class PcLanguageProvider extends LanguageProvider {
         b("column_tray_section", "Column Tray Section", "Тарельчатая секция колонны");
         b("column_top", "Column Top", "Верх колонны");
         i("seismic_charge", "Seismic Charge", "Сейсмический заряд");
+        i("sucker_rod", "Sucker Rod", "Насосная штанга");
+        i("downhole_rod_pump", "Downhole Rod Pump", "Штанговый глубинный насос");
+        i("gas_lift_valve", "Gas Lift Valve", "Газлифтный клапан");
+        i("gamma_logging_sonde", "Gamma Ray Sonde", "Зонд гамма-каротажа");
+        i("neutron_logging_sonde", "Neutron Sonde (Am-Be)", "Зонд нейтронного каротажа (Am-Be)");
+        i("resistivity_logging_sonde", "Resistivity Sonde", "Зонд электрокаротажа");
+        i("core_barrel", "Core Barrel", "Керноотборник");
+        i("reservoir_core", "Reservoir Core", "Керн");
         i("seismic_section", "Seismic Section", "Сейсмический разрез");
         i("copper_wire", "Copper Wire", "Медная проволока");
         i("generator_coupling", "Shear-Pin Coupling", "Муфта со срезным штифтом");
@@ -661,6 +673,7 @@ public final class PcLanguageProvider extends LanguageProvider {
         FLUIDS.put("concentrated_nitric_acid", new String[] {"Concentrated Nitric Acid (98 %)", "Концентрированная азотная кислота 98 %"});
         FLUIDS.put("helium", new String[] {"Helium", "Гелий"});
         FLUIDS.put("produced_water", new String[] {"Produced Water", "Пластовая вода"});
+        FLUIDS.put("injection_water", new String[] {"Injection Water", "Вода для ППД"});
         FLUIDS.put("associated_gas", new String[] {"Associated Gas", "Попутный нефтяной газ"});
         FLUIDS.put("gasoline", new String[] {"Straight-Run Gasoline", "Прямогонный бензин"});
         FLUIDS.put("kerosene", new String[] {"Kerosene", "Керосин"});

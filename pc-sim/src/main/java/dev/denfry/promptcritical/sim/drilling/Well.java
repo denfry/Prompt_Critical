@@ -33,6 +33,13 @@ import java.util.List;
  * 34,5 МПа (5000 psi, API 16A) или выход пластового флюида на устье при открытом превенторе и продолжающемся
  * притоке — открытый фонтан; дальше скважина только фонтанирует.
  *
+ * <p><b>Поглощение</b> (09 §9.5.10): когда давление на забое выше давления гидроразрыва открытого ствола (та же
+ * эквивалентная плотность, что у башмака, на глубине забоя), раствор уходит в пласт со дна затрубья
+ * q = C·(p_заб − p_грп), C = {@link #LOSS_COEFF_M3_S_PA}; наполнитель в растворе (тег
+ * {@code c:loss_circulation_material}) снижает C как 1/(1 + c/{@link #LCM_HALF_KGM3}). Ствол доливается из ёмкостей,
+ * поэтому поглощение видно по падению выхода и уровня в ёмкостях [допущение: одна вскрытая залежь, перетока
+ * «поглощение внизу — приток вверху» нет; трещиноватые известняки в разрезе не встречаются].
+ *
  * <p>Модель не описывает спуско-подъёмные операции, износ долота, искривление ствола и многофазное скольжение при
  * циркуляции; при доливе раствор в ёмкостях готовится той же плотности без учёта материалов [допущение].
  */
@@ -58,6 +65,10 @@ public final class Well {
     public static final double PUMP_EFFICIENCY = 0.85;
     /** Долив ёмкостей: ниже этой доли объёма — до второй; рабочий уровень оставляет запас под приток. */
     public static final double MAKEUP_BELOW = 0.4, MAKEUP_TO = 0.6;
+    /** Коэффициент поглощения, м³/(с·Па): 10 л/с на 1 МПа сверх давления гидроразрыва [BALANCE]. */
+    public static final double LOSS_COEFF_M3_S_PA = 1.0e-8;
+    /** Концентрация наполнителя, вдвое снижающая поглощение, кг/м³ [BALANCE: кольматирующая пачка 40–90 кг/м³]. */
+    public static final double LCM_HALF_KGM3 = 30;
     private static final double EPS = 1e-9, MERGE_KGM3 = 0.5;
     private static final double PS_MAX = 2.0e8;
 
@@ -91,6 +102,8 @@ public final class Well {
     private double pitM3, pitKgM3, pitCapacityM3, pitReferenceM3;
     private boolean bopClosed, blowout, bopFailed, shoeFractured, divertReturns;
     private double reserveM3;
+    private double pitLcmKgM3, lossM3s, stepLossM3;
+    private double bopRatedPa = BOP_RATED_PA;
     private double casingPa, heldCasingPa = Double.NaN, dppTargetPa = Double.NaN;
 
     // результаты шага
@@ -181,10 +194,11 @@ public final class Well {
         if (!(dt > 0)) return;
         int n = (int) Math.ceil(dt / MAX_SUBSTEP_S);
         double h = dt / n;
-        stepOutLiquidM3 = stepGasOutMol = 0;
+        stepOutLiquidM3 = stepGasOutMol = stepLossM3 = 0;
         stepInfluxAtSurface = false;
         for (int i = 0; i < n; i++) substep(h, Math.max(0, pumpM3s), Math.max(0, rotaryRpm), Math.max(0, wobSetN));
         flowOutM3s = stepOutLiquidM3 / dt;
+        lossM3s = stepLossM3 / dt;
         gasOutMolS = stepGasOutMol / dt;
         outputs(blowout ? 0 : pumpM3s);
     }
@@ -216,6 +230,7 @@ public final class Well {
         }
         influxM3s = v / dt;
         if (v > 0) addInflux(v, bhp);
+        lose(dt, bhp);
         if (q <= 0) migrate(dt);
         reconcile(dt, q);
         if (blowout) return;
@@ -303,6 +318,75 @@ public final class Well {
         }
     }
 
+    /** Поглощение в открытый ствол у забоя при давлении выше давления гидроразрыва. */
+    private void lose(double dt, double bhp) {
+        double excess = bhp - openHoleFracturePa();
+        if (excess <= 0 || annulus.isEmpty()) return;
+        double v = lossCoefficient() * excess * dt;
+        Slug bottom = annulus.getFirst();
+        if (bottom.kind != Kind.MUD) return;
+        v = Math.min(v, bottom.amount - EPS);
+        if (v <= 0) return;
+        bottom.amount -= v;
+        lostM3 += v;
+        stepLossM3 += v;
+    }
+
+    /** Давление гидроразрыва открытого ствола у забоя, Па. */
+    public double openHoleFracturePa() {
+        return geo.shoeFractureKgM3() * G * holeDepthM;
+    }
+
+    /** Коэффициент поглощения с учётом наполнителя в растворе, м³/(с·Па). */
+    public double lossCoefficient() {
+        return LOSS_COEFF_M3_S_PA / (1 + pitLcmKgM3 / LCM_HALF_KGM3);
+    }
+
+    /** Ввести наполнитель поглощения в ёмкости, кг (объём не учитывается). */
+    public void addLcm(double kg) {
+        if (kg <= 0 || pitM3 <= 0) return;
+        pitLcmKgM3 += kg / pitM3;
+    }
+
+    public double pitLcmKgM3() {
+        return pitLcmKgM3;
+    }
+
+    public void setPitLcmKgM3(double c) {
+        pitLcmKgM3 = Math.max(0, c);
+    }
+
+    /** Поглощение за последний шаг, м³/с. */
+    public double lossM3s() {
+        return lossM3s;
+    }
+
+    /**
+     * Репрессия на вскрытый пласт: давление в стволе против середины вскрытого интервала минус пластовое, Па; 0 —
+     * пласт не вскрыт.
+     */
+    public double overbalancePa() {
+        double pp = porePressurePa();
+        return Double.isNaN(pp) || blowout ? 0 : pwfAtPay(bhpPa) - pp;
+    }
+
+    /** Длина УБТ против вскрытого коллектора, м (долото на забое). */
+    public double collarsAcrossPayM() {
+        return Math.min(exposedPayM(), bhaInHoleM());
+    }
+
+    /**
+     * Давление удержания закрытого превентора, Па: стек задаёт по самому прочному загерметизировавшему элементу
+     * (09 §9.5.7, износ уплотнителя кольцевого).
+     */
+    public void setBopRatedPa(double pa) {
+        bopRatedPa = Math.max(0, pa);
+    }
+
+    public double bopRatedPa() {
+        return bopRatedPa;
+    }
+
     // --- давление и объём ---
 
     /** Проход сверху вниз при давлении на устье {@code ps}: объём содержимого, давление внизу, у башмака. */
@@ -369,7 +453,7 @@ public final class Well {
             if (ex <= 1e-7) break;
             popTop(ex, ps, false);
         }
-        if (casingPa > BOP_RATED_PA) {
+        if (casingPa > bopRatedPa) {
             bopFailed = true;
             blowout = true;
             bopClosed = false;
@@ -456,6 +540,7 @@ public final class Well {
     private void pits() {
         if (pitM3 < MAKEUP_BELOW * pitCapacityM3) {
             double add = MAKEUP_TO * pitCapacityM3 - pitM3;
+            pitLcmKgM3 *= pitM3 / (pitM3 + add);
             pitM3 += add;
             pitReferenceM3 += add;
             madeUpM3 += add;

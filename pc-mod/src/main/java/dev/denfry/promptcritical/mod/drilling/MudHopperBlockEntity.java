@@ -18,10 +18,12 @@ import org.jetbrains.annotations.Nullable;
 
 /**
  * Гидроворонка: через неё в раствор рабочих ёмкостей засыпают барит. Каждый мешок — {@link #SACK_KG} кг (мешки
- * 50 кг, API 13A); воронка передаёт его пульту бурильщика ближайшей буровой.
+ * 50 кг, API 13A) и наполнитель поглощения; воронка передаёт их пульту бурильщика ближайшей буровой.
  */
 public final class MudHopperBlockEntity extends DeviceBlockEntity implements FoundryDevice {
     public static final double SACK_KG = 50;
+    /** Наполнитель поглощения (тег {@code c:loss_circulation_material}, 09 §9.5.10): предмет — 10 кг [допущение]. */
+    public static final double LCM_KG = 10;
 
     public MudHopperBlockEntity(BlockPos pos, BlockState state) {
         super(DrillingBlockEntities.MUD_MIXING_HOPPER.get(), pos, state);
@@ -39,7 +41,7 @@ public final class MudHopperBlockEntity extends DeviceBlockEntity implements Fou
 
     @Override
     public boolean accepts(ItemStack stack) {
-        return stack.is(PcItems.BARITE_POWDER.get());
+        return stack.is(PcItems.BARITE_POWDER.get()) || stack.is(dev.denfry.promptcritical.mod.registry.PcTags.Items.LOSS_CIRCULATION_MATERIAL);
     }
 
     @Override
@@ -51,7 +53,8 @@ public final class MudHopperBlockEntity extends DeviceBlockEntity implements Fou
             return ItemInteractionResult.CONSUME;
         }
         int n = stack.getCount();
-        console.addBarite(n * SACK_KG, player);
+        if (stack.is(PcItems.BARITE_POWDER.get())) console.addBarite(n * SACK_KG, player);
+        else console.addLcm(n * LCM_KG, player);
         if (!player.getAbilities().instabuild) stack.shrink(n);
         level.playSound(null, worldPosition, SoundEvents.SAND_PLACE, SoundSource.BLOCKS, 1.0f, 0.8f);
         return ItemInteractionResult.SUCCESS;

@@ -146,18 +146,50 @@ public final class DeviceProfiles {
         String simple = be.getClass().getSimpleName();
         return switch (simple) {
             case "MudPumpBlockEntity" -> CACHE.computeIfAbsent(simple, k -> panelPump("MUD").also("pc_drilling").build());
+            case "LoggingUnitBlockEntity" -> CACHE.computeIfAbsent(simple, k -> DeviceProfile.builder("pc_drilling", "LOGGING")
+                    .also("pc_logging").button("startLog", DrillingPanels.LB_LOG)
+                    .read("getLogCurve", 32, (b, s, a) -> logCurve((dev.denfry.promptcritical.mod.drilling.LoggingUnitBlockEntity) b, a)).build());
             case "MineDrainagePumpBlockEntity" -> CACHE.computeIfAbsent(simple, k -> panelPump("MINE_DRAINAGE").also("pc_mine").build());
             case "DegasificationPumpBlockEntity" -> CACHE.computeIfAbsent(simple, k -> panelPump("DEGASIFICATION").also("pc_mine").build());
             case "WellheadBlockEntity" -> CACHE.computeIfAbsent(simple, k -> DeviceProfile.builder("pc_well", "FLOWING")
                     .button("chokeDown", ProductionPanels.WB_CHOKE_DOWN).button("chokeUp", ProductionPanels.WB_CHOKE_UP)
-                    .button("toggleMasterValve", ProductionPanels.WB_VALVE).build());
+                    .button("toggleMasterValve", ProductionPanels.WB_VALVE)
+                    .button("counterbalanceDown", ProductionPanels.WB_CB_DOWN).button("counterbalanceUp", ProductionPanels.WB_CB_UP)
+                    .button("acousticFluidLevel", ProductionPanels.WB_ECHO)
+                    .button("toggleInjection", ProductionPanels.WB_INJECT)
+                    .button("injectionPressureDown", ProductionPanels.WB_INJ_DOWN).button("injectionPressureUp", ProductionPanels.WB_INJ_UP)
+                    .command("setGasLiftRate", a -> {
+                        double kgS = LuaArgs.finite(a, 0);
+                        if (kgS < 0) throw new DeviceException(DeviceException.RANGE, "gas lift rate must be >= 0 kg/s");
+                        // 09 §9.13.1: кг/с → нм³/с по плотности газа при нормальных условиях
+                        double std = kgS / dev.denfry.promptcritical.sim.drilling.NaturalGas.densityKgM3(
+                                dev.denfry.promptcritical.sim.drilling.NaturalGas.STD_PRESSURE_PA,
+                                dev.denfry.promptcritical.sim.drilling.NaturalGas.STD_TEMPERATURE_K);
+                        return t -> ((dev.denfry.promptcritical.mod.production.WellheadBlockEntity) t).setGasLiftStdM3s(std);
+                    })
+                    .read("getCompletion", 4, (b, s, a) -> completion((dev.denfry.promptcritical.mod.production.WellheadBlockEntity) b))
+                    .read("getDynamometerCard", 32, (b, s, a) -> dynoCard((dev.denfry.promptcritical.mod.production.WellheadBlockEntity) b))
+                    .read("getMotor", 4, (b, s, a) -> rodPumpMotor((dev.denfry.promptcritical.mod.production.WellheadBlockEntity) b))
+                    .probe(WellEvents::new).build());
             case "PumpjackBlockEntity" -> CACHE.computeIfAbsent(simple, k -> DeviceProfile.builder("pc_well", "ROD_PUMP")
+                    .also("pc_well_rodpump")
+                    .read("getDynamometerCard", 32, (b, s, a) -> dynoCard(pumpjackWell(b)))
+                    .read("getMotor", 4, (b, s, a) -> rodPumpMotor(pumpjackWell(b)))
                     .probe(() -> lampState("running", "pc_pump_state")).build());
             case "DrillersConsoleBlockEntity" -> CACHE.computeIfAbsent(simple, k -> DeviceProfile.builder("pc_drilling", "CONSOLE")
                     .button("wobDown", DrillingPanels.B_WOB_DOWN).button("wobUp", DrillingPanels.B_WOB_UP)
                     .button("spmDown", DrillingPanels.B_SPM_DOWN).button("spmUp", DrillingPanels.B_SPM_UP)
                     .button("toggleBop", DrillingPanels.B_BOP).button("advanceKill", DrillingPanels.B_KILL)
-                    .button("zeroPitTotalizer", DrillingPanels.B_ZERO).build());
+                    .button("zeroPitTotalizer", DrillingPanels.B_ZERO).button("workPipe", DrillingPanels.B_WORK)
+                    .read("getBop", 4, DeviceProfiles::bopState)
+                    .command("closeBop", a -> {
+                        var comp = bopComponent(a);
+                        return t -> ((dev.denfry.promptcritical.mod.drilling.DrillersConsoleBlockEntity) t).closeComponent(comp, null);
+                    })
+                    .command("openBop", a -> {
+                        var comp = bopComponent(a);
+                        return t -> ((dev.denfry.promptcritical.mod.drilling.DrillersConsoleBlockEntity) t).openComponent(comp, null);
+                    }).build());
             case "GasolineBlenderBlockEntity" -> CACHE.computeIfAbsent(simple, k -> blender());
             default -> {
                 String type = GENERIC.getOrDefault(simple, "pc_device");
@@ -188,6 +220,152 @@ public final class DeviceProfiles {
                 })
                 .button("toggleGrade", dev.denfry.promptcritical.mod.refinery.ConversionPanels.B_UP2)
                 .button("calibrateAnalyzer", dev.denfry.promptcritical.mod.refinery.ConversionPanels.B_ACTION).build();
+    }
+
+    /** Элемент стека ПВО по имени 09 §9.13.2: {@code "ANNULAR"}, {@code "PIPE_RAM"}, {@code "BLIND_RAM"}, {@code "SHEAR_RAM"}. */
+    private static dev.denfry.promptcritical.sim.drilling.BopStack.Component bopComponent(Object[] a) throws DeviceException {
+        String name = LuaArgs.string(a, 0).toUpperCase(java.util.Locale.ROOT);
+        for (var c : dev.denfry.promptcritical.sim.drilling.BopStack.Component.values()) if (c.name().equals(name)) return c;
+        throw LuaArgs.arg(0, "ANNULAR, PIPE_RAM, BLIND_RAM or SHEAR_RAM");
+    }
+
+    /** {@code getBop()} 09 §9.13.2: элементы стека и аккумулятор. */
+    private static Object bopState(BlockEntity be, DeviceRuntime.Snapshot s, Object[] args) {
+        var c = (dev.denfry.promptcritical.mod.drilling.DrillersConsoleBlockEntity) be;
+        var stack = c.bopStack();
+        List<Map<String, Object>> list = new ArrayList<>();
+        if (stack != null) for (var e : stack.elements()) {
+            Map<String, Object> m = new LinkedHashMap<>();
+            m.put("component", e.kind.name());
+            m.put("closed", e.closed());
+            m.put("sealing", e.sealing());
+            m.put("pressureRating", e.holdingPa(!stack.pipeSheared()));
+            m.put("closures", e.closures());
+            m.put("lastTest", Double.isFinite(e.lastTestDay()) ? e.lastTestDay() : null);
+            m.put("fault", e.fault().name());
+            list.add(m);
+        }
+        Map<String, Object> out = new LinkedHashMap<>();
+        out.put("elements", list);
+        out.put("pipeSheared", stack != null && stack.pipeSheared());
+        var acc = c.accumulator();
+        if (acc != null) {
+            Map<String, Object> a = new LinkedHashMap<>();
+            a.put("pressure", acc.pressurePa());
+            a.put("precharge", dev.denfry.promptcritical.sim.drilling.BopAccumulator.PRECHARGE_PA);
+            a.put("bottles", acc.bottles());
+            a.put("api53", stack != null && acc.meetsApi53(stack.requiredVolumeM3()));
+            out.put("accumulator", a);
+        }
+        out.put("stuck", c.sticking().stuck());
+        out.put("stickingForce", c.sticking().stickingForceN());
+        var w = c.well();
+        out.put("lossRate", w == null ? 0.0 : w.lossM3s());
+        return out;
+    }
+
+    private static dev.denfry.promptcritical.mod.production.WellheadBlockEntity pumpjackWell(BlockEntity b) throws DeviceException {
+        var w = ((dev.denfry.promptcritical.mod.production.PumpjackBlockEntity) b).wellhead();
+        if (w == null) throw new DeviceException(DeviceException.RANGE, "no wellhead within reach of the pumpjack");
+        return w;
+    }
+
+    /** {@code getDynamometerCard()} 09 §9.13.1: 200 точек, м и Н; {@code nil}, если скважина не на насосе. */
+    private static Object dynoCard(dev.denfry.promptcritical.mod.production.WellheadBlockEntity w) {
+        var well = w.well();
+        var c = well == null ? null : well.card();
+        if (c == null) return null;
+        Map<String, Object> m = new LinkedHashMap<>();
+        m.put("period", c.periodS());
+        List<Double> x = new ArrayList<>(c.positionM().length), f = new ArrayList<>(c.loadN().length);
+        for (double v : c.positionM()) x.add(v);
+        for (double v : c.loadN()) f.add(v);
+        m.put("position", x);
+        m.put("load", f);
+        return m;
+    }
+
+    /** {@code getLogCurve(curve)} 09 §9.13.2: {@code "GR"}, {@code "NPHI"} или {@code "RT"}; {@code nil} — кривой нет. */
+    private static Object logCurve(dev.denfry.promptcritical.mod.drilling.LoggingUnitBlockEntity u, Object[] a) throws DeviceException {
+        String name = LuaArgs.string(a, 0).toUpperCase(java.util.Locale.ROOT);
+        dev.denfry.promptcritical.sim.drilling.WellLogging.Curve c;
+        try {
+            c = dev.denfry.promptcritical.sim.drilling.WellLogging.Curve.valueOf(name);
+        } catch (IllegalArgumentException e) {
+            throw LuaArgs.arg(0, "GR, NPHI or RT");
+        }
+        double[] d = u.curve(c);
+        if (d == null || u.running()) return null;
+        Map<String, Object> m = new LinkedHashMap<>();
+        m.put("top", u.topM());
+        m.put("step", dev.denfry.promptcritical.sim.drilling.WellLogging.STEP_M);
+        m.put("n", d.length);
+        m.put("unit", switch (c) {
+            case GR -> "API";
+            case NPHI -> "v/v";
+            case RT -> "ohm.m";
+        });
+        List<Double> data = new ArrayList<>(d.length);
+        for (double v : d) data.add(v);
+        m.put("data", data);
+        return m;
+    }
+
+    /** {@code getCompletion()} 09 §9.13.1: паспорт скважины, газлифтные клапаны. */
+    private static Object completion(dev.denfry.promptcritical.mod.production.WellheadBlockEntity w) {
+        Map<String, Object> m = new LinkedHashMap<>();
+        var well = w.well();
+        if (well != null) {
+            var r = well.reservoir();
+            m.put("perfTop", r.perfTopM());
+            m.put("perfBottom", r.perfTopM() + r.perforatedM());
+            m.put("pumpDepth", well.pumpDepthM());
+            m.put("tubingId", dev.denfry.promptcritical.sim.production.Tubing.DIAMETER_M);
+        }
+        List<Map<String, Object>> vs = new ArrayList<>();
+        for (var v : w.gasLiftValves()) {
+            Map<String, Object> e = new LinkedHashMap<>();
+            e.put("depth", v.depthM());
+            e.put("ptro", v.ptroPa());
+            vs.add(e);
+        }
+        m.put("gasLiftValves", vs);
+        return m;
+    }
+
+    /** {@code getMotor()} для качалки: момент на редукторе, его паспорт и мощность на валу. */
+    private static Object rodPumpMotor(dev.denfry.promptcritical.mod.production.WellheadBlockEntity w) {
+        var well = w.well();
+        Map<String, Object> m = new LinkedHashMap<>();
+        m.put("torque", well == null ? 0.0 : well.peakTorqueNm());
+        m.put("torqueRating", dev.denfry.promptcritical.sim.production.ProductionWell.GEARBOX_RATED_NM);
+        m.put("counterbalance", well == null ? 0.0 : well.counterbalanceN());
+        m.put("goodman", well == null ? 0.0 : well.goodmanRatio());
+        m.put("gearboxBroken", well != null && well.gearboxBroken());
+        return m;
+    }
+
+    /** События скважины 09 §9.13.1: {@code pc_well_fluid_level} после замера эхолотом и {@code pc_well_rod_part}. */
+    static final class WellEvents implements DeviceProfile.Probe {
+        private int echoes = -1, parts = -1;
+
+        @Override
+        public void tick(BlockEntity be, DeviceRuntime.Snapshot s, DeviceProfile.Emitter out) {
+            var w = (dev.denfry.promptcritical.mod.production.WellheadBlockEntity) be;
+            if (echoes >= 0 && w.echoCount() != echoes) {
+                Map<String, Object> m = new LinkedHashMap<>();
+                m.put("level", w.echoLevelM());
+                m.put("echoTime", w.echoTimeS());
+                out.emit("pc_well_fluid_level", m);
+            }
+            if (parts >= 0 && w.rodPartCount() != parts && w.well() != null) {
+                Map<String, Object> m = new LinkedHashMap<>();
+                m.put("depth", w.well().rodPartDepthM());
+                out.emit("pc_well_rod_part", m);
+            }
+            echoes = w.echoCount();
+            parts = w.rodPartCount();
+        }
     }
 
     private static String subtype(String simpleClassName) {

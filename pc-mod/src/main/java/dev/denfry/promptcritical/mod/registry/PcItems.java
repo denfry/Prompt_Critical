@@ -394,6 +394,21 @@ public final class PcItems {
     // нефть и газ I2: утяжелитель (мешок 50 кг, API 13A), заряд для шурфа, сейсмический разрез
     public static final DeferredItem<Item> BARITE_POWDER = item("barite_powder", 64);
     public static final DeferredItem<Item> SEISMIC_CHARGE = item("seismic_charge", 16);
+    // каротажные зонды, керноотборник и керн 09 §9.2.5–9.2.6
+    public static final DeferredItem<Item> GAMMA_LOGGING_SONDE = item("gamma_logging_sonde", 1);
+    public static final DeferredItem<Item> NEUTRON_LOGGING_SONDE = item("neutron_logging_sonde", 1);
+    public static final DeferredItem<Item> RESISTIVITY_LOGGING_SONDE = item("resistivity_logging_sonde", 1);
+    public static final DeferredItem<Item> CORE_BARREL = item("core_barrel", 1);
+    public static final DeferredItem<dev.denfry.promptcritical.mod.drilling.ReservoirCoreItem> RESERVOIR_CORE = registered(
+            ITEMS.registerItem("reservoir_core", dev.denfry.promptcritical.mod.drilling.ReservoirCoreItem::new,
+                    new Item.Properties().stacksTo(1)));
+    // ШГН 09 §9.6.5: штанга ¾″ (ремонт после обрыва) и плунжерный насос (замена клапанов)
+    public static final DeferredItem<Item> SUCKER_ROD = item("sucker_rod", 64);
+    public static final DeferredItem<Item> DOWNHOLE_ROD_PUMP = item("downhole_rod_pump", 4);
+    /** Газлифтный клапан 09 §9.6.4 (глубина и p_tro — компонент). */
+    public static final DeferredItem<dev.denfry.promptcritical.mod.production.GasLiftValveItem> GAS_LIFT_VALVE = registered(
+            ITEMS.registerItem("gas_lift_valve", dev.denfry.promptcritical.mod.production.GasLiftValveItem::new,
+                    new Item.Properties().stacksTo(16)));
     public static final DeferredItem<dev.denfry.promptcritical.mod.drilling.SeismicSectionItem> SEISMIC_SECTION = registered(
             ITEMS.registerItem("seismic_section", dev.denfry.promptcritical.mod.drilling.SeismicSectionItem::new,
                     new Item.Properties().stacksTo(1)));

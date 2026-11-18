@@ -60,6 +60,17 @@ public final class ProductionRecipes extends RecipeProvider {
                 .pattern("III").pattern("CLH").pattern("AAA").define('I', Items.IRON_BLOCK).define('C', Items.CHAIN)
                 .define('L', AllBlocks.LARGE_COGWHEEL.get()).define('H', AllBlocks.SHAFT.get()).define('A', AllBlocks.ANDESITE_CASING.get())
                 .unlockedBy("has_large_cogwheel", has(AllBlocks.LARGE_COGWHEEL.get())).save(out, id("pumpjack"));
+        // штанга — пруток с муфтой; глубинный насос — цилиндр из трубы, плунжер и два шаровых клапана
+        ShapedRecipeBuilder.shaped(RecipeCategory.MISC, PcItems.SUCKER_ROD.get(), 4)
+                .pattern("  I").pattern(" I ").pattern("N  ").define('I', Items.IRON_INGOT).define('N', Items.IRON_NUGGET)
+                .unlockedBy("has_pumpjack", has(PcBlocks.PUMPJACK.get())).save(out, id("sucker_rod"));
+        ShapedRecipeBuilder.shaped(RecipeCategory.MISC, PcItems.DOWNHOLE_ROD_PUMP.get())
+                .pattern(" P ").pattern("VIV").pattern(" P ").define('P', pipe).define('V', valve).define('I', Items.IRON_INGOT)
+                .unlockedBy("has_pumpjack", has(PcBlocks.PUMPJACK.get())).save(out, id("downhole_rod_pump"));
+        // газлифтный клапан: корпус из трубы, сильфон (медь) и седло с шаром
+        ShapedRecipeBuilder.shaped(RecipeCategory.MISC, PcItems.GAS_LIFT_VALVE.get(), 2)
+                .pattern(" P ").pattern("CVC").pattern(" P ").define('P', pipe).define('C', Items.COPPER_INGOT).define('V', valve)
+                .unlockedBy("has_seamless_pipe", has(pipe)).save(out, id("gas_lift_valve"));
         ShapedRecipeBuilder.shaped(RecipeCategory.MISC, PcBlocks.THREE_PHASE_SEPARATOR.get())
                 .pattern("SPS").pattern("GTG").pattern("SVS").define('S', sheet).define('P', AllBlocks.FLUID_PIPE.get())
                 .define('G', Items.GLASS_PANE).define('T', AllBlocks.FLUID_TANK.get()).define('V', valve)

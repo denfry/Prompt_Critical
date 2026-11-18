@@ -45,6 +45,8 @@ public final class PcTags {
     public static final class Items {
         public static final TagKey<Item> ORES = common("ores");
         public static final TagKey<Item> RAW_MATERIALS = common("raw_materials");
+        /** Наполнители поглощения 09 §9.5.10, §9.18. */
+        public static final TagKey<Item> LOSS_CIRCULATION_MATERIAL = common("loss_circulation_material");
 
         private Items() {
         }

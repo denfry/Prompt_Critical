@@ -1,0 +1,32 @@
+{
+  "parent": "minecraft:recipes/root",
+  "criteria": {
+    "has_pumpjack": {
+      "conditions": {
+        "items": [
+          {
+            "items": "promptcritical:pumpjack"
+          }
+        ]
+      },
+      "trigger": "minecraft:inventory_changed"
+    },
+    "has_the_recipe": {
+      "conditions": {
+        "recipe": "promptcritical:production/sucker_rod"
+      },
+      "trigger": "minecraft:recipe_unlocked"
+    }
+  },
+  "requirements": [
+    [
+      "has_the_recipe",
+      "has_pumpjack"
+    ]
+  ],
+  "rewards": {
+    "recipes": [
+      "promptcritical:production/sucker_rod"
+    ]
+  }
+}

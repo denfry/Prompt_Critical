@@ -81,6 +81,35 @@ public final class DrillingRecipes extends RecipeProvider {
                 .pattern("ISI").pattern("PRP").pattern("ISI").define('I', Items.IRON_BLOCK).define('S', sheet)
                 .define('P', AllBlocks.FLUID_PIPE.get()).define('R', Items.DRIED_KELP_BLOCK)
                 .unlockedBy("has_fluid_pipe", has(AllBlocks.FLUID_PIPE.get())).save(out, id("bop_annular"));
+        // каротаж и керн: подъёмник — лебёдка с кабелем на шасси, зонды — трубки с датчиком, керноотборник — труба с коронкой
+        ShapedRecipeBuilder.shaped(RecipeCategory.MISC, PcBlocks.LOGGING_UNIT.get())
+                .pattern("SCS").pattern("RTR").pattern("AAA").define('S', sheet).define('C', Items.CHAIN).define('R', Items.REDSTONE)
+                .define('T', AllItems.ELECTRON_TUBE.get()).define('A', AllBlocks.ANDESITE_CASING.get())
+                .unlockedBy("has_electron_tube", has(AllItems.ELECTRON_TUBE.get())).save(out, id("logging_unit"));
+        ShapedRecipeBuilder.shaped(RecipeCategory.MISC, PcBlocks.CORE_ANALYSIS_STATION.get())
+                .pattern("GBG").pattern("SCS").define('G', Items.GLASS_BOTTLE).define('B', Items.BREWING_STAND).define('S', sheet)
+                .define('C', Items.CRAFTING_TABLE).unlockedBy("has_brewing_stand", has(Items.BREWING_STAND)).save(out, id("core_analysis_station"));
+        ShapedRecipeBuilder.shaped(RecipeCategory.MISC, PcItems.GAMMA_LOGGING_SONDE.get())
+                .pattern("I").pattern("G").pattern("I").define('I', Items.IRON_INGOT).define('G', Items.GLASS)
+                .unlockedBy("has_logging_unit", has(PcBlocks.LOGGING_UNIT.get())).save(out, id("gamma_logging_sonde"));
+        ShapedRecipeBuilder.shaped(RecipeCategory.MISC, PcItems.NEUTRON_LOGGING_SONDE.get())
+                .pattern("I").pattern("B").pattern("I").define('I', Items.IRON_INGOT).define('B', Items.LEAD)
+                .unlockedBy("has_logging_unit", has(PcBlocks.LOGGING_UNIT.get())).save(out, id("neutron_logging_sonde"));
+        ShapedRecipeBuilder.shaped(RecipeCategory.MISC, PcItems.RESISTIVITY_LOGGING_SONDE.get())
+                .pattern("I").pattern("C").pattern("I").define('I', Items.IRON_INGOT).define('C', Items.COPPER_INGOT)
+                .unlockedBy("has_logging_unit", has(PcBlocks.LOGGING_UNIT.get())).save(out, id("resistivity_logging_sonde"));
+        ShapedRecipeBuilder.shaped(RecipeCategory.MISC, PcItems.CORE_BARREL.get())
+                .pattern("I").pattern("I").pattern("D").define('I', Items.IRON_INGOT).define('D', Items.DIAMOND)
+                .unlockedBy("has_drillers_console", has(PcBlocks.DRILLERS_CONSOLE.get())).save(out, id("core_barrel"));
+        // плашечный превентор: корпус и два гидроцилиндра плашек; аккумулятор — баллоны (баки) с насосом и рычагами
+        ShapedRecipeBuilder.shaped(RecipeCategory.MISC, PcBlocks.BOP_RAM.get())
+                .pattern("ISI").pattern("TBT").pattern("ISI").define('I', Items.IRON_BLOCK).define('S', sheet)
+                .define('T', Items.PISTON).define('B', Items.IRON_BARS)
+                .unlockedBy("has_bop_annular", has(PcBlocks.BOP_ANNULAR.get())).save(out, id("bop_ram"));
+        ShapedRecipeBuilder.shaped(RecipeCategory.MISC, PcBlocks.BOP_ACCUMULATOR.get())
+                .pattern("LLL").pattern("TMT").pattern("SPS").define('L', Items.LEVER).define('T', AllBlocks.FLUID_TANK.get())
+                .define('M', AllBlocks.MECHANICAL_PUMP.get()).define('S', sheet).define('P', AllBlocks.FLUID_PIPE.get())
+                .unlockedBy("has_bop_annular", has(PcBlocks.BOP_ANNULAR.get())).save(out, id("bop_accumulator"));
         ShapedRecipeBuilder.shaped(RecipeCategory.MISC, PcBlocks.CHOKE_MANIFOLD.get())
                 .pattern("VPV").pattern("PGP").pattern("VPV").define('V', AllBlocks.FLUID_VALVE.get()).define('P', AllBlocks.FLUID_PIPE.get())
                 .define('G', Items.CLOCK).unlockedBy("has_fluid_valve", has(AllBlocks.FLUID_VALVE.get())).save(out, id("choke_manifold"));

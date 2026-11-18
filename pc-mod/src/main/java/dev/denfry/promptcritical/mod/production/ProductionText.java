@@ -34,6 +34,28 @@ public final class ProductionText {
                 "Сырьё %s м³/ч · тарелок %s · флегмовое число %s · выход печи %s °C · топливо %s нм³/ч · перекрытие бензин/керосин %s К");
     }
 
+    static {
+        // ШГН 09 §9.6.5
+        put("rod_part", "Sucker rods parted at %s m: the load fell to the rods above. Fish them and replace the rod (sucker rod on the wellhead)",
+                "Обрыв штанг на %s м: нагрузка упала до веса штанг выше обрыва. Ловильные работы и замена штанги (штанга на устье)");
+        put("rods_fixed", "Rod string fished and repaired", "Колонна штанг извлечена и отремонтирована");
+        put("pump_replaced", "Downhole pump replaced: new valves", "Глубинный насос заменён: новые клапаны");
+        put("gearbox_fixed", "Gearbox repaired: new gears", "Редуктор отремонтирован: новые шестерни");
+        put("echo", "Echo after %s s: fluid level at %s m", "Эхо через %s с: уровень жидкости на %s м");
+        // газлифт 09 §9.6.4
+        put("valve_set", "Gas lift valve: %s m, opens at %s MPa", "Газлифтный клапан: %s м, открытие %s МПа");
+        put("valve_tip", "Depth %s m · opening pressure %s MPa (use: depth, Shift: pressure)",
+                "Глубина %s м · давление открытия %s МПа (ПКМ — глубина, Shift — давление)");
+        put("valve_installed", "Gas lift valve %s installed at %s m (opens at %s MPa)", "Газлифтный клапан %s установлен на %s м (открытие %s МПа)");
+        put("valve_full", "No room for more gas lift valves (%s)", "Больше газлифтных клапанов не поставить (%s)");
+        put("valves_pulled", "Tubing pulled: %s gas lift valves out", "НКТ подняты: вынуто газлифтных клапанов — %s");
+        put("mode.gas_lift", "gas lift", "газлифт");
+        // ППД 09 §9.4.6
+        put("mode.injecting", "water injection", "нагнетательная (ППД)");
+        put("injector_on", "Injector: water from the pipes goes into the pay at %s MPa on the head", "Нагнетательная: вода из труб уходит в пласт при %s МПа на устье");
+        put("injector_off", "Back to production", "Снова добывающая");
+    }
+
     private ProductionText() {
     }
 

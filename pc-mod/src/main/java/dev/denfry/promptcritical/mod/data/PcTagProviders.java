@@ -116,6 +116,9 @@ public final class PcTagProviders {
             // руды и сырьё мода — только в общих c:ores и c:raw_materials: в теги по металлам их не кладём, иначе
             // Mekanism, IE и подобные удвоят их в слитки мимо цепочки мода (открытый вариант — OpenCompatPack)
             for (DeferredItem<Item> raw : RAWS) tag(PcTags.Items.RAW_MATERIALS).add(raw.get());
+            // наполнители поглощения 09 §9.5.10: опилки (палки), солома (пшеница), водоросли, скорлупа (какао-бобы)
+            tag(PcTags.Items.LOSS_CIRCULATION_MATERIAL).add(net.minecraft.world.item.Items.STICK, net.minecraft.world.item.Items.WHEAT,
+                    net.minecraft.world.item.Items.DRIED_KELP, net.minecraft.world.item.Items.COCOA_BEANS);
         }
     }
 

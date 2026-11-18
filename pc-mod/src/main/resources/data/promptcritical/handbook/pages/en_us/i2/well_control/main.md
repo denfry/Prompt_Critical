@@ -21,3 +21,14 @@ Don't wait too long. Gas migrates up a shut-in well at about 300 m an hour and c
 ## Blowout
 
 If gas reaches the surface with the preventer open while the formation is still flowing, you have a blowout. Gas on the rig ignites, and the cloud explosion goes through the damage budget. From then on the well just flows.
+
+## The BOP stack and the accumulator
+
+A rig needs a [BOP accumulator unit](item:promptcritical:bop_accumulator) within its radius. It is a rack of eight 41.6 l bottles with nitrogen precharged to 7 MPa and hydraulic fluid pumped up to 21 MPa. Boyle's law gives what a bottle can deliver before the pressure falls to the 8.3 MPa a preventer needs to close: V(7/8.3 − 7/21), about 21 l. Closing the annular takes 68 l, a set of rams 22 l. API Std 53 asks for enough fluid to close everything and open the hydraulic valve with the pumps off and still keep 1.4 MPa over precharge; the API 53 lamp shows whether the stack passes. A Create shaft on the right-hand port recharges the bottles in 15 minutes.
+
+Each element strokes for 30 seconds before it seals.
+
+- The [annular preventer](item:promptcritical:bop_annular) seals on any pipe. After 20 closures its packer is worn and holds only 80 % of 34.5 MPa. A dried kelp block used on the accumulator replaces the packer of an open annular.
+- A [ram preventer](item:promptcritical:bop_ram) carries pipe, blind or shear rams; change them with an empty hand while it is open. Pipe rams seal only on 5″ pipe. Blind rams do not close on pipe at all. Shear rams cut the pipe body and seal the hole, but stall on a tool joint: joints come every 9.144 m. A cut string is lost, and the rig can no longer circulate.
+
+Test the stack with the Test lever: every open element is closed and opened again. An element untested for 14 days fails to seal one closure in twenty.

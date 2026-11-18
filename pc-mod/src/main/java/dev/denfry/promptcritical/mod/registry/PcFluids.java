@@ -53,6 +53,8 @@ public final class PcFluids {
     // нефть и газ I2: продукция скважины и прямой перегонки; жидкости — 1 мБ = 1 л, газ — 1 мБ = 1 нм³
     public static final Entry CRUDE_OIL = liquid("crude_oil", 850, 8000, 293);
     public static final Entry PRODUCED_WATER = liquid("produced_water", 1030, 1000, 300);
+    /** Вода для ППД 09 §9.4.6: подготовленная (взвесь до 5 мг/л). */
+    public static final Entry INJECTION_WATER = liquid("injection_water", 1010, 1000, 300);
     public static final Entry ASSOCIATED_GAS = gas("associated_gas", 300, -1);
     public static final Entry GASOLINE = liquid("gasoline", 735, 600, 293);
     public static final Entry KEROSENE = liquid("kerosene", 790, 1500, 293);

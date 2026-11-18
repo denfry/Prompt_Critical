@@ -11,3 +11,9 @@ The weight comes from drill collars above the bit. Never put more than 85 % of t
 ## Circulation
 
 The pump sends mud down the pipe, through the bit nozzles and up the annulus. Standpipe pressure is the sum of losses in the pipe, at the bit and in the annulus. In the annulus the mud holds cuttings with its yield stress, so bottomhole pressure while circulating is above hydrostatic. The ECD on the panel shows by how much. If pressure at the casing shoe goes above fracture pressure, the rock cracks, mud is lost into it and the losses lamp comes on.
+
+## Stuck pipe and losses
+
+When the string stands still across a permeable pay that sees more mud pressure than pore pressure, the filter cake glues the drill collars to the wall. The sticking force is the cake friction 0.15 times the overbalance times the contact area, and the contact grows with the square root of the time standing. Keep the rotary turning. Once the force is more than you may pull, 80 % of the 1.76 MN the 5″ pipe takes, minus the weight of the free string, the pipe is stuck: the stuck lamp lights and the rotary cannot turn it. The Work pipe button pulls to that limit and frees the pipe only if the force is below it. Otherwise only less overbalance will help.
+
+If bottomhole pressure goes above the fracture pressure of the open hole, mud flows into the rock at 10 l/s for every MPa over it. Returns drop and the pits fall. Loss circulation material put through the [mud mixing hopper](item:promptcritical:mud_mixing_hopper) plugs the cracks: sticks, wheat, dried kelp or cocoa beans, 10 kg each, halve the loss rate at 30 kg/m³ in the pits.

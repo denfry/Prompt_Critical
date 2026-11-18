@@ -132,7 +132,7 @@ public final class PumpjackBlockEntity extends DeviceBlockEntity implements Shaf
 
     /** Устье, на которое работает качалка. */
     @Nullable
-    private WellheadBlockEntity wellhead() {
+    public WellheadBlockEntity wellhead() {
         var all = Ironworks.blockEntities(level, new AABB(worldPosition).inflate(RADIUS), WellheadBlockEntity.class);
         WellheadBlockEntity best = null;
         double bestD = Double.MAX_VALUE;
@@ -149,6 +149,12 @@ public final class PumpjackBlockEntity extends DeviceBlockEntity implements Shaf
     @Override
     public PanelLayout panelLayout() {
         return ProductionPanels.WELLHEAD;
+    }
+
+    @Override
+    public void onPanelButton(net.minecraft.server.level.ServerPlayer player, int id) {
+        WellheadBlockEntity w = wellhead();
+        if (w != null) w.onPanelButton(player, id);
     }
 
     @Override

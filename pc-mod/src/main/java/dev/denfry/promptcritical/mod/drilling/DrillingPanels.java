@@ -22,9 +22,24 @@ public final class DrillingPanels {
     public static final int C_HOOK_T10 = 0, C_WOB_T10 = 1, C_SPP_X100 = 2, C_CSG_X100 = 3, C_PIT_PERMIL = 4, C_GAIN_L = 5,
             C_DEPTH_X10 = 6, C_ROP_X10 = 7, C_SPM = 8, C_RPM = 9, C_ECD = 10, C_PIT_RHO = 11, C_FLAGS = 12, C_STAGE = 13,
             C_KMW = 14, C_MAASP_X100 = 15, C_WOB_SET_T10 = 16, C_SPM_SET = 17, C_CHOKE_PERMIL = 18, C_FLOW_LS10 = 19,
-            C_CHANNELS = 20;
-    public static final int F_RIG = 0, F_KICK = 1, F_BOP = 2, F_GAS = 3, F_BLOWOUT = 4, F_KILL = 5, F_SHOE = 6;
-    public static final int B_WOB_DOWN = 0, B_WOB_UP = 1, B_SPM_DOWN = 2, B_SPM_UP = 3, B_BOP = 4, B_KILL = 5, B_ZERO = 6;
+            C_LOSS_LS10 = 20, C_STICK_T10 = 21, C_OVERPULL_T10 = 22, C_LCM = 23, C_CHANNELS = 24;
+    public static final int F_RIG = 0, F_KICK = 1, F_BOP = 2, F_GAS = 3, F_BLOWOUT = 4, F_KILL = 5, F_SHOE = 6, F_STUCK = 7;
+    public static final int B_WOB_DOWN = 0, B_WOB_UP = 1, B_SPM_DOWN = 2, B_SPM_UP = 3, B_BOP = 4, B_KILL = 5, B_ZERO = 6,
+            B_WORK = 7;
+
+    // аккумуляторная установка ПВО 09 §9.5.7
+    public static final int A_P_X100 = 0, A_FLAGS = 1, A_FAULT = 2, A_CLOSURES = 3, A_TEST_AGE_D = 4, A_KW10 = 5, A_BOTTLES = 6,
+            A_CHANNELS = 7;
+    public static final int AF_ANNULAR = 0, AF_PIPE = 1, AF_BLIND = 2, AF_SHEAR = 3, AF_SEALED = 4, AF_API53 = 5, AF_FAULT = 6,
+            AF_RIG = 7, AF_SHEARED = 8;
+    public static final int AB_ANNULAR = 0, AB_PIPE = 1, AB_BLIND = 2, AB_SHEAR = 3, AB_TEST = 4;
+
+    // каротажный подъёмник 09 §9.2.5
+    public static final int L_FLAGS = 0, L_DEPTH = 1, L_TOP = 2, L_BOTTOM = 3, L_RUNS = 4, L_GR = 5,
+            L_NPHI = L_GR + 2 * LoggingUnitBlockEntity.POINTS, L_RT = L_NPHI + 2 * LoggingUnitBlockEntity.POINTS,
+            L_CHANNELS = L_RT + 2 * LoggingUnitBlockEntity.POINTS;
+    public static final int LF_RUNNING = 0, LF_STUCK = 1, LF_DONE = 2, LF_GR = 3, LF_NPHI = 4, LF_RT = 5;
+    public static final int LB_LOG = 0;
 
     // буровой насос
     public static final int P_SHAFT_RPM10 = 0, P_SPM = 1, P_SPP_X100 = 2, P_FLAGS = 3, P_KW = 4, P_CHANNELS = 5;
@@ -54,6 +69,13 @@ public final class DrillingPanels {
             BLOWOUT = PanelText.tr("drill.blowout", "Blowout", "Фонтан"),
             KILL = PanelText.tr("drill.kill", "Kill", "Глушение"),
             SHOE = PanelText.tr("drill.shoe", "Losses", "Поглощ."),
+            STUCK = PanelText.tr("drill.stuck", "Stuck", "Прихват"),
+            WORK = PanelText.tr("drill.work", "Work pipe", "Расходить"),
+            WORK_TIP = PanelText.tr("drill.work_tip",
+                    "Pull up to 80 %% of the weakest link (5″ E-75 pipe, 1.76 MN) over the free string weight to break a differential sticking",
+                    "Натяжка до 80 %% предела слабейшего звена (труба 5″ E-75, 1,76 МН) сверх веса свободной колонны — сорвать дифференциальный прихват"),
+            STAGE_TIP = PanelText.tr("drill.stage_tip", "Losses %s l/s · LCM %s kg/m³ · sticking %s t of %s t overpull",
+                    "Поглощение %s л/с · наполнитель %s кг/м³ · прихват %s т из %s т натяжки"),
             WOB_DOWN = PanelText.tr("drill.wob_down", "WOB −", "Нагр. −"),
             WOB_UP = PanelText.tr("drill.wob_up", "WOB +", "Нагр. +"),
             SPM_DOWN = PanelText.tr("drill.spm_down", "SPM −", "Ходы −"),
@@ -99,6 +121,8 @@ public final class DrillingPanels {
             .lamp(256, 100, C_FLAGS, F_BLOWOUT, LampColor.RED, BLOWOUT.get())
             .lamp(8, 114, C_FLAGS, F_KILL, LampColor.GREEN, KILL.get())
             .lamp(70, 114, C_FLAGS, F_SHOE, LampColor.RED, SHOE.get())
+            .lamp(132, 114, C_FLAGS, F_STUCK, LampColor.RED, STUCK.get())
+            .button(250, 111, 62, B_WORK, WORK.get(), WORK_TIP.get())
             .button(8, 130, 38, B_WOB_DOWN, WOB_DOWN.get(), null)
             .button(50, 130, 38, B_WOB_UP, WOB_UP.get(), null)
             .button(92, 130, 38, B_SPM_DOWN, SPM_DOWN.get(), null)
@@ -111,7 +135,79 @@ public final class DrillingPanels {
             .readout(8, 166, 304, v -> PUMPS.get(v.raw(C_SPM), v.raw(C_SPM_SET), v.raw(C_RPM),
                     PanelText.num(v.raw(C_PIT_RHO) / 1000.0, 3), v.num(C_CHOKE_PERMIL, 10, 0)), null)
             .readout(8, 180, 304, v -> STAGE.get(STAGES[Math.clamp(v.raw(C_STAGE), 0, STAGES.length - 1)].get(),
-                    PanelText.num(v.raw(C_KMW) / 1000.0, 3)), null)
+                    PanelText.num(v.raw(C_KMW) / 1000.0, 3)), v -> STAGE_TIP.get(v.num(C_LOSS_LS10, 10, 1), v.raw(C_LCM),
+                    v.num(C_STICK_T10, 10, 1), v.num(C_OVERPULL_T10, 10, 1)))
+            .noInventory().build();
+
+    private static final Tr LOG_GR = PanelText.tr("log.gr", "GR, API", "ГК, API"),
+            LOG_NPHI = PanelText.tr("log.nphi", "Neutron porosity, ‰", "Нейтронная пористость, ‰"),
+            LOG_RT = PanelText.tr("log.rt", "Rt, 0.1 Ω·m", "Rt, 0,1 Ом·м"),
+            LOG_TIP = PanelText.tr("log.tip", "From the shoe (left) to TD (right), %s to %s m", "От башмака (слева) до забоя (справа), %s–%s м"),
+            LOG_RUN = PanelText.tr("log.run", "Logging", "Запись"),
+            LOG_STUCK = PanelText.tr("log.stuck", "Stuck", "Прихват"),
+            LOG_DONE = PanelText.tr("log.done", "Log ready", "Готово"),
+            LOG_BUTTON = PanelText.tr("log.button", "Log", "Каротаж"),
+            LOG_BUTTON_TIP = PanelText.tr("log.button_tip", "Run the loaded sondes from the shoe to TD and log on the way up at 0.15 m/s",
+                    "Спустить подключённые зонды от башмака до забоя и записать при подъёме на 0,15 м/с"),
+            LOG_STATUS = PanelText.tr("log.status", "Sonde at %s m · runs %s", "Зонд на %s м · рейсов %s");
+
+    public static final PanelLayout LOGGING = PanelLayout.builder("logging_unit", 300, 214, L_CHANNELS)
+            .plot(8, 20, 284, 44, L_GR, LoggingUnitBlockEntity.POINTS, 1000, 150, L_FLAGS, LF_DONE, LOG_GR.get(),
+                    v -> LOG_TIP.get(v.raw(L_TOP), v.raw(L_BOTTOM)))
+            .plot(8, 76, 284, 44, L_NPHI, LoggingUnitBlockEntity.POINTS, 1000, 400, L_FLAGS, LF_DONE, LOG_NPHI.get(),
+                    v -> LOG_TIP.get(v.raw(L_TOP), v.raw(L_BOTTOM)))
+            .plot(8, 132, 284, 44, L_RT, LoggingUnitBlockEntity.POINTS, 1000, 400, L_FLAGS, LF_DONE, LOG_RT.get(),
+                    v -> LOG_TIP.get(v.raw(L_TOP), v.raw(L_BOTTOM)))
+            .lamp(8, 184, L_FLAGS, LF_RUNNING, LampColor.GREEN, LOG_RUN.get())
+            .lamp(70, 184, L_FLAGS, LF_STUCK, LampColor.RED, LOG_STUCK.get())
+            .lamp(132, 184, L_FLAGS, LF_DONE, LampColor.AMBER, LOG_DONE.get())
+            .button(246, 182, 46, LB_LOG, LOG_BUTTON.get(), LOG_BUTTON_TIP.get())
+            .readout(8, 200, 284, v -> LOG_STATUS.get(v.raw(L_DEPTH), v.raw(L_RUNS)), null)
+            .noInventory().build();
+
+    private static final Tr ACC = PanelText.tr("bop.accumulator", "Accumulator", "Аккумулятор"),
+            ACC_TIP = PanelText.tr("bop.accumulator_tip", "Nitrogen-charged bottles: precharge 7 MPa, closes down to 8.3 MPa, full 21 MPa",
+                    "Баллоны с азотом: предзарядка 7 МПа, закрывает до 8,3 МПа, полная зарядка 21 МПа"),
+            ANNULAR = PanelText.tr("bop.annular", "Annular", "Кольцевой"),
+            PIPE_RAMS = PanelText.tr("bop.pipe", "Pipe rams", "Трубные"),
+            BLIND_RAMS = PanelText.tr("bop.blind", "Blind rams", "Глухие"),
+            SHEAR_RAMS = PanelText.tr("bop.shear", "Shear rams", "Срезающие"),
+            SEALED = PanelText.tr("bop.sealed", "Well shut", "Скважина закрыта"),
+            API53 = PanelText.tr("bop.api53", "API 53", "API 53"),
+            FAULT = PanelText.tr("bop.fault", "Fault", "Отказ"),
+            SHEARED = PanelText.tr("bop.sheared", "Pipe cut", "Труба срезана"),
+            TEST = PanelText.tr("bop.test", "Test", "Опрессовка"),
+            TEST_TIP = PanelText.tr("bop.test_tip", "Pressure-test every open element (close and open each); untested for 14 days, an element fails 1 time in 20",
+                    "Опрессовать каждый открытый элемент (закрыть и открыть); без испытания 14 суток элемент отказывает 1 раз из 20"),
+            TOGGLE_TIP = PanelText.tr("bop.toggle_tip", "Close or open: one stroke draws the closing volume from the bottles, the stroke takes 30 s",
+                    "Закрыть или открыть: ход берёт из баллонов объём закрытия и длится 30 с"),
+            STATUS = PanelText.tr("bop.status", "%s bottles · annular closures %s · last test %s days ago · pump %s kW · %s",
+                    "Баллонов %s · закрытий кольцевого %s · опрессовка %s сут назад · насос %s кВт · %s");
+    private static final Tr[] FAULTS = {PanelText.tr("bop.fault.none", "no faults", "без отказов"),
+            PanelText.tr("bop.fault.no_pressure", "NO PRESSURE", "НЕТ ДАВЛЕНИЯ"),
+            PanelText.tr("bop.fault.ram_mismatch", "RAM MISMATCH", "ПЛАШКИ НЕ ТЕ"),
+            PanelText.tr("bop.fault.tool_joint", "TOOL JOINT IN RAMS", "ЗАМОК В ПЛАШКАХ"),
+            PanelText.tr("bop.fault.worn", "WORN PACKER", "ИЗНОС УПЛОТНИТЕЛЯ"),
+            PanelText.tr("bop.fault.untested", "UNTESTED ELEMENT FAILED", "ОТКАЗ НЕИСПЫТАННОГО")};
+
+    public static final PanelLayout ACCUMULATOR = PanelLayout.builder("bop_accumulator", 260, 132, A_CHANNELS)
+            .dial(8, 20, true, A_P_X100, 100, 21, Double.NaN, 1, MPA.get(), ACC.get(), v -> ACC_TIP.get())
+            .lamp(80, 22, A_FLAGS, AF_ANNULAR, LampColor.AMBER, ANNULAR.get())
+            .lamp(80, 36, A_FLAGS, AF_PIPE, LampColor.AMBER, PIPE_RAMS.get())
+            .lamp(80, 50, A_FLAGS, AF_BLIND, LampColor.AMBER, BLIND_RAMS.get())
+            .lamp(80, 64, A_FLAGS, AF_SHEAR, LampColor.RED, SHEAR_RAMS.get())
+            .lamp(170, 22, A_FLAGS, AF_SEALED, LampColor.GREEN, SEALED.get())
+            .lamp(170, 36, A_FLAGS, AF_API53, LampColor.GREEN, API53.get())
+            .lamp(170, 50, A_FLAGS, AF_FAULT, LampColor.RED, FAULT.get())
+            .lamp(170, 64, A_FLAGS, AF_SHEARED, LampColor.RED, SHEARED.get())
+            .button(8, 86, 46, AB_ANNULAR, ANNULAR.get(), TOGGLE_TIP.get())
+            .button(58, 86, 46, AB_PIPE, PIPE_RAMS.get(), TOGGLE_TIP.get())
+            .button(108, 86, 46, AB_BLIND, BLIND_RAMS.get(), TOGGLE_TIP.get())
+            .button(158, 86, 46, AB_SHEAR, SHEAR_RAMS.get(), TOGGLE_TIP.get())
+            .button(208, 86, 44, AB_TEST, TEST.get(), TEST_TIP.get())
+            .readout(8, 112, 244, v -> STATUS.get(v.raw(A_BOTTLES), v.raw(A_CLOSURES),
+                    v.raw(A_TEST_AGE_D) < 0 ? "—" : String.valueOf(v.raw(A_TEST_AGE_D)), v.num(A_KW10, 10, 1),
+                    FAULTS[Math.clamp(v.raw(A_FAULT), 0, FAULTS.length - 1)].get()), null)
             .noInventory().build();
 
     public static final PanelLayout PUMP = PanelLayout.builder("mud_pump", 232, 100, P_CHANNELS)
@@ -132,6 +228,6 @@ public final class DrillingPanels {
     }
 
     public static List<PanelLayout> all() {
-        return List.of(CONSOLE, PUMP);
+        return List.of(CONSOLE, PUMP, ACCUMULATOR, LOGGING);
     }
 }

@@ -46,6 +46,16 @@ public final class PcDataComponents {
             COMPONENTS.registerComponentType("map_target", b -> b.persistent(MapTargetData.CODEC)
                     .networkSynchronized(MapTargetData.STREAM_CODEC));
 
+    /** Керн 09 §9.2.6: интервал, литология, свойства залежи и измерения станции. */
+    public static final DeferredHolder<DataComponentType<?>, DataComponentType<dev.denfry.promptcritical.mod.drilling.ReservoirCoreItem.Data>>
+            CORE_DATA = COMPONENTS.registerComponentType("core_data",
+                    b -> b.persistent(dev.denfry.promptcritical.mod.drilling.ReservoirCoreItem.Data.CODEC)
+                            .networkSynchronized(dev.denfry.promptcritical.mod.drilling.ReservoirCoreItem.Data.STREAM_CODEC));
+    /** Глубина и давление открытия газлифтного клапана 09 §9.6.4. */
+    public static final DeferredHolder<DataComponentType<?>, DataComponentType<dev.denfry.promptcritical.mod.production.GasLiftValveItem.Data>>
+            GAS_LIFT_VALVE = COMPONENTS.registerComponentType("gas_lift_valve",
+                    b -> b.persistent(dev.denfry.promptcritical.mod.production.GasLiftValveItem.Data.CODEC)
+                            .networkSynchronized(dev.denfry.promptcritical.mod.production.GasLiftValveItem.Data.STREAM_CODEC));
     /** Интерпретация сейсмической съёмки на {@code seismic_section}. */
     public static final DeferredHolder<DataComponentType<?>, DataComponentType<dev.denfry.promptcritical.mod.drilling.SeismicSectionData>>
             SEISMIC_SECTION = COMPONENTS.registerComponentType("seismic_section",
