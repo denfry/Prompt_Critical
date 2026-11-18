@@ -1,6 +1,7 @@
 package dev.denfry.promptcritical.mod.gametest;
 
 import dev.denfry.promptcritical.mod.PromptCritical;
+import dev.denfry.promptcritical.mod.refinery.CatalyticReformerBlockEntity;
 import dev.denfry.promptcritical.mod.refinery.ClausUnitBlockEntity;
 import dev.denfry.promptcritical.mod.refinery.HydrotreaterBlockEntity;
 import dev.denfry.promptcritical.mod.registry.PcBlocks;
@@ -62,6 +63,32 @@ public final class RefineryUpgradingGameTests {
                     ClausUnitBlockEntity c = h.getBlockEntity(claus);
                     h.assertTrue(c.totalSulfurKg() > 0.5, "Claus sulphur " + c.totalSulfurKg() + " kg");
                     h.assertTrue(c.last().recovery() > 0.94, "Claus recovery " + c.last().recovery());
+                })
+                .thenSucceed();
+    }
+
+    /** Риформинг бензина при 500 °C: реформат снизу, водород сверху, ОЧИ выше прямогонного, печи на своём газе. */
+    @GameTest(template = LARGE, timeoutTicks = 1200)
+    public static void reformerMakesReformateAndHydrogen(GameTestHelper h) {
+        BlockPos at = new BlockPos(5, 2, 5);
+        h.setBlock(at, north(PcBlocks.CATALYTIC_REFORMER.get()));
+        h.startSequence()
+                .thenExecute(() -> {
+                    CatalyticReformerBlockEntity r = h.getBlockEntity(at);
+                    r.input().insertItem(0, new ItemStack(PcItems.CATALYST_REFORMING.get()), false);
+                })
+                .thenWaitUntil(() -> {
+                    CatalyticReformerBlockEntity r = h.getBlockEntity(at);
+                    fill(r.fluids(Direction.NORTH), PcFluids.GASOLINE.source.get(), 4000);
+                    fill(r.fluids(Direction.EAST), PcFluids.SALES_GAS.source.get(), 4000);
+                    h.assertTrue(r.reformate().amount() > 50, "reformate " + r.reformate().amount() + " L");
+                    h.assertTrue(r.hydrogen().amount() > 1000, "hydrogen " + r.hydrogen().amount() + " L");
+                    h.assertTrue(r.last().ron() > 75, "RON " + r.last().ron());
+                    h.assertTrue(r.firstReactorDropK() > 30, "first reactor drop " + r.firstReactorDropK() + " K");
+                })
+                .thenExecute(() -> {
+                    CatalyticReformerBlockEntity r = h.getBlockEntity(at);
+                    h.assertFalse(r.regenerate(true), "regeneration of a running unit must be refused");
                 })
                 .thenSucceed();
     }

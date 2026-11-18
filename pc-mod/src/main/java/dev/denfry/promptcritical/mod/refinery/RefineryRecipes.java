@@ -17,7 +17,7 @@ import net.minecraft.data.recipes.ShapedRecipeBuilder;
 import net.minecraft.data.recipes.ShapelessRecipeBuilder;
 import net.minecraft.world.item.Items;
 
-/** Рецепты облагораживания на НПЗ: гидроочистка, установка Клауса и катализатор CoMo. */
+/** Рецепты облагораживания на НПЗ: гидроочистка, установка Клауса, риформинг и их катализаторы. */
 public final class RefineryRecipes extends RecipeProvider {
     public RefineryRecipes(PackOutput output, CompletableFuture<HolderLookup.Provider> registries) {
         super(output, registries);
@@ -60,5 +60,14 @@ public final class RefineryRecipes extends RecipeProvider {
         ShapelessRecipeBuilder.shapeless(RecipeCategory.MISC, PcItems.CATALYST_HYDROTREATING.get())
                 .requires(PcItems.COBALT_INGOT.get()).requires(PcItems.RAW_MOLYBDENITE.get(), 2).requires(PcItems.RAW_BAUXITE.get())
                 .unlockedBy("has_molybdenite", has(PcItems.RAW_MOLYBDENITE.get())).save(out, id("catalyst_hydrotreating"));
+        // три реактора в ряд и печи подогрева между ними, компрессор циркуляционного водорода
+        ShapedRecipeBuilder.shaped(RecipeCategory.MISC, PcBlocks.CATALYTIC_REFORMER.get())
+                .pattern("RRR").pattern("TPT").pattern("SGS").define('R', AllBlocks.FLUID_TANK.get()).define('T', PcBlocks.TUBE_FURNACE.get())
+                .define('P', pipe).define('S', plate).define('G', PcBlocks.GAS_COMPRESSOR.get())
+                .unlockedBy("has_hydrotreater", has(PcBlocks.HYDROTREATER.get())).save(out, id("catalytic_reformer"));
+        // Pt-Re/Al₂O₃: платина из сеток, рений — попутно при обжиге молибденита, глинозём из боксита
+        ShapelessRecipeBuilder.shapeless(RecipeCategory.MISC, PcItems.CATALYST_REFORMING.get(), 4)
+                .requires(PcItems.PT_RH_GAUZE.get()).requires(PcItems.RAW_MOLYBDENITE.get()).requires(PcItems.RAW_BAUXITE.get(), 2)
+                .unlockedBy("has_gauze", has(PcItems.PT_RH_GAUZE.get())).save(out, id("catalyst_reforming"));
     }
 }
