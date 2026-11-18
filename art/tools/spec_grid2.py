@@ -47,20 +47,7 @@ m("power_transformer_220/fan", "grid", [
 ], kind="partial")
 
 
-# БСК 10 кВ: стеллаж банок конденсаторов RAL 7035
-def cap_bank(on):
-    els = [el("frame_w", [1, 0, 2], [2, 15, 14], "ral"), el("frame_e", [14, 0, 2], [15, 15, 14], "ral")]
-    for j, y in enumerate((1, 8)):
-        els.append(el(f"shelf_{j}", [1, y - 1, 2], [15, y, 14], "ral"))
-        for i in range(3):
-            els.append(el(f"can_{j}_{i}", [2.5 + i * 4, y, 4], [5.5 + i * 4, y + 5.5, 12], "can"))
-            els.append(el(f"bush_{j}_{i}", [3.5 + i * 4, y + 5.5, 7], [4.5 + i * 4, y + 6.5, 9], "por"))
-    els.append(lamp("lamp_on", 8, 15.5, 2, on, "lr", 0.5))
-    return els
-
-
-m("capacitor_bank", "grid", cap_bank(False))
-m("capacitor_bank_on", "grid", cap_bank(True))
+# БСК 10 кВ — art/blockbench/grid/station_storage.author.js
 
 
 # щит ОДУ 3×2×1: мнемощит 32×32 на стене, пульт диспетчера перед ним; якорь — средний блок
@@ -76,20 +63,7 @@ m("grid_dispatch_center", "control", dispatch(False))
 m("grid_dispatch_center_alarm", "control", dispatch(True))
 
 
-# АКБ СК-16: стеллаж с двумя прозрачными банками; уровень электролита по soc
-def battery(soc):
-    return [el("rack_base", [0, 0, 2], [16, 2, 14], "wood"),
-            el("rack_rail", [0, 2, 2], [16, 3, 3], "wood"),
-            el("jar_w", [1, 3, 3], [7.5, 13, 13], f"jar{soc}", faces={"up": "d"}),
-            el("jar_e", [8.5, 3, 3], [15, 13, 13], f"jar{soc}", faces={"up": "d"}),
-            el("strap", [4, 13, 7.5], [12, 13.75, 8.5], "cus"),
-            el("post_w", [3.5, 13, 7], [5, 14.5, 9], "lead"),
-            el("post_e", [11, 13, 7], [12.5, 14.5, 9], "lead")]
-
-
-m("station_battery", "grid", battery(4))
-for _s in range(4):
-    m(f"station_battery_soc{_s}", "grid", battery(_s))
+# АКБ СК-16 (5 степеней заряда) — art/blockbench/grid/station_storage.author.js
 
 
 # ВАЗП-380/260: шкаф, амперметр — BER
