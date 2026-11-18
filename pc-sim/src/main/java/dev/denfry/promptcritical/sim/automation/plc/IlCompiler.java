@@ -149,7 +149,7 @@ public final class IlCompiler {
     /** Оператор со всеми модификаторами. {@code base} — оператор исполнения. */
     private enum Ops {
         LD(Op.LD), ST(Op.ST), S(Op.S), R(Op.R), AND(Op.AND), OR(Op.OR), XOR(Op.XOR), NOT(Op.NOT),
-        ADD(Op.ADD), SUB(Op.SUB), MUL(Op.MUL), DIV(Op.DIV), GT(Op.GT), GE(Op.GE), EQ(Op.EQ), NE(Op.NE), LE(Op.LE), LT(Op.LT),
+        ADD(Op.ADD), SUB(Op.SUB), MUL(Op.MUL), DIV(Op.DIV), MOD(Op.MOD), GT(Op.GT), GE(Op.GE), EQ(Op.EQ), NE(Op.NE), LE(Op.LE), LT(Op.LT),
         JMP(Op.JMP), RET(Op.RET), CAL(Op.CAL);
 
         final Op base;
@@ -160,7 +160,7 @@ public final class IlCompiler {
 
         boolean bracketable() {
             return switch (this) {
-                case AND, OR, XOR, ADD, SUB, MUL, DIV, GT, GE, EQ, NE, LE, LT -> true;
+                case AND, OR, XOR, ADD, SUB, MUL, DIV, MOD, GT, GE, EQ, NE, LE, LT -> true;
                 default -> false;
             };
         }

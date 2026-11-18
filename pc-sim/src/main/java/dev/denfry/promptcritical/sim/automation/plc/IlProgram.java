@@ -22,7 +22,9 @@ public record IlProgram(String source, List<Instr> code, List<IlError> errors) {
     public enum Op {
         LD, ST, S, R, AND, OR, XOR, NOT, ADD, SUB, MUL, DIV, GT, GE, EQ, NE, LE, LT, JMP, RET, CAL,
         /** Закрывающая скобка: применить отложенный оператор к сохранённому и текущему результату. */
-        CLOSE
+        CLOSE,
+        /** Остаток от деления (IEC MOD): знак делимого, на ноль — 0. */
+        MOD
     }
 
     /** Вид операнда: константа, биты и слова образа процесса и памяти, выход функционального блока. */
@@ -61,7 +63,9 @@ public record IlProgram(String source, List<Instr> code, List<IlError> errors) {
     public record IlError(int line, Kind kind, String token) {
         public enum Kind {
             UNKNOWN_OPERATOR, BAD_OPERAND, NOT_WRITABLE, MISSING_OPERAND, UNEXPECTED_OPERAND, UNKNOWN_LABEL,
-            DUPLICATE_LABEL, UNBALANCED_PARENTHESIS, NESTING_TOO_DEEP, BAD_CALL, TOO_LONG
+            DUPLICATE_LABEL, UNBALANCED_PARENTHESIS, NESTING_TOO_DEEP, BAD_CALL, TOO_LONG,
+            /** Синтаксис ST: {@code token} — что ожидалось и что встретилось. */
+            SYNTAX
         }
     }
 }
