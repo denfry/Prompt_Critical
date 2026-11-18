@@ -272,12 +272,12 @@ public final class PcBlockStateProvider extends BlockStateProvider {
             // ядерное топливо I4
             case "centrifuge_cascade" -> "cascade_header";
             case "uo2_conversion" -> "uf6_autoclave";
-            case "power_reactor" -> "reactor_vessel_wall";
+            case "power_reactor" -> s.getValue(PcProperties.REACTOR_SEGMENT) == PcProperties.ReactorSegment.DRIVES ? id + "_drives" : id;
             // биржа (14): своей модели терминала пока нет — пульт
             case "market_terminal" -> "control_desk";
             case "irradiation_channel" -> s.getValue(PcProperties.FILLED) ? id + "_loaded" : id;
             case "rtg_thermoelectric" -> s.getValue(BlockStateProperties.LIT) ? id : id + "_depleted";
-            case "pwr_reactor" -> s.getValue(PcProperties.PWR_SEGMENT) == PcProperties.PwrSegment.HEAD ? "control_rod_drive" : "reactor_vessel_wall";
+            case "pwr_reactor" -> s.getValue(PcProperties.PWR_SEGMENT) == PcProperties.PwrSegment.HEAD ? id + "_head" : id;
             case "pressurizer" -> "pressurizer";
             case "candu_reactor" -> s.getValue(PcProperties.CANDU_SEGMENT) == PcProperties.CanduSegment.FUELLING ? "refueling_machine" : "reactor_vessel_wall";
             case "submerged_arc_furnace" -> s.getValue(BlockStateProperties.LIT) ? id + "_running" : id;
@@ -291,7 +291,7 @@ public final class PcBlockStateProvider extends BlockStateProvider {
             case "christmas_tree" -> s.getValue(BlockStateProperties.OPEN) ? id : id + "_master_closed";
             case "pumpjack" -> "pumpjack_gearbox";
             case "flare_tip" -> s.getValue(BlockStateProperties.LIT) ? id + "_lit" : id;
-            case "tube_furnace" -> s.getValue(BlockStateProperties.LIT) ? "tube_furnace_radiant_lit" : "tube_furnace_radiant";
+            case "tube_furnace" -> s.getValue(BlockStateProperties.LIT) ? id + "_lit" : id;
             case "crude_column" -> "column_base";
             case "column_tray_section" -> "column_base_insulated";
             case "drillers_console", "seismic_recorder" -> s.getValue(BlockStateProperties.LIT) ? id + "_on" : id;
