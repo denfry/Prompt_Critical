@@ -344,12 +344,14 @@ public final class ContentGameTests {
     @GameTest(template = SMALL)
     public static void decorLightSwitchesAndLadderClimbs(GameTestHelper h) {
         BlockPos lamp = new BlockPos(1, 1, 1);
+        // светильник горит от щитка освещения: без щитка он тёмный, и рукой его не зажечь
         h.setBlock(lamp, PcBlocks.INDUSTRIAL_LIGHT.get().defaultBlockState());
-        h.assertBlockProperty(lamp, BlockStateProperties.LIT, true);
-        h.assertTrue(h.getBlockState(lamp).getLightEmission() == 15, "lit lamp gives light 15");
+        h.assertBlockProperty(lamp, BlockStateProperties.LIT, false);
         ServerPlayer p = player(h, new BlockPos(0, 1, 0));
         h.useBlock(lamp, p);
         h.assertBlockProperty(lamp, BlockStateProperties.LIT, false);
+        h.setBlock(lamp, PcBlocks.INDUSTRIAL_LIGHT.get().defaultBlockState().setValue(BlockStateProperties.LIT, true));
+        h.assertTrue(h.getBlockState(lamp).getLightEmission() == 15, "lit lamp gives light 15");
         BlockPos ladder = new BlockPos(0, 1, 1);
         h.setBlock(ladder, PcBlocks.CAGE_LADDER.get().defaultBlockState());
         BlockState ls = h.getBlockState(ladder);
@@ -421,12 +423,14 @@ public final class ContentGameTests {
         h.succeed();
     }
 
-    /** Декор I1: светильник потолка светит, таблички и лотки ставятся, у линолеума есть плита и ступени. */
+    /** Декор I1: светильник потолка светит от щитка, таблички и лотки ставятся, у линолеума есть плита и ступени. */
     @GameTest(template = SMALL)
     public static void ironAndPowerDecor(GameTestHelper h) {
         BlockPos panel = new BlockPos(1, 2, 1);
         h.setBlock(panel, PcBlocks.CEILING_LIGHT_PANEL.get().defaultBlockState());
-        h.assertTrue(h.getBlockState(panel).getLightEmission() == 15, "ceiling light panel gives light 15");
+        h.assertTrue(h.getBlockState(panel).getLightEmission() == 0, "ceiling light panel is dark without a lighting board");
+        h.setBlock(panel, PcBlocks.CEILING_LIGHT_PANEL.get().defaultBlockState().setValue(BlockStateProperties.LIT, true));
+        h.assertTrue(h.getBlockState(panel).getLightEmission() == 15, "lit ceiling light panel gives light 15");
         h.setBlock(new BlockPos(0, 1, 0), PcBlocks.CABLE_TRAY_TEE.get().defaultBlockState());
         h.setBlock(new BlockPos(2, 1, 0), PcBlocks.ROOM_SIGN_ELECTRICAL.get().defaultBlockState());
         long linoleum = PcBlocks.decorForms().values().stream().filter(f -> f.base().equals("linoleum_control")).count();

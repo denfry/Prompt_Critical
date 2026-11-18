@@ -1,14 +1,43 @@
 {
 	"credit": "Made with Blockbench",
+	"texture_size": [32, 32],
 	"textures": {
-		"particle": "promptcritical:block/common/steel_smooth",
-		"sm": "promptcritical:block/common/steel_smooth"
+		"particle": "promptcritical:block/hq/cast_house_machine__piston",
+		"t": "promptcritical:block/hq/cast_house_machine__piston"
 	},
 	"elements": [
 		{
-			"name": "piston_0",
-			"from": [2, 3.5, 6.964],
-			"to": [10, 8.5, 9.036],
+			"name": "nozzle_0",
+			"from": [-1, 4.3101, 7.3],
+			"to": [2, 7.6899, 8.7],
+			"rotation": {
+				"angle": 0,
+				"axis": "y",
+				"origin": [8, 8, 8]
+			},
+			"faces": {
+				"east": {
+					"uv": [1.5, 0, 2.2, 1.68995],
+					"texture": "#t"
+				},
+				"west": {
+					"uv": [0, 0, 0.7, 1.68995],
+					"texture": "#t"
+				},
+				"up": {
+					"uv": [12.5, 2.5, 14, 3.2],
+					"texture": "#t"
+				},
+				"down": {
+					"uv": [14.5, 2.5, 16, 3.2],
+					"texture": "#t"
+				}
+			}
+		},
+		{
+			"name": "nozzle_1",
+			"from": [-1.01, 5.3, 6.3101],
+			"to": [2.01, 6.7, 9.6899],
 			"rotation": {
 				"angle": 0,
 				"axis": "y",
@@ -16,136 +45,92 @@
 			},
 			"faces": {
 				"north": {
-					"uv": [0, 0, 8, 5],
-					"texture": "#sm"
+					"uv": [9, 0, 10.51, 0.7],
+					"texture": "#t"
 				},
 				"east": {
-					"uv": [0, 0, 2.07, 5],
-					"texture": "#sm"
+					"uv": [0, 2.5, 1.68995, 3.2],
+					"texture": "#t"
 				},
 				"south": {
-					"uv": [0, 0, 8, 5],
-					"texture": "#sm"
+					"uv": [11.5, 0, 13.01, 0.7],
+					"texture": "#t"
 				},
 				"west": {
-					"uv": [0, 0, 2.07, 5],
-					"texture": "#sm"
-				},
-				"up": {
-					"uv": [0, 0, 8, 2.07],
-					"texture": "#sm"
-				},
-				"down": {
-					"uv": [0, 0, 8, 2.07],
-					"texture": "#sm"
+					"uv": [14, 0, 15.68995, 0.7],
+					"texture": "#t"
 				}
 			}
 		},
 		{
-			"name": "piston_1",
-			"from": [1.99, 4.964, 5.5],
-			"to": [10.01, 7.036, 10.5],
-			"rotation": {
-				"angle": 0,
-				"axis": "y",
-				"origin": [8, 8, 8]
-			},
-			"faces": {
-				"north": {
-					"uv": [0, 0, 8.02, 2.07],
-					"texture": "#sm"
-				},
-				"east": {
-					"uv": [0, 0, 5, 2.07],
-					"texture": "#sm"
-				},
-				"south": {
-					"uv": [0, 0, 8.02, 2.07],
-					"texture": "#sm"
-				},
-				"west": {
-					"uv": [0, 0, 5, 2.07],
-					"texture": "#sm"
-				},
-				"up": {
-					"uv": [0, 0, 8.02, 5],
-					"texture": "#sm"
-				},
-				"down": {
-					"uv": [0, 0, 8.02, 5],
-					"texture": "#sm"
-				}
-			}
-		},
-		{
-			"name": "piston_2",
-			"from": [1.98, 3.5, 6.964],
-			"to": [10.02, 8.5, 9.036],
+			"name": "nozzle_2",
+			"from": [-1.02, 4.3101, 7.3],
+			"to": [2.02, 7.6899, 8.7],
 			"rotation": {
 				"angle": 45,
 				"axis": "x",
-				"origin": [8, 6, 8]
+				"origin": [0, 6, 8]
 			},
 			"faces": {
-				"north": {
-					"uv": [0, 0, 8.04, 5],
-					"texture": "#sm"
-				},
 				"east": {
-					"uv": [0, 0, 2.07, 5],
-					"texture": "#sm"
-				},
-				"south": {
-					"uv": [0, 0, 8.04, 5],
-					"texture": "#sm"
+					"uv": [4.5, 0, 5.2, 1.68995],
+					"texture": "#t"
 				},
 				"west": {
-					"uv": [0, 0, 2.07, 5],
-					"texture": "#sm"
+					"uv": [3, 0, 3.7, 1.68995],
+					"texture": "#t"
 				},
 				"up": {
-					"uv": [0, 0, 8.04, 2.07],
-					"texture": "#sm"
+					"uv": [2.5, 2.5, 4.02, 3.2],
+					"texture": "#t"
 				},
 				"down": {
-					"uv": [0, 0, 8.04, 2.07],
-					"texture": "#sm"
+					"uv": [5, 2.5, 6.52, 3.2],
+					"texture": "#t"
 				}
 			}
 		},
 		{
-			"name": "piston_3",
-			"from": [1.97, 3.5, 6.964],
-			"to": [10.03, 8.5, 9.036],
+			"name": "nozzle_3",
+			"from": [-1.03, 4.3101, 7.3],
+			"to": [2.03, 7.6899, 8.7],
 			"rotation": {
 				"angle": -45,
 				"axis": "x",
-				"origin": [8, 6, 8]
+				"origin": [0, 6, 8]
 			},
 			"faces": {
-				"north": {
-					"uv": [0, 0, 8.06, 5],
-					"texture": "#sm"
-				},
 				"east": {
-					"uv": [0, 0, 2.07, 5],
-					"texture": "#sm"
-				},
-				"south": {
-					"uv": [0, 0, 8.06, 5],
-					"texture": "#sm"
+					"uv": [7.5, 0, 8.2, 1.68995],
+					"texture": "#t"
 				},
 				"west": {
-					"uv": [0, 0, 2.07, 5],
-					"texture": "#sm"
+					"uv": [6, 0, 6.7, 1.68995],
+					"texture": "#t"
 				},
 				"up": {
-					"uv": [0, 0, 8.06, 2.07],
-					"texture": "#sm"
+					"uv": [7.5, 2.5, 9.03, 3.2],
+					"texture": "#t"
 				},
 				"down": {
-					"uv": [0, 0, 8.06, 2.07],
-					"texture": "#sm"
+					"uv": [10, 2.5, 11.53, 3.2],
+					"texture": "#t"
+				}
+			}
+		},
+		{
+			"name": "nozzle_cap0_0",
+			"from": [-1.1, 5, 7],
+			"to": [-1.085, 7, 9],
+			"rotation": {
+				"angle": 0,
+				"axis": "y",
+				"origin": [8, 8, 8]
+			},
+			"faces": {
+				"west": {
+					"uv": [0, 4, 1, 5],
+					"texture": "#t"
 				}
 			}
 		}

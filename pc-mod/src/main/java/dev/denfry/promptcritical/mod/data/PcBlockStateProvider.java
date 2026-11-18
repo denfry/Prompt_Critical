@@ -214,7 +214,9 @@ public final class PcBlockStateProvider extends BlockStateProvider {
                 case COOLING -> id + "_cooling";
             };
             case "document_lectern" -> s.getValue(PcProperties.HAS_DOCUMENT) ? id + "_document" : id;
-            case "industrial_light", "industrial_light_street", "industrial_light_floodlight", "industrial_light_exit" ->
+            case "industrial_light", "industrial_light_street", "industrial_light_floodlight", "industrial_light_exit",
+                 "ceiling_light_panel", "lamp_fluorescent", "lamp_bulkhead", "lamp_explosion_proof", "lamp_emergency",
+                 "lamp_high_bay", "warning_beacon", "lighting_board" ->
                     s.getValue(BlockStateProperties.LIT) ? id : id + "_off";
             // электросеть I1 (этап 8 M3)
             case "electric_motor" -> s.getValue(PcProperties.MEDIUM_VOLTAGE) ? id + "_mv" : id;
@@ -266,7 +268,11 @@ public final class PcBlockStateProvider extends BlockStateProvider {
             case "blast_furnace_tuyere" -> s.getValue(PcProperties.BURNT) ? id + "_burnt" : id;
             case "blast_furnace_taphole" -> s.getValue(BlockStateProperties.OPEN) ? id + "_open" : id;
             case "blast_furnace_controller" -> s.getValue(PcProperties.ALARM) ? id + "_alarm" : id;
-            case "hot_blast_stove" -> s.getValue(PcProperties.STOVE_SEGMENT) == PcProperties.StoveSegment.DOME ? id + "_dome" : id;
+            case "hot_blast_stove" -> switch (s.getValue(PcProperties.STOVE_SEGMENT)) {
+                case DOME -> id + "_dome";
+                case MIDDLE -> id + "_middle";
+                default -> id;
+            };
             case "cast_house_machine" -> s.getValue(PcProperties.CAST_HOUSE_KIND) == PcProperties.CastHouseKind.MUD_GUN ? id + "_mud_gun" : id;
             case "iron_runner", "ingot_mold" -> s.getValue(PcProperties.FILLED) ? id + "_filled" : id;
             case "reheating_furnace" -> s.getValue(BlockStateProperties.LIT) ? id + "_lit" : id;
@@ -305,7 +311,10 @@ public final class PcBlockStateProvider extends BlockStateProvider {
 
     /** Предмет блока — модель состояния по умолчанию; многоклеточные уменьшены по наибольшему габариту. */
     private void itemModel(String id, Block block) {
-        itemModel(id, modelName(id, block.defaultBlockState()), block);
+        BlockState icon = block.defaultBlockState();
+        // светильник ставится погашенным, а в инвентаре показывается горящим
+        if (block instanceof dev.denfry.promptcritical.mod.grid.LampBlock) icon = icon.setValue(BlockStateProperties.LIT, true);
+        itemModel(id, modelName(id, icon), block);
     }
 
     private void itemModel(String id, String model, Block block) {

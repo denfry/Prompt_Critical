@@ -140,6 +140,10 @@ public final class GridRecipes extends RecipeProvider {
         ShapedRecipeBuilder.shaped(RecipeCategory.MISC, PcBlocks.LV_DISTRIBUTION_BOX.get()).pattern("SSS").pattern("FWF").pattern("SSS")
                 .define('S', AllItems.IRON_SHEET.get()).define('F', PcItems.LV_FUSE.get()).define('W', wire)
                 .unlockedBy("has_fuse", has(PcItems.LV_FUSE.get())).save(out, id("lv_distribution_box"));
+        ShapedRecipeBuilder.shaped(RecipeCategory.MISC, PcBlocks.LIGHTING_BOARD.get()).pattern("SLS").pattern("FWF").pattern("SGS")
+                .define('S', AllItems.IRON_SHEET.get()).define('L', Items.LEVER).define('F', PcItems.LV_FUSE.get()).define('W', wire)
+                .define('G', Items.GLOWSTONE_DUST)
+                .unlockedBy("has_fuse", has(PcItems.LV_FUSE.get())).save(out, id("lighting_board"));
         ShapedRecipeBuilder.shaped(RecipeCategory.MISC, PcBlocks.RELAY_CABINET.get()).pattern("SGS").pattern("SCS").pattern("SWS")
                 .define('S', AllItems.IRON_SHEET.get()).define('G', Items.GLASS_PANE).define('C', Items.COMPARATOR).define('W', wire)
                 .unlockedBy("has_wire", hasWire).save(out, id("relay_cabinet"));

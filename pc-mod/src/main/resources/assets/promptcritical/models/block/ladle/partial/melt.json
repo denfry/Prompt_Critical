@@ -1,14 +1,155 @@
 {
 	"credit": "Made with Blockbench",
+	"texture_size": [64, 64],
 	"textures": {
-		"particle": "promptcritical:block/common/fuelcycle_glow_hot",
-		"hot": "promptcritical:block/common/fuelcycle_glow_hot"
+		"particle": "promptcritical:block/hq/ladle__melt",
+		"t": "promptcritical:block/hq/ladle__melt"
 	},
 	"elements": [
 		{
-			"name": "glow_melt",
-			"from": [7, 24, 7],
-			"to": [25, 26, 25],
+			"name": "glow_melt_0",
+			"from": [6.3224, 22, 14.075],
+			"to": [25.6776, 24, 17.925],
+			"rotation": {
+				"angle": 0,
+				"axis": "y",
+				"origin": [8, 8, 8]
+			},
+			"faces": {
+				"east": {
+					"uv": [2.5, 7.5, 3.4625, 8],
+					"texture": "#t"
+				},
+				"west": {
+					"uv": [1.25, 7.5, 2.2125, 8],
+					"texture": "#t"
+				},
+				"up": {
+					"uv": [3.75, 0, 8.58883, 0.9625],
+					"texture": "#t"
+				}
+			},
+			"neoforge_data": {
+				"block_light": 15,
+				"sky_light": 15
+			}
+		},
+		{
+			"name": "glow_melt_1",
+			"from": [6.3224, 21.99, 14.075],
+			"to": [25.6776, 24.01, 17.925],
+			"rotation": {
+				"angle": 22.5,
+				"axis": "y",
+				"origin": [16, 0, 16]
+			},
+			"faces": {
+				"east": {
+					"uv": [1.25, 6.5, 2.2125, 7.005],
+					"texture": "#t"
+				},
+				"west": {
+					"uv": [0, 6.5, 0.9625, 7.005],
+					"texture": "#t"
+				},
+				"up": {
+					"uv": [9, 0, 13.83883, 0.9625],
+					"texture": "#t"
+				}
+			},
+			"neoforge_data": {
+				"block_light": 15,
+				"sky_light": 15
+			}
+		},
+		{
+			"name": "glow_melt_2",
+			"from": [6.3224, 21.98, 14.075],
+			"to": [25.6776, 24.02, 17.925],
+			"rotation": {
+				"angle": 45,
+				"axis": "y",
+				"origin": [16, 0, 16]
+			},
+			"faces": {
+				"east": {
+					"uv": [3.75, 6.5, 4.7125, 7.01],
+					"texture": "#t"
+				},
+				"west": {
+					"uv": [2.5, 6.5, 3.4625, 7.01],
+					"texture": "#t"
+				},
+				"up": {
+					"uv": [0, 5.25, 4.83883, 6.2125],
+					"texture": "#t"
+				}
+			},
+			"neoforge_data": {
+				"block_light": 15,
+				"sky_light": 15
+			}
+		},
+		{
+			"name": "glow_melt_3",
+			"from": [6.3224, 21.97, 14.075],
+			"to": [25.6776, 24.03, 17.925],
+			"rotation": {
+				"angle": -22.5,
+				"axis": "y",
+				"origin": [16, 0, 16]
+			},
+			"faces": {
+				"east": {
+					"uv": [6.25, 6.5, 7.2125, 7.015],
+					"texture": "#t"
+				},
+				"west": {
+					"uv": [5, 6.5, 5.9625, 7.015],
+					"texture": "#t"
+				},
+				"up": {
+					"uv": [5.25, 5.25, 10.08883, 6.2125],
+					"texture": "#t"
+				}
+			},
+			"neoforge_data": {
+				"block_light": 15,
+				"sky_light": 15
+			}
+		},
+		{
+			"name": "glow_melt_4",
+			"from": [6.3224, 21.96, 14.075],
+			"to": [25.6776, 24.04, 17.925],
+			"rotation": {
+				"angle": -45,
+				"axis": "y",
+				"origin": [16, 0, 16]
+			},
+			"faces": {
+				"east": {
+					"uv": [8.75, 6.5, 9.7125, 7.02],
+					"texture": "#t"
+				},
+				"west": {
+					"uv": [7.5, 6.5, 8.4625, 7.02],
+					"texture": "#t"
+				},
+				"up": {
+					"uv": [10.5, 5.25, 15.33883, 6.2125],
+					"texture": "#t"
+				}
+			},
+			"neoforge_data": {
+				"block_light": 15,
+				"sky_light": 15
+			}
+		},
+		{
+			"name": "glow_melt_5",
+			"from": [14.075, 21.95, 6.3224],
+			"to": [17.925, 24.05, 25.6776],
 			"rotation": {
 				"angle": 0,
 				"axis": "y",
@@ -16,28 +157,72 @@
 			},
 			"faces": {
 				"north": {
-					"uv": [0, 0, 16, 2],
-					"texture": "#hot"
-				},
-				"east": {
-					"uv": [0, 0, 16, 2],
-					"texture": "#hot"
+					"uv": [10, 6.5, 10.9625, 7.025],
+					"texture": "#t"
 				},
 				"south": {
-					"uv": [0, 0, 16, 2],
-					"texture": "#hot"
-				},
-				"west": {
-					"uv": [0, 0, 16, 2],
-					"texture": "#hot"
+					"uv": [11.25, 6.5, 12.2125, 7.025],
+					"texture": "#t"
 				},
 				"up": {
-					"uv": [0, 0, 16, 16],
-					"texture": "#hot"
+					"uv": [0, 0, 0.9625, 4.83883],
+					"texture": "#t"
+				}
+			},
+			"neoforge_data": {
+				"block_light": 15,
+				"sky_light": 15
+			}
+		},
+		{
+			"name": "glow_melt_6",
+			"from": [14.075, 21.94, 6.3224],
+			"to": [17.925, 24.06, 25.6776],
+			"rotation": {
+				"angle": 22.5,
+				"axis": "y",
+				"origin": [16, 0, 16]
+			},
+			"faces": {
+				"north": {
+					"uv": [12.5, 6.5, 13.4625, 7.03],
+					"texture": "#t"
 				},
-				"down": {
-					"uv": [0, 0, 16, 16],
-					"texture": "#hot"
+				"south": {
+					"uv": [13.75, 6.5, 14.7125, 7.03],
+					"texture": "#t"
+				},
+				"up": {
+					"uv": [1.25, 0, 2.2125, 4.83883],
+					"texture": "#t"
+				}
+			},
+			"neoforge_data": {
+				"block_light": 15,
+				"sky_light": 15
+			}
+		},
+		{
+			"name": "glow_melt_7",
+			"from": [14.075, 21.93, 6.3224],
+			"to": [17.925, 24.07, 25.6776],
+			"rotation": {
+				"angle": -22.5,
+				"axis": "y",
+				"origin": [16, 0, 16]
+			},
+			"faces": {
+				"north": {
+					"uv": [15, 6.5, 15.9625, 7.035],
+					"texture": "#t"
+				},
+				"south": {
+					"uv": [0, 7.5, 0.9625, 8.035],
+					"texture": "#t"
+				},
+				"up": {
+					"uv": [2.5, 0, 3.4625, 4.83883],
+					"texture": "#t"
 				}
 			},
 			"neoforge_data": {

@@ -11,6 +11,8 @@
     const texRoot = path.join(root, 'pc-mod/src/main/resources/assets/promptcritical/textures');
     newProject(Formats.java_block);
     Project.name = spec.id.split('/').pop();
+    // HQ: UV заданы в пикселях своего атласа
+    if (spec.hq) { Project.texture_width = spec.size; Project.texture_height = spec.size; }
     const tm = {};
     for (const [k, rel] of Object.entries(spec.textures)) {
       const t = new Texture({ name: path.basename(rel) }).fromPath(path.join(texRoot, rel)).add(false);
@@ -21,7 +23,18 @@
       const rot = [0, 0, 0];
       let origin = [8, 8, 8];
       if (e.rot) { rot[AX[e.rot.axis]] = e.rot.angle; origin = e.rot.origin; }
-      const c = new Cube({ name: e.name, from: e.from, to: e.to, origin, rotation: rot, autouv: 1 }).init();
+      const c = new Cube({ name: e.name, from: e.from, to: e.to, origin, rotation: rot, autouv: e.uv ? 0 : 1 }).init();
+      if (e.uv) {
+        // HQ: готовая раскладка; граней без uv нет (скрыты в соседних деталях)
+        for (const d of DIRS) {
+          const f = c.faces[d];
+          if (!e.uv[d]) { f.texture = null; continue; }
+          f.texture = tm[e.tex].uuid;
+          f.uv = e.uv[d].slice();
+          if (e.cull && e.cull[d]) f.cullface = e.cull[d];
+        }
+        continue;
+      }
       for (const d of DIRS) c.faces[d].texture = tm[e.faces[d] || e.tex].uuid;
       c.mapAutoUV();
       if (e.full) { c.autouv = 0; for (const d of e.full) c.faces[d].uv = [0, 0, 16, 16]; }
@@ -68,6 +81,7 @@
     let j = Codecs.java_block.compile();
     if (typeof j === 'string') j = JSON.parse(j);
     delete j.format_version;
+    if (spec.cutout) j.render_type = 'minecraft:cutout';
     for (const e of j.elements || []) {
       if ((e.name || '').startsWith('glow_')) e.neoforge_data = { block_light: 15, sky_light: 15 };
     }

@@ -1,9 +1,9 @@
 {
 	"credit": "Made with Blockbench",
+	"texture_size": [64, 64],
 	"textures": {
-		"particle": "promptcritical:block/decor/ceiling_tile",
-		"ct": "promptcritical:block/decor/ceiling_tile",
-		"lp": "promptcritical:block/decor/ceiling_light_panel"
+		"particle": "promptcritical:block/hq/ceiling_light_panel",
+		"t": "promptcritical:block/hq/ceiling_light_panel"
 	},
 	"elements": [
 		{
@@ -17,34 +17,35 @@
 			},
 			"faces": {
 				"north": {
-					"uv": [0, 0, 16, 1],
-					"texture": "#ct"
+					"uv": [9, 0, 13, 0.25],
+					"texture": "#t",
+					"cullface": "north"
 				},
 				"east": {
-					"uv": [0, 0, 16, 1],
-					"texture": "#ct"
+					"uv": [8.5, 4.25, 12.5, 4.5],
+					"texture": "#t",
+					"cullface": "east"
 				},
 				"south": {
-					"uv": [0, 0, 16, 1],
-					"texture": "#ct"
+					"uv": [0, 4.25, 4, 4.5],
+					"texture": "#t",
+					"cullface": "south"
 				},
 				"west": {
-					"uv": [0, 0, 16, 1],
-					"texture": "#ct"
+					"uv": [4.25, 4.25, 8.25, 4.5],
+					"texture": "#t",
+					"cullface": "west"
 				},
 				"up": {
-					"uv": [0, 0, 16, 16],
-					"texture": "#ct"
-				},
-				"down": {
-					"uv": [0, 0, 16, 16],
-					"texture": "#ct"
+					"uv": [0, 0, 4, 4],
+					"texture": "#t",
+					"cullface": "up"
 				}
 			}
 		},
 		{
 			"name": "glow_diffuser",
-			"from": [1, 14.5, 1],
+			"from": [1, 14.6, 1],
 			"to": [15, 15, 15],
 			"rotation": {
 				"angle": 0,
@@ -52,34 +53,134 @@
 				"origin": [8, 8, 8]
 			},
 			"faces": {
-				"north": {
-					"uv": [0, 0, 14, 0.5],
-					"texture": "#lp"
-				},
-				"east": {
-					"uv": [0, 0, 14, 0.5],
-					"texture": "#lp"
-				},
-				"south": {
-					"uv": [0, 0, 14, 0.5],
-					"texture": "#lp"
-				},
-				"west": {
-					"uv": [0, 0, 14, 0.5],
-					"texture": "#lp"
-				},
-				"up": {
-					"uv": [0, 0, 14, 14],
-					"texture": "#lp"
-				},
 				"down": {
-					"uv": [0, 0, 14, 14],
-					"texture": "#lp"
+					"uv": [4.25, 0, 7.75, 3.5],
+					"texture": "#t"
 				}
 			},
 			"neoforge_data": {
 				"block_light": 15,
 				"sky_light": 15
+			}
+		},
+		{
+			"name": "rim0",
+			"from": [0, 14.5, 0],
+			"to": [16, 15, 1],
+			"rotation": {
+				"angle": 0,
+				"axis": "y",
+				"origin": [8, 8, 8]
+			},
+			"faces": {
+				"north": {
+					"uv": [0, 4.75, 4, 4.875],
+					"texture": "#t",
+					"cullface": "north"
+				},
+				"east": {
+					"uv": [15.5, 5.75, 15.75, 5.875],
+					"texture": "#t",
+					"cullface": "east"
+				},
+				"south": {
+					"uv": [4.25, 4.75, 8.25, 4.875],
+					"texture": "#t"
+				},
+				"west": {
+					"uv": [15, 5.75, 15.25, 5.875],
+					"texture": "#t",
+					"cullface": "west"
+				},
+				"down": {
+					"uv": [8.5, 4.75, 12.5, 5],
+					"texture": "#t"
+				}
+			}
+		},
+		{
+			"name": "rim1",
+			"from": [0, 14.5, 15],
+			"to": [16, 15, 16],
+			"rotation": {
+				"angle": 0,
+				"axis": "y",
+				"origin": [8, 8, 8]
+			},
+			"faces": {
+				"north": {
+					"uv": [0, 5.25, 4, 5.375],
+					"texture": "#t"
+				},
+				"east": {
+					"uv": [0.5, 6.25, 0.75, 6.375],
+					"texture": "#t",
+					"cullface": "east"
+				},
+				"south": {
+					"uv": [4.25, 5.25, 8.25, 5.375],
+					"texture": "#t",
+					"cullface": "south"
+				},
+				"west": {
+					"uv": [0, 6.25, 0.25, 6.375],
+					"texture": "#t",
+					"cullface": "west"
+				},
+				"down": {
+					"uv": [8.5, 5.25, 12.5, 5.5],
+					"texture": "#t"
+				}
+			}
+		},
+		{
+			"name": "rim2",
+			"from": [0, 14.5, 1],
+			"to": [1, 15, 15],
+			"rotation": {
+				"angle": 0,
+				"axis": "y",
+				"origin": [8, 8, 8]
+			},
+			"faces": {
+				"east": {
+					"uv": [3.75, 5.75, 7.25, 5.875],
+					"texture": "#t"
+				},
+				"west": {
+					"uv": [0, 5.75, 3.5, 5.875],
+					"texture": "#t",
+					"cullface": "west"
+				},
+				"down": {
+					"uv": [8, 0, 8.25, 3.5],
+					"texture": "#t"
+				}
+			}
+		},
+		{
+			"name": "rim3",
+			"from": [15, 14.5, 1],
+			"to": [16, 15, 15],
+			"rotation": {
+				"angle": 0,
+				"axis": "y",
+				"origin": [8, 8, 8]
+			},
+			"faces": {
+				"east": {
+					"uv": [11.25, 5.75, 14.75, 5.875],
+					"texture": "#t",
+					"cullface": "east"
+				},
+				"west": {
+					"uv": [7.5, 5.75, 11, 5.875],
+					"texture": "#t"
+				},
+				"down": {
+					"uv": [8.5, 0, 8.75, 3.5],
+					"texture": "#t"
+				}
 			}
 		}
 	]

@@ -1,50 +1,14 @@
 {
 	"credit": "Made with Blockbench",
+	"texture_size": [64, 64],
 	"textures": {
-		"particle": "promptcritical:block/common/fuelcycle_refractory",
-		"hot": "promptcritical:block/common/fuelcycle_glow_hot",
-		"ref": "promptcritical:block/common/fuelcycle_refractory"
+		"particle": "promptcritical:block/hq/iron_runner_filled",
+		"t": "promptcritical:block/hq/iron_runner_filled"
 	},
 	"elements": [
 		{
-			"name": "bed",
-			"from": [0, 0, 2],
-			"to": [16, 3, 14],
-			"rotation": {
-				"angle": 0,
-				"axis": "y",
-				"origin": [8, 8, 8]
-			},
-			"faces": {
-				"north": {
-					"uv": [0, 0, 16, 3],
-					"texture": "#ref"
-				},
-				"east": {
-					"uv": [0, 0, 12, 3],
-					"texture": "#ref"
-				},
-				"south": {
-					"uv": [0, 0, 16, 3],
-					"texture": "#ref"
-				},
-				"west": {
-					"uv": [0, 0, 12, 3],
-					"texture": "#ref"
-				},
-				"up": {
-					"uv": [0, 0, 16, 12],
-					"texture": "#ref"
-				},
-				"down": {
-					"uv": [0, 0, 16, 12],
-					"texture": "#ref"
-				}
-			}
-		},
-		{
-			"name": "lip_w",
-			"from": [0, 3, 2],
+			"name": "wall0",
+			"from": [0, 0, 1],
 			"to": [16, 7, 5],
 			"rotation": {
 				"angle": 0,
@@ -53,35 +17,38 @@
 			},
 			"faces": {
 				"north": {
-					"uv": [0, 0, 16, 4],
-					"texture": "#ref"
+					"uv": [0, 0, 4, 1.75],
+					"texture": "#t"
 				},
 				"east": {
-					"uv": [0, 0, 3, 4],
-					"texture": "#ref"
+					"uv": [5.5, 2, 6.5, 3.75],
+					"texture": "#t",
+					"cullface": "east"
 				},
 				"south": {
-					"uv": [0, 0, 16, 4],
-					"texture": "#ref"
+					"uv": [4.25, 0, 8.25, 1.75],
+					"texture": "#t"
 				},
 				"west": {
-					"uv": [0, 0, 3, 4],
-					"texture": "#ref"
+					"uv": [4.25, 2, 5.25, 3.75],
+					"texture": "#t",
+					"cullface": "west"
 				},
 				"up": {
-					"uv": [0, 0, 16, 3],
-					"texture": "#ref"
+					"uv": [4.25, 4, 8.25, 5],
+					"texture": "#t"
 				},
 				"down": {
-					"uv": [0, 0, 16, 3],
-					"texture": "#ref"
+					"uv": [8.5, 4, 12.5, 5],
+					"texture": "#t",
+					"cullface": "down"
 				}
 			}
 		},
 		{
-			"name": "lip_e",
-			"from": [0, 3, 11],
-			"to": [16, 7, 14],
+			"name": "wall1",
+			"from": [0, 0, 11],
+			"to": [16, 7, 15],
 			"rotation": {
 				"angle": 0,
 				"axis": "y",
@@ -89,28 +56,58 @@
 			},
 			"faces": {
 				"north": {
-					"uv": [0, 0, 16, 4],
-					"texture": "#ref"
+					"uv": [8.5, 0, 12.5, 1.75],
+					"texture": "#t"
 				},
 				"east": {
-					"uv": [0, 0, 3, 4],
-					"texture": "#ref"
+					"uv": [8, 2, 9, 3.75],
+					"texture": "#t",
+					"cullface": "east"
 				},
 				"south": {
-					"uv": [0, 0, 16, 4],
-					"texture": "#ref"
+					"uv": [0, 2, 4, 3.75],
+					"texture": "#t"
 				},
 				"west": {
-					"uv": [0, 0, 3, 4],
-					"texture": "#ref"
+					"uv": [6.75, 2, 7.75, 3.75],
+					"texture": "#t",
+					"cullface": "west"
 				},
 				"up": {
-					"uv": [0, 0, 16, 3],
-					"texture": "#ref"
+					"uv": [0, 5.75, 4, 6.75],
+					"texture": "#t"
 				},
 				"down": {
-					"uv": [0, 0, 16, 3],
-					"texture": "#ref"
+					"uv": [4.25, 5.75, 8.25, 6.75],
+					"texture": "#t",
+					"cullface": "down"
+				}
+			}
+		},
+		{
+			"name": "bed",
+			"from": [0, 0, 5],
+			"to": [16, 3, 11],
+			"rotation": {
+				"angle": 0,
+				"axis": "y",
+				"origin": [8, 8, 8]
+			},
+			"faces": {
+				"east": {
+					"uv": [10.25, 5.75, 11.75, 6.5],
+					"texture": "#t",
+					"cullface": "east"
+				},
+				"west": {
+					"uv": [8.5, 5.75, 10, 6.5],
+					"texture": "#t",
+					"cullface": "west"
+				},
+				"down": {
+					"uv": [9.25, 2, 13.25, 3.5],
+					"texture": "#t",
+					"cullface": "down"
 				}
 			}
 		},
@@ -124,29 +121,19 @@
 				"origin": [8, 8, 8]
 			},
 			"faces": {
-				"north": {
-					"uv": [0, 0, 16, 2.5],
-					"texture": "#hot"
-				},
 				"east": {
-					"uv": [0, 0, 6, 2.5],
-					"texture": "#hot"
-				},
-				"south": {
-					"uv": [0, 0, 16, 2.5],
-					"texture": "#hot"
+					"uv": [13.75, 5.75, 15.25, 6.375],
+					"texture": "#t",
+					"cullface": "east"
 				},
 				"west": {
-					"uv": [0, 0, 6, 2.5],
-					"texture": "#hot"
+					"uv": [12, 5.75, 13.5, 6.375],
+					"texture": "#t",
+					"cullface": "west"
 				},
 				"up": {
-					"uv": [0, 0, 16, 6],
-					"texture": "#hot"
-				},
-				"down": {
-					"uv": [0, 0, 16, 6],
-					"texture": "#hot"
+					"uv": [0, 4, 4, 5.5],
+					"texture": "#t"
 				}
 			},
 			"neoforge_data": {

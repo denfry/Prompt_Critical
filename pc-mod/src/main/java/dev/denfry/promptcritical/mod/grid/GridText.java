@@ -23,6 +23,10 @@ public final class GridText {
             "Сначала отключите разъединитель");
     public static final String INTERLOCK_FITTED = t("interlock_fitted", "Interlock module fitted: the disconnector is blocked while an adjacent breaker is closed",
             "Модуль блокировки установлен: разъединитель заблокирован при включённом выключателе");
+    public static final String LIGHTING_ON = t("lighting_on", "Lighting group switched on", "Группа освещения включена");
+    public static final String LIGHTING_OFF = t("lighting_off", "Lighting group switched off", "Группа освещения отключена");
+    public static final String LIGHTING_STATUS = t("lighting_status", "Lighting group: %s lamps, %s kW, %s V",
+            "Группа освещения: светильников %s, %s кВт, %s В");
     public static final String FUSE_FITTED = t("fuse_fitted", "Fuse fitted (%s A)", "Вставка установлена (%s А)");
     public static final String FUSE_REMOVED = t("fuse_removed", "Fuse removed — visible break", "Вставка вынута — видимый разрыв");
     public static final String FUSE_BLOWN = t("fuse_blown", "The fuse has blown — fit a new one", "Вставка перегорела — поставьте новую");
