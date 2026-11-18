@@ -4,7 +4,7 @@
 // Load inside Blockbench desktop, after the shared toolkit:
 //   eval(require('fs').readFileSync('<repo>/art/blockbench/lib/pcart.js', 'utf8'))
 //   eval(require('fs').readFileSync('<repo>/art/blockbench/core/candu_reactor.author.js', 'utf8'))
-//   PCART.paintMaterials('<repo>'); CANDU.paint('<repo>')
+//   PCART.paintMaterials('<repo>'); CANDU.paint('<repo>'); CANDU.paintGui('<repo>')
 //   build + save each model in turn (CANDU.build / CANDU.save, ids in CANDU.ids)
 //
 // 3x6x3: two 3x3x3 segments, each model x -16..32, y -16..32, z -16..32 about its middle block, front to the
@@ -255,6 +255,41 @@
     return m;
   }
 
+  // Panel board for CanduPanels.REACTOR (248x176): control-room desk enamel in pale grey-green with a brass
+  // frame, rings behind the three dials, recessed plates under the rod bars, the trip lamp, the button row, the
+  // fuel slots and the status read-out.
+  function guiCandu() {
+    const W = 248, H = 176, im = img(W, H), r = rng(3221);
+    grain(im, [150, 164, 154], 3222, 3, 4, 12);
+    for (let y = 0; y < H; y++) for (let x = 0; x < W; x++) {
+      const d = Math.min(x, y, W - 1 - x, H - 1 - y);
+      if (d < 4) put(im, x, y, add([150, 126, 74], (d === 0 ? -50 : d === 1 ? 30 : d === 3 ? -30 : 0) + (r() - 0.5) * 8));
+    }
+    for (const cx of [32, 88, 144]) for (let a = 0; a < 360; a += 0.5) {
+      const t = a * Math.PI / 180;
+      put(im, cx + 26 * Math.cos(t), 48 + 26 * Math.sin(t), [70, 78, 72]);
+      put(im, cx + 27 * Math.cos(t) + 0.5, 48 + 27 * Math.sin(t) + 0.5, [196, 206, 198]);
+    }
+    const plate = (x0, y0, x1, y1, base) => {
+      for (let y = y0; y < y1; y++) for (let x = x0; x < x1; x++) {
+        const edge = x === x0 || y === y0 ? -22 : x === x1 - 1 || y === y1 - 1 ? 18 : 0;
+        put(im, x, y, add(base, edge + (r() - 0.5) * 4));
+      }
+    };
+    plate(172, 16, W - 6, 56, [120, 132, 124]);
+    plate(172, 64, W - 6, 80, [120, 132, 124]);
+    plate(4, 78, 120, 92, [120, 132, 124]);
+    plate(196, 82, W - 4, 106, [96, 104, 98]);
+    plate(4, 96, 216, 118, [104, 114, 108]);
+    plate(4, 136, W - 4, 158, [60, 66, 62]);
+    return im;
+  }
+
+  function paintGui(root) {
+    writePng(guiCandu(), path.join(root, PCART.ASSETS, 'textures/gui/panel/candu_reactor.png'));
+    return 1;
+  }
+
   const BUILDS = {
     candu_reactor: { model: calandria },
     candu_reactor_fuelling: { model: cabinet },
@@ -263,7 +298,7 @@
   };
 
   window.CANDU = {
-    paint, ids: Object.keys(BUILDS), LATTICE,
+    paint, paintGui, ids: Object.keys(BUILDS), LATTICE,
     build: (root, id) => PCART.realize(root, BUILDS[id].model(), id),
     save: (root, id) => PCART.save(root, 'core', id, BUILDS[id].java),
     preview(root) {

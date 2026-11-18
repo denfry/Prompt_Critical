@@ -54,7 +54,9 @@ public final class CanduPanels {
             PanelText.tr("npp.trip.external", "SCRAM: external (ESD)", "АЗ: внешняя (ПАЗ)"),
             PanelText.tr("npp.trip.manual", "SCRAM: manual", "АЗ: ручная")};
 
+    /** Фон — art/blockbench/core/candu_reactor.author.js ({@code guiCandu}). */
     public static final PanelLayout REACTOR = PanelLayout.builder("candu_reactor", 248, 176, CHANNELS)
+            .art(dev.denfry.promptcritical.mod.PromptCritical.id("textures/gui/panel/candu_reactor.png"))
             .dial(8, 24, false, POWER, 10, 130, CanduReactor.TRIP_POWER * 100, 0, PCT.get(), N.get(),
                     v -> POWER_TIP.get(v.num(POWER, 10, 1), v.raw(RHO_PCM), 100))
             .dial(64, 24, false, PERIOD, 10, 100, Double.NaN, 0, SEC.get(), T_PERIOD.get(), null)
