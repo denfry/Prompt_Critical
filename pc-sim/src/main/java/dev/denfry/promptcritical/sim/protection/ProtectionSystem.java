@@ -386,6 +386,15 @@ public final class ProtectionSystem {
         return true;
     }
 
+    /**
+     * Восстановление после загрузки мира или горячего старта: последняя измеренная мощность и снятая пусковая уставка
+     * (её снимают только выше разрешения по мощности).
+     */
+    public void restore(double measuredPowerFrac, boolean lowFluxSetpointBlocked) {
+        lastPower = measuredPowerFrac;
+        lowFluxBlocked = lowFluxSetpointBlocked && measuredPowerFrac > cfg.lowPowerPermissiveFrac();
+    }
+
     /** Снятие пусковой уставки {@code HIGH_FLUX} оператором — только при N выше разрешения (§1.11.3). */
     public boolean setLowFluxSetpointBlocked(boolean blocked) {
         if (blocked && !(lastPower > cfg.lowPowerPermissiveFrac())) return false;
