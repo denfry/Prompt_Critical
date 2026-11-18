@@ -54,6 +54,30 @@ public final class OpsRecipes extends RecipeProvider {
         var pipe = AllBlocks.FLUID_PIPE.get();
         var hasSheet = has(sheet);
 
+        // LOTO (13 §13.1.2): замок, бирка, накладка, указатель напряжения
+        ShapedRecipeBuilder.shaped(RecipeCategory.TOOLS, PcItems.LOCKOUT_PADLOCK.get(), 2)
+                .pattern(" I ").pattern("IRI").pattern("III").define('I', Items.IRON_INGOT).define('R', Items.RED_DYE)
+                .unlockedBy("has_iron", has(Items.IRON_INGOT)).save(out, id("lockout_padlock"));
+        ShapelessRecipeBuilder.shapeless(RecipeCategory.TOOLS, PcItems.LOCKOUT_TAG.get(), 4)
+                .requires(Items.PAPER).requires(Items.RED_DYE).requires(Items.STRING)
+                .unlockedBy("has_paper", has(Items.PAPER)).save(out, id("lockout_tag"));
+        ShapedRecipeBuilder.shaped(RecipeCategory.TOOLS, PcItems.LOCKOUT_HASP.get())
+                .pattern("I I").pattern("III").define('I', Items.IRON_INGOT)
+                .unlockedBy("has_iron", has(Items.IRON_INGOT)).save(out, id("lockout_hasp"));
+        ShapelessRecipeBuilder.shapeless(RecipeCategory.TOOLS, PcItems.VOLTAGE_TESTER.get())
+                .requires(Items.REDSTONE_TORCH).requires(Items.COPPER_INGOT).requires(Items.STICK).requires(Items.YELLOW_DYE)
+                .unlockedBy("has_copper", has(Items.COPPER_INGOT)).save(out, id("voltage_tester"));
+
+        ShapedRecipeBuilder.shaped(RecipeCategory.MISC, PcBlocks.LINE_BLIND.get())
+                .pattern("I I").pattern("PRP").pattern("I I").define('I', Items.IRON_INGOT).define('P', pipe).define('R', Items.RED_DYE)
+                .unlockedBy("has_iron", has(Items.IRON_INGOT)).save(out, id("line_blind"));
+        ShapedRecipeBuilder.shaped(RecipeCategory.MISC, PcBlocks.LOCKOUT_BOX.get())
+                .pattern("III").pattern("IGI").pattern("IRI").define('I', Items.IRON_INGOT).define('G', Items.GLASS_PANE)
+                .define('R', Items.RED_DYE).unlockedBy("has_iron", has(Items.IRON_INGOT)).save(out, id("lockout_box"));
+        ShapelessRecipeBuilder.shapeless(RecipeCategory.MISC, PcBlocks.MECHANICAL_DISCONNECT.get())
+                .requires(AllBlocks.CLUTCH.get()).requires(Items.LEVER).requires(Items.IRON_INGOT)
+                .unlockedBy("has_clutch", has(AllBlocks.CLUTCH.get())).save(out, id("mechanical_disconnect"));
+
         // инструменты
         ShapelessRecipeBuilder.shapeless(RecipeCategory.TOOLS, PcItems.MECHANIC_STETHOSCOPE.get())
                 .requires(Items.COPPER_INGOT).requires(Items.IRON_INGOT).requires(Items.STRING)

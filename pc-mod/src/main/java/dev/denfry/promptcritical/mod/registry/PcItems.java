@@ -285,6 +285,15 @@ public final class PcItems {
     public static final DeferredItem<FerroalloyItem> FERROALLOY = registered(ITEMS.registerItem("ferroalloy", FerroalloyItem::new,
             new Item.Properties().stacksTo(64)));
     // --- эксплуатация (13 §13.6.5–13.6.7, этап 11а M3): инструменты, запчасти, расходники ---
+    /** LOTO 13 §13.1.2: личный замок, бирка, многозамковая накладка, указатель напряжения. */
+    public static final DeferredItem<dev.denfry.promptcritical.mod.ops.LockoutItem> LOCKOUT_PADLOCK =
+            lockout("lockout_padlock", dev.denfry.promptcritical.mod.ops.LockoutItem.Kind.PADLOCK, 8);
+    public static final DeferredItem<dev.denfry.promptcritical.mod.ops.LockoutItem> LOCKOUT_TAG =
+            lockout("lockout_tag", dev.denfry.promptcritical.mod.ops.LockoutItem.Kind.TAG, 16);
+    public static final DeferredItem<dev.denfry.promptcritical.mod.ops.LockoutItem> LOCKOUT_HASP =
+            lockout("lockout_hasp", dev.denfry.promptcritical.mod.ops.LockoutItem.Kind.HASP, 8);
+    public static final DeferredItem<dev.denfry.promptcritical.mod.ops.LockoutItem> VOLTAGE_TESTER =
+            lockout("voltage_tester", dev.denfry.promptcritical.mod.ops.LockoutItem.Kind.VOLTAGE_TESTER, 1);
     public static final DeferredItem<OpsItem> MECHANIC_STETHOSCOPE = ops("mechanic_stethoscope", OpsItem.Kind.STETHOSCOPE, 1);
     public static final DeferredItem<OpsItem> TORQUE_WRENCH = ops("torque_wrench", OpsItem.Kind.TORQUE_WRENCH, 1);
     public static final DeferredItem<OpsItem> TEST_PRESSURE_GAUGE = ops("test_pressure_gauge", OpsItem.Kind.TEST_GAUGE, 1);
@@ -389,6 +398,12 @@ public final class PcItems {
         DeferredItem<Item> i = ITEMS.registerSimpleItem(name, new Item.Properties().stacksTo(stack));
         PLAIN.add(i);
         return i;
+    }
+
+    private static DeferredItem<dev.denfry.promptcritical.mod.ops.LockoutItem> lockout(String name,
+            dev.denfry.promptcritical.mod.ops.LockoutItem.Kind kind, int stack) {
+        return registered(ITEMS.registerItem(name, p -> new dev.denfry.promptcritical.mod.ops.LockoutItem(p, kind),
+                new Item.Properties().stacksTo(stack)));
     }
 
     private static DeferredItem<OpsItem> ops(String name, OpsItem.Kind kind, int stack) {

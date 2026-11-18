@@ -32,7 +32,8 @@ import org.jetbrains.annotations.Nullable;
  * шина — боковые грани (ряд ячеек = шина), присоединение — задняя грань и верх; у щита ввод — сзади, отходящие —
  * по бокам и сверху. Модули РЗА — в соседнем шкафу {@code relay_cabinet}.
  */
-public class BreakerCellBlockEntity extends GridDeviceBlockEntity<SwitchUnit> implements PanelHost, WiredDevice {
+public class BreakerCellBlockEntity extends GridDeviceBlockEntity<SwitchUnit> implements PanelHost, WiredDevice,
+        dev.denfry.promptcritical.mod.ops.IsolationPoint {
     private final SwitchUnit.Kind kind;
     private final MechanismWiring wiring = new MechanismWiring();
     /** Электромагниты включения/отключения под напряжением на прошлом тике (команда — по фронту). */
@@ -92,6 +93,8 @@ public class BreakerCellBlockEntity extends GridDeviceBlockEntity<SwitchUnit> im
 
     @Override
     protected void serverTick(SwitchUnit u) {
+        // замок LOTO на шторке ячейки: привод заперт для руки, РЗА, АПВ, реле и Lua (13 §13.1.3)
+        u.setLockedOut(dev.denfry.promptcritical.mod.ops.Lockouts.locked(level, worldPosition));
         if (ticks % 20 == 3) u.setRelays(cabinetRelays());
         AutomationUnit a = MechanismWiring.unit(level, simId(), AutomationKind.BREAKER_IO);
         if (a != null) {
@@ -117,13 +120,16 @@ public class BreakerCellBlockEntity extends GridDeviceBlockEntity<SwitchUnit> im
         SwitchUnit u = unit();
         if (u == null) return BreakerResponse.UNAVAILABLE;
         BreakerResponse r = u.operate(close);
-        if (player != null) player.displayClientMessage(GridText.msg(GridText.BREAKER_RESPONSE, response(r)), true);
+        if (player != null) player.displayClientMessage(r == BreakerResponse.LOCKED_OUT
+                ? dev.denfry.promptcritical.mod.ops.Lockouts.lockedMessage(level, worldPosition)
+                : GridText.msg(GridText.BREAKER_RESPONSE, response(r)), true);
         if (r == BreakerResponse.ACCEPTED)
             level.playSound(null, worldPosition, dev.denfry.promptcritical.mod.sound.PcSfx.BREAKER_OPERATE.get(), SoundSource.BLOCKS, 0.9f, close ? 0.85f : 1.0f);
         return r;
     }
 
     static net.minecraft.network.chat.Component response(BreakerResponse r) {
+        if (r == BreakerResponse.LOCKED_OUT) return dev.denfry.promptcritical.mod.ops.LockoutText.msg("breaker_locked");
         return GridText.msg(switch (r) {
             case ACCEPTED -> GridText.ACCEPTED;
             case INTERLOCK -> GridText.INTERLOCK;
@@ -131,8 +137,33 @@ public class BreakerCellBlockEntity extends GridDeviceBlockEntity<SwitchUnit> im
             case BUSY -> GridText.BUSY;
             case UNAVAILABLE -> GridText.UNAVAILABLE;
             case PERMIT -> GridText.PERMIT;
+            case LOCKED_OUT -> throw new IllegalStateException();
         });
     }
+
+    // --- LOTO (13 §13.1.3): точка изоляции электрической энергии ---
+
+    @Override
+    public dev.denfry.promptcritical.sim.ops.EnergyKind energy() {
+        return dev.denfry.promptcritical.sim.ops.EnergyKind.ELECTRICAL;
+    }
+
+    /** Аппарат отключён. */
+    @Override
+    public boolean isolatedPosition() {
+        SwitchUnit u = unit();
+        return u != null && !u.closed();
+    }
+
+    /** Указатель напряжения на стороне присоединения: ниже порога указателя до 1000 В. */
+    @Override
+    public boolean noEnergy() {
+        SwitchUnit u = unit();
+        var b = level instanceof net.minecraft.server.level.ServerLevel s ? dev.denfry.promptcritical.mod.binding.SimBindings.get(s) : null;
+        GridSubsystem g = b == null ? null : b.world().subsystem(GridSubsystem.class);
+        return u != null && g != null && g.voltageV(u.node(1)) < dev.denfry.promptcritical.sim.grid.WorkPermit.NO_VOLTAGE_V;
+    }
+
 
     @Override
     public InteractionResult use(Player player) {

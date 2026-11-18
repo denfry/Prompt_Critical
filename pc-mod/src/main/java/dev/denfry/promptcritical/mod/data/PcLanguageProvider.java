@@ -437,6 +437,10 @@ public final class PcLanguageProvider extends LanguageProvider {
         i("copper_wire", "Copper Wire", "Медная проволока");
         i("generator_coupling", "Shear-Pin Coupling", "Муфта со срезным штифтом");
         i("jacket_heater", "Jacket Water Heater", "Подогреватель рубашки");
+        i("lockout_padlock", "Lockout Padlock", "Замок блокировки");
+        i("lockout_tag", "Lockout Tag", "Бирка «Не включать!»");
+        i("lockout_hasp", "Lockout Hasp", "Многозамковая накладка");
+        i("voltage_tester", "Voltage Tester", "Указатель напряжения");
         i("load_sequencer", "Load Sequencer", "Секвенсор нагрузки");
         i("lv_fuse", "LV Fuse Link", "Плавкая вставка");
         i("interlock_module", "Interlock Module", "Модуль блокировки");
@@ -510,6 +514,9 @@ public final class PcLanguageProvider extends LanguageProvider {
         b("dam_gate", "Dam Intake Gate", "Затвор водозабора");
         b("gas_turbine", "Gas Turbine Unit", "Газотурбинная установка");
         b("diesel_generator", "Emergency Diesel Generator", "Аварийный дизель-генератор");
+        b("line_blind", "Line Blind", "Поворотная заглушка");
+        b("lockout_box", "Lockout Box", "Ящик групповой блокировки");
+        b("mechanical_disconnect", "Mechanical Disconnect", "Расцепная муфта");
         b("hrsg", "Heat Recovery Steam Generator", "Котёл-утилизатор");
         b("turbine_gearbox", "Turbine Gearbox", "Редуктор турбины");
         b("condenser", "Steam Condenser", "Конденсатор");
@@ -725,6 +732,7 @@ public final class PcLanguageProvider extends LanguageProvider {
         MISC.putAll(dev.denfry.promptcritical.mod.ironworks.IronworksText.LANG);
         MISC.putAll(dev.denfry.promptcritical.mod.steelworks.SteelworksText.LANG);
         MISC.putAll(dev.denfry.promptcritical.mod.ops.OpsText.LANG);
+        MISC.putAll(dev.denfry.promptcritical.mod.ops.LockoutText.LANG);
         MISC.putAll(dev.denfry.promptcritical.mod.powerhouse.PowerhouseText.LANG);
         MISC.putAll(dev.denfry.promptcritical.mod.grid.GridText.LANG);
         MISC.putAll(dev.denfry.promptcritical.mod.automation.AutomationText.LANG);

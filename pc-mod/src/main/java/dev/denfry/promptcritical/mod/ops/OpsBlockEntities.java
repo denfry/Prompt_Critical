@@ -26,6 +26,16 @@ public final class OpsBlockEntities {
             BLOCK_ENTITIES.register("water_treatment", () -> BlockEntityType.Builder.of(WaterTreatmentBlockEntity::new,
                     PcBlocks.WATER_CLARIFIER.get(), PcBlocks.SAND_FILTER.get(), PcBlocks.ION_EXCHANGE_COLUMN.get()).build(null));
 
+    public static final DeferredHolder<BlockEntityType<?>, BlockEntityType<LineBlindBlockEntity>> LINE_BLIND =
+            BLOCK_ENTITIES.register("line_blind", () -> BlockEntityType.Builder.of(LineBlindBlockEntity::new,
+                    PcBlocks.LINE_BLIND.get()).build(null));
+    public static final DeferredHolder<BlockEntityType<?>, BlockEntityType<LockoutBoxBlockEntity>> LOCKOUT_BOX =
+            BLOCK_ENTITIES.register("lockout_box", () -> BlockEntityType.Builder.of(LockoutBoxBlockEntity::new,
+                    PcBlocks.LOCKOUT_BOX.get()).build(null));
+    public static final DeferredHolder<BlockEntityType<?>, BlockEntityType<MechanicalDisconnectBlockEntity>> MECHANICAL_DISCONNECT =
+            BLOCK_ENTITIES.register("mechanical_disconnect", () -> BlockEntityType.Builder.of(MechanicalDisconnectBlockEntity::new,
+                    PcBlocks.MECHANICAL_DISCONNECT.get()).build(null));
+
     private OpsBlockEntities() {
     }
 }

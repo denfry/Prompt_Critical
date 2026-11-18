@@ -69,6 +69,8 @@ public final class PcProperties {
     public static final BooleanProperty BURST = BooleanProperty.create("burst");
     // эксплуатация (13 §13.6.5–13.6.7, этап 11 M3)
     public static final IntegerProperty SEVERITY = IntegerProperty.create("severity", 0, 3);
+    /** Замков на ящике блокировки LOTO (13 §13.16). */
+    public static final IntegerProperty LOCKS = IntegerProperty.create("locks", 0, 6);
     public static final BooleanProperty PUMPING = BooleanProperty.create("pumping");
     public static final BooleanProperty PAPER = BooleanProperty.create("paper");
     /** Горелка котла I1 газовая (иначе пылеугольная) — по топливу котла. */

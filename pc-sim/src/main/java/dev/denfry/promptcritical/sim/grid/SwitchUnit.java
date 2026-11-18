@@ -41,6 +41,8 @@ public final class SwitchUnit extends GridUnit {
     int trips;
     /** Открытых нарядов-допусков на аппарате ({@link WorkPermit}): пока их больше нуля, включить нельзя. */
     int permits;
+    /** На приводе висит замок LOTO (13 §13.1): аппарат не двигается ни по чьей команде, оперативный ток снят. */
+    boolean lockedOut;
 
     SwitchUnit(SimId id, Kind kind) {
         super(id, 2);
@@ -113,6 +115,7 @@ public final class SwitchUnit extends GridUnit {
     public BreakerResponse operate(boolean close) {
         lastArc = false;
         if (kind == Kind.FUSE) return BreakerResponse.UNAVAILABLE;
+        if (lockedOut) return BreakerResponse.LOCKED_OUT;
         if (close && permits > 0) return BreakerResponse.PERMIT;
         if (kind == Kind.DISCONNECTOR) return operateDisconnector(close);
         if (branch == null || !owner.ready()) {
@@ -170,7 +173,18 @@ public final class SwitchUnit extends GridUnit {
     /** Привод выключателя под нарядом: оперативный ток снят, пока открыт хоть один наряд. */
     private void pushPermitLock() {
         if (branch != null && owner.ready() && (kind == Kind.MV_BREAKER || kind == Kind.LV_BREAKER))
-            owner.grid().setBreakerControlPower(branch, controlPower && permits == 0);
+            owner.grid().setBreakerControlPower(branch, controlPower && permits == 0 && !lockedOut);
+    }
+
+    /** Замок LOTO на приводе: мир ставит его каждый тик по реестру замков. */
+    public void setLockedOut(boolean locked) {
+        if (lockedOut == locked) return;
+        lockedOut = locked;
+        pushPermitLock();
+    }
+
+    public boolean lockedOut() {
+        return lockedOut;
     }
 
     /** Открытых нарядов на аппарате. */
@@ -327,7 +341,7 @@ public final class SwitchUnit extends GridUnit {
     void meter(PowerGrid g, double dt) {
         if (branch == null) return;
         // привод выключателя под нарядом заперт, оперативный ток снят — АПВ и команды РЗА его тоже не включат
-        if (permits > 0 && (kind == Kind.MV_BREAKER || kind == Kind.LV_BREAKER)) g.setBreakerControlPower(branch, false);
+        if ((permits > 0 || lockedOut) && (kind == Kind.MV_BREAKER || kind == Kind.LV_BREAKER)) g.setBreakerControlPower(branch, false);
         double p = g.branchPowerFromW(branch) * dt;
         if (p > 0) energyForwardJ += p;
         else energyReverseJ -= p;
