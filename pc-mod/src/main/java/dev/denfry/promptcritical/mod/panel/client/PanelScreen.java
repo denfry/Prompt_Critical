@@ -88,6 +88,7 @@ public final class PanelScreen extends AbstractContainerScreen<PanelMenu> {
                         menu.bit(f.flagsCh(), f.litBit()), menu.bit(f.flagsCh(), f.smokyBit()), ex, ey, fit.room(f, font.width(f.label())));
                 case PanelLayout.UTube u -> PanelArt.utube(g, font, u, smooth(u, menu.get(u.ch(), u.scale()), dt), ex, ey,
                         fit.room(u, font.width(u.label())));
+                case PanelLayout.Plot pl -> PanelArt.plot(g, font, pl, menu, ex, ey, fit.room(pl, font.width(pl.label())));
                 case PanelLayout.IndicatorCard ic -> PanelArt.indicator(g, font, ic,
                         smooth(ic, menu.get(ic.chestCh(), 1) * 1000 + 101_325, dt), menu.bit(ic.flagsCh(), ic.runBit()), ex, ey,
                         fit.room(ic, font.width(ic.label())));
@@ -168,6 +169,10 @@ public final class PanelScreen extends AbstractContainerScreen<PanelMenu> {
                 case PanelLayout.UTube u -> {
                     lines.add(u.tip() != null ? u.tip().apply(menu) : u.label());
                     yield inside(mx, my, u.x(), u.y(), PanelLayout.UTube.W, u.h() + 12);
+                }
+                case PanelLayout.Plot pl -> {
+                    lines.add(pl.tip() != null ? pl.tip().apply(menu) : pl.label());
+                    yield inside(mx, my, pl.x(), pl.y(), pl.w(), pl.h() + 12);
                 }
                 case PanelLayout.IndicatorCard ic -> {
                     lines.add(ic.tip() != null ? ic.tip().apply(menu) : ic.label());

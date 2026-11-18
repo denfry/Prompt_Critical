@@ -348,6 +348,32 @@ public final class PanelArt {
         paintCentered(g, font, e.label(), x + w / 2, y + h + 2, room);
     }
 
+    /** Кривая по точкам из каналов на миллиметровке (динамограмма): замкнутая ломаная, пока машина работает. */
+    public static void plot(GuiGraphics g, Font font, PanelLayout.Plot e, dev.denfry.promptcritical.mod.panel.PanelValues v,
+            int x, int y, int room) {
+        int w = e.w(), h = e.h();
+        g.fill(x, y, x + w, y + h, 0xFF8A6A34);
+        g.fill(x + 1, y + 1, x + w - 1, y + h - 1, 0xFFC8A45A);
+        int px0 = x + 3, py0 = y + 3, px1 = x + w - 3, py1 = y + h - 3;
+        g.fill(px0, py0, px1, py1, 0xFFEFE9D6);
+        for (int gx = px0 + 5; gx < px1; gx += 5) g.fill(gx, py0, gx + 1, py1, (gx - px0) % 25 == 0 ? 0x40C05040 : 0x20C05040);
+        for (int gy = py1 - 5; gy > py0; gy -= 5) g.fill(px0, gy, px1, gy + 1, (py1 - gy) % 25 == 0 ? 0x40C05040 : 0x20C05040);
+        if (v.bit(e.flagsCh(), e.runBit()) && e.points() > 1) {
+            int iw = px1 - px0 - 4, ih = py1 - py0 - 4, bx = px0 + 2, by = py1 - 2;
+            for (int i = 0; i < e.points(); i++) {
+                int j = (i + 1) % e.points();
+                double x0 = bx + v.raw(e.ch0() + 2 * i) / e.xMax() * iw, y0 = by - v.raw(e.ch0() + 2 * i + 1) / e.yMax() * ih;
+                double x1 = bx + v.raw(e.ch0() + 2 * j) / e.xMax() * iw, y1 = by - v.raw(e.ch0() + 2 * j + 1) / e.yMax() * ih;
+                int n = (int) Math.ceil(Math.max(Math.abs(x1 - x0), Math.abs(y1 - y0)) * 2) + 1;
+                for (int k = 0; k <= n; k++) {
+                    int qx = (int) Math.round(x0 + (x1 - x0) * k / n), qy = (int) Math.round(y0 + (y1 - y0) * k / n);
+                    if (qx >= px0 && qx < px1 && qy >= py0 && qy < py1) g.fill(qx, qy, qx + 1, qy + 1, 0xFF2A2A30);
+                }
+            }
+        }
+        paintCentered(g, font, e.label(), x + w / 2, y + h + 2, room);
+    }
+
     private static int hash(int a, int b) {
         int h = a * 73856093 ^ b * 19349663;
         h ^= h >>> 13;
