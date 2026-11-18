@@ -84,6 +84,13 @@ public final class PcItems {
     public static final DeferredItem<Item> POLYETHYLENE = item("polyethylene", 64);
     /** Суспензионный ПВХ: мешок 25 кг. */
     public static final DeferredItem<Item> PVC = item("pvc", 64);
+    /** Загрузки катализаторов азотного производства: никелевый риформинга, железохромовый и медноцинковый конверсии CO. */
+    public static final DeferredItem<Item> CATALYST_STEAM_REFORMING = item("catalyst_steam_reforming", 16);
+    public static final DeferredItem<Item> CATALYST_SHIFT_HT = item("catalyst_shift_ht", 16);
+    public static final DeferredItem<Item> CATALYST_SHIFT_LT = item("catalyst_shift_lt", 16);
+    /** Пакет платинородиевых сеток (Pt 92,5 %, Rh 7,5 %) и катализатор очистки хвостовых газов. */
+    public static final DeferredItem<Item> PT_RH_GAUZE = item("pt_rh_gauze", 4);
+    public static final DeferredItem<Item> CATALYST_DENOX = item("catalyst_denox", 16);
     /** Головной шахтный светильник: щелочная батарея на поясе, фара на каске (слот головы). */
     public static final DeferredItem<dev.denfry.promptcritical.mod.mine.CapLampItem> CAP_LAMP = registered(ITEMS.registerItem("cap_lamp",
             dev.denfry.promptcritical.mod.mine.CapLampItem::new, new Item.Properties()));

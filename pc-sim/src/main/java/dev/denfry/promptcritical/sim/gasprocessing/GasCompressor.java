@@ -29,6 +29,17 @@ public final class GasCompressor {
         return w * WaterContent.MOL_PER_SM3;
     }
 
+    /**
+     * Работа сжатия идеального газа с показателем адиабаты {@code k} от p1 до p2 теми же ступенями с промежуточным
+     * охлаждением до t1 (синтез-газ, воздух), Дж/моль.
+     */
+    public static double idealWorkJPerMol(double t1, double p1, double p2, double k) {
+        if (p2 <= p1) return 0;
+        int n = stages(p1, p2);
+        double r = Math.pow(p2 / p1, 1.0 / n);
+        return n * PengRobinson.R * t1 * k / (k - 1) * (Math.pow(r, (k - 1) / k) - 1) / EFFICIENCY;
+    }
+
     /** Температура нагнетания ступени без охлаждения, К. */
     public static double dischargeK(double t1, double ratio) {
         return t1 * (1 + (Math.pow(ratio, (K - 1) / K) - 1) / EFFICIENCY);

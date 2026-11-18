@@ -1,0 +1,32 @@
+{
+  "parent": "minecraft:recipes/root",
+  "criteria": {
+    "has_nitric_acid_unit": {
+      "conditions": {
+        "items": [
+          {
+            "items": "promptcritical:nitric_acid_unit"
+          }
+        ]
+      },
+      "trigger": "minecraft:inventory_changed"
+    },
+    "has_the_recipe": {
+      "conditions": {
+        "recipe": "promptcritical:nitrogen/acid_concentrator"
+      },
+      "trigger": "minecraft:recipe_unlocked"
+    }
+  },
+  "requirements": [
+    [
+      "has_the_recipe",
+      "has_nitric_acid_unit"
+    ]
+  ],
+  "rewards": {
+    "recipes": [
+      "promptcritical:nitrogen/acid_concentrator"
+    ]
+  }
+}

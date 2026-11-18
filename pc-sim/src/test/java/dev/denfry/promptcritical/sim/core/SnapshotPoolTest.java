@@ -16,6 +16,9 @@ class SnapshotPoolTest {
         int slots = 512;
         for (int i = 0; i < slots; i++) state.register("ch" + i);
         SnapshotPool pool = new SnapshotPool(4);
+        // начальный срез до старта читателей: пустой буфер кольца (тик 0 без значений) — не «рваный» срез
+        for (int i = 0; i < slots; i++) state.set(i, 0, Quality.GOOD);
+        pool.publish(0, 0, state);
         AtomicBoolean stop = new AtomicBoolean();
         AtomicLong torn = new AtomicLong();
         AtomicLong reads = new AtomicLong();
