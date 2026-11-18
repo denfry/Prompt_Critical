@@ -26,10 +26,10 @@ import org.jetbrains.annotations.Nullable;
  * анимация — вокруг оси части в её центре.
  */
 public final class FoundryMachineRenderer<T extends BlockEntity> implements BlockEntityRenderer<T> {
-    /** Как двигается часть. */
     /**
-     * Оси частей станочного парка (пиксели модели, фасад на север): фрезерный — шпиндель {@code milling_machine/partial/spindle},
-     * SPIN_Y вокруг x 8, z 5, ×2 к валу; плоскошлифовальный — круг {@code surface_grinder/partial/wheel}, SPIN_Z вокруг
+     * Как двигается часть. Оси частей станочного парка (пиксели модели, фасад на север; арт —
+     * art/blockbench/machine_shop/machine_tools.author.js): горизонтально-фрезерный — оправка с дисковой фрезой
+     * {@code milling_machine/partial/spindle}, SPIN_Z вокруг x 8, y 18, ×2 к валу; плоскошлифовальный — круг {@code surface_grinder/partial/wheel}, SPIN_Z вокруг
      * x 13, y 14, ×4 (визуально; настоящий круг ×42); строгальный — ползун {@code shaping_machine/partial/ram}, SLIDE_X
      * ±4 пикселя, двойной ход на два оборота вала. Новый арт должен держать эти оси или поменять их в {@code FoundryClient}.
      *

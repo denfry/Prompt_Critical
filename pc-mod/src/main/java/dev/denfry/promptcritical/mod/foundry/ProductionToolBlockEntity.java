@@ -255,8 +255,8 @@ public final class ProductionToolBlockEntity extends KineticMachineBlockEntity<P
         if (fx == null || !runningState()) return;
         switch (kind) {
             case MILLING -> {
-                if (fx.chance(14)) fx.chips(fx.at(8, 14, 5), 1);
-                if (level.getGameTime() % 20 == 0) fx.sound(fx.at(8, 16, 5), SoundEvents.GRINDSTONE_USE, 0.15f, 1.2f);
+                if (fx.chance(14)) fx.chips(fx.at(8, 14.5, 4.8), 1);
+                if (level.getGameTime() % 20 == 0) fx.sound(fx.at(8, 16, 4.8), SoundEvents.GRINDSTONE_USE, 0.15f, 1.2f);
             }
             case SHAPER -> {
                 // стружка слетает в конце рабочего хода, ползун стучит на реверсе
