@@ -102,15 +102,7 @@ m("vein_quartz", "ores", [el("block", [0, 0, 0], [16, 16, 16], "qtz")])
 
 # сланцевый и водяной заслоны нарисованы вручную в Blockbench: art/blockbench/mining/explosion_barrier.author.js
 
-# дегазационная скважина: устье с задвижкой, жёлтая газовая труба
-m("degasification_borehole", "mining", [
-    el("collar", [4, 0, 4], [12, 2, 12], "c"),
-    el("casing", [6, 2, 6], [10, 6, 10], "st"),
-    el("valve_body", [5, 6, 5], [11, 10, 11], "d"),
-    el("handwheel", [3, 8, 7.5], [5, 12, 8.5], "red"),
-    el("riser", [6.5, 10, 6.5], [9.5, 13, 9.5], "gas"),
-    el("elbow", [6.5, 13, 6.5], [16, 16, 9.5], "gas", faces={"east": "end"}),
-])
+# дегазационная скважина нарисована вручную в Blockbench: art/blockbench/mining/degasification_pump.author.js
 # шкаф АГЗ «Метан» 1×2×1: табло газа (подложка 32×32)
 def agz(alarm=False):
     return [el("body", [0, 0, 2], [16, 31.5, 16], "r35"),

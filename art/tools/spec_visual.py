@@ -109,24 +109,7 @@ def hcyl(name, axis, r, a0, a1, tex, c=(8, 8, 8), sides=16):
 
 # очистной комбайн нарисован вручную в Blockbench: art/blockbench/mining/longwall_shearer.author.js
 
-# вакуум-насос дегазации ВВН (вал сзади): корпус на раме, сепаратор, газовые патрубки; ротор и муфта — partial
-m("degasification_pump", "mining", [
-    el("frame", [0.5, 0, 0.5], [15.5, 2, 15.5], "d"),
-    el("foot_n", [3, 2, 2], [13, 4, 4], "dg"),
-    el("foot_s", [3, 2, 11], [13, 4, 13], "dg"),
-] + hcyl("casing", "z", 5.2, 2.5, 13, "mb")
-  + hcyl("end_n", "z", 5.8, 1.5, 2.5, "d", sides=8)
-  + hcyl("end_s", "z", 5.8, 13, 14, "d", sides=8)
-  + [el("inlet", [6.5, 13, 5.5], [9.5, 16, 8.5], "gas", faces={"up": "end"}),
-     el("inlet_flange", [5.5, 14, 4.5], [10.5, 15, 9.5], "gas"),
-     el("outlet", [13, 5, 6.5], [16, 8, 9.5], "gas", faces={"east": "end"}),
-     el("separator", [0.5, 2, 9], [3.5, 12, 13], "mb"),
-     el("separator_cap", [0.25, 12, 8.75], [3.75, 13, 13.25], "d"),
-     el("sight_glass", [0.3, 6, 10], [0.5, 10, 12], "gl"),
-     el("gauge", [12, 11, 2], [15, 14, 2.5], "gauge", full=["north"]),
-     el("guard", [5, 3, 14], [11, 4, 16], "haz")])
-m("degasification_pump/rotor", "mining", hcyl("rotor", "z", 3.5, 3.5, 12.5, "sm")
-  + hcyl("shaft", "z", 1, 12.5, 16, "pol", sides=8) + hcyl("coupling", "z", 2.5, 14.2, 15.6, "d", sides=8), kind="partial")
+# вакуум-насос дегазации нарисован вручную в Blockbench: art/blockbench/mining/degasification_pump.author.js
 
 # насос водоотлива нарисован вручную в Blockbench: art/blockbench/mining/mine_drainage_pump.author.js
 
