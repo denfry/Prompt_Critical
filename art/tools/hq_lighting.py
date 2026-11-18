@@ -187,21 +187,6 @@ def fluorescent(lit):
 
 
 # ----------------------------------------------------------------------
-# НПП «тарелка»: литое основание на стене, стеклянный плафон, решётка из двух дужек
-# ----------------------------------------------------------------------
-def bulkhead(lit):
-    m = Model(nm("lamp_bulkhead", lit), "decor", cullface=True)
-    b = m.cyl("base", "z", (8, 8), 1.6, 14.5, 16, "black", caps=(True, False))
-    b.cap0.disc(b.cap0.w / 2, b.cap0.h / 2, b.r - 0.5, ring=1.0, add=0.6)
-    mat, lvl = lens(lit, "lamp_y")
-    g = m.cyl(glow("glass", lit), "z", (8, 8), 1.3, 13, 14.5, mat, lvl=lvl, crisp=(True, False))
-    g.cap0.disc(g.cap0.w / 2, g.cap0.h / 2, 1.5, add=0.8)
-    m.box("bar_h", [4.5, 7.6, 12.6], [11.5, 8.4, 13], "black")
-    m.box("bar_v", [7.6, 4.5, 12.6], [8.4, 11.5, 13], "black")
-    return m.done()
-
-
-# ----------------------------------------------------------------------
 # взрывозащищённый ВЗГ: кронштейн от стены, литой корпус, колба в защитной сетке
 # ----------------------------------------------------------------------
 def explosion_proof(lit):
@@ -281,7 +266,7 @@ for _lit in (True, False):
     exit_sign(_lit)
     ceiling_panel(_lit)
     fluorescent(_lit)
-    bulkhead(_lit)
+    # bulkhead: нарисован вручную в Blockbench (art/blockbench/decor/plant_fittings.author.js)
     explosion_proof(_lit)
     emergency(_lit)
     high_bay(_lit)

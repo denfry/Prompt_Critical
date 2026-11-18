@@ -165,6 +165,19 @@ public final class AmmoniaConverterBlockEntity extends KineticMachineBlockEntity
 
     // --- щит ---
 
+    /**
+     * Работает (арт — art/blockbench/petrochem/process_units.author.js): горячий газ после колонны синтеза уходит в
+     * котёл-утилизатор; на стыке выходного штуцера с котлом тянет паром из дренажа. Чем быстрее циркуляционный
+     * компрессор, тем гуще.
+     */
+    @Override
+    protected void clientTick() {
+        var fx = fx();
+        if (fx == null || !runningState()) return;
+        double n = Math.min(1.5, Math.abs(getSpeed()) / 64.0);
+        if (fx.chance(1 + 2 * n)) fx.wisp(fx.at(15.6, -4.2, 7), 0.1);
+    }
+
     @Override
     public PanelLayout panelLayout() {
         return NitrogenPanels.LOOP;

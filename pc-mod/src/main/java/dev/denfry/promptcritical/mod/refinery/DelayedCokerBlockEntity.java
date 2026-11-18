@@ -118,6 +118,22 @@ public final class DelayedCokerBlockEntity extends UraniumProcessBlockEntity {
         return feedLs > 0;
     }
 
+    /**
+     * Пока установка работает, вторая камера проходит пропарку, охлаждение и гидрорезку (арт —
+     * art/blockbench/refinery/delayed_coker.author.js): из её воздушника над верхним люком уходит пар, а по желобу
+     * под нижним люком сходит вода гидрорезки с кусками кокса. Струи резака — вода под 14–28 МПа (2000–4000 psi) (Ellis &amp; Paul,
+     * «Tutorial: Delayed Coking Fundamentals», AIChE 1998), поэтому желоб всегда мокрый.
+     */
+    @Override
+    protected void clientTick() {
+        var fx = fx();
+        if (fx == null || !runningState()) return;
+        if (fx.chance(4)) fx.wisp(fx.at(11.5, 13.6, 6.7), 0.1);
+        if (fx.chance(1.5)) fx.puff(fx.at(11.5, 13.6, 6.7), new net.minecraft.world.phys.Vec3(0, 0.06, 0), 1);
+        if (fx.chance(6)) fx.splash(fx.at(11.5, 1.2, 2.2), 0.25, 1);
+        if (fx.chance(2)) fx.leak(fx.at(11.5, 1.6, 1.2));
+    }
+
     @Override
     public IFluidHandler fluids(@Nullable Direction side) {
         if (side == Direction.UP) return naphtha;

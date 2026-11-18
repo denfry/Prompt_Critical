@@ -91,10 +91,11 @@ public abstract class UraniumProcessBlockEntity extends DeviceBlockEntity implem
 
     @Override
     public final void tickDevice() {
-        if (!(level instanceof ServerLevel s)) {
-            if (level != null) clientTick();
+        if (level != null && level.isClientSide) {
+            clientTick();
             return;
         }
+        if (!(level instanceof ServerLevel s)) return;
         SimLevelBinding b = SimBindings.get(s);
         if (b == null) return;
         process(s, 0.05 * b.world().clock().kSlow());
@@ -105,8 +106,22 @@ public abstract class UraniumProcessBlockEntity extends DeviceBlockEntity implem
         if (level.getGameTime() % 100 == 0) setChanged();
     }
 
-    /** Частицы и звуки на клиенте по свойствам блока; по умолчанию ничего. */
+    /** Клиентский тик: частицы работы по состоянию блока ({@code running}). */
     protected void clientTick() {
+    }
+
+    /** Эффекты в модельных координатах (только клиент; на сервере {@code null}). */
+    @org.jetbrains.annotations.Nullable
+    protected dev.denfry.promptcritical.mod.fx.MachineFx fx() {
+        BlockState st = getBlockState();
+        return dev.denfry.promptcritical.mod.fx.MachineFx.of(level, worldPosition,
+                st.getBlock() instanceof dev.denfry.promptcritical.mod.block.PcBlock b ? b.facing(st) : Direction.NORTH);
+    }
+
+    /** Работает (свойство {@code running} блока, видно и клиенту). */
+    protected boolean runningState() {
+        BlockState st = getBlockState();
+        return st.hasProperty(PcProperties.RUNNING) && st.getValue(PcProperties.RUNNING);
     }
 
     private void setFlag(BooleanProperty prop, boolean v) {

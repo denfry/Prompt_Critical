@@ -229,7 +229,8 @@ public final class PcBlockStateProvider extends BlockStateProvider {
             case "mine_cage" -> s.getValue(BlockStateProperties.OPEN) ? id + "_open" : id;
             // нефть и газ I2
             case "glycol_regenerator" -> s.getValue(PcProperties.RUNNING) ? id + "_running" : id;
-            case "low_temperature_separator" -> s.getValue(BlockStateProperties.LIT) ? "cold_box_cold" : "cold_box";
+            // НТС нарисована своя: art/blockbench/core/reactor_island.author.js; холодная — под инеем
+            case "low_temperature_separator" -> s.getValue(BlockStateProperties.LIT) ? id + "_cold" : id;
             case "helium_recovery_unit" -> s.getValue(PcProperties.RUNNING) ? id + "_running" : id;
             case "fuel_rack" -> "fuel_pool_rack_open";
             case "purex_cell" -> s.getValue(PcProperties.RUNNING) ? id + "_running" : id;
@@ -237,25 +238,21 @@ public final class PcBlockStateProvider extends BlockStateProvider {
             case "mes_server" -> s.getValue(BlockStateProperties.LIT) ? id + "_busy" : id;
             // химия I3
             case "pyrolysis_furnace" -> s.getValue(BlockStateProperties.LIT) ? id + "_lit" : id;
-            case "cracked_gas_unit" -> "pyrolysis_quench_tower";
             case "ldpe_reactor", "hydrotreater" -> s.getValue(PcProperties.RUNNING) ? id + "_running" : id;
             // хлор и ПВХ I3
             case "brine_treater" -> s.getValue(PcProperties.RUNNING) ? id + "_running" : id;
             case "rectifier_unit" -> s.getValue(PcProperties.ALARM) ? "rectifier_unit_fault"
                     : s.getValue(PcProperties.RUNNING) ? "rectifier_unit" : "rectifier_unit_off";
             case "chlorine_liquefier" -> s.getValue(PcProperties.RUNNING) ? id + "_running" : id;
-            case "edc_unit" -> "chlorination_reactor";
             case "edc_cracker" -> s.getValue(PcProperties.ALARM) ? id + "_coked" : s.getValue(BlockStateProperties.LIT) ? id + "_lit" : id;
             // химия I3, азот
             case "steam_reformer" -> s.getValue(BlockStateProperties.LIT) ? id + "_lit" : id;
             case "co2_absorber" -> "absorption_tower";
-            case "ammonia_converter" -> "ammonia_synthesis_reactor";
             case "nitric_acid_unit", "chlor_alkali_cell" -> s.getValue(PcProperties.RUNNING) ? id + "_running" : id;
             case "acid_concentrator" -> s.getValue(BlockStateProperties.LIT) ? id + "_lit" : id;
             // химия I3, метанол
-            case "methanol_converter" -> "fixed_bed_reactor";
             case "claus_unit" -> s.getValue(PcProperties.RUNNING) ? id + "_running" : id;
-            case "delayed_coker" -> "tube_furnace_controller";
+            // замедленное коксование нарисовано своё: art/blockbench/refinery/delayed_coker.author.js
             case "methanol_column" -> "fractionating_column";
             // ядерное топливо I4
             case "centrifuge_cascade" -> s.getValue(PcProperties.RUNNING) ? id + "_running" : id;
@@ -266,11 +263,12 @@ public final class PcBlockStateProvider extends BlockStateProvider {
             case "irradiation_channel" -> s.getValue(PcProperties.FILLED) ? id + "_loaded" : id;
             case "rtg_thermoelectric" -> s.getValue(BlockStateProperties.LIT) ? id : id + "_depleted";
             case "pwr_reactor" -> s.getValue(PcProperties.PWR_SEGMENT) == PcProperties.PwrSegment.HEAD ? id + "_head" : id;
-            case "pressurizer" -> "pressurizer";
+            case "pressurizer" -> s.getValue(BlockStateProperties.LIT) ? id + "_lit" : id;
             // тяжёлая вода T3
             case "gs_exchange_tower" -> "absorption_tower";
             case "heavy_water_column" -> "fractionating_column";
-            case "candu_reactor" -> s.getValue(PcProperties.CANDU_SEGMENT) == PcProperties.CanduSegment.FUELLING ? "refueling_machine" : "reactor_vessel_wall";
+            // арт: art/blockbench/core/candu_reactor.author.js — свод с торцом каландра, над ним коробка питателей и площадка СУЗ
+            case "candu_reactor" -> s.getValue(PcProperties.CANDU_SEGMENT) == PcProperties.CanduSegment.FUELLING ? id + "_fuelling" : id;
             case "submerged_arc_furnace" -> s.getValue(BlockStateProperties.LIT) ? id + "_running" : id;
             case "siemens_reactor" -> s.getValue(PcProperties.RUNNING) ? id + "_running" : id;
             case "czochralski_puller" -> s.getValue(PcProperties.RUNNING) ? id + "_pulling" : id;

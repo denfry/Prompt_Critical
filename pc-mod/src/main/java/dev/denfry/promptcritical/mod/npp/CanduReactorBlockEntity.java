@@ -102,6 +102,10 @@ public final class CanduReactorBlockEntity extends DeviceBlockEntity implements 
     private double magKg, magU235, magU234;
     /** Плутоний среднего пучка магазина (МОКС), кг по изотопам. */
     private PlutoniumCharge magPu = PlutoniumCharge.NONE;
+    /** Для клиента: доля номинальной мощности и последняя перегрузка (игровое время, канал; −1 — не было). */
+    private float viewPower, sentPower = -1;
+    private long refuelTick = Long.MIN_VALUE / 2;
+    private int refuelChannel = -1;
 
     public CanduReactorBlockEntity(BlockPos pos, BlockState state) {
         super(NppBlockEntities.CANDU_REACTOR.get(), pos, state);
@@ -187,6 +191,10 @@ public final class CanduReactorBlockEntity extends DeviceBlockEntity implements 
 
     @Override
     public void tickDevice() {
+        if (level != null && level.isClientSide) {
+            clientTick();
+            return;
+        }
         if (!(level instanceof ServerLevel sl)) return;
         SimLevelBinding b = SimBindings.get(sl);
         if (b == null) return;
@@ -219,6 +227,54 @@ public final class CanduReactorBlockEntity extends DeviceBlockEntity implements 
         lastTrip = t;
         takeBundle();
         if (ticks % 100 == 0) setChanged();
+        viewPower = (float) Math.max(0, reactor.power());
+        if (Math.abs(viewPower - sentPower) > 0.02f) sync();
+    }
+
+    private void sync() {
+        sentPower = viewPower;
+        level.sendBlockUpdated(worldPosition, getBlockState(), getBlockState(), net.minecraft.world.level.block.Block.UPDATE_CLIENTS);
+    }
+
+    /** Мощность реактора, доля номинальной (на клиенте — последняя присланная). */
+    public float viewPower() {
+        return viewPower;
+    }
+
+    /** Игровое время последней перегрузки канала. */
+    public long refuelTick() {
+        return refuelTick;
+    }
+
+    /** Канал последней перегрузки; −1 — перегрузок не было. */
+    public int refuelChannel() {
+        return refuelChannel;
+    }
+
+    private void refuelled(int ch) {
+        refuelTick = level.getGameTime();
+        refuelChannel = ch;
+        sync();
+    }
+
+    /**
+     * Перегрузочная машина у канала: пока захват сидит на концевой арматуре, из уплотнения хобота капает тяжёлая вода —
+     * у машины CANDU свой контур D₂O под давлением теплоносителя, и утечки собирает дренаж торца.
+     */
+    private void clientTick() {
+        double t = level.getGameTime() - refuelTick;
+        if (!CanduFuelling.latched(refuelChannel, t)) return;
+        dev.denfry.promptcritical.mod.fx.MachineFx fx = dev.denfry.promptcritical.mod.fx.MachineFx.of(level, worldPosition, facing());
+        if (fx == null) return;
+        double[] p = CanduFuelling.offset(refuelChannel, t);
+        if (fx.chance(2)) fx.leak(fx.at(8 + p[0], 9 + p[1] - 1.4, -9.8));
+        if (t - (CanduFuelling.TRAVEL + 10) < 1)
+            fx.sound(fx.at(8 + p[0], 9 + p[1], -10), SoundEvents.PISTON_EXTEND, 0.6f, 0.6f);
+    }
+
+    private Direction facing() {
+        BlockState s = getBlockState();
+        return s.getBlock() instanceof PcBlock b ? b.facing(s) : Direction.NORTH;
     }
 
     /** Пучок из слота — в магазин машины (до 24 штук); состав магазина усредняется. */
@@ -248,6 +304,7 @@ public final class CanduReactorBlockEntity extends DeviceBlockEntity implements 
                 if (magazine < CanduReactor.BUNDLES_PER_CHANNEL) return;
                 if (reactor.loadChannel(ch, magKg, magU235, magU234, magPu)) {
                     magazine -= CanduReactor.BUNDLES_PER_CHANNEL;
+                    refuelled(ch);
                     if (player != null) player.displayClientMessage(NppText.msg("candu_refuelled", ch + 1), true);
                     setChanged();
                 }
@@ -260,6 +317,7 @@ public final class CanduReactorBlockEntity extends DeviceBlockEntity implements 
         if (ch < 0) return;
         LightWaterCore.AssemblyFuel out = reactor.refuel(ch, CanduReactor.SHIFT_BUNDLES, magKg, magU235, magU234, magPu);
         magazine -= CanduReactor.SHIFT_BUNDLES;
+        refuelled(ch);
         if (out != null) {
             FuelDesign d = FuelDesign.CANDU_37;
             FuelLot lot = FuelLot.irradiated(d, 0.96, d.rods * CanduReactor.SHIFT_BUNDLES, out.uraniumKg(), out.u235Kg(),
@@ -410,6 +468,9 @@ public final class CanduReactorBlockEntity extends DeviceBlockEntity implements 
     public CompoundTag getUpdateTag(HolderLookup.Provider registries) {
         CompoundTag tag = super.getUpdateTag(registries);
         wiring.save(tag);
+        tag.putFloat("view_power", viewPower);
+        tag.putLong("view_refuel_t", refuelTick);
+        tag.putInt("view_refuel_ch", refuelChannel);
         return tag;
     }
 
@@ -451,5 +512,10 @@ public final class CanduReactorBlockEntity extends DeviceBlockEntity implements 
         for (HeavyWaterGrade g : HeavyWaterGrade.values()) drains[g.ordinal()].load(tag, "drain_" + g.name().toLowerCase(java.util.Locale.ROOT));
         wiring.load(tag);
         lastTrip = reactor.trip();
+        if (tag.contains("view_power")) {
+            viewPower = tag.getFloat("view_power");
+            refuelTick = tag.getLong("view_refuel_t");
+            refuelChannel = tag.getInt("view_refuel_ch");
+        }
     }
 }

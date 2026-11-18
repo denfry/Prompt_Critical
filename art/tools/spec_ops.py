@@ -114,17 +114,7 @@ m("flare_stack_guys", "flare", vcyl("stack", 8, 8, 3, 0, 16, "rw", 8)
      el("guy_n", [7.75, 13, 0], [8.25, 13.5, 4], "cbl"), el("guy_e", [12, 13, 7.75], [16, 13.5, 8.25], "cbl")])
 
 
-def flare_tip(lit=False):
-    els = vcyl("tip", 8, 8, 3.5, 0, 12, "rust", 8) + vcyl("steam_ring", 8, 8, 4.5, 10, 11.5, "steam", 8)
-    for i, (x, z) in enumerate(((3, 8), (13, 5), (13, 11))):
-        els += [el(f"pilot_{i}", [x - 0.5, 4, z - 0.5], [x + 0.5, 13, z + 0.5], "st"),
-                el(("glow_" if lit else "") + f"pilot_flame_{i}", [x - 0.6, 13, z - 0.6], [x + 0.6, 14.5, z + 0.6],
-                   "gfl" if lit else "soot")]
-    return els
-
-
-m("flare_tip", "flare", flare_tip())
-m("flare_tip_lit", "flare", flare_tip(True))
+# оголовок факела нарисован вручную в Blockbench: art/blockbench/drilling/rig_floor.author.js
 
 
 def ko_drum(level=0):

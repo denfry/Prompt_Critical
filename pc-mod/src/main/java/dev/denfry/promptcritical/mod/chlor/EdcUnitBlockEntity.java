@@ -67,6 +67,10 @@ public final class EdcUnitBlockEntity extends DeviceBlockEntity implements Found
 
     @Override
     public void tickDevice() {
+        if (level != null && level.isClientSide) {
+            clientTick();
+            return;
+        }
         if (!(level instanceof ServerLevel s)) return;
         SimLevelBinding b = SimBindings.get(s);
         if (b == null) return;
@@ -121,6 +125,19 @@ public final class EdcUnitBlockEntity extends DeviceBlockEntity implements Found
         player.displayClientMessage(ChlorText.msg(unit.on() ? "edc.on" : "edc.off"), true);
         setChanged();
         return InteractionResult.SUCCESS;
+    }
+
+    /**
+     * Работает (арт — art/blockbench/petrochem/process_units.author.js): из сдувки оксихлоратора над циклонами уходит
+     * отдувочный газ — в нём азот воздуха, на кислородном дутье его меньше; конденсатор прямого хлорирования отпотевает.
+     */
+    private void clientTick() {
+        BlockState st = getBlockState();
+        if (!(st.hasProperty(PcProperties.RUNNING) && st.getValue(PcProperties.RUNNING))) return;
+        var fx = dev.denfry.promptcritical.mod.fx.MachineFx.of(this);
+        if (fx == null) return;
+        if (fx.chance(3)) fx.wisp(fx.at(5, 31, 9), 0.1);
+        if (fx.chance(0.8)) fx.leak(fx.at(12, 20, 4.2));
     }
 
     @Override

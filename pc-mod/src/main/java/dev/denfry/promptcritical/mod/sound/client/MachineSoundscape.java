@@ -5,6 +5,8 @@ import dev.denfry.promptcritical.mod.block.PcProperties;
 import dev.denfry.promptcritical.mod.boiler.FireTubeBoilerBlockEntity;
 import dev.denfry.promptcritical.mod.chlor.BrineTreaterBlockEntity;
 import dev.denfry.promptcritical.mod.chlor.EdcCrackerBlockEntity;
+import dev.denfry.promptcritical.mod.chem.CrackedGasUnitBlockEntity;
+import dev.denfry.promptcritical.mod.chlor.EdcUnitBlockEntity;
 import dev.denfry.promptcritical.mod.foundry.CupolaBlockEntity;
 import dev.denfry.promptcritical.mod.foundry.MachineToolBlockEntity;
 import dev.denfry.promptcritical.mod.foundry.ProductionToolBlockEntity;
@@ -22,6 +24,11 @@ import dev.denfry.promptcritical.mod.npp.BwrReactorBlockEntity;
 import dev.denfry.promptcritical.mod.npp.SteamGeneratorBlockEntity;
 import dev.denfry.promptcritical.mod.nuclear.CascadeBlockEntity;
 import dev.denfry.promptcritical.mod.refinery.ClausUnitBlockEntity;
+import dev.denfry.promptcritical.mod.methanol.MethanolConverterBlockEntity;
+import dev.denfry.promptcritical.mod.nitrogen.AmmoniaConverterBlockEntity;
+import dev.denfry.promptcritical.mod.npp.CanduFuelling;
+import dev.denfry.promptcritical.mod.refinery.DelayedCokerBlockEntity;
+import dev.denfry.promptcritical.mod.npp.CanduReactorBlockEntity;
 import dev.denfry.promptcritical.mod.sound.PcSfx;
 import dev.denfry.promptcritical.sim.metallurgy.ProductionToolUnit;
 import dev.denfry.promptcritical.sim.mining.Hoist;
@@ -153,6 +160,21 @@ public final class MachineSoundscape {
             case dev.denfry.promptcritical.mod.nuclear.Uo2ConversionBlockEntity u -> flag(s, BlockStateProperties.LIT) ? new Loop(PcSfx.TRANSFORMER_HUM, 0.3f, 0.9f) : null;
             // сервер MES: вентиляторы серверов в стойке
             case dev.denfry.promptcritical.mod.mes.MesServerBlockEntity m -> flag(s, BlockStateProperties.LIT) ? new Loop(PcSfx.ELECTRIC_MOTOR, 0.15f, 1.8f) : null;
+            // CANDU: моторы моста и тележки перегрузочной машины на ходу, иначе — гул насосов теплоносителя по мощности
+            case CanduReactorBlockEntity r -> CanduFuelling.moving(r.refuelChannel(), r.getLevel().getGameTime() - r.refuelTick())
+                    ? new Loop(PcSfx.ELECTRIC_MOTOR, 0.6f, 1.2f)
+                    : r.viewPower() > 0.01f ? new Loop(PcSfx.PUMP, 0.25f + 0.35f * Math.min(1, r.viewPower()), 0.7f) : null;
+            // коксование: насос высокого давления гидрорезки
+            case DelayedCokerBlockEntity c -> running ? new Loop(PcSfx.PUMP, 0.6f, 0.9f) : null;
+            // технологические установки I3: компрессоры пирогаза и циркуляторы синтеза, насосы ЭДХ
+            case CrackedGasUnitBlockEntity g -> running ? new Loop(PcSfx.COMPRESSOR, 1.0f, 0.9f) : null;
+            case EdcUnitBlockEntity e -> running ? new Loop(PcSfx.PUMP, 0.35f, 1.1f) : null;
+            case MethanolConverterBlockEntity m -> running ? new Loop(PcSfx.COMPRESSOR, 0.4f + 0.4f * n, 0.8f + 0.3f * n) : null;
+            case AmmoniaConverterBlockEntity a -> running ? new Loop(PcSfx.COMPRESSOR, 0.4f + 0.4f * n, 0.7f + 0.3f * n) : null;
+            // НТС: пропановый холодильный компрессор, пока установка в холодном режиме
+            case dev.denfry.promptcritical.mod.gas.GasPlantBlockEntity g -> flag(s, BlockStateProperties.LIT) ? new Loop(PcSfx.COMPRESSOR, 0.5f, 1.2f) : null;
+            // компенсатор давления: гудят тиристорные ключи и шины блоков нагревателей
+            case dev.denfry.promptcritical.mod.npp.PressurizerBlockEntity p -> flag(s, BlockStateProperties.LIT) ? new Loop(PcSfx.TRANSFORMER_HUM, 0.35f, 1) : null;
             default -> null;
         };
     }

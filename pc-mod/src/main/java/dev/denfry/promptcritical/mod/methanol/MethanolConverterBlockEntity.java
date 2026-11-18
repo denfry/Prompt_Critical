@@ -266,6 +266,20 @@ public final class MethanolConverterBlockEntity extends KineticMachineBlockEntit
 
     // --- щит ---
 
+    /**
+     * Работает (арт — art/blockbench/petrochem/process_units.author.js): кипящая вода межтрубного пространства
+     * отдаёт тепло синтеза паром — из продувки паросборника над конвертером курится пар, тем гуще, чем быстрее
+     * циркуляционный компрессор гонит газ.
+     */
+    @Override
+    protected void clientTick() {
+        var fx = fx();
+        if (fx == null || !runningState()) return;
+        double n = Math.min(1.5, Math.abs(getSpeed()) / 64.0);
+        if (fx.chance(1 + 3 * n)) fx.wisp(fx.at(8, 31.6, 5), 0.1);
+        if (fx.chance(0.3 * n)) fx.puff(fx.at(8, 31.6, 5), new net.minecraft.world.phys.Vec3(0, 0.08, 0), 2);
+    }
+
     @Override
     public PanelLayout panelLayout() {
         return MethanolPanels.CONVERTER;
