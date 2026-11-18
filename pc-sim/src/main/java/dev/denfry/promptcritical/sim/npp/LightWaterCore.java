@@ -224,6 +224,25 @@ public final class LightWaterCore {
         failed[pos] = true;
     }
 
+    /**
+     * Breaches the cladding of the {@code n} hottest intact loaded assemblies (largest power share first) — the
+     * hot rods burst first when the whole core heats up uncovered.
+     *
+     * @return how many assemblies failed now
+     */
+    public int failHottest(int n) {
+        int done = 0;
+        while (done < n) {
+            int best = -1;
+            for (int i = 0; i < count; i++)
+                if (loaded(i) && !failed[i] && (best < 0 || share[i] > share[best])) best = i;
+            if (best < 0) break;
+            failed[best] = true;
+            done++;
+        }
+        return done;
+    }
+
     public int failedAssemblies() {
         int n = 0;
         for (boolean f : failed) if (f) n++;
