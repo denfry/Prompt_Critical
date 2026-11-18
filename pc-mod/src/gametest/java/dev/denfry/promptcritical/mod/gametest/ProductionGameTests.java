@@ -8,6 +8,8 @@ import dev.denfry.promptcritical.mod.drilling.DrilledWells;
 import dev.denfry.promptcritical.mod.production.CrudeColumnBlockEntity;
 import dev.denfry.promptcritical.mod.production.SeparatorBlockEntity;
 import dev.denfry.promptcritical.mod.production.TubeFurnaceBlockEntity;
+import dev.denfry.promptcritical.mod.production.ProductionPanels;
+import dev.denfry.promptcritical.mod.production.PumpjackBlockEntity;
 import dev.denfry.promptcritical.mod.production.WellheadBlockEntity;
 import dev.denfry.promptcritical.mod.registry.PcBlocks;
 import dev.denfry.promptcritical.mod.registry.PcItems;
@@ -142,6 +144,62 @@ public final class ProductionGameTests {
                     h.assertTrue(w.well().oilM3s() > 0, "pump lifts oil");
                     h.assertTrue(w.well().card() != null && w.well().card().peakN() > w.well().fluidLoadN(), "dynamometer card written");
                 })
+                .thenSucceed();
+    }
+
+    /** Качалка на валу Create на устье с пониженным давлением: оснащение для испытаний ШГН. */
+    private static void pumpjackOnDeadWell(GameTestHelper h) {
+        h.setBlock(new BlockPos(5, 2, 5), PcBlocks.PUMPJACK.get().defaultBlockState().setValue(BlockStateProperties.HORIZONTAL_FACING, Direction.NORTH));
+        BlockPos motor = new BlockPos(3, 2, 5);
+        h.setBlock(motor, AllBlocks.CREATIVE_MOTOR.getDefaultState().setValue(BlockStateProperties.FACING, Direction.EAST));
+        h.runAfterDelay(1, () -> ((CreativeMotorBlockEntity) h.getBlockEntity(motor)).generatedSpeed.setValue(64));
+    }
+
+    /**
+     * 09 §9.6.5: динамограмма из 200 точек, уравновешенная качалка держит момент в паспорте редуктора API 228, эхолот
+     * находит уровень над насосом; лишние противовесы ломают зубья, большая шестерня их чинит.
+     */
+    @GameTest(template = LARGE, timeoutTicks = 900)
+    public static void rodPumpCardCounterweightsAndEcho(GameTestHelper h) {
+        FakePlayer p = new FakePlayer(h.getLevel(), new GameProfile(UUID.randomUUID(), "pc_pumper"));
+        h.startSequence()
+                .thenExecute(() -> {
+                    completeWell(h, oilTrap(h, 8_000), p);
+                    pumpjackOnDeadWell(h);
+                })
+                .thenWaitUntil(() -> {
+                    WellheadBlockEntity w = h.getBlockEntity(WELL);
+                    h.assertTrue(w.well().mode() == ProductionWell.Mode.PUMPING && w.well().card() != null, "rod pumping: " + w.well().mode());
+                })
+                .thenExecute(() -> {
+                    WellheadBlockEntity w = h.getBlockEntity(WELL);
+                    ProductionWell well = w.well();
+                    h.assertTrue(well.card().positionM().length == 200, "200-point card");
+                    h.assertTrue(Math.abs(well.counterbalanceN() - well.idealCounterbalanceN()) < 1, "balanced by default");
+                    h.assertTrue(well.peakTorqueNm() > 0 && well.peakTorqueNm() < ProductionWell.GEARBOX_RATED_NM,
+                            "balanced torque " + well.peakTorqueNm());
+                    h.assertTrue(well.goodmanRatio() > 0 && well.goodmanRatio() < 1, "rods within Goodman: " + well.goodmanRatio());
+                    h.assertTrue(w.echo(), "echo shot");
+                    h.assertTrue(w.echoLevelM() > 0 && w.echoLevelM() <= well.pumpDepthM(), "fluid level " + w.echoLevelM());
+                    h.assertTrue(Math.abs(w.echoTimeS() - 2 * w.echoLevelM() / well.annulusSoundSpeedMs()) < 1e-6, "z = c t / 2");
+                    // перегруз противовесами кнопками щита качалки: на ходе вниз редуктор поднимает лишние 60 кН
+                    PumpjackBlockEntity jack = h.getBlockEntity(new BlockPos(5, 2, 5));
+                    for (int i = 0; i < 30; i++) jack.onPanelButton(p, ProductionPanels.WB_CB_UP);
+                    h.assertTrue(well.counterbalanceN() > well.idealCounterbalanceN() + 50e3, "weights added: " + well.counterbalanceN());
+                })
+                .thenWaitUntil(() -> {
+                    ProductionWell well = ((WellheadBlockEntity) h.getBlockEntity(WELL)).well();
+                    h.assertTrue(well.gearboxBroken(), "unbalanced unit breaks the gearbox: torque " + well.peakTorqueNm());
+                    h.assertTrue(well.mode() == ProductionWell.Mode.DEAD, "stopped: " + well.mode());
+                })
+                .thenExecute(() -> {
+                    WellheadBlockEntity w = h.getBlockEntity(WELL);
+                    w.well().setCounterbalanceN(w.well().idealCounterbalanceN());
+                    w.useItem(p, InteractionHand.MAIN_HAND, new ItemStack(AllBlocks.LARGE_COGWHEEL.get()));
+                    h.assertFalse(w.well().gearboxBroken(), "gearbox repaired");
+                })
+                .thenWaitUntil(() -> h.assertTrue(((WellheadBlockEntity) h.getBlockEntity(WELL)).well().mode() == ProductionWell.Mode.PUMPING,
+                        "pumping again"))
                 .thenSucceed();
     }
 }

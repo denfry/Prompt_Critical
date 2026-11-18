@@ -146,8 +146,16 @@ public final class DeviceProfiles {
             case "DegasificationPumpBlockEntity" -> CACHE.computeIfAbsent(simple, k -> panelPump("DEGASIFICATION").also("pc_mine").build());
             case "WellheadBlockEntity" -> CACHE.computeIfAbsent(simple, k -> DeviceProfile.builder("pc_well", "FLOWING")
                     .button("chokeDown", ProductionPanels.WB_CHOKE_DOWN).button("chokeUp", ProductionPanels.WB_CHOKE_UP)
-                    .button("toggleMasterValve", ProductionPanels.WB_VALVE).build());
+                    .button("toggleMasterValve", ProductionPanels.WB_VALVE)
+                    .button("counterbalanceDown", ProductionPanels.WB_CB_DOWN).button("counterbalanceUp", ProductionPanels.WB_CB_UP)
+                    .button("acousticFluidLevel", ProductionPanels.WB_ECHO)
+                    .read("getDynamometerCard", 32, (b, s, a) -> dynoCard((dev.denfry.promptcritical.mod.production.WellheadBlockEntity) b))
+                    .read("getMotor", 4, (b, s, a) -> rodPumpMotor((dev.denfry.promptcritical.mod.production.WellheadBlockEntity) b))
+                    .probe(WellEvents::new).build());
             case "PumpjackBlockEntity" -> CACHE.computeIfAbsent(simple, k -> DeviceProfile.builder("pc_well", "ROD_PUMP")
+                    .also("pc_well_rodpump")
+                    .read("getDynamometerCard", 32, (b, s, a) -> dynoCard(pumpjackWell(b)))
+                    .read("getMotor", 4, (b, s, a) -> rodPumpMotor(pumpjackWell(b)))
                     .probe(() -> lampState("running", "pc_pump_state")).build());
             case "DrillersConsoleBlockEntity" -> CACHE.computeIfAbsent(simple, k -> DeviceProfile.builder("pc_drilling", "CONSOLE")
                     .button("wobDown", DrillingPanels.B_WOB_DOWN).button("wobUp", DrillingPanels.B_WOB_UP)
@@ -210,6 +218,62 @@ public final class DeviceProfiles {
         var w = c.well();
         out.put("lossRate", w == null ? 0.0 : w.lossM3s());
         return out;
+    }
+
+    private static dev.denfry.promptcritical.mod.production.WellheadBlockEntity pumpjackWell(BlockEntity b) throws DeviceException {
+        var w = ((dev.denfry.promptcritical.mod.production.PumpjackBlockEntity) b).wellhead();
+        if (w == null) throw new DeviceException(DeviceException.RANGE, "no wellhead within reach of the pumpjack");
+        return w;
+    }
+
+    /** {@code getDynamometerCard()} 09 §9.13.1: 200 точек, м и Н; {@code nil}, если скважина не на насосе. */
+    private static Object dynoCard(dev.denfry.promptcritical.mod.production.WellheadBlockEntity w) {
+        var well = w.well();
+        var c = well == null ? null : well.card();
+        if (c == null) return null;
+        Map<String, Object> m = new LinkedHashMap<>();
+        m.put("period", c.periodS());
+        List<Double> x = new ArrayList<>(c.positionM().length), f = new ArrayList<>(c.loadN().length);
+        for (double v : c.positionM()) x.add(v);
+        for (double v : c.loadN()) f.add(v);
+        m.put("position", x);
+        m.put("load", f);
+        return m;
+    }
+
+    /** {@code getMotor()} для качалки: момент на редукторе, его паспорт и мощность на валу. */
+    private static Object rodPumpMotor(dev.denfry.promptcritical.mod.production.WellheadBlockEntity w) {
+        var well = w.well();
+        Map<String, Object> m = new LinkedHashMap<>();
+        m.put("torque", well == null ? 0.0 : well.peakTorqueNm());
+        m.put("torqueRating", dev.denfry.promptcritical.sim.production.ProductionWell.GEARBOX_RATED_NM);
+        m.put("counterbalance", well == null ? 0.0 : well.counterbalanceN());
+        m.put("goodman", well == null ? 0.0 : well.goodmanRatio());
+        m.put("gearboxBroken", well != null && well.gearboxBroken());
+        return m;
+    }
+
+    /** События скважины 09 §9.13.1: {@code pc_well_fluid_level} после замера эхолотом и {@code pc_well_rod_part}. */
+    static final class WellEvents implements DeviceProfile.Probe {
+        private int echoes = -1, parts = -1;
+
+        @Override
+        public void tick(BlockEntity be, DeviceRuntime.Snapshot s, DeviceProfile.Emitter out) {
+            var w = (dev.denfry.promptcritical.mod.production.WellheadBlockEntity) be;
+            if (echoes >= 0 && w.echoCount() != echoes) {
+                Map<String, Object> m = new LinkedHashMap<>();
+                m.put("level", w.echoLevelM());
+                m.put("echoTime", w.echoTimeS());
+                out.emit("pc_well_fluid_level", m);
+            }
+            if (parts >= 0 && w.rodPartCount() != parts && w.well() != null) {
+                Map<String, Object> m = new LinkedHashMap<>();
+                m.put("depth", w.well().rodPartDepthM());
+                out.emit("pc_well_rod_part", m);
+            }
+            echoes = w.echoCount();
+            parts = w.rodPartCount();
+        }
     }
 
     private static String subtype(String simpleClassName) {

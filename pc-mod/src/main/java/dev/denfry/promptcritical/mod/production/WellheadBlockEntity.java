@@ -13,6 +13,7 @@ import dev.denfry.promptcritical.mod.registry.PcItems;
 import dev.denfry.promptcritical.sim.production.BeamPump;
 import dev.denfry.promptcritical.sim.production.ProducingReservoir;
 import dev.denfry.promptcritical.sim.production.ProductionWell;
+import dev.denfry.promptcritical.sim.production.RodPumpDynamics;
 import dev.denfry.promptcritical.sim.production.ThreePhaseSeparator;
 import java.util.Arrays;
 import java.util.List;
@@ -59,6 +60,11 @@ public final class WellheadBlockEntity extends DeviceBlockEntity implements Foun
     private boolean tree, separator, open;
     private double spm;
     private int ticks;
+    private double[] pendingPump;
+    /** Последний замер эхолотом: время эха, с, уровень, м, и номер замера (для события {@code pc_well_fluid_level}). */
+    private double echoS, echoLevelM;
+    private int echoCount, rodPartCount;
+    public static final double CB_STEP_N = 2e3;
 
     public WellheadBlockEntity(BlockPos pos, BlockState state) {
         super(ProductionBlockEntities.WELLHEAD.get(), pos, state);
@@ -91,11 +97,36 @@ public final class WellheadBlockEntity extends DeviceBlockEntity implements Foun
 
     @Override
     public boolean accepts(ItemStack stack) {
-        return stack.is(PcItems.SEAMLESS_PIPE.get()) || stack.is(PcItems.SEISMIC_CHARGE.get());
+        return stack.is(PcItems.SEAMLESS_PIPE.get()) || stack.is(PcItems.SEISMIC_CHARGE.get()) || stack.is(PcItems.SUCKER_ROD.get())
+                || stack.is(PcItems.DOWNHOLE_ROD_PUMP.get()) || stack.is(com.simibubi.create.AllBlocks.LARGE_COGWHEEL.get().asItem());
+    }
+
+    /** Ремонт ШГН (09 §9.6.5): штанга — после обрыва, насос — новый клапан, большая шестерня — зубья редуктора. */
+    private ItemInteractionResult repair(Player player, ItemStack stack) {
+        if (well == null) return ItemInteractionResult.CONSUME;
+        String done = null;
+        if (stack.is(PcItems.SUCKER_ROD.get()) && !Double.isNaN(well.rodPartDepthM())) {
+            well.repairRods();
+            done = "rods_fixed";
+        } else if (stack.is(PcItems.DOWNHOLE_ROD_PUMP.get())) {
+            well.replacePump();
+            done = "pump_replaced";
+        } else if (stack.is(com.simibubi.create.AllBlocks.LARGE_COGWHEEL.get().asItem()) && well.gearboxBroken()) {
+            well.repairGearbox();
+            done = "gearbox_fixed";
+        }
+        if (done == null) return ItemInteractionResult.CONSUME;
+        if (!player.getAbilities().instabuild) stack.shrink(1);
+        level.playSound(null, worldPosition, SoundEvents.ANVIL_USE, SoundSource.BLOCKS, 0.6f, 1.2f);
+        player.displayClientMessage(ProductionText.msg(done), true);
+        setChanged();
+        return ItemInteractionResult.SUCCESS;
     }
 
     @Override
     public ItemInteractionResult useItem(Player player, InteractionHand hand, ItemStack stack) {
+        if (stack.is(PcItems.SUCKER_ROD.get()) || stack.is(PcItems.DOWNHOLE_ROD_PUMP.get())
+                || stack.is(com.simibubi.create.AllBlocks.LARGE_COGWHEEL.get().asItem())) return repair(player, stack);
         DrilledWells.Bore b = bore();
         if (b == null) {
             player.displayClientMessage(ProductionText.msg("no_bore"), true);
@@ -161,10 +192,55 @@ public final class WellheadBlockEntity extends DeviceBlockEntity implements Foun
         if (open && sep != null && well.oilM3s() > 0)
             dev.denfry.promptcritical.mod.content.SimAchievements.once(this, dev.denfry.promptcritical.mod.content.SimAchievements.FIRST_OIL,
                     "oil_m3s", well.oilM3s());
-        if (jack != null) jack.load(well.card() == null ? 0 : well.card().shaftPowerW());
+        if (jack != null) jack.load(shaftLoadW());
+        if (well.takeRodPartEvent()) {
+            rodPartCount++;
+            Player p = s.getNearestPlayer(worldPosition.getX(), worldPosition.getY(), worldPosition.getZ(), 32, false);
+            if (p != null) p.displayClientMessage(ProductionText.msg("rod_part", ProductionText.num(well.rodPartDepthM(), 0))
+                    .withStyle(ChatFormatting.RED), false);
+            level.playSound(null, worldPosition, SoundEvents.CHAIN_BREAK, SoundSource.BLOCKS, 1.0f, 0.6f);
+        }
         if (tree && ticks % 10 == 0 && above.getValue(BlockStateProperties.OPEN) != open)
             level.setBlock(worldPosition.above(), above.setValue(BlockStateProperties.OPEN, open), Block.UPDATE_ALL);
         if (ticks % 100 == 0) setChanged();
+    }
+
+    /**
+     * Нагрузка на вал качалки, Вт: редуктор должен дать пиковый момент цикла — у неуравновешенной качалки он
+     * вдвое-втрое выше (09 §9.6.5); КПД редуктора 0,9.
+     */
+    private double shaftLoadW() {
+        RodPumpDynamics.DynoCard c = well.card();
+        if (c == null || spm <= 0) return 0;
+        return Math.max(c.rodPowerW(), well.peakTorqueNm() * spm * 2 * Math.PI / 60) / 0.9;
+    }
+
+    /** Замер эхолотом (09 §9.6.5); {@code false} — скважина не на насосе. */
+    public boolean echo() {
+        if (well == null || well.mode() != ProductionWell.Mode.PUMPING) return false;
+        double casing = ThreePhaseSeparator.STANDARD.pressurePa();
+        echoLevelM = well.fluidLevelM(casing);
+        echoS = well.echoTimeS(casing);
+        echoCount++;
+        level.playSound(null, worldPosition, SoundEvents.NOTE_BLOCK_BASEDRUM.value(), SoundSource.BLOCKS, 1.0f, 0.5f);
+        setChanged();
+        return true;
+    }
+
+    public double echoLevelM() {
+        return echoLevelM;
+    }
+
+    public double echoTimeS() {
+        return echoS;
+    }
+
+    public int echoCount() {
+        return echoCount;
+    }
+
+    public int rodPartCount() {
+        return rodPartCount;
     }
 
     @Nullable
@@ -191,6 +267,8 @@ public final class WellheadBlockEntity extends DeviceBlockEntity implements Foun
         if (r == null) return;
         well = new ProductionWell(r);
         well.setChoke64(pendingChoke);
+        well.restorePumpState(pendingPump);
+        pendingPump = null;
     }
 
     @Override
@@ -226,6 +304,12 @@ public final class WellheadBlockEntity extends DeviceBlockEntity implements Foun
             case ProductionPanels.WB_CHOKE_DOWN -> well.setChoke64(well.choke64() - CHOKE_STEP);
             case ProductionPanels.WB_CHOKE_UP -> well.setChoke64(well.choke64() + CHOKE_STEP);
             case ProductionPanels.WB_VALVE -> masterOpen = !masterOpen;
+            case ProductionPanels.WB_CB_DOWN -> well.setCounterbalanceN(well.counterbalanceN() - CB_STEP_N);
+            case ProductionPanels.WB_CB_UP -> well.setCounterbalanceN(well.counterbalanceN() + CB_STEP_N);
+            case ProductionPanels.WB_ECHO -> {
+                if (echo()) player.displayClientMessage(ProductionText.msg("echo", ProductionText.num(echoS, 2),
+                        ProductionText.num(echoLevelM, 0)), true);
+            }
             default -> {
             }
         }
@@ -255,19 +339,29 @@ public final class WellheadBlockEntity extends DeviceBlockEntity implements Foun
         out[ProductionPanels.W_MODE] = well.mode().ordinal();
         out[ProductionPanels.W_FILL_PERMIL] = (int) Math.round(well.fillage() * 1000);
         out[ProductionPanels.W_SPM10] = (int) Math.round(spm * 10);
-        BeamPump.Card c = well.card();
+        RodPumpDynamics.DynoCard c = well.card();
         if (c != null) {
             out[ProductionPanels.W_PEAK_KN] = (int) Math.round(c.peakN() / 1000);
             for (int i = 0; i < BeamPump.CARD_POINTS; i++) {
-                out[ProductionPanels.W_CARD + 2 * i] = (int) Math.round(c.positionM()[i] * 1000);
-                out[ProductionPanels.W_CARD + 2 * i + 1] = (int) Math.round(c.loadN()[i] / 100);
+                int j = i * RodPumpDynamics.POINTS / BeamPump.CARD_POINTS;
+                out[ProductionPanels.W_CARD + 2 * i] = (int) Math.round(c.positionM()[j] * 1000);
+                out[ProductionPanels.W_CARD + 2 * i + 1] = (int) Math.round(c.loadN()[j] / 100);
             }
         }
+        out[ProductionPanels.W_CB_KN10] = (int) Math.round(well.counterbalanceN() / 100);
+        out[ProductionPanels.W_TORQUE_KNM10] = (int) Math.round(well.peakTorqueNm() / 100);
+        out[ProductionPanels.W_GOODMAN_PCT] = (int) Math.round(well.goodmanRatio() * 100);
+        out[ProductionPanels.W_LEVEL_M] = (int) Math.round(echoLevelM);
+        out[ProductionPanels.W_ECHO_MS] = (int) Math.round(echoS * 1000);
+        out[ProductionPanels.W_LEAK_PCT] = (int) Math.round(well.valveLeak() * 100);
+        out[ProductionPanels.W_GAS_PCT] = (int) Math.round(well.gasFraction() * 100);
         int f = 0;
         if (open) f |= 1 << ProductionPanels.WF_OPEN;
         if (c != null) f |= 1 << ProductionPanels.WF_PUMPING;
         if (tree) f |= 1 << ProductionPanels.WF_TREE;
         if (separator) f |= 1 << ProductionPanels.WF_SEPARATOR;
+        if (!Double.isNaN(well.rodPartDepthM())) f |= 1 << ProductionPanels.WF_ROD_PART;
+        if (well.gearboxBroken()) f |= 1 << ProductionPanels.WF_GEARBOX;
         out[ProductionPanels.W_FLAGS] = f;
     }
 
@@ -282,7 +376,10 @@ public final class WellheadBlockEntity extends DeviceBlockEntity implements Foun
             for (int i = 0; i < st.length; i++) bits[i] = Double.doubleToRawLongBits(st[i]);
             tag.putLongArray("reservoir", bits);
             tag.putInt("choke", well.choke64());
+            tag.putLongArray("pump", toBits(well.exportPumpState()));
         }
+        tag.putDouble("echo_s", echoS);
+        tag.putDouble("echo_m", echoLevelM);
     }
 
     @Override
@@ -295,6 +392,19 @@ public final class WellheadBlockEntity extends DeviceBlockEntity implements Foun
             pendingReservoir = new double[bits.length];
             for (int i = 0; i < bits.length; i++) pendingReservoir[i] = Double.longBitsToDouble(bits[i]);
             pendingChoke = tag.contains("choke") ? tag.getInt("choke") : 16;
+            if (tag.contains("pump")) {
+                long[] pb = tag.getLongArray("pump");
+                pendingPump = new double[pb.length];
+                for (int i = 0; i < pb.length; i++) pendingPump[i] = Double.longBitsToDouble(pb[i]);
+            }
         }
+        echoS = tag.getDouble("echo_s");
+        echoLevelM = tag.getDouble("echo_m");
+    }
+
+    private static long[] toBits(double[] v) {
+        long[] out = new long[v.length];
+        for (int i = 0; i < v.length; i++) out[i] = Double.doubleToRawLongBits(v[i]);
+        return out;
     }
 }

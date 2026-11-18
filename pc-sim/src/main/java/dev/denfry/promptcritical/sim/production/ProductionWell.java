@@ -1,5 +1,8 @@
 package dev.denfry.promptcritical.sim.production;
 
+import dev.denfry.promptcritical.sim.drilling.NaturalGas;
+import dev.denfry.promptcritical.sim.drilling.Trap;
+
 /**
  * Добывающая скважина: залежь ({@link ProducingReservoir}), лифт по НКТ со штуцером ({@link Tubing}) или ШГН
  * ({@link BeamPump}). Пока пласт поднимает столб, скважина фонтанирует через штуцер; когда давление упало и точки
@@ -11,6 +14,14 @@ package dev.denfry.promptcritical.sim.production;
  * жидкость; насос откачивает до минимального давления на приёме 0,3 МПа: если подача больше притока, заполнение
  * падает («откачка до уровня»), если меньше — уровень поднимается до равенства подачи и притока (Brown, т. 2a; Брэдли,
  * «Petroleum Engineering Handbook», гл. 10).
+ *
+ * <p><b>ШГН</b> (09 §9.6.5): динамограмма — колонна из восьми масс ({@link RodPumpDynamics}), 200 точек; газ, не
+ * отведённый газовым якорем ({@link #GAS_ANCHOR_EFFICIENCY}), занимает камеру насоса вместо жидкости. Противовес по
+ * умолчанию — C = W_ж/2 + W_ш(1 − ρ_ж/ρ_ст) (§9.6.5), игрок его меняет; пиковый момент выше паспорта редуктора API 228
+ * (25,8 кН·м) ломает зубья. Штанги рвутся, когда наибольшее напряжение выше допускаемого по модифицированной
+ * диаграмме Гудмана (API RP 11BR, штанги класса D: σ_в = 793 МПа, S_A = σ_в/4 + 0,5625·σ_min); глубина обрыва
+ * детерминирована. Нагнетательный клапан изнашивается с числом качаний ({@link #VALVE_LIFE_STROKES}) — утечка
+ * наклоняет карту и снижает подачу. Уровень в затрубье — эхолотом: z = c·t/2.
  */
 public final class ProductionWell {
     public enum Mode { SHUT_IN, FLOWING, DEAD, PUMPING }
@@ -22,7 +33,22 @@ public final class ProductionWell {
     private int choke64 = 16;
     private Mode mode = Mode.SHUT_IN;
     private double oilM3s, waterM3s, gasStdM3s, pwfPa, wellheadPa, fluidLoadN, fillage;
-    private BeamPump.Card card;
+    private RodPumpDynamics.DynoCard card;
+    /** Паспорт редуктора API 228 (228 000 фунт·дюйм), Н·м (09 §9.6.5). */
+    public static final double GEARBOX_RATED_NM = 25.8e3;
+    /** Предел прочности штанг класса D (API Spec 11B), Па. */
+    public static final double ROD_TENSILE_PA = 793e6;
+    /** Доля свободного газа, которую газовый якорь отводит в затрубье [BALANCE]. */
+    public static final double GAS_ANCHOR_EFFICIENCY = 0.8;
+    /** Качаний до полного износа нагнетательного клапана (утечка 100 %) [BALANCE]. */
+    public static final double VALVE_LIFE_STROKES = 1.5e6;
+    /** Показатель адиабаты газа затрубья для скорости звука. */
+    public static final double GAS_GAMMA = 1.3;
+
+    private double counterbalanceN = Double.NaN, strokes, partDepthM = Double.NaN, peakTorqueNm, goodman, intakePa, gasFraction;
+    private boolean gearboxBroken, rodPartEvent;
+    private double cacheSpm = -1, cacheLoad = -1, cacheFill = -1, cacheLeak = -1, cachePart = -1, cacheIntake = -1;
+    private int cacheAge;
 
     public ProductionWell(ProducingReservoir reservoir) {
         this.reservoir = reservoir;
@@ -49,11 +75,13 @@ public final class ProductionWell {
      * {@code separatorPa} — давление в сепараторе.
      */
     public void step(double dt, boolean open, double spm, double separatorPa) {
+        if (gearboxBroken || !Double.isNaN(partDepthM)) spm = 0;
         Inflow ipr = reservoir.inflow();
         double wc = reservoir.waterCut(), gor = reservoir.gasOilRatio(), depth = reservoir.datumM();
-        card = null;
+        if (spm <= 0) card = null;
         fluidLoadN = 0;
         fillage = 0;
+        peakTorqueNm = goodman = 0;
         if (!open) {
             mode = Mode.SHUT_IN;
             oilM3s = waterM3s = gasStdM3s = 0;
@@ -63,6 +91,7 @@ public final class ProductionWell {
         }
         if (spm > 0) {
             pump(ipr, wc, gor, spm, separatorPa);
+            mechanics(dt, spm, separatorPa);
         } else {
             // закрытая или заглохшая скважина фонтан не начнёт, если пласт не поднимает столб без потока
             boolean running = mode == Mode.FLOWING;
@@ -86,11 +115,12 @@ public final class ProductionWell {
         double discharge = separatorPa + rho * Tubing.G * l;
         double pwfMin = MIN_INTAKE_PA + rho * Tubing.G * below;
         double liquidMax = ipr.rateM3s(pwfMin) / (1 - wc);
-        double intake = MIN_INTAKE_PA, liquid = 0;
+        double intake = MIN_INTAKE_PA, liquid = 0, leak = valveLeak();
         for (int it = 0; it < 3; it++) {
             fluidLoadN = BeamPump.PLUNGER_AREA_M2 * Math.max(0, discharge - intake);
             double sp = BeamPump.strokeM() - BeamPump.rodStretchM(fluidLoadN, l);
-            double qd = BeamPump.displacementM3s(spm, sp);
+            gasFraction = intakeGasFraction(gor, wc, intake);
+            double qd = BeamPump.displacementM3s(spm, sp) * (1 - gasFraction) * (1 - leak / 2);
             if (qd >= liquidMax) {
                 liquid = liquidMax;
                 intake = MIN_INTAKE_PA;
@@ -103,10 +133,163 @@ public final class ProductionWell {
             }
         }
         fluidLoadN = BeamPump.PLUNGER_AREA_M2 * Math.max(0, discharge - intake);
-        card = BeamPump.card(spm, l, rho, fluidLoadN, fillage);
+        intakePa = intake;
         oilM3s = liquid * (1 - wc);
         pwfPa = intake + rho * Tubing.G * below;
         wellheadPa = separatorPa;
+        double chamberLiquid = fillage * (1 - gasFraction);
+        card = cachedCard(spm, l, rho, discharge, intake, chamberLiquid, leak);
+    }
+
+    /** Доля свободного газа в камере насоса на приёме: газ сверх растворённого при давлении приёма, за вычетом якоря. */
+    private double intakeGasFraction(double gor, double wc, double intake) {
+        double rs = Tubing.solutionGor(intake, reservoir.bubblePointPa(), Math.min(gor, ProducingReservoir.RS_M3M3));
+        double freeStd = Math.max(0, gor - rs) * (1 - wc) * (1 - GAS_ANCHOR_EFFICIENCY);
+        double t = reservoir.temperatureK();
+        double gasAtIntake = freeStd * NaturalGas.STD_PRESSURE_PA / (intake + NaturalGas.STD_PRESSURE_PA) * t / NaturalGas.STD_TEMPERATURE_K
+                * NaturalGas.Z;
+        return gasAtIntake / (gasAtIntake + 1);
+    }
+
+    /** Карта считается заново, когда входы заметно сменились или раз в 200 шагов: она стоит сотни тысяч операций. */
+    private RodPumpDynamics.DynoCard cachedCard(double spm, double l, double rho, double discharge, double intake, double fill, double leak) {
+        double part = Double.isNaN(partDepthM) ? -1 : partDepthM;
+        boolean same = card != null && cacheAge < 200 && Math.abs(spm - cacheSpm) < 0.01 * spm
+                && Math.abs(fluidLoadN - cacheLoad) <= 0.01 * Math.max(1, fluidLoadN) && Math.abs(fill - cacheFill) < 0.01
+                && Math.abs(leak - cacheLeak) < 0.01 && part == cachePart && Math.abs(intake - cacheIntake) < 0.02 * Math.max(intake, 1e5);
+        if (same) {
+            cacheAge++;
+            return card;
+        }
+        cacheSpm = spm;
+        cacheLoad = fluidLoadN;
+        cacheFill = fill;
+        cacheLeak = leak;
+        cachePart = part;
+        cacheIntake = intake;
+        cacheAge = 0;
+        return RodPumpDynamics.card(spm, l, rho, discharge, intake, fill, leak, partDepthM);
+    }
+
+    /** Противовес, редуктор, штанги и клапаны после шага насоса. */
+    private void mechanics(double dt, double spm, double separatorPa) {
+        if (card == null) return;
+        if (Double.isNaN(counterbalanceN)) counterbalanceN = idealCounterbalanceN();
+        peakTorqueNm = card.peakTorqueNm(counterbalanceN);
+        double sMax = card.peakN() / BeamPump.ROD_AREA_M2, sMin = Math.max(0, card.minN()) / BeamPump.ROD_AREA_M2;
+        goodman = sMax / (ROD_TENSILE_PA / 4 + 0.5625 * sMin);
+        strokes += spm / 60 * dt;
+        if (peakTorqueNm > GEARBOX_RATED_NM) gearboxBroken = true;
+        if (goodman > 1 && Double.isNaN(partDepthM)) {
+            // обрыв на муфте: глубина — детерминированная доля колонны по числу качаний
+            double frac = 0.2 + 0.6 * new java.util.SplittableRandom(Double.doubleToLongBits(strokes) ^ 0x5DEECE66DL).nextDouble();
+            partDepthM = Math.floor(frac * pumpDepthM());
+            rodPartEvent = true;
+        }
+    }
+
+    /** Противовес для уравновешенной качалки C = W_ж/2 + W_ш(1 − ρ_ж/ρ_ст), Н (09 §9.6.5). */
+    public double idealCounterbalanceN() {
+        if (card == null) return Double.isNaN(counterbalanceN) ? 0 : counterbalanceN;
+        return card.fluidLoadN() / 2 + card.rodWeightInFluidN();
+    }
+
+    public double counterbalanceN() {
+        return Double.isNaN(counterbalanceN) ? idealCounterbalanceN() : counterbalanceN;
+    }
+
+    public void setCounterbalanceN(double n) {
+        counterbalanceN = Math.max(0, n);
+    }
+
+    /** Пиковый момент на редукторе за последний цикл, Н·м. */
+    public double peakTorqueNm() {
+        return peakTorqueNm;
+    }
+
+    /** Отношение наибольшего напряжения в штангах к допускаемому по Гудману. */
+    public double goodmanRatio() {
+        return goodman;
+    }
+
+    /** Утечка нагнетательного клапана, 0..1. */
+    public double valveLeak() {
+        return Math.min(1, strokes / VALVE_LIFE_STROKES);
+    }
+
+    public double strokes() {
+        return strokes;
+    }
+
+    public boolean gearboxBroken() {
+        return gearboxBroken;
+    }
+
+    public void repairGearbox() {
+        gearboxBroken = false;
+    }
+
+    /** Глубина обрыва штанг, м; NaN — колонна цела. */
+    public double rodPartDepthM() {
+        return partDepthM;
+    }
+
+    /** Ловильные работы и замена оборванной штанги. */
+    public void repairRods() {
+        partDepthM = Double.NaN;
+        card = null;
+    }
+
+    /** Смена насоса: новый нагнетательный клапан. */
+    public void replacePump() {
+        strokes = 0;
+        card = null;
+    }
+
+    /** Обрыв штанг случился с прошлого вызова (для события {@code pc_well_rod_part}). */
+    public boolean takeRodPartEvent() {
+        boolean e = rodPartEvent;
+        rodPartEvent = false;
+        return e;
+    }
+
+    public double intakePa() {
+        return intakePa;
+    }
+
+    public double gasFraction() {
+        return gasFraction;
+    }
+
+    /** Глубина уровня жидкости в затрубье, м: столб над приёмом держит давление приёма сверх давления в затрубье. */
+    public double fluidLevelM(double casingPa) {
+        double rho = (1 - reservoir.waterCut()) * ProducingReservoir.STOCK_OIL_KGM3 + reservoir.waterCut() * ProducingReservoir.WATER_KGM3;
+        double h = Math.max(0, intakePa - casingPa) / (rho * Tubing.G);
+        return Math.clamp(pumpDepthM() - h, 0, pumpDepthM());
+    }
+
+    /** Скорость звука в газе затрубья c = √(γZRT/M), м/с, при средней температуре ствола. */
+    public double annulusSoundSpeedMs() {
+        double t = 0.5 * (Trap.SURFACE_K + reservoir.temperatureK());
+        return Math.sqrt(GAS_GAMMA * NaturalGas.Z * NaturalGas.R * t / NaturalGas.MOLAR_MASS_KG_MOL);
+    }
+
+    /** Время эха до уровня, с (§9.6.5: z = c·t/2). */
+    public double echoTimeS(double casingPa) {
+        return 2 * fluidLevelM(casingPa) / annulusSoundSpeedMs();
+    }
+
+    /** Состояние механики качалки для сохранения: противовес, качания, обрыв, редуктор. */
+    public double[] exportPumpState() {
+        return new double[] {counterbalanceN, strokes, partDepthM, gearboxBroken ? 1 : 0};
+    }
+
+    public void restorePumpState(double[] s) {
+        if (s == null || s.length != 4) return;
+        counterbalanceN = s[0];
+        strokes = Math.max(0, s[1]);
+        partDepthM = s[2];
+        gearboxBroken = s[3] > 0.5;
     }
 
     public Mode mode() {
@@ -145,7 +328,7 @@ public final class ProductionWell {
     }
 
     /** Динамограмма последнего шага при насосной эксплуатации; иначе {@code null}. */
-    public BeamPump.Card card() {
+    public RodPumpDynamics.DynoCard card() {
         return card;
     }
 }

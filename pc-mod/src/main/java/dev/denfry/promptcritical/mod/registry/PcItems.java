@@ -352,6 +352,9 @@ public final class PcItems {
     // нефть и газ I2: утяжелитель (мешок 50 кг, API 13A), заряд для шурфа, сейсмический разрез
     public static final DeferredItem<Item> BARITE_POWDER = item("barite_powder", 64);
     public static final DeferredItem<Item> SEISMIC_CHARGE = item("seismic_charge", 16);
+    // ШГН 09 §9.6.5: штанга ¾″ (ремонт после обрыва) и плунжерный насос (замена клапанов)
+    public static final DeferredItem<Item> SUCKER_ROD = item("sucker_rod", 64);
+    public static final DeferredItem<Item> DOWNHOLE_ROD_PUMP = item("downhole_rod_pump", 4);
     public static final DeferredItem<dev.denfry.promptcritical.mod.drilling.SeismicSectionItem> SEISMIC_SECTION = registered(
             ITEMS.registerItem("seismic_section", dev.denfry.promptcritical.mod.drilling.SeismicSectionItem::new,
                     new Item.Properties().stacksTo(1)));

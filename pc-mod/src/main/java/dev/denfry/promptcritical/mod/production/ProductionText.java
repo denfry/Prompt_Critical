@@ -32,6 +32,16 @@ public final class ProductionText {
                 "Сырьё %s м³/ч · тарелок %s · флегмовое число %s · выход печи %s °C · топливо %s нм³/ч · перекрытие бензин/керосин %s К");
     }
 
+    static {
+        // ШГН 09 §9.6.5
+        put("rod_part", "Sucker rods parted at %s m: the load fell to the rods above. Fish them and replace the rod (sucker rod on the wellhead)",
+                "Обрыв штанг на %s м: нагрузка упала до веса штанг выше обрыва. Ловильные работы и замена штанги (штанга на устье)");
+        put("rods_fixed", "Rod string fished and repaired", "Колонна штанг извлечена и отремонтирована");
+        put("pump_replaced", "Downhole pump replaced: new valves", "Глубинный насос заменён: новые клапаны");
+        put("gearbox_fixed", "Gearbox repaired: new gears", "Редуктор отремонтирован: новые шестерни");
+        put("echo", "Echo after %s s: fluid level at %s m", "Эхо через %s с: уровень жидкости на %s м");
+    }
+
     private ProductionText() {
     }
 

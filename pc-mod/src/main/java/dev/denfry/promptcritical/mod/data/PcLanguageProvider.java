@@ -458,6 +458,8 @@ public final class PcLanguageProvider extends LanguageProvider {
         b("column_tray_section", "Column Tray Section", "Тарельчатая секция колонны");
         b("column_top", "Column Top", "Верх колонны");
         i("seismic_charge", "Seismic Charge", "Сейсмический заряд");
+        i("sucker_rod", "Sucker Rod", "Насосная штанга");
+        i("downhole_rod_pump", "Downhole Rod Pump", "Штанговый глубинный насос");
         i("seismic_section", "Seismic Section", "Сейсмический разрез");
         i("copper_wire", "Copper Wire", "Медная проволока");
         i("generator_coupling", "Shear-Pin Coupling", "Муфта со срезным штифтом");
