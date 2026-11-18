@@ -12,6 +12,7 @@ import dev.denfry.promptcritical.mod.safety.FlareKnockoutDrumBlockEntity;
 import dev.denfry.promptcritical.mod.safety.FlareSealDrumBlockEntity;
 import dev.denfry.promptcritical.mod.safety.Flares;
 import dev.denfry.promptcritical.mod.safety.ManwayBlockEntity;
+import dev.denfry.promptcritical.mod.safety.TurningGearBlockEntity;
 import dev.denfry.promptcritical.mod.safety.PatrolCheckpointBlockEntity;
 import dev.denfry.promptcritical.mod.safety.PatrolReaderItem;
 import dev.denfry.promptcritical.mod.safety.Patrols;
@@ -296,5 +297,37 @@ public final class SafetyGameTests {
             h.assertTrue(p.state().flameOut() && p.state().ch4UnburntKgS() > 0, "no unburnt release without pilots " + p.state());
             h.assertFalse(h.getBlockState(tip).getValue(net.minecraft.world.level.block.state.properties.BlockStateProperties.LIT), "tip lit without pilots");
         }).thenExecute(() -> FlareIgnitionPanelBlockEntity.rainFire = true).thenSucceed();
+    }
+
+    /**
+     * Валоповорот 03a §3a.7.6: горячая остановленная турбина без валоповорота выгибается, дисбаланс в модели вибрации
+     * растёт; вал Create на валоповороте проворачивает ротор, прогиб уходит.
+     */
+    @GameTest(template = LARGE, timeoutTicks = 300)
+    public static void turningGearPreventsRotorBow(GameTestHelper h) {
+        BlockPos turbine = new BlockPos(5, 2, 5), gear = new BlockPos(6, 2, 5), motor = new BlockPos(7, 2, 5);
+        h.setBlock(turbine, PcBlocks.STEAM_TURBINE.get().defaultBlockState()
+                .setValue(net.minecraft.world.level.block.state.properties.BlockStateProperties.HORIZONTAL_FACING, net.minecraft.core.Direction.NORTH));
+        h.setBlock(gear, PcBlocks.TURBINE_TURNING_GEAR.get().defaultBlockState());
+        double[] u0 = new double[2];
+        h.startSequence().thenIdle(5).thenExecute(() -> {
+            TurningGearBlockEntity g = h.getBlockEntity(gear);
+            u0[0] = dev.denfry.promptcritical.mod.acoustics.MachineAcoustics.imbalance(h.getLevel(), h.absolutePos(turbine));
+            g.setRotor(0, 0); // только что остановлена, горячая
+        }).thenIdle(65).thenExecute(() -> {
+            TurningGearBlockEntity g = h.getBlockEntity(gear);
+            h.assertTrue(g.rotor().bow() > 0, "hot stopped rotor did not bow");
+            h.assertFalse(g.turning(), "turning without a shaft");
+            double u = dev.denfry.promptcritical.mod.acoustics.MachineAcoustics.imbalance(h.getLevel(), h.absolutePos(turbine));
+            h.assertTrue(Math.abs(u - u0[0] * g.rotor().vibrationFactor()) < 1e-3 * u, "imbalance " + u + " vs " + u0[0]);
+            u0[1] = g.rotor().bow();
+            h.setBlock(motor, com.simibubi.create.AllBlocks.CREATIVE_MOTOR.getDefaultState()
+                    .setValue(net.minecraft.world.level.block.state.properties.BlockStateProperties.FACING, net.minecraft.core.Direction.WEST));
+        }).thenIdle(2).thenExecute(() -> ((com.simibubi.create.content.kinetics.motor.CreativeMotorBlockEntity) h.getBlockEntity(motor))
+                .generatedSpeed.setValue(32)).thenIdle(65).thenExecute(() -> {
+            TurningGearBlockEntity g = h.getBlockEntity(gear);
+            h.assertTrue(g.turning(), "the shaft does not turn the rotor");
+            h.assertTrue(g.rotor().bow() < u0[1], "bow did not straighten: " + g.rotor().bow() + " vs " + u0[1]);
+        }).thenSucceed();
     }
 }

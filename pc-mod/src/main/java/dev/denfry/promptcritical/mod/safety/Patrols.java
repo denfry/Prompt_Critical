@@ -20,7 +20,7 @@ import net.minecraft.server.level.ServerLevel;
  * <ul>
  *   <li>послушать — вращающиеся машины Create: износ подшипника D_b от {@value #AUDIBLE_BEARING} — «шум подшипника»
  *   [BALANCE: порог, при котором дефект слышен на слух до вибродиагностики], заметный дисбаланс или расцентровка —
- *   «гул, биение»;</li>
+ *   «гул, биение» (дисбаланс u/u₀ ≥ 2,5 — вдвое выше худшего монтажа 1,4; расцентровка ≥ 0,2 мм при монтажных 0,03–0,08 мм);</li>
  *   <li>осмотреть — запертые точки изоляции рядом, открытые наряды-допуски, замкнутые пространства с непригодной
  *   атмосферой за люком.</li>
  * </ul>
@@ -29,7 +29,7 @@ import net.minecraft.server.level.ServerLevel;
  */
 public final class Patrols {
     public static final int CARD_RADIUS = 4;
-    public static final double AUDIBLE_BEARING = 0.3, AUDIBLE_IMBALANCE = 0.5, AUDIBLE_MISALIGNMENT_MM = 0.2;
+    public static final double AUDIBLE_BEARING = 0.3, AUDIBLE_IMBALANCE = 2.5, AUDIBLE_MISALIGNMENT_MM = 0.2;
 
     public enum Finding { BEARING_NOISE, HUM, LOCKED_POINT, OPEN_PERMIT, BAD_AIR }
 

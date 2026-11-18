@@ -84,6 +84,10 @@ public final class SafetyRecipes extends RecipeProvider {
                 .pattern("SSS").pattern("S N").define('S', Items.STRING).define('N', Items.IRON_INGOT)
                 .unlockedBy("has_harness", has(PcItems.SAFETY_HARNESS.get())).save(out, id("lifeline"));
         confined(out, sheet);
+        ShapedRecipeBuilder.shaped(RecipeCategory.MISC, dev.denfry.promptcritical.mod.registry.PcBlocks.TURBINE_TURNING_GEAR.get())
+                .pattern("SCS").pattern("GMG").pattern("SSS").define('S', sheet).define('C', com.simibubi.create.AllBlocks.COGWHEEL.get())
+                .define('G', com.simibubi.create.AllBlocks.LARGE_COGWHEEL.get()).define('M', com.simibubi.create.AllBlocks.GEARBOX.get())
+                .unlockedBy("has_turbine", has(dev.denfry.promptcritical.mod.registry.PcBlocks.STEAM_TURBINE.get())).save(out, id("turbine_turning_gear"));
         // факельная система §13.4.3
         ShapedRecipeBuilder.shaped(RecipeCategory.MISC, dev.denfry.promptcritical.mod.registry.PcBlocks.FLARE_IGNITION_PANEL.get())
                 .pattern("SLS").pattern("RFR").pattern("SCS").define('S', sheet).define('L', Items.GLASS_PANE).define('R', Items.REDSTONE)

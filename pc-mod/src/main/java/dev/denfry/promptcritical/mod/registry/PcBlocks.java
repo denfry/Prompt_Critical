@@ -1064,6 +1064,9 @@ public final class PcBlocks {
     /** Конденсатор под паровой турбиной: охлаждается водой, которой касается (река, пруд). */
     public static final DeferredBlock<PcBlock> CONDENSER = block("condenser", machine().noOcclusion(), Spec.facing());
     /** Паровая турбина с противодавлением: вал Create спереди, пар — от котла, которого касается. */
+    /** Валоповоротное устройство турбины (03a §3a.7.6). */
+    public static final DeferredBlock<PcDeviceBlock> TURBINE_TURNING_GEAR = device("turbine_turning_gear", machine().noOcclusion(),
+            Spec.facing(PcProperties.RUNNING), FoundryBlock.with(dev.denfry.promptcritical.mod.safety.TurningGearBlockEntity::new));
     public static final DeferredBlock<PcDeviceBlock> STEAM_TURBINE = device("steam_turbine", machine(),
             Spec.facing(PcProperties.RUNNING),
             KineticMachineBlock.with(ShaftSide.FRONT, dev.denfry.promptcritical.mod.powerhouse.SteamTurbineBlockEntity::new));

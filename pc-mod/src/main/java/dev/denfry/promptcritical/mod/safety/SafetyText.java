@@ -92,6 +92,13 @@ public final class SafetyText {
         t("death.attack.promptcritical.thermal_radiation", "%1$s was scorched by the flare", "%1$s обожжён излучением факела");
         t("death.attack.promptcritical.thermal_radiation.player", "%1$s was scorched by the flare while fighting %2$s",
                 "%1$s обожжён излучением факела, спасаясь от %2$s");
+        // валоповорот 03a §3a.7.6
+        m("turning_no_turbine", "No steam turbine next to the turning gear", "Рядом с валоповоротом нет паровой турбины");
+        m("turning_running", "Turbine running · bow %s %% · vibration ×%s", "Турбина в работе · прогиб %s %% · вибрация ×%s");
+        m("turning_on", "Turning the rotor at 3 rpm · bow %s %% · vibration ×%s", "Ротор проворачивается 3 об/мин · прогиб %s %% · вибрация ×%s");
+        m("turning_hot_idle", "Hot rotor standing still: it bows! Bow %s %% · vibration ×%s — put a Create shaft of 16 rpm or more on the gear",
+                "Горячий ротор стоит: он выгибается! Прогиб %s %% · вибрация ×%s — дайте на валоповорот вал Create от 16 об/мин");
+        m("turning_cold", "Rotor cold · bow %s %% · vibration ×%s", "Ротор остыл · прогиб %s %% · вибрация ×%s");
         for (String[] c : new String[][] {{"organic_vapour", "organic vapours (A)", "органические пары (A)"},
                 {"low_boiling_organic", "low-boiling organics (AX)", "низкокипящие органические (AX)"},
                 {"inorganic_gas", "Cl₂, H₂S (B)", "Cl₂, H₂S (B)"}, {"acid_gas", "SO₂, HCl, HF (E)", "SO₂, HCl, HF (E)"},

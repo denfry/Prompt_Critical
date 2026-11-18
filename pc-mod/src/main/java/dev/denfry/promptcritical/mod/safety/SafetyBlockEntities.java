@@ -35,6 +35,9 @@ public final class SafetyBlockEntities {
     public static final DeferredHolder<BlockEntityType<?>, BlockEntityType<FlareSealDrumBlockEntity>> FLARE_SEAL_DRUM =
             type("flare_seal_drum", FlareSealDrumBlockEntity::new, PcBlocks.FLARE_SEAL_DRUM);
 
+    public static final DeferredHolder<BlockEntityType<?>, BlockEntityType<TurningGearBlockEntity>> TURBINE_TURNING_GEAR =
+            type("turbine_turning_gear", TurningGearBlockEntity::new, PcBlocks.TURBINE_TURNING_GEAR);
+
     private SafetyBlockEntities() {
     }
 

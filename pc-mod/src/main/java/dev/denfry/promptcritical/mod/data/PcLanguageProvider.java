@@ -967,6 +967,7 @@ public final class PcLanguageProvider extends LanguageProvider {
         b("flare_ignition_panel", "Flare Ignition Panel", "Щит розжига факела");
         b("flare_knockout_drum", "Flare Knock-out Drum", "Факельный сепаратор капель");
         b("flare_seal_drum", "Flare Seal Drum", "Гидрозатвор факела");
+        b("turbine_turning_gear", "Turbine Turning Gear", "Валоповоротное устройство");
         MISC.putAll(dev.denfry.promptcritical.mod.safety.SafetyText.LANG);
     }
 
