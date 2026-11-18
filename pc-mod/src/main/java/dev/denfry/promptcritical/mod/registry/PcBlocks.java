@@ -494,6 +494,12 @@ public final class PcBlocks {
             Spec.facing(PcProperties.RUNNING).footprint(Footprint.of(Segment.box(-1, 1, 0, 0, 0, 0))),
             KineticMachineBlock.with(ShaftSide.BACK, dev.denfry.promptcritical.mod.chem.LdpeReactorBlockEntity::new));
 
+    // --- облагораживание на НПЗ: гидроочистка и сера (I2) ---
+    public static final DeferredBlock<PcDeviceBlock> HYDROTREATER = uranium("hydrotreater",
+            dev.denfry.promptcritical.mod.refinery.HydrotreaterBlockEntity::new);
+    public static final DeferredBlock<PcDeviceBlock> CLAUS_UNIT = uranium("claus_unit",
+            dev.denfry.promptcritical.mod.refinery.ClausUnitBlockEntity::new);
+
     // --- передел урана: от руды до UF₆ (I4) ---
     public static final DeferredBlock<PcDeviceBlock> ACID_PLANT = uranium("acid_plant",
             dev.denfry.promptcritical.mod.uranium.AcidPlantBlockEntity::new);

@@ -249,6 +249,8 @@ public final class PcLanguageProvider extends LanguageProvider {
         i("catalyst_shift_ht", "Iron-Chromium Shift Catalyst", "Железохромовый катализатор конверсии CO");
         i("catalyst_shift_lt", "Copper-Zinc Shift Catalyst", "Медноцинковый катализатор конверсии CO");
         i("catalyst_methanol", "Methanol Synthesis Catalyst", "Катализатор синтеза метанола");
+        i("catalyst_hydrotreating", "Hydrotreating Catalyst (CoMo)", "Катализатор гидроочистки (CoMo)");
+        i("sulfur", "Sulphur", "Сера");
         i("pt_rh_gauze", "Platinum-Rhodium Gauze Pack", "Пакет платинородиевых сеток");
         i("catalyst_denox", "Tail Gas Reduction Catalyst", "Катализатор очистки хвостовых газов");
         i("cap_lamp", "Miner's Cap Lamp", "Головной шахтный светильник");
@@ -300,6 +302,8 @@ public final class PcLanguageProvider extends LanguageProvider {
         b("edc_cracker", "EDC Cracking Furnace", "Печь пиролиза ДХЭ");
         b("pvc_reactor", "PVC Suspension Autoclave", "Автоклав суспензионного ПВХ");
         b("acid_plant", "Contact Sulphuric Acid Plant", "Сернокислотная установка");
+        b("hydrotreater", "Diesel Hydrotreater", "Установка гидроочистки дизельного топлива");
+        b("claus_unit", "Claus Sulphur Recovery Unit", "Установка Клауса");
         b("hf_kiln", "Hydrogen Fluoride Kiln", "Печь фтористого водорода");
         b("leach_tank", "Uranium Leach and CCD Train", "Выщелачивание урана с противоточной декантацией");
         b("uranium_ion_exchange", "Uranium Ion Exchange Unit", "Ионообменная установка урана");
