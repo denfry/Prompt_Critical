@@ -93,19 +93,7 @@ m("vein_quartz", "ores", [el("block", [0, 0, 0], [16, 16, 16], "qtz")])
 # ======================================================================
 # шахта
 # ======================================================================
-# шахтная крепь: арка СВП (деревянный оклад и мехкрепь — spec_visual)
-def support_arch():
-    return [el("arch_w", [0, -16, 7], [2, 18, 9], "rust"),
-            el("arch_e", [14, -16, 7], [16, 18, 9], "rust"),
-            el("arch_nw", [0, 16, 7], [2, 28, 9], "rust", rot=("z", -22.5, [1, 18, 8])),
-            el("arch_ne", [14, 16, 7], [16, 28, 9], "rust", rot=("z", 22.5, [15, 18, 8])),
-            el("arch_top", [3, 28, 7], [13, 30, 9], "rust"),
-            el("clamp_w", [-0.5, 16, 6.5], [2.5, 18, 9.5], "d"),
-            el("clamp_e", [13.5, 16, 6.5], [16.5, 18, 9.5], "d"),
-            el("mesh", [2, 29, 0], [14, 29.5, 16], "mesh")]
-
-
-m("mine_support_arch", "mining", support_arch())
+# арка СВП нарисована вручную в Blockbench: art/blockbench/mining/mine_support.author.js
 
 # главный вентилятор нарисован вручную в Blockbench: art/blockbench/mining/main_mine_fan.author.js
 

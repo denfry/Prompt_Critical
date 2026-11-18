@@ -103,23 +103,7 @@ def hcyl(name, axis, r, a0, a1, tex, c=(8, 8, 8), sides=16):
     return disc(name, axis, r, max(a0, -15.92), min(a1, 31.92), tex, sides, c=c)
 
 
-def support(damaged=False):
-    """Деревянный оклад 1×3×1 (якорь — средний блок): две окорённые стойки, верхняк, затяжки по кровле."""
-    els = disc("post_w", "y", 2, -15.9, 28, "log", 8, c=(3, 8, 8)) + disc("post_e", "y", 2, -15.9, 28, "log", 8, c=(13, 8, 8))
-    cap = disc("cap", "x", 2.2, -0.9, 16.9, "log", 8, c=(8, 29.6, 8))
-    if damaged:
-        # верхняк переломлен: половины просели к середине
-        cap = [el("cap_w", [-1, 27.6, 6], [8, 31.6, 10], "log", rot=("z", -22.5, [-1, 29.6, 8])),
-               el("cap_e", [8, 27.6, 6], [17, 31.6, 10], "log", rot=("z", 22.5, [17, 29.6, 8]))]
-    els += cap
-    els += [el(f"lagging_{i}", [i * 4 + 0.2, 31.8, 0], [i * 4 + 3.8, 32, 16], "plank") for i in range(4)]
-    els += [el("wedge_w", [1.5, 27, 6.5], [4.5, 28, 9.5], "plank"), el("wedge_e", [11.5, 27, 6.5], [14.5, 28, 9.5], "plank"),
-            el("foot_w", [0.5, -16, 5.5], [5.5, -15, 10.5], "plank"), el("foot_e", [10.5, -16, 5.5], [15.5, -15, 10.5], "plank")]
-    return els
-
-
-m("mine_support", "mining", support())
-m("mine_support_damaged", "mining", support(True))
+# деревянный оклад (целый и сломанный) нарисован вручную в Blockbench: art/blockbench/mining/mine_support.author.js
 
 # механизированная крепь нарисована вручную в Blockbench: art/blockbench/mining/powered_roof_support.author.js
 
