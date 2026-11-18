@@ -49,6 +49,9 @@ public final class BoilerUnit {
         this.boiler = new FireTubeBoiler(spec, fuel, initialTempK);
     }
 
+    /** Тепло от электродного котла на коллекторе, Вт (мир ставит каждый тик). */
+    double electricHeatW;
+
     public SimId id() {
         return id;
     }

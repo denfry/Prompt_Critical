@@ -281,6 +281,30 @@ public final class SteamPlant implements Subsystem {
         }
     }
 
+    /**
+     * Тепло электродного котла, стоящего на общем паровом коллекторе с котлом {@code boiler}, Вт. Электродный котёл
+     * даёт насыщенный пар при давлении коллектора, а подпитку держит питательный регулятор котла, поэтому в установившемся
+     * режиме его пар равносилен теплу, подведённому к воде барабана: m = Q/(h″ − h_пит).
+     *
+     * @return {@code true} — котёл есть, цел и может принять тепло (не взорван, не на предохранительном клапане)
+     */
+    public boolean setElectricHeatW(SimId boiler, double watts) {
+        double w = Math.max(0, watts);
+        BoilerUnit b = boilers.get(boiler);
+        if (b != null) {
+            boolean ok = !b.exploded && b.boiler.rupture() == BoilerRupture.NONE && !b.reliefOpen;
+            b.electricHeatW = ok ? w : 0;
+            return ok;
+        }
+        WaterTubeUnit t = waterTubes.get(boiler);
+        if (t != null) {
+            boolean ok = !t.exploded && t.drum != null;
+            t.electricHeatW = ok ? w : 0;
+            return ok;
+        }
+        return false;
+    }
+
     public BoilerUnit boiler(SimId id) {
         return boilers.get(id);
     }
@@ -373,7 +397,7 @@ public final class SteamPlant implements Subsystem {
         in.waterLevelM = drum.mixtureLevel();
         in.fuelFeedKgS = 0;
         u.boiler.stepFast(dt, in, u.out);
-        drum.addHeat(u.out.heatToWaterW);
+        drum.addHeat(u.out.heatToWaterW + u.electricHeatW);
         u.ashKg += u.out.fuelBurnKgS * dt * u.fuel.ash();
         boolean vent = u.boiler.plugMelted() || u.boiler.rupture() != BoilerRupture.NONE;
         u.plug.setValvePosition(vent ? 1 : 0);

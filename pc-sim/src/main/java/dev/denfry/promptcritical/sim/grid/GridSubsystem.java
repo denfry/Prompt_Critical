@@ -119,6 +119,16 @@ public final class GridSubsystem implements Subsystem, GridEventSink {
         return unit(id, LampRackUnit.class, () -> new LampRackUnit(id));
     }
 
+    /** Обратимый агрегат ГАЭС. */
+    public PumpedStorageUnit pumpedStorage(SimId id) {
+        return unit(id, PumpedStorageUnit.class, () -> new PumpedStorageUnit(id));
+    }
+
+    /** Электродный котёл 6,3 кВ. */
+    public ElectrodeBoilerUnit electrodeBoiler(SimId id) {
+        return unit(id, ElectrodeBoilerUnit.class, () -> new ElectrodeBoilerUnit(id));
+    }
+
     /** Сетевая ВЭУ с асинхронным генератором. */
     public WindTurbineUnit windTurbine(SimId id) {
         return unit(id, WindTurbineUnit.class, () -> new WindTurbineUnit(id));
@@ -297,6 +307,8 @@ public final class GridSubsystem implements Subsystem, GridEventSink {
         for (GridUnit u : units.values()) {
             if (u instanceof GeneratorUnit g) g.beforeTick(grid, dt, tick);
             else if (u instanceof WindTurbineUnit w) w.beforeTick(grid, dt);
+            else if (u instanceof PumpedStorageUnit s) s.beforeTick(grid, dt);
+            else if (u instanceof ElectrodeBoilerUnit e) e.beforeTick(grid, dt);
         }
         if (grid.busCount() > 0) {
             grid.stepFast(dt, inputs, out);
@@ -602,6 +614,8 @@ public final class GridSubsystem implements Subsystem, GridEventSink {
             case LightingBoardUnit l -> "lighting_board";
             case WindTurbineUnit w -> "wind_turbine";
             case LampRackUnit r -> "lamp_rack";
+            case PumpedStorageUnit s -> "pumped_storage";
+            case ElectrodeBoilerUnit e -> "electrode_boiler";
         };
     }
 
@@ -632,6 +646,8 @@ public final class GridSubsystem implements Subsystem, GridEventSink {
                 case "lighting_board" -> new LightingBoardUnit(id);
                 case "wind_turbine" -> new WindTurbineUnit(id);
                 case "lamp_rack" -> new LampRackUnit(id);
+                case "pumped_storage" -> new PumpedStorageUnit(id);
+                case "electrode_boiler" -> new ElectrodeBoilerUnit(id);
                 default -> type.startsWith("switch:") ? new SwitchUnit(id, SwitchUnit.Kind.valueOf(type.substring(7))) : null;
             };
             if (u != null) {

@@ -87,6 +87,8 @@ public final class WaterTubeUnit {
     double furnaceVolumeM3;
     int superheaterBlocks, economizerBlocks, airPreheaterBlocks;
     FluidNode drum, superheater;
+    /** Тепло от электродного котла на коллекторе, Вт (мир ставит каждый тик). */
+    double electricHeatW;
     FlowLink relief, superheatLink;
     /** Вход биндинга: запасы топлива и воды, кг; температура и качество питательной воды. */
     double fuelSupplyKg, fuelUsedKg, feedSupplyKg, feedUsedKg, feedTempK = 288.15;
@@ -541,7 +543,7 @@ public final class WaterTubeUnit {
         fuelSupplyKg = Math.max(0, fuelSupplyKg - admitted);
         fuelUsedKg += admitted;
         if (exploded) return;
-        drum.addHeat(out.heatToWaterW);
+        drum.addHeat(out.heatToWaterW + electricHeatW);
         superheater.addHeat(out.superheaterHeatW);
         if (feedRateKgS > 0) {
             double hFeed = water.liquidEnthalpy(Math.max(p, SteamPlant.ATMOSPHERE_PA) + 0.3e6, feedTempK)
