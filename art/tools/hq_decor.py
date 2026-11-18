@@ -34,31 +34,6 @@ def warn_triangle(s, cx, y0, h=4):
 # ======================================================================
 # электрооборудование
 # ======================================================================
-def electrical_cabinet():
-    """Шкаф распределительный ШР: двустворчатая дверь, жалюзи, ручки-защёлки, знак напряжения, цоколь."""
-    m = Model("electrical_cabinet", "decor", cullface=True)
-
-    def door(s):
-        s.frame()
-        s.seam_v(7, 1, s.h - 2)
-        s.louvres(2, 2, 6, 5, 2).louvres(10, 2, 14, 5, 2)
-        s.louvres(2, 11, 6, 14, 2).louvres(10, 11, 14, 14, 2)
-        s.vline(6, 7, 10, mat="black", lvl=1.5).vline(9, 7, 10, mat="black", lvl=1.5)
-        warn_triangle(s, 3, 5, 5)
-        s.fill(10, 7, 14, 9, mat="white", lvl=4.5)
-        s.hline(8, 11, 13, mat="black", lvl=1.5)
-
-    def side(s):
-        s.frame()
-        s.louvres(4, 3, 12, 8, 2)
-    m.box("plinth", [0, 0, 0.5], [16, 1, 15.5], "black")
-    m.box("body", [0, 1, 0.5], [16, 16, 16], "pgrey", paint={"north": door, "east": side, "west": side,
-                                                            "up": lambda s: (s.frame(), s.fill(6, 6, 10, 10, mat="black", lvl=1.5))})
-    for i, y in enumerate((3, 12)):
-        m.box(f"hinge{i}", [15.6, y, 0.2], [16, y + 2, 0.5], "steel", share="hinge")
-    return m.done()
-
-
 def junction_box():
     m = Model("junction_box", "decor", cullface=True)
 
@@ -97,20 +72,6 @@ def knife_switch():
     m.box("bar", [4, 9.5, 12.8], [12, 10.5, 13.6], "black")
     m.box("handle", [7.4, 9.7, 10], [8.6, 10.3, 12.8], "red")
     m.box("guard", [3.5, 10.5, 12.5], [12.5, 13.5, 13], "pgrey", paint={"north": lambda s: warn_triangle(s, 4, 0, 3)})
-    return m.done()
-
-
-def conduit(vertical=False):
-    """Стальная труба электропроводки по стене со скобами и коробкой-протяжкой."""
-    m = Model("conduit_vertical" if vertical else "conduit", "decor", cullface=True)
-    if vertical:
-        m.cyl("pipe", "y", (8, 15), 0.8, 0, 16, "zinc", n=8, caps=(False, False))
-        for i, y in enumerate((2, 13)):
-            m.box(f"clip{i}", [6.5, y, 14.5], [9.5, y + 1, 16], "steel", share="clip")
-    else:
-        m.cyl("pipe", "x", (8, 15), 0.8, 0, 16, "zinc", n=8, caps=(False, False))
-        for i, x in enumerate((2, 13)):
-            m.box(f"clip{i}", [x, 6.5, 14.5], [x + 1, 9.5, 16], "steel", share="clip")
     return m.done()
 
 
@@ -254,16 +215,6 @@ def fire_hose_cabinet():
     return m.done()
 
 
-def first_aid_box():
-    m = Model("first_aid_box", "decor", cullface=True)
-
-    def face(s):
-        s.frame()
-        s.fill(3, 2, 5, 4, mat="red", lvl=3.5).fill(2, 2, 6, 4, mat="red", lvl=3.5).fill(3, 1, 5, 5, mat="red", lvl=3.5)
-    m.box("box", [4, 5, 14], [12, 11, 16], "white", paint={"north": face})
-    return m.done()
-
-
 def oil_drum():
     """Бочка 200 л: обечайка с зигами, крышка с пробками, потёки."""
     m = Model("oil_drum", "decor", cullface=True)
@@ -282,37 +233,6 @@ def oil_drum():
     return m.done()
 
 
-def gas_cylinders():
-    """Стойка с баллонами: кислород (голубой), ацетилен (белый), пропан (красный), цепь."""
-    m = Model("gas_cylinders", "decor", cullface=True)
-    m.box("back", [0, 0, 14.5], [16, 15, 16], "zinc", paint={"north": lambda s: [s.rivet(x, 1) for x in (1, 14)]})
-    m.box("floor", [0, 0, 7], [16, 0.5, 14.5], "zinc")
-    for i, (x, mat) in enumerate(((3, "p_air"), (8, "white"), (13, "red"))):
-        c = m.cyl(f"cyl{i}", "y", (x, 10.5), 1.0, 0.5, 13, mat, n=8, caps=(False, True))
-        c.wrap.hline(1, add=-0.8)
-        m.cyl(f"valve{i}", "y", (x, 10.5), 0.5, 13, 14.5, "brass", n=8, share="valve")
-    m.box("chain", [0.5, 9, 7.5], [15.5, 9.4, 7.9], "steel")
-    return m.done()
-
-
-def column_i_beam():
-    """Колонна из двутавра: полки и стенка, рёбра жёсткости, жёлто-чёрная обмотка внизу."""
-    m = Model("column_i_beam", "decor", cullface=True)
-
-    def flange(s):
-        s.fill(0, s.h - 3, s.w, s.h, mat="yellow", lvl=4.0)
-        for x in range(0, s.w, 2):
-            s.px(x, s.h - 2, mat="black", lvl=1.5)
-        s.rivets_v(1, 2, s.h - 4, 4)
-    for i, z in enumerate((3, 12)):
-        m.box(f"flange{i}", [3, 0, z], [13, 16, z + 1], "oxide", share="flange",
-              paint={"north": flange, "south": flange})
-    m.box("web", [7.5, 0, 4], [8.5, 16, 12], "oxide")
-    for i, y in enumerate((8,)):
-        m.box(f"stiffener{i}", [4, y, 4], [12, y + 0.5, 12], "oxide")
-    return m.done()
-
-
 def floor_marking(hazard=False):
     m = Model("floor_marking_hazard" if hazard else "floor_marking", "decor", cullface=True)
 
@@ -326,11 +246,10 @@ def floor_marking(hazard=False):
     return m.done()
 
 
-for _f in (electrical_cabinet, junction_box, wall_socket, knife_switch, voltage_sign, cable_drum, dielectric_mat,
-           workbench, locker, shelving, fire_extinguisher, fire_hose_cabinet, first_aid_box, oil_drum, gas_cylinders,
-           column_i_beam):
+# шкаф ШР, трубы проводки, колонна, баллоны и аптечка нарисованы вручную в Blockbench:
+# art/blockbench/decor/plant_fittings.author.js
+for _f in (junction_box, wall_socket, knife_switch, voltage_sign, cable_drum, dielectric_mat,
+           workbench, locker, shelving, fire_extinguisher, fire_hose_cabinet, oil_drum):
     _f()
-conduit()
-conduit(True)
 floor_marking()
 floor_marking(True)
