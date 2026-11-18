@@ -38,6 +38,7 @@ public final class MineBlockEntities {
     public static void register(IEventBus modBus) {
         BLOCK_ENTITIES.register(modBus);
         CapLampService.register();
+        dev.denfry.promptcritical.mod.gear.ElectricGearService.register();
     }
 
     private static <T extends BlockEntity> DeferredHolder<BlockEntityType<?>, BlockEntityType<T>> type(String name,

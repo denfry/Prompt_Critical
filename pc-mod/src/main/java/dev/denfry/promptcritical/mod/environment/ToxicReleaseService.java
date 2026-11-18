@@ -217,7 +217,7 @@ public final class ToxicReleaseService {
 
     private static void expose(ServerLevel level, State s, ServerPlayer p, ToxicGas gas) {
         if (p.isCreative() || p.isSpectator()) return;
-        double ppm = ppmAt(level, gas, p.getX(), p.getEyeY(), p.getZ());
+        double ppm = dev.denfry.promptcritical.mod.gear.ElectricGearService.inhaledPpm(p, ppmAt(level, gas, p.getX(), p.getEyeY(), p.getZ()), 1);
         EnumMap<ToxicGas, double[]> byGas = s.exposure.get(p.getUUID());
         double[] ex = byGas == null ? null : byGas.get(gas);
         if (ppm < gas.odourPpm) {

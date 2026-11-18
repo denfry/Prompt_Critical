@@ -254,6 +254,8 @@ public final class PcLanguageProvider extends LanguageProvider {
         i("pt_rh_gauze", "Platinum-Rhodium Gauze Pack", "Пакет платинородиевых сеток");
         i("catalyst_denox", "Tail Gas Reduction Catalyst", "Катализатор очистки хвостовых газов");
         i("cap_lamp", "Miner's Cap Lamp", "Головной шахтный светильник");
+        i("powered_respirator", "Powered Air-Purifying Respirator", "Респиратор с принудительной подачей воздуха");
+        i("heated_suit", "Electrically Heated Suit", "Электрообогреваемый костюм");
         b("lamp_rack", "Lamp Room Charging Rack", "Зарядный стеллаж ламповой");
         b("cap_lamp_light", "Cap Lamp Light", "Свет фары");
         i("self_rescuer", "Self-Rescuer", "Самоспасатель");
@@ -570,6 +572,24 @@ public final class PcLanguageProvider extends LanguageProvider {
                 "Заряд %s %% от %s А·ч · циклов %s"});
         MISC.put("item.promptcritical.cap_lamp.broken", new String[] {"Glass broken: put it on the lamp room rack",
                 "Стекло разбито: сдайте в ламповую на стеллаж"});
+        MISC.put("item.promptcritical.electric_gear.battery", new String[] {"NiCd battery: %s cells, %s V, %s Ah (%s Wh)",
+                "Батарея НК: %s эл., %s В, %s А·ч (%s Вт·ч)"});
+        MISC.put("item.promptcritical.electric_gear.charge", new String[] {"Charge %s %% · load %s W · %s cycles",
+                "Заряд %s %% · нагрузка %s Вт · %s циклов"});
+        MISC.put("item.promptcritical.powered_respirator.filter", new String[] {"Acid gas filter (EN 14387 B1): %s %% used",
+                "Фильтр кислых газов (EN 14387 B1): израсходован на %s %%"});
+        MISC.put("item.promptcritical.powered_respirator.filter_spent", new String[] {"Filter spent (%s %%): gas breaks through, change it on the lamp room rack",
+                "Фильтр отработан (%s %%): газ проходит, замените на стеллаже ламповой"});
+        MISC.put("item.promptcritical.powered_respirator.no_co", new String[] {"Does not stop carbon monoxide or add oxygen: in a mine fire use the self-rescuer",
+                "Не задерживает угарный газ и не даёт кислорода: при пожаре в шахте — самоспасатель"});
+        MISC.put("item.promptcritical.heated_suit.heater", new String[] {"Thermostatic heater up to %s W, insulation %s clo",
+                "Обогрев с терморегулятором до %s Вт, изоляция %s кло"});
+        MISC.put("promptcritical.gear.cold.stage1", new String[] {"You are shivering: core temperature below 35 °C",
+                "Вас бьёт озноб: температура тела ниже 35 °C"});
+        MISC.put("promptcritical.gear.cold.stage2", new String[] {"Moderate hypothermia: core below 32 °C, get warm",
+                "Умеренное переохлаждение: ниже 32 °C, срочно в тепло"});
+        MISC.put("promptcritical.gear.cold.stage3", new String[] {"Severe hypothermia: core below 28 °C",
+                "Тяжёлое переохлаждение: ниже 28 °C"});
         MISC.put("item.promptcritical.cap_lamp.proof", new String[] {"Flameproof mine design", "Рудничное взрывобезопасное исполнение"});
         MISC.put("promptcritical.mine.lamp.halo", new String[] {"Lamp: blue cap over the flame, %s %% of full height",
                 "Лампа: голубой ореол над пламенем, %s %% высоты"});

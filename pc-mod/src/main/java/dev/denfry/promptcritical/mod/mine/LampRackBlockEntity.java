@@ -1,12 +1,17 @@
 package dev.denfry.promptcritical.mod.mine;
 
 import dev.denfry.promptcritical.mod.grid.GridDeviceBlockEntity;
+import dev.denfry.promptcritical.mod.gear.ElectricGearItem;
 import dev.denfry.promptcritical.mod.item.CapLampData;
+import dev.denfry.promptcritical.mod.item.ElectricGearData;
 import dev.denfry.promptcritical.mod.panel.PanelHost;
 import dev.denfry.promptcritical.mod.panel.PanelLayout;
 import dev.denfry.promptcritical.mod.registry.PcDataComponents;
+import dev.denfry.promptcritical.sim.battery.Battery;
 import dev.denfry.promptcritical.sim.battery.CapLamp;
 import dev.denfry.promptcritical.sim.battery.LampCharger;
+import dev.denfry.promptcritical.sim.gear.PowerPack;
+import dev.denfry.promptcritical.sim.gear.PoweredRespirator;
 import dev.denfry.promptcritical.sim.grid.GridSubsystem;
 import dev.denfry.promptcritical.sim.grid.LampRackUnit;
 import java.util.ArrayList;
@@ -39,7 +44,7 @@ public class LampRackBlockEntity extends GridDeviceBlockEntity<LampRackUnit> imp
     private final ItemStackHandler lamps = new ItemStackHandler(SLOTS) {
         @Override
         public boolean isItemValid(int slot, ItemStack stack) {
-            return stack.getItem() instanceof CapLampItem;
+            return stack.getItem() instanceof CapLampItem || stack.getItem() instanceof ElectricGearItem;
         }
 
         @Override
@@ -87,6 +92,14 @@ public class LampRackBlockEntity extends GridDeviceBlockEntity<LampRackUnit> imp
         int nCharging = 0, nFull = 0;
         for (int i = 0; i < SLOTS; i++) {
             ItemStack s = lamps.getStackInSlot(i);
+            if (s.getItem() instanceof ElectricGearItem gear) {
+                LampCharger.Step step = chargeGear(i, s, gear, now, supply);
+                ac += step.acPowerW();
+                if (step.full()) nFull++;
+                else if (step.currentA() > 0) nCharging++;
+                tmax = Math.max(tmax, ElectricGearItem.data(lamps.getStackInSlot(i)).tempC());
+                continue;
+            }
             if (!(s.getItem() instanceof CapLampItem)) continue;
             CapLampData d = CapLampItem.data(s);
             CapLamp lamp = d.toLamp();
@@ -114,6 +127,33 @@ public class LampRackBlockEntity extends GridDeviceBlockEntity<LampRackUnit> imp
         full = nFull;
         u.setDemandW(ac);
         setFlag(BlockStateProperties.LIT, supply > 0.5);
+    }
+
+    /**
+     * Зарядное место для батареи снаряжения (§15.8): тот же режим CC/CV, что у ламп; отработавший фильтр респиратора
+     * ламповщица меняет, как стекло фары.
+     */
+    private LampCharger.Step chargeGear(int slot, ItemStack s, ElectricGearItem gear, long now, double supply) {
+        ElectricGearData d = ElectricGearItem.data(s);
+        double filter = d.filterMol();
+        if (gear.kind() == ElectricGearItem.Kind.RESPIRATOR && filter >= PoweredRespirator.FILTER_CAPACITY_MOL) {
+            filter = 0;
+            repaired++;
+        }
+        PowerPack pack = gear.pack(d);
+        long last = d.lastTick() < 0 ? now : d.lastTick();
+        double left = Math.max(0, now - last) * CapLampService.SECONDS_PER_TICK;
+        LampCharger.Step step = LampCharger.Step.IDLE;
+        while (left > 0) {
+            double dt = Math.min(CapLampService.MAX_STEP_S, left);
+            step = LampCharger.charge(pack.battery(), dt, supply, CapLampService.AMBIENT_C);
+            left -= dt;
+        }
+        ItemStack copy = s.copy();
+        Battery b = pack.battery();
+        copy.set(PcDataComponents.ELECTRIC_GEAR.get(), new ElectricGearData(b.removedAh(), b.cycles(), b.temperatureC(), filter, 0, now));
+        lamps.setStackInSlot(slot, copy);
+        return step;
     }
 
     private static ItemStack withData(ItemStack s, CapLampData d) {

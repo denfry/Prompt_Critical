@@ -44,6 +44,11 @@ public final class PcDataComponents {
             COMPONENTS.registerComponentType("cap_lamp", b -> b.persistent(dev.denfry.promptcritical.mod.item.CapLampData.CODEC)
                     .networkSynchronized(dev.denfry.promptcritical.mod.item.CapLampData.STREAM_CODEC));
 
+    /** Батарея и фильтр носимого электроснаряжения (§15.8). */
+    public static final DeferredHolder<DataComponentType<?>, DataComponentType<dev.denfry.promptcritical.mod.item.ElectricGearData>> ELECTRIC_GEAR =
+            COMPONENTS.registerComponentType("electric_gear", b -> b.persistent(dev.denfry.promptcritical.mod.item.ElectricGearData.CODEC)
+                    .networkSynchronized(dev.denfry.promptcritical.mod.item.ElectricGearData.STREAM_CODEC));
+
     private PcDataComponents() {
     }
 }
