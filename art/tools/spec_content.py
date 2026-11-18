@@ -22,8 +22,7 @@ def lectern(doc):
     return els
 
 
-m("document_lectern", "control", lectern(False))
-m("document_lectern_document", "control", lectern(True))
+# нарисовано вручную в Blockbench: art/blockbench/control/panel_devices.author.js
 
 
 # клетка шахтёрской канарейки: латунные прутья, кольцо; птица на жёрдочке — partial (качание по X)

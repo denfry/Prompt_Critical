@@ -345,6 +345,4 @@ def recording_gauge(paper=True):  # самописец на установке 1
             el("clock_knob", [7, 14, 13], [9, 15, 15], "d")]
 
 
-m("recording_gauge", "instruments", recording_gauge())
-m("recording_gauge_empty", "instruments", recording_gauge(False))
-m("recording_gauge/drum", "instruments", [el("drum", [5, 4, 11.5], [11, 12, 12], "w")], kind="partial")
+# нарисовано вручную в Blockbench: art/blockbench/control/panel_devices.author.js

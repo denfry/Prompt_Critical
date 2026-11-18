@@ -145,12 +145,7 @@ model("instrument_boron", "instruments", tx("d", "acid", body=B("instrument_boro
     el("sample_out", [14, 4, 12], [16, 5, 13], "acid"),
 ], "block/instrument_boron")
 
-model("instrument_vibration", "instruments", tx("d", "st", "cbl", body=B("instrument_vibration_body")),
-      [el("pad", [5, 5, 15], [11, 11, 16], "d")]
-      + disc("sensor", "z", 2.25, 11, 15, "body", 8)
-      + [el("connector", [7.25, 4.5, 12], [8.75, 5.75, 13.5], "st"),
-         el("cable", [7.5, 0, 12.25], [8.5, 4.5, 13.25], "cbl")],
-      "block/instrument_vibration")
+# нарисовано вручную в Blockbench: art/blockbench/control/panel_devices.author.js
 
 model("instrument_acoustic", "instruments", tx("d", "st", "cbl", body=B("instrument_acoustic_body")),
       [el("clamp", [3, 7, 14], [13, 9, 15.9], "st")]
@@ -159,12 +154,7 @@ model("instrument_acoustic", "instruments", tx("d", "st", "cbl", body=B("instrum
          el("cable", [7.5, 14, 13], [8.5, 16, 14], "cbl")],
       "block/instrument_acoustic")
 
-model("neutron_detector", "instruments", tx("d", "b", "cbl", body=B("neutron_detector_body")),
-      disc("chamber", "y", 3.5, 0, 13, "body")
-      + [el("head", [5, 13, 5], [11, 15, 11], "d"),
-         el("connector", [7, 15, 7], [9, 16, 9], "b"),
-         el("cable", [7.5, 15.5, 9], [8.5, 16.5, 15], "cbl")],
-      "block/neutron_detector")
+# нарисовано вручную в Blockbench: art/blockbench/control/panel_devices.author.js
 
 # ======================================================================
 # piping
@@ -661,8 +651,7 @@ def lamp_model(lit):
 
 
 _lp = tx("pn", "pnd", "lw", "loff", lbl=B("indicator_lamp_label"))
-model("indicator_lamp", "control", _lp, lamp_model(True), "block/indicator_lamp")
-model("indicator_lamp_off", "control", _lp, lamp_model(False), "block/indicator_lamp_off")
+# нарисовано вручную в Blockbench: art/blockbench/control/panel_devices.author.js
 
 model("annunciator_panel", "control", tx("pn", "pnd", face=B("annunciator_panel_face")), [
     panel_tile(),
@@ -677,25 +666,9 @@ for _form in ("pipe", "bend", "tee", "pump", "valve", "control_valve", "check_va
         el("tile", [0, 0, 15], [16, 16, 16], "pn", faces={"north": "m"}, full=["north"]),
     ], f"block/{_mid}")
 
-model("key_switch", "control", tx("pn", "pnd", pl=B("key_switch_plate")), [
-    panel_tile(),
-    el("plate", [4, 4, 12.5], [12, 12, 13], "pnd", faces={"north": "pl"}, full=["north"]),
-], "block/key_switch")
-model("key_switch/key", "control", tx("pnd", "st", "r"),
-      disc("boss", "z", 1.75, 11.5, 12.5, "st", 8)
-      + [el("handle", [7.25, 4.5, 10], [8.75, 11.5, 11.5], "r"),
-         el("pointer", [7.75, 11.5, 10.5], [8.25, 12.5, 11], "st")],
-      "block/key_switch/partial/key", kind="partial")
+# нарисовано вручную в Blockbench: art/blockbench/control/panel_devices.author.js
 
-model("selector_switch", "control", tx("pn", "pnd", pl=B("selector_switch_plate")), [
-    panel_tile(),
-    el("plate", [3, 3, 12.5], [13, 13, 13], "pnd", faces={"north": "pl"}, full=["north"]),
-], "block/selector_switch")
-model("selector_switch/knob", "control", tx("r", "st"),
-      disc("base", "z", 2.5, 11.5, 12.5, "r", 8)
-      + [el("grip", [7.25, 5, 10], [8.75, 11, 11.5], "r"),
-         el("pointer", [7.75, 9.5, 9.9], [8.25, 11, 10], "st")],
-      "block/selector_switch/partial/knob", kind="partial")
+# нарисовано вручную в Blockbench: art/blockbench/control/panel_devices.author.js
 
 
 def pushbutton(lit):
@@ -705,15 +678,9 @@ def pushbutton(lit):
 
 
 _pb = tx("pn", "pnd", "lg", bz=B("pushbutton_bezel"))
-model("pushbutton", "control", _pb, pushbutton(False), "block/pushbutton")
-model("pushbutton_lit", "control", _pb, pushbutton(True), "block/pushbutton_lit")
+# нарисовано вручную в Blockbench: art/blockbench/control/panel_devices.author.js
 
-model("scram_button", "control", tx("pn", "pnd", "redsm", pl=B("scram_button_plate")),
-      [panel_tile(),
-       el("plate", [2, 2, 12.5], [14, 14, 13], "pnd", faces={"north": "pl"}, full=["north"])]
-      + disc("stem", "z", 1.5, 11, 12.5, "pnd", 8)
-      + disc("mushroom", "z", 3, 10, 11, "redsm"),
-      "block/scram_button")
+# нарисовано вручную в Blockbench: art/blockbench/control/panel_devices.author.js
 model("scram_button/cap", "control", {"c": B("scram_button_cap"), "d": T("steel_dark")}, [
     el("cover", [3, 3, 8.5], [13, 13, 9], "c"),
     el("side_t", [3, 12.5, 9], [13, 13, 12.5], "c"),

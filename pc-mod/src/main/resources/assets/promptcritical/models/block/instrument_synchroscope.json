@@ -1,15 +1,16 @@
 {
 	"credit": "Made with Blockbench",
 	"textures": {
-		"particle": "promptcritical:block/common/grid_dark_grey",
-		"d": "promptcritical:block/common/steel_dark",
-		"dg": "promptcritical:block/common/grid_dark_grey",
-		"loff": "promptcritical:block/common/plant_lamp_off",
-		"syn": "promptcritical:block/instrument_synchroscope_dial"
+		"plant_structure": "promptcritical:block/plant/structure",
+		"automation_bakelite": "promptcritical:block/automation/bakelite",
+		"plant_rubber": "promptcritical:block/plant/rubber",
+		"particle": "promptcritical:block/control/synchro_dial",
+		"control_synchro_dial": "promptcritical:block/control/synchro_dial",
+		"grid_lines_lamp_off": "promptcritical:block/grid_lines/lamp_off"
 	},
 	"elements": [
 		{
-			"name": "mount_plate",
+			"name": "plate",
 			"from": [2, 2, 15],
 			"to": [14, 14, 16],
 			"rotation": {
@@ -19,35 +20,35 @@
 			},
 			"faces": {
 				"north": {
-					"uv": [0, 0, 12, 12],
-					"texture": "#d"
+					"uv": [2, 2, 14, 14],
+					"texture": "#plant_structure"
 				},
 				"east": {
-					"uv": [0, 0, 1, 12],
-					"texture": "#d"
+					"uv": [0, 2, 1, 14],
+					"texture": "#plant_structure"
 				},
 				"south": {
-					"uv": [0, 0, 12, 12],
-					"texture": "#d"
+					"uv": [2, 2, 14, 14],
+					"texture": "#plant_structure"
 				},
 				"west": {
-					"uv": [0, 0, 1, 12],
-					"texture": "#d"
+					"uv": [15, 2, 16, 14],
+					"texture": "#plant_structure"
 				},
 				"up": {
-					"uv": [0, 0, 12, 1],
-					"texture": "#d"
+					"uv": [2, 15, 14, 16],
+					"texture": "#plant_structure"
 				},
 				"down": {
-					"uv": [0, 0, 12, 1],
-					"texture": "#d"
+					"uv": [2, 0, 14, 1],
+					"texture": "#plant_structure"
 				}
 			}
 		},
 		{
 			"name": "case",
-			"from": [3, 3, 11],
-			"to": [13, 13, 15],
+			"from": [2.6, 2.6, 11.4],
+			"to": [13.4, 14.6, 15],
 			"rotation": {
 				"angle": 0,
 				"axis": "y",
@@ -55,35 +56,35 @@
 			},
 			"faces": {
 				"north": {
-					"uv": [0, 0, 10, 10],
-					"texture": "#dg"
+					"uv": [2.6, 1.4, 13.4, 13.4],
+					"texture": "#automation_bakelite"
 				},
 				"east": {
-					"uv": [0, 0, 4, 10],
-					"texture": "#dg"
+					"uv": [1, 1.4, 4.6, 13.4],
+					"texture": "#automation_bakelite"
 				},
 				"south": {
-					"uv": [0, 0, 10, 10],
-					"texture": "#dg"
+					"uv": [2.6, 1.4, 13.4, 13.4],
+					"texture": "#automation_bakelite"
 				},
 				"west": {
-					"uv": [0, 0, 4, 10],
-					"texture": "#dg"
+					"uv": [11.4, 1.4, 15, 13.4],
+					"texture": "#automation_bakelite"
 				},
 				"up": {
-					"uv": [0, 0, 10, 4],
-					"texture": "#dg"
+					"uv": [2.6, 11.4, 13.4, 15],
+					"texture": "#automation_bakelite"
 				},
 				"down": {
-					"uv": [0, 0, 10, 4],
-					"texture": "#dg"
+					"uv": [2.6, 1, 13.4, 4.6],
+					"texture": "#automation_bakelite"
 				}
 			}
 		},
 		{
-			"name": "dial",
-			"from": [3.5, 3.5, 10.9],
-			"to": [12.5, 12.5, 11],
+			"name": "rim",
+			"from": [2.4, 2.4, 11],
+			"to": [13.6, 13.6, 11.4],
 			"rotation": {
 				"angle": 0,
 				"axis": "y",
@@ -91,35 +92,327 @@
 			},
 			"faces": {
 				"north": {
-					"uv": [0, 0, 16, 16],
-					"texture": "#syn"
+					"uv": [2.4, 2.4, 13.6, 13.6],
+					"texture": "#plant_rubber"
 				},
 				"east": {
-					"uv": [0, 0, 0.1, 9],
-					"texture": "#dg"
+					"uv": [4.6, 2.4, 5, 13.6],
+					"texture": "#plant_rubber"
 				},
 				"south": {
-					"uv": [0, 0, 9, 9],
-					"texture": "#dg"
+					"uv": [2.4, 2.4, 13.6, 13.6],
+					"texture": "#plant_rubber"
 				},
 				"west": {
-					"uv": [0, 0, 0.1, 9],
-					"texture": "#dg"
+					"uv": [11, 2.4, 11.4, 13.6],
+					"texture": "#plant_rubber"
 				},
 				"up": {
-					"uv": [0, 0, 9, 0.1],
-					"texture": "#dg"
+					"uv": [2.4, 11, 13.6, 11.4],
+					"texture": "#plant_rubber"
 				},
 				"down": {
-					"uv": [0, 0, 9, 0.1],
-					"texture": "#dg"
+					"uv": [2.4, 4.6, 13.6, 5],
+					"texture": "#plant_rubber"
+				}
+			}
+		},
+		{
+			"name": "dial_0",
+			"from": [3, 7.00544, 10.9],
+			"to": [13, 8.99456, 11],
+			"rotation": {
+				"angle": 0,
+				"axis": "y",
+				"origin": [8, 8, 8]
+			},
+			"faces": {
+				"north": {
+					"uv": [0, 6.4087, 16, 9.5913],
+					"texture": "#control_synchro_dial"
+				},
+				"east": {
+					"uv": [5, 7.00544, 5.1, 8.99456],
+					"texture": "#plant_rubber"
+				},
+				"west": {
+					"uv": [10.9, 7.00544, 11, 8.99456],
+					"texture": "#plant_rubber"
+				},
+				"up": {
+					"uv": [3, 10.9, 13, 11],
+					"texture": "#plant_rubber"
+				},
+				"down": {
+					"uv": [3, 5, 13, 5.1],
+					"texture": "#plant_rubber"
+				}
+			}
+		},
+		{
+			"name": "dial_1",
+			"from": [3, 7.00544, 10.89],
+			"to": [13, 8.99456, 11.01],
+			"rotation": {
+				"angle": 22.5,
+				"axis": "z",
+				"origin": [8, 8, 8]
+			},
+			"faces": {
+				"north": {
+					"uv": [0, 6.4087, 16, 9.5913],
+					"texture": "#control_synchro_dial"
+				},
+				"east": {
+					"uv": [4.99, 7.00544, 5.11, 8.99456],
+					"texture": "#plant_rubber"
+				},
+				"west": {
+					"uv": [10.89, 7.00544, 11.01, 8.99456],
+					"texture": "#plant_rubber"
+				},
+				"up": {
+					"uv": [3, 10.89, 13, 11.01],
+					"texture": "#plant_rubber"
+				},
+				"down": {
+					"uv": [3, 4.99, 13, 5.11],
+					"texture": "#plant_rubber"
+				}
+			}
+		},
+		{
+			"name": "dial_2",
+			"from": [3, 7.00544, 10.88],
+			"to": [13, 8.99456, 11.02],
+			"rotation": {
+				"angle": 45,
+				"axis": "z",
+				"origin": [8, 8, 8]
+			},
+			"faces": {
+				"north": {
+					"uv": [0, 6.4087, 16, 9.5913],
+					"texture": "#control_synchro_dial"
+				},
+				"east": {
+					"uv": [4.98, 7.00544, 5.12, 8.99456],
+					"texture": "#plant_rubber"
+				},
+				"west": {
+					"uv": [10.88, 7.00544, 11.02, 8.99456],
+					"texture": "#plant_rubber"
+				},
+				"up": {
+					"uv": [3, 10.88, 13, 11.02],
+					"texture": "#plant_rubber"
+				},
+				"down": {
+					"uv": [3, 4.98, 13, 5.12],
+					"texture": "#plant_rubber"
+				}
+			}
+		},
+		{
+			"name": "dial_3",
+			"from": [3, 7.00544, 10.87],
+			"to": [13, 8.99456, 11.03],
+			"rotation": {
+				"angle": -22.5,
+				"axis": "z",
+				"origin": [8, 8, 8]
+			},
+			"faces": {
+				"north": {
+					"uv": [0, 6.4087, 16, 9.5913],
+					"texture": "#control_synchro_dial"
+				},
+				"east": {
+					"uv": [4.97, 7.00544, 5.13, 8.99456],
+					"texture": "#plant_rubber"
+				},
+				"west": {
+					"uv": [10.87, 7.00544, 11.03, 8.99456],
+					"texture": "#plant_rubber"
+				},
+				"up": {
+					"uv": [3, 10.87, 13, 11.03],
+					"texture": "#plant_rubber"
+				},
+				"down": {
+					"uv": [3, 4.97, 13, 5.13],
+					"texture": "#plant_rubber"
+				}
+			}
+		},
+		{
+			"name": "dial_4",
+			"from": [3, 7.00544, 10.86],
+			"to": [13, 8.99456, 11.04],
+			"rotation": {
+				"angle": -45,
+				"axis": "z",
+				"origin": [8, 8, 8]
+			},
+			"faces": {
+				"north": {
+					"uv": [0, 6.4087, 16, 9.5913],
+					"texture": "#control_synchro_dial"
+				},
+				"east": {
+					"uv": [4.96, 7.00544, 5.14, 8.99456],
+					"texture": "#plant_rubber"
+				},
+				"west": {
+					"uv": [10.86, 7.00544, 11.04, 8.99456],
+					"texture": "#plant_rubber"
+				},
+				"up": {
+					"uv": [3, 10.86, 13, 11.04],
+					"texture": "#plant_rubber"
+				},
+				"down": {
+					"uv": [3, 4.96, 13, 5.14],
+					"texture": "#plant_rubber"
+				}
+			}
+		},
+		{
+			"name": "dial_5",
+			"from": [7.00544, 3, 10.85],
+			"to": [8.99456, 13, 11.05],
+			"rotation": {
+				"angle": 0,
+				"axis": "y",
+				"origin": [8, 8, 8]
+			},
+			"faces": {
+				"north": {
+					"uv": [6.4087, 0, 9.5913, 16],
+					"texture": "#control_synchro_dial"
+				},
+				"east": {
+					"uv": [4.95, 3, 5.15, 13],
+					"texture": "#plant_rubber"
+				},
+				"west": {
+					"uv": [10.85, 3, 11.05, 13],
+					"texture": "#plant_rubber"
+				},
+				"up": {
+					"uv": [7.00544, 10.85, 8.99456, 11.05],
+					"texture": "#plant_rubber"
+				},
+				"down": {
+					"uv": [7.00544, 4.95, 8.99456, 5.15],
+					"texture": "#plant_rubber"
+				}
+			}
+		},
+		{
+			"name": "dial_6",
+			"from": [7.00544, 3, 10.84],
+			"to": [8.99456, 13, 11.06],
+			"rotation": {
+				"angle": 22.5,
+				"axis": "z",
+				"origin": [8, 8, 8]
+			},
+			"faces": {
+				"north": {
+					"uv": [6.4087, 0, 9.5913, 16],
+					"texture": "#control_synchro_dial"
+				},
+				"east": {
+					"uv": [4.94, 3, 5.16, 13],
+					"texture": "#plant_rubber"
+				},
+				"west": {
+					"uv": [10.84, 3, 11.06, 13],
+					"texture": "#plant_rubber"
+				},
+				"up": {
+					"uv": [7.00544, 10.84, 8.99456, 11.06],
+					"texture": "#plant_rubber"
+				},
+				"down": {
+					"uv": [7.00544, 4.94, 8.99456, 5.16],
+					"texture": "#plant_rubber"
+				}
+			}
+		},
+		{
+			"name": "dial_7",
+			"from": [7.00544, 3, 10.83],
+			"to": [8.99456, 13, 11.07],
+			"rotation": {
+				"angle": -22.5,
+				"axis": "z",
+				"origin": [8, 8, 8]
+			},
+			"faces": {
+				"north": {
+					"uv": [6.4087, 0, 9.5913, 16],
+					"texture": "#control_synchro_dial"
+				},
+				"east": {
+					"uv": [4.93, 3, 5.17, 13],
+					"texture": "#plant_rubber"
+				},
+				"west": {
+					"uv": [10.83, 3, 11.07, 13],
+					"texture": "#plant_rubber"
+				},
+				"up": {
+					"uv": [7.00544, 10.83, 8.99456, 11.07],
+					"texture": "#plant_rubber"
+				},
+				"down": {
+					"uv": [7.00544, 4.93, 8.99456, 5.17],
+					"texture": "#plant_rubber"
+				}
+			}
+		},
+		{
+			"name": "lamp_w_bezel",
+			"from": [3.3, 12.9, 11.25],
+			"to": [4.7, 14.3, 11.4],
+			"rotation": {
+				"angle": 0,
+				"axis": "y",
+				"origin": [8, 8, 8]
+			},
+			"faces": {
+				"north": {
+					"uv": [11.3, 1.7, 12.7, 3.1],
+					"texture": "#plant_rubber"
+				},
+				"east": {
+					"uv": [4.6, 1.7, 4.75, 3.1],
+					"texture": "#plant_rubber"
+				},
+				"south": {
+					"uv": [3.3, 1.7, 4.7, 3.1],
+					"texture": "#plant_rubber"
+				},
+				"west": {
+					"uv": [11.25, 1.7, 11.4, 3.1],
+					"texture": "#plant_rubber"
+				},
+				"up": {
+					"uv": [3.3, 11.25, 4.7, 11.4],
+					"texture": "#plant_rubber"
+				},
+				"down": {
+					"uv": [3.3, 4.6, 4.7, 4.75],
+					"texture": "#plant_rubber"
 				}
 			}
 		},
 		{
 			"name": "lamp_w",
-			"from": [3.5, 13, 11.5],
-			"to": [5, 14, 12.5],
+			"from": [3.5, 13.1, 11.05],
+			"to": [4.5, 14.1, 11.25],
 			"rotation": {
 				"angle": 0,
 				"axis": "y",
@@ -127,35 +420,67 @@
 			},
 			"faces": {
 				"north": {
-					"uv": [0, 0, 1.5, 1],
-					"texture": "#loff"
+					"uv": [11.5, 1.9, 12.5, 2.9],
+					"texture": "#grid_lines_lamp_off"
 				},
 				"east": {
-					"uv": [0, 0, 1, 1],
-					"texture": "#loff"
-				},
-				"south": {
-					"uv": [0, 0, 1.5, 1],
-					"texture": "#loff"
+					"uv": [4.75, 1.9, 4.95, 2.9],
+					"texture": "#grid_lines_lamp_off"
 				},
 				"west": {
-					"uv": [0, 0, 1, 1],
-					"texture": "#loff"
+					"uv": [11.05, 1.9, 11.25, 2.9],
+					"texture": "#grid_lines_lamp_off"
 				},
 				"up": {
-					"uv": [0, 0, 1.5, 1],
-					"texture": "#loff"
+					"uv": [3.5, 11.05, 4.5, 11.25],
+					"texture": "#grid_lines_lamp_off"
 				},
 				"down": {
-					"uv": [0, 0, 1.5, 1],
-					"texture": "#loff"
+					"uv": [3.5, 4.75, 4.5, 4.95],
+					"texture": "#grid_lines_lamp_off"
+				}
+			}
+		},
+		{
+			"name": "lamp_e_bezel",
+			"from": [11.3, 12.9, 11.25],
+			"to": [12.7, 14.3, 11.4],
+			"rotation": {
+				"angle": 0,
+				"axis": "y",
+				"origin": [8, 8, 8]
+			},
+			"faces": {
+				"north": {
+					"uv": [3.3, 1.7, 4.7, 3.1],
+					"texture": "#plant_rubber"
+				},
+				"east": {
+					"uv": [4.6, 1.7, 4.75, 3.1],
+					"texture": "#plant_rubber"
+				},
+				"south": {
+					"uv": [11.3, 1.7, 12.7, 3.1],
+					"texture": "#plant_rubber"
+				},
+				"west": {
+					"uv": [11.25, 1.7, 11.4, 3.1],
+					"texture": "#plant_rubber"
+				},
+				"up": {
+					"uv": [11.3, 11.25, 12.7, 11.4],
+					"texture": "#plant_rubber"
+				},
+				"down": {
+					"uv": [11.3, 4.6, 12.7, 4.75],
+					"texture": "#plant_rubber"
 				}
 			}
 		},
 		{
 			"name": "lamp_e",
-			"from": [11, 13, 11.5],
-			"to": [12.5, 14, 12.5],
+			"from": [11.5, 13.1, 11.05],
+			"to": [12.5, 14.1, 11.25],
 			"rotation": {
 				"angle": 0,
 				"axis": "y",
@@ -163,28 +488,24 @@
 			},
 			"faces": {
 				"north": {
-					"uv": [0, 0, 1.5, 1],
-					"texture": "#loff"
+					"uv": [3.5, 1.9, 4.5, 2.9],
+					"texture": "#grid_lines_lamp_off"
 				},
 				"east": {
-					"uv": [0, 0, 1, 1],
-					"texture": "#loff"
-				},
-				"south": {
-					"uv": [0, 0, 1.5, 1],
-					"texture": "#loff"
+					"uv": [4.75, 1.9, 4.95, 2.9],
+					"texture": "#grid_lines_lamp_off"
 				},
 				"west": {
-					"uv": [0, 0, 1, 1],
-					"texture": "#loff"
+					"uv": [11.05, 1.9, 11.25, 2.9],
+					"texture": "#grid_lines_lamp_off"
 				},
 				"up": {
-					"uv": [0, 0, 1.5, 1],
-					"texture": "#loff"
+					"uv": [11.5, 11.05, 12.5, 11.25],
+					"texture": "#grid_lines_lamp_off"
 				},
 				"down": {
-					"uv": [0, 0, 1.5, 1],
-					"texture": "#loff"
+					"uv": [11.5, 4.75, 12.5, 4.95],
+					"texture": "#grid_lines_lamp_off"
 				}
 			}
 		}

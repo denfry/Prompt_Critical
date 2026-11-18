@@ -38,9 +38,7 @@ def gas_detector(alarm="none"):
     ]
 
 
-m("gas_detector", "instruments", gas_detector())
-m("gas_detector_warn", "instruments", gas_detector("warn"))
-m("gas_detector_alarm", "instruments", gas_detector("alarm"))
+# нарисовано вручную в Blockbench: art/blockbench/control/panel_devices.author.js
 
 
 # ======================================================================

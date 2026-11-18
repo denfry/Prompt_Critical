@@ -76,13 +76,7 @@ m("generator_exciter/commutator", "grid",
   disc("commutator", "z", 2.5, 3.5, 12.5, "cus") + disc("shaft", "z", 1, -0.01, 16.01, "st", 8), kind="partial")
 
 # синхроноскоп Э-327: щитовой прибор, шкала 32×32; стрелку рисует BER
-m("instrument_synchroscope", "instruments", [
-    el("mount_plate", [2, 2, 15], [14, 14, 16], "d"),
-    el("case", [3, 3, 11], [13, 13, 15], "dg"),
-    front("dial", [3.5, 3.5, 10.9], [12.5, 12.5, 11], "syn", "dg"),
-    el("lamp_w", [3.5, 13, 11.5], [5, 14, 12.5], "loff"),
-    el("lamp_e", [11, 13, 11.5], [12.5, 14, 12.5], "loff"),
-])
+# нарисовано вручную в Blockbench: art/blockbench/control/panel_devices.author.js
 
 
 
@@ -173,9 +167,7 @@ def relay_cab(state="normal"):
     return els
 
 
-m("relay_cabinet", "control", relay_cab())
-m("relay_cabinet_picked", "control", relay_cab("picked"))
-m("relay_cabinet_tripped", "control", relay_cab("tripped"))
+# нарисовано вручную в Blockbench: art/blockbench/control/panel_devices.author.js
 
 # масляный трансформатор ТМГ — art/blockbench/grid/switchgear.author.js
 # силовой трансформатор ТДН-16000/110: сегмент «бак с вводами» и сегмент радиаторов; якорь — центр 3×3×3
@@ -273,13 +265,7 @@ m("grid_fe_interface_import", "grid", fe_iface("import"))
 m("grid_fe_interface_export", "grid", fe_iface("export"))
 
 # счётчик САЗУ / СЭТ-4ТМ: настенный корпус с окном; цифры рисует BER
-m("energy_meter", "instruments", [
-    el("plate", [3, 1, 15], [13, 15, 16], "d"),
-    el("case", [3.5, 3, 11], [12.5, 14, 15], "dg"),
-    front("face", [4, 5, 10.9], [12, 13.5, 11], "emf", "dg"),
-    el("terminal_cover", [4, 1, 11.5], [12, 3, 15], "dg"),
-    el("seal", [7.5, 0.5, 11], [8.5, 1.5, 12], "red"),
-])
+# нарисовано вручную в Blockbench: art/blockbench/control/panel_devices.author.js
 
 # ======================================================================
 # котлы и паровые машины

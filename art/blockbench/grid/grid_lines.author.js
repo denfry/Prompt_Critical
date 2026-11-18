@@ -268,12 +268,15 @@
   }
 
   // ---------------------------------------------------------------- shared parts
-  // Small upright octagon from two boxes (square and square turned 45 degrees): cheap round parts. o.ends keeps
-  // the top / bottom faces; the turned box sits 0.01 lower so the tops do not fight.
+  // Small upright regular octagon from four boxes (a bar each way and the bar turned +-45 degrees): cheap round
+  // parts. `ends` keeps the top / bottom faces; the turned bars sit a hair lower so the tops do not fight.
   function oct(m, n, x, z, r, y0, y1, mat, ends) {
-    const e = ends || [], hide = ['up', 'down'].filter((d) => !e.includes(d));
-    m.box(`${n}_a`, [x - r, y0, z - r], [x + r, y1, z + r], mat, { split: '', hide });
-    m.box(`${n}_b`, [x - r, y0 + 0.01, z - r], [x + r, y1 - 0.01, z + r], mat, { split: '', hide, rot: { axis: 'y', angle: 45, origin: [x, 8, z] } });
+    const e = ends || [], hide = ['up', 'down'].filter((d) => !e.includes(d)), h = r * Math.tan(Math.PI / 8);
+    m.box(`${n}_a`, [x - r, y0, z - h], [x + r, y1, z + h], mat, { split: '', hide });
+    m.box(`${n}_b`, [x - h, y0 + 0.01, z - r], [x + h, y1 - 0.01, z + r], mat, { split: '', hide });
+    for (const [k, a, d] of [['c', 45, 0.02], ['d', -45, 0.03]]) {
+      m.box(`${n}_${k}`, [x - r, y0 + d, z - h], [x + r, y1 - d, z + h], mat, { split: '', hide, rot: { axis: 'y', angle: a, origin: [x, 8, z] } });
+    }
   }
   // Pin insulator (ShF type) with its steel pin from y0: lower skirt, body, upper skirt, the groove the line wire
   // is tied into, the crown. s scales it (1 = ShF-20 at y0 + 7.6 to the crown).
@@ -521,6 +524,15 @@
     // settlement sign at the road
     for (const x of [24.4, 30.2]) m.box(`sign_post_${x}`, [x, G, -15.4], [x + 0.6, G + 7, -14.8], 'gal', { split: '' });
     m.plate('sign', [23.6, G + 4, -15.6], [31.6, G + 7.6, -15.4], 'light', 'north', TEX + 'sign_village');
+    // outgoing feeder box at the north edge: the two CONSUMER_IO terminals (x 5 and 11, y -10, z -16.1) on it
+    m.box('feeder_box', [3.6, -12.6, -15.7], [12.4, -7.4, -14.6], 'en', { split: '' });
+    m.box('feeder_roof', [3.4, -7.4, -16], [12.6, -7, -14.4], 'en', { split: '' });
+    for (const x of [4.2, 11.2]) m.box(`feeder_post_${x}`, [x, G, -15.6], [x + 0.6, -12.6, -15], 'gal', { split: '' });
+    for (const x of [5, 11]) {
+      m.box(`feeder_term_${x}`, [x - 0.65, -10.65, -15.95], [x + 0.65, -9.35, -15.7], 'rubber', { split: '' });
+      m.box(`feeder_screw_${x}`, [x - 0.42, -10.42, -16], [x + 0.42, -9.58, -15.95], 'cu', { split: '' });
+    }
+    m.box('feeder_cable', [7.4, G, -15.4], [8.6, -12.6, -14.8], 'cable', { split: '' });
     // service drop on insulators from the kiosk to the house
     m.box('drop_pole', [6.2, G, -9.4], [7, G + 11, -8.6], 'wood', { split: '' });
     m.box('drop_wire', [4, G + 10.4, -9.1], [9, G + 10.6, -8.9], 'rubber', { split: '' });

@@ -91,17 +91,7 @@ model("valve_gate_closed", "piping", vt, valve(23.5), "block/valve_gate_closed")
 model("valve_gate_open", "piping", vt, valve(29), "block/valve_gate_open")
 
 # ---------------- instruments / control ----------------
-model("instrument_pressure", "instruments",
-      {"dial": "block/instrument_dial.png", "d": T("steel_dark"), "st": T("steel_bare"), "b": T("brass")}, [
-    el("mount_plate", [3, 1, 15], [13, 15, 16], "d"),
-    el("case", [2.5, 3, 11], [13.5, 14, 15], "d"),
-    el("dial_face", [3, 3.5, 10.9], [13, 13.5, 11], "dial", full=["north"]),
-    el("bezel_t", [2.5, 13.5, 10.5], [13.5, 14, 11], "st"),
-    el("bezel_b", [2.5, 3, 10.5], [13.5, 3.5, 11], "st"),
-    el("bezel_w", [2.5, 3.5, 10.5], [3, 13.5, 11], "st"),
-    el("bezel_e", [13, 3.5, 10.5], [13.5, 13.5, 11], "st"),
-    el("socket", [7, 0, 12], [9, 3, 14], "b"),
-], "block/instrument_pressure")
+# нарисовано вручную в Blockbench: art/blockbench/control/panel_devices.author.js
 
 model("protection_cabinet", "control",
       {"c": T("cabinet"), "door": "block/protection_cabinet_door.png", "d": T("steel_dark"),
@@ -116,15 +106,7 @@ model("protection_cabinet", "control",
     el("handle", [13.5, 4, -0.5], [14.25, 9, 0.5], "d"),
 ], "block/protection_cabinet")
 
-model("reactor_controller", "control",
-      {"p": T("steel_plate"), "front": "block/reactor_controller_front.png", "d": T("steel_dark")}, [
-    el("body", [0, 0, 1], [16, 16, 16], "p"),
-    el("glow_panel", [0.5, 0.5, 0.5], [15.5, 15.5, 1], "front", full=["north"]),
-    el("frame_t", [0, 15.5, 0], [16, 16, 1], "d"),
-    el("frame_b", [0, 0, 0], [16, 0.5, 1], "d"),
-    el("frame_w", [0, 0.5, 0], [0.5, 15.5, 1], "d"),
-    el("frame_e", [15.5, 0.5, 0], [16, 15.5, 1], "d"),
-], "block/reactor_controller")
+# нарисовано вручную в Blockbench: art/blockbench/control/panel_devices.author.js
 
 # ---------------- items ----------------
 model("fuel_assembly", "items", {"rods": "item/fuel_assembly_rods.png", "st": T("steel_bare"), "d": T("steel_dark")}, [
