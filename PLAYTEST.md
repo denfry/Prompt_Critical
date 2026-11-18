@@ -40,6 +40,15 @@ the facing and the log line, if there is one.
 | Effects | Run boilers, furnaces, flare, cooling tower, chimney, reactors | Smoke, steam, flame and sparks appear at the right places of the model, not inside the floor |
 | Clean room | Build a room of `cleanroom_panel`/`cleanroom_window` with `hepa_filter`s behind `cleanroom_airlock`, open and close the door, walk in | Class on the airlock panel improves with filters, gets worse with an open door and with people inside |
 | Toxic clouds | Release chlorine (chlor-alkali liquefier without caustic) and HF (fluorination without a cylinder) outdoors in wind | The cloud drifts downwind; players downwind take the toxic load, upwind do not |
+| PLC Structured Text | Program the same start/stop latch in ST (`PROGRAM … END_PROGRAM`, `IF … THEN`), load it | The screen shows the detected language; ST and IL versions behave the same; a syntax error names its line |
+| Reactors T2b, T3, T4 | Build `bwr_reactor`, `candu_reactor`, `sfr_reactor` with pumps and a steam generator; load fuel; start up | Panels show power, pressure, void/sodium temperatures; BWR power follows recirculation flow; CANDU on-power refuelling shifts bundles; SFR sodium leak on overheat gives fire and smoke |
+| Containment | Wall a `pwr_reactor` in with `containment_wall` (floor and roof too) and a `containment_hatch`; open and close the hatch | Closed shell is detected within 5 s; with the hatch open a vessel rupture releases a plume downwind, with it shut it does not |
+| MOX | Put PuO₂ from PUREX into the pellet press's second hopper, run the line to an assembly, load it into the PWR | The lot tooltip shows Pu at 7 %; the PWR accepts it |
+| Plant server (A5) | `mes_server` next to an `rtu_station` among running generators | KPI panel shows generation, load, cost and revenue; dispatch setpoints appear; with CC, `peripheral.find("pc_mes").getKpi()` |
+| Air quality | Run several coal boilers without cleaning for a few game days, then add an electrostatic precipitator and an FGD absorber | Haze and smog messages, cough and slowness without a respirator; cleaning lowers the field; `cems_analyzer` switches the ledger to measured |
+| Market | Sell goods at `market_terminal` repeatedly | Price falls with volume and recovers over two days |
+| Electric gear | Charge `powered_respirator` and `heated_suit` on the lamp rack; walk into a chlorine cloud and into a snowy biome at night | Respirator stops the chlorine while the blower runs, not CO in a mine; without the suit the body cools by stages, with it the battery drains instead |
+| Refinery | Hydrotreater → Claus → acid plant; catalytic reformer; delayed coker | Sulphur items reach the acid plant; reformer panel shows RON and hydrogen; coker drums cycle and drop petroleum coke; PCBs now need phenolic resin |
 | Chunk save | Save and quit with machines running (reactor at power, cascade spinning, PUREX line busy), reload | Everything resumes in the same state; the T1/T2a reactors do not trip on the first tick after loading |
 
 ## Game test structures to look at
@@ -47,10 +56,11 @@ the facing and the log line, if there is one.
 `/test runall` builds all of these. The headless run passes all of them; in the client look at the models, the panels
 and the effects of each structure, not only the beacon colour.
 
-182 tests in 48 classes.
+189 tests in 52 classes.
 
 | Class | Tests |
 |---|---|
+| `AirQualityGameTests` | `scrubberAndCemsChangeTheLedger` |
 | `ArcFurnaceGameTests` | `scrapChargesButNoBusMeansNoArc` |
 | `AutomationGameTests` | `startStopLadderSealsInAndStops`, `plcLatchesStartStopFromItsProgram`, `analogPiLoopSettlesOnSetpoint`, `controlKeyClosesAndTripsTheBreakerThroughItsTerminals`, `redstoneInterfacePowersTheWallBehindIt` |
 | `BindingGameTests` | `simulationTicksWithTheLevel`, `deviceRegistersInTopologyAndLeavesAfterBreak`, `footprintPlacesPartsAndBreaksAsWhole`, `boilerPlacesBothSegmentsAlongFacing`, `headframeStackFormsAndMarksTop`, `damageBudgetDestroysAroundOriginButNotImmuneBlocks`, `worldStateSurvivesNbtRoundTrip`, `everyBlockHasLootAndPlacesWithoutError` |
@@ -62,6 +72,7 @@ and the effects of each structure, not only the beacon colour.
 | `CompatGameTests` | `processCatalogIsComplete`, `productsAreExportedToCommonTags`, `modOresStayOutOfPerMetalTagsUnlessOpenCompatIsEnabled`, `coldSweatHeatSourcesMatchBlockStates` |
 | `ContentGameTests` | `handbookIsGivenOnceOnFirstJoin`, `chapterOpensWhenItemObtained`, `handbookIsConsistent`, `markdownLinksAndEmphasis`, `firstSteamGoesToTheShiftNearTheEngine`, `canaryInAMineAndRewardsAreOnlyExperience`, `procedureGoesOnTheLecternAndBack`, `geologicalMapPointsToTheNearestBody`, `decorLightSwitchesAndLadderClimbs`, `ironAndPowerChaptersAndProcedures`, `ironAndPowerAdvancements`, `ponderScenesHaveSchematicsAndTexts`, `ironAndPowerDecor`, `routeIsConsistent`, `handbookTranslationKeys`, `routeReachNeedsTheWholeHold`, `routeObtainBuildAndChoice` |
 | `DrillingGameTests` | `drillIntoGasTakeKickAndKillIt`, `seismicRecorderNeedsASpread` |
+| `ElectricGearGameTests` | `respiratorFiltersTheCloudOnceTheBlowerRuns` |
 | `ElectronicsGameTests` | `airlockSeesTheRoomAndItsFilters`, `czochralskiPullsASingleCrystal` |
 | `EnrichmentGameTests` | `cylindersMixAndRefuseOverfill`, `cascadeEnrichesNaturalUranium`, `overspeedWrecksTheSections` |
 | `FoundryGameTests` | `everyMachineGetsItsDomainTwin`, `bronzeIsCraftedFromCopperAndCassiteriteAndFitsTheCrucible`, `latheTurnsACastingOnACreateShaft`, `cupolaPoursAMoldThatTheGrateKnocksOut`, `crucibleMeltsCopperAndPoursTheMoldInFront`, `moldingMachineRamsASandMold`, `coalJigWashesRunOfMineCoal` |
@@ -77,6 +88,7 @@ and the effects of each structure, not only the beacon colour.
 | `LampRoomGameTests` | `lampChargesOnTheRackFromTheGrid`, `wornLampRunsDownAtTheEndOfTheShiftAndItsLightFollows`, `orphanLightBlockRemovesItself` |
 | `LongwallGameTests` | `pistonAdvancesOnlyLoweredSupport`, `setSupportsHoldWideRoof`, `shearerCutsFaceOnGantry` |
 | `MachineShopGameTests` | `millingMachineCutsAGearFromATurnedBlank`, `shapingMachinePlanesABasePlateCasting`, `surfaceGrinderGrindsAPlanedPlate`, `overspedGrindingWheelBursts` |
+| `MarketGameTests` | `terminalSellsSteelForCredits`, `terminalRefusesVanillaGoods` |
 | `MethanolGameTests` | `methanolUnitAndColumnMakeGradeAa`, `withoutAColumnCrudeStaysInTheSeparator` |
 | `MineGameTests` | `methaneExplosionStopsAtBarrier`, `fanVentilatesAndDoorThrottles`, `regulatorWindowSetsAirflow`, `canaryFaintsInCarbonMonoxide`, `everyVeinRoleHasABlock`, `minedOreCarriesAssay`, `anchorStartsMineAndRemovalEndsIt` |
 | `NitrogenGameTests` | `reformerMakesAmmoniaSyngas`, `reformerWithoutNickelMakesNothing`, `synthesisLoopMakesLiquidAmmonia`, `ostwaldUnitMakesNitricAcid`, `richAmmoniaMixtureFlashes`, `magnesiumNitrateColumnConcentratesAcid` |
@@ -90,6 +102,7 @@ and the effects of each structure, not only the beacon colour.
 | `PyrolysisGameTests` | `furnaceCracksPropaneIntoOlefins`, `furnaceWithoutSeparationStaysCold`, `ldpePolymerisesEthylene`, `ldpeOverheatDecomposesEthylene` |
 | `RadiationGameTests` | `cobaltSourceThroughAirLeadAndConcrete`, `sourceExpiresWhenNotRenewed` |
 | `ReactorGameTests` | `deskFindsThePileRodsAndCounter`, `removingAFuelBlockReformsThePile`, `scramButtonDropsTheZipRod`, `scannerRefusesOnlyNonPileBlocks`, `fuelChannelTakesOnlyEightSlugCassettes`, `achesonFurnaceNeedsTheGrid` |
+| `RefineryUpgradingGameTests` | `hydrotreaterFeedsClausWithHydrogenSulfide`, `reformerMakesReformateAndHydrogen`, `sulfurFeedsAcidPlant` |
 | `ShockGameTests` | `liveBusbarElectrocutesAnEarthedPlayer` |
 | `StationBatteryGameTests` | `batteryCarriesControlPowerThroughABlackout` |
 | `SteelworksGameTests` | `steelAndPipesGoIntoRecipes`, `hotPlateCoolsAndStacksWithColdOnes`, `millStandReducesABilletOnACreateShaft`, `hydrotestPassesASoundPipeAndBurstsACrackedOne`, `airSeparatorFormsFromCompressorSieveAndExpander` |
@@ -110,3 +123,7 @@ and the effects of each structure, not only the beacon colour.
 - The `Beta-M` RTG (~10 W) cannot light any lamp; the weakest lamp needs 15 W.
 - The sintering furnace draws no power.
 - Water never moves with the tide (design decision R32).
+- `GridGameTests.lowVoltageMotorOnSixKilovoltBusBreaksDownAndOvercurrentTrips` is timing-sensitive under a loaded
+  server (breakdown seen at 7 ticks against a limit of 5); it passed on the rerun.
+- Heavy water is not a fluid yet (inside the CANDU model only); MOX is accepted by the PWR only; the MES server
+  only advises setpoints; LOCA and station blackout models are not yet connected to the reactor block.
