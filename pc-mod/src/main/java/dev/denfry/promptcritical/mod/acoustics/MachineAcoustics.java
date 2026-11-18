@@ -48,6 +48,11 @@ public final class MachineAcoustics {
     public static final double GEAR_RATIO = 1000.0 / 256;
     public static final double NOMINAL_RPM = 1000;
     public static final int PUMP_BLADES = 6, FAN_BLADES = 8, SMALL_COG_TEETH = 8, LARGE_COG_TEETH = 16;
+    /**
+     * Кавитация при κ = 1 (04a §4a.3) [BALANCE]: широкополосный фон 2,8 мм/с (машина класса I уходит в зону C по
+     * ISO 10816) и 20 м/с² в огибающей 5–20 кГц — удары, как от дефектного подшипника, но без его частот.
+     */
+    public static final double CAVITATION_V_RMS = 2.8e-3, CAVITATION_A_HF = 20;
 
     private MachineAcoustics() {
     }
@@ -200,7 +205,9 @@ public final class MachineAcoustics {
     public static VibrationSpectrum spectrum(ServerLevel level, BlockPos pos) {
         Probe p = probe(level, pos);
         if (p == null) return null;
-        return model(p, state(level, pos)).spectrum(p.rpm(), 1);
+        VibrationSpectrum s = model(p, state(level, pos)).spectrum(p.rpm(), 1);
+        double k = p.be() instanceof CavitationSource c && p.running() ? c.cavitationIntensity() : 0;
+        return k > 0 ? s.withBroadband(k * CAVITATION_V_RMS, k * CAVITATION_A_HF) : s;
     }
 
     /** Повреждение подшипника D_b машины (для тестов и обслуживания); новая — 0. */
@@ -251,7 +258,10 @@ public final class MachineAcoustics {
     public static double soundPowerDb(ServerLevel level, BlockPos pos, Probe p) {
         if (!p.machine() || !p.running()) return Double.NEGATIVE_INFINITY;
         State s = state(level, pos);
-        return SoundLevel.machineLw(p.powerW(), new RollingBearing(s.lifeFactor, s.damage));
+        double lw = SoundLevel.machineLw(p.powerW(), new RollingBearing(s.lifeFactor, s.damage));
+        if (p.be() instanceof CavitationSource c && c.cavitationIntensity() > 0)
+            lw = SoundLevel.sum(lw, dev.denfry.promptcritical.sim.hydraulics.PumpCavitation.soundLayerDb(lw, c.cavitationIntensity()));
+        return lw;
     }
 
     // --- обслуживание (04a §4a.7.5) ---

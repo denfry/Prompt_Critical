@@ -54,6 +54,14 @@ public record VibrationSpectrum(double shaftHz, List<Line> lines, double vBackgr
         if (machineClass == null) throw new IllegalArgumentException("machineClass");
     }
 
+    /**
+     * Тот же спектр с добавочным широкополосным фоном {@code vRms} (м/с, складывается квадратично) и огибающей ВЧ
+     * {@code aHf} (м/с²): кавитация насоса (04a §4a.3) — удары схлопывающихся пузырей без своей частоты.
+     */
+    public VibrationSpectrum withBroadband(double vRms, double aHfAdd) {
+        return new VibrationSpectrum(shaftHz, lines, Math.hypot(vBackground, vRms), aHf + aHfAdd, bearingTempK, machineClass);
+    }
+
     public double shaftRpm() {
         return shaftHz * 60;
     }

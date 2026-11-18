@@ -34,6 +34,13 @@ public final class SimAchievements {
             HISTORIAN_DAY = "promptcritical:historian_day", TELEMETRY = "promptcritical:telemetry",
             LOCKOUT = "promptcritical:lockout", RADIOGRAPHY_DEFECT = "promptcritical:radiography_defect",
             DOSIMETER_DAY = "promptcritical:dosimeter_day", SCRAM_CLEAN = "promptcritical:scram_clean";
+    /**
+     * События физики (11 §11.2.2): «Тихий насос» — кавитирующий насос найден и устранён до отказа (04a §4a.3),
+     * «Вечная батарейка» — РИТЭГ питает КП удалённой скважины (12 §12.5.1), «Импульс» — импульс TRIGA ≥ 100 МВт без
+     * повреждения топлива (12 §12.6.1).
+     */
+    public static final String QUIET_PUMP = "promptcritical:quiet_pump", EVERLASTING = "promptcritical:everlasting",
+            PULSE = "promptcritical:pulse";
     /** Источники, уже объявившие событие: повторно не шлют (сбрасывается с выгрузкой блока). */
     private static final java.util.Map<Object, java.util.Set<String>> ONCE = new java.util.WeakHashMap<>();
 

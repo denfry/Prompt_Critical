@@ -17,6 +17,10 @@ import dev.denfry.promptcritical.sim.ops.CheckInput;
 import dev.denfry.promptcritical.sim.ops.OpsSubsystem;
 import dev.denfry.promptcritical.sim.ops.UnitKind;
 import dev.denfry.promptcritical.sim.mining.MineSump;
+import dev.denfry.promptcritical.sim.hydraulics.PumpCavitation;
+import dev.denfry.promptcritical.mod.acoustics.CavitationSource;
+import net.minecraft.core.HolderLookup;
+import net.minecraft.nbt.CompoundTag;
 import java.util.Arrays;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
@@ -50,8 +54,16 @@ import org.jetbrains.annotations.Nullable;
  * остановленном насосе не качает и греет подшипник всухую; обратное вращение и износ колеса снижают напор
  * ({@link dev.denfry.promptcritical.sim.ops.ImpellerWear#headFactor}); кислая вода ест колесо втрое быстрее;
  * заплавленный подшипник клинит вал.
+ *
+ * <p>Кавитация (04a §4a.3): насос берёт воду из водосборника у подошвы выработок; чем выше он стоит над ней, тем
+ * меньше давление на всасе. NPSH_a — воздух шахты на этой глубине минус столб воды до оси насоса, потери во всасе и
+ * давление пара воды, нагретой породой; NPSH_r — паспорт колеса по подаче и скорости ({@link PumpCavitation}). При
+ * κ &gt; 0 насос гремит «гравием» (слой шума {@link CavitationSource}) и виброметр видит удары, при развитой — падает
+ * подача, колесо съедается за сотни часов и, пробитое, перестаёт качать. Лечение — опустить насос к водосборнику
+ * или сбавить обороты, колесо — заменить. Найденная и устранённая кавитация до отказа — достижение «Тихий насос» (11).
  */
-public final class MineDrainagePumpBlockEntity extends KineticMachineBlockEntity<ShaftInput> implements PanelHost, OpsMachine {
+public final class MineDrainagePumpBlockEntity extends KineticMachineBlockEntity<ShaftInput> implements PanelHost, OpsMachine,
+        CavitationSource {
     public static final double NOMINAL_RPM = 64;
     public static final MineSump.PumpSpec PUMP = new MineSump.PumpSpec(100.0 / 3600, 150, 0.7, NOMINAL_RPM);
     public static final double RATED_W = MineSump.pumpPowerW(PUMP.ratedFlowM3s(), PUMP.ratedHeadM(), PUMP.efficiency());
@@ -59,7 +71,15 @@ public final class MineDrainagePumpBlockEntity extends KineticMachineBlockEntity
     /** pH откачиваемой воды: кислая шахтная и обычная [BALANCE]. */
     public static final double ACID_PH = 3.5, NEUTRAL_PH = 7.5;
 
+    /** Секунд развитой кавитации, после которых насос «найден», и тихой работы, после которых он «устранён». */
+    public static final int CAVITATED_S = 30, QUIET_S = 60;
+    /** κ, с которой кавитацию слышно и без стетоскопа (−3 % напора около 0,67). */
+    public static final double AUDIBLE_KAPPA = 0.5;
+
     private final ShaftInput shaft = new ShaftInput();
+    private int sumpFloorY = Integer.MIN_VALUE, cavitatedS, quietS;
+    private double kappa, npshA, npshR, suctionPa = MineSump.SURFACE_PA, headDrop;
+    private boolean quietReported;
     private long tick;
     private double headM, pumpedM3s, pendingMb;
     private boolean acidic, seized, dry;
@@ -74,11 +94,69 @@ public final class MineDrainagePumpBlockEntity extends KineticMachineBlockEntity
         return Math.max(1, level.getHeight(Heightmap.Types.WORLD_SURFACE, worldPosition.getX(), worldPosition.getZ()) - worldPosition.getY());
     }
 
-    /** Подача на своём напоре при скорости вала на тике мира {@code simTick}, м³/с. */
+    /**
+     * Подача на своём напоре при скорости вала на тике мира {@code simTick}, м³/с. Кавитация считается по подаче,
+     * которую насос дал бы без неё, и сжимает характеристику на ΔH/H (04a §4a.3.3).
+     */
     public double capacityM3s(long simTick) {
         headM = headM();
-        double f = headFactor(simTick);
-        return f > 0 ? PUMP.flowAt(shaft.rpm(simTick), headM / f) : 0;
+        double f = headFactor(simTick), rpm = shaft.rpm(simTick);
+        double q0 = f > 0 ? PUMP.flowAt(rpm, headM / f) : 0;
+        cavitation(rpm, q0);
+        double fc = f * (1 - headDrop);
+        return fc > 0 ? PUMP.flowAt(rpm, headM / fc) : 0;
+    }
+
+    /** Подошва выработок, где стоит водосборник (от обхода шахты); без обхода насос считается стоящим у воды. */
+    public void setSumpFloor(int y) {
+        sumpFloorY = y;
+    }
+
+    /** Высота оси насоса над зеркалом водосборника, м. */
+    public double suctionLiftM() {
+        return sumpFloorY == Integer.MIN_VALUE ? 0 : Math.max(0, worldPosition.getY() - sumpFloorY);
+    }
+
+    /** NPSH_a и NPSH_r при подаче {@code q0}, κ и падение напора (04a §4a.3). */
+    private void cavitation(double rpm, double q0) {
+        double depth = headM;
+        double waterK = MineScanner.SURFACE_TEMP_K + MineScanner.GEOTHERMAL_K_PER_M * depth;
+        suctionPa = MineSump.suctionPressurePa(depth, waterK, suctionLiftM(), q0, PUMP);
+        if (!(rpm > 0) || !(q0 > 0)) {
+            kappa = headDrop = 0;
+            npshA = PumpCavitation.npshAvailable(suctionPa, waterK, MineSump.RHO, 0);
+            npshR = 0;
+            return;
+        }
+        npshA = PumpCavitation.npshAvailable(suctionPa, waterK, MineSump.RHO, MineSump.suctionVelocity(q0));
+        npshR = PumpCavitation.npshRequired(MineSump.NPSH_R_BEP_M, rpm / NOMINAL_RPM, q0 / PUMP.ratedFlowM3s(), wear());
+        kappa = PumpCavitation.intensity(npshA, npshR);
+        headDrop = PumpCavitation.headDrop(npshA, npshR);
+    }
+
+    private double wear() {
+        OpsSubsystem ops = OpsWorld.ops(level);
+        OpsSubsystem.Unit u = ops == null ? null : ops.unit(simId());
+        return u == null ? 0 : u.wear().impeller().cavitation();
+    }
+
+    /** κ, 0–1 (04a §4a.3.3). */
+    @Override
+    public double cavitationIntensity() {
+        return kappa;
+    }
+
+    public double npshAvailableM() {
+        return npshA;
+    }
+
+    public double npshRequiredM() {
+        return npshR;
+    }
+
+    /** «Тихий насос» уже объявлен этим насосом. */
+    public boolean quietReported() {
+        return quietReported;
     }
 
     /** Множитель характеристики H(Q): не залит или заклинил — 0, обратное вращение и износ колеса — меньше 1. */
@@ -157,7 +235,30 @@ public final class MineDrainagePumpBlockEntity extends KineticMachineBlockEntity
         dry = !ops.commissioning().primed(simId());
         ou.setRunning(running, running && dry, acidic ? ACID_PH : NEUTRAL_PH);
         seized = ou.seized();
+        if (level.getGameTime() % 20 == 0) erode(ou, running);
         ops.observeTrial(simId(), 0.05, running, pumpedM3s / PUMP.ratedFlowM3s(), false, opsCurrent());
+    }
+
+    /** Секунда кавитации: эрозия колеса на часах SLOW и учёт «найден — устранён» для «Тихого насоса». */
+    private void erode(OpsSubsystem.Unit ou, boolean running) {
+        var impeller = ou.wear().impeller();
+        if (!running) kappa = 0;
+        impeller.stepCavitation(dev.denfry.promptcritical.mod.config.ServerConfig.K_SLOW.get(), kappa);
+        if (impeller.holed()) {
+            cavitatedS = quietS = 0;
+            return;
+        }
+        if (running && kappa >= AUDIBLE_KAPPA) {
+            cavitatedS = Math.min(cavitatedS + 1, CAVITATED_S);
+            quietS = 0;
+        } else if (running && pumpedM3s > 0 && kappa <= 0 && cavitatedS >= CAVITATED_S && ++quietS >= QUIET_S) {
+            cavitatedS = quietS = 0;
+            if (!quietReported && level instanceof net.minecraft.server.level.ServerLevel sl) {
+                quietReported = true;
+                setChanged();
+                dev.denfry.promptcritical.mod.content.SimAchievements.nearby(sl, worldPosition, dev.denfry.promptcritical.mod.content.SimAchievements.QUIET_PUMP, "npsh_margin_m", npshA - npshR);
+            }
+        }
     }
 
     @Override
@@ -207,6 +308,7 @@ public final class MineDrainagePumpBlockEntity extends KineticMachineBlockEntity
         out[MinePanels.PUMP_FLOW_M3H10] = (int) Math.round(pumpedM3s * 3600 * 10);
         out[MinePanels.PUMP_HEAD_M] = (int) Math.round(headM());
         out[MinePanels.PUMP_KW10] = (int) Math.round(powerW(shaft) / 100);
+        out[MinePanels.PUMP_SUCTION_KPA10] = (int) Math.round(suctionPa / 100);
         out[MinePanels.FLAGS] = (pumpedM3s > 0 ? 1 << MinePanels.F_RUNNING : 0) | (acidic ? 1 << MinePanels.F_ACID : 0)
                 | (dry ? 1 << MinePanels.F_DRY : 0);
     }
@@ -238,6 +340,20 @@ public final class MineDrainagePumpBlockEntity extends KineticMachineBlockEntity
         double f = headFactor(tick);
         return new Baseline(Double.NaN, Double.NaN, f > 0 ? PUMP.ratedHeadM() * f : Double.NaN, Double.NaN,
                 shaft.rpm(tick) * 2 * Math.PI / 60, Double.NaN);
+    }
+
+    @Override
+    protected void write(CompoundTag tag, HolderLookup.Provider registries, boolean clientPacket) {
+        super.write(tag, registries, clientPacket);
+        tag.putInt("cav_s", cavitatedS);
+        tag.putBoolean("quiet_done", quietReported);
+    }
+
+    @Override
+    protected void read(CompoundTag tag, HolderLookup.Provider registries, boolean clientPacket) {
+        super.read(tag, registries, clientPacket);
+        cavitatedS = tag.getInt("cav_s");
+        quietReported = tag.getBoolean("quiet_done");
     }
 
     @Override

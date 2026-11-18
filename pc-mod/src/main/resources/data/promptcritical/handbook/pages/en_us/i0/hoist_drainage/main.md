@@ -34,3 +34,17 @@ The rule: the sump must hold at least four hours of inflow. The gas monitoring c
 Water from sulphurous seams is acidic. It must not be discharged without neutralising.
 
 If drainage stops, the lowest workings flood within a few hours of physical time.
+
+## Cavitation
+
+The pump draws from the sump at the bottom of the workings. Air at the depth of the mine pushes the water up the suction pipe, a little over ten metres of water column at most. From that subtract the height of the pump above the sump, the friction in the suction pipe, and the vapour pressure of the water, which rises as the rock warms it with depth. What is left is the **net positive suction head available**. The pump's impeller needs about 4 m of it at rated flow, more at high flow and at low flow, and four times less at half speed.
+
+When the margin runs short, vapour bubbles form in the impeller eye and collapse on the vanes:
+
+- the pump sounds like **gravel** going through it, long before anything shows on the gauges;
+- the vibrometer shows a broadband floor and shock pulses in the high-frequency envelope, with no bearing frequency behind them;
+- the **suction gauge** on the panel shows a deep vacuum;
+- at developed cavitation the head drops and the flow falls off;
+- the bubbles eat the impeller. At full cavitation it is gone in about 200 hours of physical time, under three hours of play, and a worn impeller cavitates even more readily. Holed, it pumps nothing until replaced.
+
+The cure is to give the pump back its suction head. Set it down at the sump (no more than a block or two above the bottom of the workings), or slow it down. Then replace the damaged impeller. Catching a cavitating pump and making it quiet before the impeller fails earns *Quiet Pump*.

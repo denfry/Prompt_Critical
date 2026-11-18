@@ -1,0 +1,33 @@
+{
+  "parent": "promptcritical:canary",
+  "criteria": {
+    "quiet": {
+      "conditions": {
+        "event": "promptcritical:quiet_pump",
+        "station_member": true
+      },
+      "trigger": "promptcritical:sim_event"
+    }
+  },
+  "display": {
+    "description": {
+      "translate": "advancements.promptcritical.quiet_pump.description"
+    },
+    "icon": {
+      "count": 1,
+      "id": "promptcritical:mine_drainage_pump"
+    },
+    "title": {
+      "translate": "advancements.promptcritical.quiet_pump.title"
+    }
+  },
+  "requirements": [
+    [
+      "quiet"
+    ]
+  ],
+  "rewards": {
+    "experience": 40
+  },
+  "sends_telemetry_event": true
+}

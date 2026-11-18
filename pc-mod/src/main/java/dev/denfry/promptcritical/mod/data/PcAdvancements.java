@@ -62,6 +62,10 @@ public final class PcAdvancements implements AdvancementProvider.AdvancementGene
         LANG.put("annealing", new String[] {"Annealing", "Отжиг",
                 "Release the pile graphite's Wigner energy under control: half of it out, the graphite never above 400 °C",
                 "Контролируемо высвободите энергию Вигнера из графита котла: больше половины запаса, графит не выше 400 °C"});
+        // физика: кавитация насоса (04a §4a.3)
+        LANG.put("quiet_pump", new String[] {"Quiet Pump", "Тихий насос",
+                "Find a cavitating pump by its gravel noise and cure it before the impeller is eaten through",
+                "Найдите кавитирующий насос по шуму «гравия» и устраните кавитацию, пока колесо не съедено"});
         LANG.put("relay_logic", new String[] {"Click-Clack", "Щёлк-щёлк", "A circuit of at least five relays drives a mechanism",
                 "Схема из пяти и более реле управляет механизмом"});
         LANG.put("analog_pid", new String[] {"No Computer Needed", "Без компьютера",
@@ -152,6 +156,9 @@ public final class PcAdvancements implements AdvancementProvider.AdvancementGene
                 .addCriterion("annealed", event(ReactorSubsystem.PILE_STATE, Map.of(dev.denfry.promptcritical.sim.reactor.PileUnit.WIGNER_ANNEALED,
                         MinMaxBounds.Doubles.atLeast(0))))
                 .save(saver, id("annealing"), efh);
+        task(canary, PcBlocks.MINE_DRAINAGE_PUMP.get(), "quiet_pump", AdvancementType.TASK, false, 40)
+                .addCriterion("quiet", event(dev.denfry.promptcritical.mod.content.SimAchievements.QUIET_PUMP, Map.of()))
+                .save(saver, id("quiet_pump"), efh);
         // автоматизация A1–A2
         AdvancementHolder relays = task(root, PcBlocks.RELAY.get(), "relay_logic", AdvancementType.TASK, false, 30)
                 .addCriterion("relay_logic", event(AutomationSubsystem.RELAY_LOGIC,
