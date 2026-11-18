@@ -40,3 +40,9 @@ After it operates, raise machine output or drop some load by hand. Reclosing bri
 ## Dispatch center
 
 The [grid dispatch center](item:promptcritical:grid_dispatch_center) sees the whole grid of the world: its islands with their frequency, generation, load and losses, the rate of change of frequency and any de-energized parts. The "off-normal" lamp lights when an island leaves 49.5–50.5 Hz or an island with buses is left dead. The center does not run the system: the generation plan, secondary frequency control and reserves are the dispatcher's job. With a CC: Tweaked computer next to it, the center is the `pc_grid` peripheral: islands, buses, branches and their flows, and a load forecast from the consumers' contracted loads with a 3 % error.
+
+## Daily load curve
+
+A [grid consumer](item:promptcritical:grid_consumer) does not draw its contracted power all day. Like a town on a winter working day it follows a daily curve: about 60 % at half past three in the night, a morning rise to 92 % by nine, a dip at midday and the evening peak of 100 % at half past seven. Below 15 °C heating adds 2 % per degree, and the load wanders by about 2 % around the curve. The dispatch center forecasts the curve hour by hour, and `pc_grid` gives the same forecast to a computer.
+
+One Minecraft day is one cycle (server key `grid.load_profile_days_per_cycle`; 0 keeps the load flat). The morning rise of a third of the load takes under five real minutes: a drum boiler cannot keep up, a gas turbine can. A reactor that follows the curve for a whole day within 5 % has done what power plants call load following, and pays for it with xenon on every drop.

@@ -70,6 +70,11 @@ public final class GridSubsystem implements Subsystem, GridEventSink {
     /** Узлы, обесточенные блэкаутом и ещё не поднятые; машины, стоявшие за это время (07, {@link #BLACK_START}). */
     private final java.util.Set<Long> blackoutNodes = new java.util.HashSet<>();
     private final java.util.Set<SimId> stoppedInBlackout = new java.util.HashSet<>();
+    /** Час суток для графика нагрузки (07 §7.6.4); NaN — график выключен, потребители берут договорную мощность. */
+    private double hourOfDay = Double.NaN, profileTimer;
+    private final SplittableRandom profileRng = new SplittableRandom(0x6a09e667f3bcc908L);
+    /** Шаг пересчёта графика нагрузки, с: шум τ = 10 мин, час суток — минуты реального времени. */
+    static final double PROFILE_STEP_S = 1;
 
     public GridSubsystem(GridConfig cfg) {
         this.cfg = Objects.requireNonNull(cfg, "cfg");
@@ -345,7 +350,39 @@ public final class GridSubsystem implements Subsystem, GridEventSink {
         return out;
     }
 
-    /** Заявленная нагрузка потребителей сети, Вт (прогноз диспетчера; суточного графика нагрузки в мире пока нет). */
+    /** Час суток MC для суточного графика нагрузки (07 §7.6.4); NaN выключает график. */
+    public void setHourOfDay(double hour) {
+        hourOfDay = hour;
+    }
+
+    public double hourOfDay() {
+        return hourOfDay;
+    }
+
+    /** Прогноз графика на час {@code hour}: $\hat p(h)\,k_T$ при текущей погоде, доли договорной мощности. */
+    public double forecastFactor(double hour) {
+        return Double.isNaN(hour) ? 1 : DailyLoadProfile.shape(hour) * DailyLoadProfile.temperatureFactor(ambientC);
+    }
+
+    /** Суточный график: раз в {@link #PROFILE_STEP_S} новая мощность NPC-потребителей $P_{дог}\hat p(h)k_T(1+\xi)$. */
+    private void profile(double dt) {
+        if (Double.isNaN(hourOfDay)) return;
+        profileTimer += dt;
+        if (profileTimer < PROFILE_STEP_S) return;
+        double step = profileTimer;
+        profileTimer = 0;
+        double base = forecastFactor(hourOfDay);
+        for (GridUnit u : units.values()) {
+            if (!(u instanceof ConsumerUnit c) || !Double.isNaN(c.machineW)) continue;
+            c.xi = DailyLoadProfile.noiseStep(c.xi, step, profileRng);
+            double f = Math.max(0, base * (1 + c.xi));
+            if (Math.abs(f - c.profileFactor) <= 0.005) continue;
+            c.profileFactor = f;
+            if (c.load != null && ready()) grid.setLoadPowerW(c.load, c.targetW());
+        }
+    }
+
+    /** Заявленная нагрузка потребителей сети, Вт (договорная, без суточного графика). */
     public double contractedLoadW() {
         double w = 0;
         for (GridUnit u : units.values()) if (u instanceof ConsumerUnit c && c.switchedOn()) w += c.demandW();
@@ -400,6 +437,7 @@ public final class GridSubsystem implements Subsystem, GridEventSink {
             else if (u instanceof PumpedStorageUnit s) s.beforeTick(grid, dt);
             else if (u instanceof ElectrodeBoilerUnit e) e.beforeTick(grid, dt);
         }
+        profile(dt);
         if (grid.busCount() > 0) {
             grid.stepFast(dt, inputs, out);
             grid.drainEvents(this);

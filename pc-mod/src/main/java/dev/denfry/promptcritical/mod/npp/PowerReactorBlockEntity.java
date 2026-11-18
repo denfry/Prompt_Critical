@@ -73,6 +73,8 @@ public final class PowerReactorBlockEntity extends DeviceBlockEntity implements 
     private final ChannelReactor reactor = new ChannelReactor();
     /** Непрерывная работа без автоматической АЗ (11 §11.2.2 {@code hundred_days}). */
     private final dev.denfry.promptcritical.sim.reactor.ContinuousRun run = new dev.denfry.promptcritical.sim.reactor.ContinuousRun();
+    /** Следование суточному графику (11 §11.2.2 {@code load_follow}). */
+    private final dev.denfry.promptcritical.sim.reactor.LoadFollowWatch follow = new dev.denfry.promptcritical.sim.reactor.LoadFollowWatch();
     private final MechanismWiring wiring = new MechanismWiring();
     private final ItemStackHandler fuel = new ItemStackHandler(2) {
         @Override
@@ -180,6 +182,8 @@ public final class PowerReactorBlockEntity extends DeviceBlockEntity implements 
         if (run.update(gameDt, reactor.power(), reactor.trip() != ChannelReactor.Trip.NONE && reactor.trip() != ChannelReactor.Trip.MANUAL))
             dev.denfry.promptcritical.mod.content.SimAchievements.nearby(sl, worldPosition, dev.denfry.promptcritical.mod.content.SimAchievements.HUNDRED_DAYS, "days", run.days());
         if (reactor.power() >= dev.denfry.promptcritical.mod.content.IndustrialComplex.REACTOR_POWER) dev.denfry.promptcritical.mod.content.IndustrialComplex.running(sl, worldPosition, dev.denfry.promptcritical.mod.content.IndustrialComplex.Part.REACTOR);
+        if (follow.update(gameDt, dev.denfry.promptcritical.mod.grid.LoadProfiles.shape(sl), reactor.power(), reactor.trip() != ChannelReactor.Trip.NONE))
+            dev.denfry.promptcritical.mod.content.SimAchievements.nearby(sl, worldPosition, dev.denfry.promptcritical.mod.content.SimAchievements.LOAD_FOLLOW, "hours", follow.hours());
         for (SteamGeneratorBlockEntity sg : sgs) sg.deliver(q / sgs.size());
         if (ticks % 100 == 1) accident.scan(sl, worldPosition);
         // слой аварии: тепло зоны, сток — парогенераторы; разогрев оголённой зоны разрушает самые нагруженные каналы

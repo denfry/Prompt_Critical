@@ -152,10 +152,10 @@ public class GridDispatchCenterBlockEntity extends DeviceBlockEntity implements 
         return out;
     }
 
-    /** Прогноз нагрузки на час {@code h}: заявленная мощность потребителей и ошибка 3 % (суточного графика пока нет). */
+    /** Прогноз нагрузки на час {@code h}: договорная мощность по суточному графику (07 §7.6.4) и ошибка 3 %. */
     public Map<String, Object> getLoadForecast(int h) {
         GridSubsystem g = grid();
-        double p = g == null ? 0 : g.contractedLoadW();
+        double p = g == null ? 0 : g.contractedLoadW() * g.forecastFactor(Double.isNaN(g.hourOfDay()) ? Double.NaN : Math.floorMod(h, 24));
         Map<String, Object> m = new LinkedHashMap<>();
         m.put("hour", Math.floorMod(h, 24));
         m.put("p", p);
@@ -205,7 +205,7 @@ public class GridDispatchCenterBlockEntity extends DeviceBlockEntity implements 
             out[GridDispatchPanels.LOSS_KW] = (int) Math.round(m.lossW() / 1e3);
             out[GridDispatchPanels.ROCOF1000] = (int) Math.round(m.rocofHzPerS() * 1000);
         }
-        out[GridDispatchPanels.FORECAST_KW] = (int) Math.round(g.contractedLoadW() / 1e3);
+        out[GridDispatchPanels.FORECAST_KW] = (int) Math.round(g.contractedLoadW() * g.forecastFactor(g.hourOfDay()) / 1e3);
         out[GridDispatchPanels.FLAGS] = alarm() ? 1 << GridDispatchPanels.F_ALARM : 0;
     }
 

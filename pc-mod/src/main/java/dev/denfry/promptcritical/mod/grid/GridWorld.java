@@ -330,6 +330,8 @@ public final class GridWorld {
         Environment.Sample s = EnvironmentService.sample(level, at, 10);
         g.setWeather(s.airTempC(), ConductorSpec.convectionWm2K(s.meanWindMs(), s.airTempC(), at.getY() - level.getSeaLevel()),
                 ConductorSpec.solarWPerM(s.solarWm2()));
+        int days = dev.denfry.promptcritical.mod.config.ServerConfig.GRID_LOAD_PROFILE_DAYS.get();
+        g.setHourOfDay(days == 0 ? Double.NaN : dev.denfry.promptcritical.sim.grid.DailyLoadProfile.hourOfDay(level.getDayTime(), days));
     }
 
     /** Удар молнии в точку: ближайший пролёт в радиусе получает перекрытие изоляции. */

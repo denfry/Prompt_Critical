@@ -100,6 +100,8 @@ public final class BwrReactorBlockEntity extends DeviceBlockEntity implements Fo
     private int ticks;
     /** Непрерывная работа без автоматической АЗ (11 §11.2.2 {@code hundred_days}). */
     private final dev.denfry.promptcritical.sim.reactor.ContinuousRun run = new dev.denfry.promptcritical.sim.reactor.ContinuousRun();
+    /** Следование суточному графику (11 §11.2.2 {@code load_follow}). */
+    private final dev.denfry.promptcritical.sim.reactor.LoadFollowWatch follow = new dev.denfry.promptcritical.sim.reactor.LoadFollowWatch();
 
     public BwrReactorBlockEntity(BlockPos pos, BlockState state) {
         super(NppBlockEntities.BWR_REACTOR.get(), pos, state);
@@ -159,6 +161,8 @@ public final class BwrReactorBlockEntity extends DeviceBlockEntity implements Fo
         if (run.update(gameDt, reactor.power(), reactor.trip() != BoilingWaterReactor.Trip.NONE && reactor.trip() != BoilingWaterReactor.Trip.MANUAL))
             dev.denfry.promptcritical.mod.content.SimAchievements.nearby(sl, worldPosition, dev.denfry.promptcritical.mod.content.SimAchievements.HUNDRED_DAYS, "days", run.days());
         if (reactor.power() >= dev.denfry.promptcritical.mod.content.IndustrialComplex.REACTOR_POWER) dev.denfry.promptcritical.mod.content.IndustrialComplex.running(sl, worldPosition, dev.denfry.promptcritical.mod.content.IndustrialComplex.Part.REACTOR);
+        if (follow.update(gameDt, dev.denfry.promptcritical.mod.grid.LoadProfiles.shape(sl), reactor.power(), reactor.trip() != BoilingWaterReactor.Trip.NONE))
+            dev.denfry.promptcritical.mod.content.SimAchievements.nearby(sl, worldPosition, dev.denfry.promptcritical.mod.content.SimAchievements.LOAD_FOLLOW, "hours", follow.hours());
         // пар корпуса — в барабаны: тепло, которое он несёт сверх питательной воды
         double steamW = reactor.steamKgS() * 1.85e6;
         for (SteamGeneratorBlockEntity sg : out) sg.deliver(steamW / out.size());

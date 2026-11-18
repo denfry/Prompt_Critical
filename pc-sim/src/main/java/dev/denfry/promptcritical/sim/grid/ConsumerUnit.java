@@ -19,6 +19,8 @@ public final class ConsumerUnit extends GridUnit {
     /** Нагрузка была отключена автоматикой (АЧР, 27) и ещё не вернулась. */
     boolean shed;
     int shedCount;
+    /** Множитель суточного графика (07 §7.6.4) $\hat p(h)\,k_T\,(1+\xi)$ и его шум ξ; у нагрузки машины не действует. */
+    double profileFactor = 1, xi;
 
     ConsumerUnit(SimId id) {
         super(id, 1);
@@ -31,6 +33,16 @@ public final class ConsumerUnit extends GridUnit {
 
     public double demandW() {
         return Double.isNaN(machineW) ? POWER_KW[power] * 1e3 : machineW;
+    }
+
+    /** Мощность сейчас: договорная по суточному графику (07 §7.6.4) или мощность машины, Вт. */
+    public double targetW() {
+        return Double.isNaN(machineW) ? demandW() * profileFactor : machineW;
+    }
+
+    /** Множитель суточного графика, доли договорной мощности. */
+    public double profileFactor() {
+        return Double.isNaN(machineW) ? profileFactor : 1;
     }
 
     /**
@@ -91,7 +103,7 @@ public final class ConsumerUnit extends GridUnit {
     @Override
     void build(GridSubsystem.Build b) {
         if (node(0) == NO_NODE) return;
-        load = b.grid.addLoad(LoadModel.typical(LoadKind.NPC_CONSUMER, demandW()), b.bus(node(0)));
+        load = b.grid.addLoad(LoadModel.typical(LoadKind.NPC_CONSUMER, targetW()), b.bus(node(0)));
         b.load(load, this);
         b.grid.setLoadConnected(load, switchedOn && !shed);
     }

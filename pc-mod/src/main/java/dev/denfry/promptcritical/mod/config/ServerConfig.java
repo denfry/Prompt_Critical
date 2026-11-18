@@ -69,6 +69,7 @@ public final class ServerConfig {
     public static final ModConfigSpec.DoubleValue GRID_COUPLING_SHEAR_PU;
     public static final ModConfigSpec.DoubleValue GRID_AR_SUCCESS_LIGHTNING;
     public static final ModConfigSpec.DoubleValue GRID_LV_BREAKER_THERMAL_K_S;
+    public static final ModConfigSpec.IntValue GRID_LOAD_PROFILE_DAYS;
     public static final ModConfigSpec.DoubleValue BOILER_FURNACE_EXPLOSION_BLAST_FRACTION;
     public static final ModConfigSpec.DoubleValue BOILER_PURGE_MIN_S;
     public static final ModConfigSpec.IntValue BOILER_PURGE_MIN_VOLUME_CHANGES;
@@ -249,6 +250,8 @@ public final class ServerConfig {
                 .defineInRange("ar_success_lightning", 0.8, 0.0, 1.0);
         GRID_LV_BREAKER_THERMAL_K_S = b.comment("Thermal constant of 0.4 kV breaker and fuse curves, s (07 §7.4.6)")
                 .defineInRange("lv_breaker_thermal_k_s", 40.0, 1.0, 1000.0);
+        GRID_LOAD_PROFILE_DAYS = b.comment("Minecraft days per cycle of the daily load profile of grid consumers; 0 — flat contracted load (07 §7.6.4, §7.17)")
+                .defineInRange("load_profile_days_per_cycle", 1, 0, 30);
         b.pop();
 
         b.push("ops");

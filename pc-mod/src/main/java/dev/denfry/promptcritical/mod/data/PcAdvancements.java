@@ -74,6 +74,9 @@ public final class PcAdvancements implements AdvancementProvider.AdvancementGene
         LANG.put("first_fa", new String[] {"First Assembly", "Первая сборка", "Assemble the first fuel assembly", "Соберите первую ТВС"});
         LANG.put("closed_cycle", new String[] {"Closed Cycle", "Замкнутый цикл", "Load MOX fuel from your own plutonium into a reactor and hold a vitrified HLW canister", "Загрузите МОКС-топливо из своего плутония в реактор и получите канистру остеклованных ВАО"});
         LANG.put("scram_clean", new String[] {"Clean Scram", "Чистая АЗ", "Scram a power reactor from above 50 % with no fuel failing in the minute after", "Аварийная защита с мощности выше 50 % без разгерметизации ТВС в следующую минуту"});
+        LANG.put("load_follow", new String[] {"Load Following", "Под нагрузку",
+                "A power reactor follows the dispatcher's daily load curve for a whole day within 5 %",
+                "Реактор целые сутки следует суточному графику диспетчера с отклонением меньше 5 %"});
         LANG.put("hundred_days", new String[] {"Hundred Days", "Сто суток",
                 "Run a power reactor for 100 days with no automatic scram (manual ones allowed)",
                 "Энергетический реактор проработал 100 суток без автоматической АЗ (ручные не в счёт)"});
@@ -193,6 +196,8 @@ public final class PcAdvancements implements AdvancementProvider.AdvancementGene
                 .save(saver, id("closed_cycle"), efh);
         task(fa, PcBlocks.PWR_REACTOR.get(), "scram_clean", AdvancementType.TASK, false, 50)
                 .addCriterion("scram", event(dev.denfry.promptcritical.mod.content.SimAchievements.SCRAM_CLEAN, Map.of())).save(saver, id("scram_clean"), efh);
+        task(pile, PcBlocks.GRID_DISPATCH_CENTER.get(), "load_follow", AdvancementType.GOAL, false, 100)
+                .addCriterion("follow", event(dev.denfry.promptcritical.mod.content.SimAchievements.LOAD_FOLLOW, Map.of())).save(saver, id("load_follow"), efh);
         task(pile, PcBlocks.POWER_REACTOR.get(), "hundred_days", AdvancementType.CHALLENGE, false, 200)
                 .addCriterion("run", event(dev.denfry.promptcritical.mod.content.SimAchievements.HUNDRED_DAYS, Map.of())).save(saver, id("hundred_days"), efh);
         task(oil, PcBlocks.BLAST_FURNACE_CONTROLLER.get(), "industrial_complex", AdvancementType.CHALLENGE, false, 200)

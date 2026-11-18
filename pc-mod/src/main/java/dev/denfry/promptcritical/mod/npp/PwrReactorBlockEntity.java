@@ -126,6 +126,8 @@ public final class PwrReactorBlockEntity extends DeviceBlockEntity implements Fo
     private int ticks;
     /** Непрерывная работа без автоматической АЗ (11 §11.2.2 {@code hundred_days}). */
     private final dev.denfry.promptcritical.sim.reactor.ContinuousRun run = new dev.denfry.promptcritical.sim.reactor.ContinuousRun();
+    /** Следование суточному графику (11 §11.2.2 {@code load_follow}). */
+    private final dev.denfry.promptcritical.sim.reactor.LoadFollowWatch follow = new dev.denfry.promptcritical.sim.reactor.LoadFollowWatch();
 
     public PwrReactorBlockEntity(BlockPos pos, BlockState state) {
         super(NppBlockEntities.PWR_REACTOR.get(), pos, state);
@@ -209,6 +211,8 @@ public final class PwrReactorBlockEntity extends DeviceBlockEntity implements Fo
         if (run.update(gameDt, reactor.power(), reactor.tripped() && reactor.protection().firstOut() != dev.denfry.promptcritical.sim.protection.TripReason.MANUAL))
             dev.denfry.promptcritical.mod.content.SimAchievements.nearby(sl, worldPosition, dev.denfry.promptcritical.mod.content.SimAchievements.HUNDRED_DAYS, "days", run.days());
         if (reactor.power() >= dev.denfry.promptcritical.mod.content.IndustrialComplex.REACTOR_POWER) dev.denfry.promptcritical.mod.content.IndustrialComplex.running(sl, worldPosition, dev.denfry.promptcritical.mod.content.IndustrialComplex.Part.REACTOR);
+        if (follow.update(gameDt, dev.denfry.promptcritical.mod.grid.LoadProfiles.shape(sl), reactor.power(), reactor.tripped()))
+            dev.denfry.promptcritical.mod.content.SimAchievements.nearby(sl, worldPosition, dev.denfry.promptcritical.mod.content.SimAchievements.LOAD_FOLLOW, "hours", follow.hours());
         double q = reactor.steamGeneratorW();
         for (SteamGeneratorBlockEntity sg : sgs) sg.deliver(q / sgs.size());
         if (kd != null) kd.report(reactor.heaterW() > 1e3, reactor.pressurizer().reliefOpen() || reactor.pressurizer().safetyOpen());

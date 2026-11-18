@@ -106,6 +106,8 @@ public final class CanduReactorBlockEntity extends DeviceBlockEntity implements 
     private int ticks;
     /** Непрерывная работа без автоматической АЗ (11 §11.2.2 {@code hundred_days}). */
     private final dev.denfry.promptcritical.sim.reactor.ContinuousRun run = new dev.denfry.promptcritical.sim.reactor.ContinuousRun();
+    /** Следование суточному графику (11 §11.2.2 {@code load_follow}). */
+    private final dev.denfry.promptcritical.sim.reactor.LoadFollowWatch follow = new dev.denfry.promptcritical.sim.reactor.LoadFollowWatch();
     /** Магазин перегрузочной машины: свежие пучки (предмет — один пучок), их уран на пучок и доли U-235, U-234. */
     private int magazine;
     private double magKg, magU235, magU234;
@@ -230,6 +232,8 @@ public final class CanduReactorBlockEntity extends DeviceBlockEntity implements 
         if (run.update(gameDt, reactor.power(), reactor.trip() != CanduReactor.Trip.NONE && reactor.trip() != CanduReactor.Trip.MANUAL))
             dev.denfry.promptcritical.mod.content.SimAchievements.nearby(sl, worldPosition, dev.denfry.promptcritical.mod.content.SimAchievements.HUNDRED_DAYS, "days", run.days());
         if (reactor.power() >= dev.denfry.promptcritical.mod.content.IndustrialComplex.REACTOR_POWER) dev.denfry.promptcritical.mod.content.IndustrialComplex.running(sl, worldPosition, dev.denfry.promptcritical.mod.content.IndustrialComplex.Part.REACTOR);
+        if (follow.update(gameDt, dev.denfry.promptcritical.mod.grid.LoadProfiles.shape(sl), reactor.power(), reactor.trip() != CanduReactor.Trip.NONE))
+            dev.denfry.promptcritical.mod.content.SimAchievements.nearby(sl, worldPosition, dev.denfry.promptcritical.mod.content.SimAchievements.LOAD_FOLLOW, "hours", follow.hours());
         List<SteamGeneratorBlockEntity> sgs = new ArrayList<>();
         for (BlockPos p : generators)
             if (level.getBlockEntity(p) instanceof SteamGeneratorBlockEntity sg && !Double.isNaN(sg.secondaryK())) sgs.add(sg);

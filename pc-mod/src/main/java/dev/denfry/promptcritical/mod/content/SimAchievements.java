@@ -39,7 +39,7 @@ public final class SimAchievements {
      * критичностью (тег {@code points}), блэкстарт, следование графику, сутки без АЗ, промышленный комплекс.
      */
     public static final String XENON_PIT = "promptcritical:xenon_pit", HUNDRED_DAYS = "promptcritical:hundred_days",
-            INDUSTRIAL_COMPLEX = "promptcritical:industrial_complex";
+            INDUSTRIAL_COMPLEX = "promptcritical:industrial_complex", LOAD_FOLLOW = "promptcritical:load_follow";
     /** Источники, уже объявившие событие: повторно не шлют (сбрасывается с выгрузкой блока). */
     private static final java.util.Map<Object, java.util.Set<String>> ONCE = new java.util.WeakHashMap<>();
 
