@@ -48,7 +48,8 @@ public final class PanelLayouts {
                 dev.denfry.promptcritical.mod.nuclear.EnrichmentPanels.all(),
                 dev.denfry.promptcritical.mod.nuclear.FuelPanels.all(),
                 dev.denfry.promptcritical.mod.npp.NppPanels.all(),
-                dev.denfry.promptcritical.mod.isotopes.IsotopePanels.all())) {
+                dev.denfry.promptcritical.mod.isotopes.IsotopePanels.all(),
+                dev.denfry.promptcritical.mod.electronics.ElectronicsPanels.all())) {
             for (PanelLayout l : group) {
                 if (BY_ID.put(l.id, l) != null) throw new IllegalStateException("duplicate panel " + l.id);
             }

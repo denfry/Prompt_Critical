@@ -102,10 +102,10 @@ public final class AutomationRecipes extends RecipeProvider {
                 .requires(Items.GLASS_PANE).requires(wire, 2).requires(Items.REDSTONE).requires(Items.YELLOW_DYE)
                 .unlockedBy("has_wire", hasWire).save(out, id("gas_detector"));
 
-        // A2: ламповый решающий усилитель
+        // A2: ламповый решающий усилитель — на электровакуумных лампах
         ShapedRecipeBuilder.shaped(RecipeCategory.REDSTONE, summer).pattern("IGI").pattern("WTW").pattern("IRI")
-                .define('I', Items.IRON_INGOT).define('G', Items.GLASS_PANE).define('W', wire).define('T', Items.REDSTONE_TORCH)
-                .define('R', Items.REDSTONE).unlockedBy("has_wire", hasWire).save(out, id("analog_summer"));
+                .define('I', Items.IRON_INGOT).define('G', Items.GLASS_PANE).define('W', wire).define('T', PcItems.VACUUM_TUBE.get())
+                .define('R', Items.REDSTONE).unlockedBy("has_vacuum_tube", has(PcItems.VACUUM_TUBE.get())).save(out, id("analog_summer"));
         ShapelessRecipeBuilder.shapeless(RecipeCategory.REDSTONE, PcBlocks.ANALOG_INTEGRATOR.get()).requires(summer).requires(Items.COPPER_INGOT)
                 .requires(Items.PAPER).unlockedBy("has_summer", has(summer)).save(out, id("analog_integrator"));
         ShapelessRecipeBuilder.shapeless(RecipeCategory.REDSTONE, PcBlocks.ANALOG_DIFFERENTIATOR.get()).requires(summer).requires(Items.COPPER_INGOT)
@@ -122,10 +122,11 @@ public final class AutomationRecipes extends RecipeProvider {
         ShapelessRecipeBuilder.shapeless(RecipeCategory.REDSTONE, PcBlocks.SIGNAL_CONVERTER.get()).requires(coil).requires(wire)
                 .requires(Items.REDSTONE).requires(Items.IRON_NUGGET).unlockedBy("has_coil", hasCoil).save(out, id("signal_converter"));
 
-        // A3: программируемый контроллер — логика на компараторах и памяти, модули ввода-вывода на реле
+        // A3: программируемый контроллер — логика на транзисторах на печатной плате, модули ввода-вывода на реле
         ShapedRecipeBuilder.shaped(RecipeCategory.REDSTONE, PcBlocks.PLC.get()).pattern("IGI").pattern("CQC").pattern("RWR")
-                .define('I', Items.IRON_INGOT).define('G', Items.GLASS_PANE).define('C', Items.COMPARATOR).define('Q', Items.QUARTZ_BLOCK)
-                .define('R', relay).define('W', wire).unlockedBy("has_relay", has(relay)).save(out, id("plc"));
+                .define('I', Items.IRON_INGOT).define('G', Items.GLASS_PANE).define('C', PcItems.TRANSISTOR.get())
+                .define('Q', PcItems.PRINTED_CIRCUIT_BOARD.get()).define('R', relay).define('W', wire)
+                .unlockedBy("has_transistor", has(PcItems.TRANSISTOR.get())).save(out, id("plc"));
         // ПАЗ: реле с принудительно направляемыми контактами и компараторы в красном шкафу
         ShapedRecipeBuilder.shaped(RecipeCategory.REDSTONE, PcBlocks.SIS_LOGIC.get()).pattern("IRI").pattern("CRC").pattern("IWI")
                 .define('I', Items.IRON_INGOT).define('R', relay).define('C', Items.COMPARATOR).define('W', Items.RED_DYE)

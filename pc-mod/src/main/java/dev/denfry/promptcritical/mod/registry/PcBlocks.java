@@ -330,6 +330,25 @@ public final class PcBlocks {
     // --- изотопы (12): канал облучения в кладке T0 или у корпуса T1, термоэлектрический РИТЭГ ---
     public static final DeferredBlock<PcDeviceBlock> IRRADIATION_CHANNEL = device("irradiation_channel", graphite(), Spec.of(PcProperties.FILLED),
             dev.denfry.promptcritical.mod.foundry.FoundryBlock.with(dev.denfry.promptcritical.mod.isotopes.IrradiationChannelBlockEntity::new));
+    // --- кремний и микросхемы (11 §11.5): печь, хлорсиланы, Сименс, Чохральский, резка, чистая комната ---
+    public static final DeferredBlock<PcDeviceBlock> SUBMERGED_ARC_FURNACE = device("submerged_arc_furnace", lit(brick()),
+            Spec.facing(BlockStateProperties.LIT),
+            dev.denfry.promptcritical.mod.foundry.FoundryBlock.with(dev.denfry.promptcritical.mod.electronics.SubmergedArcFurnaceBlockEntity::new));
+    public static final DeferredBlock<PcDeviceBlock> TRICHLOROSILANE_REACTOR = device("trichlorosilane_reactor", machine(), Spec.facing(),
+            dev.denfry.promptcritical.mod.foundry.FoundryBlock.with(dev.denfry.promptcritical.mod.electronics.TrichlorosilaneReactorBlockEntity::new));
+    public static final DeferredBlock<PcDeviceBlock> SIEMENS_REACTOR = device("siemens_reactor", machine(), Spec.facing(PcProperties.RUNNING),
+            dev.denfry.promptcritical.mod.foundry.FoundryBlock.with(dev.denfry.promptcritical.mod.electronics.SiemensReactorBlockEntity::new));
+    public static final DeferredBlock<PcDeviceBlock> CZOCHRALSKI_PULLER = device("czochralski_puller", machine(),
+            Spec.facing(PcProperties.RUNNING),
+            KineticMachineBlock.with(ShaftSide.BACK, dev.denfry.promptcritical.mod.electronics.CzochralskiPullerBlockEntity::new));
+    public static final DeferredBlock<PcDeviceBlock> WAFER_SAW = device("wafer_saw", machine(), Spec.facing(PcProperties.RUNNING),
+            KineticMachineBlock.with(ShaftSide.BACK, dev.denfry.promptcritical.mod.electronics.WaferSawBlockEntity::new));
+    public static final DeferredBlock<PcDeviceBlock> CLEANROOM_AIRLOCK = device("cleanroom_airlock", machine(),
+            Spec.facing(BlockStateProperties.OPEN, PcProperties.RUNNING),
+            dev.denfry.promptcritical.mod.foundry.FoundryBlock.with(dev.denfry.promptcritical.mod.electronics.CleanroomAirlockBlockEntity::new));
+    public static final DeferredBlock<PcBlock> CLEANROOM_PANEL = block("cleanroom_panel", machine(), Spec.of());
+    public static final DeferredBlock<PcBlock> CLEANROOM_WINDOW = block("cleanroom_window", glassBlock(), Spec.of());
+    public static final DeferredBlock<PcBlock> HEPA_FILTER = block("hepa_filter", machine(), Spec.of());
     public static final DeferredBlock<PcDeviceBlock> RTG_THERMOELECTRIC = device("rtg_thermoelectric", machine(),
             Spec.of(net.minecraft.world.level.block.state.properties.BlockStateProperties.LIT),
             dev.denfry.promptcritical.mod.foundry.FoundryBlock.with(dev.denfry.promptcritical.mod.isotopes.RtgBlockEntity::new));

@@ -267,6 +267,10 @@ public final class PcBlockStateProvider extends BlockStateProvider {
             case "power_reactor" -> "reactor_vessel_wall";
             case "irradiation_channel" -> s.getValue(PcProperties.FILLED) ? id + "_loaded" : id;
             case "rtg_thermoelectric" -> s.getValue(BlockStateProperties.LIT) ? id : id + "_depleted";
+            case "submerged_arc_furnace" -> s.getValue(BlockStateProperties.LIT) ? id + "_running" : id;
+            case "siemens_reactor" -> s.getValue(PcProperties.RUNNING) ? id + "_running" : id;
+            case "czochralski_puller" -> s.getValue(PcProperties.RUNNING) ? id + "_pulling" : id;
+            case "cleanroom_airlock" -> s.getValue(BlockStateProperties.OPEN) ? id + "_open" : id;
             case "christmas_tree" -> s.getValue(BlockStateProperties.OPEN) ? id : id + "_master_closed";
             case "pumpjack" -> "pumpjack_gearbox";
             case "flare_tip" -> s.getValue(BlockStateProperties.LIT) ? id + "_lit" : id;

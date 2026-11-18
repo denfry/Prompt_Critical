@@ -67,6 +67,7 @@ public final class PcDataGen {
         gen.addProvider(event.includeServer(), dev.denfry.promptcritical.mod.nuclear.NuclearRecipes.provider(out, lookup));
         gen.addProvider(event.includeServer(), dev.denfry.promptcritical.mod.npp.NppRecipes.provider(out, lookup));
         gen.addProvider(event.includeServer(), dev.denfry.promptcritical.mod.isotopes.IsotopeRecipes.provider(out, lookup));
+        gen.addProvider(event.includeServer(), dev.denfry.promptcritical.mod.electronics.ElectronicsRecipes.provider(out, lookup));
         gen.addProvider(event.includeServer(), new AdvancementProvider(out, lookup, efh, List.of(new PcAdvancements())));
     }
 }
