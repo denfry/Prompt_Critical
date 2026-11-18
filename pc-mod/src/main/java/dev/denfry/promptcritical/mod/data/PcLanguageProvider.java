@@ -172,6 +172,7 @@ public final class PcLanguageProvider extends LanguageProvider {
         b("manual_station", "Manual/Auto Station", "Станция РУЧ/АВТ");
         b("signal_converter", "Signal Converter", "Нормирующий преобразователь");
         b("plc", "Programmable Logic Controller", "Программируемый логический контроллер");
+        b("sis_logic_solver", "Safety Logic Solver (SIS)", "Логический блок ПАЗ");
         b("lv_distribution_box", "Fuse Box", "Распределительный ящик с предохранителями");
         b("lighting_board", "Lighting Board", "Щиток освещения");
 

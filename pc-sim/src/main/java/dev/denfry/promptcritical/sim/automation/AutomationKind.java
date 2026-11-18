@@ -42,6 +42,12 @@ public enum AutomationKind {
      * AO0…AO1 — сигналы A2 в вольтах.
      */
     PLC(plc()),
+    /**
+     * Логический блок ПАЗ (A3, {@link dev.denfry.promptcritical.sim.automation.sis.SisLogic}): питание +24/0, датчики
+     * 4–20 мА на AI1…AI3, выходное реле 11-12-14 под током, пока процесс разрешён (снятие питания = останов),
+     * сигнализация 21-24, вход квитирования RST на «0».
+     */
+    SIS_LOGIC(List.of(t("+24"), t("0"), inC("AI1"), inC("AI2"), inC("AI3"), t("11"), t("12"), t("14"), t("21"), t("24"), t("RST"))),
     BREAKER_IO(d("+", "-", "CLOSE", "TRIP", "13", "14", "21", "22")),
     MOTOR_IO(d("A1", "A2", "13", "14")),
     CONSUMER_IO(d("13", "14"));
@@ -82,6 +88,10 @@ public enum AutomationKind {
 
     private static Terminal in(String label) {
         return new Terminal(label, TerminalType.ANALOG_VOLTAGE, Role.INPUT);
+    }
+
+    private static Terminal inC(String label) {
+        return new Terminal(label, TerminalType.ANALOG_CURRENT, Role.INPUT);
     }
 
     private static Terminal out(String label, TerminalType type) {

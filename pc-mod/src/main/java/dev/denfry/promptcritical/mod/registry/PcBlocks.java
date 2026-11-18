@@ -822,6 +822,8 @@ public final class PcBlocks {
     public static final DeferredBlock<PcDeviceBlock> SIGNAL_CONVERTER = automationWall("signal_converter", Spec.facing(), 0.5, 1, 9, 15.5, 15, 16);
     /** ПЛК (A3): программируемый контроллер на IL с модулями ввода-вывода. */
     public static final DeferredBlock<PcDeviceBlock> PLC = automationBlock("plc", Spec.facing(PcProperties.RUNNING));
+    /** Логический блок ПАЗ (A3): голосование датчиков, останов снятием питания, байпас и квитирование. */
+    public static final DeferredBlock<PcDeviceBlock> SIS_LOGIC = automationBlock("sis_logic_solver", Spec.facing(PcProperties.ALARM).footprint(FP_TALL2));
 
 
     private PcBlocks() {
