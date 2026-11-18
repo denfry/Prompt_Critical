@@ -1,26 +1,21 @@
 package dev.denfry.promptcritical.mod.mine;
 
 import dev.denfry.promptcritical.mod.binding.SimLevelBinding;
-import dev.denfry.promptcritical.mod.block.ModelPoints;
-import dev.denfry.promptcritical.mod.block.PcBlock;
 import dev.denfry.promptcritical.mod.block.PcProperties;
 import dev.denfry.promptcritical.mod.foundry.KineticMachineBlockEntity;
+import dev.denfry.promptcritical.mod.fx.MachineFx;
 import dev.denfry.promptcritical.mod.panel.PanelHost;
 import dev.denfry.promptcritical.mod.panel.PanelLayout;
 import dev.denfry.promptcritical.sim.mechanics.ShaftInput;
 import java.util.Arrays;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
-import net.minecraft.core.particles.ParticleTypes;
-import net.minecraft.core.particles.SimpleParticleType;
-import net.minecraft.server.level.ServerLevel;
 import net.minecraft.world.InteractionHand;
 import net.minecraft.world.InteractionResult;
 import net.minecraft.world.ItemInteractionResult;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.level.block.state.BlockState;
-import net.minecraft.world.phys.Vec3;
 import net.neoforged.neoforge.items.IItemHandler;
 import org.jetbrains.annotations.Nullable;
 
@@ -74,28 +69,20 @@ public final class DegasificationPumpBlockEntity extends KineticMachineBlockEnti
     @Override
     protected void serverTick(SimLevelBinding binding, ShaftInput u) {
         tick = binding.world().clock().tick();
-        double rpm = u.rpm(tick);
-        setStateFlag(PcProperties.RUNNING, rpm > 0);
-        if (rpm > 0 && level instanceof ServerLevel server && server.getGameTime() % 10 == 0) effects(server, rpm / NOMINAL_RPM);
+        setStateFlag(PcProperties.RUNNING, u.rpm(tick) > 0);
     }
 
     /**
      * Жидкостно-кольцевой насос выбрасывает в сепаратор смесь газа с водой кольца: на смотровом стекле бурлит, у
-     * выхлопа газа — водяная пыль, из подпиточной линии капает. Интенсивность — от доли номинальной частоты.
+     * выхлопа газа — водяная пыль, из подпиточного крана капает.
      */
-    private void effects(ServerLevel server, double load) {
-        if (!(getBlockState().getBlock() instanceof PcBlock b)) return;
-        Direction f = b.facing(getBlockState());
-        int n = 1 + (int) Math.min(3, load * 3);
-        puff(server, f, 15.9, 7, 11.6, ParticleTypes.BUBBLE_POP, n);     // сепаратор, смотровое стекло
-        puff(server, f, 15.9, 13.2, 11.6, ParticleTypes.BUBBLE_POP, n);  // выход газа
-        puff(server, f, 9.7, 3, 14.2, ParticleTypes.DRIPPING_WATER, 1); // подпиточный кран
-    }
-
-    /** Частицы в точке модели (px), повёрнутой к {@code facing} как в рендере блока. */
-    private void puff(ServerLevel server, Direction facing, double x, double y, double z, SimpleParticleType type, int count) {
-        Vec3 p = ModelPoints.toWorld(worldPosition, facing, x, y, z);
-        server.sendParticles(type, p.x, p.y, p.z, count, 0.04, 0.08, 0.04, 0.01);
+    @Override
+    protected void clientTick() {
+        MachineFx fx = fx();
+        if (fx == null || !runningState()) return;
+        if (fx.chance(4)) fx.bubbles(fx.at(15.9, 7, 11.6), 0.1, 2);
+        if (fx.chance(2)) fx.bubbles(fx.at(15.9, 13.2, 11.6), 0.1, 1);
+        if (fx.chance(1)) fx.leak(fx.at(9.7, 3, 14.2));
     }
 
     @Override

@@ -131,53 +131,10 @@ def vcyl(name, cx, cz, r, y0, y1, tex, sides=16):
     return disc(name, "y", r, max(y0, -15.92), min(y1, 31.92), tex, sides, c=(cx, 8, cz))
 
 
-# вагранка 1×3×1 (y −16…32): клёпаная шахта на ножках, воздушная коробка с дутьём от вала (запад), лётка и
-# жёлоб на север, загрузочное окно, искрогаситель
-def cupola(lit=False):
-    els = [el(f"leg_{i}", [x, -16, z], [x + 2, -8, z + 2], "d") for i, (x, z) in enumerate(((1, 1), (13, 1), (1, 13), (13, 13)))]
-    els += [el("bottom_plate", [0.5, -8, 0.5], [15.5, -6, 15.5], "d")]
-    els += disc("shaft", "y", 6.5, -6, 29, "shellb", 16)
-    els += ring("wind_belt", "y", 7.4, 2, -3, 2, "ci", n=16)
-    els += ring("band_mid", "y", 6.8, 0.8, 11, 12.5, "d", n=16)
-    els += ring("band_top", "y", 6.8, 0.8, 23, 24.5, "d", n=16)
-    els += [el("blower", [-0.01, 3, 4.5], [3, 13, 11.5], "dg"),
-            el("blast_pipe", [1, -1, 7], [3, 3, 9], "d"),
-            el("bearing_e", [13.5, 5.5, 5.5], [16.01, 10.5, 10.5], "ci"),
-            el(("glow_" if lit else "") + "taphole", [6.5, -5.5, 1], [9.5, -3, 1.6], "melt" if lit else "ci"),
-            el("spout", [6, -6.5, -3], [10, -5.5, 2], "refr"),
-            el("spout_lip_w", [6, -5.5, -3], [6.6, -4.5, 2], "refr"),
-            el("spout_lip_e", [9.4, -5.5, -3], [10, -4.5, 2], "refr"),
-            el("slag_hole", [14.4, -4, 7], [15, -2, 9], "ci"),
-            el("charge_frame", [4.5, 16.5, 1], [11.5, 24.5, 2], "ci"),
-            el(("glow_" if lit else "") + "charge_door", [5.5, 17.5, 0.6], [10.5, 23.5, 1.2], "melt" if lit else "d"),
-            el("peep_n", [7.5, -1, 0.4], [8.5, 0, 0.8], "br")]
-    els += disc("arrester", "y", 5, 29, 31.5, "d", 8) + disc("arrester_cap", "y", 6, 31.4, 31.9, "ci", 8)
-    return els
+# вагранка нарисована вручную в Blockbench: art/blockbench/foundry/cupola_furnace.author.js
 
 
-m("cupola_furnace", "foundry", cupola())
-m("cupola_furnace_lit", "foundry", cupola(True))
-
-
-# тигельная печь (фасад — север): кирпичная шахта в бандажах, крышка с летком, горелка сзади; тигель — partial
-def crucible_furnace(lit=False):
-    els = disc("body", "y", 7, 0, 12, "sb", 8)
-    els += ring("band_low", "y", 7.1, 0.6, 2, 3.2, "d", n=8) + ring("band_high", "y", 7.1, 0.6, 9, 10.2, "d", n=8)
-    lid = [el("lid_n", [2, 12, 2], [14, 13.5, 6], "ci"), el("lid_s", [2, 12, 10], [14, 13.5, 14], "ci"),
-           el("lid_w", [2, 12, 6], [6, 13.5, 10], "ci"), el("lid_e", [10, 12, 6], [14, 13.5, 10], "ci"),
-           el("lid_handle", [7, 13.5, 2.5], [9, 15, 3.5], "d")]
-    els += lid + [el("burner", [6.5, 2, 14], [9.5, 5, 16], "d"),
-                  el("air_pipe", [7, 5, 14.5], [9, 9, 15.5], "d"),
-                  el("tap_notch", [7, 11, 0.8], [9, 12, 1.2], "refr")]
-    if lit:
-        els.append(el("glow_flue", [6, 13.4, 6], [10, 13.45, 10], "melt"))
-    return els
-
-
-m("crucible_furnace", "foundry", crucible_furnace())
-m("crucible_furnace_lit", "foundry", crucible_furnace(True))
-m("crucible_furnace/crucible", "foundry", disc("crucible", "y", 4, 3, 12, "graph", 8)
-  + [el("glow_melt", [5, 11.5, 5], [11, 12, 11], "melt"), el("lip", [7, 11.5, 3.6], [9, 12.2, 4.2], "graph")], kind="partial")
+# тигельная печь нарисована вручную в Blockbench: art/blockbench/foundry/crucible_furnace.author.js
 
 
 # песчаная форма в опоке: низ и верх опоки с ушками, штыри, литниковая чаша и две прибыли

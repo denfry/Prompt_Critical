@@ -107,6 +107,11 @@ public final class MachineFx {
         for (int i = 0; i < n; i++) emit(ParticleTypes.SPLASH, at, spread, 0, 0.1, 0);
     }
 
+    /** Пузыри, лопающиеся на поверхности (сепаратор, пульсирующая постель). */
+    public void bubbles(Vec3 at, double spread, int n) {
+        for (int i = 0; i < n; i++) emit(ParticleTypes.BUBBLE_POP, at, spread, 0, 0.02, 0);
+    }
+
     /** Капель из сальника. */
     public void leak(Vec3 at) {
         emit(ParticleTypes.DRIPPING_WATER, at, 0.05, 0, 0, 0);

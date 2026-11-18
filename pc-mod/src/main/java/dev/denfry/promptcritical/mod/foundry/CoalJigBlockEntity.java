@@ -16,11 +16,6 @@ import dev.denfry.promptcritical.sim.mining.CoalJig;
 import dev.denfry.promptcritical.sim.mining.CoalPrepSubsystem;
 import java.util.Arrays;
 import net.minecraft.core.BlockPos;
-import net.minecraft.world.phys.Vec3;
-import net.minecraft.server.level.ServerLevel;
-import net.minecraft.core.particles.ParticleTypes;
-import dev.denfry.promptcritical.mod.block.PcBlock;
-import dev.denfry.promptcritical.mod.block.ModelPoints;
 import net.minecraft.core.Direction;
 import net.minecraft.core.HolderLookup;
 import net.minecraft.nbt.CompoundTag;
@@ -94,23 +89,21 @@ public final class CoalJigBlockEntity extends KineticMachineBlockEntity<CoalJig>
         emit(u, CoalJig.Product.MIDDLINGS, PcItems.COAL_MIDDLINGS.get(), kg);
         emit(u, CoalJig.Product.REFUSE, PcItems.COAL_REFUSE.get(), kg);
         setStateFlag(PcProperties.RUNNING, u.running());
-        if (u.running() && level instanceof ServerLevel server && server.getGameTime() % 6 == 0) pulse(server);
     }
 
     /**
      * Пульсация: воздух из клапанов толкает воду сквозь постель — над отсадочным отделением вскипают пузыри и
      * всплески, на сливном пороге вода переливается с мытым углём.
      */
-    private void pulse(ServerLevel server) {
-        if (!(getBlockState().getBlock() instanceof PcBlock b)) return;
-        Direction f = b.facing(getBlockState());
-        var rnd = server.getRandom();
-        for (int i = 0; i < 3; i++) {
-            Vec3 p = ModelPoints.toWorld(worldPosition, f, 3 + rnd.nextDouble() * 26, 23.1, 9 + rnd.nextDouble() * 5.5);
-            server.sendParticles(i == 0 ? ParticleTypes.SPLASH : ParticleTypes.BUBBLE_POP, p.x, p.y, p.z, 2, 0.08, 0.02, 0.08, 0.02);
-        }
-        Vec3 lip = ModelPoints.toWorld(worldPosition, f, 33, 21, 12);
-        server.sendParticles(ParticleTypes.FALLING_WATER, lip.x, lip.y, lip.z, 2, 0.02, 0.02, 0.15, 0);
+    @Override
+    protected void clientTick() {
+        MachineFx fx = fx();
+        if (fx == null || !runningState()) return;
+        var r = fx.random();
+        if (fx.chance(8)) fx.bubbles(fx.at(3 + r.nextDouble() * 26, 23.1, 9 + r.nextDouble() * 5.5), 0.2, 2);
+        if (fx.chance(3)) fx.splash(fx.at(3 + r.nextDouble() * 26, 23.1, 9 + r.nextDouble() * 5.5), 0.3, 2);
+        if (fx.chance(4)) fx.leak(fx.at(33.5, 20.4, 9.5 + r.nextDouble() * 5));
+        if (fx.chance(0.5)) fx.sound(fx.at(16, 23, 12), SoundEvents.WATER_AMBIENT, 0.25f, 1.2f);
     }
 
     static CoalAssay assay(ItemStack stack) {
@@ -172,14 +165,6 @@ public final class CoalJigBlockEntity extends KineticMachineBlockEntity<CoalJig>
         double rho = u.cycleRhoClean();
         if (ctx.getPlayer() != null) ctx.getPlayer().displayClientMessage(FoundryText.msg("jig_cut", FoundryText.num(rho)), true);
         return InteractionResult.SUCCESS;
-    }
-
-    @Override
-    protected void clientTick() {
-        MachineFx fx = fx();
-        if (fx == null || !runningState()) return;
-        if (fx.chance(10)) fx.splash(fx.at(16, 24.2, 8), 1.6, 2);
-        if (fx.chance(0.5)) fx.sound(fx.at(16, 24, 8), SoundEvents.WATER_AMBIENT, 0.25f, 1.2f);
     }
 
     @Override

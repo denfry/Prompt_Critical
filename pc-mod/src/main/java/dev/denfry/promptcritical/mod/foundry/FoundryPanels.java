@@ -112,7 +112,9 @@ public final class FoundryPanels {
             TOOL_STATUS = PanelText.tr("tool.status", "%s · spindle %s rpm", "%s · шпиндель %s об/мин"),
             TOOL_IDLE = PanelText.tr("tool.idle", "No workpiece", "Нет заготовки");
 
+    /** Фон — art/blockbench/foundry/cupola_furnace.author.js ({@code guiCupola}). */
     public static final PanelLayout CUPOLA = PanelLayout.builder("cupola_furnace", 200, 150, C_CHANNELS)
+            .art(PromptCritical.id("textures/gui/panel/cupola_furnace.png"))
             .dial(8, 24, true, C_WELL_C, 1, 1600, Double.NaN, 0, CELSIUS.get(), WELL.get(), null)
             .dial(80, 24, false, C_AIR_NM3H, 1, 1200, Double.NaN, 0, NM3H.get(), BLAST.get(), null)
             .dial(140, 24, false, SHAFT_RPM10, 10, 256, Double.NaN, 0, RPM.get(), SHAFT.get(), shaftTip())
@@ -128,7 +130,9 @@ public final class FoundryPanels {
             .slot(170, 126, 1, s -> s.is(FoundryTags.CUPOLA_COKE), CUPOLA_COKE.get())
             .build();
 
+    /** Фон — art/blockbench/foundry/crucible_furnace.author.js ({@code guiCrucible}). */
     public static final PanelLayout CRUCIBLE = PanelLayout.builder("crucible_furnace", 200, 150, T_CHANNELS)
+            .art(PromptCritical.id("textures/gui/panel/crucible_furnace.png"))
             .dial(8, 24, true, T_TEMP_C, 1, 1600, Double.NaN, 0, CELSIUS.get(), MELT.get(), null)
             .lamp(84, 26, FLAGS, F_RUNNING, LampColor.AMBER, LIT.get())
             .lamp(84, 42, FLAGS, F_HELD, LampColor.RED, TAP.get())
