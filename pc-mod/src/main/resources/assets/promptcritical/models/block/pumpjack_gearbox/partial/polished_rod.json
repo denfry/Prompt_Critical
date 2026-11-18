@@ -1,15 +1,19 @@
 {
 	"credit": "Made with Blockbench",
 	"textures": {
-		"particle": "promptcritical:block/common/fuelcycle_ss_smooth",
-		"sss": "promptcritical:block/common/fuelcycle_ss_smooth",
-		"st": "promptcritical:block/common/steel_bare"
+		"material_steel": "promptcritical:block/material/steel",
+		"material_cast_iron": "promptcritical:block/material/cast_iron",
+		"particle": "promptcritical:block/material/bright_steel",
+		"material_bright_steel": "promptcritical:block/material/bright_steel",
+		"material_brass": "promptcritical:block/material/brass",
+		"plant_pipe_liquid": "promptcritical:block/plant/pipe_liquid",
+		"plant_green": "promptcritical:block/plant/green"
 	},
 	"elements": [
 		{
-			"name": "rod_0",
-			"from": [7.5, 0, 7.793],
-			"to": [8.5, 16, 8.207],
+			"name": "bridle_7.4",
+			"from": [-15.9, 7, 7.25],
+			"to": [-15.6, 19, 7.55],
 			"rotation": {
 				"angle": 0,
 				"axis": "y",
@@ -17,35 +21,35 @@
 			},
 			"faces": {
 				"north": {
-					"uv": [0, 0, 1, 16],
-					"texture": "#sss"
+					"uv": [15.6, 0, 15.9, 9],
+					"texture": "#material_steel"
 				},
 				"east": {
-					"uv": [0, 0, 0.41, 16],
-					"texture": "#sss"
+					"uv": [8.45, 0, 8.75, 9],
+					"texture": "#material_steel"
 				},
 				"south": {
-					"uv": [0, 0, 1, 16],
-					"texture": "#sss"
+					"uv": [0.1, 0, 0.4, 9],
+					"texture": "#material_steel"
 				},
 				"west": {
-					"uv": [0, 0, 0.41, 16],
-					"texture": "#sss"
+					"uv": [7.25, 0, 7.55, 9],
+					"texture": "#material_steel"
 				},
 				"up": {
-					"uv": [0, 0, 1, 0.41],
-					"texture": "#sss"
+					"uv": [0.1, 7.25, 0.4, 7.55],
+					"texture": "#material_steel"
 				},
 				"down": {
-					"uv": [0, 0, 1, 0.41],
-					"texture": "#sss"
+					"uv": [0.1, 8.45, 0.4, 8.75],
+					"texture": "#material_steel"
 				}
 			}
 		},
 		{
-			"name": "rod_1",
-			"from": [7.793, -0.01, 7.5],
-			"to": [8.207, 16.01, 8.5],
+			"name": "bridle_8.6",
+			"from": [-15.9, 7, 8.45],
+			"to": [-15.6, 19, 8.75],
 			"rotation": {
 				"angle": 0,
 				"axis": "y",
@@ -53,107 +57,35 @@
 			},
 			"faces": {
 				"north": {
-					"uv": [0, 0, 0.41, 16],
-					"texture": "#sss"
+					"uv": [15.6, 0, 15.9, 9],
+					"texture": "#material_steel"
 				},
 				"east": {
-					"uv": [0, 0, 1, 16],
-					"texture": "#sss"
+					"uv": [7.25, 0, 7.55, 9],
+					"texture": "#material_steel"
 				},
 				"south": {
-					"uv": [0, 0, 0.41, 16],
-					"texture": "#sss"
+					"uv": [0.1, 0, 0.4, 9],
+					"texture": "#material_steel"
 				},
 				"west": {
-					"uv": [0, 0, 1, 16],
-					"texture": "#sss"
+					"uv": [8.45, 0, 8.75, 9],
+					"texture": "#material_steel"
 				},
 				"up": {
-					"uv": [0, 0, 0.41, 1],
-					"texture": "#sss"
+					"uv": [0.1, 8.45, 0.4, 8.75],
+					"texture": "#material_steel"
 				},
 				"down": {
-					"uv": [0, 0, 0.41, 1],
-					"texture": "#sss"
-				}
-			}
-		},
-		{
-			"name": "rod_2",
-			"from": [7.5, -0.02, 7.793],
-			"to": [8.5, 16.02, 8.207],
-			"rotation": {
-				"angle": 45,
-				"axis": "y",
-				"origin": [8, 8, 8]
-			},
-			"faces": {
-				"north": {
-					"uv": [0, 0, 1, 16],
-					"texture": "#sss"
-				},
-				"east": {
-					"uv": [0, 0, 0.41, 16],
-					"texture": "#sss"
-				},
-				"south": {
-					"uv": [0, 0, 1, 16],
-					"texture": "#sss"
-				},
-				"west": {
-					"uv": [0, 0, 0.41, 16],
-					"texture": "#sss"
-				},
-				"up": {
-					"uv": [0, 0, 1, 0.41],
-					"texture": "#sss"
-				},
-				"down": {
-					"uv": [0, 0, 1, 0.41],
-					"texture": "#sss"
-				}
-			}
-		},
-		{
-			"name": "rod_3",
-			"from": [7.5, -0.03, 7.793],
-			"to": [8.5, 16.03, 8.207],
-			"rotation": {
-				"angle": -45,
-				"axis": "y",
-				"origin": [8, 8, 8]
-			},
-			"faces": {
-				"north": {
-					"uv": [0, 0, 1, 16],
-					"texture": "#sss"
-				},
-				"east": {
-					"uv": [0, 0, 0.41, 16],
-					"texture": "#sss"
-				},
-				"south": {
-					"uv": [0, 0, 1, 16],
-					"texture": "#sss"
-				},
-				"west": {
-					"uv": [0, 0, 0.41, 16],
-					"texture": "#sss"
-				},
-				"up": {
-					"uv": [0, 0, 1, 0.41],
-					"texture": "#sss"
-				},
-				"down": {
-					"uv": [0, 0, 1, 0.41],
-					"texture": "#sss"
+					"uv": [0.1, 7.25, 0.4, 7.55],
+					"texture": "#material_steel"
 				}
 			}
 		},
 		{
 			"name": "carrier_bar",
-			"from": [5, 15, 7],
-			"to": [11, 16, 9],
+			"from": [-16, 6.4, 6.6],
+			"to": [-15.2, 7, 9.4],
 			"rotation": {
 				"angle": 0,
 				"axis": "y",
@@ -161,28 +93,244 @@
 			},
 			"faces": {
 				"north": {
-					"uv": [0, 0, 6, 1],
-					"texture": "#st"
+					"uv": [15.2, 9, 16, 9.6],
+					"texture": "#material_cast_iron"
 				},
 				"east": {
-					"uv": [0, 0, 2, 1],
-					"texture": "#st"
+					"uv": [6.6, 9, 9.4, 9.6],
+					"texture": "#material_cast_iron"
 				},
 				"south": {
-					"uv": [0, 0, 6, 1],
-					"texture": "#st"
+					"uv": [0, 9, 0.8, 9.6],
+					"texture": "#material_cast_iron"
 				},
 				"west": {
-					"uv": [0, 0, 2, 1],
-					"texture": "#st"
+					"uv": [6.6, 9, 9.4, 9.6],
+					"texture": "#material_cast_iron"
 				},
 				"up": {
-					"uv": [0, 0, 6, 2],
-					"texture": "#st"
+					"uv": [0, 6.6, 0.8, 9.4],
+					"texture": "#material_cast_iron"
 				},
 				"down": {
-					"uv": [0, 0, 6, 2],
-					"texture": "#st"
+					"uv": [0, 6.6, 0.8, 9.4],
+					"texture": "#material_cast_iron"
+				}
+			}
+		},
+		{
+			"name": "rod_clamp",
+			"from": [-15.9, 5.6, 7.4],
+			"to": [-15, 6.4, 8.6],
+			"rotation": {
+				"angle": 0,
+				"axis": "y",
+				"origin": [8, 8, 8]
+			},
+			"faces": {
+				"north": {
+					"uv": [15, 9.6, 15.9, 10.4],
+					"texture": "#material_steel"
+				},
+				"east": {
+					"uv": [7.4, 9.6, 8.6, 10.4],
+					"texture": "#material_steel"
+				},
+				"south": {
+					"uv": [0.1, 9.6, 1, 10.4],
+					"texture": "#material_steel"
+				},
+				"west": {
+					"uv": [7.4, 9.6, 8.6, 10.4],
+					"texture": "#material_steel"
+				},
+				"up": {
+					"uv": [0.1, 7.4, 1, 8.6],
+					"texture": "#material_steel"
+				},
+				"down": {
+					"uv": [0.1, 7.4, 1, 8.6],
+					"texture": "#material_steel"
+				}
+			}
+		},
+		{
+			"name": "polished_rod",
+			"from": [-15.75, 2.6, 7.75],
+			"to": [-15.25, 6.4, 8.25],
+			"rotation": {
+				"angle": 0,
+				"axis": "y",
+				"origin": [8, 8, 8]
+			},
+			"faces": {
+				"north": {
+					"uv": [15.25, 9.6, 15.75, 13.4],
+					"texture": "#material_bright_steel"
+				},
+				"east": {
+					"uv": [7.75, 9.6, 8.25, 13.4],
+					"texture": "#material_bright_steel"
+				},
+				"south": {
+					"uv": [0.25, 9.6, 0.75, 13.4],
+					"texture": "#material_bright_steel"
+				},
+				"west": {
+					"uv": [7.75, 9.6, 8.25, 13.4],
+					"texture": "#material_bright_steel"
+				},
+				"up": {
+					"uv": [0.25, 7.75, 0.75, 8.25],
+					"texture": "#material_bright_steel"
+				},
+				"down": {
+					"uv": [0.25, 7.75, 0.75, 8.25],
+					"texture": "#material_bright_steel"
+				}
+			}
+		},
+		{
+			"name": "stuffing_box",
+			"from": [-16, 1.4, 7],
+			"to": [-14.6, 2.6, 9],
+			"rotation": {
+				"angle": 0,
+				"axis": "y",
+				"origin": [8, 8, 8]
+			},
+			"faces": {
+				"north": {
+					"uv": [14.6, 13.4, 16, 14.6],
+					"texture": "#material_brass"
+				},
+				"east": {
+					"uv": [7, 13.4, 9, 14.6],
+					"texture": "#material_brass"
+				},
+				"south": {
+					"uv": [0, 13.4, 1.4, 14.6],
+					"texture": "#material_brass"
+				},
+				"west": {
+					"uv": [7, 13.4, 9, 14.6],
+					"texture": "#material_brass"
+				},
+				"up": {
+					"uv": [0, 7, 1.4, 9],
+					"texture": "#material_brass"
+				},
+				"down": {
+					"uv": [0, 7, 1.4, 9],
+					"texture": "#material_brass"
+				}
+			}
+		},
+		{
+			"name": "tee",
+			"from": [-16, 0, 6.6],
+			"to": [-14, 1.4, 9.4],
+			"rotation": {
+				"angle": 0,
+				"axis": "y",
+				"origin": [8, 8, 8]
+			},
+			"faces": {
+				"north": {
+					"uv": [14, 14.6, 16, 16],
+					"texture": "#material_steel"
+				},
+				"east": {
+					"uv": [6.6, 14.6, 9.4, 16],
+					"texture": "#material_steel"
+				},
+				"south": {
+					"uv": [0, 14.6, 2, 16],
+					"texture": "#material_steel"
+				},
+				"west": {
+					"uv": [6.6, 14.6, 9.4, 16],
+					"texture": "#material_steel"
+				},
+				"up": {
+					"uv": [0, 6.6, 2, 9.4],
+					"texture": "#material_steel"
+				},
+				"down": {
+					"uv": [0, 6.6, 2, 9.4],
+					"texture": "#material_steel"
+				}
+			}
+		},
+		{
+			"name": "flowline",
+			"from": [-14, 0.2, 7.4],
+			"to": [-8, 1.2, 8.6],
+			"rotation": {
+				"angle": 0,
+				"axis": "y",
+				"origin": [8, 8, 8]
+			},
+			"faces": {
+				"north": {
+					"uv": [8, 14.8, 14, 15.8],
+					"texture": "#plant_pipe_liquid"
+				},
+				"east": {
+					"uv": [7.4, 14.8, 8.6, 15.8],
+					"texture": "#plant_pipe_liquid"
+				},
+				"south": {
+					"uv": [2, 14.8, 8, 15.8],
+					"texture": "#plant_pipe_liquid"
+				},
+				"west": {
+					"uv": [7.4, 14.8, 8.6, 15.8],
+					"texture": "#plant_pipe_liquid"
+				},
+				"up": {
+					"uv": [2, 7.4, 8, 8.6],
+					"texture": "#plant_pipe_liquid"
+				},
+				"down": {
+					"uv": [2, 7.4, 8, 8.6],
+					"texture": "#plant_pipe_liquid"
+				}
+			}
+		},
+		{
+			"name": "wing_valve",
+			"from": [-12, 0, 7],
+			"to": [-10.4, 1.8, 9],
+			"rotation": {
+				"angle": 0,
+				"axis": "y",
+				"origin": [8, 8, 8]
+			},
+			"faces": {
+				"north": {
+					"uv": [10.4, 14.2, 12, 16],
+					"texture": "#plant_green"
+				},
+				"east": {
+					"uv": [7, 14.2, 9, 16],
+					"texture": "#plant_green"
+				},
+				"south": {
+					"uv": [4, 14.2, 5.6, 16],
+					"texture": "#plant_green"
+				},
+				"west": {
+					"uv": [7, 14.2, 9, 16],
+					"texture": "#plant_green"
+				},
+				"up": {
+					"uv": [4, 7, 5.6, 9],
+					"texture": "#plant_green"
+				},
+				"down": {
+					"uv": [4, 7, 5.6, 9],
+					"texture": "#plant_green"
 				}
 			}
 		}

@@ -1,16 +1,21 @@
 {
 	"credit": "Made with Blockbench",
 	"textures": {
-		"particle": "promptcritical:block/common/oil_pump_grey_blue",
-		"mb": "promptcritical:block/common/motor_blue",
-		"pgb": "promptcritical:block/common/oil_pump_grey_blue",
-		"ye": "promptcritical:block/common/w2_yellow"
+		"plant_concrete": "promptcritical:block/plant/concrete",
+		"plant_structure": "promptcritical:block/plant/structure",
+		"particle": "promptcritical:block/oil/pump_paint",
+		"oil_pump_paint": "promptcritical:block/oil/pump_paint",
+		"material_bright_steel": "promptcritical:block/material/bright_steel",
+		"material_cast_iron": "promptcritical:block/material/cast_iron",
+		"material_paint_red": "promptcritical:block/material/paint_red",
+		"plant_blue": "promptcritical:block/plant/blue",
+		"plant_yellow": "promptcritical:block/plant/yellow"
 	},
 	"elements": [
 		{
-			"name": "base",
-			"from": [-16, 0, -12],
-			"to": [32, 3, 28],
+			"name": "pad_0",
+			"from": [-16, 0, 0],
+			"to": [0, 1.2, 16],
 			"rotation": {
 				"angle": 0,
 				"axis": "y",
@@ -18,35 +23,35 @@
 			},
 			"faces": {
 				"north": {
-					"uv": [0, 0, 16, 3],
-					"texture": "#pgb"
+					"uv": [0, 14.8, 16, 16],
+					"texture": "#plant_concrete"
 				},
 				"east": {
-					"uv": [0, 0, 16, 3],
-					"texture": "#pgb"
+					"uv": [0, 14.8, 16, 16],
+					"texture": "#plant_concrete"
 				},
 				"south": {
-					"uv": [0, 0, 16, 3],
-					"texture": "#pgb"
+					"uv": [0, 14.8, 16, 16],
+					"texture": "#plant_concrete"
 				},
 				"west": {
-					"uv": [0, 0, 16, 3],
-					"texture": "#pgb"
+					"uv": [0, 14.8, 16, 16],
+					"texture": "#plant_concrete"
 				},
 				"up": {
 					"uv": [0, 0, 16, 16],
-					"texture": "#pgb"
+					"texture": "#plant_concrete"
 				},
 				"down": {
 					"uv": [0, 0, 16, 16],
-					"texture": "#pgb"
+					"texture": "#plant_concrete"
 				}
 			}
 		},
 		{
-			"name": "gearbox",
-			"from": [0, 3, 0],
-			"to": [16, 16, 16],
+			"name": "pad_1",
+			"from": [0, 0, 0],
+			"to": [16, 1.2, 16],
 			"rotation": {
 				"angle": 0,
 				"axis": "y",
@@ -54,35 +59,555 @@
 			},
 			"faces": {
 				"north": {
-					"uv": [0, 0, 16, 13],
-					"texture": "#pgb"
+					"uv": [0, 14.8, 16, 16],
+					"texture": "#plant_concrete"
 				},
 				"east": {
-					"uv": [0, 0, 16, 13],
-					"texture": "#pgb"
+					"uv": [0, 14.8, 16, 16],
+					"texture": "#plant_concrete"
 				},
 				"south": {
-					"uv": [0, 0, 16, 13],
-					"texture": "#pgb"
+					"uv": [0, 14.8, 16, 16],
+					"texture": "#plant_concrete"
 				},
 				"west": {
-					"uv": [0, 0, 16, 13],
-					"texture": "#pgb"
+					"uv": [0, 14.8, 16, 16],
+					"texture": "#plant_concrete"
 				},
 				"up": {
 					"uv": [0, 0, 16, 16],
-					"texture": "#pgb"
+					"texture": "#plant_concrete"
 				},
 				"down": {
 					"uv": [0, 0, 16, 16],
-					"texture": "#pgb"
+					"texture": "#plant_concrete"
+				}
+			}
+		},
+		{
+			"name": "pad_2",
+			"from": [16, 0, 0],
+			"to": [32, 1.2, 16],
+			"rotation": {
+				"angle": 0,
+				"axis": "y",
+				"origin": [8, 8, 8]
+			},
+			"faces": {
+				"north": {
+					"uv": [0, 14.8, 16, 16],
+					"texture": "#plant_concrete"
+				},
+				"east": {
+					"uv": [0, 14.8, 16, 16],
+					"texture": "#plant_concrete"
+				},
+				"south": {
+					"uv": [0, 14.8, 16, 16],
+					"texture": "#plant_concrete"
+				},
+				"west": {
+					"uv": [0, 14.8, 16, 16],
+					"texture": "#plant_concrete"
+				},
+				"up": {
+					"uv": [0, 0, 16, 16],
+					"texture": "#plant_concrete"
+				},
+				"down": {
+					"uv": [0, 0, 16, 16],
+					"texture": "#plant_concrete"
+				}
+			}
+		},
+		{
+			"name": "skid_0",
+			"from": [-10, 1.2, 6],
+			"to": [0, 2.8, 10],
+			"rotation": {
+				"angle": 0,
+				"axis": "y",
+				"origin": [8, 8, 8]
+			},
+			"faces": {
+				"north": {
+					"uv": [0, 13.2, 10, 14.8],
+					"texture": "#plant_structure"
+				},
+				"east": {
+					"uv": [6, 13.2, 10, 14.8],
+					"texture": "#plant_structure"
+				},
+				"south": {
+					"uv": [6, 13.2, 16, 14.8],
+					"texture": "#plant_structure"
+				},
+				"west": {
+					"uv": [6, 13.2, 10, 14.8],
+					"texture": "#plant_structure"
+				},
+				"up": {
+					"uv": [6, 6, 16, 10],
+					"texture": "#plant_structure"
+				},
+				"down": {
+					"uv": [6, 6, 16, 10],
+					"texture": "#plant_structure"
+				}
+			}
+		},
+		{
+			"name": "skid_1",
+			"from": [0, 1.2, 6],
+			"to": [16, 2.8, 10],
+			"rotation": {
+				"angle": 0,
+				"axis": "y",
+				"origin": [8, 8, 8]
+			},
+			"faces": {
+				"north": {
+					"uv": [0, 13.2, 16, 14.8],
+					"texture": "#plant_structure"
+				},
+				"east": {
+					"uv": [6, 13.2, 10, 14.8],
+					"texture": "#plant_structure"
+				},
+				"south": {
+					"uv": [0, 13.2, 16, 14.8],
+					"texture": "#plant_structure"
+				},
+				"west": {
+					"uv": [6, 13.2, 10, 14.8],
+					"texture": "#plant_structure"
+				},
+				"up": {
+					"uv": [0, 6, 16, 10],
+					"texture": "#plant_structure"
+				},
+				"down": {
+					"uv": [0, 6, 16, 10],
+					"texture": "#plant_structure"
+				}
+			}
+		},
+		{
+			"name": "skid_2",
+			"from": [16, 1.2, 6],
+			"to": [30, 2.8, 10],
+			"rotation": {
+				"angle": 0,
+				"axis": "y",
+				"origin": [8, 8, 8]
+			},
+			"faces": {
+				"north": {
+					"uv": [2, 13.2, 16, 14.8],
+					"texture": "#plant_structure"
+				},
+				"east": {
+					"uv": [6, 13.2, 10, 14.8],
+					"texture": "#plant_structure"
+				},
+				"south": {
+					"uv": [0, 13.2, 14, 14.8],
+					"texture": "#plant_structure"
+				},
+				"west": {
+					"uv": [6, 13.2, 10, 14.8],
+					"texture": "#plant_structure"
+				},
+				"up": {
+					"uv": [0, 6, 14, 10],
+					"texture": "#plant_structure"
+				},
+				"down": {
+					"uv": [0, 6, 14, 10],
+					"texture": "#plant_structure"
+				}
+			}
+		},
+		{
+			"name": "reducer",
+			"from": [19, 2.8, 4.4],
+			"to": [27, 10.6, 11.6],
+			"rotation": {
+				"angle": 0,
+				"axis": "y",
+				"origin": [8, 8, 8]
+			},
+			"faces": {
+				"north": {
+					"uv": [5, 5.4, 13, 13.2],
+					"texture": "#oil_pump_paint"
+				},
+				"east": {
+					"uv": [4.4, 5.4, 11.6, 13.2],
+					"texture": "#oil_pump_paint"
+				},
+				"south": {
+					"uv": [3, 5.4, 11, 13.2],
+					"texture": "#oil_pump_paint"
+				},
+				"west": {
+					"uv": [4.4, 5.4, 11.6, 13.2],
+					"texture": "#oil_pump_paint"
+				},
+				"up": {
+					"uv": [3, 4.4, 11, 11.6],
+					"texture": "#oil_pump_paint"
+				},
+				"down": {
+					"uv": [3, 4.4, 11, 11.6],
+					"texture": "#oil_pump_paint"
+				}
+			}
+		},
+		{
+			"name": "reducer_cap",
+			"from": [20, 10.6, 5],
+			"to": [26, 11.4, 11],
+			"rotation": {
+				"angle": 0,
+				"axis": "y",
+				"origin": [8, 8, 8]
+			},
+			"faces": {
+				"north": {
+					"uv": [6, 4.6, 12, 5.4],
+					"texture": "#oil_pump_paint"
+				},
+				"east": {
+					"uv": [5, 4.6, 11, 5.4],
+					"texture": "#oil_pump_paint"
+				},
+				"south": {
+					"uv": [4, 4.6, 10, 5.4],
+					"texture": "#oil_pump_paint"
+				},
+				"west": {
+					"uv": [5, 4.6, 11, 5.4],
+					"texture": "#oil_pump_paint"
+				},
+				"up": {
+					"uv": [4, 5, 10, 11],
+					"texture": "#oil_pump_paint"
+				},
+				"down": {
+					"uv": [4, 5, 10, 11],
+					"texture": "#oil_pump_paint"
+				}
+			}
+		},
+		{
+			"name": "crank_shaft_0",
+			"from": [22.1, 8.22098, 2],
+			"to": [23.9, 8.57902, 14],
+			"rotation": {
+				"angle": 0,
+				"axis": "y",
+				"origin": [8, 8, 8]
+			},
+			"faces": {
+				"east": {
+					"uv": [2, 7.42098, 14, 7.77902],
+					"texture": "#material_bright_steel"
+				},
+				"west": {
+					"uv": [2, 7.42098, 14, 7.77902],
+					"texture": "#material_bright_steel"
+				}
+			}
+		},
+		{
+			"name": "crank_shaft_1",
+			"from": [22.1, 8.22098, 2],
+			"to": [23.9, 8.57902, 14],
+			"rotation": {
+				"angle": 22.5,
+				"axis": "z",
+				"origin": [23, 8.4, 8]
+			},
+			"faces": {
+				"east": {
+					"uv": [2, 7.42098, 14, 7.77902],
+					"texture": "#material_bright_steel"
+				},
+				"west": {
+					"uv": [2, 7.42098, 14, 7.77902],
+					"texture": "#material_bright_steel"
+				}
+			}
+		},
+		{
+			"name": "crank_shaft_2",
+			"from": [22.1, 8.22098, 2],
+			"to": [23.9, 8.57902, 14],
+			"rotation": {
+				"angle": 45,
+				"axis": "z",
+				"origin": [23, 8.4, 8]
+			},
+			"faces": {
+				"east": {
+					"uv": [2, 7.42098, 14, 7.77902],
+					"texture": "#material_bright_steel"
+				},
+				"west": {
+					"uv": [2, 7.42098, 14, 7.77902],
+					"texture": "#material_bright_steel"
+				}
+			}
+		},
+		{
+			"name": "crank_shaft_3",
+			"from": [22.1, 8.22098, 2],
+			"to": [23.9, 8.57902, 14],
+			"rotation": {
+				"angle": -22.5,
+				"axis": "z",
+				"origin": [23, 8.4, 8]
+			},
+			"faces": {
+				"east": {
+					"uv": [2, 7.42098, 14, 7.77902],
+					"texture": "#material_bright_steel"
+				},
+				"west": {
+					"uv": [2, 7.42098, 14, 7.77902],
+					"texture": "#material_bright_steel"
+				}
+			}
+		},
+		{
+			"name": "crank_shaft_4",
+			"from": [22.1, 8.22098, 2],
+			"to": [23.9, 8.57902, 14],
+			"rotation": {
+				"angle": -45,
+				"axis": "z",
+				"origin": [23, 8.4, 8]
+			},
+			"faces": {
+				"east": {
+					"uv": [2, 7.42098, 14, 7.77902],
+					"texture": "#material_bright_steel"
+				},
+				"west": {
+					"uv": [2, 7.42098, 14, 7.77902],
+					"texture": "#material_bright_steel"
+				}
+			}
+		},
+		{
+			"name": "crank_shaft_5",
+			"from": [22.82098, 7.5, 2],
+			"to": [23.17902, 9.3, 14],
+			"rotation": {
+				"angle": 0,
+				"axis": "y",
+				"origin": [8, 8, 8]
+			},
+			"faces": {
+				"up": {
+					"uv": [6.82098, 2, 7.17902, 14],
+					"texture": "#material_bright_steel"
+				},
+				"down": {
+					"uv": [6.82098, 2, 7.17902, 14],
+					"texture": "#material_bright_steel"
+				}
+			}
+		},
+		{
+			"name": "crank_shaft_6",
+			"from": [22.82098, 7.5, 2],
+			"to": [23.17902, 9.3, 14],
+			"rotation": {
+				"angle": 22.5,
+				"axis": "z",
+				"origin": [23, 8.4, 8]
+			},
+			"faces": {
+				"up": {
+					"uv": [6.82098, 2, 7.17902, 14],
+					"texture": "#material_bright_steel"
+				},
+				"down": {
+					"uv": [6.82098, 2, 7.17902, 14],
+					"texture": "#material_bright_steel"
+				}
+			}
+		},
+		{
+			"name": "crank_shaft_7",
+			"from": [22.82098, 7.5, 2],
+			"to": [23.17902, 9.3, 14],
+			"rotation": {
+				"angle": -22.5,
+				"axis": "z",
+				"origin": [23, 8.4, 8]
+			},
+			"faces": {
+				"up": {
+					"uv": [6.82098, 2, 7.17902, 14],
+					"texture": "#material_bright_steel"
+				},
+				"down": {
+					"uv": [6.82098, 2, 7.17902, 14],
+					"texture": "#material_bright_steel"
+				}
+			}
+		},
+		{
+			"name": "brake_drum",
+			"from": [17.4, 5, 11.6],
+			"to": [19.6, 9, 13],
+			"rotation": {
+				"angle": 0,
+				"axis": "y",
+				"origin": [8, 8, 8]
+			},
+			"faces": {
+				"north": {
+					"uv": [12.4, 7, 14.6, 11],
+					"texture": "#material_cast_iron"
+				},
+				"east": {
+					"uv": [3, 7, 4.4, 11],
+					"texture": "#material_cast_iron"
+				},
+				"south": {
+					"uv": [1.4, 7, 3.6, 11],
+					"texture": "#material_cast_iron"
+				},
+				"west": {
+					"uv": [11.6, 7, 13, 11],
+					"texture": "#material_cast_iron"
+				},
+				"up": {
+					"uv": [1.4, 11.6, 3.6, 13],
+					"texture": "#material_cast_iron"
+				},
+				"down": {
+					"uv": [1.4, 3, 3.6, 4.4],
+					"texture": "#material_cast_iron"
+				}
+			}
+		},
+		{
+			"name": "brake_lever",
+			"from": [14, 2.8, 12],
+			"to": [14.6, 10, 12.6],
+			"rotation": {
+				"angle": 0,
+				"axis": "y",
+				"origin": [8, 8, 8]
+			},
+			"faces": {
+				"north": {
+					"uv": [1.4, 6, 2, 13.2],
+					"texture": "#material_paint_red"
+				},
+				"east": {
+					"uv": [3.4, 6, 4, 13.2],
+					"texture": "#material_paint_red"
+				},
+				"south": {
+					"uv": [14, 6, 14.6, 13.2],
+					"texture": "#material_paint_red"
+				},
+				"west": {
+					"uv": [12, 6, 12.6, 13.2],
+					"texture": "#material_paint_red"
+				},
+				"up": {
+					"uv": [14, 12, 14.6, 12.6],
+					"texture": "#material_paint_red"
+				},
+				"down": {
+					"uv": [14, 3.4, 14.6, 4],
+					"texture": "#material_paint_red"
+				}
+			}
+		},
+		{
+			"name": "motor_rail_11.6",
+			"from": [27, 1.2, 11.6],
+			"to": [32, 2, 12.4],
+			"rotation": {
+				"angle": 0,
+				"axis": "y",
+				"origin": [8, 8, 8]
+			},
+			"faces": {
+				"north": {
+					"uv": [0, 14, 5, 14.8],
+					"texture": "#plant_structure"
+				},
+				"east": {
+					"uv": [3.6, 14, 4.4, 14.8],
+					"texture": "#plant_structure"
+				},
+				"south": {
+					"uv": [11, 14, 16, 14.8],
+					"texture": "#plant_structure"
+				},
+				"west": {
+					"uv": [11.6, 14, 12.4, 14.8],
+					"texture": "#plant_structure"
+				},
+				"up": {
+					"uv": [11, 11.6, 16, 12.4],
+					"texture": "#plant_structure"
+				},
+				"down": {
+					"uv": [11, 3.6, 16, 4.4],
+					"texture": "#plant_structure"
+				}
+			}
+		},
+		{
+			"name": "motor_rail_14",
+			"from": [27, 1.2, 14],
+			"to": [32, 2, 14.8],
+			"rotation": {
+				"angle": 0,
+				"axis": "y",
+				"origin": [8, 8, 8]
+			},
+			"faces": {
+				"north": {
+					"uv": [0, 14, 5, 14.8],
+					"texture": "#plant_structure"
+				},
+				"east": {
+					"uv": [1.2, 14, 2, 14.8],
+					"texture": "#plant_structure"
+				},
+				"south": {
+					"uv": [11, 14, 16, 14.8],
+					"texture": "#plant_structure"
+				},
+				"west": {
+					"uv": [14, 14, 14.8, 14.8],
+					"texture": "#plant_structure"
+				},
+				"up": {
+					"uv": [11, 14, 16, 14.8],
+					"texture": "#plant_structure"
+				},
+				"down": {
+					"uv": [11, 1.2, 16, 2],
+					"texture": "#plant_structure"
 				}
 			}
 		},
 		{
 			"name": "motor",
-			"from": [20, 3, 2],
-			"to": [30, 11, 12],
+			"from": [27.6, 2, 11.6],
+			"to": [31.6, 6.6, 15.4],
 			"rotation": {
 				"angle": 0,
 				"axis": "y",
@@ -90,35 +615,35 @@
 			},
 			"faces": {
 				"north": {
-					"uv": [0, 0, 10, 8],
-					"texture": "#mb"
+					"uv": [0.4, 9.4, 4.4, 14],
+					"texture": "#plant_blue"
 				},
 				"east": {
-					"uv": [0, 0, 10, 8],
-					"texture": "#mb"
+					"uv": [0.6, 9.4, 4.4, 14],
+					"texture": "#plant_blue"
 				},
 				"south": {
-					"uv": [0, 0, 10, 8],
-					"texture": "#mb"
+					"uv": [11.6, 9.4, 15.6, 14],
+					"texture": "#plant_blue"
 				},
 				"west": {
-					"uv": [0, 0, 10, 8],
-					"texture": "#mb"
+					"uv": [11.6, 9.4, 15.4, 14],
+					"texture": "#plant_blue"
 				},
 				"up": {
-					"uv": [0, 0, 10, 10],
-					"texture": "#mb"
+					"uv": [11.6, 11.6, 15.6, 15.4],
+					"texture": "#plant_blue"
 				},
 				"down": {
-					"uv": [0, 0, 10, 10],
-					"texture": "#mb"
+					"uv": [11.6, 0.6, 15.6, 4.4],
+					"texture": "#plant_blue"
 				}
 			}
 		},
 		{
 			"name": "belt_guard",
-			"from": [16, 6, -2],
-			"to": [22, 14, 2],
+			"from": [21.6, 3, 11.6],
+			"to": [27.6, 9.6, 13.4],
 			"rotation": {
 				"angle": 0,
 				"axis": "y",
@@ -126,28 +651,28 @@
 			},
 			"faces": {
 				"north": {
-					"uv": [0, 0, 6, 8],
-					"texture": "#ye"
+					"uv": [4.4, 6.4, 10.4, 13],
+					"texture": "#plant_yellow"
 				},
 				"east": {
-					"uv": [0, 0, 4, 8],
-					"texture": "#ye"
+					"uv": [2.6, 6.4, 4.4, 13],
+					"texture": "#plant_yellow"
 				},
 				"south": {
-					"uv": [0, 0, 6, 8],
-					"texture": "#ye"
+					"uv": [5.6, 6.4, 11.6, 13],
+					"texture": "#plant_yellow"
 				},
 				"west": {
-					"uv": [0, 0, 4, 8],
-					"texture": "#ye"
+					"uv": [11.6, 6.4, 13.4, 13],
+					"texture": "#plant_yellow"
 				},
 				"up": {
-					"uv": [0, 0, 6, 4],
-					"texture": "#ye"
+					"uv": [5.6, 11.6, 11.6, 13.4],
+					"texture": "#plant_yellow"
 				},
 				"down": {
-					"uv": [0, 0, 6, 4],
-					"texture": "#ye"
+					"uv": [5.6, 2.6, 11.6, 4.4],
+					"texture": "#plant_yellow"
 				}
 			}
 		}

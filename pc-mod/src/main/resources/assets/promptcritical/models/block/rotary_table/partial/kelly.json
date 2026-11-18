@@ -1,15 +1,14 @@
 {
 	"credit": "Made with Blockbench",
 	"textures": {
-		"particle": "promptcritical:block/common/steel_bare",
-		"st": "promptcritical:block/common/steel_bare",
-		"ye": "promptcritical:block/common/w2_yellow"
+		"plant_structure": "promptcritical:block/plant/structure",
+		"material_paint_red": "promptcritical:block/material/paint_red"
 	},
 	"elements": [
 		{
-			"name": "kelly",
-			"from": [6.5, 0, 6.5],
-			"to": [9.5, 32, 9.5],
+			"name": "kelly_0",
+			"from": [6.4, 15.6, 6.4],
+			"to": [9.6, 16, 9.6],
 			"rotation": {
 				"angle": 0,
 				"axis": "y",
@@ -17,35 +16,35 @@
 			},
 			"faces": {
 				"north": {
-					"uv": [0, 0, 3, 16],
-					"texture": "#st"
+					"uv": [6.4, 0, 9.6, 0.4],
+					"texture": "#plant_structure"
 				},
 				"east": {
-					"uv": [0, 0, 3, 16],
-					"texture": "#st"
+					"uv": [6.4, 0, 9.6, 0.4],
+					"texture": "#plant_structure"
 				},
 				"south": {
-					"uv": [0, 0, 3, 16],
-					"texture": "#st"
+					"uv": [6.4, 0, 9.6, 0.4],
+					"texture": "#plant_structure"
 				},
 				"west": {
-					"uv": [0, 0, 3, 16],
-					"texture": "#st"
+					"uv": [6.4, 0, 9.6, 0.4],
+					"texture": "#plant_structure"
 				},
 				"up": {
-					"uv": [0, 0, 3, 3],
-					"texture": "#st"
+					"uv": [6.4, 6.4, 9.6, 9.6],
+					"texture": "#plant_structure"
 				},
 				"down": {
-					"uv": [0, 0, 3, 3],
-					"texture": "#st"
+					"uv": [6.4, 6.4, 9.6, 9.6],
+					"texture": "#plant_structure"
 				}
 			}
 		},
 		{
-			"name": "swivel",
-			"from": [5, 28, 5],
-			"to": [11, 32, 11],
+			"name": "kelly_1",
+			"from": [6.4, 16, 6.4],
+			"to": [9.6, 32, 9.6],
 			"rotation": {
 				"angle": 0,
 				"axis": "y",
@@ -53,28 +52,64 @@
 			},
 			"faces": {
 				"north": {
-					"uv": [0, 0, 6, 4],
-					"texture": "#ye"
+					"uv": [6.4, 0, 9.6, 16],
+					"texture": "#plant_structure"
 				},
 				"east": {
-					"uv": [0, 0, 6, 4],
-					"texture": "#ye"
+					"uv": [6.4, 0, 9.6, 16],
+					"texture": "#plant_structure"
 				},
 				"south": {
-					"uv": [0, 0, 6, 4],
-					"texture": "#ye"
+					"uv": [6.4, 0, 9.6, 16],
+					"texture": "#plant_structure"
 				},
 				"west": {
-					"uv": [0, 0, 6, 4],
-					"texture": "#ye"
+					"uv": [6.4, 0, 9.6, 16],
+					"texture": "#plant_structure"
 				},
 				"up": {
-					"uv": [0, 0, 6, 6],
-					"texture": "#ye"
+					"uv": [6.4, 6.4, 9.6, 9.6],
+					"texture": "#plant_structure"
 				},
 				"down": {
-					"uv": [0, 0, 6, 6],
-					"texture": "#ye"
+					"uv": [6.4, 6.4, 9.6, 9.6],
+					"texture": "#plant_structure"
+				}
+			}
+		},
+		{
+			"name": "kelly_cock",
+			"from": [6, 30, 6],
+			"to": [10, 32, 10],
+			"rotation": {
+				"angle": 0,
+				"axis": "y",
+				"origin": [8, 8, 8]
+			},
+			"faces": {
+				"north": {
+					"uv": [6, 0, 10, 2],
+					"texture": "#material_paint_red"
+				},
+				"east": {
+					"uv": [6, 0, 10, 2],
+					"texture": "#material_paint_red"
+				},
+				"south": {
+					"uv": [6, 0, 10, 2],
+					"texture": "#material_paint_red"
+				},
+				"west": {
+					"uv": [6, 0, 10, 2],
+					"texture": "#material_paint_red"
+				},
+				"up": {
+					"uv": [6, 6, 10, 10],
+					"texture": "#material_paint_red"
+				},
+				"down": {
+					"uv": [6, 6, 10, 10],
+					"texture": "#material_paint_red"
 				}
 			}
 		}

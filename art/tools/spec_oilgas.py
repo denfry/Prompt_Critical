@@ -52,9 +52,7 @@ m("seismic_vibrator", "oil_exploration", [
 m("seismic_vibrator/eccentric_rotor", "oil_exploration", shaft("x", 1.25, 0, 32, c=(16, 8, 16))
   + [el("weight_1", [9, 8, 13], [13, 13, 19], "d"), el("weight_2", [19, 8, 13], [23, 13, 19], "d")], kind="partial")
 
-m("geophone", "oil_exploration", [el("spike", [7.5, 0, 7.5], [8.5, 3, 8.5], "st"),
-                                  el("case", [6, 3, 6], [10, 8, 10], "or"),
-                                  el("connector", [10, 6, 7], [11.5, 7.5, 9], "dg")])
+# нарисовано вручную в Blockbench: art/blockbench/drilling/oil_field.author.js
 
 
 # сейсмостанция нарисована вручную в Blockbench: art/blockbench/drilling/rig_floor.author.js
@@ -110,8 +108,9 @@ def derrick(part="middle", formed=True):
     return els
 
 
-for _p in ("bottom", "middle", "top"):
-    m("derrick_segment" + ("" if _p == "middle" else "_" + _p), "drilling", derrick(_p))
+# секция вышки derrick_segment нарисована вручную в Blockbench: art/blockbench/drilling/oil_field.author.js
+for _p in ("bottom", "top"):
+    m("derrick_segment_" + _p, "drilling", derrick(_p))
 m("derrick_segment_unformed", "drilling", derrick("bottom", False))
 
 m("crown_block", "drilling", [el("frame_w", [-16, 0, -8], [-12, 8, 24], "ye"), el("frame_e", [28, 0, -8], [32, 8, 24], "ye"),
@@ -132,15 +131,11 @@ def floor(formed):
 m("drill_floor", "drilling", floor(False))
 m("drill_floor_formed", "drilling", floor(True))
 
-m("rotary_table", "drilling", [el("base", [0, 0, 0], [16, 12, 16], "dg"),
-                               el("drive_housing", [12, 2, 4], [16, 10, 12], "dg")])
-m("rotary_table/turntable", "drilling", vcyl("table", 8, 8, 7, 12, 15, "st") + [
-    el("bushing", [5, 15, 5], [11, 15.5, 11], "d")], kind="partial")
+# нарисовано вручную в Blockbench: art/blockbench/drilling/oil_field.author.js
 m("rotary_table/traveling_block", "drilling", [
     el("block", [4, 4, 5], [12, 16, 11], "ye"), el("hook_shank", [7, 0, 7], [9, 4, 9], "st"),
     el("hook", [6, -3, 7], [10, 0, 9], "st")] + hcyl("sheaves", "x", 4, 4.5, 11.5, "st", c=(8, 11, 8), sides=8), kind="partial")
-m("rotary_table/kelly", "drilling", [el("kelly", [6.5, 0, 6.5], [9.5, 32, 9.5], "st"),
-                                     el("swivel", [5, 32 - 4, 5], [11, 32, 11], "ye")], kind="partial")
+# нарисовано вручную в Blockbench: art/blockbench/drilling/oil_field.author.js
 m("rotary_table/drill_stand", "drilling", vcyl("pipe", 8, 8, 1.5, 0, 31.9, "blu", 8)
   + vcyl("tool_joint", 8, 8, 2, 28, 31.9, "st", 8), kind="partial")
 m("top_drive/motor", "drilling", [el("motor", [3, 6, 3], [13, 28, 13], "rd"),
@@ -149,13 +144,7 @@ m("top_drive/motor", "drilling", [el("motor", [3, 6, 3], [13, 28, 13], "rd"),
   kind="partial")
 
 # лебёдка ЛБУ-1200 3×2×2: жёлтый корпус; барабан — partial (ось X), ленточный тормоз — partial
-m("drawworks", "drilling", [
-    el("skid", [-16, 0, 0], [32, 2, 32], "d"),
-    el("housing_w", [-16, 2, 2], [-10, 24, 30], "ye"), el("housing_e", [26, 2, 2], [32, 24, 30], "ye"),
-    el("guard", [-10, 20, 18], [26, 26, 30], "ye"),
-    el("motor", [26, 2, 30 - 12], [32, 14, 30], "mb"),
-    el("brake_lever", [-10, 18, 2], [-8, 30, 4], "rd"),
-])
+# нарисовано вручную в Blockbench: art/blockbench/drilling/oil_field.author.js
 m("drawworks/drum", "drilling", drum("x", 7, -10, 26, "rope", c=(8, 12, 14)), kind="partial")
 m("drawworks/brake_band", "drilling", hcyl("band_w", "x", 9.5, -10, -8, "d", c=(8, 12, 14), sides=8)
   + hcyl("band_e", "x", 9.5, 24, 26, "d", c=(8, 12, 14), sides=8), kind="partial")
@@ -170,9 +159,7 @@ def triplex(frame_tex="rd", fluid_tex="st", extra=()):
         vcyl("dampener_1", 16, 22, 2.5, 14, 24, "rd", 8) + vcyl("dampener_2", 24, 22, 2.5, 14, 22, "st", 8) + list(extra)
 
 
-m("mud_pump", "drilling", triplex())
-m("mud_pump/crankshaft", "drilling", shaft("x", 1.5, -16, 10, c=(8, 10, 18))
-  + hcyl("bull_gear", "x", 6, -12, -10, "d", c=(8, 10, 18)), kind="partial")
+# нарисовано вручную в Blockbench: art/blockbench/drilling/oil_field.author.js
 m("mud_pump/piston", "drilling", hcyl("rod", "z", 1, 0, 10, "sss", c=(16, 8, 8), sides=8)
   + hcyl("crosshead", "z", 2, 0, 3, "d", c=(16, 8, 8), sides=8), kind="partial")
 
@@ -192,10 +179,7 @@ m("shale_shaker/screen_deck", "drilling", [el("screen", [3, 8, 2], [25, 9, 14], 
 
 m("mud_degasser", "drilling", legs(2, 14, 2, 14, 4, 1) + vvessel("vessel", 5.5, 4, 28, "dg", skirt=False)
   + [el("vacuum_pump", [12, 0, 1], [16, 6, 7], "mb")] + nozzle("gas_vent", "x", 16, (8, 24, 8), 1, "gas"))
-m("mud_mixing_hopper", "drilling", [el("stand", [3, 0, 3], [13, 6, 13], "st")]
-  + [el("hopper", [2, 8, 2], [14, 14, 14], "st"), el("cone", [5, 6, 5], [11, 8, 11], "st")]
-  + hcyl("eductor", "x", 1.5, 0, 16, "st", c=(8, 3, 8), sides=8)
-  + [el("sack_1", [9, 14, 3], [13, 16, 8], "bei"), el("sack_2", [3, 14, 8], [8, 15.5, 13], "bei")])
+# нарисовано вручную в Blockbench: art/blockbench/drilling/oil_field.author.js
 m("mud_gas_separator", "drilling", vvessel("vessel", 5, -16, 26, "st")
   + nozzle("inlet", "z", 0, (8, -4, 8), 1.2, "st") + vcyl("vent_line", 8, 8, 1.2, 26, 31.9, "gasr", 8))
 
@@ -210,8 +194,7 @@ def bop_annular(closed):
     return els
 
 
-m("bop_annular", "drilling", bop_annular(False))
-m("bop_annular_closed", "drilling", bop_annular(True))
+# нарисовано вручную в Blockbench: art/blockbench/drilling/oil_field.author.js
 
 
 def bop_ram(ram="pipe", closed=False):
@@ -251,7 +234,7 @@ def manifold(width=32, chokes=True):
     return els
 
 
-m("choke_manifold", "drilling", manifold())
+# нарисовано вручную в Blockbench: art/blockbench/drilling/oil_field.author.js
 m("choke_manifold/handwheel", "drilling", hcyl("stem", "z", 0.5, 0, 2, "st", c=(26.5, 5, 0), sides=8)
   + hcyl("wheel", "z", 2.5, -0.5, 0, "rd", c=(26.5, 5, 0), sides=8), kind="partial")
 m("kill_manifold", "drilling", manifold(16, False) + [el("check_valve", [10, 2, 10], [15, 6, 14], "st")])
@@ -301,9 +284,7 @@ m("cable_tool_rig/walking_beam", "drilling", [el("beam", [-14, 22, 7], [30, 25, 
 # ======================================================================
 # добыча
 # ======================================================================
-m("wellhead", "oil_production", vcyl("casing_head", 8, 8, 6, 0, 8, "st") + vcyl("flange", 8, 8, 7, 8, 10, "d", 8)
-  + vcyl("tubing_head", 8, 8, 4.5, 10, 16, "st", 8)
-  + nozzle("outlet_w", "x", 0, (8, 5, 8), 1.4, "st") + nozzle("outlet_e", "x", 16, (8, 5, 8), 1.4, "st"))
+# нарисовано вручную в Blockbench: art/blockbench/drilling/oil_field.author.js
 
 
 def xmas(master_closed=False, wing_closed=False):
@@ -321,19 +302,12 @@ def xmas(master_closed=False, wing_closed=False):
     return els
 
 
-m("christmas_tree", "oil_production", xmas())
-m("christmas_tree_master_closed", "oil_production", xmas(master_closed=True))
-m("christmas_tree_wing_closed", "oil_production", xmas(wing_closed=True))
+# нарисовано вручную в Blockbench: art/blockbench/drilling/oil_field.author.js
 m("christmas_tree/choke_handwheel", "oil_production", hcyl("wheel", "x", 2, 15.5, 16, "rd", c=(8, 19, 8), sides=8)
   + hcyl("stem", "x", 0.4, 14.5, 15.5, "st", c=(8, 19, 8), sides=8), kind="partial")
 
 # станок-качалка СКД8: основание с редуктором и кривошипом, стойка, головка балансира
-m("pumpjack_gearbox", "oil_production", [
-    el("base", [-16, 0, -12], [32, 3, 28], "pgb"),
-    el("gearbox", [0, 3, 0], [16, 16, 16], "pgb"),
-    el("motor", [20, 3, 2], [30, 11, 12], "mb"),
-    el("belt_guard", [16, 6, -2], [22, 14, 2], "ye"),
-])
+# нарисовано вручную в Blockbench: art/blockbench/drilling/oil_field.author.js
 m("pumpjack_gearbox_samson", "oil_production", [
     el("leg_n", [4, -16, -10], [8, 28, -6], "pgb", rot=("x", 22.5, [6, -16, -8])),
     el("leg_s", [4, -16, 22], [8, 28, 26], "pgb", rot=("x", -22.5, [6, -16, 24])),
@@ -341,15 +315,7 @@ m("pumpjack_gearbox_samson", "oil_production", [
 ])
 m("pumpjack_gearbox_head", "oil_production", [el("head", [-16, -8, 2], [-6, 16, 14], "pgb"),
                                               el("hanger", [-15, -16, 7], [-14, -8, 9], "rope")])
-m("pumpjack_gearbox/crank_counterweight", "oil_production", [
-    el("crank_n", [-8, 4, -2], [24, 12, 0], "pgb"), el("crank_s", [-8, 4, 16], [24, 12, 18], "pgb"),
-    el("weight_n", [-14, 2, -3], [-4, 14, 0], "h"), el("weight_s", [-14, 2, 16], [-4, 14, 19], "h"),
-] + shaft("z", 1.5, -4, 20), kind="partial")
-m("pumpjack_gearbox/walking_beam", "oil_production", [el("beam", [-16, 6, 6], [32, 10, 10], "pgb"),
-                                                      el("equalizer", [24, 4, 2], [28, 6, 14], "pgb")], kind="partial")
-m("pumpjack_gearbox/pitman_arm", "oil_production", [el("arm", [7, -16, 7], [9, 16, 9], "pgb")], kind="partial")
-m("pumpjack_gearbox/polished_rod", "oil_production", vcyl("rod", 8, 8, 0.5, 0, 16, "sss", 8)
-  + [el("carrier_bar", [5, 15, 7], [11, 16, 9], "st")], kind="partial")
+# нарисовано вручную в Blockbench: art/blockbench/drilling/oil_field.author.js
 
 
 def pj_frame(formed):
@@ -382,7 +348,7 @@ def hseparator(tex="sb", extra=()):
     return els + list(extra)
 
 
-m("three_phase_separator", "oil_production", hseparator())
+# нарисовано вручную в Blockbench: art/blockbench/drilling/oil_field.author.js
 
 
 def desalter(powered):

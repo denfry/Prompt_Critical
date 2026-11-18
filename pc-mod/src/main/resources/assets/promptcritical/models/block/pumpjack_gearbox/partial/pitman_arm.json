@@ -1,43 +1,79 @@
 {
 	"credit": "Made with Blockbench",
 	"textures": {
-		"particle": "promptcritical:block/common/oil_pump_grey_blue",
-		"pgb": "promptcritical:block/common/oil_pump_grey_blue"
+		"particle": "promptcritical:block/oil/pump_paint",
+		"oil_pump_paint": "promptcritical:block/oil/pump_paint"
 	},
 	"elements": [
 		{
-			"name": "arm",
-			"from": [7, -16, 7],
-			"to": [9, 16, 9],
+			"name": "pitman_n",
+			"from": [21.15, 8.6, 2.2],
+			"to": [22.35, 24, 3],
 			"rotation": {
-				"angle": 0,
-				"axis": "y",
-				"origin": [8, 8, 8]
+				"angle": -22.5,
+				"axis": "z",
+				"origin": [21.75, 16.3, 8]
 			},
 			"faces": {
 				"north": {
-					"uv": [0, 0, 2, 16],
-					"texture": "#pgb"
+					"uv": [9.65, 8, 10.85, 16],
+					"texture": "#oil_pump_paint"
 				},
 				"east": {
-					"uv": [0, 0, 2, 16],
-					"texture": "#pgb"
+					"uv": [13, 8, 13.8, 16],
+					"texture": "#oil_pump_paint"
 				},
 				"south": {
-					"uv": [0, 0, 2, 16],
-					"texture": "#pgb"
+					"uv": [5.15, 8, 6.35, 16],
+					"texture": "#oil_pump_paint"
 				},
 				"west": {
-					"uv": [0, 0, 2, 16],
-					"texture": "#pgb"
+					"uv": [2.2, 8, 3, 16],
+					"texture": "#oil_pump_paint"
 				},
 				"up": {
-					"uv": [0, 0, 2, 2],
-					"texture": "#pgb"
+					"uv": [5.15, 2.2, 6.35, 3],
+					"texture": "#oil_pump_paint"
 				},
 				"down": {
-					"uv": [0, 0, 2, 2],
-					"texture": "#pgb"
+					"uv": [5.15, 13, 6.35, 13.8],
+					"texture": "#oil_pump_paint"
+				}
+			}
+		},
+		{
+			"name": "pitman_s",
+			"from": [21.15, 8.6, 13],
+			"to": [22.35, 24, 13.8],
+			"rotation": {
+				"angle": -22.5,
+				"axis": "z",
+				"origin": [21.75, 16.3, 8]
+			},
+			"faces": {
+				"north": {
+					"uv": [9.65, 8, 10.85, 16],
+					"texture": "#oil_pump_paint"
+				},
+				"east": {
+					"uv": [2.2, 8, 3, 16],
+					"texture": "#oil_pump_paint"
+				},
+				"south": {
+					"uv": [5.15, 8, 6.35, 16],
+					"texture": "#oil_pump_paint"
+				},
+				"west": {
+					"uv": [13, 8, 13.8, 16],
+					"texture": "#oil_pump_paint"
+				},
+				"up": {
+					"uv": [5.15, 13, 6.35, 13.8],
+					"texture": "#oil_pump_paint"
+				},
+				"down": {
+					"uv": [5.15, 2.2, 6.35, 3],
+					"texture": "#oil_pump_paint"
 				}
 			}
 		}
