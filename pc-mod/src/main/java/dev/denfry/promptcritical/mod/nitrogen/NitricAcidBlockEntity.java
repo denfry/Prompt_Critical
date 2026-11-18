@@ -129,6 +129,19 @@ public final class NitricAcidBlockEntity extends KineticMachineBlockEntity<Shaft
         return NOMINAL_RPM;
     }
 
+    /**
+     * Эффекты на клиенте (точки — art/blockbench/reagents/nitric_acid_unit.author.js): из линии хвостовых газов над
+     * абсорбционной колонной курится остаток, у смотрового стекла сетки дрожит жар.
+     */
+    @Override
+    protected void clientTick() {
+        if (!runningState()) return;
+        dev.denfry.promptcritical.mod.fx.MachineFx fx = fx();
+        if (fx == null) return;
+        if (fx.chance(2)) fx.wisp(fx.at(29.3, 16, 9.9), 0.1);
+        if (fx.chance(1)) fx.wisp(fx.at(-8, 13, 1.4), 0.2);
+    }
+
     @Override
     protected void serverTick(SimLevelBinding binding, ShaftInput u) {
         tick = binding.world().clock().tick();

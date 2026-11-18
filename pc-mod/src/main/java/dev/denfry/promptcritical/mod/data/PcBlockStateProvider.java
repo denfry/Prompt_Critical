@@ -259,7 +259,7 @@ public final class PcBlockStateProvider extends BlockStateProvider {
             case "steam_reformer" -> s.getValue(BlockStateProperties.LIT) ? "tube_furnace_radiant_catalyst_lit" : "tube_furnace_radiant_catalyst";
             case "co2_absorber" -> "absorption_tower";
             case "ammonia_converter" -> "ammonia_synthesis_reactor";
-            case "nitric_acid_unit" -> "ostwald_converter";
+            case "nitric_acid_unit", "chlor_alkali_cell" -> s.getValue(PcProperties.RUNNING) ? id + "_running" : id;
             case "acid_concentrator" -> "fractionating_column";
             // химия I3, метанол
             case "methanol_converter" -> "fixed_bed_reactor";

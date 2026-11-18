@@ -125,6 +125,10 @@ public final class MachineSoundscape {
             case dev.denfry.promptcritical.mod.chem.LdpeReactorBlockEntity r -> running || n > 0 ? new Loop(PcSfx.PUMP, 0.5f + 0.4f * Math.min(1, n), 0.5f + 0.3f * Math.min(1, n)) : null;
             // гидроочистка: сырьевой насос и циркуляционный компрессор водорода за стеной
             case dev.denfry.promptcritical.mod.refinery.HydrotreaterBlockEntity h -> running ? new Loop(PcSfx.PUMP, 0.3f, 1.1f) : null;
+            // воздушный компрессор агрегата азотной кислоты: гул улитки, выше с оборотами
+            case dev.denfry.promptcritical.mod.nitrogen.NitricAcidBlockEntity a -> running || n > 0 ? new Loop(PcSfx.MINE_FAN, 0.6f, 0.8f + 0.4f * Math.min(1, n)) : null;
+            // электролизёр: гудит выпрямленный ток в шинах и выпрямитель
+            case dev.denfry.promptcritical.mod.chlor.CellRoomBlockEntity c -> running ? new Loop(PcSfx.TRANSFORMER_HUM, 0.3f, 1) : null;
             default -> null;
         };
     }

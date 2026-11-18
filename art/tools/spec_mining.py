@@ -542,15 +542,7 @@ mk("mg_electrolysis_cell", "reagents", [
     el("glow_tap_port", [6.5, 4.25, 0.5], [9.5, 5.75, 0.75], "fire"),
 ], {"side": "block/mg_electrolysis_cell_side.png"})
 
-mk("chlor_alkali_cell", "reagents",
-   [el("skid", [0, 0, 0.5], [16, 1.5, 15.5], "d"),
-    el("cells", [1, 1.5, 2], [15, 11, 14], "cells"),
-    el("busbar_w", [0, 4, 5], [1, 10, 11], "cu"),
-    el("busbar_e", [15, 4, 5], [16, 10, 11], "cu")]
-   + disc("cl2_header", "x", 1.2, 0.5, 15.5, "gas", sides=8, c=(8, 12.3, 4.5))
-   + disc("h2_header", "x", 1.2, 0.5, 15.5, "h2", sides=8, c=(8, 12.3, 8))
-   + disc("naoh_header", "x", 1.2, 0.5, 15.5, "alk", sides=8, c=(8, 12.3, 11.5)),
-   {"cells": "block/chlor_alkali_cell_front.png"})
+# хлорно-щелочной электролизёр нарисован вручную в Blockbench: art/blockbench/chlor_alkali/chlor_alkali_cell.author.js
 
 mk("process_heater", "reagents", [
     el("body", [0, 0, 0.5], [16, 16, 16], "p"),
