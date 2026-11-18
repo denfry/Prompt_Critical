@@ -29,7 +29,7 @@ public final class AccountingGameTests {
         led.record("test_boiler", EmissionLedger.Category.BOILER, EmissionLedger.Pollutant.CO2, tonnes * 1000, 1);
     }
 
-    @GameTest(template = LARGE, timeoutTicks = 100)
+    @GameTest(template = LARGE, timeoutTicks = 100, batch = "accounting_alone")
     public static void quotasDeclineAndAShortfallIsFinedAndContractsSettle(GameTestHelper h) {
         var server = h.getLevel().getServer();
         PlantAccounting acct = PlantAccounting.get(server);

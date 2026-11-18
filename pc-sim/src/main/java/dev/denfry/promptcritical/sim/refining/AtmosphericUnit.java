@@ -47,8 +47,9 @@ public record AtmosphericUnit(double stagesPerSection, double reflux, double fur
      * @param overlapK     наложение соседних продуктов: бензин/керосин, керосин/дизель, дизель/мазут, К
      * @param vaporized    доля отгона в зоне питания
      * @param dutyJPerKg   тепло печи на кг нефти
+     * @param residueSlices узкие фракции нефти, ушедшие в мазут, доли по массе на кг нефти (сырьё вакуумной колонны)
      */
-    public record Result(double[] yields, double[] overlapK, double vaporized, double dutyJPerKg) {
+    public record Result(double[] yields, double[] overlapK, double vaporized, double dutyJPerKg, double[] residueSlices) {
         public double yield(Product p) {
             return yields[p.ordinal()];
         }
@@ -79,7 +80,9 @@ public record AtmosphericUnit(double stagesPerSection, double reflux, double fur
         for (int k = 0; k < m - 1; k++) overlap[k] = percentile(tb, w, split[k], 0.95) - percentile(tb, w, split[k + 1], 0.05);
         double distillate = yields[Product.GASOLINE.ordinal()];
         double duty = CP_J_KG_K * (furnaceOutletK - FEED_K) + vaporized * LATENT_J_KG + reflux * distillate * LATENT_J_KG;
-        return new Result(yields, overlap, vaporized, duty);
+        double[] residue = new double[n];
+        for (int i = 0; i < n; i++) residue[i] = split[m - 1][i] * w[i];
+        return new Result(yields, overlap, vaporized, duty, residue);
     }
 
     /** Температура, до которой выкипает доля {@code q} продукта (по его узким фракциям), К. */

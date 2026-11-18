@@ -82,6 +82,10 @@ public final class DeviceProfiles {
         for (String c : List.of("CrudeColumnBlockEntity", "MethanolColumnBlockEntity", "HeavyWaterColumnBlockEntity", "GsExchangeTowerBlockEntity",
                 "NglFractionatorBlockEntity")) GENERIC.put(c, "pc_column");
         GENERIC.put("SeparatorBlockEntity", "pc_tank");
+        // подготовка и углубление переработки НПЗ, ГПЗ (09 §9.7.3, §9.9–9.10)
+        GENERIC.put("VacuumColumnBlockEntity", "pc_column");
+        for (String c : List.of("DesalterBlockEntity", "FccUnitBlockEntity", "AmineUnitBlockEntity", "QualityLabBlockEntity"))
+            GENERIC.put(c, "pc_chem_process");
         GENERIC.put("CascadeBlockEntity", "pc_cascade");
         for (String c : List.of("MainMineFanBlockEntity", "LampRackBlockEntity")) GENERIC.put(c, "pc_mine");
         GENERIC.put("FuelRackBlockEntity", "pc_fuel_pool");
@@ -154,11 +158,36 @@ public final class DeviceProfiles {
                     .button("spmDown", DrillingPanels.B_SPM_DOWN).button("spmUp", DrillingPanels.B_SPM_UP)
                     .button("toggleBop", DrillingPanels.B_BOP).button("advanceKill", DrillingPanels.B_KILL)
                     .button("zeroPitTotalizer", DrillingPanels.B_ZERO).build());
+            case "GasolineBlenderBlockEntity" -> CACHE.computeIfAbsent(simple, k -> blender());
             default -> {
                 String type = GENERIC.getOrDefault(simple, "pc_device");
                 yield CACHE.computeIfAbsent(simple, k -> generic(type, subtype(simple)));
             }
         };
+    }
+
+    /**
+     * Станция смешения бензина (09 §9.9.14): {@code pc_tank} с задачей ЛП — {@code getBlendData()} ({@code BlendOptimizerInput},
+     * анализатор, паспорт), рецепт {@code setValves(lsr, reformate, fcc, butane)} в м³/ч, марка и калибровка — кнопками.
+     */
+    private static DeviceProfile blender() {
+        return DeviceProfile.builder("pc_tank", "GASOLINE_BLENDER")
+                .read("getBlendData", 4, (b, s, a) -> ((dev.denfry.promptcritical.mod.refinery.GasolineBlenderBlockEntity) b).blendData())
+                .command("setValves", a -> {
+                    double[] v = new double[dev.denfry.promptcritical.mod.refinery.GasolineBlenderBlockEntity.COMPONENTS.size()];
+                    for (int i = 0; i < v.length; i++) {
+                        v[i] = LuaArgs.finite(a, i);
+                        if (v[i] < 0 || v[i] > dev.denfry.promptcritical.mod.refinery.GasolineBlenderBlockEntity.VALVE_MAX_M3H)
+                            throw new DeviceException(DeviceException.RANGE, "valve " + (i + 1) + " outside 0…"
+                                    + dev.denfry.promptcritical.mod.refinery.GasolineBlenderBlockEntity.VALVE_MAX_M3H + " m3/h");
+                    }
+                    return be -> {
+                        var bl = (dev.denfry.promptcritical.mod.refinery.GasolineBlenderBlockEntity) be;
+                        for (int i = 0; i < v.length; i++) bl.setValve(i, v[i]);
+                    };
+                })
+                .button("toggleGrade", dev.denfry.promptcritical.mod.refinery.ConversionPanels.B_UP2)
+                .button("calibrateAnalyzer", dev.denfry.promptcritical.mod.refinery.ConversionPanels.B_ACTION).build();
     }
 
     private static String subtype(String simpleClassName) {

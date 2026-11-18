@@ -80,6 +80,7 @@ public final class ClausUnitBlockEntity extends UraniumProcessBlockEntity {
             for (Direction d : Direction.values())
                 if (level.getBlockEntity(worldPosition.relative(d)) instanceof HydrotreaterBlockEntity h) kg += h.drainH2s(MAX_H2S_KG_S * dt - kg);
                 else if (level.getBlockEntity(worldPosition.relative(d)) instanceof DelayedCokerBlockEntity c) kg += c.drainH2s(MAX_H2S_KG_S * dt - kg);
+                else if (level.getBlockEntity(worldPosition.relative(d)) instanceof AmineUnitBlockEntity a) kg += a.drainH2s(MAX_H2S_KG_S * dt - kg);
             h2sKgS = kg / dt;
         }
         last = claus.run(h2sKgS, beds, airError);

@@ -75,6 +75,11 @@ public final class GasPlantBlockEntity extends DeviceBlockEntity implements Foun
         return lts;
     }
 
+    /** Газ, принятый установкой на последнем шаге, нм³/с (его очищает аминовая установка рядом). */
+    public double flowSm3s() {
+        return flowSm3s;
+    }
+
     public FeedTank gasIn() {
         return gasIn;
     }

@@ -1,0 +1,11 @@
+# Catalytic cracking
+
+The [catalytic cracker](item:promptcritical:fcc_unit) turns vacuum gas oil into gasoline. Hot zeolite catalyst meets the oil at the foot of the riser and carries it up for three seconds; the oil cracks to gasoline, and part of the gasoline overcracks to gas and coke (Weekman's three lumps). More catalyst per kilogram of oil, the cat/oil ratio C/O, means deeper conversion: at 520 °C and C/O 6 three quarters of the gas oil converts and half of it ends as gasoline.
+
+Coke covers the catalyst. In the regenerator it burns in air, and that heat is all the riser gets: the regenerated catalyst at about 700 °C heats, vaporises and cracks the feed. You set the riser outlet temperature; the slide valve then lets through as much catalyst as that heat needs. Heavier feed makes more coke, the regenerator runs hotter, less catalyst is needed for the same riser temperature, and conversion falls: the cracker limits itself.
+
+Air comes from a [centrifugal compressor](item:promptcritical:centrifugal_compressor) within eight blocks, the regenerator air blower. Its line flow against the design flow is the share of the design air, and the damper on the panel trims it. Too little air leaves coke on the regenerated catalyst and it loses activity; too much cools the regenerator. If the blower stops or surges, the regenerator loses pressure, the differential across the slide valve falls below 0.02 MPa and the shutdown system closes both slide valves: otherwise air would meet hydrocarbons. Press Run to reset once the air is back. Coke that piled up while the air was gone burns all at once afterwards: above 760 °C the CO afterburns in the cyclones.
+
+The catalyst comes in 100 kg bags through the panel slot. About 1.4 t charges the unit; every further bag replaces as much equilibrium catalyst, which leaves through the bottom with its catalyst state: activity, coke and hours in service. Hydrothermal ageing and metals pull activity down; about 0.4 kg of fresh catalyst per tonne of feed holds it near 0.7.
+
+Products: cracked gasoline from the bottom, dry gas into the sales gas from the top, light cycle oil from the front, decant oil from the back, LPG from the left and propylene from the right. Gas oil can be piped to any face.

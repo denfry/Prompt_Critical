@@ -284,6 +284,9 @@ public final class PcLanguageProvider extends LanguageProvider {
         i("catalyst_methanol", "Methanol Synthesis Catalyst", "Катализатор синтеза метанола");
         i("catalyst_hydrotreating", "Hydrotreating Catalyst (CoMo)", "Катализатор гидроочистки (CoMo)");
         i("catalyst_reforming", "Reforming Catalyst (Pt-Re)", "Катализатор риформинга (Pt-Re)");
+        i("catalyst_fcc", "Cracking Catalyst (Zeolite Y), 100 kg", "Катализатор крекинга (цеолит Y), 100 кг");
+        i("sample_bottle", "Sample Bottle", "Пробоотборник");
+        i("batch_certificate", "Gasoline Batch Certificate", "Паспорт партии бензина");
         i("sulfur", "Sulphur", "Сера");
         i("pt_rh_gauze", "Platinum-Rhodium Gauze Pack", "Пакет платинородиевых сеток");
         i("catalyst_denox", "Tail Gas Reduction Catalyst", "Катализатор очистки хвостовых газов");
@@ -363,6 +366,15 @@ public final class PcLanguageProvider extends LanguageProvider {
         b("claus_unit", "Claus Sulphur Recovery Unit", "Установка Клауса");
         b("catalytic_reformer", "Catalytic Reformer", "Установка каталитического риформинга");
         b("delayed_coker", "Delayed Coker", "Установка замедленного коксования");
+        // подготовка и углубление переработки НПЗ, ГПЗ (09 §9.7.3, §9.9–9.10)
+        b("electrostatic_desalter", "Electrostatic Desalter", "Электрообессоливающая установка (ЭЛОУ)");
+        b("vacuum_column", "Vacuum Distillation Column", "Вакуумная колонна");
+        b("steam_ejector", "Steam Ejector", "Пароэжектор");
+        b("fcc_unit", "Fluid Catalytic Cracking Unit", "Установка каталитического крекинга");
+        b("amine_unit", "Amine Gas Treating Unit", "Установка аминовой очистки газа");
+        b("gasoline_blender", "Gasoline Blending Station", "Станция смешения бензина");
+        b("quality_lab", "Fuel Quality Laboratory", "Лаборатория качества топлива");
+        b("quality_analyzer", "Online Gasoline Analyzer", "Поточный анализатор бензина");
         b("hf_kiln", "Hydrogen Fluoride Kiln", "Печь фтористого водорода");
         b("leach_tank", "Uranium Leach and CCD Train", "Выщелачивание урана с противоточной декантацией");
         b("uranium_ion_exchange", "Uranium Ion Exchange Unit", "Ионообменная установка урана");
@@ -636,6 +648,14 @@ public final class PcLanguageProvider extends LanguageProvider {
         FLUIDS.put("kerosene", new String[] {"Kerosene", "Керосин"});
         FLUIDS.put("diesel_fuel", new String[] {"Diesel Fuel", "Дизельное топливо"});
         FLUIDS.put("fuel_oil", new String[] {"Fuel Oil (Mazut)", "Мазут"});
+        FLUIDS.put("vacuum_gas_oil", new String[] {"Vacuum Gas Oil", "Вакуумный газойль"});
+        FLUIDS.put("vacuum_residue", new String[] {"Vacuum Residue (Tar)", "Гудрон"});
+        FLUIDS.put("fcc_gasoline", new String[] {"Cracked Gasoline", "Бензин каткрекинга"});
+        FLUIDS.put("light_cycle_oil", new String[] {"Light Cycle Oil", "Лёгкий газойль каткрекинга"});
+        FLUIDS.put("decant_oil", new String[] {"Decant Oil", "Тяжёлый газойль каткрекинга"});
+        FLUIDS.put("lpg", new String[] {"Liquefied Petroleum Gas", "Сжиженный углеводородный газ"});
+        FLUIDS.put("reformate", new String[] {"Reformate", "Риформат"});
+        FLUIDS.put("motor_gasoline", new String[] {"Motor Gasoline", "Товарный бензин"});
         FLUIDS.put("mine_methane", new String[] {"Mine Methane", "Шахтный метан"});
         FLUIDS.put("raw_water", new String[] {"Raw Water", "Сырая вода"});
         FLUIDS.put("mine_water", new String[] {"Mine Water", "Шахтная вода"});

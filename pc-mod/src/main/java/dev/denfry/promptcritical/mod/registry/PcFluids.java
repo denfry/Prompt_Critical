@@ -59,6 +59,23 @@ public final class PcFluids {
     public static final Entry DIESEL_FUEL = liquid("diesel_fuel", 840, 3500, 293);
     /** Мазут — остаток атмосферной перегонки, горячий: хранят и качают подогретым. */
     public static final Entry FUEL_OIL = liquid("fuel_oil", 950, 60000, 343);
+    // углубление переработки (09 §9.9.2, §9.9.5): жидкости — 1 мБ = 1 л
+    /** Вакуумный газойль 350–550 °C, горячий: сырьё каткрекинга. */
+    public static final Entry VACUUM_GAS_OIL = liquid("vacuum_gas_oil", 910, 20000, 353);
+    /** Гудрон &gt; 550 °C: сырьё коксования, хранят горячим. */
+    public static final Entry VACUUM_RESIDUE = liquid("vacuum_residue", 990, 200000, 423);
+    /** Бензин каткрекинга: олефины 20–25 %, ОЧИ 91–93. */
+    public static final Entry FCC_GASOLINE = liquid("fcc_gasoline", 740, 600, 293);
+    /** Лёгкий газойль каткрекинга — компонент дизельного топлива после гидроочистки. */
+    public static final Entry LIGHT_CYCLE_OIL = liquid("light_cycle_oil", 940, 4000, 293);
+    /** Тяжёлый газойль каткрекинга (шлам-масло): высокоароматичный, сырьё игольчатого кокса. */
+    public static final Entry DECANT_OIL = liquid("decant_oil", 1050, 30000, 343);
+    /** Сжиженный углеводородный газ: пропан и бутан-бутилены, под давлением насыщения. */
+    public static final Entry LPG = liquid("lpg", 540, 150, 288);
+    /** Риформат: ароматика 60–70 %, компонент бензина (раньше выходил из риформинга как прямогонный бензин). */
+    public static final Entry REFORMATE = liquid("reformate", 815, 550, 293);
+    /** Товарный бензин станции смешения (09 §9.9.14); ID {@code gasoline} занят прямогонным с I2. */
+    public static final Entry MOTOR_GASOLINE = liquid("motor_gasoline", 745, 550, 293);
 
     // газопереработка I2: товарный газ — 1 мБ = 1 нм³; сжиженные углеводороды и метанол — 1 мБ = 1 л жидкости
     public static final Entry SALES_GAS = gas("sales_gas", 293, -1);

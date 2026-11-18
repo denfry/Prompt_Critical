@@ -28,6 +28,18 @@ public final class FeedTank implements IFluidHandler {
         return amount / capacity;
     }
 
+    /** Свободный объём, мБ. */
+    public double room() {
+        return capacity - amount;
+    }
+
+    /** Долить дробно от соседней машины (не трубой); возвращает принятое, мБ. */
+    public double add(double mb) {
+        double t = Math.max(0, Math.min(mb, capacity - amount));
+        amount += t;
+        return t;
+    }
+
     /** Израсходовать до {@code mb}; возвращает взятое. */
     public double take(double mb) {
         double t = Math.max(0, Math.min(mb, amount));

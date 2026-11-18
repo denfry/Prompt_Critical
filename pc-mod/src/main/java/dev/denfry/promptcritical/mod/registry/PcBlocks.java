@@ -612,6 +612,21 @@ public final class PcBlocks {
     public static final DeferredBlock<PcDeviceBlock> DELAYED_COKER = uranium("delayed_coker",
             dev.denfry.promptcritical.mod.refinery.DelayedCokerBlockEntity::new);
 
+    // --- подготовка и углубление переработки на НПЗ, ГПЗ: ЭЛОУ, ВТ, FCC, амины, смешение, лаборатория (09 §9.7.3, §9.9–9.10) ---
+    public static final DeferredBlock<PcDeviceBlock> ELECTROSTATIC_DESALTER = uranium("electrostatic_desalter",
+            dev.denfry.promptcritical.mod.refinery.DesalterBlockEntity::new);
+    public static final DeferredBlock<PcDeviceBlock> VACUUM_COLUMN = uranium("vacuum_column",
+            dev.denfry.promptcritical.mod.refinery.VacuumColumnBlockEntity::new);
+    /** Пароэжектор вакуумной колонны: ступень вакуума на каждый эжектор, касающийся колонны. */
+    public static final DeferredBlock<PcBlock> STEAM_EJECTOR = block("steam_ejector", machine(), Spec.facing());
+    public static final DeferredBlock<PcDeviceBlock> FCC_UNIT = uranium("fcc_unit", dev.denfry.promptcritical.mod.refinery.FccUnitBlockEntity::new);
+    public static final DeferredBlock<PcDeviceBlock> AMINE_UNIT = uranium("amine_unit", dev.denfry.promptcritical.mod.refinery.AmineUnitBlockEntity::new);
+    public static final DeferredBlock<PcDeviceBlock> GASOLINE_BLENDER = uranium("gasoline_blender",
+            dev.denfry.promptcritical.mod.refinery.GasolineBlenderBlockEntity::new);
+    public static final DeferredBlock<PcDeviceBlock> QUALITY_LAB = uranium("quality_lab", dev.denfry.promptcritical.mod.refinery.QualityLabBlockEntity::new);
+    /** Поточный анализатор качества бензина (03d, 09 §9.9.13): показания — у станции смешения, которой он касается. */
+    public static final DeferredBlock<PcBlock> QUALITY_ANALYZER = block("quality_analyzer", machine(), Spec.facing());
+
     // --- передел урана: от руды до UF₆ (I4) ---
     public static final DeferredBlock<PcDeviceBlock> ACID_PLANT = uranium("acid_plant",
             dev.denfry.promptcritical.mod.uranium.AcidPlantBlockEntity::new);
