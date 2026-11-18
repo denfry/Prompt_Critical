@@ -441,6 +441,15 @@ public final class PcBlocks {
     public static final DeferredBlock<PcDeviceBlock> RTU_STATION = device("rtu_station", machine(),
             Spec.facing(BlockStateProperties.LIT).footprint(FP_TALL2),
             FoundryBlock.with(dev.denfry.promptcritical.mod.scada.TelemetryGatewayBlockEntity::new));
+    // --- химия I3: пиролиз, газоразделение, ПЭВД ---
+    public static final DeferredBlock<PcDeviceBlock> PYROLYSIS_FURNACE = device("pyrolysis_furnace", lit(brick()),
+            Spec.facing(BlockStateProperties.LIT).footprint(FP_CUBE3),
+            FoundryBlock.with(dev.denfry.promptcritical.mod.chem.PyrolysisFurnaceBlockEntity::new));
+    public static final DeferredBlock<PcDeviceBlock> CRACKED_GAS_UNIT = device("cracked_gas_unit", machine(),
+            Spec.facing().footprint(FP_CUBE3), FoundryBlock.with(dev.denfry.promptcritical.mod.chem.CrackedGasUnitBlockEntity::new));
+    public static final DeferredBlock<PcDeviceBlock> LDPE_REACTOR = device("ldpe_reactor", machine(),
+            Spec.facing(PcProperties.RUNNING).footprint(Footprint.of(Segment.box(-1, 1, 0, 0, 0, 0))),
+            KineticMachineBlock.with(ShaftSide.BACK, dev.denfry.promptcritical.mod.chem.LdpeReactorBlockEntity::new));
 
     // --- обогащение, литьё, механический цех (08 §8.3, §8.9, §8.10) ---
     public static final DeferredBlock<PcDeviceBlock> COAL_JIG = device("coal_jig", machine(),

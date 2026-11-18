@@ -80,6 +80,8 @@ public final class PcItems {
     public static final DeferredItem<Item> PLANED_PLATE = item("planed_plate", 16);
     public static final DeferredItem<Item> GROUND_PLATE = item("ground_plate", 16);
     public static final DeferredItem<Item> FLAME_SAFETY_LAMP = item("flame_safety_lamp", 1);
+    /** Полиэтилен высокого давления в гранулах: мешок 25 кг. */
+    public static final DeferredItem<Item> POLYETHYLENE = item("polyethylene", 64);
     /** Головной шахтный светильник: щелочная батарея на поясе, фара на каске (слот головы). */
     public static final DeferredItem<dev.denfry.promptcritical.mod.mine.CapLampItem> CAP_LAMP = registered(ITEMS.registerItem("cap_lamp",
             dev.denfry.promptcritical.mod.mine.CapLampItem::new, new Item.Properties()));
