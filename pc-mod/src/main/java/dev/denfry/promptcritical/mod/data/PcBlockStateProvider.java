@@ -241,6 +241,7 @@ public final class PcBlockStateProvider extends BlockStateProvider {
             case "purex_cell" -> "hot_cell";
             case "hlw_vault" -> "near_surface_vault";
             case "rtu_station" -> s.getValue(BlockStateProperties.LIT) ? id : id + "_off";
+            case "mes_server" -> s.getValue(BlockStateProperties.LIT) ? "historian_server_busy" : "historian_server";
             // химия I3
             case "pyrolysis_furnace" -> s.getValue(BlockStateProperties.LIT) ? "tube_furnace_radiant_lit" : "tube_furnace_radiant";
             case "cracked_gas_unit" -> "pyrolysis_quench_tower";

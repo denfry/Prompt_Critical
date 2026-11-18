@@ -51,6 +51,7 @@ public final class PanelLayouts {
                 dev.denfry.promptcritical.mod.npp.NppPanels.all(),
                 dev.denfry.promptcritical.mod.isotopes.IsotopePanels.all(),
                 dev.denfry.promptcritical.mod.market.MarketPanels.all(),
+                dev.denfry.promptcritical.mod.mes.MesPanels.all(),
                 dev.denfry.promptcritical.mod.methanol.MethanolPanels.all(),
                 dev.denfry.promptcritical.mod.powerhouse.CombinedCyclePanels.all(),
                 dev.denfry.promptcritical.mod.electronics.ElectronicsPanels.all())) {

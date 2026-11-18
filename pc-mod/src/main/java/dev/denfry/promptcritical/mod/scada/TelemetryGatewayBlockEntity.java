@@ -171,6 +171,20 @@ public final class TelemetryGatewayBlockEntity extends DeviceBlockEntity impleme
         host.onPanelButton(FakePlayerFactory.getMinecraft(sl), buttonId);
     }
 
+    /** Телеизмерение для верхнего уровня (сервер завода): машина, её тип, точка и значение последнего опроса. */
+    public record Reading(String machine, String type, TelemetryPoint point, double value) {
+    }
+
+    /** Все телеизмерения последнего цикла опроса, без расхода токенов: это срез внутри мода, а не вызов Lua. */
+    public List<Reading> analogReadings() {
+        List<Reading> out = new ArrayList<>();
+        snapshots.forEach((id, s) -> {
+            for (TelemetryPoint p : s.points())
+                if (TelemetryPoint.ANALOG.equals(p.kind()) && p.value(s.channels()) instanceof Double v) out.add(new Reading(id, s.type(), p, v));
+        });
+        return out;
+    }
+
     /** Период опроса, с. */
     public double cycleSeconds() {
         return SCAN_TICKS / TokenBucket.TICKS_PER_SECOND;

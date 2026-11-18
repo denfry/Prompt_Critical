@@ -494,6 +494,10 @@ public final class PcBlocks {
     public static final DeferredBlock<PcDeviceBlock> RTU_STATION = device("rtu_station", machine(),
             Spec.facing(BlockStateProperties.LIT).footprint(FP_TALL2),
             FoundryBlock.with(dev.denfry.promptcritical.mod.scada.TelemetryGatewayBlockEntity::new));
+    // --- автоматизация A5: сервер завода (MES) ---
+    public static final DeferredBlock<PcDeviceBlock> MES_SERVER = device("mes_server", machine(),
+            Spec.facing(BlockStateProperties.LIT).footprint(FP_TALL2),
+            FoundryBlock.with(dev.denfry.promptcritical.mod.mes.MesServerBlockEntity::new));
     // --- химия I3: пиролиз, газоразделение, ПЭВД ---
     public static final DeferredBlock<PcDeviceBlock> PYROLYSIS_FURNACE = device("pyrolysis_furnace", lit(brick()),
             Spec.facing(BlockStateProperties.LIT).footprint(FP_CUBE3),
