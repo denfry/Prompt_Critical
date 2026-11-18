@@ -211,6 +211,9 @@ public final class PcLanguageProvider extends LanguageProvider {
         i("ground_plate", "Ground Plate", "Шлифованная плита");
         i("flame_safety_lamp", "Flame Safety Lamp", "Бензиновая лампа");
         i("polyethylene", "Polyethylene Pellets (25 kg bag)", "Гранулы полиэтилена (мешок 25 кг)");
+        i("uf6_cylinder_48y", "UF₆ Cylinder 48Y", "Баллон UF₆ 48Y");
+        i("uf6_cylinder_30b", "UF₆ Cylinder 30B", "Баллон UF₆ 30B");
+        i("uf6_cylinder_5a", "UF₆ Cylinder 5A", "Баллон UF₆ 5A");
         i("pvc", "PVC Resin (25 kg bag)", "Смола ПВХ (мешок 25 кг)");
         i("catalyst_steam_reforming", "Nickel Reforming Catalyst", "Никелевый катализатор конверсии метана");
         i("catalyst_shift_ht", "Iron-Chromium Shift Catalyst", "Железохромовый катализатор конверсии CO");
@@ -640,6 +643,7 @@ public final class PcLanguageProvider extends LanguageProvider {
         MISC.putAll(dev.denfry.promptcritical.mod.scada.ScadaText.lang());
         MISC.putAll(dev.denfry.promptcritical.mod.gas.GasText.lang());
         MISC.putAll(dev.denfry.promptcritical.mod.chem.ChemText.lang());
+        MISC.putAll(dev.denfry.promptcritical.mod.nuclear.NuclearText.lang());
         MISC.putAll(dev.denfry.promptcritical.mod.chlor.ChlorText.lang());
         MISC.put("death.attack.promptcritical.chlorine", new String[] {"%1$s was gassed by chlorine", "%1$s отравлен хлором"});
         MISC.put("death.attack.promptcritical.chlorine.player", new String[] {"%1$s was gassed by chlorine while fighting %2$s",
