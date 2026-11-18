@@ -51,6 +51,12 @@ public final class RadiationService {
     private record Positioned(Vec3 at, PointSource source, long until) {
     }
 
+    /** Выброс радионуклида в атмосферу из трубы: активность в секунду. */
+    private record Release(dev.denfry.promptcritical.sim.radiation.Emitter nuclide, double bqS, long until) {
+    }
+
+    private static final Map<ServerLevel, Map<Vec3, java.util.List<Release>>> RELEASES = new WeakHashMap<>();
+
     private record Held(PointSource source, long until) {
     }
 
@@ -149,6 +155,40 @@ public final class RadiationService {
         return sum;
     }
 
+    /**
+     * Непрерывный выброс радионуклида в атмосферу, Бк/с (труба радиохимического завода): облако по ветру считается
+     * гауссовой моделью ({@link dev.denfry.promptcritical.sim.consequence.GasDispersion}), доза — погружение и ингаляция
+     * ({@link dev.denfry.promptcritical.sim.radiation.AirborneDose}). Источник обновляет выброс каждую секунду.
+     */
+    public static void airRelease(ServerLevel level, Vec3 stack, dev.denfry.promptcritical.sim.radiation.Emitter nuclide, double bqS) {
+        if (bqS <= 0) return;
+        var list = RELEASES.computeIfAbsent(level, l -> new HashMap<>()).computeIfAbsent(stack, k -> new java.util.ArrayList<>());
+        list.removeIf(r -> r.nuclide == nuclide);
+        list.add(new Release(nuclide, bqS, level.getGameTime() + HOLD_TICKS));
+    }
+
+    /** Мощность дозы от облаков выбросов в точке, Зв/ч. */
+    public static double cloudSvH(ServerLevel level, Vec3 at) {
+        Map<Vec3, java.util.List<Release>> m = RELEASES.get(level);
+        if (m == null) return 0;
+        long now = level.getGameTime();
+        double sum = 0;
+        for (Map.Entry<Vec3, java.util.List<Release>> e : m.entrySet()) {
+            Vec3 src = e.getKey();
+            double dx = at.x - src.x, dz = at.z - src.z;
+            if (dx * dx + dz * dz > 4 * RANGE_M * RANGE_M) continue;
+            var w = EnvironmentService.sample(level, net.minecraft.core.BlockPos.containing(src), 10);
+            var st = dev.denfry.promptcritical.sim.consequence.GasDispersion.stability(w.meanWindMs(), w.solarWm2());
+            double[] f = dev.denfry.promptcritical.sim.consequence.GasDispersion.windFrame(dx, dz, w.windDirRad());
+            for (Release r : e.getValue()) {
+                if (r.until < now) continue;
+                double bqM3 = dev.denfry.promptcritical.sim.consequence.GasDispersion.plumeKgM3(r.bqS, w.meanWindMs(), st, f[0], f[1]);
+                sum += dev.denfry.promptcritical.sim.radiation.AirborneDose.svH(r.nuclide, bqM3);
+            }
+        }
+        return sum;
+    }
+
     /** Источник от предмета с активностью на игровое время {@code tick}; {@code null} — у предмета её нет. */
     @org.jetbrains.annotations.Nullable
     public static PointSource itemSource(net.minecraft.world.item.ItemStack stack, long tick) {
@@ -213,10 +253,15 @@ public final class RadiationService {
         long now = level.getGameTime();
         Map<Vec3, Held> m = SOURCES.get(level);
         if (m != null) m.values().removeIf(h -> h.until < now);
+        Map<Vec3, java.util.List<Release>> rel = RELEASES.get(level);
+        if (rel != null) {
+            rel.values().forEach(l -> l.removeIf(r -> r.until < now));
+            rel.values().removeIf(java.util.List::isEmpty);
+        }
         if (now % 20 != 0) return;
         gatherItems(level, now);
         for (ServerPlayer p : level.players()) {
-            double rate = rateSvH(level, p.getEyePosition()) + BACKGROUND_USV_H * 1e-6;
+            double rate = rateSvH(level, p.getEyePosition()) + cloudSvH(level, p.getEyePosition()) + BACKGROUND_USV_H * 1e-6;
             CompoundTag d = data(p);
             d.putDouble("rate", rate);
             if (p.isCreative() || p.isSpectator()) continue;

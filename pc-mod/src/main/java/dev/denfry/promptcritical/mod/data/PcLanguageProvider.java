@@ -226,6 +226,16 @@ public final class PcLanguageProvider extends LanguageProvider {
         b("lead_block", "Lead Shielding Block", "Свинцовый блок защиты");
         b("helium_recovery_unit", "Helium Recovery Unit", "Гелиевая установка");
         b("fuel_rack", "Spent Fuel Pool Rack", "Стеллаж бассейна выдержки");
+        b("purex_cell", "PUREX Canyon Control Cell", "Каньон PUREX (горячая камера)");
+        b("hlw_vault", "Vitrified Waste Vault", "Хранилище остеклованных отходов");
+        b("shearing_machine", "Fuel Shear", "Рубильная машина");
+        b("dissolver", "Fuel Dissolver", "Растворитель топлива");
+        b("mixer_settler", "Mixer-Settler Bank", "Батарея смесителей-отстойников");
+        b("oxalate_precipitator", "Plutonium Oxalate Precipitator", "Осадитель оксалата плутония");
+        b("denitration_reactor", "Uranium Denitration Reactor", "Аппарат денитрации урана");
+        b("vitrification_melter", "Vitrification Melter", "Печь остекловывания");
+        i("puo2_powder", "Plutonium Dioxide", "Диоксид плутония");
+        i("hlw_glass_canister", "Vitrified High-Level Waste Canister", "Стеклоблок высокоактивных отходов");
         MISC.put("message.promptcritical.dosimeter.reading", new String[] {"DKS-04: %s · total %s", "ДКС-04: %s · накоплено %s"});
         MISC.put("message.promptcritical.dosimeter.idle", new String[] {"No reading yet: carry it to measure",
                 "Показаний пока нет: носите при себе"});
@@ -693,6 +703,7 @@ public final class PcLanguageProvider extends LanguageProvider {
         MISC.putAll(dev.denfry.promptcritical.mod.environment.ToxicReleaseService.lang());
         MISC.putAll(dev.denfry.promptcritical.mod.environment.RadiationService.lang());
         MISC.putAll(dev.denfry.promptcritical.mod.radiation.RadiationBlocksText.lang());
+        MISC.putAll(dev.denfry.promptcritical.mod.reprocessing.ReprocessingText.lang());
         MISC.putAll(dev.denfry.promptcritical.mod.uranium.UraniumText.lang());
         MISC.put("death.attack.promptcritical.chlorine", new String[] {"%1$s was gassed by chlorine", "%1$s отравлен хлором"});
         MISC.put("death.attack.promptcritical.chlorine.player", new String[] {"%1$s was gassed by chlorine while fighting %2$s",

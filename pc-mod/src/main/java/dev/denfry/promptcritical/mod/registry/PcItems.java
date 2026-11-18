@@ -162,6 +162,10 @@ public final class PcItems {
     public static final DeferredItem<Item> GROUND_URANIUM_ORE = item("ground_uranium_ore", 64);
     public static final DeferredItem<Item> YELLOWCAKE = item("yellowcake", 64);
     public static final DeferredItem<Item> UO2_POWDER = item("uo2_powder", 64);
+    /** Диоксид плутония после PUREX: партия с компонентом {@code pu_lot}. */
+    public static final DeferredItem<Item> PUO2_POWDER = item("puo2_powder", 1);
+    /** Стеклоблок высокоактивных отходов: 50 кг боросиликатного стекла с компонентом активности. */
+    public static final DeferredItem<Item> HLW_GLASS_CANISTER = item("hlw_glass_canister", 1);
     /** Трёхокись урана после прокалки ДУА: мешок на 1 кг урана. */
     public static final DeferredItem<Item> UO3_POWDER = item("uo3_powder", 64);
     /** Тетрафторид урана, «зелёная соль»: мешок на 1 кг урана. */
