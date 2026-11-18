@@ -1,0 +1,12 @@
+Prompt Critical device events. Use: local event, side, payload = os.pullEvent("pc_command_result")
+side is the peripheral name, payload is a table with t (simulation time, s) and seq (event number of the device).
+
+pc_command_result    {ticket, state, err}   state: DONE, REJECTED, SUPERSEDED, ABORTED, FAILED; only to the computer that sent the command
+pc_setpoint_crossed  {watchId, tag, direction = "HIGH" | "LOW" | "NORMAL", threshold, value}
+pc_scram, pc_scram_reset                    reactors
+pc_pump_state        {state, prev}          pumps, pumpjacks
+pc_sis_trip, pc_sis_reset, pc_sis_bypass, pc_sis_test_due
+pc_plc_mode, pc_plc_fault
+pc_event_overflow    {dropped = {[event] = n}}   more than 20 events a second from one device: some were dropped, read the state again
+
+A newer command for the same button replaces a queued one (SUPERSEDED).

@@ -1,0 +1,12 @@
+A reactor controller (RBMK, VVER/PWR, BWR, CANDU, sodium fast reactor, graphite pile) has the types pc_reactor, pc_rod_drive and pc_protection, plus all pc_device methods.
+
+getStatus() -> {state = "OPERATING" | "TRIPPED", tripped, formed, t}
+requestTrip([message])   scram, the same as the panel button; anyone on the network may do it
+reset()                  reset the trip; refused by the reactor if the reason is still there
+withdraw()  insert()  stopRods()   drive the regulating rods, like holding the panel keys
+toggleAuto()  setpointUp()  setpointDown()        RBMK and PWR: automatic power regulator
+exchangeUp()  exchangeDown()  exchangeSource()    PWR: makeup and letdown (boron)
+windShutdownSpring()                               graphite pile: cock the shutdown spring
+
+setSetpoint, setBypass, disable and setLogic always fail with E_HARDWARE_ONLY: the protection system is not under Lua's control.
+Events: pc_scram {reasons, source = "LUA" | "AUTOMATIC"}, pc_scram_reset.

@@ -1,0 +1,10 @@
+The PLC has the type pc_plc.
+
+getState() -> {mode = "OFF" | "STOP" | "RUN" | "FAULT", key, fault, programOk, errors, ops, t}
+readIO() -> {ix, qx, mx, iw, qw, mw, t}   inputs, outputs, markers and words (lists from index 1 = address 0)
+uploadST() -> program source
+writeMarker(i, bool) -> ticket   set %MXi (0..63) before the next scan
+writeWord(i, value) -> ticket    set %MWi (0..31)
+
+The program may overwrite a marker it writes itself, as in a real PLC. setMode fails with E_HARDWARE_ONLY: the RUN/STOP key is on the CPU.
+Events: pc_plc_mode {mode, prev}, pc_plc_fault {code, detail}.
