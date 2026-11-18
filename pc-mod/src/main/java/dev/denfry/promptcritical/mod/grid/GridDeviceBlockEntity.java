@@ -32,6 +32,8 @@ import org.jetbrains.annotations.Nullable;
 public abstract class GridDeviceBlockEntity<U extends GridUnit> extends DeviceBlockEntity implements GridDevice, FoundryDevice {
     private boolean registered;
     protected int ticks;
+    /** На аппарате висит плакат «Не включать! Работают люди» (открыт наряд-допуск); синхронизируется клиенту. */
+    private boolean posterHung;
 
     protected GridDeviceBlockEntity(BlockEntityType<?> type, BlockPos pos, BlockState state) {
         super(type, pos, state);
@@ -91,6 +93,38 @@ public abstract class GridDeviceBlockEntity<U extends GridUnit> extends DeviceBl
 
     /** Серверный тик с двойником. */
     protected void serverTick(U unit) {
+    }
+
+    public boolean posterHung() {
+        return posterHung;
+    }
+
+    /** Плакат наряда на аппарате: при изменении — клиенту (рендер плаката). */
+    protected void setPosterHung(boolean hung) {
+        if (posterHung == hung || level == null) return;
+        posterHung = hung;
+        setChanged();
+        level.sendBlockUpdated(worldPosition, getBlockState(), getBlockState(), Block.UPDATE_CLIENTS);
+    }
+
+    /** Клиенту: плакат наряда; наследники с собственной синхронизацией дописывают своё в этот тег. */
+    @Override
+    public net.minecraft.nbt.CompoundTag getUpdateTag(net.minecraft.core.HolderLookup.Provider registries) {
+        net.minecraft.nbt.CompoundTag tag = new net.minecraft.nbt.CompoundTag();
+        tag.putBoolean("poster", posterHung);
+        return tag;
+    }
+
+    @Override
+    public net.minecraft.network.protocol.Packet<net.minecraft.network.protocol.game.ClientGamePacketListener> getUpdatePacket() {
+        return net.minecraft.network.protocol.game.ClientboundBlockEntityDataPacket.create(this);
+    }
+
+    @Override
+    protected void loadAdditional(net.minecraft.nbt.CompoundTag tag, net.minecraft.core.HolderLookup.Provider registries) {
+        super.loadAdditional(tag, registries);
+        // в сохранении мира флага нет — сервер восстанавливает его по двойнику
+        if (tag.contains("poster")) posterHung = tag.getBoolean("poster");
     }
 
     /** Поставить булево свойство блока (контроллера), если изменилось. */

@@ -76,3 +76,27 @@ _ICONS = {
 TEXTURES.update({f"item/{k}.png": icon(fn) for k, fn in _ICONS.items()})
 for _i in _ICONS:
     item(_i, f"item/{_i}.png")
+
+
+# --- документы завода: оперативный журнал, плакат на приводе (иконка наряда — tex_ops) ---
+def shift_log(a):  # сшитая книга в коленкоре с белой этикеткой
+    box(a, 3, 2, 12, 13, "#2f4a3a")
+    box(a, 3, 2, 4, 13, "#1f3328")
+    box(a, 6, 4, 11, 7, "#e8e0c8")
+    line(a, 7, 5, 10, 5, "#3a3a3a")
+    box(a, 12, 3, 12, 12, "#d8d0b8")
+
+
+def permit_poster():  # «Не включать! Работают люди»: белое поле, красная кайма, чёрные строки букв
+    a = canvas("#f4f2ec", 16, noise=0)
+    box(a, 0, 0, 15, 15, "#c0392b")
+    box(a, 1, 1, 14, 14, "#f4f2ec")
+    for y in (4, 5):
+        line(a, 3, y, 12, y, "#1d1d1f")
+    for y in (9, 11):
+        line(a, 4, y, 11, y, "#1d1d1f")
+    return a
+
+
+TEXTURES.update({"item/shift_log.png": icon(shift_log), "block/permit_poster.png": permit_poster})
+item("shift_log", "item/shift_log.png")

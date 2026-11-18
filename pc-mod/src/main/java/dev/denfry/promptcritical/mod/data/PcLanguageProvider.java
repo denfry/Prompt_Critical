@@ -216,6 +216,8 @@ public final class PcLanguageProvider extends LanguageProvider {
         i("methanometer", "Methanometer", "Метанометр");
         i("engineering_handbook", "Engineering Handbook", "Справочник инженера");
         i("operating_procedure", "Operating Procedure", "Инструкция по эксплуатации");
+        i("shift_log", "Shift Log", "Оперативный журнал");
+        i("work_permit", "Work Permit Form", "Бланк наряда-допуска");
         i("geological_map", "Geological Map", "Геологическая карта");
         i("copper_wire", "Copper Wire", "Медная проволока");
         i("generator_coupling", "Shear-Pin Coupling", "Муфта со срезным штифтом");
@@ -421,6 +423,7 @@ public final class PcLanguageProvider extends LanguageProvider {
                 "%1$s задохнулся рудничным газом, спасаясь от %2$s"});
         MISC.put("commands.promptcritical.profile.reset", new String[] {"Simulation profile reset", "Профиль симуляции сброшен"});
         MISC.putAll(FoundryText.LANG);
+        MISC.putAll(dev.denfry.promptcritical.mod.paperwork.PaperworkText.LANG);
         MISC.putAll(dev.denfry.promptcritical.mod.ironworks.IronworksText.LANG);
         MISC.putAll(dev.denfry.promptcritical.mod.steelworks.SteelworksText.LANG);
         MISC.putAll(dev.denfry.promptcritical.mod.ops.OpsText.LANG);

@@ -175,6 +175,11 @@ public final class PcItems {
     // справочник (11)
     public static final DeferredItem<EngineeringHandbookItem> ENGINEERING_HANDBOOK = registered(ITEMS.registerItem("engineering_handbook",
             EngineeringHandbookItem::new, new Item.Properties().stacksTo(1)));
+    /** Оперативный журнал обхода и сдачи смены; бланк наряда-допуска (заполняется кликом по аппарату). */
+    public static final DeferredItem<dev.denfry.promptcritical.mod.paperwork.DocumentItem> SHIFT_LOG = registered(ITEMS.registerItem(
+            "shift_log", dev.denfry.promptcritical.mod.paperwork.DocumentItem::new, new Item.Properties().stacksTo(1)));
+    public static final DeferredItem<dev.denfry.promptcritical.mod.paperwork.DocumentItem> WORK_PERMIT = registered(ITEMS.registerItem(
+            "work_permit", dev.denfry.promptcritical.mod.paperwork.DocumentItem::new, new Item.Properties().stacksTo(16)));
     public static final DeferredItem<OperatingProcedureItem> OPERATING_PROCEDURE = registered(ITEMS.registerItem("operating_procedure",
             OperatingProcedureItem::new, new Item.Properties().stacksTo(1)));
     public static final DeferredItem<GeologicalMapItem> GEOLOGICAL_MAP = registered(ITEMS.registerItem("geological_map",
