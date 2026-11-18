@@ -42,6 +42,46 @@ public final class AutomationText {
     private AutomationText() {
     }
 
+    // программатор ПЛК (A3)
+    public static final String PLC_TITLE = t("plc.title", "PLC programmer · Instruction List", "Программатор ПЛК · список инструкций");
+    public static final String PLC_UPLOAD = t("plc.upload", "Load into PLC", "Загрузить в ПЛК");
+    public static final String PLC_RUN = t("plc.run", "Key: RUN", "Ключ: RUN");
+    public static final String PLC_STOP = t("plc.stop", "Key: STOP", "Ключ: STOP");
+    public static final String PLC_MODE = t("plc.mode", "Mode: %s", "Режим: %s");
+    public static final String PLC_SCAN = t("plc.scan", "Last scan: %s instructions", "Последний цикл: %s инструкций");
+    public static final String PLC_INPUTS = t("plc.inputs", "Inputs %%IX0.0–7", "Входы %%IX0.0–7");
+    public static final String PLC_OUTPUTS = t("plc.outputs", "Outputs %%QX0.0–7", "Выходы %%QX0.0–7");
+    public static final String PLC_ANALOG = t("plc.analog", "%%IW: %s  %%QW: %s", "%%IW: %s  %%QW: %s");
+    public static final String PLC_ERROR = t("plc.error", "Line %s: %s %s", "Строка %s: %s %s");
+    public static final String PLC_OK = t("plc.ok", "Program compiled without errors", "Программа скомпилирована без ошибок");
+    public static final String PLC_UNSAVED = t("plc.unsaved", "Edited — load into the PLC to apply", "Изменено — загрузите в ПЛК");
+    public static final String[] PLC_MODES = {
+            t("plc.mode.off", "OFF — no 24 V", "ВЫКЛ — нет 24 В"),
+            t("plc.mode.stop", "STOP", "STOP"),
+            t("plc.mode.run", "RUN", "RUN"),
+            t("plc.mode.fault", "FAULT — watchdog; turn the key to STOP and back", "АВАРИЯ — сторожевой таймер; ключ в STOP и обратно")};
+
+    static {
+        String[][] errors = {
+                {"UNKNOWN_OPERATOR", "unknown operator", "неизвестный оператор"},
+                {"BAD_OPERAND", "bad operand", "неверный операнд"},
+                {"NOT_WRITABLE", "cannot write to", "нельзя записать в"},
+                {"MISSING_OPERAND", "operand missing after", "нет операнда после"},
+                {"UNEXPECTED_OPERAND", "unexpected operand", "лишний операнд"},
+                {"UNKNOWN_LABEL", "no such label", "нет такой метки"},
+                {"DUPLICATE_LABEL", "label used twice", "метка повторяется"},
+                {"UNBALANCED_PARENTHESIS", "unbalanced bracket", "непарная скобка"},
+                {"NESTING_TOO_DEEP", "brackets nested too deep", "слишком глубокие скобки"},
+                {"BAD_CALL", "bad block call", "неверный вызов блока"},
+                {"TOO_LONG", "program too long", "программа слишком длинная"}};
+        for (String[] e : errors) t("plc.err." + e[0], e[1], e[2]);
+    }
+
+    /** Ключ перевода вида ошибки компиляции IL. */
+    public static String plcError(String kind) {
+        return P + "plc.err." + kind;
+    }
+
     private static String t(String key, String en, String ru) {
         LANG.put(P + key, new String[] {en, ru});
         return P + key;

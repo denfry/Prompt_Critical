@@ -806,6 +806,8 @@ public final class PcBlocks {
     public static final DeferredBlock<PcDeviceBlock> MANUAL_STATION = automationWall("manual_station", Spec.facing(PcProperties.MANUAL),
             0, 0, 4.5, 16, 16, 16);
     public static final DeferredBlock<PcDeviceBlock> SIGNAL_CONVERTER = automationWall("signal_converter", Spec.facing(), 0.5, 1, 9, 15.5, 15, 16);
+    /** ПЛК (A3): программируемый контроллер на IL с модулями ввода-вывода. */
+    public static final DeferredBlock<PcDeviceBlock> PLC = automationBlock("plc", Spec.facing(PcProperties.RUNNING));
 
 
     private PcBlocks() {

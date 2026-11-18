@@ -55,6 +55,9 @@ public final class AutomationSubsystem implements Subsystem {
     private boolean dirty = true;
     private int rebuilds;
     private AutomationUnit[] order = new AutomationUnit[0];
+    private AutomationUnit[] plcs = new AutomationUnit[0];
+    private final boolean[] plcDi = new boolean[8];
+    private final double[] plcAi = new double[4];
     // A1 → A2: нагрузка-оптрон и сигнал; A2 → A1: ключ, сигнал, инверсия
     private int[] optoLoad = new int[0], optoSignal = new int[0];
     private int[] bridgeSwitch = new int[0], bridgeSignal = new int[0];
@@ -137,6 +140,7 @@ public final class AutomationSubsystem implements Subsystem {
         observeAchievements(ctx);
         for (int i = 0; i < optoLoad.length; i++) analog.setSignal(optoSignal[i], relay.lampLit(optoLoad[i]) ? 1 : 0);
         analog.stepFast();
+        for (AutomationUnit u : plcs) scanPlc(u);
         for (int i = 0; i < bridgeSwitch.length; i++)
             relay.setSwitch(bridgeSwitch[i], (analog.signal(bridgeSignal[i]) > 0.5) != bridgeInvert[i]);
         if (ctx.clock().due(TimeDomain.SLOW, SLOW_PHASE)) {
@@ -144,6 +148,23 @@ public final class AutomationSubsystem implements Subsystem {
             relay.stepSlow(dt);
             analog.stepSlow(dt);
         }
+    }
+
+    /**
+     * Цикл ПЛК после решения цепей: входы — свечение оптронов и сигналы A2 этого тика, выходы ложатся в банки и
+     * действуют со следующего тика (запаздывание на цикл, как у настоящего ПЛК).
+     */
+    private void scanPlc(AutomationUnit u) {
+        if (u.loads.length < 9) return;
+        boolean powered = relay.lampLit(u.loads[0]);
+        for (int i = 0; i < plcDi.length; i++) plcDi[i] = relay.lampLit(u.loads[1 + i]);
+        for (int i = 0; i < plcAi.length; i++) {
+            int src = i < u.aiSources.length ? u.aiSources[i] : -1;
+            plcAi[i] = src >= 0 ? analog.signal(src) : 0;
+        }
+        u.plc.scan(SimClock.FAST_DT, powered, plcDi, plcAi);
+        for (int i = 0; i < u.switches.length; i++) relay.setSwitch(u.switches[i], u.plc.output(i));
+        for (int i = 0; i < u.signals.length; i++) analog.setSignal(u.signals[i], u.plc.analogOutput(i));
     }
 
     /** Входы мира в банки: кнопки, ключи, процесс, вал, питание, механизмы. Без аллокаций. */
@@ -205,6 +226,7 @@ public final class AutomationSubsystem implements Subsystem {
         for (AutomationUnit u : built) wireAnalog(b, u);
         for (AutomationUnit u : built) restore(u);
         order = built.toArray(new AutomationUnit[0]);
+        plcs = built.stream().filter(x -> x.kind == AutomationKind.PLC).toArray(AutomationUnit[]::new);
         optoLoad = b.optoLoad.stream().mapToInt(Integer::intValue).toArray();
         optoSignal = b.optoSignal.stream().mapToInt(Integer::intValue).toArray();
         bridgeSwitch = b.bridgeSwitch.stream().mapToInt(Integer::intValue).toArray();
@@ -492,6 +514,16 @@ public final class AutomationSubsystem implements Subsystem {
                 b.drive(u, "TRK", trk);
                 u.switches = new int[] {b.bridge(u, "13", "14", mode, false)};
             }
+            case PLC -> {
+                int m = b.node(u, "M"), common = b.node(u, "1L");
+                u.loads = new int[9];
+                u.loads[0] = relay.addLamp(b.node(u, "L+"), m, AutomationUnit.PLC_W);
+                for (int i = 0; i < 8; i++) u.loads[1 + i] = relay.addLamp(b.node(u, "I" + i), m, AutomationUnit.OPTO_W);
+                u.switches = new int[8];
+                for (int i = 0; i < 8; i++) u.switches[i] = relay.addSwitch(common, b.node(u, "Q" + i), false);
+                u.signals = new int[] {analog.newSignal(), analog.newSignal()};
+                for (int i = 0; i < 2; i++) b.drive(u, "AO" + i, u.signals[i]);
+            }
             case SIGNAL_CONVERTER -> {
                 boolean iv = ip[AutomationUnit.I_POSITION] == 1;
                 u.element = analog.addConverter(AnalogTech.TUBE, iv, -1);
@@ -534,6 +566,11 @@ public final class AutomationSubsystem implements Subsystem {
                 analog.setInput(u.element, 0, b.source(u, "AUTO"));
                 u.pvSignal = b.source(u, "PV");
                 for (String out : new String[] {"SP", "OUT", "TRK"}) if (b.conflicts.contains(u.net(u.kind.indexOf(out)))) u.conflict = true;
+            }
+            case PLC -> {
+                u.aiSources = new int[4];
+                for (int i = 0; i < 4; i++) u.aiSources[i] = b.source(u, "AI" + i);
+                for (int i = 0; i < 2; i++) if (b.conflicts.contains(u.net(u.kind.indexOf("AO" + i)))) u.conflict = true;
             }
             case SIGNAL_CONVERTER -> {
                 boolean iv = u.ip[AutomationUnit.I_POSITION] == 1;

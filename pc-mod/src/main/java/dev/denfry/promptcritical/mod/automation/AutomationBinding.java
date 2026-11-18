@@ -17,6 +17,7 @@ public final class AutomationBinding {
     public static void register(IEventBus modBus) {
         AutomationBlockEntities.BLOCK_ENTITIES.register(modBus);
         AutomationComponents.COMPONENTS.register(modBus);
+        modBus.addListener(PlcNet::register);
         SimBindings.registerSubsystem(level -> new AutomationSubsystem(AutomationSubsystem.worldConfig(
                 SimConfigs.fromServerConfig().section(AutomationConfig.class, AutomationConfig.defaults()))));
     }
