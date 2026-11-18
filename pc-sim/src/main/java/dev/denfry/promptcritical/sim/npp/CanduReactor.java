@@ -4,6 +4,8 @@ import dev.denfry.promptcritical.sim.core.StateReader;
 import dev.denfry.promptcritical.sim.core.StateWriter;
 import dev.denfry.promptcritical.sim.fuel.FuelDesign;
 import dev.denfry.promptcritical.sim.nuclide.PlutoniumCharge;
+import dev.denfry.promptcritical.sim.heavywater.HeavyWater;
+import dev.denfry.promptcritical.sim.heavywater.HeavyWaterInventory;
 import dev.denfry.promptcritical.sim.neutronics.CellComposition;
 import dev.denfry.promptcritical.sim.neutronics.CellFeedbackState;
 import dev.denfry.promptcritical.sim.neutronics.CoolantKind;
@@ -29,6 +31,14 @@ import java.util.EnumSet;
  * реактивность растёт. <b>Тритий</b> — активация дейтерия замедлителя D(n,γ)T, σ = 0,519 мб (ENDF/B-VII.1), распад
  * 12,32 г.: dN/dt = σφN_D·(доля D₂O в потоке) − λN.
  *
+ * <p><b>Тяжёлая вода</b> — две инвентаризации {@link HeavyWaterInventory}: замедлитель каландра и теплоноситель
+ * каналов. Обе заливают снаружи ({@link #addModerator}, {@link #addCoolant}); новый реактор ({@link #dry}) сухой и
+ * подкритичен. Уровень замедлителя — доля высоты зоны под ним ({@link LightWaterCore#setModeratedFraction});
+ * недолитый контур — то же осушение каналов, что и при потере теплоносителя (положительная реактивность). Изотопная
+ * чистота обеих сред входит в поглощение и замедление ячейки ({@link CellFeedbackState#withD2oPurity}): лёгкая вода
+ * в замедлителе отнимает ~12 мк на атомный процент. Течь H₂O ({@link #setLightWaterIngress}) и долив воды
+ * низшего сорта разбавляют D₂O; слив ({@link #drainModerator}) уносит вместе с водой и тритий.
+ *
  * <p><b>Защита</b> — как у СУЗ T1: период меньше 10 с, мощность выше 110 %, расход ниже 70 % на мощности, внешний
  * сигнал и кнопка; стержни аварийного останова падают за 2 с. Регулирующие поглотители (жидкостные зоны и
  * регуляторы) — одной группой с приводом.
@@ -46,6 +56,14 @@ public final class CanduReactor {
     /** D(n,γ)T: сечение, см²; период трития, с; молярная масса D₂O, кг/моль. */
     public static final double SIGMA_D_CM2 = 0.519e-27, TRITIUM_HALF_LIFE_S = 12.32 * 365.25 * 86400, M_D2O = 20.03e-3;
     public static final double D2O_DENSITY = 1085;
+    /**
+     * Теплоноситель в канале: проходное сечение трубы давления ⌀103,4 мм за вычетом 37 твэлов ⌀13,08 мм, длина 12
+     * пучков по 495,3 мм (AECL, «CANDU 6 Technical Summary», 2005); плотность D₂O при 10 МПа и ~290 °C — 823 кг/м³
+     * ({@link #D2O_FACTOR} × H₂O). Вне зоны — фидеры и коллекторы ещё столько же [оценка]; насосы и ПГ в мире — свои
+     * блоки, их D₂O не считается.
+     */
+    public static final double CHANNEL_FLOW_M2 = Math.PI / 4 * (0.1034 * 0.1034 - 37 * 0.01308 * 0.01308),
+            BUNDLE_M = 0.4953, COOLANT_HOT_DENSITY = 823, LOOP_FACTOR = 2;
 
     public enum Trip { NONE, PERIOD, POWER, FLOW, EXTERNAL, MANUAL }
 
@@ -61,10 +79,25 @@ public final class CanduReactor {
     private Trip trip = Trip.MANUAL;
     private boolean externalTrip;
     private double fuelK = 539.15, flowCommand, flowActual, coolantVoid, outletK = INLET_K, coolantDensity;
-    private double tritiumAtoms, refuelledBundles;
+    private double refuelledBundles;
+    private final HeavyWaterInventory moderator = new HeavyWaterInventory(), coolant = new HeavyWaterInventory();
+    /** Течь лёгкой воды в замедлитель, кг/с (теплообменник, влага покровного газа, ремонт). */
+    private double lightWaterIngressKgS;
 
+    /** Реактор в работе: замедлитель и контур залиты реакторной D₂O. */
     public CanduReactor() {
-        properties();
+        moderator.set(moderatorCapacityKg(), HeavyWater.REACTOR_GRADE_X);
+        coolant.set(coolantCapacityKg(), HeavyWater.REACTOR_GRADE_X);
+        levels();
+    }
+
+    /** Новый сухой реактор: тяжёлой воды нет, пока её не зальют. */
+    public static CanduReactor dry() {
+        CanduReactor r = new CanduReactor();
+        r.moderator.set(0, HeavyWater.REACTOR_GRADE_X);
+        r.coolant.set(0, HeavyWater.REACTOR_GRADE_X);
+        r.levels();
+        return r;
     }
 
     public LightWaterCore core() {
@@ -171,6 +204,7 @@ public final class CanduReactor {
         moveRods();
         core.step(gameDt, feedbackState(), rodReactivity());
         thermal();
+        ingress(gameDt);
         tritium(gameDt);
     }
 
@@ -205,13 +239,89 @@ public final class CanduReactor {
     }
 
     private CellFeedbackState feedbackState() {
-        return core.state(fuelK, coolantDensity, MODERATOR_K, 0);
+        return core.state(fuelK, coolantDensity, MODERATOR_K, 0).withD2oPurity(moderator.purity(), coolant.purity());
     }
 
     private void properties() {
         double avg = (INLET_K + outletK) / 2;
         W.stateFromPressureEnthalpy(P_COOLANT, W.enthalpyPT(P_COOLANT, Math.min(avg, 583)), ts);
-        coolantDensity = D2O_FACTOR * ts.density * (1 - coolantVoid);
+        coolantDensity = D2O_FACTOR * ts.density * (1 - Math.max(coolantVoid, 1 - coolantFill()));
+    }
+
+    /** Уровень замедлителя и плотность теплоносителя по инвентаризациям D₂O. */
+    private void levels() {
+        core.setModeratedFraction(moderatorLevel());
+        properties();
+    }
+
+    // ------------------------------------------------------------------ тяжёлая вода
+
+    /** Каландр с отражателем, полный, кг D₂O: 83 % объёма решётки всех каналов плюс оболочка отражателя. */
+    public double moderatorCapacityKg() {
+        double r = core.fullCoreRadius(), h = core.coreHeight(), t = SPEC.reflectorM();
+        double vReflector = Math.PI * ((r + t) * (r + t) * (h + 2 * t) - r * r * h);
+        return D2O_DENSITY * (0.83 * Math.PI * r * r * h + vReflector);
+    }
+
+    /** Теплоноситель в каналах и фидерах, полный, кг D₂O. */
+    public double coolantCapacityKg() {
+        return CHANNELS * CHANNEL_FLOW_M2 * BUNDLES_PER_CHANNEL * BUNDLE_M * COOLANT_HOT_DENSITY * LOOP_FACTOR;
+    }
+
+    public HeavyWaterInventory moderator() {
+        return moderator;
+    }
+
+    public HeavyWaterInventory coolant() {
+        return coolant;
+    }
+
+    /** Уровень замедлителя, доля полного. */
+    public double moderatorLevel() {
+        return Math.min(1, moderator.kg() / moderatorCapacityKg());
+    }
+
+    public double coolantFill() {
+        return Math.min(1, coolant.kg() / coolantCapacityKg());
+    }
+
+    /** Долить в каландр {@code kg} воды с долей D {@code x}; возвращает принятое (до полного), кг. */
+    public double addModerator(double kg, double x) {
+        double take = Math.max(0, Math.min(kg, moderatorCapacityKg() - moderator.kg()));
+        moderator.add(take, x);
+        levels();
+        return take;
+    }
+
+    /** Долить в контур теплоносителя; возвращает принятое, кг. */
+    public double addCoolant(double kg, double x) {
+        double take = Math.max(0, Math.min(kg, coolantCapacityKg() - coolant.kg()));
+        coolant.add(take, x);
+        levels();
+        return take;
+    }
+
+    /** Слить из каландра до {@code kg}; возвращает слитое, кг (доля D — {@code moderator().purity()}). */
+    public double drainModerator(double kg) {
+        double out = moderator.remove(kg);
+        levels();
+        return out;
+    }
+
+    public void setLightWaterIngress(double kgPerS) {
+        lightWaterIngressKgS = Math.max(0, kgPerS);
+    }
+
+    public double lightWaterIngress() {
+        return lightWaterIngressKgS;
+    }
+
+    private void ingress(double gameDt) {
+        if (lightWaterIngressKgS <= 0 || gameDt <= 0 || moderator.kg() <= 0) return;
+        // течь вытесняет столько же через переливную линию: уровень держится, чистота падает
+        moderator.add(lightWaterIngressKgS * gameDt, HeavyWater.NATURAL_X);
+        moderator.remove(Math.max(0, moderator.kg() - moderatorCapacityKg()));
+        levels();
     }
 
     private void thermal() {
@@ -228,21 +338,22 @@ public final class CanduReactor {
         properties();
     }
 
-    /** Масса D₂O замедлителя и отражателя, кг: 83 % объёма решётки плюс оболочка отражателя. */
+    /** Масса D₂O в каландре сейчас, кг. */
     public double moderatorKg() {
-        double r = core.coreRadius(), h = core.coreHeight(), t = SPEC.reflectorM();
-        double vReflector = Math.PI * ((r + t) * (r + t) * (h + 2 * t) - r * r * h);
-        return D2O_DENSITY * (0.83 * core.coreVolumeM3() + vReflector);
+        return moderator.kg();
     }
 
     private void tritium(double gameDt) {
         if (gameDt <= 0) return;
-        double lambda = Math.log(2) / TRITIUM_HALF_LIFE_S;
+        double lambda = Math.log(2) / TRITIUM_HALF_LIFE_S, decay = Math.exp(-lambda * gameDt), flux = core.averageFlux();
         // дейтерий в потоке зоны: замедлитель внутри решётки, в отражателе поток считаем вдвое ниже
-        double inCore = D2O_DENSITY * 0.83 * core.coreVolumeM3(), reflector = moderatorKg() - inCore;
-        double deuterons = 2 * (inCore + 0.5 * reflector) / M_D2O * NuclideVector.AVOGADRO;
-        double rate = SIGMA_D_CM2 * core.averageFlux() * deuterons;
-        tritiumAtoms = tritiumAtoms * Math.exp(-lambda * gameDt) + rate / lambda * (1 - Math.exp(-lambda * gameDt));
+        double r = core.fullCoreRadius(), inCore = D2O_DENSITY * 0.83 * Math.PI * r * r * core.coreHeight();
+        double cap = moderatorCapacityKg(), weight = (inCore + 0.5 * (cap - inCore)) / cap;
+        double modRate = SIGMA_D_CM2 * flux * moderator.deuteriumAtoms() * weight;
+        moderator.setTritiumAtoms(moderator.tritiumAtoms() * decay + modRate / lambda * (1 - decay));
+        // теплоноситель: в зоне только доля 1/LOOP_FACTOR контура
+        double coolRate = SIGMA_D_CM2 * flux * coolant.deuteriumAtoms() / LOOP_FACTOR;
+        coolant.setTritiumAtoms(coolant.tritiumAtoms() * decay + coolRate / lambda * (1 - decay));
     }
 
     // ------------------------------------------------------------------ показания
@@ -277,12 +388,22 @@ public final class CanduReactor {
 
     /** Тритий в замедлителе, Бк. */
     public double tritiumBq() {
-        return tritiumAtoms * Math.log(2) / TRITIUM_HALF_LIFE_S;
+        return moderator.tritiumAtoms() * Math.log(2) / TRITIUM_HALF_LIFE_S;
+    }
+
+    /** Тритий в теплоносителе, Бк. */
+    public double coolantTritiumBq() {
+        return coolant.tritiumAtoms() * Math.log(2) / TRITIUM_HALF_LIFE_S;
+    }
+
+    /** Удельная активность трития в замедлителе, Бк/кг; 0 — пустой каландр. */
+    public double moderatorTritiumBqPerKg() {
+        return moderator.kg() > 0 ? tritiumBq() / moderator.kg() : 0;
     }
 
     /** Тритий в замедлителе, г. */
     public double tritiumGrams() {
-        return tritiumAtoms * 3.016 / NuclideVector.AVOGADRO;
+        return moderator.tritiumAtoms() * 3.016 / NuclideVector.AVOGADRO;
     }
 
     public double refuelledBundles() {
@@ -318,7 +439,9 @@ public final class CanduReactor {
         out.putDouble("tout", outletK);
         out.putDouble("flow", flowCommand);
         out.putDouble("flow_act", flowActual);
-        out.putDouble("tritium", tritiumAtoms);
+        moderator.save(out, "mod_d2o");
+        coolant.save(out, "cool_d2o");
+        out.putDouble("ingress", lightWaterIngressKgS);
         out.putDouble("refuelled", refuelledBundles);
         out.putString("trip", trip.name());
     }
@@ -330,14 +453,20 @@ public final class CanduReactor {
         outletK = in.optDouble("tout", INLET_K);
         flowCommand = in.optDouble("flow", 0);
         flowActual = in.optDouble("flow_act", 0);
-        tritiumAtoms = in.optDouble("tritium", 0);
+        // сохранения до учёта D₂O: реактор был залит, тритий — в замедлителе
+        moderator.set(moderatorCapacityKg(), HeavyWater.REACTOR_GRADE_X);
+        moderator.setTritiumAtoms(in.optDouble("tritium", 0));
+        coolant.set(coolantCapacityKg(), HeavyWater.REACTOR_GRADE_X);
+        moderator.load(in, "mod_d2o");
+        coolant.load(in, "cool_d2o");
+        lightWaterIngressKgS = Math.max(0, in.optDouble("ingress", 0));
         refuelledBundles = in.optDouble("refuelled", 0);
         try {
             trip = Trip.valueOf(in.optString("trip", Trip.MANUAL.name()));
         } catch (IllegalArgumentException e) {
             trip = Trip.MANUAL;
         }
-        properties();
+        levels();
         core.load(in, this::feedbackState);
     }
 }

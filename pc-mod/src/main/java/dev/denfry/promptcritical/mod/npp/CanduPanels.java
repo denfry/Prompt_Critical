@@ -12,13 +12,15 @@ import net.minecraft.network.chat.Component;
 
 /**
  * Щит CANDU (T3): мощность, период, стержни аварийного останова и регуляторы, выход теплоносителя, расход, загрузка
- * каналов, перегрузки на ходу и тритий в замедлителе; ключи АЗ, взвода, регуляторов и перегрузочной машины.
+ * каналов, перегрузки на ходу и тритий в замедлителе; уровень и изотопная чистота замедлителя и теплоносителя с
+ * лампами «D₂O разбавлена» и «мало D₂O»; ключи АЗ, взвода, регуляторов, перегрузочной машины и слива замедлителя.
  */
 public final class CanduPanels {
     public static final int POWER = 0, PERIOD = 1, RHO_PCM = 2, SHUTOFF = 3, CONTROL = 4, OUT_C = 5, FLOW = 6, FUEL_C = 7, XE_PCM = 8,
-            LOADED = 9, BURNUP = 10, REFUELLED = 11, TRITIUM_GBQ = 12, TRIP = 13, FLAGS = 14, MAGAZINE = 15, CHANNELS = 16;
-    public static final int F_TRIPPED = 0, F_NO_SG = 1;
-    public static final int B_SCRAM = 0, B_RESET = 1, B_UP = 2, B_STOP = 3, B_DOWN = 4, B_REFUEL = 5;
+            LOADED = 9, BURNUP = 10, REFUELLED = 11, TRITIUM_GBQ = 12, TRIP = 13, FLAGS = 14, MAGAZINE = 15, MOD_LEVEL = 16,
+            MOD_PURITY = 17, COOL_FILL = 18, COOL_PURITY = 19, DRAIN_L = 20, CHANNELS = 21;
+    public static final int F_TRIPPED = 0, F_NO_SG = 1, F_DOWNGRADED = 2, F_LOW_D2O = 3;
+    public static final int B_SCRAM = 0, B_RESET = 1, B_UP = 2, B_STOP = 3, B_DOWN = 4, B_REFUEL = 5, B_DRAIN = 6;
     public static final int SLOT_FRESH = 0, SLOT_SPENT = 1;
 
     private static final Tr PCT = PanelText.PERCENT, CELSIUS = PanelText.CELSIUS, SEC = PanelText.tr("unit.s", "s", "с"),
@@ -46,7 +48,23 @@ public final class CanduPanels {
             POWER_TIP = PanelText.tr("npp.power_tip", "Ion chamber %s %% · reactivity %s pcm · setpoint %s %%",
                     "Ионизационная камера %s %% · реактивность %s pcm · уставка %s %%"),
             STATUS = PanelText.tr("candu.status", "%s · flow %s %% · fuel %s °C · Xe %s pcm · channels %s · burnup up to %s MWd/kg · refuelled %s bundles · magazine %s · tritium %s GBq",
-                    "%s · расход %s %% · топливо %s °C · Xe %s pcm · каналов %s · выгорание до %s МВт·сут/кг · перегружено пучков %s · в магазине %s · тритий %s ГБк");
+                    "%s · расход %s %% · топливо %s °C · Xe %s pcm · каналов %s · выгорание до %s МВт·сут/кг · перегружено пучков %s · в магазине %s · тритий %s ГБк"),
+            MODERATOR = PanelText.tr("candu.moderator", "Moderator D₂O", "Замедлитель D₂O"),
+            COOLANT = PanelText.tr("candu.coolant", "Coolant D₂O", "Теплоноситель D₂O"),
+            MOD_TIP = PanelText.tr("candu.moderator_tip",
+                    "Calandria level %s %% · isotopic purity %s %% D (reactor grade 99.75) · pipe heavy water into any side but the bottom",
+                    "Уровень в каландре %s %% · изотопная чистота %s %% D (реакторная 99,75) · тяжёлая вода — трубой с любой стороны, кроме низа"),
+            COOL_TIP = PanelText.tr("candu.coolant_tip",
+                    "Heat transport circuit %s %% full · purity %s %% D · fill it from below: a half-empty circuit is a voided one",
+                    "Контур теплоносителя заполнен на %s %% · чистота %s %% D · заливается снизу: недолитый контур — то же осушение"),
+            DOWNGRADED = PanelText.tr("candu.downgraded", "D₂O diluted", "D₂O разбавл."),
+            LOW_D2O = PanelText.tr("candu.low_d2o", "Low D₂O", "Мало D₂O"),
+            DRAIN = PanelText.tr("candu.drain", "Drain", "Слив"),
+            DRAIN_TIP = PanelText.tr("candu.drain_tip",
+                    "Drain 1 m³ of moderator into the tank of its grade, then pipe it to the finishing column. Lowers the level and the reactivity",
+                    "Слить 1 м³ замедлителя в бак его сорта, оттуда — трубой на колонну доводки. Уровень и реактивность падают"),
+            DRAINED_TIP = PanelText.tr("candu.drained_tip", "Drain tanks: %s L waiting to be piped away",
+                    "В баках слива %s л ждут отвода трубой");
     private static final Tr[] TRIPS = {
             PanelText.tr("npp.trip.none", "normal", "норма"),
             PanelText.tr("npp.trip.period", "SCRAM: period", "АЗ: период"),
@@ -55,7 +73,7 @@ public final class CanduPanels {
             PanelText.tr("npp.trip.external", "SCRAM: external (ESD)", "АЗ: внешняя (ПАЗ)"),
             PanelText.tr("npp.trip.manual", "SCRAM: manual", "АЗ: ручная")};
 
-    public static final PanelLayout REACTOR = PanelLayout.builder("candu_reactor", 248, 176, CHANNELS)
+    public static final PanelLayout REACTOR = PanelLayout.builder("candu_reactor", 248, 200, CHANNELS)
             .dial(8, 24, false, POWER, 10, 130, CanduReactor.TRIP_POWER * 100, 0, PCT.get(), N.get(),
                     v -> POWER_TIP.get(v.num(POWER, 10, 1), v.raw(RHO_PCM), 100))
             .dial(64, 24, false, PERIOD, 10, 100, Double.NaN, 0, SEC.get(), T_PERIOD.get(), null)
@@ -64,6 +82,8 @@ public final class CanduPanels {
             .bar(176, 40, 64, CONTROL, 10, 100, 0xFF707070, ROD_CONTROL.get(), null)
             .lamp(176, 70, FLAGS, F_TRIPPED, LampColor.RED, TRIPPED.get())
             .lamp(8, 82, FLAGS, F_NO_SG, LampColor.AMBER, NO_SG.get())
+            .lamp(64, 82, FLAGS, F_DOWNGRADED, LampColor.AMBER, DOWNGRADED.get())
+            .lamp(120, 82, FLAGS, F_LOW_D2O, LampColor.RED, LOW_D2O.get())
             .slot(200, 86, SLOT_FRESH, s -> s.is(PcItems.FUEL_ASSEMBLY.get()), FRESH.get())
             .slot(222, 86, SLOT_SPENT, s -> false, SPENT.get())
             .button(8, 100, 36, B_SCRAM, SCRAM.get(), null)
@@ -72,7 +92,12 @@ public final class CanduPanels {
             .button(108, 100, 18, B_STOP, STOP.get(), STOP_TIP.get())
             .button(128, 100, 18, B_DOWN, DOWN.get(), DOWN_TIP.get())
             .button(152, 100, 60, B_REFUEL, REFUEL.get(), REFUEL_TIP.get())
-            .readout(8, 140, 232, CanduPanels::status, null)
+            .bar(8, 128, 92, MOD_LEVEL, 10, 100, 0xFF4F86B8, MODERATOR.get(),
+                    v -> MOD_TIP.get(v.num(MOD_LEVEL, 10, 1), v.num(MOD_PURITY, 100, 2)))
+            .bar(108, 128, 92, COOL_FILL, 10, 100, 0xFF7FA8C8, COOLANT.get(),
+                    v -> COOL_TIP.get(v.num(COOL_FILL, 10, 1), v.num(COOL_PURITY, 100, 2)))
+            .button(206, 124, 36, B_DRAIN, DRAIN.get(), DRAIN_TIP.get())
+            .readout(8, 164, 232, CanduPanels::status, v -> DRAINED_TIP.get(v.raw(DRAIN_L)))
             .build();
 
     private CanduPanels() {

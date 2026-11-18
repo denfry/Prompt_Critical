@@ -51,6 +51,7 @@ public final class NppBlockEntities {
         event.registerBlockEntity(Capabilities.ItemHandler.BLOCK, PWR_REACTOR.get(), FoundryDevice::items);
         event.registerBlockEntity(Capabilities.ItemHandler.BLOCK, BWR_REACTOR.get(), FoundryDevice::items);
         event.registerBlockEntity(Capabilities.ItemHandler.BLOCK, CANDU_REACTOR.get(), FoundryDevice::items);
+        event.registerBlockEntity(Capabilities.FluidHandler.BLOCK, CANDU_REACTOR.get(), FoundryDevice::fluids);
         event.registerBlockEntity(Capabilities.ItemHandler.BLOCK, SFR_REACTOR.get(), FoundryDevice::items);
     }
 

@@ -653,6 +653,18 @@ public final class PcBlocks {
     private static final Footprint FP_CANDU_REACTOR = Footprint.of(CUBE3, CUBE3.at(0, 3, 0));
     public static final DeferredBlock<PcDeviceBlock> CANDU_REACTOR = device("candu_reactor", machine(), Spec.facing().segments(PcProperties.CANDU_SEGMENT, FP_CANDU_REACTOR),
             FoundryBlock.with(dev.denfry.promptcritical.mod.npp.CanduReactorBlockEntity::new));
+    /**
+     * Сероводородный завод тяжёлой воды 3×6×3: холодная колонна внизу, горячая над ней; питание — вода озера вокруг
+     * основания, продукт (15 % D) — в трубы. Пульт — в центре низа.
+     */
+    private static final Footprint FP_GS_TOWER = Footprint.of(CUBE3, CUBE3.at(0, 3, 0));
+    public static final DeferredBlock<PcDeviceBlock> GS_EXCHANGE_TOWER = device("gs_exchange_tower", machine(),
+            Spec.facing(PcProperties.RUNNING).footprint(FP_GS_TOWER),
+            FoundryBlock.with(dev.denfry.promptcritical.mod.heavywater.GsExchangeTowerBlockEntity::new));
+    /** Вакуумная колонна доводки D₂O 1×3×1: обогащённая и разбавленная вода — в куб, реакторная D₂O — из куба. */
+    public static final DeferredBlock<PcDeviceBlock> HEAVY_WATER_COLUMN = device("heavy_water_column", machine(),
+            Spec.facing(PcProperties.RUNNING).footprint(FP_TALL3),
+            FoundryBlock.with(dev.denfry.promptcritical.mod.heavywater.HeavyWaterColumnBlockEntity::new));
     /** Натриевый быстрый реактор T4 3×6×3: внизу бассейн натрия с зоной и экраном, вверху поворотная пробка; пульт — в центре низа. */
     private static final Footprint FP_SFR_REACTOR = Footprint.of(CUBE3, CUBE3.at(0, 3, 0));
     public static final DeferredBlock<PcDeviceBlock> SFR_REACTOR = device("sfr_reactor", machine(), Spec.facing().segments(PcProperties.SFR_SEGMENT, FP_SFR_REACTOR),
@@ -988,6 +1000,11 @@ public final class PcBlocks {
     public static final DeferredBlock<LiquidBlock> MINE_WATER = BLOCKS.registerBlock("mine_water",
             p -> new LiquidBlock(PcFluids.MINE_WATER.source.get(), p),
             Properties.ofFullCopy(Blocks.WATER).mapColor(MapColor.TERRACOTTA_ORANGE).noLootTable());
+
+    /** Реакторная тяжёлая вода из ведра: течёт как вода, в источник не превращается. */
+    public static final DeferredBlock<LiquidBlock> HEAVY_WATER = BLOCKS.registerBlock("heavy_water",
+            p -> new LiquidBlock(PcFluids.HEAVY_WATER.source.get(), p),
+            Properties.ofFullCopy(Blocks.WATER).mapColor(MapColor.WATER).noLootTable());
 
     // --- служебные ---
     /** Клетка конструкции, через которую машина отдаёт вращение в сеть Create (03a §3a.12.3). */

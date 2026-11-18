@@ -15,7 +15,8 @@ import net.neoforged.neoforge.registries.NeoForgeRegistries;
 
 /**
  * Жидкости и газы M2 (07 §7.22, 08 §8.20): существуют в трубах и баках (Create, гидросети); вёдер нет — газ из
- * ведра в мир не выливается; блок есть только у шахтной воды (затопление). Плотность газов отрицательная (всплывают), как принято в NeoForge.
+ * ведра в мир не выливается; блок есть только у шахтной воды (затопление) и реакторной тяжёлой воды — её, как и
+ * обычную воду, носят ведром. Плотность газов отрицательная (всплывают), как принято в NeoForge.
  */
 public final class PcFluids {
     public static final DeferredRegister<FluidType> TYPES = DeferredRegister.create(NeoForgeRegistries.Keys.FLUID_TYPES, PromptCritical.MOD_ID);
@@ -120,9 +121,17 @@ public final class PcFluids {
     public static final Entry DECON_PERMANGANATE = liquid("decon_permanganate", 1040, 1050, 293);
     /** Отработанный дезактивирующий раствор и смыв душа — жидкие радиоактивные отходы. */
     public static final Entry CONTAMINATED_DECON_SOLUTION = liquid("contaminated_decon_solution", 1010, 1050, 293);
+    // тяжёлая вода T3: сорта по доле D ({@code HeavyWaterGrade}), 1 мБ = 1 л; вязкость D₂O при 20 °C — 1,25 мПа·с
+    /** Реакторная D₂O, 99,75 ат. % D, 1,105 кг/л: единственная с блоком и ведром. */
+    public static final Entry HEAVY_WATER = liquid("heavy_water", 1105, 1250, 293);
+    /** Разбавленная D₂O, 90 ат. % D: слив реактора и сбор утечек — сырьё доводочной колонны. */
+    public static final Entry DOWNGRADED_HEAVY_WATER = liquid("downgraded_heavy_water", 1094, 1230, 293);
+    /** Продукт сероводородного завода, 15 ат. % D. */
+    public static final Entry DEUTERIUM_ENRICHED_WATER = liquid("deuterium_enriched_water", 1014, 1040, 293);
 
     static {
         MINE_WATER.props.block(PcBlocks.MINE_WATER);
+        HEAVY_WATER.props.block(PcBlocks.HEAVY_WATER).bucket(PcItems.HEAVY_WATER_BUCKET);
     }
 
     /** Тип, источник и текущая форма одной жидкости. */

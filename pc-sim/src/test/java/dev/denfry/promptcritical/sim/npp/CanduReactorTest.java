@@ -1,8 +1,12 @@
 package dev.denfry.promptcritical.sim.npp;
 
+import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
+import dev.denfry.promptcritical.sim.core.TreeStateReader;
+import dev.denfry.promptcritical.sim.core.TreeStateWriter;
 import dev.denfry.promptcritical.sim.fuel.FuelDesign;
+import dev.denfry.promptcritical.sim.heavywater.HeavyWater;
 import org.junit.jupiter.api.Test;
 
 /** CANDU T3 против литературы: критичность на природном уране, положительный пустотный коэффициент, перегрузка, тритий. */
@@ -79,5 +83,89 @@ class CanduReactorTest {
         assertTrue(Math.abs(full.tritiumBq() / half.tritiumBq() - 2) < 0.1, "∝ flux: " + full.tritiumBq() / half.tritiumBq());
         double gramsPerYear = full.tritiumGrams() * 365.25 * 24;
         assertTrue(gramsPerYear > 1 && gramsPerYear < 200, "g/yr " + gramsPerYear);
+    }
+
+    /** Каландр и контур: ~сотня тонн замедлителя на 97 каналов (у CANDU 6 — 265 т на 380), несколько тонн в контуре. */
+    @Test
+    void heavyWaterInventoriesHaveRealisticSize() {
+        CanduReactor r = new CanduReactor();
+        assertTrue(r.moderatorCapacityKg() > 60e3 && r.moderatorCapacityKg() < 200e3, "moderator kg " + r.moderatorCapacityKg());
+        assertTrue(r.coolantCapacityKg() > 1e3 && r.coolantCapacityKg() < 10e3, "coolant kg " + r.coolantCapacityKg());
+        assertEquals(1, r.moderatorLevel(), 1e-12);
+    }
+
+    /** Без замедлителя зона из природного урана глубоко подкритична; залитая — критична. */
+    @Test
+    void dryCalandriaIsSubcritical() {
+        CanduReactor r = CanduReactor.dry();
+        for (int i = 0; i < CanduReactor.CHANNELS; i++) assertTrue(r.loadChannel(i, BUNDLE_KG, 0.00711, 0.000054));
+        r.setRods(0, 0);
+        assertTrue(r.evaluateReactivity() < -0.2, "dry rho " + r.evaluateReactivity());
+        assertEquals(r.coolantCapacityKg(), r.addCoolant(1e9, HeavyWater.REACTOR_GRADE_X), 1e-6, "fills up to the brim");
+        r.addModerator(0.5 * r.moderatorCapacityKg(), HeavyWater.REACTOR_GRADE_X);
+        double half = r.evaluateReactivity();
+        r.addModerator(1e9, HeavyWater.REACTOR_GRADE_X);
+        double full = r.evaluateReactivity();
+        assertTrue(half < full - 0.01, "half level " + half + " vs full " + full);
+        assertTrue(full > 0, "full calandria is critical without rods: " + full);
+    }
+
+    /**
+     * Лёгкая вода в замедлителе — сильный поглотитель: протий захватывает в 640 раз сильнее дейтерия, и потеря одного
+     * атомного процента чистоты втрое увеличивает поглощение замедлителя — около десятка мк, больше запаса на
+     * перегрузку. Теплоноситель занимает малую долю ячейки, его чистота весит много меньше.
+     */
+    @Test
+    void moderatorPurityCostsAboutTenMilliK() {
+        CanduReactor r = loaded();
+        r.setRods(0, 0.5);
+        r.hotStart(1);
+        double rho = r.evaluateReactivity();
+        r.moderator().set(r.moderatorCapacityKg(), HeavyWater.REACTOR_GRADE_X - 0.01);
+        double modLoss = (rho - r.evaluateReactivity()) * 1e3;
+        assertTrue(modLoss > 8 && modLoss < 40, "moderator purity coefficient " + modLoss + " mk/at.%");
+        r.moderator().set(r.moderatorCapacityKg(), HeavyWater.REACTOR_GRADE_X);
+        r.coolant().set(r.coolantCapacityKg(), HeavyWater.REACTOR_GRADE_X - 0.01);
+        double coolLoss = (rho - r.evaluateReactivity()) * 1e3;
+        assertTrue(coolLoss > 0 && coolLoss < modLoss / 3, "coolant purity coefficient " + coolLoss + " mk/at.%");
+    }
+
+    /** Течь лёгкой воды разбавляет замедлитель при постоянном уровне, реактивность падает. */
+    @Test
+    void lightWaterIngressDowngradesTheModerator() {
+        CanduReactor r = loaded();
+        r.setRods(0, 0.5);
+        r.hotStart(1);
+        double rho = r.evaluateReactivity();
+        r.setLightWaterIngress(1);
+        r.step(600);
+        assertTrue(r.moderator().purity() < HeavyWater.REACTOR_GRADE_X - 0.004, "purity " + r.moderator().purity());
+        assertEquals(r.moderatorCapacityKg(), r.moderatorKg(), 1e-6, "overflow keeps the level");
+        assertTrue(r.evaluateReactivity() < rho - 0.005, "downgrading costs reactivity");
+    }
+
+    /** Слив уносит тритий с водой; состояние D₂O переживает сохранение, старые сохранения считаются залитыми. */
+    @Test
+    void drainCarriesTritiumAndStateSurvivesSaveLoad() {
+        CanduReactor r = loaded();
+        r.setRods(0, 0.5);
+        r.hotStart(1);
+        r.step(3600);
+        double perKg = r.moderatorTritiumBqPerKg(), cap = r.moderatorCapacityKg();
+        assertTrue(r.coolantTritiumBq() > 0 && r.coolantTritiumBq() < r.tritiumBq(), "coolant tritium " + r.coolantTritiumBq());
+        assertEquals(1000, r.drainModerator(1000), 1e-9);
+        assertEquals(perKg, r.moderatorTritiumBqPerKg(), perKg * 1e-9, "specific activity is unchanged by draining");
+        assertEquals(perKg * (cap - 1000), r.tritiumBq(), perKg * cap * 1e-9);
+        r.addModerator(1000, 0.9);
+        TreeStateWriter w = new TreeStateWriter();
+        r.save(w);
+        CanduReactor copy = CanduReactor.dry();
+        copy.load(new TreeStateReader(w.root()));
+        assertEquals(r.moderatorKg(), copy.moderatorKg(), 1e-6);
+        assertEquals(r.moderator().purity(), copy.moderator().purity(), 1e-12);
+        assertEquals(r.tritiumBq(), copy.tritiumBq(), r.tritiumBq() * 1e-9);
+        CanduReactor legacy = CanduReactor.dry();
+        legacy.load(new TreeStateReader(new TreeStateWriter().root()));
+        assertEquals(legacy.moderatorCapacityKg(), legacy.moderatorKg(), 1e-6, "pre-D2O saves load full");
     }
 }

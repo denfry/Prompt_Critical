@@ -70,6 +70,7 @@ public final class PcBlockStateProvider extends BlockStateProvider {
         simpleBlock(PcBlocks.KINETIC_PORT.get(), part);
         // жидкость рисует рендер жидкостей; модели нужна только частица
         simpleBlock(PcBlocks.MINE_WATER.get(), models().getBuilder("mine_water").texture("particle", modLoc("block/fluid/mine_water_still")));
+        simpleBlock(PcBlocks.HEAVY_WATER.get(), models().getBuilder("heavy_water").texture("particle", modLoc("block/fluid/heavy_water_still")));
     }
 
     /** Плита, ступени и стенка по ванильным шаблонам из текстуры базового блока декора. */
@@ -279,6 +280,9 @@ public final class PcBlockStateProvider extends BlockStateProvider {
             case "rtg_thermoelectric" -> s.getValue(BlockStateProperties.LIT) ? id : id + "_depleted";
             case "pwr_reactor" -> s.getValue(PcProperties.PWR_SEGMENT) == PcProperties.PwrSegment.HEAD ? "control_rod_drive" : "reactor_vessel_wall";
             case "pressurizer" -> "pressurizer";
+            // тяжёлая вода T3
+            case "gs_exchange_tower" -> "absorption_tower";
+            case "heavy_water_column" -> "fractionating_column";
             case "candu_reactor" -> s.getValue(PcProperties.CANDU_SEGMENT) == PcProperties.CanduSegment.FUELLING ? "refueling_machine" : "reactor_vessel_wall";
             case "submerged_arc_furnace" -> s.getValue(BlockStateProperties.LIT) ? id + "_running" : id;
             case "siemens_reactor" -> s.getValue(PcProperties.RUNNING) ? id + "_running" : id;

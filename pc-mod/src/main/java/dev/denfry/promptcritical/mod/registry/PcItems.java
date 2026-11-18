@@ -354,6 +354,11 @@ public final class PcItems {
     /** Содранная плёнка покрытия с загрязнением: твёрдые РАО. */
     public static final DeferredItem<Item> STRIPPED_COATING = item("stripped_coating", 16);
 
+    /** Ведро реакторной тяжёлой воды: 1000 мБ = 1 м³, 1,1 т D₂O; льётся в баки, трубы и в мир, как вода. */
+    public static final DeferredItem<net.minecraft.world.item.BucketItem> HEAVY_WATER_BUCKET = registered(ITEMS.registerItem(
+            "heavy_water_bucket", p -> new net.minecraft.world.item.BucketItem(PcFluids.HEAVY_WATER.source.get(), p),
+            new Item.Properties().craftRemainder(net.minecraft.world.item.Items.BUCKET).stacksTo(1)));
+
     private static <I extends Item> DeferredItem<I> registered(DeferredItem<I> i) {
         PLAIN.add(i);
         return i;

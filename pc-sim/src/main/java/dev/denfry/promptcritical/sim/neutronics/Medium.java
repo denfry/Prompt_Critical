@@ -21,6 +21,15 @@ enum Medium {
 
     /** Природный бор: σ_a при 2200 м/с, б; молярная масса, г/моль. */
     static final double BORON_SIGMA_A = 767, BORON_MOLAR_MASS = 10.81;
+    /**
+     * Изотопная чистота: константы {@code D2O} заданы при 99,75 ат. % D. Протий на месте дейтерия добавляет на молекулу
+     * поглощение 2(σ_H − σ_D), σ_H = 0,3326 б, σ_D = 0,519 мб при 2200 м/с (ENDF/B-VII.1; Mughabghab, «Atlas of Neutron
+     * Resonances», 2006) — проверка: 2·(0,0025·0,3326 + 0,9975·0,000519) + 0,00019 (кислород) = 2,89 мб против
+     * табличных 2,87. Рассеяние и замедляющая способность ξσ_s на молекулу аддитивны по ядрам и линейны по доле
+     * протия между D₂O и H₂O этой же таблицы. D и τ при малой примеси H не пересчитываются: главное — поглощение
+     * (на решётке CANDU модель даёт ≈ 12 мк на ат. % чистоты замедлителя и ≈ 1,3 мк — теплоносителя).
+     */
+    static final double SIGMA_A_H = 0.3326, SIGMA_A_D = 0.519e-3;
 
     final double refDensity, molarMass, sigmaA, sigmaS, moderatingPower, diffusion, age, removal, slowingDownTime;
     final boolean liquidWater;
@@ -41,8 +50,27 @@ enum Medium {
 
     /** Σ_a при 2200 м/с, см⁻¹, с бором (ppm по массе) для жидкой воды. */
     double absorption2200(double density, double boronPpm) {
-        double s = density * LatticeModel.AVOGADRO_BARN / molarMass * sigmaA;
+        return absorption2200(density, boronPpm, CellFeedbackState.REACTOR_GRADE_D2O);
+    }
+
+    /** Σ_a при 2200 м/с с изотопной чистотой {@code d2o} (ат. доля D) — для {@code D2O}; прочим средам не важна. */
+    double absorption2200(double density, double boronPpm, double d2o) {
+        double s = density * LatticeModel.AVOGADRO_BARN / molarMass * (sigmaA + protiumSigmaA(d2o));
         return liquidWater ? s + boronAbsorption(density, boronPpm) : s;
+    }
+
+    /** Добавка поглощения на молекулу от протия сверх реакторной чистоты, б (отрицательна для чистоты выше). */
+    double protiumSigmaA(double d2o) {
+        return this == D2O ? 2 * (CellFeedbackState.REACTOR_GRADE_D2O - d2o) * (SIGMA_A_H - SIGMA_A_D) : 0;
+    }
+
+    /** Множитель рассеяния и замедляющей способности {@code D2O} при чистоте {@code d2o}: линейно к H₂O. */
+    double protiumFactor(double d2o, boolean moderating) {
+        if (this != D2O) return 1;
+        double perMoleculeD = (moderating ? moderatingPower / (refDensity * LatticeModel.AVOGADRO_BARN / molarMass) : sigmaS);
+        double perMoleculeH = moderating ? H2O.moderatingPower / (H2O.refDensity * LatticeModel.AVOGADRO_BARN / H2O.molarMass) : H2O.sigmaS;
+        double shift = (CellFeedbackState.REACTOR_GRADE_D2O - d2o) / CellFeedbackState.REACTOR_GRADE_D2O;
+        return (perMoleculeD + shift * (perMoleculeH - perMoleculeD)) / perMoleculeD;
     }
 
     /** Σ_a природного бора при 2200 м/с, см⁻¹, в среде плотности {@code density} (ppm по массе). */

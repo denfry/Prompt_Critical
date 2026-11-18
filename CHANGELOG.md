@@ -195,6 +195,18 @@
 - Tritium builds up in the moderator from D(n,g)T and is counted on the desk; it is a pure beta emitter with no
   external dose. Control desk, recipe and a T3 handbook chapter.
 - Fixes a shadowed position count in the shared core step that let only the first PWR or BWR assembly deplete.
+- Heavy water is a real fluid in three grades: 15 % D enriched water, 90 % D downgraded heavy water and 99.75 %
+  reactor grade, which also comes in a bucket and pours into the world. Machines track the deuterium fraction
+  inside and never hand out a higher grade than they hold.
+- Girdler sulfide plant (3x6x3) on a lake shore: dual-temperature H2O/H2S exchange at 30 and 130 °C, at most
+  1 - 1.80/2.32 = 22 % of the deuterium recovered, a tonne of lake water a second, 15 % D product into pipes.
+- Vacuum finishing column (1x3x1): 400 plates at alpha 1.05 take the GS product or downgraded heavy water up to
+  reactor grade and refuse natural water.
+- The CANDU now starts dry and holds real D2O inventories: about 112 t in the calandria (any side) and 3 t in the
+  heat transport circuit (from below). The moderator level sets the moderated core height, a half-empty circuit
+  acts as voided channels, and isotopic purity enters the cell absorption and moderation: about 12 mk per atom
+  per cent of protium in the moderator. Light water ingress dilutes it; a drain button sends a cubic metre of
+  moderator, tritium included, into a tank of its grade. The desk shows level, purity and both lamps.
 
 ### Telemetry and SCADA (A4)
 - Telemetry gateway (RTU): scans the local panels of every machine within 8 blocks once a second and serves the
