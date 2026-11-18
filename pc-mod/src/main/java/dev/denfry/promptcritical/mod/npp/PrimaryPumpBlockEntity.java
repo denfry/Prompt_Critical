@@ -22,6 +22,14 @@ import org.jetbrains.annotations.Nullable;
  * Обороты ниже номинальных — расход пропорционально ниже; остановленный насос выбегает на маховике.
  */
 public final class PrimaryPumpBlockEntity extends KineticMachineBlockEntity<ShaftInput> {
+    /** Сальник насоса (art/blockbench/mechanics/primary_pump.author.js): протечка тем чаще, чем быстрее вал. */
+    @Override
+    protected void clientTick() {
+        if (!runningState()) return;
+        dev.denfry.promptcritical.mod.fx.MachineFx fx = fx();
+        if (fx != null && fx.chance(0.8 * Math.min(1, Math.abs(getSpeed()) / NOMINAL_RPM))) fx.leak(fx.at(8, 4.6, 9.4));
+    }
+
     public static final double NOMINAL_RPM = 64, SHARE = 0.5;
     /** Мощность насоса на полный свой расход, Вт. */
     public static final double RATED_W = ChannelReactor.NOMINAL_FLOW_KG_S * SHARE / 870 * 1.0e6 / 0.7;

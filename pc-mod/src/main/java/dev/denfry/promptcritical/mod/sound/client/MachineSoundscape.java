@@ -129,6 +129,14 @@ public final class MachineSoundscape {
             case dev.denfry.promptcritical.mod.nitrogen.NitricAcidBlockEntity a -> running || n > 0 ? new Loop(PcSfx.MINE_FAN, 0.6f, 0.8f + 0.4f * Math.min(1, n)) : null;
             // электролизёр: гудит выпрямленный ток в шинах и выпрямитель
             case dev.denfry.promptcritical.mod.chlor.CellRoomBlockEntity c -> running ? new Loop(PcSfx.TRANSFORMER_HUM, 0.3f, 1) : null;
+            // ГЦН: насос гудит по оборотам вала
+            case dev.denfry.promptcritical.mod.npp.PrimaryPumpBlockEntity p -> running || n > 0 ? new Loop(PcSfx.PUMP, 0.4f + 0.4f * Math.min(1, n), 0.6f + 0.5f * Math.min(1, n)) : null;
+            // каньон PUREX: вентиляция каньона, пока линия в работе
+            case dev.denfry.promptcritical.mod.reprocessing.PurexCellBlockEntity c -> running ? new Loop(PcSfx.MINE_FAN, 0.3f, 1.2f) : null;
+            // печь восстановления UO2: гул нагревателей и их трансформатора
+            case dev.denfry.promptcritical.mod.nuclear.Uo2ConversionBlockEntity u -> flag(s, BlockStateProperties.LIT) ? new Loop(PcSfx.TRANSFORMER_HUM, 0.3f, 0.9f) : null;
+            // сервер MES: вентиляторы серверов в стойке
+            case dev.denfry.promptcritical.mod.mes.MesServerBlockEntity m -> flag(s, BlockStateProperties.LIT) ? new Loop(PcSfx.ELECTRIC_MOTOR, 0.15f, 1.8f) : null;
             default -> null;
         };
     }

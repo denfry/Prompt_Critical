@@ -36,6 +36,7 @@ public final class PcClient {
         dev.denfry.promptcritical.mod.grid.client.GridClient.register(modBus);
         dev.denfry.promptcritical.mod.automation.client.AutomationClient.register(modBus);
         dev.denfry.promptcritical.mod.chem.client.ChemClient.register(modBus);
+        dev.denfry.promptcritical.mod.npp.client.NppClient.register(modBus);
         dev.denfry.promptcritical.mod.body.client.BodyClient.register();
         dev.denfry.promptcritical.mod.sound.client.MachineSoundscape.register();
         modBus.addListener(PcClient::renderers);

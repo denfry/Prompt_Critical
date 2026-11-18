@@ -64,9 +64,30 @@ public final class HeliumRecoveryBlockEntity extends DeviceBlockEntity implement
         return returned;
     }
 
+    /**
+     * Эффекты на клиенте (точки — art/blockbench/gas_processing/helium_recovery_unit.author.js): из продувочного
+     * клапана холодного блока ползёт холодный пар, адсорберы КЦА переключаются со сбросом давления через глушитель.
+     */
+    private void clientTick() {
+        BlockState st = getBlockState();
+        if (!st.hasProperty(PcProperties.RUNNING) || !st.getValue(PcProperties.RUNNING)) return;
+        dev.denfry.promptcritical.mod.fx.MachineFx fx = dev.denfry.promptcritical.mod.fx.MachineFx.of(level, worldPosition,
+                st.getBlock() instanceof dev.denfry.promptcritical.mod.block.PcBlock pb ? pb.facing(st) : Direction.NORTH);
+        if (fx == null) return;
+        if (fx.chance(1.5)) fx.puff(fx.at(8, 32, 8), new net.minecraft.world.phys.Vec3(0, -0.01, 0), 1);
+        if (fx.chance(0.2)) {
+            var vent = fx.at(24.6, 30, 4.2);
+            fx.puff(vent, new net.minecraft.world.phys.Vec3(0, 0.12, 0), 6);
+            fx.sound(vent, dev.denfry.promptcritical.mod.sound.PcSfx.HOIST_BRAKE.get(), 0.5f, 1.3f);
+        }
+    }
+
     @Override
     public void tickDevice() {
-        if (!(level instanceof ServerLevel s)) return;
+        if (!(level instanceof ServerLevel s)) {
+            clientTick();
+            return;
+        }
         SimLevelBinding b = SimBindings.get(s);
         if (b == null) return;
         double dt = 0.05 * b.world().clock().kSlow();

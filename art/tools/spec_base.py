@@ -48,30 +48,7 @@ model("control_rod_drive/rod", "mechanics", {"a": T("absorber"), "st": T("steel_
     el("head", [6, 15, 6], [10, 16, 10], "st"),
 ], "block/control_rod_drive/partial/rod", kind="partial")
 
-pump = (
-    [el("base", [0, 0, 0], [16, 2, 16], "d")]
-    + disc("volute", "y", 5.5, 2, 10, "sm")
-    + [
-        el("inlet_nozzle", [5, 3, 1.5], [11, 9, 4], "pipe"),
-        el("inlet_flange", [4, 2, 0], [12, 10, 1.5], "d", faces={"north": "end"}, full=["north"]),
-        el("outlet_nozzle", [12, 3, 5], [14.5, 9, 11], "pipe"),
-        el("outlet_flange", [14.5, 2, 4], [16, 10, 12], "d", faces={"east": "end"}, full=["east"]),
-        el("seal_housing", [4.5, 10, 4.5], [11.5, 13, 11.5], "st"),
-        el("hazard_band", [4.4, 12, 4.4], [11.6, 13, 11.6], "h"),
-        el("coupling", [5.5, 13, 5.5], [10.5, 16, 10.5], "b"),
-    ]
-)
-model("primary_pump", "mechanics",
-      {"d": T("steel_dark"), "p": T("steel_plate"), "st": T("steel_bare"), "b": T("brass"),
-       "h": T("hazard"), "pipe": "block/pipe_primary.png", "sm": T("steel_smooth"), "end": T("pipe_end")}, pump, "block/primary_pump")
-model("primary_pump/impeller", "mechanics", {"b": T("brass_smooth"), "st": T("steel_bare")},
-      disc("hub", "y", 2, 3, 9, "st", 8)
-      + [el("blade_x", [2.5, 4, 7.5], [13.5, 8, 8.5], "b"),
-         el("blade_z", [7.5, 4, 2.5], [8.5, 8, 13.5], "b"),
-         el("blade_d1", [2.5, 4, 7.5], [13.5, 8, 8.5], "b", rot=("y", 45, [8, 8, 8])),
-         el("blade_d2", [2.5, 4, 7.5], [13.5, 8, 8.5], "b", rot=("y", -45, [8, 8, 8]))]
-      + disc("shroud", "y", 6, 3, 4, "b"),
-      "block/primary_pump/partial/impeller", kind="partial")
+# главный циркуляционный насос нарисован вручную в Blockbench: art/blockbench/mechanics/primary_pump.author.js
 
 model("pump_flywheel", "mechanics", {"d": T("steel_dark"), "p": T("steel_plate"), "b": T("brass"), "h": T("hazard")}, [
     el("base", [0, 0, 0], [16, 2, 16], "d"),
