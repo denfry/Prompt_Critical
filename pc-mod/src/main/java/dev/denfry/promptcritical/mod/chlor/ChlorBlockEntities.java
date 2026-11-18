@@ -14,7 +14,7 @@ import net.neoforged.neoforge.capabilities.RegisterCapabilitiesEvent;
 import net.neoforged.neoforge.registries.DeferredHolder;
 import net.neoforged.neoforge.registries.DeferredRegister;
 
-/** Типы BE хлорного производства и ПВХ, их патрубки и склады; служба выбросов хлора. */
+/** Типы BE хлорного производства и ПВХ, их патрубки и склады. */
 public final class ChlorBlockEntities {
     public static final DeferredRegister<BlockEntityType<?>> BLOCK_ENTITIES =
             DeferredRegister.create(Registries.BLOCK_ENTITY_TYPE, PromptCritical.MOD_ID);
@@ -40,7 +40,6 @@ public final class ChlorBlockEntities {
     public static void register(IEventBus modBus) {
         BLOCK_ENTITIES.register(modBus);
         modBus.addListener(ChlorBlockEntities::capabilities);
-        ChlorineReleaseService.register();
     }
 
     private static void capabilities(RegisterCapabilitiesEvent event) {

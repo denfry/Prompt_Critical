@@ -6,6 +6,7 @@ import dev.denfry.promptcritical.mod.binding.SimLevelBinding;
 import dev.denfry.promptcritical.mod.block.PcProperties;
 import dev.denfry.promptcritical.mod.blockentity.DeviceBlockEntity;
 import dev.denfry.promptcritical.mod.chem.PyrolysisFurnaceBlockEntity.MultiInlet;
+import dev.denfry.promptcritical.mod.environment.ToxicReleaseService;
 import dev.denfry.promptcritical.mod.foundry.FoundryDevice;
 import dev.denfry.promptcritical.mod.panel.PanelHost;
 import dev.denfry.promptcritical.mod.panel.PanelLayout;
@@ -19,6 +20,7 @@ import dev.denfry.promptcritical.sim.consequence.DamageBudgetConfig;
 import dev.denfry.promptcritical.sim.consequence.DamageKind;
 import dev.denfry.promptcritical.sim.consequence.DamageRequest;
 import dev.denfry.promptcritical.sim.core.GridPos;
+import dev.denfry.promptcritical.sim.consequence.ToxicGas;
 import dev.denfry.promptcritical.sim.core.MutableStateTree;
 import dev.denfry.promptcritical.sim.core.SimId;
 import dev.denfry.promptcritical.sim.core.TreeStateReader;
@@ -153,7 +155,7 @@ public final class CellRoomBlockEntity extends DeviceBlockEntity implements Foun
         double room = chlorine.room();
         chlorine.add(Math.min(cl2Nm3, room));
         ventKgS = Math.max(0, cl2Nm3 - room) * ChlorUnits.CL2_KG_NM3 / dt;
-        if (ventKgS > 1e-6) ChlorineReleaseService.vent(s, worldPosition.above(), ventKgS);
+        if (ventKgS > 1e-6) ToxicReleaseService.vent(s, worldPosition.above(), ToxicGas.CHLORINE, ventKgS);
         hydrogen.add(Math.min(hydrogen.room(), cells.h2KgS() * dt / ChlorUnits.H2_KG_NM3)); // избыток водорода — на свечу
         liquor.add(Math.min(liquor.room(), cells.liquorKgS() * dt / ChlorUnits.LIQUOR_KG_L));
         if (cells.tripped() && !wasTripped && cells.h2InCl2() > DiaphragmCellRoom.H2_IN_CL2_LIMIT) explode(s, b);
@@ -175,7 +177,7 @@ public final class CellRoomBlockEntity extends DeviceBlockEntity implements Foun
         double power = Math.max(1, Math.min(3, BlastScaling.power(BLAST_J, dc.tntReferenceKg(), dc.maxExplosionPower())));
         s.explode(null, worldPosition.getX() + 0.5, worldPosition.getY() + 1, worldPosition.getZ() + 0.5, (float) power, false,
                 Level.ExplosionInteraction.NONE);
-        ChlorineReleaseService.puff(s, worldPosition, CELL_HOLDUP_CL2_KG);
+        ToxicReleaseService.puff(s, worldPosition, ToxicGas.CHLORINE, CELL_HOLDUP_CL2_KG);
         for (ServerPlayer p : s.getPlayers(p -> p.distanceToSqr(worldPosition.getCenter()) < 96 * 96))
             p.displayClientMessage(ChlorText.msg("cells.blast").withStyle(ChatFormatting.RED), false);
     }

@@ -5,17 +5,17 @@ import com.simibubi.create.content.kinetics.motor.CreativeMotorBlockEntity;
 import dev.denfry.promptcritical.mod.PromptCritical;
 import dev.denfry.promptcritical.mod.chlor.BrineTreaterBlockEntity;
 import dev.denfry.promptcritical.mod.chlor.CellRoomBlockEntity;
-import dev.denfry.promptcritical.mod.chlor.ChlorineReleaseService;
 import dev.denfry.promptcritical.mod.chlor.EdcCrackerBlockEntity;
 import dev.denfry.promptcritical.mod.chlor.EdcUnitBlockEntity;
 import dev.denfry.promptcritical.mod.chlor.LiquefierBlockEntity;
 import dev.denfry.promptcritical.mod.chlor.PvcReactorBlockEntity;
 import dev.denfry.promptcritical.mod.environment.EnvironmentService;
+import dev.denfry.promptcritical.mod.environment.ToxicReleaseService;
 import dev.denfry.promptcritical.mod.grid.ShaftGeneratorBlockEntity;
 import dev.denfry.promptcritical.mod.registry.PcBlocks;
 import dev.denfry.promptcritical.mod.registry.PcFluids;
 import dev.denfry.promptcritical.mod.registry.PcItems;
-import dev.denfry.promptcritical.sim.chlor.ChlorineCloud;
+import dev.denfry.promptcritical.sim.consequence.ToxicGas;
 import dev.denfry.promptcritical.sim.chlor.PvcReactor;
 import dev.denfry.promptcritical.sim.environment.Environment;
 import dev.denfry.promptcritical.sim.grid.GeneratorUnit;
@@ -168,7 +168,7 @@ public final class ChlorAlkaliGameTests {
                     LiquefierBlockEntity l = h.getBlockEntity(liq);
                     fill(l.fluids(Direction.NORTH), PcFluids.CHLORINE.source.get(), 1000);
                     h.assertTrue(l.ventKgS() > 0, "no caustic: tail gas vents");
-                    h.assertTrue(ChlorineReleaseService.ventKgS(h.getLevel(), h.absolutePos(liq).above(2)) > 0, "release registered");
+                    h.assertTrue(ToxicReleaseService.ventKgS(h.getLevel(), h.absolutePos(liq).above(2), ToxicGas.CHLORINE) > 0, "release registered");
                 })
                 .thenSucceed();
     }
@@ -177,13 +177,13 @@ public final class ChlorAlkaliGameTests {
     public static void chlorineCloudDriftsDownwind(GameTestHelper h) {
         BlockPos src = h.absolutePos(new BlockPos(6, 2, 6));
         h.startSequence()
-                .thenExecute(() -> ChlorineReleaseService.vent(h.getLevel(), src, 1.0))
+                .thenExecute(() -> ToxicReleaseService.vent(h.getLevel(), src, ToxicGas.CHLORINE, 1.0))
                 .thenExecute(() -> {
                     Environment.Sample e = EnvironmentService.sample(h.getLevel(), src, 10);
                     double ux = -Math.sin(e.windDirRad()), uz = Math.cos(e.windDirRad());
-                    double down = ChlorineReleaseService.ppmAt(h.getLevel(), src.getX() + 0.5 + ux * 50, src.getY() + 1, src.getZ() + 0.5 + uz * 50);
-                    double up = ChlorineReleaseService.ppmAt(h.getLevel(), src.getX() + 0.5 - ux * 50, src.getY() + 1, src.getZ() + 0.5 - uz * 50);
-                    h.assertTrue(down > ChlorineCloud.IDLH_PPM, "1 kg/s at 50 m downwind: " + down + " ppm");
+                    double down = ToxicReleaseService.ppmAt(h.getLevel(), ToxicGas.CHLORINE, src.getX() + 0.5 + ux * 50, src.getY() + 1, src.getZ() + 0.5 + uz * 50);
+                    double up = ToxicReleaseService.ppmAt(h.getLevel(), ToxicGas.CHLORINE, src.getX() + 0.5 - ux * 50, src.getY() + 1, src.getZ() + 0.5 - uz * 50);
+                    h.assertTrue(down > ToxicGas.CHLORINE.idlhPpm, "1 kg/s at 50 m downwind: " + down + " ppm");
                     h.assertTrue(up == 0, "nothing upwind: " + up);
                 })
                 .thenSucceed();

@@ -64,6 +64,7 @@ public final class PromptCritical {
         dev.denfry.promptcritical.mod.gas.GasBlockEntities.register(modBus);
         dev.denfry.promptcritical.mod.chem.ChemBlockEntities.register(modBus);
         dev.denfry.promptcritical.mod.chlor.ChlorBlockEntities.register(modBus);
+        dev.denfry.promptcritical.mod.environment.ToxicReleaseService.register();
         SimBindings.registerSubsystem(level -> new MineSubsystem(
                 SimConfigs.fromServerConfig().section(MiningConfig.class, MiningConfig.defaults()),
                 SimConfigs.fromServerConfig().section(DrainageConfig.class, DrainageConfig.defaults())));
