@@ -59,6 +59,17 @@ public final class SteamGeneratorBlockEntity extends DeviceBlockEntity implement
         return w != null ? w.steamTempK() : Double.NaN;
     }
 
+    /**
+     * Уровень в барабане котла, доля высоты барабана (0,5 — нормальный); {@code NaN} — котёл без барабана (жаротрубный)
+     * или его нет: защиты по уровню ПГ тогда нет.
+     */
+    double levelFrac() {
+        SteamPlant p = plant();
+        if (p == null || boiler.isNone()) return Double.NaN;
+        WaterTubeUnit w = p.waterTube(boiler);
+        return w != null ? (w.drumLevelM() + WaterTubeUnit.NORMAL_LEVEL_M) / WaterTubeUnit.DRUM_HEIGHT_M : Double.NaN;
+    }
+
     /** Тепло реактора в котёл, Вт. */
     void deliver(double watts) {
         heatW = watts;

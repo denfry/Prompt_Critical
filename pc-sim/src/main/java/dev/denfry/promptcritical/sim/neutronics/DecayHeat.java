@@ -29,6 +29,12 @@ public final class DecayHeat {
         }
     }
 
+    /** Равновесие после бесконечной работы на мощности деления {@code fissionW} (горячий старт, тесты). */
+    public void equilibrium(double fissionW) {
+        double p = Math.max(0, fissionW);
+        for (int i = 0; i < energy.length; i++) energy[i] = SHARE[i] * p / LAMBDA[i];
+    }
+
     /** Мощность остаточного тепловыделения, Вт. */
     public double powerW() {
         double s = 0;

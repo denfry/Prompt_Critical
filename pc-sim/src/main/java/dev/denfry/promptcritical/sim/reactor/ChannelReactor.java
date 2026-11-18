@@ -16,7 +16,6 @@ import dev.denfry.promptcritical.sim.neutronics.PointKinetics;
 import dev.denfry.promptcritical.sim.neutronics.ReactorShape;
 import dev.denfry.promptcritical.sim.neutronics.SixFactor;
 import dev.denfry.promptcritical.sim.neutronics.Westcott;
-import dev.denfry.promptcritical.sim.nuclide.Nuclide;
 import dev.denfry.promptcritical.sim.nuclide.NuclideVector;
 
 /**
@@ -71,8 +70,8 @@ public final class ChannelReactor {
     public static final double TRIP_PERIOD_S = 10, TRIP_POWER = 1.2, TRIP_FLOW = 0.7, TRIP_OUTLET_K = 573.15;
     /** Источник нейтронов (Po–Be), нейтр./с. */
     public static final double SOURCE_N_S = 1e7;
-    public static final double ALPHA_U5 = 0.17, ALPHA_PU9 = 0.36, CONVERSION = 0.35, SIGMA_F5 = 585, SIGMA_F9 = 748;
-    private static final double AVOGADRO = NuclideVector.AVOGADRO;
+    public static final double ALPHA_U5 = FuelDepletion.ALPHA_U5, ALPHA_PU9 = FuelDepletion.ALPHA_PU9, CONVERSION = 0.35,
+            SIGMA_F5 = FuelDepletion.SIGMA_F5, SIGMA_F9 = FuelDepletion.SIGMA_F9;
 
     public enum Trip { NONE, PERIOD, POWER, FLOW, OUTLET, EXTERNAL, MANUAL }
 
@@ -298,23 +297,7 @@ public final class ChannelReactor {
 
     /** Средний состав загруженных каналов на 1 т ТМ — для модели ячейки. */
     private NuclideVector averageFuel() {
-        double s5 = 0, s8 = 0, s9 = 0, sf = 0, hm = 0;
-        for (int i = 0; i < CHANNELS; i++) {
-            if (hm0[i] <= 0) continue;
-            s5 += u5[i];
-            s8 += u8[i];
-            s9 += pu9[i];
-            sf += fp[i];
-            hm += hm0[i];
-        }
-        if (hm <= 0) return NuclideVector.uranium(1000, 0.05);
-        double k = 1e6 / hm; // граммы на тонну исходного ТМ
-        double[] a = new double[Nuclide.values().length];
-        a[Nuclide.U235.ordinal()] = s5 * k / Nuclide.U235.molarMass() * AVOGADRO;
-        a[Nuclide.U238.ordinal()] = s8 * k / Nuclide.U238.molarMass() * AVOGADRO;
-        a[Nuclide.PU239.ordinal()] = s9 * k / Nuclide.PU239.molarMass() * AVOGADRO;
-        a[Nuclide.LFP.ordinal()] = sf * k / Nuclide.LFP.molarMass() * AVOGADRO / 2;
-        return NuclideVector.ofAtoms(a);
+        return FuelDepletion.averageFuel(hm0, u5, u8, pu9, fp, 0.05);
     }
 
     private CellFeedbackState state(double tf, double tg) {
@@ -459,25 +442,8 @@ public final class ChannelReactor {
 
     private void burn(double gameDt) {
         if (fissionW <= 0 || gameDt <= 0) return;
-        for (int i = 0; i < CHANNELS; i++) {
-            if (share[i] <= 0 || hm0[i] <= 0) continue;
-            double pw = fissionW * share[i];
-            double fissions = pw / PointKinetics.FISSION_ENERGY * gameDt; // делений за шаг
-            double w5 = u5[i] * SIGMA_F5 / Nuclide.U235.molarMass(), w9 = pu9[i] * SIGMA_F9 / Nuclide.PU239.molarMass();
-            double f9 = w5 + w9 > 0 ? w9 / (w5 + w9) : 0;
-            double mol = fissions / AVOGADRO;
-            double d5 = mol * (1 - f9) * (1 + ALPHA_U5) * Nuclide.U235.molarMass() / 1000,
-                    d9 = mol * f9 * (1 + ALPHA_PU9) * Nuclide.PU239.molarMass() / 1000;
-            double made9 = CONVERSION * mol * ((1 - f9) * (1 + ALPHA_U5) + f9 * (1 + ALPHA_PU9)) * Nuclide.PU239.molarMass() / 1000;
-            u5[i] = Math.max(0, u5[i] - d5);
-            // захват без деления: U-235 → U-236, Pu-239 → Pu-240
-            u6[i] += mol * (1 - f9) * ALPHA_U5 * 236.046 / 1000;
-            pu0[i] += mol * f9 * ALPHA_PU9 * Nuclide.PU240.molarMass() / 1000;
-            pu9[i] = Math.max(0, pu9[i] - d9 + made9);
-            u8[i] = Math.max(0, u8[i] - made9 * Nuclide.U238.molarMass() / Nuclide.PU239.molarMass());
-            fp[i] += mol * (1 - f9) * Nuclide.U235.molarMass() / 1000 + mol * f9 * Nuclide.PU239.molarMass() / 1000;
-            burnup[i] += pw * gameDt / 86400 / 1e6 / hm0[i];
-        }
+        for (int i = 0; i < CHANNELS; i++)
+            if (share[i] > 0) FuelDepletion.deplete(i, fissionW * share[i], gameDt, CONVERSION, hm0, u5, u8, u6, pu9, pu0, fp, burnup);
     }
 
     private void thermal(double secondaryK) {

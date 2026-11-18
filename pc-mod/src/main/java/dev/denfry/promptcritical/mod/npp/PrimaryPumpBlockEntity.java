@@ -39,6 +39,14 @@ public final class PrimaryPumpBlockEntity extends KineticMachineBlockEntity<Shaf
         return flow;
     }
 
+    /**
+     * Обороты, которые держит привод, доля номинала: реактор T2a сам ведёт ротор с маховиком и выбег
+     * ({@code CoolantPump}), насос сообщает только, крутит ли его вал.
+     */
+    public double drive() {
+        return flow / SHARE;
+    }
+
     @Override
     protected ShaftInput unit(SimLevelBinding binding) {
         return shaft;

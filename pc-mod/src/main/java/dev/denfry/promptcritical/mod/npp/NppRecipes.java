@@ -14,8 +14,9 @@ import net.minecraft.data.recipes.RecipeCategory;
 import net.minecraft.data.recipes.RecipeOutput;
 import net.minecraft.data.recipes.RecipeProvider;
 import net.minecraft.data.recipes.ShapedRecipeBuilder;
+import net.minecraft.world.item.Items;
 
-/** Рецепты АЭС T1. */
+/** Рецепты АЭС T1 и T2a. */
 public final class NppRecipes extends RecipeProvider {
     public NppRecipes(PackOutput output, CompletableFuture<HolderLookup.Provider> registries) {
         super(output, registries);
@@ -57,5 +58,16 @@ public final class NppRecipes extends RecipeProvider {
                 .pattern("PTP").pattern("SXS").pattern("PTP").define('P', PcItems.STEEL_PLATE.get()).define('T', PcItems.SEAMLESS_PIPE.get())
                 .define('S', AllItems.IRON_SHEET.get()).define('X', AllBlocks.FLUID_TANK.get())
                 .unlockedBy("has_power_reactor", has(PcBlocks.POWER_REACTOR.get())).save(out, id("steam_generator"));
+        // ВВЭР: блок приводов СУЗ над корпусом из листа, внутрикорпусная шахта из циркалоя, пульт
+        ShapedRecipeBuilder.shaped(RecipeCategory.MISC, PcBlocks.PWR_REACTOR.get())
+                .pattern("DCD").pattern("PRP").pattern("PZP").define('D', PcBlocks.CONTROL_ROD_DRIVE.get())
+                .define('C', PcBlocks.CONTROL_ROD_CHANNEL.get()).define('R', PcBlocks.REACTOR_CONTROLLER.get())
+                .define('P', PcItems.STEEL_PLATE.get()).define('Z', PcItems.ZIRCALOY_INGOT.get())
+                .unlockedBy("has_reactor_controller", has(PcBlocks.REACTOR_CONTROLLER.get())).save(out, id("pwr_reactor"));
+        // компенсатор давления: сосуд, ИПУ сверху, манометр, ТЭНы — медная обмотка
+        ShapedRecipeBuilder.shaped(RecipeCategory.MISC, PcBlocks.PRESSURIZER.get())
+                .pattern("PVP").pattern("PXP").pattern("CGC").define('P', PcItems.STEEL_PLATE.get()).define('V', PcItems.SAFETY_VALVE.get())
+                .define('X', AllBlocks.FLUID_TANK.get()).define('G', PcBlocks.INSTRUMENT_PRESSURE.get()).define('C', Items.COPPER_INGOT)
+                .unlockedBy("has_pwr_reactor", has(PcBlocks.PWR_REACTOR.get())).save(out, id("pressurizer"));
     }
 }
