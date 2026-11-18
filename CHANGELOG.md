@@ -137,6 +137,18 @@
   tests not yet run.
 - Fuel depletion moved out of the T1 channel reactor into a shared helper; T1 behaviour is unchanged.
 
+### Boiling water reactor (T2b)
+- A 100 MWt direct-cycle boiling water unit on the same light water core as the VVER: the water boils in the core at
+  7 MPa, drift-flux voids along the power profile feed back through the core water density, and recirculation pumps
+  set the power along a rod line (70 % flow gives about 73 % power). A PI turbine pressure regulator, feedwater level
+  control, hydraulic scram in 3 s, natural circulation without pumps and a vessel safety valve.
+- The steam carries N-16: steam turbines near the reactor become radiation sources at power. Steam reaches the
+  turbines through a water-tube boiler drum next to a steam generator block, which stands for the vessel steam space.
+- A 3×6×3 vessel with its own segments, a control desk, recipe and a handbook chapter. The core is small for a boiling
+  reactor, so its void coefficient is several times the large-plant −80…−150 pcm/%, like the PWR coolant coefficient.
+- The PWR now keeps only its loop and protection; assemblies, neutronics, poisons and depletion moved into a shared
+  light water core.
+
 ### Telemetry and SCADA (A4)
 - Telemetry gateway (RTU): scans the local panels of every machine within 8 blocks once a second and serves the
   snapshot to a CC: Tweaked computer as the `pc_rtu` peripheral — machines, named instruments with units, lamps as

@@ -272,6 +272,7 @@ public final class PcBlockStateProvider extends BlockStateProvider {
             case "rtg_thermoelectric" -> s.getValue(BlockStateProperties.LIT) ? id : id + "_depleted";
             case "pwr_reactor" -> s.getValue(PcProperties.PWR_SEGMENT) == PcProperties.PwrSegment.HEAD ? "control_rod_drive" : "reactor_vessel_wall";
             case "pressurizer" -> "pressurizer";
+            case "bwr_reactor" -> s.getValue(PcProperties.BWR_SEGMENT) == PcProperties.BwrSegment.SEPARATORS ? "steam_drum" : "reactor_vessel_wall";
             case "christmas_tree" -> s.getValue(BlockStateProperties.OPEN) ? id : id + "_master_closed";
             case "pumpjack" -> "pumpjack_gearbox";
             case "flare_tip" -> s.getValue(BlockStateProperties.LIT) ? id + "_lit" : id;

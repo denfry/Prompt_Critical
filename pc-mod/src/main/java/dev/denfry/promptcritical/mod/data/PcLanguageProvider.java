@@ -341,6 +341,7 @@ public final class PcLanguageProvider extends LanguageProvider {
         b("steam_generator", "Steam Generator", "Парогенератор");
         b("pwr_reactor", "Pressurized Water Reactor (VVER type)", "Водо-водяной энергетический реактор (типа ВВЭР)");
         b("pressurizer", "Pressurizer", "Компенсатор давления");
+        b("bwr_reactor", "Boiling Water Reactor", "Кипящий корпусной реактор");
         b("wellhead", "Wellhead", "Колонная головка");
         b("christmas_tree", "Christmas Tree", "Фонтанная арматура");
         b("pumpjack", "Pumpjack", "Станок-качалка");

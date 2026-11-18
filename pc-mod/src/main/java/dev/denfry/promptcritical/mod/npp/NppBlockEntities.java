@@ -27,6 +27,8 @@ public final class NppBlockEntities {
             type("steam_generator", SteamGeneratorBlockEntity::new, PcBlocks.STEAM_GENERATOR);
     public static final DeferredHolder<BlockEntityType<?>, BlockEntityType<PwrReactorBlockEntity>> PWR_REACTOR =
             type("pwr_reactor", PwrReactorBlockEntity::new, PcBlocks.PWR_REACTOR);
+    public static final DeferredHolder<BlockEntityType<?>, BlockEntityType<BwrReactorBlockEntity>> BWR_REACTOR =
+            type("bwr_reactor", BwrReactorBlockEntity::new, PcBlocks.BWR_REACTOR);
     public static final DeferredHolder<BlockEntityType<?>, BlockEntityType<PressurizerBlockEntity>> PRESSURIZER =
             type("pressurizer", PressurizerBlockEntity::new, PcBlocks.PRESSURIZER);
 
@@ -41,6 +43,7 @@ public final class NppBlockEntities {
     private static void capabilities(RegisterCapabilitiesEvent event) {
         event.registerBlockEntity(Capabilities.ItemHandler.BLOCK, POWER_REACTOR.get(), FoundryDevice::items);
         event.registerBlockEntity(Capabilities.ItemHandler.BLOCK, PWR_REACTOR.get(), FoundryDevice::items);
+        event.registerBlockEntity(Capabilities.ItemHandler.BLOCK, BWR_REACTOR.get(), FoundryDevice::items);
     }
 
     private static <T extends BlockEntity> DeferredHolder<BlockEntityType<?>, BlockEntityType<T>> type(String name,
