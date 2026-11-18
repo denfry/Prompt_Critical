@@ -255,7 +255,7 @@ public final class PwrReactorBlockEntity extends DeviceBlockEntity implements Fo
         for (int pos = 0; pos < PressurizedWaterReactor.POSITIONS; pos++)
             if (reactor.loaded(pos) && (best < 0 || reactor.burnup(pos) > reactor.burnup(best))) best = pos;
         if (best < 0) return;
-        PressurizedWaterReactor.AssemblyFuel f = reactor.unload(best);
+        dev.denfry.promptcritical.sim.npp.LightWaterCore.AssemblyFuel f = reactor.unload(best);
         if (f == null) return;
         double u = f.uraniumKg(), pu = f.plutoniumKg();
         FuelDesign d = f.design();
