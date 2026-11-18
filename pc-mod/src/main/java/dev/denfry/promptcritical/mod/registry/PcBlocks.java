@@ -517,6 +517,17 @@ public final class PcBlocks {
     public static final DeferredBlock<PcDeviceBlock> CENTRIFUGE_CASCADE = device("centrifuge_cascade", machine(),
             Spec.facing(PcProperties.RUNNING),
             KineticMachineBlock.with(ShaftSide.BACK, dev.denfry.promptcritical.mod.nuclear.CascadeBlockEntity::new));
+    /** Фабрикация топлива: конверсия UF₆ в UO₂ (АДУ), пресс и печь спекания таблеток, снаряжение твэлов, сборка ТВС. */
+    public static final DeferredBlock<PcDeviceBlock> UO2_CONVERSION = device("uo2_conversion", machine(), Spec.facing(BlockStateProperties.LIT),
+            FoundryBlock.with(dev.denfry.promptcritical.mod.nuclear.Uo2ConversionBlockEntity::new));
+    public static final DeferredBlock<PcDeviceBlock> PELLET_PRESS = device("pellet_press", machine(), Spec.facing(PcProperties.RUNNING),
+            KineticMachineBlock.with(ShaftSide.BACK, dev.denfry.promptcritical.mod.nuclear.PelletPressBlockEntity::new));
+    public static final DeferredBlock<PcDeviceBlock> SINTERING_FURNACE = device("sintering_furnace", machine(),
+            Spec.facing(BlockStateProperties.LIT), FoundryBlock.with(dev.denfry.promptcritical.mod.nuclear.SinteringFurnaceBlockEntity::new));
+    public static final DeferredBlock<PcDeviceBlock> ROD_LOADING_STATION = device("rod_loading_station", machine(),
+            Spec.facing(BlockStateProperties.LIT), FoundryBlock.with(dev.denfry.promptcritical.mod.nuclear.RodStationBlockEntity::new));
+    public static final DeferredBlock<PcDeviceBlock> ASSEMBLY_JIG = device("assembly_jig", machine(), Spec.facing(BlockStateProperties.LIT),
+            FoundryBlock.with(dev.denfry.promptcritical.mod.nuclear.AssemblyJigBlockEntity::new));
 
     // --- обогащение, литьё, механический цех (08 §8.3, §8.9, §8.10) ---
     public static final DeferredBlock<PcDeviceBlock> COAL_JIG = device("coal_jig", machine(),

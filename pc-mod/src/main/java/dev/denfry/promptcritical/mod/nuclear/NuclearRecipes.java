@@ -45,6 +45,7 @@ public final class NuclearRecipes extends RecipeProvider {
         var sheet = AllItems.IRON_SHEET.get();
         var plate = PcItems.STEEL_PLATE.get();
         var mechanism = AllItems.PRECISION_MECHANISM.get();
+        var valve = AllBlocks.FLUID_VALVE.get();
         // секция центрифуг: вакуумный кожух, ротор на игольчатой опоре и магнитном подвесе, двигатель
         ShapedRecipeBuilder.shaped(RecipeCategory.MISC, PcBlocks.GAS_CENTRIFUGE.get())
                 .pattern("SMS").pattern("SRS").pattern("SWS").define('S', sheet).define('M', mechanism)
@@ -55,8 +56,31 @@ public final class NuclearRecipes extends RecipeProvider {
                 .pattern("WMW").pattern("PTP").pattern("WHW").define('W', PcItems.COPPER_WIRE.get()).define('M', mechanism)
                 .define('P', AllBlocks.FLUID_PIPE.get()).define('T', AllBlocks.FLUID_TANK.get()).define('H', AllBlocks.SHAFT.get())
                 .unlockedBy("has_gas_centrifuge", has(PcBlocks.GAS_CENTRIFUGE.get())).save(out, id("centrifuge_cascade"));
+        // топливный цех: линия АДУ (испаритель UF₆, осадитель, печь восстановления), пресс, печь спекания, сварка, стапель
+        var zr = PcItems.ZIRCALOY_INGOT.get();
+        ShapedRecipeBuilder.shaped(RecipeCategory.MISC, PcBlocks.UO2_CONVERSION.get())
+                .pattern("PTP").pattern("SFS").pattern("PVP").define('P', AllBlocks.FLUID_PIPE.get()).define('T', AllBlocks.FLUID_TANK.get())
+                .define('S', sheet).define('F', net.minecraft.world.item.Items.BLAST_FURNACE).define('V', valve)
+                .unlockedBy("has_uf6_cylinder", has(PcItems.UF6_CYLINDER_30B.get())).save(out, id("uo2_conversion"));
+        ShapedRecipeBuilder.shaped(RecipeCategory.MISC, PcBlocks.PELLET_PRESS.get())
+                .pattern("SMS").pattern("SPS").pattern("SHS").define('S', sheet).define('M', mechanism)
+                .define('P', AllBlocks.MECHANICAL_PRESS.get()).define('H', AllBlocks.SHAFT.get())
+                .unlockedBy("has_uo2_powder", has(PcItems.UO2_POWDER.get())).save(out, id("pellet_press"));
+        ShapedRecipeBuilder.shaped(RecipeCategory.MISC, PcBlocks.SINTERING_FURNACE.get())
+                .pattern("RRR").pattern("RFR").pattern("SGS").define('R', PcItems.REFRACTORY_BRICK.get())
+                .define('F', net.minecraft.world.item.Items.BLAST_FURNACE).define('S', sheet).define('G', AllBlocks.MECHANICAL_SAW.get())
+                .unlockedBy("has_pellet_press", has(PcBlocks.PELLET_PRESS.get())).save(out, id("sintering_furnace"));
+        ShapedRecipeBuilder.shaped(RecipeCategory.MISC, PcBlocks.ROD_LOADING_STATION.get())
+                .pattern("SMS").pattern("WTW").pattern("SVS").define('S', sheet).define('M', mechanism)
+                .define('W', PcItems.COPPER_WIRE.get()).define('T', AllBlocks.FLUID_TANK.get()).define('V', valve)
+                .unlockedBy("has_cladding_tube", has(PcItems.CLADDING_TUBE.get())).save(out, id("rod_loading_station"));
+        ShapedRecipeBuilder.shaped(RecipeCategory.MISC, PcBlocks.ASSEMBLY_JIG.get())
+                .pattern("SSS").pattern("ZMZ").pattern("SSS").define('S', PcItems.STEEL_BEAM.get()).define('Z', zr)
+                .define('M', mechanism).unlockedBy("has_fuel_rod", has(PcItems.FUEL_ROD.get())).save(out, id("assembly_jig"));
+        ShapedRecipeBuilder.shaped(RecipeCategory.MISC, PcItems.SPACER_GRID.get(), 2)
+                .pattern("Z Z").pattern(" Z ").pattern("Z Z").define('Z', zr)
+                .unlockedBy("has_zircaloy", has(zr)).save(out, id("spacer_grid"));
         // баллоны: стальные сосуды с вентилем
-        var valve = AllBlocks.FLUID_VALVE.get();
         ShapedRecipeBuilder.shaped(RecipeCategory.MISC, PcItems.UF6_CYLINDER_48Y.get())
                 .pattern("PVP").pattern("P P").pattern("PPP").define('P', plate).define('V', valve)
                 .unlockedBy("has_steel_plate", has(plate)).save(out, id("uf6_cylinder_48y"));

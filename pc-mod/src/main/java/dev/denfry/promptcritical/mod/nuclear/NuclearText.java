@@ -22,6 +22,32 @@ public final class NuclearText {
                 "СЦР В ДЕСУБЛИМАТОРЕ ОТБОРА: голубая вспышка, ваша доза около %s Гр");
     }
 
+    static {
+        put("conversion.start", "UO₂ line: UF₆ to hydrolysis, ammonia to precipitation, hydrogen to the furnace",
+                "Линия UO₂: UF₆ на гидролиз, аммиак на осаждение, водород в печь");
+        put("conversion.stop", "UO₂ line stopped", "Линия UO₂ остановлена");
+        put("press.start", "Pellet press running", "Пресс таблеток работает");
+        put("press.stop", "Pellet press stopped", "Пресс таблеток остановлен");
+        put("sintering.start", "Sintering furnace: hydrogen on, boats moving", "Печь спекания: водород подан, лодочки пошли");
+        put("sintering.stop", "Sintering furnace stopped", "Печь спекания остановлена");
+        put("rods.start", "Rod loading and welding line running", "Линия снаряжения и заварки твэлов работает");
+        put("rods.stop", "Rod line stopped", "Линия твэлов остановлена");
+        put("jig.start", "Assembly jig: rods are being pulled into the skeleton", "Стапель: твэлы протягивают в каркас");
+        put("jig.stop", "Assembly jig stopped", "Стапель остановлен");
+        put("lot.uranium", "U %s kg · U-235 %s %% (%s g)", "U %s кг · U-235 %s %% (%s г)");
+        put("lot.density", "Pellets %s %% of theoretical density · %s pcs", "Таблетки %s %% теоретической плотности · %s шт.");
+        put("lot.design", "%s%s", "%s%s");
+        put("lot.gas.he", " · helium fill", " · заправка гелием");
+        put("lot.gas.ar", " · argon fill", " · заправка аргоном");
+        put("design.vver_440", "VVER-440", "ВВЭР-440");
+        put("design.vver_1000", "VVER-1000", "ВВЭР-1000");
+        put("design.pwr_17x17", "PWR 17×17", "PWR 17×17");
+    }
+
+    public static Component design(dev.denfry.promptcritical.sim.fuel.FuelDesign d) {
+        return msg("design." + d.name().toLowerCase(Locale.ROOT));
+    }
+
     private NuclearText() {
     }
 
