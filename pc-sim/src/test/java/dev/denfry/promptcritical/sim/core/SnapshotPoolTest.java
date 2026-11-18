@@ -21,9 +21,15 @@ class SnapshotPoolTest {
         AtomicLong reads = new AtomicLong();
 
         Thread[] readers = new Thread[4];
+        // писатель ждёт, пока каждый читатель начнёт читать, и останавливает их не раньше, чем каждый прочтёт хотя бы
+        // раз: под нагрузкой иначе 20 000 публикаций могли закончиться до первого чтения (reads = 0 — ложное падение)
+        java.util.concurrent.CountDownLatch started = new java.util.concurrent.CountDownLatch(readers.length);
+        java.util.concurrent.atomic.AtomicLongArray perReader = new java.util.concurrent.atomic.AtomicLongArray(readers.length);
         for (int r = 0; r < readers.length; r++) {
+            int me = r;
             readers[r] = new Thread(() -> {
-                while (!stop.get()) {
+                started.countDown();
+                while (!stop.get() || perReader.get(me) == 0) {
                     boolean ok = SimSnapshot.readConsistent(pool::latest, pool::lockedCopy, s -> {
                         double t = s.tick();
                         for (int i = 0; i < slots; i++) if (s.measured(i) != t) return false;
@@ -31,10 +37,12 @@ class SnapshotPoolTest {
                     });
                     if (!ok) torn.incrementAndGet();
                     reads.incrementAndGet();
+                    perReader.incrementAndGet(me);
                 }
             });
             readers[r].start();
         }
+        started.await();
         for (long tick = 1; tick <= 20_000; tick++) {
             for (int i = 0; i < slots; i++) state.set(i, tick, Quality.GOOD);
             pool.publish(tick, tick * SimClock.FAST_DT, state);
