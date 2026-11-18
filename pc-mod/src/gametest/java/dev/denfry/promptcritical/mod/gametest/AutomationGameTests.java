@@ -114,6 +114,51 @@ public final class AutomationGameTests {
         });
     }
 
+    // --- ПЛК A3 ---
+
+    /**
+     * Та же лестница пуск/стоп, но вместо реле K1 — ПЛК с программой самоподхвата на IL: кнопки на входы I0/I1,
+     * лампа «РАБОТА» на релейный выход Q0, питание ПЛК от того же блока 24 В.
+     */
+    @GameTest(template = LARGE, timeoutTicks = 400)
+    public static void plcLatchesStartStopFromItsProgram(GameTestHelper h) {
+        BlockPos plc = K1;
+        place(h, PSU, PcBlocks.RELAY_POWER_SUPPLY.get());
+        place(h, STOP, PcBlocks.PUSHBUTTON.get());
+        place(h, START, PcBlocks.PUSHBUTTON.get());
+        place(h, plc, PcBlocks.PLC.get());
+        place(h, LAMP, PcBlocks.INDICATOR_LAMP.get());
+        h.runAfterDelay(5, () -> {
+            ((PowerSupplyBlockEntity) h.getBlockEntity(PSU)).setBenchInput(1);
+            wire(h, PSU, "+24", plc, "L+");
+            wire(h, plc, "M", PSU, "0");
+            wire(h, PSU, "+24", START, "13");       // ПУСК — НО на I0
+            wire(h, START, "14", plc, "I0");
+            wire(h, PSU, "+24", STOP, "11");        // СТОП — НЗ на I1
+            wire(h, STOP, "12", plc, "I1");
+            wire(h, PSU, "+24", plc, "1L");         // общий релейных выходов
+            wire(h, plc, "Q0", LAMP, "X1");
+            wire(h, LAMP, "X2", PSU, "0");
+            h.assertTrue(unit(h, plc).plc().load("LD %IX0.0
+OR %QX0.0
+AND %IX0.1
+ST %QX0.0").ok(), "program compiles");
+        });
+        h.runAfterDelay(40, () -> {
+            h.assertTrue(flag(h, plc, PcProperties.RUNNING), "PLC in RUN: " + unit(h, plc).plc().mode());
+            h.assertFalse(flag(h, LAMP, BlockStateProperties.LIT), "lamp dark before START");
+            ((AutomationBlockEntity) h.getBlockEntity(START)).press();
+        });
+        h.runAfterDelay(90, () -> {
+            h.assertTrue(flag(h, LAMP, BlockStateProperties.LIT), "lamp held by the program after START released");
+            ((AutomationBlockEntity) h.getBlockEntity(STOP)).press();
+        });
+        h.runAfterDelay(140, () -> {
+            h.assertFalse(flag(h, LAMP, BlockStateProperties.LIT), "STOP drops the latch");
+            h.succeed();
+        });
+    }
+
     // --- ПИ-регулятор из блоков A2 ---
 
     private static final BlockPos SP = new BlockPos(2, 1, 4), ERR = new BlockPos(3, 1, 4), INT_C = new BlockPos(4, 1, 4),

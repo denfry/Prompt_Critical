@@ -121,5 +121,10 @@ public final class AutomationRecipes extends RecipeProvider {
                 .unlockedBy("has_wire", hasWire).save(out, id("manual_station"));
         ShapelessRecipeBuilder.shapeless(RecipeCategory.REDSTONE, PcBlocks.SIGNAL_CONVERTER.get()).requires(coil).requires(wire)
                 .requires(Items.REDSTONE).requires(Items.IRON_NUGGET).unlockedBy("has_coil", hasCoil).save(out, id("signal_converter"));
+
+        // A3: программируемый контроллер — логика на компараторах и памяти, модули ввода-вывода на реле
+        ShapedRecipeBuilder.shaped(RecipeCategory.REDSTONE, PcBlocks.PLC.get()).pattern("IGI").pattern("CQC").pattern("RWR")
+                .define('I', Items.IRON_INGOT).define('G', Items.GLASS_PANE).define('C', Items.COMPARATOR).define('Q', Items.QUARTZ_BLOCK)
+                .define('R', relay).define('W', wire).unlockedBy("has_relay", has(relay)).save(out, id("plc"));
     }
 }

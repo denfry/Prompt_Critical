@@ -5,6 +5,7 @@ import dev.denfry.promptcritical.sim.core.SimId;
 import dev.denfry.promptcritical.sim.core.StateReader;
 import dev.denfry.promptcritical.sim.core.StateWriter;
 import java.util.Arrays;
+import dev.denfry.promptcritical.sim.automation.plc.PlcCpu;
 import java.util.Objects;
 
 /**
@@ -57,6 +58,8 @@ public final class AutomationUnit {
 
     /** Мощность электромагнитов выключателя на 24 В, Вт [BALANCE]; реле контроля цепи и пускатель. */
     static final double BREAKER_COIL_W = 10, MONITOR_W = 1, STARTER_COIL_W = 5, OPTO_W = 0.5;
+    /** Потребление ПЛК от 24 В, Вт (компактный ПЛК класса S5-100U) [BALANCE]. */
+    static final double PLC_W = 10;
 
     final SimId id;
     final AutomationKind kind;
@@ -72,11 +75,15 @@ public final class AutomationUnit {
     int element = -1;
     int[] loads = new int[0], switches = new int[0], signals = new int[0];
     boolean conflict;
+    /** PLC: процессор (живёт вне банков и переживает пересборку); источники аналоговых входов AI0…AI3. */
+    final PlcCpu plc;
+    int[] aiSources = new int[0];
 
     AutomationUnit(SimId id, AutomationKind kind) {
         this.id = Objects.requireNonNull(id, "id");
         this.kind = Objects.requireNonNull(kind, "kind");
         this.nets = new long[kind.terminalCount()];
+        this.plc = kind == AutomationKind.PLC ? new PlcCpu() : null;
         defaults();
     }
 
@@ -400,8 +407,14 @@ public final class AutomationUnit {
         loads = new int[0];
         switches = new int[0];
         signals = new int[0];
+        aiSources = new int[0];
         pvSignal = -1;
         conflict = false;
+    }
+
+    /** Процессор ПЛК; {@code null} — блок не ПЛК. */
+    public PlcCpu plc() {
+        return plc;
     }
 
     // ================================================================ сохранение
@@ -413,6 +426,11 @@ public final class AutomationUnit {
         out.putDoubles("dp", dp, dp.length);
         out.putDoubles("in", in, in.length);
         if (memo != null) out.putDoubles("memo", memo, memo.length);
+        if (plc != null) {
+            out.beginObject("plc");
+            plc.save(out);
+            out.endObject();
+        }
     }
 
     static AutomationUnit load(SimId id, StateReader r) {
@@ -434,6 +452,11 @@ public final class AutomationUnit {
             System.arraycopy(x, 0, u.in, 0, Math.min(x.length, u.in.length));
         }
         u.memo = r.has("memo") ? r.getDoubles("memo") : null;
+        if (u.plc != null && r.has("plc")) {
+            r.beginObject("plc");
+            u.plc.load(r);
+            r.endObject();
+        }
         return u;
     }
 }

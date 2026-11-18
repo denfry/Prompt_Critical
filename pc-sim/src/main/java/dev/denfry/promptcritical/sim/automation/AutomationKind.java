@@ -36,6 +36,12 @@ public enum AutomationKind {
     /** Направление задаёт уставка: I/V — вход «I», выход «U»; V/I — наоборот. */
     SIGNAL_CONVERTER(List.of(new Terminal("I", TerminalType.ANALOG_CURRENT, Role.CONFIGURED),
             new Terminal("U", TerminalType.ANALOG_VOLTAGE, Role.CONFIGURED))),
+    /**
+     * ПЛК (A3, {@link dev.denfry.promptcritical.sim.automation.plc.PlcCpu}): питание 24 В на L+/M; дискретные входы
+     * I0…I7 — оптроны на M; релейные выходы Q0…Q7 — контакты от общего 1L; аналоговые входы AI0…AI3 и выходы
+     * AO0…AO1 — сигналы A2 в вольтах.
+     */
+    PLC(plc()),
     BREAKER_IO(d("+", "-", "CLOSE", "TRIP", "13", "14", "21", "22")),
     MOTOR_IO(d("A1", "A2", "13", "14")),
     CONSUMER_IO(d("13", "14"));
@@ -85,6 +91,16 @@ public enum AutomationKind {
     private static List<Terminal> d(String... labels) {
         List<Terminal> out = new ArrayList<>(labels.length);
         for (String l : labels) out.add(t(l));
+        return List.copyOf(out);
+    }
+
+    private static List<Terminal> plc() {
+        List<Terminal> out = new ArrayList<>(List.of(t("L+"), t("M")));
+        for (int i = 0; i < 8; i++) out.add(t("I" + i));
+        out.add(t("1L"));
+        for (int i = 0; i < 8; i++) out.add(t("Q" + i));
+        for (int i = 0; i < 4; i++) out.add(in("AI" + i));
+        for (int i = 0; i < 2; i++) out.add(out("AO" + i, TerminalType.ANALOG_VOLTAGE));
         return List.copyOf(out);
     }
 

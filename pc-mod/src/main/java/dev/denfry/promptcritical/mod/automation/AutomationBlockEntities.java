@@ -76,6 +76,9 @@ public final class AutomationBlockEntities {
     public static final DeferredHolder<BlockEntityType<?>, BlockEntityType<AutomationBlockEntity>> SIGNAL_CONVERTER =
             entry("signal_converter", AutomationKind.SIGNAL_CONVERTER, true, PcBlocks.SIGNAL_CONVERTER);
 
+    public static final DeferredHolder<BlockEntityType<?>, BlockEntityType<AutomationBlockEntity>> PLC =
+            entry("plc", AutomationKind.PLC, false, PcBlocks.PLC);
+
     private AutomationBlockEntities() {
     }
 
@@ -91,6 +94,7 @@ public final class AutomationBlockEntities {
     /** BE блока {@code name} (фабрика блоков в {@code PcBlocks}). */
     public static AutomationBlockEntity create(String name, BlockPos pos, BlockState state) {
         if (name.equals("relay_power_supply")) return new PowerSupplyBlockEntity(pos, state);
+        if (name.equals("plc")) return new PlcBlockEntity(ENTRIES.get(name).type.get(), pos, state);
         Entry e = ENTRIES.get(name);
         if (e == null) throw new IllegalArgumentException("no automation block " + name);
         return e.panel ? new AutomationPanelBlockEntity(e.type.get(), pos, state, e.kind)

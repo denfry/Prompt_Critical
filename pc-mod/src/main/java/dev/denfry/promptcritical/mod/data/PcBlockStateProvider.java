@@ -192,7 +192,7 @@ public final class PcBlockStateProvider extends BlockStateProvider {
                 yield id + lit + (s.getValue(PcProperties.LOW_WATER) ? "_low_water" : "");
             }
             case "steam_engine_cylinder" -> s.getValue(PcProperties.ENGINE_SEGMENT) == PcProperties.EngineSegment.FRAME ? id + "_frame" : id;
-            case "grate_stoker", "main_mine_fan" -> s.getValue(PcProperties.RUNNING) ? id + "_running" : id;
+            case "grate_stoker", "main_mine_fan", "plc" -> s.getValue(PcProperties.RUNNING) ? id + "_running" : id;
             case "chimney" -> switch (s.getValue(PcProperties.CHIMNEY_PART)) {
                 case BASE -> id + "_base";
                 case TOP -> id + "_top";
