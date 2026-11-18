@@ -58,6 +58,10 @@ public final class PcAdvancements implements AdvancementProvider.AdvancementGene
                 "Удержите графитовый котёл на самоподдерживающейся реакции пять секунд без помощи источника"});
         LANG.put("pile_scram", new String[] {"Zip!", "Зип!",
                 "See the pile's zip rods fall on a scram", "Увидеть, как падают аварийные стержни котла"});
+        // физика: отжиг графита (04c §4c.11.1)
+        LANG.put("annealing", new String[] {"Annealing", "Отжиг",
+                "Release the pile graphite's Wigner energy under control: half of it out, the graphite never above 400 °C",
+                "Контролируемо высвободите энергию Вигнера из графита котла: больше половины запаса, графит не выше 400 °C"});
         LANG.put("relay_logic", new String[] {"Click-Clack", "Щёлк-щёлк", "A circuit of at least five relays drives a mechanism",
                 "Схема из пяти и более реле управляет механизмом"});
         LANG.put("analog_pid", new String[] {"No Computer Needed", "Без компьютера",
@@ -144,6 +148,10 @@ public final class PcAdvancements implements AdvancementProvider.AdvancementGene
         task(pile, PcBlocks.SCRAM_BUTTON.get(), "pile_scram", AdvancementType.TASK, true, 20)
                 .addCriterion("scram", event(ReactorSubsystem.PILE_STATE, Map.of("scram", MinMaxBounds.Doubles.atLeast(1))))
                 .save(saver, id("pile_scram"), efh);
+        task(pile, PcBlocks.REACTOR_CONTROLLER.get(), "annealing", AdvancementType.CHALLENGE, false, 100)
+                .addCriterion("annealed", event(ReactorSubsystem.PILE_STATE, Map.of(dev.denfry.promptcritical.sim.reactor.PileUnit.WIGNER_ANNEALED,
+                        MinMaxBounds.Doubles.atLeast(0))))
+                .save(saver, id("annealing"), efh);
         // автоматизация A1–A2
         AdvancementHolder relays = task(root, PcBlocks.RELAY.get(), "relay_logic", AdvancementType.TASK, false, 30)
                 .addCriterion("relay_logic", event(AutomationSubsystem.RELAY_LOGIC,

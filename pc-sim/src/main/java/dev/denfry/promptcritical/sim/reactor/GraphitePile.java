@@ -46,8 +46,15 @@ import java.util.SplittableRandom;
  * делений ({@link FissionPoisons}, {@link DecayHeat}); на ваттах CP-1 они ничтожны, на мегаваттах X-10 — нет.
  * Поглощение ядов входит в константы топливных узлов (STATIC), XENON и SAMARIUM баланса — только для показа.
  *
- * <p>Чего нет: выгорания, энергии Вигнера, принудительного охлаждения X-10, разницы потока в топливе и в ячейке для
- * ядов. Температура — по двум сосредоточенным ёмкостям, топливо и графит.
+ * <p>Энергия Вигнера (04c §4c.11.1, {@link WignerEnergy}): холодный графит копит её по флюенсу и отдаёт теплом при
+ * нагреве выше температуры облучения. Кладка в сотни тонн греется сутками, поэтому графит и его запас ведутся на часах
+ * SLOW ({@link #GRAPHITE_CLOCK}): теплоёмкость графита в уравнении — в {@code K_slow} раз меньше, тепло отжига и отвод с
+ * граней — в физическом масштабе, так что установившиеся температуры прежние, а подъём на десятки градусов занимает
+ * минуты, а не сутки. Отжиг — как на Windscale: заслонки ({@link #setDampersClosed}) режут отвод тепла с граней, котёл
+ * греет графит своей мощностью, запас выходит порциями; большой запас при нагреве уходит разом — пожар графита.
+ *
+ * <p>Чего нет: выгорания, принудительного охлаждения X-10, разницы потока в топливе и в ячейке для ядов. Температура —
+ * по двум сосредоточенным ёмкостям, топливо и графит.
  */
 public final class GraphitePile {
     /** Шаг FAST, с. */
@@ -66,6 +73,22 @@ public final class GraphitePile {
     private static final int ROD_OUTER_ITERATIONS = 2;
     /** Σ_s = D/(h/2)²: D графита ≈ 0,85 см, узел h = 100 см; см⁻¹. */
     private static final double SATURATION_SIGMA = 0.85 / (50.0 * 50.0);
+    /**
+     * Часы графита и энергии Вигнера: физических секунд на секунду игры, {@code K_slow} = 72 (00 §0.4). Постоянная
+     * времени кладки ~10⁵ с — процесс домена SLOW, как накопление изотопов в каналах облучения (12 §12.1).
+     */
+    public static final double GRAPHITE_CLOCK = 72;
+    /**
+     * Φ_s энергии Вигнера, н/см² [BALANCE {@code accident.wigner_fluence_scale}]. В 04c §4c.11.1 — 10²¹: столько
+     * графит Windscale набирал за годы при 10¹³ н/(см²·с). Котёл T0 работает на сотнях киловатт (средний поток по кладке
+     * ~10¹⁰), и даже на часах SLOW такой флюенс набирался бы 10⁵ часов; здесь холодный котёл на уставке мощности
+     * подходит к опасному запасу (~200 Дж/г) за час-два игры.
+     */
+    public static final double WIGNER_FLUENCE_SCALE = 6e16;
+    /** Доля отвода тепла с граней при закрытых заслонках [BALANCE]: «уменьшенный воздух» отжига Windscale. */
+    public static final double DAMPER_COOLING = 0.2;
+    /** FAST-шагов в одном SLOW. */
+    private static final int SLOW_STEPS = 20;
 
     private final PileConfig cfg;
     private final LatticeModel model;
@@ -104,6 +127,10 @@ public final class GraphitePile {
     private PileTrip trip = PileTrip.NONE;
     private double criticalTimer;
     private boolean criticalReported, cladFailed, graphiteFire;
+    private final WignerEnergy wigner = new WignerEnergy(WIGNER_FLUENCE_SCALE);
+    private boolean dampersClosed, wignerRunaway;
+    private double wignerPowerW;
+    private double[] wignerFlux = new double[0];
 
     public GraphitePile(PileConfig cfg, NeutronicsConfig neutronics) {
         this.cfg = cfg;
@@ -178,7 +205,11 @@ public final class GraphitePile {
         double pW = powerW();
         advancePoisons(pW);
         decayHeat.step(DT, pW);
-        stepThermal(pW + decayHeat.powerW());
+        if (slow) irradiateGraphite(SLOW_STEPS * DT * GRAPHITE_CLOCK);
+        double grams = graphiteGrams();
+        double wignerJ = wigner.release(graphiteTempK, DT * GRAPHITE_CLOCK) * grams;
+        wignerPowerW = wigner.releasePowerWg() * grams;
+        stepThermal(pW + decayHeat.powerW(), wignerJ);
         periodMeter.sample(fissile ? power : PointKinetics.MIN_POWER);
         protect(pW, events);
         count(random);
@@ -436,7 +467,28 @@ public final class GraphitePile {
 
     // ------------------------------------------------------------------ тепло
 
-    private void stepThermal(double pW) {
+    /** Графит всей кладки, г. */
+    private double graphiteGrams() {
+        return layout.nodeCount() * GRAPHITE_DENSITY * 1000;
+    }
+
+    /** Флюенс за {@code dtPhys} физических секунд: средний по кладке поток нодального решения. */
+    private void irradiateGraphite(double dtPhys) {
+        int n = layout.nodeCount();
+        if (n == 0 || !fissile) return;
+        if (wignerFlux.length < n) wignerFlux = new double[n];
+        double[] phi = nodeFluxes(wignerFlux);
+        double mean = 0;
+        for (int i = 0; i < n; i++) mean += phi[i];
+        wigner.irradiate(mean / n * dtPhys, graphiteTempK);
+    }
+
+    /**
+     * Две ёмкости, топливо и графит, неявно. Графит — на часах {@link #GRAPHITE_CLOCK}: его теплоёмкость делится на
+     * {@code K_slow}, тепло отжига {@code wignerJ} (физическое, Дж) — тоже, так что адиабатический подъём от отжига
+     * остаётся ΔE/c_p.
+     */
+    private void stepThermal(double pW, double wignerJ) {
         int n = layout.nodeCount();
         if (n == 0) return;
         LatticeDesign d = LatticeDesigns.get(LatticeDesigns.T0_SLUG);
@@ -447,19 +499,20 @@ public final class GraphitePile {
             uMass += d.fuelFraction() * share * d.fuelMaterial().density() * 1000;
             contact += cfg.fuelToGraphiteWK() * share;
         }
-        double cg = n * GRAPHITE_DENSITY * CP_GRAPHITE;
-        double cool = layout.exposedFaces() * cfg.surfaceCoolingWK();
+        double cg = n * GRAPHITE_DENSITY * CP_GRAPHITE / GRAPHITE_CLOCK;
+        double cool = layout.exposedFaces() * cfg.surfaceCoolingWK() * (dampersClosed ? DAMPER_COOLING : 1);
+        double qw = wignerJ / GRAPHITE_CLOCK;
         if (uMass > 0) {
             double cf = uMass * CP_URANIUM;
             // Неявно по двум ёмкостям: шаг устойчив при любой мощности
             double a = contact * DT;
             double tf = fuelTempK, tg = graphiteTempK;
             double det = (cf + a) * (cg + a + cool * DT) - a * a;
-            double rf = cf * tf + pW * DT, rg = cg * tg + cool * DT * cfg.ambientK();
+            double rf = cf * tf + pW * DT, rg = cg * tg + cool * DT * cfg.ambientK() + qw;
             fuelTempK = (rf * (cg + a + cool * DT) + a * rg) / det;
             graphiteTempK = ((cf + a) * rg + a * rf) / det;
         } else {
-            graphiteTempK = (cg * graphiteTempK + cool * DT * cfg.ambientK()) / (cg + cool * DT);
+            graphiteTempK = (cg * graphiteTempK + cool * DT * cfg.ambientK() + qw) / (cg + cool * DT);
             fuelTempK = graphiteTempK;
         }
     }
@@ -526,6 +579,11 @@ public final class GraphitePile {
             graphiteFire = true;
             events.graphiteFire(graphiteTempK);
         }
+        boolean runaway = wigner.selfSustaining(graphiteTempK);
+        if (runaway && !wignerRunaway) events.wignerRunaway(graphiteTempK, wigner.storedJg());
+        wignerRunaway = runaway;
+        double annealed = wigner.takeCompletedAnneal();
+        if (annealed > 0 && !graphiteFire) events.wignerAnnealed(annealed, graphiteTempK);
     }
 
     // ------------------------------------------------------------------ управление
@@ -666,6 +724,40 @@ public final class GraphitePile {
         return criticalReported;
     }
 
+    /** Запасённая энергия Вигнера, Дж/г графита (04c §4c.11.1). */
+    public double wignerStoredJg() {
+        return wigner.storedJg();
+    }
+
+    /** Тепло, которое отдаёт графит при отжиге, Вт (физическое). */
+    public double wignerPowerW() {
+        return wignerPowerW;
+    }
+
+    /** dE/dT впереди больше c_p, и запас уже выходит: нагрев самоподдерживается. */
+    public boolean wignerRunaway() {
+        return wignerRunaway;
+    }
+
+    /** Модель запаса: для тестов и сценария {@code wigner_anneal} (11). */
+    public WignerEnergy wigner() {
+        return wigner;
+    }
+
+    public boolean dampersClosed() {
+        return dampersClosed;
+    }
+
+    /** Заслонки воздуха на гранях кладки: закрытые оставляют {@link #DAMPER_COOLING} отвода тепла. */
+    public void setDampersClosed(boolean closed) {
+        dampersClosed = closed;
+    }
+
+    /** Температура графита для опытов и сценариев (отжиг начинают с прогретой кладки). */
+    public void setGraphiteTempK(double tK) {
+        graphiteTempK = tK;
+    }
+
     /** k_eff последней нодальной задачи (без стержней между SLOW); 0 — котёл без топлива. Игроку не показывается. */
     public double keff() {
         return fissile ? keff : 0;
@@ -730,6 +822,8 @@ public final class GraphitePile {
         out.putBoolean("critical", criticalReported);
         out.putBoolean("clad_failed", cladFailed);
         out.putBoolean("graphite_fire", graphiteFire);
+        out.putBoolean("dampers", dampersClosed);
+        wigner.save(out);
         long[] keys = new long[rodInsertion.size()];
         double[] in = new double[keys.length];
         int i = 0;
@@ -758,6 +852,8 @@ public final class GraphitePile {
         criticalReported = in.getBoolean("critical");
         cladFailed = in.getBoolean("clad_failed");
         graphiteFire = in.getBoolean("graphite_fire");
+        dampersClosed = in.has("dampers") && in.getBoolean("dampers");
+        wigner.load(in);
         long[] keys = in.getLongs("rod_keys");
         double[] ins = in.getDoubles("rod_in");
         // кладку пришлёт биндинг; до неё котёл пуст, стержни ждут своих ключей

@@ -41,3 +41,18 @@ Bring the pile up the way Fermi did. The desk does not show k: you find critical
 The pile's protection belongs to the pile, not to your circuits. It trips on a **period shorter than 5 s** or **power above 200 kW**, and on the desk or [scram button](item:promptcritical:scram_button). On a trip the zip rods fall in a second or two and the control rods drive in. A redstone pulse on a scram button trips it too, so your relay logic can scram the pile but can never hold it out of a trip.
 
 The zip rods only help if they are worth more than the pile's excess reactivity. A big pile with one zip rod at the edge can go on rising after a scram. A pile with no rods at all just runs away: the slugs heat until their cans fail, and above about 450 °C the graphite catches fire in air, as at Windscale in 1957.
+
+## Wigner energy and annealing
+
+Fast neutrons knock carbon atoms out of the graphite lattice. In cold graphite they stay out, and the lattice stores the energy: up to about 2000 J per gram in graphite irradiated near room temperature, less the hotter it runs, none above about 330 °C. The desk shows the store as **Wigner energy, J/g**. The graphite and its store run on the slow clock, so an hour at 150 kW leaves a cold pile with roughly 100 J/g.
+
+Heated about 50 K above the temperature it was irradiated at, the graphite starts to give the energy back as heat, most of it around 200 °C. That heat warms the graphite further. If the store just ahead is more than the graphite's heat capacity, about 0.7 J/g per kelvin, the release feeds itself: the **Self-heating** lamp lights and the graphite climbs into the next part of the store. A pile carrying 300–400 J/g goes past 450 °C this way and the graphite catches fire. That is how Windscale burned in October 1957, during exactly this procedure.
+
+To **anneal**, do it while the store is small:
+
+1. Bring the pile to power and **shut the dampers**. The faces then lose only a fifth of their heat and the graphite warms by a degree or two a minute.
+2. Watch the release on the desk. Hold the power steady while the graphite passes 100–250 °C and the store comes out.
+3. If Self-heating lights, take the power off and open the dampers. The graphite will still rise by the store divided by 0.7 J/(g·K).
+4. When more than half of the store is out and the release has died down, and the graphite never went above 400 °C (where it starts to burn in air), the anneal is done. Open the dampers.
+
+Graphite irradiated hot keeps its store above the temperature it ran at, so a pile that ran warm needs a hotter anneal.
