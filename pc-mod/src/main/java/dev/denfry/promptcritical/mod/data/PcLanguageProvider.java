@@ -326,6 +326,7 @@ public final class PcLanguageProvider extends LanguageProvider {
         b("power_reactor", "Channel Power Reactor (AM-1 type)", "Канальный энергетический реактор (типа АМ-1)");
         b("irradiation_channel", "Irradiation Channel", "Канал облучения");
         b("rtg_thermoelectric", "Thermoelectric RTG", "Термоэлектрический РИТЭГ");
+        b("market_terminal", "Exchange Terminal", "Биржевой терминал");
         i("cobalt_ingot", "Cobalt Ingot", "Слиток кобальта");
         i("iridium_ingot", "Iridium Ingot", "Слиток иридия");
         i("npo2_powder", "Neptunium Dioxide (Np-237)", "Диоксид нептуния (Np-237)");
@@ -721,6 +722,7 @@ public final class PcLanguageProvider extends LanguageProvider {
         MISC.putAll(dev.denfry.promptcritical.mod.nuclear.NuclearText.lang());
         MISC.putAll(dev.denfry.promptcritical.mod.npp.NppText.lang());
         MISC.putAll(dev.denfry.promptcritical.mod.isotopes.IsotopeText.lang());
+        MISC.putAll(dev.denfry.promptcritical.mod.market.MarketText.lang());
         MISC.putAll(dev.denfry.promptcritical.mod.chlor.ChlorText.lang());
         MISC.putAll(dev.denfry.promptcritical.mod.environment.ToxicReleaseService.lang());
         MISC.putAll(dev.denfry.promptcritical.mod.environment.RadiationService.lang());

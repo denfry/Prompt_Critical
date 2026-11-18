@@ -268,6 +268,8 @@ public final class PcBlockStateProvider extends BlockStateProvider {
             case "centrifuge_cascade" -> "cascade_header";
             case "uo2_conversion" -> "uf6_autoclave";
             case "power_reactor" -> "reactor_vessel_wall";
+            // биржа (14): своей модели терминала пока нет — пульт
+            case "market_terminal" -> "control_desk";
             case "irradiation_channel" -> s.getValue(PcProperties.FILLED) ? id + "_loaded" : id;
             case "rtg_thermoelectric" -> s.getValue(BlockStateProperties.LIT) ? id : id + "_depleted";
             case "christmas_tree" -> s.getValue(BlockStateProperties.OPEN) ? id : id + "_master_closed";
