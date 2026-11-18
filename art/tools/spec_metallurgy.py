@@ -103,17 +103,7 @@ m("vein_quartz", "ores", [el("block", [0, 0, 0], [16, 16, 16], "qtz")])
 # сланцевый и водяной заслоны нарисованы вручную в Blockbench: art/blockbench/mining/explosion_barrier.author.js
 
 # дегазационная скважина нарисована вручную в Blockbench: art/blockbench/mining/degasification_pump.author.js
-# шкаф АГЗ «Метан» 1×2×1: табло газа (подложка 32×32)
-def agz(alarm=False):
-    return [el("body", [0, 0, 2], [16, 31.5, 16], "r35"),
-            el("face", [1, 14, 1.5], [15, 30, 2], "agz", full=["north"]),
-            el("door_low", [1, 1, 1.5], [15, 13, 2], "r35"),
-            el("handle", [13, 5, 0.5], [14, 9, 1.5], "d"),
-            el(("glow_" if alarm else "") + "beacon", [6, 31.5, 6], [10, 33.5 - 1.5, 10], "lr" if alarm else "loff")]
-
-
-m("mine_dispatch_cabinet", "mining", agz())
-m("mine_dispatch_cabinet_alarm", "mining", agz(True))
+# шкаф АГЗ «Метан» нарисован вручную в Blockbench: art/blockbench/mining/mine_dispatch_cabinet.author.js
 
 # копёр, шкив и клеть нарисованы вручную в Blockbench: art/blockbench/mining/headframe.author.js
 # (текстуры textures/block/shaft/)

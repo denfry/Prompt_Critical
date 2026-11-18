@@ -46,6 +46,7 @@ public final class PromptCritical {
         PcFluids.FLUIDS.register(modBus);
         PcCreativeTabs.TABS.register(modBus);
         dev.denfry.promptcritical.mod.pa.PaSounds.SOUNDS.register(modBus);
+        dev.denfry.promptcritical.mod.sound.PcSfx.SOUNDS.register(modBus);
         SimBindings.register(modBus);
         FoundryBinding.register(modBus);
         dev.denfry.promptcritical.mod.ironworks.IronworksBinding.register(modBus);
