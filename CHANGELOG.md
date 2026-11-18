@@ -44,6 +44,13 @@
 - NGL fractionation into propane, butane and natural gasoline through a deethanizer, depropanizer and debutanizer
   on the Fenske–Underwood–Gilliland column. Sales gas and associated gas fire the gas turbine and furnaces.
 
+### Telemetry and SCADA (A4)
+- Telemetry gateway (RTU): scans the local panels of every machine within 8 blocks once a second and serves the
+  snapshot to a CC: Tweaked computer as the `pc_rtu` peripheral — machines, named instruments with units, lamps as
+  status points, dynamometer cards as curves, and panel buttons as telecontrol commands, with a request budget and
+  one-at-a-time commands. Works without CC installed.
+- The handbook renders code blocks; the telemetry chapter carries a Lua boiler house mimic with a trend archive.
+
 ### Character body
 - Choose sex, height, mass and age on the title screen or on first join; locked per world, an operator can reset.
 - Height scales the player model and stride; mass sets knockback resistance and the load in the hoist cage;

@@ -43,6 +43,33 @@ public final class PanelText {
         return LANG;
     }
 
+    /**
+     * Английский текст надписи щита на сервере, где клиентских языковых файлов нет (телемеханика,
+     * {@code mod.scada}); аргументы-надписи переводятся так же. Чужие ключи — как есть.
+     */
+    public static String english(Component c) {
+        if (c.getContents() instanceof net.minecraft.network.chat.contents.TranslatableContents t) {
+            String[] text = lang().get(t.getKey());
+            if (text == null) return t.getKey();
+            Object[] args = new Object[t.getArgs().length];
+            for (int i = 0; i < args.length; i++)
+                args[i] = t.getArgs()[i] instanceof Component a ? english(a) : String.valueOf(t.getArgs()[i]);
+            try {
+                return String.format(Locale.ROOT, text[0], args);
+            } catch (java.util.IllegalFormatException e) {
+                return text[0];
+            }
+        }
+        return c.getString();
+    }
+
+    /** Короткий ключ надписи щита без префикса мода: {@code drill.spp}; чужие ключи и литералы — текст. */
+    public static String shortKey(Component c) {
+        if (c.getContents() instanceof net.minecraft.network.chat.contents.TranslatableContents t && t.getKey().startsWith(P))
+            return t.getKey().substring(P.length());
+        return c.getString();
+    }
+
     /** Число для щита: {@code decimals} знаков, без «-0». */
     public static String num(double v, int decimals) {
         if (Double.isNaN(v)) return "—";

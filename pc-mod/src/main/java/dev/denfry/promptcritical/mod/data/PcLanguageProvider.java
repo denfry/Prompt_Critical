@@ -246,6 +246,7 @@ public final class PcLanguageProvider extends LanguageProvider {
         b("glycol_regenerator", "Glycol Regenerator", "Регенератор гликоля");
         b("low_temperature_separator", "Low-Temperature Separation Unit", "Установка НТС");
         b("ngl_fractionator", "NGL Fractionation Unit", "Газофракционирующая установка");
+        b("rtu_station", "Telemetry Gateway (RTU)", "Шлюз телемеханики (КП)");
         b("wellhead", "Wellhead", "Колонная головка");
         b("christmas_tree", "Christmas Tree", "Фонтанная арматура");
         b("pumpjack", "Pumpjack", "Станок-качалка");
@@ -595,6 +596,7 @@ public final class PcLanguageProvider extends LanguageProvider {
         MISC.putAll(dev.denfry.promptcritical.mod.panel.PanelText.lang());
         MISC.putAll(dev.denfry.promptcritical.mod.drilling.DrillingText.lang());
         MISC.putAll(dev.denfry.promptcritical.mod.production.ProductionText.lang());
+        MISC.putAll(dev.denfry.promptcritical.mod.scada.ScadaText.lang());
         MISC.putAll(dev.denfry.promptcritical.mod.gas.GasText.lang());
     }
 

@@ -1,0 +1,21 @@
+package dev.denfry.promptcritical.mod.scada.cc;
+
+import dan200.computercraft.api.peripheral.PeripheralCapability;
+import dev.denfry.promptcritical.mod.scada.ScadaBlockEntities;
+import net.neoforged.bus.api.IEventBus;
+import net.neoforged.neoforge.capabilities.RegisterCapabilitiesEvent;
+
+/** Мост в CC: Tweaked: шлюз телемеханики — периферия {@code pc_rtu}. Загружается только при установленном CC. */
+public final class CcIntegration {
+    private CcIntegration() {
+    }
+
+    public static void register(IEventBus modBus) {
+        modBus.addListener(CcIntegration::capabilities);
+    }
+
+    private static void capabilities(RegisterCapabilitiesEvent event) {
+        event.registerBlockEntity(PeripheralCapability.get(), ScadaBlockEntities.TELEMETRY_GATEWAY.get(),
+                (be, side) -> new RtuPeripheral(be));
+    }
+}

@@ -225,6 +225,7 @@ public final class PcBlockStateProvider extends BlockStateProvider {
             case "glycol_regenerator" -> s.getValue(PcProperties.RUNNING) ? id + "_running" : id;
             case "low_temperature_separator" -> s.getValue(BlockStateProperties.LIT) ? "cold_box_cold" : "cold_box";
             case "ngl_fractionator" -> "column_base_large";
+            case "rtu_station" -> s.getValue(BlockStateProperties.LIT) ? id : id + "_off";
             case "christmas_tree" -> s.getValue(BlockStateProperties.OPEN) ? id : id + "_master_closed";
             case "pumpjack" -> "pumpjack_gearbox";
             case "flare_tip" -> s.getValue(BlockStateProperties.LIT) ? id + "_lit" : id;

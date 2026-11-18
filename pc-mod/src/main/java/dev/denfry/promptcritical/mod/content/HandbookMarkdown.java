@@ -17,14 +17,15 @@ import net.minecraft.world.item.Items;
  * Упрощённый Markdown страниц справочника (11 §11.1.2): {@code # заголовок}, {@code ## подзаголовок}, {@code - пункт},
  * пустая строка — новый абзац; в строке — {@code **жирный**}, {@code *курсив*}, ссылка на главу
  * {@code [текст](promptcritical:i0/boiler)} и на предмет {@code [текст](item:minecraft:coal)} (наведение показывает
- * предмет). Строки абзаца склеиваются через пробел.
+ * предмет). Строки абзаца склеиваются через пробел. Между строками {@code ```} — программный код: строки идут как
+ * есть, с отступами, без разметки, своим цветом.
  */
 public final class HandbookMarkdown {
     /** Префикс значения {@link ClickEvent} ссылки на главу. */
     public static final String ENTRY_LINK = "entry:";
-    public static final int HEADING_COLOR = 0x1F3A5F, LINK_COLOR = 0x2A5DB0, ITEM_COLOR = 0x2E6B30;
+    public static final int HEADING_COLOR = 0x1F3A5F, LINK_COLOR = 0x2A5DB0, ITEM_COLOR = 0x2E6B30, CODE_COLOR = 0x4A4038;
 
-    public enum Kind { HEADING, SUBHEADING, PARAGRAPH, BULLET, BREAK }
+    public enum Kind { HEADING, SUBHEADING, PARAGRAPH, BULLET, BREAK, CODE }
 
     public record Block(Kind kind, Component text) {
     }
@@ -35,8 +36,19 @@ public final class HandbookMarkdown {
     public static List<Block> parse(String md) {
         List<Block> out = new ArrayList<>();
         StringBuilder para = new StringBuilder();
+        boolean code = false;
         for (String raw : md.split("\n", -1)) {
             String line = raw.strip();
+            if (line.startsWith("```")) {
+                flush(out, para);
+                code = !code;
+                continue;
+            }
+            if (code) {
+                String verbatim = raw.stripTrailing().replace("\t", "    ");
+                out.add(new Block(Kind.CODE, Component.literal(verbatim.isEmpty() ? " " : verbatim).withColor(CODE_COLOR)));
+                continue;
+            }
             if (line.isEmpty()) {
                 flush(out, para);
                 if (!out.isEmpty() && out.getLast().kind() != Kind.BREAK) out.add(new Block(Kind.BREAK, Component.empty()));
