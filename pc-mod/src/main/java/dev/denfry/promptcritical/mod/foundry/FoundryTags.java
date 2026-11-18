@@ -31,7 +31,8 @@ public final class FoundryTags {
 
     /** Наполнение тегов для datagen ({@code ItemTagsProvider#tag}). */
     public static void addItemTags(Function<TagKey<Item>, IntrinsicHolderTagsProvider.IntrinsicTagAppender<Item>> tag) {
-        tag.apply(CUPOLA_IRON).add(PcItems.PIG_IRON.get()).addTag(IRON_INGOTS);
+        // вагранка плавит чушковый чугун со стальным ломом (брак станочного парка, обрезь)
+        tag.apply(CUPOLA_IRON).add(PcItems.PIG_IRON.get(), PcItems.STEEL_SCRAP.get()).addTag(IRON_INGOTS);
         tag.apply(CUPOLA_COKE).add(Items.CHARCOAL).addOptionalTag(COAL_COKE);
         tag.apply(FURNACE_COAL).add(PcItems.RAW_COAL.get(), PcItems.WASHED_COAL.get(), PcItems.COAL_MIDDLINGS.get(),
                 Items.COAL, Items.CHARCOAL);

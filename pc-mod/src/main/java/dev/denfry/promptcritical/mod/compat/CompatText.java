@@ -77,6 +77,22 @@ public final class CompatText {
                 "Выбивает остывшие формы на валу Create: отливка с паспортом и 90 % формовочной смеси обратно.");
         process("machine_tool", "Turns or drills a casting; the cutting tool wears with use.",
                 "Точит или сверлит отливку; резец изнашивается.");
+        process("milling_machine", "Cuts the teeth of a turned gear-blank casting with a disc module cutter. A coarse feed per "
+                + "tooth leaves the flanks too rough and the gear goes to scrap; an oversped cutter burns out in seconds.",
+                "Нарезает зубья на точёной заготовке шестерни дисковой модульной фрезой. Крупная подача на зуб оставляет грубые "
+                + "боковые поверхности — колесо в брак; перегнанная фреза сгорает за секунды.");
+        process("milling_keyway", "Mills a 12 × 8 keyway into a steel bar; the keyway tolerates a coarser feed than gear teeth.",
+                "Фрезерует шпоночный паз 12 × 8 в стальном прутке; пазу допустима подача крупнее, чем зубьям.");
+        process("shaping_slideway", "Planes a machine-bed casting into a slideway and a base-plate casting into a plate. The "
+                + "tool cuts on the forward stroke only; the slideway needs a fine feed.",
+                "Строгает отливку станины в направляющую, отливку плиты — в плиту. Резец режет только на рабочем ходе; "
+                + "направляющей нужна мелкая подача.");
+        process("shaping_plate", "Planes a rolled steel plate flat for the surface grinder.",
+                "Строгает лист проката под шлифование.");
+        process("surface_grinding", "Grinds a planed plate flat. A deep down-feed or a loaded wheel burns the surface; spinning "
+                + "the wheel past 1.5 × its working speed bursts it.",
+                "Шлифует строганую плиту. Глубокая подача или засаленный круг дают прижог; круг, разогнанный выше 1,5 рабочей "
+                + "скорости, разрывает.");
         process("casting_impeller", "A turned impeller casting without defects crafts into a pump impeller.",
                 "Обточенная отливка рабочего колеса без дефектов — колесо насоса.");
         process("casting_bearing", "A turned bronze bearing housing crafts into two bearing shells. Porous, short-run "

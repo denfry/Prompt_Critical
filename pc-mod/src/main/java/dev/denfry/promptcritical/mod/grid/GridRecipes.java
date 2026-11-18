@@ -105,14 +105,15 @@ public final class GridRecipes extends RecipeProvider {
                 .unlockedBy("has_pin", has(pin)).save(out, id("concrete_pole"));
 
         // машины
+        // вал ротора и вал двигателя — стальной пруток со шпоночным пазом под полумуфту (фрезерный станок)
         ShapedRecipeBuilder.shaped(RecipeCategory.MISC, PcBlocks.SHAFT_GENERATOR.get()).pattern("IWI").pattern("WSW").pattern("IBI")
-                .define('I', PcItems.STEEL_PLATE.get()).define('W', wire).define('S', AllBlocks.SHAFT.get()).define('B', PcItems.STEEL_BEAM.get())
+                .define('I', PcItems.STEEL_PLATE.get()).define('W', wire).define('S', PcItems.KEYED_SHAFT.get()).define('B', PcItems.STEEL_BEAM.get())
                 .unlockedBy("has_wire", hasWire).save(out, id("shaft_generator"));
         ShapedRecipeBuilder.shaped(RecipeCategory.MISC, PcBlocks.GENERATOR_EXCITER.get()).pattern("BWB").pattern("WSW").pattern("BRB")
                 .define('B', AllItems.BRASS_INGOT.get()).define('W', wire).define('S', AllBlocks.SHAFT.get()).define('R', Items.REDSTONE)
                 .unlockedBy("has_generator", has(PcBlocks.SHAFT_GENERATOR.get())).save(out, id("generator_exciter"));
         ShapedRecipeBuilder.shaped(RecipeCategory.MISC, PcBlocks.ELECTRIC_MOTOR.get()).pattern("IWI").pattern("WSW").pattern("ICI")
-                .define('I', PcItems.STEEL_PLATE.get()).define('W', wire).define('S', AllBlocks.SHAFT.get())
+                .define('I', PcItems.STEEL_PLATE.get()).define('W', wire).define('S', PcItems.KEYED_SHAFT.get())
                 .define('C', AllBlocks.ANDESITE_CASING.get())
                 .unlockedBy("has_wire", hasWire).save(out, id("electric_motor"));
         ShapedRecipeBuilder.shaped(RecipeCategory.MISC, PcBlocks.DISTRIBUTION_TRANSFORMER.get()).pattern("PPP").pattern("WBW").pattern("IWI")

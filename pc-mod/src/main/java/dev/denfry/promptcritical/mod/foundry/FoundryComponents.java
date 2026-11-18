@@ -17,7 +17,7 @@ import net.neoforged.neoforge.registries.DeferredRegister;
 
 /**
  * Компоненты предметов литейки (08 §8.17, §8.20): {@code casting_spec} отливки, модель {@code casting_pattern} и
- * заформованная {@code sand_mold}.
+ * заформованная {@code sand_mold}, чистота обработанной детали {@code machined_finish}.
  */
 public final class FoundryComponents {
     public static final DeferredRegister.DataComponents COMPONENTS =
@@ -59,12 +59,35 @@ public final class FoundryComponents {
                 KIND_STREAM, Mold::kind, ByteBufCodecs.BOOL, Mold::riser, ByteBufCodecs.FLOAT, Mold::moisture, Mold::new);
     }
 
+    /**
+     * Чистота детали станочного парка: материал ({@code steel_45}, {@code cast_iron}, {@code aluminium}), Ra
+     * последнего прохода, мкм, и квалитет IT.
+     */
+    public record Finish(String material, float raUm, int itGrade) {
+        public static final Codec<Finish> CODEC = RecordCodecBuilder.create(i -> i.group(
+                Codec.STRING.fieldOf("material").forGetter(Finish::material),
+                Codec.FLOAT.fieldOf("ra").forGetter(Finish::raUm),
+                Codec.INT.fieldOf("it").forGetter(Finish::itGrade)).apply(i, Finish::new));
+        public static final StreamCodec<ByteBuf, Finish> STREAM = StreamCodec.composite(
+                ByteBufCodecs.STRING_UTF8, Finish::material, ByteBufCodecs.FLOAT, Finish::raUm, ByteBufCodecs.VAR_INT, Finish::itGrade,
+                Finish::new);
+
+        /** Материал детали; неизвестный — чугун. */
+        public dev.denfry.promptcritical.sim.metallurgy.Machining.WorkMaterial workMaterial() {
+            for (var m : dev.denfry.promptcritical.sim.metallurgy.Machining.WorkMaterial.values())
+                if (m.name().equalsIgnoreCase(material)) return m;
+            return dev.denfry.promptcritical.sim.metallurgy.Machining.WorkMaterial.CAST_IRON;
+        }
+    }
+
     public static final DeferredHolder<DataComponentType<?>, DataComponentType<CastingSpec>> CASTING_SPEC =
             COMPONENTS.registerComponentType("casting_spec", b -> b.persistent(CASTING_SPEC_CODEC).networkSynchronized(CASTING_SPEC_STREAM));
     public static final DeferredHolder<DataComponentType<?>, DataComponentType<Pattern>> CASTING_PATTERN =
             COMPONENTS.registerComponentType("casting_pattern", b -> b.persistent(Pattern.CODEC).networkSynchronized(Pattern.STREAM));
     public static final DeferredHolder<DataComponentType<?>, DataComponentType<Mold>> SAND_MOLD =
             COMPONENTS.registerComponentType("sand_mold", b -> b.persistent(Mold.CODEC).networkSynchronized(Mold.STREAM));
+    public static final DeferredHolder<DataComponentType<?>, DataComponentType<Finish>> MACHINED_FINISH =
+            COMPONENTS.registerComponentType("machined_finish", b -> b.persistent(Finish.CODEC).networkSynchronized(Finish.STREAM));
 
     private FoundryComponents() {
     }

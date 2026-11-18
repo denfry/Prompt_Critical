@@ -167,19 +167,25 @@ public final class ProductionToolUnit implements FoundryUnit {
         return work != null && volumeLeft <= 0;
     }
 
-    /** Снять готовую деталь; {@code null} — не готова или станок пуст. */
-    public Result unload() {
+    /** Что выйдет со станка сейчас, не снимая детали; {@code null} — не готова или станок пуст. */
+    public Result peek() {
         if (!done()) return null;
-        Workpiece w = work;
         // профилометр показывает Ra с точностью 0,01 мкм — по показанию и принимают деталь
         double ra = Math.round((Double.isNaN(raUm) ? SurfaceFinish.RA_FLOOR_UM : raUm) * 100) / 100.0;
-        Reject reject = !w.sound() ? Reject.DEFECT
+        Reject reject = !work.sound() ? Reject.DEFECT
                 : burnt ? Reject.BURN
-                : ra > w.part().maxRaUm() ? Reject.ROUGH : Reject.NONE;
+                : ra > work.part().maxRaUm() ? Reject.ROUGH : Reject.NONE;
+        return new Result(work.part(), work.material(), ra, SurfaceFinish.itGrade(ra), reject);
+    }
+
+    /** Снять готовую деталь; {@code null} — не готова или станок пуст. */
+    public Result unload() {
+        Result r = peek();
+        if (r == null) return null;
         work = null;
         volumeLeft = 0;
         burnt = false;
-        return new Result(w.part(), w.material(), ra, SurfaceFinish.itGrade(ra), reject);
+        return r;
     }
 
     /** Следующая ступень подачи; возвращает новую подачу, мм. */

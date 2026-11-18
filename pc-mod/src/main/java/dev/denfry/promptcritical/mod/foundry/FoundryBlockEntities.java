@@ -31,6 +31,12 @@ public final class FoundryBlockEntities {
             type("machine_lathe", MachineToolBlockEntity::lathe, PcBlocks.MACHINE_LATHE);
     public static final DeferredHolder<BlockEntityType<?>, BlockEntityType<MachineToolBlockEntity>> DRILL_PRESS =
             type("drill_press", MachineToolBlockEntity::drillPress, PcBlocks.DRILL_PRESS);
+    public static final DeferredHolder<BlockEntityType<?>, BlockEntityType<ProductionToolBlockEntity>> MILLING_MACHINE =
+            type("milling_machine", ProductionToolBlockEntity::milling, PcBlocks.MILLING_MACHINE);
+    public static final DeferredHolder<BlockEntityType<?>, BlockEntityType<ProductionToolBlockEntity>> SHAPING_MACHINE =
+            type("shaping_machine", ProductionToolBlockEntity::shaper, PcBlocks.SHAPING_MACHINE);
+    public static final DeferredHolder<BlockEntityType<?>, BlockEntityType<ProductionToolBlockEntity>> SURFACE_GRINDER =
+            type("surface_grinder", ProductionToolBlockEntity::grinder, PcBlocks.SURFACE_GRINDER);
 
     private FoundryBlockEntities() {
     }

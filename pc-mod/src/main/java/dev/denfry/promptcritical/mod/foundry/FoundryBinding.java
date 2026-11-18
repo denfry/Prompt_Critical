@@ -40,6 +40,9 @@ public final class FoundryBinding {
         caps(event, FoundryBlockEntities.SHAKEOUT_GRATE.get());
         caps(event, FoundryBlockEntities.MACHINE_LATHE.get());
         caps(event, FoundryBlockEntities.DRILL_PRESS.get());
+        caps(event, FoundryBlockEntities.MILLING_MACHINE.get());
+        caps(event, FoundryBlockEntities.SHAPING_MACHINE.get());
+        caps(event, FoundryBlockEntities.SURFACE_GRINDER.get());
         event.registerBlock(Capabilities.ItemHandler.BLOCK, (level, pos, state, be, side) -> {
             FoundryDevice d = controller(level, pos, state);
             return d == null ? null : d.items(side);
