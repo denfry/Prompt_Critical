@@ -434,6 +434,13 @@ public final class PcBlocks {
     public static final DeferredBlock<PcDeviceBlock> LOW_TEMPERATURE_SEPARATOR = device("low_temperature_separator", machine(),
             Spec.facing(BlockStateProperties.LIT).footprint(FP_CUBE3),
             FoundryBlock.with(dev.denfry.promptcritical.mod.gas.GasPlantBlockEntity::new));
+    /** Гелиевая установка: криоблок и адсорберы доочистки, 2×2×1. */
+    public static final DeferredBlock<PcDeviceBlock> HELIUM_RECOVERY_UNIT = device("helium_recovery_unit", machine(),
+            Spec.facing(PcProperties.RUNNING).footprint(Footprint.of(Segment.box(0, 1, 0, 1, 0, 0))),
+            FoundryBlock.with(dev.denfry.promptcritical.mod.gas.HeliumRecoveryBlockEntity::new));
+    /** Стеллаж бассейна выдержки облучённого топлива. */
+    public static final DeferredBlock<PcDeviceBlock> FUEL_RACK = device("fuel_rack", machine().noOcclusion(), Spec.of(),
+            FoundryBlock.with(dev.denfry.promptcritical.mod.radiation.FuelRackBlockEntity::new));
     public static final DeferredBlock<PcDeviceBlock> NGL_FRACTIONATOR = device("ngl_fractionator", machine(),
             Spec.facing().footprint(FP_CUBE3), FoundryBlock.with(dev.denfry.promptcritical.mod.gas.NglFractionatorBlockEntity::new));
 

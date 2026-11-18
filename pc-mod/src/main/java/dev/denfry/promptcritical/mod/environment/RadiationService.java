@@ -43,6 +43,13 @@ public final class RadiationService {
     public static final ResourceKey<DamageType> RADIATION = ResourceKey.create(Registries.DAMAGE_TYPE, PromptCritical.id("radiation"));
     private static final Map<String, String[]> LANG = new LinkedHashMap<>();
     private static final Map<ServerLevel, Map<Vec3, Held>> SOURCES = new WeakHashMap<>();
+    /** Предметы с активностью (инвентари игроков, лежащие на земле): пересобираются раз в секунду. */
+    private static final Map<ServerLevel, List<Positioned>> ITEMS = new WeakHashMap<>();
+    /** Радиус поиска лежащих предметов вокруг игрока, м. */
+    static final double ITEM_SCAN_M = 64;
+
+    private record Positioned(Vec3 at, PointSource source, long until) {
+    }
 
     private record Held(PointSource source, long until) {
     }
@@ -124,7 +131,48 @@ public final class RadiationService {
             List<DoseRate.Layer> layers = ShieldBlocks.between(level, src, at);
             sum += DoseRate.totalSvH(e.getValue().source, r, layers);
         }
+        List<Positioned> items = ITEMS.get(level);
+        if (items != null)
+            for (Positioned it : items) {
+                if (it.until < now) continue;
+                double r = it.at.distanceTo(at);
+                if (r > RANGE_M) continue;
+                sum += DoseRate.totalSvH(it.source, r, ShieldBlocks.between(level, it.at, at));
+            }
         return sum;
+    }
+
+    /** Источник от предмета с активностью на игровое время {@code tick}; {@code null} — у предмета её нет. */
+    @org.jetbrains.annotations.Nullable
+    public static PointSource itemSource(net.minecraft.world.item.ItemStack stack, long tick) {
+        ActivityData a = stack.get(ActivityData.ACTIVITY.get());
+        if (a == null) return null;
+        PointSource one = a.inventory(tick).source();
+        return stack.getCount() == 1 ? one : one.scaled(stack.getCount());
+    }
+
+    /** Пересобрать предметные источники: инвентари игроков и предметы на земле рядом с ними. */
+    private static void gatherItems(ServerLevel level, long now) {
+        List<Positioned> out = new java.util.ArrayList<>();
+        java.util.Set<net.minecraft.world.entity.item.ItemEntity> seen = new java.util.HashSet<>();
+        for (ServerPlayer p : level.players()) {
+            PointSource carried = PointSource.NONE;
+            for (net.minecraft.world.item.ItemStack st : p.getInventory().items) carried = plus(carried, itemSource(st, now));
+            for (net.minecraft.world.item.ItemStack st : p.getInventory().offhand) carried = plus(carried, itemSource(st, now));
+            for (net.minecraft.world.item.ItemStack st : p.getInventory().armor) carried = plus(carried, itemSource(st, now));
+            if (!carried.empty()) out.add(new Positioned(p.position().add(0, 0.9, 0), carried, now + HOLD_TICKS));
+            for (net.minecraft.world.entity.item.ItemEntity e : level.getEntitiesOfClass(net.minecraft.world.entity.item.ItemEntity.class,
+                    p.getBoundingBox().inflate(ITEM_SCAN_M))) {
+                if (!seen.add(e)) continue;
+                PointSource s = itemSource(e.getItem(), now);
+                if (s != null && !s.empty()) out.add(new Positioned(e.position().add(0, 0.2, 0), s, now + HOLD_TICKS));
+            }
+        }
+        ITEMS.put(level, out);
+    }
+
+    private static PointSource plus(PointSource a, @org.jetbrains.annotations.Nullable PointSource b) {
+        return b == null ? a : a.plus(b);
     }
 
     /** Полная накопленная доза игрока, Зв. */
@@ -159,6 +207,7 @@ public final class RadiationService {
         Map<Vec3, Held> m = SOURCES.get(level);
         if (m != null) m.values().removeIf(h -> h.until < now);
         if (now % 20 != 0) return;
+        gatherItems(level, now);
         for (ServerPlayer p : level.players()) {
             double rate = rateSvH(level, p.getEyePosition()) + BACKGROUND_USV_H * 1e-6;
             CompoundTag d = data(p);

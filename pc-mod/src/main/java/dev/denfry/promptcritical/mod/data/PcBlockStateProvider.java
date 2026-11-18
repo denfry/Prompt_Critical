@@ -234,6 +234,8 @@ public final class PcBlockStateProvider extends BlockStateProvider {
             case "glycol_regenerator" -> s.getValue(PcProperties.RUNNING) ? id + "_running" : id;
             case "low_temperature_separator" -> s.getValue(BlockStateProperties.LIT) ? "cold_box_cold" : "cold_box";
             case "ngl_fractionator" -> "column_base_large";
+            case "helium_recovery_unit" -> "helium_purifier";
+            case "fuel_rack" -> "fuel_pool_rack_open";
             case "rtu_station" -> s.getValue(BlockStateProperties.LIT) ? id : id + "_off";
             // химия I3
             case "pyrolysis_furnace" -> s.getValue(BlockStateProperties.LIT) ? "tube_furnace_radiant_lit" : "tube_furnace_radiant";

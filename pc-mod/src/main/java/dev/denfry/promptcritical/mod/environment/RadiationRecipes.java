@@ -49,6 +49,16 @@ public final class RadiationRecipes extends RecipeProvider {
                 .pattern("BGB").pattern("BEB").pattern("BRB").define('B', AllItems.BRASS_SHEET.get()).define('G', Items.GLASS)
                 .define('E', AllItems.ELECTRON_TUBE.get()).define('R', Items.REDSTONE)
                 .unlockedBy("has_electron_tube", has(AllItems.ELECTRON_TUBE.get())).save(out, id("dosimeter_radiometer"));
+        // стеллаж бассейна: нержавеющая сталь с бором — железо и пластины, бура заменена латунью-поглотителем условно
+        ShapedRecipeBuilder.shaped(RecipeCategory.MISC, PcBlocks.FUEL_RACK.get())
+                .pattern("S S").pattern("SBS").pattern("S S").define('S', AllItems.IRON_SHEET.get()).define('B', Items.IRON_BARS)
+                .unlockedBy("has_iron_sheet", has(AllItems.IRON_SHEET.get())).save(out, id("fuel_rack"));
+        // гелиевая установка: криоблок (теплообменники, детандер) и адсорберы с углём
+        ShapedRecipeBuilder.shaped(RecipeCategory.MISC, PcBlocks.HELIUM_RECOVERY_UNIT.get())
+                .pattern("SPS").pattern("TLT").pattern("SCS").define('S', AllItems.IRON_SHEET.get()).define('P', PcItems.SEAMLESS_PIPE.get())
+                .define('T', com.simibubi.create.AllBlocks.FLUID_TANK.get()).define('L', PcBlocks.LOW_TEMPERATURE_SEPARATOR.get())
+                .define('C', Items.CHARCOAL).unlockedBy("has_low_temperature_separator", has(PcBlocks.LOW_TEMPERATURE_SEPARATOR.get()))
+                .save(out, id("helium_recovery_unit"));
         // свинец выплавляют из галенита (обжиг PbS и восстановление — свёрнуты в доменную плавку)
         SimpleCookingRecipeBuilder.blasting(Ingredient.of(PcBlocks.GALENA_ORE.get(), PcBlocks.DEEPSLATE_GALENA_ORE.get()), RecipeCategory.BUILDING_BLOCKS,
                         PcBlocks.LEAD_BLOCK.get(), 0.3f, 200)
