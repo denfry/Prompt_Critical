@@ -156,6 +156,13 @@ public final class GuiCheck {
                         j.addProperty("tw", font.width(ic.label()));
                         j.addProperty("t", ic.label().getString());
                     }
+                    case PanelLayout.Plot pl -> {
+                        j.addProperty("k", "plot");
+                        j.addProperty("w", pl.w());
+                        j.addProperty("h", pl.h());
+                        j.addProperty("tw", font.width(pl.label()));
+                        j.addProperty("t", pl.label().getString());
+                    }
                     case PanelLayout.Readout r -> {
                         j.addProperty("k", "readout");
                         j.addProperty("w", r.w());

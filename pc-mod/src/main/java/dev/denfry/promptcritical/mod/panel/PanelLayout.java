@@ -91,7 +91,7 @@ public final class PanelLayout {
     public interface Tip extends Function<PanelValues, Component> {
     }
 
-    public sealed interface Element permits Dial, Scope, Glass, Bar, Lamp, Readout, Caption, Button, Firebox, UTube, IndicatorCard {
+    public sealed interface Element permits Dial, Scope, Glass, Bar, Lamp, Readout, Caption, Button, Firebox, UTube, IndicatorCard, Plot {
         int x();
 
         int y();
@@ -157,6 +157,15 @@ public final class PanelLayout {
      */
     public record UTube(int x, int y, int h, int ch, double scale, double max, Component label, @Nullable Tip tip) implements Element {
         public static final int W = 24;
+    }
+
+    /**
+     * Замкнутая кривая по точкам из каналов (динамограмма станка-качалки): точка i — каналы {@code ch0 + 2i} (X) и
+     * {@code ch0 + 2i + 1} (Y) в единицах канала, шкалы — от 0 до {@code xMax} и {@code yMax}. Рисуется, пока установлен
+     * бит {@code runBit} канала {@code flagsCh}.
+     */
+    public record Plot(int x, int y, int w, int h, int ch0, int points, double xMax, double yMax, int flagsCh, int runBit,
+            Component label, @Nullable Tip tip) implements Element {
     }
 
     /**
@@ -282,6 +291,12 @@ public final class PanelLayout {
         public Builder indicator(int x, int y, int w, int h, int chestCh, int flagsCh, int runBit, double cutoff, double clearance,
                 double backPa, double pMaxPa, Component label, @Nullable Tip tip) {
             elements.add(new IndicatorCard(x, y, w, h, chestCh, flagsCh, runBit, cutoff, clearance, backPa, pMaxPa, label, tip));
+            return this;
+        }
+
+        public Builder plot(int x, int y, int w, int h, int ch0, int points, double xMax, double yMax, int flagsCh, int runBit,
+                Component label, @Nullable Tip tip) {
+            elements.add(new Plot(x, y, w, h, ch0, points, xMax, yMax, flagsCh, runBit, label, tip));
             return this;
         }
 

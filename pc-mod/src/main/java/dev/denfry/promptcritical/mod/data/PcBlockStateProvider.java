@@ -109,7 +109,7 @@ public final class PcBlockStateProvider extends BlockStateProvider {
     /** Блоки с неподвижными частями из арт-реестра (partial): части добавляются мультипартом к модели состояния. */
     private static final java.util.Set<String> PARTS = java.util.Set.of("coke_pusher_ram", "sinter_strand", "blast_furnace_top",
             "cast_house_machine", "ladle", "roller_table", "rolling_mill_stand", "piercing_mill", "pipe_welder", "asu_main_compressor",
-            "asu_expander", "air_separator", "hydrotest_pump", "recording_gauge", "water_clarifier", "rotary_table", "mud_pump");
+            "asu_expander", "air_separator", "hydrotest_pump", "recording_gauge", "water_clarifier", "rotary_table", "mud_pump", "pumpjack");
 
     /** Модели состояния мультипартом: основная и части, все с поворотом по {@code facing}. */
     private void parts(Block block, String id) {
@@ -150,6 +150,8 @@ public final class PcBlockStateProvider extends BlockStateProvider {
             case "water_clarifier" -> java.util.List.of(base, id + "/partial/rake");
             case "rotary_table" -> java.util.List.of(base, id + "/partial/turntable", id + "/partial/kelly");
             case "mud_pump" -> java.util.List.of(base, id + "/partial/crankshaft");
+            case "pumpjack" -> java.util.List.of(base, "pumpjack_gearbox/partial/crank_counterweight", "pumpjack_gearbox/partial/walking_beam",
+                    "pumpjack_gearbox/partial/pitman_arm", "pumpjack_gearbox/partial/polished_rod");
             default -> java.util.List.of(base);
         };
     }
@@ -217,6 +219,12 @@ public final class PcBlockStateProvider extends BlockStateProvider {
             case "headframe" -> s.getValue(PcProperties.TOP) ? id + "_top" : id;
             case "mine_cage" -> s.getValue(BlockStateProperties.OPEN) ? id + "_open" : id;
             // нефть и газ I2
+            case "christmas_tree" -> s.getValue(BlockStateProperties.OPEN) ? id : id + "_master_closed";
+            case "pumpjack" -> "pumpjack_gearbox";
+            case "flare_tip" -> s.getValue(BlockStateProperties.LIT) ? id + "_lit" : id;
+            case "tube_furnace" -> s.getValue(BlockStateProperties.LIT) ? "tube_furnace_radiant_lit" : "tube_furnace_radiant";
+            case "crude_column" -> "column_base";
+            case "column_tray_section" -> "column_base_insulated";
             case "drillers_console", "seismic_recorder" -> s.getValue(BlockStateProperties.LIT) ? id + "_on" : id;
             case "bop_annular" -> s.getValue(PcProperties.SHUT) ? id + "_closed" : id;
             case "mud_tank" -> switch (s.getValue(PcProperties.MUD_LEVEL)) {

@@ -24,6 +24,17 @@
   breakdown and preventer limit, the driller's method on an automatic choke, and a blowout that ignites gas on
   the rig through the damage budget. Handbook chapters on seismic, drilling and well control.
 
+### Oil production and refining (I2)
+- Completing a drilled bore: a wellhead on the rig's spot, production casing from seamless pipe, perforating with
+  charges, a Christmas tree with a choke. Inflow by Vogel's curve, the reservoir depletes with a rising gas-oil
+  ratio and water cut, the well flows on a Gilbert choke until it dies.
+- Pumpjack on a Create shaft: four-bar beam kinematics, rod stretch, inertia and fluid pound, with the
+  dynamometer card drawn on the panel.
+- Three-phase separator (oil, water, associated gas; Stokes settling, Souders–Brown gas capacity) and a flare.
+- Atmospheric crude unit: crude heater burning associated gas and a tray column that splits a light West
+  Siberian crude by its TBP curve into gasoline, kerosene, diesel and mazut; trays and reflux set the sharpness
+  through Fenske–Underwood–Gilliland. Handbook chapters on production and distillation.
+
 ### Character body
 - Choose sex, height, mass and age on the title screen or on first join; locked per world, an operator can reset.
 - Height scales the player model and stride; mass sets knockback resistance and the load in the hoist cage;

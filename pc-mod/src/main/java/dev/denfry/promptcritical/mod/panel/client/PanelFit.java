@@ -116,6 +116,10 @@ public final class PanelFit {
                     bodies.add(new Box("utube " + str(u.label()), x, y, x + PanelLayout.UTube.W, y + u.h()));
                     labels.add(new Label(e, str(u.label()), true, x + PanelLayout.UTube.W / 2, y + u.h() + 2, font.width(u.label())));
                 }
+                case PanelLayout.Plot pl -> {
+                    bodies.add(new Box("plot", x, y, x + pl.w(), y + pl.h()));
+                    labels.add(new Label(e, str(pl.label()), true, x + pl.w() / 2, y + pl.h() + 2, font.width(pl.label())));
+                }
                 case PanelLayout.IndicatorCard ic -> {
                     bodies.add(new Box("indicator", x, y, x + ic.w(), y + ic.h()));
                     labels.add(new Label(e, str(ic.label()), true, x + ic.w() / 2, y + ic.h() + 2, font.width(ic.label())));

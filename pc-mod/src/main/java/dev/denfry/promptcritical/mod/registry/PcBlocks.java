@@ -404,6 +404,27 @@ public final class PcBlocks {
     public static final DeferredBlock<PcDeviceBlock> MUD_MIXING_HOPPER = device("mud_mixing_hopper", machine(), Spec.facing(),
             FoundryBlock.with(dev.denfry.promptcritical.mod.drilling.MudHopperBlockEntity::new));
 
+    // --- нефть и газ I2: добыча, подготовка, атмосферная перегонка ---
+    public static final DeferredBlock<PcDeviceBlock> WELLHEAD = device("wellhead", machine(), Spec.facing(),
+            FoundryBlock.with(dev.denfry.promptcritical.mod.production.WellheadBlockEntity::new));
+    public static final DeferredBlock<PcBlock> CHRISTMAS_TREE = block("christmas_tree", machine(),
+            Spec.facing(BlockStateProperties.OPEN).footprint(FP_TALL2));
+    public static final DeferredBlock<PcDeviceBlock> PUMPJACK = device("pumpjack", machine(),
+            Spec.facing(PcProperties.RUNNING).footprint(Footprint.of(Segment.box(-1, 1, 0, 0, -1, 1))),
+            dev.denfry.promptcritical.mod.production.PumpjackBlock::create);
+    public static final DeferredBlock<PcDeviceBlock> THREE_PHASE_SEPARATOR = device("three_phase_separator", machine(),
+            Spec.facing().footprint(Footprint.of(Segment.box(-1, 1, 0, 1, 0, 1))),
+            FoundryBlock.with(dev.denfry.promptcritical.mod.production.SeparatorBlockEntity::new));
+    public static final DeferredBlock<PcBlock> FLARE_STACK = block("flare_stack", machine(), Spec.of());
+    public static final DeferredBlock<PcBlock> FLARE_TIP = block("flare_tip", lit(machine()), Spec.of(BlockStateProperties.LIT));
+    public static final DeferredBlock<PcDeviceBlock> TUBE_FURNACE = device("tube_furnace", lit(brick()),
+            Spec.facing(BlockStateProperties.LIT).footprint(FP_CUBE3),
+            FoundryBlock.with(dev.denfry.promptcritical.mod.production.TubeFurnaceBlockEntity::new));
+    public static final DeferredBlock<PcDeviceBlock> CRUDE_COLUMN = device("crude_column", machine(), Spec.facing().footprint(FP_TALL2),
+            FoundryBlock.with(dev.denfry.promptcritical.mod.production.CrudeColumnBlockEntity::new));
+    public static final DeferredBlock<PcBlock> COLUMN_TRAY_SECTION = block("column_tray_section", machine(), Spec.facing().footprint(FP_TALL2));
+    public static final DeferredBlock<PcBlock> COLUMN_TOP = block("column_top", machine(), Spec.facing());
+
     // --- обогащение, литьё, механический цех (08 §8.3, §8.9, §8.10) ---
     public static final DeferredBlock<PcDeviceBlock> COAL_JIG = device("coal_jig", machine(),
             Spec.facing(PcProperties.RUNNING).footprint(Footprint.of(Segment.box(0, 1, 0, 1, 0, 0))),
