@@ -227,20 +227,7 @@ mk("isl_monitor_well", "ore_processing", [
 # hydrometallurgy
 # =====================================================================
 # чан выщелачивания: открытый сверху, мостик с приводом мешалки; мешалка — partial (ось Y)
-mk("leach_tank", "hydrometallurgy",
-   shell("tank", "y", 7, 0, 10, "shell", faces={"up": "pulp"})
-   + ring_y("rim", 7.3, 1, 9.5, 12, "ds")
-   + [
-       el("bridge", [0, 12, 7], [16, 13.5, 9], "d"),
-       el("gearbox", [5, 13.5, 5], [11, 16, 11], "and"),
-       nozzle("feed", [6.5, 6, 0], [9.5, 9, 1.5], "acid", "north"),
-       nozzle("discharge", [14.5, 1, 6.5], [16, 4, 9.5], "acid", "east"),
-   ], {"shell": "block/leach_tank_shell.png"})
-mk("leach_tank/agitator", "hydrometallurgy", [
-    el("shaft", [7.5, 1, 7.5], [8.5, 13.5, 8.5], "st"),
-    el("blade_x", [3, 2.5, 7.25], [13, 3.5, 8.75], "bs"),
-    el("blade_z", [7.25, 2.49, 3], [8.75, 3.51, 13], "bs"),
-] + disc("hub", "y", 2, 10.5, 11.5, "ds", sides=8), kind="partial")
+# нарисовано вручную в Blockbench: art/blockbench/conversion/fuel_cycle.author.js
 
 # автоклав: горизонтальный сосуд в обшивке на сёдлах
 mk("pressure_leach_autoclave", "hydrometallurgy",
@@ -284,66 +271,16 @@ mk("thickener/rake", "hydrometallurgy", [
 ], kind="partial")
 
 # ионообменная колонна: сегмент 1×1×3
-mk("ion_exchange_column", "hydrometallurgy",
-   shell("shell", "y", 5.5, 0.5, 15.5, "shell")
-   + disc("flange_b", "y", 6.5, 0, 1, "ds", sides=8)
-   + disc("flange_t", "y", 6.5, 15, 16, "ds", sides=8)
-   + [
-       el("sight_glass", [6, 4, 2.2], [10, 12, 2.6], "resin", full=["north"]),
-       nozzle("inlet", [13.5, 12, 7], [16, 14, 9], "acid", "east"),
-       nozzle("outlet", [0, 2, 7], [2.5, 4, 9], "acid", "west"),
-       el("valve", [14, 11.5, 6.5], [15.5, 14.5, 9.5], "b"),
-   ], {"shell": "block/ion_exchange_column_shell.png", "resin": "block/ion_exchange_column_resin.png"})
+# нарисовано вручную в Blockbench: art/blockbench/conversion/fuel_cycle.author.js
 
 # смеситель-отстойник: смесительная камера (сегмент 2×1×1), мешалка — partial
-mk("mixer_settler", "hydrometallurgy", [
-    el("mixer_box", [3, 0, 3], [13, 10, 13], "frp", faces={"up": "emul"}),
-    el("window", [5, 2, 2.9], [11, 8.5, 3], "win", full=["north"]),
-    el("rim_n", [2.75, 9.5, 2.75], [13.25, 11, 3.25], "d"),
-    el("rim_s", [2.75, 9.5, 12.75], [13.25, 11, 13.25], "d"),
-    el("bridge", [3, 11, 7], [13, 12.5, 9], "d"),
-    el("gearbox", [5.5, 12.5, 5.5], [10.5, 15.5, 10.5], "and"),
-    el("launder", [13, 7, 4], [16, 9.5, 12], "frp", faces={"up": "emul"}),
-    nozzle("aqueous_in", [0, 3, 5], [3, 5, 7], "acid", "west"),
-    nozzle("organic_in", [0, 5.5, 9], [3, 7.5, 11], "fuel", "west"),
-], {"emul": "block/mixer_settler_emulsion.png", "win": "block/mixer_settler_window.png"})
-mk("mixer_settler/impeller", "hydrometallurgy", [
-    el("shaft", [7.5, 1.5, 7.5], [8.5, 16, 8.5], "st"),
-    el("blade_x", [4.5, 2, 7.25], [11.5, 3, 8.75], "bs"),
-    el("blade_z", [7.25, 1.99, 4.5], [8.75, 3.01, 11.5], "bs"),
-] + disc("hub", "y", 1.8, 9.5, 10.75, "ds", sides=8), kind="partial")
+# нарисовано вручную в Blockbench: art/blockbench/conversion/fuel_cycle.author.js
 
 # осадительный бак с коническим днищем на опорах
-mk("precipitation_tank", "hydrometallurgy",
-   legs4(7, inset=2.5)
-   + disc("cone_low", "y", 3, 3, 5, "sm", sides=8)
-   + disc("cone_mid", "y", 5, 5, 7, "sm", sides=8)
-   + shell("body", "y", 6.5, 7, 14, "shell")
-   + disc("head", "y", 5, 14, 15, "sm", sides=8)
-   + [
-       el("agitator_motor", [6, 15, 6], [10, 16, 10], "mb"),
-       el("nh3_dosing", [11, 14.2, 7], [12.5, 16, 8.5], "gas"),
-       el("bottom_valve", [7, 1.5, 7], [9, 3, 9], "b"),
-       nozzle("slurry_out", [7, 1.5, 1], [9, 3, 7], "acid", "north"),
-   ], {"shell": "block/precipitation_tank_shell.png"})
+# нарисовано вручную в Blockbench: art/blockbench/conversion/fuel_cycle.author.js
 
 # вращающаяся печь прокалки: кожух — partial (ось X)
-mk("rotary_calciner", "hydrometallurgy", [
-    el("base", [0, 0, 2], [16, 1, 14], "c"),
-    el("rollers_w", [3, 1, 4], [6, 2.4, 12], "and"),
-    el("rollers_e", [10, 1, 4], [13, 2.4, 12], "and"),
-    el("feed_hood", [0, 1, 2], [2, 14, 14], "p"),
-    el("feed_chute", [0.25, 14, 5], [1.75, 16, 11], "p"),
-    el("discharge_hood", [14, 1, 2], [16, 15, 14], "fb", faces={"east": "hood"}, full=["east"]),
-    el("glow_hood_port", [14.5, 4, 1.9], [15.5, 7, 2], "fire"),
-    nozzle("burner", [16, 9, 7], [17.5, 11, 9], "fuel", "east"),
-], {"hood": "block/rotary_calciner_hood.png"})
-mk("rotary_calciner/shell", "hydrometallurgy",
-   shell("kiln", "x", 5, 2, 14, "shell")
-   + disc("tyre_w", "x", 5.8, 3.5, 5.5, "ds", sides=8)
-   + disc("tyre_e", "x", 5.8, 10.5, 12.5, "ds", sides=8)
-   + disc("girth_gear", "x", 6.3, 7.5, 8.5, "bs", sides=8),
-   {"shell": "block/rotary_calciner_shell.png"}, kind="partial")
+# нарисовано вручную в Blockbench: art/blockbench/conversion/fuel_cycle.author.js
 
 # дамба хвостохранилища: насыпь с каменной наброской и водомерной рейкой
 mk("tailings_dam", "hydrometallurgy", [
@@ -535,16 +472,7 @@ mk("process_steam_port", "reagents", [
 # =====================================================================
 # conversion
 # =====================================================================
-mk("dissolver", "conversion",
-   [el("base_ring", [2, 0, 2], [14, 1.9, 14], "d")]
-   + shell("vessel", "y", 6, 2, 13, "shell")
-   + disc("head", "y", 4.5, 13, 14, "st", sides=8)
-   + [
-       el("charge_hopper", [5.5, 14, 5.5], [10.5, 16, 10.5], "p"),
-       el("nox_offgas", [11, 13.2, 7], [13, 16, 9], "gas"),
-       nozzle("hno3_in", [0, 10, 7], [2.5, 12, 9], "acid", "west"),
-       nozzle("unh_out", [13.5, 3, 7], [16, 5, 9], "acid", "east"),
-   ], {"shell": "block/dissolver_shell.png"})
+# нарисовано вручную в Blockbench: art/blockbench/conversion/fuel_cycle.author.js
 
 # пульсационная колонна: сегмент 1×1×N, пульсатор — шток (partial, поступательный)
 mk("pulsed_column", "conversion",
@@ -575,44 +503,12 @@ mk("evaporator", "conversion",
        nozzle("concentrate_out", [0, 1, 7], [4.5, 3, 9], "acid", "west"),
    ], {"shell": "block/evaporator_shell.png"})
 
-mk("denitration_reactor", "conversion",
-   [el("base", [1, 0, 1], [15, 1.5, 15], "d")]
-   + shell("reactor", "y", 5, 1.5, 14, "shell")
-   + [
-       el("no2_offgas", [6.5, 14, 6.5], [9.5, 16, 9.5], "gas"),
-       nozzle("unh_in", [0, 10, 7], [3.5, 12, 9], "acid", "west"),
-       el("uo3_chute", [6.5, 1.5, 1], [9.5, 4, 3.5], "d"),
-       el("heater_box", [12.5, 6, 5.5], [15.5, 10, 10.5], "cab"),
-       el("glow_heater_lamp", [13.5, 8, 5.25], [14.5, 9, 5.5], "ly"),
-   ], {"shell": "block/denitration_reactor_shell.png"})
+# нарисовано вручную в Blockbench: art/blockbench/conversion/fuel_cycle.author.js
 
-mk("reduction_furnace", "conversion", [
-    el("body", [1, 0, 1], [15, 13, 15], "fb", faces={"north": "front"}, full=["north"]),
-    el("glow_peephole", [7, 8, 0.75], [9, 9.5, 1], "fire"),
-    nozzle("retort_w", [-1, 3, 6.5], [1, 6, 9.5], "st", "west"),
-    nozzle("retort_e", [15, 3, 6.5], [17, 6, 9.5], "st", "east"),
-    el("h2_line", [-0.5, 6, 7.25], [0.5, 13, 8.75], "h2"),
-    el("h2_feed", [-0.5, 13, 7.3], [3, 14.5, 8.7], "h2"),
-    el("thermocouple", [7, 13, 7], [9, 15, 9], "d"),
-], {"front": "block/reduction_furnace_front.png"})
+# нарисовано вручную в Blockbench: art/blockbench/conversion/fuel_cycle.author.js
 
 # печь HF: вращающийся барабан в неподвижной обогревательной рубашке; барабан — partial (ось X)
-mk("hf_kiln", "conversion", [
-    el("base", [0, 0, 2], [16, 1, 14], "c"),
-    el("rollers_w", [2.5, 1, 4], [4.5, 2.4, 12], "and"),
-    el("rollers_e", [11.5, 1, 4], [13.5, 2.4, 12], "and"),
-    el("jacket", [5, 1.5, 1.5], [11, 14.5, 14.5], "fb", faces={"north": "jk", "south": "jk"}, full=["north", "south"]),
-    el("glow_burner", [7, 3, 1.25], [9, 5, 1.5], "fire"),
-    el("feed_hood", [0, 1, 2], [2, 14, 14], "p"),
-    el("discharge_hood", [14, 1, 2], [16, 14, 14], "p"),
-    el("hf_offgas", [0.5, 14, 6.5], [1.75, 16, 9.5], "gas"),
-    nozzle("acid_feed", [-1.5, 9, 7], [0, 11, 9], "acid", "west"),
-], {"jk": "block/hf_kiln_jacket.png"})
-mk("hf_kiln/shell", "conversion",
-   shell("kiln", "x", 5, 2, 14, "shell")
-   + disc("tyre_w", "x", 5.8, 2.8, 4.3, "ds", sides=8)
-   + disc("tyre_e", "x", 5.8, 11.7, 13.2, "ds", sides=8),
-   {"shell": "block/hf_kiln_shell.png"}, kind="partial")
+# нарисовано вручную в Blockbench: art/blockbench/conversion/fuel_cycle.author.js
 
 mk("hf_condenser", "conversion",
    [el("saddle_w", [2, 0, 4], [4.5, 3.5, 12], "c"), el("saddle_e", [11.5, 0, 4], [14, 3.5, 12], "c")]
@@ -628,41 +524,13 @@ mk("hf_condenser", "conversion",
        el("hf_liquid_out", [14.25, 1, 7], [15.25, 3.5, 9], "acid"),
    ], {"shell": "block/hf_condenser_shell.png"})
 
-mk("hydrofluorination_reactor", "conversion",
-   [el("base", [1, 0, 1], [15, 1.5, 15], "d")]
-   + shell("tube", "y", 4, 1.5, 15, "shell")
-   + [
-       el("uo2_hopper", [5, 14, 5], [11, 16, 11], "p"),
-       el("uf4_chute", [6.5, 1.5, 1.5], [9.5, 4, 4.5], "d"),
-       nozzle("hf_in", [11.5, 3, 7], [16, 5, 9], "gas", "east"),
-       nozzle("offgas_out", [0, 12, 7], [4.5, 14, 9], "gas", "west"),
-       el("heater_terminal", [3, 6, 3], [5, 9, 5], "cab"),
-   ], {"shell": "block/hydrofluorination_reactor_shell.png"})
+# нарисовано вручную в Blockbench: art/blockbench/conversion/fuel_cycle.author.js
 
 # фтористая ячейка: электролизёр KF·2HF, угольные аноды, раздельные отводы F₂ и H₂
-mk("fluorine_cell", "conversion", [
-    el("tank", [1, 0, 2], [15, 10, 14], "side"),
-    el("lid", [0.5, 10, 1.5], [15.5, 11, 14.5], "d"),
-    el("anode_1", [3, 11, 4], [5, 13, 7], "g"),
-    el("anode_2", [7, 11, 4], [9, 13, 7], "g"),
-    el("anode_3", [11, 11, 4], [13, 13, 7], "g"),
-    el("busbar", [2, 13, 5], [14, 14, 6], "cu"),
-    el("f2_outlet", [3, 11, 10], [5, 15, 12], "gas"),
-    el("h2_outlet", [11, 11, 10], [13, 15, 12], "h2"),
-    nozzle("cooling_in", [0, 2, 7], [1, 4, 9], "wat", "west"),
-    el("hazard_plinth", [1, 0, 1.5], [15, 1, 2], "h"),
-], {"side": "block/fluorine_cell_side.png"})
+# нарисовано вручную в Blockbench: art/blockbench/conversion/fuel_cycle.author.js
 
 # пламенная башня фторирования
-mk("fluorination_reactor", "conversion",
-   shell("tower", "y", 4.5, 0, 15, "shell")
-   + [
-       el("uf4_hopper", [5.5, 15, 5.5], [10.5, 17, 10.5], "p"),
-       nozzle("f2_in", [12, 12.8, 7], [16, 14.8, 9], "gas", "east"),
-       nozzle("uf6_out", [0, 2, 7], [4, 4, 9], "gas", "west"),
-       el("glow_flame_port", [7, 9, 3.25], [9, 11, 3.55], "fire"),
-       el("ash_pot", [6, 0, 1.5], [10, 2, 3.75], "d"),
-   ], {"shell": "block/fluorination_reactor_shell.png"})
+# нарисовано вручную в Blockbench: art/blockbench/conversion/fuel_cycle.author.js
 
 mk("cold_trap", "conversion",
    shell("vessel", "y", 5, 0, 13, "shell", cap="frost")

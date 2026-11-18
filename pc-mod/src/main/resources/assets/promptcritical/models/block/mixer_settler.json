@@ -1,21 +1,17 @@
 {
 	"credit": "Made with Blockbench",
 	"textures": {
-		"particle": "promptcritical:block/common/mining_frp",
-		"acid": "promptcritical:block/common/mining_pipe_acid",
-		"and": "promptcritical:block/common/mining_andesite",
-		"d": "promptcritical:block/common/steel_dark",
-		"emul": "promptcritical:block/mixer_settler_emulsion",
-		"end": "promptcritical:block/common/pipe_end",
-		"frp": "promptcritical:block/common/mining_frp",
-		"fuel": "promptcritical:block/common/mining_pipe_fuel",
-		"win": "promptcritical:block/mixer_settler_window"
+		"particle": "promptcritical:block/fuel/frp_green",
+		"fuel_frp_green": "promptcritical:block/fuel/frp_green",
+		"plant_pipe_liquid": "promptcritical:block/plant/pipe_liquid",
+		"plant_structure": "promptcritical:block/plant/structure",
+		"plant_pipe_acid": "promptcritical:block/plant/pipe_acid"
 	},
 	"elements": [
 		{
-			"name": "mixer_box",
-			"from": [3, 0, 3],
-			"to": [13, 10, 13],
+			"name": "mixer",
+			"from": [0.6, 0, 3],
+			"to": [6.6, 10, 13],
 			"rotation": {
 				"angle": 0,
 				"axis": "y",
@@ -23,35 +19,35 @@
 			},
 			"faces": {
 				"north": {
-					"uv": [0, 0, 10, 10],
-					"texture": "#frp"
+					"uv": [9.4, 6, 15.4, 16],
+					"texture": "#fuel_frp_green"
 				},
 				"east": {
-					"uv": [0, 0, 10, 10],
-					"texture": "#frp"
+					"uv": [3, 6, 13, 16],
+					"texture": "#fuel_frp_green"
 				},
 				"south": {
-					"uv": [0, 0, 10, 10],
-					"texture": "#frp"
+					"uv": [0.6, 6, 6.6, 16],
+					"texture": "#fuel_frp_green"
 				},
 				"west": {
-					"uv": [0, 0, 10, 10],
-					"texture": "#frp"
+					"uv": [3, 6, 13, 16],
+					"texture": "#fuel_frp_green"
 				},
 				"up": {
-					"uv": [0, 0, 10, 10],
-					"texture": "#emul"
+					"uv": [0.6, 3, 6.6, 13],
+					"texture": "#fuel_frp_green"
 				},
 				"down": {
-					"uv": [0, 0, 10, 10],
-					"texture": "#frp"
+					"uv": [0.6, 3, 6.6, 13],
+					"texture": "#fuel_frp_green"
 				}
 			}
 		},
 		{
-			"name": "window",
-			"from": [5, 2, 2.9],
-			"to": [11, 8.5, 3],
+			"name": "settler",
+			"from": [6.6, 0, 3],
+			"to": [15.6, 6, 13],
 			"rotation": {
 				"angle": 0,
 				"axis": "y",
@@ -59,71 +55,51 @@
 			},
 			"faces": {
 				"north": {
-					"uv": [0, 0, 16, 16],
-					"texture": "#win"
+					"uv": [0.4, 10, 9.4, 16],
+					"texture": "#fuel_frp_green"
 				},
 				"east": {
-					"uv": [0, 0, 0.1, 6.5],
-					"texture": "#win"
+					"uv": [3, 10, 13, 16],
+					"texture": "#fuel_frp_green"
 				},
 				"south": {
-					"uv": [0, 0, 6, 6.5],
-					"texture": "#win"
+					"uv": [6.6, 10, 15.6, 16],
+					"texture": "#fuel_frp_green"
 				},
 				"west": {
-					"uv": [0, 0, 0.1, 6.5],
-					"texture": "#win"
+					"uv": [3, 10, 13, 16],
+					"texture": "#fuel_frp_green"
 				},
 				"up": {
-					"uv": [0, 0, 6, 0.1],
-					"texture": "#win"
+					"uv": [6.6, 3, 15.6, 13],
+					"texture": "#fuel_frp_green"
 				},
 				"down": {
-					"uv": [0, 0, 6, 0.1],
-					"texture": "#win"
+					"uv": [6.6, 3, 15.6, 13],
+					"texture": "#fuel_frp_green"
 				}
 			}
 		},
 		{
-			"name": "rim_n",
-			"from": [2.75, 9.5, 2.75],
-			"to": [13.25, 11, 3.25],
+			"name": "organic",
+			"from": [7, 5.4, 3.4],
+			"to": [15.2, 5.6, 12.6],
 			"rotation": {
 				"angle": 0,
 				"axis": "y",
 				"origin": [8, 8, 8]
 			},
 			"faces": {
-				"north": {
-					"uv": [0, 0, 10.5, 1.5],
-					"texture": "#d"
-				},
-				"east": {
-					"uv": [0, 0, 0.5, 1.5],
-					"texture": "#d"
-				},
-				"south": {
-					"uv": [0, 0, 10.5, 1.5],
-					"texture": "#d"
-				},
-				"west": {
-					"uv": [0, 0, 0.5, 1.5],
-					"texture": "#d"
-				},
 				"up": {
-					"uv": [0, 0, 10.5, 0.5],
-					"texture": "#d"
-				},
-				"down": {
-					"uv": [0, 0, 10.5, 0.5],
-					"texture": "#d"
+					"uv": [7, 3.4, 15.2, 12.6],
+					"texture": "#plant_pipe_liquid"
 				}
 			}
 		},
 		{
-			"name": "rim_s",
-			"from": [2.75, 9.5, 12.75],
-			"to": [13.25, 11, 13.25],
+			"name": "weir",
+			"from": [14.6, 6, 3],
+			"to": [15.6, 7.4, 13],
 			"rotation": {
 				"angle": 0,
 				"axis": "y",
@@ -131,35 +107,35 @@
 			},
 			"faces": {
 				"north": {
-					"uv": [0, 0, 10.5, 1.5],
-					"texture": "#d"
+					"uv": [0.4, 8.6, 1.4, 10],
+					"texture": "#fuel_frp_green"
 				},
 				"east": {
-					"uv": [0, 0, 0.5, 1.5],
-					"texture": "#d"
+					"uv": [3, 8.6, 13, 10],
+					"texture": "#fuel_frp_green"
 				},
 				"south": {
-					"uv": [0, 0, 10.5, 1.5],
-					"texture": "#d"
+					"uv": [14.6, 8.6, 15.6, 10],
+					"texture": "#fuel_frp_green"
 				},
 				"west": {
-					"uv": [0, 0, 0.5, 1.5],
-					"texture": "#d"
+					"uv": [3, 8.6, 13, 10],
+					"texture": "#fuel_frp_green"
 				},
 				"up": {
-					"uv": [0, 0, 10.5, 0.5],
-					"texture": "#d"
+					"uv": [14.6, 3, 15.6, 13],
+					"texture": "#fuel_frp_green"
 				},
 				"down": {
-					"uv": [0, 0, 10.5, 0.5],
-					"texture": "#d"
+					"uv": [14.6, 3, 15.6, 13],
+					"texture": "#fuel_frp_green"
 				}
 			}
 		},
 		{
-			"name": "bridge",
-			"from": [3, 11, 7],
-			"to": [13, 12.5, 9],
+			"name": "mixer_top",
+			"from": [0.6, 10, 3],
+			"to": [6.6, 10.6, 13],
 			"rotation": {
 				"angle": 0,
 				"axis": "y",
@@ -167,35 +143,35 @@
 			},
 			"faces": {
 				"north": {
-					"uv": [0, 0, 10, 1.5],
-					"texture": "#d"
+					"uv": [9.4, 5.4, 15.4, 6],
+					"texture": "#plant_structure"
 				},
 				"east": {
-					"uv": [0, 0, 2, 1.5],
-					"texture": "#d"
+					"uv": [3, 5.4, 13, 6],
+					"texture": "#plant_structure"
 				},
 				"south": {
-					"uv": [0, 0, 10, 1.5],
-					"texture": "#d"
+					"uv": [0.6, 5.4, 6.6, 6],
+					"texture": "#plant_structure"
 				},
 				"west": {
-					"uv": [0, 0, 2, 1.5],
-					"texture": "#d"
+					"uv": [3, 5.4, 13, 6],
+					"texture": "#plant_structure"
 				},
 				"up": {
-					"uv": [0, 0, 10, 2],
-					"texture": "#d"
+					"uv": [0.6, 3, 6.6, 13],
+					"texture": "#plant_structure"
 				},
 				"down": {
-					"uv": [0, 0, 10, 2],
-					"texture": "#d"
+					"uv": [0.6, 3, 6.6, 13],
+					"texture": "#plant_structure"
 				}
 			}
 		},
 		{
-			"name": "gearbox",
-			"from": [5.5, 12.5, 5.5],
-			"to": [10.5, 15.5, 10.5],
+			"name": "aq_in",
+			"from": [0, 7, 5],
+			"to": [0.6, 8.2, 6.2],
 			"rotation": {
 				"angle": 0,
 				"axis": "y",
@@ -203,35 +179,35 @@
 			},
 			"faces": {
 				"north": {
-					"uv": [0, 0, 5, 3],
-					"texture": "#and"
+					"uv": [15.4, 7.8, 16, 9],
+					"texture": "#plant_pipe_acid"
 				},
 				"east": {
-					"uv": [0, 0, 5, 3],
-					"texture": "#and"
+					"uv": [9.8, 7.8, 11, 9],
+					"texture": "#plant_pipe_acid"
 				},
 				"south": {
-					"uv": [0, 0, 5, 3],
-					"texture": "#and"
+					"uv": [0, 7.8, 0.6, 9],
+					"texture": "#plant_pipe_acid"
 				},
 				"west": {
-					"uv": [0, 0, 5, 3],
-					"texture": "#and"
+					"uv": [5, 7.8, 6.2, 9],
+					"texture": "#plant_pipe_acid"
 				},
 				"up": {
-					"uv": [0, 0, 5, 5],
-					"texture": "#and"
+					"uv": [0, 5, 0.6, 6.2],
+					"texture": "#plant_pipe_acid"
 				},
 				"down": {
-					"uv": [0, 0, 5, 5],
-					"texture": "#and"
+					"uv": [0, 9.8, 0.6, 11],
+					"texture": "#plant_pipe_acid"
 				}
 			}
 		},
 		{
-			"name": "launder",
-			"from": [13, 7, 4],
-			"to": [16, 9.5, 12],
+			"name": "org_out",
+			"from": [15.6, 4, 9],
+			"to": [16, 5.2, 10.2],
 			"rotation": {
 				"angle": 0,
 				"axis": "y",
@@ -239,100 +215,28 @@
 			},
 			"faces": {
 				"north": {
-					"uv": [0, 0, 3, 2.5],
-					"texture": "#frp"
+					"uv": [0, 10.8, 0.4, 12],
+					"texture": "#plant_pipe_liquid"
 				},
 				"east": {
-					"uv": [0, 0, 8, 2.5],
-					"texture": "#frp"
+					"uv": [5.8, 10.8, 7, 12],
+					"texture": "#plant_pipe_liquid"
 				},
 				"south": {
-					"uv": [0, 0, 3, 2.5],
-					"texture": "#frp"
+					"uv": [15.6, 10.8, 16, 12],
+					"texture": "#plant_pipe_liquid"
 				},
 				"west": {
-					"uv": [0, 0, 8, 2.5],
-					"texture": "#frp"
+					"uv": [9, 10.8, 10.2, 12],
+					"texture": "#plant_pipe_liquid"
 				},
 				"up": {
-					"uv": [0, 0, 3, 8],
-					"texture": "#emul"
+					"uv": [15.6, 9, 16, 10.2],
+					"texture": "#plant_pipe_liquid"
 				},
 				"down": {
-					"uv": [0, 0, 3, 8],
-					"texture": "#frp"
-				}
-			}
-		},
-		{
-			"name": "aqueous_in",
-			"from": [0, 3, 5],
-			"to": [3, 5, 7],
-			"rotation": {
-				"angle": 0,
-				"axis": "y",
-				"origin": [8, 8, 8]
-			},
-			"faces": {
-				"north": {
-					"uv": [0, 0, 3, 2],
-					"texture": "#acid"
-				},
-				"east": {
-					"uv": [0, 0, 2, 2],
-					"texture": "#acid"
-				},
-				"south": {
-					"uv": [0, 0, 3, 2],
-					"texture": "#acid"
-				},
-				"west": {
-					"uv": [0, 0, 16, 16],
-					"texture": "#end"
-				},
-				"up": {
-					"uv": [0, 0, 3, 2],
-					"texture": "#acid"
-				},
-				"down": {
-					"uv": [0, 0, 3, 2],
-					"texture": "#acid"
-				}
-			}
-		},
-		{
-			"name": "organic_in",
-			"from": [0, 5.5, 9],
-			"to": [3, 7.5, 11],
-			"rotation": {
-				"angle": 0,
-				"axis": "y",
-				"origin": [8, 8, 8]
-			},
-			"faces": {
-				"north": {
-					"uv": [0, 0, 3, 2],
-					"texture": "#fuel"
-				},
-				"east": {
-					"uv": [0, 0, 2, 2],
-					"texture": "#fuel"
-				},
-				"south": {
-					"uv": [0, 0, 3, 2],
-					"texture": "#fuel"
-				},
-				"west": {
-					"uv": [0, 0, 16, 16],
-					"texture": "#end"
-				},
-				"up": {
-					"uv": [0, 0, 3, 2],
-					"texture": "#fuel"
-				},
-				"down": {
-					"uv": [0, 0, 3, 2],
-					"texture": "#fuel"
+					"uv": [15.6, 5.8, 16, 7],
+					"texture": "#plant_pipe_liquid"
 				}
 			}
 		}

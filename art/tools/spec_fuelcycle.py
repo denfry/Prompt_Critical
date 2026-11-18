@@ -143,30 +143,9 @@ mk("defluorination_kiln", FUEL,
       el("hf_offgas", [0.25, 14, 7], [1.75, 16, 9], "apipe"),
       el("discharge_hood", [14, 1, 4], [16, 12, 12], "p")])
 
-mk("pellet_press", FUEL, [
-    el("base", [0, 0, 0], [16, 3, 16], "d"),
-    el("die_table", [4, 3, 3], [12, 6, 13], "st"),
-    el("column_w", [1, 3, 5], [4, 13, 11], "gp"),
-    el("column_e", [12, 3, 5], [15, 13, 11], "gp"),
-    el("crown", [0, 13, 3], [16, 16, 13], "gp", faces={"north": "f", "south": "f"}, full=["north", "south"]),
-    el("feed_shoe", [5, 6, 12], [11, 8, 15], "ss"),
-    el("powder_hopper", [6, 8, 13], [10, 12, 16], "ss"),
-])
-mk("pellet_press/ram", FUEL, [
-    el("ram", [5, 8, 5], [11, 13, 11], "st"),
-    el("punch_plate", [6, 7, 6], [10, 8, 10], "d"),
-], kind="partial")
+# нарисовано вручную в Blockbench: art/blockbench/conversion/fuel_cycle.author.js
 
-mk("sintering_furnace", FUEL, [
-    el("casing", [0, 0, 1], [16, 16, 16], "d"),
-    el("door", [2, 2, 0.5], [14, 14, 1], "f", full=["north"]),
-    el("glow_peephole", [7, 8.5, 0.25], [9, 10, 0.5], "hot"),
-    el("hinge_t", [1, 10, 0.25], [2, 12, 1], "st"),
-    el("hinge_b", [1, 4, 0.25], [2, 6, 1], "st"),
-    el("h2_line", [2, 16, 3], [10, 17, 4], "uf6"),
-    el("flare_stub", [11, 16, 11], [13, 17.5, 13], "st"),
-    el("glow_flare", [11.5, 17.5, 11.5], [12.5, 18, 12.5], "hot"),
-])
+# нарисовано вручную в Blockbench: art/blockbench/conversion/fuel_cycle.author.js
 
 mk("centerless_grinder", FUEL, [
     el("bed", [0, 0, 1], [16, 3, 15], "d"),
@@ -276,15 +255,7 @@ mk("ultrasonic_tester", FUEL, [
     el("probe", [10, 8, 9.5], [11, 12, 10.5], "st"),
 ])
 
-mk("rod_loading_station", FUEL,
-   [el("cabinet", [0, 0, 4], [16, 7, 13], "p"),
-    el("panel", [3, 1, 3.5], [13, 6.5, 4], "f", full=["north"]),
-    el("top", [0, 7, 3], [16, 8, 14], "ss"),
-    el("cladding", [0, 8, 6.5], [16, 9, 7.5], "zr"),
-    el("feeder", [1, 8, 4], [6, 12, 9], "ss"),
-    el("feeder_chute", [6, 8, 6], [8, 9.5, 8], "st")]
-   + disc("he_bottle", "y", 1.6, 8, 15, "he", 8, c=(13, 8, 11.5))
-   + [el("he_valve", [12.5, 15, 11], [13.5, 16, 12], "b")])
+# нарисовано вручную в Blockbench: art/blockbench/conversion/fuel_cycle.author.js
 
 mk("rod_welder", FUEL, [
     el("base", [0, 0, 0], [16, 2, 16], "d"),
@@ -313,16 +284,9 @@ jig += [
     el("clamp_w", [0.75, 7, 2.5], [2.25, 8.5, 13.5], "b"),
     el("clamp_e", [13.75, 7, 2.5], [15.25, 8.5, 13.5], "b"),
 ]
-mk("assembly_jig", FUEL, jig)
+# нарисовано вручную в Blockbench: art/blockbench/conversion/fuel_cycle.author.js
 
-mk("acheson_furnace", FUEL,
-   [el("trough", [0, 0, 2], [16, 10, 14], "f"),
-    el("charge", [1, 10, 3], [15, 12, 13], "charge"),
-    el("glow_ridge", [3, 12, 5], [13, 13, 11], "charge")]
-   + disc("electrode_w", "x", 2, -1, 1, "gr", 8, c=(8, 6, 8))
-   + disc("electrode_e", "x", 2, 15, 17, "gr", 8, c=(8, 6, 8))
-   + [el("bus_w", [-1, 8.5, 7.25], [0.5, 11, 8.75], "cu"),
-      el("bus_e", [15.5, 8.5, 7.25], [17, 11, 8.75], "cu")])
+# нарисовано вручную в Blockbench: art/blockbench/conversion/fuel_cycle.author.js
 
 mk("gs_exchange_tower", FUEL,
    dsc("shell", "y", 6.5, 0, 16, "f", cap="sss")
