@@ -436,14 +436,7 @@ mk("mg_electrolysis_cell", "reagents", [
 
 # хлорно-щелочной электролизёр нарисован вручную в Blockbench: art/blockbench/chlor_alkali/chlor_alkali_cell.author.js
 
-mk("process_heater", "reagents", [
-    el("body", [0, 0, 0.5], [16, 16, 16], "p"),
-    el("front", [1, 1, 0.25], [15, 15, 0.5], "front", full=["north"]),
-    el("glow_coil_window", [4, 6, 0], [12, 11, 0.25], "coil", full=["north"]),
-    el("terminal_box", [3, 16, 4], [13, 17, 12], "d"),
-    nozzle("inlet", [16, 3, 7], [17.5, 5, 9], "wat", "east"),
-    nozzle("outlet", [-1.5, 11, 7], [0, 13, 9], "steam", "west"),
-], {"front": "block/process_heater_front.png"})
+# нарисовано вручную в Blockbench: art/blockbench/automation/m3_utilities.author.js
 
 mk("process_steam_port", "reagents", [
     el("body", [1, 1, 4], [15, 15, 16], "p"),

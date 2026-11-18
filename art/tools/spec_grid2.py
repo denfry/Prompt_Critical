@@ -32,19 +32,7 @@ def at220_tank():
     return els
 
 
-m("power_transformer_220", "grid", at220_tank())
-m("power_transformer_220_cooler", "grid", [
-    el("header_top", [-14, 10, -4], [30, 12, -2], "r32"),
-    el("header_bot", [-14, -14, -4], [30, -12, -2], "r32"),
-] + [el(f"cooler_{i}", [-13 + i * 15, -12, -2], [-2 + i * 15, 10, 20], "rad", faces={"north": "vent", "south": "vent"})
-     for i in range(3)]
-  + [el(f"oil_pump_{i}", [-10 + i * 15, -16, 0], [-6 + i * 15, -12, 4], "mb") for i in range(3)])
-m("power_transformer_220/fan", "grid", [
-    el("ring", [2, 2, 0], [14, 14, 1], "d"),
-    el("blade_x", [2.5, 7.25, 0.25], [13.5, 8.75, 0.75], "gal"),
-    el("blade_y", [7.25, 2.5, 0.25], [8.75, 13.5, 0.75], "gal"),
-    el("hub", [7, 7, -0.5], [9, 9, 1.5], "d"),
-], kind="partial")
+# нарисовано вручную в Blockbench: art/blockbench/grid/hv_grid.author.js
 
 
 # БСК 10 кВ — art/blockbench/grid/station_storage.author.js

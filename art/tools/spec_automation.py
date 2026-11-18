@@ -45,33 +45,10 @@ def gas_detector(alarm="none"):
 # воздух КИП
 # ======================================================================
 # поршневой компрессор 2×1×1 (по X): ребристый цилиндр, картер, маховик — partial на валу
-m("instrument_air_compressor", "automation", [
-    el("skid", [0, 0, 1], [32, 2, 15], "d"),
-    el("crankcase", [2, 2, 3], [14, 9, 13], "cb"),
-    el("cylinder", [4, 9, 4.5], [11, 15, 11.5], "fin", faces={"up": "cbs"}),
-    el("head", [3.5, 15, 4], [11.5, 17, 12], "cbs"),
-    el("discharge", [11.5, 15.5, 7], [20, 16.5, 9], "air"),
-    el("aftercooler", [18, 10, 4], [30, 16, 12], "fin", faces={"up": "cb", "down": "cb"}),
-    el("filter", [24, 2, 5], [28, 10, 9], "cbs"),
-    el("bearing", [14, 5, 6], [16, 11, 10], "d"),
-    el("guard", [15.5, 2, 1.5], [17, 14, 14.5], "h"),
-])
-m("instrument_air_compressor/flywheel", "automation",
-  disc("rim", "x", 5.5, 0.5, 2.5, "ds") + disc("web", "x", 4.5, 0.75, 2.25, "red")
-  + disc("hub", "x", 1.5, -0.5, 4, "st", 8),
-  kind="partial")
+# нарисовано вручную в Blockbench: art/blockbench/automation/m3_utilities.author.js
 
 # воздухосборник 1×2×1: вертикальный сосуд, манометр (подложка, стрелку рисует BER)
-m("air_receiver", "automation",
-  [el("base_ring", [2, 0, 2], [14, 2, 14], "d")]
-  + disc("shell", "y", 6.5, 2, 28, "va")
-  + disc("head", "y", 4.5, 28, 30, "va", 8)
-  + [el("safety_valve", [7, 30, 7], [9, 32, 9], "bs"),
-     el("inlet", [13, 20, 7], [16.5, 22, 9], "air", faces={"east": "end"}),
-     el("outlet", [-0.5, 6, 7], [3, 8, 9], "air", faces={"west": "end"}),
-     el("drain", [7.5, 1.5, 1], [8.5, 3, 3], "bs"),
-     el("gauge_stem", [7.5, 22, 1], [8.5, 23, 2], "bs"),
-     el("gauge_case", [5.5, 21, 0], [10.5, 26, 1], "d", faces={"north": "dial"}, full=["north"])])
+# нарисовано вручную в Blockbench: art/blockbench/automation/m3_utilities.author.js
 
 
 # адсорбционный осушитель 1×2×1: две колонны, переключающие клапаны, индикатор точки росы
@@ -89,5 +66,4 @@ def air_dryer(wet=False):
     return els
 
 
-m("air_dryer", "automation", air_dryer())
-m("air_dryer_wet", "automation", air_dryer(True))
+# нарисовано вручную в Blockbench: art/blockbench/automation/m3_utilities.author.js

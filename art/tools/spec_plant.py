@@ -281,15 +281,7 @@ model("turbine_gearbox/shaft_out", "turbine", tx("st", "bsm"),
       disc("shaft", "x", 1.5, 14.5, 16.5, "st", 8) + disc("coupling", "x", 2.5, 16, 17, "bsm", 8),
       "block/turbine_gearbox/partial/shaft_out", kind="partial")
 
-model("electric_generator", "turbine", tx("d", "dsm", st=B("electric_generator_stator"), term=B("electric_generator_terminal")),
-      [el("feet", [0.5, 0, 1], [15.5, 1, 15], "d"),
-       el("stator", [1.5, 1, 1.5], [14.5, 13.5, 14.5], "st")]
-      + disc("shield_w", "x", 6, 0, 1.5, "dsm", 8) + disc("shield_e", "x", 6, 14.5, 16, "dsm", 8)
-      + [el("terminal_box", [5, 13.5, 4], [11, 16, 12], "term", full=["north", "up"])],
-      "block/electric_generator")
-model("electric_generator/rotor", "turbine", tx("st", "bsm"),
-      disc("shaft", "x", 1.5, -0.75, 17, "st", 8) + disc("coupling_w", "x", 2.75, -1, -0.25, "bsm", 8),
-      "block/electric_generator/partial/rotor", kind="partial")
+# нарисовано вручную в Blockbench: art/blockbench/grid/hv_grid.author.js
 
 model("turbine_turning_gear", "turbine", tx("d", "mb", cov=B("turbine_turning_gear_cover")),
       [el("base", [0, 0, 1], [16, 2, 15], "d"),

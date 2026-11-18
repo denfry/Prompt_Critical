@@ -739,20 +739,8 @@ def sand_filter(backwash=False):
 
 # нарисовано вручную в Blockbench: art/blockbench/water_treatment/plant_utilities.author.js
 # декарбонизатор 1×3×1: колонна с насадкой, вентилятор
-m("decarbonizer", "water_treatment", hcyl("column", "y", 6.5, -12, 28, "p") + [
-    el("sump", [1, -16, 1], [15, -12, 15], "c"),
-    el("fan_box", [12, -10, 4], [16.01, -2, 12], "mb"),
-    el("water_in", [6, 28, 6], [10, 32, 10], "wat", faces={"up": "end"}),
-    el("vent", [3, 26, 3], [6, 30, 6], "air")])
+# нарисовано вручную в Blockbench: art/blockbench/automation/m3_utilities.author.js
 # деаэратор ДА-25 3×2×1: горизонтальный бак, колонка; красная (пар) и зелёная трубы
 # нарисовано вручную в Blockbench: art/blockbench/water_treatment/plant_utilities.author.js
 # дозировочный комплекс 2×1×1: бачки, плунжерные насосы; головка насоса — partial (ход плунжера)
-m("chemical_dosing_skid", "water_treatment", [
-    el("skid", [0, 0, 0], [32, 2, 16], "d"),
-    el("tank_a", [1, 2, 6], [9, 14, 15], "lab"),
-    el("tank_b", [11, 2, 6], [19, 14, 15], "lab"),
-    el("pump_motor", [22, 2, 4], [30, 8, 10], "mb"),
-    el("dosing_line", [0, 3, 2], [32, 4, 3], "acid"),
-])
-m("chemical_dosing_skid/pump_head", "water_treatment", [el("head", [22, 8, 4], [26, 12, 8], "st"),
-                                                         el("plunger", [23.5, 12, 5.5], [24.5, 15, 6.5], "sm")], kind="partial")
+# нарисовано вручную в Blockbench: art/blockbench/automation/m3_utilities.author.js

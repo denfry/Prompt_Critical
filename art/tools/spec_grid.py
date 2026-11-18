@@ -85,9 +85,7 @@ m("generator_exciter/commutator", "grid",
 # ======================================================================
 # ОРУ 110 кВ: трубчатая шина (busbar, busbar_side) нарисован вручную в Blockbench: art/blockbench/grid/grid_lines.author.js
 # ошиновка серии электролизёров: пакет алюминиевых полос
-m("busbar_dc", "grid", [el(f"bar_{i}", [4 + i * 3, 4, 4], [6 + i * 3, 12, 12], "al") for i in range(3)]
-  + [el("spacer", [3.5, 7, 7], [12.5, 9, 9], "dg")])
-m("busbar_dc_side", "grid", [el(f"bar_{i}", [4 + i * 3, 4, 0], [6 + i * 3, 12, 4], "al") for i in range(3)])
+# нарисовано вручную в Blockbench: art/blockbench/grid/hv_grid.author.js
 # силовой кабель (power_cable, power_cable_side) нарисован вручную в Blockbench: art/blockbench/grid/grid_lines.author.js
 
 
@@ -104,17 +102,10 @@ def arrester(tex="pol", failed=False):
     return els
 
 
-m("surge_arrester", "grid", arrester())
-m("surge_arrester_valve", "grid", arrester("porg"))
-m("surge_arrester_failed", "grid", arrester(failed=True))
+# нарисовано вручную в Blockbench: art/blockbench/grid/hv_grid.author.js
 
 # заземлитель: медно-стальной стержень, хомут, полоса
-m("ground_electrode", "grid", [
-    el("rod", [7.25, 0, 7.25], [8.75, 12, 8.75], "cus"),
-    el("clamp", [6.5, 9, 6.5], [9.5, 11, 9.5], "st"),
-    el("strip", [8, 9.5, 7.5], [16, 10.5, 8.5], "gal"),
-    el("bolt", [9.5, 8.5, 7], [10.5, 11.5, 9], "d"),
-])
+# нарисовано вручную в Blockbench: art/blockbench/grid/hv_grid.author.js
 
 # роликовый и штыревой изоляторы (wire_connector_lv/mv) и щиток ЩРН (lv_distribution_box) нарисованы вручную в Blockbench: art/blockbench/grid/grid_lines.author.js
 
@@ -138,9 +129,7 @@ def hv_breaker(sf6=False, closed=True):
     return els
 
 
-m("hv_circuit_breaker", "grid", hv_breaker())
-m("hv_circuit_breaker_open", "grid", hv_breaker(closed=False))
-m("hv_circuit_breaker_sf6", "grid", hv_breaker(sf6=True))
+# нарисовано вручную в Blockbench: art/blockbench/grid/hv_grid.author.js
 
 
 # разъединитель РДЗ-110: рама, три фарфоровые колонки; главный нож — partial
@@ -188,26 +177,9 @@ def power_tx_tank(hv="por", hv_h=16, cons=True):
     return els
 
 
-m("power_transformer", "grid", power_tx_tank())
-m("power_transformer_radiators", "grid", [
-    el("header_top", [-14, 6, -6], [30, 8, -4], "r32"),
-    el("header_bot", [-14, -12, -6], [30, -10, -4], "r32"),
-] + [el(f"fin_{i}", [-13 + i * 4, -12, -4], [-11 + i * 4, 8, 22], "rad") for i in range(11)]
-  + [el("fan_mount", [-6, -14, 22], [22, -12, 24], "d")])
-m("power_transformer/fan", "grid", [
-    el("ring", [3, 3, 0], [13, 13, 1], "d"),
-    el("blade_x", [3.5, 7.25, 0.25], [12.5, 8.75, 0.75], "gal"),
-    el("blade_y", [7.25, 3.5, 0.25], [8.75, 12.5, 0.75], "gal"),
-    el("hub", [7, 7, -0.5], [9, 9, 1.5], "d"),
-], kind="partial")
+# нарисовано вручную в Blockbench: art/blockbench/grid/hv_grid.author.js
 # ТМН-6300/35: один сегмент 3×3×3, гофры, три ввода 35 кВ
-m("power_transformer_35", "grid", [
-    el("skid", [-12, -16, -8], [28, -14, 24], "d"),
-    el("tank", [-10, -14, -6], [26, 8, 22], "cor", faces={"up": "r32", "down": "r32"}),
-    el("cover", [-11, 8, -7], [27, 9.5, 23], "r32"),
-] + [x for i, xx in enumerate((-4, 8, 20)) for x in insulator(f"hv_{i}", xx, 2, 9.5, 11, "porg", 2)]
-  + disc("conservator", "x", 3, -6, 18, "r32", 8, c=(4, 24, 18))
-  + [el("cons_leg", [6, 9.5, 17], [7, 21, 19], "d")])
+# нарисовано вручную в Blockbench: art/blockbench/grid/hv_grid.author.js
 
 
 # выпрямительный агрегат (rectifier_unit и состояния, ртутный вариант) нарисован вручную в Blockbench: art/blockbench/grid/grid_lines.author.js
@@ -234,18 +206,7 @@ def tower_section(w0, w1):
     return els
 
 
-m("transmission_tower", "grid", tower_section(14, 13))
-m("transmission_tower_top", "grid", tower_section(6, 5)[:4] + [
-    el("crossarm_low", [-16, -4, 6], [32, -2, 10], "gal"),
-    el("crossarm_high", [-12, 14, 6], [28, 16, 10], "gal"),
-    el("peak", [7, 16, 7], [9, 32, 9], "gal"),
-    el("ground_wire_clamp", [6.5, 31, 6.5], [9.5, 32, 9.5], "d"),
-] + [x for i, (xx, yy) in enumerate(((-14, -4), (30, -4), (-10, 14))) for x in (
-    el(f"string_{i}", [xx - 1, yy - 10, 7], [xx + 1, yy, 9], "porg"),
-    el(f"clamp_{i}", [xx - 1.5, yy - 11, 6.5], [xx + 1.5, yy - 10, 9.5], "al"))])
-m("transmission_tower_base", "grid", tower_section(14, 13)[:4] + [
-    el(f"footing_{i}", [x - 2, -16, z - 2], [x + 2, -12, z + 2], "c")
-    for i, (x, z) in enumerate(((-6, -6), (22, -6), (-6, 22), (22, 22)))])
+# нарисовано вручную в Blockbench: art/blockbench/grid/hv_grid.author.js
 
 
 # ТП 10/0,4 кВ потребителя с посёлком (grid_consumer, grid_consumer_dark) нарисована вручную в Blockbench: art/blockbench/grid/grid_lines.author.js
@@ -260,9 +221,7 @@ def fe_iface(mode="off"):
             lamp("arrow", 8, 4, 2, col is not None, col or "lb", 1.25)]
 
 
-m("grid_fe_interface", "grid", fe_iface())
-m("grid_fe_interface_import", "grid", fe_iface("import"))
-m("grid_fe_interface_export", "grid", fe_iface("export"))
+# нарисовано вручную в Blockbench: art/blockbench/grid/hv_grid.author.js
 
 # счётчик САЗУ / СЭТ-4ТМ: настенный корпус с окном; цифры рисует BER
 # нарисовано вручную в Blockbench: art/blockbench/control/panel_devices.author.js
@@ -288,13 +247,4 @@ m("chimney_concrete_top", "boilers", chimney("rcb", "top"))
 # щит котла, экраны топки, горелки, пароперегреватель, экономайзер, ТВП, дутьевой вентилятор и дымосос с крыльчатками нарисованы вручную в Blockbench: art/blockbench/boilers/water_tube_boiler.author.js
 
 # шаровая барабанная мельница ШБМ 3×3×3: опоры, загрузочная и разгрузочная течки; барабан — partial (ось X)
-m("coal_mill", "boilers", [
-    el("foundation", [-16, -16, -12], [32, -12, 28], "c"),
-    el("bearing_w", [-16, -12, 2], [-12, 10, 14], "ci"),
-    el("bearing_e", [28, -12, 2], [32, 10, 14], "ci"),
-    el("feed_chute", [-16, 10, 4], [-10, 28, 12], "d"),
-    el("discharge", [28, 10, 4], [32, 30, 12], "d"),
-    el("girth_guard", [18, -12, -10], [24, 22, -8], "h"),
-])
-m("coal_mill/drum", "boilers", disc("drum", "x", 12, -12, 28, "arm") + [
-    el("girth_gear", [18, -5, -5], [22, 21, 21], "ci")], kind="partial")
+# нарисовано вручную в Blockbench: art/blockbench/automation/m3_utilities.author.js
