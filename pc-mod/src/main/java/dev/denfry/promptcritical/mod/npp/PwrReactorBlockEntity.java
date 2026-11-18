@@ -17,8 +17,7 @@ import dev.denfry.promptcritical.mod.registry.PcItems;
 import dev.denfry.promptcritical.sim.automation.AutomationKind;
 import dev.denfry.promptcritical.sim.automation.AutomationSubsystem;
 import dev.denfry.promptcritical.sim.automation.AutomationUnit;
-import dev.denfry.promptcritical.sim.consequence.DamageKind;
-import dev.denfry.promptcritical.sim.consequence.DamageRequest;
+import dev.denfry.promptcritical.sim.consequence.ConsequenceRouter;
 import dev.denfry.promptcritical.sim.core.GridPos;
 import dev.denfry.promptcritical.sim.core.MutableStateTree;
 import dev.denfry.promptcritical.sim.core.TreeStateReader;
@@ -214,7 +213,11 @@ public final class PwrReactorBlockEntity extends DeviceBlockEntity implements Fo
         }
         if (reactor.ruptureEvent()) {
             GridPos o = new GridPos(worldPosition.getX(), worldPosition.getY(), worldPosition.getZ());
-            b.damage().submit(new DamageRequest(requestSeq++, simId(), null, DamageKind.BLAST, o, RUPTURE_J, 4, 3));
+            // R6: the rupture goes through the consequence router; there is no containment block yet,
+            // so the route is "no containment" and the burst blast reaches the budget unchanged
+            ConsequenceRouter.Routed routed = ConsequenceRouter.route(ConsequenceRouter.Event.VESSEL_RUPTURE,
+                    requestSeq++, simId(), null, o, RUPTURE_J, false, reactor.newlyFailed() > 0);
+            if (routed.damage() != null) b.damage().submit(routed.damage());
             sl.playSound(null, worldPosition, SoundEvents.GENERIC_EXPLODE.value(), SoundSource.BLOCKS, 2f, 0.7f);
             for (ServerPlayer p : sl.getPlayers(p -> p.distanceToSqr(worldPosition.getCenter()) < 96 * 96))
                 p.displayClientMessage(NppText.msg("pwr_rupture").withStyle(ChatFormatting.DARK_RED), false);
