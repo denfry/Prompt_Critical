@@ -254,6 +254,8 @@ public final class PcBlockStateProvider extends BlockStateProvider {
             case "ammonia_converter" -> "ammonia_synthesis_reactor";
             case "nitric_acid_unit" -> "ostwald_converter";
             case "acid_concentrator" -> "fractionating_column";
+            // ядерное топливо I4
+            case "centrifuge_cascade" -> "cascade_header";
             case "christmas_tree" -> s.getValue(BlockStateProperties.OPEN) ? id : id + "_master_closed";
             case "pumpjack" -> "pumpjack_gearbox";
             case "flare_tip" -> s.getValue(BlockStateProperties.LIT) ? id + "_lit" : id;

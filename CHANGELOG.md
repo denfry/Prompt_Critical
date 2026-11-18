@@ -57,6 +57,18 @@
   lower explosive limit, Bodenstein NO oxidation and tray absorption limited by acid strength, a brown tail plume and
   tail gas reduction. Magnesium nitrate concentration to 98 % on the existing column code.
 
+### Uranium enrichment (I4)
+- UF₆ cylinders 48Y, 30B and 5A carry their UF₆ mass and U-235 and U-234 fractions; topping up averages the isotopics,
+  and overfill or enrichment beyond the cylinder's limit is refused.
+- Gas centrifuge sections and a cascade control on a Create shaft: Dirac's separative power with countercurrent
+  efficiency, rotor burst speed for aluminium, maraging steel and carbon fibre, more failures near burst and above the
+  bending critical speed, and burst rotors wrecking their section and sometimes the next one.
+- An ideal cascade built from the counted machines for the set product and tails assays: stages, stage flows, SWU tested
+  against Benedict–Pigford–Levi (4.5 % from natural at 0.25 % tails takes 6.87 SWU/kg), cost-optimal tails, U-234
+  following U-235, and depleted tails as a product of their own.
+- Criticality safety: the product desublimer is held below 45 % of the minimum critical mass of moderated uranium by an
+  interlock; with the interlock off it can be overloaded into a criticality excursion that doses everyone nearby.
+
 ### Telemetry and SCADA (A4)
 - Telemetry gateway (RTU): scans the local panels of every machine within 8 blocks once a second and serves the
   snapshot to a CC: Tweaked computer as the `pc_rtu` peripheral — machines, named instruments with units, lamps as
