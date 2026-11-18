@@ -135,7 +135,7 @@ public final class NoiseService {
         return levelAt(level, ear, sources(level, ear));
     }
 
-    static double levelAt(ServerLevel level, Vec3 ear, List<Source> sources) {
+    public static double levelAt(ServerLevel level, Vec3 ear, List<Source> sources) {
         record Heard(Source s, double d, double open) {
         }
         List<Heard> heard = new ArrayList<>();

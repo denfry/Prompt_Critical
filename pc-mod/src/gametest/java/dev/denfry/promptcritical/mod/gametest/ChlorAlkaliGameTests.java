@@ -184,7 +184,7 @@ public final class ChlorAlkaliGameTests {
                     double down = ToxicReleaseService.ppmAt(h.getLevel(), ToxicGas.CHLORINE, src.getX() + 0.5 + ux * 50, src.getY() + 1, src.getZ() + 0.5 + uz * 50);
                     double up = ToxicReleaseService.ppmAt(h.getLevel(), ToxicGas.CHLORINE, src.getX() + 0.5 - ux * 50, src.getY() + 1, src.getZ() + 0.5 - uz * 50);
                     h.assertTrue(down > ToxicGas.CHLORINE.idlhPpm, "1 kg/s at 50 m downwind: " + down + " ppm");
-                    h.assertTrue(up == 0, "nothing upwind: " + up);
+                    h.assertTrue(up < 1e-30, "nothing upwind: " + up); // хвост гауссова шлейфа даёт 1e-100, а не ровно 0
                 })
                 .thenSucceed();
     }

@@ -139,15 +139,21 @@ public final class AcousticsGameTests {
         fanRig(h);
         Vec3 ear = Vec3.atCenterOf(h.absolutePos(new BlockPos(3, 2, 8)));
         double[] open = new double[1];
+        @SuppressWarnings("unchecked")
+        java.util.List<NoiseService.Source>[] own = new java.util.List[1];
         h.startSequence()
                 .thenIdle(20)
                 .thenExecute(() -> {
-                    var sources = NoiseService.sources(h.getLevel(), ear);
+                    // только машины этой площадки: станки соседних тестов тоже шумят в радиусе 32 м
+                    var box = h.getBounds();
+                    var sources = NoiseService.sources(h.getLevel(), ear).stream()
+                            .filter(s -> box.contains(Vec3.atCenterOf(s.pos()))).toList();
+                    own[0] = sources;
                     h.assertTrue(sources.size() == 2, "motor and fan are sources: " + sources);
                     double[] each = new double[sources.size()];
                     for (int i = 0; i < each.length; i++)
                         each[i] = SoundLevel.atDistance(sources.get(i).lwDb(), Vec3.atCenterOf(sources.get(i).pos()).distanceTo(ear), 0);
-                    open[0] = NoiseService.levelAt(h.getLevel(), ear);
+                    open[0] = NoiseService.levelAt(h.getLevel(), ear, sources);
                     h.assertTrue(Math.abs(open[0] - SoundLevel.sum(each)) < 1e-6, "open air: " + open[0] + " vs " + SoundLevel.sum(each));
                     // листва почти прозрачна для звука, бетон — нет
                     h.assertTrue(NoiseService.material(Blocks.OAK_LEAVES.defaultBlockState()) == BarrierMaterial.PLANT, "leaves");
@@ -157,7 +163,7 @@ public final class AcousticsGameTests {
                 })
                 .thenIdle(1)
                 .thenExecute(() -> {
-                    double walled = NoiseService.levelAt(h.getLevel(), ear);
+                    double walled = NoiseService.levelAt(h.getLevel(), ear, own[0]);
                     double drop = open[0] - walled;
                     h.assertTrue(drop > 24 && drop < 32, "a concrete wall takes off about 25 dB: " + drop);
                 })
