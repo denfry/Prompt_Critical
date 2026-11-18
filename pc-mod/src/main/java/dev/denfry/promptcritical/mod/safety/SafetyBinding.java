@@ -14,5 +14,6 @@ public final class SafetyBinding {
         PpeItem.MATERIALS.register(modBus);
         SafetyComponents.COMPONENTS.register(modBus);
         PpeService.register();
+        SafetyBlockEntities.register(modBus);
     }
 }

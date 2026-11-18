@@ -83,6 +83,21 @@ public final class SafetyRecipes extends RecipeProvider {
         ShapedRecipeBuilder.shaped(RecipeCategory.TOOLS, PcItems.LIFELINE.get())
                 .pattern("SSS").pattern("S N").define('S', Items.STRING).define('N', Items.IRON_INGOT)
                 .unlockedBy("has_harness", has(PcItems.SAFETY_HARNESS.get())).save(out, id("lifeline"));
+        confined(out, sheet);
+    }
+
+    /** Замкнутые пространства §13.2.6. */
+    private void confined(RecipeOutput out, net.minecraft.world.item.Item sheet) {
+        ShapedRecipeBuilder.shaped(RecipeCategory.MISC, dev.denfry.promptcritical.mod.registry.PcBlocks.MANWAY.get())
+                .pattern("SNS").pattern("NTN").pattern("SNS").define('S', sheet).define('N', Items.IRON_NUGGET).define('T', Items.IRON_TRAPDOOR)
+                .unlockedBy("has_sheet", has(sheet)).save(out, id("manway"));
+        ShapedRecipeBuilder.shaped(RecipeCategory.MISC, dev.denfry.promptcritical.mod.registry.PcBlocks.RESCUE_TRIPOD.get())
+                .pattern(" W ").pattern("I I").pattern("I I").define('W', AllItems.PRECISION_MECHANISM.get()).define('I', Items.IRON_INGOT)
+                .unlockedBy("has_lifeline", has(PcItems.LIFELINE.get())).save(out, id("rescue_tripod"));
+        ShapedRecipeBuilder.shaped(RecipeCategory.MISC, dev.denfry.promptcritical.mod.registry.PcBlocks.PORTABLE_VENTILATOR.get())
+                .pattern("SPS").pattern("SMS").pattern("LLL").define('S', sheet).define('P', AllItems.PROPELLER.get())
+                .define('M', com.simibubi.create.AllBlocks.ENCASED_FAN.get()).define('L', Items.LEATHER)
+                .unlockedBy("has_sheet", has(sheet)).save(out, id("portable_ventilator"));
     }
 
     private void filter(RecipeOutput out, FilterType type, ItemLike impregnation) {

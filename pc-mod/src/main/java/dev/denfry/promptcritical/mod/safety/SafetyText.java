@@ -42,6 +42,27 @@ public final class SafetyText {
         t("item.promptcritical.lifeline.hint", "Right-click a support or rescue tripod to clip it; sneak + right-click in the air to unclip",
                 "ПКМ по опоре или треноге — закрепить; Shift + ПКМ в воздух — отстегнуть");
         t("item.promptcritical.lifeline.anchor", "Clipped at %s", "Закреплён: %s");
+        // замкнутые пространства 13 §13.2.6
+        m("faint", "You are losing consciousness: the air here does not keep you alive", "Вы теряете сознание: этим воздухом дышать нельзя");
+        m("not_confined", "No confined space behind this manway (more than 2048 blocks of air or none)",
+                "За люком нет замкнутого пространства (воздуха больше 2048 блоков или нет вовсе)");
+        m("hatch_closed", "The hatch is closed: open it on the panel", "Люк закрыт: откройте его на щите");
+        m("no_permit", "No active confined space permit on this manway", "Нет действующего наряда на замкнутое пространство по этому люку");
+        m("no_attendant", "No attendant at the entry: another player must stay within 4 m outside",
+                "Нет наблюдающего у входа: другой игрок должен стоять снаружи не дальше 4 м");
+        m("entered", "Inside. Sneak + right-click the manway to climb out", "Вы внутри. Выход — Shift + ПКМ по люку");
+        m("entered_unsafe", "Inside an atmosphere unfit to breathe — get out or put on an SCBA",
+                "Вы в атмосфере, непригодной для дыхания: выходите или наденьте аппарат");
+        m("tripod_no_manway", "No manway with a confined space within 3 blocks of the tripod", "Нет люка с замкнутым пространством в 3 блоках от треноги");
+        m("tripod_from_outside", "The winch is worked from outside", "Лебёдкой работают снаружи");
+        m("tripod_winching", "Winching %s out: 5 s", "Вытягиваем %s: 5 с");
+        m("tripod_nobody", "Nobody inside is in a harness with a lifeline on this tripod", "Внутри нет никого в привязи с фалом на этой треноге");
+        m("tripod_rescued", "Pulled out through the manway", "Вытянут через люк");
+        m("ventilator_on", "Ventilator running: 0.5 m³/s into an open manway within 3 blocks", "Вентилятор работает: 0,5 м³/с в открытый люк в 3 блоках");
+        m("ventilator_off", "Ventilator stopped", "Вентилятор остановлен");
+        t("death.attack.promptcritical.asphyxiation", "%1$s suffocated in a confined space", "%1$s задохнулся в замкнутом пространстве");
+        t("death.attack.promptcritical.asphyxiation.player", "%1$s suffocated in a confined space while fighting %2$s",
+                "%1$s задохнулся в замкнутом пространстве, спасаясь от %2$s");
         for (String[] c : new String[][] {{"organic_vapour", "organic vapours (A)", "органические пары (A)"},
                 {"low_boiling_organic", "low-boiling organics (AX)", "низкокипящие органические (AX)"},
                 {"inorganic_gas", "Cl₂, H₂S (B)", "Cl₂, H₂S (B)"}, {"acid_gas", "SO₂, HCl, HF (E)", "SO₂, HCl, HF (E)"},

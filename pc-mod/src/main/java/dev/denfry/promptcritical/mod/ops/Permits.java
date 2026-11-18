@@ -151,6 +151,14 @@ public final class Permits {
      * Сероводород мод пока не моделирует.
      */
     public static Air air(ServerLevel level, BlockPos pos) {
+        // замкнутое пространство за люком (13 §13.2.6): точка внутри или сам люк
+        dev.denfry.promptcritical.mod.safety.ManwayBlockEntity m = dev.denfry.promptcritical.mod.safety.ConfinedSpaces.at(level, pos);
+        if (m == null && level.getBlockEntity(pos) instanceof dev.denfry.promptcritical.mod.safety.ManwayBlockEntity self && self.confined()) m = self;
+        if (m != null) {
+            var a = m.atmosphere();
+            return new Air(a.fraction(dev.denfry.promptcritical.sim.ops.ConfinedSpaceAtmosphere.Gas.O2), a.lelFraction(),
+                    a.ppm(dev.denfry.promptcritical.sim.ops.ConfinedSpaceAtmosphere.Gas.H2S), a.ppm(dev.denfry.promptcritical.sim.ops.ConfinedSpaceAtmosphere.Gas.CO));
+        }
         SimLevelBinding b = SimBindings.get(level);
         MineNetwork n = b == null ? null : b.mines().mineAt(pos);
         int node = n == null ? -1 : n.nodeOf(pos.asLong());
@@ -260,6 +268,7 @@ public final class Permits {
 
     /** Вид наряда по опасностям объекта (§13.2.2: опасности предзаполнены по объекту). */
     public static PermitType typeFor(ServerLevel level, BlockPos target) {
+        if (level.getBlockState(target).is(PcBlocks.MANWAY.get())) return PermitType.CONFINED_SPACE; // 13 §13.2.6
         if (level.getBlockState(target).is(PcBlocks.PRIMARY_PUMP.get())
                 || RadiationService.rateSvH(level, Vec3.atCenterOf(target)) > UNSERVICED_SV_H) return PermitType.RADIATION;
         if (flammableNear(level, target, PermitRegistry.HOT_WORK_RADIUS_M)) return PermitType.HOT;
@@ -436,6 +445,9 @@ public final class Permits {
         boolean bumped = bump != null && level.getGameTime() - bump <= PermitRegistry.BUMP_TEST_MAX_AGE_S * 20;
         long now = tick(level);
         GasTest t = new GasTest(now, p.getUUID(), "portable_gas_detector", bumped, a.o2(), lelReading, a.h2sPpm(), a.coPpm());
+        // пробоотборник через открытый люк или замер внутри: атмосфера замкнутого пространства (13 §13.2.3, §13.2.6)
+        dev.denfry.promptcritical.mod.safety.ManwayBlockEntity mw = dev.denfry.promptcritical.mod.safety.ConfinedSpaces.sampledFrom(level, p);
+        if (mw != null) t = mw.sample(now, p.getUUID(), bumped);
         p.displayClientMessage(PermitText.msg("gas.reading", pct(t.o2() * 100), pct(t.lelFraction() * 100), Math.round(t.h2sPpm()),
                 Math.round(t.coPpm()), bumped ? "" : PermitText.msg("status.unbumped").getString()), false);
         if (!bumped) p.displayClientMessage(PermitText.msg("gas.bump_needed").withStyle(ChatFormatting.GOLD), false);

@@ -1,7 +1,15 @@
 package dev.denfry.promptcritical.mod.gametest;
 
 import dev.denfry.promptcritical.mod.PromptCritical;
+import dev.denfry.promptcritical.mod.block.PcProperties;
+import dev.denfry.promptcritical.mod.ops.Permits;
+import dev.denfry.promptcritical.mod.registry.PcBlocks;
+import dev.denfry.promptcritical.mod.registry.PcFluids;
 import dev.denfry.promptcritical.mod.registry.PcItems;
+import dev.denfry.promptcritical.mod.safety.ConfinedSpaces;
+import dev.denfry.promptcritical.mod.safety.ManwayBlockEntity;
+import dev.denfry.promptcritical.mod.safety.RescueTripodBlockEntity;
+import dev.denfry.promptcritical.sim.ops.ConfinedSpaceAtmosphere;
 import dev.denfry.promptcritical.mod.safety.GasMaskFilterItem;
 import dev.denfry.promptcritical.mod.safety.PpeService;
 import dev.denfry.promptcritical.mod.safety.SafetyComponents;
@@ -9,6 +17,7 @@ import dev.denfry.promptcritical.sim.ops.Contaminant;
 import dev.denfry.promptcritical.sim.ops.FilterType;
 import dev.denfry.promptcritical.sim.ops.Ppe;
 import dev.denfry.promptcritical.sim.ops.Scba;
+import net.minecraft.core.BlockPos;
 import net.minecraft.core.GlobalPos;
 import net.minecraft.gametest.framework.GameTest;
 import net.minecraft.gametest.framework.GameTestHelper;
@@ -132,5 +141,80 @@ public final class SafetyGameTests {
             strip(p);
         }
         h.succeed();
+    }
+
+    /** Ёмкость 3×2×3 из камня с люком в стене: 18 м³ за люком — замкнутое пространство. */
+    static BlockPos vessel(GameTestHelper h) {
+        for (int x = 2; x <= 6; x++)
+            for (int y = 1; y <= 4; y++)
+                for (int z = 2; z <= 6; z++) {
+                    boolean shell = x == 2 || x == 6 || y == 1 || y == 4 || z == 2 || z == 6;
+                    h.setBlock(new BlockPos(x, y, z), shell ? net.minecraft.world.level.block.Blocks.STONE.defaultBlockState()
+                            : net.minecraft.world.level.block.Blocks.AIR.defaultBlockState());
+                }
+        BlockPos manway = new BlockPos(4, 2, 2);
+        h.setBlock(manway, PcBlocks.MANWAY.get().defaultBlockState());
+        return manway;
+    }
+
+    /** Люк находит объём, азот через штуцер вытесняет кислород, открытый люк с вентилятором проветривает. */
+    @GameTest(template = LARGE, timeoutTicks = 400)
+    public static void manwayPurgeAndVentilation(GameTestHelper h) {
+        BlockPos manway = vessel(h);
+        h.startSequence().thenIdle(2).thenExecute(() -> {
+            ManwayBlockEntity m = h.getBlockEntity(manway);
+            m.rescan(h.getLevel());
+            h.assertTrue(m.volume() == 18, "volume " + m.volume());
+            m.fluids(null).fill(new net.neoforged.neoforge.fluids.FluidStack(PcFluids.NITROGEN.source.get(), 1000),
+                    net.neoforged.neoforge.fluids.capability.IFluidHandler.FluidAction.EXECUTE);
+        }).thenIdle(140).thenExecute(() -> {
+            ManwayBlockEntity m = h.getBlockEntity(manway);
+            double o2 = m.atmosphere().fraction(ConfinedSpaceAtmosphere.Gas.O2);
+            h.assertTrue(o2 < 0.207, "nitrogen did not displace oxygen: " + o2);
+            Permits.Air air = Permits.air(h.getLevel(), h.absolutePos(new BlockPos(4, 2, 4)));
+            h.assertTrue(Math.abs(air.o2() - o2) < 1e-6, "gas test does not see the vessel: " + air.o2());
+            h.assertFalse(m.ventM3s() > 0, "closed hatch ventilates");
+            m.setHatch(true);
+            h.setBlock(new BlockPos(4, 2, 1), PcBlocks.PORTABLE_VENTILATOR.get().defaultBlockState().setValue(PcProperties.RUNNING, true));
+        }).thenIdle(30).thenExecute(() -> {
+            ManwayBlockEntity m = h.getBlockEntity(manway);
+            double v = m.ventM3s();
+            h.assertTrue(Math.abs(v - ConfinedSpaceAtmosphere.VENTILATOR_M3S - ConfinedSpaceAtmosphere.NATURAL_VENT_M3S) < 1e-9, "ventilation " + v);
+        }).thenSucceed();
+    }
+
+    /** Внутри при 5 % O₂ — потеря сознания без аппарата, противогаз не помогает, аппарат спасает; тренога вытягивает. */
+    @GameTest(template = LARGE, timeoutTicks = 400)
+    public static void lowOxygenFaintsAndTheTripodPullsOut(GameTestHelper h) {
+        BlockPos manway = vessel(h);
+        BlockPos tripod = new BlockPos(4, 1, 1);
+        h.setBlock(tripod, PcBlocks.RESCUE_TRIPOD.get().defaultBlockState());
+        FakePlayer in = bare(h);
+        FakePlayer rescuer = FakePlayerFactory.get(h.getLevel(), new com.mojang.authlib.GameProfile(java.util.UUID.randomUUID(), "attendant"));
+        h.startSequence().thenIdle(2).thenExecute(() -> {
+            ManwayBlockEntity m = h.getBlockEntity(manway);
+            m.rescan(h.getLevel());
+            m.setHatch(true);
+            m.setAtmosphere(new double[] {0.05, 0.95, 0, 0, 0, 0});
+            h.assertTrue(m.enter(in), "entry refused in advisory mode");
+            h.assertTrue(m.inside(in), "not inside after entry");
+            in.setItemSlot(EquipmentSlot.HEAD, mask(FilterType.B));
+            int[] st = ConfinedSpaces.breathe(in, m.atmosphere(), h.getLevel().getGameTime());
+            h.assertTrue(st[0] == 4, "5 % O2 stage " + st[0]);
+            ItemStack scba = new ItemStack(PcItems.SCBA.get());
+            scba.set(SafetyComponents.AIR_REMAINING.get(), Scba.AIR_L);
+            in.setItemSlot(EquipmentSlot.CHEST, scba);
+            h.assertTrue(ConfinedSpaces.breathe(in, m.atmosphere(), h.getLevel().getGameTime())[0] == 0, "SCBA did not protect");
+            in.setItemSlot(EquipmentSlot.LEGS, new ItemStack(PcItems.SAFETY_HARNESS.get()));
+            ItemStack line = new ItemStack(PcItems.LIFELINE.get());
+            line.set(SafetyComponents.LIFELINE_ANCHOR.get(), GlobalPos.of(h.getLevel().dimension(), h.absolutePos(tripod)));
+            in.getInventory().setItem(0, line);
+            rescuer.setPos(h.absoluteVec(new net.minecraft.world.phys.Vec3(4.5, 1, 0.5)));
+            RescueTripodBlockEntity t = h.getBlockEntity(tripod);
+            h.assertTrue(t.startWinch(rescuer, java.util.List.of(rescuer, in)), "winch did not find the tethered man");
+        }).thenIdle(RescueTripodBlockEntity.WINCH_TICKS + 5).thenExecute(() -> {
+            ManwayBlockEntity m = h.getBlockEntity(manway);
+            h.assertFalse(m.inside(in), "still inside after the winch");
+        }).thenExecute(() -> strip(in)).thenSucceed();
     }
 }

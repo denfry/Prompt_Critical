@@ -961,6 +961,13 @@ public final class PcBlocks {
             Spec.facing().footprint(FP_WIDE2), FoundryBlock.with(dev.denfry.promptcritical.mod.ops.PermitBoardBlockEntity::new));
     public static final DeferredBlock<dev.denfry.promptcritical.mod.ops.MechanicalDisconnectBlock> MECHANICAL_DISCONNECT =
             withItem(BLOCKS.registerBlock("mechanical_disconnect", dev.denfry.promptcritical.mod.ops.MechanicalDisconnectBlock::new, machine()));
+    /** Замкнутые пространства 13 §13.2.6: люк-лаз, спасательная тренога, переносной вентилятор. */
+    public static final DeferredBlock<PcDeviceBlock> MANWAY = device("manway", machine(), Spec.facing(BlockStateProperties.OPEN),
+            FoundryBlock.with(dev.denfry.promptcritical.mod.safety.ManwayBlockEntity::new));
+    public static final DeferredBlock<PcDeviceBlock> RESCUE_TRIPOD = device("rescue_tripod", machine().noOcclusion(), Spec.facing(),
+            FoundryBlock.with(dev.denfry.promptcritical.mod.safety.RescueTripodBlockEntity::new));
+    public static final DeferredBlock<PcDeviceBlock> PORTABLE_VENTILATOR = device("portable_ventilator", machine().noOcclusion(),
+            Spec.facing(PcProperties.RUNNING), FoundryBlock.with(dev.denfry.promptcritical.mod.safety.PortableVentilatorBlockEntity::new));
     public static final DeferredBlock<PcDeviceBlock> HYDROTEST_PUMP = device("hydrotest_pump", machine(),
             Spec.facing(PcProperties.PUMPING), FoundryBlock.with(HydrotestPumpBlockEntity::new));
     public static final DeferredBlock<PcDeviceBlock> RECORDING_GAUGE = device("recording_gauge", instrument(),
