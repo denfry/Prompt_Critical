@@ -15,8 +15,8 @@ import dev.denfry.promptcritical.sim.core.StateWriter;
  */
 public final class PvcReactor {
     public static final double MIN_K = 318.15, MAX_K = 343.15;
-    /** Загрузка ВХ на цикл, кг [BALANCE: промышленные автоклавы 20–150 м³]. */
-    public static final double CHARGE_KG = 2000;
+    /** Загрузка ВХ на цикл, кг [BALANCE: опытный автоклав ≈ 0,7 м³; промышленные — 20–150 м³]. */
+    public static final double CHARGE_KG = 250;
     /** Вода на загрузку, кг (1,3 : 1). */
     public static final double WATER_KG = CHARGE_KG * 1.3;
     /** Окончание загрузки — падение давления. */

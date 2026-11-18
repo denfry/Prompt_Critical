@@ -73,6 +73,21 @@ public final class PcFluids {
     public static final Entry PYROLYSIS_GASOLINE = liquid("pyrolysis_gasoline", 830, 500, 293);
     public static final Entry PYROLYSIS_FUEL_OIL = liquid("pyrolysis_fuel_oil", 1080, 20000, 343);
 
+    // хлор-щелочное производство и ПВХ, I3: газы — 1 мБ = 1 нм³, жидкости — 1 мБ = 1 л
+    /** Очищенный рассол: 310 г/л NaCl, Ca + Mg ≤ 5 мг/л. */
+    public static final Entry BRINE = liquid("brine", 1200, 1300, 333);
+    /** Сырой рассол: жёсткость ≈ 300 мг/л. */
+    public static final Entry RAW_BRINE = liquid("raw_brine", 1200, 1300, 333);
+    public static final Entry CHLORINE = gas("chlorine", 293, 3);
+    /** Жидкий хлор под собственным давлением, 1,47 кг/л при 20 °C. */
+    public static final Entry LIQUID_CHLORINE = liquid("liquid_chlorine", 1470, 350, 293);
+    public static final Entry HYDROGEN = gas("hydrogen", 293, -1);
+    /** Электролитическая щёлочь диафрагменных ванн: 11 % NaOH, 15 % NaCl. */
+    public static final Entry SODIUM_HYDROXIDE_SOLUTION = liquid("sodium_hydroxide_solution", 1240, 1800, 343);
+    public static final Entry HYDROGEN_CHLORIDE = gas("hydrogen_chloride", 293, 2);
+    public static final Entry ETHYLENE_DICHLORIDE = liquid("ethylene_dichloride", 1253, 840, 293);
+    public static final Entry VINYL_CHLORIDE = liquid("vinyl_chloride", 911, 200, 288);
+
     static {
         MINE_WATER.props.block(PcBlocks.MINE_WATER);
     }

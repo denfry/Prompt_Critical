@@ -300,10 +300,10 @@ public final class PyrolysisFurnaceBlockEntity extends DeviceBlockEntity impleme
     }
 
     /** Вход нескольких жидкостей через одну грань: каждая — в свой бак. */
-    static final class MultiInlet implements IFluidHandler {
+    public static final class MultiInlet implements IFluidHandler {
         private final FeedTank[] tanks;
 
-        MultiInlet(FeedTank... tanks) {
+        public MultiInlet(FeedTank... tanks) {
             this.tanks = tanks;
         }
 
