@@ -99,6 +99,32 @@ public final class SafetyText {
         m("turning_hot_idle", "Hot rotor standing still: it bows! Bow %s %% · vibration ×%s — put a Create shaft of 16 rpm or more on the gear",
                 "Горячий ротор стоит: он выгибается! Прогиб %s %% · вибрация ×%s — дайте на валоповорот вал Create от 16 об/мин");
         m("turning_cold", "Rotor cold · bow %s %% · vibration ×%s", "Ротор остыл · прогиб %s %% · вибрация ×%s");
+        // маркировка опасностей 13 §13.8
+        m("sign", "Sign: %s", "Знак: %s");
+        m("sign_mandatory", "Sign: %s", "Знак: %s");
+        m("placard", "UN %s · hazard code %s · NFPA 704 %s", "ООН %s · код опасности %s · NFPA 704 %s");
+        m("placard_none", "Nothing in the tank behind, or the product is not in the marking table",
+                "В ёмкости за табличкой пусто или продукта нет в таблице маркировки");
+        for (String[] s : new String[][] {{"fire_hazard", "Fire hazard", "Пожароопасно"}, {"explosive", "Explosive", "Взрывоопасно"},
+                {"toxic", "Toxic substances", "Токсичные вещества"}, {"corrosive", "Corrosive substances", "Едкие вещества"},
+                {"radioactive", "Radioactive substances", "Радиоактивные вещества"}, {"voltage", "Electric voltage", "Электрическое напряжение"},
+                {"gas_cylinder", "Gas cylinder", "Газовый баллон"}, {"asphyxiation", "Danger of asphyxiation", "Опасность удушья"},
+                {"no_open_flame", "No open flame", "Запрещается пользоваться открытым огнём"}, {"no_entry", "No entry", "Вход запрещён"},
+                {"no_smoking", "No smoking", "Курить запрещается"}, {"no_switching_on", "Do not switch on: people at work", "Не включать: работают люди"},
+                {"wear_hard_hat", "Wear a hard hat", "Работать в защитной каске"}, {"wear_gas_mask", "Wear a gas mask", "Работать в противогазе"},
+                {"wear_hearing_protection", "Wear ear muffs", "Работать в наушниках"}, {"wear_harness", "Wear a safety harness", "Работать в страховочной привязи"},
+                {"ghs_flammable", "GHS: flammable", "СГС: воспламеняющееся"}, {"ghs_toxic", "GHS: acute toxicity", "СГС: острая токсичность"},
+                {"ghs_corrosive", "GHS: corrosive", "СГС: коррозионное"}, {"ghs_gas_under_pressure", "GHS: gas under pressure", "СГС: газ под давлением"},
+                {"ghs_oxidizer", "GHS: oxidizer", "СГС: окислитель"}, {"ghs_health_hazard", "GHS: health hazard", "СГС: опасно для здоровья"}})
+            t("sign.promptcritical." + s[0], s[1], s[2]);
+        // водозабор 07 §7.13.4
+        m("intake_cleaned", "Screen raked clean", "Решётка очищена");
+        m("intake_status", "%s · intake %s L/s · screen clogged %s %% (sneak + right-click to rake)",
+                "%s · забор %s л/с · засор решётки %s %% (Shift + ПКМ — очистить)");
+        m("intake_dry", "No water at the intake (%s, %s L/s, screen %s %%)", "У водозабора нет воды (%s, %s л/с, решётка %s %%)");
+        m("intake_body.ocean", "Sea", "Море");
+        m("intake_body.river", "River", "Река");
+        m("intake_body.lake", "Pond", "Пруд");
         for (String[] c : new String[][] {{"organic_vapour", "organic vapours (A)", "органические пары (A)"},
                 {"low_boiling_organic", "low-boiling organics (AX)", "низкокипящие органические (AX)"},
                 {"inorganic_gas", "Cl₂, H₂S (B)", "Cl₂, H₂S (B)"}, {"acid_gas", "SO₂, HCl, HF (E)", "SO₂, HCl, HF (E)"},

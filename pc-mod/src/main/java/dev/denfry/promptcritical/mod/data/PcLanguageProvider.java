@@ -970,6 +970,10 @@ public final class PcLanguageProvider extends LanguageProvider {
         b("turbine_turning_gear", "Turbine Turning Gear", "Валоповоротное устройство");
         b("charcoal_filter", "Charcoal Iodine Filter", "Йодный угольный фильтр");
         b("vent_stack", "Ventilation Stack", "Вентиляционная труба");
+        b("hazard_sign", "Safety Sign", "Знак безопасности");
+        b("water_intake", "Water Intake", "Водозабор");
+        b("hazard_diamond", "NFPA 704 Diamond", "Ромб NFPA 704");
+        b("un_placard", "ADR Placard", "Табличка ДОПОГ");
         MISC.putAll(dev.denfry.promptcritical.mod.safety.SafetyText.LANG);
     }
 

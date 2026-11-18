@@ -84,6 +84,20 @@ public final class SafetyRecipes extends RecipeProvider {
                 .pattern("SSS").pattern("S N").define('S', Items.STRING).define('N', Items.IRON_INGOT)
                 .unlockedBy("has_harness", has(PcItems.SAFETY_HARNESS.get())).save(out, id("lifeline"));
         confined(out, sheet);
+        ShapedRecipeBuilder.shaped(RecipeCategory.MISC, dev.denfry.promptcritical.mod.registry.PcBlocks.WATER_INTAKE.get())
+                .pattern("CBC").pattern("BPB").pattern("CBC").define('C', Items.SMOOTH_STONE).define('B', Items.IRON_BARS)
+                .define('P', com.simibubi.create.AllBlocks.MECHANICAL_PUMP.get())
+                .unlockedBy("has_iron_bars", has(Items.IRON_BARS)).save(out, id("water_intake"));
+        // маркировка §13.8
+        ShapedRecipeBuilder.shaped(RecipeCategory.DECORATIONS, dev.denfry.promptcritical.mod.registry.PcBlocks.HAZARD_SIGN.get(), 4)
+                .pattern("YSY").pattern(" S ").define('Y', Items.YELLOW_DYE).define('S', sheet)
+                .unlockedBy("has_sheet", has(sheet)).save(out, id("hazard_sign"));
+        ShapedRecipeBuilder.shaped(RecipeCategory.DECORATIONS, dev.denfry.promptcritical.mod.registry.PcBlocks.HAZARD_DIAMOND.get(), 2)
+                .pattern("RB").pattern("YW").define('R', Items.RED_DYE).define('B', Items.BLUE_DYE).define('Y', Items.YELLOW_DYE).define('W', sheet)
+                .unlockedBy("has_sheet", has(sheet)).save(out, id("hazard_diamond"));
+        ShapedRecipeBuilder.shaped(RecipeCategory.DECORATIONS, dev.denfry.promptcritical.mod.registry.PcBlocks.UN_PLACARD.get(), 2)
+                .pattern("OSO").define('O', Items.ORANGE_DYE).define('S', sheet)
+                .unlockedBy("has_sheet", has(sheet)).save(out, id("un_placard"));
         // вытяжка зала 03a §3a.9.3: йодный фильтр — уголь с TEDA (здесь — древесный уголь), труба
         ShapedRecipeBuilder.shaped(RecipeCategory.MISC, dev.denfry.promptcritical.mod.registry.PcBlocks.CHARCOAL_FILTER.get())
                 .pattern("SSS").pattern("CCC").pattern("SSS").define('S', sheet).define('C', Items.CHARCOAL)

@@ -980,6 +980,13 @@ public final class PcBlocks {
             FoundryBlock.with(dev.denfry.promptcritical.mod.safety.RescueTripodBlockEntity::new));
     public static final DeferredBlock<PcDeviceBlock> PORTABLE_VENTILATOR = device("portable_ventilator", machine().noOcclusion(),
             Spec.facing(PcProperties.RUNNING), FoundryBlock.with(dev.denfry.promptcritical.mod.safety.PortableVentilatorBlockEntity::new));
+    /** Маркировка опасностей 13 §13.8: знак безопасности (группа — свойство), ромб NFPA 704, табличка ДОПОГ. */
+    public static final DeferredBlock<PcDeviceBlock> HAZARD_SIGN = device("hazard_sign", plate(), Spec.facing(PcProperties.SEVERITY),
+            dev.denfry.promptcritical.mod.grid.GridMountedBlock.wall(dev.denfry.promptcritical.mod.safety.SignageBlockEntity::new, 1, 1, 15, 15, 15, 16));
+    public static final DeferredBlock<PcDeviceBlock> HAZARD_DIAMOND = device("hazard_diamond", plate(), Spec.facing(),
+            dev.denfry.promptcritical.mod.grid.GridMountedBlock.wall(dev.denfry.promptcritical.mod.safety.SignageBlockEntity::new, 3, 3, 15.5, 13, 13, 16));
+    public static final DeferredBlock<PcDeviceBlock> UN_PLACARD = device("un_placard", plate(), Spec.facing(),
+            dev.denfry.promptcritical.mod.grid.GridMountedBlock.wall(dev.denfry.promptcritical.mod.safety.SignageBlockEntity::new, 0, 4, 15, 16, 12, 16));
     /** Метка маршрута обхода 13 §13.3.1. */
     public static final DeferredBlock<PcDeviceBlock> PATROL_CHECKPOINT = device("patrol_checkpoint", instrument().noOcclusion(),
             Spec.facing(PcProperties.ALARM), FoundryBlock.with(dev.denfry.promptcritical.mod.safety.PatrolCheckpointBlockEntity::new));
@@ -1068,6 +1075,9 @@ public final class PcBlocks {
     /** Конденсатор под паровой турбиной: охлаждается водой, которой касается (река, пруд). */
     public static final DeferredBlock<PcBlock> CONDENSER = block("condenser", machine().noOcclusion(), Spec.facing());
     /** Паровая турбина с противодавлением: вал Create спереди, пар — от котла, которого касается. */
+    /** Водозабор техводы с решёткой (07 §7.13.4), 1×2×1. */
+    public static final DeferredBlock<PcDeviceBlock> WATER_INTAKE = device("water_intake", brick().noOcclusion(),
+            Spec.facing(PcProperties.ALARM).footprint(FP_TALL2), FoundryBlock.with(dev.denfry.promptcritical.mod.safety.WaterIntakeBlockEntity::new));
     /** Валоповоротное устройство турбины (03a §3a.7.6). */
     public static final DeferredBlock<PcDeviceBlock> TURBINE_TURNING_GEAR = device("turbine_turning_gear", machine().noOcclusion(),
             Spec.facing(PcProperties.RUNNING), FoundryBlock.with(dev.denfry.promptcritical.mod.safety.TurningGearBlockEntity::new));

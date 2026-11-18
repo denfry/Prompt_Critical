@@ -41,6 +41,14 @@ public final class SafetyBlockEntities {
     public static final DeferredHolder<BlockEntityType<?>, BlockEntityType<VentStackBlockEntity>> VENT_STACK =
             type("vent_stack", VentStackBlockEntity::new, PcBlocks.VENT_STACK);
 
+    /** Один тип на знак, ромб и табличку: вид — по ID блока. */
+    public static final DeferredHolder<BlockEntityType<?>, BlockEntityType<SignageBlockEntity>> SIGNAGE =
+            BLOCK_ENTITIES.register("signage", () -> BlockEntityType.Builder.of(SignageBlockEntity::new,
+                    PcBlocks.HAZARD_SIGN.get(), PcBlocks.HAZARD_DIAMOND.get(), PcBlocks.UN_PLACARD.get()).build(null));
+
+    public static final DeferredHolder<BlockEntityType<?>, BlockEntityType<WaterIntakeBlockEntity>> WATER_INTAKE =
+            type("water_intake", WaterIntakeBlockEntity::new, PcBlocks.WATER_INTAKE);
+
     private SafetyBlockEntities() {
     }
 
@@ -51,6 +59,7 @@ public final class SafetyBlockEntities {
 
     private static void capabilities(RegisterCapabilitiesEvent event) {
         event.registerBlockEntity(Capabilities.FluidHandler.BLOCK, MANWAY.get(), FoundryDevice::fluids);
+        event.registerBlockEntity(Capabilities.FluidHandler.BLOCK, WATER_INTAKE.get(), FoundryDevice::fluids);
         event.registerBlockEntity(Capabilities.FluidHandler.BLOCK, FLARE_IGNITION_PANEL.get(), FoundryDevice::fluids);
         event.registerBlockEntity(Capabilities.FluidHandler.BLOCK, FLARE_KNOCKOUT_DRUM.get(), FoundryDevice::fluids);
         event.registerBlockEntity(Capabilities.FluidHandler.BLOCK, FLARE_SEAL_DRUM.get(), FoundryDevice::fluids);

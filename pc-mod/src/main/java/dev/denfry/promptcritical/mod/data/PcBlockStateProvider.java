@@ -224,6 +224,13 @@ public final class PcBlockStateProvider extends BlockStateProvider {
             case "steam_engine_cylinder" -> s.getValue(PcProperties.ENGINE_SEGMENT) == PcProperties.EngineSegment.FRAME ? id + "_frame" : id;
             case "grate_stoker", "main_mine_fan", "plc" -> s.getValue(PcProperties.RUNNING) ? id + "_running" : id;
             case "portable_ventilator" -> s.getValue(PcProperties.RUNNING) ? id + "_on" : id;
+            case "water_intake" -> s.getValue(PcProperties.ALARM) ? id + "_fouled" : id;
+            case "hazard_sign" -> switch (s.getValue(PcProperties.SEVERITY)) {
+                case 1 -> id + "_forbid";
+                case 2 -> id + "_mandatory";
+                case 3 -> id + "_ghs";
+                default -> id;
+            };
             case "flare_ignition_panel" -> s.getValue(PcProperties.SEVERITY) == 0 ? id : id + "_pilots" + s.getValue(PcProperties.SEVERITY);
             case "flare_knockout_drum" -> switch (s.getValue(PcProperties.MUD_LEVEL)) {
                 case 1 -> id + "_level2";

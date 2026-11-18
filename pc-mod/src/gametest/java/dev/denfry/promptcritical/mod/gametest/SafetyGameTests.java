@@ -12,6 +12,8 @@ import dev.denfry.promptcritical.mod.safety.FlareKnockoutDrumBlockEntity;
 import dev.denfry.promptcritical.mod.safety.FlareSealDrumBlockEntity;
 import dev.denfry.promptcritical.mod.safety.Flares;
 import dev.denfry.promptcritical.mod.safety.ManwayBlockEntity;
+import dev.denfry.promptcritical.mod.safety.WaterIntakeBlockEntity;
+import dev.denfry.promptcritical.mod.safety.SignageBlockEntity;
 import dev.denfry.promptcritical.mod.safety.VentStackBlockEntity;
 import dev.denfry.promptcritical.mod.safety.TurningGearBlockEntity;
 import dev.denfry.promptcritical.mod.safety.PatrolCheckpointBlockEntity;
@@ -359,5 +361,61 @@ public final class SafetyGameTests {
                 v.bank().setRetained(0, 0); // не оставлять источник в общем мире
             }
         }).thenSucceed();
+    }
+
+    /** Маркировка §13.8: табличка на баке с нефтью читает ООН 1267 и ромб; предписывающий знак проверяет СИЗ. */
+    @GameTest(template = LARGE, timeoutTicks = 100)
+    public static void placardReadsTheTankAndSignsCheckPpe(GameTestHelper h) {
+        BlockPos tank = new BlockPos(5, 2, 5), placard = new BlockPos(5, 2, 4), sign = new BlockPos(7, 2, 4);
+        h.setBlock(tank, com.simibubi.create.AllBlocks.FLUID_TANK.getDefaultState());
+        h.setBlock(placard, PcBlocks.UN_PLACARD.get().defaultBlockState());
+        h.setBlock(sign, PcBlocks.HAZARD_SIGN.get().defaultBlockState());
+        FakePlayer p = bare(h);
+        h.startSequence().thenIdle(3).thenExecute(() -> {
+            var handler = h.getLevel().getCapability(net.neoforged.neoforge.capabilities.Capabilities.FluidHandler.BLOCK, h.absolutePos(tank), null);
+            h.assertTrue(handler != null, "tank has no fluid handler");
+            handler.fill(new net.neoforged.neoforge.fluids.FluidStack(PcFluids.CRUDE_OIL.source.get(), 1000),
+                    net.neoforged.neoforge.fluids.capability.IFluidHandler.FluidAction.EXECUTE);
+            SignageBlockEntity pl = h.getBlockEntity(placard);
+            var code = pl.product();
+            h.assertTrue(code != null && code.un() == 1267 && code.diamond().equals("1-3-0"), "placard reads " + code);
+            SignageBlockEntity s = h.getBlockEntity(sign);
+            s.setVariant(2, 0);
+            h.assertTrue(s.variantKey().equals("wear_hard_hat"), "variant " + s.variantKey());
+            h.assertFalse(SignageBlockEntity.wears(p, "wear_hard_hat"), "bare head passes the hard hat sign");
+            p.setItemSlot(EquipmentSlot.HEAD, new ItemStack(PcItems.HARD_HAT.get()));
+            h.assertTrue(SignageBlockEntity.wears(p, "wear_hard_hat"), "hard hat not recognised");
+            h.assertFalse(SignageBlockEntity.wears(p, "wear_gas_mask"), "hard hat is not a gas mask");
+        }).thenExecute(() -> strip(p)).thenSucceed();
+    }
+
+    /** Водозабор 07 §7.13.4: у пруда забор ограничен объёмом, засор решётки зажигает «засорено», очистка снимает. */
+    @GameTest(template = LARGE, timeoutTicks = 200)
+    public static void waterIntakeTakesFromAPondAndClogs(GameTestHelper h) {
+        BlockPos intake = new BlockPos(8, 1, 4);
+        // пруд 6×6×2 в каменной чаше: вода не должна растечься к соседним испытаниям общего мира
+        for (int x = 1; x <= 8; x++)
+            for (int z = 1; z <= 8; z++)
+                for (int y = 0; y <= 2; y++) {
+                    boolean inside = x >= 2 && x <= 7 && z >= 2 && z <= 7 && y >= 1;
+                    if (x == 8 && z == 4 && y >= 1) continue;
+                    h.setBlock(new BlockPos(x, y, z), inside ? net.minecraft.world.level.block.Blocks.WATER.defaultBlockState()
+                            : net.minecraft.world.level.block.Blocks.STONE.defaultBlockState());
+                }
+        h.setBlock(intake, PcBlocks.WATER_INTAKE.get().defaultBlockState());
+        h.startSequence().thenIdle(25).thenExecute(() -> {
+            WaterIntakeBlockEntity w = h.getBlockEntity(intake);
+            w.survey(h.getLevel());
+            h.assertTrue(w.wet(), "intake not in water");
+            h.assertTrue(w.body() == dev.denfry.promptcritical.sim.thermal.WaterIntake.Body.LAKE, "body " + w.body());
+            w.setClog(0.8);
+        }).thenIdle(25).thenExecute(() -> {
+            WaterIntakeBlockEntity w = h.getBlockEntity(intake);
+            double lake = dev.denfry.promptcritical.sim.thermal.WaterIntake.bodyLimitM3s(dev.denfry.promptcritical.sim.thermal.WaterIntake.Body.LAKE, 0, 72);
+            h.assertTrue(Math.abs(w.capacityM3s() - lake) < 1e-12, "pond limit " + w.capacityM3s() + " vs " + lake);
+            h.assertTrue(h.getBlockState(intake).getValue(PcProperties.ALARM), "clogged screen not shown");
+            w.intake().clean();
+        }).thenIdle(25).thenExecute(() -> h.assertFalse(h.getBlockState(intake).getValue(PcProperties.ALARM), "raked screen still clogged"))
+                .thenSucceed();
     }
 }
