@@ -70,6 +70,8 @@ public final class LightWaterCore {
     private CellFeedbackState eval = new CellFeedbackState(573, 720, 573, 0, 0, 0);
     private double alphaDoppler, alphaDensity, alphaModerator, alphaBoron;
     private double totalRho, fissionW, slowTimer = 1e9;
+    /** Доля высоты зоны под замедлителем (уровень в баке/каландре); 1 — зона залита. */
+    private double moderatedFraction = 1;
 
     public LightWaterCore(double nominalW, double dt) {
         this(LWR, nominalW, dt);
@@ -248,8 +250,34 @@ public final class LightWaterCore {
         return Math.sqrt(Math.max(loaded, 1) * a / Math.PI);
     }
 
+    /** Радиус зоны со всеми позициями (размер бака/каландра), м. */
+    public double fullCoreRadius() {
+        FuelDesign d = design == null ? spec.defaultDesign() : design;
+        double a = d.hexagonal ? Math.sqrt(3) / 2 * pitch(d) * pitch(d) : pitch(d) * pitch(d);
+        return Math.sqrt(count * a / Math.PI);
+    }
+
     public double coreHeight() {
         return (design == null ? spec.defaultDesign() : design).stackM * spec.stackedPerPosition();
+    }
+
+    /**
+     * Уровень замедлителя: доля высоты зоны под ним. Каналы над уровнем не замедляются и почти не делятся, так что
+     * для критичности зона становится ниже — B² растёт как (π/H)². Так регулировали ZEEP и NRX, а на Пикеринге
+     * слив замедлителя в бак был остановом (Rouben, «CANDU Fuel Management», 1999). Пересчёт — со следующим
+     * {@link #solveStatic}.
+     */
+    public void setModeratedFraction(double f) {
+        moderatedFraction = Math.max(0, Math.min(1, f));
+    }
+
+    public double moderatedFraction() {
+        return moderatedFraction;
+    }
+
+    /** Высота зоны под замедлителем, м (не меньше 2 % — чтобы геометрия оставалась конечной). */
+    private double moderatedHeight() {
+        return coreHeight() * Math.max(0.02, moderatedFraction);
     }
 
     // ------------------------------------------------------------------ нейтроника
@@ -276,7 +304,7 @@ public final class LightWaterCore {
         SixFactor sf = lattice.evaluate(cell, fuel, s);
         SixFactor refl = lattice.evaluate(reflector, fuel, s);
         double delta = lattice.reflectorSavings(sf, refl, spec.reflectorM());
-        double b2 = lattice.geometricBuckling(ReactorShape.cylinder(coreRadius(), coreHeight()), delta);
+        double b2 = lattice.geometricBuckling(ReactorShape.cylinder(coreRadius(), moderatedHeight()), delta);
         keff = loaded > 0 ? lattice.estimateKeff(sf, b2) : 0;
         staticRho = loaded > 0 ? (keff - 1) / keff : -1;
         eval = s;
@@ -309,7 +337,7 @@ public final class LightWaterCore {
     private double rhoAt(NuclideVector fuel, CellFeedbackState s) {
         SixFactor sf = lattice.evaluate(cell, fuel, s);
         double delta = lattice.reflectorSavings(sf, lattice.evaluate(reflector, fuel, s), spec.reflectorM());
-        double k = lattice.estimateKeff(sf, lattice.geometricBuckling(ReactorShape.cylinder(coreRadius(), coreHeight()), delta));
+        double k = lattice.estimateKeff(sf, lattice.geometricBuckling(ReactorShape.cylinder(coreRadius(), moderatedHeight()), delta));
         return (k - 1) / k;
     }
 
@@ -342,7 +370,7 @@ public final class LightWaterCore {
         fissionW = n * nominalW;
         decay.step(dt, fissionW);
         double f = 0, phi = 0;
-        double vCm3 = Math.PI * Math.pow(coreRadius() * 100, 2) * coreHeight() * 100;
+        double vCm3 = Math.PI * Math.pow(coreRadius() * 100, 2) * moderatedHeight() * 100;
         if (loaded > 0 && sigmaF > 0) {
             f = fissionW / (PointKinetics.FISSION_ENERGY * vCm3);
             phi = f / sigmaF;
@@ -358,7 +386,7 @@ public final class LightWaterCore {
 
     /** Средний тепловой поток в зоне при текущей мощности, н/(см²·с). */
     public double averageFlux() {
-        double vCm3 = Math.PI * Math.pow(coreRadius() * 100, 2) * coreHeight() * 100;
+        double vCm3 = Math.PI * Math.pow(coreRadius() * 100, 2) * moderatedHeight() * 100;
         return loaded > 0 && sigmaF > 0 ? fissionW / (PointKinetics.FISSION_ENERGY * vCm3) / sigmaF : 0;
     }
 

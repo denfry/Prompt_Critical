@@ -142,9 +142,10 @@ public final class LatticeModel {
         double vF = d == null ? 0 : d.fuelFraction(), vC = d == null ? 0 : d.cladFraction();
         double vW = c.coolantFraction(), vM = c.moderatorFraction();
         double vS = c.structureFraction(), vA = c.absorberFraction();
-        double sigCool = cool == null ? 0 : cool.absorption2200(rhoW, ppm) * w;
+        double pC = s.coolantD2o(), pM = s.moderatorD2o();
+        double sigCool = cool == null ? 0 : cool.absorption2200(rhoW, ppm, pC) * w;
         double sigMod = mod == null ? 0
-                : (mod.absorption2200(rhoM, mod.liquidWater ? ppm : 0)
+                : (mod.absorption2200(rhoM, mod.liquidWater ? ppm : 0, pM)
                         + Medium.boronAbsorption(rhoM, c.moderatorImpurityPpmB())) * w;
         double sigStruct = c.structure().numberDensity() * c.structure().sigmaA() * w;
         double sigAbs = c.absorber().sigmaA();
@@ -223,7 +224,7 @@ public final class LatticeModel {
         double aPellet = d.pelletRadius() * 100;
         double surface = d.rodsPerCell() * 2 * Math.PI * aPellet / 1e4; // см² поверхности на см³ узла
         double vNear = cluster ? vW : vW + vM;
-        double scatNear = cluster ? vW * scattering(cool, rhoW) : vW * scattering(cool, rhoW) + vM * scattering(mod, rhoM);
+        double scatNear = cluster ? vW * scattering(cool, rhoW, pC) : vW * scattering(cool, rhoW, pC) + vM * scattering(mod, rhoM, pM);
         double removalNear = cluster ? vW * removal(cool, rhoW) : vW * removal(cool, rhoW) + vM * removal(mod, rhoM);
         double chord = vNear > 0 ? 4 * vNear / surface : 0;
         double shadowed = cluster ? 1 - outwardSurface(d.rodsPerAssembly()) : 1;
@@ -233,7 +234,7 @@ public final class LatticeModel {
         double resonance = fm.resonanceIntegral300(sm * (1 - dancoff))
                 * (1 + fm.dopplerCoefficient(sm) * (Math.sqrt(s.fuelEffTemp()) - SQRT_300));
         double gAdj = cluster ? config.coolantAdjacencyFactor() : 1;
-        double slowing = vM * moderatingPower(mod, rhoM) + vW * moderatingPower(cool, rhoW) / gAdj;
+        double slowing = vM * moderatingPower(mod, rhoM, pM) + vW * moderatingPower(cool, rhoW, pC) / gAdj;
         double n238 = nHeavy * fuel.fraction[I_U238];
         double p = Math.exp(-n238 * vF * resonance / Math.max(slowing, 1e-12));
 
@@ -284,16 +285,16 @@ public final class LatticeModel {
         return m.numberDensity() * m.sigmaS() * (1 - 2 / (3 * m.massNumber()));
     }
 
-    private static double scattering(Medium m, double rho) {
-        return m == null ? 0 : m.scattering(rho);
+    private static double scattering(Medium m, double rho, double d2o) {
+        return m == null ? 0 : m.scattering(rho) * m.protiumFactor(d2o, false);
     }
 
     private static double removal(Medium m, double rho) {
         return m == null ? 0 : m.removal(rho);
     }
 
-    private static double moderatingPower(Medium m, double rho) {
-        return m == null ? 0 : m.moderatingPower(rho);
+    private static double moderatingPower(Medium m, double rho, double d2o) {
+        return m == null ? 0 : m.moderatingPower(rho) * m.protiumFactor(d2o, true);
     }
 
     /** Возраст: 1/τ = Σ φ_j (ρ_j/ρ_j0)² / τ_j по замедляющим средам (§1.6.3). */
