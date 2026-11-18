@@ -64,6 +64,7 @@ public final class PromptCritical {
         dev.denfry.promptcritical.mod.gas.GasBlockEntities.register(modBus);
         dev.denfry.promptcritical.mod.chem.ChemBlockEntities.register(modBus);
         dev.denfry.promptcritical.mod.chlor.ChlorBlockEntities.register(modBus);
+        dev.denfry.promptcritical.mod.uranium.UraniumBlockEntities.register(modBus);
         dev.denfry.promptcritical.mod.nitrogen.NitrogenBlockEntities.register(modBus);
         dev.denfry.promptcritical.mod.environment.ToxicReleaseService.register();
         dev.denfry.promptcritical.mod.nuclear.Uf6Components.register(modBus);

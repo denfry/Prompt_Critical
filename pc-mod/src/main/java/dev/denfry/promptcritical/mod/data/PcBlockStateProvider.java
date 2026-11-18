@@ -109,7 +109,7 @@ public final class PcBlockStateProvider extends BlockStateProvider {
     /** Блоки с неподвижными частями из арт-реестра (partial): части добавляются мультипартом к модели состояния. */
     private static final java.util.Set<String> PARTS = java.util.Set.of("coke_pusher_ram", "sinter_strand", "blast_furnace_top",
             "cast_house_machine", "ladle", "roller_table", "rolling_mill_stand", "piercing_mill", "pipe_welder", "asu_main_compressor",
-            "asu_expander", "air_separator", "hydrotest_pump", "recording_gauge", "water_clarifier", "rotary_table", "mud_pump", "pumpjack", "gas_compressor", "ldpe_reactor", "brine_treater", "pvc_reactor",
+            "asu_expander", "air_separator", "hydrotest_pump", "recording_gauge", "water_clarifier", "rotary_table", "mud_pump", "pumpjack", "gas_compressor", "ldpe_reactor", "brine_treater", "pvc_reactor", "leach_tank", "rotary_calciner", "hf_kiln",
             "ammonia_converter");
 
     /** Модели состояния мультипартом: основная и части, все с поворотом по {@code facing}. */
@@ -155,6 +155,8 @@ public final class PcBlockStateProvider extends BlockStateProvider {
                     "reciprocating_compressor/partial/pistons");
             case "ldpe_reactor" -> java.util.List.of(base, "hyper_compressor/partial/crankshaft", "hyper_compressor/partial/plunger");
             case "brine_treater" -> java.util.List.of(base, "water_clarifier/partial/rake");
+            case "leach_tank" -> java.util.List.of(base, id + "/partial/agitator");
+            case "rotary_calciner", "hf_kiln" -> java.util.List.of(base, id + "/partial/shell");
             case "pvc_reactor" -> java.util.List.of(base, "high_pressure_autoclave/partial/agitator");
             case "ammonia_converter" -> java.util.List.of(base, "ammonia_synthesis_reactor/partial/compressor_wheel");
             case "pumpjack" -> java.util.List.of(base, "pumpjack_gearbox/partial/crank_counterweight", "pumpjack_gearbox/partial/walking_beam",
@@ -237,6 +239,7 @@ public final class PcBlockStateProvider extends BlockStateProvider {
             case "cracked_gas_unit" -> "pyrolysis_quench_tower";
             case "ldpe_reactor" -> "hyper_compressor";
             // хлор и ПВХ I3
+            case "uranium_ion_exchange" -> "ion_exchange_column";
             case "brine_treater" -> "water_clarifier";
             case "rectifier_unit" -> s.getValue(PcProperties.ALARM) ? "rectifier_unit_fault"
                     : s.getValue(PcProperties.RUNNING) ? "rectifier_unit" : "rectifier_unit_off";

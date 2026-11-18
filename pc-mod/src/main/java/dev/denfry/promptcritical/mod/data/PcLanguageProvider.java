@@ -215,6 +215,9 @@ public final class PcLanguageProvider extends LanguageProvider {
         i("uf6_cylinder_30b", "UF₆ Cylinder 30B", "Баллон UF₆ 30B");
         i("uf6_cylinder_5a", "UF₆ Cylinder 5A", "Баллон UF₆ 5A");
         i("pvc", "PVC Resin (25 kg bag)", "Смола ПВХ (мешок 25 кг)");
+        i("uo3_powder", "Uranium Trioxide (1 kg U)", "Трёхокись урана (1 кг U)");
+        i("uf4_powder", "Uranium Tetrafluoride, Green Salt (1 kg U)", "Тетрафторид урана, зелёная соль (1 кг U)");
+        i("ion_exchange_resin_sba", "Strong-Base Anion Exchange Resin (100 l)", "Сильноосновный анионит (100 л)");
         i("catalyst_steam_reforming", "Nickel Reforming Catalyst", "Никелевый катализатор конверсии метана");
         i("catalyst_shift_ht", "Iron-Chromium Shift Catalyst", "Железохромовый катализатор конверсии CO");
         i("catalyst_shift_lt", "Copper-Zinc Shift Catalyst", "Медноцинковый катализатор конверсии CO");
@@ -268,6 +271,16 @@ public final class PcLanguageProvider extends LanguageProvider {
         b("edc_unit", "EDC Unit (Chlorination and Oxychlorination)", "Установка ДХЭ (хлорирование и оксихлорирование)");
         b("edc_cracker", "EDC Cracking Furnace", "Печь пиролиза ДХЭ");
         b("pvc_reactor", "PVC Suspension Autoclave", "Автоклав суспензионного ПВХ");
+        b("acid_plant", "Contact Sulphuric Acid Plant", "Сернокислотная установка");
+        b("hf_kiln", "Hydrogen Fluoride Kiln", "Печь фтористого водорода");
+        b("leach_tank", "Uranium Leach and CCD Train", "Выщелачивание урана с противоточной декантацией");
+        b("uranium_ion_exchange", "Uranium Ion Exchange Unit", "Ионообменная установка урана");
+        b("precipitation_tank", "Ammonium Diuranate Precipitator", "Осадитель диураната аммония");
+        b("rotary_calciner", "Rotary Calciner (ADU to UO3)", "Прокалочная печь (ДУА в UO3)");
+        b("reduction_furnace", "Hydrogen Reduction Furnace (UO3 to UO2)", "Печь восстановления (UO3 в UO2)");
+        b("hydrofluorination_reactor", "Hydrofluorination Reactor (UO2 to UF4)", "Аппарат гидрофторирования (UO2 в UF4)");
+        b("fluorination_reactor", "Flame Fluorination Reactor (UF4 to UF6)", "Пламенный реактор фторирования (UF4 в UF6)");
+        b("fluorine_cell", "Fluorine Cell Series", "Серия фторных электролизёров");
         b("steam_reformer", "Steam Reformer", "Печь паровой конверсии метана");
         b("co2_absorber", "CO₂ Removal and Methanation Column", "Колонна очистки от CO₂ с метанатором");
         b("ammonia_converter", "Ammonia Synthesis Loop", "Колонна синтеза аммиака");
@@ -410,6 +423,13 @@ public final class PcLanguageProvider extends LanguageProvider {
         FLUIDS.put("hydrogen_chloride", new String[] {"Hydrogen Chloride", "Хлористый водород"});
         FLUIDS.put("ethylene_dichloride", new String[] {"Ethylene Dichloride", "Дихлорэтан"});
         FLUIDS.put("vinyl_chloride", new String[] {"Vinyl Chloride", "Винилхлорид"});
+        FLUIDS.put("sulfuric_acid", new String[] {"Sulphuric Acid (98 %)", "Серная кислота (98 %)"});
+        FLUIDS.put("hydrogen_fluoride", new String[] {"Anhydrous Hydrogen Fluoride", "Безводный фтористый водород"});
+        FLUIDS.put("fluorine", new String[] {"Fluorine", "Фтор"});
+        FLUIDS.put("pregnant_leach_solution", new String[] {"Pregnant Leach Solution", "Продуктивный раствор"});
+        FLUIDS.put("raffinate", new String[] {"Barren Solution", "Маточник сорбции"});
+        FLUIDS.put("uranium_tailings", new String[] {"Uranium Mill Tailings", "Хвосты урановой фабрики"});
+        FLUIDS.put("uranium_eluate", new String[] {"Uranium Eluate", "Урановый элюат"});
         FLUIDS.put("syngas", new String[] {"Ammonia Syngas (3 H₂ + N₂)", "Азотоводородная смесь"});
         FLUIDS.put("ammonia", new String[] {"Liquid Ammonia", "Жидкий аммиак"});
         FLUIDS.put("nitric_acid", new String[] {"Nitric Acid (56 %)", "Азотная кислота 56 %"});
@@ -646,6 +666,7 @@ public final class PcLanguageProvider extends LanguageProvider {
         MISC.putAll(dev.denfry.promptcritical.mod.nuclear.NuclearText.lang());
         MISC.putAll(dev.denfry.promptcritical.mod.chlor.ChlorText.lang());
         MISC.putAll(dev.denfry.promptcritical.mod.environment.ToxicReleaseService.lang());
+        MISC.putAll(dev.denfry.promptcritical.mod.uranium.UraniumText.lang());
         MISC.put("death.attack.promptcritical.chlorine", new String[] {"%1$s was gassed by chlorine", "%1$s отравлен хлором"});
         MISC.put("death.attack.promptcritical.chlorine.player", new String[] {"%1$s was gassed by chlorine while fighting %2$s",
                 "%1$s отравлен хлором, спасаясь от %2$s"});

@@ -91,6 +91,21 @@ public final class PcFluids {
     /** Электролитическая щёлочь диафрагменных ванн: 11 % NaOH, 15 % NaCl. */
     public static final Entry SODIUM_HYDROXIDE_SOLUTION = liquid("sodium_hydroxide_solution", 1240, 1800, 343);
     public static final Entry HYDROGEN_CHLORIDE = gas("hydrogen_chloride", 293, 2);
+
+    // передел урана I4: жидкости — 1 мБ = 1 л, газы — 1 мБ = 1 нм³
+    /** Серная кислота 98 %, 1,84 кг/л. */
+    public static final Entry SULFURIC_ACID = liquid("sulfuric_acid", 1840, 2400, 293);
+    /** Безводный фтористый водород, 0,99 кг/л (кипит при 19,5 °C). */
+    public static final Entry HYDROGEN_FLUORIDE = liquid("hydrogen_fluoride", 990, 250, 283);
+    public static final Entry FLUORINE = gas("fluorine", 293, 2);
+    /** Продуктивный раствор выщелачивания: 1 г/л U в сернокислом растворе. */
+    public static final Entry PREGNANT_LEACH_SOLUTION = liquid("pregnant_leach_solution", 1030, 1100, 313);
+    /** Маточник сорбции: обеднённый раствор, идёт обратно на выщелачивание. */
+    public static final Entry RAFFINATE = liquid("raffinate", 1030, 1100, 303);
+    /** Хвостовая пульпа: 50 % твёрдого. */
+    public static final Entry URANIUM_TAILINGS = liquid("uranium_tailings", 1450, 8000, 303);
+    /** Элюат: 10 г/л U в подкисленном растворе NaCl. */
+    public static final Entry URANIUM_ELUATE = liquid("uranium_eluate", 1060, 1100, 303);
     public static final Entry ETHYLENE_DICHLORIDE = liquid("ethylene_dichloride", 1253, 840, 293);
     public static final Entry VINYL_CHLORIDE = liquid("vinyl_chloride", 911, 200, 288);
 

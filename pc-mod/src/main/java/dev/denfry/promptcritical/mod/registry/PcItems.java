@@ -150,6 +150,12 @@ public final class PcItems {
     public static final DeferredItem<Item> GROUND_URANIUM_ORE = item("ground_uranium_ore", 64);
     public static final DeferredItem<Item> YELLOWCAKE = item("yellowcake", 64);
     public static final DeferredItem<Item> UO2_POWDER = item("uo2_powder", 64);
+    /** Трёхокись урана после прокалки ДУА: мешок на 1 кг урана. */
+    public static final DeferredItem<Item> UO3_POWDER = item("uo3_powder", 64);
+    /** Тетрафторид урана, «зелёная соль»: мешок на 1 кг урана. */
+    public static final DeferredItem<Item> UF4_POWDER = item("uf4_powder", 64);
+    /** Сильноосновный анионит: мешок 100 л. */
+    public static final DeferredItem<Item> ION_EXCHANGE_RESIN_SBA = item("ion_exchange_resin_sba", 16);
     public static final DeferredItem<Item> MAGNESIUM_INGOT = item("magnesium_ingot", 64);
     /** Блочок природного металлического урана: кассета топливного канала котла. */
     public static final DeferredItem<Item> URANIUM_SLUG = item("uranium_slug", 16);

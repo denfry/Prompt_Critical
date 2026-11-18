@@ -8,6 +8,7 @@ import dev.denfry.promptcritical.mod.blockentity.DeviceBlockEntity;
 import dev.denfry.promptcritical.mod.chem.PyrolysisFurnaceBlockEntity.MultiInlet;
 import dev.denfry.promptcritical.mod.environment.ToxicReleaseService;
 import dev.denfry.promptcritical.mod.foundry.FoundryDevice;
+import dev.denfry.promptcritical.mod.grid.DcLoad;
 import dev.denfry.promptcritical.mod.panel.PanelHost;
 import dev.denfry.promptcritical.mod.panel.PanelLayout;
 import dev.denfry.promptcritical.mod.production.FeedTank;
@@ -56,7 +57,7 @@ import org.jetbrains.annotations.Nullable;
  * коллекторе растёт и хлор выходит через гидрозатворы наружу — облако. Если рассола не хватает и водород в хлоре
  * переходит 4 %, защита отключает серию, но смесь в газовых пространствах уже взрывается и выбрасывает хлор.
  */
-public final class CellRoomBlockEntity extends DeviceBlockEntity implements FoundryDevice, PanelHost {
+public final class CellRoomBlockEntity extends DeviceBlockEntity implements FoundryDevice, PanelHost, DcLoad {
     public static final int BRINE_MB = 16_000, GAS_MB = 4_000, LIQUOR_MB = 16_000;
     /** Хлор в анодных пространствах серии, кг: столько уходит облаком при взрыве. */
     public static final double CELL_HOLDUP_CL2_KG = 40;
@@ -110,13 +111,20 @@ public final class CellRoomBlockEntity extends DeviceBlockEntity implements Foun
     }
 
     /** Ток от выпрямителя на этот тик, А. */
-    void supply(double amps) {
+    @Override
+    public void supply(double amps) {
         suppliedAmps = Math.max(0, amps);
         suppliedTick = level.getGameTime();
     }
 
     /** Мощность постоянного тока, которую серия возьмёт при заданном токе, Вт. */
-    double dcDemandW() {
+    @Override
+    public double dcSetpointA() {
+        return cells.currentKa() * 1000;
+    }
+
+    @Override
+    public double dcDemandW() {
         return cells.on() && !cells.tripped() ? cells.dcDemandW(cells.currentKa() * 1000) : 0;
     }
 
