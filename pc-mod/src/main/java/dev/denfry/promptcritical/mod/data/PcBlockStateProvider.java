@@ -265,6 +265,8 @@ public final class PcBlockStateProvider extends BlockStateProvider {
             case "centrifuge_cascade" -> "cascade_header";
             case "uo2_conversion" -> "uf6_autoclave";
             case "power_reactor" -> "reactor_vessel_wall";
+            case "pwr_reactor" -> s.getValue(PcProperties.PWR_SEGMENT) == PcProperties.PwrSegment.HEAD ? "control_rod_drive" : "reactor_vessel_wall";
+            case "pressurizer" -> "pressurizer";
             case "christmas_tree" -> s.getValue(BlockStateProperties.OPEN) ? id : id + "_master_closed";
             case "pumpjack" -> "pumpjack_gearbox";
             case "flare_tip" -> s.getValue(BlockStateProperties.LIT) ? id + "_lit" : id;

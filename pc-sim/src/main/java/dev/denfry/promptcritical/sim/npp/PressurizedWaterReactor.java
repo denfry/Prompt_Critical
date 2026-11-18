@@ -754,7 +754,7 @@ public final class PressurizedWaterReactor {
                 case HIGH_PRIMARY_PRESSURE, LOW_PRIMARY_PRESSURE -> pressure;
                 case LOW_COOLANT_FLOW -> loopFlowFrac(ch / 3);
                 case HIGH_COOLANT_TEMP -> hotK;
-                case LOW_SG_LEVEL -> sgLevel / 0.5;
+                case LOW_SG_LEVEL -> sgLevel;
                 case LOSS_OF_DRIVE_POWER -> pumps[ch / 3].speed();
                 default -> Double.NaN;
             };

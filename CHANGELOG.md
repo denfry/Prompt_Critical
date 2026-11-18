@@ -94,6 +94,25 @@
   into the hall; the reactor is a radiation source for the dose model. Spent channel fuel carries burnup, U-236 and
   plutonium.
 
+### Pressurized water reactor (T2a)
+- A 100 MWt VVER-type starter unit: a vessel of 19 VVER-440, VVER-1000 or PWR 17×17 assemblies from the fuel shop
+  (about 2.3 t of uranium with VVER-440) with the rod drive head above, two loops at 15.7 MPa and 290/320 °C.
+  Doppler, coolant density and boron coefficients come from the full core k-eff, so the small core's leakage shows
+  in a strongly negative coolant temperature coefficient; boron is about −1.5 % per g/kg of boric acid.
+- A two-region pressurizer: insurge compresses the steam bubble, outsurge flashes the water, heaters, spray from the
+  pump discharge, a relief valve and a safety valve. Charging holds its level; water exchange with clean condensate
+  or 40 g/kg concentrate dilutes or borates the primary.
+- Reactor coolant pumps keep their Create shafts but coast down on a 300 kg·m² flywheel (τ = 12 s). Steam generators
+  at water-tube boiler drums feed the existing turbines; their drum level feeds the protection.
+- The 01 §1.11 protection set with three channels per function and three DNBR calculators: power with the start-up
+  setpoint and permit, period, high and low pressure, loop flow, pump speed, hot leg temperature, DNBR, SG level,
+  the button and an external scram on the cabinet terminals. Safety injection below 12.5 MPa with 16 g/kg solution.
+- A primary leak drains through the pressurizer to a low-pressure scram and injection; cladding that stays past
+  departure from nucleate boiling for 5 s fails and releases iodine through the leak or relief valve; overpressure
+  ruptures the loop through the damage budget. Control desk, ru/en texts, recipes, a T2 handbook chapter and game
+  tests not yet run.
+- Fuel depletion moved out of the T1 channel reactor into a shared helper; T1 behaviour is unchanged.
+
 ### Telemetry and SCADA (A4)
 - Telemetry gateway (RTU): scans the local panels of every machine within 8 blocks once a second and serves the
   snapshot to a CC: Tweaked computer as the `pc_rtu` peripheral — machines, named instruments with units, lamps as

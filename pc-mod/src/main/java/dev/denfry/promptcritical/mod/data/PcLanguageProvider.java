@@ -323,6 +323,8 @@ public final class PcLanguageProvider extends LanguageProvider {
         b("power_reactor", "Channel Power Reactor (AM-1 type)", "Канальный энергетический реактор (типа АМ-1)");
         b("primary_pump", "Primary Circulation Pump", "Главный циркуляционный насос");
         b("steam_generator", "Steam Generator", "Парогенератор");
+        b("pwr_reactor", "Pressurized Water Reactor (VVER type)", "Водо-водяной энергетический реактор (типа ВВЭР)");
+        b("pressurizer", "Pressurizer", "Компенсатор давления");
         b("wellhead", "Wellhead", "Колонная головка");
         b("christmas_tree", "Christmas Tree", "Фонтанная арматура");
         b("pumpjack", "Pumpjack", "Станок-качалка");

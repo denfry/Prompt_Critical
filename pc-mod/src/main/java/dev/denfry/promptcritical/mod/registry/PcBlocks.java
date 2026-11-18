@@ -557,6 +557,14 @@ public final class PcBlocks {
     public static final DeferredBlock<PcDeviceBlock> STEAM_GENERATOR = device("steam_generator", machine(),
             Spec.facing(BlockStateProperties.LIT), FoundryBlock.with(dev.denfry.promptcritical.mod.npp.SteamGeneratorBlockEntity::new));
 
+    // --- АЭС T2a: ВВЭР — корпус с зоной на 19 ТВС и верхний блок СУЗ, компенсатор давления ---
+    /** Установка 3×6×3: нижний куб — корпус с зоной, верхний — блок приводов СУЗ; контроллер (пульт) — в центре низа. */
+    private static final Footprint FP_PWR_REACTOR = Footprint.of(CUBE3, CUBE3.at(0, 3, 0));
+    public static final DeferredBlock<PcDeviceBlock> PWR_REACTOR = device("pwr_reactor", machine(), Spec.facing().segments(PcProperties.PWR_SEGMENT, FP_PWR_REACTOR),
+            FoundryBlock.with(dev.denfry.promptcritical.mod.npp.PwrReactorBlockEntity::new));
+    public static final DeferredBlock<PcDeviceBlock> PRESSURIZER = device("pressurizer", machine(), Spec.facing(BlockStateProperties.LIT),
+            FoundryBlock.with(dev.denfry.promptcritical.mod.npp.PressurizerBlockEntity::new));
+
     // --- обогащение, литьё, механический цех (08 §8.3, §8.9, §8.10) ---
     public static final DeferredBlock<PcDeviceBlock> COAL_JIG = device("coal_jig", machine(),
             Spec.facing(PcProperties.RUNNING).footprint(Footprint.of(Segment.box(0, 1, 0, 1, 0, 0))),
