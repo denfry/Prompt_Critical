@@ -1,14 +1,134 @@
 {
 	"credit": "Made with Blockbench",
 	"textures": {
-		"particle": "promptcritical:block/common/graphite",
-		"g": "promptcritical:block/common/graphite"
+		"particle": "promptcritical:block/steelmaking/graphite",
+		"steelmaking_graphite": "promptcritical:block/steelmaking/graphite"
 	},
 	"elements": [
 		{
-			"name": "electrode_0",
-			"from": [5.5, -15.92, -13.036],
-			"to": [10.5, 31.92, -10.964],
+			"name": "rod_0",
+			"from": [5.5, -16, -12.49728],
+			"to": [10.5, 0, -11.50272],
+			"rotation": {
+				"angle": 0,
+				"axis": "y",
+				"origin": [8, 8, 8]
+			},
+			"faces": {
+				"east": {
+					"uv": [0, 0, 0.99456, 16],
+					"texture": "#steelmaking_graphite"
+				},
+				"west": {
+					"uv": [7.50272, 0, 8.49728, 16],
+					"texture": "#steelmaking_graphite"
+				},
+				"down": {
+					"uv": [0, 0, 5, 0.99456],
+					"texture": "#steelmaking_graphite"
+				}
+			}
+		},
+		{
+			"name": "rod_1",
+			"from": [5.5, -16, -12.49728],
+			"to": [10.5, 0, -11.50272],
+			"rotation": {
+				"angle": 22.5,
+				"axis": "y",
+				"origin": [8, 8, -12]
+			},
+			"faces": {
+				"east": {
+					"uv": [9.27387, 0, 10.26843, 16],
+					"texture": "#steelmaking_graphite"
+				},
+				"west": {
+					"uv": [1.77115, 0, 2.76571, 16],
+					"texture": "#steelmaking_graphite"
+				},
+				"down": {
+					"uv": [0, 0, 5, 0.99456],
+					"texture": "#steelmaking_graphite"
+				}
+			}
+		},
+		{
+			"name": "rod_2",
+			"from": [5.5, -16, -12.49728],
+			"to": [10.5, 0, -11.50272],
+			"rotation": {
+				"angle": 45,
+				"axis": "y",
+				"origin": [8, 8, -12]
+			},
+			"faces": {
+				"east": {
+					"uv": [3.5423, 0, 4.53686, 16],
+					"texture": "#steelmaking_graphite"
+				},
+				"west": {
+					"uv": [11.04502, 0, 12.03958, 16],
+					"texture": "#steelmaking_graphite"
+				},
+				"down": {
+					"uv": [0, 0, 5, 0.99456],
+					"texture": "#steelmaking_graphite"
+				}
+			}
+		},
+		{
+			"name": "rod_3",
+			"from": [5.5, -16, -12.49728],
+			"to": [10.5, 0, -11.50272],
+			"rotation": {
+				"angle": -22.5,
+				"axis": "y",
+				"origin": [8, 8, -12]
+			},
+			"faces": {
+				"east": {
+					"uv": [12.81617, 0, 13.81073, 16],
+					"texture": "#steelmaking_graphite"
+				},
+				"west": {
+					"uv": [5.31345, 0, 6.30801, 16],
+					"texture": "#steelmaking_graphite"
+				},
+				"down": {
+					"uv": [0, 0, 5, 0.99456],
+					"texture": "#steelmaking_graphite"
+				}
+			}
+		},
+		{
+			"name": "rod_4",
+			"from": [5.5, -16, -12.49728],
+			"to": [10.5, 0, -11.50272],
+			"rotation": {
+				"angle": -45,
+				"axis": "y",
+				"origin": [8, 8, -12]
+			},
+			"faces": {
+				"east": {
+					"uv": [7.0846, 0, 8.07916, 16],
+					"texture": "#steelmaking_graphite"
+				},
+				"west": {
+					"uv": [14.58732, 0, 15.58188, 16],
+					"texture": "#steelmaking_graphite"
+				},
+				"down": {
+					"uv": [0, 0, 5, 0.99456],
+					"texture": "#steelmaking_graphite"
+				}
+			}
+		},
+		{
+			"name": "rod_5",
+			"from": [7.50272, -16, -14.5],
+			"to": [8.49728, 0, -9.5],
 			"rotation": {
 				"angle": 0,
 				"axis": "y",
@@ -16,35 +136,171 @@
 			},
 			"faces": {
 				"north": {
-					"uv": [0, 0, 5, 16],
-					"texture": "#g"
-				},
-				"east": {
-					"uv": [0, 0, 2.07, 16],
-					"texture": "#g"
+					"uv": [1.35303, 0, 2.34759, 16],
+					"texture": "#steelmaking_graphite"
 				},
 				"south": {
-					"uv": [0, 0, 5, 16],
-					"texture": "#g"
-				},
-				"west": {
-					"uv": [0, 0, 2.07, 16],
-					"texture": "#g"
-				},
-				"up": {
-					"uv": [0, 0, 5, 2.07],
-					"texture": "#g"
+					"uv": [8.85575, 0, 9.85031, 16],
+					"texture": "#steelmaking_graphite"
 				},
 				"down": {
-					"uv": [0, 0, 5, 2.07],
-					"texture": "#g"
+					"uv": [0, 0, 5, 0.99456],
+					"texture": "#steelmaking_graphite"
 				}
 			}
 		},
 		{
-			"name": "electrode_1",
-			"from": [6.964, -15.93, -14.5],
-			"to": [9.036, 31.93, -9.5],
+			"name": "rod_6",
+			"from": [7.50272, -16, -14.5],
+			"to": [8.49728, 0, -9.5],
+			"rotation": {
+				"angle": 22.5,
+				"axis": "y",
+				"origin": [8, 8, -12]
+			},
+			"faces": {
+				"north": {
+					"uv": [10.6269, 0, 11.62146, 16],
+					"texture": "#steelmaking_graphite"
+				},
+				"south": {
+					"uv": [3.12418, 0, 4.11875, 16],
+					"texture": "#steelmaking_graphite"
+				},
+				"down": {
+					"uv": [0, 0, 5, 0.99456],
+					"texture": "#steelmaking_graphite"
+				}
+			}
+		},
+		{
+			"name": "rod_7",
+			"from": [7.50272, -16, -14.5],
+			"to": [8.49728, 0, -9.5],
+			"rotation": {
+				"angle": -22.5,
+				"axis": "y",
+				"origin": [8, 8, -12]
+			},
+			"faces": {
+				"north": {
+					"uv": [4.89533, 0, 5.8899, 16],
+					"texture": "#steelmaking_graphite"
+				},
+				"south": {
+					"uv": [12.39805, 0, 13.39261, 16],
+					"texture": "#steelmaking_graphite"
+				},
+				"down": {
+					"uv": [0, 0, 5, 0.99456],
+					"texture": "#steelmaking_graphite"
+				}
+			}
+		},
+		{
+			"name": "rod_8",
+			"from": [5.5, 0, -12.49728],
+			"to": [10.5, 16, -11.50272],
+			"rotation": {
+				"angle": 0,
+				"axis": "y",
+				"origin": [8, 8, 8]
+			},
+			"faces": {
+				"east": {
+					"uv": [0, 0, 0.99456, 16],
+					"texture": "#steelmaking_graphite"
+				},
+				"west": {
+					"uv": [7.50272, 0, 8.49728, 16],
+					"texture": "#steelmaking_graphite"
+				}
+			}
+		},
+		{
+			"name": "rod_9",
+			"from": [5.5, 0, -12.49728],
+			"to": [10.5, 16, -11.50272],
+			"rotation": {
+				"angle": 22.5,
+				"axis": "y",
+				"origin": [8, 8, -12]
+			},
+			"faces": {
+				"east": {
+					"uv": [9.27387, 0, 10.26843, 16],
+					"texture": "#steelmaking_graphite"
+				},
+				"west": {
+					"uv": [1.77115, 0, 2.76571, 16],
+					"texture": "#steelmaking_graphite"
+				}
+			}
+		},
+		{
+			"name": "rod_10",
+			"from": [5.5, 0, -12.49728],
+			"to": [10.5, 16, -11.50272],
+			"rotation": {
+				"angle": 45,
+				"axis": "y",
+				"origin": [8, 8, -12]
+			},
+			"faces": {
+				"east": {
+					"uv": [3.5423, 0, 4.53686, 16],
+					"texture": "#steelmaking_graphite"
+				},
+				"west": {
+					"uv": [11.04502, 0, 12.03958, 16],
+					"texture": "#steelmaking_graphite"
+				}
+			}
+		},
+		{
+			"name": "rod_11",
+			"from": [5.5, 0, -12.49728],
+			"to": [10.5, 16, -11.50272],
+			"rotation": {
+				"angle": -22.5,
+				"axis": "y",
+				"origin": [8, 8, -12]
+			},
+			"faces": {
+				"east": {
+					"uv": [12.81617, 0, 13.81073, 16],
+					"texture": "#steelmaking_graphite"
+				},
+				"west": {
+					"uv": [5.31345, 0, 6.30801, 16],
+					"texture": "#steelmaking_graphite"
+				}
+			}
+		},
+		{
+			"name": "rod_12",
+			"from": [5.5, 0, -12.49728],
+			"to": [10.5, 16, -11.50272],
+			"rotation": {
+				"angle": -45,
+				"axis": "y",
+				"origin": [8, 8, -12]
+			},
+			"faces": {
+				"east": {
+					"uv": [7.0846, 0, 8.07916, 16],
+					"texture": "#steelmaking_graphite"
+				},
+				"west": {
+					"uv": [14.58732, 0, 15.58188, 16],
+					"texture": "#steelmaking_graphite"
+				}
+			}
+		},
+		{
+			"name": "rod_13",
+			"from": [7.50272, 0, -14.5],
+			"to": [8.49728, 16, -9.5],
 			"rotation": {
 				"angle": 0,
 				"axis": "y",
@@ -52,35 +308,323 @@
 			},
 			"faces": {
 				"north": {
-					"uv": [0, 0, 2.07, 16],
-					"texture": "#g"
-				},
-				"east": {
-					"uv": [0, 0, 5, 16],
-					"texture": "#g"
+					"uv": [1.35303, 0, 2.34759, 16],
+					"texture": "#steelmaking_graphite"
 				},
 				"south": {
-					"uv": [0, 0, 2.07, 16],
-					"texture": "#g"
-				},
-				"west": {
-					"uv": [0, 0, 5, 16],
-					"texture": "#g"
-				},
-				"up": {
-					"uv": [0, 0, 2.07, 5],
-					"texture": "#g"
-				},
-				"down": {
-					"uv": [0, 0, 2.07, 5],
-					"texture": "#g"
+					"uv": [8.85575, 0, 9.85031, 16],
+					"texture": "#steelmaking_graphite"
 				}
 			}
 		},
 		{
-			"name": "electrode_2",
-			"from": [5.5, -15.94, -13.036],
-			"to": [10.5, 31.94, -10.964],
+			"name": "rod_14",
+			"from": [7.50272, 0, -14.5],
+			"to": [8.49728, 16, -9.5],
+			"rotation": {
+				"angle": 22.5,
+				"axis": "y",
+				"origin": [8, 8, -12]
+			},
+			"faces": {
+				"north": {
+					"uv": [10.6269, 0, 11.62146, 16],
+					"texture": "#steelmaking_graphite"
+				},
+				"south": {
+					"uv": [3.12418, 0, 4.11875, 16],
+					"texture": "#steelmaking_graphite"
+				}
+			}
+		},
+		{
+			"name": "rod_15",
+			"from": [7.50272, 0, -14.5],
+			"to": [8.49728, 16, -9.5],
+			"rotation": {
+				"angle": -22.5,
+				"axis": "y",
+				"origin": [8, 8, -12]
+			},
+			"faces": {
+				"north": {
+					"uv": [4.89533, 0, 5.8899, 16],
+					"texture": "#steelmaking_graphite"
+				},
+				"south": {
+					"uv": [12.39805, 0, 13.39261, 16],
+					"texture": "#steelmaking_graphite"
+				}
+			}
+		},
+		{
+			"name": "rod_16",
+			"from": [5.5, 16, -12.49728],
+			"to": [10.5, 32, -11.50272],
+			"rotation": {
+				"angle": 0,
+				"axis": "y",
+				"origin": [8, 8, 8]
+			},
+			"faces": {
+				"east": {
+					"uv": [0, 0, 0.99456, 16],
+					"texture": "#steelmaking_graphite"
+				},
+				"west": {
+					"uv": [7.50272, 0, 8.49728, 16],
+					"texture": "#steelmaking_graphite"
+				},
+				"up": {
+					"uv": [0, 6.4087, 16, 9.5913],
+					"texture": "#steelmaking_graphite"
+				}
+			}
+		},
+		{
+			"name": "rod_17",
+			"from": [5.5, 16, -12.49728],
+			"to": [10.5, 32, -11.50272],
+			"rotation": {
+				"angle": 22.5,
+				"axis": "y",
+				"origin": [8, 8, -12]
+			},
+			"faces": {
+				"east": {
+					"uv": [9.27387, 0, 10.26843, 16],
+					"texture": "#steelmaking_graphite"
+				},
+				"west": {
+					"uv": [1.77115, 0, 2.76571, 16],
+					"texture": "#steelmaking_graphite"
+				},
+				"up": {
+					"uv": [0, 6.4087, 16, 9.5913],
+					"texture": "#steelmaking_graphite"
+				}
+			}
+		},
+		{
+			"name": "rod_18",
+			"from": [5.5, 16, -12.49728],
+			"to": [10.5, 32, -11.50272],
+			"rotation": {
+				"angle": 45,
+				"axis": "y",
+				"origin": [8, 8, -12]
+			},
+			"faces": {
+				"east": {
+					"uv": [3.5423, 0, 4.53686, 16],
+					"texture": "#steelmaking_graphite"
+				},
+				"west": {
+					"uv": [11.04502, 0, 12.03958, 16],
+					"texture": "#steelmaking_graphite"
+				},
+				"up": {
+					"uv": [0, 6.4087, 16, 9.5913],
+					"texture": "#steelmaking_graphite"
+				}
+			}
+		},
+		{
+			"name": "rod_19",
+			"from": [5.5, 16, -12.49728],
+			"to": [10.5, 32, -11.50272],
+			"rotation": {
+				"angle": -22.5,
+				"axis": "y",
+				"origin": [8, 8, -12]
+			},
+			"faces": {
+				"east": {
+					"uv": [12.81617, 0, 13.81073, 16],
+					"texture": "#steelmaking_graphite"
+				},
+				"west": {
+					"uv": [5.31345, 0, 6.30801, 16],
+					"texture": "#steelmaking_graphite"
+				},
+				"up": {
+					"uv": [0, 6.4087, 16, 9.5913],
+					"texture": "#steelmaking_graphite"
+				}
+			}
+		},
+		{
+			"name": "rod_20",
+			"from": [5.5, 16, -12.49728],
+			"to": [10.5, 32, -11.50272],
+			"rotation": {
+				"angle": -45,
+				"axis": "y",
+				"origin": [8, 8, -12]
+			},
+			"faces": {
+				"east": {
+					"uv": [7.0846, 0, 8.07916, 16],
+					"texture": "#steelmaking_graphite"
+				},
+				"west": {
+					"uv": [14.58732, 0, 15.58188, 16],
+					"texture": "#steelmaking_graphite"
+				},
+				"up": {
+					"uv": [0, 6.4087, 16, 9.5913],
+					"texture": "#steelmaking_graphite"
+				}
+			}
+		},
+		{
+			"name": "rod_21",
+			"from": [7.50272, 16, -14.5],
+			"to": [8.49728, 32, -9.5],
+			"rotation": {
+				"angle": 0,
+				"axis": "y",
+				"origin": [8, 8, 8]
+			},
+			"faces": {
+				"north": {
+					"uv": [1.35303, 0, 2.34759, 16],
+					"texture": "#steelmaking_graphite"
+				},
+				"south": {
+					"uv": [8.85575, 0, 9.85031, 16],
+					"texture": "#steelmaking_graphite"
+				},
+				"up": {
+					"uv": [6.4087, 0, 9.5913, 16],
+					"texture": "#steelmaking_graphite"
+				}
+			}
+		},
+		{
+			"name": "rod_22",
+			"from": [7.50272, 16, -14.5],
+			"to": [8.49728, 32, -9.5],
+			"rotation": {
+				"angle": 22.5,
+				"axis": "y",
+				"origin": [8, 8, -12]
+			},
+			"faces": {
+				"north": {
+					"uv": [10.6269, 0, 11.62146, 16],
+					"texture": "#steelmaking_graphite"
+				},
+				"south": {
+					"uv": [3.12418, 0, 4.11875, 16],
+					"texture": "#steelmaking_graphite"
+				},
+				"up": {
+					"uv": [6.4087, 0, 9.5913, 16],
+					"texture": "#steelmaking_graphite"
+				}
+			}
+		},
+		{
+			"name": "rod_23",
+			"from": [7.50272, 16, -14.5],
+			"to": [8.49728, 32, -9.5],
+			"rotation": {
+				"angle": -22.5,
+				"axis": "y",
+				"origin": [8, 8, -12]
+			},
+			"faces": {
+				"north": {
+					"uv": [4.89533, 0, 5.8899, 16],
+					"texture": "#steelmaking_graphite"
+				},
+				"south": {
+					"uv": [12.39805, 0, 13.39261, 16],
+					"texture": "#steelmaking_graphite"
+				},
+				"up": {
+					"uv": [6.4087, 0, 9.5913, 16],
+					"texture": "#steelmaking_graphite"
+				}
+			}
+		},
+		{
+			"name": "nipple_0",
+			"from": [10.2, 6, -12.57739],
+			"to": [10.6, 6.6, -11.42261],
+			"rotation": {
+				"angle": 0,
+				"axis": "y",
+				"origin": [8, 8, 8]
+			},
+			"faces": {
+				"north": {
+					"uv": [5.4, 9.4, 5.8, 10],
+					"texture": "#steelmaking_graphite"
+				},
+				"east": {
+					"uv": [11.42261, 9.4, 12.57739, 10],
+					"texture": "#steelmaking_graphite"
+				},
+				"south": {
+					"uv": [10.2, 9.4, 10.6, 10],
+					"texture": "#steelmaking_graphite"
+				},
+				"west": {
+					"uv": [3.42261, 9.4, 4.57739, 10],
+					"texture": "#steelmaking_graphite"
+				},
+				"up": {
+					"uv": [10.2, 3.42261, 10.6, 4.57739],
+					"texture": "#steelmaking_graphite"
+				},
+				"down": {
+					"uv": [10.2, 11.42261, 10.6, 12.57739],
+					"texture": "#steelmaking_graphite"
+				}
+			}
+		},
+		{
+			"name": "nipple_1",
+			"from": [10.2, 6, -12.57739],
+			"to": [10.6, 6.6, -11.42261],
+			"rotation": {
+				"angle": 22.5,
+				"axis": "y",
+				"origin": [8, 8, -12]
+			},
+			"faces": {
+				"north": {
+					"uv": [5.4, 9.4, 5.8, 10],
+					"texture": "#steelmaking_graphite"
+				},
+				"east": {
+					"uv": [11.42261, 9.4, 12.57739, 10],
+					"texture": "#steelmaking_graphite"
+				},
+				"south": {
+					"uv": [10.2, 9.4, 10.6, 10],
+					"texture": "#steelmaking_graphite"
+				},
+				"west": {
+					"uv": [3.42261, 9.4, 4.57739, 10],
+					"texture": "#steelmaking_graphite"
+				},
+				"up": {
+					"uv": [10.2, 3.42261, 10.6, 4.57739],
+					"texture": "#steelmaking_graphite"
+				},
+				"down": {
+					"uv": [10.2, 11.42261, 10.6, 12.57739],
+					"texture": "#steelmaking_graphite"
+				}
+			}
+		},
+		{
+			"name": "nipple_2",
+			"from": [10.2, 6, -12.57739],
+			"to": [10.6, 6.6, -11.42261],
 			"rotation": {
 				"angle": 45,
 				"axis": "y",
@@ -88,35 +632,71 @@
 			},
 			"faces": {
 				"north": {
-					"uv": [0, 0, 5, 16],
-					"texture": "#g"
+					"uv": [5.4, 9.4, 5.8, 10],
+					"texture": "#steelmaking_graphite"
 				},
 				"east": {
-					"uv": [0, 0, 2.07, 16],
-					"texture": "#g"
+					"uv": [11.42261, 9.4, 12.57739, 10],
+					"texture": "#steelmaking_graphite"
 				},
 				"south": {
-					"uv": [0, 0, 5, 16],
-					"texture": "#g"
+					"uv": [10.2, 9.4, 10.6, 10],
+					"texture": "#steelmaking_graphite"
 				},
 				"west": {
-					"uv": [0, 0, 2.07, 16],
-					"texture": "#g"
+					"uv": [3.42261, 9.4, 4.57739, 10],
+					"texture": "#steelmaking_graphite"
 				},
 				"up": {
-					"uv": [0, 0, 5, 2.07],
-					"texture": "#g"
+					"uv": [10.2, 3.42261, 10.6, 4.57739],
+					"texture": "#steelmaking_graphite"
 				},
 				"down": {
-					"uv": [0, 0, 5, 2.07],
-					"texture": "#g"
+					"uv": [10.2, 11.42261, 10.6, 12.57739],
+					"texture": "#steelmaking_graphite"
 				}
 			}
 		},
 		{
-			"name": "electrode_3",
-			"from": [5.5, -15.95, -13.036],
-			"to": [10.5, 31.95, -10.964],
+			"name": "nipple_3",
+			"from": [10.2, 6, -12.57739],
+			"to": [10.6, 6.6, -11.42261],
+			"rotation": {
+				"angle": -22.5,
+				"axis": "y",
+				"origin": [8, 8, -12]
+			},
+			"faces": {
+				"north": {
+					"uv": [5.4, 9.4, 5.8, 10],
+					"texture": "#steelmaking_graphite"
+				},
+				"east": {
+					"uv": [11.42261, 9.4, 12.57739, 10],
+					"texture": "#steelmaking_graphite"
+				},
+				"south": {
+					"uv": [10.2, 9.4, 10.6, 10],
+					"texture": "#steelmaking_graphite"
+				},
+				"west": {
+					"uv": [3.42261, 9.4, 4.57739, 10],
+					"texture": "#steelmaking_graphite"
+				},
+				"up": {
+					"uv": [10.2, 3.42261, 10.6, 4.57739],
+					"texture": "#steelmaking_graphite"
+				},
+				"down": {
+					"uv": [10.2, 11.42261, 10.6, 12.57739],
+					"texture": "#steelmaking_graphite"
+				}
+			}
+		},
+		{
+			"name": "nipple_4",
+			"from": [10.2, 6, -12.57739],
+			"to": [10.6, 6.6, -11.42261],
 			"rotation": {
 				"angle": -45,
 				"axis": "y",
@@ -124,28 +704,424 @@
 			},
 			"faces": {
 				"north": {
-					"uv": [0, 0, 5, 16],
-					"texture": "#g"
+					"uv": [5.4, 9.4, 5.8, 10],
+					"texture": "#steelmaking_graphite"
 				},
 				"east": {
-					"uv": [0, 0, 2.07, 16],
-					"texture": "#g"
+					"uv": [11.42261, 9.4, 12.57739, 10],
+					"texture": "#steelmaking_graphite"
 				},
 				"south": {
-					"uv": [0, 0, 5, 16],
-					"texture": "#g"
+					"uv": [10.2, 9.4, 10.6, 10],
+					"texture": "#steelmaking_graphite"
 				},
 				"west": {
-					"uv": [0, 0, 2.07, 16],
-					"texture": "#g"
+					"uv": [3.42261, 9.4, 4.57739, 10],
+					"texture": "#steelmaking_graphite"
 				},
 				"up": {
-					"uv": [0, 0, 5, 2.07],
-					"texture": "#g"
+					"uv": [10.2, 3.42261, 10.6, 4.57739],
+					"texture": "#steelmaking_graphite"
 				},
 				"down": {
-					"uv": [0, 0, 5, 2.07],
-					"texture": "#g"
+					"uv": [10.2, 11.42261, 10.6, 12.57739],
+					"texture": "#steelmaking_graphite"
+				}
+			}
+		},
+		{
+			"name": "nipple_5",
+			"from": [7.42261, 6, -9.8],
+			"to": [8.57739, 6.6, -9.4],
+			"rotation": {
+				"angle": 0,
+				"axis": "y",
+				"origin": [8, 8, 8]
+			},
+			"faces": {
+				"north": {
+					"uv": [7.42261, 9.4, 8.57739, 10],
+					"texture": "#steelmaking_graphite"
+				},
+				"east": {
+					"uv": [9.4, 9.4, 9.8, 10],
+					"texture": "#steelmaking_graphite"
+				},
+				"south": {
+					"uv": [7.42261, 9.4, 8.57739, 10],
+					"texture": "#steelmaking_graphite"
+				},
+				"west": {
+					"uv": [6.2, 9.4, 6.6, 10],
+					"texture": "#steelmaking_graphite"
+				},
+				"up": {
+					"uv": [7.42261, 6.2, 8.57739, 6.6],
+					"texture": "#steelmaking_graphite"
+				},
+				"down": {
+					"uv": [7.42261, 9.4, 8.57739, 9.8],
+					"texture": "#steelmaking_graphite"
+				}
+			}
+		},
+		{
+			"name": "nipple_6",
+			"from": [7.42261, 6, -9.8],
+			"to": [8.57739, 6.6, -9.4],
+			"rotation": {
+				"angle": 22.5,
+				"axis": "y",
+				"origin": [8, 8, -12]
+			},
+			"faces": {
+				"north": {
+					"uv": [7.42261, 9.4, 8.57739, 10],
+					"texture": "#steelmaking_graphite"
+				},
+				"east": {
+					"uv": [9.4, 9.4, 9.8, 10],
+					"texture": "#steelmaking_graphite"
+				},
+				"south": {
+					"uv": [7.42261, 9.4, 8.57739, 10],
+					"texture": "#steelmaking_graphite"
+				},
+				"west": {
+					"uv": [6.2, 9.4, 6.6, 10],
+					"texture": "#steelmaking_graphite"
+				},
+				"up": {
+					"uv": [7.42261, 6.2, 8.57739, 6.6],
+					"texture": "#steelmaking_graphite"
+				},
+				"down": {
+					"uv": [7.42261, 9.4, 8.57739, 9.8],
+					"texture": "#steelmaking_graphite"
+				}
+			}
+		},
+		{
+			"name": "nipple_7",
+			"from": [7.42261, 6, -9.8],
+			"to": [8.57739, 6.6, -9.4],
+			"rotation": {
+				"angle": -22.5,
+				"axis": "y",
+				"origin": [8, 8, -12]
+			},
+			"faces": {
+				"north": {
+					"uv": [7.42261, 9.4, 8.57739, 10],
+					"texture": "#steelmaking_graphite"
+				},
+				"east": {
+					"uv": [9.4, 9.4, 9.8, 10],
+					"texture": "#steelmaking_graphite"
+				},
+				"south": {
+					"uv": [7.42261, 9.4, 8.57739, 10],
+					"texture": "#steelmaking_graphite"
+				},
+				"west": {
+					"uv": [6.2, 9.4, 6.6, 10],
+					"texture": "#steelmaking_graphite"
+				},
+				"up": {
+					"uv": [7.42261, 6.2, 8.57739, 6.6],
+					"texture": "#steelmaking_graphite"
+				},
+				"down": {
+					"uv": [7.42261, 9.4, 8.57739, 9.8],
+					"texture": "#steelmaking_graphite"
+				}
+			}
+		},
+		{
+			"name": "nipple_8",
+			"from": [5.4, 6, -12.57739],
+			"to": [5.8, 6.6, -11.42261],
+			"rotation": {
+				"angle": 0,
+				"axis": "y",
+				"origin": [8, 8, 8]
+			},
+			"faces": {
+				"north": {
+					"uv": [10.2, 9.4, 10.6, 10],
+					"texture": "#steelmaking_graphite"
+				},
+				"east": {
+					"uv": [11.42261, 9.4, 12.57739, 10],
+					"texture": "#steelmaking_graphite"
+				},
+				"south": {
+					"uv": [5.4, 9.4, 5.8, 10],
+					"texture": "#steelmaking_graphite"
+				},
+				"west": {
+					"uv": [3.42261, 9.4, 4.57739, 10],
+					"texture": "#steelmaking_graphite"
+				},
+				"up": {
+					"uv": [5.4, 3.42261, 5.8, 4.57739],
+					"texture": "#steelmaking_graphite"
+				},
+				"down": {
+					"uv": [5.4, 11.42261, 5.8, 12.57739],
+					"texture": "#steelmaking_graphite"
+				}
+			}
+		},
+		{
+			"name": "nipple_9",
+			"from": [5.4, 6, -12.57739],
+			"to": [5.8, 6.6, -11.42261],
+			"rotation": {
+				"angle": 22.5,
+				"axis": "y",
+				"origin": [8, 8, -12]
+			},
+			"faces": {
+				"north": {
+					"uv": [10.2, 9.4, 10.6, 10],
+					"texture": "#steelmaking_graphite"
+				},
+				"east": {
+					"uv": [11.42261, 9.4, 12.57739, 10],
+					"texture": "#steelmaking_graphite"
+				},
+				"south": {
+					"uv": [5.4, 9.4, 5.8, 10],
+					"texture": "#steelmaking_graphite"
+				},
+				"west": {
+					"uv": [3.42261, 9.4, 4.57739, 10],
+					"texture": "#steelmaking_graphite"
+				},
+				"up": {
+					"uv": [5.4, 3.42261, 5.8, 4.57739],
+					"texture": "#steelmaking_graphite"
+				},
+				"down": {
+					"uv": [5.4, 11.42261, 5.8, 12.57739],
+					"texture": "#steelmaking_graphite"
+				}
+			}
+		},
+		{
+			"name": "nipple_10",
+			"from": [5.4, 6, -12.57739],
+			"to": [5.8, 6.6, -11.42261],
+			"rotation": {
+				"angle": 45,
+				"axis": "y",
+				"origin": [8, 8, -12]
+			},
+			"faces": {
+				"north": {
+					"uv": [10.2, 9.4, 10.6, 10],
+					"texture": "#steelmaking_graphite"
+				},
+				"east": {
+					"uv": [11.42261, 9.4, 12.57739, 10],
+					"texture": "#steelmaking_graphite"
+				},
+				"south": {
+					"uv": [5.4, 9.4, 5.8, 10],
+					"texture": "#steelmaking_graphite"
+				},
+				"west": {
+					"uv": [3.42261, 9.4, 4.57739, 10],
+					"texture": "#steelmaking_graphite"
+				},
+				"up": {
+					"uv": [5.4, 3.42261, 5.8, 4.57739],
+					"texture": "#steelmaking_graphite"
+				},
+				"down": {
+					"uv": [5.4, 11.42261, 5.8, 12.57739],
+					"texture": "#steelmaking_graphite"
+				}
+			}
+		},
+		{
+			"name": "nipple_11",
+			"from": [5.4, 6, -12.57739],
+			"to": [5.8, 6.6, -11.42261],
+			"rotation": {
+				"angle": -22.5,
+				"axis": "y",
+				"origin": [8, 8, -12]
+			},
+			"faces": {
+				"north": {
+					"uv": [10.2, 9.4, 10.6, 10],
+					"texture": "#steelmaking_graphite"
+				},
+				"east": {
+					"uv": [11.42261, 9.4, 12.57739, 10],
+					"texture": "#steelmaking_graphite"
+				},
+				"south": {
+					"uv": [5.4, 9.4, 5.8, 10],
+					"texture": "#steelmaking_graphite"
+				},
+				"west": {
+					"uv": [3.42261, 9.4, 4.57739, 10],
+					"texture": "#steelmaking_graphite"
+				},
+				"up": {
+					"uv": [5.4, 3.42261, 5.8, 4.57739],
+					"texture": "#steelmaking_graphite"
+				},
+				"down": {
+					"uv": [5.4, 11.42261, 5.8, 12.57739],
+					"texture": "#steelmaking_graphite"
+				}
+			}
+		},
+		{
+			"name": "nipple_12",
+			"from": [5.4, 6, -12.57739],
+			"to": [5.8, 6.6, -11.42261],
+			"rotation": {
+				"angle": -45,
+				"axis": "y",
+				"origin": [8, 8, -12]
+			},
+			"faces": {
+				"north": {
+					"uv": [10.2, 9.4, 10.6, 10],
+					"texture": "#steelmaking_graphite"
+				},
+				"east": {
+					"uv": [11.42261, 9.4, 12.57739, 10],
+					"texture": "#steelmaking_graphite"
+				},
+				"south": {
+					"uv": [5.4, 9.4, 5.8, 10],
+					"texture": "#steelmaking_graphite"
+				},
+				"west": {
+					"uv": [3.42261, 9.4, 4.57739, 10],
+					"texture": "#steelmaking_graphite"
+				},
+				"up": {
+					"uv": [5.4, 3.42261, 5.8, 4.57739],
+					"texture": "#steelmaking_graphite"
+				},
+				"down": {
+					"uv": [5.4, 11.42261, 5.8, 12.57739],
+					"texture": "#steelmaking_graphite"
+				}
+			}
+		},
+		{
+			"name": "nipple_13",
+			"from": [7.42261, 6, -14.6],
+			"to": [8.57739, 6.6, -14.2],
+			"rotation": {
+				"angle": 0,
+				"axis": "y",
+				"origin": [8, 8, 8]
+			},
+			"faces": {
+				"north": {
+					"uv": [7.42261, 9.4, 8.57739, 10],
+					"texture": "#steelmaking_graphite"
+				},
+				"east": {
+					"uv": [14.2, 9.4, 14.6, 10],
+					"texture": "#steelmaking_graphite"
+				},
+				"south": {
+					"uv": [7.42261, 9.4, 8.57739, 10],
+					"texture": "#steelmaking_graphite"
+				},
+				"west": {
+					"uv": [1.4, 9.4, 1.8, 10],
+					"texture": "#steelmaking_graphite"
+				},
+				"up": {
+					"uv": [7.42261, 1.4, 8.57739, 1.8],
+					"texture": "#steelmaking_graphite"
+				},
+				"down": {
+					"uv": [7.42261, 14.2, 8.57739, 14.6],
+					"texture": "#steelmaking_graphite"
+				}
+			}
+		},
+		{
+			"name": "nipple_14",
+			"from": [7.42261, 6, -14.6],
+			"to": [8.57739, 6.6, -14.2],
+			"rotation": {
+				"angle": 22.5,
+				"axis": "y",
+				"origin": [8, 8, -12]
+			},
+			"faces": {
+				"north": {
+					"uv": [7.42261, 9.4, 8.57739, 10],
+					"texture": "#steelmaking_graphite"
+				},
+				"east": {
+					"uv": [14.2, 9.4, 14.6, 10],
+					"texture": "#steelmaking_graphite"
+				},
+				"south": {
+					"uv": [7.42261, 9.4, 8.57739, 10],
+					"texture": "#steelmaking_graphite"
+				},
+				"west": {
+					"uv": [1.4, 9.4, 1.8, 10],
+					"texture": "#steelmaking_graphite"
+				},
+				"up": {
+					"uv": [7.42261, 1.4, 8.57739, 1.8],
+					"texture": "#steelmaking_graphite"
+				},
+				"down": {
+					"uv": [7.42261, 14.2, 8.57739, 14.6],
+					"texture": "#steelmaking_graphite"
+				}
+			}
+		},
+		{
+			"name": "nipple_15",
+			"from": [7.42261, 6, -14.6],
+			"to": [8.57739, 6.6, -14.2],
+			"rotation": {
+				"angle": -22.5,
+				"axis": "y",
+				"origin": [8, 8, -12]
+			},
+			"faces": {
+				"north": {
+					"uv": [7.42261, 9.4, 8.57739, 10],
+					"texture": "#steelmaking_graphite"
+				},
+				"east": {
+					"uv": [14.2, 9.4, 14.6, 10],
+					"texture": "#steelmaking_graphite"
+				},
+				"south": {
+					"uv": [7.42261, 9.4, 8.57739, 10],
+					"texture": "#steelmaking_graphite"
+				},
+				"west": {
+					"uv": [1.4, 9.4, 1.8, 10],
+					"texture": "#steelmaking_graphite"
+				},
+				"up": {
+					"uv": [7.42261, 1.4, 8.57739, 1.8],
+					"texture": "#steelmaking_graphite"
+				},
+				"down": {
+					"uv": [7.42261, 14.2, 8.57739, 14.6],
+					"texture": "#steelmaking_graphite"
 				}
 			}
 		}

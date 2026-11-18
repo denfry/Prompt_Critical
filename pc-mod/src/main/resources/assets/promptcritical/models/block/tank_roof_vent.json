@@ -1,14 +1,13 @@
 {
 	"credit": "Made with Blockbench",
 	"textures": {
-		"particle": "promptcritical:block/common/oil_tank",
-		"dg": "promptcritical:block/common/grid_dark_grey",
-		"st": "promptcritical:block/common/steel_bare",
-		"tank": "promptcritical:block/common/oil_tank"
+		"particle": "promptcritical:block/m8field/tank_silver",
+		"m8field_tank_silver": "promptcritical:block/m8field/tank_silver",
+		"m8field_greyblue": "promptcritical:block/m8field/greyblue"
 	},
 	"elements": [
 		{
-			"name": "roof",
+			"name": "plate",
 			"from": [0, 0, 0],
 			"to": [16, 2, 16],
 			"rotation": {
@@ -18,179 +17,135 @@
 			},
 			"faces": {
 				"north": {
-					"uv": [0, 0, 16, 2],
-					"texture": "#tank"
+					"uv": [0, 14, 16, 16],
+					"texture": "#m8field_tank_silver"
 				},
 				"east": {
-					"uv": [0, 0, 16, 2],
-					"texture": "#tank"
+					"uv": [0, 14, 16, 16],
+					"texture": "#m8field_tank_silver"
 				},
 				"south": {
-					"uv": [0, 0, 16, 2],
-					"texture": "#tank"
+					"uv": [0, 14, 16, 16],
+					"texture": "#m8field_tank_silver"
 				},
 				"west": {
-					"uv": [0, 0, 16, 2],
-					"texture": "#tank"
+					"uv": [0, 14, 16, 16],
+					"texture": "#m8field_tank_silver"
 				},
 				"up": {
 					"uv": [0, 0, 16, 16],
-					"texture": "#tank"
+					"texture": "#m8field_tank_silver"
 				},
 				"down": {
 					"uv": [0, 0, 16, 16],
-					"texture": "#tank"
+					"texture": "#m8field_tank_silver"
 				}
 			}
 		},
 		{
-			"name": "breather_0",
-			"from": [5.5, 2, 6.964],
-			"to": [10.5, 6, 9.036],
+			"name": "neck_0",
+			"from": [6.4, 2, 7.68174],
+			"to": [9.6, 4, 8.31826],
 			"rotation": {
 				"angle": 0,
 				"axis": "y",
 				"origin": [8, 8, 8]
 			},
 			"faces": {
-				"north": {
-					"uv": [0, 0, 5, 4],
-					"texture": "#st"
-				},
 				"east": {
-					"uv": [0, 0, 2.07, 4],
-					"texture": "#st"
-				},
-				"south": {
-					"uv": [0, 0, 5, 4],
-					"texture": "#st"
+					"uv": [0, 12, 0.63652, 14],
+					"texture": "#m8field_tank_silver"
 				},
 				"west": {
-					"uv": [0, 0, 2.07, 4],
-					"texture": "#st"
-				},
-				"up": {
-					"uv": [0, 0, 5, 2.07],
-					"texture": "#st"
-				},
-				"down": {
-					"uv": [0, 0, 5, 2.07],
-					"texture": "#st"
+					"uv": [7.68174, 12, 8.31826, 14],
+					"texture": "#m8field_tank_silver"
 				}
 			}
 		},
 		{
-			"name": "breather_1",
-			"from": [6.964, 1.99, 5.5],
-			"to": [9.036, 6.01, 10.5],
+			"name": "neck_1",
+			"from": [6.4, 2, 7.68174],
+			"to": [9.6, 4, 8.31826],
 			"rotation": {
-				"angle": 0,
+				"angle": 22.5,
 				"axis": "y",
 				"origin": [8, 8, 8]
 			},
 			"faces": {
-				"north": {
-					"uv": [0, 0, 2.07, 4.02],
-					"texture": "#st"
-				},
 				"east": {
-					"uv": [0, 0, 5, 4.02],
-					"texture": "#st"
-				},
-				"south": {
-					"uv": [0, 0, 2.07, 4.02],
-					"texture": "#st"
+					"uv": [9.49515, 12, 10.13167, 14],
+					"texture": "#m8field_tank_silver"
 				},
 				"west": {
-					"uv": [0, 0, 5, 4.02],
-					"texture": "#st"
-				},
-				"up": {
-					"uv": [0, 0, 2.07, 5],
-					"texture": "#st"
-				},
-				"down": {
-					"uv": [0, 0, 2.07, 5],
-					"texture": "#st"
+					"uv": [1.81341, 12, 2.44993, 14],
+					"texture": "#m8field_tank_silver"
 				}
 			}
 		},
 		{
-			"name": "breather_2",
-			"from": [5.5, 1.98, 6.964],
-			"to": [10.5, 6.02, 9.036],
+			"name": "neck_2",
+			"from": [6.4, 2, 7.68174],
+			"to": [9.6, 4, 8.31826],
 			"rotation": {
 				"angle": 45,
 				"axis": "y",
 				"origin": [8, 8, 8]
 			},
 			"faces": {
-				"north": {
-					"uv": [0, 0, 5, 4.04],
-					"texture": "#st"
-				},
 				"east": {
-					"uv": [0, 0, 2.07, 4.04],
-					"texture": "#st"
-				},
-				"south": {
-					"uv": [0, 0, 5, 4.04],
-					"texture": "#st"
+					"uv": [3.62682, 12, 4.26334, 14],
+					"texture": "#m8field_tank_silver"
 				},
 				"west": {
-					"uv": [0, 0, 2.07, 4.04],
-					"texture": "#st"
-				},
-				"up": {
-					"uv": [0, 0, 5, 2.07],
-					"texture": "#st"
-				},
-				"down": {
-					"uv": [0, 0, 5, 2.07],
-					"texture": "#st"
+					"uv": [11.30856, 12, 11.94508, 14],
+					"texture": "#m8field_tank_silver"
 				}
 			}
 		},
 		{
-			"name": "breather_3",
-			"from": [5.5, 1.97, 6.964],
-			"to": [10.5, 6.03, 9.036],
+			"name": "neck_3",
+			"from": [6.4, 2, 7.68174],
+			"to": [9.6, 4, 8.31826],
+			"rotation": {
+				"angle": -22.5,
+				"axis": "y",
+				"origin": [8, 8, 8]
+			},
+			"faces": {
+				"east": {
+					"uv": [13.12197, 12, 13.75849, 14],
+					"texture": "#m8field_tank_silver"
+				},
+				"west": {
+					"uv": [5.44023, 12, 6.07675, 14],
+					"texture": "#m8field_tank_silver"
+				}
+			}
+		},
+		{
+			"name": "neck_4",
+			"from": [6.4, 2, 7.68174],
+			"to": [9.6, 4, 8.31826],
 			"rotation": {
 				"angle": -45,
 				"axis": "y",
 				"origin": [8, 8, 8]
 			},
 			"faces": {
-				"north": {
-					"uv": [0, 0, 5, 4.06],
-					"texture": "#st"
-				},
 				"east": {
-					"uv": [0, 0, 2.07, 4.06],
-					"texture": "#st"
-				},
-				"south": {
-					"uv": [0, 0, 5, 4.06],
-					"texture": "#st"
+					"uv": [7.25365, 12, 7.89017, 14],
+					"texture": "#m8field_tank_silver"
 				},
 				"west": {
-					"uv": [0, 0, 2.07, 4.06],
-					"texture": "#st"
-				},
-				"up": {
-					"uv": [0, 0, 5, 2.07],
-					"texture": "#st"
-				},
-				"down": {
-					"uv": [0, 0, 5, 2.07],
-					"texture": "#st"
+					"uv": [14.93539, 12, 15.57191, 14],
+					"texture": "#m8field_tank_silver"
 				}
 			}
 		},
 		{
-			"name": "cap",
-			"from": [4.5, 6, 4.5],
-			"to": [11.5, 7.5, 11.5],
+			"name": "neck_5",
+			"from": [7.68174, 2, 6.4],
+			"to": [8.31826, 4, 9.6],
 			"rotation": {
 				"angle": 0,
 				"axis": "y",
@@ -198,28 +153,124 @@
 			},
 			"faces": {
 				"north": {
-					"uv": [0, 0, 7, 1.5],
-					"texture": "#dg"
-				},
-				"east": {
-					"uv": [0, 0, 7, 1.5],
-					"texture": "#dg"
+					"uv": [1.38532, 12, 2.02184, 14],
+					"texture": "#m8field_tank_silver"
 				},
 				"south": {
-					"uv": [0, 0, 7, 1.5],
-					"texture": "#dg"
+					"uv": [9.06706, 12, 9.70358, 14],
+					"texture": "#m8field_tank_silver"
+				}
+			}
+		},
+		{
+			"name": "neck_6",
+			"from": [7.68174, 2, 6.4],
+			"to": [8.31826, 4, 9.6],
+			"rotation": {
+				"angle": 22.5,
+				"axis": "y",
+				"origin": [8, 8, 8]
+			},
+			"faces": {
+				"north": {
+					"uv": [10.88047, 12, 11.51699, 14],
+					"texture": "#m8field_tank_silver"
+				},
+				"south": {
+					"uv": [3.19873, 12, 3.83525, 14],
+					"texture": "#m8field_tank_silver"
+				}
+			}
+		},
+		{
+			"name": "neck_7",
+			"from": [7.68174, 2, 6.4],
+			"to": [8.31826, 4, 9.6],
+			"rotation": {
+				"angle": -22.5,
+				"axis": "y",
+				"origin": [8, 8, 8]
+			},
+			"faces": {
+				"north": {
+					"uv": [5.01214, 12, 5.64866, 14],
+					"texture": "#m8field_tank_silver"
+				},
+				"south": {
+					"uv": [12.69388, 12, 13.3304, 14],
+					"texture": "#m8field_tank_silver"
+				}
+			}
+		},
+		{
+			"name": "valve",
+			"from": [5.6, 4, 5.6],
+			"to": [10.4, 6.4, 10.4],
+			"rotation": {
+				"angle": 0,
+				"axis": "y",
+				"origin": [8, 8, 8]
+			},
+			"faces": {
+				"north": {
+					"uv": [5.6, 9.6, 10.4, 12],
+					"texture": "#m8field_greyblue"
+				},
+				"east": {
+					"uv": [5.6, 9.6, 10.4, 12],
+					"texture": "#m8field_greyblue"
+				},
+				"south": {
+					"uv": [5.6, 9.6, 10.4, 12],
+					"texture": "#m8field_greyblue"
 				},
 				"west": {
-					"uv": [0, 0, 7, 1.5],
-					"texture": "#dg"
+					"uv": [5.6, 9.6, 10.4, 12],
+					"texture": "#m8field_greyblue"
 				},
 				"up": {
-					"uv": [0, 0, 7, 7],
-					"texture": "#dg"
+					"uv": [5.6, 5.6, 10.4, 10.4],
+					"texture": "#m8field_greyblue"
 				},
 				"down": {
-					"uv": [0, 0, 7, 7],
-					"texture": "#dg"
+					"uv": [5.6, 5.6, 10.4, 10.4],
+					"texture": "#m8field_greyblue"
+				}
+			}
+		},
+		{
+			"name": "hood",
+			"from": [5, 6.4, 5],
+			"to": [11, 7.5, 11],
+			"rotation": {
+				"angle": 0,
+				"axis": "y",
+				"origin": [8, 8, 8]
+			},
+			"faces": {
+				"north": {
+					"uv": [5, 8.5, 11, 9.6],
+					"texture": "#m8field_greyblue"
+				},
+				"east": {
+					"uv": [5, 8.5, 11, 9.6],
+					"texture": "#m8field_greyblue"
+				},
+				"south": {
+					"uv": [5, 8.5, 11, 9.6],
+					"texture": "#m8field_greyblue"
+				},
+				"west": {
+					"uv": [5, 8.5, 11, 9.6],
+					"texture": "#m8field_greyblue"
+				},
+				"up": {
+					"uv": [5, 5, 11, 11],
+					"texture": "#m8field_greyblue"
+				},
+				"down": {
+					"uv": [5, 5, 11, 11],
+					"texture": "#m8field_greyblue"
 				}
 			}
 		}

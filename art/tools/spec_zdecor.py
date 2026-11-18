@@ -3,5 +3,4 @@ from artkit import *
 
 D = lambda n: f"block/decor/{n}.png"
 
-for _k in ("electrical", "pump", "control"):
-    mk(f"room_sign_{_k}", "decor", [el("plate", [2, 5, 15.5], [14, 11, 16], "s", full=["north"])], {"s": D(f"room_sign_{_k}")})
+# таблички room_sign_* нарисованы вручную в Blockbench: art/blockbench/decor/plant_decor.author.js

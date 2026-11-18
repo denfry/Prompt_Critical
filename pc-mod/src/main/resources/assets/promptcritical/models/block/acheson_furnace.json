@@ -1,17 +1,18 @@
 {
 	"credit": "Made with Blockbench",
 	"textures": {
-		"particle": "promptcritical:block/acheson_furnace",
-		"f": "promptcritical:block/acheson_furnace",
-		"charge": "promptcritical:block/common/fuelcycle_charge",
-		"gr": "promptcritical:block/common/graphite",
-		"cu": "promptcritical:block/common/fuelcycle_copper"
+		"particle": "promptcritical:block/material/brick",
+		"material_brick": "promptcritical:block/material/brick",
+		"material_soot": "promptcritical:block/material/soot",
+		"plant_concrete": "promptcritical:block/plant/concrete",
+		"steelmaking_graphite": "promptcritical:block/steelmaking/graphite",
+		"disconnector_copper": "promptcritical:block/disconnector/copper"
 	},
 	"elements": [
 		{
 			"name": "trough",
 			"from": [0, 0, 2],
-			"to": [16, 10, 14],
+			"to": [16, 8, 14],
 			"rotation": {
 				"angle": 0,
 				"axis": "y",
@@ -19,35 +20,35 @@
 			},
 			"faces": {
 				"north": {
-					"uv": [0, 0, 16, 10],
-					"texture": "#f"
+					"uv": [8, 12, 16, 16],
+					"texture": "#material_brick"
 				},
 				"east": {
-					"uv": [0, 0, 12, 10],
-					"texture": "#f"
+					"uv": [9, 12, 15, 16],
+					"texture": "#material_brick"
 				},
 				"south": {
-					"uv": [0, 0, 16, 10],
-					"texture": "#f"
+					"uv": [0, 12, 8, 16],
+					"texture": "#material_brick"
 				},
 				"west": {
-					"uv": [0, 0, 12, 10],
-					"texture": "#f"
+					"uv": [1, 12, 7, 16],
+					"texture": "#material_brick"
 				},
 				"up": {
-					"uv": [0, 0, 16, 12],
-					"texture": "#f"
+					"uv": [0, 1, 8, 7],
+					"texture": "#material_brick"
 				},
 				"down": {
-					"uv": [0, 0, 16, 12],
-					"texture": "#f"
+					"uv": [0, 9, 8, 15],
+					"texture": "#material_brick"
 				}
 			}
 		},
 		{
 			"name": "charge",
-			"from": [1, 10, 3],
-			"to": [15, 12, 13],
+			"from": [0.6, 8, 3],
+			"to": [15.4, 10, 13],
 			"rotation": {
 				"angle": 0,
 				"axis": "y",
@@ -55,35 +56,35 @@
 			},
 			"faces": {
 				"north": {
-					"uv": [0, 0, 14, 2],
-					"texture": "#charge"
+					"uv": [0.6, 6, 15.4, 8],
+					"texture": "#material_soot"
 				},
 				"east": {
-					"uv": [0, 0, 10, 2],
-					"texture": "#charge"
+					"uv": [3, 6, 13, 8],
+					"texture": "#material_soot"
 				},
 				"south": {
-					"uv": [0, 0, 14, 2],
-					"texture": "#charge"
+					"uv": [0.6, 6, 15.4, 8],
+					"texture": "#material_soot"
 				},
 				"west": {
-					"uv": [0, 0, 10, 2],
-					"texture": "#charge"
+					"uv": [3, 6, 13, 8],
+					"texture": "#material_soot"
 				},
 				"up": {
-					"uv": [0, 0, 14, 10],
-					"texture": "#charge"
+					"uv": [0.6, 3, 15.4, 13],
+					"texture": "#material_soot"
 				},
 				"down": {
-					"uv": [0, 0, 14, 10],
-					"texture": "#charge"
+					"uv": [0.6, 3, 15.4, 13],
+					"texture": "#material_soot"
 				}
 			}
 		},
 		{
-			"name": "glow_ridge",
-			"from": [3, 12, 5],
-			"to": [13, 13, 11],
+			"name": "cover",
+			"from": [1, 10, 4],
+			"to": [15, 11.6, 12],
 			"rotation": {
 				"angle": 0,
 				"axis": "y",
@@ -91,39 +92,35 @@
 			},
 			"faces": {
 				"north": {
-					"uv": [0, 0, 10, 1],
-					"texture": "#charge"
+					"uv": [1, 4.4, 15, 6],
+					"texture": "#plant_concrete"
 				},
 				"east": {
-					"uv": [0, 0, 6, 1],
-					"texture": "#charge"
+					"uv": [4, 4.4, 12, 6],
+					"texture": "#plant_concrete"
 				},
 				"south": {
-					"uv": [0, 0, 10, 1],
-					"texture": "#charge"
+					"uv": [1, 4.4, 15, 6],
+					"texture": "#plant_concrete"
 				},
 				"west": {
-					"uv": [0, 0, 6, 1],
-					"texture": "#charge"
+					"uv": [4, 4.4, 12, 6],
+					"texture": "#plant_concrete"
 				},
 				"up": {
-					"uv": [0, 0, 10, 6],
-					"texture": "#charge"
+					"uv": [1, 4, 15, 12],
+					"texture": "#plant_concrete"
 				},
 				"down": {
-					"uv": [0, 0, 10, 6],
-					"texture": "#charge"
+					"uv": [1, 4, 15, 12],
+					"texture": "#plant_concrete"
 				}
-			},
-			"neoforge_data": {
-				"block_light": 15,
-				"sky_light": 15
 			}
 		},
 		{
-			"name": "electrode_w_0",
-			"from": [-1, 4, 7.172],
-			"to": [1, 8, 8.828],
+			"name": "head_-1",
+			"from": [-1, 2, 4],
+			"to": [1, 10, 12],
 			"rotation": {
 				"angle": 0,
 				"axis": "y",
@@ -131,35 +128,35 @@
 			},
 			"faces": {
 				"north": {
-					"uv": [0, 0, 2, 4],
-					"texture": "#gr"
+					"uv": [15, 6, 16, 14],
+					"texture": "#steelmaking_graphite"
 				},
 				"east": {
-					"uv": [0, 0, 1.66, 4],
-					"texture": "#gr"
+					"uv": [4, 6, 12, 14],
+					"texture": "#steelmaking_graphite"
 				},
 				"south": {
-					"uv": [0, 0, 2, 4],
-					"texture": "#gr"
+					"uv": [0, 6, 1, 14],
+					"texture": "#steelmaking_graphite"
 				},
 				"west": {
-					"uv": [0, 0, 1.66, 4],
-					"texture": "#gr"
+					"uv": [4, 6, 12, 14],
+					"texture": "#steelmaking_graphite"
 				},
 				"up": {
-					"uv": [0, 0, 2, 1.66],
-					"texture": "#gr"
+					"uv": [0, 4, 1, 12],
+					"texture": "#steelmaking_graphite"
 				},
 				"down": {
-					"uv": [0, 0, 2, 1.66],
-					"texture": "#gr"
+					"uv": [0, 4, 1, 12],
+					"texture": "#steelmaking_graphite"
 				}
 			}
 		},
 		{
-			"name": "electrode_w_1",
-			"from": [-1.01, 5.172, 6],
-			"to": [1.01, 6.828, 10],
+			"name": "bus_-1",
+			"from": [-1, 10, 7],
+			"to": [1, 13, 9],
 			"rotation": {
 				"angle": 0,
 				"axis": "y",
@@ -167,107 +164,35 @@
 			},
 			"faces": {
 				"north": {
-					"uv": [0, 0, 2.02, 1.66],
-					"texture": "#gr"
+					"uv": [15, 3, 16, 6],
+					"texture": "#disconnector_copper"
 				},
 				"east": {
-					"uv": [0, 0, 4, 1.66],
-					"texture": "#gr"
+					"uv": [7, 3, 9, 6],
+					"texture": "#disconnector_copper"
 				},
 				"south": {
-					"uv": [0, 0, 2.02, 1.66],
-					"texture": "#gr"
+					"uv": [0, 3, 1, 6],
+					"texture": "#disconnector_copper"
 				},
 				"west": {
-					"uv": [0, 0, 4, 1.66],
-					"texture": "#gr"
+					"uv": [7, 3, 9, 6],
+					"texture": "#disconnector_copper"
 				},
 				"up": {
-					"uv": [0, 0, 2.02, 4],
-					"texture": "#gr"
+					"uv": [0, 7, 1, 9],
+					"texture": "#disconnector_copper"
 				},
 				"down": {
-					"uv": [0, 0, 2.02, 4],
-					"texture": "#gr"
+					"uv": [0, 7, 1, 9],
+					"texture": "#disconnector_copper"
 				}
 			}
 		},
 		{
-			"name": "electrode_w_2",
-			"from": [-1.02, 4, 7.172],
-			"to": [1.02, 8, 8.828],
-			"rotation": {
-				"angle": 45,
-				"axis": "x",
-				"origin": [8, 6, 8]
-			},
-			"faces": {
-				"north": {
-					"uv": [0, 0, 2.04, 4],
-					"texture": "#gr"
-				},
-				"east": {
-					"uv": [0, 0, 1.66, 4],
-					"texture": "#gr"
-				},
-				"south": {
-					"uv": [0, 0, 2.04, 4],
-					"texture": "#gr"
-				},
-				"west": {
-					"uv": [0, 0, 1.66, 4],
-					"texture": "#gr"
-				},
-				"up": {
-					"uv": [0, 0, 2.04, 1.66],
-					"texture": "#gr"
-				},
-				"down": {
-					"uv": [0, 0, 2.04, 1.66],
-					"texture": "#gr"
-				}
-			}
-		},
-		{
-			"name": "electrode_w_3",
-			"from": [-1.03, 4, 7.172],
-			"to": [1.03, 8, 8.828],
-			"rotation": {
-				"angle": -45,
-				"axis": "x",
-				"origin": [8, 6, 8]
-			},
-			"faces": {
-				"north": {
-					"uv": [0, 0, 2.06, 4],
-					"texture": "#gr"
-				},
-				"east": {
-					"uv": [0, 0, 1.66, 4],
-					"texture": "#gr"
-				},
-				"south": {
-					"uv": [0, 0, 2.06, 4],
-					"texture": "#gr"
-				},
-				"west": {
-					"uv": [0, 0, 1.66, 4],
-					"texture": "#gr"
-				},
-				"up": {
-					"uv": [0, 0, 2.06, 1.66],
-					"texture": "#gr"
-				},
-				"down": {
-					"uv": [0, 0, 2.06, 1.66],
-					"texture": "#gr"
-				}
-			}
-		},
-		{
-			"name": "electrode_e_0",
-			"from": [15, 4, 7.172],
-			"to": [17, 8, 8.828],
+			"name": "head_15",
+			"from": [15, 2, 4],
+			"to": [17, 10, 12],
 			"rotation": {
 				"angle": 0,
 				"axis": "y",
@@ -275,35 +200,35 @@
 			},
 			"faces": {
 				"north": {
-					"uv": [0, 0, 2, 4],
-					"texture": "#gr"
+					"uv": [15, 6, 16, 14],
+					"texture": "#steelmaking_graphite"
 				},
 				"east": {
-					"uv": [0, 0, 1.66, 4],
-					"texture": "#gr"
+					"uv": [4, 6, 12, 14],
+					"texture": "#steelmaking_graphite"
 				},
 				"south": {
-					"uv": [0, 0, 2, 4],
-					"texture": "#gr"
+					"uv": [0, 6, 1, 14],
+					"texture": "#steelmaking_graphite"
 				},
 				"west": {
-					"uv": [0, 0, 1.66, 4],
-					"texture": "#gr"
+					"uv": [4, 6, 12, 14],
+					"texture": "#steelmaking_graphite"
 				},
 				"up": {
-					"uv": [0, 0, 2, 1.66],
-					"texture": "#gr"
+					"uv": [0, 4, 1, 12],
+					"texture": "#steelmaking_graphite"
 				},
 				"down": {
-					"uv": [0, 0, 2, 1.66],
-					"texture": "#gr"
+					"uv": [0, 4, 1, 12],
+					"texture": "#steelmaking_graphite"
 				}
 			}
 		},
 		{
-			"name": "electrode_e_1",
-			"from": [14.99, 5.172, 6],
-			"to": [17.01, 6.828, 10],
+			"name": "bus_15",
+			"from": [15, 10, 7],
+			"to": [17, 13, 9],
 			"rotation": {
 				"angle": 0,
 				"axis": "y",
@@ -311,172 +236,28 @@
 			},
 			"faces": {
 				"north": {
-					"uv": [0, 0, 2.02, 1.66],
-					"texture": "#gr"
+					"uv": [15, 3, 16, 6],
+					"texture": "#disconnector_copper"
 				},
 				"east": {
-					"uv": [0, 0, 4, 1.66],
-					"texture": "#gr"
+					"uv": [7, 3, 9, 6],
+					"texture": "#disconnector_copper"
 				},
 				"south": {
-					"uv": [0, 0, 2.02, 1.66],
-					"texture": "#gr"
+					"uv": [0, 3, 1, 6],
+					"texture": "#disconnector_copper"
 				},
 				"west": {
-					"uv": [0, 0, 4, 1.66],
-					"texture": "#gr"
+					"uv": [7, 3, 9, 6],
+					"texture": "#disconnector_copper"
 				},
 				"up": {
-					"uv": [0, 0, 2.02, 4],
-					"texture": "#gr"
+					"uv": [0, 7, 1, 9],
+					"texture": "#disconnector_copper"
 				},
 				"down": {
-					"uv": [0, 0, 2.02, 4],
-					"texture": "#gr"
-				}
-			}
-		},
-		{
-			"name": "electrode_e_2",
-			"from": [14.98, 4, 7.172],
-			"to": [17.02, 8, 8.828],
-			"rotation": {
-				"angle": 45,
-				"axis": "x",
-				"origin": [8, 6, 8]
-			},
-			"faces": {
-				"north": {
-					"uv": [0, 0, 2.04, 4],
-					"texture": "#gr"
-				},
-				"east": {
-					"uv": [0, 0, 1.66, 4],
-					"texture": "#gr"
-				},
-				"south": {
-					"uv": [0, 0, 2.04, 4],
-					"texture": "#gr"
-				},
-				"west": {
-					"uv": [0, 0, 1.66, 4],
-					"texture": "#gr"
-				},
-				"up": {
-					"uv": [0, 0, 2.04, 1.66],
-					"texture": "#gr"
-				},
-				"down": {
-					"uv": [0, 0, 2.04, 1.66],
-					"texture": "#gr"
-				}
-			}
-		},
-		{
-			"name": "electrode_e_3",
-			"from": [14.97, 4, 7.172],
-			"to": [17.03, 8, 8.828],
-			"rotation": {
-				"angle": -45,
-				"axis": "x",
-				"origin": [8, 6, 8]
-			},
-			"faces": {
-				"north": {
-					"uv": [0, 0, 2.06, 4],
-					"texture": "#gr"
-				},
-				"east": {
-					"uv": [0, 0, 1.66, 4],
-					"texture": "#gr"
-				},
-				"south": {
-					"uv": [0, 0, 2.06, 4],
-					"texture": "#gr"
-				},
-				"west": {
-					"uv": [0, 0, 1.66, 4],
-					"texture": "#gr"
-				},
-				"up": {
-					"uv": [0, 0, 2.06, 1.66],
-					"texture": "#gr"
-				},
-				"down": {
-					"uv": [0, 0, 2.06, 1.66],
-					"texture": "#gr"
-				}
-			}
-		},
-		{
-			"name": "bus_w",
-			"from": [-1, 8.5, 7.25],
-			"to": [0.5, 11, 8.75],
-			"rotation": {
-				"angle": 0,
-				"axis": "y",
-				"origin": [8, 8, 8]
-			},
-			"faces": {
-				"north": {
-					"uv": [0, 0, 1.5, 2.5],
-					"texture": "#cu"
-				},
-				"east": {
-					"uv": [0, 0, 1.5, 2.5],
-					"texture": "#cu"
-				},
-				"south": {
-					"uv": [0, 0, 1.5, 2.5],
-					"texture": "#cu"
-				},
-				"west": {
-					"uv": [0, 0, 1.5, 2.5],
-					"texture": "#cu"
-				},
-				"up": {
-					"uv": [0, 0, 1.5, 1.5],
-					"texture": "#cu"
-				},
-				"down": {
-					"uv": [0, 0, 1.5, 1.5],
-					"texture": "#cu"
-				}
-			}
-		},
-		{
-			"name": "bus_e",
-			"from": [15.5, 8.5, 7.25],
-			"to": [17, 11, 8.75],
-			"rotation": {
-				"angle": 0,
-				"axis": "y",
-				"origin": [8, 8, 8]
-			},
-			"faces": {
-				"north": {
-					"uv": [0, 0, 1.5, 2.5],
-					"texture": "#cu"
-				},
-				"east": {
-					"uv": [0, 0, 1.5, 2.5],
-					"texture": "#cu"
-				},
-				"south": {
-					"uv": [0, 0, 1.5, 2.5],
-					"texture": "#cu"
-				},
-				"west": {
-					"uv": [0, 0, 1.5, 2.5],
-					"texture": "#cu"
-				},
-				"up": {
-					"uv": [0, 0, 1.5, 1.5],
-					"texture": "#cu"
-				},
-				"down": {
-					"uv": [0, 0, 1.5, 1.5],
-					"texture": "#cu"
+					"uv": [0, 7, 1, 9],
+					"texture": "#disconnector_copper"
 				}
 			}
 		}

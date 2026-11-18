@@ -1,18 +1,20 @@
 {
 	"credit": "Made with Blockbench",
 	"textures": {
-		"particle": "promptcritical:block/common/grid_dark_grey",
-		"cus": "promptcritical:block/common/plant_copper_smooth",
-		"dg": "promptcritical:block/common/grid_dark_grey",
-		"elec": "promptcritical:block/common/metal_electrolyte",
-		"lead": "promptcritical:block/common/lead",
-		"st": "promptcritical:block/common/steel_bare"
+		"particle": "promptcritical:block/m3met/riveted",
+		"plant_rubber": "promptcritical:block/plant/rubber",
+		"material_cast_iron": "promptcritical:block/material/cast_iron",
+		"m3met_ni_el": "promptcritical:block/m3met/ni_el",
+		"disconnector_copper": "promptcritical:block/disconnector/copper",
+		"m3met_anode": "promptcritical:block/m3met/anode",
+		"m3met_bag": "promptcritical:block/m3met/bag",
+		"m3met_riveted": "promptcritical:block/m3met/riveted"
 	},
 	"elements": [
 		{
 			"name": "tank",
 			"from": [0, 0, 1],
-			"to": [32, 10, 15],
+			"to": [32, 12, 15],
 			"rotation": {
 				"angle": 0,
 				"axis": "y",
@@ -20,35 +22,71 @@
 			},
 			"faces": {
 				"north": {
-					"uv": [0, 0, 16, 10],
-					"texture": "#dg"
+					"uv": [0, 4, 16, 16],
+					"texture": "#plant_rubber"
 				},
 				"east": {
-					"uv": [0, 0, 14, 10],
-					"texture": "#dg"
+					"uv": [1, 4, 15, 16],
+					"texture": "#plant_rubber"
 				},
 				"south": {
-					"uv": [0, 0, 16, 10],
-					"texture": "#dg"
+					"uv": [0, 4, 16, 16],
+					"texture": "#plant_rubber"
 				},
 				"west": {
-					"uv": [0, 0, 14, 10],
-					"texture": "#dg"
+					"uv": [1, 4, 15, 16],
+					"texture": "#plant_rubber"
 				},
 				"up": {
-					"uv": [0, 0, 16, 14],
-					"texture": "#dg"
+					"uv": [0, 1, 16, 15],
+					"texture": "#plant_rubber"
 				},
 				"down": {
-					"uv": [0, 0, 16, 14],
-					"texture": "#dg"
+					"uv": [0, 1, 16, 15],
+					"texture": "#plant_rubber"
+				}
+			}
+		},
+		{
+			"name": "lip",
+			"from": [-0.01, 11.6, 0.6],
+			"to": [32, 12.4, 15.4],
+			"rotation": {
+				"angle": 0,
+				"axis": "y",
+				"origin": [8, 8, 8]
+			},
+			"faces": {
+				"north": {
+					"uv": [0, 3.6, 16, 4.4],
+					"texture": "#material_cast_iron"
+				},
+				"east": {
+					"uv": [0.6, 3.6, 15.4, 4.4],
+					"texture": "#material_cast_iron"
+				},
+				"south": {
+					"uv": [0, 3.6, 16, 4.4],
+					"texture": "#material_cast_iron"
+				},
+				"west": {
+					"uv": [0.6, 3.6, 15.4, 4.4],
+					"texture": "#material_cast_iron"
+				},
+				"up": {
+					"uv": [0, 0.6, 16, 15.4],
+					"texture": "#material_cast_iron"
+				},
+				"down": {
+					"uv": [0, 0.6, 16, 15.4],
+					"texture": "#material_cast_iron"
 				}
 			}
 		},
 		{
 			"name": "electrolyte",
-			"from": [1, 9, 2],
-			"to": [31, 9.5, 14],
+			"from": [0.6, 10.8, 1.6],
+			"to": [31.4, 11, 14.4],
 			"rotation": {
 				"angle": 0,
 				"axis": "y",
@@ -56,35 +94,103 @@
 			},
 			"faces": {
 				"north": {
-					"uv": [0, 0, 16, 0.5],
-					"texture": "#elec"
+					"uv": [0.6, 5, 16, 5.2],
+					"texture": "#m3met_ni_el"
 				},
 				"east": {
-					"uv": [0, 0, 12, 0.5],
-					"texture": "#elec"
+					"uv": [1.6, 5, 14.4, 5.2],
+					"texture": "#m3met_ni_el"
 				},
 				"south": {
-					"uv": [0, 0, 16, 0.5],
-					"texture": "#elec"
+					"uv": [0, 5, 15.4, 5.2],
+					"texture": "#m3met_ni_el"
 				},
 				"west": {
-					"uv": [0, 0, 12, 0.5],
-					"texture": "#elec"
+					"uv": [1.6, 5, 14.4, 5.2],
+					"texture": "#m3met_ni_el"
 				},
 				"up": {
-					"uv": [0, 0, 16, 12],
-					"texture": "#elec"
-				},
-				"down": {
-					"uv": [0, 0, 16, 12],
-					"texture": "#elec"
+					"uv": [0, 1.6, 15.4, 14.4],
+					"texture": "#m3met_ni_el"
 				}
 			}
 		},
 		{
-			"name": "plate_0",
+			"name": "bus1.4",
+			"from": [0, 12.4, 1.4],
+			"to": [32, 13.2, 2],
+			"rotation": {
+				"angle": 0,
+				"axis": "y",
+				"origin": [8, 8, 8]
+			},
+			"faces": {
+				"north": {
+					"uv": [0, 2.8, 16, 3.6],
+					"texture": "#disconnector_copper"
+				},
+				"east": {
+					"uv": [14, 2.8, 14.6, 3.6],
+					"texture": "#disconnector_copper"
+				},
+				"south": {
+					"uv": [0, 2.8, 16, 3.6],
+					"texture": "#disconnector_copper"
+				},
+				"west": {
+					"uv": [1.4, 2.8, 2, 3.6],
+					"texture": "#disconnector_copper"
+				},
+				"up": {
+					"uv": [0, 1.4, 16, 2],
+					"texture": "#disconnector_copper"
+				},
+				"down": {
+					"uv": [0, 14, 16, 14.6],
+					"texture": "#disconnector_copper"
+				}
+			}
+		},
+		{
+			"name": "bus14",
+			"from": [0, 12.4, 14],
+			"to": [32, 13.2, 14.6],
+			"rotation": {
+				"angle": 0,
+				"axis": "y",
+				"origin": [8, 8, 8]
+			},
+			"faces": {
+				"north": {
+					"uv": [0, 2.8, 16, 3.6],
+					"texture": "#disconnector_copper"
+				},
+				"east": {
+					"uv": [1.4, 2.8, 2, 3.6],
+					"texture": "#disconnector_copper"
+				},
+				"south": {
+					"uv": [0, 2.8, 16, 3.6],
+					"texture": "#disconnector_copper"
+				},
+				"west": {
+					"uv": [14, 2.8, 14.6, 3.6],
+					"texture": "#disconnector_copper"
+				},
+				"up": {
+					"uv": [0, 14, 16, 14.6],
+					"texture": "#disconnector_copper"
+				},
+				"down": {
+					"uv": [0, 1.4, 16, 2],
+					"texture": "#disconnector_copper"
+				}
+			}
+		},
+		{
+			"name": "plate0",
 			"from": [2, 3, 3],
-			"to": [2.75, 14, 13],
+			"to": [2.4, 12.8, 13],
 			"rotation": {
 				"angle": 0,
 				"axis": "y",
@@ -92,35 +198,35 @@
 			},
 			"faces": {
 				"north": {
-					"uv": [0, 0, 0.75, 11],
-					"texture": "#lead"
+					"uv": [13.6, 3.2, 14, 13],
+					"texture": "#m3met_anode"
 				},
 				"east": {
-					"uv": [0, 0, 10, 11],
-					"texture": "#lead"
+					"uv": [3, 3.2, 13, 13],
+					"texture": "#m3met_anode"
 				},
 				"south": {
-					"uv": [0, 0, 0.75, 11],
-					"texture": "#lead"
+					"uv": [2, 3.2, 2.4, 13],
+					"texture": "#m3met_anode"
 				},
 				"west": {
-					"uv": [0, 0, 10, 11],
-					"texture": "#lead"
+					"uv": [3, 3.2, 13, 13],
+					"texture": "#m3met_anode"
 				},
 				"up": {
-					"uv": [0, 0, 0.75, 10],
-					"texture": "#lead"
+					"uv": [2, 3, 2.4, 13],
+					"texture": "#m3met_anode"
 				},
 				"down": {
-					"uv": [0, 0, 0.75, 10],
-					"texture": "#lead"
+					"uv": [2, 3, 2.4, 13],
+					"texture": "#m3met_anode"
 				}
 			}
 		},
 		{
-			"name": "bar_0",
-			"from": [1.5, 14, 2],
-			"to": [3.25, 14.75, 14],
+			"name": "bar0",
+			"from": [1.8, 12.8, 1.2],
+			"to": [2.6, 13.6, 14.8],
 			"rotation": {
 				"angle": 0,
 				"axis": "y",
@@ -128,35 +234,143 @@
 			},
 			"faces": {
 				"north": {
-					"uv": [0, 0, 1.75, 0.75],
-					"texture": "#cus"
+					"uv": [13.4, 2.4, 14.2, 3.2],
+					"texture": "#m3met_anode"
 				},
 				"east": {
-					"uv": [0, 0, 12, 0.75],
-					"texture": "#cus"
+					"uv": [1.2, 2.4, 14.8, 3.2],
+					"texture": "#m3met_anode"
 				},
 				"south": {
-					"uv": [0, 0, 1.75, 0.75],
-					"texture": "#cus"
+					"uv": [1.8, 2.4, 2.6, 3.2],
+					"texture": "#m3met_anode"
 				},
 				"west": {
-					"uv": [0, 0, 12, 0.75],
-					"texture": "#cus"
+					"uv": [1.2, 2.4, 14.8, 3.2],
+					"texture": "#m3met_anode"
 				},
 				"up": {
-					"uv": [0, 0, 1.75, 12],
-					"texture": "#cus"
+					"uv": [1.8, 1.2, 2.6, 14.8],
+					"texture": "#m3met_anode"
 				},
 				"down": {
-					"uv": [0, 0, 1.75, 12],
-					"texture": "#cus"
+					"uv": [1.8, 1.2, 2.6, 14.8],
+					"texture": "#m3met_anode"
 				}
 			}
 		},
 		{
-			"name": "plate_1",
+			"name": "plate1",
+			"from": [4, 4, 3],
+			"to": [4.4, 12.8, 13],
+			"rotation": {
+				"angle": 0,
+				"axis": "y",
+				"origin": [8, 8, 8]
+			},
+			"faces": {
+				"north": {
+					"uv": [11.6, 3.2, 12, 12],
+					"texture": "#m3met_bag"
+				},
+				"east": {
+					"uv": [3, 3.2, 13, 12],
+					"texture": "#m3met_bag"
+				},
+				"south": {
+					"uv": [4, 3.2, 4.4, 12],
+					"texture": "#m3met_bag"
+				},
+				"west": {
+					"uv": [3, 3.2, 13, 12],
+					"texture": "#m3met_bag"
+				},
+				"up": {
+					"uv": [4, 3, 4.4, 13],
+					"texture": "#m3met_bag"
+				},
+				"down": {
+					"uv": [4, 3, 4.4, 13],
+					"texture": "#m3met_bag"
+				}
+			}
+		},
+		{
+			"name": "bar1",
+			"from": [3.8, 12.8, 1.2],
+			"to": [4.6, 14.2, 14.8],
+			"rotation": {
+				"angle": 0,
+				"axis": "y",
+				"origin": [8, 8, 8]
+			},
+			"faces": {
+				"north": {
+					"uv": [11.4, 1.8, 12.2, 3.2],
+					"texture": "#disconnector_copper"
+				},
+				"east": {
+					"uv": [1.2, 1.8, 14.8, 3.2],
+					"texture": "#disconnector_copper"
+				},
+				"south": {
+					"uv": [3.8, 1.8, 4.6, 3.2],
+					"texture": "#disconnector_copper"
+				},
+				"west": {
+					"uv": [1.2, 1.8, 14.8, 3.2],
+					"texture": "#disconnector_copper"
+				},
+				"up": {
+					"uv": [3.8, 1.2, 4.6, 14.8],
+					"texture": "#disconnector_copper"
+				},
+				"down": {
+					"uv": [3.8, 1.2, 4.6, 14.8],
+					"texture": "#disconnector_copper"
+				}
+			}
+		},
+		{
+			"name": "lug1",
+			"from": [3.9, 14.2, 7.4],
+			"to": [4.5, 14.75, 8.6],
+			"rotation": {
+				"angle": 0,
+				"axis": "y",
+				"origin": [8, 8, 8]
+			},
+			"faces": {
+				"north": {
+					"uv": [11.5, 1.25, 12.1, 1.8],
+					"texture": "#disconnector_copper"
+				},
+				"east": {
+					"uv": [7.4, 1.25, 8.6, 1.8],
+					"texture": "#disconnector_copper"
+				},
+				"south": {
+					"uv": [3.9, 1.25, 4.5, 1.8],
+					"texture": "#disconnector_copper"
+				},
+				"west": {
+					"uv": [7.4, 1.25, 8.6, 1.8],
+					"texture": "#disconnector_copper"
+				},
+				"up": {
+					"uv": [3.9, 7.4, 4.5, 8.6],
+					"texture": "#disconnector_copper"
+				},
+				"down": {
+					"uv": [3.9, 7.4, 4.5, 8.6],
+					"texture": "#disconnector_copper"
+				}
+			}
+		},
+		{
+			"name": "plate2",
 			"from": [6, 3, 3],
-			"to": [6.75, 14, 13],
+			"to": [6.4, 12.8, 13],
 			"rotation": {
 				"angle": 0,
 				"axis": "y",
@@ -164,35 +378,35 @@
 			},
 			"faces": {
 				"north": {
-					"uv": [0, 0, 0.75, 11],
-					"texture": "#st"
+					"uv": [9.6, 3.2, 10, 13],
+					"texture": "#m3met_anode"
 				},
 				"east": {
-					"uv": [0, 0, 10, 11],
-					"texture": "#st"
+					"uv": [3, 3.2, 13, 13],
+					"texture": "#m3met_anode"
 				},
 				"south": {
-					"uv": [0, 0, 0.75, 11],
-					"texture": "#st"
+					"uv": [6, 3.2, 6.4, 13],
+					"texture": "#m3met_anode"
 				},
 				"west": {
-					"uv": [0, 0, 10, 11],
-					"texture": "#st"
+					"uv": [3, 3.2, 13, 13],
+					"texture": "#m3met_anode"
 				},
 				"up": {
-					"uv": [0, 0, 0.75, 10],
-					"texture": "#st"
+					"uv": [6, 3, 6.4, 13],
+					"texture": "#m3met_anode"
 				},
 				"down": {
-					"uv": [0, 0, 0.75, 10],
-					"texture": "#st"
+					"uv": [6, 3, 6.4, 13],
+					"texture": "#m3met_anode"
 				}
 			}
 		},
 		{
-			"name": "bar_1",
-			"from": [5.5, 14, 2],
-			"to": [7.25, 14.75, 14],
+			"name": "bar2",
+			"from": [5.8, 12.8, 1.2],
+			"to": [6.6, 13.6, 14.8],
 			"rotation": {
 				"angle": 0,
 				"axis": "y",
@@ -200,35 +414,143 @@
 			},
 			"faces": {
 				"north": {
-					"uv": [0, 0, 1.75, 0.75],
-					"texture": "#cus"
+					"uv": [9.4, 2.4, 10.2, 3.2],
+					"texture": "#m3met_anode"
 				},
 				"east": {
-					"uv": [0, 0, 12, 0.75],
-					"texture": "#cus"
+					"uv": [1.2, 2.4, 14.8, 3.2],
+					"texture": "#m3met_anode"
 				},
 				"south": {
-					"uv": [0, 0, 1.75, 0.75],
-					"texture": "#cus"
+					"uv": [5.8, 2.4, 6.6, 3.2],
+					"texture": "#m3met_anode"
 				},
 				"west": {
-					"uv": [0, 0, 12, 0.75],
-					"texture": "#cus"
+					"uv": [1.2, 2.4, 14.8, 3.2],
+					"texture": "#m3met_anode"
 				},
 				"up": {
-					"uv": [0, 0, 1.75, 12],
-					"texture": "#cus"
+					"uv": [5.8, 1.2, 6.6, 14.8],
+					"texture": "#m3met_anode"
 				},
 				"down": {
-					"uv": [0, 0, 1.75, 12],
-					"texture": "#cus"
+					"uv": [5.8, 1.2, 6.6, 14.8],
+					"texture": "#m3met_anode"
 				}
 			}
 		},
 		{
-			"name": "plate_2",
+			"name": "plate3",
+			"from": [8, 4, 3],
+			"to": [8.4, 12.8, 13],
+			"rotation": {
+				"angle": 0,
+				"axis": "y",
+				"origin": [8, 8, 8]
+			},
+			"faces": {
+				"north": {
+					"uv": [7.6, 3.2, 8, 12],
+					"texture": "#m3met_bag"
+				},
+				"east": {
+					"uv": [3, 3.2, 13, 12],
+					"texture": "#m3met_bag"
+				},
+				"south": {
+					"uv": [8, 3.2, 8.4, 12],
+					"texture": "#m3met_bag"
+				},
+				"west": {
+					"uv": [3, 3.2, 13, 12],
+					"texture": "#m3met_bag"
+				},
+				"up": {
+					"uv": [8, 3, 8.4, 13],
+					"texture": "#m3met_bag"
+				},
+				"down": {
+					"uv": [8, 3, 8.4, 13],
+					"texture": "#m3met_bag"
+				}
+			}
+		},
+		{
+			"name": "bar3",
+			"from": [7.8, 12.8, 1.2],
+			"to": [8.6, 14.2, 14.8],
+			"rotation": {
+				"angle": 0,
+				"axis": "y",
+				"origin": [8, 8, 8]
+			},
+			"faces": {
+				"north": {
+					"uv": [7.4, 1.8, 8.2, 3.2],
+					"texture": "#disconnector_copper"
+				},
+				"east": {
+					"uv": [1.2, 1.8, 14.8, 3.2],
+					"texture": "#disconnector_copper"
+				},
+				"south": {
+					"uv": [7.8, 1.8, 8.6, 3.2],
+					"texture": "#disconnector_copper"
+				},
+				"west": {
+					"uv": [1.2, 1.8, 14.8, 3.2],
+					"texture": "#disconnector_copper"
+				},
+				"up": {
+					"uv": [7.8, 1.2, 8.6, 14.8],
+					"texture": "#disconnector_copper"
+				},
+				"down": {
+					"uv": [7.8, 1.2, 8.6, 14.8],
+					"texture": "#disconnector_copper"
+				}
+			}
+		},
+		{
+			"name": "lug3",
+			"from": [7.9, 14.2, 7.4],
+			"to": [8.5, 14.75, 8.6],
+			"rotation": {
+				"angle": 0,
+				"axis": "y",
+				"origin": [8, 8, 8]
+			},
+			"faces": {
+				"north": {
+					"uv": [7.5, 1.25, 8.1, 1.8],
+					"texture": "#disconnector_copper"
+				},
+				"east": {
+					"uv": [7.4, 1.25, 8.6, 1.8],
+					"texture": "#disconnector_copper"
+				},
+				"south": {
+					"uv": [7.9, 1.25, 8.5, 1.8],
+					"texture": "#disconnector_copper"
+				},
+				"west": {
+					"uv": [7.4, 1.25, 8.6, 1.8],
+					"texture": "#disconnector_copper"
+				},
+				"up": {
+					"uv": [7.9, 7.4, 8.5, 8.6],
+					"texture": "#disconnector_copper"
+				},
+				"down": {
+					"uv": [7.9, 7.4, 8.5, 8.6],
+					"texture": "#disconnector_copper"
+				}
+			}
+		},
+		{
+			"name": "plate4",
 			"from": [10, 3, 3],
-			"to": [10.75, 14, 13],
+			"to": [10.4, 12.8, 13],
 			"rotation": {
 				"angle": 0,
 				"axis": "y",
@@ -236,35 +558,35 @@
 			},
 			"faces": {
 				"north": {
-					"uv": [0, 0, 0.75, 11],
-					"texture": "#lead"
+					"uv": [5.6, 3.2, 6, 13],
+					"texture": "#m3met_anode"
 				},
 				"east": {
-					"uv": [0, 0, 10, 11],
-					"texture": "#lead"
+					"uv": [3, 3.2, 13, 13],
+					"texture": "#m3met_anode"
 				},
 				"south": {
-					"uv": [0, 0, 0.75, 11],
-					"texture": "#lead"
+					"uv": [10, 3.2, 10.4, 13],
+					"texture": "#m3met_anode"
 				},
 				"west": {
-					"uv": [0, 0, 10, 11],
-					"texture": "#lead"
+					"uv": [3, 3.2, 13, 13],
+					"texture": "#m3met_anode"
 				},
 				"up": {
-					"uv": [0, 0, 0.75, 10],
-					"texture": "#lead"
+					"uv": [10, 3, 10.4, 13],
+					"texture": "#m3met_anode"
 				},
 				"down": {
-					"uv": [0, 0, 0.75, 10],
-					"texture": "#lead"
+					"uv": [10, 3, 10.4, 13],
+					"texture": "#m3met_anode"
 				}
 			}
 		},
 		{
-			"name": "bar_2",
-			"from": [9.5, 14, 2],
-			"to": [11.25, 14.75, 14],
+			"name": "bar4",
+			"from": [9.8, 12.8, 1.2],
+			"to": [10.6, 13.6, 14.8],
 			"rotation": {
 				"angle": 0,
 				"axis": "y",
@@ -272,35 +594,143 @@
 			},
 			"faces": {
 				"north": {
-					"uv": [0, 0, 1.75, 0.75],
-					"texture": "#cus"
+					"uv": [5.4, 2.4, 6.2, 3.2],
+					"texture": "#m3met_anode"
 				},
 				"east": {
-					"uv": [0, 0, 12, 0.75],
-					"texture": "#cus"
+					"uv": [1.2, 2.4, 14.8, 3.2],
+					"texture": "#m3met_anode"
 				},
 				"south": {
-					"uv": [0, 0, 1.75, 0.75],
-					"texture": "#cus"
+					"uv": [9.8, 2.4, 10.6, 3.2],
+					"texture": "#m3met_anode"
 				},
 				"west": {
-					"uv": [0, 0, 12, 0.75],
-					"texture": "#cus"
+					"uv": [1.2, 2.4, 14.8, 3.2],
+					"texture": "#m3met_anode"
 				},
 				"up": {
-					"uv": [0, 0, 1.75, 12],
-					"texture": "#cus"
+					"uv": [9.8, 1.2, 10.6, 14.8],
+					"texture": "#m3met_anode"
 				},
 				"down": {
-					"uv": [0, 0, 1.75, 12],
-					"texture": "#cus"
+					"uv": [9.8, 1.2, 10.6, 14.8],
+					"texture": "#m3met_anode"
 				}
 			}
 		},
 		{
-			"name": "plate_3",
+			"name": "plate5",
+			"from": [12, 4, 3],
+			"to": [12.4, 12.8, 13],
+			"rotation": {
+				"angle": 0,
+				"axis": "y",
+				"origin": [8, 8, 8]
+			},
+			"faces": {
+				"north": {
+					"uv": [3.6, 3.2, 4, 12],
+					"texture": "#m3met_bag"
+				},
+				"east": {
+					"uv": [3, 3.2, 13, 12],
+					"texture": "#m3met_bag"
+				},
+				"south": {
+					"uv": [12, 3.2, 12.4, 12],
+					"texture": "#m3met_bag"
+				},
+				"west": {
+					"uv": [3, 3.2, 13, 12],
+					"texture": "#m3met_bag"
+				},
+				"up": {
+					"uv": [12, 3, 12.4, 13],
+					"texture": "#m3met_bag"
+				},
+				"down": {
+					"uv": [12, 3, 12.4, 13],
+					"texture": "#m3met_bag"
+				}
+			}
+		},
+		{
+			"name": "bar5",
+			"from": [11.8, 12.8, 1.2],
+			"to": [12.6, 14.2, 14.8],
+			"rotation": {
+				"angle": 0,
+				"axis": "y",
+				"origin": [8, 8, 8]
+			},
+			"faces": {
+				"north": {
+					"uv": [3.4, 1.8, 4.2, 3.2],
+					"texture": "#disconnector_copper"
+				},
+				"east": {
+					"uv": [1.2, 1.8, 14.8, 3.2],
+					"texture": "#disconnector_copper"
+				},
+				"south": {
+					"uv": [11.8, 1.8, 12.6, 3.2],
+					"texture": "#disconnector_copper"
+				},
+				"west": {
+					"uv": [1.2, 1.8, 14.8, 3.2],
+					"texture": "#disconnector_copper"
+				},
+				"up": {
+					"uv": [11.8, 1.2, 12.6, 14.8],
+					"texture": "#disconnector_copper"
+				},
+				"down": {
+					"uv": [11.8, 1.2, 12.6, 14.8],
+					"texture": "#disconnector_copper"
+				}
+			}
+		},
+		{
+			"name": "lug5",
+			"from": [11.9, 14.2, 7.4],
+			"to": [12.5, 14.75, 8.6],
+			"rotation": {
+				"angle": 0,
+				"axis": "y",
+				"origin": [8, 8, 8]
+			},
+			"faces": {
+				"north": {
+					"uv": [3.5, 1.25, 4.1, 1.8],
+					"texture": "#disconnector_copper"
+				},
+				"east": {
+					"uv": [7.4, 1.25, 8.6, 1.8],
+					"texture": "#disconnector_copper"
+				},
+				"south": {
+					"uv": [11.9, 1.25, 12.5, 1.8],
+					"texture": "#disconnector_copper"
+				},
+				"west": {
+					"uv": [7.4, 1.25, 8.6, 1.8],
+					"texture": "#disconnector_copper"
+				},
+				"up": {
+					"uv": [11.9, 7.4, 12.5, 8.6],
+					"texture": "#disconnector_copper"
+				},
+				"down": {
+					"uv": [11.9, 7.4, 12.5, 8.6],
+					"texture": "#disconnector_copper"
+				}
+			}
+		},
+		{
+			"name": "plate6",
 			"from": [14, 3, 3],
-			"to": [14.75, 14, 13],
+			"to": [14.4, 12.8, 13],
 			"rotation": {
 				"angle": 0,
 				"axis": "y",
@@ -308,35 +738,35 @@
 			},
 			"faces": {
 				"north": {
-					"uv": [0, 0, 0.75, 11],
-					"texture": "#st"
+					"uv": [1.6, 3.2, 2, 13],
+					"texture": "#m3met_anode"
 				},
 				"east": {
-					"uv": [0, 0, 10, 11],
-					"texture": "#st"
+					"uv": [3, 3.2, 13, 13],
+					"texture": "#m3met_anode"
 				},
 				"south": {
-					"uv": [0, 0, 0.75, 11],
-					"texture": "#st"
+					"uv": [14, 3.2, 14.4, 13],
+					"texture": "#m3met_anode"
 				},
 				"west": {
-					"uv": [0, 0, 10, 11],
-					"texture": "#st"
+					"uv": [3, 3.2, 13, 13],
+					"texture": "#m3met_anode"
 				},
 				"up": {
-					"uv": [0, 0, 0.75, 10],
-					"texture": "#st"
+					"uv": [14, 3, 14.4, 13],
+					"texture": "#m3met_anode"
 				},
 				"down": {
-					"uv": [0, 0, 0.75, 10],
-					"texture": "#st"
+					"uv": [14, 3, 14.4, 13],
+					"texture": "#m3met_anode"
 				}
 			}
 		},
 		{
-			"name": "bar_3",
-			"from": [13.5, 14, 2],
-			"to": [15.25, 14.75, 14],
+			"name": "bar6",
+			"from": [13.8, 12.8, 1.2],
+			"to": [14.6, 13.6, 14.8],
 			"rotation": {
 				"angle": 0,
 				"axis": "y",
@@ -344,35 +774,143 @@
 			},
 			"faces": {
 				"north": {
-					"uv": [0, 0, 1.75, 0.75],
-					"texture": "#cus"
+					"uv": [1.4, 2.4, 2.2, 3.2],
+					"texture": "#m3met_anode"
 				},
 				"east": {
-					"uv": [0, 0, 12, 0.75],
-					"texture": "#cus"
+					"uv": [1.2, 2.4, 14.8, 3.2],
+					"texture": "#m3met_anode"
 				},
 				"south": {
-					"uv": [0, 0, 1.75, 0.75],
-					"texture": "#cus"
+					"uv": [13.8, 2.4, 14.6, 3.2],
+					"texture": "#m3met_anode"
 				},
 				"west": {
-					"uv": [0, 0, 12, 0.75],
-					"texture": "#cus"
+					"uv": [1.2, 2.4, 14.8, 3.2],
+					"texture": "#m3met_anode"
 				},
 				"up": {
-					"uv": [0, 0, 1.75, 12],
-					"texture": "#cus"
+					"uv": [13.8, 1.2, 14.6, 14.8],
+					"texture": "#m3met_anode"
 				},
 				"down": {
-					"uv": [0, 0, 1.75, 12],
-					"texture": "#cus"
+					"uv": [13.8, 1.2, 14.6, 14.8],
+					"texture": "#m3met_anode"
 				}
 			}
 		},
 		{
-			"name": "plate_4",
+			"name": "plate7",
+			"from": [16, 4, 3],
+			"to": [16.4, 12.8, 13],
+			"rotation": {
+				"angle": 0,
+				"axis": "y",
+				"origin": [8, 8, 8]
+			},
+			"faces": {
+				"north": {
+					"uv": [15.6, 3.2, 16, 12],
+					"texture": "#m3met_bag"
+				},
+				"east": {
+					"uv": [3, 3.2, 13, 12],
+					"texture": "#m3met_bag"
+				},
+				"south": {
+					"uv": [0, 3.2, 0.4, 12],
+					"texture": "#m3met_bag"
+				},
+				"west": {
+					"uv": [3, 3.2, 13, 12],
+					"texture": "#m3met_bag"
+				},
+				"up": {
+					"uv": [0, 3, 0.4, 13],
+					"texture": "#m3met_bag"
+				},
+				"down": {
+					"uv": [0, 3, 0.4, 13],
+					"texture": "#m3met_bag"
+				}
+			}
+		},
+		{
+			"name": "bar7",
+			"from": [15.8, 12.8, 1.2],
+			"to": [16.6, 14.2, 14.8],
+			"rotation": {
+				"angle": 0,
+				"axis": "y",
+				"origin": [8, 8, 8]
+			},
+			"faces": {
+				"north": {
+					"uv": [15.4, 1.8, 16, 3.2],
+					"texture": "#disconnector_copper"
+				},
+				"east": {
+					"uv": [1.2, 1.8, 14.8, 3.2],
+					"texture": "#disconnector_copper"
+				},
+				"south": {
+					"uv": [0, 1.8, 0.6, 3.2],
+					"texture": "#disconnector_copper"
+				},
+				"west": {
+					"uv": [1.2, 1.8, 14.8, 3.2],
+					"texture": "#disconnector_copper"
+				},
+				"up": {
+					"uv": [0, 1.2, 0.6, 14.8],
+					"texture": "#disconnector_copper"
+				},
+				"down": {
+					"uv": [0, 1.2, 0.6, 14.8],
+					"texture": "#disconnector_copper"
+				}
+			}
+		},
+		{
+			"name": "lug7",
+			"from": [15.9, 14.2, 7.4],
+			"to": [16.5, 14.75, 8.6],
+			"rotation": {
+				"angle": 0,
+				"axis": "y",
+				"origin": [8, 8, 8]
+			},
+			"faces": {
+				"north": {
+					"uv": [15.5, 1.25, 16, 1.8],
+					"texture": "#disconnector_copper"
+				},
+				"east": {
+					"uv": [7.4, 1.25, 8.6, 1.8],
+					"texture": "#disconnector_copper"
+				},
+				"south": {
+					"uv": [0, 1.25, 0.5, 1.8],
+					"texture": "#disconnector_copper"
+				},
+				"west": {
+					"uv": [7.4, 1.25, 8.6, 1.8],
+					"texture": "#disconnector_copper"
+				},
+				"up": {
+					"uv": [0, 7.4, 0.5, 8.6],
+					"texture": "#disconnector_copper"
+				},
+				"down": {
+					"uv": [0, 7.4, 0.5, 8.6],
+					"texture": "#disconnector_copper"
+				}
+			}
+		},
+		{
+			"name": "plate8",
 			"from": [18, 3, 3],
-			"to": [18.75, 14, 13],
+			"to": [18.4, 12.8, 13],
 			"rotation": {
 				"angle": 0,
 				"axis": "y",
@@ -380,35 +918,35 @@
 			},
 			"faces": {
 				"north": {
-					"uv": [0, 0, 0.75, 11],
-					"texture": "#lead"
+					"uv": [13.6, 3.2, 14, 13],
+					"texture": "#m3met_anode"
 				},
 				"east": {
-					"uv": [0, 0, 10, 11],
-					"texture": "#lead"
+					"uv": [3, 3.2, 13, 13],
+					"texture": "#m3met_anode"
 				},
 				"south": {
-					"uv": [0, 0, 0.75, 11],
-					"texture": "#lead"
+					"uv": [2, 3.2, 2.4, 13],
+					"texture": "#m3met_anode"
 				},
 				"west": {
-					"uv": [0, 0, 10, 11],
-					"texture": "#lead"
+					"uv": [3, 3.2, 13, 13],
+					"texture": "#m3met_anode"
 				},
 				"up": {
-					"uv": [0, 0, 0.75, 10],
-					"texture": "#lead"
+					"uv": [2, 3, 2.4, 13],
+					"texture": "#m3met_anode"
 				},
 				"down": {
-					"uv": [0, 0, 0.75, 10],
-					"texture": "#lead"
+					"uv": [2, 3, 2.4, 13],
+					"texture": "#m3met_anode"
 				}
 			}
 		},
 		{
-			"name": "bar_4",
-			"from": [17.5, 14, 2],
-			"to": [19.25, 14.75, 14],
+			"name": "bar8",
+			"from": [17.8, 12.8, 1.2],
+			"to": [18.6, 13.6, 14.8],
 			"rotation": {
 				"angle": 0,
 				"axis": "y",
@@ -416,35 +954,143 @@
 			},
 			"faces": {
 				"north": {
-					"uv": [0, 0, 1.75, 0.75],
-					"texture": "#cus"
+					"uv": [13.4, 2.4, 14.2, 3.2],
+					"texture": "#m3met_anode"
 				},
 				"east": {
-					"uv": [0, 0, 12, 0.75],
-					"texture": "#cus"
+					"uv": [1.2, 2.4, 14.8, 3.2],
+					"texture": "#m3met_anode"
 				},
 				"south": {
-					"uv": [0, 0, 1.75, 0.75],
-					"texture": "#cus"
+					"uv": [1.8, 2.4, 2.6, 3.2],
+					"texture": "#m3met_anode"
 				},
 				"west": {
-					"uv": [0, 0, 12, 0.75],
-					"texture": "#cus"
+					"uv": [1.2, 2.4, 14.8, 3.2],
+					"texture": "#m3met_anode"
 				},
 				"up": {
-					"uv": [0, 0, 1.75, 12],
-					"texture": "#cus"
+					"uv": [1.8, 1.2, 2.6, 14.8],
+					"texture": "#m3met_anode"
 				},
 				"down": {
-					"uv": [0, 0, 1.75, 12],
-					"texture": "#cus"
+					"uv": [1.8, 1.2, 2.6, 14.8],
+					"texture": "#m3met_anode"
 				}
 			}
 		},
 		{
-			"name": "plate_5",
+			"name": "plate9",
+			"from": [20, 4, 3],
+			"to": [20.4, 12.8, 13],
+			"rotation": {
+				"angle": 0,
+				"axis": "y",
+				"origin": [8, 8, 8]
+			},
+			"faces": {
+				"north": {
+					"uv": [11.6, 3.2, 12, 12],
+					"texture": "#m3met_bag"
+				},
+				"east": {
+					"uv": [3, 3.2, 13, 12],
+					"texture": "#m3met_bag"
+				},
+				"south": {
+					"uv": [4, 3.2, 4.4, 12],
+					"texture": "#m3met_bag"
+				},
+				"west": {
+					"uv": [3, 3.2, 13, 12],
+					"texture": "#m3met_bag"
+				},
+				"up": {
+					"uv": [4, 3, 4.4, 13],
+					"texture": "#m3met_bag"
+				},
+				"down": {
+					"uv": [4, 3, 4.4, 13],
+					"texture": "#m3met_bag"
+				}
+			}
+		},
+		{
+			"name": "bar9",
+			"from": [19.8, 12.8, 1.2],
+			"to": [20.6, 14.2, 14.8],
+			"rotation": {
+				"angle": 0,
+				"axis": "y",
+				"origin": [8, 8, 8]
+			},
+			"faces": {
+				"north": {
+					"uv": [11.4, 1.8, 12.2, 3.2],
+					"texture": "#disconnector_copper"
+				},
+				"east": {
+					"uv": [1.2, 1.8, 14.8, 3.2],
+					"texture": "#disconnector_copper"
+				},
+				"south": {
+					"uv": [3.8, 1.8, 4.6, 3.2],
+					"texture": "#disconnector_copper"
+				},
+				"west": {
+					"uv": [1.2, 1.8, 14.8, 3.2],
+					"texture": "#disconnector_copper"
+				},
+				"up": {
+					"uv": [3.8, 1.2, 4.6, 14.8],
+					"texture": "#disconnector_copper"
+				},
+				"down": {
+					"uv": [3.8, 1.2, 4.6, 14.8],
+					"texture": "#disconnector_copper"
+				}
+			}
+		},
+		{
+			"name": "lug9",
+			"from": [19.9, 14.2, 7.4],
+			"to": [20.5, 14.75, 8.6],
+			"rotation": {
+				"angle": 0,
+				"axis": "y",
+				"origin": [8, 8, 8]
+			},
+			"faces": {
+				"north": {
+					"uv": [11.5, 1.25, 12.1, 1.8],
+					"texture": "#disconnector_copper"
+				},
+				"east": {
+					"uv": [7.4, 1.25, 8.6, 1.8],
+					"texture": "#disconnector_copper"
+				},
+				"south": {
+					"uv": [3.9, 1.25, 4.5, 1.8],
+					"texture": "#disconnector_copper"
+				},
+				"west": {
+					"uv": [7.4, 1.25, 8.6, 1.8],
+					"texture": "#disconnector_copper"
+				},
+				"up": {
+					"uv": [3.9, 7.4, 4.5, 8.6],
+					"texture": "#disconnector_copper"
+				},
+				"down": {
+					"uv": [3.9, 7.4, 4.5, 8.6],
+					"texture": "#disconnector_copper"
+				}
+			}
+		},
+		{
+			"name": "plate10",
 			"from": [22, 3, 3],
-			"to": [22.75, 14, 13],
+			"to": [22.4, 12.8, 13],
 			"rotation": {
 				"angle": 0,
 				"axis": "y",
@@ -452,35 +1098,35 @@
 			},
 			"faces": {
 				"north": {
-					"uv": [0, 0, 0.75, 11],
-					"texture": "#st"
+					"uv": [9.6, 3.2, 10, 13],
+					"texture": "#m3met_anode"
 				},
 				"east": {
-					"uv": [0, 0, 10, 11],
-					"texture": "#st"
+					"uv": [3, 3.2, 13, 13],
+					"texture": "#m3met_anode"
 				},
 				"south": {
-					"uv": [0, 0, 0.75, 11],
-					"texture": "#st"
+					"uv": [6, 3.2, 6.4, 13],
+					"texture": "#m3met_anode"
 				},
 				"west": {
-					"uv": [0, 0, 10, 11],
-					"texture": "#st"
+					"uv": [3, 3.2, 13, 13],
+					"texture": "#m3met_anode"
 				},
 				"up": {
-					"uv": [0, 0, 0.75, 10],
-					"texture": "#st"
+					"uv": [6, 3, 6.4, 13],
+					"texture": "#m3met_anode"
 				},
 				"down": {
-					"uv": [0, 0, 0.75, 10],
-					"texture": "#st"
+					"uv": [6, 3, 6.4, 13],
+					"texture": "#m3met_anode"
 				}
 			}
 		},
 		{
-			"name": "bar_5",
-			"from": [21.5, 14, 2],
-			"to": [23.25, 14.75, 14],
+			"name": "bar10",
+			"from": [21.8, 12.8, 1.2],
+			"to": [22.6, 13.6, 14.8],
 			"rotation": {
 				"angle": 0,
 				"axis": "y",
@@ -488,35 +1134,143 @@
 			},
 			"faces": {
 				"north": {
-					"uv": [0, 0, 1.75, 0.75],
-					"texture": "#cus"
+					"uv": [9.4, 2.4, 10.2, 3.2],
+					"texture": "#m3met_anode"
 				},
 				"east": {
-					"uv": [0, 0, 12, 0.75],
-					"texture": "#cus"
+					"uv": [1.2, 2.4, 14.8, 3.2],
+					"texture": "#m3met_anode"
 				},
 				"south": {
-					"uv": [0, 0, 1.75, 0.75],
-					"texture": "#cus"
+					"uv": [5.8, 2.4, 6.6, 3.2],
+					"texture": "#m3met_anode"
 				},
 				"west": {
-					"uv": [0, 0, 12, 0.75],
-					"texture": "#cus"
+					"uv": [1.2, 2.4, 14.8, 3.2],
+					"texture": "#m3met_anode"
 				},
 				"up": {
-					"uv": [0, 0, 1.75, 12],
-					"texture": "#cus"
+					"uv": [5.8, 1.2, 6.6, 14.8],
+					"texture": "#m3met_anode"
 				},
 				"down": {
-					"uv": [0, 0, 1.75, 12],
-					"texture": "#cus"
+					"uv": [5.8, 1.2, 6.6, 14.8],
+					"texture": "#m3met_anode"
 				}
 			}
 		},
 		{
-			"name": "plate_6",
+			"name": "plate11",
+			"from": [24, 4, 3],
+			"to": [24.4, 12.8, 13],
+			"rotation": {
+				"angle": 0,
+				"axis": "y",
+				"origin": [8, 8, 8]
+			},
+			"faces": {
+				"north": {
+					"uv": [7.6, 3.2, 8, 12],
+					"texture": "#m3met_bag"
+				},
+				"east": {
+					"uv": [3, 3.2, 13, 12],
+					"texture": "#m3met_bag"
+				},
+				"south": {
+					"uv": [8, 3.2, 8.4, 12],
+					"texture": "#m3met_bag"
+				},
+				"west": {
+					"uv": [3, 3.2, 13, 12],
+					"texture": "#m3met_bag"
+				},
+				"up": {
+					"uv": [8, 3, 8.4, 13],
+					"texture": "#m3met_bag"
+				},
+				"down": {
+					"uv": [8, 3, 8.4, 13],
+					"texture": "#m3met_bag"
+				}
+			}
+		},
+		{
+			"name": "bar11",
+			"from": [23.8, 12.8, 1.2],
+			"to": [24.6, 14.2, 14.8],
+			"rotation": {
+				"angle": 0,
+				"axis": "y",
+				"origin": [8, 8, 8]
+			},
+			"faces": {
+				"north": {
+					"uv": [7.4, 1.8, 8.2, 3.2],
+					"texture": "#disconnector_copper"
+				},
+				"east": {
+					"uv": [1.2, 1.8, 14.8, 3.2],
+					"texture": "#disconnector_copper"
+				},
+				"south": {
+					"uv": [7.8, 1.8, 8.6, 3.2],
+					"texture": "#disconnector_copper"
+				},
+				"west": {
+					"uv": [1.2, 1.8, 14.8, 3.2],
+					"texture": "#disconnector_copper"
+				},
+				"up": {
+					"uv": [7.8, 1.2, 8.6, 14.8],
+					"texture": "#disconnector_copper"
+				},
+				"down": {
+					"uv": [7.8, 1.2, 8.6, 14.8],
+					"texture": "#disconnector_copper"
+				}
+			}
+		},
+		{
+			"name": "lug11",
+			"from": [23.9, 14.2, 7.4],
+			"to": [24.5, 14.75, 8.6],
+			"rotation": {
+				"angle": 0,
+				"axis": "y",
+				"origin": [8, 8, 8]
+			},
+			"faces": {
+				"north": {
+					"uv": [7.5, 1.25, 8.1, 1.8],
+					"texture": "#disconnector_copper"
+				},
+				"east": {
+					"uv": [7.4, 1.25, 8.6, 1.8],
+					"texture": "#disconnector_copper"
+				},
+				"south": {
+					"uv": [7.9, 1.25, 8.5, 1.8],
+					"texture": "#disconnector_copper"
+				},
+				"west": {
+					"uv": [7.4, 1.25, 8.6, 1.8],
+					"texture": "#disconnector_copper"
+				},
+				"up": {
+					"uv": [7.9, 7.4, 8.5, 8.6],
+					"texture": "#disconnector_copper"
+				},
+				"down": {
+					"uv": [7.9, 7.4, 8.5, 8.6],
+					"texture": "#disconnector_copper"
+				}
+			}
+		},
+		{
+			"name": "plate12",
 			"from": [26, 3, 3],
-			"to": [26.75, 14, 13],
+			"to": [26.4, 12.8, 13],
 			"rotation": {
 				"angle": 0,
 				"axis": "y",
@@ -524,35 +1278,35 @@
 			},
 			"faces": {
 				"north": {
-					"uv": [0, 0, 0.75, 11],
-					"texture": "#lead"
+					"uv": [5.6, 3.2, 6, 13],
+					"texture": "#m3met_anode"
 				},
 				"east": {
-					"uv": [0, 0, 10, 11],
-					"texture": "#lead"
+					"uv": [3, 3.2, 13, 13],
+					"texture": "#m3met_anode"
 				},
 				"south": {
-					"uv": [0, 0, 0.75, 11],
-					"texture": "#lead"
+					"uv": [10, 3.2, 10.4, 13],
+					"texture": "#m3met_anode"
 				},
 				"west": {
-					"uv": [0, 0, 10, 11],
-					"texture": "#lead"
+					"uv": [3, 3.2, 13, 13],
+					"texture": "#m3met_anode"
 				},
 				"up": {
-					"uv": [0, 0, 0.75, 10],
-					"texture": "#lead"
+					"uv": [10, 3, 10.4, 13],
+					"texture": "#m3met_anode"
 				},
 				"down": {
-					"uv": [0, 0, 0.75, 10],
-					"texture": "#lead"
+					"uv": [10, 3, 10.4, 13],
+					"texture": "#m3met_anode"
 				}
 			}
 		},
 		{
-			"name": "bar_6",
-			"from": [25.5, 14, 2],
-			"to": [27.25, 14.75, 14],
+			"name": "bar12",
+			"from": [25.8, 12.8, 1.2],
+			"to": [26.6, 13.6, 14.8],
 			"rotation": {
 				"angle": 0,
 				"axis": "y",
@@ -560,28 +1314,208 @@
 			},
 			"faces": {
 				"north": {
-					"uv": [0, 0, 1.75, 0.75],
-					"texture": "#cus"
+					"uv": [5.4, 2.4, 6.2, 3.2],
+					"texture": "#m3met_anode"
 				},
 				"east": {
-					"uv": [0, 0, 12, 0.75],
-					"texture": "#cus"
+					"uv": [1.2, 2.4, 14.8, 3.2],
+					"texture": "#m3met_anode"
 				},
 				"south": {
-					"uv": [0, 0, 1.75, 0.75],
-					"texture": "#cus"
+					"uv": [9.8, 2.4, 10.6, 3.2],
+					"texture": "#m3met_anode"
 				},
 				"west": {
-					"uv": [0, 0, 12, 0.75],
-					"texture": "#cus"
+					"uv": [1.2, 2.4, 14.8, 3.2],
+					"texture": "#m3met_anode"
 				},
 				"up": {
-					"uv": [0, 0, 1.75, 12],
-					"texture": "#cus"
+					"uv": [9.8, 1.2, 10.6, 14.8],
+					"texture": "#m3met_anode"
 				},
 				"down": {
-					"uv": [0, 0, 1.75, 12],
-					"texture": "#cus"
+					"uv": [9.8, 1.2, 10.6, 14.8],
+					"texture": "#m3met_anode"
+				}
+			}
+		},
+		{
+			"name": "plate13",
+			"from": [28, 4, 3],
+			"to": [28.4, 12.8, 13],
+			"rotation": {
+				"angle": 0,
+				"axis": "y",
+				"origin": [8, 8, 8]
+			},
+			"faces": {
+				"north": {
+					"uv": [3.6, 3.2, 4, 12],
+					"texture": "#m3met_bag"
+				},
+				"east": {
+					"uv": [3, 3.2, 13, 12],
+					"texture": "#m3met_bag"
+				},
+				"south": {
+					"uv": [12, 3.2, 12.4, 12],
+					"texture": "#m3met_bag"
+				},
+				"west": {
+					"uv": [3, 3.2, 13, 12],
+					"texture": "#m3met_bag"
+				},
+				"up": {
+					"uv": [12, 3, 12.4, 13],
+					"texture": "#m3met_bag"
+				},
+				"down": {
+					"uv": [12, 3, 12.4, 13],
+					"texture": "#m3met_bag"
+				}
+			}
+		},
+		{
+			"name": "bar13",
+			"from": [27.8, 12.8, 1.2],
+			"to": [28.6, 14.2, 14.8],
+			"rotation": {
+				"angle": 0,
+				"axis": "y",
+				"origin": [8, 8, 8]
+			},
+			"faces": {
+				"north": {
+					"uv": [3.4, 1.8, 4.2, 3.2],
+					"texture": "#disconnector_copper"
+				},
+				"east": {
+					"uv": [1.2, 1.8, 14.8, 3.2],
+					"texture": "#disconnector_copper"
+				},
+				"south": {
+					"uv": [11.8, 1.8, 12.6, 3.2],
+					"texture": "#disconnector_copper"
+				},
+				"west": {
+					"uv": [1.2, 1.8, 14.8, 3.2],
+					"texture": "#disconnector_copper"
+				},
+				"up": {
+					"uv": [11.8, 1.2, 12.6, 14.8],
+					"texture": "#disconnector_copper"
+				},
+				"down": {
+					"uv": [11.8, 1.2, 12.6, 14.8],
+					"texture": "#disconnector_copper"
+				}
+			}
+		},
+		{
+			"name": "lug13",
+			"from": [27.9, 14.2, 7.4],
+			"to": [28.5, 14.75, 8.6],
+			"rotation": {
+				"angle": 0,
+				"axis": "y",
+				"origin": [8, 8, 8]
+			},
+			"faces": {
+				"north": {
+					"uv": [3.5, 1.25, 4.1, 1.8],
+					"texture": "#disconnector_copper"
+				},
+				"east": {
+					"uv": [7.4, 1.25, 8.6, 1.8],
+					"texture": "#disconnector_copper"
+				},
+				"south": {
+					"uv": [11.9, 1.25, 12.5, 1.8],
+					"texture": "#disconnector_copper"
+				},
+				"west": {
+					"uv": [7.4, 1.25, 8.6, 1.8],
+					"texture": "#disconnector_copper"
+				},
+				"up": {
+					"uv": [11.9, 7.4, 12.5, 8.6],
+					"texture": "#disconnector_copper"
+				},
+				"down": {
+					"uv": [11.9, 7.4, 12.5, 8.6],
+					"texture": "#disconnector_copper"
+				}
+			}
+		},
+		{
+			"name": "plate14",
+			"from": [30, 3, 3],
+			"to": [30.4, 12.8, 13],
+			"rotation": {
+				"angle": 0,
+				"axis": "y",
+				"origin": [8, 8, 8]
+			},
+			"faces": {
+				"north": {
+					"uv": [1.6, 3.2, 2, 13],
+					"texture": "#m3met_anode"
+				},
+				"east": {
+					"uv": [3, 3.2, 13, 13],
+					"texture": "#m3met_anode"
+				},
+				"south": {
+					"uv": [14, 3.2, 14.4, 13],
+					"texture": "#m3met_anode"
+				},
+				"west": {
+					"uv": [3, 3.2, 13, 13],
+					"texture": "#m3met_anode"
+				},
+				"up": {
+					"uv": [14, 3, 14.4, 13],
+					"texture": "#m3met_anode"
+				},
+				"down": {
+					"uv": [14, 3, 14.4, 13],
+					"texture": "#m3met_anode"
+				}
+			}
+		},
+		{
+			"name": "bar14",
+			"from": [29.8, 12.8, 1.2],
+			"to": [30.6, 13.6, 14.8],
+			"rotation": {
+				"angle": 0,
+				"axis": "y",
+				"origin": [8, 8, 8]
+			},
+			"faces": {
+				"north": {
+					"uv": [1.4, 2.4, 2.2, 3.2],
+					"texture": "#m3met_anode"
+				},
+				"east": {
+					"uv": [1.2, 2.4, 14.8, 3.2],
+					"texture": "#m3met_anode"
+				},
+				"south": {
+					"uv": [13.8, 2.4, 14.6, 3.2],
+					"texture": "#m3met_anode"
+				},
+				"west": {
+					"uv": [1.2, 2.4, 14.8, 3.2],
+					"texture": "#m3met_anode"
+				},
+				"up": {
+					"uv": [13.8, 1.2, 14.6, 14.8],
+					"texture": "#m3met_anode"
+				},
+				"down": {
+					"uv": [13.8, 1.2, 14.6, 14.8],
+					"texture": "#m3met_anode"
 				}
 			}
 		}

@@ -143,30 +143,9 @@ mk("defluorination_kiln", FUEL,
       el("hf_offgas", [0.25, 14, 7], [1.75, 16, 9], "apipe"),
       el("discharge_hood", [14, 1, 4], [16, 12, 12], "p")])
 
-mk("pellet_press", FUEL, [
-    el("base", [0, 0, 0], [16, 3, 16], "d"),
-    el("die_table", [4, 3, 3], [12, 6, 13], "st"),
-    el("column_w", [1, 3, 5], [4, 13, 11], "gp"),
-    el("column_e", [12, 3, 5], [15, 13, 11], "gp"),
-    el("crown", [0, 13, 3], [16, 16, 13], "gp", faces={"north": "f", "south": "f"}, full=["north", "south"]),
-    el("feed_shoe", [5, 6, 12], [11, 8, 15], "ss"),
-    el("powder_hopper", [6, 8, 13], [10, 12, 16], "ss"),
-])
-mk("pellet_press/ram", FUEL, [
-    el("ram", [5, 8, 5], [11, 13, 11], "st"),
-    el("punch_plate", [6, 7, 6], [10, 8, 10], "d"),
-], kind="partial")
+# нарисовано вручную в Blockbench: art/blockbench/conversion/fuel_cycle.author.js
 
-mk("sintering_furnace", FUEL, [
-    el("casing", [0, 0, 1], [16, 16, 16], "d"),
-    el("door", [2, 2, 0.5], [14, 14, 1], "f", full=["north"]),
-    el("glow_peephole", [7, 8.5, 0.25], [9, 10, 0.5], "hot"),
-    el("hinge_t", [1, 10, 0.25], [2, 12, 1], "st"),
-    el("hinge_b", [1, 4, 0.25], [2, 6, 1], "st"),
-    el("h2_line", [2, 16, 3], [10, 17, 4], "uf6"),
-    el("flare_stub", [11, 16, 11], [13, 17.5, 13], "st"),
-    el("glow_flare", [11.5, 17.5, 11.5], [12.5, 18, 12.5], "hot"),
-])
+# нарисовано вручную в Blockbench: art/blockbench/conversion/fuel_cycle.author.js
 
 mk("centerless_grinder", FUEL, [
     el("bed", [0, 0, 1], [16, 3, 15], "d"),
@@ -276,15 +255,7 @@ mk("ultrasonic_tester", FUEL, [
     el("probe", [10, 8, 9.5], [11, 12, 10.5], "st"),
 ])
 
-mk("rod_loading_station", FUEL,
-   [el("cabinet", [0, 0, 4], [16, 7, 13], "p"),
-    el("panel", [3, 1, 3.5], [13, 6.5, 4], "f", full=["north"]),
-    el("top", [0, 7, 3], [16, 8, 14], "ss"),
-    el("cladding", [0, 8, 6.5], [16, 9, 7.5], "zr"),
-    el("feeder", [1, 8, 4], [6, 12, 9], "ss"),
-    el("feeder_chute", [6, 8, 6], [8, 9.5, 8], "st")]
-   + disc("he_bottle", "y", 1.6, 8, 15, "he", 8, c=(13, 8, 11.5))
-   + [el("he_valve", [12.5, 15, 11], [13.5, 16, 12], "b")])
+# нарисовано вручную в Blockbench: art/blockbench/conversion/fuel_cycle.author.js
 
 mk("rod_welder", FUEL, [
     el("base", [0, 0, 0], [16, 2, 16], "d"),
@@ -313,16 +284,9 @@ jig += [
     el("clamp_w", [0.75, 7, 2.5], [2.25, 8.5, 13.5], "b"),
     el("clamp_e", [13.75, 7, 2.5], [15.25, 8.5, 13.5], "b"),
 ]
-mk("assembly_jig", FUEL, jig)
+# нарисовано вручную в Blockbench: art/blockbench/conversion/fuel_cycle.author.js
 
-mk("acheson_furnace", FUEL,
-   [el("trough", [0, 0, 2], [16, 10, 14], "f"),
-    el("charge", [1, 10, 3], [15, 12, 13], "charge"),
-    el("glow_ridge", [3, 12, 5], [13, 13, 11], "charge")]
-   + disc("electrode_w", "x", 2, -1, 1, "gr", 8, c=(8, 6, 8))
-   + disc("electrode_e", "x", 2, 15, 17, "gr", 8, c=(8, 6, 8))
-   + [el("bus_w", [-1, 8.5, 7.25], [0.5, 11, 8.75], "cu"),
-      el("bus_e", [15.5, 8.5, 7.25], [17, 11, 8.75], "cu")])
+# нарисовано вручную в Blockbench: art/blockbench/conversion/fuel_cycle.author.js
 
 mk("gs_exchange_tower", FUEL,
    dsc("shell", "y", 6.5, 0, 16, "f", cap="sss")
@@ -362,7 +326,7 @@ for y in (7, 14.5):
         el(f"tie_w_{y}", [0.25, y, 2], [1.25, y + 1, 14], "f"),
         el(f"tie_e_{y}", [14.75, y, 2], [15.75, y + 1, 14], "f"),
     ]
-mk("fuel_pool_rack_open", SF, rack)
+# нарисовано вручную в Blockbench: art/blockbench/core/reactor_hall.author.js
 
 mk("fuel_pool_rack_borated", SF, [
     el("wall_n", [0, 0, 0], [16, 16, 1], "f"),
@@ -476,16 +440,7 @@ mk("master_slave_manipulator", RC, [
     el("tong_e", [8.5, 0.5, 11.75], [9.5, 2, 13.75], "d"),
 ])
 
-mk("shearing_machine", RC, [
-    el("base", [0, 0, 0], [16, 3, 16], "d"),
-    el("cheek_w", [0, 3, 2], [3, 13, 14], "f", full=["north", "west"]),
-    el("cheek_e", [13, 3, 2], [16, 13, 14], "f", full=["north", "east"]),
-    el("crown", [0, 13, 2], [16, 16, 14], "f", full=["north", "south"]),
-    el("magazine", [4, 3, 9], [12, 7, 16], "lead"),
-    el("gag", [5, 7, 9], [11, 9, 12], "d"),
-    el("discharge_chute", [5, 3, 0], [11, 4, 4], "ss"),
-    el("hydraulic", [6, 16, 6], [10, 17.5, 10], "st"),
-])
+# нарисовано вручную в Blockbench: art/blockbench/core/reactor_hall.author.js
 mk("shearing_machine/blade", RC, [
     el("blade", [3.5, 7.5, 5], [12.5, 12.5, 7], "st"),
     el("edge", [3.5, 7, 5.5], [12.5, 7.5, 6.5], "ds"),
@@ -520,15 +475,7 @@ mk("clarifier/bowl", RC,
    disc("bowl", "y", 4, 4, 10, "st") + disc("spindle", "y", 1, 10, 13, "ds", 8)
    + disc("nut", "y", 1.5, 12, 12.75, "b", 8), kind="partial")
 
-mk("oxalate_precipitator", RC,
-   [el("base", [2, 0, 2], [14, 2, 14], "d")]
-   + dsc("vessel", "y", 3.5, 2, 11.5, "f", cap="sss")
-   + disc("lid", "y", 3, 11.5, 12, "ds", 8)
-   + [el("post_w", [2.5, 2, 7.5], [3.5, 15.5, 8.5], "d"),
-      el("post_e", [12.5, 2, 7.5], [13.5, 15.5, 8.5], "d"),
-      el("bracket", [3.5, 14.5, 7.5], [12.5, 15.5, 8.5], "d"),
-      el("motor", [6, 15.5, 6], [10, 17.5, 10], "mot"),
-      el("filtrate", [7, 3, 1], [9, 5, 4.6], "apipe")])
+# нарисовано вручную в Blockbench: art/blockbench/core/reactor_hall.author.js
 mk("oxalate_precipitator/agitator", RC,
    [el("shaft", [7.5, 3, 7.5], [8.5, 15.5, 8.5], "st"),
     el("paddle_x", [5, 4, 7.75], [11, 6, 8.25], "st"),
@@ -631,25 +578,13 @@ mk("solvent_wash", RC, [
 # =====================================================================
 WS = "waste"
 
-mk("waste_compactor", WS,
-   [el("base", [0, 0, 0], [16, 3, 16], "d")]
-   + disc("drum", "y", 4, 3, 9, "drum")
-   + [el("column_w", [0, 3, 6], [2, 13, 10], "yp"),
-      el("column_e", [14, 3, 6], [16, 13, 10], "yp"),
-      el("crown", [0, 13, 3], [16, 16, 13], "yp", faces={"north": "f", "south": "f"}, full=["north", "south"]),
-      el("cylinder", [6, 16, 6], [10, 17.5, 10], "st")])
+# нарисовано вручную в Blockbench: art/blockbench/core/reactor_hall.author.js
 mk("waste_compactor/ram", WS, [
     el("platen", [3, 10, 3], [13, 12, 13], "d"),
     el("rod", [7, 12, 7], [9, 13, 9], "st"),
 ], kind="partial")
 
-mk("cementation_mixer", WS,
-   [el("base", [0, 0, 0], [16, 2, 16], "d")]
-   + disc("drum", "y", 5.5, 2, 11, "drum")
-   + [el("post_w", [0.5, 2, 6], [2.5, 14, 10], "f"),
-      el("post_e", [13.5, 2, 6], [15.5, 14, 10], "f"),
-      el("beam", [0.5, 14, 5], [15.5, 16, 11], "f", full=["north", "south"]),
-      el("mixer_head", [5, 12, 5], [11, 14, 11], "mot")])
+# нарисовано вручную в Blockbench: art/blockbench/core/reactor_hall.author.js
 mk("cementation_mixer/paddle", WS, [
     el("shaft", [7.5, 3, 7.5], [8.5, 12, 8.5], "st"),
     el("paddle_x", [3.5, 4, 7.5], [12.5, 7, 8.5], "st"),
@@ -662,23 +597,11 @@ mk("cement_kiln", WS,
    + dsc("shell", "x", 6, 0, 16, "f", cap="ref", c=(8, 9, 8))
    + disc("tyre", "x", 6.7, 6.5, 9.5, "ds", c=(8, 9, 8)))
 
-mk("bitumenizer", WS,
-   [el("base", [0, 0, 2], [16, 2, 14], "d"),
-    el("gearbox", [0, 2, 4], [3, 10, 12], "mot")]
-   + dsc("barrel", "x", 3.5, 3, 14, "f", cap="ds", c=(8, 7, 8))
-   + [el("hopper", [5, 10, 6], [9, 14, 10], "p"),
-      el("spout", [14, 4, 7], [15.5, 7, 9], "d"),
-      el("glow_drip", [14.25, 2, 7.75], [15.25, 4, 8.25], "bit"),
-      el("steam_line", [3, 11, 3], [14, 12, 4], "red")])
+# нарисовано вручную в Blockbench: art/blockbench/core/reactor_hall.author.js
 
 # плавитель остекловывания нарисован вручную в Blockbench: art/blockbench/waste/vitrification_melter.author.js
 
-mk("repository_controller", WS, [
-    el("pedestal", [2, 0, 5], [14, 7, 15], "d"),
-    el("desk", [1, 7, 1], [15, 8, 6], "d"),
-    el("housing", [1, 8, 6], [15, 16, 15], "p"),
-    el("glow_screen", [1.5, 8.5, 5.5], [14.5, 15.5, 6], "f", full=["north"]),
-])
+# нарисовано вручную в Blockbench: art/blockbench/turbine/power_misc.author.js
 
 cube("bentonite_buffer", WS)
 mk("near_surface_vault", WS, [el("block", [0, 0, 0], [16, 16, 16], "f", faces={"up": "cs", "down": "cs"})])

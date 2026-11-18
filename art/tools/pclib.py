@@ -5,7 +5,7 @@ Models:   model(id, category, {key: texture_rel}, [elements], java_path, kind)
 Items:    item(id, texture_rel)  -> flat item/generated model
 Fluids:   fluid(id, base_hex, kind="liquid"|"gas")  -> still/flow animated textures
 """
-import math, os, random
+import json, math, os, random
 import numpy as np
 from PIL import Image
 
@@ -154,9 +154,15 @@ def ring_xz(name, r, w, y0, y1, tex, c=8):
 
 
 M = []
+# Models drawn by hand (art/blockbench/**/*.author.js, run by art/tools/pcart_headless.js, which keeps this list):
+# the generator no longer registers them, so a rerun cannot overwrite the hand-made JSON and .bbmodel.
+_HAND_MODELS_FILE = os.path.join(os.path.dirname(os.path.abspath(__file__)), "..", "hand_models.json")
+HAND_MODELS = set(json.load(open(_HAND_MODELS_FILE, encoding="utf8"))["models"]) if os.path.exists(_HAND_MODELS_FILE) else set()
 
 
 def model(id_, cat, textures, elements, java, kind="block"):
+    if java in HAND_MODELS or id_ in HAND_MODELS:
+        return
     M.append({"id": id_, "cat": cat, "textures": textures, "elements": elements, "java": java, "kind": kind})
 
 

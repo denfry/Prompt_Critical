@@ -1,15 +1,15 @@
 {
 	"credit": "Made with Blockbench",
 	"textures": {
-		"particle": "promptcritical:block/common/oil_pump_grey_blue",
-		"pgb": "promptcritical:block/common/oil_pump_grey_blue",
-		"st": "promptcritical:block/common/steel_bare"
+		"particle": "promptcritical:block/oil/pump_paint",
+		"oil_pump_paint": "promptcritical:block/oil/pump_paint",
+		"plant_concrete": "promptcritical:block/plant/concrete"
 	},
 	"elements": [
 		{
-			"name": "frame",
+			"name": "rail0",
 			"from": [0, 0, 0],
-			"to": [16, 4, 16],
+			"to": [16, 5, 3],
 			"rotation": {
 				"angle": 0,
 				"axis": "y",
@@ -17,35 +17,35 @@
 			},
 			"faces": {
 				"north": {
-					"uv": [0, 0, 16, 4],
-					"texture": "#pgb"
+					"uv": [0, 11, 16, 16],
+					"texture": "#oil_pump_paint"
 				},
 				"east": {
-					"uv": [0, 0, 16, 4],
-					"texture": "#pgb"
+					"uv": [13, 11, 16, 16],
+					"texture": "#oil_pump_paint"
 				},
 				"south": {
-					"uv": [0, 0, 16, 4],
-					"texture": "#pgb"
+					"uv": [0, 11, 16, 16],
+					"texture": "#oil_pump_paint"
 				},
 				"west": {
-					"uv": [0, 0, 16, 4],
-					"texture": "#pgb"
+					"uv": [0, 11, 3, 16],
+					"texture": "#oil_pump_paint"
 				},
 				"up": {
-					"uv": [0, 0, 16, 16],
-					"texture": "#pgb"
+					"uv": [0, 0, 16, 3],
+					"texture": "#oil_pump_paint"
 				},
 				"down": {
-					"uv": [0, 0, 16, 16],
-					"texture": "#pgb"
+					"uv": [0, 13, 16, 16],
+					"texture": "#oil_pump_paint"
 				}
 			}
 		},
 		{
-			"name": "anchor_1",
-			"from": [1, 4, 1],
-			"to": [3, 5, 3],
+			"name": "rail13",
+			"from": [0, 0, 13],
+			"to": [16, 5, 16],
 			"rotation": {
 				"angle": 0,
 				"axis": "y",
@@ -53,35 +53,35 @@
 			},
 			"faces": {
 				"north": {
-					"uv": [0, 0, 2, 1],
-					"texture": "#st"
+					"uv": [0, 11, 16, 16],
+					"texture": "#oil_pump_paint"
 				},
 				"east": {
-					"uv": [0, 0, 2, 1],
-					"texture": "#st"
+					"uv": [0, 11, 3, 16],
+					"texture": "#oil_pump_paint"
 				},
 				"south": {
-					"uv": [0, 0, 2, 1],
-					"texture": "#st"
+					"uv": [0, 11, 16, 16],
+					"texture": "#oil_pump_paint"
 				},
 				"west": {
-					"uv": [0, 0, 2, 1],
-					"texture": "#st"
+					"uv": [13, 11, 16, 16],
+					"texture": "#oil_pump_paint"
 				},
 				"up": {
-					"uv": [0, 0, 2, 2],
-					"texture": "#st"
+					"uv": [0, 13, 16, 16],
+					"texture": "#oil_pump_paint"
 				},
 				"down": {
-					"uv": [0, 0, 2, 2],
-					"texture": "#st"
+					"uv": [0, 0, 16, 3],
+					"texture": "#oil_pump_paint"
 				}
 			}
 		},
 		{
-			"name": "anchor_2",
-			"from": [13, 4, 13],
-			"to": [15, 5, 15],
+			"name": "cross",
+			"from": [6, 0, 3],
+			"to": [10, 4, 13],
 			"rotation": {
 				"angle": 0,
 				"axis": "y",
@@ -89,28 +89,60 @@
 			},
 			"faces": {
 				"north": {
-					"uv": [0, 0, 2, 1],
-					"texture": "#st"
+					"uv": [6, 12, 10, 16],
+					"texture": "#oil_pump_paint"
 				},
 				"east": {
-					"uv": [0, 0, 2, 1],
-					"texture": "#st"
+					"uv": [3, 12, 13, 16],
+					"texture": "#oil_pump_paint"
 				},
 				"south": {
-					"uv": [0, 0, 2, 1],
-					"texture": "#st"
+					"uv": [6, 12, 10, 16],
+					"texture": "#oil_pump_paint"
 				},
 				"west": {
-					"uv": [0, 0, 2, 1],
-					"texture": "#st"
+					"uv": [3, 12, 13, 16],
+					"texture": "#oil_pump_paint"
 				},
 				"up": {
-					"uv": [0, 0, 2, 2],
-					"texture": "#st"
+					"uv": [6, 3, 10, 13],
+					"texture": "#oil_pump_paint"
 				},
 				"down": {
-					"uv": [0, 0, 2, 2],
-					"texture": "#st"
+					"uv": [6, 3, 10, 13],
+					"texture": "#oil_pump_paint"
+				}
+			}
+		},
+		{
+			"name": "pad",
+			"from": [0, 0, 0],
+			"to": [16, 0.01, 16],
+			"rotation": {
+				"angle": 0,
+				"axis": "y",
+				"origin": [8, 8, 8]
+			},
+			"faces": {
+				"north": {
+					"uv": [0, 15.99, 16, 16],
+					"texture": "#plant_concrete"
+				},
+				"east": {
+					"uv": [0, 15.99, 16, 16],
+					"texture": "#plant_concrete"
+				},
+				"south": {
+					"uv": [0, 15.99, 16, 16],
+					"texture": "#plant_concrete"
+				},
+				"west": {
+					"uv": [0, 15.99, 16, 16],
+					"texture": "#plant_concrete"
+				},
+				"up": {
+					"uv": [0, 0, 16, 16],
+					"texture": "#plant_concrete"
 				}
 			}
 		}

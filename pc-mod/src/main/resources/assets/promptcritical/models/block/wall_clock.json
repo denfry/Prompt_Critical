@@ -1,14 +1,15 @@
 {
 	"credit": "Made with Blockbench",
 	"textures": {
-		"particle": "promptcritical:block/common/grid_dark_grey",
-		"dg": "promptcritical:block/common/grid_dark_grey",
-		"f": "promptcritical:block/decor/wall_clock_face"
+		"plant_rubber": "promptcritical:block/plant/rubber",
+		"material_bright_steel": "promptcritical:block/material/bright_steel",
+		"particle": "promptcritical:block/decor_hand/clock",
+		"decor_hand_clock": "promptcritical:block/decor_hand/clock"
 	},
 	"elements": [
 		{
 			"name": "case",
-			"from": [2, 2, 14.5],
+			"from": [2, 2, 15],
 			"to": [14, 14, 16],
 			"rotation": {
 				"angle": 0,
@@ -17,35 +18,71 @@
 			},
 			"faces": {
 				"north": {
-					"uv": [0, 0, 12, 12],
-					"texture": "#dg"
+					"uv": [2, 2, 14, 14],
+					"texture": "#plant_rubber"
 				},
 				"east": {
-					"uv": [0, 0, 1.5, 12],
-					"texture": "#dg"
+					"uv": [0, 2, 1, 14],
+					"texture": "#plant_rubber"
 				},
 				"south": {
-					"uv": [0, 0, 12, 12],
-					"texture": "#dg"
+					"uv": [2, 2, 14, 14],
+					"texture": "#plant_rubber"
 				},
 				"west": {
-					"uv": [0, 0, 1.5, 12],
-					"texture": "#dg"
+					"uv": [15, 2, 16, 14],
+					"texture": "#plant_rubber"
 				},
 				"up": {
-					"uv": [0, 0, 12, 1.5],
-					"texture": "#dg"
+					"uv": [2, 15, 14, 16],
+					"texture": "#plant_rubber"
 				},
 				"down": {
-					"uv": [0, 0, 12, 1.5],
-					"texture": "#dg"
+					"uv": [2, 0, 14, 1],
+					"texture": "#plant_rubber"
+				}
+			}
+		},
+		{
+			"name": "bezel",
+			"from": [1.6, 1.6, 14.6],
+			"to": [14.4, 14.4, 15],
+			"rotation": {
+				"angle": 0,
+				"axis": "y",
+				"origin": [8, 8, 8]
+			},
+			"faces": {
+				"north": {
+					"uv": [1.6, 1.6, 14.4, 14.4],
+					"texture": "#material_bright_steel"
+				},
+				"east": {
+					"uv": [1, 1.6, 1.4, 14.4],
+					"texture": "#material_bright_steel"
+				},
+				"south": {
+					"uv": [1.6, 1.6, 14.4, 14.4],
+					"texture": "#material_bright_steel"
+				},
+				"west": {
+					"uv": [14.6, 1.6, 15, 14.4],
+					"texture": "#material_bright_steel"
+				},
+				"up": {
+					"uv": [1.6, 14.6, 14.4, 15],
+					"texture": "#material_bright_steel"
+				},
+				"down": {
+					"uv": [1.6, 1, 14.4, 1.4],
+					"texture": "#material_bright_steel"
 				}
 			}
 		},
 		{
 			"name": "face",
-			"from": [2.5, 2.5, 14.4],
-			"to": [13.5, 13.5, 14.5],
+			"from": [2.4, 2.4, 14.5],
+			"to": [13.6, 13.6, 14.6],
 			"rotation": {
 				"angle": 0,
 				"axis": "y",
@@ -54,27 +91,23 @@
 			"faces": {
 				"north": {
 					"uv": [0, 0, 16, 16],
-					"texture": "#f"
+					"texture": "#decor_hand_clock"
 				},
 				"east": {
-					"uv": [0, 0, 0.1, 11],
-					"texture": "#f"
-				},
-				"south": {
-					"uv": [0, 0, 11, 11],
-					"texture": "#f"
+					"uv": [1.4, 2.4, 1.5, 13.6],
+					"texture": "#plant_rubber"
 				},
 				"west": {
-					"uv": [0, 0, 0.1, 11],
-					"texture": "#f"
+					"uv": [14.5, 2.4, 14.6, 13.6],
+					"texture": "#plant_rubber"
 				},
 				"up": {
-					"uv": [0, 0, 11, 0.1],
-					"texture": "#f"
+					"uv": [2.4, 14.5, 13.6, 14.6],
+					"texture": "#plant_rubber"
 				},
 				"down": {
-					"uv": [0, 0, 11, 0.1],
-					"texture": "#f"
+					"uv": [2.4, 1.4, 13.6, 1.5],
+					"texture": "#plant_rubber"
 				}
 			}
 		}

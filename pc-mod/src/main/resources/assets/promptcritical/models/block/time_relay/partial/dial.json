@@ -1,15 +1,15 @@
 {
 	"credit": "Made with Blockbench",
 	"textures": {
-		"particle": "promptcritical:block/common/paint_red",
-		"d": "promptcritical:block/common/steel_dark",
-		"red": "promptcritical:block/common/paint_red"
+		"particle": "promptcritical:block/material/paint_red",
+		"material_paint_red": "promptcritical:block/material/paint_red",
+		"plant_rubber": "promptcritical:block/plant/rubber"
 	},
 	"elements": [
 		{
 			"name": "needle",
-			"from": [7.75, 8, 8.6],
-			"to": [8.25, 12, 8.8],
+			"from": [7.82, 8, 8.4],
+			"to": [8.18, 10.7, 8.55],
 			"rotation": {
 				"angle": 0,
 				"axis": "y",
@@ -17,35 +17,71 @@
 			},
 			"faces": {
 				"north": {
-					"uv": [0, 0, 0.5, 4],
-					"texture": "#red"
+					"uv": [7.82, 5.3, 8.18, 8],
+					"texture": "#material_paint_red"
 				},
 				"east": {
-					"uv": [0, 0, 0.2, 4],
-					"texture": "#red"
+					"uv": [7.45, 5.3, 7.6, 8],
+					"texture": "#material_paint_red"
 				},
 				"south": {
-					"uv": [0, 0, 0.5, 4],
-					"texture": "#red"
+					"uv": [7.82, 5.3, 8.18, 8],
+					"texture": "#material_paint_red"
 				},
 				"west": {
-					"uv": [0, 0, 0.2, 4],
-					"texture": "#red"
+					"uv": [8.4, 5.3, 8.55, 8],
+					"texture": "#material_paint_red"
 				},
 				"up": {
-					"uv": [0, 0, 0.5, 0.2],
-					"texture": "#red"
+					"uv": [7.82, 8.4, 8.18, 8.55],
+					"texture": "#material_paint_red"
 				},
 				"down": {
-					"uv": [0, 0, 0.5, 0.2],
-					"texture": "#red"
+					"uv": [7.82, 7.45, 8.18, 7.6],
+					"texture": "#material_paint_red"
+				}
+			}
+		},
+		{
+			"name": "tail",
+			"from": [7.85, 7.1, 8.4],
+			"to": [8.15, 8, 8.55],
+			"rotation": {
+				"angle": 0,
+				"axis": "y",
+				"origin": [8, 8, 8]
+			},
+			"faces": {
+				"north": {
+					"uv": [7.85, 8, 8.15, 8.9],
+					"texture": "#material_paint_red"
+				},
+				"east": {
+					"uv": [7.45, 8, 7.6, 8.9],
+					"texture": "#material_paint_red"
+				},
+				"south": {
+					"uv": [7.85, 8, 8.15, 8.9],
+					"texture": "#material_paint_red"
+				},
+				"west": {
+					"uv": [8.4, 8, 8.55, 8.9],
+					"texture": "#material_paint_red"
+				},
+				"up": {
+					"uv": [7.85, 8.4, 8.15, 8.55],
+					"texture": "#material_paint_red"
+				},
+				"down": {
+					"uv": [7.85, 7.45, 8.15, 7.6],
+					"texture": "#material_paint_red"
 				}
 			}
 		},
 		{
 			"name": "hub",
-			"from": [7.5, 7.5, 8.5],
-			"to": [8.5, 8.5, 8.9],
+			"from": [7.5, 7.5, 8.3],
+			"to": [8.5, 8.5, 8.6],
 			"rotation": {
 				"angle": 0,
 				"axis": "y",
@@ -53,28 +89,28 @@
 			},
 			"faces": {
 				"north": {
-					"uv": [0, 0, 1, 1],
-					"texture": "#d"
+					"uv": [7.5, 7.5, 8.5, 8.5],
+					"texture": "#plant_rubber"
 				},
 				"east": {
-					"uv": [0, 0, 0.4, 1],
-					"texture": "#d"
+					"uv": [7.4, 7.5, 7.7, 8.5],
+					"texture": "#plant_rubber"
 				},
 				"south": {
-					"uv": [0, 0, 1, 1],
-					"texture": "#d"
+					"uv": [7.5, 7.5, 8.5, 8.5],
+					"texture": "#plant_rubber"
 				},
 				"west": {
-					"uv": [0, 0, 0.4, 1],
-					"texture": "#d"
+					"uv": [8.3, 7.5, 8.6, 8.5],
+					"texture": "#plant_rubber"
 				},
 				"up": {
-					"uv": [0, 0, 1, 0.4],
-					"texture": "#d"
+					"uv": [7.5, 8.3, 8.5, 8.6],
+					"texture": "#plant_rubber"
 				},
 				"down": {
-					"uv": [0, 0, 1, 0.4],
-					"texture": "#d"
+					"uv": [7.5, 7.4, 8.5, 7.7],
+					"texture": "#plant_rubber"
 				}
 			}
 		}

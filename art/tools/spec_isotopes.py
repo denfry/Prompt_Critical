@@ -28,8 +28,7 @@ def irr_channel(loaded):
     return els
 
 
-m("irradiation_channel", "core", irr_channel(False))
-m("irradiation_channel_loaded", "core", irr_channel(True))
+# нарисовано вручную в Blockbench: art/blockbench/core/reactor_hall.author.js
 
 
 def reflector_port(loaded):
@@ -148,8 +147,7 @@ def rtg_te(active=True):
     return els
 
 
-m("rtg_thermoelectric", "isotopes", rtg_te())
-m("rtg_thermoelectric_depleted", "isotopes", rtg_te(False))
+# нарисовано вручную в Blockbench: art/blockbench/core/reactor_hall.author.js
 
 
 def rtg_stirling(running=True):
@@ -194,6 +192,4 @@ m("compact_reactor_module_shutdown", "core", klt(False))
 m("tc99m_generator", "isotopes", vcyl("body", 8, 8, 4, 0, 11, "lead") + vcyl("cap", 8, 8, 3, 11, 13, "sss", 8)
   + [el("handle", [5, 13, 7.5], [11, 15, 8.5], "d"), el("label", [5, 4, 3.9], [11, 8, 4.1], "srad", full=["north"])],
   kind="item")
-m("radiography_camera", "isotopes", [el("body", [3, 2, 4], [13, 10, 12], "ye", faces={"north": "ycase"}, full=["north"]),
-                                     el("handle", [5, 10, 7], [11, 13, 9], "d"),
-                                     el("port", [13, 4, 6.5], [15, 7, 9.5], "st")], kind="item")
+# нарисовано вручную в Blockbench: art/blockbench/items/items3d.author.js

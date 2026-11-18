@@ -1,15 +1,15 @@
 {
 	"credit": "Made with Blockbench",
 	"textures": {
-		"particle": "promptcritical:block/common/w2_red",
-		"d": "promptcritical:block/common/steel_dark",
-		"rd": "promptcritical:block/common/w2_red"
+		"particle": "promptcritical:block/m10ops/fire_red",
+		"m10ops_fire_red": "promptcritical:block/m10ops/fire_red",
+		"electronics_glass": "promptcritical:block/electronics/glass"
 	},
 	"elements": [
 		{
-			"name": "chamber",
-			"from": [4, 4, 8],
-			"to": [12, 12, 15],
+			"name": "mount",
+			"from": [2, 4, 15],
+			"to": [12, 12, 16],
 			"rotation": {
 				"angle": 0,
 				"axis": "y",
@@ -17,35 +17,35 @@
 			},
 			"faces": {
 				"north": {
-					"uv": [0, 0, 8, 8],
-					"texture": "#rd"
+					"uv": [4, 4, 14, 12],
+					"texture": "#m10ops_fire_red"
 				},
 				"east": {
-					"uv": [0, 0, 7, 8],
-					"texture": "#rd"
+					"uv": [0, 4, 1, 12],
+					"texture": "#m10ops_fire_red"
 				},
 				"south": {
-					"uv": [0, 0, 8, 8],
-					"texture": "#rd"
+					"uv": [2, 4, 12, 12],
+					"texture": "#m10ops_fire_red"
 				},
 				"west": {
-					"uv": [0, 0, 7, 8],
-					"texture": "#rd"
+					"uv": [15, 4, 16, 12],
+					"texture": "#m10ops_fire_red"
 				},
 				"up": {
-					"uv": [0, 0, 8, 7],
-					"texture": "#rd"
+					"uv": [2, 15, 12, 16],
+					"texture": "#m10ops_fire_red"
 				},
 				"down": {
-					"uv": [0, 0, 8, 7],
-					"texture": "#rd"
+					"uv": [2, 0, 12, 1],
+					"texture": "#m10ops_fire_red"
 				}
 			}
 		},
 		{
-			"name": "flange",
-			"from": [3, 3, 15],
-			"to": [13, 13, 16],
+			"name": "body",
+			"from": [3, 5, 9],
+			"to": [11, 12, 15],
 			"rotation": {
 				"angle": 0,
 				"axis": "y",
@@ -53,35 +53,71 @@
 			},
 			"faces": {
 				"north": {
-					"uv": [0, 0, 10, 10],
-					"texture": "#d"
+					"uv": [5, 4, 13, 11],
+					"texture": "#m10ops_fire_red"
 				},
 				"east": {
-					"uv": [0, 0, 1, 10],
-					"texture": "#d"
+					"uv": [1, 4, 7, 11],
+					"texture": "#m10ops_fire_red"
 				},
 				"south": {
-					"uv": [0, 0, 10, 10],
-					"texture": "#d"
+					"uv": [3, 4, 11, 11],
+					"texture": "#m10ops_fire_red"
 				},
 				"west": {
-					"uv": [0, 0, 1, 10],
-					"texture": "#d"
+					"uv": [9, 4, 15, 11],
+					"texture": "#m10ops_fire_red"
 				},
 				"up": {
-					"uv": [0, 0, 10, 1],
-					"texture": "#d"
+					"uv": [3, 9, 11, 15],
+					"texture": "#m10ops_fire_red"
 				},
 				"down": {
-					"uv": [0, 0, 10, 1],
-					"texture": "#d"
+					"uv": [3, 1, 11, 7],
+					"texture": "#m10ops_fire_red"
+				}
+			}
+		},
+		{
+			"name": "glass_seal",
+			"from": [5, 7, 8.6],
+			"to": [9, 10, 9],
+			"rotation": {
+				"angle": 0,
+				"axis": "y",
+				"origin": [8, 8, 8]
+			},
+			"faces": {
+				"north": {
+					"uv": [7, 6, 11, 9],
+					"texture": "#electronics_glass"
+				},
+				"east": {
+					"uv": [7, 6, 7.4, 9],
+					"texture": "#electronics_glass"
+				},
+				"south": {
+					"uv": [5, 6, 9, 9],
+					"texture": "#electronics_glass"
+				},
+				"west": {
+					"uv": [8.6, 6, 9, 9],
+					"texture": "#electronics_glass"
+				},
+				"up": {
+					"uv": [5, 8.6, 9, 9],
+					"texture": "#electronics_glass"
+				},
+				"down": {
+					"uv": [5, 7, 9, 7.4],
+					"texture": "#electronics_glass"
 				}
 			}
 		},
 		{
 			"name": "inlet_0",
-			"from": [0, 4.5, 10.379],
-			"to": [4, 7.5, 11.621],
+			"from": [-0.03, 5.72152, 10.6],
+			"to": [3, 6.27848, 13.4],
 			"rotation": {
 				"angle": 0,
 				"axis": "y",
@@ -89,35 +125,191 @@
 			},
 			"faces": {
 				"north": {
-					"uv": [0, 0, 4, 3],
-					"texture": "#rd"
-				},
-				"east": {
-					"uv": [0, 0, 1.24, 3],
-					"texture": "#rd"
+					"uv": [13, 9.72152, 16, 10.27848],
+					"texture": "#m10ops_fire_red"
 				},
 				"south": {
-					"uv": [0, 0, 4, 3],
-					"texture": "#rd"
+					"uv": [0, 9.72152, 3, 10.27848],
+					"texture": "#m10ops_fire_red"
 				},
 				"west": {
-					"uv": [0, 0, 1.24, 3],
-					"texture": "#rd"
-				},
-				"up": {
-					"uv": [0, 0, 4, 1.24],
-					"texture": "#rd"
-				},
-				"down": {
-					"uv": [0, 0, 4, 1.24],
-					"texture": "#rd"
+					"uv": [10.6, 9.72152, 13.4, 10.27848],
+					"texture": "#m10ops_fire_red"
 				}
 			}
 		},
 		{
 			"name": "inlet_1",
-			"from": [-0.01, 5.379, 9.5],
-			"to": [4.01, 6.621, 12.5],
+			"from": [-0.03, 5.72152, 10.6],
+			"to": [3, 6.27848, 13.4],
+			"rotation": {
+				"angle": 22.5,
+				"axis": "x",
+				"origin": [8, 6, 12]
+			},
+			"faces": {
+				"north": {
+					"uv": [13, 9.72152, 16, 10.27848],
+					"texture": "#m10ops_fire_red"
+				},
+				"south": {
+					"uv": [0, 9.72152, 3, 10.27848],
+					"texture": "#m10ops_fire_red"
+				},
+				"west": {
+					"uv": [10.6, 9.72152, 13.4, 10.27848],
+					"texture": "#m10ops_fire_red"
+				}
+			}
+		},
+		{
+			"name": "inlet_2",
+			"from": [-0.03, 5.72152, 10.6],
+			"to": [3, 6.27848, 13.4],
+			"rotation": {
+				"angle": 45,
+				"axis": "x",
+				"origin": [8, 6, 12]
+			},
+			"faces": {
+				"north": {
+					"uv": [13, 9.72152, 16, 10.27848],
+					"texture": "#m10ops_fire_red"
+				},
+				"south": {
+					"uv": [0, 9.72152, 3, 10.27848],
+					"texture": "#m10ops_fire_red"
+				},
+				"west": {
+					"uv": [10.6, 9.72152, 13.4, 10.27848],
+					"texture": "#m10ops_fire_red"
+				}
+			}
+		},
+		{
+			"name": "inlet_3",
+			"from": [-0.03, 5.72152, 10.6],
+			"to": [3, 6.27848, 13.4],
+			"rotation": {
+				"angle": -22.5,
+				"axis": "x",
+				"origin": [8, 6, 12]
+			},
+			"faces": {
+				"north": {
+					"uv": [13, 9.72152, 16, 10.27848],
+					"texture": "#m10ops_fire_red"
+				},
+				"south": {
+					"uv": [0, 9.72152, 3, 10.27848],
+					"texture": "#m10ops_fire_red"
+				},
+				"west": {
+					"uv": [10.6, 9.72152, 13.4, 10.27848],
+					"texture": "#m10ops_fire_red"
+				}
+			}
+		},
+		{
+			"name": "inlet_4",
+			"from": [-0.03, 5.72152, 10.6],
+			"to": [3, 6.27848, 13.4],
+			"rotation": {
+				"angle": -45,
+				"axis": "x",
+				"origin": [8, 6, 12]
+			},
+			"faces": {
+				"north": {
+					"uv": [13, 9.72152, 16, 10.27848],
+					"texture": "#m10ops_fire_red"
+				},
+				"south": {
+					"uv": [0, 9.72152, 3, 10.27848],
+					"texture": "#m10ops_fire_red"
+				},
+				"west": {
+					"uv": [10.6, 9.72152, 13.4, 10.27848],
+					"texture": "#m10ops_fire_red"
+				}
+			}
+		},
+		{
+			"name": "inlet_5",
+			"from": [-0.03, 4.6, 11.72152],
+			"to": [3, 7.4, 12.27848],
+			"rotation": {
+				"angle": 0,
+				"axis": "y",
+				"origin": [8, 8, 8]
+			},
+			"faces": {
+				"west": {
+					"uv": [11.72152, 8.6, 12.27848, 11.4],
+					"texture": "#m10ops_fire_red"
+				},
+				"up": {
+					"uv": [0, 11.72152, 3, 12.27848],
+					"texture": "#m10ops_fire_red"
+				},
+				"down": {
+					"uv": [0, 3.72152, 3, 4.27848],
+					"texture": "#m10ops_fire_red"
+				}
+			}
+		},
+		{
+			"name": "inlet_6",
+			"from": [-0.03, 4.6, 11.72152],
+			"to": [3, 7.4, 12.27848],
+			"rotation": {
+				"angle": 22.5,
+				"axis": "x",
+				"origin": [8, 6, 12]
+			},
+			"faces": {
+				"west": {
+					"uv": [11.72152, 8.6, 12.27848, 11.4],
+					"texture": "#m10ops_fire_red"
+				},
+				"up": {
+					"uv": [0, 11.72152, 3, 12.27848],
+					"texture": "#m10ops_fire_red"
+				},
+				"down": {
+					"uv": [0, 3.72152, 3, 4.27848],
+					"texture": "#m10ops_fire_red"
+				}
+			}
+		},
+		{
+			"name": "inlet_7",
+			"from": [-0.03, 4.6, 11.72152],
+			"to": [3, 7.4, 12.27848],
+			"rotation": {
+				"angle": -22.5,
+				"axis": "x",
+				"origin": [8, 6, 12]
+			},
+			"faces": {
+				"west": {
+					"uv": [11.72152, 8.6, 12.27848, 11.4],
+					"texture": "#m10ops_fire_red"
+				},
+				"up": {
+					"uv": [0, 11.72152, 3, 12.27848],
+					"texture": "#m10ops_fire_red"
+				},
+				"down": {
+					"uv": [0, 3.72152, 3, 4.27848],
+					"texture": "#m10ops_fire_red"
+				}
+			}
+		},
+		{
+			"name": "deflector",
+			"from": [3.6, 3, 10],
+			"to": [10.4, 5, 14],
 			"rotation": {
 				"angle": 0,
 				"axis": "y",
@@ -125,100 +317,64 @@
 			},
 			"faces": {
 				"north": {
-					"uv": [0, 0, 4.02, 1.24],
-					"texture": "#rd"
+					"uv": [5.6, 11, 12.4, 13],
+					"texture": "#m10ops_fire_red"
 				},
 				"east": {
-					"uv": [0, 0, 3, 1.24],
-					"texture": "#rd"
+					"uv": [2, 11, 6, 13],
+					"texture": "#m10ops_fire_red"
 				},
 				"south": {
-					"uv": [0, 0, 4.02, 1.24],
-					"texture": "#rd"
+					"uv": [3.6, 11, 10.4, 13],
+					"texture": "#m10ops_fire_red"
 				},
 				"west": {
-					"uv": [0, 0, 3, 1.24],
-					"texture": "#rd"
+					"uv": [10, 11, 14, 13],
+					"texture": "#m10ops_fire_red"
 				},
 				"up": {
-					"uv": [0, 0, 4.02, 3],
-					"texture": "#rd"
+					"uv": [3.6, 10, 10.4, 14],
+					"texture": "#m10ops_fire_red"
 				},
 				"down": {
-					"uv": [0, 0, 4.02, 3],
-					"texture": "#rd"
+					"uv": [3.6, 2, 10.4, 6],
+					"texture": "#m10ops_fire_red"
 				}
 			}
 		},
 		{
-			"name": "inlet_2",
-			"from": [-0.02, 4.5, 10.379],
-			"to": [4.02, 7.5, 11.621],
+			"name": "top",
+			"from": [5, 12, 10],
+			"to": [9, 13, 14],
 			"rotation": {
-				"angle": 45,
-				"axis": "x",
-				"origin": [8, 6, 11]
+				"angle": 0,
+				"axis": "y",
+				"origin": [8, 8, 8]
 			},
 			"faces": {
 				"north": {
-					"uv": [0, 0, 4.04, 3],
-					"texture": "#rd"
+					"uv": [7, 3, 11, 4],
+					"texture": "#m10ops_fire_red"
 				},
 				"east": {
-					"uv": [0, 0, 1.24, 3],
-					"texture": "#rd"
+					"uv": [2, 3, 6, 4],
+					"texture": "#m10ops_fire_red"
 				},
 				"south": {
-					"uv": [0, 0, 4.04, 3],
-					"texture": "#rd"
+					"uv": [5, 3, 9, 4],
+					"texture": "#m10ops_fire_red"
 				},
 				"west": {
-					"uv": [0, 0, 1.24, 3],
-					"texture": "#rd"
+					"uv": [10, 3, 14, 4],
+					"texture": "#m10ops_fire_red"
 				},
 				"up": {
-					"uv": [0, 0, 4.04, 1.24],
-					"texture": "#rd"
+					"uv": [5, 10, 9, 14],
+					"texture": "#m10ops_fire_red"
 				},
 				"down": {
-					"uv": [0, 0, 4.04, 1.24],
-					"texture": "#rd"
-				}
-			}
-		},
-		{
-			"name": "inlet_3",
-			"from": [-0.03, 4.5, 10.379],
-			"to": [4.03, 7.5, 11.621],
-			"rotation": {
-				"angle": -45,
-				"axis": "x",
-				"origin": [8, 6, 11]
-			},
-			"faces": {
-				"north": {
-					"uv": [0, 0, 4.06, 3],
-					"texture": "#rd"
-				},
-				"east": {
-					"uv": [0, 0, 1.24, 3],
-					"texture": "#rd"
-				},
-				"south": {
-					"uv": [0, 0, 4.06, 3],
-					"texture": "#rd"
-				},
-				"west": {
-					"uv": [0, 0, 1.24, 3],
-					"texture": "#rd"
-				},
-				"up": {
-					"uv": [0, 0, 4.06, 1.24],
-					"texture": "#rd"
-				},
-				"down": {
-					"uv": [0, 0, 4.06, 1.24],
-					"texture": "#rd"
+					"uv": [5, 2, 9, 6],
+					"texture": "#m10ops_fire_red"
 				}
 			}
 		}

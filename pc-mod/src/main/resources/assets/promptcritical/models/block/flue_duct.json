@@ -1,87 +1,99 @@
 {
 	"credit": "Made with Blockbench",
 	"textures": {
-		"particle": "promptcritical:block/common/env_flue",
-		"d": "promptcritical:block/common/steel_dark",
-		"flue": "promptcritical:block/common/env_flue"
+		"particle": "promptcritical:block/m13env/flue",
+		"m13env_flue": "promptcritical:block/m13env/flue",
+		"m8field_gasband": "promptcritical:block/m8field/gasband"
 	},
 	"elements": [
 		{
 			"name": "duct",
-			"from": [1, 1, 0],
-			"to": [15, 15, 16],
+			"from": [0.5, 0.5, 0],
+			"to": [15.5, 15.5, 16],
 			"rotation": {
 				"angle": 0,
 				"axis": "y",
 				"origin": [8, 8, 8]
 			},
 			"faces": {
-				"north": {
-					"uv": [0, 0, 14, 14],
-					"texture": "#flue"
-				},
 				"east": {
-					"uv": [0, 0, 16, 14],
-					"texture": "#flue"
-				},
-				"south": {
-					"uv": [0, 0, 14, 14],
-					"texture": "#flue"
+					"uv": [0, 0.5, 16, 15.5],
+					"texture": "#m13env_flue"
 				},
 				"west": {
-					"uv": [0, 0, 16, 14],
-					"texture": "#flue"
+					"uv": [0, 0.5, 16, 15.5],
+					"texture": "#m13env_flue"
 				},
 				"up": {
-					"uv": [0, 0, 14, 16],
-					"texture": "#flue"
+					"uv": [0.5, 0, 15.5, 16],
+					"texture": "#m13env_flue"
 				},
 				"down": {
-					"uv": [0, 0, 14, 16],
-					"texture": "#flue"
+					"uv": [0.5, 0, 15.5, 16],
+					"texture": "#m13env_flue"
 				}
 			}
 		},
 		{
-			"name": "stiffener_0",
-			"from": [0.5, 0.5, 3],
-			"to": [15.5, 15.5, 4],
+			"name": "rib0",
+			"from": [0, 0, 0],
+			"to": [16, 16, 1],
 			"rotation": {
 				"angle": 0,
 				"axis": "y",
 				"origin": [8, 8, 8]
 			},
 			"faces": {
-				"north": {
-					"uv": [0, 0, 15, 15],
-					"texture": "#d"
-				},
 				"east": {
-					"uv": [0, 0, 1, 15],
-					"texture": "#d"
-				},
-				"south": {
-					"uv": [0, 0, 15, 15],
-					"texture": "#d"
+					"uv": [15, 0, 16, 16],
+					"texture": "#m13env_flue"
 				},
 				"west": {
-					"uv": [0, 0, 1, 15],
-					"texture": "#d"
+					"uv": [0, 0, 1, 16],
+					"texture": "#m13env_flue"
 				},
 				"up": {
-					"uv": [0, 0, 15, 1],
-					"texture": "#d"
+					"uv": [0, 0, 16, 1],
+					"texture": "#m13env_flue"
 				},
 				"down": {
-					"uv": [0, 0, 15, 1],
-					"texture": "#d"
+					"uv": [0, 15, 16, 16],
+					"texture": "#m13env_flue"
 				}
 			}
 		},
 		{
-			"name": "stiffener_1",
-			"from": [0.5, 0.5, 12],
-			"to": [15.5, 15.5, 13],
+			"name": "rib15",
+			"from": [0, 0, 15],
+			"to": [16, 16, 16],
+			"rotation": {
+				"angle": 0,
+				"axis": "y",
+				"origin": [8, 8, 8]
+			},
+			"faces": {
+				"east": {
+					"uv": [0, 0, 1, 16],
+					"texture": "#m13env_flue"
+				},
+				"west": {
+					"uv": [15, 0, 16, 16],
+					"texture": "#m13env_flue"
+				},
+				"up": {
+					"uv": [0, 15, 16, 16],
+					"texture": "#m13env_flue"
+				},
+				"down": {
+					"uv": [0, 0, 16, 1],
+					"texture": "#m13env_flue"
+				}
+			}
+		},
+		{
+			"name": "band",
+			"from": [0.4, 12, 6],
+			"to": [15.6, 13, 10],
 			"rotation": {
 				"angle": 0,
 				"axis": "y",
@@ -89,28 +101,28 @@
 			},
 			"faces": {
 				"north": {
-					"uv": [0, 0, 15, 15],
-					"texture": "#d"
+					"uv": [0.4, 3, 15.6, 4],
+					"texture": "#m8field_gasband"
 				},
 				"east": {
-					"uv": [0, 0, 1, 15],
-					"texture": "#d"
+					"uv": [6, 3, 10, 4],
+					"texture": "#m8field_gasband"
 				},
 				"south": {
-					"uv": [0, 0, 15, 15],
-					"texture": "#d"
+					"uv": [0.4, 3, 15.6, 4],
+					"texture": "#m8field_gasband"
 				},
 				"west": {
-					"uv": [0, 0, 1, 15],
-					"texture": "#d"
+					"uv": [6, 3, 10, 4],
+					"texture": "#m8field_gasband"
 				},
 				"up": {
-					"uv": [0, 0, 15, 1],
-					"texture": "#d"
+					"uv": [0.4, 6, 15.6, 10],
+					"texture": "#m8field_gasband"
 				},
 				"down": {
-					"uv": [0, 0, 15, 1],
-					"texture": "#d"
+					"uv": [0.4, 6, 15.6, 10],
+					"texture": "#m8field_gasband"
 				}
 			}
 		}

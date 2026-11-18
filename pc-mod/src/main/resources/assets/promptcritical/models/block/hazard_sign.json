@@ -1,13 +1,13 @@
 {
 	"credit": "Made with Blockbench",
 	"textures": {
-		"particle": "promptcritical:block/common/w2_white_smooth",
-		"sg_warn": "promptcritical:block/hazard_sign_warn",
-		"ws": "promptcritical:block/common/w2_white_smooth"
+		"particle": "promptcritical:block/m10ops/sign_warning",
+		"plant_light": "promptcritical:block/plant/light",
+		"m10ops_sign_warning": "promptcritical:block/m10ops/sign_warning"
 	},
 	"elements": [
 		{
-			"name": "plate",
+			"name": "sign",
 			"from": [1, 1, 15],
 			"to": [15, 15, 16],
 			"rotation": {
@@ -18,27 +18,27 @@
 			"faces": {
 				"north": {
 					"uv": [0, 0, 16, 16],
-					"texture": "#sg_warn"
+					"texture": "#m10ops_sign_warning"
 				},
 				"east": {
-					"uv": [0, 0, 1, 14],
-					"texture": "#ws"
+					"uv": [0, 1, 1, 15],
+					"texture": "#plant_light"
 				},
 				"south": {
-					"uv": [0, 0, 14, 14],
-					"texture": "#ws"
+					"uv": [1, 1, 15, 15],
+					"texture": "#plant_light"
 				},
 				"west": {
-					"uv": [0, 0, 1, 14],
-					"texture": "#ws"
+					"uv": [15, 1, 16, 15],
+					"texture": "#plant_light"
 				},
 				"up": {
-					"uv": [0, 0, 14, 1],
-					"texture": "#ws"
+					"uv": [1, 15, 15, 16],
+					"texture": "#plant_light"
 				},
 				"down": {
-					"uv": [0, 0, 14, 1],
-					"texture": "#ws"
+					"uv": [1, 0, 15, 1],
+					"texture": "#plant_light"
 				}
 			}
 		}

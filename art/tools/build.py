@@ -14,6 +14,9 @@ import numpy as np  # noqa: E402
 ROOT = sys.argv[1]
 SPEC_OUT = sys.argv[2]
 CHECK_ONLY = "--only-check" in sys.argv
+# Textures painted by hand over generator-owned paths: computed (to keep the shared noise stream) but not written.
+_HAND_FILE = os.path.join(ROOT, "art", "hand_textures.json")
+HAND = set(json.load(open(_HAND_FILE, encoding="utf8"))["textures"]) if os.path.exists(_HAND_FILE) else set()
 HQ_ONLY = "--hq-only" in sys.argv
 ASSETS = os.path.join(ROOT, "pc-mod/src/main/resources/assets/promptcritical")
 pclib.TEX = os.path.join(ASSETS, "textures")
@@ -96,6 +99,11 @@ for fl in pclib.FLUIDS:
     if fl["id"] in fluid_ids:
         errors.append(f"duplicate fluid {fl['id']}")
     fluid_ids.add(fl["id"])
+for rel in sorted(HAND):
+    if rel not in pclib.TEXTURES:
+        errors.append(f"hand texture '{rel}' is not a generator texture")
+    elif not os.path.exists(os.path.join(ROOT, "pc-mod/src/main/resources/assets/promptcritical/textures", rel)):
+        errors.append(f"hand texture '{rel}' is missing on disk")
 
 if errors:
     print("\n".join(errors))
@@ -116,7 +124,10 @@ if HQ_ONLY:
     sys.exit(0)
 
 for rel, fn in pclib.TEXTURES.items():
-    pclib.save(fn(), rel)
+    a = fn()
+    if rel in HAND:
+        continue
+    pclib.save(a, rel)
 
 for it in pclib.ITEMS:
     p = os.path.join(ASSETS, "models/item", it["id"] + ".json")

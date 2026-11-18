@@ -106,8 +106,7 @@ m("valve_test_bench_occupied", "ops", valve_bench(True))
 # ======================================================================
 # факельное хозяйство
 # ======================================================================
-m("flare_stack", "flare", [el("base_plate", [2, 0, 2], [14, 2, 14], "c")] + vcyl("stack", 8, 8, 3, 2, 16, "rw", 8)
-  + [el(f"guy_lug_{i}", [x, 12, z], [x + 1, 14, z + 1], "d") for i, (x, z) in enumerate(((4.5, 7.5), (10.5, 7.5)))])
+# нарисовано вручную в Blockbench: art/blockbench/water_treatment/plant_utilities.author.js
 m("flare_stack_middle", "flare", vcyl("stack", 8, 8, 3, 0, 16, "rw", 8))
 m("flare_stack_guys", "flare", vcyl("stack", 8, 8, 3, 0, 16, "rw", 8)
   + [el("guy_ring", [3.5, 13, 3.5], [12.5, 14, 12.5], "d"),
@@ -321,7 +320,7 @@ def maint_panel(sev=0):  # настенный щит 14×14×3: 6 ламп ка�
     return els
 
 
-m("maintenance_panel", "ops", maint_panel())
+# нарисовано вручную в Blockbench: art/blockbench/turbine/power_misc.author.js
 for _s in (1, 2, 3):
     m(f"maintenance_panel_severity{_s}", "ops", maint_panel(_s))
 
@@ -334,9 +333,7 @@ def hydrotest_pump(pumping=False):  # ручной опрессовочный н
             el("pivot", [7, 11, 7], [9, 12, 9], "d")]
 
 
-m("hydrotest_pump", "ops", hydrotest_pump())
-m("hydrotest_pump/lever", "ops", [el("lever", [7.5, 11, 1], [8.5, 12, 15], "d"),
-                                  el("grip", [7, 10.5, 1], [9, 12.5, 3], "r")], kind="partial")
+# нарисовано вручную в Blockbench: art/blockbench/turbine/power_misc.author.js
 
 
 def recording_gauge(paper=True):  # самописец на установке 10×12×4: латунный корпус, дверца с лентой
@@ -345,6 +342,4 @@ def recording_gauge(paper=True):  # самописец на установке 1
             el("clock_knob", [7, 14, 13], [9, 15, 15], "d")]
 
 
-m("recording_gauge", "instruments", recording_gauge())
-m("recording_gauge_empty", "instruments", recording_gauge(False))
-m("recording_gauge/drum", "instruments", [el("drum", [5, 4, 11.5], [11, 12, 12], "w")], kind="partial")
+# нарисовано вручную в Blockbench: art/blockbench/control/panel_devices.author.js

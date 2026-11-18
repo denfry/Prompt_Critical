@@ -1,16 +1,18 @@
 {
 	"credit": "Made with Blockbench",
 	"textures": {
-		"particle": "promptcritical:block/common/auto_ral7035",
-		"lg": "promptcritical:block/common/lamp_green",
-		"loff": "promptcritical:block/common/plant_lamp_off",
-		"ral": "promptcritical:block/common/auto_ral7035",
-		"st": "promptcritical:block/common/steel_bare"
+		"particle": "promptcritical:block/switchgear_cell/enamel",
+		"switchgear_cell_enamel": "promptcritical:block/switchgear_cell/enamel",
+		"utilities_display": "promptcritical:block/utilities/display",
+		"plant_rubber": "promptcritical:block/plant/rubber",
+		"grid_lines_lamp_green": "promptcritical:block/grid_lines/lamp_green",
+		"grid_lines_lamp_off": "promptcritical:block/grid_lines/lamp_off",
+		"plant_pipe_gas": "promptcritical:block/plant/pipe_gas"
 	},
 	"elements": [
 		{
 			"name": "cabinet",
-			"from": [2, 2, 10],
+			"from": [2, 2, 9.6],
 			"to": [14, 14, 16],
 			"rotation": {
 				"angle": 0,
@@ -19,35 +21,35 @@
 			},
 			"faces": {
 				"north": {
-					"uv": [0, 0, 12, 12],
-					"texture": "#ral"
+					"uv": [2, 2, 14, 14],
+					"texture": "#switchgear_cell_enamel"
 				},
 				"east": {
-					"uv": [0, 0, 6, 12],
-					"texture": "#ral"
+					"uv": [0, 2, 6.4, 14],
+					"texture": "#switchgear_cell_enamel"
 				},
 				"south": {
-					"uv": [0, 0, 12, 12],
-					"texture": "#ral"
+					"uv": [2, 2, 14, 14],
+					"texture": "#switchgear_cell_enamel"
 				},
 				"west": {
-					"uv": [0, 0, 6, 12],
-					"texture": "#ral"
+					"uv": [9.6, 2, 16, 14],
+					"texture": "#switchgear_cell_enamel"
 				},
 				"up": {
-					"uv": [0, 0, 12, 6],
-					"texture": "#ral"
+					"uv": [2, 9.6, 14, 16],
+					"texture": "#switchgear_cell_enamel"
 				},
 				"down": {
-					"uv": [0, 0, 12, 6],
-					"texture": "#ral"
+					"uv": [2, 0, 14, 6.4],
+					"texture": "#switchgear_cell_enamel"
 				}
 			}
 		},
 		{
-			"name": "probe",
-			"from": [7, 7, 16],
-			"to": [9, 9, 16.01],
+			"name": "door",
+			"from": [2.4, 2.4, 9.4],
+			"to": [13.6, 13.6, 9.6],
 			"rotation": {
 				"angle": 0,
 				"axis": "y",
@@ -55,35 +57,35 @@
 			},
 			"faces": {
 				"north": {
-					"uv": [0, 0, 2, 2],
-					"texture": "#st"
+					"uv": [2.4, 2.4, 13.6, 13.6],
+					"texture": "#switchgear_cell_enamel"
 				},
 				"east": {
-					"uv": [0, 0, 0.01, 2],
-					"texture": "#st"
+					"uv": [6.4, 2.4, 6.6, 13.6],
+					"texture": "#switchgear_cell_enamel"
 				},
 				"south": {
-					"uv": [0, 0, 2, 2],
-					"texture": "#st"
+					"uv": [2.4, 2.4, 13.6, 13.6],
+					"texture": "#switchgear_cell_enamel"
 				},
 				"west": {
-					"uv": [0, 0, 0.01, 2],
-					"texture": "#st"
+					"uv": [9.4, 2.4, 9.6, 13.6],
+					"texture": "#switchgear_cell_enamel"
 				},
 				"up": {
-					"uv": [0, 0, 2, 0.01],
-					"texture": "#st"
+					"uv": [2.4, 9.4, 13.6, 9.6],
+					"texture": "#switchgear_cell_enamel"
 				},
 				"down": {
-					"uv": [0, 0, 2, 0.01],
-					"texture": "#st"
+					"uv": [2.4, 6.4, 13.6, 6.6],
+					"texture": "#switchgear_cell_enamel"
 				}
 			}
 		},
 		{
-			"name": "glow_lamp_on",
-			"from": [3.5, 12, 9.4],
-			"to": [4.5, 13, 10],
+			"name": "glow_display",
+			"from": [4, 8, 9.2],
+			"to": [12, 12, 9.4],
 			"rotation": {
 				"angle": 0,
 				"axis": "y",
@@ -91,28 +93,24 @@
 			},
 			"faces": {
 				"north": {
-					"uv": [0, 0, 1, 1],
-					"texture": "#lg"
+					"uv": [0, 0, 16, 16],
+					"texture": "#utilities_display"
 				},
 				"east": {
-					"uv": [0, 0, 0.6, 1],
-					"texture": "#lg"
-				},
-				"south": {
-					"uv": [0, 0, 1, 1],
-					"texture": "#lg"
+					"uv": [6.6, 4, 6.8, 8],
+					"texture": "#switchgear_cell_enamel"
 				},
 				"west": {
-					"uv": [0, 0, 0.6, 1],
-					"texture": "#lg"
+					"uv": [9.2, 4, 9.4, 8],
+					"texture": "#switchgear_cell_enamel"
 				},
 				"up": {
-					"uv": [0, 0, 1, 0.6],
-					"texture": "#lg"
+					"uv": [4, 9.2, 12, 9.4],
+					"texture": "#switchgear_cell_enamel"
 				},
 				"down": {
-					"uv": [0, 0, 1, 0.6],
-					"texture": "#lg"
+					"uv": [4, 6.6, 12, 6.8],
+					"texture": "#switchgear_cell_enamel"
 				}
 			},
 			"neoforge_data": {
@@ -121,9 +119,9 @@
 			}
 		},
 		{
-			"name": "lamp_alarm",
-			"from": [5.5, 12, 9.4],
-			"to": [6.5, 13, 10],
+			"name": "lamp_on_bezel",
+			"from": [4.2, 4.2, 9.25],
+			"to": [5.8, 5.8, 9.4],
 			"rotation": {
 				"angle": 0,
 				"axis": "y",
@@ -131,28 +129,168 @@
 			},
 			"faces": {
 				"north": {
-					"uv": [0, 0, 1, 1],
-					"texture": "#loff"
+					"uv": [10.2, 10.2, 11.8, 11.8],
+					"texture": "#plant_rubber"
 				},
 				"east": {
-					"uv": [0, 0, 0.6, 1],
-					"texture": "#loff"
+					"uv": [6.6, 10.2, 6.75, 11.8],
+					"texture": "#plant_rubber"
 				},
 				"south": {
-					"uv": [0, 0, 1, 1],
-					"texture": "#loff"
+					"uv": [4.2, 10.2, 5.8, 11.8],
+					"texture": "#plant_rubber"
 				},
 				"west": {
-					"uv": [0, 0, 0.6, 1],
-					"texture": "#loff"
+					"uv": [9.25, 10.2, 9.4, 11.8],
+					"texture": "#plant_rubber"
 				},
 				"up": {
-					"uv": [0, 0, 1, 0.6],
-					"texture": "#loff"
+					"uv": [4.2, 9.25, 5.8, 9.4],
+					"texture": "#plant_rubber"
 				},
 				"down": {
-					"uv": [0, 0, 1, 0.6],
-					"texture": "#loff"
+					"uv": [4.2, 6.6, 5.8, 6.75],
+					"texture": "#plant_rubber"
+				}
+			}
+		},
+		{
+			"name": "glow_lamp_on",
+			"from": [4.4, 4.4, 9.05],
+			"to": [5.6, 5.6, 9.25],
+			"rotation": {
+				"angle": 0,
+				"axis": "y",
+				"origin": [8, 8, 8]
+			},
+			"faces": {
+				"north": {
+					"uv": [10.4, 10.4, 11.6, 11.6],
+					"texture": "#grid_lines_lamp_green"
+				},
+				"east": {
+					"uv": [6.75, 10.4, 6.95, 11.6],
+					"texture": "#grid_lines_lamp_green"
+				},
+				"west": {
+					"uv": [9.05, 10.4, 9.25, 11.6],
+					"texture": "#grid_lines_lamp_green"
+				},
+				"up": {
+					"uv": [4.4, 9.05, 5.6, 9.25],
+					"texture": "#grid_lines_lamp_green"
+				},
+				"down": {
+					"uv": [4.4, 6.75, 5.6, 6.95],
+					"texture": "#grid_lines_lamp_green"
+				}
+			},
+			"neoforge_data": {
+				"block_light": 15,
+				"sky_light": 15
+			}
+		},
+		{
+			"name": "lamp_alarm_bezel",
+			"from": [7.2, 4.2, 9.25],
+			"to": [8.8, 5.8, 9.4],
+			"rotation": {
+				"angle": 0,
+				"axis": "y",
+				"origin": [8, 8, 8]
+			},
+			"faces": {
+				"north": {
+					"uv": [7.2, 10.2, 8.8, 11.8],
+					"texture": "#plant_rubber"
+				},
+				"east": {
+					"uv": [6.6, 10.2, 6.75, 11.8],
+					"texture": "#plant_rubber"
+				},
+				"south": {
+					"uv": [7.2, 10.2, 8.8, 11.8],
+					"texture": "#plant_rubber"
+				},
+				"west": {
+					"uv": [9.25, 10.2, 9.4, 11.8],
+					"texture": "#plant_rubber"
+				},
+				"up": {
+					"uv": [7.2, 9.25, 8.8, 9.4],
+					"texture": "#plant_rubber"
+				},
+				"down": {
+					"uv": [7.2, 6.6, 8.8, 6.75],
+					"texture": "#plant_rubber"
+				}
+			}
+		},
+		{
+			"name": "lamp_alarm",
+			"from": [7.4, 4.4, 9.05],
+			"to": [8.6, 5.6, 9.25],
+			"rotation": {
+				"angle": 0,
+				"axis": "y",
+				"origin": [8, 8, 8]
+			},
+			"faces": {
+				"north": {
+					"uv": [7.4, 10.4, 8.6, 11.6],
+					"texture": "#grid_lines_lamp_off"
+				},
+				"east": {
+					"uv": [6.75, 10.4, 6.95, 11.6],
+					"texture": "#grid_lines_lamp_off"
+				},
+				"west": {
+					"uv": [9.05, 10.4, 9.25, 11.6],
+					"texture": "#grid_lines_lamp_off"
+				},
+				"up": {
+					"uv": [7.4, 9.05, 8.6, 9.25],
+					"texture": "#grid_lines_lamp_off"
+				},
+				"down": {
+					"uv": [7.4, 6.75, 8.6, 6.95],
+					"texture": "#grid_lines_lamp_off"
+				}
+			}
+		},
+		{
+			"name": "sample_line",
+			"from": [12, 14, 12],
+			"to": [13, 16, 13],
+			"rotation": {
+				"angle": 0,
+				"axis": "y",
+				"origin": [8, 8, 8]
+			},
+			"faces": {
+				"north": {
+					"uv": [3, 0, 4, 2],
+					"texture": "#plant_pipe_gas"
+				},
+				"east": {
+					"uv": [3, 0, 4, 2],
+					"texture": "#plant_pipe_gas"
+				},
+				"south": {
+					"uv": [12, 0, 13, 2],
+					"texture": "#plant_pipe_gas"
+				},
+				"west": {
+					"uv": [12, 0, 13, 2],
+					"texture": "#plant_pipe_gas"
+				},
+				"up": {
+					"uv": [12, 12, 13, 13],
+					"texture": "#plant_pipe_gas"
+				},
+				"down": {
+					"uv": [12, 3, 13, 4],
+					"texture": "#plant_pipe_gas"
 				}
 			}
 		}

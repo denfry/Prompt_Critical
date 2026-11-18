@@ -28,8 +28,7 @@ def sim_cabinet(running):
         lamp(f"lamp_{i}", 3.5 + i * 3, 28, 1, running and i % 2 == 0, "ly" if i % 2 else "lg", 0.6) for i in range(4)]
 
 
-m("training_simulator", "control", sim_cabinet(False))
-m("training_simulator_running", "control", sim_cabinet(True))
+# нарисовано вручную в Blockbench: art/blockbench/automation/m6_automation.author.js
 
 
 def sim_console(active):  # секция пульта как control_desk с жёлтой полосой «ТРЕНАЖЁР»
@@ -41,8 +40,7 @@ def sim_console(active):  # секция пульта как control_desk с ж�
             lamp("lamp_active", 8, 14, 14, active, "ly", 0.75)]
 
 
-m("simulator_console", "control", sim_console(False))
-m("simulator_console_active", "control", sim_console(True))
+# нарисовано вручную в Blockbench: art/blockbench/automation/m6_automation.author.js
 
 
 def instructor(active):
@@ -58,8 +56,7 @@ def instructor(active):
             el(("glow_" if active else "") + "pause_button", [22, 11, 3.5], [24, 12, 5.5], "lr" if active else "red")]
 
 
-m("instructor_station", "control", instructor(False))
-m("instructor_station_active", "control", instructor(True))
+# нарисовано вручную в Blockbench: art/blockbench/automation/m6_automation.author.js
 
 
 # ======================================================================
@@ -72,8 +69,7 @@ def saf(running):
             el("glow_taphole" if running else "taphole", [5, -12, -16], [11, -7, -15], "hot" if running else "soot")]
 
 
-m("submerged_arc_furnace", "electronics", saf(False))
-m("submerged_arc_furnace_running", "electronics", saf(True))
+# нарисовано вручную в Blockbench: art/blockbench/electronics/silicon_line.author.js
 m("submerged_arc_furnace_roof", "electronics", [
     el("roof", [-14, 0, -14], [30, 4, 30], "ref"),
     el("hood", [-10, 4, -10], [26, 12, 26], "d"),
@@ -84,10 +80,7 @@ for _i, (_cx, _cz) in enumerate(((0, 2), (16, 2), (8, 16))):
       vcyl("electrode", _cx, _cz, 2, -10, 16, "g", 8) + vcyl("clamp", _cx, _cz, 3, 14, 17, "cus", 8), kind="partial")
 
 # реактор синтеза трихлорсилана 1×2×1: стальной аппарат, жёлтые полосы, патрубки «горючие газы»
-m("trichlorosilane_reactor", "electronics", legs(3, 13, 3, 13, 4, 1)
-  + vvessel("shell", 5.5, 4, 28, "st", skirt=False) + vcyl("band_1", 8, 8, 5.8, 12, 13.5, "ye")
-  + vcyl("band_2", 8, 8, 5.8, 22, 23.5, "ye")
-  + nozzle("feed", "x", 0, (8, 8, 8), 1.2, "gas") + nozzle("off_gas", "x", 16, (8, 26, 8), 1.2, "gasr"))
+# нарисовано вручную в Blockbench: art/blockbench/electronics/silicon_line.author.js
 
 
 def siemens(running):  # колокол осаждения поликремния, смотровое окно
@@ -97,8 +90,7 @@ def siemens(running):  # колокол осаждения поликремни�
     return els
 
 
-m("siemens_reactor", "electronics", siemens(False))
-m("siemens_reactor_running", "electronics", siemens(True))
+# нарисовано вручную в Blockbench: art/blockbench/electronics/silicon_line.author.js
 
 
 def cz_puller(pulling):  # Чохральский 1×3×1 (якорь — средний блок): камера с тиглем, тянущая камера, шток сверху
@@ -109,22 +101,18 @@ def cz_puller(pulling):  # Чохральский 1×3×1 (якорь — сре
     return els
 
 
-m("czochralski_puller", "electronics", cz_puller(False))
-m("czochralski_puller_pulling", "electronics", cz_puller(True))
+# нарисовано вручную в Blockbench: art/blockbench/electronics/silicon_line.author.js
 m("czochralski_puller/crystal", "electronics", vcyl("ingot", 8, 8, 2.5, -4, 4, "si", 8)
   + vcyl("neck", 8, 8, 0.75, 4, 6, "si", 8), kind="partial")
 m("czochralski_puller/seed_shaft", "electronics", vcyl("shaft", 8, 8, 0.5, 6, 30, "st", 8), kind="partial")
 
 # проволочная пила: белый корпус, прозрачный кожух; барабан — partial (ось X)
-m("wafer_saw", "electronics", [el("base", [0, 0, 1], [16, 6, 15], "w"),
-                               el("cover", [1, 6, 2], [15, 14, 14], "gls"),
-                               el("frame", [0, 14, 1], [16, 15, 15], "w"),
-                               el("panel", [12, 2, 0.5], [15, 5, 1], "scr")])
+# нарисовано вручную в Blockbench: art/blockbench/electronics/silicon_line.author.js
 m("wafer_saw/blade", "electronics", hcyl("guide_roller", "x", 3, 2, 14, "pblk", c=(8, 10, 8), sides=8)
   + hcyl("axle", "x", 0.75, 1, 15, "st", c=(8, 10, 8), sides=8), kind="partial")
 
 # чистые комнаты: панель, шлюз 1×2×1 (дверь — partial), окно
-m("cleanroom_panel", "electronics", [el("panel", [0, 0, 0], [16, 16, 16], "cr")])
+# нарисовано вручную в Blockbench: art/blockbench/electronics/silicon_line.author.js
 
 
 def airlock(state="closed"):
@@ -134,17 +122,12 @@ def airlock(state="closed"):
             lamp("lamp_state", 8, 30, 6, lam[1], lam[0], 0.6)]
 
 
-for _s in ("closed", "open", "purging"):
-    m("cleanroom_airlock" + ("" if _s == "closed" else "_" + _s), "electronics", airlock(_s))
+# шлюз чистой комнаты нарисован вручную в Blockbench: art/blockbench/electronics/silicon_line.author.js
 m("cleanroom_airlock/door", "electronics", [
     el("leaf", [2, 0, 7.5], [14, 28, 8.5], "cr"),
     el("window", [5, 16, 7.4], [11, 24, 8.6], "gls"),
 ], kind="partial")
-m("cleanroom_window", "electronics", [
-    el("frame_t", [0, 14, 6], [16, 16, 10], "cr"), el("frame_b", [0, 0, 6], [16, 2, 10], "cr"),
-    el("frame_w", [0, 2, 6], [2, 14, 10], "cr"), el("frame_e", [14, 2, 6], [16, 14, 10], "cr"),
-    el("glass", [2, 2, 7.5], [14, 14, 8.5], "gls"),
-])
+# нарисовано вручную в Blockbench: art/blockbench/electronics/silicon_line.author.js
 
 
 # автомат установки компонентов: зелёный стол с платой в жёлтой рамке; голова — partial
@@ -155,12 +138,7 @@ def assembler(working):
             lamp("lamp_work", 2, 6, 0, working, "lg", 0.6)]
 
 
-m("component_assembler", "electronics", assembler(False))
-m("component_assembler_working", "electronics", assembler(True))
-m("component_assembler/head", "electronics", [
-    el("carriage", [6, 12, 6], [10, 14.5, 10], "d"),
-    el("nozzle", [7.5, 9, 7.5], [8.5, 12, 8.5], "st"),
-], kind="partial")
+# нарисовано вручную в Blockbench: art/blockbench/automation/m6_automation.author.js
 
 
 def vfd(state="off"):

@@ -1,7 +1,8 @@
 {
 	"credit": "Made with Blockbench",
 	"textures": {
-		"bp": "promptcritical:block/common/metitem_beam_paint"
+		"particle": "promptcritical:block/plant/structure",
+		"plant_structure": "promptcritical:block/plant/structure"
 	},
 	"elements": [
 		{
@@ -15,28 +16,28 @@
 			},
 			"faces": {
 				"north": {
-					"uv": [0, 0, 6, 1],
-					"texture": "#bp"
+					"uv": [5, 3, 11, 4],
+					"texture": "#plant_structure"
 				},
 				"east": {
-					"uv": [0, 0, 16, 1],
-					"texture": "#bp"
+					"uv": [0, 3, 16, 4],
+					"texture": "#plant_structure"
 				},
 				"south": {
-					"uv": [0, 0, 6, 1],
-					"texture": "#bp"
+					"uv": [5, 3, 11, 4],
+					"texture": "#plant_structure"
 				},
 				"west": {
-					"uv": [0, 0, 16, 1],
-					"texture": "#bp"
+					"uv": [0, 3, 16, 4],
+					"texture": "#plant_structure"
 				},
 				"up": {
-					"uv": [0, 0, 6, 16],
-					"texture": "#bp"
+					"uv": [5, 0, 11, 16],
+					"texture": "#plant_structure"
 				},
 				"down": {
-					"uv": [0, 0, 6, 16],
-					"texture": "#bp"
+					"uv": [5, 0, 11, 16],
+					"texture": "#plant_structure"
 				}
 			}
 		},
@@ -51,28 +52,28 @@
 			},
 			"faces": {
 				"north": {
-					"uv": [0, 0, 6, 1],
-					"texture": "#bp"
+					"uv": [5, 12, 11, 13],
+					"texture": "#plant_structure"
 				},
 				"east": {
-					"uv": [0, 0, 16, 1],
-					"texture": "#bp"
+					"uv": [0, 12, 16, 13],
+					"texture": "#plant_structure"
 				},
 				"south": {
-					"uv": [0, 0, 6, 1],
-					"texture": "#bp"
+					"uv": [5, 12, 11, 13],
+					"texture": "#plant_structure"
 				},
 				"west": {
-					"uv": [0, 0, 16, 1],
-					"texture": "#bp"
+					"uv": [0, 12, 16, 13],
+					"texture": "#plant_structure"
 				},
 				"up": {
-					"uv": [0, 0, 6, 16],
-					"texture": "#bp"
+					"uv": [5, 0, 11, 16],
+					"texture": "#plant_structure"
 				},
 				"down": {
-					"uv": [0, 0, 6, 16],
-					"texture": "#bp"
+					"uv": [5, 0, 11, 16],
+					"texture": "#plant_structure"
 				}
 			}
 		},
@@ -87,30 +88,56 @@
 			},
 			"faces": {
 				"north": {
-					"uv": [0, 0, 1, 8],
-					"texture": "#bp"
+					"uv": [7.5, 4, 8.5, 12],
+					"texture": "#plant_structure"
 				},
 				"east": {
-					"uv": [0, 0, 16, 8],
-					"texture": "#bp"
+					"uv": [0, 4, 16, 12],
+					"texture": "#plant_structure"
 				},
 				"south": {
-					"uv": [0, 0, 1, 8],
-					"texture": "#bp"
+					"uv": [7.5, 4, 8.5, 12],
+					"texture": "#plant_structure"
 				},
 				"west": {
-					"uv": [0, 0, 16, 8],
-					"texture": "#bp"
+					"uv": [0, 4, 16, 12],
+					"texture": "#plant_structure"
 				},
 				"up": {
-					"uv": [0, 0, 1, 16],
-					"texture": "#bp"
+					"uv": [7.5, 0, 8.5, 16],
+					"texture": "#plant_structure"
 				},
 				"down": {
-					"uv": [0, 0, 1, 16],
-					"texture": "#bp"
+					"uv": [7.5, 0, 8.5, 16],
+					"texture": "#plant_structure"
 				}
 			}
 		}
-	]
+	],
+	"display": {
+		"gui": {
+			"rotation": [30, 225, 0],
+			"scale": [0.625, 0.625, 0.625]
+		},
+		"ground": {
+			"translation": [0, 3, 0],
+			"scale": [0.25, 0.25, 0.25]
+		},
+		"fixed": {
+			"scale": [0.5, 0.5, 0.5]
+		},
+		"thirdperson_righthand": {
+			"rotation": [75, 45, 0],
+			"translation": [0, 2.5, 0],
+			"scale": [0.375, 0.375, 0.375]
+		},
+		"firstperson_righthand": {
+			"rotation": [0, 45, 0],
+			"scale": [0.4, 0.4, 0.4]
+		},
+		"firstperson_lefthand": {
+			"rotation": [0, 225, 0],
+			"scale": [0.4, 0.4, 0.4]
+		}
+	}
 }

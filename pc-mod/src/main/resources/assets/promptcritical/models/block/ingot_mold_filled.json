@@ -1,16 +1,16 @@
 {
 	"credit": "Made with Blockbench",
 	"textures": {
-		"particle": "promptcritical:block/common/grid_cast_iron",
-		"ci": "promptcritical:block/common/grid_cast_iron",
-		"hot": "promptcritical:block/common/fuelcycle_glow_hot",
-		"soot": "promptcritical:block/common/metal_soot"
+		"particle": "promptcritical:block/material/cast_iron",
+		"material_cast_iron": "promptcritical:block/material/cast_iron",
+		"boilers_firebrick": "promptcritical:block/boilers/firebrick",
+		"steelmaking_melt": "promptcritical:block/steelmaking/melt"
 	},
 	"elements": [
 		{
 			"name": "stool",
-			"from": [0, 0, 0],
-			"to": [16, 2, 16],
+			"from": [1, 0, 1],
+			"to": [15, 2, 15],
 			"rotation": {
 				"angle": 0,
 				"axis": "y",
@@ -18,35 +18,35 @@
 			},
 			"faces": {
 				"north": {
-					"uv": [0, 0, 16, 2],
-					"texture": "#ci"
+					"uv": [1, 14, 15, 16],
+					"texture": "#material_cast_iron"
 				},
 				"east": {
-					"uv": [0, 0, 16, 2],
-					"texture": "#ci"
+					"uv": [1, 14, 15, 16],
+					"texture": "#material_cast_iron"
 				},
 				"south": {
-					"uv": [0, 0, 16, 2],
-					"texture": "#ci"
+					"uv": [1, 14, 15, 16],
+					"texture": "#material_cast_iron"
 				},
 				"west": {
-					"uv": [0, 0, 16, 2],
-					"texture": "#ci"
+					"uv": [1, 14, 15, 16],
+					"texture": "#material_cast_iron"
 				},
 				"up": {
-					"uv": [0, 0, 16, 16],
-					"texture": "#ci"
+					"uv": [1, 1, 15, 15],
+					"texture": "#material_cast_iron"
 				},
 				"down": {
-					"uv": [0, 0, 16, 16],
-					"texture": "#ci"
+					"uv": [1, 1, 15, 15],
+					"texture": "#material_cast_iron"
 				}
 			}
 		},
 		{
-			"name": "mould",
-			"from": [2, 2, 2],
-			"to": [14, 30, 14],
+			"name": "body_lo",
+			"from": [2.4, 2, 2.4],
+			"to": [13.6, 14, 13.6],
 			"rotation": {
 				"angle": 0,
 				"axis": "y",
@@ -54,35 +54,35 @@
 			},
 			"faces": {
 				"north": {
-					"uv": [0, 0, 12, 16],
-					"texture": "#ci"
+					"uv": [2.4, 2, 13.6, 14],
+					"texture": "#material_cast_iron"
 				},
 				"east": {
-					"uv": [0, 0, 12, 16],
-					"texture": "#ci"
+					"uv": [2.4, 2, 13.6, 14],
+					"texture": "#material_cast_iron"
 				},
 				"south": {
-					"uv": [0, 0, 12, 16],
-					"texture": "#ci"
+					"uv": [2.4, 2, 13.6, 14],
+					"texture": "#material_cast_iron"
 				},
 				"west": {
-					"uv": [0, 0, 12, 16],
-					"texture": "#ci"
+					"uv": [2.4, 2, 13.6, 14],
+					"texture": "#material_cast_iron"
 				},
 				"up": {
-					"uv": [0, 0, 12, 12],
-					"texture": "#soot"
+					"uv": [2.4, 2.4, 13.6, 13.6],
+					"texture": "#material_cast_iron"
 				},
 				"down": {
-					"uv": [0, 0, 12, 12],
-					"texture": "#ci"
+					"uv": [2.4, 2.4, 13.6, 13.6],
+					"texture": "#material_cast_iron"
 				}
 			}
 		},
 		{
-			"name": "glow_top",
-			"from": [3, 30, 3],
-			"to": [13, 30.5, 13],
+			"name": "body_hi_0",
+			"from": [3, 14, 3],
+			"to": [13, 16, 13],
 			"rotation": {
 				"angle": 0,
 				"axis": "y",
@@ -90,28 +90,204 @@
 			},
 			"faces": {
 				"north": {
-					"uv": [0, 0, 10, 0.5],
-					"texture": "#hot"
+					"uv": [3, 0, 13, 2],
+					"texture": "#material_cast_iron"
 				},
 				"east": {
-					"uv": [0, 0, 10, 0.5],
-					"texture": "#hot"
+					"uv": [3, 0, 13, 2],
+					"texture": "#material_cast_iron"
 				},
 				"south": {
-					"uv": [0, 0, 10, 0.5],
-					"texture": "#hot"
+					"uv": [3, 0, 13, 2],
+					"texture": "#material_cast_iron"
 				},
 				"west": {
-					"uv": [0, 0, 10, 0.5],
-					"texture": "#hot"
+					"uv": [3, 0, 13, 2],
+					"texture": "#material_cast_iron"
 				},
 				"up": {
-					"uv": [0, 0, 10, 10],
-					"texture": "#hot"
+					"uv": [3, 3, 13, 13],
+					"texture": "#material_cast_iron"
 				},
 				"down": {
-					"uv": [0, 0, 10, 10],
-					"texture": "#hot"
+					"uv": [3, 3, 13, 13],
+					"texture": "#material_cast_iron"
+				}
+			}
+		},
+		{
+			"name": "body_hi_1",
+			"from": [3, 16, 3],
+			"to": [13, 28, 13],
+			"rotation": {
+				"angle": 0,
+				"axis": "y",
+				"origin": [8, 8, 8]
+			},
+			"faces": {
+				"north": {
+					"uv": [3, 4, 13, 16],
+					"texture": "#material_cast_iron"
+				},
+				"east": {
+					"uv": [3, 4, 13, 16],
+					"texture": "#material_cast_iron"
+				},
+				"south": {
+					"uv": [3, 4, 13, 16],
+					"texture": "#material_cast_iron"
+				},
+				"west": {
+					"uv": [3, 4, 13, 16],
+					"texture": "#material_cast_iron"
+				},
+				"up": {
+					"uv": [3, 3, 13, 13],
+					"texture": "#material_cast_iron"
+				},
+				"down": {
+					"uv": [3, 3, 13, 13],
+					"texture": "#material_cast_iron"
+				}
+			}
+		},
+		{
+			"name": "hot_top",
+			"from": [2.6, 28, 2.6],
+			"to": [13.4, 30, 13.4],
+			"rotation": {
+				"angle": 0,
+				"axis": "y",
+				"origin": [8, 8, 8]
+			},
+			"faces": {
+				"north": {
+					"uv": [2.6, 2, 13.4, 4],
+					"texture": "#boilers_firebrick"
+				},
+				"east": {
+					"uv": [2.6, 2, 13.4, 4],
+					"texture": "#boilers_firebrick"
+				},
+				"south": {
+					"uv": [2.6, 2, 13.4, 4],
+					"texture": "#boilers_firebrick"
+				},
+				"west": {
+					"uv": [2.6, 2, 13.4, 4],
+					"texture": "#boilers_firebrick"
+				},
+				"up": {
+					"uv": [2.6, 2.6, 13.4, 13.4],
+					"texture": "#boilers_firebrick"
+				},
+				"down": {
+					"uv": [2.6, 2.6, 13.4, 13.4],
+					"texture": "#boilers_firebrick"
+				}
+			}
+		},
+		{
+			"name": "lug_1.6",
+			"from": [1.6, 20, 6.6],
+			"to": [2.4, 23, 9.4],
+			"rotation": {
+				"angle": 0,
+				"axis": "y",
+				"origin": [8, 8, 8]
+			},
+			"faces": {
+				"north": {
+					"uv": [13.6, 9, 14.4, 12],
+					"texture": "#material_cast_iron"
+				},
+				"east": {
+					"uv": [6.6, 9, 9.4, 12],
+					"texture": "#material_cast_iron"
+				},
+				"south": {
+					"uv": [1.6, 9, 2.4, 12],
+					"texture": "#material_cast_iron"
+				},
+				"west": {
+					"uv": [6.6, 9, 9.4, 12],
+					"texture": "#material_cast_iron"
+				},
+				"up": {
+					"uv": [1.6, 6.6, 2.4, 9.4],
+					"texture": "#material_cast_iron"
+				},
+				"down": {
+					"uv": [1.6, 6.6, 2.4, 9.4],
+					"texture": "#material_cast_iron"
+				}
+			}
+		},
+		{
+			"name": "lug_13.6",
+			"from": [13.6, 20, 6.6],
+			"to": [14.4, 23, 9.4],
+			"rotation": {
+				"angle": 0,
+				"axis": "y",
+				"origin": [8, 8, 8]
+			},
+			"faces": {
+				"north": {
+					"uv": [1.6, 9, 2.4, 12],
+					"texture": "#material_cast_iron"
+				},
+				"east": {
+					"uv": [6.6, 9, 9.4, 12],
+					"texture": "#material_cast_iron"
+				},
+				"south": {
+					"uv": [13.6, 9, 14.4, 12],
+					"texture": "#material_cast_iron"
+				},
+				"west": {
+					"uv": [6.6, 9, 9.4, 12],
+					"texture": "#material_cast_iron"
+				},
+				"up": {
+					"uv": [13.6, 6.6, 14.4, 9.4],
+					"texture": "#material_cast_iron"
+				},
+				"down": {
+					"uv": [13.6, 6.6, 14.4, 9.4],
+					"texture": "#material_cast_iron"
+				}
+			}
+		},
+		{
+			"name": "glow_metal",
+			"from": [4, 29.6, 4],
+			"to": [12, 30.4, 12],
+			"rotation": {
+				"angle": 0,
+				"axis": "y",
+				"origin": [8, 8, 8]
+			},
+			"faces": {
+				"north": {
+					"uv": [4, 1.6, 12, 2.4],
+					"texture": "#steelmaking_melt"
+				},
+				"east": {
+					"uv": [4, 1.6, 12, 2.4],
+					"texture": "#steelmaking_melt"
+				},
+				"south": {
+					"uv": [4, 1.6, 12, 2.4],
+					"texture": "#steelmaking_melt"
+				},
+				"west": {
+					"uv": [4, 1.6, 12, 2.4],
+					"texture": "#steelmaking_melt"
+				},
+				"up": {
+					"uv": [4, 4, 12, 12],
+					"texture": "#steelmaking_melt"
 				}
 			},
 			"neoforge_data": {

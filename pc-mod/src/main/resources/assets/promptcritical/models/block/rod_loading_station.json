@@ -1,20 +1,19 @@
 {
 	"credit": "Made with Blockbench",
 	"textures": {
-		"particle": "promptcritical:block/common/steel_plate",
-		"p": "promptcritical:block/common/steel_plate",
-		"f": "promptcritical:block/rod_loading_station",
-		"ss": "promptcritical:block/common/fuelcycle_ss",
-		"zr": "promptcritical:block/common/zirconium",
-		"st": "promptcritical:block/common/steel_bare",
-		"he": "promptcritical:block/common/fuelcycle_bottle_he",
-		"b": "promptcritical:block/common/brass"
+		"particle": "promptcritical:block/electronics/ss",
+		"electronics_ss": "promptcritical:block/electronics/ss",
+		"plant_structure": "promptcritical:block/plant/structure",
+		"fuel_rods": "promptcritical:block/fuel/rods",
+		"electronics_glass": "promptcritical:block/electronics/glass",
+		"plant_pipe_steam": "promptcritical:block/plant/pipe_steam",
+		"switchgear_cell_enamel": "promptcritical:block/switchgear_cell/enamel"
 	},
 	"elements": [
 		{
-			"name": "cabinet",
-			"from": [0, 0, 4],
-			"to": [16, 7, 13],
+			"name": "bench",
+			"from": [0, 6, 3],
+			"to": [16, 7, 14],
 			"rotation": {
 				"angle": 0,
 				"axis": "y",
@@ -22,35 +21,35 @@
 			},
 			"faces": {
 				"north": {
-					"uv": [0, 0, 16, 7],
-					"texture": "#p"
+					"uv": [0, 9, 16, 10],
+					"texture": "#electronics_ss"
 				},
 				"east": {
-					"uv": [0, 0, 9, 7],
-					"texture": "#p"
+					"uv": [2, 9, 13, 10],
+					"texture": "#electronics_ss"
 				},
 				"south": {
-					"uv": [0, 0, 16, 7],
-					"texture": "#p"
+					"uv": [0, 9, 16, 10],
+					"texture": "#electronics_ss"
 				},
 				"west": {
-					"uv": [0, 0, 9, 7],
-					"texture": "#p"
+					"uv": [3, 9, 14, 10],
+					"texture": "#electronics_ss"
 				},
 				"up": {
-					"uv": [0, 0, 16, 9],
-					"texture": "#p"
+					"uv": [0, 3, 16, 14],
+					"texture": "#electronics_ss"
 				},
 				"down": {
-					"uv": [0, 0, 16, 9],
-					"texture": "#p"
+					"uv": [0, 2, 16, 13],
+					"texture": "#electronics_ss"
 				}
 			}
 		},
 		{
-			"name": "panel",
-			"from": [3, 1, 3.5],
-			"to": [13, 6.5, 4],
+			"name": "bench_leg_0.6",
+			"from": [0.6, 0, 4],
+			"to": [1.6, 6, 13],
 			"rotation": {
 				"angle": 0,
 				"axis": "y",
@@ -58,35 +57,35 @@
 			},
 			"faces": {
 				"north": {
-					"uv": [0, 0, 16, 16],
-					"texture": "#f"
+					"uv": [14.4, 10, 15.4, 16],
+					"texture": "#plant_structure"
 				},
 				"east": {
-					"uv": [0, 0, 0.5, 5.5],
-					"texture": "#f"
+					"uv": [3, 10, 12, 16],
+					"texture": "#plant_structure"
 				},
 				"south": {
-					"uv": [0, 0, 10, 5.5],
-					"texture": "#f"
+					"uv": [0.6, 10, 1.6, 16],
+					"texture": "#plant_structure"
 				},
 				"west": {
-					"uv": [0, 0, 0.5, 5.5],
-					"texture": "#f"
+					"uv": [4, 10, 13, 16],
+					"texture": "#plant_structure"
 				},
 				"up": {
-					"uv": [0, 0, 10, 0.5],
-					"texture": "#f"
+					"uv": [0.6, 4, 1.6, 13],
+					"texture": "#plant_structure"
 				},
 				"down": {
-					"uv": [0, 0, 10, 0.5],
-					"texture": "#f"
+					"uv": [0.6, 3, 1.6, 12],
+					"texture": "#plant_structure"
 				}
 			}
 		},
 		{
-			"name": "top",
-			"from": [0, 7, 3],
-			"to": [16, 8, 14],
+			"name": "bench_leg_14.4",
+			"from": [14.4, 0, 4],
+			"to": [15.4, 6, 13],
 			"rotation": {
 				"angle": 0,
 				"axis": "y",
@@ -94,35 +93,35 @@
 			},
 			"faces": {
 				"north": {
-					"uv": [0, 0, 16, 1],
-					"texture": "#ss"
+					"uv": [0.6, 10, 1.6, 16],
+					"texture": "#plant_structure"
 				},
 				"east": {
-					"uv": [0, 0, 11, 1],
-					"texture": "#ss"
+					"uv": [3, 10, 12, 16],
+					"texture": "#plant_structure"
 				},
 				"south": {
-					"uv": [0, 0, 16, 1],
-					"texture": "#ss"
+					"uv": [14.4, 10, 15.4, 16],
+					"texture": "#plant_structure"
 				},
 				"west": {
-					"uv": [0, 0, 11, 1],
-					"texture": "#ss"
+					"uv": [4, 10, 13, 16],
+					"texture": "#plant_structure"
 				},
 				"up": {
-					"uv": [0, 0, 16, 11],
-					"texture": "#ss"
+					"uv": [14.4, 4, 15.4, 13],
+					"texture": "#plant_structure"
 				},
 				"down": {
-					"uv": [0, 0, 16, 11],
-					"texture": "#ss"
+					"uv": [14.4, 3, 15.4, 12],
+					"texture": "#plant_structure"
 				}
 			}
 		},
 		{
-			"name": "cladding",
-			"from": [0, 8, 6.5],
-			"to": [16, 9, 7.5],
+			"name": "tray",
+			"from": [2, 7, 4.4],
+			"to": [12, 8, 12.6],
 			"rotation": {
 				"angle": 0,
 				"axis": "y",
@@ -130,35 +129,35 @@
 			},
 			"faces": {
 				"north": {
-					"uv": [0, 0, 16, 1],
-					"texture": "#zr"
+					"uv": [4, 8, 14, 9],
+					"texture": "#electronics_ss"
 				},
 				"east": {
-					"uv": [0, 0, 1, 1],
-					"texture": "#zr"
+					"uv": [3.4, 8, 11.6, 9],
+					"texture": "#electronics_ss"
 				},
 				"south": {
-					"uv": [0, 0, 16, 1],
-					"texture": "#zr"
+					"uv": [2, 8, 12, 9],
+					"texture": "#electronics_ss"
 				},
 				"west": {
-					"uv": [0, 0, 1, 1],
-					"texture": "#zr"
+					"uv": [4.4, 8, 12.6, 9],
+					"texture": "#electronics_ss"
 				},
 				"up": {
-					"uv": [0, 0, 16, 1],
-					"texture": "#zr"
+					"uv": [2, 4.4, 12, 12.6],
+					"texture": "#fuel_rods"
 				},
 				"down": {
-					"uv": [0, 0, 16, 1],
-					"texture": "#zr"
+					"uv": [2, 3.4, 12, 11.6],
+					"texture": "#electronics_ss"
 				}
 			}
 		},
 		{
-			"name": "feeder",
-			"from": [1, 8, 4],
-			"to": [6, 12, 9],
+			"name": "hood",
+			"from": [1.4, 8, 4],
+			"to": [12.6, 14, 4.4],
 			"rotation": {
 				"angle": 0,
 				"axis": "y",
@@ -166,35 +165,35 @@
 			},
 			"faces": {
 				"north": {
-					"uv": [0, 0, 5, 4],
-					"texture": "#ss"
+					"uv": [3.4, 2, 14.6, 8],
+					"texture": "#electronics_glass"
 				},
 				"east": {
-					"uv": [0, 0, 5, 4],
-					"texture": "#ss"
+					"uv": [11.6, 2, 12, 8],
+					"texture": "#electronics_glass"
 				},
 				"south": {
-					"uv": [0, 0, 5, 4],
-					"texture": "#ss"
+					"uv": [1.4, 2, 12.6, 8],
+					"texture": "#electronics_glass"
 				},
 				"west": {
-					"uv": [0, 0, 5, 4],
-					"texture": "#ss"
+					"uv": [4, 2, 4.4, 8],
+					"texture": "#electronics_glass"
 				},
 				"up": {
-					"uv": [0, 0, 5, 5],
-					"texture": "#ss"
+					"uv": [1.4, 4, 12.6, 4.4],
+					"texture": "#electronics_glass"
 				},
 				"down": {
-					"uv": [0, 0, 5, 5],
-					"texture": "#ss"
+					"uv": [1.4, 11.6, 12.6, 12],
+					"texture": "#electronics_glass"
 				}
 			}
 		},
 		{
-			"name": "feeder_chute",
-			"from": [6, 8, 6],
-			"to": [8, 9.5, 8],
+			"name": "hood_top",
+			"from": [1.4, 14, 4],
+			"to": [12.6, 14.4, 13],
 			"rotation": {
 				"angle": 0,
 				"axis": "y",
@@ -202,179 +201,155 @@
 			},
 			"faces": {
 				"north": {
-					"uv": [0, 0, 2, 1.5],
-					"texture": "#st"
+					"uv": [3.4, 1.6, 14.6, 2],
+					"texture": "#electronics_ss"
 				},
 				"east": {
-					"uv": [0, 0, 2, 1.5],
-					"texture": "#st"
+					"uv": [3, 1.6, 12, 2],
+					"texture": "#electronics_ss"
 				},
 				"south": {
-					"uv": [0, 0, 2, 1.5],
-					"texture": "#st"
+					"uv": [1.4, 1.6, 12.6, 2],
+					"texture": "#electronics_ss"
 				},
 				"west": {
-					"uv": [0, 0, 2, 1.5],
-					"texture": "#st"
+					"uv": [4, 1.6, 13, 2],
+					"texture": "#electronics_ss"
 				},
 				"up": {
-					"uv": [0, 0, 2, 2],
-					"texture": "#st"
+					"uv": [1.4, 4, 12.6, 13],
+					"texture": "#electronics_ss"
 				},
 				"down": {
-					"uv": [0, 0, 2, 2],
-					"texture": "#st"
+					"uv": [1.4, 3, 12.6, 12],
+					"texture": "#electronics_ss"
 				}
 			}
 		},
 		{
-			"name": "he_bottle_0",
-			"from": [11.4, 8, 10.837],
-			"to": [14.6, 15, 12.163],
+			"name": "bottle_0",
+			"from": [12.6, 7, 8.72152],
+			"to": [15.4, 15, 9.27848],
 			"rotation": {
 				"angle": 0,
 				"axis": "y",
 				"origin": [8, 8, 8]
 			},
 			"faces": {
-				"north": {
-					"uv": [0, 0, 3.2, 7],
-					"texture": "#he"
-				},
 				"east": {
-					"uv": [0, 0, 1.33, 7],
-					"texture": "#he"
-				},
-				"south": {
-					"uv": [0, 0, 3.2, 7],
-					"texture": "#he"
+					"uv": [6.72152, 1, 7.27848, 9],
+					"texture": "#plant_pipe_steam"
 				},
 				"west": {
-					"uv": [0, 0, 1.33, 7],
-					"texture": "#he"
+					"uv": [8.72152, 1, 9.27848, 9],
+					"texture": "#plant_pipe_steam"
 				},
 				"up": {
-					"uv": [0, 0, 3.2, 1.33],
-					"texture": "#he"
-				},
-				"down": {
-					"uv": [0, 0, 3.2, 1.33],
-					"texture": "#he"
+					"uv": [12.6, 8.72152, 15.4, 9.27848],
+					"texture": "#plant_pipe_steam"
 				}
 			}
 		},
 		{
-			"name": "he_bottle_1",
-			"from": [12.337, 7.99, 9.9],
-			"to": [13.663, 15.01, 13.1],
+			"name": "bottle_1",
+			"from": [12.6, 7, 8.72152],
+			"to": [15.4, 15, 9.27848],
 			"rotation": {
-				"angle": 0,
+				"angle": 22.5,
 				"axis": "y",
-				"origin": [8, 8, 8]
+				"origin": [14, 8, 9]
 			},
 			"faces": {
-				"north": {
-					"uv": [0, 0, 1.33, 7.02],
-					"texture": "#he"
-				},
 				"east": {
-					"uv": [0, 0, 3.2, 7.02],
-					"texture": "#he"
-				},
-				"south": {
-					"uv": [0, 0, 1.33, 7.02],
-					"texture": "#he"
+					"uv": [6.72152, 1, 7.27848, 9],
+					"texture": "#plant_pipe_steam"
 				},
 				"west": {
-					"uv": [0, 0, 3.2, 7.02],
-					"texture": "#he"
+					"uv": [8.72152, 1, 9.27848, 9],
+					"texture": "#plant_pipe_steam"
 				},
 				"up": {
-					"uv": [0, 0, 1.33, 3.2],
-					"texture": "#he"
-				},
-				"down": {
-					"uv": [0, 0, 1.33, 3.2],
-					"texture": "#he"
+					"uv": [12.6, 8.72152, 15.4, 9.27848],
+					"texture": "#plant_pipe_steam"
 				}
 			}
 		},
 		{
-			"name": "he_bottle_2",
-			"from": [11.4, 7.98, 10.837],
-			"to": [14.6, 15.02, 12.163],
+			"name": "bottle_2",
+			"from": [12.6, 7, 8.72152],
+			"to": [15.4, 15, 9.27848],
 			"rotation": {
 				"angle": 45,
 				"axis": "y",
-				"origin": [13, 8, 11.5]
+				"origin": [14, 8, 9]
 			},
 			"faces": {
-				"north": {
-					"uv": [0, 0, 3.2, 7.04],
-					"texture": "#he"
-				},
 				"east": {
-					"uv": [0, 0, 1.33, 7.04],
-					"texture": "#he"
-				},
-				"south": {
-					"uv": [0, 0, 3.2, 7.04],
-					"texture": "#he"
+					"uv": [6.72152, 1, 7.27848, 9],
+					"texture": "#plant_pipe_steam"
 				},
 				"west": {
-					"uv": [0, 0, 1.33, 7.04],
-					"texture": "#he"
+					"uv": [8.72152, 1, 9.27848, 9],
+					"texture": "#plant_pipe_steam"
 				},
 				"up": {
-					"uv": [0, 0, 3.2, 1.33],
-					"texture": "#he"
-				},
-				"down": {
-					"uv": [0, 0, 3.2, 1.33],
-					"texture": "#he"
+					"uv": [12.6, 8.72152, 15.4, 9.27848],
+					"texture": "#plant_pipe_steam"
 				}
 			}
 		},
 		{
-			"name": "he_bottle_3",
-			"from": [11.4, 7.97, 10.837],
-			"to": [14.6, 15.03, 12.163],
+			"name": "bottle_3",
+			"from": [12.6, 7, 8.72152],
+			"to": [15.4, 15, 9.27848],
+			"rotation": {
+				"angle": -22.5,
+				"axis": "y",
+				"origin": [14, 8, 9]
+			},
+			"faces": {
+				"east": {
+					"uv": [6.72152, 1, 7.27848, 9],
+					"texture": "#plant_pipe_steam"
+				},
+				"west": {
+					"uv": [8.72152, 1, 9.27848, 9],
+					"texture": "#plant_pipe_steam"
+				},
+				"up": {
+					"uv": [12.6, 8.72152, 15.4, 9.27848],
+					"texture": "#plant_pipe_steam"
+				}
+			}
+		},
+		{
+			"name": "bottle_4",
+			"from": [12.6, 7, 8.72152],
+			"to": [15.4, 15, 9.27848],
 			"rotation": {
 				"angle": -45,
 				"axis": "y",
-				"origin": [13, 8, 11.5]
+				"origin": [14, 8, 9]
 			},
 			"faces": {
-				"north": {
-					"uv": [0, 0, 3.2, 7.06],
-					"texture": "#he"
-				},
 				"east": {
-					"uv": [0, 0, 1.33, 7.06],
-					"texture": "#he"
-				},
-				"south": {
-					"uv": [0, 0, 3.2, 7.06],
-					"texture": "#he"
+					"uv": [6.72152, 1, 7.27848, 9],
+					"texture": "#plant_pipe_steam"
 				},
 				"west": {
-					"uv": [0, 0, 1.33, 7.06],
-					"texture": "#he"
+					"uv": [8.72152, 1, 9.27848, 9],
+					"texture": "#plant_pipe_steam"
 				},
 				"up": {
-					"uv": [0, 0, 3.2, 1.33],
-					"texture": "#he"
-				},
-				"down": {
-					"uv": [0, 0, 3.2, 1.33],
-					"texture": "#he"
+					"uv": [12.6, 8.72152, 15.4, 9.27848],
+					"texture": "#plant_pipe_steam"
 				}
 			}
 		},
 		{
-			"name": "he_valve",
-			"from": [12.5, 15, 11],
-			"to": [13.5, 16, 12],
+			"name": "bottle_5",
+			"from": [13.72152, 7, 7.6],
+			"to": [14.27848, 15, 10.4],
 			"rotation": {
 				"angle": 0,
 				"axis": "y",
@@ -382,28 +357,100 @@
 			},
 			"faces": {
 				"north": {
-					"uv": [0, 0, 1, 1],
-					"texture": "#b"
-				},
-				"east": {
-					"uv": [0, 0, 1, 1],
-					"texture": "#b"
+					"uv": [1.72152, 1, 2.27848, 9],
+					"texture": "#plant_pipe_steam"
 				},
 				"south": {
-					"uv": [0, 0, 1, 1],
-					"texture": "#b"
-				},
-				"west": {
-					"uv": [0, 0, 1, 1],
-					"texture": "#b"
+					"uv": [13.72152, 1, 14.27848, 9],
+					"texture": "#plant_pipe_steam"
 				},
 				"up": {
-					"uv": [0, 0, 1, 1],
-					"texture": "#b"
+					"uv": [13.72152, 7.6, 14.27848, 10.4],
+					"texture": "#plant_pipe_steam"
+				}
+			}
+		},
+		{
+			"name": "bottle_6",
+			"from": [13.72152, 7, 7.6],
+			"to": [14.27848, 15, 10.4],
+			"rotation": {
+				"angle": 22.5,
+				"axis": "y",
+				"origin": [14, 8, 9]
+			},
+			"faces": {
+				"north": {
+					"uv": [1.72152, 1, 2.27848, 9],
+					"texture": "#plant_pipe_steam"
+				},
+				"south": {
+					"uv": [13.72152, 1, 14.27848, 9],
+					"texture": "#plant_pipe_steam"
+				},
+				"up": {
+					"uv": [13.72152, 7.6, 14.27848, 10.4],
+					"texture": "#plant_pipe_steam"
+				}
+			}
+		},
+		{
+			"name": "bottle_7",
+			"from": [13.72152, 7, 7.6],
+			"to": [14.27848, 15, 10.4],
+			"rotation": {
+				"angle": -22.5,
+				"axis": "y",
+				"origin": [14, 8, 9]
+			},
+			"faces": {
+				"north": {
+					"uv": [1.72152, 1, 2.27848, 9],
+					"texture": "#plant_pipe_steam"
+				},
+				"south": {
+					"uv": [13.72152, 1, 14.27848, 9],
+					"texture": "#plant_pipe_steam"
+				},
+				"up": {
+					"uv": [13.72152, 7.6, 14.27848, 10.4],
+					"texture": "#plant_pipe_steam"
+				}
+			}
+		},
+		{
+			"name": "weld_head",
+			"from": [12.6, 7, 7],
+			"to": [15, 10, 10.6],
+			"rotation": {
+				"angle": 0,
+				"axis": "y",
+				"origin": [8, 8, 8]
+			},
+			"faces": {
+				"north": {
+					"uv": [1, 6, 3.4, 9],
+					"texture": "#switchgear_cell_enamel"
+				},
+				"east": {
+					"uv": [5.4, 6, 9, 9],
+					"texture": "#switchgear_cell_enamel"
+				},
+				"south": {
+					"uv": [12.6, 6, 15, 9],
+					"texture": "#switchgear_cell_enamel"
+				},
+				"west": {
+					"uv": [7, 6, 10.6, 9],
+					"texture": "#switchgear_cell_enamel"
+				},
+				"up": {
+					"uv": [12.6, 7, 15, 10.6],
+					"texture": "#switchgear_cell_enamel"
 				},
 				"down": {
-					"uv": [0, 0, 1, 1],
-					"texture": "#b"
+					"uv": [12.6, 5.4, 15, 9],
+					"texture": "#switchgear_cell_enamel"
 				}
 			}
 		}

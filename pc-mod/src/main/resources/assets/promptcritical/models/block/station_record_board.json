@@ -1,15 +1,16 @@
 {
 	"credit": "Made with Blockbench",
 	"textures": {
-		"particle": "promptcritical:block/common/w2_wood",
-		"gls": "promptcritical:block/common/plant_glass_dark",
-		"rec": "promptcritical:block/station_record_board_face",
-		"wood": "promptcritical:block/common/w2_wood"
+		"particle": "promptcritical:block/m13env/wood",
+		"m13env_wood": "promptcritical:block/m13env/wood",
+		"m6auto_black": "promptcritical:block/m6auto/black",
+		"m13env_digits": "promptcritical:block/m13env/digits",
+		"electronics_glass": "promptcritical:block/electronics/glass"
 	},
 	"elements": [
 		{
 			"name": "frame",
-			"from": [0, 2, 14.5],
+			"from": [0, 2, 15],
 			"to": [32, 14, 16],
 			"rotation": {
 				"angle": 0,
@@ -18,35 +19,35 @@
 			},
 			"faces": {
 				"north": {
-					"uv": [0, 0, 16, 12],
-					"texture": "#wood"
+					"uv": [0, 2, 16, 14],
+					"texture": "#m13env_wood"
 				},
 				"east": {
-					"uv": [0, 0, 1.5, 12],
-					"texture": "#wood"
+					"uv": [0, 2, 1, 14],
+					"texture": "#m13env_wood"
 				},
 				"south": {
-					"uv": [0, 0, 16, 12],
-					"texture": "#wood"
+					"uv": [0, 2, 16, 14],
+					"texture": "#m13env_wood"
 				},
 				"west": {
-					"uv": [0, 0, 1.5, 12],
-					"texture": "#wood"
+					"uv": [15, 2, 16, 14],
+					"texture": "#m13env_wood"
 				},
 				"up": {
-					"uv": [0, 0, 16, 1.5],
-					"texture": "#wood"
+					"uv": [0, 15, 16, 16],
+					"texture": "#m13env_wood"
 				},
 				"down": {
-					"uv": [0, 0, 16, 1.5],
-					"texture": "#wood"
+					"uv": [0, 0, 16, 1],
+					"texture": "#m13env_wood"
 				}
 			}
 		},
 		{
-			"name": "face",
-			"from": [1, 3, 14.25],
-			"to": [31, 13, 14.5],
+			"name": "back",
+			"from": [1, 3, 14.6],
+			"to": [31, 13, 15],
 			"rotation": {
 				"angle": 0,
 				"axis": "y",
@@ -54,35 +55,107 @@
 			},
 			"faces": {
 				"north": {
-					"uv": [0, 0, 16, 16],
-					"texture": "#rec"
+					"uv": [1, 3, 16, 13],
+					"texture": "#m6auto_black"
 				},
 				"east": {
-					"uv": [0, 0, 0.25, 10],
-					"texture": "#wood"
+					"uv": [1, 3, 1.4, 13],
+					"texture": "#m6auto_black"
 				},
 				"south": {
-					"uv": [0, 0, 16, 10],
-					"texture": "#wood"
+					"uv": [0, 3, 15, 13],
+					"texture": "#m6auto_black"
 				},
 				"west": {
-					"uv": [0, 0, 0.25, 10],
-					"texture": "#wood"
+					"uv": [14.6, 3, 15, 13],
+					"texture": "#m6auto_black"
 				},
 				"up": {
-					"uv": [0, 0, 16, 0.25],
-					"texture": "#wood"
+					"uv": [0, 14.6, 15, 15],
+					"texture": "#m6auto_black"
 				},
 				"down": {
-					"uv": [0, 0, 16, 0.25],
-					"texture": "#wood"
+					"uv": [0, 1, 15, 1.4],
+					"texture": "#m6auto_black"
+				}
+			}
+		},
+		{
+			"name": "digits4",
+			"from": [2, 4, 14.5],
+			"to": [30, 7.6, 14.6],
+			"rotation": {
+				"angle": 0,
+				"axis": "y",
+				"origin": [8, 8, 8]
+			},
+			"faces": {
+				"north": {
+					"uv": [0, 0, 16, 4],
+					"texture": "#m13env_digits"
+				},
+				"east": {
+					"uv": [1.4, 8.4, 1.5, 12],
+					"texture": "#m6auto_black"
+				},
+				"south": {
+					"uv": [0, 8.4, 14, 12],
+					"texture": "#m6auto_black"
+				},
+				"west": {
+					"uv": [14.5, 8.4, 14.6, 12],
+					"texture": "#m6auto_black"
+				},
+				"up": {
+					"uv": [0, 14.5, 14, 14.6],
+					"texture": "#m6auto_black"
+				},
+				"down": {
+					"uv": [0, 1.4, 14, 1.5],
+					"texture": "#m6auto_black"
+				}
+			}
+		},
+		{
+			"name": "digits8.4",
+			"from": [2, 8.4, 14.5],
+			"to": [30, 12, 14.6],
+			"rotation": {
+				"angle": 0,
+				"axis": "y",
+				"origin": [8, 8, 8]
+			},
+			"faces": {
+				"north": {
+					"uv": [0, 0, 16, 4],
+					"texture": "#m13env_digits"
+				},
+				"east": {
+					"uv": [1.4, 4, 1.5, 7.6],
+					"texture": "#m6auto_black"
+				},
+				"south": {
+					"uv": [0, 4, 14, 7.6],
+					"texture": "#m6auto_black"
+				},
+				"west": {
+					"uv": [14.5, 4, 14.6, 7.6],
+					"texture": "#m6auto_black"
+				},
+				"up": {
+					"uv": [0, 14.5, 14, 14.6],
+					"texture": "#m6auto_black"
+				},
+				"down": {
+					"uv": [0, 1.4, 14, 1.5],
+					"texture": "#m6auto_black"
 				}
 			}
 		},
 		{
 			"name": "glass",
-			"from": [1, 3, 14],
-			"to": [31, 13, 14.1],
+			"from": [1, 3, 14.2],
+			"to": [31, 13, 14.3],
 			"rotation": {
 				"angle": 0,
 				"axis": "y",
@@ -90,28 +163,8 @@
 			},
 			"faces": {
 				"north": {
-					"uv": [0, 0, 16, 10],
-					"texture": "#gls"
-				},
-				"east": {
-					"uv": [0, 0, 0.1, 10],
-					"texture": "#gls"
-				},
-				"south": {
-					"uv": [0, 0, 16, 10],
-					"texture": "#gls"
-				},
-				"west": {
-					"uv": [0, 0, 0.1, 10],
-					"texture": "#gls"
-				},
-				"up": {
-					"uv": [0, 0, 16, 0.1],
-					"texture": "#gls"
-				},
-				"down": {
-					"uv": [0, 0, 16, 0.1],
-					"texture": "#gls"
+					"uv": [1, 3, 16, 13],
+					"texture": "#electronics_glass"
 				}
 			}
 		}

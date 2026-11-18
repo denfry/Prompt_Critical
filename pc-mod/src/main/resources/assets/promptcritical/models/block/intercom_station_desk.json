@@ -1,9 +1,10 @@
 {
 	"credit": "Made with Blockbench",
 	"textures": {
-		"particle": "promptcritical:block/common/grid_dark_grey",
-		"dg": "promptcritical:block/common/grid_dark_grey",
-		"icm": "promptcritical:block/intercom_station_front"
+		"particle": "promptcritical:block/m6auto/dark",
+		"m6auto_dark": "promptcritical:block/m6auto/dark",
+		"m10ops_mesh": "promptcritical:block/m10ops/mesh",
+		"m6auto_black": "promptcritical:block/m6auto/black"
 	},
 	"elements": [
 		{
@@ -17,64 +18,136 @@
 			},
 			"faces": {
 				"north": {
-					"uv": [0, 0, 12, 3],
-					"texture": "#dg"
+					"uv": [2, 13, 14, 16],
+					"texture": "#m6auto_dark"
 				},
 				"east": {
-					"uv": [0, 0, 10, 3],
-					"texture": "#dg"
+					"uv": [3, 13, 13, 16],
+					"texture": "#m6auto_dark"
 				},
 				"south": {
-					"uv": [0, 0, 12, 3],
-					"texture": "#dg"
+					"uv": [2, 13, 14, 16],
+					"texture": "#m6auto_dark"
 				},
 				"west": {
-					"uv": [0, 0, 10, 3],
-					"texture": "#dg"
+					"uv": [3, 13, 13, 16],
+					"texture": "#m6auto_dark"
 				},
 				"up": {
-					"uv": [0, 0, 12, 10],
-					"texture": "#dg"
+					"uv": [2, 3, 14, 13],
+					"texture": "#m6auto_dark"
 				},
 				"down": {
-					"uv": [0, 0, 12, 10],
-					"texture": "#dg"
+					"uv": [2, 3, 14, 13],
+					"texture": "#m6auto_dark"
 				}
 			}
 		},
 		{
-			"name": "console",
-			"from": [2, 3, 6],
-			"to": [14, 9, 13],
+			"name": "face",
+			"from": [2.4, 3, 4],
+			"to": [13.6, 7, 12],
 			"rotation": {
 				"angle": -22.5,
 				"axis": "x",
-				"origin": [8, 3, 6]
+				"origin": [8, 3, 12]
 			},
 			"faces": {
 				"north": {
-					"uv": [0, 0, 16, 16],
-					"texture": "#icm"
+					"uv": [2.4, 9, 13.6, 13],
+					"texture": "#m6auto_dark"
 				},
 				"east": {
-					"uv": [0, 0, 7, 6],
-					"texture": "#dg"
+					"uv": [4, 9, 12, 13],
+					"texture": "#m6auto_dark"
 				},
 				"south": {
-					"uv": [0, 0, 12, 6],
-					"texture": "#dg"
+					"uv": [2.4, 9, 13.6, 13],
+					"texture": "#m6auto_dark"
 				},
 				"west": {
-					"uv": [0, 0, 7, 6],
-					"texture": "#dg"
+					"uv": [4, 9, 12, 13],
+					"texture": "#m6auto_dark"
 				},
 				"up": {
-					"uv": [0, 0, 12, 7],
-					"texture": "#dg"
+					"uv": [2.4, 4, 13.6, 12],
+					"texture": "#m6auto_dark"
 				},
 				"down": {
-					"uv": [0, 0, 12, 7],
-					"texture": "#dg"
+					"uv": [2.4, 4, 13.6, 12],
+					"texture": "#m6auto_dark"
+				}
+			}
+		},
+		{
+			"name": "grille",
+			"from": [4, 3, 3.8],
+			"to": [12, 6, 4],
+			"rotation": {
+				"angle": 0,
+				"axis": "y",
+				"origin": [8, 8, 8]
+			},
+			"faces": {
+				"north": {
+					"uv": [0, 0, 16, 8],
+					"texture": "#m10ops_mesh"
+				},
+				"east": {
+					"uv": [12, 10, 12.2, 13],
+					"texture": "#m6auto_dark"
+				},
+				"south": {
+					"uv": [4, 10, 12, 13],
+					"texture": "#m6auto_dark"
+				},
+				"west": {
+					"uv": [3.8, 10, 4, 13],
+					"texture": "#m6auto_dark"
+				},
+				"up": {
+					"uv": [4, 3.8, 12, 4],
+					"texture": "#m6auto_dark"
+				},
+				"down": {
+					"uv": [4, 12, 12, 12.2],
+					"texture": "#m6auto_dark"
+				}
+			}
+		},
+		{
+			"name": "handset",
+			"from": [2, 3, 12],
+			"to": [6, 5, 13],
+			"rotation": {
+				"angle": 0,
+				"axis": "y",
+				"origin": [8, 8, 8]
+			},
+			"faces": {
+				"north": {
+					"uv": [10, 11, 14, 13],
+					"texture": "#m6auto_black"
+				},
+				"east": {
+					"uv": [3, 11, 4, 13],
+					"texture": "#m6auto_black"
+				},
+				"south": {
+					"uv": [2, 11, 6, 13],
+					"texture": "#m6auto_black"
+				},
+				"west": {
+					"uv": [12, 11, 13, 13],
+					"texture": "#m6auto_black"
+				},
+				"up": {
+					"uv": [2, 12, 6, 13],
+					"texture": "#m6auto_black"
+				},
+				"down": {
+					"uv": [2, 3, 6, 4],
+					"texture": "#m6auto_black"
 				}
 			}
 		}

@@ -1,14 +1,14 @@
 {
 	"credit": "Made with Blockbench",
 	"textures": {
-		"particle": "promptcritical:block/common/grid_concrete_pole",
-		"cpol": "promptcritical:block/common/grid_concrete_pole"
+		"particle": "promptcritical:block/grid_lines/pole_concrete",
+		"grid_lines_pole_concrete": "promptcritical:block/grid_lines/pole_concrete"
 	},
 	"elements": [
 		{
-			"name": "shaft",
-			"from": [5, 0, 5],
-			"to": [11, 16, 11],
+			"name": "pole",
+			"from": [5.2, 0, 5.6],
+			"to": [10.8, 16, 10.4],
 			"rotation": {
 				"angle": 0,
 				"axis": "y",
@@ -16,28 +16,132 @@
 			},
 			"faces": {
 				"north": {
-					"uv": [0, 0, 6, 16],
-					"texture": "#cpol"
+					"uv": [5.2, 0, 10.8, 16],
+					"texture": "#grid_lines_pole_concrete"
 				},
 				"east": {
-					"uv": [0, 0, 6, 16],
-					"texture": "#cpol"
+					"uv": [5.6, 0, 10.4, 16],
+					"texture": "#grid_lines_pole_concrete"
 				},
 				"south": {
-					"uv": [0, 0, 6, 16],
-					"texture": "#cpol"
+					"uv": [5.2, 0, 10.8, 16],
+					"texture": "#grid_lines_pole_concrete"
 				},
 				"west": {
-					"uv": [0, 0, 6, 16],
-					"texture": "#cpol"
+					"uv": [5.6, 0, 10.4, 16],
+					"texture": "#grid_lines_pole_concrete"
+				}
+			}
+		},
+		{
+			"name": "edge_5.2_5.6",
+			"from": [5.05, 0, 5.45],
+			"to": [5.35, 16, 5.75],
+			"rotation": {
+				"angle": 0,
+				"axis": "y",
+				"origin": [8, 8, 8]
+			},
+			"faces": {
+				"north": {
+					"uv": [10.65, 0, 10.95, 16],
+					"texture": "#grid_lines_pole_concrete"
 				},
-				"up": {
-					"uv": [0, 0, 6, 6],
-					"texture": "#cpol"
+				"east": {
+					"uv": [10.25, 0, 10.55, 16],
+					"texture": "#grid_lines_pole_concrete"
 				},
-				"down": {
-					"uv": [0, 0, 6, 6],
-					"texture": "#cpol"
+				"south": {
+					"uv": [5.05, 0, 5.35, 16],
+					"texture": "#grid_lines_pole_concrete"
+				},
+				"west": {
+					"uv": [5.45, 0, 5.75, 16],
+					"texture": "#grid_lines_pole_concrete"
+				}
+			}
+		},
+		{
+			"name": "edge_10.8_5.6",
+			"from": [10.65, 0, 5.45],
+			"to": [10.95, 16, 5.75],
+			"rotation": {
+				"angle": 0,
+				"axis": "y",
+				"origin": [8, 8, 8]
+			},
+			"faces": {
+				"north": {
+					"uv": [5.05, 0, 5.35, 16],
+					"texture": "#grid_lines_pole_concrete"
+				},
+				"east": {
+					"uv": [10.25, 0, 10.55, 16],
+					"texture": "#grid_lines_pole_concrete"
+				},
+				"south": {
+					"uv": [10.65, 0, 10.95, 16],
+					"texture": "#grid_lines_pole_concrete"
+				},
+				"west": {
+					"uv": [5.45, 0, 5.75, 16],
+					"texture": "#grid_lines_pole_concrete"
+				}
+			}
+		},
+		{
+			"name": "edge_5.2_10.4",
+			"from": [5.05, 0, 10.25],
+			"to": [5.35, 16, 10.55],
+			"rotation": {
+				"angle": 0,
+				"axis": "y",
+				"origin": [8, 8, 8]
+			},
+			"faces": {
+				"north": {
+					"uv": [10.65, 0, 10.95, 16],
+					"texture": "#grid_lines_pole_concrete"
+				},
+				"east": {
+					"uv": [5.45, 0, 5.75, 16],
+					"texture": "#grid_lines_pole_concrete"
+				},
+				"south": {
+					"uv": [5.05, 0, 5.35, 16],
+					"texture": "#grid_lines_pole_concrete"
+				},
+				"west": {
+					"uv": [10.25, 0, 10.55, 16],
+					"texture": "#grid_lines_pole_concrete"
+				}
+			}
+		},
+		{
+			"name": "edge_10.8_10.4",
+			"from": [10.65, 0, 10.25],
+			"to": [10.95, 16, 10.55],
+			"rotation": {
+				"angle": 0,
+				"axis": "y",
+				"origin": [8, 8, 8]
+			},
+			"faces": {
+				"north": {
+					"uv": [5.05, 0, 5.35, 16],
+					"texture": "#grid_lines_pole_concrete"
+				},
+				"east": {
+					"uv": [5.45, 0, 5.75, 16],
+					"texture": "#grid_lines_pole_concrete"
+				},
+				"south": {
+					"uv": [10.65, 0, 10.95, 16],
+					"texture": "#grid_lines_pole_concrete"
+				},
+				"west": {
+					"uv": [10.25, 0, 10.55, 16],
+					"texture": "#grid_lines_pole_concrete"
 				}
 			}
 		}

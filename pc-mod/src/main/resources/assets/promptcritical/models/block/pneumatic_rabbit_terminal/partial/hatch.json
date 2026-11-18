@@ -1,14 +1,14 @@
 {
 	"credit": "Made with Blockbench",
 	"textures": {
-		"particle": "promptcritical:block/common/fuelcycle_ss_smooth",
-		"d": "promptcritical:block/common/steel_dark",
-		"sss": "promptcritical:block/common/fuelcycle_ss_smooth"
+		"particle": "promptcritical:block/electronics/ss",
+		"electronics_ss": "promptcritical:block/electronics/ss",
+		"m6auto_black": "promptcritical:block/m6auto/black"
 	},
 	"elements": [
 		{
 			"name": "hatch",
-			"from": [4, 12, 3],
+			"from": [4, 12, 2.4],
 			"to": [12, 14, 9],
 			"rotation": {
 				"angle": 0,
@@ -17,35 +17,35 @@
 			},
 			"faces": {
 				"north": {
-					"uv": [0, 0, 8, 2],
-					"texture": "#sss"
+					"uv": [4, 2, 12, 4],
+					"texture": "#electronics_ss"
 				},
 				"east": {
-					"uv": [0, 0, 6, 2],
-					"texture": "#sss"
+					"uv": [7, 2, 13.6, 4],
+					"texture": "#electronics_ss"
 				},
 				"south": {
-					"uv": [0, 0, 8, 2],
-					"texture": "#sss"
+					"uv": [4, 2, 12, 4],
+					"texture": "#electronics_ss"
 				},
 				"west": {
-					"uv": [0, 0, 6, 2],
-					"texture": "#sss"
+					"uv": [2.4, 2, 9, 4],
+					"texture": "#electronics_ss"
 				},
 				"up": {
-					"uv": [0, 0, 8, 6],
-					"texture": "#sss"
+					"uv": [4, 2.4, 12, 9],
+					"texture": "#electronics_ss"
 				},
 				"down": {
-					"uv": [0, 0, 8, 6],
-					"texture": "#sss"
+					"uv": [4, 7, 12, 13.6],
+					"texture": "#electronics_ss"
 				}
 			}
 		},
 		{
-			"name": "handle",
-			"from": [7, 12.5, 2.4],
-			"to": [9, 13.5, 3],
+			"name": "grip",
+			"from": [7, 12.4, 2],
+			"to": [9, 13.4, 2.4],
 			"rotation": {
 				"angle": 0,
 				"axis": "y",
@@ -53,28 +53,28 @@
 			},
 			"faces": {
 				"north": {
-					"uv": [0, 0, 2, 1],
-					"texture": "#d"
+					"uv": [7, 2.6, 9, 3.6],
+					"texture": "#m6auto_black"
 				},
 				"east": {
-					"uv": [0, 0, 0.6, 1],
-					"texture": "#d"
+					"uv": [13.6, 2.6, 14, 3.6],
+					"texture": "#m6auto_black"
 				},
 				"south": {
-					"uv": [0, 0, 2, 1],
-					"texture": "#d"
+					"uv": [7, 2.6, 9, 3.6],
+					"texture": "#m6auto_black"
 				},
 				"west": {
-					"uv": [0, 0, 0.6, 1],
-					"texture": "#d"
+					"uv": [2, 2.6, 2.4, 3.6],
+					"texture": "#m6auto_black"
 				},
 				"up": {
-					"uv": [0, 0, 2, 0.6],
-					"texture": "#d"
+					"uv": [7, 2, 9, 2.4],
+					"texture": "#m6auto_black"
 				},
 				"down": {
-					"uv": [0, 0, 2, 0.6],
-					"texture": "#d"
+					"uv": [7, 13.6, 9, 14],
+					"texture": "#m6auto_black"
 				}
 			}
 		}

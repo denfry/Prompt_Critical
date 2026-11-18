@@ -36,7 +36,7 @@ def cartogram(part="single", powered=False):
 
 for _p in ("single", "edge", "corner", "center"):
     m(f"core_cartogram{'' if _p == 'single' else '_' + _p}", "control", cartogram(_p))
-m("core_cartogram_powered", "control", cartogram("single", True))
+# нарисовано вручную в Blockbench: art/blockbench/automation/m6_automation.author.js
 
 
 # ======================================================================
@@ -63,10 +63,7 @@ def plc(mode="off"):
 
 for _s in ("off", "run", "stop", "fault", "forced"):
     m("plc_controller" + ("" if _s == "off" else "_" + _s), "automation", plc(_s))
-m("plc_controller/key", "automation", [
-    el("barrel", [11, 5, 8.4], [13, 7, 9], "st"),
-    el("key", [11.75, 4, 7.4], [12.25, 8, 8.4], "b"),
-], kind="partial")
+# нарисовано вручную в Blockbench: art/blockbench/automation/m6_automation.author.js
 
 for _id, _f in (("plc_io_di", "di"), ("plc_io_do", "do"), ("plc_io_ai", "ai"), ("plc_io_ao", "ao")):
     m(_id, "automation", rack_module(_f, leds=(("led_bus", 4, 13, True, "lg"),)))
@@ -83,27 +80,13 @@ def comm(fault=False, link=True, adapter=False):
     return els
 
 
-m("plc_comm", "automation", comm())
-m("plc_comm_fault", "automation", comm(fault=True))
-m("plc_comm_link_down", "automation", comm(link=False))
-m("remote_io_adapter", "automation", comm(adapter=True))
-m("remote_io_adapter_fault", "automation", comm(fault=True, adapter=True))
+# нарисовано вручную в Blockbench: art/blockbench/automation/m6_automation.author.js
 
 
 # ======================================================================
 # ПАЗ: шкаф логического контроллера безопасности 1×2×1 (TMR), дверь — partial
 # ======================================================================
-def sis(state="normal"):
-    lam = {"normal": "lg", "tripped": "lr", "bypassed": "ly", "fault": "lo"}[state]
-    return [el("plinth", [0, 0, 1], [16, 1, 16], "h"),
-            el("body", [0, 1, 1], [16, 32, 16], "ral"),
-            el("roof", [-0.25, 31, 0.75], [16.25, 32, 16.25], "rals"),
-            box_("display_frame", [3, 25, 0.5], [13, 29, 1], "rals", faces={"north": "pblk"}),
-            el("glow_status" if state != "normal" else "status", [4, 26, 0.3], [12, 28, 0.5], lam if state != "normal" else "lg")]
-
-
-for _s in ("normal", "tripped", "bypassed", "fault"):
-    m("sis_logic_solver" + ("" if _s == "normal" else "_" + _s), "automation", sis(_s))
+# шкаф ПАЗ (sis_logic_solver и состояния; дверь в статической модели, partial ниже не используется) нарисован вручную в Blockbench: art/blockbench/automation/relay_logic.author.js
 m("sis_logic_solver/door", "automation", [
     el("door", [1, 2, 0], [15, 24, 1], "ral", faces={"north": "sisd"}, full=["north"]),
     el("handle", [13, 11, -0.6], [13.75, 15, 0], "d"),
@@ -127,17 +110,13 @@ def esd(pos="open"):
 
 for _s in ("open", "closed", "mid"):
     m("esd_valve" + ("" if _s == "open" else "_" + _s), "piping", esd(_s))
-m("esd_valve/stem", "piping", [
-    el("stem", [7.25, 12, 7.25], [8.75, 16, 8.75], "st"),
-    el("flag", [5, 15, 7.6], [11, 15.5, 8.4], "ye"),
-], kind="partial")
+# нарисовано вручную в Blockbench: art/blockbench/automation/m6_automation.author.js
 
 
 # ======================================================================
 # полевая шина RS-485, повторитель, шлюз, диод данных
 # ======================================================================
-m("fieldbus_cable", "automation", [el("core", [6.5, 6.5, 6.5], [9.5, 9.5, 9.5], "vio")])
-m("fieldbus_cable_side", "automation", [el("arm", [7, 7, 0], [9, 9, 6.5], "vio")])
+# нарисовано вручную в Blockbench: art/blockbench/automation/m6_automation.author.js
 
 
 def small_module(name_els, link=True, w=(5, 11), face="rals"):
@@ -175,17 +154,7 @@ for _ok, _sfx in ((True, ""), (False, "_link_down")):
 # ======================================================================
 # телемеханика: уличный шкаф КП, мачта с антенной, фронт-процессор ПУ
 # ======================================================================
-def rtu(power="grid"):
-    lam = {"grid": ("lg", True), "battery": ("ly", True), "off": ("lg", False)}[power]
-    return [el("plinth", [0, 0, 2], [16, 2, 16], "c"),
-            el("body", [1, 2, 3], [15, 30, 15], "r32"),
-            el("canopy", [0, 30, 1], [16, 31.5, 16], "r32"),
-            el("plate", [5, 26, 2.8], [11, 28, 3], "w"),
-            lamp("lamp_power", 3, 27, 3, lam[1], lam[0])]
-
-
-for _s in ("grid", "battery", "off"):
-    m("rtu_station" + ("" if _s == "grid" else "_" + _s), "automation", rtu(_s))
+# шкаф КП (rtu_station и состояния; дверь в статической модели, partial ниже не используется) нарисован вручную в Blockbench: art/blockbench/automation/relay_logic.author.js
 m("rtu_station/door", "automation", [
     el("door", [1.5, 3, 2], [14.5, 25, 3], "r32", faces={"north": "rtud"}, full=["north"]),
     el("handle", [12.5, 12, 1.4], [13.25, 16, 2], "d"),
@@ -201,15 +170,7 @@ def mast_section(base=False):
     return els
 
 
-m("radio_antenna", "automation", mast_section(True))
-m("radio_antenna_section", "automation", mast_section())
-m("radio_antenna_top", "automation", mast_section()[:3] + [el("mast_cap", [5, 15, 5], [11, 16, 11], "gal"),
-                                                          el("whip", [7.75, 16, 7.75], [8.25, 32, 8.25], "alu")])
-m("radio_antenna/yagi", "automation", [
-    el("boom", [7.5, 10, 0], [8.5, 11, 16], "alu"),
-    el("clamp", [7, 9, 7], [9, 12, 9], "d"),
-] + [el(f"element_{i}", [3 + i * 0.5, 10.25, 2 + i * 4], [13 - i * 0.5, 10.75, 2.5 + i * 4], "alu") for i in range(4)],
-  kind="partial")
+# нарисовано вручную в Blockbench: art/blockbench/automation/m6_automation.author.js
 
 
 def tele_master(link):
@@ -221,8 +182,7 @@ def tele_master(link):
             el("antenna_lead", [12, 15, 12], [13, 18, 13], "cbl")]
 
 
-m("telemetry_master", "automation", tele_master(True))
-m("telemetry_master_link_down", "automation", tele_master(False))
+# нарисовано вручную в Blockbench: art/blockbench/automation/m6_automation.author.js
 
 
 # ======================================================================
@@ -256,17 +216,7 @@ m("quality_analyzer/flywheel", "instruments",
   hcyl("flywheel", "x", 3, 12, 13.5, "d", c=(8, 6, 6)) + hcyl("crank", "x", 0.75, 10, 14, "st", c=(8, 6, 6), sides=8), kind="partial")
 
 # инженерная станция 2×1×1: стол оператора, два монитора, клавиатура (якорь — левый блок)
-m("simulation_workstation", "automation", [
-    el("desk_top", [0, 10, 2], [32, 11, 14], "pns"),
-    el("leg_w", [0.5, 0, 3], [1.5, 10, 13], "pnd"),
-    el("leg_e", [30.5, 0, 3], [31.5, 10, 13], "pnd"),
-    el("modesty", [1.5, 2, 12], [30.5, 10, 13], "pn"),
-    el("monitor_l", [3, 12.5, 9], [14, 20, 10], "pblk"),
-    el("monitor_r", [18, 12.5, 9], [29, 20, 10], "pblk"),
-    el("stand_l", [8, 11, 9.5], [9, 12.5, 11], "d"),
-    el("stand_r", [23, 11, 9.5], [24, 12.5, 11], "d"),
-    el("keyboard", [10, 11, 3], [22, 11.5, 6], "dg"),
-])
+# нарисовано вручную в Blockbench: art/blockbench/automation/m6_automation.author.js
 
 
 def historian(busy):
@@ -276,8 +226,7 @@ def historian(busy):
         lamp(f"led_{i}", 3 + (i % 4) * 3, 4 + (i // 4) * 6, 0.5, busy and i % 3 != 1, "lg", 0.4) for i in range(16)]
 
 
-m("historian_server", "automation", historian(False))
-m("historian_server_busy", "automation", historian(True))
+# нарисовано вручную в Blockbench: art/blockbench/automation/m6_automation.author.js
 
 
 def cooler(mode="off"):
@@ -288,7 +237,7 @@ def cooler(mode="off"):
 
 for _s in ("off", "fan", "ac"):
     m("cabinet_cooler" + ("" if _s == "off" else "_" + _s), "automation", cooler(_s))
-m("cabinet_cooler/fan", "automation", fan_rotor("z", 3.5, 9.6, "d", c=(8, 7, 9.6)), kind="partial")
+# нарисовано вручную в Blockbench: art/blockbench/automation/m6_automation.author.js
 
 
 def ups(state="online", charge=4):
@@ -301,6 +250,4 @@ def ups(state="online", charge=4):
     return els
 
 
-m("ups_cabinet", "automation", ups())
-m("ups_cabinet_battery", "automation", ups("battery", 2))
-m("ups_cabinet_fault", "automation", ups("fault", 0))
+# нарисовано вручную в Blockbench: art/blockbench/automation/m6_automation.author.js

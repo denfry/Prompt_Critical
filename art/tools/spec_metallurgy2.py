@@ -78,12 +78,7 @@ def it(id_, els):
     m(id_, "items", els, kind="item")
 
 
-it("pump_impeller", hcyl("shroud_back", "z", 6, 6, 7, "b", sides=16) + hcyl("shroud_front", "z", 5, 9.5, 10.5, "b", sides=16)
-   + hcyl("eye", "z", 2.5, 10.5, 11, "b", sides=8)
-   + [el(f"vane_{i}", [7.5, 2.5, 7], [8.5, 13.5, 9.5], "bs", rot=("z", a, [8, 8, 8]) if a else None)
-      for i, a in enumerate((0, 45, -45))] + [el("vane_3", [2.5, 7.5, 7], [13.5, 8.5, 9.5], "bs")])
-it("tuyere_spare", hcyl("nose", "z", 2, 2, 6, "cus", sides=8) + hcyl("body", "z", 3, 6, 10, "cus", sides=8)
-   + hcyl("flange", "z", 4, 10, 12, "cus", sides=8) + hcyl("water_in", "x", 0.75, 8, 13, "st", c=(8, 11, 9), sides=8))
+# нарисовано вручную в Blockbench: art/blockbench/items/items3d.author.js
 it("drill_pipe", hcyl("body", "z", 1.5, 2, 14, "blu", sides=8) + hcyl("pin", "z", 2, 0, 2.5, "st", sides=8)
    + hcyl("box", "z", 2, 13.5, 16, "st", sides=8))
 it("casing_pipe", tube("body", "z", 2.5, 0, 13, "st", 0.75) + tube("coupling", "z", 3, 13, 16, "d", 0.75)

@@ -91,6 +91,10 @@ python art/tools/build.py . <tmp>/spec.json            # текстуры, ик�
 python art/tools/make_previews.py . <tmp>/registry.json
 ```
 
+Текстуры из `art/hand_textures.json` нарисованы вручную (`art/blockbench/decor/surfaces.author.js`) поверх
+путей генератора: `build.py` по-прежнему вычисляет их функции (общий шум остальных текстур не сдвигается), но
+файлы не перезаписывает; `--only-check` проверяет, что они есть на диске.
+
 `build.py --only-check` проверяет ограничения Java-моделей (−16…32, углы ±22,5/±45,
 одна ось), дубли ID и ссылки на текстуры. После ручной доработки модели в
 Blockbench источником правды становится её `.bbmodel`: повторный прогон

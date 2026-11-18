@@ -7,21 +7,10 @@ model("reactor_vessel_wall", "core", {"wall": "block/reactor_vessel_wall.png"},
 
 # стена гермооболочки нарисована вручную в Blockbench: art/blockbench/core/containment.author.js
 
-model("moderator_block_graphite", "core", {"g": "block/moderator_block_graphite.png"},
-      [el("block", [0, 0, 0], [16, 16, 16], "g")], "block/moderator_block_graphite")
+# нарисовано вручную в Blockbench: art/blockbench/core/reactor_hall.author.js
 
 # графитовая колонна с циркониевой трубой канала
-model("fuel_channel", "core", {"g": T("graphite"), "zr": T("zirconium"), "d": T("steel_dark")}, [
-    el("graphite_w", [0, 0, 0], [5, 16, 16], "g"),
-    el("graphite_e", [11, 0, 0], [16, 16, 16], "g"),
-    el("graphite_n", [5, 0, 0], [11, 16, 5], "g"),
-    el("graphite_s", [5, 0, 11], [11, 16, 16], "g"),
-    el("tube_w", [5, 0, 5], [6, 16.5, 11], "zr"),
-    el("tube_e", [10, 0, 5], [11, 16.5, 11], "zr"),
-    el("tube_n", [6, 0, 5], [10, 16.5, 6], "zr"),
-    el("tube_s", [6, 0, 10], [10, 16.5, 11], "zr"),
-    el("plug", [6, 0, 6], [10, 1, 10], "d"),
-], "block/fuel_channel")
+# нарисовано вручную в Blockbench: art/blockbench/core/reactor_hall.author.js
 
 # ---------------- mechanics ----------------
 crd = [
@@ -34,9 +23,7 @@ crd = [
     el("sign_plate", [6, 14.25, 4.9], [10, 15.75, 5], "s", full=["north"]),
     el("cable_guide", [7, 0, 7], [9, 3.01, 9], "r"),
 ]
-model("control_rod_drive", "mechanics",
-      {"d": T("steel_dark"), "p": T("steel_plate"), "b": T("brass"), "h": T("hazard"),
-       "s": T("trefoil"), "r": T("rubber")}, crd, "block/control_rod_drive")
+# нарисовано вручную в Blockbench: art/blockbench/core/reactor_hall.author.js
 model("control_rod_drive/winch_drum", "mechanics",
       {"st": T("steel_bare"), "b": T("brass_smooth")},
       disc("drum", "x", 4.5, 3.5, 12.5, "st") + disc("rim_w", "x", 5.5, 3, 4, "b") + disc("rim_e", "x", 5.5, 12, 13, "b"),
@@ -91,17 +78,7 @@ model("valve_gate_closed", "piping", vt, valve(23.5), "block/valve_gate_closed")
 model("valve_gate_open", "piping", vt, valve(29), "block/valve_gate_open")
 
 # ---------------- instruments / control ----------------
-model("instrument_pressure", "instruments",
-      {"dial": "block/instrument_dial.png", "d": T("steel_dark"), "st": T("steel_bare"), "b": T("brass")}, [
-    el("mount_plate", [3, 1, 15], [13, 15, 16], "d"),
-    el("case", [2.5, 3, 11], [13.5, 14, 15], "d"),
-    el("dial_face", [3, 3.5, 10.9], [13, 13.5, 11], "dial", full=["north"]),
-    el("bezel_t", [2.5, 13.5, 10.5], [13.5, 14, 11], "st"),
-    el("bezel_b", [2.5, 3, 10.5], [13.5, 3.5, 11], "st"),
-    el("bezel_w", [2.5, 3.5, 10.5], [3, 13.5, 11], "st"),
-    el("bezel_e", [13, 3.5, 10.5], [13.5, 13.5, 11], "st"),
-    el("socket", [7, 0, 12], [9, 3, 14], "b"),
-], "block/instrument_pressure")
+# нарисовано вручную в Blockbench: art/blockbench/control/panel_devices.author.js
 
 model("protection_cabinet", "control",
       {"c": T("cabinet"), "door": "block/protection_cabinet_door.png", "d": T("steel_dark"),
@@ -116,23 +93,8 @@ model("protection_cabinet", "control",
     el("handle", [13.5, 4, -0.5], [14.25, 9, 0.5], "d"),
 ], "block/protection_cabinet")
 
-model("reactor_controller", "control",
-      {"p": T("steel_plate"), "front": "block/reactor_controller_front.png", "d": T("steel_dark")}, [
-    el("body", [0, 0, 1], [16, 16, 16], "p"),
-    el("glow_panel", [0.5, 0.5, 0.5], [15.5, 15.5, 1], "front", full=["north"]),
-    el("frame_t", [0, 15.5, 0], [16, 16, 1], "d"),
-    el("frame_b", [0, 0, 0], [16, 0.5, 1], "d"),
-    el("frame_w", [0, 0.5, 0], [0.5, 15.5, 1], "d"),
-    el("frame_e", [15.5, 0.5, 0], [16, 15.5, 1], "d"),
-], "block/reactor_controller")
+# нарисовано вручную в Blockbench: art/blockbench/control/panel_devices.author.js
 
 # ---------------- items ----------------
-model("fuel_assembly", "items", {"rods": "item/fuel_assembly_rods.png", "st": T("steel_bare"), "d": T("steel_dark")}, [
-    el("bottom_nozzle", [5, 0, 5], [11, 2, 11], "d"),
-    el("bundle", [5.5, 2, 5.5], [10.5, 14, 10.5], "rods", full=["north", "south", "east", "west"]),
-    el("grid_1", [5.25, 5, 5.25], [10.75, 5.75, 10.75], "st"),
-    el("grid_2", [5.25, 9, 5.25], [10.75, 9.75, 10.75], "st"),
-    el("top_nozzle", [5, 14, 5], [11, 15.5, 11], "d"),
-    el("handle", [7, 15.5, 7.5], [9, 16, 8.5], "st"),
-], "item/fuel_assembly", kind="item")
+# нарисовано вручную в Blockbench: art/blockbench/items/items3d.author.js
 

@@ -1,12 +1,14 @@
 {
 	"credit": "Made with Blockbench",
 	"textures": {
-		"particle": "promptcritical:block/common/w2_white_smooth",
-		"c": "promptcritical:block/common/concrete",
-		"gal": "promptcritical:block/common/plant_galvanized",
-		"lg": "promptcritical:block/common/lamp_green",
-		"lvw": "promptcritical:block/common/env_louvre_white",
-		"ws": "promptcritical:block/common/w2_white_smooth"
+		"particle": "promptcritical:block/m8power/louvre_white",
+		"plant_concrete": "promptcritical:block/plant/concrete",
+		"m8power_louvre_white": "promptcritical:block/m8power/louvre_white",
+		"m6auto_white": "promptcritical:block/m6auto/white",
+		"disconnector_galvanised": "promptcritical:block/disconnector/galvanised",
+		"electronics_ss": "promptcritical:block/electronics/ss",
+		"plant_rubber": "promptcritical:block/plant/rubber",
+		"grid_lines_lamp_green": "promptcritical:block/grid_lines/lamp_green"
 	},
 	"elements": [
 		{
@@ -20,33 +22,33 @@
 			},
 			"faces": {
 				"north": {
-					"uv": [0, 0, 14, 1],
-					"texture": "#c"
+					"uv": [1, 15, 15, 16],
+					"texture": "#plant_concrete"
 				},
 				"east": {
-					"uv": [0, 0, 14, 1],
-					"texture": "#c"
+					"uv": [1, 15, 15, 16],
+					"texture": "#plant_concrete"
 				},
 				"south": {
-					"uv": [0, 0, 14, 1],
-					"texture": "#c"
+					"uv": [1, 15, 15, 16],
+					"texture": "#plant_concrete"
 				},
 				"west": {
-					"uv": [0, 0, 14, 1],
-					"texture": "#c"
+					"uv": [1, 15, 15, 16],
+					"texture": "#plant_concrete"
 				},
 				"up": {
-					"uv": [0, 0, 14, 14],
-					"texture": "#c"
+					"uv": [1, 1, 15, 15],
+					"texture": "#plant_concrete"
 				},
 				"down": {
-					"uv": [0, 0, 14, 14],
-					"texture": "#c"
+					"uv": [1, 1, 15, 15],
+					"texture": "#plant_concrete"
 				}
 			}
 		},
 		{
-			"name": "booth",
+			"name": "box",
 			"from": [2, 1, 2],
 			"to": [14, 14, 14],
 			"rotation": {
@@ -56,35 +58,35 @@
 			},
 			"faces": {
 				"north": {
-					"uv": [0, 0, 16, 16],
-					"texture": "#lvw"
+					"uv": [2, 2, 14, 15],
+					"texture": "#m8power_louvre_white"
 				},
 				"east": {
-					"uv": [0, 0, 16, 16],
-					"texture": "#lvw"
+					"uv": [2, 2, 14, 15],
+					"texture": "#m8power_louvre_white"
 				},
 				"south": {
-					"uv": [0, 0, 12, 13],
-					"texture": "#ws"
+					"uv": [2, 2, 14, 15],
+					"texture": "#m8power_louvre_white"
 				},
 				"west": {
-					"uv": [0, 0, 12, 13],
-					"texture": "#ws"
+					"uv": [2, 2, 14, 15],
+					"texture": "#m8power_louvre_white"
 				},
 				"up": {
-					"uv": [0, 0, 12, 12],
-					"texture": "#ws"
+					"uv": [2, 2, 14, 14],
+					"texture": "#m8power_louvre_white"
 				},
 				"down": {
-					"uv": [0, 0, 12, 12],
-					"texture": "#ws"
+					"uv": [2, 2, 14, 14],
+					"texture": "#m8power_louvre_white"
 				}
 			}
 		},
 		{
 			"name": "roof",
-			"from": [1.5, 14, 1.5],
-			"to": [14.5, 15, 14.5],
+			"from": [1.4, 14, 1.4],
+			"to": [14.6, 15, 14.6],
 			"rotation": {
 				"angle": 0,
 				"axis": "y",
@@ -92,35 +94,35 @@
 			},
 			"faces": {
 				"north": {
-					"uv": [0, 0, 13, 1],
-					"texture": "#ws"
+					"uv": [1.4, 1, 14.6, 2],
+					"texture": "#m6auto_white"
 				},
 				"east": {
-					"uv": [0, 0, 13, 1],
-					"texture": "#ws"
+					"uv": [1.4, 1, 14.6, 2],
+					"texture": "#m6auto_white"
 				},
 				"south": {
-					"uv": [0, 0, 13, 1],
-					"texture": "#ws"
+					"uv": [1.4, 1, 14.6, 2],
+					"texture": "#m6auto_white"
 				},
 				"west": {
-					"uv": [0, 0, 13, 1],
-					"texture": "#ws"
+					"uv": [1.4, 1, 14.6, 2],
+					"texture": "#m6auto_white"
 				},
 				"up": {
-					"uv": [0, 0, 13, 13],
-					"texture": "#ws"
+					"uv": [1.4, 1.4, 14.6, 14.6],
+					"texture": "#m6auto_white"
 				},
 				"down": {
-					"uv": [0, 0, 13, 13],
-					"texture": "#ws"
+					"uv": [1.4, 1.4, 14.6, 14.6],
+					"texture": "#m6auto_white"
 				}
 			}
 		},
 		{
 			"name": "mast",
-			"from": [12, 15, 12],
-			"to": [13, 30, 13],
+			"from": [13, 15, 12],
+			"to": [14.2, 29, 13.2],
 			"rotation": {
 				"angle": 0,
 				"axis": "y",
@@ -128,35 +130,35 @@
 			},
 			"faces": {
 				"north": {
-					"uv": [0, 0, 1, 15],
-					"texture": "#gal"
+					"uv": [1.8, 3, 3, 16],
+					"texture": "#disconnector_galvanised"
 				},
 				"east": {
-					"uv": [0, 0, 1, 15],
-					"texture": "#gal"
+					"uv": [2.8, 3, 4, 16],
+					"texture": "#disconnector_galvanised"
 				},
 				"south": {
-					"uv": [0, 0, 1, 15],
-					"texture": "#gal"
+					"uv": [13, 3, 14.2, 16],
+					"texture": "#disconnector_galvanised"
 				},
 				"west": {
-					"uv": [0, 0, 1, 15],
-					"texture": "#gal"
+					"uv": [12, 3, 13.2, 16],
+					"texture": "#disconnector_galvanised"
 				},
 				"up": {
-					"uv": [0, 0, 1, 1],
-					"texture": "#gal"
+					"uv": [13, 12, 14.2, 13.2],
+					"texture": "#disconnector_galvanised"
 				},
 				"down": {
-					"uv": [0, 0, 1, 1],
-					"texture": "#gal"
+					"uv": [13, 2.8, 14.2, 4],
+					"texture": "#disconnector_galvanised"
 				}
 			}
 		},
 		{
-			"name": "glow_lamp_on",
-			"from": [3.5, 11.5, 1.4],
-			"to": [4.5, 12.5, 2],
+			"name": "inlet",
+			"from": [5, 15, 5],
+			"to": [7, 20, 7],
 			"rotation": {
 				"angle": 0,
 				"axis": "y",
@@ -164,28 +166,136 @@
 			},
 			"faces": {
 				"north": {
-					"uv": [0, 0, 1, 1],
-					"texture": "#lg"
+					"uv": [9, 12, 11, 16],
+					"texture": "#electronics_ss"
 				},
 				"east": {
-					"uv": [0, 0, 0.6, 1],
-					"texture": "#lg"
+					"uv": [9, 12, 11, 16],
+					"texture": "#electronics_ss"
 				},
 				"south": {
-					"uv": [0, 0, 1, 1],
-					"texture": "#lg"
+					"uv": [5, 12, 7, 16],
+					"texture": "#electronics_ss"
 				},
 				"west": {
-					"uv": [0, 0, 0.6, 1],
-					"texture": "#lg"
+					"uv": [5, 12, 7, 16],
+					"texture": "#electronics_ss"
 				},
 				"up": {
-					"uv": [0, 0, 1, 0.6],
-					"texture": "#lg"
+					"uv": [5, 5, 7, 7],
+					"texture": "#electronics_ss"
 				},
 				"down": {
-					"uv": [0, 0, 1, 0.6],
-					"texture": "#lg"
+					"uv": [5, 9, 7, 11],
+					"texture": "#electronics_ss"
+				}
+			}
+		},
+		{
+			"name": "inlet_hat",
+			"from": [4, 20, 4],
+			"to": [8, 21, 8],
+			"rotation": {
+				"angle": 0,
+				"axis": "y",
+				"origin": [8, 8, 8]
+			},
+			"faces": {
+				"north": {
+					"uv": [8, 11, 12, 12],
+					"texture": "#electronics_ss"
+				},
+				"east": {
+					"uv": [8, 11, 12, 12],
+					"texture": "#electronics_ss"
+				},
+				"south": {
+					"uv": [4, 11, 8, 12],
+					"texture": "#electronics_ss"
+				},
+				"west": {
+					"uv": [4, 11, 8, 12],
+					"texture": "#electronics_ss"
+				},
+				"up": {
+					"uv": [4, 4, 8, 8],
+					"texture": "#electronics_ss"
+				},
+				"down": {
+					"uv": [4, 8, 8, 12],
+					"texture": "#electronics_ss"
+				}
+			}
+		},
+		{
+			"name": "on_bz",
+			"from": [10.3, 11.3, 1.85],
+			"to": [11.7, 12.7, 2],
+			"rotation": {
+				"angle": 0,
+				"axis": "y",
+				"origin": [8, 8, 8]
+			},
+			"faces": {
+				"north": {
+					"uv": [4.3, 3.3, 5.7, 4.7],
+					"texture": "#plant_rubber"
+				},
+				"east": {
+					"uv": [14, 3.3, 14.15, 4.7],
+					"texture": "#plant_rubber"
+				},
+				"south": {
+					"uv": [10.3, 3.3, 11.7, 4.7],
+					"texture": "#plant_rubber"
+				},
+				"west": {
+					"uv": [1.85, 3.3, 2, 4.7],
+					"texture": "#plant_rubber"
+				},
+				"up": {
+					"uv": [10.3, 1.85, 11.7, 2],
+					"texture": "#plant_rubber"
+				},
+				"down": {
+					"uv": [10.3, 14, 11.7, 14.15],
+					"texture": "#plant_rubber"
+				}
+			}
+		},
+		{
+			"name": "glow_on",
+			"from": [10.5, 11.5, 1.65],
+			"to": [11.5, 12.5, 1.85],
+			"rotation": {
+				"angle": 0,
+				"axis": "y",
+				"origin": [8, 8, 8]
+			},
+			"faces": {
+				"north": {
+					"uv": [4.5, 3.5, 5.5, 4.5],
+					"texture": "#grid_lines_lamp_green"
+				},
+				"east": {
+					"uv": [14.15, 3.5, 14.35, 4.5],
+					"texture": "#grid_lines_lamp_green"
+				},
+				"south": {
+					"uv": [10.5, 3.5, 11.5, 4.5],
+					"texture": "#grid_lines_lamp_green"
+				},
+				"west": {
+					"uv": [1.65, 3.5, 1.85, 4.5],
+					"texture": "#grid_lines_lamp_green"
+				},
+				"up": {
+					"uv": [10.5, 1.65, 11.5, 1.85],
+					"texture": "#grid_lines_lamp_green"
+				},
+				"down": {
+					"uv": [10.5, 14.15, 11.5, 14.35],
+					"texture": "#grid_lines_lamp_green"
 				}
 			},
 			"neoforge_data": {

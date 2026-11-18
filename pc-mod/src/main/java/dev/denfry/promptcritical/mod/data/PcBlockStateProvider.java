@@ -129,7 +129,7 @@ public final class PcBlockStateProvider extends BlockStateProvider {
             "cast_house_machine", "ladle", "roller_table", "rolling_mill_stand", "piercing_mill", "pipe_welder", "asu_main_compressor",
             "asu_expander", "air_separator", "hydrotest_pump", "recording_gauge", "water_clarifier", "rotary_table", "mud_pump",
             "pumpjack", "gas_compressor", "pvc_reactor", "leach_tank", "rotary_calciner", "hf_kiln", "mixer_settler",
-            "ammonia_converter", "pellet_press");
+            "pellet_press");
 
     /** Модели состояния мультипартом: основная и части, все с поворотом по {@code facing}. */
     private void parts(Block block, String id) {
@@ -173,7 +173,6 @@ public final class PcBlockStateProvider extends BlockStateProvider {
             case "leach_tank" -> java.util.List.of(base, id + "/partial/agitator");
             case "rotary_calciner", "hf_kiln" -> java.util.List.of(base, id + "/partial/shell");
             case "mixer_settler" -> java.util.List.of(base, id + "/partial/impeller");
-            case "ammonia_converter" -> java.util.List.of(base, "ammonia_synthesis_reactor/partial/compressor_wheel");
             case "pellet_press" -> java.util.List.of(base, "pellet_press/partial/ram");
             case "pumpjack" -> java.util.List.of(base, "pumpjack_gearbox/partial/crank_counterweight", "pumpjack_gearbox/partial/walking_beam",
                     "pumpjack_gearbox/partial/pitman_arm", "pumpjack_gearbox/partial/polished_rod");

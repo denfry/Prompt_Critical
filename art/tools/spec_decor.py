@@ -37,14 +37,10 @@ for _k in ("", "_yellow", "_arrow"):
       {"a": D("asphalt"), "mk": D(f"asphalt_marking{_k}")})
 
 # бордюр
-m("curb", [el("curb", [0, 0, 5], [16, 6, 11], "c", faces={"up": "cb", "north": "cb"})], {"cb": D("curb")})
+# нарисовано вручную в Blockbench: art/blockbench/decor/plant_decor.author.js
 
 # решётчатый настил и ступень
-m("grating", [el("plate", [0, 14, 0], [16, 16, 16], "grat"),
-              el("bearer_w", [0, 12, 0], [1, 14, 16], "gal"), el("bearer_e", [15, 12, 0], [16, 14, 16], "gal")])
-m("grating_step", [el("tread", [0, 7, 0], [16, 8, 8], "grat"), el("nosing", [0, 7, -0.01], [16, 8, 1], "yel"),
-                   el("tread_2", [0, 15, 8], [16, 16, 16], "grat"), el("nosing_2", [0, 15, 7.99], [16, 16, 9], "yel"),
-                   el("stringer_w", [0, 0, 0], [1, 16, 16], "gal"), el("stringer_e", [15, 0, 0], [16, 16, 16], "gal")])
+# нарисовано вручную в Blockbench: art/blockbench/decor/plant_decor.author.js
 
 
 # перила: жёлтые и оцинкованные, с бортиком
@@ -56,15 +52,10 @@ def handrail(tex, toe=True):
     return els
 
 
-m("handrail", handrail("cy"))
-m("handrail_galvanized", handrail("gal"))
+# нарисовано вручную в Blockbench: art/blockbench/decor/plant_decor.author.js
 
 # вертикальная лестница с ограждением
-m("cage_ladder", [el("stile_w", [3, 0, 14], [4, 16, 15], "gal"), el("stile_e", [12, 0, 14], [13, 16, 15], "gal")]
-  + [el(f"rung_{i}", [4, y, 14.25], [12, y + 0.75, 14.75], "gal") for i, y in enumerate((2, 6, 10, 14))]
-  + [el("hoop", [1, 8, 0], [15, 9, 1], "gal"), el("hoop_w", [1, 8, 1], [2, 9, 14], "gal"),
-     el("hoop_e", [14, 8, 1], [15, 9, 14], "gal")]
-  + [el(f"bar_{i}", [x, 0, z], [x + 0.75, 16, z + 0.75], "gal") for i, (x, z) in enumerate(((1, 2), (14.25, 2), (7.6, 0.1)))])
+# нарисовано вручную в Blockbench: art/blockbench/decor/plant_decor.author.js
 
 
 # кабельный лоток: прямой, угол, тройник, вертикальный; с кабелями и пустой
@@ -92,12 +83,7 @@ def tray(cables=False, arms=("n", "s")):
     return [e for e in els if e]
 
 
-m("cable_tray", tray())
-m("cable_tray_cables", tray(True))
-m("cable_tray_corner", tray(True, ("n", "e")))
-m("cable_tray_tee", tray(True, ("n", "s", "e")))
-m("cable_tray_vertical", [el("back", [3, 0, 15.5], [13, 16, 16], "gal"), el("side_w", [3, 0, 12.5], [3.5, 16, 16], "gal"),
-                          el("side_e", [12.5, 0, 12.5], [13, 16, 16], "gal"), el("cables", [4, 0, 13.5], [12, 16, 15.5], "cbl")])
+# нарисовано вручную в Blockbench: art/blockbench/decor/plant_decor.author.js
 
 # трубная эстакада: стойка и траверса
 m("pipe_rack", [el("column", [6, 0, 6], [10, 16, 10], "gal"),
@@ -129,17 +115,13 @@ for _k, sfx in (("pendant", ""), ("street", "_street"), ("flood", "_floodlight")
                                                       "dg": "block/common/grid_dark_grey.png"})
 
 # таблички помещений и стрелки эвакуации (на стене south)
-m("room_sign", [el("plate", [2, 5, 15.5], [14, 11, 16], "s", full=["north"])], {"s": D("room_sign")})
-m("room_sign_evac", [el("plate", [2, 5, 15.5], [14, 11, 16], "s", full=["north"])], {"s": D("room_sign_evac")})
+# нарисовано вручную в Blockbench: art/blockbench/decor/plant_decor.author.js
 # самосветящийся знак
 m("tritium_lamp", [el("glow_plate", [3, 5, 15.5], [13, 11, 16], "s", full=["north"])], {"s": D("tritium_lamp")})
 # часы БЩУ: стрелки рисует BER
-m("wall_clock", [el("case", [2, 2, 14.5], [14, 14, 16], "dg"),
-                 el("face", [2.5, 2.5, 14.4], [13.5, 13.5, 14.5], "f", full=["north"])],
-  {"f": D("wall_clock_face"), "dg": "block/common/grid_dark_grey.png"})
+# нарисовано вручную в Blockbench: art/blockbench/decor/plant_decor.author.js
 # плакаты ТБ 2×1 и 2×2
-m("safety_poster", [el("poster", [0, 0, 15.75], [32, 16, 16], "p", full=["north"])], {"p": D("safety_poster")})
-m("safety_poster_large", [el("poster", [0, 0, 15.75], [32, 32, 16], "p", full=["north"])], {"p": D("safety_poster_large")})
+# нарисовано вручную в Blockbench: art/blockbench/decor/plant_decor.author.js
 # декоративные массивные ворота: сегмент 2×2
 m("blast_door_decor", [el("leaf", [0, 0, 4], [32, 32, 12], "bd", full=["north", "south"]),
                        el("frame_t", [0, 30, 2], [32, 32, 14], "d"),

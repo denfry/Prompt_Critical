@@ -1,15 +1,17 @@
 {
 	"credit": "Made with Blockbench",
 	"textures": {
-		"particle": "promptcritical:block/common/fuelcycle_refractory",
-		"hot": "promptcritical:block/common/fuelcycle_glow_hot",
-		"ref": "promptcritical:block/common/fuelcycle_refractory"
+		"particle": "promptcritical:block/disconnector/copper",
+		"plant_structure": "promptcritical:block/plant/structure",
+		"disconnector_copper": "promptcritical:block/disconnector/copper",
+		"steelmaking_dinas": "promptcritical:block/steelmaking/dinas",
+		"steelmaking_melt": "promptcritical:block/steelmaking/melt"
 	},
 	"elements": [
 		{
-			"name": "crucible_0",
-			"from": [3, 8, 5.929],
-			"to": [13, 24, 10.071],
+			"name": "yoke",
+			"from": [3, 8, 3],
+			"to": [13, 22, 13],
 			"rotation": {
 				"angle": 0,
 				"axis": "y",
@@ -17,35 +19,35 @@
 			},
 			"faces": {
 				"north": {
-					"uv": [0, 0, 10, 16],
-					"texture": "#ref"
+					"uv": [3, 0, 13, 8],
+					"texture": "#plant_structure"
 				},
 				"east": {
-					"uv": [0, 0, 4.14, 16],
-					"texture": "#ref"
+					"uv": [3, 0, 13, 8],
+					"texture": "#plant_structure"
 				},
 				"south": {
-					"uv": [0, 0, 10, 16],
-					"texture": "#ref"
+					"uv": [3, 0, 13, 8],
+					"texture": "#plant_structure"
 				},
 				"west": {
-					"uv": [0, 0, 4.14, 16],
-					"texture": "#ref"
+					"uv": [3, 0, 13, 8],
+					"texture": "#plant_structure"
 				},
 				"up": {
-					"uv": [0, 0, 10, 4.14],
-					"texture": "#ref"
+					"uv": [3, 3, 13, 13],
+					"texture": "#plant_structure"
 				},
 				"down": {
-					"uv": [0, 0, 10, 4.14],
-					"texture": "#ref"
+					"uv": [3, 3, 13, 13],
+					"texture": "#plant_structure"
 				}
 			}
 		},
 		{
-			"name": "crucible_1",
-			"from": [5.929, 7.99, 3],
-			"to": [10.071, 24.01, 13],
+			"name": "coil9",
+			"from": [2.9, 9, 2.9],
+			"to": [13.1, 10, 13.1],
 			"rotation": {
 				"angle": 0,
 				"axis": "y",
@@ -53,107 +55,287 @@
 			},
 			"faces": {
 				"north": {
-					"uv": [0, 0, 4.14, 16],
-					"texture": "#ref"
+					"uv": [2.9, 6, 13.1, 7],
+					"texture": "#disconnector_copper"
 				},
 				"east": {
-					"uv": [0, 0, 10, 16],
-					"texture": "#ref"
+					"uv": [2.9, 6, 13.1, 7],
+					"texture": "#disconnector_copper"
 				},
 				"south": {
-					"uv": [0, 0, 4.14, 16],
-					"texture": "#ref"
+					"uv": [2.9, 6, 13.1, 7],
+					"texture": "#disconnector_copper"
 				},
 				"west": {
-					"uv": [0, 0, 10, 16],
-					"texture": "#ref"
+					"uv": [2.9, 6, 13.1, 7],
+					"texture": "#disconnector_copper"
 				},
 				"up": {
-					"uv": [0, 0, 4.14, 10],
-					"texture": "#ref"
+					"uv": [2.9, 2.9, 13.1, 13.1],
+					"texture": "#disconnector_copper"
 				},
 				"down": {
-					"uv": [0, 0, 4.14, 10],
-					"texture": "#ref"
+					"uv": [2.9, 2.9, 13.1, 13.1],
+					"texture": "#disconnector_copper"
 				}
 			}
 		},
 		{
-			"name": "crucible_2",
-			"from": [3, 7.98, 5.929],
-			"to": [13, 24.02, 10.071],
+			"name": "coil11",
+			"from": [2.9, 11, 2.9],
+			"to": [13.1, 12, 13.1],
 			"rotation": {
-				"angle": 45,
+				"angle": 0,
 				"axis": "y",
 				"origin": [8, 8, 8]
 			},
 			"faces": {
 				"north": {
-					"uv": [0, 0, 10, 16],
-					"texture": "#ref"
+					"uv": [2.9, 4, 13.1, 5],
+					"texture": "#disconnector_copper"
 				},
 				"east": {
-					"uv": [0, 0, 4.14, 16],
-					"texture": "#ref"
+					"uv": [2.9, 4, 13.1, 5],
+					"texture": "#disconnector_copper"
 				},
 				"south": {
-					"uv": [0, 0, 10, 16],
-					"texture": "#ref"
+					"uv": [2.9, 4, 13.1, 5],
+					"texture": "#disconnector_copper"
 				},
 				"west": {
-					"uv": [0, 0, 4.14, 16],
-					"texture": "#ref"
+					"uv": [2.9, 4, 13.1, 5],
+					"texture": "#disconnector_copper"
 				},
 				"up": {
-					"uv": [0, 0, 10, 4.14],
-					"texture": "#ref"
+					"uv": [2.9, 2.9, 13.1, 13.1],
+					"texture": "#disconnector_copper"
 				},
 				"down": {
-					"uv": [0, 0, 10, 4.14],
-					"texture": "#ref"
+					"uv": [2.9, 2.9, 13.1, 13.1],
+					"texture": "#disconnector_copper"
 				}
 			}
 		},
 		{
-			"name": "crucible_3",
-			"from": [3, 7.97, 5.929],
-			"to": [13, 24.03, 10.071],
+			"name": "coil13",
+			"from": [2.9, 13, 2.9],
+			"to": [13.1, 14, 13.1],
 			"rotation": {
-				"angle": -45,
+				"angle": 0,
 				"axis": "y",
 				"origin": [8, 8, 8]
 			},
 			"faces": {
 				"north": {
-					"uv": [0, 0, 10, 16],
-					"texture": "#ref"
+					"uv": [2.9, 2, 13.1, 3],
+					"texture": "#disconnector_copper"
 				},
 				"east": {
-					"uv": [0, 0, 4.14, 16],
-					"texture": "#ref"
+					"uv": [2.9, 2, 13.1, 3],
+					"texture": "#disconnector_copper"
 				},
 				"south": {
-					"uv": [0, 0, 10, 16],
-					"texture": "#ref"
+					"uv": [2.9, 2, 13.1, 3],
+					"texture": "#disconnector_copper"
 				},
 				"west": {
-					"uv": [0, 0, 4.14, 16],
-					"texture": "#ref"
+					"uv": [2.9, 2, 13.1, 3],
+					"texture": "#disconnector_copper"
 				},
 				"up": {
-					"uv": [0, 0, 10, 4.14],
-					"texture": "#ref"
+					"uv": [2.9, 2.9, 13.1, 13.1],
+					"texture": "#disconnector_copper"
 				},
 				"down": {
-					"uv": [0, 0, 10, 4.14],
-					"texture": "#ref"
+					"uv": [2.9, 2.9, 13.1, 13.1],
+					"texture": "#disconnector_copper"
+				}
+			}
+		},
+		{
+			"name": "coil15",
+			"from": [2.9, 15, 2.9],
+			"to": [13.1, 16, 13.1],
+			"rotation": {
+				"angle": 0,
+				"axis": "y",
+				"origin": [8, 8, 8]
+			},
+			"faces": {
+				"north": {
+					"uv": [2.9, 0, 13.1, 1],
+					"texture": "#disconnector_copper"
+				},
+				"east": {
+					"uv": [2.9, 0, 13.1, 1],
+					"texture": "#disconnector_copper"
+				},
+				"south": {
+					"uv": [2.9, 0, 13.1, 1],
+					"texture": "#disconnector_copper"
+				},
+				"west": {
+					"uv": [2.9, 0, 13.1, 1],
+					"texture": "#disconnector_copper"
+				},
+				"up": {
+					"uv": [2.9, 2.9, 13.1, 13.1],
+					"texture": "#disconnector_copper"
+				},
+				"down": {
+					"uv": [2.9, 2.9, 13.1, 13.1],
+					"texture": "#disconnector_copper"
+				}
+			}
+		},
+		{
+			"name": "coil17",
+			"from": [2.9, 17, 2.9],
+			"to": [13.1, 18, 13.1],
+			"rotation": {
+				"angle": 0,
+				"axis": "y",
+				"origin": [8, 8, 8]
+			},
+			"faces": {
+				"north": {
+					"uv": [2.9, 14, 13.1, 15],
+					"texture": "#disconnector_copper"
+				},
+				"east": {
+					"uv": [2.9, 14, 13.1, 15],
+					"texture": "#disconnector_copper"
+				},
+				"south": {
+					"uv": [2.9, 14, 13.1, 15],
+					"texture": "#disconnector_copper"
+				},
+				"west": {
+					"uv": [2.9, 14, 13.1, 15],
+					"texture": "#disconnector_copper"
+				},
+				"up": {
+					"uv": [2.9, 2.9, 13.1, 13.1],
+					"texture": "#disconnector_copper"
+				},
+				"down": {
+					"uv": [2.9, 2.9, 13.1, 13.1],
+					"texture": "#disconnector_copper"
+				}
+			}
+		},
+		{
+			"name": "coil19",
+			"from": [2.9, 19, 2.9],
+			"to": [13.1, 20, 13.1],
+			"rotation": {
+				"angle": 0,
+				"axis": "y",
+				"origin": [8, 8, 8]
+			},
+			"faces": {
+				"north": {
+					"uv": [2.9, 12, 13.1, 13],
+					"texture": "#disconnector_copper"
+				},
+				"east": {
+					"uv": [2.9, 12, 13.1, 13],
+					"texture": "#disconnector_copper"
+				},
+				"south": {
+					"uv": [2.9, 12, 13.1, 13],
+					"texture": "#disconnector_copper"
+				},
+				"west": {
+					"uv": [2.9, 12, 13.1, 13],
+					"texture": "#disconnector_copper"
+				},
+				"up": {
+					"uv": [2.9, 2.9, 13.1, 13.1],
+					"texture": "#disconnector_copper"
+				},
+				"down": {
+					"uv": [2.9, 2.9, 13.1, 13.1],
+					"texture": "#disconnector_copper"
+				}
+			}
+		},
+		{
+			"name": "rim",
+			"from": [3, 22, 3],
+			"to": [13, 24, 13],
+			"rotation": {
+				"angle": 0,
+				"axis": "y",
+				"origin": [8, 8, 8]
+			},
+			"faces": {
+				"north": {
+					"uv": [3, 8, 13, 10],
+					"texture": "#steelmaking_dinas"
+				},
+				"east": {
+					"uv": [3, 8, 13, 10],
+					"texture": "#steelmaking_dinas"
+				},
+				"south": {
+					"uv": [3, 8, 13, 10],
+					"texture": "#steelmaking_dinas"
+				},
+				"west": {
+					"uv": [3, 8, 13, 10],
+					"texture": "#steelmaking_dinas"
+				},
+				"up": {
+					"uv": [3, 3, 13, 13],
+					"texture": "#steelmaking_dinas"
+				},
+				"down": {
+					"uv": [3, 3, 13, 13],
+					"texture": "#steelmaking_dinas"
+				}
+			}
+		},
+		{
+			"name": "spout",
+			"from": [6.6, 22.6, 2],
+			"to": [9.4, 23.6, 3],
+			"rotation": {
+				"angle": 0,
+				"axis": "y",
+				"origin": [8, 8, 8]
+			},
+			"faces": {
+				"north": {
+					"uv": [6.6, 8.4, 9.4, 9.4],
+					"texture": "#steelmaking_dinas"
+				},
+				"east": {
+					"uv": [13, 8.4, 14, 9.4],
+					"texture": "#steelmaking_dinas"
+				},
+				"south": {
+					"uv": [6.6, 8.4, 9.4, 9.4],
+					"texture": "#steelmaking_dinas"
+				},
+				"west": {
+					"uv": [2, 8.4, 3, 9.4],
+					"texture": "#steelmaking_dinas"
+				},
+				"up": {
+					"uv": [6.6, 2, 9.4, 3],
+					"texture": "#steelmaking_dinas"
+				},
+				"down": {
+					"uv": [6.6, 13, 9.4, 14],
+					"texture": "#steelmaking_dinas"
 				}
 			}
 		},
 		{
 			"name": "glow_melt",
-			"from": [4, 23.5, 4],
-			"to": [12, 24, 12],
+			"from": [4.6, 23.4, 4.6],
+			"to": [11.4, 23.8, 11.4],
 			"rotation": {
 				"angle": 0,
 				"axis": "y",
@@ -161,28 +343,24 @@
 			},
 			"faces": {
 				"north": {
-					"uv": [0, 0, 8, 0.5],
-					"texture": "#hot"
+					"uv": [4.6, 8.2, 11.4, 8.6],
+					"texture": "#steelmaking_melt"
 				},
 				"east": {
-					"uv": [0, 0, 8, 0.5],
-					"texture": "#hot"
+					"uv": [4.6, 8.2, 11.4, 8.6],
+					"texture": "#steelmaking_melt"
 				},
 				"south": {
-					"uv": [0, 0, 8, 0.5],
-					"texture": "#hot"
+					"uv": [4.6, 8.2, 11.4, 8.6],
+					"texture": "#steelmaking_melt"
 				},
 				"west": {
-					"uv": [0, 0, 8, 0.5],
-					"texture": "#hot"
+					"uv": [4.6, 8.2, 11.4, 8.6],
+					"texture": "#steelmaking_melt"
 				},
 				"up": {
-					"uv": [0, 0, 8, 8],
-					"texture": "#hot"
-				},
-				"down": {
-					"uv": [0, 0, 8, 8],
-					"texture": "#hot"
+					"uv": [4.6, 4.6, 11.4, 11.4],
+					"texture": "#steelmaking_melt"
 				}
 			},
 			"neoforge_data": {

@@ -32,19 +32,7 @@ def at220_tank():
     return els
 
 
-m("power_transformer_220", "grid", at220_tank())
-m("power_transformer_220_cooler", "grid", [
-    el("header_top", [-14, 10, -4], [30, 12, -2], "r32"),
-    el("header_bot", [-14, -14, -4], [30, -12, -2], "r32"),
-] + [el(f"cooler_{i}", [-13 + i * 15, -12, -2], [-2 + i * 15, 10, 20], "rad", faces={"north": "vent", "south": "vent"})
-     for i in range(3)]
-  + [el(f"oil_pump_{i}", [-10 + i * 15, -16, 0], [-6 + i * 15, -12, 4], "mb") for i in range(3)])
-m("power_transformer_220/fan", "grid", [
-    el("ring", [2, 2, 0], [14, 14, 1], "d"),
-    el("blade_x", [2.5, 7.25, 0.25], [13.5, 8.75, 0.75], "gal"),
-    el("blade_y", [7.25, 2.5, 0.25], [8.75, 13.5, 0.75], "gal"),
-    el("hub", [7, 7, -0.5], [9, 9, 1.5], "d"),
-], kind="partial")
+# нарисовано вручную в Blockbench: art/blockbench/grid/hv_grid.author.js
 
 
 # БСК 10 кВ — art/blockbench/grid/station_storage.author.js
@@ -97,14 +85,7 @@ def gt_enclosure(extra):
             el("roof", [-15, 18, -16], [31, 20, 32], "rals")] + extra
 
 
-m("gas_turbine", "boilers", gt_enclosure([
-    el("intake_house", [-12, 20, -14], [28, 31.5, 18], "ral", faces={"north": "vent", "east": "vent", "west": "vent"}),
-    el("intake_duct", [0, 18, 10], [16, 20, 26], "rals")]))
-m("gas_turbine_combustor", "boilers", gt_enclosure([
-    el("fuel_line", [-16, 0, 6], [-14, 2, 10], "gas"),
-    el("vent_fan", [2, 20, 2], [14, 22, 14], "d")]))
-m("gas_turbine_turbine", "boilers", gt_enclosure(
-    vcyl("exhaust_stack", 8, 16, 7, 20, 31.9, "gasr", 8) + [el("diffuser", [-6, 18, 6], [22, 20, 26], "rals")]))
+# нарисовано вручную в Blockbench: art/blockbench/turbine/power_misc.author.js
 m("gas_turbine/rotor", "boilers", hcyl("rotor", "z", 3, -16, 32, "st", sides=8)
   + [el(f"stage_{i}", [2, 2, z], [14, 14, z + 1], "gal") for i, z in enumerate((-12, -6, 0, 6, 22, 28))], kind="partial")
 
@@ -167,10 +148,7 @@ m("gas_engine", "grid", piston_engine(True))
 m("gas_engine/flywheel", "grid", hcyl("flywheel", "z", 9, -16, -13.5, "ci", c=(8, -2, 8)), kind="partial")
 
 # расходный бак дизтоплива 1×2×1: вертикальный цилиндр с коричневым поясом (топливо)
-m("fuel_day_tank", "grid", legs(3, 13, 3, 13, 4, 1)
-  + vcyl("tank", 8, 8, 6, 4, 30, "sil", top="sils")
-  + vcyl("band", 8, 8, 6.3, 15, 18, "fuel")
-  + vcyl("vent", 8, 8, 0.75, 30, 32, "st", 8))
+# нарисовано вручную в Blockbench: art/blockbench/hydro/m5_water.author.js
 
 
 # огневой подогреватель (печь АВТ): стена, свод, радиантный змеевик
@@ -210,8 +188,7 @@ def tower_cell(iced=False):
             el("deck", [-16, 16, -16], [32, 18, 32], s)] + vcyl("fan_stack", 8, 8, 13, 18, 30, s, 16)
 
 
-m("cooling_tower_cell", "cooling", tower_cell())
-m("cooling_tower_cell_iced", "cooling", tower_cell(True))
+# нарисовано вручную в Blockbench: art/blockbench/water_treatment/plant_utilities.author.js
 m("cooling_tower_cell/fan", "cooling", fan_rotor("y", 12, 24, "frp") + shaft("y", 1, 18, 24), kind="partial")
 
 
@@ -227,7 +204,7 @@ m("cooling_tower_shell_top", "cooling", shell(top=True))
 for _a, _n in ((22.5, "in"), (45, "in_steep"), (-22.5, "out"), (-45, "out_steep")):
     m(f"cooling_tower_shell_{_n}", "cooling", shell(_a))
     m(f"cooling_tower_shell_{_n}_top", "cooling", shell(_a, True))
-m("cooling_tower_fill", "cooling", [el("fill", [0, 0, 0], [16, 16, 16], "fill")])
+# нарисовано вручную в Blockbench: art/blockbench/hydro/m5_water.author.js
 
 
 def basin(level):
@@ -237,13 +214,9 @@ def basin(level):
     return els
 
 
-m("cooling_tower_basin", "cooling", basin(13))
-m("cooling_tower_basin_low", "cooling", basin(6))
-m("cooling_tower_basin_empty", "cooling", basin(0))
+# нарисовано вручную в Blockbench: art/blockbench/hydro/m5_water.author.js
 
-m("spray_pond_nozzle", "cooling", [el("base", [5, 0, 5], [11, 1, 11], "c")]
-  + vcyl("riser", 8, 8, 1, 1, 11, "wat", 8) + vcyl("nozzle", 8, 8, 2, 11, 13, "b", 8)
-  + [el("deflector", [6, 13, 6], [10, 13.5, 10], "b")])
+# нарисовано вручную в Blockbench: art/blockbench/hydro/m5_water.author.js
 
 
 def intake(fouled):
@@ -254,8 +227,7 @@ def intake(fouled):
             el("discharge", [6, 24, 12], [10, 28, 16], "wat")]
 
 
-m("water_intake", "cooling", intake(False))
-m("water_intake_fouled", "cooling", intake(True))
+# нарисовано вручную в Blockbench: art/blockbench/hydro/m5_water.author.js
 
 # уловитель шариков системы очистки конденсатора: сетчатый корпус на трубе
 m("condenser_ball_cleaning", "cooling", hcyl("pipe", "x", 3, 0, 16, "wat")
@@ -266,27 +238,14 @@ m("condenser_ball_cleaning", "cooling", hcyl("pipe", "x", 3, 0, 16, "wat")
 # ======================================================================
 # ГЭС: турбина Френсиса (спиральная камера), водовод, затвор; сетевой подогреватель
 # ======================================================================
-m("hydro_turbine", "grid", [
-    el("pit", [-16, -16, -16], [32, -12, 32], "c"),
-    el("stay_ring", [-6, -12, -6], [22, 4, 22], "gate"),
-    el("cover", [-4, 4, -4], [20, 8, 20], "st"),
-    el("servo_l", [-12, 4, 6], [-6, 10, 10], "ye"),
-    el("servo_r", [22, 4, 6], [28, 10, 10], "ye"),
-] + hcyl("spiral_in", "x", 7, -16, -4, "wat", c=(8, -4, -8), sides=8)
-  + vcyl("spiral", 8, 8, 13, -12, 4, "gate", 16)
-  + vcyl("guide_bearing", 8, 8, 4, 8, 16, "dg", 8))
+# нарисовано вручную в Blockbench: art/blockbench/turbine/power_misc.author.js
 m("hydro_turbine/runner", "grid", vcyl("crown", 8, 8, 7, 0, 3, "b", 16)
   + [el(f"blade_{i}", [7.5, -10, 1], [8.5, 0, 14], "b", rot=("y", a, [8, 8, 8]) if a else None)
      for i, a in enumerate((0, 45, -45))] + vcyl("shaft", 8, 8, 2, 3, 30, "st", 8), kind="partial")
 
-m("penstock", "grid", hcyl("pipe", "z", 6, 0, 16, "wat") + hcyl("ring", "z", 6.5, 7, 9, "d", sides=8))
-m("penstock_side", "grid", hcyl("arm", "x", 5.5, 0, 8, "wat", c=(8, 8, 8)))
+# нарисовано вручную в Blockbench: art/blockbench/hydro/m5_water.author.js
 
-m("dam_gate", "grid", [
-    el("guide_w", [0, 0, 5], [3, 16, 11], "c"), el("guide_e", [13, 0, 5], [16, 16, 11], "c"),
-    el("sill", [3, 0, 5], [13, 1, 11], "st"),
-    el("hoist_beam", [0, 15, 4], [16, 16, 12], "ye"),
-])
+# нарисовано вручную в Blockbench: art/blockbench/turbine/power_misc.author.js
 m("dam_gate/gate", "grid", [
     el("leaf", [3, 1, 7], [13, 15, 9], "gate"),
     el("lug", [7, 15, 7.5], [9, 16, 8.5], "st"),

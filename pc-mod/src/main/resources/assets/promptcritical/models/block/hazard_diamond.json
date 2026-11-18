@@ -1,43 +1,29 @@
 {
 	"credit": "Made with Blockbench",
+	"render_type": "minecraft:cutout",
 	"textures": {
-		"particle": "promptcritical:block/hazard_diamond",
-		"nfpa": "promptcritical:block/hazard_diamond"
+		"particle": "promptcritical:block/m10ops/diamond",
+		"plant_light": "promptcritical:block/plant/light",
+		"m10ops_diamond": "promptcritical:block/m10ops/diamond"
 	},
 	"elements": [
 		{
-			"name": "plate",
+			"name": "diamond",
 			"from": [3, 3, 15.5],
 			"to": [13, 13, 16],
 			"rotation": {
-				"angle": 45,
-				"axis": "z",
-				"origin": [8, 8, 15.75]
+				"angle": 0,
+				"axis": "y",
+				"origin": [8, 8, 8]
 			},
 			"faces": {
 				"north": {
 					"uv": [0, 0, 16, 16],
-					"texture": "#nfpa"
-				},
-				"east": {
-					"uv": [0, 0, 0.5, 10],
-					"texture": "#nfpa"
+					"texture": "#m10ops_diamond"
 				},
 				"south": {
-					"uv": [0, 0, 10, 10],
-					"texture": "#nfpa"
-				},
-				"west": {
-					"uv": [0, 0, 0.5, 10],
-					"texture": "#nfpa"
-				},
-				"up": {
-					"uv": [0, 0, 10, 0.5],
-					"texture": "#nfpa"
-				},
-				"down": {
-					"uv": [0, 0, 10, 0.5],
-					"texture": "#nfpa"
+					"uv": [3, 3, 13, 13],
+					"texture": "#plant_light"
 				}
 			}
 		}
