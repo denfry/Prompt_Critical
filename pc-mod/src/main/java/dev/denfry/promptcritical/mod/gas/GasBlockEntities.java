@@ -26,6 +26,9 @@ public final class GasBlockEntities {
     public static final DeferredHolder<BlockEntityType<?>, BlockEntityType<NglFractionatorBlockEntity>> NGL_FRACTIONATOR =
             type("ngl_fractionator", NglFractionatorBlockEntity::new, PcBlocks.NGL_FRACTIONATOR);
 
+    public static final DeferredHolder<BlockEntityType<?>, BlockEntityType<HeliumRecoveryBlockEntity>> HELIUM_RECOVERY =
+            type("helium_recovery_unit", HeliumRecoveryBlockEntity::new, PcBlocks.HELIUM_RECOVERY_UNIT);
+
     private GasBlockEntities() {
     }
 
@@ -37,6 +40,7 @@ public final class GasBlockEntities {
     private static void capabilities(RegisterCapabilitiesEvent event) {
         fluids(event, GAS_PLANT.get());
         fluids(event, NGL_FRACTIONATOR.get());
+        fluids(event, HELIUM_RECOVERY.get());
     }
 
     private static <T extends BlockEntity & FoundryDevice> void fluids(RegisterCapabilitiesEvent event, BlockEntityType<T> type) {

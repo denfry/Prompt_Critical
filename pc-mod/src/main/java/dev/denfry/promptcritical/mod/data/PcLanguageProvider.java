@@ -224,6 +224,8 @@ public final class PcLanguageProvider extends LanguageProvider {
         i("spacer_grid", "Spacer Grid", "Дистанционирующая решётка");
         i("dosimeter_radiometer", "Dosimeter-Radiometer DKS-04", "Дозиметр-радиометр ДКС-04");
         b("lead_block", "Lead Shielding Block", "Свинцовый блок защиты");
+        b("helium_recovery_unit", "Helium Recovery Unit", "Гелиевая установка");
+        b("fuel_rack", "Spent Fuel Pool Rack", "Стеллаж бассейна выдержки");
         MISC.put("message.promptcritical.dosimeter.reading", new String[] {"DKS-04: %s · total %s", "ДКС-04: %s · накоплено %s"});
         MISC.put("message.promptcritical.dosimeter.idle", new String[] {"No reading yet: carry it to measure",
                 "Показаний пока нет: носите при себе"});
@@ -690,6 +692,7 @@ public final class PcLanguageProvider extends LanguageProvider {
         MISC.putAll(dev.denfry.promptcritical.mod.chlor.ChlorText.lang());
         MISC.putAll(dev.denfry.promptcritical.mod.environment.ToxicReleaseService.lang());
         MISC.putAll(dev.denfry.promptcritical.mod.environment.RadiationService.lang());
+        MISC.putAll(dev.denfry.promptcritical.mod.radiation.RadiationBlocksText.lang());
         MISC.putAll(dev.denfry.promptcritical.mod.uranium.UraniumText.lang());
         MISC.put("death.attack.promptcritical.chlorine", new String[] {"%1$s was gassed by chlorine", "%1$s отравлен хлором"});
         MISC.put("death.attack.promptcritical.chlorine.player", new String[] {"%1$s was gassed by chlorine while fighting %2$s",
