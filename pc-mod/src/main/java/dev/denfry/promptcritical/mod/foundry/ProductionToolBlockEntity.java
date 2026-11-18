@@ -256,18 +256,17 @@ public final class ProductionToolBlockEntity extends KineticMachineBlockEntity<P
         switch (kind) {
             case MILLING -> {
                 if (fx.chance(14)) fx.chips(fx.at(8, 14, 5), 1);
-                if (level.getGameTime() % 20 == 0) fx.sound(fx.at(8, 16, 5), SoundEvents.GRINDSTONE_USE, 0.15f, 1.2f);
             }
             case SHAPER -> {
-                // стружка слетает в конце рабочего хода, ползун стучит на реверсе
-                if (level.getGameTime() % 19 == 0) {
+                // резец скребёт по металлу на каждом рабочем ходе: двойной ход — два оборота вала (×0,5)
+                int period = Math.max(4, Math.round(1200f / Math.max(1f, Math.abs(getSpeed()) * (float) kind.gear)));
+                if (level.getGameTime() % period == 0) {
                     fx.chips(fx.at(25, 13, 8), 2);
-                    fx.sound(fx.at(16, 14, 8), SoundEvents.CHAIN_PLACE, 0.25f, 0.7f);
+                    fx.sound(fx.at(22, 10, 8), dev.denfry.promptcritical.mod.sound.PcSfx.SHAPER_STROKE.get(), 0.6f, 1.0f);
                 }
             }
             case GRINDER -> {
                 if (fx.chance(30)) fx.sparks(fx.at(13, 10.5, 8), 2);
-                if (level.getGameTime() % 30 == 0) fx.sound(fx.at(13, 14, 8), SoundEvents.GRINDSTONE_USE, 0.2f, 2.0f);
             }
         }
     }

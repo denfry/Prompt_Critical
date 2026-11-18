@@ -166,7 +166,14 @@ public class AutomationBlockEntity extends DeviceBlockEntity implements WiredDev
 
     protected void serverTick(AutomationUnit u) {
         switch (kind) {
-            case RELAY, RELAY_LATCHING -> setFlag(PcProperties.PICKED, u.relayPicked());
+            case RELAY, RELAY_LATCHING -> {
+                // якорь реле притянулся или отпал — щелчок
+                BlockState was = getBlockState();
+                setFlag(PcProperties.PICKED, u.relayPicked());
+                if (was.hasProperty(PcProperties.PICKED) && was.getValue(PcProperties.PICKED) != u.relayPicked())
+                    level.playSound(null, worldPosition, dev.denfry.promptcritical.mod.sound.PcSfx.RELAY_CLICK.get(), SoundSource.BLOCKS, 0.5f,
+                            u.relayPicked() ? 1.1f : 0.95f);
+            }
             case TIME_RELAY -> {
                 boolean energized = u.coilVoltage() >= 0.75 * RelayBank.NOMINAL_V;
                 setFlag(PcProperties.DONE, u.timerOutput());

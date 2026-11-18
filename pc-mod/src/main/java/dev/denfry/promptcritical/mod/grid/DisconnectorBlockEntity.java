@@ -96,7 +96,7 @@ public class DisconnectorBlockEntity extends GridDeviceBlockEntity<SwitchUnit> {
             player.displayClientMessage(GridText.msg(GridText.BREAKER_RESPONSE, BreakerCellBlockEntity.response(r)), true);
             return InteractionResult.SUCCESS;
         }
-        level.playSound(null, worldPosition, SoundEvents.CHAIN_PLACE, SoundSource.BLOCKS, 1, 0.6f);
+        level.playSound(null, worldPosition, dev.denfry.promptcritical.mod.sound.PcSfx.BREAKER_OPERATE.get(), SoundSource.BLOCKS, 1, 0.6f);
         if (u.lastOperationArced()) arc(player);
         return InteractionResult.SUCCESS;
     }

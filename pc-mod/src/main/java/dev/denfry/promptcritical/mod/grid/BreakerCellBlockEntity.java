@@ -119,7 +119,7 @@ public class BreakerCellBlockEntity extends GridDeviceBlockEntity<SwitchUnit> im
         BreakerResponse r = u.operate(close);
         if (player != null) player.displayClientMessage(GridText.msg(GridText.BREAKER_RESPONSE, response(r)), true);
         if (r == BreakerResponse.ACCEPTED)
-            level.playSound(null, worldPosition, SoundEvents.IRON_TRAPDOOR_CLOSE, SoundSource.BLOCKS, 0.8f, close ? 0.6f : 0.8f);
+            level.playSound(null, worldPosition, dev.denfry.promptcritical.mod.sound.PcSfx.BREAKER_OPERATE.get(), SoundSource.BLOCKS, 0.9f, close ? 0.85f : 1.0f);
         return r;
     }
 

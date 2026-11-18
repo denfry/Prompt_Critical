@@ -35,6 +35,38 @@ public class TransformerBlockEntity extends GridDeviceBlockEntity<TransformerUni
         return List.of(hv, lv);
     }
 
+    /**
+     * Гул для клиента: 0 — без напряжения, иначе 1 + загрузка в десятых (гул магнитострикции слышен и на холостом ходу,
+     * под нагрузкой к нему добавляется шум обмоток).
+     */
+    private int hum;
+
+    public int hum() {
+        return hum;
+    }
+
+    @Override
+    protected void serverTick(TransformerUnit u) {
+        if (ticks % 10 != 0) return;
+        int h = u.energized() ? 1 + (int) Math.min(10, Math.round(u.loading() * 10)) : 0;
+        if (h == hum) return;
+        hum = h;
+        level.sendBlockUpdated(worldPosition, getBlockState(), getBlockState(), net.minecraft.world.level.block.Block.UPDATE_CLIENTS);
+    }
+
+    @Override
+    public net.minecraft.nbt.CompoundTag getUpdateTag(net.minecraft.core.HolderLookup.Provider registries) {
+        net.minecraft.nbt.CompoundTag tag = super.getUpdateTag(registries);
+        tag.putInt("hum", hum);
+        return tag;
+    }
+
+    @Override
+    protected void loadAdditional(net.minecraft.nbt.CompoundTag tag, net.minecraft.core.HolderLookup.Provider registries) {
+        super.loadAdditional(tag, registries);
+        if (tag.contains("hum")) hum = tag.getInt("hum");
+    }
+
     @Override
     public PanelLayout panelLayout() {
         return GridPanels.TRANSFORMER;
