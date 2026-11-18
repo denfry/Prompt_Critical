@@ -212,6 +212,16 @@ public final class PcLanguageProvider extends LanguageProvider {
         i("flame_safety_lamp", "Flame Safety Lamp", "Бензиновая лампа");
         i("polyethylene", "Polyethylene Pellets (25 kg bag)", "Гранулы полиэтилена (мешок 25 кг)");
         i("uf6_cylinder_48y", "UF₆ Cylinder 48Y", "Баллон UF₆ 48Y");
+        i("fuel_pellet_tray", "Fuel Pellet Tray (one rod)", "Поддон топливных таблеток (на твэл)");
+        i("uo2_grinding_sludge", "UO₂ Grinding Sludge and Rejects (1 kg U)", "Шлам шлифования и брак UO₂ (1 кг U)");
+        i("fuel_rod", "Fuel Rod", "Твэл");
+        i("fuel_assembly", "Fuel Assembly", "Тепловыделяющая сборка (ТВС)");
+        i("zircon_concentrate", "Zircon Concentrate", "Цирконовый концентрат");
+        i("zirconium_sponge", "Reactor-Grade Zirconium Sponge", "Губка циркония реакторной чистоты");
+        i("hafnium_ingot", "Hafnium Ingot", "Слиток гафния");
+        i("zircaloy_ingot", "Zirconium Alloy Ingot", "Слиток циркониевого сплава");
+        i("cladding_tube", "Zirconium Cladding Tube", "Оболочечная труба из циркониевого сплава");
+        i("spacer_grid", "Spacer Grid", "Дистанционирующая решётка");
         i("uf6_cylinder_30b", "UF₆ Cylinder 30B", "Баллон UF₆ 30B");
         i("uf6_cylinder_5a", "UF₆ Cylinder 5A", "Баллон UF₆ 5A");
         i("pvc", "PVC Resin (25 kg bag)", "Смола ПВХ (мешок 25 кг)");
@@ -288,6 +298,11 @@ public final class PcLanguageProvider extends LanguageProvider {
         b("acid_concentrator", "Nitric Acid Concentrator", "Колонна концентрирования азотной кислоты");
         b("gas_centrifuge", "Gas Centrifuge Section", "Секция газовых центрифуг");
         b("centrifuge_cascade", "Centrifuge Cascade Control", "Пульт каскада газовых центрифуг");
+        b("uo2_conversion", "UF₆ to UO₂ Conversion Line (ADU)", "Линия конверсии UF₆ в UO₂ (АДУ)");
+        b("pellet_press", "Fuel Pellet Press", "Пресс топливных таблеток");
+        b("sintering_furnace", "Pellet Sintering Furnace", "Печь спекания таблеток");
+        b("rod_loading_station", "Fuel Rod Loading and Welding Station", "Участок снаряжения и заварки твэлов");
+        b("assembly_jig", "Fuel Assembly Jig", "Стапель сборки ТВС");
         b("wellhead", "Wellhead", "Колонная головка");
         b("christmas_tree", "Christmas Tree", "Фонтанная арматура");
         b("pumpjack", "Pumpjack", "Станок-качалка");
@@ -436,6 +451,7 @@ public final class PcLanguageProvider extends LanguageProvider {
         FLUIDS.put("ammonia", new String[] {"Liquid Ammonia", "Жидкий аммиак"});
         FLUIDS.put("nitric_acid", new String[] {"Nitric Acid (56 %)", "Азотная кислота 56 %"});
         FLUIDS.put("concentrated_nitric_acid", new String[] {"Concentrated Nitric Acid (98 %)", "Концентрированная азотная кислота 98 %"});
+        FLUIDS.put("helium", new String[] {"Helium", "Гелий"});
         FLUIDS.put("produced_water", new String[] {"Produced Water", "Пластовая вода"});
         FLUIDS.put("associated_gas", new String[] {"Associated Gas", "Попутный нефтяной газ"});
         FLUIDS.put("gasoline", new String[] {"Straight-Run Gasoline", "Прямогонный бензин"});

@@ -92,6 +92,18 @@ public final class PcItems {
     public static final DeferredItem<Item> PT_RH_GAUZE = item("pt_rh_gauze", 4);
     public static final DeferredItem<Item> CATALYST_DENOX = item("catalyst_denox", 16);
     /** Баллоны UF₆ (ANSI N14.1): содержимое — компонент {@code uf6}. */
+    /** Топливо: партия — компонент {@code fuel_lot} (порошок UO₂ — тот же {@link #UO2_POWDER}, 1 кг U). */
+    public static final DeferredItem<Item> FUEL_PELLET_TRAY = item("fuel_pellet_tray", 16);
+    public static final DeferredItem<Item> UO2_GRINDING_SLUDGE = item("uo2_grinding_sludge", 64);
+    public static final DeferredItem<Item> FUEL_ROD = item("fuel_rod", 64);
+    public static final DeferredItem<Item> FUEL_ASSEMBLY = item("fuel_assembly", 1);
+    /** Цирконий: циркон из тяжёлой фракции песка, губка (с отделением гафния), сплав, оболочечные трубы, решётки. */
+    public static final DeferredItem<Item> ZIRCON_CONCENTRATE = item("zircon_concentrate", 64);
+    public static final DeferredItem<Item> ZIRCONIUM_SPONGE = item("zirconium_sponge", 64);
+    public static final DeferredItem<Item> HAFNIUM_INGOT = item("hafnium_ingot", 64);
+    public static final DeferredItem<Item> ZIRCALOY_INGOT = item("zircaloy_ingot", 64);
+    public static final DeferredItem<Item> CLADDING_TUBE = item("cladding_tube", 64);
+    public static final DeferredItem<Item> SPACER_GRID = item("spacer_grid", 64);
     public static final DeferredItem<dev.denfry.promptcritical.mod.nuclear.Uf6CylinderItem> UF6_CYLINDER_48Y = uf6("uf6_cylinder_48y",
             dev.denfry.promptcritical.mod.nuclear.Uf6CylinderItem.Type.Y48);
     public static final DeferredItem<dev.denfry.promptcritical.mod.nuclear.Uf6CylinderItem> UF6_CYLINDER_30B = uf6("uf6_cylinder_30b",

@@ -69,6 +69,18 @@
 - Criticality safety: the product desublimer is held below 45 % of the minimum critical mass of moderated uranium by an
   interlock; with the interlock off it can be overloaded into a criticality excursion that doses everyone nearby.
 
+### Fuel fabrication (I4)
+- Enriched UF₆ to ceramic UO₂ by the ammonium diuranate route: hydrolysis, ammonia precipitation and hydrogen
+  reduction, with the U-235 in the line's vessels held below the safe mass and uranium above 20 % refused.
+- A pellet press on a Create shaft (Heckel green density, pressing rejects) feeding a hydrogen sintering furnace
+  (95–96 % of theoretical density at 1700 °C in four hours, grain growth, O/U) with centerless grinding; sludge and rejects
+  go back to the press.
+- Rod loading and welding with a helium fill (argon as a marked fallback) and a helium leak test; an assembly jig for
+  VVER-440, VVER-1000 and PWR 17×17 assemblies. Every powder bag, pellet tray, rod and assembly carries its lot: uranium
+  mass, U-235 and U-234, density, design and fill gas.
+- Nuclear material accounting of uranium and U-235 on every station's panel. Zirconium from zircon washed out of sand,
+  reduced with magnesium (hafnium separated), alloyed with tin, rolled into cladding tubes and made into spacer grids.
+
 ### Telemetry and SCADA (A4)
 - Telemetry gateway (RTU): scans the local panels of every machine within 8 blocks once a second and serves the
   snapshot to a CC: Tweaked computer as the `pc_rtu` peripheral — machines, named instruments with units, lamps as
