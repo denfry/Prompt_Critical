@@ -82,7 +82,8 @@ public final class FireService {
     public static boolean poolFire(Level level, BlockPos p) {
         var below = level.getBlockState(p.below());
         return below.is(dev.denfry.promptcritical.mod.registry.PcBlocks.OIL_SEEP.get())
-                || below.is(dev.denfry.promptcritical.mod.registry.PcBlocks.NATURAL_BITUMEN.get()) || tankBelow(level, p) != null;
+                || below.is(dev.denfry.promptcritical.mod.registry.PcBlocks.NATURAL_BITUMEN.get()) || tankBelow(level, p) != null
+                || below.is(dev.denfry.promptcritical.mod.registry.PcBlocks.CRUDE_OIL.get());
     }
 
     /** Класс очага у клетки. */

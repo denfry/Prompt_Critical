@@ -67,12 +67,15 @@ public final class ProcessSources {
         };
     }
 
-    /** Метан у потолка выработки, % НКПР; без кислорода термокаталитический датчик врёт в меньшую сторону. */
+    /**
+     * Метан у потолка выработки, % НКПР; без кислорода термокаталитический датчик врёт в меньшую сторону. На
+     * поверхности — облако горючего газа утечки (09 §9.11.2, {@code HazardService}).
+     */
     public static double methaneLel(ServerLevel level, BlockPos pos) {
         SimLevelBinding b = SimBindings.get(level);
         MineNetwork n = b == null ? null : b.mines().mineAt(pos);
         int node = n == null ? -1 : n.nodeOf(pos.asLong());
-        if (node <= 0) return 0;
+        if (node <= 0) return 100 * dev.denfry.promptcritical.mod.hazard.HazardService.lelFraction(level, pos);
         double ch4 = n.field().roofMethane(node), o2 = n.field().concentration(node, MineGas.O2);
         return 100 * ch4 / CH4_LEL * Math.min(1, o2 / CATALYTIC_O2_MIN);
     }

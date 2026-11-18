@@ -51,9 +51,13 @@ public final class RadiationGameTests {
                     var layers = ShieldBlocks.between(h.getLevel(), src, at);
                     h.assertTrue(layers.size() == 1 && layers.get(0).material() == ShieldMaterial.LEAD
                             && Math.abs(layers.get(0).cm() - 100) < 25, "one metre of lead on the line: " + layers);
+                    // вклад этого источника за найденным метром свинца — больше 12 порядков ослабления; поле мира в точке
+                    // общее с соседними тестами (их источники дают 1e-19…1e-14 Зв/ч), поэтому для него — только грубая граница
+                    double open = DoseRate.totalSvH(cobalt, 6, List.of());
+                    double own = DoseRate.totalSvH(cobalt, 6, layers);
+                    h.assertTrue(own < open * 1e-12, "a metre of lead stops cobalt gamma: " + own);
                     double lead = RadiationService.rateSvH(h.getLevel(), at);
-                    // больше 12 порядков ослабления; ниже порог ловит фон источников соседних тестов в общем мире (~1e-19 Зв/ч)
-                    h.assertTrue(lead < DoseRate.totalSvH(cobalt, 6, List.of()) * 1e-12, "a metre of lead stops cobalt gamma: " + lead);
+                    h.assertTrue(lead < open * 1e-4, "the field behind the lead falls to background: " + lead);
                 })
                 .thenExecute(() -> h.setBlock(new BlockPos(5, 3, 6), Blocks.WHITE_CONCRETE))
                 .thenIdle(1)

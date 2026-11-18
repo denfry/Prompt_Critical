@@ -1,0 +1,32 @@
+{
+  "parent": "minecraft:recipes/root",
+  "criteria": {
+    "has_magnesium": {
+      "conditions": {
+        "items": [
+          {
+            "items": "promptcritical:magnesium_ingot"
+          }
+        ]
+      },
+      "trigger": "minecraft:inventory_changed"
+    },
+    "has_the_recipe": {
+      "conditions": {
+        "recipe": "promptcritical:hazard/cp_test_post"
+      },
+      "trigger": "minecraft:recipe_unlocked"
+    }
+  },
+  "requirements": [
+    [
+      "has_the_recipe",
+      "has_magnesium"
+    ]
+  ],
+  "rewards": {
+    "recipes": [
+      "promptcritical:hazard/cp_test_post"
+    ]
+  }
+}

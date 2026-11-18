@@ -343,6 +343,17 @@ public final class PcLanguageProvider extends LanguageProvider {
         b("control_room_core", "Control Room Core", "Ядро щитовой");
         b("watchdog_relay", "Watchdog Relay", "Сторожевое реле");
         b("fire_water_pump", "Fire Water Pump", "Пожарный насос");
+        b("gas_storage_bullet", "LPG Bullet", "Ёмкость СУГ");
+        b("oil_boom", "Oil Boom", "Боновое заграждение");
+        b("boom_anchor", "Boom Anchor", "Якорь бона");
+        b("oil_skimmer", "Oil Skimmer", "Нефтесборщик");
+        b("oiled_sand", "Oiled Sand", "Замазученный песок");
+        b("oiled_gravel", "Oiled Gravel", "Замазученный гравий");
+        b("tank_gauge", "Tank Gauge", "Уровнемер резервуара");
+        b("pig_launcher", "Pig Launcher", "Камера запуска СОД");
+        b("pig_receiver", "Pig Receiver", "Камера приёма СОД");
+        b("cp_rectifier", "Cathodic Protection Rectifier", "Станция катодной защиты");
+        b("cp_test_post", "CP Test Post", "Контрольно-измерительный пункт");
         b("fire_hydrant", "Fire Hydrant", "Пожарный гидрант");
         b("foam_proportioner", "Foam Proportioner", "Дозатор пенообразователя");
         b("foam_chamber", "Foam Chamber", "Пенокамера");
@@ -568,6 +579,11 @@ public final class PcLanguageProvider extends LanguageProvider {
         b("lockout_box", "Lockout Box", "Ящик групповой блокировки");
         b("permit_board", "Permit Board", "Стенд нарядов-допусков");
         i("portable_gas_detector", "Portable Gas Detector", "Переносной газоанализатор");
+        i("sorbent_pad", "Sorbent Pad", "Сорбирующий мат");
+        i("oiled_sorbent", "Oiled Sorbent", "Отработанный сорбент");
+        i("pig", "Cleaning Pig", "Очистной скребок");
+        i("smart_pig", "Smart Pig (MFL)", "Внутритрубный дефектоскоп");
+        i("sacrificial_anode", "Magnesium Sacrificial Anode", "Магниевый протектор");
         i("calibration_gas", "Calibration Gas", "Поверочная газовая смесь");
         b("mechanical_disconnect", "Mechanical Disconnect", "Расцепная муфта");
         b("hrsg", "Heat Recovery Steam Generator", "Котёл-утилизатор");
@@ -604,6 +620,7 @@ public final class PcLanguageProvider extends LanguageProvider {
 
         FLUIDS.put("flue_gas", new String[] {"Flue Gas", "Дымовые газы"});
         FLUIDS.put("crude_oil", new String[] {"Crude Oil", "Сырая нефть"});
+        FLUIDS.put("recovered_oil", new String[] {"Recovered Oil (emulsion)", "Собранная нефть (эмульсия)"});
         FLUIDS.put("foam_concentrate", new String[] {"Foam Concentrate", "Пенообразователь"});
         FLUIDS.put("sales_gas", new String[] {"Sales Gas", "Товарный газ"});
         FLUIDS.put("methanol", new String[] {"Methanol", "Метанол"});
@@ -678,6 +695,8 @@ public final class PcLanguageProvider extends LanguageProvider {
         FLUIDS.put("boiler_feedwater", new String[] {"Boiler Feedwater", "Питательная вода"});
         MISC.put("block.promptcritical.mine_water", new String[] {"Mine Water", "Шахтная вода"});
         MISC.put("block.promptcritical.heavy_water", new String[] {"Heavy Water", "Тяжёлая вода"});
+        MISC.put("block.promptcritical.crude_oil", new String[] {"Spilt Crude Oil", "Разлитая нефть"});
+        MISC.put("block.promptcritical.oil_slick", new String[] {"Oil Slick", "Нефтяная плёнка"});
 
         MISC.put("itemGroup." + PromptCritical.MOD_ID, new String[] {"Prompt Critical", "Prompt Critical"});
         MISC.put("commands.promptcritical.debug.hash", new String[] {"State hash %s at tick %s", "Хеш состояния %s на тике %s"});
@@ -928,6 +947,7 @@ public final class PcLanguageProvider extends LanguageProvider {
         MISC.putAll(dev.denfry.promptcritical.mod.market.MarketText.lang());
         MISC.putAll(dev.denfry.promptcritical.mod.chlor.ChlorText.lang());
         MISC.putAll(dev.denfry.promptcritical.mod.environment.ToxicReleaseService.lang());
+        MISC.putAll(dev.denfry.promptcritical.mod.hazard.HazardText.LANG);
         MISC.putAll(dev.denfry.promptcritical.mod.environment.RadiationService.lang());
         i("vibrometer", "Vibration Analyser", "Виброанализатор");
         i("hearing_protection", "Ear Muffs", "Противошумные наушники");

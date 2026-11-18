@@ -10,7 +10,8 @@ import java.util.Map;
  * плат, но не в физическое загрязнение.
  */
 public final class EmissionLedger {
-    public enum Pollutant { SO2, NOX, PM, CO2, CH4, CO, CF4, C2F6 }
+    /** VOC — летучие органические вещества: испарение разливов и дыхания резервуаров (09 §9.8.4, 14 §14.5.3). */
+    public enum Pollutant { SO2, NOX, PM, CO2, CH4, CO, CF4, C2F6, VOC }
 
     public enum Category { BOILER, GAS_TURBINE, ENGINE, FLARE, COKE_OVEN, BLAST_FURNACE, REFINERY, FUGITIVE, SPILL, PROCESS }
 
@@ -49,6 +50,13 @@ public final class EmissionLedger {
     }
 
     private final Map<String, Source> sources = new LinkedHashMap<>();
+    private final java.util.List<SpillRecord> spills = new java.util.ArrayList<>();
+
+    /**
+     * Разлив, не поместившийся в мир блоками (09 §9.11.9, 14 §14.5.1): {@code blockKey} — место (BlockPos.asLong),
+     * {@code fluidId} — жидкость, {@code m3} — объём, {@code onWater} — на воде.
+     */
+    public record SpillRecord(long blockKey, String fluidId, double m3, boolean onWater) {}
 
     public Source source(String id, Category c) {
         return sources.computeIfAbsent(id, k -> new Source(c));
@@ -64,6 +72,22 @@ public final class EmissionLedger {
         Source s = source(id, c);
         s.day.merge(p, kgS * dtS, Double::sum);
         s.period.merge(p, kgS * dtS, Double::sum);
+    }
+
+    /** Записать разлив (14 §14.5.1). */
+    public void recordSpill(long blockKey, String fluidId, double m3, boolean onWater) {
+        if (m3 > 0) spills.add(new SpillRecord(blockKey, fluidId, m3, onWater));
+    }
+
+    public java.util.List<SpillRecord> spills() {
+        return java.util.Collections.unmodifiableList(spills);
+    }
+
+    /** Суммарный объём разливов, м³. */
+    public double spilledM3() {
+        double v = 0;
+        for (SpillRecord r : spills) v += r.m3();
+        return v;
     }
 
     /** Новые сутки: суточные счётчики обнуляются. */

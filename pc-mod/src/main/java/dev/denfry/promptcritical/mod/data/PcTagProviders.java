@@ -71,6 +71,9 @@ public final class PcTagProviders {
             tag(PcTags.Blocks.IRON_ORES).add(PcBlocks.MAGNETITE_ORE.get(), PcBlocks.HEMATITE_ORE.get())
                     .addOptionalTag(PcTags.Blocks.common("ores/iron"));
             // 08 §8.2.6: открытое пламя в выработке — источник воспламенения
+            // взрывозащищённое исполнение 09 §9.11.3: газоанализаторы и ёмкость СУГ не искрят
+            tag(PcTags.Blocks.EXPLOSION_PROOF).add(PcBlocks.GAS_DETECTOR.get(), PcBlocks.GAS_STORAGE_BULLET.get(),
+                    PcBlocks.TANK_GAUGE.get(), PcBlocks.CP_TEST_POST.get());
             tag(PcTags.Blocks.OPEN_FLAME).addTag(BlockTags.FIRE).addTag(BlockTags.CAMPFIRES).addTag(BlockTags.CANDLES)
                     .add(Blocks.TORCH, Blocks.WALL_TORCH, Blocks.SOUL_TORCH, Blocks.SOUL_WALL_TORCH, Blocks.LANTERN,
                             Blocks.SOUL_LANTERN, Blocks.LAVA, Blocks.MAGMA_BLOCK);

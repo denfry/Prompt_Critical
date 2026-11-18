@@ -26,6 +26,9 @@ public final class AccountingGameTests {
 
     private static void emitCo2(GameTestHelper h, double tonnes) {
         EmissionLedger led = AirQualityService.ledger(h.getLevel());
+        // измерено (множитель 1,0) независимо от порядка тестов: иначе источник «рассчитан» (×1,2), пока его не пометил
+        // тест САКВ, и база выходит 120 т вместо 100
+        led.source("test_boiler", EmissionLedger.Category.BOILER).method = EmissionLedger.Method.MEASURED;
         led.record("test_boiler", EmissionLedger.Category.BOILER, EmissionLedger.Pollutant.CO2, tonnes * 1000, 1);
     }
 

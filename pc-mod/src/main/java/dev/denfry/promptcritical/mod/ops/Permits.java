@@ -147,14 +147,19 @@ public final class Permits {
     }
 
     /**
-     * Истинный состав в точке: в выработке шахты — поле газов 08 (метан у кровли, O₂, CO), иначе чистый воздух.
-     * Сероводород мод пока не моделирует.
+     * Истинный состав в точке: в выработке шахты — поле газов 08 (метан у кровли, O₂, CO), иначе воздух с облаками
+     * утечек: горючий газ — доля НКПР ({@code HazardService}), сероводород — гауссов шлейф ({@code ToxicReleaseService}).
      */
     public static Air air(ServerLevel level, BlockPos pos) {
         SimLevelBinding b = SimBindings.get(level);
         MineNetwork n = b == null ? null : b.mines().mineAt(pos);
         int node = n == null ? -1 : n.nodeOf(pos.asLong());
-        if (node <= 0) return Air.CLEAN;
+        if (node <= 0) {
+            double lel = dev.denfry.promptcritical.mod.hazard.HazardService.lelFraction(level, pos);
+            double h2s = dev.denfry.promptcritical.mod.environment.ToxicReleaseService.ppmAt(level,
+                    dev.denfry.promptcritical.sim.consequence.ToxicGas.HYDROGEN_SULFIDE, pos.getX() + 0.5, pos.getY() + 0.5, pos.getZ() + 0.5);
+            return lel <= 0 && h2s <= 0 ? Air.CLEAN : new Air(Air.CLEAN.o2(), lel, h2s, 0);
+        }
         return new Air(n.field().concentration(node, MineGas.O2), n.field().roofMethane(node) / ProcessSources.CH4_LEL, 0,
                 n.field().concentration(node, MineGas.CO) * 1e6);
     }

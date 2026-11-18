@@ -84,6 +84,8 @@ public final class PcFluids {
     public static final Entry PROPANE = liquid("propane", 507, 120, 288);
     public static final Entry BUTANE = liquid("butane", 575, 180, 288);
     public static final Entry NATURAL_GASOLINE = liquid("natural_gasoline", 660, 350, 293);
+    /** Собранная с воды нефть: водонефтяная эмульсия скиммера, до 70 % воды (14 §14.5.4) — на обезвоживание. */
+    public static final Entry RECOVERED_OIL = liquid("recovered_oil", 950, 20000, 288);
 
     // химия I3, пиролиз: этилен — 1 мБ = 1 нм³; сжиженный пропилен, C4-фракция, пиробензин и смола — 1 мБ = 1 л
     public static final Entry ETHYLENE = gas("ethylene", 293, -1);
@@ -161,6 +163,8 @@ public final class PcFluids {
         MINE_WATER.props.block(PcBlocks.MINE_WATER);
         // лениво: PcItems может быть ещё в инициализации, когда сюда приходит PcFluids
         HEAVY_WATER.props.block(() -> PcBlocks.HEAVY_WATER.get()).bucket(() -> PcItems.HEAVY_WATER_BUCKET.get());
+        // разлив нефти на суше (09 §9.11.9): вязкая, растекается медленно и недалеко, горит
+        CRUDE_OIL.props.block(() -> PcBlocks.CRUDE_OIL.get()).tickRate(30).slopeFindDistance(2).levelDecreasePerBlock(2);
     }
 
     /** Тип, источник и текущая форма одной жидкости. */
