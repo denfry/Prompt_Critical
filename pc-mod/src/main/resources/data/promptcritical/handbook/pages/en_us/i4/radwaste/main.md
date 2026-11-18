@@ -10,7 +10,7 @@ PUREX sends its fission products to glass. Decontamination crews send their used
 
 Waste is sorted by specific activity, following the Russian OSPORB-99/2010 table. For solids, beta emitters up to 1 MBq/kg are very low level, up to 10 MBq/kg low level, up to 10 GBq/kg intermediate and above that high level. Alpha emitters and transuranics have limits ten and a hundred times lower. Waste that gives off more than about 2 kW per cubic metre is high level whatever its activity. Long-lived alpha above 400 Bq/g (IAEA GSG-1) cannot go near the surface.
 
-The class decides the route. Classes 3 and 4 (low level and short-lived intermediate) go to a near-surface vault. Classes 1 and 2 (heat-generating, high level and long-lived) go deep.
+The class decides the route. Classes 3 and 4 (intermediate level, plus low and very low level) go to a near-surface vault. Classes 1 and 2 (heat-generating and other high level waste, plus long-lived intermediate level) go deep.
 
 Tc-99, I-129, C-14 and Ni-63 do not show up on a gamma spectrometer, and they decide what happens in ten thousand years. So they are not measured; they are scaled from caesium-137 and cobalt-60 with fixed ratios, which is how real plants do it.
 

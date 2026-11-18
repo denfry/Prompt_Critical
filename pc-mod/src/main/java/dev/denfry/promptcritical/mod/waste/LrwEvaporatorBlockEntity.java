@@ -110,7 +110,7 @@ public final class LrwEvaporatorBlockEntity extends UraniumProcessBlockEntity {
         pool.take(st.feedL());
         condensate.add(st.condensateL());
         resin = resin.decayed(dt);
-        if (level.getGameTime() % 20 == 0) category = evaporator.waterL() > 1 ? WasteClassification.category(concentrate(), true) : null;
+        if (level.getGameTime() % 20 == 0) category = classifyConcentrate();
         if (!on) return;
         busyS -= dt;
         if (busyS > 0) return;
@@ -118,6 +118,12 @@ public final class LrwEvaporatorBlockEntity extends UraniumProcessBlockEntity {
             busyS = DRUM_S;
             level.playSound(null, worldPosition, SoundEvents.ANVIL_PLACE, SoundSource.BLOCKS, 0.4f, 0.7f);
         }
+    }
+
+    /** Категория куба сейчас (null — куб пуст); тепловыделяющий куб — ВАО при любой удельной активности. */
+    @Nullable
+    private WasteClassification.Category classifyConcentrate() {
+        return evaporator.waterL() > 1 ? WasteClassification.classify(concentrate(), true).category() : null;
     }
 
     /** Состав куба для классификации: γ-излучатели плюс трудноизмеряемые эксплуатационных отходов. */
@@ -150,7 +156,9 @@ public final class LrwEvaporatorBlockEntity extends UraniumProcessBlockEntity {
                 resinL += RESIN_BAG_L;
             }
         }
-        if (evaporator.waterL() > 1 && category == WasteClassification.Category.HLW) return melter && vitrify(now);
+        // категорию — заново, а не из показания щита (оно раз в секунду): ВАО не должно успеть уйти в цемент
+        category = classifyConcentrate();
+        if (category == WasteClassification.Category.HLW) return melter && vitrify(now);
         if (cement && resinL >= Conditioning.cementResin().feedL() && cementResin(now)) return true;
         if (!evaporator.ready()) return false;
         if (cement) return cementConcentrate(now);
