@@ -22,8 +22,24 @@ public final class NonferrousText {
         item("aluminium_hydroxide", "Aluminium Hydroxide", "Гидроксид алюминия");
         fluid("sodium_aluminate_liquor", "Sodium Aluminate Liquor", "Алюминатный раствор");
         fluid("red_mud", "Red Mud (bauxite residue)", "Красный шлам");
-        say("on", "%s: started", "%s: пущено");
-        say("off", "%s: stopped", "%s: остановлено");
+        // Холл–Эру
+        block("reduction_pot", "Hall–Héroult Reduction Pot", "Алюминиевый электролизёр");
+        item("aluminium_ingot", "Aluminium Ingot", "Чушка алюминия");
+        item("cryolite", "Cryolite", "Криолит");
+        item("carbon_anode", "Prebaked Carbon Anode", "Обожжённый анод");
+        item("cathode_block", "Cathode Block", "Подовый блок");
+        say("pot.anode_effect", "ANODE EFFECT in a reduction pot: alumina in the bath is too low. 30 V on the pot, CF₄ and C₂F₆ to the air. Feed alumina",
+                "АНОДНЫЙ ЭФФЕКТ на электролизёре: мало глинозёма в расплаве. 30 В на ванне, CF₄ и C₂F₆ в воздух. Дайте глинозём");
+        say("pot.freezing", "A reduction pot has lost its current and is cooling. Restore the DC within minutes or the bath freezes",
+                "Электролизёр без тока остывает. Верните постоянный ток за минуты, иначе электролит застынет");
+        say("pot.frozen", "A REDUCTION POT HAS FROZEN: solid bath and metal in the shell. Only a reline brings it back",
+                "ЭЛЕКТРОЛИЗЁР ЗАМОРОЖЕН: электролит и металл застыли в кожухе. Вернуть его может только капремонт");
+        say("pot.cathode_failure", "CATHODE FAILURE: molten aluminium has run through the pot lining",
+                "ПРОБОЙ ПОДИНЫ: расплавленный алюминий ушёл сквозь футеровку");
+        say("pot.relined", "Pot relined: new cathode and lining. Bake it with current before charging cryolite",
+                "Капремонт выполнен: новая подина и футеровка. Обожгите её током, потом заливайте криолит");
+        say("pot.reline_refused", "Reline needs a frozen or failed pot and %s cathode blocks and %s refractory bricks in the load",
+                "Капремонт — только замёрзшей или пробитой ванне, нужны %s подовых блока и %s огнеупорных кирпичей в загрузке");
     }
 
     private NonferrousText() {

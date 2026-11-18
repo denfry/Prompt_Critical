@@ -25,6 +25,8 @@ public final class NonferrousBlockEntities {
             type("alumina_precipitator", AluminaPrecipitatorBlockEntity::new, PcBlocks.ALUMINA_PRECIPITATOR);
     public static final DeferredHolder<BlockEntityType<?>, BlockEntityType<AluminaCalcinerBlockEntity>> ALUMINA_CALCINER =
             type("alumina_calciner", AluminaCalcinerBlockEntity::new, PcBlocks.ALUMINA_CALCINER);
+    public static final DeferredHolder<BlockEntityType<?>, BlockEntityType<ReductionPotBlockEntity>> REDUCTION_POT =
+            type("reduction_pot", ReductionPotBlockEntity::new, PcBlocks.REDUCTION_POT);
 
     private NonferrousBlockEntities() {
     }
@@ -38,6 +40,7 @@ public final class NonferrousBlockEntities {
         both(event, BAYER_DIGESTER.get());
         both(event, ALUMINA_PRECIPITATOR.get());
         both(event, ALUMINA_CALCINER.get());
+        event.registerBlockEntity(Capabilities.ItemHandler.BLOCK, REDUCTION_POT.get(), FoundryDevice::items);
     }
 
     private static <T extends BlockEntity & FoundryDevice> void both(RegisterCapabilitiesEvent event, BlockEntityType<T> type) {

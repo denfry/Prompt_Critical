@@ -867,6 +867,10 @@ public final class PcBlocks {
     /** Вращающаяся печь прокалки гидроксида: модель {@code rotary_calciner} (02), своя печь у глинозёмного цеха. */
     public static final DeferredBlock<PcDeviceBlock> ALUMINA_CALCINER = device("alumina_calciner", machine(),
             Spec.facing(PcProperties.RUNNING), FoundryBlock.with(dev.denfry.promptcritical.mod.nonferrous.AluminaCalcinerBlockEntity::new));
+    /** Электролизёр Холла–Эру 3×2×3 (08 §8.8.2): подина и аноды; анодный эффект — {@code alarm}, холодная — без {@code running}. */
+    public static final DeferredBlock<PcDeviceBlock> REDUCTION_POT = device("reduction_pot", machine(),
+            Spec.facing(PcProperties.RUNNING, PcProperties.ALARM).footprint(Footprint.of(Segment.box(-1, 1, 0, 1, -1, 1))),
+            FoundryBlock.with(dev.denfry.promptcritical.mod.nonferrous.ReductionPotBlockEntity::new));
 
     // --- эксплуатация и водоподготовка (13 §13.6.5–13.6.7, 08 §8.12, этап 11а M3) ---
     public static final DeferredBlock<PcDeviceBlock> MAINTENANCE_PANEL = device("maintenance_panel", instrument(),

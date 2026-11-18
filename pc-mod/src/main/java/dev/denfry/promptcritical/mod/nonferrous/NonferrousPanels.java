@@ -40,6 +40,28 @@ public final class NonferrousPanels {
             CALC_STATUS = PanelText.tr("nf.calc_status", "Alumina %s kg/h · %s GJ/t · keep 1000–1100 °C",
                     "Глинозём %s кг/ч · %s ГДж/т · держать 1000–1100 °C");
 
+    // электролиз алюминия
+    private static final Tr BATH = PanelText.tr("nf.bath", "Bath", "Расплав"), AL2O3 = PanelText.tr("nf.al2o3", "Al₂O₃", "Al₂O₃"),
+            ANODES = PanelText.tr("nf.anodes", "Anodes", "Аноды"), METAL = PanelText.tr("nf.metal", "Metal", "Металл"),
+            LOW_ALUMINA = PanelText.tr("nf.low_alumina", "Low Al₂O₃", "Мало Al₂O₃"),
+            THERMAL = PanelText.tr("nf.thermal", "Not in run", "Не в работе"),
+            POT_ALARM = PanelText.tr("nf.pot_alarm", "Anode eff./frozen", "АЭ/замёрзла"),
+            RELINE = PanelText.tr("nf.reline", "Reline", "Капремонт"),
+            RELINE_TIP = PanelText.tr("nf.reline_tip", "Frozen or failed pot: a new cathode from 4 cathode blocks and 8 refractory bricks in the load",
+                    "Замёрзшая или пробитая ванна: новая подина из 4 подовых блоков и 8 огнеупоров из загрузки"),
+            KA_TIP = PanelText.tr("nf.ka_tip", "Series current ±10 kA (the rectifier the pots hang on)", "Ток серии ±10 кА (на выпрямителе серии)"),
+            POT_LOAD = PanelText.tr("nf.pot_load", "Alumina, anodes, cryolite; cathode blocks and bricks for a reline",
+                    "Глинозём, аноды, криолит; подовые блоки и кирпич на капремонт"),
+            INGOT = PanelText.tr("nf.ingot", "Aluminium", "Алюминий"),
+            POT_STATUS = PanelText.tr("nf.pot_status", "%s · %s V at %s kA (set %s) · Al %s kg/h",
+                    "%s · %s В при %s кА (уставка %s) · Al %s кг/ч");
+    private static final Tr[] POT_STATES = {PanelText.tr("nf.pot.cold", "Cold", "Холодная"), PanelText.tr("nf.pot.startup", "Start-up", "Пуск"),
+            PanelText.tr("nf.pot.normal", "Normal", "Норма"), PanelText.tr("nf.pot.anode_effect", "ANODE EFFECT", "АНОДНЫЙ ЭФФЕКТ"),
+            PanelText.tr("nf.pot.freezing", "Freezing", "Остывает"), PanelText.tr("nf.pot.frozen", "FROZEN", "ЗАМОРОЖЕНА"),
+            PanelText.tr("nf.pot.cathode_failure", "CATHODE FAILURE", "ПРОБОЙ ПОДИНЫ")};
+
+    public static final PanelLayout POT = pot();
+
     public static final PanelLayout DIGESTER = base("bayer_digester", TEMP, 300)
             .dial(64, 24, false, A, 10, 100, Double.NaN, 0, PCT.get(), EXTRACT.get(), v -> DIGEST_TIP.get())
             .glass(120, 24, 56, TANK, 0xFF9A7A50, Double.NaN, Double.NaN, LIQUOR.get(), null)
@@ -75,7 +97,25 @@ public final class NonferrousPanels {
     }
 
     public static List<PanelLayout> all() {
-        return new ArrayList<>(List.of(DIGESTER, PRECIPITATOR, CALCINER));
+        return new ArrayList<>(List.of(DIGESTER, PRECIPITATOR, CALCINER, POT));
+    }
+
+    private static PanelLayout pot() {
+        PanelLayout.Builder b = PanelLayout.builder("reduction_pot", 232, 156, CHANNELS)
+                .dial(8, 24, false, T_C, 1, 1100, 1000, 0, CELSIUS.get(), BATH.get(), null)
+                .dial(64, 24, false, A, 10, 6, Double.NaN, 1, PCT.get(), AL2O3.get(), null)
+                .glass(120, 24, 56, TANK, 0xFF303030, Double.NaN, Double.NaN, ANODES.get(), null)
+                .glass(138, 24, 56, TANK2, 0xFFC8CCD0, Double.NaN, Double.NaN, METAL.get(), null)
+                .lamp(160, 22, FLAGS, F_ON, LampColor.GREEN, ON.get()).lamp(160, 36, FLAGS, F_RUN, LampColor.GREEN, WORKING.get())
+                .lamp(160, 50, FLAGS, F_WARN, LampColor.AMBER, LOW_ALUMINA.get()).lamp(160, 64, FLAGS, F_AUX, LampColor.AMBER, THERMAL.get())
+                .lamp(160, 78, FLAGS, F_ALARM, LampColor.RED, POT_ALARM.get())
+                .button(8, 98, 44, B_RUN, RUN.get(), null)
+                .button(56, 98, 20, B_DOWN, Component.literal("−"), KA_TIP.get()).button(78, 98, 20, B_UP, Component.literal("+"), KA_TIP.get())
+                .button(8, 116, 64, B_AUX, RELINE.get(), RELINE_TIP.get());
+        for (int i = 0; i < 6; i++) b.slot(120 + 18 * (i % 3), 98 + 18 * (i / 3), i, ReductionPotBlockEntity::loadable, POT_LOAD.get());
+        for (int i = 0; i < 4; i++) b.output(178 + 18 * (i % 2), 98 + 18 * (i / 2), 6 + i, INGOT.get());
+        return b.readout(8, 140, 216, v -> POT_STATUS.get(POT_STATES[Math.clamp(v.raw(E), 0, POT_STATES.length - 1)].get(),
+                v.num(B, 100, 2), v.raw(C), v.raw(TANK3), v.num(D, 10, 1)), null).build();
     }
 
     /** Общее: термометр с кнопками уставки, лампы «вкл.»/«работа», пуск. */

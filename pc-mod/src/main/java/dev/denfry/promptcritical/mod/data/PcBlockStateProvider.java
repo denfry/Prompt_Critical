@@ -129,7 +129,7 @@ public final class PcBlockStateProvider extends BlockStateProvider {
             "cast_house_machine", "ladle", "roller_table", "rolling_mill_stand", "piercing_mill", "pipe_welder", "asu_main_compressor",
             "asu_expander", "air_separator", "hydrotest_pump", "recording_gauge", "water_clarifier", "rotary_table", "mud_pump",
             "pumpjack", "gas_compressor", "pvc_reactor", "leach_tank", "rotary_calciner", "hf_kiln", "mixer_settler",
-            "pellet_press", "alumina_precipitator", "alumina_calciner");
+            "pellet_press", "alumina_precipitator", "alumina_calciner", "reduction_pot");
 
     /** Модели состояния мультипартом: основная и части, все с поворотом по {@code facing}. */
     private void parts(Block block, String id) {
@@ -176,6 +176,7 @@ public final class PcBlockStateProvider extends BlockStateProvider {
             // цветная металлургия (08 §8.8)
             case "alumina_precipitator" -> java.util.List.of(base, id + "/partial/agitator");
             case "alumina_calciner" -> java.util.List.of(base, "rotary_calciner/partial/shell");
+            case "reduction_pot" -> java.util.List.of(base, id + "/partial/anode_frame");
             case "pellet_press" -> java.util.List.of(base, "pellet_press/partial/ram");
             case "pumpjack" -> java.util.List.of(base, "pumpjack_gearbox/partial/crank_counterweight", "pumpjack_gearbox/partial/walking_beam",
                     "pumpjack_gearbox/partial/pitman_arm", "pumpjack_gearbox/partial/polished_rod");
@@ -289,6 +290,7 @@ public final class PcBlockStateProvider extends BlockStateProvider {
             case "gs_exchange_tower" -> "absorption_tower";
             // глинозём (08 §8.8.1): печь прокалки — модель вращающейся печи 02
             case "alumina_calciner" -> "rotary_calciner";
+            case "reduction_pot" -> s.getValue(PcProperties.ALARM) ? id + "_anode_effect" : s.getValue(PcProperties.RUNNING) ? id : id + "_frozen";
             case "heavy_water_column" -> "fractionating_column";
             // арт: art/blockbench/core/candu_reactor.author.js — свод с торцом каландра, над ним коробка питателей и площадка СУЗ
             case "candu_reactor" -> s.getValue(PcProperties.CANDU_SEGMENT) == PcProperties.CanduSegment.FUELLING ? id + "_fuelling" : id;

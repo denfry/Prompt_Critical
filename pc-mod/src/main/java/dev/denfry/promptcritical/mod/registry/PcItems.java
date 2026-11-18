@@ -144,6 +144,10 @@ public final class PcItems {
     // --- цветная металлургия (08 §8.8): массы — NonferrousUnits ---
     public static final DeferredItem<Item> ALUMINIUM_HYDROXIDE = item("aluminium_hydroxide", 64);
     public static final DeferredItem<Item> ALUMINA = item("alumina", 64);
+    public static final DeferredItem<Item> CRYOLITE = item("cryolite", 64);
+    public static final DeferredItem<Item> CARBON_ANODE = item("carbon_anode", 16);
+    public static final DeferredItem<Item> CATHODE_BLOCK = item("cathode_block", 16);
+    public static final DeferredItem<Item> ALUMINIUM_INGOT = item("aluminium_ingot", 64);
     public static final DeferredItem<Item> GENERATOR_COUPLING = item("generator_coupling", 16);
     /** Подогреватель рубашки ДГ (07 §7.11.3): без него на морозе отказ пуска вчетверо вероятнее. */
     public static final DeferredItem<Item> JACKET_HEATER = item("jacket_heater", 16);

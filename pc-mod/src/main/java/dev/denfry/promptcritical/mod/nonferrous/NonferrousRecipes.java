@@ -13,7 +13,9 @@ import net.minecraft.data.recipes.RecipeCategory;
 import net.minecraft.data.recipes.RecipeOutput;
 import net.minecraft.data.recipes.RecipeProvider;
 import net.minecraft.data.recipes.ShapedRecipeBuilder;
+import net.minecraft.data.recipes.ShapelessRecipeBuilder;
 import net.minecraft.world.item.Items;
+import net.minecraft.world.item.crafting.Ingredient;
 
 /**
  * Рецепты цветной металлургии (08 §8.8). Вехи (06: M3 — эра I1, M8 — I2) держат ингредиенты: стальной лист и
@@ -62,5 +64,18 @@ public final class NonferrousRecipes extends RecipeProvider {
                 .pattern("BPB").pattern("SFS").pattern("BPB").define('B', brick).define('P', plate)
                 .define('S', AllBlocks.SHAFT.get()).define('F', Items.BLAST_FURNACE)
                 .unlockedBy("has_aluminium_hydroxide", has(PcItems.ALUMINIUM_HYDROXIDE.get())).save(out, id("alumina_calciner"));
+        // Холл–Эру: стальной кожух на подовых блоках, анодная рама над ним (08 §8.8.2)
+        ShapedRecipeBuilder.shaped(RecipeCategory.MISC, PcBlocks.REDUCTION_POT.get())
+                .pattern("PAP").pattern("BCB").pattern("PCP").define('P', plate).define('A', PcItems.CARBON_ANODE.get())
+                .define('B', brick).define('C', PcItems.CATHODE_BLOCK.get())
+                .unlockedBy("has_alumina", has(PcItems.ALUMINA.get())).save(out, id("reduction_pot"));
+        // обожжённый анод: нефтяной или пековый кокс на пеке (85 : 15 по массе, §8.8.2), мешки по 100 кг
+        ShapelessRecipeBuilder.shapeless(RecipeCategory.MISC, PcItems.CARBON_ANODE.get(), 7)
+                .requires(Ingredient.of(PcItems.PETROLEUM_COKE.get(), PcItems.PITCH_COKE.get()), 6).requires(PcItems.COAL_TAR_PITCH.get())
+                .unlockedBy("has_coal_tar_pitch", has(PcItems.COAL_TAR_PITCH.get())).save(out, id("carbon_anode"));
+        // подовый блок: кокс с блюмсом-токоподводом [BALANCE]
+        ShapelessRecipeBuilder.shapeless(RecipeCategory.MISC, PcItems.CATHODE_BLOCK.get(), 2)
+                .requires(PcItems.COKE.get(), 3).requires(PcItems.STEEL_INGOT.get())
+                .unlockedBy("has_coke", has(PcItems.COKE.get())).save(out, id("cathode_block"));
     }
 }
