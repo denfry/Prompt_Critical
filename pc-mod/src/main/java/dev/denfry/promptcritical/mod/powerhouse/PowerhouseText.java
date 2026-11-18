@@ -106,6 +106,10 @@ public final class PowerhouseText {
                 "Редуктор должен касаться газовой турбины задней гранью");
         msg("gearbox.linked", "Gearbox on the gas turbine: %s rpm", "Редуктор на газовой турбине: %s об/мин");
         msg("turbine.reset", "Overspeed trip reset", "Автомат безопасности взведён");
+        msg("wind.enabled", "Wind turbine automatics on: starts at %s m/s with grid voltage", "Автоматика ВЭУ включена: пуск от %s м/с при напряжении сети");
+        msg("wind.disabled", "Wind turbine automatics off: feathering and stopping", "Автоматика ВЭУ отключена: лопасти во флюгер, останов");
+        msg("wind.reset", "Wind turbine trip reset", "Авария ВЭУ сброшена");
+        msg("wind.not_reset", "Reset only on a stopped rotor", "Сброс — только на остановленном колесе");
         msg("turbine.not_tripped", "The overspeed trip is set (reset only below rated speed)",
                 "Автомат безопасности не сработал (взводится ниже номинальных оборотов)");
         msg("turbine.no_boiler", "The turbine touches no boiler: put it against a drum, water wall or boiler panel",

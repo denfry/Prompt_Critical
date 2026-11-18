@@ -32,6 +32,9 @@ public final class PowerhouseBlockEntities {
     public static final DeferredHolder<BlockEntityType<?>, BlockEntityType<TurbineGearboxBlockEntity>> TURBINE_GEARBOX =
             type("turbine_gearbox", TurbineGearboxBlockEntity::new, PcBlocks.TURBINE_GEARBOX);
 
+    public static final DeferredHolder<BlockEntityType<?>, BlockEntityType<WindTurbineBlockEntity>> WIND_TURBINE =
+            type("wind_turbine", WindTurbineBlockEntity::new, PcBlocks.WIND_TURBINE);
+
     private PowerhouseBlockEntities() {
     }
 

@@ -108,6 +108,13 @@ public final class PowerhouseRecipes extends RecipeProvider {
                 .pattern("PCP").pattern("SLS").pattern("PCP").define('P', plate).define('C', AllBlocks.COGWHEEL.get())
                 .define('L', AllBlocks.LARGE_COGWHEEL.get()).define('S', shaft)
                 .unlockedBy("has_steel_plate", has(plate)).save(out, id("turbine_gearbox"));
+        // ВЭУ: колесо — пропеллеры на подшипнике ветряка Create, мультипликатор — большая шестерня, генератор —
+        // асинхронная машина (тот же двигатель, вращаемый выше синхронной скорости), башня — лист на железных прутьях
+        ShapedRecipeBuilder.shaped(RecipeCategory.MISC, PcBlocks.WIND_TURBINE.get())
+                .pattern("FWF").pattern("LMP").pattern("IPI").define('F', AllItems.PROPELLER.get())
+                .define('W', AllBlocks.WINDMILL_BEARING.get()).define('L', AllBlocks.LARGE_COGWHEEL.get())
+                .define('M', PcBlocks.ELECTRIC_MOTOR.get()).define('P', plate).define('I', net.minecraft.world.item.Items.IRON_BARS)
+                .unlockedBy("has_electric_motor", has(PcBlocks.ELECTRIC_MOTOR.get())).save(out, id("wind_turbine"));
         // конденсатор: корпус из листа, трубный пучок — трубы
         ShapedRecipeBuilder.shaped(RecipeCategory.MISC, PcBlocks.CONDENSER.get())
                 .pattern("PPP").pattern("FFF").pattern("PPP").define('P', plate).define('F', pipe)

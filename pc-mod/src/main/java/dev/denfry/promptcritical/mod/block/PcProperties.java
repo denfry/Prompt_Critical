@@ -53,6 +53,7 @@ public final class PcProperties {
     public static final EnumProperty<ByproductKind> BYPRODUCT_KIND = EnumProperty.create("kind", ByproductKind.class);
     public static final EnumProperty<CastHouseKind> CAST_HOUSE_KIND = EnumProperty.create("kind", CastHouseKind.class);
     public static final EnumProperty<StoveSegment> STOVE_SEGMENT = EnumProperty.create("segment", StoveSegment.class);
+    public static final EnumProperty<WindTurbineSegment> WIND_TURBINE_SEGMENT = EnumProperty.create("segment", WindTurbineSegment.class);
     public static final EnumProperty<GasTurbineSegment> GAS_TURBINE_SEGMENT = EnumProperty.create("segment", GasTurbineSegment.class);
     public static final EnumProperty<ArcFurnaceSegment> ARC_FURNACE_SEGMENT = EnumProperty.create("segment", ArcFurnaceSegment.class);
     // сталь, прокат, ВРУ (этап 10б M3)
@@ -122,6 +123,9 @@ public final class PcProperties {
     public enum GasTurbineSegment implements Named { COMPRESSOR, COMBUSTOR, TURBINE }
     /** Секции дуговой печи: корпус 3×3×3 и свод над ним. */
     public enum ArcFurnaceSegment implements Named { SHELL, ROOF }
+
+    /** Секции башни ВЭУ 1×9×1: основание со шкафом, средняя секция, оголовок с опорно-поворотным кругом. */
+    public enum WindTurbineSegment implements Named { BASE, MIDDLE, TOP }
 
     /** Секции воздухонагревателя 3×9×3: низ, середина, купол. */
     public enum StoveSegment implements Named { BOTTOM, MIDDLE, DOME }

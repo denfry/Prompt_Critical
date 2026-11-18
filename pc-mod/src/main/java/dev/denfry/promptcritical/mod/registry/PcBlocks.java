@@ -216,6 +216,9 @@ public final class PcBlocks {
     private static final Footprint FP_TALL3 = Footprint.of(Segment.box(0, 0, -1, 1, 0, 0));
     private static final Footprint FP_TALL2 = Footprint.of(Segment.box(0, 0, 0, 1, 0, 0));
     private static final Footprint FP_WIDE2 = Footprint.of(Segment.box(0, 1, 0, 0, 0, 0));
+    /** Башня 1×9×1 из трёх секций по три блока; контроллер — средний блок нижней. */
+    private static final Segment TOWER3 = Segment.box(0, 0, -1, 1, 0, 0);
+    private static final Footprint FP_WIND_TOWER = Footprint.of(TOWER3, TOWER3.at(0, 3, 0), TOWER3.at(0, 6, 0));
     /** Печь 3×2×3 (обжиговая, агломашина, колошник). */
     private static final Footprint FP_FURNACE3 = Footprint.of(Segment.box(-1, 1, 0, 1, -1, 1));
 
@@ -522,6 +525,13 @@ public final class PcBlocks {
             Spec.facing(PcProperties.RUNNING).segments(PcProperties.GAS_TURBINE_SEGMENT,
                     Footprint.of(CUBE3, CUBE3.at(0, 0, 3), CUBE3.at(0, 0, 6))),
             FoundryBlock.with(dev.denfry.promptcritical.mod.powerhouse.GasTurbineBlockEntity::new));
+    /**
+     * Сетевая ВЭУ Д-30: решётчатая башня 1×9×1 (основание со шкафом управления, средняя секция, оголовок), гондола
+     * и колесо над ней поворачиваются на ветер; кабель 0,4 кВ — к основанию.
+     */
+    public static final DeferredBlock<PcDeviceBlock> WIND_TURBINE = device("wind_turbine", machine().noOcclusion(),
+            Spec.facing(PcProperties.RUNNING).segments(PcProperties.WIND_TURBINE_SEGMENT, FP_WIND_TOWER),
+            FoundryBlock.with(dev.denfry.promptcritical.mod.powerhouse.WindTurbineBlockEntity::new));
     /** Редуктор турбины: задней гранью к агрегату, вал Create спереди. */
     public static final DeferredBlock<PcDeviceBlock> TURBINE_GEARBOX = device("turbine_gearbox", machine(),
             Spec.facing(PcProperties.RUNNING),

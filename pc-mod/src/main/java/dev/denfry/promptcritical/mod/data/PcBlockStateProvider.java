@@ -268,6 +268,11 @@ public final class PcBlockStateProvider extends BlockStateProvider {
             case "blast_furnace_tuyere" -> s.getValue(PcProperties.BURNT) ? id + "_burnt" : id;
             case "blast_furnace_taphole" -> s.getValue(BlockStateProperties.OPEN) ? id + "_open" : id;
             case "blast_furnace_controller" -> s.getValue(PcProperties.ALARM) ? id + "_alarm" : id;
+            case "wind_turbine" -> switch (s.getValue(PcProperties.WIND_TURBINE_SEGMENT)) {
+                case BASE -> id;
+                case MIDDLE -> id + "_middle";
+                case TOP -> id + "_top";
+            };
             case "hot_blast_stove" -> switch (s.getValue(PcProperties.STOVE_SEGMENT)) {
                 case DOME -> id + "_dome";
                 case MIDDLE -> id + "_middle";
