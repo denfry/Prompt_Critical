@@ -205,6 +205,10 @@ public final class WaterTubeBoilerBlockEntity extends IronworksBlockEntity imple
         // наружный воздух: дутьё, тяга трубы, потери обмуровки (раз в 5 с — погода медленная)
         if (now % 100 == 0 && level instanceof net.minecraft.server.level.ServerLevel sl)
             u.setAmbient(dev.denfry.promptcritical.mod.environment.EnvironmentService.sample(sl, worldPosition, 2).airTempC() + 273.15);
+        // выбросы — в учёт и поле загрязнения (14 §14.1): труба ТЭС 30 м над котлом, газы после экономайзера ≈ 420 К
+        if (now % 20 == 0 && level instanceof net.minecraft.server.level.ServerLevel sl)
+            dev.denfry.promptcritical.mod.environment.AirQualityService.emit(sl, worldPosition.above(3), 30, 420, u.outputs().combustion,
+                    "water_tube_boiler@" + worldPosition.toShortString(), dev.denfry.promptcritical.sim.environment.EmissionLedger.Category.BOILER);
         supplyFuel(u);
         supplyFeed(u);
         double fd = 0, id = 0;

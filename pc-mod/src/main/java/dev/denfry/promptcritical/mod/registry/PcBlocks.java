@@ -330,6 +330,13 @@ public final class PcBlocks {
     // --- изотопы (12): канал облучения в кладке T0 или у корпуса T1, термоэлектрический РИТЭГ ---
     public static final DeferredBlock<PcDeviceBlock> IRRADIATION_CHANNEL = device("irradiation_channel", graphite(), Spec.of(PcProperties.FILLED),
             dev.denfry.promptcritical.mod.foundry.FoundryBlock.with(dev.denfry.promptcritical.mod.isotopes.IrradiationChannelBlockEntity::new));
+    // --- очистка дымовых газов и САКВ (14 §14.2) ---
+    public static final DeferredBlock<PcDeviceBlock> ELECTROSTATIC_PRECIPITATOR = device("electrostatic_precipitator", machine(),
+            Spec.facing(BlockStateProperties.POWERED),
+            dev.denfry.promptcritical.mod.foundry.FoundryBlock.with(dev.denfry.promptcritical.mod.environment.ElectrostaticPrecipitatorBlockEntity::new));
+    public static final DeferredBlock<PcDeviceBlock> FGD_ABSORBER = device("fgd_absorber", machine(), Spec.of(),
+            dev.denfry.promptcritical.mod.foundry.FoundryBlock.with(dev.denfry.promptcritical.mod.environment.FgdAbsorberBlockEntity::new));
+    public static final DeferredBlock<PcBlock> CEMS_ANALYZER = block("cems_analyzer", instrument(), Spec.facing());
     public static final DeferredBlock<PcDeviceBlock> RTG_THERMOELECTRIC = device("rtg_thermoelectric", machine(),
             Spec.of(net.minecraft.world.level.block.state.properties.BlockStateProperties.LIT),
             dev.denfry.promptcritical.mod.foundry.FoundryBlock.with(dev.denfry.promptcritical.mod.isotopes.RtgBlockEntity::new));

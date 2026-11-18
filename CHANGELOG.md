@@ -91,6 +91,14 @@
 - Nuclear material accounting of uranium and U-235 on every station's panel. Zirconium from zircon washed out of sand,
   reduced with magnesium (hafnium separated), alloyed with tin, rolled into cladding tubes and made into spacer grids.
 
+### Air pollution (14 §14.1–14.4, R21)
+- Boilers report SO₂, NOx, dust, CO₂, CH₄ and CO to an emission ledger and to a chunk pollution field: Briggs plume
+  rise, a Gaussian plume over 17×17 chunks with distances compressed twenty times, deposition, rain washout,
+  self-cleaning and downwind spread saved per dimension.
+- Effects by WHO and UNECE thresholds: haze, smog, acid load on plants, cough and weakness without a respirator or gas
+  mask, acid rain. Electrostatic precipitator on grid power, limestone scrubber on calcite and a CEMS analyzer that
+  switches reporting from calculated to measured. Handbook chapter and a game test not yet run.
+
 ### Isotopes and RTGs (12)
 - Irradiation channel: in the stack of the graphite pile it takes the flux of its node, against the T1 vessel
   it is one of four AM-1 experimental channels and its target is charged against the core reactivity. Capsules

@@ -69,6 +69,8 @@ public final class PromptCritical {
         dev.denfry.promptcritical.mod.methanol.MethanolBlockEntities.register(modBus);
         dev.denfry.promptcritical.mod.environment.ToxicReleaseService.register();
         dev.denfry.promptcritical.mod.environment.RadiationService.register();
+        dev.denfry.promptcritical.mod.environment.AirQualityService.register();
+        dev.denfry.promptcritical.mod.environment.EnvironmentBlockEntities.register(modBus);
         dev.denfry.promptcritical.mod.environment.DosimeterItem.register(modBus);
         dev.denfry.promptcritical.mod.environment.ActivityData.register(modBus);
         dev.denfry.promptcritical.mod.radiation.RadiationBlockEntities.register(modBus);

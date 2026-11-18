@@ -219,6 +219,13 @@ public class FireTubeBoilerBlockEntity extends DeviceBlockEntity implements Pres
             unaccepted = !ops.canStart(simId()).accepted();
             boolean tripped = u.plugMelted() || u.rupture() != BoilerRupture.NONE;
             double load = u.outputs().fuelBurnKgS / u.spec().nominalFuelKgS();
+            // выбросы через свою трубу из звеньев chimney (14 §14.1); дымогарный котёл уходит газами ≈ 520 К
+            if (ticks % 20 == 0 && level instanceof ServerLevel sl0) {
+                int n = countChimney();
+                dev.denfry.promptcritical.mod.environment.AirQualityService.emit(sl0,
+                        BoilerGeometry.offset(worldPosition, facing(), 0, 2, 4).above(n), Math.max(1, n), 520, u.outputs().combustion,
+                        "fire_tube_boiler@" + worldPosition.toShortString(), dev.denfry.promptcritical.sim.environment.EmissionLedger.Category.BOILER);
+            }
             ops.observeTrial(simId(), TICK_S, u.lit(), Double.isFinite(load) ? load : 0, tripped, opsCurrent());
             if (ticks % 10 == 0 && ops.seamWeeping(simId(), gauge) && level instanceof ServerLevel sl) {
                 Vec3 p = BoilerGeometry.world(worldPosition, facing(), 8, 16, 30);
