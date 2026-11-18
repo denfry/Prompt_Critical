@@ -65,6 +65,7 @@ public final class PcDataGen {
         gen.addProvider(event.includeServer(), dev.denfry.promptcritical.mod.environment.RadiationRecipes.provider(out, lookup));
         gen.addProvider(event.includeServer(), dev.denfry.promptcritical.mod.acoustics.AcousticsRecipes.provider(out, lookup));
         gen.addProvider(event.includeServer(), dev.denfry.promptcritical.mod.reprocessing.ReprocessingRecipes.provider(out, lookup));
+        gen.addProvider(event.includeServer(), dev.denfry.promptcritical.mod.waste.WasteRecipes.provider(out, lookup));
         gen.addProvider(event.includeServer(), dev.denfry.promptcritical.mod.nitrogen.NitrogenRecipes.provider(out, lookup));
         gen.addProvider(event.includeServer(), dev.denfry.promptcritical.mod.methanol.MethanolRecipes.provider(out, lookup));
         gen.addProvider(event.includeServer(), dev.denfry.promptcritical.mod.refinery.RefineryRecipes.provider(out, lookup));

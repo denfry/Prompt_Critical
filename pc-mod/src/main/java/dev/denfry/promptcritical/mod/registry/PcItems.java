@@ -192,6 +192,23 @@ public final class PcItems {
     public static final DeferredItem<Item> PUO2_POWDER = item("puo2_powder", 1);
     /** Стеклоблок высокоактивных отходов: 50 кг боросиликатного стекла с компонентом активности. */
     public static final DeferredItem<Item> HLW_GLASS_CANISTER = item("hlw_glass_canister", 1);
+    // --- радиоактивные отходы: тара, вяжущие, упаковки, отработанные смолы и фильтры ---
+    /** Бочка 200 л из оцинкованной стали: пустая — тара для цементирования, битумирования и прессования. */
+    public static final DeferredItem<Item> WASTE_DRUM = item("waste_drum", 16);
+    /** Портландцемент: мешок 50 кг. */
+    public static final DeferredItem<Item> PORTLAND_CEMENT = item("portland_cement", 64);
+    /** Бочка цементного компаунда: компоненты активности и упаковки. */
+    public static final DeferredItem<Item> CEMENTED_WASTE_DRUM = item("cemented_waste_drum", 1);
+    /** Бочка битумного компаунда. */
+    public static final DeferredItem<Item> BITUMEN_WASTE_DRUM = item("bitumen_waste_drum", 1);
+    /** Бочка-контейнер с прессованными таблетками суперпресса. */
+    public static final DeferredItem<Item> COMPACTED_WASTE_DRUM = item("compacted_waste_drum", 1);
+    /** Медный контейнер для стеклоблоков в пункте глубинного захоронения (KBS-3: медь 5 см на чугунной вставке). */
+    public static final DeferredItem<Item> COPPER_CANISTER = item("copper_canister", 4);
+    /** Фильтрующий патрон механических фильтров СВО; отработанный несёт активность. */
+    public static final DeferredItem<Item> FILTER_CARTRIDGE = item("filter_cartridge", 16);
+    /** Отработанный ионит СВО: мешок 100 л с активностью. */
+    public static final DeferredItem<Item> SPENT_ION_EXCHANGE_RESIN = item("spent_ion_exchange_resin", 1);
     // --- изотопы и РИТЭГ (12): мишени, капсулы, закрытые источники, дефектоскопия, источники тепла ---
     /** Металлический кобальт (таблетки мишени Co-60). */
     public static final DeferredItem<Item> COBALT_INGOT = item("cobalt_ingot", 64);

@@ -252,6 +252,21 @@ public final class PcLanguageProvider extends LanguageProvider {
         b("vitrification_melter", "Vitrification Melter", "Печь остекловывания");
         i("puo2_powder", "Plutonium Dioxide", "Диоксид плутония");
         i("hlw_glass_canister", "Vitrified High-Level Waste Canister", "Стеклоблок высокоактивных отходов");
+        b("lrw_evaporator", "Liquid Radwaste Evaporator", "Выпарная установка ЖРО");
+        b("cementation_mixer", "Cementation Mixer", "Смеситель цементирования");
+        b("bitumenizer", "Rotary Bitumenizer", "Роторный битуматор");
+        b("waste_compactor", "Waste Supercompactor (2000 t)", "Суперпресс РАО (2000 т)");
+        b("near_surface_repository", "Near-Surface Disposal Vault", "Приповерхностный пункт захоронения РАО");
+        b("deep_geological_repository", "Deep Geological Repository Drift", "Штрек пункта глубинного захоронения");
+        b("reactor_water_cleanup", "Reactor Water Cleanup", "Система очистки теплоносителя");
+        i("waste_drum", "200 l Waste Drum", "Бочка 200 л");
+        i("portland_cement", "Portland Cement (50 kg)", "Портландцемент (50 кг)");
+        i("cemented_waste_drum", "Cemented Waste Drum", "Бочка цементного компаунда");
+        i("bitumen_waste_drum", "Bitumen Waste Drum", "Бочка битумного компаунда");
+        i("compacted_waste_drum", "Supercompacted Waste Overpack", "Контейнер прессованных отходов");
+        i("copper_canister", "Copper Disposal Canister", "Медный контейнер захоронения");
+        i("filter_cartridge", "Filter Cartridge", "Фильтрующий патрон");
+        i("spent_ion_exchange_resin", "Spent Ion Exchange Resin (100 l)", "Отработанный ионит (100 л)");
         MISC.put("message.promptcritical.dosimeter.reading", new String[] {"DKS-04: %s · total %s", "ДКС-04: %s · накоплено %s"});
         MISC.put("message.promptcritical.dosimeter.idle", new String[] {"No reading yet: carry it to measure",
                 "Показаний пока нет: носите при себе"});
@@ -557,6 +572,7 @@ public final class PcLanguageProvider extends LanguageProvider {
         FLUIDS.put("contaminated_decon_solution", new String[] {"Spent Decontamination Solution (liquid radwaste)", "Отработанный дезактивирующий раствор (ЖРО)"});
         FLUIDS.put("uranium_tailings", new String[] {"Uranium Mill Tailings", "Хвосты урановой фабрики"});
         FLUIDS.put("uranium_eluate", new String[] {"Uranium Eluate", "Урановый элюат"});
+        FLUIDS.put("liquid_radioactive_waste", new String[] {"Liquid Radioactive Waste", "Жидкие радиоактивные отходы"});
         FLUIDS.put("syngas", new String[] {"Ammonia Syngas (3 H₂ + N₂)", "Азотоводородная смесь"});
         FLUIDS.put("ammonia", new String[] {"Liquid Ammonia", "Жидкий аммиак"});
         FLUIDS.put("nitric_acid", new String[] {"Nitric Acid (56 %)", "Азотная кислота 56 %"});
@@ -834,6 +850,7 @@ public final class PcLanguageProvider extends LanguageProvider {
         MISC.putAll(dev.denfry.promptcritical.mod.radiation.RadiationBlocksText.lang());
         MISC.putAll(dev.denfry.promptcritical.mod.radiation.ContaminationText.lang());
         MISC.putAll(dev.denfry.promptcritical.mod.reprocessing.ReprocessingText.lang());
+        MISC.putAll(dev.denfry.promptcritical.mod.waste.WasteText.lang());
         MISC.putAll(dev.denfry.promptcritical.mod.uranium.UraniumText.lang());
         MISC.put("death.attack.promptcritical.chlorine", new String[] {"%1$s was gassed by chlorine", "%1$s отравлен хлором"});
         MISC.put("death.attack.promptcritical.chlorine.player", new String[] {"%1$s was gassed by chlorine while fighting %2$s",

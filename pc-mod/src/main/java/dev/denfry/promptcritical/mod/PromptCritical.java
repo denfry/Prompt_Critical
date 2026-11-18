@@ -79,6 +79,7 @@ public final class PromptCritical {
         dev.denfry.promptcritical.mod.environment.ActivityData.register(modBus);
         dev.denfry.promptcritical.mod.radiation.RadiationBlockEntities.register(modBus);
         dev.denfry.promptcritical.mod.reprocessing.ReprocessingBlockEntities.register(modBus);
+        dev.denfry.promptcritical.mod.waste.WasteBlockEntities.register(modBus);
         dev.denfry.promptcritical.mod.radiation.RadiationBlocksText.register();
         dev.denfry.promptcritical.mod.nuclear.Uf6Components.register(modBus);
         dev.denfry.promptcritical.mod.nuclear.NuclearBlockEntities.register(modBus);
