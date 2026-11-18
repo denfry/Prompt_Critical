@@ -22,7 +22,15 @@ import java.util.Map;
  *   <li>высокоактивные отходы — рафинат первого цикла: все продукты деления, кроме ушедших в газ, — остекловываются в
  *   боросиликатное стекло: 15 % оксидов отходов в стекле, оксиды ≈ 1,2 массы продуктов деления.</li>
  * </ol>
- * Плутоний из разделения течёт в буферную ёмкость перед осаждением потоком — по ходу переработки порции
+ * Нептуний-237 (Schulz &amp; Burger, «Science and Technology of Tributyl Phosphate», т. III, 1990; Taylor et al.,
+ * Radiochim. Acta 2001): в растворе питания Np(V) (D ≈ 0,01 — не экстрагируется) и Np(VI) (D ≈ 3–20, как U(VI)) в
+ * соотношении, заданном азотистой кислотой; без корректировки валентности ТБФ берёт ≈ {@value #NP_EXTRACTED_NATIVE}
+ * нептуния, остальное — в рафинат и в стекло. Нитрит натрия в питании окисляет Np(V) до Np(VI): экстрагируется
+ * ≈ {@value #NP_EXTRACTED_NITRITE}. Нептуний идёт с ураном и при разделении U/Pu, во втором урановом цикле его
+ * восстанавливают до неэкстрагируемого Np(V) и выводят в отдельный поток, осаждают оксалатом и прокаливают в NpO₂ —
+ * извлечение из урановой фракции {@value #NP_RECOVERY}, остаток — примесь в регенерате урана.
+ *
+ * <p>Плутоний из разделения течёт в буферную ёмкость перед осаждением потоком — по ходу переработки порции
  * ({@link #meter}); если осаждение стоит, масса в ёмкости растёт, и выше минимальной критической
  * ({@link Criticality#minCriticalPuKg}) — СЦР в растворе.
  */
@@ -33,9 +41,13 @@ public final class PurexPlant {
     public static final double CAPACITY_KG_S = 0.1;
     /** Пределы ручек: кислотность питания, отношение восстановителя к Pu. */
     public static final double MIN_REDUCTANT = 0, MAX_REDUCTANT = 3;
+    /** Доля Np, экстрагируемая без корректировки валентности и с нитритом; извлечение во втором урановом цикле. */
+    public static final double NP_EXTRACTED_NATIVE = 0.3, NP_EXTRACTED_NITRITE = 0.95, NP_RECOVERY = 0.9;
 
     private final UraniumLedger ledger = new UraniumLedger();
     private double acidity = 3, reductant = 1.5;
+    /** Корректировка валентности нептуния нитритом в питании. */
+    private boolean npValence = true;
     /** Буферная ёмкость нитрата Pu: масса Pu, кг, и доля Pu-240. */
     private double puTankKg, puTank240;
     /** Плутоний в аппаратах разделения, ещё не дошедший до буфера, кг, и его доля Pu-240. */
@@ -51,6 +63,19 @@ public final class PurexPlant {
 
     public void setAcidity(double m) {
         acidity = Math.clamp(m, PurexFlowsheet.MIN_ACID, PurexFlowsheet.MAX_ACID);
+    }
+
+    public boolean npValence() {
+        return npValence;
+    }
+
+    public void setNpValence(boolean on) {
+        npValence = on;
+    }
+
+    /** Доля Np-237 питания, выделяемая в NpO₂-поток. */
+    public double npRecoveryFraction() {
+        return (npValence ? NP_EXTRACTED_NITRITE : NP_EXTRACTED_NATIVE) * NP_RECOVERY;
     }
 
     public double reductant() {
@@ -82,10 +107,12 @@ public final class PurexPlant {
      * @param kr85Bq       криптон в трубу
      * @param i131ReleasedBq иод в трубу (после фильтра)
      * @param uProductDf   коэффициент очистки урана от γ-активных продуктов деления
+     * @param npKg         нептуний-237, выделенный в поток NpO₂, кг Np
+     * @param npToHlwKg    нептуний, ушедший с рафинатом в стекло, кг
      */
     public record Batch(double hmKg, double uProductKg, double u235, double u236, double puToTankKg, double pu239, double pu240,
             double pu241, double pu242, double uLossKg, double puLossKg, double puInUKg, ActivityInventory hlw, double glassKg,
-            double kr85Bq, double i131ReleasedBq, double acidKg, double uProductDf) {
+            double kr85Bq, double i131ReleasedBq, double acidKg, double uProductDf, double npKg, double npToHlwKg) {
     }
 
     /** Доля U, ушедшая в рафинат: неизвлечённая плюс механические потери 0,1 %. */
@@ -146,12 +173,15 @@ public final class PurexPlant {
                 default -> hlw.merge(e.getKey(), a, Double::sum);
             }
         }
+        double np = hmKg * comp.np237PerHm();
+        double npExtracted = np * (npValence ? NP_EXTRACTED_NITRITE : NP_EXTRACTED_NATIVE);
         double glass = hmKg * comp.fpPerHm() * OXIDE_PER_FP / WASTE_LOADING;
         double df = Math.min(PurexFlowsheet.decontamination(PurexFlowsheet.Species.ZR, acidity),
                 Math.min(PurexFlowsheet.decontamination(PurexFlowsheet.Species.RU, acidity),
                         PurexFlowsheet.decontamination(PurexFlowsheet.Species.CS_SR, acidity)));
         return new Batch(hmKg, uProduct, comp.u235(), comp.u236(), puTank, comp.pu239(), comp.pu240(), comp.pu241(), comp.pu242(), uLoss,
-                puLoss, puInU, new ActivityInventory(hlw, glass, 2.7), glass, kr, iRel, hmKg * ACID_KG_PER_KG_HM, df);
+                puLoss, puInU, new ActivityInventory(hlw, glass, 2.7), glass, kr, iRel, hmKg * ACID_KG_PER_KG_HM, df, npExtracted * NP_RECOVERY,
+                np - npExtracted);
     }
 
     /** Плутоний в аппаратах разделения (ещё не в буфере), кг. */
@@ -196,6 +226,7 @@ public final class PurexPlant {
     public void save(StateWriter out) {
         out.putDouble("h", acidity);
         out.putDouble("red", reductant);
+        out.putBoolean("np_valence", npValence);
         out.putDouble("pu_tank", puTankKg);
         out.putDouble("pu_tank240", puTank240);
         out.putDouble("pu_flow", puInFlowKg);
@@ -206,6 +237,7 @@ public final class PurexPlant {
     public void load(StateReader in) {
         setAcidity(in.optDouble("h", 3));
         setReductant(in.optDouble("red", 1.5));
+        npValence = !in.has("np_valence") || in.getBoolean("np_valence");
         puTankKg = in.optDouble("pu_tank", 0);
         puTank240 = in.optDouble("pu_tank240", 0);
         puInFlowKg = in.optDouble("pu_flow", 0);

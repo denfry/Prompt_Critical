@@ -9,6 +9,7 @@ import dev.denfry.promptcritical.mod.chem.PyrolysisFurnaceBlockEntity.MultiInlet
 import dev.denfry.promptcritical.mod.environment.ActivityData;
 import dev.denfry.promptcritical.mod.environment.RadiationService;
 import dev.denfry.promptcritical.mod.foundry.FoundryDevice;
+import dev.denfry.promptcritical.mod.isotopes.IsotopeCraftRecipe;
 import dev.denfry.promptcritical.mod.item.ExtractOnlyItemHandler;
 import dev.denfry.promptcritical.mod.nuclear.FuelLot;
 import dev.denfry.promptcritical.mod.panel.PanelHost;
@@ -67,13 +68,17 @@ import org.jetbrains.annotations.Nullable;
  * <p>Топливо — предметы с партией ({@code fuel_lot}: выгорание и состав пишет реактор) или с активностью: тогда
  * выгорание оценивается по Cs-137, состав — {@link ActinideBuildup}. Азотная кислота и керосин (разбавитель ТБФ) —
  * трубами; уголь для иодного фильтра — в слот. Продукты: регенерат урана — мешки UO₃ по 1 кг с изотопией (U-236),
- * PuO₂ — партиями по {@value #PU_BATCH_KG} кг (меньше безопасной массы), стеклоблоки ВАО по {@value #CANISTER_KG} кг.
+ * PuO₂ — партиями по {@value #PU_BATCH_KG} кг (меньше безопасной массы), стеклоблоки ВАО по {@value #CANISTER_KG} кг,
+ * NpO₂ — мешками по {@link IsotopeCraftRecipe#NPO2_KG} кг (на одну мишень для наработки Pu-238): нептуний с нитритом
+ * в питании идёт с ураном, во втором урановом цикле выводится и осаждается оксалатом в том же осадителе.
  * Криптон и непойманный иод уходят в трубу — облако по ветру.
  */
 public final class PurexCellBlockEntity extends DeviceBlockEntity implements FoundryDevice, PanelHost {
     public static final int REACH = 8, IN_SLOTS = 4, CHARCOAL_SLOT = 4, OUT_SLOTS = 6;
     public static final double PU_BATCH_KG = 0.1, CANISTER_KG = 50, HLW_TANK_KG = 500, KG_HM_PER_CHARCOAL = 25;
     /** HNO₃ в кислоте 3b (≈ 57 %, 1,345 кг/л), кг/л; керосин на кг ТМ, л. */
+    /** NpO₂ на кг Np: (237 + 32) / 237. */
+    static final double NPO2_PER_NP = 269.0 / 237.0;
     static final double HNO3_KG_L = 1.345 * 0.57, KEROSENE_L_PER_KG = 0.005, PU_PRECIPITATE_KG_S = 0.01;
 
     private final ItemStackHandler input = new ItemStackHandler(IN_SLOTS + 1) {
@@ -103,6 +108,8 @@ public final class PurexCellBlockEntity extends DeviceBlockEntity implements Fou
     /** Регенерат урана в работе: кг и изотопия. */
     private double uKg, u234, u235, u236;
     private PuLot puPending = new PuLot(0, 0, 0, 0, 0);
+    /** Выделенный NpO₂, ещё не расфасованный, кг. */
+    private double npO2Kg;
     /** Высокоактивные отходы: стекло, кг, и активность на {@link #hlwTick}. */
     private double glassKg, iodineCredits;
     private ActivityInventory hlw = new ActivityInventory(Map.of(), 0, 2.7);
@@ -146,7 +153,8 @@ public final class PurexCellBlockEntity extends DeviceBlockEntity implements Fou
             double fp = ActinideBuildup.FP_PER_MWD * l.burnup();
             double hm0 = l.heavyMetalKg() / Math.max(1e-6, 1 - fp);
             hmOut[0] = hm0;
-            return new ActinideBuildup.Composition(l.burnup(), l.u235(), l.u236(), l.pu() / hm0, l.pu239(), l.pu240(), l.pu241(), l.pu242(), fp);
+            return new ActinideBuildup.Composition(l.burnup(), l.u235(), l.u236(), l.pu() / hm0, l.pu239(), l.pu240(), l.pu241(), l.pu242(), fp,
+                    ActinideBuildup.np237(l.burnup()));
         }
         ActivityData a = s.get(ActivityData.ACTIVITY.get());
         double hm = l != null ? l.heavyMetalKg() : a.massKg();
@@ -184,6 +192,11 @@ public final class PurexCellBlockEntity extends DeviceBlockEntity implements Fou
             double pu = plant.precipitate(PU_PRECIPITATE_KG_S * dt);
             puPending = puPending.plus(new PuLot(pu, puIso[0], puIso[1], puIso[2], puIso[3]));
             if (puPending.puKg() >= PU_BATCH_KG && emitPu()) puPending = new PuLot(0, 0, 0, 0, 0);
+        }
+        // нептуний: NpO₂ мешками на одну мишень
+        while (oxalate && npO2Kg >= IsotopeCraftRecipe.NPO2_KG && hasRoom(PcItems.NPO2_POWDER.get())) {
+            if (!emit(new ItemStack(PcItems.NPO2_POWDER.get()))) break;
+            npO2Kg -= IsotopeCraftRecipe.NPO2_KG;
         }
         double fissions = plant.criticalityFissions();
         if (fissions > 0) criticality(s, fissions);
@@ -247,6 +260,7 @@ public final class PurexCellBlockEntity extends DeviceBlockEntity implements Fou
             u234 = (u234 * uKg + (lot != null ? lot.u234() : 0.000054) * r.uProductKg()) / m;
         }
         uKg = m;
+        npO2Kg += r.npKg() * NPO2_PER_NP;
         puIso[0] = r.pu239();
         puIso[1] = r.pu240();
         puIso[2] = r.pu241();
@@ -416,6 +430,7 @@ public final class PurexCellBlockEntity extends DeviceBlockEntity implements Fou
         tag.putDouble("u235", u235);
         tag.putDouble("u236", u236);
         tag.putDouble("glass", glassKg);
+        tag.putDouble("npo2", npO2Kg);
         tag.putDouble("iodine", iodineCredits);
         tag.putLong("hlw_tick", hlwTick);
         CompoundTag h = new CompoundTag();
@@ -443,6 +458,7 @@ public final class PurexCellBlockEntity extends DeviceBlockEntity implements Fou
         u235 = tag.getDouble("u235");
         u236 = tag.getDouble("u236");
         glassKg = tag.getDouble("glass");
+        npO2Kg = tag.getDouble("npo2");
         iodineCredits = tag.getDouble("iodine");
         hlwTick = tag.getLong("hlw_tick");
         EnumMap<Emitter, Double> m = new EnumMap<>(Emitter.class);

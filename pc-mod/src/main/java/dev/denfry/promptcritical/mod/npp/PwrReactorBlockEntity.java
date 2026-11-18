@@ -11,6 +11,7 @@ import dev.denfry.promptcritical.mod.environment.RadiationService;
 import dev.denfry.promptcritical.mod.foundry.FoundryDevice;
 import dev.denfry.promptcritical.mod.ironworks.Ironworks;
 import dev.denfry.promptcritical.mod.nuclear.FuelLot;
+import dev.denfry.promptcritical.sim.fuel.MoxBlend;
 import dev.denfry.promptcritical.mod.panel.PanelHost;
 import dev.denfry.promptcritical.mod.panel.PanelLayout;
 import dev.denfry.promptcritical.mod.registry.PcItems;
@@ -88,7 +89,7 @@ public final class PwrReactorBlockEntity extends DeviceBlockEntity implements Fo
             if (slot != PwrPanels.SLOT_FRESH || !stack.is(PcItems.FUEL_ASSEMBLY.get())) return false;
             FuelLot l = FuelLot.of(stack);
             FuelDesign d = l.designOrNull();
-            return d != null && PressurizedWaterReactor.accepts(d) && l.burnup() <= 0 && l.pu() <= 0
+            return d != null && PressurizedWaterReactor.accepts(d) && l.burnup() <= 0
                     && (reactor.design() == null || reactor.design() == d);
         }
 
@@ -235,7 +236,10 @@ public final class PwrReactorBlockEntity extends DeviceBlockEntity implements Fo
         if (d == null) return;
         for (int pos = 0; pos < PressurizedWaterReactor.POSITIONS; pos++) {
             if (reactor.loaded(pos)) continue;
-            if (reactor.load(pos, d, l.uKg(), l.u235(), l.u234())) {
+            // МОКС: решётка видит тяжёлый металл (U + Pu) с эквивалентным обогащением по U-235 (MoxBlend)
+            double hm = l.heavyMetalKg();
+            double xEq = MoxBlend.equivalentEnrichment(l.u235Kg() / hm, l.pu() * (l.pu239() + l.pu241()) / hm);
+            if (reactor.load(pos, d, hm, xEq, l.u234() * l.uKg() / hm)) {
                 s.shrink(1);
                 fuel.setStackInSlot(PwrPanels.SLOT_FRESH, s);
                 setChanged();

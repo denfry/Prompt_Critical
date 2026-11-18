@@ -23,6 +23,8 @@ public final class AssemblyJigBlockEntity extends FuelShopBlockEntity {
     private FuelDesign design = FuelDesign.VVER_1000;
     private int loaded, assemblies;
     private double uKg, u235Kg, u234Kg, densityKg;
+    /** Плутоний МОКС в собранных твэлах, на кг U. */
+    private MoxShare share = MoxShare.NONE;
     private boolean argon;
 
     public AssemblyJigBlockEntity(BlockPos pos, BlockState state) {
@@ -70,6 +72,7 @@ public final class AssemblyJigBlockEntity extends FuelShopBlockEntity {
             FuelLot l = FuelLot.of(rods);
             if (l.designOrNull() == design) {
                 loaded++;
+                share = MoxShare.mix(share, uKg, MoxShare.of(l), l.uKg());
                 uKg += l.uKg();
                 u235Kg += l.u235Kg();
                 u234Kg += l.uKg() * l.u234();
@@ -86,7 +89,7 @@ public final class AssemblyJigBlockEntity extends FuelShopBlockEntity {
         if (level.getGameTime() % 10 == 0) setLit(loaded > 0 && loaded < design.rods);
         if (!ready) return;
         double x = u235Kg / uKg;
-        ItemStack fa = new FuelLot(uKg, x, u234Kg / uKg, densityKg / uKg, loaded, design.name(), argon ? "ar" : "he")
+        ItemStack fa = share.apply(new FuelLot(uKg, x, u234Kg / uKg, densityKg / uKg, loaded, design.name(), argon ? "ar" : "he"))
                 .on(new ItemStack(PcItems.FUEL_ASSEMBLY.get()));
         grids.shrink(design.grids);
         tubes.shrink(tubesFor(design));
@@ -95,6 +98,7 @@ public final class AssemblyJigBlockEntity extends FuelShopBlockEntity {
         assemblies++;
         loaded = 0;
         uKg = u235Kg = u234Kg = densityKg = 0;
+        share = MoxShare.NONE;
         argon = false;
         level.playSound(null, worldPosition, SoundEvents.ANVIL_USE, SoundSource.BLOCKS, 0.4f, 1.4f);
     }
@@ -136,6 +140,7 @@ public final class AssemblyJigBlockEntity extends FuelShopBlockEntity {
         out.putDouble("u235", u235Kg);
         out.putDouble("u234", u234Kg);
         out.putDouble("density", densityKg);
+        share.save(out, "mox_");
         out.putBoolean("argon", argon);
     }
 
@@ -149,6 +154,7 @@ public final class AssemblyJigBlockEntity extends FuelShopBlockEntity {
         u235Kg = in.optDouble("u235", 0);
         u234Kg = in.optDouble("u234", 0);
         densityKg = in.optDouble("density", 0);
+        share = MoxShare.load(in, "mox_");
         argon = in.has("argon") && in.getBoolean("argon");
     }
 }
