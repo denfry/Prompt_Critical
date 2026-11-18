@@ -16,6 +16,10 @@ public final class NuclearText {
         put("cylinder.charge", "UF₆ %s kg · U-235 %s %%", "UF₆ %s кг · U-235 %s %%");
         put("cylinder.u234", "U-234 %s %% · uranium %s kg", "U-234 %s %% · урана %s кг");
         put("cylinder.limit", "Limit %s kg, U-235 up to %s %%", "Предел %s кг, U-235 до %s %%");
+        put("cascade.start", "Centrifuge hall: rotors spinning up, UF₆ to the cascade", "Цех центрифуг: роторы разгоняются, UF₆ в каскад");
+        put("cascade.stop", "Centrifuge hall stopped, rotors coasting down", "Цех центрифуг остановлен, роторы выбегают");
+        put("cascade.excursion", "CRITICALITY EXCURSION in the product desublimer: blue flash, your dose about %s Gy",
+                "СЦР В ДЕСУБЛИМАТОРЕ ОТБОРА: голубая вспышка, ваша доза около %s Гр");
     }
 
     private NuclearText() {

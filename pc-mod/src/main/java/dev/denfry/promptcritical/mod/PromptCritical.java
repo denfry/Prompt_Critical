@@ -68,6 +68,7 @@ public final class PromptCritical {
         dev.denfry.promptcritical.mod.nitrogen.NitrogenBlockEntities.register(modBus);
         dev.denfry.promptcritical.mod.environment.ToxicReleaseService.register();
         dev.denfry.promptcritical.mod.nuclear.Uf6Components.register(modBus);
+        dev.denfry.promptcritical.mod.nuclear.NuclearBlockEntities.register(modBus);
         SimBindings.registerSubsystem(level -> new MineSubsystem(
                 SimConfigs.fromServerConfig().section(MiningConfig.class, MiningConfig.defaults()),
                 SimConfigs.fromServerConfig().section(DrainageConfig.class, DrainageConfig.defaults())));

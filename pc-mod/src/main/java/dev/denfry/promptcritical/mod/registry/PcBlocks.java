@@ -511,6 +511,13 @@ public final class PcBlocks {
             Spec.facing(BlockStateProperties.LIT).footprint(FP_COLUMN3),
             FoundryBlock.with(dev.denfry.promptcritical.mod.nitrogen.AcidConcentratorBlockEntity::new));
 
+    // --- ядерное топливо I4: обогащение урана на газовых центрифугах ---
+    /** Секция газовых центрифуг (20 машин); их считает пульт каскада в радиусе {@code CascadeBlockEntity#RADIUS}. */
+    public static final DeferredBlock<PcBlock> GAS_CENTRIFUGE = block("gas_centrifuge", machine(), Spec.facing());
+    public static final DeferredBlock<PcDeviceBlock> CENTRIFUGE_CASCADE = device("centrifuge_cascade", machine(),
+            Spec.facing(PcProperties.RUNNING),
+            KineticMachineBlock.with(ShaftSide.BACK, dev.denfry.promptcritical.mod.nuclear.CascadeBlockEntity::new));
+
     // --- обогащение, литьё, механический цех (08 §8.3, §8.9, §8.10) ---
     public static final DeferredBlock<PcDeviceBlock> COAL_JIG = device("coal_jig", machine(),
             Spec.facing(PcProperties.RUNNING).footprint(Footprint.of(Segment.box(0, 1, 0, 1, 0, 0))),
