@@ -175,6 +175,10 @@ public final class BofVesselBlockEntity extends IronworksDeviceBlockEntity<Conve
         if (ladle != null && (ladle.metalKg() > 0 && !ladle.steel() || ladle.frozen())) ladle = null;
         SteelMelt steel = c.tap();
         if (steel == null) return;
+        // конвертер: PM 0,15 кг на т стали после газоочистки (14 §14.1.3); масса плавки — в журнал целиком; свеча 40 м
+        if (level instanceof ServerLevel sl0)
+            dev.denfry.promptcritical.mod.environment.AirQualityService.emit(sl0, worldPosition.above(4), 40, 350, 50, 0, 0, 0.15 * steel.massKg() / 1000 / 72, 0, 0,
+                    "bof@" + worldPosition.toShortString(), dev.denfry.promptcritical.sim.environment.EmissionLedger.Category.PROCESS);
         if (level instanceof ServerLevel sl)
             SimAchievements.nearby(sl, worldPosition, SimAchievements.STEEL_TAPPED, "steel_kg", steel.massKg());
         double rest = steel.massKg() - (ladle == null ? 0 : ladle.receive(steel, true));

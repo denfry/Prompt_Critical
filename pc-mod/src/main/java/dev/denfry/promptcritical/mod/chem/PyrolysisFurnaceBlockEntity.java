@@ -154,6 +154,15 @@ public final class PyrolysisFurnaceBlockEntity extends DeviceBlockEntity impleme
         // излишек хвостового газа — на факел
         flaredW = tailGasJ > 1e9 ? (tailGasJ - 1e9) / dt : 0;
         if (tailGasJ > 1e9) tailGasJ = 1e9;
+        // выбросы (14 §14.1): топка печи на газе — NOx 0,09 кг/ГДж (EMEP, печи с подогревом воздуха), труба 50 м, ≈ 420 К;
+        // излишек хвостового газа — на факел
+        if (level.getGameTime() % 20 == 0 && level instanceof net.minecraft.server.level.ServerLevel sl0) {
+            double heat = kg > 0 && furnace.feedKgS() > 0 ? furnace.fuelW() : 0;
+            dev.denfry.promptcritical.mod.environment.AirQualityService.emitGasFiring(sl0, worldPosition.above(4), 50, 420, heat, heat / 2.5e6, 0.09, 0,
+                    "pyrolysis_furnace@" + worldPosition.toShortString(), dev.denfry.promptcritical.sim.environment.EmissionLedger.Category.REFINERY);
+            dev.denfry.promptcritical.mod.environment.AirQualityService.emitGasFiring(sl0, worldPosition.above(6), 40, 1000, flaredW, flaredW / 2.5e6, 0.03, 0.02,
+                    "pyrolysis_flare@" + worldPosition.toShortString(), dev.denfry.promptcritical.sim.environment.EmissionLedger.Category.FLARE);
+        }
         if (level.getGameTime() % 10 == 0) setLit(furnace.feedKgS() > 0 || furnace.mode() == PyrolysisFurnace.Mode.DECOKE);
         if (furnace.feedKgS() > 0 && level.getGameTime() % 20 == 0)
             s.sendParticles(ParticleTypes.LARGE_SMOKE, worldPosition.getX() + 0.5, worldPosition.getY() + 2.5, worldPosition.getZ() + 0.5,
