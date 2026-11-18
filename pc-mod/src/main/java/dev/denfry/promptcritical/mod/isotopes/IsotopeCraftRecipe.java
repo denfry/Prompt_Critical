@@ -40,6 +40,8 @@ public final class IsotopeCraftRecipe extends CustomRecipe {
     public static final double PU_IN_OXIDE = 0.882, PU238_PURITY = 0.85, PUO2_DENSITY = 11.5;
     /** SrTiO₃: 47,7 % Sr по массе, Sr-90 — половина выделенного стронция; плотность 5,1 г/см³ (12 §12.5.3). */
     public static final double SR_IN_TITANATE = 0.477, SR90_IN_SR = 0.5, SRTIO3_DENSITY = 5.1;
+    /** AmO₂: 88,3 % Am по массе, плотность 11,7 г/см³. */
+    public static final double AM_IN_OXIDE = 0.883, AMO2_DENSITY = 11.7;
 
     public IsotopeCraftRecipe(CraftingBookCategory category) {
         super(category);
@@ -110,6 +112,26 @@ public final class IsotopeCraftRecipe extends CustomRecipe {
                 return out;
             }
         }
+        // выделение Am-241 из выдержанного PuO₂ ионным обменом (12 §12.2.5)
+        ItemStack resin = pick(l, s -> s.is(PcItems.ION_EXCHANGE_RESIN_SBA.get()));
+        if (resin != null) {
+            ItemStack other = l.get(0) == resin ? l.get(1) : l.get(0);
+            ActivityData am = americium(other);
+            if (am != null) {
+                ItemStack out = new ItemStack(PcItems.AM241_OXIDE.get());
+                out.set(ActivityData.ACTIVITY.get(), am);
+                return out;
+            }
+        }
+        // закрытый источник Am-241 (γ 59,5 кэВ): оксид в двойной стальной капсуле
+        if (iron != null) {
+            ItemStack other = l.get(0) == iron ? l.get(1) : l.get(0);
+            if (other.is(PcItems.AM241_OXIDE.get()) && other.has(ActivityData.ACTIVITY.get())) {
+                ItemStack out = new ItemStack(PcItems.SEALED_SOURCE.get());
+                out.set(ActivityData.ACTIVITY.get(), other.get(ActivityData.ACTIVITY.get()));
+                return out;
+            }
+        }
         // источник тепла Pu-238
         if (iridium != null) {
             ItemStack other = l.get(0) == iridium ? l.get(1) : l.get(0);
@@ -125,6 +147,25 @@ public final class IsotopeCraftRecipe extends CustomRecipe {
             return out;
         }
         return ItemStack.EMPTY;
+    }
+
+    /** Игровое время сервера для распада в рецепте (верстак своего времени не знает). */
+    static long now() {
+        var server = net.neoforged.neoforge.server.ServerLifecycleHooks.getCurrentServer();
+        return server == null ? 0 : server.overworld().getGameTime();
+    }
+
+    /** Am-241, вросший в партию PuO₂ к нынешнему игровому времени, или null. */
+    @Nullable
+    static ActivityData americium(ItemStack s) {
+        if (!s.is(PcItems.PUO2_POWDER.get())) return null;
+        ActivityData a = s.get(ActivityData.ACTIVITY.get());
+        if (a == null) return null;
+        long t = now();
+        double am = a.inventory(t).bq(Emitter.AM241);
+        if (am <= 0) return null;
+        double kg = am / Emitter.AM241.lambda() / TargetMaterial.AVOGADRO * 241.06 / 1000;
+        return new ActivityData(t, kg / AM_IN_OXIDE, AMO2_DENSITY, Map.of(Emitter.AM241.name(), am));
     }
 
     /** Стронциевая фракция стеклоблока ВАО или null. */
@@ -168,6 +209,26 @@ public final class IsotopeCraftRecipe extends CustomRecipe {
                     back.set(ActivityData.ACTIVITY.get(), new ActivityData(a.refTick(), a.massKg(), a.densityGcc(), rest));
                 }
                 out.set(i, back);
+            }
+        }
+        // PuO₂ возвращается без америция (распад досчитан до сейчас), ионит — отработанным
+        if (result(input).is(PcItems.AM241_OXIDE.get())) {
+            long t = now();
+            for (int i = 0; i < input.size(); i++) {
+                ItemStack s = input.getItem(i);
+                if (s.is(PcItems.ION_EXCHANGE_RESIN_SBA.get())) {
+                    out.set(i, new ItemStack(PcItems.SPENT_ION_EXCHANGE_RESIN.get()));
+                } else if (s.is(PcItems.PUO2_POWDER.get())) {
+                    ActivityData a = s.get(ActivityData.ACTIVITY.get());
+                    ItemStack back = s.copyWithCount(1);
+                    if (a != null) {
+                        ActivityData now = ActivityData.of(a.inventory(t), t);
+                        Map<String, Double> rest = new HashMap<>(now.bq());
+                        rest.remove(Emitter.AM241.name());
+                        back.set(ActivityData.ACTIVITY.get(), new ActivityData(t, a.massKg(), a.densityGcc(), rest));
+                    }
+                    out.set(i, back);
+                }
             }
         }
         return out;

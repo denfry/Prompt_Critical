@@ -134,8 +134,6 @@ and the effects of each structure, not only the beacon colour.
 - Art is postponed: many new machines use placeholder or borrowed models (for example the uranium ion exchange column
   uses the water treatment column's model, the T1 reactor both segments use `reactor_vessel_wall`). Report only missing
   models, wrong orientation and parts outside the body.
-- Spent fuel has no minor actinides; decay heat is about a third low.
-- Pu-238 cannot be made in survival yet (no Np-237 recovery in PUREX).
 - The `Beta-M` RTG (~10 W) cannot light any lamp; the weakest lamp needs 15 W.
 - The sintering furnace draws no power.
 - Water never moves with the tide (design decision R32).

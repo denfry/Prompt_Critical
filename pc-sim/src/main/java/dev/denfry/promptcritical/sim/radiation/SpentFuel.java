@@ -20,6 +20,16 @@ public final class SpentFuel {
     public static final double Y_CS137 = 0.0619, Y_SR90 = 0.0578, Y_I131 = 0.0289, Y_ZR95 = 0.0650, Y_RU106 = 0.0040, Y_KR85 = 0.00286;
     /** Co-60 активации стали на кг ТМ при 40 МВт·сут/кг, Бк. */
     public static final double CO60_BQ_PER_KG_AT_40 = 3e13 / 460;
+    /**
+     * Актиниды при выгрузке, кг на кг ТМ при опорном выгорании {@value #ACTINIDE_REF_BU} МВт·сут/кг — обратным
+     * пересчётом из состава ОЯТ через 5 лет выдержки (02 §2.8.1: Pu 11,5 кг/т с Pu-238 2,7 % и Pu-241 12,5 %, Am 0,6 кг/т,
+     * Cm 0,06 кг/т): Pu-238 0,31, Pu-241 1,83, Am-241 0,21 (0,6 минус врастание из Pu-241 за 5 лет), Cm-244 0,073 кг/т.
+     * Зависимость от выгорания: Pu-241 — линейно, Pu-238 и Am-241 — квадрат, Cm-244 — четвёртая степень (цепочка
+     * из четырёх захватов) [оценка по форме ORIGEN-зависимостей].
+     */
+    public static final double ACTINIDE_REF_BU = 45, PU238_AT_REF = 0.31e-3, PU241_AT_REF = 1.83e-3, AM241_AT_REF = 0.21e-3,
+            CM244_AT_REF = 0.073e-3;
+    private static final double AVOGADRO = 6.02214076e23;
 
     private SpentFuel() {
     }
@@ -54,7 +64,18 @@ public final class SpentFuel {
         put(a, Emitter.KR85, rate, Y_KR85, irradiationS);
         a.put(Emitter.CS134, a.get(Emitter.CS137) * burnupMWdPerKg / 40);
         if (steelStructure) a.put(Emitter.CO60, CO60_BQ_PER_KG_AT_40 * heavyMetalKg * burnupMWdPerKg / 40);
+        // актиниды: тепло и нейтроны выдержанного ОЯТ (Pu-238, Cm-244, Am-241 — около четверти тепла через 5 лет)
+        double r = burnupMWdPerKg / ACTINIDE_REF_BU;
+        a.put(Emitter.PU238, bq(Emitter.PU238, 238.05, PU238_AT_REF * r * r * heavyMetalKg));
+        a.put(Emitter.PU241, bq(Emitter.PU241, 241.06, PU241_AT_REF * r * heavyMetalKg));
+        a.put(Emitter.AM241, bq(Emitter.AM241, 241.06, AM241_AT_REF * r * r * heavyMetalKg));
+        a.put(Emitter.CM244, bq(Emitter.CM244, 244.06, CM244_AT_REF * r * r * r * r * heavyMetalKg));
         return new ActivityInventory(a, heavyMetalKg, densityGcc);
+    }
+
+    /** Активность массы {@code kg} нуклида с молярной массой {@code gPerMol}, Бк. */
+    static double bq(Emitter e, double gPerMol, double kg) {
+        return e.lambda() * kg * 1000 / gPerMol * AVOGADRO;
     }
 
     /**

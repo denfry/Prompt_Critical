@@ -28,3 +28,9 @@ Core gamma rays heat the capsule, about 5 W per gram at PWR power density. In th
 ## Pile slugs
 
 Slug cassettes of the T0 pile build up fission products from the fissions of their node: caesium, strontium, iodine, zirconium, ruthenium, krypton. The tooltip shows burnup and activity. A cassette pulled from a pile that has been running is a radiation source, so don't carry it around bare. A discharged power-reactor assembly carries activity from the moment it leaves: fission products plus Co-60 from the steel tubes.
+
+## Americium-241
+
+Americium needs no irradiation: it grows by itself in aged PuO₂ from plutonium-241 (half-life 14.3 years). A kilogram of plutonium with 10 % Pu-241 gains 21 g of Am-241 in five years. Americium is separated at the crafting table: PuO₂ and a [strong-base anion exchange resin](item:promptcritical:ion_exchange_resin_sba) give [americium-241 oxide](item:promptcritical:am241_oxide), and the PuO₂ comes back clean. The oxide with an iron ingot makes a sealed Am-241 source. Its gamma rays are soft (59.5 keV); it is dangerous mainly when the capsule breaks: alpha aerosol.
+
+Americium and curium-244 also build up in the spent fuel itself. After five years of cooling, together with Pu-238, they give about a quarter of an assembly's decay heat. Curium-244 is also the main neutron source of aged fuel. In PUREX americium and curium go to the raffinate and then into the HLW glass.

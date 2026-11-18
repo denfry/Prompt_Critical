@@ -438,6 +438,7 @@ public final class PcLanguageProvider extends LanguageProvider {
         i("generator_coupling", "Shear-Pin Coupling", "Муфта со срезным штифтом");
         i("jacket_heater", "Jacket Water Heater", "Подогреватель рубашки");
         i("lockout_padlock", "Lockout Padlock", "Замок блокировки");
+        i("am241_oxide", "Americium-241 Oxide", "Оксид америция-241");
         i("fire_extinguisher", "Powder Fire Extinguisher (ABCE)", "Огнетушитель порошковый (ABCE)");
         i("fire_extinguisher_water", "Water Fire Extinguisher", "Огнетушитель водный");
         i("fire_extinguisher_foam", "Foam Fire Extinguisher", "Огнетушитель пенный");

@@ -25,7 +25,9 @@ public final class EmitterData {
             case RU106 -> Element.RU;
             case KR85 -> Element.KR;
             case IR192 -> Element.IR;
-            case PU238 -> Element.PU;
+            case PU238, PU241 -> Element.PU;
+            case AM241 -> Element.AM;
+            case CM244 -> Element.AM; // трёхвалентный актинид: подвижность в барьерах как у америция
             case N16 -> Element.N;
         };
     }
@@ -44,12 +46,15 @@ public final class EmitterData {
             case RU106 -> 7.0e-9;
             case IR192 -> 1.4e-9;
             case PU238 -> 2.3e-7;
+            case PU241 -> 4.8e-9;
+            case AM241 -> 2.0e-7;
+            case CM244 -> 1.2e-7;
             case KR85, N16 -> 0;
         };
     }
 
     public static boolean transuranic(Emitter e) {
-        return e == Emitter.PU238;
+        return e == Emitter.PU238 || e == Emitter.PU241 || e == Emitter.AM241 || e == Emitter.CM244;
     }
 
     /** Период полураспада, годы. */

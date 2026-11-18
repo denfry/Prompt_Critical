@@ -220,6 +220,8 @@ public final class PcItems {
     public static final DeferredItem<Item> IRIDIUM_INGOT = item("iridium_ingot", 64);
     /** Диоксид нептуния-237 (мишень Pu-238). */
     public static final DeferredItem<Item> NPO2_POWDER = item("npo2_powder", 16);
+    /** AmO₂ — америций-241, выделенный ионитом из выдержанного PuO₂ (12 §12.2.5). */
+    public static final DeferredItem<Item> AM241_OXIDE = item("am241_oxide", 1);
     /** Капсула облучения: пустая или с компонентом {@code irradiation_target}. */
     public static final DeferredItem<Item> IRRADIATION_CAPSULE = item("irradiation_capsule", 16);
     /** Закрытый источник особой формы: активность — компонентом {@code activity}. */
