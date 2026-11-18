@@ -19,7 +19,7 @@ An empty hand on the PLC opens the programmer. The language is the IEC 61131-3 I
 
 - `LD x` loads, `ST y` stores, `S y` / `R y` set or reset when the result is true.
 - `AND`, `OR`, `XOR`, `NOT`; an N suffix inverts the operand: `ANDN %IX0.1`.
-- `ADD`, `SUB`, `MUL`, `DIV`, and the comparisons `GT GE EQ NE LE LT`.
+- `ADD`, `SUB`, `MUL`, `DIV`, `MOD`, and the comparisons `GT GE EQ NE LE LT`.
 - Brackets: `AND( %IX0.1` … `)` evaluates what is inside first.
 - Jumps: `JMP label`, `JMPC` if true, `JMPCN` if false; `RETC` ends the scan.
 - Comments: `(* … *)` and `//`.
@@ -51,6 +51,33 @@ CAL TON0(IN := %IX0.2, PT := T#5S)
 LD  TON0.Q
 ST  %QX0.1
 ```
+
+## Structured Text
+
+Instruction List reads like the relay circuit it replaced. For arithmetic, loops and branching there is Structured Text, the Pascal-like second language of IEC 61131-3. Start the program with `PROGRAM name` or put `(*ST*)` on the first line and the programmer switches to ST; the line under the editor shows which language it sees. Both languages compile into the same instructions, so the scan, the watchdog, the limits and the addresses are the same.
+
+```
+PROGRAM Pump
+VAR
+    Start AT %IX0.0 : BOOL;
+    Stop  AT %IX0.1 : BOOL;   (* normally closed *)
+    Motor AT %QX0.0 : BOOL;
+    Delay : TON;
+END_VAR
+Motor := (Start OR Motor) AND Stop;
+Delay(IN := Motor, PT := T#5s);
+%QX0.1 := Delay.Q;
+END_PROGRAM
+```
+
+- `x := expression;` assigns. Precedence, highest first: brackets; `NOT` and unary minus; `*`, `/`, `MOD`; `+`, `-`; `<`, `>`, `<=`, `>=`; `=`, `<>`; `AND` (or `&`); `XOR`; `OR`. So `a OR b AND c` is `a OR (b AND c)`.
+- `IF … THEN … ELSIF … ELSE … END_IF;`
+- `CASE n OF 1: …; 2, 3: …; 4..6: …; ELSE … END_CASE;` with whole-number labels.
+- `WHILE … DO … END_WHILE;`, `REPEAT … UNTIL … END_REPEAT;`, `FOR %MW0 := 1 TO 10 BY 2 DO … END_FOR;` (the counter is a memory word, the step a constant), `EXIT;` and `RETURN;`.
+- `VAR … END_VAR` names addresses (`Name AT %IX0.0 : BOOL;`) and declares block instances (`T1 : TON;`). A declared instance takes a free number from 15 down, so it does not collide with `TON0` written directly.
+- A block call takes named inputs, and `=>` copies an output: `T1(IN := %IX0.2, PT := T#5S, Q => %QX0.1);`. Inputs must be a variable or a constant; compute an expression into a `%MX` or `%MW` first.
+
+Nothing stops a loop that never ends except the watchdog: `WHILE TRUE DO` puts the PLC into FAULT on the first scan. Brackets in an expression use the same eight levels as in IL. Errors show the line and what the compiler expected.
 
 ## Memory
 

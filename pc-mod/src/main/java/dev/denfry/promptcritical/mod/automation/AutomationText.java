@@ -49,7 +49,7 @@ public final class AutomationText {
             "Байпас снят (%s) — защита снова в работе");
 
     // программатор ПЛК (A3)
-    public static final String PLC_TITLE = t("plc.title", "PLC programmer · Instruction List", "Программатор ПЛК · список инструкций");
+    public static final String PLC_TITLE = t("plc.title", "PLC programmer · IEC 61131-3", "Программатор ПЛК · IEC 61131-3");
     public static final String PLC_UPLOAD = t("plc.upload", "Load into PLC", "Загрузить в ПЛК");
     public static final String PLC_RUN = t("plc.run", "Key: RUN", "Ключ: RUN");
     public static final String PLC_STOP = t("plc.stop", "Key: STOP", "Ключ: STOP");
@@ -60,6 +60,8 @@ public final class AutomationText {
     public static final String PLC_ANALOG = t("plc.analog", "%%IW: %s  %%QW: %s", "%%IW: %s  %%QW: %s");
     public static final String PLC_ERROR = t("plc.error", "Line %s: %s %s", "Строка %s: %s %s");
     public static final String PLC_OK = t("plc.ok", "Program compiled without errors", "Программа скомпилирована без ошибок");
+    public static final String PLC_LANGUAGE = t("plc.language", "%s — IL by default; PROGRAM or (*ST*) on the first line switches to Structured Text",
+            "%s — по умолчанию IL; PROGRAM или (*ST*) в первой строке включают Structured Text");
     public static final String PLC_UNSAVED = t("plc.unsaved", "Edited — load into the PLC to apply", "Изменено — загрузите в ПЛК");
     public static final String[] PLC_MODES = {
             t("plc.mode.off", "OFF — no 24 V", "ВЫКЛ — нет 24 В"),
@@ -79,7 +81,8 @@ public final class AutomationText {
                 {"UNBALANCED_PARENTHESIS", "unbalanced bracket", "непарная скобка"},
                 {"NESTING_TOO_DEEP", "brackets nested too deep", "слишком глубокие скобки"},
                 {"BAD_CALL", "bad block call", "неверный вызов блока"},
-                {"TOO_LONG", "program too long", "программа слишком длинная"}};
+                {"TOO_LONG", "program too long", "программа слишком длинная"},
+                {"SYNTAX", "syntax:", "синтаксис:"}};
         for (String[] e : errors) t("plc.err." + e[0], e[1], e[2]);
     }
 

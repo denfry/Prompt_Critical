@@ -50,7 +50,7 @@ public final class PlcCpu {
 
     /** Загрузить текст программы. Возвращает результат компиляции; с ошибками ПЛК встаёт в STOP. */
     public IlProgram load(String source) {
-        program = IlCompiler.compile(source);
+        program = PlcLanguage.compile(source);
         if (mode == Mode.RUN || mode == Mode.FAULT) mode = Mode.STOP;
         clearOutputs();
         return program;
@@ -195,6 +195,7 @@ public final class PlcCpu {
             case SUB -> a - v;
             case MUL -> a * v;
             case DIV -> v == 0 ? 0 : a / v;
+            case MOD -> v == 0 ? 0 : a % v;
             case GT -> a > v ? 1 : 0;
             case GE -> a >= v ? 1 : 0;
             case EQ -> Math.abs(a - v) <= 1e-9 * Math.max(1, Math.abs(a)) ? 1 : 0;
@@ -390,7 +391,7 @@ public final class PlcCpu {
     }
 
     public void load(StateReader r) {
-        program = IlCompiler.compile(r.optString("source", ""));
+        program = PlcLanguage.compile(r.optString("source", ""));
         runKey = r.getBoolean("run_key");
         Mode[] modes = Mode.values();
         mode = modes[Math.floorMod(r.optInt("mode", 0), modes.length)];
