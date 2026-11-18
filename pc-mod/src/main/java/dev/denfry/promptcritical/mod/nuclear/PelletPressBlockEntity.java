@@ -10,7 +10,10 @@ import dev.denfry.promptcritical.sim.core.MutableStateTree;
 import dev.denfry.promptcritical.sim.core.TreeStateReader;
 import dev.denfry.promptcritical.sim.core.TreeStateWriter;
 import dev.denfry.promptcritical.sim.fuel.FuelDesign;
+import dev.denfry.promptcritical.mod.registry.PcItems;
+import dev.denfry.promptcritical.mod.reprocessing.PuLot;
 import dev.denfry.promptcritical.sim.fuel.MaterialBalance;
+import dev.denfry.promptcritical.sim.fuel.MoxBlend;
 import dev.denfry.promptcritical.sim.fuel.PelletProcess;
 import dev.denfry.promptcritical.sim.mechanics.ShaftInput;
 import java.util.Arrays;
@@ -31,6 +34,7 @@ import net.minecraft.world.level.block.state.BlockState;
 import net.neoforged.neoforge.items.IItemHandler;
 import net.neoforged.neoforge.items.IItemHandlerModifiable;
 import net.neoforged.neoforge.items.ItemStackHandler;
+import net.neoforged.neoforge.items.wrapper.CombinedInvWrapper;
 import org.jetbrains.annotations.Nullable;
 
 /**
@@ -38,9 +42,16 @@ import org.jetbrains.annotations.Nullable;
  * сырые таблетки — сразу в печь спекания, которая стоит вплотную. Давление прессования задаёт сырую плотность
  * (Хеккель) и брак прессования; бракованные сырые таблетки дробят и возвращают в бункер — уран не теряется. Партии
  * не смешиваются: мешок с другим обогащением ждёт, пока бункер опустеет.
+ *
+ * <p>МОКС: PuO₂ из PUREX (партия {@code pu_lot}) — во второй бункер (воронкой или рукой); пресс забирает его в
+ * смеситель не больше безопасной массы плутония и подмешивает к каждому мешку урана до {@value #MOX_PU_FRACTION} Pu/ТМ
+ * ({@link MoxBlend}). Плутония на мешок не хватает — мешок ждёт; бункер PuO₂ пуст — пресс идёт на урановом топливе.
+ * Мешок, уже несущий плутоний (шлам МОКС), идёт со своей долей.
  */
 public final class PelletPressBlockEntity extends KineticMachineBlockEntity<ShaftInput> implements PanelHost {
     public static final double NOMINAL_RPM = 64, RATED_W = 60e3, RATED_KG_U_S = 0.01;
+    /** Доля Pu в ТМ теплового МОКС, середина 5–8 % ({@link MoxBlend}). */
+    public static final double MOX_PU_FRACTION = 0.07;
 
     private final ShaftInput shaft = new ShaftInput();
     private final ItemStackHandler hopper = new ItemStackHandler(1) {
@@ -54,6 +65,21 @@ public final class PelletPressBlockEntity extends KineticMachineBlockEntity<Shaf
             setChanged();
         }
     };
+    private final ItemStackHandler puHopper = new ItemStackHandler(1) {
+        @Override
+        public boolean isItemValid(int slot, ItemStack stack) {
+            return stack.is(PcItems.PUO2_POWDER.get()) && stack.has(PuLot.TYPE.get());
+        }
+
+        @Override
+        protected void onContentsChanged(int slot) {
+            setChanged();
+        }
+    };
+    private final IItemHandler feed = new CombinedInvWrapper(hopper, puHopper);
+    /** Плутоний в смесителе: кг и изотопия; доля Pu в буфере пресса. */
+    private double puStockKg;
+    private MoxShare puStock = MoxShare.NONE, share = MoxShare.NONE;
     private final MaterialBalance balance = new MaterialBalance();
     private double pressureMpa = 300, bufferKg, x, x234, loadW, lastKgS;
     private FuelDesign design = FuelDesign.VVER_1000;
@@ -140,10 +166,23 @@ public final class PelletPressBlockEntity extends KineticMachineBlockEntity<Shaf
         tick = binding.world().clock().tick();
         double dt = 0.05 * binding.world().clock().kSlow();
         // бункер: следующий мешок той же партии
+        fillPuStock();
         ItemStack s = hopper.getStackInSlot(0);
         if (!s.isEmpty() && bufferKg < 2) {
             FuelLot l = FuelLot.of(s);
-            if (bufferKg <= 1e-9 || Math.abs(l.u235() - x) < 1e-9) {
+            MoxShare m = MoxShare.of(l);
+            double puUsed = 0;
+            if (!m.isMox() && puStockKg > 0) {
+                MoxBlend.Mix mix = MoxBlend.blend(puStockKg, puStock.pu239(), puStock.pu240(), puStock.pu241(), puStock.pu242(), l.uKg(),
+                        l.u235(), MOX_PU_FRACTION);
+                // плутония не хватает на весь мешок — ждём следующую партию PuO₂
+                m = mix.uKg() >= l.uKg() - 1e-9 ? new MoxShare(mix.puKg() / l.uKg(), puStock.pu239(), puStock.pu240(), puStock.pu241(),
+                        puStock.pu242()) : null;
+                if (m != null) puUsed = mix.puKg();
+            }
+            if (m != null && (bufferKg <= 1e-9 || Math.abs(l.u235() - x) < 1e-9 && m.same(share))) {
+                puStockKg -= puUsed;
+                share = m;
                 x = bufferKg <= 1e-9 ? l.u235() : x;
                 x234 = bufferKg <= 1e-9 ? l.u234() : (x234 * bufferKg + l.u234() * l.uKg()) / (bufferKg + l.uKg());
                 bufferKg += l.uKg();
@@ -160,7 +199,7 @@ public final class PelletPressBlockEntity extends KineticMachineBlockEntity<Shaf
             double kg = Math.min(bufferKg, RATED_KG_U_S * dt * Math.min(1, availableW() / RATED_W));
             // брак прессования дробят и возвращают в бункер: в печь идёт только годное
             double good = kg * (1 - PelletProcess.pressingDefects(pressureMpa));
-            double taken = f.acceptGreen(good, x, x234, PelletProcess.greenDensity(pressureMpa), design);
+            double taken = f.acceptGreen(good, x, x234, share, PelletProcess.greenDensity(pressureMpa), design);
             limited = taken < good - 1e-12;
             bufferKg -= taken;
             balance.out(taken, x);
@@ -171,12 +210,26 @@ public final class PelletPressBlockEntity extends KineticMachineBlockEntity<Shaf
         if (level.getGameTime() % 100 == 0) setChanged();
     }
 
+    /** Забрать PuO₂ из бункера в смеситель, пока плутоний в нём ниже безопасной массы. */
+    private void fillPuStock() {
+        ItemStack p = puHopper.getStackInSlot(0);
+        PuLot lot = p.get(PuLot.TYPE.get());
+        if (lot == null || lot.puKg() <= 0) return;
+        if (!MoxBlend.vesselSafe(puStockKg + lot.puKg(), lot.pu240())) return;
+        double sum = puStockKg + lot.puKg();
+        puStock = MoxShare.mix(puStock, puStockKg, new MoxShare(1, lot.pu239(), lot.pu240(), lot.pu241(), lot.pu242()), lot.puKg());
+        puStock = new MoxShare(1, puStock.pu239(), puStock.pu240(), puStock.pu241(), puStock.pu242());
+        puStockKg = sum;
+        p.shrink(1);
+        puHopper.setStackInSlot(0, p);
+    }
+
     // --- руки ---
 
     @Override
     @Nullable
     public IItemHandler items(@Nullable Direction side) {
-        return hopper;
+        return feed;
     }
 
     @Override
@@ -186,13 +239,13 @@ public final class PelletPressBlockEntity extends KineticMachineBlockEntity<Shaf
 
     @Override
     public boolean accepts(ItemStack stack) {
-        return FuelPanels.powder(stack);
+        return FuelPanels.powder(stack) || puHopper.isItemValid(0, stack);
     }
 
     @Override
     public ItemInteractionResult useItem(Player player, InteractionHand hand, ItemStack stack) {
         if (!accepts(stack)) return ItemInteractionResult.PASS_TO_DEFAULT_BLOCK_INTERACTION;
-        ItemStack left = hopper.insertItem(0, stack.copy(), false);
+        ItemStack left = (FuelPanels.powder(stack) ? hopper : puHopper).insertItem(0, stack.copy(), false);
         int moved = stack.getCount() - left.getCount();
         if (moved == 0) return ItemInteractionResult.FAIL;
         if (!player.isCreative()) stack.shrink(moved);
@@ -270,6 +323,7 @@ public final class PelletPressBlockEntity extends KineticMachineBlockEntity<Shaf
         super.write(tag, registries, clientPacket);
         if (clientPacket) return;
         tag.put("hopper", hopper.serializeNBT(registries));
+        tag.put("pu_hopper", puHopper.serializeNBT(registries));
         MutableStateTree tree = new MutableStateTree();
         TreeStateWriter w = new TreeStateWriter(tree);
         balance.save(w);
@@ -279,6 +333,9 @@ public final class PelletPressBlockEntity extends KineticMachineBlockEntity<Shaf
         w.putDouble("x234", x234);
         w.putString("design", design.name());
         w.putBoolean("run", running);
+        w.putDouble("pu_stock", puStockKg);
+        puStock.save(w, "stock_");
+        share.save(w, "mox_");
         tag.put("state", NbtStateTrees.toNbt(tree));
     }
 
@@ -287,6 +344,7 @@ public final class PelletPressBlockEntity extends KineticMachineBlockEntity<Shaf
         super.read(tag, registries, clientPacket);
         if (clientPacket) return;
         if (tag.contains("hopper")) hopper.deserializeNBT(registries, tag.getCompound("hopper"));
+        if (tag.contains("pu_hopper")) puHopper.deserializeNBT(registries, tag.getCompound("pu_hopper"));
         if (tag.contains("state")) {
             TreeStateReader r = new TreeStateReader(NbtStateTrees.fromNbt(tag.getCompound("state")));
             balance.load(r);
@@ -297,6 +355,9 @@ public final class PelletPressBlockEntity extends KineticMachineBlockEntity<Shaf
             String d = r.optString("design", FuelDesign.VVER_1000.name());
             for (FuelDesign fd : FuelDesign.values()) if (fd.name().equals(d)) design = fd;
             running = r.has("run") && r.getBoolean("run");
+            puStockKg = r.optDouble("pu_stock", 0);
+            puStock = MoxShare.load(r, "stock_");
+            share = MoxShare.load(r, "mox_");
         }
     }
 }

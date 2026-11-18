@@ -95,6 +95,9 @@
   adjustment most of it ends up in the glass.
 - MOX blending model: reprocessed PuO₂ with tails uranium to 5–8 % Pu (12 % at most), a blending vessel held below
   the safe plutonium mass, and fissile plutonium worth 0.75 of U-235 in a PWR lattice.
+- MOX through the fuel shop: PuO₂ lots go into a second hopper on the pellet press and are blended into each uranium
+  bag at 7 % Pu; pellets, sludge, rods and assemblies carry the plutonium, the sintering furnace also holds it below
+  the safe mass, and the PWR loads MOX assemblies at their U-235 equivalent enrichment.
 
 ### Silicon, chips and computers (11 §11.5)
 - Submerged arc furnace (about 12 kWh/kg), trichlorosilane fluidised bed, Siemens reactor (120 kWh/kg) with the HCl

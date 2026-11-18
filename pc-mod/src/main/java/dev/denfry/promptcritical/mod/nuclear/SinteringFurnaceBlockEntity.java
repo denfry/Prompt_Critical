@@ -40,6 +40,8 @@ public final class SinteringFurnaceBlockEntity extends FuelShopBlockEntity {
     private double greenKg, greenDensity = 0.52, x, x234, pelletKg, sludgeKg, sludgeX, sludgeX234;
     @Nullable
     private FuelDesign design;
+    /** Плутоний МОКС в печи и в шламе, на кг U. */
+    private MoxShare mox = MoxShare.NONE, sludgeShare = MoxShare.NONE;
     @Nullable
     private PelletProcess.Sintered last;
     private boolean reject, starved, limited;
@@ -87,12 +89,14 @@ public final class SinteringFurnaceBlockEntity extends FuelShopBlockEntity {
 
     /**
      * Сырые таблетки от пресса: уран {@code kgU} партии {@code u235}/{@code u234}, сырая плотность и конструкция.
-     * Возвращает принятое, кг U: другую партию или конструкцию печь не смешивает, U-235 держит ниже безопасной массы.
+     * Возвращает принятое, кг U: другую партию или конструкцию печь не смешивает, U-235 и плутоний МОКС ({@code lot})
+     * держит ниже безопасной массы.
      */
-    double acceptGreen(double kgU, double u235, double u234, double green, FuelDesign d) {
+    double acceptGreen(double kgU, double u235, double u234, MoxShare lot, double green, FuelDesign d) {
         boolean empty = greenKg <= 1e-9 && pelletKg <= 1e-9;
-        if (!empty && (design != d || Math.abs(u235 - x) > 1e-9)) return 0;
+        if (!empty && (design != d || Math.abs(u235 - x) > 1e-9 || !lot.same(mox))) return 0;
         double room = Math.min(LOAD_KG - greenKg, (Criticality.safeU235Kg(u235) - (greenKg + pelletKg) * u235) / Math.max(u235, 1e-12));
+        room = Math.min(room, lot.safeUKg() - greenKg - pelletKg);
         limited = kgU > room;
         double a = Math.max(0, Math.min(kgU, room));
         if (a <= 0) return 0;
@@ -100,6 +104,7 @@ public final class SinteringFurnaceBlockEntity extends FuelShopBlockEntity {
         greenKg += a;
         x = u235;
         x234 = u234;
+        mox = lot;
         design = d;
         balance.in(a, u235);
         setChanged();
@@ -142,7 +147,7 @@ public final class SinteringFurnaceBlockEntity extends FuelShopBlockEntity {
         }
         double perRod = design.uKgPerRod(s.density(), x);
         while (pelletKg >= perRod) {
-            ItemStack tray = new FuelLot(perRod, x, x234, s.density(), design.pelletsPerRod(), design.name(), "")
+            ItemStack tray = mox.apply(new FuelLot(perRod, x, x234, s.density(), design.pelletsPerRod(), design.name(), ""))
                     .on(new ItemStack(PcItems.FUEL_PELLET_TRAY.get()));
             if (!output(FuelPanels.S_SLOT_TRAYS, tray)) break;
             pelletKg -= perRod;
@@ -159,13 +164,14 @@ public final class SinteringFurnaceBlockEntity extends FuelShopBlockEntity {
     private void addSludge(double kg) {
         sludgeX = sludgeKg + kg > 0 ? (sludgeX * sludgeKg + x * kg) / (sludgeKg + kg) : x;
         sludgeX234 = sludgeKg + kg > 0 ? (sludgeX234 * sludgeKg + x234 * kg) / (sludgeKg + kg) : x234;
+        sludgeShare = MoxShare.mix(sludgeShare, sludgeKg, mox, kg);
         sludgeKg += kg;
     }
 
     /** Шлам и брак — мешками по 1 кг U: они уходят из печи и считаются выходом участка (вернутся через пресс). */
     private void flushSludge() {
         while (sludgeKg >= 1) {
-            ItemStack bag = FuelLot.powder(1, sludgeX, sludgeX234).on(new ItemStack(PcItems.UO2_GRINDING_SLUDGE.get()));
+            ItemStack bag = sludgeShare.apply(FuelLot.powder(1, sludgeX, sludgeX234)).on(new ItemStack(PcItems.UO2_GRINDING_SLUDGE.get()));
             if (!output(FuelPanels.S_SLOT_SLUDGE, bag)) break;
             sludgeKg -= 1;
             balance.out(1, sludgeX);
@@ -232,6 +238,8 @@ public final class SinteringFurnaceBlockEntity extends FuelShopBlockEntity {
         out.putDouble("sludge_x234", sludgeX234);
         out.putString("design", design == null ? "" : design.name());
         out.putInt("trays", trays);
+        mox.save(out, "mox_");
+        sludgeShare.save(out, "sludge_mox_");
     }
 
     @Override
@@ -250,6 +258,8 @@ public final class SinteringFurnaceBlockEntity extends FuelShopBlockEntity {
         design = null;
         for (FuelDesign f : FuelDesign.values()) if (f.name().equals(d)) design = f;
         trays = in.optInt("trays", 0);
+        mox = MoxShare.load(in, "mox_");
+        sludgeShare = MoxShare.load(in, "sludge_mox_");
     }
 
     @Override

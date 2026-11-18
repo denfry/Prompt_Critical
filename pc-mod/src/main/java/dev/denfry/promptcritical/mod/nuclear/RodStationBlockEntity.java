@@ -80,7 +80,7 @@ public final class RodStationBlockEntity extends FuelShopBlockEntity {
         progress = 0;
         FuelLot l = FuelLot.of(tray);
         boolean he = helium.amount() >= GAS_NM3;
-        ItemStack rod = new FuelLot(l.uKg(), l.u235(), l.u234(), l.density(), l.count(), l.design(), he ? "he" : "ar")
+        ItemStack rod = MoxShare.of(l).apply(new FuelLot(l.uKg(), l.u235(), l.u234(), l.density(), l.count(), l.design(), he ? "he" : "ar"))
                 .on(new ItemStack(PcItems.FUEL_ROD.get()));
         if (!room(FuelPanels.R_SLOT_RODS, rod)) return;
         tube.shrink(1);
