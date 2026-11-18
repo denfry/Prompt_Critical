@@ -9,11 +9,11 @@ import net.neoforged.neoforge.fluids.capability.IFluidHandler;
  * Патрубок установки на одной грани: трубы Create заливают в приёмные баки (каждый принимает свою жидкость) и
  * забирают из одного бака продукта этой грани.
  */
-final class PortHandler implements IFluidHandler {
+public final class PortHandler implements IFluidHandler {
     private final FeedTank[] inputs;
     private final ProductTank output;
 
-    PortHandler(ProductTank output, FeedTank... inputs) {
+    public PortHandler(ProductTank output, FeedTank... inputs) {
         this.inputs = inputs;
         this.output = output;
     }
