@@ -622,6 +622,10 @@ public final class PcBlocks {
     private static final Footprint FP_BWR_REACTOR = Footprint.of(CUBE3, CUBE3.at(0, 3, 0));
     public static final DeferredBlock<PcDeviceBlock> BWR_REACTOR = device("bwr_reactor", machine(), Spec.facing().segments(PcProperties.BWR_SEGMENT, FP_BWR_REACTOR),
             FoundryBlock.with(dev.denfry.promptcritical.mod.npp.BwrReactorBlockEntity::new));
+    /** CANDU T3 3×6×3: внизу каландр с каналами, вверху мост перегрузочной машины; пульт — в центре низа. */
+    private static final Footprint FP_CANDU_REACTOR = Footprint.of(CUBE3, CUBE3.at(0, 3, 0));
+    public static final DeferredBlock<PcDeviceBlock> CANDU_REACTOR = device("candu_reactor", machine(), Spec.facing().segments(PcProperties.CANDU_SEGMENT, FP_CANDU_REACTOR),
+            FoundryBlock.with(dev.denfry.promptcritical.mod.npp.CanduReactorBlockEntity::new));
     public static final DeferredBlock<PcDeviceBlock> PRESSURIZER = device("pressurizer", machine(), Spec.facing(BlockStateProperties.LIT),
             FoundryBlock.with(dev.denfry.promptcritical.mod.npp.PressurizerBlockEntity::new));
 

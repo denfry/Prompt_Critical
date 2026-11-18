@@ -69,6 +69,12 @@ public final class NppRecipes extends RecipeProvider {
                 .pattern("PVP").pattern("PXP").pattern("CGC").define('P', PcItems.STEEL_PLATE.get()).define('V', PcItems.SAFETY_VALVE.get())
                 .define('X', AllBlocks.FLUID_TANK.get()).define('G', PcBlocks.INSTRUMENT_PRESSURE.get()).define('C', Items.COPPER_INGOT)
                 .unlockedBy("has_pwr_reactor", has(PcBlocks.PWR_REACTOR.get())).save(out, id("pressurizer"));
+        // CANDU: каландр из листа с каналами из циркалоя, перегрузочная машина сверху
+        ShapedRecipeBuilder.shaped(RecipeCategory.MISC, PcBlocks.CANDU_REACTOR.get())
+                .pattern("PMP").pattern("ZRZ").pattern("PCP").define('M', PcBlocks.CONTROL_ROD_DRIVE.get())
+                .define('C', PcBlocks.CONTROL_ROD_CHANNEL.get()).define('R', PcBlocks.REACTOR_CONTROLLER.get())
+                .define('P', PcItems.STEEL_PLATE.get()).define('Z', PcItems.ZIRCALOY_INGOT.get())
+                .unlockedBy("has_reactor_controller", has(PcBlocks.REACTOR_CONTROLLER.get())).save(out, id("candu_reactor"));
         // кипящий реактор: корпус ВВЭР без КД, сверху сепараторы — барабан, снизу приводы стержней
         ShapedRecipeBuilder.shaped(RecipeCategory.MISC, PcBlocks.BWR_REACTOR.get())
                 .pattern("PSP").pattern("PRP").pattern("DZD").define('S', PcBlocks.STEAM_DRUM.get())

@@ -176,6 +176,17 @@
 - The PWR now keeps only its loop and protection; assemblies, neutronics, poisons and depletion moved into a shared
   light water core.
 
+### Heavy water reactor (T3)
+- A 100 MWt CANDU-type unit: 97 horizontal channels of 12 natural uranium 37-element bundles (about 19 kg of uranium
+  each) in a cold D2O calandria with a D2O reflector, D2O coolant at 10 MPa. The light water core is generalized by a
+  spec, so the CANDU shares its kinetics, poisons and depletion; neutron generation time near a millisecond.
+- Positive coolant void reactivity, about +16 mk on full voiding of fresh fuel; shutoff rods drop in 2 s.
+- On-power refuelling: a fuelling machine magazine takes bundles from the desk slot, fills empty channels on a
+  shut-down reactor and at power pushes 8 fresh bundles into the most burnt channel, discharging 8 as one canister.
+- Tritium builds up in the moderator from D(n,g)T and is counted on the desk; it is a pure beta emitter with no
+  external dose. Control desk, recipe and a T3 handbook chapter.
+- Fixes a shadowed position count in the shared core step that let only the first PWR or BWR assembly deplete.
+
 ### Telemetry and SCADA (A4)
 - Telemetry gateway (RTU): scans the local panels of every machine within 8 blocks once a second and serves the
   snapshot to a CC: Tweaked computer as the `pc_rtu` peripheral — machines, named instruments with units, lamps as

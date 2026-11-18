@@ -21,6 +21,7 @@ public final class NppText {
                 "РАЗРУШЕНИЕ КАНАЛА: кризис теплообмена разрушил каналов: %s; вода в кладке, активность в зале");
         put("protection_off", "Reactor protections BYPASSED", "Защиты реактора ВЫВЕДЕНЫ");
         put("protection_on", "Reactor protections in service", "Защиты реактора введены");
+        put("candu_refuelled", "Fuelling machine: channel %s refuelled", "Перегрузочная машина: канал %s перегружен");
         put("pwr_unloaded", "Assembly %s unloaded: %s MWd/kg", "ТВС %s выгружена: %s МВт·сут/кг");
         put("pwr_permit", "Start-up power trip lifted", "Пусковая уставка АЗ по мощности снята");
         put("pwr_permit_refused", "The start-up trip can be lifted only above 10 % power", "Снять пусковую уставку можно только выше 10 % мощности");
