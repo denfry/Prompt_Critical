@@ -29,6 +29,7 @@ import net.minecraft.server.level.ServerLevel;
 import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.sounds.SoundEvents;
 import net.minecraft.sounds.SoundSource;
+import net.minecraft.world.level.block.entity.BlockEntity;
 import net.minecraft.world.phys.AABB;
 import net.minecraft.world.phys.Vec3;
 
@@ -58,6 +59,12 @@ public final class ReactorAccidentSystems {
         LoopPart(double share) {
             this.share = share;
         }
+
+        /** The block is still standing at {@code p}, whether or not the reactor picked it this time. */
+        boolean standsAt(ServerLevel sl, BlockPos p) {
+            BlockEntity be = sl.getBlockEntity(p);
+            return this == PUMP ? be instanceof PrimaryPumpBlockEntity : be instanceof PressurizerBlockEntity;
+        }
     }
 
     private final PlantAccident accident;
@@ -67,6 +74,8 @@ public final class ReactorAccidentSystems {
     private int drill;
     private int accumulators;
     private ContainmentScan containment = ContainmentScan.OPEN;
+    /** A scan has given a definite answer since the block loaded; until then the saved containment is left alone. */
+    private boolean containmentKnown;
     private boolean sboAnnounced, locaAnnounced;
     private int releaseTicks;
     private double releaseBqS;
@@ -118,21 +127,26 @@ public final class ReactorAccidentSystems {
         eccsPumps.clear();
         AABB box = new AABB(center).inflate(LINK_RADIUS);
         for (EccsPumpBlockEntity p : Ironworks.blockEntities(sl, box, EccsPumpBlockEntity.class)) eccsPumps.add(p.getBlockPos());
-        // a block of the loop that was there and is gone from a loaded chunk is a torn pipe
+        // a block of the loop that was there and is gone from a loaded chunk is a torn pipe; one still standing but
+        // not picked this time (the reactor takes only as many pumps as it has loops) is not
         for (Map.Entry<BlockPos, LoopPart> e : loop.entrySet()) {
             BlockPos p = e.getKey();
-            if (loopNow.containsKey(p) || !sl.isLoaded(p)) continue;
+            if (loopNow.containsKey(p) || !sl.isLoaded(p) || e.getValue().standsAt(sl, p)) continue;
             if (pressurized) broken.put(p.immutable(), e.getValue());
         }
         // a loop block back in place closes its break
-        broken.keySet().removeIf(loopNow::containsKey);
+        broken.entrySet().removeIf(e -> loopNow.containsKey(e.getKey()) || sl.isLoaded(e.getKey()) && e.getValue().standsAt(sl, e.getKey()));
         loop.clear();
         loop.putAll(loopNow);
     }
 
     /** Slow scans: containment and accumulators (every 5 s, like the PWR's containment scan). */
     public void scan(ServerLevel sl, BlockPos center) {
-        containment = ContainmentScan.scan(sl, center);
+        ContainmentScan c = ContainmentScan.scan(sl, center);
+        if (c != null) {
+            containment = c;
+            containmentKnown = true;
+        }
         int n = 0;
         int r = LINK_RADIUS;
         BlockPos.MutableBlockPos m = new BlockPos.MutableBlockPos();
@@ -185,7 +199,7 @@ public final class ReactorAccidentSystems {
         accident.setAcPower(ac);
         accident.setEccsTrains(trains);
         accident.setAccumulators(accumulators);
-        accident.setContainment(containment.intact() ? containment.volumeM3() : 0, containment.recombiners());
+        if (containmentKnown) accident.setContainment(containment.intact() ? containment.volumeM3() : 0, containment.recombiners());
         accident.setBreakArea(breakArea());
         accident.step(dt, coreW, sinkW, reactorPa);
         boolean injecting = accident.eccsFlowKgS() > 0;
