@@ -59,7 +59,38 @@ public final class PileControllerBlockEntity extends IronworksBlockEntity implem
         if (ticks++ % SCAN_PERIOD == 0) rescan(u);
         GraphitePile p = u.pile();
         if (ticks % FIRE_PERIOD == 0 && !top.isEmpty()) consequences(p);
-        if (ticks % 20 == 0) radiate(p);
+        if (ticks % 20 == 0) {
+            radiate(p);
+            irradiate(p);
+        }
+    }
+
+    private double[] fluxBuf = new double[0];
+
+    /**
+     * Облучение раз в секунду (72 с физики, 12 §12.1): поток узлов из нодального решения — каналам облучения, деления
+     * узлов — кассетам блочков. Плотность мощности для γ-нагрева капсулы — средняя по топливным узлам.
+     */
+    private void irradiate(GraphitePile p) {
+        if (!(level instanceof ServerLevel sl)) return;
+        PileLayout l = p.layout();
+        int n = l.nodeCount();
+        if (n == 0) return;
+        if (fluxBuf.length < n) fluxBuf = new double[n];
+        double[] flux = p.nodeFluxes(fluxBuf);
+        long now = sl.getGameTime();
+        double dt = 20 * dev.denfry.promptcritical.mod.environment.ActivityData.GAME_S_PER_TICK;
+        double q = l.fuelNodes() > 0 ? p.powerW() / (l.fuelNodes() * GraphitePile.NODE_CM3) : 0;
+        for (int i = 0; i < n; i++) {
+            PileLayout.NodeKind k = l.kind(i);
+            if (k != PileLayout.NodeKind.FUEL && k != PileLayout.NodeKind.GRAPHITE) continue;
+            BlockPos pos = new BlockPos(l.x(i), l.y(i), l.z(i));
+            if (!sl.isLoaded(pos)) continue;
+            var be = sl.getBlockEntity(pos);
+            if (be instanceof FuelChannelBlockEntity f) f.irradiate(p.nodeFissionRate(flux, i), dt, now);
+            else if (be instanceof dev.denfry.promptcritical.mod.isotopes.IrradiationChannelBlockEntity c)
+                c.push(flux[i], p.graphiteTempK(), q, now);
+        }
     }
 
     /** Обойти кладку и отдать её модели (одинаковая подпись — без пересчёта). */

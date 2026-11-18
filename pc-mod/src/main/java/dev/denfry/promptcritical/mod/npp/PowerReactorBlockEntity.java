@@ -64,6 +64,8 @@ import org.jetbrains.annotations.Nullable;
  */
 public final class PowerReactorBlockEntity extends DeviceBlockEntity implements FoundryDevice, PanelHost, WiredDevice {
     public static final int LINK_RADIUS = 12;
+    /** Размазанная плотность канальной сборки АМ-1 (U-Mo в стальных трубках, графитовая втулка), г/см³. */
+    public static final double ASSEMBLY_DENSITY = 4;
     /** I-131, выходящий из одного разрушенного канала (1 % равновесного запаса канала), Бк [оценка]. */
     public static final double I131_PER_FAILED_BQ = 2e12;
 
@@ -82,6 +84,10 @@ public final class PowerReactorBlockEntity extends DeviceBlockEntity implements 
         }
     };
     private final List<BlockPos> pumps = new ArrayList<>(), generators = new ArrayList<>();
+    /** Экспериментальных каналов облучения у АМ-1 (12 §12.1.1). */
+    public static final int IRRADIATION_CHANNELS = 4;
+    /** Каналы облучения: поглощение мишени, см², и игровое время, до которого отметка действительна. */
+    private final java.util.Map<BlockPos, double[]> irradiation = new java.util.LinkedHashMap<>();
     private ChannelReactor.Trip lastTrip = ChannelReactor.Trip.MANUAL;
     private int ticks;
 
@@ -95,6 +101,23 @@ public final class PowerReactorBlockEntity extends DeviceBlockEntity implements 
 
     public ItemStackHandler fuelSlots() {
         return fuel;
+    }
+
+    /**
+     * Канал облучения у корпуса занимает экспериментальный канал и сообщает поглощение мишени, см²; отметка живёт две
+     * секунды. Каналов не больше {@value #IRRADIATION_CHANNELS}: лишний получает {@code false} и потока не видит.
+     */
+    public boolean irradiationSlot(BlockPos channel, double absorberCm2, long now) {
+        irradiation.values().removeIf(v -> v[1] < now);
+        if (!irradiation.containsKey(channel) && irradiation.size() >= IRRADIATION_CHANNELS) return false;
+        irradiation.put(channel.immutable(), new double[] {Math.max(0, absorberCm2), now + 40});
+        return true;
+    }
+
+    private double irradiationAbsorberCm2(long now) {
+        double s = 0;
+        for (double[] v : irradiation.values()) if (v[1] >= now) s += v[0];
+        return s;
     }
 
     private Direction facing() {
@@ -131,6 +154,7 @@ public final class PowerReactorBlockEntity extends DeviceBlockEntity implements 
         double secondary = sgs.isEmpty() ? Double.NaN : sum / sgs.size();
         AutomationUnit a = MechanismWiring.unit(level, simId(), AutomationKind.REACTOR_IO);
         if (a != null) reactor.setExternalTrip(a.loadEnergized(1));
+        reactor.setIrradiationAbsorber(irradiationAbsorberCm2(level.getGameTime()));
         double q = reactor.step(gameDt, secondary);
         for (SteamGeneratorBlockEntity sg : sgs) sg.deliver(q / sgs.size());
         if (a != null) {
@@ -199,7 +223,15 @@ public final class PowerReactorBlockEntity extends DeviceBlockEntity implements 
         double u = f.uraniumKg(), pu = f.plutoniumKg();
         FuelLot lot = new FuelLot(u, f.u235Kg() / u, f.u234() * f.hm0Kg() / u, 0.955, FuelDesign.AM_1.rods, FuelDesign.AM_1.name(), "",
                 f.burnupMwdKg(), f.u236Kg() / u, pu, pu > 0 ? f.pu239Kg() / pu : 0, pu > 0 ? f.pu240Kg() / pu : 0, 0, 0);
-        fuel.setStackInSlot(NppPanels.SLOT_SPENT, lot.on(new ItemStack(PcItems.FUEL_ASSEMBLY.get())));
+        ItemStack spent = lot.on(new ItemStack(PcItems.FUEL_ASSEMBLY.get()));
+        // активность при выгрузке (12 §12.0.2): удельная мощность — номинал на весь тяжёлый металл зоны, сборка с
+        // трубками из нержавейки (размазанная плотность ≈ 4 г/см³) — с Co-60 конструкций
+        double hmZone = reactor.heavyMetalKg() + f.hm0Kg();
+        double wPerG = hmZone > 0 ? ChannelReactor.NOMINAL_W / (hmZone * 1000) : 1;
+        if (f.burnupMwdKg() > 0) spent.set(dev.denfry.promptcritical.mod.environment.ActivityData.ACTIVITY.get(),
+                dev.denfry.promptcritical.mod.environment.SpentFuel.discharge(f.heavyMetalKg(), f.burnupMwdKg(), wPerG, ASSEMBLY_DENSITY,
+                        level.getGameTime()));
+        fuel.setStackInSlot(NppPanels.SLOT_SPENT, spent);
         if (player != null)
             player.displayClientMessage(NppText.msg("unloaded", best + 1, String.format(java.util.Locale.ROOT, "%.2f", f.burnupMwdKg())), true);
         setChanged();

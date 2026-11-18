@@ -78,7 +78,9 @@ public class LampBlock extends DecorBlock implements EntityBlock {
             if (Math.floorMod(now + worldPosition.hashCode(), PERIOD) != 0) return;
             LampKind k = lamp.kind();
             LightingBoardBlockEntity board = LightingBoards.nearest(level, worldPosition);
-            boolean mains = board != null && board.feed(worldPosition, k.watts(), now);
+            boolean mains = board != null && board.feed(worldPosition, k.watts(), now)
+                    // без щитка — от РИТЭГа рядом (маяки, 12 §12.5.1)
+                    || board == null && dev.denfry.promptcritical.mod.isotopes.RtgBlockEntity.feedLamp(level, worldPosition, k.watts(), now);
             boolean lit = mains;
             if (k.batteryTicks() > 0) {
                 int before = battery;

@@ -33,6 +33,8 @@ public final class PileScanner {
         if (s.is(PcBlocks.FUEL_CHANNEL.get())) return PileLayout.NodeKind.FUEL;
         if (s.is(PcBlocks.CONTROL_ROD_CHANNEL.get())) return PileLayout.NodeKind.ROD_CHANNEL;
         if (s.is(PcBlocks.STARTUP_SOURCE.get())) return PileLayout.NodeKind.SOURCE;
+        // канал облучения — графит с алюминиевой гильзой: поглощение мишени в котле T0 не учитывается (12 §12.1.1)
+        if (s.is(PcBlocks.IRRADIATION_CHANNEL.get())) return PileLayout.NodeKind.GRAPHITE;
         return null;
     }
 

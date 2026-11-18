@@ -48,6 +48,39 @@ public final class FuelChannelBlockEntity extends IronworksBlockEntity implement
         super(ReactorBlockEntities.FUEL_CHANNEL.get(), pos, state);
     }
 
+    /**
+     * Уран одной кассеты, кг: решётка T0 при полной загрузке — 1,5 % объёма блока 1 м³ (блочки ⌀28 мм, 24 канала/м²) при
+     * 19,05 г/см³, на {@link PileLayout#FULL_LOAD} кассет.
+     */
+    public static final double CASSETTE_U_KG = 0.015 * 1e6 * 19.05 / PileLayout.FULL_LOAD / 1000;
+    public static final double U_METAL_DENSITY = 19.05;
+
+    /**
+     * Облучение блочков за шаг (12 §12.0.2): делений в узле в секунду делятся поровну между кассетами; каждая копит
+     * продукты деления ({@link dev.denfry.promptcritical.sim.radiation.SpentFuel#irradiate}) и выгорание. Вынутая
+     * кассета — источник излучения.
+     */
+    public void irradiate(double nodeFissionsPerS, double dtS, long now) {
+        int n = load();
+        if (n <= 0 || !(nodeFissionsPerS > 0) || !(dtS > 0)) return;
+        double f = nodeFissionsPerS / n;
+        double mwd = f * dev.denfry.promptcritical.sim.neutronics.PointKinetics.FISSION_ENERGY * dtS / 86400 / 1e6;
+        for (int i = 0; i < slugs.getSlots(); i++) {
+            ItemStack s = slugs.getStackInSlot(i);
+            if (s.isEmpty()) continue;
+            var a = s.get(dev.denfry.promptcritical.mod.environment.ActivityData.ACTIVITY.get());
+            var inv = a != null ? a.inventory(now)
+                    : new dev.denfry.promptcritical.sim.radiation.ActivityInventory(java.util.Map.of(), CASSETTE_U_KG, U_METAL_DENSITY);
+            var next = dev.denfry.promptcritical.sim.radiation.SpentFuel.irradiate(inv, f, dtS);
+            ItemStack out = s.copy();
+            out.set(dev.denfry.promptcritical.mod.environment.ActivityData.ACTIVITY.get(),
+                    dev.denfry.promptcritical.mod.environment.ActivityData.of(next, now));
+            out.set(dev.denfry.promptcritical.mod.isotopes.IsotopeComponents.BURNUP.get(),
+                    out.getOrDefault(dev.denfry.promptcritical.mod.isotopes.IsotopeComponents.BURNUP.get(), 0.0) + mwd / CASSETTE_U_KG);
+            slugs.setStackInSlot(i, out);
+        }
+    }
+
     /** Кассет в канале. */
     public int load() {
         int n = 0;

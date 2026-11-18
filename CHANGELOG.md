@@ -81,6 +81,20 @@
 - Nuclear material accounting of uranium and U-235 on every station's panel. Zirconium from zircon washed out of sand,
   reduced with magnesium (hafnium separated), alloyed with tin, rolled into cladding tubes and made into spacer grids.
 
+### Isotopes and RTGs (12)
+- Irradiation channel: in the stack of the graphite pile it takes the flux of its node, against the T1 vessel
+  it is one of four AM-1 experimental channels and its target is charged against the core reactivity. Capsules
+  of cobalt, iridium or neptunium dioxide go through an exact Bateman solution (Co-60, Ir-192, Np-238 → Pu-238
+  with product burnup and self-shielding); gamma heating can burst a capsule and leave the channel contaminated.
+- Pile slug cassettes build up fission products and burnup channel by channel; discharged T1 assemblies leave
+  the core with their activity, steel Co-60 included.
+- Sealed sources with IAEA categories, a gamma radiography camera that exposes film through a pipe wall, finds
+  the defects radiography can see and marks the pipe RT, and doses the radiographer while the source is out.
+- Thermoelectric RTG on Sr-90 (taken from a vitrified waste canister) or Pu-238: about 10 W from the 230 W of a
+  Beta-M, decay and thermoelement ageing, better cooling under water; it lights lamps and powers relay supplies
+  off the grid, and its source drops out unshielded when the RTG is broken. Y-90 now has a bremsstrahlung line.
+- Panels, ru/en texts, recipes, an I4 handbook chapter and game tests that have not been run yet.
+
 ### First nuclear power plant (T1)
 - A uranium-graphite channel power reactor after AM-1 of Obninsk: 128 channels with pressurised water at 10 MPa,
   30 MW of heat, fuelled by AM-1 channel assemblies from the fuel shop. Point kinetics with six delayed groups, Doppler
