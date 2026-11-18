@@ -59,6 +59,7 @@ public final class PileControllerBlockEntity extends IronworksBlockEntity implem
         if (ticks++ % SCAN_PERIOD == 0) rescan(u);
         GraphitePile p = u.pile();
         if (ticks % FIRE_PERIOD == 0 && !top.isEmpty()) consequences(p);
+        if (ticks % 20 == 0) radiate(p);
     }
 
     /** Обойти кладку и отдать её модели (одинаковая подпись — без пересчёта). */
@@ -67,6 +68,28 @@ public final class PileControllerBlockEntity extends IronworksBlockEntity implem
         tooBig = s.truncated();
         top = s.top();
         u.form(s.layout());
+    }
+
+    /**
+     * Излучение котла: точечный источник в центре загрузки (центр тяжести урана по каналам) — γ и нейтроны деления
+     * при работе, γ остаточного тепловыделения после останова. Графит кладки и стены между зоной и игроком ослабляют
+     * его в {@link dev.denfry.promptcritical.mod.environment.RadiationService}.
+     */
+    private void radiate(GraphitePile p) {
+        if (!(level instanceof ServerLevel sl)) return;
+        var l = p.layout();
+        double w = 0, x = 0, y = 0, z = 0;
+        for (int i = 0; i < l.nodeCount(); i++) {
+            int load = l.load(i);
+            if (load <= 0) continue;
+            w += load;
+            x += load * (l.x(i) + 0.5);
+            y += load * (l.y(i) + 0.5);
+            z += load * (l.z(i) + 0.5);
+        }
+        if (w <= 0) return;
+        dev.denfry.promptcritical.mod.environment.RadiationService.source(sl, new net.minecraft.world.phys.Vec3(x / w, y / w, z / w),
+                dev.denfry.promptcritical.sim.radiation.FissionSource.reactor(p.powerW(), p.decayHeatW()));
     }
 
     /** Разрушенные блочки дымят над кладкой; горящий графит поджигает воздух над верхом. */

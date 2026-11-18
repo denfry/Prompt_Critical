@@ -747,6 +747,8 @@ public final class PcBlocks {
             Properties.of().mapColor(MapColor.METAL).strength(0.5f).sound(SoundType.LANTERN).noOcclusion()));
 
     // --- декор I0 (11 §11.6.2): кафель, керамогранит, крашеный бетон, стеклоблоки, профнастил, площадки, свет ---
+    /** Свинцовые блоки биологической защиты (11,35 г/см³): слой половинного ослабления γ Co-60 — около 1 см. */
+    public static final DeferredBlock<PcBlock> LEAD_BLOCK = decorCube("lead_block", MapColor.COLOR_GRAY, false);
     public static final DeferredBlock<PcBlock> TILE_WHITE = decorCube("tile_white", MapColor.SNOW, true);
     public static final DeferredBlock<PcBlock> TILE_BLUE = decorCube("tile_blue", MapColor.COLOR_LIGHT_BLUE, true);
     public static final DeferredBlock<PcBlock> TILE_GREEN = decorCube("tile_green", MapColor.COLOR_LIGHT_GREEN, true);
