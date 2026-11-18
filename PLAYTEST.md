@@ -49,6 +49,13 @@ the facing and the log line, if there is one.
 | Market | Sell goods at `market_terminal` repeatedly | Price falls with volume and recovers over two days |
 | Electric gear | Charge `powered_respirator` and `heated_suit` on the lamp rack; walk into a chlorine cloud and into a snowy biome at night | Respirator stops the chlorine while the blower runs, not CO in a mine; without the suit the body cools by stages, with it the battery drains instead |
 | Refinery | Hydrotreater → Claus → acid plant; catalytic reformer; delayed coker | Sulphur items reach the acid plant; reformer panel shows RON and hydrogen; coker drums cycle and drop petroleum coke; PCBs now need phenolic resin |
+| Redrawn machines (2026-11-18 evening) | Look at `pwr_reactor`, `bwr_reactor`, `candu_reactor`, `sfr_reactor`, `power_reactor`, `tube_furnace`, `pyrolysis_furnace`, `steam_reformer`, `claus_unit`, `edc_cracker`, `brine_treater`, `pvc_reactor`, `ldpe_reactor`, `gas_compressor`, `nitric_acid_unit`, `chlor_alkali_cell`, `purex_cell`, `uo2_conversion`, `mes_server`, `delayed_coker`, `low_temperature_separator`, `pressurizer` cold and running, in four facings | Own models (no more `reactor_vessel_wall` bodies); moving parts (PVC agitator, brine rake, compressor and LDPE cranks, pump coupling, CANDU fuelling bridge and head) turn about the right axis inside the body; particles and sounds come from the right spot |
+| CANDU panel | Open the CANDU reactor | The panel is 200 px tall with the heavy water rows; its painted background (made for 176 px) was dropped at merge, so it is plain for now |
+| Heavy water | GS plant by a lake → finishing column → bucket of `heavy_water` into a CANDU; drain it | Graded fluids go through Create pipes; the CANDU fills, goes critical only with D2O, and drains into downgraded water |
+| Accidents | VVER or BWR at power: break a primary pump or the pressurizer, or press LOCA on the panel; then cut all AC with no diesel | ECCS pumps and accumulators hold a small break; a blackout without diesel uncovers the core, makes hydrogen and pressurises the containment |
+| Acoustics | Run a Create fan or motor, use the vibration analyzer, stand near loud machines without and with ear muffs | Spectrum shows 1x and bearing tones, ISO zone A–D; noise dose builds, ear muffs stop it; replacing the bearing resets wear |
+| Contamination | Spill from a dry pool rack, walk through it, use the hand-foot monitor, shower, ultrasonic bath, sprayer and strippable coating | Shoes carry it, the monitor alarms, each decon step lowers Bq/cm2 and leaves contaminated decon solution |
+| Waste | Feed liquid waste and decon solution to the LRW evaporator, cement or bitumen the concentrate, vitrify HLW, compact filters, fill both repositories | Drums are classified, HLW goes only to glass, repositories refuse packages over their limits |
 | Chunk save | Save and quit with machines running (reactor at power, cascade spinning, PUREX line busy), reload | Everything resumes in the same state; the T1/T2a reactors do not trip on the first tick after loading |
 
 ## Game test structures to look at
@@ -60,8 +67,11 @@ and the effects of each structure, not only the beacon colour.
 
 | Class | Tests |
 |---|---|
+| `AccidentGameTests` | `smallLocaHeldByOneEccsTrain`, `stationBlackoutLosesEccsUntilTheDieselTurns`, `tornCoolantPumpIsAGuillotineBreak`, `bwrSmallLocaHeldByCoreSpray` |
+| `AcousticsGameTests` | `fanSpectrumAndBearingWear`, `transmitterSignalsTheFanLevel`, `noiseAddsUpAndConcreteBlocksIt`, `noiseDoseAndEarMuffs` |
 | `AirQualityGameTests` | `scrubberAndCemsChangeTheLedger` |
 | `ArcFurnaceGameTests` | `scrapChargesButNoBusMeansNoArc` |
+| `ArtStateGameTests` | `coldBwrShowsDarkDeskAndSeparatorsSegment`, `emptyHlwVaultStaysCold`, `containmentHatchTogglesOpen` |
 | `AutomationGameTests` | `startStopLadderSealsInAndStops`, `plcLatchesStartStopFromItsProgram`, `analogPiLoopSettlesOnSetpoint`, `controlKeyClosesAndTripsTheBreakerThroughItsTerminals`, `redstoneInterfacePowersTheWallBehindIt` |
 | `BindingGameTests` | `simulationTicksWithTheLevel`, `deviceRegistersInTopologyAndLeavesAfterBreak`, `footprintPlacesPartsAndBreaksAsWhole`, `boilerPlacesBothSegmentsAlongFacing`, `headframeStackFormsAndMarksTop`, `damageBudgetDestroysAroundOriginButNotImmuneBlocks`, `worldStateSurvivesNbtRoundTrip`, `everyBlockHasLootAndPlacesWithoutError` |
 | `BodyGameTests` | `bodyIsChosenOnceAndShapesThePlayer` |
@@ -70,6 +80,7 @@ and the effects of each structure, not only the beacon colour.
 | `ChlorAlkaliGameTests` | `rectifierPowersCellsThatMakeChlorine`, `cellsWithoutRectifierStayDead`, `brineIsTreatedOnlyWithReagents`, `liquefierMakesLiquidChlorineAndVentsTailGasWithoutCaustic`, `chlorineCloudDriftsDownwind`, `edcCrackerAndPvcAutoclave` |
 | `CombinedCycleGameTests` | `hrsgTurnsGasTurbineExhaustIntoBoilerSteam` |
 | `CompatGameTests` | `processCatalogIsComplete`, `productsAreExportedToCommonTags`, `modOresStayOutOfPerMetalTagsUnlessOpenCompatIsEnabled`, `coldSweatHeatSourcesMatchBlockStates` |
+| `ContaminationGameTests` | `spillLandsOnTheFloorAboveTheLimit`, `shoesCarryContaminationAndTheShowerWashesHands`, `handFootMonitorCatchesDirtyHands`, `ultrasonicBathCleansPartsIntoLiquidWaste`, `strippableCoatingPeelsLooseContamination`, `sprayerNeedsPermanganateBeforeAcidForFixedContamination`, `contaminationGivesCommittedNotAcuteDose`, `betaContaminatedFloorShinesGamma` |
 | `ContentGameTests` | `handbookIsGivenOnceOnFirstJoin`, `chapterOpensWhenItemObtained`, `handbookIsConsistent`, `markdownLinksAndEmphasis`, `firstSteamGoesToTheShiftNearTheEngine`, `canaryInAMineAndRewardsAreOnlyExperience`, `procedureGoesOnTheLecternAndBack`, `geologicalMapPointsToTheNearestBody`, `decorLightSwitchesAndLadderClimbs`, `ironAndPowerChaptersAndProcedures`, `ironAndPowerAdvancements`, `ponderScenesHaveSchematicsAndTexts`, `ironAndPowerDecor`, `routeIsConsistent`, `handbookTranslationKeys`, `routeReachNeedsTheWholeHold`, `routeObtainBuildAndChoice` |
 | `DrillingGameTests` | `drillIntoGasTakeKickAndKillIt`, `seismicRecorderNeedsASpread` |
 | `ElectricGearGameTests` | `respiratorFiltersTheCloudOnceTheBlowerRuns` |
@@ -80,6 +91,7 @@ and the effects of each structure, not only the beacon colour.
 | `GasProcessingGameTests` | `ltsMakesSalesGasAndNglWithMethanol`, `uninhibitedColdChokePlugsWithHydrate`, `fractionatorSplitsNgl` |
 | `GasTurbineGameTests` | `gasTurbineStartsOnMineMethaneAndDrivesTheGearbox` |
 | `GridGameTests` | `closingAt120DegreesWithoutSyncCheckOverstressesTheCreateShaft`, `syncCheckRelayRefusesClosingAt120Degrees`, `generatorIsSynchronizedByTheSynchroscope`, `underfrequencyLoadSheddingDropsTheLoadOnDeficit`, `lowVoltageMotorOnSixKilovoltBusBreaksDownAndOvercurrentTrips`, `lightingBoardFeedsItsLampsAndTheEmergencyLightRunsOnBattery` |
+| `HeavyWaterGameTests` | `gsPlantMakesEnrichedWaterFromALake`, `gsPlantWithoutALakeStands`, `finishingColumnMakesReactorGrade`, `canduIsFilledDowngradedAndDrained`, `heavyWaterBucketPoursAndEmptiesIntoTanks` |
 | `HeliumActivityGameTests` | `heliumNeedsLiquidNitrogen`, `poolWaterShieldsSpentFuel` |
 | `HoistGameTests` | `cageRidesToLevelAndLandsAsBlocks`, `hoistRefusesWithoutRope`, `panelButtonsDoNotOverlapLandings`, `excessWaterFloodsDriftAndRecedes`, `drainagePumpLowersSump` |
 | `HydroGameTests` | `pondAboveTheTurbineDrivesIt` |
@@ -91,11 +103,12 @@ and the effects of each structure, not only the beacon colour.
 | `MarketGameTests` | `terminalSellsSteelForCredits`, `terminalRefusesVanillaGoods` |
 | `MethanolGameTests` | `methanolUnitAndColumnMakeGradeAa`, `withoutAColumnCrudeStaysInTheSeparator` |
 | `MineGameTests` | `methaneExplosionStopsAtBarrier`, `fanVentilatesAndDoorThrottles`, `regulatorWindowSetsAirflow`, `canaryFaintsInCarbonMonoxide`, `everyVeinRoleHasABlock`, `minedOreCarriesAssay`, `anchorStartsMineAndRemovalEndsIt` |
+| `MoxReactorGameTests` | `bwrLoadsMoxAssembly`, `am1ChannelTakesMox`, `canduChannelTakesMoxBundles`, `vverKeepsPlutoniumAsPlutonium` |
 | `NitrogenGameTests` | `reformerMakesAmmoniaSyngas`, `reformerWithoutNickelMakesNothing`, `synthesisLoopMakesLiquidAmmonia`, `ostwaldUnitMakesNitricAcid`, `richAmmoniaMixtureFlashes`, `magnesiumNitrateColumnConcentratesAcid` |
 | `OpsGameTests` | `stuckReliefValveBurstsUnacceptedBoiler`, `reversedPumpLosesHeadAndBumpFindsIt`, `replacingReliefValveResetsOnlyItsCheck`, `enforcedModeRefusesIgnition`, `bearingWearShowsOnPanelAndShellFixesIt`, `scaleShowsOnPanelAndScraperRemovesIt`, `tallowAndCoalDustNeedNoNether` |
 | `PaperworkGameTests` | `disconnectorStaysOpenUnderAPermitAndClosesAfterIt`, `shiftLogWritesPanelReadingsAndSignsTheHandover` |
-| `PowerReactorGameTests` | `freshFuelLoadsAndUnloads`, `twoPumpsGiveNominalFlow`, `dryoutWithoutProtectionBreaksChannelsAndDosesTheHall` |
 | `PowerhouseGameTests` | `boilerFormsAndRefusesFuelWithoutPurge`, `igniterTrialWithoutFlameTrips`, `bypassedFlameDetectorsBlowUpFurnace`, `deaeratorMakesFeedwaterFromDrumSteam` |
+| `PowerReactorGameTests` | `freshFuelLoadsAndUnloads`, `twoPumpsGiveNominalFlow`, `dryoutWithoutProtectionBreaksChannelsAndDosesTheHall` |
 | `ProductionGameTests` | `wellSeparatorAndColumnMakeProducts`, `deadWellRunsOnAPumpjack` |
 | `PurexGameTests` | `lineMakesReprocessedUraniumAndGlass`, `stalledOxalateGoesCritical` |
 | `PwrReactorGameTests` | `vverAssemblyLoadsAndUnloads`, `pressurizerLinksAndWithoutItTheReactorStaysTripped`, `twoPumpsSpinBothLoops`, `losingPumpDriveAtPowerTrips` |
@@ -111,6 +124,7 @@ and the effects of each structure, not only the beacon colour.
 | `TideGameTests` | `tideGaugeShowsTheMoonPhaseAndTheModelSeaLevel`, `tidalUnitWithoutAClosedBasinStandsStill` |
 | `TurbineGameTests` | `turbineWithoutBoilerStandsStill`, `condenserByWaterGivesVacuum`, `condenserOnACoolingTowerGivesVacuum` |
 | `UraniumFrontEndGameTests` | `acidPlantAndHfKiln`, `leachingDissolvesUraniumWithPyrolusite`, `resinSorbsAndAmmoniaPrecipitatesYellowcake`, `dryConversionMakesGreenSalt`, `fluorinationFillsACylinderWithNaturalUf6`, `fluorineCellsRunOnTheRectifier` |
+| `WasteGameTests` | `evaporatorCementsConcentrateIntoAcceptableDrums`, `highLevelConcentrateGoesOnlyToGlass`, `supercompactorPressesFiltersIntoAnOverpack`, `repositoriesApplyAcceptanceCriteria`, `cleanupLoadsResinAndSluicesItOut` |
 | `WindGameTests` | `windTurbineExportsPowerIntoTheGrid` |
 
 ## Known gaps (do not report as bugs)
@@ -125,5 +139,8 @@ and the effects of each structure, not only the beacon colour.
 - Water never moves with the tide (design decision R32).
 - `GridGameTests.lowVoltageMotorOnSixKilovoltBusBreaksDownAndOvercurrentTrips` is timing-sensitive under a loaded
   server (breakdown seen at 7 ticks against a limit of 5); it passed on the rerun.
-- Heavy water is not a fluid yet (inside the CANDU model only); MOX is accepted by the PWR only; the MES server
-  only advises setpoints; LOCA and station blackout models are not yet connected to the reactor block.
+- The MES server only advises setpoints. LOCA and blackout are wired to the VVER and BWR only, not to CANDU, SFR or
+  the AM-1. The LRW evaporator and the ultrasonic bath draw no power. Liquid waste in pipes has a fixed nominal
+  activity per fluid. MOX rod-worth loss and the CANDU moderator purity coefficient are estimates.
+- About half of today's machines are redrawn; the rest still borrow models (waste blocks, GS tower, heavy water
+  column and others). No new machine has a painted panel background yet.
