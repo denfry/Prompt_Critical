@@ -874,6 +874,18 @@ public final class PcLanguageProvider extends LanguageProvider {
             for (int i = 0; i < t.lines().size(); i++)
                 MISC.put(dev.denfry.promptcritical.mod.content.PonderLayouts.langKey(scene, "text_" + (i + 1)), t.lines().get(i));
         });
+        // тексты щитов, объявленные в полях блок-сущностей, регистрируются при инициализации класса, а datagen эти
+        // классы не грузит: без явной инициализации ключи twin.msg.* не попадали в языковые файлы
+        for (String c : new String[] {"dev.denfry.promptcritical.mod.scada.SimulatorDeskBlockEntity",
+                "dev.denfry.promptcritical.mod.scada.TrainingSimulatorBlockEntity",
+                "dev.denfry.promptcritical.mod.scada.TwinWorkstationBlockEntity",
+                "dev.denfry.promptcritical.mod.scada.OperatorLicenseItem"}) {
+            try {
+                Class.forName(c, true, PcLanguageProvider.class.getClassLoader());
+            } catch (ClassNotFoundException e) {
+                throw new IllegalStateException("panel text holder missing: " + c, e);
+            }
+        }
         MISC.putAll(dev.denfry.promptcritical.mod.panel.PanelText.lang());
         MISC.putAll(dev.denfry.promptcritical.mod.drilling.DrillingText.lang());
         MISC.putAll(dev.denfry.promptcritical.mod.production.ProductionText.lang());

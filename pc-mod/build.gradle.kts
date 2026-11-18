@@ -165,40 +165,49 @@ tasks.processResources {
 val formulaSrc = layout.projectDirectory.dir("src/main/formulas")
 val formulaOut = layout.projectDirectory.dir("src/generated/resources/assets/$modId/textures/gui/handbook/formula")
 val handbookEntries = layout.projectDirectory.dir("src/main/resources/data/$modId/handbook/entries")
+fun renderFormulas() {
+    System.setProperty("java.awt.headless", "true")
+    val src = formulaSrc.asFile
+    val out = formulaOut.asFile
+    val refs = handbookEntries.asFile.walk().filter { it.extension == "json" }
+        .flatMap { Regex("\"formula\"\\s*:\\s*\"[a-z0-9_.-]+:([a-z0-9_/.-]+)\"").findAll(it.readText()).map { m -> m.groupValues[1] } }
+        .toSet()
+    val missing = refs.filter { !src.resolve("$it.tex").isFile }
+    if (missing.isNotEmpty()) throw GradleException("handbook formulas without .tex: $missing")
+    out.deleteRecursively()
+    src.walk().filter { it.extension == "tex" }.forEach { f ->
+        val name = f.relativeTo(src).invariantSeparatorsPath.removeSuffix(".tex")
+        val icon = TeXFormula(f.readText().trim())
+            .createTeXIcon(TeXConstants.STYLE_DISPLAY, 36f)
+        icon.insets = Insets(2, 2, 2, 2)
+        icon.setForeground(Color(0x2B, 0x2B, 0x2B))
+        val img = BufferedImage(icon.iconWidth, icon.iconHeight, BufferedImage.TYPE_INT_ARGB)
+        val g = img.createGraphics()
+        g.setRenderingHint(RenderingHints.KEY_ANTIALIASING, RenderingHints.VALUE_ANTIALIAS_ON)
+        g.setRenderingHint(RenderingHints.KEY_TEXT_ANTIALIASING, RenderingHints.VALUE_TEXT_ANTIALIAS_ON)
+        icon.paintIcon(null, g, 0, 0)
+        g.dispose()
+        val target = out.resolve("$name.png")
+        target.parentFile.mkdirs()
+        ImageIO.write(img, "png", target)
+    }
+}
 val renderHandbookFormulas by tasks.registering {
     group = "build"
     description = "Renders handbook formula pages from LaTeX to PNG"
     inputs.dir(formulaSrc)
     inputs.dir(handbookEntries)
     outputs.dir(formulaOut)
-    doLast {
-        System.setProperty("java.awt.headless", "true")
-        val src = formulaSrc.asFile
-        val out = formulaOut.asFile
-        val refs = handbookEntries.asFile.walk().filter { it.extension == "json" }
-            .flatMap { Regex("\"formula\"\\s*:\\s*\"[a-z0-9_.-]+:([a-z0-9_/.-]+)\"").findAll(it.readText()).map { m -> m.groupValues[1] } }
-            .toSet()
-        val missing = refs.filter { !src.resolve("$it.tex").isFile }
-        if (missing.isNotEmpty()) throw GradleException("handbook formulas without .tex: $missing")
-        out.deleteRecursively()
-        src.walk().filter { it.extension == "tex" }.forEach { f ->
-            val name = f.relativeTo(src).invariantSeparatorsPath.removeSuffix(".tex")
-            val icon = TeXFormula(f.readText().trim())
-                .createTeXIcon(TeXConstants.STYLE_DISPLAY, 36f)
-            icon.insets = Insets(2, 2, 2, 2)
-            icon.setForeground(Color(0x2B, 0x2B, 0x2B))
-            val img = BufferedImage(icon.iconWidth, icon.iconHeight, BufferedImage.TYPE_INT_ARGB)
-            val g = img.createGraphics()
-            g.setRenderingHint(RenderingHints.KEY_ANTIALIASING, RenderingHints.VALUE_ANTIALIAS_ON)
-            g.setRenderingHint(RenderingHints.KEY_TEXT_ANTIALIASING, RenderingHints.VALUE_TEXT_ANTIALIAS_ON)
-            icon.paintIcon(null, g, 0, 0)
-            g.dispose()
-            val target = out.resolve("$name.png")
-            target.parentFile.mkdirs()
-            ImageIO.write(img, "png", target)
-        }
-    }
+    doLast { renderFormulas() }
 }
+// datagen чистит src/generated от всего, что не написал сам, и уносит PNG формул: перерисовать их сразу после него
+// (отдельной задачей — renderHandbookFormulas уже в зависимостях processResources, от которого зависит runData)
+val rerenderHandbookFormulas by tasks.registering {
+    group = "build"
+    description = "Re-renders handbook formula PNGs that runData removed from src/generated"
+    doLast { renderFormulas() }
+}
+tasks.matching { it.name == "runData" }.configureEach { finalizedBy(rerenderHandbookFormulas) }
 tasks.processResources { dependsOn(renderHandbookFormulas) }
 
 // pc-sim и pc-api упаковываются классами в jar мода: один мод, один classloader (05 §5.1.1).
