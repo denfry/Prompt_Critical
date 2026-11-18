@@ -57,7 +57,7 @@ class EnvironmentTest {
 
     /**
      * Ветер на 10 м: средний за много лет около 5 м/с; разброс 10-минутных значений вокруг среднего — по IEC 61400-1
-     * σ = 0,14·(0,75·V + 5,6); выше над водой сильнее, чем над лесом.
+     * σ = 0,14·(0,75·V + 5,6); профиль по высоте над разной шероховатостью через высоту смешения 60 м.
      */
     @Test
     void windHasTheRightMeanTurbulenceAndProfile() {
@@ -80,11 +80,20 @@ class EnvironmentTest {
         double sigma = Math.sqrt(s2 / k - (m / k) * (m / k));
         assertThat(sigma).isCloseTo(Environment.TURBULENCE_I_REF * (0.75 * mean + 5.6), within(0.35 * sigma));
 
-        double water = ENV.sample(t0, 64, 60, Environment.roughness(Environment.Surface.WATER), 15, false, false).meanWindMs();
-        double forest = ENV.sample(t0, 64, 60, Environment.roughness(Environment.Surface.FOREST), 15, false, false).meanWindMs();
-        assertThat(water).isGreaterThan(mean);
-        assertThat(forest).isGreaterThan(mean);
-        assertThat(forest / mean).isCloseTo(Math.log(60 / 0.8) / Math.log(10 / 0.8), within(1e-9));
+        // на высоте ступицы ВЭУ (30 м): над водой сильнее, чем в поле, над лесом слабее; выше стандартных 10 м — сильнее
+        double water = ENV.sample(t0, 64, 30, Environment.roughness(Environment.Surface.WATER), 15, false, false).meanWindMs();
+        double open = ENV.sample(t0, 64, 30, OPEN, 15, false, false).meanWindMs();
+        double forest = ENV.sample(t0, 64, 30, Environment.roughness(Environment.Surface.FOREST), 15, false, false).meanWindMs();
+        assertThat(water).isGreaterThan(open);
+        assertThat(open).isGreaterThan(forest).isGreaterThan(mean);
+        assertThat(open / mean).isCloseTo(Math.log(30 / 0.03) / Math.log(10 / 0.03), within(1e-9));
+        // на 10 м лес тормозит ветер на четверть (European Wind Atlas: z₀ = 0,8 против 0,03)
+        double forest10 = ENV.sample(t0, 64, 10, Environment.roughness(Environment.Surface.FOREST), 15, false, false).meanWindMs();
+        assertThat(forest10 / mean).isBetween(0.7, 0.8);
+        // на высоте смешения ветер от поверхности не зависит
+        assertThat(ENV.sample(t0, 64, 60, Environment.roughness(Environment.Surface.FOREST), 15, false, false).meanWindMs())
+                .isCloseTo(ENV.sample(t0, 64, 60, Environment.roughness(Environment.Surface.WATER), 15, false, false).meanWindMs(),
+                        within(1e-9));
         assertThat(ENV.sample(t0, 64, 10, OPEN, 15, true, true).meanWindMs()).isCloseTo(2 * mean, within(1e-9));
     }
 

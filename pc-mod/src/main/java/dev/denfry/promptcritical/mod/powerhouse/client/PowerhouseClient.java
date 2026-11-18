@@ -8,10 +8,12 @@ import dev.engine_room.flywheel.lib.model.baked.PartialModel;
 import net.neoforged.bus.api.IEventBus;
 import net.neoforged.neoforge.client.event.EntityRenderersEvent;
 
-/** Клиент котла I1: крыльчатки дутьевого вентилятора и дымососа на валу Create. Только на клиенте. */
+/** Клиент котла I1 и ВЭУ: крыльчатки дутьевого вентилятора и дымососа на валу Create, гондола и колесо ветряка. Только на клиенте. */
 public final class PowerhouseClient {
     private static final PartialModel FD_IMPELLER = partial("forced_draft_fan/partial/impeller");
     private static final PartialModel ID_IMPELLER = partial("induced_draft_fan/partial/impeller");
+    private static final PartialModel WIND_NACELLE = partial("wind_turbine/partial/nacelle");
+    private static final PartialModel WIND_BLADE = partial("wind_turbine/partial/blade");
 
     private PowerhouseClient() {
     }
@@ -28,5 +30,6 @@ public final class PowerhouseClient {
         // ось крыльчатки — центр блока, вдоль Z (фасад на север)
         event.registerBlockEntityRenderer(PowerhouseBlockEntities.FORCED_DRAFT_FAN.get(), c -> new FoundryMachineRenderer<>(FD_IMPELLER, Motion.SPIN_Z, 8, 8, 1));
         event.registerBlockEntityRenderer(PowerhouseBlockEntities.INDUCED_DRAFT_FAN.get(), c -> new FoundryMachineRenderer<>(ID_IMPELLER, Motion.SPIN_Z, 8, 8, 1));
+        event.registerBlockEntityRenderer(PowerhouseBlockEntities.WIND_TURBINE.get(), c -> new WindTurbineRenderer(WIND_NACELLE, WIND_BLADE));
     }
 }

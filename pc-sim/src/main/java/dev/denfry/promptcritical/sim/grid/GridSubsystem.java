@@ -49,7 +49,8 @@ public final class GridSubsystem implements Subsystem, GridEventSink {
     private GeneratorUnit[] machineUnits = new GeneratorUnit[0];
     private Object[] branchOwners = new Object[0];
     private ConsumerUnit[] loadUnits = new ConsumerUnit[0];
-    private MotorUnit[] motorUnits = new MotorUnit[0];
+    /** Владельцы асинхронных машин по индексу сети: {@link MotorUnit} или {@link WindTurbineUnit}. */
+    private GridUnit[] motorUnits = new GridUnit[0];
     private GridUnit[] relayOwners = new GridUnit[0];
     /** Номер уставки в {@link GridUnit#relays} у каждого реле сети — для переноса памяти реле через пересборку. */
     private int[] relaySlots = new int[0];
@@ -111,6 +112,11 @@ public final class GridSubsystem implements Subsystem, GridEventSink {
     /** Щиток освещения на шине 0,4 кВ. */
     public LightingBoardUnit lightingBoard(SimId id) {
         return unit(id, LightingBoardUnit.class, () -> new LightingBoardUnit(id));
+    }
+
+    /** Сетевая ВЭУ с асинхронным генератором. */
+    public WindTurbineUnit windTurbine(SimId id) {
+        return unit(id, WindTurbineUnit.class, () -> new WindTurbineUnit(id));
     }
 
     public ConnectorUnit connector(SimId id, boolean mediumVoltage) {
@@ -283,7 +289,10 @@ public final class GridSubsystem implements Subsystem, GridEventSink {
         if (dirty) rebuild();
         double dt = ctx.dt();
         long tick = ctx.tick();
-        for (GridUnit u : units.values()) if (u instanceof GeneratorUnit g) g.beforeTick(grid, dt, tick);
+        for (GridUnit u : units.values()) {
+            if (u instanceof GeneratorUnit g) g.beforeTick(grid, dt, tick);
+            else if (u instanceof WindTurbineUnit w) w.beforeTick(grid, dt);
+        }
         if (grid.busCount() > 0) {
             grid.stepFast(dt, inputs, out);
             grid.drainEvents(this);
@@ -351,7 +360,7 @@ public final class GridSubsystem implements Subsystem, GridEventSink {
         machineUnits = b.machines.toArray(new GeneratorUnit[0]);
         branchOwners = b.branches.toArray();
         loadUnits = b.loads.toArray(new ConsumerUnit[0]);
-        motorUnits = b.motors.toArray(new MotorUnit[0]);
+        motorUnits = b.motors.toArray(new GridUnit[0]);
         relayOwners = b.relays.toArray(new GridUnit[0]);
         relaySlots = buildingSlots.stream().mapToInt(Integer::intValue).toArray();
         dirty = false;
@@ -486,8 +495,10 @@ public final class GridSubsystem implements Subsystem, GridEventSink {
 
         @Override
         public double motorLoadTorquePu(int motor) {
-            MotorUnit m = motor < motorUnits.length ? motorUnits[motor] : null;
-            return m == null ? 0 : m.loadTorquePu();
+            GridUnit u = motor < motorUnits.length ? motorUnits[motor] : null;
+            if (u instanceof MotorUnit m) return m.loadTorquePu();
+            if (u instanceof WindTurbineUnit w) return w.loadTorquePu();
+            return 0;
         }
     }
 
@@ -499,7 +510,7 @@ public final class GridSubsystem implements Subsystem, GridEventSink {
         final List<GeneratorUnit> machines = new ArrayList<>();
         final List<Object> branches = new ArrayList<>();
         final List<ConsumerUnit> loads = new ArrayList<>();
-        final List<MotorUnit> motors = new ArrayList<>();
+        final List<GridUnit> motors = new ArrayList<>();
         final List<GridUnit> relays = new ArrayList<>();
 
         Build(PowerGrid grid, GridConfig cfg, Map<Long, BusId> buses) {
@@ -524,7 +535,7 @@ public final class GridSubsystem implements Subsystem, GridEventSink {
             put(loads, id.index(), u);
         }
 
-        void motor(MotorId id, MotorUnit u) {
+        void motor(MotorId id, GridUnit u) {
             put(motors, id.index(), u);
         }
 
@@ -584,6 +595,7 @@ public final class GridSubsystem implements Subsystem, GridEventSink {
             case ConnectorUnit c -> c.mediumVoltage ? "connector:mv" : "connector:lv";
             case AuxSupplyUnit a -> "aux_supply";
             case LightingBoardUnit l -> "lighting_board";
+            case WindTurbineUnit w -> "wind_turbine";
         };
     }
 
@@ -612,6 +624,7 @@ public final class GridSubsystem implements Subsystem, GridEventSink {
                 case "connector:lv" -> new ConnectorUnit(id, false);
                 case "aux_supply" -> new AuxSupplyUnit(id);
                 case "lighting_board" -> new LightingBoardUnit(id);
+                case "wind_turbine" -> new WindTurbineUnit(id);
                 default -> type.startsWith("switch:") ? new SwitchUnit(id, SwitchUnit.Kind.valueOf(type.substring(7))) : null;
             };
             if (u != null) {
