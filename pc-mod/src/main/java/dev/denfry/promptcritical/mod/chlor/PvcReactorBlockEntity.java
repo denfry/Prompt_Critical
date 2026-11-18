@@ -50,17 +50,14 @@ public final class PvcReactorBlockEntity extends DeviceBlockEntity implements Fo
     private final FeedTank vcm = new FeedTank(PcFluids.VINYL_CHLORIDE.source.get(), VCM_MB);
     private final FeedTank water = new FeedTank(Fluids.WATER, WATER_MB);
     private final IFluidHandler inlet = new MultiInlet(vcm, water);
+    /** Склад мешков: аппарат кладёт сам, воронка только забирает. */
     private final ItemStackHandler out = new ItemStackHandler(4) {
-        @Override
-        public boolean isItemValid(int slot, ItemStack stack) {
-            return false;
-        }
-
         @Override
         protected void onContentsChanged(int slot) {
             setChanged();
         }
     };
+    private final IItemHandler outView = new dev.denfry.promptcritical.mod.item.ExtractOnlyItemHandler(out);
     private final PvcReactor reactor = new PvcReactor();
     private boolean auto = true;
     private double resinKg, heatW;
@@ -126,7 +123,7 @@ public final class PvcReactorBlockEntity extends DeviceBlockEntity implements Fo
     @Override
     @Nullable
     public IItemHandler items(@Nullable Direction side) {
-        return out;
+        return outView;
     }
 
     @Override

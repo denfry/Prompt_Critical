@@ -5,6 +5,7 @@ import dev.denfry.promptcritical.mod.binding.SimLevelBinding;
 import dev.denfry.promptcritical.mod.block.PcProperties;
 import dev.denfry.promptcritical.mod.blockentity.DeviceBlockEntity;
 import dev.denfry.promptcritical.mod.foundry.FoundryDevice;
+import dev.denfry.promptcritical.mod.item.ExtractOnlyItemHandler;
 import dev.denfry.promptcritical.mod.panel.PanelHost;
 import java.util.function.Predicate;
 import net.minecraft.core.BlockPos;
@@ -38,6 +39,7 @@ import org.jetbrains.annotations.Nullable;
  */
 public abstract class UraniumProcessBlockEntity extends DeviceBlockEntity implements FoundryDevice, PanelHost {
     protected final ItemStackHandler input, output;
+    private final IItemHandler outputView;
     private final IItemHandlerModifiable panelItems;
     protected boolean on = true;
 
@@ -57,15 +59,11 @@ public abstract class UraniumProcessBlockEntity extends DeviceBlockEntity implem
         };
         output = new ItemStackHandler(outSlots) {
             @Override
-            public boolean isItemValid(int slot, ItemStack stack) {
-                return false;
-            }
-
-            @Override
             protected void onContentsChanged(int slot) {
                 setChanged();
             }
         };
+        outputView = new ExtractOnlyItemHandler(output);
         panelItems = new CombinedInvWrapper(input, output);
     }
 
@@ -149,7 +147,7 @@ public abstract class UraniumProcessBlockEntity extends DeviceBlockEntity implem
     @Override
     @Nullable
     public IItemHandler items(@Nullable Direction side) {
-        return side == Direction.DOWN ? output : input;
+        return side == Direction.DOWN ? outputView : input;
     }
 
     @Override
