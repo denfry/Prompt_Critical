@@ -56,17 +56,14 @@ public final class LdpeReactorBlockEntity extends KineticMachineBlockEntity<Shaf
 
     private final ShaftInput shaft = new ShaftInput();
     private final FeedTank ethylene = new FeedTank(PcFluids.ETHYLENE.source.get(), MB);
+    /** Склад мешков: аппарат кладёт сам, воронка только забирает. */
     private final ItemStackHandler out = new ItemStackHandler(4) {
-        @Override
-        public boolean isItemValid(int slot, ItemStack stack) {
-            return false;
-        }
-
         @Override
         protected void onContentsChanged(int slot) {
             setChanged();
         }
     };
+    private final IItemHandler outView = new dev.denfry.promptcritical.mod.item.ExtractOnlyItemHandler(out);
     private final LdpeReactor reactor = new LdpeReactor();
     private long tick;
     private double loadW, polymerKg;
@@ -165,7 +162,7 @@ public final class LdpeReactorBlockEntity extends KineticMachineBlockEntity<Shaf
     @Override
     @Nullable
     public IItemHandler items(@Nullable Direction side) {
-        return out;
+        return outView;
     }
 
     @Override
