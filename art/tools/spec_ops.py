@@ -320,7 +320,7 @@ def maint_panel(sev=0):  # настенный щит 14×14×3: 6 ламп ка�
     return els
 
 
-m("maintenance_panel", "ops", maint_panel())
+# нарисовано вручную в Blockbench: art/blockbench/turbine/power_misc.author.js
 for _s in (1, 2, 3):
     m(f"maintenance_panel_severity{_s}", "ops", maint_panel(_s))
 
@@ -333,9 +333,7 @@ def hydrotest_pump(pumping=False):  # ручной опрессовочный н
             el("pivot", [7, 11, 7], [9, 12, 9], "d")]
 
 
-m("hydrotest_pump", "ops", hydrotest_pump())
-m("hydrotest_pump/lever", "ops", [el("lever", [7.5, 11, 1], [8.5, 12, 15], "d"),
-                                  el("grip", [7, 10.5, 1], [9, 12.5, 3], "r")], kind="partial")
+# нарисовано вручную в Blockbench: art/blockbench/turbine/power_misc.author.js
 
 
 def recording_gauge(paper=True):  # самописец на установке 10×12×4: латунный корпус, дверца с лентой

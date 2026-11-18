@@ -601,12 +601,7 @@ mk("cement_kiln", WS,
 
 # плавитель остекловывания нарисован вручную в Blockbench: art/blockbench/waste/vitrification_melter.author.js
 
-mk("repository_controller", WS, [
-    el("pedestal", [2, 0, 5], [14, 7, 15], "d"),
-    el("desk", [1, 7, 1], [15, 8, 6], "d"),
-    el("housing", [1, 8, 6], [15, 16, 15], "p"),
-    el("glow_screen", [1.5, 8.5, 5.5], [14.5, 15.5, 6], "f", full=["north"]),
-])
+# нарисовано вручную в Blockbench: art/blockbench/turbine/power_misc.author.js
 
 cube("bentonite_buffer", WS)
 mk("near_surface_vault", WS, [el("block", [0, 0, 0], [16, 16, 16], "f", faces={"up": "cs", "down": "cs"})])

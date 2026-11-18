@@ -37,7 +37,7 @@ def cage():
             el("perch", [4, 5, 7.75], [12, 5.5, 8.25], "st")]
 
 
-m("canary_cage", "world", cage())
+# нарисовано вручную в Blockbench: art/blockbench/turbine/power_misc.author.js
 m("canary_cage/bird", "world", [
     el("body", [6.5, 5.5, 7], [9.5, 8, 9], "bird"),
     el("head", [8.5, 7.5, 7.25], [10.5, 9.5, 8.75], "bird"),

@@ -97,14 +97,7 @@ def gt_enclosure(extra):
             el("roof", [-15, 18, -16], [31, 20, 32], "rals")] + extra
 
 
-m("gas_turbine", "boilers", gt_enclosure([
-    el("intake_house", [-12, 20, -14], [28, 31.5, 18], "ral", faces={"north": "vent", "east": "vent", "west": "vent"}),
-    el("intake_duct", [0, 18, 10], [16, 20, 26], "rals")]))
-m("gas_turbine_combustor", "boilers", gt_enclosure([
-    el("fuel_line", [-16, 0, 6], [-14, 2, 10], "gas"),
-    el("vent_fan", [2, 20, 2], [14, 22, 14], "d")]))
-m("gas_turbine_turbine", "boilers", gt_enclosure(
-    vcyl("exhaust_stack", 8, 16, 7, 20, 31.9, "gasr", 8) + [el("diffuser", [-6, 18, 6], [22, 20, 26], "rals")]))
+# нарисовано вручную в Blockbench: art/blockbench/turbine/power_misc.author.js
 m("gas_turbine/rotor", "boilers", hcyl("rotor", "z", 3, -16, 32, "st", sides=8)
   + [el(f"stage_{i}", [2, 2, z], [14, 14, z + 1], "gal") for i, z in enumerate((-12, -6, 0, 6, 22, 28))], kind="partial")
 
@@ -265,15 +258,7 @@ m("condenser_ball_cleaning", "cooling", hcyl("pipe", "x", 3, 0, 16, "wat")
 # ======================================================================
 # ГЭС: турбина Френсиса (спиральная камера), водовод, затвор; сетевой подогреватель
 # ======================================================================
-m("hydro_turbine", "grid", [
-    el("pit", [-16, -16, -16], [32, -12, 32], "c"),
-    el("stay_ring", [-6, -12, -6], [22, 4, 22], "gate"),
-    el("cover", [-4, 4, -4], [20, 8, 20], "st"),
-    el("servo_l", [-12, 4, 6], [-6, 10, 10], "ye"),
-    el("servo_r", [22, 4, 6], [28, 10, 10], "ye"),
-] + hcyl("spiral_in", "x", 7, -16, -4, "wat", c=(8, -4, -8), sides=8)
-  + vcyl("spiral", 8, 8, 13, -12, 4, "gate", 16)
-  + vcyl("guide_bearing", 8, 8, 4, 8, 16, "dg", 8))
+# нарисовано вручную в Blockbench: art/blockbench/turbine/power_misc.author.js
 m("hydro_turbine/runner", "grid", vcyl("crown", 8, 8, 7, 0, 3, "b", 16)
   + [el(f"blade_{i}", [7.5, -10, 1], [8.5, 0, 14], "b", rot=("y", a, [8, 8, 8]) if a else None)
      for i, a in enumerate((0, 45, -45))] + vcyl("shaft", 8, 8, 2, 3, 30, "st", 8), kind="partial")
@@ -281,11 +266,7 @@ m("hydro_turbine/runner", "grid", vcyl("crown", 8, 8, 7, 0, 3, "b", 16)
 m("penstock", "grid", hcyl("pipe", "z", 6, 0, 16, "wat") + hcyl("ring", "z", 6.5, 7, 9, "d", sides=8))
 m("penstock_side", "grid", hcyl("arm", "x", 5.5, 0, 8, "wat", c=(8, 8, 8)))
 
-m("dam_gate", "grid", [
-    el("guide_w", [0, 0, 5], [3, 16, 11], "c"), el("guide_e", [13, 0, 5], [16, 16, 11], "c"),
-    el("sill", [3, 0, 5], [13, 1, 11], "st"),
-    el("hoist_beam", [0, 15, 4], [16, 16, 12], "ye"),
-])
+# нарисовано вручную в Blockbench: art/blockbench/turbine/power_misc.author.js
 m("dam_gate/gate", "grid", [
     el("leaf", [3, 1, 7], [13, 15, 9], "gate"),
     el("lug", [7, 15, 7.5], [9, 16, 8.5], "st"),

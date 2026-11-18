@@ -1,17 +1,16 @@
 {
 	"credit": "Made with Blockbench",
 	"textures": {
-		"particle": "promptcritical:block/common/plant_panel_smooth",
-		"pn": "promptcritical:block/common/plant_panel",
-		"pns": "promptcritical:block/common/plant_panel_smooth",
-		"pnd": "promptcritical:block/common/plant_panel_dark",
-		"top": "promptcritical:block/control_desk_top"
+		"particle": "promptcritical:block/plant/light",
+		"plant_light": "promptcritical:block/plant/light",
+		"plant_structure": "promptcritical:block/plant/structure",
+		"power_desk_top": "promptcritical:block/power/desk_top"
 	},
 	"elements": [
 		{
-			"name": "plinth",
-			"from": [0.5, 0, 3],
-			"to": [15.5, 1, 15.5],
+			"name": "cabinet",
+			"from": [0, 0, 4],
+			"to": [16, 9, 16],
 			"rotation": {
 				"angle": 0,
 				"axis": "y",
@@ -19,35 +18,35 @@
 			},
 			"faces": {
 				"north": {
-					"uv": [0, 0, 15, 1],
-					"texture": "#pnd"
+					"uv": [0, 7, 16, 16],
+					"texture": "#plant_light"
 				},
 				"east": {
-					"uv": [0, 0, 12.5, 1],
-					"texture": "#pnd"
+					"uv": [0, 7, 12, 16],
+					"texture": "#plant_light"
 				},
 				"south": {
-					"uv": [0, 0, 15, 1],
-					"texture": "#pnd"
+					"uv": [0, 7, 16, 16],
+					"texture": "#plant_light"
 				},
 				"west": {
-					"uv": [0, 0, 12.5, 1],
-					"texture": "#pnd"
+					"uv": [4, 7, 16, 16],
+					"texture": "#plant_light"
 				},
 				"up": {
-					"uv": [0, 0, 15, 12.5],
-					"texture": "#pnd"
+					"uv": [0, 4, 16, 16],
+					"texture": "#plant_light"
 				},
 				"down": {
-					"uv": [0, 0, 15, 12.5],
-					"texture": "#pnd"
+					"uv": [0, 0, 16, 12],
+					"texture": "#plant_light"
 				}
 			}
 		},
 		{
-			"name": "body",
-			"from": [0.5, 1, 2],
-			"to": [15.5, 9, 15.5],
+			"name": "kick",
+			"from": [0.4, 0, 3.4],
+			"to": [15.6, 1, 4],
 			"rotation": {
 				"angle": 0,
 				"axis": "y",
@@ -55,35 +54,71 @@
 			},
 			"faces": {
 				"north": {
-					"uv": [0, 0, 15, 8],
-					"texture": "#pn"
+					"uv": [0.4, 15, 15.6, 16],
+					"texture": "#plant_structure"
 				},
 				"east": {
-					"uv": [0, 0, 13.5, 8],
-					"texture": "#pn"
+					"uv": [12, 15, 12.6, 16],
+					"texture": "#plant_structure"
 				},
 				"south": {
-					"uv": [0, 0, 15, 8],
-					"texture": "#pn"
+					"uv": [0.4, 15, 15.6, 16],
+					"texture": "#plant_structure"
 				},
 				"west": {
-					"uv": [0, 0, 13.5, 8],
-					"texture": "#pn"
+					"uv": [3.4, 15, 4, 16],
+					"texture": "#plant_structure"
 				},
 				"up": {
-					"uv": [0, 0, 15, 13.5],
-					"texture": "#pn"
+					"uv": [0.4, 3.4, 15.6, 4],
+					"texture": "#plant_structure"
 				},
 				"down": {
-					"uv": [0, 0, 15, 13.5],
-					"texture": "#pn"
+					"uv": [0.4, 12, 15.6, 12.6],
+					"texture": "#plant_structure"
+				}
+			}
+		},
+		{
+			"name": "panel",
+			"from": [0, 8.4, 4],
+			"to": [16, 9.4, 14],
+			"rotation": {
+				"angle": -22.5,
+				"axis": "x",
+				"origin": [8, 9, 9]
+			},
+			"faces": {
+				"north": {
+					"uv": [0, 6.6, 16, 7.6],
+					"texture": "#plant_light"
+				},
+				"east": {
+					"uv": [2, 6.6, 12, 7.6],
+					"texture": "#plant_light"
+				},
+				"south": {
+					"uv": [0, 6.6, 16, 7.6],
+					"texture": "#plant_light"
+				},
+				"west": {
+					"uv": [4, 6.6, 14, 7.6],
+					"texture": "#plant_light"
+				},
+				"up": {
+					"uv": [0, 0, 16, 16],
+					"texture": "#power_desk_top"
+				},
+				"down": {
+					"uv": [0, 2, 16, 12],
+					"texture": "#plant_light"
 				}
 			}
 		},
 		{
 			"name": "back",
-			"from": [0.25, 1, 14],
-			"to": [15.75, 15.5, 16],
+			"from": [0, 9, 12],
+			"to": [16, 15.5, 16],
 			"rotation": {
 				"angle": 0,
 				"axis": "y",
@@ -91,71 +126,35 @@
 			},
 			"faces": {
 				"north": {
-					"uv": [0, 0, 15.5, 14.5],
-					"texture": "#pns"
+					"uv": [0, 0.5, 16, 7],
+					"texture": "#plant_light"
 				},
 				"east": {
-					"uv": [0, 0, 2, 14.5],
-					"texture": "#pns"
+					"uv": [0, 0.5, 4, 7],
+					"texture": "#plant_light"
 				},
 				"south": {
-					"uv": [0, 0, 15.5, 14.5],
-					"texture": "#pns"
+					"uv": [0, 0.5, 16, 7],
+					"texture": "#plant_light"
 				},
 				"west": {
-					"uv": [0, 0, 2, 14.5],
-					"texture": "#pns"
+					"uv": [12, 0.5, 16, 7],
+					"texture": "#plant_light"
 				},
 				"up": {
-					"uv": [0, 0, 15.5, 2],
-					"texture": "#pns"
+					"uv": [0, 12, 16, 16],
+					"texture": "#plant_light"
 				},
 				"down": {
-					"uv": [0, 0, 15.5, 2],
-					"texture": "#pns"
+					"uv": [0, 0, 16, 4],
+					"texture": "#plant_light"
 				}
 			}
 		},
 		{
-			"name": "desktop",
-			"from": [0, 3, 1],
-			"to": [16, 10, 15],
-			"rotation": {
-				"angle": -22.5,
-				"axis": "x",
-				"origin": [8, 9, 1]
-			},
-			"faces": {
-				"north": {
-					"uv": [0, 0, 16, 7],
-					"texture": "#pns"
-				},
-				"east": {
-					"uv": [0, 0, 14, 7],
-					"texture": "#pns"
-				},
-				"south": {
-					"uv": [0, 0, 16, 7],
-					"texture": "#pns"
-				},
-				"west": {
-					"uv": [0, 0, 14, 7],
-					"texture": "#pns"
-				},
-				"up": {
-					"uv": [0, 0, 16, 16],
-					"texture": "#top"
-				},
-				"down": {
-					"uv": [0, 0, 16, 14],
-					"texture": "#pns"
-				}
-			}
-		},
-		{
-			"name": "armrest",
-			"from": [0, 8, 0],
-			"to": [16, 9.5, 2],
+			"name": "ledge",
+			"from": [0, 8.6, 0.6],
+			"to": [16, 9.2, 4.4],
 			"rotation": {
 				"angle": 0,
 				"axis": "y",
@@ -163,28 +162,28 @@
 			},
 			"faces": {
 				"north": {
-					"uv": [0, 0, 16, 1.5],
-					"texture": "#pnd"
+					"uv": [0, 6.8, 16, 7.4],
+					"texture": "#plant_structure"
 				},
 				"east": {
-					"uv": [0, 0, 2, 1.5],
-					"texture": "#pnd"
+					"uv": [11.6, 6.8, 15.4, 7.4],
+					"texture": "#plant_structure"
 				},
 				"south": {
-					"uv": [0, 0, 16, 1.5],
-					"texture": "#pnd"
+					"uv": [0, 6.8, 16, 7.4],
+					"texture": "#plant_structure"
 				},
 				"west": {
-					"uv": [0, 0, 2, 1.5],
-					"texture": "#pnd"
+					"uv": [0.6, 6.8, 4.4, 7.4],
+					"texture": "#plant_structure"
 				},
 				"up": {
-					"uv": [0, 0, 16, 2],
-					"texture": "#pnd"
+					"uv": [0, 0.6, 16, 4.4],
+					"texture": "#plant_structure"
 				},
 				"down": {
-					"uv": [0, 0, 16, 2],
-					"texture": "#pnd"
+					"uv": [0, 11.6, 16, 15.4],
+					"texture": "#plant_structure"
 				}
 			}
 		}

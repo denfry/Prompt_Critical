@@ -338,16 +338,7 @@ mk("contact_converter", "reagents",
        nozzle("gas_out", [14, 1, 6], [16, 5, 10], "gas", "east"),
    ], {"shell": "block/contact_converter_shell.png"})
 
-mk("absorption_tower", "reagents",
-   shell("shell", "y", 5, 0, 16, "shell")
-   + disc("flange_1", "y", 5.8, 5, 5.75, "ds", sides=8)
-   + disc("flange_2", "y", 5.8, 10.5, 11.25, "ds", sides=8)
-   + disc("distributor", "y", 3, 15.5, 16.5, "ds", sides=8)
-   + [
-       nozzle("gas_in", [0, 1.5, 6], [3.5, 5.5, 10], "gas", "west"),
-       nozzle("acid_in", [12.5, 13, 7], [16, 15, 9], "acid", "east"),
-       nozzle("acid_out", [12.5, 0.5, 7], [16, 2.5, 9], "acid", "east"),
-   ], {"shell": "block/absorption_tower_shell.png"})
+# нарисовано вручную в Blockbench: art/blockbench/turbine/power_misc.author.js
 
 # Габер–Бош: колонна синтеза + компрессор на валу Create (маховик компрессора — partial, ось X)
 mk("ammonia_synthesis_reactor", "reagents",
@@ -416,12 +407,7 @@ mk("solvay_tower", "reagents",
 
 # нарисовано вручную в Blockbench: art/blockbench/electronics/silicon_line.author.js
 
-mk("fractionating_column", "reagents",
-   shell("shell", "y", 5, 0, 16, "shell")
-   + [nozzle(f"draw_{i}", [12.5, y, 7], [16, y + 2, 9], "fuel", "east") for i, y in enumerate((2, 7, 12))]
-   + [el("ladder_n", [2, 0, 5], [2.5, 16, 5.5], "d"), el("ladder_s", [2, 0, 10.5], [2.5, 16, 11], "d")]
-   + [el(f"rung_{y}", [2.01, y, 5.5], [2.49, y + 0.5, 10.5], "d") for y in (2, 5, 8, 11, 14)],
-   {"shell": "block/fractionating_column_shell.png"})
+# нарисовано вручную в Blockbench: art/blockbench/turbine/power_misc.author.js
 
 mk("brine_extractor", "reagents", [
     el("pad", [0, 0, 0], [16, 1.5, 16], "c"),

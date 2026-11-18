@@ -230,14 +230,7 @@ model("pipe_adapter_create_raw", "piping", dict(_ad, body=B("pipe_adapter_create
 # ======================================================================
 # turbine hall (ось ротора — X)
 # ======================================================================
-model("turbine_casing", "turbine", tx("d", tc=B("turbine_casing"), tcs=B("turbine_casing_smooth")), [
-    el("foot", [0, 0, 1], [16, 1, 15], "d"),
-    el("lower", [0, 1, 2], [16, 7, 14], "tc"),
-    el("joint_flange", [0, 7, 1], [16, 9, 15], "d"),
-    el("upper", [0, 9, 3], [16, 12.5, 13], "tc"),
-    el("crown", [0, 12.5, 5], [16, 14.5, 11], "tcs"),
-    el("crown_rib", [7, 14.5, 6], [9, 15.5, 10], "d"),
-], "block/turbine_casing")
+# нарисовано вручную в Blockbench: art/blockbench/turbine/power_misc.author.js
 
 model("turbine_rotor", "turbine", tx("d", "b", tc=B("turbine_casing")), [
     el("pedestal", [2, 0, 3], [14, 5, 13], "tc"),
@@ -668,13 +661,7 @@ model("alarm_horn", "control", tx("pnd", "red", gr=B("alarm_horn_grille")), [
 ], "block/alarm_horn")
 
 # секция пульта: наклонная столешница 22,5°, оператор стоит с севера
-model("control_desk", "control", tx("pn", "pns", "pnd", top=B("control_desk_top")), [
-    el("plinth", [0.5, 0, 3], [15.5, 1, 15.5], "pnd"),
-    el("body", [0.5, 1, 2], [15.5, 9, 15.5], "pn"),
-    el("back", [0.25, 1, 14], [15.75, 15.5, 16], "pns"),
-    el("desktop", [0, 3, 1], [16, 10, 15], "pns", faces={"up": "top"}, full=["up"], rot=("x", -22.5, [8, 9, 1])),
-    el("armrest", [0, 8, 0], [16, 9.5, 2], "pnd"),
-], "block/control_desk")
+# нарисовано вручную в Blockbench: art/blockbench/turbine/power_misc.author.js
 
 model("control_room_core", "control", tx("pn", "pnd", "louv", front=B("control_room_core_front")), [
     el("cabinet", [1, 0, 1], [15, 16, 16], "pn"),
