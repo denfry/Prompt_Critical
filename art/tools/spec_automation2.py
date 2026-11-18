@@ -93,17 +93,7 @@ m("remote_io_adapter_fault", "automation", comm(fault=True, adapter=True))
 # ======================================================================
 # ПАЗ: шкаф логического контроллера безопасности 1×2×1 (TMR), дверь — partial
 # ======================================================================
-def sis(state="normal"):
-    lam = {"normal": "lg", "tripped": "lr", "bypassed": "ly", "fault": "lo"}[state]
-    return [el("plinth", [0, 0, 1], [16, 1, 16], "h"),
-            el("body", [0, 1, 1], [16, 32, 16], "ral"),
-            el("roof", [-0.25, 31, 0.75], [16.25, 32, 16.25], "rals"),
-            box_("display_frame", [3, 25, 0.5], [13, 29, 1], "rals", faces={"north": "pblk"}),
-            el("glow_status" if state != "normal" else "status", [4, 26, 0.3], [12, 28, 0.5], lam if state != "normal" else "lg")]
-
-
-for _s in ("normal", "tripped", "bypassed", "fault"):
-    m("sis_logic_solver" + ("" if _s == "normal" else "_" + _s), "automation", sis(_s))
+# шкаф ПАЗ (sis_logic_solver и состояния; дверь в статической модели, partial ниже не используется) нарисован вручную в Blockbench: art/blockbench/automation/relay_logic.author.js
 m("sis_logic_solver/door", "automation", [
     el("door", [1, 2, 0], [15, 24, 1], "ral", faces={"north": "sisd"}, full=["north"]),
     el("handle", [13, 11, -0.6], [13.75, 15, 0], "d"),
@@ -175,17 +165,7 @@ for _ok, _sfx in ((True, ""), (False, "_link_down")):
 # ======================================================================
 # телемеханика: уличный шкаф КП, мачта с антенной, фронт-процессор ПУ
 # ======================================================================
-def rtu(power="grid"):
-    lam = {"grid": ("lg", True), "battery": ("ly", True), "off": ("lg", False)}[power]
-    return [el("plinth", [0, 0, 2], [16, 2, 16], "c"),
-            el("body", [1, 2, 3], [15, 30, 15], "r32"),
-            el("canopy", [0, 30, 1], [16, 31.5, 16], "r32"),
-            el("plate", [5, 26, 2.8], [11, 28, 3], "w"),
-            lamp("lamp_power", 3, 27, 3, lam[1], lam[0])]
-
-
-for _s in ("grid", "battery", "off"):
-    m("rtu_station" + ("" if _s == "grid" else "_" + _s), "automation", rtu(_s))
+# шкаф КП (rtu_station и состояния; дверь в статической модели, partial ниже не используется) нарисован вручную в Blockbench: art/blockbench/automation/relay_logic.author.js
 m("rtu_station/door", "automation", [
     el("door", [1.5, 3, 2], [14.5, 25, 3], "r32", faces={"north": "rtud"}, full=["north"]),
     el("handle", [12.5, 12, 1.4], [13.25, 16, 2], "d"),
