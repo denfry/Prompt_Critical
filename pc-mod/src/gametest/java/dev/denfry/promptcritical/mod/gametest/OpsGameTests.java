@@ -203,7 +203,10 @@ public final class OpsGameTests {
                     h.assertTrue(u.rupture() == BoilerRupture.SHELL_OVERPRESSURE, "shell overpressure: " + u.rupture());
                     h.assertTrue(u.reliefLifts() == 0, "stuck relief valve never lifted");
                     double burst = 2.0 * u.spec().workingPressurePa();
-                    h.assertTrue(Math.abs(pMax[0] - burst) <= 0.02e6, "burst at " + pMax[0] + " Pa, expected " + burst);
+                    // давление разрыва пишет сам котёл: выборка по игровым тикам могла проскочить шаг симуляции,
+                    // на котором давление дошло до предела и обечайка лопнула
+                    h.assertTrue(Math.abs(u.rupturePressurePa() - burst) <= 0.02e6,
+                            "burst at " + u.rupturePressurePa() + " Pa, expected " + burst + " (sampled max " + pMax[0] + ")");
                 })
                 .thenSucceed();
     }

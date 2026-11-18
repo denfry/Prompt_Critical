@@ -69,6 +69,8 @@ public final class FireTubeBoiler implements Boiler {
     private double bedKg, crownK, stackK, chimneyHeightM, scaleM, lastFluxWm2;
     private boolean lit, plugMelted, plugFitted = true;
     private BoilerRupture rupture = BoilerRupture.NONE;
+    /** Давление воды в момент разрыва, Па (акт о взрыве; NaN — котёл цел). */
+    private double rupturePressurePa = Double.NaN;
 
     /**
      * @param fuel         уголь на решётке ({@code CoalAssay.toFuel()})
@@ -152,6 +154,11 @@ public final class FireTubeBoiler implements Boiler {
         return plugFitted;
     }
 
+    /** Давление воды в момент разрыва, Па; NaN — котёл цел. */
+    public double rupturePressurePa() {
+        return rupturePressurePa;
+    }
+
     public BoilerRupture rupture() {
         return rupture;
     }
@@ -222,6 +229,7 @@ public final class FireTubeBoiler implements Boiler {
         out.putBoolean("plug_melted", plugMelted);
         out.putBoolean("plug_fitted", plugFitted);
         out.putInt("rupture", rupture.ordinal());
+        out.putDouble("rupture_pa", rupturePressurePa);
         out.putDouble("scale_m", scaleM);
     }
 
@@ -234,6 +242,7 @@ public final class FireTubeBoiler implements Boiler {
         plugMelted = in.getBoolean("plug_melted");
         plugFitted = in.getBoolean("plug_fitted");
         rupture = BoilerRupture.values()[in.getInt("rupture")];
+        rupturePressurePa = in.optDouble("rupture_pa", Double.NaN);
         scaleM = in.optDouble("scale_m", 0);
     }
 
@@ -283,8 +292,10 @@ public final class FireTubeBoiler implements Boiler {
         stackK += (res.fluegasKgS > 0 ? gasExit - stackK : ta0 - stackK) * Math.min(1, dtS / STACK_TIME_S);
 
         stepCrown(dtS, in, out, qFurnace);
-        if (in.waterPressurePa >= burstFactor * spec.workingPressurePa()
-                && rupture == BoilerRupture.NONE) rupture = BoilerRupture.SHELL_OVERPRESSURE;
+        if (in.waterPressurePa >= burstFactor * spec.workingPressurePa() && rupture == BoilerRupture.NONE) {
+            rupture = BoilerRupture.SHELL_OVERPRESSURE;
+            rupturePressurePa = in.waterPressurePa;
+        }
         if (rupture != BoilerRupture.NONE) lit = false;
 
         out.furnaceHeatW = qFurnace;
@@ -314,7 +325,10 @@ public final class FireTubeBoiler implements Boiler {
             plugMelted = true;
             lit = false;
         }
-        if (crownK >= CROWN_FAILURE_K && rupture == BoilerRupture.NONE) rupture = BoilerRupture.CROWN_COLLAPSE;
+        if (crownK >= CROWN_FAILURE_K && rupture == BoilerRupture.NONE) {
+            rupture = BoilerRupture.CROWN_COLLAPSE;
+            rupturePressurePa = in.waterPressurePa;
+        }
         out.crownTempK = crownK;
         out.plugTempK = plug;
         out.crownUncovered = uncovered;

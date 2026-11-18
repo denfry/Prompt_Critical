@@ -153,6 +153,11 @@ public final class BoilerUnit {
         return boiler.rupture();
     }
 
+    /** Давление в момент разрыва, Па; NaN — котёл цел. */
+    public double rupturePressurePa() {
+        return boiler.rupturePressurePa();
+    }
+
     /** Дренаж открыт ({@link SteamPlant#DRAIN}): питание отключено, вода спускается, пока нет давления. */
     public boolean draining() {
         return draining;
