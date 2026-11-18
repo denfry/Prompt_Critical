@@ -113,7 +113,12 @@ public final class AnnunciatorPanels {
     }
 
     static Component window(PanelValues v, int i) {
-        int src = v.raw(W0 + 2 * i), f = v.raw(W0 + 2 * i + 1);
+        return windowAt(v, W0 + 2 * i, W0 + 2 * i + 1);
+    }
+
+    /** Окно по каналам ссылки {@code srcCh} и состояния {@code flagCh} (табло и список сигнализаций пульта). */
+    public static Component windowAt(PanelValues v, int srcCh, int flagCh) {
+        int src = v.raw(srcCh), f = v.raw(flagCh);
         if ((f & F_TEST) != 0) return LAMP_TEST.get().withStyle(blink(2) ? ChatFormatting.WHITE : ChatFormatting.DARK_GRAY);
         if ((f & F_PRESENT) == 0) return Component.empty();
         AlarmState state = AlarmState.values()[Math.min(AlarmState.values().length - 1, f & 15)];

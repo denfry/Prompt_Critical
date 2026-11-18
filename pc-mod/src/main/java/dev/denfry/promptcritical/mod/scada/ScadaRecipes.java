@@ -90,5 +90,17 @@ public final class ScadaRecipes extends RecipeProvider {
                 .define('W', PcItems.COPPER_WIRE.get())
                 .unlockedBy("has_annunciator", has(PcBlocks.ANNUNCIATOR_PANEL.get()))
                 .save(out, PromptCritical.id("scada/alarm_horn").toString());
+        // БЩУ (03c §3c.9.1): секция пульта — стол со стеклом приборов и проводкой; ядро щитовой — датчики дозы и дыма
+        ShapedRecipeBuilder.shaped(RecipeCategory.REDSTONE, PcBlocks.CONTROL_DESK.get())
+                .pattern("GLG").pattern("WBW").pattern("S S").define('G', glass).define('L', PcBlocks.INDICATOR_LAMP.get())
+                .define('W', PcItems.COPPER_WIRE.get()).define('B', PcItems.PRINTED_CIRCUIT_BOARD.get()).define('S', sheet)
+                .unlockedBy("has_annunciator", has(PcBlocks.ANNUNCIATOR_PANEL.get()))
+                .save(out, PromptCritical.id("scada/control_desk").toString());
+        ShapedRecipeBuilder.shaped(RecipeCategory.REDSTONE, PcBlocks.CONTROL_ROOM_CORE.get())
+                .pattern("SDS").pattern("WBW").pattern("SCS").define('S', sheet).define('D', PcItems.DOSIMETER.get())
+                .define('W', PcItems.COPPER_WIRE.get()).define('B', PcItems.PRINTED_CIRCUIT_BOARD.get())
+                .define('C', net.minecraft.world.item.Items.CAMPFIRE)
+                .unlockedBy("has_control_desk", has(PcBlocks.CONTROL_DESK.get()))
+                .save(out, PromptCritical.id("scada/control_room_core").toString());
     }
 }

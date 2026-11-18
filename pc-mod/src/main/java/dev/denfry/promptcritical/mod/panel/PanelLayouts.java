@@ -28,6 +28,7 @@ public final class PanelLayouts {
                 dev.denfry.promptcritical.mod.scada.HistorianPanels.all(),
                 dev.denfry.promptcritical.mod.scada.TwinPanels.all(),
                 dev.denfry.promptcritical.mod.scada.AnnunciatorPanels.all(),
+                dev.denfry.promptcritical.mod.scada.ControlRoomPanels.all(),
                 dev.denfry.promptcritical.mod.ironworks.IronworksPanels.all(),
                 dev.denfry.promptcritical.mod.steelworks.SteelworksPanels.all(),
                 dev.denfry.promptcritical.mod.automation.AutomationPanels.all(),

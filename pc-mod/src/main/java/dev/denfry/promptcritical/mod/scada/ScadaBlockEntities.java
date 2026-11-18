@@ -45,6 +45,13 @@ public final class ScadaBlockEntities {
             BLOCK_ENTITIES.register("alarm_horn",
                     () -> BlockEntityType.Builder.of(AlarmHornBlockEntity::new, PcBlocks.ALARM_HORN.get()).build(null));
 
+    public static final DeferredHolder<BlockEntityType<?>, BlockEntityType<ControlDeskBlockEntity>> CONTROL_DESK =
+            BLOCK_ENTITIES.register("control_desk",
+                    () -> BlockEntityType.Builder.of(ControlDeskBlockEntity::new, PcBlocks.CONTROL_DESK.get()).build(null));
+    public static final DeferredHolder<BlockEntityType<?>, BlockEntityType<ControlRoomCoreBlockEntity>> CONTROL_ROOM_CORE =
+            BLOCK_ENTITIES.register("control_room_core",
+                    () -> BlockEntityType.Builder.of(ControlRoomCoreBlockEntity::new, PcBlocks.CONTROL_ROOM_CORE.get()).build(null));
+
     private ScadaBlockEntities() {
     }
 

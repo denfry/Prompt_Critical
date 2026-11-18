@@ -567,6 +567,12 @@ public final class PcBlocks {
     public static final DeferredBlock<PcDeviceBlock> ALARM_HORN = device("alarm_horn", instrument(),
             Spec.facing(BlockStateProperties.POWERED), dev.denfry.promptcritical.mod.automation.AutomationWallBlock.wall(
                     dev.denfry.promptcritical.mod.scada.AlarmHornBlockEntity::new, 4, 0, 9, 12, 12, 16));
+    /** Секция пульта БЩУ 03c §3c.9.1: обзор L1 и список сигнализаций всех табло в 32 блоках. */
+    public static final DeferredBlock<PcDeviceBlock> CONTROL_DESK = device("control_desk", machine(), Spec.facing(),
+            FoundryBlock.with(dev.denfry.promptcritical.mod.scada.ControlDeskBlockEntity::new));
+    /** Ядро помещения щита 03c §3c.9.1: объём заливкой и обитаемость. */
+    public static final DeferredBlock<PcDeviceBlock> CONTROL_ROOM_CORE = device("control_room_core", machine(), Spec.facing(),
+            FoundryBlock.with(dev.denfry.promptcritical.mod.scada.ControlRoomCoreBlockEntity::new));
     public static final DeferredBlock<PcDeviceBlock> RTU_STATION = device("rtu_station", machine(),
             Spec.facing(BlockStateProperties.LIT).footprint(FP_TALL2),
             FoundryBlock.with(dev.denfry.promptcritical.mod.scada.TelemetryGatewayBlockEntity::new));

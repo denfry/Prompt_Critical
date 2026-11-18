@@ -182,6 +182,12 @@ public class AnnunciatorBlockEntity extends DeviceBlockEntity implements Foundry
         return bound[i] != 0 ? bound[i] : auto[i];
     }
 
+    /** Ссылка на прибор щита ({@link AlarmPoints#ref}) у встроенной сигнализации, −1 — нет. */
+    public int refOf(int alarmId) {
+        Integer r = refs.get(alarmId);
+        return r == null ? -1 : r;
+    }
+
     public int machines() {
         return machines;
     }

@@ -334,6 +334,8 @@ public final class PcLanguageProvider extends LanguageProvider {
         b("historian_server", "Historian Server", "Сервер историана");
         b("annunciator_panel", "Annunciator Panel", "Светосигнальное табло");
         b("alarm_horn", "Alarm Horn", "Сирена сигнализации");
+        b("control_desk", "Control Desk", "Секция пульта");
+        b("control_room_core", "Control Room Core", "Ядро щитовой");
         b("fire_water_pump", "Fire Water Pump", "Пожарный насос");
         b("fire_hydrant", "Fire Hydrant", "Пожарный гидрант");
         b("foam_proportioner", "Foam Proportioner", "Дозатор пенообразователя");
