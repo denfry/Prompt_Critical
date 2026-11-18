@@ -27,6 +27,8 @@
     oil: { tex: 'rolling/oil', P: 16 }, roll: { tex: 'rolling/roll', P: 16 }, water: { tex: 'utilities/water', P: 16 },
     cwhite: { tex: 'utilities/cryo_white', P: 16 }, disp: { tex: 'utilities/display', P: 16 }, hvs: { tex: 'utilities/hv_sign', P: 16 },
     rw: { tex: 'utilities/red_white', P: 16 }, frpg: { tex: 'fuel/frp_green', P: 16 }, monel: { tex: 'fuel/monel', P: 16 },
+    // painted by the future-wave scripts themselves (grid/hv_grid.author.js)
+    tank: { tex: 'm3grid/tank', P: 16 }, l_b: { tex: 'm3grid/lamp_blue', P: 16 }, earth: { tex: 'm3grid/earth', P: 8 },
   });
 
   // Paints a script's own textures (T: name -> () => img) into textures/block/<dir>/.
@@ -147,7 +149,7 @@
   // Window object for a script: build, preview (side by side, dx apart), synchronous exportAll.
   function machine(BUILDS, paint) {
     return {
-      paint, ids: Object.keys(BUILDS),
+      paint, ids: Object.keys(BUILDS), javaOf: (id) => BUILDS[id] && (BUILDS[id].java || id),
       build: (root, id) => PCART.realize(root, BUILDS[id].model(), id),
       preview(root, ids, dx, dz) {
         const m = BUILDS[ids[0]].model();

@@ -1,52 +1,15 @@
 {
 	"credit": "Made with Blockbench",
 	"textures": {
-		"particle": "promptcritical:block/common/auto2_cartogram_glass",
-		"cg": "promptcritical:block/common/auto2_cartogram_glass",
-		"ral": "promptcritical:block/common/auto_ral7035",
-		"rals": "promptcritical:block/common/auto_ral7035_smooth"
+		"particle": "promptcritical:block/m6auto/cglass",
+		"plant_light": "promptcritical:block/plant/light",
+		"m6auto_cglass": "promptcritical:block/m6auto/cglass"
 	},
 	"elements": [
 		{
-			"name": "glass",
-			"from": [0, 0, 13],
-			"to": [16, 16, 14],
-			"rotation": {
-				"angle": 0,
-				"axis": "y",
-				"origin": [8, 8, 8]
-			},
-			"faces": {
-				"north": {
-					"uv": [0, 0, 16, 16],
-					"texture": "#cg"
-				},
-				"east": {
-					"uv": [0, 0, 1, 16],
-					"texture": "#cg"
-				},
-				"south": {
-					"uv": [0, 0, 16, 16],
-					"texture": "#cg"
-				},
-				"west": {
-					"uv": [0, 0, 1, 16],
-					"texture": "#cg"
-				},
-				"up": {
-					"uv": [0, 0, 16, 1],
-					"texture": "#cg"
-				},
-				"down": {
-					"uv": [0, 0, 16, 1],
-					"texture": "#cg"
-				}
-			}
-		},
-		{
 			"name": "back",
-			"from": [0.5, 0.5, 14],
-			"to": [15.5, 15.5, 16],
+			"from": [0, 0, 13.4],
+			"to": [16, 16, 16],
 			"rotation": {
 				"angle": 0,
 				"axis": "y",
@@ -54,35 +17,35 @@
 			},
 			"faces": {
 				"north": {
-					"uv": [0, 0, 15, 15],
-					"texture": "#rals"
+					"uv": [0, 0, 16, 16],
+					"texture": "#plant_light"
 				},
 				"east": {
-					"uv": [0, 0, 2, 15],
-					"texture": "#rals"
+					"uv": [0, 0, 2.6, 16],
+					"texture": "#plant_light"
 				},
 				"south": {
-					"uv": [0, 0, 15, 15],
-					"texture": "#rals"
+					"uv": [0, 0, 16, 16],
+					"texture": "#plant_light"
 				},
 				"west": {
-					"uv": [0, 0, 2, 15],
-					"texture": "#rals"
+					"uv": [13.4, 0, 16, 16],
+					"texture": "#plant_light"
 				},
 				"up": {
-					"uv": [0, 0, 15, 2],
-					"texture": "#rals"
+					"uv": [0, 13.4, 16, 16],
+					"texture": "#plant_light"
 				},
 				"down": {
-					"uv": [0, 0, 15, 2],
-					"texture": "#rals"
+					"uv": [0, 0, 16, 2.6],
+					"texture": "#plant_light"
 				}
 			}
 		},
 		{
-			"name": "frame_top",
-			"from": [0, 15, 12],
-			"to": [16, 16, 14],
+			"name": "glass",
+			"from": [0, 0, 12.8],
+			"to": [16, 16, 13.4],
 			"rotation": {
 				"angle": 0,
 				"axis": "y",
@@ -90,28 +53,64 @@
 			},
 			"faces": {
 				"north": {
-					"uv": [0, 0, 16, 1],
-					"texture": "#ral"
+					"uv": [0, 0, 16, 16],
+					"texture": "#m6auto_cglass"
 				},
 				"east": {
-					"uv": [0, 0, 2, 1],
-					"texture": "#ral"
+					"uv": [2.6, 0, 3.2, 16],
+					"texture": "#m6auto_cglass"
 				},
 				"south": {
-					"uv": [0, 0, 16, 1],
-					"texture": "#ral"
+					"uv": [0, 0, 16, 16],
+					"texture": "#m6auto_cglass"
 				},
 				"west": {
-					"uv": [0, 0, 2, 1],
-					"texture": "#ral"
+					"uv": [12.8, 0, 13.4, 16],
+					"texture": "#m6auto_cglass"
 				},
 				"up": {
-					"uv": [0, 0, 16, 2],
-					"texture": "#ral"
+					"uv": [0, 12.8, 16, 13.4],
+					"texture": "#m6auto_cglass"
 				},
 				"down": {
-					"uv": [0, 0, 16, 2],
-					"texture": "#ral"
+					"uv": [0, 2.6, 16, 3.2],
+					"texture": "#m6auto_cglass"
+				}
+			}
+		},
+		{
+			"name": "frame_t",
+			"from": [0, 14.6, 11.4],
+			"to": [16, 16, 12.8],
+			"rotation": {
+				"angle": 0,
+				"axis": "y",
+				"origin": [8, 8, 8]
+			},
+			"faces": {
+				"north": {
+					"uv": [0, 0, 16, 1.4],
+					"texture": "#plant_light"
+				},
+				"east": {
+					"uv": [3.2, 0, 4.6, 1.4],
+					"texture": "#plant_light"
+				},
+				"south": {
+					"uv": [0, 0, 16, 1.4],
+					"texture": "#plant_light"
+				},
+				"west": {
+					"uv": [11.4, 0, 12.8, 1.4],
+					"texture": "#plant_light"
+				},
+				"up": {
+					"uv": [0, 11.4, 16, 12.8],
+					"texture": "#plant_light"
+				},
+				"down": {
+					"uv": [0, 3.2, 16, 4.6],
+					"texture": "#plant_light"
 				}
 			}
 		}

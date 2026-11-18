@@ -80,9 +80,11 @@ function fmt(v, ind) {
   }
   return JSON.stringify(v);
 }
-const uuid = () => { const h = crypto.randomBytes(16).toString('hex'); return `${h.slice(0, 8)}-${h.slice(8, 12)}-${h.slice(12, 16)}-${h.slice(16, 20)}-${h.slice(20)}`; };
+let uuidSeed = '', uuidN = 0;
+const uuid = () => { const h = crypto.createHash('md5').update(uuidSeed + ':' + uuidN++).digest('hex'); return `${h.slice(0, 8)}-${h.slice(8, 12)}-${h.slice(12, 16)}-${h.slice(16, 20)}-${h.slice(20)}`; };
 
 function compile(r, cat, id, javaPath, m) {
+  uuidSeed = id; uuidN = 0;
   const texRoot = path.join(r, PCART.ASSETS, 'textures/block');
   const order = [];
   const want = (n) => { if (!order.includes(n)) order.push(n); };
@@ -147,4 +149,11 @@ function compile(r, cat, id, javaPath, m) {
 
 if (doPaint) console.log('painted', M.paint(root));
 const ids = only || M.ids;
-console.log(JSON.stringify(M.exportAll(root, ids)));
+const out = M.exportAll(root, ids);
+console.log(JSON.stringify(out));
+// Record the Java model paths written by hand so the placeholder generator (art/tools/pclib.py) skips them.
+const handFile = path.join(root, 'art/hand_models.json');
+const hand = fs.existsSync(handFile) ? JSON.parse(fs.readFileSync(handFile, 'utf8')) : { _comment: 'Models drawn by hand (art/blockbench/**/*.author.js); art/tools/pclib.py does not register these ids, so the placeholder generator cannot overwrite them. Kept by art/tools/pcart_headless.js.', models: [] };
+const java = ids.map((id) => 'block/' + ((M.javaOf ? M.javaOf(id) : null) || id));
+hand.models = [...new Set(hand.models.concat(java))].sort();
+fs.writeFileSync(handFile, JSON.stringify(hand, null, 1) + '\n');

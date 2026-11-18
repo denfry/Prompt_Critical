@@ -1,15 +1,15 @@
 {
 	"credit": "Made with Blockbench",
 	"textures": {
-		"particle": "promptcritical:block/common/brass",
-		"b": "promptcritical:block/common/brass",
-		"st": "promptcritical:block/common/steel_bare"
+		"particle": "promptcritical:block/material/brass",
+		"material_brass": "promptcritical:block/material/brass",
+		"material_bright_steel": "promptcritical:block/material/bright_steel"
 	},
 	"elements": [
 		{
-			"name": "barrel",
-			"from": [11, 5, 8.4],
-			"to": [13, 7, 9],
+			"name": "blade",
+			"from": [11.6, 5.6, 7.4],
+			"to": [12.4, 8, 8.2],
 			"rotation": {
 				"angle": 0,
 				"axis": "y",
@@ -17,35 +17,35 @@
 			},
 			"faces": {
 				"north": {
-					"uv": [0, 0, 2, 2],
-					"texture": "#st"
+					"uv": [3.6, 8, 4.4, 10.4],
+					"texture": "#material_brass"
 				},
 				"east": {
-					"uv": [0, 0, 0.6, 2],
-					"texture": "#st"
+					"uv": [7.8, 8, 8.6, 10.4],
+					"texture": "#material_brass"
 				},
 				"south": {
-					"uv": [0, 0, 2, 2],
-					"texture": "#st"
+					"uv": [11.6, 8, 12.4, 10.4],
+					"texture": "#material_brass"
 				},
 				"west": {
-					"uv": [0, 0, 0.6, 2],
-					"texture": "#st"
+					"uv": [7.4, 8, 8.2, 10.4],
+					"texture": "#material_brass"
 				},
 				"up": {
-					"uv": [0, 0, 2, 0.6],
-					"texture": "#st"
+					"uv": [11.6, 7.4, 12.4, 8.2],
+					"texture": "#material_brass"
 				},
 				"down": {
-					"uv": [0, 0, 2, 0.6],
-					"texture": "#st"
+					"uv": [11.6, 7.8, 12.4, 8.6],
+					"texture": "#material_brass"
 				}
 			}
 		},
 		{
-			"name": "key",
-			"from": [11.75, 4, 7.4],
-			"to": [12.25, 8, 8.4],
+			"name": "bow",
+			"from": [11.2, 7, 7.4],
+			"to": [12.8, 8, 8.2],
 			"rotation": {
 				"angle": 0,
 				"axis": "y",
@@ -53,28 +53,64 @@
 			},
 			"faces": {
 				"north": {
-					"uv": [0, 0, 0.5, 4],
-					"texture": "#b"
+					"uv": [3.2, 8, 4.8, 9],
+					"texture": "#material_brass"
 				},
 				"east": {
-					"uv": [0, 0, 1, 4],
-					"texture": "#b"
+					"uv": [7.8, 8, 8.6, 9],
+					"texture": "#material_brass"
 				},
 				"south": {
-					"uv": [0, 0, 0.5, 4],
-					"texture": "#b"
+					"uv": [11.2, 8, 12.8, 9],
+					"texture": "#material_brass"
 				},
 				"west": {
-					"uv": [0, 0, 1, 4],
-					"texture": "#b"
+					"uv": [7.4, 8, 8.2, 9],
+					"texture": "#material_brass"
 				},
 				"up": {
-					"uv": [0, 0, 0.5, 1],
-					"texture": "#b"
+					"uv": [11.2, 7.4, 12.8, 8.2],
+					"texture": "#material_brass"
 				},
 				"down": {
-					"uv": [0, 0, 0.5, 1],
-					"texture": "#b"
+					"uv": [11.2, 7.8, 12.8, 8.6],
+					"texture": "#material_brass"
+				}
+			}
+		},
+		{
+			"name": "barrel",
+			"from": [11.4, 4.6, 8],
+			"to": [12.6, 6, 9],
+			"rotation": {
+				"angle": 0,
+				"axis": "y",
+				"origin": [8, 8, 8]
+			},
+			"faces": {
+				"north": {
+					"uv": [3.4, 10, 4.6, 11.4],
+					"texture": "#material_bright_steel"
+				},
+				"east": {
+					"uv": [7, 10, 8, 11.4],
+					"texture": "#material_bright_steel"
+				},
+				"south": {
+					"uv": [11.4, 10, 12.6, 11.4],
+					"texture": "#material_bright_steel"
+				},
+				"west": {
+					"uv": [8, 10, 9, 11.4],
+					"texture": "#material_bright_steel"
+				},
+				"up": {
+					"uv": [11.4, 8, 12.6, 9],
+					"texture": "#material_bright_steel"
+				},
+				"down": {
+					"uv": [11.4, 7, 12.6, 8],
+					"texture": "#material_bright_steel"
 				}
 			}
 		}

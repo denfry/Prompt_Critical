@@ -28,8 +28,7 @@ def sim_cabinet(running):
         lamp(f"lamp_{i}", 3.5 + i * 3, 28, 1, running and i % 2 == 0, "ly" if i % 2 else "lg", 0.6) for i in range(4)]
 
 
-m("training_simulator", "control", sim_cabinet(False))
-m("training_simulator_running", "control", sim_cabinet(True))
+# нарисовано вручную в Blockbench: art/blockbench/automation/m6_automation.author.js
 
 
 def sim_console(active):  # секция пульта как control_desk с жёлтой полосой «ТРЕНАЖЁР»
@@ -41,8 +40,7 @@ def sim_console(active):  # секция пульта как control_desk с ж�
             lamp("lamp_active", 8, 14, 14, active, "ly", 0.75)]
 
 
-m("simulator_console", "control", sim_console(False))
-m("simulator_console_active", "control", sim_console(True))
+# нарисовано вручную в Blockbench: art/blockbench/automation/m6_automation.author.js
 
 
 def instructor(active):
@@ -58,8 +56,7 @@ def instructor(active):
             el(("glow_" if active else "") + "pause_button", [22, 11, 3.5], [24, 12, 5.5], "lr" if active else "red")]
 
 
-m("instructor_station", "control", instructor(False))
-m("instructor_station_active", "control", instructor(True))
+# нарисовано вручную в Blockbench: art/blockbench/automation/m6_automation.author.js
 
 
 # ======================================================================
@@ -141,12 +138,7 @@ def assembler(working):
             lamp("lamp_work", 2, 6, 0, working, "lg", 0.6)]
 
 
-m("component_assembler", "electronics", assembler(False))
-m("component_assembler_working", "electronics", assembler(True))
-m("component_assembler/head", "electronics", [
-    el("carriage", [6, 12, 6], [10, 14.5, 10], "d"),
-    el("nozzle", [7.5, 9, 7.5], [8.5, 12, 8.5], "st"),
-], kind="partial")
+# нарисовано вручную в Blockbench: art/blockbench/automation/m6_automation.author.js
 
 
 def vfd(state="off"):
