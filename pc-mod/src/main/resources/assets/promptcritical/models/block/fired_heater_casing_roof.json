@@ -1,14 +1,50 @@
 {
 	"credit": "Made with Blockbench",
 	"textures": {
-		"particle": "promptcritical:block/common/steel_dark",
-		"d": "promptcritical:block/common/steel_dark",
-		"ref": "promptcritical:block/common/fuelcycle_refractory"
+		"particle": "promptcritical:block/m8ref/refr",
+		"m8ref_refr": "promptcritical:block/m8ref/refr",
+		"plant_furnace_casing": "promptcritical:block/plant/furnace_casing"
 	},
 	"elements": [
 		{
-			"name": "shell",
-			"from": [0, 12, 0],
+			"name": "lining",
+			"from": [0, 9, 0],
+			"to": [16, 15, 16],
+			"rotation": {
+				"angle": 0,
+				"axis": "y",
+				"origin": [8, 8, 8]
+			},
+			"faces": {
+				"north": {
+					"uv": [0, 1, 16, 7],
+					"texture": "#m8ref_refr"
+				},
+				"east": {
+					"uv": [0, 1, 16, 7],
+					"texture": "#m8ref_refr"
+				},
+				"south": {
+					"uv": [0, 1, 16, 7],
+					"texture": "#m8ref_refr"
+				},
+				"west": {
+					"uv": [0, 1, 16, 7],
+					"texture": "#m8ref_refr"
+				},
+				"up": {
+					"uv": [0, 0, 16, 16],
+					"texture": "#m8ref_refr"
+				},
+				"down": {
+					"uv": [0, 0, 16, 16],
+					"texture": "#m8ref_refr"
+				}
+			}
+		},
+		{
+			"name": "casing",
+			"from": [0, 15, 0],
 			"to": [16, 16, 16],
 			"rotation": {
 				"angle": 0,
@@ -17,64 +53,28 @@
 			},
 			"faces": {
 				"north": {
-					"uv": [0, 0, 16, 4],
-					"texture": "#d"
+					"uv": [0, 0, 16, 1],
+					"texture": "#plant_furnace_casing"
 				},
 				"east": {
-					"uv": [0, 0, 16, 4],
-					"texture": "#d"
+					"uv": [0, 0, 16, 1],
+					"texture": "#plant_furnace_casing"
 				},
 				"south": {
-					"uv": [0, 0, 16, 4],
-					"texture": "#d"
+					"uv": [0, 0, 16, 1],
+					"texture": "#plant_furnace_casing"
 				},
 				"west": {
-					"uv": [0, 0, 16, 4],
-					"texture": "#d"
+					"uv": [0, 0, 16, 1],
+					"texture": "#plant_furnace_casing"
 				},
 				"up": {
 					"uv": [0, 0, 16, 16],
-					"texture": "#d"
+					"texture": "#plant_furnace_casing"
 				},
 				"down": {
 					"uv": [0, 0, 16, 16],
-					"texture": "#d"
-				}
-			}
-		},
-		{
-			"name": "lining",
-			"from": [0, 9, 0],
-			"to": [16, 12, 16],
-			"rotation": {
-				"angle": 0,
-				"axis": "y",
-				"origin": [8, 8, 8]
-			},
-			"faces": {
-				"north": {
-					"uv": [0, 0, 16, 3],
-					"texture": "#ref"
-				},
-				"east": {
-					"uv": [0, 0, 16, 3],
-					"texture": "#ref"
-				},
-				"south": {
-					"uv": [0, 0, 16, 3],
-					"texture": "#ref"
-				},
-				"west": {
-					"uv": [0, 0, 16, 3],
-					"texture": "#ref"
-				},
-				"up": {
-					"uv": [0, 0, 16, 16],
-					"texture": "#ref"
-				},
-				"down": {
-					"uv": [0, 0, 16, 16],
-					"texture": "#ref"
+					"texture": "#plant_furnace_casing"
 				}
 			}
 		}
