@@ -6,6 +6,7 @@ import dev.denfry.promptcritical.mod.environment.RadiationService;
 import dev.denfry.promptcritical.mod.ironworks.Ironworks;
 import dev.denfry.promptcritical.mod.registry.PcBlocks;
 import dev.denfry.promptcritical.sim.accident.CoreMeltProgression;
+import dev.denfry.promptcritical.sim.accident.HydrogenCombustion;
 import dev.denfry.promptcritical.sim.accident.PlantAccident;
 import dev.denfry.promptcritical.sim.consequence.DamageKind;
 import dev.denfry.promptcritical.sim.consequence.DamageRequest;
@@ -168,13 +169,21 @@ public final class ReactorAccidentSystems {
                 }
         accumulators = n;
         // the reactor cavity: the 3×3 under the vessel, flooded when most of it is water
+        BlockPos floor = underVessel(sl, center);
         int water = 0;
         for (int x = -1; x <= 1; x++)
             for (int z = -1; z <= 1; z++) {
-                m.set(center.getX() + x, center.getY() - 1, center.getZ() + z);
+                m.set(floor.getX() + x, floor.getY(), floor.getZ() + z);
                 if (sl.isLoaded(m) && sl.getFluidState(m).is(net.minecraft.tags.FluidTags.WATER)) water++;
             }
         cavityFlooded = water >= 5;
+    }
+
+    /** The block under the vessel's footprint — the cavity floor where a failed head drops its corium. */
+    static BlockPos underVessel(ServerLevel sl, BlockPos center) {
+        int minY = sl.getBlockState(center).getBlock() instanceof dev.denfry.promptcritical.mod.block.PcBlock pb
+                ? pb.spec().footprint().minY() : 0;
+        return center.below(1 - minY);
     }
 
     public boolean cavityFlooded() {
@@ -289,12 +298,14 @@ public final class ReactorAccidentSystems {
         GridPos o = new GridPos(pos.getX(), pos.getY(), pos.getZ());
         if (accident.burnEvent()) {
             // R6: the burn goes through the consequence router; inside a closed containment the activity stays in
-            ConsequenceRouter.Routed r = ConsequenceRouter.route(ConsequenceRouter.Event.HYDROGEN_BURN, requestSeq++, source, null, o,
-                    accident.burnEnergyJ(), true, failed > 0);
+            // a detonation hits with the Chapman–Jouguet pressure, twice the deflagration's (04c §4c.7.3)
+            boolean det = accident.burnRegime() == HydrogenCombustion.Regime.DETONATION;
+            ConsequenceRouter.Routed r = ConsequenceRouter.route(det ? ConsequenceRouter.Event.HYDROGEN_DETONATION
+                    : ConsequenceRouter.Event.HYDROGEN_BURN, requestSeq++, source, null, o, accident.burnEnergyJ(), true, failed > 0);
             if (r.damage() != null) b.damage().submit(r.damage());
-            sl.playSound(null, pos, SoundEvents.GENERIC_EXPLODE.value(), SoundSource.BLOCKS, 3f, 0.6f);
-            broadcast(sl, c, 128, NppText.msg("accident_h2_burn", String.format(Locale.ROOT, "%.0f", accident.burnEnergyJ() / 1e6))
-                    .withStyle(ChatFormatting.DARK_RED));
+            sl.playSound(null, pos, SoundEvents.GENERIC_EXPLODE.value(), SoundSource.BLOCKS, det ? 4f : 3f, det ? 0.4f : 0.6f);
+            broadcast(sl, c, 128, NppText.msg(det ? "accident_h2_detonation" : "accident_h2_burn",
+                    String.format(Locale.ROOT, "%.0f", accident.burnEnergyJ() / 1e6)).withStyle(ChatFormatting.DARK_RED));
         }
         if (accident.breachEvent()) {
             double energy = Math.max(0, accident.design().containmentFailurePa() - PlantAccident.ATMOSPHERE_PA) * containment.volumeM3();
@@ -329,12 +340,21 @@ public final class ReactorAccidentSystems {
                 broadcast(sl, c, 128, NppText.msg(key).withStyle(ChatFormatting.DARK_RED));
             }
         }
-        if (m.steamExplosionJ() > 0) steamExplosion(sl, b, source, m.vesselFailed() ? pos.below() : pos, m.steamExplosionJ(), failed);
+        if (m.steamExplosionJ() > 0) {
+            if (m.vesselFailed()) steamExplosion(sl, b, source, underVessel(sl, pos), m.steamExplosionJ(), failed);
+            else {
+                // in the lower plenum the vessel takes the pressure pulse (the alpha-mode failure of the head is not
+                // modelled): heard and announced, no blast in the world — and the reactor block keeps its accident
+                sl.playSound(null, pos, SoundEvents.GENERIC_EXPLODE.value(), SoundSource.BLOCKS, 2f, 0.3f);
+                broadcast(sl, c, 128, NppText.msg("fci_in_vessel", String.format(Locale.ROOT, "%.1f", m.steamExplosionJ() / 1e6))
+                        .withStyle(ChatFormatting.DARK_RED));
+            }
+        }
         if (m.failureEvent()) {
             if (m.directHeatingJ() > 0)
                 broadcast(sl, c, 128, NppText.msg("melt_dch", String.format(Locale.ROOT, "%.0f", m.directHeatingJ() / 1e6))
                         .withStyle(ChatFormatting.DARK_RED));
-            coriumFront = pos.below().immutable();
+            coriumFront = underVessel(sl, pos).immutable();
             meltThrough(b, source, coriumFront);
         }
         for (int i = 0; i < m.ablatedBlocks() && coriumFront != null; i++) {
@@ -398,6 +418,8 @@ public final class ReactorAccidentSystems {
         v[base + AccidentPanels.H2_KG10] = (int) Math.round(a.hydrogenKg() * 10);
         v[base + AccidentPanels.CONT_KPA] = (int) Math.round(a.containmentPa() / 1e3);
         v[base + AccidentPanels.CONT_H2] = (int) Math.round(a.containmentHydrogenFraction() * 1000);
+        v[base + AccidentPanels.CONT_STEAM] = (int) Math.round(a.containmentSteamFraction() * 1000);
+        v[base + AccidentPanels.H2_REGIME] = a.containmentRegime().ordinal();
         v[base + AccidentPanels.ECCS_KGS10] = (int) Math.round((a.eccsFlowKgS() + a.accumulatorFlowKgS()) * 10);
         v[base + AccidentPanels.BREAK_KGS10] = (int) Math.round(a.breakFlowKgS() * 10);
         v[base + AccidentPanels.BREAK_CM2] = (int) Math.round(a.breakArea() * 1e4);

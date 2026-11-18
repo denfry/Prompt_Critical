@@ -8,6 +8,8 @@ import dev.denfry.promptcritical.mod.npp.PwrPanels;
 import dev.denfry.promptcritical.mod.npp.PwrReactorBlockEntity;
 import dev.denfry.promptcritical.mod.registry.PcBlocks;
 import dev.denfry.promptcritical.sim.accident.CoreMeltProgression;
+import dev.denfry.promptcritical.sim.accident.HydrogenCombustion;
+import dev.denfry.promptcritical.sim.accident.PlantAccident;
 import dev.denfry.promptcritical.sim.accident.ReactivityInitiatedAccident;
 import dev.denfry.promptcritical.sim.fuel.FuelDesign;
 import dev.denfry.promptcritical.sim.npp.PressurizedWaterReactor;
@@ -172,7 +174,7 @@ public final class SevereAccidentGameTests {
 
     /**
      * A VVER without ECCS on a guillotine break, scrammed from half power: no water ever comes back. When
-     * {@code cavityWater}, the 3×3 under the vessel is flooded.
+     * {@code cavityWater}, the 3×3 under the vessel's footprint (two below the controller) is flooded.
      */
     private static GameTestSequence meltdown(GameTestHelper h, boolean cavityWater) {
         place(h, REACTOR, PcBlocks.PWR_REACTOR.get());
@@ -181,7 +183,7 @@ public final class SevereAccidentGameTests {
         driven(h, PUMP_B, PcBlocks.PRIMARY_PUMP.get());
         if (cavityWater)
             for (int x = -1; x <= 1; x++)
-                for (int z = -1; z <= 1; z++) h.setBlock(REACTOR.offset(x, -1, z), Blocks.WATER.defaultBlockState());
+                for (int z = -1; z <= 1; z++) h.setBlock(REACTOR.offset(x, -2, z), Blocks.WATER.defaultBlockState());
         return h.startSequence()
                 .thenIdle(2)
                 .thenExecute(() -> {
@@ -209,7 +211,8 @@ public final class SevereAccidentGameTests {
                     CoreMeltProgression m = pwr(h).accident().accident().melt();
                     h.assertTrue(m.vesselFailed(), "stage " + m.stage() + ", head " + m.lowerHeadK() + " K");
                 })
-                .thenWaitUntil(() -> h.assertBlockPresent(PcBlocks.CORIUM.get(), REACTOR.below()))
+                // the vessel's footprint reaches one block below the controller: the corium lands under it
+                .thenWaitUntil(() -> h.assertBlockPresent(PcBlocks.CORIUM.get(), REACTOR.below(2)))
                 .thenExecute(() -> {
                     PwrReactorBlockEntity r = pwr(h);
                     h.assertTrue(r.accident().coriumFront() != null, "corium tracked");
@@ -236,8 +239,50 @@ public final class SevereAccidentGameTests {
                     CoreMeltProgression m = pwr(h).accident().accident().melt();
                     h.assertFalse(m.vesselFailed(), "head holds at " + m.lowerHeadK() + " K");
                     h.assertTrue(m.lowerHeadK() < 600, "head cooled from outside: " + m.lowerHeadK());
-                    h.assertBlockNotPresent(PcBlocks.CORIUM.get(), REACTOR.below());
+                    h.assertBlockNotPresent(PcBlocks.CORIUM.get(), REACTOR.below(2));
                 })
+                .thenSucceed();
+    }
+
+    /**
+     * §4c.7.3: hydrogen in a small closed containment (5×5×5 inside walls). 6 % is a slow-deflagration mixture that
+     * nothing lights below 8 % without a hot surface: it waits. Brought to 15 %, a 5 m room is past the
+     * deflagration-to-detonation size; it lights, detonates with twice the AICC pressure and tears the 1 MPa shell (a
+     * deflagration alone would load it with about 0.66 MPa). Alone in its batch: the blast is real.
+     */
+    @GameTest(template = LARGE, timeoutTicks = 600, batch = "hydrogen_alone")
+    public static void hydrogenWaitsThenDetonatesInASmallContainment(GameTestHelper h) {
+        for (int x = 3; x <= 9; x++)
+            for (int y = 1; y <= 7; y++)
+                for (int z = 3; z <= 9; z++)
+                    if (x == 3 || x == 9 || y == 1 || y == 7 || z == 3 || z == 9)
+                        h.setBlock(new BlockPos(x, y, z), PcBlocks.CONTAINMENT_WALL.get().defaultBlockState());
+        place(h, REACTOR, PcBlocks.PWR_REACTOR.get());
+        // the blast may take the reactor block with it: keep the block entity to read the latched breach
+        PwrReactorBlockEntity[] held = new PwrReactorBlockEntity[1];
+        double airMol = 101_325 * 125 / (8.314 * 313);
+        double lean = airMol * 0.06 / 0.94, rich = (0.15 * (airMol + lean) - lean) / 0.85;
+        h.startSequence()
+                .thenIdle(2)
+                .thenExecute(() -> held[0] = pwr(h))
+                .thenWaitUntil(() -> h.assertTrue(held[0].accident().accident().hasContainment(), "containment found: "
+                        + held[0].accident().containment()))
+                .thenExecute(() -> {
+                    h.assertTrue(held[0].accident().containment().volumeM3() == 125, "125 m³: " + held[0].accident().containment().volumeM3());
+                    held[0].accident().accident().addContainmentHydrogen(lean * 0.002016);
+                })
+                .thenIdle(40)
+                .thenExecute(() -> {
+                    PlantAccident a = held[0].accident().accident();
+                    h.assertTrue(a.containmentHydrogenFraction() > 0.055, "6 % waits unlit: " + a.containmentHydrogenFraction());
+                    int[] v = new int[PwrPanels.CHANNELS];
+                    held[0].readPanel(v);
+                    h.assertTrue(v[PwrPanels.ACCIDENT + AccidentPanels.H2_REGIME] == HydrogenCombustion.Regime.SLOW_DEFLAGRATION.ordinal(),
+                            "panel regime " + v[PwrPanels.ACCIDENT + AccidentPanels.H2_REGIME]);
+                    a.addContainmentHydrogen(rich * 0.002016);
+                    h.assertTrue(a.containmentRegime() == HydrogenCombustion.Regime.DETONATION, "regime " + a.containmentRegime());
+                })
+                .thenWaitUntil(() -> h.assertTrue(held[0].accident().accident().containmentBreached(), "detonation tore the shell"))
                 .thenSucceed();
     }
 

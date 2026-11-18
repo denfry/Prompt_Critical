@@ -186,6 +186,7 @@ public final class PlantAccident {
     private double breakKgS, eccsKgS, accKgS, boilKgS, lastDt;
     private boolean burnEvent, breachEvent, uncoveryEvent;
     private double burnJ;
+    private HydrogenCombustion.Regime burnRegime = HydrogenCombustion.Regime.NONE;
 
     public PlantAccident(Design design) {
         this.d = design;
@@ -297,6 +298,7 @@ public final class PlantAccident {
     public void step(double dt, double coreW, double sinkW, double reactorPa) {
         burnEvent = breachEvent = uncoveryEvent = false;
         burnJ = 0;
+        burnRegime = HydrogenCombustion.Regime.NONE;
         if (melt != null) melt.beginStep();
         breakKgS = eccsKgS = accKgS = boilKgS = 0;
         lastDt = dt;
@@ -475,12 +477,15 @@ public final class PlantAccident {
     private void containmentStep(double dt, double steamKg, double energyJ, double h2Kg) {
         if (containment == null) return;
         containment.setRecombiners(recombiners);
+        // corium out of the vessel is a hot surface in the gas: it lights any flammable mixture (04c §4c.7.4)
+        containment.setHotSurface(melt != null && melt.vesselFailed());
         containment.addSteam(steamKg, energyJ);
         containment.addHydrogen(h2Kg);
         boolean wasFailed = containment.failed();
         if (containment.step(dt)) {
             burnEvent = true;
             burnJ += containment.lastBurnJ();
+            if (containment.lastRegime().ordinal() > burnRegime.ordinal()) burnRegime = containment.lastRegime();
         }
         if (containment.failed() && !wasFailed) {
             breached = true;
@@ -645,6 +650,28 @@ public final class PlantAccident {
 
     public double burnEnergyJ() {
         return burnJ;
+    }
+
+    /**
+     * Hydrogen reaching the containment from outside the core (a leaking hydrogen line, a gas bottle, a test). Without a
+     * closed containment it is lost to the open air.
+     */
+    public void addContainmentHydrogen(double kg) {
+        if (containment != null) containment.addHydrogen(kg);
+    }
+
+    /** Kind of the burn of the last step: deflagration or detonation (04c §4c.7.3). */
+    public HydrogenCombustion.Regime burnRegime() {
+        return burnRegime;
+    }
+
+    /** What the containment gas would do if lit now ({@code NONE} without a closed containment). */
+    public HydrogenCombustion.Regime containmentRegime() {
+        return containment != null ? containment.regime() : HydrogenCombustion.Regime.NONE;
+    }
+
+    public double containmentSteamFraction() {
+        return containment != null ? containment.steamFraction() : 0;
     }
 
     public boolean breachEvent() {

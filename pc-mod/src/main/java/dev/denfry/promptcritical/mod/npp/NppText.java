@@ -48,6 +48,7 @@ public final class NppText {
                 "РАЗГОН НА МГНОВЕННЫХ НЕЙТРОНАХ: вспышка %s МДж за %s мс, энтальпия топлива в горячей точке %s кал/г");
         put("ria_failed", "REACTIVITY ACCIDENT: cladding failed in %s assemblies", "РЕАКТИВНОСТНАЯ АВАРИЯ: разрушены оболочки ТВС: %s");
         put("fci", "STEAM EXPLOSION: molten fuel hit the water, %s MJ", "ПАРОВОЙ ВЗРЫВ: расплав топлива попал в воду, %s МДж");
+        put("fci_in_vessel", "STEAM EXPLOSION in the lower plenum: %s MJ, the vessel holds it", "ПАРОВОЙ ВЗРЫВ в нижней камере: %s МДж, корпус его выдержал");
         put("ria_reseated", "Drill: the cluster is back and its housing is sealed", "Учение: кластер на месте, чехол привода заглушён");
         put("ria_reseat_refused", "The cluster can be restored only on a shut-down reactor",
                 "Вернуть кластер можно только на заглушенном реакторе");
@@ -68,6 +69,8 @@ public final class NppText {
         put("melt_dch", "DIRECT CONTAINMENT HEATING: melt blown out at pressure, %s MJ into the containment",
                 "ПРЯМОЙ НАГРЕВ ГЕРМООБОЛОЧКИ: расплав выброшен под давлением, %s МДж в гермооболочку");
         put("melt_mcci", "CORIUM ON THE CONCRETE: %s m³ of floor eaten through", "КОРИУМ НА БЕТОНЕ: проплавлено %s м³ основания");
+        put("accident_h2_detonation", "HYDROGEN DETONATION in the containment: %s MJ, the walls take twice the burn pressure",
+                "ДЕТОНАЦИЯ ВОДОРОДА в гермооболочке: %s МДж, стены получают вдвое больше давления горения");
         put("accident_breach", "CONTAINMENT FAILED: overpressure tore the shell, the release goes outside",
                 "РАЗРУШЕНИЕ ГЕРМООБОЛОЧКИ: давление разорвало её, выброс уходит наружу");
     }
