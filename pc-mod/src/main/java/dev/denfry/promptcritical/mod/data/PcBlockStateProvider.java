@@ -261,6 +261,9 @@ public final class PcBlockStateProvider extends BlockStateProvider {
             case "ammonia_converter" -> "ammonia_synthesis_reactor";
             case "nitric_acid_unit" -> "ostwald_converter";
             case "acid_concentrator" -> "fractionating_column";
+            // химия I3, метанол
+            case "methanol_converter" -> "fixed_bed_reactor";
+            case "methanol_column" -> "fractionating_column";
             // ядерное топливо I4
             case "centrifuge_cascade" -> "cascade_header";
             case "uo2_conversion" -> "uf6_autoclave";
@@ -296,6 +299,7 @@ public final class PcBlockStateProvider extends BlockStateProvider {
             case "disconnector" -> s.getValue(PcProperties.EARTHED) ? id + "_earthed" : id;
             case "dam_gate" -> s.getValue(BlockStateProperties.OPEN) ? id : id + "_closed";
             case "cooling_tower_cell" -> s.getValue(PcProperties.ICED) ? id + "_iced" : id;
+            case "hrsg" -> s.getValue(PcProperties.HRSG_SEGMENT) == PcProperties.HrsgSegment.DRUM ? "hrsg_top" : "hrsg";
             case "gas_turbine" -> switch (s.getValue(PcProperties.GAS_TURBINE_SEGMENT)) {
                 case COMPRESSOR -> id;
                 case COMBUSTOR -> id + "_combustor";

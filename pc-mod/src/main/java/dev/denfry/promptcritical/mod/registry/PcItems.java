@@ -88,6 +88,8 @@ public final class PcItems {
     public static final DeferredItem<Item> CATALYST_STEAM_REFORMING = item("catalyst_steam_reforming", 16);
     public static final DeferredItem<Item> CATALYST_SHIFT_HT = item("catalyst_shift_ht", 16);
     public static final DeferredItem<Item> CATALYST_SHIFT_LT = item("catalyst_shift_lt", 16);
+    /** Медь–оксид цинка–глинозём синтеза метанола (СНМ-1). */
+    public static final DeferredItem<Item> CATALYST_METHANOL = item("catalyst_methanol", 16);
     /** Пакет платинородиевых сеток (Pt 92,5 %, Rh 7,5 %) и катализатор очистки хвостовых газов. */
     public static final DeferredItem<Item> PT_RH_GAUZE = item("pt_rh_gauze", 4);
     public static final DeferredItem<Item> CATALYST_DENOX = item("catalyst_denox", 16);

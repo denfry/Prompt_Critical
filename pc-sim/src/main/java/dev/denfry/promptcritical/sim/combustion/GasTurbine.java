@@ -166,6 +166,22 @@ public final class GasTurbine {
         return ratedPowerW;
     }
 
+    /** Расход воздуха при ISO и номинальных оборотах, кг/с. */
+    public double ratedAirKgS() {
+        return ratedPowerW / specificWork(ISO_K);
+    }
+
+    /**
+     * Расход выхлопных газов, кг/с: одновальная машина на постоянных оборотах качает постоянный объём — приведённый
+     * расход воздуха ∝ p₁/√T₁, пропорционально оборотам; плюс сожжённое топливо (Q_н 50 МДж/кг). Без огня газ холодный,
+     * поэтому — ноль.
+     */
+    public double exhaustKgS(double airK, double airPa) {
+        if (!lit) return 0;
+        double air = ratedAirKgS() * (airPa / ISO_PA) * Math.sqrt(ISO_K / airK) * speed;
+        return air + heatInputW() / 50e6;
+    }
+
     public void save(StateWriter out) {
         out.putDouble("speed", speed);
         out.putDouble("fuel", fuel);
