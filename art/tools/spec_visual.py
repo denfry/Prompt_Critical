@@ -137,62 +137,8 @@ def vcyl(name, cx, cz, r, y0, y1, tex, sides=16):
 # тигельная печь нарисована вручную в Blockbench: art/blockbench/foundry/crucible_furnace.author.js
 
 
-# песчаная форма в опоке: низ и верх опоки с ушками, штыри, литниковая чаша и две прибыли
-def sand_mold(state="empty"):
-    els = [el("drag", [1, 0, 1], [15, 6, 15], "ci", faces={"up": "fsand"}),
-           el("cope", [1, 6, 1], [15, 12, 15], "ci", faces={"up": "fsand"}),
-           el("lug_w", [0, 4, 6], [1, 8, 10], "ci"), el("lug_e", [15, 4, 6], [16, 8, 10], "ci"),
-           el("pin_n", [2, 3, 0.4], [3, 11, 1], "pol"), el("pin_s", [13, 3, 15], [14, 11, 15.6], "pol"),
-           el("handle_n", [6, 9, 0.2], [10, 10, 1], "d"), el("handle_s", [6, 9, 15], [10, 10, 15.8], "d"),
-           el("weight", [2, 12, 2], [6, 14, 6], "d")]
-    hot = state == "poured"
-    tex = "melt" if hot else ("soot" if state == "cooling" else "fsand")
-    for name, (x, z, s) in (("sprue", (9, 9, 3)), ("riser_a", (3, 10, 2)), ("riser_b", (11, 3, 2))):
-        els.append(el(("glow_" if hot else "") + name, [x, 12, z], [x + s, 12.6, z + s], tex))
-    els.append(el("pouring_cup", [8.5, 12, 8.5], [12.5, 13, 9], "fsand"))
-    return els
-
-
-m("sand_mold", "foundry", sand_mold())
-m("sand_mold_poured", "foundry", sand_mold("poured"))
-m("sand_mold_cooling", "foundry", sand_mold("cooling"))
-
-# формовочная машина 2×1×1 (x 0…32): станина со встряхивающим цилиндром, прессовая траверса, бункер смеси; стол — partial
-m("molding_station", "foundry", [
-    el("base", [0, 0, 2], [20, 5, 14], "mach"),
-    el("jolt_cylinder", [6, 5, 5], [14, 6, 11], "pol"),
-    el("yoke_post_n", [19, 0, 2], [23, 22, 5], "mach"),
-    el("yoke_post_s", [19, 0, 11], [23, 22, 14], "mach"),
-    el("yoke_beam", [2, 19, 5], [23, 22, 11], "mach"),
-    el("squeeze_head", [4, 16.5, 4], [16, 19, 12], "machs"),
-    el("hopper", [22, 10, 2], [32, 16, 14], "machs", faces={"up": "fsand"}),
-    el("hopper_legs", [24, 0, 4], [31, 10, 12], "mach"),
-    el("chute", [16, 13, 6], [22, 14.5, 10], "d"),
-    el("drive_box", [-0.01, 5, 5], [1, 11, 11], "ci"),
-    el("valve_box", [0.5, 5, 0.5], [6, 9, 2], "d"),
-    el("lever_jolt", [1.5, 9, 1], [2.5, 13, 1.6], "red"),
-    el("lever_squeeze", [4, 9, 1], [5, 13, 1.6], "gas"),
-])
-m("molding_station/table", "foundry", [
-    el("table", [1, 6, 2], [19, 8, 14], "tslot"),
-    el("pattern_plate", [3, 8, 4], [17, 9, 12], "patw"),
-    el("flask_n", [3, 9, 3], [17, 12, 4], "ci"), el("flask_s", [3, 9, 12], [17, 12, 13], "ci"),
-    el("flask_w", [3, 9, 4], [4, 12, 12], "ci"), el("flask_e", [16, 9, 4], [17, 12, 12], "ci"),
-    el("sand_fill", [4, 9, 4], [16, 11.5, 12], "fsand"),
-], kind="partial")
-
-# выбивная решётка 2×1×2: основание на пружинах, колосниковое полотно, вибровозбудитель с дебалансами
-m("shakeout_grate", "foundry", [
-    el("base", [0, 0, 0], [32, 2, 32], "d"),
-    el("sand_pile", [4, 2, 4], [28, 3.5, 28], "fsand"),
-] + [el(f"spring_{i}", [x, 2, z], [x + 3, 5, z + 3], "pol") for i, (x, z) in enumerate(((1, 1), (28, 1), (1, 28), (28, 28)))]
-  + [el("deck_n", [0, 5, 0], [32, 8, 2], "ci"), el("deck_s", [0, 5, 30], [32, 8, 32], "ci"),
-     el("deck_w", [0, 5, 2], [2, 8, 30], "ci"), el("deck_e", [30, 5, 2], [32, 8, 30], "ci")]
-  + [el(f"bar_{i}", [2, 6, 3 + i * 4], [30, 7.5, 4.5 + i * 4], "ci") for i in range(7)]
-  + [el("cross_w", [10, 5.5, 2], [11, 6, 30], "d"), el("cross_e", [21, 5.5, 2], [22, 6, 30], "d"),
-     el("vibrator", [-0.01, 5.5, 4], [5, 10.5, 12], "ribs"),
-     el("unbalance_n", [0.5, 5, 2.5], [4.5, 11, 4], "haz"), el("unbalance_s", [0.5, 5, 12], [4.5, 11, 13.5], "haz"),
-     el("vibrator_foot", [-0.01, 2, 3], [5, 5.5, 13], "d")])
+# песчаная форма, формовочная машина и выбивная решётка нарисованы вручную в Blockbench:
+# art/blockbench/foundry/molding.author.js
 
 # токарный станок 2×1×1 (вал слева): тумбы, станина с направляющими, передняя бабка, суппорт, задняя бабка
 m("machine_lathe", "machine_shop", [

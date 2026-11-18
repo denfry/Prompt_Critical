@@ -161,7 +161,9 @@ public final class FoundryPanels {
             .caption(40, 125, Component.literal("→"))
             .build();
 
+    /** Фон — art/blockbench/foundry/molding.author.js ({@code paintGui}). */
     public static final PanelLayout MOLDING = PanelLayout.builder("molding_station", 200, 150, M_CHANNELS)
+            .art(PromptCritical.id("textures/gui/panel/molding_station.png"))
             .dial(8, 24, false, SHAFT_RPM10, 10, 256, Double.NaN, 0, RPM.get(), SHAFT.get(), shaftTip())
             .lamp(8, 88, FLAGS, F_RUNNING, LampColor.AMBER, RUNNING.get())
             .bar(66, 34, 126, M_WATER_MB, 1, 4000, 0xFF3F78B8, WATER.get(), v -> MB.get(v.raw(M_WATER_MB)))
@@ -173,7 +175,9 @@ public final class FoundryPanels {
             .output(104, 120, 2, MOLD_OUT.get())
             .build();
 
+    /** Фон — art/blockbench/foundry/molding.author.js ({@code paintGui}). */
     public static final PanelLayout SHAKEOUT = PanelLayout.builder("shakeout_grate", 200, 150, K_CHANNELS)
+            .art(PromptCritical.id("textures/gui/panel/shakeout_grate.png"))
             .dial(8, 24, false, SHAFT_RPM10, 10, 256, Double.NaN, 0, RPM.get(), SHAFT.get(), shaftTip())
             .lamp(8, 88, FLAGS, F_RUNNING, LampColor.AMBER, RUNNING.get())
             .bar(66, 34, 126, K_PROGRESS_PERMIL, 10, 100, 0xFFC8A050, CYCLE.get(), null)
