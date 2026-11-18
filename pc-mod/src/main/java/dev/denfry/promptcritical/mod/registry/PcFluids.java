@@ -136,6 +136,9 @@ public final class PcFluids {
     public static final Entry DOWNGRADED_HEAVY_WATER = liquid("downgraded_heavy_water", 1094, 1230, 293);
     /** Продукт сероводородного завода, 15 ат. % D. */
     public static final Entry DEUTERIUM_ENRICHED_WATER = liquid("deuterium_enriched_water", 1014, 1040, 293);
+    // цветная металлургия (08 §8.8.1): оборотный раствор 200 г/л NaOH, 150 г/л Al₂O₃ после автоклава; шлам — пульпа 40 %
+    public static final Entry SODIUM_ALUMINATE_LIQUOR = liquid("sodium_aluminate_liquor", 1300, 3000, 368);
+    public static final Entry RED_MUD = liquid("red_mud", 1350, 30000, 333);
 
     static {
         MINE_WATER.props.block(PcBlocks.MINE_WATER);

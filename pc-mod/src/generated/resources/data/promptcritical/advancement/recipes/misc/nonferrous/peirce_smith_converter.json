@@ -1,0 +1,32 @@
+{
+  "parent": "minecraft:recipes/root",
+  "criteria": {
+    "has_sulfide_matte": {
+      "conditions": {
+        "items": [
+          {
+            "items": "promptcritical:sulfide_matte"
+          }
+        ]
+      },
+      "trigger": "minecraft:inventory_changed"
+    },
+    "has_the_recipe": {
+      "conditions": {
+        "recipe": "promptcritical:nonferrous/peirce_smith_converter"
+      },
+      "trigger": "minecraft:recipe_unlocked"
+    }
+  },
+  "requirements": [
+    [
+      "has_the_recipe",
+      "has_sulfide_matte"
+    ]
+  ],
+  "rewards": {
+    "recipes": [
+      "promptcritical:nonferrous/peirce_smith_converter"
+    ]
+  }
+}

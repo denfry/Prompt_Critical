@@ -53,6 +53,21 @@ public final class AcidPlantBlockEntity extends UraniumProcessBlockEntity {
         return acid;
     }
 
+    /** Буфер серы печи КС: сколько секунд паспортной производительности он держит. */
+    public static final double SULFUR_BUFFER_S = 600;
+
+    /**
+     * Сернистый газ плавки и конвертирования меди (08 §8.8.3): сера SO₂ идёт в контактный аппарат вместо колчедана.
+     * Возвращает принятое, кг S; выключенная установка и полный буфер не берут ничего.
+     */
+    public double acceptSulfurKg(double kg) {
+        if (!on || kg <= 0) return 0;
+        double take = Math.min(kg, Math.max(0, ContactAcidPlant.CAPACITY_S_KG_S * SULFUR_BUFFER_S - sulfurKg));
+        sulfurKg += take;
+        if (take > 0) setChanged();
+        return take;
+    }
+
     @Override
     protected void process(ServerLevel level, double dt) {
         double want = ContactAcidPlant.CAPACITY_S_KG_S * dt;

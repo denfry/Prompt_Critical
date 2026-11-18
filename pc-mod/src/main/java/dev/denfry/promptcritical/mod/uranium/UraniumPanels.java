@@ -67,7 +67,9 @@ public final class UraniumPanels {
     private static final Tr PRECIP = PanelText.tr("uranium.precip", "Precipit.", "Осаждение"),
             LOW_NH3 = PanelText.tr("uranium.low_nh3", "Low NH₃", "Мало NH₃"),
             NH3 = PanelText.tr("uranium.nh3", "NH₃", "NH₃"),
-            CAKE = PanelText.tr("uranium.cake", "Yellowcake, 1 kg U", "Жёлтый кек, 1 кг U"),
+            CAKE = PanelText.tr("uranium.cake", "Yellowcake, 1 kg U; cryolite", "Жёлтый кек, 1 кг U; криолит"),
+            HYDRATE = PanelText.tr("uranium.hydrate", "Aluminium hydroxide for cryolite (with HF and caustic)",
+                    "Гидроксид алюминия на криолит (с HF и щёлочью)"),
             ADU_STATUS = PanelText.tr("uranium.adu_status", "Ammonia %s %% of the norm · in the filter press %s kg U",
                     "Аммиак %s %% нормы · на фильтр-прессе %s кг U");
     // конверсия
@@ -131,7 +133,8 @@ public final class UraniumPanels {
             PCT.get(), PRECIP.get(), null).glass(120, 24, 56, TANK, 0xFFE8D040, Double.NaN, Double.NaN, ELUATE.get(), null)
             .glass(140, 24, 56, TANK2, 0xFFE0E8F0, Double.NaN, Double.NaN, NH3.get(), null)
             .lamp(162, 24, FLAGS, F_WARN, LampColor.AMBER, LOW_NH3.get())
-            .outputs(150, 68, 0, 4, CAKE)
+            .slots(150, 86, 0, 2, s -> s.is(PcItems.ALUMINIUM_HYDROXIDE.get()), HYDRATE)
+            .outputs(150, 68, 2, 4, CAKE)
             .readout(8, 110, 216, v -> ADU_STATUS.get(v.raw(B), v.num(C, 100, 2)), null).build();
 
     public static final PanelLayout CALCINER = conversion("rotary_calciner", 800);

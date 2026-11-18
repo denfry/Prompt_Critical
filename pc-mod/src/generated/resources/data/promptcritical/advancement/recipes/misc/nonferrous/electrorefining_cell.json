@@ -1,0 +1,32 @@
+{
+  "parent": "minecraft:recipes/root",
+  "criteria": {
+    "has_rectifier_unit": {
+      "conditions": {
+        "items": [
+          {
+            "items": "promptcritical:rectifier_unit"
+          }
+        ]
+      },
+      "trigger": "minecraft:inventory_changed"
+    },
+    "has_the_recipe": {
+      "conditions": {
+        "recipe": "promptcritical:nonferrous/electrorefining_cell"
+      },
+      "trigger": "minecraft:recipe_unlocked"
+    }
+  },
+  "requirements": [
+    [
+      "has_the_recipe",
+      "has_rectifier_unit"
+    ]
+  ],
+  "rewards": {
+    "recipes": [
+      "promptcritical:nonferrous/electrorefining_cell"
+    ]
+  }
+}

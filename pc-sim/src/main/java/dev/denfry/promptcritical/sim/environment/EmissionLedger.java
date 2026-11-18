@@ -10,7 +10,7 @@ import java.util.Map;
  * плат, но не в физическое загрязнение.
  */
 public final class EmissionLedger {
-    public enum Pollutant { SO2, NOX, PM, CO2, CH4, CO }
+    public enum Pollutant { SO2, NOX, PM, CO2, CH4, CO, CF4, C2F6 }
 
     public enum Category { BOILER, GAS_TURBINE, ENGINE, FLARE, COKE_OVEN, BLAST_FURNACE, REFINERY, FUGITIVE, SPILL, PROCESS }
 
@@ -26,6 +26,8 @@ public final class EmissionLedger {
 
     /** Потенциал глобального потепления CH₄ на 100 лет для квот (§14.1.1). */
     public static final double GWP_CH4 = 28;
+    /** ПГП перфторуглеродов анодного эффекта алюминиевых ванн (08 §8.8.2: AR5, 6630 и 11 100). */
+    public static final double GWP_CF4 = 6630, GWP_C2F6 = 11_100;
 
     /** Записи одного источника. */
     public static final class Source {
@@ -77,7 +79,8 @@ public final class EmissionLedger {
     /** CO₂-эквивалент за период по всем источникам с множителем метода, т. */
     public double reportedCo2eT() {
         double kg = 0;
-        for (Source s : sources.values()) kg += s.method.factor * (s.periodKg(Pollutant.CO2) + GWP_CH4 * s.periodKg(Pollutant.CH4));
+        for (Source s : sources.values()) kg += s.method.factor * (s.periodKg(Pollutant.CO2) + GWP_CH4 * s.periodKg(Pollutant.CH4)
+                + GWP_CF4 * s.periodKg(Pollutant.CF4) + GWP_C2F6 * s.periodKg(Pollutant.C2F6));
         return kg / 1000;
     }
 

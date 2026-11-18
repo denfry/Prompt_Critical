@@ -899,6 +899,7 @@ public final class PcLanguageProvider extends LanguageProvider {
         MISC.putAll(dev.denfry.promptcritical.mod.gas.GasText.lang());
         MISC.putAll(dev.denfry.promptcritical.mod.chem.ChemText.lang());
         MISC.putAll(dev.denfry.promptcritical.mod.heavywater.HeavyWaterText.lang());
+        MISC.putAll(dev.denfry.promptcritical.mod.nonferrous.NonferrousText.lang());
         MISC.putAll(dev.denfry.promptcritical.mod.nuclear.NuclearText.lang());
         MISC.putAll(dev.denfry.promptcritical.mod.npp.NppText.lang());
         MISC.putAll(dev.denfry.promptcritical.mod.isotopes.IsotopeText.lang());

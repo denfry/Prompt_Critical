@@ -141,6 +141,31 @@ public final class PcItems {
 
     // --- электросеть I1 (07 §7.22) ---
     public static final DeferredItem<Item> COPPER_WIRE = item("copper_wire", 64);
+    // --- цветная металлургия (08 §8.8): массы — NonferrousUnits ---
+    public static final DeferredItem<Item> ALUMINIUM_HYDROXIDE = item("aluminium_hydroxide", 64);
+    public static final DeferredItem<Item> ALUMINA = item("alumina", 64);
+    public static final DeferredItem<Item> CRYOLITE = item("cryolite", 64);
+    public static final DeferredItem<Item> CARBON_ANODE = item("carbon_anode", 16);
+    public static final DeferredItem<Item> CATHODE_BLOCK = item("cathode_block", 16);
+    public static final DeferredItem<Item> ALUMINIUM_INGOT = item("aluminium_ingot", 64);
+    /** Флотоконцентрат и штейн: медная линия или, с компонентом {@code nickel_line}, медно-никелевая. */
+    public static final DeferredItem<dev.denfry.promptcritical.mod.nonferrous.NonferrousLineItem> FLOTATION_CONCENTRATE = registered(
+            ITEMS.registerItem("flotation_concentrate", dev.denfry.promptcritical.mod.nonferrous.NonferrousLineItem::new,
+                    new Item.Properties().stacksTo(64)));
+    public static final DeferredItem<dev.denfry.promptcritical.mod.nonferrous.NonferrousLineItem> SULFIDE_MATTE = registered(
+            ITEMS.registerItem("sulfide_matte", dev.denfry.promptcritical.mod.nonferrous.NonferrousLineItem::new,
+                    new Item.Properties().stacksTo(64)));
+    public static final DeferredItem<Item> BLISTER_COPPER = item("blister_copper", 64);
+    public static final DeferredItem<Item> COPPER_ANODE = item("copper_anode", 64);
+    public static final DeferredItem<Item> COPPER_CATHODE = item("copper_cathode", 64);
+    public static final DeferredItem<Item> NICKEL_INGOT = item("nickel_ingot", 64);
+    public static final DeferredItem<Item> ANODE_SLIME = item("anode_slime", 64);
+    /** Касситеритовый концентрат гравитации и олово (08 §8.8.5): по 10 кг, NonferrousUnits. */
+    public static final DeferredItem<Item> TIN_DUST = item("tin_dust", 64);
+    public static final DeferredItem<Item> TIN_INGOT = item("tin_ingot", 64);
+    /** Концентрат платиноидов (порция 50 г) и платина, слиток 100 г (08 §8.0.2, §8.8.4). */
+    public static final DeferredItem<Item> PGM_CONCENTRATE = item("pgm_concentrate", 64);
+    public static final DeferredItem<Item> PLATINUM_INGOT = item("platinum_ingot", 64);
     public static final DeferredItem<Item> GENERATOR_COUPLING = item("generator_coupling", 16);
     /** Подогреватель рубашки ДГ (07 §7.11.3): без него на морозе отказ пуска вчетверо вероятнее. */
     public static final DeferredItem<Item> JACKET_HEATER = item("jacket_heater", 16);

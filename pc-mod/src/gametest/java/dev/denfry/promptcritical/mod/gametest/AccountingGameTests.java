@@ -59,12 +59,15 @@ public final class AccountingGameTests {
         emitCo2(h, Math.max(0, held + 50 - acct.quota().carriedDebtT()));
         acct.settle(server);
         long after = market.account(op).balanceCents();
-        // оплата 32 ед. × 120 CR минус неустойка, штраф 50 т × 100 CR, платы за SO2/NOx/PM — нули
-        long expectedFine = 50 * 100_00L;
+        // оплата 32 ед. × 120 CR минус неустойка, штраф не меньше 50 т × 100 CR. Учёт выбросов общий на мир: тесты,
+        // идущие параллельно (электролиз Al даёт ПФУ, конвертер меди — SO₂), добавляют в период свой CO₂-экв. и платы,
+        // поэтому баланс сверяется с фактическими штрафом и платами расчёта
+        long minFine = 50 * 100_00L;
         long payment = 32 * 120_00L;
         long penalty = Math.round(0.2 * 120_00 * 32);
-        h.assertTrue(Math.abs((after - before) - (payment - penalty - expectedFine)) < 100_00,
-                "balance change " + (after - before) + " vs " + (payment - penalty - expectedFine));
+        h.assertTrue(acct.lastFineCents() >= minFine - 100_00, "fine for 50 t over quota: " + acct.lastFineCents());
+        long expected = payment - penalty - acct.lastFineCents() - acct.lastFeesCents();
+        h.assertTrue(Math.abs((after - before) - expected) < 100_00, "balance change " + (after - before) + " vs " + expected);
         h.assertTrue(acct.quota().carriedDebtT() > 49, "deficit carried: " + acct.quota().carriedDebtT());
         h.succeed();
     }

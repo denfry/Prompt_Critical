@@ -193,6 +193,16 @@ public final class PlantAccounting extends SavedData {
     }
 
     /** Закрытие периода: квоты, платы, договоры; отчёт — игрокам. */
+    /** Штраф за превышение квоты в последнем расчёте, коп. CR. */
+    public long lastFineCents() {
+        return lastFineCents;
+    }
+
+    /** Платы за SO₂, NOx и пыль в последнем расчёте, коп. CR. */
+    public long lastFeesCents() {
+        return lastFeesCents;
+    }
+
     public void settle(MinecraftServer server) {
         NpcMarket market = MarketData.get(server).market(server.overworld().getGameTime());
         double co2e = 0, so2 = 0, nox = 0, pm = 0;

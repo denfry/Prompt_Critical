@@ -1,0 +1,32 @@
+{
+  "parent": "minecraft:recipes/root",
+  "criteria": {
+    "has_aluminium_hydroxide": {
+      "conditions": {
+        "items": [
+          {
+            "items": "promptcritical:aluminium_hydroxide"
+          }
+        ]
+      },
+      "trigger": "minecraft:inventory_changed"
+    },
+    "has_the_recipe": {
+      "conditions": {
+        "recipe": "promptcritical:nonferrous/alumina_calciner"
+      },
+      "trigger": "minecraft:recipe_unlocked"
+    }
+  },
+  "requirements": [
+    [
+      "has_the_recipe",
+      "has_aluminium_hydroxide"
+    ]
+  ],
+  "rewards": {
+    "recipes": [
+      "promptcritical:nonferrous/alumina_calciner"
+    ]
+  }
+}

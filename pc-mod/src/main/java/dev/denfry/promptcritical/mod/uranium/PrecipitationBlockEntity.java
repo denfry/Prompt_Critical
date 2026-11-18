@@ -25,6 +25,11 @@ import org.jetbrains.annotations.Nullable;
  * Осадитель диураната аммония ({@link AduPrecipitation}) с фильтр-прессом и сушилкой. Элюат и жидкий аммиак (1 мБ =
  * 1 л, 0,682 кг) — трубами к любой грани; жёлтый кек — мешками по {@value UraniumUnits#U_PER_ITEM_KG} кг урана в склад
  * продукта (воронкой снизу).
+ *
+ * <p>Тот же бак осаждает криолит для алюминиевых ванн (08 §8.8.2: {@code cryolite} из HF 02 и гидроксида алюминия
+ * в {@code precipitation_tank} 02): Al(OH)₃ + 6HF + 3NaOH → Na₃AlF₆ + 6H₂O. Гидроксид — мешками воронкой или рукой,
+ * безводный HF и электролитическая щёлочь — трубами; криолит — мешками по {@code metallurgy.bulk_item_mass_kg} в тот же
+ * склад. Осадок кека идёт первым, криолит — когда элюата нет.
  */
 public final class PrecipitationBlockEntity extends UraniumProcessBlockEntity {
     public static final int MB = 8_000;
@@ -33,12 +38,19 @@ public final class PrecipitationBlockEntity extends UraniumProcessBlockEntity {
 
     private final FeedTank eluate = new FeedTank(PcFluids.URANIUM_ELUATE.source.get(), MB);
     private final FeedTank ammonia = new FeedTank(PcFluids.AMMONIA.source.get(), MB / 8);
-    private final IFluidHandler inlet = new MultiInlet(eluate, ammonia);
+    private final FeedTank hf = new FeedTank(PcFluids.HYDROGEN_FLUORIDE.source.get(), MB / 2);
+    private final FeedTank caustic = new FeedTank(PcFluids.SODIUM_HYDROXIDE_SOLUTION.source.get(), MB);
+    private final IFluidHandler inlet = new MultiInlet(eluate, ammonia, hf, caustic);
     private final AduPrecipitation adu = new AduPrecipitation();
     private double cakeKgU, ammoniaShare = 1;
+    /** Криолит: гидроксид в баке и готовый осадок, кг. */
+    private double hydroxideKg, cryoliteKg;
+    /** Криолит на шаг, кг/с физ. [BALANCE]; реагенты на кг криолита по стехиометрии (M Na₃AlF₆ = 209,94 г/моль). */
+    public static final double CRYOLITE_KG_S = 0.05, HYDROXIDE_PER_CRYOLITE = 78.004 / 209.94, HF_PER_CRYOLITE = 6 * 20.006 / 209.94,
+            NAOH_PER_CRYOLITE = 3 * 39.997 / 209.94;
 
     public PrecipitationBlockEntity(BlockPos pos, BlockState state) {
-        super(UraniumBlockEntities.PRECIPITATION.get(), pos, state, 0, 4, s -> false);
+        super(UraniumBlockEntities.PRECIPITATION.get(), pos, state, 2, 4, s -> s.is(PcItems.ALUMINIUM_HYDROXIDE.get()));
     }
 
     public AduPrecipitation adu() {
@@ -47,6 +59,8 @@ public final class PrecipitationBlockEntity extends UraniumProcessBlockEntity {
 
     @Override
     protected void process(ServerLevel level, double dt) {
+        lastCryoliteKgS = 0;
+        if (on && eluate.amount() <= 0 && hasRoom(PcItems.CRYOLITE.get())) cryolite(dt);
         if (on && hasRoom(PcItems.YELLOWCAKE.get())) {
             double litres = Math.min(eluate.amount(), ELUATE_LS * dt);
             double u = litres * UraniumUnits.ELUATE_KG_U_L;
@@ -58,11 +72,36 @@ public final class PrecipitationBlockEntity extends UraniumProcessBlockEntity {
             cakeKgU += adu.step(u, nh3L * UraniumUnits.NH3_KG_L);
         }
         while (cakeKgU >= UraniumUnits.U_PER_ITEM_KG && emit(PcItems.YELLOWCAKE.get())) cakeKgU -= UraniumUnits.U_PER_ITEM_KG;
+        double bag = dev.denfry.promptcritical.mod.config.ServerConfig.METALLURGY_BULK_ITEM_MASS_KG.get();
+        while (cryoliteKg >= bag && emit(PcItems.CRYOLITE.get())) cryoliteKg -= bag;
+    }
+
+    /** Криолит из гидроксида, HF и щёлочи; щёлочь — электролитическая, 11 % NaOH (1,24 кг/л). */
+    private void cryolite(double dt) {
+        double bag = dev.denfry.promptcritical.mod.config.ServerConfig.METALLURGY_BULK_ITEM_MASS_KG.get();
+        double want = CRYOLITE_KG_S * dt;
+        if (hydroxideKg < want * HYDROXIDE_PER_CRYOLITE && !takeOne(s -> s.is(PcItems.ALUMINIUM_HYDROXIDE.get())).isEmpty()) hydroxideKg += bag;
+        double kg = Math.min(want, hydroxideKg / HYDROXIDE_PER_CRYOLITE);
+        kg = Math.min(kg, hf.amount() * UraniumUnits.HF_KG_L / HF_PER_CRYOLITE);
+        kg = Math.min(kg, caustic.amount() * CAUSTIC_NAOH_KG_L / NAOH_PER_CRYOLITE);
+        if (kg <= 0) return;
+        hydroxideKg -= kg * HYDROXIDE_PER_CRYOLITE;
+        hf.take(kg * HF_PER_CRYOLITE / UraniumUnits.HF_KG_L);
+        caustic.take(kg * NAOH_PER_CRYOLITE / CAUSTIC_NAOH_KG_L);
+        cryoliteKg += kg;
+        lastCryoliteKgS = kg / dt;
+    }
+
+    private static final double CAUSTIC_NAOH_KG_L = 0.11 * 1.24;
+    private double lastCryoliteKgS;
+
+    public double cryoliteKg() {
+        return cryoliteKg;
     }
 
     @Override
     protected boolean running() {
-        return on && eluate.amount() > 0;
+        return on && (eluate.amount() > 0 || lastCryoliteKgS > 0);
     }
 
     @Override
@@ -99,6 +138,10 @@ public final class PrecipitationBlockEntity extends UraniumProcessBlockEntity {
         eluate.save(tag, "eluate");
         ammonia.save(tag, "nh3");
         tag.putDouble("cake", cakeKgU);
+        hf.save(tag, "hf");
+        caustic.save(tag, "caustic");
+        tag.putDouble("hydrate", hydroxideKg);
+        tag.putDouble("cryolite", cryoliteKg);
         MutableStateTree t = new MutableStateTree();
         adu.save(new TreeStateWriter(t));
         tag.put("adu", NbtStateTrees.toNbt(t));
@@ -109,6 +152,10 @@ public final class PrecipitationBlockEntity extends UraniumProcessBlockEntity {
         eluate.load(tag, "eluate");
         ammonia.load(tag, "nh3");
         cakeKgU = tag.getDouble("cake");
+        hf.load(tag, "hf");
+        caustic.load(tag, "caustic");
+        hydroxideKg = tag.getDouble("hydrate");
+        cryoliteKg = tag.getDouble("cryolite");
         if (tag.contains("adu")) adu.load(new TreeStateReader(NbtStateTrees.fromNbt(tag.getCompound("adu"))));
     }
 }
