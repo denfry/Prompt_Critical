@@ -293,6 +293,7 @@ public final class PcLanguageProvider extends LanguageProvider {
         b("low_temperature_separator", "Low-Temperature Separation Unit", "Установка НТС");
         b("ngl_fractionator", "NGL Fractionation Unit", "Газофракционирующая установка");
         b("rtu_station", "Telemetry Gateway (RTU)", "Шлюз телемеханики (КП)");
+        b("mes_server", "Plant Server (MES)", "Сервер завода (MES)");
         b("pyrolysis_furnace", "Pyrolysis Furnace", "Печь пиролиза");
         b("cracked_gas_unit", "Cracked Gas Separation Unit", "Установка газоразделения пирогаза");
         b("ldpe_reactor", "LDPE Unit", "Установка ПЭВД");
@@ -772,6 +773,7 @@ public final class PcLanguageProvider extends LanguageProvider {
         MISC.putAll(dev.denfry.promptcritical.mod.drilling.DrillingText.lang());
         MISC.putAll(dev.denfry.promptcritical.mod.production.ProductionText.lang());
         MISC.putAll(dev.denfry.promptcritical.mod.scada.ScadaText.lang());
+        MISC.putAll(dev.denfry.promptcritical.mod.mes.MesText.lang());
         MISC.putAll(dev.denfry.promptcritical.mod.gas.GasText.lang());
         MISC.putAll(dev.denfry.promptcritical.mod.chem.ChemText.lang());
         MISC.putAll(dev.denfry.promptcritical.mod.nuclear.NuclearText.lang());

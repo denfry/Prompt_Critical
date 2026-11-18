@@ -45,5 +45,11 @@ public final class ScadaRecipes extends RecipeProvider {
                 .define('W', PcItems.COPPER_WIRE.get()).define('R', PcItems.MEMORY_CHIP.get()).define('B', PcItems.PRINTED_CIRCUIT_BOARD.get())
                 .unlockedBy("has_integrated_circuit", has(PcItems.INTEGRATED_CIRCUIT.get()))
                 .save(out, PromptCritical.id("scada/rtu_station").toString());
+        // A5: сервер завода — микропроцессор и память на плате, связь с КП по медной линии
+        ShapedRecipeBuilder.shaped(RecipeCategory.REDSTONE, PcBlocks.MES_SERVER.get())
+                .pattern("SPS").pattern("MBM").pattern("SWS").define('S', sheet).define('P', PcItems.MICROPROCESSOR.get())
+                .define('M', PcItems.MEMORY_CHIP.get()).define('B', PcItems.PRINTED_CIRCUIT_BOARD.get()).define('W', PcItems.COPPER_WIRE.get())
+                .unlockedBy("has_microprocessor", has(PcItems.MICROPROCESSOR.get()))
+                .save(out, PromptCritical.id("scada/mes_server").toString());
     }
 }

@@ -175,6 +175,14 @@
   one-at-a-time commands. Works without CC installed.
 - The handbook renders code blocks; the telemetry chapter carries a Lua boiler house mimic with a trend archive.
 
+### Plant server (A5)
+- Plant server (MES): reads every telemetry gateway within 16 blocks, shows plant generation, load, fuel cost,
+  sales, CO2 and dispatch efficiency on its panel, and splits the dispatch target between generators by equal
+  incremental cost (lambda iteration, Wood & Wollenberg ch. 3). Optional CC: Tweaked peripheral `pc_mes`
+  (`getKpi`, `getDispatch`, `setDispatchTarget`).
+- `sim.mes`: economic dispatch with unit limits and a CO2 fee, and a production planner that commits units and
+  loads them to the market price under a market cap.
+
 ### Character body
 - Choose sex, height, mass and age on the title screen or on first join; locked per world, an operator can reset.
 - Height scales the player model and stride; mass sets knockback resistance and the load in the hoist cage;
