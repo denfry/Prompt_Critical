@@ -26,8 +26,9 @@ import org.jetbrains.annotations.Nullable;
 
 /**
  * Пожар в мире для систем пожаротушения (13 §13.5): горящие блоки огня. Класс очага — по окружению: у натриевой течи
- * быстрого реактора — D (металл), у устройства электросети — E (электроустановка), иначе A (твёрдые горючие).
- * Пожаров классов B и C (пролив, струя газа) в мире пока нет: их источники (резервуары 09, газопроводы) не горят.
+ * быстрого реактора — D (металл), у устройства электросети — E (электроустановка), над нефтепроявлением, природным
+ * битумом или на резервуаре Create с нефтепродуктом — B (пролив и резервуар, §13.5.4), иначе A (твёрдые горючие).
+ * Пожаров класса C (струя газа) в мире пока нет: газопроводы не горят.
  */
 public final class FireService {
     /** Мощность одного горящего блока, кВт [моё: порядок горения штабеля древесины на 1 м², SFPE — 0,3–1 МВт/м²]. */
@@ -55,12 +56,42 @@ public final class FireService {
         return fires(level, center, r).size() * KW_PER_FIRE_BLOCK;
     }
 
+    /** Горючие жидкости класса B в резервуарах Create (нефть, нефтепродукты, спирты, смолы). */
+    public static boolean hydrocarbon(net.minecraft.world.level.material.Fluid f) {
+        for (var e : java.util.List.of(dev.denfry.promptcritical.mod.registry.PcFluids.CRUDE_OIL, dev.denfry.promptcritical.mod.registry.PcFluids.GASOLINE,
+                dev.denfry.promptcritical.mod.registry.PcFluids.KEROSENE, dev.denfry.promptcritical.mod.registry.PcFluids.DIESEL_FUEL,
+                dev.denfry.promptcritical.mod.registry.PcFluids.FUEL_OIL, dev.denfry.promptcritical.mod.registry.PcFluids.NGL,
+                dev.denfry.promptcritical.mod.registry.PcFluids.NATURAL_GASOLINE, dev.denfry.promptcritical.mod.registry.PcFluids.PYROLYSIS_GASOLINE,
+                dev.denfry.promptcritical.mod.registry.PcFluids.PYROLYSIS_FUEL_OIL, dev.denfry.promptcritical.mod.registry.PcFluids.CRUDE_BENZOL,
+                dev.denfry.promptcritical.mod.registry.PcFluids.COAL_TAR, dev.denfry.promptcritical.mod.registry.PcFluids.METHANOL))
+            if (f.isSame(e.source.get())) return true;
+        return false;
+    }
+
+    /** Резервуар Create с горючей жидкостью под клеткой (контроллер), {@code null} — нет. */
+    @Nullable
+    public static com.simibubi.create.content.fluids.tank.FluidTankBlockEntity tankBelow(Level level, BlockPos p) {
+        if (level.getBlockEntity(p.below()) instanceof com.simibubi.create.content.fluids.tank.FluidTankBlockEntity t) {
+            var c = t.getControllerBE();
+            if (c != null && !c.getTankInventory().getFluid().isEmpty() && hydrocarbon(c.getTankInventory().getFluid().getFluid())) return c;
+        }
+        return null;
+    }
+
+    /** Пролив класса B: огонь над нефтепроявлением, битумом или резервуаром с нефтепродуктом. */
+    public static boolean poolFire(Level level, BlockPos p) {
+        var below = level.getBlockState(p.below());
+        return below.is(dev.denfry.promptcritical.mod.registry.PcBlocks.OIL_SEEP.get())
+                || below.is(dev.denfry.promptcritical.mod.registry.PcBlocks.NATURAL_BITUMEN.get()) || tankBelow(level, p) != null;
+    }
+
     /** Класс очага у клетки. */
     public static FireClass classAt(Level level, BlockPos p) {
         if (level instanceof ServerLevel sl)
             for (SfrReactorBlockEntity s : Ironworks.blockEntities(sl, new AABB(p).inflate(SODIUM_RADIUS), SfrReactorBlockEntity.class))
                 if (s.reactor().sodiumFireW() > 0) return FireClass.D;
         if (electricalNear(level, p)) return FireClass.E;
+        if (poolFire(level, p)) return FireClass.B;
         return FireClass.A;
     }
 
@@ -106,10 +137,58 @@ public final class FireService {
                     }
                 }
                 case INEFFECTIVE -> {
+                    // вода без пены на горящую жидкость разбрызгивает её: площадь пролива +20 % в минуту (§13.5.4)
+                    if (c == FireClass.B && agent == Agent.WATER && level.random.nextDouble() < FireSuppression.WATER_ON_B_GROWTH_PER_S)
+                        spread(level, p);
                 }
             }
         }
         if (out > 0) level.playSound(null, center, SoundEvents.FIRE_EXTINGUISH, SoundSource.BLOCKS, 0.8f, 1.0f);
+        return out;
+    }
+
+    /** Брызги горящей жидкости: огонь на соседнюю свободную клетку с опорой. */
+    static void spread(ServerLevel level, BlockPos p) {
+        for (int k = 0; k < 4; k++) {
+            BlockPos q = p.offset(level.random.nextInt(3) - 1, 0, level.random.nextInt(3) - 1);
+            if (level.getBlockState(q).isAir() && level.getBlockState(q.below()).isFaceSturdy(level, q.below(), net.minecraft.core.Direction.UP)) {
+                level.setBlock(q, net.minecraft.world.level.block.BaseFireBlock.getState(level, q), 3);
+                return;
+            }
+        }
+    }
+
+    /**
+     * Пена из ствола или пенокамеры, {@code lpm} л/мин раствора на очаги в радиусе {@code r} (§13.5.4). Пролив класса
+     * B гаснет, только если интенсивность r = Q/A не ниже 4,1 л/(мин·м²): площадь сокращается за 300 с · 4,1 / r
+     * (каждая клетка за секунду гаснет с вероятностью 1/t); слабее — пена разрушается пламенем. Очаги других классов —
+     * по таблице классов, как у огнетушителя.
+     *
+     * @return погашено очагов
+     */
+    public static int foam(ServerLevel level, BlockPos center, int r, double lpm) {
+        List<BlockPos> pool = new ArrayList<>(), other = new ArrayList<>();
+        for (BlockPos p : fires(level, center, r)) (classAt(level, p) == FireClass.B ? pool : other).add(p);
+        int out = 0;
+        if (!pool.isEmpty()) {
+            double t = FireSuppression.foamExtinctionS(lpm / pool.size());
+            if (Double.isFinite(t))
+                for (BlockPos p : pool)
+                    if (level.random.nextDouble() < 1 / Math.max(1, t)) {
+                        level.setBlock(p, Blocks.AIR.defaultBlockState(), 3);
+                        TankFires.foamed(level, p);
+                        out++;
+                    }
+        }
+        if (!other.isEmpty()) {
+            for (BlockPos p : other) {
+                if (FireSuppression.effect(classAt(level, p), Agent.FOAM, false) == Effect.EFFECTIVE) {
+                    level.setBlock(p, Blocks.AIR.defaultBlockState(), 3);
+                    out++;
+                }
+            }
+        }
+        if (out > 0) level.playSound(null, center, SoundEvents.FIRE_EXTINGUISH, SoundSource.BLOCKS, 0.6f, 0.8f);
         return out;
     }
 }

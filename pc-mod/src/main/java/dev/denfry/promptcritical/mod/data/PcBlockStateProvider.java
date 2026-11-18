@@ -399,6 +399,7 @@ public final class PcBlockStateProvider extends BlockStateProvider {
             case "fire_alarm_panel" -> s.getValue(PcProperties.ALARM) ? id + "_fire"
                     : s.getValue(BlockStateProperties.POWERED) ? id + "_fault" : id;
             case "historian_server" -> s.getValue(BlockStateProperties.LIT) ? id + "_busy" : id;
+            case "foam_proportioner" -> s.getValue(BlockStateProperties.POWERED) ? id + "_6" : id;
             case "gas_seep_vent" -> s.getValue(BlockStateProperties.LIT) ? id + "_burning" : id;
             case "oklo_uraninite_ore" -> "deepslate_uraninite_ore";
             case "training_simulator" -> s.getValue(PcProperties.RUNNING) ? id + "_running" : id;

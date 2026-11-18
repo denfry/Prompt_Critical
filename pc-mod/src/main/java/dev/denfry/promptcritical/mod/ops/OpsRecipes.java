@@ -106,6 +106,19 @@ public final class OpsRecipes extends RecipeProvider {
         ShapedRecipeBuilder.shaped(RecipeCategory.MISC, PcBlocks.FIRE_MONITOR.get()).pattern("PPI").pattern(" V ").pattern("III")
                 .define('P', pipe).define('I', Items.IRON_INGOT).define('V', AllBlocks.FLUID_VALVE.get())
                 .unlockedBy("has_pipe", has(pipe)).save(out, id("fire_monitor"));
+        // противопожарный водопровод 13 §13.5.3: насос — крыльчатка на валу двигателя, гидрант и камера — арматура и труба
+        ShapedRecipeBuilder.shaped(RecipeCategory.MISC, PcBlocks.FIRE_WATER_PUMP.get()).pattern("IRI").pattern("PMP").pattern("III")
+                .define('I', Items.IRON_INGOT).define('R', Items.RED_DYE).define('P', pipe).define('M', AllBlocks.MECHANICAL_PUMP.get())
+                .unlockedBy("has_pipe", has(pipe)).save(out, id("fire_water_pump"));
+        ShapedRecipeBuilder.shaped(RecipeCategory.MISC, PcBlocks.FIRE_HYDRANT.get()).pattern(" R ").pattern("VPV").pattern(" I ")
+                .define('I', Items.IRON_INGOT).define('R', Items.RED_DYE).define('P', pipe).define('V', AllBlocks.FLUID_VALVE.get())
+                .unlockedBy("has_pipe", has(pipe)).save(out, id("fire_hydrant"));
+        ShapedRecipeBuilder.shaped(RecipeCategory.MISC, PcBlocks.FOAM_PROPORTIONER.get()).pattern("IRI").pattern("ITI").pattern("PVP")
+                .define('I', Items.IRON_INGOT).define('R', Items.RED_DYE).define('T', AllBlocks.FLUID_TANK.get()).define('P', pipe)
+                .define('V', AllBlocks.FLUID_VALVE.get()).unlockedBy("has_pipe", has(pipe)).save(out, id("foam_proportioner"));
+        ShapedRecipeBuilder.shaped(RecipeCategory.MISC, PcBlocks.FOAM_CHAMBER.get()).pattern("IRI").pattern("P I").pattern("III")
+                .define('I', Items.IRON_INGOT).define('R', Items.RED_DYE).define('P', pipe)
+                .unlockedBy("has_pipe", has(pipe)).save(out, id("foam_chamber"));
         ShapelessRecipeBuilder.shapeless(RecipeCategory.TOOLS, PcItems.FIRE_EXTINGUISHER.get())
                 .requires(Items.IRON_INGOT).requires(Items.IRON_INGOT).requires(Items.RED_DYE).requires(Items.BONE_MEAL)
                 .unlockedBy("has_iron", has(Items.IRON_INGOT)).save(out, id("fire_extinguisher"));

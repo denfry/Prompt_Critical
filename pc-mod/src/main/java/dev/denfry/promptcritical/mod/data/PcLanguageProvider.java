@@ -332,6 +332,10 @@ public final class PcLanguageProvider extends LanguageProvider {
         b("ngl_fractionator", "NGL Fractionation Unit", "Газофракционирующая установка");
         b("rtu_station", "Telemetry Gateway (RTU)", "Шлюз телемеханики (КП)");
         b("historian_server", "Historian Server", "Сервер историана");
+        b("fire_water_pump", "Fire Water Pump", "Пожарный насос");
+        b("fire_hydrant", "Fire Hydrant", "Пожарный гидрант");
+        b("foam_proportioner", "Foam Proportioner", "Дозатор пенообразователя");
+        b("foam_chamber", "Foam Chamber", "Пенокамера");
         b("simulation_workstation", "Simulation Workstation", "Инженерная станция");
         b("training_simulator", "Training Simulator", "Шкаф тренажёра");
         b("simulator_console", "Simulator Console", "Пульт тренажёра");
@@ -577,6 +581,7 @@ public final class PcLanguageProvider extends LanguageProvider {
 
         FLUIDS.put("flue_gas", new String[] {"Flue Gas", "Дымовые газы"});
         FLUIDS.put("crude_oil", new String[] {"Crude Oil", "Сырая нефть"});
+        FLUIDS.put("foam_concentrate", new String[] {"Foam Concentrate", "Пенообразователь"});
         FLUIDS.put("sales_gas", new String[] {"Sales Gas", "Товарный газ"});
         FLUIDS.put("methanol", new String[] {"Methanol", "Метанол"});
         FLUIDS.put("ngl", new String[] {"NGL (Natural Gas Liquids)", "ШФЛУ"});

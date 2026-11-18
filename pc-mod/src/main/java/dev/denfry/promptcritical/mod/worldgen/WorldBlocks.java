@@ -46,6 +46,22 @@ public final class WorldBlocks {
             return CODEC;
         }
 
+        /** Горит, как пролив нефти (класс B), и не выгорает: огонь на нём вечный, пока его не потушат пеной. */
+        @Override
+        public int getFlammability(BlockState state, net.minecraft.world.level.BlockGetter level, BlockPos pos, net.minecraft.core.Direction dir) {
+            return 5;
+        }
+
+        @Override
+        public int getFireSpreadSpeed(BlockState state, net.minecraft.world.level.BlockGetter level, BlockPos pos, net.minecraft.core.Direction dir) {
+            return 5;
+        }
+
+        @Override
+        public boolean isFireSource(BlockState state, net.minecraft.world.level.LevelReader level, BlockPos pos, net.minecraft.core.Direction dir) {
+            return dir == net.minecraft.core.Direction.UP;
+        }
+
         @Override
         public void stepOn(Level level, BlockPos pos, BlockState state, Entity entity) {
             found(level, entity, PITCH_LAKE);

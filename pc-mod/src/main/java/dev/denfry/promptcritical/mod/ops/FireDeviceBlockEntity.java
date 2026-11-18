@@ -188,22 +188,36 @@ public class FireDeviceBlockEntity extends DeviceBlockEntity implements FoundryD
 
     /** Ороситель: вода из трубы, расход за секунду; гасит очаги класса A (на D и E — по таблице классов). */
     private void spray(ServerLevel sl, BlockPos center, int r, double litresPerS) {
+        topUp(sl, litresPerS);
         if (water.take(litresPerS) < litresPerS * 0.99) return; // сухая труба: ороситель не работает
         sl.sendParticles(ParticleTypes.FALLING_WATER, center.getX() + 0.5, center.getY() + r, center.getZ() + 0.5, 20, r, 0.5, r, 0);
         FireService.apply(sl, center, r, Agent.WATER, null);
     }
 
+    /** Своя труба пуста — вода из пожарной сети (насос в 24 блоках), см. {@link FireWaterBlockEntity}. */
+    private void topUp(ServerLevel sl, double litresPerS) {
+        double need = litresPerS - water.amount();
+        if (need <= 0) return;
+        double got = FireWaterBlockEntity.draw(sl, worldPosition, need);
+        if (got > 0) water.fill(new net.neoforged.neoforge.fluids.FluidStack(net.minecraft.world.level.material.Fluids.WATER,
+                (int) Math.ceil(got)), IFluidHandler.FluidAction.EXECUTE);
+    }
+
     private void monitor(ServerLevel sl) {
+        topUp(sl, MONITOR_LPS);
         if (water.take(MONITOR_LPS) < MONITOR_LPS * 0.99) {
             running = false;
             setFlag(PcProperties.RUNNING, false);
             return;
         }
         Direction f = getBlockState().getBlock() instanceof PcBlock pc ? pc.facing(getBlockState()) : Direction.NORTH;
+        // с дозатором пенообразователя рядом ствол бьёт пеной (13 §13.5.3)
+        boolean foam = FireWaterBlockEntity.foam(sl, worldPosition, MONITOR_LPS);
         for (int i = 2; i <= MONITOR_RANGE; i += 2) {
             BlockPos p = worldPosition.relative(f, i);
-            sl.sendParticles(ParticleTypes.SPLASH, p.getX() + 0.5, p.getY() + 0.5, p.getZ() + 0.5, 6, 0.3, 0.3, 0.3, 0);
-            FireService.apply(sl, p, 1, Agent.WATER, null);
+            sl.sendParticles(foam ? ParticleTypes.CLOUD : ParticleTypes.SPLASH, p.getX() + 0.5, p.getY() + 0.5, p.getZ() + 0.5, 6, 0.3, 0.3, 0.3, 0);
+            if (foam) FireService.foam(sl, p, 1, MONITOR_LPS * 60 / (MONITOR_RANGE / 2.0));
+            else FireService.apply(sl, p, 1, Agent.WATER, null);
         }
     }
 

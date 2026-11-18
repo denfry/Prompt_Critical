@@ -23,6 +23,13 @@ public final class OpsFireText {
         m("deluge_closed", "Deluge closed: it opens on a fire signal from the fire panel", "Дренчер закрыт: откроется по сигналу пожара от ППК");
         m("monitor_on", "Fire monitor on: a water jet along its face", "Лафетный ствол открыт: струя воды по фасаду");
         m("monitor_off", "Fire monitor off", "Лафетный ствол закрыт");
+        m("hydrant_open", "Discharging from the fire main: foam with a proportioner nearby, otherwise water",
+                "Подача из пожарной сети: с дозатором рядом — пена, иначе вода");
+        m("hydrant_closed", "Closed", "Закрыто");
+        m("proportioner", "Proportioner: %s %% foam concentrate, %s L in the tank", "Дозатор: %s %% пенообразователя, в баке %s л");
+        m("pump_running", "Fire pump running: the main is under pressure", "Пожарный насос в работе: сеть под давлением");
+        m("pump_standby", "Fire pump on standby: it starts when water is drawn from the main", "Пожарный насос в резерве: пустится при разборе воды из сети");
+        m("pump_dry", "No water to draw: the pump needs a water source next to it", "Нечего забирать: насосу нужна вода рядом");
         m("recharged", "Gas module recharged", "Модуль газового тушения перезаряжен");
         m("gas_blocked", "Gas release blocked by hand (lock it for the works)", "Выпуск газа заблокирован вручную (заприте на время работ)");
         m("gas_armed", "Gas release armed: on a fire it goes off 30 s after the siren",

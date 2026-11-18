@@ -864,6 +864,15 @@ public final class PcBlocks {
     public static final DeferredBlock<PcDeviceBlock> DELUGE_NOZZLE = device("deluge_nozzle", instrument(), Spec.facing(PcProperties.RUNNING), FoundryBlock.with(dev.denfry.promptcritical.mod.ops.FireDeviceBlockEntity::new));
     public static final DeferredBlock<PcDeviceBlock> GAS_SUPPRESSION_CYLINDER = device("gas_suppression_cylinder", machine(), Spec.facing(PcProperties.ALARM), FoundryBlock.with(dev.denfry.promptcritical.mod.ops.FireDeviceBlockEntity::new));
     public static final DeferredBlock<PcDeviceBlock> FIRE_MONITOR = device("fire_monitor", machine(), Spec.facing(PcProperties.RUNNING), FoundryBlock.with(dev.denfry.promptcritical.mod.ops.FireDeviceBlockEntity::new));
+    /** Противопожарный водопровод 13 §13.5.3: пожарный насос, гидрант, дозатор пенообразователя, пенокамера. */
+    public static final DeferredBlock<PcDeviceBlock> FIRE_WATER_PUMP = device("fire_water_pump", machine(),
+            Spec.facing(PcProperties.RUNNING).footprint(FP_WIDE2), FoundryBlock.with(dev.denfry.promptcritical.mod.ops.FireWaterBlockEntity::new));
+    public static final DeferredBlock<PcDeviceBlock> FIRE_HYDRANT = device("fire_hydrant", machine(), Spec.facing(),
+            FoundryBlock.with(dev.denfry.promptcritical.mod.ops.FireWaterBlockEntity::new));
+    public static final DeferredBlock<PcDeviceBlock> FOAM_PROPORTIONER = device("foam_proportioner", machine(),
+            Spec.facing(BlockStateProperties.POWERED).footprint(FP_TALL2), FoundryBlock.with(dev.denfry.promptcritical.mod.ops.FireWaterBlockEntity::new));
+    public static final DeferredBlock<PcDeviceBlock> FOAM_CHAMBER = device("foam_chamber", machine(), Spec.facing(),
+            FoundryBlock.with(dev.denfry.promptcritical.mod.ops.FireWaterBlockEntity::new));
     /** LOTO 13 §13.1.2: поворотная заглушка на фланце, групповой ящик блокировки, расцепная муфта на валу Create. */
     public static final DeferredBlock<PcDeviceBlock> LINE_BLIND = device("line_blind", machine(),
             Spec.facing(BlockStateProperties.OPEN), FoundryBlock.with(dev.denfry.promptcritical.mod.ops.LineBlindBlockEntity::new));

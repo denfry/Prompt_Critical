@@ -37,10 +37,16 @@ public final class OpsBinding {
         NeoForge.EVENT_BUS.addListener(Lockouts::onBreak);
         NeoForge.EVENT_BUS.addListener(Lockouts::onExplosion);
         NeoForge.EVENT_BUS.addListener(OpsActions::onRightClick);
+        TankFires.register();
+        modBus.addListener((net.neoforged.fml.event.lifecycle.FMLCommonSetupEvent e) -> e.enqueueWork(() ->
+                // нефтепроявление горит и выгорает, как горючий блок (13 §13.5.4, пролив класса B)
+                ((net.minecraft.world.level.block.FireBlock) net.minecraft.world.level.block.Blocks.FIRE)
+                        .setFlammable(dev.denfry.promptcritical.mod.registry.PcBlocks.OIL_SEEP.get(), 30, 20)));
         SimBindings.registerSubsystem(level -> new OpsSubsystem(SimConfigs.ops(), level.getSeed()));
     }
 
     private static void registerCapabilities(RegisterCapabilitiesEvent event) {
+        event.registerBlockEntity(Capabilities.FluidHandler.BLOCK, OpsBlockEntities.FIRE_WATER.get(), FireWaterBlockEntity::fluids);
         event.registerBlockEntity(Capabilities.ItemHandler.BLOCK, OpsBlockEntities.WATER_TREATMENT.get(), FoundryDevice::items);
         event.registerBlockEntity(Capabilities.FluidHandler.BLOCK, OpsBlockEntities.LINE_BLIND.get(), LineBlindBlockEntity::fluids);
         event.registerBlockEntity(Capabilities.FluidHandler.BLOCK, OpsBlockEntities.FIRE_DEVICE.get(), FireDeviceBlockEntity::fluids);
