@@ -871,6 +871,21 @@ public final class PcBlocks {
     public static final DeferredBlock<PcDeviceBlock> REDUCTION_POT = device("reduction_pot", machine(),
             Spec.facing(PcProperties.RUNNING, PcProperties.ALARM).footprint(Footprint.of(Segment.box(-1, 1, 0, 1, -1, 1))),
             FoundryBlock.with(dev.denfry.promptcritical.mod.nonferrous.ReductionPotBlockEntity::new));
+    // медь и никель (08 §8.8.3–8.8.4)
+    public static final DeferredBlock<PcDeviceBlock> FLOTATION_CELL = device("flotation_cell", machine(),
+            Spec.facing(PcProperties.RUNNING), FoundryBlock.with(dev.denfry.promptcritical.mod.nonferrous.FlotationCellBlockEntity::new));
+    /** Отражательная печь 3×3×3: свод на кирпиче, горит — {@code lit}. */
+    public static final DeferredBlock<PcDeviceBlock> MATTE_SMELTER = device("matte_smelter", lit(brick()),
+            Spec.facing(BlockStateProperties.LIT).footprint(FP_CUBE3),
+            FoundryBlock.with(dev.denfry.promptcritical.mod.nonferrous.MatteSmelterBlockEntity::new));
+    /** Конвертер Пирса–Смита 3×2×2: бочка на роликах, дутьё — {@code running}. */
+    public static final DeferredBlock<PcDeviceBlock> PEIRCE_SMITH_CONVERTER = device("peirce_smith_converter", machine(),
+            Spec.facing(PcProperties.RUNNING).footprint(Footprint.of(Segment.box(-1, 1, 0, 1, 0, 1))),
+            FoundryBlock.with(dev.denfry.promptcritical.mod.nonferrous.ConverterBlockEntity::new));
+    /** Секция ванн электрорафинирования 2×1×1; режим никеля — {@code nickel}. */
+    public static final DeferredBlock<PcDeviceBlock> ELECTROREFINING_CELL = device("electrorefining_cell", machine(),
+            Spec.facing(PcProperties.RUNNING, PcProperties.NICKEL).footprint(FP_WIDE2),
+            FoundryBlock.with(dev.denfry.promptcritical.mod.nonferrous.ElectrorefiningCellBlockEntity::new));
 
     // --- эксплуатация и водоподготовка (13 §13.6.5–13.6.7, 08 §8.12, этап 11а M3) ---
     public static final DeferredBlock<PcDeviceBlock> MAINTENANCE_PANEL = device("maintenance_panel", instrument(),

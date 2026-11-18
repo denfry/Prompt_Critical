@@ -77,5 +77,24 @@ public final class NonferrousRecipes extends RecipeProvider {
         ShapelessRecipeBuilder.shapeless(RecipeCategory.MISC, PcItems.CATHODE_BLOCK.get(), 2)
                 .requires(PcItems.COKE.get(), 3).requires(PcItems.STEEL_INGOT.get())
                 .unlockedBy("has_coke", has(PcItems.COKE.get())).save(out, id("cathode_block"));
+        // медь и никель (08 §8.8.3–8.8.4): флотомашина — бак с импеллером, печь — кирпичный свод, конвертер — бочка на
+        // валу, ванны — футерованные свинцом баки с медной ошиновкой
+        ShapedRecipeBuilder.shaped(RecipeCategory.MISC, PcBlocks.FLOTATION_CELL.get())
+                .pattern("PXP").pattern("PTP").define('P', plate).define('T', tank).define('X', AllBlocks.MECHANICAL_MIXER.get())
+                .unlockedBy("has_raw_chalcopyrite", has(PcItems.RAW_CHALCOPYRITE.get())).save(out, id("flotation_cell"));
+        ShapedRecipeBuilder.shaped(RecipeCategory.MISC, PcBlocks.MATTE_SMELTER.get())
+                .pattern("BBB").pattern("BFB").pattern("PSP").define('B', brick).define('F', Items.BLAST_FURNACE).define('P', plate)
+                .define('S', pipe)
+                .unlockedBy("has_flotation_concentrate", has(PcItems.FLOTATION_CONCENTRATE.get())).save(out, id("matte_smelter"));
+        ShapedRecipeBuilder.shaped(RecipeCategory.MISC, PcBlocks.PEIRCE_SMITH_CONVERTER.get())
+                .pattern("PBP").pattern("SBS").pattern("PCP").define('P', plate).define('B', brick).define('S', AllBlocks.SHAFT.get())
+                .define('C', AllBlocks.ENCASED_FAN.get())
+                .unlockedBy("has_sulfide_matte", has(PcItems.SULFIDE_MATTE.get())).save(out, id("peirce_smith_converter"));
+        ShapedRecipeBuilder.shaped(RecipeCategory.MISC, PcBlocks.ELECTROREFINING_CELL.get())
+                .pattern("CCC").pattern("LTL").define('C', Items.COPPER_INGOT).define('L', PcBlocks.LEAD_BLOCK.get()).define('T', tank)
+                .unlockedBy("has_rectifier_unit", has(PcBlocks.RECTIFIER_UNIT.get())).save(out, id("electrorefining_cell"));
+        // катодная медь (100 кг) — в ванильные слитки меди для крафта Create и ванилы [BALANCE]
+        ShapelessRecipeBuilder.shapeless(RecipeCategory.MISC, Items.COPPER_INGOT, 9).requires(PcItems.COPPER_CATHODE.get())
+                .unlockedBy("has_copper_cathode", has(PcItems.COPPER_CATHODE.get())).save(out, id("copper_ingot_from_cathode"));
     }
 }

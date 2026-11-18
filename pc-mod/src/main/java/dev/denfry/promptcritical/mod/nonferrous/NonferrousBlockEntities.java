@@ -27,12 +27,21 @@ public final class NonferrousBlockEntities {
             type("alumina_calciner", AluminaCalcinerBlockEntity::new, PcBlocks.ALUMINA_CALCINER);
     public static final DeferredHolder<BlockEntityType<?>, BlockEntityType<ReductionPotBlockEntity>> REDUCTION_POT =
             type("reduction_pot", ReductionPotBlockEntity::new, PcBlocks.REDUCTION_POT);
+    public static final DeferredHolder<BlockEntityType<?>, BlockEntityType<FlotationCellBlockEntity>> FLOTATION_CELL =
+            type("flotation_cell", FlotationCellBlockEntity::new, PcBlocks.FLOTATION_CELL);
+    public static final DeferredHolder<BlockEntityType<?>, BlockEntityType<MatteSmelterBlockEntity>> MATTE_SMELTER =
+            type("matte_smelter", MatteSmelterBlockEntity::new, PcBlocks.MATTE_SMELTER);
+    public static final DeferredHolder<BlockEntityType<?>, BlockEntityType<ConverterBlockEntity>> PEIRCE_SMITH_CONVERTER =
+            type("peirce_smith_converter", ConverterBlockEntity::new, PcBlocks.PEIRCE_SMITH_CONVERTER);
+    public static final DeferredHolder<BlockEntityType<?>, BlockEntityType<ElectrorefiningCellBlockEntity>> ELECTROREFINING_CELL =
+            type("electrorefining_cell", ElectrorefiningCellBlockEntity::new, PcBlocks.ELECTROREFINING_CELL);
 
     private NonferrousBlockEntities() {
     }
 
     public static void register(IEventBus modBus) {
         BLOCK_ENTITIES.register(modBus);
+        NonferrousComponents.COMPONENTS.register(modBus);
         modBus.addListener(NonferrousBlockEntities::capabilities);
     }
 
@@ -41,6 +50,10 @@ public final class NonferrousBlockEntities {
         both(event, ALUMINA_PRECIPITATOR.get());
         both(event, ALUMINA_CALCINER.get());
         event.registerBlockEntity(Capabilities.ItemHandler.BLOCK, REDUCTION_POT.get(), FoundryDevice::items);
+        both(event, FLOTATION_CELL.get());
+        both(event, MATTE_SMELTER.get());
+        both(event, PEIRCE_SMITH_CONVERTER.get());
+        event.registerBlockEntity(Capabilities.ItemHandler.BLOCK, ELECTROREFINING_CELL.get(), FoundryDevice::items);
     }
 
     private static <T extends BlockEntity & FoundryDevice> void both(RegisterCapabilitiesEvent event, BlockEntityType<T> type) {

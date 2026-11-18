@@ -1,5 +1,15 @@
 package dev.denfry.promptcritical.mod.gametest;
 
+import net.minecraft.world.level.material.Fluids;
+import dev.denfry.promptcritical.sim.nonferrous.PeirceSmithConverter;
+import dev.denfry.promptcritical.sim.nonferrous.Electrorefining;
+import dev.denfry.promptcritical.sim.nonferrous.Flotation;
+import dev.denfry.promptcritical.mod.uranium.AcidPlantBlockEntity;
+import dev.denfry.promptcritical.mod.nonferrous.NonferrousComponents;
+import dev.denfry.promptcritical.mod.nonferrous.ElectrorefiningCellBlockEntity;
+import dev.denfry.promptcritical.mod.nonferrous.ConverterBlockEntity;
+import dev.denfry.promptcritical.mod.nonferrous.MatteSmelterBlockEntity;
+import dev.denfry.promptcritical.mod.nonferrous.FlotationCellBlockEntity;
 import dev.denfry.promptcritical.sim.nonferrous.ReductionPot.State;
 import dev.denfry.promptcritical.sim.nonferrous.ReductionPot;
 import dev.denfry.promptcritical.sim.grid.VoltageClass;
@@ -257,6 +267,131 @@ public final class NonferrousGameTests {
                     ReductionPotBlockEntity p = h.getBlockEntity(POT);
                     p.supply(150e3);
                     h.assertTrue(p.pot().state() == State.NORMAL, "alumina feed kills the anode effect: " + p.pot().aluminaFraction());
+                })
+                .thenSucceed();
+    }
+
+    // --- медь, никель, кобальт, платиноиды, олово (08 §8.8.3–8.8.5) ---
+
+    private static int countOut(net.neoforged.neoforge.items.IItemHandler out, net.minecraft.world.item.Item item, boolean nickel) {
+        int n = 0;
+        for (int i = 0; i < out.getSlots(); i++) {
+            ItemStack s = out.getStackInSlot(i);
+            if (s.is(item) && NonferrousComponents.nickel(s) == nickel) n += s.getCount();
+        }
+        return n;
+    }
+
+    @GameTest(template = LARGE, timeoutTicks = 1600)
+    public static void flotationMakesCopperAndNickelConcentrates(GameTestHelper h) {
+        place(h, A, PcBlocks.FLOTATION_CELL.get());
+        place(h, B, PcBlocks.FLOTATION_CELL.get());
+        h.startSequence()
+                .thenExecute(() -> {
+                    FlotationCellBlockEntity cu = h.getBlockEntity(A), ni = h.getBlockEntity(B);
+                    cu.input().insertItem(0, new ItemStack(PcItems.RAW_CHALCOPYRITE.get(), 12), false);
+                    ni.input().insertItem(0, new ItemStack(PcItems.RAW_PENTLANDITE.get(), 7), false);
+                    for (FlotationCellBlockEntity f : new FlotationCellBlockEntity[] {cu, ni}) fill(f.fluids(Direction.NORTH), Fluids.WATER, 8000);
+                    // без вспенивателя пены нет: смолу даём только медной машине
+                    fill(cu.fluids(Direction.NORTH), PcFluids.COAL_TAR.source.get(), 1000);
+                })
+                .thenIdle(100)
+                .thenExecute(() -> {
+                    FlotationCellBlockEntity ni = h.getBlockEntity(B);
+                    h.assertTrue(ni.water().amount() == 8000, "no frother, no flotation");
+                    fill(ni.fluids(Direction.NORTH), PcFluids.COAL_TAR.source.get(), 1000);
+                })
+                .thenWaitUntil(() -> {
+                    FlotationCellBlockEntity cu = h.getBlockEntity(A), ni = h.getBlockEntity(B);
+                    h.assertTrue(countOut(cu.output(), PcItems.FLOTATION_CONCENTRATE.get(), false) >= 1, "copper concentrate");
+                    h.assertTrue(countOut(ni.output(), PcItems.FLOTATION_CONCENTRATE.get(), true) >= 1, "copper-nickel concentrate");
+                })
+                .thenSucceed();
+    }
+
+    @GameTest(template = LARGE, timeoutTicks = 1200)
+    public static void smelterMakesMatteAndSendsSo2ToTheAcidPlant(GameTestHelper h) {
+        BlockPos smelter = new BlockPos(4, 3, 4), acidPos = new BlockPos(9, 2, 4), free = new BlockPos(9, 3, 9);
+        place(h, smelter, PcBlocks.MATTE_SMELTER.get());
+        h.setBlock(acidPos, PcBlocks.ACID_PLANT.get().defaultBlockState().setValue(BlockStateProperties.HORIZONTAL_FACING, Direction.NORTH));
+        h.startSequence()
+                .thenExecute(() -> {
+                    MatteSmelterBlockEntity m = h.getBlockEntity(smelter);
+                    m.input().insertItem(0, new ItemStack(PcItems.FLOTATION_CONCENTRATE.get(), 6), false);
+                    m.input().insertItem(1, new ItemStack(PcBlocks.VEIN_QUARTZ.get().asItem(), 2), false);
+                    fill(m.fluids(Direction.NORTH), PcFluids.SALES_GAS.source.get(), 8000);
+                    fill(m.fluids(Direction.NORTH), PcFluids.OXYGEN.source.get(), 8000);
+                    AcidPlantBlockEntity acid = h.getBlockEntity(acidPos);
+                    fill(acid.fluids(Direction.NORTH), Fluids.WATER, 8000);
+                })
+                .thenWaitUntil(() -> {
+                    MatteSmelterBlockEntity m = h.getBlockEntity(smelter);
+                    h.assertTrue(countOut(m.output(), PcItems.SULFIDE_MATTE.get(), false) >= 1, "copper matte");
+                    h.assertTrue(m.so2().capturedKg() > 1, "SO2 into the acid plant: " + m.so2().capturedKg());
+                    AcidPlantBlockEntity acid = h.getBlockEntity(acidPos);
+                    h.assertTrue(acid.acid().amount() > 0, "sulphuric acid from smelter gas");
+                })
+                .thenSucceed();
+    }
+
+    @GameTest(template = LARGE, timeoutTicks = 1200)
+    public static void converterBlowsMatteToAnodeCopper(GameTestHelper h) {
+        BlockPos conv = new BlockPos(5, 2, 5);
+        place(h, conv, PcBlocks.PEIRCE_SMITH_CONVERTER.get());
+        h.startSequence()
+                .thenExecute(() -> {
+                    ConverterBlockEntity c = h.getBlockEntity(conv);
+                    c.input().insertItem(0, new ItemStack(PcItems.SULFIDE_MATTE.get(), 4), false);
+                    // никелевый штейн в конвертер не идёт
+                    ItemStack ni = NonferrousComponents.nickel(new ItemStack(PcItems.SULFIDE_MATTE.get()), true);
+                    h.assertTrue(!c.accepts(ni), "nickel matte refused");
+                })
+                .thenIdle(40)
+                .thenExecute(() -> {
+                    ConverterBlockEntity c = h.getBlockEntity(conv);
+                    h.assertTrue(c.converter().phase() == PeirceSmithConverter.Phase.SLAG_BLOW && c.converter().lastO2KgS() == 0,
+                            "no quartz: the slag blow waits, " + c.converter().phase());
+                    c.input().insertItem(1, new ItemStack(PcBlocks.VEIN_QUARTZ.get().asItem(), 1), false);
+                    fill(c.fluids(Direction.NORTH), PcFluids.SALES_GAS.source.get(), 1000);
+                })
+                .thenWaitUntil(() -> {
+                    ConverterBlockEntity c = h.getBlockEntity(conv);
+                    h.assertTrue(countOut(c.output(), PcItems.COPPER_ANODE.get(), false) >= 2, "anode copper");
+                    h.assertTrue(c.converter().totalSo2Kg() > 100, "converter SO2 " + c.converter().totalSo2Kg());
+                    h.assertTrue(c.gas().amount() < 1000, "poling gas used");
+                })
+                .thenSucceed();
+    }
+
+    @GameTest(template = LARGE, timeoutTicks = 1200)
+    public static void electrorefiningPlatesCopperAndNickelWithCobaltAndPlatinumMetals(GameTestHelper h) {
+        h.setBlock(A, PcBlocks.ELECTROREFINING_CELL.get().defaultBlockState().setValue(BlockStateProperties.HORIZONTAL_FACING, Direction.NORTH));
+        h.setBlock(B, PcBlocks.ELECTROREFINING_CELL.get().defaultBlockState().setValue(BlockStateProperties.HORIZONTAL_FACING, Direction.NORTH));
+        h.startSequence()
+                .thenExecute(() -> {
+                    ElectrorefiningCellBlockEntity cu = h.getBlockEntity(A), ni = h.getBlockEntity(B);
+                    cu.input().insertItem(0, new ItemStack(PcItems.COPPER_ANODE.get(), 2), false);
+                    h.assertTrue(ni.setMode(Electrorefining.Mode.NICKEL), "empty section switches to nickel");
+                    h.assertTrue(h.getBlockState(B).getValue(PcProperties.NICKEL), "nickel cells shown");
+                    ni.input().insertItem(0, NonferrousComponents.nickel(new ItemStack(PcItems.SULFIDE_MATTE.get(), 8), true), false);
+                    ni.cells().setCurrentSetA(30e3);
+                })
+                // электролиз — реальное время: 100-килограммовый катод растёт часами, проверяем темп и балансы
+                .thenWaitUntil(() -> {
+                    ElectrorefiningCellBlockEntity cu = h.getBlockEntity(A), ni = h.getBlockEntity(B);
+                    cu.supply(20e3);
+                    ni.supply(30e3);
+                    h.assertTrue(cu.cells().lastVoltage() > 0.25 && cu.cells().lastVoltage() < 0.35, "copper cell volts " + cu.cells().lastVoltage());
+                    h.assertTrue(ni.cells().lastVoltage() >= 3.0 && ni.cells().lastVoltage() <= 3.5, "nickel cell volts " + ni.cells().lastVoltage());
+                    h.assertTrue(cu.cells().totalMetalKg() > 1 && ni.cells().totalMetalKg() > 1,
+                            "metal plated: Cu " + cu.cells().totalMetalKg() + ", Ni " + ni.cells().totalMetalKg());
+                    double kwh = cu.cells().specificKwhPerKg();
+                    h.assertTrue(kwh > 0.2 && kwh < 0.3, "copper refining " + kwh + " kWh/kg");
+                    // кобальт и платиноиды — по никелю, ушедшему с анодов (90 % — в катод)
+                    double anodeNi = ni.cells().totalMetalKg() / Electrorefining.NI_RECOVERY;
+                    h.assertTrue(Math.abs(ni.cobaltKg() - anodeNi * Flotation.CO_PER_NI * Electrorefining.CO_RECOVERY) < 1e-6, "cobalt " + ni.cobaltKg());
+                    h.assertTrue(Math.abs(ni.pgmKg() - anodeNi * Flotation.PGM_PER_NI) < 1e-9, "platinum metals " + ni.pgmKg());
+                    h.assertTrue(!ni.setMode(Electrorefining.Mode.COPPER), "a busy section keeps its mode");
                 })
                 .thenSucceed();
     }

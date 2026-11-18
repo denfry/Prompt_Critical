@@ -1,0 +1,32 @@
+{
+  "parent": "minecraft:recipes/root",
+  "criteria": {
+    "has_copper_cathode": {
+      "conditions": {
+        "items": [
+          {
+            "items": "promptcritical:copper_cathode"
+          }
+        ]
+      },
+      "trigger": "minecraft:inventory_changed"
+    },
+    "has_the_recipe": {
+      "conditions": {
+        "recipe": "promptcritical:nonferrous/copper_ingot_from_cathode"
+      },
+      "trigger": "minecraft:recipe_unlocked"
+    }
+  },
+  "requirements": [
+    [
+      "has_the_recipe",
+      "has_copper_cathode"
+    ]
+  ],
+  "rewards": {
+    "recipes": [
+      "promptcritical:nonferrous/copper_ingot_from_cathode"
+    ]
+  }
+}

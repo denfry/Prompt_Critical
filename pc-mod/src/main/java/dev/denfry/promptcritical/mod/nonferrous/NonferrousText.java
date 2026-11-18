@@ -22,6 +22,29 @@ public final class NonferrousText {
         item("aluminium_hydroxide", "Aluminium Hydroxide", "Гидроксид алюминия");
         fluid("sodium_aluminate_liquor", "Sodium Aluminate Liquor", "Алюминатный раствор");
         fluid("red_mud", "Red Mud (bauxite residue)", "Красный шлам");
+        // медь, никель, кобальт, платиноиды, олово
+        block("flotation_cell", "Flotation Cell (sulphide ores)", "Флотомашина (сульфидные руды)");
+        block("matte_smelter", "Reverberatory Matte Smelter", "Отражательная печь (штейн, олово)");
+        block("peirce_smith_converter", "Peirce–Smith Converter", "Конвертер Пирса–Смита");
+        block("electrorefining_cell", "Electrorefining Cell Section", "Секция ванн электрорафинирования");
+        block("pgm_refinery", "Platinum Metals Refinery", "Аффинаж платиноидов");
+        item("flotation_concentrate", "Copper Flotation Concentrate", "Медный флотоконцентрат");
+        item("flotation_concentrate.nickel", "Copper-Nickel Flotation Concentrate", "Медно-никелевый флотоконцентрат");
+        item("sulfide_matte", "Copper Matte", "Медный штейн");
+        item("sulfide_matte.nickel", "Nickel Matte Anode", "Никелевый штейн (анод)");
+        item("blister_copper", "Blister Copper", "Черновая медь");
+        item("copper_anode", "Copper Anode", "Медный анод");
+        item("copper_cathode", "Copper Cathode", "Катодная медь");
+        item("anode_slime", "Anode Slime", "Анодный шлам");
+        item("nickel_ingot", "Nickel Cathode", "Катодный никель");
+        item("pgm_concentrate", "Platinum Metals Concentrate", "Концентрат платиноидов");
+        item("platinum_ingot", "Platinum Ingot", "Слиток платины");
+        item("tin_dust", "Cassiterite Concentrate", "Касситеритовый концентрат");
+        item("tin_ingot", "Tin Ingot", "Слиток олова");
+        say("refining.mode_copper", "Cell section: copper refining", "Секция ванн: рафинирование меди");
+        say("refining.mode_nickel", "Cell section: nickel matte anodes", "Секция ванн: никелевые штейновые аноды");
+        say("refining.mode_busy", "Change the mode on an empty section: anodes are still in the cells",
+                "Режим меняют на пустой секции: в ваннах ещё аноды");
         // Холл–Эру
         block("reduction_pot", "Hall–Héroult Reduction Pot", "Алюминиевый электролизёр");
         item("aluminium_ingot", "Aluminium Ingot", "Чушка алюминия");

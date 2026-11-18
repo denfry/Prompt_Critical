@@ -11,6 +11,8 @@ public final class PcProperties {
     public static final BooleanProperty RUNNING = BooleanProperty.create("running");
     public static final BooleanProperty DAMAGED = BooleanProperty.create("damaged");
     public static final BooleanProperty ALARM = BooleanProperty.create("alarm");
+    /** Ванна электрорафинирования в режиме никеля (08 §8.8.4; арт {@code mode=ni}). */
+    public static final BooleanProperty NICKEL = BooleanProperty.create("nickel");
     public static final BooleanProperty FORMED = BooleanProperty.create("formed");
     public static final BooleanProperty TOP = BooleanProperty.create("top");
     public static final BooleanProperty HAS_DOCUMENT = BooleanProperty.create("has_document");

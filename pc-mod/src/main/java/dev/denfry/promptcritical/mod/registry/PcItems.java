@@ -148,6 +148,18 @@ public final class PcItems {
     public static final DeferredItem<Item> CARBON_ANODE = item("carbon_anode", 16);
     public static final DeferredItem<Item> CATHODE_BLOCK = item("cathode_block", 16);
     public static final DeferredItem<Item> ALUMINIUM_INGOT = item("aluminium_ingot", 64);
+    /** Флотоконцентрат и штейн: медная линия или, с компонентом {@code nickel_line}, медно-никелевая. */
+    public static final DeferredItem<dev.denfry.promptcritical.mod.nonferrous.NonferrousLineItem> FLOTATION_CONCENTRATE = registered(
+            ITEMS.registerItem("flotation_concentrate", dev.denfry.promptcritical.mod.nonferrous.NonferrousLineItem::new,
+                    new Item.Properties().stacksTo(64)));
+    public static final DeferredItem<dev.denfry.promptcritical.mod.nonferrous.NonferrousLineItem> SULFIDE_MATTE = registered(
+            ITEMS.registerItem("sulfide_matte", dev.denfry.promptcritical.mod.nonferrous.NonferrousLineItem::new,
+                    new Item.Properties().stacksTo(64)));
+    public static final DeferredItem<Item> BLISTER_COPPER = item("blister_copper", 64);
+    public static final DeferredItem<Item> COPPER_ANODE = item("copper_anode", 64);
+    public static final DeferredItem<Item> COPPER_CATHODE = item("copper_cathode", 64);
+    public static final DeferredItem<Item> NICKEL_INGOT = item("nickel_ingot", 64);
+    public static final DeferredItem<Item> ANODE_SLIME = item("anode_slime", 64);
     public static final DeferredItem<Item> GENERATOR_COUPLING = item("generator_coupling", 16);
     /** Подогреватель рубашки ДГ (07 §7.11.3): без него на морозе отказ пуска вчетверо вероятнее. */
     public static final DeferredItem<Item> JACKET_HEATER = item("jacket_heater", 16);

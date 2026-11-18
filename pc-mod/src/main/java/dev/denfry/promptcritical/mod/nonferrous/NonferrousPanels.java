@@ -7,7 +7,9 @@ import dev.denfry.promptcritical.mod.panel.PanelText.Tr;
 import dev.denfry.promptcritical.mod.registry.PcItems;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.function.Predicate;
 import net.minecraft.network.chat.Component;
+import net.minecraft.world.item.ItemStack;
 
 /**
  * Щиты цветной металлургии (08 §8.8). Общий набор каналов: температура, пять величин стадии, три стекла баков и флаги
@@ -93,11 +95,84 @@ public final class NonferrousPanels {
             .output(174, 88, 7, ALUMINA.get())
             .readout(8, 112, 216, v -> CALC_STATUS.get(v.raw(B), v.num(C, 10, 1)), null).build();
 
+    // медь, никель, платиноиды, олово
+    private static final Tr RECOVERY = PanelText.tr("nf.recovery", "Recovery", "Извлеч."),
+            WATER = PanelText.tr("nf.water", "Water", "Вода"), TAR = PanelText.tr("nf.tar", "Tar", "Смола"),
+            NO_FROTHER = PanelText.tr("nf.no_frother", "No frother", "Нет вспенивателя"),
+            SULPHIDE_ORE = PanelText.tr("nf.sulphide_ore", "Chalcopyrite or pentlandite (grade by assay)", "Халькопирит или пентландит (содержание по пробе)"),
+            CONCENTRATE = PanelText.tr("nf.concentrate", "Flotation concentrate", "Флотоконцентрат"),
+            FLOT_STATUS = PanelText.tr("nf.flot_status", "Ore %s kg/h · in the froth Cu %s kg, Ni %s kg",
+                    "Руда %s кг/ч · в пене Cu %s кг, Ni %s кг"),
+            OXYGEN = PanelText.tr("nf.oxygen", "O₂", "O₂"), STARVED = PanelText.tr("nf.starved", "Short of feed", "Не хватает"),
+            SMELTER_LOAD = PanelText.tr("nf.smelter_load", "Concentrate with vein quartz; cassiterite concentrate with coke",
+                    "Концентрат с кварцем; касситеритовый концентрат с коксом"),
+            SMELTER_OUT = PanelText.tr("nf.smelter_out", "Matte, tin", "Штейн, олово"),
+            SMELT_STATUS = PanelText.tr("nf.smelt_status", "Matte metal %s kg/h · tin %s kg/h · SO₂ %s kg/h · to acid %s kg",
+                    "Металл в штейн %s кг/ч · олово %s кг/ч · SO₂ %s кг/ч · в кислоту %s кг"),
+            GAS = PanelText.tr("nf.gas", "Gas", "Газ"), NO_FLUX = PanelText.tr("nf.no_flux", "No quartz", "Нет кварца"),
+            REFINE = PanelText.tr("nf.refine", "Refine", "Рафинир."),
+            REFINE_TIP = PanelText.tr("nf.refine_tip", "Fire-refine the blister to anodes with natural gas, or tap it as blister",
+                    "Огневое рафинирование черновой меди в аноды на природном газе или слив черновой"),
+            CONVERTER_LOAD = PanelText.tr("nf.converter_load", "Copper matte, blister copper, vein quartz", "Медный штейн, черновая медь, кварц"),
+            CONVERTER_OUT = PanelText.tr("nf.converter_out", "Blister or anode copper", "Черновая или анодная медь"),
+            CONV_STATUS = PanelText.tr("nf.conv_status", "%s · Cu %s kg · Fe %s kg · S %s kg · SO₂ %s kg/h",
+                    "%s · Cu %s кг · Fe %s кг · S %s кг · SO₂ %s кг/ч"),
+            ANODE_FILL = PanelText.tr("nf.anode_fill", "Anodes", "Аноды"), NO_ANODES = PanelText.tr("nf.no_anodes", "No anodes", "Нет анодов"),
+            NICKEL_MODE = PanelText.tr("nf.nickel_mode", "Ni mode", "Режим Ni"), MODE = PanelText.tr("nf.mode", "Cu/Ni", "Cu/Ni"),
+            MODE_TIP = PanelText.tr("nf.mode_tip", "Switch copper / nickel on an empty section", "Медь / никель — на пустой секции"),
+            REF_LOAD = PanelText.tr("nf.ref_load", "Copper anodes or nickel matte anodes", "Медные аноды или никелевые штейновые аноды"),
+            REF_OUT = PanelText.tr("nf.ref_out", "Cathodes, cobalt, anode slime", "Катоды, кобальт, анодный шлам"),
+            REF_STATUS = PanelText.tr("nf.ref_status", "%s V per cell at %s kA (set %s) · %s kg/h · %s kWh/kg",
+                    "%s В на ванну при %s кА (уставка %s) · %s кг/ч · %s кВт·ч/кг"),
+            ACID = PanelText.tr("nf.acid", "H₂SO₄", "H₂SO₄"), NITRIC = PanelText.tr("nf.nitric", "HNO₃", "HNO₃"), HCL = PanelText.tr("nf.hcl", "HCl", "HCl"),
+            LEACH = PanelText.tr("nf.leach", "Slime leach", "Шлам"), DISSOLVE = PanelText.tr("nf.dissolve", "Aqua regia", "Царск. водка"),
+            PGM_LOAD = PanelText.tr("nf.pgm_load", "Anode slime, platinum metals concentrate", "Анодный шлам, концентрат платиноидов"),
+            PGM_OUT = PanelText.tr("nf.pgm_out", "Concentrate, platinum, iridium", "Концентрат, платина, иридий"),
+            PGM_STATUS = PanelText.tr("nf.pgm_status", "Pt %s g and Ir %s g on the filter · %s g of platinum metals refined",
+                    "Pt %s г и Ir %s г на фильтре · выделено %s г платиноидов");
+    private static final Tr[] CONVERTER_PHASES = {PanelText.tr("nf.ps.empty", "Empty", "Пуст"),
+            PanelText.tr("nf.ps.slag", "Slag blow", "Шлаковый период"), PanelText.tr("nf.ps.copper", "Copper blow", "Медный период"),
+            PanelText.tr("nf.ps.blister", "Blister ready", "Черновая готова"), PanelText.tr("nf.ps.refining", "Fire refining", "Огневое рафинирование"),
+            PanelText.tr("nf.ps.anode", "Anode copper", "Анодная медь")};
+
+    public static final PanelLayout FLOTATION = base("flotation_cell", null, 0, 132)
+            .dial(64, 24, false, A, 10, 100, Double.NaN, 0, PCT.get(), RECOVERY.get(), null)
+            .glass(120, 24, 56, TANK, 0xFF3A6EA5, Double.NaN, Double.NaN, WATER.get(), null)
+            .glass(138, 24, 56, TANK2, 0xFF202020, Double.NaN, Double.NaN, TAR.get(), null)
+            .lamp(200, 50, FLAGS, F_WARN, LampColor.AMBER, NO_FROTHER.get())
+            .slot(120, 70, 0, FlotationCellBlockEntity::ore, SULPHIDE_ORE.get()).slot(138, 70, 1, FlotationCellBlockEntity::ore, SULPHIDE_ORE.get())
+            .slot(156, 70, 2, FlotationCellBlockEntity::ore, SULPHIDE_ORE.get()).slot(174, 70, 3, FlotationCellBlockEntity::ore, SULPHIDE_ORE.get())
+            .output(120, 88, 4, CONCENTRATE.get()).output(138, 88, 5, CONCENTRATE.get()).output(156, 88, 6, CONCENTRATE.get())
+            .output(174, 88, 7, CONCENTRATE.get())
+            .readout(8, 112, 216, v -> FLOT_STATUS.get(v.raw(B), v.num(C, 10, 1), v.num(D, 10, 1)), null).build();
+
+    public static final PanelLayout SMELTER = rows(base("matte_smelter", null, 0, 146)
+            .glass(120, 24, 40, TANK, 0xFFB0B8C0, Double.NaN, Double.NaN, GAS.get(), null)
+            .glass(138, 24, 40, TANK2, 0xFFD8E8F8, Double.NaN, Double.NaN, OXYGEN.get(), null)
+            .lamp(200, 50, FLAGS, F_WARN, LampColor.AMBER, STARVED.get()), 6, 4, MatteSmelterBlockEntity::charge, SMELTER_LOAD, SMELTER_OUT)
+            .readout(8, 130, 216, v -> SMELT_STATUS.get(v.raw(A), v.raw(B), v.raw(C), v.raw(D)), null).build();
+
+    public static final PanelLayout CONVERTER = rows(base("peirce_smith_converter", null, 0, 146)
+            .glass(120, 24, 40, TANK, 0xFFB0B8C0, Double.NaN, Double.NaN, GAS.get(), null)
+            .lamp(200, 50, FLAGS, F_WARN, LampColor.AMBER, NO_FLUX.get()).lamp(200, 64, FLAGS, F_AUX, LampColor.GREEN, REFINE.get())
+            .button(56, 92, 50, B_AUX, REFINE.get(), REFINE_TIP.get()), 6, 4, ConverterBlockEntity::charge, CONVERTER_LOAD, CONVERTER_OUT)
+            .readout(8, 130, 216, v -> CONV_STATUS.get(CONVERTER_PHASES[Math.clamp(v.raw(E), 0, CONVERTER_PHASES.length - 1)].get(),
+                    v.raw(A), v.num(B, 10, 1), v.num(C, 10, 1), v.raw(D)), null).build();
+
+    public static final PanelLayout REFINING = rows(base("electrorefining_cell", null, 0, 146)
+            .dial(8, 24, false, A, 100, 4, Double.NaN, 2, PanelText.tr("nf.unit_v", "V", "В").get(), PanelText.tr("nf.cell", "Cell", "Ванна").get(), null)
+            .glass(120, 24, 40, TANK, 0xFFC87533, Double.NaN, Double.NaN, ANODE_FILL.get(), null)
+            .lamp(200, 50, FLAGS, F_WARN, LampColor.AMBER, NO_ANODES.get()).lamp(200, 64, FLAGS, F_AUX, LampColor.GREEN, NICKEL_MODE.get())
+            .button(56, 92, 20, B_DOWN, Component.literal("−"), null).button(78, 92, 20, B_UP, Component.literal("+"), null)
+            .button(8, 110, 44, B_AUX, MODE.get(), MODE_TIP.get()), 4, 6, ElectrorefiningCellBlockEntity::anode, REF_LOAD, REF_OUT)
+            .readout(8, 130, 216, v -> REF_STATUS.get(v.num(A, 100, 2), v.num(B, 10, 1), v.num(TANK3, 10, 1), v.raw(C), v.num(D, 1000, 3)), null)
+            .build();
+
     private NonferrousPanels() {
     }
 
     public static List<PanelLayout> all() {
-        return new ArrayList<>(List.of(DIGESTER, PRECIPITATOR, CALCINER, POT));
+        return new ArrayList<>(List.of(DIGESTER, PRECIPITATOR, CALCINER, POT, FLOTATION, SMELTER, CONVERTER, REFINING));
     }
 
     private static PanelLayout pot() {
@@ -120,12 +195,24 @@ public final class NonferrousPanels {
 
     /** Общее: термометр с кнопками уставки, лампы «вкл.»/«работа», пуск. */
     static PanelLayout.Builder base(String id, Tr tempLabel, double tempMax) {
-        PanelLayout.Builder b = PanelLayout.builder(id, 232, 132, CHANNELS);
+        return base(id, tempLabel, tempMax, 132);
+    }
+
+    static PanelLayout.Builder base(String id, Tr tempLabel, double tempMax, int height) {
+        PanelLayout.Builder b = PanelLayout.builder(id, 232, height, CHANNELS);
         if (tempLabel != null) {
             b.dial(8, 24, false, T_C, 1, tempMax, Double.NaN, 0, CELSIUS.get(), tempLabel.get(), null);
             b.button(56, 92, 20, B_DOWN, Component.literal("−"), null).button(78, 92, 20, B_UP, Component.literal("+"), null);
         }
         return b.lamp(200, 22, FLAGS, F_ON, LampColor.GREEN, ON.get()).lamp(200, 36, FLAGS, F_RUN, LampColor.GREEN, WORKING.get())
                 .button(8, 92, 44, B_RUN, RUN.get(), null);
+    }
+
+    /** Загрузка рядами по 4 с x = 120, y = 70, ниже — склад продукта (индексы после загрузки). */
+    static PanelLayout.Builder rows(PanelLayout.Builder b, int nIn, int nOut, Predicate<ItemStack> accepts, Tr inTip, Tr outTip) {
+        for (int i = 0; i < nIn; i++) b.slot(120 + 18 * (i % 4), 70 + 18 * (i / 4), i, accepts, inTip.get());
+        int y = 70 + 18 * ((nIn + 3) / 4);
+        for (int j = 0; j < nOut; j++) b.output(120 + 18 * (j % 4), y + 18 * (j / 4), nIn + j, outTip.get());
+        return b;
     }
 }
