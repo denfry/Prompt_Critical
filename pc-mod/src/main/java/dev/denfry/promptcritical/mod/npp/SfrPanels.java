@@ -13,14 +13,21 @@ import net.minecraft.network.chat.Component;
 
 /**
  * Щит натриевого быстрого реактора (T4): мощность, период, температура натрия на выходе зоны, на входе и во втором
- * контуре, стержни, Pu-239 в зоне и в экране, КВ; лампы натриевого пожара, течи натрий–вода и разрывной мембраны.
+ * контуре, стержни, Pu-239 в зоне и в экране, КВ; лампы натриевого пожара, течи натрий–вода и разрывной мембраны;
+ * аварийный слой — учебный блэкаут, мощность аварийного расхолаживания, кипение натрия, разрушенные оболочки.
  */
 public final class SfrPanels {
     public static final int POWER = 0, PERIOD = 1, RHO_PCM = 2, SCRAM_ROD = 3, CONTROL_ROD = 4, INLET_C = 5, OUTLET_C = 6,
             INT_HOT_C = 7, FLOW = 8, STEAM = 9, FUEL_C = 10, CORE_PU = 11, BLANKET_PU_G = 12, BR = 13, TRIP = 14, FLAGS = 15,
-            CHANNELS = 16;
-    public static final int F_TRIPPED = 0, F_NO_STEAM = 1, F_FIRE = 2, F_NA_WATER = 3, F_DISC = 4, F_NO_CORE = 5;
-    public static final int B_SCRAM = 0, B_RESET = 1, B_UP = 2, B_STOP = 3, B_DOWN = 4;
+            DHR_KW = 16, CLAD_PERMIL = 17, BOIL_PCT = 18, CHANNELS = 19;
+    public static final int F_TRIPPED = 0, F_NO_STEAM = 1, F_FIRE = 2, F_NA_WATER = 3, F_DISC = 4, F_NO_CORE = 5, F_BLACKOUT = 6;
+    public static final int B_SCRAM = 0, B_RESET = 1, B_UP = 2, B_STOP = 3, B_DOWN = 4, B_BLACKOUT = 5;
+    private static final Tr BLACKOUT = PanelText.tr("sfr.blackout", "Blackout drill", "Учения: блэкаут"),
+            BLACKOUT_TIP = PanelText.tr("sfr.blackout_tip",
+                    "Loss of station power: pumps coast down, no steam is taken, scram; decay heat goes to the air coolers. Press again to end",
+                    "Потеря собственных нужд: насосы на выбеге, пар не отбирается, АЗ; остаточное тепло — на воздушные теплообменники. Повторно — конец учений"),
+            ACCIDENT = PanelText.tr("sfr.accident", "Air coolers %s kW · boiling %s %% · failed cladding %s %%",
+                    "Воздушные теплообменники %s кВт · кипение %s %% · разрушено оболочек %s %%");
     public static final int SLOT_FRESH = 0;
 
     private static final Tr PCT = PanelText.PERCENT, SEC = PanelText.tr("unit.s", "s", "с"),
@@ -90,7 +97,10 @@ public final class SfrPanels {
             .button(88, 100, 18, B_UP, UP.get(), UP_TIP.get())
             .button(108, 100, 18, B_STOP, STOP.get(), STOP_TIP.get())
             .button(128, 100, 18, B_DOWN, DOWN.get(), DOWN_TIP.get())
-            .readout(8, 140, 232, SfrPanels::status, null)
+            .button(150, 100, 64, B_BLACKOUT, BLACKOUT.get(), BLACKOUT_TIP.get())
+            .lamp(176, 132, FLAGS, F_BLACKOUT, LampColor.AMBER, BLACKOUT.get())
+            .readout(8, 120, 160, v -> ACCIDENT.get(v.raw(DHR_KW), v.raw(BOIL_PCT), v.num(CLAD_PERMIL, 10, 1)), null)
+            .readout(8, 152, 232, SfrPanels::status, null)
             .build();
 
     private SfrPanels() {

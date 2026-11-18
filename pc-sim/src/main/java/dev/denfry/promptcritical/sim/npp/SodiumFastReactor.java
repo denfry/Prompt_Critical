@@ -35,6 +35,16 @@ import dev.denfry.promptcritical.sim.neutronics.PointKinetics;
  * Na₂O 1,35 кг на кг натрия. Течь воды в парогенераторе — реакция натрий–вода Na + H₂O → NaOH + ½H₂, ≈ 7,8 МДж/кг
  * воды и 0,056 кг водорода на кг воды; давление водорода во втором контуре разрывает мембрану при 1 МПа, а детектор
  * водорода глушит реактор (АЗ «натрий–вода»). Эти потоки — сырьё для {@code DamageBudget} и эффекта дыма в моде.
+ *
+ * <p><b>Аварийный слой</b> (по схеме БН-600/БН-800, константы [BALANCE] — в GDD БН это T4 после релиза). Остаточное
+ * тепло после потери насосов и отбора пара отводит система аварийного расхолаживания — воздушные теплообменники на
+ * петлях второго контура, {@value #DHR_TRAINS} канала по {@value #DHR_TRAIN_W} Вт при номинальной температуре
+ * горячей нитки (≈1,5 % номинала, порядок САОТ БН-800); заслонки открываются сами по АЗ, тяга естественная, отвод
+ * пропорционален напору «натрий − воздух». Без расхолаживания бассейн греется остаточным теплом к кипению натрия
+ * (883 °C): центральный пустотный эффект положителен ({@link #centreVoid}). Оболочки твэлов (сталь) разрушаются выше
+ * {@value #CLAD_FAIL_K} K (≈ 700 °C — эвтектика топливо–оболочка и ползучесть, нижняя граница переходных пределов
+ * [оценка]): доля разрушенных растёт на {@value #CLAD_FAIL_RATE} в секунду на каждые 100 K сверх предела. Топливо
+ * МОКС плавится при {@value #FUEL_MELT_K} K (солидус ≈ 2 750 °C [оценка, IAEA-TECDOC-1531]).
  */
 public final class SodiumFastReactor {
     public static final double DT = 0.05;
@@ -74,6 +84,12 @@ public final class SodiumFastReactor {
 
     public enum Trip { NONE, POWER, PERIOD, OUTLET_TEMP, FLOW, SODIUM_WATER, EXTERNAL, MANUAL }
 
+    /** Аварийное расхолаживание: каналы, мощность канала, температура наружного воздуха (см. класс). */
+    public static final int DHR_TRAINS = 3;
+    public static final double DHR_TRAIN_W = 0.5e6, AIR_K = 303.15;
+    /** Предел оболочки, скорость разрушения (доля в секунду на 100 K сверх предела), плавление МОКС; К. */
+    public static final double CLAD_FAIL_K = 973.15, CLAD_FAIL_RATE = 1.0 / 600, FUEL_MELT_K = 3023;
+
     private final double puFraction0;
     private final PointKinetics kinetics;
     private final DecayHeat decay = new DecayHeat();
@@ -89,6 +105,11 @@ public final class SodiumFastReactor {
     private double steamDemandW = NOMINAL_W, qIhxW, qSgW, rho0;
     private double primaryLeakKgS, sgLeakKgS, fireW, aerosolKgS, sodiumWaterW, h2Kg, intGasPa;
     private boolean discBurst;
+    /** Аварийное расхолаживание: исправных каналов, заслонки открыты; отведено, Вт; разрушено оболочек (доля). */
+    private int dhrTrains = DHR_TRAINS;
+    private boolean dhrDampers;
+    private double dhrW, cladFailed, peakCladK = T_IN_NOM_K;
+    private boolean fuelMelt;
 
     /** Зона из {@code heavyMetalKg} МОКС с массовой долей Pu {@code puFraction} (≈ Pu-239, Pu-240/241 не ведём). */
     public SodiumFastReactor(double heavyMetalKg, double puFraction) {
@@ -226,6 +247,16 @@ public final class SodiumFastReactor {
         return true;
     }
 
+    /** Исправных каналов расхолаживания (0…{@value #DHR_TRAINS}): отказ — учения и отказы оборудования. */
+    public void setDecayHeatRemovalTrains(int n) {
+        dhrTrains = Math.max(0, Math.min(DHR_TRAINS, n));
+    }
+
+    /** Заслонки воздушных теплообменников открыть вручную (по АЗ они открываются сами). */
+    public void openDhrDampers(boolean open) {
+        dhrDampers = open;
+    }
+
     /** Течь натрия первого контура в помещение, кг/с (0 — заглушено). */
     public void setPrimaryLeak(double kgS) {
         primaryLeakKgS = Math.max(0, kgS);
@@ -289,7 +320,10 @@ public final class SodiumFastReactor {
         coldPoolK += mP * CP_NA * (ihxOutK - coldPoolK) / COLD_POOL_C * DT;
 
         sodiumWaterW = sgLeakKgS * NA_H2O_J_KG;
-        intHotK += (qIhxW - mI * CP_NA * (intHotK - intColdK)) / INT_HOT_C * DT;
+        // аварийное расхолаживание: воздушные теплообменники на горячей нитке второго контура, тяга естественная
+        if (trip != Trip.NONE) dhrDampers = true;
+        dhrW = dhrDampers ? dhrTrains * DHR_TRAIN_W * Math.max(0, (intHotK - AIR_K) / (INT_HOT_NOM_K - AIR_K)) : 0;
+        intHotK += (qIhxW - mI * CP_NA * (intHotK - intColdK) - dhrW) / INT_HOT_C * DT;
         intColdK += (mI * CP_NA * (intHotK - intColdK) - qSgW + sodiumWaterW) / INT_COLD_C * DT;
         if (!discBurst) {
             h2Kg += sgLeakKgS * H2_PER_H2O * DT;
@@ -300,6 +334,12 @@ public final class SodiumFastReactor {
                 intGasPa = P_PRIMARY_PA;
             }
         }
+
+        // оболочки — по натрию на выходе зоны (горячая точка), топливо — по средней температуре
+        double cladK = 2 * coreNaK - coldPoolK;
+        peakCladK = Math.max(peakCladK, cladK);
+        if (cladK > CLAD_FAIL_K) cladFailed = Math.min(1, cladFailed + CLAD_FAIL_RATE * (cladK - CLAD_FAIL_K) / 100 * DT);
+        if (fuelK > FUEL_MELT_K) fuelMelt = true;
 
         // Натриевый пожар: горит всё вытекшее (подача ограничивает горение).
         fireW = primaryLeakKgS * NA_FIRE_J_KG;
@@ -357,6 +397,16 @@ public final class SodiumFastReactor {
     public boolean ruptureDiscBurst() { return discBurst; }
     /** Тепло натриевого пожара, Вт, и аэрозоль Na₂O, кг/с — для {@code DamageBudget} и дыма. */
     public double sodiumFireW() { return fireW; }
+    /** Аварийное расхолаживание: отводимая мощность, Вт; исправных каналов; заслонки открыты. */
+    public double dhrW() { return dhrW; }
+    public int dhrTrains() { return dhrTrains; }
+    public boolean dhrDampersOpen() { return dhrDampers; }
+    /** Доля разрушенных оболочек твэлов; наибольшая температура оболочки за кампанию, К; расплав топлива. */
+    public double claddingFailedFraction() { return cladFailed; }
+    public double peakCladK() { return peakCladK; }
+    public boolean fuelMelt() { return fuelMelt; }
+    /** Натрий в центре зоны кипит (доля пустот 0…1). */
+    public double boilingFraction() { return centreVoid(); }
     public double aerosolKgS() { return aerosolKgS; }
     /** Тепло реакции натрий–вода во втором контуре, Вт. */
     public double sodiumWaterW() { return sodiumWaterW; }
@@ -383,6 +433,11 @@ public final class SodiumFastReactor {
         out.putDouble("h2", h2Kg);
         out.putString("trip", trip.name());
         out.putString("disc", discBurst ? "1" : "0");
+        out.putInt("dhr_trains", dhrTrains);
+        out.putString("dhr_open", dhrDampers ? "1" : "0");
+        out.putDouble("clad_failed", cladFailed);
+        out.putDouble("clad_peak", peakCladK);
+        out.putString("melt", fuelMelt ? "1" : "0");
         out.beginObject("decay");
         decay.save(out);
         out.endObject();
@@ -402,6 +457,11 @@ public final class SodiumFastReactor {
         h2Kg = in.optDouble("h2", 0);
         puFraction = Math.max(1e-4, corePuKg / heavyMetalKg);
         discBurst = "1".equals(in.optString("disc", "0"));
+        dhrTrains = in.optInt("dhr_trains", DHR_TRAINS);
+        dhrDampers = "1".equals(in.optString("dhr_open", "0"));
+        cladFailed = in.optDouble("clad_failed", 0);
+        peakCladK = in.optDouble("clad_peak", T_IN_NOM_K);
+        fuelMelt = "1".equals(in.optString("melt", "0"));
         try {
             trip = Trip.valueOf(in.optString("trip", Trip.MANUAL.name()));
         } catch (IllegalArgumentException e) {

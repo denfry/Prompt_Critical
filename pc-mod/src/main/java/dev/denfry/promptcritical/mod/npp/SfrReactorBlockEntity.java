@@ -127,16 +127,19 @@ public final class SfrReactorBlockEntity extends DeviceBlockEntity implements Fo
         double[] drive = new double[2];
         for (int i = 0; i < 2; i++)
             if (i < pumps.size() && level.getBlockEntity(pumps.get(i)) instanceof PrimaryPumpBlockEntity p) drive[i] = p.drive();
+        // учебный блэкаут: насосы обесточены, пар не отбирается, АЗ
+        if (blackoutDrill) drive[0] = drive[1] = 0;
         r.setPumpDrive(drive[0], drive[1]);
         List<SteamGeneratorBlockEntity> out = new ArrayList<>();
         for (BlockPos p : generators)
             if (level.getBlockEntity(p) instanceof SteamGeneratorBlockEntity sg && !Double.isNaN(sg.secondaryK())) out.add(sg);
-        r.setSteamDemand(out.isEmpty() ? 0 : 1.1 * SodiumFastReactor.NOMINAL_W);
+        r.setSteamDemand(out.isEmpty() || blackoutDrill ? 0 : 1.1 * SodiumFastReactor.NOMINAL_W);
         AutomationUnit a = MechanismWiring.unit(level, simId(), AutomationKind.REACTOR_IO);
-        r.setExternalTrip(a != null && a.loadEnergized(1));
+        r.setExternalTrip(blackoutDrill || a != null && a.loadEnergized(1));
         r.setPrimaryLeak(r.outletK() - 273.15 > CREEP_OUTLET_C ? PRIMARY_LEAK_KG_S : 0);
         r.setSteamGeneratorLeak(r.intermediateHotK() - 273.15 > SG_STRESS_C ? SG_LEAK_KG_S : 0);
         r.step();
+        accidentEffects(sl, r);
         for (SteamGeneratorBlockEntity sg : out) sg.deliver(r.steamGeneratorW() / out.size());
         if (a != null) {
             a.setInput(AutomationUnit.IN_MAIN, r.trip() != SodiumFastReactor.Trip.NONE ? 1 : 0);
@@ -253,6 +256,42 @@ public final class SfrReactorBlockEntity extends DeviceBlockEntity implements Fo
         return InteractionResult.SUCCESS;
     }
 
+    /** Учебный блэкаут (потеря собственных нужд) идёт. */
+    private boolean blackoutDrill;
+    private double announcedClad;
+
+    public boolean blackoutDrill() {
+        return blackoutDrill;
+    }
+
+    public void setBlackoutDrill(boolean on) {
+        blackoutDrill = on;
+        setChanged();
+    }
+
+    /**
+     * Последствия аварийного слоя в мире: предупреждение о разрушении оболочек; выход активности — только через
+     * натриевый пожар (натрий удерживает йод и цезий, пока он в бассейне), I-131 на разрушенную долю зоны как у
+     * ВВЭР на ТВС, Cs-137 по их отношению.
+     */
+    private void accidentEffects(ServerLevel sl, SodiumFastReactor r) {
+        if (ticks % 20 != 0) return;
+        double failed = r.claddingFailedFraction();
+        if (failed - announcedClad >= 0.05 || failed > 0 && announcedClad == 0) {
+            announcedClad = failed;
+            for (ServerPlayer p : sl.getPlayers(p -> p.distanceToSqr(worldPosition.getCenter()) < 48 * 48))
+                p.displayClientMessage(NppText.msg("sfr_clad", Math.round(failed * 100)).withStyle(net.minecraft.ChatFormatting.DARK_RED), false);
+        }
+        if (failed > 0 && r.sodiumFireW() > 0) {
+            double bqS = failed * 100 * PwrReactorBlockEntity.I131_PER_FAILED_BQ / 600.0;
+            var top = worldPosition.getCenter().add(0, 6, 0);
+            dev.denfry.promptcritical.mod.environment.RadiationService.airRelease(sl, top,
+                    dev.denfry.promptcritical.sim.radiation.Emitter.I131, bqS);
+            dev.denfry.promptcritical.mod.environment.RadiationService.airRelease(sl, top,
+                    dev.denfry.promptcritical.sim.radiation.Emitter.CS137, bqS * PwrReactorBlockEntity.CS137_PER_I131);
+        }
+    }
+
     @Override
     public PanelLayout panelLayout() {
         return SfrPanels.REACTOR;
@@ -284,7 +323,11 @@ public final class SfrReactorBlockEntity extends DeviceBlockEntity implements Fo
                 | (generators.isEmpty() ? 1 << SfrPanels.F_NO_STEAM : 0)
                 | (r.sodiumFireW() > 0 ? 1 << SfrPanels.F_FIRE : 0)
                 | (r.sodiumWaterW() > 0 ? 1 << SfrPanels.F_NA_WATER : 0)
-                | (r.ruptureDiscBurst() ? 1 << SfrPanels.F_DISC : 0);
+                | (r.ruptureDiscBurst() ? 1 << SfrPanels.F_DISC : 0)
+                | (blackoutDrill ? 1 << SfrPanels.F_BLACKOUT : 0);
+        v[SfrPanels.DHR_KW] = (int) Math.round(r.dhrW() / 1e3);
+        v[SfrPanels.CLAD_PERMIL] = (int) Math.round(r.claddingFailedFraction() * 1000);
+        v[SfrPanels.BOIL_PCT] = (int) Math.round(r.boilingFraction() * 100);
     }
 
     @Override
@@ -297,6 +340,7 @@ public final class SfrReactorBlockEntity extends DeviceBlockEntity implements Fo
             case SfrPanels.B_UP -> r.driveControl(-1);
             case SfrPanels.B_STOP -> r.driveControl(0);
             case SfrPanels.B_DOWN -> r.driveControl(1);
+            case SfrPanels.B_BLACKOUT -> setBlackoutDrill(!blackoutDrill);
             default -> {
             }
         }
@@ -370,6 +414,7 @@ public final class SfrReactorBlockEntity extends DeviceBlockEntity implements Fo
     @Override
     protected void saveAdditional(CompoundTag tag, HolderLookup.Provider registries) {
         super.saveAdditional(tag, registries);
+        tag.putBoolean("blackout_drill", blackoutDrill);
         tag.put("fuel", fuel.serializeNBT(registries));
         if (reactor != null) {
             tag.putDouble("hm", reactor.heavyMetalKg());
@@ -384,6 +429,7 @@ public final class SfrReactorBlockEntity extends DeviceBlockEntity implements Fo
     @Override
     protected void loadAdditional(CompoundTag tag, HolderLookup.Provider registries) {
         super.loadAdditional(tag, registries);
+        blackoutDrill = tag.getBoolean("blackout_drill");
         if (tag.contains("fuel")) fuel.deserializeNBT(registries, tag.getCompound("fuel"));
         if (tag.contains("reactor") && tag.getDouble("hm") > 0 && tag.getDouble("pu0") > 0 && tag.getDouble("pu0") < 1) {
             reactor = new SodiumFastReactor(tag.getDouble("hm"), tag.getDouble("pu0"));

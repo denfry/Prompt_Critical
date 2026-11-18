@@ -37,6 +37,8 @@ public final class NppText {
         put("accident_uncovered", "CORE UNCOVERED: the level is below the top of the fuel", "ОГОЛЕНИЕ АКТИВНОЙ ЗОНЫ: уровень ниже верха топлива");
         put("accident_clad", "CORE HEAT-UP: cladding burst, assemblies with failed cladding: %s",
                 "РАЗОГРЕВ ЗОНЫ: оболочки вздулись и лопнули, разгерметизировано ТВС: %s");
+        put("sfr_clad", "SODIUM POOL OVERHEATED: fuel cladding failing, %s %% of the core",
+                "ПЕРЕГРЕВ НАТРИЯ: разрушаются оболочки твэлов, %s %% зоны");
         put("accident_h2_burn", "HYDROGEN BURN in the containment: %s MJ", "ГОРЕНИЕ ВОДОРОДА в гермооболочке: %s МДж");
         put("accident_breach", "CONTAINMENT FAILED: overpressure tore the shell, the release goes outside",
                 "РАЗРУШЕНИЕ ГЕРМООБОЛОЧКИ: давление разорвало её, выброс уходит наружу");
