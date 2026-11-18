@@ -282,6 +282,31 @@ val checkTranslations by tasks.registering {
     }
 }
 tasks.named("check") { dependsOn(checkTranslations) }
+// Ванильный загрузчик моделей отбрасывает модель целиком, если "from"/"to" элемента выходит за −16…32: блок
+// рисуется пурпурно-чёрным кубом, а ни сборка, ни GameTest этого не видят (только лог клиента)
+val checkModelBounds by tasks.registering {
+    group = "verification"
+    description = "Fails on block or item model elements outside the vanilla -16..32 bounds"
+    val roots = listOf("src/main/resources", "src/generated/resources").map { layout.projectDirectory.dir("$it/assets/$modId/models") }
+    roots.forEach { inputs.dir(it).optional() }
+    doLast {
+        val bad = mutableListOf<String>()
+        roots.map { it.asFile }.filter { it.isDirectory }.forEach { root ->
+            root.walk().filter { it.extension == "json" }.forEach { f ->
+                val json = groovy.json.JsonSlurper().parse(f) as? Map<*, *> ?: return@forEach
+                (json["elements"] as? List<*>)?.forEachIndexed { i, el ->
+                    val e = el as? Map<*, *> ?: return@forEachIndexed
+                    for (k in listOf("from", "to")) (e[k] as? List<*>)?.forEach { v ->
+                        val d = (v as Number).toDouble()
+                        if (d < -16.0 || d > 32.0) bad += "${f.relativeTo(root).invariantSeparatorsPath} element $i $k $d"
+                    }
+                }
+            }
+        }
+        if (bad.isNotEmpty()) throw GradleException("model elements outside -16..32: " + bad.take(40).joinToString("; "))
+    }
+}
+tasks.named("check") { dependsOn(checkModelBounds) }
 
 val translationStatus by tasks.registering {
     group = "help"
