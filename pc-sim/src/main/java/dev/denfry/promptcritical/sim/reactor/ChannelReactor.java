@@ -94,7 +94,7 @@ public final class ChannelReactor {
     private final double[] hm0 = new double[CHANNELS], u5 = new double[CHANNELS], u8 = new double[CHANNELS], pu9 = new double[CHANNELS],
             fp = new double[CHANNELS], burnup = new double[CHANNELS], dryout = new double[CHANNELS], share = new double[CHANNELS],
             x234 = new double[CHANNELS], u6 = new double[CHANNELS], pu0 = new double[CHANNELS], pu1 = new double[CHANNELS],
-            pu2 = new double[CHANNELS];
+            pu2 = new double[CHANNELS], puMox = new double[CHANNELS];
     private final boolean[] failed = new boolean[CHANNELS];
     private final double[] radius = new double[CHANNELS];
     // стержни: погружение 0…1
@@ -155,6 +155,7 @@ public final class ChannelReactor {
         pu0[ch] = pu.pu240Kg();
         pu1[ch] = pu.pu241Kg();
         pu2[ch] = pu.pu242Kg();
+        puMox[ch] = pu.totalKg();
         failed[ch] = false;
         slowTimer = 1e9;
         return true;
@@ -190,7 +191,7 @@ public final class ChannelReactor {
     public ChannelFuel unload(int ch) {
         if (!shutDown() || hm0[ch] <= 0) return null;
         ChannelFuel f = fuel(ch);
-        hm0[ch] = u5[ch] = u8[ch] = pu9[ch] = fp[ch] = burnup[ch] = dryout[ch] = u6[ch] = pu0[ch] = pu1[ch] = pu2[ch] = 0;
+        hm0[ch] = u5[ch] = u8[ch] = pu9[ch] = fp[ch] = burnup[ch] = dryout[ch] = u6[ch] = pu0[ch] = pu1[ch] = pu2[ch] = puMox[ch] = 0;
         failed[ch] = false;
         slowTimer = 1e9;
         return f;
@@ -354,8 +355,16 @@ public final class ChannelReactor {
         staticRho = loaded > 0 ? (keff - 1) / keff : -1;
         evalFuelK = fuelK;
         evalGraphiteK = graphiteK;
-        rodWorthFactor = loaded > 0 && PlutoniumCharge.hasPlutonium(fuel)
-                ? PlutoniumCharge.rodWorthFactor(lattice.evaluate(cell, PlutoniumCharge.uraniumEquivalent(fuel), s).sigmaA(), sf.sigmaA()) : 1;
+        // множитель стержней — только по плутонию МОКС: наработанный Pu уже в опытной ценности стержней АМ-1
+        double loadedPu = 0, pu = 0;
+        for (int i = 0; i < CHANNELS; i++)
+            if (hm0[i] > 0) {
+                loadedPu += puMox[i];
+                pu += pu9[i] + pu0[i] + pu1[i] + pu2[i];
+            }
+        double moxShare = PlutoniumCharge.moxShare(loadedPu, pu);
+        rodWorthFactor = loaded > 0 && moxShare > 0 && sf.sigmaA() > 0
+                ? PlutoniumCharge.rodWorthFactor(lattice.evaluate(cell, PlutoniumCharge.uraniumEquivalent(fuel, moxShare), s).sigmaA(), sf.sigmaA()) : 1;
         alphaDoppler = sf.reactivityCoefficient(sf.dkdTf());
         alphaGraphite = sf.reactivityCoefficient(sf.dkdTm());
         sigmaA = sf.sigmaA();
@@ -714,6 +723,7 @@ public final class ChannelReactor {
         out.putDoubles("pu0", pu0, CHANNELS);
         out.putDoubles("pu1", pu1, CHANNELS);
         out.putDoubles("pu2", pu2, CHANNELS);
+        out.putDoubles("puMox", puMox, CHANNELS);
         int[] f = new int[CHANNELS];
         for (int i = 0; i < CHANNELS; i++) f[i] = failed[i] ? 1 : 0;
         out.putInts("failed", f, CHANNELS);
@@ -748,6 +758,7 @@ public final class ChannelReactor {
         copy(in, "pu0", pu0);
         copy(in, "pu1", pu1);
         copy(in, "pu2", pu2);
+        copy(in, "puMox", puMox);
         if (in.has("failed")) {
             int[] f = in.getInts("failed");
             for (int i = 0; i < Math.min(CHANNELS, f.length); i++) failed[i] = f[i] != 0;

@@ -5,6 +5,8 @@ import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
+import dev.denfry.promptcritical.sim.core.TreeStateReader;
+import dev.denfry.promptcritical.sim.core.TreeStateWriter;
 import dev.denfry.promptcritical.sim.fuel.FuelDesign;
 import dev.denfry.promptcritical.sim.nuclide.PlutoniumCharge;
 import dev.denfry.promptcritical.sim.neutronics.CellFeedbackState;
@@ -108,6 +110,39 @@ class MoxThermalReactorsTest {
         // стержни входят в реактивность с этим множителем
         CellFeedbackState s = hot(mox, 600);
         assertEquals(-0.05 * mox.rodWorthFactor(), mox.reactivity(s, -0.05) - mox.reactivity(s, 0), 1e-12);
+    }
+
+    /**
+     * Выгоревшая урановая зона несёт наработанный Pu (≈ 1 % ТМ к концу кампании), но ценность её стержней — та, на
+     * которую установка рассчитана: множитель считает только плутоний, загруженный МОКС. Сохранение и загрузка МОКС-зоны
+     * множитель не теряют.
+     */
+    @Test
+    void bredPlutoniumDoesNotWeakenUraniumRods() {
+        LightWaterCore uox = uoxCore();
+        TreeStateWriter w = new TreeStateWriter();
+        uox.save(w);
+        double kg = FuelDesign.VVER_1000.uKgPerAssembly(0.96, 0.04);
+        double[] u5 = new double[LightWaterCore.POSITIONS], pu9 = new double[LightWaterCore.POSITIONS], pu0 = new double[LightWaterCore.POSITIONS];
+        for (int i = 0; i < LightWaterCore.POSITIONS; i++) {
+            u5[i] = kg * 0.008;
+            pu9[i] = kg * 0.006;
+            pu0[i] = kg * 0.003;
+        }
+        w.root().put("u5", u5).put("pu9", pu9).put("pu0", pu0);
+        LightWaterCore burnt = new LightWaterCore(1e8, 0.05);
+        burnt.load(new TreeStateReader(w.root()), () -> hot(burnt, 600));
+        burnt.solveStatic(hot(burnt, 600));
+        assertEquals(1.0, burnt.rodWorthFactor(), 1e-12, "bred Pu is already in the installation's rod worth");
+
+        LightWaterCore mox = moxCore(reactorGrade(PU));
+        mox.solveStatic(hot(mox, 600));
+        TreeStateWriter mw = new TreeStateWriter();
+        mox.save(mw);
+        LightWaterCore again = new LightWaterCore(1e8, 0.05);
+        again.load(new TreeStateReader(mw.root()), () -> hot(again, 600));
+        again.solveStatic(hot(again, 600));
+        assertEquals(mox.rodWorthFactor(), again.rodWorthFactor(), 1e-12, "MOX rod factor survives a save");
     }
 
     /** Деградированный плутоний (больше Pu-240 и Pu-242, меньше Pu-239) при той же доле Pu даёт меньший k. */

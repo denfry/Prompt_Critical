@@ -59,13 +59,39 @@ public record PlutoniumCharge(double pu239Kg, double pu240Kg, double pu241Kg, do
      * обогащение, но урановый спектр и поглощение.
      */
     public static NuclideVector uraniumEquivalent(NuclideVector fuel) {
-        double fiss = fuel.atoms(Nuclide.PU239) * Nuclide.PU239.molarMass() + fuel.atoms(Nuclide.PU241) * Nuclide.PU241.molarMass();
-        double other = fuel.atoms(Nuclide.PU238) * Nuclide.PU238.molarMass() + fuel.atoms(Nuclide.PU240) * Nuclide.PU240.molarMass()
-                + fuel.atoms(Nuclide.PU242) * Nuclide.PU242.molarMass();
+        return uraniumEquivalent(fuel, 1);
+    }
+
+    /**
+     * Урановый двойник, в котором заменена только доля {@code share} плутония каждого изотопа — та, что пришла в зону
+     * с МОКС; остальной (наработанный из U-238) остаётся как есть. Ценности стержней установок заданы для реальных
+     * урановых зон, где наработанный Pu уже есть, — считать его ещё раз нельзя.
+     */
+    public static NuclideVector uraniumEquivalent(NuclideVector fuel, double share) {
+        double g = Math.max(0, Math.min(1, share));
+        double fiss = g * (fuel.atoms(Nuclide.PU239) * Nuclide.PU239.molarMass() + fuel.atoms(Nuclide.PU241) * Nuclide.PU241.molarMass());
+        double other = g * (fuel.atoms(Nuclide.PU238) * Nuclide.PU238.molarMass() + fuel.atoms(Nuclide.PU240) * Nuclide.PU240.molarMass()
+                + fuel.atoms(Nuclide.PU242) * Nuclide.PU242.molarMass());
         if (fiss + other <= 0) return fuel;
-        return fuel.with(Nuclide.PU238, 0).with(Nuclide.PU239, 0).with(Nuclide.PU240, 0).with(Nuclide.PU241, 0).with(Nuclide.PU242, 0)
+        double keep = 1 - g;
+        return fuel.with(Nuclide.PU238, fuel.atoms(Nuclide.PU238) * keep).with(Nuclide.PU239, fuel.atoms(Nuclide.PU239) * keep)
+                .with(Nuclide.PU240, fuel.atoms(Nuclide.PU240) * keep).with(Nuclide.PU241, fuel.atoms(Nuclide.PU241) * keep)
+                .with(Nuclide.PU242, fuel.atoms(Nuclide.PU242) * keep)
                 .with(Nuclide.U235, fuel.atoms(Nuclide.U235) + FISS_TO_U235 * fiss / Nuclide.U235.molarMass())
                 .with(Nuclide.U238, fuel.atoms(Nuclide.U238) + (other + (1 - FISS_TO_U235) * fiss) / Nuclide.U238.molarMass());
+    }
+
+    /**
+     * Доля плутония зоны, пришедшая с МОКС: загруженный свежим Pu к Pu сейчас, не больше 1. В МОКС Pu за кампанию
+     * убывает (делится больше, чем нарабатывается), так что вся его масса считается МОКС; в урановой зоне загружено 0 —
+     * множитель стержней остаётся 1, как до МОКС.
+     *
+     * @param loadedPuKg  плутоний, загруженный свежим (с поправкой на выгруженное), кг
+     * @param currentPuKg плутоний в зоне сейчас, кг
+     */
+    public static double moxShare(double loadedPuKg, double currentPuKg) {
+        if (loadedPuKg <= 0 || currentPuKg <= 0) return 0;
+        return Math.min(1, loadedPuKg / currentPuKg);
     }
 
     /** Есть ли в составе плутоний. */
