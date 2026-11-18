@@ -156,41 +156,7 @@ m("powered_roof_support/legs", "mining", [
     el("rod_e", [10.5, 10.5, 7], [12.5, 26, 9], "pol"),
 ], kind="partial")
 
-# очистной комбайн 3×1×1: корпус с моторными отсеками, поворотные рукояти к шнекам на оси (y 16, z 8)
-m("longwall_shearer", "mining", [
-    el("body", [-9, 0.5, 2], [25, 9, 14], "org"),
-    el("haulage", [1, 0.5, 0.5], [15, 7, 2], "org"),
-    el("control_box", [3, 9, 4], [13, 13, 12], "dg"),
-    el("control_panel", [4, 10, 3.5], [12, 12.5, 4], "gauge", full=["north"]),
-    el("motor_w", [-9, 9, 3], [0, 12, 13], "ribs"),
-    el("motor_e", [16, 9, 3], [25, 12, 13], "ribs"),
-    el("stripe", [-9, 8, 1.9], [25, 9, 2], "haz"),
-    el("arm_w", [-16, 5, 4.5], [-6, 10, 11.5], "org", rot=("z", 22.5, [-6, 7, 8])),
-    el("arm_e", [22, 5, 4.5], [32, 10, 11.5], "org", rot=("z", -22.5, [22, 7, 8])),
-    el("skid_w", [-9, -0.01, 3], [-3, 1, 13], "d"),
-    el("skid_e", [19, -0.01, 3], [25, 1, 13], "d"),
-    el("cable_handler", [-9, 2, 14], [25, 6, 16], "r"),
-    el("spray_bar", [-9, 9.5, 14], [25, 10.5, 15], "gas"),
-    el("lamp", [7, 13, 6], [9, 14.5, 10], "lw"),
-])
-
-
-def shearer_drum(x0):
-    """Шнек: барабан на оси (y 16, z 8), фланец, два венца резцов (второй повёрнут на 45°); ширина 6,8 px от x0."""
-    els = hcyl("core", "x", 5, x0, x0 + 6.8, "vane", c=(8, 16, 8))
-    els += hcyl("flange", "x", 7, x0, x0 + 1, "d", c=(8, 16, 8), sides=8)
-    s = math.sqrt(0.5)
-    for i, xx in enumerate((x0 + 2, x0 + 4.5)):
-        dirs = ((1, 0), (-1, 0), (0, 1), (0, -1)) if i == 0 else ((s, s), (-s, s), (s, -s), (-s, -s))
-        for k, (dy, dz) in enumerate(dirs):
-            yy, zz = 16 + 7 * dy, 8 + 7 * dz
-            els.append(el(f"pick_{i}_{k}", [xx, round(yy - 0.7, 3), round(zz - 0.7, 3)],
-                          [xx + 1.3, round(yy + 0.7, 3), round(zz + 0.7, 3)], "pick"))
-    return els
-
-
-m("longwall_shearer/drum_a", "mining", shearer_drum(-15.9), kind="partial")
-m("longwall_shearer/drum_b", "mining", shearer_drum(25.1), kind="partial")
+# очистной комбайн нарисован вручную в Blockbench: art/blockbench/mining/longwall_shearer.author.js
 
 # вакуум-насос дегазации ВВН (вал сзади): корпус на раме, сепаратор, газовые патрубки; ротор и муфта — partial
 m("degasification_pump", "mining", [

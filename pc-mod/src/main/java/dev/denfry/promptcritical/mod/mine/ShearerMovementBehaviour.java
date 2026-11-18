@@ -24,6 +24,9 @@ import java.util.ArrayList;
 import java.util.List;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
+import net.minecraft.core.particles.BlockParticleOption;
+import net.minecraft.core.particles.DustParticleOptions;
+import net.minecraft.core.particles.ParticleTypes;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.sounds.SoundSource;
 import net.minecraft.util.Mth;
@@ -37,6 +40,7 @@ import net.minecraft.world.phys.Vec3;
 import net.neoforged.neoforge.fluids.FluidStack;
 import net.neoforged.neoforge.fluids.capability.IFluidHandler;
 import org.jetbrains.annotations.Nullable;
+import org.joml.Vector3f;
 
 /**
  * Резание очистным комбайном на контрапции Create {@code gantry} (08 §8.2.3). Шнеки на концах корпуса режут
@@ -118,6 +122,7 @@ public final class ShearerMovementBehaviour implements MovementBehaviour {
             double share = remSum > 0 ? p * cut.remainingJ() / remSum : p;
             double alloc = Math.min(cut.demandW(p), share);
             used += alloc;
+            if ((now & 1) == 0) effects(ctx, level, w, d, alloc / Math.max(1, cfg.shearerRatedW()));
             if (cut.advance(alloc, DT)) {
                 breakColumn(ctx, level, w, d, cfg, ctrl, facing);
                 clearDrum(level, w, d);
@@ -209,6 +214,34 @@ public final class ShearerMovementBehaviour implements MovementBehaviour {
             level.setBlock(p, st.getFluidState().createLegacyBlock(), Block.UPDATE_ALL);
         }
     }
+
+    /**
+     * Видимое резание у столбца шнека, раз в 2 тика: крошка вынимаемого блока, при орошении — брызги и туман,
+     * без него — облако угольной пыли; по породе резцы дают искры (фрикционное искрение по кварцсодержащим
+     * породам — признанный источник воспламенения метана в лаве). Число частиц растёт с долей номинальной мощности.
+     */
+    private static void effects(MovementContext ctx, ServerLevel level, Work w, int d, double load) {
+        List<BlockPos> list = w.blocks.get(d);
+        if (list.isEmpty() || load <= 0) return;
+        int n = 1 + (int) Math.min(4, load * 4);
+        boolean wet = ctx.contraption.getStorage().getFluids()
+                .drain(new FluidStack(Fluids.WATER, 1), IFluidHandler.FluidAction.SIMULATE).getAmount() > 0;
+        for (BlockPos p : list) {
+            BlockState st = level.getBlockState(p);
+            if (st.isAir()) continue;
+            double x = p.getX() + 0.5, y = p.getY() + 0.5, z = p.getZ() + 0.5;
+            level.sendParticles(new BlockParticleOption(ParticleTypes.BLOCK, st), x, y, z, n * 2, 0.4, 0.4, 0.4, 0.15);
+            if (wet) level.sendParticles(ParticleTypes.SPLASH, x, y, z, n * 3, 0.5, 0.4, 0.5, 0.1);
+            else level.sendParticles(COAL_DUST, x, y, z, n * 3, 0.6, 0.5, 0.6, 0.02);
+            if (!st.is(PcBlocks.COAL_SEAM.get())) level.sendParticles(ParticleTypes.ELECTRIC_SPARK, x, y, z, n, 0.4, 0.4, 0.4, 0.3);
+        }
+        if (wet) {
+            BlockPos p = list.get(0);
+            level.sendParticles(ParticleTypes.CLOUD, p.getX() + 0.5, p.getY() + 0.8, p.getZ() + 0.5, 1, 0.5, 0.3, 0.5, 0.01);
+        }
+    }
+
+    private static final DustParticleOptions COAL_DUST = new DustParticleOptions(new Vector3f(0.09f, 0.085f, 0.08f), 1.6f);
 
     /** Орошение: вода с баков контрапции на уголь столбца; хватило — {@code true}. */
     private static boolean spray(MovementContext ctx, LongwallConfig cfg, double coalTonnes) {
