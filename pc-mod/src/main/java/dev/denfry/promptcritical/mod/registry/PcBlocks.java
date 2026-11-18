@@ -492,6 +492,13 @@ public final class PcBlocks {
     /** Стеллаж бассейна выдержки облучённого топлива. */
     public static final DeferredBlock<PcDeviceBlock> FUEL_RACK = device("fuel_rack", machine().noOcclusion(), Spec.of(),
             FoundryBlock.with(dev.denfry.promptcritical.mod.radiation.FuelRackBlockEntity::new));
+    // поверхностное загрязнение и дезактивация (санпропускник, мойка деталей)
+    public static final DeferredBlock<PcDeviceBlock> ULTRASONIC_BATH = device("ultrasonic_bath", machine(), Spec.facing(),
+            FoundryBlock.with(dev.denfry.promptcritical.mod.radiation.UltrasonicBathBlockEntity::new));
+    public static final DeferredBlock<PcDeviceBlock> DECON_SHOWER = device("decon_shower", machine(), Spec.facing(),
+            FoundryBlock.with(dev.denfry.promptcritical.mod.radiation.DeconShowerBlockEntity::new));
+    public static final DeferredBlock<PcDeviceBlock> HAND_FOOT_MONITOR = device("hand_foot_monitor", machine(), Spec.facing(),
+            FoundryBlock.with(dev.denfry.promptcritical.mod.radiation.HandFootMonitorBlockEntity::new));
     public static final DeferredBlock<PcDeviceBlock> NGL_FRACTIONATOR = device("ngl_fractionator", machine(),
             Spec.facing().footprint(FP_CUBE3), FoundryBlock.with(dev.denfry.promptcritical.mod.gas.NglFractionatorBlockEntity::new));
 

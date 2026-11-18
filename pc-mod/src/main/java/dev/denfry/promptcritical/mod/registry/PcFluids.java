@@ -113,6 +113,14 @@ public final class PcFluids {
     public static final Entry ETHYLENE_DICHLORIDE = liquid("ethylene_dichloride", 1253, 840, 293);
     public static final Entry VINYL_CHLORIDE = liquid("vinyl_chloride", 911, 200, 288);
 
+    // дезактивация: растворы — 1 мБ = 1 л
+    /** Лимонная + щавелевая кислота по 2–3 % (комплексоны): растворяют оксиды железа с радионуклидами. */
+    public static final Entry DECON_SOLUTION = liquid("decon_solution", 1020, 1050, 293);
+    /** Щелочной перманганат (KMnO₄ ≈ 1 %, NaOH ≈ 3 %): окислительная стадия, переводит хром оксидной плёнки в хромат. */
+    public static final Entry DECON_PERMANGANATE = liquid("decon_permanganate", 1040, 1050, 293);
+    /** Отработанный дезактивирующий раствор и смыв душа — жидкие радиоактивные отходы. */
+    public static final Entry CONTAMINATED_DECON_SOLUTION = liquid("contaminated_decon_solution", 1010, 1050, 293);
+
     static {
         MINE_WATER.props.block(PcBlocks.MINE_WATER);
     }

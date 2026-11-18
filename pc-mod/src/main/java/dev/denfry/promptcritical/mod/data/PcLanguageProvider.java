@@ -226,6 +226,22 @@ public final class PcLanguageProvider extends LanguageProvider {
         b("lead_block", "Lead Shielding Block", "Свинцовый блок защиты");
         b("helium_recovery_unit", "Helium Recovery Unit", "Гелиевая установка");
         b("fuel_rack", "Spent Fuel Pool Rack", "Стеллаж бассейна выдержки");
+        b("ultrasonic_bath", "Ultrasonic Decontamination Bath", "Ультразвуковая ванна дезактивации");
+        b("decon_shower", "Decontamination Shower", "Душ санпропускника");
+        b("hand_foot_monitor", "Hand and Foot Contamination Monitor", "Установка контроля загрязнённости рук и ног");
+        i("contamination_meter", "Surface Contamination Meter", "Радиометр загрязнённости поверхностей");
+        i("strippable_coating", "Strippable Decontamination Coating", "Снимаемое дезактивирующее покрытие");
+        i("stripped_coating", "Peeled Coating Film", "Содранная плёнка покрытия");
+        i("decon_sprayer", "Decontamination Sprayer", "Распылитель дезактивирующих растворов");
+        MISC.put("item.promptcritical.decon_sprayer.tip", new String[] {
+                "Right-click a tank: hand over the collected waste and fill up · right-click a surface: treat it. KMnO₄ first, then acid",
+                "ПКМ по баку — сдать смыв и заправиться · ПКМ по поверхности — обработать. Сначала KMnO₄, потом кислота"});
+        MISC.put("item.promptcritical.contamination_meter.tip", new String[] {
+                "Right-click a block: its surface · in the air: your hands and shoes, or the item in your other hand",
+                "ПКМ по блоку — его поверхность · в воздух — руки и обувь или предмет во второй руке"});
+        MISC.put("item.promptcritical.strippable_coating.tip", new String[] {
+                "Spray on a surface, let it dry for 4 h, then peel it off with an empty hand while sneaking",
+                "Нанести на поверхность, дать высохнуть 4 ч, затем содрать пустой рукой с Shift"});
         b("purex_cell", "PUREX Canyon Control Cell", "Каньон PUREX (горячая камера)");
         b("hlw_vault", "Vitrified Waste Vault", "Хранилище остеклованных отходов");
         b("shearing_machine", "Fuel Shear", "Рубильная машина");
@@ -531,6 +547,9 @@ public final class PcLanguageProvider extends LanguageProvider {
         FLUIDS.put("fluorine", new String[] {"Fluorine", "Фтор"});
         FLUIDS.put("pregnant_leach_solution", new String[] {"Pregnant Leach Solution", "Продуктивный раствор"});
         FLUIDS.put("raffinate", new String[] {"Barren Solution", "Маточник сорбции"});
+        FLUIDS.put("decon_solution", new String[] {"Decontamination Solution (citric + oxalic acid)", "Дезактивирующий раствор (лимонная + щавелевая кислота)"});
+        FLUIDS.put("decon_permanganate", new String[] {"Alkaline Permanganate Solution", "Щелочной раствор перманганата"});
+        FLUIDS.put("contaminated_decon_solution", new String[] {"Spent Decontamination Solution (liquid radwaste)", "Отработанный дезактивирующий раствор (ЖРО)"});
         FLUIDS.put("uranium_tailings", new String[] {"Uranium Mill Tailings", "Хвосты урановой фабрики"});
         FLUIDS.put("uranium_eluate", new String[] {"Uranium Eluate", "Урановый элюат"});
         FLUIDS.put("syngas", new String[] {"Ammonia Syngas (3 H₂ + N₂)", "Азотоводородная смесь"});
@@ -796,6 +815,7 @@ public final class PcLanguageProvider extends LanguageProvider {
         MISC.putAll(dev.denfry.promptcritical.mod.environment.ToxicReleaseService.lang());
         MISC.putAll(dev.denfry.promptcritical.mod.environment.RadiationService.lang());
         MISC.putAll(dev.denfry.promptcritical.mod.radiation.RadiationBlocksText.lang());
+        MISC.putAll(dev.denfry.promptcritical.mod.radiation.ContaminationText.lang());
         MISC.putAll(dev.denfry.promptcritical.mod.reprocessing.ReprocessingText.lang());
         MISC.putAll(dev.denfry.promptcritical.mod.uranium.UraniumText.lang());
         MISC.put("death.attack.promptcritical.chlorine", new String[] {"%1$s was gassed by chlorine", "%1$s отравлен хлором"});

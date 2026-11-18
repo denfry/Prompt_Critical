@@ -95,6 +95,17 @@ class ContaminationTest {
     }
 
     @Test
+    void twoStepOxidisingTreatmentReachesFixedContamination() {
+        // въевшееся в оксидную плёнку: вода и одна окислительная стадия его не берут, окисление + кислота — берут
+        SurfaceContamination fixed = new SurfaceContamination(0, 1, 0, 100);
+        assertThat(fixed.after(DeconMethod.WATER_RINSE).total()).isEqualTo(fixed.total());
+        assertThat(fixed.after(DeconMethod.ALKALINE_PERMANGANATE).total()).isEqualTo(fixed.total());
+        SurfaceContamination twoStep = fixed.after(DeconMethod.ALKALINE_PERMANGANATE).after(DeconMethod.PERMANGANATE_OXALIC);
+        assertThat(fixed.total() / twoStep.total()).isCloseTo(10, within(1e-9));
+        assertThat(twoStep.total()).isLessThan(fixed.after(DeconMethod.CITRIC_OXALIC).total());
+    }
+
+    @Test
     void alphaIsFarWorseToBreatheThanBeta() {
         SurfaceContamination alpha = SurfaceContamination.of(1, 0, 1), beta = SurfaceContamination.of(0, 1, 1);
         assertThat(ContaminationExposure.inhalationSvH(alpha) / ContaminationExposure.inhalationSvH(beta)).isGreaterThan(1000);

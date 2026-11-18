@@ -323,6 +323,18 @@ public final class PcItems {
     public static final DeferredItem<dev.denfry.promptcritical.mod.environment.DosimeterItem> DOSIMETER = registered(ITEMS.registerItem(
             "dosimeter_radiometer", dev.denfry.promptcritical.mod.environment.DosimeterItem::new, new Item.Properties()));
 
+    /** Радиометр загрязнённости поверхностей с α/β-зондом. */
+    public static final DeferredItem<dev.denfry.promptcritical.mod.radiation.ContaminationMeterItem> CONTAMINATION_METER = registered(
+            ITEMS.registerItem("contamination_meter", dev.denfry.promptcritical.mod.radiation.ContaminationMeterItem::new, new Item.Properties()));
+    /** Баллон снимаемого дезактивирующего покрытия. */
+    public static final DeferredItem<dev.denfry.promptcritical.mod.radiation.StrippableCoatingItem> STRIPPABLE_COATING = registered(
+            ITEMS.registerItem("strippable_coating", dev.denfry.promptcritical.mod.radiation.StrippableCoatingItem::new, new Item.Properties()));
+    /** Распылитель дезактивирующих растворов со сборником смыва. */
+    public static final DeferredItem<dev.denfry.promptcritical.mod.radiation.DeconSprayerItem> DECON_SPRAYER = registered(
+            ITEMS.registerItem("decon_sprayer", dev.denfry.promptcritical.mod.radiation.DeconSprayerItem::new, new Item.Properties()));
+    /** Содранная плёнка покрытия с загрязнением: твёрдые РАО. */
+    public static final DeferredItem<Item> STRIPPED_COATING = item("stripped_coating", 16);
+
     private static <I extends Item> DeferredItem<I> registered(DeferredItem<I> i) {
         PLAIN.add(i);
         return i;

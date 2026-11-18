@@ -71,7 +71,7 @@ import org.jetbrains.annotations.Nullable;
  * PuO₂ — партиями по {@value #PU_BATCH_KG} кг (меньше безопасной массы), стеклоблоки ВАО по {@value #CANISTER_KG} кг,
  * NpO₂ — мешками по {@link IsotopeCraftRecipe#NPO2_KG} кг (на одну мишень для наработки Pu-238): нептуний с нитритом
  * в питании идёт с ураном, во втором урановом цикле выводится и осаждается оксалатом в том же осадителе.
- * Криптон и непойманный иод уходят в трубу — облако по ветру.
+ * Криптон и непойманный иод уходят в трубу — облако по ветру. СЦР разбрызгивает раствор по полу вокруг камеры.
  */
 public final class PurexCellBlockEntity extends DeviceBlockEntity implements FoundryDevice, PanelHost {
     public static final int REACH = 8, IN_SLOTS = 4, CHARCOAL_SLOT = 4, OUT_SLOTS = 6;
@@ -287,6 +287,14 @@ public final class PurexCellBlockEntity extends DeviceBlockEntity implements Fou
         return emit(p);
     }
 
+    /**
+     * Брызги раствора при СЦР: импульс мощности вскипает раствор и выбрасывает часть его из аппарата (так было на
+     * растворных СЦР — LA-13638, 2000). Принято около литра раствора нитрата Pu с 10 г/л: 10 г Pu-239 — 2,3·10¹⁰ Бк α,
+     * и около 10¹¹ Бк β продуктов деления самой вспышки и остатка в растворе.
+     */
+    static final double CRITICALITY_SPILL_ALPHA_BQ = 2.3e10, CRITICALITY_SPILL_BETA_BQ = 1e11;
+    static final int CRITICALITY_SPILL_RADIUS = 3;
+
     /** СЦР в буфере нитрата плутония: вспышка, доза всем вокруг через стены, раствор сливают в отходы. */
     private void criticality(ServerLevel s, double fissions) {
         RadiationService.burst(s, worldPosition.getCenter(), FissionSource.solutionBurst(fissions), true);
@@ -294,6 +302,9 @@ public final class PurexCellBlockEntity extends DeviceBlockEntity implements Fou
         s.playSound(null, worldPosition, SoundEvents.BEACON_DEACTIVATE, SoundSource.BLOCKS, 1.5f, 1.4f);
         for (ServerPlayer p : s.getPlayers(p -> p.distanceToSqr(worldPosition.getCenter()) < 96 * 96))
             p.displayClientMessage(ReprocessingText.msg("criticality").withStyle(ChatFormatting.RED), false);
+        // вскипевший раствор выбрасывает брызги из аппарата: плутоний и продукты деления на полу камеры
+        dev.denfry.promptcritical.mod.radiation.ContaminationService.spill(s, worldPosition, CRITICALITY_SPILL_RADIUS,
+                CRITICALITY_SPILL_ALPHA_BQ, CRITICALITY_SPILL_BETA_BQ);
         plant.dumpPuTank();
         setChanged();
     }
