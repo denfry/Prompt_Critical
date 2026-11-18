@@ -211,6 +211,7 @@ public final class PcLanguageProvider extends LanguageProvider {
         i("ground_plate", "Ground Plate", "Шлифованная плита");
         i("flame_safety_lamp", "Flame Safety Lamp", "Бензиновая лампа");
         i("polyethylene", "Polyethylene Pellets (25 kg bag)", "Гранулы полиэтилена (мешок 25 кг)");
+        i("pvc", "PVC Resin (25 kg bag)", "Смола ПВХ (мешок 25 кг)");
         i("cap_lamp", "Miner's Cap Lamp", "Головной шахтный светильник");
         b("lamp_rack", "Lamp Room Charging Rack", "Зарядный стеллаж ламповой");
         b("cap_lamp_light", "Cap Lamp Light", "Свет фары");
@@ -252,6 +253,13 @@ public final class PcLanguageProvider extends LanguageProvider {
         b("pyrolysis_furnace", "Pyrolysis Furnace", "Печь пиролиза");
         b("cracked_gas_unit", "Cracked Gas Separation Unit", "Установка газоразделения пирогаза");
         b("ldpe_reactor", "LDPE Unit", "Установка ПЭВД");
+        b("brine_treater", "Brine Treatment Plant", "Рассольное отделение");
+        b("chlor_alkali_cell", "Diaphragm Chlorine Cell Series", "Серия диафрагменных электролизёров");
+        b("rectifier_unit", "Electrolysis Rectifier Unit", "Выпрямительный агрегат электролиза");
+        b("chlorine_liquefier", "Chlorine Drying and Liquefaction", "Осушка и сжижение хлора");
+        b("edc_unit", "EDC Unit (Chlorination and Oxychlorination)", "Установка ДХЭ (хлорирование и оксихлорирование)");
+        b("edc_cracker", "EDC Cracking Furnace", "Печь пиролиза ДХЭ");
+        b("pvc_reactor", "PVC Suspension Autoclave", "Автоклав суспензионного ПВХ");
         b("wellhead", "Wellhead", "Колонная головка");
         b("christmas_tree", "Christmas Tree", "Фонтанная арматура");
         b("pumpjack", "Pumpjack", "Станок-качалка");
@@ -380,6 +388,15 @@ public final class PcLanguageProvider extends LanguageProvider {
         FLUIDS.put("c4_fraction", new String[] {"C4 Cut", "C4-фракция пиролиза"});
         FLUIDS.put("pyrolysis_gasoline", new String[] {"Pyrolysis Gasoline", "Пиробензин"});
         FLUIDS.put("pyrolysis_fuel_oil", new String[] {"Pyrolysis Fuel Oil", "Тяжёлая смола пиролиза"});
+        FLUIDS.put("brine", new String[] {"Treated Brine", "Очищенный рассол"});
+        FLUIDS.put("raw_brine", new String[] {"Raw Brine", "Сырой рассол"});
+        FLUIDS.put("chlorine", new String[] {"Chlorine", "Хлор"});
+        FLUIDS.put("liquid_chlorine", new String[] {"Liquid Chlorine", "Жидкий хлор"});
+        FLUIDS.put("hydrogen", new String[] {"Hydrogen", "Водород"});
+        FLUIDS.put("sodium_hydroxide_solution", new String[] {"Cell Liquor (Caustic Soda)", "Электролитическая щёлочь"});
+        FLUIDS.put("hydrogen_chloride", new String[] {"Hydrogen Chloride", "Хлористый водород"});
+        FLUIDS.put("ethylene_dichloride", new String[] {"Ethylene Dichloride", "Дихлорэтан"});
+        FLUIDS.put("vinyl_chloride", new String[] {"Vinyl Chloride", "Винилхлорид"});
         FLUIDS.put("produced_water", new String[] {"Produced Water", "Пластовая вода"});
         FLUIDS.put("associated_gas", new String[] {"Associated Gas", "Попутный нефтяной газ"});
         FLUIDS.put("gasoline", new String[] {"Straight-Run Gasoline", "Прямогонный бензин"});
@@ -609,6 +626,10 @@ public final class PcLanguageProvider extends LanguageProvider {
         MISC.putAll(dev.denfry.promptcritical.mod.scada.ScadaText.lang());
         MISC.putAll(dev.denfry.promptcritical.mod.gas.GasText.lang());
         MISC.putAll(dev.denfry.promptcritical.mod.chem.ChemText.lang());
+        MISC.putAll(dev.denfry.promptcritical.mod.chlor.ChlorText.lang());
+        MISC.put("death.attack.promptcritical.chlorine", new String[] {"%1$s was gassed by chlorine", "%1$s отравлен хлором"});
+        MISC.put("death.attack.promptcritical.chlorine.player", new String[] {"%1$s was gassed by chlorine while fighting %2$s",
+                "%1$s отравлен хлором, спасаясь от %2$s"});
     }
 
     @Override

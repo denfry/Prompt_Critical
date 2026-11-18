@@ -38,7 +38,8 @@ public final class PanelLayouts {
                 dev.denfry.promptcritical.mod.drilling.DrillingPanels.all(),
                 dev.denfry.promptcritical.mod.production.ProductionPanels.all(),
                 dev.denfry.promptcritical.mod.gas.GasPanels.all(),
-                dev.denfry.promptcritical.mod.chem.ChemPanels.all())) {
+                dev.denfry.promptcritical.mod.chem.ChemPanels.all(),
+                dev.denfry.promptcritical.mod.chlor.ChlorPanels.all())) {
             for (PanelLayout l : group) {
                 if (BY_ID.put(l.id, l) != null) throw new IllegalStateException("duplicate panel " + l.id);
             }

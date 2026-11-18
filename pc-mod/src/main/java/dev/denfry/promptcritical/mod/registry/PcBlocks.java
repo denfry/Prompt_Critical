@@ -451,6 +451,28 @@ public final class PcBlocks {
             Spec.facing(PcProperties.RUNNING).footprint(Footprint.of(Segment.box(-1, 1, 0, 0, 0, 0))),
             KineticMachineBlock.with(ShaftSide.BACK, dev.denfry.promptcritical.mod.chem.LdpeReactorBlockEntity::new));
 
+    // --- хлор-щелочное производство и ПВХ (I3) ---
+    public static final DeferredBlock<PcDeviceBlock> BRINE_TREATER = device("brine_treater", machine(),
+            Spec.facing(PcProperties.RUNNING).footprint(FP_FURNACE3),
+            FoundryBlock.with(dev.denfry.promptcritical.mod.chlor.BrineTreaterBlockEntity::new));
+    public static final DeferredBlock<PcDeviceBlock> CHLOR_ALKALI_CELL = device("chlor_alkali_cell", machine(),
+            Spec.facing(PcProperties.RUNNING), FoundryBlock.with(dev.denfry.promptcritical.mod.chlor.CellRoomBlockEntity::new));
+    public static final DeferredBlock<PcDeviceBlock> RECTIFIER_UNIT = device("rectifier_unit", machine(),
+            Spec.facing(PcProperties.RUNNING, PcProperties.ALARM).footprint(Footprint.of(Segment.box(0, 1, 0, 1, 0, 0))),
+            FoundryBlock.with(dev.denfry.promptcritical.mod.chlor.RectifierBlockEntity::new));
+    public static final DeferredBlock<PcDeviceBlock> CHLORINE_LIQUEFIER = device("chlorine_liquefier", machine(),
+            Spec.facing(PcProperties.RUNNING).footprint(FP_TALL2),
+            FoundryBlock.with(dev.denfry.promptcritical.mod.chlor.LiquefierBlockEntity::new));
+    public static final DeferredBlock<PcDeviceBlock> EDC_UNIT = device("edc_unit", machine(),
+            Spec.facing(PcProperties.RUNNING).footprint(FP_TALL2),
+            FoundryBlock.with(dev.denfry.promptcritical.mod.chlor.EdcUnitBlockEntity::new));
+    public static final DeferredBlock<PcDeviceBlock> EDC_CRACKER = device("edc_cracker", lit(brick()),
+            Spec.facing(BlockStateProperties.LIT, PcProperties.ALARM),
+            FoundryBlock.with(dev.denfry.promptcritical.mod.chlor.EdcCrackerBlockEntity::new));
+    public static final DeferredBlock<PcDeviceBlock> PVC_REACTOR = device("pvc_reactor", machine(),
+            Spec.facing(PcProperties.RUNNING).footprint(FP_TALL3),
+            FoundryBlock.with(dev.denfry.promptcritical.mod.chlor.PvcReactorBlockEntity::new));
+
     // --- обогащение, литьё, механический цех (08 §8.3, §8.9, §8.10) ---
     public static final DeferredBlock<PcDeviceBlock> COAL_JIG = device("coal_jig", machine(),
             Spec.facing(PcProperties.RUNNING).footprint(Footprint.of(Segment.box(0, 1, 0, 1, 0, 0))),

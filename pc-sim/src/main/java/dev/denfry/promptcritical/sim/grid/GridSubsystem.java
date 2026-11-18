@@ -129,6 +129,11 @@ public final class GridSubsystem implements Subsystem, GridEventSink {
         return unit(id, ElectrodeBoilerUnit.class, () -> new ElectrodeBoilerUnit(id));
     }
 
+    /** Выпрямительный агрегат электролиза на 6,3 кВ. */
+    public RectifierUnit rectifier(SimId id) {
+        return unit(id, RectifierUnit.class, () -> new RectifierUnit(id));
+    }
+
     /** Сетевая ВЭУ с асинхронным генератором. */
     public WindTurbineUnit windTurbine(SimId id) {
         return unit(id, WindTurbineUnit.class, () -> new WindTurbineUnit(id));
@@ -616,6 +621,7 @@ public final class GridSubsystem implements Subsystem, GridEventSink {
             case LampRackUnit r -> "lamp_rack";
             case PumpedStorageUnit s -> "pumped_storage";
             case ElectrodeBoilerUnit e -> "electrode_boiler";
+            case RectifierUnit r -> "rectifier";
         };
     }
 
@@ -648,6 +654,7 @@ public final class GridSubsystem implements Subsystem, GridEventSink {
                 case "lamp_rack" -> new LampRackUnit(id);
                 case "pumped_storage" -> new PumpedStorageUnit(id);
                 case "electrode_boiler" -> new ElectrodeBoilerUnit(id);
+                case "rectifier" -> new RectifierUnit(id);
                 default -> type.startsWith("switch:") ? new SwitchUnit(id, SwitchUnit.Kind.valueOf(type.substring(7))) : null;
             };
             if (u != null) {
