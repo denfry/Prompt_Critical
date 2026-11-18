@@ -5,7 +5,7 @@ import java.util.Map;
 import net.minecraft.network.chat.Component;
 import net.minecraft.network.chat.MutableComponent;
 
-/** Сообщения АЭС T1 (en_us, ru_ru); ключи собирает {@code PcLanguageProvider}. */
+/** Сообщения АЭС T1 и T2a (en_us, ru_ru); ключи собирает {@code PcLanguageProvider}. */
 public final class NppText {
     private static final String P = "message.promptcritical.npp.";
     private static final Map<String, String[]> LANG = new LinkedHashMap<>();
@@ -21,6 +21,12 @@ public final class NppText {
                 "РАЗРУШЕНИЕ КАНАЛА: кризис теплообмена разрушил каналов: %s; вода в кладке, активность в зале");
         put("protection_off", "Reactor protections BYPASSED", "Защиты реактора ВЫВЕДЕНЫ");
         put("protection_on", "Reactor protections in service", "Защиты реактора введены");
+        put("pwr_unloaded", "Assembly %s unloaded: %s MWd/kg", "ТВС %s выгружена: %s МВт·сут/кг");
+        put("pwr_permit", "Start-up power trip lifted", "Пусковая уставка АЗ по мощности снята");
+        put("pwr_permit_refused", "The start-up trip can be lifted only above 10 % power", "Снять пусковую уставку можно только выше 10 % мощности");
+        put("pwr_dnb", "DEPARTURE FROM NUCLEATE BOILING: assemblies with failed cladding: %s, activity in the coolant",
+                "КРИЗИС ТЕПЛООБМЕНА: разгерметизированы оболочки ТВС: %s; активность в теплоносителе");
+        put("pwr_rupture", "PRIMARY CIRCUIT RUPTURE: the pressure broke the loop", "РАЗРЫВ ПЕРВОГО КОНТУРА: давление разорвало петлю");
     }
 
     private NppText() {

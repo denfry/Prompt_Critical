@@ -1,0 +1,32 @@
+{
+  "parent": "minecraft:recipes/root",
+  "criteria": {
+    "has_pwr_reactor": {
+      "conditions": {
+        "items": [
+          {
+            "items": "promptcritical:pwr_reactor"
+          }
+        ]
+      },
+      "trigger": "minecraft:inventory_changed"
+    },
+    "has_the_recipe": {
+      "conditions": {
+        "recipe": "promptcritical:npp/pressurizer"
+      },
+      "trigger": "minecraft:recipe_unlocked"
+    }
+  },
+  "requirements": [
+    [
+      "has_the_recipe",
+      "has_pwr_reactor"
+    ]
+  ],
+  "rewards": {
+    "recipes": [
+      "promptcritical:npp/pressurizer"
+    ]
+  }
+}
