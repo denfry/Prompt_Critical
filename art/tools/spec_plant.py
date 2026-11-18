@@ -614,16 +614,7 @@ model("containment_penetration", "safety", tx("con", "d", "end", pen=B("containm
     el("sleeve_s", [3, 3, 16], [13, 13, 17], "d", faces={"south": "end"}, full=["south"]),
 ], "block/containment_penetration")
 
-model("hydrogen_recombiner", "safety", tx("d", "st", "louv", front=B("hydrogen_recombiner_front")), [
-    el("leg_nw", [2, 0, 3], [3, 3, 4], "d"),
-    el("leg_ne", [13, 0, 3], [14, 3, 4], "d"),
-    el("leg_sw", [2, 0, 12], [3, 3, 13], "d"),
-    el("leg_se", [13, 0, 12], [14, 3, 13], "d"),
-    el("housing", [2, 3, 3], [14, 14, 13], "st"),
-    el("front", [2.5, 3.5, 2.9], [13.5, 13.5, 3], "front", full=["north"]),
-    el("hood", [1.5, 14, 2.5], [14.5, 16, 13.5], "louv"),
-    el("wall_bracket", [5, 6, 13], [11, 11, 16], "d"),
-], "block/hydrogen_recombiner")
+# пассивный рекомбинатор водорода нарисован вручную в Blockbench: art/blockbench/core/containment.author.js
 
 
 def tank(shell, r, h, extra):

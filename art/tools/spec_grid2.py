@@ -108,18 +108,7 @@ m("gas_turbine_turbine", "boilers", gt_enclosure(
 m("gas_turbine/rotor", "boilers", hcyl("rotor", "z", 3, -16, 32, "st", sides=8)
   + [el(f"stage_{i}", [2, 2, z], [14, 14, z + 1], "gal") for i, z in enumerate((-12, -6, 0, 6, 22, 28))], kind="partial")
 
-# котёл-утилизатор П-90 3×6×3: нижний сегмент (газовый вход жёлтый), верхний (барабан, паровые линии)
-m("hrsg", "boilers", [
-    el("casing", [-14, -16, -14], [30, 32, 30], "clad"),
-    el("gas_inlet", [-16, -12, -6], [-14, 12, 22], "gasr", faces={"west": "gasr"}),
-    el("stair", [30, -16, -14], [32, 32, -10], "gal"),
-])
-m("hrsg_top", "boilers", [
-    el("casing", [-14, -16, -14], [30, 6, 30], "clad"),
-    el("roof", [-15, 6, -15], [31, 8, 31], "d"),
-] + hcyl("drum", "z", 5, -14, 30, "st", c=(8, 14, 8), ends="d")
-  + vcyl("steam_out", 8, -10, 2, 18, 31.9, "steam", 8)
-  + vcyl("stack", 8, 20, 6, 8, 31.9, "st", 8))
+# котёл-утилизатор нарисован вручную в Blockbench: art/blockbench/boilers/hrsg.author.js
 
 
 # ======================================================================

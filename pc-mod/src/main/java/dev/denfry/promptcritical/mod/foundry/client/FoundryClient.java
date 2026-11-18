@@ -26,6 +26,8 @@ public final class FoundryClient {
     private static final PartialModel MILL_SPINDLE = partial("milling_machine/partial/spindle");
     private static final PartialModel SHAPER_RAM = partial("shaping_machine/partial/ram");
     private static final PartialModel GRINDER_WHEEL = partial("surface_grinder/partial/wheel");
+    private static final PartialModel PVC_AGITATOR = partial("pvc_reactor/partial/agitator");
+    private static final PartialModel GAS_CRANKSHAFT = partial("gas_compressor/partial/crankshaft");
 
     private FoundryClient() {
     }
@@ -52,6 +54,13 @@ public final class FoundryClient {
         // ползун ходит на ±4 пикселя; кривошип — один двойной ход на два оборота вала
         event.registerBlockEntityRenderer(FoundryBlockEntities.SHAPING_MACHINE.get(), c -> new FoundryMachineRenderer<>(SHAPER_RAM, Motion.SLIDE_X, 4, 0, 0.5f));
         event.registerBlockEntityRenderer(FoundryBlockEntities.SURFACE_GRINDER.get(), c -> new FoundryMachineRenderer<>(GRINDER_WHEEL, Motion.SPIN_Z, 13, 14, 4));
+        // мешалка автоклава ПВХ (art/blockbench/polymers/pvc_reactor.author.js): муфта в фонаре привода, ось x 8, z 8;
+        // суспензионные реакторы мешают на ~100–150 об/мин
+        event.registerBlockEntityRenderer(dev.denfry.promptcritical.mod.chlor.ChlorBlockEntities.PVC_REACTOR.get(),
+                c -> FoundryMachineRenderer.whileRunning(PVC_AGITATOR, Motion.SPIN_Y, 8, 8, 120));
+        // коленвал газового компрессора с маховиком (art/blockbench/gas_processing/gas_compressor.author.js): ось x на y 8, z 16
+        event.registerBlockEntityRenderer(dev.denfry.promptcritical.mod.gas.GasBlockEntities.GAS_COMPRESSOR.get(),
+                c -> new FoundryMachineRenderer<>(GAS_CRANKSHAFT, Motion.SPIN_X, 8, 16, 1));
     }
 
     private static void tooltip(ItemTooltipEvent event) {

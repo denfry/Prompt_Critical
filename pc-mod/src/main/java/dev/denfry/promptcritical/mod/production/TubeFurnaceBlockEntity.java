@@ -111,7 +111,7 @@ public final class TubeFurnaceBlockEntity extends DeviceBlockEntity implements F
         if (level.isClientSide) {
             if (getBlockState().getValue(BlockStateProperties.LIT)) {
                 MachineFx fx = MachineFx.of(level, worldPosition, getBlockState().getValue(BlockStateProperties.HORIZONTAL_FACING));
-                if (fx != null && fx.chance(3)) fx.smoke(fx.at(8, 32, 8), false, 0.2);
+                if (fx != null) clientFx(fx);
             }
             return;
         }
@@ -122,6 +122,19 @@ public final class TubeFurnaceBlockEntity extends DeviceBlockEntity implements F
         if (s.getValue(BlockStateProperties.LIT) != lit && level.getGameTime() % 10 == 0)
             level.setBlock(worldPosition, s.setValue(BlockStateProperties.LIT, lit), Block.UPDATE_ALL);
         if (level.getGameTime() % 100 == 0) setChanged();
+    }
+
+    /**
+     * Работающая печь (модель art/blockbench/refinery/tube_furnace.author.js): дым из трубы, языки пламени
+     * в амбразурах подовых горелок под полом топки, гул факелов.
+     */
+    private static void clientFx(MachineFx fx) {
+        if (fx.chance(3)) fx.smoke(fx.at(8, 32, 8), false, 0.2);
+        if (fx.chance(4)) {
+            int i = fx.random().nextInt(6);
+            fx.flame(fx.at(-6 + 14 * (i % 3), -11, i < 3 ? -2 : 18), 0.1);
+        }
+        if (fx.chance(0.4)) fx.sound(fx.at(8, -10, 8), dev.denfry.promptcritical.mod.sound.PcSfx.BOILER_FIRE.get(), 0.7f, 0.8f);
     }
 
     @Override

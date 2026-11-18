@@ -31,6 +31,8 @@ import net.minecraft.world.level.block.Block;
 import net.minecraft.world.level.block.state.BlockState;
 import net.neoforged.neoforge.items.IItemHandler;
 import org.jetbrains.annotations.Nullable;
+import dev.denfry.promptcritical.mod.fx.MachineFx;
+import net.minecraft.world.level.block.state.properties.BlockStateProperties;
 
 /**
  * Котёл-утилизатор ПГУ 3×6×3 ({@link HeatRecoverySteamGenerator}, одно давление, без дожига): нижний куб — газоход,
@@ -88,8 +90,19 @@ public final class HrsgBlockEntity extends DeviceBlockEntity implements FoundryD
         return b == null ? null : b.world().subsystem(SteamPlant.class);
     }
 
+    /** Работающий котёл (арт art/blockbench/boilers/hrsg.author.js): над трубой дрожит горячий выхлоп ГТУ (у верхнего сегмента якорь на три блока выше). */
+    private void clientFx() {
+        MachineFx fx = MachineFx.of(level, worldPosition, getBlockState().getValue(BlockStateProperties.HORIZONTAL_FACING));
+        if (fx == null || !getBlockState().getValue(PcProperties.RUNNING)) return;
+        if (fx.chance(3)) fx.wisp(fx.at(8, 48 + 32, -6), 0.6);
+    }
+
     @Override
     public void tickDevice() {
+        if (level != null && level.isClientSide) {
+            clientFx();
+            return;
+        }
         if (!(level instanceof ServerLevel sl)) return;
         if (ticks++ % 20 == 0) {
             turbine = findTurbine();

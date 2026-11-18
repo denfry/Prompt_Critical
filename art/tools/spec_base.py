@@ -5,8 +5,7 @@ from pclib import *
 model("reactor_vessel_wall", "core", {"wall": "block/reactor_vessel_wall.png"},
       [el("wall", [0, 0, 0], [16, 16, 16], "wall")], "block/reactor_vessel_wall")
 
-model("containment_wall", "core", {"wall": "block/containment_wall.png"},
-      [el("wall", [0, 0, 0], [16, 16, 16], "wall")], "block/containment_wall")
+# стена гермооболочки нарисована вручную в Blockbench: art/blockbench/core/containment.author.js
 
 model("moderator_block_graphite", "core", {"g": "block/moderator_block_graphite.png"},
       [el("block", [0, 0, 0], [16, 16, 16], "g")], "block/moderator_block_graphite")

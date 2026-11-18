@@ -35,6 +35,8 @@ import net.minecraft.world.level.block.state.properties.BlockStateProperties;
 import net.neoforged.neoforge.fluids.capability.IFluidHandler;
 import net.neoforged.neoforge.items.IItemHandler;
 import org.jetbrains.annotations.Nullable;
+import dev.denfry.promptcritical.mod.fx.MachineFx;
+import net.minecraft.world.phys.Vec3;
 
 /**
  * Колонна концентрирования азотной кислоты с плавом нитрата магния ({@link AcidConcentrator}) 1×3×1: слабая кислота
@@ -85,8 +87,19 @@ public final class AcidConcentratorBlockEntity extends DeviceBlockEntity impleme
         setChanged();
     }
 
+    /** Работающий концентратор (арт art/blockbench/reagents/acid_concentrator.author.js): парит конденсатоотводчик парового подогревателя куба (контроллер — нижняя клетка, на 16 px ниже якоря модели). */
+    private void clientFx() {
+        MachineFx fx = MachineFx.of(level, worldPosition, getBlockState().getValue(BlockStateProperties.HORIZONTAL_FACING));
+        if (fx == null || !getBlockState().getValue(BlockStateProperties.LIT)) return;
+        if (fx.chance(1.5)) fx.puff(fx.at(16.2, 2.1, 10.5), new Vec3(0.02, 0.02, 0), 1);
+    }
+
     @Override
     public void tickDevice() {
+        if (level != null && level.isClientSide) {
+            clientFx();
+            return;
+        }
         if (!(level instanceof ServerLevel s)) return;
         SimLevelBinding b = SimBindings.get(s);
         if (b == null) return;
