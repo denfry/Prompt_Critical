@@ -729,6 +729,13 @@ public final class PcBlocks {
             FoundryBlock.with(dev.denfry.promptcritical.mod.npp.PwrReactorBlockEntity::new));
     // --- гермооболочка ВВЭР/PWR (04c, M10): стена, люк и пассивный рекомбинатор водорода ---
     public static final DeferredBlock<PcBlock> CONTAINMENT_WALL = block("containment_wall", containment(), Spec.of());
+    /**
+     * Corium: molten core with the concrete it has eaten, set by the damage budget under a failed vessel (04c §4c.10.5).
+     * Glows, takes a pickaxe and outlasts concrete; its decay gamma comes from the reactor that made it.
+     */
+    public static final DeferredBlock<PcBlock> CORIUM = block("corium", Properties.of().mapColor(MapColor.COLOR_ORANGE)
+            .instrument(NoteBlockInstrument.BASEDRUM).requiresCorrectToolForDrops().strength(50.0f, 1200.0f).lightLevel(s -> 15)
+            .pushReaction(PushReaction.BLOCK), Spec.of());
     public static final DeferredBlock<dev.denfry.promptcritical.mod.npp.ContainmentHatchBlock> CONTAINMENT_HATCH = withItem(
             BLOCKS.registerBlock("containment_hatch", dev.denfry.promptcritical.mod.npp.ContainmentHatchBlock::create, containment()));
     public static final DeferredBlock<PcBlock> HYDROGEN_RECOMBINER = block("hydrogen_recombiner", machine(), Spec.of());

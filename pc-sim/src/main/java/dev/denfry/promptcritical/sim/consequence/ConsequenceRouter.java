@@ -22,8 +22,15 @@ public final class ConsequenceRouter {
         VESSEL_RUPTURE(4, 3),
         /** Global hydrogen deflagration inside a building or containment. */
         HYDROGEN_BURN(6, 4),
+        /** Hydrogen detonation (04c §4c.7.3): the same chemical energy at the Chapman–Jouguet pressure, a sharper blast. */
+        HYDROGEN_DETONATION(8, 3),
         /** Containment overpressure breach: the wall tears, no fireball. */
-        CONTAINMENT_BREACH(3, 5);
+        CONTAINMENT_BREACH(3, 5),
+        /**
+         * Fuel–coolant interaction (04c §4c.10.4): melt or fragmented fuel hitting water, a confined blast at the core or
+         * the reactor cavity.
+         */
+        STEAM_EXPLOSION(5, 3);
 
         final double maxRadiusM;
         final int priority;

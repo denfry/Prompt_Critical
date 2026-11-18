@@ -42,6 +42,35 @@ public final class NppText {
         put("sfr_clad", "SODIUM POOL OVERHEATED: fuel cladding failing, %s %% of the core",
                 "ПЕРЕГРЕВ НАТРИЯ: разрушаются оболочки твэлов, %s %% зоны");
         put("accident_h2_burn", "HYDROGEN BURN in the containment: %s MJ", "ГОРЕНИЕ ВОДОРОДА в гермооболочке: %s МДж");
+        put("ria_eject", "ROD EJECTION: a control cluster blew out of its housing, %s $ of reactivity",
+                "ВЫБРОС СТЕРЖНЯ: кластер СУЗ выбит из чехла, реактивность %s $");
+        put("ria_burst", "PROMPT CRITICAL BURST: %s MJ in %s ms, hot-spot fuel enthalpy %s cal/g",
+                "РАЗГОН НА МГНОВЕННЫХ НЕЙТРОНАХ: вспышка %s МДж за %s мс, энтальпия топлива в горячей точке %s кал/г");
+        put("ria_failed", "REACTIVITY ACCIDENT: cladding failed in %s assemblies", "РЕАКТИВНОСТНАЯ АВАРИЯ: разрушены оболочки ТВС: %s");
+        put("fci", "STEAM EXPLOSION: molten fuel hit the water, %s MJ", "ПАРОВОЙ ВЗРЫВ: расплав топлива попал в воду, %s МДж");
+        put("fci_in_vessel", "STEAM EXPLOSION in the lower plenum: %s MJ, the vessel holds it", "ПАРОВОЙ ВЗРЫВ в нижней камере: %s МДж, корпус его выдержал");
+        put("ria_reseated", "Drill: the cluster is back and its housing is sealed", "Учение: кластер на месте, чехол привода заглушён");
+        put("ria_reseat_refused", "The cluster can be restored only on a shut-down reactor",
+                "Вернуть кластер можно только на заглушенном реакторе");
+        put("sgtr_on", "Drill: a tube of steam generator 1 torn through", "Учение: порвана трубка ПГ-1");
+        put("sgtr_off", "Drill: the torn tube is plugged", "Учение: порванная трубка заглушена");
+        put("sg_isolated", "Steam generator 1 isolated: steam and feed valves closed", "ПГ-1 отсечён: БЗОК и питание закрыты");
+        put("sg_restored", "Steam generator 1 back on steam and feed", "ПГ-1 снова на паре и питании");
+        put("porv_open", "Pressurizer relief valve held open", "ИПУ компенсатора давления открыт ключом");
+        put("porv_closed", "Pressurizer relief valve back on its setpoint", "ИПУ компенсатора давления на уставке");
+        put("sgtr_n16", "N-16 IN THE STEAM LINE: primary coolant is leaking into steam generator 1",
+                "N-16 В ПАРОПРОВОДЕ: теплоноситель первого контура течёт в ПГ-1");
+        put("sgtr_stuck", "SG SAFETY VALVE STUCK OPEN: primary coolant vents straight to the atmosphere",
+                "ПК ПГ ЗАЛИП ОТКРЫТЫМ: теплоноситель первого контура уходит прямо в атмосферу");
+        put("melt_candling", "CORE MELT: the cladding is melting and running down the fuel", "ПЛАВЛЕНИЕ ЗОНЫ: оболочки плавятся и стекают по топливу");
+        put("melt_pool", "CORE MELT: a pool of molten fuel inside a crust", "ПЛАВЛЕНИЕ ЗОНЫ: бассейн расплавленного топлива в корке");
+        put("melt_plenum", "CORE MELT: the crust gave way, corium in the lower plenum", "ПЛАВЛЕНИЕ ЗОНЫ: корка прорвана, кориум в нижней камере");
+        put("melt_vessel", "VESSEL FAILED: the corium is through the lower head", "КОРПУС ПРОПЛАВЛЕН: кориум прошёл через днище");
+        put("melt_dch", "DIRECT CONTAINMENT HEATING: melt blown out at pressure, %s MJ into the containment",
+                "ПРЯМОЙ НАГРЕВ ГЕРМООБОЛОЧКИ: расплав выброшен под давлением, %s МДж в гермооболочку");
+        put("melt_mcci", "CORIUM ON THE CONCRETE: %s m³ of floor eaten through", "КОРИУМ НА БЕТОНЕ: проплавлено %s м³ основания");
+        put("accident_h2_detonation", "HYDROGEN DETONATION in the containment: %s MJ, the walls take twice the burn pressure",
+                "ДЕТОНАЦИЯ ВОДОРОДА в гермооболочке: %s МДж, стены получают вдвое больше давления горения");
         put("accident_breach", "CONTAINMENT FAILED: overpressure tore the shell, the release goes outside",
                 "РАЗРУШЕНИЕ ГЕРМООБОЛОЧКИ: давление разорвало её, выброс уходит наружу");
     }

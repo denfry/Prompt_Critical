@@ -2,6 +2,7 @@ package dev.denfry.promptcritical.sim.accident;
 
 import dev.denfry.promptcritical.sim.core.StateReader;
 import dev.denfry.promptcritical.sim.core.StateWriter;
+import java.util.SplittableRandom;
 
 /**
  * Accident layer of a light-water reactor in the world: the coolant inventory, core cooling and containment once the
@@ -46,8 +47,13 @@ import dev.denfry.promptcritical.sim.core.StateWriter;
  * The relief-valve discharge of a PWR reaches the containment through the relief tank, a BWR's goes into the pool.
  * Without a closed containment the hydrogen and the steam go to the open air.
  *
+ * <p><b>Melt.</b> Past the cladding melting point the vessel plants (VVER, BWR) go on in {@link CoreMeltProgression}:
+ * candling, a ceramic pool, the lower plenum, the lower head and the concrete. A failed head drains what water is left
+ * into the cavity and opens the primary to the containment; direct containment heating and the hydrogen of the melt on
+ * the concrete go into the containment atmosphere.
+ *
  * <p>Simplifications: one volume, no loop seal, no counter-current flow limit, no steam binding, no reflood
- * quench front, no in-vessel melt progression past the cladding melting point.
+ * quench front.
  */
 public final class PlantAccident {
     /** Hot-rod to core-average rise above coolant (F_q-class peaking on the lumped node). */
@@ -161,6 +167,10 @@ public final class PlantAccident {
     private final double gapWK, hCoveredWK, hSteamWK, hFilmWK;
     private Accumulator[] accumulators = new Accumulator[0];
     private ContainmentAtmosphere containment;
+    /** Melt progression past the cladding melting point; null for channel reactors (no lower head). */
+    private final CoreMeltProgression melt;
+    private long seed;
+    private SplittableRandom random;
 
     // inputs
     private double breakM2;
@@ -176,6 +186,7 @@ public final class PlantAccident {
     private double breakKgS, eccsKgS, accKgS, boilKgS, lastDt;
     private boolean burnEvent, breachEvent, uncoveryEvent;
     private double burnJ;
+    private HydrogenCombustion.Regime burnRegime = HydrogenCombustion.Regime.NONE;
 
     public PlantAccident(Design design) {
         this.d = design;
@@ -188,6 +199,26 @@ public final class PlantAccident {
         this.hCoveredWK = nominal / 170;
         this.hSteamWK = nominal * 5e4 / 3.411e9;
         this.hFilmWK = nominal * 3e6 / 3.411e9;
+        CoreMeltProgression.Vessel v = CoreMeltProgression.forDesign(design.id);
+        this.melt = v == null ? null : new CoreMeltProgression(v, design.fuelJK / 300, design.zrKg, design.fuelJK + design.cladJK);
+        setSeed(design.id.hashCode());
+    }
+
+    /** Seed of the accident's random draws (steam explosion triggers and yields); the world gives one per plant. */
+    public void setSeed(long seed) {
+        if (random != null && seed == this.seed) return;
+        this.seed = seed;
+        this.random = new SplittableRandom(seed);
+    }
+
+    /** Melt progression of a vessel plant, or null. */
+    public CoreMeltProgression melt() {
+        return melt;
+    }
+
+    /** Water in the reactor cavity around the lower head (in-vessel retention; quench of an ejected melt). */
+    public void setCavityFlooded(boolean on) {
+        if (melt != null) melt.setCavityFlooded(on);
     }
 
     public Design design() {
@@ -267,6 +298,8 @@ public final class PlantAccident {
     public void step(double dt, double coreW, double sinkW, double reactorPa) {
         burnEvent = breachEvent = uncoveryEvent = false;
         burnJ = 0;
+        burnRegime = HydrogenCombustion.Regime.NONE;
+        if (melt != null) melt.beginStep();
         breakKgS = eccsKgS = accKgS = boilKgS = 0;
         lastDt = dt;
         if (!(dt > 0)) return;
@@ -290,7 +323,7 @@ public final class PlantAccident {
         accKgS /= dt;
         boilKgS /= dt;
         // recovered: break closed, AC back, the vessel full again and nothing left to boil away
-        if (!brk && ac && mass >= 0.999 * d.inventoryKg && net <= 0.005 * d.nominalW) {
+        if (!brk && ac && mass >= 0.999 * d.inventoryKg && net <= 0.005 * d.nominalW && (melt == null || !melt.started())) {
             active = false;
             adsOpen = false;
             adsTimer = 0;
@@ -422,19 +455,37 @@ public final class PlantAccident {
             uncovered = true;
             uncoveryEvent = true;
         }
-        containmentStep(dt, d.suppressionPool ? 0 : toContainment, d.suppressionPool ? 0 : energy,
-                zrKg * ZircaloyOxidation.H2_PER_KG_ZR);
+        double h2 = zrKg * ZircaloyOxidation.H2_PER_KG_ZR;
+        if (melt != null) {
+            melt.observeCladding(pct);
+            double mcciH2 = melt.mcciHydrogenKg();
+            boolean failedBefore = melt.vesselFailed();
+            melt.step(dt, coreW, coverage(), pressure, mass, d.lowerPlenumKg, tClad, zr.reactedFraction(), tCool, random);
+            h2 += melt.mcciHydrogenKg() - mcciH2;
+            if (melt.vesselFailed()) {
+                // the open head drains the vessel into the cavity and vents the primary to the containment
+                toContainment += mass;
+                energy += mass * 1.3e6;
+                mass = 0;
+                pressure = pc;
+            }
+            if (!failedBefore && melt.vesselFailed() && containment != null) containment.addHeat(melt.directHeatingJ());
+        }
+        containmentStep(dt, d.suppressionPool ? 0 : toContainment, d.suppressionPool ? 0 : energy, h2);
     }
 
     private void containmentStep(double dt, double steamKg, double energyJ, double h2Kg) {
         if (containment == null) return;
         containment.setRecombiners(recombiners);
+        // corium out of the vessel is a hot surface in the gas: it lights any flammable mixture (04c §4c.7.4)
+        containment.setHotSurface(melt != null && melt.vesselFailed());
         containment.addSteam(steamKg, energyJ);
         containment.addHydrogen(h2Kg);
         boolean wasFailed = containment.failed();
         if (containment.step(dt)) {
             burnEvent = true;
             burnJ += containment.lastBurnJ();
+            if (containment.lastRegime().ordinal() > burnRegime.ordinal()) burnRegime = containment.lastRegime();
         }
         if (containment.failed() && !wasFailed) {
             breached = true;
@@ -601,6 +652,28 @@ public final class PlantAccident {
         return burnJ;
     }
 
+    /**
+     * Hydrogen reaching the containment from outside the core (a leaking hydrogen line, a gas bottle, a test). Without a
+     * closed containment it is lost to the open air.
+     */
+    public void addContainmentHydrogen(double kg) {
+        if (containment != null) containment.addHydrogen(kg);
+    }
+
+    /** Kind of the burn of the last step: deflagration or detonation (04c §4c.7.3). */
+    public HydrogenCombustion.Regime burnRegime() {
+        return burnRegime;
+    }
+
+    /** What the containment gas would do if lit now ({@code NONE} without a closed containment). */
+    public HydrogenCombustion.Regime containmentRegime() {
+        return containment != null ? containment.regime() : HydrogenCombustion.Regime.NONE;
+    }
+
+    public double containmentSteamFraction() {
+        return containment != null ? containment.steamFraction() : 0;
+    }
+
     public boolean breachEvent() {
         return breachEvent;
     }
@@ -628,6 +701,11 @@ public final class PlantAccident {
         for (int i = 0; i < accumulators.length; i++) {
             out.beginObject("acc" + i);
             accumulators[i].save(out);
+            out.endObject();
+        }
+        if (melt != null) {
+            out.beginObject("melt");
+            melt.save(out);
             out.endObject();
         }
         out.putInt("cv", containmentM3);
@@ -671,6 +749,11 @@ public final class PlantAccident {
             if (!in.has("acc" + i)) continue;
             in.beginObject("acc" + i);
             accumulators[i].load(in);
+            in.endObject();
+        }
+        if (melt != null && in.has("melt")) {
+            in.beginObject("melt");
+            melt.load(in);
             in.endObject();
         }
         containment = null;

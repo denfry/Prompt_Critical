@@ -67,7 +67,7 @@ public final class BwrPanels {
             PanelText.tr("bwr.reason.external", "external (ESD)", "внешняя (ПАЗ)"),
             PanelText.tr("bwr.reason.manual", "manual", "ручная")};
 
-    public static final PanelLayout REACTOR = PanelLayout.builder("bwr_reactor", 248, 176, CHANNELS)
+    public static final PanelLayout REACTOR = PanelLayout.builder("bwr_reactor", 248, 180, CHANNELS)
             .dial(8, 24, false, POWER, 10, 130, BoilingWaterReactor.TRIP_POWER * 100, 0, PCT.get(), N.get(),
                     v -> POWER_TIP.get(v.num(POWER, 10, 1), v.raw(RHO_PCM), v.raw(FLOW), v.raw(VOID)))
             .dial(64, 24, false, PERIOD, 10, 100, Double.NaN, 0, SEC.get(), T_PERIOD.get(), null)
@@ -89,6 +89,7 @@ public final class BwrPanels {
             .button(8, 120, 40, B_LOCA, AccidentPanels.DRILL.get(), AccidentPanels.DRILL_TIP.get())
             .readout(8, 140, 232, BwrPanels::status, null)
             .readout(8, 154, 232, v -> AccidentPanels.line(v, ACCIDENT), v -> AccidentPanels.tip(v, ACCIDENT))
+            .readout(8, 166, 232, v -> AccidentPanels.meltLine(v, ACCIDENT), v -> AccidentPanels.meltTip(v, ACCIDENT))
             .build();
 
     private BwrPanels() {

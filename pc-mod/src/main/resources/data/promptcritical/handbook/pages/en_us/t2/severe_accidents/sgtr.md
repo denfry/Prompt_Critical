@@ -1,0 +1,9 @@
+## Steam generator tube rupture
+
+A steam generator tube is 16 mm across with a 1.5 mm wall, and it is the only thing between 15.7 MPa of primary water and 6.4 MPa of secondary. Wear or a water hammer can tear one through. Both ends then leak: 2.65 cm² in all. The cold primary water flashes in the hole and leaves at G = 0.6·A·√(2ρ(P − P_sat)), about 17 kg/s. The 6 kg/s of makeup cannot keep up, so the primary loses pressure, trips on low pressure and starts safety injection. The **SGTR** button on the VVER panel tears a tube in steam generator 1. Press it again to plug the tube.
+
+**Why it matters.** This leak bypasses the containment. Primary water goes into the secondary, out with the steam to the turbine and the condenser, whose ejectors vent noble gases and some iodine up the stack. If the generator overfills, its safety valve vents straight to the open air.
+
+**Signs.** The first sign is N-16 in the steam line. Neutrons on oxygen-16 in the core make it, it has a half-life of 7 seconds, and it reaches the steam line monitor in 2–5 s. The alarm comes within about ten seconds, but only while the reactor is at power. After that: one generator's level rises on less feed, and the pressurizer level and pressure fall while makeup rises.
+
+**What to do.** Press **Isolate SG1**: steam and feed of the damaged generator close and it stops taking heat. Now the leak fills it. Its pressure follows the saturation of the incoming water, and once it is full of water it goes solid and lifts its 8 MPa safety valve. A valve passing water sticks open three times in ten. Then the generator blows down to the atmosphere and the leak becomes a release nobody can isolate. So, with the generator isolated, cool the primary through the intact generator until the cold leg is below the saturation temperature of 8 MPa (about 295 °C). Then hold the **PORV** open until the primary pressure is down at the damaged generator's. The leak stops.

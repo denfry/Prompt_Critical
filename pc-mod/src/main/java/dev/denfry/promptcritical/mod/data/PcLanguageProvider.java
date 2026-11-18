@@ -457,6 +457,7 @@ public final class PcLanguageProvider extends LanguageProvider {
         b("steam_generator", "Steam Generator", "Парогенератор");
         b("pwr_reactor", "Pressurized Water Reactor (VVER type)", "Водо-водяной энергетический реактор (типа ВВЭР)");
         b("containment_wall", "Containment Wall", "Стена гермооболочки");
+        b("corium", "Corium", "Кориум");
         b("containment_hatch", "Containment Personnel Hatch", "Шлюзовой люк гермооболочки");
         b("hydrogen_recombiner", "Passive Hydrogen Recombiner", "Пассивный каталитический рекомбинатор водорода");
         b("eccs_pump", "ECCS Pump Train", "Насос САОЗ");

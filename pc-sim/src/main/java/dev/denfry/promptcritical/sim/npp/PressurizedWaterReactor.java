@@ -1,5 +1,6 @@
 package dev.denfry.promptcritical.sim.npp;
 
+import dev.denfry.promptcritical.sim.accident.ReactivityInitiatedAccident;
 import dev.denfry.promptcritical.sim.reactor.pwr.CoolantPump;
 import dev.denfry.promptcritical.sim.reactor.pwr.Pressurizer;
 import dev.denfry.promptcritical.sim.reactor.pwr.SecondarySide;
@@ -103,6 +104,20 @@ public final class PressurizedWaterReactor {
     public static final double CONVERSION = 0.5, SOURCE_N_S = 1e8, REFLECTOR_M = 0.3;
     /** Кризис теплообмена: истинная DNBR ниже 1 дольше 5 с — разрушение оболочек горячей ТВС. */
     public static final double DNB_FAIL_S = 5;
+    /**
+     * Ejected cluster as a share of the control group's worth (04c §4c.5.1): ПР-300 loses 0.7–1.0β with one cluster of a
+     * fully inserted 2000 pcm bank at hot zero power and 0.1–0.2β at power; β ≈ 680 pcm there, so one cluster of four is
+     * worth up to 0.34 of the bank with the field tilt. The upper end is taken: on this 2500 pcm group about 1.3β fully
+     * in, about 0.2β at the working position 0.3.
+     */
+    public static final double EJECTED_RG_SHARE = 0.34;
+    /**
+     * Rod-housing nozzle torn open with the cluster: about 20 cm² on ПР-300 (04c §4c.5.1), scaled by power 100/300 as the
+     * accident layer's breaks are.
+     */
+    public static final double ROD_HOUSING_BREAK_M2 = 20e-4 / 3;
+    /** UO₂ melting point, K: the lumped fuel does not go above it on a burst (04c §4c.5.3). */
+    public static final double UO2_MELT_K = 3120;
 
     private static final WaterProperties W = WaterProperties.tables();
     /** Доля энергии деления, выделяющаяся с запаздыванием (распад ПД): мгновенная часть — остальное. */
@@ -146,6 +161,14 @@ public final class PressurizedWaterReactor {
     private double secondaryK = Double.NaN, sgLevel = Double.NaN;
     private int sgCount;
     private boolean ruptured, ruptureEvent;
+    /** Share of the control group's worth missing with an ejected cluster (0 — none). */
+    private double ejectedShare;
+    private ReactivityInitiatedAccident.Pulse lastPulse;
+    private ReactivityInitiatedAccident.Damage lastRiaDamage = ReactivityInitiatedAccident.Damage.NONE;
+    /** Steam-generator tube rupture: break area to the secondary and the back pressure of the damaged SG. */
+    private double tubeLeakAreaM2, tubeBackPa = SecondarySide.P_NOMINAL, tubeLeakKgS;
+    /** Pressurizer relief valve held open from the panel: the operator's depressurisation (04c §4c.6.4, §4c.10.3). */
+    private boolean porvOpen;
     private int newlyFailed;
     private double mdnbr = Double.POSITIVE_INFINITY;
     private final DnbrCalculator trueDnbr;
@@ -369,7 +392,106 @@ public final class PressurizedWaterReactor {
 
     /** Реактивность стержней, Δk/k (отрицательная). */
     public double rodReactivity() {
-        return -(WORTH_AZ * sCurve(az) + WORTH_RG * sCurve(rg));
+        return -(WORTH_AZ * sCurve(az) + WORTH_RG * (1 - ejectedShare) * sCurve(rg));
+    }
+
+    // ------------------------------------------------------------------ RIA (04c §4c.5)
+
+    /** A cluster of the control group blown out of the core by the primary pressure: {@link #EJECTED_RG_SHARE}. */
+    public ReactivityInitiatedAccident.Pulse ejectRodCluster() {
+        return ejectRodCluster(EJECTED_RG_SHARE);
+    }
+
+    /**
+     * Ejects a cluster worth {@code share} of the control group (1 — a cell with a single cluster for the whole group,
+     * the ~3β design mistake of §4c.5.1). Above prompt criticality the burst is not resolved on the 50 ms step: its
+     * Nordheim–Fuchs energy goes straight into the fuel, whose Doppler feedback then leaves the core at β − (ρ₀ − β),
+     * and the burst's power trips the reactor on high flux. Below it the reactor's own kinetics carry the excursion.
+     * Failed cladding of the burst counts into {@link #newlyFailed()} until the next {@link #step}.
+     *
+     * @return the burst, or null when no cluster could be ejected (one is already out, or the core is empty)
+     */
+    public ReactivityInitiatedAccident.Pulse ejectRodCluster(double share) {
+        if (ejectedShare > 0 || core.loadedAssemblies() == 0 || !(share > 0)) return null;
+        double tf = fuelK;
+        ejectedShare = Math.min(1, share);
+        CellFeedbackState s = feedbackState();
+        double rho0 = core.reactivity(s, rodReactivity());
+        double cf = fuelHeatCapacity();
+        double gamma = Math.max(1e-15, Math.abs(core.dopplerCoefficient())) / cf;
+        double beta = core.betaEff() > 0 ? core.betaEff() : 0.0065;
+        double lambda = core.generationTime() > 0 ? core.generationTime() : 2e-5;
+        ReactivityInitiatedAccident.Pulse p = ReactivityInitiatedAccident.nordheimFuchs(rho0, beta, lambda, gamma);
+        lastPulse = p;
+        lastRiaDamage = ReactivityInitiatedAccident.assess(p, core.heavyMetalKg() * ReactivityInitiatedAccident.UO2_PER_HM, tf,
+                core.maxBurnup());
+        if (p.prompt()) {
+            fuelK = Math.min(UO2_MELT_K, fuelK + p.energyJ() / cf);
+            protection.requestTrip(TripReason.HIGH_FLUX, TripSource.AUTOMATIC);
+            int n = (int) Math.ceil(lastRiaDamage.cladFailedFraction() * core.loadedAssemblies() - 1e-9);
+            if (n > 0) newlyFailed += core.failHottest(n);
+        }
+        return p;
+    }
+
+    /** A cluster is out of the core (until {@link #reseatRodCluster}). */
+    public boolean rodClusterEjected() {
+        return ejectedShare > 0;
+    }
+
+    /** The drill is over: the cluster and its drive are back — only on a shut-down reactor. */
+    public boolean reseatRodCluster() {
+        if (ejectedShare <= 0 || !shutDown()) return false;
+        ejectedShare = 0;
+        return true;
+    }
+
+    /** Last burst of {@link #ejectRodCluster} (null — none since load). */
+    public ReactivityInitiatedAccident.Pulse lastPulse() {
+        return lastPulse;
+    }
+
+    public ReactivityInitiatedAccident.Damage lastRiaDamage() {
+        return lastRiaDamage;
+    }
+
+    private double fuelHeatCapacity() {
+        return Math.max(1e5, FUEL_C_J_PER_KG_HM * core.heavyMetalKg());
+    }
+
+    // ------------------------------------------------------------------ SGTR (04c §4c.6)
+
+    /**
+     * Steam-generator tubes torn open to the secondary: area in m² and the pressure of the damaged SG. The flow is the
+     * subcooled break flow of the cold side of the bundle, {@code G = 0.6·A·√(2ρ(P − max(P_sat(T_cold), P_SG)))}
+     * (§4c.6.1: C_D = 0.6 of a short sharp-edged orifice; the cold water flashes in the hole), and it stops once the
+     * primary is down at the damaged SG's pressure or the cold leg's saturation.
+     */
+    public void setTubeRupture(double areaM2, double sgPressurePa) {
+        tubeLeakAreaM2 = Math.max(0, areaM2);
+        tubeBackPa = Math.max(0.1e6, sgPressurePa);
+    }
+
+    /**
+     * Opens the pressurizer relief valve by hand (or closes it back to its 17 MPa setpoint): the primary blows steam to
+     * the relief tank at the valve's capacity, proportional to pressure — how the operator brings the primary down to the
+     * damaged generator's pressure in an SGTR, or below the vessel's high-pressure failure range in a core melt.
+     */
+    public void setPorvOpen(boolean open) {
+        porvOpen = open;
+    }
+
+    public boolean porvOpen() {
+        return porvOpen;
+    }
+
+    public double tubeRuptureArea() {
+        return tubeLeakAreaM2;
+    }
+
+    /** Primary-to-secondary leak through ruptured tubes, kg/s. */
+    public double tubeLeakKgS() {
+        return tubeLeakKgS;
     }
 
     private void protectionStep() {
@@ -482,10 +604,11 @@ public final class PressurizedWaterReactor {
         double tColdNow = ts.temperature;
         double pSatCold = W.saturationPressure(Math.min(640, tColdNow));
         leakKgS = leakAreaM2 > 0 ? 0.61 * leakAreaM2 * Math.sqrt(2 * rhoCold * Math.max(0.05 * p, p - Math.max(pSatCold, 0.1e6))) : 0;
+        tubeLeakKgS = tubeLeakAreaM2 > 0 ? 0.6 * tubeLeakAreaM2 * Math.sqrt(2 * rhoCold * Math.max(0, p - Math.max(pSatCold, tubeBackPa))) : 0;
         siKgS = siHold > 0 ? SI_MAX_KG_S * Math.max(0, Math.min(1, (SI_SHUTOFF_PA - p) / (SI_SHUTOFF_PA - 3e6))) : 0;
         double hCharge = W.enthalpyPT(p, CHARGING_K), hSi = W.enthalpyPT(p, SI_K);
         double inKg = (chargingKgS + exchangeKgS + siKgS) * DT;
-        double outKg = (letdown + leakKgS) * DT;
+        double outKg = (letdown + leakKgS + tubeLeakKgS) * DT;
         double totalKg = Math.max(1, loopKg + pzr.liquidKg());
         boronKg += (chargingKgS * ppm + exchangeKgS * exchangeGkg * PPM_B_PER_G_KG + siKgS * SI_G_KG * PPM_B_PER_G_KG) * DT / 1e6
                 - outKg * boronKg / totalKg;
@@ -512,7 +635,9 @@ public final class PressurizedWaterReactor {
         sprayKgS = SPRAY_MAX_KG_S * sprayDemand * Math.min(1, pumps[0].speed());
         heaterW = pzr.level() < 0.1 ? 0
                 : HEATER_PROP_W * Math.max(0, Math.min(1, (0.1e6 - pErr) / 0.2e6)) + (pErr < -0.15e6 ? HEATER_BACKUP_W : 0);
-        double outH = pzr.step(DT, surge, hHot, sprayKgS, hCold, heaterW - PZR_LOSS_W, RELIEF_PA, RELIEF_KG_S, SAFETY_PA, SAFETY_KG_S);
+        // ИПУ ключом оператора: открыт при любом давлении, расход — как у ИПУ на уставке, ∝ P (critical flow)
+        double reliefPa = porvOpen ? 0.1e6 : RELIEF_PA, reliefKgS = porvOpen ? RELIEF_KG_S * 0.1e6 / RELIEF_PA : RELIEF_KG_S;
+        double outH = pzr.step(DT, surge, hHot, sprayKgS, hCold, heaterW - PZR_LOSS_W, reliefPa, reliefKgS, SAFETY_PA, SAFETY_KG_S);
         // впрыск забирается из холодной нитки и возвращается через КД; outsurge приносит энтальпию КД в горячий узел
         loopKg -= sprayKgS * DT;
         if (surge > 0) loopKg -= surge;
@@ -941,6 +1066,15 @@ public final class PressurizedWaterReactor {
         out.putInts("lowflux", new int[] {protection.isTripped() ? 0 : lowFluxBlocked ? 1 : 0}, 1);
         out.putInts("tripped", new int[] {protection.isTripped() ? 1 : 0}, 1);
         out.putInts("ruptured", new int[] {ruptured ? 1 : 0}, 1);
+        out.putDouble("ejected", ejectedShare);
+        if (lastPulse != null) {
+            ReactivityInitiatedAccident.Damage d = lastRiaDamage;
+            out.putDoubles("ria", new double[] {lastPulse.rho0(), lastPulse.beta(), lastPulse.generationS(), lastPulse.gammaPerJ(),
+                    d.peakCalG(), d.averageRiseCalG(), d.cladFailedFraction(), d.fragmentedFraction(), d.failure().ordinal()}, 9);
+        }
+        out.putDouble("tube", tubeLeakAreaM2);
+        out.putDouble("tubeP", tubeBackPa);
+        out.putBoolean("porv", porvOpen);
         out.beginObject("pzr");
         pzr.save(out);
         out.endObject();
@@ -977,6 +1111,20 @@ public final class PressurizedWaterReactor {
         loopKg = in.optDouble("loop", requiredLoopKg(pressure, hHot, hCold));
         boronKg = in.optDouble("boron", boronKg);
         if (in.has("ruptured")) ruptured = in.getInts("ruptured")[0] != 0;
+        ejectedShare = Math.max(0, Math.min(1, in.optDouble("ejected", 0)));
+        lastPulse = null;
+        lastRiaDamage = ReactivityInitiatedAccident.Damage.NONE;
+        if (in.has("ria")) {
+            double[] a = in.getDoubles("ria");
+            if (a.length >= 9 && a[1] > 0 && a[2] > 0 && a[3] > 0) {
+                lastPulse = ReactivityInitiatedAccident.nordheimFuchs(a[0], a[1], a[2], a[3]);
+                ReactivityInitiatedAccident.Failure[] modes = ReactivityInitiatedAccident.Failure.values();
+                lastRiaDamage = new ReactivityInitiatedAccident.Damage(a[4], a[5], a[6], a[7], modes[Math.max(0, Math.min(modes.length - 1, (int) a[8]))]);
+            }
+        }
+        tubeLeakAreaM2 = Math.max(0, in.optDouble("tube", 0));
+        tubeBackPa = in.optDouble("tubeP", SecondarySide.P_NOMINAL);
+        porvOpen = in.optInt("porv", 0) != 0;
         properties();
         core.load(in, this::feedbackState);
         double n = LightWaterCore.savedPower(in);

@@ -18,6 +18,9 @@ import dev.denfry.promptcritical.sim.automation.AutomationKind;
 import dev.denfry.promptcritical.sim.automation.AutomationSubsystem;
 import dev.denfry.promptcritical.sim.automation.AutomationUnit;
 import dev.denfry.promptcritical.sim.accident.PlantAccident;
+import dev.denfry.promptcritical.sim.accident.ReactivityInitiatedAccident;
+import dev.denfry.promptcritical.sim.accident.SteamGeneratorTubeRupture;
+import dev.denfry.promptcritical.sim.reactor.pwr.SecondarySide;
 import dev.denfry.promptcritical.sim.consequence.ConsequenceRouter;
 import dev.denfry.promptcritical.sim.core.GridPos;
 import dev.denfry.promptcritical.sim.core.MutableStateTree;
@@ -118,6 +121,15 @@ public final class PwrReactorBlockEntity extends DeviceBlockEntity implements Fo
     private boolean wasTripped, concentrate;
     /** LOCA, blackout and containment (04c M10): the accident layer and its world glue. */
     private final ReactorAccidentSystems accident = new ReactorAccidentSystems(PlantAccident.PWR_T2A);
+    /** Tube rupture in the first steam generator (04c §4c.6): the damaged generator's side of the leak. */
+    private final SteamGeneratorTubeRupture sgtr = new SteamGeneratorTubeRupture(SecondarySide.P_NOMINAL);
+    /**
+     * I-131 in the primary coolant of intact fuel, Bq/kg [оценка: ≈ 0.03 µCi/g, a typical PWR well under the 1 µCi/g
+     * dose-equivalent limit]; failed assemblies add their {@link #I131_PER_FAILED_BQ} over the primary inventory.
+     */
+    public static final double COOLANT_I131_BQ_PER_KG = 1e6;
+    /** Iodine carried with steam out of boiling water ({@code accident.iodine_partition}, 04c §4c.8.4) [BALANCE]. */
+    public static final double IODINE_PARTITION = 1e-3;
     /** Ticks of airborne release left after a rupture outside an intact containment. */
     private int releaseTicks;
     private double releaseI131BqS;
@@ -194,20 +206,25 @@ public final class PwrReactorBlockEntity extends DeviceBlockEntity implements Fo
         // ПГ: средняя температура котлов, наименьший уровень барабанов, тепло — поровну
         List<SteamGeneratorBlockEntity> sgs = new ArrayList<>();
         double sum = 0, level = Double.NaN;
-        for (BlockPos p : generators)
-            if (this.level.getBlockEntity(p) instanceof SteamGeneratorBlockEntity sg && !Double.isNaN(sg.secondaryK())) {
+        for (int gi = 0; gi < generators.size(); gi++) {
+            // ПГ-1 с разрывом трубок, отсечённый по пару и питанию, тепло не отводит
+            if (gi == 0 && sgtr.isolated()) continue;
+            if (this.level.getBlockEntity(generators.get(gi)) instanceof SteamGeneratorBlockEntity sg && !Double.isNaN(sg.secondaryK())) {
                 sgs.add(sg);
                 sum += sg.secondaryK();
                 double lv = sg.levelFrac();
                 if (!Double.isNaN(lv)) level = Double.isNaN(level) ? lv : Math.min(level, lv);
             }
+        }
         reactor.setSecondary(sgs.isEmpty() ? Double.NaN : sum / sgs.size(), level, sgs.size());
         PressurizerBlockEntity kd = pressurizerBlock();
         AutomationUnit a = MechanismWiring.unit(this.level, simId(), AutomationKind.REACTOR_IO);
         boolean ioScram = a != null && a.loadEnergized(1);
         // без КД контур не держит давление: защита держит реактор заглушенным; авария — тоже
         reactor.setExternalTrip(ioScram || kd == null || accident.demandsTrip());
+        reactor.setTubeRupture(generators.isEmpty() ? 0 : sgtr.breakAreaM2(), sgtr.sgPressurePa());
         reactor.step(gameDt);
+        tubeRupture(sl);
         if (run.update(gameDt, reactor.power(), reactor.tripped() && reactor.protection().firstOut() != dev.denfry.promptcritical.sim.protection.TripReason.MANUAL))
             dev.denfry.promptcritical.mod.content.SimAchievements.nearby(sl, worldPosition, dev.denfry.promptcritical.mod.content.SimAchievements.HUNDRED_DAYS, "days", run.days());
         if (reactor.power() >= dev.denfry.promptcritical.mod.content.IndustrialComplex.REACTOR_POWER) dev.denfry.promptcritical.mod.content.IndustrialComplex.running(sl, worldPosition, dev.denfry.promptcritical.mod.content.IndustrialComplex.Part.REACTOR);
@@ -251,6 +268,44 @@ public final class PwrReactorBlockEntity extends DeviceBlockEntity implements Fo
             RadiationService.airRelease(sl, top, Emitter.I131, releaseI131BqS);
             RadiationService.airRelease(sl, top, Emitter.CS137, releaseI131BqS * CS137_PER_I131);
         }
+    }
+
+    /**
+     * Steps the damaged generator on the reactor's real-time step (the leak is the reactor's) and sends the coolant it
+     * passes out: with the steam to the condenser off-gas (iodine partition 10⁻³), through the SG relief straight to the
+     * atmosphere — steam with the same partition, water with all of it (§4c.6.2, the containment bypass).
+     */
+    private void tubeRupture(ServerLevel sl) {
+        if (!sgtr.ruptured()) return;
+        java.util.SplittableRandom rnd = new java.util.SplittableRandom(sl.getSeed() ^ worldPosition.asLong() ^ 0x5617L);
+        // the stuck-open draw happens once per valve lift: derive it from the world and the plant, not the tick
+        sgtr.step(PressurizedWaterReactor.DT, reactor.tubeLeakKgS(), reactor.coldLegK(), reactor.power(), rnd);
+        Vec3 c = worldPosition.getCenter();
+        if (sgtr.alarmEvent()) {
+            sl.playSound(null, worldPosition, SoundEvents.NOTE_BLOCK_BELL.value(), SoundSource.BLOCKS, 2f, 1.6f);
+            for (ServerPlayer p : sl.getPlayers(p -> p.distanceToSqr(c) < 64 * 64))
+                p.displayClientMessage(NppText.msg("sgtr_n16").withStyle(ChatFormatting.RED), false);
+        }
+        if (sgtr.stuckEvent())
+            for (ServerPlayer p : sl.getPlayers(p -> p.distanceToSqr(c) < 96 * 96))
+                p.displayClientMessage(NppText.msg("sgtr_stuck").withStyle(ChatFormatting.DARK_RED), false);
+        if (ticks % 20 != 0) return;
+        double perKg = COOLANT_I131_BQ_PER_KG + reactor.failedAssemblies() * I131_PER_FAILED_BQ / Math.max(1, reactor.primaryKg());
+        double bqS = perKg * (sgtr.condenserKgS() * IODINE_PARTITION + sgtr.atmosphereKgS() * (sgtr.waterRelief() ? 1 : IODINE_PARTITION));
+        if (bqS > 0) {
+            BlockPos sgPos = generators.isEmpty() ? worldPosition : generators.get(0);
+            Vec3 top = sgPos.getCenter().add(0, 4, 0);
+            RadiationService.airRelease(sl, top, Emitter.I131, bqS);
+            RadiationService.airRelease(sl, top, Emitter.CS137, bqS * CS137_PER_I131);
+        }
+        if (sgtr.atmosphereKgS() > 0 && !generators.isEmpty()) {
+            Vec3 v = generators.get(0).getCenter();
+            sl.sendParticles(ParticleTypes.CLOUD, v.x, v.y + 2, v.z, (int) Math.min(20, 2 + sgtr.atmosphereKgS()), 0.4, 1.0, 0.4, 0.1);
+        }
+    }
+
+    public SteamGeneratorTubeRupture tubeRuptureModel() {
+        return sgtr;
     }
 
     public boolean containmentIntact() { return accident.containment().intact(); }
@@ -446,6 +501,27 @@ public final class PwrReactorBlockEntity extends DeviceBlockEntity implements Fo
                 | (r.leakKgS() > 0 || acc.breakArea() > 0 ? 1 << PwrPanels.F_LEAK : 0)
                 | (r.heaterW() > 1e3 ? 1 << PwrPanels.F_HEATERS : 0);
         accident.readPanel(v, PwrPanels.ACCIDENT);
+        v[PwrPanels.SGTR_KGS10] = (int) Math.round(r.tubeLeakKgS() * 10);
+        v[PwrPanels.SG_P100] = (int) Math.round(sgtr.sgPressurePa() / 1e4);
+        v[PwrPanels.SG_EXCESS_KG] = (int) Math.round(sgtr.excessWaterKg());
+        v[PwrPanels.SG_VENTED_KG] = (int) Math.round(sgtr.toAtmosphereKg());
+        v[PwrPanels.SG_FLAGS] = (sgtr.ruptured() ? 1 << PwrPanels.S_RUPTURED : 0) | (sgtr.n16Alarm() ? 1 << PwrPanels.S_N16 : 0)
+                | (sgtr.isolated() ? 1 << PwrPanels.S_ISOLATED : 0) | (sgtr.reliefOpen() ? 1 << PwrPanels.S_RELIEF : 0)
+                | (sgtr.stuckOpen() ? 1 << PwrPanels.S_STUCK : 0) | (r.porvOpen() ? 1 << PwrPanels.S_PORV : 0);
+        ReactivityInitiatedAccident.Pulse p = r.lastPulse();
+        if (r.rodClusterEjected() && p != null) {
+            ReactivityInitiatedAccident.Damage d = r.lastRiaDamage();
+            v[PwrPanels.RIA_CENTS] = (int) Math.round(p.dollars() * 100);
+            v[PwrPanels.RIA_MJ] = (int) Math.round(p.energyJ() / 1e6);
+            v[PwrPanels.RIA_FWHM_MS10] = (int) Math.round(p.fwhmS() * 1e4);
+            v[PwrPanels.RIA_PEAK_CALG] = (int) Math.round(d.peakCalG());
+            v[PwrPanels.RIA_LIMIT_CALG] = (int) Math.round(Math.min(ReactivityInitiatedAccident.HIGH_TEMP_CAL_G,
+                    ReactivityInitiatedAccident.pcmiThresholdCalG(r.maxBurnup())));
+            v[PwrPanels.RIA_FLAGS] = 1 << PwrPanels.R_EJECTED | (p.prompt() ? 1 << PwrPanels.R_PROMPT : 0)
+                    | (d.cladFailedFraction() > 0 ? 1 << PwrPanels.R_FAILED : 0) | (d.fragmentedFraction() > 0 ? 1 << PwrPanels.R_FRAGMENTED : 0);
+        } else if (r.rodClusterEjected()) {
+            v[PwrPanels.RIA_FLAGS] = 1 << PwrPanels.R_EJECTED;
+        }
     }
 
     @Override
@@ -469,10 +545,74 @@ public final class PwrReactorBlockEntity extends DeviceBlockEntity implements Fo
             }
             case PwrPanels.B_UNLOAD -> unload(player);
             case PwrPanels.B_LOCA -> accident.cycleDrill(player);
+            case PwrPanels.B_RIA -> rodEjectionDrill(player);
+            case PwrPanels.B_SGTR -> {
+                sgtr.rupture(!sgtr.ruptured());
+                player.displayClientMessage(NppText.msg(sgtr.ruptured() ? "sgtr_on" : "sgtr_off")
+                        .withStyle(sgtr.ruptured() ? ChatFormatting.RED : ChatFormatting.GREEN), true);
+            }
+            case PwrPanels.B_SG_ISOLATE -> {
+                sgtr.setIsolated(!sgtr.isolated());
+                player.displayClientMessage(NppText.msg(sgtr.isolated() ? "sg_isolated" : "sg_restored"), true);
+            }
+            case PwrPanels.B_PORV -> {
+                r.setPorvOpen(!r.porvOpen());
+                player.displayClientMessage(NppText.msg(r.porvOpen() ? "porv_open" : "porv_closed"), true);
+            }
             default -> {
             }
         }
         setChanged();
+    }
+
+    /** Rod-ejection drill: eject a cluster, or put it back once the reactor is shut down. */
+    private void rodEjectionDrill(ServerPlayer player) {
+        if (reactor.rodClusterEjected()) {
+            boolean back = reactor.reseatRodCluster();
+            if (back) accident.setRodHousingBreak(false);
+            player.displayClientMessage(NppText.msg(back ? "ria_reseated" : "ria_reseat_refused"), true);
+            return;
+        }
+        ejectRod(PressurizedWaterReactor.EJECTED_RG_SHARE);
+    }
+
+    /**
+     * Rod ejection (04c §4c.5): the cluster leaves the core with {@code share} of the control group's worth, the housing
+     * nozzle opens a small break, a prompt burst fails the fuel past its enthalpy limits, and fuel past 230 cal/g
+     * fragments into the coolant — a steam explosion in the core through the consequence router.
+     *
+     * @return the burst, or null when no cluster could be ejected
+     */
+    @Nullable
+    public ReactivityInitiatedAccident.Pulse ejectRod(double share) {
+        if (!(level instanceof ServerLevel sl)) return null;
+        int failedBefore = reactor.failedAssemblies();
+        ReactivityInitiatedAccident.Pulse p = reactor.ejectRodCluster(share);
+        if (p == null) return null;
+        accident.setRodHousingBreak(true);
+        Vec3 c = worldPosition.getCenter();
+        List<ServerPlayer> near = sl.getPlayers(pl -> pl.distanceToSqr(c) < 96 * 96);
+        sl.playSound(null, worldPosition, SoundEvents.ANVIL_LAND, SoundSource.BLOCKS, 2f, 0.5f);
+        for (ServerPlayer pl : near)
+            pl.displayClientMessage(NppText.msg("ria_eject", String.format(Locale.ROOT, "%.2f", p.dollars())).withStyle(ChatFormatting.RED), false);
+        if (p.prompt()) {
+            ReactivityInitiatedAccident.Damage d = reactor.lastRiaDamage();
+            for (ServerPlayer pl : near)
+                pl.displayClientMessage(NppText.msg("ria_burst", String.format(Locale.ROOT, "%.0f", p.energyJ() / 1e6),
+                        String.format(Locale.ROOT, "%.1f", p.fwhmS() * 1e3), String.format(Locale.ROOT, "%.0f", d.peakCalG())).withStyle(ChatFormatting.DARK_RED), false);
+            int failedNow = reactor.failedAssemblies() - failedBefore;
+            if (failedNow > 0)
+                for (ServerPlayer pl : near) pl.displayClientMessage(NppText.msg("ria_failed", failedNow).withStyle(ChatFormatting.DARK_RED), false);
+            double fragmentedKg = d.fragmentedFraction() * reactor.core().heavyMetalKg() * ReactivityInitiatedAccident.UO2_PER_HM;
+            if (fragmentedKg > 0) {
+                SimLevelBinding b = SimBindings.get(sl);
+                java.util.SplittableRandom rnd = new java.util.SplittableRandom(sl.getSeed() ^ worldPosition.asLong() ^ sl.getGameTime());
+                if (b != null) accident.steamExplosion(sl, b, simId(), worldPosition, ReactivityInitiatedAccident.fciEnergyJ(fragmentedKg, rnd),
+                        reactor.failedAssemblies());
+            }
+        }
+        setChanged();
+        return p;
     }
 
     private double exchangeG() {
@@ -554,6 +694,9 @@ public final class PwrReactorBlockEntity extends DeviceBlockEntity implements Fo
         tag.put("reactor", NbtStateTrees.toNbt(tree));
         tag.putBoolean("concentrate", concentrate);
         accident.save(tag);
+        MutableStateTree sg = new MutableStateTree();
+        sgtr.save(new TreeStateWriter(sg));
+        tag.put("sgtr", NbtStateTrees.toNbt(sg));
         wiring.save(tag);
     }
 
@@ -565,6 +708,7 @@ public final class PwrReactorBlockEntity extends DeviceBlockEntity implements Fo
         if (tag.contains("reactor")) reactor.load(new TreeStateReader(NbtStateTrees.fromNbt(tag.getCompound("reactor"))));
         concentrate = tag.getBoolean("concentrate");
         accident.load(tag);
+        if (tag.contains("sgtr")) sgtr.load(new TreeStateReader(NbtStateTrees.fromNbt(tag.getCompound("sgtr"))));
         wiring.load(tag);
         wasTripped = reactor.protection().isTripped();
     }

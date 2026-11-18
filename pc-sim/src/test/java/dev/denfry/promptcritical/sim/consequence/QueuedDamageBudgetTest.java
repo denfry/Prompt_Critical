@@ -20,7 +20,7 @@ class QueuedDamageBudgetTest {
     private static final double HUGE_J = 1e15;
 
     /** Мир из сплошного камня с сопротивлением 0; бедрок ниже y = 0. */
-    private static final class SolidWorld implements DamageBudget.BlockMutator {
+    private static class SolidWorld implements DamageBudget.BlockMutator {
         final List<GridPos> destroyed = new ArrayList<>();
         final Set<GridPos> gone = new HashSet<>();
         int drops;
@@ -119,6 +119,28 @@ class QueuedDamageBudgetTest {
         SolidWorld world = new SolidWorld();
         budget.drain(0, world, DamageBudget.TerritoryOracle.EVERYWHERE);
         assertThat(world.destroyed).isEmpty();
+    }
+
+    /** 04c §4c.10.5: a melt-through turns one block into corium, bedrock stops it, creative-safe forbids it. */
+    @Test
+    void meltThroughReplacesOneBlockWithCorium() {
+        List<String> placed = new ArrayList<>();
+        DamageBudget.BlockMutator world = new SolidWorld() {
+            @Override
+            public void replace(GridPos p, String blockId) {
+                placed.add(blockId + "@" + p.y());
+            }
+        };
+        QueuedDamageBudget budget = new QueuedDamageBudget(DamageBudgetConfig.defaults(ServerMode.REALISTIC));
+        DamageGrant g = budget.submit(new DamageRequest(1, SRC, TEAM, DamageKind.MELT_THROUGH, new GridPos(3, 5, 3), 4.6e9, 0, 1));
+        assertThat(g.blocksGranted()).isEqualTo(1);
+        budget.submit(new DamageRequest(2, SRC, TEAM, DamageKind.MELT_THROUGH, new GridPos(3, -1, 3), 4.6e9, 0, 1));
+        budget.drain(0, world, DamageBudget.TerritoryOracle.EVERYWHERE);
+        assertThat(placed).containsExactly(DamageBudget.CORIUM_BLOCK + "@5");
+        assertThat(budget.stats().deniedByReason()).containsKey(DenyReason.PROTECTED_BLOCK);
+        QueuedDamageBudget safe = new QueuedDamageBudget(DamageBudgetConfig.defaults(ServerMode.CREATIVE_SAFE));
+        assertThat(safe.submit(new DamageRequest(3, SRC, TEAM, DamageKind.MELT_THROUGH, new GridPos(0, 5, 0), 4.6e9, 0, 1)).reason())
+                .isEqualTo(DenyReason.MODE_FORBIDS);
     }
 
     @Test

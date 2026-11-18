@@ -5,7 +5,12 @@ import dev.denfry.promptcritical.mod.binding.SimLevelBinding;
 import dev.denfry.promptcritical.mod.environment.RadiationService;
 import dev.denfry.promptcritical.mod.ironworks.Ironworks;
 import dev.denfry.promptcritical.mod.registry.PcBlocks;
+import dev.denfry.promptcritical.sim.accident.CoreMeltProgression;
+import dev.denfry.promptcritical.sim.accident.HydrogenCombustion;
 import dev.denfry.promptcritical.sim.accident.PlantAccident;
+import dev.denfry.promptcritical.sim.consequence.DamageKind;
+import dev.denfry.promptcritical.sim.consequence.DamageRequest;
+import dev.denfry.promptcritical.sim.radiation.FissionSource;
 import dev.denfry.promptcritical.sim.consequence.ConsequenceRouter;
 import dev.denfry.promptcritical.sim.core.GridPos;
 import dev.denfry.promptcritical.sim.core.MutableStateTree;
@@ -72,6 +77,12 @@ public final class ReactorAccidentSystems {
     private final Map<BlockPos, LoopPart> loop = new HashMap<>();
     private final Map<BlockPos, LoopPart> broken = new HashMap<>();
     private int drill;
+    /** A rod-housing nozzle torn open by an ejected cluster (04c §4c.5.1): a small break until the drill is reset. */
+    private boolean housingBreak;
+    /** Water in the reactor cavity below the vessel (scan), and the lowest block the corium has reached (null — in the vessel). */
+    private boolean cavityFlooded;
+    @org.jetbrains.annotations.Nullable
+    private BlockPos coriumFront;
     private int accumulators;
     private ContainmentScan containment = ContainmentScan.OPEN;
     /** A scan has given a definite answer since the block loaded; until then the saved containment is left alone. */
@@ -157,6 +168,32 @@ public final class ReactorAccidentSystems {
                     if (sl.isLoaded(m) && sl.getBlockState(m).is(PcBlocks.ECCS_ACCUMULATOR.get())) n++;
                 }
         accumulators = n;
+        // the reactor cavity: the 3×3 under the vessel, flooded when most of it is water
+        BlockPos floor = underVessel(sl, center);
+        int water = 0;
+        for (int x = -1; x <= 1; x++)
+            for (int z = -1; z <= 1; z++) {
+                m.set(floor.getX() + x, floor.getY(), floor.getZ() + z);
+                if (sl.isLoaded(m) && sl.getFluidState(m).is(net.minecraft.tags.FluidTags.WATER)) water++;
+            }
+        cavityFlooded = water >= 5;
+    }
+
+    /** The block under the vessel's footprint — the cavity floor where a failed head drops its corium. */
+    static BlockPos underVessel(ServerLevel sl, BlockPos center) {
+        int minY = sl.getBlockState(center).getBlock() instanceof dev.denfry.promptcritical.mod.block.PcBlock pb
+                ? pb.spec().footprint().minY() : 0;
+        return center.below(1 - minY);
+    }
+
+    public boolean cavityFlooded() {
+        return cavityFlooded;
+    }
+
+    /** Lowest block the corium has reached outside the vessel, or null. */
+    @org.jetbrains.annotations.Nullable
+    public BlockPos coriumFront() {
+        return coriumFront;
     }
 
     // ------------------------------------------------------------------ drill
@@ -171,7 +208,33 @@ public final class ReactorAccidentSystems {
         PlantAccident.Design d = accident.design();
         double a = drill == 1 ? d.smallBreakM2() : drill == 2 ? d.largeBreakM2() : 0;
         for (LoopPart part : broken.values()) a += part.share * d.largeBreakM2();
+        if (housingBreak) a += dev.denfry.promptcritical.sim.npp.PressurizedWaterReactor.ROD_HOUSING_BREAK_M2;
         return Math.min(a, 2 * d.largeBreakM2());
+    }
+
+    /** Opens or seals the rod-housing break of an ejected cluster. */
+    public void setRodHousingBreak(boolean open) {
+        housingBreak = open;
+    }
+
+    public boolean rodHousingBreak() {
+        return housingBreak;
+    }
+
+    /**
+     * A steam explosion at the core or under the vessel (04c §4c.10.4): a confined blast through the consequence router,
+     * the activity of failed fuel inside the containment when it holds, outside otherwise.
+     */
+    public void steamExplosion(ServerLevel sl, SimLevelBinding b, SimId source, BlockPos at, double energyJ, int failed) {
+        if (!(energyJ > 0)) return;
+        GridPos o = new GridPos(at.getX(), at.getY(), at.getZ());
+        ConsequenceRouter.Routed r = ConsequenceRouter.route(ConsequenceRouter.Event.STEAM_EXPLOSION, requestSeq++, source, null, o,
+                energyJ, accident.hasContainment(), failed > 0);
+        if (r.damage() != null) b.damage().submit(r.damage());
+        if (r.release() == ConsequenceRouter.ReleasePath.ENVIRONMENT) startRelease(failed);
+        sl.playSound(null, at, SoundEvents.GENERIC_EXPLODE.value(), SoundSource.BLOCKS, 3f, 0.5f);
+        sl.sendParticles(ParticleTypes.EXPLOSION_EMITTER, at.getX() + 0.5, at.getY() + 0.5, at.getZ() + 0.5, 1, 0, 0, 0, 0);
+        broadcast(sl, at.getCenter(), 128, NppText.msg("fci", String.format(Locale.ROOT, "%.1f", energyJ / 1e6)).withStyle(ChatFormatting.DARK_RED));
     }
 
     // ------------------------------------------------------------------ step
@@ -201,10 +264,13 @@ public final class ReactorAccidentSystems {
         accident.setAccumulators(accumulators);
         if (containmentKnown) accident.setContainment(containment.intact() ? containment.volumeM3() : 0, containment.recombiners());
         accident.setBreakArea(breakArea());
+        accident.setSeed(sl.getSeed() ^ pos.asLong());
+        accident.setCavityFlooded(cavityFlooded);
         accident.step(dt, coreW, sinkW, reactorPa);
         boolean injecting = accident.eccsFlowKgS() > 0;
         for (EccsPumpBlockEntity e : pumps) e.reportInjecting(injecting && e.driven());
         events(sl, b, source, pos, failed);
+        melt(sl, b, source, pos, coreW, failed);
         if (loaded <= 0) return 0;
         int target = (int) Math.ceil(accident.claddingFailedFraction() * loaded - 1e-9);
         return Math.max(0, target - failed);
@@ -232,12 +298,14 @@ public final class ReactorAccidentSystems {
         GridPos o = new GridPos(pos.getX(), pos.getY(), pos.getZ());
         if (accident.burnEvent()) {
             // R6: the burn goes through the consequence router; inside a closed containment the activity stays in
-            ConsequenceRouter.Routed r = ConsequenceRouter.route(ConsequenceRouter.Event.HYDROGEN_BURN, requestSeq++, source, null, o,
-                    accident.burnEnergyJ(), true, failed > 0);
+            // a detonation hits with the Chapman–Jouguet pressure, twice the deflagration's (04c §4c.7.3)
+            boolean det = accident.burnRegime() == HydrogenCombustion.Regime.DETONATION;
+            ConsequenceRouter.Routed r = ConsequenceRouter.route(det ? ConsequenceRouter.Event.HYDROGEN_DETONATION
+                    : ConsequenceRouter.Event.HYDROGEN_BURN, requestSeq++, source, null, o, accident.burnEnergyJ(), true, failed > 0);
             if (r.damage() != null) b.damage().submit(r.damage());
-            sl.playSound(null, pos, SoundEvents.GENERIC_EXPLODE.value(), SoundSource.BLOCKS, 3f, 0.6f);
-            broadcast(sl, c, 128, NppText.msg("accident_h2_burn", String.format(Locale.ROOT, "%.0f", accident.burnEnergyJ() / 1e6))
-                    .withStyle(ChatFormatting.DARK_RED));
+            sl.playSound(null, pos, SoundEvents.GENERIC_EXPLODE.value(), SoundSource.BLOCKS, det ? 4f : 3f, det ? 0.4f : 0.6f);
+            broadcast(sl, c, 128, NppText.msg(det ? "accident_h2_detonation" : "accident_h2_burn",
+                    String.format(Locale.ROOT, "%.0f", accident.burnEnergyJ() / 1e6)).withStyle(ChatFormatting.DARK_RED));
         }
         if (accident.breachEvent()) {
             double energy = Math.max(0, accident.design().containmentFailurePa() - PlantAccident.ATMOSPHERE_PA) * containment.volumeM3();
@@ -248,6 +316,65 @@ public final class ReactorAccidentSystems {
             sl.playSound(null, pos, SoundEvents.GENERIC_EXPLODE.value(), SoundSource.BLOCKS, 3f, 0.4f);
             broadcast(sl, c, 128, NppText.msg("accident_breach").withStyle(ChatFormatting.DARK_RED));
         }
+    }
+
+    /**
+     * Melt progression in the world (04c §4c.10): stage messages, steam explosions through the consequence router, the
+     * corium poured under a failed vessel and sinking through the floor block by block, each block through the damage
+     * budget as a melt-through (the server mode decides), and the corium's decay gamma at the front.
+     */
+    private void melt(ServerLevel sl, SimLevelBinding b, SimId source, BlockPos pos, double coreW, int failed) {
+        CoreMeltProgression m = accident.melt();
+        if (m == null || !m.started()) return;
+        Vec3 c = pos.getCenter();
+        if (m.stageEvent()) {
+            String key = switch (m.stage()) {
+                case CLAD_MELT_CANDLING -> "melt_candling";
+                case CERAMIC_MELT_POOL -> "melt_pool";
+                case LOWER_PLENUM_RELOCATION -> "melt_plenum";
+                case LOWER_HEAD_FAILURE -> "melt_vessel";
+                default -> null;
+            };
+            if (key != null) {
+                sl.playSound(null, pos, SoundEvents.LAVA_EXTINGUISH, SoundSource.BLOCKS, 2f, 0.4f);
+                broadcast(sl, c, 128, NppText.msg(key).withStyle(ChatFormatting.DARK_RED));
+            }
+        }
+        if (m.steamExplosionJ() > 0) {
+            if (m.vesselFailed()) steamExplosion(sl, b, source, underVessel(sl, pos), m.steamExplosionJ(), failed);
+            else {
+                // in the lower plenum the vessel takes the pressure pulse (the alpha-mode failure of the head is not
+                // modelled): heard and announced, no blast in the world — and the reactor block keeps its accident
+                sl.playSound(null, pos, SoundEvents.GENERIC_EXPLODE.value(), SoundSource.BLOCKS, 2f, 0.3f);
+                broadcast(sl, c, 128, NppText.msg("fci_in_vessel", String.format(Locale.ROOT, "%.1f", m.steamExplosionJ() / 1e6))
+                        .withStyle(ChatFormatting.DARK_RED));
+            }
+        }
+        if (m.failureEvent()) {
+            if (m.directHeatingJ() > 0)
+                broadcast(sl, c, 128, NppText.msg("melt_dch", String.format(Locale.ROOT, "%.0f", m.directHeatingJ() / 1e6))
+                        .withStyle(ChatFormatting.DARK_RED));
+            coriumFront = underVessel(sl, pos).immutable();
+            meltThrough(b, source, coriumFront);
+        }
+        for (int i = 0; i < m.ablatedBlocks() && coriumFront != null; i++) {
+            BlockPos next = coriumFront.below();
+            if (!sl.isLoaded(next) || sl.getBlockState(next).getDestroySpeed(sl, next) < 0) break; // bedrock stops it
+            coriumFront = next.immutable();
+            meltThrough(b, source, coriumFront);
+            broadcast(sl, c, 96, NppText.msg("melt_mcci", String.format(Locale.ROOT, "%.0f", m.ablatedM3())).withStyle(ChatFormatting.DARK_RED));
+        }
+        if (coriumFront != null && ticks % 20 == 0) {
+            double share = Math.min(1, m.exVesselKg() / Math.max(1, m.exVesselKg() + m.lowerPlenumKg() + m.meltKg()));
+            RadiationService.source(sl, coriumFront.getCenter(), FissionSource.reactor(0, coreW * share));
+            sl.sendParticles(ParticleTypes.LAVA, coriumFront.getX() + 0.5, coriumFront.getY() + 1.0, coriumFront.getZ() + 0.5, 3, 0.3, 0.1, 0.3, 0);
+        }
+    }
+
+    /** One block of floor turned to corium through the budget ({@link DamageKind#MELT_THROUGH}). */
+    private static void meltThrough(SimLevelBinding b, SimId source, BlockPos at) {
+        GridPos o = new GridPos(at.getX(), at.getY(), at.getZ());
+        b.damage().submit(new DamageRequest(requestSeq++, source, null, DamageKind.MELT_THROUGH, o, CoreMeltProgression.BLOCK_J, 0, 1));
     }
 
     private static void broadcast(ServerLevel sl, Vec3 c, int radius, Component msg) {
@@ -291,6 +418,8 @@ public final class ReactorAccidentSystems {
         v[base + AccidentPanels.H2_KG10] = (int) Math.round(a.hydrogenKg() * 10);
         v[base + AccidentPanels.CONT_KPA] = (int) Math.round(a.containmentPa() / 1e3);
         v[base + AccidentPanels.CONT_H2] = (int) Math.round(a.containmentHydrogenFraction() * 1000);
+        v[base + AccidentPanels.CONT_STEAM] = (int) Math.round(a.containmentSteamFraction() * 1000);
+        v[base + AccidentPanels.H2_REGIME] = a.containmentRegime().ordinal();
         v[base + AccidentPanels.ECCS_KGS10] = (int) Math.round((a.eccsFlowKgS() + a.accumulatorFlowKgS()) * 10);
         v[base + AccidentPanels.BREAK_KGS10] = (int) Math.round(a.breakFlowKgS() * 10);
         v[base + AccidentPanels.BREAK_CM2] = (int) Math.round(a.breakArea() * 1e4);
@@ -302,6 +431,16 @@ public final class ReactorAccidentSystems {
                 | (a.hasContainment() ? 1 << AccidentPanels.F_CONTAINMENT : 0)
                 | (a.containmentBreached() ? 1 << AccidentPanels.F_BREACHED : 0)
                 | (a.pctLimitExceeded() ? 1 << AccidentPanels.F_PCT : 0);
+        CoreMeltProgression m = a.melt();
+        if (m != null) {
+            v[base + AccidentPanels.MELT_STAGE] = m.stage().ordinal();
+            v[base + AccidentPanels.MELT_GAMMA] = (int) Math.round(m.gamma() * 1000);
+            v[base + AccidentPanels.HEAD_C] = (int) Math.round(m.lowerHeadK() - 273.15);
+            v[base + AccidentPanels.CORIUM_KG] = (int) Math.round(m.exVesselKg());
+            v[base + AccidentPanels.ABLATED_M3] = (int) Math.round(m.ablatedM3());
+            v[base + AccidentPanels.MELT_FLAGS] = 1 << AccidentPanels.M_VESSEL | (cavityFlooded ? 1 << AccidentPanels.M_FLOODED : 0)
+                    | (m.retainedInVessel() ? 1 << AccidentPanels.M_IVR : 0) | (m.vesselFailed() ? 1 << AccidentPanels.M_FAILED : 0);
+        }
     }
 
     // ------------------------------------------------------------------ save
@@ -312,6 +451,9 @@ public final class ReactorAccidentSystems {
         accident.save(new TreeStateWriter(tree));
         t.put("sim", NbtStateTrees.toNbt(tree));
         t.putInt("drill", drill);
+        t.putBoolean("housing", housingBreak);
+        t.putBoolean("cavity", cavityFlooded);
+        if (coriumFront != null) t.putLong("corium", coriumFront.asLong());
         ListTag list = new ListTag();
         for (Map.Entry<BlockPos, LoopPart> e : broken.entrySet()) {
             CompoundTag c = new CompoundTag();
@@ -328,6 +470,9 @@ public final class ReactorAccidentSystems {
         CompoundTag t = tag.getCompound("accident");
         if (t.contains("sim")) accident.load(new TreeStateReader(NbtStateTrees.fromNbt(t.getCompound("sim"))));
         drill = Math.floorMod(t.getInt("drill"), 3);
+        housingBreak = t.getBoolean("housing");
+        cavityFlooded = t.getBoolean("cavity");
+        coriumFront = t.contains("corium") ? BlockPos.of(t.getLong("corium")) : null;
         broken.clear();
         for (Tag e : t.getList("broken", Tag.TAG_COMPOUND)) {
             CompoundTag c = (CompoundTag) e;

@@ -50,6 +50,7 @@ public final class QueuedDamageBudget implements DamageBudget {
 
     @Override
     public DamageGrant submit(DamageRequest r) {
+        if (r.kind() == DamageKind.MELT_THROUGH) return meltThrough(r);
         double power = BlastScaling.power(r.energyJ(), config.tntReferenceKg(), config.maxExplosionPower());
         double radius = Math.min(Math.min(BlastScaling.radiusBlocks(power), r.maxRadiusM()), MAX_RADIUS);
         int requested = Offsets.countWithin(radius);
@@ -108,6 +109,35 @@ public final class QueuedDamageBudget implements DamageBudget {
         return new DamageGrant(r.requestId(), count, count, requested - count, main);
     }
 
+    /**
+     * Melt-through (04c §4c.10.5): one block at the origin turns into corium — no blast, so no resistance check, but the
+     * server mode, the protected blocks, the territory and the per-chunk and per-region day caps hold as for a blast.
+     */
+    private DamageGrant meltThrough(DamageRequest r) {
+        if (config.mode() == ServerMode.CREATIVE_SAFE || config.maxBlocksPerTick() == 0 || config.maxBlocksPerEvent() == 0) {
+            deny(DenyReason.MODE_FORBIDS, 1);
+            return new DamageGrant(r.requestId(), 0, 0, 1, DenyReason.MODE_FORBIDS);
+        }
+        GridPos o = r.origin();
+        long chunk = GridPos.chunkKey(o.x() >> 4, o.z() >> 4);
+        long region = GridPos.chunkKey(o.x() >> 9, o.z() >> 9);
+        DenyReason why = pending >= config.maxPending() ? DenyReason.QUEUE_FULL
+                : chunkUsed.getOrDefault(chunk, 0) >= config.maxBlocksPerChunkPerDay() ? DenyReason.PER_CHUNK_CAP
+                : regionUsed.getOrDefault(region, 0) >= config.maxBlocksPerRegionPerDay() ? DenyReason.PER_REGION_CAP : DenyReason.NONE;
+        if (why != DenyReason.NONE) {
+            deny(why, 1);
+            return new DamageGrant(r.requestId(), 0, 0, 1, why);
+        }
+        chunkUsed.merge(chunk, 1, Integer::sum);
+        regionUsed.merge(region, 1, Integer::sum);
+        Entry e = new Entry(r, 0, new int[] {0}, seq++);
+        int at = 0;
+        while (at < queue.size() && queue.get(at).before(e)) at++;
+        queue.add(at, e);
+        pending++;
+        return new DamageGrant(r.requestId(), 1, 1, 0, DenyReason.NONE);
+    }
+
     @Override
     public void drain(long gameTick, BlockMutator mutator, TerritoryOracle territory) {
         long d = Math.floorDiv(gameTick, TICKS_PER_DAY);
@@ -126,7 +156,17 @@ public final class QueuedDamageBudget implements DamageBudget {
             GridPos o = e.request.origin();
             GridPos p = o.offset(Offsets.dx(offset), Offsets.dy(offset), Offsets.dz(offset));
             BlockInfo info = mutator.inspect(p);
-            if (info.air()) {
+            if (e.request.kind() == DamageKind.MELT_THROUGH) {
+                if (info.immune()) deny(DenyReason.PROTECTED_BLOCK, 1);
+                else if (config.mode() == ServerMode.CONTAINED && !territory.mayDamage(e.request.responsibleTeam(), p))
+                    deny(DenyReason.OUTSIDE_TERRITORY, 1);
+                else {
+                    mutator.replace(p, CORIUM_BLOCK);
+                    e.applied++;
+                    appliedTotal++;
+                    budget--;
+                }
+            } else if (info.air()) {
                 // менять нечего: операция бюджета не тратится
             } else if (info.immune() || !BlastScaling.breaks(e.power, Offsets.distance(offset), info.blastResistance())) {
                 deny(DenyReason.PROTECTED_BLOCK, 1);
