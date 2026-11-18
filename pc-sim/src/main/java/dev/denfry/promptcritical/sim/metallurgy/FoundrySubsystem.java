@@ -9,7 +9,7 @@ import dev.denfry.promptcritical.sim.core.TimeDomain;
 
 /**
  * Литейка и механический цех I0 (08 §8.9–8.10): вагранка, тигельная печь, песчаные формы, формовочная машина,
- * выбивная решётка, токарный и сверлильный станки. Печи и формы — класс 1 §8.0.3: их шаг SLOW дёшев (лумпед,
+ * выбивная решётка, токарный и сверлильный станки, станочный парк (фрезерный, строгальный, шлифовальный). Печи и формы — класс 1 §8.0.3: их шаг SLOW дёшев (лумпед,
  * единицы флопов), поэтому выполняется на серверном потоке в FAST-тике с периодом SLOW, без задания воркеру.
  * Станки и машины — FAST, реальное время.
  *
@@ -25,6 +25,9 @@ public final class FoundrySubsystem extends DeviceSubsystem<FoundryUnit> {
     public static final String SHAKEOUT_GRATE = "promptcritical:shakeout_grate";
     public static final String MACHINE_LATHE = "promptcritical:machine_lathe";
     public static final String DRILL_PRESS = "promptcritical:drill_press";
+    /** Станочный парк: консольно-фрезерный, поперечно-строгальный, плоскошлифовальный ({@link ProductionToolUnit}). */
+    public static final String MILLING_MACHINE = "promptcritical:milling_machine", SHAPING_MACHINE = "promptcritical:shaping_machine",
+            SURFACE_GRINDER = "promptcritical:surface_grinder";
     // машины коксохима и домны на валу Create (этап 10 M3): цикл и мощность, остальное — в мире
     public static final String MAGNETIC_SEPARATOR = "promptcritical:magnetic_separator";
     public static final String SINTER_STRAND = "promptcritical:sinter_strand";
@@ -62,6 +65,9 @@ public final class FoundrySubsystem extends DeviceSubsystem<FoundryUnit> {
             case SHAKEOUT_GRATE -> CyclicMachine.shakeoutGrate();
             case MACHINE_LATHE -> new MachineToolUnit(MachineToolUnit.Kind.LATHE);
             case DRILL_PRESS -> new MachineToolUnit(MachineToolUnit.Kind.DRILL_PRESS);
+            case MILLING_MACHINE -> new ProductionToolUnit(ProductionToolUnit.Kind.MILLING);
+            case SHAPING_MACHINE -> new ProductionToolUnit(ProductionToolUnit.Kind.SHAPER);
+            case SURFACE_GRINDER -> new ProductionToolUnit(ProductionToolUnit.Kind.GRINDER);
             // [BALANCE]: сепаратор 6 с / 11 кВт, агломашина 20 с / 30 кВт, пресс 15 с / 22 кВт; воздуходувка и
             // эксгаустер — по расходу (BlastBlower.RATED_W, GasMain.EXHAUSTER_RATED_W), цикл не используется
             case MAGNETIC_SEPARATOR -> new CyclicMachine(MAGNETIC_SEPARATOR, 6, 11_000);
