@@ -117,6 +117,13 @@ public final class RadiationService {
         return doses;
     }
 
+    /** Держится ли сейчас непрерывный источник в точке {@code at} (не просрочен). */
+    public static boolean holds(ServerLevel level, Vec3 at) {
+        Map<Vec3, Held> m = SOURCES.get(level);
+        Held h = m == null ? null : m.get(at);
+        return h != null && h.until >= level.getGameTime();
+    }
+
     /** Мощность дозы в точке от всех источников, Зв/ч (без фона). */
     public static double rateSvH(ServerLevel level, Vec3 at) {
         Map<Vec3, Held> m = SOURCES.get(level);

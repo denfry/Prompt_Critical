@@ -82,9 +82,11 @@ public final class RadiationGameTests {
         Vec3 at = Vec3.atCenterOf(h.absolutePos(new BlockPos(8, 3, 6)));
         h.startSequence()
                 .thenExecute(() -> RadiationService.source(h.getLevel(), src, Emitter.CS137.source(1e11)))
-                .thenExecute(() -> h.assertTrue(RadiationService.rateSvH(h.getLevel(), at) > 0, "source registered"))
+                .thenExecute(() -> h.assertTrue(RadiationService.holds(h.getLevel(), src) && RadiationService.rateSvH(h.getLevel(), at) > 0,
+                        "source registered"))
                 .thenIdle(60)
-                .thenExecute(() -> h.assertTrue(RadiationService.rateSvH(h.getLevel(), at) == 0, "source forgotten after the hold time"))
+                // мир общий с другими тестами (их источники в радиусе 200 м), поэтому проверяем именно этот источник
+                .thenExecute(() -> h.assertTrue(!RadiationService.holds(h.getLevel(), src), "source forgotten after the hold time"))
                 .thenSucceed();
     }
 }
