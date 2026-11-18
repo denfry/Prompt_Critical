@@ -1,16 +1,16 @@
 {
 	"credit": "Made with Blockbench",
 	"textures": {
-		"particle": "promptcritical:block/common/metal_timber",
-		"d": "promptcritical:block/common/steel_dark",
-		"lab": "promptcritical:block/common/mining_lab_white",
-		"tim": "promptcritical:block/common/metal_timber"
+		"material_steel": "promptcritical:block/material/steel",
+		"particle": "promptcritical:block/explosion_barrier/board",
+		"explosion_barrier_board": "promptcritical:block/explosion_barrier/board",
+		"explosion_barrier_dust": "promptcritical:block/explosion_barrier/dust"
 	},
 	"elements": [
 		{
 			"name": "hanger_w",
-			"from": [1, 10, 7],
-			"to": [2, 16, 9],
+			"from": [1, 7.6, 7.4],
+			"to": [2, 16, 8.6],
 			"rotation": {
 				"angle": 0,
 				"axis": "y",
@@ -18,35 +18,71 @@
 			},
 			"faces": {
 				"north": {
-					"uv": [0, 0, 1, 6],
-					"texture": "#d"
+					"uv": [14, 0, 15, 8.4],
+					"texture": "#material_steel"
 				},
 				"east": {
-					"uv": [0, 0, 2, 6],
-					"texture": "#d"
+					"uv": [7.4, 0, 8.6, 8.4],
+					"texture": "#material_steel"
 				},
 				"south": {
-					"uv": [0, 0, 1, 6],
-					"texture": "#d"
+					"uv": [1, 0, 2, 8.4],
+					"texture": "#material_steel"
 				},
 				"west": {
-					"uv": [0, 0, 2, 6],
-					"texture": "#d"
+					"uv": [7.4, 0, 8.6, 8.4],
+					"texture": "#material_steel"
 				},
 				"up": {
-					"uv": [0, 0, 1, 2],
-					"texture": "#d"
+					"uv": [1, 7.4, 2, 8.6],
+					"texture": "#material_steel"
 				},
 				"down": {
-					"uv": [0, 0, 1, 2],
-					"texture": "#d"
+					"uv": [1, 7.4, 2, 8.6],
+					"texture": "#material_steel"
+				}
+			}
+		},
+		{
+			"name": "hanger_plate_w",
+			"from": [0.2, 15.6, 6.6],
+			"to": [2.8, 16, 9.4],
+			"rotation": {
+				"angle": 0,
+				"axis": "y",
+				"origin": [8, 8, 8]
+			},
+			"faces": {
+				"north": {
+					"uv": [13.2, 0, 15.8, 0.4],
+					"texture": "#material_steel"
+				},
+				"east": {
+					"uv": [6.6, 0, 9.4, 0.4],
+					"texture": "#material_steel"
+				},
+				"south": {
+					"uv": [0.2, 0, 2.8, 0.4],
+					"texture": "#material_steel"
+				},
+				"west": {
+					"uv": [6.6, 0, 9.4, 0.4],
+					"texture": "#material_steel"
+				},
+				"up": {
+					"uv": [0.2, 6.6, 2.8, 9.4],
+					"texture": "#material_steel"
+				},
+				"down": {
+					"uv": [0.2, 6.6, 2.8, 9.4],
+					"texture": "#material_steel"
 				}
 			}
 		},
 		{
 			"name": "hanger_e",
-			"from": [14, 10, 7],
-			"to": [15, 16, 9],
+			"from": [14, 7.6, 7.4],
+			"to": [15, 16, 8.6],
 			"rotation": {
 				"angle": 0,
 				"axis": "y",
@@ -54,35 +90,35 @@
 			},
 			"faces": {
 				"north": {
-					"uv": [0, 0, 1, 6],
-					"texture": "#d"
+					"uv": [1, 0, 2, 8.4],
+					"texture": "#material_steel"
 				},
 				"east": {
-					"uv": [0, 0, 2, 6],
-					"texture": "#d"
+					"uv": [7.4, 0, 8.6, 8.4],
+					"texture": "#material_steel"
 				},
 				"south": {
-					"uv": [0, 0, 1, 6],
-					"texture": "#d"
+					"uv": [14, 0, 15, 8.4],
+					"texture": "#material_steel"
 				},
 				"west": {
-					"uv": [0, 0, 2, 6],
-					"texture": "#d"
+					"uv": [7.4, 0, 8.6, 8.4],
+					"texture": "#material_steel"
 				},
 				"up": {
-					"uv": [0, 0, 1, 2],
-					"texture": "#d"
+					"uv": [14, 7.4, 15, 8.6],
+					"texture": "#material_steel"
 				},
 				"down": {
-					"uv": [0, 0, 1, 2],
-					"texture": "#d"
+					"uv": [14, 7.4, 15, 8.6],
+					"texture": "#material_steel"
 				}
 			}
 		},
 		{
-			"name": "shelf_10",
-			"from": [1, 10, 4],
-			"to": [15, 10.5, 12],
+			"name": "hanger_plate_e",
+			"from": [13.2, 15.6, 6.6],
+			"to": [15.8, 16, 9.4],
 			"rotation": {
 				"angle": 0,
 				"axis": "y",
@@ -90,35 +126,35 @@
 			},
 			"faces": {
 				"north": {
-					"uv": [0, 0, 14, 0.5],
-					"texture": "#tim"
+					"uv": [0.2, 0, 2.8, 0.4],
+					"texture": "#material_steel"
 				},
 				"east": {
-					"uv": [0, 0, 8, 0.5],
-					"texture": "#tim"
+					"uv": [6.6, 0, 9.4, 0.4],
+					"texture": "#material_steel"
 				},
 				"south": {
-					"uv": [0, 0, 14, 0.5],
-					"texture": "#tim"
+					"uv": [13.2, 0, 15.8, 0.4],
+					"texture": "#material_steel"
 				},
 				"west": {
-					"uv": [0, 0, 8, 0.5],
-					"texture": "#tim"
+					"uv": [6.6, 0, 9.4, 0.4],
+					"texture": "#material_steel"
 				},
 				"up": {
-					"uv": [0, 0, 14, 8],
-					"texture": "#tim"
+					"uv": [13.2, 6.6, 15.8, 9.4],
+					"texture": "#material_steel"
 				},
 				"down": {
-					"uv": [0, 0, 14, 8],
-					"texture": "#tim"
+					"uv": [13.2, 6.6, 15.8, 9.4],
+					"texture": "#material_steel"
 				}
 			}
 		},
 		{
-			"name": "dust_10",
-			"from": [2, 10.5, 5],
-			"to": [14, 11.5, 11],
+			"name": "bearer_0_n",
+			"from": [0.4, 7.4, 3.6],
+			"to": [15.6, 8, 4.4],
 			"rotation": {
 				"angle": 0,
 				"axis": "y",
@@ -126,35 +162,35 @@
 			},
 			"faces": {
 				"north": {
-					"uv": [0, 0, 12, 1],
-					"texture": "#lab"
+					"uv": [0.4, 8, 15.6, 8.6],
+					"texture": "#material_steel"
 				},
 				"east": {
-					"uv": [0, 0, 6, 1],
-					"texture": "#lab"
+					"uv": [11.6, 8, 12.4, 8.6],
+					"texture": "#material_steel"
 				},
 				"south": {
-					"uv": [0, 0, 12, 1],
-					"texture": "#lab"
+					"uv": [0.4, 8, 15.6, 8.6],
+					"texture": "#material_steel"
 				},
 				"west": {
-					"uv": [0, 0, 6, 1],
-					"texture": "#lab"
+					"uv": [3.6, 8, 4.4, 8.6],
+					"texture": "#material_steel"
 				},
 				"up": {
-					"uv": [0, 0, 12, 6],
-					"texture": "#lab"
+					"uv": [0.4, 3.6, 15.6, 4.4],
+					"texture": "#material_steel"
 				},
 				"down": {
-					"uv": [0, 0, 12, 6],
-					"texture": "#lab"
+					"uv": [0.4, 11.6, 15.6, 12.4],
+					"texture": "#material_steel"
 				}
 			}
 		},
 		{
-			"name": "shelf_12.5",
-			"from": [1, 12.5, 4],
-			"to": [15, 13, 12],
+			"name": "bearer_0_s",
+			"from": [0.4, 7.4, 11.6],
+			"to": [15.6, 8, 12.4],
 			"rotation": {
 				"angle": 0,
 				"axis": "y",
@@ -162,35 +198,35 @@
 			},
 			"faces": {
 				"north": {
-					"uv": [0, 0, 14, 0.5],
-					"texture": "#tim"
+					"uv": [0.4, 8, 15.6, 8.6],
+					"texture": "#material_steel"
 				},
 				"east": {
-					"uv": [0, 0, 8, 0.5],
-					"texture": "#tim"
+					"uv": [3.6, 8, 4.4, 8.6],
+					"texture": "#material_steel"
 				},
 				"south": {
-					"uv": [0, 0, 14, 0.5],
-					"texture": "#tim"
+					"uv": [0.4, 8, 15.6, 8.6],
+					"texture": "#material_steel"
 				},
 				"west": {
-					"uv": [0, 0, 8, 0.5],
-					"texture": "#tim"
+					"uv": [11.6, 8, 12.4, 8.6],
+					"texture": "#material_steel"
 				},
 				"up": {
-					"uv": [0, 0, 14, 8],
-					"texture": "#tim"
+					"uv": [0.4, 11.6, 15.6, 12.4],
+					"texture": "#material_steel"
 				},
 				"down": {
-					"uv": [0, 0, 14, 8],
-					"texture": "#tim"
+					"uv": [0.4, 3.6, 15.6, 4.4],
+					"texture": "#material_steel"
 				}
 			}
 		},
 		{
-			"name": "dust_12.5",
-			"from": [2, 13, 5],
-			"to": [14, 14, 11],
+			"name": "board_0_0",
+			"from": [1.6, 8, 2.4],
+			"to": [4.6, 8.5, 13.6],
 			"rotation": {
 				"angle": 0,
 				"axis": "y",
@@ -198,28 +234,568 @@
 			},
 			"faces": {
 				"north": {
-					"uv": [0, 0, 12, 1],
-					"texture": "#lab"
+					"uv": [11.4, 7.5, 14.4, 8],
+					"texture": "#explosion_barrier_board"
 				},
 				"east": {
-					"uv": [0, 0, 6, 1],
-					"texture": "#lab"
+					"uv": [2.4, 7.5, 13.6, 8],
+					"texture": "#explosion_barrier_board"
 				},
 				"south": {
-					"uv": [0, 0, 12, 1],
-					"texture": "#lab"
+					"uv": [1.6, 7.5, 4.6, 8],
+					"texture": "#explosion_barrier_board"
 				},
 				"west": {
-					"uv": [0, 0, 6, 1],
-					"texture": "#lab"
+					"uv": [2.4, 7.5, 13.6, 8],
+					"texture": "#explosion_barrier_board"
 				},
 				"up": {
-					"uv": [0, 0, 12, 6],
-					"texture": "#lab"
+					"uv": [1.6, 2.4, 4.6, 13.6],
+					"texture": "#explosion_barrier_board"
 				},
 				"down": {
-					"uv": [0, 0, 12, 6],
-					"texture": "#lab"
+					"uv": [1.6, 2.4, 4.6, 13.6],
+					"texture": "#explosion_barrier_board"
+				}
+			}
+		},
+		{
+			"name": "board_0_1",
+			"from": [4.85, 8, 2.4],
+			"to": [7.85, 8.5, 13.6],
+			"rotation": {
+				"angle": 0,
+				"axis": "y",
+				"origin": [8, 8, 8]
+			},
+			"faces": {
+				"north": {
+					"uv": [8.15, 7.5, 11.15, 8],
+					"texture": "#explosion_barrier_board"
+				},
+				"east": {
+					"uv": [2.4, 7.5, 13.6, 8],
+					"texture": "#explosion_barrier_board"
+				},
+				"south": {
+					"uv": [4.85, 7.5, 7.85, 8],
+					"texture": "#explosion_barrier_board"
+				},
+				"west": {
+					"uv": [2.4, 7.5, 13.6, 8],
+					"texture": "#explosion_barrier_board"
+				},
+				"up": {
+					"uv": [4.85, 2.4, 7.85, 13.6],
+					"texture": "#explosion_barrier_board"
+				},
+				"down": {
+					"uv": [4.85, 2.4, 7.85, 13.6],
+					"texture": "#explosion_barrier_board"
+				}
+			}
+		},
+		{
+			"name": "board_0_2",
+			"from": [8.1, 8, 2.4],
+			"to": [11.1, 8.5, 13.6],
+			"rotation": {
+				"angle": 0,
+				"axis": "y",
+				"origin": [8, 8, 8]
+			},
+			"faces": {
+				"north": {
+					"uv": [4.9, 7.5, 7.9, 8],
+					"texture": "#explosion_barrier_board"
+				},
+				"east": {
+					"uv": [2.4, 7.5, 13.6, 8],
+					"texture": "#explosion_barrier_board"
+				},
+				"south": {
+					"uv": [8.1, 7.5, 11.1, 8],
+					"texture": "#explosion_barrier_board"
+				},
+				"west": {
+					"uv": [2.4, 7.5, 13.6, 8],
+					"texture": "#explosion_barrier_board"
+				},
+				"up": {
+					"uv": [8.1, 2.4, 11.1, 13.6],
+					"texture": "#explosion_barrier_board"
+				},
+				"down": {
+					"uv": [8.1, 2.4, 11.1, 13.6],
+					"texture": "#explosion_barrier_board"
+				}
+			}
+		},
+		{
+			"name": "board_0_3",
+			"from": [11.35, 8, 2.4],
+			"to": [14.35, 8.5, 13.6],
+			"rotation": {
+				"angle": 0,
+				"axis": "y",
+				"origin": [8, 8, 8]
+			},
+			"faces": {
+				"north": {
+					"uv": [1.65, 7.5, 4.65, 8],
+					"texture": "#explosion_barrier_board"
+				},
+				"east": {
+					"uv": [2.4, 7.5, 13.6, 8],
+					"texture": "#explosion_barrier_board"
+				},
+				"south": {
+					"uv": [11.35, 7.5, 14.35, 8],
+					"texture": "#explosion_barrier_board"
+				},
+				"west": {
+					"uv": [2.4, 7.5, 13.6, 8],
+					"texture": "#explosion_barrier_board"
+				},
+				"up": {
+					"uv": [11.35, 2.4, 14.35, 13.6],
+					"texture": "#explosion_barrier_board"
+				},
+				"down": {
+					"uv": [11.35, 2.4, 14.35, 13.6],
+					"texture": "#explosion_barrier_board"
+				}
+			}
+		},
+		{
+			"name": "dust_0_a",
+			"from": [2, 8.5, 3],
+			"to": [14, 9.2, 13],
+			"rotation": {
+				"angle": 0,
+				"axis": "y",
+				"origin": [8, 8, 8]
+			},
+			"faces": {
+				"north": {
+					"uv": [2, 6.8, 14, 7.5],
+					"texture": "#explosion_barrier_dust"
+				},
+				"east": {
+					"uv": [3, 6.8, 13, 7.5],
+					"texture": "#explosion_barrier_dust"
+				},
+				"south": {
+					"uv": [2, 6.8, 14, 7.5],
+					"texture": "#explosion_barrier_dust"
+				},
+				"west": {
+					"uv": [3, 6.8, 13, 7.5],
+					"texture": "#explosion_barrier_dust"
+				},
+				"up": {
+					"uv": [2, 3, 14, 13],
+					"texture": "#explosion_barrier_dust"
+				},
+				"down": {
+					"uv": [2, 3, 14, 13],
+					"texture": "#explosion_barrier_dust"
+				}
+			}
+		},
+		{
+			"name": "dust_0_b",
+			"from": [3.4, 9.2, 4],
+			"to": [12.6, 9.8, 12],
+			"rotation": {
+				"angle": 0,
+				"axis": "y",
+				"origin": [8, 8, 8]
+			},
+			"faces": {
+				"north": {
+					"uv": [3.4, 6.2, 12.6, 6.8],
+					"texture": "#explosion_barrier_dust"
+				},
+				"east": {
+					"uv": [4, 6.2, 12, 6.8],
+					"texture": "#explosion_barrier_dust"
+				},
+				"south": {
+					"uv": [3.4, 6.2, 12.6, 6.8],
+					"texture": "#explosion_barrier_dust"
+				},
+				"west": {
+					"uv": [4, 6.2, 12, 6.8],
+					"texture": "#explosion_barrier_dust"
+				},
+				"up": {
+					"uv": [3.4, 4, 12.6, 12],
+					"texture": "#explosion_barrier_dust"
+				},
+				"down": {
+					"uv": [3.4, 4, 12.6, 12],
+					"texture": "#explosion_barrier_dust"
+				}
+			}
+		},
+		{
+			"name": "dust_0_c",
+			"from": [5.2, 9.8, 5.4],
+			"to": [10.8, 10.2, 10.6],
+			"rotation": {
+				"angle": 0,
+				"axis": "y",
+				"origin": [8, 8, 8]
+			},
+			"faces": {
+				"north": {
+					"uv": [5.2, 5.8, 10.8, 6.2],
+					"texture": "#explosion_barrier_dust"
+				},
+				"east": {
+					"uv": [5.4, 5.8, 10.6, 6.2],
+					"texture": "#explosion_barrier_dust"
+				},
+				"south": {
+					"uv": [5.2, 5.8, 10.8, 6.2],
+					"texture": "#explosion_barrier_dust"
+				},
+				"west": {
+					"uv": [5.4, 5.8, 10.6, 6.2],
+					"texture": "#explosion_barrier_dust"
+				},
+				"up": {
+					"uv": [5.2, 5.4, 10.8, 10.6],
+					"texture": "#explosion_barrier_dust"
+				},
+				"down": {
+					"uv": [5.2, 5.4, 10.8, 10.6],
+					"texture": "#explosion_barrier_dust"
+				}
+			}
+		},
+		{
+			"name": "bearer_1_n",
+			"from": [0.4, 10.8, 3.6],
+			"to": [15.6, 11.4, 4.4],
+			"rotation": {
+				"angle": 0,
+				"axis": "y",
+				"origin": [8, 8, 8]
+			},
+			"faces": {
+				"north": {
+					"uv": [0.4, 4.6, 15.6, 5.2],
+					"texture": "#material_steel"
+				},
+				"east": {
+					"uv": [11.6, 4.6, 12.4, 5.2],
+					"texture": "#material_steel"
+				},
+				"south": {
+					"uv": [0.4, 4.6, 15.6, 5.2],
+					"texture": "#material_steel"
+				},
+				"west": {
+					"uv": [3.6, 4.6, 4.4, 5.2],
+					"texture": "#material_steel"
+				},
+				"up": {
+					"uv": [0.4, 3.6, 15.6, 4.4],
+					"texture": "#material_steel"
+				},
+				"down": {
+					"uv": [0.4, 11.6, 15.6, 12.4],
+					"texture": "#material_steel"
+				}
+			}
+		},
+		{
+			"name": "bearer_1_s",
+			"from": [0.4, 10.8, 11.6],
+			"to": [15.6, 11.4, 12.4],
+			"rotation": {
+				"angle": 0,
+				"axis": "y",
+				"origin": [8, 8, 8]
+			},
+			"faces": {
+				"north": {
+					"uv": [0.4, 4.6, 15.6, 5.2],
+					"texture": "#material_steel"
+				},
+				"east": {
+					"uv": [3.6, 4.6, 4.4, 5.2],
+					"texture": "#material_steel"
+				},
+				"south": {
+					"uv": [0.4, 4.6, 15.6, 5.2],
+					"texture": "#material_steel"
+				},
+				"west": {
+					"uv": [11.6, 4.6, 12.4, 5.2],
+					"texture": "#material_steel"
+				},
+				"up": {
+					"uv": [0.4, 11.6, 15.6, 12.4],
+					"texture": "#material_steel"
+				},
+				"down": {
+					"uv": [0.4, 3.6, 15.6, 4.4],
+					"texture": "#material_steel"
+				}
+			}
+		},
+		{
+			"name": "board_1_0",
+			"from": [1.6, 11.4, 2.4],
+			"to": [4.6, 11.9, 13.6],
+			"rotation": {
+				"angle": 0,
+				"axis": "y",
+				"origin": [8, 8, 8]
+			},
+			"faces": {
+				"north": {
+					"uv": [11.4, 4.1, 14.4, 4.6],
+					"texture": "#explosion_barrier_board"
+				},
+				"east": {
+					"uv": [2.4, 4.1, 13.6, 4.6],
+					"texture": "#explosion_barrier_board"
+				},
+				"south": {
+					"uv": [1.6, 4.1, 4.6, 4.6],
+					"texture": "#explosion_barrier_board"
+				},
+				"west": {
+					"uv": [2.4, 4.1, 13.6, 4.6],
+					"texture": "#explosion_barrier_board"
+				},
+				"up": {
+					"uv": [1.6, 2.4, 4.6, 13.6],
+					"texture": "#explosion_barrier_board"
+				},
+				"down": {
+					"uv": [1.6, 2.4, 4.6, 13.6],
+					"texture": "#explosion_barrier_board"
+				}
+			}
+		},
+		{
+			"name": "board_1_1",
+			"from": [4.85, 11.4, 2.4],
+			"to": [7.85, 11.9, 13.6],
+			"rotation": {
+				"angle": 0,
+				"axis": "y",
+				"origin": [8, 8, 8]
+			},
+			"faces": {
+				"north": {
+					"uv": [8.15, 4.1, 11.15, 4.6],
+					"texture": "#explosion_barrier_board"
+				},
+				"east": {
+					"uv": [2.4, 4.1, 13.6, 4.6],
+					"texture": "#explosion_barrier_board"
+				},
+				"south": {
+					"uv": [4.85, 4.1, 7.85, 4.6],
+					"texture": "#explosion_barrier_board"
+				},
+				"west": {
+					"uv": [2.4, 4.1, 13.6, 4.6],
+					"texture": "#explosion_barrier_board"
+				},
+				"up": {
+					"uv": [4.85, 2.4, 7.85, 13.6],
+					"texture": "#explosion_barrier_board"
+				},
+				"down": {
+					"uv": [4.85, 2.4, 7.85, 13.6],
+					"texture": "#explosion_barrier_board"
+				}
+			}
+		},
+		{
+			"name": "board_1_2",
+			"from": [8.1, 11.4, 2.4],
+			"to": [11.1, 11.9, 13.6],
+			"rotation": {
+				"angle": 0,
+				"axis": "y",
+				"origin": [8, 8, 8]
+			},
+			"faces": {
+				"north": {
+					"uv": [4.9, 4.1, 7.9, 4.6],
+					"texture": "#explosion_barrier_board"
+				},
+				"east": {
+					"uv": [2.4, 4.1, 13.6, 4.6],
+					"texture": "#explosion_barrier_board"
+				},
+				"south": {
+					"uv": [8.1, 4.1, 11.1, 4.6],
+					"texture": "#explosion_barrier_board"
+				},
+				"west": {
+					"uv": [2.4, 4.1, 13.6, 4.6],
+					"texture": "#explosion_barrier_board"
+				},
+				"up": {
+					"uv": [8.1, 2.4, 11.1, 13.6],
+					"texture": "#explosion_barrier_board"
+				},
+				"down": {
+					"uv": [8.1, 2.4, 11.1, 13.6],
+					"texture": "#explosion_barrier_board"
+				}
+			}
+		},
+		{
+			"name": "board_1_3",
+			"from": [11.35, 11.4, 2.4],
+			"to": [14.35, 11.9, 13.6],
+			"rotation": {
+				"angle": 0,
+				"axis": "y",
+				"origin": [8, 8, 8]
+			},
+			"faces": {
+				"north": {
+					"uv": [1.65, 4.1, 4.65, 4.6],
+					"texture": "#explosion_barrier_board"
+				},
+				"east": {
+					"uv": [2.4, 4.1, 13.6, 4.6],
+					"texture": "#explosion_barrier_board"
+				},
+				"south": {
+					"uv": [11.35, 4.1, 14.35, 4.6],
+					"texture": "#explosion_barrier_board"
+				},
+				"west": {
+					"uv": [2.4, 4.1, 13.6, 4.6],
+					"texture": "#explosion_barrier_board"
+				},
+				"up": {
+					"uv": [11.35, 2.4, 14.35, 13.6],
+					"texture": "#explosion_barrier_board"
+				},
+				"down": {
+					"uv": [11.35, 2.4, 14.35, 13.6],
+					"texture": "#explosion_barrier_board"
+				}
+			}
+		},
+		{
+			"name": "dust_1_a",
+			"from": [2, 11.9, 3],
+			"to": [14, 12.6, 13],
+			"rotation": {
+				"angle": 0,
+				"axis": "y",
+				"origin": [8, 8, 8]
+			},
+			"faces": {
+				"north": {
+					"uv": [2, 3.4, 14, 4.1],
+					"texture": "#explosion_barrier_dust"
+				},
+				"east": {
+					"uv": [3, 3.4, 13, 4.1],
+					"texture": "#explosion_barrier_dust"
+				},
+				"south": {
+					"uv": [2, 3.4, 14, 4.1],
+					"texture": "#explosion_barrier_dust"
+				},
+				"west": {
+					"uv": [3, 3.4, 13, 4.1],
+					"texture": "#explosion_barrier_dust"
+				},
+				"up": {
+					"uv": [2, 3, 14, 13],
+					"texture": "#explosion_barrier_dust"
+				},
+				"down": {
+					"uv": [2, 3, 14, 13],
+					"texture": "#explosion_barrier_dust"
+				}
+			}
+		},
+		{
+			"name": "dust_1_b",
+			"from": [3.4, 12.6, 4],
+			"to": [12.6, 13.2, 12],
+			"rotation": {
+				"angle": 0,
+				"axis": "y",
+				"origin": [8, 8, 8]
+			},
+			"faces": {
+				"north": {
+					"uv": [3.4, 2.8, 12.6, 3.4],
+					"texture": "#explosion_barrier_dust"
+				},
+				"east": {
+					"uv": [4, 2.8, 12, 3.4],
+					"texture": "#explosion_barrier_dust"
+				},
+				"south": {
+					"uv": [3.4, 2.8, 12.6, 3.4],
+					"texture": "#explosion_barrier_dust"
+				},
+				"west": {
+					"uv": [4, 2.8, 12, 3.4],
+					"texture": "#explosion_barrier_dust"
+				},
+				"up": {
+					"uv": [3.4, 4, 12.6, 12],
+					"texture": "#explosion_barrier_dust"
+				},
+				"down": {
+					"uv": [3.4, 4, 12.6, 12],
+					"texture": "#explosion_barrier_dust"
+				}
+			}
+		},
+		{
+			"name": "dust_1_c",
+			"from": [5.2, 13.2, 5.4],
+			"to": [10.8, 13.6, 10.6],
+			"rotation": {
+				"angle": 0,
+				"axis": "y",
+				"origin": [8, 8, 8]
+			},
+			"faces": {
+				"north": {
+					"uv": [5.2, 2.4, 10.8, 2.8],
+					"texture": "#explosion_barrier_dust"
+				},
+				"east": {
+					"uv": [5.4, 2.4, 10.6, 2.8],
+					"texture": "#explosion_barrier_dust"
+				},
+				"south": {
+					"uv": [5.2, 2.4, 10.8, 2.8],
+					"texture": "#explosion_barrier_dust"
+				},
+				"west": {
+					"uv": [5.4, 2.4, 10.6, 2.8],
+					"texture": "#explosion_barrier_dust"
+				},
+				"up": {
+					"uv": [5.2, 5.4, 10.8, 10.6],
+					"texture": "#explosion_barrier_dust"
+				},
+				"down": {
+					"uv": [5.2, 5.4, 10.8, 10.6],
+					"texture": "#explosion_barrier_dust"
 				}
 			}
 		}

@@ -100,15 +100,7 @@ m("vein_quartz", "ores", [el("block", [0, 0, 0], [16, 16, 16], "qtz")])
 
 # вентиляционная дверь и жалюзийный регулятор нарисованы вручную в Blockbench: art/blockbench/mining/ventilation_door.author.js
 
-# сланцевый заслон (полки с инертной пылью) / водяной заслон (подвесные сосуды)
-m("explosion_barrier", "mining", [el("hanger_w", [1, 10, 7], [2, 16, 9], "d"), el("hanger_e", [14, 10, 7], [15, 16, 9], "d")]
-  + [x for y in (10, 12.5) for x in (el(f"shelf_{y}", [1, y, 4], [15, y + 0.5, 12], "tim"),
-                                       el(f"dust_{y}", [2, y + 0.5, 5], [14, y + 1.5, 11], "lab"))])
-m("explosion_barrier_water", "mining", [el("rail", [0, 14.5, 7], [16, 15.5, 9], "d")]
-  + [x for i, xx in enumerate((1, 6, 11)) for x in (
-      el(f"vessel_{i}", [xx, 8, 4], [xx + 4, 13, 12], "gl"),
-      el(f"water_{i}", [xx + 0.5, 8.5, 4.5], [xx + 3.5, 11.5, 11.5], "water"),
-      el(f"hook_{i}", [xx + 1.5, 13, 7.5], [xx + 2.5, 14.5, 8.5], "d"))])
+# сланцевый и водяной заслоны нарисованы вручную в Blockbench: art/blockbench/mining/explosion_barrier.author.js
 
 # дегазационная скважина: устье с задвижкой, жёлтая газовая труба
 m("degasification_borehole", "mining", [
