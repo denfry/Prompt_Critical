@@ -202,6 +202,11 @@ public final class DrillersConsoleBlockEntity extends DeviceBlockEntity implemen
             }
         }
         if (well == null) return;
+        if (ticks % SCAN_PERIOD == 0 && rotaryPos != null) {
+            DrilledWells bores = DrilledWells.of(s);
+            if (well.blowout()) bores.remove(rotaryPos.getX(), rotaryPos.getZ());
+            else bores.put(rotaryPos.getX(), rotaryPos.getZ(), new DrilledWells.Bore(Math.floor(well.holeDepthM()), well.prospect()));
+        }
         double dt = 0.05 * b.world().clock().kSlow();
         List<MudPumpBlockEntity> pumpBes = new ArrayList<>();
         for (BlockPos p : pumps) if (level.getBlockEntity(p) instanceof MudPumpBlockEntity m) pumpBes.add(m);

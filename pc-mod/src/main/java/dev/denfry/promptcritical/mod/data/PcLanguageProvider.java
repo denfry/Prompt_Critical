@@ -238,6 +238,16 @@ public final class PcLanguageProvider extends LanguageProvider {
         b("mud_tank", "Mud Tank", "Ёмкость бурового раствора");
         b("mud_mixing_hopper", "Mud Mixing Hopper", "Гидроворонка");
         i("barite_powder", "Barite Sack (50 kg)", "Мешок барита (50 кг)");
+        b("wellhead", "Wellhead", "Колонная головка");
+        b("christmas_tree", "Christmas Tree", "Фонтанная арматура");
+        b("pumpjack", "Pumpjack", "Станок-качалка");
+        b("three_phase_separator", "Three-Phase Separator", "Трёхфазный сепаратор");
+        b("flare_stack", "Flare Stack", "Факельный ствол");
+        b("flare_tip", "Flare Tip", "Факельный оголовок");
+        b("tube_furnace", "Crude Heater", "Трубчатая печь");
+        b("crude_column", "Atmospheric Column Bottom", "Куб атмосферной колонны");
+        b("column_tray_section", "Column Tray Section", "Тарельчатая секция колонны");
+        b("column_top", "Column Top", "Верх колонны");
         i("seismic_charge", "Seismic Charge", "Сейсмический заряд");
         i("seismic_section", "Seismic Section", "Сейсмический разрез");
         i("copper_wire", "Copper Wire", "Медная проволока");
@@ -340,6 +350,13 @@ public final class PcLanguageProvider extends LanguageProvider {
         i("welded_pipe", "Welded Pipe", "Сварная труба");
 
         FLUIDS.put("flue_gas", new String[] {"Flue Gas", "Дымовые газы"});
+        FLUIDS.put("crude_oil", new String[] {"Crude Oil", "Сырая нефть"});
+        FLUIDS.put("produced_water", new String[] {"Produced Water", "Пластовая вода"});
+        FLUIDS.put("associated_gas", new String[] {"Associated Gas", "Попутный нефтяной газ"});
+        FLUIDS.put("gasoline", new String[] {"Straight-Run Gasoline", "Прямогонный бензин"});
+        FLUIDS.put("kerosene", new String[] {"Kerosene", "Керосин"});
+        FLUIDS.put("diesel_fuel", new String[] {"Diesel Fuel", "Дизельное топливо"});
+        FLUIDS.put("fuel_oil", new String[] {"Fuel Oil (Mazut)", "Мазут"});
         FLUIDS.put("mine_methane", new String[] {"Mine Methane", "Шахтный метан"});
         FLUIDS.put("raw_water", new String[] {"Raw Water", "Сырая вода"});
         FLUIDS.put("mine_water", new String[] {"Mine Water", "Шахтная вода"});
@@ -552,6 +569,7 @@ public final class PcLanguageProvider extends LanguageProvider {
         });
         MISC.putAll(dev.denfry.promptcritical.mod.panel.PanelText.lang());
         MISC.putAll(dev.denfry.promptcritical.mod.drilling.DrillingText.lang());
+        MISC.putAll(dev.denfry.promptcritical.mod.production.ProductionText.lang());
     }
 
     @Override

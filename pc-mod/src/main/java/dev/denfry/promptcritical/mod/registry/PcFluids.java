@@ -47,6 +47,16 @@ public final class PcFluids {
     /** Питательная вода котла I1 после деаэратора: 104 °C, O₂ ≤ 15 мкг/кг (этап 11б M3). */
     public static final Entry BOILER_FEEDWATER = liquid("boiler_feedwater", 955, 300, 377);
 
+    // нефть и газ I2: продукция скважины и прямой перегонки; жидкости — 1 мБ = 1 л, газ — 1 мБ = 1 нм³
+    public static final Entry CRUDE_OIL = liquid("crude_oil", 850, 8000, 293);
+    public static final Entry PRODUCED_WATER = liquid("produced_water", 1030, 1000, 300);
+    public static final Entry ASSOCIATED_GAS = gas("associated_gas", 300, -1);
+    public static final Entry GASOLINE = liquid("gasoline", 735, 600, 293);
+    public static final Entry KEROSENE = liquid("kerosene", 790, 1500, 293);
+    public static final Entry DIESEL_FUEL = liquid("diesel_fuel", 840, 3500, 293);
+    /** Мазут — остаток атмосферной перегонки, горячий: хранят и качают подогретым. */
+    public static final Entry FUEL_OIL = liquid("fuel_oil", 950, 60000, 343);
+
     static {
         MINE_WATER.props.block(PcBlocks.MINE_WATER);
     }
