@@ -34,6 +34,15 @@ public final class GridSubsystem implements Subsystem, GridEventSink {
     /** Вехи для достижений и маршрута (11): включение на параллельную работу, действие РЗА, отключение АЧР. */
     public static final String SYNC_CLOSED = "promptcritical:sync_closed", RELAY_OPERATED = "promptcritical:relay_operated",
             LOAD_SHED = "promptcritical:load_shed";
+    /**
+     * Блэкстарт (11 §11.2.2 {@code black_start}, урок 11 «Блэкаут»): после обесточивания острова машина, стоявшая во
+     * время блэкаута, снова питает нагрузку его узлов. Тег {@code load_kw} — поднятая нагрузка острова.
+     */
+    public static final String BLACK_START = "promptcritical:black_start";
+    /** Машина ниже этой частоты вращения, о.е., за время блэкаута считается остановленной (пуск «с нуля»). */
+    static final double BLACK_START_STOPPED_PU = 0.1;
+    /** Поднятый остров несёт хотя бы столько нагрузки, Вт: не ток холостого хода, а принятые потребители. [BALANCE] */
+    static final double BLACK_START_MIN_LOAD_W = 10e3;
     /** Фаза SLOW-шага нагрева проводов и трансформаторов. */
     static final int SLOW_PHASE = 5;
 
@@ -58,6 +67,9 @@ public final class GridSubsystem implements Subsystem, GridEventSink {
     private double ambientC = 15, convectionWm2K = 15, solarWPerM;
     private FastContext ctx;
     private int rebuilds;
+    /** Узлы, обесточенные блэкаутом и ещё не поднятые; машины, стоявшие за это время (07, {@link #BLACK_START}). */
+    private final java.util.Set<Long> blackoutNodes = new java.util.HashSet<>();
+    private final java.util.Set<SimId> stoppedInBlackout = new java.util.HashSet<>();
 
     public GridSubsystem(GridConfig cfg) {
         this.cfg = Objects.requireNonNull(cfg, "cfg");
@@ -391,6 +403,7 @@ public final class GridSubsystem implements Subsystem, GridEventSink {
         if (grid.busCount() > 0) {
             grid.stepFast(dt, inputs, out);
             grid.drainEvents(this);
+            if (!blackoutNodes.isEmpty()) blackStart(tick);
             if (ctx.clock().due(TimeDomain.SLOW, SLOW_PHASE)) grid.stepSlow(ctx.clock().slowDtPhys());
             for (GridUnit u : units.values()) if (u instanceof SwitchUnit s) s.meter(grid, dt);
         }
@@ -527,6 +540,41 @@ public final class GridSubsystem implements Subsystem, GridEventSink {
                 Math.toDegrees(c.scope().angleRad()), c.scope().slipHz(), c.torquePu(), c.result()));
         ctx.events().milestone(ctx.tick(), g.id, SYNC_CLOSED, c.result().name().toLowerCase(java.util.Locale.ROOT),
                 c.torquePu());
+    }
+
+    @Override
+    public void islandDeenergized(int island) {
+        for (Map.Entry<Long, BusId> e : buses.entrySet()) if (grid.islandOf(e.getValue()) == island) blackoutNodes.add(e.getKey());
+    }
+
+    /** Блэкстарт: остановленная за блэкаут машина в сети снова питает нагрузку острова с обесточенными узлами. */
+    private void blackStart(long tick) {
+        for (GridUnit u : units.values()) {
+            if (!(u instanceof GeneratorUnit g)) continue;
+            if (g.speedPu() < BLACK_START_STOPPED_PU) stoppedInBlackout.add(g.id);
+            BusId bus = buses.get(g.node(0));
+            if (g.machine == null || bus == null || !stoppedInBlackout.contains(g.id) || !grid.machineOnline(g.machine)) continue;
+            int isl = grid.islandOf(bus);
+            IslandView v = grid.island(isl);
+            if (!v.energized() || v.loadW() < BLACK_START_MIN_LOAD_W) continue;
+            boolean restores = false;
+            for (long n : blackoutNodes) {
+                BusId b = buses.get(n);
+                if (b != null && grid.islandOf(b) == isl) {
+                    restores = true;
+                    break;
+                }
+            }
+            if (!restores) continue;
+            blackoutNodes.clear();
+            stoppedInBlackout.clear();
+            if (ctx != null) {
+                ctx.events().journal(tick, g.id, Severity.INFO, String.format(java.util.Locale.ROOT,
+                        "black start: island restored, %.0f kW", v.loadW() / 1e3));
+                ctx.events().milestone(tick, g.id, BLACK_START, "load_kw", v.loadW() / 1e3);
+            }
+            return;
+        }
     }
 
     @Override

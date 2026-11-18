@@ -27,7 +27,12 @@ class GraphitePileTest {
 
     private static final class Recorder implements PileEvents {
         final List<PileTrip> trips = new ArrayList<>();
-        int critical, clad, fire;
+        int critical, clad, fire, approachPoints = -1;
+
+        @Override
+        public void approachPoints(int points) {
+            approachPoints = points;
+        }
 
         @Override
         public void tripped(PileTrip reason, double powerW, double periodS) {
@@ -91,6 +96,33 @@ class GraphitePileTest {
         GraphitePile p = Piles.pile(Piles.cube(3, 1, 8, false, false, true));
         Piles.run(p, 120, random);
         assertThat(p.countRate(0)).isCloseTo(p.expectedCountRate(0), within(p.expectedCountRate(0) * 0.25));
+    }
+
+    /**
+     * Метод 1/M (01 §1.14 пример 3, достижение {@code one_over_m}): счёт установился при трёх разных загрузках
+     * подкритичного котла — при первой критичности котёл сообщает три точки; загрузка без паузы на счёт не считается.
+     */
+    @Test
+    void approachCountsDistinctLoadingsBeforeCriticality() {
+        Recorder ev = new Recorder();
+        GraphitePile p = Piles.pile(Piles.cube(4, 1, 2, true, true, true));
+        Piles.run(p, GraphitePile.APPROACH_COUNT_S + 5, random, ev);
+        p.form(Piles.cube(4, 1, 4, true, true, true));
+        Piles.run(p, 3, random, ev); // перегрузка без замера
+        p.form(Piles.cube(4, 1, 5, true, true, true));
+        Piles.run(p, GraphitePile.APPROACH_COUNT_S + 5, random, ev);
+        p.form(Piles.cube(4, 1, 8, true, true, true));
+        Piles.run(p, GraphitePile.APPROACH_COUNT_S + 5, random, ev);
+        assertThat(p.approachPoints()).isEqualTo(3);
+        p.windZip();
+        Piles.run(p, 80, random, ev);
+        p.driveControlRods(1);
+        int guard = 0;
+        while (p.reactivity() < 0.0015 && guard++ < 4000) Piles.run(p, 0.5, random, ev);
+        p.driveControlRods(0);
+        Piles.run(p, 60, random, ev);
+        assertThat(ev.critical).isEqualTo(1);
+        assertThat(ev.approachPoints).isEqualTo(3);
     }
 
     /**

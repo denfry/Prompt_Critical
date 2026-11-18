@@ -1,0 +1,38 @@
+{
+  "parent": "promptcritical:first_criticality",
+  "criteria": {
+    "approach": {
+      "conditions": {
+        "event": "promptcritical:pile_state",
+        "predicate": {
+          "one_over_m": {
+            "min": 3.0
+          }
+        },
+        "station_member": true
+      },
+      "trigger": "promptcritical:sim_event"
+    }
+  },
+  "display": {
+    "description": {
+      "translate": "advancements.promptcritical.one_over_m.description"
+    },
+    "icon": {
+      "count": 1,
+      "id": "promptcritical:neutron_detector"
+    },
+    "title": {
+      "translate": "advancements.promptcritical.one_over_m.title"
+    }
+  },
+  "requirements": [
+    [
+      "approach"
+    ]
+  ],
+  "rewards": {
+    "experience": 50
+  },
+  "sends_telemetry_event": true
+}

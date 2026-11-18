@@ -1,0 +1,34 @@
+{
+  "parent": "promptcritical:synchronized",
+  "criteria": {
+    "restored": {
+      "conditions": {
+        "event": "promptcritical:black_start",
+        "station_member": true
+      },
+      "trigger": "promptcritical:sim_event"
+    }
+  },
+  "display": {
+    "description": {
+      "translate": "advancements.promptcritical.black_start.description"
+    },
+    "frame": "challenge",
+    "icon": {
+      "count": 1,
+      "id": "promptcritical:diesel_generator"
+    },
+    "title": {
+      "translate": "advancements.promptcritical.black_start.title"
+    }
+  },
+  "requirements": [
+    [
+      "restored"
+    ]
+  ],
+  "rewards": {
+    "experience": 100
+  },
+  "sends_telemetry_event": true
+}

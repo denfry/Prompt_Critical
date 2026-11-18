@@ -30,6 +30,7 @@ class DieselGeneratorTest {
     private final WorkerPool pool = WorkerPool.direct();
     private final List<SimulationWorld> worlds = new ArrayList<>();
     private final List<GeneratorUnit> shafts = new ArrayList<>();
+    private final List<dev.denfry.promptcritical.sim.core.SimEvent.Milestone> milestones = new ArrayList<>();
     private int x;
 
     @AfterEach
@@ -95,6 +96,7 @@ class DieselGeneratorTest {
         for (GeneratorUnit g : shafts) if (g.owner == grid(w)) g.shaft.sample(64, true, w.clock().tick());
         w.tick(ExternalInputs.NONE);
         w.drainEvents(e -> {
+            if (e instanceof dev.denfry.promptcritical.sim.core.SimEvent.Milestone m) milestones.add(m);
         });
     }
 
@@ -131,6 +133,31 @@ class DieselGeneratorTest {
         assertThat(dg.terminalVoltageV()).isCloseTo(6300, within(6300 * 0.1));
         assertThat(dg.electricalPowerW()).isCloseTo(c.powerW(), within(10e3));
         assertThat(dg.diesel().fuelKgS()).isPositive();
+    }
+
+    /**
+     * Блэкстарт (11 §11.2.2 {@code black_start}): шина обесточена, стоявший ДГ сам поднимает её с нагрузкой — веха с
+     * поднятой нагрузкой; пока внешнее питание есть, вехи нет.
+     */
+    @Test
+    void dieselRestoringADeadBusIsABlackStart() {
+        SimulationWorld w = world();
+        offsite(w, BUS_A);
+        SwitchUnit incomer = cell(w, BUS_A, BUS_B, true);
+        ConsumerUnit c = consumer(w, BUS_B, 100);
+        GeneratorUnit dg = diesel(w, BUS_B);
+        run(w, 25);
+        dg.setAutoStart(true);
+        run(w, 5);
+        assertThat(milestones).noneMatch(m -> m.event().equals(GridSubsystem.BLACK_START));
+        incomer.operate(false);
+        until(w, 30, () -> dg.breakerClosed() && c.energized());
+        run(w, 2);
+        assertThat(milestones).filteredOn(m -> m.event().equals(GridSubsystem.BLACK_START)).singleElement()
+                .satisfies(m -> {
+                    assertThat(m.source()).isEqualTo(dg.id);
+                    assertThat(m.value()).isBetween(GridSubsystem.BLACK_START_MIN_LOAD_W / 1e3, 115.0);
+                });
     }
 
     @Test

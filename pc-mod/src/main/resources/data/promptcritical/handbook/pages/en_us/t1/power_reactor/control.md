@@ -31,3 +31,9 @@ The reactor's front carries the control cabinet terminals:
 - **+/−** — circuit monitoring.
 
 This way a safety system can protect the reactor from its own sensors.
+
+## Reactivity margin and the iodine pit
+
+The **operational reactivity margin** (ORM) is the worth of the shim and auto rods still in the core, counted in equivalent rods: all of them in is 180, all out is 0. Hover over the RR bar to read it. Below **15 rods** the amber **ORM** lamp lights: the reactor no longer has enough rods in hand to stop a rise of reactivity quickly.
+
+After a drop in power xenon keeps growing for hours from the decay of iodine, the **iodine pit**. A reactor that fell to a few percent cannot be brought back at once: the operator withdraws the rods, the margin shrinks, and if it goes below the minimum the rods are no longer a defence. The safe course is to wait until xenon decays (20–30 real minutes) or to rise with the margin kept above 15 rods. A chat warning says when the margin was broken.

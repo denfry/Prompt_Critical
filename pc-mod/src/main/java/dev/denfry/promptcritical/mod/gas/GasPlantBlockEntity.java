@@ -152,6 +152,7 @@ public final class GasPlantBlockEntity extends DeviceBlockEntity implements Foun
         if (q > 0) freeWaterPerSm3 = r.freeWaterKgS() / q;
         double flowing = r.blocked() ? 0 : q;
         flowSm3s = flowing;
+        if (flowing > 0) dev.denfry.promptcritical.mod.content.IndustrialComplex.running(s, worldPosition, dev.denfry.promptcritical.mod.content.IndustrialComplex.Part.GAS_PLANT);
         gasIn.take(flowing * dt);
         methanol.take(dose * dt / METHANOL_KGM3 * 1000);
         double fuel = r.regenerationW() * dt / (HEATER_EFFICIENCY * FUEL_J_PER_SM3);

@@ -71,6 +71,8 @@ public final class PowerReactorBlockEntity extends DeviceBlockEntity implements 
     public static final double I131_PER_FAILED_BQ = 2e12;
 
     private final ChannelReactor reactor = new ChannelReactor();
+    /** Непрерывная работа без автоматической АЗ (11 §11.2.2 {@code hundred_days}). */
+    private final dev.denfry.promptcritical.sim.reactor.ContinuousRun run = new dev.denfry.promptcritical.sim.reactor.ContinuousRun();
     private final MechanismWiring wiring = new MechanismWiring();
     private final ItemStackHandler fuel = new ItemStackHandler(2) {
         @Override
@@ -175,6 +177,9 @@ public final class PowerReactorBlockEntity extends DeviceBlockEntity implements 
         reactor.setCoolantLoss(acc.active() ? 1 - Math.min(1, acc.levelFraction()) : 0);
         reactor.setIrradiationAbsorber(irradiationAbsorberCm2(level.getGameTime()));
         double q = reactor.step(gameDt, secondary);
+        if (run.update(gameDt, reactor.power(), reactor.trip() != ChannelReactor.Trip.NONE && reactor.trip() != ChannelReactor.Trip.MANUAL))
+            dev.denfry.promptcritical.mod.content.SimAchievements.nearby(sl, worldPosition, dev.denfry.promptcritical.mod.content.SimAchievements.HUNDRED_DAYS, "days", run.days());
+        if (reactor.power() >= dev.denfry.promptcritical.mod.content.IndustrialComplex.REACTOR_POWER) dev.denfry.promptcritical.mod.content.IndustrialComplex.running(sl, worldPosition, dev.denfry.promptcritical.mod.content.IndustrialComplex.Part.REACTOR);
         for (SteamGeneratorBlockEntity sg : sgs) sg.deliver(q / sgs.size());
         if (ticks % 100 == 1) accident.scan(sl, worldPosition);
         // слой аварии: тепло зоны, сток — парогенераторы; разогрев оголённой зоны разрушает самые нагруженные каналы
@@ -206,6 +211,12 @@ public final class PowerReactorBlockEntity extends DeviceBlockEntity implements 
                 p.displayClientMessage(NppText.msg("scram", tripName(t)).withStyle(ChatFormatting.RED), false);
         }
         lastTrip = t;
+        if (reactor.xenonPitEscaped())
+            dev.denfry.promptcritical.mod.content.SimAchievements.nearby(sl, worldPosition,
+                    dev.denfry.promptcritical.mod.content.SimAchievements.XENON_PIT, "orm_min", reactor.xenonPit().minMargin());
+        if (reactor.xenonPit().spoiled())
+            for (ServerPlayer p : sl.getPlayers(p -> p.distanceToSqr(worldPosition.getCenter()) < 48 * 48))
+                p.displayClientMessage(NppText.msg("orm_violated", Math.round(ChannelReactor.ORM_MIN_RODS)).withStyle(ChatFormatting.GOLD), false);
         if (reactor.newlyFailed() > 0) {
             sl.sendParticles(ParticleTypes.CLOUD, worldPosition.getX() + 0.5, worldPosition.getY() + 3, worldPosition.getZ() + 0.5, 30, 0.8, 0.5, 0.8, 0.05);
             sl.playSound(null, worldPosition, SoundEvents.GENERIC_EXPLODE.value(), SoundSource.BLOCKS, 0.6f, 1.6f);
@@ -335,7 +346,9 @@ public final class PowerReactorBlockEntity extends DeviceBlockEntity implements 
                 | (r.hottestChannelQuality() > ChannelReactor.CRITICAL_QUALITY ? 1 << NppPanels.F_DRYOUT : 0)
                 | (generators.isEmpty() || r.steamGeneratorW() <= 0 && r.fissionW() > 1e6 ? 1 << NppPanels.F_NO_SG : 0)
                 | (r.failedChannels() > 0 ? 1 << NppPanels.F_FAILED : 0)
-                | (r.rrDrive() < 0 ? 1 << NppPanels.F_RR_UP : 0) | (r.rrDrive() > 0 ? 1 << NppPanels.F_RR_DOWN : 0);
+                | (r.rrDrive() < 0 ? 1 << NppPanels.F_RR_UP : 0) | (r.rrDrive() > 0 ? 1 << NppPanels.F_RR_DOWN : 0)
+                | (r.marginLow() ? 1 << NppPanels.F_ORM_LOW : 0);
+        v[NppPanels.ORM] = (int) Math.round(r.operationalMargin() * 10);
         accident.readPanel(v, NppPanels.ACCIDENT);
     }
 
@@ -431,6 +444,7 @@ public final class PowerReactorBlockEntity extends DeviceBlockEntity implements 
     @Override
     protected void saveAdditional(CompoundTag tag, HolderLookup.Provider registries) {
         super.saveAdditional(tag, registries);
+        tag.putDouble("run_s", run.seconds());
         tag.put("fuel", fuel.serializeNBT(registries));
         MutableStateTree tree = new MutableStateTree();
         reactor.save(new TreeStateWriter(tree));
@@ -442,6 +456,7 @@ public final class PowerReactorBlockEntity extends DeviceBlockEntity implements 
     @Override
     protected void loadAdditional(CompoundTag tag, HolderLookup.Provider registries) {
         super.loadAdditional(tag, registries);
+        run.restore(tag.getDouble("run_s"));
         if (tag.contains("fuel")) fuel.deserializeNBT(registries, tag.getCompound("fuel"));
         if (tag.contains("reactor")) reactor.load(new TreeStateReader(NbtStateTrees.fromNbt(tag.getCompound("reactor"))));
         wiring.load(tag);

@@ -74,6 +74,13 @@ public final class ChannelReactor {
     public static final double WORTH_AZ = 0.04, WORTH_RR = 0.12, WORTH_AR = 0.006;
     /** Скорости стержней, доля хода в секунду: АЗ падает за 2 с, РР — 60 с, АР — 20 с. */
     public static final double SPEED_AZ = 0.5, SPEED_RR = 1.0 / 60, SPEED_AR = 1.0 / 20;
+    /**
+     * ОЗР (04c §4c.9.1, тег {@code core.reactivity.operational_margin}) — ценность ещё погружённых рабочих стержней РР и
+     * АР в эквивалентных стержнях: $\sum_b w_b(1-z_b)\rho_b/\rho_{ref}$. Эталонный стержень приведён к шкале РБМК, где
+     * минимум 15 эквивалентных стержней (04c §4c.9.2): [BALANCE] полная ценность РР + АР = 180 эквивалентных стержней,
+     * порядок числа рабочих стержней РБМК-1000, — так минимум остаётся долей ≈ 8 % рабочей ценности, как в оригинале.
+     */
+    public static final double ORM_FULL_RODS = 180, ORM_MIN_RODS = 15;
     public static final double TRIP_PERIOD_S = 10, TRIP_POWER = 1.2, TRIP_FLOW = 0.7, TRIP_OUTLET_K = 573.15;
     /** Источник нейтронов (Po–Be), нейтр./с. */
     public static final double SOURCE_N_S = 1e7;
@@ -112,6 +119,8 @@ public final class ChannelReactor {
     private DelayedGroups groups = dev.denfry.promptcritical.sim.neutronics.DelayedNeutronData.keepin(0);
     private double staticRho, evalFuelK, evalGraphiteK, alphaDoppler, alphaGraphite, betaEff, generation, keff, sigmaA, sigmaF;
     private double rodWorthFactor = 1;
+    private final XenonPitWatch xenonPit = new XenonPitWatch();
+    private boolean xenonPitEscaped;
     private double totalRho, fissionW, slowTimer = 1e9;
     /** Экстраполированный радиус зоны, м, и средний J₀ по загруженным каналам — для потока в облучательном канале. */
     private double extrapolatedR = 1, meanJ0 = 1;
@@ -314,6 +323,7 @@ public final class ChannelReactor {
         thermal(secondaryK);
         period.sample(Math.max(n, PointKinetics.MIN_POWER));
         protect();
+        xenonPitEscaped = loaded > 0 && xenonPit.update(power(), operationalMargin(), xenonReactivity(), failedChannels());
         return qSgW;
     }
 
@@ -400,6 +410,30 @@ public final class ChannelReactor {
     /** Реактивность стержней (отрицательная), Δk/k; у МОКС-зоны — с {@link #rodWorthFactor()}. */
     public double rodReactivity() {
         return -(WORTH_AZ * sCurve(az) + WORTH_RR * sCurve(rr) + WORTH_AR * sCurve(ar)) * rodWorthFactor;
+    }
+
+    /**
+     * Оперативный запас реактивности, эквивалентных стержней (04c §4c.9.1): погружённая ценность РР и АР к эталонному
+     * стержню; у МОКС-зоны стержни слабее — и запас меньше.
+     */
+    public double operationalMargin() {
+        double rhoRef = (WORTH_RR + WORTH_AR) / ORM_FULL_RODS;
+        return (WORTH_RR * sCurve(rr) + WORTH_AR * sCurve(ar)) * rodWorthFactor / rhoRef;
+    }
+
+    /** ОЗР ниже минимума — аннунциатор «ОЗР низкий» (04c §4c.9.2). */
+    public boolean marginLow() {
+        return loaded > 0 && operationalMargin() < ORM_MIN_RODS;
+    }
+
+    /** Наблюдатель йодной ямы (достижение {@code xenon_pit}). */
+    public XenonPitWatch xenonPit() {
+        return xenonPit;
+    }
+
+    /** Реактор только что вышел из йодной ямы без нарушения ОЗР (сбрасывается следующим шагом). */
+    public boolean xenonPitEscaped() {
+        return xenonPitEscaped;
     }
 
     /** Ценность стержней этой зоны к урановой зоне того же эквивалентного обогащения (1 — без плутония). */
@@ -776,6 +810,9 @@ public final class ChannelReactor {
         out.beginObject("decay");
         decay.save(out);
         out.endObject();
+        out.beginObject("xe_pit");
+        xenonPit.save(out);
+        out.endObject();
     }
 
     public void load(StateReader in) {
@@ -818,6 +855,11 @@ public final class ChannelReactor {
         if (in.has("decay")) {
             in.beginObject("decay");
             decay.load(in);
+            in.endObject();
+        }
+        if (in.has("xe_pit")) {
+            in.beginObject("xe_pit");
+            xenonPit.load(in);
             in.endObject();
         }
         loaded = 0;

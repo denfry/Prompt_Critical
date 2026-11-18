@@ -133,6 +133,8 @@ public final class BlastFurnaceControllerBlockEntity extends IronworksDeviceBloc
             if (level.getBlockEntity(p) instanceof HotBlastStoveBlockEntity s && s.unit() != null) su.add(s.unit());
         }
         u.couple(cold, su, autoCycle);
+        if (u.blastNm3S() > 0 && level instanceof net.minecraft.server.level.ServerLevel sl)
+            dev.denfry.promptcritical.mod.content.IndustrialComplex.running(sl, worldPosition, dev.denfry.promptcritical.mod.content.IndustrialComplex.Part.BLAST_FURNACE);
         topGas(u);
         tap(f);
         for (IronmakingLog.Entry e; (e = u.log().poll()) != null; ) event(b, u, e);

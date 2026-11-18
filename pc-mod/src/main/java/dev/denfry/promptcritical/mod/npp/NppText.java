@@ -13,6 +13,8 @@ public final class NppText {
     static {
         put("scram", "REACTOR SCRAM: %s", "АВАРИЙНАЯ ЗАЩИТА РЕАКТОРА: %s");
         put("reset", "Scram rods cocked", "Стержни АЗ взведены");
+        put("orm_violated", "Operational reactivity margin below %s equivalent rods: the rods are too far out, insert the shim rods",
+                "Оперативный запас реактивности ниже %s эквивалентных стержней: стержни выведены слишком далеко, погрузите РР");
         put("reset_refused", "Cannot cock the scram rods: the cause is still there", "Взвести АЗ нельзя: причина срабатывания не устранена");
         put("loaded", "Fuel loaded into channel %s", "Топливо загружено в канал %s");
         put("unloaded", "Channel %s unloaded: %s MWd/kg", "Канал %s выгружен: %s МВт·сут/кг");

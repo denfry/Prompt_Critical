@@ -36,6 +36,8 @@ Bring the pile up the way Fermi did. The desk does not show k: you find critical
 4. Plot **1/count** against rod position. It falls in a straight line towards zero. Where the line would cross zero, the pile is critical. Never take a step bigger than the distance left to that point.
 5. Past critical the count no longer settles: it climbs with a steady **period**. A 60 s period is gentle. Stop the drive and the power keeps rising on that period until you drive the rods back in.
 
+A count taken while the pile sits still at one loading (source in, counter in place, rods not moving, about 30 s) is one point of the **1/M** curve. Take points at three or more loadings before the pile first goes critical, and the pile remembers it.
+
 ## Protection
 
 The pile's protection belongs to the pile, not to your circuits. It trips on a **period shorter than 5 s** or **power above 200 kW**, and on the desk or [scram button](item:promptcritical:scram_button). On a trip the zip rods fall in a second or two and the control rods drive in. A redstone pulse on a scram button trips it too, so your relay logic can scram the pile but can never hold it out of a trip.

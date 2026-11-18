@@ -124,6 +124,8 @@ public final class PwrReactorBlockEntity extends DeviceBlockEntity implements Fo
     /** Cs-137 to I-131 activity ratio in an equilibrium LWR core (≈ 0.1, NUREG-1465 inventories). */
     static final double CS137_PER_I131 = 0.1;
     private int ticks;
+    /** Непрерывная работа без автоматической АЗ (11 §11.2.2 {@code hundred_days}). */
+    private final dev.denfry.promptcritical.sim.reactor.ContinuousRun run = new dev.denfry.promptcritical.sim.reactor.ContinuousRun();
 
     public PwrReactorBlockEntity(BlockPos pos, BlockState state) {
         super(NppBlockEntities.PWR_REACTOR.get(), pos, state);
@@ -204,6 +206,9 @@ public final class PwrReactorBlockEntity extends DeviceBlockEntity implements Fo
         // без КД контур не держит давление: защита держит реактор заглушенным; авария — тоже
         reactor.setExternalTrip(ioScram || kd == null || accident.demandsTrip());
         reactor.step(gameDt);
+        if (run.update(gameDt, reactor.power(), reactor.tripped() && reactor.protection().firstOut() != dev.denfry.promptcritical.sim.protection.TripReason.MANUAL))
+            dev.denfry.promptcritical.mod.content.SimAchievements.nearby(sl, worldPosition, dev.denfry.promptcritical.mod.content.SimAchievements.HUNDRED_DAYS, "days", run.days());
+        if (reactor.power() >= dev.denfry.promptcritical.mod.content.IndustrialComplex.REACTOR_POWER) dev.denfry.promptcritical.mod.content.IndustrialComplex.running(sl, worldPosition, dev.denfry.promptcritical.mod.content.IndustrialComplex.Part.REACTOR);
         double q = reactor.steamGeneratorW();
         for (SteamGeneratorBlockEntity sg : sgs) sg.deliver(q / sgs.size());
         if (kd != null) kd.report(reactor.heaterW() > 1e3, reactor.pressurizer().reliefOpen() || reactor.pressurizer().safetyOpen());
@@ -538,6 +543,7 @@ public final class PwrReactorBlockEntity extends DeviceBlockEntity implements Fo
     @Override
     protected void saveAdditional(CompoundTag tag, HolderLookup.Provider registries) {
         super.saveAdditional(tag, registries);
+        tag.putDouble("run_s", run.seconds());
         tag.put("fuel", fuel.serializeNBT(registries));
         MutableStateTree tree = new MutableStateTree();
         reactor.save(new TreeStateWriter(tree));
@@ -550,6 +556,7 @@ public final class PwrReactorBlockEntity extends DeviceBlockEntity implements Fo
     @Override
     protected void loadAdditional(CompoundTag tag, HolderLookup.Provider registries) {
         super.loadAdditional(tag, registries);
+        run.restore(tag.getDouble("run_s"));
         if (tag.contains("fuel")) fuel.deserializeNBT(registries, tag.getCompound("fuel"));
         if (tag.contains("reactor")) reactor.load(new TreeStateReader(NbtStateTrees.fromNbt(tag.getCompound("reactor"))));
         concentrate = tag.getBoolean("concentrate");

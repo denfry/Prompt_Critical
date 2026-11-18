@@ -104,6 +104,8 @@ public final class CanduReactorBlockEntity extends DeviceBlockEntity implements 
         return accident;
     }
     private int ticks;
+    /** Непрерывная работа без автоматической АЗ (11 §11.2.2 {@code hundred_days}). */
+    private final dev.denfry.promptcritical.sim.reactor.ContinuousRun run = new dev.denfry.promptcritical.sim.reactor.ContinuousRun();
     /** Магазин перегрузочной машины: свежие пучки (предмет — один пучок), их уран на пучок и доли U-235, U-234. */
     private int magazine;
     private double magKg, magU235, magU234;
@@ -225,6 +227,9 @@ public final class CanduReactorBlockEntity extends DeviceBlockEntity implements 
         reactor.setExternalTrip(a != null && a.loadEnergized(1) || accident.demandsTrip());
         double gameDt = CanduReactor.DT * b.world().clock().kSlow();
         reactor.step(gameDt);
+        if (run.update(gameDt, reactor.power(), reactor.trip() != CanduReactor.Trip.NONE && reactor.trip() != CanduReactor.Trip.MANUAL))
+            dev.denfry.promptcritical.mod.content.SimAchievements.nearby(sl, worldPosition, dev.denfry.promptcritical.mod.content.SimAchievements.HUNDRED_DAYS, "days", run.days());
+        if (reactor.power() >= dev.denfry.promptcritical.mod.content.IndustrialComplex.REACTOR_POWER) dev.denfry.promptcritical.mod.content.IndustrialComplex.running(sl, worldPosition, dev.denfry.promptcritical.mod.content.IndustrialComplex.Part.REACTOR);
         List<SteamGeneratorBlockEntity> sgs = new ArrayList<>();
         for (BlockPos p : generators)
             if (level.getBlockEntity(p) instanceof SteamGeneratorBlockEntity sg && !Double.isNaN(sg.secondaryK())) sgs.add(sg);
@@ -512,6 +517,7 @@ public final class CanduReactorBlockEntity extends DeviceBlockEntity implements 
     @Override
     protected void saveAdditional(CompoundTag tag, HolderLookup.Provider registries) {
         super.saveAdditional(tag, registries);
+        tag.putDouble("run_s", run.seconds());
         tag.put("fuel", fuel.serializeNBT(registries));
         MutableStateTree tree = new MutableStateTree();
         reactor.save(new TreeStateWriter(tree));
@@ -532,6 +538,7 @@ public final class CanduReactorBlockEntity extends DeviceBlockEntity implements 
     @Override
     protected void loadAdditional(CompoundTag tag, HolderLookup.Provider registries) {
         super.loadAdditional(tag, registries);
+        run.restore(tag.getDouble("run_s"));
         if (tag.contains("fuel")) fuel.deserializeNBT(registries, tag.getCompound("fuel"));
         if (tag.contains("reactor")) reactor.load(new TreeStateReader(NbtStateTrees.fromNbt(tag.getCompound("reactor"))));
         magazine = tag.getInt("magazine");

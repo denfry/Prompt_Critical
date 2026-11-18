@@ -88,6 +88,8 @@ public final class SfrReactorBlockEntity extends DeviceBlockEntity implements Fo
     private boolean discWas;
     private double lastRods = Double.NaN;
     private int ticks;
+    /** Непрерывная работа без автоматической АЗ (11 §11.2.2 {@code hundred_days}). */
+    private final dev.denfry.promptcritical.sim.reactor.ContinuousRun run = new dev.denfry.promptcritical.sim.reactor.ContinuousRun();
     private static long requestSeq;
 
     public SfrReactorBlockEntity(BlockPos pos, BlockState state) {
@@ -139,6 +141,9 @@ public final class SfrReactorBlockEntity extends DeviceBlockEntity implements Fo
         r.setPrimaryLeak(r.outletK() - 273.15 > CREEP_OUTLET_C ? PRIMARY_LEAK_KG_S : 0);
         r.setSteamGeneratorLeak(r.intermediateHotK() - 273.15 > SG_STRESS_C ? SG_LEAK_KG_S : 0);
         r.step();
+        if (run.update(SodiumFastReactor.DT * b.world().clock().kSlow(), r.power(), r.trip() != SodiumFastReactor.Trip.NONE && r.trip() != SodiumFastReactor.Trip.MANUAL))
+            dev.denfry.promptcritical.mod.content.SimAchievements.nearby(sl, worldPosition, dev.denfry.promptcritical.mod.content.SimAchievements.HUNDRED_DAYS, "days", run.days());
+        if (r.power() >= dev.denfry.promptcritical.mod.content.IndustrialComplex.REACTOR_POWER) dev.denfry.promptcritical.mod.content.IndustrialComplex.running(sl, worldPosition, dev.denfry.promptcritical.mod.content.IndustrialComplex.Part.REACTOR);
         accidentEffects(sl, r);
         for (SteamGeneratorBlockEntity sg : out) sg.deliver(r.steamGeneratorW() / out.size());
         if (a != null) {
@@ -414,6 +419,7 @@ public final class SfrReactorBlockEntity extends DeviceBlockEntity implements Fo
     @Override
     protected void saveAdditional(CompoundTag tag, HolderLookup.Provider registries) {
         super.saveAdditional(tag, registries);
+        tag.putDouble("run_s", run.seconds());
         tag.putBoolean("blackout_drill", blackoutDrill);
         tag.put("fuel", fuel.serializeNBT(registries));
         if (reactor != null) {
@@ -429,6 +435,7 @@ public final class SfrReactorBlockEntity extends DeviceBlockEntity implements Fo
     @Override
     protected void loadAdditional(CompoundTag tag, HolderLookup.Provider registries) {
         super.loadAdditional(tag, registries);
+        run.restore(tag.getDouble("run_s"));
         blackoutDrill = tag.getBoolean("blackout_drill");
         if (tag.contains("fuel")) fuel.deserializeNBT(registries, tag.getCompound("fuel"));
         if (tag.contains("reactor") && tag.getDouble("hm") > 0 && tag.getDouble("pu0") > 0 && tag.getDouble("pu0") < 1) {

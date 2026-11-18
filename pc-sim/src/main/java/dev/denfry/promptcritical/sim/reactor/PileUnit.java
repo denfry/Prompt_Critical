@@ -95,6 +95,11 @@ public final class PileUnit implements DeviceSubsystem.Unit {
         }
 
         @Override
+        public void approachPoints(int points) {
+            ctx.events().milestone(ctx.tick(), self, ReactorSubsystem.PILE_STATE, "one_over_m", points);
+        }
+
+        @Override
         public void cladFailed(double fuelTempK) {
             ctx.events().journal(ctx.tick(), self, Severity.CRITICAL, String.format(Locale.ROOT,
                     "pile slug cladding failed at %.0f K", fuelTempK));

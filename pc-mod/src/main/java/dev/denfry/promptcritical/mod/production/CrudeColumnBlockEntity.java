@@ -139,6 +139,8 @@ public final class CrudeColumnBlockEntity extends DeviceBlockEntity implements F
         double kg = f.fire(maxKg, r.dutyJPerKg(), dt);
         for (Product p : Product.values()) tanks[p.ordinal()].add(kg * r.yield(p) / p.densityKgM3 * 1000);
         feedKgS = kg / dt;
+        if (feedKgS > 0 && level instanceof net.minecraft.server.level.ServerLevel sl)
+            dev.denfry.promptcritical.mod.content.IndustrialComplex.running(sl, worldPosition, dev.denfry.promptcritical.mod.content.IndustrialComplex.Part.REFINERY);
         fuelNm3s = f.fuelNm3s();
         if (ticks % 100 == 0) setChanged();
     }

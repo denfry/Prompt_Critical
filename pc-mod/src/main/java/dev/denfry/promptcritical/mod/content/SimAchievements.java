@@ -34,6 +34,12 @@ public final class SimAchievements {
             HISTORIAN_DAY = "promptcritical:historian_day", TELEMETRY = "promptcritical:telemetry",
             LOCKOUT = "promptcritical:lockout", RADIOGRAPHY_DEFECT = "promptcritical:radiography_defect",
             DOSIMETER_DAY = "promptcritical:dosimeter_day", SCRAM_CLEAN = "promptcritical:scram_clean";
+    /**
+     * События мастерства эксплуатации 11 §11.2.2: выход из йодной ямы без нарушения ОЗР (тег {@code orm_min}), 1/M перед
+     * критичностью (тег {@code points}), блэкстарт, следование графику, сутки без АЗ, промышленный комплекс.
+     */
+    public static final String XENON_PIT = "promptcritical:xenon_pit", HUNDRED_DAYS = "promptcritical:hundred_days",
+            INDUSTRIAL_COMPLEX = "promptcritical:industrial_complex";
     /** Источники, уже объявившие событие: повторно не шлют (сбрасывается с выгрузкой блока). */
     private static final java.util.Map<Object, java.util.Set<String>> ONCE = new java.util.WeakHashMap<>();
 

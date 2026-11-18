@@ -66,6 +66,35 @@ public final class PowerReactorGameTests {
                 .thenSucceed();
     }
 
+    /**
+     * ОЗР на пульте (04c §4c.9.2): все рабочие стержни внизу — 180 эквивалентных стержней, лампа не горит; РР вверх до
+     * конца — запас ниже 15, горит лампа «ОЗР».
+     */
+    @GameTest(template = LARGE, timeoutTicks = 1600)
+    public static void withdrawingTheShimRodsLightsTheMarginLamp(GameTestHelper h) {
+        place(h, REACTOR, PcBlocks.POWER_REACTOR.get());
+        int[] v = new int[NppPanels.CHANNELS];
+        h.startSequence()
+                .thenIdle(5)
+                .thenExecute(() -> ((PowerReactorBlockEntity) h.getBlockEntity(REACTOR)).fuelSlots().setStackInSlot(NppPanels.SLOT_FRESH, am1(1)))
+                .thenWaitUntil(() -> h.assertTrue(((PowerReactorBlockEntity) h.getBlockEntity(REACTOR)).reactor().loadedChannels() == 1, "loaded"))
+                .thenExecute(() -> {
+                    PowerReactorBlockEntity r = h.getBlockEntity(REACTOR);
+                    r.reactor().setRods(1, 1, 1);
+                    r.readPanel(v);
+                    h.assertTrue(v[NppPanels.ORM] == 1800, "all rods in: " + v[NppPanels.ORM]);
+                    h.assertFalse((v[NppPanels.FLAGS] & 1 << NppPanels.F_ORM_LOW) != 0, "lamp dark with rods in");
+                    r.reactor().setRods(1, 0.05, 0.05);
+                })
+                .thenWaitUntil(() -> {
+                    PowerReactorBlockEntity r = h.getBlockEntity(REACTOR);
+                    r.readPanel(v);
+                    h.assertTrue(v[NppPanels.ORM] < 150, "rods out: " + v[NppPanels.ORM]);
+                    h.assertTrue((v[NppPanels.FLAGS] & 1 << NppPanels.F_ORM_LOW) != 0, "ORM lamp lit");
+                })
+                .thenSucceed();
+    }
+
     private static void pump(GameTestHelper h, BlockPos pos) {
         place(h, pos, PcBlocks.PRIMARY_PUMP.get());
         BlockPos motor = pos.south();

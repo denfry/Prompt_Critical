@@ -54,6 +54,12 @@ public final class GraphitePile {
     public static final double DT = 0.05;
     /** Столько секунд ρ ≥ 0 без учёта источника — котёл критичен. */
     public static final double CRITICAL_HOLD_S = 5;
+    /**
+     * Замер для метода 1/M (01 §1.14 пример 3, достижение {@code one_over_m}): подкритичный котёл с источником, счётчиком
+     * и неподвижными стержнями при одной загрузке столько секунд — счёт установился и записан. [BALANCE] 30 с — время
+     * счёта пересчётного прибора.
+     */
+    public static final double APPROACH_COUNT_S = 30;
     /** ν природного урана на тепловых нейтронах. */
     static final double NU = 2.43;
     /** Теплоёмкость металлического урана и графита, Дж/(кг·К); плотность графита кладки, кг/м³. */
@@ -104,6 +110,10 @@ public final class GraphitePile {
     private PileTrip trip = PileTrip.NONE;
     private double criticalTimer;
     private boolean criticalReported, cladFailed, graphiteFire;
+    /** Загрузки (блочков в кладке), при которых записан установившийся подкритичный счёт до первой критичности. */
+    private final java.util.TreeSet<Integer> approachLoads = new java.util.TreeSet<>();
+    private double approachTimer, approachRods = -1;
+    private int approachLoad = -1;
 
     public GraphitePile(PileConfig cfg, NeutronicsConfig neutronics) {
         this.cfg = cfg;
@@ -183,11 +193,13 @@ public final class GraphitePile {
         protect(pW, events);
         count(random);
         consequences(events);
+        approachCount();
         if (fissile && budget.total() >= 0 && pW > 0) {
             criticalTimer += DT;
             if (criticalTimer >= CRITICAL_HOLD_S && !criticalReported) {
                 criticalReported = true;
                 events.critical(pW);
+                events.approachPoints(approachLoads.size());
             }
         } else {
             criticalTimer = 0;
@@ -384,6 +396,29 @@ public final class GraphitePile {
     /** Σ_a Xe-135 средней топливной ячейки, см⁻¹. */
     public double xenonAbs() {
         return poisons.xenonAbs(sigmaXeB(graphiteTempK + LatticeModel.NEUTRON_GAS_OFFSET));
+    }
+
+    /** Запись установившегося подкритичного счёта при текущей загрузке (метод 1/M до первой критичности). */
+    private void approachCount() {
+        if (!fissile || criticalReported || cps.length == 0 || layout.sources() == 0 || budget.total() >= 0) {
+            approachTimer = 0;
+            return;
+        }
+        double rods = 0;
+        for (double v : rodInsertion.values()) rods += v;
+        int load = layout.totalLoad();
+        if (load != approachLoad || Math.abs(rods - approachRods) > 1e-6) {
+            approachLoad = load;
+            approachRods = rods;
+            approachTimer = 0;
+        }
+        approachTimer += DT;
+        if (approachTimer >= APPROACH_COUNT_S) approachLoads.add(load);
+    }
+
+    /** Сколько разных загрузок записано по 1/M до первой критичности. */
+    public int approachPoints() {
+        return approachLoads.size();
     }
 
     private boolean rodsMoved() {
@@ -728,6 +763,8 @@ public final class GraphitePile {
         out.putBoolean("winding", winding);
         out.putInt("drive", controlDrive);
         out.putBoolean("critical", criticalReported);
+        int[] loads = approachLoads.stream().mapToInt(Integer::intValue).toArray();
+        out.putInts("approach_loads", loads, loads.length);
         out.putBoolean("clad_failed", cladFailed);
         out.putBoolean("graphite_fire", graphiteFire);
         long[] keys = new long[rodInsertion.size()];
@@ -756,6 +793,8 @@ public final class GraphitePile {
         winding = in.getBoolean("winding");
         controlDrive = Integer.signum(in.getInt("drive"));
         criticalReported = in.getBoolean("critical");
+        approachLoads.clear();
+        if (in.has("approach_loads")) for (int l : in.getInts("approach_loads")) approachLoads.add(l);
         cladFailed = in.getBoolean("clad_failed");
         graphiteFire = in.getBoolean("graphite_fire");
         long[] keys = in.getLongs("rod_keys");

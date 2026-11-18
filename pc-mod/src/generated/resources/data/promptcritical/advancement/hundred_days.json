@@ -1,0 +1,34 @@
+{
+  "parent": "promptcritical:first_criticality",
+  "criteria": {
+    "run": {
+      "conditions": {
+        "event": "promptcritical:hundred_days",
+        "station_member": true
+      },
+      "trigger": "promptcritical:sim_event"
+    }
+  },
+  "display": {
+    "description": {
+      "translate": "advancements.promptcritical.hundred_days.description"
+    },
+    "frame": "challenge",
+    "icon": {
+      "count": 1,
+      "id": "promptcritical:power_reactor"
+    },
+    "title": {
+      "translate": "advancements.promptcritical.hundred_days.title"
+    }
+  },
+  "requirements": [
+    [
+      "run"
+    ]
+  ],
+  "rewards": {
+    "experience": 200
+  },
+  "sends_telemetry_event": true
+}

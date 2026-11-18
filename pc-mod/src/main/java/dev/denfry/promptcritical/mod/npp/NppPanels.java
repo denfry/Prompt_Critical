@@ -18,8 +18,9 @@ import net.minecraft.network.chat.Component;
 public final class NppPanels {
     public static final int POWER = 0, PERIOD = 1, RHO_PCM = 2, AZ = 3, RR = 4, AR = 5, FUEL_C = 6, GRAPHITE_C = 7, IN_C = 8, OUT_C = 9,
             FLOW = 10, QUALITY = 11, SG_KW = 12, XE_PCM = 13, BURNUP = 14, LOADED = 15, FAILED = 16, SETPOINT = 17, TRIP = 18, FLAGS = 19,
-            ACCIDENT = 20, CHANNELS = ACCIDENT + AccidentPanels.COUNT;
-    public static final int F_TRIPPED = 0, F_AUTO = 1, F_PROT_OFF = 2, F_DRYOUT = 3, F_NO_SG = 4, F_FAILED = 5, F_RR_UP = 6, F_RR_DOWN = 7;
+            ACCIDENT = 20, ORM = ACCIDENT + AccidentPanels.COUNT, CHANNELS = ORM + 1;
+    public static final int F_TRIPPED = 0, F_AUTO = 1, F_PROT_OFF = 2, F_DRYOUT = 3, F_NO_SG = 4, F_FAILED = 5, F_RR_UP = 6, F_RR_DOWN = 7,
+            F_ORM_LOW = 8;
     public static final int B_SCRAM = 0, B_RESET = 1, B_RR_UP = 2, B_RR_STOP = 3, B_RR_DOWN = 4, B_AUTO = 5, B_SP_DOWN = 6, B_SP_UP = 7,
             B_PROTECTION = 8, B_UNLOAD = 9, B_LOCA = 10;
     public static final int SLOT_FRESH = 0, SLOT_SPENT = 1;
@@ -37,6 +38,9 @@ public final class NppPanels {
             DRYOUT = PanelText.tr("npp.dryout", "Dryout", "Кризис"),
             NO_SG = PanelText.tr("npp.no_sg", "No SG", "Нет ПГ"),
             FAILED_L = PanelText.tr("npp.failed", "Channel", "Канал"),
+            ORM_LOW = PanelText.tr("npp.orm_low", "ORM", "ОЗР"),
+            ORM_TIP = PanelText.tr("npp.orm_tip", "Operational reactivity margin %s equivalent rods · keep at least %s",
+                    "Оперативный запас реактивности %s эквивалентных стержней · не меньше %s"),
             SCRAM = PanelText.tr("npp.scram", "SCRAM", "АЗ"),
             RESET = PanelText.tr("npp.reset", "Cock", "Взвод"),
             RESET_TIP = PanelText.tr("npp.reset_tip", "Cock the scram rods (only with the cause gone)", "Взвести стержни АЗ (только если причины нет)"),
@@ -80,7 +84,8 @@ public final class NppPanels {
             .dial(120, 24, false, OUT_C, 1, 350, ChannelReactor.TRIP_OUTLET_K - 273.15, 0, CELSIUS.get(), OUTLET.get(),
                     v -> OUT_TIP.get(v.raw(IN_C), v.raw(OUT_C), v.raw(FLOW), v.num(QUALITY, 10, 1)))
             .bar(176, 26, 64, AZ, 10, 100, 0xFFB03030, ROD_AZ.get(), null)
-            .bar(176, 40, 64, RR, 10, 100, 0xFF707070, ROD_RR.get(), null)
+            .bar(176, 40, 64, RR, 10, 100, 0xFF707070, ROD_RR.get(),
+                    v -> ORM_TIP.get(v.num(ORM, 10, 1), Math.round(ChannelReactor.ORM_MIN_RODS)))
             .bar(176, 54, 64, AR, 10, 100, 0xFF4060A0, ROD_AR.get(), null)
             .lamp(176, 70, FLAGS, F_TRIPPED, LampColor.RED, TRIPPED.get())
             .lamp(212, 70, FLAGS, F_AUTO, LampColor.GREEN, AUTO.get())
@@ -88,6 +93,7 @@ public final class NppPanels {
             .lamp(56, 82, FLAGS, F_DRYOUT, LampColor.RED, DRYOUT.get())
             .lamp(104, 82, FLAGS, F_NO_SG, LampColor.AMBER, NO_SG.get())
             .lamp(152, 82, FLAGS, F_FAILED, LampColor.RED, FAILED_L.get())
+            .lamp(180, 122, FLAGS, F_ORM_LOW, LampColor.AMBER, ORM_LOW.get())
             .slot(200, 86, SLOT_FRESH, s -> s.is(PcItems.FUEL_ASSEMBLY.get()), FRESH.get())
             .slot(222, 86, SLOT_SPENT, s -> false, SPENT.get())
             .button(8, 100, 36, B_SCRAM, SCRAM.get(), null)

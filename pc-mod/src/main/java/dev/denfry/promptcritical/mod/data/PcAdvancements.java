@@ -74,6 +74,21 @@ public final class PcAdvancements implements AdvancementProvider.AdvancementGene
         LANG.put("first_fa", new String[] {"First Assembly", "Первая сборка", "Assemble the first fuel assembly", "Соберите первую ТВС"});
         LANG.put("closed_cycle", new String[] {"Closed Cycle", "Замкнутый цикл", "Load MOX fuel from your own plutonium into a reactor and hold a vitrified HLW canister", "Загрузите МОКС-топливо из своего плутония в реактор и получите канистру остеклованных ВАО"});
         LANG.put("scram_clean", new String[] {"Clean Scram", "Чистая АЗ", "Scram a power reactor from above 50 % with no fuel failing in the minute after", "Аварийная защита с мощности выше 50 % без разгерметизации ТВС в следующую минуту"});
+        LANG.put("hundred_days", new String[] {"Hundred Days", "Сто суток",
+                "Run a power reactor for 100 days with no automatic scram (manual ones allowed)",
+                "Энергетический реактор проработал 100 суток без автоматической АЗ (ручные не в счёт)"});
+        LANG.put("industrial_complex", new String[] {"Industrial Complex", "Промышленный комплекс",
+                "A blast furnace, a crude unit, a gas plant and a reactor above 50 % all running at once",
+                "Одновременно работают домна, НПЗ, ГПЗ и реактор на мощности выше 50 %"});
+        LANG.put("black_start", new String[] {"From Scratch", "С нуля",
+                "After a blackout, start a stopped generator and bring the dead network back under load on your own",
+                "После блэкаута запустите остановленный генератор и сами поднимите обесточенную сеть под нагрузку"});
+        LANG.put("one_over_m", new String[] {"One over M", "Метод 1/M",
+                "Bring a pile critical after counting it at three or more different loadings",
+                "Выведите котёл на критичность, перед этим сняв счёт при трёх и более разных загрузках"});
+        LANG.put("xenon_pit", new String[] {"Iodine Pit", "Йодная яма",
+                "Bring a T1 power reactor back to power out of the xenon pit without dropping below 15 rods of reactivity margin",
+                "Выведите реактор T1 на мощность из йодной ямы, не опуская ОЗР ниже 15 стержней"});
         LANG.put("kill_well", new String[] {"Well Killed", "Скважина заглушена", "Kill a well kick with the driller's method, without a blowout", "Ликвидируйте ГНВП методом бурильщика, без открытого фонтана"});
         LANG.put("plc_first", new String[] {"First Scan", "Первый скан", "A PLC program runs in RUN", "Программа ПЛК работает в режиме RUN"});
         LANG.put("all_languages", new String[] {"IEC Polyglot", "Полиглот МЭК", "One PLC has run programs in LD, FBD, SFC and ST", "Один ПЛК работал на программах LD, FBD, SFC и ST"});
@@ -178,6 +193,18 @@ public final class PcAdvancements implements AdvancementProvider.AdvancementGene
                 .save(saver, id("closed_cycle"), efh);
         task(fa, PcBlocks.PWR_REACTOR.get(), "scram_clean", AdvancementType.TASK, false, 50)
                 .addCriterion("scram", event(dev.denfry.promptcritical.mod.content.SimAchievements.SCRAM_CLEAN, Map.of())).save(saver, id("scram_clean"), efh);
+        task(pile, PcBlocks.POWER_REACTOR.get(), "hundred_days", AdvancementType.CHALLENGE, false, 200)
+                .addCriterion("run", event(dev.denfry.promptcritical.mod.content.SimAchievements.HUNDRED_DAYS, Map.of())).save(saver, id("hundred_days"), efh);
+        task(oil, PcBlocks.BLAST_FURNACE_CONTROLLER.get(), "industrial_complex", AdvancementType.CHALLENGE, false, 200)
+                .addCriterion("complex", event(dev.denfry.promptcritical.mod.content.SimAchievements.INDUSTRIAL_COMPLEX, Map.of()))
+                .save(saver, id("industrial_complex"), efh);
+        task(sync, PcBlocks.DIESEL_GENERATOR.get(), "black_start", AdvancementType.CHALLENGE, false, 100)
+                .addCriterion("restored", event(GridSubsystem.BLACK_START, Map.of())).save(saver, id("black_start"), efh);
+        task(pile, PcBlocks.NEUTRON_DETECTOR.get(), "one_over_m", AdvancementType.TASK, false, 50)
+                .addCriterion("approach", event(ReactorSubsystem.PILE_STATE, Map.of("one_over_m", MinMaxBounds.Doubles.atLeast(3))))
+                .save(saver, id("one_over_m"), efh);
+        task(pile, PcBlocks.POWER_REACTOR.get(), "xenon_pit", AdvancementType.GOAL, false, 80)
+                .addCriterion("pit", event(dev.denfry.promptcritical.mod.content.SimAchievements.XENON_PIT, Map.of())).save(saver, id("xenon_pit"), efh);
         task(oil, PcBlocks.DRILLERS_CONSOLE.get(), "kill_well", AdvancementType.GOAL, false, 80)
                 .addCriterion("killed", event(dev.denfry.promptcritical.mod.content.SimAchievements.WELL_KILLED, Map.of())).save(saver, id("kill_well"), efh);
         AdvancementHolder plc = task(relays, PcBlocks.PLC.get(), "plc_first", AdvancementType.TASK, false, 30)

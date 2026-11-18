@@ -39,3 +39,7 @@ Throwing the whole load on in one step pulls the frequency down: the boost canno
 2. Put a station battery against the unit and fill it with diesel fuel.
 3. Fit the jacket heater and the sequencer (right-click the unit with the item).
 4. Turn the key to Auto and test the unit with the Start button.
+
+## Black start
+
+If the whole network goes dead, nothing outside will bring it back. A diesel that stood still through the blackout can: start it, close its breaker onto the dead bus and pick up the loads step by step with the sequencer. Once the restored island carries real load (10 kW or more), the network has been black-started.
