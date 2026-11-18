@@ -19,6 +19,8 @@ public final class PcTags {
         public static final TagKey<Block> DAMAGE_IMMUNE = mod("damage_immune");
         /** Открытое пламя в выработке воспламеняет метан (08 §8.2.6). */
         public static final TagKey<Block> OPEN_FLAME = mod("open_flame");
+        /** Взрывозащищённое исполнение: не поджигает облако горючего газа (09 §9.11.3). */
+        public static final TagKey<Block> EXPLOSION_PROOF = mod("explosion_proof");
         /** Кровля устойчивая — пролёт {@code mining.roof_span_stable} (08 §8.2.2). */
         public static final TagKey<Block> ROOF_STABLE = mod("roof_stable");
         /** Кровля неустойчивая — {@code mining.roof_span_weak}; остальное — средняя. */

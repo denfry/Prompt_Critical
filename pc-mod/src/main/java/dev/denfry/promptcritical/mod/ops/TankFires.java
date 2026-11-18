@@ -42,6 +42,11 @@ public final class TankFires {
         return s != null && s.contains(fire);
     }
 
+    /** Горящие клетки резервуаров измерения (для излучения пожара пролива, 09 §9.11.4); {@code null} — нет. */
+    public static Set<BlockPos> burningCells(Level level) {
+        return BURNING.get(level.dimension());
+    }
+
     /** Огонь на крыше резервуара — завести пожар резервуара. */
     public static void ignite(ServerLevel level, BlockPos fire) {
         if (FireService.tankBelow(level, fire) == null) return;

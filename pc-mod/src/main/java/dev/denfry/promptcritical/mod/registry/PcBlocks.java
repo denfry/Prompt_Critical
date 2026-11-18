@@ -1103,6 +1103,34 @@ public final class PcBlocks {
             p -> new LiquidBlock(PcFluids.HEAVY_WATER.source.get(), p),
             Properties.ofFullCopy(Blocks.WATER).mapColor(MapColor.WATER).noLootTable());
 
+    /** Пролитая нефть на суше (09 §9.11.9): течёт медленно, горит; предмета нет. */
+    public static final DeferredBlock<LiquidBlock> CRUDE_OIL = BLOCKS.registerBlock("crude_oil",
+            p -> new LiquidBlock(PcFluids.CRUDE_OIL.source.get(), p),
+            Properties.ofFullCopy(Blocks.WATER).mapColor(MapColor.COLOR_BLACK).noLootTable().ignitedByLava());
+
+    // аварии нефтегаза и разливы 09 §9.11, 14 §14.5
+    /** Ёмкость СУГ 50 м³: BLEVE при пожаре (09 §9.11.6). */
+    public static final DeferredBlock<PcDeviceBlock> GAS_STORAGE_BULLET = device("gas_storage_bullet", machine(),
+            Spec.facing(PcProperties.ALARM).footprint(Footprint.of(Segment.box(-1, 1, 0, 1, 0, 1))),
+            FoundryBlock.with(dev.denfry.promptcritical.mod.hazard.GasStorageBulletBlockEntity::new));
+    /** Плёнка нефти на воде: раскладывает {@code OilSpills}; предмета нет. */
+    public static final DeferredBlock<dev.denfry.promptcritical.mod.hazard.SpillBlocks.OilSlickBlock> OIL_SLICK = BLOCKS.registerBlock("oil_slick",
+            dev.denfry.promptcritical.mod.hazard.SpillBlocks.OilSlickBlock::new, Properties.of().mapColor(MapColor.COLOR_BLACK).noCollission()
+                    .instabreak().noOcclusion().replaceable().pushReaction(PushReaction.DESTROY).noLootTable().sound(SoundType.HONEY_BLOCK));
+    public static final DeferredBlock<dev.denfry.promptcritical.mod.hazard.SpillBlocks.OilBoomBlock> OIL_BOOM = withItem(BLOCKS.registerBlock("oil_boom",
+            dev.denfry.promptcritical.mod.hazard.SpillBlocks.OilBoomBlock::new, Properties.of().mapColor(MapColor.COLOR_ORANGE).strength(0.5f)
+                    .noOcclusion().sound(SoundType.WOOL).pushReaction(PushReaction.DESTROY)));
+    public static final DeferredBlock<PcBlock> BOOM_ANCHOR = block("boom_anchor", Properties.of().mapColor(MapColor.STONE).strength(1.5f)
+            .noOcclusion().requiresCorrectToolForDrops(), Spec.of());
+    public static final DeferredBlock<PcDeviceBlock> OIL_SKIMMER = device("oil_skimmer", machine(), Spec.facing(PcProperties.RUNNING),
+            FoundryBlock.with(dev.denfry.promptcritical.mod.hazard.OilSkimmerBlockEntity::new));
+    public static final DeferredBlock<dev.denfry.promptcritical.mod.hazard.SpillBlocks.OiledShoreBlock> OILED_SAND = withItem(BLOCKS.registerBlock("oiled_sand",
+            p -> new dev.denfry.promptcritical.mod.hazard.SpillBlocks.OiledShoreBlock(p, false),
+            Properties.ofFullCopy(Blocks.SAND).mapColor(MapColor.COLOR_BLACK).randomTicks()));
+    public static final DeferredBlock<dev.denfry.promptcritical.mod.hazard.SpillBlocks.OiledShoreBlock> OILED_GRAVEL = withItem(BLOCKS.registerBlock("oiled_gravel",
+            p -> new dev.denfry.promptcritical.mod.hazard.SpillBlocks.OiledShoreBlock(p, true),
+            Properties.ofFullCopy(Blocks.GRAVEL).mapColor(MapColor.COLOR_BLACK).randomTicks()));
+
     // --- служебные ---
     /** Клетка конструкции, через которую машина отдаёт вращение в сеть Create (03a §3a.12.3). */
     public static final DeferredBlock<KineticPortBlock> KINETIC_PORT = BLOCKS.registerBlock("kinetic_port",

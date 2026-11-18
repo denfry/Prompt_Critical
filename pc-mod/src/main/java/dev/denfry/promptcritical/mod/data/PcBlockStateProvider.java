@@ -75,6 +75,12 @@ public final class PcBlockStateProvider extends BlockStateProvider {
         // жидкость рисует рендер жидкостей; модели нужна только частица
         simpleBlock(PcBlocks.MINE_WATER.get(), models().getBuilder("mine_water").texture("particle", modLoc("block/fluid/mine_water_still")));
         simpleBlock(PcBlocks.HEAVY_WATER.get(), models().getBuilder("heavy_water").texture("particle", modLoc("block/fluid/heavy_water_still")));
+        simpleBlock(PcBlocks.CRUDE_OIL.get(), models().getBuilder("crude_oil").texture("particle", modLoc("block/fluid/crude_oil_still")));
+        // плёнка нефти без предмета: стадия выветривания — своя модель (09 §9.11.9)
+        getVariantBuilder(PcBlocks.OIL_SLICK.get()).forAllStates(st -> {
+            int age = st.getValue(dev.denfry.promptcritical.mod.hazard.SpillBlocks.OilSlickBlock.AGE);
+            return ConfiguredModel.builder().modelFile(existing(age == 0 ? "oil_slick" : "oil_slick_age" + age)).build();
+        });
     }
 
     /** Расцепная муфта: модель вдоль Z; ось X — поворот на 90° вокруг Y, ось Y — на 90° вокруг X. */
@@ -401,6 +407,12 @@ public final class PcBlockStateProvider extends BlockStateProvider {
                     : s.getValue(BlockStateProperties.POWERED) ? id + "_fault" : id;
             case "historian_server" -> s.getValue(BlockStateProperties.LIT) ? id + "_busy" : id;
             case "foam_proportioner" -> s.getValue(BlockStateProperties.POWERED) ? id + "_6" : id;
+            case "oil_skimmer" -> s.getValue(PcProperties.RUNNING) ? id + "_on" : id;
+            case "oil_boom" -> s.getValue(BlockStateProperties.HORIZONTAL_AXIS) == Direction.Axis.X ? id + "_x" : id;
+            case "oiled_sand", "oiled_gravel" -> {
+                int age = s.getValue(dev.denfry.promptcritical.mod.hazard.SpillBlocks.OiledShoreBlock.AGE);
+                yield age == 0 ? id : id + "_" + age;
+            }
             case "gas_seep_vent" -> s.getValue(BlockStateProperties.LIT) ? id + "_burning" : id;
             case "oklo_uraninite_ore" -> "deepslate_uraninite_ore";
             case "training_simulator" -> s.getValue(PcProperties.RUNNING) ? id + "_running" : id;
