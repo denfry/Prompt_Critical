@@ -122,7 +122,6 @@ public final class CupolaBlockEntity extends KineticMachineBlockEntity<CupolaUni
         if (fx.chance(4)) fx.smoke(fx.at(8, 32, 8), false, 0.3);
         if (fx.chance(3)) fx.flame(fx.at(8, -4, 0.6), 0.1);
         if (fx.chance(0.6)) fx.drip(fx.at(8, -6, -2.5));
-        if (fx.chance(0.4)) fx.sound(fx.at(8, 20, 8), SoundEvents.FIRE_AMBIENT, 0.8f, 0.8f);
     }
 
     @Override

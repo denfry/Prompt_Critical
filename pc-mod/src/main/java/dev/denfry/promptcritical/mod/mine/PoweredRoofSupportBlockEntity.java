@@ -55,7 +55,7 @@ public final class PoweredRoofSupportBlockEntity extends DeviceBlockEntity {
         pendingTicks = 0;
         level.setBlock(worldPosition, getBlockState().setValue(BlockStateProperties.EXTENDED, want), Block.UPDATE_ALL);
         // Смена состояния будит перезаливку шахты, она же заново проверяет пролёты кровли.
-        level.playSound(null, worldPosition, want ? SoundEvents.PISTON_EXTEND : SoundEvents.PISTON_CONTRACT, SoundSource.BLOCKS, 0.6f, 0.6f);
+        level.playSound(null, worldPosition, dev.denfry.promptcritical.mod.sound.PcSfx.ROOF_SUPPORT.get(), SoundSource.BLOCKS, 0.9f, want ? 1.0f : 0.85f);
         if (level instanceof ServerLevel server) effects(server, want);
     }
 

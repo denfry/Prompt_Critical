@@ -153,7 +153,7 @@ public final class MoldingStationBlockEntity extends KineticMachineBlockEntity<C
         MachineFx fx = fx();
         if (fx == null || !runningState() || level.getGameTime() % 11 != 0) return;
         fx.dust(fx.at(10, 10, 8), 0.6, 4);
-        fx.sound(fx.at(10, 8, 8), SoundEvents.SAND_PLACE, 0.6f, 0.6f);
+        fx.sound(fx.at(10, 8, 8), dev.denfry.promptcritical.mod.sound.PcSfx.MOLDING_JOLT.get(), 0.7f, 1.0f);
     }
 
     @Override

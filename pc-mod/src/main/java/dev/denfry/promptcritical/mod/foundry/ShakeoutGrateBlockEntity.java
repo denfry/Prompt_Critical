@@ -148,7 +148,6 @@ public final class ShakeoutGrateBlockEntity extends KineticMachineBlockEntity<Cy
         MachineFx fx = fx();
         if (fx == null || !runningState()) return;
         if (fx.chance(12)) fx.dust(fx.at(16, 8, 16), 1.6, 2);
-        if (level.getGameTime() % 5 == 0) fx.sound(fx.at(16, 6, 16), SoundEvents.CHAIN_STEP, 0.35f, 0.7f);
     }
 
     @Override
