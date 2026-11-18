@@ -96,7 +96,6 @@ public final class FoundryMachineRenderer<T extends BlockEntity> implements Bloc
             }
             case SLIDE_X -> buf.translate((float) Math.sin(Math.toRadians(angle)) * a, 0, 0);
             case SWEEP_Y -> {
-                boolean running = state.hasProperty(PcProperties.RUNNING) && state.getValue(PcProperties.RUNNING);
                 // фаза — от времени мира: при остановке мост встаёт в исходное положение (фазу никто не хранит)
                 if (running) buf.translate(a, 0, b).rotateYDegrees((time * gear * 360f / 1200f) % 360f).translate(-a, 0, -b);
             }
