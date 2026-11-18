@@ -201,7 +201,7 @@ public final class NoiseService {
     /** Противошумные наушники на голове. */
     public static boolean protectedEars(Player p) {
         var head = p.getItemBySlot(EquipmentSlot.HEAD);
-        if (head.getItem() instanceof HearingProtectionItem) return true;
+        if (head.getItem() instanceof HearingProtectionItem || dev.denfry.promptcritical.mod.safety.PpeService.earsProtected(p)) return true;
         String id = BuiltInRegistries.ITEM.getKey(head.getItem()).getPath();
         return id.contains("hearing_protection") || id.contains("ear_muff") || id.contains("earmuff");
     }

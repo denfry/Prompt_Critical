@@ -212,7 +212,7 @@ public final class AirQualityService {
 
     private static boolean protectedHead(ServerPlayer p) {
         var id = net.minecraft.core.registries.BuiltInRegistries.ITEM.getKey(p.getItemBySlot(EquipmentSlot.HEAD).getItem()).getPath();
-        return id.contains("respirator") || id.contains("gas_mask") || id.contains("scba");
+        return id.contains("respirator") || dev.denfry.promptcritical.mod.safety.PpeService.breathingProtected(p);
     }
 
     private static void effects(ServerLevel level, Map<Long, double[]> air, PollutionField field) {

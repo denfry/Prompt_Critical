@@ -15,6 +15,10 @@ public record OpsLogEntry(long tick, SimId unit, Kind kind, String detail) {
         /** LOTO 13 §13.1.7: замок повешен, снят владельцем, срезан администратором, попытка сломать запертую точку. */
         LOCKOUT_ON, LOCKOUT_OFF, LOCKOUT_ADMIN_CUT, UNAUTHORIZED_ACCESS,
         /** Наряды 13 §13.2, §13.12.3: смена состояния наряда, замер газа, огневые работы без наряда, фаза остановочного ремонта. */
-        PERMIT_STATE, GAS_TEST, UNAUTHORIZED_WORK, TURNAROUND_PHASE
+        PERMIT_STATE, GAS_TEST, UNAUTHORIZED_WORK, TURNAROUND_PHASE,
+        /** Вход в замкнутое пространство через люк (13 §13.2.6). */
+        CONFINED_ENTRY,
+        /** Обход просрочен (13 §13.3.1, P4 «ОБХОД ПРОСРОЧЕН»). */
+        PATROL_OVERDUE
     }
 }

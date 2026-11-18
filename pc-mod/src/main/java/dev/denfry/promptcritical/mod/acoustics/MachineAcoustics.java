@@ -221,6 +221,12 @@ public final class MachineAcoustics {
         data(level).setDirty();
     }
 
+    /** Задать дисбаланс u/u₀ (прогиб ротора от валоповорота 03a §3a.7.6, сценарии и тесты). */
+    public static void setImbalance(ServerLevel level, BlockPos pos, double imbalance) {
+        state(level, pos).imbalance = Math.max(0, imbalance);
+        data(level).setDirty();
+    }
+
     public static double imbalance(ServerLevel level, BlockPos pos) {
         return state(level, pos).imbalance;
     }

@@ -34,6 +34,7 @@ public final class PanelLayouts {
                 dev.denfry.promptcritical.mod.steelworks.SteelworksPanels.all(),
                 dev.denfry.promptcritical.mod.automation.AutomationPanels.all(),
                 dev.denfry.promptcritical.mod.ops.OpsPanels.all(),
+                dev.denfry.promptcritical.mod.safety.SafetyPanels.all(),
                 dev.denfry.promptcritical.mod.powerhouse.PowerhousePanels.all(),
                 dev.denfry.promptcritical.mod.powerhouse.WindPanels.all(),
                 dev.denfry.promptcritical.mod.powerhouse.TidalPanels.all(),

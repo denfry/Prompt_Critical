@@ -443,6 +443,31 @@ public final class PcItems {
     /** Противошумные наушники (13 §13.7). */
     public static final DeferredItem<dev.denfry.promptcritical.mod.acoustics.HearingProtectionItem> HEARING_PROTECTION = registered(
             ITEMS.registerItem("hearing_protection", dev.denfry.promptcritical.mod.acoustics.HearingProtectionItem::new, new Item.Properties()));
+    // --- общепромышленные СИЗ (13 §13.7) ---
+    public static final DeferredItem<dev.denfry.promptcritical.mod.safety.PpeItem> HARD_HAT = ppe("hard_hat",
+            dev.denfry.promptcritical.mod.safety.PpeItem.Kind.HARD_HAT);
+    public static final DeferredItem<dev.denfry.promptcritical.mod.safety.PpeItem> GAS_MASK = ppe("gas_mask",
+            dev.denfry.promptcritical.mod.safety.PpeItem.Kind.GAS_MASK);
+    public static final DeferredItem<dev.denfry.promptcritical.mod.safety.PpeItem> SCBA = ppe("scba",
+            dev.denfry.promptcritical.mod.safety.PpeItem.Kind.SCBA);
+    public static final DeferredItem<dev.denfry.promptcritical.mod.safety.PpeItem> FIRE_SUIT = ppe("fire_suit",
+            dev.denfry.promptcritical.mod.safety.PpeItem.Kind.FIRE_SUIT);
+    public static final DeferredItem<dev.denfry.promptcritical.mod.safety.PpeItem> SAFETY_HARNESS = ppe("safety_harness",
+            dev.denfry.promptcritical.mod.safety.PpeItem.Kind.SAFETY_HARNESS);
+    public static final DeferredItem<dev.denfry.promptcritical.mod.safety.GasMaskFilterItem> GAS_MASK_FILTER = registered(ITEMS.registerItem(
+            "gas_mask_filter", dev.denfry.promptcritical.mod.safety.GasMaskFilterItem::new, new Item.Properties()));
+    public static final DeferredItem<Item> SCBA_CYLINDER = item("scba_cylinder", 4);
+    public static final DeferredItem<dev.denfry.promptcritical.mod.safety.LifelineItem> LIFELINE = registered(ITEMS.registerItem(
+            "lifeline", dev.denfry.promptcritical.mod.safety.LifelineItem::new, new Item.Properties()));
+
+    /** Считыватель обходчика (13 §13.3.1). */
+    public static final DeferredItem<dev.denfry.promptcritical.mod.safety.PatrolReaderItem> PATROL_READER = registered(ITEMS.registerItem(
+            "patrol_reader", dev.denfry.promptcritical.mod.safety.PatrolReaderItem::new, new Item.Properties()));
+
+    private static DeferredItem<dev.denfry.promptcritical.mod.safety.PpeItem> ppe(String name, dev.denfry.promptcritical.mod.safety.PpeItem.Kind kind) {
+        return registered(ITEMS.registerItem(name, p -> new dev.denfry.promptcritical.mod.safety.PpeItem(p, kind), new Item.Properties()));
+    }
+
     /** Обслуживание вращающихся машин (04a §4a.7.5): подшипник, балансировка, центровка. */
     public static final DeferredItem<dev.denfry.promptcritical.mod.acoustics.MachineServiceItem> BEARING_KIT = service("bearing_kit",
             dev.denfry.promptcritical.mod.acoustics.MachineServiceItem.Kind.BEARING_KIT);

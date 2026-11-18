@@ -39,6 +39,14 @@ public final class AirborneDose {
 
     /** Мощность эффективной дозы в облаке с объёмной активностью {@code bqM3}, Зв/ч. */
     public static double svH(Emitter e, double bqM3) {
-        return (submersion(e) + inhalation(e) * BREATHING_M3_S) * bqM3 * 3600;
+        return svH(e, bqM3, 1);
+    }
+
+    /**
+     * То же, когда под маску попадает только доля {@code inhaledFraction} аэрозоля (противогаз с фильтром P или
+     * изолирующий аппарат, 13 §13.7): ингаляция делится на кратность, внешнее облучение погружением остаётся.
+     */
+    public static double svH(Emitter e, double bqM3, double inhaledFraction) {
+        return (submersion(e) + inhalation(e) * BREATHING_M3_S * inhaledFraction) * bqM3 * 3600;
     }
 }

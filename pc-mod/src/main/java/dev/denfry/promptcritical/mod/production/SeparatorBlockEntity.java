@@ -91,7 +91,10 @@ public final class SeparatorBlockEntity extends DeviceBlockEntity implements Fou
             flaredStdM3s = 0;
         }
         inOil = inWater = inGas = inDt = 0;
-        if (ticks % 20 == 0 && flare != null) {
+        if (ticks % 20 == 0 && flare != null && dev.denfry.promptcritical.mod.safety.Flares.managed(level, flare)) {
+            // у оголовка есть щит розжига (13 §13.4.3): горение, выбросы и свет считает он
+            dev.denfry.promptcritical.mod.safety.Flares.offer(level, flare, flaredStdM3s);
+        } else if (ticks % 20 == 0 && flare != null) {
             BlockState tip = level.getBlockState(flare);
             boolean lit = flaredStdM3s > 0;
             // факел: попутный газ ≈ 38 МДж/м³, полнота сгорания 0,98 — остальное метаном (14 §14.1.1); ствол 30 м, 1000 К
