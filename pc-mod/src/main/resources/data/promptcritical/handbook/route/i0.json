@@ -823,6 +823,78 @@
       }
     },
     {
+      "id": "promptcritical:i0/shaper",
+      "requires": [
+        "promptcritical:i0/lathe"
+      ],
+      "type": "build",
+      "condition": {
+        "block": "promptcritical:shaping_machine"
+      },
+      "entry": "promptcritical:i0/machine_tools",
+      "icon": "promptcritical:shaping_machine",
+      "title": "handbook.promptcritical.task.i0.shaper.title",
+      "text": "handbook.promptcritical.task.i0.shaper.text",
+      "hint": "handbook.promptcritical.task.i0.shaper.hint",
+      "reward": {
+        "xp": 20
+      }
+    },
+    {
+      "id": "promptcritical:i0/milling",
+      "requires": [
+        "promptcritical:i0/shaper"
+      ],
+      "type": "build",
+      "condition": {
+        "block": "promptcritical:milling_machine"
+      },
+      "entry": "promptcritical:i0/machine_tools",
+      "icon": "promptcritical:milling_machine",
+      "title": "handbook.promptcritical.task.i0.milling.title",
+      "text": "handbook.promptcritical.task.i0.milling.text",
+      "hint": "handbook.promptcritical.task.i0.milling.hint",
+      "reward": {
+        "xp": 25
+      }
+    },
+    {
+      "id": "promptcritical:i0/spur_gear",
+      "requires": [
+        "promptcritical:i0/milling"
+      ],
+      "type": "obtain",
+      "condition": {
+        "item": "promptcritical:spur_gear"
+      },
+      "entry": "promptcritical:i0/machine_tools",
+      "icon": "promptcritical:spur_gear",
+      "title": "handbook.promptcritical.task.i0.spur_gear.title",
+      "text": "handbook.promptcritical.task.i0.spur_gear.text",
+      "hint": "handbook.promptcritical.task.i0.spur_gear.hint",
+      "reward": {
+        "xp": 15
+      }
+    },
+    {
+      "id": "promptcritical:i0/grinder",
+      "requires": [
+        "promptcritical:i0/milling"
+      ],
+      "type": "build",
+      "condition": {
+        "block": "promptcritical:surface_grinder"
+      },
+      "entry": "promptcritical:i0/machine_tools",
+      "icon": "promptcritical:surface_grinder",
+      "title": "handbook.promptcritical.task.i0.grinder.title",
+      "text": "handbook.promptcritical.task.i0.grinder.text",
+      "hint": "handbook.promptcritical.task.i0.grinder.hint",
+      "reward": {
+        "xp": 25
+      }
+    },
+    {
       "id": "promptcritical:i0/longwall",
       "requires": [
         "promptcritical:i0/cage"

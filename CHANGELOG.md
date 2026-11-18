@@ -80,6 +80,12 @@ CC: Tweaked 1.120.2+ is optional.
 - Cupola and crucible furnaces, sand moulds, moulding machine, shakeout grate.
 - Lathe and drill press with cutting tool wear; castings with defects.
 - Coal jig with clean coal, middlings and refuse.
+- Knee milling machine, shaping machine and surface grinder make spur gears, keyed shafts, slideways and planed
+  and ground plates. Cutting force follows Kienzle, cutter and tool wear follow Taylor, the grinding wheel loads up
+  by removed volume and burns the work past Malkin's limit; the feed step sets Ra and the IT grade, and a part
+  too rough for its job, burnt or with a casting defect comes out as scrap, which the cupola remelts.
+- Gears go into the rolling mill stand, keyed shafts into the generator and the electric motor, ground plates
+  into the hydrotest bench. Machine bed and base plate casting patterns.
 
 ### Panels, art and effects
 - Local instrument panels (A0) for every machine: dial gauges with red zones and
