@@ -243,7 +243,6 @@ public final class PcBlockStateProvider extends BlockStateProvider {
             case "cracked_gas_unit" -> "pyrolysis_quench_tower";
             case "ldpe_reactor" -> "hyper_compressor";
             // хлор и ПВХ I3
-            case "uranium_ion_exchange" -> "ion_exchange_column";
             case "brine_treater" -> "water_clarifier";
             case "rectifier_unit" -> s.getValue(PcProperties.ALARM) ? "rectifier_unit_fault"
                     : s.getValue(PcProperties.RUNNING) ? "rectifier_unit" : "rectifier_unit_off";

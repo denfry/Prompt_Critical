@@ -680,19 +680,7 @@ mk("bitumenizer", WS,
       el("glow_drip", [14.25, 2, 7.75], [15.25, 4, 8.25], "bit"),
       el("steam_line", [3, 11, 3], [14, 12, 4], "red")])
 
-mk("vitrification_melter", WS, [
-    el("leg_nw", [0, 0, 1], [2, 6, 3], "d"),
-    el("leg_ne", [14, 0, 1], [16, 6, 3], "d"),
-    el("leg_sw", [0, 0, 13], [2, 6, 15], "d"),
-    el("leg_se", [14, 0, 13], [16, 6, 15], "d"),
-    el("melter", [0, 6, 1], [16, 16, 15], "p", faces={"up": "ref"}),
-    el("front", [1, 7, 0.5], [15, 15, 1], "f", full=["north"]),
-    el("glow_view", [6, 10.5, 0.25], [10, 12.5, 0.5], "hot"),
-    el("spout", [7, 5, 7], [9, 6, 9], "d"),
-    el("glow_stream", [7.6, 4.5, 7.6], [8.4, 5, 8.4], "hot"),
-    el("electrode_w", [3, 16, 6], [5, 17.5, 10], "cu"),
-    el("electrode_e", [11, 16, 6], [13, 17.5, 10], "cu"),
-] + disc("canister", "y", 3, 0, 4.5, "sss"))
+# плавитель остекловывания нарисован вручную в Blockbench: art/blockbench/waste/vitrification_melter.author.js
 
 mk("repository_controller", WS, [
     el("pedestal", [2, 0, 5], [14, 7, 15], "d"),
