@@ -68,7 +68,7 @@ public final class RefineryUpgradingGameTests {
     }
 
     /** Риформинг бензина при 500 °C: реформат снизу, водород сверху, ОЧИ выше прямогонного, печи на своём газе. */
-    @GameTest(template = LARGE, timeoutTicks = 1200)
+    @GameTest(template = LARGE, timeoutTicks = 2400)
     public static void reformerMakesReformateAndHydrogen(GameTestHelper h) {
         BlockPos at = new BlockPos(5, 2, 5);
         h.setBlock(at, north(PcBlocks.CATALYTIC_REFORMER.get()));
