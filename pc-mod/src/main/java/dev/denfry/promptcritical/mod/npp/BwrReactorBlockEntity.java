@@ -70,7 +70,7 @@ public final class BwrReactorBlockEntity extends DeviceBlockEntity implements Fo
             if (slot != BwrPanels.SLOT_FRESH || !stack.is(PcItems.FUEL_ASSEMBLY.get())) return false;
             FuelLot l = FuelLot.of(stack);
             FuelDesign d = l.designOrNull();
-            return d != null && LightWaterCore.accepts(d) && l.burnup() <= 0 && l.pu() <= 0
+            return d != null && LightWaterCore.accepts(d) && l.freshThermal()
                     && (reactor.core().design() == null || reactor.core().design() == d);
         }
 
@@ -163,7 +163,7 @@ public final class BwrReactorBlockEntity extends DeviceBlockEntity implements Fo
         if (d == null) return;
         for (int pos = 0; pos < BoilingWaterReactor.POSITIONS; pos++) {
             if (reactor.core().loaded(pos)) continue;
-            if (reactor.load(pos, d, l.uKg(), l.u235(), l.u234())) {
+            if (reactor.load(pos, d, l.uKg(), l.u235(), l.u234(), l.plutonium())) {
                 s.shrink(1);
                 fuel.setStackInSlot(BwrPanels.SLOT_FRESH, s);
                 setChanged();
@@ -184,10 +184,9 @@ public final class BwrReactorBlockEntity extends DeviceBlockEntity implements Fo
         if (best < 0) return;
         LightWaterCore.AssemblyFuel f = reactor.unload(best);
         if (f == null) return;
-        double u = f.uraniumKg(), pu = f.plutoniumKg();
         FuelDesign d = f.design();
-        FuelLot lot = new FuelLot(u, f.u235Kg() / u, f.u234() * f.hm0Kg() / u, 0.96, d.rods, d.name(), "", f.burnupMwdKg(), f.u236Kg() / u,
-                pu, pu > 0 ? f.pu239Kg() / pu : 0, pu > 0 ? f.pu240Kg() / pu : 0, 0, 0);
+        FuelLot lot = FuelLot.irradiated(d, 0.96, d.rods, f.uraniumKg(), f.u235Kg(), f.u234() * f.hm0Kg(), f.u236Kg(), f.pu239Kg(),
+                f.pu240Kg(), f.pu241Kg(), f.pu242Kg(), f.burnupMwdKg());
         fuel.setStackInSlot(BwrPanels.SLOT_SPENT, lot.on(new ItemStack(PcItems.FUEL_ASSEMBLY.get())));
         if (player != null)
             player.displayClientMessage(NppText.msg("pwr_unloaded", best + 1, String.format(Locale.ROOT, "%.2f", f.burnupMwdKg())), true);

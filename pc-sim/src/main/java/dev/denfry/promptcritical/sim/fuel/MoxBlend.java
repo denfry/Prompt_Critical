@@ -1,6 +1,7 @@
 package dev.denfry.promptcritical.sim.fuel;
 
 import dev.denfry.promptcritical.sim.enrichment.Criticality;
+import dev.denfry.promptcritical.sim.nuclide.PlutoniumCharge;
 
 /**
  * Смешение МОКС-топлива для тепловых реакторов: PuO₂ из PUREX и UO₂ из обеднённого (отвал) или регенерированного урана
@@ -21,7 +22,8 @@ import dev.denfry.promptcritical.sim.enrichment.Criticality;
  * порции порошка ограничена ей, а не производительностью.
  */
 public final class MoxBlend {
-    public static final double PU_FISS_TO_U235 = 0.75, TYPICAL_MIN_PU = 0.05, TYPICAL_MAX_PU = 0.08, MAX_PU = 0.12;
+    public static final double PU_FISS_TO_U235 = PlutoniumCharge.FISS_TO_U235, TYPICAL_MIN_PU = 0.05, TYPICAL_MAX_PU = 0.08,
+            MAX_PU = PlutoniumCharge.MAX_THERMAL_FRACTION;
 
     private MoxBlend() {
     }

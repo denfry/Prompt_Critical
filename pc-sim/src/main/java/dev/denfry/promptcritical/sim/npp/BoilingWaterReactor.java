@@ -3,6 +3,7 @@ package dev.denfry.promptcritical.sim.npp;
 import dev.denfry.promptcritical.sim.core.StateReader;
 import dev.denfry.promptcritical.sim.core.StateWriter;
 import dev.denfry.promptcritical.sim.fuel.FuelDesign;
+import dev.denfry.promptcritical.sim.nuclide.PlutoniumCharge;
 import dev.denfry.promptcritical.sim.neutronics.CellFeedbackState;
 import dev.denfry.promptcritical.sim.reactor.pwr.CoolantPump;
 import dev.denfry.promptcritical.sim.thermo.SaturationState;
@@ -79,6 +80,15 @@ public final class BoilingWaterReactor {
 
     public boolean load(int pos, FuelDesign d, double hmKg, double u235, double u234) {
         return core.load(shutDown(), pos, d, hmKg, u235, u234);
+    }
+
+    /**
+     * Загрузка ТВС МОКС: уран {@code uKg} (доли U-235 и U-234 в уране) и плутоний {@code pu}. В BWR МОКС — штатное
+     * топливо (Kernkraftwerk Gundremmingen, Fukushima Daiichi-3; IAEA TRS-415, 2003): меньшая β_eff и более жёсткий
+     * спектр делают паровой коэффициент сильнее по модулю, стержни — слабее ({@link LightWaterCore#rodWorthFactor()}).
+     */
+    public boolean load(int pos, FuelDesign d, double uKg, double u235, double u234, PlutoniumCharge pu) {
+        return core.load(shutDown(), pos, d, uKg, u235, u234, pu);
     }
 
     public LightWaterCore.AssemblyFuel unload(int pos) {

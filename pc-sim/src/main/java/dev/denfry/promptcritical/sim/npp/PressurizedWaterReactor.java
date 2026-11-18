@@ -7,6 +7,7 @@ import dev.denfry.promptcritical.sim.reactor.pwr.SecondarySide;
 import dev.denfry.promptcritical.sim.core.StateReader;
 import dev.denfry.promptcritical.sim.core.StateWriter;
 import dev.denfry.promptcritical.sim.fuel.FuelDesign;
+import dev.denfry.promptcritical.sim.nuclide.PlutoniumCharge;
 import dev.denfry.promptcritical.sim.neutronics.CellComposition;
 import dev.denfry.promptcritical.sim.neutronics.CellFeedbackState;
 import dev.denfry.promptcritical.sim.neutronics.CoolantKind;
@@ -204,7 +205,12 @@ public final class PressurizedWaterReactor {
 
     /** Загрузка ТВС в позицию: только на заглушенном реакторе; конструкция — одна на весь корпус. */
     public boolean load(int pos, FuelDesign d, double hmKg, double u235, double u234) {
-        if (!core.load(shutDown(), pos, d, hmKg, u235, u234)) return false;
+        return load(pos, d, hmKg, u235, u234, PlutoniumCharge.NONE);
+    }
+
+    /** Загрузка ТВС МОКС: уран {@code uKg} (доли U-235 и U-234 в уране) и плутоний {@code pu} ({@link LightWaterCore}). */
+    public boolean load(int pos, FuelDesign d, double uKg, double u235, double u234, PlutoniumCharge pu) {
+        if (!core.load(shutDown(), pos, d, uKg, u235, u234, pu)) return false;
         dnbTimer[pos] = 0;
         return true;
     }

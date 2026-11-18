@@ -3,6 +3,8 @@ package dev.denfry.promptcritical.sim.npp;
 import dev.denfry.promptcritical.sim.core.StateReader;
 import dev.denfry.promptcritical.sim.core.StateWriter;
 import dev.denfry.promptcritical.sim.fuel.FuelDesign;
+import dev.denfry.promptcritical.sim.fuel.MoxBlend;
+import dev.denfry.promptcritical.sim.nuclide.PlutoniumCharge;
 import dev.denfry.promptcritical.sim.neutronics.CellComposition;
 import dev.denfry.promptcritical.sim.neutronics.CellFeedbackState;
 import dev.denfry.promptcritical.sim.neutronics.CoolantKind;
@@ -29,6 +31,14 @@ import dev.denfry.promptcritical.sim.reactor.FuelDepletion;
  * меняет утечку сильнее, чем k∞ ячейки, и производные одной ячейки не годятся.
  *
  * <p>Стержни, контур и защита — у установки: зона получает реактивность стержней числом.
+ *
+ * <p><b>МОКС.</b> ТВС (канал CANDU) может нести плутоний ({@link PlutoniumCharge}): зона ведёт Pu-239…Pu-242 по
+ * позициям, и ячейка видит их сечения как есть — без пересчёта в эквивалентный U-235. Отсюда сами собой: меньшая β_eff
+ * (доли делений на Pu-239 с β = 0,0021 и Pu-241 с 0,0054 против 0,0065 у U-235; Keepin, 1965), более жёсткий спектр и
+ * меньшая по модулю ценность бора и плотности воды. Ценность стержней установки (числом, Δk/k для урановой зоны)
+ * умножается на {@link #rodWorthFactor()}: у МОКС тепловое поглощение больше (σ_a Pu-239 1017 б, Pu-240 290 б,
+ * Pu-241 1373 б), и по теории возмущений ценность поглотителя падает с ростом Σ_a зоны
+ * ({@link PlutoniumCharge#rodWorthFactor}).
  */
 public final class LightWaterCore {
     public static final int POSITIONS = 19;
@@ -54,7 +64,7 @@ public final class LightWaterCore {
     private final Spec spec;
     private final int count;
     private final double nominalW, dt;
-    private final double[] hm0, u5, u8, pu9, fp, burnup, u6, pu0, x234, share, radius;
+    private final double[] hm0, u5, u8, pu9, fp, burnup, u6, pu0, pu1, pu2, x234, share, radius;
     private final boolean[] failed;
     private FuelDesign design;
     private int loaded;
@@ -68,7 +78,7 @@ public final class LightWaterCore {
     private DelayedGroups groups = DelayedNeutronData.keepin(0);
     private double staticRho = -1, keff, betaEff, generation, sigmaA, sigmaF;
     private CellFeedbackState eval = new CellFeedbackState(573, 720, 573, 0, 0, 0);
-    private double alphaDoppler, alphaDensity, alphaModerator, alphaBoron;
+    private double alphaDoppler, alphaDensity, alphaModerator, alphaBoron, rodWorthFactor = 1;
     private double totalRho, fissionW, slowTimer = 1e9;
 
     public LightWaterCore(double nominalW, double dt) {
@@ -91,6 +101,8 @@ public final class LightWaterCore {
         burnup = new double[count];
         u6 = new double[count];
         pu0 = new double[count];
+        pu1 = new double[count];
+        pu2 = new double[count];
         x234 = new double[count];
         share = new double[count];
         radius = new double[count];
@@ -137,40 +149,59 @@ public final class LightWaterCore {
 
     /** Загрузка ТВС; {@code shutDown} — состояние установки. Конструкция — одна на корпус. */
     public boolean load(boolean shutDown, int pos, FuelDesign d, double hmKg, double u235, double u234) {
-        if (!shutDown || hm0[pos] > 0 || hmKg <= 0 || !spec.designs().contains(d)) return false;
+        return load(shutDown, pos, d, hmKg, u235, u234, PlutoniumCharge.NONE);
+    }
+
+    /**
+     * Загрузка ТВС МОКС: уран {@code uKg} с долями U-235 и U-234 в уране и плутоний {@code pu}. Доля Pu в ТМ — не выше
+     * {@link MoxBlend#MAX_PU}: дальше коэффициент по пустотам положительный, такое топливо в тепловой реактор не
+     * лицензируют.
+     */
+    public boolean load(boolean shutDown, int pos, FuelDesign d, double uKg, double u235, double u234, PlutoniumCharge pu) {
+        double hmKg = uKg + pu.totalKg();
+        if (!shutDown || hm0[pos] > 0 || uKg <= 0 || !spec.designs().contains(d)) return false;
+        if (!pu.thermalLicensable(uKg)) return false;
         if (design != null && loaded > 0 && design != d) return false;
         design = d;
         hm0[pos] = hmKg;
-        u5[pos] = hmKg * u235;
-        u8[pos] = hmKg * (1 - u235 - u234);
-        x234[pos] = u234;
-        pu9[pos] = fp[pos] = burnup[pos] = u6[pos] = pu0[pos] = 0;
+        u5[pos] = uKg * u235;
+        u8[pos] = uKg * (1 - u235 - u234);
+        x234[pos] = u234 * uKg / hmKg;
+        fp[pos] = burnup[pos] = u6[pos] = 0;
+        pu9[pos] = pu.pu239Kg();
+        pu0[pos] = pu.pu240Kg();
+        pu1[pos] = pu.pu241Kg();
+        pu2[pos] = pu.pu242Kg();
         failed[pos] = false;
         countLoaded();
         slowTimer = 1e9;
         return true;
     }
 
-    /** Состав ТВС: начальный ТМ, U-235, U-238, U-236, Pu-239, Pu-240, ПД, кг; U-234 в исходном; выгорание. */
+    /**
+     * Состав ТВС: начальный ТМ, U-235, U-238, U-236, Pu-239, Pu-240, Pu-241, Pu-242 (с Pu-238 МОКС), ПД, кг; U-234 —
+     * доля исходного ТМ; выгорание.
+     */
     public record AssemblyFuel(FuelDesign design, double hm0Kg, double u235Kg, double u238Kg, double u236Kg, double pu239Kg,
-            double pu240Kg, double fpKg, double u234, double burnupMwdKg, boolean failed) {
+            double pu240Kg, double pu241Kg, double pu242Kg, double fpKg, double u234, double burnupMwdKg, boolean failed) {
         public double uraniumKg() {
             return u235Kg + u238Kg + u236Kg + hm0Kg * u234;
         }
 
         public double plutoniumKg() {
-            return pu239Kg + pu240Kg;
+            return pu239Kg + pu240Kg + pu241Kg + pu242Kg;
         }
     }
 
     public AssemblyFuel fuel(int pos) {
-        return new AssemblyFuel(design, hm0[pos], u5[pos], u8[pos], u6[pos], pu9[pos], pu0[pos], fp[pos], x234[pos], burnup[pos], failed[pos]);
+        return new AssemblyFuel(design, hm0[pos], u5[pos], u8[pos], u6[pos], pu9[pos], pu0[pos], pu1[pos], pu2[pos], fp[pos], x234[pos],
+                burnup[pos], failed[pos]);
     }
 
     public AssemblyFuel unload(boolean shutDown, int pos) {
         if (!shutDown || hm0[pos] <= 0) return null;
         AssemblyFuel f = fuel(pos);
-        hm0[pos] = u5[pos] = u8[pos] = pu9[pos] = fp[pos] = burnup[pos] = u6[pos] = pu0[pos] = 0;
+        hm0[pos] = u5[pos] = u8[pos] = pu9[pos] = fp[pos] = burnup[pos] = u6[pos] = pu0[pos] = pu1[pos] = pu2[pos] = 0;
         failed[pos] = false;
         countLoaded();
         if (loaded == 0) design = null;
@@ -272,8 +303,9 @@ public final class LightWaterCore {
     /** Пересчёт ячейки и коэффициентов при состоянии {@code s}. */
     public void solveStatic(CellFeedbackState s) {
         countLoaded();
-        NuclideVector fuel = FuelDepletion.averageFuel(hm0, u5, u8, pu9, fp, spec.fallbackEnrichment());
+        NuclideVector fuel = FuelDepletion.averageFuel(hm0, u5, u8, pu9, pu0, pu1, pu2, fp, spec.fallbackEnrichment());
         SixFactor sf = lattice.evaluate(cell, fuel, s);
+        rodWorthFactor = loaded > 0 ? rodWorthFactor(fuel, sf, s) : 1;
         SixFactor refl = lattice.evaluate(reflector, fuel, s);
         double delta = lattice.reflectorSavings(sf, refl, spec.reflectorM());
         double b2 = lattice.geometricBuckling(ReactorShape.cylinder(coreRadius(), coreHeight()), delta);
@@ -306,6 +338,17 @@ public final class LightWaterCore {
         for (int i = 0; i < count; i++) share[i] = sum > 0 ? share[i] / sum : 0;
     }
 
+    /** Множитель ценности стержней по Σ_a уранового двойника ({@link PlutoniumCharge#rodWorthFactor}); без Pu — ровно 1. */
+    private double rodWorthFactor(NuclideVector fuel, SixFactor sf, CellFeedbackState s) {
+        if (!PlutoniumCharge.hasPlutonium(fuel) || sf.sigmaA() <= 0) return 1;
+        return PlutoniumCharge.rodWorthFactor(lattice.evaluate(cell, PlutoniumCharge.uraniumEquivalent(fuel), s).sigmaA(), sf.sigmaA());
+    }
+
+    /** Ценность стержней этой зоны к урановой зоне того же эквивалентного обогащения (1 — без плутония). */
+    public double rodWorthFactor() {
+        return rodWorthFactor;
+    }
+
     private double rhoAt(NuclideVector fuel, CellFeedbackState s) {
         SixFactor sf = lattice.evaluate(cell, fuel, s);
         double delta = lattice.reflectorSavings(sf, lattice.evaluate(reflector, fuel, s), spec.reflectorM());
@@ -322,7 +365,8 @@ public final class LightWaterCore {
     public double reactivity(CellFeedbackState s, double rods) {
         return staticRho + alphaDoppler * (s.fuelEffTemp() - eval.fuelEffTemp())
                 + alphaDensity * (s.coolantDensity() - eval.coolantDensity())
-                + alphaModerator * (s.moderatorTemp() - eval.moderatorTemp()) + alphaBoron * (s.boronPpm() - eval.boronPpm()) + rods;
+                + alphaModerator * (s.moderatorTemp() - eval.moderatorTemp()) + alphaBoron * (s.boronPpm() - eval.boronPpm())
+                + rods * rodWorthFactor;
     }
 
     /**
@@ -351,7 +395,8 @@ public final class LightWaterCore {
         poisons.step(gameDt, f, phi, sigmaXe(tn), sigmaSm(tn));
         if (fissionW > 0 && gameDt > 0)
             for (int i = 0; i < count; i++)
-                if (share[i] > 0) FuelDepletion.deplete(i, fissionW * share[i], gameDt, CONVERSION, hm0, u5, u8, u6, pu9, pu0, fp, burnup);
+                if (share[i] > 0) FuelDepletion.deplete(i, fissionW * share[i], gameDt, CONVERSION, hm0, u5, u8, u6, pu9, pu0, pu1, pu2, fp,
+                            burnup);
         period.sample(Math.max(n, PointKinetics.MIN_POWER));
         return n;
     }
@@ -373,28 +418,44 @@ public final class LightWaterCore {
      * выгоревшие пучки у выходного торца]. Возвращает выгруженное или null, если позиция не была полна.
      */
     public AssemblyFuel shift(int pos, FuelDesign d, double kgIn, double u235, double u234, double fullKg) {
-        if (kgIn <= 0 || !spec.designs().contains(d) || design != null && loaded > 0 && design != d) return null;
+        return shift(pos, d, kgIn, u235, u234, PlutoniumCharge.NONE, fullKg);
+    }
+
+    /**
+     * Перегрузка на ходу топливом МОКС: {@code uKgIn} урана (доли U-235 и U-234 в уране) и плутоний {@code pu}; позиция
+     * полна при {@code fullKg} тяжёлого металла.
+     */
+    public AssemblyFuel shift(int pos, FuelDesign d, double uKgIn, double u235, double u234, PlutoniumCharge pu, double fullKg) {
+        double kgIn = uKgIn + pu.totalKg();
+        if (uKgIn <= 0 || !spec.designs().contains(d) || design != null && loaded > 0 && design != d) return null;
+        if (!pu.thermalLicensable(uKgIn)) return null;
         design = d;
         double m = hm0[pos], out = Math.max(0, m + kgIn - fullKg);
         AssemblyFuel discharged = null;
         if (out > 0 && m > 0) {
             double f = Math.min(1, out / m);
-            discharged = new AssemblyFuel(d, m * f, u5[pos] * f, u8[pos] * f, u6[pos] * f, pu9[pos] * f, pu0[pos] * f, fp[pos] * f,
-                    x234[pos], burnup[pos], failed[pos]);
+            discharged = new AssemblyFuel(d, m * f, u5[pos] * f, u8[pos] * f, u6[pos] * f, pu9[pos] * f, pu0[pos] * f, pu1[pos] * f,
+                    pu2[pos] * f, fp[pos] * f, x234[pos], burnup[pos], failed[pos]);
             hm0[pos] *= 1 - f;
             u5[pos] *= 1 - f;
             u8[pos] *= 1 - f;
             u6[pos] *= 1 - f;
             pu9[pos] *= 1 - f;
             pu0[pos] *= 1 - f;
+            pu1[pos] *= 1 - f;
+            pu2[pos] *= 1 - f;
             fp[pos] *= 1 - f;
         }
-        double left = hm0[pos];
+        double left = hm0[pos], x234In = u234 * uKgIn / kgIn;
         burnup[pos] = left + kgIn > 0 ? burnup[pos] * left / (left + kgIn) : 0;
-        x234[pos] = left + kgIn > 0 ? (x234[pos] * left + u234 * kgIn) / (left + kgIn) : u234;
+        x234[pos] = left + kgIn > 0 ? (x234[pos] * left + x234In * kgIn) / (left + kgIn) : x234In;
         hm0[pos] += kgIn;
-        u5[pos] += kgIn * u235;
-        u8[pos] += kgIn * (1 - u235 - u234);
+        u5[pos] += uKgIn * u235;
+        u8[pos] += uKgIn * (1 - u235 - u234);
+        pu9[pos] += pu.pu239Kg();
+        pu0[pos] += pu.pu240Kg();
+        pu1[pos] += pu.pu241Kg();
+        pu2[pos] += pu.pu242Kg();
         countLoaded();
         slowTimer = 1e9;
         return discharged;
@@ -490,6 +551,8 @@ public final class LightWaterCore {
         out.putDoubles("bu", burnup, count);
         out.putDoubles("u6", u6, count);
         out.putDoubles("pu0", pu0, count);
+        out.putDoubles("pu1", pu1, count);
+        out.putDoubles("pu2", pu2, count);
         out.putDoubles("x234", x234, count);
         int[] f = new int[count];
         for (int i = 0; i < count; i++) f[i] = failed[i] ? 1 : 0;
@@ -514,6 +577,8 @@ public final class LightWaterCore {
         copy(in, "bu", burnup);
         copy(in, "u6", u6);
         copy(in, "pu0", pu0);
+        copy(in, "pu1", pu1);
+        copy(in, "pu2", pu2);
         copy(in, "x234", x234);
         if (in.has("failed")) {
             int[] f = in.getInts("failed");

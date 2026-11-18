@@ -3,6 +3,7 @@ package dev.denfry.promptcritical.sim.npp;
 import dev.denfry.promptcritical.sim.core.StateReader;
 import dev.denfry.promptcritical.sim.core.StateWriter;
 import dev.denfry.promptcritical.sim.fuel.FuelDesign;
+import dev.denfry.promptcritical.sim.nuclide.PlutoniumCharge;
 import dev.denfry.promptcritical.sim.neutronics.CellComposition;
 import dev.denfry.promptcritical.sim.neutronics.CellFeedbackState;
 import dev.denfry.promptcritical.sim.neutronics.CoolantKind;
@@ -78,6 +79,24 @@ public final class CanduReactor {
     /** Первая загрузка канала целиком (12 пучков): только на заглушенном реакторе. */
     public boolean loadChannel(int ch, double bundleKg, double u235, double u234) {
         return core.load(shutDown(), ch, FuelDesign.CANDU_37, channelKg(bundleKg), u235, u234);
+    }
+
+    /**
+     * Первая загрузка канала пучками МОКС: в пучке {@code bundleUKg} урана (доли U-235 и U-234 в уране) и плутоний
+     * {@code bundlePu}. CANDU сжигает МОКС на природном или обеднённом уране без переделки зоны — пучок той же
+     * геометрии (AECL, Dimayuga, «Plutonium disposition in CANDU», 1997; Chan et al., IAEA-SM-358, 1999).
+     */
+    public boolean loadChannel(int ch, double bundleUKg, double u235, double u234, PlutoniumCharge bundlePu) {
+        return core.load(shutDown(), ch, FuelDesign.CANDU_37, channelKg(bundleUKg), u235, u234,
+                bundlePu.scaled(BUNDLES_PER_CHANNEL));
+    }
+
+    /** Перегрузка на ходу пучками МОКС (см. {@link #refuel(int, int, double, double, double)}). */
+    public LightWaterCore.AssemblyFuel refuel(int ch, int bundles, double bundleUKg, double u235, double u234, PlutoniumCharge bundlePu) {
+        LightWaterCore.AssemblyFuel out = core.shift(ch, FuelDesign.CANDU_37, bundles * bundleUKg, u235, u234,
+                bundlePu.scaled(bundles), channelKg(bundleUKg + bundlePu.totalKg()));
+        refuelledBundles += bundles;
+        return out;
     }
 
     /**
