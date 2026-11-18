@@ -1,0 +1,32 @@
+{
+  "parent": "minecraft:recipes/root",
+  "criteria": {
+    "has_salt": {
+      "conditions": {
+        "items": [
+          {
+            "items": "promptcritical:salt"
+          }
+        ]
+      },
+      "trigger": "minecraft:inventory_changed"
+    },
+    "has_the_recipe": {
+      "conditions": {
+        "recipe": "promptcritical:chlor/brine_treater"
+      },
+      "trigger": "minecraft:recipe_unlocked"
+    }
+  },
+  "requirements": [
+    [
+      "has_the_recipe",
+      "has_salt"
+    ]
+  ],
+  "rewards": {
+    "recipes": [
+      "promptcritical:chlor/brine_treater"
+    ]
+  }
+}

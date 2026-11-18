@@ -1,0 +1,32 @@
+{
+  "parent": "minecraft:recipes/root",
+  "criteria": {
+    "has_edc_unit": {
+      "conditions": {
+        "items": [
+          {
+            "items": "promptcritical:edc_unit"
+          }
+        ]
+      },
+      "trigger": "minecraft:inventory_changed"
+    },
+    "has_the_recipe": {
+      "conditions": {
+        "recipe": "promptcritical:chlor/edc_cracker"
+      },
+      "trigger": "minecraft:recipe_unlocked"
+    }
+  },
+  "requirements": [
+    [
+      "has_the_recipe",
+      "has_edc_unit"
+    ]
+  ],
+  "rewards": {
+    "recipes": [
+      "promptcritical:chlor/edc_cracker"
+    ]
+  }
+}

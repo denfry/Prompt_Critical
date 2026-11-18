@@ -1,0 +1,32 @@
+{
+  "parent": "minecraft:recipes/root",
+  "criteria": {
+    "has_edc_cracker": {
+      "conditions": {
+        "items": [
+          {
+            "items": "promptcritical:edc_cracker"
+          }
+        ]
+      },
+      "trigger": "minecraft:inventory_changed"
+    },
+    "has_the_recipe": {
+      "conditions": {
+        "recipe": "promptcritical:chlor/pvc_reactor"
+      },
+      "trigger": "minecraft:recipe_unlocked"
+    }
+  },
+  "requirements": [
+    [
+      "has_the_recipe",
+      "has_edc_cracker"
+    ]
+  ],
+  "rewards": {
+    "recipes": [
+      "promptcritical:chlor/pvc_reactor"
+    ]
+  }
+}
