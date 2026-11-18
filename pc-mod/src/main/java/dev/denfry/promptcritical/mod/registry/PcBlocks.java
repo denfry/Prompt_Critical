@@ -127,6 +127,7 @@ public final class PcBlocks {
     /** Блок руды → id сырого предмета (выпадение). */
     private static final Map<DeferredBlock<? extends Block>, String> ORE_DROPS = new LinkedHashMap<>();
     private static final List<DeferredBlock<PcDeviceBlock>> DEVICES = new ArrayList<>();
+    private static final List<DeferredBlock<PcBlock>> GEOLOGY = new ArrayList<>();
     /** Руды 02, выпадающие сами собой (с анализом). */
     private static final List<DeferredBlock<PcBlock>> SELF_ASSAYED = new ArrayList<>();
     /** Декор (11 §11.6): в топологию не входит. */
@@ -361,6 +362,34 @@ public final class PcBlocks {
     public static final DeferredBlock<PcDeviceBlock> MINE_DRAINAGE_PUMP = device("mine_drainage_pump", machine(),
             Spec.facing(PcProperties.RUNNING).footprint(FP_WIDE2),
             KineticMachineBlock.with(ShaftSide.LEFT, MineDrainagePumpBlockEntity::new));
+
+    // --- нефть и газ I2: геология, сейсморазведка, буровая ---
+    public static final DeferredBlock<PcBlock> RESERVOIR_SANDSTONE = geology("reservoir_sandstone", MapColor.TERRACOTTA_ORANGE);
+    public static final DeferredBlock<PcBlock> RESERVOIR_SANDSTONE_GAS = geology("reservoir_sandstone_gas", MapColor.TERRACOTTA_YELLOW);
+    public static final DeferredBlock<PcBlock> RESERVOIR_SANDSTONE_WATER = geology("reservoir_sandstone_water", MapColor.TERRACOTTA_LIGHT_GRAY);
+    public static final DeferredBlock<PcBlock> CAP_ROCK_SHALE = geology("cap_rock_shale", MapColor.TERRACOTTA_GRAY);
+    public static final DeferredBlock<PcBlock> BARITE_ORE = geology("barite_ore", MapColor.QUARTZ);
+    public static final DeferredBlock<PcBlock> OIL_SEEP = geologyOf(block("oil_seep",
+            Properties.of().mapColor(MapColor.COLOR_BLACK).strength(0.6f).sound(SoundType.MUD).noOcclusion().speedFactor(0.4f), Spec.of()));
+    public static final DeferredBlock<PcDeviceBlock> SEISMIC_RECORDER = device("seismic_recorder", instrument(),
+            Spec.facing(BlockStateProperties.LIT), FoundryBlock.with(dev.denfry.promptcritical.mod.drilling.SeismicRecorderBlockEntity::new));
+    public static final DeferredBlock<PcBlock> GEOPHONE = block("geophone", instrument().noCollission(), Spec.of());
+    public static final DeferredBlock<PcDeviceBlock> DRILLERS_CONSOLE = device("drillers_console", machine(),
+            Spec.facing(BlockStateProperties.LIT, PcProperties.ALARM).footprint(FP_TALL2),
+            FoundryBlock.with(dev.denfry.promptcritical.mod.drilling.DrillersConsoleBlockEntity::new));
+    public static final DeferredBlock<PcDeviceBlock> ROTARY_TABLE = device("rotary_table", machine(), Spec.facing(PcProperties.RUNNING),
+            KineticMachineBlock.with(ShaftSide.LEFT, dev.denfry.promptcritical.mod.drilling.RotaryTableBlockEntity::new));
+    public static final DeferredBlock<PcDeviceBlock> MUD_PUMP = device("mud_pump", machine(),
+            Spec.facing(PcProperties.RUNNING).footprint(Footprint.of(Segment.box(-1, 1, 0, 1, 0, 1))),
+            dev.denfry.promptcritical.mod.drilling.MudPumpBlock::create);
+    public static final DeferredBlock<PcBlock> DRAWWORKS = block("drawworks", machine(),
+            Spec.facing().footprint(Footprint.of(Segment.box(-1, 1, 0, 1, 0, 1))));
+    public static final DeferredBlock<PcBlock> DERRICK_SEGMENT = block("derrick_segment", machine(), Spec.facing().footprint(FP_CUBE3));
+    public static final DeferredBlock<PcBlock> BOP_ANNULAR = block("bop_annular", machine(), Spec.facing(PcProperties.SHUT));
+    public static final DeferredBlock<PcBlock> CHOKE_MANIFOLD = block("choke_manifold", machine(), Spec.facing().footprint(FP_WIDE2));
+    public static final DeferredBlock<PcBlock> MUD_TANK = block("mud_tank", machine(), Spec.facing(PcProperties.MUD_LEVEL));
+    public static final DeferredBlock<PcDeviceBlock> MUD_MIXING_HOPPER = device("mud_mixing_hopper", machine(), Spec.facing(),
+            FoundryBlock.with(dev.denfry.promptcritical.mod.drilling.MudHopperBlockEntity::new));
 
     // --- обогащение, литьё, механический цех (08 §8.3, §8.9, §8.10) ---
     public static final DeferredBlock<PcDeviceBlock> COAL_JIG = device("coal_jig", machine(),
@@ -769,6 +798,22 @@ public final class PcBlocks {
         return b;
     }
 
+    /** Порода нефтегазоносного разреза: колется киркой, в топологии не участвует. */
+    private static DeferredBlock<PcBlock> geology(String name, MapColor color) {
+        return geologyOf(block(name, Properties.of().mapColor(color).instrument(NoteBlockInstrument.BASEDRUM)
+                .requiresCorrectToolForDrops().strength(2.0f, 6.0f), Spec.of()));
+    }
+
+    private static DeferredBlock<PcBlock> geologyOf(DeferredBlock<PcBlock> b) {
+        GEOLOGY.add(b);
+        return b;
+    }
+
+    /** Породы разреза I2: вне топологии, как руды. */
+    public static List<DeferredBlock<PcBlock>> geology() {
+        return Collections.unmodifiableList(GEOLOGY);
+    }
+
     private static DeferredBlock<PcBlock> ore02(String name) {
         DeferredBlock<PcBlock> b = block(name, ore(), Spec.of());
         SELF_ASSAYED.add(b);
@@ -814,7 +859,8 @@ public final class PcBlocks {
     public static List<Block> topologyRelevant() {
         List<Block> out = new ArrayList<>();
         for (DeferredBlock<? extends Block> b : WITH_ITEMS) {
-            if (!ORE_DROPS.containsKey(b) && !SELF_ASSAYED.contains(b) && !DECOR.contains(b) && b != FIRECLAY && b != VEIN_QUARTZ)
+            if (!ORE_DROPS.containsKey(b) && !SELF_ASSAYED.contains(b) && !DECOR.contains(b) && !GEOLOGY.contains(b) && b != FIRECLAY
+                    && b != VEIN_QUARTZ)
                 out.add(b.get());
         }
         out.add(MULTIBLOCK_PART.get());

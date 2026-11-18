@@ -56,8 +56,8 @@ public final class Well {
     /** Момент на долоте T = μWd/3 (Pessier, Fear, SPE 24584) и сопротивление вращению колонны, Н·м/м. */
     public static final double BIT_FRICTION = 0.25, STRING_TORQUE_NM_PER_M = 1.5;
     public static final double PUMP_EFFICIENCY = 0.85;
-    /** Долив ёмкостей: ниже этой доли объёма — до второй. */
-    public static final double MAKEUP_BELOW = 0.5, MAKEUP_TO = 0.8;
+    /** Долив ёмкостей: ниже этой доли объёма — до второй; рабочий уровень оставляет запас под приток. */
+    public static final double MAKEUP_BELOW = 0.4, MAKEUP_TO = 0.6;
     private static final double EPS = 1e-9, MERGE_KGM3 = 0.5;
     private static final double PS_MAX = 2.0e8;
 
@@ -170,7 +170,7 @@ public final class Well {
 
     /** Обнулить счётчик прироста (бурильщик перед работой отмечает уровень). */
     public void zeroPitTotalizer() {
-        pitReferenceM3 = pitM3;
+        pitReferenceM3 = pitM3 + spilledM3;
     }
 
     /**
@@ -681,8 +681,9 @@ public final class Well {
         return pitKgM3;
     }
 
+    /** Прирост против ожидаемого уровня, м³; перелитое через край тоже считается — его видит датчик потока. */
     public double pitGainM3() {
-        return pitM3 - pitReferenceM3;
+        return pitM3 + spilledM3 - pitReferenceM3;
     }
 
     /** Признак притока: прирост в ёмкостях или перелив при остановленном насосе и открытом превенторе. */

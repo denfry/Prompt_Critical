@@ -34,6 +34,12 @@ public final class PcDataComponents {
             COMPONENTS.registerComponentType("map_target", b -> b.persistent(MapTargetData.CODEC)
                     .networkSynchronized(MapTargetData.STREAM_CODEC));
 
+    /** Интерпретация сейсмической съёмки на {@code seismic_section}. */
+    public static final DeferredHolder<DataComponentType<?>, DataComponentType<dev.denfry.promptcritical.mod.drilling.SeismicSectionData>>
+            SEISMIC_SECTION = COMPONENTS.registerComponentType("seismic_section",
+                    b -> b.persistent(dev.denfry.promptcritical.mod.drilling.SeismicSectionData.CODEC)
+                            .networkSynchronized(dev.denfry.promptcritical.mod.drilling.SeismicSectionData.STREAM_CODEC));
+
     private PcDataComponents() {
     }
 }

@@ -207,6 +207,27 @@ public final class PcLanguageProvider extends LanguageProvider {
         i("engineering_handbook", "Engineering Handbook", "Справочник инженера");
         i("operating_procedure", "Operating Procedure", "Инструкция по эксплуатации");
         i("geological_map", "Geological Map", "Геологическая карта");
+        // нефть и газ I2
+        b("reservoir_sandstone", "Oil-Bearing Sandstone", "Нефтенасыщенный песчаник");
+        b("reservoir_sandstone_gas", "Gas-Bearing Sandstone", "Газонасыщенный песчаник");
+        b("reservoir_sandstone_water", "Water-Bearing Sandstone", "Водонасыщенный песчаник");
+        b("cap_rock_shale", "Cap Rock Shale", "Глинистая покрышка");
+        b("barite_ore", "Bedded Barite", "Пластовый барит");
+        b("oil_seep", "Oil Seep", "Нефтепроявление");
+        b("seismic_recorder", "Seismic Recorder", "Сейсмостанция");
+        b("geophone", "Geophone", "Сейсмоприёмник");
+        b("drillers_console", "Driller's Console", "Пульт бурильщика");
+        b("rotary_table", "Rotary Table", "Ротор");
+        b("mud_pump", "Triplex Mud Pump", "Буровой насос");
+        b("drawworks", "Drawworks", "Буровая лебёдка");
+        b("derrick_segment", "Derrick Section", "Секция вышки");
+        b("bop_annular", "Annular Preventer", "Кольцевой превентор");
+        b("choke_manifold", "Choke Manifold", "Манифольд дросселирования");
+        b("mud_tank", "Mud Tank", "Ёмкость бурового раствора");
+        b("mud_mixing_hopper", "Mud Mixing Hopper", "Гидроворонка");
+        i("barite_powder", "Barite Sack (50 kg)", "Мешок барита (50 кг)");
+        i("seismic_charge", "Seismic Charge", "Сейсмический заряд");
+        i("seismic_section", "Seismic Section", "Сейсмический разрез");
         i("copper_wire", "Copper Wire", "Медная проволока");
         i("generator_coupling", "Shear-Pin Coupling", "Муфта со срезным штифтом");
         i("lv_fuse", "LV Fuse Link", "Плавкая вставка");
@@ -514,6 +535,7 @@ public final class PcLanguageProvider extends LanguageProvider {
                 MISC.put(dev.denfry.promptcritical.mod.content.PonderLayouts.langKey(scene, "text_" + (i + 1)), t.lines().get(i));
         });
         MISC.putAll(dev.denfry.promptcritical.mod.panel.PanelText.lang());
+        MISC.putAll(dev.denfry.promptcritical.mod.drilling.DrillingText.lang());
     }
 
     @Override

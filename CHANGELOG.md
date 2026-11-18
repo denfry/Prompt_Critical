@@ -11,6 +11,19 @@
   and the low-severity list.
 - Xenon, samarium and fission product decay heat in the graphite pile.
 
+### Oil and gas (I2)
+- Petroleum geology: one anticlinal trap per 384-block cell with a real depth of 0.6–2.5 km, porosity,
+  permeability, gas, oil or water and normal or abnormal pore pressure; a model of the dome in the deepslate,
+  bedded barite in the cap rock and oil seeps over shallow fields.
+- Seismic recorder with geophones and seismic charges: a seismic section of the nearest structure with
+  two-way time, depth, closure, a bright spot over gas and an Eaton pore pressure forecast.
+- Drilling rig around a driller's console: rotary table and triplex mud pumps on Create shafts, derrick,
+  drawworks, annular preventer, choke manifold, mud tanks and a mixing hopper for barite. Bourgoyne–Young
+  rate of penetration, Bingham plastic hydraulics, ECD, weight indicator, standpipe and casing gauges, pit level.
+- Well control: Darcy inflow when underbalanced, pit gain alarm, shut-in SIDPP and SICP, gas migration, shoe
+  breakdown and preventer limit, the driller's method on an automatic choke, and a blowout that ignites gas on
+  the rig through the damage budget. Handbook chapters on seismic, drilling and well control.
+
 ### Character body
 - Choose sex, height, mass and age on the title screen or on first join; locked per world, an operator can reset.
 - Height scales the player model and stride; mass sets knockback resistance and the load in the hoist cage;

@@ -165,6 +165,12 @@ public final class PcItems {
             EngineeringHandbookItem::new, new Item.Properties().stacksTo(1)));
     public static final DeferredItem<OperatingProcedureItem> OPERATING_PROCEDURE = registered(ITEMS.registerItem("operating_procedure",
             OperatingProcedureItem::new, new Item.Properties().stacksTo(1)));
+    // нефть и газ I2: утяжелитель (мешок 50 кг, API 13A), заряд для шурфа, сейсмический разрез
+    public static final DeferredItem<Item> BARITE_POWDER = item("barite_powder", 64);
+    public static final DeferredItem<Item> SEISMIC_CHARGE = item("seismic_charge", 16);
+    public static final DeferredItem<dev.denfry.promptcritical.mod.drilling.SeismicSectionItem> SEISMIC_SECTION = registered(
+            ITEMS.registerItem("seismic_section", dev.denfry.promptcritical.mod.drilling.SeismicSectionItem::new,
+                    new Item.Properties().stacksTo(1)));
     public static final DeferredItem<GeologicalMapItem> GEOLOGICAL_MAP = registered(ITEMS.registerItem("geological_map",
             GeologicalMapItem::new, new Item.Properties().stacksTo(1)));
 

@@ -109,7 +109,7 @@ public final class PcBlockStateProvider extends BlockStateProvider {
     /** Блоки с неподвижными частями из арт-реестра (partial): части добавляются мультипартом к модели состояния. */
     private static final java.util.Set<String> PARTS = java.util.Set.of("coke_pusher_ram", "sinter_strand", "blast_furnace_top",
             "cast_house_machine", "ladle", "roller_table", "rolling_mill_stand", "piercing_mill", "pipe_welder", "asu_main_compressor",
-            "asu_expander", "air_separator", "hydrotest_pump", "recording_gauge", "water_clarifier");
+            "asu_expander", "air_separator", "hydrotest_pump", "recording_gauge", "water_clarifier", "rotary_table", "mud_pump");
 
     /** Модели состояния мультипартом: основная и части, все с поворотом по {@code facing}. */
     private void parts(Block block, String id) {
@@ -148,6 +148,8 @@ public final class PcBlockStateProvider extends BlockStateProvider {
             case "hydrotest_pump" -> java.util.List.of(base, id + "/partial/lever");
             case "recording_gauge" -> java.util.List.of(base, id + "/partial/drum");
             case "water_clarifier" -> java.util.List.of(base, id + "/partial/rake");
+            case "rotary_table" -> java.util.List.of(base, id + "/partial/turntable", id + "/partial/kelly");
+            case "mud_pump" -> java.util.List.of(base, id + "/partial/crankshaft");
             default -> java.util.List.of(base);
         };
     }
@@ -207,6 +209,14 @@ public final class PcBlockStateProvider extends BlockStateProvider {
             case "mine_dispatch_cabinet" -> s.getValue(PcProperties.ALARM) ? id + "_alarm" : id;
             case "headframe" -> s.getValue(PcProperties.TOP) ? id + "_top" : id;
             case "mine_cage" -> s.getValue(BlockStateProperties.OPEN) ? id + "_open" : id;
+            // нефть и газ I2
+            case "drillers_console", "seismic_recorder" -> s.getValue(BlockStateProperties.LIT) ? id + "_on" : id;
+            case "bop_annular" -> s.getValue(PcProperties.SHUT) ? id + "_closed" : id;
+            case "mud_tank" -> switch (s.getValue(PcProperties.MUD_LEVEL)) {
+                case 0 -> id + "_empty";
+                case 2 -> id + "_full";
+                default -> id;
+            };
             case "cupola_furnace", "crucible_furnace" -> s.getValue(BlockStateProperties.LIT) ? id + "_lit" : id;
             case "sand_mold" -> switch (s.getValue(PcProperties.MOLD_STAGE)) {
                 case EMPTY -> id;

@@ -12,6 +12,8 @@ public final class PcFeatures {
     public static final DeferredRegister<Feature<?>> FEATURES = DeferredRegister.create(Registries.FEATURE, PromptCritical.MOD_ID);
 
     public static final DeferredHolder<Feature<?>, VeinOreFeature> VEIN_ORES = FEATURES.register("vein_ores", VeinOreFeature::new);
+    public static final DeferredHolder<Feature<?>, dev.denfry.promptcritical.mod.drilling.PetroleumFeature> PETROLEUM =
+            FEATURES.register("petroleum", dev.denfry.promptcritical.mod.drilling.PetroleumFeature::new);
 
     private PcFeatures() {
     }
