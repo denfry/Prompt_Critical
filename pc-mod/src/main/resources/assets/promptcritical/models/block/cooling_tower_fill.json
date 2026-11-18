@@ -1,14 +1,15 @@
 {
 	"credit": "Made with Blockbench",
 	"textures": {
-		"particle": "promptcritical:block/common/grid2_fill",
-		"fill": "promptcritical:block/common/grid2_fill"
+		"particle": "promptcritical:block/m5water/fill",
+		"m5water_fill": "promptcritical:block/m5water/fill",
+		"plant_concrete": "promptcritical:block/plant/concrete"
 	},
 	"elements": [
 		{
-			"name": "fill",
-			"from": [0, 0, 0],
-			"to": [16, 16, 16],
+			"name": "pack",
+			"from": [0, 2, 0],
+			"to": [16, 14, 16],
 			"rotation": {
 				"angle": 0,
 				"axis": "y",
@@ -16,28 +17,172 @@
 			},
 			"faces": {
 				"north": {
-					"uv": [0, 0, 16, 16],
-					"texture": "#fill"
+					"uv": [0, 4, 16, 16],
+					"texture": "#m5water_fill"
 				},
 				"east": {
-					"uv": [0, 0, 16, 16],
-					"texture": "#fill"
+					"uv": [0, 4, 16, 16],
+					"texture": "#m5water_fill"
 				},
 				"south": {
-					"uv": [0, 0, 16, 16],
-					"texture": "#fill"
+					"uv": [0, 4, 16, 16],
+					"texture": "#m5water_fill"
 				},
 				"west": {
-					"uv": [0, 0, 16, 16],
-					"texture": "#fill"
+					"uv": [0, 4, 16, 16],
+					"texture": "#m5water_fill"
 				},
 				"up": {
 					"uv": [0, 0, 16, 16],
-					"texture": "#fill"
+					"texture": "#m5water_fill"
 				},
 				"down": {
 					"uv": [0, 0, 16, 16],
-					"texture": "#fill"
+					"texture": "#m5water_fill"
+				}
+			}
+		},
+		{
+			"name": "beam1",
+			"from": [1, 0, 0],
+			"to": [2, 2, 16],
+			"rotation": {
+				"angle": 0,
+				"axis": "y",
+				"origin": [8, 8, 8]
+			},
+			"faces": {
+				"north": {
+					"uv": [14, 14, 15, 16],
+					"texture": "#plant_concrete"
+				},
+				"east": {
+					"uv": [0, 14, 16, 16],
+					"texture": "#plant_concrete"
+				},
+				"south": {
+					"uv": [1, 14, 2, 16],
+					"texture": "#plant_concrete"
+				},
+				"west": {
+					"uv": [0, 14, 16, 16],
+					"texture": "#plant_concrete"
+				},
+				"up": {
+					"uv": [1, 0, 2, 16],
+					"texture": "#plant_concrete"
+				},
+				"down": {
+					"uv": [1, 0, 2, 16],
+					"texture": "#plant_concrete"
+				}
+			}
+		},
+		{
+			"name": "beam14",
+			"from": [14, 0, 0],
+			"to": [15, 2, 16],
+			"rotation": {
+				"angle": 0,
+				"axis": "y",
+				"origin": [8, 8, 8]
+			},
+			"faces": {
+				"north": {
+					"uv": [1, 14, 2, 16],
+					"texture": "#plant_concrete"
+				},
+				"east": {
+					"uv": [0, 14, 16, 16],
+					"texture": "#plant_concrete"
+				},
+				"south": {
+					"uv": [14, 14, 15, 16],
+					"texture": "#plant_concrete"
+				},
+				"west": {
+					"uv": [0, 14, 16, 16],
+					"texture": "#plant_concrete"
+				},
+				"up": {
+					"uv": [14, 0, 15, 16],
+					"texture": "#plant_concrete"
+				},
+				"down": {
+					"uv": [14, 0, 15, 16],
+					"texture": "#plant_concrete"
+				}
+			}
+		},
+		{
+			"name": "hanger1",
+			"from": [0, 14, 1],
+			"to": [16, 16, 2],
+			"rotation": {
+				"angle": 0,
+				"axis": "y",
+				"origin": [8, 8, 8]
+			},
+			"faces": {
+				"north": {
+					"uv": [0, 0, 16, 2],
+					"texture": "#plant_concrete"
+				},
+				"east": {
+					"uv": [14, 0, 15, 2],
+					"texture": "#plant_concrete"
+				},
+				"south": {
+					"uv": [0, 0, 16, 2],
+					"texture": "#plant_concrete"
+				},
+				"west": {
+					"uv": [1, 0, 2, 2],
+					"texture": "#plant_concrete"
+				},
+				"up": {
+					"uv": [0, 1, 16, 2],
+					"texture": "#plant_concrete"
+				},
+				"down": {
+					"uv": [0, 14, 16, 15],
+					"texture": "#plant_concrete"
+				}
+			}
+		},
+		{
+			"name": "hanger14",
+			"from": [0, 14, 14],
+			"to": [16, 16, 15],
+			"rotation": {
+				"angle": 0,
+				"axis": "y",
+				"origin": [8, 8, 8]
+			},
+			"faces": {
+				"north": {
+					"uv": [0, 0, 16, 2],
+					"texture": "#plant_concrete"
+				},
+				"east": {
+					"uv": [1, 0, 2, 2],
+					"texture": "#plant_concrete"
+				},
+				"south": {
+					"uv": [0, 0, 16, 2],
+					"texture": "#plant_concrete"
+				},
+				"west": {
+					"uv": [14, 0, 15, 2],
+					"texture": "#plant_concrete"
+				},
+				"up": {
+					"uv": [0, 14, 16, 15],
+					"texture": "#plant_concrete"
+				},
+				"down": {
+					"uv": [0, 1, 16, 2],
+					"texture": "#plant_concrete"
 				}
 			}
 		}

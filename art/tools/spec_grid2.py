@@ -148,10 +148,7 @@ m("gas_engine", "grid", piston_engine(True))
 m("gas_engine/flywheel", "grid", hcyl("flywheel", "z", 9, -16, -13.5, "ci", c=(8, -2, 8)), kind="partial")
 
 # расходный бак дизтоплива 1×2×1: вертикальный цилиндр с коричневым поясом (топливо)
-m("fuel_day_tank", "grid", legs(3, 13, 3, 13, 4, 1)
-  + vcyl("tank", 8, 8, 6, 4, 30, "sil", top="sils")
-  + vcyl("band", 8, 8, 6.3, 15, 18, "fuel")
-  + vcyl("vent", 8, 8, 0.75, 30, 32, "st", 8))
+# нарисовано вручную в Blockbench: art/blockbench/hydro/m5_water.author.js
 
 
 # огневой подогреватель (печь АВТ): стена, свод, радиантный змеевик
@@ -207,7 +204,7 @@ m("cooling_tower_shell_top", "cooling", shell(top=True))
 for _a, _n in ((22.5, "in"), (45, "in_steep"), (-22.5, "out"), (-45, "out_steep")):
     m(f"cooling_tower_shell_{_n}", "cooling", shell(_a))
     m(f"cooling_tower_shell_{_n}_top", "cooling", shell(_a, True))
-m("cooling_tower_fill", "cooling", [el("fill", [0, 0, 0], [16, 16, 16], "fill")])
+# нарисовано вручную в Blockbench: art/blockbench/hydro/m5_water.author.js
 
 
 def basin(level):
@@ -217,13 +214,9 @@ def basin(level):
     return els
 
 
-m("cooling_tower_basin", "cooling", basin(13))
-m("cooling_tower_basin_low", "cooling", basin(6))
-m("cooling_tower_basin_empty", "cooling", basin(0))
+# нарисовано вручную в Blockbench: art/blockbench/hydro/m5_water.author.js
 
-m("spray_pond_nozzle", "cooling", [el("base", [5, 0, 5], [11, 1, 11], "c")]
-  + vcyl("riser", 8, 8, 1, 1, 11, "wat", 8) + vcyl("nozzle", 8, 8, 2, 11, 13, "b", 8)
-  + [el("deflector", [6, 13, 6], [10, 13.5, 10], "b")])
+# нарисовано вручную в Blockbench: art/blockbench/hydro/m5_water.author.js
 
 
 def intake(fouled):
@@ -234,8 +227,7 @@ def intake(fouled):
             el("discharge", [6, 24, 12], [10, 28, 16], "wat")]
 
 
-m("water_intake", "cooling", intake(False))
-m("water_intake_fouled", "cooling", intake(True))
+# нарисовано вручную в Blockbench: art/blockbench/hydro/m5_water.author.js
 
 # уловитель шариков системы очистки конденсатора: сетчатый корпус на трубе
 m("condenser_ball_cleaning", "cooling", hcyl("pipe", "x", 3, 0, 16, "wat")
@@ -251,8 +243,7 @@ m("hydro_turbine/runner", "grid", vcyl("crown", 8, 8, 7, 0, 3, "b", 16)
   + [el(f"blade_{i}", [7.5, -10, 1], [8.5, 0, 14], "b", rot=("y", a, [8, 8, 8]) if a else None)
      for i, a in enumerate((0, 45, -45))] + vcyl("shaft", 8, 8, 2, 3, 30, "st", 8), kind="partial")
 
-m("penstock", "grid", hcyl("pipe", "z", 6, 0, 16, "wat") + hcyl("ring", "z", 6.5, 7, 9, "d", sides=8))
-m("penstock_side", "grid", hcyl("arm", "x", 5.5, 0, 8, "wat", c=(8, 8, 8)))
+# нарисовано вручную в Blockbench: art/blockbench/hydro/m5_water.author.js
 
 # нарисовано вручную в Blockbench: art/blockbench/turbine/power_misc.author.js
 m("dam_gate/gate", "grid", [

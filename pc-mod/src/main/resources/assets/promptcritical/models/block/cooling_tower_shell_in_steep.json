@@ -1,8 +1,8 @@
 {
 	"credit": "Made with Blockbench",
 	"textures": {
-		"particle": "promptcritical:block/common/grid2_tower_concrete",
-		"twc": "promptcritical:block/common/grid2_tower_concrete"
+		"particle": "promptcritical:block/m5water/tower",
+		"m5water_tower": "promptcritical:block/m5water/tower"
 	},
 	"elements": [
 		{
@@ -10,34 +10,70 @@
 			"from": [0, 0, 12],
 			"to": [16, 16, 16],
 			"rotation": {
-				"angle": 45,
+				"angle": -45,
 				"axis": "x",
-				"origin": [8, 0, 14]
+				"origin": [8, 8, 14]
 			},
 			"faces": {
 				"north": {
 					"uv": [0, 0, 16, 16],
-					"texture": "#twc"
+					"texture": "#m5water_tower"
 				},
 				"east": {
 					"uv": [0, 0, 4, 16],
-					"texture": "#twc"
+					"texture": "#m5water_tower"
 				},
 				"south": {
 					"uv": [0, 0, 16, 16],
-					"texture": "#twc"
+					"texture": "#m5water_tower"
 				},
 				"west": {
-					"uv": [0, 0, 4, 16],
-					"texture": "#twc"
+					"uv": [12, 0, 16, 16],
+					"texture": "#m5water_tower"
 				},
 				"up": {
-					"uv": [0, 0, 16, 4],
-					"texture": "#twc"
+					"uv": [0, 12, 16, 16],
+					"texture": "#m5water_tower"
 				},
 				"down": {
 					"uv": [0, 0, 16, 4],
-					"texture": "#twc"
+					"texture": "#m5water_tower"
+				}
+			}
+		},
+		{
+			"name": "rib",
+			"from": [7.4, 0, 11.4],
+			"to": [8.6, 16, 12],
+			"rotation": {
+				"angle": -45,
+				"axis": "x",
+				"origin": [8, 8, 14]
+			},
+			"faces": {
+				"north": {
+					"uv": [7.4, 0, 8.6, 16],
+					"texture": "#m5water_tower"
+				},
+				"east": {
+					"uv": [4, 0, 4.6, 16],
+					"texture": "#m5water_tower"
+				},
+				"south": {
+					"uv": [7.4, 0, 8.6, 16],
+					"texture": "#m5water_tower"
+				},
+				"west": {
+					"uv": [11.4, 0, 12, 16],
+					"texture": "#m5water_tower"
+				},
+				"up": {
+					"uv": [7.4, 11.4, 8.6, 12],
+					"texture": "#m5water_tower"
+				},
+				"down": {
+					"uv": [7.4, 4, 8.6, 4.6],
+					"texture": "#m5water_tower"
 				}
 			}
 		}

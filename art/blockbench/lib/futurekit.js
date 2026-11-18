@@ -28,6 +28,7 @@
     cwhite: { tex: 'utilities/cryo_white', P: 16 }, disp: { tex: 'utilities/display', P: 16 }, hvs: { tex: 'utilities/hv_sign', P: 16 },
     rw: { tex: 'utilities/red_white', P: 16 }, frpg: { tex: 'fuel/frp_green', P: 16 }, monel: { tex: 'fuel/monel', P: 16 },
     // painted by the future-wave scripts themselves (grid/hv_grid.author.js)
+    bk: { tex: 'm6auto/black', P: 16 }, dk: { tex: 'm6auto/dark', P: 16 }, wh: { tex: 'm6auto/white', P: 16 }, // automation/m6_automation.author.js
     tank: { tex: 'm3grid/tank', P: 16 }, l_b: { tex: 'm3grid/lamp_blue', P: 16 }, earth: { tex: 'm3grid/earth', P: 8 },
   });
 
