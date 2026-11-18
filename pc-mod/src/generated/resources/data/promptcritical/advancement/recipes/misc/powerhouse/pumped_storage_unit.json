@@ -1,0 +1,32 @@
+{
+  "parent": "minecraft:recipes/root",
+  "criteria": {
+    "has_hydro_turbine": {
+      "conditions": {
+        "items": [
+          {
+            "items": "promptcritical:hydro_turbine"
+          }
+        ]
+      },
+      "trigger": "minecraft:inventory_changed"
+    },
+    "has_the_recipe": {
+      "conditions": {
+        "recipe": "promptcritical:powerhouse/pumped_storage_unit"
+      },
+      "trigger": "minecraft:recipe_unlocked"
+    }
+  },
+  "requirements": [
+    [
+      "has_the_recipe",
+      "has_hydro_turbine"
+    ]
+  ],
+  "rewards": {
+    "recipes": [
+      "promptcritical:powerhouse/pumped_storage_unit"
+    ]
+  }
+}

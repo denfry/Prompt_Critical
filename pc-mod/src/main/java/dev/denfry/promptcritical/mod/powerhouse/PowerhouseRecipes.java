@@ -126,6 +126,17 @@ public final class PowerhouseRecipes extends RecipeProvider {
                 .define('S', net.minecraft.world.item.Items.STICK).define('G', net.minecraft.world.item.Items.GLASS_PANE)
                 .define('B', net.minecraft.world.item.Items.BUCKET)
                 .unlockedBy("has_clock", has(net.minecraft.world.item.Items.CLOCK)).save(out, id("tide_gauge"));
+        // обратимый агрегат: насос-турбина (гидротурбина и механический насос Create) на синхронной машине
+        ShapedRecipeBuilder.shaped(RecipeCategory.MISC, PcBlocks.PUMPED_STORAGE_UNIT.get())
+                .pattern("PMP").pattern("HUH").pattern("PCP").define('P', plate).define('M', PcBlocks.ELECTRIC_MOTOR.get())
+                .define('H', PcBlocks.HYDRO_TURBINE.get()).define('U', AllBlocks.MECHANICAL_PUMP.get())
+                .define('C', AllBlocks.COGWHEEL.get())
+                .unlockedBy("has_hydro_turbine", has(PcBlocks.HYDRO_TURBINE.get())).save(out, id("pumped_storage_unit"));
+        // электродный котёл: корпус из листа, электроды — медь в изоляторах, вода — котёл
+        ShapedRecipeBuilder.shaped(RecipeCategory.MISC, PcBlocks.ELECTRODE_BOILER.get())
+                .pattern("PCP").pattern("CTC").pattern("PCP").define('P', plate)
+                .define('C', net.minecraft.world.item.Items.COPPER_INGOT).define('T', AllBlocks.FLUID_TANK.get())
+                .unlockedBy("has_steel_plate", has(plate)).save(out, id("electrode_boiler"));
         // конденсатор: корпус из листа, трубный пучок — трубы
         ShapedRecipeBuilder.shaped(RecipeCategory.MISC, PcBlocks.CONDENSER.get())
                 .pattern("PPP").pattern("FFF").pattern("PPP").define('P', plate).define('F', pipe)

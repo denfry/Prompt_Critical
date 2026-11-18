@@ -40,6 +40,11 @@ public final class PowerhouseBlockEntities {
     public static final DeferredHolder<BlockEntityType<?>, BlockEntityType<TideGaugeBlockEntity>> TIDE_GAUGE =
             type("tide_gauge", TideGaugeBlockEntity::new, PcBlocks.TIDE_GAUGE);
 
+    public static final DeferredHolder<BlockEntityType<?>, BlockEntityType<PumpedStorageBlockEntity>> PUMPED_STORAGE =
+            type("pumped_storage_unit", PumpedStorageBlockEntity::new, PcBlocks.PUMPED_STORAGE_UNIT);
+    public static final DeferredHolder<BlockEntityType<?>, BlockEntityType<ElectrodeBoilerBlockEntity>> ELECTRODE_BOILER =
+            type("electrode_boiler", ElectrodeBoilerBlockEntity::new, PcBlocks.ELECTRODE_BOILER);
+
     private PowerhouseBlockEntities() {
     }
 

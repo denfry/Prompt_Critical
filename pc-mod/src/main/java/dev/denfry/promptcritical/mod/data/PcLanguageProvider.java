@@ -242,6 +242,10 @@ public final class PcLanguageProvider extends LanguageProvider {
         b("mud_tank", "Mud Tank", "Ёмкость бурового раствора");
         b("mud_mixing_hopper", "Mud Mixing Hopper", "Гидроворонка");
         i("barite_powder", "Barite Sack (50 kg)", "Мешок барита (50 кг)");
+        b("gas_compressor", "Gas Compressor", "Газовый компрессор");
+        b("glycol_regenerator", "Glycol Regenerator", "Регенератор гликоля");
+        b("low_temperature_separator", "Low-Temperature Separation Unit", "Установка НТС");
+        b("ngl_fractionator", "NGL Fractionation Unit", "Газофракционирующая установка");
         b("wellhead", "Wellhead", "Колонная головка");
         b("christmas_tree", "Christmas Tree", "Фонтанная арматура");
         b("pumpjack", "Pumpjack", "Станок-качалка");
@@ -321,6 +325,8 @@ public final class PcLanguageProvider extends LanguageProvider {
         b("hydro_turbine", "Hydro Turbine", "Гидротурбина");
         b("tidal_unit", "Tidal Bulb Unit", "Капсульный агрегат ПЭС");
         b("tide_gauge", "Tide Gauge", "Мареограф");
+        b("pumped_storage_unit", "Pumped Storage Unit", "Обратимый агрегат ГАЭС");
+        b("electrode_boiler", "Electrode Boiler", "Электродный котёл");
         b("wind_turbine", "Wind Power Unit D-30", "Ветроэлектростанция Д-30");
         b("dam_gate", "Dam Intake Gate", "Затвор водозабора");
         b("gas_turbine", "Gas Turbine Unit", "Газотурбинная установка");
@@ -357,6 +363,12 @@ public final class PcLanguageProvider extends LanguageProvider {
 
         FLUIDS.put("flue_gas", new String[] {"Flue Gas", "Дымовые газы"});
         FLUIDS.put("crude_oil", new String[] {"Crude Oil", "Сырая нефть"});
+        FLUIDS.put("sales_gas", new String[] {"Sales Gas", "Товарный газ"});
+        FLUIDS.put("methanol", new String[] {"Methanol", "Метанол"});
+        FLUIDS.put("ngl", new String[] {"NGL (Natural Gas Liquids)", "ШФЛУ"});
+        FLUIDS.put("propane", new String[] {"Propane", "Пропан"});
+        FLUIDS.put("butane", new String[] {"Butane", "Бутан"});
+        FLUIDS.put("natural_gasoline", new String[] {"Natural Gasoline", "Газовый бензин"});
         FLUIDS.put("produced_water", new String[] {"Produced Water", "Пластовая вода"});
         FLUIDS.put("associated_gas", new String[] {"Associated Gas", "Попутный нефтяной газ"});
         FLUIDS.put("gasoline", new String[] {"Straight-Run Gasoline", "Прямогонный бензин"});
@@ -583,6 +595,7 @@ public final class PcLanguageProvider extends LanguageProvider {
         MISC.putAll(dev.denfry.promptcritical.mod.panel.PanelText.lang());
         MISC.putAll(dev.denfry.promptcritical.mod.drilling.DrillingText.lang());
         MISC.putAll(dev.denfry.promptcritical.mod.production.ProductionText.lang());
+        MISC.putAll(dev.denfry.promptcritical.mod.gas.GasText.lang());
     }
 
     @Override

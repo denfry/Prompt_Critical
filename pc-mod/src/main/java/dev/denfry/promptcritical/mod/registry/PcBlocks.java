@@ -425,6 +425,18 @@ public final class PcBlocks {
     public static final DeferredBlock<PcBlock> COLUMN_TRAY_SECTION = block("column_tray_section", machine(), Spec.facing().footprint(FP_TALL2));
     public static final DeferredBlock<PcBlock> COLUMN_TOP = block("column_top", machine(), Spec.facing());
 
+    // --- газопереработка I2: компрессор, осушка, НТС, ГФУ ---
+    public static final DeferredBlock<PcDeviceBlock> GAS_COMPRESSOR = device("gas_compressor", machine(),
+            Spec.facing(PcProperties.RUNNING).footprint(Footprint.of(Segment.box(0, 1, 0, 1, 0, 1))),
+            KineticMachineBlock.with(ShaftSide.LEFT, dev.denfry.promptcritical.mod.gas.GasCompressorBlockEntity::new));
+    public static final DeferredBlock<PcBlock> GLYCOL_REGENERATOR = block("glycol_regenerator", machine(),
+            Spec.facing(PcProperties.RUNNING).footprint(Footprint.of(Segment.box(-1, 1, 0, 1, 0, 0))));
+    public static final DeferredBlock<PcDeviceBlock> LOW_TEMPERATURE_SEPARATOR = device("low_temperature_separator", machine(),
+            Spec.facing(BlockStateProperties.LIT).footprint(FP_CUBE3),
+            FoundryBlock.with(dev.denfry.promptcritical.mod.gas.GasPlantBlockEntity::new));
+    public static final DeferredBlock<PcDeviceBlock> NGL_FRACTIONATOR = device("ngl_fractionator", machine(),
+            Spec.facing().footprint(FP_CUBE3), FoundryBlock.with(dev.denfry.promptcritical.mod.gas.NglFractionatorBlockEntity::new));
+
     // --- обогащение, литьё, механический цех (08 §8.3, §8.9, §8.10) ---
     public static final DeferredBlock<PcDeviceBlock> COAL_JIG = device("coal_jig", machine(),
             Spec.facing(PcProperties.RUNNING).footprint(Footprint.of(Segment.box(0, 1, 0, 1, 0, 0))),
@@ -591,6 +603,13 @@ public final class PcBlocks {
     public static final DeferredBlock<PcDeviceBlock> TIDAL_UNIT = device("tidal_unit", machine(),
             Spec.facing(PcProperties.RUNNING).footprint(Footprint.of(Segment.box(-1, 1, -1, 0, -1, 1))),
             KineticMachineBlock.with(ShaftSide.UP, dev.denfry.promptcritical.mod.powerhouse.TidalUnitBlockEntity::new));
+    /** Обратимый агрегат ГАЭС 3×2×3: верхний бассейн — затвор водозабора выше по склону, кабель 6,3 кВ — сверху и с боков. */
+    public static final DeferredBlock<PcDeviceBlock> PUMPED_STORAGE_UNIT = device("pumped_storage_unit", machine(),
+            Spec.facing(PcProperties.RUNNING).footprint(Footprint.of(Segment.box(-1, 1, -1, 0, -1, 1))),
+            FoundryBlock.with(dev.denfry.promptcritical.mod.powerhouse.PumpedStorageBlockEntity::new));
+    /** Электродный котёл 6,3 кВ: вплотную к котлу котельной, пар — в его коллектор. */
+    public static final DeferredBlock<PcDeviceBlock> ELECTRODE_BOILER = device("electrode_boiler", machine(),
+            Spec.facing(PcProperties.RUNNING), FoundryBlock.with(dev.denfry.promptcritical.mod.powerhouse.ElectrodeBoilerBlockEntity::new));
     /** Мареограф: уровень моря по модели прилива, амплитуда M2 места и фаза Луны. */
     public static final DeferredBlock<PcDeviceBlock> TIDE_GAUGE = device("tide_gauge", machine().noOcclusion(), Spec.facing(),
             FoundryBlock.with(dev.denfry.promptcritical.mod.powerhouse.TideGaugeBlockEntity::new));
