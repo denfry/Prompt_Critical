@@ -40,7 +40,7 @@ public final class DeconShowerBlockEntity extends DeviceBlockEntity implements F
 
     private final FeedTank water = new FeedTank(Fluids.WATER, WATER_MB);
     private final ProductTank waste = new ProductTank(PcFluids.CONTAMINATED_DECON_SOLUTION.source.get(), WASTE_MB);
-    private double wasteBq;
+    private double wasteBq, wasteL;
 
     public DeconShowerBlockEntity(BlockPos pos, BlockState state) {
         super(RadiationBlockEntities.DECON_SHOWER.get(), pos, state);
@@ -50,8 +50,19 @@ public final class DeconShowerBlockEntity extends DeviceBlockEntity implements F
         return waste;
     }
 
+    /** Смытая активность, находящаяся сейчас в баке ЖРО, Бк. */
     public double wasteBq() {
         return wasteBq;
+    }
+
+    /**
+     * Активность в баке ЖРО идёт за объёмом: смыв, слитый трубой снизу, уносит свою долю беккерелей (раствор
+     * перемешан). {@code wasteL} — объём бака на прошлой сверке.
+     */
+    private void syncWaste() {
+        double a = waste.amount();
+        if (a < wasteL) wasteBq = wasteL > 0 ? wasteBq * a / wasteL : 0;
+        wasteL = a;
     }
 
     /**
@@ -63,7 +74,9 @@ public final class DeconShowerBlockEntity extends DeviceBlockEntity implements F
         double litres = FLOW_L_S * seconds;
         if (water.amount() < litres || waste.room() < litres) return false;
         water.take(litres);
+        syncWaste();
         waste.add(litres);
+        wasteL = waste.amount();
         wasteBq += ContaminationService.shower(p, seconds / FULL_WASH_S);
         setChanged();
         return true;
@@ -71,7 +84,9 @@ public final class DeconShowerBlockEntity extends DeviceBlockEntity implements F
 
     @Override
     public void tickDevice() {
-        if (!(level instanceof ServerLevel s) || s.getGameTime() % 20 != 0) return;
+        if (!(level instanceof ServerLevel s)) return;
+        syncWaste();
+        if (s.getGameTime() % 20 != 0) return;
         boolean any = false;
         for (ServerPlayer p : s.getEntitiesOfClass(ServerPlayer.class, new AABB(worldPosition).inflate(1, 1, 1))) {
             if (p.isSpectator()) continue;
@@ -126,6 +141,7 @@ public final class DeconShowerBlockEntity extends DeviceBlockEntity implements F
         super.loadAdditional(tag, registries);
         water.load(tag, "water");
         waste.load(tag, "waste");
+        wasteL = waste.amount();
         wasteBq = tag.getDouble("waste_bq");
     }
 }

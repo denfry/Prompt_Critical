@@ -72,7 +72,7 @@ public final class UltrasonicBathBlockEntity extends DeviceBlockEntity implement
     private final IFluidHandler inlet = new MultiInlet(water, citric, permanganate);
     private final ProductTank waste = new ProductTank(PcFluids.CONTAMINATED_DECON_SOLUTION.source.get(), WASTE_MB);
     private int progress;
-    private double wasteBq, lastDf;
+    private double wasteBq, wasteL, lastDf;
     @Nullable
     private DeconMethod lastMethod;
 
@@ -92,8 +92,19 @@ public final class UltrasonicBathBlockEntity extends DeviceBlockEntity implement
         return waste;
     }
 
+    /** Активность, снятая с деталей и находящаяся сейчас в баке ЖРО, Бк. */
     public double wasteBq() {
         return wasteBq;
+    }
+
+    /**
+     * Активность в баке ЖРО идёт за объёмом: смыв, слитый трубой снизу, уносит свою долю беккерелей (раствор
+     * перемешан). {@code wasteL} — объём бака на прошлой сверке.
+     */
+    private void syncWaste() {
+        double a = waste.amount();
+        if (a < wasteL) wasteBq = wasteL > 0 ? wasteBq * a / wasteL : 0;
+        wasteL = a;
     }
 
     public double lastDf() {
@@ -148,6 +159,7 @@ public final class UltrasonicBathBlockEntity extends DeviceBlockEntity implement
     @Override
     public void tickDevice() {
         if (!(level instanceof ServerLevel s)) return;
+        syncWaste();
         if (!running()) {
             progress = 0;
             return;
@@ -178,7 +190,9 @@ public final class UltrasonicBathBlockEntity extends DeviceBlockEntity implement
         for (int i = 0; i < OUT && !one.isEmpty(); i++) one = output.insertItem(i, one, false);
         input.extractItem(slot, 1, false);
         consume(m);
+        syncWaste();
         waste.add(litres(m));
+        wasteL = waste.amount();
         wasteBq += (before.total() - after.total()) * ContaminationTransfer.ITEM_CM2;
         lastDf = after.total() > 0 ? before.total() / after.total() : 0;
         lastMethod = m;
@@ -268,6 +282,7 @@ public final class UltrasonicBathBlockEntity extends DeviceBlockEntity implement
         citric.load(tag, "citric");
         permanganate.load(tag, "kmno4");
         waste.load(tag, "waste");
+        wasteL = waste.amount();
         progress = tag.getInt("progress");
         wasteBq = tag.getDouble("waste_bq");
         lastDf = tag.getDouble("df");

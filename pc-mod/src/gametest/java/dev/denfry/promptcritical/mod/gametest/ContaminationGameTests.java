@@ -125,6 +125,7 @@ public final class ContaminationGameTests {
         BlockPos at = new BlockPos(5, 2, 5);
         h.setBlock(at, PcBlocks.ULTRASONIC_BATH.get());
         SurfaceContamination dirty = SurfaceContamination.of(10, 1000, 0.5);
+        double[] bqBefore = new double[1];
         h.startSequence()
                 .thenExecute(() -> {
                     UltrasonicBathBlockEntity b = h.getBlockEntity(at);
@@ -151,6 +152,14 @@ public final class ContaminationGameTests {
                     h.assertTrue(b.wasteBq() > 0.9 * dirty.total() * 100, "activity moved to waste: " + b.wasteBq());
                     h.assertTrue(b.fluids(Direction.DOWN).drain(4, IFluidHandler.FluidAction.SIMULATE).getFluid()
                             == PcFluids.CONTAMINATED_DECON_SOLUTION.source.get(), "waste comes out of the bottom");
+                    bqBefore[0] = b.wasteBq();
+                    // половину смыва слили трубой — с ней ушла половина активности бака
+                    b.fluids(Direction.DOWN).drain(2, IFluidHandler.FluidAction.EXECUTE);
+                })
+                .thenExecuteAfter(2, () -> {
+                    UltrasonicBathBlockEntity b = h.getBlockEntity(at);
+                    h.assertTrue(Math.abs(b.wasteBq() - bqBefore[0] / 2) < 1e-6 * bqBefore[0],
+                            "drained waste took its activity: " + b.wasteBq() + " of " + bqBefore[0]);
                 })
                 .thenSucceed();
     }

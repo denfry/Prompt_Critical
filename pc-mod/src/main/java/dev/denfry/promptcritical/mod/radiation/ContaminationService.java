@@ -12,6 +12,7 @@ import dev.denfry.promptcritical.sim.radiation.SurfaceContamination;
 import java.util.HashMap;
 import java.util.Locale;
 import java.util.Map;
+import java.util.WeakHashMap;
 import net.minecraft.ChatFormatting;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.SectionPos;
@@ -58,6 +59,8 @@ public final class ContaminationService {
     public static final long CURE_TICKS = (long) (4 * 3600 / 3.6);
     /** Площадь касания ладонями при хвате предмета или разборе блока, см². */
     static final double GRIP_CM2 = 50;
+    /** Где сейчас стоит γ-источник каждой секции уровня (ключ — {@link SectionPos#asLong}). */
+    private static final Map<ServerLevel, Map<Long, Vec3>> GAMMA_AT = new WeakHashMap<>();
 
     private ContaminationService() {
     }
@@ -233,10 +236,14 @@ public final class ContaminationService {
         gamma(level);
     }
 
-    /** γ от β-загрязнения пола: по секциям 16³ в источники {@link RadiationService}. */
+    /**
+     * γ от β-загрязнения пола: по секциям 16³ в источники {@link RadiationService}. Центр масс секции сдвигается, когда
+     * загрязнение разносят или смывают, поэтому источник с прошлого места снимается сразу — иначе до истечения
+     * удержания секция светила бы дважды.
+     */
     private static void gamma(ServerLevel level) {
         ContaminationMap m = ContaminationMap.of(level);
-        if (m.all().isEmpty()) return;
+        Map<Long, Vec3> before = GAMMA_AT.getOrDefault(level, Map.of()), now = new HashMap<>();
         Map<Long, double[]> sections = new HashMap<>();
         for (Map.Entry<Long, SurfaceContamination> e : m.all().entrySet()) {
             double bq = e.getValue().beta() * ContaminationTransfer.BLOCK_FACE_CM2;
@@ -247,10 +254,18 @@ public final class ContaminationService {
             s[2] += bq * (p.getY() + 1.05);
             s[3] += bq * (p.getZ() + 0.5);
         }
-        for (double[] s : sections.values()) {
+        for (Map.Entry<Long, double[]> e : sections.entrySet()) {
+            double[] s = e.getValue();
             if (s[0] < GAMMA_MIN_BQ) continue;
-            RadiationService.source(level, new Vec3(s[1] / s[0], s[2] / s[0], s[3] / s[0]), Emitter.CS137.source(s[0]));
+            Vec3 at = new Vec3(s[1] / s[0], s[2] / s[0], s[3] / s[0]);
+            RadiationService.source(level, at, Emitter.CS137.source(s[0]));
+            now.put(e.getKey(), at);
         }
+        before.forEach((section, at) -> {
+            if (!at.equals(now.get(section))) RadiationService.removeSource(level, at);
+        });
+        if (now.isEmpty()) GAMMA_AT.remove(level);
+        else GAMMA_AT.put(level, now);
     }
 
     /** Разбор загрязнённого блока: руки берут своё, остальное — на выпавшие предметы; покрытие уходит с блоком. */
@@ -260,6 +275,7 @@ public final class ContaminationService {
         ContaminationMap m = ContaminationMap.of(level);
         SurfaceContamination c = m.get(pos);
         m.removeCoating(pos);
+        m.setOxidised(pos, false);
         if (c.negligible()) return;
         if (e.getBreaker() instanceof ServerPlayer p) {
             ContaminationTransfer.Pair r = ContaminationTransfer.contact(hands(p), ContaminationTransfer.HANDS_CM2, c,
@@ -270,7 +286,11 @@ public final class ContaminationService {
         m.set(pos, SurfaceContamination.NONE);
         int items = 0;
         for (ItemEntity it : e.getDrops()) items += it.getItem().getCount();
-        if (items == 0) return;
+        if (items == 0) {
+            // ничего не выпало (стекло, творческий режим): пыль осыпается на открывшуюся грань блока снизу
+            m.add(pos.below(), c);
+            return;
+        }
         // активность грани сохраняется: делится на поверхность всех выпавших предметов
         double perItemScale = ContaminationTransfer.BLOCK_FACE_CM2 / (items * ContaminationTransfer.ITEM_CM2);
         for (ItemEntity it : e.getDrops()) {
