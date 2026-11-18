@@ -106,8 +106,7 @@ m("valve_test_bench_occupied", "ops", valve_bench(True))
 # ======================================================================
 # факельное хозяйство
 # ======================================================================
-m("flare_stack", "flare", [el("base_plate", [2, 0, 2], [14, 2, 14], "c")] + vcyl("stack", 8, 8, 3, 2, 16, "rw", 8)
-  + [el(f"guy_lug_{i}", [x, 12, z], [x + 1, 14, z + 1], "d") for i, (x, z) in enumerate(((4.5, 7.5), (10.5, 7.5)))])
+# нарисовано вручную в Blockbench: art/blockbench/water_treatment/plant_utilities.author.js
 m("flare_stack_middle", "flare", vcyl("stack", 8, 8, 3, 0, 16, "rw", 8))
 m("flare_stack_guys", "flare", vcyl("stack", 8, 8, 3, 0, 16, "rw", 8)
   + [el("guy_ring", [3.5, 13, 3.5], [12.5, 14, 12.5], "d"),

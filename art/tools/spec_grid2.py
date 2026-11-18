@@ -210,8 +210,7 @@ def tower_cell(iced=False):
             el("deck", [-16, 16, -16], [32, 18, 32], s)] + vcyl("fan_stack", 8, 8, 13, 18, 30, s, 16)
 
 
-m("cooling_tower_cell", "cooling", tower_cell())
-m("cooling_tower_cell_iced", "cooling", tower_cell(True))
+# нарисовано вручную в Blockbench: art/blockbench/water_treatment/plant_utilities.author.js
 m("cooling_tower_cell/fan", "cooling", fan_rotor("y", 12, 24, "frp") + shaft("y", 1, 18, 24), kind="partial")
 
 

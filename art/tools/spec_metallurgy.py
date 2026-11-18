@@ -143,14 +143,7 @@ m("flotation_cell/impeller", "coal_prep", vcyl("stem", 8, 8, 0.75, 2, 16, "st", 
   + [el("rotor_a", [5, 2, 7.5], [11, 4, 8.5], "r"), el("rotor_b", [7.5, 2, 5], [8.5, 4, 11], "r")], kind="partial")
 
 # магнитный сепаратор ПБМ 2×1×1: ванна с пульпой; барабан — partial (ось X)
-m("magnetic_separator", "coal_prep", [
-    el("tank", [0, 0, 2], [32, 8, 14], "p"),
-    el("pulp", [1, 7, 3], [31, 7.5, 13], "pulp"),
-    el("feed_box", [2, 8, 0], [30, 12, 3], "p"),
-    el("bearing_w", [-0.01, 6, 6], [2, 12, 10], "d"),
-    el("bearing_e", [30, 6, 6], [32, 12, 10], "d"),
-])
-m("magnetic_separator/drum", "coal_prep", hcyl("drum", "x", 5.5, 2, 30, "mb", c=(8, 10, 8)) + shaft_x(1, 0, 32, (8, 10, 8)), kind="partial")
+# нарисовано вручную в Blockbench: art/blockbench/water_treatment/plant_utilities.author.js
 
 # ======================================================================
 # коксохим
@@ -708,30 +701,9 @@ m("permanent_mold/half", "foundry", [el("half", [2, 2, 2], [14, 13, 8], "ci"), e
 # промышленные газы
 # ======================================================================
 # центробежный компрессор К-1500 3×2×2: спираль, синие патрубки воздуха; ротор — partial (ось X)
-m("asu_main_compressor", "industrial_gases", [
-    el("skid", [-16, 0, 0], [32, 3, 32], "d"),
-    el("motor", [-16, 3, 6], [-2, 17, 26], "mb"),
-    el("gearbox", [-2, 3, 8], [6, 15, 24], "mb"),
-    el("stage_1", [6, 3, 6], [16, 21, 26], "p"),
-    el("stage_2", [18, 3, 8], [28, 19, 24], "p"),
-    el("inlet", [8, 21, 12], [14, 32, 20], "air", faces={"up": "end"}),
-    el("intercooler", [16, 21, 4], [32, 29, 28], "air"),
-])
-m("asu_main_compressor/rotor", "industrial_gases", shaft_x(1.5, -2, 28, (8, 12, 16)), kind="partial")
+# нарисовано вручную в Blockbench: art/blockbench/water_treatment/plant_utilities.author.js
 # блок осушки (молекулярные сита) 1×3×1
-m("asu_molsieve", "industrial_gases", hcyl("adsorber", "y", 6.5, -14, 28, "p") + hcyl("head", "y", 4.5, 28, 31, "p", sides=8) + [
-    el("skirt", [3, -16, 3], [13, -14, 13], "d"),
-    el("air_in", [13, -10, 6], [16.01, -6, 10], "air", faces={"east": "end"}),
-    el("air_out", [13, 22, 6], [16.01, 26, 10], "air", faces={"east": "end"}),
-    el("regen_heater", [-0.01, 0, 5], [3, 8, 11], "r35")])
-m("asu_expander", "industrial_gases", [
-    el("skid", [0, 0, 0], [16, 2, 16], "d"),
-    el("casing", [3, 2, 3], [13, 12, 13], "fro"),
-    el("inlet", [6, 12, 6], [10, 16, 10], "fro", faces={"up": "end"}),
-    el("outlet", [13, 4, 6], [16.01, 8, 10], "fro", faces={"east": "end"}),
-    el("brake_fan", [4, 4, -0.01], [12, 10, 3], "mb"),
-])
-m("asu_expander/rotor", "industrial_gases", shaft_z(1, -0.01, 13), kind="partial")
+# нарисовано вручную в Blockbench: art/blockbench/water_treatment/plant_utilities.author.js
 
 
 # ЦТК / газификатор 1×3×1: белый двустенный бак или оребрённый испаритель с инеем
@@ -746,24 +718,13 @@ def cryo(kind="storage"):
         el("core", [6, -14, 6], [10, 30, 10], "fro"), el("header", [0, 30, 0], [16, 32, 16], "st")]
 
 
-m("cryogenic_tank", "industrial_gases", cryo())
-m("cryogenic_tank_vaporizer", "industrial_gases", cryo("vaporizer"))
+# нарисовано вручную в Blockbench: art/blockbench/water_treatment/plant_utilities.author.js
 
 # ======================================================================
 # водоподготовка
 # ======================================================================
 # осветлитель ВТИ 3×2×3: бетонная чаша, зелёная вода; ферма скребка — partial (ось Y)
-m("water_clarifier", "water_treatment", [
-    el("bowl_n", [-16, 0, -16], [32, 18, -14], "c"), el("bowl_s", [-16, 0, 30], [32, 18, 32], "c"),
-    el("bowl_w", [-16, 0, -14], [-14, 18, 30], "c"), el("bowl_e", [30, 0, -14], [32, 18, 30], "c"),
-    el("floor", [-14, 0, -14], [30, 2, 30], "c"),
-    el("water", [-14, 2, -14], [30, 16, 30], "water"),
-    el("centre_well", [2, 16, 2], [14, 22, 14], "p"),
-    el("launder", [-14, 16, -14], [30, 18, -12], "c"),
-])
-m("water_clarifier/rake", "water_treatment", [el("bridge", [-14, 22, 6], [30, 24, 10], "d"),
-                                              el("drive", [5, 24, 5], [11, 28, 11], "mb"),
-                                              el("rake_arm", [-12, 3, 7], [28, 4, 9], "st")] + vcyl("shaft", 8, 8, 1, 4, 22, "st", 8), kind="partial")
+# нарисовано вручную в Blockbench: art/blockbench/water_treatment/plant_utilities.author.js
 
 
 # механический фильтр 1×2×1: вертикальный сосуд, зелёные трубы; при backwash — лампа
@@ -776,8 +737,7 @@ def sand_filter(backwash=False):
         lamp("lamp_backwash", 13, 28, 2, backwash, "ly", 0.6)]
 
 
-m("sand_filter", "water_treatment", sand_filter())
-m("sand_filter_backwash", "water_treatment", sand_filter(True))
+# нарисовано вручную в Blockbench: art/blockbench/water_treatment/plant_utilities.author.js
 # декарбонизатор 1×3×1: колонна с насадкой, вентилятор
 m("decarbonizer", "water_treatment", hcyl("column", "y", 6.5, -12, 28, "p") + [
     el("sump", [1, -16, 1], [15, -12, 15], "c"),
@@ -785,11 +745,7 @@ m("decarbonizer", "water_treatment", hcyl("column", "y", 6.5, -12, 28, "p") + [
     el("water_in", [6, 28, 6], [10, 32, 10], "wat", faces={"up": "end"}),
     el("vent", [3, 26, 3], [6, 30, 6], "air")])
 # деаэратор ДА-25 3×2×1: горизонтальный бак, колонка; красная (пар) и зелёная трубы
-m("deaerator", "water_treatment", hcyl("tank", "x", 7, -16, 32, "p", c=(8, 9, 8), ends="d") + hcyl("column", "y", 4.5, 16, 30, "p", c=(-4, 8, 8))
-  + [el("saddle_w", [-12, 0, 2], [-8, 4, 14], "d"), el("saddle_e", [24, 0, 2], [28, 4, 14], "d"),
-     el("steam_in", [20, 16, 6], [24, 26, 10], "steam"),
-     el("water_in", [-6, 30, 6], [-2, 32, 10], "wat", faces={"up": "end"}),
-     el("outlet", [6, 0, 6], [10, 3, 10], "wat")])
+# нарисовано вручную в Blockbench: art/blockbench/water_treatment/plant_utilities.author.js
 # дозировочный комплекс 2×1×1: бачки, плунжерные насосы; головка насоса — partial (ход плунжера)
 m("chemical_dosing_skid", "water_treatment", [
     el("skid", [0, 0, 0], [32, 2, 16], "d"),

@@ -635,8 +635,7 @@ def glycol_regen(running):
             el("glow_burner" if running else "burner_port", [-8, 3, 1.4], [-4, 7, 2], "gfl" if running else "dg")] +         hcyl("reboiler", "x", 5, -2, 30, "sb", c=(8, 8, 8)) + vcyl("still_column", 4, 8, 2.5, 13, 31.9, "sb", 8)
 
 
-m("glycol_regenerator", "gas_processing", glycol_regen(False))
-m("glycol_regenerator_running", "gas_processing", glycol_regen(True))
+# нарисовано вручную в Blockbench: art/blockbench/water_treatment/plant_utilities.author.js
 
 
 def cold_box(cold):

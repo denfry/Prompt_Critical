@@ -292,13 +292,7 @@ model("turbine_stop_valve", "turbine", tx("d", "psteam", "end", body=B("turbine_
       + [el("servo_cap", [6.5, 15.5, 6.5], [9.5, 16, 9.5], "d")],
       "block/turbine_stop_valve")
 
-model("turbine_gearbox", "turbine", tx("d", "b", hs=B("turbine_gearbox_housing")), [
-    el("feet", [0, 0, 1], [16, 1.5, 15], "d"),
-    el("housing", [1.5, 1.5, 2], [14.5, 14, 14], "hs"),
-    el("boss_w", [0.5, 4.5, 4.5], [1.5, 11.5, 11.5], "d"),
-    el("boss_e", [14.5, 4.5, 4.5], [15.5, 11.5, 11.5], "d"),
-    el("breather", [7, 14, 7], [9, 15.5, 9], "b"),
-], "block/turbine_gearbox")
+# нарисовано вручную в Blockbench: art/blockbench/water_treatment/plant_utilities.author.js
 model("turbine_gearbox/shaft_in", "turbine", tx("st", "bsm"),
       disc("shaft", "x", 1.5, -0.5, 1.5, "st", 8) + disc("coupling", "x", 3, -1, 0, "bsm", 8),
       "block/turbine_gearbox/partial/shaft_in", kind="partial")
@@ -330,13 +324,7 @@ model("turbine_turning_gear/gear", "turbine", tx("st", "bsm"),
       + disc("shaft", "x", 1.5, 12.5, 16.25, "st", 8),
       "block/turbine_turning_gear/partial/gear", kind="partial")
 
-model("condenser", "turbine", tx("d", "wat", "stm", "end", sh=B("condenser_shell"), ts=B("condenser_tubesheet")), [
-    el("shell", [0, 0, 1], [16, 15, 15], "sh", faces={"north": "ts", "south": "ts"}, full=["north", "south"]),
-    el("steam_neck", [2, 15, 3], [14, 16, 13], "stm"),
-    el("cw_in", [2.5, 10, -1.5], [6.5, 14, 1], "wat", faces={"north": "end"}, full=["north"]),
-    el("cw_out", [9.5, 2, -1.5], [13.5, 6, 1], "wat", faces={"north": "end"}, full=["north"]),
-    el("hotwell", [5, -0.5, 4], [11, 1, 12], "d"),
-], "block/condenser")
+# нарисовано вручную в Blockbench: art/blockbench/water_treatment/plant_utilities.author.js
 
 # ======================================================================
 # mechanics

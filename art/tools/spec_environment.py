@@ -63,9 +63,7 @@ def cems(on=False, alarm=False):
             lamp("lamp_alarm", 6, 12.5, 10, alarm, "lr", 0.5)]
 
 
-m("cems_analyzer", "flue_gas", cems())
-m("cems_analyzer_on", "flue_gas", cems(True))
-m("cems_analyzer_alarm", "flue_gas", cems(True, True))
+# нарисовано вручную в Blockbench: art/blockbench/water_treatment/plant_utilities.author.js
 
 m("flue_duct", "flue_gas", [el("duct", [1, 1, 0], [15, 15, 16], "flue")]
   + [el(f"stiffener_{i}", [0.5, 0.5, z], [15.5, 15.5, z + 1], "d") for i, z in enumerate((3, 12))])
@@ -83,8 +81,7 @@ def esp_seg(energized=False):
     return els
 
 
-m("electrostatic_precipitator", "flue_gas", esp_seg())
-m("electrostatic_precipitator_energized", "flue_gas", esp_seg(True))
+# нарисовано вручную в Blockbench: art/blockbench/water_treatment/plant_utilities.author.js
 m("electrostatic_precipitator/rapper", "flue_gas", [el("hammer_arm", [7.5, 26, -14], [8.5, 30, -13], "d"),
                                                     el("hammer", [6.5, 24, -14.5], [9.5, 26, -12.5], "d")], kind="partial")
 
@@ -119,7 +116,7 @@ def fgd(part="bottom"):
         vcyl("outlet", 8, 8, 7, 22, 31.9, "flue")
 
 
-m("fgd_absorber", "flue_gas", fgd())
+# нарисовано вручную в Blockbench: art/blockbench/water_treatment/plant_utilities.author.js
 m("fgd_absorber_middle", "flue_gas", fgd("middle"))
 m("fgd_absorber_top", "flue_gas", fgd("top"))
 m("fgd_absorber/agitator", "flue_gas", hcyl("shaft", "x", 0.75, -12, 4, "st", c=(8, 13, 8), sides=8)
