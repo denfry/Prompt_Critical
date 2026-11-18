@@ -139,10 +139,7 @@ public final class AutomationGameTests {
             wire(h, PSU, "+24", plc, "1L");         // общий релейных выходов
             wire(h, plc, "Q0", LAMP, "X1");
             wire(h, LAMP, "X2", PSU, "0");
-            h.assertTrue(unit(h, plc).plc().load("LD %IX0.0
-OR %QX0.0
-AND %IX0.1
-ST %QX0.0").ok(), "program compiles");
+            h.assertTrue(unit(h, plc).plc().load(String.join("\n", "LD %IX0.0", "OR %QX0.0", "AND %IX0.1", "ST %QX0.0")).ok(), "program compiles");
         });
         h.runAfterDelay(40, () -> {
             h.assertTrue(flag(h, plc, PcProperties.RUNNING), "PLC in RUN: " + unit(h, plc).plc().mode());
