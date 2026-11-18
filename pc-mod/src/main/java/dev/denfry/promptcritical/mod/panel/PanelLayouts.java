@@ -31,6 +31,7 @@ public final class PanelLayouts {
                 dev.denfry.promptcritical.mod.ops.OpsPanels.all(),
                 dev.denfry.promptcritical.mod.powerhouse.PowerhousePanels.all(),
                 dev.denfry.promptcritical.mod.powerhouse.WindPanels.all(),
+                dev.denfry.promptcritical.mod.mine.LampRackPanels.all(),
                 dev.denfry.promptcritical.mod.reactor.ReactorPanels.all(),
                 dev.denfry.promptcritical.mod.drilling.DrillingPanels.all())) {
             for (PanelLayout l : group) {

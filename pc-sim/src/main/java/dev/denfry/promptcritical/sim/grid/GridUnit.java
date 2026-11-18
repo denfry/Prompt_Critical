@@ -13,7 +13,7 @@ import java.util.Objects;
  * меняющих схему, пересобирает сеть в начале следующего тика.
  */
 public abstract sealed class GridUnit permits GeneratorUnit, SwitchUnit, TransformerUnit, MotorUnit, ConsumerUnit, CapacitorBankUnit, ArcFurnaceUnit,
-        ConnectorUnit, AuxSupplyUnit, LightingBoardUnit, WindTurbineUnit {
+        ConnectorUnit, AuxSupplyUnit, LightingBoardUnit, WindTurbineUnit, LampRackUnit {
     /** Узел вывода, ещё не найденный миром. */
     public static final long NO_NODE = 0;
 

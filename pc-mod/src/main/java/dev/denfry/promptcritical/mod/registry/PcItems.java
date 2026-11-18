@@ -80,6 +80,9 @@ public final class PcItems {
     public static final DeferredItem<Item> PLANED_PLATE = item("planed_plate", 16);
     public static final DeferredItem<Item> GROUND_PLATE = item("ground_plate", 16);
     public static final DeferredItem<Item> FLAME_SAFETY_LAMP = item("flame_safety_lamp", 1);
+    /** Головной шахтный светильник: щелочная батарея на поясе, фара на каске (слот головы). */
+    public static final DeferredItem<dev.denfry.promptcritical.mod.mine.CapLampItem> CAP_LAMP = registered(ITEMS.registerItem("cap_lamp",
+            dev.denfry.promptcritical.mod.mine.CapLampItem::new, new Item.Properties()));
     public static final DeferredItem<MineInstrumentItem> SELF_RESCUER = instrument("self_rescuer", MineInstrumentItem.Kind.SELF_RESCUER, 16);
     public static final DeferredItem<MineInstrumentItem> STONE_DUSTER = instrument("stone_duster", MineInstrumentItem.Kind.STONE_DUSTER, 1);
     public static final DeferredItem<MineInstrumentItem> METHANOMETER = instrument("methanometer", MineInstrumentItem.Kind.METHANOMETER, 1);

@@ -29,11 +29,15 @@ public final class MineBlockEntities {
     public static final DeferredHolder<BlockEntityType<?>, BlockEntityType<PoweredRoofSupportBlockEntity>> POWERED_ROOF_SUPPORT =
             type("powered_roof_support", PoweredRoofSupportBlockEntity::new, PcBlocks.POWERED_ROOF_SUPPORT);
 
+    public static final DeferredHolder<BlockEntityType<?>, BlockEntityType<LampRackBlockEntity>> LAMP_RACK =
+            type("lamp_rack", LampRackBlockEntity::new, PcBlocks.LAMP_RACK);
+
     private MineBlockEntities() {
     }
 
     public static void register(IEventBus modBus) {
         BLOCK_ENTITIES.register(modBus);
+        CapLampService.register();
     }
 
     private static <T extends BlockEntity> DeferredHolder<BlockEntityType<?>, BlockEntityType<T>> type(String name,
