@@ -115,7 +115,9 @@ class GasProcessingTest {
             t += 60;
         }
         assertThat(cold.blocked()).isTrue();
-        assertThat(cold.process(1, 0, 60).salesSm3s()).isZero();
+        // перекрытый штуцер: потока нет, но холодный гидрат не тает — пробка держится
+        for (int i = 0; i < 100; i++) assertThat(cold.process(1, 0, 60).salesSm3s()).isZero();
+        assertThat(cold.blocked()).isTrue();
         // метанол на нужную концентрацию предотвращает пробку
         LowTemperatureSeparation inhibited = new LowTemperatureSeparation(GlycolDehydration.STANDARD);
         inhibited.setChillK(253);
@@ -125,8 +127,15 @@ class GasProcessingTest {
         assertThat(ri.inhibitedK()).isLessThan(ri.ltsK());
         for (int i = 0; i < 1000; i++) inhibited.process(1, meoh, 60);
         assertThat(inhibited.plug()).isZero();
-        // прогрев: пробка тает
-        cold.setChillK(300);
+        // метанол в пробку при остановленном потоке её растапливает
+        LowTemperatureSeparation methanolKill = new LowTemperatureSeparation(GlycolDehydration.STANDARD);
+        methanolKill.setChillK(253);
+        methanolKill.setPlug(1);
+        for (int i = 0; i < 20; i++) methanolKill.process(1, 0.01, 60);
+        assertThat(methanolKill.blocked()).isFalse();
+        // прогрев: холодильник выключен (35 °C), штуцер почти прикрыт до 6 МПа — газ выше гидратной температуры, пробка тает
+        cold.setChillK(LowTemperatureSeparation.COOLER_K);
+        cold.setLtsPressurePa(6e6);
         for (int i = 0; i < 20; i++) cold.process(1, 0, 60);
         assertThat(cold.plug()).isLessThan(1);
     }

@@ -20,7 +20,8 @@ package dev.denfry.promptcritical.sim.gasprocessing;
  * нарастает гидратная пробка. Гидрат содержит
  * около 87 % воды по массе (структура I, 5,75 молекул воды на молекулу газа; Sloan, Koh, «Clathrate Hydrates of
  * Natural Gases»). Пробка в {@link #PLUG_KG} кг гидрата перекрывает штуцер [BALANCE: малый диаметр штуцера и шлейфа];
- * выше гидратной температуры пробка тает за {@link #MELT_S} с.
+ * выше гидратной температуры пробка тает за {@link #MELT_S} с. Остановка потока пробку не снимает: застывший гидрат
+ * держится, пока температура ниже гидратной; снимают её прогревом или метанолом.
  */
 public final class LowTemperatureSeparation {
     public static final double PLUG_KG = 30, MELT_S = 600, HYDRATE_WATER_FRACTION = 0.87;
@@ -105,7 +106,8 @@ public final class LowTemperatureSeparation {
         double inhibited = hydrate - Hydrates.methanolDepressionK(wt);
         if (q > 0 && freeWaterKgS > 0 && tLts < inhibited) {
             plug = Math.min(1, plug + freeWaterKgS / HYDRATE_WATER_FRACTION * dt / PLUG_KG);
-        } else if (tLts > inhibited || freeWaterKgS <= 0) {
+        } else if (tLts > inhibited) {
+            // тает только выше гидратной температуры (прогрев или метанол); без потока и без воды пробка стоит
             plug = Math.max(0, plug - dt / MELT_S);
         }
         double waterKgS = q * ((wIn - wCooled) * 1e-6 + dry.waterKgPerSm3()) + freeWaterKgS;
