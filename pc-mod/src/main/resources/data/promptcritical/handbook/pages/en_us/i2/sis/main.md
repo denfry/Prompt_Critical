@@ -30,3 +30,18 @@ The panel works out the average probability of failure on demand, PFDavg, by the
 Here λ is the rate of dangerous undetected failures of one transmitter, T the proof test interval, and β the share of common cause failures (the same dirt, the same batch, the same cable tray). PFDavg sets the safety integrity level: SIL 1 below 0.1, SIL 2 below 0.01, SIL 3 below 0.001.
 
 You can see what each number does. Test half as often and the PFD of 1oo1 doubles. 2oo3 redundancy gains an order of magnitude while β is small; at β = 10 % the common cause eats most of that gain.
+
+## Proof test
+
+PFDavg is an average. The real probability of failure grows from the moment of the last proof test: a transmitter can stick or drift unnoticed, and only a test finds it. The panel shows it as **PFD now**, a sawtooth that starts at zero after each signed test. The **Proof test** line counts hours of plant time since the test (one hour of play is 72 hours of plant time) and turns to OVERDUE once the interval set on the panel has passed. An overdue test also lights the alarm lamp.
+
+The test follows the procedure of a real plant:
+
+1. Put the function in **Bypass**, or a test signal would stop the process. Then press **Test**.
+2. Press **Inject** for each transmitter channel in turn. A healthy channel answers with a vote for shutdown. A channel in loop fault (below 3.6 or above 20.8 mA) is a found failure: repair the loop and start the test again.
+3. When every channel of the voting scheme has answered, remove the bypass.
+4. Press **Sign**. The time since the test goes back to zero. A test signed in time earns the "Proof Tested" achievement.
+
+## Cause and effect matrix
+
+A real SIS is a table: rows are causes (high level, low pressure, gas detected, the ESD button), columns are effects (close a valve, stop a pump, sound the horn). Each logic solver is one cause with its own voting and setpoint. Logic solvers fed from the same +24 V wire form one cabinet, one matrix, and their output contacts in the trip circuits are the effects. The **Cabinet** line counts the powered causes and how many of them vote 2oo3 on three connected transmitters. Ten causes or more with 2oo3 among them make a real matrix.

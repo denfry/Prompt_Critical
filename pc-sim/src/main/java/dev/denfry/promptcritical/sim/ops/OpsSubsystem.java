@@ -1,6 +1,7 @@
 package dev.denfry.promptcritical.sim.ops;
 
 import dev.denfry.promptcritical.sim.core.FastContext;
+import dev.denfry.promptcritical.sim.core.GridPos;
 import dev.denfry.promptcritical.sim.core.Severity;
 import dev.denfry.promptcritical.sim.core.SimConfig;
 import dev.denfry.promptcritical.sim.core.SimId;
@@ -32,6 +33,9 @@ import java.util.UUID;
  */
 public final class OpsSubsystem implements Subsystem {
     private final LockoutRegistry lockouts = new LockoutRegistry();
+    /** Наряды-допуски и остановочные ремонты (13 §13.2, §13.6.2): по стенду нарядов, ключ — позиция стенда. */
+    private final PermitRegistry permits = new PermitRegistry();
+    private final NavigableMap<Long, Turnaround> turnarounds = new TreeMap<>();
     public static final String ID = "ops";
     /** Поток {@link SimRandom} износа (u_b подшипника, новые вкладыши). */
     public static final int WEAR_STREAM = 0x13_67;
@@ -374,6 +378,9 @@ public final class OpsSubsystem implements Subsystem {
                 u.panel.update(tick);
             }
         }
+        permits.step(tick);
+        for (PermitRegistry.Transition t : permits.drainTransitions())
+            log(SimId.NONE, OpsLogEntry.Kind.PERMIT_STATE, "#" + t.permit() + " " + t.type() + " " + t.from() + "->" + t.to() + " " + t.reason());
         for (OpsLogEntry e : pending) ctx.events().journal(e.tick(), e.unit(), severity(e.kind()), message(e));
         pending.clear();
     }
@@ -383,6 +390,7 @@ public final class OpsSubsystem implements Subsystem {
             case START_REFUSED, START_UNACCEPTED, DEFECT_FOUND, CHECK_FAILED, MAINTENANCE_REQUIRED, UNSAFE_MAINTENANCE ->
                     Severity.WARNING;
             case SEIZED, LOCKOUT_ADMIN_CUT, UNAUTHORIZED_ACCESS -> Severity.CRITICAL;
+            case UNAUTHORIZED_WORK -> Severity.WARNING;
             default -> Severity.INFO;
         };
     }
@@ -425,11 +433,37 @@ public final class OpsSubsystem implements Subsystem {
         return lockouts;
     }
 
+    /** Наряды-допуски мира (13 §13.2). */
+    public PermitRegistry permits() {
+        return permits;
+    }
+
+    /** Остановочный ремонт установки у стенда нарядов (13 §13.6.2); создаётся при первом обращении. */
+    public Turnaround turnaround(GridPos board) {
+        return turnarounds.computeIfAbsent(board.asLong(), k -> new Turnaround());
+    }
+
+    /** Стенд снят: его ремонт забывается. */
+    public void forgetTurnaround(GridPos board) {
+        turnarounds.remove(board.asLong());
+    }
+
     @Override
     public void save(StateWriter out) {
         out.beginObject("lockouts");
         lockouts.save(out);
         out.endObject();
+        out.beginObject("permits");
+        permits.save(out);
+        out.endObject();
+        out.putInt("turnarounds", turnarounds.size());
+        int t = 0;
+        for (Map.Entry<Long, Turnaround> e : turnarounds.entrySet()) {
+            out.beginObject("t" + t++);
+            out.putLong("board", e.getKey());
+            e.getValue().save(out);
+            out.endObject();
+        }
         out.beginObject("commissioning");
         service.save(out);
         out.endObject();
@@ -465,6 +499,20 @@ public final class OpsSubsystem implements Subsystem {
         if (in.has("lockouts")) {
             in.beginObject("lockouts");
             lockouts.load(in);
+            in.endObject();
+        }
+        if (in.has("permits")) {
+            in.beginObject("permits");
+            permits.load(in);
+            in.endObject();
+        }
+        turnarounds.clear();
+        int nt = in.optInt("turnarounds", 0);
+        for (int t = 0; t < nt; t++) {
+            in.beginObject("t" + t);
+            Turnaround ta = new Turnaround();
+            ta.load(in);
+            turnarounds.put(in.getLong("board"), ta);
             in.endObject();
         }
         in.beginObject("commissioning");

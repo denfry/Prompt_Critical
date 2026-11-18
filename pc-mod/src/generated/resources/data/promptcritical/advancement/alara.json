@@ -1,0 +1,39 @@
+{
+  "parent": "promptcritical:permit",
+  "criteria": {
+    "alara": {
+      "conditions": {
+        "event": "promptcritical:alara",
+        "predicate": {
+          "dose_msv": {
+            "max": 10.0
+          }
+        },
+        "station_member": true
+      },
+      "trigger": "promptcritical:sim_event"
+    }
+  },
+  "display": {
+    "description": {
+      "translate": "advancements.promptcritical.alara.description"
+    },
+    "frame": "challenge",
+    "icon": {
+      "count": 1,
+      "id": "promptcritical:primary_pump"
+    },
+    "title": {
+      "translate": "advancements.promptcritical.alara.title"
+    }
+  },
+  "requirements": [
+    [
+      "alara"
+    ]
+  ],
+  "rewards": {
+    "experience": 150
+  },
+  "sends_telemetry_event": true
+}

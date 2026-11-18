@@ -26,7 +26,9 @@ public final class DocumentItem extends Item {
     @Override
     public InteractionResultHolder<ItemStack> use(Level level, Player player, InteractionHand hand) {
         ItemStack stack = player.getItemInHand(hand);
-        if (player instanceof ServerPlayer sp) {
+        if (player instanceof ServerPlayer sp && stack.has(dev.denfry.promptcritical.mod.ops.Permits.REF.get())) {
+            dev.denfry.promptcritical.mod.ops.Permits.status(sp, stack); // наряд 13 §13.2: состояние оригинала
+        } else if (player instanceof ServerPlayer sp) {
             if (player.isSecondaryUseActive() && stack.is(PcItems.SHIFT_LOG.get())) Paperwork.handOver(sp, stack);
             else Paperwork.show(sp, stack);
         }
@@ -39,6 +41,10 @@ public final class DocumentItem extends Item {
             ShiftLog j = stack.getOrDefault(Paperwork.SHIFT_LOG.get(), ShiftLog.EMPTY);
             out.add(Component.translatable(PaperworkText.LOG_TOOLTIP, j.entries().size(), j.currentShiftEntries())
                     .withStyle(ChatFormatting.GRAY));
+            return;
+        }
+        if (stack.has(dev.denfry.promptcritical.mod.ops.Permits.REF.get())) {
+            dev.denfry.promptcritical.mod.ops.Permits.tooltip(stack, out);
             return;
         }
         PermitRecord r = stack.get(Paperwork.WORK_PERMIT.get());
@@ -55,6 +61,8 @@ public final class DocumentItem extends Item {
 
     @Override
     public Component getName(ItemStack stack) {
+        Component ops = dev.denfry.promptcritical.mod.ops.Permits.name(stack);
+        if (ops != null) return ops;
         PermitRecord r = stack.get(Paperwork.WORK_PERMIT.get());
         return r == null ? super.getName(stack) : Component.translatable(PaperworkText.PERMIT_TITLE, r.number());
     }

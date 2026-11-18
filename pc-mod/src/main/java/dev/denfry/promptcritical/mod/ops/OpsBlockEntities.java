@@ -32,6 +32,10 @@ public final class OpsBlockEntities {
     public static final DeferredHolder<BlockEntityType<?>, BlockEntityType<LockoutBoxBlockEntity>> LOCKOUT_BOX =
             BLOCK_ENTITIES.register("lockout_box", () -> BlockEntityType.Builder.of(LockoutBoxBlockEntity::new,
                     PcBlocks.LOCKOUT_BOX.get()).build(null));
+    /** Стенд нарядов-допусков с остановочным ремонтом (13 §13.2.2, §13.6.2). */
+    public static final DeferredHolder<BlockEntityType<?>, BlockEntityType<PermitBoardBlockEntity>> PERMIT_BOARD =
+            BLOCK_ENTITIES.register("permit_board", () -> BlockEntityType.Builder.of(PermitBoardBlockEntity::new,
+                    PcBlocks.PERMIT_BOARD.get()).build(null));
     public static final DeferredHolder<BlockEntityType<?>, BlockEntityType<MechanicalDisconnectBlockEntity>> MECHANICAL_DISCONNECT =
             BLOCK_ENTITIES.register("mechanical_disconnect", () -> BlockEntityType.Builder.of(MechanicalDisconnectBlockEntity::new,
                     PcBlocks.MECHANICAL_DISCONNECT.get()).build(null));

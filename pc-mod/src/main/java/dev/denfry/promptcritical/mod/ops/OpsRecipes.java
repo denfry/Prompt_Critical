@@ -68,6 +68,17 @@ public final class OpsRecipes extends RecipeProvider {
                 .requires(Items.REDSTONE_TORCH).requires(Items.COPPER_INGOT).requires(Items.STICK).requires(Items.YELLOW_DYE)
                 .unlockedBy("has_copper", has(Items.COPPER_INGOT)).save(out, id("voltage_tester"));
 
+        // наряды-допуски 13 §13.2
+        ShapedRecipeBuilder.shaped(RecipeCategory.TOOLS, PcItems.PORTABLE_GAS_DETECTOR.get())
+                .pattern("YGY").pattern("YRY").pattern("YCY").define('Y', Items.YELLOW_DYE).define('G', Items.GLASS_PANE)
+                .define('R', Items.REDSTONE).define('C', Items.COPPER_INGOT)
+                .unlockedBy("has_copper", has(Items.COPPER_INGOT)).save(out, id("portable_gas_detector"));
+        ShapelessRecipeBuilder.shapeless(RecipeCategory.TOOLS, PcItems.CALIBRATION_GAS.get(), 4)
+                .requires(Items.IRON_INGOT).requires(Items.GLASS_BOTTLE).requires(Items.CHARCOAL)
+                .unlockedBy("has_iron", has(Items.IRON_INGOT)).save(out, id("calibration_gas"));
+        ShapedRecipeBuilder.shaped(RecipeCategory.MISC, PcBlocks.PERMIT_BOARD.get())
+                .pattern("PPP").pattern("WWW").define('P', Items.PAPER).define('W', net.minecraft.tags.ItemTags.PLANKS)
+                .unlockedBy("has_paper", has(Items.PAPER)).save(out, id("permit_board"));
         ShapedRecipeBuilder.shaped(RecipeCategory.MISC, PcBlocks.LINE_BLIND.get())
                 .pattern("I I").pattern("PRP").pattern("I I").define('I', Items.IRON_INGOT).define('P', pipe).define('R', Items.RED_DYE)
                 .unlockedBy("has_iron", has(Items.IRON_INGOT)).save(out, id("line_blind"));

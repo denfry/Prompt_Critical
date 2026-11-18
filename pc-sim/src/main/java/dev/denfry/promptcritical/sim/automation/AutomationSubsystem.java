@@ -1,5 +1,6 @@
 package dev.denfry.promptcritical.sim.automation;
 
+import dev.denfry.promptcritical.sim.automation.sis.SisCabinet;
 import dev.denfry.promptcritical.sim.automation.sis.SisLogic;
 import dev.denfry.promptcritical.sim.core.FastContext;
 import dev.denfry.promptcritical.sim.core.SimClock;
@@ -149,7 +150,27 @@ public final class AutomationSubsystem implements Subsystem {
             double dt = ctx.clock().slowDtPhys();
             relay.stepSlow(dt);
             analog.stepSlow(dt);
+            for (AutomationUnit u : siss) u.sis.ageProofTest(dt / 3600);
         }
+    }
+
+    /**
+     * Шкаф ПАЗ блока (03d §3d.6.3): блоки ПАЗ под питанием от той же цепи +24 В — причины одной матрицы причин и
+     * следствий. Для неподключённого питания — только сам блок.
+     */
+    public SisCabinet sisCabinet(AutomationUnit u) {
+        if (u == null || u.sis == null) return SisCabinet.NONE;
+        long net = u.net(0);
+        int causes = 0, tmr = 0, bypassed = 0, overdue = 0;
+        for (AutomationUnit x : siss) {
+            boolean same = x == u || net != AutomationUnit.NO_NET && x.net(0) == net;
+            if (!same || !x.sisPowered) continue;
+            causes++;
+            if (x.sisVoting() == SisLogic.Voting.TWO_OO_THREE && x.sisChannelsWired(3)) tmr++;
+            if (x.sis.bypass()) bypassed++;
+            if (x.sis.proofTestOverdue(x.sisProofIntervalH())) overdue++;
+        }
+        return new SisCabinet(causes, tmr, bypassed, overdue);
     }
 
     /**

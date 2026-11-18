@@ -1,0 +1,38 @@
+{
+  "parent": "promptcritical:proof_test",
+  "criteria": {
+    "matrix": {
+      "conditions": {
+        "event": "promptcritical:sis_matrix",
+        "predicate": {
+          "causes": {
+            "min": 10.0
+          }
+        },
+        "station_member": true
+      },
+      "trigger": "promptcritical:sim_event"
+    }
+  },
+  "display": {
+    "description": {
+      "translate": "advancements.promptcritical.sis_matrix.description"
+    },
+    "icon": {
+      "count": 1,
+      "id": "promptcritical:sis_logic_solver"
+    },
+    "title": {
+      "translate": "advancements.promptcritical.sis_matrix.title"
+    }
+  },
+  "requirements": [
+    [
+      "matrix"
+    ]
+  ],
+  "rewards": {
+    "experience": 50
+  },
+  "sends_telemetry_event": true
+}

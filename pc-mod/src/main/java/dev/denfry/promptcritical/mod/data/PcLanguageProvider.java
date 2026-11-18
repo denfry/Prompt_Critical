@@ -546,6 +546,9 @@ public final class PcLanguageProvider extends LanguageProvider {
         b("gas_suppression_cylinder", "Gas Suppression Cylinder", "Модуль газового пожаротушения");
         b("fire_monitor", "Fire Monitor", "Лафетный ствол");
         b("lockout_box", "Lockout Box", "Ящик групповой блокировки");
+        b("permit_board", "Permit Board", "Стенд нарядов-допусков");
+        i("portable_gas_detector", "Portable Gas Detector", "Переносной газоанализатор");
+        i("calibration_gas", "Calibration Gas", "Поверочная газовая смесь");
         b("mechanical_disconnect", "Mechanical Disconnect", "Расцепная муфта");
         b("hrsg", "Heat Recovery Steam Generator", "Котёл-утилизатор");
         b("turbine_gearbox", "Turbine Gearbox", "Редуктор турбины");
@@ -765,6 +768,7 @@ public final class PcLanguageProvider extends LanguageProvider {
         MISC.putAll(dev.denfry.promptcritical.mod.ops.OpsText.LANG);
         MISC.putAll(dev.denfry.promptcritical.mod.worldgen.WorldFinds.LANG);
         MISC.putAll(dev.denfry.promptcritical.mod.ops.LockoutText.LANG);
+        MISC.putAll(dev.denfry.promptcritical.mod.ops.PermitText.LANG);
         MISC.putAll(dev.denfry.promptcritical.mod.ops.OpsFireText.LANG);
         MISC.putAll(dev.denfry.promptcritical.mod.powerhouse.PowerhouseText.LANG);
         MISC.putAll(dev.denfry.promptcritical.mod.grid.GridText.LANG);

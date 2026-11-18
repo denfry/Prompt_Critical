@@ -111,6 +111,7 @@ public final class Paperwork {
         ItemStack stack = event.getItemStack();
         boolean log = stack.is(PcItems.SHIFT_LOG.get()), permit = stack.is(PcItems.WORK_PERMIT.get());
         if (!log && !permit) return;
+        if (permit && stack.has(dev.denfry.promptcritical.mod.ops.Permits.REF.get())) return; // наряд 13 §13.2 — у Permits
         BlockEntity be = controller(event.getLevel(), event.getPos());
         boolean target = log ? be instanceof PanelHost : be instanceof DisconnectorBlockEntity || be instanceof BreakerCellBlockEntity;
         if (!target) return;

@@ -1,0 +1,39 @@
+{
+  "parent": "promptcritical:permit",
+  "criteria": {
+    "turnaround": {
+      "conditions": {
+        "event": "promptcritical:turnaround",
+        "predicate": {
+          "repairs": {
+            "min": 1.0
+          }
+        },
+        "station_member": true
+      },
+      "trigger": "promptcritical:sim_event"
+    }
+  },
+  "display": {
+    "description": {
+      "translate": "advancements.promptcritical.turnaround.description"
+    },
+    "frame": "goal",
+    "icon": {
+      "count": 1,
+      "id": "promptcritical:permit_board"
+    },
+    "title": {
+      "translate": "advancements.promptcritical.turnaround.title"
+    }
+  },
+  "requirements": [
+    [
+      "turnaround"
+    ]
+  ],
+  "rewards": {
+    "experience": 100
+  },
+  "sends_telemetry_event": true
+}

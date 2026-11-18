@@ -312,6 +312,10 @@ public final class PcItems {
             lockout("lockout_hasp", dev.denfry.promptcritical.mod.ops.LockoutItem.Kind.HASP, 8);
     public static final DeferredItem<dev.denfry.promptcritical.mod.ops.LockoutItem> VOLTAGE_TESTER =
             lockout("voltage_tester", dev.denfry.promptcritical.mod.ops.LockoutItem.Kind.VOLTAGE_TESTER, 1);
+    /** Наряды-допуски 13 §13.2.3: переносной газоанализатор и поверочная смесь для его проверки газом. */
+    public static final DeferredItem<dev.denfry.promptcritical.mod.ops.PortableGasDetectorItem> PORTABLE_GAS_DETECTOR = registered(ITEMS.registerItem(
+            "portable_gas_detector", dev.denfry.promptcritical.mod.ops.PortableGasDetectorItem::new, new Item.Properties().stacksTo(1)));
+    public static final DeferredItem<Item> CALIBRATION_GAS = registered(ITEMS.registerSimpleItem("calibration_gas", new Item.Properties().stacksTo(16)));
     public static final DeferredItem<OpsItem> MECHANIC_STETHOSCOPE = ops("mechanic_stethoscope", OpsItem.Kind.STETHOSCOPE, 1);
     public static final DeferredItem<OpsItem> TORQUE_WRENCH = ops("torque_wrench", OpsItem.Kind.TORQUE_WRENCH, 1);
     public static final DeferredItem<OpsItem> TEST_PRESSURE_GAUGE = ops("test_pressure_gauge", OpsItem.Kind.TEST_GAUGE, 1);
