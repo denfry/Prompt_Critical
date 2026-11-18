@@ -3,7 +3,9 @@ package dev.denfry.promptcritical.sim.production;
 /**
  * Добывающая скважина: залежь ({@link ProducingReservoir}), лифт по НКТ со штуцером ({@link Tubing}) или ШГН
  * ({@link BeamPump}). Пока пласт поднимает столб, скважина фонтанирует через штуцер; когда давление упало и точки
- * работы нет — скважина «умирает», и нужен станок-качалка.
+ * работы нет — скважина «умирает», и нужен станок-качалка. Закрытая или заглохшая скважина сама снова не
+ * запускается, если без потока столб жидкости тяжелее пластового давления, даже когда при потоке газ облегчил бы
+ * его ({@link Tubing#kicksOff}).
  *
  * <p>При насосной эксплуатации газ отводится по затрубью (насос с газовым якорем) и в насос идёт дегазированная
  * жидкость; насос откачивает до минимального давления на приёме 0,3 МПа: если подача больше притока, заполнение
@@ -62,7 +64,10 @@ public final class ProductionWell {
         if (spm > 0) {
             pump(ipr, wc, gor, spm, separatorPa);
         } else {
-            double q = Tubing.flowingRateM3s(ipr, gor, wc, depth, choke64, separatorPa);
+            // закрытая или заглохшая скважина фонтан не начнёт, если пласт не поднимает столб без потока
+            boolean running = mode == Mode.FLOWING;
+            double q = running || Tubing.kicksOff(ipr, gor, wc, depth, separatorPa)
+                    ? Tubing.flowingRateM3s(ipr, gor, wc, depth, choke64, separatorPa) : 0;
             mode = q > 0 ? Mode.FLOWING : Mode.DEAD;
             oilM3s = q;
             pwfPa = q > 0 ? ipr.pwfAtPa(q) : ipr.reservoirPa();

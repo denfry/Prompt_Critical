@@ -43,6 +43,25 @@ class ProductionTest {
         assertThat(p).isCloseTo(373, within(1.0));
     }
 
+    /**
+     * Проскальзывание газа: при почти нулевом дебите столб с газовым фактором 90 почти жидкий (как статика), а не
+     * облегчённый газом; пласт с пониженным давлением (8 кПа/м) из закрытого состояния не фонтанирует.
+     */
+    @Test
+    void slipKeepsALowRateColumnHeavyAndALowPressureWellDoesNotKickOff() {
+        ProducingReservoir r = oilField(8_000);
+        Inflow ipr = r.inflow();
+        double stat = Tubing.bottomholePa(0.6e6, 0, r.gasOilRatio(), r.waterCut(), r.datumM(), ipr.bubblePointPa());
+        double creep = Tubing.bottomholePa(0.6e6, ipr.maxRateM3s() * 1e-6, r.gasOilRatio(), r.waterCut(), r.datumM(), ipr.bubblePointPa());
+        assertThat(creep).isCloseTo(stat, within(0.02 * stat));
+        assertThat(Tubing.kicksOff(ipr, r.gasOilRatio(), r.waterCut(), r.datumM(), 0.6e6)).isFalse();
+        ProductionWell w = new ProductionWell(r);
+        w.setChoke64(32);
+        w.step(1, true, 0, 0.6e6);
+        assertThat(w.mode()).isEqualTo(ProductionWell.Mode.DEAD);
+        assertThat(Tubing.kicksOff(oilField(12_500).inflow(), 90, 0.02, 930, 0.6e6)).isTrue();
+    }
+
     @Test
     void staticWaterColumnIsHydrostatic() {
         assertThat(Tubing.bottomholePa(1e6, 0, 0, 1, 1500, 10e6)).isCloseTo(1e6 + 1030 * G * 1500, within(1.0));
