@@ -358,6 +358,8 @@ public final class PcLanguageProvider extends LanguageProvider {
         b("claus_unit", "Claus Sulphur Recovery Unit", "Установка Клауса");
         b("catalytic_reformer", "Catalytic Reformer", "Установка каталитического риформинга");
         b("delayed_coker", "Delayed Coker", "Установка замедленного коксования");
+        // подготовка и углубление переработки НПЗ, ГПЗ (09 §9.7.3, §9.9–9.10)
+        b("electrostatic_desalter", "Electrostatic Desalter", "Электрообессоливающая установка (ЭЛОУ)");
         b("hf_kiln", "Hydrogen Fluoride Kiln", "Печь фтористого водорода");
         b("leach_tank", "Uranium Leach and CCD Train", "Выщелачивание урана с противоточной декантацией");
         b("uranium_ion_exchange", "Uranium Ion Exchange Unit", "Ионообменная установка урана");

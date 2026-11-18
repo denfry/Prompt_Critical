@@ -593,6 +593,10 @@ public final class PcBlocks {
     public static final DeferredBlock<PcDeviceBlock> DELAYED_COKER = uranium("delayed_coker",
             dev.denfry.promptcritical.mod.refinery.DelayedCokerBlockEntity::new);
 
+    // --- подготовка и углубление переработки на НПЗ, ГПЗ: ЭЛОУ, ВТ, FCC, амины, смешение, лаборатория (09 §9.7.3, §9.9–9.10) ---
+    public static final DeferredBlock<PcDeviceBlock> ELECTROSTATIC_DESALTER = uranium("electrostatic_desalter",
+            dev.denfry.promptcritical.mod.refinery.DesalterBlockEntity::new);
+
     // --- передел урана: от руды до UF₆ (I4) ---
     public static final DeferredBlock<PcDeviceBlock> ACID_PLANT = uranium("acid_plant",
             dev.denfry.promptcritical.mod.uranium.AcidPlantBlockEntity::new);

@@ -24,8 +24,9 @@ public final class ProductionPanels {
     public static final int SF_FLARING = 0, SF_CARRYOVER = 1, SF_FULL = 2;
     // колонна
     public static final int C_T_OUT = 0, C_FEED_M3H10 = 1, C_FUEL_M3H = 2, C_REFLUX_X10 = 3, C_TRAYS = 4, C_Y_GASOLINE = 5,
-            C_Y_KEROSENE = 6, C_Y_DIESEL = 7, C_Y_RESIDUE = 8, C_OVERLAP_K = 9, C_FLAGS = 10, C_TANK0 = 11, C_CHANNELS = 15;
-    public static final int CF_LIT = 0, CF_READY = 1;
+            C_Y_KEROSENE = 6, C_Y_DIESEL = 7, C_Y_RESIDUE = 8, C_OVERLAP_K = 9, C_FLAGS = 10, C_TANK0 = 11, C_SALT_X10 = 15,
+            C_CORROSION_PERMIL = 16, C_CHANNELS = 17;
+    public static final int CF_LIT = 0, CF_READY = 1, CF_LEAK = 2;
     public static final int CB_T_DOWN = 0, CB_T_UP = 1, CB_R_DOWN = 2, CB_R_UP = 3;
 
     private static final Tr M3D = PanelText.tr("unit.m3d", "m³/d", "м³/сут"), M3H = PanelText.tr("unit.m3h_prod", "m³/h", "м³/ч"),
@@ -75,6 +76,9 @@ public final class ProductionPanels {
                     "Бензин %s %% · керосин %s %% · дизель %s %% · мазут %s %%"),
             SHARPNESS = PanelText.tr("prod.sharpness", "%s theoretical trays · reflux %s · kerosene/diesel overlap %s K",
                     "Теоретических тарелок %s · флегмовое число %s · наложение керосин/дизель %s К"),
+            LEAK = PanelText.tr("prod.overhead_leak", "Overhead cooler leaks: salt", "Течь конденсатора: соли"),
+            SALT = PanelText.tr("prod.salt", "Salt in crude %s mg/l · overhead tube wear %s %%",
+                    "Соли в нефти %s мг/л · износ пучка конденсатора %s %%"),
             GASOLINE = PanelText.tr("prod.gasoline", "Gasoline", "Бензин"),
             KEROSENE = PanelText.tr("prod.kerosene", "Kerosene", "Керосин"),
             DIESEL = PanelText.tr("prod.diesel", "Diesel", "Дизель"),
@@ -119,6 +123,8 @@ public final class ProductionPanels {
             .glass(264, 22, 64, C_TANK0 + 3, 0xFF302010, Double.NaN, Double.NaN, MAZUT.get(), null)
             .lamp(8, 100, C_FLAGS, CF_LIT, LampColor.AMBER, LIT.get())
             .lamp(70, 100, C_FLAGS, CF_READY, LampColor.GREEN, READY.get())
+            .lamp(140, 100, C_FLAGS, CF_LEAK, LampColor.RED, LEAK.get())
+            .readout(8, 86, 284, v -> SALT.get(v.num(C_SALT_X10, 10, 1), v.num(C_CORROSION_PERMIL, 10, 0)), null)
             .button(8, 116, 40, CB_T_DOWN, T_DOWN.get(), null)
             .button(52, 116, 40, CB_T_UP, T_UP.get(), null)
             .button(100, 116, 56, CB_R_DOWN, R_DOWN.get(), null)

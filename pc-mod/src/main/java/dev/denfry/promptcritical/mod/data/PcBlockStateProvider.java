@@ -268,6 +268,8 @@ public final class PcBlockStateProvider extends BlockStateProvider {
             case "acid_concentrator" -> s.getValue(BlockStateProperties.LIT) ? id + "_lit" : id;
             // химия I3, метанол
             case "claus_unit" -> s.getValue(PcProperties.RUNNING) ? id + "_running" : id;
+            // подготовка и углубление переработки НПЗ, ГПЗ (09 §9.7.3, §9.9–9.10)
+            case "electrostatic_desalter" -> s.getValue(PcProperties.RUNNING) ? id + "_powered" : id;
             // замедленное коксование нарисовано своё: art/blockbench/refinery/delayed_coker.author.js
             case "methanol_column" -> "fractionating_column";
             // ядерное топливо I4

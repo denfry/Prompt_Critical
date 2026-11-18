@@ -29,6 +29,10 @@ public final class RefineryBlockEntities {
             BLOCK_ENTITIES.register("catalytic_reformer",
                     () -> BlockEntityType.Builder.of(CatalyticReformerBlockEntity::new, PcBlocks.CATALYTIC_REFORMER.get()).build(null));
 
+    public static final DeferredHolder<BlockEntityType<?>, BlockEntityType<DesalterBlockEntity>> DESALTER =
+            BLOCK_ENTITIES.register("electrostatic_desalter",
+                    () -> BlockEntityType.Builder.of(DesalterBlockEntity::new, PcBlocks.ELECTROSTATIC_DESALTER.get()).build(null));
+
     private RefineryBlockEntities() {
     }
 
@@ -43,5 +47,6 @@ public final class RefineryBlockEntities {
         event.registerBlockEntity(Capabilities.FluidHandler.BLOCK, CATALYTIC_REFORMER.get(), (be, side) -> be.fluids(side));
         event.registerBlockEntity(Capabilities.FluidHandler.BLOCK, DELAYED_COKER.get(), (be, side) -> be.fluids(side));
         event.registerBlockEntity(Capabilities.ItemHandler.BLOCK, DELAYED_COKER.get(), (be, side) -> be.items(side));
+        event.registerBlockEntity(Capabilities.FluidHandler.BLOCK, DESALTER.get(), (be, side) -> be.fluids(side));
     }
 }

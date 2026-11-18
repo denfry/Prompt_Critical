@@ -12,6 +12,8 @@ public final class ProductionText {
     private static final Map<String, String[]> LANG = new LinkedHashMap<>();
 
     static {
+        put("column_repair_short", "Re-tubing the overhead cooler takes %s seamless pipes", "Для замены трубного пучка конденсатора нужно %s бесшовных труб");
+        put("column_repaired", "Overhead cooler re-tubed: the leak is gone", "Трубный пучок конденсатора заменён: течи нет");
         put("no_bore", "No drilled bore under the wellhead: drill here first", "Под устьем нет пробуренного ствола: сначала пробурите здесь");
         put("cased", "Production casing run: %s of %s joints (12 m each)", "Эксплуатационная колонна: %s из %s труб (по 12 м)");
         put("needs_casing", "Run the production casing first (%s seamless pipes)", "Сначала спустите эксплуатационную колонну (%s бесшовных труб)");

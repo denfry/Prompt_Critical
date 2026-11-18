@@ -30,6 +30,11 @@ import org.jetbrains.annotations.Nullable;
 public final class TubeFurnaceBlockEntity extends DeviceBlockEntity implements FoundryDevice {
     public static final double FUEL_J_PER_NM3 = 42e6, EFFICIENCY = 0.85;
     public static final int CRUDE_MB = 16_000, FUEL_MB = 4_000;
+    /**
+     * Соль в нефти, пришедшей трубой мимо ЭЛОУ, мг/л: продукция скважины без промыслового обессоливания — значение
+     * примера 09 §9.7.3 (200 мг/л). Соль в баке печи — пассивный скаляр, смешивается по объёму.
+     */
+    public static final double RAW_SALT_MG_L = 200;
 
     private final FeedTank crude = new FeedTank(PcFluids.CRUDE_OIL.source.get(), CRUDE_MB);
     private final FeedTank fuel = new FeedTank(PcFluids.ASSOCIATED_GAS.source.get(), FUEL_MB);
@@ -56,7 +61,11 @@ public final class TubeFurnaceBlockEntity extends DeviceBlockEntity implements F
 
         @Override
         public int fill(FluidStack resource, FluidAction action) {
-            return resource.is(crude.fluid()) ? crude.fill(resource, action) : fuel.fill(resource, action);
+            if (!resource.is(crude.fluid())) return fuel.fill(resource, action);
+            double before = crude.amount();
+            int n = crude.fill(resource, action);
+            if (n > 0 && action.execute()) mixSalt(before, n, RAW_SALT_MG_L);
+            return n;
         }
 
         @Override
@@ -69,7 +78,7 @@ public final class TubeFurnaceBlockEntity extends DeviceBlockEntity implements F
             return FluidStack.EMPTY;
         }
     };
-    private double fuelNm3s;
+    private double fuelNm3s, saltMgL = RAW_SALT_MG_L;
     private int litTicks;
 
     public TubeFurnaceBlockEntity(BlockPos pos, BlockState state) {
@@ -82,6 +91,25 @@ public final class TubeFurnaceBlockEntity extends DeviceBlockEntity implements F
 
     public FeedTank fuel() {
         return fuel;
+    }
+
+    /** Соль в нефти бака печи, мг/л (её получает колонна вместе с нефтью). */
+    public double crudeSaltMgL() {
+        return crude.amount() > 0 ? saltMgL : RAW_SALT_MG_L;
+    }
+
+    /** Принять обессоленную нефть от касающегося ЭЛОУ; возвращает принятое, л. */
+    public double acceptDesalted(double liters, double salt) {
+        double before = crude.amount();
+        double n = crude.add(liters);
+        if (n > 0) mixSalt(before, n, salt);
+        return n;
+    }
+
+    private void mixSalt(double before, double added, double salt) {
+        double old = before > 0 ? saltMgL : salt;
+        saltMgL = (old * before + salt * added) / (before + added);
+        setChanged();
     }
 
     /** Расход топлива на последнем шаге, нм³/с. */
@@ -168,6 +196,7 @@ public final class TubeFurnaceBlockEntity extends DeviceBlockEntity implements F
         super.saveAdditional(tag, registries);
         crude.save(tag, "crude");
         fuel.save(tag, "fuel");
+        tag.putDouble("salt", saltMgL);
     }
 
     @Override
@@ -175,5 +204,6 @@ public final class TubeFurnaceBlockEntity extends DeviceBlockEntity implements F
         super.loadAdditional(tag, registries);
         crude.load(tag, "crude");
         fuel.load(tag, "fuel");
+        saltMgL = tag.contains("salt") ? tag.getDouble("salt") : RAW_SALT_MG_L;
     }
 }

@@ -48,6 +48,14 @@ public final class CrudeColumnBlockEntity extends DeviceBlockEntity implements F
     public static final double STAGES_PER_SECTION = 2, FEED_M3H = 10, CRUDE_KGM3 = 850;
     /** Бензин в спецификации (11 §11.2.2 {@code first_cut}): перекрытие с керосином ≤ 30 К — верх диапазона 10–30 К АВТ (09). */
     public static final double GASOLINE_OVERLAP_MAX_K = 30;
+    /**
+     * Хлоридная коррозия верха колонны (09 §9.7.3): соль, ушедшая на перегонку, гидролизуется в HCl и разъедает
+     * конденсатор; скорость ∝ солёности нефти. «ЭЛОУ плохо работает → через 20–50 ч течь в АВО»: при 200 мг/л течь —
+     * через 30 ч игры при K_slow 72 ({@link #CORROSION_LIFE_S} с физ.). Течь уносит {@link #LEAK_LOSS} бензина;
+     * трубный пучок меняют {@link #REPAIR_PIPES} бесшовными трубами (ПКМ по кубу).
+     */
+    public static final double CORROSION_LIFE_S = 30 * 3600.0 * 72, LEAK_LOSS = 0.3;
+    public static final int REPAIR_PIPES = 4;
     public static final double REFLUX_MIN = 0.5, REFLUX_MAX = 5, REFLUX_STEP = 0.5, T_MIN_C = 320, T_MAX_C = 380, T_STEP_C = 5;
 
     private final ProductTank[] tanks = {new ProductTank(PcFluids.GASOLINE.source.get(), PRODUCT_MB),
@@ -59,7 +67,7 @@ public final class CrudeColumnBlockEntity extends DeviceBlockEntity implements F
     private BlockPos furnacePos;
     private AtmosphericUnit.Result result;
     private double resultKey = Double.NaN;
-    private double feedKgS, fuelNm3s;
+    private double feedKgS, fuelNm3s, corrosion, saltMgL = TubeFurnaceBlockEntity.RAW_SALT_MG_L;
     private int ticks;
 
     public CrudeColumnBlockEntity(BlockPos pos, BlockState state) {
@@ -76,6 +84,20 @@ public final class CrudeColumnBlockEntity extends DeviceBlockEntity implements F
 
     public double theoreticalStages() {
         return sections * STAGES_PER_SECTION;
+    }
+
+    /** Износ трубного пучка конденсатора верха: 1 — течь. */
+    public double corrosion() {
+        return corrosion;
+    }
+
+    public boolean leaking() {
+        return corrosion >= 1;
+    }
+
+    /** Соль в нефти, которую колонна перегоняет сейчас, мг/л. */
+    public double saltMgL() {
+        return saltMgL;
     }
 
     public boolean ready() {
@@ -138,8 +160,14 @@ public final class CrudeColumnBlockEntity extends DeviceBlockEntity implements F
             double perKg = r.yield(p) / p.densityKgM3 * 1000;
             if (perKg > 0) maxKg = Math.min(maxKg, tanks[p.ordinal()].room() / perKg);
         }
+        saltMgL = f.crudeSaltMgL();
         double kg = f.fire(maxKg, r.dutyJPerKg(), dt);
-        for (Product p : Product.values()) tanks[p.ordinal()].add(kg * r.yield(p) / p.densityKgM3 * 1000);
+        if (kg > 0) corrosion += saltMgL / TubeFurnaceBlockEntity.RAW_SALT_MG_L * dt / CORROSION_LIFE_S;
+        for (Product p : Product.values()) {
+            double add = kg * r.yield(p) / p.densityKgM3 * 1000;
+            if (p == Product.GASOLINE && leaking()) add *= 1 - LEAK_LOSS;
+            tanks[p.ordinal()].add(add);
+        }
         feedKgS = kg / dt;
         // бензин в спецификации: перекрытие D86 5–95 % с керосином не больше верхней границы реальных АВТ (09, σ₀)
         if (feedKgS > 0 && r.overlapK()[0] <= GASOLINE_OVERLAP_MAX_K) dev.denfry.promptcritical.mod.content.SimAchievements.once(this, dev.denfry.promptcritical.mod.content.SimAchievements.FIRST_CUT, "overlap_k", r.overlapK()[0]);
@@ -190,7 +218,17 @@ public final class CrudeColumnBlockEntity extends DeviceBlockEntity implements F
 
     @Override
     public ItemInteractionResult useItem(Player player, InteractionHand hand, ItemStack stack) {
-        return ItemInteractionResult.PASS_TO_DEFAULT_BLOCK_INTERACTION;
+        if (!stack.is(dev.denfry.promptcritical.mod.registry.PcItems.SEAMLESS_PIPE.get()) || corrosion < 0.05)
+            return ItemInteractionResult.PASS_TO_DEFAULT_BLOCK_INTERACTION;
+        if (stack.getCount() < REPAIR_PIPES && !player.isCreative()) {
+            player.displayClientMessage(ProductionText.msg("column_repair_short", REPAIR_PIPES), true);
+            return ItemInteractionResult.FAIL;
+        }
+        if (!player.isCreative()) stack.shrink(REPAIR_PIPES);
+        corrosion = 0;
+        setChanged();
+        player.displayClientMessage(ProductionText.msg("column_repaired"), true);
+        return ItemInteractionResult.SUCCESS;
     }
 
     @Override
@@ -236,7 +274,10 @@ public final class CrudeColumnBlockEntity extends DeviceBlockEntity implements F
         out[ProductionPanels.C_Y_DIESEL] = (int) Math.round(r.yield(Product.DIESEL) * 1000);
         out[ProductionPanels.C_Y_RESIDUE] = (int) Math.round(r.yield(Product.RESIDUE) * 1000);
         out[ProductionPanels.C_OVERLAP_K] = (int) Math.round(r.overlapK()[1]);
-        out[ProductionPanels.C_FLAGS] = (feedKgS > 0 ? 1 << ProductionPanels.CF_LIT : 0) | (ready() ? 1 << ProductionPanels.CF_READY : 0);
+        out[ProductionPanels.C_FLAGS] = (feedKgS > 0 ? 1 << ProductionPanels.CF_LIT : 0) | (ready() ? 1 << ProductionPanels.CF_READY : 0)
+                | (leaking() ? 1 << ProductionPanels.CF_LEAK : 0);
+        out[ProductionPanels.C_SALT_X10] = (int) Math.round(saltMgL * 10);
+        out[ProductionPanels.C_CORROSION_PERMIL] = (int) Math.round(Math.min(1, corrosion) * 1000);
         for (int i = 0; i < tanks.length; i++) out[ProductionPanels.C_TANK0 + i] = (int) Math.round(tanks[i].fill() * 1000);
     }
 
@@ -245,6 +286,7 @@ public final class CrudeColumnBlockEntity extends DeviceBlockEntity implements F
         super.saveAdditional(tag, registries);
         tag.putDouble("reflux", reflux);
         tag.putDouble("outlet", outletC);
+        tag.putDouble("corrosion", corrosion);
         for (Product p : Product.values()) tanks[p.ordinal()].save(tag, p.name().toLowerCase(java.util.Locale.ROOT));
     }
 
@@ -253,6 +295,7 @@ public final class CrudeColumnBlockEntity extends DeviceBlockEntity implements F
         super.loadAdditional(tag, registries);
         if (tag.contains("reflux")) reflux = tag.getDouble("reflux");
         if (tag.contains("outlet")) outletC = tag.getDouble("outlet");
+        corrosion = tag.getDouble("corrosion");
         for (Product p : Product.values()) tanks[p.ordinal()].load(tag, p.name().toLowerCase(java.util.Locale.ROOT));
     }
 }
