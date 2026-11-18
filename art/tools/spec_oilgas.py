@@ -32,7 +32,7 @@ m("reservoir_sandstone_gas", "oil_geology", full("rsg"))
 m("reservoir_sandstone_water", "oil_geology", full("rsw"))
 m("cap_rock_shale", "oil_geology", full("shl"))
 m("rock_salt", "oil_geology", full("salt"))
-m("oil_seep", "oil_geology", [el("pool", [0, 0, 0], [16, 4, 16], "seep")])
+# нарисовано вручную в Blockbench: art/blockbench/decor/plant_decor.author.js
 m("barite_ore", "oil_geology", full("bar"))
 m("bituminous_sand", "oil_geology", full("bsand"))
 m("oil_shale", "oil_geology", full("osh"))

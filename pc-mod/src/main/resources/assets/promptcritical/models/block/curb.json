@@ -1,14 +1,51 @@
 {
 	"credit": "Made with Blockbench",
 	"textures": {
-		"particle": "promptcritical:block/common/concrete",
-		"c": "promptcritical:block/common/concrete",
-		"cb": "promptcritical:block/decor/curb"
+		"particle": "promptcritical:block/plant/concrete",
+		"plant_concrete": "promptcritical:block/plant/concrete",
+		"plant_light": "promptcritical:block/plant/light",
+		"plant_rubber": "promptcritical:block/plant/rubber"
 	},
 	"elements": [
 		{
-			"name": "curb",
+			"name": "kerb",
 			"from": [0, 0, 5],
+			"to": [16, 5, 11],
+			"rotation": {
+				"angle": 0,
+				"axis": "y",
+				"origin": [8, 8, 8]
+			},
+			"faces": {
+				"north": {
+					"uv": [0, 11, 16, 16],
+					"texture": "#plant_concrete"
+				},
+				"east": {
+					"uv": [5, 11, 11, 16],
+					"texture": "#plant_concrete"
+				},
+				"south": {
+					"uv": [0, 11, 16, 16],
+					"texture": "#plant_concrete"
+				},
+				"west": {
+					"uv": [5, 11, 11, 16],
+					"texture": "#plant_concrete"
+				},
+				"up": {
+					"uv": [0, 5, 16, 11],
+					"texture": "#plant_concrete"
+				},
+				"down": {
+					"uv": [0, 5, 16, 11],
+					"texture": "#plant_concrete"
+				}
+			}
+		},
+		{
+			"name": "chamfer",
+			"from": [0, 5, 6],
 			"to": [16, 6, 11],
 			"rotation": {
 				"angle": 0,
@@ -17,28 +54,92 @@
 			},
 			"faces": {
 				"north": {
-					"uv": [0, 0, 16, 6],
-					"texture": "#cb"
+					"uv": [0, 10, 16, 11],
+					"texture": "#plant_concrete"
 				},
 				"east": {
-					"uv": [0, 0, 6, 6],
-					"texture": "#c"
+					"uv": [5, 10, 10, 11],
+					"texture": "#plant_concrete"
 				},
 				"south": {
-					"uv": [0, 0, 16, 6],
-					"texture": "#c"
+					"uv": [0, 10, 16, 11],
+					"texture": "#plant_concrete"
 				},
 				"west": {
-					"uv": [0, 0, 6, 6],
-					"texture": "#c"
+					"uv": [6, 10, 11, 11],
+					"texture": "#plant_concrete"
 				},
 				"up": {
-					"uv": [0, 0, 16, 6],
-					"texture": "#cb"
+					"uv": [0, 6, 16, 11],
+					"texture": "#plant_concrete"
 				},
 				"down": {
-					"uv": [0, 0, 16, 6],
-					"texture": "#c"
+					"uv": [0, 5, 16, 10],
+					"texture": "#plant_concrete"
+				}
+			}
+		},
+		{
+			"name": "band_w",
+			"from": [0, 0, 4.95],
+			"to": [8, 5, 5],
+			"rotation": {
+				"angle": 0,
+				"axis": "y",
+				"origin": [8, 8, 8]
+			},
+			"faces": {
+				"north": {
+					"uv": [8, 11, 16, 16],
+					"texture": "#plant_light"
+				},
+				"east": {
+					"uv": [11, 11, 11.05, 16],
+					"texture": "#plant_light"
+				},
+				"west": {
+					"uv": [4.95, 11, 5, 16],
+					"texture": "#plant_light"
+				},
+				"up": {
+					"uv": [0, 4.95, 8, 5],
+					"texture": "#plant_light"
+				},
+				"down": {
+					"uv": [0, 11, 8, 11.05],
+					"texture": "#plant_light"
+				}
+			}
+		},
+		{
+			"name": "band_b",
+			"from": [8, 0, 4.95],
+			"to": [16, 5, 5],
+			"rotation": {
+				"angle": 0,
+				"axis": "y",
+				"origin": [8, 8, 8]
+			},
+			"faces": {
+				"north": {
+					"uv": [0, 11, 8, 16],
+					"texture": "#plant_rubber"
+				},
+				"east": {
+					"uv": [11, 11, 11.05, 16],
+					"texture": "#plant_rubber"
+				},
+				"west": {
+					"uv": [4.95, 11, 5, 16],
+					"texture": "#plant_rubber"
+				},
+				"up": {
+					"uv": [8, 4.95, 16, 5],
+					"texture": "#plant_rubber"
+				},
+				"down": {
+					"uv": [8, 11, 16, 11.05],
+					"texture": "#plant_rubber"
 				}
 			}
 		}

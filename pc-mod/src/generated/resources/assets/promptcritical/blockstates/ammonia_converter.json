@@ -1,160 +1,34 @@
 {
-  "multipart": [
-    {
-      "apply": {
-        "model": "promptcritical:block/ammonia_converter"
-      },
-      "when": {
-        "facing": "north",
-        "running": "true"
-      }
+  "variants": {
+    "facing=east,running=false": {
+      "model": "promptcritical:block/ammonia_converter",
+      "y": 90
     },
-    {
-      "apply": {
-        "model": "promptcritical:block/ammonia_synthesis_reactor/partial/compressor_wheel"
-      },
-      "when": {
-        "facing": "north",
-        "running": "true"
-      }
+    "facing=east,running=true": {
+      "model": "promptcritical:block/ammonia_converter",
+      "y": 90
     },
-    {
-      "apply": {
-        "model": "promptcritical:block/ammonia_converter"
-      },
-      "when": {
-        "facing": "north",
-        "running": "false"
-      }
+    "facing=north,running=false": {
+      "model": "promptcritical:block/ammonia_converter"
     },
-    {
-      "apply": {
-        "model": "promptcritical:block/ammonia_synthesis_reactor/partial/compressor_wheel"
-      },
-      "when": {
-        "facing": "north",
-        "running": "false"
-      }
+    "facing=north,running=true": {
+      "model": "promptcritical:block/ammonia_converter"
     },
-    {
-      "apply": {
-        "model": "promptcritical:block/ammonia_converter",
-        "y": 180
-      },
-      "when": {
-        "facing": "south",
-        "running": "true"
-      }
+    "facing=south,running=false": {
+      "model": "promptcritical:block/ammonia_converter",
+      "y": 180
     },
-    {
-      "apply": {
-        "model": "promptcritical:block/ammonia_synthesis_reactor/partial/compressor_wheel",
-        "y": 180
-      },
-      "when": {
-        "facing": "south",
-        "running": "true"
-      }
+    "facing=south,running=true": {
+      "model": "promptcritical:block/ammonia_converter",
+      "y": 180
     },
-    {
-      "apply": {
-        "model": "promptcritical:block/ammonia_converter",
-        "y": 180
-      },
-      "when": {
-        "facing": "south",
-        "running": "false"
-      }
+    "facing=west,running=false": {
+      "model": "promptcritical:block/ammonia_converter",
+      "y": 270
     },
-    {
-      "apply": {
-        "model": "promptcritical:block/ammonia_synthesis_reactor/partial/compressor_wheel",
-        "y": 180
-      },
-      "when": {
-        "facing": "south",
-        "running": "false"
-      }
-    },
-    {
-      "apply": {
-        "model": "promptcritical:block/ammonia_converter",
-        "y": 270
-      },
-      "when": {
-        "facing": "west",
-        "running": "true"
-      }
-    },
-    {
-      "apply": {
-        "model": "promptcritical:block/ammonia_synthesis_reactor/partial/compressor_wheel",
-        "y": 270
-      },
-      "when": {
-        "facing": "west",
-        "running": "true"
-      }
-    },
-    {
-      "apply": {
-        "model": "promptcritical:block/ammonia_converter",
-        "y": 270
-      },
-      "when": {
-        "facing": "west",
-        "running": "false"
-      }
-    },
-    {
-      "apply": {
-        "model": "promptcritical:block/ammonia_synthesis_reactor/partial/compressor_wheel",
-        "y": 270
-      },
-      "when": {
-        "facing": "west",
-        "running": "false"
-      }
-    },
-    {
-      "apply": {
-        "model": "promptcritical:block/ammonia_converter",
-        "y": 90
-      },
-      "when": {
-        "facing": "east",
-        "running": "true"
-      }
-    },
-    {
-      "apply": {
-        "model": "promptcritical:block/ammonia_synthesis_reactor/partial/compressor_wheel",
-        "y": 90
-      },
-      "when": {
-        "facing": "east",
-        "running": "true"
-      }
-    },
-    {
-      "apply": {
-        "model": "promptcritical:block/ammonia_converter",
-        "y": 90
-      },
-      "when": {
-        "facing": "east",
-        "running": "false"
-      }
-    },
-    {
-      "apply": {
-        "model": "promptcritical:block/ammonia_synthesis_reactor/partial/compressor_wheel",
-        "y": 90
-      },
-      "when": {
-        "facing": "east",
-        "running": "false"
-      }
+    "facing=west,running=true": {
+      "model": "promptcritical:block/ammonia_converter",
+      "y": 270
     }
-  ]
+  }
 }

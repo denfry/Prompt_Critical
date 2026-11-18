@@ -1,13 +1,16 @@
 {
 	"credit": "Made with Blockbench",
 	"textures": {
+		"switchgear_cell_enamel": "promptcritical:block/switchgear_cell/enamel",
 		"particle": "promptcritical:block/decor/room_sign",
-		"s": "promptcritical:block/decor/room_sign"
+		"decor_room_sign": "promptcritical:block/decor/room_sign",
+		"plant_structure": "promptcritical:block/plant/structure",
+		"material_bright_steel": "promptcritical:block/material/bright_steel"
 	},
 	"elements": [
 		{
 			"name": "plate",
-			"from": [2, 5, 15.5],
+			"from": [2, 5, 15.4],
 			"to": [14, 11, 16],
 			"rotation": {
 				"angle": 0,
@@ -17,27 +20,171 @@
 			"faces": {
 				"north": {
 					"uv": [0, 0, 16, 16],
-					"texture": "#s"
+					"texture": "#decor_room_sign"
 				},
 				"east": {
-					"uv": [0, 0, 0.5, 6],
-					"texture": "#s"
+					"uv": [0, 5, 0.6, 11],
+					"texture": "#switchgear_cell_enamel"
 				},
 				"south": {
-					"uv": [0, 0, 12, 6],
-					"texture": "#s"
+					"uv": [2, 5, 14, 11],
+					"texture": "#switchgear_cell_enamel"
 				},
 				"west": {
-					"uv": [0, 0, 0.5, 6],
-					"texture": "#s"
+					"uv": [15.4, 5, 16, 11],
+					"texture": "#switchgear_cell_enamel"
 				},
 				"up": {
-					"uv": [0, 0, 12, 0.5],
-					"texture": "#s"
+					"uv": [2, 15.4, 14, 16],
+					"texture": "#switchgear_cell_enamel"
 				},
 				"down": {
-					"uv": [0, 0, 12, 0.5],
-					"texture": "#s"
+					"uv": [2, 0, 14, 0.6],
+					"texture": "#switchgear_cell_enamel"
+				}
+			}
+		},
+		{
+			"name": "rim_t",
+			"from": [1.8, 10.8, 15.3],
+			"to": [14.2, 11.2, 16],
+			"rotation": {
+				"angle": 0,
+				"axis": "y",
+				"origin": [8, 8, 8]
+			},
+			"faces": {
+				"north": {
+					"uv": [1.8, 4.8, 14.2, 5.2],
+					"texture": "#plant_structure"
+				},
+				"east": {
+					"uv": [0, 4.8, 0.7, 5.2],
+					"texture": "#plant_structure"
+				},
+				"south": {
+					"uv": [1.8, 4.8, 14.2, 5.2],
+					"texture": "#plant_structure"
+				},
+				"west": {
+					"uv": [15.3, 4.8, 16, 5.2],
+					"texture": "#plant_structure"
+				},
+				"up": {
+					"uv": [1.8, 15.3, 14.2, 16],
+					"texture": "#plant_structure"
+				},
+				"down": {
+					"uv": [1.8, 0, 14.2, 0.7],
+					"texture": "#plant_structure"
+				}
+			}
+		},
+		{
+			"name": "rim_b",
+			"from": [1.8, 4.8, 15.3],
+			"to": [14.2, 5.2, 16],
+			"rotation": {
+				"angle": 0,
+				"axis": "y",
+				"origin": [8, 8, 8]
+			},
+			"faces": {
+				"north": {
+					"uv": [1.8, 10.8, 14.2, 11.2],
+					"texture": "#plant_structure"
+				},
+				"east": {
+					"uv": [0, 10.8, 0.7, 11.2],
+					"texture": "#plant_structure"
+				},
+				"south": {
+					"uv": [1.8, 10.8, 14.2, 11.2],
+					"texture": "#plant_structure"
+				},
+				"west": {
+					"uv": [15.3, 10.8, 16, 11.2],
+					"texture": "#plant_structure"
+				},
+				"up": {
+					"uv": [1.8, 15.3, 14.2, 16],
+					"texture": "#plant_structure"
+				},
+				"down": {
+					"uv": [1.8, 0, 14.2, 0.7],
+					"texture": "#plant_structure"
+				}
+			}
+		},
+		{
+			"name": "screw_2.6",
+			"from": [2.6, 7.6, 15.3],
+			"to": [3, 8, 15.4],
+			"rotation": {
+				"angle": 0,
+				"axis": "y",
+				"origin": [8, 8, 8]
+			},
+			"faces": {
+				"north": {
+					"uv": [13, 8, 13.4, 8.4],
+					"texture": "#material_bright_steel"
+				},
+				"east": {
+					"uv": [0.6, 8, 0.7, 8.4],
+					"texture": "#material_bright_steel"
+				},
+				"south": {
+					"uv": [2.6, 8, 3, 8.4],
+					"texture": "#material_bright_steel"
+				},
+				"west": {
+					"uv": [15.3, 8, 15.4, 8.4],
+					"texture": "#material_bright_steel"
+				},
+				"up": {
+					"uv": [2.6, 15.3, 3, 15.4],
+					"texture": "#material_bright_steel"
+				},
+				"down": {
+					"uv": [2.6, 0.6, 3, 0.7],
+					"texture": "#material_bright_steel"
+				}
+			}
+		},
+		{
+			"name": "screw_13",
+			"from": [13, 7.6, 15.3],
+			"to": [13.4, 8, 15.4],
+			"rotation": {
+				"angle": 0,
+				"axis": "y",
+				"origin": [8, 8, 8]
+			},
+			"faces": {
+				"north": {
+					"uv": [2.6, 8, 3, 8.4],
+					"texture": "#material_bright_steel"
+				},
+				"east": {
+					"uv": [0.6, 8, 0.7, 8.4],
+					"texture": "#material_bright_steel"
+				},
+				"south": {
+					"uv": [13, 8, 13.4, 8.4],
+					"texture": "#material_bright_steel"
+				},
+				"west": {
+					"uv": [15.3, 8, 15.4, 8.4],
+					"texture": "#material_bright_steel"
+				},
+				"up": {
+					"uv": [13, 15.3, 13.4, 15.4],
+					"texture": "#material_bright_steel"
+				},
+				"down": {
+					"uv": [13, 0.6, 13.4, 0.7],
+					"texture": "#material_bright_steel"
 				}
 			}
 		}

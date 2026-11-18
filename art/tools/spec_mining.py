@@ -478,16 +478,7 @@ mk("pulsed_column/piston", "conversion", [
     el("crosshead", [12, 17, 7], [14.5, 18, 9], "d"),
 ], kind="partial")
 
-mk("evaporator", "conversion",
-   shell("calandria", "y", 4, 0, 8, "shell")
-   + shell("vapour_body", "y", 6, 8, 15, "shell")
-   + disc("dome", "y", 4, 15, 16, "sm", sides=8)
-   + [
-       el("sight_glass", [6.5, 10, 1.8], [9.5, 13, 2.1], "gl", full=["north"]),
-       nozzle("steam_in", [11.5, 5, 7], [16, 7, 9], "steam", "east"),
-       el("vapour_out", [6.5, 16, 6.5], [9.5, 17.5, 9.5], "steam", faces={"up": "end"}, full=["up"]),
-       nozzle("concentrate_out", [0, 1, 7], [4.5, 3, 9], "acid", "west"),
-   ], {"shell": "block/evaporator_shell.png"})
+# нарисовано вручную в Blockbench: art/blockbench/decor/plant_decor.author.js
 
 # нарисовано вручную в Blockbench: art/blockbench/conversion/fuel_cycle.author.js
 

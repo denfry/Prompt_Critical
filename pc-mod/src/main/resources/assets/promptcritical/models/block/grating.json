@@ -1,14 +1,14 @@
 {
 	"credit": "Made with Blockbench",
 	"textures": {
-		"particle": "promptcritical:block/common/fuelcycle_grating",
-		"gal": "promptcritical:block/common/plant_galvanized",
-		"grat": "promptcritical:block/common/fuelcycle_grating"
+		"particle": "promptcritical:block/steelmaking/grating",
+		"steelmaking_grating": "promptcritical:block/steelmaking/grating",
+		"disconnector_galvanised": "promptcritical:block/disconnector/galvanised"
 	},
 	"elements": [
 		{
-			"name": "plate",
-			"from": [0, 14, 0],
+			"name": "grating",
+			"from": [0, 15, 0],
 			"to": [16, 16, 16],
 			"rotation": {
 				"angle": 0,
@@ -18,34 +18,34 @@
 			"faces": {
 				"north": {
 					"uv": [0, 0, 16, 2],
-					"texture": "#grat"
+					"texture": "#steelmaking_grating"
 				},
 				"east": {
 					"uv": [0, 0, 16, 2],
-					"texture": "#grat"
+					"texture": "#steelmaking_grating"
 				},
 				"south": {
 					"uv": [0, 0, 16, 2],
-					"texture": "#grat"
+					"texture": "#steelmaking_grating"
 				},
 				"west": {
 					"uv": [0, 0, 16, 2],
-					"texture": "#grat"
+					"texture": "#steelmaking_grating"
 				},
 				"up": {
 					"uv": [0, 0, 16, 16],
-					"texture": "#grat"
+					"texture": "#steelmaking_grating"
 				},
 				"down": {
 					"uv": [0, 0, 16, 16],
-					"texture": "#grat"
+					"texture": "#steelmaking_grating"
 				}
 			}
 		},
 		{
-			"name": "bearer_w",
-			"from": [0, 12, 0],
-			"to": [1, 14, 16],
+			"name": "bearer_0.4",
+			"from": [0.4, 12, 0],
+			"to": [1, 15, 16],
 			"rotation": {
 				"angle": 0,
 				"axis": "y",
@@ -53,35 +53,35 @@
 			},
 			"faces": {
 				"north": {
-					"uv": [0, 0, 1, 2],
-					"texture": "#gal"
+					"uv": [15, 1, 15.6, 4],
+					"texture": "#disconnector_galvanised"
 				},
 				"east": {
-					"uv": [0, 0, 16, 2],
-					"texture": "#gal"
+					"uv": [0, 1, 16, 4],
+					"texture": "#disconnector_galvanised"
 				},
 				"south": {
-					"uv": [0, 0, 1, 2],
-					"texture": "#gal"
+					"uv": [0.4, 1, 1, 4],
+					"texture": "#disconnector_galvanised"
 				},
 				"west": {
-					"uv": [0, 0, 16, 2],
-					"texture": "#gal"
+					"uv": [0, 1, 16, 4],
+					"texture": "#disconnector_galvanised"
 				},
 				"up": {
-					"uv": [0, 0, 1, 16],
-					"texture": "#gal"
+					"uv": [0.4, 0, 1, 16],
+					"texture": "#disconnector_galvanised"
 				},
 				"down": {
-					"uv": [0, 0, 1, 16],
-					"texture": "#gal"
+					"uv": [0.4, 0, 1, 16],
+					"texture": "#disconnector_galvanised"
 				}
 			}
 		},
 		{
-			"name": "bearer_e",
+			"name": "bearer_15",
 			"from": [15, 12, 0],
-			"to": [16, 14, 16],
+			"to": [15.6, 15, 16],
 			"rotation": {
 				"angle": 0,
 				"axis": "y",
@@ -89,28 +89,28 @@
 			},
 			"faces": {
 				"north": {
-					"uv": [0, 0, 1, 2],
-					"texture": "#gal"
+					"uv": [0.4, 1, 1, 4],
+					"texture": "#disconnector_galvanised"
 				},
 				"east": {
-					"uv": [0, 0, 16, 2],
-					"texture": "#gal"
+					"uv": [0, 1, 16, 4],
+					"texture": "#disconnector_galvanised"
 				},
 				"south": {
-					"uv": [0, 0, 1, 2],
-					"texture": "#gal"
+					"uv": [15, 1, 15.6, 4],
+					"texture": "#disconnector_galvanised"
 				},
 				"west": {
-					"uv": [0, 0, 16, 2],
-					"texture": "#gal"
+					"uv": [0, 1, 16, 4],
+					"texture": "#disconnector_galvanised"
 				},
 				"up": {
-					"uv": [0, 0, 1, 16],
-					"texture": "#gal"
+					"uv": [15, 0, 15.6, 16],
+					"texture": "#disconnector_galvanised"
 				},
 				"down": {
-					"uv": [0, 0, 1, 16],
-					"texture": "#gal"
+					"uv": [15, 0, 15.6, 16],
+					"texture": "#disconnector_galvanised"
 				}
 			}
 		}
