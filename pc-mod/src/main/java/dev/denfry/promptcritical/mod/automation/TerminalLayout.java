@@ -35,6 +35,7 @@ public final class TerminalLayout {
         front(AutomationKind.INDICATOR_LAMP, 10.4, 3, 2, 13, 2, 2);
         front(AutomationKind.REDSTONE_INTERFACE, 5.8, 2, 3, 14, 3, 4);
         front(AutomationKind.GAS_DETECTOR, 7.9, 5, 3.5, 11.5, 13.5, 3);
+        front(AutomationKind.REACTOR_IO, -0.6, 2.5, 3, 13.5, 6, 3);
         front(AutomationKind.ANALOG_SUMMER, -0.6, 2, 2, 14, 2, 5);
         front(AutomationKind.ANALOG_INTEGRATOR, -1.6, 2, 2, 14, 4.5, 4);
         front(AutomationKind.ANALOG_DIFFERENTIATOR, -0.6, 4, 2, 12, 2, 2);
