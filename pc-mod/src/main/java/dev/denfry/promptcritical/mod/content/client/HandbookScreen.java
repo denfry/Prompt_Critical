@@ -208,6 +208,7 @@ public class HandbookScreen extends Screen {
                         switch (b.kind()) {
                             case BREAK -> lines.add(new Line(FormattedCharSequence.EMPTY, 0, false));
                             case BULLET -> wrap(lines, b.text(), cw - BULLET_INDENT, BULLET_INDENT, true);
+                            case CODE -> wrap(lines, b.text(), cw - BULLET_INDENT / 2, BULLET_INDENT / 2, false);
                             default -> wrap(lines, b.text(), cw, 0, false);
                         }
                     }
