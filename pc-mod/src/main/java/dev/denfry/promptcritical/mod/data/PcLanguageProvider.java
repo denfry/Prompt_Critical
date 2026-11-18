@@ -795,6 +795,13 @@ public final class PcLanguageProvider extends LanguageProvider {
         MISC.putAll(dev.denfry.promptcritical.mod.chlor.ChlorText.lang());
         MISC.putAll(dev.denfry.promptcritical.mod.environment.ToxicReleaseService.lang());
         MISC.putAll(dev.denfry.promptcritical.mod.environment.RadiationService.lang());
+        i("vibrometer", "Vibration Analyser", "Виброанализатор");
+        i("hearing_protection", "Ear Muffs", "Противошумные наушники");
+        i("bearing_kit", "Rolling Bearing Kit", "Комплект подшипника качения");
+        i("balancing_weights", "Balancing Weights", "Балансировочные грузы");
+        i("alignment_tool", "Shaft Alignment Tool", "Приспособление для центровки валов");
+        b("instrument_vibration", "Vibration Transmitter", "Вибродатчик");
+        MISC.putAll(dev.denfry.promptcritical.mod.acoustics.Acoustics.lang());
         MISC.putAll(dev.denfry.promptcritical.mod.radiation.RadiationBlocksText.lang());
         MISC.putAll(dev.denfry.promptcritical.mod.reprocessing.ReprocessingText.lang());
         MISC.putAll(dev.denfry.promptcritical.mod.uranium.UraniumText.lang());

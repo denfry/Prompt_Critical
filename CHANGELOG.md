@@ -211,6 +211,17 @@
 - `sim.mes`: economic dispatch with unit limits and a CO2 fee, and a production planner that commits units and
   loads them to the market price under a market cap.
 
+### Vibration and noise (04a)
+- Vibration diagnostics for any turning Create machine: a spectrum with 1x imbalance, 2x misalignment, blade pass,
+  the outer race, inner race, ball and cage frequencies from bearing geometry, gear mesh on cogwheels and an HF
+  envelope; overall RMS velocity in the ISO 10816 band, zones A-D by machine class from shaft power.
+- Rolling bearings wear by ISO 281 life and Palmgren-Miner through four defect stages and seize at the end,
+  wrecking the machine. Bearing kit, balancing weights and an alignment tool for maintenance.
+- Vibration analyser with a spectrum screen, bearing housing temperature and the noise level where you stand;
+  a vibration transmitter that puts the overall level on redstone.
+- Machine noise adds up by energy with distance and wall attenuation; a daily noise dose by the 3 dB rule,
+  fatigue past the dose, deafening above 120 dB(A), ear muffs take off 25 dB. Handbook chapter in I1.
+
 ### Character body
 - Choose sex, height, mass and age on the title screen or on first join; locked per world, an operator can reset.
 - Height scales the player model and stride; mass sets knockback resistance and the load in the hoist cage;
