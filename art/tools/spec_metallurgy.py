@@ -783,23 +783,7 @@ m("permanent_mold/half", "foundry", [el("half", [2, 2, 2], [14, 13, 8], "ci"), e
 # ======================================================================
 # механический цех (серо-зелёная станочная эмаль); токарный и сверлильный станки — spec_visual
 # ======================================================================
-m("milling_machine", "machine_shop", [
-    el("column", [3, 0, 8], [13, 28, 16], "mach"),
-    el("knee", [2, 6, 0], [14, 12, 8], "mach"),
-    el("table", [-0.01, 12, 1], [16.01, 14, 7], "machs"),
-    el("overarm", [5, 28, 2], [11, 31, 16], "mach"),
-    el("head", [5, 20, 2], [11, 28, 8], "mach"),
-])
-m("milling_machine/spindle", "machine_shop", vcyl("spindle", 8, 5, 1, 16, 20, "st", 8) + vcyl("cutter", 8, 5, 2, 15, 17, "d", 8), kind="partial")
-m("surface_grinder", "machine_shop", [
-    el("base", [0, 0, 2], [32, 8, 14], "mach"),
-    el("table", [2, 8, 3], [26, 10, 13], "machs"),
-    el("chuck", [6, 10, 4], [22, 11, 12], "st"),
-    el("column", [26, 0, 4], [32, 22, 12], "mach"),
-    el("wheel_head", [12, 16, 5], [28, 22, 11], "mach"),
-    el("guard", [10, 13, 4], [16, 20, 12], "mach"),
-])
-m("surface_grinder/wheel", "machine_shop", hcyl("wheel", "z", 4, 5, 11, "grind", c=(13, 14, 8)), kind="partial")
+# фрезерный и плоскошлифовальный — art/blockbench/machine_shop/machine_tools.author.js
 
 # ======================================================================
 # промышленные газы

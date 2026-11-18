@@ -48,7 +48,7 @@ public final class FoundryClient {
         event.registerBlockEntityRenderer(FoundryBlockEntities.SHAKEOUT_GRATE.get(), c -> new FoundryMachineRenderer<>(SHAKEOUT_DECK, Motion.JOLT, 0, 0, 1));
         event.registerBlockEntityRenderer(FoundryBlockEntities.MACHINE_LATHE.get(), c -> new FoundryMachineRenderer<>(LATHE_SPINDLE, Motion.SPIN_X, 14, 8, 1));
         event.registerBlockEntityRenderer(FoundryBlockEntities.DRILL_PRESS.get(), c -> new FoundryMachineRenderer<>(DRILL_SPINDLE, Motion.SPIN_Y, 8, 7, 4));
-        event.registerBlockEntityRenderer(FoundryBlockEntities.MILLING_MACHINE.get(), c -> new FoundryMachineRenderer<>(MILL_SPINDLE, Motion.SPIN_Y, 8, 5, 2));
+        event.registerBlockEntityRenderer(FoundryBlockEntities.MILLING_MACHINE.get(), c -> new FoundryMachineRenderer<>(MILL_SPINDLE, Motion.SPIN_Z, 8, 18, 2));
         // ползун ходит на ±4 пикселя; кривошип — один двойной ход на два оборота вала
         event.registerBlockEntityRenderer(FoundryBlockEntities.SHAPING_MACHINE.get(), c -> new FoundryMachineRenderer<>(SHAPER_RAM, Motion.SLIDE_X, 4, 0, 0.5f));
         event.registerBlockEntityRenderer(FoundryBlockEntities.SURFACE_GRINDER.get(), c -> new FoundryMachineRenderer<>(GRINDER_WHEEL, Motion.SPIN_Z, 13, 14, 4));
