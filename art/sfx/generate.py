@@ -192,7 +192,7 @@ def main():
         sounds = {k: v for k, v in sounds.items() if not k.startswith("sfx.")}
         for key in keys:
             sounds[f"sfx.{key}"] = {"sounds": [{"name": f"promptcritical:sfx/{key}"}], "subtitle": f"subtitles.promptcritical.sfx.{key}"}
-        sounds_json.write_text(json.dumps(sounds, indent=2, ensure_ascii=False) + "\n", encoding="utf-8")
+        sounds_json.write_text(json.dumps(sounds, indent=2, ensure_ascii=False) + "\n", encoding="utf-8", newline="\n")
     steady = {k: src[k].get("steady", True) if k in src else True for k in keys}
     ok = all([check(k, loops[k], steady[k]) for k in keys])
     print(f"готово: {len(keys)} звуков" if ok else "есть замечания")
