@@ -1,5 +1,7 @@
 package dev.denfry.promptcritical.sim.economy;
 
+import dev.denfry.promptcritical.sim.environment.EmissionLedger;
+
 /**
  * Квоты CO₂, cap-and-trade (14 §14.7.1): бесплатное выделение A_n = A_base·(1 − r)^n, в конце периода команда сдаёт
  * квоты на E_CO₂e·m_method плюс долг прошлого периода. Излишек переходит дальше и продаётся на бирже, при дефиците —
@@ -46,6 +48,17 @@ public final class QuotaLedger {
         QuotaAccount next = new QuotaAccount(acc.team(), nextAllocationT, surplus + nextAllocationT, deficit,
                 acc.period() + 1);
         return new Settlement(obligation, surrendered, deficit, fine, next);
+    }
+
+    /**
+     * Закрытие периода по журналу выбросов (14 §14.1.4, §14.7.1): CO₂-эквивалент с множителями метода каждого источника
+     * (измерено 1,0 · рассчитано 1,2 · замещено 1,5) уже учтён в {@link EmissionLedger#reportedCo2eT()}, поэтому здесь
+     * множитель 1. Журнал начинает новый период.
+     */
+    public static Settlement settle(QuotaAccount acc, EmissionLedger ledger, long penaltyCentsPerT, double nextAllocationT) {
+        Settlement s = settle(acc, ledger.reportedCo2eT(), 1, penaltyCentsPerT, nextAllocationT);
+        ledger.rollPeriod();
+        return s;
     }
 
     /** Купить (tonnes > 0) или продать (tonnes < 0) квоты; продать больше, чем на руках, нельзя. */

@@ -118,6 +118,35 @@ public final class AirQualityService {
         return false;
     }
 
+    /**
+     * Выброс по массовым расходам, кг/с, для установок без модели горения (§14.1.3): SO₂, NOx, PM идут в поле,
+     * всё — в учёт.
+     */
+    public static void emit(ServerLevel level, BlockPos top, double heightM, double exitK, double flueKgS, double so2KgS, double noxKgS,
+            double pmKgS, double co2KgS, double ch4KgS, String id, EmissionLedger.Category category) {
+        CombustionResult r = new CombustionResult();
+        r.fluegasKgS = Math.max(1e-3, flueKgS);
+        r.so2KgS = so2KgS;
+        r.noxKgS = noxKgS;
+        r.pmKgS = pmKgS;
+        r.co2KgS = co2KgS;
+        r.ch4KgS = ch4KgS;
+        emit(level, top, heightM, exitK, r, id, category);
+    }
+
+    /**
+     * Сжигание горючего газа по тепловой мощности, Вт: CO₂ 56,1 кг/ГДж (IPCC 2006, природный газ), PM 0,0009 кг/ГДж,
+     * NOx — по типу горелки, кг/ГДж (EMEP/EEA 2019: котлы и печи ≈ 0,05–0,09, ГТУ с диффузионными камерами ≈ 0,2,
+     * факел 0,03 по AP-42 13.5); недожог {@code slip} уходит метаном.
+     */
+    public static void emitGasFiring(ServerLevel level, BlockPos top, double heightM, double exitK, double heatW, double flueKgS,
+            double noxKgPerGJ, double slip, String id, EmissionLedger.Category category) {
+        if (!(heatW > 0)) return;
+        double gj = heatW * 1e-9;
+        double ch4 = slip > 0 ? heatW / 50e6 * slip : 0; // метан: 50 МДж/кг
+        emit(level, top, heightM, exitK, flueKgS, 0, noxKgPerGJ * gj, 0.0009 * gj, 56.1 * gj * (1 - slip), ch4, id, category);
+    }
+
     public static EmissionLedger ledger(ServerLevel level) {
         return LEDGERS.computeIfAbsent(level, l -> new EmissionLedger());
     }

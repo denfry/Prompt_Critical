@@ -30,6 +30,9 @@ public final class ClausUnitBlockEntity extends UraniumProcessBlockEntity {
     private double bed1C = 300, airError, sulfurKg, h2sKgS;
     private ClausUnit.Result last = new ClausUnit().run(0, new double[] {300, 240, 225}, 0);
     private double totalSulfurKg, totalSo2Kg;
+    /** Кислый газ, остающийся в реакторе и конденсаторах при остановке, кг [оценка]. */
+    public static final double H2S_HOLDUP_KG = 5;
+    private boolean wasRunning;
 
     public ClausUnitBlockEntity(BlockPos pos, BlockState state) {
         super(RefineryBlockEntities.CLAUS_UNIT.get(), pos, state, 0, 4, s -> false);
@@ -76,6 +79,15 @@ public final class ClausUnitBlockEntity extends UraniumProcessBlockEntity {
             h2sKgS = kg / dt;
         }
         last = claus.run(h2sKgS, beds, airError);
+        // хвостовой газ после печи дожига — труба 60 м, ≈ 570 К (09 §9.9, 14 §14.1.1)
+        if (level.getGameTime() % 20 == 0 && last.so2KgS() > 0)
+            dev.denfry.promptcritical.mod.environment.AirQualityService.emit(level, worldPosition.above(2), 60, 570, 3 + 20 * h2sKgS, last.so2KgS(),
+                    0, 0, 0, 0, "claus@" + worldPosition.toShortString(), dev.denfry.promptcritical.sim.environment.EmissionLedger.Category.REFINERY);
+        // остановка установки с кислым газом в аппаратах: задержка H₂S стравливается через неплотности облаком (09 §9.11.8)
+        if (wasRunning && !on)
+            dev.denfry.promptcritical.mod.environment.ToxicReleaseService.puff(level, worldPosition.above(),
+                    dev.denfry.promptcritical.sim.consequence.ToxicGas.HYDROGEN_SULFIDE, H2S_HOLDUP_KG);
+        wasRunning = h2sKgS > 0;
         for (int j = 0; j < beds.length; j++) claus.ageStage(j, beds[j], h2sKgS > 0 ? dt : 0);
         sulfurKg += last.sulfurKgS() * dt;
         totalSulfurKg += last.sulfurKgS() * dt;

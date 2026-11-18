@@ -55,6 +55,27 @@ public final class ToxicReleaseService {
     static {
         DAMAGE.put(ToxicGas.CHLORINE, key("chlorine"));
         DAMAGE.put(ToxicGas.HYDROGEN_FLUORIDE, key("hydrogen_fluoride"));
+        DAMAGE.put(ToxicGas.SULFUR_DIOXIDE, key("sulfur_dioxide"));
+        DAMAGE.put(ToxicGas.HYDROGEN_SULFIDE, key("hydrogen_sulfide"));
+        FUME.put(ToxicGas.SULFUR_DIOXIDE, new DustParticleOptions(new Vector3f(0.85f, 0.85f, 0.80f), 1.4f));
+        FUME.put(ToxicGas.HYDROGEN_SULFIDE, new DustParticleOptions(new Vector3f(0.80f, 0.82f, 0.78f), 1.0f));
+        text(ToxicGas.SULFUR_DIOXIDE, "smell", "A choking, struck-match smell: sulfur dioxide", "Удушливый запах горелой спички: сернистый газ");
+        text(ToxicGas.SULFUR_DIOXIDE, "idlh", "Sulfur dioxide above 100 ppm: airways spasm. Leave across the wind",
+                "Сернистого газа больше 100 ppm: спазм дыхательных путей. Уходите поперёк ветра");
+        text(ToxicGas.SULFUR_DIOXIDE, "aegl3", "Sulfur dioxide above 42 ppm for minutes: lungs are being burnt",
+                "Сернистый газ выше 42 ppm несколько минут: ожог лёгких");
+        text(ToxicGas.HYDROGEN_SULFIDE, "smell", "Rotten eggs: hydrogen sulfide. If the smell goes away, the gas has not",
+                "Тухлые яйца: сероводород. Если запах пропал — газ не ушёл");
+        text(ToxicGas.HYDROGEN_SULFIDE, "idlh", "Hydrogen sulfide above 100 ppm: you can no longer smell it. Self-contained breathing apparatus only",
+                "Сероводорода больше 100 ppm: запаха уже нет. Только изолирующий дыхательный аппарат");
+        text(ToxicGas.HYDROGEN_SULFIDE, "aegl3", "Hydrogen sulfide: dizziness and knockdown are coming", "Сероводород: головокружение, вот-вот потеря сознания");
+        LANG.put("death.attack.promptcritical.sulfur_dioxide", new String[] {"%1$s choked on sulfur dioxide", "%1$s задохнулся сернистым газом"});
+        LANG.put("death.attack.promptcritical.sulfur_dioxide.player", new String[] {"%1$s choked on sulfur dioxide while fighting %2$s",
+                "%1$s задохнулся сернистым газом, спасаясь от %2$s"});
+        LANG.put("death.attack.promptcritical.hydrogen_sulfide", new String[] {"%1$s was knocked down by hydrogen sulfide",
+                "%1$s погиб от сероводорода"});
+        LANG.put("death.attack.promptcritical.hydrogen_sulfide.player", new String[] {"%1$s was knocked down by hydrogen sulfide while fighting %2$s",
+                "%1$s погиб от сероводорода, спасаясь от %2$s"});
         FUME.put(ToxicGas.CHLORINE, new DustParticleOptions(new Vector3f(0.78f, 0.86f, 0.30f), 1.6f));
         FUME.put(ToxicGas.HYDROGEN_FLUORIDE, new DustParticleOptions(new Vector3f(0.92f, 0.93f, 0.95f), 1.8f));
         text(ToxicGas.CHLORINE, "smell", "A sharp, bleach-like smell: chlorine in the air", "Резкий запах хлорки: в воздухе хлор");
@@ -234,7 +255,8 @@ public final class ToxicReleaseService {
         double lethal = gas.lethality(ex[0]);
         double dp = lethal - ex[1];
         int flags = (int) ex[2];
-        if ((flags & 1) == 0) {
+        // сероводород выше 100 ppm парализует обоняние: запаха нет с первого вдоха
+        if ((flags & 1) == 0 && !(gas == ToxicGas.HYDROGEN_SULFIDE && ppm >= ToxicGas.H2S_ANOSMIA_PPM)) {
             p.displayClientMessage(msg(gas, "smell").withStyle(ChatFormatting.YELLOW), false);
             flags |= 1;
         }
