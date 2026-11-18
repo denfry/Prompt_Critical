@@ -134,7 +134,7 @@ public final class PwrPanels {
             PanelText.tr("pwr.reason.seismic", "seismic", "сейсмика"),
             PanelText.tr("pwr.reason.lua_request", "external (ESD)", "внешняя (ПАЗ)")};
 
-    public static final PanelLayout REACTOR = PanelLayout.builder("pwr_reactor", 248, 226, CHANNELS)
+    public static final PanelLayout REACTOR = PanelLayout.builder("pwr_reactor", 248, 238, CHANNELS)
             .dial(8, 24, false, POWER, 10, 130, 107, 0, PCT.get(), N.get(),
                     v -> POWER_TIP.get(v.num(POWER, 10, 1), v.raw(RHO_PCM), v.raw(SETPOINT)))
             .dial(64, 24, false, PERIOD, 10, 100, Double.NaN, 0, SEC.get(), T_PERIOD.get(),
@@ -178,6 +178,7 @@ public final class PwrPanels {
             .button(196, 180, 44, B_PORV, PORV.get(), PORV_TIP.get())
             .readout(8, 200, 232, PwrPanels::severe, v -> RIA_LINE_TIP.get())
             .readout(8, 212, 232, PwrPanels::tubes, v -> SG_TIP.get())
+            .readout(8, 224, 232, v -> AccidentPanels.meltLine(v, ACCIDENT), v -> AccidentPanels.meltTip(v, ACCIDENT))
             .build();
 
     private PwrPanels() {

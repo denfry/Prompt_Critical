@@ -3,9 +3,11 @@ package dev.denfry.promptcritical.mod.gametest;
 import com.simibubi.create.AllBlocks;
 import com.simibubi.create.content.kinetics.motor.CreativeMotorBlockEntity;
 import dev.denfry.promptcritical.mod.PromptCritical;
+import dev.denfry.promptcritical.mod.npp.AccidentPanels;
 import dev.denfry.promptcritical.mod.npp.PwrPanels;
 import dev.denfry.promptcritical.mod.npp.PwrReactorBlockEntity;
 import dev.denfry.promptcritical.mod.registry.PcBlocks;
+import dev.denfry.promptcritical.sim.accident.CoreMeltProgression;
 import dev.denfry.promptcritical.sim.accident.ReactivityInitiatedAccident;
 import dev.denfry.promptcritical.sim.fuel.FuelDesign;
 import dev.denfry.promptcritical.sim.npp.PressurizedWaterReactor;
@@ -16,6 +18,7 @@ import net.minecraft.gametest.framework.GameTest;
 import net.minecraft.gametest.framework.GameTestHelper;
 import net.minecraft.gametest.framework.GameTestSequence;
 import net.minecraft.world.level.block.Block;
+import net.minecraft.world.level.block.Blocks;
 import net.minecraft.world.level.block.state.properties.BlockStateProperties;
 import net.neoforged.neoforge.common.util.FakePlayerFactory;
 import net.neoforged.neoforge.gametest.GameTestHolder;
@@ -24,7 +27,8 @@ import net.neoforged.neoforge.gametest.PrefixGameTestTemplate;
 /**
  * Severe light-water accidents of 04c in the world, in short deterministic form: a rod ejection at hot zero power
  * (a mild prompt burst, a scram and a small break through the housing), the single-cluster design mistake that fails
- * and fragments fuel.
+ * and fragments fuel, a torn steam generator tube, and a core melt without ECCS that goes through a dry cavity's vessel
+ * or stays in a flooded one.
  */
 @GameTestHolder(PromptCritical.MOD_ID)
 @PrefixGameTestTemplate(false)
@@ -163,6 +167,77 @@ public final class SevereAccidentGameTests {
                     r.onPanelButton(FakePlayerFactory.getMinecraft(h.getLevel()), PwrPanels.B_SGTR);
                 })
                 .thenWaitUntil(() -> h.assertTrue(pwr(h).reactor().tubeLeakKgS() == 0, "tube plugged"))
+                .thenSucceed();
+    }
+
+    /**
+     * A VVER without ECCS on a guillotine break, scrammed from half power: no water ever comes back. When
+     * {@code cavityWater}, the 3×3 under the vessel is flooded.
+     */
+    private static GameTestSequence meltdown(GameTestHelper h, boolean cavityWater) {
+        place(h, REACTOR, PcBlocks.PWR_REACTOR.get());
+        place(h, PZR, PcBlocks.PRESSURIZER.get());
+        driven(h, PUMP_A, PcBlocks.PRIMARY_PUMP.get());
+        driven(h, PUMP_B, PcBlocks.PRIMARY_PUMP.get());
+        if (cavityWater)
+            for (int x = -1; x <= 1; x++)
+                for (int z = -1; z <= 1; z++) h.setBlock(REACTOR.offset(x, -1, z), Blocks.WATER.defaultBlockState());
+        return h.startSequence()
+                .thenIdle(2)
+                .thenExecute(() -> {
+                    PressurizedWaterReactor r = pwr(h).reactor();
+                    double kg = FuelDesign.VVER_440.uKgPerAssembly(0.96, 0.044);
+                    r.setRods(1, 1);
+                    for (int i = 0; i < PressurizedWaterReactor.POSITIONS; i++) r.load(i, FuelDesign.VVER_440, kg, 0.044, 0.0003);
+                    r.setThermalState(600, 573, 563);
+                    r.equilibrate(0.5);
+                })
+                .thenIdle(110) // the cavity scan runs every 5 s
+                .thenExecute(() -> {
+                    h.assertTrue(pwr(h).accident().cavityFlooded() == cavityWater, "cavity scan: " + pwr(h).accident().cavityFlooded());
+                    var player = FakePlayerFactory.getMinecraft(h.getLevel());
+                    pwr(h).onPanelButton(player, PwrPanels.B_LOCA);
+                    pwr(h).onPanelButton(player, PwrPanels.B_LOCA);
+                });
+    }
+
+    /** §4c.10: a dry cavity — the core melts, the head fails at low pressure and the corium lands under the vessel. */
+    @GameTest(template = LARGE, timeoutTicks = 4000)
+    public static void unCooledCoreMeltsThroughTheVessel(GameTestHelper h) {
+        meltdown(h, false)
+                .thenWaitUntil(() -> {
+                    CoreMeltProgression m = pwr(h).accident().accident().melt();
+                    h.assertTrue(m.vesselFailed(), "stage " + m.stage() + ", head " + m.lowerHeadK() + " K");
+                })
+                .thenWaitUntil(() -> h.assertBlockPresent(PcBlocks.CORIUM.get(), REACTOR.below()))
+                .thenExecute(() -> {
+                    PwrReactorBlockEntity r = pwr(h);
+                    h.assertTrue(r.accident().coriumFront() != null, "corium tracked");
+                    h.assertTrue(r.reactor().failedAssemblies() == PressurizedWaterReactor.POSITIONS, "every assembly failed");
+                    int[] v = new int[PwrPanels.CHANNELS];
+                    r.readPanel(v);
+                    int flags = v[PwrPanels.ACCIDENT + AccidentPanels.MELT_FLAGS];
+                    h.assertTrue((flags & 1 << AccidentPanels.M_FAILED) != 0, "vessel failure on the panel");
+                    h.assertTrue(v[PwrPanels.ACCIDENT + AccidentPanels.CORIUM_KG] > 0, "corium mass on the panel");
+                })
+                .thenSucceed();
+    }
+
+    /** §4c.10.3: the same core with the cavity flooded — the melt reaches the lower plenum and the head holds. */
+    @GameTest(template = LARGE, timeoutTicks = 4000)
+    public static void floodedCavityHoldsTheMeltInTheVessel(GameTestHelper h) {
+        meltdown(h, true)
+                .thenWaitUntil(() -> {
+                    CoreMeltProgression m = pwr(h).accident().accident().melt();
+                    h.assertTrue(m.retainedInVessel(), "stage " + m.stage() + ", plenum " + m.lowerPlenumKg() + " kg");
+                })
+                .thenIdle(600)
+                .thenExecute(() -> {
+                    CoreMeltProgression m = pwr(h).accident().accident().melt();
+                    h.assertFalse(m.vesselFailed(), "head holds at " + m.lowerHeadK() + " K");
+                    h.assertTrue(m.lowerHeadK() < 600, "head cooled from outside: " + m.lowerHeadK());
+                    h.assertBlockNotPresent(PcBlocks.CORIUM.get(), REACTOR.below());
+                })
                 .thenSucceed();
     }
 

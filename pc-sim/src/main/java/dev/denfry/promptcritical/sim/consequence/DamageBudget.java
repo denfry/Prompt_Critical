@@ -8,6 +8,9 @@ import java.util.UUID;
  * бюджет сразу решает, сколько блоков и когда будет изменено, а биндинг применяет изменения на серверном потоке.
  */
 public interface DamageBudget {
+    /** Block a {@link DamageKind#MELT_THROUGH} request turns its origin into (04c §4c.10.5). */
+    String CORIUM_BLOCK = "promptcritical:corium";
+
     /** Вызывается доменом (серверный поток, после FAST). Возвращает решение сразу; блоки применяются позже. */
     DamageGrant submit(DamageRequest request);
 

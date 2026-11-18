@@ -61,6 +61,13 @@ public final class NppText {
                 "N-16 В ПАРОПРОВОДЕ: теплоноситель первого контура течёт в ПГ-1");
         put("sgtr_stuck", "SG SAFETY VALVE STUCK OPEN: primary coolant vents straight to the atmosphere",
                 "ПК ПГ ЗАЛИП ОТКРЫТЫМ: теплоноситель первого контура уходит прямо в атмосферу");
+        put("melt_candling", "CORE MELT: the cladding is melting and running down the fuel", "ПЛАВЛЕНИЕ ЗОНЫ: оболочки плавятся и стекают по топливу");
+        put("melt_pool", "CORE MELT: a pool of molten fuel inside a crust", "ПЛАВЛЕНИЕ ЗОНЫ: бассейн расплавленного топлива в корке");
+        put("melt_plenum", "CORE MELT: the crust gave way, corium in the lower plenum", "ПЛАВЛЕНИЕ ЗОНЫ: корка прорвана, кориум в нижней камере");
+        put("melt_vessel", "VESSEL FAILED: the corium is through the lower head", "КОРПУС ПРОПЛАВЛЕН: кориум прошёл через днище");
+        put("melt_dch", "DIRECT CONTAINMENT HEATING: melt blown out at pressure, %s MJ into the containment",
+                "ПРЯМОЙ НАГРЕВ ГЕРМООБОЛОЧКИ: расплав выброшен под давлением, %s МДж в гермооболочку");
+        put("melt_mcci", "CORIUM ON THE CONCRETE: %s m³ of floor eaten through", "КОРИУМ НА БЕТОНЕ: проплавлено %s м³ основания");
         put("accident_breach", "CONTAINMENT FAILED: overpressure tore the shell, the release goes outside",
                 "РАЗРУШЕНИЕ ГЕРМООБОЛОЧКИ: давление разорвало её, выброс уходит наружу");
     }

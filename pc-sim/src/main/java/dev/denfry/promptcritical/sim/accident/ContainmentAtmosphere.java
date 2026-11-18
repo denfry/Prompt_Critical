@@ -32,7 +32,7 @@ public final class ContainmentAtmosphere {
     private double tK = 313;
     private int recombiners;
     private boolean failed, inerted;
-    private double lastBurnJ;
+    private double lastBurnJ, pendingHeatJ;
 
     /** Large dry PWR containment: 70 000 m³, fails at ~1.0 MPa (≈ 2.5× design). */
     public static ContainmentAtmosphere largeDry() {
@@ -70,6 +70,15 @@ public final class ContainmentAtmosphere {
     }
 
     /**
+     * Heat dumped straight into the gas — direct containment heating by melt droplets blown out of a failing vessel
+     * (04c §4c.10.3). Applied on the next {@link #step} like a burn: into the gas alone for the pressure peak, then
+     * quenched by the walls.
+     */
+    public void addHeat(double j) {
+        if (j > 0) pendingHeatJ += j;
+    }
+
+    /**
      * Advances recombination, condensation and the burn check.
      *
      * @return true when a deflagration happened during this step ({@link #lastBurnJ()} gives its energy)
@@ -96,8 +105,13 @@ public final class ContainmentAtmosphere {
             double gasCp = 21 * (airMol + steamMol);
             tK += lastBurnJ / gasCp;
         }
+        boolean heated = pendingHeatJ > 0;
+        if (heated) {
+            tK += pendingHeatJ / (21 * (airMol + steamMol + h2Mol));
+            pendingHeatJ = 0;
+        }
         if (pressurePa() > failurePa) failed = true;
-        if (burn) tK = Math.min(tK, 313 + (tK - 313) * 0.3); // walls quench the burn within the step
+        if (burn || heated) tK = Math.min(tK, 313 + (tK - 313) * 0.3); // walls quench the burn within the step
         return burn;
     }
 

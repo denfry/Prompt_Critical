@@ -12,8 +12,11 @@ import net.minecraft.network.chat.Component;
  */
 public final class AccidentPanels {
     public static final int LEVEL = 0, COVER = 1, PCT_C = 2, CLAD_C = 3, H2_KG10 = 4, CONT_KPA = 5, CONT_H2 = 6, ECCS_KGS10 = 7,
-            BREAK_KGS10 = 8, BREAK_CM2 = 9, TRAINS = 10, FLAGS = 11, COUNT = 12;
+            BREAK_KGS10 = 8, BREAK_CM2 = 9, TRAINS = 10, FLAGS = 11, MELT_STAGE = 12, MELT_GAMMA = 13, HEAD_C = 14, CORIUM_KG = 15,
+            ABLATED_M3 = 16, MELT_FLAGS = 17, COUNT = 18;
     public static final int F_ACTIVE = 0, F_SBO = 1, F_UNCOVERED = 2, F_ADS = 3, F_CONTAINMENT = 4, F_BREACHED = 5, F_PCT = 6;
+    /** {@link #MELT_FLAGS}: the plant has a lower head model, the cavity is flooded, in-vessel retention holds, the head failed. */
+    public static final int M_VESSEL = 0, M_FLOODED = 1, M_IVR = 2, M_FAILED = 3;
 
     public static final Tr DRILL = PanelText.tr("accident.drill", "LOCA", "LOCA"),
             DRILL_TIP = PanelText.tr("accident.drill_tip",
@@ -32,6 +35,26 @@ public final class AccidentPanels {
             TIP = PanelText.tr("accident.tip",
                     "Vessel level %s %% · core covered %s %% · cladding %s °C, peak %s °C (limit 1204) · break %s kg/s · ADS %s · containment H₂ %s %% (burns at 8)",
                     "Уровень в корпусе %s %% · зона залита на %s %% · оболочка %s °C, максимум %s °C (предел 1204) · течь %s кг/с · АДС %s · H₂ в ГО %s %% (горит с 8)"),
+            MELT_LINE = PanelText.tr("accident.melt_line", "Core: %s · lost geometry %s %% · lower head %s °C · cavity %s",
+                    "Зона: %s · потеря геометрии %s %% · днище %s °C · шахта %s"),
+            MELT_OUT = PanelText.tr("accident.melt_out", "Core: %s · corium on the concrete %s t · ablated %s m³ · cavity %s",
+                    "Зона: %s · кориум на бетоне %s т · проплавлено %s м³ · шахта %s"),
+            MELT_TIP = PanelText.tr("accident.melt_tip",
+                    "Water back over a core with under 10 % lost geometry still cools it. Flood the reactor cavity to hold the melt in the vessel (up to 1.2 MW/m² through the head); open the PORV before the head fails, or the melt is blown into the containment",
+                    "Залив зоны с потерей геометрии меньше 10 % ещё охлаждает её. Затопите шахту реактора, чтобы удержать расплав в корпусе (до 1,2 МВт/м² через днище); откройте ИПУ до проплавления днища, иначе расплав выбросит в гермооболочку"),
+            CAVITY_WET = PanelText.tr("accident.cavity_wet", "flooded", "затоплена"),
+            CAVITY_DRY = PanelText.tr("accident.cavity_dry", "dry", "сухая");
+    private static final Tr[] STAGES = {
+            PanelText.tr("accident.stage.intact", "intact", "цела"),
+            PanelText.tr("accident.stage.clad_ballooning_burst", "cladding burst", "оболочки вздулись и лопнули"),
+            PanelText.tr("accident.stage.rapid_oxidation", "rapid oxidation", "бурное окисление"),
+            PanelText.tr("accident.stage.control_material_relocation", "absorber relocated", "поглотитель стёк"),
+            PanelText.tr("accident.stage.clad_melt_candling", "cladding melting down", "оболочки плавятся и стекают"),
+            PanelText.tr("accident.stage.ceramic_melt_pool", "MOLTEN POOL", "БАССЕЙН РАСПЛАВА"),
+            PanelText.tr("accident.stage.lower_plenum_relocation", "MELT IN THE LOWER PLENUM", "РАСПЛАВ В НИЖНЕЙ КАМЕРЕ"),
+            PanelText.tr("accident.stage.lower_head_failure", "VESSEL FAILED", "КОРПУС ПРОПЛАВЛЕН"),
+            PanelText.tr("accident.stage.ex_vessel_mcci", "CORIUM ON THE CONCRETE", "КОРИУМ НА БЕТОНЕ")};
+    public static final Tr
             YES = PanelText.tr("accident.yes", "open", "открыт"),
             NO = PanelText.tr("accident.no", "shut", "закрыт");
 
@@ -53,6 +76,21 @@ public final class AccidentPanels {
                 v.num(base + ECCS_KGS10, 10, 1), cont);
         ChatFormatting colour = (flags & (1 << F_UNCOVERED | 1 << F_PCT | 1 << F_BREACHED)) != 0 ? ChatFormatting.DARK_RED : ChatFormatting.RED;
         return c.copy().withStyle(colour);
+    }
+
+    /** Melt progression line (vessel plants): stage, lost geometry, lower head, cavity, corium on the concrete. */
+    public static Component meltLine(PanelValues v, int base) {
+        int flags = v.raw(base + MELT_FLAGS);
+        int s = Math.max(0, Math.min(STAGES.length - 1, v.raw(base + MELT_STAGE)));
+        Component cavity = (flags & 1 << M_FLOODED) != 0 ? CAVITY_WET.get() : CAVITY_DRY.get();
+        Component c = (flags & 1 << M_FAILED) != 0
+                ? MELT_OUT.get(STAGES[s].get(), v.num(base + CORIUM_KG, 1000, 1), v.raw(base + ABLATED_M3), cavity)
+                : MELT_LINE.get(STAGES[s].get(), v.num(base + MELT_GAMMA, 10, 0), v.raw(base + HEAD_C), cavity);
+        return s >= 5 ? c.copy().withStyle(ChatFormatting.DARK_RED) : s > 0 ? c.copy().withStyle(ChatFormatting.RED) : c;
+    }
+
+    public static Component meltTip(PanelValues v, int base) {
+        return MELT_TIP.get();
     }
 
     public static Component tip(PanelValues v, int base) {
