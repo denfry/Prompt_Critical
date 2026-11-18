@@ -1,5 +1,8 @@
 package dev.denfry.promptcritical.sim.accident;
 
+import dev.denfry.promptcritical.sim.core.StateReader;
+import dev.denfry.promptcritical.sim.core.StateWriter;
+
 /**
  * Lumped containment atmosphere: air, steam and hydrogen in one well-mixed volume.
  *
@@ -28,7 +31,7 @@ public final class ContainmentAtmosphere {
     private double h2Mol;
     private double tK = 313;
     private int recombiners;
-    private boolean failed;
+    private boolean failed, inerted;
     private double lastBurnJ;
 
     /** Large dry PWR containment: 70 000 m³, fails at ~1.0 MPa (≈ 2.5× design). */
@@ -45,6 +48,14 @@ public final class ContainmentAtmosphere {
 
     public void setRecombiners(int n) {
         recombiners = Math.max(0, n);
+    }
+
+    /**
+     * Nitrogen-inerted atmosphere (BWR Mark I/II, required by 10 CFR 50.44): oxygen is held below the 5 vol-%
+     * needed for combustion, so hydrogen accumulates but never burns.
+     */
+    public void setInerted(boolean on) {
+        inerted = on;
     }
 
     /** Steam/water release from the primary (kg at the given specific enthalpy relative to 0 °C). */
@@ -76,7 +87,7 @@ public final class ContainmentAtmosphere {
             h2Mol -= kg / M_H2;
             tK += kg * H2_LHV_J_KG / heatCapacity();
         }
-        boolean burn = hydrogenFraction() >= DEFLAGRATION_FRACTION;
+        boolean burn = !inerted && hydrogenFraction() >= DEFLAGRATION_FRACTION;
         if (burn) {
             lastBurnJ = h2Mol * M_H2 * H2_LHV_J_KG;
             steamMol += h2Mol;
@@ -108,8 +119,23 @@ public final class ContainmentAtmosphere {
         return h2Mol / (airMol + steamMol + h2Mol);
     }
 
+    public double volumeM3() { return volumeM3; }
     public double temperatureK() { return tK; }
     public double hydrogenKg() { return h2Mol * M_H2; }
     public boolean failed() { return failed; }
     public double lastBurnJ() { return lastBurnJ; }
+
+    public void save(StateWriter out) {
+        out.putDouble("steam", steamMol);
+        out.putDouble("h2", h2Mol);
+        out.putDouble("t", tK);
+        out.putBoolean("failed", failed);
+    }
+
+    public void load(StateReader in) {
+        steamMol = Math.max(0, in.optDouble("steam", 0));
+        h2Mol = Math.max(0, in.optDouble("h2", 0));
+        tK = in.optDouble("t", 313);
+        failed = in.optInt("failed", 0) != 0;
+    }
 }

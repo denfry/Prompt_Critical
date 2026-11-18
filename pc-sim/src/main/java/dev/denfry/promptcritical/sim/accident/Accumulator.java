@@ -1,5 +1,8 @@
 package dev.denfry.promptcritical.sim.accident;
 
+import dev.denfry.promptcritical.sim.core.StateReader;
+import dev.denfry.promptcritical.sim.core.StateWriter;
+
 /**
  * Passive ECCS accumulator: borated water under a nitrogen cushion behind a check valve.
  * The gas expands polytropically (n = 1.3) as water leaves; injection runs while the tank
@@ -54,5 +57,15 @@ public final class Accumulator {
     /** Time the check valve first opened, s after the break (NaN if never). */
     public double injectionStartS() {
         return startedS;
+    }
+
+    public void save(StateWriter out) {
+        out.putDouble("water", waterKg);
+        out.putDouble("started", startedS);
+    }
+
+    public void load(StateReader in) {
+        waterKg = in.optDouble("water", waterKg);
+        startedS = in.optDouble("started", Double.NaN);
     }
 }

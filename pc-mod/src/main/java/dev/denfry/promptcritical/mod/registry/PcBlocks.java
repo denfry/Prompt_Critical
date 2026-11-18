@@ -641,6 +641,10 @@ public final class PcBlocks {
     public static final DeferredBlock<dev.denfry.promptcritical.mod.npp.ContainmentHatchBlock> CONTAINMENT_HATCH = withItem(
             BLOCKS.registerBlock("containment_hatch", dev.denfry.promptcritical.mod.npp.ContainmentHatchBlock::create, containment()));
     public static final DeferredBlock<PcBlock> HYDROGEN_RECOMBINER = block("hydrogen_recombiner", machine(), Spec.of());
+    // --- САОЗ (04c): канал с насосом на валу Create и гидроёмкость под азотом ---
+    public static final DeferredBlock<PcDeviceBlock> ECCS_PUMP = device("eccs_pump", machine(), Spec.facing(PcProperties.RUNNING),
+            KineticMachineBlock.with(ShaftSide.BACK, dev.denfry.promptcritical.mod.npp.EccsPumpBlockEntity::new));
+    public static final DeferredBlock<PcBlock> ECCS_ACCUMULATOR = block("eccs_accumulator", machine(), Spec.of());
     /** Кипящий реактор T2b 3×6×3: внизу корпус с зоной, вверху сепараторы и осушители; пульт — в центре низа. */
     private static final Footprint FP_BWR_REACTOR = Footprint.of(CUBE3, CUBE3.at(0, 3, 0));
     public static final DeferredBlock<PcDeviceBlock> BWR_REACTOR = device("bwr_reactor", machine(), Spec.facing().segments(PcProperties.BWR_SEGMENT, FP_BWR_REACTOR),

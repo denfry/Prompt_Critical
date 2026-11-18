@@ -872,6 +872,16 @@ public final class PressurizedWaterReactor {
         return newlyFailed;
     }
 
+    /**
+     * Cladding breached from outside the DNB check — a core heat-up after uncovery in an accident model. Counts into
+     * {@link #newlyFailed()} until the next {@link #step}.
+     */
+    public int failCladding(int n) {
+        int f = core.failHottest(n);
+        newlyFailed += f;
+        return f;
+    }
+
     /** Давление превысило 1,25 расчётного на этом шаге — разрыв контура. */
     public boolean ruptureEvent() {
         return ruptureEvent;

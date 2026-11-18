@@ -1,5 +1,8 @@
 package dev.denfry.promptcritical.sim.accident;
 
+import dev.denfry.promptcritical.sim.core.StateReader;
+import dev.denfry.promptcritical.sim.core.StateWriter;
+
 /**
  * Zirconium–steam reaction Zr + 2H₂O → ZrO₂ + 2H₂ with Baker–Just parabolic kinetics
  * (Baker &amp; Just, ANL-6548, 1962; the 10 CFR 50 Appendix K correlation):
@@ -60,5 +63,13 @@ public final class ZircaloyOxidation {
     /** Equivalent cladding reacted fraction (ECR, the 17 % criterion of 10 CFR 50.46). */
     public double reactedFraction() {
         return reactedKg() / zrMassKg;
+    }
+
+    public void save(StateWriter out) {
+        out.putDouble("w2", w2);
+    }
+
+    public void load(StateReader in) {
+        w2 = Math.max(0, in.optDouble("w2", 0));
     }
 }
