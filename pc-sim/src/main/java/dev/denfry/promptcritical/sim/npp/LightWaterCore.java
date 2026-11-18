@@ -65,6 +65,8 @@ public final class LightWaterCore {
     private final int count;
     private final double nominalW, dt;
     private final double[] hm0, u5, u8, pu9, fp, burnup, u6, pu0, pu1, pu2, x234, share, radius;
+    /** Плутоний, загруженный свежим МОКС (кг, с поправкой на выгруженное) — только для множителя стержней. */
+    private final double[] puMox;
     private final boolean[] failed;
     private FuelDesign design;
     private int loaded;
@@ -103,6 +105,7 @@ public final class LightWaterCore {
         pu0 = new double[count];
         pu1 = new double[count];
         pu2 = new double[count];
+        puMox = new double[count];
         x234 = new double[count];
         share = new double[count];
         radius = new double[count];
@@ -172,6 +175,7 @@ public final class LightWaterCore {
         pu0[pos] = pu.pu240Kg();
         pu1[pos] = pu.pu241Kg();
         pu2[pos] = pu.pu242Kg();
+        puMox[pos] = pu.totalKg();
         failed[pos] = false;
         countLoaded();
         slowTimer = 1e9;
@@ -201,7 +205,7 @@ public final class LightWaterCore {
     public AssemblyFuel unload(boolean shutDown, int pos) {
         if (!shutDown || hm0[pos] <= 0) return null;
         AssemblyFuel f = fuel(pos);
-        hm0[pos] = u5[pos] = u8[pos] = pu9[pos] = fp[pos] = burnup[pos] = u6[pos] = pu0[pos] = pu1[pos] = pu2[pos] = 0;
+        hm0[pos] = u5[pos] = u8[pos] = pu9[pos] = fp[pos] = burnup[pos] = u6[pos] = pu0[pos] = pu1[pos] = pu2[pos] = puMox[pos] = 0;
         failed[pos] = false;
         countLoaded();
         if (loaded == 0) design = null;
@@ -357,10 +361,21 @@ public final class LightWaterCore {
         for (int i = 0; i < count; i++) share[i] = sum > 0 ? share[i] / sum : 0;
     }
 
-    /** Множитель ценности стержней по Σ_a уранового двойника ({@link PlutoniumCharge#rodWorthFactor}); без Pu — ровно 1. */
+    /**
+     * Множитель ценности стержней по Σ_a уранового двойника ({@link PlutoniumCharge#rodWorthFactor}). В двойнике
+     * заменяется только плутоний МОКС ({@link PlutoniumCharge#moxShare}); у урановой зоны — даже выгоревшей, с
+     * наработанным Pu — ровно 1: ценности стержней установок заданы для таких зон.
+     */
     private double rodWorthFactor(NuclideVector fuel, SixFactor sf, CellFeedbackState s) {
-        if (!PlutoniumCharge.hasPlutonium(fuel) || sf.sigmaA() <= 0) return 1;
-        return PlutoniumCharge.rodWorthFactor(lattice.evaluate(cell, PlutoniumCharge.uraniumEquivalent(fuel), s).sigmaA(), sf.sigmaA());
+        double loadedPu = 0, pu = 0;
+        for (int i = 0; i < count; i++)
+            if (hm0[i] > 0) {
+                loadedPu += puMox[i];
+                pu += pu9[i] + pu0[i] + pu1[i] + pu2[i];
+            }
+        double g = PlutoniumCharge.moxShare(loadedPu, pu);
+        if (g <= 0 || sf.sigmaA() <= 0) return 1;
+        return PlutoniumCharge.rodWorthFactor(lattice.evaluate(cell, PlutoniumCharge.uraniumEquivalent(fuel, g), s).sigmaA(), sf.sigmaA());
     }
 
     /** Ценность стержней этой зоны к урановой зоне того же эквивалентного обогащения (1 — без плутония). */
@@ -463,6 +478,7 @@ public final class LightWaterCore {
             pu0[pos] *= 1 - f;
             pu1[pos] *= 1 - f;
             pu2[pos] *= 1 - f;
+            puMox[pos] *= 1 - f;
             fp[pos] *= 1 - f;
         }
         double left = hm0[pos], x234In = u234 * uKgIn / kgIn;
@@ -475,6 +491,7 @@ public final class LightWaterCore {
         pu0[pos] += pu.pu240Kg();
         pu1[pos] += pu.pu241Kg();
         pu2[pos] += pu.pu242Kg();
+        puMox[pos] += pu.totalKg();
         countLoaded();
         slowTimer = 1e9;
         return discharged;
@@ -572,6 +589,7 @@ public final class LightWaterCore {
         out.putDoubles("pu0", pu0, count);
         out.putDoubles("pu1", pu1, count);
         out.putDoubles("pu2", pu2, count);
+        out.putDoubles("puMox", puMox, count);
         out.putDoubles("x234", x234, count);
         int[] f = new int[count];
         for (int i = 0; i < count; i++) f[i] = failed[i] ? 1 : 0;
@@ -598,6 +616,7 @@ public final class LightWaterCore {
         copy(in, "pu0", pu0);
         copy(in, "pu1", pu1);
         copy(in, "pu2", pu2);
+        copy(in, "puMox", puMox);
         copy(in, "x234", x234);
         if (in.has("failed")) {
             int[] f = in.getInts("failed");
