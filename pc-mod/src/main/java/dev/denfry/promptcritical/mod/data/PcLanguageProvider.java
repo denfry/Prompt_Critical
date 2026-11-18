@@ -436,6 +436,8 @@ public final class PcLanguageProvider extends LanguageProvider {
         i("seismic_section", "Seismic Section", "Сейсмический разрез");
         i("copper_wire", "Copper Wire", "Медная проволока");
         i("generator_coupling", "Shear-Pin Coupling", "Муфта со срезным штифтом");
+        i("jacket_heater", "Jacket Water Heater", "Подогреватель рубашки");
+        i("load_sequencer", "Load Sequencer", "Секвенсор нагрузки");
         i("lv_fuse", "LV Fuse Link", "Плавкая вставка");
         i("interlock_module", "Interlock Module", "Модуль блокировки");
         i("insulator_pin", "Pin Insulator", "Штыревой изолятор");
@@ -507,6 +509,7 @@ public final class PcLanguageProvider extends LanguageProvider {
         b("wind_turbine", "Wind Power Unit D-30", "Ветроэлектростанция Д-30");
         b("dam_gate", "Dam Intake Gate", "Затвор водозабора");
         b("gas_turbine", "Gas Turbine Unit", "Газотурбинная установка");
+        b("diesel_generator", "Emergency Diesel Generator", "Аварийный дизель-генератор");
         b("hrsg", "Heat Recovery Steam Generator", "Котёл-утилизатор");
         b("turbine_gearbox", "Turbine Gearbox", "Редуктор турбины");
         b("condenser", "Steam Condenser", "Конденсатор");

@@ -140,6 +140,10 @@ public final class PcItems {
     // --- электросеть I1 (07 §7.22) ---
     public static final DeferredItem<Item> COPPER_WIRE = item("copper_wire", 64);
     public static final DeferredItem<Item> GENERATOR_COUPLING = item("generator_coupling", 16);
+    /** Подогреватель рубашки ДГ (07 §7.11.3): без него на морозе отказ пуска вчетверо вероятнее. */
+    public static final DeferredItem<Item> JACKET_HEATER = item("jacket_heater", 16);
+    /** Секвенсор нагрузки ДГ (07 §7.11.4): ступени через 5 с после включения на обесточенную шину. */
+    public static final DeferredItem<Item> LOAD_SEQUENCER = item("load_sequencer", 16);
     public static final DeferredItem<Item> LV_FUSE = item("lv_fuse", 64);
     public static final DeferredItem<Item> INTERLOCK_MODULE = item("interlock_module", 16);
     public static final DeferredItem<Item> INSULATOR_PIN = item("insulator_pin", 64);

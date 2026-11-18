@@ -78,6 +78,13 @@ public final class GridSubsystem implements Subsystem, GridEventSink {
         return unit(id, GeneratorUnit.class, () -> new GeneratorUnit(id));
     }
 
+    /** Дизель-генератор §7.11: синхронная машина 750 об/мин со своим дизелем, {@code ratedVa} — её S_ном. */
+    public GeneratorUnit dieselGenerator(SimId id, double ratedVa) {
+        GeneratorUnit g = unit(id, GeneratorUnit.class, () -> new GeneratorUnit(id));
+        g.makeDiesel(ratedVa);
+        return g;
+    }
+
     public SwitchUnit switchUnit(SimId id, SwitchUnit.Kind kind) {
         GridUnit u = units.get(id);
         if (u instanceof SwitchUnit s && s.kind == kind) return s;
@@ -269,6 +276,24 @@ public final class GridSubsystem implements Subsystem, GridEventSink {
 
     BusId busOf(long node) {
         return buses.get(node);
+    }
+
+    /** Двигатели и потребители на острове узла {@code node} (по включённым ветвям, а не по напряжению). */
+    List<GridUnit> loadsOnIsland(long node) {
+        List<GridUnit> out = new ArrayList<>();
+        BusId at = ready() ? buses.get(node) : null;
+        if (at == null) return out;
+        int island = grid.islandOf(at);
+        for (GridUnit u : units.values()) {
+            if (!(u instanceof MotorUnit || u instanceof ConsumerUnit)) continue;
+            BusId b = buses.get(u.node(0));
+            if (b != null && grid.islandOf(b) == island) out.add(u);
+        }
+        return out;
+    }
+
+    GridUnit unitById(SimId id) {
+        return units.get(id);
     }
 
     /** Линейное напряжение узла, В (0 — без источника или узла нет в сети). */

@@ -46,12 +46,12 @@ public final class StationBatteryBlockEntity extends IronworksBlockEntity {
     }
 
     /** Выпрямитель под напряжением: подзаряд на тик, А. */
-    void floatCharge(double dtS) {
+    public void floatCharge(double dtS) {
         lastChargeA = battery.charge(dtS);
     }
 
     /** Шины нет: батарея отдаёт ток {@code currentA}; вход выпрямителя, о.е. (0 — отключена). */
-    double supply(double currentA, double dtS) {
+    public double supply(double currentA, double dtS) {
         lastChargeA = -currentA;
         battery.discharge(currentA, dtS);
         return battery.terminalV(currentA) / 24.0;

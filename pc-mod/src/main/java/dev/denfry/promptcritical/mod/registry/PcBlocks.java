@@ -874,6 +874,13 @@ public final class PcBlocks {
             Spec.facing(PcProperties.RUNNING).segments(PcProperties.GAS_TURBINE_SEGMENT,
                     Footprint.of(CUBE3, CUBE3.at(0, 0, 3), CUBE3.at(0, 0, 6))),
             FoundryBlock.with(dev.denfry.promptcritical.mod.powerhouse.GasTurbineBlockEntity::new));
+    /**
+     * Аварийный дизель-генератор 3×3×6 (07 §7.11): дизель спереди, генератор сзади; дизтопливо — трубой к любой части,
+     * кабель — к верху, бокам или торцу генератора, аккумулятор оперативного тока — вплотную к агрегату.
+     */
+    public static final DeferredBlock<PcDeviceBlock> DIESEL_GENERATOR = device("diesel_generator", machine(),
+            Spec.facing(PcProperties.RUNNING).segments(PcProperties.DIESEL_SEGMENT, Footprint.of(CUBE3, CUBE3.at(0, 0, 3))),
+            FoundryBlock.with(dev.denfry.promptcritical.mod.powerhouse.DieselGeneratorBlockEntity::new));
     /** Котёл-утилизатор ПГУ 3×6×3: газоход у выхлопа ГТУ, барабан сверху; пар — в котёл, которого он касается. */
     public static final DeferredBlock<PcDeviceBlock> HRSG = device("hrsg", machine(),
             Spec.facing(PcProperties.RUNNING).segments(PcProperties.HRSG_SEGMENT, Footprint.of(CUBE3, CUBE3.at(0, 3, 0))),

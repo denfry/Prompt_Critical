@@ -104,6 +104,22 @@ public final class PowerhouseRecipes extends RecipeProvider {
                 .pattern("PFP").pattern("BSB").pattern("PFP").define('P', plate).define('F', AllItems.PROPELLER.get())
                 .define('B', PcBlocks.BOILER_BURNER.get()).define('S', shaft)
                 .unlockedBy("has_boiler_wall", has(wall)).save(out, id("gas_turbine"));
+        // ДГ: дизель (корпус из листа, поршни, коленвал), генератор с возбудителем, баллоны пускового воздуха — баки
+        ShapedRecipeBuilder.shaped(RecipeCategory.MISC, PcBlocks.DIESEL_GENERATOR.get())
+                .pattern("PTP").pattern("ISG").pattern("PEP").define('P', plate).define('T', AllBlocks.FLUID_TANK.get())
+                .define('I', AllBlocks.MECHANICAL_PISTON.get()).define('S', shaft).define('G', PcBlocks.SHAFT_GENERATOR.get())
+                .define('E', PcBlocks.GENERATOR_EXCITER.get())
+                .unlockedBy("has_shaft_generator", has(PcBlocks.SHAFT_GENERATOR.get())).save(out, id("diesel_generator"));
+        // подогреватель рубашки — ТЭН (медная спираль) с термостатом (компаратор)
+        ShapedRecipeBuilder.shaped(RecipeCategory.MISC, PcItems.JACKET_HEATER.get())
+                .pattern("PCP").pattern("CRC").pattern("PCP").define('P', plate)
+                .define('C', net.minecraft.world.item.Items.COPPER_INGOT).define('R', net.minecraft.world.item.Items.COMPARATOR)
+                .unlockedBy("has_steel_plate", has(plate)).save(out, id("jacket_heater"));
+        // секвенсор нагрузки — программный барабан (часы) и реле (повторители) в корпусе
+        ShapedRecipeBuilder.shaped(RecipeCategory.MISC, PcItems.LOAD_SEQUENCER.get())
+                .pattern("PRP").pattern("RKR").pattern("PRP").define('P', plate)
+                .define('R', net.minecraft.world.item.Items.REPEATER).define('K', net.minecraft.world.item.Items.CLOCK)
+                .unlockedBy("has_steel_plate", has(plate)).save(out, id("load_sequencer"));
         // котёл-утилизатор: барабан, пароперегреватель, испаритель (экраны) и экономайзер в газоходе из листа
         ShapedRecipeBuilder.shaped(RecipeCategory.MISC, PcBlocks.HRSG.get())
                 .pattern("PDP").pattern("WSW").pattern("PEP").define('P', plate).define('D', PcBlocks.STEAM_DRUM.get())

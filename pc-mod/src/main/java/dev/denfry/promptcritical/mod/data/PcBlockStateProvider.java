@@ -306,6 +306,8 @@ public final class PcBlockStateProvider extends BlockStateProvider {
             case "disconnector" -> s.getValue(PcProperties.EARTHED) ? id + "_earthed" : id;
             case "dam_gate" -> s.getValue(BlockStateProperties.OPEN) ? id : id + "_closed";
             case "cooling_tower_cell" -> s.getValue(PcProperties.ICED) ? id + "_iced" : id;
+            case "diesel_generator" -> s.getValue(PcProperties.DIESEL_SEGMENT) == PcProperties.DieselSegment.ALTERNATOR
+                    ? "diesel_generator_alternator" : id;
             case "hrsg" -> s.getValue(PcProperties.HRSG_SEGMENT) == PcProperties.HrsgSegment.DRUM ? "hrsg_top" : "hrsg";
             case "gas_turbine" -> switch (s.getValue(PcProperties.GAS_TURBINE_SEGMENT)) {
                 case COMPRESSOR -> id;

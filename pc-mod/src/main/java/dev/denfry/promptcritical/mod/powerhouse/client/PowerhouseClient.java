@@ -14,6 +14,7 @@ public final class PowerhouseClient {
     private static final PartialModel ID_IMPELLER = partial("induced_draft_fan/partial/impeller");
     private static final PartialModel WIND_NACELLE = partial("wind_turbine/partial/nacelle");
     private static final PartialModel WIND_BLADE = partial("wind_turbine/partial/blade");
+    private static final PartialModel DG_FLYWHEEL = partial("diesel_generator/partial/flywheel");
 
     private PowerhouseClient() {
     }
@@ -31,5 +32,8 @@ public final class PowerhouseClient {
         event.registerBlockEntityRenderer(PowerhouseBlockEntities.FORCED_DRAFT_FAN.get(), c -> new FoundryMachineRenderer<>(FD_IMPELLER, Motion.SPIN_Z, 8, 8, 1));
         event.registerBlockEntityRenderer(PowerhouseBlockEntities.INDUCED_DRAFT_FAN.get(), c -> new FoundryMachineRenderer<>(ID_IMPELLER, Motion.SPIN_Z, 8, 8, 1));
         event.registerBlockEntityRenderer(PowerhouseBlockEntities.WIND_TURBINE.get(), c -> new WindTurbineRenderer(WIND_NACELLE, WIND_BLADE));
+        // маховик ДГ на торце дизеля: ось — x 8, y 0 модели, вдоль Z; 750 об/мин показаны условно
+        event.registerBlockEntityRenderer(PowerhouseBlockEntities.DIESEL_GENERATOR.get(),
+                c -> FoundryMachineRenderer.whileRunning(DG_FLYWHEEL, Motion.SPIN_Z, 8, 0, 120));
     }
 }

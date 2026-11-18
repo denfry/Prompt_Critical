@@ -24,6 +24,7 @@ public final class ServerConfig {
     public static final ModConfigSpec.DoubleValue K_BURN;
     public static final ModConfigSpec.EnumValue<DecayHeatClock> DECAY_HEAT_CLOCK;
     public static final ModConfigSpec.DoubleValue W_PER_SU;
+    public static final ModConfigSpec.DoubleValue DIESEL_FAIL_TO_START_BASE;
     public static final ModConfigSpec.DoubleValue J_PER_FE;
     public static final ModConfigSpec.IntValue CC_TOKEN_RATE;
     public static final ModConfigSpec.IntValue CC_TOKEN_BURST;
@@ -157,6 +158,11 @@ public final class ServerConfig {
                 .defineInRange("w_per_su", 1000.0, 1.0, 1.0e6);
         J_PER_FE = b.comment("[BALANCE] Joules per Forge Energy unit (00 §0.9)")
                 .defineInRange("j_per_fe", 2.5, 0.01, 1.0e6);
+        b.pop();
+
+        b.push("diesel");
+        DIESEL_FAIL_TO_START_BASE = b.comment("[BALANCE] Emergency diesel failure-to-start probability per demand, p0 (07 §7.11.3)")
+                .defineInRange("fail_to_start_base", 0.005, 0.0, 1.0);
         b.pop();
 
         b.push("cc");
