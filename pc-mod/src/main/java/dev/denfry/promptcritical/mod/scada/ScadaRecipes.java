@@ -40,9 +40,10 @@ public final class ScadaRecipes extends RecipeProvider {
     protected void buildRecipes(RecipeOutput out) {
         var sheet = AllItems.IRON_SHEET.get();
         ShapedRecipeBuilder.shaped(RecipeCategory.REDSTONE, PcBlocks.RTU_STATION.get())
-                .pattern("STS").pattern("WRW").pattern("STS").define('S', sheet).define('T', AllItems.ELECTRON_TUBE.get())
-                .define('W', PcItems.COPPER_WIRE.get()).define('R', Items.REPEATER)
-                .unlockedBy("has_electron_tube", has(AllItems.ELECTRON_TUBE.get()))
+                // A4: КП телемеханики — микросхемы на плате (11 §11.5.4)
+                .pattern("STS").pattern("WRW").pattern("SBS").define('S', sheet).define('T', PcItems.INTEGRATED_CIRCUIT.get())
+                .define('W', PcItems.COPPER_WIRE.get()).define('R', PcItems.MEMORY_CHIP.get()).define('B', PcItems.PRINTED_CIRCUIT_BOARD.get())
+                .unlockedBy("has_integrated_circuit", has(PcItems.INTEGRATED_CIRCUIT.get()))
                 .save(out, PromptCritical.id("scada/rtu_station").toString());
     }
 }

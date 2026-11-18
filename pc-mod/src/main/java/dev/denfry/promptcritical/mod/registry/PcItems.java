@@ -187,6 +187,25 @@ public final class PcItems {
     public static final DeferredItem<Item> RADIOGRAPHY_FILM_EXPOSED = item("radiography_film_exposed", 1);
     public static final DeferredItem<Item> PU238_HEAT_SOURCE = item("pu238_heat_source", 1);
     public static final DeferredItem<Item> SR90_HEAT_SOURCE = item("sr90_heat_source", 1);
+    // --- электроника (11 §11.5, 15 §15.6): лампы A2, кремний, кристаллы, платы, ЭЛТ ---
+    public static final DeferredItem<Item> VACUUM_TUBE = item("vacuum_tube", 64);
+    public static final DeferredItem<Item> METALLURGICAL_SILICON = item("metallurgical_silicon", 64);
+    public static final DeferredItem<Item> POLYSILICON = item("polysilicon", 64);
+    /** Слиток Чохральского: компонент {@code silicon_ingot}. */
+    public static final DeferredItem<Item> SILICON_INGOT = item("silicon_ingot", 1);
+    public static final DeferredItem<Item> SILICON_WAFER = item("silicon_wafer", 64);
+    /** Кристаллы с компонентом {@code chip_spec}. */
+    public static final DeferredItem<Item> TRANSISTOR = item("transistor", 64);
+    public static final DeferredItem<Item> INTEGRATED_CIRCUIT = item("integrated_circuit", 64);
+    public static final DeferredItem<Item> MEMORY_CHIP = item("memory_chip", 64);
+    public static final DeferredItem<Item> MICROPROCESSOR = item("microprocessor", 64);
+    public static final DeferredItem<Item> COPPER_FOIL = item("copper_foil", 64);
+    public static final DeferredItem<Item> RESISTOR = item("resistor", 64);
+    public static final DeferredItem<Item> CAPACITOR = item("capacitor", 64);
+    public static final DeferredItem<Item> PRINTED_CIRCUIT_BOARD = item("printed_circuit_board", 64);
+    public static final DeferredItem<Item> CATHODE_RAY_TUBE = item("cathode_ray_tube", 16);
+    /** Объектив проекционного степпера g-line из плавленого кварца. */
+    public static final DeferredItem<Item> STEPPER_LENS = item("stepper_lens", 1);
     /** Трёхокись урана после прокалки ДУА: мешок на 1 кг урана. */
     public static final DeferredItem<Item> UO3_POWDER = item("uo3_powder", 64);
     /** Тетрафторид урана, «зелёная соль»: мешок на 1 кг урана. */

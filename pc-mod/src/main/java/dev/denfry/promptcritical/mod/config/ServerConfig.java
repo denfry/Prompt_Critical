@@ -128,6 +128,7 @@ public final class ServerConfig {
     public static final ModConfigSpec.BooleanValue CONTENT_GIVE_HANDBOOK_ON_JOIN;
     public static final ModConfigSpec.BooleanValue CONTENT_HANDBOOK_ALL_UNLOCKED;
     public static final ModConfigSpec.BooleanValue CONTENT_HINTS_BY_DIFFICULTY;
+    public static final ModConfigSpec.BooleanValue CONTENT_CC_RECIPE_OVERRIDE;
     public static final ModConfigSpec.IntValue ENVIRONMENT_DAYS_PER_SEASON;
     public static final ModConfigSpec.BooleanValue BODY_ELECTRIC_SHOCK;
 
@@ -363,6 +364,8 @@ public final class ServerConfig {
         CONTENT_HANDBOOK_ALL_UNLOCKED = b.comment("Open every handbook chapter at once (11 §11.1.2)").define("handbook_all_unlocked", false);
         CONTENT_HINTS_BY_DIFFICULTY = b.comment("Show 'what next' hints at the end of chapters on TRAINING (11 §11.1.1)")
                 .define("hints_by_difficulty", true);
+        CONTENT_CC_RECIPE_OVERRIDE = b.comment("CC: Tweaked computers and monitors are crafted from this mod's chips, boards and tubes (11 §11.5.4, K20). "
+                + "Read when datapacks load; the default applies to a world's first load").define("cc_recipe_override", true);
         b.pop();
 
         b.push("environment");

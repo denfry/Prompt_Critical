@@ -91,6 +91,18 @@
 - Nuclear material accounting of uranium and U-235 on every station's panel. Zirconium from zircon washed out of sand,
   reduced with magnesium (hafnium separated), alloyed with tin, rolled into cladding tubes and made into spacer grids.
 
+### Silicon, chips and computers (11 §11.5)
+- Submerged arc furnace (about 12 kWh/kg), trichlorosilane fluidised bed, Siemens reactor (120 kWh/kg) with the HCl
+  loop, Czochralski puller on a Create shaft under argon with its growth window and Scheil boron profile, wafer saw
+  with Preston polishing.
+- Clean room behind an airlock with HEPA fan filter units: ISO class from filtered flow, leaks, the door and people.
+  The airlock runs the planar process: Deal-Grove oxidation, contact, proximity or g-line lithography, phosphorus
+  diffusion, aluminium metallisation, a process window and Poisson yield into transistors, logic ICs, memory and
+  microprocessors that carry their process node.
+- Vacuum tubes for A2 analog computers, transistors and boards for the PLC, ICs and memory for the RTU station.
+  CC: Tweaked computers and monitors are crafted from processors, memory, boards and cathode-ray tubes when the mod
+  is loaded (`content.cc_recipe_override`). Handbook chapter, panels, ru/en texts and game tests not yet run.
+
 ### Isotopes and RTGs (12)
 - Irradiation channel: in the stack of the graphite pile it takes the flux of its node, against the T1 vessel
   it is one of four AM-1 experimental channels and its target is charged against the core reactivity. Capsules
