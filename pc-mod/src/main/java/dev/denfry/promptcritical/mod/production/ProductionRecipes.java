@@ -67,6 +67,10 @@ public final class ProductionRecipes extends RecipeProvider {
         ShapedRecipeBuilder.shaped(RecipeCategory.MISC, PcItems.DOWNHOLE_ROD_PUMP.get())
                 .pattern(" P ").pattern("VIV").pattern(" P ").define('P', pipe).define('V', valve).define('I', Items.IRON_INGOT)
                 .unlockedBy("has_pumpjack", has(PcBlocks.PUMPJACK.get())).save(out, id("downhole_rod_pump"));
+        // газлифтный клапан: корпус из трубы, сильфон (медь) и седло с шаром
+        ShapedRecipeBuilder.shaped(RecipeCategory.MISC, PcItems.GAS_LIFT_VALVE.get(), 2)
+                .pattern(" P ").pattern("CVC").pattern(" P ").define('P', pipe).define('C', Items.COPPER_INGOT).define('V', valve)
+                .unlockedBy("has_seamless_pipe", has(pipe)).save(out, id("gas_lift_valve"));
         ShapedRecipeBuilder.shaped(RecipeCategory.MISC, PcBlocks.THREE_PHASE_SEPARATOR.get())
                 .pattern("SPS").pattern("GTG").pattern("SVS").define('S', sheet).define('P', AllBlocks.FLUID_PIPE.get())
                 .define('G', Items.GLASS_PANE).define('T', AllBlocks.FLUID_TANK.get()).define('V', valve)

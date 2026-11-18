@@ -22,9 +22,13 @@ import dev.denfry.promptcritical.sim.drilling.Trap;
  * диаграмме Гудмана (API RP 11BR, штанги класса D: σ_в = 793 МПа, S_A = σ_в/4 + 0,5625·σ_min); глубина обрыва
  * детерминирована. Нагнетательный клапан изнашивается с числом качаний ({@link #VALVE_LIFE_STROKES}) — утечка
  * наклоняет карту и снижает подачу. Уровень в затрубье — эхолотом: z = c·t/2.
+ *
+ * <p><b>Газлифт</b> (09 §9.6.4, {@link GasLift}): с клапанами в НКТ и закачкой газа без качалки скважина работает
+ * через рабочий клапан; газ закачки возвращается с продукцией. Точка работы пересчитывается раз в 20 шагов или при
+ * смене закачки — расчёт пуска перебирает клапаны.
  */
 public final class ProductionWell {
-    public enum Mode { SHUT_IN, FLOWING, DEAD, PUMPING }
+    public enum Mode { SHUT_IN, FLOWING, DEAD, PUMPING, GAS_LIFT, INJECTING }
 
     public static final double PUMP_ABOVE_PERFS_M = 30, MIN_INTAKE_PA = 0.3e6;
     public static final int MIN_CHOKE = 4, MAX_CHOKE = 64;
@@ -49,6 +53,10 @@ public final class ProductionWell {
     private boolean gearboxBroken, rodPartEvent;
     private double cacheSpm = -1, cacheLoad = -1, cacheFill = -1, cacheLeak = -1, cachePart = -1, cacheIntake = -1;
     private int cacheAge;
+    private final java.util.List<GasLift.Valve> valves = new java.util.ArrayList<>();
+    private double injStdM3s, liftInjStdM3s = -1;
+    private GasLift.Point lift = GasLift.Point.NONE;
+    private int liftAge;
 
     public ProductionWell(ProducingReservoir reservoir) {
         this.reservoir = reservoir;
@@ -87,6 +95,12 @@ public final class ProductionWell {
             oilM3s = waterM3s = gasStdM3s = 0;
             pwfPa = ipr.reservoirPa();
             wellheadPa = Math.max(0, pwfPa - (Tubing.bottomholePa(0, 0, gor, wc, depth, ipr.bubblePointPa())));
+            return;
+        }
+        if (spm <= 0 && injStdM3s > 0 && !valves.isEmpty() && gasLift(ipr, wc, gor, depth, separatorPa)) {
+            waterM3s = oilM3s * wc / (1 - wc);
+            gasStdM3s = oilM3s * gor + injStdM3s;
+            reservoir.produce(oilM3s, dt);
             return;
         }
         if (spm > 0) {
@@ -149,6 +163,47 @@ public final class ProductionWell {
         double gasAtIntake = freeStd * NaturalGas.STD_PRESSURE_PA / (intake + NaturalGas.STD_PRESSURE_PA) * t / NaturalGas.STD_TEMPERATURE_K
                 * NaturalGas.Z;
         return gasAtIntake / (gasAtIntake + 1);
+    }
+
+    /** Газлифт: {@code true}, если скважина работает через клапан. */
+    private boolean gasLift(Inflow ipr, double wc, double gor, double depth, double separatorPa) {
+        if (lift == GasLift.Point.NONE || liftAge++ >= 20 || Math.abs(liftInjStdM3s - injStdM3s) > 1e-9) {
+            lift = GasLift.operate(ipr, gor, wc, depth, choke64, separatorPa, injStdM3s, valves);
+            liftInjStdM3s = injStdM3s;
+            liftAge = 0;
+        }
+        if (lift.oilM3s() <= 0) return false;
+        mode = Mode.GAS_LIFT;
+        oilM3s = lift.oilM3s();
+        pwfPa = ipr.pwfAtPa(oilM3s);
+        double ql = oilM3s / (1 - wc);
+        wellheadPa = Math.max(separatorPa, Tubing.gilbertWellheadPa(ql, gor * (1 - wc) + injStdM3s / ql, choke64));
+        return true;
+    }
+
+    /** Газлифтные клапаны в НКТ (глубина и давление открытия). */
+    public void setGasLiftValves(java.util.List<GasLift.Valve> v) {
+        valves.clear();
+        valves.addAll(v);
+        lift = GasLift.Point.NONE;
+    }
+
+    public java.util.List<GasLift.Valve> gasLiftValves() {
+        return java.util.List.copyOf(valves);
+    }
+
+    /** Закачка газлифтного газа, нм³/с (не больше {@link GasLift#MAX_INJECTION_STD_M3S}). */
+    public void setGasInjectionStdM3s(double q) {
+        injStdM3s = Math.clamp(q, 0, GasLift.MAX_INJECTION_STD_M3S);
+    }
+
+    public double gasInjectionStdM3s() {
+        return injStdM3s;
+    }
+
+    /** Последняя точка работы газлифта. */
+    public GasLift.Point gasLiftPoint() {
+        return lift;
     }
 
     /** Карта считается заново, когда входы заметно сменились или раз в 200 шагов: она стоит сотни тысяч операций. */

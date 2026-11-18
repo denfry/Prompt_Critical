@@ -40,6 +40,14 @@ public final class ProductionText {
         put("pump_replaced", "Downhole pump replaced: new valves", "Глубинный насос заменён: новые клапаны");
         put("gearbox_fixed", "Gearbox repaired: new gears", "Редуктор отремонтирован: новые шестерни");
         put("echo", "Echo after %s s: fluid level at %s m", "Эхо через %s с: уровень жидкости на %s м");
+        // газлифт 09 §9.6.4
+        put("valve_set", "Gas lift valve: %s m, opens at %s MPa", "Газлифтный клапан: %s м, открытие %s МПа");
+        put("valve_tip", "Depth %s m · opening pressure %s MPa (use: depth, Shift: pressure)",
+                "Глубина %s м · давление открытия %s МПа (ПКМ — глубина, Shift — давление)");
+        put("valve_installed", "Gas lift valve %s installed at %s m (opens at %s MPa)", "Газлифтный клапан %s установлен на %s м (открытие %s МПа)");
+        put("valve_full", "No room for more gas lift valves (%s)", "Больше газлифтных клапанов не поставить (%s)");
+        put("valves_pulled", "Tubing pulled: %s gas lift valves out", "НКТ подняты: вынуто газлифтных клапанов — %s");
+        put("mode.gas_lift", "gas lift", "газлифт");
     }
 
     private ProductionText() {

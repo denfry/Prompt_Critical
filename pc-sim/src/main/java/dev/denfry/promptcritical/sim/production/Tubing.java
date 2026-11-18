@@ -51,14 +51,26 @@ public final class Tubing {
      * @param bubblePa   давление насыщения, Па
      */
     public static double bottomholePa(double pwhPa, double qOil, double gor, double waterCut, double depthM, double bubblePa) {
+        return pressureAtPa(pwhPa, qOil, gor, waterCut, depthM, depthM, bubblePa, 0, 0);
+    }
+
+    /**
+     * Давление в НКТ на глубине {@code toDepthM} скважины глубиной {@code wellDepthM}; выше {@code injDepthM} в поток
+     * добавлен газлифтный газ {@code injStdM3s}, нм³/с (09 §9.6.4). Без притока закачка не учитывается.
+     */
+    public static double pressureAtPa(double pwhPa, double qOil, double gor, double waterCut, double wellDepthM, double toDepthM,
+            double bubblePa, double injStdM3s, double injDepthM) {
+        double depthM = wellDepthM;
         double area = Math.PI / 4 * DIAMETER_M * DIAMETER_M;
         double qWater = waterCut >= 1 ? 0 : qOil * waterCut / (1 - waterCut);
         double rsi = Math.min(gor, ProducingReservoir.RS_M3M3);
         double tBottom = Trap.temperatureK(depthM);
-        double dz = depthM / STEPS, p = pwhPa;
+        double dz = toDepthM / STEPS, p = pwhPa;
         double gasStdKgM3 = NaturalGas.densityKgM3(NaturalGas.STD_PRESSURE_PA, NaturalGas.STD_TEMPERATURE_K);
         for (int i = 0; i < STEPS; i++) {
-            double t = WELLHEAD_K + (tBottom - WELLHEAD_K) * (i + 0.5) / STEPS;
+            double z = (i + 0.5) * dz;
+            double t = WELLHEAD_K + (tBottom - WELLHEAD_K) * z / depthM;
+            double inj = z < injDepthM ? Math.max(0, injStdM3s) : 0;
             double rs = solutionGor(p, bubblePa, rsi);
             double bo = oilFvf(rs);
             double grad;
@@ -66,7 +78,7 @@ public final class Tubing {
                 double liveOil = (ProducingReservoir.STOCK_OIL_KGM3 + rs * gasStdKgM3) / bo;
                 grad = ((1 - waterCut) * liveOil + waterCut * ProducingReservoir.WATER_KGM3) * G;
             } else {
-                double freeStd = qOil * Math.max(0, gor - rs);
+                double freeStd = qOil * Math.max(0, gor - rs) + inj;
                 double qGas = NaturalGas.volumeM3(NaturalGas.moles(freeStd, NaturalGas.STD_PRESSURE_PA, NaturalGas.STD_TEMPERATURE_K),
                         p + NaturalGas.STD_PRESSURE_PA, t);
                 double qLiq = qOil * bo + qWater;
@@ -77,7 +89,7 @@ public final class Tubing {
                 double vd = 1.53 * Math.pow(G * SURFACE_TENSION * Math.max(0, rhoL - rhoG) / (rhoL * rhoL), 0.25);
                 double holdup = vsg > 0 ? Math.min(vsg / (C0 * vm + vd), 1) : 0;
                 double rho = holdup * rhoG + (1 - holdup) * rhoL;
-                double rhoNoSlip = (liquidMass + qOil * Math.max(0, gor - rs) * gasStdKgM3) / (qLiq + qGas);
+                double rhoNoSlip = (liquidMass + freeStd * gasStdKgM3) / (qLiq + qGas);
                 grad = rho * G + 2 * FANNING * rhoNoSlip * vm * vm / DIAMETER_M;
             }
             p += grad * dz;
@@ -108,12 +120,19 @@ public final class Tubing {
      * с плюса на минус по сетке дебитов, затем делением пополам. 0 — пересечения нет, скважина не фонтанирует.
      */
     public static double flowingRateM3s(Inflow ipr, double gor, double waterCut, double depthM, double choke64, double separatorPa) {
+        return flowingRateM3s(ipr, gor, waterCut, depthM, choke64, separatorPa, 0, 0);
+    }
+
+    /** Точка работы с газлифтным газом {@code injStdM3s}, нм³/с, вводимым на глубине {@code injDepthM} (09 §9.6.4). */
+    public static double flowingRateM3s(Inflow ipr, double gor, double waterCut, double depthM, double choke64, double separatorPa,
+            double injStdM3s, double injDepthM) {
         if (choke64 <= 0) return 0;
         double glr = gor * (1 - waterCut);
         java.util.function.DoubleUnaryOperator g = q -> {
             double ql = q / (1 - waterCut);
-            double pwh = Math.max(separatorPa, gilbertWellheadPa(ql, glr, choke64));
-            return ipr.pwfAtPa(q) - bottomholePa(pwh, q, gor, waterCut, depthM, ipr.bubblePointPa());
+            double glrTotal = glr + (ql > 0 ? injStdM3s / ql : 0);
+            double pwh = Math.max(separatorPa, gilbertWellheadPa(ql, glrTotal, choke64));
+            return ipr.pwfAtPa(q) - pressureAtPa(pwh, q, gor, waterCut, depthM, depthM, ipr.bubblePointPa(), injStdM3s, injDepthM);
         };
         double qMax = ipr.maxRateM3s();
         if (qMax <= 0) return 0;

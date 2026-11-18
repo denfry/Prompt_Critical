@@ -22,6 +22,12 @@ The crank counterweights balance the rods and half the fluid. The Weights button
 
 The Echo button fires a shot down the annulus. The echo from the liquid level comes back after t seconds, and the level is at z = c·t/2, c being the speed of sound in the casing gas, about 400 m/s.
 
+## Gas lift
+
+Instead of a pumpjack, gas can lift the oil. [Gas lift valves](item:promptcritical:gas_lift_valve) go into the tubing, up to six. Each one carries its depth and its opening pressure: use it in the air to step the depth by 100 m, with Shift to step the opening pressure by 0.5 MPa. Use it on the wellhead to install it, and use one with Shift to pull the tubing and get all valves back.
+
+The Gas buttons set the injection in steps of 0.05 nm³/s. The gas comes from the separator and comes back with the production, so the separator needs some gas to start. At start the annulus is full of kill fluid. 8 MPa of gas pushes it down to the top valve if the gas column there is above the liquid in the tubing plus 0.7 MPa across the valve. Then the well flows through that valve, the tubing pressure below falls, and the next valve uncovers, as deep as the gas can reach. The working casing pressure is what the deepest open valve needs. An upper valve whose opening pressure is below the gas pressure at its depth stays open and takes the gas: the well is stuck on the top valve. Set the opening pressures to fall with depth. More gas lightens the column, until gas friction takes over.
+
 ## Separator and flare
 
 Production goes to a [three-phase separator](item:promptcritical:three_phase_separator) within 8 blocks. Gas rises to the top, water settles to the bottom, oil floats in between. Water drops settle by Stokes' law. Small drops can't get through the oil layer in the residence time and leave with the oil, so a high rate gives wet oil. Create pipes take oil from the sides, gas from the top and water from the bottom. Gas with nowhere to go burns at a [flare tip](item:promptcritical:flare_tip). Without a flare the separator fills up and shuts the well in.

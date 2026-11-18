@@ -65,6 +65,11 @@ public final class WellheadBlockEntity extends DeviceBlockEntity implements Foun
     private double echoS, echoLevelM;
     private int echoCount, rodPartCount;
     public static final double CB_STEP_N = 2e3;
+    /** Шаг закачки газлифтного газа, нм³/с; не больше шести клапанов в НКТ. */
+    public static final double GL_STEP_STD_M3S = 0.05;
+    public static final int MAX_VALVES = 6;
+    private final java.util.List<dev.denfry.promptcritical.sim.production.GasLift.Valve> valves = new java.util.ArrayList<>();
+    private double glSetStdM3s, glActualStdM3s;
 
     public WellheadBlockEntity(BlockPos pos, BlockState state) {
         super(ProductionBlockEntities.WELLHEAD.get(), pos, state);
@@ -98,7 +103,53 @@ public final class WellheadBlockEntity extends DeviceBlockEntity implements Foun
     @Override
     public boolean accepts(ItemStack stack) {
         return stack.is(PcItems.SEAMLESS_PIPE.get()) || stack.is(PcItems.SEISMIC_CHARGE.get()) || stack.is(PcItems.SUCKER_ROD.get())
-                || stack.is(PcItems.DOWNHOLE_ROD_PUMP.get()) || stack.is(com.simibubi.create.AllBlocks.LARGE_COGWHEEL.get().asItem());
+                || stack.is(PcItems.DOWNHOLE_ROD_PUMP.get()) || stack.is(com.simibubi.create.AllBlocks.LARGE_COGWHEEL.get().asItem())
+                || stack.is(PcItems.GAS_LIFT_VALVE.get());
+    }
+
+    /** Газлифтный клапан — в НКТ; с Shift — подъём НКТ: все клапаны обратно игроку. */
+    private ItemInteractionResult installValve(Player player, ItemStack stack) {
+        if (player.isShiftKeyDown()) {
+            int n = valves.size();
+            for (var v : valves) {
+                ItemStack back = new ItemStack(PcItems.GAS_LIFT_VALVE.get());
+                back.set(dev.denfry.promptcritical.mod.registry.PcDataComponents.GAS_LIFT_VALVE.get(),
+                        new GasLiftValveItem.Data((int) v.depthM(), (int) Math.round(v.ptroPa() / 1000)));
+                if (!player.getInventory().add(back)) player.drop(back, false);
+            }
+            valves.clear();
+            if (well != null) well.setGasLiftValves(valves);
+            player.displayClientMessage(ProductionText.msg("valves_pulled", n), true);
+            setChanged();
+            return ItemInteractionResult.SUCCESS;
+        }
+        if (valves.size() >= MAX_VALVES) {
+            player.displayClientMessage(ProductionText.msg("valve_full", MAX_VALVES), true);
+            return ItemInteractionResult.CONSUME;
+        }
+        GasLiftValveItem.Data d = GasLiftValveItem.data(stack);
+        valves.add(new dev.denfry.promptcritical.sim.production.GasLift.Valve(d.depthM(), d.ptroKpa() * 1000.0));
+        if (well != null) well.setGasLiftValves(valves);
+        if (!player.getAbilities().instabuild) stack.shrink(1);
+        player.displayClientMessage(ProductionText.msg("valve_installed", valves.size(), d.depthM(),
+                ProductionText.num(d.ptroKpa() / 1000.0, 1)), true);
+        level.playSound(null, worldPosition, SoundEvents.CHAIN_PLACE, SoundSource.BLOCKS, 1.0f, 1.2f);
+        setChanged();
+        return ItemInteractionResult.SUCCESS;
+    }
+
+    public java.util.List<dev.denfry.promptcritical.sim.production.GasLift.Valve> gasLiftValves() {
+        return java.util.List.copyOf(valves);
+    }
+
+    /** Уставка закачки газлифтного газа, нм³/с. */
+    public void setGasLiftStdM3s(double q) {
+        glSetStdM3s = Math.clamp(q, 0, dev.denfry.promptcritical.sim.production.GasLift.MAX_INJECTION_STD_M3S);
+        setChanged();
+    }
+
+    public double gasLiftSetStdM3s() {
+        return glSetStdM3s;
     }
 
     /** Ремонт ШГН (09 §9.6.5): штанга — после обрыва, насос — новый клапан, большая шестерня — зубья редуктора. */
@@ -125,6 +176,7 @@ public final class WellheadBlockEntity extends DeviceBlockEntity implements Foun
 
     @Override
     public ItemInteractionResult useItem(Player player, InteractionHand hand, ItemStack stack) {
+        if (stack.is(PcItems.GAS_LIFT_VALVE.get())) return installValve(player, stack);
         if (stack.is(PcItems.SUCKER_ROD.get()) || stack.is(PcItems.DOWNHOLE_ROD_PUMP.get())
                 || stack.is(com.simibubi.create.AllBlocks.LARGE_COGWHEEL.get().asItem())) return repair(player, stack);
         DrilledWells.Bore b = bore();
@@ -162,6 +214,7 @@ public final class WellheadBlockEntity extends DeviceBlockEntity implements Foun
         }
         if (!player.getAbilities().instabuild) stack.shrink(charges);
         well = new ProductionWell(r);
+        well.setGasLiftValves(valves);
         level.playSound(null, worldPosition, SoundEvents.GENERIC_EXPLODE.value(), SoundSource.BLOCKS, 0.3f, 1.6f);
         player.displayClientMessage(ProductionText.msg("perforated", ProductionText.num(r.perforatedM(), 1),
                 ProductionText.num(r.perfTopM(), 0), ProductionText.num(r.pressurePa() / 1e6, 2)), true);
@@ -187,6 +240,15 @@ public final class WellheadBlockEntity extends DeviceBlockEntity implements Foun
         spm = jack == null ? 0 : jack.spm();
         open = masterOpen && tree && sep != null && sep.hasRoom();
         double dt = 0.05 * b.world().clock().kSlow();
+        // газлифтный газ — из газа сепаратора (замкнутый цикл: возвращается с продукцией)
+        glActualStdM3s = 0;
+        if (glSetStdM3s > 0 && sep != null && !valves.isEmpty() && spm <= 0) {
+            double want = glSetStdM3s * dt;
+            double got = sep.gas().drain((int) Math.floor(Math.min(want, sep.gas().amount())),
+                    net.neoforged.neoforge.fluids.capability.IFluidHandler.FluidAction.EXECUTE).getAmount();
+            glActualStdM3s = got / dt;
+        }
+        well.setGasInjectionStdM3s(glActualStdM3s);
         well.step(dt, open, spm, ThreePhaseSeparator.STANDARD.pressurePa());
         if (open && sep != null) sep.accept(well.oilM3s() * dt, well.waterM3s() * dt, well.gasStdM3s() * dt, dt);
         if (open && sep != null && well.oilM3s() > 0)
@@ -267,6 +329,7 @@ public final class WellheadBlockEntity extends DeviceBlockEntity implements Foun
         if (r == null) return;
         well = new ProductionWell(r);
         well.setChoke64(pendingChoke);
+        well.setGasLiftValves(valves);
         well.restorePumpState(pendingPump);
         pendingPump = null;
     }
@@ -304,6 +367,8 @@ public final class WellheadBlockEntity extends DeviceBlockEntity implements Foun
             case ProductionPanels.WB_CHOKE_DOWN -> well.setChoke64(well.choke64() - CHOKE_STEP);
             case ProductionPanels.WB_CHOKE_UP -> well.setChoke64(well.choke64() + CHOKE_STEP);
             case ProductionPanels.WB_VALVE -> masterOpen = !masterOpen;
+            case ProductionPanels.WB_GL_DOWN -> setGasLiftStdM3s(glSetStdM3s - GL_STEP_STD_M3S);
+            case ProductionPanels.WB_GL_UP -> setGasLiftStdM3s(glSetStdM3s + GL_STEP_STD_M3S);
             case ProductionPanels.WB_CB_DOWN -> well.setCounterbalanceN(well.counterbalanceN() - CB_STEP_N);
             case ProductionPanels.WB_CB_UP -> well.setCounterbalanceN(well.counterbalanceN() + CB_STEP_N);
             case ProductionPanels.WB_ECHO -> {
@@ -355,6 +420,12 @@ public final class WellheadBlockEntity extends DeviceBlockEntity implements Foun
         out[ProductionPanels.W_ECHO_MS] = (int) Math.round(echoS * 1000);
         out[ProductionPanels.W_LEAK_PCT] = (int) Math.round(well.valveLeak() * 100);
         out[ProductionPanels.W_GAS_PCT] = (int) Math.round(well.gasFraction() * 100);
+        var gl = well.gasLiftPoint();
+        boolean lifting = well.mode() == ProductionWell.Mode.GAS_LIFT;
+        out[ProductionPanels.W_GL_INJ_X100] = (int) Math.round((lifting ? glActualStdM3s : glSetStdM3s) * 100);
+        out[ProductionPanels.W_GL_VALVES] = valves.size();
+        out[ProductionPanels.W_GL_DEPTH_M] = lifting ? (int) Math.round(gl.injDepthM()) : 0;
+        out[ProductionPanels.W_GL_CSG_X100] = lifting ? (int) Math.round(gl.casingSurfacePa() / 1e4) : 0;
         int f = 0;
         if (open) f |= 1 << ProductionPanels.WF_OPEN;
         if (c != null) f |= 1 << ProductionPanels.WF_PUMPING;
@@ -362,6 +433,8 @@ public final class WellheadBlockEntity extends DeviceBlockEntity implements Foun
         if (separator) f |= 1 << ProductionPanels.WF_SEPARATOR;
         if (!Double.isNaN(well.rodPartDepthM())) f |= 1 << ProductionPanels.WF_ROD_PART;
         if (well.gearboxBroken()) f |= 1 << ProductionPanels.WF_GEARBOX;
+        if (well.mode() == ProductionWell.Mode.GAS_LIFT) f |= 1 << ProductionPanels.WF_GAS_LIFT;
+        if (well.mode() == ProductionWell.Mode.GAS_LIFT && well.gasLiftPoint().stuckHigh()) f |= 1 << ProductionPanels.WF_GL_STUCK;
         out[ProductionPanels.W_FLAGS] = f;
     }
 
@@ -379,6 +452,13 @@ public final class WellheadBlockEntity extends DeviceBlockEntity implements Foun
             tag.putLongArray("pump", toBits(well.exportPumpState()));
         }
         tag.putDouble("echo_s", echoS);
+        tag.putDouble("gl_set", glSetStdM3s);
+        long[] vb = new long[2 * valves.size()];
+        for (int i = 0; i < valves.size(); i++) {
+            vb[2 * i] = Double.doubleToRawLongBits(valves.get(i).depthM());
+            vb[2 * i + 1] = Double.doubleToRawLongBits(valves.get(i).ptroPa());
+        }
+        tag.putLongArray("gl_valves", vb);
         tag.putDouble("echo_m", echoLevelM);
     }
 
@@ -399,6 +479,11 @@ public final class WellheadBlockEntity extends DeviceBlockEntity implements Foun
             }
         }
         echoS = tag.getDouble("echo_s");
+        glSetStdM3s = tag.getDouble("gl_set");
+        valves.clear();
+        long[] vb = tag.getLongArray("gl_valves");
+        for (int i = 0; i + 1 < vb.length && valves.size() < MAX_VALVES; i += 2)
+            valves.add(new dev.denfry.promptcritical.sim.production.GasLift.Valve(Double.longBitsToDouble(vb[i]), Double.longBitsToDouble(vb[i + 1])));
         echoLevelM = tag.getDouble("echo_m");
     }
 

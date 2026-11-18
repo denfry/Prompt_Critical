@@ -18,6 +18,7 @@ import dev.denfry.promptcritical.sim.drilling.Prospect;
 import dev.denfry.promptcritical.sim.drilling.Trap;
 import dev.denfry.promptcritical.sim.production.ProductionWell;
 import dev.denfry.promptcritical.sim.refining.AtmosphericUnit.Product;
+import dev.denfry.promptcritical.mod.registry.PcFluids;
 import java.util.UUID;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
@@ -200,6 +201,39 @@ public final class ProductionGameTests {
                 })
                 .thenWaitUntil(() -> h.assertTrue(((WellheadBlockEntity) h.getBlockEntity(WELL)).well().mode() == ProductionWell.Mode.PUMPING,
                         "pumping again"))
+                .thenSucceed();
+    }
+
+    /**
+     * 09 §9.6.4: заглохшую скважину запускает газлифт — клапан на 600 м с давлением открытия 6 МПа, газ из
+     * сепаратора; газ закачки возвращается с продукцией.
+     */
+    @GameTest(template = LARGE, timeoutTicks = 600)
+    public static void gasLiftKicksOffADeadWell(GameTestHelper h) {
+        FakePlayer p = new FakePlayer(h.getLevel(), new GameProfile(UUID.randomUUID(), "pc_lifter"));
+        h.startSequence()
+                .thenExecute(() -> completeWell(h, oilTrap(h, 8_000), p))
+                .thenWaitUntil(() -> h.assertTrue(((WellheadBlockEntity) h.getBlockEntity(WELL)).well().mode() == ProductionWell.Mode.DEAD,
+                        "dead well"))
+                .thenExecute(() -> {
+                    WellheadBlockEntity w = h.getBlockEntity(WELL);
+                    ItemStack valve = new ItemStack(PcItems.GAS_LIFT_VALVE.get());
+                    valve.set(dev.denfry.promptcritical.mod.registry.PcDataComponents.GAS_LIFT_VALVE.get(),
+                            new dev.denfry.promptcritical.mod.production.GasLiftValveItem.Data(600, 6000));
+                    w.useItem(p, InteractionHand.MAIN_HAND, valve);
+                    h.assertTrue(w.gasLiftValves().size() == 1, "valve in the tubing");
+                    SeparatorBlockEntity s = h.getBlockEntity(SEPARATOR);
+                    s.gas().add(4000);
+                    for (int i = 0; i < 6; i++) w.onPanelButton(p, ProductionPanels.WB_GL_UP);
+                    h.assertTrue(Math.abs(w.gasLiftSetStdM3s() - 0.3) < 1e-9, "0.3 nm3/s set");
+                })
+                .thenWaitUntil(() -> {
+                    WellheadBlockEntity w = h.getBlockEntity(WELL);
+                    h.assertTrue(w.well().mode() == ProductionWell.Mode.GAS_LIFT, "gas lift: " + w.well().mode());
+                    h.assertTrue(w.well().oilM3s() > 0, "lifts oil");
+                    h.assertTrue(w.well().gasLiftPoint().injDepthM() == 600, "through the 600 m valve");
+                    h.assertTrue(w.well().gasStdM3s() > w.well().gasInjectionStdM3s(), "injected gas returns with production");
+                })
                 .thenSucceed();
     }
 }

@@ -355,6 +355,10 @@ public final class PcItems {
     // ШГН 09 §9.6.5: штанга ¾″ (ремонт после обрыва) и плунжерный насос (замена клапанов)
     public static final DeferredItem<Item> SUCKER_ROD = item("sucker_rod", 64);
     public static final DeferredItem<Item> DOWNHOLE_ROD_PUMP = item("downhole_rod_pump", 4);
+    /** Газлифтный клапан 09 §9.6.4 (глубина и p_tro — компонент). */
+    public static final DeferredItem<dev.denfry.promptcritical.mod.production.GasLiftValveItem> GAS_LIFT_VALVE = registered(
+            ITEMS.registerItem("gas_lift_valve", dev.denfry.promptcritical.mod.production.GasLiftValveItem::new,
+                    new Item.Properties().stacksTo(16)));
     public static final DeferredItem<dev.denfry.promptcritical.mod.drilling.SeismicSectionItem> SEISMIC_SECTION = registered(
             ITEMS.registerItem("seismic_section", dev.denfry.promptcritical.mod.drilling.SeismicSectionItem::new,
                     new Item.Properties().stacksTo(1)));

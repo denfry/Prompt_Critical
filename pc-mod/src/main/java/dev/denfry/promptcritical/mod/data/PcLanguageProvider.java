@@ -460,6 +460,7 @@ public final class PcLanguageProvider extends LanguageProvider {
         i("seismic_charge", "Seismic Charge", "Сейсмический заряд");
         i("sucker_rod", "Sucker Rod", "Насосная штанга");
         i("downhole_rod_pump", "Downhole Rod Pump", "Штанговый глубинный насос");
+        i("gas_lift_valve", "Gas Lift Valve", "Газлифтный клапан");
         i("seismic_section", "Seismic Section", "Сейсмический разрез");
         i("copper_wire", "Copper Wire", "Медная проволока");
         i("generator_coupling", "Shear-Pin Coupling", "Муфта со срезным штифтом");

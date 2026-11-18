@@ -149,6 +149,16 @@ public final class DeviceProfiles {
                     .button("toggleMasterValve", ProductionPanels.WB_VALVE)
                     .button("counterbalanceDown", ProductionPanels.WB_CB_DOWN).button("counterbalanceUp", ProductionPanels.WB_CB_UP)
                     .button("acousticFluidLevel", ProductionPanels.WB_ECHO)
+                    .command("setGasLiftRate", a -> {
+                        double kgS = LuaArgs.finite(a, 0);
+                        if (kgS < 0) throw new DeviceException(DeviceException.RANGE, "gas lift rate must be >= 0 kg/s");
+                        // 09 §9.13.1: кг/с → нм³/с по плотности газа при нормальных условиях
+                        double std = kgS / dev.denfry.promptcritical.sim.drilling.NaturalGas.densityKgM3(
+                                dev.denfry.promptcritical.sim.drilling.NaturalGas.STD_PRESSURE_PA,
+                                dev.denfry.promptcritical.sim.drilling.NaturalGas.STD_TEMPERATURE_K);
+                        return t -> ((dev.denfry.promptcritical.mod.production.WellheadBlockEntity) t).setGasLiftStdM3s(std);
+                    })
+                    .read("getCompletion", 4, (b, s, a) -> completion((dev.denfry.promptcritical.mod.production.WellheadBlockEntity) b))
                     .read("getDynamometerCard", 32, (b, s, a) -> dynoCard((dev.denfry.promptcritical.mod.production.WellheadBlockEntity) b))
                     .read("getMotor", 4, (b, s, a) -> rodPumpMotor((dev.denfry.promptcritical.mod.production.WellheadBlockEntity) b))
                     .probe(WellEvents::new).build());
@@ -238,6 +248,28 @@ public final class DeviceProfiles {
         for (double v : c.loadN()) f.add(v);
         m.put("position", x);
         m.put("load", f);
+        return m;
+    }
+
+    /** {@code getCompletion()} 09 §9.13.1: паспорт скважины, газлифтные клапаны. */
+    private static Object completion(dev.denfry.promptcritical.mod.production.WellheadBlockEntity w) {
+        Map<String, Object> m = new LinkedHashMap<>();
+        var well = w.well();
+        if (well != null) {
+            var r = well.reservoir();
+            m.put("perfTop", r.perfTopM());
+            m.put("perfBottom", r.perfTopM() + r.perforatedM());
+            m.put("pumpDepth", well.pumpDepthM());
+            m.put("tubingId", dev.denfry.promptcritical.sim.production.Tubing.DIAMETER_M);
+        }
+        List<Map<String, Object>> vs = new ArrayList<>();
+        for (var v : w.gasLiftValves()) {
+            Map<String, Object> e = new LinkedHashMap<>();
+            e.put("depth", v.depthM());
+            e.put("ptro", v.ptroPa());
+            vs.add(e);
+        }
+        m.put("gasLiftValves", vs);
         return m;
     }
 

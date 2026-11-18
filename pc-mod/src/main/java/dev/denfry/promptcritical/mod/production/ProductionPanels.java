@@ -17,9 +17,12 @@ public final class ProductionPanels {
             W_MODE = 7, W_FLAGS = 8, W_FILL_PERMIL = 9, W_PEAK_KN = 10, W_SPM10 = 11, W_CARD = 12,
             W_CB_KN10 = W_CARD + 2 * BeamPump.CARD_POINTS, W_TORQUE_KNM10 = W_CB_KN10 + 1, W_GOODMAN_PCT = W_CB_KN10 + 2,
             W_LEVEL_M = W_CB_KN10 + 3, W_ECHO_MS = W_CB_KN10 + 4, W_LEAK_PCT = W_CB_KN10 + 5, W_GAS_PCT = W_CB_KN10 + 6,
-            W_CHANNELS = W_CB_KN10 + 7;
-    public static final int WF_OPEN = 0, WF_PUMPING = 1, WF_TREE = 2, WF_SEPARATOR = 3, WF_ROD_PART = 4, WF_GEARBOX = 5;
-    public static final int WB_CHOKE_DOWN = 0, WB_CHOKE_UP = 1, WB_VALVE = 2, WB_CB_DOWN = 3, WB_CB_UP = 4, WB_ECHO = 5;
+            W_GL_INJ_X100 = W_CB_KN10 + 7, W_GL_DEPTH_M = W_CB_KN10 + 8, W_GL_CSG_X100 = W_CB_KN10 + 9, W_GL_VALVES = W_CB_KN10 + 10,
+            W_CHANNELS = W_CB_KN10 + 11;
+    public static final int WF_OPEN = 0, WF_PUMPING = 1, WF_TREE = 2, WF_SEPARATOR = 3, WF_ROD_PART = 4, WF_GEARBOX = 5,
+            WF_GAS_LIFT = 6, WF_GL_STUCK = 7;
+    public static final int WB_CHOKE_DOWN = 0, WB_CHOKE_UP = 1, WB_VALVE = 2, WB_CB_DOWN = 3, WB_CB_UP = 4, WB_ECHO = 5,
+            WB_GL_DOWN = 6, WB_GL_UP = 7;
     // сепаратор
     public static final int S_OIL_PERMIL = 0, S_WATER_PERMIL = 1, S_GAS_PERMIL = 2, S_BSW_X100 = 3, S_RET_S = 4, S_FLARE_M3H = 5,
             S_FLAGS = 6, S_CHANNELS = 7;
@@ -61,6 +64,14 @@ public final class ProductionPanels {
                     "Выстрел в затрубье: эхо от уровня жидкости даёт z = c·t/2"),
             PUMP = PanelText.tr("prod.pump", "Counterweight %s kN · gearbox %s of 25.8 kN·m · rods %s %% Goodman · valve leak %s %% · gas %s %%",
                     "Противовес %s кН · редуктор %s из 25,8 кН·м · штанги %s %% Гудмана · утечка клапана %s %% · газ %s %%"),
+            GL_DOWN = PanelText.tr("prod.gl_down", "Gas −", "Газ −"),
+            GL_UP = PanelText.tr("prod.gl_up", "Gas +", "Газ +"),
+            GL_TIP = PanelText.tr("prod.gl_tip", "Gas lift injection into the annulus in steps of 0.05 nm³/s, taken from the separator gas",
+                    "Закачка газлифтного газа в затрубье шагом 0,05 нм³/с из газа сепаратора"),
+            GL_LAMP = PanelText.tr("prod.gl_lamp", "Gas lift", "Газлифт"),
+            GL = PanelText.tr("prod.gl", "Gas lift %s nm³/s · %s valves · injecting at %s m · casing %s MPa",
+                    "Газлифт %s нм³/с · клапанов %s · ввод газа на %s м · затрубье %s МПа"),
+            GL_STUCK = PanelText.tr("prod.gl_stuck", "Top valve open", "Верхний клапан открыт"),
             LEVEL = PanelText.tr("prod.level", "Echo %s s: fluid level %s m", "Эхо %s с: уровень жидкости %s м"),
             WELL = PanelText.tr("prod.well", "Choke %s/64″ · water cut %s %% · GOR %s m³/m³",
                     "Штуцер %s/64″ · обводнённость %s %% · газовый фактор %s м³/м³"),
@@ -94,7 +105,7 @@ public final class ProductionPanels {
             DIESEL = PanelText.tr("prod.diesel", "Diesel", "Дизель"),
             MAZUT = PanelText.tr("prod.mazut", "Mazut", "Мазут");
 
-    public static final PanelLayout WELLHEAD = PanelLayout.builder("wellhead", 300, 228, W_CHANNELS)
+    public static final PanelLayout WELLHEAD = PanelLayout.builder("wellhead", 300, 242, W_CHANNELS)
             .dial(8, 20, false, W_THP_X100, 100, 20, Double.NaN, 1, MPA.get(), THP.get(), v -> THP_TIP.get(v.num(W_THP_X100, 100, 2)))
             .dial(64, 20, false, W_BHP_X100, 100, 30, Double.NaN, 1, MPA.get(), BHP.get(), null)
             .dial(120, 20, false, W_PR_X100, 100, 30, Double.NaN, 1, MPA.get(), PR.get(), v -> PR_TIP.get(v.num(W_PR_X100, 100, 2)))
@@ -113,10 +124,16 @@ public final class ProductionPanels {
             .button(250, 122, 46, WB_ECHO, ECHO.get(), ECHO_TIP.get())
             .button(200, 144, 46, WB_CB_DOWN, CB_DOWN.get(), CB_TIP.get())
             .button(250, 144, 46, WB_CB_UP, CB_UP.get(), CB_TIP.get())
+            .button(200, 166, 46, WB_GL_DOWN, GL_DOWN.get(), GL_TIP.get())
+            .button(250, 166, 46, WB_GL_UP, GL_UP.get(), GL_TIP.get())
+            .lamp(236, 88, W_FLAGS, WF_GAS_LIFT, LampColor.GREEN, GL_LAMP.get())
+
             .readout(8, 180, 284, v -> WELL.get(v.raw(W_CHOKE), v.num(W_WC_PERMIL, 10, 0), v.raw(W_GOR)), null)
             .readout(8, 194, 284, v -> PUMP.get(v.num(W_CB_KN10, 10, 1), v.num(W_TORQUE_KNM10, 10, 1), v.raw(W_GOODMAN_PCT),
                     v.raw(W_LEAK_PCT), v.raw(W_GAS_PCT)), null)
             .readout(8, 208, 284, v -> LEVEL.get(PanelText.num(v.raw(W_ECHO_MS) / 1000.0, 2), v.raw(W_LEVEL_M)), null)
+            .readout(8, 222, 284, v -> GL.get(PanelText.num(v.raw(W_GL_INJ_X100) / 100.0, 2), v.raw(W_GL_VALVES), v.raw(W_GL_DEPTH_M),
+                    v.num(W_GL_CSG_X100, 100, 2)), null)
             .noInventory().build();
 
     public static final PanelLayout SEPARATOR_PANEL = PanelLayout.builder("three_phase_separator", 240, 120, S_CHANNELS)
