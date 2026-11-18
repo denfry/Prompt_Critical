@@ -45,22 +45,8 @@ def insulator(name, x, z, y0, h, tex="por", r=1.5):
 # ======================================================================
 # генераторы и двигатели на валу Create
 # ======================================================================
-# синхронный генератор СГ-500: оребрённый статор, медные выводы, ротор — partial
-m("shaft_generator", "grid", [
-    el("feet", [1, 0, 2], [15, 2, 14], "d"),
-    el("stator_w", [1, 2, 2], [3.5, 14, 14], "enf"),
-    el("stator_e", [12.5, 2, 2], [15, 14, 14], "enf"),
-    el("stator_t", [3.5, 11.5, 2], [12.5, 14, 14], "enf", faces={"up": "en"}),
-    el("stator_b", [3.5, 2, 2], [12.5, 4.5, 14], "en"),
-    el("end_shield_n", [3, 3, 0.5], [13, 13, 2], "en"),
-    el("end_shield_s", [3, 3, 14], [13, 13, 15.5], "en"),
-    el("terminal_box", [5, 14, 6], [11, 16, 11], "en"),
-    el("lead_1", [5.5, 15, 11], [6.5, 16, 12.5], "cub"),
-    el("lead_2", [7.5, 15, 11], [8.5, 16, 12.5], "cub"),
-    el("lead_3", [9.5, 15, 11], [10.5, 16, 12.5], "cub"),
-])
-m("shaft_generator/rotor", "grid",
-  disc("rotor", "z", 3.5, 2.5, 13.5, "cus") + disc("shaft", "z", 1, -0.01, 16.01, "st", 8), kind="partial")
+# синхронный генератор, возбудитель и асинхронный двигатель нарисованы вручную в Blockbench:
+# art/blockbench/grid/rotating_machines.author.js (варианты возбудителя ниже — бэклог, блоков нет)
 
 
 # возбудитель ВТ-450: машинный (коллектор — partial), тиристорный шкаф, бесщёточный
@@ -83,7 +69,6 @@ def exciter(kind="machine", forcing=False):
     return els
 
 
-m("generator_exciter", "grid", exciter())
 m("generator_exciter_forcing", "grid", exciter(forcing=True))
 m("generator_exciter_thyristor", "grid", exciter("thyristor"))
 m("generator_exciter_brushless", "grid", exciter("brushless"))
@@ -100,26 +85,6 @@ m("instrument_synchroscope", "instruments", [
 ])
 
 
-# асинхронный двигатель АИР: оребрённый корпус RAL 5010, клеммная коробка; вал — partial
-def motor(mv=False):
-    r0 = 1 if mv else 2
-    return [
-        el("feet", [r0, 0, 2], [16 - r0, 1.5, 14], "d"),
-        el("body_w", [r0, 1.5, 2.5], [r0 + 2.5, 13.5, 13.5], "mf"),
-        el("body_e", [13.5 - r0, 1.5, 2.5], [16 - r0, 13.5, 13.5], "mf"),
-        el("body_t", [r0 + 2.5, 11, 2.5], [13.5 - r0, 13.5 + (1 if mv else 0), 13.5], "mf", faces={"up": "mb"}),
-        el("body_b", [r0 + 2.5, 1.5, 2.5], [13.5 - r0, 4, 13.5], "mb"),
-        el("flange", [3, 3, 1], [13, 13, 2.5], "mb"),
-        el("fan_cowl", [3, 3, 13.5], [13, 13, 15.5], "mb", faces={"south": "louv"}, full=["south"]),
-        el("terminal_box", [5, 13.5 + (1 if mv else 0), 6], [11, 15.5 + (1 if mv else 0), 11], "mb"),
-        el("gland", [11, 13.5, 8], [12.5, 15, 9.5], "bs"),
-    ]
-
-
-m("electric_motor", "grid", motor())
-m("electric_motor_mv", "grid", motor(True))
-m("electric_motor/shaft", "grid", disc("shaft", "z", 1, -0.01, 3, "st", 8) + [
-    el("key", [7.75, 8.75, 0], [8.25, 9.25, 1.5], "d")], kind="partial")
 
 # ======================================================================
 # шины, кабели, изоляторы (multipart: центр + рукав к грани north)
@@ -212,66 +177,13 @@ m("hv_circuit_breaker_sf6", "grid", hv_breaker(sf6=True))
 
 
 # разъединитель РДЗ-110: рама, три фарфоровые колонки; главный нож — partial
-def disconnector(earthed=False):
-    els = [el("frame", [-15, 0, 6], [31, 2, 10], "gal")]
-    for x in (-10, 26):
-        els += insulator(f"post_{x}", x, 8, 2, 14, "por", 2)
-        els.append(el(f"contact_{x}", [x - 2, 17, 6.5], [x + 2, 19, 9.5], "cus"))
-    els.append(el("drive_rod", [-11, 2, 11], [-10, 14, 12], "gal"))
-    if earthed:
-        els.append(el("earth_blade", [24.5, 2, 10], [25.5, 18, 11], "red"))
-    else:
-        els.append(el("earth_blade", [25.5, 2, 10], [31, 3, 11], "red"))
-    return els
+# разъединитель с ножом — art/blockbench/grid/switchgear.author.js
 
 
-m("disconnector", "grid", disconnector())
-m("disconnector_earthed", "grid", disconnector(True))
-m("disconnector/blade", "grid", [
-    el("hinge", [-12, 17, 6.5], [-8, 19.5, 9.5], "cus"),
-    el("blade", [-10, 17.5, 7.25], [26, 18.5, 8.75], "cus"),
-], kind="partial")
+# ячейка КРУ — art/blockbench/grid/switchgear.author.js
 
 
-# ячейка КРУ К-104 1×2×1: шкаф RAL 7035, мнемосхема на двери; выкатной элемент
-def switchgear(state="closed"):
-    els = [el("body", [0, 0, 1], [16, 31.5, 16], "r35"),
-           el("relay_compartment", [0.5, 24, 0.5], [15.5, 31.5, 1], "pns"),
-           el("door", [0.5, 1, 0.5], [15.5, 23, 1], "r35", faces={"north": "swd"}, full=["north"]),
-           el("handle", [13, 9, -0.5], [14, 14, 0.5], "d"),
-           el("bushing_box", [3, 31.5, 5], [13, 32, 13], "dg")]
-    on = {"closed": "lr", "open": "lg", "racked_out": "lg", "alarm": "ly"}[state]
-    els += [lamp("lamp_state", 4, 28, 0.5, True, on), lamp("lamp_off", 8, 28, 0.5, False, "lg"),
-            el("ammeter", [10.5, 26.5, 0], [13.5, 29.5, 0.5], "dial", full=["north"])]
-    if state == "racked_out":
-        els = [e for e in els if e["name"] not in ("door", "handle")]
-        els += [el("trolley", [2, 0, -6], [14, 10, 6], "r35"),
-                el("contacts", [4, 7, 6], [12, 9, 8], "cus"),
-                el("wheel_w", [2.5, 0, -5], [4, 1.5, -2], "r"),
-                el("wheel_e", [12, 0, -5], [13.5, 1.5, -2], "r")]
-    return els
-
-
-m("switchgear_cell", "grid", switchgear())
-m("switchgear_cell_open", "grid", switchgear("open"))
-m("switchgear_cell_racked_out", "grid", switchgear("racked_out"))
-m("switchgear_cell_alarm", "grid", switchgear("alarm"))
-
-
-# щит 0,4 кВ ЩО-70 1×2×1: рубильники, амперметры, лампы
-def lv_board(state="on"):
-    return [el("body", [0, 0, 2], [16, 31.5, 16], "r35"),
-            el("panel_low", [0.5, 1, 1.5], [15.5, 15, 2], "pns"),
-            el("panel_high", [0.5, 15.5, 1.5], [15.5, 31, 2], "r35", faces={"north": "lvf"}, full=["north"]),
-            el("cable_duct", [2, 31.5, 4], [14, 32, 14], "dg")]\
-        + [el(f"handle_{i}", [3 + i * 5, 6, 0], [4 + i * 5, 10, 1.5], "red") for i in range(3)]\
-        + [lamp(f"lamp_{i}", 3.5 + i * 4.5, 13, 1.5, state != "off",
-                {"on": "lg", "off": "lg", "overload": "lr"}[state]) for i in range(3)]
-
-
-m("lv_switchboard", "grid", lv_board())
-m("lv_switchboard_off", "grid", lv_board("off"))
-m("lv_switchboard_overload", "grid", lv_board("overload"))
+# щит 0,4 кВ — art/blockbench/grid/switchgear.author.js
 
 
 # панель РЗА ЭПЗ-1636 1×2×1: стеклянная дверь, ряды реле, блинкеры
@@ -292,17 +204,7 @@ m("relay_cabinet", "control", relay_cab())
 m("relay_cabinet_picked", "control", relay_cab("picked"))
 m("relay_cabinet_tripped", "control", relay_cab("tripped"))
 
-# масляный трансформатор ТМГ-1000/10 1×2×1: гофробак RAL 7032, вводы ВН сверху, НН сбоку
-m("distribution_transformer", "grid", [
-    el("skid", [1, 0, 2], [15, 1.5, 14], "d"),
-    el("tank", [2, 1.5, 3], [14, 18, 13], "cor", faces={"up": "r32", "down": "r32"}),
-    el("cover", [1.5, 18, 2.5], [14.5, 19, 13.5], "r32"),
-    el("lv_box", [4, 9, 1.5], [12, 15, 3], "r32"),
-] + [x for i, xx in enumerate((4.5, 8, 11.5)) for x in insulator(f"hv_{i}", xx, 8, 19, 9, "por", 1.25)]
-  + [el(f"lv_{i}", [4.5 + i * 2.2, 15, 1.75], [5.5 + i * 2.2, 17, 2.75], "porg") for i in range(4)]
-  + [el("oil_gauge", [12, 15, 6], [14.5, 17, 9], "dial", faces={"east": "dial"})])
-
-
+# масляный трансформатор ТМГ — art/blockbench/grid/switchgear.author.js
 # силовой трансформатор ТДН-16000/110: сегмент «бак с вводами» и сегмент радиаторов; якорь — центр 3×3×3
 def power_tx_tank(hv="por", hv_h=16, cons=True):
     els = [el("rails", [-14, -16, -10], [30, -15, 26], "d"),

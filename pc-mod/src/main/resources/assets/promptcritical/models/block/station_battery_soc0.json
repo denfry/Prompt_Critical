@@ -1,12 +1,15 @@
 {
 	"credit": "Made with Blockbench",
 	"textures": {
-		"particle": "promptcritical:block/common/grid2_battery_jar_0",
-		"cus": "promptcritical:block/common/plant_copper_smooth",
-		"d": "promptcritical:block/common/steel_dark",
-		"jar0": "promptcritical:block/common/grid2_battery_jar_0",
-		"lead": "promptcritical:block/common/lead",
-		"wood": "promptcritical:block/common/w2_wood"
+		"particle": "promptcritical:block/station_battery/wood",
+		"station_battery_wood": "promptcritical:block/station_battery/wood",
+		"capacitor_bank_porcelain": "promptcritical:block/capacitor_bank/porcelain",
+		"station_battery_plates_0": "promptcritical:block/station_battery/plates_0",
+		"station_battery_glass": "promptcritical:block/station_battery/glass",
+		"station_battery_acid": "promptcritical:block/station_battery/acid",
+		"station_battery_lead": "promptcritical:block/station_battery/lead",
+		"material_soot": "promptcritical:block/material/soot",
+		"material_paint_red": "promptcritical:block/material/paint_red"
 	},
 	"elements": [
 		{
@@ -20,28 +23,28 @@
 			},
 			"faces": {
 				"north": {
-					"uv": [0, 0, 16, 2],
-					"texture": "#wood"
+					"uv": [0, 14, 16, 16],
+					"texture": "#station_battery_wood"
 				},
 				"east": {
-					"uv": [0, 0, 12, 2],
-					"texture": "#wood"
+					"uv": [2, 14, 14, 16],
+					"texture": "#station_battery_wood"
 				},
 				"south": {
-					"uv": [0, 0, 16, 2],
-					"texture": "#wood"
+					"uv": [0, 14, 16, 16],
+					"texture": "#station_battery_wood"
 				},
 				"west": {
-					"uv": [0, 0, 12, 2],
-					"texture": "#wood"
+					"uv": [2, 14, 14, 16],
+					"texture": "#station_battery_wood"
 				},
 				"up": {
-					"uv": [0, 0, 16, 12],
-					"texture": "#wood"
+					"uv": [0, 2, 16, 14],
+					"texture": "#station_battery_wood"
 				},
 				"down": {
-					"uv": [0, 0, 16, 12],
-					"texture": "#wood"
+					"uv": [0, 2, 16, 14],
+					"texture": "#station_battery_wood"
 				}
 			}
 		},
@@ -56,35 +59,251 @@
 			},
 			"faces": {
 				"north": {
-					"uv": [0, 0, 16, 1],
-					"texture": "#wood"
+					"uv": [0, 13, 16, 14],
+					"texture": "#station_battery_wood"
 				},
 				"east": {
-					"uv": [0, 0, 1, 1],
-					"texture": "#wood"
+					"uv": [13, 13, 14, 14],
+					"texture": "#station_battery_wood"
 				},
 				"south": {
-					"uv": [0, 0, 16, 1],
-					"texture": "#wood"
+					"uv": [0, 13, 16, 14],
+					"texture": "#station_battery_wood"
 				},
 				"west": {
-					"uv": [0, 0, 1, 1],
-					"texture": "#wood"
+					"uv": [2, 13, 3, 14],
+					"texture": "#station_battery_wood"
 				},
 				"up": {
-					"uv": [0, 0, 16, 1],
-					"texture": "#wood"
+					"uv": [0, 2, 16, 3],
+					"texture": "#station_battery_wood"
 				},
 				"down": {
-					"uv": [0, 0, 16, 1],
-					"texture": "#wood"
+					"uv": [0, 13, 16, 14],
+					"texture": "#station_battery_wood"
+				}
+			}
+		},
+		{
+			"name": "insulator_1.6",
+			"from": [1.6, 2, 6],
+			"to": [2.6, 3, 10],
+			"rotation": {
+				"angle": 0,
+				"axis": "y",
+				"origin": [8, 8, 8]
+			},
+			"faces": {
+				"north": {
+					"uv": [13.4, 13, 14.4, 14],
+					"texture": "#capacitor_bank_porcelain"
+				},
+				"east": {
+					"uv": [6, 13, 10, 14],
+					"texture": "#capacitor_bank_porcelain"
+				},
+				"south": {
+					"uv": [1.6, 13, 2.6, 14],
+					"texture": "#capacitor_bank_porcelain"
+				},
+				"west": {
+					"uv": [6, 13, 10, 14],
+					"texture": "#capacitor_bank_porcelain"
+				},
+				"up": {
+					"uv": [1.6, 6, 2.6, 10],
+					"texture": "#capacitor_bank_porcelain"
+				},
+				"down": {
+					"uv": [1.6, 6, 2.6, 10],
+					"texture": "#capacitor_bank_porcelain"
+				}
+			}
+		},
+		{
+			"name": "insulator_13.4",
+			"from": [13.4, 2, 6],
+			"to": [14.4, 3, 10],
+			"rotation": {
+				"angle": 0,
+				"axis": "y",
+				"origin": [8, 8, 8]
+			},
+			"faces": {
+				"north": {
+					"uv": [1.6, 13, 2.6, 14],
+					"texture": "#capacitor_bank_porcelain"
+				},
+				"east": {
+					"uv": [6, 13, 10, 14],
+					"texture": "#capacitor_bank_porcelain"
+				},
+				"south": {
+					"uv": [13.4, 13, 14.4, 14],
+					"texture": "#capacitor_bank_porcelain"
+				},
+				"west": {
+					"uv": [6, 13, 10, 14],
+					"texture": "#capacitor_bank_porcelain"
+				},
+				"up": {
+					"uv": [13.4, 6, 14.4, 10],
+					"texture": "#capacitor_bank_porcelain"
+				},
+				"down": {
+					"uv": [13.4, 6, 14.4, 10],
+					"texture": "#capacitor_bank_porcelain"
+				}
+			}
+		},
+		{
+			"name": "plate_w_0",
+			"from": [1.8, 3.8, 4.4],
+			"to": [6.6, 11, 4.9],
+			"rotation": {
+				"angle": 0,
+				"axis": "y",
+				"origin": [8, 8, 8]
+			},
+			"faces": {
+				"north": {
+					"uv": [9.4, 5, 14.2, 12.2],
+					"texture": "#station_battery_plates_0"
+				},
+				"east": {
+					"uv": [11.1, 5, 11.6, 12.2],
+					"texture": "#station_battery_plates_0"
+				},
+				"south": {
+					"uv": [1.8, 5, 6.6, 12.2],
+					"texture": "#station_battery_plates_0"
+				},
+				"west": {
+					"uv": [4.4, 5, 4.9, 12.2],
+					"texture": "#station_battery_plates_0"
+				},
+				"up": {
+					"uv": [1.8, 4.4, 6.6, 4.9],
+					"texture": "#station_battery_plates_0"
+				},
+				"down": {
+					"uv": [1.8, 11.1, 6.6, 11.6],
+					"texture": "#station_battery_plates_0"
+				}
+			}
+		},
+		{
+			"name": "plate_w_1",
+			"from": [1.8, 3.8, 6.4],
+			"to": [6.6, 11, 6.9],
+			"rotation": {
+				"angle": 0,
+				"axis": "y",
+				"origin": [8, 8, 8]
+			},
+			"faces": {
+				"north": {
+					"uv": [9.4, 5, 14.2, 12.2],
+					"texture": "#station_battery_plates_0"
+				},
+				"east": {
+					"uv": [9.1, 5, 9.6, 12.2],
+					"texture": "#station_battery_plates_0"
+				},
+				"south": {
+					"uv": [1.8, 5, 6.6, 12.2],
+					"texture": "#station_battery_plates_0"
+				},
+				"west": {
+					"uv": [6.4, 5, 6.9, 12.2],
+					"texture": "#station_battery_plates_0"
+				},
+				"up": {
+					"uv": [1.8, 6.4, 6.6, 6.9],
+					"texture": "#station_battery_plates_0"
+				},
+				"down": {
+					"uv": [1.8, 9.1, 6.6, 9.6],
+					"texture": "#station_battery_plates_0"
+				}
+			}
+		},
+		{
+			"name": "plate_w_2",
+			"from": [1.8, 3.8, 8.4],
+			"to": [6.6, 11, 8.9],
+			"rotation": {
+				"angle": 0,
+				"axis": "y",
+				"origin": [8, 8, 8]
+			},
+			"faces": {
+				"north": {
+					"uv": [9.4, 5, 14.2, 12.2],
+					"texture": "#station_battery_plates_0"
+				},
+				"east": {
+					"uv": [7.1, 5, 7.6, 12.2],
+					"texture": "#station_battery_plates_0"
+				},
+				"south": {
+					"uv": [1.8, 5, 6.6, 12.2],
+					"texture": "#station_battery_plates_0"
+				},
+				"west": {
+					"uv": [8.4, 5, 8.9, 12.2],
+					"texture": "#station_battery_plates_0"
+				},
+				"up": {
+					"uv": [1.8, 8.4, 6.6, 8.9],
+					"texture": "#station_battery_plates_0"
+				},
+				"down": {
+					"uv": [1.8, 7.1, 6.6, 7.6],
+					"texture": "#station_battery_plates_0"
+				}
+			}
+		},
+		{
+			"name": "plate_w_3",
+			"from": [1.8, 3.8, 10.4],
+			"to": [6.6, 11, 10.9],
+			"rotation": {
+				"angle": 0,
+				"axis": "y",
+				"origin": [8, 8, 8]
+			},
+			"faces": {
+				"north": {
+					"uv": [9.4, 5, 14.2, 12.2],
+					"texture": "#station_battery_plates_0"
+				},
+				"east": {
+					"uv": [5.1, 5, 5.6, 12.2],
+					"texture": "#station_battery_plates_0"
+				},
+				"south": {
+					"uv": [1.8, 5, 6.6, 12.2],
+					"texture": "#station_battery_plates_0"
+				},
+				"west": {
+					"uv": [10.4, 5, 10.9, 12.2],
+					"texture": "#station_battery_plates_0"
+				},
+				"up": {
+					"uv": [1.8, 10.4, 6.6, 10.9],
+					"texture": "#station_battery_plates_0"
+				},
+				"down": {
+					"uv": [1.8, 5.1, 6.6, 5.6],
+					"texture": "#station_battery_plates_0"
 				}
 			}
 		},
 		{
 			"name": "jar_w",
-			"from": [1, 3, 3],
-			"to": [7.5, 13, 13],
+			"from": [1, 3, 3.4],
+			"to": [7.4, 13, 12.6],
 			"rotation": {
 				"angle": 0,
 				"axis": "y",
@@ -92,35 +311,227 @@
 			},
 			"faces": {
 				"north": {
-					"uv": [0, 0, 6.5, 10],
-					"texture": "#jar0"
+					"uv": [0, 0, 16, 16],
+					"texture": "#station_battery_glass"
 				},
 				"east": {
-					"uv": [0, 0, 10, 10],
-					"texture": "#jar0"
+					"uv": [0, 0, 16, 16],
+					"texture": "#station_battery_glass"
 				},
 				"south": {
-					"uv": [0, 0, 6.5, 10],
-					"texture": "#jar0"
+					"uv": [0, 0, 16, 16],
+					"texture": "#station_battery_glass"
 				},
 				"west": {
-					"uv": [0, 0, 10, 10],
-					"texture": "#jar0"
-				},
-				"up": {
-					"uv": [0, 0, 6.5, 10],
-					"texture": "#d"
+					"uv": [0, 0, 16, 16],
+					"texture": "#station_battery_glass"
 				},
 				"down": {
-					"uv": [0, 0, 6.5, 10],
-					"texture": "#jar0"
+					"uv": [1, 3.4, 7.4, 12.6],
+					"texture": "#station_battery_glass"
+				}
+			}
+		},
+		{
+			"name": "electrolyte_w",
+			"from": [1.1, 11.6, 3.5],
+			"to": [7.3, 11.7, 12.5],
+			"rotation": {
+				"angle": 0,
+				"axis": "y",
+				"origin": [8, 8, 8]
+			},
+			"faces": {
+				"up": {
+					"uv": [1.1, 3.5, 7.3, 12.5],
+					"texture": "#station_battery_acid"
+				}
+			}
+		},
+		{
+			"name": "lug_w",
+			"from": [3, 11, 7.4],
+			"to": [5.4, 13.6, 8.6],
+			"rotation": {
+				"angle": 0,
+				"axis": "y",
+				"origin": [8, 8, 8]
+			},
+			"faces": {
+				"north": {
+					"uv": [10.6, 2.4, 13, 5],
+					"texture": "#station_battery_lead"
+				},
+				"east": {
+					"uv": [7.4, 2.4, 8.6, 5],
+					"texture": "#station_battery_lead"
+				},
+				"south": {
+					"uv": [3, 2.4, 5.4, 5],
+					"texture": "#station_battery_lead"
+				},
+				"west": {
+					"uv": [7.4, 2.4, 8.6, 5],
+					"texture": "#station_battery_lead"
+				},
+				"up": {
+					"uv": [3, 7.4, 5.4, 8.6],
+					"texture": "#station_battery_lead"
+				},
+				"down": {
+					"uv": [3, 7.4, 5.4, 8.6],
+					"texture": "#station_battery_lead"
+				}
+			}
+		},
+		{
+			"name": "plate_e_0",
+			"from": [9.4, 3.8, 4.4],
+			"to": [14.2, 11, 4.9],
+			"rotation": {
+				"angle": 0,
+				"axis": "y",
+				"origin": [8, 8, 8]
+			},
+			"faces": {
+				"north": {
+					"uv": [1.8, 5, 6.6, 12.2],
+					"texture": "#station_battery_plates_0"
+				},
+				"east": {
+					"uv": [11.1, 5, 11.6, 12.2],
+					"texture": "#station_battery_plates_0"
+				},
+				"south": {
+					"uv": [9.4, 5, 14.2, 12.2],
+					"texture": "#station_battery_plates_0"
+				},
+				"west": {
+					"uv": [4.4, 5, 4.9, 12.2],
+					"texture": "#station_battery_plates_0"
+				},
+				"up": {
+					"uv": [9.4, 4.4, 14.2, 4.9],
+					"texture": "#station_battery_plates_0"
+				},
+				"down": {
+					"uv": [9.4, 11.1, 14.2, 11.6],
+					"texture": "#station_battery_plates_0"
+				}
+			}
+		},
+		{
+			"name": "plate_e_1",
+			"from": [9.4, 3.8, 6.4],
+			"to": [14.2, 11, 6.9],
+			"rotation": {
+				"angle": 0,
+				"axis": "y",
+				"origin": [8, 8, 8]
+			},
+			"faces": {
+				"north": {
+					"uv": [1.8, 5, 6.6, 12.2],
+					"texture": "#station_battery_plates_0"
+				},
+				"east": {
+					"uv": [9.1, 5, 9.6, 12.2],
+					"texture": "#station_battery_plates_0"
+				},
+				"south": {
+					"uv": [9.4, 5, 14.2, 12.2],
+					"texture": "#station_battery_plates_0"
+				},
+				"west": {
+					"uv": [6.4, 5, 6.9, 12.2],
+					"texture": "#station_battery_plates_0"
+				},
+				"up": {
+					"uv": [9.4, 6.4, 14.2, 6.9],
+					"texture": "#station_battery_plates_0"
+				},
+				"down": {
+					"uv": [9.4, 9.1, 14.2, 9.6],
+					"texture": "#station_battery_plates_0"
+				}
+			}
+		},
+		{
+			"name": "plate_e_2",
+			"from": [9.4, 3.8, 8.4],
+			"to": [14.2, 11, 8.9],
+			"rotation": {
+				"angle": 0,
+				"axis": "y",
+				"origin": [8, 8, 8]
+			},
+			"faces": {
+				"north": {
+					"uv": [1.8, 5, 6.6, 12.2],
+					"texture": "#station_battery_plates_0"
+				},
+				"east": {
+					"uv": [7.1, 5, 7.6, 12.2],
+					"texture": "#station_battery_plates_0"
+				},
+				"south": {
+					"uv": [9.4, 5, 14.2, 12.2],
+					"texture": "#station_battery_plates_0"
+				},
+				"west": {
+					"uv": [8.4, 5, 8.9, 12.2],
+					"texture": "#station_battery_plates_0"
+				},
+				"up": {
+					"uv": [9.4, 8.4, 14.2, 8.9],
+					"texture": "#station_battery_plates_0"
+				},
+				"down": {
+					"uv": [9.4, 7.1, 14.2, 7.6],
+					"texture": "#station_battery_plates_0"
+				}
+			}
+		},
+		{
+			"name": "plate_e_3",
+			"from": [9.4, 3.8, 10.4],
+			"to": [14.2, 11, 10.9],
+			"rotation": {
+				"angle": 0,
+				"axis": "y",
+				"origin": [8, 8, 8]
+			},
+			"faces": {
+				"north": {
+					"uv": [1.8, 5, 6.6, 12.2],
+					"texture": "#station_battery_plates_0"
+				},
+				"east": {
+					"uv": [5.1, 5, 5.6, 12.2],
+					"texture": "#station_battery_plates_0"
+				},
+				"south": {
+					"uv": [9.4, 5, 14.2, 12.2],
+					"texture": "#station_battery_plates_0"
+				},
+				"west": {
+					"uv": [10.4, 5, 10.9, 12.2],
+					"texture": "#station_battery_plates_0"
+				},
+				"up": {
+					"uv": [9.4, 10.4, 14.2, 10.9],
+					"texture": "#station_battery_plates_0"
+				},
+				"down": {
+					"uv": [9.4, 5.1, 14.2, 5.6],
+					"texture": "#station_battery_plates_0"
 				}
 			}
 		},
 		{
 			"name": "jar_e",
-			"from": [8.5, 3, 3],
-			"to": [15, 13, 13],
+			"from": [8.6, 3, 3.4],
+			"to": [15, 13, 12.6],
 			"rotation": {
 				"angle": 0,
 				"axis": "y",
@@ -128,35 +539,83 @@
 			},
 			"faces": {
 				"north": {
-					"uv": [0, 0, 6.5, 10],
-					"texture": "#jar0"
+					"uv": [0, 0, 16, 16],
+					"texture": "#station_battery_glass"
 				},
 				"east": {
-					"uv": [0, 0, 10, 10],
-					"texture": "#jar0"
+					"uv": [0, 0, 16, 16],
+					"texture": "#station_battery_glass"
 				},
 				"south": {
-					"uv": [0, 0, 6.5, 10],
-					"texture": "#jar0"
+					"uv": [0, 0, 16, 16],
+					"texture": "#station_battery_glass"
 				},
 				"west": {
-					"uv": [0, 0, 10, 10],
-					"texture": "#jar0"
-				},
-				"up": {
-					"uv": [0, 0, 6.5, 10],
-					"texture": "#d"
+					"uv": [0, 0, 16, 16],
+					"texture": "#station_battery_glass"
 				},
 				"down": {
-					"uv": [0, 0, 6.5, 10],
-					"texture": "#jar0"
+					"uv": [8.6, 3.4, 15, 12.6],
+					"texture": "#station_battery_glass"
+				}
+			}
+		},
+		{
+			"name": "electrolyte_e",
+			"from": [8.7, 11.6, 3.5],
+			"to": [14.9, 11.7, 12.5],
+			"rotation": {
+				"angle": 0,
+				"axis": "y",
+				"origin": [8, 8, 8]
+			},
+			"faces": {
+				"up": {
+					"uv": [8.7, 3.5, 14.9, 12.5],
+					"texture": "#station_battery_acid"
+				}
+			}
+		},
+		{
+			"name": "lug_e",
+			"from": [10.6, 11, 7.4],
+			"to": [13, 13.6, 8.6],
+			"rotation": {
+				"angle": 0,
+				"axis": "y",
+				"origin": [8, 8, 8]
+			},
+			"faces": {
+				"north": {
+					"uv": [3, 2.4, 5.4, 5],
+					"texture": "#station_battery_lead"
+				},
+				"east": {
+					"uv": [7.4, 2.4, 8.6, 5],
+					"texture": "#station_battery_lead"
+				},
+				"south": {
+					"uv": [10.6, 2.4, 13, 5],
+					"texture": "#station_battery_lead"
+				},
+				"west": {
+					"uv": [7.4, 2.4, 8.6, 5],
+					"texture": "#station_battery_lead"
+				},
+				"up": {
+					"uv": [10.6, 7.4, 13, 8.6],
+					"texture": "#station_battery_lead"
+				},
+				"down": {
+					"uv": [10.6, 7.4, 13, 8.6],
+					"texture": "#station_battery_lead"
 				}
 			}
 		},
 		{
 			"name": "strap",
-			"from": [4, 13, 7.5],
-			"to": [12, 13.75, 8.5],
+			"from": [4, 13.6, 7.4],
+			"to": [12, 14.2, 8.6],
 			"rotation": {
 				"angle": 0,
 				"axis": "y",
@@ -164,35 +623,35 @@
 			},
 			"faces": {
 				"north": {
-					"uv": [0, 0, 8, 0.75],
-					"texture": "#cus"
+					"uv": [4, 1.8, 12, 2.4],
+					"texture": "#station_battery_lead"
 				},
 				"east": {
-					"uv": [0, 0, 1, 0.75],
-					"texture": "#cus"
+					"uv": [7.4, 1.8, 8.6, 2.4],
+					"texture": "#station_battery_lead"
 				},
 				"south": {
-					"uv": [0, 0, 8, 0.75],
-					"texture": "#cus"
+					"uv": [4, 1.8, 12, 2.4],
+					"texture": "#station_battery_lead"
 				},
 				"west": {
-					"uv": [0, 0, 1, 0.75],
-					"texture": "#cus"
+					"uv": [7.4, 1.8, 8.6, 2.4],
+					"texture": "#station_battery_lead"
 				},
 				"up": {
-					"uv": [0, 0, 8, 1],
-					"texture": "#cus"
+					"uv": [4, 7.4, 12, 8.6],
+					"texture": "#station_battery_lead"
 				},
 				"down": {
-					"uv": [0, 0, 8, 1],
-					"texture": "#cus"
+					"uv": [4, 7.4, 12, 8.6],
+					"texture": "#station_battery_lead"
 				}
 			}
 		},
 		{
 			"name": "post_w",
-			"from": [3.5, 13, 7],
-			"to": [5, 14.5, 9],
+			"from": [3.4, 13, 7],
+			"to": [5, 14.8, 9],
 			"rotation": {
 				"angle": 0,
 				"axis": "y",
@@ -200,35 +659,35 @@
 			},
 			"faces": {
 				"north": {
-					"uv": [0, 0, 1.5, 1.5],
-					"texture": "#lead"
+					"uv": [11, 1.2, 12.6, 3],
+					"texture": "#station_battery_lead"
 				},
 				"east": {
-					"uv": [0, 0, 2, 1.5],
-					"texture": "#lead"
+					"uv": [7, 1.2, 9, 3],
+					"texture": "#station_battery_lead"
 				},
 				"south": {
-					"uv": [0, 0, 1.5, 1.5],
-					"texture": "#lead"
+					"uv": [3.4, 1.2, 5, 3],
+					"texture": "#station_battery_lead"
 				},
 				"west": {
-					"uv": [0, 0, 2, 1.5],
-					"texture": "#lead"
+					"uv": [7, 1.2, 9, 3],
+					"texture": "#station_battery_lead"
 				},
 				"up": {
-					"uv": [0, 0, 1.5, 2],
-					"texture": "#lead"
+					"uv": [3.4, 7, 5, 9],
+					"texture": "#station_battery_lead"
 				},
 				"down": {
-					"uv": [0, 0, 1.5, 2],
-					"texture": "#lead"
+					"uv": [3.4, 7, 5, 9],
+					"texture": "#station_battery_lead"
 				}
 			}
 		},
 		{
 			"name": "post_e",
 			"from": [11, 13, 7],
-			"to": [12.5, 14.5, 9],
+			"to": [12.6, 14.8, 9],
 			"rotation": {
 				"angle": 0,
 				"axis": "y",
@@ -236,28 +695,136 @@
 			},
 			"faces": {
 				"north": {
-					"uv": [0, 0, 1.5, 1.5],
-					"texture": "#lead"
+					"uv": [3.4, 1.2, 5, 3],
+					"texture": "#station_battery_lead"
 				},
 				"east": {
-					"uv": [0, 0, 2, 1.5],
-					"texture": "#lead"
+					"uv": [7, 1.2, 9, 3],
+					"texture": "#station_battery_lead"
 				},
 				"south": {
-					"uv": [0, 0, 1.5, 1.5],
-					"texture": "#lead"
+					"uv": [11, 1.2, 12.6, 3],
+					"texture": "#station_battery_lead"
 				},
 				"west": {
-					"uv": [0, 0, 2, 1.5],
-					"texture": "#lead"
+					"uv": [7, 1.2, 9, 3],
+					"texture": "#station_battery_lead"
 				},
 				"up": {
-					"uv": [0, 0, 1.5, 2],
-					"texture": "#lead"
+					"uv": [11, 7, 12.6, 9],
+					"texture": "#station_battery_lead"
 				},
 				"down": {
-					"uv": [0, 0, 1.5, 2],
-					"texture": "#lead"
+					"uv": [11, 7, 12.6, 9],
+					"texture": "#station_battery_lead"
+				}
+			}
+		},
+		{
+			"name": "hydrometer_tube",
+			"from": [13.4, 9, 10.4],
+			"to": [14.2, 16, 11.2],
+			"rotation": {
+				"angle": 0,
+				"axis": "y",
+				"origin": [8, 8, 8]
+			},
+			"faces": {
+				"north": {
+					"uv": [1.8, 0, 2.6, 7],
+					"texture": "#station_battery_glass"
+				},
+				"east": {
+					"uv": [4.8, 0, 5.6, 7],
+					"texture": "#station_battery_glass"
+				},
+				"south": {
+					"uv": [13.4, 0, 14.2, 7],
+					"texture": "#station_battery_glass"
+				},
+				"west": {
+					"uv": [10.4, 0, 11.2, 7],
+					"texture": "#station_battery_glass"
+				},
+				"up": {
+					"uv": [13.4, 10.4, 14.2, 11.2],
+					"texture": "#station_battery_glass"
+				},
+				"down": {
+					"uv": [13.4, 4.8, 14.2, 5.6],
+					"texture": "#station_battery_glass"
+				}
+			}
+		},
+		{
+			"name": "hydrometer_bulb",
+			"from": [13.2, 15.6, 10.2],
+			"to": [14.4, 16, 11.4],
+			"rotation": {
+				"angle": 0,
+				"axis": "y",
+				"origin": [8, 8, 8]
+			},
+			"faces": {
+				"north": {
+					"uv": [1.6, 0, 2.8, 0.4],
+					"texture": "#material_soot"
+				},
+				"east": {
+					"uv": [4.6, 0, 5.8, 0.4],
+					"texture": "#material_soot"
+				},
+				"south": {
+					"uv": [13.2, 0, 14.4, 0.4],
+					"texture": "#material_soot"
+				},
+				"west": {
+					"uv": [10.2, 0, 11.4, 0.4],
+					"texture": "#material_soot"
+				},
+				"up": {
+					"uv": [13.2, 10.2, 14.4, 11.4],
+					"texture": "#material_soot"
+				},
+				"down": {
+					"uv": [13.2, 4.6, 14.4, 5.8],
+					"texture": "#material_soot"
+				}
+			}
+		},
+		{
+			"name": "hydrometer_float",
+			"from": [13.6, 10, 10.6],
+			"to": [14, 11.4, 11],
+			"rotation": {
+				"angle": 0,
+				"axis": "y",
+				"origin": [8, 8, 8]
+			},
+			"faces": {
+				"north": {
+					"uv": [2, 4.6, 2.4, 6],
+					"texture": "#material_paint_red"
+				},
+				"east": {
+					"uv": [5, 4.6, 5.4, 6],
+					"texture": "#material_paint_red"
+				},
+				"south": {
+					"uv": [13.6, 4.6, 14, 6],
+					"texture": "#material_paint_red"
+				},
+				"west": {
+					"uv": [10.6, 4.6, 11, 6],
+					"texture": "#material_paint_red"
+				},
+				"up": {
+					"uv": [13.6, 10.6, 14, 11],
+					"texture": "#material_paint_red"
+				},
+				"down": {
+					"uv": [13.6, 5, 14, 5.4],
+					"texture": "#material_paint_red"
 				}
 			}
 		}

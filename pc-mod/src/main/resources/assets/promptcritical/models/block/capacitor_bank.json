@@ -1,15 +1,18 @@
 {
 	"credit": "Made with Blockbench",
 	"textures": {
-		"particle": "promptcritical:block/common/auto_ral7035",
-		"can": "promptcritical:block/common/grid2_cap_can",
-		"loff": "promptcritical:block/common/plant_lamp_off",
-		"por": "promptcritical:block/common/grid_porcelain",
-		"ral": "promptcritical:block/common/auto_ral7035"
+		"particle": "promptcritical:block/capacitor_bank/enamel",
+		"capacitor_bank_enamel": "promptcritical:block/capacitor_bank/enamel",
+		"disconnector_copper": "promptcritical:block/disconnector/copper",
+		"capacitor_bank_can": "promptcritical:block/capacitor_bank/can",
+		"capacitor_bank_porcelain": "promptcritical:block/capacitor_bank/porcelain",
+		"material_steel": "promptcritical:block/material/steel",
+		"material_cast_iron": "promptcritical:block/material/cast_iron",
+		"material_soot": "promptcritical:block/material/soot"
 	},
 	"elements": [
 		{
-			"name": "frame_w",
+			"name": "frame_1",
 			"from": [1, 0, 2],
 			"to": [2, 15, 14],
 			"rotation": {
@@ -19,33 +22,33 @@
 			},
 			"faces": {
 				"north": {
-					"uv": [0, 0, 1, 15],
-					"texture": "#ral"
+					"uv": [14, 1, 15, 16],
+					"texture": "#capacitor_bank_enamel"
 				},
 				"east": {
-					"uv": [0, 0, 12, 15],
-					"texture": "#ral"
+					"uv": [2, 1, 14, 16],
+					"texture": "#capacitor_bank_enamel"
 				},
 				"south": {
-					"uv": [0, 0, 1, 15],
-					"texture": "#ral"
+					"uv": [1, 1, 2, 16],
+					"texture": "#capacitor_bank_enamel"
 				},
 				"west": {
-					"uv": [0, 0, 12, 15],
-					"texture": "#ral"
+					"uv": [2, 1, 14, 16],
+					"texture": "#capacitor_bank_enamel"
 				},
 				"up": {
-					"uv": [0, 0, 1, 12],
-					"texture": "#ral"
+					"uv": [1, 2, 2, 14],
+					"texture": "#capacitor_bank_enamel"
 				},
 				"down": {
-					"uv": [0, 0, 1, 12],
-					"texture": "#ral"
+					"uv": [1, 2, 2, 14],
+					"texture": "#capacitor_bank_enamel"
 				}
 			}
 		},
 		{
-			"name": "frame_e",
+			"name": "frame_14",
 			"from": [14, 0, 2],
 			"to": [15, 15, 14],
 			"rotation": {
@@ -55,28 +58,64 @@
 			},
 			"faces": {
 				"north": {
-					"uv": [0, 0, 1, 15],
-					"texture": "#ral"
+					"uv": [1, 1, 2, 16],
+					"texture": "#capacitor_bank_enamel"
 				},
 				"east": {
-					"uv": [0, 0, 12, 15],
-					"texture": "#ral"
+					"uv": [2, 1, 14, 16],
+					"texture": "#capacitor_bank_enamel"
 				},
 				"south": {
-					"uv": [0, 0, 1, 15],
-					"texture": "#ral"
+					"uv": [14, 1, 15, 16],
+					"texture": "#capacitor_bank_enamel"
 				},
 				"west": {
-					"uv": [0, 0, 12, 15],
-					"texture": "#ral"
+					"uv": [2, 1, 14, 16],
+					"texture": "#capacitor_bank_enamel"
 				},
 				"up": {
-					"uv": [0, 0, 1, 12],
-					"texture": "#ral"
+					"uv": [14, 2, 15, 14],
+					"texture": "#capacitor_bank_enamel"
 				},
 				"down": {
-					"uv": [0, 0, 1, 12],
-					"texture": "#ral"
+					"uv": [14, 2, 15, 14],
+					"texture": "#capacitor_bank_enamel"
+				}
+			}
+		},
+		{
+			"name": "busbar",
+			"from": [1, 15, 7.4],
+			"to": [15, 15.6, 8.6],
+			"rotation": {
+				"angle": 0,
+				"axis": "y",
+				"origin": [8, 8, 8]
+			},
+			"faces": {
+				"north": {
+					"uv": [1, 0.4, 15, 1],
+					"texture": "#disconnector_copper"
+				},
+				"east": {
+					"uv": [7.4, 0.4, 8.6, 1],
+					"texture": "#disconnector_copper"
+				},
+				"south": {
+					"uv": [1, 0.4, 15, 1],
+					"texture": "#disconnector_copper"
+				},
+				"west": {
+					"uv": [7.4, 0.4, 8.6, 1],
+					"texture": "#disconnector_copper"
+				},
+				"up": {
+					"uv": [1, 7.4, 15, 8.6],
+					"texture": "#disconnector_copper"
+				},
+				"down": {
+					"uv": [1, 7.4, 15, 8.6],
+					"texture": "#disconnector_copper"
 				}
 			}
 		},
@@ -91,35 +130,35 @@
 			},
 			"faces": {
 				"north": {
-					"uv": [0, 0, 14, 1],
-					"texture": "#ral"
+					"uv": [1, 15, 15, 16],
+					"texture": "#capacitor_bank_enamel"
 				},
 				"east": {
-					"uv": [0, 0, 12, 1],
-					"texture": "#ral"
+					"uv": [2, 15, 14, 16],
+					"texture": "#capacitor_bank_enamel"
 				},
 				"south": {
-					"uv": [0, 0, 14, 1],
-					"texture": "#ral"
+					"uv": [1, 15, 15, 16],
+					"texture": "#capacitor_bank_enamel"
 				},
 				"west": {
-					"uv": [0, 0, 12, 1],
-					"texture": "#ral"
+					"uv": [2, 15, 14, 16],
+					"texture": "#capacitor_bank_enamel"
 				},
 				"up": {
-					"uv": [0, 0, 14, 12],
-					"texture": "#ral"
+					"uv": [1, 2, 15, 14],
+					"texture": "#capacitor_bank_enamel"
 				},
 				"down": {
-					"uv": [0, 0, 14, 12],
-					"texture": "#ral"
+					"uv": [1, 2, 15, 14],
+					"texture": "#capacitor_bank_enamel"
 				}
 			}
 		},
 		{
 			"name": "can_0_0",
-			"from": [2.5, 1, 4],
-			"to": [5.5, 6.5, 12],
+			"from": [2.4, 1, 4],
+			"to": [5.6, 6.4, 12],
 			"rotation": {
 				"angle": 0,
 				"axis": "y",
@@ -127,35 +166,155 @@
 			},
 			"faces": {
 				"north": {
-					"uv": [0, 0, 3, 5.5],
-					"texture": "#can"
+					"uv": [10.4, 9.6, 13.6, 15],
+					"texture": "#capacitor_bank_can"
 				},
 				"east": {
-					"uv": [0, 0, 8, 5.5],
-					"texture": "#can"
+					"uv": [4, 9.6, 12, 15],
+					"texture": "#capacitor_bank_can"
 				},
 				"south": {
-					"uv": [0, 0, 3, 5.5],
-					"texture": "#can"
+					"uv": [2.4, 9.6, 5.6, 15],
+					"texture": "#capacitor_bank_can"
 				},
 				"west": {
-					"uv": [0, 0, 8, 5.5],
-					"texture": "#can"
+					"uv": [4, 9.6, 12, 15],
+					"texture": "#capacitor_bank_can"
 				},
 				"up": {
-					"uv": [0, 0, 3, 8],
-					"texture": "#can"
+					"uv": [2.4, 4, 5.6, 12],
+					"texture": "#capacitor_bank_can"
 				},
 				"down": {
-					"uv": [0, 0, 3, 8],
-					"texture": "#can"
+					"uv": [2.4, 4, 5.6, 12],
+					"texture": "#capacitor_bank_can"
 				}
 			}
 		},
 		{
-			"name": "bush_0_0",
-			"from": [3.5, 6.5, 7],
-			"to": [4.5, 7.5, 9],
+			"name": "bushing_0_0_0",
+			"from": [3.4, 6.4, 7.88065],
+			"to": [4.6, 7.4, 8.11935],
+			"rotation": {
+				"angle": 0,
+				"axis": "y",
+				"origin": [8, 8, 8]
+			},
+			"faces": {
+				"east": {
+					"uv": [7.88065, 8.6, 8.11935, 9.6],
+					"texture": "#capacitor_bank_porcelain"
+				},
+				"west": {
+					"uv": [7.88065, 8.6, 8.11935, 9.6],
+					"texture": "#capacitor_bank_porcelain"
+				},
+				"up": {
+					"uv": [3.4, 7.88065, 4.6, 8.11935],
+					"texture": "#capacitor_bank_porcelain"
+				}
+			}
+		},
+		{
+			"name": "bushing_0_0_1",
+			"from": [3.4, 6.4, 7.88065],
+			"to": [4.6, 7.4, 8.11935],
+			"rotation": {
+				"angle": 22.5,
+				"axis": "y",
+				"origin": [4, 8, 8]
+			},
+			"faces": {
+				"east": {
+					"uv": [7.88065, 8.6, 8.11935, 9.6],
+					"texture": "#capacitor_bank_porcelain"
+				},
+				"west": {
+					"uv": [7.88065, 8.6, 8.11935, 9.6],
+					"texture": "#capacitor_bank_porcelain"
+				},
+				"up": {
+					"uv": [3.4, 7.88065, 4.6, 8.11935],
+					"texture": "#capacitor_bank_porcelain"
+				}
+			}
+		},
+		{
+			"name": "bushing_0_0_2",
+			"from": [3.4, 6.4, 7.88065],
+			"to": [4.6, 7.4, 8.11935],
+			"rotation": {
+				"angle": 45,
+				"axis": "y",
+				"origin": [4, 8, 8]
+			},
+			"faces": {
+				"east": {
+					"uv": [7.88065, 8.6, 8.11935, 9.6],
+					"texture": "#capacitor_bank_porcelain"
+				},
+				"west": {
+					"uv": [7.88065, 8.6, 8.11935, 9.6],
+					"texture": "#capacitor_bank_porcelain"
+				},
+				"up": {
+					"uv": [3.4, 7.88065, 4.6, 8.11935],
+					"texture": "#capacitor_bank_porcelain"
+				}
+			}
+		},
+		{
+			"name": "bushing_0_0_3",
+			"from": [3.4, 6.4, 7.88065],
+			"to": [4.6, 7.4, 8.11935],
+			"rotation": {
+				"angle": -22.5,
+				"axis": "y",
+				"origin": [4, 8, 8]
+			},
+			"faces": {
+				"east": {
+					"uv": [7.88065, 8.6, 8.11935, 9.6],
+					"texture": "#capacitor_bank_porcelain"
+				},
+				"west": {
+					"uv": [7.88065, 8.6, 8.11935, 9.6],
+					"texture": "#capacitor_bank_porcelain"
+				},
+				"up": {
+					"uv": [3.4, 7.88065, 4.6, 8.11935],
+					"texture": "#capacitor_bank_porcelain"
+				}
+			}
+		},
+		{
+			"name": "bushing_0_0_4",
+			"from": [3.4, 6.4, 7.88065],
+			"to": [4.6, 7.4, 8.11935],
+			"rotation": {
+				"angle": -45,
+				"axis": "y",
+				"origin": [4, 8, 8]
+			},
+			"faces": {
+				"east": {
+					"uv": [7.88065, 8.6, 8.11935, 9.6],
+					"texture": "#capacitor_bank_porcelain"
+				},
+				"west": {
+					"uv": [7.88065, 8.6, 8.11935, 9.6],
+					"texture": "#capacitor_bank_porcelain"
+				},
+				"up": {
+					"uv": [3.4, 7.88065, 4.6, 8.11935],
+					"texture": "#capacitor_bank_porcelain"
+				}
+			}
+		},
+		{
+			"name": "bushing_0_0_5",
+			"from": [3.88065, 6.4, 7.4],
+			"to": [4.11935, 7.4, 8.6],
 			"rotation": {
 				"angle": 0,
 				"axis": "y",
@@ -163,35 +322,71 @@
 			},
 			"faces": {
 				"north": {
-					"uv": [0, 0, 1, 1],
-					"texture": "#por"
-				},
-				"east": {
-					"uv": [0, 0, 2, 1],
-					"texture": "#por"
+					"uv": [11.88065, 8.6, 12.11935, 9.6],
+					"texture": "#capacitor_bank_porcelain"
 				},
 				"south": {
-					"uv": [0, 0, 1, 1],
-					"texture": "#por"
-				},
-				"west": {
-					"uv": [0, 0, 2, 1],
-					"texture": "#por"
+					"uv": [3.88065, 8.6, 4.11935, 9.6],
+					"texture": "#capacitor_bank_porcelain"
 				},
 				"up": {
-					"uv": [0, 0, 1, 2],
-					"texture": "#por"
+					"uv": [3.88065, 7.4, 4.11935, 8.6],
+					"texture": "#capacitor_bank_porcelain"
+				}
+			}
+		},
+		{
+			"name": "bushing_0_0_6",
+			"from": [3.88065, 6.4, 7.4],
+			"to": [4.11935, 7.4, 8.6],
+			"rotation": {
+				"angle": 22.5,
+				"axis": "y",
+				"origin": [4, 8, 8]
+			},
+			"faces": {
+				"north": {
+					"uv": [11.88065, 8.6, 12.11935, 9.6],
+					"texture": "#capacitor_bank_porcelain"
 				},
-				"down": {
-					"uv": [0, 0, 1, 2],
-					"texture": "#por"
+				"south": {
+					"uv": [3.88065, 8.6, 4.11935, 9.6],
+					"texture": "#capacitor_bank_porcelain"
+				},
+				"up": {
+					"uv": [3.88065, 7.4, 4.11935, 8.6],
+					"texture": "#capacitor_bank_porcelain"
+				}
+			}
+		},
+		{
+			"name": "bushing_0_0_7",
+			"from": [3.88065, 6.4, 7.4],
+			"to": [4.11935, 7.4, 8.6],
+			"rotation": {
+				"angle": -22.5,
+				"axis": "y",
+				"origin": [4, 8, 8]
+			},
+			"faces": {
+				"north": {
+					"uv": [11.88065, 8.6, 12.11935, 9.6],
+					"texture": "#capacitor_bank_porcelain"
+				},
+				"south": {
+					"uv": [3.88065, 8.6, 4.11935, 9.6],
+					"texture": "#capacitor_bank_porcelain"
+				},
+				"up": {
+					"uv": [3.88065, 7.4, 4.11935, 8.6],
+					"texture": "#capacitor_bank_porcelain"
 				}
 			}
 		},
 		{
 			"name": "can_0_1",
-			"from": [6.5, 1, 4],
-			"to": [9.5, 6.5, 12],
+			"from": [6.4, 1, 4],
+			"to": [9.6, 6.4, 12],
 			"rotation": {
 				"angle": 0,
 				"axis": "y",
@@ -199,35 +394,155 @@
 			},
 			"faces": {
 				"north": {
-					"uv": [0, 0, 3, 5.5],
-					"texture": "#can"
+					"uv": [6.4, 9.6, 9.6, 15],
+					"texture": "#capacitor_bank_can"
 				},
 				"east": {
-					"uv": [0, 0, 8, 5.5],
-					"texture": "#can"
+					"uv": [4, 9.6, 12, 15],
+					"texture": "#capacitor_bank_can"
 				},
 				"south": {
-					"uv": [0, 0, 3, 5.5],
-					"texture": "#can"
+					"uv": [6.4, 9.6, 9.6, 15],
+					"texture": "#capacitor_bank_can"
 				},
 				"west": {
-					"uv": [0, 0, 8, 5.5],
-					"texture": "#can"
+					"uv": [4, 9.6, 12, 15],
+					"texture": "#capacitor_bank_can"
 				},
 				"up": {
-					"uv": [0, 0, 3, 8],
-					"texture": "#can"
+					"uv": [6.4, 4, 9.6, 12],
+					"texture": "#capacitor_bank_can"
 				},
 				"down": {
-					"uv": [0, 0, 3, 8],
-					"texture": "#can"
+					"uv": [6.4, 4, 9.6, 12],
+					"texture": "#capacitor_bank_can"
 				}
 			}
 		},
 		{
-			"name": "bush_0_1",
-			"from": [7.5, 6.5, 7],
-			"to": [8.5, 7.5, 9],
+			"name": "bushing_0_1_0",
+			"from": [7.4, 6.4, 7.88065],
+			"to": [8.6, 7.4, 8.11935],
+			"rotation": {
+				"angle": 0,
+				"axis": "y",
+				"origin": [8, 8, 8]
+			},
+			"faces": {
+				"east": {
+					"uv": [7.88065, 8.6, 8.11935, 9.6],
+					"texture": "#capacitor_bank_porcelain"
+				},
+				"west": {
+					"uv": [7.88065, 8.6, 8.11935, 9.6],
+					"texture": "#capacitor_bank_porcelain"
+				},
+				"up": {
+					"uv": [7.4, 7.88065, 8.6, 8.11935],
+					"texture": "#capacitor_bank_porcelain"
+				}
+			}
+		},
+		{
+			"name": "bushing_0_1_1",
+			"from": [7.4, 6.4, 7.88065],
+			"to": [8.6, 7.4, 8.11935],
+			"rotation": {
+				"angle": 22.5,
+				"axis": "y",
+				"origin": [8, 8, 8]
+			},
+			"faces": {
+				"east": {
+					"uv": [7.88065, 8.6, 8.11935, 9.6],
+					"texture": "#capacitor_bank_porcelain"
+				},
+				"west": {
+					"uv": [7.88065, 8.6, 8.11935, 9.6],
+					"texture": "#capacitor_bank_porcelain"
+				},
+				"up": {
+					"uv": [7.4, 7.88065, 8.6, 8.11935],
+					"texture": "#capacitor_bank_porcelain"
+				}
+			}
+		},
+		{
+			"name": "bushing_0_1_2",
+			"from": [7.4, 6.4, 7.88065],
+			"to": [8.6, 7.4, 8.11935],
+			"rotation": {
+				"angle": 45,
+				"axis": "y",
+				"origin": [8, 8, 8]
+			},
+			"faces": {
+				"east": {
+					"uv": [7.88065, 8.6, 8.11935, 9.6],
+					"texture": "#capacitor_bank_porcelain"
+				},
+				"west": {
+					"uv": [7.88065, 8.6, 8.11935, 9.6],
+					"texture": "#capacitor_bank_porcelain"
+				},
+				"up": {
+					"uv": [7.4, 7.88065, 8.6, 8.11935],
+					"texture": "#capacitor_bank_porcelain"
+				}
+			}
+		},
+		{
+			"name": "bushing_0_1_3",
+			"from": [7.4, 6.4, 7.88065],
+			"to": [8.6, 7.4, 8.11935],
+			"rotation": {
+				"angle": -22.5,
+				"axis": "y",
+				"origin": [8, 8, 8]
+			},
+			"faces": {
+				"east": {
+					"uv": [7.88065, 8.6, 8.11935, 9.6],
+					"texture": "#capacitor_bank_porcelain"
+				},
+				"west": {
+					"uv": [7.88065, 8.6, 8.11935, 9.6],
+					"texture": "#capacitor_bank_porcelain"
+				},
+				"up": {
+					"uv": [7.4, 7.88065, 8.6, 8.11935],
+					"texture": "#capacitor_bank_porcelain"
+				}
+			}
+		},
+		{
+			"name": "bushing_0_1_4",
+			"from": [7.4, 6.4, 7.88065],
+			"to": [8.6, 7.4, 8.11935],
+			"rotation": {
+				"angle": -45,
+				"axis": "y",
+				"origin": [8, 8, 8]
+			},
+			"faces": {
+				"east": {
+					"uv": [7.88065, 8.6, 8.11935, 9.6],
+					"texture": "#capacitor_bank_porcelain"
+				},
+				"west": {
+					"uv": [7.88065, 8.6, 8.11935, 9.6],
+					"texture": "#capacitor_bank_porcelain"
+				},
+				"up": {
+					"uv": [7.4, 7.88065, 8.6, 8.11935],
+					"texture": "#capacitor_bank_porcelain"
+				}
+			}
+		},
+		{
+			"name": "bushing_0_1_5",
+			"from": [7.88065, 6.4, 7.4],
+			"to": [8.11935, 7.4, 8.6],
 			"rotation": {
 				"angle": 0,
 				"axis": "y",
@@ -235,35 +550,71 @@
 			},
 			"faces": {
 				"north": {
-					"uv": [0, 0, 1, 1],
-					"texture": "#por"
-				},
-				"east": {
-					"uv": [0, 0, 2, 1],
-					"texture": "#por"
+					"uv": [7.88065, 8.6, 8.11935, 9.6],
+					"texture": "#capacitor_bank_porcelain"
 				},
 				"south": {
-					"uv": [0, 0, 1, 1],
-					"texture": "#por"
-				},
-				"west": {
-					"uv": [0, 0, 2, 1],
-					"texture": "#por"
+					"uv": [7.88065, 8.6, 8.11935, 9.6],
+					"texture": "#capacitor_bank_porcelain"
 				},
 				"up": {
-					"uv": [0, 0, 1, 2],
-					"texture": "#por"
+					"uv": [7.88065, 7.4, 8.11935, 8.6],
+					"texture": "#capacitor_bank_porcelain"
+				}
+			}
+		},
+		{
+			"name": "bushing_0_1_6",
+			"from": [7.88065, 6.4, 7.4],
+			"to": [8.11935, 7.4, 8.6],
+			"rotation": {
+				"angle": 22.5,
+				"axis": "y",
+				"origin": [8, 8, 8]
+			},
+			"faces": {
+				"north": {
+					"uv": [7.88065, 8.6, 8.11935, 9.6],
+					"texture": "#capacitor_bank_porcelain"
 				},
-				"down": {
-					"uv": [0, 0, 1, 2],
-					"texture": "#por"
+				"south": {
+					"uv": [7.88065, 8.6, 8.11935, 9.6],
+					"texture": "#capacitor_bank_porcelain"
+				},
+				"up": {
+					"uv": [7.88065, 7.4, 8.11935, 8.6],
+					"texture": "#capacitor_bank_porcelain"
+				}
+			}
+		},
+		{
+			"name": "bushing_0_1_7",
+			"from": [7.88065, 6.4, 7.4],
+			"to": [8.11935, 7.4, 8.6],
+			"rotation": {
+				"angle": -22.5,
+				"axis": "y",
+				"origin": [8, 8, 8]
+			},
+			"faces": {
+				"north": {
+					"uv": [7.88065, 8.6, 8.11935, 9.6],
+					"texture": "#capacitor_bank_porcelain"
+				},
+				"south": {
+					"uv": [7.88065, 8.6, 8.11935, 9.6],
+					"texture": "#capacitor_bank_porcelain"
+				},
+				"up": {
+					"uv": [7.88065, 7.4, 8.11935, 8.6],
+					"texture": "#capacitor_bank_porcelain"
 				}
 			}
 		},
 		{
 			"name": "can_0_2",
-			"from": [10.5, 1, 4],
-			"to": [13.5, 6.5, 12],
+			"from": [10.4, 1, 4],
+			"to": [13.6, 6.4, 12],
 			"rotation": {
 				"angle": 0,
 				"axis": "y",
@@ -271,35 +622,155 @@
 			},
 			"faces": {
 				"north": {
-					"uv": [0, 0, 3, 5.5],
-					"texture": "#can"
+					"uv": [2.4, 9.6, 5.6, 15],
+					"texture": "#capacitor_bank_can"
 				},
 				"east": {
-					"uv": [0, 0, 8, 5.5],
-					"texture": "#can"
+					"uv": [4, 9.6, 12, 15],
+					"texture": "#capacitor_bank_can"
 				},
 				"south": {
-					"uv": [0, 0, 3, 5.5],
-					"texture": "#can"
+					"uv": [10.4, 9.6, 13.6, 15],
+					"texture": "#capacitor_bank_can"
 				},
 				"west": {
-					"uv": [0, 0, 8, 5.5],
-					"texture": "#can"
+					"uv": [4, 9.6, 12, 15],
+					"texture": "#capacitor_bank_can"
 				},
 				"up": {
-					"uv": [0, 0, 3, 8],
-					"texture": "#can"
+					"uv": [10.4, 4, 13.6, 12],
+					"texture": "#capacitor_bank_can"
 				},
 				"down": {
-					"uv": [0, 0, 3, 8],
-					"texture": "#can"
+					"uv": [10.4, 4, 13.6, 12],
+					"texture": "#capacitor_bank_can"
 				}
 			}
 		},
 		{
-			"name": "bush_0_2",
-			"from": [11.5, 6.5, 7],
-			"to": [12.5, 7.5, 9],
+			"name": "bushing_0_2_0",
+			"from": [11.4, 6.4, 7.88065],
+			"to": [12.6, 7.4, 8.11935],
+			"rotation": {
+				"angle": 0,
+				"axis": "y",
+				"origin": [8, 8, 8]
+			},
+			"faces": {
+				"east": {
+					"uv": [7.88065, 8.6, 8.11935, 9.6],
+					"texture": "#capacitor_bank_porcelain"
+				},
+				"west": {
+					"uv": [7.88065, 8.6, 8.11935, 9.6],
+					"texture": "#capacitor_bank_porcelain"
+				},
+				"up": {
+					"uv": [11.4, 7.88065, 12.6, 8.11935],
+					"texture": "#capacitor_bank_porcelain"
+				}
+			}
+		},
+		{
+			"name": "bushing_0_2_1",
+			"from": [11.4, 6.4, 7.88065],
+			"to": [12.6, 7.4, 8.11935],
+			"rotation": {
+				"angle": 22.5,
+				"axis": "y",
+				"origin": [12, 8, 8]
+			},
+			"faces": {
+				"east": {
+					"uv": [7.88065, 8.6, 8.11935, 9.6],
+					"texture": "#capacitor_bank_porcelain"
+				},
+				"west": {
+					"uv": [7.88065, 8.6, 8.11935, 9.6],
+					"texture": "#capacitor_bank_porcelain"
+				},
+				"up": {
+					"uv": [11.4, 7.88065, 12.6, 8.11935],
+					"texture": "#capacitor_bank_porcelain"
+				}
+			}
+		},
+		{
+			"name": "bushing_0_2_2",
+			"from": [11.4, 6.4, 7.88065],
+			"to": [12.6, 7.4, 8.11935],
+			"rotation": {
+				"angle": 45,
+				"axis": "y",
+				"origin": [12, 8, 8]
+			},
+			"faces": {
+				"east": {
+					"uv": [7.88065, 8.6, 8.11935, 9.6],
+					"texture": "#capacitor_bank_porcelain"
+				},
+				"west": {
+					"uv": [7.88065, 8.6, 8.11935, 9.6],
+					"texture": "#capacitor_bank_porcelain"
+				},
+				"up": {
+					"uv": [11.4, 7.88065, 12.6, 8.11935],
+					"texture": "#capacitor_bank_porcelain"
+				}
+			}
+		},
+		{
+			"name": "bushing_0_2_3",
+			"from": [11.4, 6.4, 7.88065],
+			"to": [12.6, 7.4, 8.11935],
+			"rotation": {
+				"angle": -22.5,
+				"axis": "y",
+				"origin": [12, 8, 8]
+			},
+			"faces": {
+				"east": {
+					"uv": [7.88065, 8.6, 8.11935, 9.6],
+					"texture": "#capacitor_bank_porcelain"
+				},
+				"west": {
+					"uv": [7.88065, 8.6, 8.11935, 9.6],
+					"texture": "#capacitor_bank_porcelain"
+				},
+				"up": {
+					"uv": [11.4, 7.88065, 12.6, 8.11935],
+					"texture": "#capacitor_bank_porcelain"
+				}
+			}
+		},
+		{
+			"name": "bushing_0_2_4",
+			"from": [11.4, 6.4, 7.88065],
+			"to": [12.6, 7.4, 8.11935],
+			"rotation": {
+				"angle": -45,
+				"axis": "y",
+				"origin": [12, 8, 8]
+			},
+			"faces": {
+				"east": {
+					"uv": [7.88065, 8.6, 8.11935, 9.6],
+					"texture": "#capacitor_bank_porcelain"
+				},
+				"west": {
+					"uv": [7.88065, 8.6, 8.11935, 9.6],
+					"texture": "#capacitor_bank_porcelain"
+				},
+				"up": {
+					"uv": [11.4, 7.88065, 12.6, 8.11935],
+					"texture": "#capacitor_bank_porcelain"
+				}
+			}
+		},
+		{
+			"name": "bushing_0_2_5",
+			"from": [11.88065, 6.4, 7.4],
+			"to": [12.11935, 7.4, 8.6],
 			"rotation": {
 				"angle": 0,
 				"axis": "y",
@@ -307,28 +778,64 @@
 			},
 			"faces": {
 				"north": {
-					"uv": [0, 0, 1, 1],
-					"texture": "#por"
-				},
-				"east": {
-					"uv": [0, 0, 2, 1],
-					"texture": "#por"
+					"uv": [3.88065, 8.6, 4.11935, 9.6],
+					"texture": "#capacitor_bank_porcelain"
 				},
 				"south": {
-					"uv": [0, 0, 1, 1],
-					"texture": "#por"
-				},
-				"west": {
-					"uv": [0, 0, 2, 1],
-					"texture": "#por"
+					"uv": [11.88065, 8.6, 12.11935, 9.6],
+					"texture": "#capacitor_bank_porcelain"
 				},
 				"up": {
-					"uv": [0, 0, 1, 2],
-					"texture": "#por"
+					"uv": [11.88065, 7.4, 12.11935, 8.6],
+					"texture": "#capacitor_bank_porcelain"
+				}
+			}
+		},
+		{
+			"name": "bushing_0_2_6",
+			"from": [11.88065, 6.4, 7.4],
+			"to": [12.11935, 7.4, 8.6],
+			"rotation": {
+				"angle": 22.5,
+				"axis": "y",
+				"origin": [12, 8, 8]
+			},
+			"faces": {
+				"north": {
+					"uv": [3.88065, 8.6, 4.11935, 9.6],
+					"texture": "#capacitor_bank_porcelain"
 				},
-				"down": {
-					"uv": [0, 0, 1, 2],
-					"texture": "#por"
+				"south": {
+					"uv": [11.88065, 8.6, 12.11935, 9.6],
+					"texture": "#capacitor_bank_porcelain"
+				},
+				"up": {
+					"uv": [11.88065, 7.4, 12.11935, 8.6],
+					"texture": "#capacitor_bank_porcelain"
+				}
+			}
+		},
+		{
+			"name": "bushing_0_2_7",
+			"from": [11.88065, 6.4, 7.4],
+			"to": [12.11935, 7.4, 8.6],
+			"rotation": {
+				"angle": -22.5,
+				"axis": "y",
+				"origin": [12, 8, 8]
+			},
+			"faces": {
+				"north": {
+					"uv": [3.88065, 8.6, 4.11935, 9.6],
+					"texture": "#capacitor_bank_porcelain"
+				},
+				"south": {
+					"uv": [11.88065, 8.6, 12.11935, 9.6],
+					"texture": "#capacitor_bank_porcelain"
+				},
+				"up": {
+					"uv": [11.88065, 7.4, 12.11935, 8.6],
+					"texture": "#capacitor_bank_porcelain"
 				}
 			}
 		},
@@ -343,35 +850,35 @@
 			},
 			"faces": {
 				"north": {
-					"uv": [0, 0, 14, 1],
-					"texture": "#ral"
+					"uv": [1, 8, 15, 9],
+					"texture": "#capacitor_bank_enamel"
 				},
 				"east": {
-					"uv": [0, 0, 12, 1],
-					"texture": "#ral"
+					"uv": [2, 8, 14, 9],
+					"texture": "#capacitor_bank_enamel"
 				},
 				"south": {
-					"uv": [0, 0, 14, 1],
-					"texture": "#ral"
+					"uv": [1, 8, 15, 9],
+					"texture": "#capacitor_bank_enamel"
 				},
 				"west": {
-					"uv": [0, 0, 12, 1],
-					"texture": "#ral"
+					"uv": [2, 8, 14, 9],
+					"texture": "#capacitor_bank_enamel"
 				},
 				"up": {
-					"uv": [0, 0, 14, 12],
-					"texture": "#ral"
+					"uv": [1, 2, 15, 14],
+					"texture": "#capacitor_bank_enamel"
 				},
 				"down": {
-					"uv": [0, 0, 14, 12],
-					"texture": "#ral"
+					"uv": [1, 2, 15, 14],
+					"texture": "#capacitor_bank_enamel"
 				}
 			}
 		},
 		{
 			"name": "can_1_0",
-			"from": [2.5, 8, 4],
-			"to": [5.5, 13.5, 12],
+			"from": [2.4, 8, 4],
+			"to": [5.6, 13.4, 12],
 			"rotation": {
 				"angle": 0,
 				"axis": "y",
@@ -379,35 +886,155 @@
 			},
 			"faces": {
 				"north": {
-					"uv": [0, 0, 3, 5.5],
-					"texture": "#can"
+					"uv": [10.4, 2.6, 13.6, 8],
+					"texture": "#capacitor_bank_can"
 				},
 				"east": {
-					"uv": [0, 0, 8, 5.5],
-					"texture": "#can"
+					"uv": [4, 2.6, 12, 8],
+					"texture": "#capacitor_bank_can"
 				},
 				"south": {
-					"uv": [0, 0, 3, 5.5],
-					"texture": "#can"
+					"uv": [2.4, 2.6, 5.6, 8],
+					"texture": "#capacitor_bank_can"
 				},
 				"west": {
-					"uv": [0, 0, 8, 5.5],
-					"texture": "#can"
+					"uv": [4, 2.6, 12, 8],
+					"texture": "#capacitor_bank_can"
 				},
 				"up": {
-					"uv": [0, 0, 3, 8],
-					"texture": "#can"
+					"uv": [2.4, 4, 5.6, 12],
+					"texture": "#capacitor_bank_can"
 				},
 				"down": {
-					"uv": [0, 0, 3, 8],
-					"texture": "#can"
+					"uv": [2.4, 4, 5.6, 12],
+					"texture": "#capacitor_bank_can"
 				}
 			}
 		},
 		{
-			"name": "bush_1_0",
-			"from": [3.5, 13.5, 7],
-			"to": [4.5, 14.5, 9],
+			"name": "bushing_1_0_0",
+			"from": [3.4, 13.4, 7.88065],
+			"to": [4.6, 14.4, 8.11935],
+			"rotation": {
+				"angle": 0,
+				"axis": "y",
+				"origin": [8, 8, 8]
+			},
+			"faces": {
+				"east": {
+					"uv": [7.88065, 1.6, 8.11935, 2.6],
+					"texture": "#capacitor_bank_porcelain"
+				},
+				"west": {
+					"uv": [7.88065, 1.6, 8.11935, 2.6],
+					"texture": "#capacitor_bank_porcelain"
+				},
+				"up": {
+					"uv": [3.4, 7.88065, 4.6, 8.11935],
+					"texture": "#capacitor_bank_porcelain"
+				}
+			}
+		},
+		{
+			"name": "bushing_1_0_1",
+			"from": [3.4, 13.4, 7.88065],
+			"to": [4.6, 14.4, 8.11935],
+			"rotation": {
+				"angle": 22.5,
+				"axis": "y",
+				"origin": [4, 8, 8]
+			},
+			"faces": {
+				"east": {
+					"uv": [7.88065, 1.6, 8.11935, 2.6],
+					"texture": "#capacitor_bank_porcelain"
+				},
+				"west": {
+					"uv": [7.88065, 1.6, 8.11935, 2.6],
+					"texture": "#capacitor_bank_porcelain"
+				},
+				"up": {
+					"uv": [3.4, 7.88065, 4.6, 8.11935],
+					"texture": "#capacitor_bank_porcelain"
+				}
+			}
+		},
+		{
+			"name": "bushing_1_0_2",
+			"from": [3.4, 13.4, 7.88065],
+			"to": [4.6, 14.4, 8.11935],
+			"rotation": {
+				"angle": 45,
+				"axis": "y",
+				"origin": [4, 8, 8]
+			},
+			"faces": {
+				"east": {
+					"uv": [7.88065, 1.6, 8.11935, 2.6],
+					"texture": "#capacitor_bank_porcelain"
+				},
+				"west": {
+					"uv": [7.88065, 1.6, 8.11935, 2.6],
+					"texture": "#capacitor_bank_porcelain"
+				},
+				"up": {
+					"uv": [3.4, 7.88065, 4.6, 8.11935],
+					"texture": "#capacitor_bank_porcelain"
+				}
+			}
+		},
+		{
+			"name": "bushing_1_0_3",
+			"from": [3.4, 13.4, 7.88065],
+			"to": [4.6, 14.4, 8.11935],
+			"rotation": {
+				"angle": -22.5,
+				"axis": "y",
+				"origin": [4, 8, 8]
+			},
+			"faces": {
+				"east": {
+					"uv": [7.88065, 1.6, 8.11935, 2.6],
+					"texture": "#capacitor_bank_porcelain"
+				},
+				"west": {
+					"uv": [7.88065, 1.6, 8.11935, 2.6],
+					"texture": "#capacitor_bank_porcelain"
+				},
+				"up": {
+					"uv": [3.4, 7.88065, 4.6, 8.11935],
+					"texture": "#capacitor_bank_porcelain"
+				}
+			}
+		},
+		{
+			"name": "bushing_1_0_4",
+			"from": [3.4, 13.4, 7.88065],
+			"to": [4.6, 14.4, 8.11935],
+			"rotation": {
+				"angle": -45,
+				"axis": "y",
+				"origin": [4, 8, 8]
+			},
+			"faces": {
+				"east": {
+					"uv": [7.88065, 1.6, 8.11935, 2.6],
+					"texture": "#capacitor_bank_porcelain"
+				},
+				"west": {
+					"uv": [7.88065, 1.6, 8.11935, 2.6],
+					"texture": "#capacitor_bank_porcelain"
+				},
+				"up": {
+					"uv": [3.4, 7.88065, 4.6, 8.11935],
+					"texture": "#capacitor_bank_porcelain"
+				}
+			}
+		},
+		{
+			"name": "bushing_1_0_5",
+			"from": [3.88065, 13.4, 7.4],
+			"to": [4.11935, 14.4, 8.6],
 			"rotation": {
 				"angle": 0,
 				"axis": "y",
@@ -415,35 +1042,107 @@
 			},
 			"faces": {
 				"north": {
-					"uv": [0, 0, 1, 1],
-					"texture": "#por"
-				},
-				"east": {
-					"uv": [0, 0, 2, 1],
-					"texture": "#por"
+					"uv": [11.88065, 1.6, 12.11935, 2.6],
+					"texture": "#capacitor_bank_porcelain"
 				},
 				"south": {
-					"uv": [0, 0, 1, 1],
-					"texture": "#por"
-				},
-				"west": {
-					"uv": [0, 0, 2, 1],
-					"texture": "#por"
+					"uv": [3.88065, 1.6, 4.11935, 2.6],
+					"texture": "#capacitor_bank_porcelain"
 				},
 				"up": {
-					"uv": [0, 0, 1, 2],
-					"texture": "#por"
+					"uv": [3.88065, 7.4, 4.11935, 8.6],
+					"texture": "#capacitor_bank_porcelain"
+				}
+			}
+		},
+		{
+			"name": "bushing_1_0_6",
+			"from": [3.88065, 13.4, 7.4],
+			"to": [4.11935, 14.4, 8.6],
+			"rotation": {
+				"angle": 22.5,
+				"axis": "y",
+				"origin": [4, 8, 8]
+			},
+			"faces": {
+				"north": {
+					"uv": [11.88065, 1.6, 12.11935, 2.6],
+					"texture": "#capacitor_bank_porcelain"
+				},
+				"south": {
+					"uv": [3.88065, 1.6, 4.11935, 2.6],
+					"texture": "#capacitor_bank_porcelain"
+				},
+				"up": {
+					"uv": [3.88065, 7.4, 4.11935, 8.6],
+					"texture": "#capacitor_bank_porcelain"
+				}
+			}
+		},
+		{
+			"name": "bushing_1_0_7",
+			"from": [3.88065, 13.4, 7.4],
+			"to": [4.11935, 14.4, 8.6],
+			"rotation": {
+				"angle": -22.5,
+				"axis": "y",
+				"origin": [4, 8, 8]
+			},
+			"faces": {
+				"north": {
+					"uv": [11.88065, 1.6, 12.11935, 2.6],
+					"texture": "#capacitor_bank_porcelain"
+				},
+				"south": {
+					"uv": [3.88065, 1.6, 4.11935, 2.6],
+					"texture": "#capacitor_bank_porcelain"
+				},
+				"up": {
+					"uv": [3.88065, 7.4, 4.11935, 8.6],
+					"texture": "#capacitor_bank_porcelain"
+				}
+			}
+		},
+		{
+			"name": "fuse_0",
+			"from": [3.7, 14.4, 7.7],
+			"to": [4.3, 15, 8.3],
+			"rotation": {
+				"angle": 0,
+				"axis": "y",
+				"origin": [8, 8, 8]
+			},
+			"faces": {
+				"north": {
+					"uv": [11.7, 1, 12.3, 1.6],
+					"texture": "#material_steel"
+				},
+				"east": {
+					"uv": [7.7, 1, 8.3, 1.6],
+					"texture": "#material_steel"
+				},
+				"south": {
+					"uv": [3.7, 1, 4.3, 1.6],
+					"texture": "#material_steel"
+				},
+				"west": {
+					"uv": [7.7, 1, 8.3, 1.6],
+					"texture": "#material_steel"
+				},
+				"up": {
+					"uv": [3.7, 7.7, 4.3, 8.3],
+					"texture": "#material_steel"
 				},
 				"down": {
-					"uv": [0, 0, 1, 2],
-					"texture": "#por"
+					"uv": [3.7, 7.7, 4.3, 8.3],
+					"texture": "#material_steel"
 				}
 			}
 		},
 		{
 			"name": "can_1_1",
-			"from": [6.5, 8, 4],
-			"to": [9.5, 13.5, 12],
+			"from": [6.4, 8, 4],
+			"to": [9.6, 13.4, 12],
 			"rotation": {
 				"angle": 0,
 				"axis": "y",
@@ -451,35 +1150,155 @@
 			},
 			"faces": {
 				"north": {
-					"uv": [0, 0, 3, 5.5],
-					"texture": "#can"
+					"uv": [6.4, 2.6, 9.6, 8],
+					"texture": "#capacitor_bank_can"
 				},
 				"east": {
-					"uv": [0, 0, 8, 5.5],
-					"texture": "#can"
+					"uv": [4, 2.6, 12, 8],
+					"texture": "#capacitor_bank_can"
 				},
 				"south": {
-					"uv": [0, 0, 3, 5.5],
-					"texture": "#can"
+					"uv": [6.4, 2.6, 9.6, 8],
+					"texture": "#capacitor_bank_can"
 				},
 				"west": {
-					"uv": [0, 0, 8, 5.5],
-					"texture": "#can"
+					"uv": [4, 2.6, 12, 8],
+					"texture": "#capacitor_bank_can"
 				},
 				"up": {
-					"uv": [0, 0, 3, 8],
-					"texture": "#can"
+					"uv": [6.4, 4, 9.6, 12],
+					"texture": "#capacitor_bank_can"
 				},
 				"down": {
-					"uv": [0, 0, 3, 8],
-					"texture": "#can"
+					"uv": [6.4, 4, 9.6, 12],
+					"texture": "#capacitor_bank_can"
 				}
 			}
 		},
 		{
-			"name": "bush_1_1",
-			"from": [7.5, 13.5, 7],
-			"to": [8.5, 14.5, 9],
+			"name": "bushing_1_1_0",
+			"from": [7.4, 13.4, 7.88065],
+			"to": [8.6, 14.4, 8.11935],
+			"rotation": {
+				"angle": 0,
+				"axis": "y",
+				"origin": [8, 8, 8]
+			},
+			"faces": {
+				"east": {
+					"uv": [7.88065, 1.6, 8.11935, 2.6],
+					"texture": "#capacitor_bank_porcelain"
+				},
+				"west": {
+					"uv": [7.88065, 1.6, 8.11935, 2.6],
+					"texture": "#capacitor_bank_porcelain"
+				},
+				"up": {
+					"uv": [7.4, 7.88065, 8.6, 8.11935],
+					"texture": "#capacitor_bank_porcelain"
+				}
+			}
+		},
+		{
+			"name": "bushing_1_1_1",
+			"from": [7.4, 13.4, 7.88065],
+			"to": [8.6, 14.4, 8.11935],
+			"rotation": {
+				"angle": 22.5,
+				"axis": "y",
+				"origin": [8, 8, 8]
+			},
+			"faces": {
+				"east": {
+					"uv": [7.88065, 1.6, 8.11935, 2.6],
+					"texture": "#capacitor_bank_porcelain"
+				},
+				"west": {
+					"uv": [7.88065, 1.6, 8.11935, 2.6],
+					"texture": "#capacitor_bank_porcelain"
+				},
+				"up": {
+					"uv": [7.4, 7.88065, 8.6, 8.11935],
+					"texture": "#capacitor_bank_porcelain"
+				}
+			}
+		},
+		{
+			"name": "bushing_1_1_2",
+			"from": [7.4, 13.4, 7.88065],
+			"to": [8.6, 14.4, 8.11935],
+			"rotation": {
+				"angle": 45,
+				"axis": "y",
+				"origin": [8, 8, 8]
+			},
+			"faces": {
+				"east": {
+					"uv": [7.88065, 1.6, 8.11935, 2.6],
+					"texture": "#capacitor_bank_porcelain"
+				},
+				"west": {
+					"uv": [7.88065, 1.6, 8.11935, 2.6],
+					"texture": "#capacitor_bank_porcelain"
+				},
+				"up": {
+					"uv": [7.4, 7.88065, 8.6, 8.11935],
+					"texture": "#capacitor_bank_porcelain"
+				}
+			}
+		},
+		{
+			"name": "bushing_1_1_3",
+			"from": [7.4, 13.4, 7.88065],
+			"to": [8.6, 14.4, 8.11935],
+			"rotation": {
+				"angle": -22.5,
+				"axis": "y",
+				"origin": [8, 8, 8]
+			},
+			"faces": {
+				"east": {
+					"uv": [7.88065, 1.6, 8.11935, 2.6],
+					"texture": "#capacitor_bank_porcelain"
+				},
+				"west": {
+					"uv": [7.88065, 1.6, 8.11935, 2.6],
+					"texture": "#capacitor_bank_porcelain"
+				},
+				"up": {
+					"uv": [7.4, 7.88065, 8.6, 8.11935],
+					"texture": "#capacitor_bank_porcelain"
+				}
+			}
+		},
+		{
+			"name": "bushing_1_1_4",
+			"from": [7.4, 13.4, 7.88065],
+			"to": [8.6, 14.4, 8.11935],
+			"rotation": {
+				"angle": -45,
+				"axis": "y",
+				"origin": [8, 8, 8]
+			},
+			"faces": {
+				"east": {
+					"uv": [7.88065, 1.6, 8.11935, 2.6],
+					"texture": "#capacitor_bank_porcelain"
+				},
+				"west": {
+					"uv": [7.88065, 1.6, 8.11935, 2.6],
+					"texture": "#capacitor_bank_porcelain"
+				},
+				"up": {
+					"uv": [7.4, 7.88065, 8.6, 8.11935],
+					"texture": "#capacitor_bank_porcelain"
+				}
+			}
+		},
+		{
+			"name": "bushing_1_1_5",
+			"from": [7.88065, 13.4, 7.4],
+			"to": [8.11935, 14.4, 8.6],
 			"rotation": {
 				"angle": 0,
 				"axis": "y",
@@ -487,35 +1306,107 @@
 			},
 			"faces": {
 				"north": {
-					"uv": [0, 0, 1, 1],
-					"texture": "#por"
-				},
-				"east": {
-					"uv": [0, 0, 2, 1],
-					"texture": "#por"
+					"uv": [7.88065, 1.6, 8.11935, 2.6],
+					"texture": "#capacitor_bank_porcelain"
 				},
 				"south": {
-					"uv": [0, 0, 1, 1],
-					"texture": "#por"
-				},
-				"west": {
-					"uv": [0, 0, 2, 1],
-					"texture": "#por"
+					"uv": [7.88065, 1.6, 8.11935, 2.6],
+					"texture": "#capacitor_bank_porcelain"
 				},
 				"up": {
-					"uv": [0, 0, 1, 2],
-					"texture": "#por"
+					"uv": [7.88065, 7.4, 8.11935, 8.6],
+					"texture": "#capacitor_bank_porcelain"
+				}
+			}
+		},
+		{
+			"name": "bushing_1_1_6",
+			"from": [7.88065, 13.4, 7.4],
+			"to": [8.11935, 14.4, 8.6],
+			"rotation": {
+				"angle": 22.5,
+				"axis": "y",
+				"origin": [8, 8, 8]
+			},
+			"faces": {
+				"north": {
+					"uv": [7.88065, 1.6, 8.11935, 2.6],
+					"texture": "#capacitor_bank_porcelain"
+				},
+				"south": {
+					"uv": [7.88065, 1.6, 8.11935, 2.6],
+					"texture": "#capacitor_bank_porcelain"
+				},
+				"up": {
+					"uv": [7.88065, 7.4, 8.11935, 8.6],
+					"texture": "#capacitor_bank_porcelain"
+				}
+			}
+		},
+		{
+			"name": "bushing_1_1_7",
+			"from": [7.88065, 13.4, 7.4],
+			"to": [8.11935, 14.4, 8.6],
+			"rotation": {
+				"angle": -22.5,
+				"axis": "y",
+				"origin": [8, 8, 8]
+			},
+			"faces": {
+				"north": {
+					"uv": [7.88065, 1.6, 8.11935, 2.6],
+					"texture": "#capacitor_bank_porcelain"
+				},
+				"south": {
+					"uv": [7.88065, 1.6, 8.11935, 2.6],
+					"texture": "#capacitor_bank_porcelain"
+				},
+				"up": {
+					"uv": [7.88065, 7.4, 8.11935, 8.6],
+					"texture": "#capacitor_bank_porcelain"
+				}
+			}
+		},
+		{
+			"name": "fuse_1",
+			"from": [7.7, 14.4, 7.7],
+			"to": [8.3, 15, 8.3],
+			"rotation": {
+				"angle": 0,
+				"axis": "y",
+				"origin": [8, 8, 8]
+			},
+			"faces": {
+				"north": {
+					"uv": [7.7, 1, 8.3, 1.6],
+					"texture": "#material_steel"
+				},
+				"east": {
+					"uv": [7.7, 1, 8.3, 1.6],
+					"texture": "#material_steel"
+				},
+				"south": {
+					"uv": [7.7, 1, 8.3, 1.6],
+					"texture": "#material_steel"
+				},
+				"west": {
+					"uv": [7.7, 1, 8.3, 1.6],
+					"texture": "#material_steel"
+				},
+				"up": {
+					"uv": [7.7, 7.7, 8.3, 8.3],
+					"texture": "#material_steel"
 				},
 				"down": {
-					"uv": [0, 0, 1, 2],
-					"texture": "#por"
+					"uv": [7.7, 7.7, 8.3, 8.3],
+					"texture": "#material_steel"
 				}
 			}
 		},
 		{
 			"name": "can_1_2",
-			"from": [10.5, 8, 4],
-			"to": [13.5, 13.5, 12],
+			"from": [10.4, 8, 4],
+			"to": [13.6, 13.4, 12],
 			"rotation": {
 				"angle": 0,
 				"axis": "y",
@@ -523,35 +1414,155 @@
 			},
 			"faces": {
 				"north": {
-					"uv": [0, 0, 3, 5.5],
-					"texture": "#can"
+					"uv": [2.4, 2.6, 5.6, 8],
+					"texture": "#capacitor_bank_can"
 				},
 				"east": {
-					"uv": [0, 0, 8, 5.5],
-					"texture": "#can"
+					"uv": [4, 2.6, 12, 8],
+					"texture": "#capacitor_bank_can"
 				},
 				"south": {
-					"uv": [0, 0, 3, 5.5],
-					"texture": "#can"
+					"uv": [10.4, 2.6, 13.6, 8],
+					"texture": "#capacitor_bank_can"
 				},
 				"west": {
-					"uv": [0, 0, 8, 5.5],
-					"texture": "#can"
+					"uv": [4, 2.6, 12, 8],
+					"texture": "#capacitor_bank_can"
 				},
 				"up": {
-					"uv": [0, 0, 3, 8],
-					"texture": "#can"
+					"uv": [10.4, 4, 13.6, 12],
+					"texture": "#capacitor_bank_can"
 				},
 				"down": {
-					"uv": [0, 0, 3, 8],
-					"texture": "#can"
+					"uv": [10.4, 4, 13.6, 12],
+					"texture": "#capacitor_bank_can"
 				}
 			}
 		},
 		{
-			"name": "bush_1_2",
-			"from": [11.5, 13.5, 7],
-			"to": [12.5, 14.5, 9],
+			"name": "bushing_1_2_0",
+			"from": [11.4, 13.4, 7.88065],
+			"to": [12.6, 14.4, 8.11935],
+			"rotation": {
+				"angle": 0,
+				"axis": "y",
+				"origin": [8, 8, 8]
+			},
+			"faces": {
+				"east": {
+					"uv": [7.88065, 1.6, 8.11935, 2.6],
+					"texture": "#capacitor_bank_porcelain"
+				},
+				"west": {
+					"uv": [7.88065, 1.6, 8.11935, 2.6],
+					"texture": "#capacitor_bank_porcelain"
+				},
+				"up": {
+					"uv": [11.4, 7.88065, 12.6, 8.11935],
+					"texture": "#capacitor_bank_porcelain"
+				}
+			}
+		},
+		{
+			"name": "bushing_1_2_1",
+			"from": [11.4, 13.4, 7.88065],
+			"to": [12.6, 14.4, 8.11935],
+			"rotation": {
+				"angle": 22.5,
+				"axis": "y",
+				"origin": [12, 8, 8]
+			},
+			"faces": {
+				"east": {
+					"uv": [7.88065, 1.6, 8.11935, 2.6],
+					"texture": "#capacitor_bank_porcelain"
+				},
+				"west": {
+					"uv": [7.88065, 1.6, 8.11935, 2.6],
+					"texture": "#capacitor_bank_porcelain"
+				},
+				"up": {
+					"uv": [11.4, 7.88065, 12.6, 8.11935],
+					"texture": "#capacitor_bank_porcelain"
+				}
+			}
+		},
+		{
+			"name": "bushing_1_2_2",
+			"from": [11.4, 13.4, 7.88065],
+			"to": [12.6, 14.4, 8.11935],
+			"rotation": {
+				"angle": 45,
+				"axis": "y",
+				"origin": [12, 8, 8]
+			},
+			"faces": {
+				"east": {
+					"uv": [7.88065, 1.6, 8.11935, 2.6],
+					"texture": "#capacitor_bank_porcelain"
+				},
+				"west": {
+					"uv": [7.88065, 1.6, 8.11935, 2.6],
+					"texture": "#capacitor_bank_porcelain"
+				},
+				"up": {
+					"uv": [11.4, 7.88065, 12.6, 8.11935],
+					"texture": "#capacitor_bank_porcelain"
+				}
+			}
+		},
+		{
+			"name": "bushing_1_2_3",
+			"from": [11.4, 13.4, 7.88065],
+			"to": [12.6, 14.4, 8.11935],
+			"rotation": {
+				"angle": -22.5,
+				"axis": "y",
+				"origin": [12, 8, 8]
+			},
+			"faces": {
+				"east": {
+					"uv": [7.88065, 1.6, 8.11935, 2.6],
+					"texture": "#capacitor_bank_porcelain"
+				},
+				"west": {
+					"uv": [7.88065, 1.6, 8.11935, 2.6],
+					"texture": "#capacitor_bank_porcelain"
+				},
+				"up": {
+					"uv": [11.4, 7.88065, 12.6, 8.11935],
+					"texture": "#capacitor_bank_porcelain"
+				}
+			}
+		},
+		{
+			"name": "bushing_1_2_4",
+			"from": [11.4, 13.4, 7.88065],
+			"to": [12.6, 14.4, 8.11935],
+			"rotation": {
+				"angle": -45,
+				"axis": "y",
+				"origin": [12, 8, 8]
+			},
+			"faces": {
+				"east": {
+					"uv": [7.88065, 1.6, 8.11935, 2.6],
+					"texture": "#capacitor_bank_porcelain"
+				},
+				"west": {
+					"uv": [7.88065, 1.6, 8.11935, 2.6],
+					"texture": "#capacitor_bank_porcelain"
+				},
+				"up": {
+					"uv": [11.4, 7.88065, 12.6, 8.11935],
+					"texture": "#capacitor_bank_porcelain"
+				}
+			}
+		},
+		{
+			"name": "bushing_1_2_5",
+			"from": [11.88065, 13.4, 7.4],
+			"to": [12.11935, 14.4, 8.6],
 			"rotation": {
 				"angle": 0,
 				"axis": "y",
@@ -559,35 +1570,143 @@
 			},
 			"faces": {
 				"north": {
-					"uv": [0, 0, 1, 1],
-					"texture": "#por"
-				},
-				"east": {
-					"uv": [0, 0, 2, 1],
-					"texture": "#por"
+					"uv": [3.88065, 1.6, 4.11935, 2.6],
+					"texture": "#capacitor_bank_porcelain"
 				},
 				"south": {
-					"uv": [0, 0, 1, 1],
-					"texture": "#por"
-				},
-				"west": {
-					"uv": [0, 0, 2, 1],
-					"texture": "#por"
+					"uv": [11.88065, 1.6, 12.11935, 2.6],
+					"texture": "#capacitor_bank_porcelain"
 				},
 				"up": {
-					"uv": [0, 0, 1, 2],
-					"texture": "#por"
+					"uv": [11.88065, 7.4, 12.11935, 8.6],
+					"texture": "#capacitor_bank_porcelain"
+				}
+			}
+		},
+		{
+			"name": "bushing_1_2_6",
+			"from": [11.88065, 13.4, 7.4],
+			"to": [12.11935, 14.4, 8.6],
+			"rotation": {
+				"angle": 22.5,
+				"axis": "y",
+				"origin": [12, 8, 8]
+			},
+			"faces": {
+				"north": {
+					"uv": [3.88065, 1.6, 4.11935, 2.6],
+					"texture": "#capacitor_bank_porcelain"
+				},
+				"south": {
+					"uv": [11.88065, 1.6, 12.11935, 2.6],
+					"texture": "#capacitor_bank_porcelain"
+				},
+				"up": {
+					"uv": [11.88065, 7.4, 12.11935, 8.6],
+					"texture": "#capacitor_bank_porcelain"
+				}
+			}
+		},
+		{
+			"name": "bushing_1_2_7",
+			"from": [11.88065, 13.4, 7.4],
+			"to": [12.11935, 14.4, 8.6],
+			"rotation": {
+				"angle": -22.5,
+				"axis": "y",
+				"origin": [12, 8, 8]
+			},
+			"faces": {
+				"north": {
+					"uv": [3.88065, 1.6, 4.11935, 2.6],
+					"texture": "#capacitor_bank_porcelain"
+				},
+				"south": {
+					"uv": [11.88065, 1.6, 12.11935, 2.6],
+					"texture": "#capacitor_bank_porcelain"
+				},
+				"up": {
+					"uv": [11.88065, 7.4, 12.11935, 8.6],
+					"texture": "#capacitor_bank_porcelain"
+				}
+			}
+		},
+		{
+			"name": "fuse_2",
+			"from": [11.7, 14.4, 7.7],
+			"to": [12.3, 15, 8.3],
+			"rotation": {
+				"angle": 0,
+				"axis": "y",
+				"origin": [8, 8, 8]
+			},
+			"faces": {
+				"north": {
+					"uv": [3.7, 1, 4.3, 1.6],
+					"texture": "#material_steel"
+				},
+				"east": {
+					"uv": [7.7, 1, 8.3, 1.6],
+					"texture": "#material_steel"
+				},
+				"south": {
+					"uv": [11.7, 1, 12.3, 1.6],
+					"texture": "#material_steel"
+				},
+				"west": {
+					"uv": [7.7, 1, 8.3, 1.6],
+					"texture": "#material_steel"
+				},
+				"up": {
+					"uv": [11.7, 7.7, 12.3, 8.3],
+					"texture": "#material_steel"
 				},
 				"down": {
-					"uv": [0, 0, 1, 2],
-					"texture": "#por"
+					"uv": [11.7, 7.7, 12.3, 8.3],
+					"texture": "#material_steel"
+				}
+			}
+		},
+		{
+			"name": "discharge_resistor",
+			"from": [11, 15.6, 3],
+			"to": [14, 16, 6],
+			"rotation": {
+				"angle": 0,
+				"axis": "y",
+				"origin": [8, 8, 8]
+			},
+			"faces": {
+				"north": {
+					"uv": [2, 0, 5, 0.4],
+					"texture": "#material_cast_iron"
+				},
+				"east": {
+					"uv": [10, 0, 13, 0.4],
+					"texture": "#material_cast_iron"
+				},
+				"south": {
+					"uv": [11, 0, 14, 0.4],
+					"texture": "#material_cast_iron"
+				},
+				"west": {
+					"uv": [3, 0, 6, 0.4],
+					"texture": "#material_cast_iron"
+				},
+				"up": {
+					"uv": [11, 3, 14, 6],
+					"texture": "#material_cast_iron"
+				},
+				"down": {
+					"uv": [11, 10, 14, 13],
+					"texture": "#material_cast_iron"
 				}
 			}
 		},
 		{
 			"name": "lamp_on",
-			"from": [7.5, 15, 1.4],
-			"to": [8.5, 16, 2],
+			"from": [7.4, 15.2, 1.6],
+			"to": [8.6, 16, 2.2],
 			"rotation": {
 				"angle": 0,
 				"axis": "y",
@@ -595,28 +1714,28 @@
 			},
 			"faces": {
 				"north": {
-					"uv": [0, 0, 1, 1],
-					"texture": "#loff"
+					"uv": [7.4, 0, 8.6, 0.8],
+					"texture": "#material_soot"
 				},
 				"east": {
-					"uv": [0, 0, 0.6, 1],
-					"texture": "#loff"
+					"uv": [13.8, 0, 14.4, 0.8],
+					"texture": "#material_soot"
 				},
 				"south": {
-					"uv": [0, 0, 1, 1],
-					"texture": "#loff"
+					"uv": [7.4, 0, 8.6, 0.8],
+					"texture": "#material_soot"
 				},
 				"west": {
-					"uv": [0, 0, 0.6, 1],
-					"texture": "#loff"
+					"uv": [1.6, 0, 2.2, 0.8],
+					"texture": "#material_soot"
 				},
 				"up": {
-					"uv": [0, 0, 1, 0.6],
-					"texture": "#loff"
+					"uv": [7.4, 1.6, 8.6, 2.2],
+					"texture": "#material_soot"
 				},
 				"down": {
-					"uv": [0, 0, 1, 0.6],
-					"texture": "#loff"
+					"uv": [7.4, 13.8, 8.6, 14.4],
+					"texture": "#material_soot"
 				}
 			}
 		}
