@@ -183,6 +183,11 @@ public final class RadiationService {
 
     /** Мощность дозы от облаков выбросов в точке, Зв/ч. */
     public static double cloudSvH(ServerLevel level, Vec3 at) {
+        return cloudSvH(level, at, 1);
+    }
+
+    /** То же для дышащего через маску: под неё попадает доля {@code inhaledFraction} аэрозоля (13 §13.7). */
+    public static double cloudSvH(ServerLevel level, Vec3 at, double inhaledFraction) {
         Map<Vec3, java.util.List<Release>> m = RELEASES.get(level);
         if (m == null) return 0;
         long now = level.getGameTime();
@@ -197,7 +202,7 @@ public final class RadiationService {
             for (Release r : e.getValue()) {
                 if (r.until < now) continue;
                 double bqM3 = dev.denfry.promptcritical.sim.consequence.GasDispersion.plumeKgM3(r.bqS, w.meanWindMs(), st, f[0], f[1]);
-                sum += dev.denfry.promptcritical.sim.radiation.AirborneDose.svH(r.nuclide, bqM3);
+                sum += dev.denfry.promptcritical.sim.radiation.AirborneDose.svH(r.nuclide, bqM3, inhaledFraction);
             }
         }
         return sum;
@@ -294,7 +299,8 @@ public final class RadiationService {
         if (now % 20 != 0) return;
         gatherItems(level, now);
         for (ServerPlayer p : level.players()) {
-            double rate = rateSvH(level, p.getEyePosition()) + cloudSvH(level, p.getEyePosition()) + BACKGROUND_USV_H * 1e-6;
+            double rate = rateSvH(level, p.getEyePosition())
+                    + cloudSvH(level, p.getEyePosition(), dev.denfry.promptcritical.mod.safety.PpeService.aerosolFraction(p)) + BACKGROUND_USV_H * 1e-6;
             CompoundTag d = data(p);
             d.putDouble("rate", rate);
             if (p.isCreative() || p.isSpectator()) continue;

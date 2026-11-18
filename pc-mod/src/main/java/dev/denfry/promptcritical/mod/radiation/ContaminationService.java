@@ -200,7 +200,9 @@ public final class ContaminationService {
      * @return доза, Зв
      */
     public static double expose(ServerPlayer p, SurfaceContamination floor, double seconds) {
-        double sv = ContaminationExposure.committedSvH(floor, hands(p)) * seconds / 3600;
+        // пыль с пола вдыхается мимо маски только в доле, которую пропускает фильтр P или аппарат (13 §13.7)
+        double inhaled = ContaminationExposure.inhalationSvH(floor) * (dev.denfry.promptcritical.mod.safety.PpeService.aerosolFraction(p) - 1);
+        double sv = (ContaminationExposure.committedSvH(floor, hands(p)) + inhaled) * seconds / 3600;
         if (!p.isCreative() && !p.isSpectator()) RadiationService.addCommitted(p, sv);
         return sv;
     }

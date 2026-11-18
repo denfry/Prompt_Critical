@@ -455,7 +455,11 @@ public final class MineWorld {
             if (!p.isCreative()) {
                 // время отравления идёт с «физиологическими часами» тела: бег и лестница — в разы быстрее
                 double clock = Physiology.gasClock(BodyService.profile(p), activity);
-                b.exposure.step(clock, isolated ? 0 : co, isolated ? MineGas.O2.freshAir : o2);
+                // изолирующий аппарат 13 §13.7 — как самоспасатель; противогаз с гопкалитом снимает CO, но не кислородное голодание
+                boolean scba = dev.denfry.promptcritical.mod.safety.PpeService.isolated(p);
+                double coIn = isolated || scba ? 0 : dev.denfry.promptcritical.mod.safety.PpeService.inhaled(p,
+                        dev.denfry.promptcritical.sim.ops.Contaminant.CARBON_MONOXIDE, co * 1e6, o2, 1) * 1e-6;
+                b.exposure.step(clock, coIn, isolated || scba ? MineGas.O2.freshAir : o2);
                 applyExposure(p, b);
             }
             if (holding(p, PcItems.FLAME_SAFETY_LAMP.get())) lamp(p, n, node, o2);

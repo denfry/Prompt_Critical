@@ -1,0 +1,93 @@
+package dev.denfry.promptcritical.mod.safety;
+
+import com.simibubi.create.AllItems;
+import dev.denfry.promptcritical.mod.PromptCritical;
+import dev.denfry.promptcritical.mod.registry.PcItems;
+import dev.denfry.promptcritical.sim.ops.FilterType;
+import java.util.Locale;
+import java.util.concurrent.CompletableFuture;
+import net.minecraft.core.HolderLookup;
+import net.minecraft.data.CachedOutput;
+import net.minecraft.data.DataProvider;
+import net.minecraft.data.PackOutput;
+import net.minecraft.data.recipes.RecipeCategory;
+import net.minecraft.data.recipes.RecipeOutput;
+import net.minecraft.data.recipes.RecipeProvider;
+import net.minecraft.data.recipes.ShapedRecipeBuilder;
+import net.minecraft.data.recipes.ShapelessRecipeBuilder;
+import net.minecraft.world.item.Items;
+import net.minecraft.world.level.ItemLike;
+
+/** Рецепты промышленной безопасности 13: СИЗ §13.7 (каска, противогаз и фильтры, аппарат, костюм, привязь, фал). */
+public final class SafetyRecipes extends RecipeProvider {
+    public SafetyRecipes(PackOutput output, CompletableFuture<HolderLookup.Provider> registries) {
+        super(output, registries);
+    }
+
+    public static DataProvider provider(PackOutput output, CompletableFuture<HolderLookup.Provider> registries) {
+        DataProvider inner = new SafetyRecipes(output, registries);
+        return new DataProvider() {
+            @Override
+            public CompletableFuture<?> run(CachedOutput cache) {
+                return inner.run(cache);
+            }
+
+            @Override
+            public String getName() {
+                return "Recipes: industrial safety";
+            }
+        };
+    }
+
+    static String id(String name) {
+        return PromptCritical.id("safety/" + name).toString();
+    }
+
+    @Override
+    protected void buildRecipes(RecipeOutput out) {
+        var sheet = AllItems.IRON_SHEET.get();
+        var hasSheet = has(sheet);
+        ShapedRecipeBuilder.shaped(RecipeCategory.COMBAT, PcItems.HARD_HAT.get())
+                .pattern("SYS").pattern("S S").define('S', sheet).define('Y', Items.YELLOW_DYE)
+                .unlockedBy("has_sheet", hasSheet).save(out, id("hard_hat"));
+        ShapedRecipeBuilder.shaped(RecipeCategory.COMBAT, PcItems.GAS_MASK.get())
+                .pattern("LGL").pattern("LNL").define('L', Items.LEATHER).define('G', Items.GLASS_PANE).define('N', Items.IRON_NUGGET)
+                .unlockedBy("has_leather", has(Items.LEATHER)).save(out, id("gas_mask"));
+        // сорбент — активированный уголь; группа задаётся пропиткой (EN 14387): B — соли меди, E — щёлочь (зола костей),
+        // K — кислота (сера), CO — гопкалит (оксиды марганца и меди: редстоун как заместитель), AX — двойной слой угля,
+        // P — волокнистый материал
+        filter(out, FilterType.A, Items.CHARCOAL);
+        filter(out, FilterType.B, Items.COPPER_INGOT);
+        filter(out, FilterType.E, Items.BONE_MEAL);
+        filter(out, FilterType.K, PcItems.SULFUR.get());
+        filter(out, FilterType.CO, Items.REDSTONE);
+        filter(out, FilterType.AX, Items.COAL);
+        ShapelessRecipeBuilder.shapeless(RecipeCategory.MISC, GasMaskFilterItem.of(FilterType.P))
+                .requires(Items.IRON_NUGGET).requires(Items.PAPER).requires(Items.WHITE_WOOL)
+                .unlockedBy("has_mask", has(PcItems.GAS_MASK.get())).save(out, id("gas_mask_filter_p"));
+        ShapedRecipeBuilder.shaped(RecipeCategory.COMBAT, PcItems.SCBA.get())
+                .pattern("LGL").pattern("SCS").pattern(" B ").define('L', Items.LEATHER).define('G', Items.GLASS_PANE)
+                .define('S', sheet).define('C', PcItems.SCBA_CYLINDER.get()).define('B', AllItems.BRASS_INGOT.get())
+                .unlockedBy("has_cylinder", has(PcItems.SCBA_CYLINDER.get())).save(out, id("scba"));
+        // баллон заправляют компрессором: здесь — стальной баллон, наполненный при изготовлении
+        ShapedRecipeBuilder.shaped(RecipeCategory.MISC, PcItems.SCBA_CYLINDER.get())
+                .pattern(" B ").pattern("SXS").pattern("SSS").define('B', AllItems.BRASS_INGOT.get()).define('S', sheet)
+                .define('X', AllItems.PROPELLER.get())
+                .unlockedBy("has_sheet", hasSheet).save(out, id("scba_cylinder"));
+        ShapedRecipeBuilder.shaped(RecipeCategory.COMBAT, PcItems.FIRE_SUIT.get())
+                .pattern("WGW").pattern("WWW").pattern("W W").define('W', Items.WHITE_WOOL).define('G', Items.GOLD_NUGGET)
+                .unlockedBy("has_wool", has(Items.WHITE_WOOL)).save(out, id("fire_suit"));
+        ShapedRecipeBuilder.shaped(RecipeCategory.COMBAT, PcItems.SAFETY_HARNESS.get())
+                .pattern("L L").pattern("LNL").pattern("L L").define('L', Items.LEATHER).define('N', Items.IRON_INGOT)
+                .unlockedBy("has_leather", has(Items.LEATHER)).save(out, id("safety_harness"));
+        ShapedRecipeBuilder.shaped(RecipeCategory.TOOLS, PcItems.LIFELINE.get())
+                .pattern("SSS").pattern("S N").define('S', Items.STRING).define('N', Items.IRON_INGOT)
+                .unlockedBy("has_harness", has(PcItems.SAFETY_HARNESS.get())).save(out, id("lifeline"));
+    }
+
+    private void filter(RecipeOutput out, FilterType type, ItemLike impregnation) {
+        ShapelessRecipeBuilder.shapeless(RecipeCategory.MISC, GasMaskFilterItem.of(type))
+                .requires(Items.IRON_NUGGET).requires(Items.CHARCOAL).requires(impregnation)
+                .unlockedBy("has_mask", has(PcItems.GAS_MASK.get())).save(out, id("gas_mask_filter_" + type.name().toLowerCase(Locale.ROOT)));
+    }
+}

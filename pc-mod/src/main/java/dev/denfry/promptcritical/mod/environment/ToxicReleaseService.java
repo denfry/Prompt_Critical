@@ -238,7 +238,10 @@ public final class ToxicReleaseService {
 
     private static void expose(ServerLevel level, State s, ServerPlayer p, ToxicGas gas) {
         if (p.isCreative() || p.isSpectator()) return;
-        double ppm = dev.denfry.promptcritical.mod.gear.ElectricGearService.inhaledPpm(p, ppmAt(level, gas, p.getX(), p.getEyeY(), p.getZ()), 1);
+        // СИЗ 13 §13.7: аппарат или противогаз с фильтром своей группы, затем респиратор с поддувом 15.8
+        double ambient = dev.denfry.promptcritical.mod.safety.PpeService.inhaled(p, dev.denfry.promptcritical.sim.ops.Ppe.contaminant(gas),
+                ppmAt(level, gas, p.getX(), p.getEyeY(), p.getZ()), dev.denfry.promptcritical.sim.mining.MineGas.O2.freshAir, 1);
+        double ppm = dev.denfry.promptcritical.mod.gear.ElectricGearService.inhaledPpm(p, ambient, 1);
         EnumMap<ToxicGas, double[]> byGas = s.exposure.get(p.getUUID());
         double[] ex = byGas == null ? null : byGas.get(gas);
         if (ppm < gas.odourPpm) {

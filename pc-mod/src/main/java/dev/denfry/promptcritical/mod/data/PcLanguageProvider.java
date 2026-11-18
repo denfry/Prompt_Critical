@@ -946,6 +946,20 @@ public final class PcLanguageProvider extends LanguageProvider {
                 "%1$s отравлен хлором, спасаясь от %2$s"});
         MISC.putAll(dev.denfry.promptcritical.mod.nitrogen.NitrogenText.lang());
         MISC.putAll(dev.denfry.promptcritical.mod.methanol.MethanolText.lang());
+        safety();
+    }
+
+    /** Промышленная безопасность 13: СИЗ §13.7, замкнутые пространства, обходы, факел, знаки. */
+    private static void safety() {
+        i("hard_hat", "Hard Hat", "Защитная каска");
+        i("gas_mask", "Gas Mask", "Фильтрующий противогаз");
+        i("gas_mask_filter", "Gas Mask Filter", "Фильтр противогаза");
+        i("scba", "Self-Contained Breathing Apparatus", "Дыхательный аппарат на сжатом воздухе");
+        i("scba_cylinder", "SCBA Air Cylinder", "Баллон дыхательного аппарата");
+        i("fire_suit", "Fire Proximity Suit", "Огнезащитный костюм");
+        i("safety_harness", "Safety Harness", "Страховочная привязь");
+        i("lifeline", "Lifeline", "Страховочный фал");
+        MISC.putAll(dev.denfry.promptcritical.mod.safety.SafetyText.LANG);
     }
 
     @Override
