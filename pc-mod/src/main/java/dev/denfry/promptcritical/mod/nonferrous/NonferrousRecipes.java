@@ -96,5 +96,9 @@ public final class NonferrousRecipes extends RecipeProvider {
         // катодная медь (100 кг) — в ванильные слитки меди для крафта Create и ванилы [BALANCE]
         ShapelessRecipeBuilder.shapeless(RecipeCategory.MISC, Items.COPPER_INGOT, 9).requires(PcItems.COPPER_CATHODE.get())
                 .unlockedBy("has_copper_cathode", has(PcItems.COPPER_CATHODE.get())).save(out, id("copper_ingot_from_cathode"));
+        // олово (08 §8.8.5): бронза и припой (11); оловянная бронза ≈ 10 % Sn [BALANCE]
+        ShapelessRecipeBuilder.shapeless(RecipeCategory.MISC, PcItems.BRONZE_INGOT.get(), 4).requires(Items.COPPER_INGOT, 3)
+                .requires(PcItems.TIN_INGOT.get())
+                .unlockedBy("has_tin_ingot", has(PcItems.TIN_INGOT.get())).save(out, id("bronze_ingot_from_tin"));
     }
 }

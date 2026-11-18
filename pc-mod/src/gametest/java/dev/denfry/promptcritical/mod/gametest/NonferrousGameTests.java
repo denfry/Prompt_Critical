@@ -395,4 +395,26 @@ public final class NonferrousGameTests {
                 })
                 .thenSucceed();
     }
+    @GameTest(template = LARGE, timeoutTicks = 1200)
+    public static void smelterReducesCassiteriteToTin(GameTestHelper h) {
+        BlockPos smelter = new BlockPos(4, 3, 4);
+        place(h, smelter, PcBlocks.MATTE_SMELTER.get());
+        h.startSequence()
+                .thenExecute(() -> {
+                    MatteSmelterBlockEntity m = h.getBlockEntity(smelter);
+                    m.input().insertItem(0, new ItemStack(PcItems.TIN_DUST.get(), 4), false);
+                    fill(m.fluids(Direction.NORTH), PcFluids.SALES_GAS.source.get(), 8000);
+                })
+                .thenIdle(40)
+                .thenExecute(() -> {
+                    MatteSmelterBlockEntity m = h.getBlockEntity(smelter);
+                    h.assertTrue(countOut(m.output(), PcItems.TIN_INGOT.get(), false) == 0, "no coke, no tin");
+                    m.input().insertItem(1, new ItemStack(PcItems.COKE.get(), 1), false);
+                })
+                .thenWaitUntil(() -> {
+                    MatteSmelterBlockEntity m = h.getBlockEntity(smelter);
+                    h.assertTrue(countOut(m.output(), PcItems.TIN_INGOT.get(), false) >= 2, "tin ingots");
+                })
+                .thenSucceed();
+    }
 }

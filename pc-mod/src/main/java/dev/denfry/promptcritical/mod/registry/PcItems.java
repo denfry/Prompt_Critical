@@ -160,6 +160,9 @@ public final class PcItems {
     public static final DeferredItem<Item> COPPER_CATHODE = item("copper_cathode", 64);
     public static final DeferredItem<Item> NICKEL_INGOT = item("nickel_ingot", 64);
     public static final DeferredItem<Item> ANODE_SLIME = item("anode_slime", 64);
+    /** Касситеритовый концентрат гравитации и олово (08 §8.8.5): по 10 кг, NonferrousUnits. */
+    public static final DeferredItem<Item> TIN_DUST = item("tin_dust", 64);
+    public static final DeferredItem<Item> TIN_INGOT = item("tin_ingot", 64);
     public static final DeferredItem<Item> GENERATOR_COUPLING = item("generator_coupling", 16);
     /** Подогреватель рубашки ДГ (07 §7.11.3): без него на морозе отказ пуска вчетверо вероятнее. */
     public static final DeferredItem<Item> JACKET_HEATER = item("jacket_heater", 16);

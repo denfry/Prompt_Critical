@@ -24,8 +24,9 @@ import org.jetbrains.annotations.Nullable;
 
 /**
  * Отражательная печь ({@link MatteSmelter}, 08 §8.8.3, §8.8.5) 3×3×3. Загрузка воронкой или рукой: флотоконцентрат
- * (медный или медно-никелевый) с кварцем {@code vein_quartz} — плавка на штейн. Топливный газ и кислород — трубой к
- * любой грани; штейн — в склад (воронкой снизу). SO₂ — газоходом в сернокислотную установку рядом, иначе в трубу.
+ * (медный или медно-никелевый) с кварцем {@code vein_quartz} — плавка на штейн; оловянный концентрат {@code tin_dust}
+ * с коксом — восстановительная плавка (концентрат идёт первым). Топливный газ и кислород — трубой к любой грани;
+ * штейн и олово — в склад (воронкой снизу). SO₂ — газоходом в сернокислотную установку рядом, иначе в трубу.
  */
 public final class MatteSmelterBlockEntity extends UraniumProcessBlockEntity {
     public static final int MB = 8_000;
@@ -47,7 +48,8 @@ public final class MatteSmelterBlockEntity extends UraniumProcessBlockEntity {
     }
 
     static boolean charge(ItemStack s) {
-        return s.is(PcItems.FLOTATION_CONCENTRATE.get()) || s.is(PcBlocks.VEIN_QUARTZ.get().asItem());
+        return s.is(PcItems.FLOTATION_CONCENTRATE.get()) || s.is(PcBlocks.VEIN_QUARTZ.get().asItem()) || s.is(PcItems.TIN_DUST.get())
+                || s.is(PcItems.COKE.get());
     }
 
     public FeedTank fuel() {
@@ -104,12 +106,29 @@ public final class MatteSmelterBlockEntity extends UraniumProcessBlockEntity {
                     lastMetalKgS = kg / dt;
                 }
             } else {
+                // олово: концентрат и кокс по мешку
+                if (tinFeedKg <= 0) {
+                    if (!takeOne(s -> s.is(PcItems.TIN_DUST.get())).isEmpty()) tinFeedKg += NonferrousUnits.TIN_ITEM_KG * NonferrousUnits.TIN_DUST_SN;
+                }
+                if (tinFeedKg > 0) {
+                    double cokeNeed = MatteSmelter.cokePerTin() * MatteSmelter.TIN_KG_S * dt;
+                    while (cokeKg < cokeNeed && !takeOne(s -> s.is(PcItems.COKE.get())).isEmpty()) cokeKg += bulk;
+                    double kg = MatteSmelter.tinKg(dt, tinFeedKg, heatJ, cokeKg);
+                    if (kg > 0) {
+                        fuel.take(kg * MatteSmelter.TIN_HEAT_J_PER_KG / NonferrousUnits.FUEL_J_NM3);
+                        cokeKg = Math.max(0, cokeKg - kg * MatteSmelter.cokePerTin());
+                        tinFeedKg -= kg;
+                        tinKg += kg * MatteSmelter.TIN_RECOVERY;
+                        lastTinKgS = kg / dt;
+                    }
+                }
                 so2.offer(level, worldPosition, 0, "matte_smelter@" + worldPosition.toShortString());
             }
         }
         double cuPer = ingot * Metal.COPPER.matteGrade, niPer = ingot * Metal.NICKEL.matteGrade;
         while (cuMatteKg >= cuPer && emit(new ItemStack(PcItems.SULFIDE_MATTE.get()))) cuMatteKg -= cuPer;
         while (niMatteKg >= niPer && emit(NonferrousComponents.nickel(new ItemStack(PcItems.SULFIDE_MATTE.get()), true))) niMatteKg -= niPer;
+        while (tinKg >= NonferrousUnits.TIN_ITEM_KG && emit(PcItems.TIN_INGOT.get())) tinKg -= NonferrousUnits.TIN_ITEM_KG;
     }
 
     @Override
