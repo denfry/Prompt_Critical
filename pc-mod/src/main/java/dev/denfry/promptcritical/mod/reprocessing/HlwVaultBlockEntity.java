@@ -6,8 +6,12 @@ import dev.denfry.promptcritical.mod.environment.RadiationService;
 import dev.denfry.promptcritical.mod.foundry.FoundryDevice;
 import dev.denfry.promptcritical.mod.panel.PanelHost;
 import dev.denfry.promptcritical.mod.panel.PanelLayout;
+import dev.denfry.promptcritical.mod.waste.WastePackage;
 import dev.denfry.promptcritical.sim.radiation.PointSource;
 import dev.denfry.promptcritical.sim.radiation.ShieldMaterial;
+import dev.denfry.promptcritical.sim.waste.InterimStore;
+import dev.denfry.promptcritical.sim.waste.Vitrification;
+import dev.denfry.promptcritical.sim.waste.WasteForm;
 import java.util.Arrays;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
@@ -30,10 +34,15 @@ import org.jetbrains.annotations.Nullable;
  * бетонном массиве толщиной {@value #CONCRETE_CM} см, тепло снимает принудительная вентиляция — до {@value #VENT_W}
  * Вт на хранилище. Принимает стеклоблоки и любые предметы с активностью. Наружу проходит только то, что осталось за
  * бетоном: источник для {@link RadiationService} ослаблен им заранее (бетон с накоплением, нейтроны — выведением).
+ *
+ * <p>Тепловой режим ({@link InterimStore}, {@link Vitrification}): воздух входит при {@value #INLET_K} К и греется на
+ * 30 К при проектной мощности; стеклоблок омывается воздухом на выходе, центр каждого блока считается по его
+ * тепловыделению. Лампа «Вентиляция» горит, если тепла больше проектного или центр хоть одного блока горячее предела
+ * стекла (боросиликатное — стеклование 510 °C, фосфатное — кристаллизация 400 °C).
  */
 public final class HlwVaultBlockEntity extends DeviceBlockEntity implements FoundryDevice, PanelHost {
     public static final int SLOTS = 12;
-    public static final double CONCRETE_CM = 100, VENT_W = 50_000;
+    public static final double CONCRETE_CM = 100, VENT_W = 50_000, INLET_K = 293.15;
 
     private final ItemStackHandler slots = new ItemStackHandler(SLOTS) {
         @Override
@@ -46,7 +55,8 @@ public final class HlwVaultBlockEntity extends DeviceBlockEntity implements Foun
             setChanged();
         }
     };
-    private double heatW, activityBq;
+    private double heatW, activityBq, outletK = INLET_K, hottestK;
+    private boolean glassOverLimit;
 
     public HlwVaultBlockEntity(BlockPos pos, BlockState state) {
         super(ReprocessingBlockEntities.HLW_VAULT.get(), pos, state);
@@ -58,6 +68,16 @@ public final class HlwVaultBlockEntity extends DeviceBlockEntity implements Foun
 
     public double heatW() {
         return heatW;
+    }
+
+    /** Воздух на выходе вентиляции, К. */
+    public double outletK() {
+        return outletK;
+    }
+
+    /** Самый горячий центр стеклоблока, К (0 — стекла нет). */
+    public double hottestGlassK() {
+        return hottestK;
     }
 
     /** Источник за бетонными стенами: γ с накоплением бетона, нейтроны — сечением выведения. */
@@ -88,6 +108,19 @@ public final class HlwVaultBlockEntity extends DeviceBlockEntity implements Foun
         }
         heatW = q;
         activityBq = a;
+        outletK = InterimStore.outletK(INLET_K, q, VENT_W, true);
+        hottestK = 0;
+        glassOverLimit = false;
+        for (int i = 0; i < SLOTS; i++) {
+            ItemStack st = slots.getStackInSlot(i);
+            WastePackage p = WastePackage.of(st);
+            ActivityData d = st.get(ActivityData.ACTIVITY.get());
+            if (p == null || d == null || !p.wasteForm().glass()) continue;
+            Vitrification.Glass g = p.wasteForm() == WasteForm.PHOSPHATE_GLASS ? Vitrification.Glass.PHOSPHATE : Vitrification.Glass.BOROSILICATE;
+            double t = Vitrification.centreK(g, d.inventory(now).decayHeatW(), d.massKg(), outletK);
+            hottestK = Math.max(hottestK, t);
+            glassOverLimit |= t > g.limitK;
+        }
         if (!src.empty()) RadiationService.source(s, worldPosition.getCenter(), behindConcrete(src));
         if (now % 100 == 0) setChanged();
     }
@@ -134,7 +167,7 @@ public final class HlwVaultBlockEntity extends DeviceBlockEntity implements Foun
         Arrays.fill(v, 0);
         v[ReprocessingPanels.V_HEAT_W] = (int) Math.round(Math.min(2e9, heatW));
         v[ReprocessingPanels.V_ACT_TBQ] = (int) Math.round(Math.min(2e9, activityBq / 1e12));
-        v[ReprocessingPanels.V_FLAGS] = heatW > VENT_W ? 1 << ReprocessingPanels.VF_HOT : 0;
+        v[ReprocessingPanels.V_FLAGS] = heatW > VENT_W || glassOverLimit ? 1 << ReprocessingPanels.VF_HOT : 0;
     }
 
     @Override

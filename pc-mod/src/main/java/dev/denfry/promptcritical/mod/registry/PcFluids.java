@@ -110,6 +110,11 @@ public final class PcFluids {
     public static final Entry URANIUM_TAILINGS = liquid("uranium_tailings", 1450, 8000, 303);
     /** Элюат: 10 г/л U в подкисленном растворе NaCl. */
     public static final Entry URANIUM_ELUATE = liquid("uranium_eluate", 1060, 1100, 303);
+    /**
+     * Жидкие радиоактивные отходы АЭС: трапные воды, регенерационные растворы фильтров СВО, сбросы дезактивации —
+     * солесодержание порядка граммов на литр, Cs-137, Cs-134 и Co-60 около 10⁻⁴ Ки/л (3,7·10⁶ Бк/л). Идут на выпарку.
+     */
+    public static final Entry LIQUID_RADIOACTIVE_WASTE = liquid("liquid_radioactive_waste", 1005, 1000, 303);
     public static final Entry ETHYLENE_DICHLORIDE = liquid("ethylene_dichloride", 1253, 840, 293);
     public static final Entry VINYL_CHLORIDE = liquid("vinyl_chloride", 911, 200, 288);
 

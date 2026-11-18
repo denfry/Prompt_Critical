@@ -489,6 +489,19 @@ public final class PcBlocks {
     public static final DeferredBlock<PcBlock> OXALATE_PRECIPITATOR = block("oxalate_precipitator", machine(), Spec.facing());
     public static final DeferredBlock<PcBlock> DENITRATION_REACTOR = block("denitration_reactor", machine(), Spec.facing());
     public static final DeferredBlock<PcBlock> VITRIFICATION_MELTER = block("vitrification_melter", machine(), Spec.facing());
+    // --- обращение с РАО: выпарка ЖРО, отверждение, суперпресс, захоронение, очистка теплоносителя ---
+    public static final DeferredBlock<PcDeviceBlock> LRW_EVAPORATOR = device("lrw_evaporator", machine(), Spec.facing(PcProperties.RUNNING),
+            FoundryBlock.with(dev.denfry.promptcritical.mod.waste.LrwEvaporatorBlockEntity::new));
+    public static final DeferredBlock<PcBlock> CEMENTATION_MIXER = block("cementation_mixer", machine(), Spec.facing());
+    public static final DeferredBlock<PcBlock> BITUMENIZER = block("bitumenizer", machine(), Spec.facing());
+    public static final DeferredBlock<PcDeviceBlock> WASTE_COMPACTOR = device("waste_compactor", machine(), Spec.facing(PcProperties.RUNNING),
+            FoundryBlock.with(dev.denfry.promptcritical.mod.waste.WasteCompactorBlockEntity::new));
+    public static final DeferredBlock<PcDeviceBlock> NEAR_SURFACE_REPOSITORY = device("near_surface_repository", machine(), Spec.facing(),
+            FoundryBlock.with(dev.denfry.promptcritical.mod.waste.RepositoryBlockEntity::nearSurface));
+    public static final DeferredBlock<PcDeviceBlock> DEEP_GEOLOGICAL_REPOSITORY = device("deep_geological_repository", machine(), Spec.facing(),
+            FoundryBlock.with(dev.denfry.promptcritical.mod.waste.RepositoryBlockEntity::deep));
+    public static final DeferredBlock<PcDeviceBlock> REACTOR_WATER_CLEANUP = device("reactor_water_cleanup", machine(),
+            Spec.facing(PcProperties.RUNNING), FoundryBlock.with(dev.denfry.promptcritical.mod.waste.ReactorWaterCleanupBlockEntity::new));
     /** Стеллаж бассейна выдержки облучённого топлива. */
     public static final DeferredBlock<PcDeviceBlock> FUEL_RACK = device("fuel_rack", machine().noOcclusion(), Spec.of(),
             FoundryBlock.with(dev.denfry.promptcritical.mod.radiation.FuelRackBlockEntity::new));
