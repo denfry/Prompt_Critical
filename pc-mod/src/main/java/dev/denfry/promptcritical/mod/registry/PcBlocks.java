@@ -676,7 +676,7 @@ public final class PcBlocks {
      */
     private static final Footprint FP_GS_TOWER = Footprint.of(CUBE3, CUBE3.at(0, 3, 0));
     public static final DeferredBlock<PcDeviceBlock> GS_EXCHANGE_TOWER = device("gs_exchange_tower", machine(),
-            Spec.facing(PcProperties.RUNNING).footprint(FP_GS_TOWER),
+            Spec.facing(PcProperties.RUNNING).segments(PcProperties.GS_SEGMENT, FP_GS_TOWER),
             FoundryBlock.with(dev.denfry.promptcritical.mod.heavywater.GsExchangeTowerBlockEntity::new));
     /** Вакуумная колонна доводки D₂O 1×3×1: обогащённая и разбавленная вода — в куб, реакторная D₂O — из куба. */
     public static final DeferredBlock<PcDeviceBlock> HEAVY_WATER_COLUMN = device("heavy_water_column", machine(),
