@@ -134,7 +134,7 @@ public final class AcousticsGameTests {
                 .thenSucceed();
     }
 
-    @GameTest(template = LARGE, timeoutTicks = 200)
+    @GameTest(template = LARGE, timeoutTicks = 200, batch = "noise_alone")
     public static void noiseAddsUpAndConcreteBlocksIt(GameTestHelper h) {
         fanRig(h);
         Vec3 ear = Vec3.atCenterOf(h.absolutePos(new BlockPos(3, 2, 8)));

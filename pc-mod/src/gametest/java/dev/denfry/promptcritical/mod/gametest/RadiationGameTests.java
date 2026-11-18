@@ -30,7 +30,7 @@ public final class RadiationGameTests {
     private RadiationGameTests() {
     }
 
-    @GameTest(template = LARGE, timeoutTicks = 100)
+    @GameTest(template = LARGE, timeoutTicks = 100, batch = "radiation_alone")
     public static void cobaltSourceThroughAirLeadAndConcrete(GameTestHelper h) {
         Vec3 src = Vec3.atCenterOf(h.absolutePos(new BlockPos(2, 3, 6)));
         Vec3 at = Vec3.atCenterOf(h.absolutePos(new BlockPos(8, 3, 6)));
