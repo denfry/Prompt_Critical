@@ -1,0 +1,32 @@
+{
+  "parent": "minecraft:recipes/root",
+  "criteria": {
+    "has_low_temperature_separator": {
+      "conditions": {
+        "items": [
+          {
+            "items": "promptcritical:low_temperature_separator"
+          }
+        ]
+      },
+      "trigger": "minecraft:inventory_changed"
+    },
+    "has_the_recipe": {
+      "conditions": {
+        "recipe": "promptcritical:radiation/helium_recovery_unit"
+      },
+      "trigger": "minecraft:recipe_unlocked"
+    }
+  },
+  "requirements": [
+    [
+      "has_the_recipe",
+      "has_low_temperature_separator"
+    ]
+  ],
+  "rewards": {
+    "recipes": [
+      "promptcritical:radiation/helium_recovery_unit"
+    ]
+  }
+}
