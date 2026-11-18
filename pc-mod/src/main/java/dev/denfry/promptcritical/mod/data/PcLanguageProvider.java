@@ -341,6 +341,11 @@ public final class PcLanguageProvider extends LanguageProvider {
         b("oil_skimmer", "Oil Skimmer", "Нефтесборщик");
         b("oiled_sand", "Oiled Sand", "Замазученный песок");
         b("oiled_gravel", "Oiled Gravel", "Замазученный гравий");
+        b("tank_gauge", "Tank Gauge", "Уровнемер резервуара");
+        b("pig_launcher", "Pig Launcher", "Камера запуска СОД");
+        b("pig_receiver", "Pig Receiver", "Камера приёма СОД");
+        b("cp_rectifier", "Cathodic Protection Rectifier", "Станция катодной защиты");
+        b("cp_test_post", "CP Test Post", "Контрольно-измерительный пункт");
         b("fire_hydrant", "Fire Hydrant", "Пожарный гидрант");
         b("foam_proportioner", "Foam Proportioner", "Дозатор пенообразователя");
         b("foam_chamber", "Foam Chamber", "Пенокамера");
@@ -559,6 +564,9 @@ public final class PcLanguageProvider extends LanguageProvider {
         i("portable_gas_detector", "Portable Gas Detector", "Переносной газоанализатор");
         i("sorbent_pad", "Sorbent Pad", "Сорбирующий мат");
         i("oiled_sorbent", "Oiled Sorbent", "Отработанный сорбент");
+        i("pig", "Cleaning Pig", "Очистной скребок");
+        i("smart_pig", "Smart Pig (MFL)", "Внутритрубный дефектоскоп");
+        i("sacrificial_anode", "Magnesium Sacrificial Anode", "Магниевый протектор");
         i("calibration_gas", "Calibration Gas", "Поверочная газовая смесь");
         b("mechanical_disconnect", "Mechanical Disconnect", "Расцепная муфта");
         b("hrsg", "Heat Recovery Steam Generator", "Котёл-утилизатор");

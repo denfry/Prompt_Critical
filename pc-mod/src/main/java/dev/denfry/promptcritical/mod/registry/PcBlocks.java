@@ -1131,6 +1131,22 @@ public final class PcBlocks {
             p -> new dev.denfry.promptcritical.mod.hazard.SpillBlocks.OiledShoreBlock(p, true),
             Properties.ofFullCopy(Blocks.GRAVEL).mapColor(MapColor.COLOR_BLACK).randomTicks()));
 
+    // трубопроводы и резервуарный парк 09 §9.8
+    /** Уровнемер на крыше резервуара Create: уровень, перелив, потери от испарения, плавающая крыша. */
+    public static final DeferredBlock<PcDeviceBlock> TANK_GAUGE = device("tank_gauge", instrument(),
+            Spec.facing(BlockStateProperties.POWERED), dev.denfry.promptcritical.mod.hazard.TankGaugeBlock.create());
+    /** Камеры запуска и приёма скребка: границы участка трубопровода из труб Create. */
+    public static final DeferredBlock<PcDeviceBlock> PIG_LAUNCHER = device("pig_launcher", machine(),
+            Spec.facing(BlockStateProperties.OPEN).footprint(Footprint.of(Segment.box(-1, 1, 0, 0, 0, 0))),
+            FoundryBlock.with(dev.denfry.promptcritical.mod.hazard.PigTrapBlockEntity::new));
+    public static final DeferredBlock<PcDeviceBlock> PIG_RECEIVER = device("pig_receiver", machine(),
+            Spec.facing(BlockStateProperties.OPEN).footprint(Footprint.of(Segment.box(-1, 1, 0, 0, 0, 0))),
+            FoundryBlock.with(dev.denfry.promptcritical.mod.hazard.PigTrapBlockEntity::new));
+    public static final DeferredBlock<PcDeviceBlock> CP_RECTIFIER = device("cp_rectifier", machine(),
+            Spec.facing(PcProperties.RUNNING).footprint(FP_TALL2), FoundryBlock.with(dev.denfry.promptcritical.mod.hazard.CpRectifierBlockEntity::new));
+    public static final DeferredBlock<PcDeviceBlock> CP_TEST_POST = device("cp_test_post", instrument(), Spec.facing(),
+            FoundryBlock.with(dev.denfry.promptcritical.mod.hazard.CpTestPostBlockEntity::new));
+
     // --- служебные ---
     /** Клетка конструкции, через которую машина отдаёт вращение в сеть Create (03a §3a.12.3). */
     public static final DeferredBlock<KineticPortBlock> KINETIC_PORT = BLOCKS.registerBlock("kinetic_port",

@@ -407,7 +407,7 @@ public final class PcBlockStateProvider extends BlockStateProvider {
                     : s.getValue(BlockStateProperties.POWERED) ? id + "_fault" : id;
             case "historian_server" -> s.getValue(BlockStateProperties.LIT) ? id + "_busy" : id;
             case "foam_proportioner" -> s.getValue(BlockStateProperties.POWERED) ? id + "_6" : id;
-            case "oil_skimmer" -> s.getValue(PcProperties.RUNNING) ? id + "_on" : id;
+            case "oil_skimmer", "cp_rectifier" -> s.getValue(PcProperties.RUNNING) ? id + "_on" : id;
             case "oil_boom" -> s.getValue(BlockStateProperties.HORIZONTAL_AXIS) == Direction.Axis.X ? id + "_x" : id;
             case "oiled_sand", "oiled_gravel" -> {
                 int age = s.getValue(dev.denfry.promptcritical.mod.hazard.SpillBlocks.OiledShoreBlock.AGE);

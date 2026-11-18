@@ -25,6 +25,20 @@ public final class HazardBlockEntities {
             BLOCK_ENTITIES.register("oil_skimmer",
                     () -> BlockEntityType.Builder.of(OilSkimmerBlockEntity::new, PcBlocks.OIL_SKIMMER.get()).build(null));
 
+    // трубопроводы и резервуарный парк 09 §9.8
+    public static final DeferredHolder<BlockEntityType<?>, BlockEntityType<TankGaugeBlockEntity>> TANK_GAUGE =
+            BLOCK_ENTITIES.register("tank_gauge",
+                    () -> BlockEntityType.Builder.of(TankGaugeBlockEntity::new, PcBlocks.TANK_GAUGE.get()).build(null));
+    public static final DeferredHolder<BlockEntityType<?>, BlockEntityType<PigTrapBlockEntity>> PIG_TRAP =
+            BLOCK_ENTITIES.register("pig_trap",
+                    () -> BlockEntityType.Builder.of(PigTrapBlockEntity::new, PcBlocks.PIG_LAUNCHER.get(), PcBlocks.PIG_RECEIVER.get()).build(null));
+    public static final DeferredHolder<BlockEntityType<?>, BlockEntityType<CpRectifierBlockEntity>> CP_RECTIFIER =
+            BLOCK_ENTITIES.register("cp_rectifier",
+                    () -> BlockEntityType.Builder.of(CpRectifierBlockEntity::new, PcBlocks.CP_RECTIFIER.get()).build(null));
+    public static final DeferredHolder<BlockEntityType<?>, BlockEntityType<CpTestPostBlockEntity>> CP_TEST_POST =
+            BLOCK_ENTITIES.register("cp_test_post",
+                    () -> BlockEntityType.Builder.of(CpTestPostBlockEntity::new, PcBlocks.CP_TEST_POST.get()).build(null));
+
     private HazardBlockEntities() {
     }
 

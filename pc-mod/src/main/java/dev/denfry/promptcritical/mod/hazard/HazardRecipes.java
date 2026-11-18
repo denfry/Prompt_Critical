@@ -66,5 +66,30 @@ public final class HazardRecipes extends RecipeProvider {
         ShapedRecipeBuilder.shaped(RecipeCategory.MISC, PcItems.SORBENT_PAD.get(), 8)
                 .pattern("PP").pattern("PP").define('P', PcItems.POLYETHYLENE.get())
                 .unlockedBy("has_polyethylene", has(PcItems.POLYETHYLENE.get())).save(out, id("sorbent_pad"));
+        // резервуарный парк и трубопроводы 09 §9.8
+        ShapedRecipeBuilder.shaped(RecipeCategory.MISC, PcBlocks.TANK_GAUGE.get())
+                .pattern(" R ").pattern("ICI").define('R', Items.REDSTONE).define('I', AllItems.IRON_SHEET.get()).define('C', Items.COMPARATOR)
+                .unlockedBy("has_tank", has(AllBlocks.FLUID_TANK.get())).save(out, id("tank_gauge"));
+        ShapedRecipeBuilder.shaped(RecipeCategory.MISC, PcBlocks.PIG_LAUNCHER.get())
+                .pattern("SSS").pattern("PVP").define('S', plate).define('P', pipe).define('V', AllBlocks.FLUID_VALVE.get())
+                .unlockedBy("has_seamless_pipe", has(pipe)).save(out, id("pig_launcher"));
+        ShapedRecipeBuilder.shaped(RecipeCategory.MISC, PcBlocks.PIG_RECEIVER.get())
+                .pattern("PVP").pattern("SSS").define('S', plate).define('P', pipe).define('V', AllBlocks.FLUID_VALVE.get())
+                .unlockedBy("has_seamless_pipe", has(pipe)).save(out, id("pig_receiver"));
+        ShapedRecipeBuilder.shaped(RecipeCategory.MISC, PcItems.PIG.get(), 2)
+                .pattern("RIR").define('R', Items.LEATHER).define('I', Items.IRON_INGOT)
+                .unlockedBy("has_seamless_pipe", has(pipe)).save(out, id("pig"));
+        ShapedRecipeBuilder.shaped(RecipeCategory.MISC, PcItems.SMART_PIG.get())
+                .pattern("RCR").pattern("MIM").define('R', Items.LEATHER).define('C', Items.COMPARATOR).define('M', Items.IRON_INGOT)
+                .define('I', PcItems.PIG.get()).unlockedBy("has_pig", has(PcItems.PIG.get())).save(out, id("smart_pig"));
+        ShapedRecipeBuilder.shaped(RecipeCategory.MISC, PcItems.SACRIFICIAL_ANODE.get())
+                .pattern("MMM").pattern(" C ").define('M', PcItems.MAGNESIUM_INGOT.get()).define('C', Items.COPPER_INGOT)
+                .unlockedBy("has_magnesium", has(PcItems.MAGNESIUM_INGOT.get())).save(out, id("sacrificial_anode"));
+        ShapedRecipeBuilder.shaped(RecipeCategory.MISC, PcBlocks.CP_RECTIFIER.get())
+                .pattern("ICI").pattern("IRI").pattern("III").define('I', AllItems.IRON_SHEET.get()).define('C', Items.COPPER_INGOT)
+                .define('R', Items.REDSTONE).unlockedBy("has_magnesium", has(PcItems.MAGNESIUM_INGOT.get())).save(out, id("cp_rectifier"));
+        ShapedRecipeBuilder.shaped(RecipeCategory.MISC, PcBlocks.CP_TEST_POST.get())
+                .pattern("Y").pattern("C").pattern("I").define('Y', Items.YELLOW_DYE).define('C', Items.COPPER_INGOT).define('I', Items.IRON_BARS)
+                .unlockedBy("has_magnesium", has(PcItems.MAGNESIUM_INGOT.get())).save(out, id("cp_test_post"));
     }
 }

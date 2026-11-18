@@ -321,6 +321,10 @@ public final class PcItems {
     public static final DeferredItem<dev.denfry.promptcritical.mod.hazard.SorbentPadItem> SORBENT_PAD = registered(ITEMS.registerItem(
             "sorbent_pad", dev.denfry.promptcritical.mod.hazard.SorbentPadItem::new, new Item.Properties().stacksTo(64)));
     public static final DeferredItem<Item> OILED_SORBENT = item("oiled_sorbent", 64);
+    // скребки и протекторы трубопроводов 09 §9.8.2–9.8.3
+    public static final DeferredItem<Item> PIG = item("pig", 16);
+    public static final DeferredItem<Item> SMART_PIG = item("smart_pig", 16);
+    public static final DeferredItem<Item> SACRIFICIAL_ANODE = item("sacrificial_anode", 16);
     public static final DeferredItem<Item> CALIBRATION_GAS = registered(ITEMS.registerSimpleItem("calibration_gas", new Item.Properties().stacksTo(16)));
     public static final DeferredItem<OpsItem> MECHANIC_STETHOSCOPE = ops("mechanic_stethoscope", OpsItem.Kind.STETHOSCOPE, 1);
     public static final DeferredItem<OpsItem> TORQUE_WRENCH = ops("torque_wrench", OpsItem.Kind.TORQUE_WRENCH, 1);

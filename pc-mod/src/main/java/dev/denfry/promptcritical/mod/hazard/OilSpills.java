@@ -62,6 +62,8 @@ public final class OilSpills {
         final List<BlockPos> blocks = new ArrayList<>();
         int shoreBlocks;
         double vocLoggedKg;
+        /** Пролив на суше: литры, ещё не ставшие блоком (меньше кубометра). */
+        double pendingL;
         boolean enclosed;
         int reachable;
 
@@ -116,6 +118,7 @@ public final class OilSpills {
                 for (long l : c.getLongArray("blocks")) s.blocks.add(BlockPos.of(l));
                 s.shoreBlocks = c.getInt("shore");
                 s.vocLoggedKg = c.getDouble("voc");
+                s.pendingL = c.getDouble("pending");
                 d.spills.add(s);
             }
             return d;
@@ -143,6 +146,7 @@ public final class OilSpills {
                 c.putLongArray("blocks", s.blocks.stream().mapToLong(BlockPos::asLong).toArray());
                 c.putInt("shore", s.shoreBlocks);
                 c.putDouble("voc", s.vocLoggedKg);
+                c.putDouble("pending", s.pendingL);
                 list.add(c);
             }
             tag.put("spills", list);
@@ -178,20 +182,32 @@ public final class OilSpills {
         ledger.recordSpill(at.asLong(), fluidId, m3, water);
         if (!HazardService.harmful()) return null;
         Data d = data(level);
-        Spill s = new Spill(d.nextId++, surface(level, at), fluidId, water,
-                new OilSpill(m3 * densityKgM3, densityKgM3, DEFAULT_D180_PCT, false));
-        d.spills.add(s);
+        BlockPos origin = surface(level, at);
         d.setDirty();
         if (!water) {
-            int n = (int) Math.min(OilSpill.MAX_FLUID_BLOCKS, Math.round(m3));
-            for (BlockPos p : floodLand(level, s.origin, n)) {
+            // непрерывный разлив в одном месте (перелив, течь) копится в одну лужу: блок на каждый полный кубометр
+            Spill s = null;
+            for (Spill o : d.spills) if (!o.onWater && o.origin.equals(origin)) s = o;
+            boolean fresh = s == null;
+            if (fresh) {
+                s = new Spill(d.nextId++, origin, fluidId, false, new OilSpill(m3 * densityKgM3, densityKgM3, DEFAULT_D180_PCT, false));
+                d.spills.add(s);
+            }
+            s.pendingL += litres;
+            int want = (int) Math.min(OilSpill.MAX_FLUID_BLOCKS, s.blocks.size() + Math.floor(s.pendingL / 1000 + 1e-9));
+            for (BlockPos p : floodLand(level, s.origin, want)) {
+                if (s.blocks.size() >= want) break;
+                if (s.blocks.contains(p)) continue;
                 level.setBlock(p, PcBlocks.CRUDE_OIL.get().defaultBlockState(), Block.UPDATE_ALL);
                 s.blocks.add(p);
+                s.pendingL -= 1000;
             }
-            HazardService.tell(level, at, 48, HazardText.msg("spill.land", Math.round(m3 * 10) / 10.0));
-        } else {
-            HazardService.tell(level, at, 64, HazardText.msg("spill.water", Math.round(m3 * 10) / 10.0));
+            if (fresh) HazardService.tell(level, at, 48, HazardText.msg("spill.land", Math.round(m3 * 10) / 10.0));
+            return s;
         }
+        Spill s = new Spill(d.nextId++, origin, fluidId, true, new OilSpill(m3 * densityKgM3, densityKgM3, DEFAULT_D180_PCT, false));
+        d.spills.add(s);
+        HazardService.tell(level, at, 64, HazardText.msg("spill.water", Math.round(m3 * 10) / 10.0));
         return s;
     }
 
@@ -265,7 +281,8 @@ public final class OilSpills {
             if (!s.onWater) {
                 // проливы на суше: блоки, которые выгорели или убраны, — из записи вон
                 s.blocks.removeIf(p -> level.isLoaded(p) && !level.getBlockState(p).is(PcBlocks.CRUDE_OIL.get()));
-                if (s.blocks.isEmpty()) it.remove();
+                if (s.blocks.isEmpty() && s.pendingL < 1000 && s.model.ageS() > 600) it.remove();
+                s.model.advance(1, -1000); // только возраст: испарение на суше не считаем
                 continue;
             }
             tickWater(level, s);
