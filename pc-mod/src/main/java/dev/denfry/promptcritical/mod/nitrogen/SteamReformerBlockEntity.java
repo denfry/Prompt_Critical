@@ -20,7 +20,6 @@ import java.util.Arrays;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
 import net.minecraft.core.HolderLookup;
-import net.minecraft.core.particles.ParticleTypes;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.server.level.ServerPlayer;
@@ -32,6 +31,7 @@ import net.minecraft.world.ItemInteractionResult;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.level.Level;
+import dev.denfry.promptcritical.mod.fx.MachineFx;
 import net.minecraft.world.level.block.Block;
 import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.level.block.state.properties.BlockStateProperties;
@@ -100,7 +100,10 @@ public final class SteamReformerBlockEntity extends DeviceBlockEntity implements
 
     @Override
     public void tickDevice() {
-        if (!(level instanceof ServerLevel s)) return;
+        if (!(level instanceof ServerLevel s)) {
+            clientTick();
+            return;
+        }
         SimLevelBinding b = SimBindings.get(s);
         if (b == null) return;
         double dt = 0.05 * b.world().clock().kSlow();
@@ -137,10 +140,21 @@ public final class SteamReformerBlockEntity extends DeviceBlockEntity implements
         // излишек продувочного газа — на факел
         if (purgeJ > 1e9) purgeJ = 1e9;
         if (level.getGameTime() % 10 == 0) setLit(ch4MolS > 0);
-        if (ch4MolS > 0 && level.getGameTime() % 20 == 0)
-            s.sendParticles(ParticleTypes.SMOKE, worldPosition.getX() + 0.5, worldPosition.getY() + 2.5, worldPosition.getZ() + 0.5,
-                    2, 0.2, 0.1, 0.2, 0.01);
         if (level.getGameTime() % 100 == 0) setChanged();
+    }
+
+    /**
+     * Печь горит: дымок из трубы над конвекционной камерой, языки пламени в смотровых окнах северной стены, гул
+     * горелок (петля — MachineSoundscape). Точки — art/blockbench/petrochem/steam_reformer.author.js.
+     */
+    private void clientTick() {
+        BlockState st = getBlockState();
+        if (!st.hasProperty(BlockStateProperties.LIT) || !st.getValue(BlockStateProperties.LIT)) return;
+        MachineFx fx = MachineFx.of(level, worldPosition, st.getValue(BlockStateProperties.HORIZONTAL_FACING));
+        if (fx == null) return;
+        if (fx.chance(4)) fx.smoke(fx.at(26.5, 32.5, 8), false, 0.3);
+        if (fx.chance(1.5)) fx.flame(fx.at(fx.random().nextInt(3) * 8, 1, -12.8), 0.1);
+        if (fx.chance(0.4)) fx.wisp(fx.at(-7 + fx.random().nextInt(3) * 12, 20.5, fx.random().nextBoolean() ? 2 : 14), 0.1);
     }
 
     private void setLit(boolean lit) {

@@ -20,7 +20,6 @@ import java.util.Arrays;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
 import net.minecraft.core.HolderLookup;
-import net.minecraft.core.particles.ParticleTypes;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.server.level.ServerPlayer;
@@ -31,6 +30,7 @@ import net.minecraft.world.InteractionResult;
 import net.minecraft.world.ItemInteractionResult;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.ItemStack;
+import dev.denfry.promptcritical.mod.fx.MachineFx;
 import net.minecraft.world.level.block.Block;
 import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.level.block.state.properties.BlockStateProperties;
@@ -77,7 +77,10 @@ public final class EdcCrackerBlockEntity extends DeviceBlockEntity implements Fo
 
     @Override
     public void tickDevice() {
-        if (!(level instanceof ServerLevel s)) return;
+        if (!(level instanceof ServerLevel s)) {
+            clientTick();
+            return;
+        }
         SimLevelBinding b = SimBindings.get(s);
         if (b == null) return;
         double dt = 0.05 * b.world().clock().kSlow();
@@ -106,10 +109,21 @@ public final class EdcCrackerBlockEntity extends DeviceBlockEntity implements Fo
                 level.setBlock(worldPosition, st = st.setValue(BlockStateProperties.LIT, lit), Block.UPDATE_CLIENTS);
             if (st.hasProperty(PcProperties.ALARM) && st.getValue(PcProperties.ALARM) != alarm)
                 level.setBlock(worldPosition, st.setValue(PcProperties.ALARM, alarm), Block.UPDATE_CLIENTS);
-            if (lit) s.sendParticles(ParticleTypes.SMOKE, worldPosition.getX() + 0.5, worldPosition.getY() + 1.1, worldPosition.getZ() + 0.5,
-                    1, 0.1, 0.05, 0.1, 0.01);
         }
         if (level.getGameTime() % 100 == 0) setChanged();
+    }
+
+    /**
+     * Печь горит: дымок над трубой, пламя в гляделке северной стены; гул горелок — MachineSoundscape. Точки —
+     * art/blockbench/chlor_alkali/edc_cracker.author.js.
+     */
+    private void clientTick() {
+        BlockState st = getBlockState();
+        if (!st.hasProperty(BlockStateProperties.LIT) || !st.getValue(BlockStateProperties.LIT)) return;
+        MachineFx fx = MachineFx.of(level, worldPosition, st.getValue(BlockStateProperties.HORIZONTAL_FACING));
+        if (fx == null) return;
+        if (fx.chance(3)) fx.smoke(fx.at(8, 32.3, 8), false, 0.15);
+        if (fx.chance(1)) fx.flame(fx.at(8, 7, 1.2), 0.08);
     }
 
     @Override

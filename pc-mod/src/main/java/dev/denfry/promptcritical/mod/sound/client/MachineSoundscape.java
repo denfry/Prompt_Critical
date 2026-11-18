@@ -3,6 +3,8 @@ package dev.denfry.promptcritical.mod.sound.client;
 import com.simibubi.create.content.kinetics.base.KineticBlockEntity;
 import dev.denfry.promptcritical.mod.block.PcProperties;
 import dev.denfry.promptcritical.mod.boiler.FireTubeBoilerBlockEntity;
+import dev.denfry.promptcritical.mod.chlor.BrineTreaterBlockEntity;
+import dev.denfry.promptcritical.mod.chlor.EdcCrackerBlockEntity;
 import dev.denfry.promptcritical.mod.foundry.CupolaBlockEntity;
 import dev.denfry.promptcritical.mod.foundry.MachineToolBlockEntity;
 import dev.denfry.promptcritical.mod.foundry.ProductionToolBlockEntity;
@@ -15,6 +17,11 @@ import dev.denfry.promptcritical.mod.mine.LongwallShearerBlockEntity;
 import dev.denfry.promptcritical.mod.mine.MainMineFanBlockEntity;
 import dev.denfry.promptcritical.mod.mine.MineDrainagePumpBlockEntity;
 import dev.denfry.promptcritical.mod.mine.MineHoistBlockEntity;
+import dev.denfry.promptcritical.mod.nitrogen.SteamReformerBlockEntity;
+import dev.denfry.promptcritical.mod.npp.BwrReactorBlockEntity;
+import dev.denfry.promptcritical.mod.npp.SteamGeneratorBlockEntity;
+import dev.denfry.promptcritical.mod.nuclear.CascadeBlockEntity;
+import dev.denfry.promptcritical.mod.refinery.ClausUnitBlockEntity;
 import dev.denfry.promptcritical.mod.sound.PcSfx;
 import dev.denfry.promptcritical.sim.metallurgy.ProductionToolUnit;
 import dev.denfry.promptcritical.sim.mining.Hoist;
@@ -119,6 +126,15 @@ public final class MachineSoundscape {
             case ShakeoutGrateBlockEntity g -> running ? new Loop(PcSfx.SHAKEOUT_RATTLE, 0.6f, 0.8f + 0.2f * n) : null;
             case SandMoldBlockEntity m -> s.hasProperty(PcProperties.MOLD_STAGE) && s.getValue(PcProperties.MOLD_STAGE) == PcProperties.MoldStage.POURED
                     ? new Loop(PcSfx.METAL_POUR, 0.5f, 1) : null;
+            // кипящий реактор на мощности: шум потока пароводяной смеси в корпусе и паропроводах
+            case BwrReactorBlockEntity r -> flag(s, BlockStateProperties.LIT) ? new Loop(PcSfx.PUMP, 0.35f, 0.55f) : null;
+            case SteamReformerBlockEntity r -> flag(s, BlockStateProperties.LIT) ? new Loop(PcSfx.BOILER_FIRE, 0.9f, 0.85f) : null;
+            case ClausUnitBlockEntity c -> running ? new Loop(PcSfx.BOILER_FIRE, 0.45f, 1.1f) : null;
+            case EdcCrackerBlockEntity c -> flag(s, BlockStateProperties.LIT) ? new Loop(PcSfx.BOILER_FIRE, 0.6f, 1.0f) : null;
+            case BrineTreaterBlockEntity b -> running ? new Loop(PcSfx.PUMP, 0.3f, 0.8f) : null;
+            // преобразователь частоты каскада: тонкий вой на высокой частоте питания моторов центрифуг
+            case CascadeBlockEntity c -> running ? new Loop(PcSfx.ELECTRIC_MOTOR, 0.35f, 1.8f) : null;
+            case SteamGeneratorBlockEntity g -> flag(s, BlockStateProperties.LIT) ? new Loop(PcSfx.PUMP, 0.2f, 0.5f) : null;
             default -> null;
         };
     }

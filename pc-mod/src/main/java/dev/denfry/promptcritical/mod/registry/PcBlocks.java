@@ -487,7 +487,7 @@ public final class PcBlocks {
     // --- радиохимия PUREX (I4): каньон, аппараты линии, хранилище стекла ---
     public static final DeferredBlock<PcDeviceBlock> PUREX_CELL = device("purex_cell", machine(), Spec.facing(PcProperties.RUNNING),
             FoundryBlock.with(dev.denfry.promptcritical.mod.reprocessing.PurexCellBlockEntity::new));
-    public static final DeferredBlock<PcDeviceBlock> HLW_VAULT = device("hlw_vault", machine(), Spec.of(),
+    public static final DeferredBlock<PcDeviceBlock> HLW_VAULT = device("hlw_vault", machine(), Spec.of(BlockStateProperties.LIT),
             FoundryBlock.with(dev.denfry.promptcritical.mod.reprocessing.HlwVaultBlockEntity::new));
     public static final DeferredBlock<PcBlock> SHEARING_MACHINE = block("shearing_machine", machine(), Spec.facing());
     public static final DeferredBlock<PcBlock> DISSOLVER = block("dissolver", machine(), Spec.facing());
@@ -658,9 +658,13 @@ public final class PcBlocks {
     public static final DeferredBlock<PcDeviceBlock> ECCS_PUMP = device("eccs_pump", machine(), Spec.facing(PcProperties.RUNNING),
             KineticMachineBlock.with(ShaftSide.BACK, dev.denfry.promptcritical.mod.npp.EccsPumpBlockEntity::new));
     public static final DeferredBlock<PcBlock> ECCS_ACCUMULATOR = block("eccs_accumulator", machine(), Spec.of());
-    /** Кипящий реактор T2b 3×6×3: внизу корпус с зоной, вверху сепараторы и осушители; пульт — в центре низа. */
+    /**
+     * Кипящий реактор T2b 3×6×3: внизу корпус с зоной, вверху сепараторы и осушители; пульт — в центре низа. {@code lit} —
+     * реактор на мощности, {@code open} — открыты предохранительные клапаны (для огней пульта, звука и сброса пара).
+     */
     private static final Footprint FP_BWR_REACTOR = Footprint.of(CUBE3, CUBE3.at(0, 3, 0));
-    public static final DeferredBlock<PcDeviceBlock> BWR_REACTOR = device("bwr_reactor", machine(), Spec.facing().segments(PcProperties.BWR_SEGMENT, FP_BWR_REACTOR),
+    public static final DeferredBlock<PcDeviceBlock> BWR_REACTOR = device("bwr_reactor", machine(),
+            Spec.facing(BlockStateProperties.LIT, BlockStateProperties.OPEN).segments(PcProperties.BWR_SEGMENT, FP_BWR_REACTOR),
             FoundryBlock.with(dev.denfry.promptcritical.mod.npp.BwrReactorBlockEntity::new));
     /** CANDU T3 3×6×3: внизу каландр с каналами, вверху мост перегрузочной машины; пульт — в центре низа. */
     private static final Footprint FP_CANDU_REACTOR = Footprint.of(CUBE3, CUBE3.at(0, 3, 0));

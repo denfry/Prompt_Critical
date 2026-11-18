@@ -21,7 +21,7 @@ public final class BoilerSounds {
     }
 
     /** Шипение струи пара. */
-    static SoundEvent steam() {
+    public static SoundEvent steam() {
         return lookup("create:steam");
     }
 
