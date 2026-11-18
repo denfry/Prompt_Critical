@@ -72,6 +72,10 @@ public final class PcFluids {
     public static final Entry DECANT_OIL = liquid("decant_oil", 1050, 30000, 343);
     /** Сжиженный углеводородный газ: пропан и бутан-бутилены, под давлением насыщения. */
     public static final Entry LPG = liquid("lpg", 540, 150, 288);
+    /** Риформат: ароматика 60–70 %, компонент бензина (раньше выходил из риформинга как прямогонный бензин). */
+    public static final Entry REFORMATE = liquid("reformate", 815, 550, 293);
+    /** Товарный бензин станции смешения (09 §9.9.14); ID {@code gasoline} занят прямогонным с I2. */
+    public static final Entry MOTOR_GASOLINE = liquid("motor_gasoline", 745, 550, 293);
 
     // газопереработка I2: товарный газ — 1 мБ = 1 нм³; сжиженные углеводороды и метанол — 1 мБ = 1 л жидкости
     public static final Entry SALES_GAS = gas("sales_gas", 293, -1);

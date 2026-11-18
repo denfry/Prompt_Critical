@@ -1,0 +1,32 @@
+{
+  "parent": "minecraft:recipes/root",
+  "criteria": {
+    "has_quality_lab": {
+      "conditions": {
+        "items": [
+          {
+            "items": "promptcritical:quality_lab"
+          }
+        ]
+      },
+      "trigger": "minecraft:inventory_changed"
+    },
+    "has_the_recipe": {
+      "conditions": {
+        "recipe": "promptcritical:refinery/sample_bottle"
+      },
+      "trigger": "minecraft:recipe_unlocked"
+    }
+  },
+  "requirements": [
+    [
+      "has_the_recipe",
+      "has_quality_lab"
+    ]
+  ],
+  "rewards": {
+    "recipes": [
+      "promptcritical:refinery/sample_bottle"
+    ]
+  }
+}

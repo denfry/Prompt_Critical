@@ -97,6 +97,12 @@ public final class PcItems {
     /** Цеолит Y в матрице Al₂O₃ для каткрекинга, мешок 100 кг; на выведенном равновесном — {@code catalyst_state} (09 §9.9.11). */
     public static final DeferredItem<dev.denfry.promptcritical.mod.refinery.CatalystItem> CATALYST_FCC = registered(ITEMS.register("catalyst_fcc",
             () -> new dev.denfry.promptcritical.mod.refinery.CatalystItem(new Item.Properties().stacksTo(16))));
+    /** Пробоотборник (09 §9.9.13): пустой — стопкой, с пробой ({@code sample_data}) — по одному. */
+    public static final DeferredItem<dev.denfry.promptcritical.mod.refinery.SampleItem> SAMPLE_BOTTLE = registered(ITEMS.register("sample_bottle",
+            () -> new dev.denfry.promptcritical.mod.refinery.SampleItem(new Item.Properties().stacksTo(16), false)));
+    /** Паспорт партии бензина: результат лаборатории и марка (09 §9.9.13). */
+    public static final DeferredItem<dev.denfry.promptcritical.mod.refinery.SampleItem> BATCH_CERTIFICATE = registered(ITEMS.register(
+            "batch_certificate", () -> new dev.denfry.promptcritical.mod.refinery.SampleItem(new Item.Properties().stacksTo(1), true)));
     /** Комовая сера установки Клауса, 10 кг — сырьё сернокислотной установки. */
     public static final DeferredItem<Item> SULFUR = item("sulfur", 64);
     /** Пакет платинородиевых сеток (Pt 92,5 %, Rh 7,5 %) и катализатор очистки хвостовых газов. */

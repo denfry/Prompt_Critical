@@ -45,6 +45,13 @@ public final class RefineryBlockEntities {
             BLOCK_ENTITIES.register("amine_unit",
                     () -> BlockEntityType.Builder.of(AmineUnitBlockEntity::new, PcBlocks.AMINE_UNIT.get()).build(null));
 
+    public static final DeferredHolder<BlockEntityType<?>, BlockEntityType<GasolineBlenderBlockEntity>> GASOLINE_BLENDER =
+            BLOCK_ENTITIES.register("gasoline_blender",
+                    () -> BlockEntityType.Builder.of(GasolineBlenderBlockEntity::new, PcBlocks.GASOLINE_BLENDER.get()).build(null));
+    public static final DeferredHolder<BlockEntityType<?>, BlockEntityType<QualityLabBlockEntity>> QUALITY_LAB =
+            BLOCK_ENTITIES.register("quality_lab",
+                    () -> BlockEntityType.Builder.of(QualityLabBlockEntity::new, PcBlocks.QUALITY_LAB.get()).build(null));
+
     private RefineryBlockEntities() {
     }
 
@@ -65,5 +72,7 @@ public final class RefineryBlockEntities {
         event.registerBlockEntity(Capabilities.FluidHandler.BLOCK, FCC_UNIT.get(), (be, side) -> be.fluids(side));
         event.registerBlockEntity(Capabilities.ItemHandler.BLOCK, FCC_UNIT.get(), (be, side) -> be.items(side));
         event.registerBlockEntity(Capabilities.FluidHandler.BLOCK, AMINE_UNIT.get(), (be, side) -> be.fluids(side));
+        event.registerBlockEntity(Capabilities.FluidHandler.BLOCK, GASOLINE_BLENDER.get(), (be, side) -> be.fluids(side));
+        event.registerBlockEntity(Capabilities.ItemHandler.BLOCK, QUALITY_LAB.get(), (be, side) -> be.items(side));
     }
 }

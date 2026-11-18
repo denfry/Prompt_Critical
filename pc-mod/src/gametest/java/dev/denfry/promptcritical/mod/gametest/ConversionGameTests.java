@@ -10,6 +10,9 @@ import dev.denfry.promptcritical.mod.refinery.AmineUnitBlockEntity;
 import dev.denfry.promptcritical.mod.refinery.ClausUnitBlockEntity;
 import dev.denfry.promptcritical.mod.refinery.DelayedCokerBlockEntity;
 import dev.denfry.promptcritical.mod.refinery.FccUnitBlockEntity;
+import dev.denfry.promptcritical.mod.refinery.GasolineBlenderBlockEntity;
+import dev.denfry.promptcritical.mod.refinery.QualityLabBlockEntity;
+import dev.denfry.promptcritical.mod.refinery.SampleItem;
 import dev.denfry.promptcritical.mod.refinery.RefineryComponents;
 import dev.denfry.promptcritical.mod.registry.PcItems;
 import dev.denfry.promptcritical.sim.refining.CatalystState;
@@ -234,6 +237,74 @@ public final class ConversionGameTests {
                     h.assertTrue(a.totalH2sKg() > 0.5, "acid gas " + a.totalH2sKg() + " kg");
                     ClausUnitBlockEntity c = h.getBlockEntity(claus);
                     h.assertTrue(c.totalSulfurKg() > 0.3, "Claus sulphur " + c.totalSulfurKg() + " kg");
+                })
+                .thenSucceed();
+    }
+
+    /**
+     * Станция смешения по рецепту случая A §9.9.14 («Нормаль-80»): смесь в резервуаре, анализатор показывает её ОЧИ,
+     * проба в лаборатории даёт паспорт партии; CC видит задачу ЛП через {@code pc_tank.getBlendData()}.
+     */
+    @GameTest(template = LARGE, timeoutTicks = 1600)
+    public static void blendingStationLabAndCertificate(GameTestHelper h) {
+        BlockPos bl = new BlockPos(5, 2, 5), lab = new BlockPos(8, 2, 5);
+        h.setBlock(bl, north(PcBlocks.GASOLINE_BLENDER.get()));
+        h.setBlock(bl.above(), north(PcBlocks.QUALITY_ANALYZER.get()));
+        h.setBlock(lab, north(PcBlocks.QUALITY_LAB.get()));
+        h.startSequence()
+                .thenExecute(() -> {
+                    GasolineBlenderBlockEntity b = h.getBlockEntity(bl);
+                    double[] caseA = {2.093, 0.636, 5.000, 0};
+                    for (int i = 0; i < caseA.length; i++) b.setValve(i, caseA[i]);
+                    b.setGrade(0);
+                    var profile = dev.denfry.promptcritical.mod.scada.device.DeviceProfiles.of(b);
+                    h.assertTrue(profile != null && profile.type.equals("pc_tank") && profile.reads.containsKey("getBlendData")
+                            && profile.commands.containsKey("setValves"), "pc_tank with getBlendData and setValves");
+                    h.assertTrue(((java.util.List<?>) b.blendData().get("components")).size() == 4, "four components");
+                })
+                .thenWaitUntil(() -> {
+                    GasolineBlenderBlockEntity b = h.getBlockEntity(bl);
+                    fill(b.fluids(Direction.NORTH), PcFluids.GASOLINE.source.get(), 8000);
+                    fill(b.fluids(Direction.NORTH), PcFluids.REFORMATE.source.get(), 8000);
+                    fill(b.fluids(Direction.NORTH), PcFluids.FCC_GASOLINE.source.get(), 8000);
+                    h.assertTrue(b.blend().amount() > 500, "blend " + b.blend().amount() + " L");
+                    h.assertTrue(b.analyzer() && b.analyzerReading() != null, "analyzer reading");
+                    double ron = b.blendProperties().ron();
+                    h.assertTrue(Math.abs(ron - 85.7) < 1.5, "blend RON " + ron);
+                })
+                .thenExecute(() -> {
+                    ItemStack bottle = new ItemStack(PcItems.SAMPLE_BOTTLE.get());
+                    bottle.set(RefineryComponents.SAMPLE_DATA.get(), SampleItem.sample(h.getLevel(), h.absolutePos(bl), null));
+                    QualityLabBlockEntity q = h.getBlockEntity(lab);
+                    h.assertTrue(q.input().insertItem(0, bottle, false).isEmpty(), "sample accepted by the lab");
+                })
+                .thenWaitUntil(() -> {
+                    GasolineBlenderBlockEntity b = h.getBlockEntity(bl);
+                    QualityLabBlockEntity q = h.getBlockEntity(lab);
+                    h.assertTrue(b.passport() != null, "passport written");
+                    h.assertTrue(Math.abs(b.passport().ron() - b.blendProperties().ron()) < 2, "measured RON " + b.passport().ron());
+                    boolean cert = false;
+                    for (int i = 0; i < q.output().getSlots(); i++) cert |= q.output().getStackInSlot(i).is(PcItems.BATCH_CERTIFICATE.get());
+                    h.assertTrue(cert, "batch certificate issued");
+                })
+                .thenSucceed();
+    }
+
+    /** Пробоотборник по баку Create с бензином каткрекинга: истинное качество — эталонное §9.9.14 (ОЧИ 91,5). */
+    @GameTest(template = LARGE, timeoutTicks = 100)
+    public static void sampleBottleTakesAComponentFromAnyTank(GameTestHelper h) {
+        BlockPos tank = new BlockPos(5, 2, 5);
+        h.setBlock(tank, AllBlocks.FLUID_TANK.getDefaultState());
+        h.startSequence()
+                .thenIdle(2)
+                .thenExecute(() -> {
+                    BlockPos at = h.absolutePos(tank);
+                    h.assertTrue(SampleItem.sample(h.getLevel(), at, Direction.UP) == null, "empty tank: nothing to sample");
+                    var cap = h.getLevel().getCapability(net.neoforged.neoforge.capabilities.Capabilities.FluidHandler.BLOCK, at, Direction.UP);
+                    fill(cap, PcFluids.FCC_GASOLINE.source.get(), 1000);
+                    RefineryComponents.SampleData d = SampleItem.sample(h.getLevel(), at, Direction.UP);
+                    h.assertTrue(d != null && Math.abs(d.truth().ron() - 91.5) < 1e-9 && !d.analysed(), "cracked gasoline sample");
+                    h.assertTrue(Math.abs(QualityLabBlockEntity.measure(d).ron() - 91.5) < 1.5, "lab within reproducibility");
                 })
                 .thenSucceed();
     }

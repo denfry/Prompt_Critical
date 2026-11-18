@@ -159,6 +159,100 @@ public final class ConversionPanels {
                     v.num(AM_LEAN_X1000, 10000, 4), v.raw(AM_STEAM)), null)
             .noInventory().build();
 
+    // ------------------------------------------------------------------ смешение бензина, лаборатория (09 §9.9.12–9.9.14)
+    public static final int BL_RON_X10 = 0, BL_MON_X10 = 1, BL_RVP_X10 = 2, BL_TANK = 3, BL_V0 = 4, BL_SEL = 8, BL_GRADE = 9,
+            BL_RATE_X100 = 10, BL_PASS_RON_X10 = 11, BL_FLAGS = 12, BL_CHANNELS = 13;
+    public static final Tr NOTHING_TO_SAMPLE = PanelText.tr("conv.nothing_to_sample", "No gasoline or blending component here",
+            "Здесь нет бензина или компонента смешения"),
+            SAMPLED = PanelText.tr("conv.sampled", "Sample taken: %s", "Проба отобрана: %s"),
+            EMPTY_BOTTLE = PanelText.tr("conv.empty_bottle", "Use on a blending station or a tank of gasoline components",
+                    "ПКМ по станции смешения или баку с компонентом бензина"),
+            NOT_ANALYSED = PanelText.tr("conv.not_analysed", "Not analysed: take it to the quality lab", "Не проанализирована: отнесите в лабораторию"),
+            ON_GRADE = PanelText.tr("conv.on_grade", "Meets %s", "Соответствует: %s"),
+            OFF_GRADE = PanelText.tr("conv.off_grade", "Fails %s", "Не соответствует: %s"),
+            QUALITY_1 = PanelText.tr("conv.quality_1", "RON %s · MON %s · RVP %s kPa · S %s ppm", "ОЧИ %s · ОЧМ %s · ДНП %s кПа · S %s ppm"),
+            QUALITY_2 = PanelText.tr("conv.quality_2", "Benzene %s %% · aromatics %s %% · olefins %s %% · %s kg/m³",
+                    "Бензол %s %% · ароматика %s %% · олефины %s %% · %s кг/м³");
+    private static final Tr[] GRADE_NAMES = {PanelText.tr("conv.grade.normal80", "Normal-80", "Нормаль-80"),
+            PanelText.tr("conv.grade.ai92", "AI-92", "АИ-92")};
+    private static final Tr[] COMPONENT_NAMES = {PanelText.tr("conv.comp.lsr", "straight-run", "прямогонный"),
+            PanelText.tr("conv.comp.reformate", "reformate", "риформат"), PanelText.tr("conv.comp.fcc", "cracked", "каткрекинга"),
+            PanelText.tr("conv.comp.butane", "butane", "бутан")};
+    private static final Tr RON_DIAL = PanelText.tr("conv.ron", "RON", "ОЧИ"), MON_DIAL = PanelText.tr("conv.mon", "MON", "ОЧМ"),
+            RVP_DIAL = PanelText.tr("conv.rvp", "RVP", "ДНП"), BLEND = PanelText.tr("conv.blend", "Motor gasoline", "Товарный бензин"),
+            ANALYZER = PanelText.tr("conv.analyzer", "Analyzer attached", "Анализатор подключён"),
+            OFF_SPEC_BLEND = PanelText.tr("conv.off_spec_blend", "Analyzer: blend off grade", "Анализатор: смесь не в марке"),
+            CERT_OK = PanelText.tr("conv.cert_ok", "Batch certified on grade", "Партия с паспортом, в марке"),
+            CERT_BAD = PanelText.tr("conv.cert_bad", "Batch certified off grade", "Паспорт: партия не в марке"),
+            V_DOWN = PanelText.tr("conv.v_down", "Selected valve −0.1 m³/h", "Выбранный клапан −0,1 м³/ч"),
+            V_UP = PanelText.tr("conv.v_up", "Selected valve +0.1 m³/h", "Выбранный клапан +0,1 м³/ч"),
+            NEXT = PanelText.tr("conv.next", "Valve", "Клапан"), NEXT_TIP = PanelText.tr("conv.next_tip", "Select the next component valve",
+                    "Выбрать клапан следующего компонента"),
+            GRADE = PanelText.tr("conv.grade", "Grade", "Марка"), GRADE_TIP = PanelText.tr("conv.grade_tip", "Switch the grade the batch is made to",
+                    "Переключить марку, на которую делают партию"),
+            CAL = PanelText.tr("conv.cal", "Calibrate", "Калибровка"), CAL_TIP = PanelText.tr("conv.cal_tip",
+                    "Zero the analyzer drift against a lab certificate newer than the last calibration",
+                    "Обнулить дрейф анализатора по паспорту лаборатории, свежее последней калибровки"),
+            VALVES = PanelText.tr("conv.valves", "Valves m³/h: %s %s · %s %s · %s %s · %s %s",
+                    "Клапаны, м³/ч: %s %s · %s %s · %s %s · %s %s"),
+            BLEND_STATUS = PanelText.tr("conv.blend_status", "%s · blending %s m³/h · selected: %s · certified RON %s",
+                    "%s · смешение %s м³/ч · выбран: %s · ОЧИ по паспорту %s");
+
+    public static Component gradeName(dev.denfry.promptcritical.sim.refining.GasolineBlending.Grade g) {
+        return GRADE_NAMES[g.id().equals("ai92") ? 1 : 0].get();
+    }
+
+    /** Две строки качества {@code fuel_quality} для подсказки пробы и паспорта. */
+    public static void qualityLines(RefineryComponents.FuelQuality q, List<Component> out) {
+        out.add(QUALITY_1.get(PanelText.num(q.ron(), 1), PanelText.num(q.mon(), 1), PanelText.num(q.rvpKpa(), 1), PanelText.num(q.sulfurPpm(), 1))
+                .withStyle(net.minecraft.ChatFormatting.GRAY));
+        out.add(QUALITY_2.get(PanelText.num(q.benzenePct(), 1), PanelText.num(q.aromaticsPct(), 1), PanelText.num(q.olefinsPct(), 1),
+                PanelText.num(q.density(), 0)).withStyle(net.minecraft.ChatFormatting.GRAY));
+    }
+
+    private static Component comp(int i) {
+        return COMPONENT_NAMES[Math.clamp(i, 0, COMPONENT_NAMES.length - 1)].get();
+    }
+
+    public static final PanelLayout BLENDER = PanelLayout.builder("gasoline_blender", 300, 150, BL_CHANNELS)
+            .dial(8, 24, false, BL_RON_X10, 10, 110, Double.NaN, 1, RON_DIAL.get(), RON_DIAL.get(), null)
+            .dial(64, 24, false, BL_MON_X10, 10, 110, Double.NaN, 1, MON_DIAL.get(), MON_DIAL.get(), null)
+            .dial(120, 24, false, BL_RVP_X10, 10, 100, 60, 0, KPA.get(), RVP_DIAL.get(), null)
+            .glass(176, 24, 56, BL_TANK, 0xFFE8E070, Double.NaN, Double.NaN, BLEND.get(), null)
+            .lamp(204, 22, BL_FLAGS, F_ON, LampColor.GREEN, ON.get()).lamp(204, 36, BL_FLAGS, F_RUN, LampColor.GREEN, WORKING.get())
+            .lamp(204, 50, BL_FLAGS, F_AUX, LampColor.GREEN, ANALYZER.get()).lamp(204, 64, BL_FLAGS, F_WARN, LampColor.AMBER, OFF_SPEC_BLEND.get())
+            .lamp(204, 78, BL_FLAGS, F_LOW, LampColor.GREEN, CERT_OK.get()).lamp(204, 92, BL_FLAGS, F_ALARM, LampColor.RED, CERT_BAD.get())
+            .button(8, 92, 44, B_RUN, RUN.get(), null)
+            .button(56, 92, 20, B_DOWN, Component.literal("−"), V_DOWN.get()).button(78, 92, 20, B_UP, Component.literal("+"), V_UP.get())
+            .button(102, 92, 40, B_DOWN2, NEXT.get(), NEXT_TIP.get()).button(146, 92, 40, B_UP2, GRADE.get(), GRADE_TIP.get())
+            .button(8, 108, 56, B_ACTION, CAL.get(), CAL_TIP.get())
+            .readout(8, 126, 284, v -> VALVES.get(comp(0), v.num(BL_V0, 100, 2), comp(1), v.num(BL_V0 + 1, 100, 2), comp(2),
+                    v.num(BL_V0 + 2, 100, 2), comp(3), v.num(BL_V0 + 3, 100, 2)), null)
+            .readout(8, 138, 284, v -> BLEND_STATUS.get(GRADE_NAMES[Math.clamp(v.raw(BL_GRADE), 0, 1)].get(), v.num(BL_RATE_X100, 100, 2),
+                    comp(v.raw(BL_SEL)), v.num(BL_PASS_RON_X10, 10, 1)), null)
+            .noInventory().build();
+
+    public static final int LB_PROGRESS = 0, LB_RON_X10 = 1, LB_MON_X10 = 2, LB_RVP_X10 = 3, LB_S_X10 = 4, LB_BZ_X10 = 5, LB_ARO_X10 = 6,
+            LB_OLE_X10 = 7, LB_RHO = 8, LB_FLAGS = 9, LB_CHANNELS = 10;
+    private static final Tr PROGRESS = PanelText.tr("conv.progress", "Analysis", "Анализ"),
+            RESULT = PanelText.tr("conv.result", "Last result ready", "Есть результат"),
+            SAMPLE = PanelText.tr("conv.sample", "Sample bottle", "Проба"), DONE = PanelText.tr("conv.done", "Analysed sample, certificate", "Проба после анализа, паспорт"),
+            LAB_1 = PanelText.tr("conv.lab_1", "RON %s · MON %s · RVP %s kPa · S %s ppm", "ОЧИ %s · ОЧМ %s · ДНП %s кПа · S %s ppm"),
+            LAB_2 = PanelText.tr("conv.lab_2", "Benzene %s %% · aromatics %s %% · olefins %s %% · %s kg/m³",
+                    "Бензол %s %% · ароматика %s %% · олефины %s %% · %s кг/м³");
+
+    public static final PanelLayout LAB = PanelLayout.builder("quality_lab", 232, 120, LB_CHANNELS)
+            .bar(8, 24, 140, LB_PROGRESS, 10, 100, 0xFF60A060, PROGRESS.get(), null)
+            .lamp(176, 22, LB_FLAGS, F_ON, LampColor.GREEN, ON.get()).lamp(176, 36, LB_FLAGS, F_RUN, LampColor.AMBER, WORKING.get())
+            .lamp(176, 50, LB_FLAGS, F_AUX, LampColor.GREEN, RESULT.get())
+            .button(8, 50, 44, B_RUN, RUN.get(), null)
+            .slot(70, 50, 0, s -> s.is(dev.denfry.promptcritical.mod.registry.PcItems.SAMPLE_BOTTLE.get()), SAMPLE.get())
+            .output(100, 50, 1, DONE.get()).output(118, 50, 2, DONE.get())
+            .readout(8, 80, 216, v -> LAB_1.get(v.num(LB_RON_X10, 10, 1), v.num(LB_MON_X10, 10, 1), v.num(LB_RVP_X10, 10, 1),
+                    v.num(LB_S_X10, 10, 1)), null)
+            .readout(8, 94, 216, v -> LAB_2.get(v.num(LB_BZ_X10, 10, 1), v.num(LB_ARO_X10, 10, 1), v.num(LB_OLE_X10, 10, 1),
+                    v.raw(LB_RHO)), null).build();
+
     private ConversionPanels() {
     }
 
@@ -168,6 +262,8 @@ public final class ConversionPanels {
         out.add(VACUUM);
         out.add(FCC);
         out.add(AMINE);
+        out.add(BLENDER);
+        out.add(LAB);
         return List.copyOf(out);
     }
 }

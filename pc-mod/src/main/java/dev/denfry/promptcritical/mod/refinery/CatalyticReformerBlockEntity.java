@@ -43,7 +43,7 @@ public final class CatalyticReformerBlockEntity extends UraniumProcessBlockEntit
     private final FeedTank naphtha = new FeedTank(PcFluids.GASOLINE.source.get(), MB);
     private final FeedTank fuel = new FeedTank(PcFluids.SALES_GAS.source.get(), MB);
     private final FeedTank chlorine = new FeedTank(PcFluids.CHLORINE.source.get(), CHLORINE_MB);
-    private final ProductTank reformate = new ProductTank(PcFluids.GASOLINE.source.get(), MB);
+    private final ProductTank reformate = new ProductTank(PcFluids.REFORMATE.source.get(), MB);
     private final ProductTank hydrogen = new ProductTank(PcFluids.HYDROGEN.source.get(), MB);
     private final ProductTank fuelGas = new ProductTank(PcFluids.SALES_GAS.source.get(), MB);
     private final IFluidHandler inlet = new PyrolysisFurnaceBlockEntity.MultiInlet(naphtha, fuel, chlorine);

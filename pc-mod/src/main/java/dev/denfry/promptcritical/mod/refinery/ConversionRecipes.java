@@ -68,5 +68,22 @@ public final class ConversionRecipes extends RecipeProvider {
                 .define('T', AllBlocks.FLUID_TANK.get()).define('A', net.minecraft.world.item.Items.GLASS_BOTTLE).define('S', plate)
                 .define('F', PcBlocks.TUBE_FURNACE.get())
                 .unlockedBy("has_gas_plant", has(PcBlocks.LOW_TEMPERATURE_SEPARATOR.get())).save(out, id("amine_unit"));
+        // резервуар смешения, четыре регулирующих клапана с расходомерами
+        ShapedRecipeBuilder.shaped(RecipeCategory.MISC, PcBlocks.GASOLINE_BLENDER.get())
+                .pattern("VPV").pattern("PTP").pattern("VPV").define('V', AllBlocks.FLUID_VALVE.get()).define('P', pipe)
+                .define('T', AllBlocks.FLUID_TANK.get())
+                .unlockedBy("has_crude_column", has(PcBlocks.CRUDE_COLUMN.get())).save(out, id("gasoline_blender"));
+        // моторная установка CFR (одноцилиндровый двигатель), аппарат разгонки, весы
+        ShapedRecipeBuilder.shaped(RecipeCategory.MISC, PcBlocks.QUALITY_LAB.get())
+                .pattern("GGG").pattern("BEB").pattern("SSS").define('G', net.minecraft.world.item.Items.GLASS_PANE)
+                .define('B', net.minecraft.world.item.Items.GLASS_BOTTLE).define('E', AllBlocks.ENCASED_FAN.get()).define('S', plate)
+                .unlockedBy("has_crude_column", has(PcBlocks.CRUDE_COLUMN.get())).save(out, id("quality_lab"));
+        ShapedRecipeBuilder.shaped(RecipeCategory.MISC, PcBlocks.QUALITY_ANALYZER.get())
+                .pattern("SGS").pattern("WBW").pattern("SPS").define('S', plate).define('G', net.minecraft.world.item.Items.GLASS_PANE)
+                .define('W', PcItems.COPPER_WIRE.get()).define('B', net.minecraft.world.item.Items.GLASS_BOTTLE).define('P', pipe)
+                .unlockedBy("has_quality_lab", has(PcBlocks.QUALITY_LAB.get())).save(out, id("quality_analyzer"));
+        net.minecraft.data.recipes.ShapelessRecipeBuilder.shapeless(RecipeCategory.MISC, PcItems.SAMPLE_BOTTLE.get(), 4)
+                .requires(net.minecraft.world.item.Items.GLASS_BOTTLE, 4).requires(net.minecraft.world.item.Items.PAPER)
+                .unlockedBy("has_quality_lab", has(PcBlocks.QUALITY_LAB.get())).save(out, id("sample_bottle"));
     }
 }

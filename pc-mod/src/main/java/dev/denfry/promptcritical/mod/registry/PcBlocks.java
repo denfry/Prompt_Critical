@@ -602,6 +602,11 @@ public final class PcBlocks {
     public static final DeferredBlock<PcBlock> STEAM_EJECTOR = block("steam_ejector", machine(), Spec.facing());
     public static final DeferredBlock<PcDeviceBlock> FCC_UNIT = uranium("fcc_unit", dev.denfry.promptcritical.mod.refinery.FccUnitBlockEntity::new);
     public static final DeferredBlock<PcDeviceBlock> AMINE_UNIT = uranium("amine_unit", dev.denfry.promptcritical.mod.refinery.AmineUnitBlockEntity::new);
+    public static final DeferredBlock<PcDeviceBlock> GASOLINE_BLENDER = uranium("gasoline_blender",
+            dev.denfry.promptcritical.mod.refinery.GasolineBlenderBlockEntity::new);
+    public static final DeferredBlock<PcDeviceBlock> QUALITY_LAB = uranium("quality_lab", dev.denfry.promptcritical.mod.refinery.QualityLabBlockEntity::new);
+    /** Поточный анализатор качества бензина (03d, 09 §9.9.13): показания — у станции смешения, которой он касается. */
+    public static final DeferredBlock<PcBlock> QUALITY_ANALYZER = block("quality_analyzer", machine(), Spec.facing());
 
     // --- передел урана: от руды до UF₆ (I4) ---
     public static final DeferredBlock<PcDeviceBlock> ACID_PLANT = uranium("acid_plant",
