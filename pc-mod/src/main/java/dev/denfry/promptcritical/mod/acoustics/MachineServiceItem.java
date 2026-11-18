@@ -41,8 +41,11 @@ public final class MachineServiceItem extends Item {
         }
     }
 
-    /** Машина, над которой идут работы (свой у клиента и у сервера). */
-    private static final Map<Player, BlockPos> TARGET = new WeakHashMap<>();
+    /**
+     * Машина, над которой идут работы (свой ключ у клиента и у сервера). В одиночной игре клиент и встроенный сервер —
+     * разные потоки одной JVM, поэтому карта синхронизирована.
+     */
+    private static final Map<Player, BlockPos> TARGET = java.util.Collections.synchronizedMap(new WeakHashMap<>());
     static final double REACH_M = 6;
 
     private final Kind kind;
