@@ -132,6 +132,20 @@ public final class PlcCpu {
         return mw[i];
     }
 
+    /**
+     * Запись маркера {@code %MXi} снаружи (верхний уровень, 03d §3d.14.1 {@code writeVar}): программа видит её на
+     * ближайшем цикле и может переписать сама, как у настоящего ПЛК.
+     */
+    public void writeMarker(int i, boolean v) {
+        mx[i] = v;
+    }
+
+    /** Запись слова {@code %MWi} снаружи; только конечные значения. */
+    public void writeWord(int i, double v) {
+        if (!Double.isFinite(v)) throw new IllegalArgumentException("finite value required");
+        mw[i] = v;
+    }
+
     /** Исполнение программы; {@code false} — сработал сторожевой таймер. */
     private boolean execute(List<Instr> code) {
         double cr = 0;

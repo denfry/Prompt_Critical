@@ -1,0 +1,7 @@
+Wells and the drilling rig.
+
+pc_well (wellhead): chokeUp()  chokeDown()  toggleMasterValve()
+pc_well (pumpjack): read its panel with read and readMany; event pc_pump_state when it starts or stops
+pc_drilling (driller's console): wobUp()  wobDown()  spmUp()  spmDown()  toggleBop()  advanceKill()  zeroPitTotalizer()
+
+Every method returns a ticket. Watch the pit volume with watch() to catch a kick early.

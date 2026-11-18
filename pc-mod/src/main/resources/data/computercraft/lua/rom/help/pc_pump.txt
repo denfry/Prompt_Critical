@@ -1,0 +1,6 @@
+Pumps have the type pc_pump.
+
+The main coolant pump and the emergency core cooling pump are turned by a Create shaft. They have no clutch of their own: start and stop them with a Create clutch and redstone. getState() -> {state = "RUNNING" | "STOPPED", ...}. start, stop and setCoupling fail with E_HARDWARE_ONLY.
+The mud pump (also pc_drilling), the mine drainage pump and the degasification pump (also pc_mine) have panels: use read, listCommands and command.
+
+Event: pc_pump_state {state, prev} when the pump starts or stops.

@@ -1,0 +1,20 @@
+Prompt Critical machines are peripherals. Every machine with a panel has the type "pc_device" and its own type: pc_reactor, pc_pump, pc_plc, pc_sis, pc_well, pc_drilling, pc_boiler, pc_turbine, pc_generator, pc_breaker, pc_transformer, pc_furnace, pc_column, pc_chem_process and others.
+A computer sees what a player at the panel sees and can press what a player can press, no more.
+
+Methods of every pc_device:
+getDeviceInfo()  getControlMode()  getAccessLevel()  simTime()
+listTags()  getTagInfo(tag)  read(tag) -> value, quality, t
+readMany({tag, ...}) -> {[tag] = {v, q, t}}   (up to 64 tags, one snapshot)
+getState() -> {mode, values, quality, t}
+watch(tag, lo, hi, deadband [, onDelay [, offDelay]]) -> watchId   unwatch(watchId)
+listCommands() -> {{name, label, coil}, ...}   command(name) -> ticket
+getCommandStatus(ticket) -> {state, err, t}   cancel(ticket)
+readInputRegisters(addr, n)  readDiscreteInputs(addr, n)  readCoils(addr, n)  writeCoil(addr, true)
+
+Commands return a ticket at once and run on the next server tick. The result comes as the "pc_command_result" event.
+Errors look like "E_RATE: ..." and are caught with pcall. Limits: a call budget per computer (400 tokens a second, 800 at once) and 10 commands a second per device.
+Bypasses, protection setpoints and taking things out of a machine are done by hand only: E_HARDWARE_ONLY.
+A device under a lockout padlock is in MAINTENANCE mode and refuses commands.
+
+See also: help pc_reactor, help pc_pump, help pc_plc, help pc_sis, help pc_well, help pc_events.
+Example programs: /rom/programs/pc/examples

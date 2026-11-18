@@ -1,0 +1,8 @@
+The safety logic solver has the type pc_sis. It is read only.
+
+getState() -> {state, tripped, bypasses, testing, power, voting, trips, proofTests, proofTestOverdue, cabinet}
+getCauses() -> {{id, state, voting, votes, channels = {A = {mA, q, state}, ...}, bypass}}
+getBypasses()  getPfd() -> {{sif, pfdAvg, pfdNow, silAchieved, architecture, sinceTestH, intervalH, overdue}}
+
+reset, setBypass, requestTrip, setSetpoint and setMatrix always fail with E_HARDWARE_ONLY. To trip it from a program, wire a PLC output to its input.
+Events: pc_sis_trip, pc_sis_reset, pc_sis_bypass {on}, pc_sis_test_due {overdueS, pfdNow}.

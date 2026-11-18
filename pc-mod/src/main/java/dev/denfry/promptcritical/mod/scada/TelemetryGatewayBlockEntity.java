@@ -165,6 +165,8 @@ public final class TelemetryGatewayBlockEntity extends DeviceBlockEntity impleme
         for (PanelLayout.Element e : s.layout().elements)
             if (e instanceof PanelLayout.Button b && PanelText.shortKey(b.label()).equals(button)) buttonId = b.id();
         if (buttonId < 0) throw new TelemetryException("No button " + button + " on " + id);
+        if (dev.denfry.promptcritical.mod.scada.device.DeviceRuntime.hardwareKey(button))
+            throw new TelemetryException(button + " is done only at the panel, by hand");
         if (!commands.tryTake(now(), 1)) throw new TelemetryException("Telecontrol channel is busy: wait for the previous command");
         if (!(level.getBlockEntity(s.pos()) instanceof PanelHost host) || !(level instanceof ServerLevel sl))
             throw new TelemetryException("Machine " + id + " is gone");
