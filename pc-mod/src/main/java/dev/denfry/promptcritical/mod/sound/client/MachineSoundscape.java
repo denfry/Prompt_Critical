@@ -119,6 +119,12 @@ public final class MachineSoundscape {
             case ShakeoutGrateBlockEntity g -> running ? new Loop(PcSfx.SHAKEOUT_RATTLE, 0.6f, 0.8f + 0.2f * n) : null;
             case SandMoldBlockEntity m -> s.hasProperty(PcProperties.MOLD_STAGE) && s.getValue(PcProperties.MOLD_STAGE) == PcProperties.MoldStage.POURED
                     ? new Loop(PcSfx.METAL_POUR, 0.5f, 1) : null;
+            // печь пиролиза: подовые горелки гудят, пока печь в работе или на выжиге кокса
+            case dev.denfry.promptcritical.mod.chem.PyrolysisFurnaceBlockEntity f -> flag(s, BlockStateProperties.LIT) ? new Loop(PcSfx.BOILER_FIRE, 1.0f, 0.8f) : null;
+            // гиперкомпрессор ПЭВД: тяжёлый поршневой стук, чаще с оборотами вала
+            case dev.denfry.promptcritical.mod.chem.LdpeReactorBlockEntity r -> running || n > 0 ? new Loop(PcSfx.PUMP, 0.5f + 0.4f * Math.min(1, n), 0.5f + 0.3f * Math.min(1, n)) : null;
+            // гидроочистка: сырьевой насос и циркуляционный компрессор водорода за стеной
+            case dev.denfry.promptcritical.mod.refinery.HydrotreaterBlockEntity h -> running ? new Loop(PcSfx.PUMP, 0.3f, 1.1f) : null;
             default -> null;
         };
     }

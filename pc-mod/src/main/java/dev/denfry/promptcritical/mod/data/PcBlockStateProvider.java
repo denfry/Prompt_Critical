@@ -109,7 +109,7 @@ public final class PcBlockStateProvider extends BlockStateProvider {
     /** Блоки с неподвижными частями из арт-реестра (partial): части добавляются мультипартом к модели состояния. */
     private static final java.util.Set<String> PARTS = java.util.Set.of("coke_pusher_ram", "sinter_strand", "blast_furnace_top",
             "cast_house_machine", "ladle", "roller_table", "rolling_mill_stand", "piercing_mill", "pipe_welder", "asu_main_compressor",
-            "asu_expander", "air_separator", "hydrotest_pump", "recording_gauge", "water_clarifier", "rotary_table", "mud_pump", "pumpjack", "gas_compressor", "ldpe_reactor", "brine_treater", "pvc_reactor", "leach_tank", "rotary_calciner", "hf_kiln", "mixer_settler",
+            "asu_expander", "air_separator", "hydrotest_pump", "recording_gauge", "water_clarifier", "rotary_table", "mud_pump", "pumpjack", "gas_compressor", "brine_treater", "pvc_reactor", "leach_tank", "rotary_calciner", "hf_kiln", "mixer_settler",
             "ammonia_converter", "pellet_press", "primary_pump");
 
     /** Модели состояния мультипартом: основная и части, все с поворотом по {@code facing}. */
@@ -153,7 +153,6 @@ public final class PcBlockStateProvider extends BlockStateProvider {
             case "mud_pump" -> java.util.List.of(base, id + "/partial/crankshaft");
             case "gas_compressor" -> java.util.List.of(base, "reciprocating_compressor/partial/crankshaft",
                     "reciprocating_compressor/partial/pistons");
-            case "ldpe_reactor" -> java.util.List.of(base, "hyper_compressor/partial/crankshaft", "hyper_compressor/partial/plunger");
             case "brine_treater" -> java.util.List.of(base, "water_clarifier/partial/rake");
             case "leach_tank" -> java.util.List.of(base, id + "/partial/agitator");
             case "rotary_calciner", "hf_kiln" -> java.util.List.of(base, id + "/partial/shell");
@@ -243,9 +242,9 @@ public final class PcBlockStateProvider extends BlockStateProvider {
             case "rtu_station" -> s.getValue(BlockStateProperties.LIT) ? id : id + "_off";
             case "mes_server" -> s.getValue(BlockStateProperties.LIT) ? "historian_server_busy" : "historian_server";
             // химия I3
-            case "pyrolysis_furnace" -> s.getValue(BlockStateProperties.LIT) ? "tube_furnace_radiant_lit" : "tube_furnace_radiant";
+            case "pyrolysis_furnace" -> s.getValue(BlockStateProperties.LIT) ? id + "_lit" : id;
             case "cracked_gas_unit" -> "pyrolysis_quench_tower";
-            case "ldpe_reactor" -> "hyper_compressor";
+            case "ldpe_reactor", "hydrotreater" -> s.getValue(PcProperties.RUNNING) ? id + "_running" : id;
             // хлор и ПВХ I3
             case "uranium_ion_exchange" -> "ion_exchange_column";
             case "brine_treater" -> "water_clarifier";
@@ -264,7 +263,6 @@ public final class PcBlockStateProvider extends BlockStateProvider {
             case "acid_concentrator" -> "fractionating_column";
             // химия I3, метанол
             case "methanol_converter" -> "fixed_bed_reactor";
-            case "hydrotreater" -> "fixed_bed_reactor_large";
             case "claus_unit" -> "claus_reaction_furnace";
             case "catalytic_reformer" -> "fixed_bed_reactor_regen";
             case "delayed_coker" -> "tube_furnace_controller";
@@ -284,7 +282,7 @@ public final class PcBlockStateProvider extends BlockStateProvider {
             case "siemens_reactor" -> s.getValue(PcProperties.RUNNING) ? id + "_running" : id;
             case "czochralski_puller" -> s.getValue(PcProperties.RUNNING) ? id + "_pulling" : id;
             case "cleanroom_airlock" -> s.getValue(BlockStateProperties.OPEN) ? id + "_open" : id;
-            case "sfr_reactor" -> s.getValue(PcProperties.SFR_SEGMENT) == PcProperties.SfrSegment.PLUG ? "control_rod_drive" : "reactor_vessel_wall";
+            case "sfr_reactor" -> s.getValue(PcProperties.SFR_SEGMENT) == PcProperties.SfrSegment.PLUG ? id + "_plug" : id;
             case "bwr_reactor" -> s.getValue(PcProperties.BWR_SEGMENT) == PcProperties.BwrSegment.SEPARATORS ? "steam_drum" : "reactor_vessel_wall";
             case "electrostatic_precipitator" -> s.getValue(BlockStateProperties.POWERED) ? id + "_energized" : id;
             case "cems_analyzer" -> id + "_on";

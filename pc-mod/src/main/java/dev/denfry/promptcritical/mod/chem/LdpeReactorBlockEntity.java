@@ -143,6 +143,20 @@ public final class LdpeReactorBlockEntity extends KineticMachineBlockEntity<Shaf
         if (level.getGameTime() % 100 == 0) setChanged();
     }
 
+    /**
+     * Эффекты на клиенте (точки — art/blockbench/polymers/ldpe_reactor.author.js): масло плунжерного сальника
+     * гиперкомпрессора капает тем чаще, чем быстрее вал, у дросселя сброса давления курится горячий расплав.
+     */
+    @Override
+    protected void clientTick() {
+        if (!runningState()) return;
+        dev.denfry.promptcritical.mod.fx.MachineFx fx = fx();
+        if (fx == null) return;
+        double n = Math.min(1, Math.abs(getSpeed()) / NOMINAL_RPM);
+        if (fx.chance(0.6 * n)) fx.leak(fx.at(-6.5, 4.4, 8.5));
+        if (fx.chance(1.5)) fx.wisp(fx.at(28.3, 3.6, 1), 0.1);
+    }
+
     /** Разложение этилена: мембраны вскрыты, выброс горячего газа вспыхивает у установки. */
     private void decompose(ServerLevel sl, SimLevelBinding b, double energyJ) {
         GridPos o = new GridPos(worldPosition.getX(), worldPosition.getY(), worldPosition.getZ());
