@@ -231,4 +231,24 @@ class ChannelReactorTest {
         assertEquals(a.fuel(5).burnupMwdKg(), b.fuel(5).burnupMwdKg(), 1e-12);
         assertEquals(a.loadedChannels(), b.loadedChannels());
     }
+
+    /**
+     * Облучательный канал (12 §12.1): поток АМ-1 на номинале — порядка 10¹³…10¹⁴ (у АМ-1 ≈ 5·10¹³), у оси выше, чем на
+     * краю; 100 г кобальта в канале — отрицательная реактивность сотни pcm (плата за изотопы), 1 кг — несколько β.
+     */
+    @Test
+    void irradiationChannelFluxAndWorth() {
+        ChannelReactor r = hotCritical();
+        r.step(0, SECONDARY_K);
+        double phi = r.fluxAt(ChannelReactor.EXPERIMENTAL_CHANNEL_R_M);
+        assertTrue(phi > 1e13 && phi < 3e14, "flux " + phi);
+        assertTrue(r.fluxAt(0) > phi && r.fluxAt(0.7) < phi, "J0 shape");
+        assertEquals(0, r.fluxAt(5), 0);
+        double before = r.reactivity();
+        r.setIrradiationAbsorber(dev.denfry.promptcritical.sim.isotopes.TargetMaterial.COBALT_METAL.absorptionCm2(0.1));
+        double worth = r.irradiationWorth();
+        assertTrue(worth < -1e-3 && worth > -1e-2, "100 g Co worth " + worth);
+        r.step(0, SECONDARY_K);
+        assertEquals(before + worth, r.reactivity(), 2e-4);
+    }
 }

@@ -57,6 +57,31 @@ public final class SpentFuel {
         return new ActivityInventory(a, heavyMetalKg, densityGcc);
     }
 
+    /**
+     * Наработка за шаг облучения при постоянной скорости делений (блочки T0 в канале, 12 §12.0.2): сначала распад с
+     * накоплением дочерних, затем рождение продуктов деления A += F·y·(1 − e^{−λΔt}) — точно для постоянной F. Cs-134 и
+     * Co-60 не рождаются: выгорание блочков — доли МВт·сут/т, стали в них нет.
+     *
+     * @param fissionsPerS делений в предмете, 1/с
+     */
+    public static ActivityInventory irradiate(ActivityInventory before, double fissionsPerS, double dtS) {
+        ActivityInventory d = before.decayed(dtS);
+        if (!(fissionsPerS > 0) || !(dtS > 0)) return d;
+        EnumMap<Emitter, Double> a = new EnumMap<>(Emitter.class);
+        a.putAll(d.activities());
+        add(a, Emitter.CS137, fissionsPerS, Y_CS137, dtS);
+        add(a, Emitter.SR90, fissionsPerS, Y_SR90, dtS);
+        add(a, Emitter.I131, fissionsPerS, Y_I131, dtS);
+        add(a, Emitter.ZR95, fissionsPerS, Y_ZR95, dtS);
+        add(a, Emitter.RU106, fissionsPerS, Y_RU106, dtS);
+        add(a, Emitter.KR85, fissionsPerS, Y_KR85, dtS);
+        return new ActivityInventory(a, d.massKg(), d.densityGcc());
+    }
+
+    private static void add(EnumMap<Emitter, Double> a, Emitter e, double fissionRate, double yield, double dtS) {
+        a.merge(e, fissionRate * yield * -Math.expm1(-e.lambda() * dtS), Double::sum);
+    }
+
     private static void put(EnumMap<Emitter, Double> a, Emitter e, double fissionRate, double yield, double irradiationS) {
         a.put(e, fissionRate * yield * (1 - Math.exp(-e.lambda() * irradiationS)));
     }
