@@ -636,6 +636,7 @@ public final class PcLanguageProvider extends LanguageProvider {
         FLUIDS.put("concentrated_nitric_acid", new String[] {"Concentrated Nitric Acid (98 %)", "Концентрированная азотная кислота 98 %"});
         FLUIDS.put("helium", new String[] {"Helium", "Гелий"});
         FLUIDS.put("produced_water", new String[] {"Produced Water", "Пластовая вода"});
+        FLUIDS.put("injection_water", new String[] {"Injection Water", "Вода для ППД"});
         FLUIDS.put("associated_gas", new String[] {"Associated Gas", "Попутный нефтяной газ"});
         FLUIDS.put("gasoline", new String[] {"Straight-Run Gasoline", "Прямогонный бензин"});
         FLUIDS.put("kerosene", new String[] {"Kerosene", "Керосин"});

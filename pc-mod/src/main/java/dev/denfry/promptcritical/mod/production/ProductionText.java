@@ -48,6 +48,10 @@ public final class ProductionText {
         put("valve_full", "No room for more gas lift valves (%s)", "Больше газлифтных клапанов не поставить (%s)");
         put("valves_pulled", "Tubing pulled: %s gas lift valves out", "НКТ подняты: вынуто газлифтных клапанов — %s");
         put("mode.gas_lift", "gas lift", "газлифт");
+        // ППД 09 §9.4.6
+        put("mode.injecting", "water injection", "нагнетательная (ППД)");
+        put("injector_on", "Injector: water from the pipes goes into the pay at %s MPa on the head", "Нагнетательная: вода из труб уходит в пласт при %s МПа на устье");
+        put("injector_off", "Back to production", "Снова добывающая");
     }
 
     private ProductionText() {

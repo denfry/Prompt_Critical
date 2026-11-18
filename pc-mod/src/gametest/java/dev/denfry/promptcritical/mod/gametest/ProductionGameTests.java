@@ -236,4 +236,46 @@ public final class ProductionGameTests {
                 })
                 .thenSucceed();
     }
+
+    /**
+     * 09 §9.4.6: две скважины на одной ловушке тянут из одного «бака»; вторую переводят под закачку воды — давление
+     * залежи растёт для обеих, закачка видна в компенсации отбора.
+     */
+    @GameTest(template = LARGE, timeoutTicks = 600)
+    public static void waterInjectionLiftsTheSharedReservoir(GameTestHelper h) {
+        FakePlayer p = new FakePlayer(h.getLevel(), new GameProfile(UUID.randomUUID(), "pc_injector"));
+        BlockPos inj = new BlockPos(2, 2, 7);
+        double[] before = new double[1];
+        h.startSequence()
+                .thenExecute(() -> {
+                    Trap trap = oilTrap(h, 8_000);
+                    completeWell(h, trap, p);
+                    BlockPos abs = h.absolutePos(inj);
+                    DrilledWells.of(h.getLevel()).put(abs.getX(), abs.getZ(), new DrilledWells.Bore(930, new Prospect(trap, 900)));
+                    var facing = BlockStateProperties.HORIZONTAL_FACING;
+                    h.setBlock(inj, PcBlocks.WELLHEAD.get().defaultBlockState().setValue(facing, Direction.NORTH));
+                    h.setBlock(inj.above(), PcBlocks.CHRISTMAS_TREE.get().defaultBlockState().setValue(facing, Direction.NORTH));
+                    WellheadBlockEntity w = h.getBlockEntity(inj);
+                    w.useItem(p, InteractionHand.MAIN_HAND, new ItemStack(PcItems.SEAMLESS_PIPE.get(), 64));
+                    w.useItem(p, InteractionHand.MAIN_HAND, new ItemStack(PcItems.SEAMLESS_PIPE.get(), 64));
+                    w.useItem(p, InteractionHand.MAIN_HAND, new ItemStack(PcItems.SEISMIC_CHARGE.get(), 64));
+                    h.assertTrue(w.well() != null, "injector perforated");
+                    WellheadBlockEntity prod = h.getBlockEntity(WELL);
+                    h.assertTrue(prod.well().reservoir().state() == w.well().reservoir().state(), "one tank for the trap");
+                    w.onPanelButton(p, ProductionPanels.WB_INJECT);
+                    h.assertTrue(w.injector(), "injector mode");
+                    w.fluids(Direction.UP).fill(new FluidStack(PcFluids.INJECTION_WATER.source.get(), WellheadBlockEntity.WATER_MB),
+                            IFluidHandler.FluidAction.EXECUTE);
+                    before[0] = prod.well().reservoir().pressurePa();
+                })
+                .thenWaitUntil(() -> {
+                    WellheadBlockEntity w = h.getBlockEntity(inj), prod = h.getBlockEntity(WELL);
+                    h.assertTrue(w.well().mode() == ProductionWell.Mode.INJECTING && w.well().injectionM3s() > 0,
+                            "injecting: " + w.well().mode() + " " + w.well().injectionM3s());
+                    h.assertTrue(prod.well().reservoir().injectedM3() > 1, "water in the pay: " + prod.well().reservoir().injectedM3());
+                    h.assertTrue(prod.well().reservoir().pressurePa() > before[0], "pressure up for the producer too");
+                    h.assertTrue(w.waterTank().getFluidAmount() < WellheadBlockEntity.WATER_MB, "water drawn from the tank");
+                })
+                .thenSucceed();
+    }
 }

@@ -149,6 +149,8 @@ public final class DeviceProfiles {
                     .button("toggleMasterValve", ProductionPanels.WB_VALVE)
                     .button("counterbalanceDown", ProductionPanels.WB_CB_DOWN).button("counterbalanceUp", ProductionPanels.WB_CB_UP)
                     .button("acousticFluidLevel", ProductionPanels.WB_ECHO)
+                    .button("toggleInjection", ProductionPanels.WB_INJECT)
+                    .button("injectionPressureDown", ProductionPanels.WB_INJ_DOWN).button("injectionPressureUp", ProductionPanels.WB_INJ_UP)
                     .command("setGasLiftRate", a -> {
                         double kgS = LuaArgs.finite(a, 0);
                         if (kgS < 0) throw new DeviceException(DeviceException.RANGE, "gas lift rate must be >= 0 kg/s");

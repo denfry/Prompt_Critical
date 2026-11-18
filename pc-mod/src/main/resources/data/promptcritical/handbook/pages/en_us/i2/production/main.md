@@ -28,6 +28,12 @@ Instead of a pumpjack, gas can lift the oil. [Gas lift valves](item:promptcritic
 
 The Gas buttons set the injection in steps of 0.05 nm³/s. The gas comes from the separator and comes back with the production, so the separator needs some gas to start. At start the annulus is full of kill fluid. 8 MPa of gas pushes it down to the top valve if the gas column there is above the liquid in the tubing plus 0.7 MPa across the valve. Then the well flows through that valve, the tubing pressure below falls, and the next valve uncovers, as deep as the gas can reach. The working casing pressure is what the deepest open valve needs. An upper valve whose opening pressure is below the gas pressure at its depth stays open and takes the gas: the well is stuck on the top valve. Set the opening pressures to fall with depth. More gas lightens the column, until gas friction takes over.
 
+## Water injection
+
+All wells on one trap draw on the same tank of oil, so each producer pulls the pressure down for the others. The Inject button turns a completed well into an injector. Pipe injection water or produced water into the wellhead and set the injection pressure on the head with P inj. The bottomhole pressure is that plus the water column; the rate follows Darcy with water viscosity and the end-point water relative permeability. Injection brings the pressure back and sweeps oil, so up to a tenth more of the oil becomes recoverable. Watch the voidage replacement ratio, injected water over produced oil and water at reservoir conditions, and keep it near 1.
+
+Above the fracture pressure, 1.70 g/cm³ equivalent like the casing shoe, the rock opens: injectivity goes up five times, and water breaks through to the producers, adding 0.3 to their water cut every ten days. Untreated produced water carries silt that keeps raising the injector's skin; injection water does not.
+
 ## Separator and flare
 
 Production goes to a [three-phase separator](item:promptcritical:three_phase_separator) within 8 blocks. Gas rises to the top, water settles to the bottom, oil floats in between. Water drops settle by Stokes' law. Small drops can't get through the oil layer in the residence time and leave with the oil, so a high rate gives wet oil. Create pipes take oil from the sides, gas from the top and water from the bottom. Gas with nowhere to go burns at a [flare tip](item:promptcritical:flare_tip). Without a flare the separator fills up and shuts the well in.

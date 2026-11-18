@@ -26,6 +26,10 @@ import dev.denfry.promptcritical.sim.drilling.Trap;
  * <p><b>Газлифт</b> (09 §9.6.4, {@link GasLift}): с клапанами в НКТ и закачкой газа без качалки скважина работает
  * через рабочий клапан; газ закачки возвращается с продукцией. Точка работы пересчитывается раз в 20 шагов или при
  * смене закачки — расчёт пуска перебирает клапаны.
+ *
+ * <p><b>Нагнетательная</b> (09 §9.4.6): та же скважина с отрицательным дебитом — {@link #inject}: q = J_нагн·(p_заб −
+ * p̄), p_заб = p_устья + ρ_в·g·H (трение в НКТ не учитывается [допущение]); выше давления гидроразрыва — трещины
+ * ({@link ProducingReservoir#inject}); взвесь в воде растит скин.
  */
 public final class ProductionWell {
     public enum Mode { SHUT_IN, FLOWING, DEAD, PUMPING, GAS_LIFT, INJECTING }
@@ -57,6 +61,8 @@ public final class ProductionWell {
     private double injStdM3s, liftInjStdM3s = -1;
     private GasLift.Point lift = GasLift.Point.NONE;
     private int liftAge;
+    private double injSkin = ProducingReservoir.SKIN, injM3s;
+    private boolean fracturing;
 
     public ProductionWell(ProducingReservoir reservoir) {
         this.reservoir = reservoir;
@@ -163,6 +169,55 @@ public final class ProductionWell {
         double gasAtIntake = freeStd * NaturalGas.STD_PRESSURE_PA / (intake + NaturalGas.STD_PRESSURE_PA) * t / NaturalGas.STD_TEMPERATURE_K
                 * NaturalGas.Z;
         return gasAtIntake / (gasAtIntake + 1);
+    }
+
+    /**
+     * Шаг нагнетательной скважины: устьевое давление закачки {@code wellheadPa}, плотность воды, взвесь, мг/л, и запас
+     * воды на устье, м³. Возвращает закачанный объём, м³.
+     */
+    public double inject(double dt, boolean open, double wellheadPa, double waterKgM3, double tssMgL, double availableM3) {
+        card = null;
+        oilM3s = waterM3s = gasStdM3s = 0;
+        injM3s = 0;
+        fracturing = false;
+        double pr = reservoir.pressurePa(), depth = reservoir.datumM();
+        if (!open) {
+            mode = Mode.SHUT_IN;
+            pwfPa = pr;
+            this.wellheadPa = Math.max(0, pr - waterKgM3 * Tubing.G * depth);
+            return 0;
+        }
+        mode = Mode.INJECTING;
+        double pwf = Math.max(0, wellheadPa) + waterKgM3 * Tubing.G * depth;
+        fracturing = pwf > reservoir.fracturePa();
+        double j = reservoir.injectivity(injSkin) * (fracturing ? ProducingReservoir.FRACTURE_INJECTIVITY_FACTOR : 1);
+        double q = Math.max(0, j * (pwf - pr));
+        if (dt > 0) q = Math.min(q, Math.max(0, availableM3) / dt);
+        reservoir.inject(q, dt, fracturing && q > 0);
+        if (q > 0) injSkin += ProducingReservoir.SKIN_PER_MGL_S * Math.max(0, tssMgL - ProducingReservoir.TSS_LIMIT_MGL) * dt;
+        injM3s = q;
+        pwfPa = pwf;
+        this.wellheadPa = wellheadPa;
+        return q * dt;
+    }
+
+    /** Закачка воды, м³/с. */
+    public double injectionM3s() {
+        return injM3s;
+    }
+
+    /** Скин нагнетательной скважины (растёт со взвесью в воде). */
+    public double injectionSkin() {
+        return injSkin;
+    }
+
+    public void setInjectionSkin(double s) {
+        injSkin = Double.isFinite(s) ? s : ProducingReservoir.SKIN;
+    }
+
+    /** Закачка идёт выше давления гидроразрыва. */
+    public boolean fracturing() {
+        return fracturing;
     }
 
     /** Газлифт: {@code true}, если скважина работает через клапан. */
