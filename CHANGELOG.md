@@ -132,6 +132,15 @@
   off the grid, and its source drops out unshielded when the RTG is broken. Y-90 now has a bremsstrahlung line.
 - Panels, ru/en texts, recipes, an I4 handbook chapter and game tests that have not been run yet.
 
+### Sodium-cooled fast reactor (T4)
+- Fast reactor `sfr_reactor` (3×6×3, BN-350/BN-600 type at 100 MW(t)): one-group point model of a MOX core
+  in a U-238 blanket, breeding ratio ≈ 1.2 at 18 % Pu with Pu-239 bred in the blanket; plutonium kinetics
+  (β_eff ≈ 0.0035, Λ = 0.4 µs); Doppler, axial fuel and radial support plate expansion and a sodium void worth
+  that is negative for the whole small core and positive in its centre.
+- Pool-type primary sodium at 0.1 MPa (380 → 550 °C), intermediate sodium loop and a sodium–water steam
+  generator; sodium fire with Na₂O smoke and the sodium–water reaction with a hydrogen scram and a rupture disc,
+  both fed to the damage budget. Desk, ru/en texts, recipe and a T4 handbook chapter.
+
 ### First nuclear power plant (T1)
 - A uranium-graphite channel power reactor after AM-1 of Obninsk: 128 channels with pressurised water at 10 MPa,
   30 MW of heat, fuelled by AM-1 channel assemblies from the fuel shop. Point kinetics with six delayed groups, Doppler

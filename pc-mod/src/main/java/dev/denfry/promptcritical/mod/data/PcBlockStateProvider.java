@@ -284,6 +284,7 @@ public final class PcBlockStateProvider extends BlockStateProvider {
             case "siemens_reactor" -> s.getValue(PcProperties.RUNNING) ? id + "_running" : id;
             case "czochralski_puller" -> s.getValue(PcProperties.RUNNING) ? id + "_pulling" : id;
             case "cleanroom_airlock" -> s.getValue(BlockStateProperties.OPEN) ? id + "_open" : id;
+            case "sfr_reactor" -> s.getValue(PcProperties.SFR_SEGMENT) == PcProperties.SfrSegment.PLUG ? "control_rod_drive" : "reactor_vessel_wall";
             case "bwr_reactor" -> s.getValue(PcProperties.BWR_SEGMENT) == PcProperties.BwrSegment.SEPARATORS ? "steam_drum" : "reactor_vessel_wall";
             case "electrostatic_precipitator" -> s.getValue(BlockStateProperties.POWERED) ? id + "_energized" : id;
             case "cems_analyzer" -> id + "_on";

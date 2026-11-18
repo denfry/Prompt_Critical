@@ -626,6 +626,10 @@ public final class PcBlocks {
     private static final Footprint FP_CANDU_REACTOR = Footprint.of(CUBE3, CUBE3.at(0, 3, 0));
     public static final DeferredBlock<PcDeviceBlock> CANDU_REACTOR = device("candu_reactor", machine(), Spec.facing().segments(PcProperties.CANDU_SEGMENT, FP_CANDU_REACTOR),
             FoundryBlock.with(dev.denfry.promptcritical.mod.npp.CanduReactorBlockEntity::new));
+    /** Натриевый быстрый реактор T4 3×6×3: внизу бассейн натрия с зоной и экраном, вверху поворотная пробка; пульт — в центре низа. */
+    private static final Footprint FP_SFR_REACTOR = Footprint.of(CUBE3, CUBE3.at(0, 3, 0));
+    public static final DeferredBlock<PcDeviceBlock> SFR_REACTOR = device("sfr_reactor", machine(), Spec.facing().segments(PcProperties.SFR_SEGMENT, FP_SFR_REACTOR),
+            FoundryBlock.with(dev.denfry.promptcritical.mod.npp.SfrReactorBlockEntity::new));
     public static final DeferredBlock<PcDeviceBlock> PRESSURIZER = device("pressurizer", machine(), Spec.facing(BlockStateProperties.LIT),
             FoundryBlock.with(dev.denfry.promptcritical.mod.npp.PressurizerBlockEntity::new));
 

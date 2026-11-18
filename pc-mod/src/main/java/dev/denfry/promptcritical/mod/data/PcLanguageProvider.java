@@ -382,6 +382,7 @@ public final class PcLanguageProvider extends LanguageProvider {
         b("pressurizer", "Pressurizer", "Компенсатор давления");
         b("candu_reactor", "Heavy Water Reactor (CANDU type)", "Тяжеловодный реактор (типа CANDU)");
         b("bwr_reactor", "Boiling Water Reactor", "Кипящий корпусной реактор");
+        b("sfr_reactor", "Sodium-Cooled Fast Reactor", "Реактор на быстрых нейтронах с натрием");
         b("wellhead", "Wellhead", "Колонная головка");
         b("christmas_tree", "Christmas Tree", "Фонтанная арматура");
         b("pumpjack", "Pumpjack", "Станок-качалка");
