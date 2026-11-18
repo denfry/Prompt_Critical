@@ -60,6 +60,7 @@ public final class PromptCritical {
         dev.denfry.promptcritical.mod.mine.MineBlockEntities.register(modBus);
         dev.denfry.promptcritical.mod.drilling.DrillingBlockEntities.register(modBus);
         dev.denfry.promptcritical.mod.production.ProductionBlockEntities.register(modBus);
+        dev.denfry.promptcritical.mod.scada.ScadaBlockEntities.register(modBus);
         dev.denfry.promptcritical.mod.gas.GasBlockEntities.register(modBus);
         SimBindings.registerSubsystem(level -> new MineSubsystem(
                 SimConfigs.fromServerConfig().section(MiningConfig.class, MiningConfig.defaults()),

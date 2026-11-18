@@ -437,6 +437,11 @@ public final class PcBlocks {
     public static final DeferredBlock<PcDeviceBlock> NGL_FRACTIONATOR = device("ngl_fractionator", machine(),
             Spec.facing().footprint(FP_CUBE3), FoundryBlock.with(dev.denfry.promptcritical.mod.gas.NglFractionatorBlockEntity::new));
 
+    // --- телемеханика A4: шлюз (КП) для диспетчерского компьютера CC: Tweaked ---
+    public static final DeferredBlock<PcDeviceBlock> RTU_STATION = device("rtu_station", machine(),
+            Spec.facing(BlockStateProperties.LIT).footprint(FP_TALL2),
+            FoundryBlock.with(dev.denfry.promptcritical.mod.scada.TelemetryGatewayBlockEntity::new));
+
     // --- обогащение, литьё, механический цех (08 §8.3, §8.9, §8.10) ---
     public static final DeferredBlock<PcDeviceBlock> COAL_JIG = device("coal_jig", machine(),
             Spec.facing(PcProperties.RUNNING).footprint(Footprint.of(Segment.box(0, 1, 0, 1, 0, 0))),
