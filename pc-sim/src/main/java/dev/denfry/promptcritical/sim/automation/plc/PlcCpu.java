@@ -25,7 +25,10 @@ public final class PlcCpu {
     /** Предел инструкций за цикл: сторожевой таймер. */
     public static final int WATCHDOG = 4096;
     public static final int RETAIN_MX = 32, RETAIN_MW = 16;
-    private static final int IN_W = 9, OUT_W = 2, ST_W = 4;
+    /** Ширина входов, выходов и состояния экземпляра блока (под самый широкий — {@code PC_ANTISURGE}). */
+    private static final int IN_W = 12, OUT_W = 4, ST_W = 8;
+    /** Раскладка до {@code PC_ANTISURGE}: 8 типов, ширины 9/2/4 — так сохранены старые миры. */
+    private static final int OLD_KINDS = 8, OLD_IN_W = 9, OLD_OUT_W = 2, OLD_ST_W = 4, LAYOUT = 2;
 
     public enum Mode { OFF, STOP, RUN, FAULT }
 
@@ -323,6 +326,7 @@ public final class PlcCpu {
                 fbSt[s] = clk ? 1 : 0;
             }
             case PID -> pid(base, o, s);
+            case PC_ANTISURGE -> AntiSurge.scan(fbIn, base, fbOut, o, fbSt, s, dt);
         }
     }
 
@@ -387,6 +391,7 @@ public final class PlcCpu {
             fbIn[base + 2] = 1;
             fbIn[base + 6] = 10;
         }
+        for (int i = 0; i < Fb.PER_KIND; i++) AntiSurge.defaults(fbIn, (Fb.Kind.PC_ANTISURGE.ordinal() * Fb.PER_KIND + i) * IN_W);
     }
 
     // ---------------------------------------------------------------- сохранение
@@ -402,6 +407,7 @@ public final class PlcCpu {
         w.putDoubles("fb_in", fbIn, fbIn.length);
         w.putDoubles("fb_out", fbOut, fbOut.length);
         w.putDoubles("fb_st", fbSt, fbSt.length);
+        w.putInt("fb_layout", LAYOUT);
     }
 
     public void load(StateReader r) {
@@ -414,9 +420,15 @@ public final class PlcCpu {
         copyBits(r, "qx", qx);
         copy(r, "mw", mw);
         copy(r, "qw", qw);
-        copy(r, "fb_in", fbIn);
-        copy(r, "fb_out", fbOut);
-        copy(r, "fb_st", fbSt);
+        if (r.optInt("fb_layout", 1) >= LAYOUT) {
+            copy(r, "fb_in", fbIn);
+            copy(r, "fb_out", fbOut);
+            copy(r, "fb_st", fbSt);
+        } else {
+            copyOld(r, "fb_in", fbIn, OLD_IN_W, IN_W);
+            copyOld(r, "fb_out", fbOut, OLD_OUT_W, OUT_W);
+            copyOld(r, "fb_st", fbSt, OLD_ST_W, ST_W);
+        }
     }
 
     private static int[] bits(boolean[] b) {
@@ -429,6 +441,14 @@ public final class PlcCpu {
         if (!r.has(k)) return;
         int[] a = r.getInts(k);
         for (int i = 0; i < Math.min(a.length, into.length); i++) into[i] = a[i] != 0;
+    }
+
+    /** Старая раскладка экземпляров (узкие поля) в новую: экземпляр за экземпляром. */
+    private static void copyOld(StateReader r, String k, double[] into, int oldW, int newW) {
+        if (!r.has(k)) return;
+        double[] a = r.getDoubles(k);
+        for (int fb = 0; fb < OLD_KINDS * Fb.PER_KIND && (fb + 1) * oldW <= a.length; fb++)
+            System.arraycopy(a, fb * oldW, into, fb * newW, oldW);
     }
 
     private static void copy(StateReader r, String k, double[] into) {

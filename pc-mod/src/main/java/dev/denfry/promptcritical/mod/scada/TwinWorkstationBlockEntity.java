@@ -11,6 +11,9 @@ import dev.denfry.promptcritical.mod.panel.PanelText;
 import dev.denfry.promptcritical.mod.panel.PanelText.Tr;
 import dev.denfry.promptcritical.sim.automation.AutomationUnit;
 import dev.denfry.promptcritical.sim.automation.plc.PlcCpu;
+import dev.denfry.promptcritical.sim.automation.twin.Challenge;
+import dev.denfry.promptcritical.sim.automation.twin.ChallengeCatalog;
+import dev.denfry.promptcritical.sim.automation.twin.ChallengeRun;
 import dev.denfry.promptcritical.sim.automation.twin.Fault;
 import dev.denfry.promptcritical.sim.automation.twin.Scenario;
 import dev.denfry.promptcritical.sim.automation.twin.ScenarioCatalog;
@@ -41,6 +44,10 @@ import org.jetbrains.annotations.Nullable;
  * времени, показатели контура. Инструктор может добавить отказ кнопкой. Двойник не трогает мир. Прошедшую FAT
  * программу кнопка «В ПЛК» загружает в реальный ПЛК и ставит его в RUN — достижение {@code digital_twin}
  * (11 §11.2.2). Изменённая после испытаний программа требует нового FAT.
+ *
+ * <p>Кнопка «Задача» — задача наладчика 03d §3d.11 на выбранной установке ({@link ChallengeCatalog#forPlant}): та же
+ * программа ближайшего ПЛК, эталонное зерно, жёсткие условия и метрики; прошедшая попытка сразу идёт в таблицу лидеров
+ * сервера и в достижения ({@link TunerChallenges}).
  */
 public class TwinWorkstationBlockEntity extends DeviceBlockEntity implements FoundryDevice, PanelHost {
     public static final int RADIUS = 16;
@@ -59,6 +66,9 @@ public class TwinWorkstationBlockEntity extends DeviceBlockEntity implements Fou
                     "Испытанная программа загружена в ПЛК, ключ в RUN"),
             FAULT = PanelText.tr("twin.msg.fault", "Fault injected: %s", "Введён отказ: %s"),
             TIMEOUT = PanelText.tr("twin.msg.timeout", "Twin session closed: time limit", "Сеанс двойника закрыт: предел времени");
+    // сообщения задачи наладчика объявлены в TwinPanels: так они попадают в языковые файлы datagen
+    private static final Tr NO_CHALLENGE = TwinPanels.MSG_NO_CHALLENGE, CH_STARTED = TwinPanels.MSG_STARTED,
+            CH_METRIC_MSG = TwinPanels.MSG_METRIC, CH_TOP = TwinPanels.MSG_TOP;
 
     private int plant, speed = 1, status, faultIdx;
     private double score;
@@ -67,6 +77,14 @@ public class TwinWorkstationBlockEntity extends DeviceBlockEntity implements Fou
     private long startedTick;
     /** Программа, прошедшая FAT, и шаблон, на котором прошла. */
     private String passedSource = "", passedTemplate = "";
+    /** Попытка задачи наладчика ({@link #run} — её прогон) и кто её начал. */
+    @Nullable
+    private ChallengeRun challenge;
+    @Nullable
+    private ServerPlayer challenger;
+    /** Итог последней задачи: место и участников по первой метрике, её значение; 0 — не было. */
+    private int rank, total;
+    private double metric0;
 
     public TwinWorkstationBlockEntity(BlockPos pos, BlockState state) {
         super(ScadaBlockEntities.TWIN_WORKSTATION.get(), pos, state);
@@ -107,7 +125,10 @@ public class TwinWorkstationBlockEntity extends DeviceBlockEntity implements Fou
         boolean ok = r.status() == ScenarioRun.Status.PASSED;
         status = ok ? TwinPanels.PASSED : TwinPanels.FAILED;
         score = r.score();
-        if (ok && r.program() != null) {
+        ChallengeRun ch = challenge;
+        if (ch != null) {
+            if (level instanceof ServerLevel sl) finishChallenge(sl, ch);
+        } else if (ok && r.program() != null) {
             passedSource = r.program().source();
             passedTemplate = r.scenario().plant();
         }
@@ -118,9 +139,28 @@ public class TwinWorkstationBlockEntity extends DeviceBlockEntity implements Fou
         setChanged();
     }
 
+    private void finishChallenge(ServerLevel sl, ChallengeRun ch) {
+        ServerPlayer p = challenger;
+        challenger = null;
+        if (p == null || p.hasDisconnected() || ch.status() != ScenarioRun.Status.PASSED) return;
+        List<TunerChallenges.Result> results = TunerChallenges.submit(p, ch);
+        for (int i = 0; i < results.size(); i++) {
+            TunerChallenges.Result res = results.get(i);
+            if (i == 0) {
+                rank = res.placement().rank();
+                total = res.placement().total();
+                metric0 = res.value();
+            }
+            tell(p, CH_METRIC_MSG.get(res.metric().id(), PanelText.num(res.value(), 3), res.placement().rank(), res.placement().total(),
+                    res.placement().topTenth() ? CH_TOP.get() : Component.empty()));
+        }
+    }
+
     private void stop() {
         if (run != null) run.close();
         run = null;
+        challenge = null;
+        challenger = null;
         TwinSessions.release(this);
     }
 
@@ -170,6 +210,51 @@ public class TwinWorkstationBlockEntity extends DeviceBlockEntity implements Fou
         if (run.status() != ScenarioRun.Status.RUNNING) finish(null);
     }
 
+    /** Начать задачу наладчика выбранной установки с программой ближайшего ПЛК. */
+    public void startChallenge(@Nullable ServerPlayer player) {
+        if (!(level instanceof ServerLevel)) return;
+        Challenge c = ChallengeCatalog.forPlant(template());
+        if (c == null) {
+            tell(player, NO_CHALLENGE.get());
+            return;
+        }
+        PlcBlockEntity plc = nearestPlc();
+        String src = plc == null ? "" : source(plc);
+        if (src.isBlank()) {
+            tell(player, NO_PLC.get());
+            return;
+        }
+        stop();
+        if (!TwinSessions.acquire(this, TwinSessions.Kind.TWIN)) {
+            tell(player, LIMIT.get());
+            return;
+        }
+        challenge = ChallengeRun.start(c, src);
+        challenger = player;
+        run = challenge.run();
+        run.session().setSpeed(speed);
+        startedTick = level.getGameTime();
+        status = TwinPanels.RUN;
+        rank = total = 0;
+        faultIdx = 0;
+        tell(player, CH_STARTED.get(c.id()));
+        if (run.status() != ScenarioRun.Status.RUNNING) finish(null);
+    }
+
+    /** Попытка задачи наладчика идёт. */
+    public boolean challengeRunning() {
+        return challenge != null;
+    }
+
+    /** Итог последней задачи: место по первой метрике (0 — не было) и её значение. */
+    public int challengeRank() {
+        return rank;
+    }
+
+    public double challengeMetric() {
+        return metric0;
+    }
+
     /** Загрузить прошедшую FAT программу в реальный ПЛК. */
     public boolean deploy(@Nullable ServerPlayer player) {
         PlcBlockEntity plc = nearestPlc();
@@ -216,6 +301,9 @@ public class TwinWorkstationBlockEntity extends DeviceBlockEntity implements Fou
     public void readPanel(int[] out) {
         TwinPanels.fill(out, run, plant, status, score);
         out[TwinPanels.SPEED] = speed;
+        out[TwinPanels.CH_RANK] = rank;
+        out[TwinPanels.CH_TOTAL] = total;
+        out[TwinPanels.CH_METRIC] = (int) Math.round(Math.max(-2e6, Math.min(2e6, metric0)) * 1000);
         if (deployable() && passedTemplate.equals(template())) out[TwinPanels.FLAGS] |= 1 << TwinPanels.F_DEPLOYABLE;
     }
 
@@ -229,12 +317,14 @@ public class TwinWorkstationBlockEntity extends DeviceBlockEntity implements Fou
                 score = 0;
             }
             case TwinPanels.W_FAT -> startFat(player);
+            case TwinPanels.W_CHALLENGE -> startChallenge(player);
             case TwinPanels.W_SPEED -> {
                 speed = TwinPanels.nextSpeed(speed);
                 if (run != null) run.session().setSpeed(speed);
             }
             case TwinPanels.W_FAULT -> {
-                if (run == null) return;
+                // в задаче наладчика возмущения задаёт сценарий, а не инструктор
+                if (run == null || challenge != null) return;
                 List<Fault> faults = TwinSessions.manualFaults(template());
                 Fault f = faults.get(faultIdx++ % faults.size());
                 run.session().inject(f);
@@ -296,6 +386,9 @@ public class TwinWorkstationBlockEntity extends DeviceBlockEntity implements Fou
         tag.putDouble("score", score);
         tag.putString("passed_source", passedSource);
         tag.putString("passed_template", passedTemplate);
+        tag.putInt("challenge_rank", rank);
+        tag.putInt("challenge_total", total);
+        tag.putDouble("challenge_metric", metric0);
     }
 
     @Override
@@ -307,5 +400,8 @@ public class TwinWorkstationBlockEntity extends DeviceBlockEntity implements Fou
         score = tag.getDouble("score");
         passedSource = tag.getString("passed_source");
         passedTemplate = tag.getString("passed_template");
+        rank = tag.getInt("challenge_rank");
+        total = tag.getInt("challenge_total");
+        metric0 = tag.getDouble("challenge_metric");
     }
 }

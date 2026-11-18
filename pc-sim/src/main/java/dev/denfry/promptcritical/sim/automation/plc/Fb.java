@@ -5,7 +5,7 @@ import java.util.Locale;
 
 /**
  * Стандартные функциональные блоки ПЛК (IEC 61131-3 §2.5.2.3) и регулятор. Экземпляры не объявляются: имя задаёт
- * тип и номер ({@code TON3}, {@code CTU0}, {@code PID1}). Номер экземпляра в процессоре —
+ * тип и номер ({@code TON3}, {@code CTU0}, {@code PID1}, {@code PC_ANTISURGE0}). Номер экземпляра в процессоре —
  * {@code kind.ordinal() * PER_KIND + n}.
  */
 public final class Fb {
@@ -28,7 +28,10 @@ public final class Fb {
         CTD(List.of("CD", "LD", "PV"), List.of("Q", "CV"), 0b01),
         R_TRIG(List.of("CLK"), List.of("Q"), 0b1),
         F_TRIG(List.of("CLK"), List.of("Q"), 0b1),
-        PID(List.of("PV", "SP", "KP", "TI", "TD", "LO", "HI", "MAN", "XM"), List.of("Y"), 0);
+        PID(List.of("PV", "SP", "KP", "TI", "TD", "LO", "HI", "MAN", "XM"), List.of("Y"), 0),
+        /** Антипомпажный регулятор 03d §3d.5.12 ({@link AntiSurge}). */
+        PC_ANTISURGE(List.of("DPO", "PS", "PD", "KS", "BCTRL", "BRTL", "KP", "TI", "RATE", "MAN", "XM"),
+                List.of("Y", "SS", "DEV", "CNT"), 0);
 
         public final List<String> inputs, outputs;
         private final int boolOutputs;

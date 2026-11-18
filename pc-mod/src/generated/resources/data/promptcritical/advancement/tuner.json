@@ -1,0 +1,33 @@
+{
+  "parent": "promptcritical:digital_twin",
+  "criteria": {
+    "top": {
+      "conditions": {
+        "event": "promptcritical:tuner"
+      },
+      "trigger": "promptcritical:sim_event"
+    }
+  },
+  "display": {
+    "description": {
+      "translate": "advancements.promptcritical.tuner.description"
+    },
+    "frame": "challenge",
+    "icon": {
+      "count": 1,
+      "id": "promptcritical:plc"
+    },
+    "title": {
+      "translate": "advancements.promptcritical.tuner.title"
+    }
+  },
+  "requirements": [
+    [
+      "top"
+    ]
+  ],
+  "rewards": {
+    "experience": 150
+  },
+  "sends_telemetry_event": true
+}

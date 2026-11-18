@@ -497,6 +497,10 @@ public final class PcBlocks {
     public static final DeferredBlock<PcDeviceBlock> GAS_COMPRESSOR = device("gas_compressor", machine(),
             Spec.facing(PcProperties.RUNNING).footprint(Footprint.of(Segment.box(0, 1, 0, 1, 0, 1))),
             KineticMachineBlock.with(ShaftSide.LEFT, dev.denfry.promptcritical.mod.gas.GasCompressorBlockEntity::new));
+    /** Центробежный компрессор газопровода 3×2×2 (09 §9.8.5): вал Create — в лицевую грань контроллера. */
+    public static final DeferredBlock<PcDeviceBlock> CENTRIFUGAL_COMPRESSOR = device("centrifugal_compressor", machine(),
+            Spec.facing(PcProperties.RUNNING).footprint(Footprint.of(Segment.box(-1, 1, 0, 1, 0, 1))),
+            KineticMachineBlock.with(ShaftSide.FRONT, dev.denfry.promptcritical.mod.gas.CentrifugalCompressorBlockEntity::new));
     public static final DeferredBlock<PcBlock> GLYCOL_REGENERATOR = block("glycol_regenerator", machine(),
             Spec.facing(PcProperties.RUNNING).footprint(Footprint.of(Segment.box(-1, 1, 0, 1, 0, 0))));
     public static final DeferredBlock<PcDeviceBlock> LOW_TEMPERATURE_SEPARATOR = device("low_temperature_separator", machine(),

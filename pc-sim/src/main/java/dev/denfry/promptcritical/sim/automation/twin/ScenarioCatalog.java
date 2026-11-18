@@ -21,7 +21,8 @@ import java.util.Map;
  * Каталог сценариев тренажёра (11 §11.3.4) и испытаний двойника (03d §3d.9.1 FAT). Уроки — инженерные, без названий
  * объектов и стран (риск K12); каждый связан с механикой мода. Из каталога 11 §11.3.4 здесь те, чьи эталонные
  * установки есть в двойнике: {@code tank_overfill}, {@code forced_bit}, {@code out_of_phase_sync}; плюс вводный урок
- * котла I0 {@code boiler_low_water} (упуск воды, легкоплавкая пробка 07 §7.9.4). Времена и уровни [BALANCE].
+ * котла I0 {@code boiler_low_water} (упуск воды, легкоплавкая пробка 07 §7.9.4). Времена и уровни [BALANCE]. FAT
+ * компрессорной станции и станции смешения — сценарии задач наладчика {@link ChallengeCatalog}.
  */
 public final class ScenarioCatalog {
     /** Испытания FAT по шаблону установки: программа игрока должна их пройти, прежде чем её загрузят в мир. */
@@ -68,6 +69,9 @@ public final class ScenarioCatalog {
                 new Loop(BoilerTwinPlant.PRESSURE, 10, BoilerTwinPlant.FIRING), 0.3, 0.7));
         fat(new Scenario("fat_generator_sync", g, "slip", 300, true, null, null, List.of(),
                 conds("breaker_closed >= 1"), List.of(), null, null, 1, 0));
+        // компрессор и смешение: испытание FAT — то же, что задача наладчика 03d §3d.11.6
+        fat(ChallengeCatalog.get("compressor_startup_no_surge").scenario());
+        fat(ChallengeCatalog.get("gasoline_blending_lp").scenario());
     }
 
     private ScenarioCatalog() {

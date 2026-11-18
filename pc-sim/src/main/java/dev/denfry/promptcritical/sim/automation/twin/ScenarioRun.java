@@ -58,6 +58,11 @@ public final class ScenarioRun implements AutoCloseable {
         return reason;
     }
 
+    /** Момент двойника, после которого критерии успеха выполнялись без перерыва, с. */
+    public double settledS() {
+        return lastUnsettledS;
+    }
+
     public double remainingS() {
         return Math.max(0, scenario.durationS() - session.timeS());
     }

@@ -21,6 +21,8 @@ public final class GasBlockEntities {
 
     public static final DeferredHolder<BlockEntityType<?>, BlockEntityType<GasCompressorBlockEntity>> GAS_COMPRESSOR =
             type("gas_compressor", GasCompressorBlockEntity::new, PcBlocks.GAS_COMPRESSOR);
+    public static final DeferredHolder<BlockEntityType<?>, BlockEntityType<CentrifugalCompressorBlockEntity>> CENTRIFUGAL_COMPRESSOR =
+            type("centrifugal_compressor", CentrifugalCompressorBlockEntity::new, PcBlocks.CENTRIFUGAL_COMPRESSOR);
     public static final DeferredHolder<BlockEntityType<?>, BlockEntityType<GasPlantBlockEntity>> GAS_PLANT =
             type("low_temperature_separator", GasPlantBlockEntity::new, PcBlocks.LOW_TEMPERATURE_SEPARATOR);
     public static final DeferredHolder<BlockEntityType<?>, BlockEntityType<NglFractionatorBlockEntity>> NGL_FRACTIONATOR =

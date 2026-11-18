@@ -144,6 +144,15 @@ public final class PcAdvancements implements AdvancementProvider.AdvancementGene
         LANG.put("digital_twin", new String[] {"Twin First", "Сначала на двойнике",
                 "A PLC program passed its acceptance test on the digital twin, then went into the real PLC",
                 "Программа прошла испытания на цифровом двойнике, затем загружена в реальный ПЛК"});
+        LANG.put("no_surge", new String[] {"No Surge", "Без помпажа",
+                "Start a centrifugal compressor and put it on line without a single surge cycle",
+                "Пустите центробежный компрессор и выведите его в линию без единого цикла помпажа"});
+        LANG.put("refinery_lp", new String[] {"Blending", "Компаундирование",
+                "Blend gasoline on spec at a cost no more than 105 % of the LP optimum",
+                "Бензин в спецификации при себестоимости не выше 105 % от оптимума ЛП"});
+        LANG.put("tuner", new String[] {"Tuner", "Наладчик",
+                "Solve a tuner task with a metric in the top 10 % of the server",
+                "Решите задачу наладчика с метрикой в верхних 10 % сервера"});
         LANG.put("operator_license", new String[] {"Licensed", "Допуск",
                 "Pass the simulator lessons of a plant and get an operator license",
                 "Сдайте уроки тренажёра по установке и получите удостоверение оператора"});
@@ -315,10 +324,23 @@ public final class PcAdvancements implements AdvancementProvider.AdvancementGene
                                 .expect(dev.denfry.promptcritical.mod.registry.PcDataComponents.ORPHAN_SOURCE.get(), true).build())))
                 .save(saver, id("orphan_found"), efh);
         // A5 и тренажёр (03d §3d.9.1, 11 §11.3.5)
-        task(relays, PcBlocks.SIMULATION_WORKSTATION.get(), "digital_twin", AdvancementType.GOAL, false, 80)
+        AdvancementHolder twin = task(relays, PcBlocks.SIMULATION_WORKSTATION.get(), "digital_twin", AdvancementType.GOAL, false, 80)
                 .addCriterion("deployed", SimEventTrigger.TriggerInstance.of(
                         ResourceLocation.parse(dev.denfry.promptcritical.mod.scada.TwinWorkstationBlockEntity.DIGITAL_TWIN), Map.of(), false))
                 .save(saver, id("digital_twin"), efh);
+        // задачи наладчика 03d §3d.11 и антипомпаж 09 §9.8.5 (11: no_surge, refinery_lp, tuner)
+        task(oil, PcBlocks.CENTRIFUGAL_COMPRESSOR.get(), "no_surge", AdvancementType.TASK, false, 40)
+                .addCriterion("started", event(dev.denfry.promptcritical.mod.gas.CentrifugalCompressorBlockEntity.NO_SURGE, Map.of()))
+                .save(saver, id("no_surge"), efh);
+        task(twin, PcBlocks.CATALYTIC_REFORMER.get(), "refinery_lp", AdvancementType.CHALLENGE, false, 100)
+                .addCriterion("blend", SimEventTrigger.TriggerInstance.of(
+                        ResourceLocation.parse(dev.denfry.promptcritical.mod.scada.TunerChallenges.REFINERY_LP),
+                        Map.of("cost_ratio", MinMaxBounds.Doubles.atMost(1.05)), false))
+                .save(saver, id("refinery_lp"), efh);
+        task(twin, PcBlocks.PLC.get(), "tuner", AdvancementType.CHALLENGE, false, 150)
+                .addCriterion("top", SimEventTrigger.TriggerInstance.of(
+                        ResourceLocation.parse(dev.denfry.promptcritical.mod.scada.TunerChallenges.TUNER), Map.of(), false))
+                .save(saver, id("tuner"), efh);
         task(root, PcItems.OPERATOR_LICENSE.get(), "operator_license", AdvancementType.GOAL, false, 60)
                 .addCriterion("licensed", SimEventTrigger.TriggerInstance.of(
                         ResourceLocation.parse(dev.denfry.promptcritical.mod.scada.SimulatorDeskBlockEntity.OPERATOR_LICENSE),

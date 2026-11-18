@@ -28,6 +28,7 @@ public final class FoundryClient {
     private static final PartialModel GRINDER_WHEEL = partial("surface_grinder/partial/wheel");
     private static final PartialModel PVC_AGITATOR = partial("pvc_reactor/partial/agitator");
     private static final PartialModel GAS_CRANKSHAFT = partial("gas_compressor/partial/crankshaft");
+    private static final PartialModel CC_ROTOR = partial("centrifugal_compressor/partial/rotor");
 
     private FoundryClient() {
     }
@@ -61,6 +62,9 @@ public final class FoundryClient {
         // коленвал газового компрессора с маховиком (art/blockbench/gas_processing/gas_compressor.author.js): ось x на y 8, z 16
         event.registerBlockEntityRenderer(dev.denfry.promptcritical.mod.gas.GasBlockEntities.GAS_COMPRESSOR.get(),
                 c -> new FoundryMachineRenderer<>(GAS_CRANKSHAFT, Motion.SPIN_X, 8, 16, 1));
+        // муфта ротора центробежного компрессора (art/blockbench/oil_transport/centrifugal_compressor): ось x на y 12, z 16
+        event.registerBlockEntityRenderer(dev.denfry.promptcritical.mod.gas.GasBlockEntities.CENTRIFUGAL_COMPRESSOR.get(),
+                c -> new FoundryMachineRenderer<>(CC_ROTOR, Motion.SPIN_X, 12, 16, 1));
     }
 
     private static void tooltip(ItemTooltipEvent event) {

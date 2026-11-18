@@ -15,7 +15,8 @@ import java.util.List;
  */
 public final class TwinPlants {
     /** Порядок выбора на станции. */
-    public static final List<String> IDS = List.of(TankTwinPlant.ID, BoilerTwinPlant.ID, SyncTwinPlant.ID);
+    public static final List<String> IDS = List.of(TankTwinPlant.ID, BoilerTwinPlant.ID, SyncTwinPlant.ID, CompressorTwinPlant.ID,
+            BlendTwinPlant.ID);
 
     private TwinPlants() {
     }
@@ -26,6 +27,8 @@ public final class TwinPlants {
             case TankTwinPlant.ID -> TankTwinPlant.SIGNALS;
             case BoilerTwinPlant.ID -> BoilerTwinPlant.SIGNALS;
             case SyncTwinPlant.ID -> SyncTwinPlant.SIGNALS;
+            case CompressorTwinPlant.ID -> CompressorTwinPlant.SIGNALS;
+            case BlendTwinPlant.ID -> BlendTwinPlant.SIGNALS;
             default -> List.of();
         };
     }
@@ -36,6 +39,8 @@ public final class TwinPlants {
             case TankTwinPlant.ID -> TankTwinPlant.ACTUATORS;
             case BoilerTwinPlant.ID -> BoilerTwinPlant.ACTUATORS;
             case SyncTwinPlant.ID -> SyncTwinPlant.ACTUATORS;
+            case CompressorTwinPlant.ID -> CompressorTwinPlant.ACTUATORS;
+            case BlendTwinPlant.ID -> BlendTwinPlant.ACTUATORS;
             default -> List.of();
         };
     }
@@ -43,13 +48,16 @@ public final class TwinPlants {
     /**
      * Новая установка. Пресеты: резервуар — {@code half} (5 м), {@code high} (6 м); котёл — {@code hot} (10 бар) и {@code low} (уровень
      * 0,09 м над жаровой трубой);
-     * генератор — {@code slip} (скольжение 0,25 Гц).
+     * генератор — {@code slip} (скольжение 0,25 Гц); компрессор — стоит с открытым рециклом; смешение — пустой
+     * резервуар.
      */
     public static TwinPlant create(String template, String preset, long seed) {
         return switch (template) {
             case TankTwinPlant.ID -> new TankTwinPlant("high".equals(preset) ? 6.0 : 5.0, 0.55, true);
             case BoilerTwinPlant.ID -> new BoilerTwinPlant(10, "low".equals(preset) ? 0.09 : Double.NaN, seed);
             case SyncTwinPlant.ID -> new SyncTwinPlant(0.25);
+            case CompressorTwinPlant.ID -> new CompressorTwinPlant();
+            case BlendTwinPlant.ID -> new BlendTwinPlant();
             default -> throw new IllegalArgumentException("no twin plant " + template);
         };
     }
@@ -77,6 +85,24 @@ public final class TwinPlants {
                             new Do(1, SyncTwinPlant.SPEEDER, DoMode.COMMAND, 1, 0),
                             new Do(2, SyncTwinPlant.SPEEDER, DoMode.COMMAND, -1, 0)),
                     List.of());
+            // антипомпаж: перепад, давления всаса и нагнетания в одной шкале 0…50 (кПа и бар) — в вольтах q²_r и R_c те же,
+            // что в паспорте; пуск привода — %QX0.0, рецикл — %QW0
+            case CompressorTwinPlant.ID -> new IoMap(
+                    List.of(new Di(0, CompressorTwinPlant.SPEED, Cmp.GT, 0.95)),
+                    List.of(new Ai(0, CompressorTwinPlant.DP, 0, 50), new Ai(1, CompressorTwinPlant.PS, 0, 50),
+                            new Ai(2, CompressorTwinPlant.PD, 0, 50), new Ai(3, CompressorTwinPlant.SPEED, 0, 1)),
+                    List.of(new Do(0, CompressorTwinPlant.DRIVE, DoMode.COMMAND, 1, 0)),
+                    List.of(new Ao(0, CompressorTwinPlant.RECYCLE, 0, 1)));
+            // смешение: анализатор качества и объём резервуара на входах, расходы компонентов 0…A_i на %QW0…%QW4
+            case BlendTwinPlant.ID -> {
+                List<Ao> ao = new java.util.ArrayList<>();
+                for (int i = 0; i < BlendTwinPlant.ACTUATORS.size(); i++)
+                    ao.add(new Ao(i, BlendTwinPlant.ACTUATORS.get(i), 0, BlendTwinPlant.INPUT.components().get(i).availableM3h()));
+                yield new IoMap(List.of(),
+                        List.of(new Ai(0, BlendTwinPlant.AN_RON, 80, 100), new Ai(1, BlendTwinPlant.AN_MON, 70, 90),
+                                new Ai(2, BlendTwinPlant.AN_RVP, 0, 100), new Ai(3, BlendTwinPlant.VOLUME, 0, 5)),
+                        List.of(), ao);
+            }
             default -> throw new IllegalArgumentException("no twin plant " + template);
         };
     }
