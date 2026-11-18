@@ -94,6 +94,9 @@ public final class PcItems {
     public static final DeferredItem<Item> CATALYST_HYDROTREATING = item("catalyst_hydrotreating", 16);
     /** Pt-Re/Al₂O₃ каталитического риформинга (0,3 % Pt, 0,3 % Re, хлорированный глинозём). */
     public static final DeferredItem<Item> CATALYST_REFORMING = item("catalyst_reforming", 16);
+    /** Цеолит Y в матрице Al₂O₃ для каткрекинга, мешок 100 кг; на выведенном равновесном — {@code catalyst_state} (09 §9.9.11). */
+    public static final DeferredItem<dev.denfry.promptcritical.mod.refinery.CatalystItem> CATALYST_FCC = registered(ITEMS.register("catalyst_fcc",
+            () -> new dev.denfry.promptcritical.mod.refinery.CatalystItem(new Item.Properties().stacksTo(16))));
     /** Комовая сера установки Клауса, 10 кг — сырьё сернокислотной установки. */
     public static final DeferredItem<Item> SULFUR = item("sulfur", 64);
     /** Пакет платинородиевых сеток (Pt 92,5 %, Rh 7,5 %) и катализатор очистки хвостовых газов. */

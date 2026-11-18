@@ -64,6 +64,14 @@ public final class PcFluids {
     public static final Entry VACUUM_GAS_OIL = liquid("vacuum_gas_oil", 910, 20000, 353);
     /** Гудрон &gt; 550 °C: сырьё коксования, хранят горячим. */
     public static final Entry VACUUM_RESIDUE = liquid("vacuum_residue", 990, 200000, 423);
+    /** Бензин каткрекинга: олефины 20–25 %, ОЧИ 91–93. */
+    public static final Entry FCC_GASOLINE = liquid("fcc_gasoline", 740, 600, 293);
+    /** Лёгкий газойль каткрекинга — компонент дизельного топлива после гидроочистки. */
+    public static final Entry LIGHT_CYCLE_OIL = liquid("light_cycle_oil", 940, 4000, 293);
+    /** Тяжёлый газойль каткрекинга (шлам-масло): высокоароматичный, сырьё игольчатого кокса. */
+    public static final Entry DECANT_OIL = liquid("decant_oil", 1050, 30000, 343);
+    /** Сжиженный углеводородный газ: пропан и бутан-бутилены, под давлением насыщения. */
+    public static final Entry LPG = liquid("lpg", 540, 150, 288);
 
     // газопереработка I2: товарный газ — 1 мБ = 1 нм³; сжиженные углеводороды и метанол — 1 мБ = 1 л жидкости
     public static final Entry SALES_GAS = gas("sales_gas", 293, -1);

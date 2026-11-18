@@ -37,11 +37,16 @@ public final class RefineryBlockEntities {
             BLOCK_ENTITIES.register("vacuum_column",
                     () -> BlockEntityType.Builder.of(VacuumColumnBlockEntity::new, PcBlocks.VACUUM_COLUMN.get()).build(null));
 
+    public static final DeferredHolder<BlockEntityType<?>, BlockEntityType<FccUnitBlockEntity>> FCC_UNIT =
+            BLOCK_ENTITIES.register("fcc_unit",
+                    () -> BlockEntityType.Builder.of(FccUnitBlockEntity::new, PcBlocks.FCC_UNIT.get()).build(null));
+
     private RefineryBlockEntities() {
     }
 
     public static void register(IEventBus modBus) {
         BLOCK_ENTITIES.register(modBus);
+        RefineryComponents.register(modBus);
         modBus.addListener(RefineryBlockEntities::capabilities);
     }
 
@@ -53,5 +58,7 @@ public final class RefineryBlockEntities {
         event.registerBlockEntity(Capabilities.ItemHandler.BLOCK, DELAYED_COKER.get(), (be, side) -> be.items(side));
         event.registerBlockEntity(Capabilities.FluidHandler.BLOCK, DESALTER.get(), (be, side) -> be.fluids(side));
         event.registerBlockEntity(Capabilities.FluidHandler.BLOCK, VACUUM_COLUMN.get(), (be, side) -> be.fluids(side));
+        event.registerBlockEntity(Capabilities.FluidHandler.BLOCK, FCC_UNIT.get(), (be, side) -> be.fluids(side));
+        event.registerBlockEntity(Capabilities.ItemHandler.BLOCK, FCC_UNIT.get(), (be, side) -> be.items(side));
     }
 }

@@ -2,7 +2,15 @@ package dev.denfry.promptcritical.mod.gametest;
 
 import dev.denfry.promptcritical.mod.PromptCritical;
 import dev.denfry.promptcritical.mod.production.TubeFurnaceBlockEntity;
+import com.simibubi.create.AllBlocks;
+import com.simibubi.create.content.kinetics.motor.CreativeMotorBlockEntity;
+import dev.denfry.promptcritical.mod.gas.CentrifugalCompressorBlockEntity;
 import dev.denfry.promptcritical.mod.refinery.DelayedCokerBlockEntity;
+import dev.denfry.promptcritical.mod.refinery.FccUnitBlockEntity;
+import dev.denfry.promptcritical.mod.refinery.RefineryComponents;
+import dev.denfry.promptcritical.mod.registry.PcItems;
+import dev.denfry.promptcritical.sim.refining.CatalystState;
+import net.minecraft.world.item.ItemStack;
 import dev.denfry.promptcritical.mod.refinery.DesalterBlockEntity;
 import dev.denfry.promptcritical.mod.refinery.VacuumColumnBlockEntity;
 import dev.denfry.promptcritical.mod.registry.PcBlocks;
@@ -128,6 +136,67 @@ public final class ConversionGameTests {
                     h.assertTrue(v.residue().amount() > 200, "tar " + v.residue().amount() + " L");
                     h.assertTrue(v.pressureKpa() > 100, "no steam, no vacuum: " + v.pressureKpa());
                     h.assertTrue(v.result().vgo() < 0.3, "atmospheric gas oil yield " + v.result().vgo());
+                })
+                .thenSucceed();
+    }
+
+    /**
+     * Каткрекинг с воздуходувкой — центробежным компрессором на валу Create: бензин, пропилен, регенератор горячий,
+     * подпитка выводит равновесный катализатор с {@code catalyst_state}.
+     */
+    @GameTest(template = LARGE, timeoutTicks = 1600)
+    public static void fccCracksGasOilWithAirFromTheCompressor(GameTestHelper h) {
+        BlockPos fcc = new BlockPos(2, 2, 2), cc = new BlockPos(7, 2, 7), motor = cc.north();
+        h.setBlock(fcc, north(PcBlocks.FCC_UNIT.get()));
+        h.setBlock(cc, north(PcBlocks.CENTRIFUGAL_COMPRESSOR.get()));
+        h.setBlock(motor, AllBlocks.CREATIVE_MOTOR.getDefaultState().setValue(BlockStateProperties.FACING, Direction.SOUTH));
+        h.runAfterDelay(1, () -> ((CreativeMotorBlockEntity) h.getBlockEntity(motor)).generatedSpeed.setValue(64));
+        h.startSequence()
+                .thenExecute(() -> {
+                    ((CentrifugalCompressorBlockEntity) h.getBlockEntity(cc)).setLine(0.85);
+                    FccUnitBlockEntity f = h.getBlockEntity(fcc);
+                    f.input().insertItem(0, new ItemStack(PcItems.CATALYST_FCC.get(), 16), false);
+                })
+                .thenWaitUntil(() -> {
+                    FccUnitBlockEntity f = h.getBlockEntity(fcc);
+                    fill(f.fluids(Direction.NORTH), PcFluids.VACUUM_GAS_OIL.source.get(), 8000);
+                    h.assertTrue(f.blower() && f.airKgS() > 0.2, "air " + f.airKgS() + " kg/s");
+                    // оператор держит воздух под кокс: ≈ 0,47 кг/с на 0,68 кг/с газойля (13 кг воздуха на кг кокса)
+                    double share = f.airKgS() / (FccUnitBlockEntity.AIR_DESIGN_KGS * Math.max(0.05, f.damper()));
+                    if (share > 0.1) f.setDamper(0.47 / (FccUnitBlockEntity.AIR_DESIGN_KGS * share));
+                    h.assertTrue(f.gasoline().amount() > 200, "cracked gasoline " + f.gasoline().amount() + " L");
+                    h.assertTrue(f.propylene().amount() > 10, "propylene " + f.propylene().amount() + " L");
+                    h.assertTrue(f.last().yields().conversion() > 0.6, "conversion " + f.last().yields().conversion());
+                    h.assertTrue(f.unit().regenK() - 273.15 > 600, "regenerator " + (f.unit().regenK() - 273.15) + " °C");
+                    ItemStack ecat = f.output().getStackInSlot(0);
+                    h.assertTrue(ecat.is(PcItems.CATALYST_FCC.get()), "withdrawn equilibrium catalyst");
+                    CatalystState s = ecat.get(RefineryComponents.CATALYST_STATE.get());
+                    h.assertTrue(s != null && s.ageH() >= 0, "catalyst_state on the withdrawn bag");
+                })
+                .thenExecute(() -> h.setBlock(cc, net.minecraft.world.level.block.Blocks.AIR))
+                .thenWaitUntil(() -> {
+                    FccUnitBlockEntity f = h.getBlockEntity(fcc);
+                    h.assertTrue(f.unit().tripped(), "blower lost: slide valves shut, air " + f.airKgS());
+                })
+                .thenSucceed();
+    }
+
+    /** Без воздуходувки нет перепада на шиберной задвижке: установка не пускается, сырьё не идёт. */
+    @GameTest(template = LARGE, timeoutTicks = 200)
+    public static void fccWithoutAirTripsTheSlideValves(GameTestHelper h) {
+        BlockPos fcc = new BlockPos(5, 2, 5);
+        h.setBlock(fcc, north(PcBlocks.FCC_UNIT.get()));
+        h.startSequence()
+                .thenExecute(() -> {
+                    FccUnitBlockEntity f = h.getBlockEntity(fcc);
+                    f.input().insertItem(0, new ItemStack(PcItems.CATALYST_FCC.get(), 16), false);
+                })
+                .thenWaitUntil(() -> {
+                    FccUnitBlockEntity f = h.getBlockEntity(fcc);
+                    fill(f.fluids(Direction.NORTH), PcFluids.VACUUM_GAS_OIL.source.get(), 8000);
+                    h.assertFalse(f.blower(), "no compressor in range");
+                    h.assertTrue(f.unit().inventoryKg() > 0.5 * FccUnitBlockEntity.fullKg(), "charged " + f.unit().inventoryKg());
+                    h.assertTrue(f.gasoline().amount() == 0, "no cracking without air");
                 })
                 .thenSucceed();
     }

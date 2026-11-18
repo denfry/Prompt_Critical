@@ -600,6 +600,7 @@ public final class PcBlocks {
             dev.denfry.promptcritical.mod.refinery.VacuumColumnBlockEntity::new);
     /** Пароэжектор вакуумной колонны: ступень вакуума на каждый эжектор, касающийся колонны. */
     public static final DeferredBlock<PcBlock> STEAM_EJECTOR = block("steam_ejector", machine(), Spec.facing());
+    public static final DeferredBlock<PcDeviceBlock> FCC_UNIT = uranium("fcc_unit", dev.denfry.promptcritical.mod.refinery.FccUnitBlockEntity::new);
 
     // --- передел урана: от руды до UF₆ (I4) ---
     public static final DeferredBlock<PcDeviceBlock> ACID_PLANT = uranium("acid_plant",

@@ -57,5 +57,10 @@ public final class ConversionRecipes extends RecipeProvider {
         ShapedRecipeBuilder.shaped(RecipeCategory.MISC, PcBlocks.STEAM_EJECTOR.get(), 2)
                 .pattern("PVP").define('P', pipe).define('V', AllBlocks.FLUID_VALVE.get())
                 .unlockedBy("has_crude_column", has(PcBlocks.CRUDE_COLUMN.get())).save(out, id("steam_ejector"));
+        // футерованные райзер, реактор-сепаратор с циклонами и регенератор, шиберные задвижки
+        ShapedRecipeBuilder.shaped(RecipeCategory.MISC, PcBlocks.FCC_UNIT.get())
+                .pattern("BTB").pattern("VPV").pattern("BFB").define('B', net.minecraft.world.item.Items.BRICKS).define('T', AllBlocks.FLUID_TANK.get())
+                .define('V', AllBlocks.FLUID_VALVE.get()).define('P', pipe).define('F', PcBlocks.TUBE_FURNACE.get())
+                .unlockedBy("has_vacuum_column", has(PcBlocks.VACUUM_COLUMN.get())).save(out, id("fcc_unit"));
     }
 }

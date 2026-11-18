@@ -15,7 +15,7 @@ import net.minecraft.network.chat.Component;
  */
 public final class ConversionPanels {
     /** Общие биты флагов и кнопки. */
-    public static final int F_ON = 0, F_RUN = 1, F_WARN = 2, F_AUX = 3, F_ALARM = 4;
+    public static final int F_ON = 0, F_RUN = 1, F_WARN = 2, F_AUX = 3, F_ALARM = 4, F_LOW = 5;
     public static final int B_RUN = 0, B_DOWN = 1, B_UP = 2, B_DOWN2 = 3, B_UP2 = 4, B_ACTION = 5, B_ACTION2 = 6;
 
     private static final Tr RUN = PanelText.tr("conv.run", "Run", "Пуск/стоп"), ON = PanelText.tr("conv.on", "On", "Вкл."),
@@ -74,6 +74,58 @@ public final class ConversionPanels {
             .readout(8, 118, 216, v -> VACUUM_STATUS.get(v.raw(VC_FEED_LH), v.raw(VC_FLASH_C), v.num(VC_CCR_PERMIL, 10, 1), v.raw(VC_EJECTORS)), null)
             .noInventory().build();
 
+    // ------------------------------------------------------------------ каткрекинг (09 §9.9.5)
+    public static final int FC_RISER_C = 0, FC_REGEN_C = 1, FC_C2O_X10 = 2, FC_CONV_PERMIL = 3, FC_ACT_PERMIL = 4, FC_TANK = 5,
+            FC_INV_KG = 6, FC_CRC_X1000 = 7, FC_AIR_X1000 = 8, FC_DAMPER_PCT = 9, FC_DP_KPA = 10, FC_FEED_LH = 11, FC_FLAGS = 12,
+            FC_CHANNELS = 13;
+    private static final Tr RISER = PanelText.tr("conv.riser", "Riser outlet", "Выход райзера"),
+            REGEN = PanelText.tr("conv.regen", "Regenerator", "Регенератор"),
+            C2O = PanelText.tr("conv.c2o", "Cat/oil", "Катализатор/сырьё"), RATIO = PanelText.tr("conv.ratio", "kg/kg", "кг/кг"),
+            CONVERSION = PanelText.tr("conv.conversion", "Conversion", "Конверсия"),
+            FCC_GASOLINE = PanelText.tr("conv.fcc_gasoline", "FCC gasoline", "Бензин каткрекинга"),
+            NO_BLOWER = PanelText.tr("conv.no_blower", "No air blower within 8 blocks", "Нет воздуходувки в 8 блоках"),
+            SLIDE_TRIP = PanelText.tr("conv.slide_trip", "Slide valves shut: Δp low (Run resets)", "Задвижки закрыты: мал перепад (Пуск — сброс)"),
+            AFTERBURN = PanelText.tr("conv.afterburn", "Afterburn above 760 °C", "Догорание выше 760 °C"),
+            CAT_LOW = PanelText.tr("conv.cat_low", "Catalyst charge below half", "Катализатора меньше половины"),
+            AIR_DOWN = PanelText.tr("conv.air_down", "Air −", "Воздух −"), AIR_UP = PanelText.tr("conv.air_up", "Air +", "Воздух +"),
+            AIR_DOWN_TIP = PanelText.tr("conv.air_down_tip", "Air damper −5 %", "Заслонка воздуха −5 %"),
+            AIR_UP_TIP = PanelText.tr("conv.air_up_tip", "Air damper +5 %", "Заслонка воздуха +5 %"),
+            FCC_CATALYST = PanelText.tr("conv.fcc_catalyst", "Zeolite catalyst, 100 kg bags", "Цеолитный катализатор, мешки по 100 кг"),
+            ECAT = PanelText.tr("conv.ecat", "Withdrawn equilibrium catalyst", "Выведенный равновесный катализатор"),
+            FCC_STATUS = PanelText.tr("conv.fcc_status", "Gas oil %s l/h · catalyst %s kg, activity %s %% · coke on regenerated %s %%",
+                    "Газойль %s л/ч · катализатор %s кг, активность %s %% · кокс на регенерированном %s %%"),
+            AIR_STATUS = PanelText.tr("conv.air_status", "Air %s kg/s (damper %s %%) · slide valve Δp %s kPa",
+                    "Воздух %s кг/с (заслонка %s %%) · перепад на задвижке %s кПа"),
+            CATALYST_TIP = PanelText.tr("conv.catalyst_state", "Activity %s %% · coke %s %% · %s h in service · %s",
+                    "Активность %s %% · кокс %s %% · %s ч в работе · %s");
+    private static final Tr[] STAGES = {PanelText.tr("conv.stage.fresh", "fresh", "свежий"),
+            PanelText.tr("conv.stage.oxide", "oxide form", "оксидная форма"), PanelText.tr("conv.stage.active", "in service", "в работе"),
+            PanelText.tr("conv.stage.spent", "spent", "отработанный"), PanelText.tr("conv.stage.regenerating", "regenerating", "на регенерации")};
+
+    /** Подсказка мешка катализатора с {@code catalyst_state}. */
+    public static net.minecraft.network.chat.MutableComponent catalystTip(dev.denfry.promptcritical.sim.refining.CatalystState s) {
+        return CATALYST_TIP.get(PanelText.num(s.activity() * 100, 0), PanelText.num(s.cokeFrac() * 100, 2), PanelText.num(s.ageH(), 0),
+                STAGES[s.state().ordinal()].get());
+    }
+
+    public static final PanelLayout FCC = PanelLayout.builder("fcc_unit", 300, 168, FC_CHANNELS)
+            .dial(8, 24, false, FC_RISER_C, 1, 600, 545, 0, PanelText.CELSIUS.get(), RISER.get(), null)
+            .dial(64, 24, false, FC_REGEN_C, 1, 800, 760, 0, PanelText.CELSIUS.get(), REGEN.get(), null)
+            .dial(120, 24, false, FC_C2O_X10, 10, 12, 10, 1, RATIO.get(), C2O.get(), null)
+            .dial(176, 24, false, FC_CONV_PERMIL, 10, 100, Double.NaN, 0, PCT.get(), CONVERSION.get(), null)
+            .glass(232, 24, 64, FC_TANK, 0xFFE0A040, Double.NaN, Double.NaN, FCC_GASOLINE.get(), null)
+            .lamp(256, 22, FC_FLAGS, F_ON, LampColor.GREEN, ON.get()).lamp(256, 36, FC_FLAGS, F_RUN, LampColor.GREEN, WORKING.get())
+            .lamp(256, 50, FC_FLAGS, F_AUX, LampColor.AMBER, NO_BLOWER.get()).lamp(256, 64, FC_FLAGS, F_WARN, LampColor.RED, SLIDE_TRIP.get())
+            .lamp(256, 78, FC_FLAGS, F_ALARM, LampColor.RED, AFTERBURN.get()).lamp(256, 92, FC_FLAGS, F_LOW, LampColor.AMBER, CAT_LOW.get())
+            .button(8, 108, 44, B_RUN, RUN.get(), null)
+            .button(56, 108, 20, B_DOWN, Component.literal("−"), T_DOWN.get()).button(78, 108, 20, B_UP, Component.literal("+"), T_UP.get())
+            .button(102, 108, 40, B_DOWN2, AIR_DOWN.get(), AIR_DOWN_TIP.get()).button(146, 108, 40, B_UP2, AIR_UP.get(), AIR_UP_TIP.get())
+            .slot(196, 108, 0, s -> s.is(dev.denfry.promptcritical.mod.registry.PcItems.CATALYST_FCC.get()), FCC_CATALYST.get())
+            .output(216, 108, 1, ECAT.get()).output(234, 108, 2, ECAT.get())
+            .readout(8, 134, 284, v -> FCC_STATUS.get(v.raw(FC_FEED_LH), v.raw(FC_INV_KG), v.num(FC_ACT_PERMIL, 10, 1),
+                    v.num(FC_CRC_X1000, 1000, 3)), null)
+            .readout(8, 148, 284, v -> AIR_STATUS.get(v.num(FC_AIR_X1000, 1000, 2), v.raw(FC_DAMPER_PCT), v.raw(FC_DP_KPA)), null).build();
+
     private ConversionPanels() {
     }
 
@@ -81,6 +133,7 @@ public final class ConversionPanels {
         List<PanelLayout> out = new ArrayList<>();
         out.add(DESALTER);
         out.add(VACUUM);
+        out.add(FCC);
         return List.copyOf(out);
     }
 }
