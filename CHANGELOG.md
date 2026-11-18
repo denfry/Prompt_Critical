@@ -35,6 +35,15 @@
   Siberian crude by its TBP curve into gasoline, kerosene, diesel and mazut; trays and reflux set the sharpness
   through Fenske–Underwood–Gilliland. Handbook chapters on production and distillation.
 
+### Gas processing (I2)
+- Low-temperature separation of associated gas: a gas compressor on a Create shaft, triethylene glycol dehydration
+  with a regenerator, a propane chiller and a Joule–Thomson choke; sales gas, NGL and water come out on their own
+  faces. Water dew point by Bukacek, Peng–Robinson expansion, Wilson flash.
+- Hydrates by Hammerschmidt and Katz: chilling below the glycol dew point without methanol grows a hydrate plug
+  that blocks the choke; methanol from dry distillation of wood is dosed to keep a 3 K margin.
+- NGL fractionation into propane, butane and natural gasoline through a deethanizer, depropanizer and debutanizer
+  on the Fenske–Underwood–Gilliland column. Sales gas and associated gas fire the gas turbine and furnaces.
+
 ### Character body
 - Choose sex, height, mass and age on the title screen or on first join; locked per world, an operator can reset.
 - Height scales the player model and stride; mass sets knockback resistance and the load in the hoist cage;

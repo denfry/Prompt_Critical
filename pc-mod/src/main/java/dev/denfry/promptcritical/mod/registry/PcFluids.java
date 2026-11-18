@@ -57,6 +57,14 @@ public final class PcFluids {
     /** Мазут — остаток атмосферной перегонки, горячий: хранят и качают подогретым. */
     public static final Entry FUEL_OIL = liquid("fuel_oil", 950, 60000, 343);
 
+    // газопереработка I2: товарный газ — 1 мБ = 1 нм³; сжиженные углеводороды и метанол — 1 мБ = 1 л жидкости
+    public static final Entry SALES_GAS = gas("sales_gas", 293, -1);
+    public static final Entry METHANOL = liquid("methanol", 791, 600, 293);
+    public static final Entry NGL = liquid("ngl", 540, 300, 278);
+    public static final Entry PROPANE = liquid("propane", 507, 120, 288);
+    public static final Entry BUTANE = liquid("butane", 575, 180, 288);
+    public static final Entry NATURAL_GASOLINE = liquid("natural_gasoline", 660, 350, 293);
+
     static {
         MINE_WATER.props.block(PcBlocks.MINE_WATER);
     }
