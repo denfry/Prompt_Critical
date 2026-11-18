@@ -32,8 +32,16 @@ public final class DelayedCokerBlockEntity extends UraniumProcessBlockEntity {
     public static final double FEED_CCR = 0.10, FEED_SULFUR = 0.018, FUEL_OIL_KG_L = 0.95, GASOLINE_KG_L = 0.735, DIESEL_KG_L = 0.84;
     public static final double FEED_L_S = 2, TIME_SCALE = 120, COKE_KG_PER_ITEM = 10, H2S_HOLDUP_KG = 50;
     public static final double T_MIN_C = 470, T_MAX_C = 530;
+    /**
+     * Гудрон западносибирской нефти: коксуемость {@link VacuumColumnBlockEntity} в номинальном режиме — около 20 %
+     * (пример §9.9.8: CCR 20), сера та же, что у мазута [допущение]; плотность 0,99 кг/л.
+     */
+    public static final double RESIDUE_CCR = 0.20, RESIDUE_KG_L = 0.99;
 
     private final FeedTank feed = new FeedTank(PcFluids.FUEL_OIL.source.get(), MB);
+    /** Гудрон вакуумной колонны — основное сырьё коксования (09 §9.9.8); коксуемость — {@link #RESIDUE_CCR}. */
+    private final FeedTank residue = new FeedTank(PcFluids.VACUUM_RESIDUE.source.get(), MB);
+    private final IFluidHandler inlet = new dev.denfry.promptcritical.mod.chem.PyrolysisFurnaceBlockEntity.MultiInlet(feed, residue);
     private final ProductTank naphtha = new ProductTank(PcFluids.GASOLINE.source.get(), MB);
     private final ProductTank gasOil = new ProductTank(PcFluids.DIESEL_FUEL.source.get(), MB);
     private double coilC = 500, hours, drumKg, waitingKg, cutKg, h2sKg, feedLs;
@@ -49,6 +57,10 @@ public final class DelayedCokerBlockEntity extends UraniumProcessBlockEntity {
 
     public FeedTank feed() {
         return feed;
+    }
+
+    public FeedTank residue() {
+        return residue;
     }
 
     public ProductTank naphtha() {
@@ -83,14 +95,18 @@ public final class DelayedCokerBlockEntity extends UraniumProcessBlockEntity {
     @Override
     protected void process(ServerLevel level, double dt) {
         feedLs = 0;
-        last = DelayedCoking.yields(FEED_CCR, FEED_SULFUR, coilC);
+        // гудрон — в первую очередь, мазут — если гудрона нет
+        boolean tar = residue.amount() > 0;
+        FeedTank src = tar ? residue : feed;
+        double rho = tar ? RESIDUE_KG_L : FUEL_OIL_KG_L;
+        last = DelayedCoking.yields(tar ? RESIDUE_CCR : FEED_CCR, FEED_SULFUR, coilC);
         if (on && h2sKg < H2S_HOLDUP_KG) {
-            double l = Math.min(FEED_L_S * dt, feed.amount());
-            l = Math.min(l, Math.min(naphtha.room() * GASOLINE_KG_L / Math.max(1e-9, last.naphtha() * FUEL_OIL_KG_L),
-                    gasOil.room() * DIESEL_KG_L / Math.max(1e-9, last.gasOil() * FUEL_OIL_KG_L)));
+            double l = Math.min(FEED_L_S * dt, src.amount());
+            l = Math.min(l, Math.min(naphtha.room() * GASOLINE_KG_L / Math.max(1e-9, last.naphtha() * rho),
+                    gasOil.room() * DIESEL_KG_L / Math.max(1e-9, last.gasOil() * rho)));
             if (l > 0) {
-                double kg = l * FUEL_OIL_KG_L;
-                feed.take(l);
+                double kg = l * rho;
+                src.take(l);
                 naphtha.add(kg * last.naphtha() / GASOLINE_KG_L);
                 gasOil.add(kg * last.gasOil() / DIESEL_KG_L);
                 drumKg += kg * last.coke();
@@ -137,7 +153,7 @@ public final class DelayedCokerBlockEntity extends UraniumProcessBlockEntity {
     @Override
     public IFluidHandler fluids(@Nullable Direction side) {
         if (side == Direction.UP) return naphtha;
-        return side == Direction.DOWN ? gasOil : feed;
+        return side == Direction.DOWN ? gasOil : inlet;
     }
 
     @Override
@@ -174,6 +190,7 @@ public final class DelayedCokerBlockEntity extends UraniumProcessBlockEntity {
     @Override
     protected void saveExtra(CompoundTag tag, HolderLookup.Provider registries) {
         feed.save(tag, "feed");
+        residue.save(tag, "residue");
         naphtha.save(tag, "naphtha");
         gasOil.save(tag, "gas_oil");
         tag.putDouble("coil", coilC);
@@ -187,6 +204,7 @@ public final class DelayedCokerBlockEntity extends UraniumProcessBlockEntity {
     @Override
     protected void loadExtra(CompoundTag tag, HolderLookup.Provider registries) {
         feed.load(tag, "feed");
+        residue.load(tag, "residue");
         naphtha.load(tag, "naphtha");
         gasOil.load(tag, "gas_oil");
         if (tag.contains("coil")) coilC = tag.getDouble("coil");

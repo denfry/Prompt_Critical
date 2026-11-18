@@ -2,7 +2,9 @@ package dev.denfry.promptcritical.mod.gametest;
 
 import dev.denfry.promptcritical.mod.PromptCritical;
 import dev.denfry.promptcritical.mod.production.TubeFurnaceBlockEntity;
+import dev.denfry.promptcritical.mod.refinery.DelayedCokerBlockEntity;
 import dev.denfry.promptcritical.mod.refinery.DesalterBlockEntity;
+import dev.denfry.promptcritical.mod.refinery.VacuumColumnBlockEntity;
 import dev.denfry.promptcritical.mod.registry.PcBlocks;
 import dev.denfry.promptcritical.mod.registry.PcFluids;
 import net.minecraft.core.BlockPos;
@@ -73,6 +75,59 @@ public final class ConversionGameTests {
                     h.assertFalse(d.powered(), "no grid, no bench power");
                     h.assertTrue(f.crude().amount() > 200, "crude in furnace " + f.crude().amount() + " L");
                     h.assertTrue(f.crudeSaltMgL() > 100, "salt " + f.crudeSaltMgL() + " mg/l");
+                })
+                .thenSucceed();
+    }
+
+    /**
+     * Вакуумная колонна с двумя эжекторами (5 кПа): газойль сверху, гудрон снизу, гудрон — в коксование, которое
+     * берёт его первым.
+     */
+    @GameTest(template = LARGE, timeoutTicks = 800)
+    public static void vacuumColumnSplitsMazutAndFeedsTheCoker(GameTestHelper h) {
+        BlockPos vc = new BlockPos(5, 2, 5), coker = new BlockPos(5, 2, 9);
+        h.setBlock(vc, north(PcBlocks.VACUUM_COLUMN.get()));
+        h.setBlock(vc.east(), north(PcBlocks.STEAM_EJECTOR.get()));
+        h.setBlock(vc.west(), north(PcBlocks.STEAM_EJECTOR.get()));
+        h.setBlock(coker, north(PcBlocks.DELAYED_COKER.get()));
+        h.startSequence()
+                .thenWaitUntil(() -> {
+                    VacuumColumnBlockEntity v = h.getBlockEntity(vc);
+                    fill(v.fluids(Direction.NORTH), PcFluids.FUEL_OIL.source.get(), 8000);
+                    fill(v.fluids(Direction.NORTH), PcFluids.SALES_GAS.source.get(), 8000);
+                    fill(v.fluids(Direction.NORTH), PcFluids.BOILER_FEEDWATER.source.get(), 8000);
+                    h.assertTrue(v.ejectors() == 2, "ejectors " + v.ejectors());
+                    h.assertTrue(v.pressureKpa() == 5, "flash zone " + v.pressureKpa() + " kPa");
+                    h.assertTrue(v.vgo().amount() > 300, "vacuum gas oil " + v.vgo().amount() + " L");
+                    h.assertTrue(v.residue().amount() > 200, "tar " + v.residue().amount() + " L");
+                    h.assertTrue(v.residueCcr() > 0.15, "tar CCR " + v.residueCcr());
+                })
+                .thenWaitUntil(() -> {
+                    VacuumColumnBlockEntity v = h.getBlockEntity(vc);
+                    DelayedCokerBlockEntity c = h.getBlockEntity(coker);
+                    int tar = (int) v.residue().amount();
+                    fill(c.fluids(Direction.NORTH), PcFluids.VACUUM_RESIDUE.source.get(), tar);
+                    fill(c.fluids(Direction.NORTH), PcFluids.FUEL_OIL.source.get(), 2000);
+                    h.assertTrue(c.last().coke() > 0.3, "coke yield on tar " + c.last().coke());
+                    h.assertTrue(c.feed().amount() >= 1999, "mazut waits while tar lasts: " + c.feed().amount());
+                })
+                .thenSucceed();
+    }
+
+    /** Без питательной воды эжекторы не работают: атмосферное давление, газойля в разы меньше. */
+    @GameTest(template = LARGE, timeoutTicks = 400)
+    public static void vacuumColumnWithoutSteamRunsAtAtmosphere(GameTestHelper h) {
+        BlockPos vc = new BlockPos(5, 2, 5);
+        h.setBlock(vc, north(PcBlocks.VACUUM_COLUMN.get()));
+        h.setBlock(vc.east(), north(PcBlocks.STEAM_EJECTOR.get()));
+        h.startSequence()
+                .thenWaitUntil(() -> {
+                    VacuumColumnBlockEntity v = h.getBlockEntity(vc);
+                    fill(v.fluids(Direction.NORTH), PcFluids.FUEL_OIL.source.get(), 8000);
+                    fill(v.fluids(Direction.NORTH), PcFluids.SALES_GAS.source.get(), 8000);
+                    h.assertTrue(v.residue().amount() > 200, "tar " + v.residue().amount() + " L");
+                    h.assertTrue(v.pressureKpa() > 100, "no steam, no vacuum: " + v.pressureKpa());
+                    h.assertTrue(v.result().vgo() < 0.3, "atmospheric gas oil yield " + v.result().vgo());
                 })
                 .thenSucceed();
     }

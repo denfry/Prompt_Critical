@@ -360,6 +360,8 @@ public final class PcLanguageProvider extends LanguageProvider {
         b("delayed_coker", "Delayed Coker", "Установка замедленного коксования");
         // подготовка и углубление переработки НПЗ, ГПЗ (09 §9.7.3, §9.9–9.10)
         b("electrostatic_desalter", "Electrostatic Desalter", "Электрообессоливающая установка (ЭЛОУ)");
+        b("vacuum_column", "Vacuum Distillation Column", "Вакуумная колонна");
+        b("steam_ejector", "Steam Ejector", "Пароэжектор");
         b("hf_kiln", "Hydrogen Fluoride Kiln", "Печь фтористого водорода");
         b("leach_tank", "Uranium Leach and CCD Train", "Выщелачивание урана с противоточной декантацией");
         b("uranium_ion_exchange", "Uranium Ion Exchange Unit", "Ионообменная установка урана");
@@ -633,6 +635,8 @@ public final class PcLanguageProvider extends LanguageProvider {
         FLUIDS.put("kerosene", new String[] {"Kerosene", "Керосин"});
         FLUIDS.put("diesel_fuel", new String[] {"Diesel Fuel", "Дизельное топливо"});
         FLUIDS.put("fuel_oil", new String[] {"Fuel Oil (Mazut)", "Мазут"});
+        FLUIDS.put("vacuum_gas_oil", new String[] {"Vacuum Gas Oil", "Вакуумный газойль"});
+        FLUIDS.put("vacuum_residue", new String[] {"Vacuum Residue (Tar)", "Гудрон"});
         FLUIDS.put("mine_methane", new String[] {"Mine Methane", "Шахтный метан"});
         FLUIDS.put("raw_water", new String[] {"Raw Water", "Сырая вода"});
         FLUIDS.put("mine_water", new String[] {"Mine Water", "Шахтная вода"});

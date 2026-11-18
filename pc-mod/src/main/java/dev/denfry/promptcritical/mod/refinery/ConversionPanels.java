@@ -49,12 +49,38 @@ public final class ConversionPanels {
             .readout(8, 118, 216, v -> DESALTER_STATUS.get(v.raw(DS_FEED_LH), v.num(DS_STAGE1_X10, 10, 1), v.num(DS_WATER_X100, 100, 2)), null)
             .noInventory().build();
 
+    // ------------------------------------------------------------------ вакуумная колонна (09 §9.9.2)
+    public static final int VC_T_C = 0, VC_P_X10 = 1, VC_VGO_PERMIL = 2, VC_CCR_PERMIL = 3, VC_TANK = 4, VC_FEED_LH = 5, VC_FLASH_C = 6,
+            VC_EJECTORS = 7, VC_FLAGS = 8, VC_CHANNELS = 9;
+    private static final Tr HEATER = PanelText.tr("conv.heater", "Heater outlet", "Выход печи"),
+            FLASH_P = PanelText.tr("conv.flash_p", "Flash zone", "Зона питания"),
+            VGO_YIELD = PanelText.tr("conv.vgo_yield", "Gas oil yield", "Выход газойля"),
+            VGO = PanelText.tr("conv.vgo", "Vacuum gas oil", "Вакуумный газойль"),
+            VACUUM_OK = PanelText.tr("conv.vacuum_ok", "Vacuum held", "Вакуум есть"),
+            NO_VACUUM = PanelText.tr("conv.no_vacuum", "No vacuum: ejectors or feedwater missing", "Нет вакуума: нет эжекторов или воды"),
+            T_DOWN = PanelText.tr("conv.t_down", "−5 °C", "−5 °C"), T_UP = PanelText.tr("conv.t_up", "+5 °C", "+5 °C"),
+            VACUUM_STATUS = PanelText.tr("conv.vacuum_status", "Mazut %s l/h · cut to %s °C · tar CCR %s %% · ejector stages %s",
+                    "Мазут %s л/ч · выкипает до %s °C · коксуемость гудрона %s %% · ступеней эжекторов %s");
+
+    public static final PanelLayout VACUUM = PanelLayout.builder("vacuum_column", 232, 140, VC_CHANNELS)
+            .dial(8, 24, false, VC_T_C, 1, 450, 420, 0, PanelText.CELSIUS.get(), HEATER.get(), null)
+            .dial(64, 24, false, VC_P_X10, 10, 110, 20, 0, KPA.get(), FLASH_P.get(), null)
+            .dial(120, 24, false, VC_VGO_PERMIL, 10, 100, Double.NaN, 0, PCT.get(), VGO_YIELD.get(), null)
+            .glass(176, 24, 56, VC_TANK, 0xFF4A3420, Double.NaN, Double.NaN, VGO.get(), null)
+            .lamp(196, 22, VC_FLAGS, F_ON, LampColor.GREEN, ON.get()).lamp(196, 36, VC_FLAGS, F_RUN, LampColor.GREEN, WORKING.get())
+            .lamp(196, 50, VC_FLAGS, F_AUX, LampColor.GREEN, VACUUM_OK.get()).lamp(196, 64, VC_FLAGS, F_WARN, LampColor.AMBER, NO_VACUUM.get())
+            .button(8, 92, 44, B_RUN, RUN.get(), null)
+            .button(56, 92, 20, B_DOWN, Component.literal("−"), T_DOWN.get()).button(78, 92, 20, B_UP, Component.literal("+"), T_UP.get())
+            .readout(8, 118, 216, v -> VACUUM_STATUS.get(v.raw(VC_FEED_LH), v.raw(VC_FLASH_C), v.num(VC_CCR_PERMIL, 10, 1), v.raw(VC_EJECTORS)), null)
+            .noInventory().build();
+
     private ConversionPanels() {
     }
 
     public static List<PanelLayout> all() {
         List<PanelLayout> out = new ArrayList<>();
         out.add(DESALTER);
+        out.add(VACUUM);
         return List.copyOf(out);
     }
 }

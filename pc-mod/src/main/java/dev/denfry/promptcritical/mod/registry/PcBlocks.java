@@ -596,6 +596,10 @@ public final class PcBlocks {
     // --- подготовка и углубление переработки на НПЗ, ГПЗ: ЭЛОУ, ВТ, FCC, амины, смешение, лаборатория (09 §9.7.3, §9.9–9.10) ---
     public static final DeferredBlock<PcDeviceBlock> ELECTROSTATIC_DESALTER = uranium("electrostatic_desalter",
             dev.denfry.promptcritical.mod.refinery.DesalterBlockEntity::new);
+    public static final DeferredBlock<PcDeviceBlock> VACUUM_COLUMN = uranium("vacuum_column",
+            dev.denfry.promptcritical.mod.refinery.VacuumColumnBlockEntity::new);
+    /** Пароэжектор вакуумной колонны: ступень вакуума на каждый эжектор, касающийся колонны. */
+    public static final DeferredBlock<PcBlock> STEAM_EJECTOR = block("steam_ejector", machine(), Spec.facing());
 
     // --- передел урана: от руды до UF₆ (I4) ---
     public static final DeferredBlock<PcDeviceBlock> ACID_PLANT = uranium("acid_plant",

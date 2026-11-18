@@ -48,5 +48,14 @@ public final class ConversionRecipes extends RecipeProvider {
                 .pattern("IWI").pattern("PTP").pattern("SVS").define('I', PcItems.INSULATOR_PIN.get()).define('W', PcItems.COPPER_WIRE.get())
                 .define('P', pipe).define('T', AllBlocks.FLUID_TANK.get()).define('S', plate).define('V', AllBlocks.FLUID_VALVE.get())
                 .unlockedBy("has_crude_column", has(PcBlocks.CRUDE_COLUMN.get())).save(out, id("electrostatic_desalter"));
+        // куб колонны большого диаметра с насадкой, печь, конденсаторы вакуумной системы
+        ShapedRecipeBuilder.shaped(RecipeCategory.MISC, PcBlocks.VACUUM_COLUMN.get())
+                .pattern("SCS").pattern("STS").pattern("SFS").define('S', plate).define('C', PcBlocks.COLUMN_TRAY_SECTION.get())
+                .define('T', AllBlocks.FLUID_TANK.get()).define('F', PcBlocks.TUBE_FURNACE.get())
+                .unlockedBy("has_crude_column", has(PcBlocks.CRUDE_COLUMN.get())).save(out, id("vacuum_column"));
+        // сопло Лаваля и диффузор: труба, клапан пара
+        ShapedRecipeBuilder.shaped(RecipeCategory.MISC, PcBlocks.STEAM_EJECTOR.get(), 2)
+                .pattern("PVP").define('P', pipe).define('V', AllBlocks.FLUID_VALVE.get())
+                .unlockedBy("has_crude_column", has(PcBlocks.CRUDE_COLUMN.get())).save(out, id("steam_ejector"));
     }
 }

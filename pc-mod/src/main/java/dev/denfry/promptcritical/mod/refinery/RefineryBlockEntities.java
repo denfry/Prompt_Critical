@@ -33,6 +33,10 @@ public final class RefineryBlockEntities {
             BLOCK_ENTITIES.register("electrostatic_desalter",
                     () -> BlockEntityType.Builder.of(DesalterBlockEntity::new, PcBlocks.ELECTROSTATIC_DESALTER.get()).build(null));
 
+    public static final DeferredHolder<BlockEntityType<?>, BlockEntityType<VacuumColumnBlockEntity>> VACUUM_COLUMN =
+            BLOCK_ENTITIES.register("vacuum_column",
+                    () -> BlockEntityType.Builder.of(VacuumColumnBlockEntity::new, PcBlocks.VACUUM_COLUMN.get()).build(null));
+
     private RefineryBlockEntities() {
     }
 
@@ -48,5 +52,6 @@ public final class RefineryBlockEntities {
         event.registerBlockEntity(Capabilities.FluidHandler.BLOCK, DELAYED_COKER.get(), (be, side) -> be.fluids(side));
         event.registerBlockEntity(Capabilities.ItemHandler.BLOCK, DELAYED_COKER.get(), (be, side) -> be.items(side));
         event.registerBlockEntity(Capabilities.FluidHandler.BLOCK, DESALTER.get(), (be, side) -> be.fluids(side));
+        event.registerBlockEntity(Capabilities.FluidHandler.BLOCK, VACUUM_COLUMN.get(), (be, side) -> be.fluids(side));
     }
 }
