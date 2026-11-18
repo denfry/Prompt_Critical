@@ -240,6 +240,13 @@ public final class BlastFurnaceControllerBlockEntity extends IronworksDeviceBloc
             tell(IronworksText.msg("bf_blowing"));
         }
         if (r.ironKg() <= 0 && r.slagKg() <= 0) return;
+        // выпуск: литейный двор и домна по коэффициентам 14 §14.1.3 на т чугуна — PM 0,3, SO₂ 0,1, NOx 0,05 кг;
+        // масса выпуска уходит в журнал целиком (кг/с × 72 с учёта = кг), аспирация литейного двора — 30 м, 330 К
+        if (r.ironKg() > 0 && level instanceof ServerLevel sl0) {
+            double t = r.ironKg() / 1000 / 72;
+            dev.denfry.promptcritical.mod.environment.AirQualityService.emit(sl0, shape.taphole().above(3), 30, 330, 50, 0.1 * t, 0.05 * t, 0.3 * t, 0, 0,
+                    "blast_furnace@" + worldPosition.toShortString(), dev.denfry.promptcritical.sim.environment.EmissionLedger.Category.BLAST_FURNACE);
+        }
         if (runner.isEmpty() || level.getGameTime() % 20 == 0) runner = runnerPath(shape);
         fillRunner(true);
         fillTicks = FILL_HOLD;

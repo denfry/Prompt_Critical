@@ -130,6 +130,10 @@ public final class SteamReformerBlockEntity extends DeviceBlockEntity implements
                 ch4MolS = 0;
             }
         }
+        // выбросы топки трубчатой печи (14 §14.1): газ, NOx 0,09 кг/ГДж (EMEP), труба 40 м, ≈ 430 К
+        if (level.getGameTime() % 20 == 0 && level instanceof net.minecraft.server.level.ServerLevel sl0)
+            dev.denfry.promptcritical.mod.environment.AirQualityService.emitGasFiring(sl0, worldPosition.above(4), 40, 430, fuelW, fuelW / 2.5e6, 0.09, 0,
+                    "steam_reformer@" + worldPosition.toShortString(), dev.denfry.promptcritical.sim.environment.EmissionLedger.Category.PROCESS);
         // излишек продувочного газа — на факел
         if (purgeJ > 1e9) purgeJ = 1e9;
         if (level.getGameTime() % 10 == 0) setLit(ch4MolS > 0);
