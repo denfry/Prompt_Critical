@@ -37,6 +37,14 @@ public final class ScadaBlockEntities {
             BLOCK_ENTITIES.register("instructor_station",
                     () -> BlockEntityType.Builder.of(SimulatorDeskBlockEntity::instructor, PcBlocks.INSTRUCTOR_STATION.get()).build(null));
 
+    // SCADA/HMI 03c: сигнализация
+    public static final DeferredHolder<BlockEntityType<?>, BlockEntityType<AnnunciatorBlockEntity>> ANNUNCIATOR =
+            BLOCK_ENTITIES.register("annunciator_panel",
+                    () -> BlockEntityType.Builder.of(AnnunciatorBlockEntity::new, PcBlocks.ANNUNCIATOR_PANEL.get()).build(null));
+    public static final DeferredHolder<BlockEntityType<?>, BlockEntityType<AlarmHornBlockEntity>> ALARM_HORN =
+            BLOCK_ENTITIES.register("alarm_horn",
+                    () -> BlockEntityType.Builder.of(AlarmHornBlockEntity::new, PcBlocks.ALARM_HORN.get()).build(null));
+
     private ScadaBlockEntities() {
     }
 

@@ -17,6 +17,11 @@ public final class ScadaText {
                 "подключите компьютер CC: Tweaked (периферия pc_rtu)");
         put("cc_off", "CC: Tweaked is not installed: the gateway has no computer to talk to",
                 "CC: Tweaked не установлен: шлюзу не с чем связаться");
+        // сирена сигнализации (03c §3c.2.1)
+        put("horn_on", "Alarm horn: sounding for priority %s — acknowledge or silence it at the annunciator",
+                "Сирена: звучит приоритет %s — квитируйте или заглушите на табло");
+        put("horn_off", "Alarm horn: silent (no unacknowledged alarm on annunciators within 16 blocks)",
+                "Сирена молчит (на табло в 16 блоках нет неквитированных сигнализаций)");
     }
 
     private ScadaText() {

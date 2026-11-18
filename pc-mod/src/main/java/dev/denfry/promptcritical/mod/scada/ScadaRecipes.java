@@ -79,5 +79,16 @@ public final class ScadaRecipes extends RecipeProvider {
                 .define('W', PcItems.COPPER_WIRE.get()).define('B', PcItems.PRINTED_CIRCUIT_BOARD.get()).define('S', sheet)
                 .unlockedBy("has_microprocessor", has(PcItems.MICROPROCESSOR.get()))
                 .save(out, PromptCritical.id("scada/instructor_station").toString());
+        // сигнализация 03c (эпоха Э2, 03c §3c.1): табло — 12 окон-ламп за стеклом на релейной плате, сирена — звонок на проводе
+        ShapedRecipeBuilder.shaped(RecipeCategory.REDSTONE, PcBlocks.ANNUNCIATOR_PANEL.get())
+                .pattern("GGG").pattern("LWL").pattern("SSS").define('G', glass).define('L', PcBlocks.INDICATOR_LAMP.get())
+                .define('W', PcItems.COPPER_WIRE.get()).define('S', sheet)
+                .unlockedBy("has_indicator_lamp", has(PcBlocks.INDICATOR_LAMP.get()))
+                .save(out, PromptCritical.id("scada/annunciator_panel").toString());
+        ShapedRecipeBuilder.shaped(RecipeCategory.REDSTONE, PcBlocks.ALARM_HORN.get())
+                .pattern(" S ").pattern("SNS").pattern(" W ").define('S', sheet).define('N', net.minecraft.world.item.Items.NOTE_BLOCK)
+                .define('W', PcItems.COPPER_WIRE.get())
+                .unlockedBy("has_annunciator", has(PcBlocks.ANNUNCIATOR_PANEL.get()))
+                .save(out, PromptCritical.id("scada/alarm_horn").toString());
     }
 }

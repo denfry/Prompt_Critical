@@ -26,5 +26,7 @@ public final class CcIntegration {
                 (be, side) -> new GridPeripheral(be));
         event.registerBlockEntity(PeripheralCapability.get(), dev.denfry.promptcritical.mod.mes.MesBlockEntities.MES_SERVER.get(),
                 (be, side) -> new MesPeripheral(be));
+        // SCADA/HMI 03c: сервер сигнализации
+        event.registerBlockEntity(PeripheralCapability.get(), ScadaBlockEntities.ANNUNCIATOR.get(), (be, side) -> new AnnunciatorPeripheral(be));
     }
 }
