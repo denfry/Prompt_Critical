@@ -28,8 +28,8 @@ public final class ProductionText {
         put("missing_separator", "no separator within 8 blocks", "нет сепаратора в 8 блоках");
         put("column_missing", "Column needs a tube furnace within 6 blocks and at least %s tray sections under the top (found %s)",
                 "Колонне нужна трубчатая печь в 6 блоках и не меньше %s тарельчатых секций под верхом (найдено %s)");
-        put("column_status", "Feed %s m³/h · %s trays · reflux %s · outlet %s °C · fuel %s nm³/h",
-                "Сырьё %s м³/ч · тарелок %s · флегмовое число %s · выход печи %s °C · топливо %s нм³/ч");
+        put("column_status", "Feed %s m³/h · %s trays · reflux %s · outlet %s °C · fuel %s nm³/h · gasoline/kerosene overlap %s K",
+                "Сырьё %s м³/ч · тарелок %s · флегмовое число %s · выход печи %s °C · топливо %s нм³/ч · перекрытие бензин/керосин %s К");
     }
 
     private ProductionText() {

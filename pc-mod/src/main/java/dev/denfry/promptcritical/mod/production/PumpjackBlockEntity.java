@@ -35,6 +35,9 @@ public final class PumpjackBlockEntity extends DeviceBlockEntity implements Shaf
 
     private final ShaftInput shaft = new ShaftInput();
     private double loadW;
+    /** Физическое время работы с нагрузкой скважины, с (11 §11.2.2 {@code pumpjack}: сутки SLOW). */
+    private double pumpingS;
+    public static final double PUMPJACK_DAY_S = 86_400;
 
     public PumpjackBlockEntity(BlockPos pos, BlockState state) {
         super(ProductionBlockEntities.PUMPJACK.get(), pos, state);
@@ -80,6 +83,30 @@ public final class PumpjackBlockEntity extends DeviceBlockEntity implements Shaf
         BlockState s = getBlockState();
         boolean running = spm() > 0;
         if (s.getValue(PcProperties.RUNNING) != running) level.setBlock(worldPosition, s.setValue(PcProperties.RUNNING, running), Block.UPDATE_ALL);
+        SimLevelBinding b = level instanceof ServerLevel sl ? SimBindings.get(sl) : null;
+        if (running && loadW > 0 && b != null) {
+            boolean before = pumpingS >= PUMPJACK_DAY_S;
+            pumpingS += 10 * 0.05 * b.world().clock().kSlow();
+            if (!before && pumpingS >= PUMPJACK_DAY_S) dev.denfry.promptcritical.mod.content.SimAchievements.once(this, dev.denfry.promptcritical.mod.content.SimAchievements.PUMPJACK_DAY, "hours", pumpingS / 3600);
+            if (level.getGameTime() % 200 == 0) setChanged();
+        }
+    }
+
+    /** Время работы с нагрузкой, ч физ. */
+    public double pumpingHours() {
+        return pumpingS / 3600;
+    }
+
+    @Override
+    protected void saveAdditional(net.minecraft.nbt.CompoundTag tag, net.minecraft.core.HolderLookup.Provider registries) {
+        super.saveAdditional(tag, registries);
+        tag.putDouble("pumping_s", pumpingS);
+    }
+
+    @Override
+    protected void loadAdditional(net.minecraft.nbt.CompoundTag tag, net.minecraft.core.HolderLookup.Provider registries) {
+        super.loadAdditional(tag, registries);
+        pumpingS = tag.getDouble("pumping_s");
     }
 
     @Override

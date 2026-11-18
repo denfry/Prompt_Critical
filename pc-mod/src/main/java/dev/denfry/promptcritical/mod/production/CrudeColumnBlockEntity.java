@@ -46,6 +46,8 @@ import org.jetbrains.annotations.Nullable;
 public final class CrudeColumnBlockEntity extends DeviceBlockEntity implements FoundryDevice, PanelHost {
     public static final int MIN_SECTIONS = 3, MAX_SECTIONS = 30, FURNACE_RADIUS = 6, PRODUCT_MB = 16_000;
     public static final double STAGES_PER_SECTION = 2, FEED_M3H = 10, CRUDE_KGM3 = 850;
+    /** Бензин в спецификации (11 §11.2.2 {@code first_cut}): перекрытие с керосином ≤ 30 К — верх диапазона 10–30 К АВТ (09). */
+    public static final double GASOLINE_OVERLAP_MAX_K = 30;
     public static final double REFLUX_MIN = 0.5, REFLUX_MAX = 5, REFLUX_STEP = 0.5, T_MIN_C = 320, T_MAX_C = 380, T_STEP_C = 5;
 
     private final ProductTank[] tanks = {new ProductTank(PcFluids.GASOLINE.source.get(), PRODUCT_MB),
@@ -139,6 +141,8 @@ public final class CrudeColumnBlockEntity extends DeviceBlockEntity implements F
         double kg = f.fire(maxKg, r.dutyJPerKg(), dt);
         for (Product p : Product.values()) tanks[p.ordinal()].add(kg * r.yield(p) / p.densityKgM3 * 1000);
         feedKgS = kg / dt;
+        // бензин в спецификации: перекрытие D86 5–95 % с керосином не больше верхней границы реальных АВТ (09, σ₀)
+        if (feedKgS > 0 && r.overlapK()[0] <= GASOLINE_OVERLAP_MAX_K) dev.denfry.promptcritical.mod.content.SimAchievements.once(this, dev.denfry.promptcritical.mod.content.SimAchievements.FIRST_CUT, "overlap_k", r.overlapK()[0]);
         if (feedKgS > 0 && level instanceof net.minecraft.server.level.ServerLevel sl)
             dev.denfry.promptcritical.mod.content.IndustrialComplex.running(sl, worldPosition, dev.denfry.promptcritical.mod.content.IndustrialComplex.Part.REFINERY);
         fuelNm3s = f.fuelNm3s();
@@ -196,7 +200,7 @@ public final class CrudeColumnBlockEntity extends DeviceBlockEntity implements F
         } else {
             player.displayClientMessage(ProductionText.msg("column_status", ProductionText.num(feedKgS / CRUDE_KGM3 * 3600, 2),
                     ProductionText.num(theoreticalStages(), 0), ProductionText.num(reflux, 1), ProductionText.num(outletC, 0),
-                    ProductionText.num(fuelNm3s * 3600, 0)), true);
+                    ProductionText.num(fuelNm3s * 3600, 0), ProductionText.num(result().overlapK()[0], 0)), true);
         }
         return InteractionResult.SUCCESS;
     }

@@ -1,0 +1,33 @@
+{
+  "parent": "promptcritical:first_oil",
+  "criteria": {
+    "cut": {
+      "conditions": {
+        "event": "promptcritical:first_cut",
+        "station_member": true
+      },
+      "trigger": "promptcritical:sim_event"
+    }
+  },
+  "display": {
+    "description": {
+      "translate": "advancements.promptcritical.first_cut.description"
+    },
+    "icon": {
+      "count": 1,
+      "id": "promptcritical:crude_column"
+    },
+    "title": {
+      "translate": "advancements.promptcritical.first_cut.title"
+    }
+  },
+  "requirements": [
+    [
+      "cut"
+    ]
+  ],
+  "rewards": {
+    "experience": 40
+  },
+  "sends_telemetry_event": true
+}

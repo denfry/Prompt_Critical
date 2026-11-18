@@ -1,0 +1,33 @@
+{
+  "parent": "promptcritical:first_oil",
+  "criteria": {
+    "day": {
+      "conditions": {
+        "event": "promptcritical:pumpjack_day",
+        "station_member": true
+      },
+      "trigger": "promptcritical:sim_event"
+    }
+  },
+  "display": {
+    "description": {
+      "translate": "advancements.promptcritical.pumpjack.description"
+    },
+    "icon": {
+      "count": 1,
+      "id": "promptcritical:pumpjack"
+    },
+    "title": {
+      "translate": "advancements.promptcritical.pumpjack.title"
+    }
+  },
+  "requirements": [
+    [
+      "day"
+    ]
+  ],
+  "rewards": {
+    "experience": 40
+  },
+  "sends_telemetry_event": true
+}

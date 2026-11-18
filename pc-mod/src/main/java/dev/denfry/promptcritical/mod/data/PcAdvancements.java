@@ -74,6 +74,11 @@ public final class PcAdvancements implements AdvancementProvider.AdvancementGene
         LANG.put("first_fa", new String[] {"First Assembly", "Первая сборка", "Assemble the first fuel assembly", "Соберите первую ТВС"});
         LANG.put("closed_cycle", new String[] {"Closed Cycle", "Замкнутый цикл", "Load MOX fuel from your own plutonium into a reactor and hold a vitrified HLW canister", "Загрузите МОКС-топливо из своего плутония в реактор и получите канистру остеклованных ВАО"});
         LANG.put("scram_clean", new String[] {"Clean Scram", "Чистая АЗ", "Scram a power reactor from above 50 % with no fuel failing in the minute after", "Аварийная защита с мощности выше 50 % без разгерметизации ТВС в следующую минуту"});
+        LANG.put("pumpjack", new String[] {"Nodding Donkey", "Качалка", "A pumpjack lifts oil for a whole day",
+                "Станок-качалка качает нефть целые сутки"});
+        LANG.put("first_cut", new String[] {"First Cut", "Первая фракция",
+                "A crude column makes on-spec gasoline: no more than 30 K overlap with kerosene",
+                "Ректификационная колонна выдаёт бензин в спецификации: перекрытие с керосином не больше 30 К"});
         LANG.put("load_follow", new String[] {"Load Following", "Под нагрузку",
                 "A power reactor follows the dispatcher's daily load curve for a whole day within 5 %",
                 "Реактор целые сутки следует суточному графику диспетчера с отклонением меньше 5 %"});
@@ -206,6 +211,10 @@ public final class PcAdvancements implements AdvancementProvider.AdvancementGene
                 .save(saver, id("closed_cycle"), efh);
         task(fa, PcBlocks.PWR_REACTOR.get(), "scram_clean", AdvancementType.TASK, false, 50)
                 .addCriterion("scram", event(dev.denfry.promptcritical.mod.content.SimAchievements.SCRAM_CLEAN, Map.of())).save(saver, id("scram_clean"), efh);
+        task(oil, PcBlocks.PUMPJACK.get(), "pumpjack", AdvancementType.TASK, false, 40)
+                .addCriterion("day", event(dev.denfry.promptcritical.mod.content.SimAchievements.PUMPJACK_DAY, Map.of())).save(saver, id("pumpjack"), efh);
+        task(oil, PcBlocks.CRUDE_COLUMN.get(), "first_cut", AdvancementType.TASK, false, 40)
+                .addCriterion("cut", event(dev.denfry.promptcritical.mod.content.SimAchievements.FIRST_CUT, Map.of())).save(saver, id("first_cut"), efh);
         task(pile, PcBlocks.GRID_DISPATCH_CENTER.get(), "load_follow", AdvancementType.GOAL, false, 100)
                 .addCriterion("follow", event(dev.denfry.promptcritical.mod.content.SimAchievements.LOAD_FOLLOW, Map.of())).save(saver, id("load_follow"), efh);
         task(pile, PcBlocks.POWER_REACTOR.get(), "hundred_days", AdvancementType.CHALLENGE, false, 200)

@@ -52,7 +52,8 @@ public final class RadiationGameTests {
                     h.assertTrue(layers.size() == 1 && layers.get(0).material() == ShieldMaterial.LEAD
                             && Math.abs(layers.get(0).cm() - 100) < 25, "one metre of lead on the line: " + layers);
                     double lead = RadiationService.rateSvH(h.getLevel(), at);
-                    h.assertTrue(lead < DoseRate.totalSvH(cobalt, 6, List.of()) * 1e-20, "a metre of lead stops cobalt gamma: " + lead);
+                    // больше 12 порядков ослабления; ниже порог ловит фон источников соседних тестов в общем мире (~1e-19 Зв/ч)
+                    h.assertTrue(lead < DoseRate.totalSvH(cobalt, 6, List.of()) * 1e-12, "a metre of lead stops cobalt gamma: " + lead);
                 })
                 .thenExecute(() -> h.setBlock(new BlockPos(5, 3, 6), Blocks.WHITE_CONCRETE))
                 .thenIdle(1)

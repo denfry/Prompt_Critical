@@ -39,7 +39,8 @@ public final class SimAchievements {
      * критичностью (тег {@code points}), блэкстарт, следование графику, сутки без АЗ, промышленный комплекс.
      */
     public static final String XENON_PIT = "promptcritical:xenon_pit", HUNDRED_DAYS = "promptcritical:hundred_days",
-            INDUSTRIAL_COMPLEX = "promptcritical:industrial_complex", LOAD_FOLLOW = "promptcritical:load_follow";
+            INDUSTRIAL_COMPLEX = "promptcritical:industrial_complex", LOAD_FOLLOW = "promptcritical:load_follow",
+            PUMPJACK_DAY = "promptcritical:pumpjack_day", FIRST_CUT = "promptcritical:first_cut";
     /**
      * Эксплуатация 13 и ПАЗ 03d (11 §11.2.2): огневые работы по наряду с газоанализом, остановочный ремонт (тег
      * {@code repairs}), ремонт ГЦН по плану дозы (тег {@code dose_msv} — коллективная доза бригады), проверка ПАЗ в срок,
