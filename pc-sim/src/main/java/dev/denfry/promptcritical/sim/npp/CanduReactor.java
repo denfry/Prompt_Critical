@@ -308,7 +308,8 @@ public final class CanduReactor {
     private void thermal() {
         flowActual += (flowCommand - flowActual) * Math.min(1, DT / 15);
         double heat = core.heatW();
-        double w = Math.max(0.03, flowActual);
+        // недолитый контур: насосы гонят газ, тепло уносит только залитая доля
+        double w = Math.max(0.03, flowActual * coolantFill());
         double ua = Math.max(1e3, core.rodLengthM() * 1000 / FUEL_R_K_PER_KW_M);
         double c = Math.max(1e5, FUEL_C_J_PER_KG_HM * core.heavyMetalKg());
         double cool = (INLET_K + outletK) / 2;
