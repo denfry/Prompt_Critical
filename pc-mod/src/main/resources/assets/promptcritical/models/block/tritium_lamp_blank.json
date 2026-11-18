@@ -1,0 +1,50 @@
+{
+	"credit": "Made with Blockbench",
+	"textures": {
+		"particle": "promptcritical:block/m12iso/tritium_blank",
+		"grid_lines_alu": "promptcritical:block/grid_lines/alu",
+		"m12iso_tritium_blank": "promptcritical:block/m12iso/tritium_blank"
+	},
+	"elements": [
+		{
+			"name": "glow_plate",
+			"from": [3, 5, 15.5],
+			"to": [13, 11, 16],
+			"rotation": {
+				"angle": 0,
+				"axis": "y",
+				"origin": [8, 8, 8]
+			},
+			"faces": {
+				"north": {
+					"uv": [0, 0, 16, 8],
+					"texture": "#m12iso_tritium_blank"
+				},
+				"east": {
+					"uv": [0, 5, 0.5, 11],
+					"texture": "#grid_lines_alu"
+				},
+				"south": {
+					"uv": [3, 5, 13, 11],
+					"texture": "#grid_lines_alu"
+				},
+				"west": {
+					"uv": [15.5, 5, 16, 11],
+					"texture": "#grid_lines_alu"
+				},
+				"up": {
+					"uv": [3, 15.5, 13, 16],
+					"texture": "#grid_lines_alu"
+				},
+				"down": {
+					"uv": [3, 0, 13, 0.5],
+					"texture": "#grid_lines_alu"
+				}
+			},
+			"neoforge_data": {
+				"block_light": 15,
+				"sky_light": 15
+			}
+		}
+	]
+}
