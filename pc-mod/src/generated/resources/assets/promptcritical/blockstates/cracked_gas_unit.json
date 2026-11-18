@@ -1,18 +1,33 @@
 {
   "variants": {
-    "facing=east": {
-      "model": "promptcritical:block/pyrolysis_quench_tower",
+    "facing=east,running=false": {
+      "model": "promptcritical:block/cracked_gas_unit",
       "y": 90
     },
-    "facing=north": {
-      "model": "promptcritical:block/pyrolysis_quench_tower"
+    "facing=east,running=true": {
+      "model": "promptcritical:block/cracked_gas_unit",
+      "y": 90
     },
-    "facing=south": {
-      "model": "promptcritical:block/pyrolysis_quench_tower",
+    "facing=north,running=false": {
+      "model": "promptcritical:block/cracked_gas_unit"
+    },
+    "facing=north,running=true": {
+      "model": "promptcritical:block/cracked_gas_unit"
+    },
+    "facing=south,running=false": {
+      "model": "promptcritical:block/cracked_gas_unit",
       "y": 180
     },
-    "facing=west": {
-      "model": "promptcritical:block/pyrolysis_quench_tower",
+    "facing=south,running=true": {
+      "model": "promptcritical:block/cracked_gas_unit",
+      "y": 180
+    },
+    "facing=west,running=false": {
+      "model": "promptcritical:block/cracked_gas_unit",
+      "y": 270
+    },
+    "facing=west,running=true": {
+      "model": "promptcritical:block/cracked_gas_unit",
       "y": 270
     }
   }

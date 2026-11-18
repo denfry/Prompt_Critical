@@ -1,160 +1,34 @@
 {
-  "multipart": [
-    {
-      "apply": {
-        "model": "promptcritical:block/water_clarifier"
-      },
-      "when": {
-        "facing": "north",
-        "running": "true"
-      }
+  "variants": {
+    "facing=east,running=false": {
+      "model": "promptcritical:block/brine_treater",
+      "y": 90
     },
-    {
-      "apply": {
-        "model": "promptcritical:block/water_clarifier/partial/rake"
-      },
-      "when": {
-        "facing": "north",
-        "running": "true"
-      }
+    "facing=east,running=true": {
+      "model": "promptcritical:block/brine_treater_running",
+      "y": 90
     },
-    {
-      "apply": {
-        "model": "promptcritical:block/water_clarifier"
-      },
-      "when": {
-        "facing": "north",
-        "running": "false"
-      }
+    "facing=north,running=false": {
+      "model": "promptcritical:block/brine_treater"
     },
-    {
-      "apply": {
-        "model": "promptcritical:block/water_clarifier/partial/rake"
-      },
-      "when": {
-        "facing": "north",
-        "running": "false"
-      }
+    "facing=north,running=true": {
+      "model": "promptcritical:block/brine_treater_running"
     },
-    {
-      "apply": {
-        "model": "promptcritical:block/water_clarifier",
-        "y": 180
-      },
-      "when": {
-        "facing": "south",
-        "running": "true"
-      }
+    "facing=south,running=false": {
+      "model": "promptcritical:block/brine_treater",
+      "y": 180
     },
-    {
-      "apply": {
-        "model": "promptcritical:block/water_clarifier/partial/rake",
-        "y": 180
-      },
-      "when": {
-        "facing": "south",
-        "running": "true"
-      }
+    "facing=south,running=true": {
+      "model": "promptcritical:block/brine_treater_running",
+      "y": 180
     },
-    {
-      "apply": {
-        "model": "promptcritical:block/water_clarifier",
-        "y": 180
-      },
-      "when": {
-        "facing": "south",
-        "running": "false"
-      }
+    "facing=west,running=false": {
+      "model": "promptcritical:block/brine_treater",
+      "y": 270
     },
-    {
-      "apply": {
-        "model": "promptcritical:block/water_clarifier/partial/rake",
-        "y": 180
-      },
-      "when": {
-        "facing": "south",
-        "running": "false"
-      }
-    },
-    {
-      "apply": {
-        "model": "promptcritical:block/water_clarifier",
-        "y": 270
-      },
-      "when": {
-        "facing": "west",
-        "running": "true"
-      }
-    },
-    {
-      "apply": {
-        "model": "promptcritical:block/water_clarifier/partial/rake",
-        "y": 270
-      },
-      "when": {
-        "facing": "west",
-        "running": "true"
-      }
-    },
-    {
-      "apply": {
-        "model": "promptcritical:block/water_clarifier",
-        "y": 270
-      },
-      "when": {
-        "facing": "west",
-        "running": "false"
-      }
-    },
-    {
-      "apply": {
-        "model": "promptcritical:block/water_clarifier/partial/rake",
-        "y": 270
-      },
-      "when": {
-        "facing": "west",
-        "running": "false"
-      }
-    },
-    {
-      "apply": {
-        "model": "promptcritical:block/water_clarifier",
-        "y": 90
-      },
-      "when": {
-        "facing": "east",
-        "running": "true"
-      }
-    },
-    {
-      "apply": {
-        "model": "promptcritical:block/water_clarifier/partial/rake",
-        "y": 90
-      },
-      "when": {
-        "facing": "east",
-        "running": "true"
-      }
-    },
-    {
-      "apply": {
-        "model": "promptcritical:block/water_clarifier",
-        "y": 90
-      },
-      "when": {
-        "facing": "east",
-        "running": "false"
-      }
-    },
-    {
-      "apply": {
-        "model": "promptcritical:block/water_clarifier/partial/rake",
-        "y": 90
-      },
-      "when": {
-        "facing": "east",
-        "running": "false"
-      }
+    "facing=west,running=true": {
+      "model": "promptcritical:block/brine_treater_running",
+      "y": 270
     }
-  ]
+  }
 }

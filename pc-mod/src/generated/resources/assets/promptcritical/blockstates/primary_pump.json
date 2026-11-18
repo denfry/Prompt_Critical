@@ -1,160 +1,34 @@
 {
-  "multipart": [
-    {
-      "apply": {
-        "model": "promptcritical:block/primary_pump"
-      },
-      "when": {
-        "facing": "north",
-        "running": "true"
-      }
+  "variants": {
+    "facing=east,running=false": {
+      "model": "promptcritical:block/primary_pump",
+      "y": 90
     },
-    {
-      "apply": {
-        "model": "promptcritical:block/primary_pump/partial/impeller"
-      },
-      "when": {
-        "facing": "north",
-        "running": "true"
-      }
+    "facing=east,running=true": {
+      "model": "promptcritical:block/primary_pump",
+      "y": 90
     },
-    {
-      "apply": {
-        "model": "promptcritical:block/primary_pump"
-      },
-      "when": {
-        "facing": "north",
-        "running": "false"
-      }
+    "facing=north,running=false": {
+      "model": "promptcritical:block/primary_pump"
     },
-    {
-      "apply": {
-        "model": "promptcritical:block/primary_pump/partial/impeller"
-      },
-      "when": {
-        "facing": "north",
-        "running": "false"
-      }
+    "facing=north,running=true": {
+      "model": "promptcritical:block/primary_pump"
     },
-    {
-      "apply": {
-        "model": "promptcritical:block/primary_pump",
-        "y": 180
-      },
-      "when": {
-        "facing": "south",
-        "running": "true"
-      }
+    "facing=south,running=false": {
+      "model": "promptcritical:block/primary_pump",
+      "y": 180
     },
-    {
-      "apply": {
-        "model": "promptcritical:block/primary_pump/partial/impeller",
-        "y": 180
-      },
-      "when": {
-        "facing": "south",
-        "running": "true"
-      }
+    "facing=south,running=true": {
+      "model": "promptcritical:block/primary_pump",
+      "y": 180
     },
-    {
-      "apply": {
-        "model": "promptcritical:block/primary_pump",
-        "y": 180
-      },
-      "when": {
-        "facing": "south",
-        "running": "false"
-      }
+    "facing=west,running=false": {
+      "model": "promptcritical:block/primary_pump",
+      "y": 270
     },
-    {
-      "apply": {
-        "model": "promptcritical:block/primary_pump/partial/impeller",
-        "y": 180
-      },
-      "when": {
-        "facing": "south",
-        "running": "false"
-      }
-    },
-    {
-      "apply": {
-        "model": "promptcritical:block/primary_pump",
-        "y": 270
-      },
-      "when": {
-        "facing": "west",
-        "running": "true"
-      }
-    },
-    {
-      "apply": {
-        "model": "promptcritical:block/primary_pump/partial/impeller",
-        "y": 270
-      },
-      "when": {
-        "facing": "west",
-        "running": "true"
-      }
-    },
-    {
-      "apply": {
-        "model": "promptcritical:block/primary_pump",
-        "y": 270
-      },
-      "when": {
-        "facing": "west",
-        "running": "false"
-      }
-    },
-    {
-      "apply": {
-        "model": "promptcritical:block/primary_pump/partial/impeller",
-        "y": 270
-      },
-      "when": {
-        "facing": "west",
-        "running": "false"
-      }
-    },
-    {
-      "apply": {
-        "model": "promptcritical:block/primary_pump",
-        "y": 90
-      },
-      "when": {
-        "facing": "east",
-        "running": "true"
-      }
-    },
-    {
-      "apply": {
-        "model": "promptcritical:block/primary_pump/partial/impeller",
-        "y": 90
-      },
-      "when": {
-        "facing": "east",
-        "running": "true"
-      }
-    },
-    {
-      "apply": {
-        "model": "promptcritical:block/primary_pump",
-        "y": 90
-      },
-      "when": {
-        "facing": "east",
-        "running": "false"
-      }
-    },
-    {
-      "apply": {
-        "model": "promptcritical:block/primary_pump/partial/impeller",
-        "y": 90
-      },
-      "when": {
-        "facing": "east",
-        "running": "false"
-      }
+    "facing=west,running=true": {
+      "model": "promptcritical:block/primary_pump",
+      "y": 270
     }
-  ]
+  }
 }
