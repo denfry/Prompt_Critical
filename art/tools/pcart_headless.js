@@ -112,7 +112,8 @@ function compile(r, cat, id, javaPath, m) {
     }
     if (!Object.keys(faces).length) continue;
     const axis = e.rot ? e.rot.axis : 'y';
-    const el = { name: e.name, from: e.from.map(r4), to: e.to.map(r4), rotation: { angle: e.rot ? e.rot.angle : 0, axis, origin: origin.map(r4) }, faces };
+    const clamp = (v) => { if (v < -16.1 || v > 32.1) throw new Error(`${id}: ${e.name} out of the -16..32 range (${v})`); return r4(Math.min(32, Math.max(-16, v))); };
+    const el = { name: e.name, from: e.from.map(clamp), to: e.to.map(clamp), rotation: { angle: e.rot ? e.rot.angle : 0, axis, origin: origin.map(r4) }, faces };
     if (e.name.startsWith('glow_')) el.neoforge_data = { block_light: 15, sky_light: 15 };
     elements.push(el);
     bbEls.push({ name: e.name, box_uv: false, rescale: false, locked: false, export: true, from: el.from, to: el.to, autouv: 0, color: 2,

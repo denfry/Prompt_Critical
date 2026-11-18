@@ -1,15 +1,15 @@
 {
 	"credit": "Made with Blockbench",
 	"textures": {
-		"particle": "promptcritical:block/common/graphite",
-		"al": "promptcritical:block/common/grid_aluminium",
-		"g": "promptcritical:block/common/graphite"
+		"particle": "promptcritical:block/steelmaking/graphite",
+		"grid_lines_alu": "promptcritical:block/grid_lines/alu",
+		"steelmaking_graphite": "promptcritical:block/steelmaking/graphite"
 	},
 	"elements": [
 		{
-			"name": "beam",
-			"from": [-14, 22, -1],
-			"to": [30, 25, 1],
+			"name": "beam-2",
+			"from": [-14, 23, -2],
+			"to": [30, 25, 0],
 			"rotation": {
 				"angle": 0,
 				"axis": "y",
@@ -17,35 +17,35 @@
 			},
 			"faces": {
 				"north": {
-					"uv": [0, 0, 16, 3],
-					"texture": "#al"
+					"uv": [0, 7, 16, 9],
+					"texture": "#grid_lines_alu"
 				},
 				"east": {
-					"uv": [0, 0, 2, 3],
-					"texture": "#al"
+					"uv": [0, 7, 2, 9],
+					"texture": "#grid_lines_alu"
 				},
 				"south": {
-					"uv": [0, 0, 16, 3],
-					"texture": "#al"
+					"uv": [0, 7, 16, 9],
+					"texture": "#grid_lines_alu"
 				},
 				"west": {
-					"uv": [0, 0, 2, 3],
-					"texture": "#al"
+					"uv": [14, 7, 16, 9],
+					"texture": "#grid_lines_alu"
 				},
 				"up": {
-					"uv": [0, 0, 16, 2],
-					"texture": "#al"
+					"uv": [0, 14, 16, 16],
+					"texture": "#grid_lines_alu"
 				},
 				"down": {
 					"uv": [0, 0, 16, 2],
-					"texture": "#al"
+					"texture": "#grid_lines_alu"
 				}
 			}
 		},
 		{
-			"name": "anode_0",
-			"from": [-12, 10, -10],
-			"to": [-6, 16, 26],
+			"name": "beam18",
+			"from": [-14, 23, 18],
+			"to": [30, 25, 20],
 			"rotation": {
 				"angle": 0,
 				"axis": "y",
@@ -53,35 +53,35 @@
 			},
 			"faces": {
 				"north": {
-					"uv": [0, 0, 6, 6],
-					"texture": "#g"
+					"uv": [0, 7, 16, 9],
+					"texture": "#grid_lines_alu"
 				},
 				"east": {
-					"uv": [0, 0, 16, 6],
-					"texture": "#g"
+					"uv": [12, 7, 14, 9],
+					"texture": "#grid_lines_alu"
 				},
 				"south": {
-					"uv": [0, 0, 6, 6],
-					"texture": "#g"
+					"uv": [0, 7, 16, 9],
+					"texture": "#grid_lines_alu"
 				},
 				"west": {
-					"uv": [0, 0, 16, 6],
-					"texture": "#g"
+					"uv": [2, 7, 4, 9],
+					"texture": "#grid_lines_alu"
 				},
 				"up": {
-					"uv": [0, 0, 6, 16],
-					"texture": "#g"
+					"uv": [0, 2, 16, 4],
+					"texture": "#grid_lines_alu"
 				},
 				"down": {
-					"uv": [0, 0, 6, 16],
-					"texture": "#g"
+					"uv": [0, 12, 16, 14],
+					"texture": "#grid_lines_alu"
 				}
 			}
 		},
 		{
-			"name": "anode_1",
-			"from": [-2, 10, -10],
-			"to": [4, 16, 26],
+			"name": "rod_0_-8",
+			"from": [-10, 16, -1.4],
+			"to": [-9, 23, -0.6],
 			"rotation": {
 				"angle": 0,
 				"axis": "y",
@@ -89,35 +89,35 @@
 			},
 			"faces": {
 				"north": {
-					"uv": [0, 0, 6, 6],
-					"texture": "#g"
+					"uv": [9, 9, 10, 16],
+					"texture": "#grid_lines_alu"
 				},
 				"east": {
-					"uv": [0, 0, 16, 6],
-					"texture": "#g"
+					"uv": [0.6, 9, 1.4, 16],
+					"texture": "#grid_lines_alu"
 				},
 				"south": {
-					"uv": [0, 0, 6, 6],
-					"texture": "#g"
+					"uv": [6, 9, 7, 16],
+					"texture": "#grid_lines_alu"
 				},
 				"west": {
-					"uv": [0, 0, 16, 6],
-					"texture": "#g"
+					"uv": [14.6, 9, 15.4, 16],
+					"texture": "#grid_lines_alu"
 				},
 				"up": {
-					"uv": [0, 0, 6, 16],
-					"texture": "#g"
+					"uv": [6, 14.6, 7, 15.4],
+					"texture": "#grid_lines_alu"
 				},
 				"down": {
-					"uv": [0, 0, 6, 16],
-					"texture": "#g"
+					"uv": [6, 0.6, 7, 1.4],
+					"texture": "#grid_lines_alu"
 				}
 			}
 		},
 		{
-			"name": "anode_2",
-			"from": [8, 10, -10],
-			"to": [14, 16, 26],
+			"name": "anode_0_-8",
+			"from": [-12, 10, -8],
+			"to": [-7, 16, -2],
 			"rotation": {
 				"angle": 0,
 				"axis": "y",
@@ -125,35 +125,395 @@
 			},
 			"faces": {
 				"north": {
+					"uv": [7, 0, 12, 6],
+					"texture": "#steelmaking_graphite"
+				},
+				"east": {
+					"uv": [2, 0, 8, 6],
+					"texture": "#steelmaking_graphite"
+				},
+				"south": {
+					"uv": [4, 0, 9, 6],
+					"texture": "#steelmaking_graphite"
+				},
+				"west": {
+					"uv": [8, 0, 14, 6],
+					"texture": "#steelmaking_graphite"
+				},
+				"up": {
+					"uv": [4, 8, 9, 14],
+					"texture": "#steelmaking_graphite"
+				},
+				"down": {
+					"uv": [4, 2, 9, 8],
+					"texture": "#steelmaking_graphite"
+				}
+			}
+		},
+		{
+			"name": "rod_0_0",
+			"from": [-10, 16, -1.4],
+			"to": [-9, 23, -0.6],
+			"rotation": {
+				"angle": 0,
+				"axis": "y",
+				"origin": [8, 8, 8]
+			},
+			"faces": {
+				"north": {
+					"uv": [9, 9, 10, 16],
+					"texture": "#grid_lines_alu"
+				},
+				"east": {
+					"uv": [0.6, 9, 1.4, 16],
+					"texture": "#grid_lines_alu"
+				},
+				"south": {
+					"uv": [6, 9, 7, 16],
+					"texture": "#grid_lines_alu"
+				},
+				"west": {
+					"uv": [14.6, 9, 15.4, 16],
+					"texture": "#grid_lines_alu"
+				},
+				"up": {
+					"uv": [6, 14.6, 7, 15.4],
+					"texture": "#grid_lines_alu"
+				},
+				"down": {
+					"uv": [6, 0.6, 7, 1.4],
+					"texture": "#grid_lines_alu"
+				}
+			}
+		},
+		{
+			"name": "anode_0_0",
+			"from": [-12, 10, 0],
+			"to": [-7, 16, 6],
+			"rotation": {
+				"angle": 0,
+				"axis": "y",
+				"origin": [8, 8, 8]
+			},
+			"faces": {
+				"north": {
+					"uv": [7, 0, 12, 6],
+					"texture": "#steelmaking_graphite"
+				},
+				"east": {
+					"uv": [10, 0, 16, 6],
+					"texture": "#steelmaking_graphite"
+				},
+				"south": {
+					"uv": [4, 0, 9, 6],
+					"texture": "#steelmaking_graphite"
+				},
+				"west": {
 					"uv": [0, 0, 6, 6],
-					"texture": "#g"
+					"texture": "#steelmaking_graphite"
+				},
+				"up": {
+					"uv": [4, 0, 9, 6],
+					"texture": "#steelmaking_graphite"
+				},
+				"down": {
+					"uv": [4, 10, 9, 16],
+					"texture": "#steelmaking_graphite"
+				}
+			}
+		},
+		{
+			"name": "rod_0_12",
+			"from": [-10, 16, 18.6],
+			"to": [-9, 23, 19.4],
+			"rotation": {
+				"angle": 0,
+				"axis": "y",
+				"origin": [8, 8, 8]
+			},
+			"faces": {
+				"north": {
+					"uv": [9, 9, 10, 16],
+					"texture": "#grid_lines_alu"
 				},
 				"east": {
-					"uv": [0, 0, 16, 6],
-					"texture": "#g"
+					"uv": [12.6, 9, 13.4, 16],
+					"texture": "#grid_lines_alu"
 				},
 				"south": {
+					"uv": [6, 9, 7, 16],
+					"texture": "#grid_lines_alu"
+				},
+				"west": {
+					"uv": [2.6, 9, 3.4, 16],
+					"texture": "#grid_lines_alu"
+				},
+				"up": {
+					"uv": [6, 2.6, 7, 3.4],
+					"texture": "#grid_lines_alu"
+				},
+				"down": {
+					"uv": [6, 12.6, 7, 13.4],
+					"texture": "#grid_lines_alu"
+				}
+			}
+		},
+		{
+			"name": "anode_0_12",
+			"from": [-12, 10, 12],
+			"to": [-7, 16, 18],
+			"rotation": {
+				"angle": 0,
+				"axis": "y",
+				"origin": [8, 8, 8]
+			},
+			"faces": {
+				"north": {
+					"uv": [7, 0, 12, 6],
+					"texture": "#steelmaking_graphite"
+				},
+				"east": {
+					"uv": [0, 0, 4, 6],
+					"texture": "#steelmaking_graphite"
+				},
+				"south": {
+					"uv": [4, 0, 9, 6],
+					"texture": "#steelmaking_graphite"
+				},
+				"west": {
+					"uv": [12, 0, 16, 6],
+					"texture": "#steelmaking_graphite"
+				},
+				"up": {
+					"uv": [4, 12, 9, 16],
+					"texture": "#steelmaking_graphite"
+				},
+				"down": {
+					"uv": [4, 0, 9, 4],
+					"texture": "#steelmaking_graphite"
+				}
+			}
+		},
+		{
+			"name": "rod_0_20",
+			"from": [-10, 16, 18.6],
+			"to": [-9, 23, 19.4],
+			"rotation": {
+				"angle": 0,
+				"axis": "y",
+				"origin": [8, 8, 8]
+			},
+			"faces": {
+				"north": {
+					"uv": [9, 9, 10, 16],
+					"texture": "#grid_lines_alu"
+				},
+				"east": {
+					"uv": [12.6, 9, 13.4, 16],
+					"texture": "#grid_lines_alu"
+				},
+				"south": {
+					"uv": [6, 9, 7, 16],
+					"texture": "#grid_lines_alu"
+				},
+				"west": {
+					"uv": [2.6, 9, 3.4, 16],
+					"texture": "#grid_lines_alu"
+				},
+				"up": {
+					"uv": [6, 2.6, 7, 3.4],
+					"texture": "#grid_lines_alu"
+				},
+				"down": {
+					"uv": [6, 12.6, 7, 13.4],
+					"texture": "#grid_lines_alu"
+				}
+			}
+		},
+		{
+			"name": "anode_0_20",
+			"from": [-12, 10, 20],
+			"to": [-7, 16, 26],
+			"rotation": {
+				"angle": 0,
+				"axis": "y",
+				"origin": [8, 8, 8]
+			},
+			"faces": {
+				"north": {
+					"uv": [7, 0, 12, 6],
+					"texture": "#steelmaking_graphite"
+				},
+				"east": {
+					"uv": [6, 0, 12, 6],
+					"texture": "#steelmaking_graphite"
+				},
+				"south": {
+					"uv": [4, 0, 9, 6],
+					"texture": "#steelmaking_graphite"
+				},
+				"west": {
+					"uv": [4, 0, 10, 6],
+					"texture": "#steelmaking_graphite"
+				},
+				"up": {
+					"uv": [4, 4, 9, 10],
+					"texture": "#steelmaking_graphite"
+				},
+				"down": {
+					"uv": [4, 6, 9, 12],
+					"texture": "#steelmaking_graphite"
+				}
+			}
+		},
+		{
+			"name": "rod_1_-8",
+			"from": [-4, 16, -1.4],
+			"to": [-3, 23, -0.6],
+			"rotation": {
+				"angle": 0,
+				"axis": "y",
+				"origin": [8, 8, 8]
+			},
+			"faces": {
+				"north": {
+					"uv": [3, 9, 4, 16],
+					"texture": "#grid_lines_alu"
+				},
+				"east": {
+					"uv": [0.6, 9, 1.4, 16],
+					"texture": "#grid_lines_alu"
+				},
+				"south": {
+					"uv": [12, 9, 13, 16],
+					"texture": "#grid_lines_alu"
+				},
+				"west": {
+					"uv": [14.6, 9, 15.4, 16],
+					"texture": "#grid_lines_alu"
+				},
+				"up": {
+					"uv": [12, 14.6, 13, 15.4],
+					"texture": "#grid_lines_alu"
+				},
+				"down": {
+					"uv": [12, 0.6, 13, 1.4],
+					"texture": "#grid_lines_alu"
+				}
+			}
+		},
+		{
+			"name": "anode_1_-8",
+			"from": [-6, 10, -8],
+			"to": [-1, 16, -2],
+			"rotation": {
+				"angle": 0,
+				"axis": "y",
+				"origin": [8, 8, 8]
+			},
+			"faces": {
+				"north": {
+					"uv": [1, 0, 6, 6],
+					"texture": "#steelmaking_graphite"
+				},
+				"east": {
+					"uv": [2, 0, 8, 6],
+					"texture": "#steelmaking_graphite"
+				},
+				"south": {
+					"uv": [10, 0, 15, 6],
+					"texture": "#steelmaking_graphite"
+				},
+				"west": {
+					"uv": [8, 0, 14, 6],
+					"texture": "#steelmaking_graphite"
+				},
+				"up": {
+					"uv": [10, 8, 15, 14],
+					"texture": "#steelmaking_graphite"
+				},
+				"down": {
+					"uv": [10, 2, 15, 8],
+					"texture": "#steelmaking_graphite"
+				}
+			}
+		},
+		{
+			"name": "rod_1_0",
+			"from": [-4, 16, -1.4],
+			"to": [-3, 23, -0.6],
+			"rotation": {
+				"angle": 0,
+				"axis": "y",
+				"origin": [8, 8, 8]
+			},
+			"faces": {
+				"north": {
+					"uv": [3, 9, 4, 16],
+					"texture": "#grid_lines_alu"
+				},
+				"east": {
+					"uv": [0.6, 9, 1.4, 16],
+					"texture": "#grid_lines_alu"
+				},
+				"south": {
+					"uv": [12, 9, 13, 16],
+					"texture": "#grid_lines_alu"
+				},
+				"west": {
+					"uv": [14.6, 9, 15.4, 16],
+					"texture": "#grid_lines_alu"
+				},
+				"up": {
+					"uv": [12, 14.6, 13, 15.4],
+					"texture": "#grid_lines_alu"
+				},
+				"down": {
+					"uv": [12, 0.6, 13, 1.4],
+					"texture": "#grid_lines_alu"
+				}
+			}
+		},
+		{
+			"name": "anode_1_0",
+			"from": [-6, 10, 0],
+			"to": [-1, 16, 6],
+			"rotation": {
+				"angle": 0,
+				"axis": "y",
+				"origin": [8, 8, 8]
+			},
+			"faces": {
+				"north": {
+					"uv": [1, 0, 6, 6],
+					"texture": "#steelmaking_graphite"
+				},
+				"east": {
+					"uv": [10, 0, 16, 6],
+					"texture": "#steelmaking_graphite"
+				},
+				"south": {
+					"uv": [10, 0, 15, 6],
+					"texture": "#steelmaking_graphite"
+				},
+				"west": {
 					"uv": [0, 0, 6, 6],
-					"texture": "#g"
-				},
-				"west": {
-					"uv": [0, 0, 16, 6],
-					"texture": "#g"
+					"texture": "#steelmaking_graphite"
 				},
 				"up": {
-					"uv": [0, 0, 6, 16],
-					"texture": "#g"
+					"uv": [10, 0, 15, 6],
+					"texture": "#steelmaking_graphite"
 				},
 				"down": {
-					"uv": [0, 0, 6, 16],
-					"texture": "#g"
+					"uv": [10, 10, 15, 16],
+					"texture": "#steelmaking_graphite"
 				}
 			}
 		},
 		{
-			"name": "anode_3",
-			"from": [18, 10, -10],
-			"to": [24, 16, 26],
+			"name": "rod_1_12",
+			"from": [-4, 16, 18.6],
+			"to": [-3, 23, 19.4],
 			"rotation": {
 				"angle": 0,
 				"axis": "y",
@@ -161,35 +521,575 @@
 			},
 			"faces": {
 				"north": {
+					"uv": [3, 9, 4, 16],
+					"texture": "#grid_lines_alu"
+				},
+				"east": {
+					"uv": [12.6, 9, 13.4, 16],
+					"texture": "#grid_lines_alu"
+				},
+				"south": {
+					"uv": [12, 9, 13, 16],
+					"texture": "#grid_lines_alu"
+				},
+				"west": {
+					"uv": [2.6, 9, 3.4, 16],
+					"texture": "#grid_lines_alu"
+				},
+				"up": {
+					"uv": [12, 2.6, 13, 3.4],
+					"texture": "#grid_lines_alu"
+				},
+				"down": {
+					"uv": [12, 12.6, 13, 13.4],
+					"texture": "#grid_lines_alu"
+				}
+			}
+		},
+		{
+			"name": "anode_1_12",
+			"from": [-6, 10, 12],
+			"to": [-1, 16, 18],
+			"rotation": {
+				"angle": 0,
+				"axis": "y",
+				"origin": [8, 8, 8]
+			},
+			"faces": {
+				"north": {
+					"uv": [1, 0, 6, 6],
+					"texture": "#steelmaking_graphite"
+				},
+				"east": {
+					"uv": [0, 0, 4, 6],
+					"texture": "#steelmaking_graphite"
+				},
+				"south": {
+					"uv": [10, 0, 15, 6],
+					"texture": "#steelmaking_graphite"
+				},
+				"west": {
+					"uv": [12, 0, 16, 6],
+					"texture": "#steelmaking_graphite"
+				},
+				"up": {
+					"uv": [10, 12, 15, 16],
+					"texture": "#steelmaking_graphite"
+				},
+				"down": {
+					"uv": [10, 0, 15, 4],
+					"texture": "#steelmaking_graphite"
+				}
+			}
+		},
+		{
+			"name": "rod_1_20",
+			"from": [-4, 16, 18.6],
+			"to": [-3, 23, 19.4],
+			"rotation": {
+				"angle": 0,
+				"axis": "y",
+				"origin": [8, 8, 8]
+			},
+			"faces": {
+				"north": {
+					"uv": [3, 9, 4, 16],
+					"texture": "#grid_lines_alu"
+				},
+				"east": {
+					"uv": [12.6, 9, 13.4, 16],
+					"texture": "#grid_lines_alu"
+				},
+				"south": {
+					"uv": [12, 9, 13, 16],
+					"texture": "#grid_lines_alu"
+				},
+				"west": {
+					"uv": [2.6, 9, 3.4, 16],
+					"texture": "#grid_lines_alu"
+				},
+				"up": {
+					"uv": [12, 2.6, 13, 3.4],
+					"texture": "#grid_lines_alu"
+				},
+				"down": {
+					"uv": [12, 12.6, 13, 13.4],
+					"texture": "#grid_lines_alu"
+				}
+			}
+		},
+		{
+			"name": "anode_1_20",
+			"from": [-6, 10, 20],
+			"to": [-1, 16, 26],
+			"rotation": {
+				"angle": 0,
+				"axis": "y",
+				"origin": [8, 8, 8]
+			},
+			"faces": {
+				"north": {
+					"uv": [1, 0, 6, 6],
+					"texture": "#steelmaking_graphite"
+				},
+				"east": {
+					"uv": [6, 0, 12, 6],
+					"texture": "#steelmaking_graphite"
+				},
+				"south": {
+					"uv": [10, 0, 15, 6],
+					"texture": "#steelmaking_graphite"
+				},
+				"west": {
+					"uv": [4, 0, 10, 6],
+					"texture": "#steelmaking_graphite"
+				},
+				"up": {
+					"uv": [10, 4, 15, 10],
+					"texture": "#steelmaking_graphite"
+				},
+				"down": {
+					"uv": [10, 6, 15, 12],
+					"texture": "#steelmaking_graphite"
+				}
+			}
+		},
+		{
+			"name": "rod_2_-8",
+			"from": [2, 16, -1.4],
+			"to": [3, 23, -0.6],
+			"rotation": {
+				"angle": 0,
+				"axis": "y",
+				"origin": [8, 8, 8]
+			},
+			"faces": {
+				"north": {
+					"uv": [13, 9, 14, 16],
+					"texture": "#grid_lines_alu"
+				},
+				"east": {
+					"uv": [0.6, 9, 1.4, 16],
+					"texture": "#grid_lines_alu"
+				},
+				"south": {
+					"uv": [2, 9, 3, 16],
+					"texture": "#grid_lines_alu"
+				},
+				"west": {
+					"uv": [14.6, 9, 15.4, 16],
+					"texture": "#grid_lines_alu"
+				},
+				"up": {
+					"uv": [2, 14.6, 3, 15.4],
+					"texture": "#grid_lines_alu"
+				},
+				"down": {
+					"uv": [2, 0.6, 3, 1.4],
+					"texture": "#grid_lines_alu"
+				}
+			}
+		},
+		{
+			"name": "anode_2_-8",
+			"from": [0, 10, -8],
+			"to": [5, 16, -2],
+			"rotation": {
+				"angle": 0,
+				"axis": "y",
+				"origin": [8, 8, 8]
+			},
+			"faces": {
+				"north": {
+					"uv": [11, 0, 16, 6],
+					"texture": "#steelmaking_graphite"
+				},
+				"east": {
+					"uv": [2, 0, 8, 6],
+					"texture": "#steelmaking_graphite"
+				},
+				"south": {
+					"uv": [0, 0, 5, 6],
+					"texture": "#steelmaking_graphite"
+				},
+				"west": {
+					"uv": [8, 0, 14, 6],
+					"texture": "#steelmaking_graphite"
+				},
+				"up": {
+					"uv": [0, 8, 5, 14],
+					"texture": "#steelmaking_graphite"
+				},
+				"down": {
+					"uv": [0, 2, 5, 8],
+					"texture": "#steelmaking_graphite"
+				}
+			}
+		},
+		{
+			"name": "rod_2_0",
+			"from": [2, 16, -1.4],
+			"to": [3, 23, -0.6],
+			"rotation": {
+				"angle": 0,
+				"axis": "y",
+				"origin": [8, 8, 8]
+			},
+			"faces": {
+				"north": {
+					"uv": [13, 9, 14, 16],
+					"texture": "#grid_lines_alu"
+				},
+				"east": {
+					"uv": [0.6, 9, 1.4, 16],
+					"texture": "#grid_lines_alu"
+				},
+				"south": {
+					"uv": [2, 9, 3, 16],
+					"texture": "#grid_lines_alu"
+				},
+				"west": {
+					"uv": [14.6, 9, 15.4, 16],
+					"texture": "#grid_lines_alu"
+				},
+				"up": {
+					"uv": [2, 14.6, 3, 15.4],
+					"texture": "#grid_lines_alu"
+				},
+				"down": {
+					"uv": [2, 0.6, 3, 1.4],
+					"texture": "#grid_lines_alu"
+				}
+			}
+		},
+		{
+			"name": "anode_2_0",
+			"from": [0, 10, 0],
+			"to": [5, 16, 6],
+			"rotation": {
+				"angle": 0,
+				"axis": "y",
+				"origin": [8, 8, 8]
+			},
+			"faces": {
+				"north": {
+					"uv": [11, 0, 16, 6],
+					"texture": "#steelmaking_graphite"
+				},
+				"east": {
+					"uv": [10, 0, 16, 6],
+					"texture": "#steelmaking_graphite"
+				},
+				"south": {
+					"uv": [0, 0, 5, 6],
+					"texture": "#steelmaking_graphite"
+				},
+				"west": {
 					"uv": [0, 0, 6, 6],
-					"texture": "#g"
+					"texture": "#steelmaking_graphite"
+				},
+				"up": {
+					"uv": [0, 0, 5, 6],
+					"texture": "#steelmaking_graphite"
+				},
+				"down": {
+					"uv": [0, 10, 5, 16],
+					"texture": "#steelmaking_graphite"
+				}
+			}
+		},
+		{
+			"name": "rod_2_12",
+			"from": [2, 16, 18.6],
+			"to": [3, 23, 19.4],
+			"rotation": {
+				"angle": 0,
+				"axis": "y",
+				"origin": [8, 8, 8]
+			},
+			"faces": {
+				"north": {
+					"uv": [13, 9, 14, 16],
+					"texture": "#grid_lines_alu"
 				},
 				"east": {
-					"uv": [0, 0, 16, 6],
-					"texture": "#g"
+					"uv": [12.6, 9, 13.4, 16],
+					"texture": "#grid_lines_alu"
 				},
 				"south": {
+					"uv": [2, 9, 3, 16],
+					"texture": "#grid_lines_alu"
+				},
+				"west": {
+					"uv": [2.6, 9, 3.4, 16],
+					"texture": "#grid_lines_alu"
+				},
+				"up": {
+					"uv": [2, 2.6, 3, 3.4],
+					"texture": "#grid_lines_alu"
+				},
+				"down": {
+					"uv": [2, 12.6, 3, 13.4],
+					"texture": "#grid_lines_alu"
+				}
+			}
+		},
+		{
+			"name": "anode_2_12",
+			"from": [0, 10, 12],
+			"to": [5, 16, 18],
+			"rotation": {
+				"angle": 0,
+				"axis": "y",
+				"origin": [8, 8, 8]
+			},
+			"faces": {
+				"north": {
+					"uv": [11, 0, 16, 6],
+					"texture": "#steelmaking_graphite"
+				},
+				"east": {
+					"uv": [0, 0, 4, 6],
+					"texture": "#steelmaking_graphite"
+				},
+				"south": {
+					"uv": [0, 0, 5, 6],
+					"texture": "#steelmaking_graphite"
+				},
+				"west": {
+					"uv": [12, 0, 16, 6],
+					"texture": "#steelmaking_graphite"
+				},
+				"up": {
+					"uv": [0, 12, 5, 16],
+					"texture": "#steelmaking_graphite"
+				},
+				"down": {
+					"uv": [0, 0, 5, 4],
+					"texture": "#steelmaking_graphite"
+				}
+			}
+		},
+		{
+			"name": "rod_2_20",
+			"from": [2, 16, 18.6],
+			"to": [3, 23, 19.4],
+			"rotation": {
+				"angle": 0,
+				"axis": "y",
+				"origin": [8, 8, 8]
+			},
+			"faces": {
+				"north": {
+					"uv": [13, 9, 14, 16],
+					"texture": "#grid_lines_alu"
+				},
+				"east": {
+					"uv": [12.6, 9, 13.4, 16],
+					"texture": "#grid_lines_alu"
+				},
+				"south": {
+					"uv": [2, 9, 3, 16],
+					"texture": "#grid_lines_alu"
+				},
+				"west": {
+					"uv": [2.6, 9, 3.4, 16],
+					"texture": "#grid_lines_alu"
+				},
+				"up": {
+					"uv": [2, 2.6, 3, 3.4],
+					"texture": "#grid_lines_alu"
+				},
+				"down": {
+					"uv": [2, 12.6, 3, 13.4],
+					"texture": "#grid_lines_alu"
+				}
+			}
+		},
+		{
+			"name": "anode_2_20",
+			"from": [0, 10, 20],
+			"to": [5, 16, 26],
+			"rotation": {
+				"angle": 0,
+				"axis": "y",
+				"origin": [8, 8, 8]
+			},
+			"faces": {
+				"north": {
+					"uv": [11, 0, 16, 6],
+					"texture": "#steelmaking_graphite"
+				},
+				"east": {
+					"uv": [6, 0, 12, 6],
+					"texture": "#steelmaking_graphite"
+				},
+				"south": {
+					"uv": [0, 0, 5, 6],
+					"texture": "#steelmaking_graphite"
+				},
+				"west": {
+					"uv": [4, 0, 10, 6],
+					"texture": "#steelmaking_graphite"
+				},
+				"up": {
+					"uv": [0, 4, 5, 10],
+					"texture": "#steelmaking_graphite"
+				},
+				"down": {
+					"uv": [0, 6, 5, 12],
+					"texture": "#steelmaking_graphite"
+				}
+			}
+		},
+		{
+			"name": "rod_3_-8",
+			"from": [8, 16, -1.4],
+			"to": [9, 23, -0.6],
+			"rotation": {
+				"angle": 0,
+				"axis": "y",
+				"origin": [8, 8, 8]
+			},
+			"faces": {
+				"north": {
+					"uv": [7, 9, 8, 16],
+					"texture": "#grid_lines_alu"
+				},
+				"east": {
+					"uv": [0.6, 9, 1.4, 16],
+					"texture": "#grid_lines_alu"
+				},
+				"south": {
+					"uv": [8, 9, 9, 16],
+					"texture": "#grid_lines_alu"
+				},
+				"west": {
+					"uv": [14.6, 9, 15.4, 16],
+					"texture": "#grid_lines_alu"
+				},
+				"up": {
+					"uv": [8, 14.6, 9, 15.4],
+					"texture": "#grid_lines_alu"
+				},
+				"down": {
+					"uv": [8, 0.6, 9, 1.4],
+					"texture": "#grid_lines_alu"
+				}
+			}
+		},
+		{
+			"name": "anode_3_-8",
+			"from": [6, 10, -8],
+			"to": [11, 16, -2],
+			"rotation": {
+				"angle": 0,
+				"axis": "y",
+				"origin": [8, 8, 8]
+			},
+			"faces": {
+				"north": {
+					"uv": [5, 0, 10, 6],
+					"texture": "#steelmaking_graphite"
+				},
+				"east": {
+					"uv": [2, 0, 8, 6],
+					"texture": "#steelmaking_graphite"
+				},
+				"south": {
+					"uv": [6, 0, 11, 6],
+					"texture": "#steelmaking_graphite"
+				},
+				"west": {
+					"uv": [8, 0, 14, 6],
+					"texture": "#steelmaking_graphite"
+				},
+				"up": {
+					"uv": [6, 8, 11, 14],
+					"texture": "#steelmaking_graphite"
+				},
+				"down": {
+					"uv": [6, 2, 11, 8],
+					"texture": "#steelmaking_graphite"
+				}
+			}
+		},
+		{
+			"name": "rod_3_0",
+			"from": [8, 16, -1.4],
+			"to": [9, 23, -0.6],
+			"rotation": {
+				"angle": 0,
+				"axis": "y",
+				"origin": [8, 8, 8]
+			},
+			"faces": {
+				"north": {
+					"uv": [7, 9, 8, 16],
+					"texture": "#grid_lines_alu"
+				},
+				"east": {
+					"uv": [0.6, 9, 1.4, 16],
+					"texture": "#grid_lines_alu"
+				},
+				"south": {
+					"uv": [8, 9, 9, 16],
+					"texture": "#grid_lines_alu"
+				},
+				"west": {
+					"uv": [14.6, 9, 15.4, 16],
+					"texture": "#grid_lines_alu"
+				},
+				"up": {
+					"uv": [8, 14.6, 9, 15.4],
+					"texture": "#grid_lines_alu"
+				},
+				"down": {
+					"uv": [8, 0.6, 9, 1.4],
+					"texture": "#grid_lines_alu"
+				}
+			}
+		},
+		{
+			"name": "anode_3_0",
+			"from": [6, 10, 0],
+			"to": [11, 16, 6],
+			"rotation": {
+				"angle": 0,
+				"axis": "y",
+				"origin": [8, 8, 8]
+			},
+			"faces": {
+				"north": {
+					"uv": [5, 0, 10, 6],
+					"texture": "#steelmaking_graphite"
+				},
+				"east": {
+					"uv": [10, 0, 16, 6],
+					"texture": "#steelmaking_graphite"
+				},
+				"south": {
+					"uv": [6, 0, 11, 6],
+					"texture": "#steelmaking_graphite"
+				},
+				"west": {
 					"uv": [0, 0, 6, 6],
-					"texture": "#g"
-				},
-				"west": {
-					"uv": [0, 0, 16, 6],
-					"texture": "#g"
+					"texture": "#steelmaking_graphite"
 				},
 				"up": {
-					"uv": [0, 0, 6, 16],
-					"texture": "#g"
+					"uv": [6, 0, 11, 6],
+					"texture": "#steelmaking_graphite"
 				},
 				"down": {
-					"uv": [0, 0, 6, 16],
-					"texture": "#g"
+					"uv": [6, 10, 11, 16],
+					"texture": "#steelmaking_graphite"
 				}
 			}
 		},
 		{
-			"name": "rod_0",
-			"from": [-10, 16, -1],
-			"to": [-8, 22, 1],
+			"name": "rod_3_12",
+			"from": [8, 16, 18.6],
+			"to": [9, 23, 19.4],
 			"rotation": {
 				"angle": 0,
 				"axis": "y",
@@ -197,35 +1097,35 @@
 			},
 			"faces": {
 				"north": {
-					"uv": [0, 0, 2, 6],
-					"texture": "#al"
+					"uv": [7, 9, 8, 16],
+					"texture": "#grid_lines_alu"
 				},
 				"east": {
-					"uv": [0, 0, 2, 6],
-					"texture": "#al"
+					"uv": [12.6, 9, 13.4, 16],
+					"texture": "#grid_lines_alu"
 				},
 				"south": {
-					"uv": [0, 0, 2, 6],
-					"texture": "#al"
+					"uv": [8, 9, 9, 16],
+					"texture": "#grid_lines_alu"
 				},
 				"west": {
-					"uv": [0, 0, 2, 6],
-					"texture": "#al"
+					"uv": [2.6, 9, 3.4, 16],
+					"texture": "#grid_lines_alu"
 				},
 				"up": {
-					"uv": [0, 0, 2, 2],
-					"texture": "#al"
+					"uv": [8, 2.6, 9, 3.4],
+					"texture": "#grid_lines_alu"
 				},
 				"down": {
-					"uv": [0, 0, 2, 2],
-					"texture": "#al"
+					"uv": [8, 12.6, 9, 13.4],
+					"texture": "#grid_lines_alu"
 				}
 			}
 		},
 		{
-			"name": "rod_1",
-			"from": [0, 16, -1],
-			"to": [2, 22, 1],
+			"name": "anode_3_12",
+			"from": [6, 10, 12],
+			"to": [11, 16, 18],
 			"rotation": {
 				"angle": 0,
 				"axis": "y",
@@ -233,35 +1133,35 @@
 			},
 			"faces": {
 				"north": {
-					"uv": [0, 0, 2, 6],
-					"texture": "#al"
+					"uv": [5, 0, 10, 6],
+					"texture": "#steelmaking_graphite"
 				},
 				"east": {
-					"uv": [0, 0, 2, 6],
-					"texture": "#al"
+					"uv": [0, 0, 4, 6],
+					"texture": "#steelmaking_graphite"
 				},
 				"south": {
-					"uv": [0, 0, 2, 6],
-					"texture": "#al"
+					"uv": [6, 0, 11, 6],
+					"texture": "#steelmaking_graphite"
 				},
 				"west": {
-					"uv": [0, 0, 2, 6],
-					"texture": "#al"
+					"uv": [12, 0, 16, 6],
+					"texture": "#steelmaking_graphite"
 				},
 				"up": {
-					"uv": [0, 0, 2, 2],
-					"texture": "#al"
+					"uv": [6, 12, 11, 16],
+					"texture": "#steelmaking_graphite"
 				},
 				"down": {
-					"uv": [0, 0, 2, 2],
-					"texture": "#al"
+					"uv": [6, 0, 11, 4],
+					"texture": "#steelmaking_graphite"
 				}
 			}
 		},
 		{
-			"name": "rod_2",
-			"from": [10, 16, -1],
-			"to": [12, 22, 1],
+			"name": "rod_3_20",
+			"from": [8, 16, 18.6],
+			"to": [9, 23, 19.4],
 			"rotation": {
 				"angle": 0,
 				"axis": "y",
@@ -269,35 +1169,35 @@
 			},
 			"faces": {
 				"north": {
-					"uv": [0, 0, 2, 6],
-					"texture": "#al"
+					"uv": [7, 9, 8, 16],
+					"texture": "#grid_lines_alu"
 				},
 				"east": {
-					"uv": [0, 0, 2, 6],
-					"texture": "#al"
+					"uv": [12.6, 9, 13.4, 16],
+					"texture": "#grid_lines_alu"
 				},
 				"south": {
-					"uv": [0, 0, 2, 6],
-					"texture": "#al"
+					"uv": [8, 9, 9, 16],
+					"texture": "#grid_lines_alu"
 				},
 				"west": {
-					"uv": [0, 0, 2, 6],
-					"texture": "#al"
+					"uv": [2.6, 9, 3.4, 16],
+					"texture": "#grid_lines_alu"
 				},
 				"up": {
-					"uv": [0, 0, 2, 2],
-					"texture": "#al"
+					"uv": [8, 2.6, 9, 3.4],
+					"texture": "#grid_lines_alu"
 				},
 				"down": {
-					"uv": [0, 0, 2, 2],
-					"texture": "#al"
+					"uv": [8, 12.6, 9, 13.4],
+					"texture": "#grid_lines_alu"
 				}
 			}
 		},
 		{
-			"name": "rod_3",
-			"from": [20, 16, -1],
-			"to": [22, 22, 1],
+			"name": "anode_3_20",
+			"from": [6, 10, 20],
+			"to": [11, 16, 26],
 			"rotation": {
 				"angle": 0,
 				"axis": "y",
@@ -305,28 +1205,892 @@
 			},
 			"faces": {
 				"north": {
-					"uv": [0, 0, 2, 6],
-					"texture": "#al"
+					"uv": [5, 0, 10, 6],
+					"texture": "#steelmaking_graphite"
 				},
 				"east": {
-					"uv": [0, 0, 2, 6],
-					"texture": "#al"
+					"uv": [6, 0, 12, 6],
+					"texture": "#steelmaking_graphite"
 				},
 				"south": {
-					"uv": [0, 0, 2, 6],
-					"texture": "#al"
+					"uv": [6, 0, 11, 6],
+					"texture": "#steelmaking_graphite"
 				},
 				"west": {
-					"uv": [0, 0, 2, 6],
-					"texture": "#al"
+					"uv": [4, 0, 10, 6],
+					"texture": "#steelmaking_graphite"
 				},
 				"up": {
-					"uv": [0, 0, 2, 2],
-					"texture": "#al"
+					"uv": [6, 4, 11, 10],
+					"texture": "#steelmaking_graphite"
 				},
 				"down": {
-					"uv": [0, 0, 2, 2],
-					"texture": "#al"
+					"uv": [6, 6, 11, 12],
+					"texture": "#steelmaking_graphite"
+				}
+			}
+		},
+		{
+			"name": "rod_4_-8",
+			"from": [14, 16, -1.4],
+			"to": [15, 23, -0.6],
+			"rotation": {
+				"angle": 0,
+				"axis": "y",
+				"origin": [8, 8, 8]
+			},
+			"faces": {
+				"north": {
+					"uv": [1, 9, 2, 16],
+					"texture": "#grid_lines_alu"
+				},
+				"east": {
+					"uv": [0.6, 9, 1.4, 16],
+					"texture": "#grid_lines_alu"
+				},
+				"south": {
+					"uv": [14, 9, 15, 16],
+					"texture": "#grid_lines_alu"
+				},
+				"west": {
+					"uv": [14.6, 9, 15.4, 16],
+					"texture": "#grid_lines_alu"
+				},
+				"up": {
+					"uv": [14, 14.6, 15, 15.4],
+					"texture": "#grid_lines_alu"
+				},
+				"down": {
+					"uv": [14, 0.6, 15, 1.4],
+					"texture": "#grid_lines_alu"
+				}
+			}
+		},
+		{
+			"name": "anode_4_-8",
+			"from": [12, 10, -8],
+			"to": [17, 16, -2],
+			"rotation": {
+				"angle": 0,
+				"axis": "y",
+				"origin": [8, 8, 8]
+			},
+			"faces": {
+				"north": {
+					"uv": [0, 0, 4, 6],
+					"texture": "#steelmaking_graphite"
+				},
+				"east": {
+					"uv": [2, 0, 8, 6],
+					"texture": "#steelmaking_graphite"
+				},
+				"south": {
+					"uv": [12, 0, 16, 6],
+					"texture": "#steelmaking_graphite"
+				},
+				"west": {
+					"uv": [8, 0, 14, 6],
+					"texture": "#steelmaking_graphite"
+				},
+				"up": {
+					"uv": [12, 8, 16, 14],
+					"texture": "#steelmaking_graphite"
+				},
+				"down": {
+					"uv": [12, 2, 16, 8],
+					"texture": "#steelmaking_graphite"
+				}
+			}
+		},
+		{
+			"name": "rod_4_0",
+			"from": [14, 16, -1.4],
+			"to": [15, 23, -0.6],
+			"rotation": {
+				"angle": 0,
+				"axis": "y",
+				"origin": [8, 8, 8]
+			},
+			"faces": {
+				"north": {
+					"uv": [1, 9, 2, 16],
+					"texture": "#grid_lines_alu"
+				},
+				"east": {
+					"uv": [0.6, 9, 1.4, 16],
+					"texture": "#grid_lines_alu"
+				},
+				"south": {
+					"uv": [14, 9, 15, 16],
+					"texture": "#grid_lines_alu"
+				},
+				"west": {
+					"uv": [14.6, 9, 15.4, 16],
+					"texture": "#grid_lines_alu"
+				},
+				"up": {
+					"uv": [14, 14.6, 15, 15.4],
+					"texture": "#grid_lines_alu"
+				},
+				"down": {
+					"uv": [14, 0.6, 15, 1.4],
+					"texture": "#grid_lines_alu"
+				}
+			}
+		},
+		{
+			"name": "anode_4_0",
+			"from": [12, 10, 0],
+			"to": [17, 16, 6],
+			"rotation": {
+				"angle": 0,
+				"axis": "y",
+				"origin": [8, 8, 8]
+			},
+			"faces": {
+				"north": {
+					"uv": [0, 0, 4, 6],
+					"texture": "#steelmaking_graphite"
+				},
+				"east": {
+					"uv": [10, 0, 16, 6],
+					"texture": "#steelmaking_graphite"
+				},
+				"south": {
+					"uv": [12, 0, 16, 6],
+					"texture": "#steelmaking_graphite"
+				},
+				"west": {
+					"uv": [0, 0, 6, 6],
+					"texture": "#steelmaking_graphite"
+				},
+				"up": {
+					"uv": [12, 0, 16, 6],
+					"texture": "#steelmaking_graphite"
+				},
+				"down": {
+					"uv": [12, 10, 16, 16],
+					"texture": "#steelmaking_graphite"
+				}
+			}
+		},
+		{
+			"name": "rod_4_12",
+			"from": [14, 16, 18.6],
+			"to": [15, 23, 19.4],
+			"rotation": {
+				"angle": 0,
+				"axis": "y",
+				"origin": [8, 8, 8]
+			},
+			"faces": {
+				"north": {
+					"uv": [1, 9, 2, 16],
+					"texture": "#grid_lines_alu"
+				},
+				"east": {
+					"uv": [12.6, 9, 13.4, 16],
+					"texture": "#grid_lines_alu"
+				},
+				"south": {
+					"uv": [14, 9, 15, 16],
+					"texture": "#grid_lines_alu"
+				},
+				"west": {
+					"uv": [2.6, 9, 3.4, 16],
+					"texture": "#grid_lines_alu"
+				},
+				"up": {
+					"uv": [14, 2.6, 15, 3.4],
+					"texture": "#grid_lines_alu"
+				},
+				"down": {
+					"uv": [14, 12.6, 15, 13.4],
+					"texture": "#grid_lines_alu"
+				}
+			}
+		},
+		{
+			"name": "anode_4_12",
+			"from": [12, 10, 12],
+			"to": [17, 16, 18],
+			"rotation": {
+				"angle": 0,
+				"axis": "y",
+				"origin": [8, 8, 8]
+			},
+			"faces": {
+				"north": {
+					"uv": [0, 0, 4, 6],
+					"texture": "#steelmaking_graphite"
+				},
+				"east": {
+					"uv": [0, 0, 4, 6],
+					"texture": "#steelmaking_graphite"
+				},
+				"south": {
+					"uv": [12, 0, 16, 6],
+					"texture": "#steelmaking_graphite"
+				},
+				"west": {
+					"uv": [12, 0, 16, 6],
+					"texture": "#steelmaking_graphite"
+				},
+				"up": {
+					"uv": [12, 12, 16, 16],
+					"texture": "#steelmaking_graphite"
+				},
+				"down": {
+					"uv": [12, 0, 16, 4],
+					"texture": "#steelmaking_graphite"
+				}
+			}
+		},
+		{
+			"name": "rod_4_20",
+			"from": [14, 16, 18.6],
+			"to": [15, 23, 19.4],
+			"rotation": {
+				"angle": 0,
+				"axis": "y",
+				"origin": [8, 8, 8]
+			},
+			"faces": {
+				"north": {
+					"uv": [1, 9, 2, 16],
+					"texture": "#grid_lines_alu"
+				},
+				"east": {
+					"uv": [12.6, 9, 13.4, 16],
+					"texture": "#grid_lines_alu"
+				},
+				"south": {
+					"uv": [14, 9, 15, 16],
+					"texture": "#grid_lines_alu"
+				},
+				"west": {
+					"uv": [2.6, 9, 3.4, 16],
+					"texture": "#grid_lines_alu"
+				},
+				"up": {
+					"uv": [14, 2.6, 15, 3.4],
+					"texture": "#grid_lines_alu"
+				},
+				"down": {
+					"uv": [14, 12.6, 15, 13.4],
+					"texture": "#grid_lines_alu"
+				}
+			}
+		},
+		{
+			"name": "anode_4_20",
+			"from": [12, 10, 20],
+			"to": [17, 16, 26],
+			"rotation": {
+				"angle": 0,
+				"axis": "y",
+				"origin": [8, 8, 8]
+			},
+			"faces": {
+				"north": {
+					"uv": [0, 0, 4, 6],
+					"texture": "#steelmaking_graphite"
+				},
+				"east": {
+					"uv": [6, 0, 12, 6],
+					"texture": "#steelmaking_graphite"
+				},
+				"south": {
+					"uv": [12, 0, 16, 6],
+					"texture": "#steelmaking_graphite"
+				},
+				"west": {
+					"uv": [4, 0, 10, 6],
+					"texture": "#steelmaking_graphite"
+				},
+				"up": {
+					"uv": [12, 4, 16, 10],
+					"texture": "#steelmaking_graphite"
+				},
+				"down": {
+					"uv": [12, 6, 16, 12],
+					"texture": "#steelmaking_graphite"
+				}
+			}
+		},
+		{
+			"name": "rod_5_-8",
+			"from": [20, 16, -1.4],
+			"to": [21, 23, -0.6],
+			"rotation": {
+				"angle": 0,
+				"axis": "y",
+				"origin": [8, 8, 8]
+			},
+			"faces": {
+				"north": {
+					"uv": [11, 9, 12, 16],
+					"texture": "#grid_lines_alu"
+				},
+				"east": {
+					"uv": [0.6, 9, 1.4, 16],
+					"texture": "#grid_lines_alu"
+				},
+				"south": {
+					"uv": [4, 9, 5, 16],
+					"texture": "#grid_lines_alu"
+				},
+				"west": {
+					"uv": [14.6, 9, 15.4, 16],
+					"texture": "#grid_lines_alu"
+				},
+				"up": {
+					"uv": [4, 14.6, 5, 15.4],
+					"texture": "#grid_lines_alu"
+				},
+				"down": {
+					"uv": [4, 0.6, 5, 1.4],
+					"texture": "#grid_lines_alu"
+				}
+			}
+		},
+		{
+			"name": "anode_5_-8",
+			"from": [18, 10, -8],
+			"to": [23, 16, -2],
+			"rotation": {
+				"angle": 0,
+				"axis": "y",
+				"origin": [8, 8, 8]
+			},
+			"faces": {
+				"north": {
+					"uv": [9, 0, 14, 6],
+					"texture": "#steelmaking_graphite"
+				},
+				"east": {
+					"uv": [2, 0, 8, 6],
+					"texture": "#steelmaking_graphite"
+				},
+				"south": {
+					"uv": [2, 0, 7, 6],
+					"texture": "#steelmaking_graphite"
+				},
+				"west": {
+					"uv": [8, 0, 14, 6],
+					"texture": "#steelmaking_graphite"
+				},
+				"up": {
+					"uv": [2, 8, 7, 14],
+					"texture": "#steelmaking_graphite"
+				},
+				"down": {
+					"uv": [2, 2, 7, 8],
+					"texture": "#steelmaking_graphite"
+				}
+			}
+		},
+		{
+			"name": "rod_5_0",
+			"from": [20, 16, -1.4],
+			"to": [21, 23, -0.6],
+			"rotation": {
+				"angle": 0,
+				"axis": "y",
+				"origin": [8, 8, 8]
+			},
+			"faces": {
+				"north": {
+					"uv": [11, 9, 12, 16],
+					"texture": "#grid_lines_alu"
+				},
+				"east": {
+					"uv": [0.6, 9, 1.4, 16],
+					"texture": "#grid_lines_alu"
+				},
+				"south": {
+					"uv": [4, 9, 5, 16],
+					"texture": "#grid_lines_alu"
+				},
+				"west": {
+					"uv": [14.6, 9, 15.4, 16],
+					"texture": "#grid_lines_alu"
+				},
+				"up": {
+					"uv": [4, 14.6, 5, 15.4],
+					"texture": "#grid_lines_alu"
+				},
+				"down": {
+					"uv": [4, 0.6, 5, 1.4],
+					"texture": "#grid_lines_alu"
+				}
+			}
+		},
+		{
+			"name": "anode_5_0",
+			"from": [18, 10, 0],
+			"to": [23, 16, 6],
+			"rotation": {
+				"angle": 0,
+				"axis": "y",
+				"origin": [8, 8, 8]
+			},
+			"faces": {
+				"north": {
+					"uv": [9, 0, 14, 6],
+					"texture": "#steelmaking_graphite"
+				},
+				"east": {
+					"uv": [10, 0, 16, 6],
+					"texture": "#steelmaking_graphite"
+				},
+				"south": {
+					"uv": [2, 0, 7, 6],
+					"texture": "#steelmaking_graphite"
+				},
+				"west": {
+					"uv": [0, 0, 6, 6],
+					"texture": "#steelmaking_graphite"
+				},
+				"up": {
+					"uv": [2, 0, 7, 6],
+					"texture": "#steelmaking_graphite"
+				},
+				"down": {
+					"uv": [2, 10, 7, 16],
+					"texture": "#steelmaking_graphite"
+				}
+			}
+		},
+		{
+			"name": "rod_5_12",
+			"from": [20, 16, 18.6],
+			"to": [21, 23, 19.4],
+			"rotation": {
+				"angle": 0,
+				"axis": "y",
+				"origin": [8, 8, 8]
+			},
+			"faces": {
+				"north": {
+					"uv": [11, 9, 12, 16],
+					"texture": "#grid_lines_alu"
+				},
+				"east": {
+					"uv": [12.6, 9, 13.4, 16],
+					"texture": "#grid_lines_alu"
+				},
+				"south": {
+					"uv": [4, 9, 5, 16],
+					"texture": "#grid_lines_alu"
+				},
+				"west": {
+					"uv": [2.6, 9, 3.4, 16],
+					"texture": "#grid_lines_alu"
+				},
+				"up": {
+					"uv": [4, 2.6, 5, 3.4],
+					"texture": "#grid_lines_alu"
+				},
+				"down": {
+					"uv": [4, 12.6, 5, 13.4],
+					"texture": "#grid_lines_alu"
+				}
+			}
+		},
+		{
+			"name": "anode_5_12",
+			"from": [18, 10, 12],
+			"to": [23, 16, 18],
+			"rotation": {
+				"angle": 0,
+				"axis": "y",
+				"origin": [8, 8, 8]
+			},
+			"faces": {
+				"north": {
+					"uv": [9, 0, 14, 6],
+					"texture": "#steelmaking_graphite"
+				},
+				"east": {
+					"uv": [0, 0, 4, 6],
+					"texture": "#steelmaking_graphite"
+				},
+				"south": {
+					"uv": [2, 0, 7, 6],
+					"texture": "#steelmaking_graphite"
+				},
+				"west": {
+					"uv": [12, 0, 16, 6],
+					"texture": "#steelmaking_graphite"
+				},
+				"up": {
+					"uv": [2, 12, 7, 16],
+					"texture": "#steelmaking_graphite"
+				},
+				"down": {
+					"uv": [2, 0, 7, 4],
+					"texture": "#steelmaking_graphite"
+				}
+			}
+		},
+		{
+			"name": "rod_5_20",
+			"from": [20, 16, 18.6],
+			"to": [21, 23, 19.4],
+			"rotation": {
+				"angle": 0,
+				"axis": "y",
+				"origin": [8, 8, 8]
+			},
+			"faces": {
+				"north": {
+					"uv": [11, 9, 12, 16],
+					"texture": "#grid_lines_alu"
+				},
+				"east": {
+					"uv": [12.6, 9, 13.4, 16],
+					"texture": "#grid_lines_alu"
+				},
+				"south": {
+					"uv": [4, 9, 5, 16],
+					"texture": "#grid_lines_alu"
+				},
+				"west": {
+					"uv": [2.6, 9, 3.4, 16],
+					"texture": "#grid_lines_alu"
+				},
+				"up": {
+					"uv": [4, 2.6, 5, 3.4],
+					"texture": "#grid_lines_alu"
+				},
+				"down": {
+					"uv": [4, 12.6, 5, 13.4],
+					"texture": "#grid_lines_alu"
+				}
+			}
+		},
+		{
+			"name": "anode_5_20",
+			"from": [18, 10, 20],
+			"to": [23, 16, 26],
+			"rotation": {
+				"angle": 0,
+				"axis": "y",
+				"origin": [8, 8, 8]
+			},
+			"faces": {
+				"north": {
+					"uv": [9, 0, 14, 6],
+					"texture": "#steelmaking_graphite"
+				},
+				"east": {
+					"uv": [6, 0, 12, 6],
+					"texture": "#steelmaking_graphite"
+				},
+				"south": {
+					"uv": [2, 0, 7, 6],
+					"texture": "#steelmaking_graphite"
+				},
+				"west": {
+					"uv": [4, 0, 10, 6],
+					"texture": "#steelmaking_graphite"
+				},
+				"up": {
+					"uv": [2, 4, 7, 10],
+					"texture": "#steelmaking_graphite"
+				},
+				"down": {
+					"uv": [2, 6, 7, 12],
+					"texture": "#steelmaking_graphite"
+				}
+			}
+		},
+		{
+			"name": "rod_6_-8",
+			"from": [26, 16, -1.4],
+			"to": [27, 23, -0.6],
+			"rotation": {
+				"angle": 0,
+				"axis": "y",
+				"origin": [8, 8, 8]
+			},
+			"faces": {
+				"north": {
+					"uv": [5, 9, 6, 16],
+					"texture": "#grid_lines_alu"
+				},
+				"east": {
+					"uv": [0.6, 9, 1.4, 16],
+					"texture": "#grid_lines_alu"
+				},
+				"south": {
+					"uv": [10, 9, 11, 16],
+					"texture": "#grid_lines_alu"
+				},
+				"west": {
+					"uv": [14.6, 9, 15.4, 16],
+					"texture": "#grid_lines_alu"
+				},
+				"up": {
+					"uv": [10, 14.6, 11, 15.4],
+					"texture": "#grid_lines_alu"
+				},
+				"down": {
+					"uv": [10, 0.6, 11, 1.4],
+					"texture": "#grid_lines_alu"
+				}
+			}
+		},
+		{
+			"name": "anode_6_-8",
+			"from": [24, 10, -8],
+			"to": [29, 16, -2],
+			"rotation": {
+				"angle": 0,
+				"axis": "y",
+				"origin": [8, 8, 8]
+			},
+			"faces": {
+				"north": {
+					"uv": [3, 0, 8, 6],
+					"texture": "#steelmaking_graphite"
+				},
+				"east": {
+					"uv": [2, 0, 8, 6],
+					"texture": "#steelmaking_graphite"
+				},
+				"south": {
+					"uv": [8, 0, 13, 6],
+					"texture": "#steelmaking_graphite"
+				},
+				"west": {
+					"uv": [8, 0, 14, 6],
+					"texture": "#steelmaking_graphite"
+				},
+				"up": {
+					"uv": [8, 8, 13, 14],
+					"texture": "#steelmaking_graphite"
+				},
+				"down": {
+					"uv": [8, 2, 13, 8],
+					"texture": "#steelmaking_graphite"
+				}
+			}
+		},
+		{
+			"name": "rod_6_0",
+			"from": [26, 16, -1.4],
+			"to": [27, 23, -0.6],
+			"rotation": {
+				"angle": 0,
+				"axis": "y",
+				"origin": [8, 8, 8]
+			},
+			"faces": {
+				"north": {
+					"uv": [5, 9, 6, 16],
+					"texture": "#grid_lines_alu"
+				},
+				"east": {
+					"uv": [0.6, 9, 1.4, 16],
+					"texture": "#grid_lines_alu"
+				},
+				"south": {
+					"uv": [10, 9, 11, 16],
+					"texture": "#grid_lines_alu"
+				},
+				"west": {
+					"uv": [14.6, 9, 15.4, 16],
+					"texture": "#grid_lines_alu"
+				},
+				"up": {
+					"uv": [10, 14.6, 11, 15.4],
+					"texture": "#grid_lines_alu"
+				},
+				"down": {
+					"uv": [10, 0.6, 11, 1.4],
+					"texture": "#grid_lines_alu"
+				}
+			}
+		},
+		{
+			"name": "anode_6_0",
+			"from": [24, 10, 0],
+			"to": [29, 16, 6],
+			"rotation": {
+				"angle": 0,
+				"axis": "y",
+				"origin": [8, 8, 8]
+			},
+			"faces": {
+				"north": {
+					"uv": [3, 0, 8, 6],
+					"texture": "#steelmaking_graphite"
+				},
+				"east": {
+					"uv": [10, 0, 16, 6],
+					"texture": "#steelmaking_graphite"
+				},
+				"south": {
+					"uv": [8, 0, 13, 6],
+					"texture": "#steelmaking_graphite"
+				},
+				"west": {
+					"uv": [0, 0, 6, 6],
+					"texture": "#steelmaking_graphite"
+				},
+				"up": {
+					"uv": [8, 0, 13, 6],
+					"texture": "#steelmaking_graphite"
+				},
+				"down": {
+					"uv": [8, 10, 13, 16],
+					"texture": "#steelmaking_graphite"
+				}
+			}
+		},
+		{
+			"name": "rod_6_12",
+			"from": [26, 16, 18.6],
+			"to": [27, 23, 19.4],
+			"rotation": {
+				"angle": 0,
+				"axis": "y",
+				"origin": [8, 8, 8]
+			},
+			"faces": {
+				"north": {
+					"uv": [5, 9, 6, 16],
+					"texture": "#grid_lines_alu"
+				},
+				"east": {
+					"uv": [12.6, 9, 13.4, 16],
+					"texture": "#grid_lines_alu"
+				},
+				"south": {
+					"uv": [10, 9, 11, 16],
+					"texture": "#grid_lines_alu"
+				},
+				"west": {
+					"uv": [2.6, 9, 3.4, 16],
+					"texture": "#grid_lines_alu"
+				},
+				"up": {
+					"uv": [10, 2.6, 11, 3.4],
+					"texture": "#grid_lines_alu"
+				},
+				"down": {
+					"uv": [10, 12.6, 11, 13.4],
+					"texture": "#grid_lines_alu"
+				}
+			}
+		},
+		{
+			"name": "anode_6_12",
+			"from": [24, 10, 12],
+			"to": [29, 16, 18],
+			"rotation": {
+				"angle": 0,
+				"axis": "y",
+				"origin": [8, 8, 8]
+			},
+			"faces": {
+				"north": {
+					"uv": [3, 0, 8, 6],
+					"texture": "#steelmaking_graphite"
+				},
+				"east": {
+					"uv": [0, 0, 4, 6],
+					"texture": "#steelmaking_graphite"
+				},
+				"south": {
+					"uv": [8, 0, 13, 6],
+					"texture": "#steelmaking_graphite"
+				},
+				"west": {
+					"uv": [12, 0, 16, 6],
+					"texture": "#steelmaking_graphite"
+				},
+				"up": {
+					"uv": [8, 12, 13, 16],
+					"texture": "#steelmaking_graphite"
+				},
+				"down": {
+					"uv": [8, 0, 13, 4],
+					"texture": "#steelmaking_graphite"
+				}
+			}
+		},
+		{
+			"name": "rod_6_20",
+			"from": [26, 16, 18.6],
+			"to": [27, 23, 19.4],
+			"rotation": {
+				"angle": 0,
+				"axis": "y",
+				"origin": [8, 8, 8]
+			},
+			"faces": {
+				"north": {
+					"uv": [5, 9, 6, 16],
+					"texture": "#grid_lines_alu"
+				},
+				"east": {
+					"uv": [12.6, 9, 13.4, 16],
+					"texture": "#grid_lines_alu"
+				},
+				"south": {
+					"uv": [10, 9, 11, 16],
+					"texture": "#grid_lines_alu"
+				},
+				"west": {
+					"uv": [2.6, 9, 3.4, 16],
+					"texture": "#grid_lines_alu"
+				},
+				"up": {
+					"uv": [10, 2.6, 11, 3.4],
+					"texture": "#grid_lines_alu"
+				},
+				"down": {
+					"uv": [10, 12.6, 11, 13.4],
+					"texture": "#grid_lines_alu"
+				}
+			}
+		},
+		{
+			"name": "anode_6_20",
+			"from": [24, 10, 20],
+			"to": [29, 16, 26],
+			"rotation": {
+				"angle": 0,
+				"axis": "y",
+				"origin": [8, 8, 8]
+			},
+			"faces": {
+				"north": {
+					"uv": [3, 0, 8, 6],
+					"texture": "#steelmaking_graphite"
+				},
+				"east": {
+					"uv": [6, 0, 12, 6],
+					"texture": "#steelmaking_graphite"
+				},
+				"south": {
+					"uv": [8, 0, 13, 6],
+					"texture": "#steelmaking_graphite"
+				},
+				"west": {
+					"uv": [4, 0, 10, 6],
+					"texture": "#steelmaking_graphite"
+				},
+				"up": {
+					"uv": [8, 4, 13, 10],
+					"texture": "#steelmaking_graphite"
+				},
+				"down": {
+					"uv": [8, 6, 13, 12],
+					"texture": "#steelmaking_graphite"
 				}
 			}
 		}
