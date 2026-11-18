@@ -243,6 +243,12 @@ public final class PcBlocks {
             PressureGaugeBlock::create, Properties.of().mapColor(MapColor.METAL).strength(1.0f).sound(SoundType.COPPER)
                     .noOcclusion().pushReaction(PushReaction.DESTROY)));
 
+    /** Вибродатчик на грани машины Create: общий уровень виброскорости — аналоговым редстоуном (04a §4a.8.3). */
+    public static final DeferredBlock<dev.denfry.promptcritical.mod.acoustics.VibrationTransmitterBlock> INSTRUMENT_VIBRATION = withItem(
+            BLOCKS.registerBlock("instrument_vibration", dev.denfry.promptcritical.mod.acoustics.VibrationTransmitterBlock::create,
+                    Properties.of().mapColor(MapColor.METAL).strength(1.0f).sound(SoundType.COPPER).noOcclusion()
+                            .pushReaction(PushReaction.DESTROY)));
+
     /** Реле на DIN-рейке: корпус у стены (модель {@code relay}). */
     private static final double[] RELAY_BOX = {0.5, 1, 5.9, 15.5, 15, 16};
 

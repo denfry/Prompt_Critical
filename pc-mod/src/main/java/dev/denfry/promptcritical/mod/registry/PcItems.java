@@ -322,6 +322,25 @@ public final class PcItems {
     /** Дозиметр-радиометр ДКС-04: мощность дозы и накопленная доза, щелчки счётчика. */
     public static final DeferredItem<dev.denfry.promptcritical.mod.environment.DosimeterItem> DOSIMETER = registered(ITEMS.registerItem(
             "dosimeter_radiometer", dev.denfry.promptcritical.mod.environment.DosimeterItem::new, new Item.Properties()));
+    /** Виброметр-анализатор: спектр, зона ISO 10816, температура подшипника, шум (04a §4a.8.1). */
+    public static final DeferredItem<dev.denfry.promptcritical.mod.acoustics.VibrometerItem> VIBROMETER = registered(ITEMS.registerItem(
+            "vibrometer", dev.denfry.promptcritical.mod.acoustics.VibrometerItem::new, new Item.Properties()));
+    /** Противошумные наушники (13 §13.7). */
+    public static final DeferredItem<dev.denfry.promptcritical.mod.acoustics.HearingProtectionItem> HEARING_PROTECTION = registered(
+            ITEMS.registerItem("hearing_protection", dev.denfry.promptcritical.mod.acoustics.HearingProtectionItem::new, new Item.Properties()));
+    /** Обслуживание вращающихся машин (04a §4a.7.5): подшипник, балансировка, центровка. */
+    public static final DeferredItem<dev.denfry.promptcritical.mod.acoustics.MachineServiceItem> BEARING_KIT = service("bearing_kit",
+            dev.denfry.promptcritical.mod.acoustics.MachineServiceItem.Kind.BEARING_KIT);
+    public static final DeferredItem<dev.denfry.promptcritical.mod.acoustics.MachineServiceItem> BALANCING_WEIGHTS = service(
+            "balancing_weights", dev.denfry.promptcritical.mod.acoustics.MachineServiceItem.Kind.BALANCING_WEIGHTS);
+    public static final DeferredItem<dev.denfry.promptcritical.mod.acoustics.MachineServiceItem> ALIGNMENT_TOOL = service(
+            "alignment_tool", dev.denfry.promptcritical.mod.acoustics.MachineServiceItem.Kind.ALIGNMENT_TOOL);
+
+    private static DeferredItem<dev.denfry.promptcritical.mod.acoustics.MachineServiceItem> service(String name,
+            dev.denfry.promptcritical.mod.acoustics.MachineServiceItem.Kind kind) {
+        return registered(ITEMS.registerItem(name, p -> new dev.denfry.promptcritical.mod.acoustics.MachineServiceItem(p, kind),
+                new Item.Properties()));
+    }
 
     private static <I extends Item> DeferredItem<I> registered(DeferredItem<I> i) {
         PLAIN.add(i);
