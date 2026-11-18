@@ -51,6 +51,20 @@ public final class LockoutText {
         m("keys_out", "Keys taken from the box", "Ключи забраны из ящика");
         m("box_status", "Lockout box: %s locks on it, keys of %s inside", "Ящик блокировки: замков на нём %s, внутри ключи: %s");
         m("result.hasp_busy", "The hasp is already fitted or still holds locks", "Накладка уже стоит или на ней ещё замки");
+        // план изоляции 13 §13.1.4 (IsolationPlans)
+        m("plan.header", "Isolation plan: %s", "План изоляции: %s");
+        m("plan.point", "%s at %s — %s", "%s у %s — %s");
+        m("plan.state.in_service", "IN SERVICE", "В РАБОТЕ");
+        m("plan.state.isolated", "isolated, not locked", "изолирована, не заперта");
+        m("plan.state.locked", "locked by %s", "заперта: %s");
+        m("plan.state.verified", "locked by %s, energy absence verified", "заперта: %s, отсутствие энергии проверено");
+        m("plan.source", "Source with no apparatus between it and the work: %s at %s — it cannot be locked out here",
+                "Источник без аппарата до места работ: %s у %s — здесь его не запереть");
+        m("plan.stored", "Stored energy: %s at %s — discharge before work", "Накопленная энергия: %s у %s — разрядить до работ");
+        m("plan.done", "All points locked and verified: the work may start", "Все точки заперты и проверены: можно допускать к работе");
+        m("plan.todo", "Points still to lock and verify: %s", "Ещё запереть и проверить точек: %s");
+        m("plan.none", "No isolation points found: the object is fed by nothing the plan can see",
+                "Точек изоляции не найдено: питания, которое видит план, у объекта нет");
         m("tip.padlock", "Personal lock: right-click an isolated point; Shift + empty hand takes your own lock off",
                 "Личный замок: ПКМ по изолированной точке; Shift + пустая рука снимает свой замок");
         m("tip.tag", "Hold in the other hand when hanging a padlock", "Держите в другой руке, когда вешаете замок");

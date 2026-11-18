@@ -34,3 +34,8 @@ No player can take off someone else's lock, not even the station owner. If the o
 - A [mechanical disconnect](item:promptcritical:mechanical_disconnect) goes on a Create shaft. Right-click disengages it: the shaft before it keeps turning, the shaft after it stops. A disengaged coupling takes a lock.
 - A [line blind](item:promptcritical:line_blind) goes between a pipe and a machine. Open, it passes the fluid; turned to its blind side, it cuts the line positively. This is how hazardous media are isolated.
 - A [lockout box](item:promptcritical:lockout_box) is for complex isolations. The person in charge locks every point with their own locks and puts the keys in the box (right-click the box with an empty hand). Every crew member hangs their lock on the box. While at least one lock hangs on the box, the person in charge cannot take the locks off the points. The keys come out of the box once the crew has taken their locks off.
+
+
+## Isolation plan
+
+Right-click the equipment you are going to work on, not a breaker, with a padlock or a tag. The chat shows its isolation plan, found from the grid and the shaft: the breakers, switches, fuses and disconnectors that feed it, and the couplings on its Create shaft. Each point has its state: in service, isolated, locked by whom, energy absence verified. A generator connected to the equipment with no apparatus in between cannot be locked out, and the plan says so. A capacitor bank is listed as stored energy that has to be discharged. When every point is locked and verified, the plan says the work may start. Belts and chain drives join shafts that do not touch, so couplings beyond them are not found, and pipes are not traced at all: lock those points by hand. The same plan is printed by `/pc lockout plan <pos>`.

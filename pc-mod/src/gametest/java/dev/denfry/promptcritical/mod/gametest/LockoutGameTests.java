@@ -201,4 +201,42 @@ public final class LockoutGameTests {
                 .thenSucceed();
     }
 
+
+    /**
+     * План изоляции (13 §13.1.4): у аппарата точка изоляции — он сам; у вала Create — расцепная муфта на нём, а за
+     * муфту обход не идёт. Отключённая, запертая и проверенная точка закрывает план.
+     */
+    @GameTest(template = LARGE, timeoutTicks = 400)
+    public static void isolationPlanListsTheCellAndTheShaftCoupling(GameTestHelper h) {
+        place(h);
+        BlockPos shaft = new BlockPos(2, 1, 2), coupling = new BlockPos(3, 1, 2), beyond = new BlockPos(4, 1, 2);
+        var axis = net.minecraft.world.level.block.state.properties.BlockStateProperties.AXIS;
+        h.setBlock(shaft, com.simibubi.create.AllBlocks.SHAFT.get().defaultBlockState().setValue(axis, Direction.Axis.X));
+        h.setBlock(coupling, PcBlocks.MECHANICAL_DISCONNECT.get().defaultBlockState().setValue(axis, Direction.Axis.X));
+        h.setBlock(beyond, com.simibubi.create.AllBlocks.SHAFT.get().defaultBlockState().setValue(axis, Direction.Axis.X));
+        FakePlayer a = player(h, "Alice");
+        h.startSequence()
+                .thenWaitUntil(() -> unit(h))
+                .thenExecute(() -> {
+                    var level = h.getLevel();
+                    var shaftPlan = dev.denfry.promptcritical.mod.ops.IsolationPlans.build(level, h.absolutePos(shaft));
+                    h.assertTrue(shaftPlan.points().size() == 1 && shaftPlan.points().get(0).pos().equals(h.absolutePos(coupling)),
+                            "the coupling on the shaft is the isolation point: " + shaftPlan.points());
+                    h.assertTrue(shaftPlan.points().get(0).state() == IsolationState.IN_SERVICE, "engaged coupling in service");
+                    var cellPlan = dev.denfry.promptcritical.mod.ops.IsolationPlans.build(level, h.absolutePos(CELL));
+                    h.assertTrue(cellPlan.points().size() == 1 && cellPlan.points().get(0).pos().equals(h.absolutePos(CELL)),
+                            "the cell is its own point: " + cellPlan.points());
+                    h.assertFalse(cellPlan.complete(), "not locked yet");
+                    h.assertTrue(cell(h).operate(null, false) == BreakerResponse.ACCEPTED, "opened");
+                    click(h, a, new ItemStack(PcItems.LOCKOUT_PADLOCK.get()), false);
+                })
+                .thenIdle(2)
+                .thenExecute(() -> {
+                    click(h, a, new ItemStack(PcItems.VOLTAGE_TESTER.get()), false);
+                    var plan = dev.denfry.promptcritical.mod.ops.IsolationPlans.build(h.getLevel(), h.absolutePos(CELL));
+                    h.assertTrue(plan.complete(), "locked and verified: plan complete " + plan.points());
+                    click(h, a, ItemStack.EMPTY, true);
+                })
+                .thenSucceed();
+    }
 }

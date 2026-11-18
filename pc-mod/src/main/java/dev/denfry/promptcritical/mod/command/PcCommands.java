@@ -101,6 +101,7 @@ public final class PcCommands {
                 // LOTO 13 §13.1.7: чужой замок снимает только администратор, с причиной в журнал
                 .then(Commands.literal("lockout")
                         .then(Commands.literal("list").executes(PcCommands::lockoutList))
+                        .then(Commands.literal("plan").then(Commands.argument("pos", BlockPosArgument.blockPos()).executes(PcCommands::lockoutPlan)))
                         .then(Commands.literal("cut").then(Commands.argument("pos", BlockPosArgument.blockPos())
                                 .then(Commands.argument("reason", StringArgumentType.greedyString()).executes(PcCommands::lockoutCut))))));
     }
@@ -120,6 +121,16 @@ public final class PcCommands {
             ctx.getSource().sendSuccess(() -> Component.literal(line), false);
         }
         return r.lockedPoints().size();
+    }
+
+    /** План изоляции объекта работ (13 §13.1.4). */
+    private static int lockoutPlan(CommandContext<CommandSourceStack> ctx) throws CommandSyntaxException {
+        BlockPos pos = BlockPosArgument.getLoadedBlockPos(ctx, "pos");
+        var level = ctx.getSource().getLevel();
+        var plan = dev.denfry.promptcritical.mod.ops.IsolationPlans.build(level, pos);
+        for (Component line : dev.denfry.promptcritical.mod.ops.IsolationPlans.describe(level, plan))
+            ctx.getSource().sendSuccess(() -> line, false);
+        return plan.points().size();
     }
 
     private static int lockoutCut(CommandContext<CommandSourceStack> ctx) throws CommandSyntaxException {

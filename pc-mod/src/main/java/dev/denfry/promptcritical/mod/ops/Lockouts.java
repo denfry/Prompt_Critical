@@ -100,7 +100,18 @@ public final class Lockouts {
         if (!tool && !bare) return;
         Level level = e.getLevel();
         Found f = find(level, e.getPos());
-        if (f == null) return;
+        if (f == null) {
+            // замок или бирка по объекту работ, а не по точке изоляции — план изоляции (13 §13.1.4)
+            if (!tool || ((LockoutItem) stack.getItem()).kind() == LockoutItem.Kind.VOLTAGE_TESTER) return;
+            if (level instanceof net.minecraft.server.level.ServerLevel sl && p instanceof ServerPlayer sp) {
+                IsolationPlans.Plan plan = IsolationPlans.nonEmpty(sl, e.getPos());
+                if (plan == null) return;
+                for (Component line : IsolationPlans.describe(sl, plan)) sp.displayClientMessage(line, false);
+            }
+            e.setCanceled(true);
+            e.setCancellationResult(InteractionResult.SUCCESS);
+            return;
+        }
         InteractionResult r = InteractionResult.SUCCESS;
         if (!level.isClientSide && p instanceof ServerPlayer sp) {
             r = tool ? use(sp, ((LockoutItem) stack.getItem()).kind(), stack, f) : takeOff(sp, f);
