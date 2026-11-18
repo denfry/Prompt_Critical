@@ -115,7 +115,9 @@ public final class RadiationService {
         Map<Vec3, Held> m = SOURCES.get(level);
         if (m == null) return 0;
         double sum = 0;
+        long now = level.getGameTime();
         for (Map.Entry<Vec3, Held> e : m.entrySet()) {
+            if (e.getValue().until < now) continue; // просрочен: не зависим от того, успел ли тик уровня его вычистить
             Vec3 src = e.getKey();
             double r = src.distanceTo(at);
             if (r > RANGE_M) continue;
