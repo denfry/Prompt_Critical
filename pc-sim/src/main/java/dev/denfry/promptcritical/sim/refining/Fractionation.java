@@ -53,7 +53,15 @@ public final class Fractionation {
      * псевдобинарной пары ключей (x_F = 0,5, чистота p в обоих продуктах).
      */
     public static double effectiveStages(double stages, double reflux, double cutK) {
-        double alpha = relativeVolatility(cutK - KEY_HALF_SPAN_K, cutK + KEY_HALF_SPAN_K, cutK);
+        return effectiveStagesForAlpha(stages, reflux, relativeVolatility(cutK - KEY_HALF_SPAN_K, cutK + KEY_HALF_SPAN_K, cutK));
+    }
+
+    /**
+     * То же для пары ключевых компонентов с известной относительной летучестью {@code alpha} (например, по
+     * константам равновесия газофракционирующей колонны).
+     */
+    public static double effectiveStagesForAlpha(double stages, double reflux, double alpha) {
+        if (!(alpha > 1)) throw new IllegalArgumentException("relative volatility must exceed 1: " + alpha);
         double lo = 0.5 + 1e-9, hi = 1 - 1e-12;
         for (int i = 0; i < 100; i++) {
             double p = 0.5 * (lo + hi);
