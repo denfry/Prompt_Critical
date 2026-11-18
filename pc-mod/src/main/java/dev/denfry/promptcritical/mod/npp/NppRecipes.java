@@ -64,6 +64,18 @@ public final class NppRecipes extends RecipeProvider {
                 .define('C', PcBlocks.CONTROL_ROD_CHANNEL.get()).define('R', PcBlocks.REACTOR_CONTROLLER.get())
                 .define('P', PcItems.STEEL_PLATE.get()).define('Z', PcItems.ZIRCALOY_INGOT.get())
                 .unlockedBy("has_reactor_controller", has(PcBlocks.REACTOR_CONTROLLER.get())).save(out, id("pwr_reactor"));
+        // гермооболочка: железобетон со стальной облицовкой; люк — стальная дверь в обойме; ПАР — каталитические пластины
+        ShapedRecipeBuilder.shaped(RecipeCategory.BUILDING_BLOCKS, PcBlocks.CONTAINMENT_WALL.get(), 8)
+                .pattern("CCC").pattern("CPC").pattern("CCC").define('C', Items.GRAY_CONCRETE).define('P', PcItems.STEEL_PLATE.get())
+                .unlockedBy("has_pwr_reactor", has(PcBlocks.PWR_REACTOR.get())).save(out, id("containment_wall"));
+        ShapedRecipeBuilder.shaped(RecipeCategory.BUILDING_BLOCKS, PcBlocks.CONTAINMENT_HATCH.get())
+                .pattern("PWP").pattern("PDP").pattern("PWP").define('P', PcItems.STEEL_PLATE.get())
+                .define('W', PcBlocks.CONTAINMENT_WALL.get()).define('D', Items.IRON_DOOR)
+                .unlockedBy("has_containment_wall", has(PcBlocks.CONTAINMENT_WALL.get())).save(out, id("containment_hatch"));
+        ShapedRecipeBuilder.shaped(RecipeCategory.MISC, PcBlocks.HYDROGEN_RECOMBINER.get())
+                .pattern("PSP").pattern("SXS").pattern("PSP").define('P', PcItems.STEEL_PLATE.get())
+                .define('S', AllItems.IRON_SHEET.get()).define('X', Items.IRON_BARS)
+                .unlockedBy("has_containment_wall", has(PcBlocks.CONTAINMENT_WALL.get())).save(out, id("hydrogen_recombiner"));
         // компенсатор давления: сосуд, ИПУ сверху, манометр, ТЭНы — медная обмотка
         ShapedRecipeBuilder.shaped(RecipeCategory.MISC, PcBlocks.PRESSURIZER.get())
                 .pattern("PVP").pattern("PXP").pattern("CGC").define('P', PcItems.STEEL_PLATE.get()).define('V', PcItems.SAFETY_VALVE.get())

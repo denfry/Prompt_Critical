@@ -18,8 +18,7 @@ import dev.denfry.promptcritical.mod.registry.PcItems;
 import dev.denfry.promptcritical.sim.automation.AutomationKind;
 import dev.denfry.promptcritical.sim.automation.AutomationSubsystem;
 import dev.denfry.promptcritical.sim.automation.AutomationUnit;
-import dev.denfry.promptcritical.sim.consequence.DamageKind;
-import dev.denfry.promptcritical.sim.consequence.DamageRequest;
+import dev.denfry.promptcritical.sim.consequence.ConsequenceRouter;
 import dev.denfry.promptcritical.sim.core.GridPos;
 import dev.denfry.promptcritical.sim.core.MutableStateTree;
 import dev.denfry.promptcritical.sim.core.TreeStateReader;
@@ -35,6 +34,7 @@ import java.util.Arrays;
 import java.util.List;
 import java.util.Locale;
 import net.minecraft.ChatFormatting;
+import dev.denfry.promptcritical.mod.registry.PcBlocks;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
 import net.minecraft.core.HolderLookup;
@@ -51,6 +51,7 @@ import net.minecraft.world.ItemInteractionResult;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.level.block.state.BlockState;
+import net.minecraft.world.level.block.state.properties.BlockStateProperties;
 import net.minecraft.world.phys.AABB;
 import net.minecraft.world.phys.Vec3;
 import net.neoforged.neoforge.items.IItemHandler;
@@ -102,6 +103,16 @@ public final class PwrReactorBlockEntity extends DeviceBlockEntity implements Fo
     @Nullable
     private BlockPos pressurizer;
     private boolean wasTripped, concentrate;
+    /** Containment scan (04c M10): a closed shell of containment wall / shut hatches around the reactor. */
+    private boolean containmentIntact;
+    private int containmentVolume, recombiners;
+    /** Ticks of airborne release left after a rupture outside an intact containment. */
+    private int releaseTicks;
+    private double releaseI131BqS;
+    public static final int CONTAINMENT_RADIUS = 24;
+    public static final int CONTAINMENT_MAX_VOLUME = 40_000;
+    /** Cs-137 to I-131 activity ratio in an equilibrium LWR core (≈ 0.1, NUREG-1465 inventories). */
+    static final double CS137_PER_I131 = 0.1;
     private int ticks;
 
     public PwrReactorBlockEntity(BlockPos pos, BlockState state) {
@@ -180,6 +191,7 @@ public final class PwrReactorBlockEntity extends DeviceBlockEntity implements Fo
             a.setInput(AutomationUnit.IN_MAIN, reactor.protection().isTripped() ? 1 : 0);
             a.setInput(AutomationUnit.IN_AUX, reactor.power());
         }
+        if (ticks % 100 == 1) scanContainment(sl);
         radiation(sl);
         events(sl, b);
         if (reactor.shutDown()) loadFresh();
@@ -194,7 +206,58 @@ public final class PwrReactorBlockEntity extends DeviceBlockEntity implements Fo
         boolean escaping = reactor.leakKgS() > 0 || reactor.pressurizer().reliefOpen() || reactor.pressurizer().safetyOpen();
         if (failed > 0 && escaping) src = src.plus(Emitter.I131.source(failed * I131_PER_FAILED_BQ));
         RadiationService.source(sl, center, src);
+        if (releaseTicks > 0) {
+            releaseTicks -= 20;
+            Vec3 top = worldPosition.getCenter().add(0, 6, 0);
+            RadiationService.airRelease(sl, top, Emitter.I131, releaseI131BqS);
+            RadiationService.airRelease(sl, top, Emitter.CS137, releaseI131BqS * CS137_PER_I131);
+        }
     }
+
+    /**
+     * Bounded flood fill from the reactor through everything that is not a containment boundary.
+     * Closed when the fill stays within {@link #CONTAINMENT_RADIUS} and {@link #CONTAINMENT_MAX_VOLUME}:
+     * walls and shut hatches stop it; an open hatch, a gap or unloaded chunks let it out.
+     */
+    private void scanContainment(ServerLevel sl) {
+        java.util.ArrayDeque<BlockPos> queue = new java.util.ArrayDeque<>();
+        java.util.HashSet<BlockPos> seen = new java.util.HashSet<>();
+        queue.add(worldPosition);
+        seen.add(worldPosition);
+        boolean closed = true;
+        int pars = 0;
+        while (!queue.isEmpty() && closed) {
+            BlockPos p = queue.poll();
+            for (Direction d : Direction.values()) {
+                BlockPos n = p.relative(d);
+                if (seen.contains(n)) continue;
+                if (Math.abs(n.getX() - worldPosition.getX()) > CONTAINMENT_RADIUS
+                        || Math.abs(n.getY() - worldPosition.getY()) > CONTAINMENT_RADIUS
+                        || Math.abs(n.getZ() - worldPosition.getZ()) > CONTAINMENT_RADIUS
+                        || seen.size() >= CONTAINMENT_MAX_VOLUME || !sl.isLoaded(n)) {
+                    closed = false;
+                    break;
+                }
+                BlockState s = sl.getBlockState(n);
+                if (isContainmentBoundary(s)) continue;
+                if (s.is(PcBlocks.HYDROGEN_RECOMBINER.get())) pars++;
+                seen.add(n);
+                queue.add(n);
+            }
+        }
+        containmentIntact = closed;
+        containmentVolume = closed ? seen.size() : 0;
+        recombiners = closed ? pars : 0;
+    }
+
+    static boolean isContainmentBoundary(BlockState s) {
+        if (s.is(PcBlocks.CONTAINMENT_WALL.get())) return true;
+        return s.is(PcBlocks.CONTAINMENT_HATCH.get()) && !s.getValue(BlockStateProperties.OPEN);
+    }
+
+    public boolean containmentIntact() { return containmentIntact; }
+    public int containmentVolumeM3() { return containmentVolume; }
+    public int recombiners() { return recombiners; }
 
     private void events(ServerLevel sl, SimLevelBinding b) {
         boolean tripped = reactor.protection().isTripped();
@@ -215,7 +278,17 @@ public final class PwrReactorBlockEntity extends DeviceBlockEntity implements Fo
         }
         if (reactor.ruptureEvent()) {
             GridPos o = new GridPos(worldPosition.getX(), worldPosition.getY(), worldPosition.getZ());
-            b.damage().submit(new DamageRequest(requestSeq++, simId(), null, DamageKind.BLAST, o, RUPTURE_J, 4, 3));
+            // R6: the rupture goes through the consequence router. Inside an intact containment the
+            // activity stays in the building (the failed-fuel point source above doses those inside);
+            // otherwise the failed fuel's I-131/Cs-137 goes up as an airborne plume for a minute.
+            int failed = reactor.failedAssemblies();
+            ConsequenceRouter.Routed routed = ConsequenceRouter.route(ConsequenceRouter.Event.VESSEL_RUPTURE,
+                    requestSeq++, simId(), null, o, RUPTURE_J, containmentIntact, failed > 0);
+            if (routed.damage() != null) b.damage().submit(routed.damage());
+            if (routed.release() == ConsequenceRouter.ReleasePath.ENVIRONMENT) {
+                releaseTicks = 60 * 20;
+                releaseI131BqS = failed * I131_PER_FAILED_BQ / 60.0;
+            }
             sl.playSound(null, worldPosition, SoundEvents.GENERIC_EXPLODE.value(), SoundSource.BLOCKS, 2f, 0.7f);
             for (ServerPlayer p : sl.getPlayers(p -> p.distanceToSqr(worldPosition.getCenter()) < 96 * 96))
                 p.displayClientMessage(NppText.msg("pwr_rupture").withStyle(ChatFormatting.DARK_RED), false);
