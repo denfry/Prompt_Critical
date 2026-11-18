@@ -123,8 +123,9 @@ public final class SteelworksRecipes extends RecipeProvider {
                 .pattern("SSS").pattern("ICI").define('S', shaft).define('I', Items.IRON_INGOT).define('C', casing)
                 .unlockedBy("has_steel_ingot", has(PcItems.STEEL_INGOT.get())).save(out, id("roller_table"));
         ShapedRecipeBuilder.shaped(RecipeCategory.MISC, PcBlocks.ROLLING_MILL_STAND.get())
+                // шестерённая клеть: валки разводит пара зубчатых колёс с фрезерного станка
                 .pattern("BIB").pattern("SGS").pattern("BCB").define('B', Items.IRON_BLOCK).define('I', Items.IRON_INGOT).define('S', shaft)
-                .define('G', AllBlocks.COGWHEEL.get()).define('C', casing)
+                .define('G', PcItems.SPUR_GEAR.get()).define('C', casing)
                 .unlockedBy("has_steel_ingot", has(PcItems.STEEL_INGOT.get())).save(out, id("rolling_mill_stand"));
         ShapedRecipeBuilder.shaped(RecipeCategory.MISC, PcBlocks.PIERCING_MILL.get())
                 .pattern("BRB").pattern("SGS").pattern("BCB").define('B', beam).define('R', rod).define('S', shaft)
@@ -134,8 +135,9 @@ public final class SteelworksRecipes extends RecipeProvider {
                 .pattern("PWP").pattern("SCS").define('P', plate).define('W', PcItems.COPPER_WIRE.get()).define('S', shaft).define('C', casing)
                 .unlockedBy("has_plate", hasPlate).save(out, id("pipe_welder"));
         ShapedRecipeBuilder.shaped(RecipeCategory.MISC, PcBlocks.HYDROTEST_BENCH.get())
-                .pattern("GPG").pattern("BMB").define('G', AllBlocks.FLUID_VALVE.get()).define('P', AllBlocks.MECHANICAL_PUMP.get())
-                .define('B', beam).define('M', Items.CLOCK)
+                // торцы трубы зажимают шлифованные плиты: уплотнение держит пробное давление только на плоской поверхности
+                .pattern("GPG").pattern("BMB").pattern(" R ").define('G', AllBlocks.FLUID_VALVE.get()).define('P', AllBlocks.MECHANICAL_PUMP.get())
+                .define('B', beam).define('M', Items.CLOCK).define('R', PcItems.GROUND_PLATE.get())
                 .unlockedBy("has_seamless_pipe", has(seamless)).save(out, id("hydrotest_bench"));
 
         // ВРУ даёт кислород первой плавке — без стали; криобак — на бесшовных трубах

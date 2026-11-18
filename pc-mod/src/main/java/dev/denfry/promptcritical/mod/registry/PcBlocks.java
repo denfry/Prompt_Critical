@@ -71,6 +71,7 @@ import dev.denfry.promptcritical.mod.mine.MineHoistBlock;
 import dev.denfry.promptcritical.mod.mine.PoweredRoofSupportBlock;
 import dev.denfry.promptcritical.mod.foundry.KineticMachineBlock.ShaftSide;
 import dev.denfry.promptcritical.mod.foundry.MachineToolBlockEntity;
+import dev.denfry.promptcritical.mod.foundry.ProductionToolBlockEntity;
 import dev.denfry.promptcritical.mod.grid.BreakerCellBlockEntity;
 import dev.denfry.promptcritical.mod.grid.CableBlock;
 import dev.denfry.promptcritical.mod.grid.ConnectorBlockEntity;
@@ -383,6 +384,15 @@ public final class PcBlocks {
             Spec.facing(PcProperties.RUNNING).footprint(FP_WIDE2), KineticMachineBlock.with(ShaftSide.LEFT, MachineToolBlockEntity::lathe));
     public static final DeferredBlock<PcDeviceBlock> DRILL_PRESS = device("drill_press", machine(),
             Spec.facing(PcProperties.RUNNING).footprint(FP_TALL2), KineticMachineBlock.with(ShaftSide.BACK, MachineToolBlockEntity::drillPress));
+    // станочный парк (плейсхолдеры арта): фрезерный 1×2×1, строгальный и плоскошлифовальный 2×1×1; вал слева
+    public static final DeferredBlock<PcDeviceBlock> MILLING_MACHINE = device("milling_machine", machine(),
+            Spec.facing(PcProperties.RUNNING).footprint(FP_TALL2),
+            KineticMachineBlock.with(ShaftSide.LEFT, ProductionToolBlockEntity::milling));
+    public static final DeferredBlock<PcDeviceBlock> SHAPING_MACHINE = device("shaping_machine", machine(),
+            Spec.facing(PcProperties.RUNNING).footprint(FP_WIDE2), KineticMachineBlock.with(ShaftSide.LEFT, ProductionToolBlockEntity::shaper));
+    public static final DeferredBlock<PcDeviceBlock> SURFACE_GRINDER = device("surface_grinder", machine(),
+            Spec.facing(PcProperties.RUNNING).footprint(FP_WIDE2),
+            KineticMachineBlock.with(ShaftSide.LEFT, ProductionToolBlockEntity::grinder));
 
     // --- коксохим и домна (08 §8.4–8.5, этап 10 M3) ---
     public static final DeferredBlock<PcDeviceBlock> COKE_OVEN = device("coke_oven", brick().pushReaction(PushReaction.BLOCK),

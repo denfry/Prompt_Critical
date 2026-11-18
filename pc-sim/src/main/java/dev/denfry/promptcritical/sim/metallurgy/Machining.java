@@ -7,22 +7,31 @@ import java.util.Objects;
  * P_c = k_c·a_p·f·v_c → стресс Create; стойкость резца {@code cutting_tool} по Тейлору v_c·T^n = C_T.
  */
 public final class Machining {
-    /** Обрабатываемый материал: удельная сила резания k_c и множитель C_T к стали. */
+    /**
+     * Обрабатываемый материал: удельная сила резания k_c токарного станка (при толщине среза ≈ 0,25 мм), множитель
+     * C_T к стали и константы Кинцле k_c1.1 (сила на 1 мм² сечения при h = b = 1 мм) и m_c для любой толщины среза:
+     * k_c = k_c1.1 · h^{−m_c} (O. Kienzle, «Die Bestimmung von Kräften und Leistungen an spanenden Werkzeugen und
+     * Werkzeugmaschinen», VDI-Z 94 (1952); таблица König W., Klocke F. «Fertigungsverfahren 1», для C45 и GG-20).
+     */
     public enum WorkMaterial {
-        /** Сталь 45: k_c ≈ 2000 Н/мм². */
-        STEEL_45(2000, 1.0),
-        /** Чугун: 1100 Н/мм²; C_T быстрорежущего по серому чугуну ≈ 0,9 стального [сверить]. */
-        CAST_IRON(1100, 0.9),
-        /** Алюминий: 700 Н/мм²; режется в разы быстрее, C_T ×4 [сверить]. */
-        ALUMINIUM(700, 4.0);
+        /** Сталь 45 (C45): k_c ≈ 2000 Н/мм²; k_c1.1 = 1450 Н/мм², m_c = 0,27 [сверить по König–Klocke]. */
+        STEEL_45(2000, 1.0, 1450, 0.27),
+        /** Чугун (СЧ20 ≈ GG-20): 1100 Н/мм²; k_c1.1 = 1020, m_c = 0,25; C_T быстрорежущего ≈ 0,9 стального [сверить]. */
+        CAST_IRON(1100, 0.9, 1020, 0.25),
+        /** Алюминий: 700 Н/мм²; k_c1.1 ≈ 500, m_c = 0,25 [сверить]; режется в разы быстрее, C_T ×4 [сверить]. */
+        ALUMINIUM(700, 4.0, 500, 0.25);
 
         /** k_c, Н/мм². */
         public final double kc;
         public final double taylorScale;
+        /** k_c1.1, Н/мм², и показатель m_c Кинцле. */
+        public final double kc11, mc;
 
-        WorkMaterial(double kc, double taylorScale) {
+        WorkMaterial(double kc, double taylorScale, double kc11, double mc) {
             this.kc = kc;
             this.taylorScale = taylorScale;
+            this.kc11 = kc11;
+            this.mc = mc;
         }
 
         /** Материал заготовки по сплаву отливки; медь и бронза режутся как чугун (k_c ≈ 1100) [допущение]. */
@@ -57,6 +66,25 @@ public final class Machining {
     /** Съём металла a_p·f·v_c, мм³/с. */
     public static double removalRateMm3S(double depthMm, double feedMmRev, double vcMMin) {
         return depthMm * feedMmRev * vcMMin * 1000 / 60;
+    }
+
+    /**
+     * Удельная сила резания по Кинцле k_c = k_c1.1 · h^{−m_c}, Н/мм²: тонкая стружка режется с большей удельной силой
+     * (на кромке растёт доля трения и пластического сдвига).
+     *
+     * @param hMm толщина среза h, мм (у фрезы — средняя h_m)
+     */
+    public static double kienzleKc(WorkMaterial m, double hMm) {
+        if (!(hMm > 0)) throw new IllegalArgumentException("h: " + hMm);
+        return m.kc11 * Math.pow(hMm, -m.mc);
+    }
+
+    /**
+     * Рост силы резания с износом: изношенная задняя грань трётся о поверхность, к концу стойкости (VB ≈ 0,3–0,5 мм)
+     * сила выше на ~30 % (König, Klocke «Fertigungsverfahren 1», поправка K_ver на износ 1,3–1,5) [сверить].
+     */
+    public static double wearForceFactor(double wear) {
+        return 1 + 0.3 * Math.max(0, Math.min(1, wear));
     }
 
     public double taylorN(ToolMaterial t) {
@@ -98,6 +126,11 @@ public final class Machining {
 
         public boolean dull() {
             return wear >= 1;
+        }
+
+        /** Износ за {@code dt} с, если кромка в резании долю {@code share} времени при стойкости {@code lifeMin}. */
+        void wear(double dt, double share, double lifeMin) {
+            if (lifeMin > 0) wear = Math.min(1, wear + dt * share / 60 / lifeMin);
         }
 
         /** Переточка. */

@@ -45,6 +45,15 @@ public final class FoundryRecipes extends RecipeProvider {
         ShapelessRecipeBuilder.shapeless(RecipeCategory.TOOLS, PcItems.CUTTING_TOOL.get())
                 .requires(Items.IRON_INGOT, 2).requires(Items.FLINT)
                 .unlockedBy("has_iron", has(Items.IRON_INGOT)).save(out, id("cutting_tool"));
+        // дисковая фреза: быстрорежущая пластина на стальном диске; круг — абразив (кремень) на керамической связке (глина),
+        // обожжённой вместе с песком-наполнителем
+        ShapedRecipeBuilder.shaped(RecipeCategory.TOOLS, PcItems.MILLING_CUTTER.get())
+                .pattern(" T ").pattern("TIT").pattern(" T ").define('T', PcItems.CUTTING_TOOL.get()).define('I', Items.IRON_INGOT)
+                .unlockedBy("has_cutting_tool", has(PcItems.CUTTING_TOOL.get())).save(out, id("milling_cutter"));
+        ShapedRecipeBuilder.shaped(RecipeCategory.TOOLS, PcItems.GRINDING_WHEEL.get())
+                .pattern("FCF").pattern("CSC").pattern("FCF").define('F', Items.FLINT).define('C', Items.CLAY_BALL)
+                .define('S', Items.SAND)
+                .unlockedBy("has_flint", has(Items.FLINT)).save(out, id("grinding_wheel"));
         SimpleCookingRecipeBuilder.smelting(Ingredient.of(PcBlocks.FIRECLAY.get()), RecipeCategory.MISC,
                 PcItems.REFRACTORY_BRICK.get(), 0.1f, 200)
                 .unlockedBy("has_fireclay", has(PcBlocks.FIRECLAY.get())).save(out, id("refractory_brick"));
@@ -80,5 +89,20 @@ public final class FoundryRecipes extends RecipeProvider {
                 .pattern("IGI").pattern(" C ").pattern(" S ").define('I', Items.IRON_INGOT).define('G', AllBlocks.COGWHEEL.get())
                 .define('S', AllBlocks.SHAFT.get()).define('C', AllBlocks.ANDESITE_CASING.get())
                 .unlockedBy("has_casing", has(AllBlocks.ANDESITE_CASING.get())).save(out, id("drill_press"));
+        // станочный парк строит сам себя: строгальный — из деталей Create, его направляющие идут в фрезерный и
+        // шлифовальный, зубчатые колёса фрезерного — в коробку шлифовального
+        ShapedRecipeBuilder.shaped(RecipeCategory.MISC, PcBlocks.SHAPING_MACHINE.get())
+                .pattern("IPI").pattern("GCS").define('I', Items.IRON_INGOT).define('P', AllBlocks.MECHANICAL_PISTON.get())
+                .define('G', AllBlocks.COGWHEEL.get()).define('C', AllBlocks.ANDESITE_CASING.get()).define('S', AllBlocks.SHAFT.get())
+                .unlockedBy("has_lathe", has(PcBlocks.MACHINE_LATHE.get())).save(out, id("shaping_machine"));
+        ShapedRecipeBuilder.shaped(RecipeCategory.MISC, PcBlocks.MILLING_MACHINE.get())
+                .pattern("IGI").pattern("WCW").pattern("ISI").define('I', Items.IRON_INGOT).define('G', AllBlocks.COGWHEEL.get())
+                .define('W', PcItems.MACHINE_SLIDEWAY.get()).define('C', AllBlocks.ANDESITE_CASING.get()).define('S', AllBlocks.SHAFT.get())
+                .unlockedBy("has_slideway", has(PcItems.MACHINE_SLIDEWAY.get())).save(out, id("milling_machine"));
+        ShapedRecipeBuilder.shaped(RecipeCategory.MISC, PcBlocks.SURFACE_GRINDER.get())
+                .pattern("IBI").pattern("WCW").pattern("GSG").define('I', Items.IRON_INGOT).define('B', AllItems.BELT_CONNECTOR.get())
+                .define('W', PcItems.MACHINE_SLIDEWAY.get()).define('C', AllBlocks.ANDESITE_CASING.get())
+                .define('G', PcItems.SPUR_GEAR.get()).define('S', AllBlocks.SHAFT.get())
+                .unlockedBy("has_spur_gear", has(PcItems.SPUR_GEAR.get())).save(out, id("surface_grinder"));
     }
 }

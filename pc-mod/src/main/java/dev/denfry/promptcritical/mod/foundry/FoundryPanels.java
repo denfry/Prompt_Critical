@@ -17,6 +17,7 @@ import dev.denfry.promptcritical.sim.metallurgy.CastAlloy;
 import dev.denfry.promptcritical.sim.metallurgy.CastingKind;
 import dev.denfry.promptcritical.sim.metallurgy.CrucibleUnit;
 import dev.denfry.promptcritical.sim.metallurgy.CupolaUnit;
+import dev.denfry.promptcritical.sim.metallurgy.MachinedPart;
 import dev.denfry.promptcritical.sim.mining.CoalJig;
 import java.util.List;
 import net.minecraft.ChatFormatting;
@@ -47,6 +48,12 @@ public final class FoundryPanels {
     // станки
     public static final int L_SPINDLE_RPM = OWN, L_PROGRESS_PERMIL = OWN + 1, L_WEAR_PERMIL = OWN + 2, L_KIND = OWN + 3,
             L_CHANNELS = OWN + 4;
+    // станочный парк: скорость (об/мин, дв. ход/мин), подача ×1000, Ra ×100 текущего прохода, мощность, v_c ×10, деталь,
+    // итог последней снятой детали (брак — ProductionToolUnit.Reject, Ra ×100, IT)
+    public static final int P_SPEED = OWN, P_PROGRESS_PERMIL = OWN + 1, P_WEAR_PERMIL = OWN + 2, P_PART = OWN + 3,
+            P_FEED_UM = OWN + 4, P_RA100 = OWN + 5, P_POWER_W = OWN + 6, P_VC10 = OWN + 7, P_LAST_REJECT = OWN + 8,
+            P_LAST_RA100 = OWN + 9, P_LAST_IT = OWN + 10, P_CHANNELS = OWN + 11;
+    public static final int BUTTON_FEED = 0;
 
     private static final Tr WELL = PanelText.tr("cupola.well", "Well", "Горн"),
             BLAST = PanelText.tr("cupola.blast", "Blast", "Дутьё"),
@@ -172,14 +179,40 @@ public final class FoundryPanels {
             .output(84, 108, 6, CASTINGS.get()).output(102, 108, 7, CASTINGS.get()).output(120, 108, 8, CASTINGS.get())
             .build();
 
+    private static final Tr FEED = PanelText.tr("shop.feed", "Feed", "Подача"),
+            FEED_TIP = PanelText.tr("shop.feed_tip", "Next step of the feed gearbox: finer feed — cleaner surface, longer cut",
+                    "Следующая ступень коробки подач: мельче подача — чище поверхность, дольше обработка"),
+            CUTTER = PanelText.tr("shop.cutter", "Cutter", "Фреза"),
+            STROKES = PanelText.tr("shop.strokes", "Strokes", "Ходы"),
+            WHEEL = PanelText.tr("shop.wheel", "Wheel", "Круг"),
+            DSPM = PanelText.tr("unit.dspm", "str/min", "дв.х/мин"),
+            LOADING = PanelText.tr("shop.loading", "Wheel loading", "Засаливание круга"),
+            BURN = PanelText.tr("shop.burn", "Burn", "Прижог"),
+            SHOP_STATUS = PanelText.tr("shop.status", "%s · f %s mm · Ra %s µm · %s W", "%s · f %s мм · Ra %s мкм · %s Вт"),
+            SHOP_IDLE = PanelText.tr("shop.idle", "No workpiece · f %s mm", "Нет заготовки · f %s мм"),
+            LAST_OK = PanelText.tr("shop.last_ok", "Last part: Ra %s µm, IT%s", "Последняя деталь: Ra %s мкм, IT%s"),
+            LAST_ROUGH = PanelText.tr("shop.last_rough", "Scrap: too rough, Ra %s µm", "Брак: грубо, Ra %s мкм"),
+            LAST_BURN = PanelText.tr("shop.last_burn", "Scrap: grinding burn", "Брак: прижог"),
+            LAST_DEFECT = PanelText.tr("shop.last_defect", "Scrap: casting defect opened up", "Брак: вскрылся литейный дефект"),
+            BLANK_SLOT = PanelText.tr("shop.blank_slot", "Blank: casting, bar or plate", "Заготовка: отливка, пруток или лист"),
+            CUTTER_SLOT = PanelText.tr("shop.cutter_slot", "Disc milling cutter", "Дисковая фреза"),
+            WHEEL_SLOT = PanelText.tr("shop.wheel_slot", "Grinding wheel", "Шлифовальный круг"),
+            PART_SLOT = PanelText.tr("shop.part_slot", "Finished part or scrap", "Готовая деталь или лом");
+
     public static final PanelLayout LATHE = tool("machine_lathe", 800);
     public static final PanelLayout DRILL_PRESS = tool("drill_press", 1200);
+    public static final PanelLayout MILLING = production("milling_machine", 512, RPM.get(), CUTTER.get(), WEAR.get(),
+            CUTTER_SLOT.get(), PcItems.MILLING_CUTTER);
+    public static final PanelLayout SHAPER = production("shaping_machine", 128, DSPM.get(), STROKES.get(), WEAR.get(),
+            TOOL_SLOT.get(), PcItems.CUTTING_TOOL);
+    public static final PanelLayout GRINDER = production("surface_grinder", 6000, RPM.get(), WHEEL.get(), LOADING.get(),
+            WHEEL_SLOT.get(), PcItems.GRINDING_WHEEL);
 
     private FoundryPanels() {
     }
 
     public static List<PanelLayout> all() {
-        return List.of(CUPOLA, CRUCIBLE, COAL_JIG, MOLDING, SHAKEOUT, LATHE, DRILL_PRESS);
+        return List.of(CUPOLA, CRUCIBLE, COAL_JIG, MOLDING, SHAKEOUT, LATHE, DRILL_PRESS, MILLING, SHAPER, GRINDER);
     }
 
     private static PanelLayout tool(String id, double spindleMax) {
@@ -197,6 +230,48 @@ public final class FoundryPanels {
                 .caption(70, 129, Component.literal("→"))
                 .output(104, 124, 2, DONE_SLOT.get())
                 .build();
+    }
+
+    /** Щит станка парка: тахометр вала и шпинделя, лампы работы и прижога, ход детали, износ, кнопка подачи, слоты. */
+    private static PanelLayout production(String id, double speedMax, Component unit, Component speedName, Component wearName,
+            Component toolSlot, java.util.function.Supplier<? extends net.minecraft.world.item.Item> tool) {
+        return PanelLayout.builder(id, 200, 150, P_CHANNELS)
+                .dial(8, 24, false, SHAFT_RPM10, 10, 256, Double.NaN, 0, RPM.get(), SHAFT.get(), shaftTip())
+                .dial(66, 24, false, P_SPEED, 1, speedMax, Double.NaN, 0, unit, speedName, null)
+                .lamp(124, 26, FLAGS, F_RUNNING, LampColor.AMBER, RUNNING.get())
+                .lamp(160, 26, FLAGS, F_HELD, LampColor.RED, BURN.get())
+                .bar(124, 56, 68, P_PROGRESS_PERMIL, 10, 100, 0xFFC8A050, PROGRESS.get(),
+                        v -> Component.literal(v.num(P_PROGRESS_PERMIL, 10, 0) + " %"))
+                .bar(124, 80, 68, P_WEAR_PERMIL, 10, 100, 0xFFC04030, wearName,
+                        v -> Component.literal(v.raw(P_WEAR_PERMIL) < 0 ? "—" : v.num(P_WEAR_PERMIL, 10, 0) + " %"))
+                .readout(8, 92, 184, FoundryPanels::shopStatus, FoundryPanels::shopLast)
+                .button(8, 104, 60, BUTTON_FEED, FEED.get(), FEED_TIP.get())
+                .slot(16, 124, 0, s -> ProductionToolBlockEntity.workpiece(s) != null, BLANK_SLOT.get())
+                .slot(40, 124, 1, s -> s.is(tool.get()), toolSlot)
+                .caption(70, 129, Component.literal("→"))
+                .output(104, 124, 2, PART_SLOT.get())
+                .build();
+    }
+
+    private static Component shopStatus(PanelValues v) {
+        String feed = v.num(P_FEED_UM, 1000, 3);
+        int p = v.raw(P_PART);
+        MachinedPart[] parts = MachinedPart.values();
+        if (p < 0 || p >= parts.length) return SHOP_IDLE.get(feed);
+        String ra = v.raw(P_RA100) < 0 ? "—" : v.num(P_RA100, 100, 2);
+        return SHOP_STATUS.get(FoundryText.part(parts[p]), feed, ra, v.raw(P_POWER_W));
+    }
+
+    private static Component shopLast(PanelValues v) {
+        int r = v.raw(P_LAST_REJECT);
+        String ra = v.num(P_LAST_RA100, 100, 2);
+        return switch (r) {
+            case 0 -> LAST_OK.get(ra, v.raw(P_LAST_IT));
+            case 1 -> LAST_DEFECT.get();
+            case 2 -> LAST_ROUGH.get(ra);
+            case 3 -> LAST_BURN.get();
+            default -> Component.empty();
+        };
     }
 
     private static PanelLayout.Tip shaftTip() {

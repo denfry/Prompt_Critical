@@ -1,0 +1,32 @@
+{
+  "parent": "minecraft:recipes/root",
+  "criteria": {
+    "has_cutting_tool": {
+      "conditions": {
+        "items": [
+          {
+            "items": "promptcritical:cutting_tool"
+          }
+        ]
+      },
+      "trigger": "minecraft:inventory_changed"
+    },
+    "has_the_recipe": {
+      "conditions": {
+        "recipe": "promptcritical:foundry/milling_cutter"
+      },
+      "trigger": "minecraft:recipe_unlocked"
+    }
+  },
+  "requirements": [
+    [
+      "has_the_recipe",
+      "has_cutting_tool"
+    ]
+  ],
+  "rewards": {
+    "recipes": [
+      "promptcritical:foundry/milling_cutter"
+    ]
+  }
+}

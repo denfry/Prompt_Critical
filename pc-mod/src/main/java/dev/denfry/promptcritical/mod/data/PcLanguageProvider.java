@@ -70,6 +70,9 @@ public final class PcLanguageProvider extends LanguageProvider {
         b("shakeout_grate", "Shakeout Grate", "Выбивная решётка");
         b("machine_lathe", "Lathe", "Токарный станок");
         b("drill_press", "Drill Press", "Сверлильный станок");
+        b("milling_machine", "Knee Milling Machine", "Консольно-фрезерный станок");
+        b("shaping_machine", "Shaping Machine", "Поперечно-строгальный станок");
+        b("surface_grinder", "Surface Grinder", "Плоскошлифовальный станок");
         b("coke_oven", "Coke Oven", "Коксовая камера");
         b("coke_battery_wall", "Coke Battery Flue Wall", "Простенок коксовой батареи");
         b("gas_collector_main", "Gas Collector Main", "Газосборник");
@@ -197,6 +200,13 @@ public final class PcLanguageProvider extends LanguageProvider {
         i("casting", "Casting", "Отливка");
         i("refractory_brick", "Refractory Brick", "Огнеупорный кирпич");
         i("cutting_tool", "Cutting Tool", "Резец");
+        i("milling_cutter", "Disc Milling Cutter", "Дисковая фреза");
+        i("grinding_wheel", "Grinding Wheel", "Шлифовальный круг");
+        i("spur_gear", "Spur Gear", "Зубчатое колесо");
+        i("keyed_shaft", "Keyed Shaft", "Вал со шпоночным пазом");
+        i("machine_slideway", "Machine Slideway", "Направляющая станины");
+        i("planed_plate", "Planed Plate", "Строганая плита");
+        i("ground_plate", "Ground Plate", "Шлифованная плита");
         i("flame_safety_lamp", "Flame Safety Lamp", "Бензиновая лампа");
         i("self_rescuer", "Self-Rescuer", "Самоспасатель");
         i("stone_duster", "Stone Duster", "Осланцеватель");

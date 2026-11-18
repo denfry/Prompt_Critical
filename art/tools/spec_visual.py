@@ -286,4 +286,27 @@ m("drill_press", "machine_shop", [
 m("drill_press/spindle", "machine_shop", vcyl("quill", 8, 7, 1, 14, 20, "pol", 8) + vcyl("chuck", 8, 7, 1.6, 13, 15, "d", 8)
   + vcyl("bit", 8, 7, 0.4, 11, 13, "d", 8), kind="partial")
 
+# фрезерный и плоскошлифовальный — плейсхолдеры spec_metallurgy (механический цех)
+# поперечно-строгальный 7305 2×1×1 (вал слева): станина с кулисой и мотором, стол на поперечине со струбциной-тисками;
+# ползун с резцовой головкой ходит по x (partial, ±4 пикселя)
+m("shaping_machine", "machine_shop", [
+    el("base", [0, 0, 2], [32, 2, 14], "mach"),
+    el("body", [0, 2, 3], [18, 14, 13], "mach"),
+    el("drive_boss", [-0.02, 5.5, 5.5], [1, 10.5, 10.5], "ci"),
+    el("motor", [2, 4, 13], [10, 10, 16.0], "ribs"),
+    el("ram_guide", [2, 14, 4.5], [18, 14.5, 11.5], "pol"),
+    el("cross_rail", [18, 7, 1], [20, 11, 15], "pol"),
+    el("table", [20, 4, 3], [30, 11, 13], "mach", faces={"up": "tslot"}),
+    el("table_leg", [22, 2, 5], [28, 4, 11], "d"),
+    el("vise", [22, 11, 5], [28, 12.5, 11], "d"),
+    el("work", [23, 12.5, 6], [27, 13.2, 10], "ci"),
+    el("stroke_lever", [8, 14, 2], [9, 17, 3], "red"),
+] + wheel("feed_wheel", "z", 1.6, 1.0, 1.8, (12, 8, 1.4)))
+m("shaping_machine/ram", "machine_shop", [
+    el("ram", [4, 14.5, 5], [22, 18, 11], "machs"),
+    el("head", [20, 12, 6], [24, 18, 10], "mach"),
+    el("clapper", [21, 10.5, 6.5], [23, 12, 9.5], "d"),
+    el("tool", [21.5, 9.2, 7.5], [22.5, 10.5, 8.5], "pol"),
+], kind="partial")
+
 # отсадочная машина нарисована вручную в Blockbench: art/blockbench/coal_prep/coal_jig.author.js

@@ -67,6 +67,18 @@ public final class PcItems {
     /** Быстрорежущий резец: прочность — износ по Тейлору (08 §8.10). */
     public static final DeferredItem<Item> CUTTING_TOOL = registered(ITEMS.registerSimpleItem("cutting_tool",
             new Item.Properties().durability(100)));
+    /** Дисковая фреза Р6М5 Ø80 для фрезерного станка: прочность — износ по Тейлору. */
+    public static final DeferredItem<Item> MILLING_CUTTER = registered(ITEMS.registerSimpleItem("milling_cutter",
+            new Item.Properties().durability(100)));
+    /** Шлифовальный круг ПП 250×20×76: прочность — засаливание до правки. */
+    public static final DeferredItem<Item> GRINDING_WHEEL = registered(ITEMS.registerSimpleItem("grinding_wheel",
+            new Item.Properties().durability(100)));
+    /** Детали станочного парка (компонент {@code machined_finish}: Ra и квалитет). */
+    public static final DeferredItem<Item> SPUR_GEAR = item("spur_gear", 16);
+    public static final DeferredItem<Item> KEYED_SHAFT = item("keyed_shaft", 16);
+    public static final DeferredItem<Item> MACHINE_SLIDEWAY = item("machine_slideway", 16);
+    public static final DeferredItem<Item> PLANED_PLATE = item("planed_plate", 16);
+    public static final DeferredItem<Item> GROUND_PLATE = item("ground_plate", 16);
     public static final DeferredItem<Item> FLAME_SAFETY_LAMP = item("flame_safety_lamp", 1);
     public static final DeferredItem<MineInstrumentItem> SELF_RESCUER = instrument("self_rescuer", MineInstrumentItem.Kind.SELF_RESCUER, 16);
     public static final DeferredItem<MineInstrumentItem> STONE_DUSTER = instrument("stone_duster", MineInstrumentItem.Kind.STONE_DUSTER, 1);

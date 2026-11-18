@@ -3,6 +3,7 @@ package dev.denfry.promptcritical.mod.foundry;
 import dev.denfry.promptcritical.mod.PromptCritical;
 import dev.denfry.promptcritical.sim.metallurgy.CastingDefect;
 import dev.denfry.promptcritical.sim.metallurgy.CastingKind;
+import dev.denfry.promptcritical.sim.metallurgy.MachinedPart;
 import dev.denfry.promptcritical.sim.metallurgy.CastingSpec;
 import java.util.LinkedHashMap;
 import java.util.List;
@@ -27,6 +28,24 @@ public final class FoundryText {
         kind(CastingKind.FLYWHEEL, "flywheel", "маховик");
         kind(CastingKind.INGOT_MOLD, "ingot mould", "изложница");
         kind(CastingKind.BEARING_HOUSING, "bearing housing", "корпус подшипника");
+        kind(CastingKind.MACHINE_BED, "machine bed", "станина");
+        kind(CastingKind.BASE_PLATE, "base plate", "плита");
+        part(MachinedPart.SPUR_GEAR, "spur gear", "зубчатое колесо");
+        part(MachinedPart.KEYED_SHAFT, "keyed shaft", "вал со шпоночным пазом");
+        part(MachinedPart.MACHINE_SLIDEWAY, "slideway", "направляющая");
+        part(MachinedPart.PLANED_PLATE, "planed plate", "строганая плита");
+        part(MachinedPart.GROUND_PLATE, "ground plate", "шлифованная плита");
+        msg("material.steel_45", "steel 45", "сталь 45");
+        msg("material.cast_iron", "cast iron", "чугун");
+        msg("material.aluminium", "aluminium", "алюминий");
+        msg("finish", "%s · Ra %s µm · IT%s", "%s · Ra %s мкм · IT%s");
+        msg("shop", "%s %s%%, speed %s, feed %s mm, tool wear %s%%", "%s %s%%, скорость %s, подача %s мм, износ инструмента %s%%");
+        msg("shop_idle", "No workpiece; speed %s, feed %s mm, tool wear %s%%",
+                "Заготовки нет; скорость %s, подача %s мм, износ инструмента %s%%");
+        msg("feed_set", "Feed %s mm", "Подача %s мм");
+        msg("not_for_this_machine", "This machine does not take that", "Этот станок такое не берёт");
+        msg("wheel_burst", "The grinding wheel burst: it was spun past 1.5 × its working speed",
+                "Круг разорвало: его разогнали выше 1,5 рабочей скорости");
         alloy("gray_iron", "grey cast iron", "серый чугун");
         alloy("carbon_steel", "carbon steel", "углеродистая сталь");
         alloy("bronze", "tin bronze", "оловянная бронза");
@@ -76,6 +95,20 @@ public final class FoundryText {
 
     private static void kind(CastingKind k, String en, String ru) {
         LANG.put(kindKey(k), new String[] {en, ru});
+    }
+
+    private static void part(MachinedPart p, String en, String ru) {
+        LANG.put(P + "part." + p.itemId(), new String[] {en, ru});
+    }
+
+    public static MutableComponent part(MachinedPart p) {
+        return Component.translatable(P + "part." + p.itemId());
+    }
+
+    /** Строка подсказки детали: материал, Ra, квалитет. */
+    public static MutableComponent finish(FoundryComponents.Finish f) {
+        return msg("finish", Component.translatable(P + "material." + f.material()),
+                String.format(Locale.ROOT, "%.2f", f.raUm()), f.itGrade());
     }
 
     private static void alloy(String id, String en, String ru) {

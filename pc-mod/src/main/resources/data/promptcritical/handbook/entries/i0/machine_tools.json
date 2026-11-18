@@ -1,0 +1,104 @@
+{
+  "category": "promptcritical:i0",
+  "title": "handbook.promptcritical.entry.i0.machine_tools.title",
+  "icon": "promptcritical:milling_machine",
+  "sort": 125,
+  "unlock": {
+    "type": "always"
+  },
+  "pages": [
+    {
+      "type": "text",
+      "file": "main"
+    },
+    {
+      "type": "formula",
+      "formula": "promptcritical:kienzle",
+      "vars": [
+        {
+          "symbol": "k_c",
+          "text": "handbook.promptcritical.entry.i0.machine_tools.pages.1.vars.0.text"
+        },
+        {
+          "symbol": "k_{c1.1}, m_c",
+          "text": "handbook.promptcritical.entry.i0.machine_tools.pages.1.vars.1.text"
+        },
+        {
+          "symbol": "h",
+          "text": "handbook.promptcritical.entry.i0.machine_tools.pages.1.vars.2.text"
+        },
+        {
+          "symbol": "Q",
+          "text": "handbook.promptcritical.entry.i0.machine_tools.pages.1.vars.3.text"
+        }
+      ],
+      "caption": "handbook.promptcritical.entry.i0.machine_tools.pages.1.caption"
+    },
+    {
+      "type": "formula",
+      "formula": "promptcritical:surface_roughness",
+      "vars": [
+        {
+          "symbol": "R_a, R_t",
+          "text": "handbook.promptcritical.entry.i0.machine_tools.pages.2.vars.0.text"
+        },
+        {
+          "symbol": "f",
+          "text": "handbook.promptcritical.entry.i0.machine_tools.pages.2.vars.1.text"
+        },
+        {
+          "symbol": "r_\\varepsilon",
+          "text": "handbook.promptcritical.entry.i0.machine_tools.pages.2.vars.2.text"
+        }
+      ],
+      "caption": "handbook.promptcritical.entry.i0.machine_tools.pages.2.caption"
+    },
+    {
+      "type": "formula",
+      "formula": "promptcritical:grinding_burn",
+      "vars": [
+        {
+          "symbol": "u",
+          "text": "handbook.promptcritical.entry.i0.machine_tools.pages.3.vars.0.text"
+        },
+        {
+          "symbol": "u_{ch}",
+          "text": "handbook.promptcritical.entry.i0.machine_tools.pages.3.vars.1.text"
+        },
+        {
+          "symbol": "A_a",
+          "text": "handbook.promptcritical.entry.i0.machine_tools.pages.3.vars.2.text"
+        },
+        {
+          "symbol": "a",
+          "text": "handbook.promptcritical.entry.i0.machine_tools.pages.3.vars.3.text"
+        },
+        {
+          "symbol": "u^*",
+          "text": "handbook.promptcritical.entry.i0.machine_tools.pages.3.vars.4.text"
+        }
+      ],
+      "caption": "handbook.promptcritical.entry.i0.machine_tools.pages.3.caption"
+    },
+    {
+      "type": "recipe",
+      "recipe": "promptcritical:foundry/shaping_machine"
+    },
+    {
+      "type": "recipe",
+      "recipe": "promptcritical:foundry/milling_machine"
+    },
+    {
+      "type": "recipe",
+      "recipe": "promptcritical:foundry/surface_grinder"
+    },
+    {
+      "type": "recipe",
+      "recipe": "promptcritical:foundry/milling_cutter"
+    },
+    {
+      "type": "recipe",
+      "recipe": "promptcritical:foundry/grinding_wheel"
+    }
+  ]
+}

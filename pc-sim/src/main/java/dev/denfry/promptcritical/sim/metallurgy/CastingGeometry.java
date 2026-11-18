@@ -31,6 +31,9 @@ public record CastingGeometry(double massKg, double moduleCm, double thicknessRa
             case FLYWHEEL -> new CastingGeometry(200, 4.0, 3.0, 0, 8, 60_000, 800, 25_000, 60);
             case INGOT_MOLD -> new CastingGeometry(500, 6.0, 1.0, 0, 16, 0, 0, 0, 0);
             case BEARING_HOUSING -> new CastingGeometry(25, 1.4, 2.0, 0, 2, 12_000, 180, 15_000, 30);
+            // станина 400×120 мм с двумя направляющими и плита 400×200×40: не точатся, сверлятся под крепёж
+            case MACHINE_BED -> new CastingGeometry(70, 2.0, 2.5, 0, 3, 0, 0, 10_000, 18);
+            case BASE_PLATE -> new CastingGeometry(25, 1.6, 1.2, 0, 2, 0, 0, 8_000, 14);
         };
     }
 
