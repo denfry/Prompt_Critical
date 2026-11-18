@@ -65,6 +65,14 @@ public final class PcFluids {
     public static final Entry BUTANE = liquid("butane", 575, 180, 288);
     public static final Entry NATURAL_GASOLINE = liquid("natural_gasoline", 660, 350, 293);
 
+    // химия I3, пиролиз: этилен — 1 мБ = 1 нм³; сжиженный пропилен, C4-фракция, пиробензин и смола — 1 мБ = 1 л
+    public static final Entry ETHYLENE = gas("ethylene", 293, -1);
+    public static final Entry PROPYLENE = liquid("propylene", 514, 110, 288);
+    /** C4-фракция пиролиза: бутадиен-1,3 (40–50 %), бутены и бутаны. */
+    public static final Entry C4_FRACTION = liquid("c4_fraction", 620, 180, 288);
+    public static final Entry PYROLYSIS_GASOLINE = liquid("pyrolysis_gasoline", 830, 500, 293);
+    public static final Entry PYROLYSIS_FUEL_OIL = liquid("pyrolysis_fuel_oil", 1080, 20000, 343);
+
     static {
         MINE_WATER.props.block(PcBlocks.MINE_WATER);
     }
