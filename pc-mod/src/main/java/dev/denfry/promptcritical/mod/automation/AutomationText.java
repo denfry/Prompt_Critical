@@ -42,6 +42,12 @@ public final class AutomationText {
     private AutomationText() {
     }
 
+    // ПАЗ (A3): байпас — событие для журнала смены
+    public static final String SIS_BYPASS_ON = t("sis.bypass_on", "Safety function BYPASSED by %s — the protection is off until the bypass is removed",
+            "Защита ВЫВЕДЕНА в байпас (%s) — до снятия байпаса она не сработает");
+    public static final String SIS_BYPASS_OFF = t("sis.bypass_off", "Bypass removed by %s — the protection is back in service",
+            "Байпас снят (%s) — защита снова в работе");
+
     // программатор ПЛК (A3)
     public static final String PLC_TITLE = t("plc.title", "PLC programmer · Instruction List", "Программатор ПЛК · список инструкций");
     public static final String PLC_UPLOAD = t("plc.upload", "Load into PLC", "Загрузить в ПЛК");

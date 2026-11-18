@@ -6,6 +6,7 @@ import dev.denfry.promptcritical.sim.core.StateReader;
 import dev.denfry.promptcritical.sim.core.StateWriter;
 import java.util.Arrays;
 import dev.denfry.promptcritical.sim.automation.plc.PlcCpu;
+import dev.denfry.promptcritical.sim.automation.sis.SisLogic;
 import java.util.Objects;
 
 /**
@@ -60,6 +61,8 @@ public final class AutomationUnit {
     static final double BREAKER_COIL_W = 10, MONITOR_W = 1, STARTER_COIL_W = 5, OPTO_W = 0.5;
     /** Потребление ПЛК от 24 В, Вт (компактный ПЛК класса S5-100U) [BALANCE]. */
     static final double PLC_W = 10;
+    /** Потребление логического блока ПАЗ от 24 В, Вт [BALANCE]. */
+    static final double SIS_W = 6;
 
     final SimId id;
     final AutomationKind kind;
@@ -77,6 +80,10 @@ public final class AutomationUnit {
     boolean conflict;
     /** PLC: процессор (живёт вне банков и переживает пересборку); источники аналоговых входов AI0…AI3. */
     final PlcCpu plc;
+    /** SIS_LOGIC: логика защиты и последние токи каналов, мА (для щита). */
+    final SisLogic sis;
+    final double[] sisMa = new double[SisLogic.CHANNELS];
+    boolean sisPowered;
     int[] aiSources = new int[0];
 
     AutomationUnit(SimId id, AutomationKind kind) {
@@ -84,6 +91,7 @@ public final class AutomationUnit {
         this.kind = Objects.requireNonNull(kind, "kind");
         this.nets = new long[kind.terminalCount()];
         this.plc = kind == AutomationKind.PLC ? new PlcCpu() : null;
+        this.sis = kind == AutomationKind.SIS_LOGIC ? new SisLogic() : null;
         defaults();
     }
 
@@ -125,6 +133,14 @@ public final class AutomationUnit {
                 ip[I_POSITION] = 1;
             }
             case SIGNAL_CONVERTER -> ip[I_POSITION] = 1;
+            case SIS_LOGIC -> {
+                ip[I_MODE] = SisLogic.Voting.TWO_OO_THREE.ordinal();
+                ip[I_POSITION] = 1;
+                dp[D_SET] = 16;
+                dp[D_SPAN] = 12;
+                dp[D_RETURN] = 1;
+                dp[D_TABLE] = 10;
+            }
             default -> {
             }
         }
@@ -412,6 +428,26 @@ public final class AutomationUnit {
         conflict = false;
     }
 
+    /** Логика ПАЗ; {@code null} — блок не ПАЗ. */
+    public SisLogic sis() {
+        return sis;
+    }
+
+    /** Ток канала ПАЗ {@code i} на последнем шаге, мА. */
+    public double sisChannelMa(int i) {
+        return sisMa[i];
+    }
+
+    public boolean sisPowered() {
+        return sisPowered;
+    }
+
+    /** PFDavg функции безопасности по уставкам блока (λ_DU — в 1e-6 1/ч, интервал испытаний — в месяцах, β — в %). */
+    public double sisPfdAvg() {
+        SisLogic.Voting v = SisLogic.Voting.values()[Math.floorMod(ip[I_MODE], SisLogic.Voting.values().length)];
+        return SisLogic.pfdAvg(v, dp[D_RETURN] * 1e-6, dp[D_SPAN] * 730, dp[D_TABLE] / 100);
+    }
+
     /** Процессор ПЛК; {@code null} — блок не ПЛК. */
     public PlcCpu plc() {
         return plc;
@@ -426,6 +462,11 @@ public final class AutomationUnit {
         out.putDoubles("dp", dp, dp.length);
         out.putDoubles("in", in, in.length);
         if (memo != null) out.putDoubles("memo", memo, memo.length);
+        if (sis != null) {
+            out.beginObject("sis");
+            sis.save(out);
+            out.endObject();
+        }
         if (plc != null) {
             out.beginObject("plc");
             plc.save(out);
@@ -452,6 +493,11 @@ public final class AutomationUnit {
             System.arraycopy(x, 0, u.in, 0, Math.min(x.length, u.in.length));
         }
         u.memo = r.has("memo") ? r.getDoubles("memo") : null;
+        if (u.sis != null && r.has("sis")) {
+            r.beginObject("sis");
+            u.sis.load(r);
+            r.endObject();
+        }
         if (u.plc != null && r.has("plc")) {
             r.beginObject("plc");
             u.plc.load(r);

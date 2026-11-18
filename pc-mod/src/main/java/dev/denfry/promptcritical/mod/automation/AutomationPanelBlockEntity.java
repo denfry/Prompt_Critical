@@ -1,5 +1,6 @@
 package dev.denfry.promptcritical.mod.automation;
 
+import dev.denfry.promptcritical.mod.block.PcProperties;
 import dev.denfry.promptcritical.mod.panel.PanelHost;
 import dev.denfry.promptcritical.mod.panel.PanelLayout;
 import dev.denfry.promptcritical.sim.automation.AutomationKind;
@@ -21,7 +22,7 @@ public class AutomationPanelBlockEntity extends AutomationBlockEntity implements
     /** Ручка станции «▼/▲» держится полсекунды на клик. */
     public static final int RAMP_TICKS = 10;
 
-    private int cursor, rampTicks, rampDir;
+    private int cursor, rampTicks, rampDir, resetTicks;
 
     public AutomationPanelBlockEntity(BlockEntityType<?> type, BlockPos pos, BlockState state, AutomationKind kind) {
         super(type, pos, state, kind);
@@ -34,6 +35,11 @@ public class AutomationPanelBlockEntity extends AutomationBlockEntity implements
     @Override
     protected void serverTick(AutomationUnit u) {
         super.serverTick(u);
+        if (kind == AutomationKind.SIS_LOGIC) {
+            if (resetTicks > 0) resetTicks--;
+            u.setInput(AutomationUnit.IN_MAIN, resetTicks > 0 ? 1 : 0);
+            setFlag(PcProperties.ALARM, u.sis().tripped() || u.sis().bypass() || !u.sisPowered());
+        }
         if (kind == AutomationKind.MANUAL_STATION) {
             if (rampTicks > 0) rampTicks--;
             u.setInput(AutomationUnit.IN_MAIN, rampTicks > 0 ? rampDir : 0);
@@ -82,6 +88,14 @@ public class AutomationPanelBlockEntity extends AutomationBlockEntity implements
                         ? AutomationText.CALIBRATED : AutomationText.CALIBRATE_REFUSED), true);
                 case AutomationPanels.BUTTON_AUTO -> u.setStationManual(false);
                 case AutomationPanels.BUTTON_MAN -> u.setStationManual(true);
+                case AutomationPanels.BUTTON_SIS_RESET -> resetTicks = 4;
+                case AutomationPanels.BUTTON_SIS_BYPASS -> {
+                    if (u.sis() != null) {
+                        u.sis().setBypass(!u.sis().bypass());
+                        player.displayClientMessage(AutomationText.msg(u.sis().bypass() ? AutomationText.SIS_BYPASS_ON : AutomationText.SIS_BYPASS_OFF,
+                                player.getName()), false);
+                    }
+                }
                 case AutomationPanels.BUTTON_DOWN, AutomationPanels.BUTTON_UP -> {
                     rampDir = id == AutomationPanels.BUTTON_UP ? 1 : -1;
                     rampTicks = RAMP_TICKS;

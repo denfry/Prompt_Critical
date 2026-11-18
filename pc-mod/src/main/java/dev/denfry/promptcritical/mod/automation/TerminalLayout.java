@@ -45,6 +45,7 @@ public final class TerminalLayout {
         front(AutomationKind.SIGNAL_CONVERTER, 8.9, 4, 3, 12, 3, 2);
         // ПЛК: три ряда на лицевой панели — питание и входы, общий и выходы, аналоговые каналы
         front(AutomationKind.PLC, -0.6, 1.5, 2, 14.5, 12, 9);
+        front(AutomationKind.SIS_LOGIC, 0.4, 2, 3, 14, 13, 6);
         front(AutomationKind.BREAKER_IO, -0.6, 2.5, 21, 13.5, 28, 4);
         LAYOUTS.put(AutomationKind.MOTOR_IO, List.of(new Point(5.5, 15.6, 7, Direction.UP), new Point(10.5, 15.6, 7, Direction.UP),
                 new Point(5.5, 15.6, 10, Direction.UP), new Point(10.5, 15.6, 10, Direction.UP)));

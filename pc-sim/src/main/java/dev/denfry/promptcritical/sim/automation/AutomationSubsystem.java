@@ -1,5 +1,6 @@
 package dev.denfry.promptcritical.sim.automation;
 
+import dev.denfry.promptcritical.sim.automation.sis.SisLogic;
 import dev.denfry.promptcritical.sim.core.FastContext;
 import dev.denfry.promptcritical.sim.core.SimClock;
 import dev.denfry.promptcritical.sim.core.SimConfig;
@@ -55,7 +56,7 @@ public final class AutomationSubsystem implements Subsystem {
     private boolean dirty = true;
     private int rebuilds;
     private AutomationUnit[] order = new AutomationUnit[0];
-    private AutomationUnit[] plcs = new AutomationUnit[0];
+    private AutomationUnit[] plcs = new AutomationUnit[0], siss = new AutomationUnit[0];
     private final boolean[] plcDi = new boolean[8];
     private final double[] plcAi = new double[4];
     // A1 → A2: нагрузка-оптрон и сигнал; A2 → A1: ключ, сигнал, инверсия
@@ -141,6 +142,7 @@ public final class AutomationSubsystem implements Subsystem {
         for (int i = 0; i < optoLoad.length; i++) analog.setSignal(optoSignal[i], relay.lampLit(optoLoad[i]) ? 1 : 0);
         analog.stepFast();
         for (AutomationUnit u : plcs) scanPlc(u);
+        for (AutomationUnit u : siss) scanSis(u);
         for (int i = 0; i < bridgeSwitch.length; i++)
             relay.setSwitch(bridgeSwitch[i], (analog.signal(bridgeSignal[i]) > 0.5) != bridgeInvert[i]);
         if (ctx.clock().due(TimeDomain.SLOW, SLOW_PHASE)) {
@@ -165,6 +167,30 @@ public final class AutomationSubsystem implements Subsystem {
         u.plc.scan(SimClock.FAST_DT, powered, plcDi, plcAi);
         for (int i = 0; i < u.switches.length; i++) relay.setSwitch(u.switches[i], u.plc.output(i));
         for (int i = 0; i < u.signals.length; i++) analog.setSignal(u.signals[i], u.plc.analogOutput(i));
+    }
+
+    /**
+     * Логика ПАЗ после решения цепей: питание и квитирование — по оптронам, токи датчиков — сигналы A2. Выходное реле
+     * под током, пока процесс разрешён; контакт 11-14 замкнут, 11-12 разомкнут. Сигнализация 21-24 — срабатывание,
+     * байпас или неисправный канал.
+     */
+    private void scanSis(AutomationUnit u) {
+        if (u.loads.length < 2 || u.switches.length < 3) return;
+        boolean powered = relay.lampLit(u.loads[0]);
+        boolean reset = relay.lampLit(u.loads[1]) || u.in[AutomationUnit.IN_MAIN] > 0.5;
+        for (int i = 0; i < SisLogic.CHANNELS; i++) {
+            int src = i < u.aiSources.length ? u.aiSources[i] : -1;
+            u.sisMa[i] = src >= 0 ? analog.signal(src) : 0;
+        }
+        u.sisPowered = powered;
+        SisLogic.Voting v = SisLogic.Voting.values()[Math.floorMod(u.ip[AutomationUnit.I_MODE], SisLogic.Voting.values().length)];
+        boolean energized = u.sis.step(SimClock.FAST_DT, powered, u.sisMa, v, u.ip[AutomationUnit.I_POSITION] == 1,
+                u.dp[AutomationUnit.D_SET], reset);
+        boolean fault = false;
+        for (int i = 0; i < v.n; i++) fault |= u.sis.channelFault(i);
+        relay.setSwitch(u.switches[0], energized);
+        relay.setSwitch(u.switches[1], !energized);
+        relay.setSwitch(u.switches[2], powered && (u.sis.tripped() || u.sis.bypass() || fault));
     }
 
     /** Входы мира в банки: кнопки, ключи, процесс, вал, питание, механизмы. Без аллокаций. */
@@ -227,6 +253,7 @@ public final class AutomationSubsystem implements Subsystem {
         for (AutomationUnit u : built) restore(u);
         order = built.toArray(new AutomationUnit[0]);
         plcs = built.stream().filter(x -> x.kind == AutomationKind.PLC).toArray(AutomationUnit[]::new);
+        siss = built.stream().filter(x -> x.kind == AutomationKind.SIS_LOGIC).toArray(AutomationUnit[]::new);
         optoLoad = b.optoLoad.stream().mapToInt(Integer::intValue).toArray();
         optoSignal = b.optoSignal.stream().mapToInt(Integer::intValue).toArray();
         bridgeSwitch = b.bridgeSwitch.stream().mapToInt(Integer::intValue).toArray();
@@ -514,6 +541,13 @@ public final class AutomationSubsystem implements Subsystem {
                 b.drive(u, "TRK", trk);
                 u.switches = new int[] {b.bridge(u, "13", "14", mode, false)};
             }
+            case SIS_LOGIC -> {
+                int zero = b.node(u, "0"), n11 = b.node(u, "11");
+                u.loads = new int[] {relay.addLamp(b.node(u, "+24"), zero, AutomationUnit.SIS_W),
+                        relay.addLamp(b.node(u, "RST"), zero, AutomationUnit.OPTO_W)};
+                u.switches = new int[] {relay.addSwitch(n11, b.node(u, "14"), false), relay.addSwitch(n11, b.node(u, "12"), true),
+                        relay.addSwitch(b.node(u, "21"), b.node(u, "24"), false)};
+            }
             case PLC -> {
                 int m = b.node(u, "M"), common = b.node(u, "1L");
                 u.loads = new int[9];
@@ -566,6 +600,10 @@ public final class AutomationSubsystem implements Subsystem {
                 analog.setInput(u.element, 0, b.source(u, "AUTO"));
                 u.pvSignal = b.source(u, "PV");
                 for (String out : new String[] {"SP", "OUT", "TRK"}) if (b.conflicts.contains(u.net(u.kind.indexOf(out)))) u.conflict = true;
+            }
+            case SIS_LOGIC -> {
+                u.aiSources = new int[SisLogic.CHANNELS];
+                for (int i = 0; i < SisLogic.CHANNELS; i++) u.aiSources[i] = b.source(u, "AI" + (i + 1));
             }
             case PLC -> {
                 u.aiSources = new int[4];

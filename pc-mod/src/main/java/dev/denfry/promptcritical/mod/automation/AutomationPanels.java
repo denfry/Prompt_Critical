@@ -30,7 +30,7 @@ import org.jetbrains.annotations.Nullable;
  */
 public final class AutomationPanels {
     public static final int BUTTON_REPLACE = 100, BUTTON_CALIBRATE = 101, BUTTON_AUTO = 102, BUTTON_MAN = 103,
-            BUTTON_DOWN = 104, BUTTON_UP = 105;
+            BUTTON_DOWN = 104, BUTTON_UP = 105, BUTTON_SIS_RESET = 106, BUTTON_SIS_BYPASS = 107;
     private static final int W = 232, ROW = 16, TOP = 22;
 
     /** Значение строки для канала (сервер). */
@@ -109,6 +109,17 @@ public final class AutomationPanels {
     private static final Tr[] DIRECTIONS = {tr("dir.vi", "V → mA", "В → мА"), tr("dir.iv", "mA → V", "мА → В")};
     private static final Tr[] QUALITIES = {tr("q.good", "Good", "Норма"), tr("q.uncertain", "Uncertain", "Сомнительно"),
             tr("q.bad", "Bad", "Недостоверно")};
+    // ПАЗ (A3)
+    private static final Tr SIS_VOTING = tr("sis.voting", "Voting", "Голосование"), SIS_TRIP = tr("sis.trip", "Trip on", "Останов при"),
+            SIS_SP = tr("sis.setpoint", "Setpoint", "Уставка"), SIS_TI = tr("sis.ti", "Proof test", "Испытания"),
+            SIS_LAMBDA = tr("sis.lambda", "λ DU, 1e-6/h", "λ ОН, 1e-6/ч"), SIS_BETA = tr("sis.beta", "β (common cause)", "β (общая причина)"),
+            SIS_PFD = tr("sis.pfd", "PFD avg", "PFD ср."), SIS_RESET = tr("sis.reset", "Reset", "Квит."),
+            SIS_BYPASS = tr("sis.bypass", "Bypass", "Байпас"), SIS_HIGH = tr("sis.high", "rising", "превышении"),
+            SIS_LOW = tr("sis.low", "falling", "понижении"), SIS_EVERY = tr("sis.every", "every %s mo", "раз в %s мес"),
+            SIS_FAULT = tr("sis.fault", "loop fault", "обрыв линии");
+    private static final Tr[] SIS_STATES = {tr("sis.state.normal", "Normal", "Норма"), tr("sis.state.tripped", "TRIPPED", "СРАБОТАЛА"),
+            tr("sis.state.bypassed", "BYPASSED", "В БАЙПАСЕ"), tr("sis.state.off", "No 24 V — tripped", "Нет 24 В — сработала")};
+    private static final String[] VOTINGS = {"1oo1", "1oo2", "2oo2", "2oo3"};
     private static final Tr TRIPPED = tr("tripped", "Tripped", "Сработало"), NORMAL = tr("normal", "Normal", "Норма"),
             STUCK = tr("stuck", "Stuck — replace", "Заклинило — замените"), FAILED = tr("failed", "Tube failed", "Отказ лампы"),
             LOOP = tr("loop", "Algebraic loop", "Алгебраический контур"), CAL_DUE = tr("cal_due", "Zero balance due", "Пора балансировать нуль"),
@@ -224,6 +235,31 @@ public final class AutomationPanels {
                 new Row(OUT_MA.get(), (u, c) -> centi(u.output(0)), v -> Component.literal(PanelText.num(v / 100.0, 2) + " mA"), null),
                 new Row(PV.get(), (u, c) -> Double.isNaN(u.stationPv()) ? Integer.MIN_VALUE : centi(u.stationPv()), AutomationPanels::volts, null)),
                 BUTTON_AUTO, BUTTON_MAN, BUTTON_DOWN, BUTTON_UP));
+        List<Row> sis = new ArrayList<>(List.of(
+                new Row(STATE.get(), (u, c) -> u.sis().state(u.sisPowered()).ordinal(), v -> SIS_STATES[Math.floorMod(v, 4)].get(), null),
+                new Row(SIS_VOTING.get(), (u, c) -> u.intParam(AutomationUnit.I_MODE), v -> Component.literal(VOTINGS[Math.floorMod(v, 4)]),
+                        (u, c, d, f) -> cycle(u, AutomationUnit.I_MODE, d, 4)),
+                new Row(SIS_TRIP.get(), (u, c) -> u.intParam(AutomationUnit.I_POSITION), v -> (v == 1 ? SIS_HIGH : SIS_LOW).get(),
+                        (u, c, d, f) -> cycle(u, AutomationUnit.I_POSITION, d, 2)),
+                new Row(SIS_SP.get(), (u, c) -> (int) Math.round(u.param(AutomationUnit.D_SET) * 10),
+                        v -> Component.literal(PanelText.num(v / 10.0, 1) + " mA"),
+                        (u, c, d, f) -> u.setParam(AutomationUnit.D_SET, clamp(u.param(AutomationUnit.D_SET) + d * (f ? 0.1 : 0.5), 4, 20))),
+                new Row(SIS_TI.get(), (u, c) -> (int) u.param(AutomationUnit.D_SPAN), v -> SIS_EVERY.get(v),
+                        (u, c, d, f) -> u.setParam(AutomationUnit.D_SPAN, clamp(u.param(AutomationUnit.D_SPAN) + d * (f ? 1 : 3), 1, 60))),
+                new Row(SIS_LAMBDA.get(), (u, c) -> (int) Math.round(u.param(AutomationUnit.D_RETURN) * 10),
+                        v -> Component.literal(PanelText.num(v / 10.0, 1)),
+                        (u, c, d, f) -> u.setParam(AutomationUnit.D_RETURN, clamp(u.param(AutomationUnit.D_RETURN) + d * (f ? 0.1 : 0.5), 0.1, 20))),
+                new Row(SIS_BETA.get(), (u, c) -> (int) u.param(AutomationUnit.D_TABLE), v -> Component.literal(v + " %"),
+                        (u, c, d, f) -> u.setParam(AutomationUnit.D_TABLE, clamp(u.param(AutomationUnit.D_TABLE) + d, 0, 20))),
+                new Row(SIS_PFD.get(), (u, c) -> (int) Math.min(Integer.MAX_VALUE, Math.round(u.sisPfdAvg() * 1e8)),
+                        v -> Component.literal(String.format(java.util.Locale.ROOT, "%.1e · SIL %d", v / 1e8,
+                                dev.denfry.promptcritical.sim.automation.sis.SisLogic.sil(v / 1e8))), null)));
+        for (int i = 0; i < 3; i++) {
+            int ch = i;
+            sis.add(new Row(Component.literal("AI" + (i + 1)), (u, c) -> u.sis().channelFault(ch) ? -1 : (int) Math.round(u.sisChannelMa(ch) * 10),
+                    v -> v < 0 ? SIS_FAULT.get() : Component.literal(PanelText.num(v / 10.0, 1) + " mA"), null));
+        }
+        SPECS.put(AutomationKind.SIS_LOGIC, spec(AutomationKind.SIS_LOGIC, sis, BUTTON_SIS_RESET, BUTTON_SIS_BYPASS));
         SPECS.put(AutomationKind.SIGNAL_CONVERTER, spec(AutomationKind.SIGNAL_CONVERTER, List.of(
                 new Row(DIRECTION.get(), (u, c) -> u.intParam(AutomationUnit.I_POSITION), v -> name(DIRECTIONS, v),
                         (u, c, d, f) -> cycle(u, AutomationUnit.I_POSITION, d, 2)),
@@ -267,6 +303,8 @@ public final class AutomationPanels {
                 case BUTTON_AUTO -> AUTO;
                 case BUTTON_MAN -> MAN;
                 case BUTTON_DOWN -> DOWN;
+                case BUTTON_SIS_RESET -> SIS_RESET;
+                case BUTTON_SIS_BYPASS -> SIS_BYPASS;
                 default -> UP;
             };
             b.button(x, y, 52, id, label.get(), null);

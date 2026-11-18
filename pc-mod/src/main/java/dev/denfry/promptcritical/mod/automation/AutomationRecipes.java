@@ -126,5 +126,9 @@ public final class AutomationRecipes extends RecipeProvider {
         ShapedRecipeBuilder.shaped(RecipeCategory.REDSTONE, PcBlocks.PLC.get()).pattern("IGI").pattern("CQC").pattern("RWR")
                 .define('I', Items.IRON_INGOT).define('G', Items.GLASS_PANE).define('C', Items.COMPARATOR).define('Q', Items.QUARTZ_BLOCK)
                 .define('R', relay).define('W', wire).unlockedBy("has_relay", has(relay)).save(out, id("plc"));
+        // ПАЗ: реле с принудительно направляемыми контактами и компараторы в красном шкафу
+        ShapedRecipeBuilder.shaped(RecipeCategory.REDSTONE, PcBlocks.SIS_LOGIC.get()).pattern("IRI").pattern("CRC").pattern("IWI")
+                .define('I', Items.IRON_INGOT).define('R', relay).define('C', Items.COMPARATOR).define('W', Items.RED_DYE)
+                .unlockedBy("has_relay", has(relay)).save(out, id("sis_logic_solver"));
     }
 }

@@ -79,6 +79,9 @@ public final class AutomationBlockEntities {
     public static final DeferredHolder<BlockEntityType<?>, BlockEntityType<AutomationBlockEntity>> PLC =
             entry("plc", AutomationKind.PLC, false, PcBlocks.PLC);
 
+    public static final DeferredHolder<BlockEntityType<?>, BlockEntityType<AutomationBlockEntity>> SIS_LOGIC =
+            entry("sis_logic_solver", AutomationKind.SIS_LOGIC, true, PcBlocks.SIS_LOGIC);
+
     private AutomationBlockEntities() {
     }
 
