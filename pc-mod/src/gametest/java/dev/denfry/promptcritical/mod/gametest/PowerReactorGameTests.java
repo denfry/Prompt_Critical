@@ -56,7 +56,7 @@ public final class PowerReactorGameTests {
                     h.assertTrue(r.reactor().loadedChannels() == 1, "one channel loaded: " + r.reactor().loadedChannels());
                     h.assertTrue(r.fuelSlots().getStackInSlot(NppPanels.SLOT_FRESH).isEmpty(), "slot emptied");
                 })
-                .thenExecute(() -> ((PowerReactorBlockEntity) h.getBlockEntity(REACTOR)).onPanelButton(h.makeMockServerPlayerInLevel(), NppPanels.B_UNLOAD))
+                .thenExecute(() -> ((PowerReactorBlockEntity) h.getBlockEntity(REACTOR)).onPanelButton(net.neoforged.neoforge.common.util.FakePlayerFactory.getMinecraft(h.getLevel()), NppPanels.B_UNLOAD))
                 .thenWaitUntil(() -> {
                     PowerReactorBlockEntity r = h.getBlockEntity(REACTOR);
                     ItemStack spent = r.fuelSlots().getStackInSlot(NppPanels.SLOT_SPENT);

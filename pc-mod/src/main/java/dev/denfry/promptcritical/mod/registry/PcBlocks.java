@@ -539,7 +539,7 @@ public final class PcBlocks {
     // --- АЭС T1: канальный уран-графитовый реактор (АМ-1), ГЦН, парогенератор ---
     /** Кладка 3×6×3: нижний куб — активная зона с отражателем, верхний — приводы СУЗ; контроллер — в центре низа. */
     private static final Footprint FP_POWER_REACTOR = Footprint.of(CUBE3, CUBE3.at(0, 3, 0));
-    public static final DeferredBlock<PcDeviceBlock> POWER_REACTOR = device("power_reactor", machine(), Spec.facing().footprint(FP_POWER_REACTOR),
+    public static final DeferredBlock<PcDeviceBlock> POWER_REACTOR = device("power_reactor", machine(), Spec.facing().segments(PcProperties.REACTOR_SEGMENT, FP_POWER_REACTOR),
             FoundryBlock.with(dev.denfry.promptcritical.mod.npp.PowerReactorBlockEntity::new));
     public static final DeferredBlock<PcDeviceBlock> PRIMARY_PUMP = device("primary_pump", machine(), Spec.facing(PcProperties.RUNNING),
             KineticMachineBlock.with(ShaftSide.BACK, dev.denfry.promptcritical.mod.npp.PrimaryPumpBlockEntity::new));

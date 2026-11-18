@@ -56,6 +56,7 @@ public final class PcProperties {
     public static final EnumProperty<WindTurbineSegment> WIND_TURBINE_SEGMENT = EnumProperty.create("segment", WindTurbineSegment.class);
     public static final EnumProperty<GasTurbineSegment> GAS_TURBINE_SEGMENT = EnumProperty.create("segment", GasTurbineSegment.class);
     public static final EnumProperty<ArcFurnaceSegment> ARC_FURNACE_SEGMENT = EnumProperty.create("segment", ArcFurnaceSegment.class);
+    public static final EnumProperty<ReactorSegment> REACTOR_SEGMENT = EnumProperty.create("segment", ReactorSegment.class);
     // сталь, прокат, ВРУ (этап 10б M3)
     public static final BooleanProperty LOWERED = BooleanProperty.create("lowered");
     public static final BooleanProperty BURST = BooleanProperty.create("burst");
@@ -126,6 +127,9 @@ public final class PcProperties {
     public enum GasTurbineSegment implements Named { COMPRESSOR, COMBUSTOR, TURBINE }
     /** Секции дуговой печи: корпус 3×3×3 и свод над ним. */
     public enum ArcFurnaceSegment implements Named { SHELL, ROOF }
+
+    /** Кладка T1: нижний куб — активная зона с отражателем, верхний — приводы СУЗ. */
+    public enum ReactorSegment implements Named { CORE, DRIVES }
 
     /** Секции башни ВЭУ 1×9×1: основание со шкафом, средняя секция, оголовок с опорно-поворотным кругом. */
     public enum WindTurbineSegment implements Named { BASE, MIDDLE, TOP }
