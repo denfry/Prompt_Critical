@@ -12,8 +12,8 @@ import net.minecraft.network.chat.Component;
 public final class MesPanels {
     public static final int GEN_KW = 0, LOAD_KW = 1, TARGET_KW = 2, COST_CR_H = 3, REVENUE_CR_H = 4, CO2_KG_H = 5,
             EFF_PERMIL = 6, LAMBDA_CENTS = 7, UNITS = 8, FLAGS = 9, CHANNELS = 10;
-    public static final int F_LINK = 0, F_FOLLOW = 1, F_SHORT = 2;
-    public static final int BTN_DOWN = 0, BTN_UP = 1, BTN_FOLLOW = 2;
+    public static final int F_LINK = 0, F_FOLLOW = 1, F_SHORT = 2, F_AUTO = 3;
+    public static final int BTN_DOWN = 0, BTN_UP = 1, BTN_FOLLOW = 2, BTN_AUTO = 3;
 
     private static final Tr LINK = PanelText.tr("mes.link", "RTU link", "Связь с КП"),
             FOLLOW = PanelText.tr("mes.follow", "Follows load", "По нагрузке"),
@@ -28,7 +28,7 @@ public final class MesPanels {
             UP = PanelText.tr("mes.up", "Target +10%", "Задание +10%"),
             FOLLOW_BTN = PanelText.tr("mes.follow_btn", "Follow load", "По нагрузке");
 
-    public static final PanelLayout SERVER = PanelLayout.builder("mes_server", 240, 132, CHANNELS)
+    public static final PanelLayout SERVER = PanelLayout.builder("mes_server", 240, 152, CHANNELS)
             .lamp(8, 24, FLAGS, F_LINK, LampColor.GREEN, LINK.get())
             .lamp(80, 24, FLAGS, F_FOLLOW, LampColor.AMBER, FOLLOW.get())
             .lamp(152, 24, FLAGS, F_SHORT, LampColor.RED, SHORT.get())
@@ -38,6 +38,10 @@ public final class MesPanels {
             .button(8, 104, 70, BTN_DOWN, DOWN.get(), null)
             .button(84, 104, 70, BTN_UP, UP.get(), null)
             .button(160, 104, 72, BTN_FOLLOW, FOLLOW_BTN.get(), null)
+            .button(8, 126, 100, BTN_AUTO, PanelText.tr("mes.auto", "Closed loop", "Замкнутый контур").get(),
+                    PanelText.tr("mes.auto_tip", "Drive the units to their setpoints by raise/lower pulses through the RTU",
+                            "Вести агрегаты к уставкам импульсами «больше/меньше» через RTU").get())
+            .lamp(116, 128, FLAGS, F_AUTO, LampColor.GREEN, PanelText.tr("mes.auto_lamp", "Auto", "Авто").get())
             .build();
 
     private MesPanels() {

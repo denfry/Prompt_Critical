@@ -15,3 +15,13 @@ So sell a little and often rather than hoarding a warehouse.
 ## Daily limit
 
 One account earns at most 50 000 CR a day. When the limit is reached the red lamp on the panel lights up, and the rest of the batch waits in the slot for the next day.
+
+## Allowances, fees and contracts
+
+Whoever claims a market terminal first is the plant operator: the emission bills go to their account. The books close every 7 game days.
+
+- **CO₂ allowances.** The first week is the base: its CO₂-equivalent emission becomes the baseline, with no fine. After that, each week's allocation is 5 % smaller. At the end of the week allowances are surrendered for the whole emission in the ledger (a calculated emission counts ×1.2, one measured by a gas analyser ×1.0). Short of allowances, you pay a fine of 100 CR a tonne, and the shortfall is added to next week's obligation. A surplus carries over. Nuclear, hydro and wind plants use no allowances.
+- **Pollution fees:** SO₂ and NOx 0.5 CR per kg, dust 1 CR per kg.
+- **Supply contract.** Put goods in the slot and press "Contract": an NPC buyer takes 64 units a week at today's price. The deposit is 20 % of a week's value. Goods from the slot go to the contract first; the rest goes to the market. At the end of the week you are paid for what was delivered. A shortfall costs a penalty of 20 % of the price of what is missing, no more than the deposit. Three weeks in a row below half is a default, and the buyer keeps the deposit.
+
+If the account cannot cover a charge, it becomes a debt paid off from the terminal's sales.

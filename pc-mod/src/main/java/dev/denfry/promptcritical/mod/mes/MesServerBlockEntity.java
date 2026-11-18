@@ -67,6 +67,16 @@ public final class MesServerBlockEntity extends DeviceBlockEntity implements Fou
     private int gateways;
     /** Задание на выработку, МВт; NaN — следовать нагрузке. */
     private double target = Double.NaN;
+    /**
+     * Замкнутый контур (A5, 03d): сервер сам ведёт агрегаты к уставкам экономического распределения импульсами
+     * «больше/меньше» на их щиты через телеуправление RTU — как вторичное регулирование с пульта. Без этого сервер
+     * только советует.
+     */
+    private boolean auto;
+    /** Кнопки уставки нагрузки на щитах агрегатов: подстройка генератора на валу, ДГ, задание ГАЭС. */
+    static final String[] RAISE = {"grid.f_up", "dg.raise", "storage.more"}, LOWER = {"grid.f_down", "dg.lower", "storage.less"};
+    /** Мёртвая зона: отклонение от уставки меньше 5 % номинала агрегата (или 50 кВт) не регулируется. */
+    static final double DEADBAND_SHARE = 0.05, DEADBAND_MIN_MW = 0.05;
     private TokenBucket calls;
 
     public MesServerBlockEntity(BlockPos pos, BlockState state) {
@@ -127,11 +137,45 @@ public final class MesServerBlockEntity extends DeviceBlockEntity implements Fou
         }
         gateways = found;
         units = List.copyOf(gen.values());
+        unitGateways.clear();
+        for (TelemetryGatewayBlockEntity rtu : Ironworks.blockEntities(level, new AABB(worldPosition).inflate(RADIUS), TelemetryGatewayBlockEntity.class))
+            for (Reading r : rtu.analogReadings()) unitGateways.putIfAbsent(r.machine(), rtu);
         rated.keySet().retainAll(gen.keySet());
         for (Unit u : units) rated.merge(u.id(), u.outputMw(), Math::max);
         generation = units.stream().mapToDouble(Unit::outputMw).sum();
         load = loadMw;
         dispatch();
+        if (auto) regulate();
+        setChanged();
+    }
+
+    private final Map<String, TelemetryGatewayBlockEntity> unitGateways = new java.util.HashMap<>();
+
+    /** Один импульс на агрегат за цикл: к уставке, если вне мёртвой зоны. */
+    private void regulate() {
+        for (Unit u : units) {
+            Double sp = setpoints.get(u.id());
+            TelemetryGatewayBlockEntity rtu = unitGateways.get(u.id());
+            if (sp == null || rtu == null) continue;
+            double err = sp - u.outputMw(), band = Math.max(DEADBAND_MIN_MW, DEADBAND_SHARE * rated.getOrDefault(u.id(), 0.0));
+            if (Math.abs(err) <= band) continue;
+            for (String key : err > 0 ? RAISE : LOWER) {
+                try {
+                    rtu.press(u.id(), key);
+                    break;
+                } catch (TelemetryException ignored) {
+                    // у этого агрегата такой кнопки нет или канал занят — следующая кнопка или следующий цикл
+                }
+            }
+        }
+    }
+
+    public boolean auto() {
+        return auto;
+    }
+
+    public void setAuto(boolean on) {
+        auto = on;
         setChanged();
     }
 
@@ -257,6 +301,7 @@ public final class MesServerBlockEntity extends DeviceBlockEntity implements Fou
         if (gateways > 0) f |= 1 << MesPanels.F_LINK;
         if (Double.isNaN(target)) f |= 1 << MesPanels.F_FOLLOW;
         if (effectiveTarget() > capacity() + 1e-6) f |= 1 << MesPanels.F_SHORT;
+        if (auto) f |= 1 << MesPanels.F_AUTO;
         out[MesPanels.FLAGS] = f;
     }
 
@@ -271,6 +316,7 @@ public final class MesServerBlockEntity extends DeviceBlockEntity implements Fou
             case MesPanels.BTN_DOWN -> target = Math.max(0, t * 0.9);
             case MesPanels.BTN_UP -> target = Math.min(1e6, Math.max(t * 1.1, t + 0.01));
             case MesPanels.BTN_FOLLOW -> target = Double.NaN;
+            case MesPanels.BTN_AUTO -> auto = !auto;
             default -> {
                 return;
             }
@@ -283,12 +329,14 @@ public final class MesServerBlockEntity extends DeviceBlockEntity implements Fou
     protected void saveAdditional(CompoundTag tag, HolderLookup.Provider registries) {
         super.saveAdditional(tag, registries);
         if (!Double.isNaN(target)) tag.putDouble("target", target);
+        tag.putBoolean("auto", auto);
     }
 
     @Override
     protected void loadAdditional(CompoundTag tag, HolderLookup.Provider registries) {
         super.loadAdditional(tag, registries);
         target = tag.contains("target") ? tag.getDouble("target") : Double.NaN;
+        auto = tag.getBoolean("auto");
     }
 
     @Override

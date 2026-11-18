@@ -21,3 +21,7 @@ With CC: Tweaked, a computer attached to the server sees the **pc_mes** peripher
 - **getKpi()** — generation, load, target, capacity, costRate, revenueRate, profitRate, emissions, efficiency, lambda;
 - **getDispatch()** — units: **id**, type, output, setpoint, rated;
 - **setDispatchTarget(mw)** — set the target; a negative value returns to following the load.
+
+## Closed loop
+
+The "Closed loop" button (or `mes.setAuto(true)` in Lua) turns the server from an adviser into a controller. Every cycle it compares each unit's output with its economic dispatch setpoint. If a unit is off by more than 5 % of its rating, the server sends a "raise" or "lower" pulse to its panel through the RTU: the trim of a shaft generator, the setpoint of a diesel generator or the set point of a pumped-storage unit. This is how secondary control from a dispatch desk works. A unit without such buttons stays under manual control.

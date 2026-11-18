@@ -137,7 +137,7 @@ and the effects of each structure, not only the beacon colour.
 - Water never moves with the tide (design decision R32).
 - `GridGameTests.lowVoltageMotorOnSixKilovoltBusBreaksDownAndOvercurrentTrips` is timing-sensitive under a loaded
   server (breakdown seen at 7 ticks against a limit of 5); it passed on the rerun.
-- The MES server only advises setpoints. LOCA and blackout are wired to the VVER, BWR, CANDU and AM-1, not to the SFR
+- The MES server closes the loop only on units with raise/lower panel buttons (shaft generator trim, diesel, pumped storage). LOCA and blackout are wired to the VVER, BWR, CANDU and AM-1, not to the SFR
   (its sodium pool has only the sodium fires). The steel-clad AM-1 core does not burst its cladding in the accident
   layer; it loses channels to dryout in its own channel model. Liquid waste in pipes has a fixed nominal
   activity per fluid. MOX rod-worth loss and the CANDU moderator purity coefficient are estimates.

@@ -77,7 +77,17 @@ public final class MarketTerminalBlockEntity extends IronworksBlockEntity implem
         ItemStack st = goods.getStackInSlot(0);
         Commodity c = MarketCommodities.of(st);
         bidCents = c != null ? market.quote(c.id()).bidCents() : 0;
+        PlantAccounting acct = PlantAccounting.get(sl.getServer());
         if (owner != null && c != null) {
+            // сначала — договор поставки (оплата в конце недели по цене договора), остаток — на рынок
+            int toContract = acct.deliver(owner, c.id(), st.getCount());
+            if (toContract > 0) {
+                goods.extractItem(0, toContract, false);
+                st = goods.getStackInSlot(0);
+                setChanged();
+            }
+        }
+        if (owner != null && c != null && !st.isEmpty()) {
             Fill f = market.execute(owner, new Order(c.id(), -st.getCount(), 0));
             lastStatus = f.status();
             if (f.executed()) {
@@ -89,6 +99,7 @@ public final class MarketTerminalBlockEntity extends IronworksBlockEntity implem
             }
         }
         if (owner != null) {
+            acct.repay(market);
             Account a = market.account(owner);
             balanceCents = a.balanceCents();
             todayCents = a.salesTodayCents();
@@ -132,6 +143,7 @@ public final class MarketTerminalBlockEntity extends IronworksBlockEntity implem
             owner = player.getUUID();
             setChanged();
         }
+        if (owner != null && player.level() instanceof ServerLevel sl) PlantAccounting.get(sl.getServer()).claimOperator(owner);
     }
 
     // --- щит ---
@@ -164,6 +176,28 @@ public final class MarketTerminalBlockEntity extends IronworksBlockEntity implem
         if (!goods.getStackInSlot(0).isEmpty()) f |= 1 << MarketPanels.TF_GOODS;
         if (lastStatus == FillStatus.REJECTED_CAP || lastStatus == FillStatus.PARTIAL) f |= 1 << MarketPanels.TF_CAP;
         out[MarketPanels.T_FLAGS] = f;
+        if (level instanceof ServerLevel sl) {
+            PlantAccounting acct = PlantAccounting.get(sl.getServer());
+            out[MarketPanels.T_QUOTA_T] = acct.quota() == null ? 0 : (int) Math.round(acct.quota().heldT());
+            out[MarketPanels.T_DEBT_CR] = clampCr(acct.debtCents());
+            for (PlantAccounting.Contract k : acct.contracts())
+                if (owner != null && k.terms().seller().equals(owner)) {
+                    out[MarketPanels.T_CONTRACT_DONE] = (int) k.delivered();
+                    out[MarketPanels.T_CONTRACT_QTY] = (int) k.terms().qtyPerPeriod();
+                }
+        }
+    }
+
+    @Override
+    public void onPanelButton(net.minecraft.server.level.ServerPlayer player, int id) {
+        if (id != MarketPanels.B_CONTRACT || !(level instanceof ServerLevel sl) || owner == null) return;
+        Commodity c = MarketCommodities.of(goods.getStackInSlot(0));
+        MarketData data = MarketData.get(sl.getServer());
+        NpcMarket market = data.market(sl.getGameTime());
+        var t = c == null ? null : PlantAccounting.get(sl.getServer()).sign(market, owner, c.id(), market.quote(c.id()).bidCents());
+        player.displayClientMessage(t == null ? MarketText.msg("contract_refused").withStyle(net.minecraft.ChatFormatting.RED)
+                : MarketText.msg("contract_signed", (int) t.qtyPerPeriod(), c.id(), MarketText.cr(t.priceCents()), MarketText.cr(t.depositCents())), false);
+        data.setDirty();
     }
 
     private static int clampCr(long cents) {
