@@ -438,6 +438,17 @@ public final class PcBlocks {
     public static final DeferredBlock<PcDeviceBlock> HELIUM_RECOVERY_UNIT = device("helium_recovery_unit", machine(),
             Spec.facing(PcProperties.RUNNING).footprint(Footprint.of(Segment.box(0, 1, 0, 1, 0, 0))),
             FoundryBlock.with(dev.denfry.promptcritical.mod.gas.HeliumRecoveryBlockEntity::new));
+    // --- радиохимия PUREX (I4): каньон, аппараты линии, хранилище стекла ---
+    public static final DeferredBlock<PcDeviceBlock> PUREX_CELL = device("purex_cell", machine(), Spec.facing(PcProperties.RUNNING),
+            FoundryBlock.with(dev.denfry.promptcritical.mod.reprocessing.PurexCellBlockEntity::new));
+    public static final DeferredBlock<PcDeviceBlock> HLW_VAULT = device("hlw_vault", machine(), Spec.of(),
+            FoundryBlock.with(dev.denfry.promptcritical.mod.reprocessing.HlwVaultBlockEntity::new));
+    public static final DeferredBlock<PcBlock> SHEARING_MACHINE = block("shearing_machine", machine(), Spec.facing());
+    public static final DeferredBlock<PcBlock> DISSOLVER = block("dissolver", machine(), Spec.facing());
+    public static final DeferredBlock<PcBlock> MIXER_SETTLER = block("mixer_settler", machine(), Spec.facing());
+    public static final DeferredBlock<PcBlock> OXALATE_PRECIPITATOR = block("oxalate_precipitator", machine(), Spec.facing());
+    public static final DeferredBlock<PcBlock> DENITRATION_REACTOR = block("denitration_reactor", machine(), Spec.facing());
+    public static final DeferredBlock<PcBlock> VITRIFICATION_MELTER = block("vitrification_melter", machine(), Spec.facing());
     /** Стеллаж бассейна выдержки облучённого топлива. */
     public static final DeferredBlock<PcDeviceBlock> FUEL_RACK = device("fuel_rack", machine().noOcclusion(), Spec.of(),
             FoundryBlock.with(dev.denfry.promptcritical.mod.radiation.FuelRackBlockEntity::new));

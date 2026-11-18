@@ -18,7 +18,9 @@ public enum Emitter {
     SR90(28.79 * Times.Y, new double[0], new double[0], 0.196, Y90),
     NB95(34.991 * Times.D, new double[] {0.7658}, new double[] {0.998}, 0.808, null),
     ZR95(64.032 * Times.D, new double[] {0.7242, 0.7567}, new double[] {0.4417, 0.5446}, 0.852, NB95),
-    RU106(371.8 * Times.D, new double[] {0.5119, 0.6221, 1.0503}, new double[] {0.204, 0.0993, 0.0156}, 1.62, null);
+    RU106(371.8 * Times.D, new double[] {0.5119, 0.6221, 1.0503}, new double[] {0.204, 0.0993, 0.0156}, 1.62, null),
+    /** Криптон-85: инертный газ, при растворении топлива уходит в газоочистку и в трубу. */
+    KR85(10.739 * Times.Y, new double[] {0.5140}, new double[] {0.00434}, 0.253, null);
 
     public final double halfLifeS;
     /** Средняя энергия распада, уходящая в тепло, МэВ. */

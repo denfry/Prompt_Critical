@@ -109,7 +109,7 @@ public final class PcBlockStateProvider extends BlockStateProvider {
     /** Блоки с неподвижными частями из арт-реестра (partial): части добавляются мультипартом к модели состояния. */
     private static final java.util.Set<String> PARTS = java.util.Set.of("coke_pusher_ram", "sinter_strand", "blast_furnace_top",
             "cast_house_machine", "ladle", "roller_table", "rolling_mill_stand", "piercing_mill", "pipe_welder", "asu_main_compressor",
-            "asu_expander", "air_separator", "hydrotest_pump", "recording_gauge", "water_clarifier", "rotary_table", "mud_pump", "pumpjack", "gas_compressor", "ldpe_reactor", "brine_treater", "pvc_reactor", "leach_tank", "rotary_calciner", "hf_kiln",
+            "asu_expander", "air_separator", "hydrotest_pump", "recording_gauge", "water_clarifier", "rotary_table", "mud_pump", "pumpjack", "gas_compressor", "ldpe_reactor", "brine_treater", "pvc_reactor", "leach_tank", "rotary_calciner", "hf_kiln", "mixer_settler",
             "ammonia_converter", "pellet_press", "primary_pump");
 
     /** Модели состояния мультипартом: основная и части, все с поворотом по {@code facing}. */
@@ -157,6 +157,7 @@ public final class PcBlockStateProvider extends BlockStateProvider {
             case "brine_treater" -> java.util.List.of(base, "water_clarifier/partial/rake");
             case "leach_tank" -> java.util.List.of(base, id + "/partial/agitator");
             case "rotary_calciner", "hf_kiln" -> java.util.List.of(base, id + "/partial/shell");
+            case "mixer_settler" -> java.util.List.of(base, id + "/partial/impeller");
             case "pvc_reactor" -> java.util.List.of(base, "high_pressure_autoclave/partial/agitator");
             case "ammonia_converter" -> java.util.List.of(base, "ammonia_synthesis_reactor/partial/compressor_wheel");
             case "pellet_press" -> java.util.List.of(base, "pellet_press/partial/ram");
@@ -237,6 +238,8 @@ public final class PcBlockStateProvider extends BlockStateProvider {
             case "ngl_fractionator" -> "column_base_large";
             case "helium_recovery_unit" -> "helium_purifier";
             case "fuel_rack" -> "fuel_pool_rack_open";
+            case "purex_cell" -> "hot_cell";
+            case "hlw_vault" -> "near_surface_vault";
             case "rtu_station" -> s.getValue(BlockStateProperties.LIT) ? id : id + "_off";
             // химия I3
             case "pyrolysis_furnace" -> s.getValue(BlockStateProperties.LIT) ? "tube_furnace_radiant_lit" : "tube_furnace_radiant";

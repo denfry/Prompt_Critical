@@ -16,7 +16,7 @@ public final class Criticality {
     private static final double[][] MIN_CRITICAL = {
             {0.0095, Double.POSITIVE_INFINITY}, {0.02, 8.0}, {0.03, 3.6}, {0.05, 2.1}, {0.10, 1.35}, {0.20, 1.05}, {0.50, 0.85},
             {0.93, 0.78}, {1.0, 0.76}};
-    public static final double SAFE_SHARE = 0.45, FISSIONS_REF = 1e17;
+    public static final double SAFE_SHARE = 0.45, FISSIONS_REF = 1e17, PU239_MIN_CRITICAL_KG = 0.51;
 
     private Criticality() {
     }
@@ -39,14 +39,32 @@ public final class Criticality {
         return MIN_CRITICAL[MIN_CRITICAL.length - 1][1];
     }
 
+    /**
+     * Минимальная критическая масса Pu-239 в оптимально замедленном растворе нитрата плутония с водяным отражателем:
+     * 0,51 кг (LA-10860, Paxton & Pruvost 1987; ARH-600). Pu-240 поглощает нейтроны и поднимает её: на каждый процент
+     * Pu-240 сверх 5 % — около 1,3 % (ANSI/ANS-8.15, оценка); Pu-241 делится и считается как Pu-239.
+     */
+    public static double minCriticalPuKg(double pu240Fraction) {
+        return PU239_MIN_CRITICAL_KG * (1 + 1.3 * Math.max(0, pu240Fraction - 0.05));
+    }
+
+    /** Безопасная масса плутония в аппарате — та же доля {@link #SAFE_SHARE} от минимальной критической. */
+    public static double safePuKg(double pu240Fraction) {
+        return SAFE_SHARE * minCriticalPuKg(pu240Fraction);
+    }
+
     public static double safeU235Kg(double x) {
         return SAFE_SHARE * minCriticalU235Kg(x);
     }
 
     /** Делений во вспышке: растёт с избытком массы над критической, не больше 10¹⁹. */
     public static double excursionFissions(double u235Kg, double x) {
-        double m = minCriticalU235Kg(x);
-        if (!(u235Kg > m)) return 0;
-        return Math.min(1e19, FISSIONS_REF * (1 + 10 * (u235Kg / m - 1)));
+        return excursionFissionsOver(u235Kg, minCriticalU235Kg(x));
+    }
+
+    /** Делений во вспышке для массы делящегося {@code kg} при минимальной критической {@code minKg}. */
+    public static double excursionFissionsOver(double kg, double minKg) {
+        if (!(kg > minKg)) return 0;
+        return Math.min(1e19, FISSIONS_REF * (1 + 10 * (kg / minKg - 1)));
     }
 }
