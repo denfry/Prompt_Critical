@@ -318,6 +318,8 @@ public final class PcLanguageProvider extends LanguageProvider {
         b("forced_draft_fan", "Forced Draft Fan", "Дутьевой вентилятор");
         b("steam_turbine", "Steam Turbine", "Паровая турбина");
         b("hydro_turbine", "Hydro Turbine", "Гидротурбина");
+        b("tidal_unit", "Tidal Bulb Unit", "Капсульный агрегат ПЭС");
+        b("tide_gauge", "Tide Gauge", "Мареограф");
         b("wind_turbine", "Wind Power Unit D-30", "Ветроэлектростанция Д-30");
         b("dam_gate", "Dam Intake Gate", "Затвор водозабора");
         b("gas_turbine", "Gas Turbine Unit", "Газотурбинная установка");

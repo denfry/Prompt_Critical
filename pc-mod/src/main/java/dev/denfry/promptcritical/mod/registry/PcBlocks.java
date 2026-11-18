@@ -585,6 +585,15 @@ public final class PcBlocks {
     public static final DeferredBlock<PcDeviceBlock> HYDRO_TURBINE = device("hydro_turbine", machine(),
             Spec.facing(PcProperties.RUNNING).footprint(Footprint.of(Segment.box(-1, 1, -1, 0, -1, 1))),
             KineticMachineBlock.with(ShaftSide.UP, dev.denfry.promptcritical.mod.powerhouse.HydroTurbineBlockEntity::new));
+    /**
+     * Капсульный агрегат приливной электростанции 3×2×3 в плотине: фасадом к морю, тылом к бассейну, вал Create вверх.
+     */
+    public static final DeferredBlock<PcDeviceBlock> TIDAL_UNIT = device("tidal_unit", machine(),
+            Spec.facing(PcProperties.RUNNING).footprint(Footprint.of(Segment.box(-1, 1, -1, 0, -1, 1))),
+            KineticMachineBlock.with(ShaftSide.UP, dev.denfry.promptcritical.mod.powerhouse.TidalUnitBlockEntity::new));
+    /** Мареограф: уровень моря по модели прилива, амплитуда M2 места и фаза Луны. */
+    public static final DeferredBlock<PcDeviceBlock> TIDE_GAUGE = device("tide_gauge", machine().noOcclusion(), Spec.facing(),
+            FoundryBlock.with(dev.denfry.promptcritical.mod.powerhouse.TideGaugeBlockEntity::new));
     /** Затвор водозабора ГЭС: ставится в воду, поднимается и опускается рукой. */
     public static final DeferredBlock<dev.denfry.promptcritical.mod.powerhouse.DamGateBlock> DAM_GATE = withItem(BLOCKS.registerBlock(
             "dam_gate", p -> dev.denfry.promptcritical.mod.powerhouse.DamGateBlock.create(p, Spec.facing(BlockStateProperties.OPEN)),

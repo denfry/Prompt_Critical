@@ -35,6 +35,11 @@ public final class PowerhouseBlockEntities {
     public static final DeferredHolder<BlockEntityType<?>, BlockEntityType<WindTurbineBlockEntity>> WIND_TURBINE =
             type("wind_turbine", WindTurbineBlockEntity::new, PcBlocks.WIND_TURBINE);
 
+    public static final DeferredHolder<BlockEntityType<?>, BlockEntityType<TidalUnitBlockEntity>> TIDAL_UNIT =
+            type("tidal_unit", TidalUnitBlockEntity::new, PcBlocks.TIDAL_UNIT);
+    public static final DeferredHolder<BlockEntityType<?>, BlockEntityType<TideGaugeBlockEntity>> TIDE_GAUGE =
+            type("tide_gauge", TideGaugeBlockEntity::new, PcBlocks.TIDE_GAUGE);
+
     private PowerhouseBlockEntities() {
     }
 

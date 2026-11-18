@@ -106,6 +106,10 @@ public final class PowerhouseText {
                 "Редуктор должен касаться газовой турбины задней гранью");
         msg("gearbox.linked", "Gearbox on the gas turbine: %s rpm", "Редуктор на газовой турбине: %s об/мин");
         msg("turbine.reset", "Overspeed trip reset", "Автомат безопасности взведён");
+        msg("tidal.mode.off", "Tidal plant: gates open, the basin follows the sea", "ПЭС: затворы открыты, бассейн ходит за морем");
+        msg("tidal.mode.ebb", "Tidal plant: one-way generation on the ebb", "ПЭС: одностороннее действие на отливе");
+        msg("tidal.mode.two_way", "Tidal plant: two-way generation on the ebb and the flood",
+                "ПЭС: двустороннее действие на отливе и приливе");
         msg("wind.enabled", "Wind turbine automatics on: starts at %s m/s with grid voltage", "Автоматика ВЭУ включена: пуск от %s м/с при напряжении сети");
         msg("wind.disabled", "Wind turbine automatics off: feathering and stopping", "Автоматика ВЭУ отключена: лопасти во флюгер, останов");
         msg("wind.reset", "Wind turbine trip reset", "Авария ВЭУ сброшена");
