@@ -65,6 +65,21 @@ public final class GasTurbineBlockEntity extends IronworksBlockEntity {
         return level.getBlockEntity(c) instanceof GasTurbineBlockEntity g ? g : null;
     }
 
+    /** Расход выхлопных газов при нынешнем воздухе, кг/с (котлу-утилизатору). */
+    public double exhaustKgS() {
+        return turbine.exhaustKgS(airK, airPa);
+    }
+
+    /** Температура выхлопа, К. */
+    public double exhaustK() {
+        return turbine.exhaustK(airK);
+    }
+
+    /** Тепло сожжённого газа, Вт. */
+    public double fuelHeatW() {
+        return turbine.heatInputW();
+    }
+
     /** Нагрузка вала от редуктора, Вт. */
     void setLoadW(double w) {
         loadW = Math.max(0, w);

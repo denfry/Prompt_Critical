@@ -248,6 +248,7 @@ public final class PcLanguageProvider extends LanguageProvider {
         i("catalyst_steam_reforming", "Nickel Reforming Catalyst", "Никелевый катализатор конверсии метана");
         i("catalyst_shift_ht", "Iron-Chromium Shift Catalyst", "Железохромовый катализатор конверсии CO");
         i("catalyst_shift_lt", "Copper-Zinc Shift Catalyst", "Медноцинковый катализатор конверсии CO");
+        i("catalyst_methanol", "Methanol Synthesis Catalyst", "Катализатор синтеза метанола");
         i("pt_rh_gauze", "Platinum-Rhodium Gauze Pack", "Пакет платинородиевых сеток");
         i("catalyst_denox", "Tail Gas Reduction Catalyst", "Катализатор очистки хвостовых газов");
         i("cap_lamp", "Miner's Cap Lamp", "Головной шахтный светильник");
@@ -313,6 +314,8 @@ public final class PcLanguageProvider extends LanguageProvider {
         b("ammonia_converter", "Ammonia Synthesis Loop", "Колонна синтеза аммиака");
         b("nitric_acid_unit", "Nitric Acid Unit", "Агрегат азотной кислоты");
         b("acid_concentrator", "Nitric Acid Concentrator", "Колонна концентрирования азотной кислоты");
+        b("methanol_converter", "Methanol Synthesis Unit", "Агрегат синтеза метанола");
+        b("methanol_column", "Methanol Distillation Columns", "Колонны ректификации метанола");
         b("gas_centrifuge", "Gas Centrifuge Section", "Секция газовых центрифуг");
         b("centrifuge_cascade", "Centrifuge Cascade Control", "Пульт каскада газовых центрифуг");
         b("uo2_conversion", "UF₆ to UO₂ Conversion Line (ADU)", "Линия конверсии UF₆ в UO₂ (АДУ)");
@@ -407,6 +410,7 @@ public final class PcLanguageProvider extends LanguageProvider {
         b("wind_turbine", "Wind Power Unit D-30", "Ветроэлектростанция Д-30");
         b("dam_gate", "Dam Intake Gate", "Затвор водозабора");
         b("gas_turbine", "Gas Turbine Unit", "Газотурбинная установка");
+        b("hrsg", "Heat Recovery Steam Generator", "Котёл-утилизатор");
         b("turbine_gearbox", "Turbine Gearbox", "Редуктор турбины");
         b("condenser", "Steam Condenser", "Конденсатор");
         b("cooling_tower_cell", "Cooling Tower Cell", "Секция градирни");
@@ -713,6 +717,7 @@ public final class PcLanguageProvider extends LanguageProvider {
         MISC.put("death.attack.promptcritical.chlorine.player", new String[] {"%1$s was gassed by chlorine while fighting %2$s",
                 "%1$s отравлен хлором, спасаясь от %2$s"});
         MISC.putAll(dev.denfry.promptcritical.mod.nitrogen.NitrogenText.lang());
+        MISC.putAll(dev.denfry.promptcritical.mod.methanol.MethanolText.lang());
     }
 
     @Override

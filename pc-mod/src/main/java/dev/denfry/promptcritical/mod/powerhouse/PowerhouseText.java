@@ -102,6 +102,12 @@ public final class PowerhouseText {
         msg("gt.stop", "Stop: fuel shut · %s %% speed, %s of %s kW, air %s °C, exhaust %s °C",
                 "Останов: топливо отсечено · %s %% оборотов, %s из %s кВт, воздух %s °C, выхлоп %s °C");
         msg("gt.reset", "Gas turbine overspeed trip reset", "Автомат безопасности ГТУ взведён");
+        msg("hrsg.no_turbine", "The heat recovery boiler must touch the turbine end of a gas turbine with its lower duct",
+                "Котёл-утилизатор должен касаться нижним газоходом турбинной секции ГТУ");
+        msg("hrsg.no_boiler", "No boiler for the steam: put the heat recovery boiler against a boiler drum or shell",
+                "Пару некуда идти: поставьте котёл-утилизатор вплотную к барабану или корпусу котла");
+        msg("hrsg.state", "Exhaust %s °C → stack %s °C · steam %s kg/h · %s kW into the boiler",
+                "Выхлоп %s °C → в трубу %s °C · пар %s кг/ч · %s кВт в котёл");
         msg("gearbox.no_turbine", "The gearbox must touch the gas turbine with its back face",
                 "Редуктор должен касаться газовой турбины задней гранью");
         msg("gearbox.linked", "Gearbox on the gas turbine: %s rpm", "Редуктор на газовой турбине: %s об/мин");

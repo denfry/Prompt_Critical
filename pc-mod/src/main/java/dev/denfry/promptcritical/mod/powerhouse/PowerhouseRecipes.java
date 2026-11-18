@@ -104,6 +104,11 @@ public final class PowerhouseRecipes extends RecipeProvider {
                 .pattern("PFP").pattern("BSB").pattern("PFP").define('P', plate).define('F', AllItems.PROPELLER.get())
                 .define('B', PcBlocks.BOILER_BURNER.get()).define('S', shaft)
                 .unlockedBy("has_boiler_wall", has(wall)).save(out, id("gas_turbine"));
+        // котёл-утилизатор: барабан, пароперегреватель, испаритель (экраны) и экономайзер в газоходе из листа
+        ShapedRecipeBuilder.shaped(RecipeCategory.MISC, PcBlocks.HRSG.get())
+                .pattern("PDP").pattern("WSW").pattern("PEP").define('P', plate).define('D', PcBlocks.STEAM_DRUM.get())
+                .define('W', wall).define('S', PcBlocks.BOILER_SUPERHEATER.get()).define('E', PcBlocks.BOILER_ECONOMIZER.get())
+                .unlockedBy("has_gas_turbine", has(PcBlocks.GAS_TURBINE.get())).save(out, id("hrsg"));
         ShapedRecipeBuilder.shaped(RecipeCategory.MISC, PcBlocks.TURBINE_GEARBOX.get())
                 .pattern("PCP").pattern("SLS").pattern("PCP").define('P', plate).define('C', AllBlocks.COGWHEEL.get())
                 .define('L', AllBlocks.LARGE_COGWHEEL.get()).define('S', shaft)

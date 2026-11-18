@@ -57,6 +57,16 @@
   lower explosive limit, Bodenstein NO oxidation and tray absorption limited by acid strength, a brown tail plume and
   tail gas reduction. Magnesium nitrate concentration to 98 % on the existing column code.
 
+### Methanol and combined cycle (I3)
+- Methanol synthesis unit on a Create shaft: its own steam reformer without air or shift (S ≈ 3), a Lurgi-type
+  boiling-water tube converter on copper with Graaf equilibria and Vanden Bussche–Froment kinetics, a recycle loop
+  whose pressure finds its own level and a purge to the reformer burners. The shell steam sets the bed temperature;
+  copper sinters above 300 °C and a dry shell runs the bed to its adiabatic equilibrium.
+- Two-column methanol distillation to grade AA on the Fenske–Underwood–Gilliland column, reboiled by the unit's own
+  steam; the product is the same methanol the gas plant uses against hydrates.
+- Heat recovery steam generator behind the gas turbine: single-pressure pinch-point design, steam into the boiler it
+  touches. Combined cycle about 43 % on the first-generation turbine, about 50 % on a 1980s heavy-duty one.
+
 ### Uranium enrichment (I4)
 - UF₆ cylinders 48Y, 30B and 5A carry their UF₆ mass and U-235 and U-234 fractions; topping up averages the isotopics,
   and overfill or enrichment beyond the cylinder's limit is refused.

@@ -528,6 +528,13 @@ public final class PcBlocks {
     public static final DeferredBlock<PcDeviceBlock> ACID_CONCENTRATOR = device("acid_concentrator", machine(),
             Spec.facing(BlockStateProperties.LIT).footprint(FP_COLUMN3),
             FoundryBlock.with(dev.denfry.promptcritical.mod.nitrogen.AcidConcentratorBlockEntity::new));
+    // --- химия I3: метанол — свой риформинг, контур синтеза на валу Create, ректификация ---
+    public static final DeferredBlock<PcDeviceBlock> METHANOL_CONVERTER = device("methanol_converter", machine(),
+            Spec.facing(PcProperties.RUNNING).footprint(FP_TALL2),
+            KineticMachineBlock.with(ShaftSide.BACK, dev.denfry.promptcritical.mod.methanol.MethanolConverterBlockEntity::new));
+    public static final DeferredBlock<PcDeviceBlock> METHANOL_COLUMN = device("methanol_column", machine(),
+            Spec.facing(BlockStateProperties.LIT).footprint(FP_COLUMN3),
+            FoundryBlock.with(dev.denfry.promptcritical.mod.methanol.MethanolColumnBlockEntity::new));
 
     // --- ядерное топливо I4: обогащение урана на газовых центрифугах ---
     /** Секция газовых центрифуг (20 машин); их считает пульт каскада в радиусе {@code CascadeBlockEntity#RADIUS}. */
@@ -742,6 +749,10 @@ public final class PcBlocks {
             Spec.facing(PcProperties.RUNNING).segments(PcProperties.GAS_TURBINE_SEGMENT,
                     Footprint.of(CUBE3, CUBE3.at(0, 0, 3), CUBE3.at(0, 0, 6))),
             FoundryBlock.with(dev.denfry.promptcritical.mod.powerhouse.GasTurbineBlockEntity::new));
+    /** Котёл-утилизатор ПГУ 3×6×3: газоход у выхлопа ГТУ, барабан сверху; пар — в котёл, которого он касается. */
+    public static final DeferredBlock<PcDeviceBlock> HRSG = device("hrsg", machine(),
+            Spec.facing(PcProperties.RUNNING).segments(PcProperties.HRSG_SEGMENT, Footprint.of(CUBE3, CUBE3.at(0, 3, 0))),
+            FoundryBlock.with(dev.denfry.promptcritical.mod.powerhouse.HrsgBlockEntity::new));
     /**
      * Сетевая ВЭУ Д-30: решётчатая башня 1×9×1 (основание со шкафом управления, средняя секция, оголовок), гондола
      * и колесо над ней поворачиваются на ветер; кабель 0,4 кВ — к основанию.
