@@ -381,14 +381,7 @@ mk("pyrite_roaster", "reagents", [
 ], {"front": "block/pyrite_roaster_front.png"})
 
 # сернокислотная установка: щит управления мультиблоком (печь + контактный аппарат + башня)
-mk("acid_plant", "reagents", [
-    el("body", [0, 0, 1], [16, 16, 16], "p"),
-    el("panel", [1, 1, 0.5], [15, 15, 1], "panel", full=["north"]),
-    el("glow_lamp_run", [11, 13, 0.25], [12.5, 14, 0.5], "lg"),
-    el("glow_lamp_alarm", [13, 13, 0.25], [14.5, 14, 0.5], "lr"),
-    el("so2_in", [3, 16, 7], [5, 17.5, 9], "gas", faces={"up": "end"}, full=["up"]),
-    el("acid_out", [11, 16, 7], [13, 17.5, 9], "acid", faces={"up": "end"}, full=["up"]),
-], {"panel": "block/acid_plant_panel.png"})
+# нарисовано вручную в Blockbench: art/blockbench/electronics/silicon_line.author.js
 
 mk("sulfur_burner", "reagents",
    [el("saddle_w", [2, 0, 3], [5, 3, 13], "c"), el("saddle_e", [11, 0, 3], [14, 3, 13], "c")]
@@ -451,23 +444,7 @@ mk("electrolyzer", "reagents", [
    {"stack": "block/electrolyzer_stack.png"})
 
 # воздухоразделительная установка: холодильный блок, на фасаде — вентилятор забора воздуха (partial, ось Z)
-mk("air_separator", "reagents", [
-    el("cold_box", [1, 0, 3], [15, 16, 16], "box"),
-    el("shroud_b", [1, 1, 1], [15, 2, 3], "and"),
-    el("shroud_t", [1, 14, 1], [15, 15, 3], "and"),
-    el("shroud_w", [1, 2, 1], [2, 14, 3], "and"),
-    el("shroud_e", [14, 2, 1], [15, 14, 3], "and"),
-    el("n2_out", [3, 16, 8], [5, 17.5, 10], "gas", faces={"up": "end"}, full=["up"]),
-    el("o2_out", [11, 16, 8], [13, 17.5, 10], "air", faces={"up": "end"}, full=["up"]),
-], {"box": "block/air_separator_coldbox.png"})
-mk("air_separator/fan", "reagents",
-   disc("hub", "z", 1.5, 1, 3, "ds", sides=8)
-   + [
-       el("blade_v", [7.4, 2.5, 1.75], [8.6, 13.5, 2.25], "sm"),
-       el("blade_h", [2.5, 7.4, 1.73], [13.5, 8.6, 2.27], "sm"),
-       el("blade_d1", [7.4, 2.5, 1.74], [8.6, 13.5, 2.24], "sm", rot=("z", 45, [8, 8, 8])),
-       el("blade_d2", [7.4, 2.5, 1.76], [8.6, 13.5, 2.26], "sm", rot=("z", -45, [8, 8, 8])),
-   ], kind="partial")
+# нарисовано вручную в Blockbench: art/blockbench/electronics/silicon_line.author.js
 
 mk("ostwald_converter", "reagents",
    shell("boiler", "y", 6.5, 0, 7, "shell")
@@ -500,15 +477,7 @@ mk("solvay_tower", "reagents",
        nozzle("slurry_out", [13, 1, 7], [16, 3, 9], "alk", "east"),
    ], {"shell": "block/solvay_tower_shell.png"})
 
-mk("coke_oven", "reagents", [
-    el("brickwork", [0, 0, 0.5], [16, 16, 16], "fb"),
-    el("door", [2, 1, 0], [14, 13, 0.5], "door", full=["north"]),
-    el("buckstay_w", [0.25, 0, -0.5], [2, 16, 0.5], "d"),
-    el("buckstay_e", [14, 0, -0.5], [15.75, 16, 0.5], "d"),
-    el("glow_door_seam", [7, 13, 0.1], [9, 13.5, 0.5], "fire"),
-    el("standpipe", [6, 16, 10], [9, 17.5, 13], "fuel"),
-    el("gooseneck", [6, 16.5, 7], [9, 18, 10], "fuel"),
-], {"door": "block/coke_oven_door.png"})
+# нарисовано вручную в Blockbench: art/blockbench/electronics/silicon_line.author.js
 
 mk("fractionating_column", "reagents",
    shell("shell", "y", 5, 0, 16, "shell")
