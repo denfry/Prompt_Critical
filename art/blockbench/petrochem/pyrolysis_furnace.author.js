@@ -76,7 +76,7 @@
     // hood and stack
     m.box('hood', [-5, 24, 2], [21, 26, 14], 'casing', { hide: ['down'] });
     m.prismY('stack_base', [8, 8], 5, 26, 27.5, 'frame', { ends: ['up'] });
-    m.prismY('stack', [8, 8], 4, 27.5, 32, 'ci', { cap: 'material/soot' });
+    m.prismY('stack', [8, 8], 4, 27.5, 31.9, 'ci', { cap: 'material/soot' });   // caps step up 0.01 each: stay under 32
     m.prismY('stack_ring', [8, 8], 4.4, 30, 30.8, 'frame', { ends: ['up', 'down'] });
 
     // quench exchangers (TLE) on the south side, on a beam over the edge, feeding the steam drum
