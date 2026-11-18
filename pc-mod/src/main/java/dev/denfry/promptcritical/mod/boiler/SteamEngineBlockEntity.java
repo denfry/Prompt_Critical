@@ -324,7 +324,7 @@ public class SteamEngineBlockEntity extends DeviceBlockEntity implements Pressur
     /** Коренной подшипник у маховика. */
     @Override
     public Vec3 opsBearingPos() {
-        return BoilerGeometry.world(worldPosition, facing(), 8, 12, 8);
+        return BoilerGeometry.world(worldPosition, facing(), 18.5, 8, 40); // крышка восточного коренного подшипника рамы
     }
 
     @Override

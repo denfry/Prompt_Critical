@@ -107,19 +107,7 @@ def support_arch():
 
 m("mine_support_arch", "mining", support_arch())
 
-# главный вентилятор ВОД-21 3×3×3: кожух с жалюзи, электродвигатель; крыльчатка — partial (ось Z)
-def main_fan(running=False):
-    return hcyl("housing", "z", 15, -15.5, 26, "p") + [
-        el("louver_face", [-12, -12, -16], [28, 28, -15.5], "louv", full=["north"]),
-        el("diffuser", [-10, -10, 26], [26, 26, 32], "p"),
-        el("motor", [-16, -16, 20], [0, -4, 32], "mb"),
-        el("foundation", [-16, -16, -16], [32, -14, 20], "c"),
-        lamp("lamp_run", 28, 26, -15.4, running, "lg", 1.25)]
-
-
-m("main_mine_fan", "mining", main_fan())
-m("main_mine_fan_running", "mining", main_fan(True))
-m("main_mine_fan/impeller", "mining", disc("hub", "z", 3, -10, 6, "st", 8) + impeller_z(-6, 2, 13), kind="partial")
+# главный вентилятор нарисован вручную в Blockbench: art/blockbench/mining/main_mine_fan.author.js
 
 
 # вентиляционная дверь 1×2×1: дощатая с резиной / стальной регулятор с окном
@@ -174,48 +162,8 @@ def agz(alarm=False):
 m("mine_dispatch_cabinet", "mining", agz())
 m("mine_dispatch_cabinet_alarm", "mining", agz(True))
 
-# копёр: секции клёпаной фермы 3×3×3, верхняя — подшкивная площадка; шкив — partial (ось X)
-def headframe_section(top=False):
-    els = []
-    for i, (x, z) in enumerate(((-15, -15), (29, -15), (-15, 29), (29, 29))):
-        els.append(el(f"leg_{i}", [x, -16, z], [x + 2, 32, z + 2], "riv"))
-    for y in (-16, 8):
-        els += [el(f"brace_n_{y}", [-13, y, -15], [29, y + 2, -14], "riv"),
-                el(f"brace_s_{y}", [-13, y, 30], [29, y + 2, 31], "riv"),
-                el(f"brace_w_{y}", [-15, y, -13], [-14, y + 2, 29], "riv"),
-                el(f"brace_e_{y}", [30, y, -13], [31, y + 2, 29], "riv")]
-    if top:
-        els += [el("deck", [-16, 26, -16], [32, 28, 32], "grat"),
-                el("rail_n", [-16, 28, -16], [32, 31, -15.5], "red"),
-                el("bearing_w", [-12, 28, 4], [-6, 32, 12], "d"),
-                el("bearing_e", [22, 28, 4], [28, 32, 12], "d")]
-    return els
-
-
-m("headframe", "mining", headframe_section())
-m("headframe_top", "mining", headframe_section(True))
-m("headframe/sheave", "mining", hcyl("rim", "x", 13, 4, 12, "red", c=(8, 16, 8)) + hcyl("hub", "x", 3, 2, 14, "st", c=(8, 16, 8), sides=8)
-  + [el("spoke_v", [6.5, 4, 7], [9.5, 28, 9], "red"), el("spoke_h", [6.5, 15, -4], [9.5, 17, 20], "red")],
-  kind="partial")
-
-
-# шахтная клеть 2×3×2 (якорь — нижний северо-западный по X/Z, средний по Y)
-def cage(door_open=False):
-    els = [el("floor", [0, -16, 0], [32, -14, 32], "grat"),
-           el("roof", [0, 30, 0], [32, 32, 32], "p"),
-           el("bridle", [12, 32 - 0.01, 12], [20, 32, 20], "d"),
-           el("wall_w", [0, -14, 0], [0.5, 30, 32], "mesh"),
-           el("wall_e", [31.5, -14, 0], [32, 30, 32], "mesh"),
-           el("wall_s", [0, -14, 31.5], [32, 30, 32], "mesh")]
-    for i, (x, z) in enumerate(((0, 0), (30, 0), (0, 30), (30, 30))):
-        els.append(el(f"post_{i}", [x, -14, z], [x + 2, 30, z + 2], "d"))
-    els.append(el("rail", [0.5, 4, 1], [31.5, 5, 2], "cy"))
-    els.append(el("door", [2, -14, 0], [30, 2, 0.5], "mesh") if not door_open else el("door", [2, 12, 0], [30, 28, 0.5], "mesh"))
-    return els
-
-
-m("mine_cage", "mining", cage())
-m("mine_cage_open", "mining", cage(True))
+# копёр, шкив и клеть нарисованы вручную в Blockbench: art/blockbench/mining/headframe.author.js
+# (текстуры textures/block/shaft/)
 
 # ======================================================================
 # углеобогащение

@@ -63,7 +63,12 @@ public final class PanelScreen extends AbstractContainerScreen<PanelMenu> {
         double dt = Math.min(0.25, (now - lastFrame) / 1000.0);
         lastFrame = now;
         int x = leftPos, y = topPos;
-        PanelArt.background(g, x, y, layout.width, imageHeight);
+        if (layout.art != null) {
+            PanelArt.art(g, layout.art, x, y, layout.width, layout.height);
+            if (imageHeight > layout.height) PanelArt.background(g, x, y + layout.height, layout.width, imageHeight - layout.height);
+        } else {
+            PanelArt.background(g, x, y, layout.width, imageHeight);
+        }
         if (menu.side()) PanelArt.background(g, x + layout.width, y, imageWidth - layout.width, imageHeight);
         PanelArt.plate(g, font, title, x + layout.width / 2, y + 5, fit.titleRoom());
         for (PanelLayout.Element e : layout.elements) {
@@ -79,6 +84,13 @@ public final class PanelScreen extends AbstractContainerScreen<PanelMenu> {
                 case PanelLayout.Lamp l -> PanelArt.lamp(g, font, l, menu.bit(l.ch(), l.bit()), ex, ey, fit.room(l, font.width(l.label())));
                 case PanelLayout.Readout r -> PanelArt.window(g, font, r.text().apply(menu), ex, ey, r.w());
                 case PanelLayout.Caption c -> PanelArt.paint(g, font, c.text(), ex, ey, fit.room(c, font.width(c.text())));
+                case PanelLayout.Firebox f -> PanelArt.firebox(g, font, f, smooth(f, menu.get(f.bedCh(), f.bedScale()) / f.bedMax(), dt),
+                        menu.bit(f.flagsCh(), f.litBit()), menu.bit(f.flagsCh(), f.smokyBit()), ex, ey, fit.room(f, font.width(f.label())));
+                case PanelLayout.UTube u -> PanelArt.utube(g, font, u, smooth(u, menu.get(u.ch(), u.scale()), dt), ex, ey,
+                        fit.room(u, font.width(u.label())));
+                case PanelLayout.IndicatorCard ic -> PanelArt.indicator(g, font, ic,
+                        smooth(ic, menu.get(ic.chestCh(), 1) * 1000 + 101_325, dt), menu.bit(ic.flagsCh(), ic.runBit()), ex, ey,
+                        fit.room(ic, font.width(ic.label())));
                 case PanelLayout.Button b -> {
                 }
             }
@@ -148,6 +160,18 @@ public final class PanelScreen extends AbstractContainerScreen<PanelMenu> {
                 case PanelLayout.Lamp l -> {
                     lines.add(l.label());
                     yield inside(mx, my, l.x(), l.y(), 14, 14);
+                }
+                case PanelLayout.Firebox f -> {
+                    lines.add(f.tip() != null ? f.tip().apply(menu) : f.label());
+                    yield inside(mx, my, f.x(), f.y(), f.w(), f.h() + 12);
+                }
+                case PanelLayout.UTube u -> {
+                    lines.add(u.tip() != null ? u.tip().apply(menu) : u.label());
+                    yield inside(mx, my, u.x(), u.y(), PanelLayout.UTube.W, u.h() + 12);
+                }
+                case PanelLayout.IndicatorCard ic -> {
+                    lines.add(ic.tip() != null ? ic.tip().apply(menu) : ic.label());
+                    yield inside(mx, my, ic.x(), ic.y(), ic.w(), ic.h() + 12);
                 }
                 default -> false;
             };

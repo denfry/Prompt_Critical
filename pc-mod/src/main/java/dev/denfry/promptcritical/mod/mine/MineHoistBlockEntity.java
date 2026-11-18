@@ -7,6 +7,7 @@ import dev.denfry.promptcritical.mod.binding.SimBindings;
 import dev.denfry.promptcritical.mod.binding.SimLevelBinding;
 import dev.denfry.promptcritical.mod.block.PcProperties;
 import dev.denfry.promptcritical.mod.blockentity.DeviceBlockEntity;
+import dev.denfry.promptcritical.mod.boiler.BoilerGeometry;
 import dev.denfry.promptcritical.mod.boiler.ShaftConsumer;
 import dev.denfry.promptcritical.mod.config.ServerConfig;
 import dev.denfry.promptcritical.mod.item.RopeStateData;
@@ -457,10 +458,10 @@ public final class MineHoistBlockEntity extends DeviceBlockEntity implements Sha
         return speed == 0;
     }
 
-    /** Подшипник барабана. */
+    /** Западный коренной подшипник барабана (крышка над осью y 0, z 8 модели). */
     @Override
     public Vec3 opsBearingPos() {
-        return Vec3.atCenterOf(worldPosition).add(0, 0.4, 0);
+        return BoilerGeometry.world(worldPosition, facing(), -14.25, 4, 8);
     }
 
     @Override

@@ -1,5 +1,6 @@
 package dev.denfry.promptcritical.mod.boiler;
 
+import dev.denfry.promptcritical.mod.PromptCritical;
 import dev.denfry.promptcritical.mod.panel.PanelLayout;
 import dev.denfry.promptcritical.mod.panel.PanelLayout.LampColor;
 import dev.denfry.promptcritical.mod.panel.PanelText;
@@ -10,6 +11,7 @@ import static dev.denfry.promptcritical.mod.panel.PanelText.PA;
 import static dev.denfry.promptcritical.mod.panel.PanelText.RPM;
 import dev.denfry.promptcritical.mod.panel.PanelText.Tr;
 import dev.denfry.promptcritical.mod.panel.PanelValues;
+import dev.denfry.promptcritical.sim.combustion.SteamEngineUnit;
 import java.util.List;
 import net.minecraft.ChatFormatting;
 import net.minecraft.network.chat.Component;
@@ -61,8 +63,8 @@ public final class BoilerPanels {
                     "Давление пара %s МПа (рабочее %s, клапан открывается при %s)"),
             GLASS_TIP = PanelText.tr("boiler.glass_tip", "Gauge glass %s%% · red line — furnace crown and fusible plug",
                     "Водоуказательное стекло %s%% · красная черта — потолок жаровой трубы и пробка"),
-            DRAFT_TIP = PanelText.tr("boiler.draft_tip", "Chimney draft %s Pa — more chimney, more air",
-                    "Тяга трубы %s Па — выше труба, больше воздуха"),
+            DRAFT_TIP = PanelText.tr("boiler.draft_tip", "Chimney draft %s Pa (%s mm w.g.) — more chimney, more air",
+                    "Тяга трубы %s Па (%s мм вод. ст.) — выше труба, больше воздуха"),
             FLUE_TIP = PanelText.tr("boiler.flue_tip", "Flue gas leaving the boiler %s °C", "Уходящие газы %s °C"),
             BED_TIP = PanelText.tr("boiler.bed_tip", "Coal on the grate %s of %s kg", "Угля на решётке %s из %s кг"),
             FEED_TIP = PanelText.tr("boiler.feed_tip", "Feed water %s of %s L — fill by pipe or bucket",
@@ -96,66 +98,97 @@ public final class BoilerPanels {
             STEAM = PanelText.tr("engine.steam", "Steam %s kg/h", "Пар %s кг/ч"),
             NO_BOILER = PanelText.tr("engine.no_boiler", "No boiler touching the engine", "Машина не примыкает к котлу"),
             TACHO_TIP = PanelText.tr("engine.tacho_tip", "Engine %s rpm (rated 120)", "Машина %s об/мин (номинал 120)"),
-            CHEST_TIP = PanelText.tr("engine.chest_tip", "Steam at the valve chest %s MPa", "Пар перед золотником %s МПа");
+            CHEST_TIP = PanelText.tr("engine.chest_tip", "Steam at the valve chest %s MPa", "Пар перед золотником %s МПа"),
+            CARD = PanelText.tr("engine.card", "Indicator card", "Индикаторная диаграмма"),
+            CARD_TIP = PanelText.tr("engine.card_tip", "Theoretical card: cut-off at %s%% of the stroke, mean effective pressure %s MPa",
+                    "Теоретическая диаграмма: отсечка на %s%% хода, среднее индикаторное давление %s МПа");
 
     private static final Tr FEED_RATE = PanelText.tr("stoker.feed", "Coal feed", "Подача угля"),
             HOPPER = PanelText.tr("stoker.hopper", "Hopper: coal, washed coal, charcoal, coke",
                     "Бункер: уголь, концентрат, древесный уголь, кокс"),
             CHAIN = PanelText.tr("stoker.chain", "Chain", "Цепь"),
+            CHAIN_SPEED = PanelText.tr("stoker.chain_speed", "Chain shaft", "Вал цепи"),
+            CHAIN_SPEED_TIP = PanelText.tr("stoker.chain_speed_tip", "Chain shaft %s rpm (nominal %s): the feed follows the speed",
+                    "Вал цепи %s об/мин (номинал %s): подача идёт по скорости"),
             STOKER_STATUS = PanelText.tr("stoker.status", "Shaft %s rpm · bed %s kg", "Вал %s об/мин · слой %s кг"),
             STOKER_NO_BOILER = PanelText.tr("stoker.no_boiler", "Back the stoker onto a boiler", "Решётку нужно примкнуть задом к котлу");
 
-    public static final PanelLayout BOILER = PanelLayout.builder("fire_tube_boiler", 220, 178, B_CHANNELS)
+    /**
+     * Фронт котла: манометр, водоуказательное стекло, глазок в топку, U-образный тягомер, термометр уходящих газов.
+     * Фон нарисован под эту раскладку ({@code art/blockbench/boilers/fire_tube_boiler.author.js}, {@code FTB.paintGui}):
+     * при переносе приборов перерисуйте его.
+     */
+    public static final PanelLayout BOILER = PanelLayout.builder("fire_tube_boiler", 240, 202, B_CHANNELS)
+            .art(PromptCritical.id("textures/gui/panel/fire_tube_boiler.png"))
             .dial(8, 24, true, B_P_KPA, 1000, 1.6, 1.32, 2, MPA.get(), PRESSURE.get(),
                     v -> PRESSURE_TIP.get(v.num(B_P_KPA, 1000, 2), "1.20", v.num(B_RELIEF_KPA, 1000, 2)))
-            .glass(80, 24, 74, B_GLASS_PERMIL, 0xFF3F78B8, (0.45 - FireTubeBoilerBlockEntity.GLASS_BOTTOM_M) / FireTubeBoilerBlockEntity.GLASS_SPAN_M,
+            .glass(82, 24, 76, B_GLASS_PERMIL, 0xFF3F78B8, (0.45 - FireTubeBoilerBlockEntity.GLASS_BOTTOM_M) / FireTubeBoilerBlockEntity.GLASS_SPAN_M,
                     (0.67 - FireTubeBoilerBlockEntity.GLASS_BOTTOM_M) / FireTubeBoilerBlockEntity.GLASS_SPAN_M, GLASS.get(),
                     v -> GLASS_TIP.get(v.num(B_GLASS_PERMIL, 10, 0)))
-            .dial(104, 24, false, B_DRAFT_PA10, 10, 200, Double.NaN, 0, PA.get(), DRAFT.get(),
-                    v -> DRAFT_TIP.get(v.num(B_DRAFT_PA10, 10, 0)))
-            .dial(162, 24, false, B_FLUE_C10, 10, 600, 450, 0, CELSIUS.get(), FLUE.get(),
-                    v -> FLUE_TIP.get(v.num(B_FLUE_C10, 10, 0)))
-            .lamp(104, 88, B_FLAGS, F_LIT, LampColor.AMBER, LIT.get())
-            .lamp(104, 104, B_FLAGS, F_RELIEF, LampColor.WHITE, RELIEF.get())
-            .lamp(162, 88, B_FLAGS, F_PLUG, LampColor.RED, PLUG.get())
-            .lamp(162, 104, B_FLAGS, F_LOW_WATER, LampColor.RED, LOW.get())
-            .lamp(104, 118, B_FLAGS, F_UNACCEPTED, LampColor.RED, UNACCEPTED.get())
-            .lamp(162, 118, B_FLAGS, F_DRAIN, LampColor.WHITE, DRAIN_LAMP.get())
-            .bar(8, 132, 98, B_BED_KG10, 10, FireTubeBoilerBlockEntity.MAX_BED_KG, 0xFFE07828, BED.get(),
+            .firebox(106, 24, 76, 50, B_BED_KG10, 10, FireTubeBoilerBlockEntity.MAX_BED_KG, B_FLAGS, F_LIT, F_SMOKY, BED.get(),
                     v -> BED_TIP.get(v.num(B_BED_KG10, 10, 0), PanelText.num(FireTubeBoilerBlockEntity.MAX_BED_KG, 0)))
-            .bar(114, 132, 98, B_FEED_L, 1, FireTubeBoilerBlockEntity.FEED_TANK_MB, 0xFF3F78B8, FEED.get(),
+            .utube(198, 24, 64, B_DRAFT_PA10, 10, 200, DRAFT.get(),
+                    v -> DRAFT_TIP.get(v.num(B_DRAFT_PA10, 10, 0), PanelText.num(v.get(B_DRAFT_PA10, 10) / 9.80665, 1)))
+            .dial(184, 104, false, B_FLUE_C10, 10, 600, 450, 0, CELSIUS.get(), FLUE.get(),
+                    v -> FLUE_TIP.get(v.num(B_FLUE_C10, 10, 0)))
+            .lamp(8, 114, B_FLAGS, F_LIT, LampColor.AMBER, LIT.get())
+            .lamp(62, 114, B_FLAGS, F_RELIEF, LampColor.WHITE, RELIEF.get())
+            .lamp(118, 114, B_FLAGS, F_DRAIN, LampColor.WHITE, DRAIN_LAMP.get())
+            .lamp(8, 130, B_FLAGS, F_PLUG, LampColor.RED, PLUG.get())
+            .lamp(62, 130, B_FLAGS, F_LOW_WATER, LampColor.RED, LOW.get())
+            .lamp(118, 130, B_FLAGS, F_UNACCEPTED, LampColor.RED, UNACCEPTED.get())
+            .bar(8, 156, 170, B_FEED_L, 1, FireTubeBoilerBlockEntity.FEED_TANK_MB, 0xFF3F78B8, FEED.get(),
                     v -> FEED_TIP.get(v.num(B_FEED_L, 1, 0), FireTubeBoilerBlockEntity.FEED_TANK_MB))
-            .readout(8, 143, 204, BoilerPanels::boilerStatus, null)
-            .slot(10, 159, SLOT_FUEL, s -> BoilerFuels.key(s) != null, FUEL_SLOT.get())
-            .button(30, 160, 64, BUTTON_CHARGE, CHARGE.get(), CHARGE_TIP.get())
-            .button(98, 160, 56, BUTTON_DRAIN, DRAIN.get(), DRAIN_TIP.get())
-            .caption(166, 164, SLAG.get())
-            .output(194, 159, SLOT_SLAG, SLAG_SLOT.get())
+            .readout(8, 167, 170, BoilerPanels::boilerStatus, null)
+            .slot(10, 184, SLOT_FUEL, s -> BoilerFuels.key(s) != null, FUEL_SLOT.get())
+            .button(30, 184, 64, BUTTON_CHARGE, CHARGE.get(), CHARGE_TIP.get())
+            .button(98, 184, 56, BUTTON_DRAIN, DRAIN.get(), DRAIN_TIP.get())
+            .caption(184, 188, SLAG.get())
+            .output(216, 184, SLOT_SLAG, SLAG_SLOT.get())
             .build();
 
-    public static final PanelLayout ENGINE = PanelLayout.builder("steam_engine", 220, 168, E_CHANNELS)
+    /** Эталонная машина: отсечка и противодавление для индикаторной диаграммы щита. */
+    private static final SteamEngineUnit.Spec ENGINE_SPEC = SteamEngineUnit.Spec.reference(1, SteamEngineUnit.FLYWHEEL_INERTIA);
+    /** Вредное пространство цилиндра, доля рабочего объёма (у машин с плоским золотником 7–10 %). */
+    private static final double CLEARANCE = 0.08;
+    private static final PanelLayout.IndicatorCard CARD_SHAPE = new PanelLayout.IndicatorCard(0, 0, 0, 0, E_CHEST_KPA, E_FLAGS,
+            EF_RUNNING, ENGINE_SPEC.nominalCutoff(), CLEARANCE, ENGINE_SPEC.nominalBackPa(), 1.6e6, Component.empty(), null);
+
+    /**
+     * Щит машины: тахометр, манометр золотниковой коробки, индикаторная диаграмма, лампы, дроссель регулятора. Фон —
+     * доска машинного зала ({@code art/blockbench/boilers/steam_engine.author.js}, {@code SEN.paintGui}).
+     */
+    public static final PanelLayout ENGINE = PanelLayout.builder("steam_engine", 240, 206, E_CHANNELS)
+            .art(PromptCritical.id("textures/gui/panel/steam_engine.png"))
             .dial(8, 24, true, E_RPM10, 10, 160, 140, 0, RPM.get(), TACHO.get(), v -> TACHO_TIP.get(v.num(E_RPM10, 10, 0)))
             .dial(80, 24, false, E_CHEST_KPA, 1000, 1.6, 1.32, 2, MPA.get(), CHEST.get(),
                     v -> CHEST_TIP.get(v.num(E_CHEST_KPA, 1000, 2)))
-            .lamp(140, 26, E_FLAGS, EF_BOILER, LampColor.GREEN, BOILER_LAMP.get())
-            .lamp(140, 42, E_FLAGS, EF_VALVE, LampColor.GREEN, VALVE_LAMP.get())
-            .lamp(140, 58, E_FLAGS, EF_DASHPOT, LampColor.WHITE, DASHPOT.get())
-            .lamp(140, 74, E_FLAGS, EF_RUNNING, LampColor.AMBER, DRIVE.get())
-            .bar(80, 100, 132, E_THROTTLE_PERMIL, 1000, 1, 0xFFC8A050, THROTTLE.get(),
+            .indicator(136, 24, 96, 60, E_CHEST_KPA, E_FLAGS, EF_RUNNING, CARD_SHAPE.cutoff(), CLEARANCE, CARD_SHAPE.backPa(),
+                    CARD_SHAPE.pMaxPa(), CARD.get(), v -> CARD_TIP.get(PanelText.num(ENGINE_SPEC.nominalCutoff() * 100, 0),
+                            PanelText.num(CARD_SHAPE.meanEffectivePa(v.get(E_CHEST_KPA, 1) * 1000 + 101_325) / 1e6, 2)))
+            .lamp(80, 92, E_FLAGS, EF_BOILER, LampColor.GREEN, BOILER_LAMP.get())
+            .lamp(80, 108, E_FLAGS, EF_VALVE, LampColor.GREEN, VALVE_LAMP.get())
+            .lamp(160, 100, E_FLAGS, EF_DASHPOT, LampColor.WHITE, DASHPOT.get())
+            .lamp(160, 116, E_FLAGS, EF_RUNNING, LampColor.AMBER, DRIVE.get())
+            .bar(8, 142, 224, E_THROTTLE_PERMIL, 1000, 1, 0xFFC8A050, THROTTLE.get(),
                     v -> THROTTLE_TIP.get(v.num(E_THROTTLE_PERMIL, 10, 0)))
-            .readout(8, 114, 204, BoilerPanels::engineStatus, null)
-            .readout(8, 129, 204, v -> STEAM.get(v.num(E_STEAM_KGH, 1, 0)), null)
-            .button(8, 146, 80, BUTTON_VALVE, VALVE.get(), VALVE_TIP.get())
-            .button(92, 146, 56, BUTTON_BAR, BAR.get(), BAR_TIP.get())
-            .button(152, 146, 60, BUTTON_GEAR, GEAR_BUTTON.get(), GEAR_TIP.get())
+            .readout(8, 154, 224, BoilerPanels::engineStatus, null)
+            .readout(8, 170, 224, v -> STEAM.get(v.num(E_STEAM_KGH, 1, 0)), null)
+            .button(8, 187, 80, BUTTON_VALVE, VALVE.get(), VALVE_TIP.get())
+            .button(92, 187, 56, BUTTON_BAR, BAR.get(), BAR_TIP.get())
+            .button(152, 187, 80, BUTTON_GEAR, GEAR_BUTTON.get(), GEAR_TIP.get())
             .build();
 
-    public static final PanelLayout STOKER = PanelLayout.builder("grate_stoker", 176, 100, S_CHANNELS)
+    /** Щит решётки: подача угля, обороты вала цепи, лампы, бункер. Фон — {@code grate_stoker.author.js}, {@code GST.paintGui}. */
+    public static final PanelLayout STOKER = PanelLayout.builder("grate_stoker", 176, 104, S_CHANNELS)
+            .art(PromptCritical.id("textures/gui/panel/grate_stoker.png"))
             .dial(8, 24, false, S_FEED_KGH, 1, 1500, Double.NaN, 0, KGH.get(), FEED_RATE.get(), null)
-            .lamp(64, 26, S_FLAGS, SF_BOILER, LampColor.GREEN, BOILER_LAMP.get())
-            .lamp(64, 42, S_FLAGS, SF_RUNNING, LampColor.AMBER, CHAIN.get())
-            .slot(140, 34, 0, s -> BoilerFuels.key(s) != null, HOPPER.get())
-            .readout(64, 62, 104, v -> v.bit(S_FLAGS, SF_BOILER)
+            .dial(64, 24, false, S_RPM10, 10, 2 * GrateStokerBlockEntity.NOMINAL_RPM, Double.NaN, 0, RPM.get(), CHAIN_SPEED.get(),
+                    v -> CHAIN_SPEED_TIP.get(v.num(S_RPM10, 10, 0), PanelText.num(GrateStokerBlockEntity.NOMINAL_RPM, 0)))
+            .lamp(120, 26, S_FLAGS, SF_BOILER, LampColor.GREEN, BOILER_LAMP.get())
+            .lamp(120, 42, S_FLAGS, SF_RUNNING, LampColor.AMBER, CHAIN.get())
+            .slot(122, 62, 0, s -> BoilerFuels.key(s) != null, HOPPER.get())
+            .readout(8, 87, 160, v -> v.bit(S_FLAGS, SF_BOILER)
                     ? STOKER_STATUS.get(v.num(S_RPM10, 10, 0), v.num(S_BED_KG10, 10, 0))
                     : STOKER_NO_BOILER.get().withStyle(ChatFormatting.RED), null)
             .build();
