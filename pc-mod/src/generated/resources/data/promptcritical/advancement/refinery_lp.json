@@ -1,0 +1,38 @@
+{
+  "parent": "promptcritical:digital_twin",
+  "criteria": {
+    "blend": {
+      "conditions": {
+        "event": "promptcritical:refinery_lp",
+        "predicate": {
+          "cost_ratio": {
+            "max": 1.05
+          }
+        }
+      },
+      "trigger": "promptcritical:sim_event"
+    }
+  },
+  "display": {
+    "description": {
+      "translate": "advancements.promptcritical.refinery_lp.description"
+    },
+    "frame": "challenge",
+    "icon": {
+      "count": 1,
+      "id": "promptcritical:catalytic_reformer"
+    },
+    "title": {
+      "translate": "advancements.promptcritical.refinery_lp.title"
+    }
+  },
+  "requirements": [
+    [
+      "blend"
+    ]
+  ],
+  "rewards": {
+    "experience": 100
+  },
+  "sends_telemetry_event": true
+}

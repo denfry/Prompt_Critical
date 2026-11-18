@@ -21,7 +21,9 @@ import java.util.Map;
  * </pre>
  *
  * Функции: {@code AND OR XOR NOT MOVE ADD SUB MUL DIV GT GE LT LE EQ NE}; функциональные блоки с позиционными
- * входами: {@code TON/TOF/TP(IN, PT)}, {@code CTU(CU, R, PV)}, {@code CTD(CD, LD, PV)}, {@code R_TRIG/F_TRIG(CLK)}.
+ * входами: {@code TON/TOF/TP(IN, PT)}, {@code CTU(CU, R, PV)}, {@code CTD(CD, LD, PV)}, {@code R_TRIG/F_TRIG(CLK)},
+ * регуляторы {@code PID(PV, SP, KP, TI, TD, LO, HI, MAN, XM)} и {@code PC_ANTISURGE(DPO, PS, PD, KS, BCTRL, BRTL, KP,
+ * TI, RATE, MAN, XM)} (03d §3d.5.12).
  * Перевод — в ST ({@link StCompiler}); входы блоков, которые не переменная и не константа, проходят через биты
  * {@code %MX48…%MX63} (BOOL) или слова {@code %MW24…%MW31} (числа).
  */
@@ -120,12 +122,14 @@ public final class FbdCompiler {
 
     private static boolean isFb(String name) {
         return switch (name) {
-            case "TON", "TOF", "TP", "CTU", "CTD", "R_TRIG", "F_TRIG" -> true;
+            case "TON", "TOF", "TP", "CTU", "CTD", "R_TRIG", "F_TRIG", "PID", "PC_ANTISURGE" -> true;
             default -> false;
         };
     }
 
     private static boolean isNumericInput(String fb, int i) {
+        if (fb.equals("PID")) return i != 7; // MAN — BOOL
+        if (fb.equals("PC_ANTISURGE")) return i != 9;
         return (fb.equals("CTU") || fb.equals("CTD")) && i == 2;
     }
 

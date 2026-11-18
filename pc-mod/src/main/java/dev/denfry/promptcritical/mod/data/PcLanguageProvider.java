@@ -327,6 +327,7 @@ public final class PcLanguageProvider extends LanguageProvider {
         b("mud_mixing_hopper", "Mud Mixing Hopper", "Гидроворонка");
         i("barite_powder", "Barite Sack (50 kg)", "Мешок барита (50 кг)");
         b("gas_compressor", "Gas Compressor", "Газовый компрессор");
+        b("centrifugal_compressor", "Centrifugal Compressor", "Центробежный компрессор");
         b("glycol_regenerator", "Glycol Regenerator", "Регенератор гликоля");
         b("low_temperature_separator", "Low-Temperature Separation Unit", "Установка НТС");
         b("ngl_fractionator", "NGL Fractionation Unit", "Газофракционирующая установка");

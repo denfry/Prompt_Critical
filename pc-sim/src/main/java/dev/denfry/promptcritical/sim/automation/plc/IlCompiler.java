@@ -21,7 +21,7 @@ import java.util.regex.Pattern;
  * Регистр не важен.
  *
  * <p>Операнды: {@code %IX0.0…%IX0.7} — дискретные входы, {@code %QX0.0…%QX0.7} — выходы, {@code %MX0…%MX63} —
- * биты памяти; {@code %IW0…%IW3} — аналоговые входы, {@code %QW0…%QW1} — аналоговые выходы, {@code %MW0…%MW31} —
+ * биты памяти; {@code %IW0…%IW3} — аналоговые входы, {@code %QW0…%QW7} — аналоговые выходы (в мире работают те, что выведены на клеммы; все восемь — на стенде двойника), {@code %MW0…%MW31} —
  * слова памяти (в вольтах шкалы или любых единицах); константы {@code TRUE}, {@code FALSE}, числа и время
  * {@code T#1M30S}, {@code T#200MS} (в секундах); выходы блоков {@code TON3.Q}, {@code CTU0.CV}, {@code PID0.Y}.
  * Вызов блока: {@code CAL TON3(IN := %IX0.1, PT := T#5S)}; неуказанные входы сохраняют прошлые значения.
@@ -31,7 +31,7 @@ import java.util.regex.Pattern;
  */
 public final class IlCompiler {
     public static final int MAX_CHARS = 8192, MAX_INSTR = 512, MAX_DEPTH = 8;
-    public static final int IX = 8, QX = 8, MX = 64, IW = 4, QW = 2, MW = 32;
+    public static final int IX = 8, QX = 8, MX = 64, IW = 4, QW = 8, MW = 32;
 
     private static final Pattern LABEL = Pattern.compile("^([A-Za-z_][A-Za-z0-9_]*)\\s*:(?!=)\\s*(.*)$");
     private static final Pattern CALL = Pattern.compile("^([A-Za-z_][A-Za-z0-9_]*)\\s*(?:\\((.*)\\))?$");

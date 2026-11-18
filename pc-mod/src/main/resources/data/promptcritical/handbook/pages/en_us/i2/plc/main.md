@@ -24,7 +24,7 @@ An empty hand on the PLC opens the programmer. The language is the IEC 61131-3 I
 - Jumps: `JMP label`, `JMPC` if true, `JMPCN` if false; `RETC` ends the scan.
 - Comments: `(* … *)` and `//`.
 
-Addresses: `%IX0.0…%IX0.7` inputs, `%QX0.0…%QX0.7` outputs, `%MX0…%MX63` marker bits, `%IW0…%IW3` and `%QW0…%QW1` analogue channels, `%MW0…%MW31` memory words. Time is written `T#5S`, `T#1M30S`, `T#200MS`.
+Addresses: `%IX0.0…%IX0.7` inputs, `%QX0.0…%QX0.7` outputs, `%MX0…%MX63` marker bits, `%IW0…%IW3` and `%QW0…%QW7` analogue channels (in the world only those wired to terminals act; the twin stand wires all eight), `%MW0…%MW31` memory words. Time is written `T#5S`, `T#1M30S`, `T#200MS`.
 
 ## Blocks
 
@@ -34,6 +34,7 @@ Blocks are called with CAL, with the instance number in the name:
 - `CTU`, `CTD` counters. Inputs CU/CD, R/LD, PV; outputs Q, CV.
 - `R_TRIG`, `F_TRIG` rising and falling edges.
 - `PID` controller. Inputs PV, SP, KP, TI, TD, LO, HI, MAN, XM; output Y. The derivative acts on PV, so a setpoint step does not kick the output. It does not wind up, and switching to manual and back is bumpless.
+- `PC_ANTISURGE` anti-surge controller of a compressor. Inputs DPO (suction orifice differential), PS, PD (suction and discharge pressure), KS (slope of the surge line from the compressor's data sheet), BCTRL, BRTL (control and recycle trip margins, 0.10 and 0.03 by default), KP, TI, RATE (closing rate, 1 %/s by default), MAN, XM; outputs Y (recycle valve, 0–10 V, 10 is open), SS (surge ratio), DEV, CNT (surges counted). See the centrifugal compressor in the gas processing chapter.
 
 Example — start and stop with a seal-in, exactly what relay K1 does in the relay circuit:
 

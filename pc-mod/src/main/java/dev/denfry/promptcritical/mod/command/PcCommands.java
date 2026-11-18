@@ -103,7 +103,38 @@ public final class PcCommands {
                         .then(Commands.literal("list").executes(PcCommands::lockoutList))
                         .then(Commands.literal("plan").then(Commands.argument("pos", BlockPosArgument.blockPos()).executes(PcCommands::lockoutPlan)))
                         .then(Commands.literal("cut").then(Commands.argument("pos", BlockPosArgument.blockPos())
-                                .then(Commands.argument("reason", StringArgumentType.greedyString()).executes(PcCommands::lockoutCut))))));
+                                .then(Commands.argument("reason", StringArgumentType.greedyString()).executes(PcCommands::lockoutCut)))))
+                // задачи наладчика 03d §3d.11.4: таблица лидеров; сброс — администратор (весь /pc — уровень 2)
+                .then(Commands.literal("challenge")
+                        .then(Commands.literal("list").executes(PcCommands::challengeList))
+                        .then(Commands.literal("top").then(Commands.argument("id", StringArgumentType.word())
+                                .then(Commands.argument("metric", StringArgumentType.word()).executes(PcCommands::challengeTop))))
+                        .then(Commands.literal("reset").then(Commands.argument("id", StringArgumentType.word())
+                                .executes(PcCommands::challengeReset)))));
+    }
+
+    private static int challengeList(CommandContext<CommandSourceStack> ctx) {
+        for (var c : dev.denfry.promptcritical.sim.automation.twin.ChallengeCatalog.ALL.values()) {
+            String line = c.id() + " (" + c.industry() + ", " + c.level() + ", " + c.scenario().plant() + "): "
+                    + c.metrics().stream().map(m -> m.id()).collect(java.util.stream.Collectors.joining(", "));
+            ctx.getSource().sendSuccess(() -> Component.literal(line), false);
+        }
+        return dev.denfry.promptcritical.sim.automation.twin.ChallengeCatalog.ALL.size();
+    }
+
+    private static int challengeTop(CommandContext<CommandSourceStack> ctx) {
+        String id = StringArgumentType.getString(ctx, "id"), metric = StringArgumentType.getString(ctx, "metric");
+        var lines = dev.denfry.promptcritical.mod.scada.TunerChallenges.top(ctx.getSource().getServer(), id, metric);
+        if (lines.isEmpty()) ctx.getSource().sendSuccess(() -> Component.literal("no results for " + id + " " + metric), false);
+        for (String l : lines) ctx.getSource().sendSuccess(() -> Component.literal(l), false);
+        return lines.size();
+    }
+
+    private static int challengeReset(CommandContext<CommandSourceStack> ctx) {
+        String id = StringArgumentType.getString(ctx, "id");
+        dev.denfry.promptcritical.mod.scada.TunerChallenges.reset(ctx.getSource().getServer(), id);
+        ctx.getSource().sendSuccess(() -> Component.literal("leaderboard reset: " + id), true);
+        return 1;
     }
 
     private static int lockoutList(CommandContext<CommandSourceStack> ctx) {

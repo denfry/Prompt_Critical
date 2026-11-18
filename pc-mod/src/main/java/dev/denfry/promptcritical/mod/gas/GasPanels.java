@@ -8,8 +8,12 @@ import dev.denfry.promptcritical.mod.panel.PanelLayout.LampColor;
 import dev.denfry.promptcritical.mod.panel.PanelText;
 import dev.denfry.promptcritical.mod.panel.PanelText.Tr;
 import java.util.List;
+import net.minecraft.network.chat.Component;
 
-/** Местные щиты газопереработки: установка НТС с осушкой и холодильником, газофракционирующая установка. */
+/**
+ * Местные щиты газопереработки: установка НТС с осушкой и холодильником, газофракционирующая установка, центробежный
+ * компрессор со встроенным антипомпажным регулятором.
+ */
 public final class GasPanels {
     // НТС
     public static final int L_P_X100 = 0, L_GAS_M3H = 1, L_POWER_KW = 2, L_PLUG_PERMIL = 3, L_NGL_PERMIL = 4, L_SALES_PERMIL = 5,
@@ -22,6 +26,13 @@ public final class GasPanels {
             G_CHANNELS = 9;
     public static final int GF_RUNNING = 0;
     public static final int GB_R_DOWN = 0, GB_R_UP = 1;
+    // центробежный компрессор
+    public static final int C_SPEED_PCT = 0, C_PD_X100 = 1, C_FLOW_X1000 = 2, C_LINE_X1000 = 3, C_RECYCLE_PCT = 4, C_SS_X1000 = 5,
+            C_CYCLES = 6, C_VIB_X10 = 7, C_DAMAGE_PERMIL = 8, C_POWER_KW = 9, C_BCTRL_X1000 = 10, C_RATE_X1000 = 11,
+            C_LINE_VALVE_PCT = 12, C_XM_PCT = 13, C_FLAGS = 14, C_CHANNELS = 15;
+    public static final int CF_RUNNING = 0, CF_SURGE = 1, CF_AUTO = 2, CF_ONLINE = 3;
+    public static final int CB_LINE_DOWN = 0, CB_LINE_UP = 1, CB_MODE = 2, CB_REC_DOWN = 3, CB_REC_UP = 4, CB_MARGIN_DOWN = 5,
+            CB_MARGIN_UP = 6, CB_RATE_DOWN = 7, CB_RATE_UP = 8;
 
     private static final Tr M3H = PanelText.tr("unit.nm3h", "nm³/h", "нм³/ч"), KW = PanelText.tr("unit.kw", "kW", "кВт"),
             LTS_P = PanelText.tr("gas.lts_p", "LTS", "НТС"),
@@ -57,7 +68,35 @@ public final class GasPanels {
             R_DOWN = PanelText.tr("gas.r_down", "Reflux −", "Флегма −"),
             R_UP = PanelText.tr("gas.r_up", "Reflux +", "Флегма +"),
             GFU = PanelText.tr("gas.gfu", "Feed %s l/h · reflux %s · 15 trays in each of three columns",
-                    "Сырьё %s л/ч · флегмовое число %s · по 15 тарелок в трёх колоннах");
+                    "Сырьё %s л/ч · флегмовое число %s · по 15 тарелок в трёх колоннах"),
+            SPEED = PanelText.tr("cc.speed", "Speed", "Обороты"),
+            DISCHARGE = PanelText.tr("cc.discharge", "Discharge", "Нагнет."),
+            BAR = PanelText.tr("unit.bar", "bar", "бар"),
+            M3S = PanelText.tr("unit.m3s", "m³/s", "м³/с"),
+            LINE = PanelText.tr("cc.line", "To line", "В линию"),
+            SURGE_MARGIN = PanelText.tr("cc.ss", "S_s", "S_s"),
+            SS_TIP = PanelText.tr("cc.ss_tip", "Surge ratio S_s = q²_surge(Rc)/q²_r: 1 — on the surge line, the controller keeps it below 1/(1 + b_ctrl)",
+                    "Запас S_s = q²_surge(Rc)/q²_r: 1 — на линии помпажа, регулятор держит его ниже 1/(1 + b_ctrl)"),
+            VIBRATION = PanelText.tr("cc.vibration", "Vibration", "Вибрация"),
+            MMS = PanelText.tr("unit.mms", "mm/s", "мм/с"),
+            SURGE = PanelText.tr("cc.surge", "Surge", "Помпаж"),
+            AUTO = PanelText.tr("cc.auto", "Anti-surge", "Антипомпаж"),
+            ONLINE = PanelText.tr("cc.online", "On line", "В линии"),
+            LINE_DOWN = PanelText.tr("cc.line_down", "Line −", "Линия −"),
+            LINE_UP = PanelText.tr("cc.line_up", "Line +", "Линия +"),
+            MODE = PanelText.tr("cc.mode", "Auto/Man", "Авт/Руч"),
+            MODE_TIP = PanelText.tr("cc.mode_tip", "Anti-surge controller PC_ANTISURGE: automatic, or the recycle valve by hand",
+                    "Антипомпажный регулятор PC_ANTISURGE: автомат или рецикл вручную"),
+            REC_DOWN = PanelText.tr("cc.rec_down", "Recycle −", "Рецикл −"),
+            REC_UP = PanelText.tr("cc.rec_up", "Recycle +", "Рецикл +"),
+            MARGIN_DOWN = PanelText.tr("cc.margin_down", "Margin −", "Запас −"),
+            MARGIN_UP = PanelText.tr("cc.margin_up", "Margin +", "Запас +"),
+            RATE_DOWN = PanelText.tr("cc.rate_down", "Close −", "Закрытие −"),
+            RATE_UP = PanelText.tr("cc.rate_up", "Close +", "Закрытие +"),
+            CC_STATE = PanelText.tr("cc.state", "Recycle %s %% · flow %s m³/s · surge cycles %s · damage %s %% · shaft %s kW",
+                    "Рецикл %s %% · расход %s м³/с · циклов помпажа %s · повреждение %s %% · вал %s кВт"),
+            CC_TUNING = PanelText.tr("cc.tuning", "b_ctrl %s · closing %s %%/s · line valve %s %% · manual recycle %s %%",
+                    "b_ctrl %s · закрытие %s %%/с · линейный клапан %s %% · рецикл вручную %s %%");
 
     public static final PanelLayout PLANT = PanelLayout.builder("low_temperature_separator", 300, 176, L_CHANNELS)
             .dial(8, 22, false, L_P_X100, 100, 7, Double.NaN, 1, MPA.get(), LTS_P.get(), v -> LTS_P_TIP.get(v.num(L_P_X100, 100, 2)))
@@ -94,10 +133,35 @@ public final class GasPanels {
             .readout(8, 112, 224, v -> GFU.get(v.raw(G_FEED_LH), v.num(G_REFLUX_X10, 10, 1)), null)
             .noInventory().build();
 
+    public static final PanelLayout CENTRIFUGAL = PanelLayout.builder("centrifugal_compressor", 300, 176, C_CHANNELS)
+            .dial(8, 22, false, C_SPEED_PCT, 1, 110, 105, 0, PERCENT.get(), SPEED.get(), null)
+            .dial(64, 22, false, C_PD_X100, 100, 12, 11, 1, BAR.get(), DISCHARGE.get(), null)
+            .dial(120, 22, false, C_LINE_X1000, 1000, 1.4, Double.NaN, 2, M3S.get(), LINE.get(), null)
+            .dial(176, 22, false, C_SS_X1000, 1000, 1.2, 1.0, 2, Component.literal(""), SURGE_MARGIN.get(), v -> SS_TIP.get())
+            .dial(232, 22, false, C_VIB_X10, 10, 20, 11.2, 1, MMS.get(), VIBRATION.get(), null)
+            .lamp(8, 96, C_FLAGS, CF_RUNNING, LampColor.GREEN, PanelText.RUNNING.get())
+            .lamp(80, 96, C_FLAGS, CF_ONLINE, LampColor.GREEN, ONLINE.get())
+            .lamp(152, 96, C_FLAGS, CF_AUTO, LampColor.GREEN, AUTO.get())
+            .lamp(224, 96, C_FLAGS, CF_SURGE, LampColor.RED, SURGE.get())
+            .button(8, 112, 52, CB_LINE_DOWN, LINE_DOWN.get(), null)
+            .button(64, 112, 52, CB_LINE_UP, LINE_UP.get(), null)
+            .button(124, 112, 52, CB_MODE, MODE.get(), MODE_TIP.get())
+            .button(184, 112, 52, CB_REC_DOWN, REC_DOWN.get(), null)
+            .button(240, 112, 52, CB_REC_UP, REC_UP.get(), null)
+            .button(8, 130, 66, CB_MARGIN_DOWN, MARGIN_DOWN.get(), null)
+            .button(78, 130, 66, CB_MARGIN_UP, MARGIN_UP.get(), null)
+            .button(156, 130, 66, CB_RATE_DOWN, RATE_DOWN.get(), null)
+            .button(226, 130, 66, CB_RATE_UP, RATE_UP.get(), null)
+            .readout(8, 150, 284, v -> CC_STATE.get(v.raw(C_RECYCLE_PCT), v.num(C_FLOW_X1000, 1000, 2), v.raw(C_CYCLES),
+                    v.num(C_DAMAGE_PERMIL, 10, 1), v.raw(C_POWER_KW)), null)
+            .readout(8, 162, 284, v -> CC_TUNING.get(v.num(C_BCTRL_X1000, 1000, 2), v.num(C_RATE_X1000, 10, 1),
+                    v.raw(C_LINE_VALVE_PCT), v.raw(C_XM_PCT)), null)
+            .noInventory().build();
+
     private GasPanels() {
     }
 
     public static List<PanelLayout> all() {
-        return List.of(PLANT, FRACTIONATOR);
+        return List.of(PLANT, FRACTIONATOR, CENTRIFUGAL);
     }
 }

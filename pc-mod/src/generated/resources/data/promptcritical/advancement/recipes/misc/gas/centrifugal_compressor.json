@@ -1,0 +1,32 @@
+{
+  "parent": "minecraft:recipes/root",
+  "criteria": {
+    "has_gas_compressor": {
+      "conditions": {
+        "items": [
+          {
+            "items": "promptcritical:gas_compressor"
+          }
+        ]
+      },
+      "trigger": "minecraft:inventory_changed"
+    },
+    "has_the_recipe": {
+      "conditions": {
+        "recipe": "promptcritical:gas/centrifugal_compressor"
+      },
+      "trigger": "minecraft:recipe_unlocked"
+    }
+  },
+  "requirements": [
+    [
+      "has_the_recipe",
+      "has_gas_compressor"
+    ]
+  ],
+  "rewards": {
+    "recipes": [
+      "promptcritical:gas/centrifugal_compressor"
+    ]
+  }
+}

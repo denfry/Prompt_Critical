@@ -1,0 +1,33 @@
+{
+  "parent": "promptcritical:first_oil",
+  "criteria": {
+    "started": {
+      "conditions": {
+        "event": "promptcritical:no_surge",
+        "station_member": true
+      },
+      "trigger": "promptcritical:sim_event"
+    }
+  },
+  "display": {
+    "description": {
+      "translate": "advancements.promptcritical.no_surge.description"
+    },
+    "icon": {
+      "count": 1,
+      "id": "promptcritical:centrifugal_compressor"
+    },
+    "title": {
+      "translate": "advancements.promptcritical.no_surge.title"
+    }
+  },
+  "requirements": [
+    [
+      "started"
+    ]
+  ],
+  "rewards": {
+    "experience": 40
+  },
+  "sends_telemetry_event": true
+}

@@ -26,7 +26,7 @@ import net.minecraft.network.chat.MutableComponent;
 public final class TwinPanels {
     public static final int PLANT = 0, STATUS = 1, TIME = 2, SPEED = 3, PLC = 4, FAULTS = 5, FORCES = 6, SCORE = 7, SIG0 = 8,
             SIGNALS = 6, ACT0 = 14, ACTUATORS = 4, LESSON = 18, IAE = 19, OVERSHOOT = 20, TRAVEL = 21, REMAIN = 22, FLAGS = 23,
-            RUNNING_SIMS = 24, CHANNELS = 25;
+            RUNNING_SIMS = 24, CH_RANK = 25, CH_TOTAL = 26, CH_METRIC = 27, CHANNELS = 28;
     /** Нет показания (обрыв линии). */
     public static final int BAD = Integer.MIN_VALUE;
     /** Итог: 0 — нет прогона, 1 — идёт, 2 — пройден, 3 — провал. */
@@ -34,7 +34,7 @@ public final class TwinPanels {
     /** Флаги: программа прошла FAT и её можно загрузить в ПЛК. */
     public static final int F_DEPLOYABLE = 0;
     // станция
-    public static final int W_PLANT = 0, W_FAT = 1, W_SPEED = 2, W_FAULT = 3, W_STOP = 4, W_DEPLOY = 5;
+    public static final int W_PLANT = 0, W_FAT = 1, W_SPEED = 2, W_FAULT = 3, W_STOP = 4, W_DEPLOY = 5, W_CHALLENGE = 6;
     // инструктор
     public static final int I_LESSON = 0, I_START = 1, I_SPEED = 2, I_FAULT = 3, I_STOP = 4, I_LICENSE = 5;
     // пульт оператора: механизм i — кнопки 2i («−», закрыть) и 2i+1 («+», открыть); снять форсировки
@@ -42,6 +42,11 @@ public final class TwinPanels {
     /** Ступени скорости двойника, шагов за тик сервера. */
     public static final int[] SPEEDS = {0, 1, 2, 5, 10};
 
+    /** Сообщения задачи наладчика в чат (инженерная станция). */
+    static final Tr MSG_NO_CHALLENGE = PanelText.tr("twin.msg.no_challenge", "No tuner task on this plant", "На этой установке нет задачи наладчика"),
+            MSG_STARTED = PanelText.tr("twin.msg.challenge_started", "Tuner task started: %s", "Задача наладчика начата: %s"),
+            MSG_METRIC = PanelText.tr("twin.msg.challenge_metric", "%s = %s: place %s of %s%s", "%s = %s: место %s из %s%s"),
+            MSG_TOP = PanelText.tr("twin.msg.challenge_top", ", top 10 %%", ", верхние 10 %%");
     static final Tr[] STATUS_TEXT = {
             PanelText.tr("twin.status.idle", "no run", "нет прогона"),
             PanelText.tr("twin.status.running", "running", "идёт"),
@@ -50,7 +55,9 @@ public final class TwinPanels {
     static final Tr[] PLANT_TEXT = {
             PanelText.tr("twin.plant.tank_farm", "Tank farm", "Резервуарный парк"),
             PanelText.tr("twin.plant.boiler_i0", "Boiler I0", "Котёл I0"),
-            PanelText.tr("twin.plant.generator_sync", "Generator and grid", "Генератор и сеть")};
+            PanelText.tr("twin.plant.generator_sync", "Generator and grid", "Генератор и сеть"),
+            PanelText.tr("twin.plant.compressor", "Compressor station", "Компрессорная станция"),
+            PanelText.tr("twin.plant.gasoline_blending", "Gasoline blending", "Смешение бензина")};
     static final Tr[] LESSON_TEXT = {
             PanelText.tr("twin.lesson.tank_overfill", "Tank overfill at night", "Перелив резервуара ночью"),
             PanelText.tr("twin.lesson.forced_bit", "The forced bit", "Забытая форсировка"),
@@ -83,12 +90,19 @@ public final class TwinPanels {
             FORCES_B = PanelText.tr("twin.b.forces", "Unforce", "Снять форсы"),
             FORCES_L = PanelText.tr("twin.forces", "Forces", "Форсировки"),
             DEPLOY_L = PanelText.tr("twin.deployable", "FAT passed", "FAT пройден"),
+            CHALLENGE_B = PanelText.tr("twin.b.challenge", "Tuner task", "Задача"),
+            CHALLENGE_TIP = PanelText.tr("twin.challenge_tip",
+                    "Tuner task on the chosen plant: the nearest PLC's program on the server's twin with the reference seed; hard limits, metrics and the server's leaderboard",
+                    "Задача наладчика на выбранной установке: программа ближайшего ПЛК на серверном двойнике с эталонным зерном; жёсткие условия, метрики и таблица лидеров сервера"),
+            CHALLENGE_LINE = PanelText.tr("twin.challenge_line", "Tuner task: first metric %s · place %s of %s",
+                    "Задача наладчика: первая метрика %s · место %s из %s"),
+            NO_CHALLENGE_LINE = PanelText.tr("twin.challenge_none", "Tuner task: not solved yet", "Задача наладчика: ещё не решена"),
             WS_TIP = PanelText.tr("twin.ws_tip", "FAT runs the program of the nearest PLC (16 blocks) on a copy of the plant; nothing in the world moves",
                     "FAT прогоняет программу ближайшего ПЛК (16 блоков) на копии установки; в мире ничего не движется"),
             CONSOLE_TIP = PanelText.tr("twin.console_tip", "Readings come from the simulator's instruments, faults included",
                     "Показания — с приборов тренажёра, вместе с их отказами");
 
-    public static final PanelLayout WORKSTATION = PanelLayout.builder("simulation_workstation", 248, 150, CHANNELS)
+    public static final PanelLayout WORKSTATION = PanelLayout.builder("simulation_workstation", 248, 170, CHANNELS)
             .readout(8, 22, 232, v -> RUN_LINE.get(plant(v), STATUS_TEXT[clampIdx(v.raw(STATUS), 4)].get(), v.raw(TIME), v.raw(SPEED)),
                     v -> WS_TIP.get())
             .readout(8, 36, 232, v -> signals(v, 0, 3), null)
@@ -104,6 +118,9 @@ public final class TwinPanels {
             .button(128, 116, 36, W_FAULT, FAULT_B.get(), null)
             .button(168, 116, 36, W_STOP, STOP_B.get(), null)
             .button(208, 116, 36, W_DEPLOY, DEPLOY_B.get(), null)
+            .button(8, 134, 76, W_CHALLENGE, CHALLENGE_B.get(), CHALLENGE_TIP.get())
+            .readout(8, 154, 232, v -> v.raw(CH_RANK) <= 0 ? NO_CHALLENGE_LINE.get()
+                    : CHALLENGE_LINE.get(v.num(CH_METRIC, 1000, 3), v.raw(CH_RANK), v.raw(CH_TOTAL)), null)
             .noInventory().build();
 
     public static final PanelLayout SIMULATOR = PanelLayout.builder("training_simulator", 232, 60, CHANNELS)

@@ -53,6 +53,11 @@ public final class GasRecipes extends RecipeProvider {
                 .pattern("PPP").pattern("CIC").pattern("AHA").define('P', AllBlocks.MECHANICAL_PISTON.get()).define('C', AllBlocks.COGWHEEL.get())
                 .define('I', Items.IRON_BLOCK).define('A', AllBlocks.ANDESITE_CASING.get()).define('H', AllBlocks.SHAFT.get())
                 .unlockedBy("has_mechanical_piston", has(AllBlocks.MECHANICAL_PISTON.get())).save(out, id("gas_compressor"));
+        ShapedRecipeBuilder.shaped(RecipeCategory.MISC, PcBlocks.CENTRIFUGAL_COMPRESSOR.get())
+                .pattern("PFP").pattern("SGS").pattern("AHA").define('P', pipe).define('F', AllBlocks.ENCASED_FAN.get())
+                .define('S', sheet).define('G', PcBlocks.GAS_COMPRESSOR.get()).define('A', AllBlocks.ANDESITE_CASING.get())
+                .define('H', AllBlocks.SHAFT.get()).unlockedBy("has_gas_compressor", has(PcBlocks.GAS_COMPRESSOR.get()))
+                .save(out, id("centrifugal_compressor"));
         ShapedRecipeBuilder.shaped(RecipeCategory.MISC, PcBlocks.GLYCOL_REGENERATOR.get())
                 .pattern("SPS").pattern("TBT").pattern("SFS").define('S', sheet).define('P', pipe).define('T', AllBlocks.FLUID_TANK.get())
                 .define('B', Items.BRICKS).define('F', Items.BLAST_FURNACE).unlockedBy("has_seamless_pipe", has(pipe))

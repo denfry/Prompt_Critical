@@ -15,3 +15,13 @@ The cure is methanol injected ahead of the chiller. By Hammerschmidt, 20 % metha
 ## NGL fractionation
 
 The [NGL fractionation unit](item:promptcritical:ngl_fractionator) splits NGL in three columns. The deethanizer strips methane and ethane, which burn in the reboilers. The depropanizer makes propane overhead, the debutanizer makes butanes, and natural gasoline is left in its bottoms. Sales gas piped to the unit heats the reboilers. Reflux on the panel sets the purity: with 15 trays at reflux 2, propane comes out better than 95 %.
+
+## Centrifugal compressor and surge
+
+The [centrifugal compressor](item:promptcritical:centrifugal_compressor) of a gas pipeline station takes gas from a 5 bar header and pushes it into an 8 bar line. The Create shaft enters its front face; 64 rpm is full speed, and the rotor needs 20 s to follow the shaft. At full speed and with the line valve at 85 % it delivers about 1 m³/s of suction gas at 8.7 bar for some 400 kW.
+
+Each speed of a centrifugal machine has a peak of pressure. Left of it, at too small a flow, the machine cannot hold the pressure it built: the flow breaks down and reverses, the discharge header blows back through the wheel, refills, and the cycle repeats every second or so. This is **surge**. Every cycle bangs in the casing, shakes the rotor above 11 mm/s and wears the bearing ten times faster; two minutes of surge in total wreck the machine. The panel counts surge cycles.
+
+The line of peaks is the **surge line**. In reduced coordinates it does not depend on the gas: q²_r = Δp_o/p_s (orifice differential at the suction in kPa over suction pressure in bar) against the pressure ratio R_c = p_d/p_s. For this compressor the data sheet gives q²_surge = 2.489 × (R_c − 1). The surge ratio S_s = q²_surge/q²_r is 1 on the surge line.
+
+The defence is the **recycle valve** from the discharge back to the suction, driven by the anti-surge controller `PC_ANTISURGE`. It keeps S_s below the control line 1/(1 + b_ctrl): it opens the valve at once and closes it no faster than the closing rate. When S_s crosses the recycle trip line 1/(1 + b_rtl) it adds 30 % of stroke in the same scan, and 60 % if that happens again within 10 s. A detected surge widens b_ctrl by 2 %. The compressor has this controller built in: its panel switches it to manual, sets the margin and the closing rate, and the line valve. A safe start: recycle open, shaft up to speed, then open the line valve and let the controller close the recycle slowly. Put the compressor on line without a single surge cycle for the *No Surge* advancement.
