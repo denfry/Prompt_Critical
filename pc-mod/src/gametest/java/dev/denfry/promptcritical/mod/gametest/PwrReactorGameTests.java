@@ -113,22 +113,25 @@ public final class PwrReactorGameTests {
                 .thenSucceed();
     }
 
-    @GameTest(template = LARGE, timeoutTicks = 600)
+    @GameTest(template = LARGE, timeoutTicks = 900)
     public static void losingPumpDriveAtPowerTrips(GameTestHelper h) {
         place(h, REACTOR, PcBlocks.PWR_REACTOR.get());
         place(h, PZR, PcBlocks.PRESSURIZER.get());
         pump(h, PUMP_A);
         pump(h, PUMP_B);
         h.startSequence()
-                .thenWaitUntil(() -> {
-                    PressurizedWaterReactor r = ((PwrReactorBlockEntity) h.getBlockEntity(REACTOR)).reactor();
-                    h.assertTrue(r.pumpSpeed(0) > 0.99 && r.pumpSpeed(1) > 0.99, "pumps at speed");
-                })
+                .thenIdle(2)
+                // топливо — сразу: размножение источника после загрузки даёт короткий период, и выдержка сброса АЗ
+                // (10 с) отсчитывается от его конца; пока разгоняются ГЦН (12 с), он успевает уйти
                 .thenExecute(() -> {
                     PressurizedWaterReactor r = ((PwrReactorBlockEntity) h.getBlockEntity(REACTOR)).reactor();
                     double kg = FuelDesign.VVER_440.uKgPerAssembly(0.96, 0.044);
                     r.setRods(1, 1);
                     for (int i = 0; i < PressurizedWaterReactor.POSITIONS; i++) r.load(i, FuelDesign.VVER_440, kg, 0.044, 0.0003);
+                })
+                .thenWaitUntil(() -> {
+                    PressurizedWaterReactor r = ((PwrReactorBlockEntity) h.getBlockEntity(REACTOR)).reactor();
+                    h.assertTrue(r.pumpSpeed(0) > 0.99 && r.pumpSpeed(1) > 0.99, "pumps at speed");
                 })
                 // насосы на ходу, КД на месте: причин АЗ нет, выдержка сброса 10 с
                 .thenIdle(240)

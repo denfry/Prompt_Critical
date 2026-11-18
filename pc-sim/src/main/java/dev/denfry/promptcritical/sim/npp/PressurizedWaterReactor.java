@@ -1054,6 +1054,7 @@ public final class PressurizedWaterReactor {
     public void equilibrate(double n) {
         solveStatic();
         kinetics.resetToEquilibrium(n);
+        period.reset(); // скачок мощности горячего старта — не разгон
         decay.equilibrium(n * NOMINAL_W);
         lowFluxBlocked = n > 0.1;
         protection.restore(n, lowFluxBlocked);
@@ -1175,6 +1176,7 @@ public final class PressurizedWaterReactor {
         solveStatic();
         double n = Math.max(PointKinetics.MIN_POWER, in.optDouble("n", 0));
         kinetics.resetToEquilibrium(n);
+        period.reset(); // мощность восстановлена из сохранения, а не выросла
         lowFluxBlocked = in.has("lowflux") && in.getInts("lowflux")[0] != 0;
         protection.restore(n, lowFluxBlocked);
         if (!in.has("tripped") || in.getInts("tripped")[0] != 0) protection.requestTrip(TripReason.MANUAL, TripSource.OPERATOR_PANEL);

@@ -221,6 +221,54 @@ class PressurizedWaterReactorTest {
         assertTrue(r.power() > 1.0, "power creeps up: " + r.power());
     }
 
+    /**
+     * Последовательность game test {@code losingPumpDriveAtPowerTrips}: после загрузки ТВС размножение источника поднимает
+     * счёт с коротким положительным периодом (≈ 3 с) — канал периода голосует, и выдержка сброса АЗ (10 с) идёт заново
+     * от момента, когда период ушёл. Сброс через 12 с после загрузки отказан, после выдержки — разрешён.
+     */
+    @Test
+    void fuelLoadingPeriodRestartsTheResetDelay() {
+        PressurizedWaterReactor r = new PressurizedWaterReactor();
+        r.setSecondary(Double.NaN, Double.NaN, 0);
+        Pwrs.run(r, 0.1);
+        for (int l = 0; l < PressurizedWaterReactor.LOOPS; l++) r.setPumpDrive(l, 1);
+        while (r.pumpSpeed(0) <= 0.99) r.step(0);
+        assertTrue(r.protection().isTripped() && r.protection().activeReasons().isEmpty(), "tripped, causes gone");
+        r.setRods(1, 1);
+        double kg = dev.denfry.promptcritical.sim.fuel.FuelDesign.VVER_440.uKgPerAssembly(0.96, 0.044);
+        for (int i = 0; i < PressurizedWaterReactor.POSITIONS; i++)
+            assertTrue(r.load(i, dev.denfry.promptcritical.sim.fuel.FuelDesign.VVER_440, kg, 0.044, 0.0003));
+        double shortest = Double.POSITIVE_INFINITY;
+        for (int i = 0; i < 40; i++) {
+            r.step(0);
+            if (r.periodS() > 0) shortest = Math.min(shortest, r.periodS());
+        }
+        assertTrue(shortest < 10, "loading gives a short positive period: " + shortest);
+        assertTrue(r.power() < 1e-6, "still deeply subcritical");
+        Pwrs.run(r, 10);
+        assertFalse(r.resetTrip(), "12 s after loading the delay is not over");
+        Pwrs.run(r, 5);
+        assertTrue(r.resetTrip(), "reset once 10 s passed after the period cleared");
+        // дальше — как в game test: горячий старт на 50 %, привод ГЦН петли 1 пропал
+        r.setThermalState(800, 588, 563);
+        r.setRods(0, 0.3);
+        double lo = 0, hi = 30;
+        for (int i = 0; i < 40; i++) {
+            double m = (lo + hi) / 2;
+            r.setBoronGkg(m);
+            if (r.evaluateReactivity() > 0) lo = m;
+            else hi = m;
+        }
+        r.equilibrate(0.5);
+        Pwrs.run(r, 1);
+        assertFalse(r.protection().isTripped(), "running at 50 %: " + r.protection().activeReasons());
+        r.setPumpDrive(0, 0);
+        Pwrs.run(r, 3);
+        assertTrue(r.protection().isTripped(), "tripped");
+        TripReason first = r.protection().firstOut();
+        assertTrue(first == TripReason.LOSS_OF_DRIVE_POWER || first == TripReason.LOW_COOLANT_FLOW, "first-out " + first);
+    }
+
     @Test
     void stateRoundTrips() {
         Unit u = new Unit();
@@ -238,5 +286,11 @@ class PressurizedWaterReactorTest {
         assertEquals(a.loadedAssemblies(), b.loadedAssemblies());
         assertFalse(b.protection().isTripped());
         assertNull(b.protection().firstOut());
+        // мир загружен на мощности: восстановленная мощность — не короткий период
+        b.setSecondary(Pwrs.T_SEC, 0.5, 2);
+        for (int l = 0; l < PressurizedWaterReactor.LOOPS; l++) b.setPumpDrive(l, 1);
+        Pwrs.run(b, 3);
+        assertFalse(b.protection().isTripped(), "no trip after reload: " + b.protection().firstOut());
+        assertEquals(a.power(), b.power(), 0.03);
     }
 }
