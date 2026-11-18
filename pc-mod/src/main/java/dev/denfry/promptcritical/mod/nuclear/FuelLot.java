@@ -4,6 +4,7 @@ import com.mojang.serialization.Codec;
 import com.mojang.serialization.codecs.RecordCodecBuilder;
 import dev.denfry.promptcritical.mod.PromptCritical;
 import dev.denfry.promptcritical.sim.fuel.FuelDesign;
+import dev.denfry.promptcritical.sim.nuclide.PlutoniumCharge;
 import io.netty.buffer.ByteBuf;
 import java.util.List;
 import net.minecraft.ChatFormatting;
@@ -103,6 +104,33 @@ public record FuelLot(double uKg, double u235, double u234, double density, int 
         return uKg * u235;
     }
 
+    /** Плутоний партии по изотопам, кг (недостача долей до единицы — Pu-238 — идёт в Pu-242). */
+    public PlutoniumCharge plutonium() {
+        return PlutoniumCharge.of(pu, pu239, pu240, pu241, pu242);
+    }
+
+    /**
+     * Свежая сборка для теплового реактора: без выгорания, плутония (МОКС) не больше
+     * {@link PlutoniumCharge#MAX_THERMAL_FRACTION} тяжёлого металла. Урановая — тоже да.
+     */
+    public boolean freshThermal() {
+        return burnup <= 0 && uKg > 0 && plutonium().thermalLicensable(uKg);
+    }
+
+    /**
+     * Облучённая сборка из состава реактора: уран {@code uKg} (U-235, U-234, U-236 — кг) и плутоний по изотопам, кг.
+     *
+     * @param density плотность таблеток, доля теоретической
+     * @param count   твэлов в сборке
+     */
+    public static FuelLot irradiated(FuelDesign d, double density, int count, double uKg, double u235Kg, double u234Kg, double u236Kg,
+            double pu239Kg, double pu240Kg, double pu241Kg, double pu242Kg, double burnup) {
+        double pu = pu239Kg + pu240Kg + pu241Kg + pu242Kg;
+        double u = Math.max(uKg, 1e-12);
+        return new FuelLot(uKg, u235Kg / u, u234Kg / u, density, count, d.name(), "", burnup, u236Kg / u, pu,
+                pu > 0 ? pu239Kg / pu : 0, pu > 0 ? pu240Kg / pu : 0, pu > 0 ? pu241Kg / pu : 0, pu > 0 ? pu242Kg / pu : 0);
+    }
+
     public ItemStack on(ItemStack s) {
         s.set(TYPE.get(), this);
         return s;
@@ -120,6 +148,9 @@ public record FuelLot(double uKg, double u235, double u234, double density, int 
         if (l.burnup > 0)
             t.add(NuclearText.msg("lot.burnup", NuclearText.num(l.burnup, 2), NuclearText.num(l.u236 * 100, 3),
                     NuclearText.num(l.pu * 1000, 1), NuclearText.num(l.pu239 * 100, 1)).withStyle(ChatFormatting.GOLD));
+        if (l.burnup <= 0 && l.pu > 0)
+            t.add(NuclearText.msg("lot.mox", NuclearText.num(l.pu / l.heavyMetalKg() * 100, 2), NuclearText.num(l.pu * 1000, 1),
+                    NuclearText.num(l.pu239 * 100, 1), NuclearText.num(l.pu240 * 100, 1)).withStyle(ChatFormatting.LIGHT_PURPLE));
         if (d != null) t.add(NuclearText.msg("lot.design", NuclearText.design(d),
                 l.gas.isEmpty() ? "" : NuclearText.msg("lot.gas." + l.gas)).withStyle(ChatFormatting.DARK_GRAY));
     }

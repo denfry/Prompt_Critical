@@ -21,6 +21,7 @@ import dev.denfry.promptcritical.sim.core.MutableStateTree;
 import dev.denfry.promptcritical.sim.core.TreeStateReader;
 import dev.denfry.promptcritical.sim.core.TreeStateWriter;
 import dev.denfry.promptcritical.sim.fuel.FuelDesign;
+import dev.denfry.promptcritical.sim.nuclide.PlutoniumCharge;
 import dev.denfry.promptcritical.sim.npp.CanduReactor;
 import dev.denfry.promptcritical.sim.npp.LightWaterCore;
 import dev.denfry.promptcritical.sim.radiation.FissionSource;
@@ -66,7 +67,7 @@ public final class CanduReactorBlockEntity extends DeviceBlockEntity implements 
         public boolean isItemValid(int slot, ItemStack stack) {
             if (slot != CanduPanels.SLOT_FRESH || !stack.is(PcItems.FUEL_ASSEMBLY.get())) return false;
             FuelLot l = FuelLot.of(stack);
-            return l.designOrNull() == FuelDesign.CANDU_37 && l.burnup() <= 0 && l.pu() <= 0;
+            return l.designOrNull() == FuelDesign.CANDU_37 && l.freshThermal();
         }
 
         @Override
@@ -80,6 +81,8 @@ public final class CanduReactorBlockEntity extends DeviceBlockEntity implements 
     /** Магазин перегрузочной машины: свежие пучки (предмет — один пучок), их уран на пучок и доли U-235, U-234. */
     private int magazine;
     private double magKg, magU235, magU234;
+    /** Плутоний среднего пучка магазина (МОКС), кг по изотопам. */
+    private PlutoniumCharge magPu = PlutoniumCharge.NONE;
 
     public CanduReactorBlockEntity(BlockPos pos, BlockState state) {
         super(NppBlockEntities.CANDU_REACTOR.get(), pos, state);
@@ -142,6 +145,7 @@ public final class CanduReactorBlockEntity extends DeviceBlockEntity implements 
         magKg = (magKg * n + l.uKg()) / (n + 1);
         magU235 = (magU235 * n + l.u235()) / (n + 1);
         magU234 = (magU234 * n + l.u234()) / (n + 1);
+        magPu = magPu.scaled(n).plus(l.plutonium()).scaled(1 / (n + 1));
         magazine++;
         fuel.setStackInSlot(CanduPanels.SLOT_FRESH, ItemStack.EMPTY);
         setChanged();
@@ -157,7 +161,7 @@ public final class CanduReactorBlockEntity extends DeviceBlockEntity implements 
             for (int ch = 0; ch < CanduReactor.CHANNELS; ch++) {
                 if (reactor.core().loaded(ch)) continue;
                 if (magazine < CanduReactor.BUNDLES_PER_CHANNEL) return;
-                if (reactor.loadChannel(ch, magKg, magU235, magU234)) {
+                if (reactor.loadChannel(ch, magKg, magU235, magU234, magPu)) {
                     magazine -= CanduReactor.BUNDLES_PER_CHANNEL;
                     if (player != null) player.displayClientMessage(NppText.msg("candu_refuelled", ch + 1), true);
                     setChanged();
@@ -169,13 +173,12 @@ public final class CanduReactorBlockEntity extends DeviceBlockEntity implements 
         if (magazine < CanduReactor.SHIFT_BUNDLES || !fuel.getStackInSlot(CanduPanels.SLOT_SPENT).isEmpty()) return;
         int ch = reactor.mostBurntChannel();
         if (ch < 0) return;
-        LightWaterCore.AssemblyFuel out = reactor.refuel(ch, CanduReactor.SHIFT_BUNDLES, magKg, magU235, magU234);
+        LightWaterCore.AssemblyFuel out = reactor.refuel(ch, CanduReactor.SHIFT_BUNDLES, magKg, magU235, magU234, magPu);
         magazine -= CanduReactor.SHIFT_BUNDLES;
         if (out != null) {
-            double u = out.uraniumKg(), pu = out.plutoniumKg();
             FuelDesign d = FuelDesign.CANDU_37;
-            FuelLot lot = new FuelLot(u, out.u235Kg() / u, out.u234() * out.hm0Kg() / u, 0.96, d.rods * CanduReactor.SHIFT_BUNDLES, d.name(), "",
-                    out.burnupMwdKg(), out.u236Kg() / u, pu, pu > 0 ? out.pu239Kg() / pu : 0, pu > 0 ? out.pu240Kg() / pu : 0, 0, 0);
+            FuelLot lot = FuelLot.irradiated(d, 0.96, d.rods * CanduReactor.SHIFT_BUNDLES, out.uraniumKg(), out.u235Kg(),
+                    out.u234() * out.hm0Kg(), out.u236Kg(), out.pu239Kg(), out.pu240Kg(), out.pu241Kg(), out.pu242Kg(), out.burnupMwdKg());
             fuel.setStackInSlot(CanduPanels.SLOT_SPENT, lot.on(new ItemStack(PcItems.FUEL_ASSEMBLY.get())));
         }
         if (player != null) player.displayClientMessage(NppText.msg("candu_refuelled", ch + 1), true);
@@ -331,6 +334,10 @@ public final class CanduReactorBlockEntity extends DeviceBlockEntity implements 
         tag.putDouble("mag_kg", magKg);
         tag.putDouble("mag_u235", magU235);
         tag.putDouble("mag_u234", magU234);
+        tag.putDouble("mag_pu239", magPu.pu239Kg());
+        tag.putDouble("mag_pu240", magPu.pu240Kg());
+        tag.putDouble("mag_pu241", magPu.pu241Kg());
+        tag.putDouble("mag_pu242", magPu.pu242Kg());
         wiring.save(tag);
     }
 
@@ -343,6 +350,8 @@ public final class CanduReactorBlockEntity extends DeviceBlockEntity implements 
         magKg = tag.getDouble("mag_kg");
         magU235 = tag.getDouble("mag_u235");
         magU234 = tag.getDouble("mag_u234");
+        magPu = new PlutoniumCharge(tag.getDouble("mag_pu239"), tag.getDouble("mag_pu240"), tag.getDouble("mag_pu241"),
+                tag.getDouble("mag_pu242"));
         wiring.load(tag);
         lastTrip = reactor.trip();
     }

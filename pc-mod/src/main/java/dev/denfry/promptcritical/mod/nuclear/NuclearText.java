@@ -45,6 +45,8 @@ public final class NuclearText {
         put("design.am_1", "AM-1 channel", "Канал АМ-1");
         put("lot.burnup", "Spent: %s MWd/kg · U-236 %s %% · Pu %s g (Pu-239 %s %%)",
                 "Отработанное: %s МВт·сут/кг · U-236 %s %% · Pu %s г (Pu-239 %s %%)");
+        put("lot.mox", "MOX: Pu %s %% of heavy metal (%s g) · Pu-239 %s %% · Pu-240 %s %%",
+                "МОКС: Pu %s %% тяжёлого металла (%s г) · Pu-239 %s %% · Pu-240 %s %%");
     }
 
     public static Component design(dev.denfry.promptcritical.sim.fuel.FuelDesign d) {

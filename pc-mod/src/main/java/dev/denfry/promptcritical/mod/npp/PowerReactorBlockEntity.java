@@ -75,7 +75,7 @@ public final class PowerReactorBlockEntity extends DeviceBlockEntity implements 
         @Override
         public boolean isItemValid(int slot, ItemStack stack) {
             return slot == NppPanels.SLOT_FRESH && stack.is(PcItems.FUEL_ASSEMBLY.get()) && FuelLot.of(stack).designOrNull() == FuelDesign.AM_1
-                    && FuelLot.of(stack).burnup() <= 0 && FuelLot.of(stack).pu() <= 0;
+                    && FuelLot.of(stack).freshThermal();
         }
 
         @Override
@@ -198,7 +198,7 @@ public final class PowerReactorBlockEntity extends DeviceBlockEntity implements 
         FuelLot l = FuelLot.of(s);
         for (int ch = 0; ch < ChannelReactor.CHANNELS; ch++) {
             if (reactor.loaded(ch)) continue;
-            if (reactor.load(ch, l.uKg(), l.u235(), l.u234())) {
+            if (reactor.load(ch, l.uKg(), l.u235(), l.u234(), l.plutonium())) {
                 s.shrink(1);
                 fuel.setStackInSlot(NppPanels.SLOT_FRESH, s);
                 setChanged();
@@ -220,9 +220,8 @@ public final class PowerReactorBlockEntity extends DeviceBlockEntity implements 
         if (best < 0) return;
         ChannelReactor.ChannelFuel f = reactor.unload(best);
         if (f == null) return;
-        double u = f.uraniumKg(), pu = f.plutoniumKg();
-        FuelLot lot = new FuelLot(u, f.u235Kg() / u, f.u234() * f.hm0Kg() / u, 0.955, FuelDesign.AM_1.rods, FuelDesign.AM_1.name(), "",
-                f.burnupMwdKg(), f.u236Kg() / u, pu, pu > 0 ? f.pu239Kg() / pu : 0, pu > 0 ? f.pu240Kg() / pu : 0, 0, 0);
+        FuelLot lot = FuelLot.irradiated(FuelDesign.AM_1, 0.955, FuelDesign.AM_1.rods, f.uraniumKg(), f.u235Kg(), f.u234() * f.hm0Kg(),
+                f.u236Kg(), f.pu239Kg(), f.pu240Kg(), f.pu241Kg(), f.pu242Kg(), f.burnupMwdKg());
         ItemStack spent = lot.on(new ItemStack(PcItems.FUEL_ASSEMBLY.get()));
         // активность при выгрузке (12 §12.0.2): удельная мощность — номинал на весь тяжёлый металл зоны, сборка с
         // трубками из нержавейки (размазанная плотность ≈ 4 г/см³) — с Co-60 конструкций

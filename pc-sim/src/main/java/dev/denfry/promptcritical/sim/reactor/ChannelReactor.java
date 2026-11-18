@@ -2,6 +2,7 @@ package dev.denfry.promptcritical.sim.reactor;
 
 import dev.denfry.promptcritical.sim.core.StateReader;
 import dev.denfry.promptcritical.sim.core.StateWriter;
+import dev.denfry.promptcritical.sim.nuclide.PlutoniumCharge;
 import dev.denfry.promptcritical.sim.neutronics.CellComposition;
 import dev.denfry.promptcritical.sim.neutronics.CellFeedbackState;
 import dev.denfry.promptcritical.sim.neutronics.CoolantKind;
@@ -39,6 +40,12 @@ import dev.denfry.promptcritical.sim.nuclide.NuclideVector;
  * часов, кампания 100 суток — на ~33 реальных часа. Кинетика, теплогидравлика и остаточное тепло — в реальном
  * времени. Выгорание — по каналам: доля мощности канала по J₀(2,405 r/R); на деление расходуется 1,17 ядра U-235
  * (α = 0,17) или 1,36 ядра Pu-239 (α = 0,36), Pu-239 нарабатывается с КВ 0,35 [оценка для 5 % в графите].
+ *
+ * <p><b>МОКС.</b> Канал может нести плутоний ({@link PlutoniumCharge}): Pu-239…Pu-242 ведутся по каналам и входят в
+ * ячейку как есть, так что β_eff падает по долям делений на Pu-239 (β = 0,0021) и Pu-241 (0,0054) против U-235 (0,0065;
+ * Keepin, 1965). Ценность стержней умножается на {@link #rodWorthFactor()} — по Σ_a уранового двойника зоны
+ * ({@link PlutoniumCharge#rodWorthFactor}). Паровой
+ * коэффициент воды — опытный (см. выше), по МОКС он не пересчитывается [допущение: опыта с МОКС в АМ-1 не было].
  *
  * <p><b>Теплосъём.</b> Топливо, графит и вода контура — сосредоточенные ёмкости; 5 % энергии деления (γ и замедление)
  * греет графит. Вода контура отдаёт тепло в парогенератор (тепло уходит в котёл второго контура). Выход канала с
@@ -86,7 +93,8 @@ public final class ChannelReactor {
     // каналы: начальная масса ТМ, U-235, U-238, Pu-239, ПД (кг), выгорание (МВт·сут/кг), кризис (с), разрушен
     private final double[] hm0 = new double[CHANNELS], u5 = new double[CHANNELS], u8 = new double[CHANNELS], pu9 = new double[CHANNELS],
             fp = new double[CHANNELS], burnup = new double[CHANNELS], dryout = new double[CHANNELS], share = new double[CHANNELS],
-            x234 = new double[CHANNELS], u6 = new double[CHANNELS], pu0 = new double[CHANNELS];
+            x234 = new double[CHANNELS], u6 = new double[CHANNELS], pu0 = new double[CHANNELS], pu1 = new double[CHANNELS],
+            pu2 = new double[CHANNELS];
     private final boolean[] failed = new boolean[CHANNELS];
     private final double[] radius = new double[CHANNELS];
     // стержни: погружение 0…1
@@ -101,6 +109,7 @@ public final class ChannelReactor {
     private boolean externalTrip, protection = true;
     private DelayedGroups groups = dev.denfry.promptcritical.sim.neutronics.DelayedNeutronData.keepin(0);
     private double staticRho, evalFuelK, evalGraphiteK, alphaDoppler, alphaGraphite, betaEff, generation, keff, sigmaA, sigmaF;
+    private double rodWorthFactor = 1;
     private double totalRho, fissionW, slowTimer = 1e9;
     /** Экстраполированный радиус зоны, м, и средний J₀ по загруженным каналам — для потока в облучательном канале. */
     private double extrapolatedR = 1, meanJ0 = 1;
@@ -127,31 +136,44 @@ public final class ChannelReactor {
 
     /** Загрузка канала свежим топливом: ТМ кг, доли U-235 и U-234. Только на заглушенном реакторе. */
     public boolean load(int ch, double hmKg, double u235, double u234) {
-        if (!shutDown() || hm0[ch] > 0 || hmKg <= 0) return false;
+        return load(ch, hmKg, u235, u234, PlutoniumCharge.NONE);
+    }
+
+    /**
+     * Загрузка канала сборкой МОКС: уран {@code uKg} (доли U-235 и U-234 в уране) и плутоний {@code pu}; доля Pu в ТМ —
+     * не выше {@link PlutoniumCharge#MAX_THERMAL_FRACTION}.
+     */
+    public boolean load(int ch, double uKg, double u235, double u234, PlutoniumCharge pu) {
+        double hmKg = uKg + pu.totalKg();
+        if (!shutDown() || hm0[ch] > 0 || uKg <= 0 || !pu.thermalLicensable(uKg)) return false;
         hm0[ch] = hmKg;
-        u5[ch] = hmKg * u235;
-        u8[ch] = hmKg * (1 - u235 - u234);
-        x234[ch] = u234;
-        pu9[ch] = fp[ch] = burnup[ch] = dryout[ch] = u6[ch] = pu0[ch] = 0;
+        u5[ch] = uKg * u235;
+        u8[ch] = uKg * (1 - u235 - u234);
+        x234[ch] = u234 * uKg / hmKg;
+        fp[ch] = burnup[ch] = dryout[ch] = u6[ch] = 0;
+        pu9[ch] = pu.pu239Kg();
+        pu0[ch] = pu.pu240Kg();
+        pu1[ch] = pu.pu241Kg();
+        pu2[ch] = pu.pu242Kg();
         failed[ch] = false;
         slowTimer = 1e9;
         return true;
     }
 
     /**
-     * Топливо канала: начальный ТМ, U-235, U-238, U-236 (захват на U-235), Pu-239, Pu-240 (захват на Pu-239), продукты
-     * деления, кг; доля U-234 в исходном уране; выгорание. Pu-241 и Pu-242 при выгорании АМ-1 (≈ 5 МВт·сут/кг) — доли
-     * процента плутония, не ведутся.
+     * Топливо канала: начальный ТМ, U-235, U-238, U-236 (захват на U-235), Pu-239, Pu-240 (захват на Pu-239), Pu-241 и
+     * Pu-242 (у уранового топлива при выгорании АМ-1 ≈ 5 МВт·сут/кг — нули: их ведёт только МОКС), продукты деления, кг;
+     * доля U-234 в исходном ТМ; выгорание.
      */
     public record ChannelFuel(double hm0Kg, double u235Kg, double u238Kg, double u236Kg, double pu239Kg, double pu240Kg,
-            double fpKg, double u234, double burnupMwdKg, boolean failed) {
+            double pu241Kg, double pu242Kg, double fpKg, double u234, double burnupMwdKg, boolean failed) {
         /** Уран сейчас, кг (U-234 — как в исходном). */
         public double uraniumKg() {
             return u235Kg + u238Kg + u236Kg + hm0Kg * u234;
         }
 
         public double plutoniumKg() {
-            return pu239Kg + pu240Kg;
+            return pu239Kg + pu240Kg + pu241Kg + pu242Kg;
         }
 
         public double heavyMetalKg() {
@@ -160,14 +182,15 @@ public final class ChannelReactor {
     }
 
     public ChannelFuel fuel(int ch) {
-        return new ChannelFuel(hm0[ch], u5[ch], u8[ch], u6[ch], pu9[ch], pu0[ch], fp[ch], x234[ch], burnup[ch], failed[ch]);
+        return new ChannelFuel(hm0[ch], u5[ch], u8[ch], u6[ch], pu9[ch], pu0[ch], pu1[ch], pu2[ch], fp[ch], x234[ch], burnup[ch],
+                failed[ch]);
     }
 
     /** Выгрузка канала: только на заглушенном реакторе. */
     public ChannelFuel unload(int ch) {
         if (!shutDown() || hm0[ch] <= 0) return null;
         ChannelFuel f = fuel(ch);
-        hm0[ch] = u5[ch] = u8[ch] = pu9[ch] = fp[ch] = burnup[ch] = dryout[ch] = u6[ch] = pu0[ch] = 0;
+        hm0[ch] = u5[ch] = u8[ch] = pu9[ch] = fp[ch] = burnup[ch] = dryout[ch] = u6[ch] = pu0[ch] = pu1[ch] = pu2[ch] = 0;
         failed[ch] = false;
         slowTimer = 1e9;
         return f;
@@ -297,7 +320,7 @@ public final class ChannelReactor {
 
     /** Средний состав загруженных каналов на 1 т ТМ — для модели ячейки. */
     private NuclideVector averageFuel() {
-        return FuelDepletion.averageFuel(hm0, u5, u8, pu9, fp, 0.05);
+        return FuelDepletion.averageFuel(hm0, u5, u8, pu9, pu0, pu1, pu2, fp, 0.05);
     }
 
     private CellFeedbackState state(double tf, double tg) {
@@ -331,6 +354,8 @@ public final class ChannelReactor {
         staticRho = loaded > 0 ? (keff - 1) / keff : -1;
         evalFuelK = fuelK;
         evalGraphiteK = graphiteK;
+        rodWorthFactor = loaded > 0 && PlutoniumCharge.hasPlutonium(fuel)
+                ? PlutoniumCharge.rodWorthFactor(lattice.evaluate(cell, PlutoniumCharge.uraniumEquivalent(fuel), s).sigmaA(), sf.sigmaA()) : 1;
         alphaDoppler = sf.reactivityCoefficient(sf.dkdTf());
         alphaGraphite = sf.reactivityCoefficient(sf.dkdTm());
         sigmaA = sf.sigmaA();
@@ -361,9 +386,14 @@ public final class ChannelReactor {
         return x - Math.sin(2 * Math.PI * x) / (2 * Math.PI);
     }
 
-    /** Реактивность стержней (отрицательная), Δk/k. */
+    /** Реактивность стержней (отрицательная), Δk/k; у МОКС-зоны — с {@link #rodWorthFactor()}. */
     public double rodReactivity() {
-        return -(WORTH_AZ * sCurve(az) + WORTH_RR * sCurve(rr) + WORTH_AR * sCurve(ar));
+        return -(WORTH_AZ * sCurve(az) + WORTH_RR * sCurve(rr) + WORTH_AR * sCurve(ar)) * rodWorthFactor;
+    }
+
+    /** Ценность стержней этой зоны к урановой зоне того же эквивалентного обогащения (1 — без плутония). */
+    public double rodWorthFactor() {
+        return rodWorthFactor;
     }
 
     private double totalReactivity() {
@@ -443,7 +473,8 @@ public final class ChannelReactor {
     private void burn(double gameDt) {
         if (fissionW <= 0 || gameDt <= 0) return;
         for (int i = 0; i < CHANNELS; i++)
-            if (share[i] > 0) FuelDepletion.deplete(i, fissionW * share[i], gameDt, CONVERSION, hm0, u5, u8, u6, pu9, pu0, fp, burnup);
+            if (share[i] > 0)
+                FuelDepletion.deplete(i, fissionW * share[i], gameDt, CONVERSION, hm0, u5, u8, u6, pu9, pu0, pu1, pu2, fp, burnup);
     }
 
     private void thermal(double secondaryK) {
@@ -681,6 +712,8 @@ public final class ChannelReactor {
         out.putDoubles("x234", x234, CHANNELS);
         out.putDoubles("u6", u6, CHANNELS);
         out.putDoubles("pu0", pu0, CHANNELS);
+        out.putDoubles("pu1", pu1, CHANNELS);
+        out.putDoubles("pu2", pu2, CHANNELS);
         int[] f = new int[CHANNELS];
         for (int i = 0; i < CHANNELS; i++) f[i] = failed[i] ? 1 : 0;
         out.putInts("failed", f, CHANNELS);
@@ -713,6 +746,8 @@ public final class ChannelReactor {
         copy(in, "x234", x234);
         copy(in, "u6", u6);
         copy(in, "pu0", pu0);
+        copy(in, "pu1", pu1);
+        copy(in, "pu2", pu2);
         if (in.has("failed")) {
             int[] f = in.getInts("failed");
             for (int i = 0; i < Math.min(CHANNELS, f.length); i++) failed[i] = f[i] != 0;
