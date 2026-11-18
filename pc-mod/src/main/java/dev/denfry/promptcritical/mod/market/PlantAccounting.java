@@ -143,6 +143,25 @@ public final class PlantAccounting extends SavedData {
         return t;
     }
 
+    /**
+     * Расторгнуть договоры продавца по согласию (14 §14.6.6): ACTIVE → CLOSED, депозит возвращается; поставленное
+     * в этом периоде оплачивается.
+     *
+     * @return расторгнуто договоров
+     */
+    public int cancel(NpcMarket market, UUID seller) {
+        int n = 0;
+        for (Contract c : contracts) {
+            if (!c.terms.seller().equals(seller) || c.terms.state() != ContractState.ACTIVE) continue;
+            market.transfer(seller, Math.round(Math.min(c.delivered, c.terms.qtyPerPeriod()) * c.terms.priceCents()) + c.terms.depositCents());
+            c.terms = c.terms.close();
+            n++;
+        }
+        contracts.removeIf(c -> c.terms.state() == ContractState.CLOSED);
+        if (n > 0) setDirty();
+        return n;
+    }
+
     /** Сколько единиц товара из партии уйдёт в договоры продавца в этом периоде (и записать поставку). */
     public int deliver(UUID seller, String commodityId, int qty) {
         int taken = 0;

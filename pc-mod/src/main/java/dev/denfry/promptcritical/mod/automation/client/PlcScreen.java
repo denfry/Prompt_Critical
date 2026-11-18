@@ -98,9 +98,15 @@ public final class PlcScreen extends Screen {
         g.drawString(font, AutomationText.msg(AutomationText.PLC_ANALOG, ai.toString().strip(), ao.toString().strip()), bx, y, DIM);
         // ошибки компиляции или «без ошибок»; предупреждение, если текст в окне не тот, что в ПЛК
         int ey = editor.getY() + editor.getHeight() + 8;
-        // язык определяется по тексту: PROGRAM или (*ST*) в начале — ST, иначе IL
-        boolean st = PlcLanguage.of(editor.getValue()) == PlcLanguage.ST;
-        g.drawString(font, AutomationText.msg(AutomationText.PLC_LANGUAGE, st ? "Structured Text" : "Instruction List"), 12, ey, DIM);
+        // язык определяется по тексту: (*LD*), (*FBD*), (*SFC*) в первой строке, PROGRAM или (*ST*) — ST, иначе IL
+        String lang = switch (PlcLanguage.of(editor.getValue())) {
+            case IL -> "Instruction List";
+            case ST -> "Structured Text";
+            case LD -> "Ladder Diagram";
+            case FBD -> "Function Block Diagram";
+            case SFC -> "Sequential Function Chart";
+        };
+        g.drawString(font, AutomationText.msg(AutomationText.PLC_LANGUAGE, lang), 12, ey, DIM);
         ey += 11;
         if (!editor.getValue().equals(loaded)) {
             g.drawString(font, AutomationText.msg(AutomationText.PLC_UNSAVED), 12, ey, 0xFFE0C040);

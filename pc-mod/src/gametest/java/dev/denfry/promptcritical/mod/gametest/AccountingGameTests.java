@@ -46,6 +46,8 @@ public final class AccountingGameTests {
             h.assertTrue(Math.abs(acct.baseT() - 100) < 1, "base period " + acct.baseT());
             h.assertTrue(Math.abs(acct.quota().heldT() - 95) < 1, "allocation 95 t: " + acct.quota().heldT());
         }
+        // мир GameTest сохраняется между прогонами: договоры прошлого прогона расторгаются
+        acct.cancel(market, op);
         // договор на кокс: поставить половину, остальное — недопоставка
         var contract = acct.sign(market, op, "coke", 120_00);
         h.assertTrue(contract != null, "contract signed");
@@ -53,7 +55,8 @@ public final class AccountingGameTests {
         long before = market.account(op).balanceCents();
         double held = acct.quota().heldT();
         for (var l : server.getAllLevels()) AirQualityService.ledger(l).rollPeriod();
-        emitCo2(h, held + 50); // 50 т сверх квот
+        // 50 т сверх квот с учётом долга прошлых недель (мир GameTest сохраняется между прогонами)
+        emitCo2(h, Math.max(0, held + 50 - acct.quota().carriedDebtT()));
         acct.settle(server);
         long after = market.account(op).balanceCents();
         // оплата 32 ед. × 120 CR минус неустойка, штраф 50 т × 100 CR, платы за SO2/NOx/PM — нули

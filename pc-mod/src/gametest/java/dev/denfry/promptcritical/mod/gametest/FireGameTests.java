@@ -82,7 +82,9 @@ public final class FireGameTests {
                 .thenIdle(2)
                 .thenExecute(() -> {
                     FireDeviceBlockEntity g = h.getBlockEntity(gas);
-                    var p = net.neoforged.neoforge.common.util.FakePlayerFactory.getMinecraft(h.getLevel());
+                    // мир GameTest сохраняется между прогонами вместе с замками: игрок — новый на каждый прогон
+                    var p = net.neoforged.neoforge.common.util.FakePlayerFactory.get(h.getLevel(),
+                            new com.mojang.authlib.GameProfile(java.util.UUID.randomUUID(), "fire-test"));
                     g.use(p); // ручная блокировка — изолированное положение
                     h.assertTrue(g.isolatedPosition(), "blocked by hand");
                     g.use(p); // снова взведён
@@ -93,6 +95,7 @@ public final class FireGameTests {
                             == dev.denfry.promptcritical.sim.ops.LockoutRegistry.LockResult.OK, "locked out for the works");
                     g.use(p); // запертый не взвести
                     h.assertTrue(g.isolatedPosition(), "a locked module stays blocked");
+                    r.remove(key, p.getUUID());
                 })
                 .thenSucceed();
     }

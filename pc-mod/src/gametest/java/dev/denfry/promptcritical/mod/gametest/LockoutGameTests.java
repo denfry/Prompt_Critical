@@ -37,12 +37,14 @@ import net.neoforged.neoforge.gametest.PrefixGameTestTemplate;
 public final class LockoutGameTests {
     private static final String LARGE = "gametest/empty_12x12x12";
     private static final BlockPos CELL = new BlockPos(5, 1, 5);
+    private static final long RUN = System.nanoTime();
 
     private LockoutGameTests() {
     }
 
     private static FakePlayer player(GameTestHelper h, String name) {
-        UUID id = UUID.nameUUIDFromBytes(("pc-lockout-" + name).getBytes());
+        // мир GameTest сохраняется между прогонами вместе с реестром замков: игроки — новые на каждый прогон
+        UUID id = UUID.nameUUIDFromBytes(("pc-lockout-" + name + "-" + RUN).getBytes());
         return FakePlayerFactory.get(h.getLevel(), new GameProfile(id, name));
     }
 
