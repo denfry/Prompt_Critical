@@ -76,6 +76,15 @@ public final class NppRecipes extends RecipeProvider {
                 .pattern("PSP").pattern("SXS").pattern("PSP").define('P', PcItems.STEEL_PLATE.get())
                 .define('S', AllItems.IRON_SHEET.get()).define('X', Items.IRON_BARS)
                 .unlockedBy("has_containment_wall", has(PcBlocks.CONTAINMENT_WALL.get())).save(out, id("hydrogen_recombiner"));
+        // САОЗ: многоступенчатый насос (механический насос Create с прецизионным механизмом) и бак под азотом с обратным клапаном
+        ShapedRecipeBuilder.shaped(RecipeCategory.MISC, PcBlocks.ECCS_PUMP.get())
+                .pattern("PMP").pattern("TXT").pattern("PHP").define('P', PcItems.STEEL_PLATE.get()).define('M', AllItems.PRECISION_MECHANISM.get())
+                .define('T', AllBlocks.MECHANICAL_PUMP.get()).define('X', PcItems.SEAMLESS_PIPE.get()).define('H', AllBlocks.SHAFT.get())
+                .unlockedBy("has_pwr_reactor", has(PcBlocks.PWR_REACTOR.get())).save(out, id("eccs_pump"));
+        ShapedRecipeBuilder.shaped(RecipeCategory.MISC, PcBlocks.ECCS_ACCUMULATOR.get())
+                .pattern("PVP").pattern("PXP").pattern("PTP").define('P', PcItems.STEEL_PLATE.get()).define('V', PcItems.SAFETY_VALVE.get())
+                .define('X', AllBlocks.FLUID_TANK.get()).define('T', PcItems.SEAMLESS_PIPE.get())
+                .unlockedBy("has_pwr_reactor", has(PcBlocks.PWR_REACTOR.get())).save(out, id("eccs_accumulator"));
         // компенсатор давления: сосуд, ИПУ сверху, манометр, ТЭНы — медная обмотка
         ShapedRecipeBuilder.shaped(RecipeCategory.MISC, PcBlocks.PRESSURIZER.get())
                 .pattern("PVP").pattern("PXP").pattern("CGC").define('P', PcItems.STEEL_PLATE.get()).define('V', PcItems.SAFETY_VALVE.get())

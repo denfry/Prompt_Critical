@@ -382,6 +382,8 @@ public final class PcLanguageProvider extends LanguageProvider {
         b("containment_wall", "Containment Wall", "Стена гермооболочки");
         b("containment_hatch", "Containment Personnel Hatch", "Шлюзовой люк гермооболочки");
         b("hydrogen_recombiner", "Passive Hydrogen Recombiner", "Пассивный каталитический рекомбинатор водорода");
+        b("eccs_pump", "ECCS Pump Train", "Насос САОЗ");
+        b("eccs_accumulator", "ECCS Hydroaccumulator", "Гидроёмкость САОЗ");
         b("pressurizer", "Pressurizer", "Компенсатор давления");
         b("candu_reactor", "Heavy Water Reactor (CANDU type)", "Тяжеловодный реактор (типа CANDU)");
         b("bwr_reactor", "Boiling Water Reactor", "Кипящий корпусной реактор");

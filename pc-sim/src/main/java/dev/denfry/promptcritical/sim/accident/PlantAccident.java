@@ -31,7 +31,8 @@ import dev.denfry.promptcritical.sim.core.StateWriter;
  * {@code H = H₀·(1 − (q/q_max)²)} read backwards: {@code q = q_max·√(1 − p/p_shutoff)}; both need AC. Accumulators
  * ({@link Accumulator}) need nothing but a primary below their nitrogen pressure. A BWR has the automatic
  * depressurisation system instead: after 120 s at low level, with a low-pressure pump running, the relief valves
- * blow the vessel down so the low-head pumps can inject (GE BWR/4 logic, NUREG/CR-5249 class).
+ * blow the vessel down so the low-head pumps can inject (GE BWR/4 logic: low level, a low-pressure pump
+ * running, a 120 s timer — USNRC GE BWR/4 Technology Manual).
  *
  * <p><b>Core.</b> Two nodes as in {@link LossOfCoolantTransient}, scaled to the plant: fuel and cladding exchange
  * heat through a gap conductance that carries full power over the nominal 580 K fuel-to-clad drop; the cladding is
@@ -259,7 +260,7 @@ public final class PlantAccident {
         accKgS /= dt;
         boilKgS /= dt;
         // recovered: break closed, AC back, the vessel full again and nothing left to boil away
-        if (!brk && ac && mass >= 0.999 * d.inventoryKg && net <= 0) {
+        if (!brk && ac && mass >= 0.999 * d.inventoryKg && net <= 0.005 * d.nominalW) {
             active = false;
             adsOpen = false;
             adsTimer = 0;

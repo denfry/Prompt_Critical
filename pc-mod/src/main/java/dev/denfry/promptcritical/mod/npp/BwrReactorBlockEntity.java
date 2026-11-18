@@ -18,6 +18,7 @@ import dev.denfry.promptcritical.mod.registry.PcItems;
 import dev.denfry.promptcritical.sim.automation.AutomationKind;
 import dev.denfry.promptcritical.sim.automation.AutomationSubsystem;
 import dev.denfry.promptcritical.sim.automation.AutomationUnit;
+import dev.denfry.promptcritical.sim.accident.PlantAccident;
 import dev.denfry.promptcritical.sim.core.MutableStateTree;
 import dev.denfry.promptcritical.sim.core.TreeStateReader;
 import dev.denfry.promptcritical.sim.core.TreeStateWriter;
@@ -28,8 +29,10 @@ import dev.denfry.promptcritical.sim.radiation.Emitter;
 import dev.denfry.promptcritical.sim.radiation.FissionSource;
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Locale;
+import java.util.Map;
 import net.minecraft.ChatFormatting;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
@@ -58,6 +61,10 @@ import org.jetbrains.annotations.Nullable;
  * откуда идёт в существующие турбины. Барабан здесь — паровой объём корпуса, а не второй контур: по нему реактор знает,
  * есть ли отбор пара. N-16 из пара светит на паровых турбинах ({@link SteamTurbineBlockEntity}) в радиусе
  * {@value #TURBINE_RADIUS} блоков. Клеммы СУЗ — как у T1/T2a.
+ *
+ * <p>Аварии ({@link ReactorAccidentSystems}, {@link PlantAccident#BWR_T2B}): сорванный насос рециркуляции — разрыв
+ * всасывающего трубопровода, кнопка «LOCA» — учебное событие, без вращения валов насосов — обесточивание. Насосы САОЗ
+ * здесь — HPCS и LPCI, гидроёмкостей у кипящего нет, есть АДС; гермооболочка с бассейном-барботёром инертирована азотом.
  */
 public final class BwrReactorBlockEntity extends DeviceBlockEntity implements FoundryDevice, PanelHost, WiredDevice {
     public static final int LINK_RADIUS = 12, TURBINE_RADIUS = 24;
@@ -81,6 +88,7 @@ public final class BwrReactorBlockEntity extends DeviceBlockEntity implements Fo
     };
     private final List<BlockPos> pumps = new ArrayList<>(), drums = new ArrayList<>(), turbines = new ArrayList<>();
     private BoilingWaterReactor.Trip lastTrip = BoilingWaterReactor.Trip.MANUAL;
+    private final ReactorAccidentSystems accident = new ReactorAccidentSystems(PlantAccident.BWR_T2B);
     private int ticks;
 
     public BwrReactorBlockEntity(BlockPos pos, BlockState state) {
@@ -95,6 +103,10 @@ public final class BwrReactorBlockEntity extends DeviceBlockEntity implements Fo
         return fuel;
     }
 
+    public ReactorAccidentSystems accident() {
+        return accident;
+    }
+
     private void link(ServerLevel sl) {
         pumps.clear();
         drums.clear();
@@ -105,6 +117,9 @@ public final class BwrReactorBlockEntity extends DeviceBlockEntity implements Fo
         for (SteamGeneratorBlockEntity g : Ironworks.blockEntities(sl, box, SteamGeneratorBlockEntity.class)) drums.add(g.getBlockPos());
         for (SteamTurbineBlockEntity t : Ironworks.blockEntities(sl, new AABB(worldPosition).inflate(TURBINE_RADIUS), SteamTurbineBlockEntity.class))
             turbines.add(t.getBlockPos());
+        Map<BlockPos, ReactorAccidentSystems.LoopPart> loop = new LinkedHashMap<>();
+        for (BlockPos p : pumps) loop.put(p, ReactorAccidentSystems.LoopPart.PUMP);
+        accident.link(sl, worldPosition, loop, reactor.core().loadedAssemblies() > 0);
     }
 
     @Override
@@ -113,18 +128,21 @@ public final class BwrReactorBlockEntity extends DeviceBlockEntity implements Fo
         SimLevelBinding b = SimBindings.get(sl);
         if (b == null) return;
         if (ticks++ % 20 == 0) link(sl);
+        boolean pumpsDriven = false;
         for (int i = 0; i < BoilingWaterReactor.PUMPS; i++) {
             double drive = 0;
             if (i < pumps.size() && level.getBlockEntity(pumps.get(i)) instanceof PrimaryPumpBlockEntity p) drive = p.drive();
             reactor.setPumpDrive(i, drive);
+            pumpsDriven |= drive > 0.5;
         }
         List<SteamGeneratorBlockEntity> out = new ArrayList<>();
         for (BlockPos p : drums)
             if (level.getBlockEntity(p) instanceof SteamGeneratorBlockEntity sg && !Double.isNaN(sg.secondaryK())) out.add(sg);
         reactor.setTurbineAvailable(!out.isEmpty());
         AutomationUnit a = MechanismWiring.unit(level, simId(), AutomationKind.REACTOR_IO);
-        reactor.setExternalTrip(a != null && a.loadEnergized(1));
-        reactor.step(BoilingWaterReactor.DT * b.world().clock().kSlow());
+        reactor.setExternalTrip(a != null && a.loadEnergized(1) || accident.demandsTrip());
+        double gameDt = BoilingWaterReactor.DT * b.world().clock().kSlow();
+        reactor.step(gameDt);
         // пар корпуса — в барабаны: тепло, которое он несёт сверх питательной воды
         double steamW = reactor.steamKgS() * 1.85e6;
         for (SteamGeneratorBlockEntity sg : out) sg.deliver(steamW / out.size());
@@ -132,9 +150,23 @@ public final class BwrReactorBlockEntity extends DeviceBlockEntity implements Fo
             a.setInput(AutomationUnit.IN_MAIN, reactor.trip() != BoilingWaterReactor.Trip.NONE ? 1 : 0);
             a.setInput(AutomationUnit.IN_AUX, reactor.power());
         }
+        if (ticks % 100 == 1) accident.scan(sl, worldPosition);
+        // слой аварии: тепло в топливо — от зоны, сток — пар в барабаны; разогрев разгерметизирует горячие ТВС
+        int breach = accident.step(sl, b, simId(), worldPosition, gameDt, reactor.core().heatW(), out.isEmpty() ? 0 : steamW,
+                reactor.pressure(), pumpsDriven, reactor.core().loadedAssemblies(), reactor.core().failedAssemblies());
+        if (breach > 0 && reactor.core().failHottest(breach) > 0) {
+            sl.playSound(null, worldPosition, SoundEvents.GENERIC_EXTINGUISH_FIRE, SoundSource.BLOCKS, 1f, 0.4f);
+            for (ServerPlayer p : sl.getPlayers(p -> p.distanceToSqr(worldPosition.getCenter()) < 64 * 64))
+                p.displayClientMessage(NppText.msg("accident_clad", reactor.core().failedAssemblies()).withStyle(ChatFormatting.DARK_RED), false);
+        }
+        accident.radiation(sl, worldPosition, reactor.core().failedAssemblies());
         if (ticks % 20 == 0) {
-            RadiationService.source(sl, worldPosition.getCenter().add(0, 1, 0),
-                    FissionSource.reactor(reactor.core().fissionW(), reactor.core().decayHeatW()));
+            var src = FissionSource.reactor(reactor.core().fissionW(), reactor.core().decayHeatW());
+            int failed = reactor.core().failedAssemblies();
+            PlantAccident acc = accident.accident();
+            if (failed > 0 && (acc.breakFlowKgS() > 0 || acc.boilOffKgS() > 0 || acc.adsOpen()))
+                src = src.plus(Emitter.I131.source(failed * ReactorAccidentSystems.I131_PER_FAILED_BQ));
+            RadiationService.source(sl, worldPosition.getCenter().add(0, 1, 0), src);
             double n16 = reactor.turbineN16Bq();
             if (n16 > 0 && !turbines.isEmpty())
                 for (BlockPos t : turbines) RadiationService.source(sl, t.getCenter(), Emitter.N16.source(n16 / turbines.size()));
@@ -243,8 +275,9 @@ public final class BwrReactorBlockEntity extends DeviceBlockEntity implements Fo
         v[BwrPanels.RHO_PCM] = (int) Math.round(r.core().reactivity() * 1e5);
         v[BwrPanels.SCRAM_ROD] = (int) Math.round((1 - r.scramPosition()) * 1000);
         v[BwrPanels.CONTROL_ROD] = (int) Math.round((1 - r.controlPosition()) * 1000);
-        v[BwrPanels.PRESSURE] = (int) Math.round(r.pressure() / 1e4);
-        v[BwrPanels.LEVEL] = (int) Math.round(r.level() * 1000);
+        PlantAccident acc = accident.accident();
+        v[BwrPanels.PRESSURE] = (int) Math.round((acc.active() ? acc.pressurePa() : r.pressure()) / 1e4);
+        v[BwrPanels.LEVEL] = (int) Math.round((acc.active() ? Math.min(r.level(), acc.levelFraction()) : r.level()) * 1000);
         v[BwrPanels.FLOW] = (int) Math.round(r.flowFraction() * 100);
         v[BwrPanels.VOID] = (int) Math.round(r.voidFraction() * 100);
         v[BwrPanels.STEAM] = (int) Math.round(r.steamKgS() * 10);
@@ -256,8 +289,9 @@ public final class BwrReactorBlockEntity extends DeviceBlockEntity implements Fo
         v[BwrPanels.N16_GBQ] = (int) Math.round(r.turbineN16Bq() / 1e9);
         v[BwrPanels.FLAGS] = (r.trip() != BoilingWaterReactor.Trip.NONE ? 1 << BwrPanels.F_TRIPPED : 0)
                 | (drums.isEmpty() ? 1 << BwrPanels.F_NO_TURBINE : 0)
-                | (r.reliefKgS() > 0 ? 1 << BwrPanels.F_RELIEF : 0)
+                | (r.reliefKgS() > 0 || acc.adsOpen() ? 1 << BwrPanels.F_RELIEF : 0)
                 | (r.controlDrive() < 0 ? 1 << BwrPanels.F_UP : 0) | (r.controlDrive() > 0 ? 1 << BwrPanels.F_DOWN : 0);
+        accident.readPanel(v, BwrPanels.ACCIDENT);
     }
 
     @Override
@@ -269,6 +303,7 @@ public final class BwrReactorBlockEntity extends DeviceBlockEntity implements Fo
             case BwrPanels.B_STOP -> reactor.driveControl(0);
             case BwrPanels.B_DOWN -> reactor.driveControl(1);
             case BwrPanels.B_UNLOAD -> unload(player);
+            case BwrPanels.B_LOCA -> accident.cycleDrill(player);
             default -> {
             }
         }
@@ -346,6 +381,7 @@ public final class BwrReactorBlockEntity extends DeviceBlockEntity implements Fo
         MutableStateTree tree = new MutableStateTree();
         reactor.save(new TreeStateWriter(tree));
         tag.put("reactor", NbtStateTrees.toNbt(tree));
+        accident.save(tag);
         wiring.save(tag);
     }
 
@@ -354,6 +390,7 @@ public final class BwrReactorBlockEntity extends DeviceBlockEntity implements Fo
         super.loadAdditional(tag, registries);
         if (tag.contains("fuel")) fuel.deserializeNBT(registries, tag.getCompound("fuel"));
         if (tag.contains("reactor")) reactor.load(new TreeStateReader(NbtStateTrees.fromNbt(tag.getCompound("reactor"))));
+        accident.load(tag);
         wiring.load(tag);
         lastTrip = reactor.trip();
     }

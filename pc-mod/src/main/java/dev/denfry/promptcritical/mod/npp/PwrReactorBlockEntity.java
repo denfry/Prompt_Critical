@@ -18,6 +18,7 @@ import dev.denfry.promptcritical.mod.registry.PcItems;
 import dev.denfry.promptcritical.sim.automation.AutomationKind;
 import dev.denfry.promptcritical.sim.automation.AutomationSubsystem;
 import dev.denfry.promptcritical.sim.automation.AutomationUnit;
+import dev.denfry.promptcritical.sim.accident.PlantAccident;
 import dev.denfry.promptcritical.sim.consequence.ConsequenceRouter;
 import dev.denfry.promptcritical.sim.core.GridPos;
 import dev.denfry.promptcritical.sim.core.MutableStateTree;
@@ -31,10 +32,11 @@ import dev.denfry.promptcritical.sim.radiation.FissionSource;
 import dev.denfry.promptcritical.sim.radiation.PointSource;
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Locale;
+import java.util.Map;
 import net.minecraft.ChatFormatting;
-import dev.denfry.promptcritical.mod.registry.PcBlocks;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
 import net.minecraft.core.HolderLookup;
@@ -51,7 +53,6 @@ import net.minecraft.world.ItemInteractionResult;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.level.block.state.BlockState;
-import net.minecraft.world.level.block.state.properties.BlockStateProperties;
 import net.minecraft.world.phys.AABB;
 import net.minecraft.world.phys.Vec3;
 import net.neoforged.neoforge.items.IItemHandler;
@@ -70,6 +71,12 @@ import org.jetbrains.annotations.Nullable;
  * ({@link AutomationKind#REACTOR_IO}): «SCRAM» — АЗ от ПАЗ/ПЛК, «13–14» — контакт «АЗ сработала», «N» — мощность.
  * Разгерметизированные ТВС выносят I-131 в зал, если теплоноситель уходит через течь или ИПУ; разрыв контура от
  * давления — через {@code DamageBudget}.
+ *
+ * <p>Аварии ({@link ReactorAccidentSystems}, {@link PlantAccident#PWR_T2A}): сорванный с петли ГЦН или КД — разрыв
+ * трубопровода, кнопка «LOCA» — учебное исходное событие; без вращения валов ГЦН и насосов САОЗ — полное обесточивание.
+ * Слой аварии берёт тепло зоны и отбор ПГ у реактора, держит АЗ, показывает давление, уровень и температуру оболочек,
+ * разгерметизирует ТВС при разогреве и отправляет горение водорода и разрыв гермооболочки через маршрутизатор
+ * последствий.
  */
 public final class PwrReactorBlockEntity extends DeviceBlockEntity implements FoundryDevice, PanelHost, WiredDevice {
     public static final int LINK_RADIUS = 12;
@@ -103,14 +110,11 @@ public final class PwrReactorBlockEntity extends DeviceBlockEntity implements Fo
     @Nullable
     private BlockPos pressurizer;
     private boolean wasTripped, concentrate;
-    /** Containment scan (04c M10): a closed shell of containment wall / shut hatches around the reactor. */
-    private boolean containmentIntact;
-    private int containmentVolume, recombiners;
+    /** LOCA, blackout and containment (04c M10): the accident layer and its world glue. */
+    private final ReactorAccidentSystems accident = new ReactorAccidentSystems(PlantAccident.PWR_T2A);
     /** Ticks of airborne release left after a rupture outside an intact containment. */
     private int releaseTicks;
     private double releaseI131BqS;
-    public static final int CONTAINMENT_RADIUS = 24;
-    public static final int CONTAINMENT_MAX_VOLUME = 40_000;
     /** Cs-137 to I-131 activity ratio in an equilibrium LWR core (≈ 0.1, NUREG-1465 inventories). */
     static final double CS137_PER_I131 = 0.1;
     private int ticks;
@@ -125,6 +129,10 @@ public final class PwrReactorBlockEntity extends DeviceBlockEntity implements Fo
 
     public ItemStackHandler fuelSlots() {
         return fuel;
+    }
+
+    public ReactorAccidentSystems accident() {
+        return accident;
     }
 
     private Direction facing() {
@@ -147,6 +155,10 @@ public final class PwrReactorBlockEntity extends DeviceBlockEntity implements Fo
             pressurizer = k.getBlockPos();
             break;
         }
+        Map<BlockPos, ReactorAccidentSystems.LoopPart> loop = new LinkedHashMap<>();
+        for (BlockPos p : pumps) loop.put(p, ReactorAccidentSystems.LoopPart.PUMP);
+        if (pressurizer != null) loop.put(pressurizer, ReactorAccidentSystems.LoopPart.PRESSURIZER);
+        accident.link(sl, worldPosition, loop, reactor.loadedAssemblies() > 0);
     }
 
     @Nullable
@@ -162,10 +174,12 @@ public final class PwrReactorBlockEntity extends DeviceBlockEntity implements Fo
         if (ticks++ % 20 == 0) link(sl);
         double gameDt = PressurizedWaterReactor.DT * b.world().clock().kSlow();
         // ГЦН: петля i — i-й найденный насос; нет насоса — петля без привода
+        boolean pumpsDriven = false;
         for (int l = 0; l < PressurizedWaterReactor.LOOPS; l++) {
             double drive = 0;
             if (l < pumps.size() && level.getBlockEntity(pumps.get(l)) instanceof PrimaryPumpBlockEntity p) drive = p.drive();
             reactor.setPumpDrive(l, drive);
+            pumpsDriven |= drive > 0.5;
         }
         // ПГ: средняя температура котлов, наименьший уровень барабанов, тепло — поровну
         List<SteamGeneratorBlockEntity> sgs = new ArrayList<>();
@@ -181,8 +195,8 @@ public final class PwrReactorBlockEntity extends DeviceBlockEntity implements Fo
         PressurizerBlockEntity kd = pressurizerBlock();
         AutomationUnit a = MechanismWiring.unit(this.level, simId(), AutomationKind.REACTOR_IO);
         boolean ioScram = a != null && a.loadEnergized(1);
-        // без КД контур не держит давление: защита держит реактор заглушенным
-        reactor.setExternalTrip(ioScram || kd == null);
+        // без КД контур не держит давление: защита держит реактор заглушенным; авария — тоже
+        reactor.setExternalTrip(ioScram || kd == null || accident.demandsTrip());
         reactor.step(gameDt);
         double q = reactor.steamGeneratorW();
         for (SteamGeneratorBlockEntity sg : sgs) sg.deliver(q / sgs.size());
@@ -191,9 +205,18 @@ public final class PwrReactorBlockEntity extends DeviceBlockEntity implements Fo
             a.setInput(AutomationUnit.IN_MAIN, reactor.protection().isTripped() ? 1 : 0);
             a.setInput(AutomationUnit.IN_AUX, reactor.power());
         }
-        if (ticks % 100 == 1) scanContainment(sl);
+        if (ticks % 100 == 1) accident.scan(sl, worldPosition);
         radiation(sl);
         events(sl, b);
+        // слой аварии: тепло в топливо и отбор ПГ — от реактора; разогрев зоны разгерметизирует горячие ТВС
+        int breach = accident.step(sl, b, simId(), worldPosition, gameDt, reactor.core().heatW(), reactor.steamGeneratorW(),
+                reactor.pressure(), pumpsDriven, reactor.loadedAssemblies(), reactor.failedAssemblies());
+        if (breach > 0 && reactor.failCladding(breach) > 0) {
+            sl.playSound(null, worldPosition, SoundEvents.GENERIC_EXTINGUISH_FIRE, SoundSource.BLOCKS, 1f, 0.4f);
+            for (ServerPlayer p : sl.getPlayers(p -> p.distanceToSqr(worldPosition.getCenter()) < 64 * 64))
+                p.displayClientMessage(NppText.msg("accident_clad", reactor.failedAssemblies()).withStyle(ChatFormatting.DARK_RED), false);
+        }
+        accident.radiation(sl, worldPosition, reactor.failedAssemblies());
         if (reactor.shutDown()) loadFresh();
         if (ticks % 100 == 0) setChanged();
     }
@@ -203,7 +226,8 @@ public final class PwrReactorBlockEntity extends DeviceBlockEntity implements Fo
         Vec3 center = worldPosition.getCenter().add(0, 1, 0);
         PointSource src = FissionSource.reactor(reactor.fissionW(), reactor.decayHeatW());
         int failed = reactor.failedAssemblies();
-        boolean escaping = reactor.leakKgS() > 0 || reactor.pressurizer().reliefOpen() || reactor.pressurizer().safetyOpen();
+        boolean escaping = reactor.leakKgS() > 0 || reactor.pressurizer().reliefOpen() || reactor.pressurizer().safetyOpen()
+                || accident.accident().breakFlowKgS() > 0 || accident.accident().boilOffKgS() > 0;
         if (failed > 0 && escaping) src = src.plus(Emitter.I131.source(failed * I131_PER_FAILED_BQ));
         RadiationService.source(sl, center, src);
         if (releaseTicks > 0) {
@@ -214,50 +238,9 @@ public final class PwrReactorBlockEntity extends DeviceBlockEntity implements Fo
         }
     }
 
-    /**
-     * Bounded flood fill from the reactor through everything that is not a containment boundary.
-     * Closed when the fill stays within {@link #CONTAINMENT_RADIUS} and {@link #CONTAINMENT_MAX_VOLUME}:
-     * walls and shut hatches stop it; an open hatch, a gap or unloaded chunks let it out.
-     */
-    private void scanContainment(ServerLevel sl) {
-        java.util.ArrayDeque<BlockPos> queue = new java.util.ArrayDeque<>();
-        java.util.HashSet<BlockPos> seen = new java.util.HashSet<>();
-        queue.add(worldPosition);
-        seen.add(worldPosition);
-        boolean closed = true;
-        int pars = 0;
-        while (!queue.isEmpty() && closed) {
-            BlockPos p = queue.poll();
-            for (Direction d : Direction.values()) {
-                BlockPos n = p.relative(d);
-                if (seen.contains(n)) continue;
-                if (Math.abs(n.getX() - worldPosition.getX()) > CONTAINMENT_RADIUS
-                        || Math.abs(n.getY() - worldPosition.getY()) > CONTAINMENT_RADIUS
-                        || Math.abs(n.getZ() - worldPosition.getZ()) > CONTAINMENT_RADIUS
-                        || seen.size() >= CONTAINMENT_MAX_VOLUME || !sl.isLoaded(n)) {
-                    closed = false;
-                    break;
-                }
-                BlockState s = sl.getBlockState(n);
-                if (isContainmentBoundary(s)) continue;
-                if (s.is(PcBlocks.HYDROGEN_RECOMBINER.get())) pars++;
-                seen.add(n);
-                queue.add(n);
-            }
-        }
-        containmentIntact = closed;
-        containmentVolume = closed ? seen.size() : 0;
-        recombiners = closed ? pars : 0;
-    }
-
-    static boolean isContainmentBoundary(BlockState s) {
-        if (s.is(PcBlocks.CONTAINMENT_WALL.get())) return true;
-        return s.is(PcBlocks.CONTAINMENT_HATCH.get()) && !s.getValue(BlockStateProperties.OPEN);
-    }
-
-    public boolean containmentIntact() { return containmentIntact; }
-    public int containmentVolumeM3() { return containmentVolume; }
-    public int recombiners() { return recombiners; }
+    public boolean containmentIntact() { return accident.containment().intact(); }
+    public int containmentVolumeM3() { return accident.containment().volumeM3(); }
+    public int recombiners() { return accident.containment().recombiners(); }
 
     private void events(ServerLevel sl, SimLevelBinding b) {
         boolean tripped = reactor.protection().isTripped();
@@ -283,7 +266,7 @@ public final class PwrReactorBlockEntity extends DeviceBlockEntity implements Fo
             // otherwise the failed fuel's I-131/Cs-137 goes up as an airborne plume for a minute.
             int failed = reactor.failedAssemblies();
             ConsequenceRouter.Routed routed = ConsequenceRouter.route(ConsequenceRouter.Event.VESSEL_RUPTURE,
-                    requestSeq++, simId(), null, o, RUPTURE_J, containmentIntact, failed > 0);
+                    requestSeq++, simId(), null, o, RUPTURE_J, containmentIntact(), failed > 0);
             if (routed.damage() != null) b.damage().submit(routed.damage());
             if (routed.release() == ConsequenceRouter.ReleasePath.ENVIRONMENT) {
                 releaseTicks = 60 * 20;
@@ -399,7 +382,8 @@ public final class PwrReactorBlockEntity extends DeviceBlockEntity implements Fo
         v[PwrPanels.FUEL_C] = (int) Math.round(r.fuelK() - 273.15);
         v[PwrPanels.HOT_C] = (int) Math.round(r.hotLegK() - 273.15);
         v[PwrPanels.COLD_C] = (int) Math.round(r.coldLegK() - 273.15);
-        v[PwrPanels.PRESSURE] = (int) Math.round(r.pressure() / 1e4);
+        PlantAccident acc = accident.accident();
+        v[PwrPanels.PRESSURE] = (int) Math.round((acc.active() ? acc.pressurePa() : r.pressure()) / 1e4);
         v[PwrPanels.PZR_LEVEL] = (int) Math.round(r.pressurizerLevel() * 1000);
         v[PwrPanels.BORON] = (int) Math.round(r.boronGkg() * 100);
         v[PwrPanels.HEATER_KW] = (int) Math.round(r.heaterW() / 1e3);
@@ -417,7 +401,7 @@ public final class PwrReactorBlockEntity extends DeviceBlockEntity implements Fo
         v[PwrPanels.FIRST_OUT] = r.protection().isTripped() ? PwrPanels.reasonCode(r.protection().firstOut()) : 0;
         v[PwrPanels.EXCHANGE] = (int) Math.round(r.exchangeKgS() * 10);
         v[PwrPanels.EXCHANGE_G] = (int) Math.round(r.exchangeGkg() * 10);
-        v[PwrPanels.LEAK] = (int) Math.round(r.leakKgS() * 10);
+        v[PwrPanels.LEAK] = (int) Math.round((r.leakKgS() + acc.breakFlowKgS()) * 10);
         v[PwrPanels.PUMP1] = (int) Math.round(r.pumpSpeed(0) * 100);
         v[PwrPanels.PUMP2] = (int) Math.round(r.pumpSpeed(1) * 100);
         v[PwrPanels.FLAGS] = (r.protection().isTripped() ? 1 << PwrPanels.F_TRIPPED : 0)
@@ -427,9 +411,10 @@ public final class PwrReactorBlockEntity extends DeviceBlockEntity implements Fo
                 | (r.failedAssemblies() > 0 ? 1 << PwrPanels.F_FAILED : 0)
                 | (r.rgDrive() < 0 ? 1 << PwrPanels.F_RG_UP : 0) | (r.rgDrive() > 0 ? 1 << PwrPanels.F_RG_DOWN : 0)
                 | (r.pressurizer().reliefOpen() || r.pressurizer().safetyOpen() ? 1 << PwrPanels.F_RELIEF : 0)
-                | (r.safetyInjection() ? 1 << PwrPanels.F_SI : 0)
-                | (r.leakKgS() > 0 ? 1 << PwrPanels.F_LEAK : 0)
+                | (r.safetyInjection() || acc.eccsFlowKgS() + acc.accumulatorFlowKgS() > 0 ? 1 << PwrPanels.F_SI : 0)
+                | (r.leakKgS() > 0 || acc.breakArea() > 0 ? 1 << PwrPanels.F_LEAK : 0)
                 | (r.heaterW() > 1e3 ? 1 << PwrPanels.F_HEATERS : 0);
+        accident.readPanel(v, PwrPanels.ACCIDENT);
     }
 
     @Override
@@ -452,6 +437,7 @@ public final class PwrReactorBlockEntity extends DeviceBlockEntity implements Fo
                 r.setWaterExchange(r.exchangeKgS(), exchangeG());
             }
             case PwrPanels.B_UNLOAD -> unload(player);
+            case PwrPanels.B_LOCA -> accident.cycleDrill(player);
             default -> {
             }
         }
@@ -535,6 +521,7 @@ public final class PwrReactorBlockEntity extends DeviceBlockEntity implements Fo
         reactor.save(new TreeStateWriter(tree));
         tag.put("reactor", NbtStateTrees.toNbt(tree));
         tag.putBoolean("concentrate", concentrate);
+        accident.save(tag);
         wiring.save(tag);
     }
 
@@ -544,6 +531,7 @@ public final class PwrReactorBlockEntity extends DeviceBlockEntity implements Fo
         if (tag.contains("fuel")) fuel.deserializeNBT(registries, tag.getCompound("fuel"));
         if (tag.contains("reactor")) reactor.load(new TreeStateReader(NbtStateTrees.fromNbt(tag.getCompound("reactor"))));
         concentrate = tag.getBoolean("concentrate");
+        accident.load(tag);
         wiring.load(tag);
         wasTripped = reactor.protection().isTripped();
     }

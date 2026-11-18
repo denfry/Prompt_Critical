@@ -293,4 +293,19 @@ class PressurizedWaterReactorTest {
         assertFalse(b.protection().isTripped(), "no trip after reload: " + b.protection().firstOut());
         assertEquals(a.power(), b.power(), 0.03);
     }
+
+    /** Core heat-up from the accident layer breaches the hottest intact assemblies first and reports them once. */
+    @Test
+    void accidentFailsTheHottestCladding() {
+        PressurizedWaterReactor r = new PressurizedWaterReactor();
+        r.setRods(1, 1);
+        double kg = dev.denfry.promptcritical.sim.fuel.FuelDesign.VVER_440.uKgPerAssembly(0.96, 0.044);
+        for (int i = 0; i < 3; i++) assertTrue(r.load(i, dev.denfry.promptcritical.sim.fuel.FuelDesign.VVER_440, kg, 0.044, 0.0003));
+        assertEquals(2, r.failCladding(2));
+        assertEquals(2, r.newlyFailed());
+        assertEquals(1, r.failCladding(5), "only one intact assembly left");
+        assertEquals(3, r.failedAssemblies());
+        r.step(0.05);
+        assertEquals(0, r.newlyFailed(), "reported once");
+    }
 }

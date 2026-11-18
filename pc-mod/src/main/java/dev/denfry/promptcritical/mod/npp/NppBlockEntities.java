@@ -35,6 +35,8 @@ public final class NppBlockEntities {
             type("sfr_reactor", SfrReactorBlockEntity::new, PcBlocks.SFR_REACTOR);
     public static final DeferredHolder<BlockEntityType<?>, BlockEntityType<PressurizerBlockEntity>> PRESSURIZER =
             type("pressurizer", PressurizerBlockEntity::new, PcBlocks.PRESSURIZER);
+    public static final DeferredHolder<BlockEntityType<?>, BlockEntityType<EccsPumpBlockEntity>> ECCS_PUMP =
+            type("eccs_pump", EccsPumpBlockEntity::new, PcBlocks.ECCS_PUMP);
 
     private NppBlockEntities() {
     }

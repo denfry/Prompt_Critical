@@ -28,6 +28,18 @@ public final class NppText {
         put("pwr_dnb", "DEPARTURE FROM NUCLEATE BOILING: assemblies with failed cladding: %s, activity in the coolant",
                 "КРИЗИС ТЕПЛООБМЕНА: разгерметизированы оболочки ТВС: %s; активность в теплоносителе");
         put("pwr_rupture", "PRIMARY CIRCUIT RUPTURE: the pressure broke the loop", "РАЗРЫВ ПЕРВОГО КОНТУРА: давление разорвало петлю");
+        put("accident_drill_0", "Drill: the break is isolated", "Учение: течь отсечена");
+        put("accident_drill_1", "Drill: small break opened in a cold leg", "Учение: малая течь в холодной нитке");
+        put("accident_drill_2", "Drill: guillotine break of the main coolant pipe", "Учение: разрыв главного трубопровода на полное сечение");
+        put("accident_loca", "LOSS OF COOLANT ACCIDENT: break of %s cm²", "АВАРИЯ С ПОТЕРЕЙ ТЕПЛОНОСИТЕЛЯ: течь %s см²");
+        put("accident_sbo", "STATION BLACKOUT: no AC on the safety buses, ECCS pumps and makeup are lost",
+                "ПОЛНОЕ ОБЕСТОЧИВАНИЕ: на секциях надёжного питания нет напряжения, насосы САОЗ и подпитка потеряны");
+        put("accident_uncovered", "CORE UNCOVERED: the level is below the top of the fuel", "ОГОЛЕНИЕ АКТИВНОЙ ЗОНЫ: уровень ниже верха топлива");
+        put("accident_clad", "CORE HEAT-UP: cladding burst, assemblies with failed cladding: %s",
+                "РАЗОГРЕВ ЗОНЫ: оболочки вздулись и лопнули, разгерметизировано ТВС: %s");
+        put("accident_h2_burn", "HYDROGEN BURN in the containment: %s MJ", "ГОРЕНИЕ ВОДОРОДА в гермооболочке: %s МДж");
+        put("accident_breach", "CONTAINMENT FAILED: overpressure tore the shell, the release goes outside",
+                "РАЗРУШЕНИЕ ГЕРМООБОЛОЧКИ: давление разорвало её, выброс уходит наружу");
     }
 
     private NppText() {

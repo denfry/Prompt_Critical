@@ -17,9 +17,10 @@ import net.minecraft.network.chat.Component;
  */
 public final class BwrPanels {
     public static final int POWER = 0, PERIOD = 1, RHO_PCM = 2, SCRAM_ROD = 3, CONTROL_ROD = 4, PRESSURE = 5, LEVEL = 6, FLOW = 7,
-            VOID = 8, STEAM = 9, FUEL_C = 10, XE_PCM = 11, LOADED = 12, BURNUP = 13, TRIP = 14, N16_GBQ = 15, FLAGS = 16, CHANNELS = 17;
+            VOID = 8, STEAM = 9, FUEL_C = 10, XE_PCM = 11, LOADED = 12, BURNUP = 13, TRIP = 14, N16_GBQ = 15, FLAGS = 16, ACCIDENT = 17,
+            CHANNELS = ACCIDENT + AccidentPanels.COUNT;
     public static final int F_TRIPPED = 0, F_NO_TURBINE = 1, F_RELIEF = 2, F_UP = 3, F_DOWN = 4;
-    public static final int B_SCRAM = 0, B_RESET = 1, B_UP = 2, B_STOP = 3, B_DOWN = 4, B_UNLOAD = 5;
+    public static final int B_SCRAM = 0, B_RESET = 1, B_UP = 2, B_STOP = 3, B_DOWN = 4, B_UNLOAD = 5, B_LOCA = 6;
     public static final int SLOT_FRESH = 0, SLOT_SPENT = 1;
 
     private static final Tr PCT = PanelText.PERCENT, SEC = PanelText.tr("unit.s", "s", "с"),
@@ -85,7 +86,9 @@ public final class BwrPanels {
             .button(108, 100, 18, B_STOP, STOP.get(), STOP_TIP.get())
             .button(128, 100, 18, B_DOWN, DOWN.get(), DOWN_TIP.get())
             .button(152, 100, 52, B_UNLOAD, UNLOAD.get(), UNLOAD_TIP.get())
+            .button(8, 120, 40, B_LOCA, AccidentPanels.DRILL.get(), AccidentPanels.DRILL_TIP.get())
             .readout(8, 140, 232, BwrPanels::status, null)
+            .readout(8, 154, 232, v -> AccidentPanels.line(v, ACCIDENT), v -> AccidentPanels.tip(v, ACCIDENT))
             .build();
 
     private BwrPanels() {

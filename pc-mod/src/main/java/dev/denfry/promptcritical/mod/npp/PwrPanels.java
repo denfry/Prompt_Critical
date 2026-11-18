@@ -19,11 +19,11 @@ public final class PwrPanels {
     public static final int POWER = 0, PERIOD = 1, RHO_PCM = 2, AZ = 3, RG = 4, FUEL_C = 5, HOT_C = 6, COLD_C = 7, PRESSURE = 8,
             PZR_LEVEL = 9, BORON = 10, HEATER_KW = 11, SPRAY = 12, CHARGE = 13, FLOW = 14, DNBR = 15, SG_MW = 16, XE_PCM = 17,
             BURNUP = 18, LOADED = 19, FAILED = 20, SETPOINT = 21, FIRST_OUT = 22, EXCHANGE = 23, EXCHANGE_G = 24, LEAK = 25,
-            PUMP1 = 26, PUMP2 = 27, FLAGS = 28, CHANNELS = 29;
+            PUMP1 = 26, PUMP2 = 27, FLAGS = 28, ACCIDENT = 29, CHANNELS = ACCIDENT + AccidentPanels.COUNT;
     public static final int F_TRIPPED = 0, F_AUTO = 1, F_NO_PZR = 2, F_NO_SG = 3, F_FAILED = 4, F_RG_UP = 5, F_RG_DOWN = 6,
             F_RELIEF = 7, F_SI = 8, F_LEAK = 9, F_LOW_FLUX_OFF = 10, F_HEATERS = 11;
     public static final int B_SCRAM = 0, B_RESET = 1, B_RG_UP = 2, B_RG_STOP = 3, B_RG_DOWN = 4, B_AUTO = 5, B_SP_DOWN = 6,
-            B_SP_UP = 7, B_LOW_FLUX = 8, B_XCH_DOWN = 9, B_XCH_UP = 10, B_XCH_SOURCE = 11, B_UNLOAD = 12;
+            B_SP_UP = 7, B_LOW_FLUX = 8, B_XCH_DOWN = 9, B_XCH_UP = 10, B_XCH_SOURCE = 11, B_UNLOAD = 12, B_LOCA = 13;
     public static final int SLOT_FRESH = 0, SLOT_SPENT = 1;
 
     private static final Tr PCT = PanelText.PERCENT, CELSIUS = PanelText.CELSIUS, SEC = PanelText.tr("unit.s", "s", "с"),
@@ -129,8 +129,10 @@ public final class PwrPanels {
             .button(80, 120, 18, B_XCH_UP, Component.literal("+"), XCH_UP_TIP.get())
             .button(102, 120, 48, B_XCH_SOURCE, XCH_SRC.get(), XCH_SRC_TIP.get())
             .button(154, 120, 52, B_UNLOAD, UNLOAD.get(), UNLOAD_TIP.get())
+            .button(210, 120, 30, B_LOCA, AccidentPanels.DRILL.get(), AccidentPanels.DRILL_TIP.get())
             .readout(8, 140, 232, PwrPanels::chemistry, null)
             .readout(8, 154, 232, PwrPanels::status, null)
+            .readout(8, 166, 232, v -> AccidentPanels.line(v, ACCIDENT), v -> AccidentPanels.tip(v, ACCIDENT))
             .build();
 
     private PwrPanels() {

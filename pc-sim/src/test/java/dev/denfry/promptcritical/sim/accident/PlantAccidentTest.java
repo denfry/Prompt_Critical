@@ -125,7 +125,8 @@ class PlantAccidentTest {
     /**
      * Station blackout on a VVER without a heat sink: the loop rises to the relief setpoint and boils off through
      * it. With ~5.6 t of water above the core, h_fg ≈ 0.9 MJ/kg and 1–2 MW of decay heat the core uncovers after
-     * roughly an hour (the order of the Surry SBO without AFW, NUREG-1150 / SOARCA: 1–3 h to uncovery).
+     * roughly an hour; full-size plants with no feedwater at all take a few hours, as their water-to-power ratio is
+     * larger.
      */
     @Test
     void stationBlackoutBoilsOffThroughTheReliefValves() {
