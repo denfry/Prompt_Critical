@@ -27,6 +27,8 @@ public final class IsotopeBlockEntities {
             type("irradiation_channel", IrradiationChannelBlockEntity::new, PcBlocks.IRRADIATION_CHANNEL);
     public static final DeferredHolder<BlockEntityType<?>, BlockEntityType<RtgBlockEntity>> RTG =
             type("rtg_thermoelectric", RtgBlockEntity::new, PcBlocks.RTG_THERMOELECTRIC);
+    public static final DeferredHolder<BlockEntityType<?>, BlockEntityType<TrigaBlockEntity>> TRIGA =
+            type("transient_rod_drive", TrigaBlockEntity::new, PcBlocks.TRANSIENT_ROD_DRIVE);
     public static final DeferredHolder<RecipeSerializer<?>, SimpleCraftingRecipeSerializer<IsotopeCraftRecipe>> CRAFT =
             RECIPE_SERIALIZERS.register("isotope_craft", () -> new SimpleCraftingRecipeSerializer<>(IsotopeCraftRecipe::new));
 

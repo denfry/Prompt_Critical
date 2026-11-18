@@ -219,6 +219,7 @@ public final class PcLanguageProvider extends LanguageProvider {
         i("fuel_assembly", "Fuel Assembly", "Тепловыделяющая сборка (ТВС)");
         i("zircon_concentrate", "Zircon Concentrate", "Цирконовый концентрат");
         i("zirconium_sponge", "Reactor-Grade Zirconium Sponge", "Губка циркония реакторной чистоты");
+        i("triga_fuel_element", "TRIGA Fuel Element (U-ZrH)", "Твэл TRIGA (U-ZrH)");
         i("hafnium_ingot", "Hafnium Ingot", "Слиток гафния");
         i("zircaloy_ingot", "Zirconium Alloy Ingot", "Слиток циркониевого сплава");
         i("cladding_tube", "Zirconium Cladding Tube", "Оболочечная труба из циркониевого сплава");
@@ -382,6 +383,7 @@ public final class PcLanguageProvider extends LanguageProvider {
         b("power_reactor", "Channel Power Reactor (AM-1 type)", "Канальный энергетический реактор (типа АМ-1)");
         b("irradiation_channel", "Irradiation Channel", "Канал облучения");
         b("rtg_thermoelectric", "Thermoelectric RTG", "Термоэлектрический РИТЭГ");
+        b("transient_rod_drive", "TRIGA Transient Rod Drive", "Привод импульсного стержня TRIGA");
         b("submerged_arc_furnace", "Submerged Arc Furnace", "Рудно-термическая печь");
         b("trichlorosilane_reactor", "Trichlorosilane Fluidised-Bed Reactor", "Реактор синтеза трихлорсилана");
         b("siemens_reactor", "Siemens Polysilicon Reactor", "Реактор Сименса");

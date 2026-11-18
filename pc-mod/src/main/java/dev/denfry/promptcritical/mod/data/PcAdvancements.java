@@ -66,6 +66,10 @@ public final class PcAdvancements implements AdvancementProvider.AdvancementGene
         LANG.put("quiet_pump", new String[] {"Quiet Pump", "Тихий насос",
                 "Find a cavitating pump by its gravel noise and cure it before the impeller is eaten through",
                 "Найдите кавитирующий насос по шуму «гравия» и устраните кавитацию, пока колесо не съедено"});
+        // физика: импульс TRIGA (12 §12.6.1)
+        LANG.put("pulse", new String[] {"Pulse", "Импульс",
+                "Fire a TRIGA pulse of 100 MW or more without damaging the fuel",
+                "Импульс TRIGA в 100 МВт и больше без повреждения топлива"});
         // физика: РИТЭГ на удалённой скважине (12 §12.5.1)
         LANG.put("everlasting", new String[] {"Everlasting Battery", "Вечная батарейка",
                 "An RTG alone powers the telemetry gateway of a remote well",
@@ -163,6 +167,9 @@ public final class PcAdvancements implements AdvancementProvider.AdvancementGene
         task(canary, PcBlocks.MINE_DRAINAGE_PUMP.get(), "quiet_pump", AdvancementType.TASK, false, 40)
                 .addCriterion("quiet", event(dev.denfry.promptcritical.mod.content.SimAchievements.QUIET_PUMP, Map.of()))
                 .save(saver, id("quiet_pump"), efh);
+        task(pile, PcBlocks.TRANSIENT_ROD_DRIVE.get(), "pulse", AdvancementType.CHALLENGE, false, 100)
+                .addCriterion("pulse", event(dev.denfry.promptcritical.mod.content.SimAchievements.PULSE, Map.of()))
+                .save(saver, id("pulse"), efh);
         // автоматизация A1–A2
         AdvancementHolder relays = task(root, PcBlocks.RELAY.get(), "relay_logic", AdvancementType.TASK, false, 30)
                 .addCriterion("relay_logic", event(AutomationSubsystem.RELAY_LOGIC,

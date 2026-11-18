@@ -1,0 +1,32 @@
+{
+  "parent": "minecraft:recipes/root",
+  "criteria": {
+    "has_the_recipe": {
+      "conditions": {
+        "recipe": "promptcritical:isotopes/triga_fuel_element"
+      },
+      "trigger": "minecraft:recipe_unlocked"
+    },
+    "has_zirconium": {
+      "conditions": {
+        "items": [
+          {
+            "items": "promptcritical:zirconium_sponge"
+          }
+        ]
+      },
+      "trigger": "minecraft:inventory_changed"
+    }
+  },
+  "requirements": [
+    [
+      "has_the_recipe",
+      "has_zirconium"
+    ]
+  ],
+  "rewards": {
+    "recipes": [
+      "promptcritical:isotopes/triga_fuel_element"
+    ]
+  }
+}
