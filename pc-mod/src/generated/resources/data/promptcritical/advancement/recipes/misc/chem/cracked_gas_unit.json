@@ -1,0 +1,32 @@
+{
+  "parent": "minecraft:recipes/root",
+  "criteria": {
+    "has_ngl_fractionator": {
+      "conditions": {
+        "items": [
+          {
+            "items": "promptcritical:ngl_fractionator"
+          }
+        ]
+      },
+      "trigger": "minecraft:inventory_changed"
+    },
+    "has_the_recipe": {
+      "conditions": {
+        "recipe": "promptcritical:chem/cracked_gas_unit"
+      },
+      "trigger": "minecraft:recipe_unlocked"
+    }
+  },
+  "requirements": [
+    [
+      "has_the_recipe",
+      "has_ngl_fractionator"
+    ]
+  ],
+  "rewards": {
+    "recipes": [
+      "promptcritical:chem/cracked_gas_unit"
+    ]
+  }
+}
