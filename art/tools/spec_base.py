@@ -7,21 +7,10 @@ model("reactor_vessel_wall", "core", {"wall": "block/reactor_vessel_wall.png"},
 
 # стена гермооболочки нарисована вручную в Blockbench: art/blockbench/core/containment.author.js
 
-model("moderator_block_graphite", "core", {"g": "block/moderator_block_graphite.png"},
-      [el("block", [0, 0, 0], [16, 16, 16], "g")], "block/moderator_block_graphite")
+# нарисовано вручную в Blockbench: art/blockbench/core/reactor_hall.author.js
 
 # графитовая колонна с циркониевой трубой канала
-model("fuel_channel", "core", {"g": T("graphite"), "zr": T("zirconium"), "d": T("steel_dark")}, [
-    el("graphite_w", [0, 0, 0], [5, 16, 16], "g"),
-    el("graphite_e", [11, 0, 0], [16, 16, 16], "g"),
-    el("graphite_n", [5, 0, 0], [11, 16, 5], "g"),
-    el("graphite_s", [5, 0, 11], [11, 16, 16], "g"),
-    el("tube_w", [5, 0, 5], [6, 16.5, 11], "zr"),
-    el("tube_e", [10, 0, 5], [11, 16.5, 11], "zr"),
-    el("tube_n", [6, 0, 5], [10, 16.5, 6], "zr"),
-    el("tube_s", [6, 0, 10], [10, 16.5, 11], "zr"),
-    el("plug", [6, 0, 6], [10, 1, 10], "d"),
-], "block/fuel_channel")
+# нарисовано вручную в Blockbench: art/blockbench/core/reactor_hall.author.js
 
 # ---------------- mechanics ----------------
 crd = [
@@ -34,9 +23,7 @@ crd = [
     el("sign_plate", [6, 14.25, 4.9], [10, 15.75, 5], "s", full=["north"]),
     el("cable_guide", [7, 0, 7], [9, 3.01, 9], "r"),
 ]
-model("control_rod_drive", "mechanics",
-      {"d": T("steel_dark"), "p": T("steel_plate"), "b": T("brass"), "h": T("hazard"),
-       "s": T("trefoil"), "r": T("rubber")}, crd, "block/control_rod_drive")
+# нарисовано вручную в Blockbench: art/blockbench/core/reactor_hall.author.js
 model("control_rod_drive/winch_drum", "mechanics",
       {"st": T("steel_bare"), "b": T("brass_smooth")},
       disc("drum", "x", 4.5, 3.5, 12.5, "st") + disc("rim_w", "x", 5.5, 3, 4, "b") + disc("rim_e", "x", 5.5, 12, 13, "b"),

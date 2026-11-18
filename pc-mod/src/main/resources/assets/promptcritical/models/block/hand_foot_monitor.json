@@ -1,17 +1,17 @@
 {
 	"credit": "Made with Blockbench",
 	"textures": {
-		"particle": "promptcritical:block/common/cabinet",
-		"d": "promptcritical:block/common/steel_dark",
-		"cab": "promptcritical:block/common/cabinet",
-		"front": "promptcritical:block/hand_foot_monitor_front",
-		"foot": "promptcritical:block/hand_foot_monitor_foot"
+		"particle": "promptcritical:block/switchgear_cell/enamel",
+		"switchgear_cell_enamel": "promptcritical:block/switchgear_cell/enamel",
+		"electronics_ss": "promptcritical:block/electronics/ss",
+		"reactor_hfm": "promptcritical:block/reactor/hfm",
+		"grid_lines_lamp_green": "promptcritical:block/grid_lines/lamp_green"
 	},
 	"elements": [
 		{
-			"name": "platform",
-			"from": [0, 0, 0],
-			"to": [16, 1.5, 16],
+			"name": "base",
+			"from": [1, 0, 2],
+			"to": [15, 2, 16],
 			"rotation": {
 				"angle": 0,
 				"axis": "y",
@@ -19,71 +19,71 @@
 			},
 			"faces": {
 				"north": {
-					"uv": [0, 0, 16, 1.5],
-					"texture": "#d"
+					"uv": [1, 14, 15, 16],
+					"texture": "#switchgear_cell_enamel"
 				},
 				"east": {
-					"uv": [0, 0, 16, 1.5],
-					"texture": "#d"
+					"uv": [0, 14, 14, 16],
+					"texture": "#switchgear_cell_enamel"
 				},
 				"south": {
-					"uv": [0, 0, 16, 1.5],
-					"texture": "#d"
+					"uv": [1, 14, 15, 16],
+					"texture": "#switchgear_cell_enamel"
 				},
 				"west": {
-					"uv": [0, 0, 16, 1.5],
-					"texture": "#d"
+					"uv": [2, 14, 16, 16],
+					"texture": "#switchgear_cell_enamel"
 				},
 				"up": {
-					"uv": [0, 0, 16, 16],
-					"texture": "#foot"
+					"uv": [1, 2, 15, 16],
+					"texture": "#switchgear_cell_enamel"
 				},
 				"down": {
-					"uv": [0, 0, 16, 16],
-					"texture": "#d"
+					"uv": [1, 0, 15, 14],
+					"texture": "#switchgear_cell_enamel"
+				}
+			}
+		},
+		{
+			"name": "foot_plate",
+			"from": [3, 2, 3],
+			"to": [13, 2.4, 11],
+			"rotation": {
+				"angle": 0,
+				"axis": "y",
+				"origin": [8, 8, 8]
+			},
+			"faces": {
+				"north": {
+					"uv": [3, 13.6, 13, 14],
+					"texture": "#electronics_ss"
+				},
+				"east": {
+					"uv": [5, 13.6, 13, 14],
+					"texture": "#electronics_ss"
+				},
+				"south": {
+					"uv": [3, 13.6, 13, 14],
+					"texture": "#electronics_ss"
+				},
+				"west": {
+					"uv": [3, 13.6, 11, 14],
+					"texture": "#electronics_ss"
+				},
+				"up": {
+					"uv": [3, 3, 13, 11],
+					"texture": "#electronics_ss"
+				},
+				"down": {
+					"uv": [3, 5, 13, 13],
+					"texture": "#electronics_ss"
 				}
 			}
 		},
 		{
 			"name": "column",
-			"from": [4, 1.5, 10],
-			"to": [12, 10, 15],
-			"rotation": {
-				"angle": 0,
-				"axis": "y",
-				"origin": [8, 8, 8]
-			},
-			"faces": {
-				"north": {
-					"uv": [0, 0, 8, 8.5],
-					"texture": "#cab"
-				},
-				"east": {
-					"uv": [0, 0, 5, 8.5],
-					"texture": "#cab"
-				},
-				"south": {
-					"uv": [0, 0, 8, 8.5],
-					"texture": "#cab"
-				},
-				"west": {
-					"uv": [0, 0, 5, 8.5],
-					"texture": "#cab"
-				},
-				"up": {
-					"uv": [0, 0, 8, 5],
-					"texture": "#cab"
-				},
-				"down": {
-					"uv": [0, 0, 8, 5],
-					"texture": "#cab"
-				}
-			}
-		},
-		{
-			"name": "head",
-			"from": [1, 10, 5],
-			"to": [15, 16, 15],
+			"from": [2, 2, 11],
+			"to": [14, 16, 16],
 			"rotation": {
 				"angle": 0,
 				"axis": "y",
@@ -92,28 +92,140 @@
 			"faces": {
 				"north": {
 					"uv": [0, 0, 16, 16],
-					"texture": "#front"
+					"texture": "#reactor_hfm"
 				},
 				"east": {
-					"uv": [0, 0, 10, 6],
-					"texture": "#cab"
+					"uv": [0, 0, 5, 14],
+					"texture": "#switchgear_cell_enamel"
 				},
 				"south": {
-					"uv": [0, 0, 14, 6],
-					"texture": "#cab"
+					"uv": [2, 0, 14, 14],
+					"texture": "#switchgear_cell_enamel"
 				},
 				"west": {
-					"uv": [0, 0, 10, 6],
-					"texture": "#cab"
+					"uv": [11, 0, 16, 14],
+					"texture": "#switchgear_cell_enamel"
 				},
 				"up": {
-					"uv": [0, 0, 14, 10],
-					"texture": "#cab"
+					"uv": [2, 11, 14, 16],
+					"texture": "#switchgear_cell_enamel"
 				},
 				"down": {
-					"uv": [0, 0, 14, 10],
-					"texture": "#cab"
+					"uv": [2, 0, 14, 5],
+					"texture": "#switchgear_cell_enamel"
 				}
+			}
+		},
+		{
+			"name": "hand_3",
+			"from": [3, 11, 8],
+			"to": [6, 13, 11],
+			"rotation": {
+				"angle": 0,
+				"axis": "y",
+				"origin": [8, 8, 8]
+			},
+			"faces": {
+				"north": {
+					"uv": [10, 3, 13, 5],
+					"texture": "#switchgear_cell_enamel"
+				},
+				"east": {
+					"uv": [5, 3, 8, 5],
+					"texture": "#switchgear_cell_enamel"
+				},
+				"south": {
+					"uv": [3, 3, 6, 5],
+					"texture": "#switchgear_cell_enamel"
+				},
+				"west": {
+					"uv": [8, 3, 11, 5],
+					"texture": "#switchgear_cell_enamel"
+				},
+				"up": {
+					"uv": [3, 8, 6, 11],
+					"texture": "#switchgear_cell_enamel"
+				},
+				"down": {
+					"uv": [3, 5, 6, 8],
+					"texture": "#switchgear_cell_enamel"
+				}
+			}
+		},
+		{
+			"name": "hand_10",
+			"from": [10, 11, 8],
+			"to": [13, 13, 11],
+			"rotation": {
+				"angle": 0,
+				"axis": "y",
+				"origin": [8, 8, 8]
+			},
+			"faces": {
+				"north": {
+					"uv": [3, 3, 6, 5],
+					"texture": "#switchgear_cell_enamel"
+				},
+				"east": {
+					"uv": [5, 3, 8, 5],
+					"texture": "#switchgear_cell_enamel"
+				},
+				"south": {
+					"uv": [10, 3, 13, 5],
+					"texture": "#switchgear_cell_enamel"
+				},
+				"west": {
+					"uv": [8, 3, 11, 5],
+					"texture": "#switchgear_cell_enamel"
+				},
+				"up": {
+					"uv": [10, 8, 13, 11],
+					"texture": "#switchgear_cell_enamel"
+				},
+				"down": {
+					"uv": [10, 5, 13, 8],
+					"texture": "#switchgear_cell_enamel"
+				}
+			}
+		},
+		{
+			"name": "glow_ready",
+			"from": [7, 15, 10.8],
+			"to": [9, 15.6, 11],
+			"rotation": {
+				"angle": 0,
+				"axis": "y",
+				"origin": [8, 8, 8]
+			},
+			"faces": {
+				"north": {
+					"uv": [7, 0.4, 9, 1],
+					"texture": "#grid_lines_lamp_green"
+				},
+				"east": {
+					"uv": [5, 0.4, 5.2, 1],
+					"texture": "#grid_lines_lamp_green"
+				},
+				"south": {
+					"uv": [7, 0.4, 9, 1],
+					"texture": "#grid_lines_lamp_green"
+				},
+				"west": {
+					"uv": [10.8, 0.4, 11, 1],
+					"texture": "#grid_lines_lamp_green"
+				},
+				"up": {
+					"uv": [7, 10.8, 9, 11],
+					"texture": "#grid_lines_lamp_green"
+				},
+				"down": {
+					"uv": [7, 5, 9, 5.2],
+					"texture": "#grid_lines_lamp_green"
+				}
+			},
+			"neoforge_data": {
+				"block_light": 15,
+				"sky_light": 15
 			}
 		}
 	]

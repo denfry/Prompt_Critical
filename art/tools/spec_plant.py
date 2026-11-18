@@ -77,21 +77,9 @@ model("moderator_tank", "core", tx("d", "st", "end", wall=B("moderator_tank")), 
     el("top_flange", [3, 15.5, 3], [13, 16.5, 13], "st"),
 ], "block/moderator_tank")
 
-model("control_rod_channel", "core", tx("g", "st", "ab", top=B("control_rod_channel_top")), [
-    el("graphite", [0, 0, 0], [16, 16, 16], "g", faces={"up": "top"}),
-    el("collar", [4.5, 16, 4.5], [11.5, 16.5, 11.5], "st"),
-    el("rod_head", [6.5, 16.5, 6.5], [9.5, 17.5, 9.5], "ab"),
-], "block/control_rod_channel")
+# нарисовано вручную в Blockbench: art/blockbench/core/reactor_hall.author.js
 
-model("startup_source", "core", tx("d", "st", "h", cap=B("startup_source_capsule")), [
-    el("base", [3, 0, 3], [13, 2, 13], "d"),
-    el("hazard_rim", [2.9, 1.5, 2.9], [13.1, 2.25, 13.1], "h"),
-    el("holder", [6, 2, 6], [10, 12, 10], "cap", full=["north", "south", "east", "west"]),
-    el("cap", [5.5, 12, 5.5], [10.5, 13, 10.5], "d"),
-    el("bail_w", [6.5, 13, 7.5], [7.5, 15.5, 8.5], "st"),
-    el("bail_e", [8.5, 13, 7.5], [9.5, 15.5, 8.5], "st"),
-    el("bail_top", [6.5, 15.5, 7.5], [9.5, 16, 8.5], "st"),
-], "block/startup_source")
+# нарисовано вручную в Blockbench: art/blockbench/core/reactor_hall.author.js
 
 # ---------- vessels of the reactor island ----------
 # компенсатор давления нарисован вручную в Blockbench: art/blockbench/core/reactor_island.author.js
@@ -361,15 +349,7 @@ model("condensate_pump/coupling", "mechanics", tx("st", "bsm"),
       disc("shaft", "y", 1, 6.5, 10.5, "st", 8) + disc("coupling", "y", 2, 8, 9, "bsm", 8),
       "block/condensate_pump/partial/coupling", kind="partial")
 
-model("zip_rod_winch", "mechanics", tx("d", "p", "b", "h", rat=B("zip_rod_winch_ratchet")), [
-    el("base", [0, 0, 0], [16, 2, 16], "d"),
-    el("rope_hole", [6.5, -0.01, 6.5], [9.5, 0.5, 9.5], "d"),
-    el("cheek_w", [1, 2, 3], [3, 14, 13], "p"),
-    el("cheek_e", [13, 2, 3], [15, 14, 13], "p"),
-    el("ratchet", [15, 3.5, 3.5], [16, 12.5, 12.5], "d", faces={"east": "rat"}, full=["east"]),
-    el("pawl", [15.5, 11, 10], [16.5, 14, 12], "b"),
-    el("cross_tie", [3, 12.5, 6.5], [13, 14, 9.5], "h"),
-], "block/zip_rod_winch")
+# нарисовано вручную в Blockbench: art/blockbench/core/reactor_hall.author.js
 model("zip_rod_winch/drum", "mechanics", tx("rope", "bsm", "st"),
       disc("drum", "x", 3.5, 3.5, 12.5, "rope") + disc("rim_w", "x", 5, 3, 4, "bsm") + disc("rim_e", "x", 5, 12, 13, "bsm")
       + disc("axle", "x", 1, 1, 15, "st", 8),
@@ -525,7 +505,7 @@ def filter_box(face):
     ]
 
 
-model("hepa_filter", "ventilation", tx("d", "st", hs=B("hepa_filter_housing"), face=B("hepa_filter_face")), filter_box(0), "block/hepa_filter")
+# нарисовано вручную в Blockbench: art/blockbench/core/reactor_hall.author.js
 model("charcoal_filter", "ventilation", tx("d", "st", hs=B("charcoal_filter_housing"), face=B("charcoal_filter_face")),
       filter_box(0) + [el("sample_port", [3, 16, 3], [5, 16.75, 5], "st")], "block/charcoal_filter")
 
@@ -568,13 +548,7 @@ model("boron_injection_tank", "safety", tx("d", "st", "end", sh=B("boron_injecti
           el("skirt", [2, 0, 2], [14, 1, 14], "d")]),
       "block/boron_injection_tank")
 
-model("eccs_accumulator", "safety", tx("d", "st", "end", "cys", sh=B("eccs_accumulator_shell"), top=B("tank_top")),
-      tank("sh", 7, 12.5, disc("head_1", "y", 5.5, 12.5, 14, "st") + disc("head_2", "y", 3.5, 14, 15, "st", 8) + [
-          el("n2_nozzle", [7, 15, 7], [9, 16, 9], "cys"),
-          el("outlet", [5.5, 1, -0.5], [10.5, 6, 1.5], "d", faces={"north": "end"}, full=["north"]),
-          el("lug_w", [0, 8, 7], [1.5, 10, 9], "d"),
-          el("lug_e", [14.5, 8, 7], [16, 10, 9], "d")]),
-      "block/eccs_accumulator")
+# нарисовано вручную в Blockbench: art/blockbench/core/reactor_hall.author.js
 
 model("borated_water_tank", "safety", tx("d", "p", sh=B("borated_water_tank_shell")), [
     el("wall", [0, 0, 1], [16, 16, 16], "sh", faces={"up": "p", "down": "d"}),
@@ -756,7 +730,8 @@ model("signal_cable_side", "control", _cb, [el("arm", [7, 7, 0], [9, 9, 6.5], "c
 # ======================================================================
 # radiation safety (04b)
 # ======================================================================
-for _id in ("lead_block", "heavy_concrete", "polyethylene_block", "borated_polyethylene", "tungsten_block",
+# lead_block нарисован вручную в Blockbench: art/blockbench/core/reactor_hall.author.js
+for _id in ("heavy_concrete", "polyethylene_block", "borated_polyethylene", "tungsten_block",
             "depleted_uranium_block", "steel_plate", "lead_glass"):
     model(_id, "radiation", {"t": B(_id)}, [el("block", [0, 0, 0], [16, 16, 16], "t")], f"block/{_id}")
 
@@ -770,11 +745,7 @@ model("portal_monitor", "radiation", tx("d", "lg", "cab", pnl=B("portal_monitor_
     el("glow_status", [6.5, 16, 6.5], [9.5, 17, 9.5], "lg"),
 ], "block/portal_monitor")
 
-model("hand_foot_monitor", "radiation", tx("d", "cab", front=B("hand_foot_monitor_front"), foot=B("hand_foot_monitor_foot")), [
-    el("platform", [0, 0, 0], [16, 1.5, 16], "d", faces={"up": "foot"}, full=["up"]),
-    el("column", [4, 1.5, 10], [12, 10, 15], "cab"),
-    el("head", [1, 10, 5], [15, 16, 15], "cab", faces={"north": "front"}, full=["north"]),
-], "block/hand_foot_monitor")
+# нарисовано вручную в Blockbench: art/blockbench/core/reactor_hall.author.js
 
 model("whole_body_counter", "radiation", tx("pb", "r", "st", "d", pnl=B("whole_body_counter_panel")), [
     el("back_shield", [1, 0, 12], [15, 16, 16], "pb", faces={"north": "pnl"}, full=["north"]),
@@ -827,14 +798,7 @@ for _id in ("clean_locker", "dirty_locker"):
         el("vent_top", [3, 16, 5], [13, 16.5, 13], "d"),
     ], f"block/{_id}")
 
-model("decon_shower", "radiation", tx("st", "red", "tile", hd=B("decon_shower_head")),
-      [el("wall", [0, 0, 15], [16, 16, 16], "tile"),
-       el("riser", [7.5, 2, 13.5], [8.5, 14, 14.5], "st"),
-       el("arm", [7.4, 13, 9.5], [8.6, 14.1, 14.5], "st")]
-      + disc("head", "y", 2.5, 12, 13, "st", 8, faces={"down": "hd"}, c=(8, 8, 9.5))
-      + [el("valve_hot", [5, 6, 13], [6.5, 7.5, 15], "red"),
-         el("valve_cold", [9.5, 6, 13], [11, 7.5, 15], "st")],
-      "block/decon_shower")
+# нарисовано вручную в Blockbench: art/blockbench/core/reactor_hall.author.js
 
 model("decon_drain", "radiation", {"t": P("tile"), "top": B("decon_drain_top")}, [
     el("floor", [0, 0, 0], [16, 16, 16], "t", faces={"up": "top"}),
@@ -853,8 +817,7 @@ def bath(front, liquid, extra):
     ] + extra
 
 
-model("ultrasonic_bath", "radiation", tx("st", "d", "pnd", front=B("ultrasonic_bath_front"), liq=B("ultrasonic_bath_liquid")),
-      bath("front", "liq", [el("transducer_box", [5, 12, 14.5], [11, 14, 15.5], "pnd")]), "block/ultrasonic_bath")
+# нарисовано вручную в Blockbench: art/blockbench/core/reactor_hall.author.js
 model("electropolish_bath", "radiation", tx("st", "d", "cu", "pb", front=B("electropolish_bath_front"), liq=B("electropolish_bath_liquid")),
       bath("front", "liq", [el("bus_n", [0.5, 12, 5], [15.5, 13, 6], "cu"),
                             el("bus_s", [0.5, 12, 10], [15.5, 13, 11], "cu"),

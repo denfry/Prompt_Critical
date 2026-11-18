@@ -28,8 +28,7 @@ def irr_channel(loaded):
     return els
 
 
-m("irradiation_channel", "core", irr_channel(False))
-m("irradiation_channel_loaded", "core", irr_channel(True))
+# нарисовано вручную в Blockbench: art/blockbench/core/reactor_hall.author.js
 
 
 def reflector_port(loaded):
@@ -148,8 +147,7 @@ def rtg_te(active=True):
     return els
 
 
-m("rtg_thermoelectric", "isotopes", rtg_te())
-m("rtg_thermoelectric_depleted", "isotopes", rtg_te(False))
+# нарисовано вручную в Blockbench: art/blockbench/core/reactor_hall.author.js
 
 
 def rtg_stirling(running=True):

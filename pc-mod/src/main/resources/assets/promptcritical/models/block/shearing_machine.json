@@ -1,18 +1,19 @@
 {
 	"credit": "Made with Blockbench",
 	"textures": {
-		"particle": "promptcritical:block/shearing_machine",
-		"d": "promptcritical:block/common/steel_dark",
-		"f": "promptcritical:block/shearing_machine",
-		"lead": "promptcritical:block/common/lead",
-		"ss": "promptcritical:block/common/fuelcycle_ss",
-		"st": "promptcritical:block/common/steel_bare"
+		"particle": "promptcritical:block/reactor/lead",
+		"reactor_lead": "promptcritical:block/reactor/lead",
+		"material_steel": "promptcritical:block/material/steel",
+		"reactor_lead_glass": "promptcritical:block/reactor/lead_glass",
+		"electronics_ss": "promptcritical:block/electronics/ss",
+		"material_cast_iron": "promptcritical:block/material/cast_iron",
+		"plant_hazard": "promptcritical:block/plant/hazard"
 	},
 	"elements": [
 		{
-			"name": "base",
-			"from": [0, 0, 0],
-			"to": [16, 3, 16],
+			"name": "cell",
+			"from": [0, 0, 1],
+			"to": [16, 15, 16],
 			"rotation": {
 				"angle": 0,
 				"axis": "y",
@@ -20,35 +21,35 @@
 			},
 			"faces": {
 				"north": {
-					"uv": [0, 0, 16, 3],
-					"texture": "#d"
+					"uv": [0, 1, 16, 16],
+					"texture": "#reactor_lead"
 				},
 				"east": {
-					"uv": [0, 0, 16, 3],
-					"texture": "#d"
+					"uv": [0, 1, 15, 16],
+					"texture": "#reactor_lead"
 				},
 				"south": {
-					"uv": [0, 0, 16, 3],
-					"texture": "#d"
+					"uv": [0, 1, 16, 16],
+					"texture": "#reactor_lead"
 				},
 				"west": {
-					"uv": [0, 0, 16, 3],
-					"texture": "#d"
+					"uv": [1, 1, 16, 16],
+					"texture": "#reactor_lead"
 				},
 				"up": {
-					"uv": [0, 0, 16, 16],
-					"texture": "#d"
+					"uv": [0, 1, 16, 16],
+					"texture": "#reactor_lead"
 				},
 				"down": {
-					"uv": [0, 0, 16, 16],
-					"texture": "#d"
+					"uv": [0, 0, 16, 15],
+					"texture": "#reactor_lead"
 				}
 			}
 		},
 		{
-			"name": "cheek_w",
-			"from": [0, 3, 2],
-			"to": [3, 13, 14],
+			"name": "window_frame",
+			"from": [3, 5, 0.6],
+			"to": [13, 13, 1],
 			"rotation": {
 				"angle": 0,
 				"axis": "y",
@@ -56,35 +57,35 @@
 			},
 			"faces": {
 				"north": {
-					"uv": [0, 0, 16, 16],
-					"texture": "#f"
+					"uv": [3, 3, 13, 11],
+					"texture": "#material_steel"
 				},
 				"east": {
-					"uv": [0, 0, 12, 10],
-					"texture": "#f"
+					"uv": [15, 3, 15.4, 11],
+					"texture": "#material_steel"
 				},
 				"south": {
-					"uv": [0, 0, 3, 10],
-					"texture": "#f"
+					"uv": [3, 3, 13, 11],
+					"texture": "#material_steel"
 				},
 				"west": {
-					"uv": [0, 0, 16, 16],
-					"texture": "#f"
+					"uv": [0.6, 3, 1, 11],
+					"texture": "#material_steel"
 				},
 				"up": {
-					"uv": [0, 0, 3, 12],
-					"texture": "#f"
+					"uv": [3, 0.6, 13, 1],
+					"texture": "#material_steel"
 				},
 				"down": {
-					"uv": [0, 0, 3, 12],
-					"texture": "#f"
+					"uv": [3, 15, 13, 15.4],
+					"texture": "#material_steel"
 				}
 			}
 		},
 		{
-			"name": "cheek_e",
-			"from": [13, 3, 2],
-			"to": [16, 13, 14],
+			"name": "window",
+			"from": [4, 6, 0.4],
+			"to": [12, 12, 0.6],
 			"rotation": {
 				"angle": 0,
 				"axis": "y",
@@ -92,35 +93,35 @@
 			},
 			"faces": {
 				"north": {
-					"uv": [0, 0, 16, 16],
-					"texture": "#f"
+					"uv": [4, 4, 12, 10],
+					"texture": "#reactor_lead_glass"
 				},
 				"east": {
-					"uv": [0, 0, 16, 16],
-					"texture": "#f"
+					"uv": [15.4, 4, 15.6, 10],
+					"texture": "#reactor_lead_glass"
 				},
 				"south": {
-					"uv": [0, 0, 3, 10],
-					"texture": "#f"
+					"uv": [4, 4, 12, 10],
+					"texture": "#reactor_lead_glass"
 				},
 				"west": {
-					"uv": [0, 0, 12, 10],
-					"texture": "#f"
+					"uv": [0.4, 4, 0.6, 10],
+					"texture": "#reactor_lead_glass"
 				},
 				"up": {
-					"uv": [0, 0, 3, 12],
-					"texture": "#f"
+					"uv": [4, 0.4, 12, 0.6],
+					"texture": "#reactor_lead_glass"
 				},
 				"down": {
-					"uv": [0, 0, 3, 12],
-					"texture": "#f"
+					"uv": [4, 15.4, 12, 15.6],
+					"texture": "#reactor_lead_glass"
 				}
 			}
 		},
 		{
-			"name": "crown",
-			"from": [0, 13, 2],
-			"to": [16, 16, 14],
+			"name": "manip_3.4_a",
+			"from": [3.6, 13, 0.58579],
+			"to": [5.6, 17.5, 1.41421],
 			"rotation": {
 				"angle": 0,
 				"axis": "y",
@@ -128,35 +129,35 @@
 			},
 			"faces": {
 				"north": {
-					"uv": [0, 0, 16, 16],
-					"texture": "#f"
+					"uv": [10.4, 0, 12.4, 3],
+					"texture": "#electronics_ss"
 				},
 				"east": {
-					"uv": [0, 0, 12, 3],
-					"texture": "#f"
+					"uv": [14.58579, 0, 15.41421, 3],
+					"texture": "#electronics_ss"
 				},
 				"south": {
-					"uv": [0, 0, 16, 16],
-					"texture": "#f"
+					"uv": [3.6, 0, 5.6, 3],
+					"texture": "#electronics_ss"
 				},
 				"west": {
-					"uv": [0, 0, 12, 3],
-					"texture": "#f"
+					"uv": [0.58579, 0, 1.41421, 3],
+					"texture": "#electronics_ss"
 				},
 				"up": {
-					"uv": [0, 0, 16, 12],
-					"texture": "#f"
+					"uv": [3.6, 0.58579, 5.6, 1.41421],
+					"texture": "#electronics_ss"
 				},
 				"down": {
-					"uv": [0, 0, 16, 12],
-					"texture": "#f"
+					"uv": [3.6, 14.58579, 5.6, 15.41421],
+					"texture": "#electronics_ss"
 				}
 			}
 		},
 		{
-			"name": "magazine",
-			"from": [4, 3, 9],
-			"to": [12, 7, 16],
+			"name": "manip_3.4_b",
+			"from": [4.18579, 13.01, 0],
+			"to": [5.01421, 17.49, 2],
 			"rotation": {
 				"angle": 0,
 				"axis": "y",
@@ -164,107 +165,107 @@
 			},
 			"faces": {
 				"north": {
-					"uv": [0, 0, 8, 4],
-					"texture": "#lead"
+					"uv": [10.98579, 0, 11.81421, 2.99],
+					"texture": "#electronics_ss"
 				},
 				"east": {
-					"uv": [0, 0, 7, 4],
-					"texture": "#lead"
+					"uv": [14, 0, 16, 2.99],
+					"texture": "#electronics_ss"
 				},
 				"south": {
-					"uv": [0, 0, 8, 4],
-					"texture": "#lead"
+					"uv": [4.18579, 0, 5.01421, 2.99],
+					"texture": "#electronics_ss"
 				},
 				"west": {
-					"uv": [0, 0, 7, 4],
-					"texture": "#lead"
+					"uv": [0, 0, 2, 2.99],
+					"texture": "#electronics_ss"
 				},
 				"up": {
-					"uv": [0, 0, 8, 7],
-					"texture": "#lead"
+					"uv": [4.18579, 0, 5.01421, 2],
+					"texture": "#electronics_ss"
 				},
 				"down": {
-					"uv": [0, 0, 8, 7],
-					"texture": "#lead"
+					"uv": [4.18579, 14, 5.01421, 16],
+					"texture": "#electronics_ss"
 				}
 			}
 		},
 		{
-			"name": "gag",
-			"from": [5, 7, 9],
-			"to": [11, 9, 12],
+			"name": "manip_3.4_c",
+			"from": [3.6, 13.02, 0.58579],
+			"to": [5.6, 17.48, 1.41421],
 			"rotation": {
-				"angle": 0,
+				"angle": 45,
 				"axis": "y",
-				"origin": [8, 8, 8]
+				"origin": [4.6, 8, 1]
 			},
 			"faces": {
 				"north": {
-					"uv": [0, 0, 6, 2],
-					"texture": "#d"
+					"uv": [10.4, 0, 12.4, 2.98],
+					"texture": "#electronics_ss"
 				},
 				"east": {
-					"uv": [0, 0, 3, 2],
-					"texture": "#d"
+					"uv": [14.58579, 0, 15.41421, 2.98],
+					"texture": "#electronics_ss"
 				},
 				"south": {
-					"uv": [0, 0, 6, 2],
-					"texture": "#d"
+					"uv": [3.6, 0, 5.6, 2.98],
+					"texture": "#electronics_ss"
 				},
 				"west": {
-					"uv": [0, 0, 3, 2],
-					"texture": "#d"
+					"uv": [0.58579, 0, 1.41421, 2.98],
+					"texture": "#electronics_ss"
 				},
 				"up": {
-					"uv": [0, 0, 6, 3],
-					"texture": "#d"
+					"uv": [3.6, 0.58579, 5.6, 1.41421],
+					"texture": "#electronics_ss"
 				},
 				"down": {
-					"uv": [0, 0, 6, 3],
-					"texture": "#d"
+					"uv": [3.6, 14.58579, 5.6, 15.41421],
+					"texture": "#electronics_ss"
 				}
 			}
 		},
 		{
-			"name": "discharge_chute",
-			"from": [5, 3, 0],
-			"to": [11, 4, 4],
+			"name": "manip_3.4_d",
+			"from": [3.6, 13.03, 0.58579],
+			"to": [5.6, 17.47, 1.41421],
 			"rotation": {
-				"angle": 0,
+				"angle": -45,
 				"axis": "y",
-				"origin": [8, 8, 8]
+				"origin": [4.6, 8, 1]
 			},
 			"faces": {
 				"north": {
-					"uv": [0, 0, 6, 1],
-					"texture": "#ss"
+					"uv": [10.4, 0, 12.4, 2.97],
+					"texture": "#electronics_ss"
 				},
 				"east": {
-					"uv": [0, 0, 4, 1],
-					"texture": "#ss"
+					"uv": [14.58579, 0, 15.41421, 2.97],
+					"texture": "#electronics_ss"
 				},
 				"south": {
-					"uv": [0, 0, 6, 1],
-					"texture": "#ss"
+					"uv": [3.6, 0, 5.6, 2.97],
+					"texture": "#electronics_ss"
 				},
 				"west": {
-					"uv": [0, 0, 4, 1],
-					"texture": "#ss"
+					"uv": [0.58579, 0, 1.41421, 2.97],
+					"texture": "#electronics_ss"
 				},
 				"up": {
-					"uv": [0, 0, 6, 4],
-					"texture": "#ss"
+					"uv": [3.6, 0.58579, 5.6, 1.41421],
+					"texture": "#electronics_ss"
 				},
 				"down": {
-					"uv": [0, 0, 6, 4],
-					"texture": "#ss"
+					"uv": [3.6, 14.58579, 5.6, 15.41421],
+					"texture": "#electronics_ss"
 				}
 			}
 		},
 		{
-			"name": "hydraulic",
-			"from": [6, 16, 6],
-			"to": [10, 17.5, 10],
+			"name": "manip_11.4_a",
+			"from": [11.6, 13, 0.58579],
+			"to": [13.6, 17.5, 1.41421],
 			"rotation": {
 				"angle": 0,
 				"axis": "y",
@@ -272,28 +273,244 @@
 			},
 			"faces": {
 				"north": {
-					"uv": [0, 0, 4, 1.5],
-					"texture": "#st"
+					"uv": [2.4, 0, 4.4, 3],
+					"texture": "#electronics_ss"
 				},
 				"east": {
-					"uv": [0, 0, 4, 1.5],
-					"texture": "#st"
+					"uv": [14.58579, 0, 15.41421, 3],
+					"texture": "#electronics_ss"
 				},
 				"south": {
-					"uv": [0, 0, 4, 1.5],
-					"texture": "#st"
+					"uv": [11.6, 0, 13.6, 3],
+					"texture": "#electronics_ss"
 				},
 				"west": {
-					"uv": [0, 0, 4, 1.5],
-					"texture": "#st"
+					"uv": [0.58579, 0, 1.41421, 3],
+					"texture": "#electronics_ss"
 				},
 				"up": {
-					"uv": [0, 0, 4, 4],
-					"texture": "#st"
+					"uv": [11.6, 0.58579, 13.6, 1.41421],
+					"texture": "#electronics_ss"
 				},
 				"down": {
-					"uv": [0, 0, 4, 4],
-					"texture": "#st"
+					"uv": [11.6, 14.58579, 13.6, 15.41421],
+					"texture": "#electronics_ss"
+				}
+			}
+		},
+		{
+			"name": "manip_11.4_b",
+			"from": [12.18579, 13.01, 0],
+			"to": [13.01421, 17.49, 2],
+			"rotation": {
+				"angle": 0,
+				"axis": "y",
+				"origin": [8, 8, 8]
+			},
+			"faces": {
+				"north": {
+					"uv": [2.98579, 0, 3.81421, 2.99],
+					"texture": "#electronics_ss"
+				},
+				"east": {
+					"uv": [14, 0, 16, 2.99],
+					"texture": "#electronics_ss"
+				},
+				"south": {
+					"uv": [12.18579, 0, 13.01421, 2.99],
+					"texture": "#electronics_ss"
+				},
+				"west": {
+					"uv": [0, 0, 2, 2.99],
+					"texture": "#electronics_ss"
+				},
+				"up": {
+					"uv": [12.18579, 0, 13.01421, 2],
+					"texture": "#electronics_ss"
+				},
+				"down": {
+					"uv": [12.18579, 14, 13.01421, 16],
+					"texture": "#electronics_ss"
+				}
+			}
+		},
+		{
+			"name": "manip_11.4_c",
+			"from": [11.6, 13.02, 0.58579],
+			"to": [13.6, 17.48, 1.41421],
+			"rotation": {
+				"angle": 45,
+				"axis": "y",
+				"origin": [12.6, 8, 1]
+			},
+			"faces": {
+				"north": {
+					"uv": [2.4, 0, 4.4, 2.98],
+					"texture": "#electronics_ss"
+				},
+				"east": {
+					"uv": [14.58579, 0, 15.41421, 2.98],
+					"texture": "#electronics_ss"
+				},
+				"south": {
+					"uv": [11.6, 0, 13.6, 2.98],
+					"texture": "#electronics_ss"
+				},
+				"west": {
+					"uv": [0.58579, 0, 1.41421, 2.98],
+					"texture": "#electronics_ss"
+				},
+				"up": {
+					"uv": [11.6, 0.58579, 13.6, 1.41421],
+					"texture": "#electronics_ss"
+				},
+				"down": {
+					"uv": [11.6, 14.58579, 13.6, 15.41421],
+					"texture": "#electronics_ss"
+				}
+			}
+		},
+		{
+			"name": "manip_11.4_d",
+			"from": [11.6, 13.03, 0.58579],
+			"to": [13.6, 17.47, 1.41421],
+			"rotation": {
+				"angle": -45,
+				"axis": "y",
+				"origin": [12.6, 8, 1]
+			},
+			"faces": {
+				"north": {
+					"uv": [2.4, 0, 4.4, 2.97],
+					"texture": "#electronics_ss"
+				},
+				"east": {
+					"uv": [14.58579, 0, 15.41421, 2.97],
+					"texture": "#electronics_ss"
+				},
+				"south": {
+					"uv": [11.6, 0, 13.6, 2.97],
+					"texture": "#electronics_ss"
+				},
+				"west": {
+					"uv": [0.58579, 0, 1.41421, 2.97],
+					"texture": "#electronics_ss"
+				},
+				"up": {
+					"uv": [11.6, 0.58579, 13.6, 1.41421],
+					"texture": "#electronics_ss"
+				},
+				"down": {
+					"uv": [11.6, 14.58579, 13.6, 15.41421],
+					"texture": "#electronics_ss"
+				}
+			}
+		},
+		{
+			"name": "roof",
+			"from": [0, 15, 1],
+			"to": [16, 16, 16],
+			"rotation": {
+				"angle": 0,
+				"axis": "y",
+				"origin": [8, 8, 8]
+			},
+			"faces": {
+				"north": {
+					"uv": [0, 0, 16, 1],
+					"texture": "#material_steel"
+				},
+				"east": {
+					"uv": [0, 0, 15, 1],
+					"texture": "#material_steel"
+				},
+				"south": {
+					"uv": [0, 0, 16, 1],
+					"texture": "#material_steel"
+				},
+				"west": {
+					"uv": [1, 0, 16, 1],
+					"texture": "#material_steel"
+				},
+				"up": {
+					"uv": [0, 1, 16, 16],
+					"texture": "#material_steel"
+				},
+				"down": {
+					"uv": [0, 0, 16, 15],
+					"texture": "#material_steel"
+				}
+			}
+		},
+		{
+			"name": "feed_port",
+			"from": [12.6, 1, 0.6],
+			"to": [15.4, 4, 1],
+			"rotation": {
+				"angle": 0,
+				"axis": "y",
+				"origin": [8, 8, 8]
+			},
+			"faces": {
+				"north": {
+					"uv": [0.6, 12, 3.4, 15],
+					"texture": "#material_cast_iron"
+				},
+				"east": {
+					"uv": [15, 12, 15.4, 15],
+					"texture": "#material_cast_iron"
+				},
+				"south": {
+					"uv": [12.6, 12, 15.4, 15],
+					"texture": "#material_cast_iron"
+				},
+				"west": {
+					"uv": [0.6, 12, 1, 15],
+					"texture": "#material_cast_iron"
+				},
+				"up": {
+					"uv": [12.6, 0.6, 15.4, 1],
+					"texture": "#material_cast_iron"
+				},
+				"down": {
+					"uv": [12.6, 15, 15.4, 15.4],
+					"texture": "#material_cast_iron"
+				}
+			}
+		},
+		{
+			"name": "sign",
+			"from": [6.4, 13.2, 0.9],
+			"to": [9.6, 14.6, 1],
+			"rotation": {
+				"angle": 0,
+				"axis": "y",
+				"origin": [8, 8, 8]
+			},
+			"faces": {
+				"north": {
+					"uv": [6.4, 1.4, 9.6, 2.8],
+					"texture": "#plant_hazard"
+				},
+				"east": {
+					"uv": [15, 1.4, 15.1, 2.8],
+					"texture": "#plant_hazard"
+				},
+				"south": {
+					"uv": [6.4, 1.4, 9.6, 2.8],
+					"texture": "#plant_hazard"
+				},
+				"west": {
+					"uv": [0.9, 1.4, 1, 2.8],
+					"texture": "#plant_hazard"
+				},
+				"up": {
+					"uv": [6.4, 0.9, 9.6, 1],
+					"texture": "#plant_hazard"
+				},
+				"down": {
+					"uv": [6.4, 15, 9.6, 15.1],
+					"texture": "#plant_hazard"
 				}
 			}
 		}
