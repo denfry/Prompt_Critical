@@ -115,6 +115,14 @@ public final class PcItems {
     /** Головной шахтный светильник: щелочная батарея на поясе, фара на каске (слот головы). */
     public static final DeferredItem<dev.denfry.promptcritical.mod.mine.CapLampItem> CAP_LAMP = registered(ITEMS.registerItem("cap_lamp",
             dev.denfry.promptcritical.mod.mine.CapLampItem::new, new Item.Properties()));
+    /** Респиратор с принудительной подачей воздуха: поясной блок на NiCd, маска (слот груди). */
+    public static final DeferredItem<dev.denfry.promptcritical.mod.gear.ElectricGearItem> POWERED_RESPIRATOR = registered(ITEMS.registerItem(
+            "powered_respirator", p -> new dev.denfry.promptcritical.mod.gear.ElectricGearItem(p,
+                    dev.denfry.promptcritical.mod.gear.ElectricGearItem.Kind.RESPIRATOR), new Item.Properties()));
+    /** Электрообогреваемый костюм на 24 В (слот ног). */
+    public static final DeferredItem<dev.denfry.promptcritical.mod.gear.ElectricGearItem> HEATED_SUIT = registered(ITEMS.registerItem(
+            "heated_suit", p -> new dev.denfry.promptcritical.mod.gear.ElectricGearItem(p,
+                    dev.denfry.promptcritical.mod.gear.ElectricGearItem.Kind.HEATED_SUIT), new Item.Properties()));
     public static final DeferredItem<MineInstrumentItem> SELF_RESCUER = instrument("self_rescuer", MineInstrumentItem.Kind.SELF_RESCUER, 16);
     public static final DeferredItem<MineInstrumentItem> STONE_DUSTER = instrument("stone_duster", MineInstrumentItem.Kind.STONE_DUSTER, 1);
     public static final DeferredItem<MineInstrumentItem> METHANOMETER = instrument("methanometer", MineInstrumentItem.Kind.METHANOMETER, 1);

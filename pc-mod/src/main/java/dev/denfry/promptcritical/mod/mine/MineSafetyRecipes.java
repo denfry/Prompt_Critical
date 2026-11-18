@@ -99,6 +99,15 @@ public final class MineSafetyRecipes extends RecipeProvider {
                 .pattern("BGB").pattern("ICI").pattern("LIL").define('B', AllItems.BRASS_INGOT.get()).define('G', Items.GLASS_PANE)
                 .define('I', Items.IRON_INGOT).define('C', Items.COPPER_INGOT).define('L', Items.LEATHER)
                 .unlockedBy("has_brass", has(AllItems.BRASS_INGOT.get())).save(out, id("cap_lamp"));
+        // респиратор с подачей воздуха: маска со стеклом, вентилятор с медной обмоткой, угольный фильтр, батарея на ремне
+        ShapedRecipeBuilder.shaped(RecipeCategory.TOOLS, PcItems.POWERED_RESPIRATOR.get())
+                .pattern("BGB").pattern("CFC").pattern("LIL").define('B', AllItems.BRASS_INGOT.get()).define('G', Items.GLASS_PANE)
+                .define('C', Items.COPPER_INGOT).define('F', Items.CHARCOAL).define('I', Items.IRON_INGOT).define('L', Items.LEATHER)
+                .unlockedBy("has_cap_lamp", has(PcItems.CAP_LAMP.get())).save(out, id("powered_respirator"));
+        // костюм с обогревом: шерсть, греющие медные провода, батарея на 24 В
+        ShapedRecipeBuilder.shaped(RecipeCategory.TOOLS, PcItems.HEATED_SUIT.get())
+                .pattern("WCW").pattern("WIW").pattern("W W").define('W', ItemTags.WOOL).define('C', Items.COPPER_INGOT)
+                .define('I', Items.IRON_INGOT).unlockedBy("has_cap_lamp", has(PcItems.CAP_LAMP.get())).save(out, id("heated_suit"));
         // стеллаж: каркас, трансформаторы и выпрямители на каждое место
         ShapedRecipeBuilder.shaped(RecipeCategory.DECORATIONS, PcBlocks.LAMP_RACK.get())
                 .pattern("ICI").pattern("ICI").pattern("IRI").define('I', Items.IRON_INGOT).define('C', Items.COPPER_INGOT)

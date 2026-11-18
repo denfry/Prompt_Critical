@@ -57,10 +57,20 @@ public final class PoweredRespirator {
      */
     public double breathe(double dtS, double ppm, double ambientC) {
         running = pack.supply(dtS, BLOWER_W, ambientC) > 0;
+        return inhale(dtS, ppm, running);
+    }
+
+    /**
+     * Только фильтр: {@code dtS} секунд вдоха воздуха с концентрацией {@code ppm} при включённом или стоящем
+     * вентиляторе (батарею мир считает отдельно, по своим часам).
+     *
+     * @return концентрация под маской, ppm
+     */
+    public double inhale(double dtS, double ppm, boolean blowerOn) {
         if (filterSpent()) return ppm;
-        double flowLpm = running ? BLOWER_LPM : BREATHING_LPM;
+        double flowLpm = blowerOn ? BLOWER_LPM : BREATHING_LPM;
         if (ppm > 0) filterMol += ppm * 1e-6 * flowLpm * dtS / 60 / MOLAR_VOLUME_L;
-        return ppm / (running ? APF_POWERED : APF_UNPOWERED);
+        return ppm / (blowerOn ? APF_POWERED : APF_UNPOWERED);
     }
 
     /** Хранение: только саморазряд. */
