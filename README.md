@@ -11,7 +11,7 @@ run by plant I&C that you design and build yourself.
 ![Minecraft](https://img.shields.io/badge/Minecraft-1.21.1-62B47A)
 ![NeoForge](https://img.shields.io/badge/NeoForge-21.1-E07B1A)
 ![Java](https://img.shields.io/badge/Java-21-B07219)
-![Status](https://img.shields.io/badge/status-alpha-orange)
+![Status](https://img.shields.io/badge/status-release%20candidate-yellow)
 [![License](https://img.shields.io/badge/license-All%20Rights%20Reserved-lightgrey)](LICENSE)
 
 [Site](https://denfry.github.io/Prompt_Critical/) ·
@@ -23,28 +23,36 @@ run by plant I&C that you design and build yourself.
 
 </div>
 
-> [!WARNING]
-> **Alpha (0.1.0-alpha).** Milestone M2 is playable: era I0, coal and steam. Later
-> eras described below and in the wiki are the design, not yet features. Expect
-> balance changes and breaking world changes between alpha versions; back up
-> your worlds.
+> [!NOTE]
+> **Release candidate (1.0.0-rc.1).** Every industry era of the design, I0 to I4, and every reactor tier from the
+> graphite pile to the fast reactor are in the game, with the plant I&C, operations and accident layers. Balance
+> values are not final yet. Back up your worlds before updating: see the breaking changes in the
+> [changelog](CHANGELOG.md).
 
-### What is in the alpha
+### What is in the game
 
-- **Coal mine**: vein worldgen with assays, methane and ventilation network with
-  a main fan, ventilation doors and regulators, degasification, canaries and
-  flame safety lamps, methane explosions with explosion barriers, timber and
-  powered roof supports, a longwall shearer on a Create gantry, a mine hoist with
-  headframe and cage, mine drainage and flooding.
-- **Boiler room**: a Lancashire fire-tube boiler in brick setting with a chain
-  grate stoker, chimney draft, fusible plug and relief valve, and a horizontal
-  steam engine driving a Create shaft.
-- **Foundry and machine shop**: cupola and crucible furnaces, sand moulds and a
-  moulding machine, shakeout grate, lathe and drill press, coal jig.
-- **Local instrument panels (A0)** on every machine: dial gauges, gauge glass,
-  signal lamps, buttons and machine slots.
-- **Engineering handbook**, operating procedures, a geological map,
-  advancements and I0 decor blocks.
+- **Coal and steam (I0)**: coal mine with methane, ventilation, degasification, explosions and flooding; mine hoist;
+  fire-tube boiler and steam engine on a Create shaft; foundry and machine shop.
+- **Steel and power (I1)**: coke ovens, blast furnace with hot blast stoves, converter and electric arc furnace,
+  seamless pipes; synchronous generators, overhead lines, distribution transformers, protection relays,
+  under-frequency load shedding, a daily load curve, a dispatch center and emergency diesel generators.
+- **Non-ferrous metals**: Bayer alumina and Hall–Héroult aluminium, copper smelting and converting, electrorefining of
+  copper and nickel, cobalt, tin and the platinum group metals.
+- **Oil and gas (I2)**: seismic survey, drilling with kicks, well kill, stuck pipe and BOP stacks; logging and coring,
+  pumpjacks with dynamometer cards, gas lift and water injection; crude unit, desalter, vacuum column, cracking,
+  reforming, hydrotreating, coking, Claus and amine units; gasoline blending with a laboratory; gas processing and
+  helium; pipelines with pigs and cathodic protection; jet fires, vapour cloud explosions, BLEVE and oil spills.
+- **Chemistry (I3)**: pyrolysis and polymers, chlor-alkali and PVC, nitrogen and methanol, combined cycle.
+- **Nuclear (I4)**: uranium ore to yellowcake, UF₆ and enrichment, fuel fabrication, the graphite pile, AM-1 type
+  channel reactor, PWR, BWR, CANDU and sodium fast reactor with their accident layers up to core melt and hydrogen,
+  reprocessing with MOX and minor actinides, waste, isotopes, RTGs and a TRIGA pulse reactor.
+- **Plant I&C**: relay logic, analog computers, PLCs in IL, ST, LD, FBD and SFC with a ladder editor, safety
+  instrumented systems with proof tests, ISA-18.2 alarms and annunciators, control rooms, a historian, a digital twin
+  and training simulator, and a CC: Tweaked device layer with the `pcui` screen library.
+- **Operations**: lockout/tagout, work permits with gas testing, confined spaces, equipment rounds, personal
+  protective equipment, turnarounds, crew dose, flares and fire fighting with foam.
+- **World**: generated survey camps, old mines, asphalt lakes, gas craters, natural reactors; an engineering handbook,
+  a route of tasks and the full achievement catalogue.
 
 ## About
 

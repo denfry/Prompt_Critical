@@ -1,6 +1,100 @@
 # Changelog
 
-## Unreleased
+## 1.0.0-rc.1 (2026-11-19)
+
+Release candidate of the first full release: every era of the design up to the closed fuel cycle is in the game,
+together with the plant I&C, operations and accident layers. Requires Minecraft 1.21.1, NeoForge 21.1.259+,
+Create 6.0.11+; CC: Tweaked 1.120.2+ is optional. Balance values marked [BALANCE] in the code and the config are
+not final. Back up worlds before updating: see *Breaking changes*.
+
+### Breaking changes
+- A drilling rig no longer assembles without a BOP accumulator unit next to it: existing rigs need one placed.
+- Grid consumers follow a daily load curve instead of a flat contracted load
+  (`grid.load_profile_days_per_cycle`, 0 restores the flat load).
+- The `pc_rtu` gateway refuses panel buttons that are hand-only (bypasses, protection keys, unloading, drills and all
+  SIS buttons); Lua can do what a player at the panel can do, and no more.
+- The graphite pile's graphite temperature now runs on the SLOW clock (×72), so it heats and cools much faster in
+  real time; steady temperatures are unchanged.
+- PLC analog outputs grew from 2 to 8 `%QW` words; old programs keep working.
+
+### Operations and occupational safety (13)
+- Lockout/tagout: padlocks, tags, hasps and a voltage tester, a lockout box, breaker cells and disconnectors that take
+  locks, `/pc lockout`, and an isolation plan built from the electrical and shaft networks.
+- Work permits by hazard (cold, hot work, radiation) through the permit state machine, with a portable gas detector,
+  calibration gas, a fire watch, 4 h validity and 2 h re-tests, gas alarms suspending the permit and ignition at the LEL;
+  a permit board running a turnaround from shutdown to the pre-start check; crew collective dose on radiation permits.
+- Fire fighting: class B fires on oil, bitumen and tanks of crude and products, foam proportioners, foam chambers,
+  hydrants, deluge and monitors fed by a grid-powered fire water pump; sprinklers and gaseous suppression.
+- Personal protective equipment wired into the gas, smog, dose and noise models: a hard hat with respirator or ear
+  defender inserts, gas masks with EN 14387 filter classes and sorbent life, a self-contained breathing apparatus, a fire
+  suit and a harness with a lanyard.
+- Confined spaces: a manway that finds its volume, tracks O₂, H₂S and CO, purges with nitrogen or process gas,
+  ventilates through the open manway or a fan, needs a confined-space permit and an attendant, and a rescue tripod.
+- Equipment rounds with tags, a reader and per-tag cards (bearing noise, imbalance, locks, open permits, bad air).
+- The flare: three pilots, steam assist, smoke and combustion efficiency, API 521 radiation, a knock-out drum and a
+  water seal.
+- Safety signs that remind players without the required PPE, NFPA diamonds and ADR plates read from the vessel's product.
+
+### Plant I&C and SCADA (03b–03d)
+- PLC programs in LD, FBD and SFC as well as IL and ST, a graphical ladder editor, the `PC_ANTISURGE` and `PID` blocks.
+- SIS: periodic proof tests with PFD growing between them, overdue alarms, a test procedure on the panel and the cause
+  matrix of a cabinet.
+- Historian server, digital twin with reference plants and acceptance tests, training simulator with lessons
+  (including `stuck_porv`), instructor station and operator licences; tuner tasks with a server leaderboard.
+- ISA-18.2 alarm engine with the annunciator panel and horn, the main control room core and desk, the watchdog relay.
+- CC: Tweaked device layer: every panel machine is a peripheral (`pc_reactor`, `pc_pump`, `pc_plc`, `pc_sis`,
+  `pc_well`, `pc_drilling`, `pc_tank`, ...), with events, command tickets, call budgets, `help` pages and examples in
+  the ROM, and the `pcui` operator screen library with ISA-101 colours.
+
+### Grid and dispatch (07)
+- Grid dispatch center and `pc_grid`, the daily load curve of 07 §7.6.4 with heating and noise, emergency diesel
+  generators with jacket heaters and a load sequencer, black starts.
+
+### Economy (14)
+- Weekly settlement of CO₂ allowances, fines and pollution fees, contracts and quotas, the MES closed loop.
+
+### Oil and gas (09)
+- Refinery: electrostatic desalter, vacuum column on steam ejectors, fluid catalytic cracking with catalyst state and a
+  centrifugal compressor air blower, amine treating into the Claus unit, a quality laboratory with batch certificates,
+  an in-world gasoline blending station with an on-line analyser, and blending as a linear program.
+- Centrifugal compressor with a Moore–Greitzer map, surge with flow reversal, vibration and failure.
+- Wells: logging (GR, neutron, resistivity) and coring, water injection for pressure maintenance, gas lift, a
+  sucker-rod pump model with dynamometer cards behind the pumpjack, stuck pipe and lost circulation, BOP ram stacks
+  with an accumulator to API 53.
+- Accidents and pipelines: jet fires, vapour cloud explosions and flash fires, BLEVE of LPG bullets, H₂S releases,
+  thermal radiation, oil spills with booms, skimmers and sorbents; tank gauges with overfill, pigging, cathodic
+  protection and breathing losses.
+
+### Non-ferrous metallurgy (08 §8.8)
+- Bayer alumina, Hall–Héroult reduction pots on the rectifier with anode effects and PFC emissions, copper matte
+  smelting and Peirce–Smith converting with SO₂ to the acid plant, electrorefining of copper and nickel, cobalt, tin
+  and the platinum group metals.
+
+### Nuclear (01, 04c, 12)
+- Accident layers for AM-1, CANDU and the sodium fast reactor; LWR severe accidents: rod ejection with fuel enthalpy
+  limits, steam generator tube rupture, core melt to corium with vessel failure and concrete attack, hydrogen
+  combustion regimes up to detonation.
+- Turning gear for hot rotors (a stopped hot rotor bows in 30 min and starts with a large imbalance), reactor hall
+  exhaust ventilation through HEPA and charcoal filters to the stack, and a water intake with a fouling screen.
+- Operational reactivity margin with an ORM lamp on the T1 panel, Wigner energy and annealing in the graphite pile,
+  the TRIGA pulse reactor, americium, curium and Pu-241 in spent fuel with Am-241 extraction, an RTG powering a remote
+  well gateway, pump cavitation of the mine drainage pump.
+
+### World and progression (11)
+- World structures (survey camps, old mines, asphalt lakes, burning gas craters, an orphan source lighthouse, weather
+  stations, institute ruins, railway halts, natural reactors) with loot, an assay station, and the full achievement
+  catalogue of 11 §11.2.2 — every achievement now has the mechanic behind it.
+
+### Fixes in this release
+- Eleven hand-drawn block models (T1 reactor, hoist, headframe, cages, mine gas cabinet, coal jig, lathe, wind turbine)
+  were dropped by the client because elements left the vanilla −16…32 box; they rendered as missing-model cubes. A
+  `checkModelBounds` task now fails the build on such models.
+- The strong-base anion exchange resin had no item model.
+- Twin, simulator and licence messages never reached the language files.
+- The PLC programmer and the 14-row SIS panel did not fit the smallest GUI (854×480 at scale 2); a game test now
+  checks every panel against 427×240.
+- An active alarm could not get an annunciator window while quiet alarms held them all.
+
 
 ### Physics corrections
 - Physics audit fixed throughout `pc-sim`: minimum film boiling temperature, out-of-phase closing torque,
