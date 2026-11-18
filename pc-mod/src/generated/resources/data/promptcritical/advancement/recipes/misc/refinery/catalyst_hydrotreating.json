@@ -1,0 +1,32 @@
+{
+  "parent": "minecraft:recipes/root",
+  "criteria": {
+    "has_molybdenite": {
+      "conditions": {
+        "items": [
+          {
+            "items": "promptcritical:raw_molybdenite"
+          }
+        ]
+      },
+      "trigger": "minecraft:inventory_changed"
+    },
+    "has_the_recipe": {
+      "conditions": {
+        "recipe": "promptcritical:refinery/catalyst_hydrotreating"
+      },
+      "trigger": "minecraft:recipe_unlocked"
+    }
+  },
+  "requirements": [
+    [
+      "has_the_recipe",
+      "has_molybdenite"
+    ]
+  ],
+  "rewards": {
+    "recipes": [
+      "promptcritical:refinery/catalyst_hydrotreating"
+    ]
+  }
+}
