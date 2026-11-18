@@ -301,13 +301,29 @@ public final class AutomationPanels {
         return out;
     }
 
+    /**
+     * Наибольшая высота щита в одну колонку: окно 854×480 при масштабе интерфейса 2 даёт 240 точек, щит выше обрезался
+     * сверху и снизу (кнопки ПАЗ уходили за край). Выше — две колонки: строки с «−/+» слева, показания справа.
+     */
+    private static final int MAX_H = 228, RIGHT_W = 186;
+
     private static Spec spec(AutomationKind kind, List<Row> rows, int... extra) {
         int perLine = Math.max(1, (W - 8) / 56), lines = (extra.length + perLine - 1) / perLine;
-        int h = TOP + rows.size() * ROW + (extra.length > 0 ? 6 + 20 * lines : 6);
-        PanelLayout.Builder b = PanelLayout.builder("automation_" + kind.name().toLowerCase(Locale.ROOT), W, h, rows.size()).noInventory();
-        for (int i = 0; i < rows.size(); i++) {
+        int h = TOP + rows.size() * ROW + (extra.length > 0 ? 6 + 20 * lines : 6), width = W;
+        List<Integer> left = new ArrayList<>(), right = new ArrayList<>();
+        for (int i = 0; i < rows.size(); i++) left.add(i);
+        if (h > MAX_H) {
+            left.clear();
+            for (int i = 0; i < rows.size(); i++) (rows.get(i).adjust != null ? left : right).add(i);
+            width = W + RIGHT_W;
+            perLine = Math.max(1, (width - 8) / 56);
+            lines = (extra.length + perLine - 1) / perLine;
+            h = TOP + Math.max(left.size(), right.size()) * ROW + (extra.length > 0 ? 6 + 20 * lines : 6);
+        }
+        PanelLayout.Builder b = PanelLayout.builder("automation_" + kind.name().toLowerCase(Locale.ROOT), width, h, rows.size()).noInventory();
+        for (int k = 0; k < left.size(); k++) {
+            int i = left.get(k), ch = i, y = TOP + k * ROW;
             Row r = rows.get(i);
-            int y = TOP + i * ROW, ch = i;
             b.caption(8, y + 3, r.label);
             b.readout(84, y, r.adjust != null ? 96 : 140, v -> r.format.apply(v.raw(ch)), null);
             if (r.adjust != null) {
@@ -315,7 +331,13 @@ public final class AutomationPanels {
                 b.button(206, y, 20, 2 * i + 1, Component.literal("+"), null);
             }
         }
-        int x = 8, y = TOP + rows.size() * ROW + 6;
+        for (int k = 0; k < right.size(); k++) {
+            int i = right.get(k), ch = i, y = TOP + k * ROW;
+            Row r = rows.get(i);
+            b.caption(W + 4, y + 3, r.label);
+            b.readout(W + 70, y, 110, v -> r.format.apply(v.raw(ch)), null);
+        }
+        int x = 8, y = TOP + Math.max(left.size(), right.size()) * ROW + 6;
         for (int id : extra) {
             Tr label = switch (id) {
                 case BUTTON_REPLACE -> REPLACE;
@@ -330,7 +352,7 @@ public final class AutomationPanels {
                 case BUTTON_SIS_SIGN -> SIS_SIGN;
                 default -> UP;
             };
-            if (x + 52 > W) {
+            if (x + 52 > width) {
                 x = 8;
                 y += 20;
             }

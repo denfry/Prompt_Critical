@@ -174,6 +174,21 @@ public final class ContentGameTests {
      * Справочник грузится без ошибок, ссылки на рецепты, достижения, предметы и блоки существуют, тексты на двух языках,
      * у формул есть PNG из сборки.
      */
+    /**
+     * Каждый щит помещается в самый маленький экран: окно 854×480 при масштабе интерфейса 2 — 427×240 точек. Щит
+     * выше обрезался сверху и снизу, и кнопки уходили за край (так было у ПАЗ на 14 строк).
+     */
+    @GameTest(template = SMALL)
+    public static void panelsFitTheSmallestGui(GameTestHelper h) {
+        java.util.List<String> bad = new java.util.ArrayList<>();
+        for (var e : dev.denfry.promptcritical.mod.panel.PanelLayouts.all().entrySet()) {
+            var l = e.getValue();
+            if (l.width > 427 || l.height > 240) bad.add(e.getKey() + " " + l.width + "x" + l.height);
+        }
+        h.assertTrue(bad.isEmpty(), "panels larger than 427x240: " + bad);
+        h.succeed();
+    }
+
     @GameTest(template = SMALL)
     public static void handbookIsConsistent(GameTestHelper h) {
         HandbookManager.Data d = HandbookManager.data();

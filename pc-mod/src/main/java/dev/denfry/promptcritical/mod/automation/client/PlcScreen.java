@@ -107,9 +107,15 @@ public final class PlcScreen extends Screen {
         StringBuilder ai = new StringBuilder(), ao = new StringBuilder();
         for (float v : status.ai()) ai.append(String.format(Locale.ROOT, "%.1f ", v));
         for (float v : status.ao()) ao.append(String.format(Locale.ROOT, "%.1f ", v));
-        g.drawString(font, AutomationText.msg(AutomationText.PLC_ANALOG, ai.toString().strip(), ao.toString().strip()), bx, y, DIM);
+        // восемь %QW не помещаются в строку правой колонки: перенос по её ширине
+        for (net.minecraft.util.FormattedCharSequence line : font.split(
+                AutomationText.msg(AutomationText.PLC_ANALOG, ai.toString().strip(), ao.toString().strip()), Math.max(60, width - bx - 6))) {
+            g.drawString(font, line, bx, y, DIM);
+            y += 10;
+        }
         // ошибки компиляции или «без ошибок»; предупреждение, если текст в окне не тот, что в ПЛК
-        int ey = editor.getY() + editor.getHeight() + 8;
+        // ниже счётчика символов редактора и не шире редактора: на узком экране правая колонка начинается сразу за ним
+        int ey = editor.getY() + editor.getHeight() + 14, ew = editor.getWidth();
         // язык определяется по тексту: (*LD*), (*FBD*), (*SFC*) в первой строке, PROGRAM или (*ST*) — ST, иначе IL
         String lang = switch (PlcLanguage.of(editor.getValue())) {
             case IL -> "Instruction List";
@@ -118,22 +124,28 @@ public final class PlcScreen extends Screen {
             case FBD -> "Function Block Diagram";
             case SFC -> "Sequential Function Chart";
         };
-        g.drawString(font, AutomationText.msg(AutomationText.PLC_LANGUAGE, lang), 12, ey, DIM);
-        ey += 11;
+        ey = wrapped(g, AutomationText.msg(AutomationText.PLC_LANGUAGE, lang), ey, ew, DIM);
         if (!editor.getValue().equals(loaded)) {
-            g.drawString(font, AutomationText.msg(AutomationText.PLC_UNSAVED), 12, ey, 0xFFE0C040);
-            ey += 11;
+            ey = wrapped(g, AutomationText.msg(AutomationText.PLC_UNSAVED), ey, ew, 0xFFE0C040);
         }
         if (status.errors().isEmpty()) {
-            g.drawString(font, AutomationText.msg(AutomationText.PLC_OK), 12, ey, GREEN);
+            wrapped(g, AutomationText.msg(AutomationText.PLC_OK), ey, ew, GREEN);
         } else {
             for (PlcNet.Error e : status.errors()) {
                 if (ey > height - 12) break;
-                g.drawString(font, AutomationText.msg(AutomationText.PLC_ERROR, e.line(), AutomationText.msg(AutomationText.plcError(e.kind())),
-                        e.token()), 12, ey, RED);
-                ey += 11;
+                ey = wrapped(g, AutomationText.msg(AutomationText.PLC_ERROR, e.line(), AutomationText.msg(AutomationText.plcError(e.kind())),
+                        e.token()), ey, ew, RED);
             }
         }
+    }
+
+    /** Строка с переносом по ширине {@code w} от левого края; возвращает y следующей строки. */
+    private int wrapped(GuiGraphics g, net.minecraft.network.chat.Component text, int y, int w, int color) {
+        for (net.minecraft.util.FormattedCharSequence line : font.split(text, w)) {
+            g.drawString(font, line, 12, y, color);
+            y += 10;
+        }
+        return y + 1;
     }
 
     /** Ряд из восьми ламп: подпись и квадраты 0…7. */
