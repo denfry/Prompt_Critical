@@ -39,6 +39,8 @@ public final class SwitchUnit extends GridUnit {
     double energyForwardJ, energyReverseJ;
     boolean lastArc;
     int trips;
+    /** Открытых нарядов-допусков на аппарате ({@link WorkPermit}): пока их больше нуля, включить нельзя. */
+    int permits;
 
     SwitchUnit(SimId id, Kind kind) {
         super(id, 2);
@@ -111,6 +113,7 @@ public final class SwitchUnit extends GridUnit {
     public BreakerResponse operate(boolean close) {
         lastArc = false;
         if (kind == Kind.FUSE) return BreakerResponse.UNAVAILABLE;
+        if (close && permits > 0) return BreakerResponse.PERMIT;
         if (kind == Kind.DISCONNECTOR) return operateDisconnector(close);
         if (branch == null || !owner.ready()) {
             closedIdle = close;
@@ -150,12 +153,38 @@ public final class SwitchUnit extends GridUnit {
         return earthed;
     }
 
+    /** Выписан наряд: аппарат заперт в отключённом положении. */
+    void holdForPermit() {
+        permits++;
+        pushPermitLock();
+    }
+
+    /** Наряд закрыт; {@code false} — открытых нарядов не было. */
+    boolean releasePermit() {
+        if (permits == 0) return false;
+        permits--;
+        pushPermitLock();
+        return true;
+    }
+
+    /** Привод выключателя под нарядом: оперативный ток снят, пока открыт хоть один наряд. */
+    private void pushPermitLock() {
+        if (branch != null && owner.ready() && (kind == Kind.MV_BREAKER || kind == Kind.LV_BREAKER))
+            owner.grid().setBreakerControlPower(branch, controlPower && permits == 0);
+    }
+
+    /** Открытых нарядов на аппарате. */
+    public int openPermits() {
+        return permits;
+    }
+
     /**
      * Заземляющие ножи на стороне присоединения: только при отключённом разъединителе. Включение на линию под
      * напряжением — трёхфазное КЗ до снятия заземления.
      */
     public boolean setEarthed(boolean on) {
         if (kind != Kind.DISCONNECTOR || on && closed()) return false;
+        if (!on && permits > 0) return false;                     // заземление снимают после закрытия наряда
         if (earthed == on) return true;
         earthed = on;
         changed();
@@ -297,6 +326,8 @@ public final class SwitchUnit extends GridUnit {
 
     void meter(PowerGrid g, double dt) {
         if (branch == null) return;
+        // привод выключателя под нарядом заперт, оперативный ток снят — АПВ и команды РЗА его тоже не включат
+        if (permits > 0 && (kind == Kind.MV_BREAKER || kind == Kind.LV_BREAKER)) g.setBreakerControlPower(branch, false);
         double p = g.branchPowerFromW(branch) * dt;
         if (p > 0) energyForwardJ += p;
         else energyReverseJ -= p;
@@ -315,6 +346,7 @@ public final class SwitchUnit extends GridUnit {
         out.putDouble("energy_fwd_j", energyForwardJ);
         out.putDouble("energy_rev_j", energyReverseJ);
         out.putInt("trips", trips);
+        out.putInt("permits", permits);
         if (carried != null) out.putDoubles("branch", carried, carried.length);
     }
 
@@ -329,6 +361,7 @@ public final class SwitchUnit extends GridUnit {
         energyForwardJ = in.getDouble("energy_fwd_j");
         energyReverseJ = in.getDouble("energy_rev_j");
         trips = in.optInt("trips", 0);
+        permits = in.optInt("permits", 0);
         carried = in.has("branch") ? in.getDoubles("branch") : null;
         carried = PowerGrid.savedBranchState(carried);
     }
