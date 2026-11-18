@@ -22,6 +22,7 @@ public final class FoundryClient {
     private static final PartialModel DRILL_SPINDLE = partial("drill_press/partial/spindle");
     private static final PartialModel LATHE_SPINDLE = partial("machine_lathe/partial/spindle");
     private static final PartialModel TABLE = partial("molding_station/partial/table");
+    private static final PartialModel SHAKEOUT_DECK = partial("shakeout_grate/partial/deck");
     private static final PartialModel MILL_SPINDLE = partial("milling_machine/partial/spindle");
     private static final PartialModel SHAPER_RAM = partial("shaping_machine/partial/ram");
     private static final PartialModel GRINDER_WHEEL = partial("surface_grinder/partial/wheel");
@@ -44,7 +45,7 @@ public final class FoundryClient {
         event.registerBlockEntityRenderer(FoundryBlockEntities.CUPOLA.get(), c -> new FoundryMachineRenderer<>(null, Motion.STATIC, 0, 0, 1));
         event.registerBlockEntityRenderer(FoundryBlockEntities.CRUCIBLE.get(), c -> new FoundryMachineRenderer<>(CRUCIBLE, Motion.STATIC, 0, 0, 1));
         event.registerBlockEntityRenderer(FoundryBlockEntities.MOLDING_STATION.get(), c -> new FoundryMachineRenderer<>(TABLE, Motion.JOLT, 0, 0, 1));
-        event.registerBlockEntityRenderer(FoundryBlockEntities.SHAKEOUT_GRATE.get(), c -> new FoundryMachineRenderer<>(null, Motion.STATIC, 0, 0, 1));
+        event.registerBlockEntityRenderer(FoundryBlockEntities.SHAKEOUT_GRATE.get(), c -> new FoundryMachineRenderer<>(SHAKEOUT_DECK, Motion.JOLT, 0, 0, 1));
         event.registerBlockEntityRenderer(FoundryBlockEntities.MACHINE_LATHE.get(), c -> new FoundryMachineRenderer<>(LATHE_SPINDLE, Motion.SPIN_X, 14, 8, 1));
         event.registerBlockEntityRenderer(FoundryBlockEntities.DRILL_PRESS.get(), c -> new FoundryMachineRenderer<>(DRILL_SPINDLE, Motion.SPIN_Y, 8, 7, 4));
         event.registerBlockEntityRenderer(FoundryBlockEntities.MILLING_MACHINE.get(), c -> new FoundryMachineRenderer<>(MILL_SPINDLE, Motion.SPIN_Y, 8, 5, 2));

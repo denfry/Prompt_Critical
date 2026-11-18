@@ -1,17 +1,17 @@
 {
 	"credit": "Made with Blockbench",
 	"textures": {
-		"ci": "promptcritical:block/common/m2_cast_iron",
-		"fsand": "promptcritical:block/common/m2_foundry_sand",
-		"patw": "promptcritical:block/common/m2_pattern_wood",
-		"particle": "promptcritical:block/common/m2_tslot",
-		"tslot": "promptcritical:block/common/m2_tslot"
+		"particle": "promptcritical:block/molding_station/paint",
+		"molding_station_paint": "promptcritical:block/molding_station/paint",
+		"molding_station_pattern": "promptcritical:block/molding_station/pattern",
+		"sand_mold_flask": "promptcritical:block/sand_mold/flask",
+		"sand_mold_sand": "promptcritical:block/sand_mold/sand"
 	},
 	"elements": [
 		{
 			"name": "table",
-			"from": [1, 6, 2],
-			"to": [19, 8, 14],
+			"from": [1.4, 6, 2.4],
+			"to": [18.6, 8, 13.6],
 			"rotation": {
 				"angle": 0,
 				"axis": "y",
@@ -19,35 +19,35 @@
 			},
 			"faces": {
 				"north": {
-					"uv": [0, 0, 16, 2],
-					"texture": "#tslot"
+					"uv": [0, 8, 14.6, 10],
+					"texture": "#molding_station_paint"
 				},
 				"east": {
-					"uv": [0, 0, 12, 2],
-					"texture": "#tslot"
+					"uv": [2.4, 8, 13.6, 10],
+					"texture": "#molding_station_paint"
 				},
 				"south": {
-					"uv": [0, 0, 16, 2],
-					"texture": "#tslot"
+					"uv": [1.4, 8, 16, 10],
+					"texture": "#molding_station_paint"
 				},
 				"west": {
-					"uv": [0, 0, 12, 2],
-					"texture": "#tslot"
+					"uv": [2.4, 8, 13.6, 10],
+					"texture": "#molding_station_paint"
 				},
 				"up": {
-					"uv": [0, 0, 16, 12],
-					"texture": "#tslot"
+					"uv": [1.4, 2.4, 16, 13.6],
+					"texture": "#molding_station_paint"
 				},
 				"down": {
-					"uv": [0, 0, 16, 12],
-					"texture": "#tslot"
+					"uv": [1.4, 2.4, 16, 13.6],
+					"texture": "#molding_station_paint"
 				}
 			}
 		},
 		{
 			"name": "pattern_plate",
 			"from": [3, 8, 4],
-			"to": [17, 9, 12],
+			"to": [17, 8.6, 12],
 			"rotation": {
 				"angle": 0,
 				"axis": "y",
@@ -55,34 +55,34 @@
 			},
 			"faces": {
 				"north": {
-					"uv": [0, 0, 14, 1],
-					"texture": "#patw"
+					"uv": [0, 7.4, 13, 8],
+					"texture": "#molding_station_paint"
 				},
 				"east": {
-					"uv": [0, 0, 8, 1],
-					"texture": "#patw"
+					"uv": [4, 7.4, 12, 8],
+					"texture": "#molding_station_paint"
 				},
 				"south": {
-					"uv": [0, 0, 14, 1],
-					"texture": "#patw"
+					"uv": [3, 7.4, 16, 8],
+					"texture": "#molding_station_paint"
 				},
 				"west": {
-					"uv": [0, 0, 8, 1],
-					"texture": "#patw"
+					"uv": [4, 7.4, 12, 8],
+					"texture": "#molding_station_paint"
 				},
 				"up": {
-					"uv": [0, 0, 14, 8],
-					"texture": "#patw"
+					"uv": [0, 0, 16, 16],
+					"texture": "#molding_station_pattern"
 				},
 				"down": {
-					"uv": [0, 0, 14, 8],
-					"texture": "#patw"
+					"uv": [3, 4, 16, 12],
+					"texture": "#molding_station_paint"
 				}
 			}
 		},
 		{
 			"name": "flask_n",
-			"from": [3, 9, 3],
+			"from": [3, 8.6, 3.4],
 			"to": [17, 12, 4],
 			"rotation": {
 				"angle": 0,
@@ -91,35 +91,35 @@
 			},
 			"faces": {
 				"north": {
-					"uv": [0, 0, 14, 3],
-					"texture": "#ci"
+					"uv": [0, 4, 13, 7.4],
+					"texture": "#sand_mold_flask"
 				},
 				"east": {
-					"uv": [0, 0, 1, 3],
-					"texture": "#ci"
+					"uv": [12, 4, 12.6, 7.4],
+					"texture": "#sand_mold_flask"
 				},
 				"south": {
-					"uv": [0, 0, 14, 3],
-					"texture": "#ci"
+					"uv": [3, 4, 16, 7.4],
+					"texture": "#sand_mold_flask"
 				},
 				"west": {
-					"uv": [0, 0, 1, 3],
-					"texture": "#ci"
+					"uv": [3.4, 4, 4, 7.4],
+					"texture": "#sand_mold_flask"
 				},
 				"up": {
-					"uv": [0, 0, 14, 1],
-					"texture": "#ci"
+					"uv": [3, 3.4, 16, 4],
+					"texture": "#sand_mold_flask"
 				},
 				"down": {
-					"uv": [0, 0, 14, 1],
-					"texture": "#ci"
+					"uv": [3, 12, 16, 12.6],
+					"texture": "#sand_mold_flask"
 				}
 			}
 		},
 		{
 			"name": "flask_s",
-			"from": [3, 9, 12],
-			"to": [17, 12, 13],
+			"from": [3, 8.6, 12],
+			"to": [17, 12, 12.6],
 			"rotation": {
 				"angle": 0,
 				"axis": "y",
@@ -127,35 +127,35 @@
 			},
 			"faces": {
 				"north": {
-					"uv": [0, 0, 14, 3],
-					"texture": "#ci"
+					"uv": [0, 4, 13, 7.4],
+					"texture": "#sand_mold_flask"
 				},
 				"east": {
-					"uv": [0, 0, 1, 3],
-					"texture": "#ci"
+					"uv": [3.4, 4, 4, 7.4],
+					"texture": "#sand_mold_flask"
 				},
 				"south": {
-					"uv": [0, 0, 14, 3],
-					"texture": "#ci"
+					"uv": [3, 4, 16, 7.4],
+					"texture": "#sand_mold_flask"
 				},
 				"west": {
-					"uv": [0, 0, 1, 3],
-					"texture": "#ci"
+					"uv": [12, 4, 12.6, 7.4],
+					"texture": "#sand_mold_flask"
 				},
 				"up": {
-					"uv": [0, 0, 14, 1],
-					"texture": "#ci"
+					"uv": [3, 12, 16, 12.6],
+					"texture": "#sand_mold_flask"
 				},
 				"down": {
-					"uv": [0, 0, 14, 1],
-					"texture": "#ci"
+					"uv": [3, 3.4, 16, 4],
+					"texture": "#sand_mold_flask"
 				}
 			}
 		},
 		{
 			"name": "flask_w",
-			"from": [3, 9, 4],
-			"to": [4, 12, 12],
+			"from": [3, 8.6, 4],
+			"to": [3.6, 12, 12],
 			"rotation": {
 				"angle": 0,
 				"axis": "y",
@@ -163,34 +163,34 @@
 			},
 			"faces": {
 				"north": {
-					"uv": [0, 0, 1, 3],
-					"texture": "#ci"
+					"uv": [12.4, 4, 13, 7.4],
+					"texture": "#sand_mold_flask"
 				},
 				"east": {
-					"uv": [0, 0, 8, 3],
-					"texture": "#ci"
+					"uv": [4, 4, 12, 7.4],
+					"texture": "#sand_mold_flask"
 				},
 				"south": {
-					"uv": [0, 0, 1, 3],
-					"texture": "#ci"
+					"uv": [3, 4, 3.6, 7.4],
+					"texture": "#sand_mold_flask"
 				},
 				"west": {
-					"uv": [0, 0, 8, 3],
-					"texture": "#ci"
+					"uv": [4, 4, 12, 7.4],
+					"texture": "#sand_mold_flask"
 				},
 				"up": {
-					"uv": [0, 0, 1, 8],
-					"texture": "#ci"
+					"uv": [3, 4, 3.6, 12],
+					"texture": "#sand_mold_flask"
 				},
 				"down": {
-					"uv": [0, 0, 1, 8],
-					"texture": "#ci"
+					"uv": [3, 4, 3.6, 12],
+					"texture": "#sand_mold_flask"
 				}
 			}
 		},
 		{
 			"name": "flask_e",
-			"from": [16, 9, 4],
+			"from": [16.4, 8.6, 4],
 			"to": [17, 12, 12],
 			"rotation": {
 				"angle": 0,
@@ -199,35 +199,35 @@
 			},
 			"faces": {
 				"north": {
-					"uv": [0, 0, 1, 3],
-					"texture": "#ci"
+					"uv": [15, 4, 15.6, 7.4],
+					"texture": "#sand_mold_flask"
 				},
 				"east": {
-					"uv": [0, 0, 8, 3],
-					"texture": "#ci"
+					"uv": [4, 4, 12, 7.4],
+					"texture": "#sand_mold_flask"
 				},
 				"south": {
-					"uv": [0, 0, 1, 3],
-					"texture": "#ci"
+					"uv": [0.4, 4, 1, 7.4],
+					"texture": "#sand_mold_flask"
 				},
 				"west": {
-					"uv": [0, 0, 8, 3],
-					"texture": "#ci"
+					"uv": [4, 4, 12, 7.4],
+					"texture": "#sand_mold_flask"
 				},
 				"up": {
-					"uv": [0, 0, 1, 8],
-					"texture": "#ci"
+					"uv": [0.4, 4, 1, 12],
+					"texture": "#sand_mold_flask"
 				},
 				"down": {
-					"uv": [0, 0, 1, 8],
-					"texture": "#ci"
+					"uv": [0.4, 4, 1, 12],
+					"texture": "#sand_mold_flask"
 				}
 			}
 		},
 		{
 			"name": "sand_fill",
-			"from": [4, 9, 4],
-			"to": [16, 11.5, 12],
+			"from": [3.6, 8.6, 4],
+			"to": [16.4, 11.2, 12],
 			"rotation": {
 				"angle": 0,
 				"axis": "y",
@@ -235,28 +235,28 @@
 			},
 			"faces": {
 				"north": {
-					"uv": [0, 0, 12, 2.5],
-					"texture": "#fsand"
+					"uv": [0, 4.8, 12.4, 7.4],
+					"texture": "#sand_mold_sand"
 				},
 				"east": {
-					"uv": [0, 0, 8, 2.5],
-					"texture": "#fsand"
+					"uv": [4, 4.8, 12, 7.4],
+					"texture": "#sand_mold_sand"
 				},
 				"south": {
-					"uv": [0, 0, 12, 2.5],
-					"texture": "#fsand"
+					"uv": [3.6, 4.8, 16, 7.4],
+					"texture": "#sand_mold_sand"
 				},
 				"west": {
-					"uv": [0, 0, 8, 2.5],
-					"texture": "#fsand"
+					"uv": [4, 4.8, 12, 7.4],
+					"texture": "#sand_mold_sand"
 				},
 				"up": {
-					"uv": [0, 0, 12, 8],
-					"texture": "#fsand"
+					"uv": [3.6, 4, 16, 12],
+					"texture": "#sand_mold_sand"
 				},
 				"down": {
-					"uv": [0, 0, 12, 8],
-					"texture": "#fsand"
+					"uv": [3.6, 4, 16, 12],
+					"texture": "#sand_mold_sand"
 				}
 			}
 		}
