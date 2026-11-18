@@ -34,6 +34,11 @@ public final class PcDataComponents {
             COMPONENTS.registerComponentType("map_target", b -> b.persistent(MapTargetData.CODEC)
                     .networkSynchronized(MapTargetData.STREAM_CODEC));
 
+    /** Батарея и фара головного светильника. */
+    public static final DeferredHolder<DataComponentType<?>, DataComponentType<dev.denfry.promptcritical.mod.item.CapLampData>> CAP_LAMP =
+            COMPONENTS.registerComponentType("cap_lamp", b -> b.persistent(dev.denfry.promptcritical.mod.item.CapLampData.CODEC)
+                    .networkSynchronized(dev.denfry.promptcritical.mod.item.CapLampData.STREAM_CODEC));
+
     private PcDataComponents() {
     }
 }

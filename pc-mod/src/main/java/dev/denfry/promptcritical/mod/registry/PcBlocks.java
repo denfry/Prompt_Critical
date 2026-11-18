@@ -363,6 +363,14 @@ public final class PcBlocks {
     public static final DeferredBlock<MineCageBlock> MINE_CAGE = withItem(BLOCKS.registerBlock("mine_cage",
             p -> MineCageBlock.create(p, Spec.facing(BlockStateProperties.OPEN).footprint(Footprint.of(Segment.box(0, 1, -1, 1, 0, 1)))),
             machine()));
+    /** Зарядный стеллаж ламповой на 12 головных светильников: кабель 0,4 кВ — к любой грани, кроме фасада. */
+    public static final DeferredBlock<PcDeviceBlock> LAMP_RACK = device("lamp_rack", machine().noOcclusion(),
+            Spec.facing(BlockStateProperties.LIT), FoundryBlock.with(dev.denfry.promptcritical.mod.mine.LampRackBlockEntity::new));
+    /** Свет фары у головы игрока — без предмета, ставит и снимает только {@code CapLampService}. */
+    public static final DeferredBlock<dev.denfry.promptcritical.mod.mine.CapLampLightBlock> CAP_LAMP_LIGHT = BLOCKS.registerBlock(
+            "cap_lamp_light", dev.denfry.promptcritical.mod.mine.CapLampLightBlock::new, Properties.of().replaceable().noCollission()
+                    .noLootTable().air().instabreak().noOcclusion().pushReaction(PushReaction.DESTROY)
+                    .lightLevel(s -> s.getValue(dev.denfry.promptcritical.mod.mine.CapLampLightBlock.LEVEL)));
     public static final DeferredBlock<PcDeviceBlock> MINE_DRAINAGE_PUMP = device("mine_drainage_pump", machine(),
             Spec.facing(PcProperties.RUNNING).footprint(FP_WIDE2),
             KineticMachineBlock.with(ShaftSide.LEFT, MineDrainagePumpBlockEntity::new));
