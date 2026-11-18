@@ -15,6 +15,8 @@ import dev.denfry.promptcritical.mod.mine.LongwallShearerBlockEntity;
 import dev.denfry.promptcritical.mod.mine.MainMineFanBlockEntity;
 import dev.denfry.promptcritical.mod.mine.MineDrainagePumpBlockEntity;
 import dev.denfry.promptcritical.mod.mine.MineHoistBlockEntity;
+import dev.denfry.promptcritical.mod.npp.CanduFuelling;
+import dev.denfry.promptcritical.mod.npp.CanduReactorBlockEntity;
 import dev.denfry.promptcritical.mod.sound.PcSfx;
 import dev.denfry.promptcritical.sim.metallurgy.ProductionToolUnit;
 import dev.denfry.promptcritical.sim.mining.Hoist;
@@ -119,6 +121,10 @@ public final class MachineSoundscape {
             case ShakeoutGrateBlockEntity g -> running ? new Loop(PcSfx.SHAKEOUT_RATTLE, 0.6f, 0.8f + 0.2f * n) : null;
             case SandMoldBlockEntity m -> s.hasProperty(PcProperties.MOLD_STAGE) && s.getValue(PcProperties.MOLD_STAGE) == PcProperties.MoldStage.POURED
                     ? new Loop(PcSfx.METAL_POUR, 0.5f, 1) : null;
+            // CANDU: моторы моста и тележки перегрузочной машины на ходу, иначе — гул насосов теплоносителя по мощности
+            case CanduReactorBlockEntity r -> CanduFuelling.moving(r.refuelChannel(), r.getLevel().getGameTime() - r.refuelTick())
+                    ? new Loop(PcSfx.ELECTRIC_MOTOR, 0.6f, 1.2f)
+                    : r.viewPower() > 0.01f ? new Loop(PcSfx.PUMP, 0.25f + 0.35f * Math.min(1, r.viewPower()), 0.7f) : null;
             default -> null;
         };
     }

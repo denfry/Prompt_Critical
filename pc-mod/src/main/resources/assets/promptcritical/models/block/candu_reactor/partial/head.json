@@ -1,0 +1,931 @@
+{
+	"credit": "Made with Blockbench",
+	"textures": {
+		"particle": "promptcritical:block/candu_reactor/yellow",
+		"candu_reactor_yellow": "promptcritical:block/candu_reactor/yellow",
+		"candu_reactor_head": "promptcritical:block/candu_reactor/head",
+		"candu_reactor_cap": "promptcritical:block/candu_reactor/cap",
+		"candu_reactor_drive": "promptcritical:block/candu_reactor/drive",
+		"candu_reactor_stainless": "promptcritical:block/candu_reactor/stainless",
+		"material_soot": "promptcritical:block/material/soot",
+		"material_paint_red": "promptcritical:block/material/paint_red"
+	},
+	"elements": [
+		{
+			"name": "carriage",
+			"from": [4, 11, -15.4],
+			"to": [12, 14, -10.6],
+			"rotation": {
+				"angle": 0,
+				"axis": "y",
+				"origin": [8, 8, 8]
+			},
+			"faces": {
+				"north": {
+					"uv": [4, 2, 12, 5],
+					"texture": "#candu_reactor_yellow"
+				},
+				"east": {
+					"uv": [10.6, 2, 15.4, 5],
+					"texture": "#candu_reactor_yellow"
+				},
+				"south": {
+					"uv": [4, 2, 12, 5],
+					"texture": "#candu_reactor_yellow"
+				},
+				"west": {
+					"uv": [0.6, 2, 5.4, 5],
+					"texture": "#candu_reactor_yellow"
+				},
+				"up": {
+					"uv": [4, 0.6, 12, 5.4],
+					"texture": "#candu_reactor_yellow"
+				},
+				"down": {
+					"uv": [4, 10.6, 12, 15.4],
+					"texture": "#candu_reactor_yellow"
+				}
+			}
+		},
+		{
+			"name": "carriage_low",
+			"from": [4, 4, -15.4],
+			"to": [12, 7, -10.6],
+			"rotation": {
+				"angle": 0,
+				"axis": "y",
+				"origin": [8, 8, 8]
+			},
+			"faces": {
+				"north": {
+					"uv": [4, 9, 12, 12],
+					"texture": "#candu_reactor_yellow"
+				},
+				"east": {
+					"uv": [10.6, 9, 15.4, 12],
+					"texture": "#candu_reactor_yellow"
+				},
+				"south": {
+					"uv": [4, 9, 12, 12],
+					"texture": "#candu_reactor_yellow"
+				},
+				"west": {
+					"uv": [0.6, 9, 5.4, 12],
+					"texture": "#candu_reactor_yellow"
+				},
+				"up": {
+					"uv": [4, 0.6, 12, 5.4],
+					"texture": "#candu_reactor_yellow"
+				},
+				"down": {
+					"uv": [4, 10.6, 12, 15.4],
+					"texture": "#candu_reactor_yellow"
+				}
+			}
+		},
+		{
+			"name": "magazine_0",
+			"from": [4.4, 8.28392, -15.8],
+			"to": [11.6, 9.71608, -11.8],
+			"rotation": {
+				"angle": 0,
+				"axis": "y",
+				"origin": [8, 8, 8]
+			},
+			"faces": {
+				"east": {
+					"uv": [11.8, 6.28392, 15.8, 7.71608],
+					"texture": "#candu_reactor_head"
+				},
+				"west": {
+					"uv": [0.2, 6.28392, 4.2, 7.71608],
+					"texture": "#candu_reactor_head"
+				}
+			}
+		},
+		{
+			"name": "magazine_1",
+			"from": [4.4, 8.28392, -15.8],
+			"to": [11.6, 9.71608, -11.8],
+			"rotation": {
+				"angle": 22.5,
+				"axis": "z",
+				"origin": [8, 9, 8]
+			},
+			"faces": {
+				"east": {
+					"uv": [11.8, 6.28392, 15.8, 7.71608],
+					"texture": "#candu_reactor_head"
+				},
+				"west": {
+					"uv": [0.2, 6.28392, 4.2, 7.71608],
+					"texture": "#candu_reactor_head"
+				}
+			}
+		},
+		{
+			"name": "magazine_2",
+			"from": [4.4, 8.28392, -15.8],
+			"to": [11.6, 9.71608, -11.8],
+			"rotation": {
+				"angle": 45,
+				"axis": "z",
+				"origin": [8, 9, 8]
+			},
+			"faces": {
+				"east": {
+					"uv": [11.8, 6.28392, 15.8, 7.71608],
+					"texture": "#candu_reactor_head"
+				},
+				"west": {
+					"uv": [0.2, 6.28392, 4.2, 7.71608],
+					"texture": "#candu_reactor_head"
+				}
+			}
+		},
+		{
+			"name": "magazine_3",
+			"from": [4.4, 8.28392, -15.8],
+			"to": [11.6, 9.71608, -11.8],
+			"rotation": {
+				"angle": -22.5,
+				"axis": "z",
+				"origin": [8, 9, 8]
+			},
+			"faces": {
+				"east": {
+					"uv": [11.8, 6.28392, 15.8, 7.71608],
+					"texture": "#candu_reactor_head"
+				},
+				"west": {
+					"uv": [0.2, 6.28392, 4.2, 7.71608],
+					"texture": "#candu_reactor_head"
+				}
+			}
+		},
+		{
+			"name": "magazine_4",
+			"from": [4.4, 8.28392, -15.8],
+			"to": [11.6, 9.71608, -11.8],
+			"rotation": {
+				"angle": -45,
+				"axis": "z",
+				"origin": [8, 9, 8]
+			},
+			"faces": {
+				"east": {
+					"uv": [11.8, 6.28392, 15.8, 7.71608],
+					"texture": "#candu_reactor_head"
+				},
+				"west": {
+					"uv": [0.2, 6.28392, 4.2, 7.71608],
+					"texture": "#candu_reactor_head"
+				}
+			}
+		},
+		{
+			"name": "magazine_5",
+			"from": [7.28392, 5.4, -15.8],
+			"to": [8.71608, 12.6, -11.8],
+			"rotation": {
+				"angle": 0,
+				"axis": "y",
+				"origin": [8, 8, 8]
+			},
+			"faces": {
+				"up": {
+					"uv": [7.28392, 0.2, 8.71608, 4.2],
+					"texture": "#candu_reactor_head"
+				},
+				"down": {
+					"uv": [7.28392, 11.8, 8.71608, 15.8],
+					"texture": "#candu_reactor_head"
+				}
+			}
+		},
+		{
+			"name": "magazine_6",
+			"from": [7.28392, 5.4, -15.8],
+			"to": [8.71608, 12.6, -11.8],
+			"rotation": {
+				"angle": 22.5,
+				"axis": "z",
+				"origin": [8, 9, 8]
+			},
+			"faces": {
+				"up": {
+					"uv": [7.28392, 0.2, 8.71608, 4.2],
+					"texture": "#candu_reactor_head"
+				},
+				"down": {
+					"uv": [7.28392, 11.8, 8.71608, 15.8],
+					"texture": "#candu_reactor_head"
+				}
+			}
+		},
+		{
+			"name": "magazine_7",
+			"from": [7.28392, 5.4, -15.8],
+			"to": [8.71608, 12.6, -11.8],
+			"rotation": {
+				"angle": -22.5,
+				"axis": "z",
+				"origin": [8, 9, 8]
+			},
+			"faces": {
+				"up": {
+					"uv": [7.28392, 0.2, 8.71608, 4.2],
+					"texture": "#candu_reactor_head"
+				},
+				"down": {
+					"uv": [7.28392, 11.8, 8.71608, 15.8],
+					"texture": "#candu_reactor_head"
+				}
+			}
+		},
+		{
+			"name": "magazine_end_0",
+			"from": [4.4, 8.28392, -15.9],
+			"to": [11.6, 9.71608, -15.8],
+			"rotation": {
+				"angle": 0,
+				"axis": "y",
+				"origin": [8, 8, 8]
+			},
+			"faces": {
+				"north": {
+					"uv": [0, 6.4087, 16, 9.5913],
+					"texture": "#candu_reactor_cap"
+				},
+				"east": {
+					"uv": [15.8, 6.28392, 15.9, 7.71608],
+					"texture": "#candu_reactor_head"
+				},
+				"west": {
+					"uv": [0.1, 6.28392, 0.2, 7.71608],
+					"texture": "#candu_reactor_head"
+				},
+				"up": {
+					"uv": [4.4, 0.1, 11.6, 0.2],
+					"texture": "#candu_reactor_head"
+				},
+				"down": {
+					"uv": [4.4, 15.8, 11.6, 15.9],
+					"texture": "#candu_reactor_head"
+				}
+			}
+		},
+		{
+			"name": "magazine_end_1",
+			"from": [4.4, 8.28392, -15.91],
+			"to": [11.6, 9.71608, -15.79],
+			"rotation": {
+				"angle": 22.5,
+				"axis": "z",
+				"origin": [8, 9, 8]
+			},
+			"faces": {
+				"north": {
+					"uv": [0, 6.4087, 16, 9.5913],
+					"texture": "#candu_reactor_cap"
+				},
+				"east": {
+					"uv": [15.79, 6.28392, 15.91, 7.71608],
+					"texture": "#candu_reactor_head"
+				},
+				"west": {
+					"uv": [0.09, 6.28392, 0.21, 7.71608],
+					"texture": "#candu_reactor_head"
+				},
+				"up": {
+					"uv": [4.4, 0.09, 11.6, 0.21],
+					"texture": "#candu_reactor_head"
+				},
+				"down": {
+					"uv": [4.4, 15.79, 11.6, 15.91],
+					"texture": "#candu_reactor_head"
+				}
+			}
+		},
+		{
+			"name": "magazine_end_2",
+			"from": [4.4, 8.28392, -15.92],
+			"to": [11.6, 9.71608, -15.78],
+			"rotation": {
+				"angle": 45,
+				"axis": "z",
+				"origin": [8, 9, 8]
+			},
+			"faces": {
+				"north": {
+					"uv": [0, 6.4087, 16, 9.5913],
+					"texture": "#candu_reactor_cap"
+				},
+				"east": {
+					"uv": [15.78, 6.28392, 15.92, 7.71608],
+					"texture": "#candu_reactor_head"
+				},
+				"west": {
+					"uv": [0.08, 6.28392, 0.22, 7.71608],
+					"texture": "#candu_reactor_head"
+				},
+				"up": {
+					"uv": [4.4, 0.08, 11.6, 0.22],
+					"texture": "#candu_reactor_head"
+				},
+				"down": {
+					"uv": [4.4, 15.78, 11.6, 15.92],
+					"texture": "#candu_reactor_head"
+				}
+			}
+		},
+		{
+			"name": "magazine_end_3",
+			"from": [4.4, 8.28392, -15.93],
+			"to": [11.6, 9.71608, -15.77],
+			"rotation": {
+				"angle": -22.5,
+				"axis": "z",
+				"origin": [8, 9, 8]
+			},
+			"faces": {
+				"north": {
+					"uv": [0, 6.4087, 16, 9.5913],
+					"texture": "#candu_reactor_cap"
+				},
+				"east": {
+					"uv": [15.77, 6.28392, 15.93, 7.71608],
+					"texture": "#candu_reactor_head"
+				},
+				"west": {
+					"uv": [0.07, 6.28392, 0.23, 7.71608],
+					"texture": "#candu_reactor_head"
+				},
+				"up": {
+					"uv": [4.4, 0.07, 11.6, 0.23],
+					"texture": "#candu_reactor_head"
+				},
+				"down": {
+					"uv": [4.4, 15.77, 11.6, 15.93],
+					"texture": "#candu_reactor_head"
+				}
+			}
+		},
+		{
+			"name": "magazine_end_4",
+			"from": [4.4, 8.28392, -15.94],
+			"to": [11.6, 9.71608, -15.76],
+			"rotation": {
+				"angle": -45,
+				"axis": "z",
+				"origin": [8, 9, 8]
+			},
+			"faces": {
+				"north": {
+					"uv": [0, 6.4087, 16, 9.5913],
+					"texture": "#candu_reactor_cap"
+				},
+				"east": {
+					"uv": [15.76, 6.28392, 15.94, 7.71608],
+					"texture": "#candu_reactor_head"
+				},
+				"west": {
+					"uv": [0.06, 6.28392, 0.24, 7.71608],
+					"texture": "#candu_reactor_head"
+				},
+				"up": {
+					"uv": [4.4, 0.06, 11.6, 0.24],
+					"texture": "#candu_reactor_head"
+				},
+				"down": {
+					"uv": [4.4, 15.76, 11.6, 15.94],
+					"texture": "#candu_reactor_head"
+				}
+			}
+		},
+		{
+			"name": "magazine_end_5",
+			"from": [7.28392, 5.4, -15.95],
+			"to": [8.71608, 12.6, -15.75],
+			"rotation": {
+				"angle": 0,
+				"axis": "y",
+				"origin": [8, 8, 8]
+			},
+			"faces": {
+				"north": {
+					"uv": [6.4087, 0, 9.5913, 16],
+					"texture": "#candu_reactor_cap"
+				},
+				"east": {
+					"uv": [15.75, 3.4, 15.95, 10.6],
+					"texture": "#candu_reactor_head"
+				},
+				"west": {
+					"uv": [0.05, 3.4, 0.25, 10.6],
+					"texture": "#candu_reactor_head"
+				},
+				"up": {
+					"uv": [7.28392, 0.05, 8.71608, 0.25],
+					"texture": "#candu_reactor_head"
+				},
+				"down": {
+					"uv": [7.28392, 15.75, 8.71608, 15.95],
+					"texture": "#candu_reactor_head"
+				}
+			}
+		},
+		{
+			"name": "magazine_end_6",
+			"from": [7.28392, 5.4, -15.96],
+			"to": [8.71608, 12.6, -15.74],
+			"rotation": {
+				"angle": 22.5,
+				"axis": "z",
+				"origin": [8, 9, 8]
+			},
+			"faces": {
+				"north": {
+					"uv": [6.4087, 0, 9.5913, 16],
+					"texture": "#candu_reactor_cap"
+				},
+				"east": {
+					"uv": [15.74, 3.4, 15.96, 10.6],
+					"texture": "#candu_reactor_head"
+				},
+				"west": {
+					"uv": [0.04, 3.4, 0.26, 10.6],
+					"texture": "#candu_reactor_head"
+				},
+				"up": {
+					"uv": [7.28392, 0.04, 8.71608, 0.26],
+					"texture": "#candu_reactor_head"
+				},
+				"down": {
+					"uv": [7.28392, 15.74, 8.71608, 15.96],
+					"texture": "#candu_reactor_head"
+				}
+			}
+		},
+		{
+			"name": "magazine_end_7",
+			"from": [7.28392, 5.4, -15.97],
+			"to": [8.71608, 12.6, -15.73],
+			"rotation": {
+				"angle": -22.5,
+				"axis": "z",
+				"origin": [8, 9, 8]
+			},
+			"faces": {
+				"north": {
+					"uv": [6.4087, 0, 9.5913, 16],
+					"texture": "#candu_reactor_cap"
+				},
+				"east": {
+					"uv": [15.73, 3.4, 15.97, 10.6],
+					"texture": "#candu_reactor_head"
+				},
+				"west": {
+					"uv": [0.03, 3.4, 0.27, 10.6],
+					"texture": "#candu_reactor_head"
+				},
+				"up": {
+					"uv": [7.28392, 0.03, 8.71608, 0.27],
+					"texture": "#candu_reactor_head"
+				},
+				"down": {
+					"uv": [7.28392, 15.73, 8.71608, 15.97],
+					"texture": "#candu_reactor_head"
+				}
+			}
+		},
+		{
+			"name": "ram_housing_0",
+			"from": [5.6, 8.52261, -11.8],
+			"to": [10.4, 9.47739, -10.4],
+			"rotation": {
+				"angle": 0,
+				"axis": "y",
+				"origin": [8, 8, 8]
+			},
+			"faces": {
+				"east": {
+					"uv": [10.4, 6.52261, 11.8, 7.47739],
+					"texture": "#candu_reactor_drive"
+				},
+				"west": {
+					"uv": [4.2, 6.52261, 5.6, 7.47739],
+					"texture": "#candu_reactor_drive"
+				}
+			}
+		},
+		{
+			"name": "ram_housing_1",
+			"from": [5.6, 8.52261, -11.8],
+			"to": [10.4, 9.47739, -10.4],
+			"rotation": {
+				"angle": 22.5,
+				"axis": "z",
+				"origin": [8, 9, 8]
+			},
+			"faces": {
+				"east": {
+					"uv": [10.4, 6.52261, 11.8, 7.47739],
+					"texture": "#candu_reactor_drive"
+				},
+				"west": {
+					"uv": [4.2, 6.52261, 5.6, 7.47739],
+					"texture": "#candu_reactor_drive"
+				}
+			}
+		},
+		{
+			"name": "ram_housing_2",
+			"from": [5.6, 8.52261, -11.8],
+			"to": [10.4, 9.47739, -10.4],
+			"rotation": {
+				"angle": 45,
+				"axis": "z",
+				"origin": [8, 9, 8]
+			},
+			"faces": {
+				"east": {
+					"uv": [10.4, 6.52261, 11.8, 7.47739],
+					"texture": "#candu_reactor_drive"
+				},
+				"west": {
+					"uv": [4.2, 6.52261, 5.6, 7.47739],
+					"texture": "#candu_reactor_drive"
+				}
+			}
+		},
+		{
+			"name": "ram_housing_3",
+			"from": [5.6, 8.52261, -11.8],
+			"to": [10.4, 9.47739, -10.4],
+			"rotation": {
+				"angle": -22.5,
+				"axis": "z",
+				"origin": [8, 9, 8]
+			},
+			"faces": {
+				"east": {
+					"uv": [10.4, 6.52261, 11.8, 7.47739],
+					"texture": "#candu_reactor_drive"
+				},
+				"west": {
+					"uv": [4.2, 6.52261, 5.6, 7.47739],
+					"texture": "#candu_reactor_drive"
+				}
+			}
+		},
+		{
+			"name": "ram_housing_4",
+			"from": [5.6, 8.52261, -11.8],
+			"to": [10.4, 9.47739, -10.4],
+			"rotation": {
+				"angle": -45,
+				"axis": "z",
+				"origin": [8, 9, 8]
+			},
+			"faces": {
+				"east": {
+					"uv": [10.4, 6.52261, 11.8, 7.47739],
+					"texture": "#candu_reactor_drive"
+				},
+				"west": {
+					"uv": [4.2, 6.52261, 5.6, 7.47739],
+					"texture": "#candu_reactor_drive"
+				}
+			}
+		},
+		{
+			"name": "ram_housing_5",
+			"from": [7.52261, 6.6, -11.8],
+			"to": [8.47739, 11.4, -10.4],
+			"rotation": {
+				"angle": 0,
+				"axis": "y",
+				"origin": [8, 8, 8]
+			},
+			"faces": {
+				"up": {
+					"uv": [7.52261, 4.2, 8.47739, 5.6],
+					"texture": "#candu_reactor_drive"
+				},
+				"down": {
+					"uv": [7.52261, 10.4, 8.47739, 11.8],
+					"texture": "#candu_reactor_drive"
+				}
+			}
+		},
+		{
+			"name": "ram_housing_6",
+			"from": [7.52261, 6.6, -11.8],
+			"to": [8.47739, 11.4, -10.4],
+			"rotation": {
+				"angle": 22.5,
+				"axis": "z",
+				"origin": [8, 9, 8]
+			},
+			"faces": {
+				"up": {
+					"uv": [7.52261, 4.2, 8.47739, 5.6],
+					"texture": "#candu_reactor_drive"
+				},
+				"down": {
+					"uv": [7.52261, 10.4, 8.47739, 11.8],
+					"texture": "#candu_reactor_drive"
+				}
+			}
+		},
+		{
+			"name": "ram_housing_7",
+			"from": [7.52261, 6.6, -11.8],
+			"to": [8.47739, 11.4, -10.4],
+			"rotation": {
+				"angle": -22.5,
+				"axis": "z",
+				"origin": [8, 9, 8]
+			},
+			"faces": {
+				"up": {
+					"uv": [7.52261, 4.2, 8.47739, 5.6],
+					"texture": "#candu_reactor_drive"
+				},
+				"down": {
+					"uv": [7.52261, 10.4, 8.47739, 11.8],
+					"texture": "#candu_reactor_drive"
+				}
+			}
+		},
+		{
+			"name": "snout_0",
+			"from": [6.7, 8.74141, -10.4],
+			"to": [9.3, 9.25859, -9.5],
+			"rotation": {
+				"angle": 0,
+				"axis": "y",
+				"origin": [8, 8, 8]
+			},
+			"faces": {
+				"east": {
+					"uv": [9.5, 6.74141, 10.4, 7.25859],
+					"texture": "#candu_reactor_stainless"
+				},
+				"south": {
+					"uv": [6.7, 6.74141, 9.3, 7.25859],
+					"texture": "#candu_reactor_stainless"
+				},
+				"west": {
+					"uv": [5.6, 6.74141, 6.5, 7.25859],
+					"texture": "#candu_reactor_stainless"
+				}
+			}
+		},
+		{
+			"name": "snout_1",
+			"from": [6.7, 8.74141, -10.4],
+			"to": [9.3, 9.25859, -9.5],
+			"rotation": {
+				"angle": 22.5,
+				"axis": "z",
+				"origin": [8, 9, 8]
+			},
+			"faces": {
+				"east": {
+					"uv": [9.5, 6.74141, 10.4, 7.25859],
+					"texture": "#candu_reactor_stainless"
+				},
+				"south": {
+					"uv": [6.7, 6.74141, 9.3, 7.25859],
+					"texture": "#candu_reactor_stainless"
+				},
+				"west": {
+					"uv": [5.6, 6.74141, 6.5, 7.25859],
+					"texture": "#candu_reactor_stainless"
+				}
+			}
+		},
+		{
+			"name": "snout_2",
+			"from": [6.7, 8.74141, -10.4],
+			"to": [9.3, 9.25859, -9.5],
+			"rotation": {
+				"angle": 45,
+				"axis": "z",
+				"origin": [8, 9, 8]
+			},
+			"faces": {
+				"east": {
+					"uv": [9.5, 6.74141, 10.4, 7.25859],
+					"texture": "#candu_reactor_stainless"
+				},
+				"south": {
+					"uv": [6.7, 6.74141, 9.3, 7.25859],
+					"texture": "#candu_reactor_stainless"
+				},
+				"west": {
+					"uv": [5.6, 6.74141, 6.5, 7.25859],
+					"texture": "#candu_reactor_stainless"
+				}
+			}
+		},
+		{
+			"name": "snout_3",
+			"from": [6.7, 8.74141, -10.4],
+			"to": [9.3, 9.25859, -9.5],
+			"rotation": {
+				"angle": -22.5,
+				"axis": "z",
+				"origin": [8, 9, 8]
+			},
+			"faces": {
+				"east": {
+					"uv": [9.5, 6.74141, 10.4, 7.25859],
+					"texture": "#candu_reactor_stainless"
+				},
+				"south": {
+					"uv": [6.7, 6.74141, 9.3, 7.25859],
+					"texture": "#candu_reactor_stainless"
+				},
+				"west": {
+					"uv": [5.6, 6.74141, 6.5, 7.25859],
+					"texture": "#candu_reactor_stainless"
+				}
+			}
+		},
+		{
+			"name": "snout_4",
+			"from": [6.7, 8.74141, -10.4],
+			"to": [9.3, 9.25859, -9.5],
+			"rotation": {
+				"angle": -45,
+				"axis": "z",
+				"origin": [8, 9, 8]
+			},
+			"faces": {
+				"east": {
+					"uv": [9.5, 6.74141, 10.4, 7.25859],
+					"texture": "#candu_reactor_stainless"
+				},
+				"south": {
+					"uv": [6.7, 6.74141, 9.3, 7.25859],
+					"texture": "#candu_reactor_stainless"
+				},
+				"west": {
+					"uv": [5.6, 6.74141, 6.5, 7.25859],
+					"texture": "#candu_reactor_stainless"
+				}
+			}
+		},
+		{
+			"name": "snout_5",
+			"from": [7.74141, 7.7, -10.4],
+			"to": [8.25859, 10.3, -9.5],
+			"rotation": {
+				"angle": 0,
+				"axis": "y",
+				"origin": [8, 8, 8]
+			},
+			"faces": {
+				"south": {
+					"uv": [7.74141, 5.7, 8.25859, 8.3],
+					"texture": "#candu_reactor_stainless"
+				},
+				"up": {
+					"uv": [7.74141, 5.6, 8.25859, 6.5],
+					"texture": "#candu_reactor_stainless"
+				},
+				"down": {
+					"uv": [7.74141, 9.5, 8.25859, 10.4],
+					"texture": "#candu_reactor_stainless"
+				}
+			}
+		},
+		{
+			"name": "snout_6",
+			"from": [7.74141, 7.7, -10.4],
+			"to": [8.25859, 10.3, -9.5],
+			"rotation": {
+				"angle": 22.5,
+				"axis": "z",
+				"origin": [8, 9, 8]
+			},
+			"faces": {
+				"south": {
+					"uv": [7.74141, 5.7, 8.25859, 8.3],
+					"texture": "#candu_reactor_stainless"
+				},
+				"up": {
+					"uv": [7.74141, 5.6, 8.25859, 6.5],
+					"texture": "#candu_reactor_stainless"
+				},
+				"down": {
+					"uv": [7.74141, 9.5, 8.25859, 10.4],
+					"texture": "#candu_reactor_stainless"
+				}
+			}
+		},
+		{
+			"name": "snout_7",
+			"from": [7.74141, 7.7, -10.4],
+			"to": [8.25859, 10.3, -9.5],
+			"rotation": {
+				"angle": -22.5,
+				"axis": "z",
+				"origin": [8, 9, 8]
+			},
+			"faces": {
+				"south": {
+					"uv": [7.74141, 5.7, 8.25859, 8.3],
+					"texture": "#candu_reactor_stainless"
+				},
+				"up": {
+					"uv": [7.74141, 5.6, 8.25859, 6.5],
+					"texture": "#candu_reactor_stainless"
+				},
+				"down": {
+					"uv": [7.74141, 9.5, 8.25859, 10.4],
+					"texture": "#candu_reactor_stainless"
+				}
+			}
+		},
+		{
+			"name": "hose_reel",
+			"from": [11.6, 7.5, -15],
+			"to": [13, 10.5, -12],
+			"rotation": {
+				"angle": 0,
+				"axis": "y",
+				"origin": [8, 8, 8]
+			},
+			"faces": {
+				"north": {
+					"uv": [3, 5.5, 4.4, 8.5],
+					"texture": "#material_soot"
+				},
+				"east": {
+					"uv": [12, 5.5, 15, 8.5],
+					"texture": "#material_soot"
+				},
+				"south": {
+					"uv": [11.6, 5.5, 13, 8.5],
+					"texture": "#material_soot"
+				},
+				"west": {
+					"uv": [1, 5.5, 4, 8.5],
+					"texture": "#material_soot"
+				},
+				"up": {
+					"uv": [11.6, 1, 13, 4],
+					"texture": "#material_soot"
+				},
+				"down": {
+					"uv": [11.6, 12, 13, 15],
+					"texture": "#material_soot"
+				}
+			}
+		},
+		{
+			"name": "glow_status_lamp",
+			"from": [7.5, 14, -13.5],
+			"to": [8.5, 14.8, -12.5],
+			"rotation": {
+				"angle": 0,
+				"axis": "y",
+				"origin": [8, 8, 8]
+			},
+			"faces": {
+				"north": {
+					"uv": [7.5, 1.2, 8.5, 2],
+					"texture": "#material_paint_red"
+				},
+				"east": {
+					"uv": [12.5, 1.2, 13.5, 2],
+					"texture": "#material_paint_red"
+				},
+				"south": {
+					"uv": [7.5, 1.2, 8.5, 2],
+					"texture": "#material_paint_red"
+				},
+				"west": {
+					"uv": [2.5, 1.2, 3.5, 2],
+					"texture": "#material_paint_red"
+				},
+				"up": {
+					"uv": [7.5, 2.5, 8.5, 3.5],
+					"texture": "#material_paint_red"
+				},
+				"down": {
+					"uv": [7.5, 12.5, 8.5, 13.5],
+					"texture": "#material_paint_red"
+				}
+			},
+			"neoforge_data": {
+				"block_light": 15,
+				"sky_light": 15
+			}
+		}
+	]
+}
