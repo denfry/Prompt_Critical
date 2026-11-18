@@ -22,7 +22,12 @@ public enum FuelDesign {
      * кольцевые таблетки UO₂ ⌀13,6/9,8 мм [замена материала]: 4,4 кг U на канал, ≈ 560 кг на 128 каналов, как в
      * АМ-1 (Kotchetkov, NEI, 2004).
      */
-    AM_1(4, 1, 0, 13.6e-3, 9.8e-3, 1.70, 14e-3, 0.2e-3, 0.1e6, Cladding.STEEL, false);
+    AM_1(4, 1, 0, 13.6e-3, 9.8e-3, 1.70, 14e-3, 0.2e-3, 0.1e6, Cladding.STEEL, false),
+    /**
+     * Пучок CANDU-6: 37 элементов ⌀13,08 мм, оболочка Zircaloy-4 0,38 мм, таблетка ⌀12,15 мм, столб 0,48 м (пучок 0,495 м),
+     * природный UO₂ — ≈ 19 кг урана в пучке (AECL, «CANDU 6 Technical Summary», 2005). 12 пучков в канале.
+     */
+    CANDU_37(37, 0, 0, 12.15e-3, 0, 0.48, 13.08e-3, 0.38e-3, 0.1e6, Cladding.ZIRCALOY_4, false);
 
     public enum Cladding { E110, ZIRCALOY_4, STEEL }
 

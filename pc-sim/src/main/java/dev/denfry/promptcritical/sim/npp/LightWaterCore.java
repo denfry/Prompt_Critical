@@ -36,17 +36,31 @@ public final class LightWaterCore {
     /** Доля энергии деления, выделяющаяся с запаздыванием (распад ПД). */
     public static final double DECAY_SHARE = DecayHeat.afterInfiniteOperation(0);
 
+    /**
+     * Что за зона: решётка, число позиций (ТВС или каналов), раскладка, отражатель, сборок по высоте в позиции.
+     *
+     * @param squareGrid         позиции по квадратной сетке от центра (каналы CANDU), иначе — гексагональные кольца ВВЭР
+     * @param stackedPerPosition сборок одна над другой в позиции (пучков в канале CANDU — 12)
+     */
+    public record Spec(String lattice, int positions, boolean squareGrid, CellComposition reflector, double reflectorM,
+            int stackedPerPosition, double fallbackEnrichment, FuelDesign defaultDesign, java.util.Set<FuelDesign> designs) {
+    }
+
+    /** Корпус ВВЭР/PWR/BWR: 19 ТВС, вода, водяной отражатель 0,3 м. */
+    public static final Spec LWR = new Spec(LatticeDesigns.T2_HEX, POSITIONS, false,
+            CellComposition.nonFuel(ModeratorKind.NONE, 0, CoolantKind.H2O, 1, 0), REFLECTOR_M, 1, 0.04, FuelDesign.VVER_440,
+            java.util.EnumSet.of(FuelDesign.VVER_440, FuelDesign.VVER_1000, FuelDesign.PWR_17X17));
+
+    private final Spec spec;
+    private final int count;
     private final double nominalW, dt;
-    private final double[] hm0 = new double[POSITIONS], u5 = new double[POSITIONS], u8 = new double[POSITIONS],
-            pu9 = new double[POSITIONS], fp = new double[POSITIONS], burnup = new double[POSITIONS], u6 = new double[POSITIONS],
-            pu0 = new double[POSITIONS], x234 = new double[POSITIONS], share = new double[POSITIONS], radius = new double[POSITIONS];
-    private final boolean[] failed = new boolean[POSITIONS];
+    private final double[] hm0, u5, u8, pu9, fp, burnup, u6, pu0, x234, share, radius;
+    private final boolean[] failed;
     private FuelDesign design;
     private int loaded;
 
     private final LatticeModel lattice = new LatticeModel();
-    private final CellComposition cell = LatticeDesigns.referenceCell(LatticeDesigns.T2_HEX);
-    private final CellComposition reflector = CellComposition.nonFuel(ModeratorKind.NONE, 0, CoolantKind.H2O, 1, 0);
+    private final CellComposition cell, reflector;
     private final FissionPoisons poisons = new FissionPoisons();
     private final DecayHeat decay = new DecayHeat();
     private final PeriodMeter period;
@@ -58,11 +72,49 @@ public final class LightWaterCore {
     private double totalRho, fissionW, slowTimer = 1e9;
 
     public LightWaterCore(double nominalW, double dt) {
+        this(LWR, nominalW, dt);
+    }
+
+    public LightWaterCore(Spec spec, double nominalW, double dt) {
+        this.spec = spec;
+        this.count = spec.positions();
         this.nominalW = nominalW;
         this.dt = dt;
         this.period = new PeriodMeter(dt);
-        // гексагональная решётка: центр, кольцо из 6 на шаге, кольцо из 12 (6 на √3 шага, 6 на 2 шагах)
-        for (int i = 0; i < POSITIONS; i++) radius[i] = i == 0 ? 0 : i <= 6 ? 1 : i % 2 == 1 ? Math.sqrt(3) : 2;
+        this.cell = LatticeDesigns.referenceCell(spec.lattice());
+        this.reflector = spec.reflector();
+        hm0 = new double[count];
+        u5 = new double[count];
+        u8 = new double[count];
+        pu9 = new double[count];
+        fp = new double[count];
+        burnup = new double[count];
+        u6 = new double[count];
+        pu0 = new double[count];
+        x234 = new double[count];
+        share = new double[count];
+        radius = new double[count];
+        failed = new boolean[count];
+        if (spec.squareGrid()) {
+            // каналы по квадратной сетке, ближайшие к оси первыми (радиус — в шагах)
+            java.util.List<Double> r = new java.util.ArrayList<>();
+            int half = (int) Math.ceil(Math.sqrt(count)) + 1;
+            for (int i = -half; i < half; i++)
+                for (int j = -half; j < half; j++) r.add(Math.hypot(i + 0.5, j + 0.5));
+            java.util.Collections.sort(r);
+            for (int i = 0; i < count; i++) radius[i] = r.get(i);
+        } else {
+            // гексагональная решётка: центр, кольцо из 6 на шаге, кольцо из 12 (6 на √3 шага, 6 на 2 шагах)
+            for (int i = 0; i < count; i++) radius[i] = i == 0 ? 0 : i <= 6 ? 1 : i % 2 == 1 ? Math.sqrt(3) : 2;
+        }
+    }
+
+    public Spec spec() {
+        return spec;
+    }
+
+    public int positions() {
+        return count;
     }
 
     /** Шаг ТВС под ключ, м (ВВЭР-440 — 147 мм, ВВЭР-1000 — 236 мм, PWR 17×17 — 215 мм). */
@@ -71,6 +123,7 @@ public final class LightWaterCore {
             case VVER_440 -> 0.147;
             case VVER_1000 -> 0.236;
             case PWR_17X17 -> 0.215;
+            case CANDU_37 -> 0.286;
             default -> 0.147;
         };
     }
@@ -84,7 +137,7 @@ public final class LightWaterCore {
 
     /** Загрузка ТВС; {@code shutDown} — состояние установки. Конструкция — одна на корпус. */
     public boolean load(boolean shutDown, int pos, FuelDesign d, double hmKg, double u235, double u234) {
-        if (!shutDown || hm0[pos] > 0 || hmKg <= 0 || !accepts(d)) return false;
+        if (!shutDown || hm0[pos] > 0 || hmKg <= 0 || !spec.designs().contains(d)) return false;
         if (design != null && loaded > 0 && design != d) return false;
         design = d;
         hm0[pos] = hmKg;
@@ -150,7 +203,7 @@ public final class LightWaterCore {
 
     /** Суммарная длина твэлов, м (теплопередача топливо → вода). */
     public double rodLengthM() {
-        return design == null ? 0 : loaded * design.rods * design.stackM;
+        return design == null ? 0 : loaded * design.rods * design.stackM * spec.stackedPerPosition();
     }
 
     public double share(int pos) {
@@ -190,13 +243,13 @@ public final class LightWaterCore {
     // ------------------------------------------------------------------ геометрия
 
     public double coreRadius() {
-        FuelDesign d = design == null ? FuelDesign.VVER_440 : design;
+        FuelDesign d = design == null ? spec.defaultDesign() : design;
         double a = d.hexagonal ? Math.sqrt(3) / 2 * pitch(d) * pitch(d) : pitch(d) * pitch(d);
         return Math.sqrt(Math.max(loaded, 1) * a / Math.PI);
     }
 
     public double coreHeight() {
-        return design == null ? FuelDesign.VVER_440.stackM : design.stackM;
+        return (design == null ? spec.defaultDesign() : design).stackM * spec.stackedPerPosition();
     }
 
     // ------------------------------------------------------------------ нейтроника
@@ -219,10 +272,10 @@ public final class LightWaterCore {
     /** Пересчёт ячейки и коэффициентов при состоянии {@code s}. */
     public void solveStatic(CellFeedbackState s) {
         countLoaded();
-        NuclideVector fuel = FuelDepletion.averageFuel(hm0, u5, u8, pu9, fp, 0.04);
+        NuclideVector fuel = FuelDepletion.averageFuel(hm0, u5, u8, pu9, fp, spec.fallbackEnrichment());
         SixFactor sf = lattice.evaluate(cell, fuel, s);
         SixFactor refl = lattice.evaluate(reflector, fuel, s);
-        double delta = lattice.reflectorSavings(sf, refl, REFLECTOR_M);
+        double delta = lattice.reflectorSavings(sf, refl, spec.reflectorM());
         double b2 = lattice.geometricBuckling(ReactorShape.cylinder(coreRadius(), coreHeight()), delta);
         keff = loaded > 0 ? lattice.estimateKeff(sf, b2) : 0;
         staticRho = loaded > 0 ? (keff - 1) / keff : -1;
@@ -245,17 +298,17 @@ public final class LightWaterCore {
         betaEff = g.betaTotal();
         groups = g;
         kinetics.setParameters(g, generation);
-        double r = coreRadius() + delta, step = pitch(design == null ? FuelDesign.VVER_440 : design), sum = 0;
-        for (int i = 0; i < POSITIONS; i++) {
+        double r = coreRadius() + delta, step = pitch(design == null ? spec.defaultDesign() : design), sum = 0;
+        for (int i = 0; i < count; i++) {
             share[i] = hm0[i] > 0 ? Math.max(0.05, j0(2.405 * radius[i] * step / r)) : 0;
             sum += share[i];
         }
-        for (int i = 0; i < POSITIONS; i++) share[i] = sum > 0 ? share[i] / sum : 0;
+        for (int i = 0; i < count; i++) share[i] = sum > 0 ? share[i] / sum : 0;
     }
 
     private double rhoAt(NuclideVector fuel, CellFeedbackState s) {
         SixFactor sf = lattice.evaluate(cell, fuel, s);
-        double delta = lattice.reflectorSavings(sf, lattice.evaluate(reflector, fuel, s), REFLECTOR_M);
+        double delta = lattice.reflectorSavings(sf, lattice.evaluate(reflector, fuel, s), spec.reflectorM());
         double k = lattice.estimateKeff(sf, lattice.geometricBuckling(ReactorShape.cylinder(coreRadius(), coreHeight()), delta));
         return (k - 1) / k;
     }
@@ -297,10 +350,54 @@ public final class LightWaterCore {
         double tn = s.moderatorTemp() + LatticeModel.NEUTRON_GAS_OFFSET;
         poisons.step(gameDt, f, phi, sigmaXe(tn), sigmaSm(tn));
         if (fissionW > 0 && gameDt > 0)
-            for (int i = 0; i < POSITIONS; i++)
+            for (int i = 0; i < count; i++)
                 if (share[i] > 0) FuelDepletion.deplete(i, fissionW * share[i], gameDt, CONVERSION, hm0, u5, u8, u6, pu9, pu0, fp, burnup);
         period.sample(Math.max(n, PointKinetics.MIN_POWER));
         return n;
+    }
+
+    /** Средний тепловой поток в зоне при текущей мощности, н/(см²·с). */
+    public double averageFlux() {
+        double vCm3 = Math.PI * Math.pow(coreRadius() * 100, 2) * coreHeight() * 100;
+        return loaded > 0 && sigmaF > 0 ? fissionW / (PointKinetics.FISSION_ENERGY * vCm3) / sigmaF : 0;
+    }
+
+    /** Объём активной зоны, м³. */
+    public double coreVolumeM3() {
+        return Math.PI * coreRadius() * coreRadius() * coreHeight();
+    }
+
+    /**
+     * Перегрузка на ходу (CANDU): в позицию вдвигается {@code kgIn} свежего топлива, с другого конца выходит столько же,
+     * если позиция полна ({@code fullKg}). Выходящее — среднего состава позиции [упрощение: в жизни выходят самые
+     * выгоревшие пучки у выходного торца]. Возвращает выгруженное или null, если позиция не была полна.
+     */
+    public AssemblyFuel shift(int pos, FuelDesign d, double kgIn, double u235, double u234, double fullKg) {
+        if (kgIn <= 0 || !spec.designs().contains(d) || design != null && loaded > 0 && design != d) return null;
+        design = d;
+        double m = hm0[pos], out = Math.max(0, m + kgIn - fullKg);
+        AssemblyFuel discharged = null;
+        if (out > 0 && m > 0) {
+            double f = Math.min(1, out / m);
+            discharged = new AssemblyFuel(d, m * f, u5[pos] * f, u8[pos] * f, u6[pos] * f, pu9[pos] * f, pu0[pos] * f, fp[pos] * f,
+                    x234[pos], burnup[pos], failed[pos]);
+            hm0[pos] *= 1 - f;
+            u5[pos] *= 1 - f;
+            u8[pos] *= 1 - f;
+            u6[pos] *= 1 - f;
+            pu9[pos] *= 1 - f;
+            pu0[pos] *= 1 - f;
+            fp[pos] *= 1 - f;
+        }
+        double left = hm0[pos];
+        burnup[pos] = left + kgIn > 0 ? burnup[pos] * left / (left + kgIn) : 0;
+        x234[pos] = left + kgIn > 0 ? (x234[pos] * left + u234 * kgIn) / (left + kgIn) : u234;
+        hm0[pos] += kgIn;
+        u5[pos] += kgIn * u235;
+        u8[pos] += kgIn * (1 - u235 - u234);
+        countLoaded();
+        slowTimer = 1e9;
+        return discharged;
     }
 
     /** Тепло в топливо: мгновенная часть энергии деления и остаточное тепло, Вт. */
@@ -385,18 +482,18 @@ public final class LightWaterCore {
     // ------------------------------------------------------------------ сохранение
 
     public void save(StateWriter out) {
-        out.putDoubles("hm0", hm0, POSITIONS);
-        out.putDoubles("u5", u5, POSITIONS);
-        out.putDoubles("u8", u8, POSITIONS);
-        out.putDoubles("pu9", pu9, POSITIONS);
-        out.putDoubles("fp", fp, POSITIONS);
-        out.putDoubles("bu", burnup, POSITIONS);
-        out.putDoubles("u6", u6, POSITIONS);
-        out.putDoubles("pu0", pu0, POSITIONS);
-        out.putDoubles("x234", x234, POSITIONS);
-        int[] f = new int[POSITIONS];
-        for (int i = 0; i < POSITIONS; i++) f[i] = failed[i] ? 1 : 0;
-        out.putInts("failed", f, POSITIONS);
+        out.putDoubles("hm0", hm0, count);
+        out.putDoubles("u5", u5, count);
+        out.putDoubles("u8", u8, count);
+        out.putDoubles("pu9", pu9, count);
+        out.putDoubles("fp", fp, count);
+        out.putDoubles("bu", burnup, count);
+        out.putDoubles("u6", u6, count);
+        out.putDoubles("pu0", pu0, count);
+        out.putDoubles("x234", x234, count);
+        int[] f = new int[count];
+        for (int i = 0; i < count; i++) f[i] = failed[i] ? 1 : 0;
+        out.putInts("failed", f, count);
         out.putString("design", design == null ? "" : design.name());
         out.putDouble("n", power());
         out.beginObject("poisons");
@@ -420,7 +517,7 @@ public final class LightWaterCore {
         copy(in, "x234", x234);
         if (in.has("failed")) {
             int[] f = in.getInts("failed");
-            for (int i = 0; i < Math.min(POSITIONS, f.length); i++) failed[i] = f[i] != 0;
+            for (int i = 0; i < Math.min(count, f.length); i++) failed[i] = f[i] != 0;
         }
         String d = in.optString("design", "");
         design = null;
