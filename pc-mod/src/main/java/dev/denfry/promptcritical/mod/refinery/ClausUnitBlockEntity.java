@@ -18,7 +18,7 @@ import org.jetbrains.annotations.Nullable;
 /**
  * Установка Клауса ({@link ClausUnit}): печь с котлом-утилизатором, три каталитических конвертора с подогревом и
  * конденсаторы серы, дожиг хвостового газа. Кислый газ — сероводород аминовой регенерации из гидроочисток, которые
- * касаются установки. Сера — гранулами {@link #SULFUR_KG_PER_ITEM} кг в склад (воронкой снизу), она идёт в
+ * касаются установки, и газ коксования. Сера — гранулами {@link #SULFUR_KG_PER_ITEM} кг в склад (воронкой снизу), она идёт в
  * сернокислотную установку вместо колчедана. Температуру слоя первого конвертора задают кнопками щита (второй и
  * третий — на 60 и 75 К холоднее); воздух — коррекцией соотношения: ошибка подачи снижает извлечение на 3ε².
  */
@@ -73,6 +73,7 @@ public final class ClausUnitBlockEntity extends UraniumProcessBlockEntity {
             double kg = 0;
             for (Direction d : Direction.values())
                 if (level.getBlockEntity(worldPosition.relative(d)) instanceof HydrotreaterBlockEntity h) kg += h.drainH2s(MAX_H2S_KG_S * dt - kg);
+                else if (level.getBlockEntity(worldPosition.relative(d)) instanceof DelayedCokerBlockEntity c) kg += c.drainH2s(MAX_H2S_KG_S * dt - kg);
             h2sKgS = kg / dt;
         }
         last = claus.run(h2sKgS, beds, airError);

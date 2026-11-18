@@ -509,6 +509,8 @@ public final class PcBlocks {
             dev.denfry.promptcritical.mod.refinery.HydrotreaterBlockEntity::new);
     public static final DeferredBlock<PcDeviceBlock> CLAUS_UNIT = uranium("claus_unit",
             dev.denfry.promptcritical.mod.refinery.ClausUnitBlockEntity::new);
+    public static final DeferredBlock<PcDeviceBlock> DELAYED_COKER = uranium("delayed_coker",
+            dev.denfry.promptcritical.mod.refinery.DelayedCokerBlockEntity::new);
 
     // --- передел урана: от руды до UF₆ (I4) ---
     public static final DeferredBlock<PcDeviceBlock> ACID_PLANT = uranium("acid_plant",
