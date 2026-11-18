@@ -1,0 +1,112 @@
+# In-game playtest
+
+The automated game tests (`./gradlew --no-daemon :pc-mod:runGameTestServer`, headless) check the simulation and the
+block logic. They do not look at the screen. This list is for a person, or an agent driving the client, who checks what
+only a running client shows: models and their orientation, panels and screens, particles, sounds, the handbook and the
+integrations. Each check says what to do and what should be seen. Record every deviation with a screenshot, the block id,
+the facing and the log line, if there is one.
+
+## Setup
+
+1. `./gradlew --no-daemon :pc-mod:runClient` (the client run has `neoforge.enableGameTest=true`). For an agent, put the
+   mcpfabric jar into `pc-mod/run/mods` and align its token in `pc-mod/run/config/mcpfabric.config.json`.
+2. Create a creative superflat world with cheats on. Optional mods to test the integrations: CC: Tweaked 1.120.2+,
+   Serene Seasons.
+3. In the world run `/test runall`. Every test structure is built next to the player in a grid and runs once; green
+   and red beacons mark the result. Then fly along the rows. `/test runthese` re-runs the tests near the player, and
+   `/test run <class>.<method>` runs one test, for example `/test run powerreactorgametests.twopumpsgivenominalflow`.
+4. Keep the game log open: any `ERROR` from `promptcritical`, a missing model (purple-black cube) or a missing texture
+   is a finding even when the test is green.
+
+## Checks not covered by any game test
+
+| Area | What to do | Expected |
+|---|---|---|
+| Multiblock orientation | Place every multiblock facing north, east, south and west: boiler, steam engine, blast furnace, hot blast stove, arc furnace, gas turbine, wind turbine, `power_reactor` (T1), `pwr_reactor` (T2a), `hrsg`, `ldpe_reactor`, `pvc_reactor`, rectifier, uranium plant (`leach_tank`, `rotary_calciner`, `hf_kiln`), `mixer_settler`, `pellet_press`, `primary_pump`, `czochralski_puller` | Parts line up with the controller in all four facings; partial models (agitators, rams, impellers, shells, rotors) turn about the right axis and sit inside the body; breaking any part breaks the whole and drops one item |
+| Two-segment blocks | `power_reactor`, `pwr_reactor`, `hrsg` | The upper segment shows its own model (`control_rod_drive` on the T2a head, `hrsg_top`), not a copy of the lower one, where the art exists; note where it still repeats |
+| PLC | Place `plc`, open it, type the start/stop program from handbook chapter I2 "PLC", load, turn the key to RUN | Editor accepts text, compile errors are shown with a line number, RUN lamp lights, outputs follow inputs |
+| SIS | Place `sis_logic_solver` with three `gas_detector`s on 4–20 mA, open its panel | Voting, setpoint, PFDavg and SIL are shown; trip latches; Reset works only with clear channels; Bypass lights the alarm and is announced in chat with the player's name |
+| CC: Tweaked bridge | With CC installed: `rtu_station` next to panels, a computer on its side, in Lua `local r = peripheral.find("pc_rtu"); print(textutils.serialise(r.machines()))` | Machines, instruments with units, lamps; a panel button pressed through the peripheral acts in the world |
+| CC recipes | With CC installed: `/recipe` view or JEI for `computercraft:computer_normal`, `computer_advanced`, `monitor_normal`, `monitor_advanced` | They need the mod's microprocessor, memory, board and CRT (`content.cc_recipe_override = true`); with the key false, CC's own recipes return |
+| Panels | Open the A0 panel of each machine type at least once | No overlapping widgets, every gauge has a unit, lamps change colour with state, Russian and English both fit (switch the language) |
+| Handbook | Open the handbook, walk every category I0–I4, T1, T2, automation | Formula images render, links open the right chapter, code blocks render, no raw `key.name` strings |
+| Dosimeter | Hold `dosimeter_radiometer` near a running T0 pile, an RTG, the radiography camera with the source out and a spent assembly | Dose rate and total above the hotbar, clicks get denser near the source, overload message above 10 Sv/h; lead blocks and water between lower the reading |
+| Radiation effects | Stand near a broken RTG or an unloaded hot assembly for a while | Acute dose climbs; effects appear by ARS stage; death message is the radiation damage type |
+| Body | New world: the body screen on first join | Sex, height, mass and age are chosen once; height changes the model scale and step; an operator can reset |
+| Weather and seasons | `/pc env` in different biomes, day and night, with and without Serene Seasons | Temperature, wind and gusts, season and river state change plausibly; the wind turbine's rotor follows the wind |
+| Tides | Tide gauge on a coast, wait a few game days | Level follows the moon phase, spring tides at full and new moon |
+| Cap lamp | Wear a charged cap lamp in a dark mine, let it run down, break its glass in a methane drift | Light follows the player and dims at the end of the shift; broken glass of a lit lamp ignites methane |
+| Sounds | Run each machine with sound on | A sound loops while running and stops when it stops; no machine is silent where `PcSfx` names a sound; Geiger clicks |
+| Effects | Run boilers, furnaces, flare, cooling tower, chimney, reactors | Smoke, steam, flame and sparks appear at the right places of the model, not inside the floor |
+| Clean room | Build a room of `cleanroom_panel`/`cleanroom_window` with `hepa_filter`s behind `cleanroom_airlock`, open and close the door, walk in | Class on the airlock panel improves with filters, gets worse with an open door and with people inside |
+| Toxic clouds | Release chlorine (chlor-alkali liquefier without caustic) and HF (fluorination without a cylinder) outdoors in wind | The cloud drifts downwind; players downwind take the toxic load, upwind do not |
+| Chunk save | Save and quit with machines running (reactor at power, cascade spinning, PUREX line busy), reload | Everything resumes in the same state; the T1/T2a reactors do not trip on the first tick after loading |
+
+## Game test structures to look at
+
+`/test runall` builds all of these. The headless run passes all of them; in the client look at the models, the panels
+and the effects of each structure, not only the beacon colour.
+
+182 tests in 48 classes.
+
+| Class | Tests |
+|---|---|
+| `ArcFurnaceGameTests` | `scrapChargesButNoBusMeansNoArc` |
+| `AutomationGameTests` | `startStopLadderSealsInAndStops`, `plcLatchesStartStopFromItsProgram`, `analogPiLoopSettlesOnSetpoint`, `controlKeyClosesAndTripsTheBreakerThroughItsTerminals`, `redstoneInterfacePowersTheWallBehindIt` |
+| `BindingGameTests` | `simulationTicksWithTheLevel`, `deviceRegistersInTopologyAndLeavesAfterBreak`, `footprintPlacesPartsAndBreaksAsWhole`, `boilerPlacesBothSegmentsAlongFacing`, `headframeStackFormsAndMarksTop`, `damageBudgetDestroysAroundOriginButNotImmuneBlocks`, `worldStateSurvivesNbtRoundTrip`, `everyBlockHasLootAndPlacesWithoutError` |
+| `BodyGameTests` | `bodyIsChosenOnceAndShapesThePlayer` |
+| `BoilerGameTests` | `engineDrivesCreateShaftAndGaugeReadsPressure`, `reliefValveLiftsWithoutSteamDemand`, `lowWaterMeltsFusiblePlug`, `lowWaterWithoutPlugBlowsBoilerUp`, `chainGrateStokerFeedsTheFurnace` |
+| `BootstrapGameTests` | `apiIsInstalled`, `serverConfigIsLoadedWithDefaults`, `createIsLoaded` |
+| `ChlorAlkaliGameTests` | `rectifierPowersCellsThatMakeChlorine`, `cellsWithoutRectifierStayDead`, `brineIsTreatedOnlyWithReagents`, `liquefierMakesLiquidChlorineAndVentsTailGasWithoutCaustic`, `chlorineCloudDriftsDownwind`, `edcCrackerAndPvcAutoclave` |
+| `CombinedCycleGameTests` | `hrsgTurnsGasTurbineExhaustIntoBoilerSteam` |
+| `CompatGameTests` | `processCatalogIsComplete`, `productsAreExportedToCommonTags`, `modOresStayOutOfPerMetalTagsUnlessOpenCompatIsEnabled`, `coldSweatHeatSourcesMatchBlockStates` |
+| `ContentGameTests` | `handbookIsGivenOnceOnFirstJoin`, `chapterOpensWhenItemObtained`, `handbookIsConsistent`, `markdownLinksAndEmphasis`, `firstSteamGoesToTheShiftNearTheEngine`, `canaryInAMineAndRewardsAreOnlyExperience`, `procedureGoesOnTheLecternAndBack`, `geologicalMapPointsToTheNearestBody`, `decorLightSwitchesAndLadderClimbs`, `ironAndPowerChaptersAndProcedures`, `ironAndPowerAdvancements`, `ponderScenesHaveSchematicsAndTexts`, `ironAndPowerDecor`, `routeIsConsistent`, `handbookTranslationKeys`, `routeReachNeedsTheWholeHold`, `routeObtainBuildAndChoice` |
+| `DrillingGameTests` | `drillIntoGasTakeKickAndKillIt`, `seismicRecorderNeedsASpread` |
+| `ElectronicsGameTests` | `airlockSeesTheRoomAndItsFilters`, `czochralskiPullsASingleCrystal` |
+| `EnrichmentGameTests` | `cylindersMixAndRefuseOverfill`, `cascadeEnrichesNaturalUranium`, `overspeedWrecksTheSections` |
+| `FoundryGameTests` | `everyMachineGetsItsDomainTwin`, `bronzeIsCraftedFromCopperAndCassiteriteAndFitsTheCrucible`, `latheTurnsACastingOnACreateShaft`, `cupolaPoursAMoldThatTheGrateKnocksOut`, `crucibleMeltsCopperAndPoursTheMoldInFront`, `moldingMachineRamsASandMold`, `coalJigWashesRunOfMineCoal` |
+| `FuelFabricationGameTests` | `conversionMakesEnrichedPowder`, `pressAndFurnaceMakePelletTrays`, `rodStationSealsRodsWithHelium`, `jigAssemblesAVver440Assembly` |
+| `GasProcessingGameTests` | `ltsMakesSalesGasAndNglWithMethanol`, `uninhibitedColdChokePlugsWithHydrate`, `fractionatorSplitsNgl` |
+| `GasTurbineGameTests` | `gasTurbineStartsOnMineMethaneAndDrivesTheGearbox` |
+| `GridGameTests` | `closingAt120DegreesWithoutSyncCheckOverstressesTheCreateShaft`, `syncCheckRelayRefusesClosingAt120Degrees`, `generatorIsSynchronizedByTheSynchroscope`, `underfrequencyLoadSheddingDropsTheLoadOnDeficit`, `lowVoltageMotorOnSixKilovoltBusBreaksDownAndOvercurrentTrips`, `lightingBoardFeedsItsLampsAndTheEmergencyLightRunsOnBattery` |
+| `HeliumActivityGameTests` | `heliumNeedsLiquidNitrogen`, `poolWaterShieldsSpentFuel` |
+| `HoistGameTests` | `cageRidesToLevelAndLandsAsBlocks`, `hoistRefusesWithoutRope`, `panelButtonsDoNotOverlapLandings`, `excessWaterFloodsDriftAndRecedes`, `drainagePumpLowersSump` |
+| `HydroGameTests` | `pondAboveTheTurbineDrivesIt` |
+| `IronworksGameTests` | `cokeBatteryFormsChargesAndPushesIntoAChest`, `cokeBatteryReportsAMissingWall`, `blastFurnaceFormsTakesChargeAndRefusesToDrillCold`, `blastFurnaceNeedsATaphole`, `ladleChillsHotMetalIntoASkull`, `magneticSeparatorConcentratesMagnetite`, `sinterStrandSintersConcentrateWithBreezeAndFlux` |
+| `IsotopeGameTests` | `cobaltCapsuleBreedsCobalt60InTheFlux`, `overheatedCapsuleFailsAndContaminatesTheChannel`, `craftingFillsCapsuleAndMakesHeatSource`, `strontiumRtgLightsALampOffGrid` |
+| `LampRoomGameTests` | `lampChargesOnTheRackFromTheGrid`, `wornLampRunsDownAtTheEndOfTheShiftAndItsLightFollows`, `orphanLightBlockRemovesItself` |
+| `LongwallGameTests` | `pistonAdvancesOnlyLoweredSupport`, `setSupportsHoldWideRoof`, `shearerCutsFaceOnGantry` |
+| `MachineShopGameTests` | `millingMachineCutsAGearFromATurnedBlank`, `shapingMachinePlanesABasePlateCasting`, `surfaceGrinderGrindsAPlanedPlate`, `overspedGrindingWheelBursts` |
+| `MethanolGameTests` | `methanolUnitAndColumnMakeGradeAa`, `withoutAColumnCrudeStaysInTheSeparator` |
+| `MineGameTests` | `methaneExplosionStopsAtBarrier`, `fanVentilatesAndDoorThrottles`, `regulatorWindowSetsAirflow`, `canaryFaintsInCarbonMonoxide`, `everyVeinRoleHasABlock`, `minedOreCarriesAssay`, `anchorStartsMineAndRemovalEndsIt` |
+| `NitrogenGameTests` | `reformerMakesAmmoniaSyngas`, `reformerWithoutNickelMakesNothing`, `synthesisLoopMakesLiquidAmmonia`, `ostwaldUnitMakesNitricAcid`, `richAmmoniaMixtureFlashes`, `magnesiumNitrateColumnConcentratesAcid` |
+| `OpsGameTests` | `stuckReliefValveBurstsUnacceptedBoiler`, `reversedPumpLosesHeadAndBumpFindsIt`, `replacingReliefValveResetsOnlyItsCheck`, `enforcedModeRefusesIgnition`, `bearingWearShowsOnPanelAndShellFixesIt`, `scaleShowsOnPanelAndScraperRemovesIt`, `tallowAndCoalDustNeedNoNether` |
+| `PaperworkGameTests` | `disconnectorStaysOpenUnderAPermitAndClosesAfterIt`, `shiftLogWritesPanelReadingsAndSignsTheHandover` |
+| `PowerReactorGameTests` | `freshFuelLoadsAndUnloads`, `twoPumpsGiveNominalFlow`, `dryoutWithoutProtectionBreaksChannelsAndDosesTheHall` |
+| `PowerhouseGameTests` | `boilerFormsAndRefusesFuelWithoutPurge`, `igniterTrialWithoutFlameTrips`, `bypassedFlameDetectorsBlowUpFurnace`, `deaeratorMakesFeedwaterFromDrumSteam` |
+| `ProductionGameTests` | `wellSeparatorAndColumnMakeProducts`, `deadWellRunsOnAPumpjack` |
+| `PurexGameTests` | `lineMakesReprocessedUraniumAndGlass`, `stalledOxalateGoesCritical` |
+| `PwrReactorGameTests` | `vverAssemblyLoadsAndUnloads`, `pressurizerLinksAndWithoutItTheReactorStaysTripped`, `twoPumpsSpinBothLoops`, `losingPumpDriveAtPowerTrips` |
+| `PyrolysisGameTests` | `furnaceCracksPropaneIntoOlefins`, `furnaceWithoutSeparationStaysCold`, `ldpePolymerisesEthylene`, `ldpeOverheatDecomposesEthylene` |
+| `RadiationGameTests` | `cobaltSourceThroughAirLeadAndConcrete`, `sourceExpiresWhenNotRenewed` |
+| `ReactorGameTests` | `deskFindsThePileRodsAndCounter`, `removingAFuelBlockReformsThePile`, `scramButtonDropsTheZipRod`, `scannerRefusesOnlyNonPileBlocks`, `fuelChannelTakesOnlyEightSlugCassettes`, `achesonFurnaceNeedsTheGrid` |
+| `ShockGameTests` | `liveBusbarElectrocutesAnEarthedPlayer` |
+| `StationBatteryGameTests` | `batteryCarriesControlPowerThroughABlackout` |
+| `SteelworksGameTests` | `steelAndPipesGoIntoRecipes`, `hotPlateCoolsAndStacksWithColdOnes`, `millStandReducesABilletOnACreateShaft`, `hydrotestPassesASoundPipeAndBurstsACrackedOne`, `airSeparatorFormsFromCompressorSieveAndExpander` |
+| `StorageGameTests` | `electrodeBoilerDrawsFromTheGridIntoTheBoilerHouse`, `electrodeBoilerWithoutABoilerKeepsItsElectrodesDry`, `pumpedStorageUnitWithoutAnUpperBasinStandsStill` |
+| `TelemetryGameTests` | `gatewayReadsPanelsAndPressesButtons` |
+| `TideGameTests` | `tideGaugeShowsTheMoonPhaseAndTheModelSeaLevel`, `tidalUnitWithoutAClosedBasinStandsStill` |
+| `TurbineGameTests` | `turbineWithoutBoilerStandsStill`, `condenserByWaterGivesVacuum`, `condenserOnACoolingTowerGivesVacuum` |
+| `UraniumFrontEndGameTests` | `acidPlantAndHfKiln`, `leachingDissolvesUraniumWithPyrolusite`, `resinSorbsAndAmmoniaPrecipitatesYellowcake`, `dryConversionMakesGreenSalt`, `fluorinationFillsACylinderWithNaturalUf6`, `fluorineCellsRunOnTheRectifier` |
+| `WindGameTests` | `windTurbineExportsPowerIntoTheGrid` |
+
+## Known gaps (do not report as bugs)
+
+- Art is postponed: many new machines use placeholder or borrowed models (for example the uranium ion exchange column
+  uses the water treatment column's model, the T1 reactor both segments use `reactor_vessel_wall`). Report only missing
+  models, wrong orientation and parts outside the body.
+- Spent fuel has no minor actinides; decay heat is about a third low.
+- Pu-238 cannot be made in survival yet (no Np-237 recovery in PUREX).
+- The `Beta-M` RTG (~10 W) cannot light any lamp; the weakest lamp needs 15 W.
+- The sintering furnace draws no power.
+- Water never moves with the tide (design decision R32).
