@@ -109,6 +109,10 @@ public final class GridRecipes extends RecipeProvider {
         ShapedRecipeBuilder.shaped(RecipeCategory.MISC, PcBlocks.SHAFT_GENERATOR.get()).pattern("IWI").pattern("WSW").pattern("IBI")
                 .define('I', PcItems.STEEL_PLATE.get()).define('W', wire).define('S', PcItems.KEYED_SHAFT.get()).define('B', PcItems.STEEL_BEAM.get())
                 .unlockedBy("has_wire", hasWire).save(out, id("shaft_generator"));
+        // пульт диспетчера: щит с приборами, мнемосхема (карта) и телемеханика (компаратор)
+        ShapedRecipeBuilder.shaped(RecipeCategory.MISC, PcBlocks.GRID_DISPATCH_CENTER.get()).pattern("PMP").pattern("WCW").pattern("PPP")
+                .define('P', PcItems.STEEL_PLATE.get()).define('M', net.minecraft.world.item.Items.MAP).define('W', wire)
+                .define('C', net.minecraft.world.item.Items.COMPARATOR).unlockedBy("has_wire", hasWire).save(out, id("grid_dispatch_center"));
         ShapedRecipeBuilder.shaped(RecipeCategory.MISC, PcBlocks.GENERATOR_EXCITER.get()).pattern("BWB").pattern("WSW").pattern("BRB")
                 .define('B', AllItems.BRASS_INGOT.get()).define('W', wire).define('S', AllBlocks.SHAFT.get()).define('R', Items.REDSTONE)
                 .unlockedBy("has_generator", has(PcBlocks.SHAFT_GENERATOR.get())).save(out, id("generator_exciter"));

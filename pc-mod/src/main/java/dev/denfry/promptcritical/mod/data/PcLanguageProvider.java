@@ -129,6 +129,7 @@ public final class PcLanguageProvider extends LanguageProvider {
         b("instrument_pressure", "Pressure Gauge", "Манометр");
         // электросеть I1 (07 §7.22)
         b("shaft_generator", "Shaft Generator", "Генератор на валу");
+        b("grid_dispatch_center", "Grid Dispatch Center", "Пульт диспетчера энергосистемы");
         b("generator_exciter", "Generator Exciter", "Возбудитель генератора");
         b("instrument_synchroscope", "Synchroscope", "Синхроноскоп");
         b("electric_motor", "Electric Motor", "Электродвигатель");

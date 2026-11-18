@@ -254,6 +254,9 @@ public final class PcBlocks {
 
     // --- электросеть I1 (07 §7.3–7.6, этап 8 M3) ---
     private static final Footprint FP_DISCONNECTOR = Footprint.of(Segment.box(-1, 1, 0, 1, 0, 0));
+    /** Пульт диспетчера энергосистемы (07 §7.6.6), CC-периферия {@code pc_grid}. */
+    public static final DeferredBlock<PcDeviceBlock> GRID_DISPATCH_CENTER = device("grid_dispatch_center", instrument(),
+            Spec.facing(PcProperties.ALARM), FoundryBlock.with(dev.denfry.promptcritical.mod.grid.GridDispatchCenterBlockEntity::new));
     public static final DeferredBlock<PcDeviceBlock> SHAFT_GENERATOR = device("shaft_generator", machine(),
             Spec.facing(PcProperties.RUNNING), KineticMachineBlock.with(ShaftSide.BACK, ShaftGeneratorBlockEntity::new));
     public static final DeferredBlock<PcBlock> GENERATOR_EXCITER = block("generator_exciter", machine(), Spec.facing());
