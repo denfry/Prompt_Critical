@@ -103,6 +103,9 @@ public final class PcAdvancements implements AdvancementProvider.AdvancementGene
         LANG.put("lua_first", new String[] {"Hello, Reactor", "Hello, reactor", "A Lua program reads a machine through a pc_rtu telemetry gateway", "Lua-программа читает машину через шлюз телемеханики pc_rtu"});
         LANG.put("hmi", new String[] {"High-Performance HMI", "Высокоэффективный HMI", "A pcui overview screen (ISA-101 level L1) shows 20 tags or more",
                 "Экран обзора pcui (уровень L1 по ISA-101) показывает 20 тегов и больше"});
+        LANG.put("stuck_valve", new String[] {"Don't Trust the Lamp", "Не верь лампе",
+                "Pass the simulator lesson where a stuck relief valve shows up on its position sensor, not on the 'command sent' lamp",
+                "Пройдите урок тренажёра, где заклинивший клапан виден по датчику положения, а не по лампе «команда подана»"});
         LANG.put("historian", new String[] {"Plant Memory", "Память завода", "A historian keeps 100 tags, each for a game day", "Историан хранит 100 тегов, каждый — за игровые сутки"});
         LANG.put("telemetry", new String[] {"Telemechanics", "Телемеханика", "Ten telemetry gateways report to one historian", "Десять шлюзов телемеханики у одного историана"});
         LANG.put("dosimeter", new String[] {"Count the Dose", "Считай дозу", "Carry a dosimeter for a game day", "Носите дозиметр игровые сутки"});
@@ -300,6 +303,12 @@ public final class PcAdvancements implements AdvancementProvider.AdvancementGene
                         ResourceLocation.parse(dev.denfry.promptcritical.mod.scada.SimulatorDeskBlockEntity.OPERATOR_LICENSE),
                         Map.of("level", MinMaxBounds.Doubles.atLeast(1)), false))
                 .save(saver, id("operator_license"), efh);
+        // урок stuck_porv тренажёра (11 §11.2.2, §11.3.4): скрытое испытание
+        task(root, PcBlocks.TRAINING_SIMULATOR.get(), "stuck_valve", AdvancementType.CHALLENGE, true, 80)
+                .addCriterion("lesson", SimEventTrigger.TriggerInstance.of(
+                        ResourceLocation.parse(dev.denfry.promptcritical.mod.scada.TrainingSimulatorBlockEntity.SCENARIO_PASSED),
+                        Map.of("stuck_porv", MinMaxBounds.Doubles.atLeast(0)), false))
+                .save(saver, id("stuck_valve"), efh);
     }
 
     /** Событие мира или домена у игрока в радиусе смены. */

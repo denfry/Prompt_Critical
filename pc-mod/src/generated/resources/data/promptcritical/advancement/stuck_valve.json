@@ -1,0 +1,39 @@
+{
+  "parent": "promptcritical:root",
+  "criteria": {
+    "lesson": {
+      "conditions": {
+        "event": "promptcritical:scenario_passed",
+        "predicate": {
+          "stuck_porv": {
+            "min": 0.0
+          }
+        }
+      },
+      "trigger": "promptcritical:sim_event"
+    }
+  },
+  "display": {
+    "description": {
+      "translate": "advancements.promptcritical.stuck_valve.description"
+    },
+    "frame": "challenge",
+    "hidden": true,
+    "icon": {
+      "count": 1,
+      "id": "promptcritical:training_simulator"
+    },
+    "title": {
+      "translate": "advancements.promptcritical.stuck_valve.title"
+    }
+  },
+  "requirements": [
+    [
+      "lesson"
+    ]
+  ],
+  "rewards": {
+    "experience": 80
+  },
+  "sends_telemetry_event": true
+}
