@@ -101,6 +101,8 @@ public final class PcAdvancements implements AdvancementProvider.AdvancementGene
         LANG.put("plc_first", new String[] {"First Scan", "Первый скан", "A PLC program runs in RUN", "Программа ПЛК работает в режиме RUN"});
         LANG.put("all_languages", new String[] {"IEC Polyglot", "Полиглот МЭК", "One PLC has run programs in LD, FBD, SFC and ST", "Один ПЛК работал на программах LD, FBD, SFC и ST"});
         LANG.put("lua_first", new String[] {"Hello, Reactor", "Hello, reactor", "A Lua program reads a machine through a pc_rtu telemetry gateway", "Lua-программа читает машину через шлюз телемеханики pc_rtu"});
+        LANG.put("hmi", new String[] {"High-Performance HMI", "Высокоэффективный HMI", "A pcui overview screen (ISA-101 level L1) shows 20 tags or more",
+                "Экран обзора pcui (уровень L1 по ISA-101) показывает 20 тегов и больше"});
         LANG.put("historian", new String[] {"Plant Memory", "Память завода", "A historian keeps 100 tags, each for a game day", "Историан хранит 100 тегов, каждый — за игровые сутки"});
         LANG.put("telemetry", new String[] {"Telemechanics", "Телемеханика", "Ten telemetry gateways report to one historian", "Десять шлюзов телемеханики у одного историана"});
         LANG.put("dosimeter", new String[] {"Count the Dose", "Считай дозу", "Carry a dosimeter for a game day", "Носите дозиметр игровые сутки"});
@@ -240,6 +242,10 @@ public final class PcAdvancements implements AdvancementProvider.AdvancementGene
                 .addCriterion("read", event(dev.denfry.promptcritical.mod.content.SimAchievements.LUA_READ, Map.of())).save(saver, id("lua_first"), efh);
         task(rtu, PcBlocks.HISTORIAN_SERVER.get(), "historian", AdvancementType.TASK, false, 50)
                 .addCriterion("day", event(dev.denfry.promptcritical.mod.content.SimAchievements.HISTORIAN_DAY, Map.of())).save(saver, id("historian"), efh);
+        // SCADA/HMI 03c: экран pcui уровня L1 с 20 тегами и больше (11 §11.2.2)
+        task(rtu, PcBlocks.ANNUNCIATOR_PANEL.get(), "hmi", AdvancementType.TASK, false, 40)
+                .addCriterion("screen", event(dev.denfry.promptcritical.mod.content.SimAchievements.HMI, Map.of("tags", MinMaxBounds.Doubles.atLeast(20))))
+                .save(saver, id("hmi"), efh);
         task(rtu, PcBlocks.RTU_STATION.get(), "telemetry", AdvancementType.GOAL, false, 60)
                 .addCriterion("rtus", event(dev.denfry.promptcritical.mod.content.SimAchievements.TELEMETRY, Map.of())).save(saver, id("telemetry"), efh);
         AdvancementHolder lock = task(root, PcItems.LOCKOUT_PADLOCK.get(), "lockout", AdvancementType.TASK, false, 20)

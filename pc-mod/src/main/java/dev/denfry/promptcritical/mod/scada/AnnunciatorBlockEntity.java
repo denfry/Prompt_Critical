@@ -404,6 +404,18 @@ public class AnnunciatorBlockEntity extends DeviceBlockEntity implements Foundry
         return out;
     }
 
+    /**
+     * Экран {@code pcui} сообщает о себе (расширение 03b): уровень ISA-101 страницы и число различных тегов, которые она
+     * читает. Уровень — тот, с которым страница объявлена в {@code app:page(id, {level = 1})} (03c §3c.4.2,
+     * §3c.5.1). Страница L1 с 20 тегами и больше — достижение {@code hmi} (11 §11.2.2) игрокам в радиусе смены.
+     */
+    public void reportScreen(int screenLevel, int tags) {
+        admit();
+        if (screenLevel == 1 && level instanceof ServerLevel sl)
+            dev.denfry.promptcritical.mod.content.SimAchievements.nearby(sl, worldPosition, dev.denfry.promptcritical.mod.content.SimAchievements.HMI,
+                    "tags", tags);
+    }
+
     /** Окно {@code n} (1–12) — сигнализации {@code alarmId}; 0 — снова автоматически. */
     public void setWindow(int n, int alarmId) {
         admit();

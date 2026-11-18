@@ -160,4 +160,25 @@ public final class AnnunciatorGameTests {
                 })
                 .thenSucceed();
     }
+
+    /**
+     * Достижение {@code hmi} (11 §11.2.2): экран {@code pcui} уровня L1 сообщает табло число своих тегов; от 20 —
+     * достижение игрокам смены. Заглушка игрока не в списке игроков измерения — событие шлём ей явно, как табло.
+     */
+    @GameTest(template = LARGE, timeoutTicks = 100)
+    public static void hmiOverviewWithTwentyTagsEarnsTheAchievement(GameTestHelper h) {
+        var facing = BlockStateProperties.HORIZONTAL_FACING;
+        h.setBlock(ANN.south(), Blocks.STONE.defaultBlockState());
+        h.setBlock(ANN, PcBlocks.ANNUNCIATOR_PANEL.get().defaultBlockState().setValue(facing, Direction.NORTH));
+        var p = ContentGameTests.player(h, new BlockPos(5, 2, 5));
+        AnnunciatorBlockEntity a = h.getBlockEntity(ANN);
+        a.reportScreen(2, 40);
+        a.reportScreen(1, 25);
+        var who = java.util.List.of(p);
+        dev.denfry.promptcritical.mod.content.SimAchievements.nearby(who, a.getBlockPos(), dev.denfry.promptcritical.mod.content.SimAchievements.HMI, "tags", 19);
+        h.assertFalse(ContentGameTests.done(p, "hmi"), "19 tags are not enough");
+        dev.denfry.promptcritical.mod.content.SimAchievements.nearby(who, a.getBlockPos(), dev.denfry.promptcritical.mod.content.SimAchievements.HMI, "tags", 20);
+        h.assertTrue(ContentGameTests.done(p, "hmi"), "an L1 screen with 20 tags earns hmi");
+        h.succeed();
+    }
 }

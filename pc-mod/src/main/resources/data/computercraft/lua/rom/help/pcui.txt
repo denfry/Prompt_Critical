@@ -1,0 +1,45 @@
+pcui - operator screens for Prompt Critical
+(ISA-101 high-performance HMI on CC monitors)
+
+local pcui = require("pcui")
+local ann = peripheral.find("pc_annunciator")
+local app = pcui.app({monitor = peripheral.find(
+  "monitor"), title = "UNIT 1", fps = 2})
+local ov = app:page("overview",
+  {level = 1, title = "OVERVIEW", hotkey = "1"})
+ov:add(pcui.Value{x = 2, y = 3, dev = ann,
+  tag = "crude_column@10,64,5/prod.outlet",
+  label = "T out", unit = "degC", fmt = "%5.1f"})
+ov:add(pcui.AlarmList{x = 2, y = 20, w = 76,
+  h = 8, ann = ann})
+app:run()
+
+Devices: anything with readMany(tags). The
+pc_annunciator reads every machine tag within 16
+blocks (ann.getTags() lists them). pcui.rtu(rtu,
+id) adapts a pc_rtu gateway; pcui.source(fn)
+wraps a function(tags) -> {tag = value}.
+
+Widgets: Label, Value, Bar (moving analog with
+normal band and setpoint), Trend (1-4 pens),
+Button (confirm = true: select before operate),
+Status, AlarmList (touch a row to acknowledge).
+
+Pages: app:page(id, {level = 1..4, parent,
+title, hotkey}). Level is the ISA-101 level:
+1 overview, 2 system, 3 detail, 4 diagnostics.
+Keys 1-9 and the tabs switch pages, [OVERVIEW]
+goes back to level 1.
+
+Colour means trouble: grey background, blue
+values, orange outside the normal range, magenta
+for BAD data, red/orange/yellow for alarm
+priorities 1/2/3. Only changed rows are written
+to the monitor.
+
+Units: pcui.units.MPa, degC, pct, tph, pcm, uSvh.
+pcui.fmt.si(x, unit, digits) formats with SI
+prefixes.
+
+Example: run /rom/programs/pc/alarm_screen on a
+computer next to an annunciator and a monitor.

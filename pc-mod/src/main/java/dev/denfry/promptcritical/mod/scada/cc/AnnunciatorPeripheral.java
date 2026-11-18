@@ -199,6 +199,15 @@ public final class AnnunciatorPeripheral implements IPeripheral {
         });
     }
 
+    /** {@code reportScreen(level, tags)}: экран {@code pcui} сообщает уровень страницы и число её тегов (достижение {@code hmi}). */
+    @LuaFunction(mainThread = true)
+    public final boolean reportScreen(int level, int tags) throws LuaException {
+        return call(() -> {
+            ann.reportScreen(level, tags);
+            return true;
+        });
+    }
+
     @LuaFunction(mainThread = true)
     public final Map<String, Object> getTags() throws LuaException {
         return call(ann::getTags);
