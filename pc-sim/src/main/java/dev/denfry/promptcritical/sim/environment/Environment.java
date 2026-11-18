@@ -7,14 +7,18 @@ package dev.denfry.promptcritical.sim.environment;
  * <p>Ветер — три масштаба с провалом между ними (спектр Ван дер Ховена): синоптический (дни, проходящие циклоны),
  * суточный и турбулентность (секунды–минуты). Средний ветер на 10 м логнормален около {@link #MEAN_WIND_MS}; дождь
  * и гроза его усиливают, зимой ветренее. Турбулентность — нормальная модель IEC 61400-1: σ = I_ref·(0,75·V + 5,6).
- * Высота — логарифмический профиль v(z) = v₁₀·ln(z/z₀)/ln(10/z₀).
+ * Средний ветер — стандартный метеорологический: на 10 м над открытой ровной местностью (z₀ = 0,03 м, WMO-No. 8,
+ * гл. 5). К месту с другой шероховатостью он переносится через высоту смешения h_b = 60 м, где ветер уже не зависит
+ * от подстилающей поверхности: v(h_b) = v₁₀·ln(h_b/0,03)/ln(10/0,03), ниже и выше неё — местный логарифмический
+ * профиль v(z) = v(h_b)·ln(z/z₀)/ln(h_b/z₀) (Troen, Petersen, «European Wind Atlas», Risø, 1989, §8.1; Wieringa,
+ * 1986). Поэтому над лесом у земли ветер слабее, чем в поле, а над водой — сильнее.
  *
  * <p>Температура: средняя климата биома ± сезонная и суточная волны, синоптическая аномалия, дождь холоднее.
  * Солнце: ясное небо ≈ 1000 Вт/м² при солнце в зените, sin высоты; облачность дождя пропускает 20 %.
  * Константы помечены: [физ.] — справочные, [BALANCE] — подобраны для игры.
  */
 public final class Environment {
-    /** Средний ветер на 10 м, м/с [BALANCE: типичный умеренный климат 4–6]. */
+    /** Средний ветер на 10 м над открытой местностью, м/с [BALANCE: типичный умеренный климат 4–6]. */
     public static final double MEAN_WIND_MS = 5;
     /** СКО логарифма синоптического ветра [BALANCE: даёт распределение, близкое к Вейбуллу с k ≈ 2]. */
     static final double WIND_LOG_SIGMA = 0.45;
@@ -33,6 +37,8 @@ public final class Environment {
     /** Уровень моря мира, блок; шкала высот атмосферы, м [физ.]. */
     static final double SEA_LEVEL_Y = 63, SCALE_HEIGHT_M = 8400;
     static final double R_AIR = 287.05, P0 = 101_325;
+    /** Шероховатость стандартной метеоплощадки и высота смешения профилей, м [физ., European Wind Atlas §8.1]. */
+    static final double Z0_REFERENCE = 0.03, BLENDING_HEIGHT_M = 60;
 
     private final SeasonProvider seasons;
     private final TimeNoise synopticWind, synopticTemp, gust, direction;
@@ -76,7 +82,7 @@ public final class Environment {
                 * (1 + WIND_DIURNAL * Math.cos(2 * Math.PI * (hour - 14) / 24))
                 * Math.exp(WIND_LOG_SIGMA * synopticWind.normal(days / SYNOPTIC_DAYS) - WIND_LOG_SIGMA * WIND_LOG_SIGMA / 2);
         double z = Math.max(heightM, 2 * roughnessM + 0.5);
-        double mean = mean10 * Math.log(z / roughnessM) / Math.log(10 / roughnessM);
+        double mean = profile(mean10, z, roughnessM);
         double sigma = TURBULENCE_I_REF * (0.75 * mean + 5.6);
         double seconds = gameTime / 20.0;
         double wind = Math.max(0, mean + sigma * gust.normal(seconds / TURBULENCE_S));
@@ -90,6 +96,15 @@ public final class Environment {
         double density = pressure / (R_AIR * (tempC + 273.15));
         return new Sample(tempC, mean, wind, dirRad, density, pressure, solar, Math.max(0, sunElevation), year,
                 SeasonProvider.season(year));
+    }
+
+    /**
+     * Средний ветер на высоте z над поверхностью с шероховатостью z₀ по стандартному ветру на 10 м над открытой
+     * местностью: перенос через высоту смешения {@link #BLENDING_HEIGHT_M}.
+     */
+    public static double profile(double meanOpen10Ms, double heightM, double roughnessM) {
+        double atBlending = meanOpen10Ms * Math.log(BLENDING_HEIGHT_M / Z0_REFERENCE) / Math.log(10 / Z0_REFERENCE);
+        return atBlending * Math.log(heightM / roughnessM) / Math.log(BLENDING_HEIGHT_M / roughnessM);
     }
 
     /**
