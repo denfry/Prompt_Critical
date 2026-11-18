@@ -91,7 +91,10 @@ public abstract class UraniumProcessBlockEntity extends DeviceBlockEntity implem
 
     @Override
     public final void tickDevice() {
-        if (!(level instanceof ServerLevel s)) return;
+        if (!(level instanceof ServerLevel s)) {
+            if (level != null) clientTick();
+            return;
+        }
         SimLevelBinding b = SimBindings.get(s);
         if (b == null) return;
         process(s, 0.05 * b.world().clock().kSlow());
@@ -100,6 +103,10 @@ public abstract class UraniumProcessBlockEntity extends DeviceBlockEntity implem
             setFlag(BlockStateProperties.LIT, running());
         }
         if (level.getGameTime() % 100 == 0) setChanged();
+    }
+
+    /** Частицы и звуки на клиенте по свойствам блока; по умолчанию ничего. */
+    protected void clientTick() {
     }
 
     private void setFlag(BooleanProperty prop, boolean v) {

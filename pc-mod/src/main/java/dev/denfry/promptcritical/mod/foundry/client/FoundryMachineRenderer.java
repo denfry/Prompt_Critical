@@ -33,8 +33,10 @@ public final class FoundryMachineRenderer<T extends BlockEntity> implements Bloc
      * x 13, y 14, ×4 (визуально; настоящий круг ×42); строгальный — ползун {@code shaping_machine/partial/ram}, SLIDE_X
      * ±4 пикселя, двойной ход на два оборота вала. Новый арт должен держать эти оси или поменять их в {@code FoundryClient}.
      *
-     * <p>SLIDE_X — возвратно-поступательно по x с размахом ±a пикселей (ползун строгального), фаза — от вала × gear. */
-    public enum Motion { STATIC, SPIN_X, SPIN_Y, SPIN_Z, JOLT, SLIDE_X }
+     * <p>SLIDE_X — возвратно-поступательно по x с размахом ±a пикселей (ползун строгального), фаза — от вала × gear.
+     * SWEEP_Y — медленный поворот вокруг вертикали через (a, b) с gear об/мин, пока блок {@code running} (мост
+     * осветлителя: машина не на валу Create). */
+    public enum Motion { STATIC, SPIN_X, SPIN_Y, SPIN_Z, JOLT, SLIDE_X, SWEEP_Y }
 
     @Nullable
     private final PartialModel part;
@@ -84,6 +86,11 @@ public final class FoundryMachineRenderer<T extends BlockEntity> implements Bloc
                 if (running) buf.translate(0, (float) Math.abs(Math.sin(time * 0.6)) * 1.5f / 16f, 0);
             }
             case SLIDE_X -> buf.translate((float) Math.sin(Math.toRadians(angle)) * a, 0, 0);
+            case SWEEP_Y -> {
+                boolean running = state.hasProperty(PcProperties.RUNNING) && state.getValue(PcProperties.RUNNING);
+                // фаза — от времени мира: при остановке мост встаёт в исходное положение (фазу никто не хранит)
+                if (running) buf.translate(a, 0, b).rotateYDegrees((time * gear * 360f / 1200f) % 360f).translate(-a, 0, -b);
+            }
             case STATIC -> {
             }
         }

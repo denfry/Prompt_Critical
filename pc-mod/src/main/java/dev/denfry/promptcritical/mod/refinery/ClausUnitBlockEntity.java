@@ -1,5 +1,8 @@
 package dev.denfry.promptcritical.mod.refinery;
 
+import net.minecraft.world.level.block.state.properties.BlockStateProperties;
+import dev.denfry.promptcritical.mod.block.PcProperties;
+import dev.denfry.promptcritical.mod.fx.MachineFx;
 import dev.denfry.promptcritical.mod.panel.PanelLayout;
 import dev.denfry.promptcritical.mod.registry.PcItems;
 import dev.denfry.promptcritical.mod.uranium.UraniumProcessBlockEntity;
@@ -99,6 +102,21 @@ public final class ClausUnitBlockEntity extends UraniumProcessBlockEntity {
     @Override
     protected boolean running() {
         return h2sKgS > 0;
+    }
+
+    /**
+     * Установка работает: дымок дожига над трубой, пламя в гляделке печи, капель жидкой серы из гидрозатвора.
+     * Точки — art/blockbench/refinery/claus_unit.author.js.
+     */
+    @Override
+    protected void clientTick() {
+        BlockState st = getBlockState();
+        if (!st.hasProperty(PcProperties.RUNNING) || !st.getValue(PcProperties.RUNNING)) return;
+        MachineFx fx = MachineFx.of(level, worldPosition, st.getValue(BlockStateProperties.HORIZONTAL_FACING));
+        if (fx == null) return;
+        if (fx.chance(3)) fx.wisp(fx.at(13.5, 32.2, 13.5), 0.1);
+        if (fx.chance(1)) fx.flame(fx.at(-0.6, 9.6, 8.6), 0.05);
+        if (fx.chance(0.8)) fx.drip(fx.at(6, 1.8, 15));
     }
 
     @Override

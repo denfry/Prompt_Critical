@@ -4,6 +4,7 @@ import dev.denfry.promptcritical.mod.blockentity.DeviceBlockEntity;
 import dev.denfry.promptcritical.mod.environment.ActivityData;
 import dev.denfry.promptcritical.mod.environment.RadiationService;
 import dev.denfry.promptcritical.mod.foundry.FoundryDevice;
+import dev.denfry.promptcritical.mod.fx.MachineFx;
 import dev.denfry.promptcritical.mod.panel.PanelHost;
 import dev.denfry.promptcritical.mod.panel.PanelLayout;
 import dev.denfry.promptcritical.sim.radiation.PointSource;
@@ -19,7 +20,9 @@ import net.minecraft.world.InteractionResult;
 import net.minecraft.world.ItemInteractionResult;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.ItemStack;
+import net.minecraft.world.level.block.Block;
 import net.minecraft.world.level.block.state.BlockState;
+import net.minecraft.world.level.block.state.properties.BlockStateProperties;
 import net.neoforged.neoforge.items.IItemHandler;
 import net.neoforged.neoforge.items.IItemHandlerModifiable;
 import net.neoforged.neoforge.items.ItemStackHandler;
@@ -34,6 +37,8 @@ import org.jetbrains.annotations.Nullable;
 public final class HlwVaultBlockEntity extends DeviceBlockEntity implements FoundryDevice, PanelHost {
     public static final int SLOTS = 12;
     public static final double CONCRETE_CM = 100, VENT_W = 50_000;
+    /** Тепловыделение, с которого над вытяжной трубой виден тёплый воздух, Вт [BALANCE: порог показа]. */
+    static final double VISIBLE_HEAT_W = 100;
 
     private final ItemStackHandler slots = new ItemStackHandler(SLOTS) {
         @Override
@@ -73,6 +78,10 @@ public final class HlwVaultBlockEntity extends DeviceBlockEntity implements Foun
 
     @Override
     public void tickDevice() {
+        if (level != null && level.isClientSide) {
+            clientTick();
+            return;
+        }
         if (!(level instanceof ServerLevel s) || level.getGameTime() % 20 != 0) return;
         long now = level.getGameTime();
         PointSource src = PointSource.NONE;
@@ -89,7 +98,22 @@ public final class HlwVaultBlockEntity extends DeviceBlockEntity implements Foun
         heatW = q;
         activityBq = a;
         if (!src.empty()) RadiationService.source(s, worldPosition.getCenter(), behindConcrete(src));
+        BlockState bs = getBlockState();
+        boolean warm = heatW > VISIBLE_HEAT_W;
+        if (bs.hasProperty(BlockStateProperties.LIT) && bs.getValue(BlockStateProperties.LIT) != warm)
+            level.setBlock(worldPosition, bs.setValue(BlockStateProperties.LIT, warm), Block.UPDATE_CLIENTS);
         if (now % 100 == 0) setChanged();
+    }
+
+    /**
+     * Вентиляция уносит остаточное тепло стекла: над выходной трубой (art/blockbench/waste/hlw_vault.author.js)
+     * поднимается тёплый воздух (только факт отвода тепла, без его величины).
+     */
+    private void clientTick() {
+        BlockState bs = getBlockState();
+        if (!bs.hasProperty(BlockStateProperties.LIT) || !bs.getValue(BlockStateProperties.LIT)) return;
+        MachineFx fx = MachineFx.of(level, worldPosition, Direction.NORTH);
+        if (fx != null && fx.chance(1.5)) fx.wisp(fx.at(13, 23.2, 3), 0.15);
     }
 
     @Override

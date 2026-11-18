@@ -5,6 +5,7 @@ import dev.denfry.promptcritical.mod.binding.SimLevelBinding;
 import dev.denfry.promptcritical.mod.blockentity.DeviceBlockEntity;
 import dev.denfry.promptcritical.mod.boiler.FireTubeBoilerBlockEntity;
 import dev.denfry.promptcritical.mod.foundry.FoundryDevice;
+import dev.denfry.promptcritical.mod.fx.MachineFx;
 import dev.denfry.promptcritical.mod.powerhouse.WaterTubeBoilerBlockEntity;
 import dev.denfry.promptcritical.mod.registry.PcBlocks;
 import dev.denfry.promptcritical.sim.core.SimId;
@@ -13,7 +14,6 @@ import dev.denfry.promptcritical.sim.plant.SteamPlant;
 import dev.denfry.promptcritical.sim.plant.WaterTubeUnit;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
-import net.minecraft.core.particles.ParticleTypes;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.world.InteractionHand;
 import net.minecraft.world.InteractionResult;
@@ -23,6 +23,7 @@ import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.level.block.Block;
 import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.level.block.state.properties.BlockStateProperties;
+import net.minecraft.world.phys.Vec3;
 import net.neoforged.neoforge.items.IItemHandler;
 import org.jetbrains.annotations.Nullable;
 
@@ -85,13 +86,13 @@ public final class SteamGeneratorBlockEntity extends DeviceBlockEntity implement
 
     @Override
     public void tickDevice() {
-        if (!(level instanceof ServerLevel sl)) return;
+        if (!(level instanceof ServerLevel)) {
+            clientTick();
+            return;
+        }
         if (ticks++ % 20 == 0) boiler = findBoiler();
         SteamPlant p = plant();
         sink = p != null && !boiler.isNone() && p.setElectricHeatW(boiler, heatW);
-        if (heatW > 1e6 && ticks % 10 == 0)
-            sl.sendParticles(ParticleTypes.CLOUD, worldPosition.getX() + 0.5, worldPosition.getY() + 1.1, worldPosition.getZ() + 0.5,
-                    1, 0.15, 0.05, 0.15, 0.02);
         if (ticks % 10 == 0) {
             BlockState st = getBlockState();
             boolean lit = heatW > 1e5;
@@ -99,6 +100,19 @@ public final class SteamGeneratorBlockEntity extends DeviceBlockEntity implement
                 level.setBlock(worldPosition, st.setValue(BlockStateProperties.LIT, lit), Block.UPDATE_CLIENTS);
         }
         heatW = 0; // реактор передаёт тепло каждый тик заново
+    }
+
+    /**
+     * Парогенератор под нагрузкой: пар парит у фланца паросборника на выходе, продувка подкапывает. Гул потока —
+     * MachineSoundscape. Точки — art/blockbench/core/steam_generator.author.js.
+     */
+    private void clientTick() {
+        BlockState st = getBlockState();
+        if (!st.hasProperty(BlockStateProperties.LIT) || !st.getValue(BlockStateProperties.LIT)) return;
+        MachineFx fx = MachineFx.of(level, worldPosition, st.getValue(BlockStateProperties.HORIZONTAL_FACING));
+        if (fx == null) return;
+        if (fx.chance(1.5)) fx.puff(fx.at(14.5, 15.4, 3), new Vec3(0, 0.03, 0), 1);
+        if (fx.chance(0.7)) fx.leak(fx.at(8, 0.8, 12.5));
     }
 
     /** Котёл второго контура, которого парогенератор касается гранью. */

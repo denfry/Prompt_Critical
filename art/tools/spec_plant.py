@@ -103,13 +103,7 @@ model("pressurizer", "core", tx("d", "st", "end", "psteam", "inss", sh=B("pressu
          el("lug_e", [14.5, 4, 6.5], [16.5, 7, 9.5], "d")],
       "block/pressurizer")
 
-model("steam_generator", "core", tx("d", "pprim", "end", "inss", sh=B("steam_generator_shell"), top=B("tank_top"), col=B("steam_generator_collector")),
-      disc("shell", "x", 7.5, 0, 16, "sh", faces={"east": "top", "west": "top"})
-      + [el("collector", [4.5, 12, 4.5], [11.5, 16.5, 11.5], "pprim", faces={"up": "col"}, full=["up"]),
-         el("saddle_w", [2, -0.5, 1.5], [4, 3, 14.5], "d"),
-         el("saddle_e", [12, -0.5, 1.5], [14, 3, 14.5], "d"),
-         el("feed_nozzle", [6, 3, -0.5], [10, 7, 1.5], "d", faces={"north": "end"}, full=["north"])],
-      "block/steam_generator")
+# парогенератор нарисован вручную в Blockbench: art/blockbench/core/steam_generator.author.js
 
 model("steam_drum", "core", tx("d", "stm", "wat", "end", "inss", sh=B("steam_drum_shell"), top=B("tank_top")),
       disc("shell", "x", 6.5, 0, 16, "sh", faces={"east": "top", "west": "top"})
@@ -588,25 +582,7 @@ model("vent_stack", "ventilation", tx("d", "end", stk=B("vent_stack")),
 # ======================================================================
 # safety: hermetic boundary, ECCS, hydrogen
 # ======================================================================
-model("containment_hatch", "safety", tx("d", "con", fr=B("containment_hatch_frame")), [
-    el("lintel", [0, 13, 0], [16, 16, 16], "con", faces={"north": "fr", "south": "fr"}),
-    el("sill", [0, 0, 0], [16, 3, 16], "con", faces={"north": "fr", "south": "fr"}),
-    el("jamb_w", [0, 3, 0], [3, 13, 16], "con", faces={"north": "fr", "south": "fr"}),
-    el("jamb_e", [13, 3, 0], [16, 13, 16], "con", faces={"north": "fr", "south": "fr"}),
-    el("liner_t", [3, 12.5, 2.5], [13, 13, 16], "d"),
-    el("liner_b", [3, 3, 2.5], [13, 3.5, 16], "d"),
-    el("liner_w", [3, 3.5, 2.5], [3.5, 12.5, 16], "d"),
-    el("liner_e", [12.5, 3.5, 2.5], [13, 12.5, 16], "d"),
-    el("hinge_e", [13.1, 4, -0.5], [14.5, 6, 0.5], "d"),
-    el("hinge_e2", [13.1, 10, -0.5], [14.5, 12, 0.5], "d"),
-], "block/containment_hatch")
-model("containment_hatch/door", "safety", tx("d", "red", dr=B("containment_hatch_door")),
-      [el("door", [3, 3, 0.5], [13, 13, 2.5], "d", faces={"north": "dr", "south": "dr"}, full=["north", "south"]),
-       el("hub", [7, 7, -0.5], [9, 9, 0.5], "red"),
-       el("spoke_x", [3.75, 7.75, -0.25], [12.25, 8.25, 0.25], "red"),
-       el("spoke_y", [7.75, 3.75, -0.25], [8.25, 12.25, 0.25], "red")]
-      + ring_xy("wheel", 4.25, 0.75, -0.5, 0, "red"),
-      "block/containment_hatch/partial/door", kind="partial")
+# гермолюк нарисован вручную в Blockbench: art/blockbench/safety/containment_hatch.author.js
 
 model("containment_penetration", "safety", tx("con", "d", "end", pen=B("containment_penetration")), [
     el("wall", [0, 0, 0], [16, 16, 16], "con", faces={"north": "pen", "south": "pen"}, full=["north", "south"]),

@@ -1,5 +1,11 @@
 package dev.denfry.promptcritical.mod.npp;
 
+import dev.denfry.promptcritical.mod.boiler.BoilerSounds;
+import dev.denfry.promptcritical.mod.fx.MachineFx;
+import net.minecraft.world.level.block.Block;
+import net.minecraft.world.level.block.state.properties.BlockStateProperties;
+import net.minecraft.world.level.block.state.properties.BooleanProperty;
+import net.minecraft.world.phys.Vec3;
 import dev.denfry.promptcritical.mod.automation.MechanismWiring;
 import dev.denfry.promptcritical.mod.automation.WiredDevice;
 import dev.denfry.promptcritical.mod.binding.NbtStateTrees;
@@ -61,6 +67,8 @@ import org.jetbrains.annotations.Nullable;
  */
 public final class BwrReactorBlockEntity extends DeviceBlockEntity implements FoundryDevice, PanelHost, WiredDevice {
     public static final int LINK_RADIUS = 12, TURBINE_RADIUS = 24;
+    /** Доля номинальной мощности, с которой реактор показан работающим (огни пульта, гул). */
+    private static final double AT_POWER = 0.005;
 
     private final BoilingWaterReactor reactor = new BoilingWaterReactor();
     private final MechanismWiring wiring = new MechanismWiring();
@@ -109,7 +117,10 @@ public final class BwrReactorBlockEntity extends DeviceBlockEntity implements Fo
 
     @Override
     public void tickDevice() {
-        if (!(level instanceof ServerLevel sl)) return;
+        if (!(level instanceof ServerLevel sl)) {
+            clientTick();
+            return;
+        }
         SimLevelBinding b = SimBindings.get(sl);
         if (b == null) return;
         if (ticks++ % 20 == 0) link(sl);
@@ -140,8 +151,34 @@ public final class BwrReactorBlockEntity extends DeviceBlockEntity implements Fo
                 for (BlockPos t : turbines) RadiationService.source(sl, t.getCenter(), Emitter.N16.source(n16 / turbines.size()));
         }
         events(sl);
+        if (ticks % 10 == 0) {
+            setStateFlag(BlockStateProperties.LIT, reactor.power() > AT_POWER);
+            setStateFlag(BlockStateProperties.OPEN, reactor.reliefKgS() > 0);
+        }
         if (reactor.shutDown()) loadFresh();
         if (ticks % 100 == 0) setChanged();
+    }
+
+    private void setStateFlag(BooleanProperty prop, boolean value) {
+        BlockState s = getBlockState();
+        if (s.hasProperty(prop) && s.getValue(prop) != value) level.setBlock(worldPosition, s.setValue(prop, value), Block.UPDATE_ALL);
+    }
+
+    /**
+     * Сброс пара предохранительными клапанами: по выхлопным трубам в бассейн-барботёр, где пар конденсируется
+     * (гермооболочки BWR Mark I–III, T-образные гасители): над гасителями у пола клокочет вода, клапаны шипят. Точки — art/blockbench/core/bwr_reactor.author.js.
+     */
+    private void clientTick() {
+        BlockState s = getBlockState();
+        if (!s.hasProperty(BlockStateProperties.OPEN) || !s.getValue(BlockStateProperties.OPEN)) return;
+        MachineFx fx = MachineFx.of(level, worldPosition, s.getValue(BlockStateProperties.HORIZONTAL_FACING));
+        if (fx == null) return;
+        for (double x : new double[] {-6, 22}) {
+            Vec3 quencher = fx.at(x, -12, 25);
+            if (fx.chance(8)) fx.bubbles(quencher, 0.3, 2);
+            if (fx.chance(3)) fx.puff(quencher, new Vec3(0, 0.02, 0), 1);
+            if (fx.chance(0.6)) fx.sound(fx.at(x, 61, 25), BoilerSounds.steam(), 0.7f, 0.8f);
+        }
     }
 
     private void events(ServerLevel sl) {

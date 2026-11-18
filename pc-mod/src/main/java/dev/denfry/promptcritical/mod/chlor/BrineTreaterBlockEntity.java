@@ -24,7 +24,9 @@ import net.minecraft.world.InteractionResult;
 import net.minecraft.world.ItemInteractionResult;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.ItemStack;
+import dev.denfry.promptcritical.mod.fx.MachineFx;
 import net.minecraft.world.level.block.Block;
+import net.minecraft.world.level.block.state.properties.BlockStateProperties;
 import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.level.material.Fluids;
 import net.neoforged.neoforge.fluids.capability.IFluidHandler;
@@ -97,7 +99,10 @@ public final class BrineTreaterBlockEntity extends DeviceBlockEntity implements 
 
     @Override
     public void tickDevice() {
-        if (!(level instanceof ServerLevel s)) return;
+        if (!(level instanceof ServerLevel s)) {
+            clientTick();
+            return;
+        }
         SimLevelBinding b = SimBindings.get(s);
         if (b == null) return;
         double dt = 0.05 * b.world().clock().kSlow();
@@ -129,6 +134,24 @@ public final class BrineTreaterBlockEntity extends DeviceBlockEntity implements 
                 level.setBlock(worldPosition, st.setValue(PcProperties.RUNNING, run), Block.UPDATE_CLIENTS);
         }
         if (level.getGameTime() % 100 == 0) setChanged();
+    }
+
+    /**
+     * Осветлитель работает: над барботёром дымовых газов лопаются пузыри, в сборный лоток переливается рассол,
+     * со сливной трубы капает. Мост с граблями вращает рендер (ChlorClient). Точки —
+     * art/blockbench/chlor_alkali/brine_treater.author.js.
+     */
+    private void clientTick() {
+        BlockState st = getBlockState();
+        if (!st.hasProperty(PcProperties.RUNNING) || !st.getValue(PcProperties.RUNNING)) return;
+        MachineFx fx = MachineFx.of(level, worldPosition, st.getValue(BlockStateProperties.HORIZONTAL_FACING));
+        if (fx == null) return;
+        if (fx.chance(6)) fx.bubbles(fx.at(0, 16.7, 19), 0.25, 2);
+        if (fx.chance(2)) {
+            double a = fx.random().nextDouble() * Math.PI * 2;
+            fx.splash(fx.at(8 + 14.4 * Math.cos(a), 16.7, 8 + 14.4 * Math.sin(a)), 0.05, 1);
+        }
+        if (fx.chance(1)) fx.leak(fx.at(26, 1.2, 8));
     }
 
     private boolean takeBag() {

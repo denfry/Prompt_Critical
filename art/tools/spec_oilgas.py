@@ -540,7 +540,7 @@ def column_top(large=False, tex="sb"):
 m("column_base", "refinery", column_base())
 m("column_base_large", "refinery", column_base(True))
 m("column_base_insulated", "refinery", column_base(tex="clad"))
-m("column_top", "refinery", column_top())
+# верх колонны column_top — art/blockbench/refinery/crude_column.author.js
 m("column_top_large", "refinery", column_top(True))
 
 
