@@ -321,6 +321,19 @@ public final class PcLanguageProvider extends LanguageProvider {
         b("rod_loading_station", "Fuel Rod Loading and Welding Station", "Участок снаряжения и заварки твэлов");
         b("assembly_jig", "Fuel Assembly Jig", "Стапель сборки ТВС");
         b("power_reactor", "Channel Power Reactor (AM-1 type)", "Канальный энергетический реактор (типа АМ-1)");
+        b("irradiation_channel", "Irradiation Channel", "Канал облучения");
+        b("rtg_thermoelectric", "Thermoelectric RTG", "Термоэлектрический РИТЭГ");
+        i("cobalt_ingot", "Cobalt Ingot", "Слиток кобальта");
+        i("iridium_ingot", "Iridium Ingot", "Слиток иридия");
+        i("npo2_powder", "Neptunium Dioxide (Np-237)", "Диоксид нептуния (Np-237)");
+        i("irradiation_capsule", "Irradiation Capsule", "Капсула облучения");
+        i("sealed_source", "Sealed Radioactive Source", "Закрытый радионуклидный источник");
+        i("radiography_camera", "Gamma Radiography Camera", "Гамма-дефектоскоп");
+        i("radiography_crank", "Radiography Crank and Guide Tube", "Привод и шланг-ампулопровод дефектоскопа");
+        i("radiography_film", "Radiography Film", "Радиографическая плёнка");
+        i("radiography_film_exposed", "Developed Radiograph", "Проявленная радиограмма");
+        i("pu238_heat_source", "Pu-238 Heat Source", "Источник тепла Pu-238");
+        i("sr90_heat_source", "Sr-90 Heat Source", "Источник тепла Sr-90");
         b("primary_pump", "Primary Circulation Pump", "Главный циркуляционный насос");
         b("steam_generator", "Steam Generator", "Парогенератор");
         b("wellhead", "Wellhead", "Колонная головка");
@@ -703,6 +716,7 @@ public final class PcLanguageProvider extends LanguageProvider {
         MISC.putAll(dev.denfry.promptcritical.mod.chem.ChemText.lang());
         MISC.putAll(dev.denfry.promptcritical.mod.nuclear.NuclearText.lang());
         MISC.putAll(dev.denfry.promptcritical.mod.npp.NppText.lang());
+        MISC.putAll(dev.denfry.promptcritical.mod.isotopes.IsotopeText.lang());
         MISC.putAll(dev.denfry.promptcritical.mod.chlor.ChlorText.lang());
         MISC.putAll(dev.denfry.promptcritical.mod.environment.ToxicReleaseService.lang());
         MISC.putAll(dev.denfry.promptcritical.mod.environment.RadiationService.lang());

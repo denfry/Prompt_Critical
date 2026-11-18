@@ -79,7 +79,7 @@ public final class ActivityInventory {
             PointSource line = e.getKey().source(e.getValue());
             double[] p = line.photons().clone();
             for (int i = 0; i < p.length; i++) p[i] *= escape(line.energyMeV()[i]);
-            s = s.plus(new PointSource(line.energyMeV(), p, 0));
+            s = s.plus(new PointSource(line.energyMeV(), p, line.neutrons()));
         }
         return s;
     }

@@ -348,6 +348,35 @@ public final class GraphitePile {
     }
 
     /** Остаточное тепловыделение, Вт: греет топливо, но ионизационная камера его не видит. */
+    /**
+     * Абсолютный тепловой поток по узлам кладки, н/(см²·с) (12 §12.1): форма — нодальное решение, нормировка —
+     * мощность делений: F = P/E_f = Σ φ_i·Σ_f,i·V_i, V — блок 1 м³. Узлы без делений (графит, канал облучения) получают
+     * поток той же нормировки. Котёл заглушен или кладка без топлива — нули.
+     *
+     * @param out массив длиной не меньше числа узлов; возвращается он же
+     */
+    public double[] nodeFluxes(double[] out) {
+        int n = layout.nodeCount();
+        java.util.Arrays.fill(out, 0, Math.min(n, out.length), 0);
+        double[] phi = fissile && solver != null ? solver.flux() : null;
+        if (phi == null || nodeConst.length < n) return out;
+        double denom = 0;
+        for (int i = 0; i < n; i++) if (nodeConst[i] != null) denom += phi[i] * nodeConst[i].sigmaF() * NODE_CM3;
+        double fissions = powerW() / PointKinetics.FISSION_ENERGY;
+        if (!(denom > 0) || !(fissions > 0)) return out;
+        double k = fissions / denom;
+        for (int i = 0; i < n; i++) out[i] = phi[i] * k;
+        return out;
+    }
+
+    /** Делений в узле в секунду при потоках {@code flux} из {@link #nodeFluxes}. */
+    public double nodeFissionRate(double[] flux, int node) {
+        return node < nodeConst.length && nodeConst[node] != null ? flux[node] * nodeConst[node].sigmaF() * NODE_CM3 : 0;
+    }
+
+    /** Объём узла кладки — блок 1 м³, см³. */
+    public static final double NODE_CM3 = 1e6;
+
     public double decayHeatW() {
         return decayHeat.powerW();
     }

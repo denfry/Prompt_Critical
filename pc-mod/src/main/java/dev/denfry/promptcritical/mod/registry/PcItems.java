@@ -166,6 +166,25 @@ public final class PcItems {
     public static final DeferredItem<Item> PUO2_POWDER = item("puo2_powder", 1);
     /** Стеклоблок высокоактивных отходов: 50 кг боросиликатного стекла с компонентом активности. */
     public static final DeferredItem<Item> HLW_GLASS_CANISTER = item("hlw_glass_canister", 1);
+    // --- изотопы и РИТЭГ (12): мишени, капсулы, закрытые источники, дефектоскопия, источники тепла ---
+    /** Металлический кобальт (таблетки мишени Co-60). */
+    public static final DeferredItem<Item> COBALT_INGOT = item("cobalt_ingot", 64);
+    /** Иридий из концентрата платиновых металлов (мишень Ir-192, оболочка источника Pu-238). */
+    public static final DeferredItem<Item> IRIDIUM_INGOT = item("iridium_ingot", 64);
+    /** Диоксид нептуния-237 (мишень Pu-238). */
+    public static final DeferredItem<Item> NPO2_POWDER = item("npo2_powder", 16);
+    /** Капсула облучения: пустая или с компонентом {@code irradiation_target}. */
+    public static final DeferredItem<Item> IRRADIATION_CAPSULE = item("irradiation_capsule", 16);
+    /** Закрытый источник особой формы: активность — компонентом {@code activity}. */
+    public static final DeferredItem<Item> SEALED_SOURCE = item("sealed_source", 1);
+    public static final DeferredItem<dev.denfry.promptcritical.mod.isotopes.RadiographyCameraItem> RADIOGRAPHY_CAMERA = registered(
+            ITEMS.registerItem("radiography_camera", dev.denfry.promptcritical.mod.isotopes.RadiographyCameraItem::new, new Item.Properties().stacksTo(1)));
+    public static final DeferredItem<Item> RADIOGRAPHY_CRANK = item("radiography_crank", 16);
+    public static final DeferredItem<Item> RADIOGRAPHY_FILM = item("radiography_film", 64);
+    /** Проявленная плёнка: компонент {@code film_result}. */
+    public static final DeferredItem<Item> RADIOGRAPHY_FILM_EXPOSED = item("radiography_film_exposed", 1);
+    public static final DeferredItem<Item> PU238_HEAT_SOURCE = item("pu238_heat_source", 1);
+    public static final DeferredItem<Item> SR90_HEAT_SOURCE = item("sr90_heat_source", 1);
     /** Трёхокись урана после прокалки ДУА: мешок на 1 кг урана. */
     public static final DeferredItem<Item> UO3_POWDER = item("uo3_powder", 64);
     /** Тетрафторид урана, «зелёная соль»: мешок на 1 кг урана. */

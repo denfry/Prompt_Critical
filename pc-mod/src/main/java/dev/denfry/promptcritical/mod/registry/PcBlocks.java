@@ -327,6 +327,12 @@ public final class PcBlocks {
             dev.denfry.promptcritical.mod.foundry.FoundryBlock.with(dev.denfry.promptcritical.mod.reactor.FuelChannelBlockEntity::new));
     public static final DeferredBlock<PcBlock> CONTROL_ROD_CHANNEL = block("control_rod_channel", graphite(), Spec.of());
     public static final DeferredBlock<PcBlock> STARTUP_SOURCE = block("startup_source", instrument(), Spec.of());
+    // --- изотопы (12): канал облучения в кладке T0 или у корпуса T1, термоэлектрический РИТЭГ ---
+    public static final DeferredBlock<PcDeviceBlock> IRRADIATION_CHANNEL = device("irradiation_channel", graphite(), Spec.of(PcProperties.FILLED),
+            dev.denfry.promptcritical.mod.foundry.FoundryBlock.with(dev.denfry.promptcritical.mod.isotopes.IrradiationChannelBlockEntity::new));
+    public static final DeferredBlock<PcDeviceBlock> RTG_THERMOELECTRIC = device("rtg_thermoelectric", machine(),
+            Spec.of(net.minecraft.world.level.block.state.properties.BlockStateProperties.LIT),
+            dev.denfry.promptcritical.mod.foundry.FoundryBlock.with(dev.denfry.promptcritical.mod.isotopes.RtgBlockEntity::new));
     public static final DeferredBlock<PcBlock> CONTROL_ROD_DRIVE = block("control_rod_drive", machine(), Spec.facing());
     public static final DeferredBlock<PcBlock> ZIP_ROD_WINCH = block("zip_rod_winch", machine(), Spec.facing());
     public static final DeferredBlock<PcBlock> NEUTRON_DETECTOR = block("neutron_detector", instrument(), Spec.facing());

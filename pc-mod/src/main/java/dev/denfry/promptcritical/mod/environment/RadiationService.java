@@ -47,6 +47,11 @@ public final class RadiationService {
     private static final Map<ServerLevel, List<Positioned>> ITEMS = new WeakHashMap<>();
     /** Радиус поиска лежащих предметов вокруг игрока, м. */
     static final double ITEM_SCAN_M = 64;
+    /**
+     * Пропускание контейнера гамма-дефектоскопа (обеднённый уран, S-образный канал): 3,7 ТБк Ir-192 дают на 1 м около
+     * 20 мкЗв/ч — порядок паспортных пределов (ГОСТ 23764: не больше 0,03 мЗв/ч на 1 м).
+     */
+    public static final double CONTAINER_TRANSMISSION = 5e-5;
 
     private record Positioned(Vec3 at, PointSource source, long until) {
     }
@@ -193,8 +198,11 @@ public final class RadiationService {
     @org.jetbrains.annotations.Nullable
     public static PointSource itemSource(net.minecraft.world.item.ItemStack stack, long tick) {
         ActivityData a = stack.get(ActivityData.ACTIVITY.get());
-        if (a == null) return null;
-        PointSource one = a.inventory(tick).source();
+        ActivityData shielded = stack.get(dev.denfry.promptcritical.mod.isotopes.IsotopeComponents.SHIELDED_SOURCE.get());
+        if (a == null && shielded == null) return null;
+        PointSource one = a == null ? PointSource.NONE : a.inventory(tick).source();
+        // источник в защитном контейнере (дефектоскоп из обеднённого урана): на поверхности — единицы мЗв/ч
+        if (shielded != null) one = one.plus(shielded.inventory(tick).source().scaled(CONTAINER_TRANSMISSION));
         return stack.getCount() == 1 ? one : one.scaled(stack.getCount());
     }
 

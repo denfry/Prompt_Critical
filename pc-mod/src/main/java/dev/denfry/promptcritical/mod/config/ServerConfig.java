@@ -18,6 +18,8 @@ public final class ServerConfig {
 
     // --- 00, 01, 02 ---
     public static final ModConfigSpec.DoubleValue K_SLOW;
+    public static final ModConfigSpec.DoubleValue ISOTOPES_GAMMA_HEATING_W_PER_G, ISOTOPES_FILM_EXPOSURE_GY, ISOTOPES_RTG_TE_SYSTEM_FACTOR,
+            ISOTOPES_RTG_TE_DEGRADATION_PER_YEAR;
     public static final ModConfigSpec.DoubleValue K_STORAGE;
     public static final ModConfigSpec.DoubleValue K_BURN;
     public static final ModConfigSpec.EnumValue<DecayHeatClock> DECAY_HEAT_CLOCK;
@@ -371,6 +373,17 @@ public final class ServerConfig {
         b.push("body");
         BODY_ELECTRIC_SHOCK = b.comment("A player touching a live bare busbar while earthed gets an electric shock (IEC 60479-1, Dalziel)")
                 .define("electric_shock", true);
+        b.pop();
+
+        b.push("isotopes");
+        ISOTOPES_GAMMA_HEATING_W_PER_G = b.comment("Gamma heating of a capsule in a PWR-like core at 100 W/cm3, W/g; scaled by the local power density (12 §12.1.4)")
+                .defineInRange("gamma_heating_w_per_g", 5.0, 0.0, 100.0);
+        ISOTOPES_FILM_EXPOSURE_GY = b.comment("[BALANCE] Air kerma behind the weld a radiography film needs, Gy (12 §12.2.3; industrial film is a few mGy)")
+                .defineInRange("film_exposure_gy", 5e-3, 1e-6, 1.0);
+        ISOTOPES_RTG_TE_SYSTEM_FACTOR = b.comment("System to material efficiency ratio of a thermoelectric RTG (12 §12.5.4)")
+                .defineInRange("rtg_te_system_factor", 0.8, 0.1, 1.0);
+        ISOTOPES_RTG_TE_DEGRADATION_PER_YEAR = b.comment("[BALANCE] Thermoelement degradation per physical year (12 §12.5.4)")
+                .defineInRange("rtg_te_degradation_per_year", 0.03, 0.0, 0.5);
         b.pop();
 
         b.push("machining");

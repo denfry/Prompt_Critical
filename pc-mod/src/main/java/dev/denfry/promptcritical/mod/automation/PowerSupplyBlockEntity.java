@@ -44,6 +44,10 @@ public class PowerSupplyBlockEntity extends AutomationPanelBlockEntity implement
         double rated = u.supplyRatedA();
         if (aux != null) aux.setRatedPowerW(rated * 24 / AuxSupplyUnit.EFFICIENCY);
         double in = !Double.isNaN(benchInput) ? benchInput : aux == null ? 0 : aux.inputPu();
+        // РИТЭГ вплотную — автономное питание реле удалённого объекта (12 §12.5.1)
+        if (level != null && in < BATTERY_TAKEOVER_PU)
+            in = Math.max(in, dev.denfry.promptcritical.mod.isotopes.RtgBlockEntity.supplyPu(level, worldPosition,
+                    rated * 24 / AuxSupplyUnit.EFFICIENCY, level.getGameTime()));
         // батарея рядом: при шине — подзаряд, без шины — питает реле, пока не разрядится
         StationBatteryBlockEntity battery = StationBatteryBlockEntity.adjacent(level, worldPosition);
         if (battery != null) {

@@ -103,6 +103,10 @@ public final class ChannelReactor {
     private DelayedGroups groups = dev.denfry.promptcritical.sim.neutronics.DelayedNeutronData.keepin(0);
     private double staticRho, evalFuelK, evalGraphiteK, alphaDoppler, alphaGraphite, betaEff, generation, keff, sigmaA, sigmaF;
     private double totalRho, fissionW, slowTimer = 1e9;
+    /** Экстраполированный радиус зоны, м, и средний J₀ по загруженным каналам — для потока в облучательном канале. */
+    private double extrapolatedR = 1, meanJ0 = 1;
+    /** Поглощение мишеней облучательных каналов, см², приведённое к ценности в центре канала (12 §12.1.1). */
+    private double irradiationAbsorberCm2;
     private int loaded, newlyFailed;
 
     public ChannelReactor() {
@@ -359,6 +363,8 @@ public final class ChannelReactor {
             share[i] = hm0[i] > 0 ? Math.max(0.05, j0(2.405 * radius[i] / r)) : 0;
             sum += share[i];
         }
+        extrapolatedR = r;
+        meanJ0 = loaded > 0 && sum > 0 ? sum / loaded : 1;
         for (int i = 0; i < CHANNELS; i++) share[i] = sum > 0 ? share[i] / sum : 0;
     }
 
@@ -381,7 +387,47 @@ public final class ChannelReactor {
         int broken = 0;
         for (boolean f : failed) if (f) broken++;
         return staticRho + alphaDoppler * (fuelK - evalFuelK) + alphaGraphite * (graphiteK - evalGraphiteK)
-                + ALPHA_WATER * (waterDensity - WATER_REF) + rodReactivity() + INGRESS_RHO * broken;
+                + ALPHA_WATER * (waterDensity - WATER_REF) + rodReactivity() + INGRESS_RHO * broken + irradiationWorth();
+    }
+
+    // ------------------------------------------------------------------ облучательные каналы (12 §12.1)
+
+    /** Радиус экспериментальных каналов в кладке АМ-1, м: второе кольцо от оси, поток близок к максимальному. */
+    public static final double EXPERIMENTAL_CHANNEL_R_M = 0.3;
+    /** Средний J₀² по сечению цилиндра J₁(2,405)² — нормировка ценности нейтронов для возмущения. */
+    private static final double MEAN_J0_SQUARED = 0.2695;
+
+    /**
+     * Тепловой поток на радиусе {@code rM}, н/(см²·с): средний по зоне поток при текущей мощности, распределённый по
+     * J₀ так же, как доли мощности каналов. За экстраполированной границей — 0.
+     */
+    public double fluxAt(double rM) {
+        if (loaded <= 0 || meanJ0 <= 0) return 0;
+        double x = 2.405 * Math.max(0, rM) / extrapolatedR;
+        return x >= 2.405 ? 0 : flux(power()) * Math.max(0, j0(x)) / meanJ0;
+    }
+
+    /**
+     * Поглощение мишеней каналов облучения, см² (Σ N·σ_a·f по капсулам). Реактивность — односкоростная теория
+     * возмущений: Δρ = −ΔA·w/(Σ_a·V), w = J₀²(r)/⟨J₀²⟩ — ценность нейтронов в месте канала (12 §12.1.1).
+     */
+    public void setIrradiationAbsorber(double cm2) {
+        irradiationAbsorberCm2 = Math.max(0, cm2);
+    }
+
+    /** Реактивность мишеней облучательных каналов, Δk/k (≤ 0). */
+    public double irradiationWorth() {
+        if (irradiationAbsorberCm2 <= 0 || sigmaA <= 0 || loaded <= 0) return 0;
+        double vCm3 = Math.PI * Math.pow(coreRadius() * 100, 2) * HEIGHT_M * 100;
+        double j = j0(2.405 * EXPERIMENTAL_CHANNEL_R_M / extrapolatedR);
+        return -irradiationAbsorberCm2 * (j * j / MEAN_J0_SQUARED) / (sigmaA * vCm3);
+    }
+
+    /** Масса тяжёлого металла в зоне, кг. */
+    public double heavyMetalKg() {
+        double s = 0;
+        for (double v : hm0) s += v;
+        return s;
     }
 
     private void moveRods() {
