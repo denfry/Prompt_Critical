@@ -151,14 +151,11 @@ public final class PcBlockStateProvider extends BlockStateProvider {
             case "water_clarifier" -> java.util.List.of(base, id + "/partial/rake");
             case "rotary_table" -> java.util.List.of(base, id + "/partial/turntable", id + "/partial/kelly");
             case "mud_pump" -> java.util.List.of(base, id + "/partial/crankshaft");
-            case "gas_compressor" -> java.util.List.of(base, "reciprocating_compressor/partial/crankshaft",
-                    "reciprocating_compressor/partial/pistons");
             case "ldpe_reactor" -> java.util.List.of(base, "hyper_compressor/partial/crankshaft", "hyper_compressor/partial/plunger");
             case "brine_treater" -> java.util.List.of(base, "water_clarifier/partial/rake");
             case "leach_tank" -> java.util.List.of(base, id + "/partial/agitator");
             case "rotary_calciner", "hf_kiln" -> java.util.List.of(base, id + "/partial/shell");
             case "mixer_settler" -> java.util.List.of(base, id + "/partial/impeller");
-            case "pvc_reactor" -> java.util.List.of(base, "high_pressure_autoclave/partial/agitator");
             case "ammonia_converter" -> java.util.List.of(base, "ammonia_synthesis_reactor/partial/compressor_wheel");
             case "pellet_press" -> java.util.List.of(base, "pellet_press/partial/ram");
             case "primary_pump" -> java.util.List.of(base, "primary_pump/partial/impeller");
@@ -232,7 +229,6 @@ public final class PcBlockStateProvider extends BlockStateProvider {
             case "headframe" -> s.getValue(PcProperties.TOP) ? id + "_top" : id;
             case "mine_cage" -> s.getValue(BlockStateProperties.OPEN) ? id + "_open" : id;
             // нефть и газ I2
-            case "gas_compressor" -> "reciprocating_compressor";
             case "glycol_regenerator" -> s.getValue(PcProperties.RUNNING) ? id + "_running" : id;
             case "low_temperature_separator" -> s.getValue(BlockStateProperties.LIT) ? "cold_box_cold" : "cold_box";
             case "ngl_fractionator" -> "column_base_large";
@@ -251,22 +247,20 @@ public final class PcBlockStateProvider extends BlockStateProvider {
             case "brine_treater" -> "water_clarifier";
             case "rectifier_unit" -> s.getValue(PcProperties.ALARM) ? "rectifier_unit_fault"
                     : s.getValue(PcProperties.RUNNING) ? "rectifier_unit" : "rectifier_unit_off";
-            case "chlorine_liquefier" -> s.getValue(PcProperties.RUNNING) ? "air_dryer_wet" : "air_dryer";
+            case "chlorine_liquefier" -> s.getValue(PcProperties.RUNNING) ? id + "_running" : id;
             case "edc_unit" -> "chlorination_reactor";
             case "edc_cracker" -> s.getValue(PcProperties.ALARM) ? "tube_furnace_controller_tripped"
                     : s.getValue(BlockStateProperties.LIT) ? "tube_furnace_controller_cracking" : "tube_furnace_controller";
-            case "pvc_reactor" -> "high_pressure_autoclave";
             // химия I3, азот
             case "steam_reformer" -> s.getValue(BlockStateProperties.LIT) ? "tube_furnace_radiant_catalyst_lit" : "tube_furnace_radiant_catalyst";
             case "co2_absorber" -> "absorption_tower";
             case "ammonia_converter" -> "ammonia_synthesis_reactor";
             case "nitric_acid_unit" -> "ostwald_converter";
-            case "acid_concentrator" -> "fractionating_column";
+            case "acid_concentrator" -> s.getValue(BlockStateProperties.LIT) ? id + "_lit" : id;
             // химия I3, метанол
             case "methanol_converter" -> "fixed_bed_reactor";
             case "hydrotreater" -> "fixed_bed_reactor_large";
             case "claus_unit" -> "claus_reaction_furnace";
-            case "catalytic_reformer" -> "fixed_bed_reactor_regen";
             case "delayed_coker" -> "tube_furnace_controller";
             case "methanol_column" -> "fractionating_column";
             // ядерное топливо I4

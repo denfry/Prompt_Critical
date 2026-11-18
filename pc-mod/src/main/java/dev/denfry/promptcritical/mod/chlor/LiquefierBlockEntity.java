@@ -37,6 +37,9 @@ import net.minecraft.world.level.block.state.BlockState;
 import net.neoforged.neoforge.fluids.capability.IFluidHandler;
 import net.neoforged.neoforge.items.IItemHandler;
 import org.jetbrains.annotations.Nullable;
+import dev.denfry.promptcritical.mod.fx.MachineFx;
+import net.minecraft.world.level.block.state.properties.BlockStateProperties;
+import net.minecraft.world.phys.Vec3;
 
 /**
  * Отделение осушки и сжижения хлора ({@link ChlorineLiquefier}) 1×2×1: сушильные башни с серной кислотой, компрессор
@@ -83,8 +86,20 @@ public final class LiquefierBlockEntity extends DeviceBlockEntity implements Fou
         return ventKgS;
     }
 
+    /** Работающий ожижитель (арт art/blockbench/chlor_alkali/chlorine_liquefier.author.js): с заиндевевшего конденсатора и сборника стекает холодный туман. */
+    private void clientFx() {
+        MachineFx fx = MachineFx.of(level, worldPosition, getBlockState().getValue(BlockStateProperties.HORIZONTAL_FACING));
+        if (fx == null || !getBlockState().getValue(PcProperties.RUNNING)) return;
+        if (fx.chance(4)) fx.puff(fx.at(2.4 + fx.random().nextDouble() * 11.2, 17, 8), new Vec3(0, -0.03, 0), 1);
+        if (fx.chance(2)) fx.puff(fx.at(8, 1, 8), new Vec3(0, -0.03, 0), 1);
+    }
+
     @Override
     public void tickDevice() {
+        if (level != null && level.isClientSide) {
+            clientFx();
+            return;
+        }
         if (!(level instanceof ServerLevel s)) return;
         SimLevelBinding b = SimBindings.get(s);
         if (b == null) return;

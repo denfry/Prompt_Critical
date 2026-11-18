@@ -35,6 +35,9 @@ import net.neoforged.neoforge.fluids.capability.IFluidHandler;
 import net.neoforged.neoforge.items.IItemHandler;
 import net.neoforged.neoforge.items.ItemStackHandler;
 import org.jetbrains.annotations.Nullable;
+import dev.denfry.promptcritical.mod.fx.MachineFx;
+import net.minecraft.world.level.block.state.properties.BlockStateProperties;
+import dev.denfry.promptcritical.mod.sound.PcSfx;
 
 /**
  * Автоклав суспензионной полимеризации ВХ ({@link PvcReactor}) 1×3×1 с мешалкой. Винилхлорид (л) и вода — трубами к
@@ -78,8 +81,19 @@ public final class PvcReactorBlockEntity extends DeviceBlockEntity implements Fo
         return vcm;
     }
 
+    /** Работающий автоклав (арт art/blockbench/polymers/pvc_reactor.author.js): гудит электродвигатель мешалки. */
+    private void clientFx() {
+        MachineFx fx = MachineFx.of(level, worldPosition, getBlockState().getValue(BlockStateProperties.HORIZONTAL_FACING));
+        if (fx == null || !getBlockState().getValue(PcProperties.RUNNING)) return;
+        if (fx.chance(0.5)) fx.sound(fx.at(13.6, 30, 8), PcSfx.ELECTRIC_MOTOR.get(), 0.35f, 1.1f);
+    }
+
     @Override
     public void tickDevice() {
+        if (level != null && level.isClientSide) {
+            clientFx();
+            return;
+        }
         if (!(level instanceof ServerLevel)) return;
         heatW = 0;
         switch (reactor.phase()) {

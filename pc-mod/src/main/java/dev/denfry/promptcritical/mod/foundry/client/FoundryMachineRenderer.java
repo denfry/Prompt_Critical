@@ -45,6 +45,8 @@ public final class FoundryMachineRenderer<T extends BlockEntity> implements Bloc
     private final float gear;
     /** Рисовать полувал Create в грани входа (нет, если вал есть в самой части). */
     private final boolean halfShaft;
+    /** Обороты части у машины без вала Create, пока блок в состоянии {@code running} (мешалка автоклава). */
+    private float runningRpm;
 
     public FoundryMachineRenderer(@Nullable PartialModel part, Motion motion, float a, float b, float gear) {
         this(part, motion, a, b, gear, true);
@@ -57,6 +59,13 @@ public final class FoundryMachineRenderer<T extends BlockEntity> implements Bloc
         this.a = a / 16f;
         this.b = b / 16f;
         this.gear = gear;
+    }
+
+    /** Часть машины без вала Create, которая крутится с {@code rpm} оборотами, пока машина работает. */
+    public static <T extends BlockEntity> FoundryMachineRenderer<T> whileRunning(PartialModel part, Motion motion, float a, float b, float rpm) {
+        FoundryMachineRenderer<T> r = new FoundryMachineRenderer<>(part, motion, a, b, 1, false);
+        r.runningRpm = rpm;
+        return r;
     }
 
     @Override
@@ -73,14 +82,14 @@ public final class FoundryMachineRenderer<T extends BlockEntity> implements Bloc
         Direction facing = state.getBlock() instanceof PcBlock pc ? pc.facing(state) : Direction.NORTH;
         buf.center().rotateYDegrees(-(facing.toYRot() + 180)).uncenter();
         float time = AnimationTickHolder.getRenderTime(be.getLevel());
-        float speed = kbe == null ? 0 : kbe.getSpeed() * gear;
+        boolean running = state.hasProperty(PcProperties.RUNNING) && state.getValue(PcProperties.RUNNING);
+        float speed = kbe != null ? kbe.getSpeed() * gear : running ? runningRpm : 0;
         float angle = (time * speed * 3f / 10f) % 360f;
         switch (motion) {
             case SPIN_X -> buf.translate(0, a, b).rotateXDegrees(angle).translate(0, -a, -b);
             case SPIN_Y -> buf.translate(a, 0, b).rotateYDegrees(angle).translate(-a, 0, -b);
             case SPIN_Z -> buf.translate(a, b, 0).rotateZDegrees(angle).translate(-a, -b, 0);
             case JOLT -> {
-                boolean running = state.hasProperty(PcProperties.RUNNING) && state.getValue(PcProperties.RUNNING);
                 if (running) buf.translate(0, (float) Math.abs(Math.sin(time * 0.6)) * 1.5f / 16f, 0);
             }
             case SLIDE_X -> buf.translate((float) Math.sin(Math.toRadians(angle)) * a, 0, 0);
