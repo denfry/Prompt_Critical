@@ -79,6 +79,8 @@ neoForge {
             client()
             sourceSet = gametest
             systemProperty("neoforge.enabledGameTestNamespaces", modId)
+            // /test run в клиенте: собрать установку из игрового теста и посмотреть её вживую
+            systemProperty("neoforge.enableGameTest", "true")
             // ./gradlew :pc-mod:runClient -PquickPlay=<мир> — сразу войти в мир из run/saves
             providers.gradleProperty("quickPlay").orNull?.let { programArguments.addAll("--quickPlaySingleplayer", it) }
         }
