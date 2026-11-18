@@ -855,6 +855,19 @@ public final class PcBlocks {
     public static final DeferredBlock<PcBlock> ASU_EXPANDER = block("asu_expander", machine(), Spec.facing());
     public static final DeferredBlock<PcDeviceBlock> CRYOGENIC_TANK = device("cryogenic_tank", machine(),
             Spec.facing(PcProperties.CRYO_KIND).footprint(FP_TALL3), FoundryBlock.with(CryoTankBlockEntity::new));
+    // --- цветная металлургия (08 §8.8, M3): глинозём по Байеру ---
+    /** Объём аппаратов Байера 2×3×2 по модели: якорь — средний ярус левой передней колонны. */
+    private static final Footprint FP_BAYER = Footprint.of(Segment.box(0, 1, -1, 1, 0, 1));
+    public static final DeferredBlock<PcDeviceBlock> BAYER_DIGESTER = device("bayer_digester", machine(),
+            Spec.facing(PcProperties.RUNNING).footprint(FP_BAYER),
+            FoundryBlock.with(dev.denfry.promptcritical.mod.nonferrous.BayerDigesterBlockEntity::new));
+    public static final DeferredBlock<PcDeviceBlock> ALUMINA_PRECIPITATOR = device("alumina_precipitator", machine(),
+            Spec.facing(PcProperties.RUNNING).footprint(FP_BAYER),
+            FoundryBlock.with(dev.denfry.promptcritical.mod.nonferrous.AluminaPrecipitatorBlockEntity::new));
+    /** Вращающаяся печь прокалки гидроксида: модель {@code rotary_calciner} (02), своя печь у глинозёмного цеха. */
+    public static final DeferredBlock<PcDeviceBlock> ALUMINA_CALCINER = device("alumina_calciner", machine(),
+            Spec.facing(PcProperties.RUNNING), FoundryBlock.with(dev.denfry.promptcritical.mod.nonferrous.AluminaCalcinerBlockEntity::new));
+
     // --- эксплуатация и водоподготовка (13 §13.6.5–13.6.7, 08 §8.12, этап 11а M3) ---
     public static final DeferredBlock<PcDeviceBlock> MAINTENANCE_PANEL = device("maintenance_panel", instrument(),
             Spec.facing(PcProperties.SEVERITY), GridMountedBlock.wall(MaintenancePanelBlockEntity::new, 1, 1, 13, 15, 15, 16));

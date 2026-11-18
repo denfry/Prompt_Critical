@@ -141,6 +141,9 @@ public final class PcItems {
 
     // --- электросеть I1 (07 §7.22) ---
     public static final DeferredItem<Item> COPPER_WIRE = item("copper_wire", 64);
+    // --- цветная металлургия (08 §8.8): массы — NonferrousUnits ---
+    public static final DeferredItem<Item> ALUMINIUM_HYDROXIDE = item("aluminium_hydroxide", 64);
+    public static final DeferredItem<Item> ALUMINA = item("alumina", 64);
     public static final DeferredItem<Item> GENERATOR_COUPLING = item("generator_coupling", 16);
     /** Подогреватель рубашки ДГ (07 §7.11.3): без него на морозе отказ пуска вчетверо вероятнее. */
     public static final DeferredItem<Item> JACKET_HEATER = item("jacket_heater", 16);
