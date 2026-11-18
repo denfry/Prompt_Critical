@@ -142,6 +142,9 @@ public final class DeviceProfiles {
         String simple = be.getClass().getSimpleName();
         return switch (simple) {
             case "MudPumpBlockEntity" -> CACHE.computeIfAbsent(simple, k -> panelPump("MUD").also("pc_drilling").build());
+            case "LoggingUnitBlockEntity" -> CACHE.computeIfAbsent(simple, k -> DeviceProfile.builder("pc_drilling", "LOGGING")
+                    .also("pc_logging").button("startLog", DrillingPanels.LB_LOG)
+                    .read("getLogCurve", 32, (b, s, a) -> logCurve((dev.denfry.promptcritical.mod.drilling.LoggingUnitBlockEntity) b, a)).build());
             case "MineDrainagePumpBlockEntity" -> CACHE.computeIfAbsent(simple, k -> panelPump("MINE_DRAINAGE").also("pc_mine").build());
             case "DegasificationPumpBlockEntity" -> CACHE.computeIfAbsent(simple, k -> panelPump("DEGASIFICATION").also("pc_mine").build());
             case "WellheadBlockEntity" -> CACHE.computeIfAbsent(simple, k -> DeviceProfile.builder("pc_well", "FLOWING")
@@ -250,6 +253,32 @@ public final class DeviceProfiles {
         for (double v : c.loadN()) f.add(v);
         m.put("position", x);
         m.put("load", f);
+        return m;
+    }
+
+    /** {@code getLogCurve(curve)} 09 §9.13.2: {@code "GR"}, {@code "NPHI"} или {@code "RT"}; {@code nil} — кривой нет. */
+    private static Object logCurve(dev.denfry.promptcritical.mod.drilling.LoggingUnitBlockEntity u, Object[] a) throws DeviceException {
+        String name = LuaArgs.string(a, 0).toUpperCase(java.util.Locale.ROOT);
+        dev.denfry.promptcritical.sim.drilling.WellLogging.Curve c;
+        try {
+            c = dev.denfry.promptcritical.sim.drilling.WellLogging.Curve.valueOf(name);
+        } catch (IllegalArgumentException e) {
+            throw LuaArgs.arg(0, "GR, NPHI or RT");
+        }
+        double[] d = u.curve(c);
+        if (d == null || u.running()) return null;
+        Map<String, Object> m = new LinkedHashMap<>();
+        m.put("top", u.topM());
+        m.put("step", dev.denfry.promptcritical.sim.drilling.WellLogging.STEP_M);
+        m.put("n", d.length);
+        m.put("unit", switch (c) {
+            case GR -> "API";
+            case NPHI -> "v/v";
+            case RT -> "ohm.m";
+        });
+        List<Double> data = new ArrayList<>(d.length);
+        for (double v : d) data.add(v);
+        m.put("data", data);
         return m;
     }
 

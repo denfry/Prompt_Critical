@@ -1,0 +1,32 @@
+{
+  "parent": "minecraft:recipes/root",
+  "criteria": {
+    "has_drillers_console": {
+      "conditions": {
+        "items": [
+          {
+            "items": "promptcritical:drillers_console"
+          }
+        ]
+      },
+      "trigger": "minecraft:inventory_changed"
+    },
+    "has_the_recipe": {
+      "conditions": {
+        "recipe": "promptcritical:drilling/core_barrel"
+      },
+      "trigger": "minecraft:recipe_unlocked"
+    }
+  },
+  "requirements": [
+    [
+      "has_the_recipe",
+      "has_drillers_console"
+    ]
+  ],
+  "rewards": {
+    "recipes": [
+      "promptcritical:drilling/core_barrel"
+    ]
+  }
+}

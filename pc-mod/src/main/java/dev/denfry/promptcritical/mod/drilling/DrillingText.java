@@ -66,6 +66,25 @@ public final class DrillingText {
                 "Бурильная колонна срезана: колонна потеряна, циркуляция невозможна");
         put("ram_kind", "Rams: %s", "Плашки: %s");
         put("ram_closed", "Open the rams before changing them", "Сначала откройте плашки");
+        // каротаж и керн 09 §9.2.5–9.2.6
+        put("sonde_loaded", "Sonde loaded: %s", "Зонд подключён: %s");
+        put("curve.gr", "gamma ray", "гамма-каротаж");
+        put("curve.nphi", "neutron", "нейтронный каротаж");
+        put("curve.rt", "resistivity", "электрокаротаж");
+        put("log_busy", "Logging run in progress", "Идёт каротаж");
+        put("log_no_sonde", "Load a sonde first", "Сначала подключите зонд");
+        put("log_no_well", "No driller's console with a well within reach", "Рядом нет пульта бурильщика со скважиной");
+        put("log_not_static", "Stop the pumps and open the preventer before logging", "Перед каротажем остановите насосы и откройте превентор");
+        put("log_started", "Logging from %s m to %s m at 0.15 m/s", "Каротаж от %s до %s м на 0,15 м/с");
+        put("log_stuck", "Sonde stuck at %s m and left in the hole", "Прихват зонда на %s м: зонд остался в стволе");
+        put("log_stuck_source", "Sonde with the Am-Be source stuck at %s m: the source stays in the hole, log it in the station journal",
+                "Прихват зонда с источником Am-Be на %s м: источник остался в стволе, запишите в журнал станции");
+        put("core_taken", "Core cut: %s to %s m", "Отобран керн: %s–%s м");
+        put("core_tip", "Core %s–%s m · %s", "Керн %s–%s м · %s");
+        put("core_sand", "sandstone", "песчаник");
+        put("core_shale", "shale", "глина");
+        put("core_uv", "Glows under UV: oil", "Светится под УФ: нефть");
+        put("core_measured", "Porosity %s · permeability %s mD · water saturation %s", "Пористость %s · проницаемость %s мД · водонасыщенность %s");
         put("component.annular", "annular", "кольцевой");
         put("component.pipe_ram", "pipe rams", "трубные плашки");
         put("component.blind_ram", "blind rams", "глухие плашки");

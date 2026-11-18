@@ -455,6 +455,13 @@ public final class PcBlocks {
     public static final DeferredBlock<PcDeviceBlock> SEISMIC_RECORDER = device("seismic_recorder", instrument(),
             Spec.facing(BlockStateProperties.LIT), FoundryBlock.with(dev.denfry.promptcritical.mod.drilling.SeismicRecorderBlockEntity::new));
     public static final DeferredBlock<PcBlock> GEOPHONE = block("geophone", instrument().noCollission(), Spec.of());
+    // каротаж и керн 09 §9.2.5–9.2.6
+    public static final DeferredBlock<PcDeviceBlock> LOGGING_UNIT = device("logging_unit", machine(),
+            Spec.facing(PcProperties.RUNNING).footprint(Footprint.of(Segment.box(-1, 1, 0, 1, 0, 1))),
+            FoundryBlock.with(dev.denfry.promptcritical.mod.drilling.LoggingUnitBlockEntity::new));
+    public static final DeferredBlock<PcDeviceBlock> CORE_ANALYSIS_STATION = device("core_analysis_station", instrument(),
+            Spec.facing(PcProperties.RUNNING).footprint(FP_WIDE2),
+            FoundryBlock.with(dev.denfry.promptcritical.mod.drilling.CoreAnalysisStationBlockEntity::new));
     public static final DeferredBlock<PcDeviceBlock> DRILLERS_CONSOLE = device("drillers_console", machine(),
             Spec.facing(BlockStateProperties.LIT, PcProperties.ALARM).footprint(FP_TALL2),
             FoundryBlock.with(dev.denfry.promptcritical.mod.drilling.DrillersConsoleBlockEntity::new));

@@ -324,6 +324,8 @@ public final class PcLanguageProvider extends LanguageProvider {
         b("derrick_segment", "Derrick Section", "Секция вышки");
         b("bop_annular", "Annular Preventer", "Кольцевой превентор");
         b("bop_ram", "Ram Preventer", "Плашечный превентор");
+        b("logging_unit", "Logging Unit", "Каротажный подъёмник");
+        b("core_analysis_station", "Core Analysis Station", "Станция анализа керна");
         b("bop_accumulator", "BOP Accumulator Unit", "Аккумуляторная установка ПВО");
         b("choke_manifold", "Choke Manifold", "Манифольд дросселирования");
         b("mud_tank", "Mud Tank", "Ёмкость бурового раствора");
@@ -461,6 +463,11 @@ public final class PcLanguageProvider extends LanguageProvider {
         i("sucker_rod", "Sucker Rod", "Насосная штанга");
         i("downhole_rod_pump", "Downhole Rod Pump", "Штанговый глубинный насос");
         i("gas_lift_valve", "Gas Lift Valve", "Газлифтный клапан");
+        i("gamma_logging_sonde", "Gamma Ray Sonde", "Зонд гамма-каротажа");
+        i("neutron_logging_sonde", "Neutron Sonde (Am-Be)", "Зонд нейтронного каротажа (Am-Be)");
+        i("resistivity_logging_sonde", "Resistivity Sonde", "Зонд электрокаротажа");
+        i("core_barrel", "Core Barrel", "Керноотборник");
+        i("reservoir_core", "Reservoir Core", "Керн");
         i("seismic_section", "Seismic Section", "Сейсмический разрез");
         i("copper_wire", "Copper Wire", "Медная проволока");
         i("generator_coupling", "Shear-Pin Coupling", "Муфта со срезным штифтом");

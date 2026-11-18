@@ -34,6 +34,13 @@ public final class DrillingPanels {
             AF_RIG = 7, AF_SHEARED = 8;
     public static final int AB_ANNULAR = 0, AB_PIPE = 1, AB_BLIND = 2, AB_SHEAR = 3, AB_TEST = 4;
 
+    // каротажный подъёмник 09 §9.2.5
+    public static final int L_FLAGS = 0, L_DEPTH = 1, L_TOP = 2, L_BOTTOM = 3, L_RUNS = 4, L_GR = 5,
+            L_NPHI = L_GR + 2 * LoggingUnitBlockEntity.POINTS, L_RT = L_NPHI + 2 * LoggingUnitBlockEntity.POINTS,
+            L_CHANNELS = L_RT + 2 * LoggingUnitBlockEntity.POINTS;
+    public static final int LF_RUNNING = 0, LF_STUCK = 1, LF_DONE = 2, LF_GR = 3, LF_NPHI = 4, LF_RT = 5;
+    public static final int LB_LOG = 0;
+
     // буровой насос
     public static final int P_SHAFT_RPM10 = 0, P_SPM = 1, P_SPP_X100 = 2, P_FLAGS = 3, P_KW = 4, P_CHANNELS = 5;
     public static final int PF_RUNNING = 0;
@@ -132,6 +139,32 @@ public final class DrillingPanels {
                     v.num(C_STICK_T10, 10, 1), v.num(C_OVERPULL_T10, 10, 1)))
             .noInventory().build();
 
+    private static final Tr LOG_GR = PanelText.tr("log.gr", "GR, API", "ГК, API"),
+            LOG_NPHI = PanelText.tr("log.nphi", "Neutron porosity, ‰", "Нейтронная пористость, ‰"),
+            LOG_RT = PanelText.tr("log.rt", "Rt, 0.1 Ω·m", "Rt, 0,1 Ом·м"),
+            LOG_TIP = PanelText.tr("log.tip", "From the shoe (left) to TD (right), %s to %s m", "От башмака (слева) до забоя (справа), %s–%s м"),
+            LOG_RUN = PanelText.tr("log.run", "Logging", "Запись"),
+            LOG_STUCK = PanelText.tr("log.stuck", "Stuck", "Прихват"),
+            LOG_DONE = PanelText.tr("log.done", "Log ready", "Готово"),
+            LOG_BUTTON = PanelText.tr("log.button", "Log", "Каротаж"),
+            LOG_BUTTON_TIP = PanelText.tr("log.button_tip", "Run the loaded sondes from the shoe to TD and log on the way up at 0.15 m/s",
+                    "Спустить подключённые зонды от башмака до забоя и записать при подъёме на 0,15 м/с"),
+            LOG_STATUS = PanelText.tr("log.status", "Sonde at %s m · runs %s", "Зонд на %s м · рейсов %s");
+
+    public static final PanelLayout LOGGING = PanelLayout.builder("logging_unit", 300, 214, L_CHANNELS)
+            .plot(8, 20, 284, 44, L_GR, LoggingUnitBlockEntity.POINTS, 1000, 150, L_FLAGS, LF_DONE, LOG_GR.get(),
+                    v -> LOG_TIP.get(v.raw(L_TOP), v.raw(L_BOTTOM)))
+            .plot(8, 76, 284, 44, L_NPHI, LoggingUnitBlockEntity.POINTS, 1000, 400, L_FLAGS, LF_DONE, LOG_NPHI.get(),
+                    v -> LOG_TIP.get(v.raw(L_TOP), v.raw(L_BOTTOM)))
+            .plot(8, 132, 284, 44, L_RT, LoggingUnitBlockEntity.POINTS, 1000, 400, L_FLAGS, LF_DONE, LOG_RT.get(),
+                    v -> LOG_TIP.get(v.raw(L_TOP), v.raw(L_BOTTOM)))
+            .lamp(8, 184, L_FLAGS, LF_RUNNING, LampColor.GREEN, LOG_RUN.get())
+            .lamp(70, 184, L_FLAGS, LF_STUCK, LampColor.RED, LOG_STUCK.get())
+            .lamp(132, 184, L_FLAGS, LF_DONE, LampColor.AMBER, LOG_DONE.get())
+            .button(246, 182, 46, LB_LOG, LOG_BUTTON.get(), LOG_BUTTON_TIP.get())
+            .readout(8, 200, 284, v -> LOG_STATUS.get(v.raw(L_DEPTH), v.raw(L_RUNS)), null)
+            .noInventory().build();
+
     private static final Tr ACC = PanelText.tr("bop.accumulator", "Accumulator", "Аккумулятор"),
             ACC_TIP = PanelText.tr("bop.accumulator_tip", "Nitrogen-charged bottles: precharge 7 MPa, closes down to 8.3 MPa, full 21 MPa",
                     "Баллоны с азотом: предзарядка 7 МПа, закрывает до 8,3 МПа, полная зарядка 21 МПа"),
@@ -195,6 +228,6 @@ public final class DrillingPanels {
     }
 
     public static List<PanelLayout> all() {
-        return List.of(CONSOLE, PUMP, ACCUMULATOR);
+        return List.of(CONSOLE, PUMP, ACCUMULATOR, LOGGING);
     }
 }

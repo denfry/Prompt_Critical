@@ -548,12 +548,18 @@ public final class DrillersConsoleBlockEntity extends DeviceBlockEntity implemen
 
     @Override
     public boolean accepts(ItemStack stack) {
-        return false;
+        return stack.is(dev.denfry.promptcritical.mod.registry.PcItems.CORE_BARREL.get());
     }
 
+    /** Керноотборник: керн последних 9 м ствола (09 §9.2.6, {@link CoreBarrel}). */
     @Override
     public ItemInteractionResult useItem(Player player, InteractionHand hand, ItemStack stack) {
-        return ItemInteractionResult.PASS_TO_DEFAULT_BLOCK_INTERACTION;
+        if (well == null) return ItemInteractionResult.CONSUME;
+        ItemStack core = CoreBarrel.core(well);
+        if (!player.getInventory().add(core)) player.drop(core, false);
+        double top = Math.max(well.geometry().shoeDepthM(), well.holeDepthM() - CoreBarrel.LENGTH_M);
+        player.displayClientMessage(DrillingText.msg("core_taken", DrillingText.num(top, 0), DrillingText.num(top + CoreBarrel.LENGTH_M, 0)), true);
+        return ItemInteractionResult.SUCCESS;
     }
 
     /** Shift и правый клик — сводка. */

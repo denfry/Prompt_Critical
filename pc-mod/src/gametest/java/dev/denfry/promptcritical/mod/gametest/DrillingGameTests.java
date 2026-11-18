@@ -7,7 +7,9 @@ import dev.denfry.promptcritical.mod.PromptCritical;
 import dev.denfry.promptcritical.mod.block.PcProperties;
 import dev.denfry.promptcritical.mod.drilling.BopAccumulatorBlockEntity;
 import dev.denfry.promptcritical.mod.drilling.DrillersConsoleBlockEntity;
+import dev.denfry.promptcritical.mod.drilling.CoreAnalysisStationBlockEntity;
 import dev.denfry.promptcritical.mod.drilling.DrillingPanels;
+import dev.denfry.promptcritical.mod.drilling.LoggingUnitBlockEntity;
 import dev.denfry.promptcritical.mod.drilling.MudHopperBlockEntity;
 import dev.denfry.promptcritical.mod.drilling.SeismicRecorderBlockEntity;
 import dev.denfry.promptcritical.mod.registry.PcBlocks;
@@ -19,6 +21,7 @@ import dev.denfry.promptcritical.sim.drilling.KillSheet;
 import dev.denfry.promptcritical.sim.drilling.Prospect;
 import dev.denfry.promptcritical.sim.drilling.Trap;
 import dev.denfry.promptcritical.sim.drilling.Well;
+import dev.denfry.promptcritical.sim.drilling.WellLogging;
 import java.util.UUID;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
@@ -257,6 +260,68 @@ public final class DrillingGameTests {
                     BopStack.Fault f = c.closeComponent(BopStack.Component.SHEAR_RAM, null);
                     h.assertTrue(f == BopStack.Fault.TOOL_JOINT_IN_RAM ? !c.bopStack().pipeSheared() : c.bopStack().pipeSheared(),
                             "shear rams: " + f + ", sheared " + c.bopStack().pipeSheared());
+                })
+                .thenSucceed();
+    }
+
+    /**
+     * 09 §9.2.5–9.2.6: три зонда спускают в открытый ствол над нефтяным пластом; гамма-каротаж отбивает песчаник от
+     * глины, электрокаротаж — нефть по закону Арчи. Керноотборник берёт керн последних 9 м, станция меряет его в
+     * пределах своих погрешностей.
+     */
+    @GameTest(template = LARGE, timeoutTicks = 1500)
+    public static void logsAndCoreReadTheOilPay(GameTestHelper h) {
+        buildRig(h);
+        var north = BlockStateProperties.HORIZONTAL_FACING;
+        BlockPos unit = new BlockPos(9, 4, 9), lab = new BlockPos(6, 4, 1);
+        h.setBlock(unit, PcBlocks.LOGGING_UNIT.get().defaultBlockState().setValue(north, Direction.NORTH));
+        h.setBlock(lab, PcBlocks.CORE_ANALYSIS_STATION.get().defaultBlockState().setValue(north, Direction.NORTH));
+        FakePlayer p = new FakePlayer(h.getLevel(), new GameProfile(UUID.randomUUID(), "pc_logger"));
+        BlockPos abs = h.absolutePos(ROTARY);
+        Trap oil = new Trap(abs.getX(), abs.getZ(), 80, 800, 60, 860, 20, 0.2, 150, FormationFluid.OIL, 10_200);
+        h.startSequence()
+                .thenWaitUntil(() -> h.assertTrue(((DrillersConsoleBlockEntity) h.getBlockEntity(CONSOLE)).rigOk(), "rig assembled"))
+                .thenExecute(() -> {
+                    DrillersConsoleBlockEntity c = h.getBlockEntity(CONSOLE);
+                    c.spud(new Prospect(oil, 800), 812);
+                    c.setDrilling(0, 0);
+                    LoggingUnitBlockEntity u = h.getBlockEntity(unit);
+                    u.useItem(p, InteractionHand.MAIN_HAND, new ItemStack(PcItems.GAMMA_LOGGING_SONDE.get()));
+                    u.useItem(p, InteractionHand.MAIN_HAND, new ItemStack(PcItems.NEUTRON_LOGGING_SONDE.get()));
+                    u.useItem(p, InteractionHand.MAIN_HAND, new ItemStack(PcItems.RESISTIVITY_LOGGING_SONDE.get()));
+                })
+                .thenIdle(5)
+                .thenExecute(() -> {
+                    LoggingUnitBlockEntity u = h.getBlockEntity(unit);
+                    h.assertTrue(u.startLog() == null, "log started");
+                })
+                .thenWaitUntil(() -> {
+                    LoggingUnitBlockEntity u = h.getBlockEntity(unit);
+                    h.assertTrue(u.runs() == 1 || u.stuck(), "log run finished or the sonde stuck");
+                })
+                .thenExecute(() -> {
+                    LoggingUnitBlockEntity u = h.getBlockEntity(unit);
+                    if (!u.stuck()) {
+                        double[] gr = u.curve(WellLogging.Curve.GR), rt = u.curve(WellLogging.Curve.RT);
+                        int shale = (int) ((700 - u.topM()) / WellLogging.STEP_M), pay = (int) ((806 - u.topM()) / WellLogging.STEP_M);
+                        h.assertTrue(gr[shale] > 80 && gr[pay] < 50, "GR shale " + gr[shale] + " vs sand " + gr[pay]);
+                        h.assertTrue(rt[pay] > 5 * rt[shale], "oil is resistive: " + rt[pay]);
+                        int[] out = new int[DrillingPanels.L_CHANNELS];
+                        u.readPanel(out);
+                        h.assertTrue((out[DrillingPanels.L_FLAGS] & 1 << DrillingPanels.LF_DONE) != 0, "log on the panel");
+                    }
+                    DrillersConsoleBlockEntity c = h.getBlockEntity(CONSOLE);
+                    c.useItem(p, InteractionHand.MAIN_HAND, new ItemStack(PcItems.CORE_BARREL.get()));
+                    ItemStack core = ItemStack.EMPTY;
+                    for (int i = 0; i < p.getInventory().getContainerSize(); i++)
+                        if (p.getInventory().getItem(i).is(PcItems.RESERVOIR_CORE.get())) core = p.getInventory().getItem(i);
+                    h.assertFalse(core.isEmpty(), "core in hand");
+                    var d = core.get(dev.denfry.promptcritical.mod.registry.PcDataComponents.CORE_DATA.get());
+                    h.assertTrue(d.sand() && d.fluorescent(), "oil sand core");
+                    CoreAnalysisStationBlockEntity st = h.getBlockEntity(lab);
+                    st.useItem(p, InteractionHand.MAIN_HAND, core);
+                    var m = core.get(dev.denfry.promptcritical.mod.registry.PcDataComponents.CORE_DATA.get());
+                    h.assertTrue(m.analysed() && Math.abs(m.mPorosity() - 0.2) <= 0.0051, "porosity measured " + m.mPorosity());
                 })
                 .thenSucceed();
     }
