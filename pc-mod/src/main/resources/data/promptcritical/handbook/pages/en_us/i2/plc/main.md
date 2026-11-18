@@ -109,3 +109,8 @@ T1 := TON(%QX0.0, T#5S)
 **SFC (sequential function chart)** — the standard's textual form, first line `(*SFC*)`. It uses `INITIAL_STEP` and `STEP` with actions (`name(N)` while the step is active, `S` set, `R` reset, `P` once on entry), `TRANSITION FROM a TO b := condition; END_TRANSITION` and `ACTION name: … END_ACTION` with an ST body.
 
 LD, FBD and SFC keep their intermediate bits in `%MX48…%MX63`, and FBD also the words `%MW24…%MW31`. Do not use them yourself.
+
+
+## Ladder editor
+
+The **LD editor** button in the programmer opens the ladder diagram as a grid. Each rung has eight cells for contacts and blocks, a coil at the right, a main line and two parallel branches under it. A branch runs parallel to the main line over the same columns: a seal-in contact under the start button is a branch one cell long. Pick an element on the palette and click a cell: a normally open or closed contact, the TON, TOF and TP timers, the CTU counter, or a coil: output, set, reset or counter reset. Below the grid you type the selected cell's address or block name and the timer's or counter's preset. An empty cell on the main line above a branch is a plain wire. The grid becomes the LD text that the PLC compiles: **Load into PLC** sends it, and **Text** returns to the text programmer with it. LD text with nested branches or several coils in one rung does not fit the grid and stays in the text editor. While the PLC is in RUN, contacts with power through them are outlined in dark blue, as on an online ladder, by the state of the PLC's inputs and outputs.

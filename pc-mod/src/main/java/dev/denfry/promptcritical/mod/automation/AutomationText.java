@@ -51,6 +51,16 @@ public final class AutomationText {
     // программатор ПЛК (A3)
     public static final String PLC_TITLE = t("plc.title", "PLC programmer · IEC 61131-3", "Программатор ПЛК · IEC 61131-3");
     public static final String PLC_UPLOAD = t("plc.upload", "Load into PLC", "Загрузить в ПЛК");
+    // графический редактор LD (03d §3d.5.10)
+    public static final String LD_TITLE = t("ld.title", "Ladder editor · LD", "Редактор релейных схем · LD"),
+            LD_OPEN = t("ld.open", "LD editor", "Редактор LD"),
+            LD_TEXT = t("ld.text", "Text", "Текст"),
+            LD_ERASE = t("ld.erase", "Erase", "Стереть"),
+            LD_NOT_LD = t("ld.not_ld", "The program is not in LD: an empty grid", "Программа не на LD: пустая сетка"),
+            LD_NOT_GRID = t("ld.not_grid", "This LD does not fit the grid (nested branches, several coils): an empty grid",
+                    "Эта схема не ложится в сетку (вложенные ветви, несколько катушек): пустая сетка"),
+            LD_ONLINE = t("ld.online", "Online: energized contacts are outlined in blue", "Онлайн: контакты под питанием обведены синим"),
+            LD_OFFLINE = t("ld.offline", "Offline: the PLC is not in RUN", "Офлайн: ПЛК не в RUN");
     public static final String PLC_RUN = t("plc.run", "Key: RUN", "Ключ: RUN");
     public static final String PLC_STOP = t("plc.stop", "Key: STOP", "Ключ: STOP");
     public static final String PLC_MODE = t("plc.mode", "Mode: %s", "Режим: %s");

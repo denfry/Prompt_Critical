@@ -29,6 +29,8 @@ public final class PlcScreen extends Screen {
     private MultiLineEditBox editor;
     private Button keyButton;
     private int ticks;
+    /** Текст для редактора при открытии (возврат из графического редактора). */
+    private String pendingText;
 
     private PlcScreen(BlockPos pos, String source, PlcNet.Status status) {
         super(AutomationText.msg(AutomationText.PLC_TITLE));
@@ -43,12 +45,20 @@ public final class PlcScreen extends Screen {
 
     public static void update(PlcNet.State p) {
         if (Minecraft.getInstance().screen instanceof PlcScreen s && s.pos.equals(p.pos())) s.status = p.status();
+        if (Minecraft.getInstance().screen instanceof LadderScreen s && s.pos().equals(p.pos())) s.update(p.status());
+    }
+
+    /** Вернуться из графического редактора с текстом {@code source} (в ПЛК — {@code loaded}). */
+    static void openWith(BlockPos pos, String source, String loaded, PlcNet.Status status) {
+        PlcScreen s = new PlcScreen(pos, loaded, status);
+        s.pendingText = source;
+        Minecraft.getInstance().setScreen(s);
     }
 
     @Override
     protected void init() {
         int left = 12, top = 24, editW = Math.max(200, width - 12 - 180 - 24), editH = Math.max(80, height - top - 110);
-        String text = editor != null ? editor.getValue() : loaded;
+        String text = editor != null ? editor.getValue() : pendingText != null ? pendingText : loaded;
         editor = new MultiLineEditBox(font, left, top, editW, editH, Component.literal("LD %IX0.0\nST %QX0.0"), Component.empty());
         editor.setCharacterLimit(IlCompiler.MAX_CHARS);
         editor.setValue(text);
@@ -60,6 +70,8 @@ public final class PlcScreen extends Screen {
             status = new PlcNet.Status(status.mode(), !status.runKey(), status.io(), status.ai(), status.ao(), status.executed(), status.errors());
             send(false);
         }).bounds(bx, top + 24, bw, 20).build());
+        addRenderableWidget(Button.builder(AutomationText.msg(AutomationText.LD_OPEN),
+                b -> LadderScreen.open(pos, editor.getValue(), loaded, status)).bounds(bx, top + 48 + 0, bw, 20).build());
         setInitialFocus(editor);
     }
 
@@ -83,7 +95,7 @@ public final class PlcScreen extends Screen {
     public void render(GuiGraphics g, int mouseX, int mouseY, float partialTick) {
         super.render(g, mouseX, mouseY, partialTick);
         g.drawString(font, title, 12, 8, TEXT);
-        int bx = editor.getX() + editor.getWidth() + 12, y = editor.getY() + 52;
+        int bx = editor.getX() + editor.getWidth() + 12, y = editor.getY() + 76;
         int mode = Math.max(0, Math.min(AutomationText.PLC_MODES.length - 1, status.mode()));
         g.drawString(font, AutomationText.msg(AutomationText.PLC_MODE, AutomationText.msg(AutomationText.PLC_MODES[mode])), bx, y,
                 mode == 2 ? GREEN : mode == 3 ? RED : TEXT);
