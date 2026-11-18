@@ -65,6 +65,9 @@ public final class PcProperties {
     public static final BooleanProperty PAPER = BooleanProperty.create("paper");
     /** Горелка котла I1 газовая (иначе пылеугольная) — по топливу котла. */
     public static final BooleanProperty GAS_FIRED = BooleanProperty.create("gas");
+    // буровая I2: превентор закрыт, уровень раствора в ёмкости (пусто, рабочий, полно)
+    public static final BooleanProperty SHUT = BooleanProperty.create("shut");
+    public static final IntegerProperty MUD_LEVEL = IntegerProperty.create("level", 0, 2);
     public static final EnumProperty<RollerKind> ROLLER_KIND = EnumProperty.create("kind", RollerKind.class);
     public static final EnumProperty<QuenchMedium> QUENCH_MEDIUM = EnumProperty.create("medium", QuenchMedium.class);
     public static final EnumProperty<CryoKind> CRYO_KIND = EnumProperty.create("kind", CryoKind.class);
