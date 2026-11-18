@@ -98,14 +98,7 @@ model("startup_source", "core", tx("d", "st", "h", cap=B("startup_source_capsule
 
 # парогенератор нарисован вручную в Blockbench: art/blockbench/core/steam_generator.author.js
 
-model("steam_drum", "core", tx("d", "stm", "wat", "end", "inss", sh=B("steam_drum_shell"), top=B("tank_top")),
-      disc("shell", "x", 6.5, 0, 16, "sh", faces={"east": "top", "west": "top"})
-      + [el("riser_w", [2.5, 13.5, 6.5], [5.5, 16.5, 9.5], "stm", faces={"up": "end"}, full=["up"]),
-         el("riser_e", [10.5, 13.5, 6.5], [13.5, 16.5, 9.5], "stm", faces={"up": "end"}, full=["up"]),
-         el("downcomer", [6.5, -0.5, 6.5], [9.5, 2.5, 9.5], "wat", faces={"down": "end"}, full=["down"]),
-         el("saddle_w", [1, 0, 2.5], [3, 3, 13.5], "d"),
-         el("saddle_e", [13, 0, 2.5], [15, 3, 13.5], "d")],
-      "block/steam_drum")
+# барабан котла (steam_drum) нарисован вручную в Blockbench: art/blockbench/boilers/water_tube_boiler.author.js
 
 # ======================================================================
 # instruments (в стиле instrument_pressure: 32×32 подложка, без делений)
