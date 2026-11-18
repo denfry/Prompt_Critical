@@ -96,12 +96,5 @@ model("protection_cabinet", "control",
 # нарисовано вручную в Blockbench: art/blockbench/control/panel_devices.author.js
 
 # ---------------- items ----------------
-model("fuel_assembly", "items", {"rods": "item/fuel_assembly_rods.png", "st": T("steel_bare"), "d": T("steel_dark")}, [
-    el("bottom_nozzle", [5, 0, 5], [11, 2, 11], "d"),
-    el("bundle", [5.5, 2, 5.5], [10.5, 14, 10.5], "rods", full=["north", "south", "east", "west"]),
-    el("grid_1", [5.25, 5, 5.25], [10.75, 5.75, 10.75], "st"),
-    el("grid_2", [5.25, 9, 5.25], [10.75, 9.75, 10.75], "st"),
-    el("top_nozzle", [5, 14, 5], [11, 15.5, 11], "d"),
-    el("handle", [7, 15.5, 7.5], [9, 16, 8.5], "st"),
-], "item/fuel_assembly", kind="item")
+# нарисовано вручную в Blockbench: art/blockbench/items/items3d.author.js
 

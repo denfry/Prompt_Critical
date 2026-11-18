@@ -159,14 +159,6 @@ def rack_lamp(name, x, y, z):
 
 
 # нарисовано вручную в Blockbench: art/blockbench/turbine/power_misc.author.js
-m("cap_lamp", "mining", [
-    el("battery", [4, 0, 6], [12, 9, 10], "d"),
-    el("battery_lid", [4.5, 9, 6.5], [11.5, 10, 9.5], "st"),
-    el("cord", [7.5, 10, 7.5], [8.5, 13, 8.5], "r"),
-    el("headpiece", [5.5, 12, 5], [10.5, 16, 10], "b"),
-    el("reflector_glass", [6.5, 13, 4.5], [9.5, 15, 5], "gl"),
-    el("belt_loop", [3.5, 3, 7], [4, 7, 9], "r"),
-], kind="item")
 
 
 # ---- приливная электростанция (плейсхолдер до ручной модели): капсульный агрегат 3×2×3 в бетонном водоводе плотины
