@@ -7,6 +7,7 @@ import dev.denfry.promptcritical.mod.foundry.FoundryDevice;
 import dev.denfry.promptcritical.mod.panel.PanelHost;
 import dev.denfry.promptcritical.mod.panel.PanelLayout;
 import dev.denfry.promptcritical.sim.radiation.PointSource;
+import dev.denfry.promptcritical.sim.radiation.SurfaceContamination;
 import java.util.Arrays;
 import net.minecraft.ChatFormatting;
 import net.minecraft.core.BlockPos;
@@ -34,11 +35,19 @@ import org.jetbrains.annotations.Nullable;
  * защищает — защищает вода над ним: три метра воды снижают γ выдержанной ТВС в сотни тысяч раз. Под водой
  * остаточное тепло уходит в воду бассейна; на воздухе стеллаж греется — T = 20 °C + Q/(h·A), h·A = {@value #HA_W_K} Вт/К
  * (естественная конвекция и излучение). Выше {@value #CLAD_LIMIT_C} °C оболочки окисляются и рвутся (циркониевый
- * пожар бассейна без воды — сценарий NUREG-1738); здесь это аварийная лампа и дым, без выброса активности.
+ * пожар бассейна без воды — сценарий NUREG-1738); здесь это аварийная лампа, дым и осевший на пол вокруг стеллажа
+ * аэрозоль топлива ({@link ContaminationService#spill}).
  */
 public final class FuelRackBlockEntity extends DeviceBlockEntity implements FoundryDevice, PanelHost {
     public static final int SLOTS = 9;
     public static final double HA_W_K = 25, CLAD_LIMIT_C = 800, WARN_C = 400;
+    /**
+     * Доля активности, оседающая на пол вокруг при разрушении оболочек на воздухе. Игровое допущение порядка выхода
+     * нелетучих аэрозолей топлива (10⁻⁶–10⁻⁴ инвентаря); сам сценарий и его выбросы в атмосферу разобраны в NUREG-1738
+     * (2001), летучий Cs там уходит в выброс, а не на пол.
+     */
+    public static final double CLAD_RELEASE_FRACTION = 1e-5;
+    public static final int CLAD_SPILL_RADIUS = 4;
 
     private final ItemStackHandler slots = new ItemStackHandler(SLOTS) {
         @Override
@@ -103,6 +112,9 @@ public final class FuelRackBlockEntity extends DeviceBlockEntity implements Foun
             s.sendParticles(ParticleTypes.BUBBLE_COLUMN_UP, center.x, center.y + 0.6, center.z, 2, 0.3, 0.1, 0.3, 0.05);
         if (!cladFailed && tempC > CLAD_LIMIT_C) {
             cladFailed = true;
+            // разрушенные оболочки: аэрозоль топлива и продуктов деления оседает на пол вокруг стеллажа
+            double beta = activityBq * CLAD_RELEASE_FRACTION;
+            ContaminationService.spill(s, worldPosition, CLAD_SPILL_RADIUS, beta * SurfaceContamination.FUEL_ALPHA_PER_BETA, beta);
             for (ServerPlayer p : s.getPlayers(p -> p.distanceToSqr(center) < 64 * 64))
                 p.displayClientMessage(RadiationBlocksText.msg("rack.clad").withStyle(ChatFormatting.RED), false);
         }

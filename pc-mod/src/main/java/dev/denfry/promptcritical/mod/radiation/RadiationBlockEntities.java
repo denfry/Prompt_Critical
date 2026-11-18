@@ -11,7 +11,7 @@ import net.neoforged.neoforge.capabilities.RegisterCapabilitiesEvent;
 import net.neoforged.neoforge.registries.DeferredHolder;
 import net.neoforged.neoforge.registries.DeferredRegister;
 
-/** Типы BE радиационной части: стеллаж бассейна выдержки. */
+/** Типы BE радиационной части: стеллаж бассейна выдержки, ультразвуковая ванна, душ и установка контроля санпропускника. */
 public final class RadiationBlockEntities {
     public static final DeferredRegister<BlockEntityType<?>> BLOCK_ENTITIES =
             DeferredRegister.create(Registries.BLOCK_ENTITY_TYPE, PromptCritical.MOD_ID);
@@ -19,12 +19,27 @@ public final class RadiationBlockEntities {
     public static final DeferredHolder<BlockEntityType<?>, BlockEntityType<FuelRackBlockEntity>> FUEL_RACK =
             BLOCK_ENTITIES.register("fuel_rack", () -> BlockEntityType.Builder.of(FuelRackBlockEntity::new, PcBlocks.FUEL_RACK.get()).build(null));
 
+    public static final DeferredHolder<BlockEntityType<?>, BlockEntityType<UltrasonicBathBlockEntity>> ULTRASONIC_BATH =
+            BLOCK_ENTITIES.register("ultrasonic_bath",
+                    () -> BlockEntityType.Builder.of(UltrasonicBathBlockEntity::new, PcBlocks.ULTRASONIC_BATH.get()).build(null));
+    public static final DeferredHolder<BlockEntityType<?>, BlockEntityType<DeconShowerBlockEntity>> DECON_SHOWER =
+            BLOCK_ENTITIES.register("decon_shower", () -> BlockEntityType.Builder.of(DeconShowerBlockEntity::new, PcBlocks.DECON_SHOWER.get()).build(null));
+    public static final DeferredHolder<BlockEntityType<?>, BlockEntityType<HandFootMonitorBlockEntity>> HAND_FOOT_MONITOR =
+            BLOCK_ENTITIES.register("hand_foot_monitor",
+                    () -> BlockEntityType.Builder.of(HandFootMonitorBlockEntity::new, PcBlocks.HAND_FOOT_MONITOR.get()).build(null));
+
     private RadiationBlockEntities() {
     }
 
     public static void register(IEventBus modBus) {
         BLOCK_ENTITIES.register(modBus);
-        modBus.addListener((RegisterCapabilitiesEvent e) -> e.registerBlockEntity(Capabilities.ItemHandler.BLOCK, FUEL_RACK.get(),
-                FoundryDevice::items));
+        modBus.addListener((RegisterCapabilitiesEvent e) -> {
+            e.registerBlockEntity(Capabilities.ItemHandler.BLOCK, FUEL_RACK.get(), FoundryDevice::items);
+            e.registerBlockEntity(Capabilities.ItemHandler.BLOCK, ULTRASONIC_BATH.get(), FoundryDevice::items);
+            e.registerBlockEntity(Capabilities.FluidHandler.BLOCK, ULTRASONIC_BATH.get(), FoundryDevice::fluids);
+            e.registerBlockEntity(Capabilities.FluidHandler.BLOCK, DECON_SHOWER.get(), FoundryDevice::fluids);
+        });
+        ContaminationData.register(modBus);
+        ContaminationService.register();
     }
 }

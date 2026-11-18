@@ -251,6 +251,22 @@ public final class RadiationService {
         return root.getCompound(TAG);
     }
 
+    /**
+     * Ожидаемая доза внутреннего облучения (вдох, заглатывание), Зв: идёт в полную дозу, как в учёте доз персонала, но
+     * не в острую — радионуклид внутри облучает годами, лучевой болезни от таких поступлений нет.
+     */
+    public static void addCommitted(ServerPlayer p, double sv) {
+        if (!(sv > 0)) return;
+        CompoundTag d = data(p);
+        d.putDouble("total", d.getDouble("total") + sv);
+        d.putDouble("internal", d.getDouble("internal") + sv);
+    }
+
+    /** Накопленная ожидаемая доза внутреннего облучения, Зв. */
+    public static double internalSv(ServerPlayer p) {
+        return data(p).getDouble("internal");
+    }
+
     static void add(ServerPlayer p, double sv) {
         CompoundTag d = data(p);
         d.putDouble("total", d.getDouble("total") + sv);

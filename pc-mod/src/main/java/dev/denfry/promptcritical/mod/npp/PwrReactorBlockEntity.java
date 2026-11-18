@@ -74,6 +74,13 @@ public final class PwrReactorBlockEntity extends DeviceBlockEntity implements Fo
     public static final int LINK_RADIUS = 12;
     /** I-131 из одной разгерметизированной ТВС, уходящий с теплоносителем через течь или ИПУ, Бк [оценка: 1 % газового зазора]. */
     public static final double I131_PER_FAILED_BQ = 5e12;
+    /**
+     * Cs-137, осевший из разлитого теплоносителя, на единицу I-131 выхода из разрушенной сборки: зазорный инвентарь Cs
+     * сопоставим с иодным (оба — летучие продукты деления под оболочкой), большая часть остаётся в воде и уходит с ней
+     * в приямок; на полу — порядка десятой доли. Игровое допущение.
+     */
+    public static final double CS_SPILL_PER_I131 = 0.1;
+    public static final int RUPTURE_SPILL_RADIUS = 6;
     /** Энергия разрыва контура: работа расширения ≈ 7 т воды при 15 МПа до вскипания, Дж [оценка]. */
     public static final double RUPTURE_J = 3e8;
     /** Шаг водообмена с пульта, кг/с. */
@@ -288,6 +295,10 @@ public final class PwrReactorBlockEntity extends DeviceBlockEntity implements Fo
                 releaseTicks = 60 * 20;
                 releaseI131BqS = failed * I131_PER_FAILED_BQ / 60.0;
             }
+            // теплоноситель первого контура разлит по полу: с разрушенным топливом в нём Cs-137 и следы α
+            double beta = failed * I131_PER_FAILED_BQ * CS_SPILL_PER_I131;
+            dev.denfry.promptcritical.mod.radiation.ContaminationService.spill(sl, worldPosition, RUPTURE_SPILL_RADIUS,
+                    beta * dev.denfry.promptcritical.sim.radiation.SurfaceContamination.FUEL_ALPHA_PER_BETA, beta);
             sl.playSound(null, worldPosition, SoundEvents.GENERIC_EXPLODE.value(), SoundSource.BLOCKS, 2f, 0.7f);
             for (ServerPlayer p : sl.getPlayers(p -> p.distanceToSqr(worldPosition.getCenter()) < 96 * 96))
                 p.displayClientMessage(NppText.msg("pwr_rupture").withStyle(ChatFormatting.DARK_RED), false);

@@ -59,6 +59,31 @@ public final class RadiationRecipes extends RecipeProvider {
                 .define('T', com.simibubi.create.AllBlocks.FLUID_TANK.get()).define('L', PcBlocks.LOW_TEMPERATURE_SEPARATOR.get())
                 .define('C', Items.CHARCOAL).unlockedBy("has_low_temperature_separator", has(PcBlocks.LOW_TEMPERATURE_SEPARATOR.get()))
                 .save(out, id("helium_recovery_unit"));
+        // дезактивация: радиометр — плоский зонд (сцинтиллятор за стеклом) и счётная электроника
+        ShapedRecipeBuilder.shaped(RecipeCategory.TOOLS, PcItems.CONTAMINATION_METER.get())
+                .pattern("GGG").pattern("BEB").pattern("BRB").define('G', Items.GLASS_PANE).define('B', AllItems.BRASS_SHEET.get())
+                .define('E', AllItems.ELECTRON_TUBE.get()).define('R', Items.REDSTONE)
+                .unlockedBy("has_dosimeter", has(PcItems.DOSIMETER.get())).save(out, id("contamination_meter"));
+        // латекс покрытия — полимер (слизь) в банке
+        ShapedRecipeBuilder.shaped(RecipeCategory.MISC, PcItems.STRIPPABLE_COATING.get(), 4)
+                .pattern(" S ").pattern("IBI").pattern(" I ").define('S', Items.SLIME_BALL).define('I', AllItems.IRON_SHEET.get())
+                .define('B', Items.GLASS_BOTTLE).unlockedBy("has_slime_ball", has(Items.SLIME_BALL)).save(out, id("strippable_coating"));
+        ShapedRecipeBuilder.shaped(RecipeCategory.TOOLS, PcItems.DECON_SPRAYER.get())
+                .pattern("P  ").pattern("TT ").pattern("II ").define('P', com.simibubi.create.AllBlocks.FLUID_PIPE.get())
+                .define('T', com.simibubi.create.AllBlocks.FLUID_TANK.get()).define('I', AllItems.IRON_SHEET.get())
+                .unlockedBy("has_fluid_tank", has(com.simibubi.create.AllBlocks.FLUID_TANK.get())).save(out, id("decon_sprayer"));
+        ShapedRecipeBuilder.shaped(RecipeCategory.MISC, PcBlocks.ULTRASONIC_BATH.get())
+                .pattern("I I").pattern("ITI").pattern("EIE").define('I', AllItems.IRON_SHEET.get())
+                .define('T', com.simibubi.create.AllBlocks.FLUID_TANK.get()).define('E', AllItems.ELECTRON_TUBE.get())
+                .unlockedBy("has_electron_tube", has(AllItems.ELECTRON_TUBE.get())).save(out, id("ultrasonic_bath"));
+        ShapedRecipeBuilder.shaped(RecipeCategory.MISC, PcBlocks.DECON_SHOWER.get())
+                .pattern("PPP").pattern(" P ").pattern("I I").define('P', com.simibubi.create.AllBlocks.FLUID_PIPE.get())
+                .define('I', AllItems.IRON_SHEET.get())
+                .unlockedBy("has_fluid_pipe", has(com.simibubi.create.AllBlocks.FLUID_PIPE.get())).save(out, id("decon_shower"));
+        ShapedRecipeBuilder.shaped(RecipeCategory.MISC, PcBlocks.HAND_FOOT_MONITOR.get())
+                .pattern("MBM").pattern("BEB").pattern("III").define('M', PcItems.CONTAMINATION_METER.get())
+                .define('B', AllItems.BRASS_SHEET.get()).define('E', AllItems.ELECTRON_TUBE.get()).define('I', AllItems.IRON_SHEET.get())
+                .unlockedBy("has_contamination_meter", has(PcItems.CONTAMINATION_METER.get())).save(out, id("hand_foot_monitor"));
         // свинец выплавляют из галенита (обжиг PbS и восстановление — свёрнуты в доменную плавку)
         SimpleCookingRecipeBuilder.blasting(Ingredient.of(PcBlocks.GALENA_ORE.get(), PcBlocks.DEEPSLATE_GALENA_ORE.get()), RecipeCategory.BUILDING_BLOCKS,
                         PcBlocks.LEAD_BLOCK.get(), 0.3f, 200)
