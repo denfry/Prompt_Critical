@@ -155,7 +155,11 @@ public final class MachineToolBlockEntity extends KineticMachineBlockEntity<Mach
         if (fx == null || !runningState()) return;
         boolean lathe = kind == MachineToolUnit.Kind.LATHE;
         if (fx.chance(12)) fx.chips(lathe ? fx.at(17, 14.5, 9.6) : fx.at(8, 11, 7), 1);
-        if (level.getGameTime() % 25 == 0) fx.sound(fx.at(8, 12, 8), SoundEvents.GRINDSTONE_USE, 0.15f, 1.6f);
+    }
+
+    /** Сверлильный (звук шпинделя выше), иначе токарный. */
+    public boolean isDrillPress() {
+        return kind == MachineToolUnit.Kind.DRILL_PRESS;
     }
 
     @Override

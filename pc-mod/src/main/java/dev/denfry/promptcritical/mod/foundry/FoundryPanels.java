@@ -223,8 +223,10 @@ public final class FoundryPanels {
         return List.of(CUPOLA, CRUCIBLE, COAL_JIG, MOLDING, SHAKEOUT, LATHE, DRILL_PRESS, MILLING, SHAPER, GRINDER);
     }
 
+    /** Фоны станков — art/blockbench/machine_shop/machine_tools.author.js ({@code guiTool}). */
     private static PanelLayout tool(String id, double spindleMax) {
         return PanelLayout.builder(id, 200, 150, L_CHANNELS)
+                .art(PromptCritical.id("textures/gui/panel/" + id + ".png"))
                 .dial(8, 24, false, SHAFT_RPM10, 10, 256, Double.NaN, 0, RPM.get(), SHAFT.get(), shaftTip())
                 .dial(66, 24, false, L_SPINDLE_RPM, 1, spindleMax, Double.NaN, 0, RPM.get(), SPINDLE.get(), null)
                 .lamp(124, 26, FLAGS, F_RUNNING, LampColor.AMBER, RUNNING.get())
@@ -244,6 +246,7 @@ public final class FoundryPanels {
     private static PanelLayout production(String id, double speedMax, Component unit, Component speedName, Component wearName,
             Component toolSlot, java.util.function.Supplier<? extends net.minecraft.world.item.Item> tool) {
         return PanelLayout.builder(id, 200, 150, P_CHANNELS)
+                .art(PromptCritical.id("textures/gui/panel/" + id + ".png"))
                 .dial(8, 24, false, SHAFT_RPM10, 10, 256, Double.NaN, 0, RPM.get(), SHAFT.get(), shaftTip())
                 .dial(66, 24, false, P_SPEED, 1, speedMax, Double.NaN, 0, unit, speedName, null)
                 .lamp(124, 26, FLAGS, F_RUNNING, LampColor.AMBER, RUNNING.get())

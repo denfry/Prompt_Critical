@@ -114,6 +114,11 @@ public final class GridSubsystem implements Subsystem, GridEventSink {
         return unit(id, LightingBoardUnit.class, () -> new LightingBoardUnit(id));
     }
 
+    /** Зарядный стеллаж ламповой (выпрямители на 0,4 кВ). */
+    public LampRackUnit lampRack(SimId id) {
+        return unit(id, LampRackUnit.class, () -> new LampRackUnit(id));
+    }
+
     /** Сетевая ВЭУ с асинхронным генератором. */
     public WindTurbineUnit windTurbine(SimId id) {
         return unit(id, WindTurbineUnit.class, () -> new WindTurbineUnit(id));
@@ -596,6 +601,7 @@ public final class GridSubsystem implements Subsystem, GridEventSink {
             case AuxSupplyUnit a -> "aux_supply";
             case LightingBoardUnit l -> "lighting_board";
             case WindTurbineUnit w -> "wind_turbine";
+            case LampRackUnit r -> "lamp_rack";
         };
     }
 
@@ -625,6 +631,7 @@ public final class GridSubsystem implements Subsystem, GridEventSink {
                 case "aux_supply" -> new AuxSupplyUnit(id);
                 case "lighting_board" -> new LightingBoardUnit(id);
                 case "wind_turbine" -> new WindTurbineUnit(id);
+                case "lamp_rack" -> new LampRackUnit(id);
                 default -> type.startsWith("switch:") ? new SwitchUnit(id, SwitchUnit.Kind.valueOf(type.substring(7))) : null;
             };
             if (u != null) {

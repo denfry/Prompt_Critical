@@ -39,6 +39,10 @@ public final class PcDataComponents {
             SEISMIC_SECTION = COMPONENTS.registerComponentType("seismic_section",
                     b -> b.persistent(dev.denfry.promptcritical.mod.drilling.SeismicSectionData.CODEC)
                             .networkSynchronized(dev.denfry.promptcritical.mod.drilling.SeismicSectionData.STREAM_CODEC));
+    /** Батарея и фара головного светильника. */
+    public static final DeferredHolder<DataComponentType<?>, DataComponentType<dev.denfry.promptcritical.mod.item.CapLampData>> CAP_LAMP =
+            COMPONENTS.registerComponentType("cap_lamp", b -> b.persistent(dev.denfry.promptcritical.mod.item.CapLampData.CODEC)
+                    .networkSynchronized(dev.denfry.promptcritical.mod.item.CapLampData.STREAM_CODEC));
 
     private PcDataComponents() {
     }

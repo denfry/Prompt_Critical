@@ -94,6 +94,15 @@ public final class MineSafetyRecipes extends RecipeProvider {
                 .pattern(" B ").pattern("GTG").pattern(" B ").define('B', AllItems.BRASS_INGOT.get()).define('G', Items.IRON_BARS)
                 .define('T', Items.TORCH)
                 .unlockedBy("has_brass", has(AllItems.BRASS_INGOT.get())).save(out, id("flame_safety_lamp"));
+        // головной светильник: фара (стекло в латуни) и щелочная батарея (никель и железо в корпусе на ремне)
+        ShapedRecipeBuilder.shaped(RecipeCategory.TOOLS, PcItems.CAP_LAMP.get())
+                .pattern("BGB").pattern("ICI").pattern("LIL").define('B', AllItems.BRASS_INGOT.get()).define('G', Items.GLASS_PANE)
+                .define('I', Items.IRON_INGOT).define('C', Items.COPPER_INGOT).define('L', Items.LEATHER)
+                .unlockedBy("has_brass", has(AllItems.BRASS_INGOT.get())).save(out, id("cap_lamp"));
+        // стеллаж: каркас, трансформаторы и выпрямители на каждое место
+        ShapedRecipeBuilder.shaped(RecipeCategory.DECORATIONS, PcBlocks.LAMP_RACK.get())
+                .pattern("ICI").pattern("ICI").pattern("IRI").define('I', Items.IRON_INGOT).define('C', Items.COPPER_INGOT)
+                .define('R', Items.REDSTONE).unlockedBy("has_cap_lamp", has(PcItems.CAP_LAMP.get())).save(out, id("lamp_rack"));
         ShapedRecipeBuilder.shaped(RecipeCategory.TOOLS, PcItems.METHANOMETER.get())
                 .pattern(" G ").pattern("BRB").pattern("BCB").define('G', Items.GLASS_PANE).define('B', AllItems.BRASS_INGOT.get())
                 .define('R', Items.REDSTONE).define('C', Items.COPPER_INGOT)

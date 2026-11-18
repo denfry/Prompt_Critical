@@ -204,7 +204,7 @@ public class SteamEngineBlockEntity extends DeviceBlockEntity implements Pressur
         MachineFx fx = MachineFx.of(level, worldPosition, facing());
         if (fx == null) return;
         fx.puff(fx.at(-0.5, 32.5, -4), new Vec3(0, 0.12, 0), 3);
-        fx.sound(fx.at(-0.5, 32, -4), BoilerSounds.steam(), 0.15f, 1.7f);
+        fx.sound(fx.at(-0.5, 32, -4), dev.denfry.promptcritical.mod.sound.PcSfx.STEAM_ENGINE_CHUFF.get(), 0.9f, 0.85f + Math.min(0.4f, omega / 40f));
     }
 
     private static int level4(double r) {

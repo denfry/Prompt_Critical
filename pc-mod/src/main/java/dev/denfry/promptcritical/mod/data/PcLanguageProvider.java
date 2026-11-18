@@ -208,6 +208,9 @@ public final class PcLanguageProvider extends LanguageProvider {
         i("planed_plate", "Planed Plate", "Строганая плита");
         i("ground_plate", "Ground Plate", "Шлифованная плита");
         i("flame_safety_lamp", "Flame Safety Lamp", "Бензиновая лампа");
+        i("cap_lamp", "Miner's Cap Lamp", "Головной шахтный светильник");
+        b("lamp_rack", "Lamp Room Charging Rack", "Зарядный стеллаж ламповой");
+        b("cap_lamp_light", "Cap Lamp Light", "Свет фары");
         i("self_rescuer", "Self-Rescuer", "Самоспасатель");
         i("stone_duster", "Stone Duster", "Осланцеватель");
         i("wire_rope", "Wire Rope", "Стальной канат");
@@ -390,6 +393,13 @@ public final class PcLanguageProvider extends LanguageProvider {
         MISC.put("commands.promptcritical.boiler.no_boiler", new String[] {"Look at a fire-tube boiler", "Посмотрите на жаротрубный котёл"});
         MISC.put("promptcritical.mine.not_in_mine", new String[] {"Not in a mine working", "Вы не в горной выработке"});
         MISC.put("promptcritical.mine.lamp.normal", new String[] {"Lamp: steady flame", "Лампа: пламя ровное"});
+        MISC.put("promptcritical.mine.cap_lamp.broken", new String[] {"The cap lamp glass is broken: the lamp is out and no longer flameproof",
+                "Стекло фары разбито: лампа погасла и больше не взрывобезопасна"});
+        MISC.put("item.promptcritical.cap_lamp.charge", new String[] {"Charge %s %% of %s Ah · %s cycles",
+                "Заряд %s %% от %s А·ч · циклов %s"});
+        MISC.put("item.promptcritical.cap_lamp.broken", new String[] {"Glass broken: put it on the lamp room rack",
+                "Стекло разбито: сдайте в ламповую на стеллаж"});
+        MISC.put("item.promptcritical.cap_lamp.proof", new String[] {"Flameproof mine design", "Рудничное взрывобезопасное исполнение"});
         MISC.put("promptcritical.mine.lamp.halo", new String[] {"Lamp: blue cap over the flame, %s %% of full height",
                 "Лампа: голубой ореол над пламенем, %s %% высоты"});
         MISC.put("promptcritical.mine.lamp.flame_in_gauze", new String[] {"Lamp: gas burning inside the gauze, get out!",

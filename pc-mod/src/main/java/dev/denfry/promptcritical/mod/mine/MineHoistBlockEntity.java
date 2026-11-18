@@ -82,6 +82,8 @@ public final class MineHoistBlockEntity extends DeviceBlockEntity implements Sha
     // синхронизируется клиенту
     @Nullable private BlockPos sheave;
     private double depth, speed;
+    /** Клиент: барабан крутился на прошлом тике (тормоз — на остановке). */
+    private boolean clientMoving;
 
     // клиент
     private double clientDepth;
@@ -170,6 +172,12 @@ public final class MineHoistBlockEntity extends DeviceBlockEntity implements Sha
     }
 
     private void clientTick() {
+        // барабан встал — тормоз наложен, из тормозного цилиндра со свистом уходит воздух
+        if (clientMoving && speed == 0) {
+            level.playLocalSound(worldPosition.getX() + 0.5, worldPosition.getY() + 0.5, worldPosition.getZ() + 0.5,
+                    dev.denfry.promptcritical.mod.sound.PcSfx.HOIST_BRAKE.get(), net.minecraft.sounds.SoundSource.BLOCKS, 0.8f, 1.0f, false);
+        }
+        clientMoving = speed != 0;
         drumAnglePrev = drumAngle;
         drumAngle += (float) (speed / HoistUnit.DRUM_RADIUS_M * 0.05);
         clientDepth -= speed * 0.05;

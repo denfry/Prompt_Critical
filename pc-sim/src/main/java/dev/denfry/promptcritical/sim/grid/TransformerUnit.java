@@ -44,6 +44,11 @@ public final class TransformerUnit extends GridUnit {
         return true;
     }
 
+    /** Под напряжением с какой-либо стороны (гудит). */
+    public boolean energized() {
+        return loadedNow();
+    }
+
     private boolean loadedNow() {
         return owner != null && owner.ready() && (owner.voltageV(node(0)) > 0 || owner.voltageV(node(1)) > 0);
     }
