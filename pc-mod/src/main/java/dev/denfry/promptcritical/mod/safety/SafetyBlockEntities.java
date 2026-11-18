@@ -28,6 +28,13 @@ public final class SafetyBlockEntities {
     public static final DeferredHolder<BlockEntityType<?>, BlockEntityType<PatrolCheckpointBlockEntity>> PATROL_CHECKPOINT =
             type("patrol_checkpoint", PatrolCheckpointBlockEntity::new, PcBlocks.PATROL_CHECKPOINT);
 
+    public static final DeferredHolder<BlockEntityType<?>, BlockEntityType<FlareIgnitionPanelBlockEntity>> FLARE_IGNITION_PANEL =
+            type("flare_ignition_panel", FlareIgnitionPanelBlockEntity::new, PcBlocks.FLARE_IGNITION_PANEL);
+    public static final DeferredHolder<BlockEntityType<?>, BlockEntityType<FlareKnockoutDrumBlockEntity>> FLARE_KNOCKOUT_DRUM =
+            type("flare_knockout_drum", FlareKnockoutDrumBlockEntity::new, PcBlocks.FLARE_KNOCKOUT_DRUM);
+    public static final DeferredHolder<BlockEntityType<?>, BlockEntityType<FlareSealDrumBlockEntity>> FLARE_SEAL_DRUM =
+            type("flare_seal_drum", FlareSealDrumBlockEntity::new, PcBlocks.FLARE_SEAL_DRUM);
+
     private SafetyBlockEntities() {
     }
 
@@ -38,6 +45,9 @@ public final class SafetyBlockEntities {
 
     private static void capabilities(RegisterCapabilitiesEvent event) {
         event.registerBlockEntity(Capabilities.FluidHandler.BLOCK, MANWAY.get(), FoundryDevice::fluids);
+        event.registerBlockEntity(Capabilities.FluidHandler.BLOCK, FLARE_IGNITION_PANEL.get(), FoundryDevice::fluids);
+        event.registerBlockEntity(Capabilities.FluidHandler.BLOCK, FLARE_KNOCKOUT_DRUM.get(), FoundryDevice::fluids);
+        event.registerBlockEntity(Capabilities.FluidHandler.BLOCK, FLARE_SEAL_DRUM.get(), FoundryDevice::fluids);
     }
 
     private static <T extends net.minecraft.world.level.block.entity.BlockEntity> DeferredHolder<BlockEntityType<?>, BlockEntityType<T>> type(

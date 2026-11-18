@@ -7,6 +7,10 @@ import dev.denfry.promptcritical.mod.registry.PcBlocks;
 import dev.denfry.promptcritical.mod.registry.PcFluids;
 import dev.denfry.promptcritical.mod.registry.PcItems;
 import dev.denfry.promptcritical.mod.safety.ConfinedSpaces;
+import dev.denfry.promptcritical.mod.safety.FlareIgnitionPanelBlockEntity;
+import dev.denfry.promptcritical.mod.safety.FlareKnockoutDrumBlockEntity;
+import dev.denfry.promptcritical.mod.safety.FlareSealDrumBlockEntity;
+import dev.denfry.promptcritical.mod.safety.Flares;
 import dev.denfry.promptcritical.mod.safety.ManwayBlockEntity;
 import dev.denfry.promptcritical.mod.safety.PatrolCheckpointBlockEntity;
 import dev.denfry.promptcritical.mod.safety.PatrolReaderItem;
@@ -250,5 +254,47 @@ public final class SafetyGameTests {
             Patrols.Card card = Patrols.card(h.getLevel(), h.absolutePos(a));
             h.assertTrue(card.findings().contains(Patrols.Finding.BEARING_NOISE), "bearing not heard: " + card);
         }).thenExecute(() -> strip(p)).thenSucceed();
+    }
+
+    /**
+     * Факел §13.4.3: щит розжига берёт оголовок, горелки на топливном газе зажигают сброс, без пара — дым; полный сепаратор
+     * капель — горящий дождь; мало воды в гидрозатворе — проскок пламени, горелки гаснут, сброс уходит несгоревшим.
+     */
+    @GameTest(template = LARGE, timeoutTicks = 400)
+    public static void flareSystemBurnsSmokesRainsAndFlashesBack(GameTestHelper h) {
+        BlockPos tip = new BlockPos(6, 4, 6), panel = new BlockPos(2, 1, 2), ko = new BlockPos(6, 1, 2), seal = new BlockPos(9, 1, 6);
+        h.setBlock(tip, PcBlocks.FLARE_TIP.get().defaultBlockState());
+        h.setBlock(panel, PcBlocks.FLARE_IGNITION_PANEL.get().defaultBlockState());
+        h.setBlock(ko, PcBlocks.FLARE_KNOCKOUT_DRUM.get().defaultBlockState());
+        h.setBlock(seal, PcBlocks.FLARE_SEAL_DRUM.get().defaultBlockState());
+        BlockPos tipAbs = h.absolutePos(tip);
+        h.onEachTick(() -> Flares.offer(h.getLevel(), tipAbs, 0.025));
+        FlareIgnitionPanelBlockEntity.rainFire = false;
+        h.startSequence().thenIdle(2).thenExecute(() -> {
+            FlareIgnitionPanelBlockEntity p = h.getBlockEntity(panel);
+            p.fluids(null).fill(new net.neoforged.neoforge.fluids.FluidStack(PcFluids.SALES_GAS.source.get(), 100),
+                    net.neoforged.neoforge.fluids.capability.IFluidHandler.FluidAction.EXECUTE);
+            h.assertTrue(p.ignite(), "pilots did not light");
+            ((FlareSealDrumBlockEntity) h.getBlockEntity(seal)).setWater(1000);
+        }).thenIdle(50).thenExecute(() -> {
+            FlareIgnitionPanelBlockEntity p = h.getBlockEntity(panel);
+            h.assertTrue(Math.abs(p.flowNm3s() - 0.5) < 1e-6, "relief " + p.flowNm3s());
+            h.assertTrue(p.state().heatReleaseW() > 0 && !p.state().flameOut(), "flare not burning " + p.state());
+            h.assertTrue(p.state().smokeIndex() == 1, "smokeless without steam " + p.state());
+            h.assertTrue(h.getBlockState(tip).getValue(net.minecraft.world.level.block.state.properties.BlockStateProperties.LIT), "tip not lit");
+            h.assertFalse(p.raining(), "rain with an empty knock-out drum");
+            ((FlareKnockoutDrumBlockEntity) h.getBlockEntity(ko)).setLiquid(FlareKnockoutDrumBlockEntity.CAPACITY_MB);
+        }).thenIdle(45).thenExecute(() -> {
+            FlareIgnitionPanelBlockEntity p = h.getBlockEntity(panel);
+            h.assertTrue(p.raining(), "full knock-out drum did not carry liquid over");
+            ((FlareSealDrumBlockEntity) h.getBlockEntity(seal)).setWater(100);
+        }).thenIdle(45).thenExecute(() -> {
+            FlareIgnitionPanelBlockEntity p = h.getBlockEntity(panel);
+            h.assertTrue(p.pilots() == 0, "flashback did not put the pilots out");
+        }).thenIdle(25).thenExecute(() -> {
+            FlareIgnitionPanelBlockEntity p = h.getBlockEntity(panel);
+            h.assertTrue(p.state().flameOut() && p.state().ch4UnburntKgS() > 0, "no unburnt release without pilots " + p.state());
+            h.assertFalse(h.getBlockState(tip).getValue(net.minecraft.world.level.block.state.properties.BlockStateProperties.LIT), "tip lit without pilots");
+        }).thenExecute(() -> FlareIgnitionPanelBlockEntity.rainFire = true).thenSucceed();
     }
 }

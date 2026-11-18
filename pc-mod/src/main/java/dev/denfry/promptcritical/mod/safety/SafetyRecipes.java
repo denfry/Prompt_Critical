@@ -84,6 +84,18 @@ public final class SafetyRecipes extends RecipeProvider {
                 .pattern("SSS").pattern("S N").define('S', Items.STRING).define('N', Items.IRON_INGOT)
                 .unlockedBy("has_harness", has(PcItems.SAFETY_HARNESS.get())).save(out, id("lifeline"));
         confined(out, sheet);
+        // факельная система §13.4.3
+        ShapedRecipeBuilder.shaped(RecipeCategory.MISC, dev.denfry.promptcritical.mod.registry.PcBlocks.FLARE_IGNITION_PANEL.get())
+                .pattern("SLS").pattern("RFR").pattern("SCS").define('S', sheet).define('L', Items.GLASS_PANE).define('R', Items.REDSTONE)
+                .define('F', Items.FLINT_AND_STEEL).define('C', Items.COPPER_INGOT)
+                .unlockedBy("has_flare_tip", has(dev.denfry.promptcritical.mod.registry.PcBlocks.FLARE_TIP.get())).save(out, id("flare_ignition_panel"));
+        ShapedRecipeBuilder.shaped(RecipeCategory.MISC, dev.denfry.promptcritical.mod.registry.PcBlocks.FLARE_KNOCKOUT_DRUM.get())
+                .pattern("SSS").pattern("T T").pattern("SSS").define('S', sheet).define('T', com.simibubi.create.AllBlocks.FLUID_TANK.get())
+                .unlockedBy("has_flare_tip", has(dev.denfry.promptcritical.mod.registry.PcBlocks.FLARE_TIP.get())).save(out, id("flare_knockout_drum"));
+        ShapedRecipeBuilder.shaped(RecipeCategory.MISC, dev.denfry.promptcritical.mod.registry.PcBlocks.FLARE_SEAL_DRUM.get())
+                .pattern("SPS").pattern("STS").pattern("SPS").define('S', sheet).define('P', com.simibubi.create.AllBlocks.FLUID_PIPE.get())
+                .define('T', com.simibubi.create.AllBlocks.FLUID_TANK.get())
+                .unlockedBy("has_flare_tip", has(dev.denfry.promptcritical.mod.registry.PcBlocks.FLARE_TIP.get())).save(out, id("flare_seal_drum"));
         // обходы §13.3.1
         ShapedRecipeBuilder.shaped(RecipeCategory.MISC, dev.denfry.promptcritical.mod.registry.PcBlocks.PATROL_CHECKPOINT.get(), 4)
                 .pattern(" N ").pattern("NRN").pattern(" N ").define('N', Items.IRON_NUGGET).define('R', Items.REDSTONE)

@@ -964,6 +964,9 @@ public final class PcLanguageProvider extends LanguageProvider {
         b("portable_ventilator", "Portable Ventilator", "Переносной вентилятор");
         b("patrol_checkpoint", "Patrol Checkpoint", "Метка обхода");
         i("patrol_reader", "Patrol Reader", "Считыватель обходчика");
+        b("flare_ignition_panel", "Flare Ignition Panel", "Щит розжига факела");
+        b("flare_knockout_drum", "Flare Knock-out Drum", "Факельный сепаратор капель");
+        b("flare_seal_drum", "Flare Seal Drum", "Гидрозатвор факела");
         MISC.putAll(dev.denfry.promptcritical.mod.safety.SafetyText.LANG);
     }
 

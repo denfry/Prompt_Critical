@@ -85,6 +85,13 @@ public final class SafetyText {
         t("item.promptcritical.patrol_reader.hint", "Sneak + right-click checkpoints to build the route; right-click them in order on the round",
                 "Shift + ПКМ по меткам — составить маршрут; на обходе — ПКМ по ним по порядку");
         t("item.promptcritical.patrol_reader.route", "Route: %s points, next %s", "Маршрут: %s пунктов, следующий %s");
+        // факел 13 §13.4.3
+        m("flare_no_fuel", "No fuel gas for the pilots: pipe sales gas into the panel", "Нет топливного газа для горелок: подайте товарный газ трубой в щит");
+        m("ko_level", "Condensate %s of %s L", "Конденсат %s из %s л");
+        m("seal_level", "Seal water %s of %s mB", "Вода затвора %s из %s мБ");
+        t("death.attack.promptcritical.thermal_radiation", "%1$s was scorched by the flare", "%1$s обожжён излучением факела");
+        t("death.attack.promptcritical.thermal_radiation.player", "%1$s was scorched by the flare while fighting %2$s",
+                "%1$s обожжён излучением факела, спасаясь от %2$s");
         for (String[] c : new String[][] {{"organic_vapour", "organic vapours (A)", "органические пары (A)"},
                 {"low_boiling_organic", "low-boiling organics (AX)", "низкокипящие органические (AX)"},
                 {"inorganic_gas", "Cl₂, H₂S (B)", "Cl₂, H₂S (B)"}, {"acid_gas", "SO₂, HCl, HF (E)", "SO₂, HCl, HF (E)"},

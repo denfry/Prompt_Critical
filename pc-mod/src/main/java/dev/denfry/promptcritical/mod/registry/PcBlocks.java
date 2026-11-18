@@ -485,6 +485,14 @@ public final class PcBlocks {
             FoundryBlock.with(dev.denfry.promptcritical.mod.production.SeparatorBlockEntity::new));
     public static final DeferredBlock<PcBlock> FLARE_STACK = block("flare_stack", machine(), Spec.of());
     public static final DeferredBlock<PcBlock> FLARE_TIP = block("flare_tip", lit(machine()), Spec.of(BlockStateProperties.LIT));
+    /** Факельная система 13 §13.4.3: щит розжига, сепаратор капель 3×1×1, гидрозатвор 1×2×1. */
+    public static final DeferredBlock<PcDeviceBlock> FLARE_IGNITION_PANEL = device("flare_ignition_panel", instrument(),
+            Spec.facing(PcProperties.SEVERITY), FoundryBlock.with(dev.denfry.promptcritical.mod.safety.FlareIgnitionPanelBlockEntity::new));
+    public static final DeferredBlock<PcDeviceBlock> FLARE_KNOCKOUT_DRUM = device("flare_knockout_drum", machine().noOcclusion(),
+            Spec.facing(PcProperties.MUD_LEVEL).footprint(Footprint.of(Segment.box(-1, 1, 0, 0, 0, 0))),
+            FoundryBlock.with(dev.denfry.promptcritical.mod.safety.FlareKnockoutDrumBlockEntity::new));
+    public static final DeferredBlock<PcDeviceBlock> FLARE_SEAL_DRUM = device("flare_seal_drum", machine().noOcclusion(),
+            Spec.facing().footprint(FP_TALL2), FoundryBlock.with(dev.denfry.promptcritical.mod.safety.FlareSealDrumBlockEntity::new));
     public static final DeferredBlock<PcDeviceBlock> TUBE_FURNACE = device("tube_furnace", lit(brick()),
             Spec.facing(BlockStateProperties.LIT).footprint(FP_CUBE3),
             FoundryBlock.with(dev.denfry.promptcritical.mod.production.TubeFurnaceBlockEntity::new));
