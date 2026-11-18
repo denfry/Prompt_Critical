@@ -108,6 +108,14 @@ public final class SubmergedArcFurnaceBlockEntity extends GridDeviceBlockEntity<
                         2, 0.25, 0.05, 0.25, 0.01);
         }
         if (ticks % 10 == 0) setFlag(BlockStateProperties.LIT, running);
+        // газ колошника: 2 CO на атом Si догорают до CO₂ (3,13 кг/кг Si), микрокремнезём без фильтра — 0,25 кг/кг Si
+        // (Schei et al. 1998); зонт печи разбавляет газ воздухом в сотни раз; труба 20 м, ≈ 450 К
+        if (running && ticks % 20 == 0 && level instanceof ServerLevel sl) {
+            double siKgS = u.powerW() / (SiliconChain.safKwhPerKg() * SiliconChain.J_PER_KWH);
+            dev.denfry.promptcritical.mod.environment.AirQualityService.emit(sl, worldPosition.above(2), 20, 450, 200 * siKgS, 0, 0,
+                    0.25 * siKgS, 2 * 44.01 / SiliconChain.M_SI * siKgS, 0, "submerged_arc_furnace@" + worldPosition.toShortString(),
+                    dev.denfry.promptcritical.sim.environment.EmissionLedger.Category.PROCESS);
+        }
     }
 
     @Override

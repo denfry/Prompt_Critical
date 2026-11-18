@@ -103,6 +103,12 @@ public final class GasTurbineBlockEntity extends IronworksBlockEntity {
         turbine.step(DT, loadW / Math.max(turbine.omega(), 0.2 * NOMINAL_OMEGA), airK, airPa, fuel);
         if (g != null && turbine.lit()) gas.draw(turbine.heatInputW() * DT / g.fuel.lhv() / g.densityKgNm3);
         setStateFlag(PcProperties.RUNNING, turbine.lit());
+        // выхлоп ГТУ: диффузионная камера, NOx 0,2 кг/ГДж; труба котла-утилизатора 30 м, газы после него ≈ 370 К —
+        // котёл-утилизатор своих выбросов не добавляет (14 §14.1.1)
+        if (ticks % 20 == 0 && turbine.lit() && level instanceof ServerLevel sl0)
+            dev.denfry.promptcritical.mod.environment.AirQualityService.emitGasFiring(sl0, worldPosition.above(3), 30, 370, turbine.heatInputW(),
+                    turbine.exhaustKgS(airK, airPa), 0.2, 0, "gas_turbine@" + worldPosition.toShortString(),
+                    dev.denfry.promptcritical.sim.environment.EmissionLedger.Category.GAS_TURBINE);
         if (ticks % 100 == 0) setChanged();
     }
 

@@ -37,6 +37,10 @@ public final class HotBlastStoveBlockEntity extends IronworksDeviceBlockEntity<H
         ProcessGas g = gas.gas();
         if (g != null) u.setGasSupply(g, gas.draw(u.gasDemandNm3S() * dtp) / dtp);
         else u.setGasSupply(null, 0);
+        // дымовые газы воздухонагревателя — труба 40 м, ≈ 520 К (08 §8.3)
+        if (level.getGameTime() % 20 == 0 && level instanceof net.minecraft.server.level.ServerLevel sl)
+            dev.denfry.promptcritical.mod.environment.AirQualityService.emit(sl, worldPosition.above(4), 40, 520, u.stove().combustion(),
+                    "hot_blast_stove@" + worldPosition.toShortString(), dev.denfry.promptcritical.sim.environment.EmissionLedger.Category.BLAST_FURNACE);
     }
 
     @Override

@@ -94,6 +94,11 @@ public final class SeparatorBlockEntity extends DeviceBlockEntity implements Fou
         if (ticks % 20 == 0 && flare != null) {
             BlockState tip = level.getBlockState(flare);
             boolean lit = flaredStdM3s > 0;
+            // факел: попутный газ ≈ 38 МДж/м³, полнота сгорания 0,98 — остальное метаном (14 §14.1.1); ствол 30 м, 1000 К
+            if (lit && level instanceof net.minecraft.server.level.ServerLevel sl0)
+                dev.denfry.promptcritical.mod.environment.AirQualityService.emitGasFiring(sl0, flare, 30, 1000, flaredStdM3s * 38e6,
+                        flaredStdM3s * 20, 0.03, 0.02, "flare@" + flare.toShortString(),
+                        dev.denfry.promptcritical.sim.environment.EmissionLedger.Category.FLARE);
             if (tip.is(PcBlocks.FLARE_TIP.get()) && tip.getValue(BlockStateProperties.LIT) != lit)
                 level.setBlock(flare, tip.setValue(BlockStateProperties.LIT, lit), Block.UPDATE_ALL);
         }

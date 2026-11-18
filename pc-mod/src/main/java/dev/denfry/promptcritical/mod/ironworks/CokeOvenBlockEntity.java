@@ -203,6 +203,10 @@ public final class CokeOvenBlockEntity extends BlockEntity implements DeviceHost
         ProcessGas g = gas.gas();
         if (g != null) u.setGasSupply(g, gas.draw(u.gasDemandNm3S(g) * dtp) / dtp);
         else u.setGasSupply(null, 0);
+        // обогрев батареи — дымовая труба 60 м, ≈ 500 К (08 §8.4, 14 §14.1.3)
+        if (now % 20 == 0 && level instanceof net.minecraft.server.level.ServerLevel sl)
+            dev.denfry.promptcritical.mod.environment.AirQualityService.emit(sl, worldPosition.above(6), 60, 500, bat.heatingResult(),
+                    "coke_battery@" + worldPosition.toShortString(), dev.denfry.promptcritical.sim.environment.EmissionLedger.Category.COKE_OVEN);
         if (u.fireboxHungry()) {
             ItemStack fuel = firebox.getStackInSlot(0);
             if (!fuel.isEmpty()) {

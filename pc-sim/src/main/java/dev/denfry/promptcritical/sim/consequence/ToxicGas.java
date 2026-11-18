@@ -8,11 +8,21 @@ package dev.denfry.promptcritical.sim.consequence;
  *   <li>Фтористый водород — пробит TNO («Green Book», 1992: a = −8,4, b = 1, n = 1,5 в мг/м³), переведённый в ppm:
  *   a = −8,4 + 1,5·ln(20,006/24,45) = −8,70. Запах (заметный) 0,5 ppm, ERPG-2 20, IDLH 30, AEGL-3 (10 мин) 170.
  *   Источник HF — и прямая утечка, и гидролиз UF₆ во влажном воздухе: UF₆ + 2 H₂O → UO₂F₂ + 4 HF.</li>
+ *   <li>Сернистый ангидрид — пробит CCPS («Guidelines for Chemical Process Quantitative Risk Analysis», 1989): a = −15,67,
+ *   b = 2,10, n = 1. Запах 0,5 ppm, ERPG-2 3, IDLH 100, AEGL-3 (10 мин) 42.</li>
+ *   <li>Сероводород — пробит CCPS / TNO (09 §9.11.8): a = −31,42, b = 3,008, n = 1,43 (500 ppm × 10 мин — 0,3 %,
+ *   1000 ppm × 10 мин — 59 %). Запах 0,01 ppm, но выше {@value #H2S_ANOSMIA_PPM} ppm обоняние парализовано: запаха нет.
+ *   ERPG-2 30, IDLH 100, AEGL-3 (10 мин) 76.</li>
  * </ul>
  */
 public enum ToxicGas {
     CHLORINE(70.906, -8.29, 0.92, 2, 0.3, 3, 10, 50),
-    HYDROGEN_FLUORIDE(20.006, -8.70, 1.0, 1.5, 0.5, 20, 30, 170);
+    HYDROGEN_FLUORIDE(20.006, -8.70, 1.0, 1.5, 0.5, 20, 30, 170),
+    SULFUR_DIOXIDE(64.066, -15.67, 2.10, 1.0, 0.5, 3, 100, 42),
+    HYDROGEN_SULFIDE(34.081, -31.42, 3.008, 1.43, 0.01, 30, 100, 76);
+
+    /** Паралич обоняния сероводородом, ppm (09 §9.11.8). */
+    public static final double H2S_ANOSMIA_PPM = 100;
 
     /** HF на кг UF₆ при полном гидролизе: 4·20,006/352,02. */
     public static final double HF_PER_UF6 = 4 * 20.006 / 352.02;
