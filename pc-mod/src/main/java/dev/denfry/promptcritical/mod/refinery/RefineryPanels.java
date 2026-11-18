@@ -118,7 +118,6 @@ public final class RefineryPanels {
     }
 
     public static List<PanelLayout> all() {
-        return List.of(HYDROTREATER, CLAUS, REFORMER);
-        return List.of(HYDROTREATER, CLAUS, COKER);
+        return List.of(HYDROTREATER, CLAUS, REFORMER, COKER);
     }
 }
