@@ -72,6 +72,8 @@ public final class ReactorAccidentSystems {
     private final Map<BlockPos, LoopPart> loop = new HashMap<>();
     private final Map<BlockPos, LoopPart> broken = new HashMap<>();
     private int drill;
+    /** A rod-housing nozzle torn open by an ejected cluster (04c §4c.5.1): a small break until the drill is reset. */
+    private boolean housingBreak;
     private int accumulators;
     private ContainmentScan containment = ContainmentScan.OPEN;
     /** A scan has given a definite answer since the block loaded; until then the saved containment is left alone. */
@@ -171,7 +173,33 @@ public final class ReactorAccidentSystems {
         PlantAccident.Design d = accident.design();
         double a = drill == 1 ? d.smallBreakM2() : drill == 2 ? d.largeBreakM2() : 0;
         for (LoopPart part : broken.values()) a += part.share * d.largeBreakM2();
+        if (housingBreak) a += dev.denfry.promptcritical.sim.npp.PressurizedWaterReactor.ROD_HOUSING_BREAK_M2;
         return Math.min(a, 2 * d.largeBreakM2());
+    }
+
+    /** Opens or seals the rod-housing break of an ejected cluster. */
+    public void setRodHousingBreak(boolean open) {
+        housingBreak = open;
+    }
+
+    public boolean rodHousingBreak() {
+        return housingBreak;
+    }
+
+    /**
+     * A steam explosion at the core or under the vessel (04c §4c.10.4): a confined blast through the consequence router,
+     * the activity of failed fuel inside the containment when it holds, outside otherwise.
+     */
+    public void steamExplosion(ServerLevel sl, SimLevelBinding b, SimId source, BlockPos at, double energyJ, int failed) {
+        if (!(energyJ > 0)) return;
+        GridPos o = new GridPos(at.getX(), at.getY(), at.getZ());
+        ConsequenceRouter.Routed r = ConsequenceRouter.route(ConsequenceRouter.Event.STEAM_EXPLOSION, requestSeq++, source, null, o,
+                energyJ, accident.hasContainment(), failed > 0);
+        if (r.damage() != null) b.damage().submit(r.damage());
+        if (r.release() == ConsequenceRouter.ReleasePath.ENVIRONMENT) startRelease(failed);
+        sl.playSound(null, at, SoundEvents.GENERIC_EXPLODE.value(), SoundSource.BLOCKS, 3f, 0.5f);
+        sl.sendParticles(ParticleTypes.EXPLOSION_EMITTER, at.getX() + 0.5, at.getY() + 0.5, at.getZ() + 0.5, 1, 0, 0, 0, 0);
+        broadcast(sl, at.getCenter(), 128, NppText.msg("fci", String.format(Locale.ROOT, "%.1f", energyJ / 1e6)).withStyle(ChatFormatting.DARK_RED));
     }
 
     // ------------------------------------------------------------------ step
@@ -312,6 +340,7 @@ public final class ReactorAccidentSystems {
         accident.save(new TreeStateWriter(tree));
         t.put("sim", NbtStateTrees.toNbt(tree));
         t.putInt("drill", drill);
+        t.putBoolean("housing", housingBreak);
         ListTag list = new ListTag();
         for (Map.Entry<BlockPos, LoopPart> e : broken.entrySet()) {
             CompoundTag c = new CompoundTag();
@@ -328,6 +357,7 @@ public final class ReactorAccidentSystems {
         CompoundTag t = tag.getCompound("accident");
         if (t.contains("sim")) accident.load(new TreeStateReader(NbtStateTrees.fromNbt(t.getCompound("sim"))));
         drill = Math.floorMod(t.getInt("drill"), 3);
+        housingBreak = t.getBoolean("housing");
         broken.clear();
         for (Tag e : t.getList("broken", Tag.TAG_COMPOUND)) {
             CompoundTag c = (CompoundTag) e;

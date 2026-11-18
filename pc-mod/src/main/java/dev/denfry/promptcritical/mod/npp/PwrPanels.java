@@ -19,11 +19,19 @@ public final class PwrPanels {
     public static final int POWER = 0, PERIOD = 1, RHO_PCM = 2, AZ = 3, RG = 4, FUEL_C = 5, HOT_C = 6, COLD_C = 7, PRESSURE = 8,
             PZR_LEVEL = 9, BORON = 10, HEATER_KW = 11, SPRAY = 12, CHARGE = 13, FLOW = 14, DNBR = 15, SG_MW = 16, XE_PCM = 17,
             BURNUP = 18, LOADED = 19, FAILED = 20, SETPOINT = 21, FIRST_OUT = 22, EXCHANGE = 23, EXCHANGE_G = 24, LEAK = 25,
-            PUMP1 = 26, PUMP2 = 27, FLAGS = 28, ACCIDENT = 29, CHANNELS = ACCIDENT + AccidentPanels.COUNT;
+            PUMP1 = 26, PUMP2 = 27, FLAGS = 28, ACCIDENT = 29, RIA_CENTS = ACCIDENT + AccidentPanels.COUNT, RIA_MJ = RIA_CENTS + 1,
+            RIA_FWHM_MS10 = RIA_CENTS + 2, RIA_PEAK_CALG = RIA_CENTS + 3, RIA_LIMIT_CALG = RIA_CENTS + 4, RIA_FLAGS = RIA_CENTS + 5,
+            SGTR_KGS10 = RIA_CENTS + 6, SG_P100 = RIA_CENTS + 7, SG_EXCESS_KG = RIA_CENTS + 8, SG_VENTED_KG = RIA_CENTS + 9,
+            SG_FLAGS = RIA_CENTS + 10, CHANNELS = RIA_CENTS + 11;
+    /** {@link #SG_FLAGS}: tube torn, N-16 alarm, damaged SG isolated, its relief lifting, stuck open, pressurizer PORV held open. */
+    public static final int S_RUPTURED = 0, S_N16 = 1, S_ISOLATED = 2, S_RELIEF = 3, S_STUCK = 4, S_PORV = 5;
+    /** {@link #RIA_FLAGS}: a cluster is out, the ejection was a prompt burst, fuel failed, fuel fragmented. */
+    public static final int R_EJECTED = 0, R_PROMPT = 1, R_FAILED = 2, R_FRAGMENTED = 3;
     public static final int F_TRIPPED = 0, F_AUTO = 1, F_NO_PZR = 2, F_NO_SG = 3, F_FAILED = 4, F_RG_UP = 5, F_RG_DOWN = 6,
             F_RELIEF = 7, F_SI = 8, F_LEAK = 9, F_LOW_FLUX_OFF = 10, F_HEATERS = 11;
     public static final int B_SCRAM = 0, B_RESET = 1, B_RG_UP = 2, B_RG_STOP = 3, B_RG_DOWN = 4, B_AUTO = 5, B_SP_DOWN = 6,
-            B_SP_UP = 7, B_LOW_FLUX = 8, B_XCH_DOWN = 9, B_XCH_UP = 10, B_XCH_SOURCE = 11, B_UNLOAD = 12, B_LOCA = 13;
+            B_SP_UP = 7, B_LOW_FLUX = 8, B_XCH_DOWN = 9, B_XCH_UP = 10, B_XCH_SOURCE = 11, B_UNLOAD = 12, B_LOCA = 13, B_RIA = 14,
+            B_SGTR = 15, B_SG_ISOLATE = 16, B_PORV = 17;
     public static final int SLOT_FRESH = 0, SLOT_SPENT = 1;
 
     private static final Tr PCT = PanelText.PERCENT, CELSIUS = PanelText.CELSIUS, SEC = PanelText.tr("unit.s", "s", "с"),
@@ -78,7 +86,38 @@ public final class PwrPanels {
             STATUS = PanelText.tr("pwr.status", "%s · DNBR %s · SG %s MW · Xe %s pcm · assemblies %s, failed %s · burnup up to %s MWd/kg",
                     "%s · DNBR %s · ПГ %s МВт · Xe %s pcm · ТВС %s, разгерметизировано %s · выгорание до %s МВт·сут/кг"),
             NORMAL = PanelText.tr("npp.trip.none", "normal", "норма"),
-            TRIP_PREFIX = PanelText.tr("pwr.trip", "SCRAM: %s", "АЗ: %s");
+            TRIP_PREFIX = PanelText.tr("pwr.trip", "SCRAM: %s", "АЗ: %s"),
+            RIA = PanelText.tr("pwr.ria", "Rod ejection", "Выброс стержня"),
+            RIA_TIP = PanelText.tr("pwr.ria_tip",
+                    "Reactivity drill: blow a control cluster out of its housing (a small break opens with it); press again on a shut-down reactor to put it back",
+                    "Учебная реактивностная авария: выбить кластер СУЗ из чехла (вместе с ним открывается малая течь); повторно на заглушенном реакторе — вернуть"),
+            SEVERE_NONE = PanelText.tr("pwr.severe_none", "Reactivity: every cluster in its drive", "Реактивность: все кластеры на приводах"),
+            RIA_LINE = PanelText.tr("pwr.ria_line", "ROD EJECTED · %s $ · burst %s MJ, %s ms · hot spot %s cal/g (fails at %s)",
+                    "ВЫБРОС СТЕРЖНЯ · %s $ · вспышка %s МДж, %s мс · горячая точка %s кал/г (разрушение с %s)"),
+            RIA_DELAYED = PanelText.tr("pwr.ria_delayed", "ROD EJECTED · %s $: below prompt critical, a delayed excursion",
+                    "ВЫБРОС СТЕРЖНЯ · %s $: ниже мгновенной критичности, разгон на запаздывающих"),
+            SGTR = PanelText.tr("pwr.sgtr", "SGTR", "РТПГ"),
+            SGTR_TIP = PanelText.tr("pwr.sgtr_tip", "Tube rupture drill: tear one tube of steam generator 1 (2.65 cm²); press again to plug it",
+                    "Учебный разрыв трубки: порвать одну трубку ПГ-1 (2,65 см²); повторно — заглушить её"),
+            ISOLATE = PanelText.tr("pwr.sg_isolate", "Isolate SG1", "Отсечь ПГ-1"),
+            ISOLATE_TIP = PanelText.tr("pwr.sg_isolate_tip", "Close the main steam isolation and feed valves of steam generator 1 (press again to reopen)",
+                    "Закрыть БЗОК и питание ПГ-1 (повторно — открыть)"),
+            PORV = PanelText.tr("pwr.porv", "PORV", "ИПУ КД"),
+            PORV_TIP = PanelText.tr("pwr.porv_tip", "Hold the pressurizer relief valve open to bring the primary pressure down (press again to close)",
+                    "Держать ИПУ компенсатора открытым, чтобы снизить давление первого контура (повторно — закрыть)"),
+            SG_NONE = PanelText.tr("pwr.sg_none", "Steam generators: tubes tight", "Парогенераторы: трубки плотные"),
+            SG_LINE = PanelText.tr("pwr.sg_line", "SGTR · leak %s kg/s · SG1 %s MPa%s · overfill %s kg · vented %s kg",
+                    "РТПГ · течь %s кг/с · ПГ-1 %s МПа%s · перелив %s кг · сброшено %s кг"),
+            SG_N16 = PanelText.tr("pwr.sg_n16", ", N-16", ", N-16"),
+            SG_ISO = PanelText.tr("pwr.sg_iso", ", isolated", ", отсечён"),
+            SG_RELIEF = PanelText.tr("pwr.sg_relief", ", relief", ", ПК ПГ"),
+            SG_STUCK = PanelText.tr("pwr.sg_stuck", ", RELIEF STUCK OPEN", ", ПК ПГ ЗАЛИП"),
+            SG_TIP = PanelText.tr("pwr.sg_tip",
+                    "First sign: N-16 in the steam line. Isolate the damaged SG, cool down through the intact one below the saturation of its 8 MPa relief, then open the PORV until the primary is at the damaged SG's pressure — the leak stops",
+                    "Первый признак — N-16 в паропроводе. Отсечь повреждённый ПГ, расхолодить через целый ниже насыщения при уставке его ПК 8 МПа, затем открыть ИПУ КД, пока давление 1К не сравняется с давлением повреждённого ПГ, — течь прекратится"),
+            RIA_LINE_TIP = PanelText.tr("pwr.ria_line_tip",
+                    "Nordheim–Fuchs burst E = 2(ρ₀ − β)/γ. Fuel limits: PCMI max(60, 150 − 1.6·Bu) cal/g, 170 cal/g high temperature, 230 cal/g fragmentation (steam explosion)",
+                    "Вспышка Нордгейма–Фукса E = 2(ρ₀ − β)/γ. Пределы топлива: PCMI max(60, 150 − 1,6·Bu) кал/г, 170 кал/г высокотемпературное, 230 кал/г фрагментация (паровой взрыв)");
     private static final Tr[] REASONS = {
             PanelText.tr("pwr.reason.manual", "manual", "ручная"),
             PanelText.tr("pwr.reason.high_flux", "power", "мощность"),
@@ -95,7 +134,7 @@ public final class PwrPanels {
             PanelText.tr("pwr.reason.seismic", "seismic", "сейсмика"),
             PanelText.tr("pwr.reason.lua_request", "external (ESD)", "внешняя (ПАЗ)")};
 
-    public static final PanelLayout REACTOR = PanelLayout.builder("pwr_reactor", 248, 176, CHANNELS)
+    public static final PanelLayout REACTOR = PanelLayout.builder("pwr_reactor", 248, 226, CHANNELS)
             .dial(8, 24, false, POWER, 10, 130, 107, 0, PCT.get(), N.get(),
                     v -> POWER_TIP.get(v.num(POWER, 10, 1), v.raw(RHO_PCM), v.raw(SETPOINT)))
             .dial(64, 24, false, PERIOD, 10, 100, Double.NaN, 0, SEC.get(), T_PERIOD.get(),
@@ -133,6 +172,12 @@ public final class PwrPanels {
             .readout(8, 140, 232, PwrPanels::chemistry, null)
             .readout(8, 154, 232, PwrPanels::status, null)
             .readout(8, 166, 232, v -> AccidentPanels.line(v, ACCIDENT), v -> AccidentPanels.tip(v, ACCIDENT))
+            .button(8, 180, 72, B_RIA, RIA.get(), RIA_TIP.get())
+            .button(84, 180, 44, B_SGTR, SGTR.get(), SGTR_TIP.get())
+            .button(132, 180, 60, B_SG_ISOLATE, ISOLATE.get(), ISOLATE_TIP.get())
+            .button(196, 180, 44, B_PORV, PORV.get(), PORV_TIP.get())
+            .readout(8, 200, 232, PwrPanels::severe, v -> RIA_LINE_TIP.get())
+            .readout(8, 212, 232, PwrPanels::tubes, v -> SG_TIP.get())
             .build();
 
     private PwrPanels() {
@@ -150,6 +195,25 @@ public final class PwrPanels {
         Component c = STATUS.get(state, v.num(DNBR, 100, 2), v.num(SG_MW, 10, 1), v.raw(XE_PCM), v.raw(LOADED), v.raw(FAILED),
                 v.num(BURNUP, 100, 2));
         return v.bit(FLAGS, F_TRIPPED) || v.bit(FLAGS, F_FAILED) || v.bit(FLAGS, F_LEAK) ? c.copy().withStyle(ChatFormatting.RED) : c;
+    }
+
+    /** Severe-accident line: the ejected cluster and its burst. */
+    private static Component severe(PanelValues v) {
+        if (!v.bit(RIA_FLAGS, R_EJECTED)) return SEVERE_NONE.get();
+        String dollars = v.num(RIA_CENTS, 100, 2);
+        if (!v.bit(RIA_FLAGS, R_PROMPT)) return RIA_DELAYED.get(dollars).copy().withStyle(ChatFormatting.RED);
+        Component c = RIA_LINE.get(dollars, v.raw(RIA_MJ), v.num(RIA_FWHM_MS10, 10, 1), v.raw(RIA_PEAK_CALG), v.raw(RIA_LIMIT_CALG));
+        return c.copy().withStyle(v.bit(RIA_FLAGS, R_FAILED) ? ChatFormatting.DARK_RED : ChatFormatting.RED);
+    }
+
+    /** Tube-rupture line: leak, damaged SG pressure and level, what went to the atmosphere. */
+    private static Component tubes(PanelValues v) {
+        if (!v.bit(SG_FLAGS, S_RUPTURED)) return SG_NONE.get();
+        Component flags = Component.empty().append(v.bit(SG_FLAGS, S_N16) ? SG_N16.get() : Component.empty())
+                .append(v.bit(SG_FLAGS, S_ISOLATED) ? SG_ISO.get() : Component.empty())
+                .append(v.bit(SG_FLAGS, S_STUCK) ? SG_STUCK.get() : v.bit(SG_FLAGS, S_RELIEF) ? SG_RELIEF.get() : Component.empty());
+        Component c = SG_LINE.get(v.num(SGTR_KGS10, 10, 1), v.num(SG_P100, 100, 2), flags, v.raw(SG_EXCESS_KG), v.raw(SG_VENTED_KG));
+        return c.copy().withStyle(v.bit(SG_FLAGS, S_STUCK) ? ChatFormatting.DARK_RED : ChatFormatting.RED);
     }
 
     /** Порядковый номер причины для канала {@link #FIRST_OUT}: 0 — нет. */

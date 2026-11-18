@@ -42,6 +42,25 @@ public final class NppText {
         put("sfr_clad", "SODIUM POOL OVERHEATED: fuel cladding failing, %s %% of the core",
                 "ПЕРЕГРЕВ НАТРИЯ: разрушаются оболочки твэлов, %s %% зоны");
         put("accident_h2_burn", "HYDROGEN BURN in the containment: %s MJ", "ГОРЕНИЕ ВОДОРОДА в гермооболочке: %s МДж");
+        put("ria_eject", "ROD EJECTION: a control cluster blew out of its housing, %s $ of reactivity",
+                "ВЫБРОС СТЕРЖНЯ: кластер СУЗ выбит из чехла, реактивность %s $");
+        put("ria_burst", "PROMPT CRITICAL BURST: %s MJ in %s ms, hot-spot fuel enthalpy %s cal/g",
+                "РАЗГОН НА МГНОВЕННЫХ НЕЙТРОНАХ: вспышка %s МДж за %s мс, энтальпия топлива в горячей точке %s кал/г");
+        put("ria_failed", "REACTIVITY ACCIDENT: cladding failed in %s assemblies", "РЕАКТИВНОСТНАЯ АВАРИЯ: разрушены оболочки ТВС: %s");
+        put("fci", "STEAM EXPLOSION: molten fuel hit the water, %s MJ", "ПАРОВОЙ ВЗРЫВ: расплав топлива попал в воду, %s МДж");
+        put("ria_reseated", "Drill: the cluster is back and its housing is sealed", "Учение: кластер на месте, чехол привода заглушён");
+        put("ria_reseat_refused", "The cluster can be restored only on a shut-down reactor",
+                "Вернуть кластер можно только на заглушенном реакторе");
+        put("sgtr_on", "Drill: a tube of steam generator 1 torn through", "Учение: порвана трубка ПГ-1");
+        put("sgtr_off", "Drill: the torn tube is plugged", "Учение: порванная трубка заглушена");
+        put("sg_isolated", "Steam generator 1 isolated: steam and feed valves closed", "ПГ-1 отсечён: БЗОК и питание закрыты");
+        put("sg_restored", "Steam generator 1 back on steam and feed", "ПГ-1 снова на паре и питании");
+        put("porv_open", "Pressurizer relief valve held open", "ИПУ компенсатора давления открыт ключом");
+        put("porv_closed", "Pressurizer relief valve back on its setpoint", "ИПУ компенсатора давления на уставке");
+        put("sgtr_n16", "N-16 IN THE STEAM LINE: primary coolant is leaking into steam generator 1",
+                "N-16 В ПАРОПРОВОДЕ: теплоноситель первого контура течёт в ПГ-1");
+        put("sgtr_stuck", "SG SAFETY VALVE STUCK OPEN: primary coolant vents straight to the atmosphere",
+                "ПК ПГ ЗАЛИП ОТКРЫТЫМ: теплоноситель первого контура уходит прямо в атмосферу");
         put("accident_breach", "CONTAINMENT FAILED: overpressure tore the shell, the release goes outside",
                 "РАЗРУШЕНИЕ ГЕРМООБОЛОЧКИ: давление разорвало её, выброс уходит наружу");
     }
