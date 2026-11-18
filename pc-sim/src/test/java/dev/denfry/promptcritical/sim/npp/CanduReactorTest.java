@@ -144,6 +144,19 @@ class CanduReactorTest {
         assertTrue(r.evaluateReactivity() < rho - 0.005, "downgrading costs reactivity");
     }
 
+    /** Недолитый контур уносит меньше тепла: при том же расходе насосов выход горячее. */
+    @Test
+    void halfFilledCircuitCarriesLessHeat() {
+        CanduReactor full = loaded(), half = loaded();
+        half.coolant().set(half.coolantCapacityKg() / 2, HeavyWater.REACTOR_GRADE_X);
+        for (CanduReactor r : new CanduReactor[] {full, half}) {
+            r.setRods(0, 0.5);
+            r.hotStart(1);
+            r.step(1);
+        }
+        assertTrue(half.outletK() > full.outletK() + 10, "outlet " + half.outletK() + " K vs " + full.outletK() + " K");
+    }
+
     /** Слив уносит тритий с водой; состояние D₂O переживает сохранение, старые сохранения считаются залитыми. */
     @Test
     void drainCarriesTritiumAndStateSurvivesSaveLoad() {

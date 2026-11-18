@@ -136,7 +136,8 @@ public final class PcFluids {
 
     static {
         MINE_WATER.props.block(PcBlocks.MINE_WATER);
-        HEAVY_WATER.props.block(PcBlocks.HEAVY_WATER).bucket(PcItems.HEAVY_WATER_BUCKET);
+        // лениво: PcItems может быть ещё в инициализации, когда сюда приходит PcFluids
+        HEAVY_WATER.props.block(() -> PcBlocks.HEAVY_WATER.get()).bucket(() -> PcItems.HEAVY_WATER_BUCKET.get());
     }
 
     /** Тип, источник и текущая форма одной жидкости. */
