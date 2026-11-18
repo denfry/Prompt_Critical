@@ -84,6 +84,11 @@ public final class WindTurbine {
 
     // ---------------------------------------------------------------- входы
 
+    /** Плотность воздуха у оси колеса, кг/м³. */
+    public double densityKgM3() {
+        return densityKgM3;
+    }
+
     /** Ветер у оси колеса: мгновенная скорость, откуда дует (рад), плотность воздуха. */
     public void setWind(double speedMs, double fromRad, double densityKgM3) {
         windMs = Math.max(0, speedMs);

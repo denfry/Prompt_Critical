@@ -59,6 +59,7 @@ public final class RtuPeripheral implements IPeripheral {
 
     @LuaFunction(mainThread = true)
     public final Map<String, Object> read(String id) throws LuaException {
+        dev.denfry.promptcritical.mod.content.SimAchievements.once(gateway, dev.denfry.promptcritical.mod.content.SimAchievements.LUA_READ, "", 1);
         return call(() -> gateway.read(id));
     }
 

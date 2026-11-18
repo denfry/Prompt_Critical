@@ -1,0 +1,33 @@
+{
+  "parent": "promptcritical:first_oil",
+  "criteria": {
+    "ethylene": {
+      "conditions": {
+        "event": "promptcritical:ethylene",
+        "station_member": true
+      },
+      "trigger": "promptcritical:sim_event"
+    }
+  },
+  "display": {
+    "description": {
+      "translate": "advancements.promptcritical.ethylene.description"
+    },
+    "icon": {
+      "count": 1,
+      "id": "promptcritical:pyrolysis_furnace"
+    },
+    "title": {
+      "translate": "advancements.promptcritical.ethylene.title"
+    }
+  },
+  "requirements": [
+    [
+      "ethylene"
+    ]
+  ],
+  "rewards": {
+    "experience": 40
+  },
+  "sends_telemetry_event": true
+}

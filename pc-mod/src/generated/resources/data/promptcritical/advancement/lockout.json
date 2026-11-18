@@ -1,0 +1,33 @@
+{
+  "parent": "promptcritical:root",
+  "criteria": {
+    "lock": {
+      "conditions": {
+        "event": "promptcritical:lockout",
+        "station_member": true
+      },
+      "trigger": "promptcritical:sim_event"
+    }
+  },
+  "display": {
+    "description": {
+      "translate": "advancements.promptcritical.lockout.description"
+    },
+    "icon": {
+      "count": 1,
+      "id": "promptcritical:lockout_padlock"
+    },
+    "title": {
+      "translate": "advancements.promptcritical.lockout.title"
+    }
+  },
+  "requirements": [
+    [
+      "lock"
+    ]
+  ],
+  "rewards": {
+    "experience": 20
+  },
+  "sends_telemetry_event": true
+}

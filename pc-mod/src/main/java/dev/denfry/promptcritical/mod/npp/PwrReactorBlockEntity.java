@@ -248,15 +248,29 @@ public final class PwrReactorBlockEntity extends DeviceBlockEntity implements Fo
     public int containmentVolumeM3() { return accident.containment().volumeM3(); }
     public int recombiners() { return accident.containment().recombiners(); }
 
+    private static final int SCRAM_CLEAN_TICKS = 1200;
+    private double tripPower;
+    private int tripFailed;
+    private long tripTick = -1;
+
     private void events(ServerLevel sl, SimLevelBinding b) {
         boolean tripped = reactor.protection().isTripped();
         if (tripped && !wasTripped) {
+            tripPower = reactor.power();
+            tripFailed = reactor.failedAssemblies();
+            tripTick = ticks;
             sl.playSound(null, worldPosition, SoundEvents.BELL_BLOCK, SoundSource.BLOCKS, 1.5f, 0.6f);
             Component why = reasonName(reactor.protection().firstOut());
             for (ServerPlayer p : sl.getPlayers(p -> p.distanceToSqr(worldPosition.getCenter()) < 48 * 48))
                 p.displayClientMessage(NppText.msg("scram", why).withStyle(ChatFormatting.RED), false);
         }
         wasTripped = tripped;
+        // «Чистая АЗ» (11 §11.2.2): с мощности выше 50 % и без новых разгерметизаций за минуту после срабатывания
+        if (tripTick >= 0 && ticks - tripTick == SCRAM_CLEAN_TICKS) {
+            if (tripPower > 0.5 && reactor.failedAssemblies() == tripFailed)
+                dev.denfry.promptcritical.mod.content.SimAchievements.nearby(sl, worldPosition, dev.denfry.promptcritical.mod.content.SimAchievements.SCRAM_CLEAN, "power_pct", 100 * tripPower);
+            tripTick = -1;
+        }
         if (reactor.leakKgS() > 0 && ticks % 4 == 0)
             sl.sendParticles(ParticleTypes.CLOUD, worldPosition.getX() + 0.5, worldPosition.getY() + 0.5, worldPosition.getZ() + 0.5,
                     (int) Math.min(20, 1 + reactor.leakKgS()), 1.2, 0.3, 1.2, 0.05);
@@ -304,6 +318,7 @@ public final class PwrReactorBlockEntity extends DeviceBlockEntity implements Fo
             if (reactor.loaded(pos)) continue;
             // МОКС: плутоний идёт в зону по изотопам — ячейка видит его сечения и β (LightWaterCore)
             if (reactor.load(pos, d, l.uKg(), l.u235(), l.u234(), l.plutonium())) {
+                if (dev.denfry.promptcritical.mod.nuclear.MoxShare.of(l).isMox()) dev.denfry.promptcritical.mod.content.SimAchievements.once(this, dev.denfry.promptcritical.mod.content.SimAchievements.MOX_LOADED, "pu_kg", 1);
                 s.shrink(1);
                 fuel.setStackInSlot(PwrPanels.SLOT_FRESH, s);
                 setChanged();

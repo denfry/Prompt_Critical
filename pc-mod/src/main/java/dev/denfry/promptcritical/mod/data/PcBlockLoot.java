@@ -36,6 +36,9 @@ import net.neoforged.neoforge.registries.DeferredHolder;
  * конструкции — предмет только с контроллера; остальное — сам блок. Клетки {@code multiblock_part} без лута.
  */
 public final class PcBlockLoot extends BlockLootSubProvider {
+    /** Доля U-235 в руде природного реактора, ppm (около 0,60 % против 0,72 % природной, 11 §11.4.2). */
+    public static final int OKLO_U235_PPM = 6000;
+
     public PcBlockLoot(HolderLookup.Provider registries) {
         super(Set.of(), FeatureFlags.REGISTRY.allFlags(), registries);
     }
@@ -52,6 +55,11 @@ public final class PcBlockLoot extends BlockLootSubProvider {
             } else if (PcBlocks.selfAssayed().contains(db)) {
                 add(block, LootTable.lootTable().withPool(applyExplosionCondition(block, LootPool.lootPool()
                         .setRolls(ConstantValue.exactly(1)).add(LootItem.lootTableItem(block).apply(AssayFunction.assay())))));
+            } else if (db == PcBlocks.OKLO_URANINITE_ORE) {
+                // руда природного реактора: сырьё с обеднённым U-235 (11 §11.4.2), шёлк — сам блок
+                add(block, createSilkTouchDispatchTable(block, applyExplosionDecay(block, LootItem.lootTableItem(PcItems.RAW_URANINITE.get())
+                        .apply(net.minecraft.world.level.storage.loot.functions.SetComponentsFunction.setComponent(
+                                dev.denfry.promptcritical.mod.registry.PcDataComponents.U235_PPM.get(), OKLO_U235_PPM)))));
             } else if (db == PcBlocks.SAND_MOLD) {
                 // заформованная форма уносит модель и влажность (08 §8.9)
                 add(block, LootTable.lootTable().withPool(applyExplosionCondition(block, LootPool.lootPool()

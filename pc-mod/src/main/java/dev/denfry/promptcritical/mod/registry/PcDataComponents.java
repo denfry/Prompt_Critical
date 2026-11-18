@@ -26,6 +26,18 @@ public final class PcDataComponents {
             COMPONENTS.registerComponentType("rope_state", b -> b.persistent(RopeStateData.CODEC)
                     .networkSynchronized(RopeStateData.STREAM_CODEC));
 
+    /**
+     * Доля U-235 в уранините, ppm атомов (11 §11.4.2): природная 7200; руда природного реактора — обеднённая, 6000.
+     * Нет компонента — природная.
+     */
+    public static final DeferredHolder<DataComponentType<?>, DataComponentType<Integer>> U235_PPM =
+            COMPONENTS.registerComponentType("u235_ppm", b -> b.persistent(com.mojang.serialization.Codec.INT)
+                    .networkSynchronized(net.minecraft.network.codec.ByteBufCodecs.VAR_INT));
+    /** Бесхозный источник (12 §12.3.3): найден вне контейнера и вне владения станции. */
+    public static final DeferredHolder<DataComponentType<?>, DataComponentType<Boolean>> ORPHAN_SOURCE =
+            COMPONENTS.registerComponentType("orphan_source", b -> b.persistent(com.mojang.serialization.Codec.BOOL)
+                    .networkSynchronized(net.minecraft.network.codec.ByteBufCodecs.BOOL));
+
     /** Глава справочника, которую несёт {@code operating_procedure}. */
     public static final DeferredHolder<DataComponentType<?>, DataComponentType<ResourceLocation>> PROCEDURE_REF =
             COMPONENTS.registerComponentType("procedure_ref", b -> b.persistent(ResourceLocation.CODEC)

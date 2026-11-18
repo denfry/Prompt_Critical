@@ -1,0 +1,33 @@
+{
+  "parent": "promptcritical:relay_logic",
+  "criteria": {
+    "run": {
+      "conditions": {
+        "event": "promptcritical:plc_run",
+        "station_member": true
+      },
+      "trigger": "promptcritical:sim_event"
+    }
+  },
+  "display": {
+    "description": {
+      "translate": "advancements.promptcritical.plc_first.description"
+    },
+    "icon": {
+      "count": 1,
+      "id": "promptcritical:plc"
+    },
+    "title": {
+      "translate": "advancements.promptcritical.plc_first.title"
+    }
+  },
+  "requirements": [
+    [
+      "run"
+    ]
+  ],
+  "rewards": {
+    "experience": 30
+  },
+  "sends_telemetry_event": true
+}

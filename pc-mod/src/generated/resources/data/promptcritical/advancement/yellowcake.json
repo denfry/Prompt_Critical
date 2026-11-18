@@ -1,0 +1,37 @@
+{
+  "parent": "promptcritical:first_criticality",
+  "criteria": {
+    "cake": {
+      "conditions": {
+        "items": [
+          {
+            "items": "promptcritical:yellowcake"
+          }
+        ]
+      },
+      "trigger": "minecraft:inventory_changed"
+    }
+  },
+  "display": {
+    "description": {
+      "translate": "advancements.promptcritical.yellowcake.description"
+    },
+    "frame": "goal",
+    "icon": {
+      "count": 1,
+      "id": "promptcritical:yellowcake"
+    },
+    "title": {
+      "translate": "advancements.promptcritical.yellowcake.title"
+    }
+  },
+  "requirements": [
+    [
+      "cake"
+    ]
+  ],
+  "rewards": {
+    "experience": 60
+  },
+  "sends_telemetry_event": true
+}

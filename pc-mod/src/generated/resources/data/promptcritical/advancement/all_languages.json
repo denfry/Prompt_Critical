@@ -1,0 +1,39 @@
+{
+  "parent": "promptcritical:plc_first",
+  "criteria": {
+    "languages": {
+      "conditions": {
+        "event": "promptcritical:plc_languages",
+        "predicate": {
+          "languages_4": {
+            "min": 4.0
+          }
+        },
+        "station_member": true
+      },
+      "trigger": "promptcritical:sim_event"
+    }
+  },
+  "display": {
+    "description": {
+      "translate": "advancements.promptcritical.all_languages.description"
+    },
+    "frame": "challenge",
+    "icon": {
+      "count": 1,
+      "id": "promptcritical:plc"
+    },
+    "title": {
+      "translate": "advancements.promptcritical.all_languages.title"
+    }
+  },
+  "requirements": [
+    [
+      "languages"
+    ]
+  ],
+  "rewards": {
+    "experience": 100
+  },
+  "sends_telemetry_event": true
+}

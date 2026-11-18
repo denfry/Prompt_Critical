@@ -1,0 +1,34 @@
+{
+  "parent": "promptcritical:first_oil",
+  "criteria": {
+    "killed": {
+      "conditions": {
+        "event": "promptcritical:well_killed",
+        "station_member": true
+      },
+      "trigger": "promptcritical:sim_event"
+    }
+  },
+  "display": {
+    "description": {
+      "translate": "advancements.promptcritical.kill_well.description"
+    },
+    "frame": "goal",
+    "icon": {
+      "count": 1,
+      "id": "promptcritical:drillers_console"
+    },
+    "title": {
+      "translate": "advancements.promptcritical.kill_well.title"
+    }
+  },
+  "requirements": [
+    [
+      "killed"
+    ]
+  ],
+  "rewards": {
+    "experience": 80
+  },
+  "sends_telemetry_event": true
+}

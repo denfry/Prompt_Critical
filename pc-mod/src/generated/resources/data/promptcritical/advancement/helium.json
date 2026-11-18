@@ -1,0 +1,33 @@
+{
+  "parent": "promptcritical:first_oil",
+  "criteria": {
+    "helium": {
+      "conditions": {
+        "event": "promptcritical:helium_recovered",
+        "station_member": true
+      },
+      "trigger": "promptcritical:sim_event"
+    }
+  },
+  "display": {
+    "description": {
+      "translate": "advancements.promptcritical.helium.description"
+    },
+    "icon": {
+      "count": 1,
+      "id": "promptcritical:helium_recovery_unit"
+    },
+    "title": {
+      "translate": "advancements.promptcritical.helium.title"
+    }
+  },
+  "requirements": [
+    [
+      "helium"
+    ]
+  ],
+  "rewards": {
+    "experience": 40
+  },
+  "sends_telemetry_event": true
+}

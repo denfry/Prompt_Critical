@@ -433,6 +433,21 @@ public final class PcBlocks {
     public static final DeferredBlock<PcBlock> BARITE_ORE = geology("barite_ore", MapColor.QUARTZ);
     public static final DeferredBlock<PcBlock> OIL_SEEP = geologyOf(block("oil_seep",
             Properties.of().mapColor(MapColor.COLOR_BLACK).strength(0.6f).sound(SoundType.MUD).noOcclusion().speedFactor(0.4f), Spec.of()));
+    // находки мира 11 §11.4: асфальтовое озеро, горящий газовый кратер, природный реактор, станция пробирного анализа
+    public static final DeferredBlock<dev.denfry.promptcritical.mod.worldgen.WorldBlocks.NaturalBitumenBlock> NATURAL_BITUMEN = withItem(
+            BLOCKS.registerBlock("natural_bitumen", dev.denfry.promptcritical.mod.worldgen.WorldBlocks.NaturalBitumenBlock::new,
+                    Properties.of().mapColor(MapColor.COLOR_BLACK).strength(0.8f).sound(SoundType.HONEY_BLOCK).speedFactor(0.3f)
+                            .jumpFactor(0.5f)));
+    public static final DeferredBlock<dev.denfry.promptcritical.mod.worldgen.WorldBlocks.GasSeepVentBlock> GAS_SEEP_VENT = withItem(
+            BLOCKS.registerBlock("gas_seep_vent", dev.denfry.promptcritical.mod.worldgen.WorldBlocks.GasSeepVentBlock::new,
+                    Properties.of().mapColor(MapColor.TERRACOTTA_BROWN).strength(1.5f).requiresCorrectToolForDrops()
+                            .lightLevel(s -> s.getValue(BlockStateProperties.LIT) ? 15 : 0)));
+    /**
+     * Уранинит природного реактора (11 §11.4.2, {@code natural_reactor_oklo}): с виду — обычная руда в глубинном сланце,
+     * но выпадает сырьё с обеднённым U-235 (6000 ppm вместо 7200) — это видно только на станции пробирного анализа.
+     */
+    public static final DeferredBlock<PcBlock> OKLO_URANINITE_ORE = block("oklo_uraninite_ore", ore(), Spec.of());
+    public static final DeferredBlock<PcBlock> ASSAY_STATION = block("assay_station", instrument(), Spec.facing());
     public static final DeferredBlock<PcDeviceBlock> SEISMIC_RECORDER = device("seismic_recorder", instrument(),
             Spec.facing(BlockStateProperties.LIT), FoundryBlock.with(dev.denfry.promptcritical.mod.drilling.SeismicRecorderBlockEntity::new));
     public static final DeferredBlock<PcBlock> GEOPHONE = block("geophone", instrument().noCollission(), Spec.of());

@@ -21,10 +21,46 @@ public class PlcBlockEntity extends AutomationBlockEntity {
         super(type, pos, state, AutomationKind.PLC);
     }
 
+    /** Языки МЭК, на которых этот ПЛК уже работал в RUN (достижение {@code all_languages}, 11 §11.2.2). */
+    private final java.util.EnumSet<dev.denfry.promptcritical.sim.automation.plc.PlcLanguage> languages =
+            java.util.EnumSet.noneOf(dev.denfry.promptcritical.sim.automation.plc.PlcLanguage.class);
+
     @Override
     protected void serverTick(AutomationUnit u) {
         super.serverTick(u);
-        setFlag(PcProperties.RUNNING, u.plc() != null && u.plc().mode() == PlcCpu.Mode.RUN);
+        boolean run = u.plc() != null && u.plc().mode() == PlcCpu.Mode.RUN;
+        setFlag(PcProperties.RUNNING, run);
+        if (!run) return;
+        dev.denfry.promptcritical.mod.content.SimAchievements.once(this, dev.denfry.promptcritical.mod.content.SimAchievements.PLC_RUN, "", 1);
+        if (languages.add(dev.denfry.promptcritical.sim.automation.plc.PlcLanguage.of(u.plc().program().source()))) {
+            setChanged();
+            var four = java.util.EnumSet.of(dev.denfry.promptcritical.sim.automation.plc.PlcLanguage.LD,
+                    dev.denfry.promptcritical.sim.automation.plc.PlcLanguage.FBD, dev.denfry.promptcritical.sim.automation.plc.PlcLanguage.SFC,
+                    dev.denfry.promptcritical.sim.automation.plc.PlcLanguage.ST);
+            four.retainAll(languages);
+            dev.denfry.promptcritical.mod.content.SimAchievements.once(this, dev.denfry.promptcritical.mod.content.SimAchievements.PLC_LANGUAGES, "languages_" + four.size(), four.size());
+        }
+    }
+
+    @Override
+    protected void saveAdditional(net.minecraft.nbt.CompoundTag tag, net.minecraft.core.HolderLookup.Provider registries) {
+        super.saveAdditional(tag, registries);
+        StringBuilder b = new StringBuilder();
+        for (var l : languages) b.append(b.isEmpty() ? "" : ",").append(l.name());
+        tag.putString("languages", b.toString());
+    }
+
+    @Override
+    protected void loadAdditional(net.minecraft.nbt.CompoundTag tag, net.minecraft.core.HolderLookup.Provider registries) {
+        super.loadAdditional(tag, registries);
+        languages.clear();
+        for (String s : tag.getString("languages").split(",")) {
+            try {
+                if (!s.isEmpty()) languages.add(dev.denfry.promptcritical.sim.automation.plc.PlcLanguage.valueOf(s));
+            } catch (IllegalArgumentException ignored) {
+                // язык из будущей версии — пропустить
+            }
+        }
     }
 
     @Override

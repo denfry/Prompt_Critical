@@ -1,0 +1,36 @@
+{
+  "parent": "promptcritical:enriched",
+  "criteria": {
+    "fa": {
+      "conditions": {
+        "items": [
+          {
+            "items": "promptcritical:fuel_assembly"
+          }
+        ]
+      },
+      "trigger": "minecraft:inventory_changed"
+    }
+  },
+  "display": {
+    "description": {
+      "translate": "advancements.promptcritical.first_fa.description"
+    },
+    "icon": {
+      "count": 1,
+      "id": "promptcritical:fuel_assembly"
+    },
+    "title": {
+      "translate": "advancements.promptcritical.first_fa.title"
+    }
+  },
+  "requirements": [
+    [
+      "fa"
+    ]
+  ],
+  "rewards": {
+    "experience": 50
+  },
+  "sends_telemetry_event": true
+}

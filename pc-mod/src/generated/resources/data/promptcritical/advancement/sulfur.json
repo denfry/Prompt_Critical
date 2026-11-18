@@ -1,0 +1,39 @@
+{
+  "parent": "promptcritical:first_oil",
+  "criteria": {
+    "sulfur": {
+      "conditions": {
+        "items": [
+          {
+            "count": {
+              "min": 64
+            },
+            "items": "promptcritical:sulfur"
+          }
+        ]
+      },
+      "trigger": "minecraft:inventory_changed"
+    }
+  },
+  "display": {
+    "description": {
+      "translate": "advancements.promptcritical.sulfur.description"
+    },
+    "icon": {
+      "count": 1,
+      "id": "promptcritical:sulfur"
+    },
+    "title": {
+      "translate": "advancements.promptcritical.sulfur.title"
+    }
+  },
+  "requirements": [
+    [
+      "sulfur"
+    ]
+  ],
+  "rewards": {
+    "experience": 30
+  },
+  "sends_telemetry_event": true
+}

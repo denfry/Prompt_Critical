@@ -1,0 +1,33 @@
+{
+  "parent": "promptcritical:yellowcake",
+  "criteria": {
+    "uf6": {
+      "conditions": {
+        "event": "promptcritical:uf6_filled",
+        "station_member": true
+      },
+      "trigger": "promptcritical:sim_event"
+    }
+  },
+  "display": {
+    "description": {
+      "translate": "advancements.promptcritical.uf6.description"
+    },
+    "icon": {
+      "count": 1,
+      "id": "promptcritical:fluorination_reactor"
+    },
+    "title": {
+      "translate": "advancements.promptcritical.uf6.title"
+    }
+  },
+  "requirements": [
+    [
+      "uf6"
+    ]
+  ],
+  "rewards": {
+    "experience": 40
+  },
+  "sends_telemetry_event": true
+}

@@ -1,0 +1,33 @@
+{
+  "parent": "promptcritical:own_sun",
+  "criteria": {
+    "defect": {
+      "conditions": {
+        "event": "promptcritical:radiography_defect",
+        "station_member": true
+      },
+      "trigger": "promptcritical:sim_event"
+    }
+  },
+  "display": {
+    "description": {
+      "translate": "advancements.promptcritical.through_steel.description"
+    },
+    "icon": {
+      "count": 1,
+      "id": "promptcritical:radiography_film_exposed"
+    },
+    "title": {
+      "translate": "advancements.promptcritical.through_steel.title"
+    }
+  },
+  "requirements": [
+    [
+      "defect"
+    ]
+  ],
+  "rewards": {
+    "experience": 40
+  },
+  "sends_telemetry_event": true
+}

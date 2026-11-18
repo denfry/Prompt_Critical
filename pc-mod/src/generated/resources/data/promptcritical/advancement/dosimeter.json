@@ -1,0 +1,33 @@
+{
+  "parent": "promptcritical:lockout",
+  "criteria": {
+    "day": {
+      "conditions": {
+        "event": "promptcritical:dosimeter_day",
+        "station_member": true
+      },
+      "trigger": "promptcritical:sim_event"
+    }
+  },
+  "display": {
+    "description": {
+      "translate": "advancements.promptcritical.dosimeter.description"
+    },
+    "icon": {
+      "count": 1,
+      "id": "promptcritical:dosimeter_radiometer"
+    },
+    "title": {
+      "translate": "advancements.promptcritical.dosimeter.title"
+    }
+  },
+  "requirements": [
+    [
+      "day"
+    ]
+  ],
+  "rewards": {
+    "experience": 30
+  },
+  "sends_telemetry_event": true
+}

@@ -1,0 +1,34 @@
+{
+  "parent": "promptcritical:lua_first",
+  "criteria": {
+    "rtus": {
+      "conditions": {
+        "event": "promptcritical:telemetry",
+        "station_member": true
+      },
+      "trigger": "promptcritical:sim_event"
+    }
+  },
+  "display": {
+    "description": {
+      "translate": "advancements.promptcritical.telemetry.description"
+    },
+    "frame": "goal",
+    "icon": {
+      "count": 1,
+      "id": "promptcritical:rtu_station"
+    },
+    "title": {
+      "translate": "advancements.promptcritical.telemetry.title"
+    }
+  },
+  "requirements": [
+    [
+      "rtus"
+    ]
+  ],
+  "rewards": {
+    "experience": 60
+  },
+  "sends_telemetry_event": true
+}

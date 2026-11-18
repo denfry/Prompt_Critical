@@ -77,6 +77,11 @@ public final class DosimeterItem extends Item {
             if (level.getGameTime() % 20 != 0 || !(player instanceof ServerPlayer sp)) return;
             Reading r = new Reading((float) RadiationService.lastRateSvH(sp), (float) RadiationService.totalSv(sp));
             stack.set(READING.get(), r);
+            // сутки с дозиметром (достижение dosimeter, 11 §11.2.2): игровые тики, пока прибор в инвентаре
+            var data = sp.getPersistentData();
+            long worn = data.getLong("promptcritical:dosimeter_ticks") + 20;
+            data.putLong("promptcritical:dosimeter_ticks", worn);
+            if (worn % 24000 < 20) dev.denfry.promptcritical.mod.content.SimAchievements.direct(sp, dev.denfry.promptcritical.mod.content.SimAchievements.DOSIMETER_DAY, "days", worn / 24000.0);
             if (inHand) {
                 ChatFormatting c = r.rateSvH() >= 1e-3 ? ChatFormatting.RED : r.rateSvH() >= 2e-5 ? ChatFormatting.GOLD : ChatFormatting.GREEN;
                 sp.displayClientMessage(Component.translatable("message.promptcritical.dosimeter.reading", rate(r.rateSvH()), dose(r.doseSv()))

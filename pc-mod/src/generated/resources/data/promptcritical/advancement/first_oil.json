@@ -1,0 +1,34 @@
+{
+  "parent": "promptcritical:first_steam",
+  "criteria": {
+    "oil": {
+      "conditions": {
+        "event": "promptcritical:first_oil",
+        "station_member": true
+      },
+      "trigger": "promptcritical:sim_event"
+    }
+  },
+  "display": {
+    "description": {
+      "translate": "advancements.promptcritical.first_oil.description"
+    },
+    "frame": "goal",
+    "icon": {
+      "count": 1,
+      "id": "promptcritical:wellhead"
+    },
+    "title": {
+      "translate": "advancements.promptcritical.first_oil.title"
+    }
+  },
+  "requirements": [
+    [
+      "oil"
+    ]
+  ],
+  "rewards": {
+    "experience": 60
+  },
+  "sends_telemetry_event": true
+}

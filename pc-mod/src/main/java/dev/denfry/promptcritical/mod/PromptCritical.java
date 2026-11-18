@@ -42,6 +42,7 @@ public final class PromptCritical {
         PcDataComponents.COMPONENTS.register(modBus);
         PcLootFunctions.FUNCTIONS.register(modBus);
         PcFeatures.FEATURES.register(modBus);
+        dev.denfry.promptcritical.mod.worldgen.WorldFinds.register();
         PcFluids.TYPES.register(modBus);
         PcFluids.FLUIDS.register(modBus);
         PcCreativeTabs.TABS.register(modBus);

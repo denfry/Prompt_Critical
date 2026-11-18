@@ -26,7 +26,7 @@ import net.neoforged.neoforge.common.data.AdvancementProvider;
 import net.neoforged.neoforge.common.data.ExistingFileHelper;
 
 /**
- * Достижения эпох I0–I1 и автоматизации A1–A2 (11 §11.2.2): ванильные, условия — через {@code promptcritical:sim_event}, награда — только
+ * Достижения каталога 11 §11.2.2 (производство, эксплуатация, автоматизация, безопасность, мир): ванильные, условия — через {@code promptcritical:sim_event} или предмет в инвентаре, награда — только
  * опыт (C2, T11.5). Остальные ветки каталога добавляются в своих вехах.
  */
 public final class PcAdvancements implements AdvancementProvider.AdvancementGenerator {
@@ -63,6 +63,35 @@ public final class PcAdvancements implements AdvancementProvider.AdvancementGene
         LANG.put("analog_pid", new String[] {"No Computer Needed", "Без компьютера",
                 "A PI controller built from analog blocks holds its setpoint for a whole day",
                 "ПИ-регулятор на аналоговых блоках держит параметр целые сутки"});
+        LANG.put("first_oil", new String[] {"Gusher", "Фонтан", "The first crude oil from a well", "Первая нефть из скважины"});
+        LANG.put("helium", new String[] {"Light as Helium", "Лёгкий как гелий", "Separate helium from natural gas", "Выделите гелий из природного газа"});
+        LANG.put("ethylene", new String[] {"Ethylene", "Этилен", "The first ethylene from pyrolysis", "Первый этилен пиролиза"});
+        LANG.put("sulfur", new String[] {"Yellow Mountain", "Жёлтая гора", "Hold 64 sulfur", "Соберите 64 серы"});
+        LANG.put("bakelite", new String[] {"Age of Plastics", "Эпоха пластмасс", "Make the first phenolic resin", "Получите первую фенолформальдегидную смолу"});
+        LANG.put("yellowcake", new String[] {"Yellowcake", "Жёлтый кек", "The first yellowcake", "Первый жёлтый кек"});
+        LANG.put("uf6", new String[] {"Hexafluoride", "Гексафторид", "Fill the first UF6 cylinder", "Наполните первый баллон UF₆"});
+        LANG.put("enriched", new String[] {"Three Percent", "Три процента", "Enrich UF6 to 3 % U-235 or more", "Обогатите UF₆ до 3 % U-235 и выше"});
+        LANG.put("first_fa", new String[] {"First Assembly", "Первая сборка", "Assemble the first fuel assembly", "Соберите первую ТВС"});
+        LANG.put("closed_cycle", new String[] {"Closed Cycle", "Замкнутый цикл", "Load MOX fuel from your own plutonium into a reactor and hold a vitrified HLW canister", "Загрузите МОКС-топливо из своего плутония в реактор и получите канистру остеклованных ВАО"});
+        LANG.put("scram_clean", new String[] {"Clean Scram", "Чистая АЗ", "Scram a power reactor from above 50 % with no fuel failing in the minute after", "Аварийная защита с мощности выше 50 % без разгерметизации ТВС в следующую минуту"});
+        LANG.put("kill_well", new String[] {"Well Killed", "Скважина заглушена", "Kill a well kick with the driller's method, without a blowout", "Ликвидируйте ГНВП методом бурильщика, без открытого фонтана"});
+        LANG.put("plc_first", new String[] {"First Scan", "Первый скан", "A PLC program runs in RUN", "Программа ПЛК работает в режиме RUN"});
+        LANG.put("all_languages", new String[] {"IEC Polyglot", "Полиглот МЭК", "One PLC has run programs in LD, FBD, SFC and ST", "Один ПЛК работал на программах LD, FBD, SFC и ST"});
+        LANG.put("lua_first", new String[] {"Hello, Reactor", "Hello, reactor", "A Lua program reads a machine through a pc_rtu telemetry gateway", "Lua-программа читает машину через шлюз телемеханики pc_rtu"});
+        LANG.put("historian", new String[] {"Plant Memory", "Память завода", "A historian keeps 100 tags, each for a game day", "Историан хранит 100 тегов, каждый — за игровые сутки"});
+        LANG.put("telemetry", new String[] {"Telemechanics", "Телемеханика", "Ten telemetry gateways report to one historian", "Десять шлюзов телемеханики у одного историана"});
+        LANG.put("dosimeter", new String[] {"Count the Dose", "Считай дозу", "Carry a dosimeter for a game day", "Носите дозиметр игровые сутки"});
+        LANG.put("lockout", new String[] {"Padlock", "Замок", "Hang your first LOTO padlock", "Повесьте первый замок LOTO"});
+        LANG.put("own_sun", new String[] {"Own Sun", "Своё солнце", "Get the first sealed radioactive source", "Получите первый закрытый радионуклидный источник"});
+        LANG.put("through_steel", new String[] {"Through Steel", "Сквозь сталь", "Find a weld defect on a radiograph", "Найдите дефект шва на рентгенограмме"});
+        LANG.put("pitch_lake", new String[] {"Asphalt Lake", "Асфальтовое озеро", "Find a natural bitumen lake",
+                "Найдите естественный выход битума"});
+        LANG.put("gas_crater", new String[] {"Door to Hell", "Врата ада", "Find a burning gas crater", "Найдите горящий газовый кратер"});
+        LANG.put("oklo", new String[] {"The Planet Was First", "Планета успела первой",
+                "An assay shows depleted U-235 in the ore of a natural reactor",
+                "Анализ показал обеднённый U-235 в руде природного реактора"});
+        LANG.put("orphan_found", new String[] {"Nobody's Source", "Ничей источник", "Find an orphan radioactive source",
+                "Найдите бесхозный радиоактивный источник"});
         LANG.put("digital_twin", new String[] {"Twin First", "Сначала на двойнике",
                 "A PLC program passed its acceptance test on the digital twin, then went into the real PLC",
                 "Программа прошла испытания на цифровом двойнике, затем загружена в реальный ПЛК"});
@@ -123,6 +152,71 @@ public final class PcAdvancements implements AdvancementProvider.AdvancementGene
         task(relays, PcBlocks.MANUAL_STATION.get(), "analog_pid", AdvancementType.GOAL, false, 60)
                 .addCriterion("analog_loop_held", event(AutomationSubsystem.ANALOG_LOOP_HELD, Map.of()))
                 .save(saver, id("analog_pid"), efh);
+        // каталог 11 §11.2.2: производство, эксплуатация, автоматизация, безопасность
+        AdvancementHolder oil = task(steam, PcBlocks.WELLHEAD.get(), "first_oil", AdvancementType.GOAL, false, 60)
+                .addCriterion("oil", event(dev.denfry.promptcritical.mod.content.SimAchievements.FIRST_OIL, Map.of())).save(saver, id("first_oil"), efh);
+        task(oil, PcBlocks.HELIUM_RECOVERY_UNIT.get(), "helium", AdvancementType.TASK, false, 40)
+                .addCriterion("helium", event(dev.denfry.promptcritical.mod.content.SimAchievements.HELIUM, Map.of())).save(saver, id("helium"), efh);
+        AdvancementHolder eth = task(oil, PcBlocks.PYROLYSIS_FURNACE.get(), "ethylene", AdvancementType.TASK, false, 40)
+                .addCriterion("ethylene", event(dev.denfry.promptcritical.mod.content.SimAchievements.ETHYLENE, Map.of())).save(saver, id("ethylene"), efh);
+        task(oil, PcItems.SULFUR.get(), "sulfur", AdvancementType.TASK, false, 30)
+                .addCriterion("sulfur", InventoryChangeTrigger.TriggerInstance.hasItems(net.minecraft.advancements.critereon.ItemPredicate.Builder
+                        .item().of(PcItems.SULFUR.get()).withCount(MinMaxBounds.Ints.atLeast(64)))).save(saver, id("sulfur"), efh);
+        task(eth, PcItems.PHENOLIC_RESIN.get(), "bakelite", AdvancementType.TASK, false, 30)
+                .addCriterion("resin", InventoryChangeTrigger.TriggerInstance.hasItems(PcItems.PHENOLIC_RESIN.get())).save(saver, id("bakelite"), efh);
+        AdvancementHolder cake = task(pile, PcItems.YELLOWCAKE.get(), "yellowcake", AdvancementType.GOAL, false, 60)
+                .addCriterion("cake", InventoryChangeTrigger.TriggerInstance.hasItems(PcItems.YELLOWCAKE.get())).save(saver, id("yellowcake"), efh);
+        AdvancementHolder uf6 = task(cake, PcBlocks.FLUORINATION_REACTOR.get(), "uf6", AdvancementType.TASK, false, 40)
+                .addCriterion("uf6", event(dev.denfry.promptcritical.mod.content.SimAchievements.UF6_FILLED, Map.of())).save(saver, id("uf6"), efh);
+        AdvancementHolder enriched = task(uf6, PcBlocks.GAS_CENTRIFUGE.get(), "enriched", AdvancementType.GOAL, false, 80)
+                .addCriterion("enriched", event(dev.denfry.promptcritical.mod.content.SimAchievements.ENRICHED, Map.of("u235_pct", MinMaxBounds.Doubles.atLeast(3)))).save(saver, id("enriched"), efh);
+        AdvancementHolder fa = task(enriched, PcItems.FUEL_ASSEMBLY.get(), "first_fa", AdvancementType.TASK, false, 50)
+                .addCriterion("fa", InventoryChangeTrigger.TriggerInstance.hasItems(PcItems.FUEL_ASSEMBLY.get())).save(saver, id("first_fa"), efh);
+        task(fa, PcItems.HLW_GLASS_CANISTER.get(), "closed_cycle", AdvancementType.CHALLENGE, false, 200)
+                .addCriterion("mox", event(dev.denfry.promptcritical.mod.content.SimAchievements.MOX_LOADED, Map.of()))
+                .addCriterion("hlw", InventoryChangeTrigger.TriggerInstance.hasItems(PcItems.HLW_GLASS_CANISTER.get()))
+                .save(saver, id("closed_cycle"), efh);
+        task(fa, PcBlocks.PWR_REACTOR.get(), "scram_clean", AdvancementType.TASK, false, 50)
+                .addCriterion("scram", event(dev.denfry.promptcritical.mod.content.SimAchievements.SCRAM_CLEAN, Map.of())).save(saver, id("scram_clean"), efh);
+        task(oil, PcBlocks.DRILLERS_CONSOLE.get(), "kill_well", AdvancementType.GOAL, false, 80)
+                .addCriterion("killed", event(dev.denfry.promptcritical.mod.content.SimAchievements.WELL_KILLED, Map.of())).save(saver, id("kill_well"), efh);
+        AdvancementHolder plc = task(relays, PcBlocks.PLC.get(), "plc_first", AdvancementType.TASK, false, 30)
+                .addCriterion("run", event(dev.denfry.promptcritical.mod.content.SimAchievements.PLC_RUN, Map.of())).save(saver, id("plc_first"), efh);
+        task(plc, PcBlocks.PLC.get(), "all_languages", AdvancementType.CHALLENGE, false, 100)
+                .addCriterion("languages", event(dev.denfry.promptcritical.mod.content.SimAchievements.PLC_LANGUAGES, Map.of("languages_4", MinMaxBounds.Doubles.atLeast(4))))
+                .save(saver, id("all_languages"), efh);
+        AdvancementHolder rtu = task(plc, PcBlocks.RTU_STATION.get(), "lua_first", AdvancementType.TASK, false, 30)
+                .addCriterion("read", event(dev.denfry.promptcritical.mod.content.SimAchievements.LUA_READ, Map.of())).save(saver, id("lua_first"), efh);
+        task(rtu, PcBlocks.HISTORIAN_SERVER.get(), "historian", AdvancementType.TASK, false, 50)
+                .addCriterion("day", event(dev.denfry.promptcritical.mod.content.SimAchievements.HISTORIAN_DAY, Map.of())).save(saver, id("historian"), efh);
+        task(rtu, PcBlocks.RTU_STATION.get(), "telemetry", AdvancementType.GOAL, false, 60)
+                .addCriterion("rtus", event(dev.denfry.promptcritical.mod.content.SimAchievements.TELEMETRY, Map.of())).save(saver, id("telemetry"), efh);
+        AdvancementHolder lock = task(root, PcItems.LOCKOUT_PADLOCK.get(), "lockout", AdvancementType.TASK, false, 20)
+                .addCriterion("lock", event(dev.denfry.promptcritical.mod.content.SimAchievements.LOCKOUT, Map.of())).save(saver, id("lockout"), efh);
+        AdvancementHolder dose = task(lock, PcItems.DOSIMETER.get(), "dosimeter", AdvancementType.TASK, false, 30)
+                .addCriterion("day", event(dev.denfry.promptcritical.mod.content.SimAchievements.DOSIMETER_DAY, Map.of())).save(saver, id("dosimeter"), efh);
+        AdvancementHolder sun = task(dose, PcItems.SEALED_SOURCE.get(), "own_sun", AdvancementType.TASK, false, 40)
+                .addCriterion("source", InventoryChangeTrigger.TriggerInstance.hasItems(PcItems.SEALED_SOURCE.get())).save(saver, id("own_sun"), efh);
+        task(sun, PcItems.RADIOGRAPHY_FILM_EXPOSED.get(), "through_steel", AdvancementType.TASK, false, 40)
+                .addCriterion("defect", event(dev.denfry.promptcritical.mod.content.SimAchievements.RADIOGRAPHY_DEFECT, Map.of())).save(saver, id("through_steel"), efh);
+        // мир и скрытые (11 §11.2.2, §11.4)
+        task(root, PcBlocks.NATURAL_BITUMEN.get(), "pitch_lake", AdvancementType.TASK, true, 20)
+                .addCriterion("found", SimEventTrigger.TriggerInstance.of(
+                        ResourceLocation.parse(dev.denfry.promptcritical.mod.worldgen.WorldBlocks.PITCH_LAKE), Map.of(), false))
+                .save(saver, id("pitch_lake"), efh);
+        task(root, PcBlocks.GAS_SEEP_VENT.get(), "gas_crater", AdvancementType.TASK, true, 20)
+                .addCriterion("found", SimEventTrigger.TriggerInstance.of(
+                        ResourceLocation.parse(dev.denfry.promptcritical.mod.worldgen.WorldBlocks.GAS_CRATER), Map.of(), false))
+                .save(saver, id("gas_crater"), efh);
+        task(root, PcBlocks.ASSAY_STATION.get(), "oklo", AdvancementType.CHALLENGE, true, 100)
+                .addCriterion("assay", SimEventTrigger.TriggerInstance.of(
+                        ResourceLocation.parse(dev.denfry.promptcritical.mod.worldgen.WorldFinds.OKLO), Map.of(), false))
+                .save(saver, id("oklo"), efh);
+        task(root, PcItems.SR90_HEAT_SOURCE.get(), "orphan_found", AdvancementType.TASK, true, 30)
+                .addCriterion("orphan", InventoryChangeTrigger.TriggerInstance.hasItems(net.minecraft.advancements.critereon.ItemPredicate.Builder
+                        .item().of(PcItems.SR90_HEAT_SOURCE.get()).hasComponents(net.minecraft.core.component.DataComponentPredicate.builder()
+                                .expect(dev.denfry.promptcritical.mod.registry.PcDataComponents.ORPHAN_SOURCE.get(), true).build())))
+                .save(saver, id("orphan_found"), efh);
         // A5 и тренажёр (03d §3d.9.1, 11 §11.3.5)
         task(relays, PcBlocks.SIMULATION_WORKSTATION.get(), "digital_twin", AdvancementType.GOAL, false, 80)
                 .addCriterion("deployed", SimEventTrigger.TriggerInstance.of(

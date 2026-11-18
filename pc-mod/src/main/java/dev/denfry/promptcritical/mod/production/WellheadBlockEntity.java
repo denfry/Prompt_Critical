@@ -158,6 +158,9 @@ public final class WellheadBlockEntity extends DeviceBlockEntity implements Foun
         double dt = 0.05 * b.world().clock().kSlow();
         well.step(dt, open, spm, ThreePhaseSeparator.STANDARD.pressurePa());
         if (open && sep != null) sep.accept(well.oilM3s() * dt, well.waterM3s() * dt, well.gasStdM3s() * dt, dt);
+        if (open && sep != null && well.oilM3s() > 0)
+            dev.denfry.promptcritical.mod.content.SimAchievements.once(this, dev.denfry.promptcritical.mod.content.SimAchievements.FIRST_OIL,
+                    "oil_m3s", well.oilM3s());
         if (jack != null) jack.load(well.card() == null ? 0 : well.card().shaftPowerW());
         if (tree && ticks % 10 == 0 && above.getValue(BlockStateProperties.OPEN) != open)
             level.setBlock(worldPosition.above(), above.setValue(BlockStateProperties.OPEN, open), Block.UPDATE_ALL);

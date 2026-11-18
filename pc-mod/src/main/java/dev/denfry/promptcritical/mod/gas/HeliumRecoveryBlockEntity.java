@@ -97,6 +97,8 @@ public final class HeliumRecoveryBlockEntity extends DeviceBlockEntity implement
         feed.take(q);
         ln2.take(unit.ln2KgS() * dt / LN2_KG_L);
         helium.add(he);
+        if (he > 0) dev.denfry.promptcritical.mod.content.SimAchievements.once(this,
+                dev.denfry.promptcritical.mod.content.SimAchievements.HELIUM, "nm3", he);
         returned.add(unit.returnNm3S() * dt + (unit.heliumNm3S() * dt - he)); // не влезший гелий уходит с газом в сеть
         if (level.getGameTime() % 10 == 0) {
             BlockState st = getBlockState();

@@ -14,6 +14,9 @@ public final class PcFeatures {
     public static final DeferredHolder<Feature<?>, VeinOreFeature> VEIN_ORES = FEATURES.register("vein_ores", VeinOreFeature::new);
     public static final DeferredHolder<Feature<?>, dev.denfry.promptcritical.mod.drilling.PetroleumFeature> PETROLEUM =
             FEATURES.register("petroleum", dev.denfry.promptcritical.mod.drilling.PetroleumFeature::new);
+    /** Структуры мира 11 §11.4.2. */
+    public static final DeferredHolder<Feature<?>, dev.denfry.promptcritical.mod.worldgen.WorldStructureFeature> WORLD_STRUCTURE =
+            FEATURES.register("world_structure", dev.denfry.promptcritical.mod.worldgen.WorldStructureFeature::new);
 
     private PcFeatures() {
     }

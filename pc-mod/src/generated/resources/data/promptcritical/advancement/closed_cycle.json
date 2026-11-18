@@ -1,0 +1,47 @@
+{
+  "parent": "promptcritical:first_fa",
+  "criteria": {
+    "hlw": {
+      "conditions": {
+        "items": [
+          {
+            "items": "promptcritical:hlw_glass_canister"
+          }
+        ]
+      },
+      "trigger": "minecraft:inventory_changed"
+    },
+    "mox": {
+      "conditions": {
+        "event": "promptcritical:mox_loaded",
+        "station_member": true
+      },
+      "trigger": "promptcritical:sim_event"
+    }
+  },
+  "display": {
+    "description": {
+      "translate": "advancements.promptcritical.closed_cycle.description"
+    },
+    "frame": "challenge",
+    "icon": {
+      "count": 1,
+      "id": "promptcritical:hlw_glass_canister"
+    },
+    "title": {
+      "translate": "advancements.promptcritical.closed_cycle.title"
+    }
+  },
+  "requirements": [
+    [
+      "mox"
+    ],
+    [
+      "hlw"
+    ]
+  ],
+  "rewards": {
+    "experience": 200
+  },
+  "sends_telemetry_event": true
+}

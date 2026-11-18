@@ -222,6 +222,8 @@ public final class DrillersConsoleBlockEntity extends DeviceBlockEntity implemen
         boolean wasBlowout = well.blowout();
         well.step(dt, q, rpm, rigOk ? wobSetN : 0);
         kill.track(well, dt);
+        if (kill.stage() == dev.denfry.promptcritical.sim.drilling.DrillersMethod.Stage.DONE && !well.blowout())
+            dev.denfry.promptcritical.mod.content.SimAchievements.once(this, dev.denfry.promptcritical.mod.content.SimAchievements.WELL_KILLED, "", 1);
         double share = q > 0 ? well.pumpPowerW() / q : 0;
         for (MudPumpBlockEntity m : pumpBes) m.load(well.drillPipePressurePa(), share * m.flowM3s());
         if (rotary != null) rotary.load(well.rotaryPowerW());

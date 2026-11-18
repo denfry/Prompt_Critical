@@ -1,0 +1,33 @@
+{
+  "parent": "promptcritical:plc_first",
+  "criteria": {
+    "read": {
+      "conditions": {
+        "event": "promptcritical:lua_read",
+        "station_member": true
+      },
+      "trigger": "promptcritical:sim_event"
+    }
+  },
+  "display": {
+    "description": {
+      "translate": "advancements.promptcritical.lua_first.description"
+    },
+    "icon": {
+      "count": 1,
+      "id": "promptcritical:rtu_station"
+    },
+    "title": {
+      "translate": "advancements.promptcritical.lua_first.title"
+    }
+  },
+  "requirements": [
+    [
+      "read"
+    ]
+  ],
+  "rewards": {
+    "experience": 30
+  },
+  "sends_telemetry_event": true
+}

@@ -136,6 +136,7 @@ public final class Lockouts {
                 LockResult res = r.apply(k, f.point().isolatedPosition(), p.getUUID(), p.getGameProfile().getName(), tag, NO_PERMIT,
                         p.level().getGameTime(), ServerConfig.OPS_MAX_LOCKS_PER_PLAYER.get());
                 if (res == LockResult.OK) {
+                    dev.denfry.promptcritical.mod.content.SimAchievements.direct(p, dev.denfry.promptcritical.mod.content.SimAchievements.LOCKOUT, "", 1);
                     if (!p.getAbilities().instabuild) {
                         stack.shrink(1);
                         if (tagged) off.shrink(1);

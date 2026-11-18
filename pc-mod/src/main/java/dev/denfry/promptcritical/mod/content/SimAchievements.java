@@ -21,7 +21,32 @@ public final class SimAchievements {
     public static final String COKE_PUSHED = "promptcritical:coke_pushed", IRON_TAPPED = "promptcritical:iron_tapped",
             STEEL_TAPPED = "promptcritical:steel_tapped", SEAMLESS_PIPE = "promptcritical:seamless_pipe";
 
+    /**
+     * События первых продуктов и установок для достижений 11 §11.2.2: первая нефть, гелий, этилен, первый налив UF₆,
+     * обогащение (тег {@code u235_pct}), загрузка МОКС, заглушённая скважина, ПЛК в RUN, языки ПЛК (тег
+     * {@code languages}), чтение Lua, историан за сутки (тег {@code tags}), шлюзы у историана (тег {@code rtus}), замок
+     * LOTO, дефект на плёнке, сутки с дозиметром, чистая АЗ (тег {@code power_pct}).
+     */
+    public static final String FIRST_OIL = "promptcritical:first_oil", HELIUM = "promptcritical:helium_recovered",
+            ETHYLENE = "promptcritical:ethylene", UF6_FILLED = "promptcritical:uf6_filled", ENRICHED = "promptcritical:enriched",
+            MOX_LOADED = "promptcritical:mox_loaded", WELL_KILLED = "promptcritical:well_killed", PLC_RUN = "promptcritical:plc_run",
+            PLC_LANGUAGES = "promptcritical:plc_languages", LUA_READ = "promptcritical:lua_read",
+            HISTORIAN_DAY = "promptcritical:historian_day", TELEMETRY = "promptcritical:telemetry",
+            LOCKOUT = "promptcritical:lockout", RADIOGRAPHY_DEFECT = "promptcritical:radiography_defect",
+            DOSIMETER_DAY = "promptcritical:dosimeter_day", SCRAM_CLEAN = "promptcritical:scram_clean";
+    /** Источники, уже объявившие событие: повторно не шлют (сбрасывается с выгрузкой блока). */
+    private static final java.util.Map<Object, java.util.Set<String>> ONCE = new java.util.WeakHashMap<>();
+
     private SimAchievements() {
+    }
+
+    /** Событие мира у блока, один раз на экземпляр блока (первая нефть, первый налив и т. п.). */
+    public static void once(net.minecraft.world.level.block.entity.BlockEntity be, String event, String tag, double value) {
+        if (!(be.getLevel() instanceof ServerLevel sl)) return;
+        synchronized (ONCE) {
+            if (!ONCE.computeIfAbsent(be, k -> new java.util.HashSet<>()).add(event + "/" + tag)) return;
+        }
+        nearby(sl, be.getBlockPos(), event, tag, value);
     }
 
     /** Событие домена от устройства: всем игрокам рядом с ним. */

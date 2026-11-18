@@ -1,0 +1,40 @@
+{
+  "parent": "promptcritical:root",
+  "criteria": {
+    "orphan": {
+      "conditions": {
+        "items": [
+          {
+            "components": {
+              "promptcritical:orphan_source": true
+            },
+            "items": "promptcritical:sr90_heat_source"
+          }
+        ]
+      },
+      "trigger": "minecraft:inventory_changed"
+    }
+  },
+  "display": {
+    "description": {
+      "translate": "advancements.promptcritical.orphan_found.description"
+    },
+    "hidden": true,
+    "icon": {
+      "count": 1,
+      "id": "promptcritical:sr90_heat_source"
+    },
+    "title": {
+      "translate": "advancements.promptcritical.orphan_found.title"
+    }
+  },
+  "requirements": [
+    [
+      "orphan"
+    ]
+  ],
+  "rewards": {
+    "experience": 30
+  },
+  "sends_telemetry_event": true
+}

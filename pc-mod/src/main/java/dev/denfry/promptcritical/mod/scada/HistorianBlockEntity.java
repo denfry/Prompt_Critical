@@ -76,6 +76,14 @@ public class HistorianBlockEntity extends DeviceBlockEntity implements FoundryDe
                 a.add(t, r.value());
                 seen++;
             }
+        // достижения 11 §11.2.2: «Память завода» — 100 тегов, каждый за игровые сутки (1200 с архива); «Телемеханика» —
+        // 10 КП на одном мастере
+        int rtus = Ironworks.blockEntities(level, new AABB(worldPosition).inflate(RADIUS), TelemetryGatewayBlockEntity.class).size();
+        if (rtus >= 10) dev.denfry.promptcritical.mod.content.SimAchievements.once(this, dev.denfry.promptcritical.mod.content.SimAchievements.TELEMETRY, "rtus", rtus);
+        if (ticks % 1200 == 0 && tags.size() >= 100) {
+            long day = tags.values().stream().filter(a -> a.size() > 0 && a.lastT() - a.firstT() >= 1200).count();
+            if (day >= 100) dev.denfry.promptcritical.mod.content.SimAchievements.once(this, dev.denfry.promptcritical.mod.content.SimAchievements.HISTORIAN_DAY, "tags", day);
+        }
         BlockState s = getBlockState();
         boolean busy = seen > 0;
         if (s.hasProperty(BlockStateProperties.LIT) && s.getValue(BlockStateProperties.LIT) != busy)

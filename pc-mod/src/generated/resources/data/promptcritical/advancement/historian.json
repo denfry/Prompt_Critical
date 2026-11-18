@@ -1,0 +1,33 @@
+{
+  "parent": "promptcritical:lua_first",
+  "criteria": {
+    "day": {
+      "conditions": {
+        "event": "promptcritical:historian_day",
+        "station_member": true
+      },
+      "trigger": "promptcritical:sim_event"
+    }
+  },
+  "display": {
+    "description": {
+      "translate": "advancements.promptcritical.historian.description"
+    },
+    "icon": {
+      "count": 1,
+      "id": "promptcritical:historian_server"
+    },
+    "title": {
+      "translate": "advancements.promptcritical.historian.title"
+    }
+  },
+  "requirements": [
+    [
+      "day"
+    ]
+  ],
+  "rewards": {
+    "experience": 50
+  },
+  "sends_telemetry_event": true
+}

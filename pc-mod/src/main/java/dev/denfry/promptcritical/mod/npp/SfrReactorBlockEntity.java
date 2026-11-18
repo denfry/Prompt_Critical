@@ -212,6 +212,7 @@ public final class SfrReactorBlockEntity extends DeviceBlockEntity implements Fo
         FuelLot l = FuelLot.of(s);
         if (!mox(l)) return;
         reactor = new SodiumFastReactor(l.heavyMetalKg(), l.pu() / l.heavyMetalKg());
+        dev.denfry.promptcritical.mod.content.SimAchievements.once(this, dev.denfry.promptcritical.mod.content.SimAchievements.MOX_LOADED, "pu_kg", l.pu());
         s.shrink(1);
         fuel.setStackInSlot(SfrPanels.SLOT_FRESH, s);
         lastTrip = reactor.trip();

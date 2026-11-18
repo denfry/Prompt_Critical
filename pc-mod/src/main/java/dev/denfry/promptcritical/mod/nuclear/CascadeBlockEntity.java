@@ -173,6 +173,8 @@ public final class CascadeBlockEntity extends KineticMachineBlockEntity<ShaftInp
         Uf6Charge mixed = Uf6CylinderItem.charge(s).plus(new Uf6Charge(kgU * factor, x, x234));
         if (!Uf6CylinderItem.accepts(s, mixed.u235())) return;
         Uf6CylinderItem.fill(s, hall.drainProduct(kgU) * factor, x, x234);
+        if (x >= 0.03) dev.denfry.promptcritical.mod.content.SimAchievements.once(this,
+                dev.denfry.promptcritical.mod.content.SimAchievements.ENRICHED, "u235_pct", 100 * x);
     }
 
     private void drainTails() {

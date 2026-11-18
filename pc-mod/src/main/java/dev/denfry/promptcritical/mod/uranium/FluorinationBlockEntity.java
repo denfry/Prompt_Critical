@@ -81,6 +81,8 @@ public final class FluorinationBlockEntity extends UraniumProcessBlockEntity {
                 ItemStack filled = Uf6CylinderItem.fill(cyl.copy(), move, UraniumUnits.NATURAL_U235, UraniumUnits.NATURAL_U234);
                 input.setStackInSlot(slot, filled);
                 trapKgUf6 -= move;
+                dev.denfry.promptcritical.mod.content.SimAchievements.once(this,
+                        dev.denfry.promptcritical.mod.content.SimAchievements.UF6_FILLED, "kg", move);
             }
             ItemStack now = input.getStackInSlot(slot);
             if ((Uf6CylinderItem.roomKg(now) < 1e-3 || ship) && Uf6CylinderItem.charge(now).uf6Kg() > 0 && emit(now.copy())) {

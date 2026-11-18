@@ -1,0 +1,33 @@
+{
+  "parent": "promptcritical:root",
+  "criteria": {
+    "found": {
+      "conditions": {
+        "event": "promptcritical:gas_crater"
+      },
+      "trigger": "promptcritical:sim_event"
+    }
+  },
+  "display": {
+    "description": {
+      "translate": "advancements.promptcritical.gas_crater.description"
+    },
+    "hidden": true,
+    "icon": {
+      "count": 1,
+      "id": "promptcritical:gas_seep_vent"
+    },
+    "title": {
+      "translate": "advancements.promptcritical.gas_crater.title"
+    }
+  },
+  "requirements": [
+    [
+      "found"
+    ]
+  ],
+  "rewards": {
+    "experience": 20
+  },
+  "sends_telemetry_event": true
+}

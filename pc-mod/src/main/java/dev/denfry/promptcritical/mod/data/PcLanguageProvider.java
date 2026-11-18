@@ -310,6 +310,10 @@ public final class PcLanguageProvider extends LanguageProvider {
         b("cap_rock_shale", "Cap Rock Shale", "Глинистая покрышка");
         b("barite_ore", "Bedded Barite", "Пластовый барит");
         b("oil_seep", "Oil Seep", "Нефтепроявление");
+        b("natural_bitumen", "Natural Bitumen", "Природный битум");
+        b("gas_seep_vent", "Gas Seep Vent", "Выход газа");
+        b("oklo_uraninite_ore", "Deepslate Pitchblende Ore", "Урановая смолка в глубинном сланце");
+        b("assay_station", "Assay Station", "Станция пробирного анализа");
         b("seismic_recorder", "Seismic Recorder", "Сейсмостанция");
         b("geophone", "Geophone", "Сейсмоприёмник");
         b("drillers_console", "Driller's Console", "Пульт бурильщика");
@@ -754,6 +758,7 @@ public final class PcLanguageProvider extends LanguageProvider {
         MISC.putAll(dev.denfry.promptcritical.mod.ironworks.IronworksText.LANG);
         MISC.putAll(dev.denfry.promptcritical.mod.steelworks.SteelworksText.LANG);
         MISC.putAll(dev.denfry.promptcritical.mod.ops.OpsText.LANG);
+        MISC.putAll(dev.denfry.promptcritical.mod.worldgen.WorldFinds.LANG);
         MISC.putAll(dev.denfry.promptcritical.mod.ops.LockoutText.LANG);
         MISC.putAll(dev.denfry.promptcritical.mod.ops.OpsFireText.LANG);
         MISC.putAll(dev.denfry.promptcritical.mod.powerhouse.PowerhouseText.LANG);

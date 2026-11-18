@@ -38,7 +38,7 @@ public final class PcTagProviders {
             "uraninite_ore", "deepslate_uraninite_ore");
     private static final Set<String> AXE = Set.of("mine_support", "ventilation_door", "explosion_barrier", "document_lectern",
             "wooden_pole");
-    private static final Set<String> SHOVEL = Set.of("fireclay", "sand_mold");
+    private static final Set<String> SHOVEL = Set.of("fireclay", "sand_mold", "natural_bitumen");
 
     private PcTagProviders() {
     }
@@ -61,6 +61,8 @@ public final class PcTagProviders {
                     tag(PcTags.Blocks.ORES).add(b);
                 }
             }
+            tag(BlockTags.NEEDS_IRON_TOOL).add(PcBlocks.OKLO_URANINITE_ORE.get());
+            tag(PcTags.Blocks.ORES).add(PcBlocks.OKLO_URANINITE_ORE.get());
             for (DeferredBlock<PcBlock> db : PcBlocks.selfAssayed()) {
                 tag(BlockTags.NEEDS_STONE_TOOL).add(db.get());
                 tag(PcTags.Blocks.ORES).add(db.get());

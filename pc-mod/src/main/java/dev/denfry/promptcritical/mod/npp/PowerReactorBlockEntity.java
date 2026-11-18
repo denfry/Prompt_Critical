@@ -226,6 +226,7 @@ public final class PowerReactorBlockEntity extends DeviceBlockEntity implements 
         for (int ch = 0; ch < ChannelReactor.CHANNELS; ch++) {
             if (reactor.loaded(ch)) continue;
             if (reactor.load(ch, l.uKg(), l.u235(), l.u234(), l.plutonium())) {
+                if (dev.denfry.promptcritical.mod.nuclear.MoxShare.of(l).isMox()) dev.denfry.promptcritical.mod.content.SimAchievements.once(this, dev.denfry.promptcritical.mod.content.SimAchievements.MOX_LOADED, "pu_kg", 1);
                 s.shrink(1);
                 fuel.setStackInSlot(NppPanels.SLOT_FRESH, s);
                 setChanged();

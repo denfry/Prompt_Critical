@@ -109,6 +109,8 @@ public final class CrackedGasUnitBlockEntity extends DeviceBlockEntity implement
         double propL = litres(r.propylene(), 514), c4L = litres(r.c4(), 620), pyL = litres(r.pygas(), 830), oilL = litres(r.fuelOil(), 1080);
         if (ethylene.room() < ethNm3 || propylene.room() < propL || c4.room() < c4L || pygas.room() < pyL || fuelOil.room() < oilL) return;
         ethylene.add(ethNm3);
+        if (ethNm3 > 0) dev.denfry.promptcritical.mod.content.SimAchievements.once(this,
+                dev.denfry.promptcritical.mod.content.SimAchievements.ETHYLENE, "nm3", ethNm3);
         propylene.add(propL);
         c4.add(c4L);
         pygas.add(pyL);

@@ -1,0 +1,39 @@
+{
+  "parent": "promptcritical:uf6",
+  "criteria": {
+    "enriched": {
+      "conditions": {
+        "event": "promptcritical:enriched",
+        "predicate": {
+          "u235_pct": {
+            "min": 3.0
+          }
+        },
+        "station_member": true
+      },
+      "trigger": "promptcritical:sim_event"
+    }
+  },
+  "display": {
+    "description": {
+      "translate": "advancements.promptcritical.enriched.description"
+    },
+    "frame": "goal",
+    "icon": {
+      "count": 1,
+      "id": "promptcritical:gas_centrifuge"
+    },
+    "title": {
+      "translate": "advancements.promptcritical.enriched.title"
+    }
+  },
+  "requirements": [
+    [
+      "enriched"
+    ]
+  ],
+  "rewards": {
+    "experience": 80
+  },
+  "sends_telemetry_event": true
+}

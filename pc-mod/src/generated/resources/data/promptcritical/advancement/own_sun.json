@@ -1,0 +1,36 @@
+{
+  "parent": "promptcritical:dosimeter",
+  "criteria": {
+    "source": {
+      "conditions": {
+        "items": [
+          {
+            "items": "promptcritical:sealed_source"
+          }
+        ]
+      },
+      "trigger": "minecraft:inventory_changed"
+    }
+  },
+  "display": {
+    "description": {
+      "translate": "advancements.promptcritical.own_sun.description"
+    },
+    "icon": {
+      "count": 1,
+      "id": "promptcritical:sealed_source"
+    },
+    "title": {
+      "translate": "advancements.promptcritical.own_sun.title"
+    }
+  },
+  "requirements": [
+    [
+      "source"
+    ]
+  ],
+  "rewards": {
+    "experience": 40
+  },
+  "sends_telemetry_event": true
+}

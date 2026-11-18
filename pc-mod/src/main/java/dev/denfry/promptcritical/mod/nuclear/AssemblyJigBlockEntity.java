@@ -136,10 +136,10 @@ public final class AssemblyJigBlockEntity extends FuelShopBlockEntity {
         out.putString("design", design.name());
         out.putInt("loaded", loaded);
         out.putInt("assemblies", assemblies);
-        out.putDouble("u", uKg);
-        out.putDouble("u235", u235Kg);
-        out.putDouble("u234", u234Kg);
-        out.putDouble("density", densityKg);
+        out.putDouble("jig_u", uKg); // ключи u, u235… заняты объектами MaterialBalance
+        out.putDouble("jig_u235", u235Kg);
+        out.putDouble("jig_u234", u234Kg);
+        out.putDouble("jig_density", densityKg);
         share.save(out, "mox_");
         out.putBoolean("argon", argon);
     }
@@ -150,10 +150,10 @@ public final class AssemblyJigBlockEntity extends FuelShopBlockEntity {
         for (FuelDesign f : FuelDesign.values()) if (f.name().equals(d)) design = f;
         loaded = in.optInt("loaded", 0);
         assemblies = in.optInt("assemblies", 0);
-        uKg = in.optDouble("u", 0);
-        u235Kg = in.optDouble("u235", 0);
-        u234Kg = in.optDouble("u234", 0);
-        densityKg = in.optDouble("density", 0);
+        uKg = in.optDouble("jig_u", 0);
+        u235Kg = in.optDouble("jig_u235", 0);
+        u234Kg = in.optDouble("jig_u234", 0);
+        densityKg = in.optDouble("jig_density", 0);
         share = MoxShare.load(in, "mox_");
         argon = in.has("argon") && in.getBoolean("argon");
     }

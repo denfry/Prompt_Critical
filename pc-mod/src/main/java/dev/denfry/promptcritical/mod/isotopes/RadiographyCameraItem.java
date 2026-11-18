@@ -151,6 +151,8 @@ public final class RadiographyCameraItem extends Item {
         ItemStack exposed = new ItemStack(PcItems.RADIOGRAPHY_FILM_EXPOSED.get());
         exposed.set(IsotopeComponents.FILM_RESULT.get(), new IsotopeComponents.FilmResult(film.ordinal(), defect.ordinal(), spec.grade()));
         if (!p.addItem(exposed)) p.drop(exposed, false);
+        if (film == Radiography.Film.GOOD && defect != DefectKind.NONE && p instanceof net.minecraft.server.level.ServerPlayer sp)
+            dev.denfry.promptcritical.mod.content.SimAchievements.direct(sp, dev.denfry.promptcritical.mod.content.SimAchievements.RADIOGRAPHY_DEFECT, defect.name().toLowerCase(java.util.Locale.ROOT), 1);
         if (film == Radiography.Film.GOOD) {
             pipeStack.set(SteelworksComponents.PIPE_SPEC.get(), SteelworksComponents.PipeData.of(spec.inspected(PipeSpec.RT)));
             p.displayClientMessage(IsotopeText.msg("film_good", filmText(defect)), false);
