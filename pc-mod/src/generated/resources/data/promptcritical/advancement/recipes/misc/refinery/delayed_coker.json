@@ -1,0 +1,32 @@
+{
+  "parent": "minecraft:recipes/root",
+  "criteria": {
+    "has_hydrotreater": {
+      "conditions": {
+        "items": [
+          {
+            "items": "promptcritical:hydrotreater"
+          }
+        ]
+      },
+      "trigger": "minecraft:inventory_changed"
+    },
+    "has_the_recipe": {
+      "conditions": {
+        "recipe": "promptcritical:refinery/delayed_coker"
+      },
+      "trigger": "minecraft:recipe_unlocked"
+    }
+  },
+  "requirements": [
+    [
+      "has_the_recipe",
+      "has_hydrotreater"
+    ]
+  ],
+  "rewards": {
+    "recipes": [
+      "promptcritical:refinery/delayed_coker"
+    ]
+  }
+}

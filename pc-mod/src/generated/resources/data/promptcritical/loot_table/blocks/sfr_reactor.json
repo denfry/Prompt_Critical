@@ -1,0 +1,28 @@
+{
+  "type": "minecraft:block",
+  "pools": [
+    {
+      "bonus_rolls": 0.0,
+      "conditions": [
+        {
+          "block": "promptcritical:sfr_reactor",
+          "condition": "minecraft:block_state_property",
+          "properties": {
+            "segment": "pool"
+          }
+        },
+        {
+          "condition": "minecraft:survives_explosion"
+        }
+      ],
+      "entries": [
+        {
+          "type": "minecraft:item",
+          "name": "promptcritical:sfr_reactor"
+        }
+      ],
+      "rolls": 1.0
+    }
+  ],
+  "random_sequence": "promptcritical:blocks/sfr_reactor"
+}
