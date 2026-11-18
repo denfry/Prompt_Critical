@@ -93,74 +93,17 @@ m("vein_quartz", "ores", [el("block", [0, 0, 0], [16, 16, 16], "qtz")])
 # ======================================================================
 # шахта
 # ======================================================================
-# шахтная крепь: арка СВП (деревянный оклад и мехкрепь — spec_visual)
-def support_arch():
-    return [el("arch_w", [0, -16, 7], [2, 18, 9], "rust"),
-            el("arch_e", [14, -16, 7], [16, 18, 9], "rust"),
-            el("arch_nw", [0, 16, 7], [2, 28, 9], "rust", rot=("z", -22.5, [1, 18, 8])),
-            el("arch_ne", [14, 16, 7], [16, 28, 9], "rust", rot=("z", 22.5, [15, 18, 8])),
-            el("arch_top", [3, 28, 7], [13, 30, 9], "rust"),
-            el("clamp_w", [-0.5, 16, 6.5], [2.5, 18, 9.5], "d"),
-            el("clamp_e", [13.5, 16, 6.5], [16.5, 18, 9.5], "d"),
-            el("mesh", [2, 29, 0], [14, 29.5, 16], "mesh")]
-
-
-m("mine_support_arch", "mining", support_arch())
+# арка СВП нарисована вручную в Blockbench: art/blockbench/mining/mine_support.author.js
 
 # главный вентилятор нарисован вручную в Blockbench: art/blockbench/mining/main_mine_fan.author.js
 
 
-# вентиляционная дверь 1×2×1: дощатая с резиной / стальной регулятор с окном
-def vent_door(kind="door", opened=False):
-    els = [el("frame_w", [0, 0, 6], [2, 32, 10], "tim"),
-           el("frame_e", [14, 0, 6], [16, 32, 10], "tim"),
-           el("lintel", [0, 29, 6], [16, 32, 10], "tim")]
-    if kind == "door":
-        leaf = el("leaf", [2, 0, 7], [14, 29, 9], "tim", faces={"north": "tim"})
-        if opened:
-            leaf = el("leaf", [2, 0, 9], [4, 29, 21], "tim")
-        els += [leaf, el("seal", [2, 0, 6.8], [14, 0.5, 9.2], "r")]
-    else:
-        els += [el("plate", [2, 0, 7.5], [14, 29, 8.5], "p"),
-                el("window_frame", [5, 14, 7.25], [11, 22, 8.75], "d"),
-                el("window", [6, 15, 7], [10, 21, 9], "gl")]
-    return els
+# вентиляционная дверь и жалюзийный регулятор нарисованы вручную в Blockbench: art/blockbench/mining/ventilation_door.author.js
 
+# сланцевый и водяной заслоны нарисованы вручную в Blockbench: art/blockbench/mining/explosion_barrier.author.js
 
-m("ventilation_door", "mining", vent_door())
-m("ventilation_door_open", "mining", vent_door(opened=True))
-m("ventilation_door_regulator", "mining", vent_door("regulator"))
-
-# сланцевый заслон (полки с инертной пылью) / водяной заслон (подвесные сосуды)
-m("explosion_barrier", "mining", [el("hanger_w", [1, 10, 7], [2, 16, 9], "d"), el("hanger_e", [14, 10, 7], [15, 16, 9], "d")]
-  + [x for y in (10, 12.5) for x in (el(f"shelf_{y}", [1, y, 4], [15, y + 0.5, 12], "tim"),
-                                       el(f"dust_{y}", [2, y + 0.5, 5], [14, y + 1.5, 11], "lab"))])
-m("explosion_barrier_water", "mining", [el("rail", [0, 14.5, 7], [16, 15.5, 9], "d")]
-  + [x for i, xx in enumerate((1, 6, 11)) for x in (
-      el(f"vessel_{i}", [xx, 8, 4], [xx + 4, 13, 12], "gl"),
-      el(f"water_{i}", [xx + 0.5, 8.5, 4.5], [xx + 3.5, 11.5, 11.5], "water"),
-      el(f"hook_{i}", [xx + 1.5, 13, 7.5], [xx + 2.5, 14.5, 8.5], "d"))])
-
-# дегазационная скважина: устье с задвижкой, жёлтая газовая труба
-m("degasification_borehole", "mining", [
-    el("collar", [4, 0, 4], [12, 2, 12], "c"),
-    el("casing", [6, 2, 6], [10, 6, 10], "st"),
-    el("valve_body", [5, 6, 5], [11, 10, 11], "d"),
-    el("handwheel", [3, 8, 7.5], [5, 12, 8.5], "red"),
-    el("riser", [6.5, 10, 6.5], [9.5, 13, 9.5], "gas"),
-    el("elbow", [6.5, 13, 6.5], [16, 16, 9.5], "gas", faces={"east": "end"}),
-])
-# шкаф АГЗ «Метан» 1×2×1: табло газа (подложка 32×32)
-def agz(alarm=False):
-    return [el("body", [0, 0, 2], [16, 31.5, 16], "r35"),
-            el("face", [1, 14, 1.5], [15, 30, 2], "agz", full=["north"]),
-            el("door_low", [1, 1, 1.5], [15, 13, 2], "r35"),
-            el("handle", [13, 5, 0.5], [14, 9, 1.5], "d"),
-            el(("glow_" if alarm else "") + "beacon", [6, 31.5, 6], [10, 33.5 - 1.5, 10], "lr" if alarm else "loff")]
-
-
-m("mine_dispatch_cabinet", "mining", agz())
-m("mine_dispatch_cabinet_alarm", "mining", agz(True))
+# дегазационная скважина нарисована вручную в Blockbench: art/blockbench/mining/degasification_pump.author.js
+# шкаф АГЗ «Метан» нарисован вручную в Blockbench: art/blockbench/mining/mine_dispatch_cabinet.author.js
 
 # копёр, шкив и клеть нарисованы вручную в Blockbench: art/blockbench/mining/headframe.author.js
 # (текстуры textures/block/shaft/)
@@ -169,7 +112,7 @@ m("mine_dispatch_cabinet_alarm", "mining", agz(True))
 # углеобогащение
 # ======================================================================
 # отсадочная машина ОМ — корпус в spec_visual; пульсатор (ось X на y 27, z 8)
-m("coal_jig/pulsator", "coal_prep", shaft_x(1.5, 12, 28, (8, 27, 8)) + [el("eccentric", [18, 23, 5], [22, 31, 11], "st")], kind="partial")
+# пульсатор отсадочной машины — art/blockbench/coal_prep/coal_jig.author.js
 
 # тяжелосредный сепаратор СКВ 2×2×2: опорная рама, жёлоб суспензии; барабан — partial (ось X)
 m("dense_medium_separator", "coal_prep", [

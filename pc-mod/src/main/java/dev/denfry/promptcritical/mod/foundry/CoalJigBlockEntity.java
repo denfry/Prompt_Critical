@@ -16,6 +16,11 @@ import dev.denfry.promptcritical.sim.mining.CoalJig;
 import dev.denfry.promptcritical.sim.mining.CoalPrepSubsystem;
 import java.util.Arrays;
 import net.minecraft.core.BlockPos;
+import net.minecraft.world.phys.Vec3;
+import net.minecraft.server.level.ServerLevel;
+import net.minecraft.core.particles.ParticleTypes;
+import dev.denfry.promptcritical.mod.block.PcBlock;
+import dev.denfry.promptcritical.mod.block.ModelPoints;
 import net.minecraft.core.Direction;
 import net.minecraft.core.HolderLookup;
 import net.minecraft.nbt.CompoundTag;
@@ -89,6 +94,23 @@ public final class CoalJigBlockEntity extends KineticMachineBlockEntity<CoalJig>
         emit(u, CoalJig.Product.MIDDLINGS, PcItems.COAL_MIDDLINGS.get(), kg);
         emit(u, CoalJig.Product.REFUSE, PcItems.COAL_REFUSE.get(), kg);
         setStateFlag(PcProperties.RUNNING, u.running());
+        if (u.running() && level instanceof ServerLevel server && server.getGameTime() % 6 == 0) pulse(server);
+    }
+
+    /**
+     * Пульсация: воздух из клапанов толкает воду сквозь постель — над отсадочным отделением вскипают пузыри и
+     * всплески, на сливном пороге вода переливается с мытым углём.
+     */
+    private void pulse(ServerLevel server) {
+        if (!(getBlockState().getBlock() instanceof PcBlock b)) return;
+        Direction f = b.facing(getBlockState());
+        var rnd = server.getRandom();
+        for (int i = 0; i < 3; i++) {
+            Vec3 p = ModelPoints.toWorld(worldPosition, f, 3 + rnd.nextDouble() * 26, 23.1, 9 + rnd.nextDouble() * 5.5);
+            server.sendParticles(i == 0 ? ParticleTypes.SPLASH : ParticleTypes.BUBBLE_POP, p.x, p.y, p.z, 2, 0.08, 0.02, 0.08, 0.02);
+        }
+        Vec3 lip = ModelPoints.toWorld(worldPosition, f, 33, 21, 12);
+        server.sendParticles(ParticleTypes.FALLING_WATER, lip.x, lip.y, lip.z, 2, 0.02, 0.02, 0.15, 0);
     }
 
     static CoalAssay assay(ItemStack stack) {

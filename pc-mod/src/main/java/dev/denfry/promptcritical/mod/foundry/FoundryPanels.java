@@ -6,6 +6,7 @@ import static dev.denfry.promptcritical.mod.panel.PanelText.RUNNING;
 import static dev.denfry.promptcritical.mod.panel.PanelText.SHAFT;
 import static dev.denfry.promptcritical.mod.panel.PanelText.SHAFT_TIP;
 
+import dev.denfry.promptcritical.mod.PromptCritical;
 import dev.denfry.promptcritical.mod.panel.PanelLayout;
 import dev.denfry.promptcritical.mod.panel.PanelLayout.LampColor;
 import dev.denfry.promptcritical.mod.panel.PanelText;
@@ -132,7 +133,9 @@ public final class FoundryPanels {
             .slot(170, 126, 1, s -> s.is(FoundryTags.FURNACE_COAL), COAL_SLOT.get())
             .build();
 
+    /** Фон — art/blockbench/coal_prep/coal_jig.author.js ({@code guiJig}). */
     public static final PanelLayout COAL_JIG = PanelLayout.builder("coal_jig", 200, 150, J_CHANNELS)
+            .art(PromptCritical.id("textures/gui/panel/coal_jig.png"))
             .dial(8, 24, false, SHAFT_RPM10, 10, 256, Double.NaN, 0, RPM.get(), SHAFT.get(), shaftTip())
             .lamp(8, 88, FLAGS, F_RUNNING, LampColor.AMBER, RUNNING.get())
             .bar(66, 34, 126, J_WATER_L, 1, CoalJig.WATER_CAPACITY_L, 0xFF3F78B8, JIG_WATER.get(),

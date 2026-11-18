@@ -201,7 +201,14 @@ public final class PcBlockStateProvider extends BlockStateProvider {
             };
             case "mine_support" -> s.getValue(PcProperties.SUPPORT_KIND) == PcProperties.SupportKind.ARCH ? id + "_arch"
                     : s.getValue(PcProperties.DAMAGED) ? id + "_damaged" : id;
-            case "ventilation_door" -> s.getValue(PcProperties.DOOR_KIND) == PcProperties.DoorKind.REGULATOR ? id + "_regulator"
+            // регулятор: модель на каждую ступень окна (жалюзи под своим углом), ступень 0 — базовая
+            case "ventilation_door" -> s.getValue(PcProperties.DOOR_KIND) == PcProperties.DoorKind.REGULATOR
+                    ? id + "_regulator" + switch (s.getValue(PcProperties.WINDOW)) {
+                        case 1 -> "_25";
+                        case 2 -> "_50";
+                        case 3 -> "_100";
+                        default -> "";
+                    }
                     : s.getValue(BlockStateProperties.OPEN) ? id + "_open" : id;
             case "explosion_barrier" -> s.getValue(PcProperties.BARRIER_KIND) == PcProperties.BarrierKind.WATER ? id + "_water" : id;
             case "mine_dispatch_cabinet" -> s.getValue(PcProperties.ALARM) ? id + "_alarm" : id;

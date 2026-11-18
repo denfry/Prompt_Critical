@@ -592,8 +592,11 @@ public final class MineWorld {
                 BlockPos p = BlockPos.of(a);
                 if (!level.isLoaded(p)) continue;
                 BlockState st = level.getBlockState(p);
-                if (st.is(PcBlocks.MINE_DISPATCH_CABINET.get()) && st.getValue(PcProperties.ALARM) != alarm)
-                    level.setBlock(p, st.setValue(PcProperties.ALARM, alarm), Block.UPDATE_CLIENTS);
+                if (!st.is(PcBlocks.MINE_DISPATCH_CABINET.get())) continue;
+                if (st.getValue(PcProperties.ALARM) != alarm) level.setBlock(p, st.setValue(PcProperties.ALARM, alarm), Block.UPDATE_CLIENTS);
+                // сирена АГЗ: цикл звука 2 с, отсюда раз в секунду — через раз
+                if (alarm && level.getGameTime() / SECOND % 2 == 0)
+                    level.playSound(null, p, dev.denfry.promptcritical.mod.sound.PcSfx.AGZ_SIREN.get(), SoundSource.BLOCKS, 2.0f, 1.0f);
             }
         }
     }

@@ -1,16 +1,17 @@
 {
 	"credit": "Made with Blockbench",
 	"textures": {
-		"particle": "promptcritical:block/common/metal_rust",
-		"d": "promptcritical:block/common/steel_dark",
-		"mesh": "promptcritical:block/common/metal_mesh",
-		"rust": "promptcritical:block/common/metal_rust"
+		"particle": "promptcritical:block/mine_support/arch",
+		"mine_support_arch": "promptcritical:block/mine_support/arch",
+		"material_steel": "promptcritical:block/material/steel",
+		"material_bright_steel": "promptcritical:block/material/bright_steel",
+		"mine_support_mesh": "promptcritical:block/mine_support/mesh"
 	},
 	"elements": [
 		{
-			"name": "arch_w",
-			"from": [0, -16, 7],
-			"to": [2, 18, 9],
+			"name": "leg_w",
+			"from": [0.1, -16, 7.1],
+			"to": [1.9, 21.6, 8.9],
 			"rotation": {
 				"angle": 0,
 				"axis": "y",
@@ -18,35 +19,35 @@
 			},
 			"faces": {
 				"north": {
-					"uv": [0, 0, 2, 16],
-					"texture": "#rust"
+					"uv": [14.1, 0, 15.9, 16],
+					"texture": "#mine_support_arch"
 				},
 				"east": {
-					"uv": [0, 0, 2, 16],
-					"texture": "#rust"
+					"uv": [7.1, 0, 8.9, 16],
+					"texture": "#mine_support_arch"
 				},
 				"south": {
-					"uv": [0, 0, 2, 16],
-					"texture": "#rust"
+					"uv": [0.1, 0, 1.9, 16],
+					"texture": "#mine_support_arch"
 				},
 				"west": {
-					"uv": [0, 0, 2, 16],
-					"texture": "#rust"
+					"uv": [7.1, 0, 8.9, 16],
+					"texture": "#mine_support_arch"
 				},
 				"up": {
-					"uv": [0, 0, 2, 2],
-					"texture": "#rust"
+					"uv": [0.1, 7.1, 1.9, 8.9],
+					"texture": "#mine_support_arch"
 				},
 				"down": {
-					"uv": [0, 0, 2, 2],
-					"texture": "#rust"
+					"uv": [0.1, 7.1, 1.9, 8.9],
+					"texture": "#mine_support_arch"
 				}
 			}
 		},
 		{
-			"name": "arch_e",
-			"from": [14, -16, 7],
-			"to": [16, 18, 9],
+			"name": "leg_e",
+			"from": [14.1, -16, 7.1],
+			"to": [15.9, 21.6, 8.9],
 			"rotation": {
 				"angle": 0,
 				"axis": "y",
@@ -54,107 +55,143 @@
 			},
 			"faces": {
 				"north": {
-					"uv": [0, 0, 2, 16],
-					"texture": "#rust"
+					"uv": [0.1, 0, 1.9, 16],
+					"texture": "#mine_support_arch"
 				},
 				"east": {
-					"uv": [0, 0, 2, 16],
-					"texture": "#rust"
+					"uv": [7.1, 0, 8.9, 16],
+					"texture": "#mine_support_arch"
 				},
 				"south": {
-					"uv": [0, 0, 2, 16],
-					"texture": "#rust"
+					"uv": [14.1, 0, 15.9, 16],
+					"texture": "#mine_support_arch"
 				},
 				"west": {
-					"uv": [0, 0, 2, 16],
-					"texture": "#rust"
+					"uv": [7.1, 0, 8.9, 16],
+					"texture": "#mine_support_arch"
 				},
 				"up": {
-					"uv": [0, 0, 2, 2],
-					"texture": "#rust"
+					"uv": [14.1, 7.1, 15.9, 8.9],
+					"texture": "#mine_support_arch"
 				},
 				"down": {
-					"uv": [0, 0, 2, 2],
-					"texture": "#rust"
+					"uv": [14.1, 7.1, 15.9, 8.9],
+					"texture": "#mine_support_arch"
 				}
 			}
 		},
 		{
-			"name": "arch_nw",
-			"from": [0, 16, 7],
-			"to": [2, 28, 9],
+			"name": "crown_1",
+			"from": [0.63284, 22.1364, 7.1],
+			"to": [2.43284, 25.22117, 8.9],
 			"rotation": {
 				"angle": -22.5,
 				"axis": "z",
-				"origin": [1, 18, 8]
+				"origin": [1.53284, 23.67878, 8]
 			},
 			"faces": {
 				"north": {
-					"uv": [0, 0, 2, 12],
-					"texture": "#rust"
+					"uv": [13.56716, 6.77883, 15.36716, 9.8636],
+					"texture": "#mine_support_arch"
 				},
 				"east": {
-					"uv": [0, 0, 2, 12],
-					"texture": "#rust"
+					"uv": [7.1, 6.77883, 8.9, 9.8636],
+					"texture": "#mine_support_arch"
 				},
 				"south": {
-					"uv": [0, 0, 2, 12],
-					"texture": "#rust"
+					"uv": [0.63284, 6.77883, 2.43284, 9.8636],
+					"texture": "#mine_support_arch"
 				},
 				"west": {
-					"uv": [0, 0, 2, 12],
-					"texture": "#rust"
+					"uv": [7.1, 6.77883, 8.9, 9.8636],
+					"texture": "#mine_support_arch"
 				},
 				"up": {
-					"uv": [0, 0, 2, 2],
-					"texture": "#rust"
+					"uv": [0.63284, 7.1, 2.43284, 8.9],
+					"texture": "#mine_support_arch"
 				},
 				"down": {
-					"uv": [0, 0, 2, 2],
-					"texture": "#rust"
+					"uv": [0.63284, 7.1, 2.43284, 8.9],
+					"texture": "#mine_support_arch"
 				}
 			}
 		},
 		{
-			"name": "arch_ne",
-			"from": [14, 16, 7],
-			"to": [16, 28, 9],
+			"name": "crown_2",
+			"from": [2.15025, 24.40736, 7.1],
+			"to": [3.95025, 27.49213, 8.9],
+			"rotation": {
+				"angle": -45,
+				"axis": "z",
+				"origin": [3.05025, 25.94975, 8]
+			},
+			"faces": {
+				"north": {
+					"uv": [12.04975, 4.50787, 13.84975, 7.59264],
+					"texture": "#mine_support_arch"
+				},
+				"east": {
+					"uv": [7.1, 4.50787, 8.9, 7.59264],
+					"texture": "#mine_support_arch"
+				},
+				"south": {
+					"uv": [2.15025, 4.50787, 3.95025, 7.59264],
+					"texture": "#mine_support_arch"
+				},
+				"west": {
+					"uv": [7.1, 4.50787, 8.9, 7.59264],
+					"texture": "#mine_support_arch"
+				},
+				"up": {
+					"uv": [2.15025, 7.1, 3.95025, 8.9],
+					"texture": "#mine_support_arch"
+				},
+				"down": {
+					"uv": [2.15025, 7.1, 3.95025, 8.9],
+					"texture": "#mine_support_arch"
+				}
+			}
+		},
+		{
+			"name": "crown_3",
+			"from": [3.77883, 26.56716, 7.1],
+			"to": [6.8636, 28.36716, 8.9],
 			"rotation": {
 				"angle": 22.5,
 				"axis": "z",
-				"origin": [15, 18, 8]
+				"origin": [5.32122, 27.46716, 8]
 			},
 			"faces": {
 				"north": {
-					"uv": [0, 0, 2, 12],
-					"texture": "#rust"
+					"uv": [9.1364, 3.63284, 12.22117, 5.43284],
+					"texture": "#mine_support_arch"
 				},
 				"east": {
-					"uv": [0, 0, 2, 12],
-					"texture": "#rust"
+					"uv": [7.1, 3.63284, 8.9, 5.43284],
+					"texture": "#mine_support_arch"
 				},
 				"south": {
-					"uv": [0, 0, 2, 12],
-					"texture": "#rust"
+					"uv": [3.77883, 3.63284, 6.8636, 5.43284],
+					"texture": "#mine_support_arch"
 				},
 				"west": {
-					"uv": [0, 0, 2, 12],
-					"texture": "#rust"
+					"uv": [7.1, 3.63284, 8.9, 5.43284],
+					"texture": "#mine_support_arch"
 				},
 				"up": {
-					"uv": [0, 0, 2, 2],
-					"texture": "#rust"
+					"uv": [3.77883, 7.1, 6.8636, 8.9],
+					"texture": "#mine_support_arch"
 				},
 				"down": {
-					"uv": [0, 0, 2, 2],
-					"texture": "#rust"
+					"uv": [3.77883, 7.1, 6.8636, 8.9],
+					"texture": "#mine_support_arch"
 				}
 			}
 		},
 		{
-			"name": "arch_top",
-			"from": [3, 28, 7],
-			"to": [13, 30, 9],
+			"name": "crown_4",
+			"from": [6.45761, 27.1, 7.1],
+			"to": [9.54239, 28.9, 8.9],
 			"rotation": {
 				"angle": 0,
 				"axis": "y",
@@ -162,35 +199,143 @@
 			},
 			"faces": {
 				"north": {
-					"uv": [0, 0, 10, 2],
-					"texture": "#rust"
+					"uv": [6.45761, 3.1, 9.54239, 4.9],
+					"texture": "#mine_support_arch"
 				},
 				"east": {
-					"uv": [0, 0, 2, 2],
-					"texture": "#rust"
+					"uv": [7.1, 3.1, 8.9, 4.9],
+					"texture": "#mine_support_arch"
 				},
 				"south": {
-					"uv": [0, 0, 10, 2],
-					"texture": "#rust"
+					"uv": [6.45761, 3.1, 9.54239, 4.9],
+					"texture": "#mine_support_arch"
 				},
 				"west": {
-					"uv": [0, 0, 2, 2],
-					"texture": "#rust"
+					"uv": [7.1, 3.1, 8.9, 4.9],
+					"texture": "#mine_support_arch"
 				},
 				"up": {
-					"uv": [0, 0, 10, 2],
-					"texture": "#rust"
+					"uv": [6.45761, 7.1, 9.54239, 8.9],
+					"texture": "#mine_support_arch"
 				},
 				"down": {
-					"uv": [0, 0, 10, 2],
-					"texture": "#rust"
+					"uv": [6.45761, 7.1, 9.54239, 8.9],
+					"texture": "#mine_support_arch"
 				}
 			}
 		},
 		{
-			"name": "clamp_w",
-			"from": [-0.5, 16, 6.5],
-			"to": [2.5, 18, 9.5],
+			"name": "crown_5",
+			"from": [9.1364, 26.56716, 7.1],
+			"to": [12.22117, 28.36716, 8.9],
+			"rotation": {
+				"angle": -22.5,
+				"axis": "z",
+				"origin": [10.67878, 27.46716, 8]
+			},
+			"faces": {
+				"north": {
+					"uv": [3.77883, 3.63284, 6.8636, 5.43284],
+					"texture": "#mine_support_arch"
+				},
+				"east": {
+					"uv": [7.1, 3.63284, 8.9, 5.43284],
+					"texture": "#mine_support_arch"
+				},
+				"south": {
+					"uv": [9.1364, 3.63284, 12.22117, 5.43284],
+					"texture": "#mine_support_arch"
+				},
+				"west": {
+					"uv": [7.1, 3.63284, 8.9, 5.43284],
+					"texture": "#mine_support_arch"
+				},
+				"up": {
+					"uv": [9.1364, 7.1, 12.22117, 8.9],
+					"texture": "#mine_support_arch"
+				},
+				"down": {
+					"uv": [9.1364, 7.1, 12.22117, 8.9],
+					"texture": "#mine_support_arch"
+				}
+			}
+		},
+		{
+			"name": "crown_6",
+			"from": [12.04975, 24.40736, 7.1],
+			"to": [13.84975, 27.49213, 8.9],
+			"rotation": {
+				"angle": 45,
+				"axis": "z",
+				"origin": [12.94975, 25.94975, 8]
+			},
+			"faces": {
+				"north": {
+					"uv": [2.15025, 4.50787, 3.95025, 7.59264],
+					"texture": "#mine_support_arch"
+				},
+				"east": {
+					"uv": [7.1, 4.50787, 8.9, 7.59264],
+					"texture": "#mine_support_arch"
+				},
+				"south": {
+					"uv": [12.04975, 4.50787, 13.84975, 7.59264],
+					"texture": "#mine_support_arch"
+				},
+				"west": {
+					"uv": [7.1, 4.50787, 8.9, 7.59264],
+					"texture": "#mine_support_arch"
+				},
+				"up": {
+					"uv": [12.04975, 7.1, 13.84975, 8.9],
+					"texture": "#mine_support_arch"
+				},
+				"down": {
+					"uv": [12.04975, 7.1, 13.84975, 8.9],
+					"texture": "#mine_support_arch"
+				}
+			}
+		},
+		{
+			"name": "crown_7",
+			"from": [13.56716, 22.1364, 7.1],
+			"to": [15.36716, 25.22117, 8.9],
+			"rotation": {
+				"angle": 22.5,
+				"axis": "z",
+				"origin": [14.46716, 23.67878, 8]
+			},
+			"faces": {
+				"north": {
+					"uv": [0.63284, 6.77883, 2.43284, 9.8636],
+					"texture": "#mine_support_arch"
+				},
+				"east": {
+					"uv": [7.1, 6.77883, 8.9, 9.8636],
+					"texture": "#mine_support_arch"
+				},
+				"south": {
+					"uv": [13.56716, 6.77883, 15.36716, 9.8636],
+					"texture": "#mine_support_arch"
+				},
+				"west": {
+					"uv": [7.1, 6.77883, 8.9, 9.8636],
+					"texture": "#mine_support_arch"
+				},
+				"up": {
+					"uv": [13.56716, 7.1, 15.36716, 8.9],
+					"texture": "#mine_support_arch"
+				},
+				"down": {
+					"uv": [13.56716, 7.1, 15.36716, 8.9],
+					"texture": "#mine_support_arch"
+				}
+			}
+		},
+		{
+			"name": "overlap_w",
+			"from": [-0.3, 17, 6.8],
+			"to": [2.3, 22.4, 9.2],
 			"rotation": {
 				"angle": 0,
 				"axis": "y",
@@ -198,35 +343,35 @@
 			},
 			"faces": {
 				"north": {
-					"uv": [0, 0, 3, 2],
-					"texture": "#d"
+					"uv": [13.7, 9.6, 16, 15],
+					"texture": "#mine_support_arch"
 				},
 				"east": {
-					"uv": [0, 0, 3, 2],
-					"texture": "#d"
+					"uv": [6.8, 9.6, 9.2, 15],
+					"texture": "#mine_support_arch"
 				},
 				"south": {
-					"uv": [0, 0, 3, 2],
-					"texture": "#d"
+					"uv": [0, 9.6, 2.3, 15],
+					"texture": "#mine_support_arch"
 				},
 				"west": {
-					"uv": [0, 0, 3, 2],
-					"texture": "#d"
+					"uv": [6.8, 9.6, 9.2, 15],
+					"texture": "#mine_support_arch"
 				},
 				"up": {
-					"uv": [0, 0, 3, 3],
-					"texture": "#d"
+					"uv": [0, 6.8, 2.3, 9.2],
+					"texture": "#mine_support_arch"
 				},
 				"down": {
-					"uv": [0, 0, 3, 3],
-					"texture": "#d"
+					"uv": [0, 6.8, 2.3, 9.2],
+					"texture": "#mine_support_arch"
 				}
 			}
 		},
 		{
-			"name": "clamp_e",
-			"from": [13.5, 16, 6.5],
-			"to": [16.5, 18, 9.5],
+			"name": "clamp_w_17.6",
+			"from": [-0.7, 17.6, 6.5],
+			"to": [2.7, 18.5, 9.5],
 			"rotation": {
 				"angle": 0,
 				"axis": "y",
@@ -234,35 +379,35 @@
 			},
 			"faces": {
 				"north": {
-					"uv": [0, 0, 3, 2],
-					"texture": "#d"
+					"uv": [13.3, 13.5, 16, 14.4],
+					"texture": "#material_steel"
 				},
 				"east": {
-					"uv": [0, 0, 3, 2],
-					"texture": "#d"
+					"uv": [6.5, 13.5, 9.5, 14.4],
+					"texture": "#material_steel"
 				},
 				"south": {
-					"uv": [0, 0, 3, 2],
-					"texture": "#d"
+					"uv": [0, 13.5, 2.7, 14.4],
+					"texture": "#material_steel"
 				},
 				"west": {
-					"uv": [0, 0, 3, 2],
-					"texture": "#d"
+					"uv": [6.5, 13.5, 9.5, 14.4],
+					"texture": "#material_steel"
 				},
 				"up": {
-					"uv": [0, 0, 3, 3],
-					"texture": "#d"
+					"uv": [0, 6.5, 2.7, 9.5],
+					"texture": "#material_steel"
 				},
 				"down": {
-					"uv": [0, 0, 3, 3],
-					"texture": "#d"
+					"uv": [0, 6.5, 2.7, 9.5],
+					"texture": "#material_steel"
 				}
 			}
 		},
 		{
-			"name": "mesh",
-			"from": [2, 29, 0],
-			"to": [14, 29.5, 16],
+			"name": "clamp_nut_w_17.6_6.199999999999999",
+			"from": [0.5, 17.7, 6.2],
+			"to": [1.5, 18.4, 6.5],
 			"rotation": {
 				"angle": 0,
 				"axis": "y",
@@ -270,28 +415,1072 @@
 			},
 			"faces": {
 				"north": {
-					"uv": [0, 0, 12, 0.5],
-					"texture": "#mesh"
+					"uv": [14.5, 13.6, 15.5, 14.3],
+					"texture": "#material_bright_steel"
 				},
 				"east": {
-					"uv": [0, 0, 16, 0.5],
-					"texture": "#mesh"
+					"uv": [9.5, 13.6, 9.8, 14.3],
+					"texture": "#material_bright_steel"
 				},
 				"south": {
-					"uv": [0, 0, 12, 0.5],
-					"texture": "#mesh"
+					"uv": [0.5, 13.6, 1.5, 14.3],
+					"texture": "#material_bright_steel"
 				},
 				"west": {
-					"uv": [0, 0, 16, 0.5],
-					"texture": "#mesh"
+					"uv": [6.2, 13.6, 6.5, 14.3],
+					"texture": "#material_bright_steel"
 				},
 				"up": {
-					"uv": [0, 0, 12, 16],
-					"texture": "#mesh"
+					"uv": [0.5, 6.2, 1.5, 6.5],
+					"texture": "#material_bright_steel"
 				},
 				"down": {
-					"uv": [0, 0, 12, 16],
-					"texture": "#mesh"
+					"uv": [0.5, 9.5, 1.5, 9.8],
+					"texture": "#material_bright_steel"
+				}
+			}
+		},
+		{
+			"name": "clamp_nut_w_17.6_9.5",
+			"from": [0.5, 17.7, 9.5],
+			"to": [1.5, 18.4, 9.8],
+			"rotation": {
+				"angle": 0,
+				"axis": "y",
+				"origin": [8, 8, 8]
+			},
+			"faces": {
+				"north": {
+					"uv": [14.5, 13.6, 15.5, 14.3],
+					"texture": "#material_bright_steel"
+				},
+				"east": {
+					"uv": [6.2, 13.6, 6.5, 14.3],
+					"texture": "#material_bright_steel"
+				},
+				"south": {
+					"uv": [0.5, 13.6, 1.5, 14.3],
+					"texture": "#material_bright_steel"
+				},
+				"west": {
+					"uv": [9.5, 13.6, 9.8, 14.3],
+					"texture": "#material_bright_steel"
+				},
+				"up": {
+					"uv": [0.5, 9.5, 1.5, 9.8],
+					"texture": "#material_bright_steel"
+				},
+				"down": {
+					"uv": [0.5, 6.2, 1.5, 6.5],
+					"texture": "#material_bright_steel"
+				}
+			}
+		},
+		{
+			"name": "clamp_w_20.4",
+			"from": [-0.7, 20.4, 6.5],
+			"to": [2.7, 21.3, 9.5],
+			"rotation": {
+				"angle": 0,
+				"axis": "y",
+				"origin": [8, 8, 8]
+			},
+			"faces": {
+				"north": {
+					"uv": [13.3, 10.7, 16, 11.6],
+					"texture": "#material_steel"
+				},
+				"east": {
+					"uv": [6.5, 10.7, 9.5, 11.6],
+					"texture": "#material_steel"
+				},
+				"south": {
+					"uv": [0, 10.7, 2.7, 11.6],
+					"texture": "#material_steel"
+				},
+				"west": {
+					"uv": [6.5, 10.7, 9.5, 11.6],
+					"texture": "#material_steel"
+				},
+				"up": {
+					"uv": [0, 6.5, 2.7, 9.5],
+					"texture": "#material_steel"
+				},
+				"down": {
+					"uv": [0, 6.5, 2.7, 9.5],
+					"texture": "#material_steel"
+				}
+			}
+		},
+		{
+			"name": "clamp_nut_w_20.4_6.199999999999999",
+			"from": [0.5, 20.5, 6.2],
+			"to": [1.5, 21.2, 6.5],
+			"rotation": {
+				"angle": 0,
+				"axis": "y",
+				"origin": [8, 8, 8]
+			},
+			"faces": {
+				"north": {
+					"uv": [14.5, 10.8, 15.5, 11.5],
+					"texture": "#material_bright_steel"
+				},
+				"east": {
+					"uv": [9.5, 10.8, 9.8, 11.5],
+					"texture": "#material_bright_steel"
+				},
+				"south": {
+					"uv": [0.5, 10.8, 1.5, 11.5],
+					"texture": "#material_bright_steel"
+				},
+				"west": {
+					"uv": [6.2, 10.8, 6.5, 11.5],
+					"texture": "#material_bright_steel"
+				},
+				"up": {
+					"uv": [0.5, 6.2, 1.5, 6.5],
+					"texture": "#material_bright_steel"
+				},
+				"down": {
+					"uv": [0.5, 9.5, 1.5, 9.8],
+					"texture": "#material_bright_steel"
+				}
+			}
+		},
+		{
+			"name": "clamp_nut_w_20.4_9.5",
+			"from": [0.5, 20.5, 9.5],
+			"to": [1.5, 21.2, 9.8],
+			"rotation": {
+				"angle": 0,
+				"axis": "y",
+				"origin": [8, 8, 8]
+			},
+			"faces": {
+				"north": {
+					"uv": [14.5, 10.8, 15.5, 11.5],
+					"texture": "#material_bright_steel"
+				},
+				"east": {
+					"uv": [6.2, 10.8, 6.5, 11.5],
+					"texture": "#material_bright_steel"
+				},
+				"south": {
+					"uv": [0.5, 10.8, 1.5, 11.5],
+					"texture": "#material_bright_steel"
+				},
+				"west": {
+					"uv": [9.5, 10.8, 9.8, 11.5],
+					"texture": "#material_bright_steel"
+				},
+				"up": {
+					"uv": [0.5, 9.5, 1.5, 9.8],
+					"texture": "#material_bright_steel"
+				},
+				"down": {
+					"uv": [0.5, 6.2, 1.5, 6.5],
+					"texture": "#material_bright_steel"
+				}
+			}
+		},
+		{
+			"name": "foot_w",
+			"from": [-0.6, -16, 6.3],
+			"to": [2.6, -15.4, 9.7],
+			"rotation": {
+				"angle": 0,
+				"axis": "y",
+				"origin": [8, 8, 8]
+			},
+			"faces": {
+				"north": {
+					"uv": [13.4, 15.4, 16, 16],
+					"texture": "#mine_support_arch"
+				},
+				"east": {
+					"uv": [6.3, 15.4, 9.7, 16],
+					"texture": "#mine_support_arch"
+				},
+				"south": {
+					"uv": [0, 15.4, 2.6, 16],
+					"texture": "#mine_support_arch"
+				},
+				"west": {
+					"uv": [6.3, 15.4, 9.7, 16],
+					"texture": "#mine_support_arch"
+				},
+				"up": {
+					"uv": [0, 6.3, 2.6, 9.7],
+					"texture": "#mine_support_arch"
+				},
+				"down": {
+					"uv": [0, 6.3, 2.6, 9.7],
+					"texture": "#mine_support_arch"
+				}
+			}
+		},
+		{
+			"name": "overlap_e",
+			"from": [13.7, 17, 6.8],
+			"to": [16.3, 22.4, 9.2],
+			"rotation": {
+				"angle": 0,
+				"axis": "y",
+				"origin": [8, 8, 8]
+			},
+			"faces": {
+				"north": {
+					"uv": [0, 9.6, 2.3, 15],
+					"texture": "#mine_support_arch"
+				},
+				"east": {
+					"uv": [6.8, 9.6, 9.2, 15],
+					"texture": "#mine_support_arch"
+				},
+				"south": {
+					"uv": [13.7, 9.6, 16, 15],
+					"texture": "#mine_support_arch"
+				},
+				"west": {
+					"uv": [6.8, 9.6, 9.2, 15],
+					"texture": "#mine_support_arch"
+				},
+				"up": {
+					"uv": [13.7, 6.8, 16, 9.2],
+					"texture": "#mine_support_arch"
+				},
+				"down": {
+					"uv": [13.7, 6.8, 16, 9.2],
+					"texture": "#mine_support_arch"
+				}
+			}
+		},
+		{
+			"name": "clamp_e_17.6",
+			"from": [13.3, 17.6, 6.5],
+			"to": [16.7, 18.5, 9.5],
+			"rotation": {
+				"angle": 0,
+				"axis": "y",
+				"origin": [8, 8, 8]
+			},
+			"faces": {
+				"north": {
+					"uv": [0, 13.5, 2.7, 14.4],
+					"texture": "#material_steel"
+				},
+				"east": {
+					"uv": [6.5, 13.5, 9.5, 14.4],
+					"texture": "#material_steel"
+				},
+				"south": {
+					"uv": [13.3, 13.5, 16, 14.4],
+					"texture": "#material_steel"
+				},
+				"west": {
+					"uv": [6.5, 13.5, 9.5, 14.4],
+					"texture": "#material_steel"
+				},
+				"up": {
+					"uv": [13.3, 6.5, 16, 9.5],
+					"texture": "#material_steel"
+				},
+				"down": {
+					"uv": [13.3, 6.5, 16, 9.5],
+					"texture": "#material_steel"
+				}
+			}
+		},
+		{
+			"name": "clamp_nut_e_17.6_6.199999999999999",
+			"from": [14.5, 17.7, 6.2],
+			"to": [15.5, 18.4, 6.5],
+			"rotation": {
+				"angle": 0,
+				"axis": "y",
+				"origin": [8, 8, 8]
+			},
+			"faces": {
+				"north": {
+					"uv": [0.5, 13.6, 1.5, 14.3],
+					"texture": "#material_bright_steel"
+				},
+				"east": {
+					"uv": [9.5, 13.6, 9.8, 14.3],
+					"texture": "#material_bright_steel"
+				},
+				"south": {
+					"uv": [14.5, 13.6, 15.5, 14.3],
+					"texture": "#material_bright_steel"
+				},
+				"west": {
+					"uv": [6.2, 13.6, 6.5, 14.3],
+					"texture": "#material_bright_steel"
+				},
+				"up": {
+					"uv": [14.5, 6.2, 15.5, 6.5],
+					"texture": "#material_bright_steel"
+				},
+				"down": {
+					"uv": [14.5, 9.5, 15.5, 9.8],
+					"texture": "#material_bright_steel"
+				}
+			}
+		},
+		{
+			"name": "clamp_nut_e_17.6_9.5",
+			"from": [14.5, 17.7, 9.5],
+			"to": [15.5, 18.4, 9.8],
+			"rotation": {
+				"angle": 0,
+				"axis": "y",
+				"origin": [8, 8, 8]
+			},
+			"faces": {
+				"north": {
+					"uv": [0.5, 13.6, 1.5, 14.3],
+					"texture": "#material_bright_steel"
+				},
+				"east": {
+					"uv": [6.2, 13.6, 6.5, 14.3],
+					"texture": "#material_bright_steel"
+				},
+				"south": {
+					"uv": [14.5, 13.6, 15.5, 14.3],
+					"texture": "#material_bright_steel"
+				},
+				"west": {
+					"uv": [9.5, 13.6, 9.8, 14.3],
+					"texture": "#material_bright_steel"
+				},
+				"up": {
+					"uv": [14.5, 9.5, 15.5, 9.8],
+					"texture": "#material_bright_steel"
+				},
+				"down": {
+					"uv": [14.5, 6.2, 15.5, 6.5],
+					"texture": "#material_bright_steel"
+				}
+			}
+		},
+		{
+			"name": "clamp_e_20.4",
+			"from": [13.3, 20.4, 6.5],
+			"to": [16.7, 21.3, 9.5],
+			"rotation": {
+				"angle": 0,
+				"axis": "y",
+				"origin": [8, 8, 8]
+			},
+			"faces": {
+				"north": {
+					"uv": [0, 10.7, 2.7, 11.6],
+					"texture": "#material_steel"
+				},
+				"east": {
+					"uv": [6.5, 10.7, 9.5, 11.6],
+					"texture": "#material_steel"
+				},
+				"south": {
+					"uv": [13.3, 10.7, 16, 11.6],
+					"texture": "#material_steel"
+				},
+				"west": {
+					"uv": [6.5, 10.7, 9.5, 11.6],
+					"texture": "#material_steel"
+				},
+				"up": {
+					"uv": [13.3, 6.5, 16, 9.5],
+					"texture": "#material_steel"
+				},
+				"down": {
+					"uv": [13.3, 6.5, 16, 9.5],
+					"texture": "#material_steel"
+				}
+			}
+		},
+		{
+			"name": "clamp_nut_e_20.4_6.199999999999999",
+			"from": [14.5, 20.5, 6.2],
+			"to": [15.5, 21.2, 6.5],
+			"rotation": {
+				"angle": 0,
+				"axis": "y",
+				"origin": [8, 8, 8]
+			},
+			"faces": {
+				"north": {
+					"uv": [0.5, 10.8, 1.5, 11.5],
+					"texture": "#material_bright_steel"
+				},
+				"east": {
+					"uv": [9.5, 10.8, 9.8, 11.5],
+					"texture": "#material_bright_steel"
+				},
+				"south": {
+					"uv": [14.5, 10.8, 15.5, 11.5],
+					"texture": "#material_bright_steel"
+				},
+				"west": {
+					"uv": [6.2, 10.8, 6.5, 11.5],
+					"texture": "#material_bright_steel"
+				},
+				"up": {
+					"uv": [14.5, 6.2, 15.5, 6.5],
+					"texture": "#material_bright_steel"
+				},
+				"down": {
+					"uv": [14.5, 9.5, 15.5, 9.8],
+					"texture": "#material_bright_steel"
+				}
+			}
+		},
+		{
+			"name": "clamp_nut_e_20.4_9.5",
+			"from": [14.5, 20.5, 9.5],
+			"to": [15.5, 21.2, 9.8],
+			"rotation": {
+				"angle": 0,
+				"axis": "y",
+				"origin": [8, 8, 8]
+			},
+			"faces": {
+				"north": {
+					"uv": [0.5, 10.8, 1.5, 11.5],
+					"texture": "#material_bright_steel"
+				},
+				"east": {
+					"uv": [6.2, 10.8, 6.5, 11.5],
+					"texture": "#material_bright_steel"
+				},
+				"south": {
+					"uv": [14.5, 10.8, 15.5, 11.5],
+					"texture": "#material_bright_steel"
+				},
+				"west": {
+					"uv": [9.5, 10.8, 9.8, 11.5],
+					"texture": "#material_bright_steel"
+				},
+				"up": {
+					"uv": [14.5, 9.5, 15.5, 9.8],
+					"texture": "#material_bright_steel"
+				},
+				"down": {
+					"uv": [14.5, 6.2, 15.5, 6.5],
+					"texture": "#material_bright_steel"
+				}
+			}
+		},
+		{
+			"name": "foot_e",
+			"from": [13.4, -16, 6.3],
+			"to": [16.6, -15.4, 9.7],
+			"rotation": {
+				"angle": 0,
+				"axis": "y",
+				"origin": [8, 8, 8]
+			},
+			"faces": {
+				"north": {
+					"uv": [0, 15.4, 2.6, 16],
+					"texture": "#mine_support_arch"
+				},
+				"east": {
+					"uv": [6.3, 15.4, 9.7, 16],
+					"texture": "#mine_support_arch"
+				},
+				"south": {
+					"uv": [13.4, 15.4, 16, 16],
+					"texture": "#mine_support_arch"
+				},
+				"west": {
+					"uv": [6.3, 15.4, 9.7, 16],
+					"texture": "#mine_support_arch"
+				},
+				"up": {
+					"uv": [13.4, 6.3, 16, 9.7],
+					"texture": "#mine_support_arch"
+				},
+				"down": {
+					"uv": [13.4, 6.3, 16, 9.7],
+					"texture": "#mine_support_arch"
+				}
+			}
+		},
+		{
+			"name": "mesh_1",
+			"from": [0.51277, 22.43822, 0],
+			"to": [0.61277, 25.72299, 16],
+			"rotation": {
+				"angle": -22.5,
+				"axis": "z",
+				"origin": [0.56277, 24.0806, 8]
+			},
+			"faces": {
+				"north": {
+					"uv": [15.38723, 6.27701, 15.48723, 9.56178],
+					"texture": "#mine_support_mesh"
+				},
+				"east": {
+					"uv": [0, 6.27701, 16, 9.56178],
+					"texture": "#mine_support_mesh"
+				},
+				"south": {
+					"uv": [0.51277, 6.27701, 0.61277, 9.56178],
+					"texture": "#mine_support_mesh"
+				},
+				"west": {
+					"uv": [0, 6.27701, 16, 9.56178],
+					"texture": "#mine_support_mesh"
+				},
+				"up": {
+					"uv": [0.51277, 0, 0.61277, 16],
+					"texture": "#mine_support_mesh"
+				},
+				"down": {
+					"uv": [0.51277, 0, 0.61277, 16],
+					"texture": "#mine_support_mesh"
+				}
+			}
+		},
+		{
+			"name": "mesh_2",
+			"from": [2.25779, 25.04982, 0],
+			"to": [2.35779, 28.3346, 16],
+			"rotation": {
+				"angle": -45,
+				"axis": "z",
+				"origin": [2.30779, 26.69221, 8]
+			},
+			"faces": {
+				"north": {
+					"uv": [13.64221, 3.6654, 13.74221, 6.95018],
+					"texture": "#mine_support_mesh"
+				},
+				"east": {
+					"uv": [0, 3.6654, 16, 6.95018],
+					"texture": "#mine_support_mesh"
+				},
+				"south": {
+					"uv": [2.25779, 3.6654, 2.35779, 6.95018],
+					"texture": "#mine_support_mesh"
+				},
+				"west": {
+					"uv": [0, 3.6654, 16, 6.95018],
+					"texture": "#mine_support_mesh"
+				},
+				"up": {
+					"uv": [2.25779, 0, 2.35779, 16],
+					"texture": "#mine_support_mesh"
+				},
+				"down": {
+					"uv": [2.25779, 0, 2.35779, 16],
+					"texture": "#mine_support_mesh"
+				}
+			}
+		},
+		{
+			"name": "mesh_3",
+			"from": [3.27701, 28.38723, 0],
+			"to": [6.56178, 28.48723, 16],
+			"rotation": {
+				"angle": 22.5,
+				"axis": "z",
+				"origin": [4.9194, 28.43723, 8]
+			},
+			"faces": {
+				"north": {
+					"uv": [9.43822, 3.51277, 12.72299, 3.61277],
+					"texture": "#mine_support_mesh"
+				},
+				"east": {
+					"uv": [0, 3.51277, 16, 3.61277],
+					"texture": "#mine_support_mesh"
+				},
+				"south": {
+					"uv": [3.27701, 3.51277, 6.56178, 3.61277],
+					"texture": "#mine_support_mesh"
+				},
+				"west": {
+					"uv": [0, 3.51277, 16, 3.61277],
+					"texture": "#mine_support_mesh"
+				},
+				"up": {
+					"uv": [3.27701, 0, 6.56178, 16],
+					"texture": "#mine_support_mesh"
+				},
+				"down": {
+					"uv": [3.27701, 0, 6.56178, 16],
+					"texture": "#mine_support_mesh"
+				}
+			}
+		},
+		{
+			"name": "mesh_4",
+			"from": [6.35761, 29, 0],
+			"to": [9.64239, 29.1, 16],
+			"rotation": {
+				"angle": 0,
+				"axis": "y",
+				"origin": [8, 8, 8]
+			},
+			"faces": {
+				"north": {
+					"uv": [6.35761, 2.9, 9.64239, 3],
+					"texture": "#mine_support_mesh"
+				},
+				"east": {
+					"uv": [0, 2.9, 16, 3],
+					"texture": "#mine_support_mesh"
+				},
+				"south": {
+					"uv": [6.35761, 2.9, 9.64239, 3],
+					"texture": "#mine_support_mesh"
+				},
+				"west": {
+					"uv": [0, 2.9, 16, 3],
+					"texture": "#mine_support_mesh"
+				},
+				"up": {
+					"uv": [6.35761, 0, 9.64239, 16],
+					"texture": "#mine_support_mesh"
+				},
+				"down": {
+					"uv": [6.35761, 0, 9.64239, 16],
+					"texture": "#mine_support_mesh"
+				}
+			}
+		},
+		{
+			"name": "mesh_5",
+			"from": [9.43822, 28.38723, 0],
+			"to": [12.72299, 28.48723, 16],
+			"rotation": {
+				"angle": -22.5,
+				"axis": "z",
+				"origin": [11.0806, 28.43723, 8]
+			},
+			"faces": {
+				"north": {
+					"uv": [3.27701, 3.51277, 6.56178, 3.61277],
+					"texture": "#mine_support_mesh"
+				},
+				"east": {
+					"uv": [0, 3.51277, 16, 3.61277],
+					"texture": "#mine_support_mesh"
+				},
+				"south": {
+					"uv": [9.43822, 3.51277, 12.72299, 3.61277],
+					"texture": "#mine_support_mesh"
+				},
+				"west": {
+					"uv": [0, 3.51277, 16, 3.61277],
+					"texture": "#mine_support_mesh"
+				},
+				"up": {
+					"uv": [9.43822, 0, 12.72299, 16],
+					"texture": "#mine_support_mesh"
+				},
+				"down": {
+					"uv": [9.43822, 0, 12.72299, 16],
+					"texture": "#mine_support_mesh"
+				}
+			}
+		},
+		{
+			"name": "mesh_6",
+			"from": [13.64221, 25.04982, 0],
+			"to": [13.74221, 28.3346, 16],
+			"rotation": {
+				"angle": 45,
+				"axis": "z",
+				"origin": [13.69221, 26.69221, 8]
+			},
+			"faces": {
+				"north": {
+					"uv": [2.25779, 3.6654, 2.35779, 6.95018],
+					"texture": "#mine_support_mesh"
+				},
+				"east": {
+					"uv": [0, 3.6654, 16, 6.95018],
+					"texture": "#mine_support_mesh"
+				},
+				"south": {
+					"uv": [13.64221, 3.6654, 13.74221, 6.95018],
+					"texture": "#mine_support_mesh"
+				},
+				"west": {
+					"uv": [0, 3.6654, 16, 6.95018],
+					"texture": "#mine_support_mesh"
+				},
+				"up": {
+					"uv": [13.64221, 0, 13.74221, 16],
+					"texture": "#mine_support_mesh"
+				},
+				"down": {
+					"uv": [13.64221, 0, 13.74221, 16],
+					"texture": "#mine_support_mesh"
+				}
+			}
+		},
+		{
+			"name": "mesh_7",
+			"from": [15.38723, 22.43822, 0],
+			"to": [15.48723, 25.72299, 16],
+			"rotation": {
+				"angle": 22.5,
+				"axis": "z",
+				"origin": [15.43723, 24.0806, 8]
+			},
+			"faces": {
+				"north": {
+					"uv": [0.51277, 6.27701, 0.61277, 9.56178],
+					"texture": "#mine_support_mesh"
+				},
+				"east": {
+					"uv": [0, 6.27701, 16, 9.56178],
+					"texture": "#mine_support_mesh"
+				},
+				"south": {
+					"uv": [15.38723, 6.27701, 15.48723, 9.56178],
+					"texture": "#mine_support_mesh"
+				},
+				"west": {
+					"uv": [0, 6.27701, 16, 9.56178],
+					"texture": "#mine_support_mesh"
+				},
+				"up": {
+					"uv": [15.38723, 0, 15.48723, 16],
+					"texture": "#mine_support_mesh"
+				},
+				"down": {
+					"uv": [15.38723, 0, 15.48723, 16],
+					"texture": "#mine_support_mesh"
+				}
+			}
+		},
+		{
+			"name": "mesh_wall_w_0",
+			"from": [-0.1, -14, 0],
+			"to": [0, 0, 16],
+			"rotation": {
+				"angle": 0,
+				"axis": "y",
+				"origin": [8, 8, 8]
+			},
+			"faces": {
+				"north": {
+					"uv": [0, 0, 0.1, 14],
+					"texture": "#mine_support_mesh"
+				},
+				"east": {
+					"uv": [0, 0, 16, 14],
+					"texture": "#mine_support_mesh"
+				},
+				"south": {
+					"uv": [15.9, 0, 16, 14],
+					"texture": "#mine_support_mesh"
+				},
+				"west": {
+					"uv": [0, 0, 16, 14],
+					"texture": "#mine_support_mesh"
+				},
+				"up": {
+					"uv": [15.9, 0, 16, 16],
+					"texture": "#mine_support_mesh"
+				},
+				"down": {
+					"uv": [15.9, 0, 16, 16],
+					"texture": "#mine_support_mesh"
+				}
+			}
+		},
+		{
+			"name": "mesh_wall_w_1",
+			"from": [-0.1, 0, 0],
+			"to": [0, 16, 16],
+			"rotation": {
+				"angle": 0,
+				"axis": "y",
+				"origin": [8, 8, 8]
+			},
+			"faces": {
+				"north": {
+					"uv": [0, 0, 0.1, 16],
+					"texture": "#mine_support_mesh"
+				},
+				"east": {
+					"uv": [0, 0, 16, 16],
+					"texture": "#mine_support_mesh"
+				},
+				"south": {
+					"uv": [15.9, 0, 16, 16],
+					"texture": "#mine_support_mesh"
+				},
+				"west": {
+					"uv": [0, 0, 16, 16],
+					"texture": "#mine_support_mesh"
+				},
+				"up": {
+					"uv": [15.9, 0, 16, 16],
+					"texture": "#mine_support_mesh"
+				},
+				"down": {
+					"uv": [15.9, 0, 16, 16],
+					"texture": "#mine_support_mesh"
+				}
+			}
+		},
+		{
+			"name": "mesh_wall_w_2",
+			"from": [-0.1, 16, 0],
+			"to": [0, 21, 16],
+			"rotation": {
+				"angle": 0,
+				"axis": "y",
+				"origin": [8, 8, 8]
+			},
+			"faces": {
+				"north": {
+					"uv": [0, 11, 0.1, 16],
+					"texture": "#mine_support_mesh"
+				},
+				"east": {
+					"uv": [0, 11, 16, 16],
+					"texture": "#mine_support_mesh"
+				},
+				"south": {
+					"uv": [15.9, 11, 16, 16],
+					"texture": "#mine_support_mesh"
+				},
+				"west": {
+					"uv": [0, 11, 16, 16],
+					"texture": "#mine_support_mesh"
+				},
+				"up": {
+					"uv": [15.9, 0, 16, 16],
+					"texture": "#mine_support_mesh"
+				},
+				"down": {
+					"uv": [15.9, 0, 16, 16],
+					"texture": "#mine_support_mesh"
+				}
+			}
+		},
+		{
+			"name": "mesh_wall_e_0",
+			"from": [16, -14, 0],
+			"to": [16.1, 0, 16],
+			"rotation": {
+				"angle": 0,
+				"axis": "y",
+				"origin": [8, 8, 8]
+			},
+			"faces": {
+				"north": {
+					"uv": [15.9, 0, 16, 14],
+					"texture": "#mine_support_mesh"
+				},
+				"east": {
+					"uv": [0, 0, 16, 14],
+					"texture": "#mine_support_mesh"
+				},
+				"south": {
+					"uv": [0, 0, 0.1, 14],
+					"texture": "#mine_support_mesh"
+				},
+				"west": {
+					"uv": [0, 0, 16, 14],
+					"texture": "#mine_support_mesh"
+				},
+				"up": {
+					"uv": [0, 0, 0.1, 16],
+					"texture": "#mine_support_mesh"
+				},
+				"down": {
+					"uv": [0, 0, 0.1, 16],
+					"texture": "#mine_support_mesh"
+				}
+			}
+		},
+		{
+			"name": "mesh_wall_e_1",
+			"from": [16, 0, 0],
+			"to": [16.1, 16, 16],
+			"rotation": {
+				"angle": 0,
+				"axis": "y",
+				"origin": [8, 8, 8]
+			},
+			"faces": {
+				"north": {
+					"uv": [15.9, 0, 16, 16],
+					"texture": "#mine_support_mesh"
+				},
+				"east": {
+					"uv": [0, 0, 16, 16],
+					"texture": "#mine_support_mesh"
+				},
+				"south": {
+					"uv": [0, 0, 0.1, 16],
+					"texture": "#mine_support_mesh"
+				},
+				"west": {
+					"uv": [0, 0, 16, 16],
+					"texture": "#mine_support_mesh"
+				},
+				"up": {
+					"uv": [0, 0, 0.1, 16],
+					"texture": "#mine_support_mesh"
+				},
+				"down": {
+					"uv": [0, 0, 0.1, 16],
+					"texture": "#mine_support_mesh"
+				}
+			}
+		},
+		{
+			"name": "mesh_wall_e_2",
+			"from": [16, 16, 0],
+			"to": [16.1, 21, 16],
+			"rotation": {
+				"angle": 0,
+				"axis": "y",
+				"origin": [8, 8, 8]
+			},
+			"faces": {
+				"north": {
+					"uv": [15.9, 11, 16, 16],
+					"texture": "#mine_support_mesh"
+				},
+				"east": {
+					"uv": [0, 11, 16, 16],
+					"texture": "#mine_support_mesh"
+				},
+				"south": {
+					"uv": [0, 11, 0.1, 16],
+					"texture": "#mine_support_mesh"
+				},
+				"west": {
+					"uv": [0, 11, 16, 16],
+					"texture": "#mine_support_mesh"
+				},
+				"up": {
+					"uv": [0, 0, 0.1, 16],
+					"texture": "#mine_support_mesh"
+				},
+				"down": {
+					"uv": [0, 0, 0.1, 16],
+					"texture": "#mine_support_mesh"
+				}
+			}
+		},
+		{
+			"name": "tie_w",
+			"from": [0.8, 3.8, 0],
+			"to": [1.2, 4.2, 16],
+			"rotation": {
+				"angle": 0,
+				"axis": "y",
+				"origin": [8, 8, 8]
+			},
+			"faces": {
+				"north": {
+					"uv": [14.8, 11.8, 15.2, 12.2],
+					"texture": "#material_steel"
+				},
+				"east": {
+					"uv": [0, 11.8, 16, 12.2],
+					"texture": "#material_steel"
+				},
+				"south": {
+					"uv": [0.8, 11.8, 1.2, 12.2],
+					"texture": "#material_steel"
+				},
+				"west": {
+					"uv": [0, 11.8, 16, 12.2],
+					"texture": "#material_steel"
+				},
+				"up": {
+					"uv": [0.8, 0, 1.2, 16],
+					"texture": "#material_steel"
+				},
+				"down": {
+					"uv": [0.8, 0, 1.2, 16],
+					"texture": "#material_steel"
+				}
+			}
+		},
+		{
+			"name": "tie_e",
+			"from": [14.8, 3.8, 0],
+			"to": [15.2, 4.2, 16],
+			"rotation": {
+				"angle": 0,
+				"axis": "y",
+				"origin": [8, 8, 8]
+			},
+			"faces": {
+				"north": {
+					"uv": [0.8, 11.8, 1.2, 12.2],
+					"texture": "#material_steel"
+				},
+				"east": {
+					"uv": [0, 11.8, 16, 12.2],
+					"texture": "#material_steel"
+				},
+				"south": {
+					"uv": [14.8, 11.8, 15.2, 12.2],
+					"texture": "#material_steel"
+				},
+				"west": {
+					"uv": [0, 11.8, 16, 12.2],
+					"texture": "#material_steel"
+				},
+				"up": {
+					"uv": [14.8, 0, 15.2, 16],
+					"texture": "#material_steel"
+				},
+				"down": {
+					"uv": [14.8, 0, 15.2, 16],
+					"texture": "#material_steel"
+				}
+			}
+		},
+		{
+			"name": "tie_c",
+			"from": [7.8, 27.4, 0],
+			"to": [8.2, 27.8, 16],
+			"rotation": {
+				"angle": 0,
+				"axis": "y",
+				"origin": [8, 8, 8]
+			},
+			"faces": {
+				"north": {
+					"uv": [7.8, 4.2, 8.2, 4.6],
+					"texture": "#material_steel"
+				},
+				"east": {
+					"uv": [0, 4.2, 16, 4.6],
+					"texture": "#material_steel"
+				},
+				"south": {
+					"uv": [7.8, 4.2, 8.2, 4.6],
+					"texture": "#material_steel"
+				},
+				"west": {
+					"uv": [0, 4.2, 16, 4.6],
+					"texture": "#material_steel"
+				},
+				"up": {
+					"uv": [7.8, 0, 8.2, 16],
+					"texture": "#material_steel"
+				},
+				"down": {
+					"uv": [7.8, 0, 8.2, 16],
+					"texture": "#material_steel"
 				}
 			}
 		}

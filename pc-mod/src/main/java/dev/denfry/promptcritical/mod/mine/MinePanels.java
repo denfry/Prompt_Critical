@@ -88,7 +88,9 @@ public final class MinePanels {
                     PanelText.num(MainMineFanBlockEntity.GEAR, 2)), null)
             .noInventory().build();
 
+    /** Фон — art/blockbench/mining/degasification_pump.author.js ({@code guiPump}). */
     public static final PanelLayout DEGAS = PanelLayout.builder("degasification_pump", 176, 100, DEGAS_CHANNELS)
+            .art(PromptCritical.id("textures/gui/panel/degasification_pump.png"))
             .dial(8, 24, false, SHAFT_RPM10, 10, 256, Double.NaN, 0, RPM.get(), SHAFT.get(), shaftTip())
             .dial(64, 24, false, DEGAS_CAPTURE_PERMIL, 10, 100, Double.NaN, 0, PERCENT.get(), CAPTURE.get(), null)
             .lamp(122, 26, FLAGS, F_RUNNING, LampColor.GREEN, RUNNING.get())
@@ -112,7 +114,9 @@ public final class MinePanels {
             .readout(8, 92, 216, v -> PUMP_STATUS.get(v.raw(PUMP_HEAD_M), v.num(PUMP_KW10, 10, 1)), null)
             .noInventory().build();
 
+    /** Фон — art/blockbench/mining/mine_dispatch_cabinet.author.js ({@code guiCabinet}). */
     public static final PanelLayout CABINET = PanelLayout.builder("mine_dispatch_cabinet", 230, 156, D_CHANNELS)
+            .art(PromptCritical.id("textures/gui/panel/mine_dispatch_cabinet.png"))
             .dial(8, 24, true, D_CH4_X100, 100, 2, 1, 2, PERCENT.get(), CH4.get(),
                     v -> CH4_TIP.get(v.num(D_CH4_X100, 100, 2), v.num(D_TRIP_X100, 100, 2)))
             .dial(80, 24, false, D_CO_PPM, 1, 100, 17, 0, PPM.get(), CO.get(), v -> CO_TIP.get(v.raw(D_CO_PPM)))

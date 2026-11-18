@@ -4,9 +4,13 @@ import dev.denfry.promptcritical.mod.binding.SimConfigs;
 import dev.denfry.promptcritical.mod.blockentity.DeviceBlockEntity;
 import dev.denfry.promptcritical.mod.multiblock.Footprint;
 import net.minecraft.core.BlockPos;
+import net.minecraft.core.Direction;
+import net.minecraft.core.particles.BlockParticleOption;
+import net.minecraft.core.particles.ParticleTypes;
 import net.minecraft.core.HolderLookup;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.network.chat.Component;
+import net.minecraft.server.level.ServerLevel;
 import net.minecraft.sounds.SoundEvents;
 import net.minecraft.sounds.SoundSource;
 import net.minecraft.world.entity.player.Player;
@@ -52,6 +56,26 @@ public final class PoweredRoofSupportBlockEntity extends DeviceBlockEntity {
         level.setBlock(worldPosition, getBlockState().setValue(BlockStateProperties.EXTENDED, want), Block.UPDATE_ALL);
         // Смена состояния будит перезаливку шахты, она же заново проверяет пролёты кровли.
         level.playSound(null, worldPosition, want ? SoundEvents.PISTON_EXTEND : SoundEvents.PISTON_CONTRACT, SoundSource.BLOCKS, 0.6f, 0.6f);
+        if (level instanceof ServerLevel server) effects(server, want);
+    }
+
+    /**
+     * Видимая перестановка: разгруженное перекрытие отходит от кровли, и с неё сыплется порода; распёртое
+     * прижимается к кровле и крошит её. Из гидростоек при этом брызжет эмульсия (слив из поршневой полости).
+     */
+    private void effects(ServerLevel server, boolean set) {
+        if (!(getBlockState().getBlock() instanceof PoweredRoofSupportBlock b)) return;
+        Direction back = b.facing(getBlockState()).getOpposite();
+        BlockPos roof = worldPosition.above(2);
+        BlockState roofState = server.getBlockState(roof);
+        double x = worldPosition.getX() + 0.5 + back.getStepX() * 0.5, z = worldPosition.getZ() + 0.5 + back.getStepZ() * 0.5;
+        double top = worldPosition.getY() + 1.9;
+        if (!roofState.isAir()) {
+            if (set) server.sendParticles(new BlockParticleOption(ParticleTypes.BLOCK, roofState), x, top + 0.1, z, 12, 0.5, 0.05, 0.6, 0.05);
+            else server.sendParticles(new BlockParticleOption(ParticleTypes.FALLING_DUST, roofState), x, top - 0.1, z, 24, 0.5, 0.05, 0.7, 0);
+        }
+        server.sendParticles(ParticleTypes.SPLASH, worldPosition.getX() + 0.5, worldPosition.getY() + 0.1, worldPosition.getZ() + 0.5,
+                set ? 4 : 10, 0.35, 0.1, 0.2, 0.05);
     }
 
     private int setTicks() {

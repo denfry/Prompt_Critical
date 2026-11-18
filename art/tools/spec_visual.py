@@ -103,113 +103,13 @@ def hcyl(name, axis, r, a0, a1, tex, c=(8, 8, 8), sides=16):
     return disc(name, axis, r, max(a0, -15.92), min(a1, 31.92), tex, sides, c=c)
 
 
-def support(damaged=False):
-    """Деревянный оклад 1×3×1 (якорь — средний блок): две окорённые стойки, верхняк, затяжки по кровле."""
-    els = disc("post_w", "y", 2, -15.9, 28, "log", 8, c=(3, 8, 8)) + disc("post_e", "y", 2, -15.9, 28, "log", 8, c=(13, 8, 8))
-    cap = disc("cap", "x", 2.2, -0.9, 16.9, "log", 8, c=(8, 29.6, 8))
-    if damaged:
-        # верхняк переломлен: половины просели к середине
-        cap = [el("cap_w", [-1, 27.6, 6], [8, 31.6, 10], "log", rot=("z", -22.5, [-1, 29.6, 8])),
-               el("cap_e", [8, 27.6, 6], [17, 31.6, 10], "log", rot=("z", 22.5, [17, 29.6, 8]))]
-    els += cap
-    els += [el(f"lagging_{i}", [i * 4 + 0.2, 31.8, 0], [i * 4 + 3.8, 32, 16], "plank") for i in range(4)]
-    els += [el("wedge_w", [1.5, 27, 6.5], [4.5, 28, 9.5], "plank"), el("wedge_e", [11.5, 27, 6.5], [14.5, 28, 9.5], "plank"),
-            el("foot_w", [0.5, -16, 5.5], [5.5, -15, 10.5], "plank"), el("foot_e", [10.5, -16, 5.5], [15.5, -15, 10.5], "plank")]
-    return els
+# деревянный оклад (целый и сломанный) нарисован вручную в Blockbench: art/blockbench/mining/mine_support.author.js
 
+# механизированная крепь нарисована вручную в Blockbench: art/blockbench/mining/powered_roof_support.author.js
 
-m("mine_support", "mining", support())
-m("mine_support_damaged", "mining", support(True))
+# очистной комбайн нарисован вручную в Blockbench: art/blockbench/mining/longwall_shearer.author.js
 
-# механизированная крепь 1×3×2 (x 0…16, y −16…32, z 0…32): основание, перекрытие, ограждение, лемнискатный механизм
-m("powered_roof_support", "mining", [
-    el("base_w", [1, -16, 1], [6.5, -11, 30], "yel"),
-    el("base_e", [9.5, -16, 1], [15, -11, 30], "yel"),
-    el("base_bridge", [6.5, -15, 18], [9.5, -12, 28], "yel"),
-    el("toe_w", [1, -16, 0], [6.5, -13, 1], "haz"),
-    el("toe_e", [9.5, -16, 0], [15, -13, 1], "haz"),
-    el("canopy", [0, 28, -2], [16, 31, 30], "yel"),
-    el("canopy_tip", [1, 28.5, -4], [15, 30.5, -2], "yel"),
-    el("canopy_hinge", [3, 26, 26], [13, 28, 30], "d"),
-    el("shield", [1, 9, 23], [15, 27, 26], "yel", rot=("x", -22.5, [8, 27, 26])),
-    el("lemniscate_upper", [3, -2, 22], [13, 2, 29], "d", rot=("x", 22.5, [8, 0, 26])),
-    el("lemniscate_lower", [3, -11, 21], [13, -6, 29], "d"),
-    el("spill_plate", [2, -16, -2], [14, -9, 0], "yel"),
-    el("push_ram", [7, -14, 0], [9, -12, 18], "sm"),
-    el("valve_bank", [4, -11, 12], [12, -7, 17], "dg"),
-    el("lever_1", [5, -7, 13], [6, -4, 14], "red"),
-    el("lever_2", [7, -7, 13], [8, -4, 14], "gas"),
-    el("lever_3", [10, -7, 13], [11, -4, 14], "mb"),
-    el("hose_w", [2, -11, 15], [3, 26, 16], "r"),
-    el("hose_e", [13, -11, 15], [14, 26, 16], "r"),
-    el("leg_socket_w", [2, -12, 5], [7, -10, 11], "d"),
-    el("leg_socket_e", [9, -12, 5], [14, -10, 11], "d"),
-    el("leg_cap_w", [2.5, 26, 5.5], [6.5, 28, 10.5], "d"),
-    el("leg_cap_e", [9.5, 26, 5.5], [13.5, 28, 10.5], "d"),
-])
-m("powered_roof_support/legs", "mining", [
-    el("cyl_w", [2.5, -10, 6], [6.5, 9, 10], "yel"),
-    el("collar_w", [2, 9, 5.5], [7, 10.5, 10.5], "d"),
-    el("rod_w", [3.5, 10.5, 7], [5.5, 26, 9], "pol"),
-    el("cyl_e", [9.5, -10, 6], [13.5, 9, 10], "yel"),
-    el("collar_e", [9, 9, 5.5], [14, 10.5, 10.5], "d"),
-    el("rod_e", [10.5, 10.5, 7], [12.5, 26, 9], "pol"),
-], kind="partial")
-
-# очистной комбайн 3×1×1: корпус с моторными отсеками, поворотные рукояти к шнекам на оси (y 16, z 8)
-m("longwall_shearer", "mining", [
-    el("body", [-9, 0.5, 2], [25, 9, 14], "org"),
-    el("haulage", [1, 0.5, 0.5], [15, 7, 2], "org"),
-    el("control_box", [3, 9, 4], [13, 13, 12], "dg"),
-    el("control_panel", [4, 10, 3.5], [12, 12.5, 4], "gauge", full=["north"]),
-    el("motor_w", [-9, 9, 3], [0, 12, 13], "ribs"),
-    el("motor_e", [16, 9, 3], [25, 12, 13], "ribs"),
-    el("stripe", [-9, 8, 1.9], [25, 9, 2], "haz"),
-    el("arm_w", [-16, 5, 4.5], [-6, 10, 11.5], "org", rot=("z", 22.5, [-6, 7, 8])),
-    el("arm_e", [22, 5, 4.5], [32, 10, 11.5], "org", rot=("z", -22.5, [22, 7, 8])),
-    el("skid_w", [-9, -0.01, 3], [-3, 1, 13], "d"),
-    el("skid_e", [19, -0.01, 3], [25, 1, 13], "d"),
-    el("cable_handler", [-9, 2, 14], [25, 6, 16], "r"),
-    el("spray_bar", [-9, 9.5, 14], [25, 10.5, 15], "gas"),
-    el("lamp", [7, 13, 6], [9, 14.5, 10], "lw"),
-])
-
-
-def shearer_drum(x0):
-    """Шнек: барабан на оси (y 16, z 8), фланец, два венца резцов (второй повёрнут на 45°); ширина 6,8 px от x0."""
-    els = hcyl("core", "x", 5, x0, x0 + 6.8, "vane", c=(8, 16, 8))
-    els += hcyl("flange", "x", 7, x0, x0 + 1, "d", c=(8, 16, 8), sides=8)
-    s = math.sqrt(0.5)
-    for i, xx in enumerate((x0 + 2, x0 + 4.5)):
-        dirs = ((1, 0), (-1, 0), (0, 1), (0, -1)) if i == 0 else ((s, s), (-s, s), (s, -s), (-s, -s))
-        for k, (dy, dz) in enumerate(dirs):
-            yy, zz = 16 + 7 * dy, 8 + 7 * dz
-            els.append(el(f"pick_{i}_{k}", [xx, round(yy - 0.7, 3), round(zz - 0.7, 3)],
-                          [xx + 1.3, round(yy + 0.7, 3), round(zz + 0.7, 3)], "pick"))
-    return els
-
-
-m("longwall_shearer/drum_a", "mining", shearer_drum(-15.9), kind="partial")
-m("longwall_shearer/drum_b", "mining", shearer_drum(25.1), kind="partial")
-
-# вакуум-насос дегазации ВВН (вал сзади): корпус на раме, сепаратор, газовые патрубки; ротор и муфта — partial
-m("degasification_pump", "mining", [
-    el("frame", [0.5, 0, 0.5], [15.5, 2, 15.5], "d"),
-    el("foot_n", [3, 2, 2], [13, 4, 4], "dg"),
-    el("foot_s", [3, 2, 11], [13, 4, 13], "dg"),
-] + hcyl("casing", "z", 5.2, 2.5, 13, "mb")
-  + hcyl("end_n", "z", 5.8, 1.5, 2.5, "d", sides=8)
-  + hcyl("end_s", "z", 5.8, 13, 14, "d", sides=8)
-  + [el("inlet", [6.5, 13, 5.5], [9.5, 16, 8.5], "gas", faces={"up": "end"}),
-     el("inlet_flange", [5.5, 14, 4.5], [10.5, 15, 9.5], "gas"),
-     el("outlet", [13, 5, 6.5], [16, 8, 9.5], "gas", faces={"east": "end"}),
-     el("separator", [0.5, 2, 9], [3.5, 12, 13], "mb"),
-     el("separator_cap", [0.25, 12, 8.75], [3.75, 13, 13.25], "d"),
-     el("sight_glass", [0.3, 6, 10], [0.5, 10, 12], "gl"),
-     el("gauge", [12, 11, 2], [15, 14, 2.5], "gauge", full=["north"]),
-     el("guard", [5, 3, 14], [11, 4, 16], "haz")])
-m("degasification_pump/rotor", "mining", hcyl("rotor", "z", 3.5, 3.5, 12.5, "sm")
-  + hcyl("shaft", "z", 1, 12.5, 16, "pol", sides=8) + hcyl("coupling", "z", 2.5, 14.2, 15.6, "d", sides=8), kind="partial")
+# вакуум-насос дегазации нарисован вручную в Blockbench: art/blockbench/mining/degasification_pump.author.js
 
 # насос водоотлива нарисован вручную в Blockbench: art/blockbench/mining/mine_drainage_pump.author.js
 
@@ -386,21 +286,4 @@ m("drill_press", "machine_shop", [
 m("drill_press/spindle", "machine_shop", vcyl("quill", 8, 7, 1, 14, 20, "pol", 8) + vcyl("chuck", 8, 7, 1.6, 13, 15, "d", 8)
   + vcyl("bit", 8, 7, 0.4, 11, 13, "d", 8), kind="partial")
 
-# отсадочная машина ОМ 2×2×1: клёпаный бак с водой и постелью, воздушная камера с пульсатором, жёлоб питания, разгрузка
-m("coal_jig", "coal_prep", [
-    el("leg_w", [1, 0, 1], [4, 6, 15], "d"), el("leg_e", [28, 0, 1], [31, 6, 15], "d"),
-    el("bearing_w", [-0.01, 5.5, 5.5], [2, 10.5, 10.5], "ci"),
-    el("hopper", [2, 6, 1], [30, 12, 15], "ci"),
-    el("tank_w", [0, 12, 0], [1, 25, 16], "shell"), el("tank_e", [31, 12, 0], [32, 25, 16], "shell"),
-    el("tank_n", [1, 12, 0], [31, 25, 1], "shell"), el("tank_s", [1, 12, 15], [31, 25, 16], "shell"),
-    el("rim", [0, 25, 0], [32, 26, 16], "d"),
-    el("bed", [1, 18, 1], [31, 20, 15], "coal"),
-    el("water", [1, 23, 1], [31, 24, 15], "water"),
-    el("air_box", [4, 24, 3], [12, 30, 13], "mb"),
-    el("valve_drive", [12, 25, 5], [14, 29, 11], "d"),
-    el("feed_chute", [1, 26, 4], [10, 28, 12], "d", rot=("z", -22.5, [10, 26, 8])),
-    el("spout_clean", [31, 21, 5], [32.0, 23, 11], "d"),
-    el("spout_mid", [31, 14, 5], [32.0, 16, 11], "d"),
-    el("spout_refuse", [14, 6, -0.01], [18, 9, 1], "d"),
-    el("water_inlet", [24, 25, 6], [27, 31, 9], "wat", faces={"up": "end"}),
-])
+# отсадочная машина нарисована вручную в Blockbench: art/blockbench/coal_prep/coal_jig.author.js

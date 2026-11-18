@@ -111,7 +111,10 @@ def pa_lines():
 
 
 def cmd_pa(args):
-    sounds = {}
+    # записи не громкой связи (sfx.* из art/sfx/generate.py) сохраняются
+    sounds_json = ASSETS / "sounds.json"
+    old = json.loads(sounds_json.read_text(encoding="utf-8")) if sounds_json.exists() else {}
+    sounds = {k: v for k, v in old.items() if not k.startswith("pa.")}
     for key, alarm, texts in pa_lines():
         for lang, text in texts.items():
             say = CONFIG["say"].get(lang, {}).get(key, text)

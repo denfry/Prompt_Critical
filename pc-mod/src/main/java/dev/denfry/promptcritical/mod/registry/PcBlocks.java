@@ -335,8 +335,9 @@ public final class PcBlocks {
             dev.denfry.promptcritical.mod.foundry.FoundryBlock.with(dev.denfry.promptcritical.mod.reactor.AchesonFurnaceBlockEntity::new));
 
     // --- шахта (08 §8.2) ---
-    public static final DeferredBlock<PcBlock> MINE_SUPPORT = block("mine_support", wood(),
-            Spec.facing(PcProperties.SUPPORT_KIND, PcProperties.DAMAGED).footprint(FP_TALL3));
+    public static final DeferredBlock<dev.denfry.promptcritical.mod.mine.MineSupportBlock> MINE_SUPPORT = withItem(BLOCKS.registerBlock("mine_support",
+            p -> dev.denfry.promptcritical.mod.mine.MineSupportBlock.create(p,
+                    Spec.facing(PcProperties.SUPPORT_KIND, PcProperties.DAMAGED).footprint(FP_TALL3)), wood()));
     public static final DeferredBlock<PcDeviceBlock> POWERED_ROOF_SUPPORT = device("powered_roof_support", machine(),
             Spec.facing(BlockStateProperties.EXTENDED).footprint(Footprint.of(Segment.box(0, 0, -1, 1, 0, 1))),
             PoweredRoofSupportBlock::create);
