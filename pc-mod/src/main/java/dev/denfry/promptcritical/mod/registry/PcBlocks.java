@@ -473,7 +473,7 @@ public final class PcBlocks {
             Spec.facing(PcProperties.RUNNING).footprint(FP_TALL3),
             FoundryBlock.with(dev.denfry.promptcritical.mod.chlor.PvcReactorBlockEntity::new));
     // --- химия I3: азот — синтез-газ, аммиак, азотная кислота ---
-    private static final Footprint FP_COLUMN3 = Footprint.of(Segment.box(0, 0, 0, 2, 0, 0));
+    private static final Footprint FP_COLUMN3 = Footprint.of(Segment.box(0, 0, -1, 1, 0, 0).at(0, 1, 0)); // контроллер внизу, колонна вверх на 3
     public static final DeferredBlock<PcDeviceBlock> STEAM_REFORMER = device("steam_reformer", lit(brick()),
             Spec.facing(BlockStateProperties.LIT).footprint(FP_CUBE3),
             FoundryBlock.with(dev.denfry.promptcritical.mod.nitrogen.SteamReformerBlockEntity::new));
