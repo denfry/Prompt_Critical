@@ -78,6 +78,50 @@ public final class OpsRecipes extends RecipeProvider {
                 .requires(AllBlocks.CLUTCH.get()).requires(Items.LEVER).requires(Items.IRON_INGOT)
                 .unlockedBy("has_clutch", has(AllBlocks.CLUTCH.get())).save(out, id("mechanical_disconnect"));
 
+        // пожаротушение 13 §13.5
+        ShapedRecipeBuilder.shaped(RecipeCategory.MISC, PcBlocks.SMOKE_DETECTOR.get()).pattern("III").pattern("GRG")
+                .define('I', Items.IRON_INGOT).define('G', Items.GLASS_PANE).define('R', Items.REDSTONE)
+                .unlockedBy("has_redstone", has(Items.REDSTONE)).save(out, id("smoke_detector"));
+        ShapedRecipeBuilder.shaped(RecipeCategory.MISC, PcBlocks.HEAT_DETECTOR.get()).pattern("III").pattern("CRC")
+                .define('I', Items.IRON_INGOT).define('C', Items.COPPER_INGOT).define('R', Items.REDSTONE)
+                .unlockedBy("has_redstone", has(Items.REDSTONE)).save(out, id("heat_detector"));
+        ShapedRecipeBuilder.shaped(RecipeCategory.MISC, PcBlocks.FLAME_DETECTOR.get()).pattern("IGI").pattern("IRI")
+                .define('I', Items.IRON_INGOT).define('G', Items.TINTED_GLASS).define('R', Items.REDSTONE)
+                .unlockedBy("has_redstone", has(Items.REDSTONE)).save(out, id("flame_detector"));
+        ShapelessRecipeBuilder.shapeless(RecipeCategory.MISC, PcBlocks.MANUAL_CALL_POINT.get())
+                .requires(Items.STONE_BUTTON).requires(Items.RED_DYE).requires(Items.GLASS_PANE).requires(Items.IRON_INGOT)
+                .unlockedBy("has_redstone", has(Items.REDSTONE)).save(out, id("manual_call_point"));
+        ShapedRecipeBuilder.shaped(RecipeCategory.MISC, PcBlocks.FIRE_ALARM_PANEL.get()).pattern("IRI").pattern("RBR").pattern("IRI")
+                .define('I', Items.IRON_INGOT).define('R', Items.REDSTONE).define('B', Items.BELL)
+                .unlockedBy("has_redstone", has(Items.REDSTONE)).save(out, id("fire_alarm_panel"));
+        ShapedRecipeBuilder.shaped(RecipeCategory.MISC, PcBlocks.SPRINKLER_HEAD.get(), 2).pattern(" P ").pattern("CGC")
+                .define('P', pipe).define('C', Items.COPPER_INGOT).define('G', Items.GLASS_PANE)
+                .unlockedBy("has_pipe", has(pipe)).save(out, id("sprinkler_head"));
+        ShapedRecipeBuilder.shaped(RecipeCategory.MISC, PcBlocks.DELUGE_NOZZLE.get(), 2).pattern(" P ").pattern("C C")
+                .define('P', pipe).define('C', Items.COPPER_INGOT)
+                .unlockedBy("has_pipe", has(pipe)).save(out, id("deluge_nozzle"));
+        ShapedRecipeBuilder.shaped(RecipeCategory.MISC, PcBlocks.GAS_SUPPRESSION_CYLINDER.get()).pattern(" V ").pattern("ITI").pattern("ITI")
+                .define('V', AllBlocks.FLUID_VALVE.get()).define('I', Items.IRON_INGOT).define('T', AllBlocks.FLUID_TANK.get())
+                .unlockedBy("has_iron", has(Items.IRON_INGOT)).save(out, id("gas_suppression_cylinder"));
+        ShapedRecipeBuilder.shaped(RecipeCategory.MISC, PcBlocks.FIRE_MONITOR.get()).pattern("PPI").pattern(" V ").pattern("III")
+                .define('P', pipe).define('I', Items.IRON_INGOT).define('V', AllBlocks.FLUID_VALVE.get())
+                .unlockedBy("has_pipe", has(pipe)).save(out, id("fire_monitor"));
+        ShapelessRecipeBuilder.shapeless(RecipeCategory.TOOLS, PcItems.FIRE_EXTINGUISHER.get())
+                .requires(Items.IRON_INGOT).requires(Items.IRON_INGOT).requires(Items.RED_DYE).requires(Items.BONE_MEAL)
+                .unlockedBy("has_iron", has(Items.IRON_INGOT)).save(out, id("fire_extinguisher"));
+        ShapelessRecipeBuilder.shapeless(RecipeCategory.TOOLS, PcItems.FIRE_EXTINGUISHER_WATER.get())
+                .requires(Items.IRON_INGOT).requires(Items.IRON_INGOT).requires(Items.RED_DYE).requires(Items.WATER_BUCKET)
+                .unlockedBy("has_iron", has(Items.IRON_INGOT)).save(out, id("fire_extinguisher_water"));
+        ShapelessRecipeBuilder.shapeless(RecipeCategory.TOOLS, PcItems.FIRE_EXTINGUISHER_FOAM.get())
+                .requires(Items.IRON_INGOT).requires(Items.IRON_INGOT).requires(Items.RED_DYE).requires(Items.WATER_BUCKET).requires(Items.SLIME_BALL)
+                .unlockedBy("has_iron", has(Items.IRON_INGOT)).save(out, id("fire_extinguisher_foam"));
+        ShapelessRecipeBuilder.shapeless(RecipeCategory.TOOLS, PcItems.FIRE_EXTINGUISHER_CO2.get())
+                .requires(Items.IRON_INGOT).requires(Items.IRON_INGOT).requires(Items.IRON_INGOT).requires(Items.BLACK_DYE).requires(Items.CHARCOAL)
+                .unlockedBy("has_iron", has(Items.IRON_INGOT)).save(out, id("fire_extinguisher_co2"));
+        ShapelessRecipeBuilder.shapeless(RecipeCategory.TOOLS, PcItems.FIRE_EXTINGUISHER_METAL.get())
+                .requires(Items.IRON_INGOT).requires(Items.IRON_INGOT).requires(Items.YELLOW_DYE).requires(Items.SAND).requires(Items.SAND)
+                .unlockedBy("has_iron", has(Items.IRON_INGOT)).save(out, id("fire_extinguisher_metal"));
+
         // инструменты
         ShapelessRecipeBuilder.shapeless(RecipeCategory.TOOLS, PcItems.MECHANIC_STETHOSCOPE.get())
                 .requires(Items.COPPER_INGOT).requires(Items.IRON_INGOT).requires(Items.STRING)

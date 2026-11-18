@@ -438,6 +438,11 @@ public final class PcLanguageProvider extends LanguageProvider {
         i("generator_coupling", "Shear-Pin Coupling", "Муфта со срезным штифтом");
         i("jacket_heater", "Jacket Water Heater", "Подогреватель рубашки");
         i("lockout_padlock", "Lockout Padlock", "Замок блокировки");
+        i("fire_extinguisher", "Powder Fire Extinguisher (ABCE)", "Огнетушитель порошковый (ABCE)");
+        i("fire_extinguisher_water", "Water Fire Extinguisher", "Огнетушитель водный");
+        i("fire_extinguisher_foam", "Foam Fire Extinguisher", "Огнетушитель пенный");
+        i("fire_extinguisher_co2", "CO₂ Fire Extinguisher", "Огнетушитель углекислотный");
+        i("fire_extinguisher_metal", "Metal Fire Extinguisher (D)", "Огнетушитель для металлов (D)");
         i("lockout_tag", "Lockout Tag", "Бирка «Не включать!»");
         i("lockout_hasp", "Lockout Hasp", "Многозамковая накладка");
         i("voltage_tester", "Voltage Tester", "Указатель напряжения");
@@ -515,6 +520,15 @@ public final class PcLanguageProvider extends LanguageProvider {
         b("gas_turbine", "Gas Turbine Unit", "Газотурбинная установка");
         b("diesel_generator", "Emergency Diesel Generator", "Аварийный дизель-генератор");
         b("line_blind", "Line Blind", "Поворотная заглушка");
+        b("smoke_detector", "Smoke Detector", "Дымовой извещатель");
+        b("heat_detector", "Heat Detector", "Тепловой извещатель");
+        b("flame_detector", "Flame Detector", "Извещатель пламени");
+        b("manual_call_point", "Manual Call Point", "Ручной пожарный извещатель");
+        b("fire_alarm_panel", "Fire Alarm Panel", "Прибор приёмно-контрольный пожарный");
+        b("sprinkler_head", "Sprinkler Head", "Спринклерный ороситель");
+        b("deluge_nozzle", "Deluge Nozzle", "Дренчерный ороситель");
+        b("gas_suppression_cylinder", "Gas Suppression Cylinder", "Модуль газового пожаротушения");
+        b("fire_monitor", "Fire Monitor", "Лафетный ствол");
         b("lockout_box", "Lockout Box", "Ящик групповой блокировки");
         b("mechanical_disconnect", "Mechanical Disconnect", "Расцепная муфта");
         b("hrsg", "Heat Recovery Steam Generator", "Котёл-утилизатор");
@@ -733,6 +747,7 @@ public final class PcLanguageProvider extends LanguageProvider {
         MISC.putAll(dev.denfry.promptcritical.mod.steelworks.SteelworksText.LANG);
         MISC.putAll(dev.denfry.promptcritical.mod.ops.OpsText.LANG);
         MISC.putAll(dev.denfry.promptcritical.mod.ops.LockoutText.LANG);
+        MISC.putAll(dev.denfry.promptcritical.mod.ops.OpsFireText.LANG);
         MISC.putAll(dev.denfry.promptcritical.mod.powerhouse.PowerhouseText.LANG);
         MISC.putAll(dev.denfry.promptcritical.mod.grid.GridText.LANG);
         MISC.putAll(dev.denfry.promptcritical.mod.automation.AutomationText.LANG);

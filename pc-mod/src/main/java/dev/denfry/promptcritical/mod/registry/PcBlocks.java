@@ -818,6 +818,16 @@ public final class PcBlocks {
     // --- эксплуатация и водоподготовка (13 §13.6.5–13.6.7, 08 §8.12, этап 11а M3) ---
     public static final DeferredBlock<PcDeviceBlock> MAINTENANCE_PANEL = device("maintenance_panel", instrument(),
             Spec.facing(PcProperties.SEVERITY), GridMountedBlock.wall(MaintenancePanelBlockEntity::new, 1, 1, 13, 15, 15, 16));
+    /** Пожарная сигнализация и тушение 13 §13.5: извещатели, ручной извещатель, ППК, спринклер, дренчер, газовое тушение, ствол. */
+    public static final DeferredBlock<PcDeviceBlock> SMOKE_DETECTOR = device("smoke_detector", instrument(), Spec.facing(PcProperties.ALARM), FoundryBlock.with(dev.denfry.promptcritical.mod.ops.FireDeviceBlockEntity::new));
+    public static final DeferredBlock<PcDeviceBlock> HEAT_DETECTOR = device("heat_detector", instrument(), Spec.facing(PcProperties.ALARM), FoundryBlock.with(dev.denfry.promptcritical.mod.ops.FireDeviceBlockEntity::new));
+    public static final DeferredBlock<PcDeviceBlock> FLAME_DETECTOR = device("flame_detector", instrument(), Spec.facing(PcProperties.ALARM), FoundryBlock.with(dev.denfry.promptcritical.mod.ops.FireDeviceBlockEntity::new));
+    public static final DeferredBlock<PcDeviceBlock> MANUAL_CALL_POINT = device("manual_call_point", instrument(), Spec.facing(PcProperties.ALARM), FoundryBlock.with(dev.denfry.promptcritical.mod.ops.FireDeviceBlockEntity::new));
+    public static final DeferredBlock<PcDeviceBlock> FIRE_ALARM_PANEL = device("fire_alarm_panel", instrument(), Spec.facing(PcProperties.ALARM, BlockStateProperties.POWERED), FoundryBlock.with(dev.denfry.promptcritical.mod.ops.FireDeviceBlockEntity::new));
+    public static final DeferredBlock<PcDeviceBlock> SPRINKLER_HEAD = device("sprinkler_head", instrument(), Spec.facing(PcProperties.ALARM), FoundryBlock.with(dev.denfry.promptcritical.mod.ops.FireDeviceBlockEntity::new));
+    public static final DeferredBlock<PcDeviceBlock> DELUGE_NOZZLE = device("deluge_nozzle", instrument(), Spec.facing(PcProperties.RUNNING), FoundryBlock.with(dev.denfry.promptcritical.mod.ops.FireDeviceBlockEntity::new));
+    public static final DeferredBlock<PcDeviceBlock> GAS_SUPPRESSION_CYLINDER = device("gas_suppression_cylinder", machine(), Spec.facing(PcProperties.ALARM), FoundryBlock.with(dev.denfry.promptcritical.mod.ops.FireDeviceBlockEntity::new));
+    public static final DeferredBlock<PcDeviceBlock> FIRE_MONITOR = device("fire_monitor", machine(), Spec.facing(PcProperties.RUNNING), FoundryBlock.with(dev.denfry.promptcritical.mod.ops.FireDeviceBlockEntity::new));
     /** LOTO 13 §13.1.2: поворотная заглушка на фланце, групповой ящик блокировки, расцепная муфта на валу Create. */
     public static final DeferredBlock<PcDeviceBlock> LINE_BLIND = device("line_blind", machine(),
             Spec.facing(BlockStateProperties.OPEN), FoundryBlock.with(dev.denfry.promptcritical.mod.ops.LineBlindBlockEntity::new));

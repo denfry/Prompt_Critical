@@ -36,6 +36,11 @@ public final class OpsBlockEntities {
             BLOCK_ENTITIES.register("mechanical_disconnect", () -> BlockEntityType.Builder.of(MechanicalDisconnectBlockEntity::new,
                     PcBlocks.MECHANICAL_DISCONNECT.get()).build(null));
 
+    /** Один тип на все пожарные устройства: вид — по ID блока. */
+    public static final DeferredHolder<BlockEntityType<?>, BlockEntityType<FireDeviceBlockEntity>> FIRE_DEVICE =
+            BLOCK_ENTITIES.register("fire_device", () -> BlockEntityType.Builder.of(FireDeviceBlockEntity::new,
+                    PcBlocks.SMOKE_DETECTOR.get(), PcBlocks.HEAT_DETECTOR.get(), PcBlocks.FLAME_DETECTOR.get(), PcBlocks.MANUAL_CALL_POINT.get(), PcBlocks.FIRE_ALARM_PANEL.get(), PcBlocks.SPRINKLER_HEAD.get(), PcBlocks.DELUGE_NOZZLE.get(), PcBlocks.GAS_SUPPRESSION_CYLINDER.get(), PcBlocks.FIRE_MONITOR.get()).build(null));
+
     private OpsBlockEntities() {
     }
 }

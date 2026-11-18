@@ -285,6 +285,22 @@ public final class PcItems {
     public static final DeferredItem<FerroalloyItem> FERROALLOY = registered(ITEMS.registerItem("ferroalloy", FerroalloyItem::new,
             new Item.Properties().stacksTo(64)));
     // --- эксплуатация (13 §13.6.5–13.6.7, этап 11а M3): инструменты, запчасти, расходники ---
+    /** Огнетушители 13 §13.5.3: порошок ABCE, вода, пена, CO₂, порошок D. */
+    public static final DeferredItem<dev.denfry.promptcritical.mod.ops.FireExtinguisherItem> FIRE_EXTINGUISHER = registered(ITEMS.registerItem("fire_extinguisher",
+            p -> new dev.denfry.promptcritical.mod.ops.FireExtinguisherItem(p, dev.denfry.promptcritical.sim.ops.FireSuppression.Agent.POWDER_ABCE),
+            new Item.Properties()));
+    public static final DeferredItem<dev.denfry.promptcritical.mod.ops.FireExtinguisherItem> FIRE_EXTINGUISHER_WATER = registered(ITEMS.registerItem("fire_extinguisher_water",
+            p -> new dev.denfry.promptcritical.mod.ops.FireExtinguisherItem(p, dev.denfry.promptcritical.sim.ops.FireSuppression.Agent.WATER),
+            new Item.Properties()));
+    public static final DeferredItem<dev.denfry.promptcritical.mod.ops.FireExtinguisherItem> FIRE_EXTINGUISHER_FOAM = registered(ITEMS.registerItem("fire_extinguisher_foam",
+            p -> new dev.denfry.promptcritical.mod.ops.FireExtinguisherItem(p, dev.denfry.promptcritical.sim.ops.FireSuppression.Agent.FOAM),
+            new Item.Properties()));
+    public static final DeferredItem<dev.denfry.promptcritical.mod.ops.FireExtinguisherItem> FIRE_EXTINGUISHER_CO2 = registered(ITEMS.registerItem("fire_extinguisher_co2",
+            p -> new dev.denfry.promptcritical.mod.ops.FireExtinguisherItem(p, dev.denfry.promptcritical.sim.ops.FireSuppression.Agent.CO2),
+            new Item.Properties()));
+    public static final DeferredItem<dev.denfry.promptcritical.mod.ops.FireExtinguisherItem> FIRE_EXTINGUISHER_METAL = registered(ITEMS.registerItem("fire_extinguisher_metal",
+            p -> new dev.denfry.promptcritical.mod.ops.FireExtinguisherItem(p, dev.denfry.promptcritical.sim.ops.FireSuppression.Agent.POWDER_D),
+            new Item.Properties()));
     /** LOTO 13 §13.1.2: личный замок, бирка, многозамковая накладка, указатель напряжения. */
     public static final DeferredItem<dev.denfry.promptcritical.mod.ops.LockoutItem> LOCKOUT_PADLOCK =
             lockout("lockout_padlock", dev.denfry.promptcritical.mod.ops.LockoutItem.Kind.PADLOCK, 8);

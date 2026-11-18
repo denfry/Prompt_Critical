@@ -43,6 +43,7 @@ public final class OpsBinding {
     private static void registerCapabilities(RegisterCapabilitiesEvent event) {
         event.registerBlockEntity(Capabilities.ItemHandler.BLOCK, OpsBlockEntities.WATER_TREATMENT.get(), FoundryDevice::items);
         event.registerBlockEntity(Capabilities.FluidHandler.BLOCK, OpsBlockEntities.LINE_BLIND.get(), LineBlindBlockEntity::fluids);
+        event.registerBlockEntity(Capabilities.FluidHandler.BLOCK, OpsBlockEntities.FIRE_DEVICE.get(), FireDeviceBlockEntity::fluids);
         event.registerBlockEntity(Capabilities.FluidHandler.BLOCK, OpsBlockEntities.WATER_TREATMENT.get(), FoundryDevice::fluids);
     }
 }

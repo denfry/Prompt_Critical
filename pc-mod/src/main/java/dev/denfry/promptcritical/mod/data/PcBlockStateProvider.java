@@ -392,6 +392,12 @@ public final class PcBlockStateProvider extends BlockStateProvider {
             case "quench_tank" -> s.getValue(PcProperties.QUENCH_MEDIUM) == PcProperties.QuenchMedium.OIL ? id + "_oil" : id;
             case "cryogenic_tank" -> s.getValue(PcProperties.CRYO_KIND) == PcProperties.CryoKind.VAPORIZER ? id + "_vaporizer" : id;
             // эксплуатация и водоподготовка (этап 11а M3)
+            case "smoke_detector", "heat_detector", "flame_detector" -> s.getValue(PcProperties.ALARM) ? id + "_alarm" : id;
+            case "manual_call_point" -> s.getValue(PcProperties.ALARM) ? id + "_pressed" : id;
+            case "sprinkler_head" -> s.getValue(PcProperties.ALARM) ? id + "_burst" : id;
+            case "gas_suppression_cylinder" -> s.getValue(PcProperties.ALARM) ? id + "_discharged" : id;
+            case "fire_alarm_panel" -> s.getValue(PcProperties.ALARM) ? id + "_fire"
+                    : s.getValue(BlockStateProperties.POWERED) ? id + "_fault" : id;
             case "lockout_box" -> switch (s.getValue(PcProperties.LOCKS)) {
                 case 0 -> id;
                 case 1, 2 -> id + "_locks1";
