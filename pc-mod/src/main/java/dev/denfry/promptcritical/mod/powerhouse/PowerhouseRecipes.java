@@ -115,6 +115,17 @@ public final class PowerhouseRecipes extends RecipeProvider {
                 .define('W', AllBlocks.WINDMILL_BEARING.get()).define('L', AllBlocks.LARGE_COGWHEEL.get())
                 .define('M', PcBlocks.ELECTRIC_MOTOR.get()).define('P', plate).define('I', net.minecraft.world.item.Items.IRON_BARS)
                 .unlockedBy("has_electric_motor", has(PcBlocks.ELECTRIC_MOTOR.get())).save(out, id("wind_turbine"));
+        // капсульный агрегат: обтекаемая капсула из листа, рабочее колесо — лопатки на валу, водовод — трубы
+        ShapedRecipeBuilder.shaped(RecipeCategory.MISC, PcBlocks.TIDAL_UNIT.get())
+                .pattern("PSP").pattern("FHF").pattern("PCP").define('P', plate).define('S', shaft)
+                .define('F', AllItems.PROPELLER.get()).define('H', PcBlocks.HYDRO_TURBINE.get()).define('C', AllBlocks.COGWHEEL.get())
+                .unlockedBy("has_hydro_turbine", has(PcBlocks.HYDRO_TURBINE.get())).save(out, id("tidal_unit"));
+        // мареограф: футшток (рейка) с поплавком в колодце и самописец
+        ShapedRecipeBuilder.shaped(RecipeCategory.MISC, PcBlocks.TIDE_GAUGE.get())
+                .pattern(" C ").pattern("SGS").pattern(" B ").define('C', net.minecraft.world.item.Items.CLOCK)
+                .define('S', net.minecraft.world.item.Items.STICK).define('G', net.minecraft.world.item.Items.GLASS_PANE)
+                .define('B', net.minecraft.world.item.Items.BUCKET)
+                .unlockedBy("has_clock", has(net.minecraft.world.item.Items.CLOCK)).save(out, id("tide_gauge"));
         // конденсатор: корпус из листа, трубный пучок — трубы
         ShapedRecipeBuilder.shaped(RecipeCategory.MISC, PcBlocks.CONDENSER.get())
                 .pattern("PPP").pattern("FFF").pattern("PPP").define('P', plate).define('F', pipe)
