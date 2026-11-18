@@ -80,6 +80,7 @@ function fmt(v, ind) {
   }
   return JSON.stringify(v);
 }
+const problems = [];
 let uuidSeed = '', uuidN = 0;
 const uuid = () => { const h = crypto.createHash('md5').update(uuidSeed + ':' + uuidN++).digest('hex'); return `${h.slice(0, 8)}-${h.slice(8, 12)}-${h.slice(12, 16)}-${h.slice(16, 20)}-${h.slice(20)}`; };
 
@@ -114,7 +115,7 @@ function compile(r, cat, id, javaPath, m) {
     }
     if (!Object.keys(faces).length) continue;
     const axis = e.rot ? e.rot.axis : 'y';
-    const clamp = (v) => { if (v < -16.1 || v > 32.1) throw new Error(`${id}: ${e.name} out of the -16..32 range (${v})`); return r4(Math.min(32, Math.max(-16, v))); };
+    const clamp = (v) => { if (v < -16.1 || v > 32.1) problems.push(`${id}: ${e.name} out of the -16..32 range (${v})`); return r4(Math.min(32, Math.max(-16, v))); };
     const el = { name: e.name, from: e.from.map(clamp), to: e.to.map(clamp), rotation: { angle: e.rot ? e.rot.angle : 0, axis, origin: origin.map(r4) }, faces };
     if (e.name.startsWith('glow_')) el.neoforge_data = { block_light: 15, sky_light: 15 };
     elements.push(el);
@@ -150,6 +151,7 @@ function compile(r, cat, id, javaPath, m) {
 if (doPaint) console.log('painted', M.paint(root));
 const ids = only || M.ids;
 const out = M.exportAll(root, ids);
+if (problems.length) { console.error(problems.join('\n')); process.exitCode = 1; }
 console.log(JSON.stringify(out));
 // Record the Java model paths written by hand so the placeholder generator (art/tools/pclib.py) skips them.
 const handFile = path.join(root, 'art/hand_models.json');

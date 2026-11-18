@@ -1,15 +1,16 @@
 {
 	"credit": "Made with Blockbench",
 	"textures": {
-		"particle": "promptcritical:block/common/grid_dark_grey",
-		"dg": "promptcritical:block/common/grid_dark_grey",
-		"r": "promptcritical:block/common/rubber"
+		"particle": "promptcritical:block/m8field/tank_silver",
+		"steelmaking_grating": "promptcritical:block/steelmaking/grating",
+		"m8field_tank_silver": "promptcritical:block/m8field/tank_silver",
+		"plant_rubber": "promptcritical:block/plant/rubber"
 	},
 	"elements": [
 		{
-			"name": "pontoon",
-			"from": [0, 0, 0],
-			"to": [16, 2, 16],
+			"name": "deck",
+			"from": [0, 0.6, 0],
+			"to": [16, 1.6, 16],
 			"rotation": {
 				"angle": 0,
 				"axis": "y",
@@ -17,35 +18,71 @@
 			},
 			"faces": {
 				"north": {
-					"uv": [0, 0, 16, 2],
-					"texture": "#dg"
+					"uv": [0, 12.8, 16, 14.8],
+					"texture": "#steelmaking_grating"
 				},
 				"east": {
-					"uv": [0, 0, 16, 2],
-					"texture": "#dg"
+					"uv": [0, 12.8, 16, 14.8],
+					"texture": "#steelmaking_grating"
 				},
 				"south": {
-					"uv": [0, 0, 16, 2],
-					"texture": "#dg"
+					"uv": [0, 12.8, 16, 14.8],
+					"texture": "#steelmaking_grating"
 				},
 				"west": {
-					"uv": [0, 0, 16, 2],
-					"texture": "#dg"
+					"uv": [0, 12.8, 16, 14.8],
+					"texture": "#steelmaking_grating"
 				},
 				"up": {
 					"uv": [0, 0, 16, 16],
-					"texture": "#dg"
+					"texture": "#steelmaking_grating"
 				},
 				"down": {
 					"uv": [0, 0, 16, 16],
-					"texture": "#dg"
+					"texture": "#steelmaking_grating"
+				}
+			}
+		},
+		{
+			"name": "pontoon",
+			"from": [0, 0, 0],
+			"to": [16, 2.5, 3],
+			"rotation": {
+				"angle": 0,
+				"axis": "y",
+				"origin": [8, 8, 8]
+			},
+			"faces": {
+				"north": {
+					"uv": [0, 13.5, 16, 16],
+					"texture": "#m8field_tank_silver"
+				},
+				"east": {
+					"uv": [13, 13.5, 16, 16],
+					"texture": "#m8field_tank_silver"
+				},
+				"south": {
+					"uv": [0, 13.5, 16, 16],
+					"texture": "#m8field_tank_silver"
+				},
+				"west": {
+					"uv": [0, 13.5, 3, 16],
+					"texture": "#m8field_tank_silver"
+				},
+				"up": {
+					"uv": [0, 0, 16, 3],
+					"texture": "#m8field_tank_silver"
+				},
+				"down": {
+					"uv": [0, 13, 16, 16],
+					"texture": "#m8field_tank_silver"
 				}
 			}
 		},
 		{
 			"name": "seal",
-			"from": [0, 2, 0],
-			"to": [16, 2.5, 1],
+			"from": [0, 1.4, -0.01],
+			"to": [16, 2.5, 0.6],
 			"rotation": {
 				"angle": 0,
 				"axis": "y",
@@ -53,28 +90,28 @@
 			},
 			"faces": {
 				"north": {
-					"uv": [0, 0, 16, 0.5],
-					"texture": "#r"
+					"uv": [0, 13.5, 16, 14.6],
+					"texture": "#plant_rubber"
 				},
 				"east": {
-					"uv": [0, 0, 1, 0.5],
-					"texture": "#r"
+					"uv": [15.4, 13.5, 16, 14.6],
+					"texture": "#plant_rubber"
 				},
 				"south": {
-					"uv": [0, 0, 16, 0.5],
-					"texture": "#r"
+					"uv": [0, 13.5, 16, 14.6],
+					"texture": "#plant_rubber"
 				},
 				"west": {
-					"uv": [0, 0, 1, 0.5],
-					"texture": "#r"
+					"uv": [0, 13.5, 0.6, 14.6],
+					"texture": "#plant_rubber"
 				},
 				"up": {
-					"uv": [0, 0, 16, 1],
-					"texture": "#r"
+					"uv": [0, 0, 16, 0.6],
+					"texture": "#plant_rubber"
 				},
 				"down": {
-					"uv": [0, 0, 16, 1],
-					"texture": "#r"
+					"uv": [0, 15.4, 16, 16],
+					"texture": "#plant_rubber"
 				}
 			}
 		}
