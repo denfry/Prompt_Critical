@@ -57,10 +57,15 @@ public final class Uf6CylinderItem extends Item {
      * Возвращает тот же стек. Не баллон, перелив или обогащение выше предела типа — {@link IllegalArgumentException}.
      */
     public static ItemStack fill(ItemStack stack, double kg, double u235, double u234) {
+        return fill(stack, kg, u235, u234, 0);
+    }
+
+    /** То же для регенерированного урана с U-236. */
+    public static ItemStack fill(ItemStack stack, double kg, double u235, double u234, double u236) {
         if (!(stack.getItem() instanceof Uf6CylinderItem c)) throw new IllegalArgumentException("not a UF6 cylinder: " + stack);
         if (!(kg >= 0)) throw new IllegalArgumentException("negative UF6 mass: " + kg);
         if (kg == 0) return stack;
-        Uf6Charge sum = charge(stack).plus(new Uf6Charge(kg, u235, u234));
+        Uf6Charge sum = charge(stack).plus(new Uf6Charge(kg, u235, u234, u236));
         if (sum.uf6Kg() > c.type.maxKg + 1e-6)
             throw new IllegalArgumentException("UF6 cylinder " + c.type + " overfilled: " + sum.uf6Kg() + " kg > " + c.type.maxKg);
         if (sum.u235() > c.type.maxU235 + 1e-12)
