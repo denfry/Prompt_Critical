@@ -29,6 +29,12 @@
     rw: { tex: 'utilities/red_white', P: 16 }, frpg: { tex: 'fuel/frp_green', P: 16 }, monel: { tex: 'fuel/monel', P: 16 },
     // painted by the future-wave scripts themselves (grid/hv_grid.author.js)
     bk: { tex: 'm6auto/black', P: 16 }, dk: { tex: 'm6auto/dark', P: 16 }, wh: { tex: 'm6auto/white', P: 16 }, // automation/m6_automation.author.js
+    // textures painted by the future-wave scripts, shared across batches
+    riv: { tex: 'm3met/riveted', P: 16 }, refr: { tex: 'm8ref/refr', P: 16 }, sb: { tex: 'm8ref/sblue', P: 16 },
+    frost: { tex: 'm8ref/frost', P: 16 }, finned: { tex: 'm8ref/finned', P: 8 }, cfr: { tex: 'm8ref/cfr', P: 16 },
+    gband: { tex: 'm8field/gasband', P: 16 }, ypost: { tex: 'm8field/yellow_post', P: 16 }, gb: { tex: 'm8field/greyblue', P: 16 },
+    silver: { tex: 'm8field/tank_silver', P: 16 }, rope: { tex: 'oil/rope', P: 16 }, pls: { tex: 'm9chem/plastic', P: 16 },
+    forg: { tex: 'm9chem/forging', P: 16 }, fred: { tex: 'm10ops/fire_red', P: 16 }, orng: { tex: 'm10ops/orange', P: 16 },
     tank: { tex: 'm3grid/tank', P: 16 }, l_b: { tex: 'm3grid/lamp_blue', P: 16 }, earth: { tex: 'm3grid/earth', P: 8 },
   });
 
