@@ -87,7 +87,7 @@ public final class ChannelReactor {
     // каналы: начальная масса ТМ, U-235, U-238, Pu-239, ПД (кг), выгорание (МВт·сут/кг), кризис (с), разрушен
     private final double[] hm0 = new double[CHANNELS], u5 = new double[CHANNELS], u8 = new double[CHANNELS], pu9 = new double[CHANNELS],
             fp = new double[CHANNELS], burnup = new double[CHANNELS], dryout = new double[CHANNELS], share = new double[CHANNELS],
-            x234 = new double[CHANNELS];
+            x234 = new double[CHANNELS], u6 = new double[CHANNELS], pu0 = new double[CHANNELS];
     private final boolean[] failed = new boolean[CHANNELS];
     private final double[] radius = new double[CHANNELS];
     // стержни: погружение 0…1
@@ -129,29 +129,42 @@ public final class ChannelReactor {
         u5[ch] = hmKg * u235;
         u8[ch] = hmKg * (1 - u235 - u234);
         x234[ch] = u234;
-        pu9[ch] = fp[ch] = burnup[ch] = dryout[ch] = 0;
+        pu9[ch] = fp[ch] = burnup[ch] = dryout[ch] = u6[ch] = pu0[ch] = 0;
         failed[ch] = false;
         slowTimer = 1e9;
         return true;
     }
 
-    /** Отработанное топливо канала. */
-    public record ChannelFuel(double hm0Kg, double u235Kg, double u238Kg, double pu239Kg, double fpKg, double u234,
-            double burnupMwdKg, boolean failed) {
+    /**
+     * Топливо канала: начальный ТМ, U-235, U-238, U-236 (захват на U-235), Pu-239, Pu-240 (захват на Pu-239), продукты
+     * деления, кг; доля U-234 в исходном уране; выгорание. Pu-241 и Pu-242 при выгорании АМ-1 (≈ 5 МВт·сут/кг) — доли
+     * процента плутония, не ведутся.
+     */
+    public record ChannelFuel(double hm0Kg, double u235Kg, double u238Kg, double u236Kg, double pu239Kg, double pu240Kg,
+            double fpKg, double u234, double burnupMwdKg, boolean failed) {
+        /** Уран сейчас, кг (U-234 — как в исходном). */
+        public double uraniumKg() {
+            return u235Kg + u238Kg + u236Kg + hm0Kg * u234;
+        }
+
+        public double plutoniumKg() {
+            return pu239Kg + pu240Kg;
+        }
+
         public double heavyMetalKg() {
-            return u235Kg + u238Kg + pu239Kg + hm0Kg * u234;
+            return uraniumKg() + plutoniumKg();
         }
     }
 
     public ChannelFuel fuel(int ch) {
-        return new ChannelFuel(hm0[ch], u5[ch], u8[ch], pu9[ch], fp[ch], x234[ch], burnup[ch], failed[ch]);
+        return new ChannelFuel(hm0[ch], u5[ch], u8[ch], u6[ch], pu9[ch], pu0[ch], fp[ch], x234[ch], burnup[ch], failed[ch]);
     }
 
     /** Выгрузка канала: только на заглушенном реакторе. */
     public ChannelFuel unload(int ch) {
         if (!shutDown() || hm0[ch] <= 0) return null;
         ChannelFuel f = fuel(ch);
-        hm0[ch] = u5[ch] = u8[ch] = pu9[ch] = fp[ch] = burnup[ch] = dryout[ch] = 0;
+        hm0[ch] = u5[ch] = u8[ch] = pu9[ch] = fp[ch] = burnup[ch] = dryout[ch] = u6[ch] = pu0[ch] = 0;
         failed[ch] = false;
         slowTimer = 1e9;
         return f;
@@ -411,9 +424,12 @@ public final class ChannelReactor {
                     d9 = mol * f9 * (1 + ALPHA_PU9) * Nuclide.PU239.molarMass() / 1000;
             double made9 = CONVERSION * mol * ((1 - f9) * (1 + ALPHA_U5) + f9 * (1 + ALPHA_PU9)) * Nuclide.PU239.molarMass() / 1000;
             u5[i] = Math.max(0, u5[i] - d5);
+            // захват без деления: U-235 → U-236, Pu-239 → Pu-240
+            u6[i] += mol * (1 - f9) * ALPHA_U5 * 236.046 / 1000;
+            pu0[i] += mol * f9 * ALPHA_PU9 * Nuclide.PU240.molarMass() / 1000;
             pu9[i] = Math.max(0, pu9[i] - d9 + made9);
             u8[i] = Math.max(0, u8[i] - made9 * Nuclide.U238.molarMass() / Nuclide.PU239.molarMass());
-            fp[i] += mol * 235.0 / 1000;
+            fp[i] += mol * (1 - f9) * Nuclide.U235.molarMass() / 1000 + mol * f9 * Nuclide.PU239.molarMass() / 1000;
             burnup[i] += pw * gameDt / 86400 / 1e6 / hm0[i];
         }
     }
@@ -651,6 +667,8 @@ public final class ChannelReactor {
         out.putDoubles("fp", fp, CHANNELS);
         out.putDoubles("bu", burnup, CHANNELS);
         out.putDoubles("x234", x234, CHANNELS);
+        out.putDoubles("u6", u6, CHANNELS);
+        out.putDoubles("pu0", pu0, CHANNELS);
         int[] f = new int[CHANNELS];
         for (int i = 0; i < CHANNELS; i++) f[i] = failed[i] ? 1 : 0;
         out.putInts("failed", f, CHANNELS);
@@ -681,6 +699,8 @@ public final class ChannelReactor {
         copy(in, "fp", fp);
         copy(in, "bu", burnup);
         copy(in, "x234", x234);
+        copy(in, "u6", u6);
+        copy(in, "pu0", pu0);
         if (in.has("failed")) {
             int[] f = in.getInts("failed");
             for (int i = 0; i < Math.min(CHANNELS, f.length); i++) failed[i] = f[i] != 0;

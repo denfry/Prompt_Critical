@@ -50,7 +50,12 @@ public enum AutomationKind {
     SIS_LOGIC(List.of(t("+24"), t("0"), inC("AI1"), inC("AI2"), inC("AI3"), t("11"), t("12"), t("14"), t("21"), t("24"), t("RST"))),
     BREAKER_IO(d("+", "-", "CLOSE", "TRIP", "13", "14", "21", "22")),
     MOTOR_IO(d("A1", "A2", "13", "14")),
-    CONSUMER_IO(d("13", "14"));
+    CONSUMER_IO(d("13", "14")),
+    /**
+     * Шкаф СУЗ энергетического реактора: «+/−» — контроль цепи, «SCRAM» — катушка внешней АЗ (сигнал ПАЗ к «−»),
+     * «13–14» — контакт «АЗ сработала», «N» — мощность по ионизационной камере, 4–20 мА на 0–120 %.
+     */
+    REACTOR_IO(List.of(t("+"), t("-"), t("SCRAM"), t("13"), t("14"), out("N", TerminalType.ANALOG_CURRENT)));
 
     /** Роль клеммы в цепи сигналов A2: вход, выход (источник сигнала цепи) или узел A1. */
     public enum Role { NODE, INPUT, OUTPUT, CONFIGURED }

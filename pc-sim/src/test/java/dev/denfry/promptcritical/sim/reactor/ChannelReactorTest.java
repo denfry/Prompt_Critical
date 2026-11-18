@@ -200,6 +200,9 @@ class ChannelReactorTest {
         assertEquals(mwd / hm, mean / hm, 0.03 * mwd / hm);
         assertEquals(1.23, (u5Before - u5) * 1000 / mwd, 0.1);
         assertTrue(pu > 0, "plutonium bred");
+        ChannelReactor.ChannelFuel c = r.fuel(0);
+        assertTrue(c.u236Kg() > 0 && c.pu240Kg() > 0 && c.pu240Kg() < c.pu239Kg(), "captures make U-236 and Pu-240");
+        assertEquals(c.hm0Kg(), c.heavyMetalKg() + c.fpKg(), 1e-3 * c.hm0Kg());
         assertTrue(r.maxBurnup() > mwd / hm, "central channels burn deeper");
     }
 
