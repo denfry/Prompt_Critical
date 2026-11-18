@@ -364,6 +364,7 @@ public final class PcLanguageProvider extends LanguageProvider {
         b("vacuum_column", "Vacuum Distillation Column", "Вакуумная колонна");
         b("steam_ejector", "Steam Ejector", "Пароэжектор");
         b("fcc_unit", "Fluid Catalytic Cracking Unit", "Установка каталитического крекинга");
+        b("amine_unit", "Amine Gas Treating Unit", "Установка аминовой очистки газа");
         b("hf_kiln", "Hydrogen Fluoride Kiln", "Печь фтористого водорода");
         b("leach_tank", "Uranium Leach and CCD Train", "Выщелачивание урана с противоточной декантацией");
         b("uranium_ion_exchange", "Uranium Ion Exchange Unit", "Ионообменная установка урана");

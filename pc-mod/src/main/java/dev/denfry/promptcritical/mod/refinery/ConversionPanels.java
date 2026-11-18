@@ -126,6 +126,39 @@ public final class ConversionPanels {
                     v.num(FC_CRC_X1000, 1000, 3)), null)
             .readout(8, 148, 284, v -> AIR_STATUS.get(v.num(FC_AIR_X1000, 1000, 2), v.raw(FC_DAMPER_PCT), v.raw(FC_DP_KPA)), null).build();
 
+    // ------------------------------------------------------------------ аминовая очистка (09 §9.10.3)
+    public static final int AM_SWEET_X10 = 0, AM_RICH_PERMIL = 1, AM_Q_X100 = 2, AM_STEAM = 3, AM_GAS_NM3H = 4, AM_H2S_KGH10 = 5,
+            AM_PURITY_PERMIL = 6, AM_LEAN_X1000 = 7, AM_HOLDUP = 8, AM_FLAGS = 9, AM_CHANNELS = 10;
+    private static final Tr MGNM3 = PanelText.tr("conv.mgnm3", "mg/m³", "мг/м³"),
+            SWEET = PanelText.tr("conv.sweet_h2s", "H₂S in gas", "H₂S в газе"),
+            RICH = PanelText.tr("conv.rich_loading", "Rich loading", "Загрузка амина"), MOL = PanelText.tr("conv.mol_mol", "mol/mol", "моль/моль"),
+            CIRC = PanelText.tr("conv.circulation", "Amine", "Амин"), M3H = PanelText.tr("conv.m3h", "m³/h", "м³/ч"),
+            HOLDUP = PanelText.tr("conv.h2s_holdup", "Acid gas", "Кислый газ"),
+            OFF_SPEC = PanelText.tr("conv.off_spec", "Sales gas above 20 mg/m³ H₂S", "Товарный газ выше 20 мг/м³ H₂S"),
+            SATURATED = PanelText.tr("conv.saturated", "Amine saturated: raise circulation", "Амин насыщен: прибавьте циркуляцию"),
+            NO_PLANT = PanelText.tr("conv.no_plant", "No gas plant within 6 blocks", "Нет установки подготовки газа в 6 блоках"),
+            HOLDUP_FULL = PanelText.tr("conv.holdup_full", "Acid gas has nowhere to go: no Claus unit", "Кислый газ некуда сдать: нет Клауса"),
+            Q_DOWN = PanelText.tr("conv.q_down", "Amine −0.25 m³/h", "Амин −0,25 м³/ч"), Q_UP = PanelText.tr("conv.q_up", "Amine +0.25 m³/h", "Амин +0,25 м³/ч"),
+            STEAM_DOWN = PanelText.tr("conv.steam_down", "Steam −", "Пар −"), STEAM_UP = PanelText.tr("conv.steam_up", "Steam +", "Пар +"),
+            STEAM_TIP = PanelText.tr("conv.steam_tip", "Reboiler: 10 kg of steam per m³ of amine", "Ребойлер: 10 кг пара на м³ амина"),
+            AMINE_STATUS = PanelText.tr("conv.amine_status", "Gas %s m³/h · H₂S %s kg/h, %s %% pure · lean %s · steam %s kg/m³",
+                    "Газ %s м³/ч · H₂S %s кг/ч, чистота %s %% · регенерированный %s · пар %s кг/м³");
+
+    public static final PanelLayout AMINE = PanelLayout.builder("amine_unit", 232, 140, AM_CHANNELS)
+            .dial(8, 24, false, AM_SWEET_X10, 10, 50, 20, 1, MGNM3.get(), SWEET.get(), null)
+            .dial(64, 24, false, AM_RICH_PERMIL, 1000, 0.6, 0.5, 2, MOL.get(), RICH.get(), null)
+            .dial(120, 24, false, AM_Q_X100, 100, 6, Double.NaN, 2, M3H.get(), CIRC.get(), null)
+            .glass(176, 24, 56, AM_HOLDUP, 0xFFD8D070, Double.NaN, 900, HOLDUP.get(), null)
+            .lamp(196, 22, AM_FLAGS, F_ON, LampColor.GREEN, ON.get()).lamp(196, 36, AM_FLAGS, F_RUN, LampColor.GREEN, WORKING.get())
+            .lamp(196, 50, AM_FLAGS, F_ALARM, LampColor.RED, OFF_SPEC.get()).lamp(196, 64, AM_FLAGS, F_WARN, LampColor.AMBER, SATURATED.get())
+            .lamp(196, 78, AM_FLAGS, F_AUX, LampColor.RED, NO_PLANT.get()).lamp(196, 92, AM_FLAGS, F_LOW, LampColor.AMBER, HOLDUP_FULL.get())
+            .button(8, 92, 44, B_RUN, RUN.get(), null)
+            .button(56, 92, 20, B_DOWN, Component.literal("−"), Q_DOWN.get()).button(78, 92, 20, B_UP, Component.literal("+"), Q_UP.get())
+            .button(102, 92, 40, B_DOWN2, STEAM_DOWN.get(), STEAM_TIP.get()).button(146, 92, 40, B_UP2, STEAM_UP.get(), STEAM_TIP.get())
+            .readout(8, 118, 216, v -> AMINE_STATUS.get(v.raw(AM_GAS_NM3H), v.num(AM_H2S_KGH10, 10, 1), v.num(AM_PURITY_PERMIL, 10, 1),
+                    v.num(AM_LEAN_X1000, 10000, 4), v.raw(AM_STEAM)), null)
+            .noInventory().build();
+
     private ConversionPanels() {
     }
 
@@ -134,6 +167,7 @@ public final class ConversionPanels {
         out.add(DESALTER);
         out.add(VACUUM);
         out.add(FCC);
+        out.add(AMINE);
         return List.copyOf(out);
     }
 }

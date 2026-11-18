@@ -62,5 +62,11 @@ public final class ConversionRecipes extends RecipeProvider {
                 .pattern("BTB").pattern("VPV").pattern("BFB").define('B', net.minecraft.world.item.Items.BRICKS).define('T', AllBlocks.FLUID_TANK.get())
                 .define('V', AllBlocks.FLUID_VALVE.get()).define('P', pipe).define('F', PcBlocks.TUBE_FURNACE.get())
                 .unlockedBy("has_vacuum_column", has(PcBlocks.VACUUM_COLUMN.get())).save(out, id("fcc_unit"));
+        // абсорбер и десорбер с ребойлером; заправляется раствором МДЭА из аммиака и метанола
+        ShapedRecipeBuilder.shaped(RecipeCategory.MISC, PcBlocks.AMINE_UNIT.get())
+                .pattern("CPC").pattern("TAT").pattern("SFS").define('C', PcBlocks.COLUMN_TRAY_SECTION.get()).define('P', pipe)
+                .define('T', AllBlocks.FLUID_TANK.get()).define('A', net.minecraft.world.item.Items.GLASS_BOTTLE).define('S', plate)
+                .define('F', PcBlocks.TUBE_FURNACE.get())
+                .unlockedBy("has_gas_plant", has(PcBlocks.LOW_TEMPERATURE_SEPARATOR.get())).save(out, id("amine_unit"));
     }
 }

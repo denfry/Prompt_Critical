@@ -5,6 +5,9 @@ import dev.denfry.promptcritical.mod.production.TubeFurnaceBlockEntity;
 import com.simibubi.create.AllBlocks;
 import com.simibubi.create.content.kinetics.motor.CreativeMotorBlockEntity;
 import dev.denfry.promptcritical.mod.gas.CentrifugalCompressorBlockEntity;
+import dev.denfry.promptcritical.mod.gas.GasPlantBlockEntity;
+import dev.denfry.promptcritical.mod.refinery.AmineUnitBlockEntity;
+import dev.denfry.promptcritical.mod.refinery.ClausUnitBlockEntity;
 import dev.denfry.promptcritical.mod.refinery.DelayedCokerBlockEntity;
 import dev.denfry.promptcritical.mod.refinery.FccUnitBlockEntity;
 import dev.denfry.promptcritical.mod.refinery.RefineryComponents;
@@ -197,6 +200,40 @@ public final class ConversionGameTests {
                     h.assertFalse(f.blower(), "no compressor in range");
                     h.assertTrue(f.unit().inventoryKg() > 0.5 * FccUnitBlockEntity.fullKg(), "charged " + f.unit().inventoryKg());
                     h.assertTrue(f.gasoline().amount() == 0, "no cracking without air");
+                })
+                .thenSucceed();
+    }
+
+    /**
+     * Аминовая очистка при установке подготовки газа: весь газ установки очищается до нормы, сероводород уходит в
+     * касающуюся установку Клауса, она делает серу.
+     */
+    @GameTest(template = LARGE, timeoutTicks = 1600)
+    public static void amineUnitSweetensTheGasPlantFeedForClaus(GameTestHelper h) {
+        BlockPos plant = new BlockPos(6, 3, 7), compressor = new BlockPos(2, 2, 2), regenerator = new BlockPos(10, 2, 2);
+        BlockPos amine = new BlockPos(6, 2, 10), claus = amine.east();
+        h.setBlock(plant, north(PcBlocks.LOW_TEMPERATURE_SEPARATOR.get()));
+        h.setBlock(compressor, north(PcBlocks.GAS_COMPRESSOR.get()));
+        h.setBlock(regenerator, north(PcBlocks.GLYCOL_REGENERATOR.get()));
+        BlockPos motor = compressor.west();
+        h.setBlock(motor, AllBlocks.CREATIVE_MOTOR.getDefaultState().setValue(BlockStateProperties.FACING, Direction.EAST));
+        h.runAfterDelay(1, () -> ((CreativeMotorBlockEntity) h.getBlockEntity(motor)).generatedSpeed.setValue(64));
+        h.setBlock(amine, north(PcBlocks.AMINE_UNIT.get()));
+        h.setBlock(claus, north(PcBlocks.CLAUS_UNIT.get()));
+        h.startSequence()
+                .thenIdle(5)
+                .thenExecute(() -> ((GasPlantBlockEntity) h.getBlockEntity(plant)).setInhibit(true))
+                .thenWaitUntil(() -> {
+                    GasPlantBlockEntity p = h.getBlockEntity(plant);
+                    fill(p.fluids(Direction.NORTH), PcFluids.ASSOCIATED_GAS.source.get(), 4000);
+                    fill(p.fluids(Direction.NORTH), PcFluids.METHANOL.source.get(), 4000);
+                    AmineUnitBlockEntity a = h.getBlockEntity(amine);
+                    fill(a.fluids(Direction.NORTH), PcFluids.SALES_GAS.source.get(), 4000);
+                    h.assertTrue(a.gasNm3h() > 100, "gas treated " + a.gasNm3h() + " m3/h");
+                    h.assertTrue(a.last().sweetH2sMgNm3() < 20, "H2S in treated gas " + a.last().sweetH2sMgNm3() + " mg/m3");
+                    h.assertTrue(a.totalH2sKg() > 0.5, "acid gas " + a.totalH2sKg() + " kg");
+                    ClausUnitBlockEntity c = h.getBlockEntity(claus);
+                    h.assertTrue(c.totalSulfurKg() > 0.3, "Claus sulphur " + c.totalSulfurKg() + " kg");
                 })
                 .thenSucceed();
     }

@@ -41,6 +41,10 @@ public final class RefineryBlockEntities {
             BLOCK_ENTITIES.register("fcc_unit",
                     () -> BlockEntityType.Builder.of(FccUnitBlockEntity::new, PcBlocks.FCC_UNIT.get()).build(null));
 
+    public static final DeferredHolder<BlockEntityType<?>, BlockEntityType<AmineUnitBlockEntity>> AMINE_UNIT =
+            BLOCK_ENTITIES.register("amine_unit",
+                    () -> BlockEntityType.Builder.of(AmineUnitBlockEntity::new, PcBlocks.AMINE_UNIT.get()).build(null));
+
     private RefineryBlockEntities() {
     }
 
@@ -60,5 +64,6 @@ public final class RefineryBlockEntities {
         event.registerBlockEntity(Capabilities.FluidHandler.BLOCK, VACUUM_COLUMN.get(), (be, side) -> be.fluids(side));
         event.registerBlockEntity(Capabilities.FluidHandler.BLOCK, FCC_UNIT.get(), (be, side) -> be.fluids(side));
         event.registerBlockEntity(Capabilities.ItemHandler.BLOCK, FCC_UNIT.get(), (be, side) -> be.items(side));
+        event.registerBlockEntity(Capabilities.FluidHandler.BLOCK, AMINE_UNIT.get(), (be, side) -> be.fluids(side));
     }
 }

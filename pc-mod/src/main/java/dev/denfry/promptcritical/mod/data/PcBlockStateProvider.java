@@ -272,6 +272,7 @@ public final class PcBlockStateProvider extends BlockStateProvider {
             case "electrostatic_desalter" -> s.getValue(PcProperties.RUNNING) ? id + "_powered" : id;
             case "vacuum_column" -> "column_base_insulated";
             case "fcc_unit" -> "fcc_reactor_vessel";
+            case "amine_unit" -> "absorption_tower";
             // замедленное коксование нарисовано своё: art/blockbench/refinery/delayed_coker.author.js
             case "methanol_column" -> "fractionating_column";
             // ядерное топливо I4
