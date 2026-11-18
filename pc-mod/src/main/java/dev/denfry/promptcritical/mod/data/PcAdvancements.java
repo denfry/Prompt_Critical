@@ -66,6 +66,10 @@ public final class PcAdvancements implements AdvancementProvider.AdvancementGene
         LANG.put("quiet_pump", new String[] {"Quiet Pump", "Тихий насос",
                 "Find a cavitating pump by its gravel noise and cure it before the impeller is eaten through",
                 "Найдите кавитирующий насос по шуму «гравия» и устраните кавитацию, пока колесо не съедено"});
+        // физика: РИТЭГ на удалённой скважине (12 §12.5.1)
+        LANG.put("everlasting", new String[] {"Everlasting Battery", "Вечная батарейка",
+                "An RTG alone powers the telemetry gateway of a remote well",
+                "РИТЭГ один питает шлюз телемеханики удалённой скважины"});
         LANG.put("relay_logic", new String[] {"Click-Clack", "Щёлк-щёлк", "A circuit of at least five relays drives a mechanism",
                 "Схема из пяти и более реле управляет механизмом"});
         LANG.put("analog_pid", new String[] {"No Computer Needed", "Без компьютера",
@@ -206,6 +210,10 @@ public final class PcAdvancements implements AdvancementProvider.AdvancementGene
                 .addCriterion("day", event(dev.denfry.promptcritical.mod.content.SimAchievements.HISTORIAN_DAY, Map.of())).save(saver, id("historian"), efh);
         task(rtu, PcBlocks.RTU_STATION.get(), "telemetry", AdvancementType.GOAL, false, 60)
                 .addCriterion("rtus", event(dev.denfry.promptcritical.mod.content.SimAchievements.TELEMETRY, Map.of())).save(saver, id("telemetry"), efh);
+        // физика: РИТЭГ на удалённой скважине (12 §12.5.1)
+        task(rtu, PcBlocks.RTG_THERMOELECTRIC.get(), "everlasting", AdvancementType.GOAL, false, 60)
+                .addCriterion("rtg_rtu", event(dev.denfry.promptcritical.mod.content.SimAchievements.EVERLASTING, Map.of()))
+                .save(saver, id("everlasting"), efh);
         AdvancementHolder lock = task(root, PcItems.LOCKOUT_PADLOCK.get(), "lockout", AdvancementType.TASK, false, 20)
                 .addCriterion("lock", event(dev.denfry.promptcritical.mod.content.SimAchievements.LOCKOUT, Map.of())).save(saver, id("lockout"), efh);
         AdvancementHolder dose = task(lock, PcItems.DOSIMETER.get(), "dosimeter", AdvancementType.TASK, false, 30)

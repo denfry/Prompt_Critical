@@ -7,6 +7,7 @@ import dev.denfry.promptcritical.mod.ironworks.Ironworks;
 import dev.denfry.promptcritical.mod.panel.PanelHost;
 import dev.denfry.promptcritical.mod.panel.PanelLayout;
 import dev.denfry.promptcritical.mod.panel.PanelText;
+import dev.denfry.promptcritical.sim.telemetry.RtuPower;
 import dev.denfry.promptcritical.sim.telemetry.ScanCycle;
 import dev.denfry.promptcritical.sim.telemetry.TokenBucket;
 import java.util.ArrayList;
@@ -41,6 +42,10 @@ import org.jetbrains.annotations.Nullable;
  * конфиге сервера), команды — ещё и свой запас {@link #COMMANDS_PER_SECOND} в секунду (телеуправление идёт по одной
  * команде с квитированием). Чтение не трогает машины: оно отдаёт срез последнего цикла опроса и его возраст.
  * Логика шлюза не знает о CC — периферия только переводит вызовы, поэтому мод работает и без CC.
+ *
+ * <p>Питание (12 §12.5.1, {@link RtuPower}): КП считается запитанным от сети объекта, пока рядом нет РИТЭГа. КП с
+ * РИТЭГом вплотную — автономный, удалённой скважины: он берёт у РИТЭГа {@link RtuPower#DEMAND_W} Вт и гаснет, когда
+ * РИТЭГ их не даёт. КП на РИТЭГе, минуту без перерыва опрашивающий устье или станок-качалку, — «Вечная батарейка» (11).
  */
 public final class TelemetryGatewayBlockEntity extends DeviceBlockEntity implements FoundryDevice {
     public static final int RADIUS = 8, SCAN_TICKS = 20;
@@ -59,6 +64,8 @@ public final class TelemetryGatewayBlockEntity extends DeviceBlockEntity impleme
     private final ScanCycle cycle = new ScanCycle(SCAN_TICKS);
     private final Map<String, Snapshot> snapshots = new LinkedHashMap<>();
     private TokenBucket calls, commands;
+    private final RtuPower power = new RtuPower();
+    private boolean offGrid;
 
     public TelemetryGatewayBlockEntity(BlockPos pos, BlockState state) {
         super(ScadaBlockEntities.TELEMETRY_GATEWAY.get(), pos, state);
@@ -78,11 +85,45 @@ public final class TelemetryGatewayBlockEntity extends DeviceBlockEntity impleme
         if (!(level instanceof ServerLevel)) return;
         long tick = now();
         if (!cycle.due(tick)) return;
-        scan(tick);
+        offGrid = dev.denfry.promptcritical.mod.isotopes.RtgBlockEntity.adjacent(level, worldPosition);
+        double pu = offGrid ? dev.denfry.promptcritical.mod.isotopes.RtgBlockEntity.supplyPu(level, worldPosition, RtuPower.DEMAND_W, tick) : 1;
+        boolean wasEverlasting = power.everlasting();
+        if (power.step(SCAN_TICKS / 20.0, offGrid, pu, pollsWell())) {
+            scan(tick);
+        } else {
+            snapshots.clear(); // без питания КП молчит: диспетчер видит пустой срез
+        }
         cycle.scanned(tick);
+        if (power.everlasting() && !wasEverlasting) setChanged();
+        if (power.everlasting()) dev.denfry.promptcritical.mod.content.SimAchievements.once(this,
+                dev.denfry.promptcritical.mod.content.SimAchievements.EVERLASTING, "rtu_w", RtuPower.DEMAND_W);
         BlockState st = getBlockState();
         boolean lit = !snapshots.isEmpty();
         if (st.getValue(BlockStateProperties.LIT) != lit) level.setBlock(worldPosition, st.setValue(BlockStateProperties.LIT, lit), Block.UPDATE_ALL);
+    }
+
+    /** На прошлом опросе среди щитов было устье скважины или станок-качалка. */
+    private boolean pollsWell() {
+        for (Snapshot s : snapshots.values()) if (WELL_TYPES.contains(s.type())) return true;
+        // КП только что включился: срез пуст — смотрим щиты рядом без опроса
+        if (snapshots.isEmpty())
+            for (BlockEntity be : Ironworks.blockEntities(level, new AABB(worldPosition).inflate(RADIUS), BlockEntity.class))
+                if (be instanceof PanelHost && WELL_TYPES.contains(BuiltInRegistries.BLOCK.getKey(be.getBlockState().getBlock()).getPath()))
+                    return true;
+        return false;
+    }
+
+    /** Щиты скважин для «Вечной батарейки». */
+    public static final java.util.Set<String> WELL_TYPES = java.util.Set.of("wellhead", "pumpjack");
+
+    /** КП питается от РИТЭГа вплотную. */
+    public boolean offGrid() {
+        return offGrid;
+    }
+
+    /** Питание КП (12 §12.5.1). */
+    public RtuPower power() {
+        return power;
     }
 
     /** Цикл опроса: найти щиты рядом и снять показания всех приборов. */
@@ -208,7 +249,27 @@ public final class TelemetryGatewayBlockEntity extends DeviceBlockEntity impleme
 
     @Override
     public InteractionResult use(Player player) {
-        player.displayClientMessage(ScadaText.msg("status", snapshots.size(), RADIUS, ScadaText.cc()), true);
+        if (offGrid && !power.on())
+            player.displayClientMessage(ScadaText.msg("rtg_dark", Math.round(RtuPower.DEMAND_W)), true);
+        else if (offGrid)
+            player.displayClientMessage(ScadaText.msg("rtg_status", snapshots.size(), RADIUS, Math.round(RtuPower.DEMAND_W)), true);
+        else
+            player.displayClientMessage(ScadaText.msg("status", snapshots.size(), RADIUS, ScadaText.cc()), true);
         return InteractionResult.SUCCESS;
+    }
+
+    @Override
+    protected void saveAdditional(net.minecraft.nbt.CompoundTag tag, net.minecraft.core.HolderLookup.Provider registries) {
+        super.saveAdditional(tag, registries);
+        tag.putBoolean("rtu_on", power.on());
+        tag.putDouble("rtu_autonomous_s", power.autonomousS());
+        tag.putBoolean("rtu_everlasting", power.everlasting());
+    }
+
+    @Override
+    protected void loadAdditional(net.minecraft.nbt.CompoundTag tag, net.minecraft.core.HolderLookup.Provider registries) {
+        super.loadAdditional(tag, registries);
+        power.restore(!tag.contains("rtu_on") || tag.getBoolean("rtu_on"), tag.getDouble("rtu_autonomous_s"),
+                tag.getBoolean("rtu_everlasting"));
     }
 }
