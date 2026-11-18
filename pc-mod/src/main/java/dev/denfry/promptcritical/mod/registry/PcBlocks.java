@@ -349,9 +349,19 @@ public final class PcBlocks {
     public static final DeferredBlock<PcBlock> CLEANROOM_PANEL = block("cleanroom_panel", machine(), Spec.of());
     public static final DeferredBlock<PcBlock> CLEANROOM_WINDOW = block("cleanroom_window", glassBlock(), Spec.of());
     public static final DeferredBlock<PcBlock> HEPA_FILTER = block("hepa_filter", machine(), Spec.of());
+    // --- очистка дымовых газов и САКВ (14 §14.2) ---
+    public static final DeferredBlock<PcDeviceBlock> ELECTROSTATIC_PRECIPITATOR = device("electrostatic_precipitator", machine(),
+            Spec.facing(BlockStateProperties.POWERED),
+            dev.denfry.promptcritical.mod.foundry.FoundryBlock.with(dev.denfry.promptcritical.mod.environment.ElectrostaticPrecipitatorBlockEntity::new));
+    public static final DeferredBlock<PcDeviceBlock> FGD_ABSORBER = device("fgd_absorber", machine(), Spec.of(),
+            dev.denfry.promptcritical.mod.foundry.FoundryBlock.with(dev.denfry.promptcritical.mod.environment.FgdAbsorberBlockEntity::new));
+    public static final DeferredBlock<PcBlock> CEMS_ANALYZER = block("cems_analyzer", instrument(), Spec.facing());
     public static final DeferredBlock<PcDeviceBlock> RTG_THERMOELECTRIC = device("rtg_thermoelectric", machine(),
             Spec.of(net.minecraft.world.level.block.state.properties.BlockStateProperties.LIT),
             dev.denfry.promptcritical.mod.foundry.FoundryBlock.with(dev.denfry.promptcritical.mod.isotopes.RtgBlockEntity::new));
+    // --- биржа (14 §14.6): терминал продажи товара NPC-рынку ---
+    public static final DeferredBlock<PcDeviceBlock> MARKET_TERMINAL = device("market_terminal", instrument(), Spec.facing(),
+            dev.denfry.promptcritical.mod.foundry.FoundryBlock.with(dev.denfry.promptcritical.mod.market.MarketTerminalBlockEntity::new));
     public static final DeferredBlock<PcBlock> CONTROL_ROD_DRIVE = block("control_rod_drive", machine(), Spec.facing());
     public static final DeferredBlock<PcBlock> ZIP_ROD_WINCH = block("zip_rod_winch", machine(), Spec.facing());
     public static final DeferredBlock<PcBlock> NEUTRON_DETECTOR = block("neutron_detector", instrument(), Spec.facing());

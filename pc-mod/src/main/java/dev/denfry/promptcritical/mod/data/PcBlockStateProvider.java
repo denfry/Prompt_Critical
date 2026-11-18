@@ -270,6 +270,8 @@ public final class PcBlockStateProvider extends BlockStateProvider {
             case "centrifuge_cascade" -> "cascade_header";
             case "uo2_conversion" -> "uf6_autoclave";
             case "power_reactor" -> "reactor_vessel_wall";
+            // биржа (14): своей модели терминала пока нет — пульт
+            case "market_terminal" -> "control_desk";
             case "irradiation_channel" -> s.getValue(PcProperties.FILLED) ? id + "_loaded" : id;
             case "rtg_thermoelectric" -> s.getValue(BlockStateProperties.LIT) ? id : id + "_depleted";
             case "pwr_reactor" -> s.getValue(PcProperties.PWR_SEGMENT) == PcProperties.PwrSegment.HEAD ? "control_rod_drive" : "reactor_vessel_wall";
@@ -279,6 +281,8 @@ public final class PcBlockStateProvider extends BlockStateProvider {
             case "czochralski_puller" -> s.getValue(PcProperties.RUNNING) ? id + "_pulling" : id;
             case "cleanroom_airlock" -> s.getValue(BlockStateProperties.OPEN) ? id + "_open" : id;
             case "bwr_reactor" -> s.getValue(PcProperties.BWR_SEGMENT) == PcProperties.BwrSegment.SEPARATORS ? "steam_drum" : "reactor_vessel_wall";
+            case "electrostatic_precipitator" -> s.getValue(BlockStateProperties.POWERED) ? id + "_energized" : id;
+            case "cems_analyzer" -> id + "_on";
             case "christmas_tree" -> s.getValue(BlockStateProperties.OPEN) ? id : id + "_master_closed";
             case "pumpjack" -> "pumpjack_gearbox";
             case "flare_tip" -> s.getValue(BlockStateProperties.LIT) ? id + "_lit" : id;

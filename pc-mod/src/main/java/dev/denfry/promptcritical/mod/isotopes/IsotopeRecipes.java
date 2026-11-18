@@ -86,5 +86,15 @@ public final class IsotopeRecipes extends RecipeProvider {
                 .define('L', PcBlocks.LEAD_BLOCK.get())
                 .unlockedBy("has_lead", has(PcBlocks.LEAD_BLOCK.get())).save(out, id("rtg_thermoelectric"));
         SpecialRecipeBuilder.special(IsotopeCraftRecipe::new).save(out, id("isotope_craft"));
+        // очистка дымовых газов (14 §14.2): электроды и коронирующие провода, башня с форсунками, газоанализатор
+        ShapedRecipeBuilder.shaped(RecipeCategory.MISC, PcBlocks.ELECTROSTATIC_PRECIPITATOR.get()).pattern("SWS").pattern("SBS").pattern("SWS")
+                .define('S', sheet).define('W', PcItems.COPPER_WIRE.get()).define('B', Items.IRON_BARS)
+                .unlockedBy("has_sheet", has(sheet)).save(out, PromptCritical.id("environment/electrostatic_precipitator").toString());
+        ShapedRecipeBuilder.shaped(RecipeCategory.MISC, PcBlocks.FGD_ABSORBER.get()).pattern("SPS").pattern("SCS").pattern("STS")
+                .define('S', sheet).define('P', AllBlocks.FLUID_PIPE.get()).define('C', Items.CALCITE).define('T', AllBlocks.FLUID_TANK.get())
+                .unlockedBy("has_calcite", has(Items.CALCITE)).save(out, PromptCritical.id("environment/fgd_absorber").toString());
+        ShapedRecipeBuilder.shaped(RecipeCategory.MISC, PcBlocks.CEMS_ANALYZER.get()).pattern("SGS").pattern("WRW").pattern("SSS")
+                .define('S', sheet).define('G', Items.GLASS_PANE).define('W', PcItems.COPPER_WIRE.get()).define('R', Items.REDSTONE)
+                .unlockedBy("has_sheet", has(sheet)).save(out, PromptCritical.id("environment/cems_analyzer").toString());
     }
 }

@@ -26,6 +26,7 @@ public final class GridBlocks {
                     PcBlocks.WIRE_CONNECTOR_MV.get(), PcBlocks.RELAY_POWER_SUPPLY.get(),
                     PcBlocks.ACHESON_FURNACE.get(), PcBlocks.LIGHTING_BOARD.get(), PcBlocks.SUBMERGED_ARC_FURNACE.get(),
                     PcBlocks.SIEMENS_REACTOR.get(), PcBlocks.CLEANROOM_AIRLOCK.get());
+                    PcBlocks.ACHESON_FURNACE.get(), PcBlocks.LIGHTING_BOARD.get(), PcBlocks.ELECTROSTATIC_PRECIPITATOR.get());
         }
         return blocks;
     }

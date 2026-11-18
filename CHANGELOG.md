@@ -91,6 +91,7 @@
 - Nuclear material accounting of uranium and U-235 on every station's panel. Zirconium from zircon washed out of sand,
   reduced with magnesium (hafnium separated), alloyed with tin, rolled into cladding tubes and made into spacer grids.
 
+<<<<<<< HEAD
 ### Silicon, chips and computers (11 §11.5)
 - Submerged arc furnace (about 12 kWh/kg), trichlorosilane fluidised bed, Siemens reactor (120 kWh/kg) with the HCl
   loop, Czochralski puller on a Create shaft under argon with its growth window and Scheil boron profile, wafer saw
@@ -102,6 +103,15 @@
 - Vacuum tubes for A2 analog computers, transistors and boards for the PLC, ICs and memory for the RTU station.
   CC: Tweaked computers and monitors are crafted from processors, memory, boards and cathode-ray tubes when the mod
   is loaded (`content.cc_recipe_override`). Handbook chapter, panels, ru/en texts and game tests not yet run.
+=======
+### Air pollution (14 §14.1–14.4, R21)
+- Boilers report SO₂, NOx, dust, CO₂, CH₄ and CO to an emission ledger and to a chunk pollution field: Briggs plume
+  rise, a Gaussian plume over 17×17 chunks with distances compressed twenty times, deposition, rain washout,
+  self-cleaning and downwind spread saved per dimension.
+- Effects by WHO and UNECE thresholds: haze, smog, acid load on plants, cough and weakness without a respirator or gas
+  mask, acid rain. Electrostatic precipitator on grid power, limestone scrubber on calcite and a CEMS analyzer that
+  switches reporting from calculated to measured. Handbook chapter and a game test not yet run.
+>>>>>>> feat/ecology-economy
 
 ### Isotopes and RTGs (12)
 - Irradiation channel: in the stack of the graphite pile it takes the flux of its node, against the T1 vessel
