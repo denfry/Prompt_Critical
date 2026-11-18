@@ -140,7 +140,11 @@ class EnrichmentTest {
         }
         assertEquals(0, Criticality.excursionFissions(0.5, 0.9));
         assertTrue(Criticality.excursionFissions(1.0, 0.9) >= 1e17);
-        assertEquals(4 * Criticality.doseGy(1e17, 2), Criticality.doseGy(1e17, 1), 1e-12);
+        // доза вспышки — общая модель излучения: 0,4 Зв на 1 м от 10¹⁷ делений, обратный квадрат без стен
+        var burst = dev.denfry.promptcritical.sim.radiation.FissionSource.solutionBurst(1e17);
+        double d1 = dev.denfry.promptcritical.sim.radiation.DoseRate.burstSv(burst, 1, java.util.List.of());
+        assertEquals(0.4, d1, 0.004);
+        assertEquals(d1, 4 * dev.denfry.promptcritical.sim.radiation.DoseRate.burstSv(burst, 2, java.util.List.of()), 1e-12);
     }
 
     // --- цех ---

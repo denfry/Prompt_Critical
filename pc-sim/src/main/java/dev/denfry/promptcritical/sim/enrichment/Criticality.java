@@ -8,14 +8,15 @@ package dev.denfry.promptcritical.sim.enrichment;
  * ARH-600]. Безопасная масса — 0,45 от минимальной критической (двойной запас по ГОСТ/ПБЯ-06-00-96 и ANSI/ANS-8.1).
  *
  * <p>Самоподдерживающаяся цепная реакция (СЦР) в ёмкости — вспышка мощности на 10¹⁷ делений и больше (Токаймура,
- * 1999: 2,5·10¹⁸ за 20 ч), без взрыва, но с нейтронной и гамма-дозой: D ≈ 0,4·(N/10¹⁷)/r² Гр [оценка по дозам
- * персонала аварий в растворах, LA-13638, 2000].
+ * 1999: 2,5·10¹⁸ за 20 ч), без взрыва, но с нейтронной и гамма-дозой. Дозу считает общая модель излучения:
+ * источник вспышки — {@link dev.denfry.promptcritical.sim.radiation.FissionSource#solutionBurst}, ослабление стенами
+ * и расстоянием — {@link dev.denfry.promptcritical.sim.radiation.DoseRate}.
  */
 public final class Criticality {
     private static final double[][] MIN_CRITICAL = {
             {0.0095, Double.POSITIVE_INFINITY}, {0.02, 8.0}, {0.03, 3.6}, {0.05, 2.1}, {0.10, 1.35}, {0.20, 1.05}, {0.50, 0.85},
             {0.93, 0.78}, {1.0, 0.76}};
-    public static final double SAFE_SHARE = 0.45, FISSIONS_REF = 1e17, DOSE_GY_REF = 0.4;
+    public static final double SAFE_SHARE = 0.45, FISSIONS_REF = 1e17;
 
     private Criticality() {
     }
@@ -47,11 +48,5 @@ public final class Criticality {
         double m = minCriticalU235Kg(x);
         if (!(u235Kg > m)) return 0;
         return Math.min(1e19, FISSIONS_REF * (1 + 10 * (u235Kg / m - 1)));
-    }
-
-    /** Поглощённая доза на расстоянии {@code r} м, Гр. */
-    public static double doseGy(double fissions, double r) {
-        double rr = Math.max(0.5, r);
-        return DOSE_GY_REF * fissions / FISSIONS_REF / (rr * rr);
     }
 }
