@@ -52,6 +52,11 @@ import org.jetbrains.annotations.Nullable;
 public final class RtgBlockEntity extends IronworksBlockEntity implements PanelHost {
     public static final int PERIOD = 20, LAMP_RANGE = 16;
     /**
+     * Буферный аккумулятор маячного РИТЭГа (12 §12.5.1): «Бета-М» на 10 Вт питал маячный огонь через аккумулятор —
+     * днём РИТЭГ заряжает, ночью огонь берёт больше, чем РИТЭГ даёт. 1 кВт·ч ≈ сутки работы [оценка].
+     */
+    public static final double BUFFER_J = 3.6e6;
+    /**
      * Пропускание защиты корпуса для γ и нейтронов: у «Бета-М» сотни килограммов обеднённого урана — мощность дозы на
      * поверхности ≈ 1 мЗв/ч при голом источнике в десятки Гр/ч на метре (10⁻⁴); плутониевый — 2–5 см полиэтилена.
      */
@@ -82,6 +87,7 @@ public final class RtgBlockEntity extends IronworksBlockEntity implements PanelH
     private boolean overtempWarned;
     /** Потребители за текущий период: позиция → Вт, игровое время запроса. */
     private final Map<BlockPos, long[]> loads = new HashMap<>();
+    private double storedJ;
     private double loadW;
 
     public RtgBlockEntity(BlockPos pos, BlockState state) {
@@ -159,10 +165,22 @@ public final class RtgBlockEntity extends IronworksBlockEntity implements PanelH
         loads.values().removeIf(v -> v[1] < now - 2L * PERIOD);
         loadW = 0;
         for (long[] v : loads.values()) loadW += v[0];
+        // избыток мощности — в буферный аккумулятор (PERIOD тиков — 1 с)
+        storedJ = Math.min(BUFFER_J, storedJ + Math.max(0, state.electricW() - loadW) * PERIOD / 20.0);
         BlockState s = getBlockState();
         boolean active = state.electricW() > 0.5;
         if (s.hasProperty(BlockStateProperties.LIT) && s.getValue(BlockStateProperties.LIT) != active)
             level.setBlock(worldPosition, s.setValue(BlockStateProperties.LIT, active), Block.UPDATE_ALL);
+    }
+
+    /** Заряд буферного аккумулятора, Дж. */
+    public double storedJ() {
+        return storedJ;
+    }
+
+    /** Для тестов: зарядить буфер. */
+    public void setStoredJ(double j) {
+        storedJ = Math.max(0, Math.min(BUFFER_J, j));
     }
 
     /** Электрическая мощность, Вт. */
@@ -179,9 +197,15 @@ public final class RtgBlockEntity extends IronworksBlockEntity implements PanelH
         double others = 0;
         for (Map.Entry<BlockPos, long[]> e : loads.entrySet())
             if (!e.getKey().equals(consumer) && e.getValue()[1] >= now - 2L * PERIOD) others += e.getValue()[0];
-        if (others + watts > state.electricW()) {
-            if (mine != null) loads.remove(consumer);
-            return false;
+        double deficitW = others + watts - state.electricW();
+        if (deficitW > 0) {
+            // недостаток покрывает буферный аккумулятор, пока он не разряжен
+            double need = deficitW * PERIOD / 20.0;
+            if (storedJ < need) {
+                if (mine != null) loads.remove(consumer);
+                return false;
+            }
+            storedJ -= need;
         }
         loads.put(consumer.immutable(), new long[] {watts, now});
         return true;
@@ -290,6 +314,7 @@ public final class RtgBlockEntity extends IronworksBlockEntity implements PanelH
     @Override
     protected void saveAdditional(CompoundTag tag, HolderLookup.Provider registries) {
         super.saveAdditional(tag, registries);
+        tag.putDouble("stored_j", storedJ);
         tag.put("source", source.serializeNBT(registries));
         tag.putDouble("design_w", designW);
         tag.putLong("age", ageTicks);
@@ -298,6 +323,7 @@ public final class RtgBlockEntity extends IronworksBlockEntity implements PanelH
     @Override
     protected void loadAdditional(CompoundTag tag, HolderLookup.Provider registries) {
         super.loadAdditional(tag, registries);
+        storedJ = tag.getDouble("stored_j");
         if (tag.contains("source")) source.deserializeNBT(registries, tag.getCompound("source"));
         designW = tag.getDouble("design_w");
         ageTicks = tag.getLong("age");

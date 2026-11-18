@@ -134,14 +134,12 @@ and the effects of each structure, not only the beacon colour.
 - Art is postponed: many new machines use placeholder or borrowed models (for example the uranium ion exchange column
   uses the water treatment column's model, the T1 reactor both segments use `reactor_vessel_wall`). Report only missing
   models, wrong orientation and parts outside the body.
-- The `Beta-M` RTG (~10 W) cannot light any lamp; the weakest lamp needs 15 W.
-- The sintering furnace draws no power.
 - Water never moves with the tide (design decision R32).
 - `GridGameTests.lowVoltageMotorOnSixKilovoltBusBreaksDownAndOvercurrentTrips` is timing-sensitive under a loaded
   server (breakdown seen at 7 ticks against a limit of 5); it passed on the rerun.
 - The MES server only advises setpoints. LOCA and blackout are wired to the VVER, BWR, CANDU and AM-1, not to the SFR
   (its sodium pool has only the sodium fires). The steel-clad AM-1 core does not burst its cladding in the accident
-  layer; it loses channels to dryout in its own channel model. The LRW evaporator and the ultrasonic bath draw no power. Liquid waste in pipes has a fixed nominal
+  layer; it loses channels to dryout in its own channel model. Liquid waste in pipes has a fixed nominal
   activity per fluid. MOX rod-worth loss and the CANDU moderator purity coefficient are estimates.
 - About half of today's machines are redrawn; the rest still borrow models (waste blocks, GS tower, heavy water
   column and others). No new machine has a painted panel background yet.

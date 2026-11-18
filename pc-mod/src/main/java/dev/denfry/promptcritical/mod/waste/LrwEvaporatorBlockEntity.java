@@ -56,7 +56,7 @@ import org.jetbrains.annotations.Nullable;
  * Загрузка (воронкой или рукой): цемент, пустые бочки, отработанная смола. ЖРО и мазут — трубой к боковым граням;
  * конденсат (почти чистая вода) — сверху; бочки и стеклоблоки — воронкой снизу. Shift + ПКМ — пуск/стоп.
  */
-public final class LrwEvaporatorBlockEntity extends UraniumProcessBlockEntity {
+public final class LrwEvaporatorBlockEntity extends UraniumProcessBlockEntity implements dev.denfry.promptcritical.mod.grid.GridDevice {
     public static final int REACH = 4, IN_SLOTS = 6, OUT_SLOTS = 6, POOL_MB = 16_000;
     public static final double CEMENT_BAG_KG = 50, RESIN_BAG_L = 100, FUEL_OIL_KG_L = 0.95, DRUM_S = 1800, CANISTER_KG = 50;
     /** Масса оксидов на килограмм солей куба после прокалки (нитраты и бораты натрия теряют NOₓ и воду). */
@@ -106,7 +106,9 @@ public final class LrwEvaporatorBlockEntity extends UraniumProcessBlockEntity {
     @Override
     protected void process(ServerLevel level, double dt) {
         if (level.getGameTime() % 40 == 0) scan(level);
-        LrwEvaporator.Step st = evaporator.step(dt, pool.feed(), pool.litres(), condensate.room(), on);
+        // греющий куб — электронагреватель {@link LrwEvaporator#HEATER_W}: без напряжения выпарка стоит
+        boolean heated = powered(on && pool.litres() > 1 ? LrwEvaporator.HEATER_W : 0);
+        LrwEvaporator.Step st = evaporator.step(dt, pool.feed(), pool.litres(), condensate.room(), on && heated);
         pool.take(st.feedL());
         condensate.add(st.condensateL());
         resin = resin.decayed(dt);
@@ -357,4 +359,42 @@ public final class LrwEvaporatorBlockEntity extends UraniumProcessBlockEntity {
             return FluidStack.EMPTY;
         }
     }
+
+    // --- сетевой ввод (07): машина — потребитель 6,3 кВ, кабель к любой грани контроллера ---
+
+    /** Стенд (GameTest): питание без сети. */
+    private boolean benchPower;
+
+    public void setBenchPower(boolean on) {
+        benchPower = on;
+    }
+
+    /** Ввод под напряжением при нагрузке {@code demandW}. */
+    private boolean powered(double demandW) {
+        return benchPower || dev.denfry.promptcritical.mod.grid.GridLoad.draw(level, simId(), demandW);
+    }
+
+    @Override
+    public java.util.List<java.util.List<dev.denfry.promptcritical.mod.grid.GridDevice.Face>> terminals() {
+        return java.util.List.of(dev.denfry.promptcritical.mod.grid.GridDevice.allFaces(worldPosition));
+    }
+
+    @Override
+    @org.jetbrains.annotations.Nullable
+    public dev.denfry.promptcritical.sim.grid.GridUnit gridUnit(dev.denfry.promptcritical.sim.grid.GridSubsystem grid) {
+        return simId().isNone() ? null : grid.consumer(simId());
+    }
+
+    @Override
+    public void onLoad() {
+        super.onLoad();
+        dev.denfry.promptcritical.mod.grid.GridLoad.register(level, worldPosition);
+    }
+
+    @Override
+    public void setRemoved() {
+        super.setRemoved();
+        dev.denfry.promptcritical.mod.grid.GridLoad.unregister(level, worldPosition);
+    }
+
 }
