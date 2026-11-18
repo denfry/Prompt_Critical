@@ -66,6 +66,8 @@ public final class SfrReactorBlockEntity extends DeviceBlockEntity implements Fo
     public static final int LINK_RADIUS = 12;
     public static final int CREEP_OUTLET_C = 700, SG_STRESS_C = 650;
     static final double MIN_PU = 0.15, MAX_PU = 0.35, PRIMARY_LEAK_KG_S = 2, SG_LEAK_KG_S = 0.5;
+    /** Ход регулирующих стержней на один слышимый шаг привода, доля полного хода. */
+    static final double ROD_STEP = 0.01;
 
     @Nullable
     private SodiumFastReactor reactor;
@@ -84,6 +86,7 @@ public final class SfrReactorBlockEntity extends DeviceBlockEntity implements Fo
     private final List<BlockPos> pumps = new ArrayList<>(), generators = new ArrayList<>();
     private SodiumFastReactor.Trip lastTrip = SodiumFastReactor.Trip.MANUAL;
     private boolean discWas;
+    private double lastRods = Double.NaN;
     private int ticks;
     private static long requestSeq;
 
@@ -172,12 +175,34 @@ public final class SfrReactorBlockEntity extends DeviceBlockEntity implements Fo
 
     private void events(ServerLevel sl, SodiumFastReactor r) {
         SodiumFastReactor.Trip t = r.trip();
+        driveSounds(sl, r, t != SodiumFastReactor.Trip.NONE && lastTrip == SodiumFastReactor.Trip.NONE);
         if (t != SodiumFastReactor.Trip.NONE && lastTrip == SodiumFastReactor.Trip.NONE) {
             sl.playSound(null, worldPosition, SoundEvents.BELL_BLOCK, SoundSource.BLOCKS, 1.5f, 0.6f);
             for (ServerPlayer p : sl.getPlayers(p -> p.distanceToSqr(worldPosition.getCenter()) < 48 * 48))
                 p.displayClientMessage(NppText.msg("scram", SfrPanels.reason(t)).withStyle(ChatFormatting.RED), false);
         }
         lastTrip = t;
+    }
+
+    /**
+     * Приводы СУЗ над малой поворотной пробкой (art/blockbench/core/sfr_reactor.author.js, верх приводов в точке
+     * (10, 15.6, 4) сегмента пробки): шаговый привод щёлкает на каждом шаге стержня — здесь щелчок на каждый процент
+     * хода регулирующих стержней; при АЗ обесточенные захваты отпускают стержни аварийной защиты, и слышен удар
+     * отключения.
+     */
+    private void driveSounds(ServerLevel sl, SodiumFastReactor r, boolean scram) {
+        if (!(getBlockState().getBlock() instanceof PcBlock b)) return;
+        double rods = r.controlPosition();
+        if (Double.isNaN(lastRods)) lastRods = rods;
+        boolean step = Math.abs(rods - lastRods) >= ROD_STEP && ticks % 3 == 0;
+        if (!step && !scram) return;
+        var p = dev.denfry.promptcritical.mod.boiler.BoilerGeometry.world(worldPosition.above(3), b.facing(getBlockState()), 10, 15.6, 4);
+        if (scram) sl.playSound(null, p.x, p.y, p.z, dev.denfry.promptcritical.mod.sound.PcSfx.BREAKER_OPERATE.get(), SoundSource.BLOCKS, 1.2f, 0.7f);
+        if (step) {
+            sl.playSound(null, p.x, p.y, p.z, dev.denfry.promptcritical.mod.sound.PcSfx.RELAY_CLICK.get(), SoundSource.BLOCKS, 0.6f,
+                    0.8f + sl.getRandom().nextFloat() * 0.2f);
+            lastRods = rods;
+        }
     }
 
     /** Свежая ТВС МОКС становится зоной; горячий пуск — с ручной АЗ, взвод и стержни — игроку. */

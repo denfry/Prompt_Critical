@@ -141,9 +141,24 @@ public final class CellRoomBlockEntity extends DeviceBlockEntity implements Foun
         return best;
     }
 
+    /**
+     * Эффекты на клиенте: из перколятора на фасаде (art/blockbench/chlor_alkali/chlor_alkali_cell.author.js) в жёлоб
+     * каплет электролитическая щёлочь, пока ячейка под током.
+     */
+    private void clientTick() {
+        net.minecraft.world.level.block.state.BlockState st = getBlockState();
+        if (!st.hasProperty(PcProperties.RUNNING) || !st.getValue(PcProperties.RUNNING)) return;
+        dev.denfry.promptcritical.mod.fx.MachineFx fx = dev.denfry.promptcritical.mod.fx.MachineFx.of(level, worldPosition,
+                st.getBlock() instanceof dev.denfry.promptcritical.mod.block.PcBlock pb ? pb.facing(st) : net.minecraft.core.Direction.NORTH);
+        if (fx != null && fx.chance(3)) fx.leak(fx.at(11.5, 3.3, 1));
+    }
+
     @Override
     public void tickDevice() {
-        if (!(level instanceof ServerLevel s)) return;
+        if (!(level instanceof ServerLevel s)) {
+            clientTick();
+            return;
+        }
         SimLevelBinding b = SimBindings.get(s);
         if (b == null) return;
         double dt = 0.05 * b.world().clock().kSlow();

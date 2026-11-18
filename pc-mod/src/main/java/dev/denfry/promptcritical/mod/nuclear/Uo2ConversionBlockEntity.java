@@ -49,6 +49,25 @@ public final class Uo2ConversionBlockEntity extends FuelShopBlockEntity {
     }
 
     @Override
+    public void tickDevice() {
+        if (level != null && level.isClientSide) {
+            clientTick();
+            return;
+        }
+        super.tickDevice();
+    }
+
+    /** Нагретая печь (art/blockbench/conversion/uo2_conversion.author.js): над крышкой бункера дрожит тёплый воздух. */
+    private void clientTick() {
+        BlockState st = getBlockState();
+        if (!st.hasProperty(net.minecraft.world.level.block.state.properties.BlockStateProperties.LIT)
+                || !st.getValue(net.minecraft.world.level.block.state.properties.BlockStateProperties.LIT)) return;
+        dev.denfry.promptcritical.mod.fx.MachineFx fx = dev.denfry.promptcritical.mod.fx.MachineFx.of(level, worldPosition,
+                st.getBlock() instanceof dev.denfry.promptcritical.mod.block.PcBlock pb ? pb.facing(st) : net.minecraft.core.Direction.NORTH);
+        if (fx != null && fx.chance(1)) fx.wisp(fx.at(8, 13, 8), 0.4);
+    }
+
+    @Override
     protected boolean valid(int slot, ItemStack stack) {
         return slot == FuelPanels.C_SLOT_UF6 && stack.getItem() instanceof Uf6CylinderItem;
     }

@@ -135,6 +135,24 @@ public final class MachineSoundscape {
             // преобразователь частоты каскада: тонкий вой на высокой частоте питания моторов центрифуг
             case CascadeBlockEntity c -> running ? new Loop(PcSfx.ELECTRIC_MOTOR, 0.35f, 1.8f) : null;
             case SteamGeneratorBlockEntity g -> flag(s, BlockStateProperties.LIT) ? new Loop(PcSfx.PUMP, 0.2f, 0.5f) : null;
+            // печь пиролиза: подовые горелки гудят, пока печь в работе или на выжиге кокса
+            case dev.denfry.promptcritical.mod.chem.PyrolysisFurnaceBlockEntity f -> flag(s, BlockStateProperties.LIT) ? new Loop(PcSfx.BOILER_FIRE, 1.0f, 0.8f) : null;
+            // гиперкомпрессор ПЭВД: тяжёлый поршневой стук, чаще с оборотами вала
+            case dev.denfry.promptcritical.mod.chem.LdpeReactorBlockEntity r -> running || n > 0 ? new Loop(PcSfx.PUMP, 0.5f + 0.4f * Math.min(1, n), 0.5f + 0.3f * Math.min(1, n)) : null;
+            // гидроочистка: сырьевой насос и циркуляционный компрессор водорода за стеной
+            case dev.denfry.promptcritical.mod.refinery.HydrotreaterBlockEntity h -> running ? new Loop(PcSfx.PUMP, 0.3f, 1.1f) : null;
+            // воздушный компрессор агрегата азотной кислоты: гул улитки, выше с оборотами
+            case dev.denfry.promptcritical.mod.nitrogen.NitricAcidBlockEntity a -> running || n > 0 ? new Loop(PcSfx.MINE_FAN, 0.6f, 0.8f + 0.4f * Math.min(1, n)) : null;
+            // электролизёр: гудит выпрямленный ток в шинах и выпрямитель
+            case dev.denfry.promptcritical.mod.chlor.CellRoomBlockEntity c -> running ? new Loop(PcSfx.TRANSFORMER_HUM, 0.3f, 1) : null;
+            // ГЦН: насос гудит по оборотам вала
+            case dev.denfry.promptcritical.mod.npp.PrimaryPumpBlockEntity p -> running || n > 0 ? new Loop(PcSfx.PUMP, 0.4f + 0.4f * Math.min(1, n), 0.6f + 0.5f * Math.min(1, n)) : null;
+            // каньон PUREX: вентиляция каньона, пока линия в работе
+            case dev.denfry.promptcritical.mod.reprocessing.PurexCellBlockEntity c -> running ? new Loop(PcSfx.MINE_FAN, 0.3f, 1.2f) : null;
+            // печь восстановления UO2: гул нагревателей и их трансформатора
+            case dev.denfry.promptcritical.mod.nuclear.Uo2ConversionBlockEntity u -> flag(s, BlockStateProperties.LIT) ? new Loop(PcSfx.TRANSFORMER_HUM, 0.3f, 0.9f) : null;
+            // сервер MES: вентиляторы серверов в стойке
+            case dev.denfry.promptcritical.mod.mes.MesServerBlockEntity m -> flag(s, BlockStateProperties.LIT) ? new Loop(PcSfx.ELECTRIC_MOTOR, 0.15f, 1.8f) : null;
             default -> null;
         };
     }

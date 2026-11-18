@@ -121,7 +121,10 @@ public final class PyrolysisFurnaceBlockEntity extends DeviceBlockEntity impleme
 
     @Override
     public void tickDevice() {
-        if (!(level instanceof ServerLevel s)) return;
+        if (!(level instanceof ServerLevel s)) {
+            clientTick();
+            return;
+        }
         SimLevelBinding b = SimBindings.get(s);
         if (b == null) return;
         double dt = 0.05 * b.world().clock().kSlow();
@@ -168,6 +171,20 @@ public final class PyrolysisFurnaceBlockEntity extends DeviceBlockEntity impleme
             s.sendParticles(ParticleTypes.LARGE_SMOKE, worldPosition.getX() + 0.5, worldPosition.getY() + 2.5, worldPosition.getZ() + 0.5,
                     2, 0.2, 0.1, 0.2, 0.01);
         if (level.getGameTime() % 100 == 0) setChanged();
+    }
+
+    /**
+     * Эффекты на клиенте (точки — art/blockbench/petrochem/pyrolysis_furnace.author.js): над дымовой трубой дрожит
+     * горячий газ, барабан ЗИА изредка стравливает пар через воздушник.
+     */
+    private void clientTick() {
+        BlockState st = getBlockState();
+        if (!st.hasProperty(BlockStateProperties.LIT) || !st.getValue(BlockStateProperties.LIT)) return;
+        dev.denfry.promptcritical.mod.fx.MachineFx fx = dev.denfry.promptcritical.mod.fx.MachineFx.of(level, worldPosition,
+                st.getBlock() instanceof dev.denfry.promptcritical.mod.block.PcBlock b ? b.facing(st) : net.minecraft.core.Direction.NORTH);
+        if (fx == null) return;
+        if (fx.chance(4)) fx.wisp(fx.at(8, 32, 8), 0.4);
+        if (fx.chance(0.3)) fx.puff(fx.at(8, 32, 24), new net.minecraft.world.phys.Vec3(0, 0.06, 0), 2);
     }
 
     private void setLit(boolean lit) {
