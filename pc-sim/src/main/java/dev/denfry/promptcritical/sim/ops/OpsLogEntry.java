@@ -11,6 +11,8 @@ import dev.denfry.promptcritical.sim.core.SimId;
 public record OpsLogEntry(long tick, SimId unit, Kind kind, String detail) {
     public enum Kind {
         START_UNACCEPTED, START_REFUSED, STATE, DEFECT_FOUND, CHECK_PASSED, CHECK_FAILED, MAINTENANCE_REQUIRED,
-        MAINTENANCE_DONE, UNSAFE_MAINTENANCE, SEIZED
+        MAINTENANCE_DONE, UNSAFE_MAINTENANCE, SEIZED,
+        /** LOTO 13 §13.1.7: замок повешен, снят владельцем, срезан администратором, попытка сломать запертую точку. */
+        LOCKOUT_ON, LOCKOUT_OFF, LOCKOUT_ADMIN_CUT, UNAUTHORIZED_ACCESS
     }
 }

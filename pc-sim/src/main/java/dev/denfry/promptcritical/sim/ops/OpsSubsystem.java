@@ -31,6 +31,7 @@ import java.util.UUID;
  * в короткий журнал установки ({@link #log}) для щита и кнопки «Журнал».
  */
 public final class OpsSubsystem implements Subsystem {
+    private final LockoutRegistry lockouts = new LockoutRegistry();
     public static final String ID = "ops";
     /** Поток {@link SimRandom} износа (u_b подшипника, новые вкладыши). */
     public static final int WEAR_STREAM = 0x13_67;
@@ -381,13 +382,18 @@ public final class OpsSubsystem implements Subsystem {
         return switch (k) {
             case START_REFUSED, START_UNACCEPTED, DEFECT_FOUND, CHECK_FAILED, MAINTENANCE_REQUIRED, UNSAFE_MAINTENANCE ->
                     Severity.WARNING;
-            case SEIZED -> Severity.CRITICAL;
+            case SEIZED, LOCKOUT_ADMIN_CUT, UNAUTHORIZED_ACCESS -> Severity.CRITICAL;
             default -> Severity.INFO;
         };
     }
 
     private static String message(OpsLogEntry e) {
         return e.kind().name() + (e.detail().isEmpty() ? "" : " " + e.detail());
+    }
+
+    /** Запись мира в журнал эксплуатации (LOTO): уходит в журнал мира на ближайшем тике. */
+    public void journal(SimId device, OpsLogEntry.Kind kind, String detail) {
+        log(device, kind, detail);
     }
 
     private void log(SimId unit, OpsLogEntry.Kind kind, String detail) {
@@ -414,8 +420,16 @@ public final class OpsSubsystem implements Subsystem {
 
     // --- сохранение ---
 
+    /** Замки LOTO мира (13 §13.1). */
+    public LockoutRegistry lockouts() {
+        return lockouts;
+    }
+
     @Override
     public void save(StateWriter out) {
+        out.beginObject("lockouts");
+        lockouts.save(out);
+        out.endObject();
         out.beginObject("commissioning");
         service.save(out);
         out.endObject();
@@ -448,6 +462,11 @@ public final class OpsSubsystem implements Subsystem {
     @Override
     public void load(StateReader in) {
         units.clear();
+        if (in.has("lockouts")) {
+            in.beginObject("lockouts");
+            lockouts.load(in);
+            in.endObject();
+        }
         in.beginObject("commissioning");
         service.load(in);
         in.endObject();

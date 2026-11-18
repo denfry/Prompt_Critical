@@ -284,6 +284,11 @@ public final class PurexCellBlockEntity extends DeviceBlockEntity implements Fou
     private boolean emitPu() {
         ItemStack p = new ItemStack(PcItems.PUO2_POWDER.get());
         p.set(PuLot.TYPE.get(), puPending);
+        // Pu-241 партии: из него в выдержанном PuO₂ врастает Am-241 (12 §12.2.5); америций ОЯТ ушёл в рафинат
+        double pu241Kg = puPending.puKg() * puPending.pu241();
+        double pu241Bq = dev.denfry.promptcritical.sim.radiation.Emitter.PU241.lambda() * pu241Kg * 1000 / 241.06 * 6.02214076e23;
+        p.set(ActivityData.ACTIVITY.get(), new ActivityData(level.getGameTime(), puPending.puKg() / 0.882, 11.5,
+                java.util.Map.of(dev.denfry.promptcritical.sim.radiation.Emitter.PU241.name(), pu241Bq)));
         return emit(p);
     }
 

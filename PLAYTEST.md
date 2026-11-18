@@ -56,6 +56,8 @@ the facing and the log line, if there is one.
 | Acoustics | Run a Create fan or motor, use the vibration analyzer, stand near loud machines without and with ear muffs | Spectrum shows 1x and bearing tones, ISO zone A–D; noise dose builds, ear muffs stop it; replacing the bearing resets wear |
 | Contamination | Spill from a dry pool rack, walk through it, use the hand-foot monitor, shower, ultrasonic bath, sprayer and strippable coating | Shoes carry it, the monitor alarms, each decon step lowers Bq/cm2 and leaves contaminated decon solution |
 | Waste | Feed liquid waste and decon solution to the LRW evaporator, cement or bitumen the concentrate, vitrify HLW, compact filters, fill both repositories | Drums are classified, HLW goes only to glass, repositories refuse packages over their limits |
+| Emergency diesel | Place `diesel_generator` in four facings with a `station_battery` touching it, pipe in `diesel_fuel`, cable the generator end to a bus with ECCS pump motors, fit `jacket_heater` and `load_sequencer`, turn Auto on, open the incomer | Engine and alternator segments line up, the flywheel turns while running; the unit cranks, fires and closes onto the dead bus within 15 s; the sequencer brings loads back every 5 s, largest first; the panel shows fuel, air starts and the fault cause; no start without the battery |
+| Lockout and fire | Hang padlocks with tags on an open switchgear cell, a disengaged mechanical disconnect and a blind line blind; fit a hasp; use the lockout box; start a fire under a sprinkler and between two smoke detectors with a fire panel and a deluge; try each extinguisher on a plain fire, at the SFR sodium leak and next to a live cell | Locked blocks refuse every action with the owners' names; models of the disconnect, box and detectors change state; the sprinkler bursts and the deluge opens; water at the sodium fire flashes, water at the live cell shocks |
 | Chunk save | Save and quit with machines running (reactor at power, cascade spinning, PUREX line busy), reload | Everything resumes in the same state; the T1/T2a reactors do not trip on the first tick after loading |
 
 ## Game test structures to look at
@@ -132,15 +134,12 @@ and the effects of each structure, not only the beacon colour.
 - Art is postponed: many new machines use placeholder or borrowed models (for example the uranium ion exchange column
   uses the water treatment column's model, the T1 reactor both segments use `reactor_vessel_wall`). Report only missing
   models, wrong orientation and parts outside the body.
-- Spent fuel has no minor actinides; decay heat is about a third low.
-- Pu-238 cannot be made in survival yet (no Np-237 recovery in PUREX).
-- The `Beta-M` RTG (~10 W) cannot light any lamp; the weakest lamp needs 15 W.
-- The sintering furnace draws no power.
 - Water never moves with the tide (design decision R32).
 - `GridGameTests.lowVoltageMotorOnSixKilovoltBusBreaksDownAndOvercurrentTrips` is timing-sensitive under a loaded
   server (breakdown seen at 7 ticks against a limit of 5); it passed on the rerun.
-- The MES server only advises setpoints. LOCA and blackout are wired to the VVER and BWR only, not to CANDU, SFR or
-  the AM-1. The LRW evaporator and the ultrasonic bath draw no power. Liquid waste in pipes has a fixed nominal
+- The MES server closes the loop only on units with raise/lower panel buttons (shaft generator trim, diesel, pumped storage). LOCA and blackout are wired to the VVER, BWR, CANDU and AM-1, not to the SFR
+  (its sodium pool has only the sodium fires). The steel-clad AM-1 core does not burst its cladding in the accident
+  layer; it loses channels to dryout in its own channel model. Liquid waste in pipes has a fixed nominal
   activity per fluid. MOX rod-worth loss and the CANDU moderator purity coefficient are estimates.
 - About half of today's machines are redrawn; the rest still borrow models (waste blocks, GS tower, heavy water
   column and others). No new machine has a painted panel background yet.

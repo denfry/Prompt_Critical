@@ -2161,6 +2161,17 @@ public final class PowerGrid {
         return busLabel.get(bus(b));
     }
 
+    /** Шины концов ветви: {from, to}. */
+    public BusId[] branchEnds(BranchId id) {
+        int k = branch(id);
+        return new BusId[] {new BusId(bFrom[k]), new BusId(bTo[k])};
+    }
+
+    /** Ветвь замкнута (выключатель включён, провод цел). */
+    public boolean branchClosed(BranchId id) {
+        return closed[branch(id)];
+    }
+
     /** Активная мощность, втекающая в ветвь с конца {@code from}, Вт. */
     public double branchPowerFromW(BranchId id) {
         int k = branch(id), f = bFrom[k];

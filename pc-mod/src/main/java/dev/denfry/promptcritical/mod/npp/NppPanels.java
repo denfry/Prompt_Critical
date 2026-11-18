@@ -18,10 +18,10 @@ import net.minecraft.network.chat.Component;
 public final class NppPanels {
     public static final int POWER = 0, PERIOD = 1, RHO_PCM = 2, AZ = 3, RR = 4, AR = 5, FUEL_C = 6, GRAPHITE_C = 7, IN_C = 8, OUT_C = 9,
             FLOW = 10, QUALITY = 11, SG_KW = 12, XE_PCM = 13, BURNUP = 14, LOADED = 15, FAILED = 16, SETPOINT = 17, TRIP = 18, FLAGS = 19,
-            CHANNELS = 20;
+            ACCIDENT = 20, CHANNELS = ACCIDENT + AccidentPanels.COUNT;
     public static final int F_TRIPPED = 0, F_AUTO = 1, F_PROT_OFF = 2, F_DRYOUT = 3, F_NO_SG = 4, F_FAILED = 5, F_RR_UP = 6, F_RR_DOWN = 7;
     public static final int B_SCRAM = 0, B_RESET = 1, B_RR_UP = 2, B_RR_STOP = 3, B_RR_DOWN = 4, B_AUTO = 5, B_SP_DOWN = 6, B_SP_UP = 7,
-            B_PROTECTION = 8, B_UNLOAD = 9;
+            B_PROTECTION = 8, B_UNLOAD = 9, B_LOCA = 10;
     public static final int SLOT_FRESH = 0, SLOT_SPENT = 1;
 
     private static final Tr PCT = PanelText.PERCENT, CELSIUS = PanelText.CELSIUS, SEC = PanelText.tr("unit.s", "s", "с"),
@@ -72,7 +72,7 @@ public final class NppPanels {
             PanelText.tr("npp.trip.external", "SCRAM: external (ESD)", "АЗ: внешняя (ПАЗ)"),
             PanelText.tr("npp.trip.manual", "SCRAM: manual", "АЗ: ручная")};
 
-    public static final PanelLayout REACTOR = PanelLayout.builder("power_reactor", 248, 176, CHANNELS)
+    public static final PanelLayout REACTOR = PanelLayout.builder("power_reactor", 248, 196, CHANNELS)
             .dial(8, 24, false, POWER, 10, 130, ChannelReactor.TRIP_POWER * 100, 0, PCT.get(), N.get(),
                     v -> POWER_TIP.get(v.num(POWER, 10, 1), v.raw(RHO_PCM), v.raw(SETPOINT)))
             .dial(64, 24, false, PERIOD, 10, 100, Double.NaN, 0, SEC.get(), T_PERIOD.get(),
@@ -100,7 +100,9 @@ public final class NppPanels {
             .button(202, 100, 20, B_SP_UP, Component.literal("+"), SP_UP.get())
             .button(8, 120, 64, B_PROTECTION, PROT_BTN.get(), PROT_TIP.get())
             .button(76, 120, 52, B_UNLOAD, UNLOAD.get(), UNLOAD_TIP.get())
+            .button(132, 120, 40, B_LOCA, AccidentPanels.DRILL.get(), AccidentPanels.DRILL_TIP.get())
             .readout(8, 140, 232, NppPanels::status, null)
+            .readout(8, 160, 232, v -> AccidentPanels.line(v, ACCIDENT), v -> AccidentPanels.tip(v, ACCIDENT))
             .build();
 
     private NppPanels() {

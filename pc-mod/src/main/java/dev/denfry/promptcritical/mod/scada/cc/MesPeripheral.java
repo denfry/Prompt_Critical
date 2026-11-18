@@ -55,6 +55,13 @@ public final class MesPeripheral implements IPeripheral {
         return call(server::dispatchTable);
     }
 
+    /** Замкнутый контур: сервер сам ведёт агрегаты к уставкам. */
+    @LuaFunction(mainThread = true)
+    public final boolean setAuto(boolean on) {
+        server.setAuto(on);
+        return true;
+    }
+
     @LuaFunction(mainThread = true)
     public final boolean setDispatchTarget(double mw) throws LuaException {
         return call(() -> {

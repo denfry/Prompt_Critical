@@ -28,7 +28,7 @@ import net.minecraft.world.phys.AABB;
  * рядом и половина шансов на междуфазное КЗ. {@code interlock_module} запрещает операцию при включённом соседнем
  * выключателе.
  */
-public class DisconnectorBlockEntity extends GridDeviceBlockEntity<SwitchUnit> {
+public class DisconnectorBlockEntity extends GridDeviceBlockEntity<SwitchUnit> implements dev.denfry.promptcritical.mod.ops.IsolationPoint {
     /** Радиус ожога дугой, блоков; урон — полсердца на блок ближе. */
     static final double ARC_RADIUS = 4;
     /** Угол ножа на клиенте, градусы (плавный поворот рендера). */
@@ -58,6 +58,7 @@ public class DisconnectorBlockEntity extends GridDeviceBlockEntity<SwitchUnit> {
 
     @Override
     protected void serverTick(SwitchUnit u) {
+        u.setLockedOut(dev.denfry.promptcritical.mod.ops.Lockouts.locked(level, worldPosition));
         if (ticks % 5 == 0) {
             setFlag(BlockStateProperties.OPEN, !u.closed());
             setFlag(PcProperties.EARTHED, u.earthed());
@@ -93,7 +94,9 @@ public class DisconnectorBlockEntity extends GridDeviceBlockEntity<SwitchUnit> {
         }
         BreakerResponse r = u.operate(!u.closed());
         if (r != BreakerResponse.ACCEPTED) {
-            player.displayClientMessage(GridText.msg(GridText.BREAKER_RESPONSE, BreakerCellBlockEntity.response(r)), true);
+            player.displayClientMessage(r == BreakerResponse.LOCKED_OUT
+                    ? dev.denfry.promptcritical.mod.ops.Lockouts.lockedMessage(level, worldPosition)
+                    : GridText.msg(GridText.BREAKER_RESPONSE, BreakerCellBlockEntity.response(r)), true);
             return InteractionResult.SUCCESS;
         }
         level.playSound(null, worldPosition, dev.denfry.promptcritical.mod.sound.PcSfx.BREAKER_OPERATE.get(), SoundSource.BLOCKS, 1, 0.6f);
@@ -117,4 +120,28 @@ public class DisconnectorBlockEntity extends GridDeviceBlockEntity<SwitchUnit> {
             p.igniteForSeconds(3);
         }
     }
+
+    // --- LOTO (13 §13.1.3): точка изоляции электрической энергии ---
+
+    @Override
+    public dev.denfry.promptcritical.sim.ops.EnergyKind energy() {
+        return dev.denfry.promptcritical.sim.ops.EnergyKind.ELECTRICAL;
+    }
+
+    /** Аппарат отключён. */
+    @Override
+    public boolean isolatedPosition() {
+        SwitchUnit u = unit();
+        return u != null && !u.closed();
+    }
+
+    /** Указатель напряжения на стороне присоединения: ниже порога указателя до 1000 В. */
+    @Override
+    public boolean noEnergy() {
+        SwitchUnit u = unit();
+        var b = level instanceof net.minecraft.server.level.ServerLevel s ? dev.denfry.promptcritical.mod.binding.SimBindings.get(s) : null;
+        GridSubsystem g = b == null ? null : b.world().subsystem(GridSubsystem.class);
+        return u != null && g != null && g.voltageV(u.node(1)) < dev.denfry.promptcritical.sim.grid.WorkPermit.NO_VOLTAGE_V;
+    }
+
 }

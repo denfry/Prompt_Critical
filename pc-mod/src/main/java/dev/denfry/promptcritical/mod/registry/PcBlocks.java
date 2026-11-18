@@ -254,6 +254,9 @@ public final class PcBlocks {
 
     // --- электросеть I1 (07 §7.3–7.6, этап 8 M3) ---
     private static final Footprint FP_DISCONNECTOR = Footprint.of(Segment.box(-1, 1, 0, 1, 0, 0));
+    /** Пульт диспетчера энергосистемы (07 §7.6.6), CC-периферия {@code pc_grid}. */
+    public static final DeferredBlock<PcDeviceBlock> GRID_DISPATCH_CENTER = device("grid_dispatch_center", instrument(),
+            Spec.facing(PcProperties.ALARM), FoundryBlock.with(dev.denfry.promptcritical.mod.grid.GridDispatchCenterBlockEntity::new));
     public static final DeferredBlock<PcDeviceBlock> SHAFT_GENERATOR = device("shaft_generator", machine(),
             Spec.facing(PcProperties.RUNNING), KineticMachineBlock.with(ShaftSide.BACK, ShaftGeneratorBlockEntity::new));
     public static final DeferredBlock<PcBlock> GENERATOR_EXCITER = block("generator_exciter", machine(), Spec.facing());
@@ -522,6 +525,24 @@ public final class PcBlocks {
             Spec.facing().footprint(FP_CUBE3), FoundryBlock.with(dev.denfry.promptcritical.mod.gas.NglFractionatorBlockEntity::new));
 
     // --- телемеханика A4: шлюз (КП) для диспетчерского компьютера CC: Tweaked ---
+    /** Историан 03d §3d.9.5: стойка 1×2×1, CC-периферия {@code pc_historian}. */
+    public static final DeferredBlock<PcDeviceBlock> HISTORIAN_SERVER = device("historian_server", machine(),
+            Spec.facing(BlockStateProperties.LIT).footprint(FP_TALL2),
+            FoundryBlock.with(dev.denfry.promptcritical.mod.scada.HistorianBlockEntity::new));
+    /** Инженерная станция 03d §3d.9.1: цифровой двойник для FAT программ ПЛК, стол 2×1×1. */
+    public static final DeferredBlock<PcDeviceBlock> SIMULATION_WORKSTATION = device("simulation_workstation", machine(),
+            Spec.facing().footprint(FP_WIDE2),
+            FoundryBlock.with(dev.denfry.promptcritical.mod.scada.TwinWorkstationBlockEntity::new));
+    /** Тренажёр 11 §11.3.2: вычислительный шкаф 1×2×1, пульт оператора и место инструктора 2×1×1. */
+    public static final DeferredBlock<PcDeviceBlock> TRAINING_SIMULATOR = device("training_simulator", machine(),
+            Spec.facing(PcProperties.RUNNING).footprint(FP_TALL2),
+            FoundryBlock.with(dev.denfry.promptcritical.mod.scada.TrainingSimulatorBlockEntity::new));
+    public static final DeferredBlock<PcDeviceBlock> SIMULATOR_CONSOLE = device("simulator_console", machine(),
+            Spec.facing(BlockStateProperties.LIT),
+            FoundryBlock.with(dev.denfry.promptcritical.mod.scada.SimulatorDeskBlockEntity::console));
+    public static final DeferredBlock<PcDeviceBlock> INSTRUCTOR_STATION = device("instructor_station", machine(),
+            Spec.facing(BlockStateProperties.LIT).footprint(FP_WIDE2),
+            FoundryBlock.with(dev.denfry.promptcritical.mod.scada.SimulatorDeskBlockEntity::instructor));
     public static final DeferredBlock<PcDeviceBlock> RTU_STATION = device("rtu_station", machine(),
             Spec.facing(BlockStateProperties.LIT).footprint(FP_TALL2),
             FoundryBlock.with(dev.denfry.promptcritical.mod.scada.TelemetryGatewayBlockEntity::new));
@@ -818,6 +839,23 @@ public final class PcBlocks {
     // --- эксплуатация и водоподготовка (13 §13.6.5–13.6.7, 08 §8.12, этап 11а M3) ---
     public static final DeferredBlock<PcDeviceBlock> MAINTENANCE_PANEL = device("maintenance_panel", instrument(),
             Spec.facing(PcProperties.SEVERITY), GridMountedBlock.wall(MaintenancePanelBlockEntity::new, 1, 1, 13, 15, 15, 16));
+    /** Пожарная сигнализация и тушение 13 §13.5: извещатели, ручной извещатель, ППК, спринклер, дренчер, газовое тушение, ствол. */
+    public static final DeferredBlock<PcDeviceBlock> SMOKE_DETECTOR = device("smoke_detector", instrument(), Spec.facing(PcProperties.ALARM), FoundryBlock.with(dev.denfry.promptcritical.mod.ops.FireDeviceBlockEntity::new));
+    public static final DeferredBlock<PcDeviceBlock> HEAT_DETECTOR = device("heat_detector", instrument(), Spec.facing(PcProperties.ALARM), FoundryBlock.with(dev.denfry.promptcritical.mod.ops.FireDeviceBlockEntity::new));
+    public static final DeferredBlock<PcDeviceBlock> FLAME_DETECTOR = device("flame_detector", instrument(), Spec.facing(PcProperties.ALARM), FoundryBlock.with(dev.denfry.promptcritical.mod.ops.FireDeviceBlockEntity::new));
+    public static final DeferredBlock<PcDeviceBlock> MANUAL_CALL_POINT = device("manual_call_point", instrument(), Spec.facing(PcProperties.ALARM), FoundryBlock.with(dev.denfry.promptcritical.mod.ops.FireDeviceBlockEntity::new));
+    public static final DeferredBlock<PcDeviceBlock> FIRE_ALARM_PANEL = device("fire_alarm_panel", instrument(), Spec.facing(PcProperties.ALARM, BlockStateProperties.POWERED), FoundryBlock.with(dev.denfry.promptcritical.mod.ops.FireDeviceBlockEntity::new));
+    public static final DeferredBlock<PcDeviceBlock> SPRINKLER_HEAD = device("sprinkler_head", instrument(), Spec.facing(PcProperties.ALARM), FoundryBlock.with(dev.denfry.promptcritical.mod.ops.FireDeviceBlockEntity::new));
+    public static final DeferredBlock<PcDeviceBlock> DELUGE_NOZZLE = device("deluge_nozzle", instrument(), Spec.facing(PcProperties.RUNNING), FoundryBlock.with(dev.denfry.promptcritical.mod.ops.FireDeviceBlockEntity::new));
+    public static final DeferredBlock<PcDeviceBlock> GAS_SUPPRESSION_CYLINDER = device("gas_suppression_cylinder", machine(), Spec.facing(PcProperties.ALARM), FoundryBlock.with(dev.denfry.promptcritical.mod.ops.FireDeviceBlockEntity::new));
+    public static final DeferredBlock<PcDeviceBlock> FIRE_MONITOR = device("fire_monitor", machine(), Spec.facing(PcProperties.RUNNING), FoundryBlock.with(dev.denfry.promptcritical.mod.ops.FireDeviceBlockEntity::new));
+    /** LOTO 13 §13.1.2: поворотная заглушка на фланце, групповой ящик блокировки, расцепная муфта на валу Create. */
+    public static final DeferredBlock<PcDeviceBlock> LINE_BLIND = device("line_blind", machine(),
+            Spec.facing(BlockStateProperties.OPEN), FoundryBlock.with(dev.denfry.promptcritical.mod.ops.LineBlindBlockEntity::new));
+    public static final DeferredBlock<PcDeviceBlock> LOCKOUT_BOX = device("lockout_box", instrument(),
+            Spec.facing(PcProperties.LOCKS), FoundryBlock.with(dev.denfry.promptcritical.mod.ops.LockoutBoxBlockEntity::new));
+    public static final DeferredBlock<dev.denfry.promptcritical.mod.ops.MechanicalDisconnectBlock> MECHANICAL_DISCONNECT =
+            withItem(BLOCKS.registerBlock("mechanical_disconnect", dev.denfry.promptcritical.mod.ops.MechanicalDisconnectBlock::new, machine()));
     public static final DeferredBlock<PcDeviceBlock> HYDROTEST_PUMP = device("hydrotest_pump", machine(),
             Spec.facing(PcProperties.PUMPING), FoundryBlock.with(HydrotestPumpBlockEntity::new));
     public static final DeferredBlock<PcDeviceBlock> RECORDING_GAUGE = device("recording_gauge", instrument(),
@@ -874,6 +912,13 @@ public final class PcBlocks {
             Spec.facing(PcProperties.RUNNING).segments(PcProperties.GAS_TURBINE_SEGMENT,
                     Footprint.of(CUBE3, CUBE3.at(0, 0, 3), CUBE3.at(0, 0, 6))),
             FoundryBlock.with(dev.denfry.promptcritical.mod.powerhouse.GasTurbineBlockEntity::new));
+    /**
+     * Аварийный дизель-генератор 3×3×6 (07 §7.11): дизель спереди, генератор сзади; дизтопливо — трубой к любой части,
+     * кабель — к верху, бокам или торцу генератора, аккумулятор оперативного тока — вплотную к агрегату.
+     */
+    public static final DeferredBlock<PcDeviceBlock> DIESEL_GENERATOR = device("diesel_generator", machine(),
+            Spec.facing(PcProperties.RUNNING).segments(PcProperties.DIESEL_SEGMENT, Footprint.of(CUBE3, CUBE3.at(0, 0, 3))),
+            FoundryBlock.with(dev.denfry.promptcritical.mod.powerhouse.DieselGeneratorBlockEntity::new));
     /** Котёл-утилизатор ПГУ 3×6×3: газоход у выхлопа ГТУ, барабан сверху; пар — в котёл, которого он касается. */
     public static final DeferredBlock<PcDeviceBlock> HRSG = device("hrsg", machine(),
             Spec.facing(PcProperties.RUNNING).segments(PcProperties.HRSG_SEGMENT, Footprint.of(CUBE3, CUBE3.at(0, 3, 0))),

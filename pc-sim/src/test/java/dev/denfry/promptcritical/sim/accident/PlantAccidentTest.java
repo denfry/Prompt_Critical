@@ -108,6 +108,46 @@ class PlantAccidentTest {
         assertFalse(a.pctLimitExceeded(), "PCT " + a.peakCladK());
     }
 
+    /** CANDU and AM-1 large breaks (04c §4c.11.2): with accumulators and pumped ECCS the channels stay covered. */
+    @Test
+    void channelReactorLargeBreaksAreRefloodedByTheEccs() {
+        for (PlantAccident.Design d : new PlantAccident.Design[] {PlantAccident.CANDU_T3, PlantAccident.AM1_T1}) {
+            PlantAccident a = new PlantAccident(d);
+            a.setAccumulators(2);
+            a.setEccsTrains(2);
+            a.setBreakArea(d.largeBreakM2());
+            double t = 0;
+            while (t < 900) {
+                a.step(0.05, decayW(a, t), 0, 10e6);
+                t += 0.05;
+            }
+            assertTrue(a.pressurePa() < 0.5e6, d.id() + " blown down " + a.pressurePa());
+            assertTrue(a.coverage() > 0.99, d.id() + " reflooded " + a.coverage());
+            assertFalse(a.pctLimitExceeded(), d.id() + " PCT " + a.peakCladK());
+        }
+    }
+
+    /** The same breaks without injection uncover the core; the AM-1's steel cladding makes no hydrogen, CANDU's Zircaloy does. */
+    @Test
+    void channelReactorLargeBreaksWithoutAcDamageTheCore() {
+        for (PlantAccident.Design d : new PlantAccident.Design[] {PlantAccident.CANDU_T3, PlantAccident.AM1_T1}) {
+            PlantAccident a = new PlantAccident(d);
+            // the real AM-1 had no hydroaccumulators: without them and without AC the channels boil dry early
+            a.setAccumulators(d == PlantAccident.AM1_T1 ? 0 : 2);
+            a.setEccsTrains(2);
+            a.setAcPower(false);
+            a.setBreakArea(d.largeBreakM2());
+            // CANDU: 28 t of natural UO₂ for 100 MW — ten times the VVER's fuel per megawatt heats up slower
+            run(a, (d == PlantAccident.CANDU_T3 ? 8 : 3) * 3600, 0, 10e6);
+            assertTrue(a.coreUncovered(), d.id() + " uncovered");
+            // CANDU's slow heat-up still bursts its sheaths (≥ 800 °C). The steel-clad AM-1 has no Zr–steam exotherm:
+            // in the lumped model its uncovered core settles where steam cooling meets the decay heat, below burst
+            if (d == PlantAccident.CANDU_T3) assertTrue(a.peakCladK() > PlantAccident.BURST_K, d.id() + " PCT " + a.peakCladK());
+            if (d == PlantAccident.AM1_T1) assertEquals(0, a.hydrogenKg(), 1e-12, "steel cladding");
+            else assertTrue(a.hydrogenKg() > 0.1, "Zr-steam hydrogen " + a.hydrogenKg());
+        }
+    }
+
     /** Large break with the accumulators but no AC: once the tanks are empty the boil-off uncovers the core. */
     @Test
     void largeBreakWithoutAcDamagesTheCore() {

@@ -58,6 +58,7 @@ public final class PcProperties {
     public static final EnumProperty<ArcFurnaceSegment> ARC_FURNACE_SEGMENT = EnumProperty.create("segment", ArcFurnaceSegment.class);
     public static final EnumProperty<ReactorSegment> REACTOR_SEGMENT = EnumProperty.create("segment", ReactorSegment.class);
     public static final EnumProperty<HrsgSegment> HRSG_SEGMENT = EnumProperty.create("segment", HrsgSegment.class);
+    public static final EnumProperty<DieselSegment> DIESEL_SEGMENT = EnumProperty.create("segment", DieselSegment.class);
     public static final EnumProperty<PwrSegment> PWR_SEGMENT = EnumProperty.create("segment", PwrSegment.class);
     public static final EnumProperty<BwrSegment> BWR_SEGMENT = EnumProperty.create("segment", BwrSegment.class);
     public static final EnumProperty<CanduSegment> CANDU_SEGMENT = EnumProperty.create("segment", CanduSegment.class);
@@ -68,6 +69,8 @@ public final class PcProperties {
     public static final BooleanProperty BURST = BooleanProperty.create("burst");
     // эксплуатация (13 §13.6.5–13.6.7, этап 11 M3)
     public static final IntegerProperty SEVERITY = IntegerProperty.create("severity", 0, 3);
+    /** Замков на ящике блокировки LOTO (13 §13.16). */
+    public static final IntegerProperty LOCKS = IntegerProperty.create("locks", 0, 6);
     public static final BooleanProperty PUMPING = BooleanProperty.create("pumping");
     public static final BooleanProperty PAPER = BooleanProperty.create("paper");
     /** Горелка котла I1 газовая (иначе пылеугольная) — по топливу котла. */
@@ -139,6 +142,9 @@ public final class PcProperties {
 
     /** Котёл-утилизатор 3×6×3: нижний куб — газоход с поверхностями нагрева, верхний — барабан. */
     public enum HrsgSegment implements Named { DUCT, DRUM }
+
+    /** Аварийный ДГ 3×3×6: дизель спереди, генератор сзади. */
+    public enum DieselSegment implements Named { ENGINE, ALTERNATOR }
     /** Реакторная установка T2a: корпус с активной зоной и верхний блок с приводами СУЗ. */
     public enum PwrSegment implements Named { VESSEL, HEAD }
 

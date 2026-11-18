@@ -29,6 +29,8 @@ public final class PowerhouseBlockEntities {
             type("hydro_turbine", HydroTurbineBlockEntity::new, PcBlocks.HYDRO_TURBINE);
     public static final DeferredHolder<BlockEntityType<?>, BlockEntityType<GasTurbineBlockEntity>> GAS_TURBINE =
             type("gas_turbine", GasTurbineBlockEntity::new, PcBlocks.GAS_TURBINE);
+    public static final DeferredHolder<BlockEntityType<?>, BlockEntityType<DieselGeneratorBlockEntity>> DIESEL_GENERATOR =
+            type("diesel_generator", DieselGeneratorBlockEntity::new, PcBlocks.DIESEL_GENERATOR);
     public static final DeferredHolder<BlockEntityType<?>, BlockEntityType<HrsgBlockEntity>> HRSG =
             type("hrsg", HrsgBlockEntity::new, PcBlocks.HRSG);
     public static final DeferredHolder<BlockEntityType<?>, BlockEntityType<TurbineGearboxBlockEntity>> TURBINE_GEARBOX =

@@ -129,6 +129,7 @@ public final class ContaminationGameTests {
         h.startSequence()
                 .thenExecute(() -> {
                     UltrasonicBathBlockEntity b = h.getBlockEntity(at);
+                    b.setBenchPower(true);
                     ItemStack part = new ItemStack(Items.IRON_INGOT);
                     ContaminationData.set(part, dirty);
                     h.assertTrue(b.accepts(part) && !b.accepts(new ItemStack(Items.IRON_INGOT)), "only contaminated parts go in");

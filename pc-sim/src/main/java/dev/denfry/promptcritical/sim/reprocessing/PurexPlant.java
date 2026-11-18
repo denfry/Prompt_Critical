@@ -165,6 +165,9 @@ public final class PurexPlant {
             double a = e.getValue();
             switch (e.getKey()) {
                 case KR85 -> kr += a;
+                // плутоний уходит в продукт PuO₂ (его состав — в партии Pu), америций и кюрий — в рафинат и стекло
+                case PU238, PU241 -> {
+                }
                 case I131 -> {
                     double gas = a * IODINE_TO_OFFGAS;
                     iRel += iodineFilter ? gas / IODINE_FILTER_DF : gas;

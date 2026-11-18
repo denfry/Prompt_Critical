@@ -1,0 +1,38 @@
+{
+  "parent": "promptcritical:root",
+  "criteria": {
+    "licensed": {
+      "conditions": {
+        "event": "promptcritical:operator_license",
+        "predicate": {
+          "level": {
+            "min": 1.0
+          }
+        }
+      },
+      "trigger": "promptcritical:sim_event"
+    }
+  },
+  "display": {
+    "description": {
+      "translate": "advancements.promptcritical.operator_license.description"
+    },
+    "frame": "goal",
+    "icon": {
+      "count": 1,
+      "id": "promptcritical:operator_license"
+    },
+    "title": {
+      "translate": "advancements.promptcritical.operator_license.title"
+    }
+  },
+  "requirements": [
+    [
+      "licensed"
+    ]
+  ],
+  "rewards": {
+    "experience": 60
+  },
+  "sends_telemetry_event": true
+}

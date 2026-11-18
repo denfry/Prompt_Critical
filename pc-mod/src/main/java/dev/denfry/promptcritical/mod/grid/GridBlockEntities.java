@@ -17,6 +17,8 @@ public final class GridBlockEntities {
 
     public static final DeferredHolder<BlockEntityType<?>, BlockEntityType<ShaftGeneratorBlockEntity>> SHAFT_GENERATOR =
             type("shaft_generator", ShaftGeneratorBlockEntity::new, PcBlocks.SHAFT_GENERATOR);
+    public static final DeferredHolder<BlockEntityType<?>, BlockEntityType<GridDispatchCenterBlockEntity>> GRID_DISPATCH_CENTER =
+            type("grid_dispatch_center", GridDispatchCenterBlockEntity::new, PcBlocks.GRID_DISPATCH_CENTER);
     public static final DeferredHolder<BlockEntityType<?>, BlockEntityType<ElectricMotorBlockEntity>> ELECTRIC_MOTOR =
             type("electric_motor", ElectricMotorBlockEntity::new, PcBlocks.ELECTRIC_MOTOR);
     public static final DeferredHolder<BlockEntityType<?>, BlockEntityType<BreakerCellBlockEntity>> SWITCHGEAR_CELL =

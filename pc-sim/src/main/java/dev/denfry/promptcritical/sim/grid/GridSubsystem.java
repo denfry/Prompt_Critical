@@ -78,6 +78,13 @@ public final class GridSubsystem implements Subsystem, GridEventSink {
         return unit(id, GeneratorUnit.class, () -> new GeneratorUnit(id));
     }
 
+    /** Дизель-генератор §7.11: синхронная машина 750 об/мин со своим дизелем, {@code ratedVa} — её S_ном. */
+    public GeneratorUnit dieselGenerator(SimId id, double ratedVa) {
+        GeneratorUnit g = unit(id, GeneratorUnit.class, () -> new GeneratorUnit(id));
+        g.makeDiesel(ratedVa);
+        return g;
+    }
+
     public SwitchUnit switchUnit(SimId id, SwitchUnit.Kind kind) {
         GridUnit u = units.get(id);
         if (u instanceof SwitchUnit s && s.kind == kind) return s;
@@ -269,6 +276,72 @@ public final class GridSubsystem implements Subsystem, GridEventSink {
 
     BusId busOf(long node) {
         return buses.get(node);
+    }
+
+    /** Двигатели и потребители на острове узла {@code node} (по включённым ветвям, а не по напряжению). */
+    List<GridUnit> loadsOnIsland(long node) {
+        List<GridUnit> out = new ArrayList<>();
+        BusId at = ready() ? buses.get(node) : null;
+        if (at == null) return out;
+        int island = grid.islandOf(at);
+        for (GridUnit u : units.values()) {
+            if (!(u instanceof MotorUnit || u instanceof ConsumerUnit)) continue;
+            BusId b = buses.get(u.node(0));
+            if (b != null && grid.islandOf(b) == island) out.add(u);
+        }
+        return out;
+    }
+
+    // ================================================================ диспетчер (07 §7.6.6, pc_grid §7.17.4)
+
+    /** Шина для диспетчера: номер, подпись, класс напряжения, напряжение, угол, частота, остров. */
+    public record BusInfo(int id, String label, double kv, double voltageV, double angleRad, double frequencyHz, int island) {
+    }
+
+    /** Ветвь для диспетчера: концы, мощность и ток с конца from, замкнута ли. */
+    public record BranchInfo(int id, int from, int to, double powerW, double currentA, boolean closed) {
+    }
+
+    /** Острова сети (пусто, пока сеть не собрана). */
+    public java.util.List<IslandView> islandViews() {
+        java.util.List<IslandView> out = new ArrayList<>();
+        if (!ready()) return out;
+        for (int i = 0; i < grid.islandCount(); i++) out.add(grid.island(i));
+        return out;
+    }
+
+    public java.util.List<BusInfo> busInfos() {
+        java.util.List<BusInfo> out = new ArrayList<>();
+        if (!ready()) return out;
+        for (int i = 0; i < grid.busCount(); i++) {
+            BusId b = new BusId(i);
+            out.add(new BusInfo(i, grid.busLabel(b), grid.busVoltageV(b) / 1e3 / Math.max(1e-9, grid.busVoltagePu(b) > 0 ? grid.busVoltagePu(b) : 1),
+                    grid.busVoltageV(b), grid.busAngleRad(b), grid.busFrequencyHz(b), grid.islandOf(b)));
+        }
+        return out;
+    }
+
+    public java.util.List<BranchInfo> branchInfos() {
+        java.util.List<BranchInfo> out = new ArrayList<>();
+        if (!ready()) return out;
+        for (int i = 0; i < grid.branchCount(); i++) {
+            BranchId k = new BranchId(i);
+            BusId[] e = grid.branchEnds(k);
+            boolean c = grid.branchClosed(k);
+            out.add(new BranchInfo(i, e[0].index(), e[1].index(), c ? grid.branchPowerFromW(k) : 0, c ? grid.branchCurrentA(k) : 0, c));
+        }
+        return out;
+    }
+
+    /** Заявленная нагрузка потребителей сети, Вт (прогноз диспетчера; суточного графика нагрузки в мире пока нет). */
+    public double contractedLoadW() {
+        double w = 0;
+        for (GridUnit u : units.values()) if (u instanceof ConsumerUnit c && c.switchedOn()) w += c.demandW();
+        return w;
+    }
+
+    GridUnit unitById(SimId id) {
+        return units.get(id);
     }
 
     /** Линейное напряжение узла, В (0 — без источника или узла нет в сети). */

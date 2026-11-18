@@ -22,6 +22,8 @@ public final class IaeaCategory {
             case CS137 -> 0.1;
             case CS134 -> 0.04;
             case PU238 -> 0.06;
+            case AM241 -> 0.06;
+            case CM244 -> 0.05;
             // Sr-90 считается вместе с Y-90: D относится к паре, Y-90 отдельно не учитывается
             case SR90 -> 1;
             case I131 -> 0.2;

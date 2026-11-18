@@ -74,6 +74,7 @@ public final class WasteGameTests {
                 .thenIdle(45) // аппараты находятся при обходе раз в 40 тиков
                 .thenExecute(() -> {
                     LrwEvaporatorBlockEntity e = h.getBlockEntity(EVAP);
+                    e.setBenchPower(true);
                     int n = e.fluids(Direction.NORTH).fill(new FluidStack(PcFluids.LIQUID_RADIOACTIVE_WASTE.source.get(), 16_000),
                             IFluidHandler.FluidAction.EXECUTE);
                     h.assertTrue(n == 16_000, "LRW accepted: " + n);
@@ -111,6 +112,7 @@ public final class WasteGameTests {
                 .thenIdle(45)
                 .thenExecute(() -> {
                     LrwEvaporatorBlockEntity e = h.getBlockEntity(EVAP);
+                    e.setBenchPower(true);
                     // раствор после дезактивации поражённого контура: 10¹¹ Бк/л Cs-137
                     LrwEvaporator.Feed hot = new LrwEvaporator.Feed(5, Map.of(Emitter.CS137, 1e11), 303.15);
                     // четыре часа выпарки: ≈ 66 л куба, на стеклоблок нужно ≈ 33 л

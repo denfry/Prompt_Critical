@@ -1,5 +1,6 @@
 package dev.denfry.promptcritical.sim.grid;
 
+import dev.denfry.promptcritical.sim.combustion.DieselEngine;
 import dev.denfry.promptcritical.sim.core.SimId;
 import dev.denfry.promptcritical.sim.core.StateReader;
 import dev.denfry.promptcritical.sim.core.StateWriter;
@@ -13,6 +14,12 @@ import dev.denfry.promptcritical.sim.mechanics.ShaftInput;
  *
  * <p>Ниже 0,45 ω₀ машина выходит из сети (ЭДС нет, шина без источника), выше 0,5 ω₀ — входит; вне сети ротор
  * крутит эта же модель привода.
+ *
+ * <p>{@code diesel_generator} (§7.11) — та же машина с явнополюсным генератором 750 об/мин и своим первичным
+ * двигателем {@link DieselEngine} вместо вала Create. У него встроенный генераторный выключатель: агрегат в сети
+ * только при включённом выключателе. В режиме «автомат» потеря напряжения шины на 1 с — сигнал пуска (LOOP), а
+ * готовый агрегат сам включается на обесточенную шину (без синхронизации, §7.11.3). На шину под напряжением
+ * выключатель не включается — параллельная работа только через ячейку КРУ с синхронизацией.
  */
 public final class GeneratorUnit extends GridUnit {
     public static final double RATED_VA = 500e3, RATED_POWER_W = 400e3;
@@ -28,6 +35,16 @@ public final class GeneratorUnit extends GridUnit {
     static final double VREF_TRIM_PU = 0.003;
     /** H агрегата, с (табл. §7.3.1, без маховика Create). */
     static final double INERTIA_S = 0.6;
+    /** H дизель-генератора вместе с дизелем, с (§7.11.2). */
+    static final double DIESEL_INERTIA_S = 1.0;
+    /** Шина считается обесточенной ниже этого напряжения, о.е. */
+    public static final double DEAD_BUS_PU = 0.1;
+    /** Пуск ДГ по потере напряжения: ниже 0,7 о.е. дольше 1 с [моё: защита минимального напряжения 27]. */
+    static final double LOOP_PU = 0.7, LOOP_DELAY_S = 1.0;
+    /** Скорость готового агрегата — в пределах ±2 % (IEEE 387, §7.11.4). */
+    static final double READY_SPEED_BAND = 0.02;
+    /** Интервал ступеней секвенсора, с (§7.11.4). */
+    public static final double SEQUENCE_STEP_S = 5;
     public static final int[] GEARS = {16, 32, 64, 128, 256};
     /** Подстройка мультипликатора (вариатор), ‰: ±50 с шагом 1 [моё]. */
     public static final int TRIM_LIMIT = 50;
@@ -37,6 +54,14 @@ public final class GeneratorUnit extends GridUnit {
     int gear = 2, trimPermil;
     boolean exciter, fieldOn, pinInstalled;
     double vrefPu = 1.0;
+
+    /** Первичный двигатель ДГ; {@code null} — привод от вала Create. */
+    DieselEngine diesel;
+    double dieselVa;
+    boolean breakerClosed, autoStart, sequencer;
+    double undervoltageS, stepS;
+    /** Потребители, снятые секвенсором и ещё не включённые обратно, — по порядку ступеней. */
+    long[] pending = new long[0];
 
     MachineId machine;
     SynchronousMachine model;
@@ -53,6 +78,122 @@ public final class GeneratorUnit extends GridUnit {
 
     GeneratorUnit(SimId id) {
         super(id, 1);
+    }
+
+    /** Сделать машину дизель-генератором мощностью {@code ratedVa} (один раз, до первой сборки). */
+    void makeDiesel(double ratedVa) {
+        if (diesel != null) return;
+        dieselVa = ratedVa;
+        diesel = new DieselEngine(ratedVa, id.raw());
+        exciter = true; // возбуждение агрегата встроенное, начальное — от АКБ (§7.11.5)
+    }
+
+    /** Номинальная полная мощность машины, В·А. */
+    public double ratedVa() {
+        return diesel != null ? dieselVa : RATED_VA;
+    }
+
+    private double inertiaS() {
+        return diesel != null ? DIESEL_INERTIA_S : INERTIA_S;
+    }
+
+    // --- дизель-генератор ---
+
+    /** Двигатель ДГ; {@code null} у генератора на валу Create. */
+    public DieselEngine diesel() {
+        return diesel;
+    }
+
+    public boolean breakerClosed() {
+        return breakerClosed;
+    }
+
+    public boolean autoStart() {
+        return autoStart;
+    }
+
+    /** Ключ режима ДГ: «автомат» — пуск по потере напряжения шины и включение на обесточенную шину. */
+    public void setAutoStart(boolean auto) {
+        autoStart = auto;
+        undervoltageS = 0;
+    }
+
+    /** Напряжение шины выводов, о.е. (0 — шины нет или она без источника). */
+    public double busVoltagePu() {
+        return owner == null ? 0 : owner.voltageV(node(0)) / voltageClass.volts;
+    }
+
+    /** Агрегат готов принять нагрузку: на топливе, скорость и возбуждение в допуске (§7.11.3). */
+    public boolean dieselReady() {
+        return diesel != null && diesel.status() == DieselEngine.Status.RUNNING
+                && Math.abs(speedPu() - 1) <= READY_SPEED_BAND && fieldOn;
+    }
+
+    /**
+     * Включить генераторный выключатель вручную: только готовый агрегат и только на обесточенную шину.
+     *
+     * @return выключатель включён
+     */
+    public boolean closeBreaker() {
+        if (!dieselReady() || busVoltagePu() > DEAD_BUS_PU) return false;
+        breakerClosed = true;
+        return true;
+    }
+
+    public void openBreaker() {
+        breakerClosed = false;
+    }
+
+    public boolean sequencerInstalled() {
+        return sequencer;
+    }
+
+    /** Секвенсор нагрузки {@code load_sequencer} (§7.11.4) в шкафу агрегата. */
+    public void setSequencer(boolean installed) {
+        sequencer = installed;
+        if (!installed) pending = new long[0];
+    }
+
+    /** Ступеней секвенсора, ещё не включённых. */
+    public int pendingSteps() {
+        return pending.length;
+    }
+
+    /**
+     * Секвенсор перед включением на обесточенную шину снимает двигатели и потребители острова; потом включает их по
+     * одному через {@link #SEQUENCE_STEP_S} — сначала самые мощные (насосы безопасности).
+     */
+    private void stripLoads() {
+        java.util.List<GridUnit> loads = owner.loadsOnIsland(node(0));
+        loads.removeIf(u -> u instanceof MotorUnit m ? !m.contactorClosed() : !((ConsumerUnit) u).switchedOn());
+        loads.sort(java.util.Comparator.comparingDouble(GeneratorUnit::stepPowerW).reversed());
+        pending = new long[loads.size()];
+        for (int i = 0; i < pending.length; i++) {
+            GridUnit u = loads.get(i);
+            pending[i] = u.id.raw();
+            if (u instanceof MotorUnit m) m.setContactor(false);
+            else ((ConsumerUnit) u).setSwitchedOn(false);
+        }
+        stepS = 0;
+    }
+
+    private static double stepPowerW(GridUnit u) {
+        return u instanceof MotorUnit m ? m.ratedPowerW() : ((ConsumerUnit) u).demandW();
+    }
+
+    private void sequence(double dt) {
+        if (pending.length == 0) return;
+        if (!online()) {
+            pending = new long[0]; // агрегат отключился: секвенсор сброшен, включение — оператором
+            return;
+        }
+        stepS += dt;
+        if (stepS < SEQUENCE_STEP_S) return;
+        stepS = 0;
+        GridUnit u = owner.unitById(new SimId(pending[0]));
+        pending = java.util.Arrays.copyOfRange(pending, 1, pending.length);
+        if (u instanceof MotorUnit m) m.setContactor(true);
+        else if (u instanceof ConsumerUnit c) c.setSwitchedOn(true);
     }
 
     @Override
@@ -203,6 +344,7 @@ public final class GeneratorUnit extends GridUnit {
 
     /** Момент обгонной муфты привода при скорости ω, о.е. на S_ном. */
     double driveTorque(double w) {
+        if (diesel != null) return diesel.torquePu(w);
         return Math.max(0, Math.min(DRIVE_MAX_TORQUE, DRIVE_STIFFNESS * (commandSpeed() - w)));
     }
 
@@ -213,8 +355,8 @@ public final class GeneratorUnit extends GridUnit {
     double shaftPower(double w) {
         double ws = Math.max(0, w);
         double t = driveTorque(ws);
-        shaftPowerW = t * ws * RATED_VA;
-        return (t - friction(ws)) * ws * RATED_VA;
+        shaftPowerW = t * ws * ratedVa();
+        return (t - friction(ws)) * ws * ratedVa();
     }
 
     private static double friction(double w) {
@@ -223,6 +365,12 @@ public final class GeneratorUnit extends GridUnit {
 
     /** Ротор вне сети: полунеявный шаг привода (жёсткий член K_c), трение тормозит до нуля. */
     void stepOffline(double dt) {
+        if (diesel != null) {
+            double w = speedPu, t = diesel.torquePu(w);
+            speedPu = Math.max(0, w + dt * (t - friction(w)) / (2 * inertiaS()));
+            shaftPowerW = t * speedPu * ratedVa();
+            return;
+        }
         double h2 = 2 * INERTIA_S;
         double w = speedPu, cmd = commandSpeed();
         double fr = friction(w);
@@ -231,7 +379,7 @@ public final class GeneratorUnit extends GridUnit {
         if (t > DRIVE_MAX_TORQUE) wi = w + dt * (DRIVE_MAX_TORQUE - fr) / h2;
         else if (t < 0) wi = Math.max(0, w - dt * fr / h2);
         speedPu = Math.max(0, wi);
-        shaftPowerW = driveTorque(speedPu) * speedPu * RATED_VA;
+        shaftPowerW = driveTorque(speedPu) * speedPu * ratedVa();
     }
 
     // --- сборка ---
@@ -239,15 +387,17 @@ public final class GeneratorUnit extends GridUnit {
     @Override
     void build(GridSubsystem.Build b) {
         if (node(0) == NO_NODE) return;
-        MachineParams p = MachineParams.shaftGenerator(RATED_VA, voltageClass.volts);
-        model = new SynchronousMachine(p, ExciterSpec.rotating(), new PrimeMover.CreateShaft(1, RATED_POWER_W));
+        MachineParams p = diesel != null ? MachineParams.dieselGenerator(dieselVa, voltageClass.volts)
+                : MachineParams.shaftGenerator(RATED_VA, voltageClass.volts);
+        double ratedW = diesel != null ? DieselEngine.RATED_TORQUE_PU * dieselVa : RATED_POWER_W;
+        model = new SynchronousMachine(p, ExciterSpec.rotating(), new PrimeMover.CreateShaft(1, ratedW));
         machine = b.grid.addMachine(model, b.bus(node(0)));
         b.machine(machine, this);
         double[] s = carried != null ? carried : coldState();
         b.grid.importMachine(machine, s);
         if (pinInstalled) model.setShearPinCoupling(true);
         speedPu = s[1];
-        boolean on = speedPu >= ONLINE_SPEED;
+        boolean on = speedPu >= ONLINE_SPEED && (diesel == null || breakerClosed);
         if (!on) b.grid.setMachineOnline(machine, false);
         appliedField = s[15] != ExcitationMode.MANUAL.ordinal();
         appliedVref = carried != null ? vrefPu : Double.NaN;
@@ -278,11 +428,23 @@ public final class GeneratorUnit extends GridUnit {
     /** Перед тиком сети: выход в сеть и из неё по скорости, возбуждение по уставкам. */
     void beforeTick(PowerGrid g, double dt, long tick) {
         this.tick = tick;
+        if (diesel != null) dieselLogic(dt);
         if (machine == null) {
             stepOffline(dt);
             return;
         }
-        if (g.machineOnline(machine)) {
+        if (diesel != null) {
+            if (g.machineOnline(machine)) {
+                if (!breakerClosed || model.speedPu() < OFFLINE_SPEED) {
+                    speedPu = model.speedPu();
+                    g.setMachineOnline(machine, false);
+                }
+            } else {
+                stepOffline(dt);
+                g.setMachineSpeed(machine, speedPu);
+                if (breakerClosed && speedPu >= ONLINE_SPEED) g.setMachineOnline(machine, true);
+            }
+        } else if (g.machineOnline(machine)) {
             if (model.speedPu() < OFFLINE_SPEED) {
                 speedPu = model.speedPu();
                 g.setMachineOnline(machine, false);
@@ -308,7 +470,30 @@ public final class GeneratorUnit extends GridUnit {
             model.setVoltageReference(vrefPu); // уставка с поправкой на нынешнее E_fd снимает статизм АРВ
             appliedVref = vrefPu;
         }
-        if (!g.machineOnline(machine)) shaftPowerW = driveTorque(speedPu) * speedPu * RATED_VA;
+        if (!g.machineOnline(machine)) shaftPowerW = driveTorque(speedPu) * speedPu * ratedVa();
+    }
+
+    /**
+     * Автоматика ДГ раз в тик: шаг двигателя, возбуждение по скорости, пуск по LOOP, включение на обесточенную
+     * шину, отключение выключателя при останове двигателя (обратная мощность, 32R).
+     */
+    private void dieselLogic(double dt) {
+        double w = speedPu();
+        diesel.step(dt, w);
+        fieldOn = diesel.fired() && w >= DieselEngine.RUN_SPEED;
+        if (!diesel.fired()) breakerClosed = false;
+        if (sequencer) sequence(dt);
+        if (!autoStart || breakerClosed) {
+            undervoltageS = 0;
+            return;
+        }
+        double v = busVoltagePu();
+        undervoltageS = v < LOOP_PU ? undervoltageS + dt : 0;
+        if (undervoltageS >= LOOP_DELAY_S && diesel.status() == DieselEngine.Status.STANDBY) diesel.start();
+        if (dieselReady() && v <= DEAD_BUS_PU) {
+            if (sequencer) stripLoads();
+            breakerClosed = true;
+        }
     }
 
     // --- сохранение ---
@@ -325,6 +510,19 @@ public final class GeneratorUnit extends GridUnit {
         out.putDouble("vref", vrefPu);
         out.putDouble("speed", speedPu);
         if (carried != null) out.putDoubles("machine", carried, carried.length);
+        out.putBoolean("is_diesel", diesel != null);
+        if (diesel != null) {
+            out.beginObject("diesel");
+            out.putDouble("va", dieselVa);
+            out.putBoolean("breaker", breakerClosed);
+            out.putBoolean("auto", autoStart);
+            out.putDouble("uv", undervoltageS);
+            out.putBoolean("sequencer", sequencer);
+            out.putDouble("step", stepS);
+            out.putLongs("pending", pending, pending.length);
+            diesel.save(out);
+            out.endObject();
+        }
     }
 
     @Override
@@ -339,6 +537,18 @@ public final class GeneratorUnit extends GridUnit {
         vrefPu = in.getDouble("vref");
         speedPu = in.getDouble("speed");
         carried = in.has("machine") ? in.getDoubles("machine") : null;
+        if (in.optInt("is_diesel", 0) != 0) {
+            in.beginObject("diesel");
+            makeDiesel(in.getDouble("va"));
+            breakerClosed = in.getBoolean("breaker");
+            autoStart = in.getBoolean("auto");
+            undervoltageS = in.getDouble("uv");
+            sequencer = in.getBoolean("sequencer");
+            stepS = in.getDouble("step");
+            pending = in.getLongs("pending");
+            diesel.load(in);
+            in.endObject();
+        }
         // сохранение до двухосной модели — 17 чисел без E'_d; E'_d = 0, машина наберёт его за T'_q0
         if (carried != null && carried.length == PowerGrid.MACHINE_STATE - 1)
             carried = java.util.Arrays.copyOf(carried, PowerGrid.MACHINE_STATE);

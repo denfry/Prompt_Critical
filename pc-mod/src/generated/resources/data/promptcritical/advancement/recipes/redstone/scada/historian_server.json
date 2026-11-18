@@ -1,0 +1,32 @@
+{
+  "parent": "minecraft:recipes/root",
+  "criteria": {
+    "has_memory_chip": {
+      "conditions": {
+        "items": [
+          {
+            "items": "promptcritical:memory_chip"
+          }
+        ]
+      },
+      "trigger": "minecraft:inventory_changed"
+    },
+    "has_the_recipe": {
+      "conditions": {
+        "recipe": "promptcritical:scada/historian_server"
+      },
+      "trigger": "minecraft:recipe_unlocked"
+    }
+  },
+  "requirements": [
+    [
+      "has_the_recipe",
+      "has_memory_chip"
+    ]
+  ],
+  "rewards": {
+    "recipes": [
+      "promptcritical:scada/historian_server"
+    ]
+  }
+}

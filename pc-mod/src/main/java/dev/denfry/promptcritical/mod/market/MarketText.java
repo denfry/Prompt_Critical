@@ -13,6 +13,12 @@ public final class MarketText {
 
     static {
         put("balance", "Account %s CR · sold today %s CR", "Счёт %s CR · продано за сутки %s CR");
+        put("period_report", "Week closed: %s t CO2e emitted, %s t allowances held · fine %s CR, pollution fees %s CR, contracts %s CR",
+                "Неделя закрыта: выброс %s т CO2-экв., квот на счёте %s т · штраф %s CR, платы за загрязнение %s CR, договоры %s CR");
+        put("contract_signed", "Supply contract: %s units a week of %s at %s CR, deposit %s CR",
+                "Договор поставки: %s ед. в неделю (%s) по %s CR, депозит %s CR");
+        put("contract_refused", "No contract: put goods in the slot, keep the 20 %% deposit on the account, one contract per product",
+                "Договор не подписан: положите товар в слот, держите на счёте депозит 20 %%, один договор на товар");
     }
 
     private MarketText() {

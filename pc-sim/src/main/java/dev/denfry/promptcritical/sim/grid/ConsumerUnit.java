@@ -12,6 +12,8 @@ public final class ConsumerUnit extends GridUnit {
     public static final int[] POWER_KW = {50, 100, 200, 300, 500, 1000, 2000};
 
     int power = 2;
+    /** Мощность, заданная машиной (печь, выпарной аппарат), Вт; NaN — ступень игрока из {@link #POWER_KW}. */
+    double machineW = Double.NaN;
     boolean switchedOn = true;
     LoadId load;
     /** Нагрузка была отключена автоматикой (АЧР, 27) и ещё не вернулась. */
@@ -28,7 +30,18 @@ public final class ConsumerUnit extends GridUnit {
     }
 
     public double demandW() {
-        return POWER_KW[power] * 1e3;
+        return Double.isNaN(machineW) ? POWER_KW[power] * 1e3 : machineW;
+    }
+
+    /**
+     * Нагрузка машины: потребитель — это её сетевой ввод, мощность меняется по ходу работы без пересборки сети
+     * (ниже 1 % изменения — не трогаем).
+     */
+    public void setDemandW(double w) {
+        double v = Math.max(0, w);
+        if (!Double.isNaN(machineW) && Math.abs(v - machineW) <= 0.01 * Math.max(machineW, 1)) return;
+        machineW = v;
+        if (load != null && owner.ready()) owner.grid().setLoadPowerW(load, v);
     }
 
     public void cycleDemand() {
@@ -95,6 +108,7 @@ public final class ConsumerUnit extends GridUnit {
         out.putBoolean("on", switchedOn);
         out.putBoolean("shed", shed);
         out.putInt("shed_count", shedCount);
+        if (!Double.isNaN(machineW)) out.putDouble("machine_w", machineW);
     }
 
     @Override
@@ -104,5 +118,6 @@ public final class ConsumerUnit extends GridUnit {
         switchedOn = in.getBoolean("on");
         shed = in.getBoolean("shed");
         shedCount = in.optInt("shed_count", 0);
+        machineW = in.optDouble("machine_w", Double.NaN);
     }
 }

@@ -91,6 +91,7 @@ public final class FuelFabricationGameTests {
                     p.setDesign(FuelDesign.VVER_1000);
                     p.setRunning(true);
                     ((SinteringFurnaceBlockEntity) h.getBlockEntity(FURNACE)).setRunning(true);
+                    ((SinteringFurnaceBlockEntity) h.getBlockEntity(FURNACE)).setBenchPower(true);
                 })
                 .thenWaitUntil(() -> {
                     SinteringFurnaceBlockEntity f = h.getBlockEntity(FURNACE);

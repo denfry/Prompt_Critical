@@ -15,11 +15,15 @@ public final class CcIntegration {
     }
 
     private static void capabilities(RegisterCapabilitiesEvent event) {
+        event.registerBlockEntity(PeripheralCapability.get(), ScadaBlockEntities.HISTORIAN.get(), (be, side) -> new HistorianPeripheral(be));
+        event.registerBlockEntity(PeripheralCapability.get(), ScadaBlockEntities.TWIN_WORKSTATION.get(), (be, side) -> new TwinPeripheral(be));
         event.registerBlockEntity(PeripheralCapability.get(), ScadaBlockEntities.TELEMETRY_GATEWAY.get(),
                 (be, side) -> new RtuPeripheral(be));
         event.registerBlockEntity(PeripheralCapability.get(),
                 dev.denfry.promptcritical.mod.market.MarketBlockEntities.MARKET_TERMINAL.get(),
                 (be, side) -> new MarketPeripheral(be));
+        event.registerBlockEntity(PeripheralCapability.get(), dev.denfry.promptcritical.mod.grid.GridBlockEntities.GRID_DISPATCH_CENTER.get(),
+                (be, side) -> new GridPeripheral(be));
         event.registerBlockEntity(PeripheralCapability.get(), dev.denfry.promptcritical.mod.mes.MesBlockEntities.MES_SERVER.get(),
                 (be, side) -> new MesPeripheral(be));
     }

@@ -57,6 +57,8 @@ public final class PcClient {
 
     private static void renderers(EntityRenderersEvent.RegisterRenderers event) {
         event.registerBlockEntityRenderer(ContentRegistries.WALL_CLOCK.get(), WallClockRenderer::new);
+        event.registerBlockEntityRenderer(dev.denfry.promptcritical.mod.ops.OpsBlockEntities.MECHANICAL_DISCONNECT.get(),
+                dev.denfry.promptcritical.mod.ops.client.MechanicalDisconnectRenderer::new);
     }
 
     private static void registerClientExtensions(RegisterClientExtensionsEvent event) {

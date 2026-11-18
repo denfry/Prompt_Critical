@@ -129,6 +129,7 @@ public final class PcLanguageProvider extends LanguageProvider {
         b("instrument_pressure", "Pressure Gauge", "Манометр");
         // электросеть I1 (07 §7.22)
         b("shaft_generator", "Shaft Generator", "Генератор на валу");
+        b("grid_dispatch_center", "Grid Dispatch Center", "Пульт диспетчера энергосистемы");
         b("generator_exciter", "Generator Exciter", "Возбудитель генератора");
         b("instrument_synchroscope", "Synchroscope", "Синхроноскоп");
         b("electric_motor", "Electric Motor", "Электродвигатель");
@@ -298,6 +299,7 @@ public final class PcLanguageProvider extends LanguageProvider {
         i("methanometer", "Methanometer", "Метанометр");
         i("engineering_handbook", "Engineering Handbook", "Справочник инженера");
         i("operating_procedure", "Operating Procedure", "Инструкция по эксплуатации");
+        i("operator_license", "Operator License", "Удостоверение оператора");
         i("shift_log", "Shift Log", "Оперативный журнал");
         i("work_permit", "Work Permit Form", "Бланк наряда-допуска");
         i("geological_map", "Geological Map", "Геологическая карта");
@@ -325,6 +327,11 @@ public final class PcLanguageProvider extends LanguageProvider {
         b("low_temperature_separator", "Low-Temperature Separation Unit", "Установка НТС");
         b("ngl_fractionator", "NGL Fractionation Unit", "Газофракционирующая установка");
         b("rtu_station", "Telemetry Gateway (RTU)", "Шлюз телемеханики (КП)");
+        b("historian_server", "Historian Server", "Сервер историана");
+        b("simulation_workstation", "Simulation Workstation", "Инженерная станция");
+        b("training_simulator", "Training Simulator", "Шкаф тренажёра");
+        b("simulator_console", "Simulator Console", "Пульт тренажёра");
+        b("instructor_station", "Instructor Station", "Место инструктора");
         b("mes_server", "Plant Server (MES)", "Сервер завода (MES)");
         b("pyrolysis_furnace", "Pyrolysis Furnace", "Печь пиролиза");
         b("cracked_gas_unit", "Cracked Gas Separation Unit", "Установка газоразделения пирогаза");
@@ -436,6 +443,18 @@ public final class PcLanguageProvider extends LanguageProvider {
         i("seismic_section", "Seismic Section", "Сейсмический разрез");
         i("copper_wire", "Copper Wire", "Медная проволока");
         i("generator_coupling", "Shear-Pin Coupling", "Муфта со срезным штифтом");
+        i("jacket_heater", "Jacket Water Heater", "Подогреватель рубашки");
+        i("lockout_padlock", "Lockout Padlock", "Замок блокировки");
+        i("am241_oxide", "Americium-241 Oxide", "Оксид америция-241");
+        i("fire_extinguisher", "Powder Fire Extinguisher (ABCE)", "Огнетушитель порошковый (ABCE)");
+        i("fire_extinguisher_water", "Water Fire Extinguisher", "Огнетушитель водный");
+        i("fire_extinguisher_foam", "Foam Fire Extinguisher", "Огнетушитель пенный");
+        i("fire_extinguisher_co2", "CO₂ Fire Extinguisher", "Огнетушитель углекислотный");
+        i("fire_extinguisher_metal", "Metal Fire Extinguisher (D)", "Огнетушитель для металлов (D)");
+        i("lockout_tag", "Lockout Tag", "Бирка «Не включать!»");
+        i("lockout_hasp", "Lockout Hasp", "Многозамковая накладка");
+        i("voltage_tester", "Voltage Tester", "Указатель напряжения");
+        i("load_sequencer", "Load Sequencer", "Секвенсор нагрузки");
         i("lv_fuse", "LV Fuse Link", "Плавкая вставка");
         i("interlock_module", "Interlock Module", "Модуль блокировки");
         i("insulator_pin", "Pin Insulator", "Штыревой изолятор");
@@ -507,6 +526,19 @@ public final class PcLanguageProvider extends LanguageProvider {
         b("wind_turbine", "Wind Power Unit D-30", "Ветроэлектростанция Д-30");
         b("dam_gate", "Dam Intake Gate", "Затвор водозабора");
         b("gas_turbine", "Gas Turbine Unit", "Газотурбинная установка");
+        b("diesel_generator", "Emergency Diesel Generator", "Аварийный дизель-генератор");
+        b("line_blind", "Line Blind", "Поворотная заглушка");
+        b("smoke_detector", "Smoke Detector", "Дымовой извещатель");
+        b("heat_detector", "Heat Detector", "Тепловой извещатель");
+        b("flame_detector", "Flame Detector", "Извещатель пламени");
+        b("manual_call_point", "Manual Call Point", "Ручной пожарный извещатель");
+        b("fire_alarm_panel", "Fire Alarm Panel", "Прибор приёмно-контрольный пожарный");
+        b("sprinkler_head", "Sprinkler Head", "Спринклерный ороситель");
+        b("deluge_nozzle", "Deluge Nozzle", "Дренчерный ороситель");
+        b("gas_suppression_cylinder", "Gas Suppression Cylinder", "Модуль газового пожаротушения");
+        b("fire_monitor", "Fire Monitor", "Лафетный ствол");
+        b("lockout_box", "Lockout Box", "Ящик групповой блокировки");
+        b("mechanical_disconnect", "Mechanical Disconnect", "Расцепная муфта");
         b("hrsg", "Heat Recovery Steam Generator", "Котёл-утилизатор");
         b("turbine_gearbox", "Turbine Gearbox", "Редуктор турбины");
         b("condenser", "Steam Condenser", "Конденсатор");
@@ -722,6 +754,8 @@ public final class PcLanguageProvider extends LanguageProvider {
         MISC.putAll(dev.denfry.promptcritical.mod.ironworks.IronworksText.LANG);
         MISC.putAll(dev.denfry.promptcritical.mod.steelworks.SteelworksText.LANG);
         MISC.putAll(dev.denfry.promptcritical.mod.ops.OpsText.LANG);
+        MISC.putAll(dev.denfry.promptcritical.mod.ops.LockoutText.LANG);
+        MISC.putAll(dev.denfry.promptcritical.mod.ops.OpsFireText.LANG);
         MISC.putAll(dev.denfry.promptcritical.mod.powerhouse.PowerhouseText.LANG);
         MISC.putAll(dev.denfry.promptcritical.mod.grid.GridText.LANG);
         MISC.putAll(dev.denfry.promptcritical.mod.automation.AutomationText.LANG);

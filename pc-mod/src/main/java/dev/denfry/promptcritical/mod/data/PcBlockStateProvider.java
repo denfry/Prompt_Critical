@@ -48,6 +48,10 @@ public final class PcBlockStateProvider extends BlockStateProvider {
                 cable(cable, id);
                 continue;
             }
+            if (block instanceof dev.denfry.promptcritical.mod.ops.MechanicalDisconnectBlock) {
+                mechanicalDisconnect(block, id);
+                continue;
+            }
             if (block instanceof GasMainBlock) {
                 gasMain(block, id);
                 continue;
@@ -71,6 +75,19 @@ public final class PcBlockStateProvider extends BlockStateProvider {
         // жидкость рисует рендер жидкостей; модели нужна только частица
         simpleBlock(PcBlocks.MINE_WATER.get(), models().getBuilder("mine_water").texture("particle", modLoc("block/fluid/mine_water_still")));
         simpleBlock(PcBlocks.HEAVY_WATER.get(), models().getBuilder("heavy_water").texture("particle", modLoc("block/fluid/heavy_water_still")));
+    }
+
+    /** Расцепная муфта: модель вдоль Z; ось X — поворот на 90° вокруг Y, ось Y — на 90° вокруг X. */
+    private void mechanicalDisconnect(Block block, String id) {
+        getVariantBuilder(block).forAllStates(state -> {
+            String model = state.getValue(dev.denfry.promptcritical.mod.ops.MechanicalDisconnectBlock.LOCKED) ? id + "_locked"
+                    : state.getValue(dev.denfry.promptcritical.mod.ops.MechanicalDisconnectBlock.POWERED) ? id + "_disengaged" : id;
+            var axis = state.getValue(net.minecraft.world.level.block.state.properties.BlockStateProperties.AXIS);
+            return ConfiguredModel.builder().modelFile(existing(model))
+                    .rotationX(axis == net.minecraft.core.Direction.Axis.Y ? 90 : 0)
+                    .rotationY(axis == net.minecraft.core.Direction.Axis.X ? 90 : 0).build();
+        });
+        itemModel(id, block);
     }
 
     /** Плита, ступени и стенка по ванильным шаблонам из текстуры базового блока декора. */
@@ -305,6 +322,8 @@ public final class PcBlockStateProvider extends BlockStateProvider {
             case "disconnector" -> s.getValue(PcProperties.EARTHED) ? id + "_earthed" : id;
             case "dam_gate" -> s.getValue(BlockStateProperties.OPEN) ? id : id + "_closed";
             case "cooling_tower_cell" -> s.getValue(PcProperties.ICED) ? id + "_iced" : id;
+            case "diesel_generator" -> s.getValue(PcProperties.DIESEL_SEGMENT) == PcProperties.DieselSegment.ALTERNATOR
+                    ? "diesel_generator_alternator" : id;
             case "hrsg" -> s.getValue(PcProperties.HRSG_SEGMENT) == PcProperties.HrsgSegment.DRUM ? "hrsg_top" : "hrsg";
             case "gas_turbine" -> switch (s.getValue(PcProperties.GAS_TURBINE_SEGMENT)) {
                 case COMPRESSOR -> id;
@@ -372,6 +391,22 @@ public final class PcBlockStateProvider extends BlockStateProvider {
             case "quench_tank" -> s.getValue(PcProperties.QUENCH_MEDIUM) == PcProperties.QuenchMedium.OIL ? id + "_oil" : id;
             case "cryogenic_tank" -> s.getValue(PcProperties.CRYO_KIND) == PcProperties.CryoKind.VAPORIZER ? id + "_vaporizer" : id;
             // эксплуатация и водоподготовка (этап 11а M3)
+            case "smoke_detector", "heat_detector", "flame_detector" -> s.getValue(PcProperties.ALARM) ? id + "_alarm" : id;
+            case "manual_call_point" -> s.getValue(PcProperties.ALARM) ? id + "_pressed" : id;
+            case "sprinkler_head" -> s.getValue(PcProperties.ALARM) ? id + "_burst" : id;
+            case "gas_suppression_cylinder" -> s.getValue(PcProperties.ALARM) ? id + "_discharged" : id;
+            case "fire_alarm_panel" -> s.getValue(PcProperties.ALARM) ? id + "_fire"
+                    : s.getValue(BlockStateProperties.POWERED) ? id + "_fault" : id;
+            case "historian_server" -> s.getValue(BlockStateProperties.LIT) ? id + "_busy" : id;
+            case "training_simulator" -> s.getValue(PcProperties.RUNNING) ? id + "_running" : id;
+            case "simulator_console", "instructor_station" -> s.getValue(BlockStateProperties.LIT) ? id + "_active" : id;
+            case "grid_dispatch_center" -> s.getValue(PcProperties.ALARM) ? id + "_alarm" : id;
+            case "lockout_box" -> switch (s.getValue(PcProperties.LOCKS)) {
+                case 0 -> id;
+                case 1, 2 -> id + "_locks1";
+                case 3, 4, 5 -> id + "_locks3";
+                default -> id + "_locks6";
+            };
             case "maintenance_panel" -> s.getValue(PcProperties.SEVERITY) == 0 ? id : id + "_severity" + s.getValue(PcProperties.SEVERITY);
             case "recording_gauge" -> s.getValue(PcProperties.PAPER) ? id : id + "_empty";
             case "sand_filter" -> s.getValue(PcProperties.ALARM) ? id + "_backwash" : id;

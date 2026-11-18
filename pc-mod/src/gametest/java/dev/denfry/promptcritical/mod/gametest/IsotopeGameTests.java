@@ -117,6 +117,35 @@ public final class IsotopeGameTests {
                 .thenSucceed();
     }
 
+    /**
+     * Одиночный «Бета-М» и светильник НПП 60 Вт: без буферного аккумулятора огонь не горит, с заряженным — горит,
+     * пока аккумулятор покрывает недостаток (12 §12.5.1, маячный огонь через аккумулятор).
+     */
+    @GameTest(template = SMALL, timeoutTicks = 300)
+    public static void singleBetaMLightsALampFromItsBufferBattery(GameTestHelper h) {
+        h.setBlock(RTG, PcBlocks.RTG_THERMOELECTRIC.get());
+        h.setBlock(LAMP, PcBlocks.LAMP_BULKHEAD.get());
+        ItemStack src = new ItemStack(PcItems.SR90_HEAT_SOURCE.get());
+        src.set(ActivityData.ACTIVITY.get(), new ActivityData(0, 0.75, 5.1, Map.of(Emitter.SR90.name(), 1.27e15, Emitter.Y90.name(), 1.27e15)));
+        h.startSequence()
+                .thenIdle(2)
+                .thenExecute(() -> ((RtgBlockEntity) h.getBlockEntity(RTG)).panelItems().setStackInSlot(0, src))
+                .thenWaitUntil(() -> {
+                    RtgBlockEntity r = h.getBlockEntity(RTG);
+                    h.assertTrue(r.electricW() > 5 && r.electricW() < 60, "a single Beta-M: " + r.electricW());
+                })
+                .thenExecute(() -> ((RtgBlockEntity) h.getBlockEntity(RTG)).setStoredJ(0))
+                .thenIdle(60)
+                .thenExecute(() -> h.assertBlockProperty(LAMP, BlockStateProperties.LIT, false))
+                .thenExecute(() -> ((RtgBlockEntity) h.getBlockEntity(RTG)).setStoredJ(RtgBlockEntity.BUFFER_J))
+                .thenWaitUntil(() -> h.assertBlockProperty(LAMP, BlockStateProperties.LIT, true))
+                .thenExecute(() -> {
+                    RtgBlockEntity r = h.getBlockEntity(RTG);
+                    h.assertTrue(r.storedJ() < RtgBlockEntity.BUFFER_J, "the lamp draws on the buffer");
+                })
+                .thenSucceed();
+    }
+
     /** Доступ к рецепту изотопных операций без верстака. */
     private static final class IsotopeCraftRecipeAccess {
         static ItemStack result(List<ItemStack> items) {

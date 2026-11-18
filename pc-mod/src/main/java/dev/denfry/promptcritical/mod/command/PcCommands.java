@@ -97,7 +97,52 @@ public final class PcCommands {
                                 .executes(ctx -> handbook(ctx, IntegerArgumentType.getInteger(ctx, "page") - 1)))))
                 .then(Commands.literal("body").then(Commands.argument("player", EntityArgument.player())
                         .executes(PcCommands::bodyShow)
-                        .then(Commands.literal("reset").executes(PcCommands::bodyReset)))));
+                        .then(Commands.literal("reset").executes(PcCommands::bodyReset))))
+                // LOTO 13 §13.1.7: чужой замок снимает только администратор, с причиной в журнал
+                .then(Commands.literal("lockout")
+                        .then(Commands.literal("list").executes(PcCommands::lockoutList))
+                        .then(Commands.literal("plan").then(Commands.argument("pos", BlockPosArgument.blockPos()).executes(PcCommands::lockoutPlan)))
+                        .then(Commands.literal("cut").then(Commands.argument("pos", BlockPosArgument.blockPos())
+                                .then(Commands.argument("reason", StringArgumentType.greedyString()).executes(PcCommands::lockoutCut))))));
+    }
+
+    private static int lockoutList(CommandContext<CommandSourceStack> ctx) {
+        var level = ctx.getSource().getLevel();
+        var r = dev.denfry.promptcritical.mod.ops.Lockouts.registry(level);
+        if (r == null || r.lockedPoints().isEmpty()) {
+            ctx.getSource().sendSuccess(() -> Component.literal("no locked points"), false);
+            return 0;
+        }
+        for (var p : r.lockedPoints()) {
+            String locks = r.locks(p).stream().map(l -> l.ownerName() + (l.tag().isEmpty() ? "" : " (tag)"))
+                    .collect(java.util.stream.Collectors.joining(", "));
+            String line = p.x() + " " + p.y() + " " + p.z() + ": " + locks + (r.hasHasp(p) ? " [hasp]" : "")
+                    + (r.verified(p) ? " [verified]" : "");
+            ctx.getSource().sendSuccess(() -> Component.literal(line), false);
+        }
+        return r.lockedPoints().size();
+    }
+
+    /** План изоляции объекта работ (13 §13.1.4). */
+    private static int lockoutPlan(CommandContext<CommandSourceStack> ctx) throws CommandSyntaxException {
+        BlockPos pos = BlockPosArgument.getLoadedBlockPos(ctx, "pos");
+        var level = ctx.getSource().getLevel();
+        var plan = dev.denfry.promptcritical.mod.ops.IsolationPlans.build(level, pos);
+        for (Component line : dev.denfry.promptcritical.mod.ops.IsolationPlans.describe(level, plan))
+            ctx.getSource().sendSuccess(() -> line, false);
+        return plan.points().size();
+    }
+
+    private static int lockoutCut(CommandContext<CommandSourceStack> ctx) throws CommandSyntaxException {
+        BlockPos pos = BlockPosArgument.getLoadedBlockPos(ctx, "pos");
+        String reason = StringArgumentType.getString(ctx, "reason");
+        var cut = dev.denfry.promptcritical.mod.ops.Lockouts.adminCut(ctx.getSource().getLevel(), pos, ctx.getSource().getTextName(), reason);
+        if (cut.isEmpty()) {
+            ctx.getSource().sendFailure(Component.literal("no locks at " + pos.toShortString()));
+            return 0;
+        }
+        ctx.getSource().sendSuccess(() -> Component.literal("cut " + cut.size() + " lock(s) at " + pos.toShortString()), true);
+        return cut.size();
     }
 
     /** Тело игрока: профиль и подтверждён ли он. */

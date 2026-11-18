@@ -1,0 +1,33 @@
+{
+  "parent": "promptcritical:relay_logic",
+  "criteria": {
+    "deployed": {
+      "conditions": {
+        "event": "promptcritical:digital_twin"
+      },
+      "trigger": "promptcritical:sim_event"
+    }
+  },
+  "display": {
+    "description": {
+      "translate": "advancements.promptcritical.digital_twin.description"
+    },
+    "frame": "goal",
+    "icon": {
+      "count": 1,
+      "id": "promptcritical:simulation_workstation"
+    },
+    "title": {
+      "translate": "advancements.promptcritical.digital_twin.title"
+    }
+  },
+  "requirements": [
+    [
+      "deployed"
+    ]
+  ],
+  "rewards": {
+    "experience": 80
+  },
+  "sends_telemetry_event": true
+}

@@ -95,7 +95,7 @@ public final class PlantAccident {
             double containmentFailurePa, double smallBreakM2, double largeBreakM2, boolean saturated) {
 
         public Design {
-            if (!(nominalW > 0) || !(inventoryKg > lowerPlenumKg + coreWaterKg) || !(volumeM3 > 0) || !(zrKg > 0) || !(cladM2 > 0))
+            if (!(nominalW > 0) || !(inventoryKg > lowerPlenumKg + coreWaterKg) || !(volumeM3 > 0) || !(zrKg >= 0) || !(cladM2 > 0))
                 throw new IllegalArgumentException("bad plant design " + id);
         }
 
@@ -125,6 +125,36 @@ public final class PlantAccident {
     public static final Design BWR_T2B = new Design("bwr", 100e6, 7.0e6, 7.9e6, 25_000, 40, 3_000, 700, 6_000,
             1_600, 200, 3_400 * 300, 1_600 * 330, 60, 12, 8.5e6, 40, 2.0e6, 0, 0, 0, 0, 0.003, true,
             1.0e6, 1e-4, 0.017, true);
+
+    /**
+     * CANDU T3, 100 MWt, D₂O 10 MPa, 266 → 310 °C (AECL, «CANDU 6 Technical Summary», 2005), the game core of 97
+     * horizontal channels with 12 bundles of 37 elements. Inventory: the reactor's own channel and feeder D₂O,
+     * {@code CanduReactor.coolantCapacityKg()} ≈ 3.3 t in 4 m³. Horizontal channels have no lower plenum; the inlet
+     * headers below the core stand in for it, and the break nozzle is the outlet header just above the core (as the
+     * VVER's cold-leg nozzle sits just above its core). Cladding:
+     * Zircaloy-4 sheaths, ≈ 2.2 kg Zr and 0.75 m² per bundle — 2.6 t, 876 m²; 25 t UO₂. ECCS as on CANDU 6: a high
+     * pressure stage from gas-pressurised water tanks at 4.1 MPa (modelled as accumulators) and pumped medium and low
+     * pressure stages; train flows as the VVER's. Relief at 10.3 MPa [оценка]. Break: reactor outlet header
+     * (⌀ ≈ 0.37 m) double-ended, scaled by power 1:20.6 [оценка]. Dry containment. Positive void reactivity is the
+     * reactor's own ({@code CanduReactor#setCoolantVoid}, 04c §4c.11.2).
+     */
+    public static final Design CANDU_T3 = new Design("candu", 100e6, 9.87e6, 10.3e6, 3_300, 4.0, 300, 1_650, 2_200,
+            2_560, 876, 25_000 * 300, 2_560 * 330, 6, 15, 10.5e6, 20, 1.4e6, 2.0, 1.67, 4.1e6, 0.0024, 0, false,
+            1.0e6, 1e-4, 0.0104, false);
+
+    /**
+     * AM-1 T1, 30 MWt, water 10 MPa, 190 → 280 °C (Kotchetkov, «Obninsk number one», NEI, 2004). Inventory from the
+     * reactor's lumped loop, {@code ChannelReactor.C_LOOP} / c_p ≈ 3 t in 3.8 m³; a quarter of it in the channels over
+     * the fuel, the bottom collectors below, the break nozzle just above the core [оценка]. Cladding: stainless steel tubes — no Zr–steam reaction (zrKg 0);
+     * 128 channels × 4 tubes ⌀14 mm × 1.7 m ≈ 38 m² [оценка]; fuel heat capacity is the reactor's {@code C_FUEL},
+     * cladding a third of it as on the VVER. ECCS train flows, accumulators and the break are the VVER's scaled by
+     * power 0.3. Relief at 11 MPa [оценка]. Without the Zr exotherm the lumped core, once uncovered late on decay
+     * heat, settles where steam cooling meets it: the AM-1 loses fuel to dryout in its own channel model
+     * ({@code ChannelReactor}) rather than to this layer's burst criterion.
+     */
+    public static final Design AM1_T1 = new Design("am1", 30e6, 6.42e6, 11.0e6, 3_000, 3.8, 300, 700, 1_300,
+            0, 38, 2.5e5, 8.1e4, 2, 4.5, 11e6, 6, 1.4e6, 0.6, 0.5, 5.9e6, 0.0007, 0, false,
+            1.0e6, 1e-4, 0.0114, false);
 
     private final Design d;
     private final ZircaloyOxidation zr;

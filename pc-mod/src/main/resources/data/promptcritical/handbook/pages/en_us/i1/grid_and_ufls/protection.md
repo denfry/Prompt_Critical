@@ -36,3 +36,7 @@ Stages:
 The stage is stored in the module and shows in its tooltip; a new module is UFLS-1/1. A stage's volume is the sum of the loads assigned to it. Put first under shedding whatever can live a minute without power. An electromechanical frequency relay can be off by up to ±0.1 Hz, so do not set neighbouring stages any closer.
 
 After it operates, raise machine output or drop some load by hand. Reclosing brings the shed load back only once frequency has recovered.
+
+## Dispatch center
+
+The [grid dispatch center](item:promptcritical:grid_dispatch_center) sees the whole grid of the world: its islands with their frequency, generation, load and losses, the rate of change of frequency and any de-energized parts. The "off-normal" lamp lights when an island leaves 49.5–50.5 Hz or an island with buses is left dead. The center does not run the system: the generation plan, secondary frequency control and reserves are the dispatcher's job. With a CC: Tweaked computer next to it, the center is the `pc_grid` peripheral: islands, buses, branches and their flows, and a load forecast from the consumers' contracted loads with a 3 % error.

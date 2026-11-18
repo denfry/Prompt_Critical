@@ -44,8 +44,10 @@ import org.jetbrains.annotations.Nullable;
  * (снизу воронкой). Отработанный раствор — {@link DeconMethod#BATH_L_PER_ITEM} л каждой ванны на деталь — жидкие
  * радиоактивные отходы, снизу трубой; снятая активность учитывается в баке отходов.
  */
-public final class UltrasonicBathBlockEntity extends DeviceBlockEntity implements FoundryDevice, PanelHost {
+public final class UltrasonicBathBlockEntity extends DeviceBlockEntity implements dev.denfry.promptcritical.mod.grid.GridDevice, FoundryDevice, PanelHost {
     public static final int IN = 4, OUT = 4, SOLUTION_MB = 8000, WASTE_MB = 16000, CYCLE_TICKS = 160;
+    /** Ультразвуковой генератор с подогревом раствора, Вт [оценка: промышленные ванны 1–3 кВт]. */
+    public static final double GENERATOR_W = 3e3;
 
     private final ItemStackHandler input = new ItemStackHandler(IN) {
         @Override
@@ -160,8 +162,8 @@ public final class UltrasonicBathBlockEntity extends DeviceBlockEntity implement
     public void tickDevice() {
         if (!(level instanceof ServerLevel s)) return;
         syncWaste();
-        if (!running()) {
-            progress = 0;
+        if (!running() || !powered(GENERATOR_W)) {
+            if (!running()) progress = 0;
             return;
         }
         progress++;
@@ -292,4 +294,42 @@ public final class UltrasonicBathBlockEntity extends DeviceBlockEntity implement
             lastMethod = null;
         }
     }
+
+    // --- сетевой ввод (07): машина — потребитель 6,3 кВ, кабель к любой грани контроллера ---
+
+    /** Стенд (GameTest): питание без сети. */
+    private boolean benchPower;
+
+    public void setBenchPower(boolean on) {
+        benchPower = on;
+    }
+
+    /** Ввод под напряжением при нагрузке {@code demandW}. */
+    private boolean powered(double demandW) {
+        return benchPower || dev.denfry.promptcritical.mod.grid.GridLoad.draw(level, simId(), demandW);
+    }
+
+    @Override
+    public java.util.List<java.util.List<dev.denfry.promptcritical.mod.grid.GridDevice.Face>> terminals() {
+        return java.util.List.of(dev.denfry.promptcritical.mod.grid.GridDevice.allFaces(worldPosition));
+    }
+
+    @Override
+    @org.jetbrains.annotations.Nullable
+    public dev.denfry.promptcritical.sim.grid.GridUnit gridUnit(dev.denfry.promptcritical.sim.grid.GridSubsystem grid) {
+        return simId().isNone() ? null : grid.consumer(simId());
+    }
+
+    @Override
+    public void onLoad() {
+        super.onLoad();
+        dev.denfry.promptcritical.mod.grid.GridLoad.register(level, worldPosition);
+    }
+
+    @Override
+    public void setRemoved() {
+        super.setRemoved();
+        dev.denfry.promptcritical.mod.grid.GridLoad.unregister(level, worldPosition);
+    }
+
 }

@@ -140,6 +140,10 @@ public final class PcItems {
     // --- электросеть I1 (07 §7.22) ---
     public static final DeferredItem<Item> COPPER_WIRE = item("copper_wire", 64);
     public static final DeferredItem<Item> GENERATOR_COUPLING = item("generator_coupling", 16);
+    /** Подогреватель рубашки ДГ (07 §7.11.3): без него на морозе отказ пуска вчетверо вероятнее. */
+    public static final DeferredItem<Item> JACKET_HEATER = item("jacket_heater", 16);
+    /** Секвенсор нагрузки ДГ (07 §7.11.4): ступени через 5 с после включения на обесточенную шину. */
+    public static final DeferredItem<Item> LOAD_SEQUENCER = item("load_sequencer", 16);
     public static final DeferredItem<Item> LV_FUSE = item("lv_fuse", 64);
     public static final DeferredItem<Item> INTERLOCK_MODULE = item("interlock_module", 16);
     public static final DeferredItem<Item> INSULATOR_PIN = item("insulator_pin", 64);
@@ -216,6 +220,8 @@ public final class PcItems {
     public static final DeferredItem<Item> IRIDIUM_INGOT = item("iridium_ingot", 64);
     /** Диоксид нептуния-237 (мишень Pu-238). */
     public static final DeferredItem<Item> NPO2_POWDER = item("npo2_powder", 16);
+    /** AmO₂ — америций-241, выделенный ионитом из выдержанного PuO₂ (12 §12.2.5). */
+    public static final DeferredItem<Item> AM241_OXIDE = item("am241_oxide", 1);
     /** Капсула облучения: пустая или с компонентом {@code irradiation_target}. */
     public static final DeferredItem<Item> IRRADIATION_CAPSULE = item("irradiation_capsule", 16);
     /** Закрытый источник особой формы: активность — компонентом {@code activity}. */
@@ -281,6 +287,31 @@ public final class PcItems {
     public static final DeferredItem<FerroalloyItem> FERROALLOY = registered(ITEMS.registerItem("ferroalloy", FerroalloyItem::new,
             new Item.Properties().stacksTo(64)));
     // --- эксплуатация (13 §13.6.5–13.6.7, этап 11а M3): инструменты, запчасти, расходники ---
+    /** Огнетушители 13 §13.5.3: порошок ABCE, вода, пена, CO₂, порошок D. */
+    public static final DeferredItem<dev.denfry.promptcritical.mod.ops.FireExtinguisherItem> FIRE_EXTINGUISHER = registered(ITEMS.registerItem("fire_extinguisher",
+            p -> new dev.denfry.promptcritical.mod.ops.FireExtinguisherItem(p, dev.denfry.promptcritical.sim.ops.FireSuppression.Agent.POWDER_ABCE),
+            new Item.Properties()));
+    public static final DeferredItem<dev.denfry.promptcritical.mod.ops.FireExtinguisherItem> FIRE_EXTINGUISHER_WATER = registered(ITEMS.registerItem("fire_extinguisher_water",
+            p -> new dev.denfry.promptcritical.mod.ops.FireExtinguisherItem(p, dev.denfry.promptcritical.sim.ops.FireSuppression.Agent.WATER),
+            new Item.Properties()));
+    public static final DeferredItem<dev.denfry.promptcritical.mod.ops.FireExtinguisherItem> FIRE_EXTINGUISHER_FOAM = registered(ITEMS.registerItem("fire_extinguisher_foam",
+            p -> new dev.denfry.promptcritical.mod.ops.FireExtinguisherItem(p, dev.denfry.promptcritical.sim.ops.FireSuppression.Agent.FOAM),
+            new Item.Properties()));
+    public static final DeferredItem<dev.denfry.promptcritical.mod.ops.FireExtinguisherItem> FIRE_EXTINGUISHER_CO2 = registered(ITEMS.registerItem("fire_extinguisher_co2",
+            p -> new dev.denfry.promptcritical.mod.ops.FireExtinguisherItem(p, dev.denfry.promptcritical.sim.ops.FireSuppression.Agent.CO2),
+            new Item.Properties()));
+    public static final DeferredItem<dev.denfry.promptcritical.mod.ops.FireExtinguisherItem> FIRE_EXTINGUISHER_METAL = registered(ITEMS.registerItem("fire_extinguisher_metal",
+            p -> new dev.denfry.promptcritical.mod.ops.FireExtinguisherItem(p, dev.denfry.promptcritical.sim.ops.FireSuppression.Agent.POWDER_D),
+            new Item.Properties()));
+    /** LOTO 13 §13.1.2: личный замок, бирка, многозамковая накладка, указатель напряжения. */
+    public static final DeferredItem<dev.denfry.promptcritical.mod.ops.LockoutItem> LOCKOUT_PADLOCK =
+            lockout("lockout_padlock", dev.denfry.promptcritical.mod.ops.LockoutItem.Kind.PADLOCK, 8);
+    public static final DeferredItem<dev.denfry.promptcritical.mod.ops.LockoutItem> LOCKOUT_TAG =
+            lockout("lockout_tag", dev.denfry.promptcritical.mod.ops.LockoutItem.Kind.TAG, 16);
+    public static final DeferredItem<dev.denfry.promptcritical.mod.ops.LockoutItem> LOCKOUT_HASP =
+            lockout("lockout_hasp", dev.denfry.promptcritical.mod.ops.LockoutItem.Kind.HASP, 8);
+    public static final DeferredItem<dev.denfry.promptcritical.mod.ops.LockoutItem> VOLTAGE_TESTER =
+            lockout("voltage_tester", dev.denfry.promptcritical.mod.ops.LockoutItem.Kind.VOLTAGE_TESTER, 1);
     public static final DeferredItem<OpsItem> MECHANIC_STETHOSCOPE = ops("mechanic_stethoscope", OpsItem.Kind.STETHOSCOPE, 1);
     public static final DeferredItem<OpsItem> TORQUE_WRENCH = ops("torque_wrench", OpsItem.Kind.TORQUE_WRENCH, 1);
     public static final DeferredItem<OpsItem> TEST_PRESSURE_GAUGE = ops("test_pressure_gauge", OpsItem.Kind.TEST_GAUGE, 1);
@@ -306,6 +337,10 @@ public final class PcItems {
             "shift_log", dev.denfry.promptcritical.mod.paperwork.DocumentItem::new, new Item.Properties().stacksTo(1)));
     public static final DeferredItem<dev.denfry.promptcritical.mod.paperwork.DocumentItem> WORK_PERMIT = registered(ITEMS.registerItem(
             "work_permit", dev.denfry.promptcritical.mod.paperwork.DocumentItem::new, new Item.Properties().stacksTo(16)));
+    /** Удостоверение оператора 11 §11.3.5: выдаёт место инструктора тренажёра. */
+    public static final DeferredItem<dev.denfry.promptcritical.mod.scada.OperatorLicenseItem> OPERATOR_LICENSE = registered(
+            ITEMS.registerItem("operator_license", dev.denfry.promptcritical.mod.scada.OperatorLicenseItem::new,
+                    new Item.Properties().stacksTo(1)));
     public static final DeferredItem<OperatingProcedureItem> OPERATING_PROCEDURE = registered(ITEMS.registerItem("operating_procedure",
             OperatingProcedureItem::new, new Item.Properties().stacksTo(1)));
     // нефть и газ I2: утяжелитель (мешок 50 кг, API 13A), заряд для шурфа, сейсмический разрез
@@ -385,6 +420,12 @@ public final class PcItems {
         DeferredItem<Item> i = ITEMS.registerSimpleItem(name, new Item.Properties().stacksTo(stack));
         PLAIN.add(i);
         return i;
+    }
+
+    private static DeferredItem<dev.denfry.promptcritical.mod.ops.LockoutItem> lockout(String name,
+            dev.denfry.promptcritical.mod.ops.LockoutItem.Kind kind, int stack) {
+        return registered(ITEMS.registerItem(name, p -> new dev.denfry.promptcritical.mod.ops.LockoutItem(p, kind),
+                new Item.Properties().stacksTo(stack)));
     }
 
     private static DeferredItem<OpsItem> ops(String name, OpsItem.Kind kind, int stack) {

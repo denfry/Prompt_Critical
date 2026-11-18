@@ -102,6 +102,44 @@ public final class PowerhouseText {
         msg("gt.stop", "Stop: fuel shut · %s %% speed, %s of %s kW, air %s °C, exhaust %s °C",
                 "Останов: топливо отсечено · %s %% оборотов, %s из %s кВт, воздух %s °C, выхлоп %s °C");
         msg("gt.reset", "Gas turbine overspeed trip reset", "Автомат безопасности ГТУ взведён");
+        msg("dg.status", "Diesel generator: %s · %s Hz, %s kW · day tank %s L · air for %s starts · %s",
+                "Дизель-генератор: %s · %s Гц, %s кВт · расходный бак %s л · воздух на %s пусков · %s");
+        for (dev.denfry.promptcritical.sim.combustion.DieselEngine.Status s : dev.denfry.promptcritical.sim.combustion.DieselEngine.Status.values()) {
+            String[] n = switch (s) {
+                case STANDBY -> new String[] {"standby", "резерв"};
+                case CRANKING -> new String[] {"cranking", "прокрутка"};
+                case RETRY_WAIT -> new String[] {"failed to fire, retrying", "не запустился, повтор"};
+                case ACCELERATING -> new String[] {"accelerating", "разгон"};
+                case RUNNING -> new String[] {"running", "работа"};
+                case COASTING -> new String[] {"coasting down", "выбег"};
+                case LOCKED_OUT -> new String[] {"locked out", "блокировка"};
+            };
+            msg("dg.state." + s.name().toLowerCase(java.util.Locale.ROOT), n[0], n[1]);
+        }
+        for (dev.denfry.promptcritical.sim.combustion.DieselEngine.Cause c : dev.denfry.promptcritical.sim.combustion.DieselEngine.Cause.values()) {
+            String[] n = switch (c) {
+                case NONE -> new String[] {"no fault", "исправен"};
+                case STOPPED -> new String[] {"stopped", "остановлен"};
+                case FAIL_TO_START -> new String[] {"failed to start", "отказ пуска"};
+                case NO_AIR -> new String[] {"no starting air", "нет пускового воздуха"};
+                case NO_DC -> new String[] {"no control power: put a station battery against the unit",
+                        "нет оперативного тока: поставьте аккумулятор вплотную к агрегату"};
+                case NO_FUEL -> new String[] {"day tank empty", "расходный бак пуст"};
+                case RUN_FAILURE -> new String[] {"failed while running", "отказ в работе"};
+                case OVERSPEED -> new String[] {"overspeed trip", "защита от разноса"};
+            };
+            msg("dg.cause." + c.name().toLowerCase(java.util.Locale.ROOT), n[0], n[1]);
+        }
+        msg("dg.heater_installed", "Jacket heater fitted: the engine starts as readily in the cold",
+                "Подогреватель рубашки установлен: на морозе дизель пускается так же надёжно");
+        msg("dg.heater_present", "The jacket heater is already fitted", "Подогреватель рубашки уже установлен");
+        msg("dg.sequencer_installed", "Load sequencer fitted: after a blackout loads come back in 5 s steps, the largest first",
+                "Секвенсор нагрузки установлен: после потери питания нагрузка включается ступенями через 5 с, начиная с самой мощной");
+        msg("dg.sequencer_present", "The load sequencer is already fitted", "Секвенсор нагрузки уже установлен");
+        msg("dg.bus_live", "The bus is live: parallel the unit through a switchgear cell with synchronizing",
+                "Шина под напряжением: включайте агрегат на параллельную работу через ячейку КРУ с синхронизацией");
+        msg("dg.not_ready", "The unit is not ready: start it and wait for rated speed and voltage",
+                "Агрегат не готов: пустите его и дождитесь номинальных оборотов и напряжения");
         msg("hrsg.no_turbine", "The heat recovery boiler must touch the turbine end of a gas turbine with its lower duct",
                 "Котёл-утилизатор должен касаться нижним газоходом турбинной секции ГТУ");
         msg("hrsg.no_boiler", "No boiler for the steam: put the heat recovery boiler against a boiler drum or shell",

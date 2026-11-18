@@ -24,6 +24,8 @@ public final class ServerConfig {
     public static final ModConfigSpec.DoubleValue K_BURN;
     public static final ModConfigSpec.EnumValue<DecayHeatClock> DECAY_HEAT_CLOCK;
     public static final ModConfigSpec.DoubleValue W_PER_SU;
+    public static final ModConfigSpec.DoubleValue DIESEL_FAIL_TO_START_BASE;
+    public static final ModConfigSpec.IntValue OPS_MAX_LOCKS_PER_PLAYER;
     public static final ModConfigSpec.DoubleValue J_PER_FE;
     public static final ModConfigSpec.IntValue CC_TOKEN_RATE;
     public static final ModConfigSpec.IntValue CC_TOKEN_BURST;
@@ -127,6 +129,8 @@ public final class ServerConfig {
     public static final ModConfigSpec.EnumValue<DifficultyPreset> DIFFICULTY_PRESET;
     public static final ModConfigSpec.BooleanValue CONTENT_GIVE_HANDBOOK_ON_JOIN;
     public static final ModConfigSpec.BooleanValue CONTENT_HANDBOOK_ALL_UNLOCKED;
+    public static final ModConfigSpec.IntValue TWIN_MAX_SESSIONS, TWIN_MAX_SPEED, TWIN_MAX_DURATION_S, CONTENT_MAX_SIMULATORS;
+    public static final ModConfigSpec.DoubleValue TWIN_CPU_MS_PER_TICK, CONTENT_LICENSE_PASS_SCORE;
     public static final ModConfigSpec.BooleanValue CONTENT_HINTS_BY_DIFFICULTY;
     public static final ModConfigSpec.BooleanValue CONTENT_CC_RECIPE_OVERRIDE;
     public static final ModConfigSpec.IntValue ENVIRONMENT_DAYS_PER_SEASON;
@@ -157,6 +161,16 @@ public final class ServerConfig {
                 .defineInRange("w_per_su", 1000.0, 1.0, 1.0e6);
         J_PER_FE = b.comment("[BALANCE] Joules per Forge Energy unit (00 §0.9)")
                 .defineInRange("j_per_fe", 2.5, 0.01, 1.0e6);
+        b.pop();
+
+        b.push("ops");
+        OPS_MAX_LOCKS_PER_PLAYER = b.comment("LOTO padlocks one player can have hung at once (13 §13.14)")
+                .defineInRange("max_locks_per_player", 8, 1, 64);
+        b.pop();
+
+        b.push("diesel");
+        DIESEL_FAIL_TO_START_BASE = b.comment("[BALANCE] Emergency diesel failure-to-start probability per demand, p0 (07 §7.11.3)")
+                .defineInRange("fail_to_start_base", 0.005, 0.0, 1.0);
         b.pop();
 
         b.push("cc");
@@ -366,6 +380,18 @@ public final class ServerConfig {
                 .define("hints_by_difficulty", true);
         CONTENT_CC_RECIPE_OVERRIDE = b.comment("CC: Tweaked computers and monitors are crafted from this mod's chips, boards and tubes (11 §11.5.4, K20). "
                 + "Read when datapacks load; the default applies to a world's first load").define("cc_recipe_override", true);
+        CONTENT_MAX_SIMULATORS = b.comment("Training simulators running at once on the server (11 §11.3)")
+                .defineInRange("max_simulators_running", 2, 0, 64);
+        CONTENT_LICENSE_PASS_SCORE = b.comment("Lesson score an operator license needs (11 §11.3.5)")
+                .defineInRange("license_pass_score", 0.75, 0.0, 1.0);
+        b.pop();
+
+        b.push("twin");
+        TWIN_MAX_SESSIONS = b.comment("Digital twin sessions open at once on the server (03d §3d.9.1)").defineInRange("max_sessions", 4, 0, 64);
+        TWIN_MAX_SPEED = b.comment("Twin steps per server tick at most (03d §3d.9.1)").defineInRange("max_speed", 10, 1, 100);
+        TWIN_CPU_MS_PER_TICK = b.comment("Server time all twins and simulators may spend per tick, ms; short of it they slow down, not the world")
+                .defineInRange("cpu_ms_per_tick", 2.0, 0.1, 50.0);
+        TWIN_MAX_DURATION_S = b.comment("Real seconds a twin session or a lesson may run (03d §3d.9.1)").defineInRange("max_duration_s", 3600, 60, 86400);
         b.pop();
 
         b.push("environment");

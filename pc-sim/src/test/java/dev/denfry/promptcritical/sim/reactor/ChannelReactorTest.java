@@ -71,6 +71,23 @@ class ChannelReactorTest {
         assertEquals(0, r.failedChannels());
     }
 
+    /**
+     * Потеря теплоносителя от слоя аварии (04c §4c.11.2): паровой эффект воды АМ-1 отрицательный, осушение каналов
+     * снижает реактивность; разогрев зоны разрушает самые нагруженные каналы.
+     */
+    @Test
+    void coolantLossReducesReactivityAndHotChannelsFailFirst() {
+        ChannelReactor r = hotCritical();
+        r.step(0, SECONDARY_K);
+        double rho0 = r.reactivity();
+        r.setCoolantLoss(0.5);
+        for (int i = 0; i < 3; i++) r.step(0, SECONDARY_K); // плотность — в конце шага, реактивность — в начале следующего
+        assertTrue(r.reactivity() < rho0 - 0.005, "voiding: " + rho0 + " -> " + r.reactivity());
+        assertEquals(3, r.failHottest(3));
+        assertEquals(3, r.failedChannels());
+        assertTrue(r.failed(0), "the central channel carries the most power");
+    }
+
     /** Ступенчатый ввод +0,1β: установившийся период — по уравнению обратных часов с группами решётки. */
     @Test
     void inhourPeriodAfterStep() {

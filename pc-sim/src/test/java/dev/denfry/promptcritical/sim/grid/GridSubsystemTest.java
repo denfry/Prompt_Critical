@@ -112,6 +112,25 @@ class GridSubsystemTest {
         assertThat(s.energyForwardKwh()).isGreaterThan(0.3);
     }
 
+    /** LOTO 13 §13.1.3: замок на приводе — аппарат не включается ни по какой команде, а снят — включается. */
+    @Test
+    void lockedOutBreakerRefusesEveryCommand() {
+        SimulationWorld w = world();
+        generator(w, BUS_A, 0);
+        SwitchUnit s = cell(w, BUS_A, BUS_B, false);
+        ConsumerUnit c = consumer(w, BUS_B, 100);
+        run(w, 20);
+        s.setLockedOut(true);
+        assertThat(s.operate(true)).isEqualTo(BreakerResponse.LOCKED_OUT);
+        run(w, 2);
+        assertThat(s.closed()).isFalse();
+        assertThat(c.energized()).isFalse();
+        s.setLockedOut(false);
+        assertThat(s.operate(true)).isEqualTo(BreakerResponse.ACCEPTED);
+        run(w, 2);
+        assertThat(c.energized()).isTrue();
+    }
+
     @Test
     void createOverstressStopsTheDriveAndTheMachineLeavesTheGrid() {
         SimulationWorld w = world();

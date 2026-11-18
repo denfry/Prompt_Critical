@@ -33,12 +33,17 @@ public final class OpsBinding {
         OpsBlockEntities.BLOCK_ENTITIES.register(modBus);
         RECIPE_SERIALIZERS.register(modBus);
         modBus.addListener(OpsBinding::registerCapabilities);
+        NeoForge.EVENT_BUS.addListener(net.neoforged.bus.api.EventPriority.HIGH, Lockouts::onRightClick);
+        NeoForge.EVENT_BUS.addListener(Lockouts::onBreak);
+        NeoForge.EVENT_BUS.addListener(Lockouts::onExplosion);
         NeoForge.EVENT_BUS.addListener(OpsActions::onRightClick);
         SimBindings.registerSubsystem(level -> new OpsSubsystem(SimConfigs.ops(), level.getSeed()));
     }
 
     private static void registerCapabilities(RegisterCapabilitiesEvent event) {
         event.registerBlockEntity(Capabilities.ItemHandler.BLOCK, OpsBlockEntities.WATER_TREATMENT.get(), FoundryDevice::items);
+        event.registerBlockEntity(Capabilities.FluidHandler.BLOCK, OpsBlockEntities.LINE_BLIND.get(), LineBlindBlockEntity::fluids);
+        event.registerBlockEntity(Capabilities.FluidHandler.BLOCK, OpsBlockEntities.FIRE_DEVICE.get(), FireDeviceBlockEntity::fluids);
         event.registerBlockEntity(Capabilities.FluidHandler.BLOCK, OpsBlockEntities.WATER_TREATMENT.get(), FoundryDevice::fluids);
     }
 }

@@ -84,3 +84,28 @@ Nothing stops a loop that never ends except the watchdog: `WHILE TRUE DO` puts t
 When the 24 V fails, `%MX0…31`, `%MW0…15`, the timers, edges and controllers are cleared. A battery keeps the retentive memory: `%MX32…63`, `%MW16…31` and the counters. A seal-in through `%QX` does not come back after a power failure, just as with a relay. That is protection, not a bug: a machine must not start by itself when power returns.
 
 Text in the window reaches the PLC only with the Load button. A program with errors will not run: the PLC stays in STOP, and the errors are listed under the editor with their line numbers.
+
+## LD, FBD and SFC
+
+The PLC understands all five IEC 61131-3 languages. The language is detected by the program's first line. All five compile to the same instructions, so the same scheme behaves identically in any language.
+
+**LD (ladder)** — one line per rung, first line `(*LD*)`. `XIC(a)` is a normally open contact, `XIO(a)` a normally closed one, `BST … NXB … BND` parallel branches, `TON/TOF/TP(name, time)` and `CTU(name, preset)` boxes in the rung, and at the end of the rung the coils `OTE` (output), `OTL`/`OTU` (latch/unlatch) and `RES` (counter reset):
+
+```
+(*LD*)
+BST XIC(%IX0.0) NXB XIC(%QX0.0) BND XIC(%IX0.1) OTE(%QX0.0)
+XIC(%QX0.0) TON(T1, T#5S) OTE(%QX0.1)
+```
+
+**FBD (function blocks)** — a netlist, one line per block output, first line `(*FBD*)`. Functions `AND OR XOR NOT MOVE ADD SUB MUL DIV GT GE LT LE EQ NE`, blocks `TON TOF TP CTU CTD R_TRIG F_TRIG`:
+
+```
+(*FBD*)
+%QX0.0 := AND(OR(%IX0.0, %QX0.0), %IX0.1)
+T1 := TON(%QX0.0, T#5S)
+%QX0.1 := T1.Q
+```
+
+**SFC (sequential function chart)** — the standard's textual form, first line `(*SFC*)`. It uses `INITIAL_STEP` and `STEP` with actions (`name(N)` while the step is active, `S` set, `R` reset, `P` once on entry), `TRANSITION FROM a TO b := condition; END_TRANSITION` and `ACTION name: … END_ACTION` with an ST body.
+
+LD, FBD and SFC keep their intermediate bits in `%MX48…%MX63`, and FBD also the words `%MW24…%MW31`. Do not use them yourself.

@@ -25,10 +25,10 @@ public final class ZircaloyOxidation {
 
     /**
      * @param surfaceM2 wetted cladding outer surface
-     * @param zrMassKg  total cladding zirconium inventory (caps the reaction)
+     * @param zrMassKg  total cladding zirconium inventory (caps the reaction); 0 — steel cladding, no Zr–steam reaction
      */
     public ZircaloyOxidation(double surfaceM2, double zrMassKg) {
-        if (!(surfaceM2 > 0) || !(zrMassKg > 0)) throw new IllegalArgumentException("surface and mass must be > 0");
+        if (!(surfaceM2 > 0) || !(zrMassKg >= 0)) throw new IllegalArgumentException("surface must be > 0, mass >= 0");
         this.surfaceCm2 = surfaceM2 * 1e4;
         this.zrMassKg = zrMassKg;
     }
@@ -44,7 +44,7 @@ public final class ZircaloyOxidation {
      * @return Zr mass reacted during the step, kg
      */
     public double step(double tK, double dtS) {
-        if (tK < 900 || dtS <= 0) return 0; // below ~900 K the rate is negligible on accident time scales
+        if (tK < 900 || dtS <= 0 || zrMassKg <= 0) return 0; // below ~900 K the rate is negligible on accident time scales
         double before = reactedKg();
         w2 += rateConstant(tK) * dtS;
         double after = reactedKg();
@@ -62,7 +62,7 @@ public final class ZircaloyOxidation {
 
     /** Equivalent cladding reacted fraction (ECR, the 17 % criterion of 10 CFR 50.46). */
     public double reactedFraction() {
-        return reactedKg() / zrMassKg;
+        return zrMassKg > 0 ? reactedKg() / zrMassKg : 0;
     }
 
     public void save(StateWriter out) {

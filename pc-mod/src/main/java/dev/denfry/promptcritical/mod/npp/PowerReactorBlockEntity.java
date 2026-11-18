@@ -14,6 +14,7 @@ import dev.denfry.promptcritical.mod.nuclear.FuelLot;
 import dev.denfry.promptcritical.mod.panel.PanelHost;
 import dev.denfry.promptcritical.mod.panel.PanelLayout;
 import dev.denfry.promptcritical.mod.registry.PcItems;
+import dev.denfry.promptcritical.sim.accident.PlantAccident;
 import dev.denfry.promptcritical.sim.automation.AutomationKind;
 import dev.denfry.promptcritical.sim.automation.AutomationSubsystem;
 import dev.denfry.promptcritical.sim.automation.AutomationUnit;
@@ -89,6 +90,8 @@ public final class PowerReactorBlockEntity extends DeviceBlockEntity implements 
     /** Каналы облучения: поглощение мишени, см², и игровое время, до которого отметка действительна. */
     private final java.util.Map<BlockPos, double[]> irradiation = new java.util.LinkedHashMap<>();
     private ChannelReactor.Trip lastTrip = ChannelReactor.Trip.MANUAL;
+    /** LOCA и обесточивание (04c, M10): слой аварии {@link PlantAccident#AM1_T1} и его связь с миром. */
+    private final ReactorAccidentSystems accident = new ReactorAccidentSystems(PlantAccident.AM1_T1);
     private int ticks;
 
     public PowerReactorBlockEntity(BlockPos pos, BlockState state) {
@@ -97,6 +100,10 @@ public final class PowerReactorBlockEntity extends DeviceBlockEntity implements 
 
     public ChannelReactor reactor() {
         return reactor;
+    }
+
+    public ReactorAccidentSystems accident() {
+        return accident;
     }
 
     public ItemStackHandler fuelSlots() {
@@ -131,6 +138,10 @@ public final class PowerReactorBlockEntity extends DeviceBlockEntity implements 
         AABB box = new AABB(worldPosition).inflate(LINK_RADIUS);
         for (PrimaryPumpBlockEntity p : Ironworks.blockEntities(sl, box, PrimaryPumpBlockEntity.class)) pumps.add(p.getBlockPos());
         for (SteamGeneratorBlockEntity g : Ironworks.blockEntities(sl, box, SteamGeneratorBlockEntity.class)) generators.add(g.getBlockPos());
+        // сорванный с контура ГЦН под давлением — разрыв главного трубопровода
+        java.util.Map<BlockPos, ReactorAccidentSystems.LoopPart> loop = new java.util.LinkedHashMap<>();
+        for (BlockPos p : pumps) loop.put(p, ReactorAccidentSystems.LoopPart.PUMP);
+        accident.link(sl, worldPosition, loop, reactor.loadedChannels() > 0);
     }
 
     @Override
@@ -142,7 +153,12 @@ public final class PowerReactorBlockEntity extends DeviceBlockEntity implements 
         double gameDt = 0.05 * b.world().clock().kSlow();
         // расход — сумма насосов; парогенераторы — средняя температура котлов, тепло — поровну
         double flow = 0;
-        for (BlockPos p : pumps) if (level.getBlockEntity(p) instanceof PrimaryPumpBlockEntity pump) flow += pump.flowShare();
+        boolean pumpsDriven = false;
+        for (BlockPos p : pumps)
+            if (level.getBlockEntity(p) instanceof PrimaryPumpBlockEntity pump) {
+                flow += pump.flowShare();
+                pumpsDriven |= pump.drive() > 0.5;
+            }
         reactor.setFlowFraction(flow);
         List<SteamGeneratorBlockEntity> sgs = new ArrayList<>();
         double sum = 0;
@@ -153,10 +169,21 @@ public final class PowerReactorBlockEntity extends DeviceBlockEntity implements 
             }
         double secondary = sgs.isEmpty() ? Double.NaN : sum / sgs.size();
         AutomationUnit a = MechanismWiring.unit(level, simId(), AutomationKind.REACTOR_IO);
-        if (a != null) reactor.setExternalTrip(a.loadEnergized(1));
+        reactor.setExternalTrip(a != null && a.loadEnergized(1) || accident.demandsTrip());
+        // потеря теплоносителя по слою аварии — осушение каналов (паровой эффект АМ-1 отрицательный)
+        var acc = accident.accident();
+        reactor.setCoolantLoss(acc.active() ? 1 - Math.min(1, acc.levelFraction()) : 0);
         reactor.setIrradiationAbsorber(irradiationAbsorberCm2(level.getGameTime()));
         double q = reactor.step(gameDt, secondary);
         for (SteamGeneratorBlockEntity sg : sgs) sg.deliver(q / sgs.size());
+        if (ticks % 100 == 1) accident.scan(sl, worldPosition);
+        // слой аварии: тепло зоны, сток — парогенераторы; разогрев оголённой зоны разрушает самые нагруженные каналы
+        int breach = accident.step(sl, b, simId(), worldPosition, gameDt, reactor.fissionW() + reactor.decayHeatW(), q,
+                10e6, pumpsDriven, reactor.loadedChannels(), reactor.failedChannels());
+        if (breach > 0 && reactor.failHottest(breach) > 0)
+            for (ServerPlayer p : sl.getPlayers(p -> p.distanceToSqr(worldPosition.getCenter()) < 64 * 64))
+                p.displayClientMessage(NppText.msg("channel_failed", breach).withStyle(ChatFormatting.DARK_RED), false);
+        accident.radiation(sl, worldPosition, reactor.failedChannels());
         if (a != null) {
             a.setInput(AutomationUnit.IN_MAIN, reactor.trip() != ChannelReactor.Trip.NONE ? 1 : 0);
             a.setInput(AutomationUnit.IN_AUX, reactor.power());
@@ -308,6 +335,7 @@ public final class PowerReactorBlockEntity extends DeviceBlockEntity implements 
                 | (generators.isEmpty() || r.steamGeneratorW() <= 0 && r.fissionW() > 1e6 ? 1 << NppPanels.F_NO_SG : 0)
                 | (r.failedChannels() > 0 ? 1 << NppPanels.F_FAILED : 0)
                 | (r.rrDrive() < 0 ? 1 << NppPanels.F_RR_UP : 0) | (r.rrDrive() > 0 ? 1 << NppPanels.F_RR_DOWN : 0);
+        accident.readPanel(v, NppPanels.ACCIDENT);
     }
 
     @Override
@@ -327,6 +355,7 @@ public final class PowerReactorBlockEntity extends DeviceBlockEntity implements 
                         .withStyle(reactor.protection() ? ChatFormatting.GREEN : ChatFormatting.RED), false);
             }
             case NppPanels.B_UNLOAD -> unload(player);
+            case NppPanels.B_LOCA -> accident.cycleDrill(player);
             default -> {
             }
         }
@@ -406,6 +435,7 @@ public final class PowerReactorBlockEntity extends DeviceBlockEntity implements 
         reactor.save(new TreeStateWriter(tree));
         tag.put("reactor", NbtStateTrees.toNbt(tree));
         wiring.save(tag);
+        accident.save(tag);
     }
 
     @Override
@@ -415,5 +445,6 @@ public final class PowerReactorBlockEntity extends DeviceBlockEntity implements 
         if (tag.contains("reactor")) reactor.load(new TreeStateReader(NbtStateTrees.fromNbt(tag.getCompound("reactor"))));
         wiring.load(tag);
         lastTrip = reactor.trip();
+        accident.load(tag);
     }
 }
