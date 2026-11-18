@@ -9,7 +9,7 @@ import java.util.EnumMap;
  * A = F·y·(1 − e^{−λT}) при скорости делений F — короткоживущие насыщаются, долгоживущие копятся линейно.
  *
  * <p>Кумулятивные выходы деления U-235 тепловыми нейтронами (ENDF/B-VII, JEFF-3.1): Cs-137 6,19 %, Sr-90 5,78 %,
- * I-131 2,89 %, Zr-95 6,50 %, Ru-106 0,40 %. Nb-95 и Y-90 к выгрузке — в равновесии с родителем. Cs-134 рождается
+ * I-131 2,89 %, Zr-95 6,50 %, Ru-106 0,40 %, Kr-85 0,286 % (основное состояние, после изомерного ветвления Kr-85m). Nb-95 и Y-90 к выгрузке — в равновесии с родителем. Cs-134 рождается
  * захватом нейтрона на стабильном Cs-133 и растёт как квадрат выгорания: A(Cs-134)/A(Cs-137) ≈ BU/40 (МВт·сут/кг) —
  * эмпирическое соотношение по измерениям ТВС ВВЭР и PWR (≈ 1 при 40 МВт·сут/кг). Co-60 — активация стали
  * конструкций ТВС: ≈ 3·10¹³ Бк на 0,46 т ТМ при 40 МВт·сут/кг [порядок по PNNL-6906]; у металлического блочка
@@ -17,7 +17,7 @@ import java.util.EnumMap;
  */
 public final class SpentFuel {
     public static final double J_PER_MWD = 8.64e10, MEV_PER_FISSION = 200;
-    public static final double Y_CS137 = 0.0619, Y_SR90 = 0.0578, Y_I131 = 0.0289, Y_ZR95 = 0.0650, Y_RU106 = 0.0040;
+    public static final double Y_CS137 = 0.0619, Y_SR90 = 0.0578, Y_I131 = 0.0289, Y_ZR95 = 0.0650, Y_RU106 = 0.0040, Y_KR85 = 0.00286;
     /** Co-60 активации стали на кг ТМ при 40 МВт·сут/кг, Бк. */
     public static final double CO60_BQ_PER_KG_AT_40 = 3e13 / 460;
 
@@ -51,6 +51,7 @@ public final class SpentFuel {
         double l1 = Emitter.ZR95.lambda(), l2 = Emitter.NB95.lambda();
         a.put(Emitter.NB95, a.get(Emitter.ZR95) * l2 / (l2 - l1) * (1 - Math.exp(-(l2 - l1) * irradiationS)));
         put(a, Emitter.RU106, rate, Y_RU106, irradiationS);
+        put(a, Emitter.KR85, rate, Y_KR85, irradiationS);
         a.put(Emitter.CS134, a.get(Emitter.CS137) * burnupMWdPerKg / 40);
         if (steelStructure) a.put(Emitter.CO60, CO60_BQ_PER_KG_AT_40 * heavyMetalKg * burnupMWdPerKg / 40);
         return new ActivityInventory(a, heavyMetalKg, densityGcc);
