@@ -66,7 +66,8 @@ class PurexTest {
         assertThat(b.puInUKg()).isLessThan(1e-5 * 100 * c.puPerHm() + 1e-9);
         // баланс по урану и плутонию
         assertThat(p.ledger().inKg()).isCloseTo(p.ledger().outKg() + p.ledger().lossKg(), within(1e-9));
-        assertThat(p.ledger().puInKg()).isCloseTo(p.ledger().puOutKg() + p.ledger().puLossKg() + p.puTankKg(), within(1e-9));
+        assertThat(p.ledger().puInKg()).isCloseTo(p.ledger().puOutKg() + p.ledger().puLossKg() + p.puTankKg() + p.puInFlowKg(),
+                within(1e-9));
         // регенерат несёт U-236
         assertThat(b.u236()).isGreaterThan(0.003);
         // стекло ≈ 0,1 м³ (≈ 280 кг) на тонну ТМ
@@ -90,7 +91,11 @@ class PurexTest {
         PurexPlant p = new PurexPlant();
         ActinideBuildup.Composition c = ActinideBuildup.at(0.032, 33);
         ActivityInventory act = SpentFuel.discharge(100, 33, 38, 3, true);
-        p.process(100, c, 0.0002, act, true); // ≈ 0,9 кг Pu в буфер
+        p.process(100, c, 0.0002, act, true); // ≈ 0,9 кг Pu идёт в буфер потоком
+        assertThat(p.puTankKg()).isZero();
+        p.meter(0.1);
+        assertThat(p.criticalityFissions()).isZero(); // 100 г — меньше безопасной массы
+        p.meter(10); // осадитель встал: весь плутоний в буфере
         assertThat(p.puTankAboveSafe()).isTrue();
         assertThat(p.criticalityFissions()).isGreaterThan(1e17);
         double pu = p.precipitate(10);

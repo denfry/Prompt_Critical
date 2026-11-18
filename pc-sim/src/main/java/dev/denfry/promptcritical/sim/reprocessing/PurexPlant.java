@@ -22,8 +22,9 @@ import java.util.Map;
  *   <li>высокоактивные отходы — рафинат первого цикла: все продукты деления, кроме ушедших в газ, — остекловываются в
  *   боросиликатное стекло: 15 % оксидов отходов в стекле, оксиды ≈ 1,2 массы продуктов деления.</li>
  * </ol>
- * Нитрат плутония копится в буферной ёмкости перед осаждением; если осаждение стоит, масса растёт, и выше
- * минимальной критической ({@link Criticality#minCriticalPuKg}) — СЦР в растворе.
+ * Плутоний из разделения течёт в буферную ёмкость перед осаждением потоком — по ходу переработки порции
+ * ({@link #meter}); если осаждение стоит, масса в ёмкости растёт, и выше минимальной критической
+ * ({@link Criticality#minCriticalPuKg}) — СЦР в растворе.
  */
 public final class PurexPlant {
     public static final double ACID_KG_PER_KG_HM = 3.0, IODINE_TO_OFFGAS = 0.95, IODINE_FILTER_DF = 1000, OXALATE_LOSS = 0.005;
@@ -37,6 +38,8 @@ public final class PurexPlant {
     private double acidity = 3, reductant = 1.5;
     /** Буферная ёмкость нитрата Pu: масса Pu, кг, и доля Pu-240. */
     private double puTankKg, puTank240;
+    /** Плутоний в аппаратах разделения, ещё не дошедший до буфера, кг, и его доля Pu-240. */
+    private double puInFlowKg, puFlow240;
 
     public UraniumLedger ledger() {
         return ledger;
@@ -126,8 +129,8 @@ public final class PurexPlant {
         ledger.puOut(puInU);
         double puTank = puExtracted - puInU;
         double pu240 = comp.pu240();
-        puTank240 = puTankKg + puTank > 0 ? (puTank240 * puTankKg + pu240 * puTank) / (puTankKg + puTank) : pu240;
-        puTankKg += puTank;
+        puFlow240 = puInFlowKg + puTank > 0 ? (puFlow240 * puInFlowKg + pu240 * puTank) / (puInFlowKg + puTank) : pu240;
+        puInFlowKg += puTank;
         // газ и отходы
         EnumMap<Emitter, Double> hlw = new EnumMap<>(Emitter.class);
         double kr = 0, iRel = 0;
@@ -149,6 +152,20 @@ public final class PurexPlant {
                         PurexFlowsheet.decontamination(PurexFlowsheet.Species.CS_SR, acidity)));
         return new Batch(hmKg, uProduct, comp.u235(), comp.u236(), puTank, comp.pu239(), comp.pu240(), comp.pu241(), comp.pu242(), uLoss,
                 puLoss, puInU, new ActivityInventory(hlw, glass, 2.7), glass, kr, iRel, hmKg * ACID_KG_PER_KG_HM, df);
+    }
+
+    /** Плутоний в аппаратах разделения (ещё не в буфере), кг. */
+    public double puInFlowKg() {
+        return puInFlowKg;
+    }
+
+    /** Перелить в буфер не больше {@code kg} плутония из аппаратов разделения. */
+    public void meter(double kg) {
+        double m = Math.clamp(kg, 0, puInFlowKg);
+        if (m <= 0) return;
+        puTank240 = (puTank240 * puTankKg + puFlow240 * m) / (puTankKg + m);
+        puTankKg += m;
+        puInFlowKg -= m;
     }
 
     /**
@@ -181,6 +198,8 @@ public final class PurexPlant {
         out.putDouble("red", reductant);
         out.putDouble("pu_tank", puTankKg);
         out.putDouble("pu_tank240", puTank240);
+        out.putDouble("pu_flow", puInFlowKg);
+        out.putDouble("pu_flow240", puFlow240);
         ledger.save(out);
     }
 
@@ -189,6 +208,8 @@ public final class PurexPlant {
         setReductant(in.optDouble("red", 1.5));
         puTankKg = in.optDouble("pu_tank", 0);
         puTank240 = in.optDouble("pu_tank240", 0);
+        puInFlowKg = in.optDouble("pu_flow", 0);
+        puFlow240 = in.optDouble("pu_flow240", 0);
         ledger.load(in);
     }
 }
