@@ -373,6 +373,10 @@ public final class PcBlocks {
     public static final DeferredBlock<PcDeviceBlock> RTG_THERMOELECTRIC = device("rtg_thermoelectric", machine(),
             Spec.of(net.minecraft.world.level.block.state.properties.BlockStateProperties.LIT),
             dev.denfry.promptcritical.mod.foundry.FoundryBlock.with(dev.denfry.promptcritical.mod.isotopes.RtgBlockEntity::new));
+    // --- исследовательский реактор TRIGA (12 §12.6.1): мост с приводом импульсного стержня над бассейном ---
+    public static final DeferredBlock<PcDeviceBlock> TRANSIENT_ROD_DRIVE = device("transient_rod_drive", machine(),
+            Spec.facing(BlockStateProperties.ENABLED, BlockStateProperties.TRIGGERED).footprint(FP_TALL2),
+            dev.denfry.promptcritical.mod.foundry.FoundryBlock.with(dev.denfry.promptcritical.mod.isotopes.TrigaBlockEntity::new));
     // --- биржа (14 §14.6): терминал продажи товара NPC-рынку ---
     public static final DeferredBlock<PcDeviceBlock> MARKET_TERMINAL = device("market_terminal", instrument(), Spec.facing(),
             dev.denfry.promptcritical.mod.foundry.FoundryBlock.with(dev.denfry.promptcritical.mod.market.MarketTerminalBlockEntity::new));

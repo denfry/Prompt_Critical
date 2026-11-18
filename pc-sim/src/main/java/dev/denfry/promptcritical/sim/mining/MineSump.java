@@ -91,6 +91,36 @@ public final class MineSump {
         return RHO * G * flowM3s * headM / efficiency;
     }
 
+    // --- всас насоса и кавитация (04a §4a.3) ---
+
+    /** Давление на поверхности, Па; газовая постоянная воздуха, Дж/(кг·К). */
+    public static final double SURFACE_PA = 101_325, R_AIR = 287.05;
+    /**
+     * Всасывающая линия насоса водоотлива [BALANCE]: Ду 150 (скорость ~1,6 м/с на 100 м³/ч) и потери 0,5 м на
+     * номинальной подаче, как в примере конденсатного насоса 04a §4a.3.5.
+     */
+    public static final double SUCTION_DIAMETER_M = 0.15, SUCTION_LOSS_M = 0.5;
+    /**
+     * NPSH_r в точке наилучшего КПД, м [BALANCE]: секционные ЦНС на 100 м³/ч держат вакуумметрическую высоту
+     * всасывания 4–6 м, то есть требуют 4–5 м запаса.
+     */
+    public static final double NPSH_R_BEP_M = 4;
+
+    /**
+     * Абсолютное давление во всасывающем патрубке насоса, Па: воздух шахты на глубине {@code depthM} (барометрическая
+     * ступень), минус столб воды {@code liftM} от зеркала водосборника до оси насоса и потери во всасе.
+     */
+    public static double suctionPressurePa(double depthM, double airK, double liftM, double flowM3s, PumpSpec pump) {
+        double air = SURFACE_PA * Math.exp(G * Math.max(0, depthM) / (R_AIR * airK));
+        double q = flowM3s / pump.ratedFlowM3s();
+        return air - RHO * G * (liftM + SUCTION_LOSS_M * q * q);
+    }
+
+    /** Скорость во всасывающем патрубке, м/с. */
+    public static double suctionVelocity(double flowM3s) {
+        return flowM3s / (Math.PI * SUCTION_DIAMETER_M * SUCTION_DIAMETER_M / 4);
+    }
+
     /** Водосборник отвечает норме ≥ 4 ч притока. */
     public boolean capacityOk(double inflowM3s) {
         return capacityM3 >= inflowM3s * MIN_CAPACITY_HOURS * 3600;

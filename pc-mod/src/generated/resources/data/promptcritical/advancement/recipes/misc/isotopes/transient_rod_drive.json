@@ -1,0 +1,32 @@
+{
+  "parent": "minecraft:recipes/root",
+  "criteria": {
+    "has_the_recipe": {
+      "conditions": {
+        "recipe": "promptcritical:isotopes/transient_rod_drive"
+      },
+      "trigger": "minecraft:recipe_unlocked"
+    },
+    "has_triga_fuel": {
+      "conditions": {
+        "items": [
+          {
+            "items": "promptcritical:triga_fuel_element"
+          }
+        ]
+      },
+      "trigger": "minecraft:inventory_changed"
+    }
+  },
+  "requirements": [
+    [
+      "has_the_recipe",
+      "has_triga_fuel"
+    ]
+  ],
+  "rewards": {
+    "recipes": [
+      "promptcritical:isotopes/transient_rod_drive"
+    ]
+  }
+}

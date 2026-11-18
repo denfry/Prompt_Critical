@@ -27,10 +27,11 @@ public final class ReactorPanels {
     public static final int P_POWER_LOG100 = 0, P_CPS_LOG100 = 1, P_PERIOD10 = 2, P_GRAPHITE_C10 = 3, P_FUEL_C10 = 4,
             P_CONTROL_PCT = 5, P_ZIP_PCT = 6, P_FLAGS = 7, P_TRIP = 8, P_NODES = 9, P_FUEL_NODES = 10, P_LOAD = 11,
             P_CONTROL_RODS = 12, P_ZIP_RODS = 13, P_DETECTORS = 14, P_SOURCES = 15, P_DRIVE = 16, P_POWER_DIAL = 17,
-            P_CPS_DIAL = 18, P_CHANNELS = 19;
+            P_CPS_DIAL = 18, P_WIGNER_JG10 = 19, P_WIGNER_KW10 = 20, P_CHANNELS = 21;
     public static final int PF_TRIPPED = 0, PF_COCKED = 1, PF_WINDING = 2, PF_INTERLOCK = 3, PF_CLAD = 4, PF_FIRE = 5,
-            PF_TOO_BIG = 6, PF_FORMED = 7;
-    public static final int BTN_DOWN = 0, BTN_STOP = 1, BTN_UP = 2, BTN_WIND = 3, BTN_SCRAM = 4, BTN_RESET = 5;
+            PF_TOO_BIG = 6, PF_FORMED = 7, PF_WIGNER_RUNAWAY = 8, PF_DAMPERS = 9;
+    public static final int BTN_DOWN = 0, BTN_STOP = 1, BTN_UP = 2, BTN_WIND = 3, BTN_SCRAM = 4, BTN_RESET = 5,
+            BTN_DAMPERS = 6;
 
     // топливный канал
     public static final int C_LOAD = 0, C_CHANNELS = 1;
@@ -78,7 +79,15 @@ public final class ReactorPanels {
             RESET = PanelText.tr("pile.reset", "Reset", "Сброс АЗ"),
             RESET_TIP = PanelText.tr("pile.reset_tip", "Clear the scram once power and period are below the setpoints",
                     "Снять защиту, когда мощность и период ниже уставок"),
-            TRIP_REASON = PanelText.tr("pile.trip_reason", "Scram: %s", "АЗ: %s");
+            TRIP_REASON = PanelText.tr("pile.trip_reason", "Scram: %s", "АЗ: %s"),
+            READ_WIGNER = PanelText.tr("pile.read_wigner", "Wigner energy %s J/g · release %s kW",
+                    "Энергия Вигнера %s Дж/г · выделение %s кВт"),
+            WIGNER_RUNAWAY = PanelText.tr("pile.wigner_runaway", "Self-heating", "Самонагрев"),
+            DAMPERS_SHUT = PanelText.tr("pile.dampers_shut", "Dampers shut", "Заслонки закрыты"),
+            DAMPERS = PanelText.tr("pile.dampers", "Dampers", "Заслонки"),
+            DAMPERS_TIP = PanelText.tr("pile.dampers_tip",
+                    "Open or shut the air dampers: shut, the faces lose a fifth of their heat and the graphite warms for an anneal",
+                    "Открыть или закрыть заслонки воздуха: закрытые оставляют граням пятую часть отвода тепла, графит греется для отжига");
     private static final Tr[] TRIPS = {PanelText.tr("pile.trip.none", "none", "нет"),
             PanelText.tr("pile.trip.manual", "button", "кнопка"),
             PanelText.tr("pile.trip.short_period", "short period", "малый период"),
@@ -109,7 +118,7 @@ public final class ReactorPanels {
             ACHESON_NOTE = PanelText.tr("acheson.note", "Grid load 500 kW, 6 kV cable to any face",
                     "Нагрузка сети 500 кВт, кабель 6 кВ к любой грани");
 
-    public static final PanelLayout PILE = PanelLayout.builder("reactor_controller", 240, 200, P_CHANNELS)
+    public static final PanelLayout PILE = PanelLayout.builder("reactor_controller", 240, 222, P_CHANNELS)
             .dial(8, 24, true, P_POWER_DIAL, 10, 9, 7.5, 0, DECADES.get(), POWER.get(),
                     v -> READ_POWER.get(power(v.raw(P_POWER_LOG100))))
             .dial(84, 24, true, P_CPS_DIAL, 10, 6, 5.5, 0, DECADES.get(), COUNTS.get(),
@@ -132,6 +141,10 @@ public final class ReactorPanels {
             .button(188, 160, 44, BTN_RESET, RESET.get(), RESET_TIP.get())
             .readout(8, 164, 176, ReactorPanels::structureLine, null)
             .readout(8, 176, 176, v -> READ_RODS.get(v.raw(P_CONTROL_RODS), v.raw(P_ZIP_RODS), v.raw(P_DETECTORS)), null)
+            .readout(8, 190, 176, v -> READ_WIGNER.get(v.num(P_WIGNER_JG10, 10, 1), v.num(P_WIGNER_KW10, 10, 1)), null)
+            .button(188, 186, 44, BTN_DAMPERS, DAMPERS.get(), DAMPERS_TIP.get())
+            .lamp(8, 204, P_FLAGS, PF_WIGNER_RUNAWAY, LampColor.RED, WIGNER_RUNAWAY.get())
+            .lamp(100, 204, P_FLAGS, PF_DAMPERS, LampColor.AMBER, DAMPERS_SHUT.get())
             .noInventory()
             .build();
 

@@ -85,6 +85,16 @@ public final class IsotopeRecipes extends RecipeProvider {
                 .pattern("BSB").pattern("CLC").pattern("BSB").define('B', Items.IRON_BARS).define('S', sheet).define('C', Items.COPPER_BLOCK)
                 .define('L', PcBlocks.LEAD_BLOCK.get())
                 .unlockedBy("has_lead", has(PcBlocks.LEAD_BLOCK.get())).save(out, id("rtg_thermoelectric"));
+        // TRIGA (12 §12.6.1): твэл — диоксид урана, восстановленный и сплавленный с цирконием в гидрид [допущение], в
+        // стальной оболочке; мост — пневмоцилиндр импульсного стержня, приводы регулирующих, зона из твэлов
+        ShapedRecipeBuilder.shaped(RecipeCategory.MISC, PcItems.TRIGA_FUEL_ELEMENT.get(), 4)
+                .pattern("SZS").pattern("ZUZ").pattern("SZS").define('S', sheet).define('Z', PcItems.ZIRCONIUM_SPONGE.get())
+                .define('U', PcItems.UO2_POWDER.get())
+                .unlockedBy("has_zirconium", has(PcItems.ZIRCONIUM_SPONGE.get())).save(out, id("triga_fuel_element"));
+        ShapedRecipeBuilder.shaped(RecipeCategory.MISC, PcBlocks.TRANSIENT_ROD_DRIVE.get())
+                .pattern("SPS").pattern("CFC").pattern("FFF").define('S', sheet).define('P', AllBlocks.MECHANICAL_PISTON.get())
+                .define('C', PcBlocks.CONTROL_ROD_DRIVE.get()).define('F', PcItems.TRIGA_FUEL_ELEMENT.get())
+                .unlockedBy("has_triga_fuel", has(PcItems.TRIGA_FUEL_ELEMENT.get())).save(out, id("transient_rod_drive"));
         SpecialRecipeBuilder.special(IsotopeCraftRecipe::new).save(out, id("isotope_craft"));
         // очистка дымовых газов (14 §14.2): электроды и коронирующие провода, башня с форсунками, газоанализатор
         ShapedRecipeBuilder.shaped(RecipeCategory.MISC, PcBlocks.ELECTROSTATIC_PRECIPITATOR.get()).pattern("SWS").pattern("SBS").pattern("SWS")

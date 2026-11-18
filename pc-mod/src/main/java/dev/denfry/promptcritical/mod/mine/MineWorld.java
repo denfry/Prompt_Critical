@@ -679,6 +679,8 @@ public final class MineWorld {
         for (long k : s.pumps) {
             if (level.getBlockEntity(BlockPos.of(k)) instanceof MineDrainagePumpBlockEntity p) {
                 pumps[i] = p;
+                // водосборник — у подошвы выработок: от неё насос и поднимает воду всасом (04a §4a.3)
+                if (s.bounds != null) p.setSumpFloor(s.bounds.minY());
                 cap[i] = p.capacityM3s(tick);
                 sum += cap[i];
             }

@@ -199,4 +199,52 @@ public final class ReactorGameTests {
             h.succeed();
         });
     }
+
+    // --- энергия Вигнера (04c §4c.11.1) ---
+
+    private static int[] panel(GameTestHelper h) {
+        int[] out = new int[ReactorPanels.P_CHANNELS];
+        ((PileControllerBlockEntity) h.getBlockEntity(DESK)).readPanel(out);
+        return out;
+    }
+
+    /** Малый запас в прогретой кладке под закрытыми заслонками уходит порциями: отжиг засчитан, графит не горит. */
+    @GameTest(template = LARGE, timeoutTicks = 3000)
+    public static void smallWignerStoreAnnealsInAWarmPile(GameTestHelper h) {
+        buildPile(h, false);
+        h.runAfterDelay(30, () -> {
+            GraphitePile p = unit(h).pile();
+            p.wigner().preload(100, 293.15);
+            p.setGraphiteTempK(470);
+            p.setDampersClosed(true);
+            int[] before = panel(h);
+            h.assertTrue(before[ReactorPanels.P_WIGNER_JG10] > 900, "desk shows the store, got " + before[ReactorPanels.P_WIGNER_JG10]);
+            h.assertTrue((before[ReactorPanels.P_FLAGS] & 1 << ReactorPanels.PF_DAMPERS) != 0, "dampers lamp lit");
+            h.succeedWhen(() -> {
+                h.assertTrue(p.wignerStoredJg() < 50, "store still " + p.wignerStoredJg() + " J/g at " + p.graphiteTempK() + " K");
+                h.assertTrue(!p.graphiteFire(), "graphite caught fire");
+                h.assertTrue(p.wigner().peakJg() < 50, "anneal counted (peak reset), peak " + p.wigner().peakJg());
+            });
+        });
+    }
+
+    /** Большой запас: самонагрев на пульте и пожар графита, как на Windscale. */
+    @GameTest(template = LARGE, timeoutTicks = 1400)
+    public static void largeWignerStoreSetsTheGraphiteOnFire(GameTestHelper h) {
+        buildPile(h, false);
+        boolean[] lamp = {false}, ready = {false};
+        h.onEachTick(() -> {
+            if (ready[0]) lamp[0] |= (panel(h)[ReactorPanels.P_FLAGS] & 1 << ReactorPanels.PF_WIGNER_RUNAWAY) != 0;
+        });
+        h.runAfterDelay(30, () -> {
+            GraphitePile p = unit(h).pile();
+            p.wigner().preload(500, 293.15);
+            p.setGraphiteTempK(420);
+            ready[0] = true;
+            h.succeedWhen(() -> {
+                h.assertTrue(lamp[0], "self-heating lamp never lit");
+                h.assertTrue(p.graphiteFire(), "no fire yet at " + p.graphiteTempK() + " K");
+            });
+        });
+    }
 }

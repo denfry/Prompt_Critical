@@ -26,7 +26,7 @@ public final class MinePanels {
     public static final int BUTTON_BUMP = 0;
     public static final int FAN_RPM = 2, FAN_KW10 = 3, FAN_PA = 4, FAN_Q10 = 5, FAN_CHANNELS = 6;
     public static final int DEGAS_CAPTURE_PERMIL = 2, DEGAS_KW10 = 3, DEGAS_CHANNELS = 4;
-    public static final int PUMP_FLOW_M3H10 = 2, PUMP_HEAD_M = 3, PUMP_KW10 = 4, PUMP_CHANNELS = 5;
+    public static final int PUMP_FLOW_M3H10 = 2, PUMP_HEAD_M = 3, PUMP_KW10 = 4, PUMP_SUCTION_KPA10 = 5, PUMP_CHANNELS = 6;
     /** Метров водяного столба на 1 МПа: 10⁶ / (ρg) при ρ = 1000 кг/м³. */
     private static final double M_PER_MPA = 1e6 / (1000 * 9.80665);
 
@@ -52,7 +52,9 @@ public final class MinePanels {
             BUMP_TIP = PanelText.tr("machine.bump_tip", "Bump test: check the rotation direction of the running shaft",
                     "Толчок: проверить направление вращения вала"),
             PUMP_STATUS = PanelText.tr("pump.status", "Head %s m · %s kW · water goes up the pipe on top",
-                    "Напор %s м · %s кВт · вода — в трубу сверху");
+                    "Напор %s м · %s кВт · вода — в трубу сверху"),
+            SUCTION = PanelText.tr("pump.suction", "Suction gauge %s kPa abs · vacuum %s m of water",
+                    "Мановакуумметр всаса %s кПа абс. · вакуум %s м вод. ст.");
 
     private static final Tr CH4 = PanelText.tr("agz.ch4", "Methane", "Метан"),
             CO = PanelText.tr("agz.co", "CO", "CO"),
@@ -101,7 +103,7 @@ public final class MinePanels {
      * Фон — art/blockbench/mining/mine_drainage_pump.author.js ({@code guiPump}). Манометр нагнетания показывает
      * статический напор става ρgH: обратный клапан держит столб воды и на остановленном насосе.
      */
-    public static final PanelLayout DRAINAGE = PanelLayout.builder("mine_drainage_pump", 232, 108, PUMP_CHANNELS)
+    public static final PanelLayout DRAINAGE = PanelLayout.builder("mine_drainage_pump", 232, 120, PUMP_CHANNELS)
             .art(PromptCritical.id("textures/gui/panel/mine_drainage_pump.png"))
             .dial(8, 24, false, SHAFT_RPM10, 10, 256, Double.NaN, 0, RPM.get(), SHAFT.get(), shaftTip())
             .dial(64, 24, false, PUMP_FLOW_M3H10, 10, 160, Double.NaN, 0, M3H.get(), FLOW.get(), null)
@@ -112,6 +114,8 @@ public final class MinePanels {
             .lamp(178, 58, FLAGS, F_DRY, LampColor.RED, DRY.get())
             .button(178, 74, 44, BUTTON_BUMP, BUMP.get(), BUMP_TIP.get())
             .readout(8, 92, 216, v -> PUMP_STATUS.get(v.raw(PUMP_HEAD_M), v.num(PUMP_KW10, 10, 1)), null)
+            .readout(8, 104, 216, v -> SUCTION.get(v.num(PUMP_SUCTION_KPA10, 10, 1),
+                    PanelText.num(Math.max(0, (101.325 - v.raw(PUMP_SUCTION_KPA10) / 10.0) / 9.81), 1)), null)
             .noInventory().build();
 
     /** Фон — art/blockbench/mining/mine_dispatch_cabinet.author.js ({@code guiCabinet}). */

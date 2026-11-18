@@ -233,6 +233,13 @@ public final class RtgBlockEntity extends IronworksBlockEntity implements PanelH
         return best != null && level.isLoaded(best) && level.getBlockEntity(best) instanceof RtgBlockEntity r && r.feed(lamp, watts, now);
     }
 
+    /** РИТЭГ вплотную к {@code consumer} (с источником или без). */
+    public static boolean adjacent(Level level, BlockPos consumer) {
+        for (Direction d : Direction.values())
+            if (level.getBlockEntity(consumer.relative(d)) instanceof RtgBlockEntity) return true;
+        return false;
+    }
+
     /**
      * Вход выпрямителя реле от РИТЭГа вплотную, о.е.: доля мощности {@code demandW}, которую он покрывает.
      */

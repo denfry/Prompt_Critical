@@ -1,0 +1,34 @@
+{
+  "parent": "promptcritical:lua_first",
+  "criteria": {
+    "rtg_rtu": {
+      "conditions": {
+        "event": "promptcritical:everlasting",
+        "station_member": true
+      },
+      "trigger": "promptcritical:sim_event"
+    }
+  },
+  "display": {
+    "description": {
+      "translate": "advancements.promptcritical.everlasting.description"
+    },
+    "frame": "goal",
+    "icon": {
+      "count": 1,
+      "id": "promptcritical:rtg_thermoelectric"
+    },
+    "title": {
+      "translate": "advancements.promptcritical.everlasting.title"
+    }
+  },
+  "requirements": [
+    [
+      "rtg_rtu"
+    ]
+  ],
+  "rewards": {
+    "experience": 60
+  },
+  "sends_telemetry_event": true
+}

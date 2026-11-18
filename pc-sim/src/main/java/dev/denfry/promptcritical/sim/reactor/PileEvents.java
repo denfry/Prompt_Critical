@@ -18,4 +18,10 @@ public interface PileEvents {
 
     /** Графит загорелся на воздухе. */
     default void graphiteFire(double graphiteTempK) {}
+
+    /** Энергия Вигнера пошла сама: dE/dT впереди больше теплоёмкости графита (04c §4c.11.1). */
+    default void wignerRunaway(double graphiteTempK, double storedJg) {}
+
+    /** Отжиг закончен без перегрева до окисления: отдано {@code releasedJg} Дж/г (04c §4c.11.1, «Отжиг», 11). */
+    default void wignerAnnealed(double releasedJg, double graphiteTempK) {}
 }

@@ -13,6 +13,9 @@ public final class ScadaText {
 
     static {
         put("status", "Telemetry gateway: %s machines within %s blocks · %s", "Шлюз телемеханики: машин %s в %s блоках · %s");
+        put("rtg_status", "Telemetry gateway on the RTG: %s machines within %s blocks · draws %s W",
+                "Шлюз телемеханики на РИТЭГе: машин %s в %s блоках · берёт %s Вт");
+        put("rtg_dark", "Telemetry gateway dark: the RTG does not give its %s W", "Шлюз телемеханики погас: РИТЭГ не даёт его %s Вт");
         put("cc_on", "attach a CC: Tweaked computer to read it (peripheral pc_rtu)",
                 "подключите компьютер CC: Tweaked (периферия pc_rtu)");
         put("cc_off", "CC: Tweaked is not installed: the gateway has no computer to talk to",

@@ -18,6 +18,8 @@ import java.util.SplittableRandom;
 public final class PileUnit implements DeviceSubsystem.Unit {
     /** Поток ГСЧ счётчиков (§5.2.4). */
     static final int COUNTER_STREAM = 41;
+    /** Тег вехи {@link ReactorSubsystem#PILE_STATE}: отжиг графита закончен, значение — отданные Дж/г (04c §4c.11.1). */
+    public static final String WIGNER_ANNEALED = "wigner_annealed";
 
     private final GraphitePile pile;
     private SplittableRandom random;
@@ -111,6 +113,19 @@ public final class PileUnit implements DeviceSubsystem.Unit {
             ctx.events().journal(ctx.tick(), self, Severity.CRITICAL, String.format(Locale.ROOT,
                     "pile graphite fire at %.0f K", graphiteTempK));
             ctx.events().milestone(ctx.tick(), self, ReactorSubsystem.PILE_STATE, "graphite_fire", graphiteTempK);
+        }
+
+        @Override
+        public void wignerRunaway(double graphiteTempK, double storedJg) {
+            ctx.events().journal(ctx.tick(), self, Severity.CRITICAL, String.format(Locale.ROOT,
+                    "pile graphite self-heating: Wigner energy %.0f J/g releasing at %.0f K", storedJg, graphiteTempK));
+        }
+
+        @Override
+        public void wignerAnnealed(double releasedJg, double graphiteTempK) {
+            ctx.events().journal(ctx.tick(), self, Severity.INFO, String.format(Locale.ROOT,
+                    "pile graphite annealed: %.0f J/g of Wigner energy released, graphite %.0f K", releasedJg, graphiteTempK));
+            ctx.events().milestone(ctx.tick(), self, ReactorSubsystem.PILE_STATE, WIGNER_ANNEALED, releasedJg);
         }
     }
 }

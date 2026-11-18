@@ -110,6 +110,8 @@ public final class PcItems {
     public static final DeferredItem<Item> ZIRCONIUM_SPONGE = item("zirconium_sponge", 64);
     public static final DeferredItem<Item> HAFNIUM_INGOT = item("hafnium_ingot", 64);
     public static final DeferredItem<Item> ZIRCALOY_INGOT = item("zircaloy_ingot", 64);
+    /** Твэл TRIGA (12 §12.6.1): U-ZrH₁.₆, около 8,5 % масс. урана с обогащением до 19,75 %, в стальной оболочке. */
+    public static final DeferredItem<Item> TRIGA_FUEL_ELEMENT = item("triga_fuel_element", 16);
     public static final DeferredItem<Item> CLADDING_TUBE = item("cladding_tube", 64);
     public static final DeferredItem<Item> SPACER_GRID = item("spacer_grid", 64);
     public static final DeferredItem<dev.denfry.promptcritical.mod.nuclear.Uf6CylinderItem> UF6_CYLINDER_48Y = uf6("uf6_cylinder_48y",

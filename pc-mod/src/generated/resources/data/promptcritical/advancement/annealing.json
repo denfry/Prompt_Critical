@@ -1,0 +1,39 @@
+{
+  "parent": "promptcritical:first_criticality",
+  "criteria": {
+    "annealed": {
+      "conditions": {
+        "event": "promptcritical:pile_state",
+        "predicate": {
+          "wigner_annealed": {
+            "min": 0.0
+          }
+        },
+        "station_member": true
+      },
+      "trigger": "promptcritical:sim_event"
+    }
+  },
+  "display": {
+    "description": {
+      "translate": "advancements.promptcritical.annealing.description"
+    },
+    "frame": "challenge",
+    "icon": {
+      "count": 1,
+      "id": "promptcritical:reactor_controller"
+    },
+    "title": {
+      "translate": "advancements.promptcritical.annealing.title"
+    }
+  },
+  "requirements": [
+    [
+      "annealed"
+    ]
+  ],
+  "rewards": {
+    "experience": 100
+  },
+  "sends_telemetry_event": true
+}

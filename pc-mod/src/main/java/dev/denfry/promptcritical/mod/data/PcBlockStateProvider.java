@@ -278,6 +278,8 @@ public final class PcBlockStateProvider extends BlockStateProvider {
             case "market_terminal" -> "control_desk";
             case "irradiation_channel" -> s.getValue(PcProperties.FILLED) ? id + "_loaded" : id;
             case "rtg_thermoelectric" -> s.getValue(BlockStateProperties.LIT) ? id : id + "_depleted";
+            case "transient_rod_drive" -> s.getValue(BlockStateProperties.TRIGGERED) ? id + "_fired"
+                    : s.getValue(BlockStateProperties.ENABLED) ? id + "_armed" : id;
             case "pwr_reactor" -> s.getValue(PcProperties.PWR_SEGMENT) == PcProperties.PwrSegment.HEAD ? id + "_head" : id;
             case "pressurizer" -> s.getValue(BlockStateProperties.LIT) ? id + "_lit" : id;
             // тяжёлая вода T3

@@ -127,7 +127,7 @@ public final class PileControllerBlockEntity extends IronworksBlockEntity implem
     private void consequences(GraphitePile p) {
         if (!(level instanceof ServerLevel sl)) return;
         BlockPos at = top.get(sl.random.nextInt(top.size())).above();
-        if (p.cladFailed() || p.graphiteFire()) {
+        if (p.cladFailed() || p.graphiteFire() || p.wignerRunaway()) {
             sl.sendParticles(ParticleTypes.LARGE_SMOKE, at.getX() + 0.5, at.getY() + 0.2, at.getZ() + 0.5, 6, 0.3, 0.2, 0.3, 0.01);
         }
         if (p.graphiteFire() && p.graphiteTempK() > dev.denfry.promptcritical.sim.reactor.PileConfig.defaults().graphiteFireK()
@@ -206,7 +206,11 @@ public final class PileControllerBlockEntity extends IronworksBlockEntity implem
         if (p.graphiteFire()) f |= 1 << ReactorPanels.PF_FIRE;
         if (tooBig) f |= 1 << ReactorPanels.PF_TOO_BIG;
         if (l.nodeCount() > 0) f |= 1 << ReactorPanels.PF_FORMED;
+        if (p.wignerRunaway()) f |= 1 << ReactorPanels.PF_WIGNER_RUNAWAY;
+        if (p.dampersClosed()) f |= 1 << ReactorPanels.PF_DAMPERS;
         out[ReactorPanels.P_FLAGS] = f;
+        out[ReactorPanels.P_WIGNER_JG10] = (int) Math.round(p.wignerStoredJg() * 10);
+        out[ReactorPanels.P_WIGNER_KW10] = (int) Math.round(Math.min(1e8, p.wignerPowerW() / 100));
     }
 
     private static int pct(double x) {
@@ -232,6 +236,7 @@ public final class PileControllerBlockEntity extends IronworksBlockEntity implem
             case ReactorPanels.BTN_RESET -> {
                 if (!p.resetTrip()) player.displayClientMessage(ReactorPanels.MSG_RESET_REFUSED.get(), true);
             }
+            case ReactorPanels.BTN_DAMPERS -> p.setDampersClosed(!p.dampersClosed());
             default -> {
             }
         }

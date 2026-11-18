@@ -58,6 +58,22 @@ public final class PcAdvancements implements AdvancementProvider.AdvancementGene
                 "Удержите графитовый котёл на самоподдерживающейся реакции пять секунд без помощи источника"});
         LANG.put("pile_scram", new String[] {"Zip!", "Зип!",
                 "See the pile's zip rods fall on a scram", "Увидеть, как падают аварийные стержни котла"});
+        // физика: отжиг графита (04c §4c.11.1)
+        LANG.put("annealing", new String[] {"Annealing", "Отжиг",
+                "Release the pile graphite's Wigner energy under control: half of it out, the graphite never above 400 °C",
+                "Контролируемо высвободите энергию Вигнера из графита котла: больше половины запаса, графит не выше 400 °C"});
+        // физика: кавитация насоса (04a §4a.3)
+        LANG.put("quiet_pump", new String[] {"Quiet Pump", "Тихий насос",
+                "Find a cavitating pump by its gravel noise and cure it before the impeller is eaten through",
+                "Найдите кавитирующий насос по шуму «гравия» и устраните кавитацию, пока колесо не съедено"});
+        // физика: импульс TRIGA (12 §12.6.1)
+        LANG.put("pulse", new String[] {"Pulse", "Импульс",
+                "Fire a TRIGA pulse of 100 MW or more without damaging the fuel",
+                "Импульс TRIGA в 100 МВт и больше без повреждения топлива"});
+        // физика: РИТЭГ на удалённой скважине (12 §12.5.1)
+        LANG.put("everlasting", new String[] {"Everlasting Battery", "Вечная батарейка",
+                "An RTG alone powers the telemetry gateway of a remote well",
+                "РИТЭГ один питает шлюз телемеханики удалённой скважины"});
         LANG.put("relay_logic", new String[] {"Click-Clack", "Щёлк-щёлк", "A circuit of at least five relays drives a mechanism",
                 "Схема из пяти и более реле управляет механизмом"});
         LANG.put("analog_pid", new String[] {"No Computer Needed", "Без компьютера",
@@ -177,6 +193,16 @@ public final class PcAdvancements implements AdvancementProvider.AdvancementGene
         task(pile, PcBlocks.SCRAM_BUTTON.get(), "pile_scram", AdvancementType.TASK, true, 20)
                 .addCriterion("scram", event(ReactorSubsystem.PILE_STATE, Map.of("scram", MinMaxBounds.Doubles.atLeast(1))))
                 .save(saver, id("pile_scram"), efh);
+        task(pile, PcBlocks.REACTOR_CONTROLLER.get(), "annealing", AdvancementType.CHALLENGE, false, 100)
+                .addCriterion("annealed", event(ReactorSubsystem.PILE_STATE, Map.of(dev.denfry.promptcritical.sim.reactor.PileUnit.WIGNER_ANNEALED,
+                        MinMaxBounds.Doubles.atLeast(0))))
+                .save(saver, id("annealing"), efh);
+        task(canary, PcBlocks.MINE_DRAINAGE_PUMP.get(), "quiet_pump", AdvancementType.TASK, false, 40)
+                .addCriterion("quiet", event(dev.denfry.promptcritical.mod.content.SimAchievements.QUIET_PUMP, Map.of()))
+                .save(saver, id("quiet_pump"), efh);
+        task(pile, PcBlocks.TRANSIENT_ROD_DRIVE.get(), "pulse", AdvancementType.CHALLENGE, false, 100)
+                .addCriterion("pulse", event(dev.denfry.promptcritical.mod.content.SimAchievements.PULSE, Map.of()))
+                .save(saver, id("pulse"), efh);
         // автоматизация A1–A2
         AdvancementHolder relays = task(root, PcBlocks.RELAY.get(), "relay_logic", AdvancementType.TASK, false, 30)
                 .addCriterion("relay_logic", event(AutomationSubsystem.RELAY_LOGIC,
@@ -242,6 +268,10 @@ public final class PcAdvancements implements AdvancementProvider.AdvancementGene
                 .addCriterion("day", event(dev.denfry.promptcritical.mod.content.SimAchievements.HISTORIAN_DAY, Map.of())).save(saver, id("historian"), efh);
         task(rtu, PcBlocks.RTU_STATION.get(), "telemetry", AdvancementType.GOAL, false, 60)
                 .addCriterion("rtus", event(dev.denfry.promptcritical.mod.content.SimAchievements.TELEMETRY, Map.of())).save(saver, id("telemetry"), efh);
+        // физика: РИТЭГ на удалённой скважине (12 §12.5.1)
+        task(rtu, PcBlocks.RTG_THERMOELECTRIC.get(), "everlasting", AdvancementType.GOAL, false, 60)
+                .addCriterion("rtg_rtu", event(dev.denfry.promptcritical.mod.content.SimAchievements.EVERLASTING, Map.of()))
+                .save(saver, id("everlasting"), efh);
         AdvancementHolder lock = task(root, PcItems.LOCKOUT_PADLOCK.get(), "lockout", AdvancementType.TASK, false, 20)
                 .addCriterion("lock", event(dev.denfry.promptcritical.mod.content.SimAchievements.LOCKOUT, Map.of())).save(saver, id("lockout"), efh);
         // наряды-допуски, остановочный ремонт, ALARA (13 §13.2, §13.6.2; 04b), проверка и матрица ПАЗ (03d §3d.6)

@@ -87,7 +87,7 @@ public final class IsotopePanels {
     }
 
     public static List<PanelLayout> all() {
-        return List.of(CHANNEL, RTG);
+        return List.of(CHANNEL, RTG, TrigaPanels.TRIGA);
     }
 
     /** Величина в канал щита: 100·lg(x), 0 — пусто. */
