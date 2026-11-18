@@ -164,29 +164,14 @@ def coke_wall(hot=False):
         for i, x in enumerate((2, 11))]
 
 
-m("coke_battery_wall", "coke", coke_wall())
-m("coke_battery_wall_hot", "coke", coke_wall(True))
+# нарисовано вручную в Blockbench: art/blockbench/steelmaking/steel_coke.author.js
 # коксовыталкиватель: корпус привода; штанга с башмаком — partial (ход по Z)
-m("coke_pusher_ram", "coke", [
-    el("housing", [1, 0, 4], [15, 14, 16], "cy"),
-    el("rack_guide", [5, 4, 0], [11, 10, 4], "d"),
-    el("motor", [2, 14, 8], [8, 16, 14], "mb"),
-])
-m("coke_pusher_ram/ram", "coke", [el("beam", [6, 5, -16], [10, 9, 16], "soot"), el("shoe", [3, 2, -16], [13, 12, -14], "ci")], kind="partial")
+# нарисовано вручную в Blockbench: art/blockbench/steelmaking/steel_coke.author.js
 # газосборник: толстая жёлтая труба, стояк сверху
-m("gas_collector_main", "coke", hcyl("main", "x", 6, 2, 14, "gas", sides=8) + [el("standpipe", [6, 14, 6], [10, 16, 10], "gas")])
-m("gas_collector_main_side", "coke", hcyl("arm", "x", 6, 0, 2, "gas", sides=8))
+# нарисовано вручную в Blockbench: art/blockbench/steelmaking/steel_coke.author.js
 
 # тушильная башня 3×3×3: бетонная шахта, вытяжной раструб, рельсы тушильного вагона
-m("quench_tower", "coke", [
-    el("rails", [-16, -16, -6], [32, -15, 22], "d"),
-    el("wall_w", [-16, -15, -16], [-12, 24, 32], "c"),
-    el("wall_e", [28, -15, -16], [32, 24, 32], "c"),
-    el("wall_s", [-12, -15, 28], [28, 24, 32], "c"),
-    el("wall_n_top", [-12, 4, -16], [28, 24, -12], "c"),
-    el("stack", [-6, 24, -6], [22, 32, 22], "c"),
-    el("spray_header", [-12, 2, -4], [28, 4, -2], "wat"),
-])
+# нарисовано вручную в Blockbench: art/blockbench/steelmaking/steel_coke.author.js
 
 
 # УСТК: секции клёпаной камеры 3×3×3 (футеровка внутри), верхняя — загрузочное устройство
@@ -223,29 +208,13 @@ def byproduct(kind="cooler"):
     return els
 
 
-m("byproduct_plant", "coke", byproduct())
-for _k in ("precipitator", "saturator", "scrubber"):
-    m(f"byproduct_plant_{_k}", "coke", byproduct(_k))
+# нарисовано вручную в Blockbench: art/blockbench/steelmaking/steel_coke.author.js
 
 # нагнетатель коксового газа 2×2×1: серая спираль, жёлтые патрубки; ротор — partial (ось Z)
-m("gas_exhauster", "coke", hcyl("volute", "z", 13, 2, 14, "dg", c=(16, 16, 8)) + [
-    el("outlet", [16, 22, 2.5], [32, 32, 13.5], "dg"),
-    el("inlet", [10, 10, 14], [22, 22, 16], "gas", faces={"south": "end"}),
-    el("base", [2, 0, 0], [30, 3, 16], "d"),
-    el("outlet_flange", [28, 22, 2], [32, 32, 14], "gas", faces={"east": "end"}),
-])
-m("gas_exhauster/rotor", "coke", impeller_z(4, 12, 10, c=(16, 16, 8)) + shaft_z(1.5, -0.01, 16, (16, 16, 8)), kind="partial")
+# нарисовано вручную в Blockbench: art/blockbench/steelmaking/steel_coke.author.js
 
 # электродный пресс 3×1×1: контейнер, мундштук, гидроцилиндр; шнек — partial (ось X)
-m("electrode_extruder", "coke", [
-    el("frame", [-16, 0, 2], [32, 2, 14], "d"),
-    el("ram_cylinder", [-16, 2, 3], [-2, 14, 13], "dg"),
-    el("container", [-2, 3, 3], [20, 13, 13], "p"),
-    el("die", [20, 5, 5], [28, 11, 11], "st"),
-    el("green_electrode", [28, 6, 6], [32, 10, 10], "g"),
-    el("hopper", [2, 13, 4], [10, 16, 12], "p"),
-])
-m("electrode_extruder/screw", "coke", hcyl("flight", "x", 4, -2, 20, "st", sides=8) + shaft_x(1, -6, 20), kind="partial")
+# нарисовано вручную в Blockbench: art/blockbench/steelmaking/steel_coke.author.js
 
 
 # кольцевая обжиговая печь 3×2×3: кирпичные камеры, крышки, горелочный мост
@@ -258,8 +227,7 @@ def baking(lit=False):
     return els
 
 
-m("baking_furnace", "coke", baking())
-m("baking_furnace_lit", "coke", baking(True))
+# нарисовано вручную в Blockbench: art/blockbench/steelmaking/steel_coke.author.js
 
 # ======================================================================
 # доменное производство
@@ -427,32 +395,13 @@ m("dust_catcher", "ironmaking", hcyl("drum", "y", 13, 4, 30, "p", c=(16, 8, 16))
 # сталеплавильное
 # ======================================================================
 # конвертер: опоры цапф (сегмент 3×2×3); корпус — partial (ось цапф X)
-m("bof_vessel", "steelmaking", [
-    el("pier_w", [-16, 0, 2], [-10, 20, 14], "c"), el("pier_e", [26, 0, 2], [32, 20, 14], "c"),
-    el("bearing_w", [-14, 20, 4], [-8, 26, 12], "d"), el("bearing_e", [24, 20, 4], [30, 26, 12], "d"),
-    el("pit", [-10, 0, -16], [26, 1, 32], "ref")])
-m("bof_vessel/vessel", "steelmaking", hcyl("belly", "y", 13, 2, 22, "soot") + hcyl("cone", "y", 9, 22, 30, "soot")
-  + hcyl("bottom", "y", 9, -6, 2, "soot") + [
-      el("trunnion_ring", [-6, 13, -6], [22, 17, 22], "d"),
-      el("trunnion_w", [-14, 13, 6], [-6, 17, 10], "st"), el("trunnion_e", [22, 13, 6], [30, 17, 10], "st"),
-      el("glow_mouth", [1, 29.5, 1], [15, 30.5, 15], "hot")], kind="partial")
+# нарисовано вручную в Blockbench: art/blockbench/steelmaking/steel_coke.author.js
 
 # кислородная фурма: каретка с шлангами; фурма — partial (ход вниз)
-m("oxygen_lance", "steelmaking", [
-    el("carriage", [3, 6, 3], [13, 16, 13], "cy"),
-    el("guide", [13, 0, 6], [16, 16, 10], "d"),
-    el("hose_o2", [-0.01, 10, 5], [3, 12, 7], "air"),
-    el("hose_water", [-0.01, 12, 9], [3, 14, 11], "air"),
-])
-m("oxygen_lance/lance", "steelmaking", vcyl("lance", 8, 8, 1.5, -16, 6, "sm", 8), kind="partial")
+# нарисовано вручную в Blockbench: art/blockbench/steelmaking/steel_coke.author.js
 
 # установка доводки 3×2×3: стенд с бункерами ферросплавов
-m("ladle_station", "steelmaking", [el("deck", [-16, 18, -16], [32, 20, 32], "grat")]
-  + [el(f"col_{i}", [x, 0, z], [x + 2, 18, z + 2], "d") for i, (x, z) in enumerate(((-16, -16), (30, -16), (-16, 30), (30, 30)))]
-  + [x for i, xx in enumerate((-10, 4, 18)) for x in (
-      el(f"bin_{i}", [xx, 20, -4], [xx + 10, 30, 6], "p"),
-      el(f"chute_{i}", [xx + 4, 12, 0], [xx + 6, 20, 2], "d"))]
-  + [el("argon_line", [-16, 2, 10], [32, 3, 11], "gas")])
+# нарисовано вручную в Blockbench: art/blockbench/steelmaking/steel_coke.author.js
 
 
 # ДСП-12: сегменты 3×3×3 — корпус из водоохлаждаемых панелей и свод (дуга — glow)
@@ -471,9 +420,7 @@ def eaf(roof=False, arcing=False):
         el("slag_door", [-6, 6, -8.5], [22, 18, -7], "ci")]
 
 
-m("electric_arc_furnace", "steelmaking", eaf())
-m("electric_arc_furnace_roof", "steelmaking", eaf(True))
-m("electric_arc_furnace_roof_arcing", "steelmaking", eaf(True, True))
+# нарисовано вручную в Blockbench: art/blockbench/steelmaking/steel_coke.author.js
 
 # электрододержатель 1×4×1: стойка с консолью и медной ошиновкой (сегмент 1×3×1); электрод — partial
 m("eaf_electrode_mast", "steelmaking", [
@@ -502,8 +449,7 @@ def ingot(filled=False):
     return els
 
 
-m("ingot_mold", "steelmaking", ingot())
-m("ingot_mold_filled", "steelmaking", ingot(True))
+# нарисовано вручную в Blockbench: art/blockbench/steelmaking/steel_coke.author.js
 
 
 # МНЛЗ: промковш на тележке 2×2×2; стопор — partial (ход Y)

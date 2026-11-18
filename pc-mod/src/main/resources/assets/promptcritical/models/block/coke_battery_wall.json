@@ -1,13 +1,13 @@
 {
 	"credit": "Made with Blockbench",
 	"textures": {
-		"particle": "promptcritical:block/common/metal_dinas",
-		"ci": "promptcritical:block/common/grid_cast_iron",
-		"din": "promptcritical:block/common/metal_dinas"
+		"particle": "promptcritical:block/steelmaking/dinas",
+		"steelmaking_dinas": "promptcritical:block/steelmaking/dinas",
+		"material_cast_iron": "promptcritical:block/material/cast_iron"
 	},
 	"elements": [
 		{
-			"name": "wall",
+			"name": "block",
 			"from": [0, 0, 0],
 			"to": [16, 16, 16],
 			"rotation": {
@@ -18,34 +18,40 @@
 			"faces": {
 				"north": {
 					"uv": [0, 0, 16, 16],
-					"texture": "#din"
+					"texture": "#steelmaking_dinas",
+					"cullface": "north"
 				},
 				"east": {
 					"uv": [0, 0, 16, 16],
-					"texture": "#din"
+					"texture": "#steelmaking_dinas",
+					"cullface": "east"
 				},
 				"south": {
 					"uv": [0, 0, 16, 16],
-					"texture": "#din"
+					"texture": "#steelmaking_dinas",
+					"cullface": "south"
 				},
 				"west": {
 					"uv": [0, 0, 16, 16],
-					"texture": "#din"
+					"texture": "#steelmaking_dinas",
+					"cullface": "west"
 				},
 				"up": {
 					"uv": [0, 0, 16, 16],
-					"texture": "#din"
+					"texture": "#steelmaking_dinas",
+					"cullface": "up"
 				},
 				"down": {
 					"uv": [0, 0, 16, 16],
-					"texture": "#din"
+					"texture": "#steelmaking_dinas",
+					"cullface": "down"
 				}
 			}
 		},
 		{
-			"name": "peep_0",
-			"from": [2, 15.9, 6],
-			"to": [5, 16.5, 10],
+			"name": "lid_4",
+			"from": [6, 16, 2],
+			"to": [10, 16.6, 6],
 			"rotation": {
 				"angle": 0,
 				"axis": "y",
@@ -53,35 +59,35 @@
 			},
 			"faces": {
 				"north": {
-					"uv": [0, 0, 3, 0.6],
-					"texture": "#ci"
+					"uv": [6, 15.4, 10, 16],
+					"texture": "#material_cast_iron"
 				},
 				"east": {
-					"uv": [0, 0, 4, 0.6],
-					"texture": "#ci"
+					"uv": [10, 15.4, 14, 16],
+					"texture": "#material_cast_iron"
 				},
 				"south": {
-					"uv": [0, 0, 3, 0.6],
-					"texture": "#ci"
+					"uv": [6, 15.4, 10, 16],
+					"texture": "#material_cast_iron"
 				},
 				"west": {
-					"uv": [0, 0, 4, 0.6],
-					"texture": "#ci"
+					"uv": [2, 15.4, 6, 16],
+					"texture": "#material_cast_iron"
 				},
 				"up": {
-					"uv": [0, 0, 3, 4],
-					"texture": "#ci"
+					"uv": [6, 2, 10, 6],
+					"texture": "#material_cast_iron"
 				},
 				"down": {
-					"uv": [0, 0, 3, 4],
-					"texture": "#ci"
+					"uv": [6, 10, 10, 14],
+					"texture": "#material_cast_iron"
 				}
 			}
 		},
 		{
-			"name": "peep_1",
-			"from": [11, 15.9, 6],
-			"to": [14, 16.5, 10],
+			"name": "lid_knob_4",
+			"from": [7.4, 16.6, 3.4],
+			"to": [8.6, 17.2, 4.6],
 			"rotation": {
 				"angle": 0,
 				"axis": "y",
@@ -89,28 +95,100 @@
 			},
 			"faces": {
 				"north": {
-					"uv": [0, 0, 3, 0.6],
-					"texture": "#ci"
+					"uv": [7.4, 14.8, 8.6, 15.4],
+					"texture": "#material_cast_iron"
 				},
 				"east": {
-					"uv": [0, 0, 4, 0.6],
-					"texture": "#ci"
+					"uv": [11.4, 14.8, 12.6, 15.4],
+					"texture": "#material_cast_iron"
 				},
 				"south": {
-					"uv": [0, 0, 3, 0.6],
-					"texture": "#ci"
+					"uv": [7.4, 14.8, 8.6, 15.4],
+					"texture": "#material_cast_iron"
 				},
 				"west": {
-					"uv": [0, 0, 4, 0.6],
-					"texture": "#ci"
+					"uv": [3.4, 14.8, 4.6, 15.4],
+					"texture": "#material_cast_iron"
 				},
 				"up": {
-					"uv": [0, 0, 3, 4],
-					"texture": "#ci"
+					"uv": [7.4, 3.4, 8.6, 4.6],
+					"texture": "#material_cast_iron"
 				},
 				"down": {
-					"uv": [0, 0, 3, 4],
-					"texture": "#ci"
+					"uv": [7.4, 11.4, 8.6, 12.6],
+					"texture": "#material_cast_iron"
+				}
+			}
+		},
+		{
+			"name": "lid_12",
+			"from": [6, 16, 10],
+			"to": [10, 16.6, 14],
+			"rotation": {
+				"angle": 0,
+				"axis": "y",
+				"origin": [8, 8, 8]
+			},
+			"faces": {
+				"north": {
+					"uv": [6, 15.4, 10, 16],
+					"texture": "#material_cast_iron"
+				},
+				"east": {
+					"uv": [2, 15.4, 6, 16],
+					"texture": "#material_cast_iron"
+				},
+				"south": {
+					"uv": [6, 15.4, 10, 16],
+					"texture": "#material_cast_iron"
+				},
+				"west": {
+					"uv": [10, 15.4, 14, 16],
+					"texture": "#material_cast_iron"
+				},
+				"up": {
+					"uv": [6, 10, 10, 14],
+					"texture": "#material_cast_iron"
+				},
+				"down": {
+					"uv": [6, 2, 10, 6],
+					"texture": "#material_cast_iron"
+				}
+			}
+		},
+		{
+			"name": "lid_knob_12",
+			"from": [7.4, 16.6, 11.4],
+			"to": [8.6, 17.2, 12.6],
+			"rotation": {
+				"angle": 0,
+				"axis": "y",
+				"origin": [8, 8, 8]
+			},
+			"faces": {
+				"north": {
+					"uv": [7.4, 14.8, 8.6, 15.4],
+					"texture": "#material_cast_iron"
+				},
+				"east": {
+					"uv": [3.4, 14.8, 4.6, 15.4],
+					"texture": "#material_cast_iron"
+				},
+				"south": {
+					"uv": [7.4, 14.8, 8.6, 15.4],
+					"texture": "#material_cast_iron"
+				},
+				"west": {
+					"uv": [11.4, 14.8, 12.6, 15.4],
+					"texture": "#material_cast_iron"
+				},
+				"up": {
+					"uv": [7.4, 11.4, 8.6, 12.6],
+					"texture": "#material_cast_iron"
+				},
+				"down": {
+					"uv": [7.4, 3.4, 8.6, 4.6],
+					"texture": "#material_cast_iron"
 				}
 			}
 		}
