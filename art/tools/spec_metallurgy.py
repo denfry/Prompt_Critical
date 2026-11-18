@@ -98,26 +98,7 @@ m("vein_quartz", "ores", [el("block", [0, 0, 0], [16, 16, 16], "qtz")])
 # главный вентилятор нарисован вручную в Blockbench: art/blockbench/mining/main_mine_fan.author.js
 
 
-# вентиляционная дверь 1×2×1: дощатая с резиной / стальной регулятор с окном
-def vent_door(kind="door", opened=False):
-    els = [el("frame_w", [0, 0, 6], [2, 32, 10], "tim"),
-           el("frame_e", [14, 0, 6], [16, 32, 10], "tim"),
-           el("lintel", [0, 29, 6], [16, 32, 10], "tim")]
-    if kind == "door":
-        leaf = el("leaf", [2, 0, 7], [14, 29, 9], "tim", faces={"north": "tim"})
-        if opened:
-            leaf = el("leaf", [2, 0, 9], [4, 29, 21], "tim")
-        els += [leaf, el("seal", [2, 0, 6.8], [14, 0.5, 9.2], "r")]
-    else:
-        els += [el("plate", [2, 0, 7.5], [14, 29, 8.5], "p"),
-                el("window_frame", [5, 14, 7.25], [11, 22, 8.75], "d"),
-                el("window", [6, 15, 7], [10, 21, 9], "gl")]
-    return els
-
-
-m("ventilation_door", "mining", vent_door())
-m("ventilation_door_open", "mining", vent_door(opened=True))
-m("ventilation_door_regulator", "mining", vent_door("regulator"))
+# вентиляционная дверь и жалюзийный регулятор нарисованы вручную в Blockbench: art/blockbench/mining/ventilation_door.author.js
 
 # сланцевый заслон (полки с инертной пылью) / водяной заслон (подвесные сосуды)
 m("explosion_barrier", "mining", [el("hanger_w", [1, 10, 7], [2, 16, 9], "d"), el("hanger_e", [14, 10, 7], [15, 16, 9], "d")]

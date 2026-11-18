@@ -3,6 +3,8 @@ package dev.denfry.promptcritical.mod.block;
 import dev.denfry.promptcritical.mod.mine.HoistText;
 import dev.denfry.promptcritical.mod.registry.PcItems;
 import net.minecraft.core.BlockPos;
+import net.minecraft.core.particles.ParticleTypes;
+import net.minecraft.server.level.ServerLevel;
 import net.minecraft.sounds.SoundEvents;
 import net.minecraft.sounds.SoundSource;
 import net.minecraft.world.InteractionResult;
@@ -45,6 +47,7 @@ public class VentilationDoorBlock extends PcBlock {
             if (!level.isClientSide) {
                 level.setBlock(pos, state.setValue(PcProperties.WINDOW, w), Block.UPDATE_ALL);
                 level.playSound(null, pos, SoundEvents.IRON_TRAPDOOR_CLOSE, SoundSource.BLOCKS, 0.8f, 0.6f + 0.2f * w);
+                gust(level, pos, 4);
                 player.displayClientMessage(HoistText.msg("regulator.window", Math.round(WINDOW_FRACTIONS[w] * 100)), true);
             }
             return InteractionResult.sidedSuccess(level.isClientSide);
@@ -53,8 +56,19 @@ public class VentilationDoorBlock extends PcBlock {
         if (!level.isClientSide) {
             level.setBlock(pos, state.setValue(BlockStateProperties.OPEN, open), Block.UPDATE_ALL);
             level.playSound(null, pos, open ? SoundEvents.WOODEN_DOOR_OPEN : SoundEvents.WOODEN_DOOR_CLOSE, SoundSource.BLOCKS, 1.0f, 0.8f);
+            gust(level, pos, open ? 14 : 6);
         }
         return InteractionResult.sidedSuccess(level.isClientSide);
+    }
+
+    /**
+     * Перестановка двери или окна в перемычке рывком меняет перепад: воздух бросается через проём и поднимает пыль
+     * с почвы. Направление потока считает шахта, здесь — только видимый всплеск в обе стороны проёма.
+     */
+    private static void gust(Level level, BlockPos pos, int count) {
+        if (!(level instanceof ServerLevel server)) return;
+        server.sendParticles(ParticleTypes.WHITE_ASH, pos.getX() + 0.5, pos.getY() + 0.6, pos.getZ() + 0.5, count * 3, 0.3, 0.5, 0.6, 0.05);
+        server.sendParticles(ParticleTypes.POOF, pos.getX() + 0.5, pos.getY() + 0.15, pos.getZ() + 0.5, count / 2, 0.3, 0.05, 0.5, 0.02);
     }
 
     @Override

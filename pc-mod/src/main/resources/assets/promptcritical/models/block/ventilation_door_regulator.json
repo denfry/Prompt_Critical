@@ -1,17 +1,17 @@
 {
 	"credit": "Made with Blockbench",
 	"textures": {
-		"particle": "promptcritical:block/common/metal_timber",
-		"d": "promptcritical:block/common/steel_dark",
-		"gl": "promptcritical:block/common/mining_glass",
-		"p": "promptcritical:block/common/steel_plate",
-		"tim": "promptcritical:block/common/metal_timber"
+		"particle": "promptcritical:block/ventilation_door/steel",
+		"ventilation_door_steel": "promptcritical:block/ventilation_door/steel",
+		"material_bright_steel": "promptcritical:block/material/bright_steel",
+		"material_steel": "promptcritical:block/material/steel",
+		"material_paint_red": "promptcritical:block/material/paint_red"
 	},
 	"elements": [
 		{
-			"name": "frame_w",
+			"name": "post_w_0",
 			"from": [0, 0, 6],
-			"to": [2, 32, 10],
+			"to": [2, 16, 10],
 			"rotation": {
 				"angle": 0,
 				"axis": "y",
@@ -19,35 +19,71 @@
 			},
 			"faces": {
 				"north": {
-					"uv": [0, 0, 2, 16],
-					"texture": "#tim"
+					"uv": [14, 0, 16, 16],
+					"texture": "#ventilation_door_steel"
 				},
 				"east": {
-					"uv": [0, 0, 4, 16],
-					"texture": "#tim"
+					"uv": [6, 0, 10, 16],
+					"texture": "#ventilation_door_steel"
 				},
 				"south": {
 					"uv": [0, 0, 2, 16],
-					"texture": "#tim"
+					"texture": "#ventilation_door_steel"
 				},
 				"west": {
-					"uv": [0, 0, 4, 16],
-					"texture": "#tim"
+					"uv": [6, 0, 10, 16],
+					"texture": "#ventilation_door_steel"
 				},
 				"up": {
-					"uv": [0, 0, 2, 4],
-					"texture": "#tim"
+					"uv": [0, 6, 2, 10],
+					"texture": "#ventilation_door_steel"
 				},
 				"down": {
-					"uv": [0, 0, 2, 4],
-					"texture": "#tim"
+					"uv": [0, 6, 2, 10],
+					"texture": "#ventilation_door_steel"
 				}
 			}
 		},
 		{
-			"name": "frame_e",
+			"name": "post_w_1",
+			"from": [0, 16, 6],
+			"to": [2, 29, 10],
+			"rotation": {
+				"angle": 0,
+				"axis": "y",
+				"origin": [8, 8, 8]
+			},
+			"faces": {
+				"north": {
+					"uv": [14, 3, 16, 16],
+					"texture": "#ventilation_door_steel"
+				},
+				"east": {
+					"uv": [6, 3, 10, 16],
+					"texture": "#ventilation_door_steel"
+				},
+				"south": {
+					"uv": [0, 3, 2, 16],
+					"texture": "#ventilation_door_steel"
+				},
+				"west": {
+					"uv": [6, 3, 10, 16],
+					"texture": "#ventilation_door_steel"
+				},
+				"up": {
+					"uv": [0, 6, 2, 10],
+					"texture": "#ventilation_door_steel"
+				},
+				"down": {
+					"uv": [0, 6, 2, 10],
+					"texture": "#ventilation_door_steel"
+				}
+			}
+		},
+		{
+			"name": "post_e_0",
 			"from": [14, 0, 6],
-			"to": [16, 32, 10],
+			"to": [16, 16, 10],
 			"rotation": {
 				"angle": 0,
 				"axis": "y",
@@ -56,27 +92,63 @@
 			"faces": {
 				"north": {
 					"uv": [0, 0, 2, 16],
-					"texture": "#tim"
+					"texture": "#ventilation_door_steel"
 				},
 				"east": {
-					"uv": [0, 0, 4, 16],
-					"texture": "#tim"
+					"uv": [6, 0, 10, 16],
+					"texture": "#ventilation_door_steel"
 				},
 				"south": {
-					"uv": [0, 0, 2, 16],
-					"texture": "#tim"
+					"uv": [14, 0, 16, 16],
+					"texture": "#ventilation_door_steel"
 				},
 				"west": {
-					"uv": [0, 0, 4, 16],
-					"texture": "#tim"
+					"uv": [6, 0, 10, 16],
+					"texture": "#ventilation_door_steel"
 				},
 				"up": {
-					"uv": [0, 0, 2, 4],
-					"texture": "#tim"
+					"uv": [14, 6, 16, 10],
+					"texture": "#ventilation_door_steel"
 				},
 				"down": {
-					"uv": [0, 0, 2, 4],
-					"texture": "#tim"
+					"uv": [14, 6, 16, 10],
+					"texture": "#ventilation_door_steel"
+				}
+			}
+		},
+		{
+			"name": "post_e_1",
+			"from": [14, 16, 6],
+			"to": [16, 29, 10],
+			"rotation": {
+				"angle": 0,
+				"axis": "y",
+				"origin": [8, 8, 8]
+			},
+			"faces": {
+				"north": {
+					"uv": [0, 3, 2, 16],
+					"texture": "#ventilation_door_steel"
+				},
+				"east": {
+					"uv": [6, 3, 10, 16],
+					"texture": "#ventilation_door_steel"
+				},
+				"south": {
+					"uv": [14, 3, 16, 16],
+					"texture": "#ventilation_door_steel"
+				},
+				"west": {
+					"uv": [6, 3, 10, 16],
+					"texture": "#ventilation_door_steel"
+				},
+				"up": {
+					"uv": [14, 6, 16, 10],
+					"texture": "#ventilation_door_steel"
+				},
+				"down": {
+					"uv": [14, 6, 16, 10],
+					"texture": "#ventilation_door_steel"
 				}
 			}
 		},
@@ -92,34 +164,34 @@
 			"faces": {
 				"north": {
 					"uv": [0, 0, 16, 3],
-					"texture": "#tim"
+					"texture": "#ventilation_door_steel"
 				},
 				"east": {
-					"uv": [0, 0, 4, 3],
-					"texture": "#tim"
+					"uv": [6, 0, 10, 3],
+					"texture": "#ventilation_door_steel"
 				},
 				"south": {
 					"uv": [0, 0, 16, 3],
-					"texture": "#tim"
+					"texture": "#ventilation_door_steel"
 				},
 				"west": {
-					"uv": [0, 0, 4, 3],
-					"texture": "#tim"
+					"uv": [6, 0, 10, 3],
+					"texture": "#ventilation_door_steel"
 				},
 				"up": {
-					"uv": [0, 0, 16, 4],
-					"texture": "#tim"
+					"uv": [0, 6, 16, 10],
+					"texture": "#ventilation_door_steel"
 				},
 				"down": {
-					"uv": [0, 0, 16, 4],
-					"texture": "#tim"
+					"uv": [0, 6, 16, 10],
+					"texture": "#ventilation_door_steel"
 				}
 			}
 		},
 		{
-			"name": "plate",
-			"from": [2, 0, 7.5],
-			"to": [14, 29, 8.5],
+			"name": "threshold",
+			"from": [2, 0, 6.4],
+			"to": [14, 0.5, 9.6],
 			"rotation": {
 				"angle": 0,
 				"axis": "y",
@@ -127,35 +199,71 @@
 			},
 			"faces": {
 				"north": {
-					"uv": [0, 0, 12, 16],
-					"texture": "#p"
+					"uv": [2, 15.5, 14, 16],
+					"texture": "#ventilation_door_steel"
 				},
 				"east": {
-					"uv": [0, 0, 1, 16],
-					"texture": "#p"
+					"uv": [6.4, 15.5, 9.6, 16],
+					"texture": "#ventilation_door_steel"
 				},
 				"south": {
-					"uv": [0, 0, 12, 16],
-					"texture": "#p"
+					"uv": [2, 15.5, 14, 16],
+					"texture": "#ventilation_door_steel"
 				},
 				"west": {
-					"uv": [0, 0, 1, 16],
-					"texture": "#p"
+					"uv": [6.4, 15.5, 9.6, 16],
+					"texture": "#ventilation_door_steel"
 				},
 				"up": {
-					"uv": [0, 0, 12, 1],
-					"texture": "#p"
+					"uv": [2, 6.4, 14, 9.6],
+					"texture": "#ventilation_door_steel"
 				},
 				"down": {
-					"uv": [0, 0, 12, 1],
-					"texture": "#p"
+					"uv": [2, 6.4, 14, 9.6],
+					"texture": "#ventilation_door_steel"
 				}
 			}
 		},
 		{
-			"name": "window_frame",
-			"from": [5, 14, 7.25],
-			"to": [11, 22, 8.75],
+			"name": "blade_0",
+			"from": [2.1, 0.8, 7.8],
+			"to": [13.9, 5.8, 8.2],
+			"rotation": {
+				"angle": 22.5,
+				"axis": "x",
+				"origin": [8, 3.3, 8]
+			},
+			"faces": {
+				"north": {
+					"uv": [2.1, 10.2, 13.9, 15.2],
+					"texture": "#ventilation_door_steel"
+				},
+				"east": {
+					"uv": [7.8, 10.2, 8.2, 15.2],
+					"texture": "#ventilation_door_steel"
+				},
+				"south": {
+					"uv": [2.1, 10.2, 13.9, 15.2],
+					"texture": "#ventilation_door_steel"
+				},
+				"west": {
+					"uv": [7.8, 10.2, 8.2, 15.2],
+					"texture": "#ventilation_door_steel"
+				},
+				"up": {
+					"uv": [2.1, 7.8, 13.9, 8.2],
+					"texture": "#ventilation_door_steel"
+				},
+				"down": {
+					"uv": [2.1, 7.8, 13.9, 8.2],
+					"texture": "#ventilation_door_steel"
+				}
+			}
+		},
+		{
+			"name": "spindle_0",
+			"from": [1.6, 3, 7.7],
+			"to": [14.4, 3.6, 8.3],
 			"rotation": {
 				"angle": 0,
 				"axis": "y",
@@ -163,35 +271,35 @@
 			},
 			"faces": {
 				"north": {
-					"uv": [0, 0, 6, 8],
-					"texture": "#d"
+					"uv": [1.6, 12.4, 14.4, 13],
+					"texture": "#material_bright_steel"
 				},
 				"east": {
-					"uv": [0, 0, 1.5, 8],
-					"texture": "#d"
+					"uv": [7.7, 12.4, 8.3, 13],
+					"texture": "#material_bright_steel"
 				},
 				"south": {
-					"uv": [0, 0, 6, 8],
-					"texture": "#d"
+					"uv": [1.6, 12.4, 14.4, 13],
+					"texture": "#material_bright_steel"
 				},
 				"west": {
-					"uv": [0, 0, 1.5, 8],
-					"texture": "#d"
+					"uv": [7.7, 12.4, 8.3, 13],
+					"texture": "#material_bright_steel"
 				},
 				"up": {
-					"uv": [0, 0, 6, 1.5],
-					"texture": "#d"
+					"uv": [1.6, 7.7, 14.4, 8.3],
+					"texture": "#material_bright_steel"
 				},
 				"down": {
-					"uv": [0, 0, 6, 1.5],
-					"texture": "#d"
+					"uv": [1.6, 7.7, 14.4, 8.3],
+					"texture": "#material_bright_steel"
 				}
 			}
 		},
 		{
-			"name": "window",
-			"from": [6, 15, 7],
-			"to": [10, 21, 9],
+			"name": "crank_pin_0",
+			"from": [14, 3.50922, 6.64134],
+			"to": [14.6, 4.00922, 7.14134],
 			"rotation": {
 				"angle": 0,
 				"axis": "y",
@@ -199,28 +307,676 @@
 			},
 			"faces": {
 				"north": {
-					"uv": [0, 0, 4, 6],
-					"texture": "#gl"
+					"uv": [1.4, 11.99078, 2, 12.49078],
+					"texture": "#material_steel"
 				},
 				"east": {
-					"uv": [0, 0, 2, 6],
-					"texture": "#gl"
+					"uv": [8.85866, 11.99078, 9.35866, 12.49078],
+					"texture": "#material_steel"
 				},
 				"south": {
-					"uv": [0, 0, 4, 6],
-					"texture": "#gl"
+					"uv": [14, 11.99078, 14.6, 12.49078],
+					"texture": "#material_steel"
 				},
 				"west": {
-					"uv": [0, 0, 2, 6],
-					"texture": "#gl"
+					"uv": [6.64134, 11.99078, 7.14134, 12.49078],
+					"texture": "#material_steel"
 				},
 				"up": {
-					"uv": [0, 0, 4, 2],
-					"texture": "#gl"
+					"uv": [14, 6.64134, 14.6, 7.14134],
+					"texture": "#material_steel"
 				},
 				"down": {
-					"uv": [0, 0, 4, 2],
-					"texture": "#gl"
+					"uv": [14, 8.85866, 14.6, 9.35866],
+					"texture": "#material_steel"
+				}
+			}
+		},
+		{
+			"name": "blade_1",
+			"from": [2.1, 5.4, 7.8],
+			"to": [13.9, 10.4, 8.2],
+			"rotation": {
+				"angle": 22.5,
+				"axis": "x",
+				"origin": [8, 7.9, 8]
+			},
+			"faces": {
+				"north": {
+					"uv": [2.1, 5.6, 13.9, 10.6],
+					"texture": "#ventilation_door_steel"
+				},
+				"east": {
+					"uv": [7.8, 5.6, 8.2, 10.6],
+					"texture": "#ventilation_door_steel"
+				},
+				"south": {
+					"uv": [2.1, 5.6, 13.9, 10.6],
+					"texture": "#ventilation_door_steel"
+				},
+				"west": {
+					"uv": [7.8, 5.6, 8.2, 10.6],
+					"texture": "#ventilation_door_steel"
+				},
+				"up": {
+					"uv": [2.1, 7.8, 13.9, 8.2],
+					"texture": "#ventilation_door_steel"
+				},
+				"down": {
+					"uv": [2.1, 7.8, 13.9, 8.2],
+					"texture": "#ventilation_door_steel"
+				}
+			}
+		},
+		{
+			"name": "spindle_1",
+			"from": [1.6, 7.6, 7.7],
+			"to": [14.4, 8.2, 8.3],
+			"rotation": {
+				"angle": 0,
+				"axis": "y",
+				"origin": [8, 8, 8]
+			},
+			"faces": {
+				"north": {
+					"uv": [1.6, 7.8, 14.4, 8.4],
+					"texture": "#material_bright_steel"
+				},
+				"east": {
+					"uv": [7.7, 7.8, 8.3, 8.4],
+					"texture": "#material_bright_steel"
+				},
+				"south": {
+					"uv": [1.6, 7.8, 14.4, 8.4],
+					"texture": "#material_bright_steel"
+				},
+				"west": {
+					"uv": [7.7, 7.8, 8.3, 8.4],
+					"texture": "#material_bright_steel"
+				},
+				"up": {
+					"uv": [1.6, 7.7, 14.4, 8.3],
+					"texture": "#material_bright_steel"
+				},
+				"down": {
+					"uv": [1.6, 7.7, 14.4, 8.3],
+					"texture": "#material_bright_steel"
+				}
+			}
+		},
+		{
+			"name": "crank_pin_1",
+			"from": [14, 8.10922, 6.64134],
+			"to": [14.6, 8.60922, 7.14134],
+			"rotation": {
+				"angle": 0,
+				"axis": "y",
+				"origin": [8, 8, 8]
+			},
+			"faces": {
+				"north": {
+					"uv": [1.4, 7.39078, 2, 7.89078],
+					"texture": "#material_steel"
+				},
+				"east": {
+					"uv": [8.85866, 7.39078, 9.35866, 7.89078],
+					"texture": "#material_steel"
+				},
+				"south": {
+					"uv": [14, 7.39078, 14.6, 7.89078],
+					"texture": "#material_steel"
+				},
+				"west": {
+					"uv": [6.64134, 7.39078, 7.14134, 7.89078],
+					"texture": "#material_steel"
+				},
+				"up": {
+					"uv": [14, 6.64134, 14.6, 7.14134],
+					"texture": "#material_steel"
+				},
+				"down": {
+					"uv": [14, 8.85866, 14.6, 9.35866],
+					"texture": "#material_steel"
+				}
+			}
+		},
+		{
+			"name": "blade_2",
+			"from": [2.1, 10, 7.8],
+			"to": [13.9, 15, 8.2],
+			"rotation": {
+				"angle": 22.5,
+				"axis": "x",
+				"origin": [8, 12.5, 8]
+			},
+			"faces": {
+				"north": {
+					"uv": [2.1, 1, 13.9, 6],
+					"texture": "#ventilation_door_steel"
+				},
+				"east": {
+					"uv": [7.8, 1, 8.2, 6],
+					"texture": "#ventilation_door_steel"
+				},
+				"south": {
+					"uv": [2.1, 1, 13.9, 6],
+					"texture": "#ventilation_door_steel"
+				},
+				"west": {
+					"uv": [7.8, 1, 8.2, 6],
+					"texture": "#ventilation_door_steel"
+				},
+				"up": {
+					"uv": [2.1, 7.8, 13.9, 8.2],
+					"texture": "#ventilation_door_steel"
+				},
+				"down": {
+					"uv": [2.1, 7.8, 13.9, 8.2],
+					"texture": "#ventilation_door_steel"
+				}
+			}
+		},
+		{
+			"name": "spindle_2",
+			"from": [1.6, 12.2, 7.7],
+			"to": [14.4, 12.8, 8.3],
+			"rotation": {
+				"angle": 0,
+				"axis": "y",
+				"origin": [8, 8, 8]
+			},
+			"faces": {
+				"north": {
+					"uv": [1.6, 3.2, 14.4, 3.8],
+					"texture": "#material_bright_steel"
+				},
+				"east": {
+					"uv": [7.7, 3.2, 8.3, 3.8],
+					"texture": "#material_bright_steel"
+				},
+				"south": {
+					"uv": [1.6, 3.2, 14.4, 3.8],
+					"texture": "#material_bright_steel"
+				},
+				"west": {
+					"uv": [7.7, 3.2, 8.3, 3.8],
+					"texture": "#material_bright_steel"
+				},
+				"up": {
+					"uv": [1.6, 7.7, 14.4, 8.3],
+					"texture": "#material_bright_steel"
+				},
+				"down": {
+					"uv": [1.6, 7.7, 14.4, 8.3],
+					"texture": "#material_bright_steel"
+				}
+			}
+		},
+		{
+			"name": "crank_pin_2",
+			"from": [14, 12.70922, 6.64134],
+			"to": [14.6, 13.20922, 7.14134],
+			"rotation": {
+				"angle": 0,
+				"axis": "y",
+				"origin": [8, 8, 8]
+			},
+			"faces": {
+				"north": {
+					"uv": [1.4, 2.79078, 2, 3.29078],
+					"texture": "#material_steel"
+				},
+				"east": {
+					"uv": [8.85866, 2.79078, 9.35866, 3.29078],
+					"texture": "#material_steel"
+				},
+				"south": {
+					"uv": [14, 2.79078, 14.6, 3.29078],
+					"texture": "#material_steel"
+				},
+				"west": {
+					"uv": [6.64134, 2.79078, 7.14134, 3.29078],
+					"texture": "#material_steel"
+				},
+				"up": {
+					"uv": [14, 6.64134, 14.6, 7.14134],
+					"texture": "#material_steel"
+				},
+				"down": {
+					"uv": [14, 8.85866, 14.6, 9.35866],
+					"texture": "#material_steel"
+				}
+			}
+		},
+		{
+			"name": "blade_3",
+			"from": [2.1, 14.6, 7.8],
+			"to": [13.9, 19.6, 8.2],
+			"rotation": {
+				"angle": 22.5,
+				"axis": "x",
+				"origin": [8, 17.1, 8]
+			},
+			"faces": {
+				"north": {
+					"uv": [2.1, 12.4, 13.9, 16],
+					"texture": "#ventilation_door_steel"
+				},
+				"east": {
+					"uv": [7.8, 12.4, 8.2, 16],
+					"texture": "#ventilation_door_steel"
+				},
+				"south": {
+					"uv": [2.1, 12.4, 13.9, 16],
+					"texture": "#ventilation_door_steel"
+				},
+				"west": {
+					"uv": [7.8, 12.4, 8.2, 16],
+					"texture": "#ventilation_door_steel"
+				},
+				"up": {
+					"uv": [2.1, 7.8, 13.9, 8.2],
+					"texture": "#ventilation_door_steel"
+				},
+				"down": {
+					"uv": [2.1, 7.8, 13.9, 8.2],
+					"texture": "#ventilation_door_steel"
+				}
+			}
+		},
+		{
+			"name": "spindle_3",
+			"from": [1.6, 16.8, 7.7],
+			"to": [14.4, 17.4, 8.3],
+			"rotation": {
+				"angle": 0,
+				"axis": "y",
+				"origin": [8, 8, 8]
+			},
+			"faces": {
+				"north": {
+					"uv": [1.6, 14.6, 14.4, 15.2],
+					"texture": "#material_bright_steel"
+				},
+				"east": {
+					"uv": [7.7, 14.6, 8.3, 15.2],
+					"texture": "#material_bright_steel"
+				},
+				"south": {
+					"uv": [1.6, 14.6, 14.4, 15.2],
+					"texture": "#material_bright_steel"
+				},
+				"west": {
+					"uv": [7.7, 14.6, 8.3, 15.2],
+					"texture": "#material_bright_steel"
+				},
+				"up": {
+					"uv": [1.6, 7.7, 14.4, 8.3],
+					"texture": "#material_bright_steel"
+				},
+				"down": {
+					"uv": [1.6, 7.7, 14.4, 8.3],
+					"texture": "#material_bright_steel"
+				}
+			}
+		},
+		{
+			"name": "crank_pin_3",
+			"from": [14, 17.30922, 6.64134],
+			"to": [14.6, 17.80922, 7.14134],
+			"rotation": {
+				"angle": 0,
+				"axis": "y",
+				"origin": [8, 8, 8]
+			},
+			"faces": {
+				"north": {
+					"uv": [1.4, 14.19078, 2, 14.69078],
+					"texture": "#material_steel"
+				},
+				"east": {
+					"uv": [8.85866, 14.19078, 9.35866, 14.69078],
+					"texture": "#material_steel"
+				},
+				"south": {
+					"uv": [14, 14.19078, 14.6, 14.69078],
+					"texture": "#material_steel"
+				},
+				"west": {
+					"uv": [6.64134, 14.19078, 7.14134, 14.69078],
+					"texture": "#material_steel"
+				},
+				"up": {
+					"uv": [14, 6.64134, 14.6, 7.14134],
+					"texture": "#material_steel"
+				},
+				"down": {
+					"uv": [14, 8.85866, 14.6, 9.35866],
+					"texture": "#material_steel"
+				}
+			}
+		},
+		{
+			"name": "blade_4",
+			"from": [2.1, 19.2, 7.8],
+			"to": [13.9, 24.2, 8.2],
+			"rotation": {
+				"angle": 22.5,
+				"axis": "x",
+				"origin": [8, 21.7, 8]
+			},
+			"faces": {
+				"north": {
+					"uv": [2.1, 7.8, 13.9, 12.8],
+					"texture": "#ventilation_door_steel"
+				},
+				"east": {
+					"uv": [7.8, 7.8, 8.2, 12.8],
+					"texture": "#ventilation_door_steel"
+				},
+				"south": {
+					"uv": [2.1, 7.8, 13.9, 12.8],
+					"texture": "#ventilation_door_steel"
+				},
+				"west": {
+					"uv": [7.8, 7.8, 8.2, 12.8],
+					"texture": "#ventilation_door_steel"
+				},
+				"up": {
+					"uv": [2.1, 7.8, 13.9, 8.2],
+					"texture": "#ventilation_door_steel"
+				},
+				"down": {
+					"uv": [2.1, 7.8, 13.9, 8.2],
+					"texture": "#ventilation_door_steel"
+				}
+			}
+		},
+		{
+			"name": "spindle_4",
+			"from": [1.6, 21.4, 7.7],
+			"to": [14.4, 22, 8.3],
+			"rotation": {
+				"angle": 0,
+				"axis": "y",
+				"origin": [8, 8, 8]
+			},
+			"faces": {
+				"north": {
+					"uv": [1.6, 10, 14.4, 10.6],
+					"texture": "#material_bright_steel"
+				},
+				"east": {
+					"uv": [7.7, 10, 8.3, 10.6],
+					"texture": "#material_bright_steel"
+				},
+				"south": {
+					"uv": [1.6, 10, 14.4, 10.6],
+					"texture": "#material_bright_steel"
+				},
+				"west": {
+					"uv": [7.7, 10, 8.3, 10.6],
+					"texture": "#material_bright_steel"
+				},
+				"up": {
+					"uv": [1.6, 7.7, 14.4, 8.3],
+					"texture": "#material_bright_steel"
+				},
+				"down": {
+					"uv": [1.6, 7.7, 14.4, 8.3],
+					"texture": "#material_bright_steel"
+				}
+			}
+		},
+		{
+			"name": "crank_pin_4",
+			"from": [14, 21.90922, 6.64134],
+			"to": [14.6, 22.40922, 7.14134],
+			"rotation": {
+				"angle": 0,
+				"axis": "y",
+				"origin": [8, 8, 8]
+			},
+			"faces": {
+				"north": {
+					"uv": [1.4, 9.59078, 2, 10.09078],
+					"texture": "#material_steel"
+				},
+				"east": {
+					"uv": [8.85866, 9.59078, 9.35866, 10.09078],
+					"texture": "#material_steel"
+				},
+				"south": {
+					"uv": [14, 9.59078, 14.6, 10.09078],
+					"texture": "#material_steel"
+				},
+				"west": {
+					"uv": [6.64134, 9.59078, 7.14134, 10.09078],
+					"texture": "#material_steel"
+				},
+				"up": {
+					"uv": [14, 6.64134, 14.6, 7.14134],
+					"texture": "#material_steel"
+				},
+				"down": {
+					"uv": [14, 8.85866, 14.6, 9.35866],
+					"texture": "#material_steel"
+				}
+			}
+		},
+		{
+			"name": "blade_5",
+			"from": [2.1, 23.8, 7.8],
+			"to": [13.9, 28.8, 8.2],
+			"rotation": {
+				"angle": 22.5,
+				"axis": "x",
+				"origin": [8, 26.3, 8]
+			},
+			"faces": {
+				"north": {
+					"uv": [2.1, 3.2, 13.9, 8.2],
+					"texture": "#ventilation_door_steel"
+				},
+				"east": {
+					"uv": [7.8, 3.2, 8.2, 8.2],
+					"texture": "#ventilation_door_steel"
+				},
+				"south": {
+					"uv": [2.1, 3.2, 13.9, 8.2],
+					"texture": "#ventilation_door_steel"
+				},
+				"west": {
+					"uv": [7.8, 3.2, 8.2, 8.2],
+					"texture": "#ventilation_door_steel"
+				},
+				"up": {
+					"uv": [2.1, 7.8, 13.9, 8.2],
+					"texture": "#ventilation_door_steel"
+				},
+				"down": {
+					"uv": [2.1, 7.8, 13.9, 8.2],
+					"texture": "#ventilation_door_steel"
+				}
+			}
+		},
+		{
+			"name": "spindle_5",
+			"from": [1.6, 26, 7.7],
+			"to": [14.4, 26.6, 8.3],
+			"rotation": {
+				"angle": 0,
+				"axis": "y",
+				"origin": [8, 8, 8]
+			},
+			"faces": {
+				"north": {
+					"uv": [1.6, 5.4, 14.4, 6],
+					"texture": "#material_bright_steel"
+				},
+				"east": {
+					"uv": [7.7, 5.4, 8.3, 6],
+					"texture": "#material_bright_steel"
+				},
+				"south": {
+					"uv": [1.6, 5.4, 14.4, 6],
+					"texture": "#material_bright_steel"
+				},
+				"west": {
+					"uv": [7.7, 5.4, 8.3, 6],
+					"texture": "#material_bright_steel"
+				},
+				"up": {
+					"uv": [1.6, 7.7, 14.4, 8.3],
+					"texture": "#material_bright_steel"
+				},
+				"down": {
+					"uv": [1.6, 7.7, 14.4, 8.3],
+					"texture": "#material_bright_steel"
+				}
+			}
+		},
+		{
+			"name": "crank_pin_5",
+			"from": [14, 26.50922, 6.64134],
+			"to": [14.6, 27.00922, 7.14134],
+			"rotation": {
+				"angle": 0,
+				"axis": "y",
+				"origin": [8, 8, 8]
+			},
+			"faces": {
+				"north": {
+					"uv": [1.4, 4.99078, 2, 5.49078],
+					"texture": "#material_steel"
+				},
+				"east": {
+					"uv": [8.85866, 4.99078, 9.35866, 5.49078],
+					"texture": "#material_steel"
+				},
+				"south": {
+					"uv": [14, 4.99078, 14.6, 5.49078],
+					"texture": "#material_steel"
+				},
+				"west": {
+					"uv": [6.64134, 4.99078, 7.14134, 5.49078],
+					"texture": "#material_steel"
+				},
+				"up": {
+					"uv": [14, 6.64134, 14.6, 7.14134],
+					"texture": "#material_steel"
+				},
+				"down": {
+					"uv": [14, 8.85866, 14.6, 9.35866],
+					"texture": "#material_steel"
+				}
+			}
+		},
+		{
+			"name": "link_bar",
+			"from": [14.1, 3.45922, 6.59134],
+			"to": [14.5, 27.05922, 7.19134],
+			"rotation": {
+				"angle": 0,
+				"axis": "y",
+				"origin": [8, 8, 8]
+			},
+			"faces": {
+				"north": {
+					"uv": [1.5, 0, 1.9, 12.54078],
+					"texture": "#material_steel"
+				},
+				"east": {
+					"uv": [8.80866, 0, 9.40866, 12.54078],
+					"texture": "#material_steel"
+				},
+				"south": {
+					"uv": [14.1, 0, 14.5, 12.54078],
+					"texture": "#material_steel"
+				},
+				"west": {
+					"uv": [6.59134, 0, 7.19134, 12.54078],
+					"texture": "#material_steel"
+				},
+				"up": {
+					"uv": [14.1, 6.59134, 14.5, 7.19134],
+					"texture": "#material_steel"
+				},
+				"down": {
+					"uv": [14.1, 8.80866, 14.5, 9.40866],
+					"texture": "#material_steel"
+				}
+			}
+		},
+		{
+			"name": "quadrant",
+			"from": [16, 12, 7],
+			"to": [16.3, 18, 11],
+			"rotation": {
+				"angle": 0,
+				"axis": "y",
+				"origin": [8, 8, 8]
+			},
+			"faces": {
+				"north": {
+					"uv": [15.7, 0, 16, 4],
+					"texture": "#material_steel"
+				},
+				"east": {
+					"uv": [5, 0, 9, 4],
+					"texture": "#material_steel"
+				},
+				"south": {
+					"uv": [0, 0, 0.3, 4],
+					"texture": "#material_steel"
+				},
+				"west": {
+					"uv": [7, 0, 11, 4],
+					"texture": "#material_steel"
+				},
+				"up": {
+					"uv": [0, 7, 0.3, 11],
+					"texture": "#material_steel"
+				},
+				"down": {
+					"uv": [0, 5, 0.3, 9],
+					"texture": "#material_steel"
+				}
+			}
+		},
+		{
+			"name": "lever",
+			"from": [16.3, 13, 8.7],
+			"to": [16.7, 19.5, 9.3],
+			"rotation": {
+				"angle": 0,
+				"axis": "y",
+				"origin": [8, 8, 8]
+			},
+			"faces": {
+				"north": {
+					"uv": [15.3, 12.5, 15.7, 16],
+					"texture": "#material_paint_red"
+				},
+				"east": {
+					"uv": [6.7, 12.5, 7.3, 16],
+					"texture": "#material_paint_red"
+				},
+				"south": {
+					"uv": [0.3, 12.5, 0.7, 16],
+					"texture": "#material_paint_red"
+				},
+				"west": {
+					"uv": [8.7, 12.5, 9.3, 16],
+					"texture": "#material_paint_red"
+				},
+				"up": {
+					"uv": [0.3, 8.7, 0.7, 9.3],
+					"texture": "#material_paint_red"
+				},
+				"down": {
+					"uv": [0.3, 6.7, 0.7, 7.3],
+					"texture": "#material_paint_red"
 				}
 			}
 		}
