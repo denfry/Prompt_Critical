@@ -1,0 +1,32 @@
+{
+  "parent": "minecraft:recipes/root",
+  "criteria": {
+    "has_polysilicon": {
+      "conditions": {
+        "items": [
+          {
+            "items": "promptcritical:polysilicon"
+          }
+        ]
+      },
+      "trigger": "minecraft:inventory_changed"
+    },
+    "has_the_recipe": {
+      "conditions": {
+        "recipe": "promptcritical:electronics/czochralski_puller"
+      },
+      "trigger": "minecraft:recipe_unlocked"
+    }
+  },
+  "requirements": [
+    [
+      "has_the_recipe",
+      "has_polysilicon"
+    ]
+  ],
+  "rewards": {
+    "recipes": [
+      "promptcritical:electronics/czochralski_puller"
+    ]
+  }
+}

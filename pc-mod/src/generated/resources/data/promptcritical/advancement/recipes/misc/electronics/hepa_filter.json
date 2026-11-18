@@ -1,0 +1,32 @@
+{
+  "parent": "minecraft:recipes/root",
+  "criteria": {
+    "has_cleanroom_panel": {
+      "conditions": {
+        "items": [
+          {
+            "items": "promptcritical:cleanroom_panel"
+          }
+        ]
+      },
+      "trigger": "minecraft:inventory_changed"
+    },
+    "has_the_recipe": {
+      "conditions": {
+        "recipe": "promptcritical:electronics/hepa_filter"
+      },
+      "trigger": "minecraft:recipe_unlocked"
+    }
+  },
+  "requirements": [
+    [
+      "has_the_recipe",
+      "has_cleanroom_panel"
+    ]
+  ],
+  "rewards": {
+    "recipes": [
+      "promptcritical:electronics/hepa_filter"
+    ]
+  }
+}
