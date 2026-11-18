@@ -1,0 +1,32 @@
+{
+  "parent": "minecraft:recipes/root",
+  "criteria": {
+    "has_pentlandite": {
+      "conditions": {
+        "items": [
+          {
+            "items": "promptcritical:raw_pentlandite"
+          }
+        ]
+      },
+      "trigger": "minecraft:inventory_changed"
+    },
+    "has_the_recipe": {
+      "conditions": {
+        "recipe": "promptcritical:nitrogen/catalyst_steam_reforming"
+      },
+      "trigger": "minecraft:recipe_unlocked"
+    }
+  },
+  "requirements": [
+    [
+      "has_the_recipe",
+      "has_pentlandite"
+    ]
+  ],
+  "rewards": {
+    "recipes": [
+      "promptcritical:nitrogen/catalyst_steam_reforming"
+    ]
+  }
+}

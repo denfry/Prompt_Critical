@@ -1,0 +1,32 @@
+{
+  "parent": "minecraft:recipes/root",
+  "criteria": {
+    "has_co2_absorber": {
+      "conditions": {
+        "items": [
+          {
+            "items": "promptcritical:co2_absorber"
+          }
+        ]
+      },
+      "trigger": "minecraft:inventory_changed"
+    },
+    "has_the_recipe": {
+      "conditions": {
+        "recipe": "promptcritical:nitrogen/ammonia_converter"
+      },
+      "trigger": "minecraft:recipe_unlocked"
+    }
+  },
+  "requirements": [
+    [
+      "has_the_recipe",
+      "has_co2_absorber"
+    ]
+  ],
+  "rewards": {
+    "recipes": [
+      "promptcritical:nitrogen/ammonia_converter"
+    ]
+  }
+}
