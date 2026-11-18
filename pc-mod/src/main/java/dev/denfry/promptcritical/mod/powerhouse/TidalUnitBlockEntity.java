@@ -6,6 +6,7 @@ import dev.denfry.promptcritical.mod.block.PcBlock;
 import dev.denfry.promptcritical.mod.block.PcProperties;
 import dev.denfry.promptcritical.mod.config.ServerConfig;
 import dev.denfry.promptcritical.mod.environment.TideService;
+import dev.denfry.promptcritical.mod.environment.WaterBodies;
 import dev.denfry.promptcritical.mod.foundry.FoundryDevice;
 import dev.denfry.promptcritical.mod.panel.PanelHost;
 import dev.denfry.promptcritical.mod.panel.PanelLayout;
@@ -13,10 +14,7 @@ import dev.denfry.promptcritical.sim.core.MutableStateTree;
 import dev.denfry.promptcritical.sim.core.TreeStateReader;
 import dev.denfry.promptcritical.sim.core.TreeStateWriter;
 import dev.denfry.promptcritical.sim.hydraulics.TidalPlant;
-import java.util.ArrayDeque;
 import java.util.Arrays;
-import java.util.HashSet;
-import java.util.Set;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
 import net.minecraft.core.HolderLookup;
@@ -26,7 +24,6 @@ import net.minecraft.server.level.ServerLevel;
 import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.sounds.SoundEvents;
 import net.minecraft.sounds.SoundSource;
-import net.minecraft.tags.FluidTags;
 import net.minecraft.world.InteractionHand;
 import net.minecraft.world.InteractionResult;
 import net.minecraft.world.ItemInteractionResult;
@@ -180,42 +177,10 @@ public class TidalUnitBlockEntity extends GeneratingKineticBlockEntity implement
         plant = fresh;
     }
 
-    /** Зеркало бассейна за тылом: заливка по поверхности воды; 0 — нет воды, залив открыт в море или слишком велик. */
+    /** Зеркало бассейна за тылом; 0 — нет воды, залив открыт в море или слишком велик. */
     private int basin(ServerLevel sl) {
-        Direction back = facing().getOpposite();
-        BlockPos start = surface(sl, worldPosition.relative(back, 2));
-        BlockPos seaStart = surface(sl, seaSide());
-        if (start == null) return 0;
-        int y = start.getY();
-        Set<Long> seen = new HashSet<>();
-        ArrayDeque<BlockPos> queue = new ArrayDeque<>();
-        queue.add(start);
-        seen.add(start.asLong());
-        while (!queue.isEmpty()) {
-            BlockPos p = queue.poll();
-            if (seaStart != null && p.getX() == seaStart.getX() && p.getZ() == seaStart.getZ()) return 0;
-            if (seen.size() > MAX_BASIN) return 0;
-            for (Direction d : Direction.Plane.HORIZONTAL) {
-                BlockPos n = p.relative(d);
-                if (seen.contains(n.asLong())) continue;
-                if (!sl.isLoaded(n)) return 0; // край бассейна не загружен — оставить прежний расчёт
-                if (!sl.getFluidState(n).is(FluidTags.WATER) || sl.getBlockState(n).getBlock() instanceof PcBlock) continue;
-                seen.add(n.asLong());
-                queue.add(new BlockPos(n.getX(), y, n.getZ()));
-            }
-        }
-        return seen.size();
-    }
-
-    /** Поверхность воды в столбе у {@code at} (± 4 блока по высоте). */
-    @Nullable
-    private static BlockPos surface(ServerLevel sl, BlockPos at) {
-        for (int dy = 4; dy >= -4; dy--) {
-            BlockPos p = at.above(dy);
-            if (sl.isLoaded(p) && sl.getFluidState(p).is(FluidTags.WATER) && !sl.getFluidState(p.above()).is(FluidTags.WATER))
-                return p.immutable();
-        }
-        return null;
+        BlockPos start = WaterBodies.surface(sl, worldPosition.relative(facing().getOpposite(), 2));
+        return start == null ? 0 : WaterBodies.area(sl, start, MAX_BASIN, WaterBodies.surface(sl, seaSide()));
     }
 
     // --- руки ---

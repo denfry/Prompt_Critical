@@ -106,6 +106,16 @@ public final class PowerhouseText {
                 "Редуктор должен касаться газовой турбины задней гранью");
         msg("gearbox.linked", "Gearbox on the gas turbine: %s rpm", "Редуктор на газовой турбине: %s об/мин");
         msg("turbine.reset", "Overspeed trip reset", "Автомат безопасности взведён");
+        msg("psh.no_basin", "No upper basin: put a dam gate in water at least 10 m above the unit",
+                "Нет верхнего бассейна: поставьте затвор водозабора в воду не ниже 10 м над агрегатом");
+        msg("psh.mode.idle", "Pumped storage: unit stopped", "ГАЭС: агрегат остановлен");
+        msg("psh.mode.pump", "Pumped storage: pumping water up", "ГАЭС: насосный режим");
+        msg("psh.mode.generate", "Pumped storage: generating", "ГАЭС: турбинный режим");
+        msg("psh.mode.auto", "Pumped storage: automatic by grid frequency", "ГАЭС: автоматика по частоте сети");
+        msg("electrode.mode.off", "Electrode boiler: electrodes dry", "Электродный котёл: электроды осушены");
+        msg("electrode.mode.manual", "Electrode boiler: manual set point", "Электродный котёл: ручное задание");
+        msg("electrode.mode.auto", "Electrode boiler: absorbing surplus above 50.2 Hz",
+                "Электродный котёл: сброс излишка выше 50,2 Гц");
         msg("tidal.mode.off", "Tidal plant: gates open, the basin follows the sea", "ПЭС: затворы открыты, бассейн ходит за морем");
         msg("tidal.mode.ebb", "Tidal plant: one-way generation on the ebb", "ПЭС: одностороннее действие на отливе");
         msg("tidal.mode.two_way", "Tidal plant: two-way generation on the ebb and the flood",

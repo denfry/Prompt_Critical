@@ -320,6 +320,8 @@ public final class PcLanguageProvider extends LanguageProvider {
         b("hydro_turbine", "Hydro Turbine", "Гидротурбина");
         b("tidal_unit", "Tidal Bulb Unit", "Капсульный агрегат ПЭС");
         b("tide_gauge", "Tide Gauge", "Мареограф");
+        b("pumped_storage_unit", "Pumped Storage Unit", "Обратимый агрегат ГАЭС");
+        b("electrode_boiler", "Electrode Boiler", "Электродный котёл");
         b("wind_turbine", "Wind Power Unit D-30", "Ветроэлектростанция Д-30");
         b("dam_gate", "Dam Intake Gate", "Затвор водозабора");
         b("gas_turbine", "Gas Turbine Unit", "Газотурбинная установка");
