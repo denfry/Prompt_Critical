@@ -1,14 +1,15 @@
 {
 	"credit": "Made with Blockbench",
 	"textures": {
-		"particle": "promptcritical:block/common/oil_wood",
-		"owood": "promptcritical:block/common/oil_wood"
+		"particle": "promptcritical:block/m13env/wood",
+		"m13env_wood": "promptcritical:block/m13env/wood",
+		"oil_rope": "promptcritical:block/oil/rope"
 	},
 	"elements": [
 		{
-			"name": "beam",
-			"from": [-14, 22, 7],
-			"to": [30, 25, 9],
+			"name": "beam_0",
+			"from": [-16, 21, 6.5],
+			"to": [0, 23.4, 9.5],
 			"rotation": {
 				"angle": 0,
 				"axis": "y",
@@ -16,35 +17,35 @@
 			},
 			"faces": {
 				"north": {
-					"uv": [0, 0, 16, 3],
-					"texture": "#owood"
+					"uv": [0, 8.6, 16, 11],
+					"texture": "#m13env_wood"
 				},
 				"east": {
-					"uv": [0, 0, 2, 3],
-					"texture": "#owood"
+					"uv": [6.5, 8.6, 9.5, 11],
+					"texture": "#m13env_wood"
 				},
 				"south": {
-					"uv": [0, 0, 16, 3],
-					"texture": "#owood"
+					"uv": [0, 8.6, 16, 11],
+					"texture": "#m13env_wood"
 				},
 				"west": {
-					"uv": [0, 0, 2, 3],
-					"texture": "#owood"
+					"uv": [6.5, 8.6, 9.5, 11],
+					"texture": "#m13env_wood"
 				},
 				"up": {
-					"uv": [0, 0, 16, 2],
-					"texture": "#owood"
+					"uv": [0, 6.5, 16, 9.5],
+					"texture": "#m13env_wood"
 				},
 				"down": {
-					"uv": [0, 0, 16, 2],
-					"texture": "#owood"
+					"uv": [0, 6.5, 16, 9.5],
+					"texture": "#m13env_wood"
 				}
 			}
 		},
 		{
-			"name": "horsehead",
-			"from": [-16, 18, 6.5],
-			"to": [-12, 26, 9.5],
+			"name": "beam_1",
+			"from": [0, 21, 6.5],
+			"to": [16, 23.4, 9.5],
 			"rotation": {
 				"angle": 0,
 				"axis": "y",
@@ -52,28 +53,136 @@
 			},
 			"faces": {
 				"north": {
-					"uv": [0, 0, 4, 8],
-					"texture": "#owood"
+					"uv": [0, 8.6, 16, 11],
+					"texture": "#m13env_wood"
 				},
 				"east": {
-					"uv": [0, 0, 3, 8],
-					"texture": "#owood"
+					"uv": [6.5, 8.6, 9.5, 11],
+					"texture": "#m13env_wood"
 				},
 				"south": {
-					"uv": [0, 0, 4, 8],
-					"texture": "#owood"
+					"uv": [0, 8.6, 16, 11],
+					"texture": "#m13env_wood"
 				},
 				"west": {
-					"uv": [0, 0, 3, 8],
-					"texture": "#owood"
+					"uv": [6.5, 8.6, 9.5, 11],
+					"texture": "#m13env_wood"
 				},
 				"up": {
-					"uv": [0, 0, 4, 3],
-					"texture": "#owood"
+					"uv": [0, 6.5, 16, 9.5],
+					"texture": "#m13env_wood"
 				},
 				"down": {
-					"uv": [0, 0, 4, 3],
-					"texture": "#owood"
+					"uv": [0, 6.5, 16, 9.5],
+					"texture": "#m13env_wood"
+				}
+			}
+		},
+		{
+			"name": "beam_2",
+			"from": [16, 21, 6.5],
+			"to": [30, 23.4, 9.5],
+			"rotation": {
+				"angle": 0,
+				"axis": "y",
+				"origin": [8, 8, 8]
+			},
+			"faces": {
+				"north": {
+					"uv": [2, 8.6, 16, 11],
+					"texture": "#m13env_wood"
+				},
+				"east": {
+					"uv": [6.5, 8.6, 9.5, 11],
+					"texture": "#m13env_wood"
+				},
+				"south": {
+					"uv": [0, 8.6, 14, 11],
+					"texture": "#m13env_wood"
+				},
+				"west": {
+					"uv": [6.5, 8.6, 9.5, 11],
+					"texture": "#m13env_wood"
+				},
+				"up": {
+					"uv": [0, 6.5, 14, 9.5],
+					"texture": "#m13env_wood"
+				},
+				"down": {
+					"uv": [0, 6.5, 14, 9.5],
+					"texture": "#m13env_wood"
+				}
+			}
+		},
+		{
+			"name": "head",
+			"from": [-16, 18, 6.5],
+			"to": [-13, 26, 9.5],
+			"rotation": {
+				"angle": 0,
+				"axis": "y",
+				"origin": [8, 8, 8]
+			},
+			"faces": {
+				"north": {
+					"uv": [13, 6, 16, 14],
+					"texture": "#m13env_wood"
+				},
+				"east": {
+					"uv": [6.5, 6, 9.5, 14],
+					"texture": "#m13env_wood"
+				},
+				"south": {
+					"uv": [0, 6, 3, 14],
+					"texture": "#m13env_wood"
+				},
+				"west": {
+					"uv": [6.5, 6, 9.5, 14],
+					"texture": "#m13env_wood"
+				},
+				"up": {
+					"uv": [0, 6.5, 3, 9.5],
+					"texture": "#m13env_wood"
+				},
+				"down": {
+					"uv": [0, 6.5, 3, 9.5],
+					"texture": "#m13env_wood"
+				}
+			}
+		},
+		{
+			"name": "rope",
+			"from": [-15, 0, 7.6],
+			"to": [-14.4, 18, 8.4],
+			"rotation": {
+				"angle": 0,
+				"axis": "y",
+				"origin": [8, 8, 8]
+			},
+			"faces": {
+				"north": {
+					"uv": [14.4, 0, 15, 16],
+					"texture": "#oil_rope"
+				},
+				"east": {
+					"uv": [7.6, 0, 8.4, 16],
+					"texture": "#oil_rope"
+				},
+				"south": {
+					"uv": [1, 0, 1.6, 16],
+					"texture": "#oil_rope"
+				},
+				"west": {
+					"uv": [7.6, 0, 8.4, 16],
+					"texture": "#oil_rope"
+				},
+				"up": {
+					"uv": [1, 7.6, 1.6, 8.4],
+					"texture": "#oil_rope"
+				},
+				"down": {
+					"uv": [1, 7.6, 1.6, 8.4],
+					"texture": "#oil_rope"
 				}
 			}
 		}

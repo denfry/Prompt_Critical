@@ -34,7 +34,8 @@
     frost: { tex: 'm8ref/frost', P: 16 }, finned: { tex: 'm8ref/finned', P: 8 }, cfr: { tex: 'm8ref/cfr', P: 16 },
     gband: { tex: 'm8field/gasband', P: 16 }, ypost: { tex: 'm8field/yellow_post', P: 16 }, gb: { tex: 'm8field/greyblue', P: 16 },
     silver: { tex: 'm8field/tank_silver', P: 16 }, rope: { tex: 'oil/rope', P: 16 }, pls: { tex: 'm9chem/plastic', P: 16 },
-    forg: { tex: 'm9chem/forging', P: 16 }, fred: { tex: 'm10ops/fire_red', P: 16 }, orng: { tex: 'm10ops/orange', P: 16 },
+    forg: { tex: 'm9chem/forging', P: 16 }, lwh: { tex: 'm8power/louvre_white', P: 16 }, rigred: { tex: 'oil/rig_red', P: 16 },
+    lead: { tex: 'm12iso/lead', P: 16 }, ycase: { tex: 'm12iso/yellow_case', P: 16 }, fred: { tex: 'm10ops/fire_red', P: 16 }, orng: { tex: 'm10ops/orange', P: 16 },
     tank: { tex: 'm3grid/tank', P: 16 }, l_b: { tex: 'm3grid/lamp_blue', P: 16 }, earth: { tex: 'm3grid/earth', P: 8 },
   });
 
