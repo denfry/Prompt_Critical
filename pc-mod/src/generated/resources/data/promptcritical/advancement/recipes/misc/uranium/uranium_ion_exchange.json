@@ -1,0 +1,32 @@
+{
+  "parent": "minecraft:recipes/root",
+  "criteria": {
+    "has_ion_exchange_resin": {
+      "conditions": {
+        "items": [
+          {
+            "items": "promptcritical:ion_exchange_resin_sba"
+          }
+        ]
+      },
+      "trigger": "minecraft:inventory_changed"
+    },
+    "has_the_recipe": {
+      "conditions": {
+        "recipe": "promptcritical:uranium/uranium_ion_exchange"
+      },
+      "trigger": "minecraft:recipe_unlocked"
+    }
+  },
+  "requirements": [
+    [
+      "has_the_recipe",
+      "has_ion_exchange_resin"
+    ]
+  ],
+  "rewards": {
+    "recipes": [
+      "promptcritical:uranium/uranium_ion_exchange"
+    ]
+  }
+}

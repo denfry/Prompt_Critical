@@ -1,0 +1,32 @@
+{
+  "parent": "minecraft:recipes/root",
+  "criteria": {
+    "has_leach_tank": {
+      "conditions": {
+        "items": [
+          {
+            "items": "promptcritical:leach_tank"
+          }
+        ]
+      },
+      "trigger": "minecraft:inventory_changed"
+    },
+    "has_the_recipe": {
+      "conditions": {
+        "recipe": "promptcritical:uranium/precipitation_tank"
+      },
+      "trigger": "minecraft:recipe_unlocked"
+    }
+  },
+  "requirements": [
+    [
+      "has_the_recipe",
+      "has_leach_tank"
+    ]
+  ],
+  "rewards": {
+    "recipes": [
+      "promptcritical:uranium/precipitation_tank"
+    ]
+  }
+}

@@ -1,0 +1,32 @@
+{
+  "parent": "minecraft:recipes/root",
+  "criteria": {
+    "has_the_recipe": {
+      "conditions": {
+        "recipe": "promptcritical:uranium/reduction_furnace"
+      },
+      "trigger": "minecraft:recipe_unlocked"
+    },
+    "has_uo3_powder": {
+      "conditions": {
+        "items": [
+          {
+            "items": "promptcritical:uo3_powder"
+          }
+        ]
+      },
+      "trigger": "minecraft:inventory_changed"
+    }
+  },
+  "requirements": [
+    [
+      "has_the_recipe",
+      "has_uo3_powder"
+    ]
+  ],
+  "rewards": {
+    "recipes": [
+      "promptcritical:uranium/reduction_furnace"
+    ]
+  }
+}

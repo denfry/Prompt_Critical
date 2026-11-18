@@ -1,0 +1,32 @@
+{
+  "parent": "minecraft:recipes/root",
+  "criteria": {
+    "has_the_recipe": {
+      "conditions": {
+        "recipe": "promptcritical:uranium/fluorination_reactor"
+      },
+      "trigger": "minecraft:recipe_unlocked"
+    },
+    "has_uf4_powder": {
+      "conditions": {
+        "items": [
+          {
+            "items": "promptcritical:uf4_powder"
+          }
+        ]
+      },
+      "trigger": "minecraft:inventory_changed"
+    }
+  },
+  "requirements": [
+    [
+      "has_the_recipe",
+      "has_uf4_powder"
+    ]
+  ],
+  "rewards": {
+    "recipes": [
+      "promptcritical:uranium/fluorination_reactor"
+    ]
+  }
+}
