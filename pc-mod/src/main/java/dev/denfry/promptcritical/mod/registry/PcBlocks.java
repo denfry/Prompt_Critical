@@ -600,6 +600,10 @@ public final class PcBlocks {
     private static final Footprint FP_PWR_REACTOR = Footprint.of(CUBE3, CUBE3.at(0, 3, 0));
     public static final DeferredBlock<PcDeviceBlock> PWR_REACTOR = device("pwr_reactor", machine(), Spec.facing().segments(PcProperties.PWR_SEGMENT, FP_PWR_REACTOR),
             FoundryBlock.with(dev.denfry.promptcritical.mod.npp.PwrReactorBlockEntity::new));
+    /** Кипящий реактор T2b 3×6×3: внизу корпус с зоной, вверху сепараторы и осушители; пульт — в центре низа. */
+    private static final Footprint FP_BWR_REACTOR = Footprint.of(CUBE3, CUBE3.at(0, 3, 0));
+    public static final DeferredBlock<PcDeviceBlock> BWR_REACTOR = device("bwr_reactor", machine(), Spec.facing().segments(PcProperties.BWR_SEGMENT, FP_BWR_REACTOR),
+            FoundryBlock.with(dev.denfry.promptcritical.mod.npp.BwrReactorBlockEntity::new));
     public static final DeferredBlock<PcDeviceBlock> PRESSURIZER = device("pressurizer", machine(), Spec.facing(BlockStateProperties.LIT),
             FoundryBlock.with(dev.denfry.promptcritical.mod.npp.PressurizerBlockEntity::new));
 

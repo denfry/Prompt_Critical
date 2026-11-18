@@ -69,5 +69,11 @@ public final class NppRecipes extends RecipeProvider {
                 .pattern("PVP").pattern("PXP").pattern("CGC").define('P', PcItems.STEEL_PLATE.get()).define('V', PcItems.SAFETY_VALVE.get())
                 .define('X', AllBlocks.FLUID_TANK.get()).define('G', PcBlocks.INSTRUMENT_PRESSURE.get()).define('C', Items.COPPER_INGOT)
                 .unlockedBy("has_pwr_reactor", has(PcBlocks.PWR_REACTOR.get())).save(out, id("pressurizer"));
+        // кипящий реактор: корпус ВВЭР без КД, сверху сепараторы — барабан, снизу приводы стержней
+        ShapedRecipeBuilder.shaped(RecipeCategory.MISC, PcBlocks.BWR_REACTOR.get())
+                .pattern("PSP").pattern("PRP").pattern("DZD").define('S', PcBlocks.STEAM_DRUM.get())
+                .define('R', PcBlocks.REACTOR_CONTROLLER.get()).define('D', PcBlocks.CONTROL_ROD_DRIVE.get())
+                .define('P', PcItems.STEEL_PLATE.get()).define('Z', PcItems.ZIRCALOY_INGOT.get())
+                .unlockedBy("has_pwr_reactor", has(PcBlocks.PWR_REACTOR.get())).save(out, id("bwr_reactor"));
     }
 }

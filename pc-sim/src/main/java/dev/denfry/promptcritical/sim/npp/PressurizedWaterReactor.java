@@ -117,28 +117,9 @@ public final class PressurizedWaterReactor {
     /** ГЦН — агрегат ПР-300: J = 300 кг·м², 1500 об/мин, 617 кВт на валу (τ выбега 12 с, 01 §1.14.1). */
     public static final double PUMP_RPM = 1500, PUMP_SHAFT_W = 617e3;
 
-    // ----------------------------------------------------------------- топливо
-    private final double[] hm0 = new double[POSITIONS], u5 = new double[POSITIONS], u8 = new double[POSITIONS],
-            pu9 = new double[POSITIONS], fp = new double[POSITIONS], burnup = new double[POSITIONS], u6 = new double[POSITIONS],
-            pu0 = new double[POSITIONS], x234 = new double[POSITIONS], share = new double[POSITIONS], radius = new double[POSITIONS],
-            dnbTimer = new double[POSITIONS];
-    private final boolean[] failed = new boolean[POSITIONS];
-    private FuelDesign design;
-
-    // ----------------------------------------------------------------- нейтроника
-    private final LatticeModel lattice = new LatticeModel();
-    private final CellComposition cell = LatticeDesigns.referenceCell(LatticeDesigns.T2_HEX);
-    private final CellComposition reflector = CellComposition.nonFuel(ModeratorKind.NONE, 0, CoolantKind.H2O, 1, 0);
-    private final FissionPoisons poisons = new FissionPoisons();
-    private final DecayHeat decay = new DecayHeat();
-    private final PeriodMeter period = new PeriodMeter(DT);
-    private final PointKinetics kinetics = new PointKinetics(DelayedNeutronData.keepin(0), 2e-5, PointKinetics.MIN_POWER);
-    private DelayedGroups groups = DelayedNeutronData.keepin(0);
-    private double staticRho = -1, keff, betaEff, generation, sigmaA, sigmaF;
-    private double evalFuelK, evalRho, evalModK, evalBoron;
-    private double alphaDoppler, alphaDensity, alphaModerator, alphaBoron;
-    private double totalRho, fissionW, slowTimer = 1e9;
-    private int loaded;
+    // ----------------------------------------------------------------- зона
+    private final LightWaterCore core = new LightWaterCore(NOMINAL_W, DT);
+    private final double[] dnbTimer = new double[POSITIONS];
 
     // ----------------------------------------------------------------- СУЗ
     private double az = 1, rg = 1, azSpeed, rgSpeed;
@@ -174,8 +155,6 @@ public final class PressurizedWaterReactor {
 
     public PressurizedWaterReactor() {
         for (int i = 0; i < LOOPS; i++) pumps[i] = new CoolantPump(CoolantPump.INERTIA_KGM2, PUMP_RPM, PUMP_SHAFT_W);
-        // гексагональная решётка: центр, кольцо из 6 на шаге, кольцо из 12 (6 на √3 шага, 6 на 2 шагах)
-        for (int i = 0; i < POSITIONS; i++) radius[i] = i == 0 ? 0 : i <= 6 ? 1 : i % 2 == 1 ? Math.sqrt(3) : 2;
         hotChannel = hotChannelModel(FuelDesign.VVER_440);
         ProtectionConfig cfg = ProtectionConfig.defaults();
         trueDnbr = new DnbrCalculator(hotChannel, cfg.withoutDnbrUncertainty(), W);
@@ -198,19 +177,14 @@ public final class PressurizedWaterReactor {
         return new HotChannelModel(NOMINAL_W, NOMINAL_FLOW_KG_S, area, 4 * flowPer / wetted, NOMINAL_W / heated, 2.0 / 1.55, 1.55, 8);
     }
 
-    /** Шаг ТВС под ключ, м (ВВЭР-440 — 147 мм, ВВЭР-1000 — 236 мм, PWR 17×17 — 215 мм). */
+    /** Шаг ТВС под ключ, м — {@link LightWaterCore#pitch}. */
     public static double pitch(FuelDesign d) {
-        return switch (d) {
-            case VVER_440 -> 0.147;
-            case VVER_1000 -> 0.236;
-            case PWR_17X17 -> 0.215;
-            default -> 0.147;
-        };
+        return LightWaterCore.pitch(d);
     }
 
     /** Конструкции ТВС, которые принимает корпус. */
     public static boolean accepts(FuelDesign d) {
-        return d == FuelDesign.VVER_440 || d == FuelDesign.VVER_1000 || d == FuelDesign.PWR_17X17;
+        return LightWaterCore.accepts(d);
     }
 
     /** Горячий останов: контур 280 °C при номинальном давлении, КД на уровне, бор 12 г/кг, стержни внизу. */
@@ -230,62 +204,34 @@ public final class PressurizedWaterReactor {
 
     /** Загрузка ТВС в позицию: только на заглушенном реакторе; конструкция — одна на весь корпус. */
     public boolean load(int pos, FuelDesign d, double hmKg, double u235, double u234) {
-        if (!shutDown() || hm0[pos] > 0 || hmKg <= 0 || !accepts(d)) return false;
-        if (design != null && loaded > 0 && design != d) return false;
-        design = d;
-        hm0[pos] = hmKg;
-        u5[pos] = hmKg * u235;
-        u8[pos] = hmKg * (1 - u235 - u234);
-        x234[pos] = u234;
-        pu9[pos] = fp[pos] = burnup[pos] = u6[pos] = pu0[pos] = dnbTimer[pos] = 0;
-        failed[pos] = false;
-        countLoaded();
-        slowTimer = 1e9;
+        if (!core.load(shutDown(), pos, d, hmKg, u235, u234)) return false;
+        dnbTimer[pos] = 0;
         return true;
     }
 
-    /** Состав ТВС: начальный ТМ, U-235, U-238, U-236, Pu-239, Pu-240, ПД, кг; U-234 в исходном; выгорание. */
-    public record AssemblyFuel(FuelDesign design, double hm0Kg, double u235Kg, double u238Kg, double u236Kg, double pu239Kg,
-            double pu240Kg, double fpKg, double u234, double burnupMwdKg, boolean failed) {
-        public double uraniumKg() {
-            return u235Kg + u238Kg + u236Kg + hm0Kg * u234;
-        }
-
-        public double plutoniumKg() {
-            return pu239Kg + pu240Kg;
-        }
+    public LightWaterCore.AssemblyFuel fuel(int pos) {
+        return core.fuel(pos);
     }
 
-    public AssemblyFuel fuel(int pos) {
-        return new AssemblyFuel(design, hm0[pos], u5[pos], u8[pos], u6[pos], pu9[pos], pu0[pos], fp[pos], x234[pos], burnup[pos], failed[pos]);
-    }
-
-    public AssemblyFuel unload(int pos) {
-        if (!shutDown() || hm0[pos] <= 0) return null;
-        AssemblyFuel f = fuel(pos);
-        hm0[pos] = u5[pos] = u8[pos] = pu9[pos] = fp[pos] = burnup[pos] = u6[pos] = pu0[pos] = dnbTimer[pos] = 0;
-        failed[pos] = false;
-        countLoaded();
-        if (loaded == 0) design = null;
-        slowTimer = 1e9;
-        return f;
-    }
-
-    private void countLoaded() {
-        loaded = 0;
-        for (double m : hm0) if (m > 0) loaded++;
+    public LightWaterCore.AssemblyFuel unload(int pos) {
+        dnbTimer[pos] = 0;
+        return core.unload(shutDown(), pos);
     }
 
     public boolean loaded(int pos) {
-        return hm0[pos] > 0;
+        return core.loaded(pos);
     }
 
     public int loadedAssemblies() {
-        return loaded;
+        return core.loadedAssemblies();
     }
 
     public FuelDesign design() {
-        return design;
+        return core.design();
+    }
+
+    public LightWaterCore core() {
+        return core;
     }
 
     /** Заглушен: мощность ниже 0,1 % и аварийная группа внизу. */
@@ -392,38 +338,15 @@ public final class PressurizedWaterReactor {
         tick++;
         newlyFailed = 0;
         ruptureEvent = false;
-        slowTimer += DT;
-        if (slowTimer >= 1) {
-            slowTimer = 0;
-            solveStatic();
-        }
         protectionStep();
         moveRods();
-        totalRho = reactivity0();
-        double n = loaded > 0 ? kinetics.step(DT, totalRho, sourceNorm()) : PointKinetics.MIN_POWER;
-        fissionW = n * NOMINAL_W;
-        decay.step(DT, fissionW);
-        poisonsStep(gameDt);
-        if (fissionW > 0 && gameDt > 0)
-            for (int i = 0; i < POSITIONS; i++)
-                if (share[i] > 0) FuelDepletion.deplete(i, fissionW * share[i], gameDt, CONVERSION, hm0, u5, u8, u6, pu9, pu0, fp, burnup);
+        core.step(gameDt, feedbackState(), rodReactivity());
         hydraulics();
-        period.sample(Math.max(n, PointKinetics.MIN_POWER));
         dnb();
     }
 
-    private double sourceNorm() {
-        return PointKinetics.normalizedSource(SOURCE_N_S, 2.43, generation, NOMINAL_W);
-    }
-
-    private double coreRadius() {
-        FuelDesign d = design == null ? FuelDesign.VVER_440 : design;
-        double a = d.hexagonal ? Math.sqrt(3) / 2 * pitch(d) * pitch(d) : pitch(d) * pitch(d);
-        return Math.sqrt(Math.max(loaded, 1) * a / Math.PI);
-    }
-
     private double coreHeight() {
-        return design == null ? FuelDesign.VVER_440.stackM : design.stackM;
+        return core.coreHeight();
     }
 
     private double moderatorK() {
@@ -431,72 +354,7 @@ public final class PressurizedWaterReactor {
     }
 
     private CellFeedbackState feedbackState() {
-        double tn = moderatorK() + LatticeModel.NEUTRON_GAS_OFFSET;
-        return new CellFeedbackState(Math.max(1, fuelK), Math.max(1, coolantDensity), moderatorK(), Math.max(0, boronPpm()),
-                poisons.xenonAbs(sigmaXe(tn)), poisons.samariumAbs(sigmaSm(tn)));
-    }
-
-    private static double sigmaXe(double tn) {
-        return FissionPoisons.SIGMA_XE_B * Westcott.g(Westcott.Factor.XE135_A, tn) * Westcott.oneOverV(tn);
-    }
-
-    private static double sigmaSm(double tn) {
-        return FissionPoisons.SIGMA_SM_B * Westcott.g(Westcott.Factor.SM149_A, tn) * Westcott.oneOverV(tn);
-    }
-
-    private void solveStatic() {
-        countLoaded();
-        NuclideVector fuel = FuelDepletion.averageFuel(hm0, u5, u8, pu9, fp, 0.04);
-        CellFeedbackState s = feedbackState();
-        SixFactor sf = lattice.evaluate(cell, fuel, s);
-        SixFactor refl = lattice.evaluate(reflector, fuel, s);
-        double delta = lattice.reflectorSavings(sf, refl, REFLECTOR_M);
-        double b2 = lattice.geometricBuckling(ReactorShape.cylinder(coreRadius(), coreHeight()), delta);
-        keff = loaded > 0 ? lattice.estimateKeff(sf, b2) : 0;
-        staticRho = loaded > 0 ? (keff - 1) / keff : -1;
-        evalFuelK = s.fuelEffTemp();
-        evalRho = s.coolantDensity();
-        evalModK = s.moderatorTemp();
-        evalBoron = s.boronPpm();
-        // Коэффициенты — по полному k_eff (ячейка, утечка, отражатель), центральными разностями: в малой зоне плотность
-        // воды меняет длину миграции и утечку сильнее, чем k∞ ячейки, и производные одной ячейки здесь не годятся.
-        if (loaded > 0) {
-            alphaDoppler = (rhoAt(fuel, s.withFuelTemp(evalFuelK + 10)) - rhoAt(fuel, s.withFuelTemp(evalFuelK - 10))) / 20;
-            alphaDensity = (rhoAt(fuel, s.withCoolantDensity(evalRho + 5)) - rhoAt(fuel, s.withCoolantDensity(Math.max(1, evalRho - 5))))
-                    / (evalRho + 5 - Math.max(1, evalRho - 5));
-            alphaModerator = (rhoAt(fuel, s.withModeratorTemp(evalModK + 5)) - rhoAt(fuel, s.withModeratorTemp(evalModK - 5))) / 10;
-            alphaBoron = (rhoAt(fuel, s.withBoron(evalBoron + 20)) - rhoAt(fuel, s.withBoron(Math.max(0, evalBoron - 20))))
-                    / (evalBoron + 20 - Math.max(0, evalBoron - 20));
-        } else {
-            alphaDoppler = alphaDensity = alphaModerator = alphaBoron = 0;
-        }
-        sigmaA = sf.sigmaA();
-        sigmaF = sf.sigmaF();
-        DelayedGroups g = lattice.delayedGroups(lattice.fissionFractions(cell, fuel, s), b2, sf);
-        generation = lattice.generationTime(sf, moderatorK() + LatticeModel.NEUTRON_GAS_OFFSET);
-        betaEff = g.betaTotal();
-        groups = g;
-        kinetics.setParameters(g, generation);
-        // доли мощности ТВС по J₀(2,405 r/R)
-        double r = coreRadius() + delta, step = pitch(design == null ? FuelDesign.VVER_440 : design), sum = 0;
-        for (int i = 0; i < POSITIONS; i++) {
-            share[i] = hm0[i] > 0 ? Math.max(0.05, j0(2.405 * radius[i] * step / r)) : 0;
-            sum += share[i];
-        }
-        for (int i = 0; i < POSITIONS; i++) share[i] = sum > 0 ? share[i] / sum : 0;
-    }
-
-    /** Реактивность (k_eff − 1)/k_eff зоны с отражателем при состоянии {@code s}. */
-    private double rhoAt(NuclideVector fuel, CellFeedbackState s) {
-        SixFactor sf = lattice.evaluate(cell, fuel, s);
-        double delta = lattice.reflectorSavings(sf, lattice.evaluate(reflector, fuel, s), REFLECTOR_M);
-        double k = lattice.estimateKeff(sf, lattice.geometricBuckling(ReactorShape.cylinder(coreRadius(), coreHeight()), delta));
-        return (k - 1) / k;
-    }
-
-    static double j0(double x) {
-        double y = Math.min(3, Math.abs(x)) / 3, y2 = y * y;
-        return 1 + y2 * (-2.2499997 + y2 * (1.2656208 + y2 * (-0.3163866 + y2 * (0.0444479 + y2 * (-0.0039444 + y2 * 0.0002100)))));
+        return core.state(fuelK, coolantDensity, moderatorK(), boronPpm());
     }
 
     private static double sCurve(double x) {
@@ -506,11 +364,6 @@ public final class PressurizedWaterReactor {
     /** Реактивность стержней, Δk/k (отрицательная). */
     public double rodReactivity() {
         return -(WORTH_AZ * sCurve(az) + WORTH_RG * sCurve(rg));
-    }
-
-    private double reactivity0() {
-        return staticRho + alphaDoppler * (fuelK - evalFuelK) + alphaDensity * (coolantDensity - evalRho)
-                + alphaModerator * (moderatorK() - evalModK) + alphaBoron * (boronPpm() - evalBoron) + rodReactivity();
     }
 
     private void protectionStep() {
@@ -559,17 +412,6 @@ public final class PressurizedWaterReactor {
         rg = Math.max(0, Math.min(1, rg + dir * v));
     }
 
-    private void poisonsStep(double gameDt) {
-        double f = 0, phi = 0;
-        double vCm3 = Math.PI * Math.pow(coreRadius() * 100, 2) * coreHeight() * 100;
-        if (loaded > 0 && sigmaF > 0) {
-            f = fissionW / (PointKinetics.FISSION_ENERGY * vCm3);
-            phi = f / sigmaF;
-        }
-        double tn = moderatorK() + LatticeModel.NEUTRON_GAS_OFFSET;
-        poisons.step(gameDt, f, phi, sigmaXe(tn), sigmaSm(tn));
-    }
-
     // ------------------------------------------------------------------ теплогидравлика
 
     private double requiredLoopKg(double p, double hh, double hc) {
@@ -592,19 +434,19 @@ public final class PressurizedWaterReactor {
             pumps[i].step(DT, pumpDrive[i]);
             speedSum += pumps[i].speed();
         }
-        double heat = fissionW * (1 - DECAY_SHARE) + decay.powerW();
+        double heat = core.heatW();
         double natural = NATURAL_FLOW * Math.cbrt(Math.max(0, heat) / NOMINAL_W);
         double flowFrac = Math.max(Math.max(0.005, natural), speedSum / LOOPS);
         flowKgS = NOMINAL_FLOW_KG_S * flowFrac;
         // топливо
         double hmTotal = 0, rodLength = 0;
-        for (double m : hm0) hmTotal += m;
-        if (design != null) rodLength = loaded * design.rods * design.stackM;
+        hmTotal = core.heavyMetalKg();
+        rodLength = core.rodLengthM();
         double cFuel = Math.max(1e5, FUEL_C_J_PER_KG_HM * hmTotal);
         double uaFuel = Math.max(1e3, rodLength * 1000 / FUEL_R_K_PER_KW_M);
         double tCoolCore = coldK > 0 ? (hotK + coldK) / 2 : 573.15;
         qCoreW = uaFuel * (fuelK - tCoolCore);
-        double toFuel = loaded > 0 ? heat : 0;
+        double toFuel = core.loadedAssemblies() > 0 ? heat : 0;
         fuelK += (toFuel - qCoreW) / cFuel * DT;
         // ПГ
         double pumpHeat = 0;
@@ -707,18 +549,17 @@ public final class PressurizedWaterReactor {
     }
 
     private void dnb() {
-        mdnbr = trueDnbr.calculate(pressure, coldK, flowKgS / NOMINAL_FLOW_KG_S, (fissionW * (1 - DECAY_SHARE) + decay.powerW()) / NOMINAL_W, Double.NaN);
+        mdnbr = trueDnbr.calculate(pressure, coldK, flowKgS / NOMINAL_FLOW_KG_S, core.heatW() / NOMINAL_W, Double.NaN);
         // пар заполнил весь горячий узел (верхняя камера, горячие нитки) — уровень смеси опускается в зону: кризис
         if (voidM3 >= 0.98 * V_HOT) mdnbr = Math.min(mdnbr, 0.8);
-        double maxShare = 0;
-        for (double s : share) maxShare = Math.max(maxShare, s);
+        double maxShare = core.maxShare();
         for (int i = 0; i < POSITIONS; i++) {
-            if (hm0[i] <= 0 || failed[i]) continue;
+            if (!core.loaded(i) || core.failed(i)) continue;
             // горячий канал — у ТВС с наибольшей долей; у остальных запас больше на отношение долей
-            double local = mdnbr * (maxShare > 0 ? maxShare / Math.max(1e-6, share[i]) : 1);
+            double local = mdnbr * (maxShare > 0 ? maxShare / Math.max(1e-6, core.share(i)) : 1);
             dnbTimer[i] = local < 1 ? dnbTimer[i] + DT : 0;
             if (dnbTimer[i] >= DNB_FAIL_S) {
-                failed[i] = true;
+                core.fail(i);
                 newlyFailed++;
             }
         }
@@ -750,7 +591,7 @@ public final class PressurizedWaterReactor {
         public double channelValue(TripReason r, int ch) {
             return switch (r) {
                 case HIGH_FLUX -> power();
-                case SHORT_PERIOD -> period.period();
+                case SHORT_PERIOD -> core.periodS();
                 case HIGH_PRIMARY_PRESSURE, LOW_PRIMARY_PRESSURE -> pressure;
                 case LOW_COOLANT_FLOW -> loopFlowFrac(ch / 3);
                 case HIGH_COOLANT_TEMP -> hotK;
@@ -767,7 +608,7 @@ public final class PressurizedWaterReactor {
 
         @Override
         public double measuredPeriod() {
-            return period.period();
+            return core.periodS();
         }
 
         @Override
@@ -822,56 +663,56 @@ public final class PressurizedWaterReactor {
     // ------------------------------------------------------------------ показания
 
     public double power() {
-        return kinetics.power();
+        return core.power();
     }
 
     public double fissionW() {
-        return fissionW;
+        return core.fissionW();
     }
 
     public double decayHeatW() {
-        return decay.powerW();
+        return core.decayHeatW();
     }
 
     public double periodS() {
-        return period.period();
+        return core.periodS();
     }
 
     public double reactivity() {
-        return totalRho;
+        return core.reactivity();
     }
 
     public double keffStatic() {
-        return keff;
+        return core.keffStatic();
     }
 
     public double betaEff() {
-        return betaEff;
+        return core.betaEff();
     }
 
     public double generationTime() {
-        return generation;
+        return core.generationTime();
     }
 
     public DelayedGroups delayedGroups() {
-        return groups;
+        return core.delayedGroups();
     }
 
     /** Коэффициенты реактивности последнего пересчёта: Доплер, 1/К; по плотности воды, 1/(кг/м³); спектральный по T воды, 1/К; бор, 1/ppm. */
     public double dopplerCoefficient() {
-        return alphaDoppler;
+        return core.dopplerCoefficient();
     }
 
     public double densityCoefficient() {
-        return alphaDensity;
+        return core.densityCoefficient();
     }
 
     public double moderatorSpectralCoefficient() {
-        return alphaModerator;
+        return core.moderatorSpectralCoefficient();
     }
 
     public double boronCoefficient() {
-        return alphaBoron;
+        return core.boronCoefficient();
     }
 
     /** Температурный коэффициент реактивности теплоносителя (по плотности и спектру), 1/К. */
@@ -879,16 +720,16 @@ public final class PressurizedWaterReactor {
         double t = moderatorK(), h = (hHot + hCold) / 2;
         double cp = 5.5e3;
         double drho = densityPH(pressure, h + cp) - densityPH(pressure, h - cp);
-        return alphaDensity * drho / 2 + alphaModerator;
+        return core.densityCoefficient() * drho / 2 + core.moderatorSpectralCoefficient();
     }
 
     public double xenonReactivity() {
         double tn = moderatorK() + LatticeModel.NEUTRON_GAS_OFFSET;
-        return sigmaA > 0 ? -poisons.xenonAbs(sigmaXe(tn)) / sigmaA : 0;
+        return core.xenonReactivity(moderatorK());
     }
 
     public FissionPoisons poisons() {
-        return poisons;
+        return core.poisons();
     }
 
     public double az() {
@@ -994,7 +835,7 @@ public final class PressurizedWaterReactor {
 
     public void setBoronGkg(double g) {
         boronKg = Math.max(0, g) * PPM_B_PER_G_KG * (loopKg + pzr.liquidKg()) / 1e6;
-        slowTimer = 1e9;
+        core.invalidate();
     }
 
     public double primaryKg() {
@@ -1006,23 +847,19 @@ public final class PressurizedWaterReactor {
     }
 
     public double burnup(int pos) {
-        return burnup[pos];
+        return core.burnup(pos);
     }
 
     public double maxBurnup() {
-        double m = 0;
-        for (double b : burnup) m = Math.max(m, b);
-        return m;
+        return core.maxBurnup();
     }
 
     public boolean failed(int pos) {
-        return failed[pos];
+        return core.failed(pos);
     }
 
     public int failedAssemblies() {
-        int n = 0;
-        for (boolean f : failed) if (f) n++;
-        return n;
+        return core.failedAssemblies();
     }
 
     public int newlyFailed() {
@@ -1048,22 +885,20 @@ public final class PressurizedWaterReactor {
         loopKg = requiredLoopKg(pressure, hHot, hCold);
         for (int i = 0; i < LOOPS; i++) pumps[i].setSpeed(pumpDrive[i]);
         properties();
-        slowTimer = 1e9;
+        core.invalidate();
     }
 
     public void equilibrate(double n) {
-        solveStatic();
-        kinetics.resetToEquilibrium(n);
-        period.reset(); // скачок мощности горячего старта — не разгон
-        decay.equilibrium(n * NOMINAL_W);
+        core.equilibrate(feedbackState(), n);
         lowFluxBlocked = n > 0.1;
         protection.restore(n, lowFluxBlocked);
     }
 
     /** Пересчитать ячейку и вернуть реактивность при текущем состоянии без шага (подбор критичности, тесты). */
     public double evaluateReactivity() {
-        solveStatic();
-        return reactivity0();
+        CellFeedbackState s = feedbackState();
+        core.solveStatic(s);
+        return core.reactivity(s, rodReactivity());
     }
 
     public void setRods(double az, double rg) {
@@ -1074,19 +909,7 @@ public final class PressurizedWaterReactor {
     // ------------------------------------------------------------------ сохранение
 
     public void save(StateWriter out) {
-        out.putDoubles("hm0", hm0, POSITIONS);
-        out.putDoubles("u5", u5, POSITIONS);
-        out.putDoubles("u8", u8, POSITIONS);
-        out.putDoubles("pu9", pu9, POSITIONS);
-        out.putDoubles("fp", fp, POSITIONS);
-        out.putDoubles("bu", burnup, POSITIONS);
-        out.putDoubles("u6", u6, POSITIONS);
-        out.putDoubles("pu0", pu0, POSITIONS);
-        out.putDoubles("x234", x234, POSITIONS);
-        int[] f = new int[POSITIONS];
-        for (int i = 0; i < POSITIONS; i++) f[i] = failed[i] ? 1 : 0;
-        out.putInts("failed", f, POSITIONS);
-        out.putString("design", design == null ? "" : design.name());
+        core.save(out);
         out.putDouble("az", az);
         out.putDouble("rg", rg);
         out.putDouble("sp", setpoint);
@@ -1099,7 +922,6 @@ public final class PressurizedWaterReactor {
         out.putDouble("xchg", exchangeGkg);
         out.putDouble("leak", leakAreaM2);
         out.putDouble("si", siHold);
-        out.putDouble("n", power());
         out.putInts("lowflux", new int[] {protection.isTripped() ? 0 : lowFluxBlocked ? 1 : 0}, 1);
         out.putInts("tripped", new int[] {protection.isTripped() ? 1 : 0}, 1);
         out.putInts("ruptured", new int[] {ruptured ? 1 : 0}, 1);
@@ -1111,31 +933,9 @@ public final class PressurizedWaterReactor {
             pumps[i].save(out);
             out.endObject();
         }
-        out.beginObject("poisons");
-        poisons.save(out);
-        out.endObject();
-        out.beginObject("decay");
-        decay.save(out);
-        out.endObject();
     }
 
     public void load(StateReader in) {
-        copy(in, "hm0", hm0);
-        copy(in, "u5", u5);
-        copy(in, "u8", u8);
-        copy(in, "pu9", pu9);
-        copy(in, "fp", fp);
-        copy(in, "bu", burnup);
-        copy(in, "u6", u6);
-        copy(in, "pu0", pu0);
-        copy(in, "x234", x234);
-        if (in.has("failed")) {
-            int[] f = in.getInts("failed");
-            for (int i = 0; i < Math.min(POSITIONS, f.length); i++) failed[i] = f[i] != 0;
-        }
-        String d = in.optString("design", "");
-        design = null;
-        for (FuelDesign x : FuelDesign.values()) if (x.name().equals(d)) design = x;
         az = in.optDouble("az", 1);
         rg = in.optDouble("rg", 1);
         setpoint = in.optDouble("sp", 1);
@@ -1157,34 +957,16 @@ public final class PressurizedWaterReactor {
                 pumps[i].load(in);
                 in.endObject();
             }
-        if (in.has("poisons")) {
-            in.beginObject("poisons");
-            poisons.load(in);
-            in.endObject();
-        }
-        if (in.has("decay")) {
-            in.beginObject("decay");
-            decay.load(in);
-            in.endObject();
-        }
         pressure = pzr.pressure();
         loopKg = in.optDouble("loop", requiredLoopKg(pressure, hHot, hCold));
         boronKg = in.optDouble("boron", boronKg);
         if (in.has("ruptured")) ruptured = in.getInts("ruptured")[0] != 0;
-        countLoaded();
         properties();
-        solveStatic();
-        double n = Math.max(PointKinetics.MIN_POWER, in.optDouble("n", 0));
-        kinetics.resetToEquilibrium(n);
-        period.reset(); // мощность восстановлена из сохранения, а не выросла
+        core.load(in, this::feedbackState);
+        double n = LightWaterCore.savedPower(in);
         lowFluxBlocked = in.has("lowflux") && in.getInts("lowflux")[0] != 0;
         protection.restore(n, lowFluxBlocked);
         if (!in.has("tripped") || in.getInts("tripped")[0] != 0) protection.requestTrip(TripReason.MANUAL, TripSource.OPERATOR_PANEL);
     }
 
-    private static void copy(StateReader in, String key, double[] to) {
-        if (!in.has(key)) return;
-        double[] a = in.getDoubles(key);
-        System.arraycopy(a, 0, to, 0, Math.min(a.length, to.length));
-    }
 }
