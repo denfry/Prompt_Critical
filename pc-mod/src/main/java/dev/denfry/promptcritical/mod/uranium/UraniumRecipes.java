@@ -72,12 +72,5 @@ public final class UraniumRecipes extends RecipeProvider {
                 .pattern("CEC").pattern("SGS").pattern("CTC").define('C', AllItems.COPPER_SHEET.get()).define('E', AllItems.ELECTRON_TUBE.get())
                 .define('S', AllItems.IRON_SHEET.get()).define('G', Items.COAL_BLOCK).define('T', tank)
                 .unlockedBy("has_rectifier_unit", has(PcBlocks.RECTIFIER_UNIT.get())).save(out, id("fluorine_cell"));
-        ShapedRecipeBuilder.shaped(RecipeCategory.MISC, PcItems.UF6_CYLINDER_5A.get())
-                .pattern(" C ").pattern("S S").pattern("SSS").define('C', AllBlocks.FLUID_VALVE.get()).define('S', AllItems.COPPER_SHEET.get())
-                .unlockedBy("has_uf4_powder", has(PcItems.UF4_POWDER.get())).save(out, id("uf6_cylinder_5a"));
-        ShapedRecipeBuilder.shaped(RecipeCategory.MISC, PcItems.UF6_CYLINDER_48Y.get())
-                .pattern("SVS").pattern("BTB").pattern("SBS").define('S', AllItems.IRON_SHEET.get()).define('V', AllBlocks.FLUID_VALVE.get())
-                .define('B', Items.IRON_BLOCK).define('T', tank)
-                .unlockedBy("has_uf4_powder", has(PcItems.UF4_POWDER.get())).save(out, id("uf6_cylinder_48y"));
     }
 }
