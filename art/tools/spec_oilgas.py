@@ -57,16 +57,7 @@ m("geophone", "oil_exploration", [el("spike", [7.5, 0, 7.5], [8.5, 3, 8.5], "st"
                                   el("connector", [10, 6, 7], [11.5, 7.5, 9], "dg")])
 
 
-def recorder(on):
-    return [el("case", [1, 0, 2], [15, 12, 15], "r32"),
-            el("lid", [1, 12, 13], [15, 22, 15], "r32", faces={"north": "seis"}, full=["north"],
-               rot=("x", -22.5, [8, 12, 14])),
-            el("keyboard", [3, 12, 4], [13, 12.5, 10], "dg"),
-            lamp("lamp_power", 13, 10, 2, on, "lg", 0.6)]
-
-
-m("seismic_recorder", "oil_exploration", recorder(False))
-m("seismic_recorder_on", "oil_exploration", recorder(True))
+# сейсмостанция нарисована вручную в Blockbench: art/blockbench/drilling/rig_floor.author.js
 
 # каротажный подъёмник 3×2×2: синий кузов, барабан с кабелем (partial, ось X), счётчик глубины
 m("logging_unit", "oil_exploration", [
@@ -186,20 +177,7 @@ m("mud_pump/piston", "drilling", hcyl("rod", "z", 1, 0, 10, "sss", c=(16, 8, 8),
   + hcyl("crosshead", "z", 2, 0, 3, "d", c=(16, 8, 8), sides=8), kind="partial")
 
 
-def mud_tank(level=0):
-    els = [el("floor", [0, 0, 0], [16, 1, 16], "st"),
-           el("wall_n", [0, 1, 0], [16, 14, 1], "st"), el("wall_s", [0, 1, 15], [16, 14, 16], "st"),
-           el("wall_w", [0, 1, 1], [1, 14, 15], "st"), el("wall_e", [15, 1, 1], [16, 14, 15], "st"),
-           el("grating", [0, 14, 0], [16, 15, 16], "grat")]
-    els += railing(0, 16, 0, 16, 15)
-    if level:
-        els.append(el("mud", [1, 1, 1], [15, 1 + level * 1.8, 15], "pulp"))
-    return els
-
-
-m("mud_tank", "drilling", mud_tank(4))
-m("mud_tank_empty", "drilling", mud_tank(0))
-m("mud_tank_full", "drilling", mud_tank(7))
+# ёмкость бурового раствора нарисована вручную в Blockbench: art/blockbench/drilling/rig_floor.author.js
 m("mud_tank/agitator", "drilling", vcyl("shaft", 8, 8, 0.75, 2, 18, "st", 8) + fan_rotor("y", 5, 3, "st"), kind="partial")
 
 m("shale_shaker", "drilling", [
@@ -279,16 +257,7 @@ m("choke_manifold/handwheel", "drilling", hcyl("stem", "z", 0.5, 0, 2, "st", c=(
 m("kill_manifold", "drilling", manifold(16, False) + [el("check_valve", [10, 2, 10], [15, 6, 14], "st")])
 
 
-def console(on):
-    return [el("base", [1, 0, 3], [15, 14, 15], "r32"),
-            el("panel", [0, 14, 2], [16, 30, 15], "r32", faces={"north": "wind"}, full=["north"]),
-            el("hood", [0, 30, 1], [16, 32, 15], "r32"),
-            el("handle_1", [3, 10, 1], [4, 14, 3], "blk"), el("handle_2", [12, 10, 1], [13, 14, 3], "blk")] + [
-        lamp(f"lamp_{i}", 3 + i * 3.3, 12, 3, on, ("lg", "ly", "lr", "lw")[i], 0.6) for i in range(4)]
-
-
-m("drillers_console", "drilling", console(False))
-m("drillers_console_on", "drilling", console(True))
+# пульт бурильщика нарисован вручную в Blockbench: art/blockbench/drilling/rig_floor.author.js
 
 
 def capping(closed=False, sooty=False):
