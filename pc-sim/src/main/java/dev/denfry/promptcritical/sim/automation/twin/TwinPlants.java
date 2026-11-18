@@ -16,7 +16,7 @@ import java.util.List;
 public final class TwinPlants {
     /** Порядок выбора на станции. */
     public static final List<String> IDS = List.of(TankTwinPlant.ID, BoilerTwinPlant.ID, SyncTwinPlant.ID, CompressorTwinPlant.ID,
-            BlendTwinPlant.ID);
+            BlendTwinPlant.ID, PressurizerTwinPlant.ID);
 
     private TwinPlants() {
     }
@@ -29,6 +29,7 @@ public final class TwinPlants {
             case SyncTwinPlant.ID -> SyncTwinPlant.SIGNALS;
             case CompressorTwinPlant.ID -> CompressorTwinPlant.SIGNALS;
             case BlendTwinPlant.ID -> BlendTwinPlant.SIGNALS;
+            case PressurizerTwinPlant.ID -> PressurizerTwinPlant.SIGNALS;
             default -> List.of();
         };
     }
@@ -41,6 +42,7 @@ public final class TwinPlants {
             case SyncTwinPlant.ID -> SyncTwinPlant.ACTUATORS;
             case CompressorTwinPlant.ID -> CompressorTwinPlant.ACTUATORS;
             case BlendTwinPlant.ID -> BlendTwinPlant.ACTUATORS;
+            case PressurizerTwinPlant.ID -> PressurizerTwinPlant.ACTUATORS;
             default -> List.of();
         };
     }
@@ -49,7 +51,7 @@ public final class TwinPlants {
      * Новая установка. Пресеты: резервуар — {@code half} (5 м), {@code high} (6 м); котёл — {@code hot} (10 бар) и {@code low} (уровень
      * 0,09 м над жаровой трубой);
      * генератор — {@code slip} (скольжение 0,25 Гц); компрессор — стоит с открытым рециклом; смешение — пустой
-     * резервуар.
+     * резервуар; первый контур — {@code nominal} (15,5 МПа).
      */
     public static TwinPlant create(String template, String preset, long seed) {
         return switch (template) {
@@ -58,6 +60,7 @@ public final class TwinPlants {
             case SyncTwinPlant.ID -> new SyncTwinPlant(0.25);
             case CompressorTwinPlant.ID -> new CompressorTwinPlant();
             case BlendTwinPlant.ID -> new BlendTwinPlant();
+            case PressurizerTwinPlant.ID -> new PressurizerTwinPlant();
             default -> throw new IllegalArgumentException("no twin plant " + template);
         };
     }
@@ -103,6 +106,12 @@ public final class TwinPlants {
                                 new Ai(2, BlendTwinPlant.AN_RVP, 0, 100), new Ai(3, BlendTwinPlant.VOLUME, 0, 5)),
                         List.of(), ao);
             }
+            // КД: положение штока и лампа команды клапана, давление и уровень; запорная задвижка — команда (1 — открыта)
+            case PressurizerTwinPlant.ID -> new IoMap(
+                    List.of(new Di(0, PressurizerTwinPlant.PORV_POSITION, Cmp.GT, 0.5), new Di(1, PressurizerTwinPlant.PORV_LAMP, Cmp.GT, 0.5)),
+                    List.of(new Ai(0, PressurizerTwinPlant.PRESSURE, 0, 17.5), new Ai(1, PressurizerTwinPlant.LEVEL, 0, 1)),
+                    List.of(new Do(0, PressurizerTwinPlant.BLOCK_VALVE, DoMode.COMMAND, 1, 0)),
+                    List.of());
             default -> throw new IllegalArgumentException("no twin plant " + template);
         };
     }

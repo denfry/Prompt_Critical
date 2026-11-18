@@ -1,0 +1,35 @@
+{
+  "category": "promptcritical:i2",
+  "title": "handbook.promptcritical.entry.i2.control_room.title",
+  "icon": "promptcritical:control_desk",
+  "sort": 72,
+  "unlock": {
+    "type": "always"
+  },
+  "pages": [
+    {
+      "type": "text",
+      "file": "main"
+    },
+    {
+      "type": "text",
+      "file": "pcui"
+    },
+    {
+      "type": "text",
+      "file": "watchdog"
+    },
+    {
+      "type": "recipe",
+      "recipe": "promptcritical:scada/control_desk"
+    },
+    {
+      "type": "recipe",
+      "recipe": "promptcritical:scada/control_room_core"
+    },
+    {
+      "type": "recipe",
+      "recipe": "promptcritical:scada/watchdog_relay"
+    }
+  ]
+}

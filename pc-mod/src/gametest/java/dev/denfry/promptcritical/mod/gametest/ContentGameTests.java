@@ -100,7 +100,7 @@ public final class ContentGameTests {
      * Игрок-заглушка {@link FakePlayer}: mock-игрок GameTest входит без согласованных каналов, и Create роняет тик,
      * отправляя ему свои пакеты. Заглушки нет среди игроков измерения — рассылку проверяем по явному списку.
      */
-    private static ServerPlayer player(GameTestHelper h, BlockPos rel) {
+    static ServerPlayer player(GameTestHelper h, BlockPos rel) {
         FakePlayer p = new TestPlayer(h.getLevel(), new GameProfile(UUID.randomUUID(), "pc_test_" + SEQ.incrementAndGet()));
         Vec3 at = Vec3.atBottomCenterOf(h.absolutePos(rel));
         p.moveTo(at.x, at.y, at.z);
@@ -136,7 +136,7 @@ public final class ContentGameTests {
         return n;
     }
 
-    private static boolean done(ServerPlayer p, String advancement) {
+    static boolean done(ServerPlayer p, String advancement) {
         AdvancementHolder a = p.server.getAdvancements().get(PromptCritical.id(advancement));
         return a != null && p.getAdvancements().getOrStartProgress(a).isDone();
     }

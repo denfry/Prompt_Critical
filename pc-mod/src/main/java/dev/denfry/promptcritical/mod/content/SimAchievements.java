@@ -55,6 +55,11 @@ public final class SimAchievements {
      */
     public static final String QUIET_PUMP = "promptcritical:quiet_pump", EVERLASTING = "promptcritical:everlasting",
             PULSE = "promptcritical:pulse";
+    /**
+     * SCADA/HMI 03c (11 §11.2.2): экран {@code pcui} уровня L1 сообщил число своих тегов (тег {@code tags}); урок
+     * тренажёра пройден — общее событие {@code scenario_passed} тренажёра, тег — id урока.
+     */
+    public static final String HMI = "promptcritical:hmi_screen";
     /** Источники, уже объявившие событие: повторно не шлют (сбрасывается с выгрузкой блока). */
     private static final java.util.Map<Object, java.util.Set<String>> ONCE = new java.util.WeakHashMap<>();
 

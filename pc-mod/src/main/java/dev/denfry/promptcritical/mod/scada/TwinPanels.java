@@ -57,12 +57,14 @@ public final class TwinPanels {
             PanelText.tr("twin.plant.boiler_i0", "Boiler I0", "Котёл I0"),
             PanelText.tr("twin.plant.generator_sync", "Generator and grid", "Генератор и сеть"),
             PanelText.tr("twin.plant.compressor", "Compressor station", "Компрессорная станция"),
-            PanelText.tr("twin.plant.gasoline_blending", "Gasoline blending", "Смешение бензина")};
+            PanelText.tr("twin.plant.gasoline_blending", "Gasoline blending", "Смешение бензина"),
+            PanelText.tr("twin.plant.pressurizer", "Primary circuit and pressurizer", "Первый контур и КД")};
     static final Tr[] LESSON_TEXT = {
             PanelText.tr("twin.lesson.tank_overfill", "Tank overfill at night", "Перелив резервуара ночью"),
             PanelText.tr("twin.lesson.forced_bit", "The forced bit", "Забытая форсировка"),
             PanelText.tr("twin.lesson.out_of_phase_sync", "Out-of-phase closing", "Включение в противофазе"),
-            PanelText.tr("twin.lesson.boiler_low_water", "Low water in the boiler", "Упуск воды в котле")};
+            PanelText.tr("twin.lesson.boiler_low_water", "Low water in the boiler", "Упуск воды в котле"),
+            PanelText.tr("twin.lesson.stuck_porv", "The lamp said closed", "Лампа сказала «закрыт»")};
     private static final Tr[] PLC_TEXT = {
             PanelText.tr("twin.plc.none", "no PLC", "без ПЛК"),
             PanelText.tr("twin.plc.off", "OFF", "ВЫКЛ"),

@@ -566,6 +566,25 @@ public final class PcBlocks {
     public static final DeferredBlock<PcDeviceBlock> INSTRUCTOR_STATION = device("instructor_station", machine(),
             Spec.facing(BlockStateProperties.LIT).footprint(FP_WIDE2),
             FoundryBlock.with(dev.denfry.promptcritical.mod.scada.SimulatorDeskBlockEntity::instructor));
+    // --- SCADA/HMI 03c: сигнализация ISA-18.2 (§3c.2.7, §3c.6) ---
+    /** Светосигнальное табло 03c §3c.2.7: настенное, редстоун в стену, пока звучит сирена; CC-периферия {@code pc_annunciator}. */
+    public static final DeferredBlock<PcDeviceBlock> ANNUNCIATOR_PANEL = device("annunciator_panel", instrument(),
+            Spec.facing(BlockStateProperties.POWERED), dev.denfry.promptcritical.mod.automation.AutomationWallBlock.wall(
+                    dev.denfry.promptcritical.mod.scada.AnnunciatorBlockEntity::new, 0, 0, 11, 16, 16, 16));
+    /** Сирена сигнализации 03c §3c.2.1: звучит по табло в 16 блоках. */
+    public static final DeferredBlock<PcDeviceBlock> ALARM_HORN = device("alarm_horn", instrument(),
+            Spec.facing(BlockStateProperties.POWERED), dev.denfry.promptcritical.mod.automation.AutomationWallBlock.wall(
+                    dev.denfry.promptcritical.mod.scada.AlarmHornBlockEntity::new, 4, 0, 9, 12, 12, 16));
+    /** Секция пульта БЩУ 03c §3c.9.1: обзор L1 и список сигнализаций всех табло в 32 блоках. */
+    public static final DeferredBlock<PcDeviceBlock> CONTROL_DESK = device("control_desk", machine(), Spec.facing(),
+            FoundryBlock.with(dev.denfry.promptcritical.mod.scada.ControlDeskBlockEntity::new));
+    /** Ядро помещения щита 03c §3c.9.1: объём заливкой и обитаемость. */
+    public static final DeferredBlock<PcDeviceBlock> CONTROL_ROOM_CORE = device("control_room_core", machine(), Spec.facing(),
+            FoundryBlock.with(dev.denfry.promptcritical.mod.scada.ControlRoomCoreBlockEntity::new));
+    /** Сторожевое реле 03c §3c.7.2: настенное, редстоун в стену при срабатывании; CC-периферия {@code pc_watchdog}. */
+    public static final DeferredBlock<PcDeviceBlock> WATCHDOG_RELAY = device("watchdog_relay", instrument(),
+            Spec.facing(BlockStateProperties.POWERED), dev.denfry.promptcritical.mod.automation.AutomationWallBlock.wall(
+                    dev.denfry.promptcritical.mod.scada.WatchdogRelayBlockEntity::new, 1, 1, 11, 15, 15, 16));
     public static final DeferredBlock<PcDeviceBlock> RTU_STATION = device("rtu_station", machine(),
             Spec.facing(BlockStateProperties.LIT).footprint(FP_TALL2),
             FoundryBlock.with(dev.denfry.promptcritical.mod.scada.TelemetryGatewayBlockEntity::new));

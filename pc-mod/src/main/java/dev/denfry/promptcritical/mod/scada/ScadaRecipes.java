@@ -10,6 +10,7 @@ import net.minecraft.data.CachedOutput;
 import net.minecraft.data.DataProvider;
 import net.minecraft.data.PackOutput;
 import net.minecraft.data.recipes.RecipeCategory;
+import net.minecraft.data.recipes.ShapelessRecipeBuilder;
 import net.minecraft.data.recipes.RecipeOutput;
 import net.minecraft.data.recipes.RecipeProvider;
 import net.minecraft.data.recipes.ShapedRecipeBuilder;
@@ -79,5 +80,33 @@ public final class ScadaRecipes extends RecipeProvider {
                 .define('W', PcItems.COPPER_WIRE.get()).define('B', PcItems.PRINTED_CIRCUIT_BOARD.get()).define('S', sheet)
                 .unlockedBy("has_microprocessor", has(PcItems.MICROPROCESSOR.get()))
                 .save(out, PromptCritical.id("scada/instructor_station").toString());
+        // сигнализация 03c (эпоха Э2, 03c §3c.1): табло — 12 окон-ламп за стеклом на релейной плате, сирена — звонок на проводе
+        ShapedRecipeBuilder.shaped(RecipeCategory.REDSTONE, PcBlocks.ANNUNCIATOR_PANEL.get())
+                .pattern("GGG").pattern("LWL").pattern("SSS").define('G', glass).define('L', PcBlocks.INDICATOR_LAMP.get())
+                .define('W', PcItems.COPPER_WIRE.get()).define('S', sheet)
+                .unlockedBy("has_indicator_lamp", has(PcBlocks.INDICATOR_LAMP.get()))
+                .save(out, PromptCritical.id("scada/annunciator_panel").toString());
+        ShapedRecipeBuilder.shaped(RecipeCategory.REDSTONE, PcBlocks.ALARM_HORN.get())
+                .pattern(" S ").pattern("SNS").pattern(" W ").define('S', sheet).define('N', net.minecraft.world.item.Items.NOTE_BLOCK)
+                .define('W', PcItems.COPPER_WIRE.get())
+                .unlockedBy("has_annunciator", has(PcBlocks.ANNUNCIATOR_PANEL.get()))
+                .save(out, PromptCritical.id("scada/alarm_horn").toString());
+        // БЩУ (03c §3c.9.1): секция пульта — стол со стеклом приборов и проводкой; ядро щитовой — датчики дозы и дыма
+        ShapedRecipeBuilder.shaped(RecipeCategory.REDSTONE, PcBlocks.CONTROL_DESK.get())
+                .pattern("GLG").pattern("WBW").pattern("S S").define('G', glass).define('L', PcBlocks.INDICATOR_LAMP.get())
+                .define('W', PcItems.COPPER_WIRE.get()).define('B', PcItems.PRINTED_CIRCUIT_BOARD.get()).define('S', sheet)
+                .unlockedBy("has_annunciator", has(PcBlocks.ANNUNCIATOR_PANEL.get()))
+                .save(out, PromptCritical.id("scada/control_desk").toString());
+        ShapedRecipeBuilder.shaped(RecipeCategory.REDSTONE, PcBlocks.CONTROL_ROOM_CORE.get())
+                .pattern("SDS").pattern("WBW").pattern("SCS").define('S', sheet).define('D', PcItems.DOSIMETER.get())
+                .define('W', PcItems.COPPER_WIRE.get()).define('B', PcItems.PRINTED_CIRCUIT_BOARD.get())
+                .define('C', net.minecraft.world.item.Items.CAMPFIRE)
+                .unlockedBy("has_control_desk", has(PcBlocks.CONTROL_DESK.get()))
+                .save(out, PromptCritical.id("scada/control_room_core").toString());
+        // сторожевое реле (03c §3c.7.2): реле времени на плате, выход — редстоун
+        ShapelessRecipeBuilder.shapeless(RecipeCategory.REDSTONE, PcBlocks.WATCHDOG_RELAY.get()).requires(PcItems.PRINTED_CIRCUIT_BOARD.get())
+                .requires(net.minecraft.world.item.Items.REPEATER).requires(net.minecraft.world.item.Items.REDSTONE_TORCH).requires(sheet)
+                .unlockedBy("has_printed_circuit_board", has(PcItems.PRINTED_CIRCUIT_BOARD.get()))
+                .save(out, PromptCritical.id("scada/watchdog_relay").toString());
     }
 }

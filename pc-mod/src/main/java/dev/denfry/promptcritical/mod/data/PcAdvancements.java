@@ -117,6 +117,11 @@ public final class PcAdvancements implements AdvancementProvider.AdvancementGene
         LANG.put("plc_first", new String[] {"First Scan", "Первый скан", "A PLC program runs in RUN", "Программа ПЛК работает в режиме RUN"});
         LANG.put("all_languages", new String[] {"IEC Polyglot", "Полиглот МЭК", "One PLC has run programs in LD, FBD, SFC and ST", "Один ПЛК работал на программах LD, FBD, SFC и ST"});
         LANG.put("lua_first", new String[] {"Hello, Reactor", "Hello, reactor", "A Lua program reads a machine through a pc_rtu telemetry gateway", "Lua-программа читает машину через шлюз телемеханики pc_rtu"});
+        LANG.put("hmi", new String[] {"High-Performance HMI", "Высокоэффективный HMI", "A pcui overview screen (ISA-101 level L1) shows 20 tags or more",
+                "Экран обзора pcui (уровень L1 по ISA-101) показывает 20 тегов и больше"});
+        LANG.put("stuck_valve", new String[] {"Don't Trust the Lamp", "Не верь лампе",
+                "Pass the simulator lesson where a stuck relief valve shows up on its position sensor, not on the 'command sent' lamp",
+                "Пройдите урок тренажёра, где заклинивший клапан виден по датчику положения, а не по лампе «команда подана»"});
         LANG.put("historian", new String[] {"Plant Memory", "Память завода", "A historian keeps 100 tags, each for a game day", "Историан хранит 100 тегов, каждый — за игровые сутки"});
         LANG.put("telemetry", new String[] {"Telemechanics", "Телемеханика", "Ten telemetry gateways report to one historian", "Десять шлюзов телемеханики у одного историана"});
         LANG.put("dosimeter", new String[] {"Count the Dose", "Считай дозу", "Carry a dosimeter for a game day", "Носите дозиметр игровые сутки"});
@@ -275,6 +280,10 @@ public final class PcAdvancements implements AdvancementProvider.AdvancementGene
                 .addCriterion("read", event(dev.denfry.promptcritical.mod.content.SimAchievements.LUA_READ, Map.of())).save(saver, id("lua_first"), efh);
         task(rtu, PcBlocks.HISTORIAN_SERVER.get(), "historian", AdvancementType.TASK, false, 50)
                 .addCriterion("day", event(dev.denfry.promptcritical.mod.content.SimAchievements.HISTORIAN_DAY, Map.of())).save(saver, id("historian"), efh);
+        // SCADA/HMI 03c: экран pcui уровня L1 с 20 тегами и больше (11 §11.2.2)
+        task(rtu, PcBlocks.ANNUNCIATOR_PANEL.get(), "hmi", AdvancementType.TASK, false, 40)
+                .addCriterion("screen", event(dev.denfry.promptcritical.mod.content.SimAchievements.HMI, Map.of("tags", MinMaxBounds.Doubles.atLeast(20))))
+                .save(saver, id("hmi"), efh);
         task(rtu, PcBlocks.RTU_STATION.get(), "telemetry", AdvancementType.GOAL, false, 60)
                 .addCriterion("rtus", event(dev.denfry.promptcritical.mod.content.SimAchievements.TELEMETRY, Map.of())).save(saver, id("telemetry"), efh);
         // физика: РИТЭГ на удалённой скважине (12 §12.5.1)
@@ -346,6 +355,12 @@ public final class PcAdvancements implements AdvancementProvider.AdvancementGene
                         ResourceLocation.parse(dev.denfry.promptcritical.mod.scada.SimulatorDeskBlockEntity.OPERATOR_LICENSE),
                         Map.of("level", MinMaxBounds.Doubles.atLeast(1)), false))
                 .save(saver, id("operator_license"), efh);
+        // урок stuck_porv тренажёра (11 §11.2.2, §11.3.4): скрытое испытание
+        task(root, PcBlocks.TRAINING_SIMULATOR.get(), "stuck_valve", AdvancementType.CHALLENGE, true, 80)
+                .addCriterion("lesson", SimEventTrigger.TriggerInstance.of(
+                        ResourceLocation.parse(dev.denfry.promptcritical.mod.scada.TrainingSimulatorBlockEntity.SCENARIO_PASSED),
+                        Map.of("stuck_porv", MinMaxBounds.Doubles.atLeast(0)), false))
+                .save(saver, id("stuck_valve"), efh);
     }
 
     /** Событие мира или домена у игрока в радиусе смены. */

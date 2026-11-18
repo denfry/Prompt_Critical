@@ -1,0 +1,38 @@
+{
+  "parent": "promptcritical:lua_first",
+  "criteria": {
+    "screen": {
+      "conditions": {
+        "event": "promptcritical:hmi_screen",
+        "predicate": {
+          "tags": {
+            "min": 20.0
+          }
+        },
+        "station_member": true
+      },
+      "trigger": "promptcritical:sim_event"
+    }
+  },
+  "display": {
+    "description": {
+      "translate": "advancements.promptcritical.hmi.description"
+    },
+    "icon": {
+      "count": 1,
+      "id": "promptcritical:annunciator_panel"
+    },
+    "title": {
+      "translate": "advancements.promptcritical.hmi.title"
+    }
+  },
+  "requirements": [
+    [
+      "screen"
+    ]
+  ],
+  "rewards": {
+    "experience": 40
+  },
+  "sends_telemetry_event": true
+}

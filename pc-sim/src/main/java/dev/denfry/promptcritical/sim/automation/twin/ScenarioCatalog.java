@@ -1,6 +1,7 @@
 package dev.denfry.promptcritical.sim.automation.twin;
 
 import dev.denfry.promptcritical.sim.automation.twin.Fault.ForcedInput;
+import dev.denfry.promptcritical.sim.automation.twin.Fault.IndicationCommand;
 import dev.denfry.promptcritical.sim.automation.twin.Fault.SensorFault;
 import dev.denfry.promptcritical.sim.automation.twin.Fault.SensorMode;
 import dev.denfry.promptcritical.sim.automation.twin.Fault.StuckActuator;
@@ -20,9 +21,10 @@ import java.util.Map;
 /**
  * Каталог сценариев тренажёра (11 §11.3.4) и испытаний двойника (03d §3d.9.1 FAT). Уроки — инженерные, без названий
  * объектов и стран (риск K12); каждый связан с механикой мода. Из каталога 11 §11.3.4 здесь те, чьи эталонные
- * установки есть в двойнике: {@code tank_overfill}, {@code forced_bit}, {@code out_of_phase_sync}; плюс вводный урок
- * котла I0 {@code boiler_low_water} (упуск воды, легкоплавкая пробка 07 §7.9.4). Времена и уровни [BALANCE]. FAT
- * компрессорной станции и станции смешения — сценарии задач наладчика {@link ChallengeCatalog}.
+ * установки есть в двойнике: {@code tank_overfill}, {@code forced_bit}, {@code out_of_phase_sync}, {@code stuck_porv}
+ * ({@link PressurizerTwinPlant}); плюс вводный урок котла I0 {@code boiler_low_water} (упуск воды, легкоплавкая пробка
+ * 07 §7.9.4). Времена и уровни [BALANCE]. FAT компрессорной станции и станции смешения — сценарии задач наладчика
+ * {@link ChallengeCatalog}.
  */
 public final class ScenarioCatalog {
     /** Испытания FAT по шаблону установки: программа игрока должна их пройти, прежде чем её загрузят в мир. */
@@ -58,6 +60,18 @@ public final class ScenarioCatalog {
                 List.of(new Timed(30, new Inject(StuckActuator.trip(BoilerTwinPlant.FEED_PUMP)))),
                 conds("level_above_crown_m > 0"), List.of(), new Margin(BoilerTwinPlant.LEVEL_ABOVE_CROWN, 0), null, 0.3, 0.7));
 
+        // урок stuck_porv (03c §3c.2.8, 04c): импульсный клапан КД открылся на переходном процессе и не сел, лампа
+        // показывает команду «закрыт»; спасает только датчик положения и запорная задвижка
+        String z = PressurizerTwinPlant.ID;
+        List<Timed> stuckPorv = List.of(
+                new Timed(0, new Inject(new IndicationCommand(PressurizerTwinPlant.PORV_LAMP, PressurizerTwinPlant.PORV))),
+                new Timed(20, new Set(PressurizerTwinPlant.PORV, 1)),
+                new Timed(22, new Inject(new StuckActuator(PressurizerTwinPlant.PORV, Fault.StuckMode.STUCK_OPEN, 0))),
+                new Timed(26, new Set(PressurizerTwinPlant.PORV, 0)));
+        lesson(new Scenario("stuck_porv", z, "nominal", 600, false, null, null, stuckPorv,
+                conds("relief_flow <= 0", "inventory >= 0.85"), List.of(), new Margin(PressurizerTwinPlant.INVENTORY, PressurizerTwinPlant.UNCOVER),
+                null, 0.4, 0.6));
+
         fat(new Scenario("fat_tank_farm", t, "half", 900, true, null, null,
                 List.of(new Timed(300, new Inject(StuckActuator.trip(TankTwinPlant.PUMP))),
                         new Timed(600, new Inject(new SensorFault(TankTwinPlant.LSH, SensorMode.FROZEN, 0)))),
@@ -72,6 +86,9 @@ public final class ScenarioCatalog {
         // компрессор и смешение: испытание FAT — то же, что задача наладчика 03d §3d.11.6
         fat(ChallengeCatalog.get("compressor_startup_no_surge").scenario());
         fat(ChallengeCatalog.get("gasoline_blending_lp").scenario());
+        fat(new Scenario("fat_pressurizer", z, "nominal", 600, true, null, null, stuckPorv,
+                conds("relief_flow <= 0", "inventory >= 0.85"), List.of(), new Margin(PressurizerTwinPlant.INVENTORY, PressurizerTwinPlant.UNCOVER),
+                null, 0.4, 0.6));
     }
 
     private ScenarioCatalog() {
