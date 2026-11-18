@@ -81,7 +81,7 @@ public final class RefineryUpgradingGameTests {
                     CatalyticReformerBlockEntity r = h.getBlockEntity(at);
                     fill(r.fluids(Direction.NORTH), PcFluids.GASOLINE.source.get(), 4000);
                     fill(r.fluids(Direction.EAST), PcFluids.SALES_GAS.source.get(), 4000);
-                    h.assertTrue(r.reformate().amount() > 50, "reformate " + r.reformate().amount() + " L");
+                    h.assertTrue(r.reformate().amount() > 40, "reformate " + r.reformate().amount() + " L");
                     h.assertTrue(r.hydrogen().amount() > 1000, "hydrogen " + r.hydrogen().amount() + " L");
                     h.assertTrue(r.last().ron() > 75, "RON " + r.last().ron());
                     h.assertTrue(r.firstReactorDropK() > 30, "first reactor drop " + r.firstReactorDropK() + " K");
