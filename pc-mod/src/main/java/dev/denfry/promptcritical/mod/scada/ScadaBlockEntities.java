@@ -52,6 +52,10 @@ public final class ScadaBlockEntities {
             BLOCK_ENTITIES.register("control_room_core",
                     () -> BlockEntityType.Builder.of(ControlRoomCoreBlockEntity::new, PcBlocks.CONTROL_ROOM_CORE.get()).build(null));
 
+    public static final DeferredHolder<BlockEntityType<?>, BlockEntityType<WatchdogRelayBlockEntity>> WATCHDOG_RELAY =
+            BLOCK_ENTITIES.register("watchdog_relay",
+                    () -> BlockEntityType.Builder.of(WatchdogRelayBlockEntity::new, PcBlocks.WATCHDOG_RELAY.get()).build(null));
+
     private ScadaBlockEntities() {
     }
 

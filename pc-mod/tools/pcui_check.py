@@ -158,6 +158,28 @@ def main():
     check(abs(degc - 100) < 1e-9 and abs(mpa - 15.5) < 1e-9, "units: degC, MPa")
     check(si1 == "15.5 MPa" and si2 == "2.1 mSv", "fmt.si: %s, %s" % (si1, si2))
 
+    # watchdog: armed by run(), kicked after every rendered frame, not kicked when a frame fails
+    res = lua.execute(r"""
+      local pcui = require("pcui")
+      local log = {}
+      local wd = { arm = function() log[#log + 1] = "arm" end, kick = function() log[#log + 1] = "kick" end }
+      local app = pcui.app({ monitor = monitor(30, 10), clock = false, annunciator = false, watchdog = wd })
+      local p = app:page("p", { level = 1 })
+      local broken = false
+      p:add({ bind = function() return {} end, draw = function() if broken then error("widget failed") end end })
+      local frames = 0
+      os.startTimer = function() return 1 end
+      os.pullEvent = function()
+        frames = frames + 1
+        if frames == 3 then broken = true end
+        return "timer", 1
+      end
+      local ok = pcall(app.run, app)
+      return table.concat(log, ","), ok
+    """)
+    seq, ok = res
+    check(seq == "arm,kick,kick,kick" and not ok, "watchdog: arm, a kick per good frame, none after a failed one (%s)" % seq)
+
     # smoke test of the ROM program /rom/programs/pc/alarm_screen: five timer frames, then stop
     prog = os.path.join(ROOT, "src", "main", "resources", "data", "computercraft", "lua", "rom", "programs", "pc", "alarm_screen.lua")
     res = lua.execute(r"""

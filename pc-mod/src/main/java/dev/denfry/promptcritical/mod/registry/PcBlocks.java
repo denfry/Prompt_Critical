@@ -573,6 +573,10 @@ public final class PcBlocks {
     /** Ядро помещения щита 03c §3c.9.1: объём заливкой и обитаемость. */
     public static final DeferredBlock<PcDeviceBlock> CONTROL_ROOM_CORE = device("control_room_core", machine(), Spec.facing(),
             FoundryBlock.with(dev.denfry.promptcritical.mod.scada.ControlRoomCoreBlockEntity::new));
+    /** Сторожевое реле 03c §3c.7.2: настенное, редстоун в стену при срабатывании; CC-периферия {@code pc_watchdog}. */
+    public static final DeferredBlock<PcDeviceBlock> WATCHDOG_RELAY = device("watchdog_relay", instrument(),
+            Spec.facing(BlockStateProperties.POWERED), dev.denfry.promptcritical.mod.automation.AutomationWallBlock.wall(
+                    dev.denfry.promptcritical.mod.scada.WatchdogRelayBlockEntity::new, 1, 1, 11, 15, 15, 16));
     public static final DeferredBlock<PcDeviceBlock> RTU_STATION = device("rtu_station", machine(),
             Spec.facing(BlockStateProperties.LIT).footprint(FP_TALL2),
             FoundryBlock.with(dev.denfry.promptcritical.mod.scada.TelemetryGatewayBlockEntity::new));

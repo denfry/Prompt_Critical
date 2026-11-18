@@ -81,7 +81,9 @@ local App, Page = {}, {}
 App.__index = App
 Page.__index = Page
 
--- opts = {monitor=, fps=, title=, station=, annunciator=, clock=true, textScale=0.5}
+-- opts = {monitor=, fps=, title=, station=, annunciator=, clock=true, textScale=0.5, watchdog=}
+-- watchdog: a pc_watchdog relay; app:run() arms it and kicks it after every frame that
+-- rendered without an error (GDD 03c §3c.7.2: the kick follows a good pass, not a parallel task).
 function pcui.app(opts)
   opts = opts or {}
   local mon = opts.monitor or term.current()
@@ -95,6 +97,7 @@ function pcui.app(opts)
     frameNo = 0, reported = {}, alarmsDirty = true, w = w, h = h,
   }, App)
   app.buf = draw.new(w, h)
+  app.watchdog = opts.watchdog
   app.ann = opts.annunciator
   if app.ann == nil and peripheral.find then app.ann = peripheral.find("pc_annunciator") end
   return app
@@ -210,7 +213,9 @@ function App:render()
   header(self, b)
   for _, w in ipairs(self.current.widgets) do w:draw(self, b) end
   footer(self, b)
-  return b:flush(self.mon)
+  local n = b:flush(self.mon)
+  if self.watchdog then self.watchdog.kick() end
+  return n
 end
 
 function App:overview()
@@ -243,6 +248,7 @@ end
 -- Event loop: frames on a timer, touches, hotkeys 1-9, alarm events refresh the list.
 function App:run()
   self.running = true
+  if self.watchdog then self.watchdog.arm() end
   self:render()
   local timer = os.startTimer(1 / self.fps)
   while self.running do

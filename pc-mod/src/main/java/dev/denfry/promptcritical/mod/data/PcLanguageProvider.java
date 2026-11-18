@@ -336,6 +336,7 @@ public final class PcLanguageProvider extends LanguageProvider {
         b("alarm_horn", "Alarm Horn", "Сирена сигнализации");
         b("control_desk", "Control Desk", "Секция пульта");
         b("control_room_core", "Control Room Core", "Ядро щитовой");
+        b("watchdog_relay", "Watchdog Relay", "Сторожевое реле");
         b("fire_water_pump", "Fire Water Pump", "Пожарный насос");
         b("fire_hydrant", "Fire Hydrant", "Пожарный гидрант");
         b("foam_proportioner", "Foam Proportioner", "Дозатор пенообразователя");

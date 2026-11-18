@@ -10,6 +10,7 @@ import net.minecraft.data.CachedOutput;
 import net.minecraft.data.DataProvider;
 import net.minecraft.data.PackOutput;
 import net.minecraft.data.recipes.RecipeCategory;
+import net.minecraft.data.recipes.ShapelessRecipeBuilder;
 import net.minecraft.data.recipes.RecipeOutput;
 import net.minecraft.data.recipes.RecipeProvider;
 import net.minecraft.data.recipes.ShapedRecipeBuilder;
@@ -102,5 +103,10 @@ public final class ScadaRecipes extends RecipeProvider {
                 .define('C', net.minecraft.world.item.Items.CAMPFIRE)
                 .unlockedBy("has_control_desk", has(PcBlocks.CONTROL_DESK.get()))
                 .save(out, PromptCritical.id("scada/control_room_core").toString());
+        // сторожевое реле (03c §3c.7.2): реле времени на плате, выход — редстоун
+        ShapelessRecipeBuilder.shapeless(RecipeCategory.REDSTONE, PcBlocks.WATCHDOG_RELAY.get()).requires(PcItems.PRINTED_CIRCUIT_BOARD.get())
+                .requires(net.minecraft.world.item.Items.REPEATER).requires(net.minecraft.world.item.Items.REDSTONE_TORCH).requires(sheet)
+                .unlockedBy("has_printed_circuit_board", has(PcItems.PRINTED_CIRCUIT_BOARD.get()))
+                .save(out, PromptCritical.id("scada/watchdog_relay").toString());
     }
 }

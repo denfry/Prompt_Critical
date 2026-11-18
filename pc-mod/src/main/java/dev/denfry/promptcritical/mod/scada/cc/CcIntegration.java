@@ -28,5 +28,6 @@ public final class CcIntegration {
                 (be, side) -> new MesPeripheral(be));
         // SCADA/HMI 03c: сервер сигнализации
         event.registerBlockEntity(PeripheralCapability.get(), ScadaBlockEntities.ANNUNCIATOR.get(), (be, side) -> new AnnunciatorPeripheral(be));
+        event.registerBlockEntity(PeripheralCapability.get(), ScadaBlockEntities.WATCHDOG_RELAY.get(), (be, side) -> new WatchdogPeripheral(be));
     }
 }
