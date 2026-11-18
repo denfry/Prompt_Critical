@@ -41,7 +41,8 @@ public final class AcidPlantBlockEntity extends UraniumProcessBlockEntity {
     }
 
     static boolean pyrite(ItemStack s) {
-        return s.is(PcBlocks.PYRITE_ORE.get().asItem()) || s.is(PcBlocks.DEEPSLATE_PYRITE_ORE.get().asItem());
+        return s.is(PcBlocks.PYRITE_ORE.get().asItem()) || s.is(PcBlocks.DEEPSLATE_PYRITE_ORE.get().asItem())
+                || s.is(dev.denfry.promptcritical.mod.registry.PcItems.SULFUR.get());
     }
 
     public ContactAcidPlant plant() {
@@ -58,7 +59,9 @@ public final class AcidPlantBlockEntity extends UraniumProcessBlockEntity {
         while (on && sulfurKg < want) {
             ItemStack ore = takeOne(AcidPlantBlockEntity::pyrite);
             if (ore.isEmpty()) break;
-            sulfurKg += UraniumUnits.MINERAL_KG * UraniumUnits.assay(ore, UraniumUnits.PYRITE_S_DEFAULT);
+            sulfurKg += ore.is(dev.denfry.promptcritical.mod.registry.PcItems.SULFUR.get())
+                    ? dev.denfry.promptcritical.mod.refinery.ClausUnitBlockEntity.SULFUR_KG_PER_ITEM
+                    : UraniumUnits.MINERAL_KG * UraniumUnits.assay(ore, UraniumUnits.PYRITE_S_DEFAULT);
         }
         plant.setOn(on);
         plant.step(Math.min(want, sulfurKg) / dt);

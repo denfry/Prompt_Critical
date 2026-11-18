@@ -90,6 +90,10 @@ public final class PcItems {
     public static final DeferredItem<Item> CATALYST_SHIFT_LT = item("catalyst_shift_lt", 16);
     /** Медь–оксид цинка–глинозём синтеза метанола (СНМ-1). */
     public static final DeferredItem<Item> CATALYST_METHANOL = item("catalyst_methanol", 16);
+    /** CoMo/Al₂O₃ гидроочистки (GDD 09 §9.9.11). */
+    public static final DeferredItem<Item> CATALYST_HYDROTREATING = item("catalyst_hydrotreating", 16);
+    /** Комовая сера установки Клауса, 10 кг — сырьё сернокислотной установки. */
+    public static final DeferredItem<Item> SULFUR = item("sulfur", 64);
     /** Пакет платинородиевых сеток (Pt 92,5 %, Rh 7,5 %) и катализатор очистки хвостовых газов. */
     public static final DeferredItem<Item> PT_RH_GAUZE = item("pt_rh_gauze", 4);
     public static final DeferredItem<Item> CATALYST_DENOX = item("catalyst_denox", 16);
