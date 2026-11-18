@@ -115,6 +115,10 @@ public final class GasPlantBlockEntity extends DeviceBlockEntity implements Foun
 
     @Override
     public void tickDevice() {
+        if (level != null && level.isClientSide) {
+            clientTick();
+            return;
+        }
         if (!(level instanceof ServerLevel s)) return;
         SimLevelBinding b = SimBindings.get(s);
         if (b == null) return;
@@ -165,6 +169,19 @@ public final class GasPlantBlockEntity extends DeviceBlockEntity implements Foun
         }
         updateStates(regen);
         if (ticks % 100 == 0) setChanged();
+    }
+
+    /**
+     * Холодный режим (арт — art/blockbench/core/reactor_island.author.js, модель {@code _cold}): после дросселя газ
+     * ниже 0 °C, холодная сторона — холодильник, сепаратор, трубы — обрастает инеем из влаги воздуха, и он осыпается.
+     */
+    private void clientTick() {
+        BlockState st = getBlockState();
+        if (!st.getValue(BlockStateProperties.LIT)) return;
+        var fx = dev.denfry.promptcritical.mod.fx.MachineFx.of(this);
+        if (fx == null) return;
+        if (fx.chance(4)) fx.frost(fx.at(16 + fx.random().nextDouble() * 14, -1.8, -8), 0.3);
+        if (fx.chance(3)) fx.frost(fx.at(-6, 4 + fx.random().nextDouble() * 10, 11.6), 0.4);
     }
 
     private void updateStates(@Nullable BlockPos regen) {

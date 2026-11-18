@@ -17,6 +17,8 @@ public enum PcSfx {
     AGZ_SIREN("agz_siren", "Gas alarm siren wails", "Воет сирена газовой защиты"),
     // синтез ffmpeg: гул сети 50 Гц (петли 2 с)
     ELECTRIC_MOTOR("electric_motor", "Electric motor hums", "Гудит электродвигатель"),
+    /** Центробежный компрессор: лопаточная частота и широкополосный шум потока (синтез ffmpeg, петля 2 с). */
+    COMPRESSOR("compressor", "Compressor drones", "Гудит компрессор"),
     TRANSFORMER_HUM("transformer_hum", "Transformer hums", "Гудит трансформатор"),
     // записи CC0 (art/sfx/sources.json, SOURCES.md): петли работы и разовые звуки
     STEAM_ENGINE_CHUFF("steam_engine_chuff", "Steam engine exhausts", "Выхлоп паровой машины"),

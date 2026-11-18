@@ -45,6 +45,8 @@ public final class CrackedGasUnitBlockEntity extends DeviceBlockEntity implement
     private final ProductTank fuelOil = new ProductTank(PcFluids.PYROLYSIS_FUEL_OIL.source.get(), MB);
     /** Пирогаз, принятый от печи и ещё не разделённый, моль. */
     private final double[] buffer = new double[PyroComponent.N];
+    /** Игровое время последнего разделения (сервер): по нему горит свойство {@code running}. */
+    private long lastWorkTick = Long.MIN_VALUE / 2;
     @Nullable
     private BlockPos furnace;
     private CrackedGasSeparation.Result last;
@@ -86,7 +88,19 @@ public final class CrackedGasUnitBlockEntity extends DeviceBlockEntity implement
 
     @Override
     public void tickDevice() {
+        if (level != null && level.isClientSide) {
+            clientTick();
+            return;
+        }
         if (!(level instanceof ServerLevel)) return;
+        if (level.getGameTime() % 10 == 0) {
+            BlockState st = getBlockState();
+            boolean run = level.getGameTime() - lastWorkTick < 40;
+            if (st.hasProperty(dev.denfry.promptcritical.mod.block.PcProperties.RUNNING)
+                    && st.getValue(dev.denfry.promptcritical.mod.block.PcProperties.RUNNING) != run)
+                level.setBlock(worldPosition, st.setValue(dev.denfry.promptcritical.mod.block.PcProperties.RUNNING, run),
+                        net.minecraft.world.level.block.Block.UPDATE_CLIENTS);
+        }
         double total = CrackedGasSeparation.Result.total(buffer);
         if (total <= 0) return;
         CrackedGasSeparation.Result r = CrackedGasSeparation.split(buffer.clone());
@@ -106,8 +120,24 @@ public final class CrackedGasUnitBlockEntity extends DeviceBlockEntity implement
             f.acceptRecycle(ethaneKg, propaneKg, tailJ);
         causticKgTotal += r.causticKgS();
         last = r;
+        lastWorkTick = level.getGameTime();
         Arrays.fill(buffer, 0);
         if (level.getGameTime() % 100 == 0) setChanged();
+    }
+
+    /**
+     * Пока газ идёт (арт — art/blockbench/petrochem/process_units.author.js): из концевых уплотнений паровой турбины
+     * компрессора сочится пар (лабиринтовые уплотнения отсасывают пар не до конца — у старых машин всегда видно
+     * облачко у вала), над закалочной колонной курится воздушник.
+     */
+    private void clientTick() {
+        if (!(getBlockState().hasProperty(dev.denfry.promptcritical.mod.block.PcProperties.RUNNING)
+                && getBlockState().getValue(dev.denfry.promptcritical.mod.block.PcProperties.RUNNING))) return;
+        var fx = dev.denfry.promptcritical.mod.fx.MachineFx.of(this);
+        if (fx == null) return;
+        if (fx.chance(3)) fx.puff(fx.at(15.2, -7, -9), new net.minecraft.world.phys.Vec3(-0.02, 0.03, 0), 1);
+        if (fx.chance(3)) fx.puff(fx.at(25.2, -7, -9), new net.minecraft.world.phys.Vec3(0.02, 0.03, 0), 1);
+        if (fx.chance(2)) fx.wisp(fx.at(-6, 32, 20), 0.2);
     }
 
     private static double litres(double[] mol, double densityKgM3) {

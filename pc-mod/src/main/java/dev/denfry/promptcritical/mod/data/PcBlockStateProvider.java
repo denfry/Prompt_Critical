@@ -159,7 +159,6 @@ public final class PcBlockStateProvider extends BlockStateProvider {
             case "rotary_calciner", "hf_kiln" -> java.util.List.of(base, id + "/partial/shell");
             case "mixer_settler" -> java.util.List.of(base, id + "/partial/impeller");
             case "pvc_reactor" -> java.util.List.of(base, "high_pressure_autoclave/partial/agitator");
-            case "ammonia_converter" -> java.util.List.of(base, "ammonia_synthesis_reactor/partial/compressor_wheel");
             case "pellet_press" -> java.util.List.of(base, "pellet_press/partial/ram");
             case "primary_pump" -> java.util.List.of(base, "primary_pump/partial/impeller");
             case "pumpjack" -> java.util.List.of(base, "pumpjack_gearbox/partial/crank_counterweight", "pumpjack_gearbox/partial/walking_beam",
@@ -234,7 +233,8 @@ public final class PcBlockStateProvider extends BlockStateProvider {
             // нефть и газ I2
             case "gas_compressor" -> "reciprocating_compressor";
             case "glycol_regenerator" -> s.getValue(PcProperties.RUNNING) ? id + "_running" : id;
-            case "low_temperature_separator" -> s.getValue(BlockStateProperties.LIT) ? "cold_box_cold" : "cold_box";
+            // НТС нарисована своя: art/blockbench/core/reactor_island.author.js; холодная — под инеем
+            case "low_temperature_separator" -> s.getValue(BlockStateProperties.LIT) ? id + "_cold" : id;
             case "ngl_fractionator" -> "column_base_large";
             case "helium_recovery_unit" -> "helium_purifier";
             case "fuel_rack" -> "fuel_pool_rack_open";
@@ -244,7 +244,6 @@ public final class PcBlockStateProvider extends BlockStateProvider {
             case "mes_server" -> s.getValue(BlockStateProperties.LIT) ? "historian_server_busy" : "historian_server";
             // химия I3
             case "pyrolysis_furnace" -> s.getValue(BlockStateProperties.LIT) ? "tube_furnace_radiant_lit" : "tube_furnace_radiant";
-            case "cracked_gas_unit" -> "pyrolysis_quench_tower";
             case "ldpe_reactor" -> "hyper_compressor";
             // хлор и ПВХ I3
             case "uranium_ion_exchange" -> "ion_exchange_column";
@@ -252,22 +251,19 @@ public final class PcBlockStateProvider extends BlockStateProvider {
             case "rectifier_unit" -> s.getValue(PcProperties.ALARM) ? "rectifier_unit_fault"
                     : s.getValue(PcProperties.RUNNING) ? "rectifier_unit" : "rectifier_unit_off";
             case "chlorine_liquefier" -> s.getValue(PcProperties.RUNNING) ? "air_dryer_wet" : "air_dryer";
-            case "edc_unit" -> "chlorination_reactor";
             case "edc_cracker" -> s.getValue(PcProperties.ALARM) ? "tube_furnace_controller_tripped"
                     : s.getValue(BlockStateProperties.LIT) ? "tube_furnace_controller_cracking" : "tube_furnace_controller";
             case "pvc_reactor" -> "high_pressure_autoclave";
             // химия I3, азот
             case "steam_reformer" -> s.getValue(BlockStateProperties.LIT) ? "tube_furnace_radiant_catalyst_lit" : "tube_furnace_radiant_catalyst";
             case "co2_absorber" -> "absorption_tower";
-            case "ammonia_converter" -> "ammonia_synthesis_reactor";
             case "nitric_acid_unit" -> "ostwald_converter";
             case "acid_concentrator" -> "fractionating_column";
             // химия I3, метанол
-            case "methanol_converter" -> "fixed_bed_reactor";
             case "hydrotreater" -> "fixed_bed_reactor_large";
             case "claus_unit" -> "claus_reaction_furnace";
             case "catalytic_reformer" -> "fixed_bed_reactor_regen";
-            case "delayed_coker" -> "tube_furnace_controller";
+            // замедленное коксование нарисовано своё: art/blockbench/refinery/delayed_coker.author.js
             case "methanol_column" -> "fractionating_column";
             // ядерное топливо I4
             case "centrifuge_cascade" -> "cascade_header";
@@ -278,7 +274,7 @@ public final class PcBlockStateProvider extends BlockStateProvider {
             case "irradiation_channel" -> s.getValue(PcProperties.FILLED) ? id + "_loaded" : id;
             case "rtg_thermoelectric" -> s.getValue(BlockStateProperties.LIT) ? id : id + "_depleted";
             case "pwr_reactor" -> s.getValue(PcProperties.PWR_SEGMENT) == PcProperties.PwrSegment.HEAD ? "control_rod_drive" : "reactor_vessel_wall";
-            case "pressurizer" -> "pressurizer";
+            case "pressurizer" -> s.getValue(BlockStateProperties.LIT) ? id + "_lit" : id;
             // арт: art/blockbench/core/candu_reactor.author.js — свод с торцом каландра, над ним коробка питателей и площадка СУЗ
             case "candu_reactor" -> s.getValue(PcProperties.CANDU_SEGMENT) == PcProperties.CanduSegment.FUELLING ? id + "_fuelling" : id;
             case "submerged_arc_furnace" -> s.getValue(BlockStateProperties.LIT) ? id + "_running" : id;

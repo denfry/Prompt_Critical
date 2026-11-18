@@ -94,14 +94,7 @@ model("startup_source", "core", tx("d", "st", "h", cap=B("startup_source_capsule
 ], "block/startup_source")
 
 # ---------- vessels of the reactor island ----------
-model("pressurizer", "core", tx("d", "st", "end", "psteam", "inss", sh=B("pressurizer_shell"), top=B("tank_top"), ht=B("pressurizer_heaters")),
-      disc("shell", "y", 7.5, 0, 12.5, "sh", faces={"up": "top", "down": "ht"})
-      + disc("head", "y", 5.5, 12.5, 14.5, "inss", 8, faces={"up": "top"})
-      + [el("spray_nozzle", [6, 14.5, 6], [10, 16, 10], "d", faces={"up": "end"}, full=["up"]),
-         el("relief_line", [12, 13, 7], [16, 15, 9], "psteam", faces={"east": "end"}),
-         el("lug_w", [-0.5, 4, 6.5], [1.5, 7, 9.5], "d"),
-         el("lug_e", [14.5, 4, 6.5], [16.5, 7, 9.5], "d")],
-      "block/pressurizer")
+# компенсатор давления нарисован вручную в Blockbench: art/blockbench/core/reactor_island.author.js
 
 model("steam_generator", "core", tx("d", "pprim", "end", "inss", sh=B("steam_generator_shell"), top=B("tank_top"), col=B("steam_generator_collector")),
       disc("shell", "x", 7.5, 0, 16, "sh", faces={"east": "top", "west": "top"})

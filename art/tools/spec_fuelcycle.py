@@ -62,16 +62,7 @@ def dsc(name, axis, r, a0, a1, tex, sides=16, cap=None, c=(8, 8, 8)):
 # =====================================================================
 ENR = "enrichment"
 
-# центрифуга 1×1×2: тонкий высокий кожух, ротор скрыт (partial не нужен)
-mk("gas_centrifuge", ENR,
-   [el("base", [1, 0, 1], [15, 2, 15], "d")]
-   + disc("motor", "y", 5, 2, 5, "ds", 8)
-   + disc("casing", "y", 4, 5, 29, "f")
-   + disc("top_flange", "y", 4.8, 29, 30.5, "ds", 8)
-   + [el("cap", [6, 30.5, 6], [10, 32, 10], "st"),
-      el("line_feed", [7.5, 30.75, 1], [8.5, 31.75, 6], "uf6"),
-      el("line_product", [1, 30.75, 7.5], [6, 31.75, 8.5], "uf6"),
-      el("line_tails", [10, 30.75, 7.5], [15, 31.75, 8.5], "uf6")])
+# газовая центрифуга нарисована вручную в Blockbench: art/blockbench/core/reactor_island.author.js
 
 hdr = [
     el("leg_w", [1.5, 0, 7], [3, 8, 9], "d"),

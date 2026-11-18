@@ -508,7 +508,7 @@ public final class PcBlocks {
             Spec.facing(BlockStateProperties.LIT).footprint(FP_CUBE3),
             FoundryBlock.with(dev.denfry.promptcritical.mod.chem.PyrolysisFurnaceBlockEntity::new));
     public static final DeferredBlock<PcDeviceBlock> CRACKED_GAS_UNIT = device("cracked_gas_unit", machine(),
-            Spec.facing().footprint(FP_CUBE3), FoundryBlock.with(dev.denfry.promptcritical.mod.chem.CrackedGasUnitBlockEntity::new));
+            Spec.facing(PcProperties.RUNNING).footprint(FP_CUBE3), FoundryBlock.with(dev.denfry.promptcritical.mod.chem.CrackedGasUnitBlockEntity::new));
     public static final DeferredBlock<PcDeviceBlock> LDPE_REACTOR = device("ldpe_reactor", machine(),
             Spec.facing(PcProperties.RUNNING).footprint(Footprint.of(Segment.box(-1, 1, 0, 0, 0, 0))),
             KineticMachineBlock.with(ShaftSide.BACK, dev.denfry.promptcritical.mod.chem.LdpeReactorBlockEntity::new));

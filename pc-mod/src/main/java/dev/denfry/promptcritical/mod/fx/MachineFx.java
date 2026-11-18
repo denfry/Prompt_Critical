@@ -37,6 +37,13 @@ public final class MachineFx {
         this.random = level.random;
     }
 
+    /** Эффекты машины-блока {@link dev.denfry.promptcritical.mod.block.PcBlock} по её фасаду; {@code null} — не клиент. */
+    public static MachineFx of(net.minecraft.world.level.block.entity.BlockEntity be) {
+        var s = be.getBlockState();
+        return of(be.getLevel(), be.getBlockPos(),
+                s.getBlock() instanceof dev.denfry.promptcritical.mod.block.PcBlock b ? b.facing(s) : Direction.NORTH);
+    }
+
     /** Эффекты машины; {@code null} — не клиент. */
     public static MachineFx of(Level level, BlockPos controller, Direction facing) {
         return level != null && level.isClientSide ? new MachineFx(level, controller, facing) : null;
@@ -110,6 +117,11 @@ public final class MachineFx {
     /** Пузыри, лопающиеся на поверхности (сепаратор, пульсирующая постель). */
     public void bubbles(Vec3 at, double spread, int n) {
         for (int i = 0; i < n; i++) emit(ParticleTypes.BUBBLE_POP, at, spread, 0, 0.02, 0);
+    }
+
+    /** Иней, осыпающийся с холодной стенки (сепаратор НТС, холодильник). */
+    public void frost(Vec3 at, double spread) {
+        emit(ParticleTypes.SNOWFLAKE, at, spread, 0, -0.01, 0);
     }
 
     /** Капель из сальника. */
