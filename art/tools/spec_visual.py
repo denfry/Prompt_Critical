@@ -146,61 +146,7 @@ def vcyl(name, cx, cz, r, y0, y1, tex, sides=16):
 
 # отсадочная машина нарисована вручную в Blockbench: art/blockbench/coal_prep/coal_jig.author.js
 
-# ---- ветроэлектростанция Д-30 (плейсхолдер до ручной модели): решётчатая башня 1×9×1 из трёх секций, гондола
-# и одна лопасть (рендер ставит её трижды через 120° и масштабирует колесо ×3, гондолу ×1,5 вокруг ступицы 8, 8, 8)
-def wind_lattice(y0, y1, top_rail=True):
-    """Секция решётчатой башни y0…y1 (пиксели): четыре уголка-пояса, раскосы зигзагом по граням, распорки."""
-    els = [el(f"leg_{i}", [x, y0, z], [x + 2, y1, z + 2], "gal")
-           for i, (x, z) in enumerate(((0, 0), (14, 0), (0, 14), (14, 14)))]
-    half = 8 * math.sqrt(2) - 1
-    for k, y in enumerate(range(int(y0), int(y1), 16)):
-        ang = 45 if k % 2 == 0 else -45
-        c = y + 8
-        els += [
-            el(f"brace_n{k}", [8 - half, c - 0.5, 0.4], [8 + half, c + 0.5, 1.2], "gal", rot=("z", ang, [8, c, 0.8])),
-            el(f"brace_s{k}", [8 - half, c - 0.5, 14.8], [8 + half, c + 0.5, 15.6], "gal", rot=("z", -ang, [8, c, 15.2])),
-            el(f"brace_w{k}", [0.4, c - 0.5, 8 - half], [1.2, c + 0.5, 8 + half], "gal", rot=("x", ang, [0.8, c, 8])),
-            el(f"brace_e{k}", [14.8, c - 0.5, 8 - half], [15.6, c + 0.5, 8 + half], "gal", rot=("x", -ang, [15.2, c, 8])),
-        ]
-        if top_rail or y + 16 < y1:
-            els += [el(f"strut_x{k}", [2, y + 15, 0.5], [14, y + 16, 1.5], "gal"),
-                    el(f"strut_x2{k}", [2, y + 15, 14.5], [14, y + 16, 15.5], "gal"),
-                    el(f"strut_z{k}", [0.5, y + 15, 2], [1.5, y + 16, 14], "gal"),
-                    el(f"strut_z2{k}", [14.5, y + 15, 2], [15.5, y + 16, 14], "gal")]
-    return els
-
-
-m("wind_turbine", "grid", [
-    el("foundation", [-2, -16, -2], [18, -14, 18], "c"),
-] + wind_lattice(-16, 32) + [
-    el("cabinet", [3, -14, 1.5], [13, -3, 5], "cab", faces={"north": "pn"}, full=["north"]),
-    el("cabinet_lamp", [10, -5.5, 1], [11.5, -4, 1.5], "lr"),
-    el("cable_entry", [6, -14, 5], [10, -12, 9], "d"),
-])
-m("wind_turbine_middle", "grid", wind_lattice(-16, 32))
-m("wind_turbine_top", "grid", wind_lattice(-16, 28, top_rail=False) + [
-    el("platform", [-1, 28, -1], [17, 30, 17], "p"),
-    el("yaw_ring", [2, 30, 2], [14, 32, 14], "d"),
-    el("rail_n", [-1, 30, -1], [17, 31, 0], "gal"), el("rail_s", [-1, 30, 16], [17, 31, 17], "gal"),
-])
-m("wind_turbine/nacelle", "grid", [
-    el("bedplate", [4, 3, 8], [12, 5, 28], "d"),
-    el("housing", [4.5, 5, 7], [11.5, 12, 27], "eng"),
-    el("roof", [5.5, 12, 9], [10.5, 13, 25], "eng"),
-    el("generator", [5.5, 6, 20], [10.5, 11, 30], "mb"),
-    el("main_shaft", [7, 7, 3], [9, 9, 7], "st"),
-    el("spinner", [5.5, 5.5, 2.5], [10.5, 10.5, 6], "st"),
-    el("spinner_tip", [6.5, 6.5, 1], [9.5, 9.5, 2.5], "st"),
-    el("vane_post", [7.5, 13, 24], [8.5, 17, 25], "gal"),
-    el("anemometer", [6, 17, 23.5], [10, 17.5, 25.5], "d"),
-], kind="partial")
-m("wind_turbine/blade", "grid", [
-    el("root", [7, 9, 5], [9, 11, 7], "st"),
-    el("blade_inner", [6, 11, 5.5], [10, 19, 6.5], "p"),
-    el("blade_mid", [6.5, 19, 5.6], [9.5, 26, 6.4], "p"),
-    el("blade_tip", [7, 26, 5.7], [9, 32, 6.3], "p"),
-    el("stabilizer", [9.5, 22, 6.4], [11, 26, 6.9], "red"),
-], kind="partial")
+# ---- ветроэлектростанция Д-30 нарисована вручную в Blockbench: art/blockbench/grid/wind_turbine.author.js
 
 
 # ---- ламповая (плейсхолдер до ручной модели): зарядный стеллаж на 12 головных светильников и сам светильник
