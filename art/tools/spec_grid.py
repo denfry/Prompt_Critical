@@ -89,20 +89,13 @@ m("instrument_synchroscope", "instruments", [
 # ======================================================================
 # шины, кабели, изоляторы (multipart: центр + рукав к грани north)
 # ======================================================================
-# ОРУ 110 кВ: трубчатая шина на опорном изоляторе; цвет фазы — хомут
-m("busbar", "grid", [el("pedestal", [5, 0, 5], [11, 1.5, 11], "gal")]
-  + insulator("post", 8, 8, 1.5, 10)
-  + [el("clamp", [6, 12.5, 6], [10, 14.5, 10], "yel"),
-     el("node", [6.5, 13, 6.5], [9.5, 16, 9.5], "al")])
-m("busbar_side", "grid", [el("tube", [6.5, 13, 0], [9.5, 16, 6.5], "al")])
+# ОРУ 110 кВ: трубчатая шина (busbar, busbar_side) нарисован вручную в Blockbench: art/blockbench/grid/grid_lines.author.js
 # ошиновка серии электролизёров: пакет алюминиевых полос
 m("busbar_dc", "grid", [el(f"bar_{i}", [4 + i * 3, 4, 4], [6 + i * 3, 12, 12], "al") for i in range(3)]
   + [el("spacer", [3.5, 7, 7], [12.5, 9, 9], "dg")])
 m("busbar_dc_side", "grid", [el(f"bar_{i}", [4 + i * 3, 4, 0], [6 + i * 3, 12, 4], "al") for i in range(3)])
-# силовой кабель ААБл / АПвП: чёрная оболочка
-m("power_cable", "grid", [el("core", [5.5, 5.5, 5.5], [10.5, 10.5, 10.5], "cblk"),
-                          el("band", [5.4, 7.5, 5.4], [10.6, 8.5, 10.6], "yel")])
-m("power_cable_side", "grid", [el("arm", [6, 6, 0], [10, 10, 5.5], "cblk")])
+# силовой кабель (power_cable, power_cable_side) нарисован вручную в Blockbench: art/blockbench/grid/grid_lines.author.js
+
 
 
 # ограничитель перенапряжений ОПН-110 (полимер) / разрядник РВС (фарфор)
@@ -129,27 +122,7 @@ m("ground_electrode", "grid", [
     el("bolt", [9.5, 8.5, 7], [10.5, 11.5, 9], "d"),
 ])
 
-# роликовый изолятор 0,4 кВ на кронштейне (стена south)
-m("wire_connector_lv", "grid", [
-    el("bracket", [7, 6, 9], [9, 8, 16], "d"),
-    el("plate", [6, 5, 15], [10, 9, 16], "d"),
-    el("roller", [6.5, 4, 5.5], [9.5, 10, 8.5], "porg"),
-    el("band", [6.4, 8, 5.4], [9.6, 8.75, 8.6], "yel"),
-])
-# штыревой изолятор ШФ-20 на штыре (стоит на траверсе)
-m("wire_connector_mv", "grid", [el("pin", [7.5, 0, 7.5], [8.5, 4, 8.5], "gal")] + insulator("shf", 8, 8, 4, 6, "porg", 2.5)
-  + [el("neck", [6.5, 10, 6.5], [9.5, 12, 9.5], "porg")])
-
-
-# щиток ЩРН с автоматами
-def ldb(tripped=False):
-    return [el("box", [2, 2, 11], [14, 14, 16], "r35", faces={"north": "ldb"}, full=["north"]),
-            el("gland", [6, 0.5, 12], [10, 2, 14], "r"),
-            lamp("lamp", 12, 12.5, 11, True, "lr" if tripped else "lg", 0.6)]
-
-
-m("lv_distribution_box", "grid", ldb())
-m("lv_distribution_box_tripped", "grid", ldb(True))
+# роликовый и штыревой изоляторы (wire_connector_lv/mv) и щиток ЩРН (lv_distribution_box) нарисованы вручную в Blockbench: art/blockbench/grid/grid_lines.author.js
 
 
 # ======================================================================
@@ -245,54 +218,13 @@ m("power_transformer_35", "grid", [
   + [el("cons_leg", [6, 9.5, 17], [7, 21, 19], "d")])
 
 
-# выпрямительный агрегат 2×2×1: тиристорные шкафы; ртутный колбовый — вариант
-def rectifier(state="on", mercury=False):
-    els = [el("plinth", [0, 0, 1], [32, 1, 16], "dg"),
-           el("cab_w", [0, 1, 2], [15.5, 31, 16], "r35", faces={"north": "louv"}, full=["north"]),
-           el("cab_e", [16.5, 1, 2], [32, 31, 16], "r35"),
-           el("bus_out", [4, 31, 6], [28, 32, 10], "cub")]
-    if mercury:
-        els += disc("bulb", "y", 5, 6, 22, "gl", 8, c=(24, 8, 1))
-        els += [el("glow_arc", [22, 9, -0.5], [26, 18, 2.5], "hg"),
-                el("cathode_pool", [20, 4, -2], [28, 6, 4], "st")]
-    else:
-        els.append(el("door_e", [17, 2, 1.5], [31.5, 30, 2], "r35", faces={"north": "fef"}, full=["north"]))
-    col = {"on": "lg", "off": None, "fault": "lr"}[state]
-    els.append(lamp("lamp", 8, 28, 2, col is not None, col or "lg", 1))
-    return els
-
-
-m("rectifier_unit", "grid", rectifier())
-m("rectifier_unit_off", "grid", rectifier("off"))
-m("rectifier_unit_fault", "grid", rectifier("fault"))
-m("rectifier_unit_mercury", "grid", rectifier(mercury=True))
+# выпрямительный агрегат (rectifier_unit и состояния, ртутный вариант) нарисован вручную в Blockbench: art/blockbench/grid/grid_lines.author.js
 
 
 # ======================================================================
 # опоры ВЛ
 # ======================================================================
-def pole(tex, part, r=2.5):
-    els = [el("shaft", [8 - r, 0, 8 - r], [8 + r, 16, 8 + r], tex)]
-    if part == "bottom":
-        els.append(el("butt_band", [8 - r - 0.25, 0, 8 - r - 0.25], [8 + r + 0.25, 3, 8 + r + 0.25], "ci"))
-        els.append(el("ground_wire", [8 + r, 0, 7.75], [8 + r + 0.5, 16, 8.25], "gal"))
-    if part == "top":
-        els += [el("crossarm", [-6, 11, 7], [22, 13, 9], "gal"),
-                el("brace_w", [1, 7, 7.25], [8 - r, 8, 8.75], "gal"),
-                el("cap", [8 - r, 16, 8 - r], [8 + r, 16.5, 8 + r], "gal")]
-        for i, x in enumerate((-4, 4, 20)):
-            els += [el(f"pin_{i}", [x - 0.5, 13, 7.5], [x + 0.5, 15, 8.5], "gal"),
-                    el(f"ins_{i}", [x - 1.5, 15, 6.5], [x + 1.5, 17, 9.5], "porg"),
-                    el(f"ins_head_{i}", [x - 1, 17, 7], [x + 1, 18, 9], "porg")]
-    return els
-
-
-for _p in ("middle", "bottom", "top"):
-    sfx = "" if _p == "middle" else f"_{_p}"
-    # опора ВЛ 0,4–10 кВ: пропитанное дерево
-    m(f"wooden_pole{sfx}", "grid", pole("wood", _p))
-    # опора СВ-110: вибробетонная стойка
-    m(f"concrete_pole{sfx}", "grid", pole("cpol", _p, 3))
+# деревянная и бетонная опоры ВЛ (wooden_pole, concrete_pole: base/middle/top) нарисованы вручную в Blockbench: art/blockbench/grid/grid_lines.author.js
 
 
 # опора П110-3: решётчатая ферма 3×21×3, секции 3×3×3; якорь — центр секции
@@ -324,25 +256,7 @@ m("transmission_tower_base", "grid", tower_section(14, 13)[:4] + [
     for i, (x, z) in enumerate(((-6, -6), (22, -6), (-6, 22), (22, 22)))])
 
 
-# ТП 10/0,4 кВ потребителя: сегмент 3×3×3 — забор, киоск, «посёлок» с окнами
-def consumer(dark=False):
-    win = "win" if not dark else "gls"
-    els = [el("ground", [-16, -16, -16], [32, -15, 32], "c"),
-           el("fence_n", [-16, -15, -16], [32, -6, -15.5], "lat"),
-           el("fence_w", [-16, -15, -16], [-15.5, -6, 32], "lat"),
-           el("kiosk", [-12, -15, -12], [4, 2, 2], "r35"),
-           el("kiosk_roof", [-13, 2, -13], [5, 3, 3], "dg"),
-           el("sign", [-8, -4, -12.1], [0, 0, -12], "csign", full=["north"]),
-           el("tx", [-10, -15, 6], [0, -4, 16], "cor")]
-    for i, (x, z) in enumerate(((8, -10), (20, 4), (8, 18))):
-        els += [el(f"house_{i}", [x, -15, z], [x + 10, -5, z + 8], "brk"),
-                el(f"roof_{i}", [x - 0.5, -5, z - 0.5], [x + 10.5, -3, z + 8.5], "redsm"),
-                el(("glow_" if not dark else "") + f"window_{i}", [x + 3, -11, z - 0.1], [x + 7, -8, z], win)]
-    return els
-
-
-m("grid_consumer", "grid", consumer())
-m("grid_consumer_dark", "grid", consumer(True))
+# ТП 10/0,4 кВ потребителя с посёлком (grid_consumer, grid_consumer_dark) нарисована вручную в Blockbench: art/blockbench/grid/grid_lines.author.js
 
 
 # инверторный шкаф: медные шины сверху, индикатор направления

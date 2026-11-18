@@ -1,43 +1,167 @@
 {
 	"credit": "Made with Blockbench",
 	"textures": {
-		"particle": "promptcritical:block/common/grid_aluminium",
-		"al": "promptcritical:block/common/grid_aluminium"
+		"particle": "promptcritical:block/grid_lines/alu",
+		"grid_lines_alu": "promptcritical:block/grid_lines/alu"
 	},
 	"elements": [
 		{
-			"name": "tube",
-			"from": [6.5, 13, 0],
-			"to": [9.5, 16, 6.5],
+			"name": "tube_0",
+			"from": [6.5, 14.20163, 0],
+			"to": [9.5, 14.79837, 6.6],
 			"rotation": {
 				"angle": 0,
 				"axis": "y",
 				"origin": [8, 8, 8]
 			},
 			"faces": {
-				"north": {
-					"uv": [0, 0, 3, 3],
-					"texture": "#al"
-				},
 				"east": {
-					"uv": [0, 0, 6.5, 3],
-					"texture": "#al"
-				},
-				"south": {
-					"uv": [0, 0, 3, 3],
-					"texture": "#al"
+					"uv": [9.4, 1.20163, 16, 1.79837],
+					"texture": "#grid_lines_alu"
 				},
 				"west": {
-					"uv": [0, 0, 6.5, 3],
-					"texture": "#al"
+					"uv": [0, 1.20163, 6.6, 1.79837],
+					"texture": "#grid_lines_alu"
+				}
+			}
+		},
+		{
+			"name": "tube_1",
+			"from": [6.5, 14.20163, 0],
+			"to": [9.5, 14.79837, 6.6],
+			"rotation": {
+				"angle": 22.5,
+				"axis": "z",
+				"origin": [8, 14.5, 8]
+			},
+			"faces": {
+				"east": {
+					"uv": [9.4, 1.20163, 16, 1.79837],
+					"texture": "#grid_lines_alu"
 				},
+				"west": {
+					"uv": [0, 1.20163, 6.6, 1.79837],
+					"texture": "#grid_lines_alu"
+				}
+			}
+		},
+		{
+			"name": "tube_2",
+			"from": [6.5, 14.20163, 0],
+			"to": [9.5, 14.79837, 6.6],
+			"rotation": {
+				"angle": 45,
+				"axis": "z",
+				"origin": [8, 14.5, 8]
+			},
+			"faces": {
+				"east": {
+					"uv": [9.4, 1.20163, 16, 1.79837],
+					"texture": "#grid_lines_alu"
+				},
+				"west": {
+					"uv": [0, 1.20163, 6.6, 1.79837],
+					"texture": "#grid_lines_alu"
+				}
+			}
+		},
+		{
+			"name": "tube_3",
+			"from": [6.5, 14.20163, 0],
+			"to": [9.5, 14.79837, 6.6],
+			"rotation": {
+				"angle": -22.5,
+				"axis": "z",
+				"origin": [8, 14.5, 8]
+			},
+			"faces": {
+				"east": {
+					"uv": [9.4, 1.20163, 16, 1.79837],
+					"texture": "#grid_lines_alu"
+				},
+				"west": {
+					"uv": [0, 1.20163, 6.6, 1.79837],
+					"texture": "#grid_lines_alu"
+				}
+			}
+		},
+		{
+			"name": "tube_4",
+			"from": [6.5, 14.20163, 0],
+			"to": [9.5, 14.79837, 6.6],
+			"rotation": {
+				"angle": -45,
+				"axis": "z",
+				"origin": [8, 14.5, 8]
+			},
+			"faces": {
+				"east": {
+					"uv": [9.4, 1.20163, 16, 1.79837],
+					"texture": "#grid_lines_alu"
+				},
+				"west": {
+					"uv": [0, 1.20163, 6.6, 1.79837],
+					"texture": "#grid_lines_alu"
+				}
+			}
+		},
+		{
+			"name": "tube_5",
+			"from": [7.70163, 13, 0],
+			"to": [8.29837, 16, 6.6],
+			"rotation": {
+				"angle": 0,
+				"axis": "y",
+				"origin": [8, 8, 8]
+			},
+			"faces": {
 				"up": {
-					"uv": [0, 0, 3, 6.5],
-					"texture": "#al"
+					"uv": [7.70163, 0, 8.29837, 6.6],
+					"texture": "#grid_lines_alu"
 				},
 				"down": {
-					"uv": [0, 0, 3, 6.5],
-					"texture": "#al"
+					"uv": [7.70163, 9.4, 8.29837, 16],
+					"texture": "#grid_lines_alu"
+				}
+			}
+		},
+		{
+			"name": "tube_6",
+			"from": [7.70163, 13, 0],
+			"to": [8.29837, 16, 6.6],
+			"rotation": {
+				"angle": 22.5,
+				"axis": "z",
+				"origin": [8, 14.5, 8]
+			},
+			"faces": {
+				"up": {
+					"uv": [7.70163, 0, 8.29837, 6.6],
+					"texture": "#grid_lines_alu"
+				},
+				"down": {
+					"uv": [7.70163, 9.4, 8.29837, 16],
+					"texture": "#grid_lines_alu"
+				}
+			}
+		},
+		{
+			"name": "tube_7",
+			"from": [7.70163, 13, 0],
+			"to": [8.29837, 16, 6.6],
+			"rotation": {
+				"angle": -22.5,
+				"axis": "z",
+				"origin": [8, 14.5, 8]
+			},
+			"faces": {
+				"up": {
+					"uv": [7.70163, 0, 8.29837, 6.6],
+					"texture": "#grid_lines_alu"
+				},
+				"down": {
+					"uv": [7.70163, 9.4, 8.29837, 16],
+					"texture": "#grid_lines_alu"
 				}
 			}
 		}
