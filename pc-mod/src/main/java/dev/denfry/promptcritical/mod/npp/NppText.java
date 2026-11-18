@@ -24,7 +24,7 @@ public final class NppText {
         put("pwr_unloaded", "Assembly %s unloaded: %s MWd/kg", "ТВС %s выгружена: %s МВт·сут/кг");
         put("pwr_permit", "Start-up power trip lifted", "Пусковая уставка АЗ по мощности снята");
         put("pwr_permit_refused", "The start-up trip can be lifted only above 10 % power", "Снять пусковую уставку можно только выше 10 % мощности");
-        put("pwr_dnb", "DEPARTURE FROM NUCLEATE BOILING: cladding failed in %s assembly(ies), activity in the coolant",
+        put("pwr_dnb", "DEPARTURE FROM NUCLEATE BOILING: assemblies with failed cladding: %s, activity in the coolant",
                 "КРИЗИС ТЕПЛООБМЕНА: разгерметизированы оболочки ТВС: %s; активность в теплоносителе");
         put("pwr_rupture", "PRIMARY CIRCUIT RUPTURE: the pressure broke the loop", "РАЗРЫВ ПЕРВОГО КОНТУРА: давление разорвало петлю");
     }
