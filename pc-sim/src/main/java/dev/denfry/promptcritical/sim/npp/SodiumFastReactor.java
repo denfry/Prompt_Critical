@@ -1,5 +1,7 @@
 package dev.denfry.promptcritical.sim.npp;
 
+import dev.denfry.promptcritical.sim.core.StateReader;
+import dev.denfry.promptcritical.sim.core.StateWriter;
 import dev.denfry.promptcritical.sim.neutronics.DecayHeat;
 import dev.denfry.promptcritical.sim.neutronics.DelayedGroups;
 import dev.denfry.promptcritical.sim.neutronics.DelayedNeutronData;
@@ -220,6 +222,7 @@ public final class SodiumFastReactor {
         if (trip == Trip.NONE) return true;
         if (externalTrip || sgLeakKgS > 0 || scram < 0.99) return false;
         trip = Trip.NONE;
+        scram = 0; // взвод поднимает стержни АЗ
         return true;
     }
 
@@ -357,4 +360,58 @@ public final class SodiumFastReactor {
     public double aerosolKgS() { return aerosolKgS; }
     /** Тепло реакции натрий–вода во втором контуре, Вт. */
     public double sodiumWaterW() { return sodiumWaterW; }
+
+    public double heavyMetalKg() { return heavyMetalKg; }
+    public double initialPuFraction() { return puFraction0; }
+    public boolean shutDown() { return kinetics.power() < 1e-3 && scram > 0.99; }
+    public int controlDrive() { return controlDrive; }
+
+    // ------------------------------------------------------------------ сохранение (зона задаётся конструктором)
+
+    public void save(StateWriter out) {
+        out.putDouble("n", kinetics.power());
+        out.putDouble("scram", scram);
+        out.putDouble("ctrl", control);
+        out.putDouble("tf", fuelK);
+        out.putDouble("tna", coreNaK);
+        out.putDouble("thot", hotPoolK);
+        out.putDouble("tcold", coldPoolK);
+        out.putDouble("tih", intHotK);
+        out.putDouble("tic", intColdK);
+        out.putDouble("pu", corePuKg);
+        out.putDouble("bpu", blanketPuKg);
+        out.putDouble("h2", h2Kg);
+        out.putString("trip", trip.name());
+        out.putString("disc", discBurst ? "1" : "0");
+        out.beginObject("decay");
+        decay.save(out);
+        out.endObject();
+    }
+
+    public void load(StateReader in) {
+        scram = in.optDouble("scram", 1);
+        control = in.optDouble("ctrl", 1);
+        fuelK = in.optDouble("tf", fuelK);
+        coreNaK = in.optDouble("tna", coreNaK);
+        hotPoolK = in.optDouble("thot", hotPoolK);
+        coldPoolK = in.optDouble("tcold", coldPoolK);
+        intHotK = in.optDouble("tih", intHotK);
+        intColdK = in.optDouble("tic", intColdK);
+        corePuKg = in.optDouble("pu", corePuKg);
+        blanketPuKg = in.optDouble("bpu", 0);
+        h2Kg = in.optDouble("h2", 0);
+        puFraction = Math.max(1e-4, corePuKg / heavyMetalKg);
+        discBurst = "1".equals(in.optString("disc", "0"));
+        try {
+            trip = Trip.valueOf(in.optString("trip", Trip.MANUAL.name()));
+        } catch (IllegalArgumentException e) {
+            trip = Trip.MANUAL;
+        }
+        kinetics.resetToEquilibrium(Math.max(PointKinetics.MIN_POWER, in.optDouble("n", 1e-6)));
+        if (in.has("decay")) {
+            in.beginObject("decay");
+            decay.load(in);
+            in.endObject();
+        }
+    }
 }

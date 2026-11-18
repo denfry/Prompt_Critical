@@ -107,7 +107,7 @@ public final class NppPanels {
     }
 
     public static List<PanelLayout> all() {
-        return List.of(REACTOR, PwrPanels.REACTOR, BwrPanels.REACTOR);
+        return List.of(REACTOR, PwrPanels.REACTOR, BwrPanels.REACTOR, SfrPanels.REACTOR);
     }
 
     private static Component status(PanelValues v) {

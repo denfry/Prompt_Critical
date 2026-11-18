@@ -60,6 +60,7 @@ public final class PcProperties {
     public static final EnumProperty<HrsgSegment> HRSG_SEGMENT = EnumProperty.create("segment", HrsgSegment.class);
     public static final EnumProperty<PwrSegment> PWR_SEGMENT = EnumProperty.create("segment", PwrSegment.class);
     public static final EnumProperty<BwrSegment> BWR_SEGMENT = EnumProperty.create("segment", BwrSegment.class);
+    public static final EnumProperty<SfrSegment> SFR_SEGMENT = EnumProperty.create("segment", SfrSegment.class);
     // сталь, прокат, ВРУ (этап 10б M3)
     public static final BooleanProperty LOWERED = BooleanProperty.create("lowered");
     public static final BooleanProperty BURST = BooleanProperty.create("burst");
@@ -141,6 +142,8 @@ public final class PcProperties {
 
     /** Кипящий реактор T2b: корпус с зоной и верхняя часть с сепараторами и осушителями пара. */
     public enum BwrSegment implements Named { VESSEL, SEPARATORS }
+    /** Натриевый быстрый реактор T4: бассейн с зоной и экраном и поворотная пробка с приводами стержней. */
+    public enum SfrSegment implements Named { POOL, PLUG }
 
     /** Секции башни ВЭУ 1×9×1: основание со шкафом, средняя секция, оголовок с опорно-поворотным кругом. */
     public enum WindTurbineSegment implements Named { BASE, MIDDLE, TOP }

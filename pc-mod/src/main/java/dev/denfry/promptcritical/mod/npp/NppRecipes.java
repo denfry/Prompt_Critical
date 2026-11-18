@@ -75,5 +75,11 @@ public final class NppRecipes extends RecipeProvider {
                 .define('R', PcBlocks.REACTOR_CONTROLLER.get()).define('D', PcBlocks.CONTROL_ROD_DRIVE.get())
                 .define('P', PcItems.STEEL_PLATE.get()).define('Z', PcItems.ZIRCALOY_INGOT.get())
                 .unlockedBy("has_pwr_reactor", has(PcBlocks.PWR_REACTOR.get())).save(out, id("bwr_reactor"));
+        // быстрый натриевый: бассейн натрия (баки) под пробкой с приводами стержней, открывается после кипящего
+        ShapedRecipeBuilder.shaped(RecipeCategory.MISC, PcBlocks.SFR_REACTOR.get())
+                .pattern("DDD").pattern("PRP").pattern("PTP").define('D', PcBlocks.CONTROL_ROD_DRIVE.get())
+                .define('R', PcBlocks.REACTOR_CONTROLLER.get()).define('T', AllBlocks.FLUID_TANK.get())
+                .define('P', PcItems.STEEL_PLATE.get())
+                .unlockedBy("has_bwr_reactor", has(PcBlocks.BWR_REACTOR.get())).save(out, id("sfr_reactor"));
     }
 }
