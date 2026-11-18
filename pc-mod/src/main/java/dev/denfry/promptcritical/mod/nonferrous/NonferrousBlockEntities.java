@@ -35,6 +35,8 @@ public final class NonferrousBlockEntities {
             type("peirce_smith_converter", ConverterBlockEntity::new, PcBlocks.PEIRCE_SMITH_CONVERTER);
     public static final DeferredHolder<BlockEntityType<?>, BlockEntityType<ElectrorefiningCellBlockEntity>> ELECTROREFINING_CELL =
             type("electrorefining_cell", ElectrorefiningCellBlockEntity::new, PcBlocks.ELECTROREFINING_CELL);
+    public static final DeferredHolder<BlockEntityType<?>, BlockEntityType<PgmRefineryBlockEntity>> PGM_REFINERY =
+            type("pgm_refinery", PgmRefineryBlockEntity::new, PcBlocks.PGM_REFINERY);
 
     private NonferrousBlockEntities() {
     }
@@ -54,6 +56,7 @@ public final class NonferrousBlockEntities {
         both(event, MATTE_SMELTER.get());
         both(event, PEIRCE_SMITH_CONVERTER.get());
         event.registerBlockEntity(Capabilities.ItemHandler.BLOCK, ELECTROREFINING_CELL.get(), FoundryDevice::items);
+        both(event, PGM_REFINERY.get());
     }
 
     private static <T extends BlockEntity & FoundryDevice> void both(RegisterCapabilitiesEvent event, BlockEntityType<T> type) {

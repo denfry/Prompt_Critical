@@ -168,11 +168,19 @@ public final class NonferrousPanels {
             .readout(8, 130, 216, v -> REF_STATUS.get(v.num(A, 100, 2), v.num(B, 10, 1), v.num(TANK3, 10, 1), v.raw(C), v.num(D, 1000, 3)), null)
             .build();
 
+    public static final PanelLayout PGM = rows(base("pgm_refinery", null, 0, 146)
+            .bar(8, 30, 100, A, 10, 100, 0xFF8A8A50, LEACH.get(), null).bar(8, 44, 100, B, 10, 100, 0xFFE0D070, DISSOLVE.get(), null)
+            .glass(120, 24, 40, TANK, 0xFFE8E0C0, Double.NaN, Double.NaN, ACID.get(), null)
+            .glass(138, 24, 40, TANK2, 0xFFF0E0A0, Double.NaN, Double.NaN, NITRIC.get(), null)
+            .glass(156, 24, 40, TANK3, 0xFFE0F0F0, Double.NaN, Double.NaN, HCL.get(), null),
+            4, 6, s -> s.is(PcItems.ANODE_SLIME.get()) || s.is(PcItems.PGM_CONCENTRATE.get()), PGM_LOAD, PGM_OUT)
+            .readout(8, 130, 216, v -> PGM_STATUS.get(v.raw(C), v.num(D, 10, 1), v.raw(E)), null).build();
+
     private NonferrousPanels() {
     }
 
     public static List<PanelLayout> all() {
-        return new ArrayList<>(List.of(DIGESTER, PRECIPITATOR, CALCINER, POT, FLOTATION, SMELTER, CONVERTER, REFINING));
+        return new ArrayList<>(List.of(DIGESTER, PRECIPITATOR, CALCINER, POT, FLOTATION, SMELTER, CONVERTER, REFINING, PGM));
     }
 
     private static PanelLayout pot() {

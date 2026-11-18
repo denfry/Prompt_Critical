@@ -886,6 +886,10 @@ public final class PcBlocks {
     public static final DeferredBlock<PcDeviceBlock> ELECTROREFINING_CELL = device("electrorefining_cell", machine(),
             Spec.facing(PcProperties.RUNNING, PcProperties.NICKEL).footprint(FP_WIDE2),
             FoundryBlock.with(dev.denfry.promptcritical.mod.nonferrous.ElectrorefiningCellBlockEntity::new));
+    /** Аффинажный участок 2×2×1 (08 §8.8.4, M8): фарфоровые сосуды под вытяжкой. */
+    public static final DeferredBlock<PcDeviceBlock> PGM_REFINERY = device("pgm_refinery", machine(),
+            Spec.facing(PcProperties.RUNNING).footprint(Footprint.of(Segment.box(0, 1, 0, 1, 0, 0))),
+            FoundryBlock.with(dev.denfry.promptcritical.mod.nonferrous.PgmRefineryBlockEntity::new));
 
     // --- эксплуатация и водоподготовка (13 §13.6.5–13.6.7, 08 §8.12, этап 11а M3) ---
     public static final DeferredBlock<PcDeviceBlock> MAINTENANCE_PANEL = device("maintenance_panel", instrument(),

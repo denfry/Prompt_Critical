@@ -1,0 +1,3 @@
+## Platinum metals
+
+Ore of the pentlandite zone carries 5–10 g of platinum metals per tonne. All of them end up in the anode slime. Each bag of slime holds 50 g of platinum metals. The [platinum metals refinery](item:promptcritical:pgm_refinery) leaches the base metals out of the slime with sulphuric acid, giving platinum metals concentrate. Then it dissolves the concentrate in aqua regia, nitric acid and hydrogen chloride, and precipitates platinum with ammonium chloride. 70–85 % of the metals are recovered. Platinum comes out in 100 g ingots, iridium, 2–4 % of the total, in 10 g ingots. Ten grams of iridium therefore need about 50 t of ore, roughly thirty blocks of the pentlandite zone.

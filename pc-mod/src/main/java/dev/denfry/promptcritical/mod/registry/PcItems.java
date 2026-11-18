@@ -163,6 +163,9 @@ public final class PcItems {
     /** Касситеритовый концентрат гравитации и олово (08 §8.8.5): по 10 кг, NonferrousUnits. */
     public static final DeferredItem<Item> TIN_DUST = item("tin_dust", 64);
     public static final DeferredItem<Item> TIN_INGOT = item("tin_ingot", 64);
+    /** Концентрат платиноидов (порция 50 г) и платина, слиток 100 г (08 §8.0.2, §8.8.4). */
+    public static final DeferredItem<Item> PGM_CONCENTRATE = item("pgm_concentrate", 64);
+    public static final DeferredItem<Item> PLATINUM_INGOT = item("platinum_ingot", 64);
     public static final DeferredItem<Item> GENERATOR_COUPLING = item("generator_coupling", 16);
     /** Подогреватель рубашки ДГ (07 §7.11.3): без него на морозе отказ пуска вчетверо вероятнее. */
     public static final DeferredItem<Item> JACKET_HEATER = item("jacket_heater", 16);

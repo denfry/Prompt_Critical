@@ -1,5 +1,6 @@
 package dev.denfry.promptcritical.mod.gametest;
 
+import dev.denfry.promptcritical.mod.nonferrous.PgmRefineryBlockEntity;
 import net.minecraft.world.level.material.Fluids;
 import dev.denfry.promptcritical.sim.nonferrous.PeirceSmithConverter;
 import dev.denfry.promptcritical.sim.nonferrous.Electrorefining;
@@ -414,6 +415,27 @@ public final class NonferrousGameTests {
                 .thenWaitUntil(() -> {
                     MatteSmelterBlockEntity m = h.getBlockEntity(smelter);
                     h.assertTrue(countOut(m.output(), PcItems.TIN_INGOT.get(), false) >= 2, "tin ingots");
+                })
+                .thenSucceed();
+    }
+    @GameTest(template = LARGE, timeoutTicks = 1800)
+    public static void pgmRefineryMakesPlatinumAndIridium(GameTestHelper h) {
+        BlockPos at = new BlockPos(4, 2, 4);
+        place(h, at, PcBlocks.PGM_REFINERY.get());
+        h.startSequence()
+                .thenExecute(() -> {
+                    PgmRefineryBlockEntity r = h.getBlockEntity(at);
+                    r.input().insertItem(0, new ItemStack(PcItems.ANODE_SLIME.get(), 1), false);
+                    r.input().insertItem(1, new ItemStack(PcItems.PGM_CONCENTRATE.get(), 9), false);
+                    fill(r.fluids(Direction.NORTH), PcFluids.SULFURIC_ACID.source.get(), 100);
+                    fill(r.fluids(Direction.NORTH), PcFluids.NITRIC_ACID.source.get(), 100);
+                    fill(r.fluids(Direction.NORTH), PcFluids.HYDROGEN_CHLORIDE.source.get(), 100);
+                })
+                .thenWaitUntil(() -> {
+                    PgmRefineryBlockEntity r = h.getBlockEntity(at);
+                    h.assertTrue(countOut(r.output(), PcItems.PGM_CONCENTRATE.get(), false) >= 1, "slime leached to concentrate");
+                    h.assertTrue(countOut(r.output(), PcItems.PLATINUM_INGOT.get(), false) >= 1, "platinum");
+                    h.assertTrue(countOut(r.output(), PcItems.IRIDIUM_INGOT.get(), false) >= 1, "iridium");
                 })
                 .thenSucceed();
     }

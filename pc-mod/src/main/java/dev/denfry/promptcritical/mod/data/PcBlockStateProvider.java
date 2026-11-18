@@ -296,6 +296,7 @@ public final class PcBlockStateProvider extends BlockStateProvider {
             case "flotation_cell" -> s.getValue(PcProperties.RUNNING) ? id + "_froth" : id;
             case "matte_smelter" -> s.getValue(BlockStateProperties.LIT) ? id + "_lit" : id;
             case "electrorefining_cell" -> s.getValue(PcProperties.NICKEL) ? id + "_ni" : id;
+            case "pgm_refinery" -> s.getValue(PcProperties.RUNNING) ? id + "_running" : id;
             case "heavy_water_column" -> "fractionating_column";
             // арт: art/blockbench/core/candu_reactor.author.js — свод с торцом каландра, над ним коробка питателей и площадка СУЗ
             case "candu_reactor" -> s.getValue(PcProperties.CANDU_SEGMENT) == PcProperties.CanduSegment.FUELLING ? id + "_fuelling" : id;
