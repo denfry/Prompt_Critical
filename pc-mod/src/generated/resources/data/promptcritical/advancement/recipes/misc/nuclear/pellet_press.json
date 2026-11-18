@@ -1,0 +1,32 @@
+{
+  "parent": "minecraft:recipes/root",
+  "criteria": {
+    "has_the_recipe": {
+      "conditions": {
+        "recipe": "promptcritical:nuclear/pellet_press"
+      },
+      "trigger": "minecraft:recipe_unlocked"
+    },
+    "has_uo2_powder": {
+      "conditions": {
+        "items": [
+          {
+            "items": "promptcritical:uo2_powder"
+          }
+        ]
+      },
+      "trigger": "minecraft:inventory_changed"
+    }
+  },
+  "requirements": [
+    [
+      "has_the_recipe",
+      "has_uo2_powder"
+    ]
+  ],
+  "rewards": {
+    "recipes": [
+      "promptcritical:nuclear/pellet_press"
+    ]
+  }
+}

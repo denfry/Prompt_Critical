@@ -1,0 +1,32 @@
+{
+  "parent": "minecraft:recipes/root",
+  "criteria": {
+    "has_the_recipe": {
+      "conditions": {
+        "recipe": "promptcritical:nuclear/spacer_grid"
+      },
+      "trigger": "minecraft:recipe_unlocked"
+    },
+    "has_zircaloy": {
+      "conditions": {
+        "items": [
+          {
+            "items": "promptcritical:zircaloy_ingot"
+          }
+        ]
+      },
+      "trigger": "minecraft:inventory_changed"
+    }
+  },
+  "requirements": [
+    [
+      "has_the_recipe",
+      "has_zircaloy"
+    ]
+  ],
+  "rewards": {
+    "recipes": [
+      "promptcritical:nuclear/spacer_grid"
+    ]
+  }
+}

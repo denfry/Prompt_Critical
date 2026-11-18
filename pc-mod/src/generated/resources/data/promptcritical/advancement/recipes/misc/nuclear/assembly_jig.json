@@ -1,0 +1,32 @@
+{
+  "parent": "minecraft:recipes/root",
+  "criteria": {
+    "has_fuel_rod": {
+      "conditions": {
+        "items": [
+          {
+            "items": "promptcritical:fuel_rod"
+          }
+        ]
+      },
+      "trigger": "minecraft:inventory_changed"
+    },
+    "has_the_recipe": {
+      "conditions": {
+        "recipe": "promptcritical:nuclear/assembly_jig"
+      },
+      "trigger": "minecraft:recipe_unlocked"
+    }
+  },
+  "requirements": [
+    [
+      "has_the_recipe",
+      "has_fuel_rod"
+    ]
+  ],
+  "rewards": {
+    "recipes": [
+      "promptcritical:nuclear/assembly_jig"
+    ]
+  }
+}
