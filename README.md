@@ -60,13 +60,28 @@ run by plant I&C that you design and build yourself.
 | | |
 |---|---|
 | <img src="art/preview/readme/boiler_night.jpg" alt="Fire doors glowing at night" width="400"> | <img src="art/preview/readme/foundry.jpg" alt="Cupola and crucible furnace" width="400"> |
-| Fire doors glowing at night | Cupola and crucible furnace |
+| I0: fire doors glowing at night | I0: cupola and crucible furnace |
 | <img src="art/preview/readme/mine_fan_hoist.jpg" alt="Mine hoist, gas monitoring cabinet and main fan" width="400"> | <img src="art/preview/readme/shearer.jpg" alt="Longwall shearer" width="400"> |
-| Mine hoist, gas monitoring cabinet and main fan | Longwall shearer |
+| I0: mine hoist, gas monitoring cabinet and main fan | I0: longwall shearer |
 
 <img src="art/preview/readme/panel_boiler.jpg" alt="Boiler panel: pressure, gauge glass, draft, flue gas" width="820">
 
 Each machine has its own local panel; the boiler's shows pressure, the gauge glass, draft and flue gas.
+
+The later eras, as their in-game test rigs build them:
+
+| | |
+|---|---|
+| <img src="art/preview/readme/blast_furnace.jpg" alt="Blast furnace shell with the charging gear on top and its local panel" width="400"> | <img src="art/preview/readme/drilling_kick.jpg" alt="Drilling rig during a gas kick, with burning gas and the driller's console" width="400"> |
+| I1: blast furnace | I2: a gas kick on the drilling rig |
+| <img src="art/preview/readme/oil_field.jpg" alt="Wellhead, separator, heater and a column" width="400"> | <img src="art/preview/readme/pyrolysis_furnace.jpg" alt="Pyrolysis furnace with the units next to it" width="400"> |
+| I2: wellhead, separator, heater and column | I3: pyrolysis furnace |
+| <img src="art/preview/readme/gas_turbine_hrsg.jpg" alt="Gas turbine exhausting into a heat recovery steam generator" width="400"> | <img src="art/preview/readme/enrichment_cascade.jpg" alt="A cascade of gas centrifuges with its control cabinet" width="400"> |
+| I3: gas turbine and heat recovery boiler | I4: centrifuge enrichment cascade |
+
+<img src="art/preview/readme/vver.jpg" alt="VVER reactor vessel with its upper unit" width="820">
+
+I4: the VVER reactor.
 Some of the hand-made machine models of the later eras, from the 220 kV transformer to the compact reactor module:
 
 <img src="art/preview/readme/models_showcase.png" alt="Hand-made models: power transformer, continuous caster, Claus furnace, BOP accumulator, centrifugal compressor, compact reactor module, generator, CNC machining center" width="820">
