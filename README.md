@@ -11,23 +11,24 @@ run by plant I&C that you design and build yourself.
 ![Minecraft](https://img.shields.io/badge/Minecraft-1.21.1-62B47A)
 ![NeoForge](https://img.shields.io/badge/NeoForge-21.1-E07B1A)
 ![Java](https://img.shields.io/badge/Java-21-B07219)
-![Status](https://img.shields.io/badge/status-release%20candidate-yellow)
+[![Release](https://img.shields.io/github/v/release/denfry/Prompt_Critical?include_prereleases&label=release&color=2E8B57)](https://github.com/denfry/Prompt_Critical/releases/latest)
 [![License](https://img.shields.io/badge/license-All%20Rights%20Reserved-lightgrey)](LICENSE)
 
+[Download](https://github.com/denfry/Prompt_Critical/releases/latest) ·
 [Site](https://denfry.github.io/Prompt_Critical/) ·
 [Wiki](https://github.com/denfry/Prompt_Critical/wiki) ·
 [Roadmap](https://github.com/denfry/Prompt_Critical/wiki/Roadmap) ·
 [Building](https://github.com/denfry/Prompt_Critical/wiki/Building-from-Source)
 
-<img src="art/preview/sheets/models_core.png" alt="Reactor core block models" width="820">
+<img src="art/preview/readme/boiler_room.jpg" alt="Boiler room: Lancashire boiler, chain grate stoker and steam engine" width="820">
 
 </div>
 
 > [!NOTE]
-> **Release candidate (1.0.0-rc.1).** Every industry era of the design, I0 to I4, and every reactor tier from the
-> graphite pile to the fast reactor are in the game, with the plant I&C, operations and accident layers. Balance
-> values are not final yet. Back up your worlds before updating: see the breaking changes in the
-> [changelog](CHANGELOG.md).
+> **1.0.0-rc.1 is out.** Every industry era of the design, I0 to I4, and every reactor tier from the graphite pile
+> to the fast reactor are in the game, with the plant I&C, operations and accident layers. Get the jar from the
+> [releases page](https://github.com/denfry/Prompt_Critical/releases/latest). Balance values are not final yet, and
+> worlds from earlier builds need a backup before updating: see the breaking changes in the [changelog](CHANGELOG.md).
 
 ### What is in the game
 
@@ -53,6 +54,31 @@ run by plant I&C that you design and build yourself.
   protective equipment, turnarounds, crew dose, flares and fire fighting with foam.
 - **World**: generated survey camps, old mines, asphalt lakes, gas craters, natural reactors; an engineering handbook,
   a route of tasks and the full achievement catalogue.
+
+### Screenshots
+
+| | |
+|---|---|
+| <img src="art/preview/readme/boiler_night.jpg" alt="Fire doors glowing at night" width="400"> | <img src="art/preview/readme/foundry.jpg" alt="Cupola and crucible furnace" width="400"> |
+| Fire doors glowing at night | Cupola and crucible furnace |
+| <img src="art/preview/readme/mine_fan_hoist.jpg" alt="Mine hoist, gas monitoring cabinet and main fan" width="400"> | <img src="art/preview/readme/shearer.jpg" alt="Longwall shearer" width="400"> |
+| Mine hoist, gas monitoring cabinet and main fan | Longwall shearer |
+
+<img src="art/preview/readme/panel_boiler.jpg" alt="Boiler panel: pressure, gauge glass, draft, flue gas" width="820">
+
+Each machine has its own local panel; the boiler's shows pressure, the gauge glass, draft and flue gas.
+Some of the hand-made machine models of the later eras, from the 220 kV transformer to the compact reactor module:
+
+<img src="art/preview/readme/models_showcase.png" alt="Hand-made models: power transformer, continuous caster, Claus furnace, BOP accumulator, centrifugal compressor, compact reactor module, generator, CNC machining center" width="820">
+
+## Installation
+
+1. Install Minecraft 1.21.1 with NeoForge 21.1.259 or newer and Java 21.
+2. Put [Create](https://www.curseforge.com/minecraft/mc-mods/create) 6.0.11+ and the
+   `promptcritical-*.jar` from the [latest release](https://github.com/denfry/Prompt_Critical/releases/latest)
+   into `mods/`. Add [CC: Tweaked](https://www.curseforge.com/minecraft/mc-mods/cc-tweaked) 1.120.2+ if you want
+   the DCS/SCADA level.
+3. In game, the engineering handbook explains every machine and holds the route of tasks.
 
 ## About
 
@@ -135,6 +161,7 @@ pc-sim/      pure-Java simulation domain; must not import net.minecraft (ArchUni
 pc-api/      public API for addons and integrations
 pc-mod/      NeoForge binding: blocks, items, networking, Create and CC: Tweaked glue
 art/         Blockbench sources, preview renders and the asset build scripts
+site/        source of the project site on GitHub Pages
 ```
 
 ## Documentation

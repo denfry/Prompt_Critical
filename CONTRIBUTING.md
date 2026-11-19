@@ -1,8 +1,8 @@
 # Contributing to Prompt Critical
 
-The project is in pre-alpha. The most useful contributions right now are
-bug reports for the build, design feedback grounded in real engineering, and
-small, focused pull requests.
+The first release candidate, 1.0.0-rc.1, is out. The most useful contributions
+right now are bug and balance reports from playing it, physics reports where the
+numbers disagree with real engineering, translations, and small, focused pull requests.
 
 ## Before you start
 

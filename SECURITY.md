@@ -2,8 +2,9 @@
 
 ## Supported versions
 
-Prompt Critical is in pre-alpha and has no releases yet. Security fixes go to
-`main`; once releases exist, the latest release line will be supported.
+Only the latest release on the
+[releases page](https://github.com/denfry/Prompt_Critical/releases), currently 1.0.0-rc.1, gets security
+fixes. Fixes land on `main` and ship in the next release.
 
 ## Reporting a vulnerability
 
