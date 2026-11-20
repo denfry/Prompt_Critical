@@ -88,6 +88,12 @@ final class RoutePane {
         return top + h - 22;
     }
 
+    /** Открыть карточку задания {@code id} (переход из дерева технологий). */
+    void show(String id) {
+        HandbookClient.RouteTask t = route.task(id);
+        if (t != null) select(t);
+    }
+
     private void select(HandbookClient.RouteTask t) {
         selected = t;
         bodyScroll = 0;

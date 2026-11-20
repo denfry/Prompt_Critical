@@ -40,7 +40,11 @@ public final class HandbookClient {
         }
     }
 
-    public record RouteEra(String id, String era, String title, int done, int total, List<RouteTask> tasks) {
+    public record RouteEra(String id, String era, String title, int done, int total, List<RouteBranch> branches, List<RouteTask> tasks) {
+    }
+
+    /** Ветка эпохи — страница дерева технологий. */
+    public record RouteBranch(String id, String title) {
     }
 
     /**
@@ -48,7 +52,7 @@ public final class HandbookClient {
      * {@code target}/{@code targetTag} или удержание {@code heldS} из {@code durationS} секунд; {@code options} — варианты
      * развилки. На {@code HARDCORE} текста, подсказки и цели нет.
      */
-    public record RouteTask(String id, String title, String icon, String type, String status, int xp, List<String> requires,
+    public record RouteTask(String id, String title, String icon, String type, String branch, String status, int xp, List<String> requires,
             @Nullable String entry, @Nullable String ponder, String text, @Nullable String hint, @Nullable String target,
             @Nullable String targetTag, int count, double durationS, double heldS, List<String> options) {
     }
@@ -86,14 +90,20 @@ public final class HandbookClient {
             for (JsonElement te : GsonHelper.getAsJsonArray(e, "tasks")) {
                 JsonObject t = te.getAsJsonObject();
                 tasks.add(new RouteTask(GsonHelper.getAsString(t, "id"), GsonHelper.getAsString(t, "title"),
-                        GsonHelper.getAsString(t, "icon"), GsonHelper.getAsString(t, "type"), GsonHelper.getAsString(t, "status"),
+                        GsonHelper.getAsString(t, "icon"), GsonHelper.getAsString(t, "type"), GsonHelper.getAsString(t, "branch", ""),
+                        GsonHelper.getAsString(t, "status"),
                         GsonHelper.getAsInt(t, "xp", 0), strings(t, "requires"), optional(t, "entry"), optional(t, "ponder"),
                         GsonHelper.getAsString(t, "text", ""), optional(t, "hint"), optional(t, "target"), optional(t, "target_tag"),
                         GsonHelper.getAsInt(t, "count", 0), GsonHelper.getAsDouble(t, "duration_s", 0),
                         GsonHelper.getAsDouble(t, "held_s", 0), strings(t, "options")));
             }
+            List<RouteBranch> branches = new ArrayList<>();
+            for (JsonElement be : GsonHelper.getAsJsonArray(e, "branches", new com.google.gson.JsonArray())) {
+                JsonObject b = be.getAsJsonObject();
+                branches.add(new RouteBranch(GsonHelper.getAsString(b, "id"), GsonHelper.getAsString(b, "title")));
+            }
             eras.add(new RouteEra(GsonHelper.getAsString(e, "id"), GsonHelper.getAsString(e, "era"), GsonHelper.getAsString(e, "title"),
-                    GsonHelper.getAsInt(e, "done"), GsonHelper.getAsInt(e, "total"), List.copyOf(tasks)));
+                    GsonHelper.getAsInt(e, "done"), GsonHelper.getAsInt(e, "total"), List.copyOf(branches), List.copyOf(tasks)));
         }
         return new Route(GsonHelper.getAsString(r, "level"), List.copyOf(eras));
     }

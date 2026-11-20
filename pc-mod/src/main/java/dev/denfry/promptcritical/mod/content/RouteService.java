@@ -160,6 +160,14 @@ public final class RouteService {
             e.addProperty("id", era.id().toString());
             e.addProperty("era", era.era());
             e.addProperty("title", era.title().get(lang));
+            JsonArray branches = new JsonArray();
+            for (RouteTask.Branch b : era.branches()) {
+                JsonObject bo = new JsonObject();
+                bo.addProperty("id", b.id());
+                bo.addProperty("title", b.title().get(lang));
+                branches.add(bo);
+            }
+            e.add("branches", branches);
             int n = 0;
             JsonArray tasks = new JsonArray();
             for (RouteTask t : era.tasks()) {
@@ -183,6 +191,7 @@ public final class RouteService {
         o.addProperty("title", t.title().get(lang));
         o.addProperty("icon", t.icon().toString());
         o.addProperty("type", t.kind().key());
+        o.addProperty("branch", t.branch());
         o.addProperty("status", status);
         o.addProperty("xp", t.xp());
         JsonArray req = new JsonArray();

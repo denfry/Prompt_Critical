@@ -1,0 +1,561 @@
+{
+  "era": "I3",
+  "sort": 30,
+  "title": "handbook.promptcritical.route.i3.title",
+  "branches": [
+    {
+      "id": "organic",
+      "title": "handbook.promptcritical.route.i3.branch.organic"
+    },
+    {
+      "id": "inorganic",
+      "title": "handbook.promptcritical.route.i3.branch.inorganic"
+    },
+    {
+      "id": "energy",
+      "title": "handbook.promptcritical.route.i3.branch.energy"
+    }
+  ],
+  "tasks": [
+    {
+      "id": "promptcritical:i3/pyrolysis",
+      "branch": "organic",
+      "requires": [
+        "promptcritical:i2/column_top"
+      ],
+      "type": "build",
+      "condition": {
+        "block": "promptcritical:pyrolysis_furnace"
+      },
+      "entry": "promptcritical:i3/pyrolysis",
+      "icon": "promptcritical:pyrolysis_furnace",
+      "title": "handbook.promptcritical.task.i3.pyrolysis.title",
+      "text": "handbook.promptcritical.task.i3.pyrolysis.text",
+      "hint": "handbook.promptcritical.task.i3.pyrolysis.hint",
+      "reward": {
+        "xp": 30
+      }
+    },
+    {
+      "id": "promptcritical:i3/cracked_gas",
+      "branch": "organic",
+      "requires": [
+        "promptcritical:i3/pyrolysis"
+      ],
+      "type": "build",
+      "condition": {
+        "block": "promptcritical:cracked_gas_unit"
+      },
+      "entry": "promptcritical:i3/pyrolysis",
+      "icon": "promptcritical:cracked_gas_unit",
+      "title": "handbook.promptcritical.task.i3.cracked_gas.title",
+      "text": "handbook.promptcritical.task.i3.cracked_gas.text",
+      "hint": "handbook.promptcritical.task.i3.cracked_gas.hint",
+      "reward": {
+        "xp": 25
+      }
+    },
+    {
+      "id": "promptcritical:i3/ldpe",
+      "branch": "organic",
+      "requires": [
+        "promptcritical:i3/cracked_gas"
+      ],
+      "type": "build",
+      "condition": {
+        "block": "promptcritical:ldpe_reactor"
+      },
+      "entry": "promptcritical:i3/pyrolysis",
+      "icon": "promptcritical:ldpe_reactor",
+      "title": "handbook.promptcritical.task.i3.ldpe.title",
+      "text": "handbook.promptcritical.task.i3.ldpe.text",
+      "hint": "handbook.promptcritical.task.i3.ldpe.hint",
+      "reward": {
+        "xp": 25
+      }
+    },
+    {
+      "id": "promptcritical:i3/polyethylene",
+      "branch": "organic",
+      "requires": [
+        "promptcritical:i3/ldpe"
+      ],
+      "type": "obtain",
+      "condition": {
+        "item": "promptcritical:polyethylene",
+        "count": 4
+      },
+      "entry": "promptcritical:i3/pyrolysis",
+      "icon": "promptcritical:polyethylene",
+      "title": "handbook.promptcritical.task.i3.polyethylene.title",
+      "text": "handbook.promptcritical.task.i3.polyethylene.text",
+      "hint": "handbook.promptcritical.task.i3.polyethylene.hint",
+      "reward": {
+        "xp": 30
+      }
+    },
+    {
+      "id": "promptcritical:i3/steam_reformer",
+      "branch": "organic",
+      "requires": [
+        "promptcritical:i2/lts"
+      ],
+      "type": "build",
+      "condition": {
+        "block": "promptcritical:steam_reformer"
+      },
+      "entry": "promptcritical:i3/methanol",
+      "icon": "promptcritical:steam_reformer",
+      "title": "handbook.promptcritical.task.i3.steam_reformer.title",
+      "text": "handbook.promptcritical.task.i3.steam_reformer.text",
+      "hint": "handbook.promptcritical.task.i3.steam_reformer.hint",
+      "reward": {
+        "xp": 30
+      }
+    },
+    {
+      "id": "promptcritical:i3/methanol_catalyst",
+      "branch": "organic",
+      "requires": [
+        "promptcritical:i3/steam_reformer"
+      ],
+      "type": "obtain",
+      "condition": {
+        "item": "promptcritical:catalyst_methanol"
+      },
+      "entry": "promptcritical:i3/methanol",
+      "icon": "promptcritical:catalyst_methanol",
+      "title": "handbook.promptcritical.task.i3.methanol_catalyst.title",
+      "text": "handbook.promptcritical.task.i3.methanol_catalyst.text",
+      "hint": "handbook.promptcritical.task.i3.methanol_catalyst.hint",
+      "reward": {
+        "xp": 15
+      }
+    },
+    {
+      "id": "promptcritical:i3/methanol_converter",
+      "branch": "organic",
+      "requires": [
+        "promptcritical:i3/methanol_catalyst"
+      ],
+      "type": "build",
+      "condition": {
+        "block": "promptcritical:methanol_converter"
+      },
+      "entry": "promptcritical:i3/methanol",
+      "icon": "promptcritical:methanol_converter",
+      "title": "handbook.promptcritical.task.i3.methanol_converter.title",
+      "text": "handbook.promptcritical.task.i3.methanol_converter.text",
+      "hint": "handbook.promptcritical.task.i3.methanol_converter.hint",
+      "reward": {
+        "xp": 25
+      }
+    },
+    {
+      "id": "promptcritical:i3/methanol_column",
+      "branch": "organic",
+      "requires": [
+        "promptcritical:i3/methanol_converter"
+      ],
+      "type": "build",
+      "condition": {
+        "block": "promptcritical:methanol_column"
+      },
+      "entry": "promptcritical:i3/methanol",
+      "icon": "promptcritical:methanol_column",
+      "title": "handbook.promptcritical.task.i3.methanol_column.title",
+      "text": "handbook.promptcritical.task.i3.methanol_column.text",
+      "hint": "handbook.promptcritical.task.i3.methanol_column.hint",
+      "reward": {
+        "xp": 20
+      }
+    },
+    {
+      "id": "promptcritical:i3/ammonia",
+      "branch": "inorganic",
+      "requires": [
+        "promptcritical:i3/steam_reformer",
+        "promptcritical:i1/air_separation"
+      ],
+      "type": "build",
+      "condition": {
+        "block": "promptcritical:ammonia_converter"
+      },
+      "entry": "promptcritical:i3/ammonia",
+      "icon": "promptcritical:ammonia_converter",
+      "title": "handbook.promptcritical.task.i3.ammonia.title",
+      "text": "handbook.promptcritical.task.i3.ammonia.text",
+      "hint": "handbook.promptcritical.task.i3.ammonia.hint",
+      "reward": {
+        "xp": 35
+      }
+    },
+    {
+      "id": "promptcritical:i3/nitric_acid",
+      "branch": "inorganic",
+      "requires": [
+        "promptcritical:i3/ammonia"
+      ],
+      "type": "build",
+      "condition": {
+        "block": "promptcritical:nitric_acid_unit"
+      },
+      "entry": "promptcritical:i3/ammonia",
+      "icon": "promptcritical:nitric_acid_unit",
+      "title": "handbook.promptcritical.task.i3.nitric_acid.title",
+      "text": "handbook.promptcritical.task.i3.nitric_acid.text",
+      "hint": "handbook.promptcritical.task.i3.nitric_acid.hint",
+      "reward": {
+        "xp": 30
+      }
+    },
+    {
+      "id": "promptcritical:i3/chlor_alkali",
+      "branch": "inorganic",
+      "requires": [
+        "promptcritical:i1/first_sync"
+      ],
+      "type": "build",
+      "condition": {
+        "block": "promptcritical:chlor_alkali_cell"
+      },
+      "entry": "promptcritical:i3/chlor_alkali",
+      "icon": "promptcritical:chlor_alkali_cell",
+      "title": "handbook.promptcritical.task.i3.chlor_alkali.title",
+      "text": "handbook.promptcritical.task.i3.chlor_alkali.text",
+      "hint": "handbook.promptcritical.task.i3.chlor_alkali.hint",
+      "reward": {
+        "xp": 30
+      }
+    },
+    {
+      "id": "promptcritical:i3/chlorine",
+      "branch": "inorganic",
+      "requires": [
+        "promptcritical:i3/chlor_alkali"
+      ],
+      "type": "build",
+      "condition": {
+        "block": "promptcritical:chlorine_liquefier"
+      },
+      "entry": "promptcritical:i3/chlor_alkali",
+      "icon": "promptcritical:chlorine_liquefier",
+      "title": "handbook.promptcritical.task.i3.chlorine.title",
+      "text": "handbook.promptcritical.task.i3.chlorine.text",
+      "hint": "handbook.promptcritical.task.i3.chlorine.hint",
+      "reward": {
+        "xp": 20
+      }
+    },
+    {
+      "id": "promptcritical:i3/pvc_reactor",
+      "branch": "inorganic",
+      "requires": [
+        "promptcritical:i3/chlorine",
+        "promptcritical:i3/cracked_gas"
+      ],
+      "type": "build",
+      "condition": {
+        "block": "promptcritical:pvc_reactor"
+      },
+      "entry": "promptcritical:i3/chlor_alkali",
+      "icon": "promptcritical:pvc_reactor",
+      "title": "handbook.promptcritical.task.i3.pvc_reactor.title",
+      "text": "handbook.promptcritical.task.i3.pvc_reactor.text",
+      "hint": "handbook.promptcritical.task.i3.pvc_reactor.hint",
+      "reward": {
+        "xp": 25
+      }
+    },
+    {
+      "id": "promptcritical:i3/pvc",
+      "branch": "inorganic",
+      "requires": [
+        "promptcritical:i3/pvc_reactor"
+      ],
+      "type": "obtain",
+      "condition": {
+        "item": "promptcritical:pvc",
+        "count": 4
+      },
+      "entry": "promptcritical:i3/chlor_alkali",
+      "icon": "promptcritical:pvc",
+      "title": "handbook.promptcritical.task.i3.pvc.title",
+      "text": "handbook.promptcritical.task.i3.pvc.text",
+      "hint": "handbook.promptcritical.task.i3.pvc.hint",
+      "reward": {
+        "xp": 25
+      }
+    },
+    {
+      "id": "promptcritical:i3/gas_turbine",
+      "branch": "energy",
+      "requires": [
+        "promptcritical:i2/gas_compressor"
+      ],
+      "type": "build",
+      "condition": {
+        "block": "promptcritical:gas_turbine"
+      },
+      "entry": "promptcritical:i3/combined_cycle",
+      "icon": "promptcritical:gas_turbine",
+      "title": "handbook.promptcritical.task.i3.gas_turbine.title",
+      "text": "handbook.promptcritical.task.i3.gas_turbine.text",
+      "hint": "handbook.promptcritical.task.i3.gas_turbine.hint",
+      "reward": {
+        "xp": 30
+      }
+    },
+    {
+      "id": "promptcritical:i3/hrsg",
+      "branch": "energy",
+      "requires": [
+        "promptcritical:i3/gas_turbine"
+      ],
+      "type": "build",
+      "condition": {
+        "block": "promptcritical:hrsg"
+      },
+      "entry": "promptcritical:i3/combined_cycle",
+      "icon": "promptcritical:hrsg",
+      "title": "handbook.promptcritical.task.i3.hrsg.title",
+      "text": "handbook.promptcritical.task.i3.hrsg.text",
+      "hint": "handbook.promptcritical.task.i3.hrsg.hint",
+      "reward": {
+        "xp": 25
+      }
+    },
+    {
+      "id": "promptcritical:i3/combined_cycle",
+      "branch": "energy",
+      "requires": [
+        "promptcritical:i3/hrsg"
+      ],
+      "type": "build",
+      "condition": {
+        "block": "promptcritical:steam_turbine"
+      },
+      "entry": "promptcritical:i3/combined_cycle",
+      "icon": "promptcritical:steam_turbine",
+      "title": "handbook.promptcritical.task.i3.combined_cycle.title",
+      "text": "handbook.promptcritical.task.i3.combined_cycle.text",
+      "hint": "handbook.promptcritical.task.i3.combined_cycle.hint",
+      "reward": {
+        "xp": 35
+      }
+    },
+    {
+      "id": "promptcritical:i3/silicon",
+      "branch": "energy",
+      "requires": [
+        "promptcritical:i1/first_sync"
+      ],
+      "type": "obtain",
+      "condition": {
+        "item": "promptcritical:metallurgical_silicon",
+        "count": 4
+      },
+      "entry": "promptcritical:i3/electronics",
+      "icon": "promptcritical:metallurgical_silicon",
+      "title": "handbook.promptcritical.task.i3.silicon.title",
+      "text": "handbook.promptcritical.task.i3.silicon.text",
+      "hint": "handbook.promptcritical.task.i3.silicon.hint",
+      "reward": {
+        "xp": 20
+      }
+    },
+    {
+      "id": "promptcritical:i3/trichlorosilane",
+      "branch": "energy",
+      "requires": [
+        "promptcritical:i3/silicon",
+        "promptcritical:i3/chlor_alkali"
+      ],
+      "type": "build",
+      "condition": {
+        "block": "promptcritical:trichlorosilane_reactor"
+      },
+      "entry": "promptcritical:i3/electronics",
+      "icon": "promptcritical:trichlorosilane_reactor",
+      "title": "handbook.promptcritical.task.i3.trichlorosilane.title",
+      "text": "handbook.promptcritical.task.i3.trichlorosilane.text",
+      "hint": "handbook.promptcritical.task.i3.trichlorosilane.hint",
+      "reward": {
+        "xp": 25
+      }
+    },
+    {
+      "id": "promptcritical:i3/siemens",
+      "branch": "energy",
+      "requires": [
+        "promptcritical:i3/trichlorosilane"
+      ],
+      "type": "build",
+      "condition": {
+        "block": "promptcritical:siemens_reactor"
+      },
+      "entry": "promptcritical:i3/electronics",
+      "icon": "promptcritical:siemens_reactor",
+      "title": "handbook.promptcritical.task.i3.siemens.title",
+      "text": "handbook.promptcritical.task.i3.siemens.text",
+      "hint": "handbook.promptcritical.task.i3.siemens.hint",
+      "reward": {
+        "xp": 25
+      }
+    },
+    {
+      "id": "promptcritical:i3/polysilicon",
+      "branch": "energy",
+      "requires": [
+        "promptcritical:i3/siemens"
+      ],
+      "type": "obtain",
+      "condition": {
+        "item": "promptcritical:polysilicon"
+      },
+      "entry": "promptcritical:i3/electronics",
+      "icon": "promptcritical:polysilicon",
+      "title": "handbook.promptcritical.task.i3.polysilicon.title",
+      "text": "handbook.promptcritical.task.i3.polysilicon.text",
+      "hint": "handbook.promptcritical.task.i3.polysilicon.hint",
+      "reward": {
+        "xp": 20
+      }
+    },
+    {
+      "id": "promptcritical:i3/ingot",
+      "branch": "energy",
+      "requires": [
+        "promptcritical:i3/polysilicon"
+      ],
+      "type": "obtain",
+      "condition": {
+        "item": "promptcritical:silicon_ingot"
+      },
+      "entry": "promptcritical:i3/electronics",
+      "icon": "promptcritical:silicon_ingot",
+      "title": "handbook.promptcritical.task.i3.ingot.title",
+      "text": "handbook.promptcritical.task.i3.ingot.text",
+      "hint": "handbook.promptcritical.task.i3.ingot.hint",
+      "reward": {
+        "xp": 20
+      }
+    },
+    {
+      "id": "promptcritical:i3/wafer_saw",
+      "branch": "energy",
+      "requires": [
+        "promptcritical:i3/ingot"
+      ],
+      "type": "build",
+      "condition": {
+        "block": "promptcritical:wafer_saw"
+      },
+      "entry": "promptcritical:i3/electronics",
+      "icon": "promptcritical:wafer_saw",
+      "title": "handbook.promptcritical.task.i3.wafer_saw.title",
+      "text": "handbook.promptcritical.task.i3.wafer_saw.text",
+      "hint": "handbook.promptcritical.task.i3.wafer_saw.hint",
+      "reward": {
+        "xp": 20
+      }
+    },
+    {
+      "id": "promptcritical:i3/wafer",
+      "branch": "energy",
+      "requires": [
+        "promptcritical:i3/wafer_saw"
+      ],
+      "type": "obtain",
+      "condition": {
+        "item": "promptcritical:silicon_wafer"
+      },
+      "entry": "promptcritical:i3/electronics",
+      "icon": "promptcritical:silicon_wafer",
+      "title": "handbook.promptcritical.task.i3.wafer.title",
+      "text": "handbook.promptcritical.task.i3.wafer.text",
+      "hint": "handbook.promptcritical.task.i3.wafer.hint",
+      "reward": {
+        "xp": 15
+      }
+    },
+    {
+      "id": "promptcritical:i3/transistor",
+      "branch": "energy",
+      "requires": [
+        "promptcritical:i3/wafer"
+      ],
+      "type": "obtain",
+      "condition": {
+        "item": "promptcritical:transistor",
+        "count": 4
+      },
+      "entry": "promptcritical:i3/electronics",
+      "icon": "promptcritical:transistor",
+      "title": "handbook.promptcritical.task.i3.transistor.title",
+      "text": "handbook.promptcritical.task.i3.transistor.text",
+      "hint": "handbook.promptcritical.task.i3.transistor.hint",
+      "reward": {
+        "xp": 20
+      }
+    },
+    {
+      "id": "promptcritical:i3/chip",
+      "branch": "energy",
+      "requires": [
+        "promptcritical:i3/transistor",
+        "promptcritical:i2/plc"
+      ],
+      "type": "obtain",
+      "condition": {
+        "item": "promptcritical:integrated_circuit"
+      },
+      "entry": "promptcritical:i3/electronics",
+      "icon": "promptcritical:integrated_circuit",
+      "title": "handbook.promptcritical.task.i3.chip.title",
+      "text": "handbook.promptcritical.task.i3.chip.text",
+      "hint": "handbook.promptcritical.task.i3.chip.hint",
+      "reward": {
+        "xp": 30
+      }
+    },
+    {
+      "id": "promptcritical:i3/memory",
+      "branch": "energy",
+      "requires": [
+        "promptcritical:i3/chip"
+      ],
+      "type": "obtain",
+      "condition": {
+        "item": "promptcritical:memory_chip"
+      },
+      "entry": "promptcritical:i3/electronics",
+      "icon": "promptcritical:memory_chip",
+      "title": "handbook.promptcritical.task.i3.memory.title",
+      "text": "handbook.promptcritical.task.i3.memory.text",
+      "hint": "handbook.promptcritical.task.i3.memory.hint",
+      "reward": {
+        "xp": 20
+      }
+    },
+    {
+      "id": "promptcritical:i3/board",
+      "branch": "energy",
+      "requires": [
+        "promptcritical:i3/chip"
+      ],
+      "type": "obtain",
+      "condition": {
+        "item": "promptcritical:printed_circuit_board"
+      },
+      "entry": "promptcritical:i3/electronics",
+      "icon": "promptcritical:printed_circuit_board",
+      "title": "handbook.promptcritical.task.i3.board.title",
+      "text": "handbook.promptcritical.task.i3.board.text",
+      "hint": "handbook.promptcritical.task.i3.board.hint",
+      "reward": {
+        "xp": 25
+      }
+    }
+  ]
+}

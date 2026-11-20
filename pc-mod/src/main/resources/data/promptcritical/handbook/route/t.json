@@ -1,0 +1,393 @@
+{
+  "era": "T",
+  "sort": 50,
+  "title": "handbook.promptcritical.route.t.title",
+  "branches": [
+    {
+      "id": "t1",
+      "title": "handbook.promptcritical.route.t.branch.t1"
+    },
+    {
+      "id": "t2",
+      "title": "handbook.promptcritical.route.t.branch.t2"
+    },
+    {
+      "id": "t3",
+      "title": "handbook.promptcritical.route.t.branch.t3"
+    },
+    {
+      "id": "t4",
+      "title": "handbook.promptcritical.route.t.branch.t4"
+    }
+  ],
+  "tasks": [
+    {
+      "id": "promptcritical:t/fuel_channel",
+      "branch": "t1",
+      "requires": [
+        "promptcritical:i1/pile_steady"
+      ],
+      "type": "build",
+      "condition": {
+        "block": "promptcritical:fuel_channel",
+        "count": 4
+      },
+      "entry": "promptcritical:t1/power_reactor",
+      "icon": "promptcritical:fuel_channel",
+      "title": "handbook.promptcritical.task.t.fuel_channel.title",
+      "text": "handbook.promptcritical.task.t.fuel_channel.text",
+      "hint": "handbook.promptcritical.task.t.fuel_channel.hint",
+      "reward": {
+        "xp": 25
+      }
+    },
+    {
+      "id": "promptcritical:t/rod_drive",
+      "branch": "t1",
+      "requires": [
+        "promptcritical:t/fuel_channel"
+      ],
+      "type": "build",
+      "condition": {
+        "block": "promptcritical:control_rod_drive"
+      },
+      "entry": "promptcritical:t1/power_reactor",
+      "icon": "promptcritical:control_rod_drive",
+      "title": "handbook.promptcritical.task.t.rod_drive.title",
+      "text": "handbook.promptcritical.task.t.rod_drive.text",
+      "hint": "handbook.promptcritical.task.t.rod_drive.hint",
+      "reward": {
+        "xp": 20
+      }
+    },
+    {
+      "id": "promptcritical:t/power_reactor",
+      "branch": "t1",
+      "requires": [
+        "promptcritical:t/rod_drive"
+      ],
+      "type": "build",
+      "condition": {
+        "block": "promptcritical:power_reactor"
+      },
+      "entry": "promptcritical:t1/power_reactor",
+      "icon": "promptcritical:power_reactor",
+      "title": "handbook.promptcritical.task.t.power_reactor.title",
+      "text": "handbook.promptcritical.task.t.power_reactor.text",
+      "hint": "handbook.promptcritical.task.t.power_reactor.hint",
+      "reward": {
+        "xp": 60
+      }
+    },
+    {
+      "id": "promptcritical:t/diesel",
+      "branch": "t1",
+      "requires": [
+        "promptcritical:t/power_reactor"
+      ],
+      "type": "build",
+      "condition": {
+        "block": "promptcritical:diesel_generator"
+      },
+      "entry": "promptcritical:t1/emergency_diesel",
+      "icon": "promptcritical:diesel_generator",
+      "title": "handbook.promptcritical.task.t.diesel.title",
+      "text": "handbook.promptcritical.task.t.diesel.text",
+      "hint": "handbook.promptcritical.task.t.diesel.hint",
+      "reward": {
+        "xp": 30
+      }
+    },
+    {
+      "id": "promptcritical:t/pwr",
+      "branch": "t2",
+      "requires": [
+        "promptcritical:t/power_reactor",
+        "promptcritical:i4/fuel_assembly",
+        "promptcritical:i2/control_room"
+      ],
+      "type": "build",
+      "condition": {
+        "block": "promptcritical:pwr_reactor"
+      },
+      "entry": "promptcritical:t2/pwr_reactor",
+      "icon": "promptcritical:pwr_reactor",
+      "title": "handbook.promptcritical.task.t.pwr.title",
+      "text": "handbook.promptcritical.task.t.pwr.text",
+      "hint": "handbook.promptcritical.task.t.pwr.hint",
+      "reward": {
+        "xp": 80
+      }
+    },
+    {
+      "id": "promptcritical:t/pressurizer",
+      "branch": "t2",
+      "requires": [
+        "promptcritical:t/pwr"
+      ],
+      "type": "build",
+      "condition": {
+        "block": "promptcritical:pressurizer"
+      },
+      "entry": "promptcritical:t2/pwr_reactor",
+      "icon": "promptcritical:pressurizer",
+      "title": "handbook.promptcritical.task.t.pressurizer.title",
+      "text": "handbook.promptcritical.task.t.pressurizer.text",
+      "hint": "handbook.promptcritical.task.t.pressurizer.hint",
+      "reward": {
+        "xp": 25
+      }
+    },
+    {
+      "id": "promptcritical:t/primary_pump",
+      "branch": "t2",
+      "requires": [
+        "promptcritical:t/pwr"
+      ],
+      "type": "build",
+      "condition": {
+        "block": "promptcritical:primary_pump"
+      },
+      "entry": "promptcritical:t2/pwr_reactor",
+      "icon": "promptcritical:primary_pump",
+      "title": "handbook.promptcritical.task.t.primary_pump.title",
+      "text": "handbook.promptcritical.task.t.primary_pump.text",
+      "hint": "handbook.promptcritical.task.t.primary_pump.hint",
+      "reward": {
+        "xp": 25
+      }
+    },
+    {
+      "id": "promptcritical:t/steam_generator",
+      "branch": "t2",
+      "requires": [
+        "promptcritical:t/primary_pump"
+      ],
+      "type": "build",
+      "condition": {
+        "block": "promptcritical:steam_generator"
+      },
+      "entry": "promptcritical:t2/pwr_reactor",
+      "icon": "promptcritical:steam_generator",
+      "title": "handbook.promptcritical.task.t.steam_generator.title",
+      "text": "handbook.promptcritical.task.t.steam_generator.text",
+      "hint": "handbook.promptcritical.task.t.steam_generator.hint",
+      "reward": {
+        "xp": 25
+      }
+    },
+    {
+      "id": "promptcritical:t/cleanup",
+      "branch": "t2",
+      "requires": [
+        "promptcritical:t/pwr"
+      ],
+      "type": "build",
+      "condition": {
+        "block": "promptcritical:reactor_water_cleanup"
+      },
+      "entry": "promptcritical:t2/pwr_reactor",
+      "icon": "promptcritical:reactor_water_cleanup",
+      "title": "handbook.promptcritical.task.t.cleanup.title",
+      "text": "handbook.promptcritical.task.t.cleanup.text",
+      "hint": "handbook.promptcritical.task.t.cleanup.hint",
+      "reward": {
+        "xp": 20
+      }
+    },
+    {
+      "id": "promptcritical:t/eccs",
+      "branch": "t2",
+      "requires": [
+        "promptcritical:t/pwr",
+        "promptcritical:t/diesel"
+      ],
+      "type": "build",
+      "condition": {
+        "block": "promptcritical:eccs_pump"
+      },
+      "entry": "promptcritical:t2/accidents",
+      "icon": "promptcritical:eccs_pump",
+      "title": "handbook.promptcritical.task.t.eccs.title",
+      "text": "handbook.promptcritical.task.t.eccs.text",
+      "hint": "handbook.promptcritical.task.t.eccs.hint",
+      "reward": {
+        "xp": 30
+      }
+    },
+    {
+      "id": "promptcritical:t/containment",
+      "branch": "t2",
+      "requires": [
+        "promptcritical:t/pwr"
+      ],
+      "type": "build",
+      "condition": {
+        "block": "promptcritical:containment_wall",
+        "count": 64
+      },
+      "entry": "promptcritical:t2/containment",
+      "icon": "promptcritical:containment_wall",
+      "title": "handbook.promptcritical.task.t.containment.title",
+      "text": "handbook.promptcritical.task.t.containment.text",
+      "hint": "handbook.promptcritical.task.t.containment.hint",
+      "reward": {
+        "xp": 40
+      }
+    },
+    {
+      "id": "promptcritical:t/hatch",
+      "branch": "t2",
+      "requires": [
+        "promptcritical:t/containment"
+      ],
+      "type": "build",
+      "condition": {
+        "block": "promptcritical:containment_hatch"
+      },
+      "entry": "promptcritical:t2/containment",
+      "icon": "promptcritical:containment_hatch",
+      "title": "handbook.promptcritical.task.t.hatch.title",
+      "text": "handbook.promptcritical.task.t.hatch.text",
+      "hint": "handbook.promptcritical.task.t.hatch.hint",
+      "reward": {
+        "xp": 20
+      }
+    },
+    {
+      "id": "promptcritical:t/recombiner",
+      "branch": "t2",
+      "requires": [
+        "promptcritical:t/containment"
+      ],
+      "type": "build",
+      "condition": {
+        "block": "promptcritical:hydrogen_recombiner"
+      },
+      "entry": "promptcritical:t2/severe_accidents",
+      "icon": "promptcritical:hydrogen_recombiner",
+      "title": "handbook.promptcritical.task.t.recombiner.title",
+      "text": "handbook.promptcritical.task.t.recombiner.text",
+      "hint": "handbook.promptcritical.task.t.recombiner.hint",
+      "reward": {
+        "xp": 25
+      }
+    },
+    {
+      "id": "promptcritical:t/bwr",
+      "branch": "t2",
+      "requires": [
+        "promptcritical:t/pwr"
+      ],
+      "type": "build",
+      "condition": {
+        "block": "promptcritical:bwr_reactor"
+      },
+      "entry": "promptcritical:t2/bwr_reactor",
+      "icon": "promptcritical:bwr_reactor",
+      "title": "handbook.promptcritical.task.t.bwr.title",
+      "text": "handbook.promptcritical.task.t.bwr.text",
+      "hint": "handbook.promptcritical.task.t.bwr.hint",
+      "reward": {
+        "xp": 40
+      }
+    },
+    {
+      "id": "promptcritical:t/heavy_water_tower",
+      "branch": "t3",
+      "requires": [
+        "promptcritical:i2/claus"
+      ],
+      "type": "build",
+      "condition": {
+        "block": "promptcritical:gs_exchange_tower"
+      },
+      "entry": "promptcritical:t3/heavy_water",
+      "icon": "promptcritical:gs_exchange_tower",
+      "title": "handbook.promptcritical.task.t.heavy_water_tower.title",
+      "text": "handbook.promptcritical.task.t.heavy_water_tower.text",
+      "hint": "handbook.promptcritical.task.t.heavy_water_tower.hint",
+      "reward": {
+        "xp": 30
+      }
+    },
+    {
+      "id": "promptcritical:t/heavy_water_column",
+      "branch": "t3",
+      "requires": [
+        "promptcritical:t/heavy_water_tower"
+      ],
+      "type": "build",
+      "condition": {
+        "block": "promptcritical:heavy_water_column"
+      },
+      "entry": "promptcritical:t3/heavy_water",
+      "icon": "promptcritical:heavy_water_column",
+      "title": "handbook.promptcritical.task.t.heavy_water_column.title",
+      "text": "handbook.promptcritical.task.t.heavy_water_column.text",
+      "hint": "handbook.promptcritical.task.t.heavy_water_column.hint",
+      "reward": {
+        "xp": 25
+      }
+    },
+    {
+      "id": "promptcritical:t/heavy_water",
+      "branch": "t3",
+      "requires": [
+        "promptcritical:t/heavy_water_column"
+      ],
+      "type": "obtain",
+      "condition": {
+        "item": "promptcritical:heavy_water_bucket"
+      },
+      "entry": "promptcritical:t3/heavy_water",
+      "icon": "promptcritical:heavy_water_bucket",
+      "title": "handbook.promptcritical.task.t.heavy_water.title",
+      "text": "handbook.promptcritical.task.t.heavy_water.text",
+      "hint": "handbook.promptcritical.task.t.heavy_water.hint",
+      "reward": {
+        "xp": 30
+      }
+    },
+    {
+      "id": "promptcritical:t/candu",
+      "branch": "t3",
+      "requires": [
+        "promptcritical:t/heavy_water",
+        "promptcritical:t/power_reactor"
+      ],
+      "type": "build",
+      "condition": {
+        "block": "promptcritical:candu_reactor"
+      },
+      "entry": "promptcritical:t3/candu_reactor",
+      "icon": "promptcritical:candu_reactor",
+      "title": "handbook.promptcritical.task.t.candu.title",
+      "text": "handbook.promptcritical.task.t.candu.text",
+      "hint": "handbook.promptcritical.task.t.candu.hint",
+      "reward": {
+        "xp": 70
+      }
+    },
+    {
+      "id": "promptcritical:t/sfr",
+      "branch": "t4",
+      "requires": [
+        "promptcritical:i4/purex",
+        "promptcritical:t/pwr"
+      ],
+      "type": "build",
+      "condition": {
+        "block": "promptcritical:sfr_reactor"
+      },
+      "entry": "promptcritical:t4/sfr_reactor",
+      "icon": "promptcritical:sfr_reactor",
+      "title": "handbook.promptcritical.task.t.sfr.title",
+      "text": "handbook.promptcritical.task.t.sfr.text",
+      "hint": "handbook.promptcritical.task.t.sfr.hint",
+      "reward": {
+        "xp": 100
+      }
+    }
+  ]
+}
