@@ -74,6 +74,10 @@ neoForge {
         configureEach {
             systemProperty("forge.logging.markers", "REGISTRIES")
             logLevel = org.slf4j.event.Level.INFO
+            // Свой потолок кучи вместо четверти ОЗУ по умолчанию: на 14 ГБ клиент рядом со сборкой и IDE не душит
+            // систему. Переопределяется -PdevXmx=4G (большой мир-завод при дальности прорисовки 16+).
+            jvmArguments.addAll("-Xms1G", "-Xmx" + (providers.gradleProperty("devXmx").orNull ?: "3G"),
+                    "-XX:+UseG1GC", "-XX:MaxGCPauseMillis=50", "-XX:+UseStringDeduplication")
         }
         register("client") {
             client()
@@ -89,6 +93,8 @@ neoForge {
             client()
             sourceSet = gametest
             gameDirectory = project.file("run-film")
+            // FilmSession: опорное тело без экрана выбора и строка "[film] player ready" в логе
+            systemProperty("promptcritical.film", "true")
             providers.gradleProperty("quickPlay").orNull?.let { programArguments.addAll("--quickPlaySingleplayer", it) }
         }
         register("server") {
