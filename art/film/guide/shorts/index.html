@@ -1,0 +1,170 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=1080, height=1920" />
+    <title>Prompt Critical short</title>
+    <script src="https://cdn.jsdelivr.net/npm/gsap@3.14.2/dist/gsap.min.js"></script>
+    <style>
+      :root { --bg: #14110d; --fg: #efe6d6; --accent: #f2b705; --muted: #cfc5b3; }
+      * { margin: 0; padding: 0; box-sizing: border-box; }
+      html, body { width: 1080px; height: 1920px; overflow: hidden; background: var(--bg); }
+      #root { position: relative; width: 100%; height: 100%; overflow: hidden; background: var(--bg);
+              font-family: "Oswald", sans-serif; color: var(--fg); }
+      .mono { font-family: "IBM Plex Mono", monospace; }
+      .cam, .whip { position: absolute; inset: 0; overflow: hidden; }
+      .cam video { position: absolute; inset: 0; width: 100%; height: 100%; object-fit: cover; }
+      .ov { position: absolute; inset: 0; }
+      .ov::before { content: ""; position: absolute; inset: 0;
+                    background: linear-gradient(180deg, rgba(20,17,13,0.35) 0%, rgba(20,17,13,0.7) 14%, rgba(20,17,13,0.6) 36%, rgba(20,17,13,0.75) 62%, rgba(20,17,13,0) 82%); }
+      .rule { height: 6px; width: 420px; background: var(--accent); transform-origin: left center; margin: 26px 0 22px; }
+      /* hook: upper-middle, clear of the Shorts top bar */
+      .hook { position: absolute; left: 130px; right: 150px; top: 340px; }
+      .h-line { font-size: 86px; font-weight: 700; line-height: 1.12; text-transform: uppercase;
+                text-shadow: 0 4px 18px rgba(0,0,0,0.75); }
+      .h-accent { color: var(--accent); }
+      .h-sub { font-size: 38px; color: var(--fg); background: rgba(20,17,13,0.78); display: inline-block; padding: 8px 18px; }
+      /* era strip */
+      .eras { position: absolute; left: 130px; top: 330px; display: flex; gap: 14px; }
+      .era { font-size: 38px; font-weight: 600; padding: 6px 16px; color: var(--muted); background: rgba(20,17,13,0.7);
+             line-height: 1.3; }
+      .era.past { color: var(--fg); }
+      .era.on { color: var(--bg); background: var(--accent); }
+      /* caption */
+      .cap { position: absolute; left: 130px; right: 150px; top: 780px; }
+      .cap.big { top: 700px; }
+      .code { display: inline-block; background: var(--accent); color: var(--bg); font-size: 42px; font-weight: 600;
+              padding: 4px 18px; margin-bottom: 16px; line-height: 1.3; }
+      .cap-name { font-size: 92px; font-weight: 700; line-height: 1.1; text-transform: uppercase;
+                  text-shadow: 0 4px 18px rgba(0,0,0,0.75); }
+      .cap.big .cap-name { color: var(--accent); }
+      .cap-sub { font-size: 40px; color: var(--fg); margin-top: 18px; background: rgba(20,17,13,0.78);
+                 display: inline-block; padding: 8px 18px; line-height: 1.35; }
+      .alarm { position: absolute; left: 130px; top: 560px; font-size: 76px; font-weight: 600; color: #fff6ec;
+               background: #e5402a; padding: 14px 34px; line-height: 1.3; }
+      /* end card */
+      .end { position: absolute; inset: 0; background: var(--bg); }
+      .grid-bg { position: absolute; inset: 0; opacity: 0.18;
+                 background-image: linear-gradient(rgba(242,183,5,0.5) 2px, transparent 2px),
+                                   linear-gradient(90deg, rgba(242,183,5,0.5) 2px, transparent 2px);
+                 background-size: 80px 80px; }
+      #e-logo { position: absolute; left: 130px; top: 330px; width: 260px; height: 260px; object-fit: contain;
+                image-rendering: pixelated; }
+      .e-title { position: absolute; left: 130px; top: 620px; font-size: 130px; font-weight: 700; line-height: 1.05; }
+      .e-ver { position: absolute; left: 136px; top: 920px; font-size: 50px; color: var(--accent); }
+      .e-sub { position: absolute; left: 136px; width: 600px; top: 1000px; font-size: 34px; color: var(--muted); line-height: 1.4; }
+      .e-cta { position: absolute; left: 136px; top: 1130px; font-size: 56px; font-weight: 600; color: var(--accent);
+               text-transform: uppercase; }
+    </style>
+  </head>
+  <body>
+    <div id="root" data-composition-id="main" data-start="0" data-duration="35.0769" data-width="1080" data-height="1920">
+      <div class="cam" id="cam0"><div class="whip" id="whip0"><video id="v0" class="clip" src="assets/footage/sa01_aerial.mp4" data-start="0.0000" data-duration="5.5385" data-media-start="0.3" data-track-index="0" muted playsinline></video></div></div>
+      <div class="cam" id="cam1"><div class="whip" id="whip1"><video id="v1" class="clip" src="assets/footage/sa02_mine.mp4" data-start="5.5385" data-duration="1.8462" data-media-start="0.8" data-track-index="1" muted playsinline></video></div></div>
+      <div class="cam" id="cam2"><div class="whip" id="whip2"><video id="v2" class="clip" src="assets/footage/sa03_boilers.mp4" data-start="7.3846" data-duration="1.8462" data-media-start="0.5" data-track-index="0" muted playsinline></video></div></div>
+      <div class="cam" id="cam3"><div class="whip" id="whip3"><video id="v3" class="clip" src="assets/footage/sa04_furnace.mp4" data-start="9.2308" data-duration="3.6923" data-media-start="0.6" data-track-index="1" muted playsinline></video></div></div>
+      <div class="cam" id="cam4"><div class="whip" id="whip4"><video id="v4" class="clip" src="assets/footage/sa05_rig.mp4" data-start="12.9231" data-duration="3.6923" data-media-start="0.6" data-track-index="0" muted playsinline></video></div></div>
+      <div class="cam" id="cam5"><div class="whip" id="whip5"><video id="v5" class="clip" src="assets/footage/sa06_refinery.mp4" data-start="16.6154" data-duration="1.8462" data-media-start="1.0" data-track-index="1" muted playsinline></video></div></div>
+      <div class="cam" id="cam6"><div class="whip" id="whip6"><video id="v6" class="clip" src="assets/footage/sa07_chem.mp4" data-start="18.4615" data-duration="1.8462" data-media-start="0.8" data-track-index="0" muted playsinline></video></div></div>
+      <div class="cam" id="cam7"><div class="whip" id="whip7"><video id="v7" class="clip" src="assets/footage/sa08_npp.mp4" data-start="20.3077" data-duration="3.6923" data-media-start="0.6" data-track-index="1" muted playsinline></video></div></div>
+      <div class="cam" id="cam8"><div class="whip" id="whip8"><video id="v8" class="clip" src="assets/footage/sa09_reactor.mp4" data-start="24.0000" data-duration="3.6923" data-media-start="0.2" data-track-index="0" muted playsinline></video></div></div>
+      <div class="cam" id="cam9"><div class="whip" id="whip9"><video id="v9" class="clip" src="assets/footage/sa10_dusk.mp4" data-start="27.6923" data-duration="3.6923" data-media-start="1.0" data-track-index="1" muted playsinline></video></div></div>
+<section id="ov0" class="clip ov" data-start="0.0000" data-duration="5.5385" data-track-index="3">
+  <div class="hook" id="hook"><p class="h-line">From a coal mine</p><p class="h-line h-accent">to a nuclear plant</p><div class="rule" id="h-rule"></div><p class="h-sub mono">in one Minecraft world</p></div>
+</section>
+<section id="ov1" class="clip ov" data-start="5.5385" data-duration="1.8462" data-track-index="3">
+  <div class="eras mono" id="eras1"><span class="era on">I0</span><span class="era">I1</span><span class="era">I2</span><span class="era">I3</span><span class="era">I4</span></div>
+  <div class="cap" id="c1"><span class="code mono">I0</span><p class="cap-name">Coal mine</p><p class="cap-sub mono">methane and ventilation</p></div>
+</section>
+<section id="ov2" class="clip ov" data-start="7.3846" data-duration="1.8462" data-track-index="3">
+  <div class="eras mono" id="eras2"><span class="era on">I0</span><span class="era">I1</span><span class="era">I2</span><span class="era">I3</span><span class="era">I4</span></div>
+  <div class="cap" id="c2"><span class="code mono">I0</span><p class="cap-name">Boiler house</p></div>
+</section>
+<section id="ov3" class="clip ov" data-start="9.2308" data-duration="3.6923" data-track-index="3">
+  <div class="eras mono" id="eras3"><span class="era past">I0</span><span class="era on">I1</span><span class="era">I2</span><span class="era">I3</span><span class="era">I4</span></div>
+  <div class="cap" id="c3"><span class="code mono">I1</span><p class="cap-name">Blast furnace</p><p class="cap-sub mono">coke, sinter, hot blast</p></div>
+</section>
+<section id="ov4" class="clip ov" data-start="12.9231" data-duration="3.6923" data-track-index="3">
+  <div class="eras mono" id="eras4"><span class="era past">I0</span><span class="era past">I1</span><span class="era on">I2</span><span class="era">I3</span><span class="era">I4</span></div>
+  <div class="cap" id="c4"><span class="code mono">I2</span><p class="cap-name">Drilling rig</p><p class="cap-sub mono">kicks and BOP stacks</p></div>
+</section>
+<section id="ov5" class="clip ov" data-start="16.6154" data-duration="1.8462" data-track-index="3">
+  <div class="eras mono" id="eras5"><span class="era past">I0</span><span class="era past">I1</span><span class="era on">I2</span><span class="era">I3</span><span class="era">I4</span></div>
+  <div class="cap" id="c5"><span class="code mono">I2</span><p class="cap-name">Refinery</p></div>
+</section>
+<section id="ov6" class="clip ov" data-start="18.4615" data-duration="1.8462" data-track-index="3">
+  <div class="eras mono" id="eras6"><span class="era past">I0</span><span class="era past">I1</span><span class="era past">I2</span><span class="era on">I3</span><span class="era">I4</span></div>
+  <div class="cap" id="c6"><span class="code mono">I3</span><p class="cap-name">Pyrolysis</p><p class="cap-sub mono">ethylene and propylene</p></div>
+</section>
+<section id="ov7" class="clip ov" data-start="20.3077" data-duration="3.6923" data-track-index="3">
+  <div class="eras mono" id="eras7"><span class="era past">I0</span><span class="era past">I1</span><span class="era past">I2</span><span class="era past">I3</span><span class="era on">I4</span></div>
+  <div class="cap" id="c7"><span class="code mono">I4</span><p class="cap-name">VVER nuclear plant</p></div>
+</section>
+<section id="ov8" class="clip ov" data-start="24.0000" data-duration="3.6923" data-track-index="3">
+  <div class="eras mono" id="eras8"><span class="era past">I0</span><span class="era past">I1</span><span class="era past">I2</span><span class="era past">I3</span><span class="era on">I4</span></div>
+  <div class="cap" id="c8"><span class="code mono">I4</span><p class="cap-name">Reactor core</p><p class="cap-sub mono">accidents up to core melt</p></div>
+</section>
+<section id="ov9" class="clip ov" data-start="27.6923" data-duration="3.6923" data-track-index="3">
+  <div class="cap big" id="c9"><p class="cap-name">Everything is simulated for real</p></div>
+</section>
+<section id="end" class="clip end" data-start="31.3846" data-duration="3.6923" data-track-index="4">
+  <div class="grid-bg"></div>
+  <img id="e-logo" src="assets/logo.png" alt="">
+  <h2 class="e-title" id="e-title">PROMPT<br>CRITICAL</h2>
+  <p class="e-ver mono" id="e-ver">1.0.0-rc.1</p>
+  <p class="e-sub mono" id="e-sub">Requires NeoForge 21.1, Create, CC: Tweaked</p>
+  <p class="e-cta" id="e-cta">Link in the description</p>
+</section>
+      <audio id="music" src="assets/music.ogg" data-start="0" data-duration="35.0769" data-track-index="9" data-volume="0.9" data-automation='{"version": 1, "lanes": [{"target": "volume", "points": [{"t": 0, "v": 0.9}, {"t": 33.577, "v": 0.9}, {"t": 35.077, "v": 0}]}]}'></audio>
+    </div>
+    <script>
+      window.__timelines = window.__timelines || {};
+      const tl = gsap.timeline({ paused: true });
+      tl.fromTo("#cam0", {scale: 1.0}, {scale: 1.06, duration: 5.5385, ease: "none"}, 0.0000);
+      tl.from("#hook .h-line", {yPercent: 60, opacity: 0, duration: 0.5, ease: "power4.out", stagger: 0.18}, 0.100);
+      tl.from("#h-rule", {scaleX: 0, duration: 0.5, ease: "expo.out"}, 0.600);
+      tl.from("#hook .h-sub", {opacity: 0, duration: 0.4}, 0.800);
+      tl.to("#hook", {opacity: 0, duration: 0.25}, 5.238);
+      tl.fromTo("#cam1", {scale: 1.0}, {scale: 1.06, duration: 1.8462, ease: "none"}, 5.5385);
+      tl.fromTo("#whip1", {yPercent: -5, filter: "blur(16px)"}, {yPercent: 0, filter: "blur(0px)", duration: 0.3, ease: "expo.out"}, 5.5385);
+      tl.from("#eras1 .on", {scale: 1.5, duration: 0.35, ease: "back.out(2)"}, 5.588);
+      tl.from("#c1", {clipPath: "inset(0 100% 0 0)", duration: 0.45, ease: "expo.out"}, 5.658);
+      tl.fromTo("#cam2", {scale: 1.0}, {scale: 1.06, duration: 1.8462, ease: "none"}, 7.3846);
+      tl.fromTo("#whip2", {yPercent: -5, filter: "blur(16px)"}, {yPercent: 0, filter: "blur(0px)", duration: 0.3, ease: "expo.out"}, 7.3846);
+      tl.from("#eras2 .on", {scale: 1.5, duration: 0.35, ease: "back.out(2)"}, 7.435);
+      tl.from("#c2", {clipPath: "inset(0 100% 0 0)", duration: 0.45, ease: "expo.out"}, 7.505);
+      tl.fromTo("#cam3", {scale: 1.0}, {scale: 1.06, duration: 3.6923, ease: "none"}, 9.2308);
+      tl.fromTo("#whip3", {yPercent: -5, filter: "blur(16px)"}, {yPercent: 0, filter: "blur(0px)", duration: 0.3, ease: "expo.out"}, 9.2308);
+      tl.from("#eras3 .on", {scale: 1.5, duration: 0.35, ease: "back.out(2)"}, 9.281);
+      tl.from("#c3", {clipPath: "inset(0 100% 0 0)", duration: 0.45, ease: "expo.out"}, 9.351);
+      tl.fromTo("#cam4", {scale: 1.0}, {scale: 1.06, duration: 3.6923, ease: "none"}, 12.9231);
+      tl.fromTo("#whip4", {yPercent: -5, filter: "blur(16px)"}, {yPercent: 0, filter: "blur(0px)", duration: 0.3, ease: "expo.out"}, 12.9231);
+      tl.from("#eras4 .on", {scale: 1.5, duration: 0.35, ease: "back.out(2)"}, 12.973);
+      tl.from("#c4", {clipPath: "inset(0 100% 0 0)", duration: 0.45, ease: "expo.out"}, 13.043);
+      tl.fromTo("#cam5", {scale: 1.0}, {scale: 1.06, duration: 1.8462, ease: "none"}, 16.6154);
+      tl.fromTo("#whip5", {yPercent: -5, filter: "blur(16px)"}, {yPercent: 0, filter: "blur(0px)", duration: 0.3, ease: "expo.out"}, 16.6154);
+      tl.from("#eras5 .on", {scale: 1.5, duration: 0.35, ease: "back.out(2)"}, 16.665);
+      tl.from("#c5", {clipPath: "inset(0 100% 0 0)", duration: 0.45, ease: "expo.out"}, 16.735);
+      tl.fromTo("#cam6", {scale: 1.0}, {scale: 1.06, duration: 1.8462, ease: "none"}, 18.4615);
+      tl.fromTo("#whip6", {yPercent: -5, filter: "blur(16px)"}, {yPercent: 0, filter: "blur(0px)", duration: 0.3, ease: "expo.out"}, 18.4615);
+      tl.from("#eras6 .on", {scale: 1.5, duration: 0.35, ease: "back.out(2)"}, 18.512);
+      tl.from("#c6", {clipPath: "inset(0 100% 0 0)", duration: 0.45, ease: "expo.out"}, 18.582);
+      tl.fromTo("#cam7", {scale: 1.0}, {scale: 1.06, duration: 3.6923, ease: "none"}, 20.3077);
+      tl.fromTo("#whip7", {yPercent: -5, filter: "blur(16px)"}, {yPercent: 0, filter: "blur(0px)", duration: 0.3, ease: "expo.out"}, 20.3077);
+      tl.from("#eras7 .on", {scale: 1.5, duration: 0.35, ease: "back.out(2)"}, 20.358);
+      tl.from("#c7", {clipPath: "inset(0 100% 0 0)", duration: 0.45, ease: "expo.out"}, 20.428);
+      tl.fromTo("#cam8", {scale: 1.0}, {scale: 1.06, duration: 3.6923, ease: "none"}, 24.0000);
+      tl.fromTo("#whip8", {yPercent: -5, filter: "blur(16px)"}, {yPercent: 0, filter: "blur(0px)", duration: 0.3, ease: "expo.out"}, 24.0000);
+      tl.from("#eras8 .on", {scale: 1.5, duration: 0.35, ease: "back.out(2)"}, 24.050);
+      tl.from("#c8", {clipPath: "inset(0 100% 0 0)", duration: 0.45, ease: "expo.out"}, 24.120);
+      tl.fromTo("#cam9", {scale: 1.0}, {scale: 1.06, duration: 3.6923, ease: "none"}, 27.6923);
+      tl.fromTo("#whip9", {yPercent: -5, filter: "blur(16px)"}, {yPercent: 0, filter: "blur(0px)", duration: 0.3, ease: "expo.out"}, 27.6923);
+      tl.from("#c9", {clipPath: "inset(0 100% 0 0)", duration: 0.45, ease: "expo.out"}, 27.812);
+      tl.from("#e-logo", {scale: 0.6, opacity: 0, duration: 0.5, ease: "back.out(1.6)"}, 31.435);
+      tl.from("#e-title, #e-ver", {y: 40, opacity: 0, duration: 0.5, ease: "power3.out", stagger: 0.1}, 31.585);
+      tl.from("#e-sub, #e-cta", {opacity: 0, duration: 0.4, stagger: 0.15}, 31.885);
+      tl.fromTo(".grid-bg", {backgroundPosition: "0px 0px"}, {backgroundPosition: "0px 80px", duration: 3.692, ease: "none"}, 31.385);
+      window.__timelines["main"] = tl;
+    </script>
+  </body>
+</html>
