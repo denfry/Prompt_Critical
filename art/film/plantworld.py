@@ -1,6 +1,6 @@
 """The overview film's plant world: one large works on real terrain (coast, river, hills), every machine of the mod.
 
-    python art/film/plantworld.py <game dir>          # reads <game dir>/plant_site.json, writes <game dir>/plant.txt
+    python art/film/plantworld.py <game dir>          # reads plant_site.json (game dir or art/film/site), writes <game dir>/plant.txt
 
 The site comes from `/film heightmap` (pc-mod/src/gametest/.../film/FilmSite.java): surface, floor and biome of the
 chosen window, sampled from the generator before any chunk exists. This script terraces the ground under each district,
@@ -171,6 +171,13 @@ class Shift(Fn):
 
 PC = "promptcritical:"
 SITE_FILE = "plant_site.json"
+SITE_DIR = os.path.join(os.path.dirname(os.path.abspath(__file__)), "site")
+
+
+def site_file(game, name):
+    """A survey file from the game dir when it is there, else the copy kept in art/film/site (seed 62)."""
+    p = os.path.join(game, name)
+    return p if os.path.exists(p) else os.path.join(SITE_DIR, name)
 
 # reused sets: (local rect x1 z1 x2 z2 incl. margins, world x of local x1, world z of local z1)
 SETS = {
@@ -1242,7 +1249,7 @@ class Plant2(Plant):
 
 
 def write2(game):
-    site = Sites([Site(os.path.join(game, f)) for f in (SITE_FILE, "gorge_site.json", "gorge_north.json", "line_site.json")])
+    site = Sites([Site(site_file(game, f)) for f in (SITE_FILE, "gorge_site.json", "gorge_north.json", "line_site.json")])
     p = Plant2(site)
     p.build()
     lines = [l for l in p.f.lines if l]
@@ -1286,7 +1293,7 @@ def lighting(p, cell=32):
 
 
 def write(game):
-    site = Site(os.path.join(game, SITE_FILE))
+    site = Site(site_file(game, SITE_FILE))
     p = Plant2(site)
     p.sets()
     p.tpp()
