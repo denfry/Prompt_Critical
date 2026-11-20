@@ -16,7 +16,7 @@ import os
 import random
 import sys
 
-VERSION = 10
+VERSION = 15
 BOILERS = (4, 9)
 G = -61  # floor layer
 rng = random.Random(1924)
@@ -444,6 +444,8 @@ def mine(f):
 
 def prime(f):
     f("execute as @a run function filmset:kit")
+    lateset.chem_prime(f)
+    f("function filmset:works_prime")
     f("function filmset:refresh")
     for bx in BOILERS:
         for _ in range(3):
@@ -463,6 +465,7 @@ def refresh(f):
 
 
 def write(world):
+    lateset.startup(world)
     root = os.path.join(world, "datapacks", "filmset")
     fn_dir = os.path.join(root, "data", "filmset", "function")
     tag_dir = os.path.join(root, "data", "minecraft", "tags", "function")
@@ -483,18 +486,21 @@ def write(world):
     load("gamerule sendCommandFeedback false")
     load("weather clear")
     load("forceload add -20 20 150 110")
+    load(f"forceload add {lateset.X1} {lateset.Z1} {lateset.X2} {lateset.Z2}")
+    plant.forceload(load)
+    load(f"forceload add {works.X1} {works.Z1} {works.X2} {works.Z2}")
     load(f"execute unless score #built filmset matches {VERSION} run schedule function filmset:build 40t")
     fns["load"] = load
 
     build = Fn()
-    for part in ("clear", "yard", "boiler_house", "foundry", "mine"):
+    for part in ("clear", "yard", "boiler_house", "foundry", "mine") + tuple(n for n, _ in lateset.PARTS + plant.PARTS + works.PARTS):
         build(f"function filmset:{part}")
     build(f"scoreboard players set #built filmset {VERSION}")
     build("schedule function filmset:prime 40t")
     fns["build"] = build
 
     for name, fn in (("clear", clear), ("yard", yard), ("boiler_house", boiler_house), ("foundry", foundry), ("mine", mine),
-                     ("prime", prime), ("refresh", refresh)):
+                     ("prime", prime), ("refresh", refresh), ("works_prime", works.prime)) + lateset.PARTS + plant.PARTS + works.PARTS:
         f = Fn()
         fn(f)
         fns[name] = f
@@ -512,6 +518,10 @@ def write(world):
             fh.write("\n".join(l for l in f.lines if l) + "\n")
     print(f"filmset v{VERSION}: " + ", ".join(f"{n} {len(f.lines)}" for n, f in fns.items()))
 
+
+import lateset  # noqa: E402  (later-era set; imports this module back for the shared helpers)
+import plant  # noqa: E402  (every machine, by district)
+import works  # noqa: E402  (the units that really run)
 
 if __name__ == "__main__":
     write(sys.argv[1])
