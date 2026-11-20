@@ -28,6 +28,7 @@ import dev.denfry.promptcritical.mod.nuclear.Uf6CylinderItem;
 import dev.denfry.promptcritical.mod.powerhouse.GasTurbineBlockEntity;
 import dev.denfry.promptcritical.mod.registry.PcFluids;
 import dev.denfry.promptcritical.mod.registry.PcItems;
+import dev.denfry.promptcritical.sim.drilling.BopStack;
 import dev.denfry.promptcritical.sim.drilling.FormationFluid;
 import dev.denfry.promptcritical.sim.drilling.Prospect;
 import dev.denfry.promptcritical.sim.drilling.Trap;
@@ -179,9 +180,15 @@ public final class FilmPlant {
         if (!c.rigOk() || c.well() == null) return "rig not ready, missing " + c.missing();
         BlockPos rotary = console.offset(5, 0, 5);
         Trap gas = new Trap(rotary.getX(), rotary.getZ(), 80, 800, 60, 860, 15, 0.2, 50, FormationFluid.GAS, 11_800);
+        openBop(c);
         c.spud(new Prospect(gas, 800), 799.6);  // bit 0.4 m above the gas top: the kick comes within the shot
         c.setDrilling(120e3, 100);
         return "drilling into the gas cap";
+    }
+
+    /** A BOP left shut by an earlier kick holds the string: the bit makes no hole until every element is open again. */
+    private static void openBop(DrillersConsoleBlockEntity c) {
+        for (BopStack.Component kind : BopStack.Component.values()) c.openComponent(kind, null);
     }
 
     /**
@@ -195,7 +202,10 @@ public final class FilmPlant {
         BlockPos rotary = console.offset(5, 0, 5);
         Trap gas = new Trap(rotary.getX(), rotary.getZ(), 80, 800, 60, 860, 15, 0.2, 50, FormationFluid.GAS, 11_800);
         // rerunnable: spud once (below the 600 m casing shoe, Well requires it), later runs only report the depth
-        if (c.well().holeDepthM() < 605 || c.well().holeDepthM() > 780) c.spud(new Prospect(gas, 800), 610);
+        if (c.well().holeDepthM() < 605 || c.well().holeDepthM() > 780) {
+            openBop(c);
+            c.spud(new Prospect(gas, 800), 610);
+        }
         c.setDrilling(40e3, 60);
         return String.format(java.util.Locale.ROOT, "drilling, hole %.1f m, gas top at 800 m", c.well().holeDepthM());
     }
