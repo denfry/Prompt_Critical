@@ -447,4 +447,20 @@ public final class GridGameTests {
                 .thenWaitUntil(() -> h.assertFalse(lit(h, EMERGENCY), "battery runs down"))
                 .thenSucceed();
     }
+
+    /**
+     * Импульс стоящего генератора — потери холостого хода (1,5 % от 500 кВА ≈ 7,5 SU), а не номинал 400 кВт: иначе
+     * его не раскрутить ничем слабее 400 SU (паровая машина I0 даёт ~130) — сеть Create перегружена с первого тика.
+     */
+    @GameTest(template = LARGE, timeoutTicks = 200)
+    public static void standingGeneratorDeclaresOnlyItsNoLoadLoss(GameTestHelper h) {
+        h.setBlock(G1, facing(PcBlocks.SHAFT_GENERATOR.get().defaultBlockState(), Direction.NORTH));
+        h.setBlock(G1.above(), facing(PcBlocks.GENERATOR_EXCITER.get().defaultBlockState(), Direction.NORTH));
+        h.succeedWhen(() -> {
+            GeneratorUnit u = gen(h, G1);
+            ShaftGeneratorBlockEntity be = h.getBlockEntity(G1);
+            double su = be.calculateStressApplied() * u.gearRpm();
+            h.assertTrue(su > 1 && su < 10, "standstill impulse " + su + " SU at " + u.gearRpm() + " rpm");
+        });
+    }
 }

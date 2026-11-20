@@ -1,5 +1,14 @@
 # Changelog
 
+## Unreleased
+
+### Fixes
+- A standing shaft generator now asks the Create network only for its no-load losses (1.5 % of 500 kVA, about
+  7.5 SU) instead of its full 400 kW rating: a drive weaker than 400 SU, such as the I0 steam engine, could never
+  start it, because the network was overstressed from the first tick and the shaft never turned.
+- Overhead line spans render with lighting and normals: under shader packs (Iris) bare copper spans no longer glow at
+  night.
+
 ## 1.0.0-rc.1 (2026-11-19)
 
 Release candidate of the first full release: every era of the design up to the closed fuel cycle is in the game,

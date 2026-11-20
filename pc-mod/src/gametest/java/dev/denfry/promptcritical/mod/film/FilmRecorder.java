@@ -56,6 +56,7 @@ import org.slf4j.Logger;
 /**
  * Покадровая съёмка роликов (только dev-клиент): если в каталоге игры лежит {@code film.json}, после входа в
  * одиночный мир снимает шоты по очереди в {@code <out>/<shot>.mp4} и переименовывает план в {@code film.done}.
+ * Без {@code "quit": true} клиент остаётся в мире и раз в секунду ждёт следующий {@code film.json}.
  *
  * <p>Время игры на записи — виртуальные часы ({@link Util#timeSource}): между кадрами клиент и встроенный сервер
  * видят ровно 1/fps секунды, сколько бы ни рендерился и ни кодировался кадр. Сервер дожидается тиков, частичный
@@ -125,6 +126,7 @@ public final class FilmRecorder {
     private static Spline path;
     private static Encoder encoder;
     private static Saved saved;
+    private static int poll;
 
     /** Нарисованный курсор щита в координатах GUI: из точки from в to за [c0, c1] секунд шота. */
     private static boolean cursorShown;
@@ -142,8 +144,11 @@ public final class FilmRecorder {
             inWorld = 0;
             return;
         }
-        if (queue == null) {
-            if (++inWorld < WARMUP) return;
+        // нет плана или он снят (finish обнулил saved и переименовал файл): раз в секунду ищем новый film.json — клиент без "quit" снимает план за планом,
+        // не выходя из мира (датапак площадки — командой reload в setup)
+        if (queue == null || (saved == null && queue.isEmpty())) {
+            if (queue == null && ++inWorld < WARMUP) return;
+            if (queue != null && ++poll % 20 != 0) return;
             queue = load(mc.gameDirectory.toPath().resolve("film.json"));
             if (queue.isEmpty()) return;
             saved = Saved.capture(mc);
@@ -380,6 +385,7 @@ public final class FilmRecorder {
         }
         LOG.info("[film] все шоты сняты");
         queue = new ArrayDeque<>();
+        saved = null;
         if (Boolean.TRUE.equals(plan.quit())) mc.stop();
     }
 
@@ -748,6 +754,8 @@ public final class FilmRecorder {
             int[] fw = new int[1], fh = new int[1], ww = new int[1], wh = new int[1];
             GLFW.glfwGetFramebufferSize(win, fw, fh);
             GLFW.glfwGetWindowSize(win, ww, wh);
+            // свёрнутое окно отдаёт 0×0: framebuffer такого размера не создать — оставляем кадровый до разворота
+            if (fw[0] <= 0 || fh[0] <= 0) return;
             setSize(mc.getWindow(), ww[0], wh[0], fw[0], fh[0]);
             mc.resizeDisplay();
         }

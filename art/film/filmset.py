@@ -16,7 +16,7 @@ import os
 import random
 import sys
 
-VERSION = 10
+VERSION = 26
 BOILERS = (4, 9)
 G = -61  # floor layer
 rng = random.Random(1924)
@@ -84,10 +84,10 @@ def yard(f):
     for x in (-10, 0, 10, 20, 24, 32, 40, 50, 60, 70, 76):
         f.fill(x, -60, 22, x, -59, 22, "stone_bricks")
     # street lights along the yard
-    for x in (-4, 16, 36, 56):
+    for x in (-2, 16, 36, 56):
         f.fill(x, -60, 31, x, -55, 31, "polished_blackstone_wall")
         f.setb(x, -54, 31, "polished_blackstone")
-        f.setb(x, -54, 32, PC + "industrial_light_street[facing=north,lit=true]")
+        f.setb(x, -54, 32, PC + "industrial_light_street[facing=north]")
     # coal heap and wagons on a siding
     for x in range(-6, 2):
         f.setb(x, -60, 30, "rail[shape=east_west]")
@@ -176,7 +176,7 @@ def boiler_house(f):
     for x in range(X1 + 4, X2, 4):
         f.fill(x, TOP, Z1 + 1, x, TOP, Z2 - 1, "create:metal_girder[axis=z]")
     for x, z in [(4, 44), (8, 44), (12, 44), (16, 44), (20, 44), (16, 53), (20, 53), (4, 54)]:
-        f.setb(x, TOP - 1, z, PC + "industrial_light[lit=true]")
+        f.setb(x, TOP - 1, z, PC + "industrial_light")
 
     # --- the machines (layout as in the Showroom, moved): a battery of two boilers with stokers, steam engine
     by, bz = -59, 49
@@ -263,7 +263,7 @@ def foundry(f):
     for x in range(X1 + 3, X2, 6):
         f.fill(x, TOP, Z1 + 1, x, TOP, Z2 - 1, "create:metal_girder[axis=z]")
         for z in (Z1 + 4, Z2 - 4):
-            f.setb(x, TOP - 1, z, PC + "industrial_light[lit=true]")
+            f.setb(x, TOP - 1, z, PC + "industrial_light")
 
     z = 49
     # cupola with a charging platform, crucible furnace, moulding, shakeout, lathe, drill press
@@ -364,7 +364,7 @@ def mine(f):
     f.fill(110, -57, 37, 114, -57, 37, "dark_oak_log[axis=x]")
     f.fill(111, -60, 37, 113, -58, 37, "air")
     f.setb(112, -56, 36, PC + "room_sign[facing=north]")
-    f.setb(109, -58, 36, PC + "industrial_light_floodlight[facing=north,lit=true]")
+    f.setb(109, -58, 36, PC + "industrial_light_floodlight[facing=north]")
     for z in range(39, sz - 2, 3):
         f.setb(112, -59, z, PC + "mine_support[facing=north]")
     for z in range(37, sz - 1):
@@ -373,7 +373,7 @@ def mine(f):
     for z in range(26, 37):
         f.setb(111, -60, z, "rail[shape=north_south]")
     for z in range(42, sz - 2, 8):
-        f.setb(113, -58, z, PC + "industrial_light[lit=true]")
+        f.setb(113, -58, z, PC + "industrial_light")
     for z in (47, 53):
         f.setb(111, -58, z, PC + "explosion_barrier[kind=water]")
     # coal seam showing in the drift walls
@@ -398,7 +398,7 @@ def mine(f):
     motor_gearbox(f, 109, -60, sz - 1, "x")
     f.fill(108, G, sz + 1, 109, G, sz + 1, PC + "mine_water")
     f.setb(115, -60, sz - 1, PC + "canary_cage[bird=alive]")
-    f.setb(sx + 2, -58, sz, PC + "industrial_light[lit=true]")
+    f.setb(sx + 2, -58, sz, PC + "industrial_light")
 
     # --- longwall: face of coal along z = sz + 3, powered roof supports, the shearer on the face
     f.fill(117, -60, sz - 2, 135, -58, sz + 2, "air")
@@ -409,7 +409,7 @@ def mine(f):
         f.setb(x, -59, sz, PC + "powered_roof_support[facing=south,extended=true]")
     f.setb(126, -60, sz + 2, PC + "longwall_shearer[facing=south,running=true]")
     for x in (120, 127, 134):
-        f.setb(x, -58, sz - 2, PC + "industrial_light[lit=true]")
+        f.setb(x, -58, sz - 2, PC + "industrial_light")
     f.setb(135, -60, sz - 2, PC + "degasification_borehole[facing=west]")
 
     # --- surface: hoist house, the hoist on the plateau, main fan, degassing pump, trees
@@ -425,7 +425,7 @@ def mine(f):
     f.setb(hx, hy, hz, PC + "mine_hoist[facing=north]")
     f.setb(hx + 2, hy, hz, "create:creative_motor[facing=west]{ScrollValue:64}")
     f.setb(hx - 3, TOPY + 1, hz + 2, PC + "mine_dispatch_cabinet[facing=east]")
-    f.setb(hx, TOPY + 6, hz + 1, PC + "industrial_light[lit=true]")
+    f.setb(hx, TOPY + 6, hz + 1, PC + "industrial_light")
     fx_, fy, fz = FAN
     f.setb(fx_, fy, fz, PC + "main_mine_fan[facing=north]")
     f.setb(fx_, fy, fz + 2, "create:creative_motor[facing=north]{ScrollValue:64}")
@@ -433,11 +433,219 @@ def mine(f):
     f.setb(fx_, fy, fz + 2, "create:creative_motor[facing=north]{ScrollValue:64}")
     f.setb(126, -45, 56, PC + "degasification_pump[facing=north]")
     motor_gearbox(f, 126, -45, 57, "x")
-    f.setb(sx + 3, TOPY + 1, sz - 4, PC + "industrial_light_floodlight[facing=south,lit=true]")
+    f.setb(sx + 3, TOPY + 1, sz - 4, PC + "industrial_light_floodlight[facing=south]")
     for x, z in [(92, 52), (95, 78), (128, 80), (133, 66), (124, 48), (100, 84), (90, 66)]:
         t = hill_top(x, z)
         if t is not None:
             f(f"place feature minecraft:spruce {x} {t + 1} {z}")
+
+
+# ------------------------------------------------------------------------------------------------ power (07 §7.3-7.6)
+
+# The set's own power plant: the boiler house's steam engine turns a shaft generator (6.3 kV) on its line shaft, a
+# 6 kV overhead line on concrete poles runs to package substations (transformer TM-630/6 + lighting board), and every
+# lamp of the set is lit by the board within 24 blocks of it (LightingBoards.RANGE), not by a block state.
+GEN = (26, -59, 51)
+POLE_H = 9                                   # pole blocks; the MV connector sits on top at ground + POLE_H
+# substations: transformer (x, ground y, z); LV cable path from the transformer's west face to the board; board facing
+SUBS = {
+    "boiler": ((26, -60, 44), [(25, -60, 44), (24, -60, 44), (23, -60, 44)], ((22, -60, 44), "west")),
+    "foundry": ((47, -60, 37), [(46, -60, 37), (46, -60, 38), (46, -60, 39), (46, -60, 40), (46, -60, 41)],
+                ((46, -60, 42), "south")),
+    "portal": ((116, -60, 33), [(115, -60, 33)], ((114, -60, 33), "west")),
+    "headframe": ((120, -45, 72), [(119, -45, 72)], ((118, -45, 72), "west")),
+    # the later-era rows get their power from the same generator: steel row and control room, then the oil,
+    # chemistry and nuclear row
+    "steelworks": ((40, -60, 126), [(39, -60, 126)], ((38, -60, 126), "west")),
+    "nuclear": ((84, -60, 155), [(83, -60, 155)], ((82, -60, 155), "west")),
+}
+# line poles (x, ground y, z) between the substations; spans <= 32 m
+POLES = {"gen": (28, -60, 51), "yard_w": (30, -60, 36), "yard_e": (74, -60, 36), "fence": (96, -60, 36),
+         "hill": (118, -45, 42), "north1": (28, -60, 80), "north2": (30, -60, 110), "eras_mid": (64, -60, 140)}
+LINE = ["gen", "sub:boiler", "yard_w", "sub:foundry", "yard_e", "fence", "sub:portal", "hill", "sub:headframe"]
+# branch north from the generator pole to the later eras (a second line from the same connector)
+BRANCH = ["gen", "north1", "north2", "sub:steelworks", "eras_mid", "sub:nuclear"]
+
+
+def _pole(f, x, y, z):
+    f.fill(x, y, z, x, y + POLE_H - 1, z, PC + "concrete_pole")
+    f.setb(x, y + POLE_H, z, PC + "wire_connector_mv")
+    return (x, y + POLE_H, z)
+
+
+def _connector(name):
+    if name.startswith("sub:"):
+        (tx, ty, tz), _, _ = SUBS[name[4:]]
+        return (tx + 1, ty + POLE_H, tz)
+    x, y, z = POLES[name]
+    return (x, y + POLE_H, z)
+
+
+def power(f):
+    # generator on the engine line shaft, through the boiler house east wall, on a casing plinth
+    gx, gy, gz = GEN
+    f.fill(24, gy, gz, gx - 1, gy, gz, "create:shaft[axis=x]")
+    f.fill(gx - 1, gy - 1, gz, gx, gy - 1, gz, "create:andesite_casing")
+    f.fill(gx - 1, G, gz - 2, gx + 3, G, gz + 2, "gray_concrete")
+    f.setb(gx, gy, gz, PC + "shaft_generator[facing=east]")
+    f.setb(gx, gy + 1, gz, PC + "generator_exciter[facing=east]")
+    # generator terminals (front) -> cable up beside the pole to its connector
+    px, py, pz = POLES["gen"]
+    f.fill(gx + 1, gy, gz, gx + 1, py + POLE_H, gz, PC + "power_cable")
+    _pole(f, px, py, pz)
+    for name in ("yard_w", "yard_e", "fence", "hill", "north1", "north2", "eras_mid"):
+        x, y, z = POLES[name]
+        _pole(f, x, y, z)
+    for (tx, ty, tz), lv, ((bx, by, bz), facing) in SUBS.values():
+        f.fill(tx - 2, ty - 1, tz - 1, tx + 1, ty - 1, tz + 1, "gray_concrete")
+        f.setb(tx, ty, tz, PC + "distribution_transformer[facing=north]")
+        # HV: the upper cell's top face -> cable up to the connector on the pole east of it
+        f.fill(tx, ty + 2, tz, tx, ty + POLE_H, tz, PC + "power_cable")
+        _pole(f, tx + 1, ty, tz)
+        for x, y, z in lv:
+            f.setb(x, y, z, PC + "power_cable")
+        f.setb(bx, by, bz, PC + f"lighting_board[facing={facing}]")
+
+
+def lighting(f):
+    """More lamps on the boards' groups (within 24 blocks of a board): high bays in the halls, floodlights on the
+    facades and the hoist house, street lights along the yard and the mine road. ~25 kW in all on the 130 kW engine."""
+    def street(x, z, facing="north"):
+        f.fill(x, -60, z, x, -55, z, "polished_blackstone_wall")
+        f.setb(x, -54, z, "polished_blackstone")
+        dz = {"north": 1, "south": -1}[facing]
+        f.setb(x, -54, z + dz, PC + f"industrial_light_street[facing={facing}]")
+    # boiler house: high bays under every truss (y -51), in three rows
+    for x in range(4, 24, 4):
+        for z in (43, 48, 53):
+            f.setb(x, -51, z, PC + "lamp_high_bay")
+    # foundry: high bays between the pendants under the trusses (y -54)
+    for x in range(35, 62, 6):
+        f.setb(x, -54, 47, PC + "lamp_high_bay")
+    # floodlights on the facades over the yard
+    for x, y in ((3, -54), (21, -54), (35, -55), (59, -55)):
+        f.setb(x, y, 39, PC + "industrial_light_floodlight[facing=north]")
+    # more street lights along the yard and the road to the adit
+    for x in (6, 46, 66):
+        street(x, 31)
+    for x in (92, 102):
+        street(x, 34)
+    # hoist house: floodlights onto the headframe and the shaft collar
+    for x in (109, 115):
+        f.setb(x, -41, 68, PC + "industrial_light_floodlight[facing=north]")
+    # later eras: the control room lit inside, floodlights on the heroes
+    for x, z in ((58, 132), (61, 132), (58, 135), (61, 135)):
+        f.setb(x, -57, z, PC + "lamp_fluorescent[facing=north]")
+    # (only lamps within 24 blocks of the steelworks or nuclear board)
+    for x, y, z, facing in ((19, -52, 127, "north"), (31, -56, 128, "north"),
+                            (93, -54, 157, "north"), (65, -56, 158, "north"), (78, -57, 158, "north")):
+        f.setb(x, y - 1, z, "polished_blackstone_wall")
+        f.setb(x, y, z, PC + f"industrial_light_floodlight[facing={facing}]")
+    # bulkhead lamp over the generator
+    f.setb(GEN[0], GEN[1] + 3, GEN[2] - 1, PC + "lamp_bulkhead[facing=north]")
+
+
+# Electric drives instead of the hidden creative motors (07 §7.6.3). The motor turns only on a horizontal axis: a
+# drive sunk under a machine becomes motor (facing north) -> gearbox (axis x) -> vertical shaft up to where the
+# creative motor stood. "sunk": (x, y of the old motor, z, gear); "inline": (x, y, z, facing, gear) in place.
+# Each is fed from its substation's 0.4 kV bus by a cable in the ground (one cable group = one bus).
+SUNK = {"foundry": [(35, G, 49, 64), (43, G, 49, 64), (47, G, 49, 64), (52, G, 49, 64), (58, G, 50, 64)],
+        "headframe": [(126, -46, 57, 64)]}
+# the hoist needs more than one 50 SU motor: it keeps its drive
+INLINE = {"headframe": [(98, -44, 66, "north", 64)]}
+
+
+def _cable(f, pts):
+    """Cable along a polyline of axis-aligned points (inclusive)."""
+    for (x1, y1, z1), (x2, y2, z2) in zip(pts, pts[1:]):
+        f.fill(x1, y1, z1, x2, y2, z2, PC + "power_cable")
+
+
+def _motor_positions():
+    out = [(x, y - 1, z + 1, gear) for drives in SUNK.values() for x, y, z, gear in drives]
+    out += [(x, y, z, gear) for drives in INLINE.values() for x, y, z, _, gear in drives]
+    return out
+
+
+def motors(f):
+    for drives in SUNK.values():
+        for x, y, z, _ in drives:
+            f.setb(x, y, z, "create:shaft[axis=y]")
+            f.setb(x, y - 1, z, "create:gearbox[axis=x]")
+            f.setb(x, y - 1, z + 1, PC + "electric_motor[facing=north]")
+    for drives in INLINE.values():
+        for x, y, z, facing, _ in drives:
+            f.setb(x, y, z, PC + f"electric_motor[facing={facing}]")
+    # foundry: from the LV path inside the south wall down into the ground, along under the motors (y -63)
+    _cable(f, [(46, -61, 41), (46, -63, 41), (46, -63, 50)])
+    _cable(f, [(35, -63, 50), (58, -63, 50), (58, -63, 51)])
+    # headframe: from the LV cable down under the plateau (y -47), west to the hoist and the fan, south to the pump
+    _cable(f, [(119, -46, 72), (119, -47, 72), (98, -47, 72), (98, -47, 66), (98, -45, 66)])
+    _cable(f, [(114, -47, 72), (114, -45, 72)])
+    _cable(f, [(119, -47, 72), (126, -47, 72), (126, -47, 59)])
+
+
+def power_start(f):
+    for a, b in list(zip(LINE, LINE[1:])) + list(zip(BRANCH, BRANCH[1:])):
+        (ax, ay, az), (bx, by, bz) = _connector(a), _connector(b)
+        f(f"filmset wire {ax} {ay} {az} {bx} {by} {bz}")
+    # 6.3 kV, the engine's 32 rpm gear, field on (the stop valve opens later, in open_valve)
+    f(f"filmset gen {GEN[0]} {GEN[1]} {GEN[2]} mv 32 0")
+
+
+MOTOR_STEP_TICKS = 60
+
+
+def motors_start(f, fns):
+    """Start the drives one by one, as a real plant does: eight direct-on-line starts at once draw ~1000 A at
+    0.4 kV, more than the 500 kVA set can give, and the voltage collapses to 0.15 pu with every motor stalled."""
+    for i, (x, y, z, gear) in enumerate(_motor_positions()):
+        m = Fn()
+        m(f"filmset motor {x} {y} {z} {gear}")
+        fns[f"motor_{i}"] = m
+        f(f"schedule function filmset:motor_{i} {1 + i * MOTOR_STEP_TICKS}t")
+
+
+def check_spans():
+    """Spans <= 32 m and clear of the hill and the buildings' roofs (warnings only)."""
+    import math
+    for a, b in list(zip(LINE, LINE[1:])) + list(zip(BRANCH, BRANCH[1:])):
+        pa, pb = _connector(a), _connector(b)
+        d = math.dist(pa, pb)
+        if d > 32:
+            print(f"WARNING span {a}-{b} {d:.1f} m > 32")
+        for i in range(1, 20):
+            u = i / 20
+            x, y, z = (pa[k] + (pb[k] - pa[k]) * u for k in range(3))
+            t = hill_top(round(x), round(z))
+            if t is not None and y - 2 < t:
+                print(f"WARNING span {a}-{b} touches the hill at {x:.0f},{z:.0f} (wire y {y:.1f}, ground {t})")
+
+
+# ------------------------------------------------------------------------------------------------ later eras (I1-I4)
+
+# Units ported from the GameTests (eras.py), on concrete pads north of the I0 set: row A steel and power,
+# row B oil, chemistry and nuclear. (name, x, z) of the GameTest origin.
+ERA_ROWS = [
+    ("coke_battery", 0, 130), ("blast_furnace", 14, 130), ("arc_furnace", 28, 130), ("steam_turbine", 41, 130),
+    ("control_room", 56, 130),
+    ("drilling_rig", 0, 160), ("oil_field", 17, 160), ("refinery", 34, 160), ("pyrolysis", 47, 160),
+    ("combined_cycle", 61, 160), ("enrichment", 74, 160), ("pwr", 88, 160),
+]
+
+
+def eras(f, start):
+    from eras import ERAS, standing_oy
+    f.fill(-12, -60, 118, 110, -30, 186, "air")
+    f.fill(-12, -63, 118, 110, -62, 186, "dirt")
+    f.fill(-12, G, 118, 110, G, 186, "grass_block")
+    for name, x, z in ERA_ROWS:
+        build, run, (sx, _sy, sz), _ = ERAS[name]
+        f.fill(x - 2, G, z - 3, x + sx + 1, G, z + sz + 1, "gray_concrete")
+        oy = standing_oy(name)
+        build(f, x, oy, z)
+        if run:
+            run(start, x, oy, z)
 
 
 # ------------------------------------------------------------------------------------------------ prime / refresh
@@ -449,6 +657,8 @@ def prime(f):
         for _ in range(3):
             f(f"pc use {bx} -59 49 minecraft:coal")
         f(f"pc use {bx} -59 49 minecraft:flint_and_steel")
+        # a cold Lancashire boiler takes ~20 game minutes to raise steam (91 -> 144 C in 5 min): start it hot
+        f(f"filmset boiler {bx} -59 49 1.1 0.67")
     f("schedule function filmset:open_valve 200t")
     hx, hy, hz = HOIST
     f(f"pc use {hx} {hy} {hz} promptcritical:wire_rope 16")
@@ -483,14 +693,25 @@ def write(world):
     load("gamerule sendCommandFeedback false")
     load("weather clear")
     load("forceload add -20 20 150 110")
+    load("forceload add -20 115 110 190")
     load(f"execute unless score #built filmset matches {VERSION} run schedule function filmset:build 40t")
     fns["load"] = load
 
     build = Fn()
-    for part in ("clear", "yard", "boiler_house", "foundry", "mine"):
+    # eras clears its own zone first: it must run before power, which puts substations and lamps into that zone
+    for part in ("clear", "yard", "boiler_house", "foundry", "mine", "eras", "power"):
         build(f"function filmset:{part}")
     build(f"scoreboard players set #built filmset {VERSION}")
     build("schedule function filmset:prime 40t")
+    # the units' sim twins appear on the first ticks; panel buttons before that are ignored (eras.py)
+    build("schedule function filmset:eras_start 800t")
+    # connectors and the generator get their sim twins on the first ticks; the engine starts in open_valve (240t)
+    build("schedule function filmset:power_start 100t")
+    # couple the line shaft to the running engine: Create joins a shaft to a source only when the shaft is placed
+    # next to it, and the set's shaft was filled before the engine multiblock formed (prime 40t + valve 200t)
+    build("schedule function filmset:couple 400t")
+    # electric drives start once the generator is up on the coupled shaft
+    build("schedule function filmset:motors_start 600t")
     fns["build"] = build
 
     for name, fn in (("clear", clear), ("yard", yard), ("boiler_house", boiler_house), ("foundry", foundry), ("mine", mine),
@@ -498,6 +719,28 @@ def write(world):
         f = Fn()
         fn(f)
         fns[name] = f
+
+    pw, ps = Fn(), Fn()
+    power(pw)
+    lighting(pw)
+    motors(pw)
+    ms = Fn()
+    motors_start(ms, fns)
+    fns["motors_start"] = ms
+    power_start(ps)
+    fns["power"], fns["power_start"] = pw, ps
+    check_spans()
+
+    eb, es = Fn(), Fn()
+    eras(eb, es)
+    fns["eras"] = eb
+    fns["eras_start"] = es
+
+    couple = Fn()
+    ex = BOILERS[-1] + 5
+    couple(f"setblock {ex} -59 51 air")
+    couple(f"setblock {ex} -59 51 create:shaft[axis=x]")
+    fns["couple"] = couple
 
     valve = Fn()
     valve(f"pc panel {BOILERS[-1] + 3} -59 49 0")

@@ -82,9 +82,15 @@ public class ShaftGeneratorBlockEntity extends KineticMachineBlockEntity<Generat
         return unit.shaftPowerW();
     }
 
+    /**
+     * Импульс стоящего вала — потери холостого хода, а не номинал: машина трогается без нагрузки на шинах, а номинал
+     * 400 кВт на стоянке не давал раскрутить генератор ничем слабее (паровая машина I0 — ~130 SU): сеть Create сразу
+     * перегружена, вал стоит, импульс остаётся номинальным. После разгона объявляется мощность модели.
+     */
     @Override
     protected double ratedW() {
-        return GeneratorUnit.RATED_POWER_W;
+        GeneratorUnit u = unit();
+        return (u == null ? GeneratorUnit.RATED_VA : u.ratedVa()) * GeneratorUnit.NO_LOAD_LOSS_PU;
     }
 
     @Override

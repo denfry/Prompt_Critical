@@ -29,6 +29,8 @@ public final class GeneratorUnit extends GridUnit {
     public static final double DRIVE_MAX_TORQUE = 2;
     /** Трение вне сети: постоянная и вязкая части, о.е. момента. */
     static final double FRICTION_PU = 0.005, VISCOUS_PU = 0.01;
+    /** Потери холостого хода на номинальной скорости (трение и вентиляция), о.е. от номинальной полной мощности. */
+    public static final double NO_LOAD_LOSS_PU = FRICTION_PU + VISCOUS_PU;
     public static final double ONLINE_SPEED = 0.5, OFFLINE_SPEED = 0.45;
     /** Оператор возбуждения раз в 5 с подтягивает уставку, если напряжение ушло дальше 0,3 % (статизм АРВ K = 20). */
     static final int VREF_TRIM_TICKS = 100;
