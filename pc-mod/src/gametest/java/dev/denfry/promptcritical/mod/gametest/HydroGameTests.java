@@ -52,4 +52,22 @@ public final class HydroGameTests {
                 })
                 .thenSucceed();
     }
+
+    /** Затвор залило водой (или сломали) на ходу: агрегат не роняет сервер, а теряет водозабор и останавливается. */
+    @GameTest(template = LARGE, timeoutTicks = 2400)
+    public static void lostIntakeGateStopsTheTurbineInsteadOfCrashing(GameTestHelper h) {
+        for (int x = 7; x <= 10; x++) for (int z = 7; z <= 10; z++) {
+            h.setBlock(new BlockPos(x, 7, z), Blocks.STONE);
+            if (!(x == GATE.getX() && z == GATE.getZ())) h.setBlock(new BlockPos(x, 8, z), Blocks.WATER);
+        }
+        h.setBlock(GATE, PcBlocks.DAM_GATE.get().defaultBlockState().setValue(BlockStateProperties.OPEN, true));
+        h.setBlock(TURBINE, PcBlocks.HYDRO_TURBINE.get().defaultBlockState().setValue(BlockStateProperties.HORIZONTAL_FACING, Direction.NORTH));
+        h.startSequence()
+                .thenWaitUntil(() -> h.assertTrue(((HydroTurbineBlockEntity) h.getBlockEntity(TURBINE)).turbine() != null, "intake found"))
+                .thenExecute(() -> h.setBlock(GATE, Blocks.WATER))
+                .thenWaitUntil(() -> h.assertTrue(((HydroTurbineBlockEntity) h.getBlockEntity(TURBINE)).turbine() == null,
+                        "the turbine drops the lost intake on the next scan"))
+                .thenExecute(() -> h.assertTrue(((HydroTurbineBlockEntity) h.getBlockEntity(TURBINE)).outputRpm() == 0, "shaft stops"))
+                .thenSucceed();
+    }
 }
