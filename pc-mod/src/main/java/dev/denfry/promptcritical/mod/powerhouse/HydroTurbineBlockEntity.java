@@ -98,7 +98,10 @@ public class HydroTurbineBlockEntity extends GeneratingKineticBlockEntity implem
             updateRotation(0);
             return;
         }
-        boolean open = gate != null && level.getBlockState(gate).getValue(BlockStateProperties.OPEN);
+        BlockState gs = gate != null && sl.isLoaded(gate) ? sl.getBlockState(gate) : null;
+        boolean isGate = gs != null && gs.is(PcBlocks.DAM_GATE.get());
+        if (gate != null && gs != null && !isGate) ticks = 0;   // затвор сломан или залит: пересканировать водозабор на следующем тике
+        boolean open = isGate && gs.getValue(BlockStateProperties.OPEN);
         if (ticks % 20 == 0) t.setAvailableFlow(RiverService.dischargeM3s(sl, gate));
         t.step(DT, portLoadW / Math.max(t.omega(), 0.2 * t.spec().nominalOmega()), open);
 
