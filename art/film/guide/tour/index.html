@@ -1,0 +1,438 @@
+<!doctype html>
+<html lang="ru">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=1920, height=1080" />
+    <title>Prompt Critical: the whole plant</title>
+    <script src="https://cdn.jsdelivr.net/npm/gsap@3.14.2/dist/gsap.min.js"></script>
+    <style>
+      :root { --bg: #14110d; --fg: #efe6d6; --accent: #f2b705; --muted: #cfc5b3; }
+      * { margin: 0; padding: 0; box-sizing: border-box; }
+      html, body { width: 1920px; height: 1080px; overflow: hidden; background: var(--bg); }
+      #root { position: relative; width: 100%; height: 100%; overflow: hidden; background: var(--bg);
+              font-family: "Oswald", sans-serif; color: var(--fg); }
+      .mono { font-family: "IBM Plex Mono", monospace; }
+      .cam, .whip { position: absolute; inset: 0; overflow: hidden; }
+      .cam video { position: absolute; inset: 0; width: 100%; height: 100%; object-fit: cover; }
+      .ov { position: absolute; inset: 0; }
+      .ov::before { content: ""; position: absolute; inset: 0;
+                    background: radial-gradient(130% 100% at 0% 100%, rgba(20,17,13,0.92) 0%, rgba(20,17,13,0.55) 45%, rgba(20,17,13,0) 75%); }
+      .rule { height: 4px; background: var(--accent); transform-origin: left center; }
+      /* intro */
+      .tag { position: absolute; left: 110px; top: 90px; font-size: 26px; letter-spacing: 0.08em; color: var(--fg);
+             text-transform: uppercase; background: rgba(20,17,13,0.7); padding: 10px 18px; }
+      .title { position: absolute; left: 104px; bottom: 250px; font-size: 190px; line-height: 1.2; font-weight: 700;
+               letter-spacing: 0.01em; background: rgba(20,17,13,0.78); padding: 0 30px; }
+      .title span { display: inline-block; }
+      .title span:last-child { color: var(--accent); }
+      #i-rule { position: absolute; left: 110px; bottom: 214px; width: 760px; }
+      .sub { position: absolute; left: 110px; bottom: 130px; font-size: 52px; font-weight: 500; }
+      /* hero caption */
+      .cap { position: absolute; left: 110px; bottom: 110px; display: flex; align-items: center; gap: 30px;
+             background: rgba(20,17,13,0.86); padding: 22px 40px 24px 22px; border-left: 0; }
+      .code { display: block; background: var(--accent); color: var(--bg); font-size: 44px; font-weight: 600;
+              padding: 10px 18px; }
+      .cap-name { font-size: 72px; font-weight: 700; line-height: 1.25; text-transform: uppercase; }
+      .cap-sub { font-size: 32px; color: var(--muted); margin-top: 8px; font-family: "IBM Plex Mono", monospace; }
+      /* district */
+      .dist { position: absolute; left: 110px; bottom: 105px; width: 1100px; }
+      .d-top { display: flex; align-items: baseline; gap: 24px; font-size: 30px; line-height: 1.4; text-transform: uppercase;
+               letter-spacing: 0.1em; color: var(--accent); margin-bottom: 12px; }
+      .d-idx { font-size: 44px; font-weight: 600; line-height: 1.3; }
+      .d-idx em { font-style: normal; color: var(--muted); font-size: 30px; }
+      .d-word { color: var(--fg); }
+      .d-name { font-size: 150px; font-weight: 700; line-height: 1.3; text-transform: uppercase; }
+      .d-rule { width: 520px; margin: 6px 0 22px; }
+      .d-sub { font-size: 32px; color: var(--fg); background: rgba(20,17,13,0.72); display: inline-block; padding: 8px 16px; }
+      .cnt { position: absolute; right: 110px; bottom: 110px; text-align: right; background: rgba(20,17,13,0.86);
+             padding: 18px 34px 22px; }
+      .cnt-n { display: block; font-size: 120px; font-weight: 600; line-height: 1.3; color: var(--accent); }
+      .cnt-w { display: block; font-size: 34px; line-height: 1.3; text-transform: uppercase; letter-spacing: 0.06em; }
+      /* outro */
+      .total { position: absolute; left: 110px; bottom: 120px; display: flex; align-items: baseline; gap: 34px;
+               background: rgba(20,17,13,0.82); padding: 24px 44px; }
+      .tot-n { font-size: 200px; font-weight: 600; line-height: 1.25; color: var(--accent); }
+      .tot-w { font-size: 64px; font-weight: 600; text-transform: uppercase; max-width: 760px; line-height: 1.05; }
+      /* works */
+      .works-title { position: absolute; left: 110px; bottom: 120px; font-size: 170px; font-weight: 700; line-height: 1.25;
+                     text-transform: uppercase; background: var(--accent); color: var(--bg); padding: 0 40px; }
+      .alarm { position: absolute; right: 110px; top: 100px; font-family: "IBM Plex Mono", monospace; font-size: 54px;
+               font-weight: 600; color: #fff6ec; background: #e5402a; padding: 16px 34px; text-transform: uppercase;
+               line-height: 1.3; }
+      /* end card */
+      .end { position: absolute; inset: 0; background: var(--bg); }
+      .grid-bg { position: absolute; inset: 0; opacity: 0.18;
+                 background-image: linear-gradient(rgba(242,183,5,0.5) 2px, transparent 2px),
+                                   linear-gradient(90deg, rgba(242,183,5,0.5) 2px, transparent 2px);
+                 background-size: 80px 80px; }
+      #e-logo { position: absolute; left: 110px; top: 170px; width: 300px; height: 300px; object-fit: contain;
+                image-rendering: pixelated; }
+      .e-title { position: absolute; left: 110px; top: 500px; font-size: 140px; font-weight: 700; line-height: 1.25; }
+      .e-title span { font-size: 54px; color: var(--accent); vertical-align: middle; }
+      .e-sub { position: absolute; left: 114px; top: 700px; font-size: 36px; color: var(--muted); }
+      .e-next { position: absolute; left: 114px; top: 800px; font-size: 56px; font-weight: 600; color: var(--accent);
+                text-transform: uppercase; }
+    </style>
+  </head>
+  <body>
+    <div id="root" data-composition-id="main" data-start="0" data-duration="110.7692" data-width="1920" data-height="1080">
+      <div class="cam" id="cam0"><div class="whip" id="whip0"><video id="v0" class="clip" src="assets/footage/tu01_aerial_in.mp4" data-start="0.0000" data-duration="5.5385" data-media-start="1.0" data-track-index="0" muted playsinline></video></div></div>
+      <div class="cam" id="cam1"><div class="whip" id="whip1"><video id="v1" class="clip" src="assets/footage/tu02_furnace_rise.mp4" data-start="5.5385" data-duration="3.6923" data-media-start="0.6" data-track-index="1" muted playsinline></video></div></div>
+      <div class="cam" id="cam2"><div class="whip" id="whip2"><video id="v2" class="clip" src="assets/footage/tu03_stoves.mp4" data-start="9.2308" data-duration="1.8462" data-media-start="1.0" data-track-index="0" muted playsinline></video></div></div>
+      <div class="cam" id="cam3"><div class="whip" id="whip3"><video id="v3" class="clip" src="assets/footage/tu04_rig.mp4" data-start="11.0769" data-duration="3.6923" data-media-start="0.6" data-track-index="1" muted playsinline></video></div></div>
+      <div class="cam" id="cam4"><div class="whip" id="whip4"><video id="v4" class="clip" src="assets/footage/tu05_pumpjacks.mp4" data-start="14.7692" data-duration="1.8462" data-media-start="1.0" data-track-index="0" muted playsinline></video></div></div>
+      <div class="cam" id="cam5"><div class="whip" id="whip5"><video id="v5" class="clip" src="assets/footage/tu06_enrich.mp4" data-start="16.6154" data-duration="3.6923" data-media-start="0.6" data-track-index="1" muted playsinline></video></div></div>
+      <div class="cam" id="cam6"><div class="whip" id="whip6"><video id="v6" class="clip" src="assets/footage/tu07_reactor.mp4" data-start="20.3077" data-duration="3.6923" data-media-start="0.6" data-track-index="0" muted playsinline></video></div></div>
+      <div class="cam" id="cam7"><div class="whip" id="whip7"><video id="v7" class="clip" src="assets/footage/tu08_control.mp4" data-start="24.0000" data-duration="1.8462" data-media-start="0.8" data-track-index="1" muted playsinline></video></div></div>
+      <div class="cam" id="cam8"><div class="whip" id="whip8"><video id="v8" class="clip" src="assets/footage/tu20_coal.mp4" data-start="25.8462" data-duration="3.6923" data-media-start="0.4" data-track-index="0" muted playsinline></video></div></div>
+      <div class="cam" id="cam9"><div class="whip" id="whip9"><video id="v9" class="clip" src="assets/footage/tu21_power.mp4" data-start="29.5385" data-duration="3.6923" data-media-start="0.4" data-track-index="1" muted playsinline></video></div></div>
+      <div class="cam" id="cam10"><div class="whip" id="whip10"><video id="v10" class="clip" src="assets/footage/tu22_metal.mp4" data-start="33.2308" data-duration="3.6923" data-media-start="0.4" data-track-index="0" muted playsinline></video></div></div>
+      <div class="cam" id="cam11"><div class="whip" id="whip11"><video id="v11" class="clip" src="assets/footage/tu23_oil.mp4" data-start="36.9231" data-duration="3.6923" data-media-start="0.4" data-track-index="1" muted playsinline></video></div></div>
+      <div class="cam" id="cam12"><div class="whip" id="whip12"><video id="v12" class="clip" src="assets/footage/tu24_chem.mp4" data-start="40.6154" data-duration="3.6923" data-media-start="0.4" data-track-index="0" muted playsinline></video></div></div>
+      <div class="cam" id="cam13"><div class="whip" id="whip13"><video id="v13" class="clip" src="assets/footage/tu25_fuel.mp4" data-start="44.3077" data-duration="3.6923" data-media-start="0.4" data-track-index="1" muted playsinline></video></div></div>
+      <div class="cam" id="cam14"><div class="whip" id="whip14"><video id="v14" class="clip" src="assets/footage/tu26_npp.mp4" data-start="48.0000" data-duration="3.6923" data-media-start="0.4" data-track-index="0" muted playsinline></video></div></div>
+      <div class="cam" id="cam15"><div class="whip" id="whip15"><video id="v15" class="clip" src="assets/footage/tu27_ic.mp4" data-start="51.6923" data-duration="3.6923" data-media-start="0.4" data-track-index="1" muted playsinline></video></div></div>
+      <div class="cam" id="cam16"><div class="whip" id="whip16"><video id="v16" class="clip" src="assets/footage/tu28_ops.mp4" data-start="55.3846" data-duration="3.6923" data-media-start="0.4" data-track-index="0" muted playsinline></video></div></div>
+      <div class="cam" id="cam17"><div class="whip" id="whip17"><video id="v17" class="clip" src="assets/footage/wk01_aerial.mp4" data-start="59.0769" data-duration="3.6923" data-media-start="0.5" data-track-index="1" muted playsinline></video></div></div>
+      <div class="cam" id="cam18"><div class="whip" id="whip18"><video id="v18" class="clip" src="assets/footage/wk02_pyrolysis.mp4" data-start="62.7692" data-duration="3.6923" data-media-start="0.4" data-track-index="0" muted playsinline></video></div></div>
+      <div class="cam" id="cam19"><div class="whip" id="whip19"><video id="v19" class="clip" src="assets/footage/wk03_combined.mp4" data-start="66.4615" data-duration="3.6923" data-media-start="0.3" data-track-index="1" muted playsinline></video></div></div>
+      <div class="cam" id="cam20"><div class="whip" id="whip20"><video id="v20" class="clip" src="assets/footage/tr15_cage.mp4" data-start="70.1538" data-duration="3.6923" data-media-start="0.8" data-track-index="0" muted playsinline></video></div></div>
+      <div class="cam" id="cam21"><div class="whip" id="whip21"><video id="v21" class="clip" src="assets/footage/wk04_drill_panel.mp4" data-start="73.8462" data-duration="5.5385" data-media-start="0.3" data-track-index="1" muted playsinline></video></div></div>
+      <div class="cam" id="cam22"><div class="whip" id="whip22"><video id="v22" class="clip" src="assets/footage/wk05_bop.mp4" data-start="79.3846" data-duration="3.6923" data-media-start="0.3" data-track-index="0" muted playsinline></video></div></div>
+      <div class="cam" id="cam23"><div class="whip" id="whip23"><video id="v23" class="clip" src="assets/footage/wk06_reactor_panel.mp4" data-start="83.0769" data-duration="5.5385" data-media-start="0.3" data-track-index="1" muted playsinline></video></div></div>
+      <div class="cam" id="cam24"><div class="whip" id="whip24"><video id="v24" class="clip" src="assets/footage/wk07_reactor_hall.mp4" data-start="88.6154" data-duration="3.6923" data-media-start="0.4" data-track-index="0" muted playsinline></video></div></div>
+      <div class="cam" id="cam25"><div class="whip" id="whip25"><video id="v25" class="clip" src="assets/footage/wk08_cascade.mp4" data-start="92.3077" data-duration="3.6923" data-media-start="0.4" data-track-index="1" muted playsinline></video></div></div>
+      <div class="cam" id="cam26"><div class="whip" id="whip26"><video id="v26" class="clip" src="assets/footage/tr05_panel_boiler.mp4" data-start="96.0000" data-duration="5.5385" data-media-start="0.3" data-track-index="0" muted playsinline></video></div></div>
+      <div class="cam" id="cam27"><div class="whip" id="whip27"><video id="v27" class="clip" src="assets/footage/wk10_aerial_out.mp4" data-start="101.5385" data-duration="5.5385" data-media-start="0.5" data-track-index="1" muted playsinline></video></div></div>
+<section id="ov1" class="clip ov" data-start="0.0000" data-duration="5.5385" data-track-index="3">
+  <div class="tag mono" id="i-tag">Minecraft 1.21.1 · NeoForge · Create · CC: Tweaked</div>
+  <h1 class="title" id="i-title"><span>PROMPT</span> <span>CRITICAL</span></h1>
+  <div class="rule" id="i-rule"></div>
+  <p class="sub" id="i-sub">Весь завод. Все машины мода.</p>
+</section>
+<section id="ov2" class="clip ov" data-start="5.5385" data-duration="3.6923" data-track-index="3">
+  <div class="cap" id="h0"><span class="code mono">I1</span><div><p class="cap-name">Доменная печь</p><p class="cap-sub">кокс, агломерат, горячее дутьё</p></div></div>
+</section>
+<section id="ov3" class="clip ov" data-start="9.2308" data-duration="1.8462" data-track-index="3">
+  <div class="cap" id="h1"><span class="code mono">I1</span><div><p class="cap-name">Воздухонагреватели</p></div></div>
+</section>
+<section id="ov4" class="clip ov" data-start="11.0769" data-duration="3.6923" data-track-index="3">
+  <div class="cap" id="h2"><span class="code mono">I2</span><div><p class="cap-name">Буровая</p><p class="cap-sub">газопроявления, ПВО, глушение</p></div></div>
+</section>
+<section id="ov5" class="clip ov" data-start="14.7692" data-duration="1.8462" data-track-index="3">
+  <div class="cap" id="h3"><span class="code mono">I2</span><div><p class="cap-name">Станки-качалки</p></div></div>
+</section>
+<section id="ov6" class="clip ov" data-start="16.6154" data-duration="3.6923" data-track-index="3">
+  <div class="cap" id="h4"><span class="code mono">I4</span><div><p class="cap-name">Каскад центрифуг</p><p class="cap-sub">обогащение UF₆</p></div></div>
+</section>
+<section id="ov7" class="clip ov" data-start="20.3077" data-duration="3.6923" data-track-index="3">
+  <div class="cap" id="h5"><span class="code mono">T2a</span><div><p class="cap-name">ВВЭР</p><p class="cap-sub">аварии вплоть до плавления зоны</p></div></div>
+</section>
+<section id="ov8" class="clip ov" data-start="24.0000" data-duration="1.8462" data-track-index="3">
+  <div class="cap" id="h6"><span class="code mono">A4</span><div><p class="cap-name">Щит управления</p></div></div>
+</section>
+<section id="ov9" class="clip ov" data-start="25.8462" data-duration="3.6923" data-track-index="3">
+  <div class="dist" id="d0">
+    <div class="d-top mono"><span class="d-idx">01<em>/09</em></span><span class="d-word">участок</span></div>
+    <p class="d-name">Уголь и пар</p>
+    <div class="rule d-rule"></div>
+    <p class="d-sub mono">шахта · котлы · паровые машины</p>
+  </div>
+  <div class="cnt" id="c0"><span class="cnt-n mono" data-n="14">14</span><span class="cnt-w">машин</span></div>
+</section>
+<section id="ov10" class="clip ov" data-start="29.5385" data-duration="3.6923" data-track-index="3">
+  <div class="dist" id="d1">
+    <div class="d-top mono"><span class="d-idx">02<em>/09</em></span><span class="d-word">участок</span></div>
+    <p class="d-name">Энергетика</p>
+    <div class="rule d-rule"></div>
+    <p class="d-sub mono">генераторы · ЛЭП · релейная защита</p>
+  </div>
+  <div class="cnt" id="c1"><span class="cnt-n mono" data-n="31">31</span><span class="cnt-w">машина</span></div>
+</section>
+<section id="ov11" class="clip ov" data-start="33.2308" data-duration="3.6923" data-track-index="3">
+  <div class="dist" id="d2">
+    <div class="d-top mono"><span class="d-idx">03<em>/09</em></span><span class="d-word">участок</span></div>
+    <p class="d-name">Металлургия</p>
+    <div class="rule d-rule"></div>
+    <p class="d-sub mono">домна · конвертер · прокат · цветмет</p>
+  </div>
+  <div class="cnt" id="c2"><span class="cnt-n mono" data-n="45">45</span><span class="cnt-w">машин</span></div>
+</section>
+<section id="ov12" class="clip ov" data-start="36.9231" data-duration="3.6923" data-track-index="3">
+  <div class="dist" id="d3">
+    <div class="d-top mono"><span class="d-idx">04<em>/09</em></span><span class="d-word">участок</span></div>
+    <p class="d-name">Нефть и газ</p>
+    <div class="rule d-rule"></div>
+    <p class="d-sub mono">бурение · добыча · НПЗ · газопереработка</p>
+  </div>
+  <div class="cnt" id="c3"><span class="cnt-n mono" data-n="30">30</span><span class="cnt-w">машин</span></div>
+</section>
+<section id="ov13" class="clip ov" data-start="40.6154" data-duration="3.6923" data-track-index="3">
+  <div class="dist" id="d4">
+    <div class="d-top mono"><span class="d-idx">05<em>/09</em></span><span class="d-word">участок</span></div>
+    <p class="d-name">Химия</p>
+    <div class="rule d-rule"></div>
+    <p class="d-sub mono">пиролиз · хлор · аммиак · метанол · кремний</p>
+  </div>
+  <div class="cnt" id="c4"><span class="cnt-n mono" data-n="23">23</span><span class="cnt-w">машины</span></div>
+</section>
+<section id="ov14" class="clip ov" data-start="44.3077" data-duration="3.6923" data-track-index="3">
+  <div class="dist" id="d5">
+    <div class="d-top mono"><span class="d-idx">06<em>/09</em></span><span class="d-word">участок</span></div>
+    <p class="d-name">Ядерное топливо</p>
+    <div class="rule d-rule"></div>
+    <p class="d-sub mono">передел урана · обогащение · PUREX · РАО</p>
+  </div>
+  <div class="cnt" id="c5"><span class="cnt-n mono" data-n="27">27</span><span class="cnt-w">машин</span></div>
+</section>
+<section id="ov15" class="clip ov" data-start="48.0000" data-duration="3.6923" data-track-index="3">
+  <div class="dist" id="d6">
+    <div class="d-top mono"><span class="d-idx">07<em>/09</em></span><span class="d-word">участок</span></div>
+    <p class="d-name">АЭС</p>
+    <div class="rule d-rule"></div>
+    <p class="d-sub mono">АМ-1 · ВВЭР · CANDU · БН · TRIGA</p>
+  </div>
+  <div class="cnt" id="c6"><span class="cnt-n mono" data-n="16">16</span><span class="cnt-w">машин</span></div>
+</section>
+<section id="ov16" class="clip ov" data-start="51.6923" data-duration="3.6923" data-track-index="3">
+  <div class="dist" id="d7">
+    <div class="d-top mono"><span class="d-idx">08<em>/09</em></span><span class="d-word">участок</span></div>
+    <p class="d-name">Автоматика</p>
+    <div class="rule d-rule"></div>
+    <p class="d-sub mono">реле · аналоговые машины · ПЛК · SCADA</p>
+  </div>
+  <div class="cnt" id="c7"><span class="cnt-n mono" data-n="14">14</span><span class="cnt-w">машин</span></div>
+</section>
+<section id="ov17" class="clip ov" data-start="55.3846" data-duration="3.6923" data-track-index="3">
+  <div class="dist" id="d8">
+    <div class="d-top mono"><span class="d-idx">09<em>/09</em></span><span class="d-word">участок</span></div>
+    <p class="d-name">Эксплуатация</p>
+    <div class="rule d-rule"></div>
+    <p class="d-sub mono">водоподготовка · очистка газов · биржа</p>
+  </div>
+  <div class="cnt" id="c8"><span class="cnt-n mono" data-n="21">21</span><span class="cnt-w">машина</span></div>
+</section>
+<section id="ov18" class="clip ov" data-start="59.0769" data-duration="3.6923" data-track-index="3">
+  <h2 class="works-title" id="w-title">Завод в работе</h2>
+</section>
+<section id="ov19" class="clip ov" data-start="62.7692" data-duration="3.6923" data-track-index="3">
+  <div class="cap" id="w0"><span class="code mono">●</span><div><p class="cap-name">Пиролиз</p><p class="cap-sub">пропан → этилен и пропилен</p></div></div>
+  
+</section>
+<section id="ov20" class="clip ov" data-start="66.4615" data-duration="3.6923" data-track-index="3">
+  <div class="cap" id="w1"><span class="code mono">●</span><div><p class="cap-name">Парогазовый цикл</p><p class="cap-sub">выхлоп ГТУ греет котёл-утилизатор</p></div></div>
+  
+</section>
+<section id="ov21" class="clip ov" data-start="70.1538" data-duration="3.6923" data-track-index="3">
+  <div class="cap" id="w2"><span class="code mono">●</span><div><p class="cap-name">Шахтный подъём</p><p class="cap-sub">клеть уходит в ствол</p></div></div>
+  
+</section>
+<section id="ov22" class="clip ov" data-start="73.8462" data-duration="5.5385" data-track-index="3">
+  <div class="cap" id="w3"><span class="code mono">●</span><div><p class="cap-name">Пульт бурильщика</p><p class="cap-sub">приток газа: растёт объём в ёмкостях</p></div></div>
+  <div class="alarm" id="wa3">ПВО закрыт</div>
+</section>
+<section id="ov23" class="clip ov" data-start="79.3846" data-duration="3.6923" data-track-index="3">
+  <div class="cap" id="w4"><span class="code mono">●</span><div><p class="cap-name">Устье скважины</p><p class="cap-sub">газ прорвался к устью и горит</p></div></div>
+  
+</section>
+<section id="ov24" class="clip ov" data-start="83.0769" data-duration="5.5385" data-track-index="3">
+  <div class="cap" id="w5"><span class="code mono">●</span><div><p class="cap-name">ВВЭР · 50 %</p><p class="cap-sub">ПГ не забирает тепло: давление растёт</p></div></div>
+  <div class="alarm" id="wa5">АЗ: давление высокое</div>
+</section>
+<section id="ov25" class="clip ov" data-start="88.6154" data-duration="3.6923" data-track-index="3">
+  <div class="cap" id="w6"><span class="code mono">●</span><div><p class="cap-name">Реакторный зал</p></div></div>
+  
+</section>
+<section id="ov26" class="clip ov" data-start="92.3077" data-duration="3.6923" data-track-index="3">
+  <div class="cap" id="w7"><span class="code mono">●</span><div><p class="cap-name">Каскад центрифуг</p><p class="cap-sub">обогащение UF₆ идёт</p></div></div>
+  
+</section>
+<section id="ov27" class="clip ov" data-start="96.0000" data-duration="5.5385" data-track-index="3">
+  <div class="cap" id="w8"><span class="code mono">●</span><div><p class="cap-name">Щит котла</p><p class="cap-sub">розжиг топки с щита</p></div></div>
+  
+</section>
+<section id="ov28" class="clip ov" data-start="101.5385" data-duration="5.5385" data-track-index="3">
+  <div class="total" id="tot"><span class="tot-n mono">221</span><span class="tot-w">машина в одном мире</span></div>
+</section>
+<section id="end28" class="clip end" data-start="107.0769" data-duration="3.6923" data-track-index="4">
+  <div class="grid-bg"></div>
+  <img id="e-logo" src="assets/logo.png" alt="">
+  <h2 class="e-title" id="e-title">PROMPT CRITICAL <span class="mono">1.0.0-rc.1</span></h2>
+  <p class="e-sub mono" id="e-sub">Нужны: NeoForge 21.1, Create, CC: Tweaked</p>
+  <p class="e-next" id="e-next">Дальше: видеогайд по эрам</p>
+</section>
+      <audio id="music" src="assets/music.ogg" data-start="0" data-duration="110.7692" data-track-index="9" data-volume="0.9" data-automation='{"version": 1, "lanes": [{"target": "volume", "points": [{"t": 0, "v": 0.9}, {"t": 108.569, "v": 0.9}, {"t": 110.769, "v": 0}]}]}'></audio>
+    </div>
+    <script>
+      const tl = gsap.timeline({ paused: true });
+      tl.fromTo("#cam0", {scale: 1.0}, {scale: 1.05, duration: 5.5385, ease: "none"}, 0.0000);
+      tl.from("#i-tag", {opacity: 0, y: -20, duration: 0.5, ease: "power2.out"}, 0.300);
+      tl.from("#i-title span", {yPercent: 110, opacity: 0, duration: 0.7, ease: "power4.out", stagger: 0.12}, 0.500);
+      tl.from("#i-rule", {scaleX: 0, duration: 0.6, ease: "expo.out"}, 1.100);
+      tl.from("#i-sub", {opacity: 0, x: -30, duration: 0.5, ease: "power3.out"}, 1.400);
+      tl.to("#i-title, #i-sub, #i-tag, #i-rule", {opacity: 0, duration: 0.3}, 5.188);
+      tl.fromTo("#cam1", {scale: 1.0}, {scale: 1.05, duration: 3.6923, ease: "none"}, 5.5385);
+      tl.fromTo("#whip1", {xPercent: 6, filter: "blur(18px)"}, {xPercent: 0, filter: "blur(0px)", duration: 0.32, ease: "expo.out"}, 5.5385);
+      tl.from("#h0", {clipPath: "inset(0 100% 0 0)", duration: 0.45, ease: "expo.out"}, 5.658);
+      tl.from("#h0 .code", {scale: 1.6, opacity: 0, duration: 0.35, ease: "back.out(2)"}, 5.658);
+      tl.fromTo("#cam2", {scale: 1.0}, {scale: 1.05, duration: 1.8462, ease: "none"}, 9.2308);
+      tl.fromTo("#whip2", {xPercent: 6, filter: "blur(18px)"}, {xPercent: 0, filter: "blur(0px)", duration: 0.32, ease: "expo.out"}, 9.2308);
+      tl.from("#h1", {clipPath: "inset(0 100% 0 0)", duration: 0.45, ease: "expo.out"}, 9.351);
+      tl.from("#h1 .code", {scale: 1.6, opacity: 0, duration: 0.35, ease: "back.out(2)"}, 9.351);
+      tl.fromTo("#cam3", {scale: 1.0}, {scale: 1.05, duration: 3.6923, ease: "none"}, 11.0769);
+      tl.fromTo("#whip3", {xPercent: 6, filter: "blur(18px)"}, {xPercent: 0, filter: "blur(0px)", duration: 0.32, ease: "expo.out"}, 11.0769);
+      tl.from("#h2", {clipPath: "inset(0 100% 0 0)", duration: 0.45, ease: "expo.out"}, 11.197);
+      tl.from("#h2 .code", {scale: 1.6, opacity: 0, duration: 0.35, ease: "back.out(2)"}, 11.197);
+      tl.fromTo("#cam4", {scale: 1.0}, {scale: 1.05, duration: 1.8462, ease: "none"}, 14.7692);
+      tl.fromTo("#whip4", {xPercent: 6, filter: "blur(18px)"}, {xPercent: 0, filter: "blur(0px)", duration: 0.32, ease: "expo.out"}, 14.7692);
+      tl.from("#h3", {clipPath: "inset(0 100% 0 0)", duration: 0.45, ease: "expo.out"}, 14.889);
+      tl.from("#h3 .code", {scale: 1.6, opacity: 0, duration: 0.35, ease: "back.out(2)"}, 14.889);
+      tl.fromTo("#cam5", {scale: 1.0}, {scale: 1.05, duration: 3.6923, ease: "none"}, 16.6154);
+      tl.fromTo("#whip5", {xPercent: 6, filter: "blur(18px)"}, {xPercent: 0, filter: "blur(0px)", duration: 0.32, ease: "expo.out"}, 16.6154);
+      tl.from("#h4", {clipPath: "inset(0 100% 0 0)", duration: 0.45, ease: "expo.out"}, 16.735);
+      tl.from("#h4 .code", {scale: 1.6, opacity: 0, duration: 0.35, ease: "back.out(2)"}, 16.735);
+      tl.fromTo("#cam6", {scale: 1.0}, {scale: 1.05, duration: 3.6923, ease: "none"}, 20.3077);
+      tl.fromTo("#whip6", {xPercent: 6, filter: "blur(18px)"}, {xPercent: 0, filter: "blur(0px)", duration: 0.32, ease: "expo.out"}, 20.3077);
+      tl.from("#h5", {clipPath: "inset(0 100% 0 0)", duration: 0.45, ease: "expo.out"}, 20.428);
+      tl.from("#h5 .code", {scale: 1.6, opacity: 0, duration: 0.35, ease: "back.out(2)"}, 20.428);
+      tl.fromTo("#cam7", {scale: 1.0}, {scale: 1.05, duration: 1.8462, ease: "none"}, 24.0000);
+      tl.fromTo("#whip7", {xPercent: 6, filter: "blur(18px)"}, {xPercent: 0, filter: "blur(0px)", duration: 0.32, ease: "expo.out"}, 24.0000);
+      tl.from("#h6", {clipPath: "inset(0 100% 0 0)", duration: 0.45, ease: "expo.out"}, 24.120);
+      tl.from("#h6 .code", {scale: 1.6, opacity: 0, duration: 0.35, ease: "back.out(2)"}, 24.120);
+      tl.fromTo("#cam8", {scale: 1.0}, {scale: 1.05, duration: 3.6923, ease: "none"}, 25.8462);
+      tl.fromTo("#whip8", {xPercent: 6, filter: "blur(18px)"}, {xPercent: 0, filter: "blur(0px)", duration: 0.32, ease: "expo.out"}, 25.8462);
+      tl.from("#d0 .d-top", {opacity: 0, x: -24, duration: 0.35, ease: "power3.out"}, 25.946);
+      tl.from("#d0 .d-name", {yPercent: 100, opacity: 0, duration: 0.55, ease: "power4.out"}, 26.026);
+      tl.from("#d0 .d-rule", {scaleX: 0, duration: 0.5, ease: "expo.out"}, 26.246);
+      tl.from("#d0 .d-sub", {opacity: 0, y: 14, duration: 0.4, ease: "power2.out"}, 26.396);
+      tl.from("#c0", {opacity: 0, y: 30, duration: 0.4, ease: "power3.out"}, 26.146);
+      tl.from("#c0 .cnt-n", {textContent: 0, duration: 0.9, ease: "power2.out", snap: {textContent: 1}}, 26.146);
+      tl.to("#d0, #c0", {opacity: 0, duration: 0.2}, 29.318);
+      tl.fromTo("#cam9", {scale: 1.0}, {scale: 1.05, duration: 3.6923, ease: "none"}, 29.5385);
+      tl.fromTo("#whip9", {xPercent: 6, filter: "blur(18px)"}, {xPercent: 0, filter: "blur(0px)", duration: 0.32, ease: "expo.out"}, 29.5385);
+      tl.from("#d1 .d-top", {opacity: 0, x: -24, duration: 0.35, ease: "power3.out"}, 29.638);
+      tl.from("#d1 .d-name", {yPercent: 100, opacity: 0, duration: 0.55, ease: "power4.out"}, 29.718);
+      tl.from("#d1 .d-rule", {scaleX: 0, duration: 0.5, ease: "expo.out"}, 29.938);
+      tl.from("#d1 .d-sub", {opacity: 0, y: 14, duration: 0.4, ease: "power2.out"}, 30.088);
+      tl.from("#c1", {opacity: 0, y: 30, duration: 0.4, ease: "power3.out"}, 29.838);
+      tl.from("#c1 .cnt-n", {textContent: 0, duration: 0.9, ease: "power2.out", snap: {textContent: 1}}, 29.838);
+      tl.to("#d1, #c1", {opacity: 0, duration: 0.2}, 33.011);
+      tl.fromTo("#cam10", {scale: 1.0}, {scale: 1.05, duration: 3.6923, ease: "none"}, 33.2308);
+      tl.fromTo("#whip10", {xPercent: 6, filter: "blur(18px)"}, {xPercent: 0, filter: "blur(0px)", duration: 0.32, ease: "expo.out"}, 33.2308);
+      tl.from("#d2 .d-top", {opacity: 0, x: -24, duration: 0.35, ease: "power3.out"}, 33.331);
+      tl.from("#d2 .d-name", {yPercent: 100, opacity: 0, duration: 0.55, ease: "power4.out"}, 33.411);
+      tl.from("#d2 .d-rule", {scaleX: 0, duration: 0.5, ease: "expo.out"}, 33.631);
+      tl.from("#d2 .d-sub", {opacity: 0, y: 14, duration: 0.4, ease: "power2.out"}, 33.781);
+      tl.from("#c2", {opacity: 0, y: 30, duration: 0.4, ease: "power3.out"}, 33.531);
+      tl.from("#c2 .cnt-n", {textContent: 0, duration: 0.9, ease: "power2.out", snap: {textContent: 1}}, 33.531);
+      tl.to("#d2, #c2", {opacity: 0, duration: 0.2}, 36.703);
+      tl.fromTo("#cam11", {scale: 1.0}, {scale: 1.05, duration: 3.6923, ease: "none"}, 36.9231);
+      tl.fromTo("#whip11", {xPercent: 6, filter: "blur(18px)"}, {xPercent: 0, filter: "blur(0px)", duration: 0.32, ease: "expo.out"}, 36.9231);
+      tl.from("#d3 .d-top", {opacity: 0, x: -24, duration: 0.35, ease: "power3.out"}, 37.023);
+      tl.from("#d3 .d-name", {yPercent: 100, opacity: 0, duration: 0.55, ease: "power4.out"}, 37.103);
+      tl.from("#d3 .d-rule", {scaleX: 0, duration: 0.5, ease: "expo.out"}, 37.323);
+      tl.from("#d3 .d-sub", {opacity: 0, y: 14, duration: 0.4, ease: "power2.out"}, 37.473);
+      tl.from("#c3", {opacity: 0, y: 30, duration: 0.4, ease: "power3.out"}, 37.223);
+      tl.from("#c3 .cnt-n", {textContent: 0, duration: 0.9, ease: "power2.out", snap: {textContent: 1}}, 37.223);
+      tl.to("#d3, #c3", {opacity: 0, duration: 0.2}, 40.395);
+      tl.fromTo("#cam12", {scale: 1.0}, {scale: 1.05, duration: 3.6923, ease: "none"}, 40.6154);
+      tl.fromTo("#whip12", {xPercent: 6, filter: "blur(18px)"}, {xPercent: 0, filter: "blur(0px)", duration: 0.32, ease: "expo.out"}, 40.6154);
+      tl.from("#d4 .d-top", {opacity: 0, x: -24, duration: 0.35, ease: "power3.out"}, 40.715);
+      tl.from("#d4 .d-name", {yPercent: 100, opacity: 0, duration: 0.55, ease: "power4.out"}, 40.795);
+      tl.from("#d4 .d-rule", {scaleX: 0, duration: 0.5, ease: "expo.out"}, 41.015);
+      tl.from("#d4 .d-sub", {opacity: 0, y: 14, duration: 0.4, ease: "power2.out"}, 41.165);
+      tl.from("#c4", {opacity: 0, y: 30, duration: 0.4, ease: "power3.out"}, 40.915);
+      tl.from("#c4 .cnt-n", {textContent: 0, duration: 0.9, ease: "power2.out", snap: {textContent: 1}}, 40.915);
+      tl.to("#d4, #c4", {opacity: 0, duration: 0.2}, 44.088);
+      tl.fromTo("#cam13", {scale: 1.0}, {scale: 1.05, duration: 3.6923, ease: "none"}, 44.3077);
+      tl.fromTo("#whip13", {xPercent: 6, filter: "blur(18px)"}, {xPercent: 0, filter: "blur(0px)", duration: 0.32, ease: "expo.out"}, 44.3077);
+      tl.from("#d5 .d-top", {opacity: 0, x: -24, duration: 0.35, ease: "power3.out"}, 44.408);
+      tl.from("#d5 .d-name", {yPercent: 100, opacity: 0, duration: 0.55, ease: "power4.out"}, 44.488);
+      tl.from("#d5 .d-rule", {scaleX: 0, duration: 0.5, ease: "expo.out"}, 44.708);
+      tl.from("#d5 .d-sub", {opacity: 0, y: 14, duration: 0.4, ease: "power2.out"}, 44.858);
+      tl.from("#c5", {opacity: 0, y: 30, duration: 0.4, ease: "power3.out"}, 44.608);
+      tl.from("#c5 .cnt-n", {textContent: 0, duration: 0.9, ease: "power2.out", snap: {textContent: 1}}, 44.608);
+      tl.to("#d5, #c5", {opacity: 0, duration: 0.2}, 47.780);
+      tl.fromTo("#cam14", {scale: 1.0}, {scale: 1.05, duration: 3.6923, ease: "none"}, 48.0000);
+      tl.fromTo("#whip14", {xPercent: 6, filter: "blur(18px)"}, {xPercent: 0, filter: "blur(0px)", duration: 0.32, ease: "expo.out"}, 48.0000);
+      tl.from("#d6 .d-top", {opacity: 0, x: -24, duration: 0.35, ease: "power3.out"}, 48.100);
+      tl.from("#d6 .d-name", {yPercent: 100, opacity: 0, duration: 0.55, ease: "power4.out"}, 48.180);
+      tl.from("#d6 .d-rule", {scaleX: 0, duration: 0.5, ease: "expo.out"}, 48.400);
+      tl.from("#d6 .d-sub", {opacity: 0, y: 14, duration: 0.4, ease: "power2.out"}, 48.550);
+      tl.from("#c6", {opacity: 0, y: 30, duration: 0.4, ease: "power3.out"}, 48.300);
+      tl.from("#c6 .cnt-n", {textContent: 0, duration: 0.9, ease: "power2.out", snap: {textContent: 1}}, 48.300);
+      tl.to("#d6, #c6", {opacity: 0, duration: 0.2}, 51.472);
+      tl.fromTo("#cam15", {scale: 1.0}, {scale: 1.05, duration: 3.6923, ease: "none"}, 51.6923);
+      tl.fromTo("#whip15", {xPercent: 6, filter: "blur(18px)"}, {xPercent: 0, filter: "blur(0px)", duration: 0.32, ease: "expo.out"}, 51.6923);
+      tl.from("#d7 .d-top", {opacity: 0, x: -24, duration: 0.35, ease: "power3.out"}, 51.792);
+      tl.from("#d7 .d-name", {yPercent: 100, opacity: 0, duration: 0.55, ease: "power4.out"}, 51.872);
+      tl.from("#d7 .d-rule", {scaleX: 0, duration: 0.5, ease: "expo.out"}, 52.092);
+      tl.from("#d7 .d-sub", {opacity: 0, y: 14, duration: 0.4, ease: "power2.out"}, 52.242);
+      tl.from("#c7", {opacity: 0, y: 30, duration: 0.4, ease: "power3.out"}, 51.992);
+      tl.from("#c7 .cnt-n", {textContent: 0, duration: 0.9, ease: "power2.out", snap: {textContent: 1}}, 51.992);
+      tl.to("#d7, #c7", {opacity: 0, duration: 0.2}, 55.165);
+      tl.fromTo("#cam16", {scale: 1.0}, {scale: 1.05, duration: 3.6923, ease: "none"}, 55.3846);
+      tl.fromTo("#whip16", {xPercent: 6, filter: "blur(18px)"}, {xPercent: 0, filter: "blur(0px)", duration: 0.32, ease: "expo.out"}, 55.3846);
+      tl.from("#d8 .d-top", {opacity: 0, x: -24, duration: 0.35, ease: "power3.out"}, 55.485);
+      tl.from("#d8 .d-name", {yPercent: 100, opacity: 0, duration: 0.55, ease: "power4.out"}, 55.565);
+      tl.from("#d8 .d-rule", {scaleX: 0, duration: 0.5, ease: "expo.out"}, 55.785);
+      tl.from("#d8 .d-sub", {opacity: 0, y: 14, duration: 0.4, ease: "power2.out"}, 55.935);
+      tl.from("#c8", {opacity: 0, y: 30, duration: 0.4, ease: "power3.out"}, 55.685);
+      tl.from("#c8 .cnt-n", {textContent: 0, duration: 0.9, ease: "power2.out", snap: {textContent: 1}}, 55.685);
+      tl.to("#d8, #c8", {opacity: 0, duration: 0.2}, 58.857);
+      tl.fromTo("#cam17", {scale: 1.0}, {scale: 1.05, duration: 3.6923, ease: "none"}, 59.0769);
+      tl.fromTo("#whip17", {xPercent: 6, filter: "blur(18px)"}, {xPercent: 0, filter: "blur(0px)", duration: 0.32, ease: "expo.out"}, 59.0769);
+      tl.from("#w-title", {clipPath: "inset(0 100% 0 0)", duration: 0.6, ease: "expo.out"}, 59.227);
+      tl.fromTo("#cam18", {scale: 1.0}, {scale: 1.05, duration: 3.6923, ease: "none"}, 62.7692);
+      tl.fromTo("#whip18", {xPercent: 6, filter: "blur(18px)"}, {xPercent: 0, filter: "blur(0px)", duration: 0.32, ease: "expo.out"}, 62.7692);
+      tl.from("#w0", {clipPath: "inset(0 100% 0 0)", duration: 0.45, ease: "expo.out"}, 62.889);
+      tl.fromTo("#w0 .code", {opacity: 1}, {opacity: 0.25, duration: 0.46, repeat: 4, yoyo: true, ease: "none"}, 62.769);
+      tl.fromTo("#cam19", {scale: 1.0}, {scale: 1.05, duration: 3.6923, ease: "none"}, 66.4615);
+      tl.fromTo("#whip19", {xPercent: 6, filter: "blur(18px)"}, {xPercent: 0, filter: "blur(0px)", duration: 0.32, ease: "expo.out"}, 66.4615);
+      tl.from("#w1", {clipPath: "inset(0 100% 0 0)", duration: 0.45, ease: "expo.out"}, 66.582);
+      tl.fromTo("#w1 .code", {opacity: 1}, {opacity: 0.25, duration: 0.46, repeat: 4, yoyo: true, ease: "none"}, 66.462);
+      tl.fromTo("#cam20", {scale: 1.0}, {scale: 1.05, duration: 3.6923, ease: "none"}, 70.1538);
+      tl.fromTo("#whip20", {xPercent: 6, filter: "blur(18px)"}, {xPercent: 0, filter: "blur(0px)", duration: 0.32, ease: "expo.out"}, 70.1538);
+      tl.from("#w2", {clipPath: "inset(0 100% 0 0)", duration: 0.45, ease: "expo.out"}, 70.274);
+      tl.fromTo("#w2 .code", {opacity: 1}, {opacity: 0.25, duration: 0.46, repeat: 4, yoyo: true, ease: "none"}, 70.154);
+      tl.fromTo("#cam21", {scale: 1.0}, {scale: 1.05, duration: 5.5385, ease: "none"}, 73.8462);
+      tl.fromTo("#whip21", {xPercent: 6, filter: "blur(18px)"}, {xPercent: 0, filter: "blur(0px)", duration: 0.32, ease: "expo.out"}, 73.8462);
+      tl.from("#w3", {clipPath: "inset(0 100% 0 0)", duration: 0.45, ease: "expo.out"}, 73.966);
+      tl.fromTo("#w3 .code", {opacity: 1}, {opacity: 0.25, duration: 0.46, repeat: 6, yoyo: true, ease: "none"}, 73.846);
+      tl.from("#wa3", {scale: 1.4, opacity: 0, duration: 0.25, ease: "back.out(2)"}, 76.346);
+      tl.fromTo("#wa3", {backgroundColor: "#e5402a"}, {backgroundColor: "#7a1d12", duration: 0.23, repeat: 6, yoyo: true, ease: "none"}, 76.596);
+      tl.fromTo("#cam22", {scale: 1.0}, {scale: 1.05, duration: 3.6923, ease: "none"}, 79.3846);
+      tl.fromTo("#whip22", {xPercent: 6, filter: "blur(18px)"}, {xPercent: 0, filter: "blur(0px)", duration: 0.32, ease: "expo.out"}, 79.3846);
+      tl.from("#w4", {clipPath: "inset(0 100% 0 0)", duration: 0.45, ease: "expo.out"}, 79.505);
+      tl.fromTo("#w4 .code", {opacity: 1}, {opacity: 0.25, duration: 0.46, repeat: 4, yoyo: true, ease: "none"}, 79.385);
+      tl.fromTo("#cam23", {scale: 1.0}, {scale: 1.05, duration: 5.5385, ease: "none"}, 83.0769);
+      tl.fromTo("#whip23", {xPercent: 6, filter: "blur(18px)"}, {xPercent: 0, filter: "blur(0px)", duration: 0.32, ease: "expo.out"}, 83.0769);
+      tl.from("#w5", {clipPath: "inset(0 100% 0 0)", duration: 0.45, ease: "expo.out"}, 83.197);
+      tl.fromTo("#w5 .code", {opacity: 1}, {opacity: 0.25, duration: 0.46, repeat: 6, yoyo: true, ease: "none"}, 83.077);
+      tl.from("#wa5", {scale: 1.4, opacity: 0, duration: 0.25, ease: "back.out(2)"}, 84.077);
+      tl.fromTo("#wa5", {backgroundColor: "#e5402a"}, {backgroundColor: "#7a1d12", duration: 0.23, repeat: 9, yoyo: true, ease: "none"}, 84.327);
+      tl.fromTo("#cam24", {scale: 1.0}, {scale: 1.05, duration: 3.6923, ease: "none"}, 88.6154);
+      tl.fromTo("#whip24", {xPercent: 6, filter: "blur(18px)"}, {xPercent: 0, filter: "blur(0px)", duration: 0.32, ease: "expo.out"}, 88.6154);
+      tl.from("#w6", {clipPath: "inset(0 100% 0 0)", duration: 0.45, ease: "expo.out"}, 88.735);
+      tl.fromTo("#w6 .code", {opacity: 1}, {opacity: 0.25, duration: 0.46, repeat: 4, yoyo: true, ease: "none"}, 88.615);
+      tl.fromTo("#cam25", {scale: 1.0}, {scale: 1.05, duration: 3.6923, ease: "none"}, 92.3077);
+      tl.fromTo("#whip25", {xPercent: 6, filter: "blur(18px)"}, {xPercent: 0, filter: "blur(0px)", duration: 0.32, ease: "expo.out"}, 92.3077);
+      tl.from("#w7", {clipPath: "inset(0 100% 0 0)", duration: 0.45, ease: "expo.out"}, 92.428);
+      tl.fromTo("#w7 .code", {opacity: 1}, {opacity: 0.25, duration: 0.46, repeat: 4, yoyo: true, ease: "none"}, 92.308);
+      tl.fromTo("#cam26", {scale: 1.0}, {scale: 1.05, duration: 5.5385, ease: "none"}, 96.0000);
+      tl.fromTo("#whip26", {xPercent: 6, filter: "blur(18px)"}, {xPercent: 0, filter: "blur(0px)", duration: 0.32, ease: "expo.out"}, 96.0000);
+      tl.from("#w8", {clipPath: "inset(0 100% 0 0)", duration: 0.45, ease: "expo.out"}, 96.120);
+      tl.fromTo("#w8 .code", {opacity: 1}, {opacity: 0.25, duration: 0.46, repeat: 6, yoyo: true, ease: "none"}, 96.000);
+      tl.fromTo("#cam27", {scale: 1.0}, {scale: 1.05, duration: 5.5385, ease: "none"}, 101.5385);
+      tl.fromTo("#whip27", {xPercent: 6, filter: "blur(18px)"}, {xPercent: 0, filter: "blur(0px)", duration: 0.32, ease: "expo.out"}, 101.5385);
+      tl.from("#tot", {opacity: 0, scale: 0.92, duration: 0.6, ease: "power3.out"}, 101.838);
+      tl.from("#tot .tot-n", {textContent: 0, duration: 1.6, ease: "power2.out", snap: {textContent: 1}}, 101.838);
+      tl.from("#e-logo", {scale: 0.6, opacity: 0, duration: 0.6, ease: "back.out(1.6)"}, 107.127);
+      tl.from("#e-title", {y: 40, opacity: 0, duration: 0.5, ease: "power3.out"}, 107.327);
+      tl.from("#e-sub", {opacity: 0, duration: 0.4}, 107.627);
+      tl.from("#e-next", {opacity: 0, x: -20, duration: 0.4, ease: "power2.out"}, 107.877);
+      tl.fromTo(".grid-bg", {backgroundPosition: "0px 0px"}, {backgroundPosition: "0px 80px", duration: 3.692, ease: "none"}, 107.077);
+      window.__timelines["main"] = tl;
+    </script>
+  </body>
+</html>
