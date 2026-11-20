@@ -2,9 +2,36 @@
   "era": "I1",
   "sort": 10,
   "title": "handbook.promptcritical.route.i1.title",
+  "branches": [
+    {
+      "id": "coke",
+      "title": "handbook.promptcritical.route.i1.branch.coke"
+    },
+    {
+      "id": "steel",
+      "title": "handbook.promptcritical.route.i1.branch.steel"
+    },
+    {
+      "id": "grid",
+      "title": "handbook.promptcritical.route.i1.branch.grid"
+    },
+    {
+      "id": "water",
+      "title": "handbook.promptcritical.route.i1.branch.water"
+    },
+    {
+      "id": "control",
+      "title": "handbook.promptcritical.route.i1.branch.control"
+    },
+    {
+      "id": "pile",
+      "title": "handbook.promptcritical.route.i1.branch.pile"
+    }
+  ],
   "tasks": [
     {
       "id": "promptcritical:i1/copper_ore",
+      "branch": "grid",
       "requires": [
         "promptcritical:i0/first_steam"
       ],
@@ -24,6 +51,7 @@
     },
     {
       "id": "promptcritical:i1/copper_wire",
+      "branch": "grid",
       "requires": [
         "promptcritical:i1/copper_ore"
       ],
@@ -43,6 +71,7 @@
     },
     {
       "id": "promptcritical:i1/silica_brick",
+      "branch": "coke",
       "requires": [
         "promptcritical:i0/first_steam"
       ],
@@ -62,6 +91,7 @@
     },
     {
       "id": "promptcritical:i1/coke_battery",
+      "branch": "coke",
       "requires": [
         "promptcritical:i1/silica_brick"
       ],
@@ -81,6 +111,7 @@
     },
     {
       "id": "promptcritical:i1/gas_main",
+      "branch": "coke",
       "requires": [
         "promptcritical:i1/coke_battery"
       ],
@@ -99,6 +130,7 @@
     },
     {
       "id": "promptcritical:i1/first_coke",
+      "branch": "coke",
       "requires": [
         "promptcritical:i1/coke_battery"
       ],
@@ -118,6 +150,7 @@
     },
     {
       "id": "promptcritical:i1/quench_tower",
+      "branch": "coke",
       "requires": [
         "promptcritical:i1/first_coke"
       ],
@@ -136,6 +169,7 @@
     },
     {
       "id": "promptcritical:i1/byproducts",
+      "branch": "coke",
       "requires": [
         "promptcritical:i1/gas_main"
       ],
@@ -154,6 +188,7 @@
     },
     {
       "id": "promptcritical:i1/sinter",
+      "branch": "coke",
       "requires": [
         "promptcritical:i1/first_coke"
       ],
@@ -173,6 +208,7 @@
     },
     {
       "id": "promptcritical:i1/hot_blast_stove",
+      "branch": "coke",
       "requires": [
         "promptcritical:i1/first_coke"
       ],
@@ -191,6 +227,7 @@
     },
     {
       "id": "promptcritical:i1/blast_blower",
+      "branch": "coke",
       "requires": [
         "promptcritical:i1/hot_blast_stove"
       ],
@@ -209,6 +246,7 @@
     },
     {
       "id": "promptcritical:i1/blast_furnace",
+      "branch": "coke",
       "requires": [
         "promptcritical:i1/sinter",
         "promptcritical:i1/blast_blower"
@@ -228,6 +266,7 @@
     },
     {
       "id": "promptcritical:i1/first_iron",
+      "branch": "coke",
       "requires": [
         "promptcritical:i1/blast_furnace"
       ],
@@ -247,6 +286,7 @@
     },
     {
       "id": "promptcritical:i1/slag",
+      "branch": "coke",
       "requires": [
         "promptcritical:i1/first_iron"
       ],
@@ -266,6 +306,7 @@
     },
     {
       "id": "promptcritical:i1/air_separation",
+      "branch": "steel",
       "requires": [
         "promptcritical:i1/first_iron"
       ],
@@ -284,6 +325,7 @@
     },
     {
       "id": "promptcritical:i1/burnt_lime",
+      "branch": "steel",
       "requires": [
         "promptcritical:i1/first_iron"
       ],
@@ -303,6 +345,7 @@
     },
     {
       "id": "promptcritical:i1/converter",
+      "branch": "steel",
       "requires": [
         "promptcritical:i1/air_separation",
         "promptcritical:i1/burnt_lime"
@@ -322,6 +365,7 @@
     },
     {
       "id": "promptcritical:i1/first_steel",
+      "branch": "steel",
       "requires": [
         "promptcritical:i1/converter"
       ],
@@ -340,6 +384,7 @@
     },
     {
       "id": "promptcritical:i1/steel_ingot",
+      "branch": "steel",
       "requires": [
         "promptcritical:i1/first_steel"
       ],
@@ -359,6 +404,7 @@
     },
     {
       "id": "promptcritical:i1/reheating",
+      "branch": "steel",
       "requires": [
         "promptcritical:i1/steel_ingot"
       ],
@@ -377,6 +423,7 @@
     },
     {
       "id": "promptcritical:i1/mill_stand",
+      "branch": "steel",
       "requires": [
         "promptcritical:i1/reheating",
         "promptcritical:i0/spur_gear"
@@ -396,6 +443,7 @@
     },
     {
       "id": "promptcritical:i1/steel_plate",
+      "branch": "steel",
       "requires": [
         "promptcritical:i1/mill_stand"
       ],
@@ -415,6 +463,7 @@
     },
     {
       "id": "promptcritical:i1/seamless",
+      "branch": "steel",
       "requires": [
         "promptcritical:i1/mill_stand"
       ],
@@ -433,6 +482,7 @@
     },
     {
       "id": "promptcritical:i1/hydrotest",
+      "branch": "steel",
       "requires": [
         "promptcritical:i1/seamless",
         "promptcritical:i0/grinder"
@@ -452,6 +502,7 @@
     },
     {
       "id": "promptcritical:i1/generator_built",
+      "branch": "grid",
       "requires": [
         "promptcritical:i1/copper_wire",
         "promptcritical:i1/steel_plate",
@@ -472,6 +523,7 @@
     },
     {
       "id": "promptcritical:i1/exciter",
+      "branch": "grid",
       "requires": [
         "promptcritical:i1/generator_built"
       ],
@@ -490,6 +542,7 @@
     },
     {
       "id": "promptcritical:i1/switchgear",
+      "branch": "grid",
       "requires": [
         "promptcritical:i1/generator_built"
       ],
@@ -508,6 +561,7 @@
     },
     {
       "id": "promptcritical:i1/synchroscope",
+      "branch": "grid",
       "requires": [
         "promptcritical:i1/exciter"
       ],
@@ -526,6 +580,7 @@
     },
     {
       "id": "promptcritical:i1/first_sync",
+      "branch": "grid",
       "requires": [
         "promptcritical:i1/synchroscope",
         "promptcritical:i1/switchgear"
@@ -551,6 +606,7 @@
     },
     {
       "id": "promptcritical:i1/transformer",
+      "branch": "grid",
       "requires": [
         "promptcritical:i1/first_sync"
       ],
@@ -569,6 +625,7 @@
     },
     {
       "id": "promptcritical:i1/power_line",
+      "branch": "grid",
       "requires": [
         "promptcritical:i1/transformer"
       ],
@@ -588,6 +645,7 @@
     },
     {
       "id": "promptcritical:i1/consumers",
+      "branch": "grid",
       "requires": [
         "promptcritical:i1/first_sync"
       ],
@@ -607,6 +665,7 @@
     },
     {
       "id": "promptcritical:i1/electric_motor",
+      "branch": "grid",
       "requires": [
         "promptcritical:i1/first_sync"
       ],
@@ -625,6 +684,7 @@
     },
     {
       "id": "promptcritical:i1/relay_cabinet",
+      "branch": "grid",
       "requires": [
         "promptcritical:i1/switchgear"
       ],
@@ -643,6 +703,7 @@
     },
     {
       "id": "promptcritical:i1/ufls",
+      "branch": "grid",
       "requires": [
         "promptcritical:i1/consumers"
       ],
@@ -662,6 +723,7 @@
     },
     {
       "id": "promptcritical:i1/relays",
+      "branch": "control",
       "requires": [
         "promptcritical:i1/copper_wire"
       ],
@@ -681,6 +743,7 @@
     },
     {
       "id": "promptcritical:i1/relay_power",
+      "branch": "control",
       "requires": [
         "promptcritical:i1/relays"
       ],
@@ -699,6 +762,7 @@
     },
     {
       "id": "promptcritical:i1/relay_logic",
+      "branch": "control",
       "requires": [
         "promptcritical:i1/relay_power"
       ],
@@ -723,6 +787,7 @@
     },
     {
       "id": "promptcritical:i1/manual_station",
+      "branch": "control",
       "requires": [
         "promptcritical:i1/relay_logic"
       ],
@@ -741,6 +806,7 @@
     },
     {
       "id": "promptcritical:i1/analog_loop",
+      "branch": "control",
       "requires": [
         "promptcritical:i1/manual_station"
       ],
@@ -759,6 +825,7 @@
     },
     {
       "id": "promptcritical:i1/water_treatment",
+      "branch": "water",
       "requires": [
         "promptcritical:i0/first_steam"
       ],
@@ -777,6 +844,7 @@
     },
     {
       "id": "promptcritical:i1/water_tube_boiler",
+      "branch": "water",
       "requires": [
         "promptcritical:i1/water_treatment",
         "promptcritical:i1/steel_plate"
@@ -796,6 +864,7 @@
     },
     {
       "id": "promptcritical:i1/deaerator",
+      "branch": "water",
       "requires": [
         "promptcritical:i1/water_tube_boiler"
       ],
@@ -814,6 +883,7 @@
     },
     {
       "id": "promptcritical:i1/maintenance_panel",
+      "branch": "control",
       "requires": [
         "promptcritical:i0/first_steam"
       ],
@@ -832,6 +902,7 @@
     },
     {
       "id": "promptcritical:i1/recorded_chart",
+      "branch": "control",
       "requires": [
         "promptcritical:i1/maintenance_panel"
       ],
@@ -850,6 +921,7 @@
     },
     {
       "id": "promptcritical:i1/acheson_furnace",
+      "branch": "pile",
       "requires": [
         "promptcritical:i1/first_sync"
       ],
@@ -868,6 +940,7 @@
     },
     {
       "id": "promptcritical:i1/reactor_graphite",
+      "branch": "pile",
       "requires": [
         "promptcritical:i1/acheson_furnace"
       ],
@@ -887,6 +960,7 @@
     },
     {
       "id": "promptcritical:i1/pitchblende",
+      "branch": "pile",
       "requires": [
         "promptcritical:i1/first_steel"
       ],
@@ -906,6 +980,7 @@
     },
     {
       "id": "promptcritical:i1/uranium_slugs",
+      "branch": "pile",
       "requires": [
         "promptcritical:i1/pitchblende"
       ],
@@ -925,6 +1000,7 @@
     },
     {
       "id": "promptcritical:i1/pile_desk",
+      "branch": "pile",
       "requires": [
         "promptcritical:i1/reactor_graphite",
         "promptcritical:i1/uranium_slugs"
@@ -944,6 +1020,7 @@
     },
     {
       "id": "promptcritical:i1/source_counts",
+      "branch": "pile",
       "requires": [
         "promptcritical:i1/pile_desk"
       ],
@@ -967,6 +1044,7 @@
     },
     {
       "id": "promptcritical:i1/first_criticality",
+      "branch": "pile",
       "requires": [
         "promptcritical:i1/source_counts"
       ],
@@ -990,6 +1068,7 @@
     },
     {
       "id": "promptcritical:i1/pile_steady",
+      "branch": "pile",
       "requires": [
         "promptcritical:i1/first_criticality"
       ],

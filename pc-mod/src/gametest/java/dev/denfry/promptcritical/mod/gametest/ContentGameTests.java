@@ -482,6 +482,16 @@ public final class ContentGameTests {
         long i1 = d.tasks().values().stream().filter(t -> t.era().equals("I1")).count();
         h.assertTrue(i1 >= 35, "I1 route tasks: " + i1);
         h.assertTrue(task("i1/first_sync").requires().contains(PromptCritical.id("i1/synchroscope")), "first_sync after the synchroscope");
+        // the tech tree is a page per branch: every era lists branches with both titles, every task sits on one
+        for (RouteTask.Era era : d.route()) {
+            h.assertTrue(!era.branches().isEmpty(), era.id() + ": no branches");
+            for (RouteTask.Branch b : era.branches())
+                for (String lang : List.of("ru_ru", "en_us"))
+                    h.assertTrue(b.title().byLang().containsKey(lang), era.id() + ": branch " + b.id() + " " + lang + " title");
+            for (RouteTask t : era.tasks())
+                h.assertTrue(era.branches().stream().anyMatch(b -> b.id().equals(t.branch())), t.id() + ": branch " + t.branch());
+        }
+        h.assertTrue(task("i1/blast_furnace").branch().equals("coke"), "the blast furnace is on the coke and iron page");
         for (RouteTask t : d.tasks().values()) {
             for (String ref : RouteService.registryRefs(t)) {
                 String kind = ref.substring(0, ref.indexOf(':'));

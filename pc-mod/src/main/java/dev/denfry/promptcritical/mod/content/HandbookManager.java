@@ -241,16 +241,26 @@ public final class HandbookManager extends SimplePreparableReloadListener<Handbo
 
     static RouteTask.Era parseEra(ResourceLocation id, JsonObject o, List<String> problems) {
         String era = GsonHelper.getAsString(o, "era");
+        List<RouteTask.Branch> branches = new ArrayList<>();
+        for (JsonElement el : GsonHelper.getAsJsonArray(o, "branches", new JsonArray())) {
+            JsonObject b = el.getAsJsonObject();
+            branches.add(new RouteTask.Branch(GsonHelper.getAsString(b, "id"), Localized.of(b, "title")));
+        }
         List<RouteTask> tasks = new ArrayList<>();
         for (JsonElement el : GsonHelper.getAsJsonArray(o, "tasks")) {
             JsonObject t = el.getAsJsonObject();
             try {
-                tasks.add(parseTask(era, t));
+                RouteTask task = parseTask(era, t);
+                // a task off the declared branches would have no page in the tech tree
+                if (branches.stream().noneMatch(b -> b.id().equals(task.branch())))
+                    throw new IllegalArgumentException("branch '" + task.branch() + "' is not in the era's branches");
+                tasks.add(task);
             } catch (RuntimeException e) {
                 problems.add("route " + id + ": task " + GsonHelper.getAsString(t, "id", "?") + ": " + e.getMessage());
             }
         }
-        return new RouteTask.Era(id, era, Localized.of(o, "title"), GsonHelper.getAsInt(o, "sort", 0), List.copyOf(tasks));
+        return new RouteTask.Era(id, era, Localized.of(o, "title"), GsonHelper.getAsInt(o, "sort", 0), List.copyOf(branches),
+                List.copyOf(tasks));
     }
 
     public static RouteTask parseTask(String era, JsonObject o) {
@@ -283,7 +293,8 @@ public final class HandbookManager extends SimplePreparableReloadListener<Handbo
             case SCENARIO, PROGRAM -> throw new IllegalArgumentException("type " + kind.key() + " needs the trainer (11 §11.3) and PLC (03d)");
         };
         JsonObject reward = GsonHelper.getAsJsonObject(o, "reward", new JsonObject());
-        return new RouteTask(ResourceLocation.parse(GsonHelper.getAsString(o, "id")), era, List.copyOf(requires), kind, cond,
+        return new RouteTask(ResourceLocation.parse(GsonHelper.getAsString(o, "id")), era, GsonHelper.getAsString(o, "branch", ""),
+                List.copyOf(requires), kind, cond,
                 o.has("entry") ? ResourceLocation.parse(GsonHelper.getAsString(o, "entry")) : null,
                 o.has("ponder") ? ResourceLocation.parse(GsonHelper.getAsString(o, "ponder")) : null,
                 GsonHelper.getAsInt(reward, "xp", 0), ResourceLocation.parse(GsonHelper.getAsString(o, "icon", "minecraft:book")),

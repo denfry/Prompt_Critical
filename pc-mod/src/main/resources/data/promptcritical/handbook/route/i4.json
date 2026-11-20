@@ -1,0 +1,643 @@
+{
+  "era": "I4",
+  "sort": 40,
+  "title": "handbook.promptcritical.route.i4.title",
+  "branches": [
+    {
+      "id": "ore",
+      "title": "handbook.promptcritical.route.i4.branch.ore"
+    },
+    {
+      "id": "fuel",
+      "title": "handbook.promptcritical.route.i4.branch.fuel"
+    },
+    {
+      "id": "radiation",
+      "title": "handbook.promptcritical.route.i4.branch.radiation"
+    },
+    {
+      "id": "backend",
+      "title": "handbook.promptcritical.route.i4.branch.backend"
+    }
+  ],
+  "tasks": [
+    {
+      "id": "promptcritical:i4/dosimeter",
+      "branch": "radiation",
+      "requires": [
+        "promptcritical:i1/pile_steady"
+      ],
+      "type": "obtain",
+      "condition": {
+        "item": "promptcritical:dosimeter_radiometer"
+      },
+      "entry": "promptcritical:i4/radiation",
+      "icon": "promptcritical:dosimeter_radiometer",
+      "title": "handbook.promptcritical.task.i4.dosimeter.title",
+      "text": "handbook.promptcritical.task.i4.dosimeter.text",
+      "hint": "handbook.promptcritical.task.i4.dosimeter.hint",
+      "reward": {
+        "xp": 20
+      }
+    },
+    {
+      "id": "promptcritical:i4/contamination_meter",
+      "branch": "radiation",
+      "requires": [
+        "promptcritical:i4/dosimeter"
+      ],
+      "type": "obtain",
+      "condition": {
+        "item": "promptcritical:contamination_meter"
+      },
+      "entry": "promptcritical:i4/contamination",
+      "icon": "promptcritical:contamination_meter",
+      "title": "handbook.promptcritical.task.i4.contamination_meter.title",
+      "text": "handbook.promptcritical.task.i4.contamination_meter.text",
+      "hint": "handbook.promptcritical.task.i4.contamination_meter.hint",
+      "reward": {
+        "xp": 15
+      }
+    },
+    {
+      "id": "promptcritical:i4/decon_shower",
+      "branch": "radiation",
+      "requires": [
+        "promptcritical:i4/contamination_meter"
+      ],
+      "type": "build",
+      "condition": {
+        "block": "promptcritical:decon_shower"
+      },
+      "entry": "promptcritical:i4/contamination",
+      "icon": "promptcritical:decon_shower",
+      "title": "handbook.promptcritical.task.i4.decon_shower.title",
+      "text": "handbook.promptcritical.task.i4.decon_shower.text",
+      "hint": "handbook.promptcritical.task.i4.decon_shower.hint",
+      "reward": {
+        "xp": 20
+      }
+    },
+    {
+      "id": "promptcritical:i4/decon_sprayer",
+      "branch": "radiation",
+      "requires": [
+        "promptcritical:i4/decon_shower"
+      ],
+      "type": "obtain",
+      "condition": {
+        "item": "promptcritical:decon_sprayer"
+      },
+      "entry": "promptcritical:i4/contamination",
+      "icon": "promptcritical:decon_sprayer",
+      "title": "handbook.promptcritical.task.i4.decon_sprayer.title",
+      "text": "handbook.promptcritical.task.i4.decon_sprayer.text",
+      "hint": "handbook.promptcritical.task.i4.decon_sprayer.hint",
+      "reward": {
+        "xp": 15
+      }
+    },
+    {
+      "id": "promptcritical:i4/crushed_ore",
+      "branch": "ore",
+      "requires": [
+        "promptcritical:i1/pitchblende"
+      ],
+      "type": "obtain",
+      "condition": {
+        "item": "promptcritical:crushed_uranium_ore",
+        "count": 16
+      },
+      "entry": "promptcritical:i4/uranium_front_end",
+      "icon": "promptcritical:crushed_uranium_ore",
+      "title": "handbook.promptcritical.task.i4.crushed_ore.title",
+      "text": "handbook.promptcritical.task.i4.crushed_ore.text",
+      "hint": "handbook.promptcritical.task.i4.crushed_ore.hint",
+      "reward": {
+        "xp": 20
+      }
+    },
+    {
+      "id": "promptcritical:i4/leach",
+      "branch": "ore",
+      "requires": [
+        "promptcritical:i4/crushed_ore",
+        "promptcritical:i2/sulfur"
+      ],
+      "type": "build",
+      "condition": {
+        "block": "promptcritical:leach_tank"
+      },
+      "entry": "promptcritical:i4/uranium_front_end",
+      "icon": "promptcritical:leach_tank",
+      "title": "handbook.promptcritical.task.i4.leach.title",
+      "text": "handbook.promptcritical.task.i4.leach.text",
+      "hint": "handbook.promptcritical.task.i4.leach.hint",
+      "reward": {
+        "xp": 25
+      }
+    },
+    {
+      "id": "promptcritical:i4/ion_exchange",
+      "branch": "ore",
+      "requires": [
+        "promptcritical:i4/leach"
+      ],
+      "type": "build",
+      "condition": {
+        "block": "promptcritical:uranium_ion_exchange"
+      },
+      "entry": "promptcritical:i4/uranium_front_end",
+      "icon": "promptcritical:uranium_ion_exchange",
+      "title": "handbook.promptcritical.task.i4.ion_exchange.title",
+      "text": "handbook.promptcritical.task.i4.ion_exchange.text",
+      "hint": "handbook.promptcritical.task.i4.ion_exchange.hint",
+      "reward": {
+        "xp": 20
+      }
+    },
+    {
+      "id": "promptcritical:i4/precipitation",
+      "branch": "ore",
+      "requires": [
+        "promptcritical:i4/ion_exchange"
+      ],
+      "type": "build",
+      "condition": {
+        "block": "promptcritical:precipitation_tank"
+      },
+      "entry": "promptcritical:i4/uranium_front_end",
+      "icon": "promptcritical:precipitation_tank",
+      "title": "handbook.promptcritical.task.i4.precipitation.title",
+      "text": "handbook.promptcritical.task.i4.precipitation.text",
+      "hint": "handbook.promptcritical.task.i4.precipitation.hint",
+      "reward": {
+        "xp": 20
+      }
+    },
+    {
+      "id": "promptcritical:i4/yellowcake",
+      "branch": "ore",
+      "requires": [
+        "promptcritical:i4/precipitation"
+      ],
+      "type": "obtain",
+      "condition": {
+        "item": "promptcritical:yellowcake"
+      },
+      "entry": "promptcritical:i4/uranium_front_end",
+      "icon": "promptcritical:yellowcake",
+      "title": "handbook.promptcritical.task.i4.yellowcake.title",
+      "text": "handbook.promptcritical.task.i4.yellowcake.text",
+      "hint": "handbook.promptcritical.task.i4.yellowcake.hint",
+      "reward": {
+        "xp": 30
+      }
+    },
+    {
+      "id": "promptcritical:i4/calciner",
+      "branch": "ore",
+      "requires": [
+        "promptcritical:i4/yellowcake"
+      ],
+      "type": "build",
+      "condition": {
+        "block": "promptcritical:rotary_calciner"
+      },
+      "entry": "promptcritical:i4/uranium_front_end",
+      "icon": "promptcritical:rotary_calciner",
+      "title": "handbook.promptcritical.task.i4.calciner.title",
+      "text": "handbook.promptcritical.task.i4.calciner.text",
+      "hint": "handbook.promptcritical.task.i4.calciner.hint",
+      "reward": {
+        "xp": 20
+      }
+    },
+    {
+      "id": "promptcritical:i4/hf",
+      "branch": "ore",
+      "requires": [
+        "promptcritical:i2/sulfur"
+      ],
+      "type": "build",
+      "condition": {
+        "block": "promptcritical:hf_kiln"
+      },
+      "entry": "promptcritical:i4/uranium_front_end",
+      "icon": "promptcritical:hf_kiln",
+      "title": "handbook.promptcritical.task.i4.hf.title",
+      "text": "handbook.promptcritical.task.i4.hf.text",
+      "hint": "handbook.promptcritical.task.i4.hf.hint",
+      "reward": {
+        "xp": 20
+      }
+    },
+    {
+      "id": "promptcritical:i4/hydrofluorination",
+      "branch": "ore",
+      "requires": [
+        "promptcritical:i4/calciner",
+        "promptcritical:i4/hf"
+      ],
+      "type": "build",
+      "condition": {
+        "block": "promptcritical:hydrofluorination_reactor"
+      },
+      "entry": "promptcritical:i4/uranium_front_end",
+      "icon": "promptcritical:hydrofluorination_reactor",
+      "title": "handbook.promptcritical.task.i4.hydrofluorination.title",
+      "text": "handbook.promptcritical.task.i4.hydrofluorination.text",
+      "hint": "handbook.promptcritical.task.i4.hydrofluorination.hint",
+      "reward": {
+        "xp": 20
+      }
+    },
+    {
+      "id": "promptcritical:i4/fluorination",
+      "branch": "ore",
+      "requires": [
+        "promptcritical:i4/hydrofluorination"
+      ],
+      "type": "build",
+      "condition": {
+        "block": "promptcritical:fluorination_reactor"
+      },
+      "entry": "promptcritical:i4/uranium_front_end",
+      "icon": "promptcritical:fluorination_reactor",
+      "title": "handbook.promptcritical.task.i4.fluorination.title",
+      "text": "handbook.promptcritical.task.i4.fluorination.text",
+      "hint": "handbook.promptcritical.task.i4.fluorination.hint",
+      "reward": {
+        "xp": 25
+      }
+    },
+    {
+      "id": "promptcritical:i4/uf6",
+      "branch": "ore",
+      "requires": [
+        "promptcritical:i4/fluorination"
+      ],
+      "type": "obtain",
+      "condition": {
+        "item": "promptcritical:uf6_cylinder_48y"
+      },
+      "entry": "promptcritical:i4/uranium_front_end",
+      "icon": "promptcritical:uf6_cylinder_48y",
+      "title": "handbook.promptcritical.task.i4.uf6.title",
+      "text": "handbook.promptcritical.task.i4.uf6.text",
+      "hint": "handbook.promptcritical.task.i4.uf6.hint",
+      "reward": {
+        "xp": 30
+      }
+    },
+    {
+      "id": "promptcritical:i4/centrifuge",
+      "branch": "ore",
+      "requires": [
+        "promptcritical:i4/uf6",
+        "promptcritical:i3/chip"
+      ],
+      "type": "build",
+      "condition": {
+        "block": "promptcritical:gas_centrifuge",
+        "count": 8
+      },
+      "entry": "promptcritical:i4/enrichment",
+      "icon": "promptcritical:gas_centrifuge",
+      "title": "handbook.promptcritical.task.i4.centrifuge.title",
+      "text": "handbook.promptcritical.task.i4.centrifuge.text",
+      "hint": "handbook.promptcritical.task.i4.centrifuge.hint",
+      "reward": {
+        "xp": 30
+      }
+    },
+    {
+      "id": "promptcritical:i4/cascade",
+      "branch": "ore",
+      "requires": [
+        "promptcritical:i4/centrifuge"
+      ],
+      "type": "build",
+      "condition": {
+        "block": "promptcritical:centrifuge_cascade"
+      },
+      "entry": "promptcritical:i4/enrichment",
+      "icon": "promptcritical:centrifuge_cascade",
+      "title": "handbook.promptcritical.task.i4.cascade.title",
+      "text": "handbook.promptcritical.task.i4.cascade.text",
+      "hint": "handbook.promptcritical.task.i4.cascade.hint",
+      "reward": {
+        "xp": 40
+      }
+    },
+    {
+      "id": "promptcritical:i4/enriched",
+      "branch": "ore",
+      "requires": [
+        "promptcritical:i4/cascade"
+      ],
+      "type": "obtain",
+      "condition": {
+        "item": "promptcritical:uf6_cylinder_30b"
+      },
+      "entry": "promptcritical:i4/enrichment",
+      "icon": "promptcritical:uf6_cylinder_30b",
+      "title": "handbook.promptcritical.task.i4.enriched.title",
+      "text": "handbook.promptcritical.task.i4.enriched.text",
+      "hint": "handbook.promptcritical.task.i4.enriched.hint",
+      "reward": {
+        "xp": 40
+      }
+    },
+    {
+      "id": "promptcritical:i4/pellet_press",
+      "branch": "fuel",
+      "requires": [
+        "promptcritical:i4/enriched"
+      ],
+      "type": "build",
+      "condition": {
+        "block": "promptcritical:pellet_press"
+      },
+      "entry": "promptcritical:i4/fuel",
+      "icon": "promptcritical:pellet_press",
+      "title": "handbook.promptcritical.task.i4.pellet_press.title",
+      "text": "handbook.promptcritical.task.i4.pellet_press.text",
+      "hint": "handbook.promptcritical.task.i4.pellet_press.hint",
+      "reward": {
+        "xp": 25
+      }
+    },
+    {
+      "id": "promptcritical:i4/zircon",
+      "branch": "fuel",
+      "requires": [
+        "promptcritical:i1/first_sync"
+      ],
+      "type": "obtain",
+      "condition": {
+        "item": "promptcritical:zircon_concentrate",
+        "count": 4
+      },
+      "entry": "promptcritical:i4/fuel",
+      "icon": "promptcritical:zircon_concentrate",
+      "title": "handbook.promptcritical.task.i4.zircon.title",
+      "text": "handbook.promptcritical.task.i4.zircon.text",
+      "hint": "handbook.promptcritical.task.i4.zircon.hint",
+      "reward": {
+        "xp": 15
+      }
+    },
+    {
+      "id": "promptcritical:i4/zirconium",
+      "branch": "fuel",
+      "requires": [
+        "promptcritical:i4/zircon"
+      ],
+      "type": "obtain",
+      "condition": {
+        "item": "promptcritical:zirconium_sponge"
+      },
+      "entry": "promptcritical:i4/fuel",
+      "icon": "promptcritical:zirconium_sponge",
+      "title": "handbook.promptcritical.task.i4.zirconium.title",
+      "text": "handbook.promptcritical.task.i4.zirconium.text",
+      "hint": "handbook.promptcritical.task.i4.zirconium.hint",
+      "reward": {
+        "xp": 20
+      }
+    },
+    {
+      "id": "promptcritical:i4/fuel_rod",
+      "branch": "fuel",
+      "requires": [
+        "promptcritical:i4/pellet_press",
+        "promptcritical:i4/zirconium"
+      ],
+      "type": "obtain",
+      "condition": {
+        "item": "promptcritical:fuel_rod",
+        "count": 4
+      },
+      "entry": "promptcritical:i4/fuel",
+      "icon": "promptcritical:fuel_rod",
+      "title": "handbook.promptcritical.task.i4.fuel_rod.title",
+      "text": "handbook.promptcritical.task.i4.fuel_rod.text",
+      "hint": "handbook.promptcritical.task.i4.fuel_rod.hint",
+      "reward": {
+        "xp": 25
+      }
+    },
+    {
+      "id": "promptcritical:i4/assembly_jig",
+      "branch": "fuel",
+      "requires": [
+        "promptcritical:i4/fuel_rod"
+      ],
+      "type": "build",
+      "condition": {
+        "block": "promptcritical:assembly_jig"
+      },
+      "entry": "promptcritical:i4/fuel",
+      "icon": "promptcritical:assembly_jig",
+      "title": "handbook.promptcritical.task.i4.assembly_jig.title",
+      "text": "handbook.promptcritical.task.i4.assembly_jig.text",
+      "hint": "handbook.promptcritical.task.i4.assembly_jig.hint",
+      "reward": {
+        "xp": 20
+      }
+    },
+    {
+      "id": "promptcritical:i4/fuel_assembly",
+      "branch": "fuel",
+      "requires": [
+        "promptcritical:i4/assembly_jig"
+      ],
+      "type": "obtain",
+      "condition": {
+        "item": "promptcritical:fuel_assembly"
+      },
+      "entry": "promptcritical:i4/fuel",
+      "icon": "promptcritical:fuel_assembly",
+      "title": "handbook.promptcritical.task.i4.fuel_assembly.title",
+      "text": "handbook.promptcritical.task.i4.fuel_assembly.text",
+      "hint": "handbook.promptcritical.task.i4.fuel_assembly.hint",
+      "reward": {
+        "xp": 50
+      }
+    },
+    {
+      "id": "promptcritical:i4/fuel_rack",
+      "branch": "backend",
+      "requires": [
+        "promptcritical:i4/fuel_assembly"
+      ],
+      "type": "build",
+      "condition": {
+        "block": "promptcritical:fuel_rack"
+      },
+      "entry": "promptcritical:i4/spent_fuel",
+      "icon": "promptcritical:fuel_rack",
+      "title": "handbook.promptcritical.task.i4.fuel_rack.title",
+      "text": "handbook.promptcritical.task.i4.fuel_rack.text",
+      "hint": "handbook.promptcritical.task.i4.fuel_rack.hint",
+      "reward": {
+        "xp": 20
+      }
+    },
+    {
+      "id": "promptcritical:i4/purex",
+      "branch": "backend",
+      "requires": [
+        "promptcritical:i4/fuel_rack",
+        "promptcritical:i3/nitric_acid"
+      ],
+      "type": "build",
+      "condition": {
+        "block": "promptcritical:purex_cell"
+      },
+      "entry": "promptcritical:i4/purex",
+      "icon": "promptcritical:purex_cell",
+      "title": "handbook.promptcritical.task.i4.purex.title",
+      "text": "handbook.promptcritical.task.i4.purex.text",
+      "hint": "handbook.promptcritical.task.i4.purex.hint",
+      "reward": {
+        "xp": 40
+      }
+    },
+    {
+      "id": "promptcritical:i4/denitration",
+      "branch": "backend",
+      "requires": [
+        "promptcritical:i4/purex"
+      ],
+      "type": "build",
+      "condition": {
+        "block": "promptcritical:denitration_reactor"
+      },
+      "entry": "promptcritical:i4/purex",
+      "icon": "promptcritical:denitration_reactor",
+      "title": "handbook.promptcritical.task.i4.denitration.title",
+      "text": "handbook.promptcritical.task.i4.denitration.text",
+      "hint": "handbook.promptcritical.task.i4.denitration.hint",
+      "reward": {
+        "xp": 20
+      }
+    },
+    {
+      "id": "promptcritical:i4/waste_drum",
+      "branch": "backend",
+      "requires": [
+        "promptcritical:i4/decon_shower"
+      ],
+      "type": "obtain",
+      "condition": {
+        "item": "promptcritical:waste_drum",
+        "count": 4
+      },
+      "entry": "promptcritical:i4/radwaste",
+      "icon": "promptcritical:waste_drum",
+      "title": "handbook.promptcritical.task.i4.waste_drum.title",
+      "text": "handbook.promptcritical.task.i4.waste_drum.text",
+      "hint": "handbook.promptcritical.task.i4.waste_drum.hint",
+      "reward": {
+        "xp": 15
+      }
+    },
+    {
+      "id": "promptcritical:i4/compactor",
+      "branch": "backend",
+      "requires": [
+        "promptcritical:i4/waste_drum"
+      ],
+      "type": "build",
+      "condition": {
+        "block": "promptcritical:waste_compactor"
+      },
+      "entry": "promptcritical:i4/radwaste",
+      "icon": "promptcritical:waste_compactor",
+      "title": "handbook.promptcritical.task.i4.compactor.title",
+      "text": "handbook.promptcritical.task.i4.compactor.text",
+      "hint": "handbook.promptcritical.task.i4.compactor.hint",
+      "reward": {
+        "xp": 20
+      }
+    },
+    {
+      "id": "promptcritical:i4/bitumenizer",
+      "branch": "backend",
+      "requires": [
+        "promptcritical:i4/waste_drum"
+      ],
+      "type": "build",
+      "condition": {
+        "block": "promptcritical:bitumenizer"
+      },
+      "entry": "promptcritical:i4/radwaste",
+      "icon": "promptcritical:bitumenizer",
+      "title": "handbook.promptcritical.task.i4.bitumenizer.title",
+      "text": "handbook.promptcritical.task.i4.bitumenizer.text",
+      "hint": "handbook.promptcritical.task.i4.bitumenizer.hint",
+      "reward": {
+        "xp": 20
+      }
+    },
+    {
+      "id": "promptcritical:i4/vitrification",
+      "branch": "backend",
+      "requires": [
+        "promptcritical:i4/purex"
+      ],
+      "type": "build",
+      "condition": {
+        "block": "promptcritical:vitrification_melter"
+      },
+      "entry": "promptcritical:i4/radwaste",
+      "icon": "promptcritical:vitrification_melter",
+      "title": "handbook.promptcritical.task.i4.vitrification.title",
+      "text": "handbook.promptcritical.task.i4.vitrification.text",
+      "hint": "handbook.promptcritical.task.i4.vitrification.hint",
+      "reward": {
+        "xp": 30
+      }
+    },
+    {
+      "id": "promptcritical:i4/americium",
+      "branch": "backend",
+      "requires": [
+        "promptcritical:i4/purex"
+      ],
+      "type": "obtain",
+      "condition": {
+        "item": "promptcritical:am241_oxide"
+      },
+      "entry": "promptcritical:i4/isotopes",
+      "icon": "promptcritical:am241_oxide",
+      "title": "handbook.promptcritical.task.i4.americium.title",
+      "text": "handbook.promptcritical.task.i4.americium.text",
+      "hint": "handbook.promptcritical.task.i4.americium.hint",
+      "reward": {
+        "xp": 25
+      }
+    },
+    {
+      "id": "promptcritical:i4/rtg",
+      "branch": "backend",
+      "requires": [
+        "promptcritical:i4/purex"
+      ],
+      "type": "build",
+      "condition": {
+        "block": "promptcritical:rtg_thermoelectric"
+      },
+      "entry": "promptcritical:i4/isotopes",
+      "icon": "promptcritical:rtg_thermoelectric",
+      "title": "handbook.promptcritical.task.i4.rtg.title",
+      "text": "handbook.promptcritical.task.i4.rtg.text",
+      "hint": "handbook.promptcritical.task.i4.rtg.hint",
+      "reward": {
+        "xp": 30
+      }
+    }
+  ]
+}

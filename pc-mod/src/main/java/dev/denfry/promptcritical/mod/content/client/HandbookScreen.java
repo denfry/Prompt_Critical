@@ -56,8 +56,11 @@ public class HandbookScreen extends Screen {
             MUTED = 0xFF7A715F, SELECTED = 0x332A5DB0, SLOT = 0xFFD9CCAE, SLOT_EDGE = 0xFF8C7B57,
             HEADING = HandbookMarkdown.HEADING_COLOR | 0xFF000000;
     static final int LINE_H = 10, ROW_H = 12, INDEX_W = 116, BULLET_INDENT = 8;
-    /** Над оглавлением — закладки «Справочник» и «Маршрут» (11 §11.1.5). */
-    static final int TABS_H = 20;
+    /**
+     * Закладки «Справочник», «Маршрут» (11 §11.1.5) и «Дерево» торчат над верхним краем книги, как ленты-закладки;
+     * над оглавлением остаётся только поле.
+     */
+    static final int TABS_H = 6, BOOKMARK_H = 13;
 
     private final HandbookClient.View view;
     private final Deque<String> history = new ArrayDeque<>();
@@ -68,7 +71,8 @@ public class HandbookScreen extends Screen {
     private float rotY = 225, rotX = 30;
     private int layer = -1;
     private RoutePane routePane;
-    private boolean routeMode;
+    private TreePane treePane;
+    private boolean routeMode, treeMode;
 
     private sealed interface Page permits TextPage, ImagePage, RecipePage, MultiblockPage, FormulaPage, PonderPage {
     }
@@ -102,10 +106,11 @@ public class HandbookScreen extends Screen {
 
     @Override
     protected void init() {
+        boolean marks = !view.document() && view.route() != null;
         w = Math.min(view.document() ? 260 : 380, width - 8);
-        h = Math.min(228, height - 8);
+        h = Math.min(228, height - 8 - (marks ? BOOKMARK_H : 0));
         left = (width - w) / 2;
-        top = (height - h) / 2;
+        top = (height - h) / 2 + (marks ? BOOKMARK_H / 2 + 1 : 0);
         String start = view.open();
         if (entry != null) start = entry.id();
         HandbookClient.Entry e = start == null ? null : view.entry(start);
@@ -116,6 +121,8 @@ public class HandbookScreen extends Screen {
         if (!view.document() && view.route() != null) {
             if (routePane == null) routePane = new RoutePane(view.route(), font, this::openFromRoute);
             routePane.layout(left, top, w, h, INDEX_W);
+            if (treePane == null) treePane = new TreePane(view.route(), font, this::openFromTree);
+            treePane.layout(left, top, w, h);
         }
     }
 
@@ -126,6 +133,13 @@ public class HandbookScreen extends Screen {
         show(e, true);
     }
 
+    /** Из дерева — карточка задания во вкладке «Маршрут». */
+    private void openFromTree(String id) {
+        treeMode = false;
+        routeMode = true;
+        routePane.show(id);
+    }
+
     private boolean tabs() {
         return routePane != null;
     }
@@ -134,21 +148,29 @@ public class HandbookScreen extends Screen {
         return top + (tabs() ? TABS_H : 6);
     }
 
-    /** Закладка {@code i} (0 — справочник, 1 — маршрут): x, y, ширина, высота. */
+    private static final String[] TAB_KEYS = {ContentText.HANDBOOK_TAB_HANDBOOK, ContentText.HANDBOOK_TAB_ROUTE,
+            ContentText.HANDBOOK_TAB_TREE};
+
+    /** Закладка {@code i} (0 — справочник, 1 — маршрут, 2 — дерево) над краем книги: x, y, ширина, высота. */
     private int[] tab(int i) {
-        int tw = (INDEX_W - 10) / 2;
-        return new int[] {left + 4 + i * (tw + 2), top + 5, tw, 12};
+        int x = left + 8;
+        for (int j = 0; j < i; j++) x += font.width(Component.translatable(TAB_KEYS[j])) + 12 + 3;
+        return new int[] {x, top - 4 - BOOKMARK_H, font.width(Component.translatable(TAB_KEYS[i])) + 12, BOOKMARK_H};
+    }
+
+    private int mode() {
+        return treeMode ? 2 : routeMode ? 1 : 0;
     }
 
     private void renderTabs(GuiGraphics g, int mx, int my) {
-        String[] keys = {ContentText.HANDBOOK_TAB_HANDBOOK, ContentText.HANDBOOK_TAB_ROUTE};
-        for (int i = 0; i < 2; i++) {
+        for (int i = 0; i < TAB_KEYS.length; i++) {
             int[] b = tab(i);
-            boolean active = (i == 1) == routeMode, over = mx >= b[0] && mx < b[0] + b[2] && my >= b[1] && my < b[1] + b[3];
-            g.fill(b[0], b[1], b[0] + b[2], b[1] + b[3], PAPER_EDGE);
-            g.fill(b[0] + 1, b[1] + 1, b[0] + b[2] - 1, b[1] + b[3] - (active ? 0 : 1), active ? PAPER : SLOT);
-            String s = font.plainSubstrByWidth(Component.translatable(keys[i]).getString(), b[2] - 4);
-            g.drawString(font, s, b[0] + (b[2] - font.width(s)) / 2, b[1] + 2, active ? INK : over ? 0xFF2A5DB0 : MUTED, false);
+            boolean active = i == mode(), over = mx >= b[0] && mx < b[0] + b[2] && my >= b[1] && my < b[1] + b[3];
+            // лента-закладка: активная сливается с листом, остальные ниже и темнее
+            int y0 = b[1] + (active ? 0 : 2), y1 = active ? top : top - 4;
+            g.fill(b[0], y0, b[0] + b[2], y1, active ? PAPER_EDGE : COVER);
+            g.fill(b[0] + 1, y0 + 1, b[0] + b[2] - 1, y1, active ? PAPER : over ? 0xFFE3D6B6 : SLOT);
+            g.drawString(font, Component.translatable(TAB_KEYS[i]), b[0] + 6, y0 + 3, active ? INK : over ? 0xFF2A5DB0 : MUTED, false);
         }
     }
 
@@ -300,8 +322,12 @@ public class HandbookScreen extends Screen {
         g.fill(left - 4, top - 4, left + w + 4, top + h + 4, COVER);
         g.fill(left, top, left + w, top + h, PAPER);
         if (!view.document()) {
-            g.fill(left + INDEX_W, top + 4, left + INDEX_W + 1, top + h - 4, PAPER_EDGE);
             if (tabs()) renderTabs(g, mx, my);
+            if (treeMode) {
+                treePane.render(g, mx, my, this);
+                return;
+            }
+            g.fill(left + INDEX_W, top + 4, left + INDEX_W + 1, top + h - 4, PAPER_EDGE);
             if (routeMode) {
                 routePane.render(g, mx, my, this);
                 return;
@@ -645,15 +671,18 @@ public class HandbookScreen extends Screen {
     @Override
     public boolean mouseClicked(double mx, double my, int button) {
         if (tabs() && button == 0) {
-            for (int i = 0; i < 2; i++) {
+            for (int i = 0; i < TAB_KEYS.length; i++) {
                 int[] b = tab(i);
                 if (mx >= b[0] && mx < b[0] + b[2] && my >= b[1] && my < b[1] + b[3]) {
                     routeMode = i == 1;
+                    treeMode = i == 2;
                     return true;
                 }
             }
+            if (treeMode) return treePane.click(mx, my) || super.mouseClicked(mx, my, button);
             if (routeMode) return routePane.click(mx, my) || super.mouseClicked(mx, my, button);
         }
+        if (treeMode) return super.mouseClicked(mx, my, button);
         if (routeMode) return super.mouseClicked(mx, my, button);
         if (entry != null && button == 0) {
             int cx = contentX(), cw = contentW(), fy = top + h - 16;
@@ -722,7 +751,7 @@ public class HandbookScreen extends Screen {
 
     @Override
     public boolean mouseDragged(double mx, double my, int button, double dx, double dy) {
-        if (!routeMode && !pages.isEmpty() && pages.get(page) instanceof MultiblockPage && mx >= contentX()) {
+        if (!routeMode && !treeMode && !pages.isEmpty() && pages.get(page) instanceof MultiblockPage && mx >= contentX()) {
             rotY += (float) dx * 2;
             rotX = Mth.clamp(rotX + (float) dy * 2, -90, 90);
             return true;
@@ -732,6 +761,7 @@ public class HandbookScreen extends Screen {
 
     @Override
     public boolean mouseScrolled(double mx, double my, double sx, double sy) {
+        if (treeMode) return treePane.turn(sy > 0 ? -1 : 1);      // колесо листает страницы дерева
         if (routeMode) return routePane.scroll(mx, sy);
         if (!view.document() && mx < left + INDEX_W) {
             indexScroll = Mth.clamp(indexScroll - (int) (sy * ROW_H * 2), 0, Math.max(0, indexHeight() - (top + h - 6 - indexTop())));
@@ -742,7 +772,9 @@ public class HandbookScreen extends Screen {
 
     @Override
     public boolean keyPressed(int key, int scan, int mods) {
-        if (routeMode) return super.keyPressed(key, scan, mods);
+        if (treeMode && (key == GLFW.GLFW_KEY_LEFT || key == GLFW.GLFW_KEY_PAGE_UP)) return treePane.turn(-1);
+        if (treeMode && (key == GLFW.GLFW_KEY_RIGHT || key == GLFW.GLFW_KEY_PAGE_DOWN)) return treePane.turn(1);
+        if (routeMode || treeMode) return super.keyPressed(key, scan, mods);
         if (key == GLFW.GLFW_KEY_LEFT || key == GLFW.GLFW_KEY_PAGE_UP) return turn(-1);
         if (key == GLFW.GLFW_KEY_RIGHT || key == GLFW.GLFW_KEY_PAGE_DOWN) return turn(1);
         if (key == GLFW.GLFW_KEY_BACKSPACE && !history.isEmpty()) return back();

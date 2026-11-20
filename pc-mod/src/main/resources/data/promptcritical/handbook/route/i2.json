@@ -1,0 +1,1201 @@
+{
+  "era": "I2",
+  "sort": 20,
+  "title": "handbook.promptcritical.route.i2.title",
+  "branches": [
+    {
+      "id": "drilling",
+      "title": "handbook.promptcritical.route.i2.branch.drilling"
+    },
+    {
+      "id": "refining",
+      "title": "handbook.promptcritical.route.i2.branch.refining"
+    },
+    {
+      "id": "gas",
+      "title": "handbook.promptcritical.route.i2.branch.gas"
+    },
+    {
+      "id": "control",
+      "title": "handbook.promptcritical.route.i2.branch.control"
+    },
+    {
+      "id": "logistics",
+      "title": "handbook.promptcritical.route.i2.branch.logistics"
+    }
+  ],
+  "tasks": [
+    {
+      "id": "promptcritical:i2/seismic_charge",
+      "branch": "drilling",
+      "requires": [
+        "promptcritical:i1/power_line",
+        "promptcritical:i1/steel_plate"
+      ],
+      "type": "obtain",
+      "condition": {
+        "item": "promptcritical:seismic_charge",
+        "count": 4
+      },
+      "entry": "promptcritical:i2/seismic",
+      "icon": "promptcritical:seismic_charge",
+      "title": "handbook.promptcritical.task.i2.seismic_charge.title",
+      "text": "handbook.promptcritical.task.i2.seismic_charge.text",
+      "hint": "handbook.promptcritical.task.i2.seismic_charge.hint",
+      "reward": {
+        "xp": 15
+      }
+    },
+    {
+      "id": "promptcritical:i2/geophone",
+      "branch": "drilling",
+      "requires": [
+        "promptcritical:i2/seismic_charge"
+      ],
+      "type": "build",
+      "condition": {
+        "block": "promptcritical:geophone",
+        "count": 4
+      },
+      "entry": "promptcritical:i2/seismic",
+      "icon": "promptcritical:geophone",
+      "title": "handbook.promptcritical.task.i2.geophone.title",
+      "text": "handbook.promptcritical.task.i2.geophone.text",
+      "hint": "handbook.promptcritical.task.i2.geophone.hint",
+      "reward": {
+        "xp": 15
+      }
+    },
+    {
+      "id": "promptcritical:i2/seismic_recorder",
+      "branch": "drilling",
+      "requires": [
+        "promptcritical:i2/geophone"
+      ],
+      "type": "build",
+      "condition": {
+        "block": "promptcritical:seismic_recorder"
+      },
+      "entry": "promptcritical:i2/seismic",
+      "icon": "promptcritical:seismic_recorder",
+      "title": "handbook.promptcritical.task.i2.seismic_recorder.title",
+      "text": "handbook.promptcritical.task.i2.seismic_recorder.text",
+      "hint": "handbook.promptcritical.task.i2.seismic_recorder.hint",
+      "reward": {
+        "xp": 20
+      }
+    },
+    {
+      "id": "promptcritical:i2/seismic_section",
+      "branch": "drilling",
+      "requires": [
+        "promptcritical:i2/seismic_recorder"
+      ],
+      "type": "obtain",
+      "condition": {
+        "item": "promptcritical:seismic_section"
+      },
+      "entry": "promptcritical:i2/seismic",
+      "icon": "promptcritical:seismic_section",
+      "title": "handbook.promptcritical.task.i2.seismic_section.title",
+      "text": "handbook.promptcritical.task.i2.seismic_section.text",
+      "hint": "handbook.promptcritical.task.i2.seismic_section.hint",
+      "reward": {
+        "xp": 30
+      }
+    },
+    {
+      "id": "promptcritical:i2/bitumen",
+      "branch": "drilling",
+      "requires": [
+        "promptcritical:i1/first_steel"
+      ],
+      "type": "discover",
+      "condition": {
+        "block": "promptcritical:natural_bitumen"
+      },
+      "entry": "promptcritical:i2/seismic",
+      "icon": "promptcritical:natural_bitumen",
+      "title": "handbook.promptcritical.task.i2.bitumen.title",
+      "text": "handbook.promptcritical.task.i2.bitumen.text",
+      "hint": "handbook.promptcritical.task.i2.bitumen.hint",
+      "reward": {
+        "xp": 15
+      }
+    },
+    {
+      "id": "promptcritical:i2/gas_seep",
+      "branch": "drilling",
+      "requires": [
+        "promptcritical:i1/first_steel"
+      ],
+      "type": "discover",
+      "condition": {
+        "block": "promptcritical:gas_seep_vent"
+      },
+      "entry": "promptcritical:i2/seismic",
+      "icon": "promptcritical:gas_seep_vent",
+      "title": "handbook.promptcritical.task.i2.gas_seep.title",
+      "text": "handbook.promptcritical.task.i2.gas_seep.text",
+      "hint": "handbook.promptcritical.task.i2.gas_seep.hint",
+      "reward": {
+        "xp": 15
+      }
+    },
+    {
+      "id": "promptcritical:i2/derrick",
+      "branch": "drilling",
+      "requires": [
+        "promptcritical:i2/seismic_section"
+      ],
+      "type": "build",
+      "condition": {
+        "block": "promptcritical:derrick_segment",
+        "count": 3
+      },
+      "entry": "promptcritical:i2/drilling",
+      "icon": "promptcritical:derrick_segment",
+      "title": "handbook.promptcritical.task.i2.derrick.title",
+      "text": "handbook.promptcritical.task.i2.derrick.text",
+      "hint": "handbook.promptcritical.task.i2.derrick.hint",
+      "reward": {
+        "xp": 25
+      }
+    },
+    {
+      "id": "promptcritical:i2/rotary_table",
+      "branch": "drilling",
+      "requires": [
+        "promptcritical:i2/derrick"
+      ],
+      "type": "build",
+      "condition": {
+        "block": "promptcritical:rotary_table"
+      },
+      "entry": "promptcritical:i2/drilling",
+      "icon": "promptcritical:rotary_table",
+      "title": "handbook.promptcritical.task.i2.rotary_table.title",
+      "text": "handbook.promptcritical.task.i2.rotary_table.text",
+      "hint": "handbook.promptcritical.task.i2.rotary_table.hint",
+      "reward": {
+        "xp": 15
+      }
+    },
+    {
+      "id": "promptcritical:i2/drawworks",
+      "branch": "drilling",
+      "requires": [
+        "promptcritical:i2/derrick"
+      ],
+      "type": "build",
+      "condition": {
+        "block": "promptcritical:drawworks"
+      },
+      "entry": "promptcritical:i2/drilling",
+      "icon": "promptcritical:drawworks",
+      "title": "handbook.promptcritical.task.i2.drawworks.title",
+      "text": "handbook.promptcritical.task.i2.drawworks.text",
+      "hint": "handbook.promptcritical.task.i2.drawworks.hint",
+      "reward": {
+        "xp": 15
+      }
+    },
+    {
+      "id": "promptcritical:i2/mud_pump",
+      "branch": "drilling",
+      "requires": [
+        "promptcritical:i2/derrick"
+      ],
+      "type": "build",
+      "condition": {
+        "block": "promptcritical:mud_pump"
+      },
+      "entry": "promptcritical:i2/drilling",
+      "icon": "promptcritical:mud_pump",
+      "title": "handbook.promptcritical.task.i2.mud_pump.title",
+      "text": "handbook.promptcritical.task.i2.mud_pump.text",
+      "hint": "handbook.promptcritical.task.i2.mud_pump.hint",
+      "reward": {
+        "xp": 15
+      }
+    },
+    {
+      "id": "promptcritical:i2/mud_tanks",
+      "branch": "drilling",
+      "requires": [
+        "promptcritical:i2/mud_pump"
+      ],
+      "type": "build",
+      "condition": {
+        "block": "promptcritical:mud_tank",
+        "count": 3
+      },
+      "entry": "promptcritical:i2/drilling",
+      "icon": "promptcritical:mud_tank",
+      "title": "handbook.promptcritical.task.i2.mud_tanks.title",
+      "text": "handbook.promptcritical.task.i2.mud_tanks.text",
+      "hint": "handbook.promptcritical.task.i2.mud_tanks.hint",
+      "reward": {
+        "xp": 15
+      }
+    },
+    {
+      "id": "promptcritical:i2/rig",
+      "branch": "drilling",
+      "requires": [
+        "promptcritical:i2/rotary_table",
+        "promptcritical:i2/drawworks",
+        "promptcritical:i2/mud_tanks"
+      ],
+      "type": "build",
+      "condition": {
+        "block": "promptcritical:drillers_console"
+      },
+      "entry": "promptcritical:i2/drilling",
+      "icon": "promptcritical:drillers_console",
+      "title": "handbook.promptcritical.task.i2.rig.title",
+      "text": "handbook.promptcritical.task.i2.rig.text",
+      "hint": "handbook.promptcritical.task.i2.rig.hint",
+      "reward": {
+        "xp": 40
+      }
+    },
+    {
+      "id": "promptcritical:i2/bop",
+      "branch": "drilling",
+      "requires": [
+        "promptcritical:i2/rig"
+      ],
+      "type": "build",
+      "condition": {
+        "block": "promptcritical:bop_annular"
+      },
+      "entry": "promptcritical:i2/well_control",
+      "icon": "promptcritical:bop_annular",
+      "title": "handbook.promptcritical.task.i2.bop.title",
+      "text": "handbook.promptcritical.task.i2.bop.text",
+      "hint": "handbook.promptcritical.task.i2.bop.hint",
+      "reward": {
+        "xp": 30
+      }
+    },
+    {
+      "id": "promptcritical:i2/bop_accumulator",
+      "branch": "drilling",
+      "requires": [
+        "promptcritical:i2/bop"
+      ],
+      "type": "build",
+      "condition": {
+        "block": "promptcritical:bop_accumulator"
+      },
+      "entry": "promptcritical:i2/well_control",
+      "icon": "promptcritical:bop_accumulator",
+      "title": "handbook.promptcritical.task.i2.bop_accumulator.title",
+      "text": "handbook.promptcritical.task.i2.bop_accumulator.text",
+      "hint": "handbook.promptcritical.task.i2.bop_accumulator.hint",
+      "reward": {
+        "xp": 20
+      }
+    },
+    {
+      "id": "promptcritical:i2/choke",
+      "branch": "drilling",
+      "requires": [
+        "promptcritical:i2/bop"
+      ],
+      "type": "build",
+      "condition": {
+        "block": "promptcritical:choke_manifold"
+      },
+      "entry": "promptcritical:i2/well_control",
+      "icon": "promptcritical:choke_manifold",
+      "title": "handbook.promptcritical.task.i2.choke.title",
+      "text": "handbook.promptcritical.task.i2.choke.text",
+      "hint": "handbook.promptcritical.task.i2.choke.hint",
+      "reward": {
+        "xp": 20
+      }
+    },
+    {
+      "id": "promptcritical:i2/logging_unit",
+      "branch": "drilling",
+      "requires": [
+        "promptcritical:i2/rig"
+      ],
+      "type": "build",
+      "condition": {
+        "block": "promptcritical:logging_unit"
+      },
+      "entry": "promptcritical:i2/well_logging",
+      "icon": "promptcritical:logging_unit",
+      "title": "handbook.promptcritical.task.i2.logging_unit.title",
+      "text": "handbook.promptcritical.task.i2.logging_unit.text",
+      "hint": "handbook.promptcritical.task.i2.logging_unit.hint",
+      "reward": {
+        "xp": 20
+      }
+    },
+    {
+      "id": "promptcritical:i2/gamma_sonde",
+      "branch": "drilling",
+      "requires": [
+        "promptcritical:i2/logging_unit"
+      ],
+      "type": "obtain",
+      "condition": {
+        "item": "promptcritical:gamma_logging_sonde"
+      },
+      "entry": "promptcritical:i2/well_logging",
+      "icon": "promptcritical:gamma_logging_sonde",
+      "title": "handbook.promptcritical.task.i2.gamma_sonde.title",
+      "text": "handbook.promptcritical.task.i2.gamma_sonde.text",
+      "hint": "handbook.promptcritical.task.i2.gamma_sonde.hint",
+      "reward": {
+        "xp": 15
+      }
+    },
+    {
+      "id": "promptcritical:i2/core",
+      "branch": "drilling",
+      "requires": [
+        "promptcritical:i2/rig"
+      ],
+      "type": "obtain",
+      "condition": {
+        "item": "promptcritical:reservoir_core"
+      },
+      "entry": "promptcritical:i2/well_logging",
+      "icon": "promptcritical:reservoir_core",
+      "title": "handbook.promptcritical.task.i2.core.title",
+      "text": "handbook.promptcritical.task.i2.core.text",
+      "hint": "handbook.promptcritical.task.i2.core.hint",
+      "reward": {
+        "xp": 20
+      }
+    },
+    {
+      "id": "promptcritical:i2/core_station",
+      "branch": "drilling",
+      "requires": [
+        "promptcritical:i2/core"
+      ],
+      "type": "build",
+      "condition": {
+        "block": "promptcritical:core_analysis_station"
+      },
+      "entry": "promptcritical:i2/well_logging",
+      "icon": "promptcritical:core_analysis_station",
+      "title": "handbook.promptcritical.task.i2.core_station.title",
+      "text": "handbook.promptcritical.task.i2.core_station.text",
+      "hint": "handbook.promptcritical.task.i2.core_station.hint",
+      "reward": {
+        "xp": 15
+      }
+    },
+    {
+      "id": "promptcritical:i2/wellhead",
+      "branch": "drilling",
+      "requires": [
+        "promptcritical:i2/bop"
+      ],
+      "type": "build",
+      "condition": {
+        "block": "promptcritical:wellhead"
+      },
+      "entry": "promptcritical:i2/production",
+      "icon": "promptcritical:wellhead",
+      "title": "handbook.promptcritical.task.i2.wellhead.title",
+      "text": "handbook.promptcritical.task.i2.wellhead.text",
+      "hint": "handbook.promptcritical.task.i2.wellhead.hint",
+      "reward": {
+        "xp": 25
+      }
+    },
+    {
+      "id": "promptcritical:i2/christmas_tree",
+      "branch": "drilling",
+      "requires": [
+        "promptcritical:i2/wellhead"
+      ],
+      "type": "build",
+      "condition": {
+        "block": "promptcritical:christmas_tree"
+      },
+      "entry": "promptcritical:i2/production",
+      "icon": "promptcritical:christmas_tree",
+      "title": "handbook.promptcritical.task.i2.christmas_tree.title",
+      "text": "handbook.promptcritical.task.i2.christmas_tree.text",
+      "hint": "handbook.promptcritical.task.i2.christmas_tree.hint",
+      "reward": {
+        "xp": 25
+      }
+    },
+    {
+      "id": "promptcritical:i2/first_oil",
+      "branch": "drilling",
+      "requires": [
+        "promptcritical:i2/christmas_tree"
+      ],
+      "type": "build",
+      "condition": {
+        "block": "promptcritical:three_phase_separator"
+      },
+      "entry": "promptcritical:i2/production",
+      "icon": "promptcritical:three_phase_separator",
+      "title": "handbook.promptcritical.task.i2.first_oil.title",
+      "text": "handbook.promptcritical.task.i2.first_oil.text",
+      "hint": "handbook.promptcritical.task.i2.first_oil.hint",
+      "reward": {
+        "xp": 40
+      }
+    },
+    {
+      "id": "promptcritical:i2/pumpjack",
+      "branch": "drilling",
+      "requires": [
+        "promptcritical:i2/christmas_tree"
+      ],
+      "type": "build",
+      "condition": {
+        "block": "promptcritical:pumpjack"
+      },
+      "entry": "promptcritical:i2/production",
+      "icon": "promptcritical:pumpjack",
+      "title": "handbook.promptcritical.task.i2.pumpjack.title",
+      "text": "handbook.promptcritical.task.i2.pumpjack.text",
+      "hint": "handbook.promptcritical.task.i2.pumpjack.hint",
+      "reward": {
+        "xp": 20
+      }
+    },
+    {
+      "id": "promptcritical:i2/rod_pump",
+      "branch": "drilling",
+      "requires": [
+        "promptcritical:i2/pumpjack"
+      ],
+      "type": "obtain",
+      "condition": {
+        "item": "promptcritical:downhole_rod_pump"
+      },
+      "entry": "promptcritical:i2/production",
+      "icon": "promptcritical:downhole_rod_pump",
+      "title": "handbook.promptcritical.task.i2.rod_pump.title",
+      "text": "handbook.promptcritical.task.i2.rod_pump.text",
+      "hint": "handbook.promptcritical.task.i2.rod_pump.hint",
+      "reward": {
+        "xp": 15
+      }
+    },
+    {
+      "id": "promptcritical:i2/flare",
+      "branch": "drilling",
+      "requires": [
+        "promptcritical:i2/first_oil"
+      ],
+      "type": "build",
+      "condition": {
+        "block": "promptcritical:flare_stack",
+        "count": 6
+      },
+      "entry": "promptcritical:i2/flare",
+      "icon": "promptcritical:flare_stack",
+      "title": "handbook.promptcritical.task.i2.flare.title",
+      "text": "handbook.promptcritical.task.i2.flare.text",
+      "hint": "handbook.promptcritical.task.i2.flare.hint",
+      "reward": {
+        "xp": 20
+      }
+    },
+    {
+      "id": "promptcritical:i2/flare_tip",
+      "branch": "drilling",
+      "requires": [
+        "promptcritical:i2/flare"
+      ],
+      "type": "build",
+      "condition": {
+        "block": "promptcritical:flare_tip"
+      },
+      "entry": "promptcritical:i2/flare",
+      "icon": "promptcritical:flare_tip",
+      "title": "handbook.promptcritical.task.i2.flare_tip.title",
+      "text": "handbook.promptcritical.task.i2.flare_tip.text",
+      "hint": "handbook.promptcritical.task.i2.flare_tip.hint",
+      "reward": {
+        "xp": 15
+      }
+    },
+    {
+      "id": "promptcritical:i2/knockout",
+      "branch": "drilling",
+      "requires": [
+        "promptcritical:i2/flare"
+      ],
+      "type": "build",
+      "condition": {
+        "block": "promptcritical:flare_knockout_drum"
+      },
+      "entry": "promptcritical:i2/flare",
+      "icon": "promptcritical:flare_knockout_drum",
+      "title": "handbook.promptcritical.task.i2.knockout.title",
+      "text": "handbook.promptcritical.task.i2.knockout.text",
+      "hint": "handbook.promptcritical.task.i2.knockout.hint",
+      "reward": {
+        "xp": 15
+      }
+    },
+    {
+      "id": "promptcritical:i2/tube_furnace",
+      "branch": "refining",
+      "requires": [
+        "promptcritical:i2/first_oil"
+      ],
+      "type": "build",
+      "condition": {
+        "block": "promptcritical:tube_furnace"
+      },
+      "entry": "promptcritical:i2/refining",
+      "icon": "promptcritical:tube_furnace",
+      "title": "handbook.promptcritical.task.i2.tube_furnace.title",
+      "text": "handbook.promptcritical.task.i2.tube_furnace.text",
+      "hint": "handbook.promptcritical.task.i2.tube_furnace.hint",
+      "reward": {
+        "xp": 25
+      }
+    },
+    {
+      "id": "promptcritical:i2/desalter",
+      "branch": "refining",
+      "requires": [
+        "promptcritical:i2/tube_furnace"
+      ],
+      "type": "build",
+      "condition": {
+        "block": "promptcritical:electrostatic_desalter"
+      },
+      "entry": "promptcritical:i2/conversion",
+      "icon": "promptcritical:electrostatic_desalter",
+      "title": "handbook.promptcritical.task.i2.desalter.title",
+      "text": "handbook.promptcritical.task.i2.desalter.text",
+      "hint": "handbook.promptcritical.task.i2.desalter.hint",
+      "reward": {
+        "xp": 20
+      }
+    },
+    {
+      "id": "promptcritical:i2/crude_column",
+      "branch": "refining",
+      "requires": [
+        "promptcritical:i2/tube_furnace"
+      ],
+      "type": "build",
+      "condition": {
+        "block": "promptcritical:crude_column"
+      },
+      "entry": "promptcritical:i2/refining",
+      "icon": "promptcritical:crude_column",
+      "title": "handbook.promptcritical.task.i2.crude_column.title",
+      "text": "handbook.promptcritical.task.i2.crude_column.text",
+      "hint": "handbook.promptcritical.task.i2.crude_column.hint",
+      "reward": {
+        "xp": 30
+      }
+    },
+    {
+      "id": "promptcritical:i2/column_top",
+      "branch": "refining",
+      "requires": [
+        "promptcritical:i2/crude_column"
+      ],
+      "type": "build",
+      "condition": {
+        "block": "promptcritical:column_top"
+      },
+      "entry": "promptcritical:i2/refining",
+      "icon": "promptcritical:column_top",
+      "title": "handbook.promptcritical.task.i2.column_top.title",
+      "text": "handbook.promptcritical.task.i2.column_top.text",
+      "hint": "handbook.promptcritical.task.i2.column_top.hint",
+      "reward": {
+        "xp": 30
+      }
+    },
+    {
+      "id": "promptcritical:i2/vacuum_column",
+      "branch": "refining",
+      "requires": [
+        "promptcritical:i2/column_top"
+      ],
+      "type": "build",
+      "condition": {
+        "block": "promptcritical:vacuum_column"
+      },
+      "entry": "promptcritical:i2/conversion",
+      "icon": "promptcritical:vacuum_column",
+      "title": "handbook.promptcritical.task.i2.vacuum_column.title",
+      "text": "handbook.promptcritical.task.i2.vacuum_column.text",
+      "hint": "handbook.promptcritical.task.i2.vacuum_column.hint",
+      "reward": {
+        "xp": 25
+      }
+    },
+    {
+      "id": "promptcritical:i2/coker",
+      "branch": "refining",
+      "requires": [
+        "promptcritical:i2/vacuum_column"
+      ],
+      "type": "build",
+      "condition": {
+        "block": "promptcritical:delayed_coker"
+      },
+      "entry": "promptcritical:i2/conversion",
+      "icon": "promptcritical:delayed_coker",
+      "title": "handbook.promptcritical.task.i2.coker.title",
+      "text": "handbook.promptcritical.task.i2.coker.text",
+      "hint": "handbook.promptcritical.task.i2.coker.hint",
+      "reward": {
+        "xp": 25
+      }
+    },
+    {
+      "id": "promptcritical:i2/fcc_catalyst",
+      "branch": "refining",
+      "requires": [
+        "promptcritical:i2/vacuum_column"
+      ],
+      "type": "obtain",
+      "condition": {
+        "item": "promptcritical:catalyst_fcc"
+      },
+      "entry": "promptcritical:i2/conversion",
+      "icon": "promptcritical:catalyst_fcc",
+      "title": "handbook.promptcritical.task.i2.fcc_catalyst.title",
+      "text": "handbook.promptcritical.task.i2.fcc_catalyst.text",
+      "hint": "handbook.promptcritical.task.i2.fcc_catalyst.hint",
+      "reward": {
+        "xp": 15
+      }
+    },
+    {
+      "id": "promptcritical:i2/fcc",
+      "branch": "refining",
+      "requires": [
+        "promptcritical:i2/fcc_catalyst"
+      ],
+      "type": "build",
+      "condition": {
+        "block": "promptcritical:fcc_unit"
+      },
+      "entry": "promptcritical:i2/conversion",
+      "icon": "promptcritical:fcc_unit",
+      "title": "handbook.promptcritical.task.i2.fcc.title",
+      "text": "handbook.promptcritical.task.i2.fcc.text",
+      "hint": "handbook.promptcritical.task.i2.fcc.hint",
+      "reward": {
+        "xp": 35
+      }
+    },
+    {
+      "id": "promptcritical:i2/hydrotreating_catalyst",
+      "branch": "refining",
+      "requires": [
+        "promptcritical:i2/column_top"
+      ],
+      "type": "obtain",
+      "condition": {
+        "item": "promptcritical:catalyst_hydrotreating"
+      },
+      "entry": "promptcritical:i2/hydrotreating",
+      "icon": "promptcritical:catalyst_hydrotreating",
+      "title": "handbook.promptcritical.task.i2.hydrotreating_catalyst.title",
+      "text": "handbook.promptcritical.task.i2.hydrotreating_catalyst.text",
+      "hint": "handbook.promptcritical.task.i2.hydrotreating_catalyst.hint",
+      "reward": {
+        "xp": 15
+      }
+    },
+    {
+      "id": "promptcritical:i2/hydrotreater",
+      "branch": "refining",
+      "requires": [
+        "promptcritical:i2/hydrotreating_catalyst"
+      ],
+      "type": "build",
+      "condition": {
+        "block": "promptcritical:hydrotreater"
+      },
+      "entry": "promptcritical:i2/hydrotreating",
+      "icon": "promptcritical:hydrotreater",
+      "title": "handbook.promptcritical.task.i2.hydrotreater.title",
+      "text": "handbook.promptcritical.task.i2.hydrotreater.text",
+      "hint": "handbook.promptcritical.task.i2.hydrotreater.hint",
+      "reward": {
+        "xp": 30
+      }
+    },
+    {
+      "id": "promptcritical:i2/claus",
+      "branch": "refining",
+      "requires": [
+        "promptcritical:i2/hydrotreater"
+      ],
+      "type": "build",
+      "condition": {
+        "block": "promptcritical:claus_unit"
+      },
+      "entry": "promptcritical:i2/hydrotreating",
+      "icon": "promptcritical:claus_unit",
+      "title": "handbook.promptcritical.task.i2.claus.title",
+      "text": "handbook.promptcritical.task.i2.claus.text",
+      "hint": "handbook.promptcritical.task.i2.claus.hint",
+      "reward": {
+        "xp": 25
+      }
+    },
+    {
+      "id": "promptcritical:i2/sulfur",
+      "branch": "refining",
+      "requires": [
+        "promptcritical:i2/claus"
+      ],
+      "type": "obtain",
+      "condition": {
+        "item": "promptcritical:sulfur",
+        "count": 16
+      },
+      "entry": "promptcritical:i2/hydrotreating",
+      "icon": "promptcritical:sulfur",
+      "title": "handbook.promptcritical.task.i2.sulfur.title",
+      "text": "handbook.promptcritical.task.i2.sulfur.text",
+      "hint": "handbook.promptcritical.task.i2.sulfur.hint",
+      "reward": {
+        "xp": 20
+      }
+    },
+    {
+      "id": "promptcritical:i2/reformer",
+      "branch": "refining",
+      "requires": [
+        "promptcritical:i2/hydrotreater"
+      ],
+      "type": "build",
+      "condition": {
+        "block": "promptcritical:catalytic_reformer"
+      },
+      "entry": "promptcritical:i2/refining",
+      "icon": "promptcritical:catalytic_reformer",
+      "title": "handbook.promptcritical.task.i2.reformer.title",
+      "text": "handbook.promptcritical.task.i2.reformer.text",
+      "hint": "handbook.promptcritical.task.i2.reformer.hint",
+      "reward": {
+        "xp": 30
+      }
+    },
+    {
+      "id": "promptcritical:i2/blender",
+      "branch": "refining",
+      "requires": [
+        "promptcritical:i2/reformer",
+        "promptcritical:i2/fcc"
+      ],
+      "type": "build",
+      "condition": {
+        "block": "promptcritical:gasoline_blender"
+      },
+      "entry": "promptcritical:i2/refining",
+      "icon": "promptcritical:gasoline_blender",
+      "title": "handbook.promptcritical.task.i2.blender.title",
+      "text": "handbook.promptcritical.task.i2.blender.text",
+      "hint": "handbook.promptcritical.task.i2.blender.hint",
+      "reward": {
+        "xp": 30
+      }
+    },
+    {
+      "id": "promptcritical:i2/lts",
+      "branch": "gas",
+      "requires": [
+        "promptcritical:i2/first_oil"
+      ],
+      "type": "build",
+      "condition": {
+        "block": "promptcritical:low_temperature_separator"
+      },
+      "entry": "promptcritical:i2/gas_processing",
+      "icon": "promptcritical:low_temperature_separator",
+      "title": "handbook.promptcritical.task.i2.lts.title",
+      "text": "handbook.promptcritical.task.i2.lts.text",
+      "hint": "handbook.promptcritical.task.i2.lts.hint",
+      "reward": {
+        "xp": 25
+      }
+    },
+    {
+      "id": "promptcritical:i2/gas_compressor",
+      "branch": "gas",
+      "requires": [
+        "promptcritical:i2/lts"
+      ],
+      "type": "build",
+      "condition": {
+        "block": "promptcritical:gas_compressor"
+      },
+      "entry": "promptcritical:i2/gas_processing",
+      "icon": "promptcritical:gas_compressor",
+      "title": "handbook.promptcritical.task.i2.gas_compressor.title",
+      "text": "handbook.promptcritical.task.i2.gas_compressor.text",
+      "hint": "handbook.promptcritical.task.i2.gas_compressor.hint",
+      "reward": {
+        "xp": 20
+      }
+    },
+    {
+      "id": "promptcritical:i2/amine",
+      "branch": "gas",
+      "requires": [
+        "promptcritical:i2/lts"
+      ],
+      "type": "build",
+      "condition": {
+        "block": "promptcritical:amine_unit"
+      },
+      "entry": "promptcritical:i2/gas_processing",
+      "icon": "promptcritical:amine_unit",
+      "title": "handbook.promptcritical.task.i2.amine.title",
+      "text": "handbook.promptcritical.task.i2.amine.text",
+      "hint": "handbook.promptcritical.task.i2.amine.hint",
+      "reward": {
+        "xp": 25
+      }
+    },
+    {
+      "id": "promptcritical:i2/lpg",
+      "branch": "gas",
+      "requires": [
+        "promptcritical:i2/lts"
+      ],
+      "type": "build",
+      "condition": {
+        "block": "promptcritical:gas_storage_bullet"
+      },
+      "entry": "promptcritical:i2/gas_processing",
+      "icon": "promptcritical:gas_storage_bullet",
+      "title": "handbook.promptcritical.task.i2.lpg.title",
+      "text": "handbook.promptcritical.task.i2.lpg.text",
+      "hint": "handbook.promptcritical.task.i2.lpg.hint",
+      "reward": {
+        "xp": 20
+      }
+    },
+    {
+      "id": "promptcritical:i2/helium",
+      "branch": "gas",
+      "requires": [
+        "promptcritical:i2/lts",
+        "promptcritical:i1/air_separation"
+      ],
+      "type": "build",
+      "condition": {
+        "block": "promptcritical:helium_recovery_unit"
+      },
+      "entry": "promptcritical:i2/helium",
+      "icon": "promptcritical:helium_recovery_unit",
+      "title": "handbook.promptcritical.task.i2.helium.title",
+      "text": "handbook.promptcritical.task.i2.helium.text",
+      "hint": "handbook.promptcritical.task.i2.helium.hint",
+      "reward": {
+        "xp": 30
+      }
+    },
+    {
+      "id": "promptcritical:i2/cryo_tank",
+      "branch": "gas",
+      "requires": [
+        "promptcritical:i2/helium"
+      ],
+      "type": "build",
+      "condition": {
+        "block": "promptcritical:cryogenic_tank"
+      },
+      "entry": "promptcritical:i2/helium",
+      "icon": "promptcritical:cryogenic_tank",
+      "title": "handbook.promptcritical.task.i2.cryo_tank.title",
+      "text": "handbook.promptcritical.task.i2.cryo_tank.text",
+      "hint": "handbook.promptcritical.task.i2.cryo_tank.hint",
+      "reward": {
+        "xp": 15
+      }
+    },
+    {
+      "id": "promptcritical:i2/plc",
+      "branch": "control",
+      "requires": [
+        "promptcritical:i1/analog_loop"
+      ],
+      "type": "build",
+      "condition": {
+        "block": "promptcritical:plc"
+      },
+      "entry": "promptcritical:i2/plc",
+      "icon": "promptcritical:plc",
+      "title": "handbook.promptcritical.task.i2.plc.title",
+      "text": "handbook.promptcritical.task.i2.plc.text",
+      "hint": "handbook.promptcritical.task.i2.plc.hint",
+      "reward": {
+        "xp": 30
+      }
+    },
+    {
+      "id": "promptcritical:i2/sis",
+      "branch": "control",
+      "requires": [
+        "promptcritical:i2/plc"
+      ],
+      "type": "build",
+      "condition": {
+        "block": "promptcritical:sis_logic_solver"
+      },
+      "entry": "promptcritical:i2/sis",
+      "icon": "promptcritical:sis_logic_solver",
+      "title": "handbook.promptcritical.task.i2.sis.title",
+      "text": "handbook.promptcritical.task.i2.sis.text",
+      "hint": "handbook.promptcritical.task.i2.sis.hint",
+      "reward": {
+        "xp": 30
+      }
+    },
+    {
+      "id": "promptcritical:i2/gas_detector",
+      "branch": "control",
+      "requires": [
+        "promptcritical:i2/sis"
+      ],
+      "type": "build",
+      "condition": {
+        "block": "promptcritical:gas_detector"
+      },
+      "entry": "promptcritical:i2/sis",
+      "icon": "promptcritical:gas_detector",
+      "title": "handbook.promptcritical.task.i2.gas_detector.title",
+      "text": "handbook.promptcritical.task.i2.gas_detector.text",
+      "hint": "handbook.promptcritical.task.i2.gas_detector.hint",
+      "reward": {
+        "xp": 15
+      }
+    },
+    {
+      "id": "promptcritical:i2/portable_detector",
+      "branch": "control",
+      "requires": [
+        "promptcritical:i2/sis"
+      ],
+      "type": "obtain",
+      "condition": {
+        "item": "promptcritical:portable_gas_detector"
+      },
+      "entry": "promptcritical:i2/oil_gas_accidents",
+      "icon": "promptcritical:portable_gas_detector",
+      "title": "handbook.promptcritical.task.i2.portable_detector.title",
+      "text": "handbook.promptcritical.task.i2.portable_detector.text",
+      "hint": "handbook.promptcritical.task.i2.portable_detector.hint",
+      "reward": {
+        "xp": 15
+      }
+    },
+    {
+      "id": "promptcritical:i2/rtu",
+      "branch": "control",
+      "requires": [
+        "promptcritical:i2/plc"
+      ],
+      "type": "build",
+      "condition": {
+        "block": "promptcritical:rtu_station"
+      },
+      "entry": "promptcritical:i2/telemetry",
+      "icon": "promptcritical:rtu_station",
+      "title": "handbook.promptcritical.task.i2.rtu.title",
+      "text": "handbook.promptcritical.task.i2.rtu.text",
+      "hint": "handbook.promptcritical.task.i2.rtu.hint",
+      "reward": {
+        "xp": 20
+      }
+    },
+    {
+      "id": "promptcritical:i2/historian",
+      "branch": "control",
+      "requires": [
+        "promptcritical:i2/rtu"
+      ],
+      "type": "build",
+      "condition": {
+        "block": "promptcritical:historian_server"
+      },
+      "entry": "promptcritical:i2/telemetry",
+      "icon": "promptcritical:historian_server",
+      "title": "handbook.promptcritical.task.i2.historian.title",
+      "text": "handbook.promptcritical.task.i2.historian.text",
+      "hint": "handbook.promptcritical.task.i2.historian.hint",
+      "reward": {
+        "xp": 20
+      }
+    },
+    {
+      "id": "promptcritical:i2/mes",
+      "branch": "control",
+      "requires": [
+        "promptcritical:i2/historian"
+      ],
+      "type": "build",
+      "condition": {
+        "block": "promptcritical:mes_server"
+      },
+      "entry": "promptcritical:i2/mes",
+      "icon": "promptcritical:mes_server",
+      "title": "handbook.promptcritical.task.i2.mes.title",
+      "text": "handbook.promptcritical.task.i2.mes.text",
+      "hint": "handbook.promptcritical.task.i2.mes.hint",
+      "reward": {
+        "xp": 30
+      }
+    },
+    {
+      "id": "promptcritical:i2/control_room",
+      "branch": "control",
+      "requires": [
+        "promptcritical:i2/rtu",
+        "promptcritical:i2/sis"
+      ],
+      "type": "build",
+      "condition": {
+        "block": "promptcritical:control_room_core"
+      },
+      "entry": "promptcritical:i2/control_room",
+      "icon": "promptcritical:control_room_core",
+      "title": "handbook.promptcritical.task.i2.control_room.title",
+      "text": "handbook.promptcritical.task.i2.control_room.text",
+      "hint": "handbook.promptcritical.task.i2.control_room.hint",
+      "reward": {
+        "xp": 40
+      }
+    },
+    {
+      "id": "promptcritical:i2/pipe_welder",
+      "branch": "logistics",
+      "requires": [
+        "promptcritical:i1/steel_plate"
+      ],
+      "type": "build",
+      "condition": {
+        "block": "promptcritical:pipe_welder"
+      },
+      "entry": "promptcritical:i2/pipelines",
+      "icon": "promptcritical:pipe_welder",
+      "title": "handbook.promptcritical.task.i2.pipe_welder.title",
+      "text": "handbook.promptcritical.task.i2.pipe_welder.text",
+      "hint": "handbook.promptcritical.task.i2.pipe_welder.hint",
+      "reward": {
+        "xp": 20
+      }
+    },
+    {
+      "id": "promptcritical:i2/welded_pipe",
+      "branch": "logistics",
+      "requires": [
+        "promptcritical:i2/pipe_welder"
+      ],
+      "type": "obtain",
+      "condition": {
+        "item": "promptcritical:welded_pipe",
+        "count": 16
+      },
+      "entry": "promptcritical:i2/pipelines",
+      "icon": "promptcritical:welded_pipe",
+      "title": "handbook.promptcritical.task.i2.welded_pipe.title",
+      "text": "handbook.promptcritical.task.i2.welded_pipe.text",
+      "hint": "handbook.promptcritical.task.i2.welded_pipe.hint",
+      "reward": {
+        "xp": 15
+      }
+    },
+    {
+      "id": "promptcritical:i2/pig_launcher",
+      "branch": "logistics",
+      "requires": [
+        "promptcritical:i2/welded_pipe"
+      ],
+      "type": "build",
+      "condition": {
+        "block": "promptcritical:pig_launcher"
+      },
+      "entry": "promptcritical:i2/pipelines",
+      "icon": "promptcritical:pig_launcher",
+      "title": "handbook.promptcritical.task.i2.pig_launcher.title",
+      "text": "handbook.promptcritical.task.i2.pig_launcher.text",
+      "hint": "handbook.promptcritical.task.i2.pig_launcher.hint",
+      "reward": {
+        "xp": 20
+      }
+    },
+    {
+      "id": "promptcritical:i2/smart_pig",
+      "branch": "logistics",
+      "requires": [
+        "promptcritical:i2/pig_launcher"
+      ],
+      "type": "obtain",
+      "condition": {
+        "item": "promptcritical:smart_pig"
+      },
+      "entry": "promptcritical:i2/pipelines",
+      "icon": "promptcritical:smart_pig",
+      "title": "handbook.promptcritical.task.i2.smart_pig.title",
+      "text": "handbook.promptcritical.task.i2.smart_pig.text",
+      "hint": "handbook.promptcritical.task.i2.smart_pig.hint",
+      "reward": {
+        "xp": 20
+      }
+    },
+    {
+      "id": "promptcritical:i2/tank_gauge",
+      "branch": "logistics",
+      "requires": [
+        "promptcritical:i2/column_top"
+      ],
+      "type": "build",
+      "condition": {
+        "block": "promptcritical:tank_gauge"
+      },
+      "entry": "promptcritical:i2/pipelines",
+      "icon": "promptcritical:tank_gauge",
+      "title": "handbook.promptcritical.task.i2.tank_gauge.title",
+      "text": "handbook.promptcritical.task.i2.tank_gauge.text",
+      "hint": "handbook.promptcritical.task.i2.tank_gauge.hint",
+      "reward": {
+        "xp": 15
+      }
+    },
+    {
+      "id": "promptcritical:i2/market",
+      "branch": "logistics",
+      "requires": [
+        "promptcritical:i2/tank_gauge"
+      ],
+      "type": "build",
+      "condition": {
+        "block": "promptcritical:market_terminal"
+      },
+      "entry": "promptcritical:i2/market",
+      "icon": "promptcritical:market_terminal",
+      "title": "handbook.promptcritical.task.i2.market.title",
+      "text": "handbook.promptcritical.task.i2.market.text",
+      "hint": "handbook.promptcritical.task.i2.market.hint",
+      "reward": {
+        "xp": 25
+      }
+    }
+  ]
+}

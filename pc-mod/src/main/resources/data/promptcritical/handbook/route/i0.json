@@ -2,9 +2,24 @@
   "era": "I0",
   "sort": 0,
   "title": "handbook.promptcritical.route.i0.title",
+  "branches": [
+    {
+      "id": "mine",
+      "title": "handbook.promptcritical.route.i0.branch.mine"
+    },
+    {
+      "id": "steam",
+      "title": "handbook.promptcritical.route.i0.branch.steam"
+    },
+    {
+      "id": "foundry",
+      "title": "handbook.promptcritical.route.i0.branch.foundry"
+    }
+  ],
   "tasks": [
     {
       "id": "promptcritical:i0/handbook",
+      "branch": "steam",
       "type": "obtain",
       "condition": {
         "item": "promptcritical:engineering_handbook"
@@ -20,6 +35,7 @@
     },
     {
       "id": "promptcritical:i0/coal_seam",
+      "branch": "mine",
       "requires": [
         "promptcritical:i0/handbook"
       ],
@@ -38,6 +54,7 @@
     },
     {
       "id": "promptcritical:i0/raw_coal",
+      "branch": "mine",
       "requires": [
         "promptcritical:i0/coal_seam"
       ],
@@ -57,6 +74,7 @@
     },
     {
       "id": "promptcritical:i0/mine_support",
+      "branch": "mine",
       "requires": [
         "promptcritical:i0/raw_coal"
       ],
@@ -76,6 +94,7 @@
     },
     {
       "id": "promptcritical:i0/safety_lamp",
+      "branch": "mine",
       "requires": [
         "promptcritical:i0/mine_support"
       ],
@@ -94,6 +113,7 @@
     },
     {
       "id": "promptcritical:i0/canary",
+      "branch": "mine",
       "requires": [
         "promptcritical:i0/mine_support"
       ],
@@ -112,6 +132,7 @@
     },
     {
       "id": "promptcritical:i0/canary_saved",
+      "branch": "mine",
       "requires": [
         "promptcritical:i0/canary"
       ],
@@ -130,6 +151,7 @@
     },
     {
       "id": "promptcritical:i0/methanometer",
+      "branch": "mine",
       "requires": [
         "promptcritical:i0/safety_lamp"
       ],
@@ -148,6 +170,7 @@
     },
     {
       "id": "promptcritical:i0/self_rescuer",
+      "branch": "mine",
       "requires": [
         "promptcritical:i0/safety_lamp"
       ],
@@ -166,6 +189,7 @@
     },
     {
       "id": "promptcritical:i0/main_fan",
+      "branch": "mine",
       "requires": [
         "promptcritical:i0/mine_support"
       ],
@@ -184,6 +208,7 @@
     },
     {
       "id": "promptcritical:i0/ventilation_door",
+      "branch": "mine",
       "requires": [
         "promptcritical:i0/main_fan"
       ],
@@ -203,6 +228,7 @@
     },
     {
       "id": "promptcritical:i0/regulator",
+      "branch": "mine",
       "requires": [
         "promptcritical:i0/ventilation_door"
       ],
@@ -221,6 +247,7 @@
     },
     {
       "id": "promptcritical:i0/degasification",
+      "branch": "mine",
       "requires": [
         "promptcritical:i0/main_fan"
       ],
@@ -239,6 +266,7 @@
     },
     {
       "id": "promptcritical:i0/dispatch",
+      "branch": "mine",
       "requires": [
         "promptcritical:i0/main_fan"
       ],
@@ -257,6 +285,7 @@
     },
     {
       "id": "promptcritical:i0/stone_dust",
+      "branch": "mine",
       "requires": [
         "promptcritical:i0/safety_lamp"
       ],
@@ -276,6 +305,7 @@
     },
     {
       "id": "promptcritical:i0/barrier",
+      "branch": "mine",
       "requires": [
         "promptcritical:i0/stone_dust"
       ],
@@ -294,6 +324,7 @@
     },
     {
       "id": "promptcritical:i0/coal_jig",
+      "branch": "mine",
       "requires": [
         "promptcritical:i0/raw_coal"
       ],
@@ -312,6 +343,7 @@
     },
     {
       "id": "promptcritical:i0/washed_coal",
+      "branch": "mine",
       "requires": [
         "promptcritical:i0/coal_jig"
       ],
@@ -331,6 +363,7 @@
     },
     {
       "id": "promptcritical:i0/boiler",
+      "branch": "steam",
       "requires": [
         "promptcritical:i0/raw_coal"
       ],
@@ -349,6 +382,7 @@
     },
     {
       "id": "promptcritical:i0/stoker",
+      "branch": "steam",
       "requires": [
         "promptcritical:i0/boiler"
       ],
@@ -367,6 +401,7 @@
     },
     {
       "id": "promptcritical:i0/chimney",
+      "branch": "steam",
       "requires": [
         "promptcritical:i0/boiler"
       ],
@@ -386,6 +421,7 @@
     },
     {
       "id": "promptcritical:i0/gauge",
+      "branch": "steam",
       "requires": [
         "promptcritical:i0/boiler"
       ],
@@ -404,6 +440,7 @@
     },
     {
       "id": "promptcritical:i0/fusible_plug",
+      "branch": "steam",
       "requires": [
         "promptcritical:i0/boiler"
       ],
@@ -422,6 +459,7 @@
     },
     {
       "id": "promptcritical:i0/engine",
+      "branch": "steam",
       "requires": [
         "promptcritical:i0/boiler"
       ],
@@ -440,6 +478,7 @@
     },
     {
       "id": "promptcritical:i0/first_steam",
+      "branch": "steam",
       "requires": [
         "promptcritical:i0/stoker",
         "promptcritical:i0/chimney",
@@ -460,6 +499,7 @@
     },
     {
       "id": "promptcritical:i0/steady_pressure",
+      "branch": "steam",
       "requires": [
         "promptcritical:i0/first_steam",
         "promptcritical:i0/gauge"
@@ -486,6 +526,7 @@
     },
     {
       "id": "promptcritical:i0/governor",
+      "branch": "steam",
       "requires": [
         "promptcritical:i0/first_steam"
       ],
@@ -504,6 +545,7 @@
     },
     {
       "id": "promptcritical:i0/engine_shift",
+      "branch": "steam",
       "requires": [
         "promptcritical:i0/governor"
       ],
@@ -528,6 +570,7 @@
     },
     {
       "id": "promptcritical:i0/hoist",
+      "branch": "steam",
       "requires": [
         "promptcritical:i0/first_steam"
       ],
@@ -546,6 +589,7 @@
     },
     {
       "id": "promptcritical:i0/headframe",
+      "branch": "steam",
       "requires": [
         "promptcritical:i0/hoist"
       ],
@@ -565,6 +609,7 @@
     },
     {
       "id": "promptcritical:i0/wire_rope",
+      "branch": "steam",
       "requires": [
         "promptcritical:i0/hoist"
       ],
@@ -583,6 +628,7 @@
     },
     {
       "id": "promptcritical:i0/cage",
+      "branch": "steam",
       "requires": [
         "promptcritical:i0/headframe",
         "promptcritical:i0/wire_rope"
@@ -602,6 +648,7 @@
     },
     {
       "id": "promptcritical:i0/drainage",
+      "branch": "steam",
       "requires": [
         "promptcritical:i0/first_steam"
       ],
@@ -620,6 +667,7 @@
     },
     {
       "id": "promptcritical:i0/cupola",
+      "branch": "foundry",
       "requires": [
         "promptcritical:i0/first_steam"
       ],
@@ -638,6 +686,7 @@
     },
     {
       "id": "promptcritical:i0/crucible",
+      "branch": "foundry",
       "requires": [
         "promptcritical:i0/raw_coal"
       ],
@@ -656,6 +705,7 @@
     },
     {
       "id": "promptcritical:i0/melting",
+      "branch": "foundry",
       "requires": [
         "promptcritical:i0/raw_coal"
       ],
@@ -677,6 +727,7 @@
     },
     {
       "id": "promptcritical:i0/iron_ore",
+      "branch": "foundry",
       "requires": [
         "promptcritical:i0/handbook"
       ],
@@ -695,6 +746,7 @@
     },
     {
       "id": "promptcritical:i0/iron_charge",
+      "branch": "foundry",
       "requires": [
         "promptcritical:i0/melting",
         "promptcritical:i0/iron_ore"
@@ -715,6 +767,7 @@
     },
     {
       "id": "promptcritical:i0/molding",
+      "branch": "foundry",
       "requires": [
         "promptcritical:i0/melting"
       ],
@@ -733,6 +786,7 @@
     },
     {
       "id": "promptcritical:i0/casting",
+      "branch": "foundry",
       "requires": [
         "promptcritical:i0/iron_charge",
         "promptcritical:i0/molding"
@@ -752,6 +806,7 @@
     },
     {
       "id": "promptcritical:i0/shakeout",
+      "branch": "foundry",
       "requires": [
         "promptcritical:i0/molding"
       ],
@@ -770,6 +825,7 @@
     },
     {
       "id": "promptcritical:i0/lathe",
+      "branch": "foundry",
       "requires": [
         "promptcritical:i0/casting"
       ],
@@ -788,6 +844,7 @@
     },
     {
       "id": "promptcritical:i0/drill",
+      "branch": "foundry",
       "requires": [
         "promptcritical:i0/casting"
       ],
@@ -806,6 +863,7 @@
     },
     {
       "id": "promptcritical:i0/cutting_tool",
+      "branch": "foundry",
       "requires": [
         "promptcritical:i0/lathe"
       ],
@@ -824,6 +882,7 @@
     },
     {
       "id": "promptcritical:i0/shaper",
+      "branch": "foundry",
       "requires": [
         "promptcritical:i0/lathe"
       ],
@@ -842,6 +901,7 @@
     },
     {
       "id": "promptcritical:i0/milling",
+      "branch": "foundry",
       "requires": [
         "promptcritical:i0/shaper"
       ],
@@ -860,6 +920,7 @@
     },
     {
       "id": "promptcritical:i0/spur_gear",
+      "branch": "foundry",
       "requires": [
         "promptcritical:i0/milling"
       ],
@@ -878,6 +939,7 @@
     },
     {
       "id": "promptcritical:i0/grinder",
+      "branch": "foundry",
       "requires": [
         "promptcritical:i0/milling"
       ],
@@ -896,6 +958,7 @@
     },
     {
       "id": "promptcritical:i0/longwall",
+      "branch": "mine",
       "requires": [
         "promptcritical:i0/cage"
       ],
@@ -914,6 +977,7 @@
     },
     {
       "id": "promptcritical:i0/roof_supports",
+      "branch": "mine",
       "requires": [
         "promptcritical:i0/longwall"
       ],
@@ -933,6 +997,7 @@
     },
     {
       "id": "promptcritical:i0/lectern",
+      "branch": "steam",
       "requires": [
         "promptcritical:i0/boiler"
       ],

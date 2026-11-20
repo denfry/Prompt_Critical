@@ -25,6 +25,10 @@ public final class ContentText {
     public static final String HANDBOOK_PONDER_NONE = "promptcritical.handbook.ponder_none";
     public static final String HANDBOOK_TAB_HANDBOOK = "promptcritical.handbook.tab_handbook";
     public static final String HANDBOOK_TAB_ROUTE = "promptcritical.handbook.tab_route";
+    public static final String HANDBOOK_TAB_TREE = "promptcritical.handbook.tab_tree";
+    public static final String TREE_HINT = "promptcritical.tree.hint";
+    public static final String TREE_OPEN = "promptcritical.tree.open";
+    public static final String TREE_FROM = "promptcritical.tree.from";
     public static final String ROUTE_DONE = "promptcritical.route.done";
     public static final String ROUTE_STATUS_DONE = "promptcritical.route.status_done";
     public static final String ROUTE_STATUS_OPEN = "promptcritical.route.status_open";
@@ -80,6 +84,10 @@ public final class ContentText {
         LANG.put(HANDBOOK_PONDER_NONE, new String[] {"No Ponder scenes for this item yet", "Сцен Ponder для этого предмета пока нет"});
         LANG.put(HANDBOOK_TAB_HANDBOOK, new String[] {"Handbook", "Справочник"});
         LANG.put(HANDBOOK_TAB_ROUTE, new String[] {"Route", "Маршрут"});
+        LANG.put(HANDBOOK_TAB_TREE, new String[] {"Tech tree", "Дерево"});
+        LANG.put(TREE_HINT, new String[] {"Hover a step to name it, click it for details", "Наведите на шаг — название, щёлкните — подробности"});
+        LANG.put(TREE_OPEN, new String[] {"Open in route", "Открыть в маршруте"});
+        LANG.put(TREE_FROM, new String[] {"From %s", "Из ветки %s"});
         LANG.put(ROUTE_DONE, new String[] {"Route: \"%s\" done (+%s XP)", "Маршрут: «%s» выполнено (+%s опыта)"});
         LANG.put(ROUTE_STATUS_DONE, new String[] {"Done", "Выполнено"});
         LANG.put(ROUTE_STATUS_OPEN, new String[] {"Open", "Открыто"});
