@@ -64,6 +64,8 @@ public final class GridText {
     public static final String STOP_FIRST = t("stop_first", "Stop the machine first", "Сначала остановите машину");
     public static final String VOLTAGE_CLASS = t("voltage_class", "Rated voltage: %s kV", "Номинальное напряжение: %s кВ");
     public static final String GEAR = t("gear", "Gear: %s RPM", "Передача: %s об/мин");
+    public static final String DRIVE_SPEED = t("drive_speed", "Drive speed: %s RPM", "Скорость привода: %s об/мин");
+    public static final String NO_DRIVE = t("no_drive", "No frequency drive in the motor", "В двигателе нет частотного привода");
     public static final String WIRE_START = t("wire_start", "Span started — use the coil on the other connector",
             "Пролёт начат — кликните катушкой по второму коннектору");
     public static final String WIRE_DONE = t("wire_done", "Span strung: %s m", "Провод натянут: %s м");

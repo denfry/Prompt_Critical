@@ -73,6 +73,27 @@ public class ElectricMotorBlockEntity extends GeneratingKineticBlockEntity imple
             setChanged();
         }
     };
+    /** Пусковой модуль (07 §7.6.3): третье место щита. */
+    private final ItemStackHandler starter = new ItemStackHandler(1) {
+        @Override
+        public boolean isItemValid(int slot, ItemStack stack) {
+            return stack.getItem() instanceof MotorStarterItem;
+        }
+
+        @Override
+        public int getSlotLimit(int slot) {
+            return 1;
+        }
+
+        @Override
+        protected void onContentsChanged(int slot) {
+            setChanged();
+        }
+    };
+    private final net.neoforged.neoforge.items.wrapper.CombinedInvWrapper panelSlots =
+            new net.neoforged.neoforge.items.wrapper.CombinedInvWrapper(modules, starter);
+    /** Заданная скорость частотного привода на валу Create, об/мин (не выше передачи). */
+    private int driveRpm = 64;
     private SimId simId = SimId.NONE;
     private boolean chunkUnloading, registered;
     private final MechanismWiring wiring = new MechanismWiring();
@@ -126,7 +147,19 @@ public class ElectricMotorBlockEntity extends GeneratingKineticBlockEntity imple
     public float outputRpm() {
         MotorUnit u = unit();
         int gear = u == null ? MotorUnit.GEARS[2] : u.gearRpm();
+        // частотный привод даёт любую скорость, а не ступени: обороты по скорости ротора, до целых
+        if (u != null && u.starter() == dev.denfry.promptcritical.sim.grid.MotorStarter.VFD)
+            return u.speedPu() < 0.005 ? 0 : Math.max(1, Math.round((float) (gear * u.speedPu())));
         return gear * level4 / 4f;
+    }
+
+    /** Пускатель по модулю в щите (07 §7.6.3). */
+    public dev.denfry.promptcritical.sim.grid.MotorStarter installedStarter() {
+        return MotorStarterItem.of(starter.getStackInSlot(0));
+    }
+
+    public int driveRpm() {
+        return driveRpm;
     }
 
     @Override
@@ -196,6 +229,8 @@ public class ElectricMotorBlockEntity extends GeneratingKineticBlockEntity imple
         MotorUnit u = unit();
         if (u == null) return;
         if (ticks % 20 == 9) u.setRelays(settings());
+        u.setStarter(installedStarter());
+        u.setSpeedReferencePu(Math.min(1, driveRpm / (double) u.gearRpm()));
         if (real()) u.setMediumVoltage(true);
         AutomationUnit a = MechanismWiring.unit(level, simId, AutomationKind.MOTOR_IO);
         if (a != null) {
@@ -306,7 +341,7 @@ public class ElectricMotorBlockEntity extends GeneratingKineticBlockEntity imple
     @Override
     @Nullable
     public IItemHandlerModifiable panelItems() {
-        return modules;
+        return panelSlots;
     }
 
     @Override
@@ -339,6 +374,16 @@ public class ElectricMotorBlockEntity extends GeneratingKineticBlockEntity imple
             case GridPanels.BUTTON_GEAR -> {
                 u.cycleGear();
                 player.displayClientMessage(GridText.msg(GridText.GEAR, u.gearRpm()), true);
+            }
+            case GridPanels.BUTTON_DRIVE_DOWN, GridPanels.BUTTON_DRIVE_UP -> {
+                if (installedStarter() != dev.denfry.promptcritical.sim.grid.MotorStarter.VFD) {
+                    player.displayClientMessage(GridText.msg(GridText.NO_DRIVE), true);
+                    return;
+                }
+                int step = (player.isShiftKeyDown() ? 10 : 1) * (id == GridPanels.BUTTON_DRIVE_UP ? 1 : -1);
+                driveRpm = Math.max(1, Math.min(u.gearRpm(), Math.min(driveRpm, u.gearRpm()) + step));
+                setChanged();
+                player.displayClientMessage(GridText.msg(GridText.DRIVE_SPEED, driveRpm), true);
             }
             case GridPanels.BUTTON_CLASS -> {
                 if (real()) return;                              // 1 МВт 6 кВ — только высоковольтное исполнение
@@ -433,6 +478,8 @@ public class ElectricMotorBlockEntity extends GeneratingKineticBlockEntity imple
         if (!clientPacket) {
             tag.putLong("sim_id", simId.raw());
             tag.put("modules", modules.serializeNBT(registries));
+            tag.put("starter", starter.serializeNBT(registries));
+            tag.putInt("drive_rpm", driveRpm);
         }
         tag.putFloat("rpm", lastRpm);
         wiring.save(tag);
@@ -444,6 +491,8 @@ public class ElectricMotorBlockEntity extends GeneratingKineticBlockEntity imple
         if (!clientPacket) {
             simId = new SimId(tag.getLong("sim_id"));
             if (tag.contains("modules")) modules.deserializeNBT(registries, tag.getCompound("modules"));
+            if (tag.contains("starter")) starter.deserializeNBT(registries, tag.getCompound("starter"));
+            if (tag.contains("drive_rpm")) driveRpm = Math.max(1, Math.min(256, tag.getInt("drive_rpm")));
         }
         lastRpm = tag.getFloat("rpm");
         wiring.load(tag);

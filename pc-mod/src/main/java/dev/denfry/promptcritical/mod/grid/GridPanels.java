@@ -28,7 +28,8 @@ public final class GridPanels {
     public static final int BUTTON_CLOSE = 0, BUTTON_OPEN = 1, BUTTON_RATING = 2, BUTTON_SELECT = 3, BUTTON_A_DOWN = 4,
             BUTTON_A_UP = 5, BUTTON_B_DOWN = 6, BUTTON_B_UP = 7, BUTTON_RESET = 8, BUTTON_TAP_DOWN = 9, BUTTON_TAP_UP = 10,
             BUTTON_DEMAND = 11, BUTTON_SWITCH = 12, BUTTON_FIELD = 13, BUTTON_VREF_DOWN = 14, BUTTON_VREF_UP = 15,
-            BUTTON_TRIM_DOWN = 16, BUTTON_TRIM_UP = 17, BUTTON_GEAR = 18, BUTTON_CLASS = 19, BUTTON_START = 20, BUTTON_STOP = 21;
+            BUTTON_TRIM_DOWN = 16, BUTTON_TRIM_UP = 17, BUTTON_GEAR = 18, BUTTON_CLASS = 19, BUTTON_START = 20, BUTTON_STOP = 21,
+            BUTTON_DRIVE_DOWN = 22, BUTTON_DRIVE_UP = 23;
 
     // --- аппарат (ячейка, щит, щиток) ---
     public static final int W_CURRENT_A10 = 0, W_POWER_KW10 = 1, W_BUS_V = 2, W_FEED_V = 3, W_FLAGS = 4, W_STATE = 5,
@@ -84,7 +85,9 @@ public final class GridPanels {
             CONSUMER_STATUS = PanelText.tr("grid.consumer_status", "Demand %s kW · now %s kW · shed %s times",
                     "Заявлено %s кВт · сейчас %s кВт · отключений АЧР %s"),
             MODULE_SLOT = PanelText.tr("grid.module_slot", "Relay module: UFLS, 27, 81U, 51 (49 for motors)",
-                    "Модуль РЗА: АЧР, 27, 81U, 51 (49 — двигателю)");
+                    "Модуль РЗА: АЧР, 27, 81U, 51 (49 — двигателю)"),
+            STARTER_SLOT = PanelText.tr("grid.starter_slot", "Starter: star-delta (0.4 kV only), soft starter or frequency drive; empty — direct on line",
+                    "Пускатель: звезда–треугольник (только 0,4 кВ), плавный пуск или частотный привод; пусто — прямой пуск");
     private static final Tr FIELD = PanelText.tr("grid.field", "Field", "Поле"),
             FIELD_TIP = PanelText.tr("grid.field_tip", "Field breaker: AVR holds the voltage / field suppressed",
                     "Автомат гашения поля: АРВ держит напряжение / поле погашено"),
@@ -96,6 +99,9 @@ public final class GridPanels {
             F_TIP = PanelText.tr("grid.f_tip", "Speed changer of the step-up gear, step 0.1 % (0.05 Hz)",
                     "Вариатор мультипликатора, шаг 0,1 % (0,05 Гц)"),
             GEAR = PanelText.tr("grid.gear", "Gear", "Передача"),
+            DRIVE_DOWN = PanelText.tr("grid.drive_down", "RPM −", "об −"), DRIVE_UP = PanelText.tr("grid.drive_up", "RPM +", "об +"),
+            DRIVE_TIP = PanelText.tr("grid.drive_tip", "Frequency drive speed, 1 RPM (sneak: 10) up to the gear",
+                    "Скорость частотного привода, шаг 1 об/мин (с Shift — 10), не выше передачи"),
             GEAR_TIP = PanelText.tr("grid.gear_tip", "Create shaft speed giving rated frequency: 16…256 RPM",
                     "Обороты вала Create для номинальной частоты: 16…256 об/мин"),
             CLASS = PanelText.tr("grid.class", "kV", "кВ"),
@@ -221,18 +227,21 @@ public final class GridPanels {
             .noInventory()
             .build();
 
-    public static final PanelLayout MOTOR = PanelLayout.builder("electric_motor", 220, 140, M_CHANNELS)
+    public static final PanelLayout MOTOR = PanelLayout.builder("electric_motor", 220, 160, M_CHANNELS)
             .dial(8, 24, true, M_SPEED_PERMIL, 10, 110, Double.NaN, 0, PERCENT.get(), SPEED.get(), null)
             .dial(84, 24, false, M_TEMP_C10, 10, 200, 140, 0, CELSIUS.get(), WINDING.get(), null)
             .lamp(84, 88, M_FLAGS, 0, LampColor.RED, CONTACTOR.get())
             .slot(150, 26, 0, s -> s.getItem() instanceof RelayModuleItem m && ElectricMotorBlockEntity.accepts(m.kind()), MODULE_SLOT.get())
             .slot(172, 26, 1, s -> s.getItem() instanceof RelayModuleItem m && ElectricMotorBlockEntity.accepts(m.kind()), MODULE_SLOT.get())
+            .slot(194, 26, 2, s -> s.getItem() instanceof MotorStarterItem, STARTER_SLOT.get())
             .readout(8, 100, 204, v -> MOTOR_STATUS.get(state(MOTOR_STATES, v.raw(M_STATE)), v.num(M_CURRENT_A10, 10, 0),
                     v.num(M_P_KW10, 10, 0), v.num(M_OUT_RPM10, 10, 0), v.raw(M_GEAR)), null)
             .button(140, 50, 34, BUTTON_START, START.get(), null)
             .button(178, 50, 34, BUTTON_STOP, STOP.get(), null)
             .button(140, 70, 44, BUTTON_GEAR, GEAR.get(), null)
             .button(188, 70, 24, BUTTON_CLASS, CLASS.get(), CLASS_TIP.get())
+            .button(140, 120, 34, BUTTON_DRIVE_DOWN, DRIVE_DOWN.get(), DRIVE_TIP.get())
+            .button(178, 120, 34, BUTTON_DRIVE_UP, DRIVE_UP.get(), DRIVE_TIP.get())
             .build();
 
     public static final PanelLayout CABINET = PanelLayout.builder("relay_cabinet", 220, 120, R_CHANNELS)

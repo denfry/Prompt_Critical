@@ -622,6 +622,9 @@ public final class PcLanguageProvider extends LanguageProvider {
         i("relay_frequency", "Underfrequency Relay", "Реле понижения частоты");
         i("relay_voltage", "Undervoltage Relay", "Реле минимального напряжения");
         i("relay_thermal", "Thermal Overload Relay", "Тепловое реле");
+        i("star_delta_starter", "Star-Delta Starter", "Пускатель звезда–треугольник");
+        i("soft_starter", "Soft Starter", "Устройство плавного пуска");
+        i("variable_frequency_drive", "Variable Frequency Drive", "Частотный преобразователь");
         i("relay_ufls", "Load-Shedding Relay (UFLS)", "Реле АЧР");
         i("relay_autoreclose", "Auto-Reclose Relay", "Реле АПВ");
         i("relay_breaker_failure", "Breaker Failure Relay", "Реле УРОВ");

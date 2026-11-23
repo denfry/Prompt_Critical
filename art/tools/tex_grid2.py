@@ -150,6 +150,16 @@ def soft_starter(a):
     circ(a, 7.5, 9.5, 1.5, "#2c5ea8")
 
 
+def variable_frequency_drive(a):  # шкаф привода: дисплей с частотой, ручка задания, решётка радиатора
+    box(a, 3, 1, 12, 14, "#3d4f63")
+    box(a, 4, 2, 11, 5, "#1d1d1f")
+    box(a, 5, 3, 9, 3, "#4fc3e8")
+    circ(a, 7.5, 8.5, 1.5, "#d8dad4")
+    px(a, 7, 7, "#c0392b")
+    for y in range(11, 14):
+        box(a, 4, y, 11, y, "#2a3746" if y % 2 else "#566a7f")
+
+
 TEXTURES.update({
     **{G2(f"battery_jar_{i}"): battery_jar(i) for i in range(5)},
     G2("fill"): fill_pack,
@@ -170,8 +180,9 @@ TEXTURES.update({
     "item/oil_sample_bottle_filled.png": icon(oil_bottle(True)),
     "item/low_nox_burner_kit.png": icon(burner_kit),
     "item/soft_starter.png": icon(soft_starter),
+    "item/variable_frequency_drive.png": icon(variable_frequency_drive),
 })
 
 for _i in ("insulator_post", "bushing_hv", "jacket_heater", "load_sequencer", "relay_auxiliary_islanding",
-           "oil_sample_bottle", "low_nox_burner_kit", "soft_starter"):
+           "oil_sample_bottle", "low_nox_burner_kit", "soft_starter", "variable_frequency_drive"):
     item(_i, f"item/{_i}.png")

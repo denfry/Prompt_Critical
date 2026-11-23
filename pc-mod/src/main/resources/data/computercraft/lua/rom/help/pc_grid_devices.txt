@@ -1,0 +1,23 @@
+Grid machines with their own methods (on top of pc_device, see help pc_device).
+
+pc_generator (shaft generator, diesel generator):
+getState() -> {state, p, q, s, pf, vt, it, freq, speed, excMode, vref, breaker, sync, shaftDamage, statorDamage}
+  state: STOPPED, ROLLING, EXCITED, SYNCHRONIZED, LOADED, ASYNC, TRIPPED, DAMAGED. W, var, VA, V, A, Hz.
+  speed is the electrical rotor speed in rad/s. breaker is the state of the cell the generator feeds, or "NONE".
+getCapability() -> {sRated, pMax, curve = {{p, qMax, qMin}, ...}}   the P-Q diagram at the present terminal voltage
+getSyncScope() -> {df, dtheta, dv, advanceAngle, inWindow}   across the generator breaker; E_FAULT without one
+setVoltageTarget(volts)   0.9-1.1 of the rated voltage, else E_RANGE
+setExcitationMode(mode)   only "VOLTAGE": the exciter has no other mode (E_RANGE)
+fieldBreaker(on)          opens or closes the field
+
+pc_breaker (switchgear cell MV_CELL, 0.4 kV switchboard LV_BOARD):
+getState() -> {state, current, voltage, p, freq, ratedA, dcOk, interlock, earthSwitch, loto, protectionTrips, energyForwardKwh, energyReverseKwh}
+close() / open()   same checks as the panel: E_INTERLOCK (interlock, work permit, LOCKED_OUT), E_BUSY, E_FAULT (no control power)
+getRelays() -> {{func = "51", setting = {a, b}, gen}, ...}   read only: settings are changed by hand in the cabinet
+getSyncScope()     the synchroscope across the breaker
+resetLockout()     E_ACCESS: a protection lockout is reset by a shift supervisor
+
+pc_transformer (distribution transformer DISTRIBUTION):
+getState() -> {load, hotSpot (K), tap, tapRange = {min, max}, tapMode, energized, current, p, lossOfLifeH, cooling}
+setTap(n)          off-circuit tap changer: only on a de-energized transformer, else E_INTERLOCK
+setTapMode(mode)   "MANUAL"; "AUTO" needs an on-load tap changer (E_RANGE)

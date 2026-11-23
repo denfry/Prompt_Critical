@@ -192,6 +192,15 @@ public final class DeviceProfiles {
                         return t -> ((dev.denfry.promptcritical.mod.drilling.DrillersConsoleBlockEntity) t).openComponent(comp, null);
                     }).build());
             case "GasolineBlenderBlockEntity" -> CACHE.computeIfAbsent(simple, k -> blender());
+            // электросеть (07 §7.17.1–7.17.3): свои методы поверх общих
+            case "ShaftGeneratorBlockEntity" -> CACHE.computeIfAbsent(simple, k -> GridProfiles.generator("SHAFT"));
+            case "DieselGeneratorBlockEntity" -> CACHE.computeIfAbsent(simple, k -> GridProfiles.generator("DIESEL"));
+            case "BreakerCellBlockEntity" -> {
+                String sub = ((dev.denfry.promptcritical.mod.grid.BreakerCellBlockEntity) be).kind()
+                        == dev.denfry.promptcritical.sim.grid.SwitchUnit.Kind.MV_BREAKER ? "MV_CELL" : "LV_BOARD";
+                yield CACHE.computeIfAbsent("breaker_" + sub, k -> GridProfiles.breaker(sub));
+            }
+            case "TransformerBlockEntity" -> CACHE.computeIfAbsent(simple, k -> GridProfiles.transformer());
             default -> {
                 String type = GENERIC.getOrDefault(simple, "pc_device");
                 yield CACHE.computeIfAbsent(simple, k -> generic(type, subtype(simple)));

@@ -1,0 +1,32 @@
+{
+  "parent": "minecraft:recipes/root",
+  "criteria": {
+    "has_relay_coil": {
+      "conditions": {
+        "items": [
+          {
+            "items": "promptcritical:relay_coil"
+          }
+        ]
+      },
+      "trigger": "minecraft:inventory_changed"
+    },
+    "has_the_recipe": {
+      "conditions": {
+        "recipe": "promptcritical:grid/star_delta_starter"
+      },
+      "trigger": "minecraft:recipe_unlocked"
+    }
+  },
+  "requirements": [
+    [
+      "has_the_recipe",
+      "has_relay_coil"
+    ]
+  ],
+  "rewards": {
+    "recipes": [
+      "promptcritical:grid/star_delta_starter"
+    ]
+  }
+}
