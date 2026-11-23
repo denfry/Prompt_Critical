@@ -42,4 +42,32 @@ public final class SwitchgearCellGameTests {
         h.assertTrue(!t.get(0).contains(new GridDevice.Face(a.above(2), Direction.WEST)), "nothing above the cell");
         h.succeed();
     }
+
+    /**
+     * Ячейка из мира до 1 × 3 × 1 (контроллер внизу, часть над ним), под ней — верх щита 0,4 кВ: выводов у чужой клетки
+     * нет, а снос ячейки убирает только её часть и не трогает щит под ней.
+     */
+    @GameTest(template = "gametest/empty_12x12x12", timeoutTicks = 20)
+    public static void oldTwoHighCellKeepsItsNeighbourBelow(GameTestHelper h) {
+        BlockPos q = new BlockPos(5, 3, 5), board = q.below(2);
+        // старая раскладка: на месте новой нижней клетки при постановке был камень
+        h.setBlock(q.below(), net.minecraft.world.level.block.Blocks.STONE);
+        h.setBlock(q, PcBlocks.SWITCHGEAR_CELL.get().defaultBlockState().setValue(BlockStateProperties.HORIZONTAL_FACING, Direction.NORTH));
+        h.setBlock(q.below(), net.minecraft.world.level.block.Blocks.AIR);
+        h.setBlock(board, PcBlocks.LV_SWITCHBOARD.get().defaultBlockState().setValue(BlockStateProperties.HORIZONTAL_FACING, Direction.NORTH));
+        h.assertTrue(h.getBlockState(q.below()).getBlock() instanceof MultiblockPartBlock, "the board's top part sits under the cell");
+        h.assertTrue(h.getBlockState(q.above()).getBlock() instanceof MultiblockPartBlock, "the old cell keeps its part above");
+        BreakerCellBlockEntity be = h.getBlockEntity(q);
+        BlockPos a = h.absolutePos(q);
+        List<List<GridDevice.Face>> t = be.terminals();
+        h.assertTrue(t.get(0).contains(new GridDevice.Face(a, Direction.WEST)) && t.get(0).contains(new GridDevice.Face(a.above(), Direction.EAST)),
+                "the old cell keeps its bus faces");
+        h.assertTrue(!t.get(0).contains(new GridDevice.Face(a.below(), Direction.WEST)) && !t.get(1).contains(new GridDevice.Face(a.below(), Direction.SOUTH)),
+                "no terminals on the neighbour's cell below");
+        h.destroyBlock(q);
+        h.assertTrue(h.getBlockState(q.above()).isAir(), "the cell's own part goes with it");
+        h.assertTrue(h.getBlockState(q.below()).getBlock() instanceof MultiblockPartBlock, "the board's part stays");
+        h.assertBlockPresent(PcBlocks.LV_SWITCHBOARD.get(), board);
+        h.succeed();
+    }
 }
