@@ -24,6 +24,7 @@ public final class ServerConfig {
     public static final ModConfigSpec.DoubleValue K_BURN;
     public static final ModConfigSpec.EnumValue<DecayHeatClock> DECAY_HEAT_CLOCK;
     public static final ModConfigSpec.DoubleValue W_PER_SU;
+    public static final ModConfigSpec.DoubleValue CREATE_GENERATOR_FACTOR, CREATE_STEAM_ENGINE_FACTOR;
     public static final ModConfigSpec.DoubleValue DIESEL_FAIL_TO_START_BASE;
     public static final ModConfigSpec.IntValue OPS_MAX_LOCKS_PER_PLAYER;
     public static final ModConfigSpec.EnumValue<dev.denfry.promptcritical.sim.ops.PermitEnforcement> OPS_PERMIT_ENFORCEMENT;
@@ -171,6 +172,12 @@ public final class ServerConfig {
         b.push("energy");
         W_PER_SU = b.comment("[BALANCE] Watts of shaft power per Create stress unit (00 §0.9, 00 §0.13 R4)")
                 .defineInRange("w_per_su", 190.0, 1.0, 1.0e6);
+        CREATE_GENERATOR_FACTOR = b.comment("[BALANCE] Multiplier on the stress capacity of Create water wheels and windmills, so the",
+                        "mod's engines out-produce them (owner decision 2026-11-23). 1 = Create as shipped")
+                .defineInRange("create_generator_factor", 0.25, 0.0, 1.0);
+        CREATE_STEAM_ENGINE_FACTOR = b.comment("[BALANCE] Multiplier on the stress capacity of the Create steam engine on a Create boiler.",
+                        "At 0.03 one Create engine at its lowest boiler level gives about as much as the mod's I0 steam engine")
+                .defineInRange("create_steam_engine_factor", 0.03, 0.0, 1.0);
         J_PER_FE = b.comment("[BALANCE] Joules per Forge Energy unit (00 §0.9)")
                 .defineInRange("j_per_fe", 2.5, 0.01, 1.0e6);
         FE_SU_PARITY = b.comment("SU to FE parity (16 §16.7.1, R56): AUTO uses 2 x w_per_su joules per FE at the grid FE interface",

@@ -209,4 +209,26 @@ public final class BoilerGameTests {
                 .thenExecute(() -> h.assertTrue(h.getBlockState(stoker).getValue(dev.denfry.promptcritical.mod.block.PcProperties.RUNNING), "chain runs"))
                 .thenSucceed();
     }
+
+    /**
+     * Генераторы Create слабее машин мода (решение владельца 2026-11-23): водяное колесо и ветряк дают ёмкость конфига
+     * Create на {@code create_generator_factor}, паровая машина Create — на {@code create_steam_engine_factor}.
+     */
+    @GameTest(template = "gametest/empty_12x12x12", timeoutTicks = 20)
+    public static void createGeneratorsAreWeakerThanTheModsEngines(GameTestHelper h) {
+        var cfg = com.simibubi.create.infrastructure.config.AllConfigs.server().kinetics.stressValues;
+        double g = dev.denfry.promptcritical.mod.config.ServerConfig.CREATE_GENERATOR_FACTOR.get();
+        double se = dev.denfry.promptcritical.mod.config.ServerConfig.CREATE_STEAM_ENGINE_FACTOR.get();
+        h.assertTrue(g < 1 && se < g, "Create generators are scaled down, its steam engine the most");
+        for (var b : new net.minecraft.world.level.block.Block[] {com.simibubi.create.AllBlocks.WATER_WHEEL.get(),
+                com.simibubi.create.AllBlocks.LARGE_WATER_WHEEL.get(), com.simibubi.create.AllBlocks.WINDMILL_BEARING.get()}) {
+            double want = cfg.getCapacity(b).getAsDouble() * g;
+            h.assertTrue(Math.abs(com.simibubi.create.api.stress.BlockStressValues.getCapacity(b) - want) < 1e-6, b + " capacity " + want);
+        }
+        var engine = com.simibubi.create.AllBlocks.STEAM_ENGINE.get();
+        double want = cfg.getCapacity(engine).getAsDouble() * se;
+        h.assertTrue(Math.abs(com.simibubi.create.api.stress.BlockStressValues.getCapacity(engine) - want) < 1e-6,
+                "Create steam engine capacity " + want);
+        h.succeed();
+    }
 }

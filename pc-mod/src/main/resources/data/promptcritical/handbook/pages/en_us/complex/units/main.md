@@ -15,6 +15,7 @@ Instruments and messages in the mod use SI units. Here is what you will meet in 
 
 - **kW and MW.** The I0 boiler delivers about 5 MW of heat; the steam engine about 119 kW at the shaft. The gap is the efficiency of the whole chain: thermal power and shaft power are not the same thing.
 - **Create stress.** In this mod 1 Create stress unit (SU) = 190 W. A 119 kW engine gives the network about 626 SU, more than a Create water wheel; fans, pumps and machine tools draw stress according to the power they actually use.
+- **Create's own generators.** Water wheels and windmills give a quarter of their usual stress capacity, and a steam engine on a Create boiler gives 3% of it (server config `energy.create_generator_factor`, `energy.create_steam_engine_factor`). One Create engine at the lowest boiler level is about the mod's I0 steam engine; real power comes from the plant.
 
 ## Flow rates
 
