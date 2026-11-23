@@ -28,8 +28,9 @@ public record SteelGrade(SteelFamily family, String designation, Map<String, Flo
     public static final int MAX_ALLOYING = 4;
     /** Порядок проверки семейств: от самого требовательного. */
     private static final SteelFamily[] CLASSIFY_ORDER = {SteelFamily.MARAGING, SteelFamily.INCONEL,
-        SteelFamily.STAINLESS_316, SteelFamily.STAINLESS_304, SteelFamily.TOOL_HSS, SteelFamily.HEAT_RESISTANT,
-        SteelFamily.SOUR_SERVICE, SteelFamily.RAIL_WIRE, SteelFamily.LOW_ALLOY, SteelFamily.CARBON};
+        SteelFamily.STAINLESS_316, SteelFamily.STAINLESS_304, SteelFamily.TOOL_HSS, SteelFamily.BEARING,
+        SteelFamily.HEAT_RESISTANT, SteelFamily.CHROMIUM, SteelFamily.SOUR_SERVICE, SteelFamily.RAIL_WIRE,
+        SteelFamily.MEDIUM_CARBON, SteelFamily.LOW_ALLOY, SteelFamily.CARBON};
 
     public SteelGrade {
         Objects.requireNonNull(family, "family");

@@ -26,7 +26,18 @@ public enum SteelFamily {
             Map.of(AlloyElement.NI, 0.52, AlloyElement.CR, 0.15)),
     TOOL_HSS("Р6М5", 2000, 2400, HeatTreatState.QUENCHED_TEMPERED, Hardening.TOOL, 0.0003,
             Map.of(AlloyElement.MO, 0.05, AlloyElement.CR, 0.04, AlloyElement.V, 0.02)),
-    RAIL_WIRE("65Г", 700, 1000, HeatTreatState.AS_ROLLED, Hardening.FERRITIC, 0.0004, Map.of(AlloyElement.C, 0.006));
+    RAIL_WIRE("65Г", 700, 1000, HeatTreatState.AS_ROLLED, Hardening.FERRITIC, 0.0004, Map.of(AlloyElement.C, 0.006)),
+    /** Сталь 45 (ГОСТ 1050-2013): σ₀,₂ ≥ 355, σ_в ≥ 600 МПа в нормализованном состоянии, C 0,42–0,50 % [сверить]. */
+    MEDIUM_CARBON("45", 355, 600, HeatTreatState.NORMALIZED, Hardening.FERRITIC, 0.00035,
+            Map.of(AlloyElement.C, 0.0042)),
+    /** Сталь 40Х (ГОСТ 4543-2016): σ₀,₂ ≥ 785, σ_в ≥ 980 МПа после Q+T, C 0,36–0,44 %, Cr 0,8–1,1 % [сверить]. */
+    CHROMIUM("40Х", 785, 980, HeatTreatState.QUENCHED_TEMPERED, Hardening.FERRITIC, 0.00035,
+            Map.of(AlloyElement.C, 0.0036, AlloyElement.CR, 0.008)),
+    /** ШХ15 (ГОСТ 801-78): C 0,95–1,05 %, Cr 1,3–1,65 %, отожжённая; σ₀,₂ / σ_в — [сверить σ]. */
+    BEARING("ШХ15", 370, 590, HeatTreatState.AS_ROLLED, Hardening.FERRITIC, 0.0002,
+            Map.of(AlloyElement.C, 0.0095, AlloyElement.CR, 0.013)),
+    /** Кричное железо: σ₀,₂ / σ_в [сверить]; в {@code CLASSIFY_ORDER} нет, получается только из печи-домницы (MF2). */
+    WROUGHT_IRON("кричное железо", 210, 340, HeatTreatState.AS_ROLLED, Hardening.FERRITIC, 0.0005, Map.of());
 
     /** Длительная прочность металла труб котлов (07 §7.9.3) по классу стали. */
     public LarsonMiller creep() {
