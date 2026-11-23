@@ -161,6 +161,22 @@ public final class SitePlans {
                     st("pit", 100, n(BRICKS, 2), n(INGOT, 2)),
                     st("flue", 80, n(BRICKS, 1), n(INGOT, 2))));
 
+    /** Доменный цех реального масштаба (08 §8.5). */
+    private static final Map<String, Plan> IRONMAKING_PLANS = Map.of(
+            // каупер ⌀4,5 × 14 м: клёпаная обечайка с куполом ≈ 25 т листа, клапаны, площадка и лестница ≈ 8 т (оценки,
+            // docs/research/hot_blast_stove-dimensions.md); насадка 60 т шамота — как в симуляции
+            "hot_blast_stove_real", plan("hot_blast_stove_real", PcBlocks.HOT_BLAST_STOVE_REAL, 33,
+                    st("foundation", 120, n(CONCRETE, 6)),
+                    st("stove_shell", 320, n(PLATE, 250)),
+                    st("checker", 240, n(BRICKS, 32)),
+                    st("stove_valves", 200, n(INGOT, 60), n(PIPE, 40))),
+            // горизонтальная воздуходувная машина: станина, воздушный цилиндр ⌀1,2 м и параллели ≈ 22 т литья, коленвал
+            // с маховиком ≈ 8 т (оценки, docs/research/blast_blower-dimensions.md), бетонный фундамент с ямой маховика
+            "blast_blower_engine", plan("blast_blower_engine", PcBlocks.BLAST_BLOWER_ENGINE, 30,
+                    st("foundation", 100, n(CONCRETE, 6)),
+                    st("blowing_tub", 280, n(INGOT, 200), n(PLATE, 20)),
+                    st("blower_flywheel", 200, n(INGOT, 80))));
+
     private SitePlans() {}
 
     /** Множитель числа предметов на этапах ({@code site.material_scale}); вне сервера с конфигом — 1. */
@@ -175,10 +191,11 @@ public final class SitePlans {
     @Nullable
     public static Plan get(String id) {
         Plan p = PLANS.get(id);
-        return p != null ? p : I0_PLANS.get(id);
+        if (p == null) p = I0_PLANS.get(id);
+        return p != null ? p : IRONMAKING_PLANS.get(id);
     }
 
     public static Iterable<Plan> all() {
-        return java.util.stream.Stream.concat(PLANS.values().stream(), I0_PLANS.values().stream()).toList();
+        return java.util.stream.Stream.of(PLANS, I0_PLANS, IRONMAKING_PLANS).flatMap(m -> m.values().stream()).toList();
     }
 }

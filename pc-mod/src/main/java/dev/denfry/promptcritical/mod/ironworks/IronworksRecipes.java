@@ -127,6 +127,20 @@ public final class IronworksRecipes extends RecipeProvider {
         ShapedRecipeBuilder.shaped(RecipeCategory.MISC, PcBlocks.BLAST_BLOWER.get())
                 .pattern("IPI").pattern("PCP").pattern("ISI").define('I', sheet).define('P', AllItems.PROPELLER.get()).define('C', casing)
                 .define('S', shaft).unlockedBy("has_shell", has(shell)).save(out, id("blast_blower"));
+        // реальный масштаб: лётка и шкаф — блоки, каупер и воздуходувная машина — чертежи для стройплощадки (SitePlans)
+        ShapelessRecipeBuilder.shapeless(RecipeCategory.MISC, PcBlocks.BLAST_FURNACE_TAPHOLE_REAL.get())
+                .requires(shell).requires(PcItems.TAPHOLE_CLAY.get(), 2).requires(brick).requires(sheet)
+                .unlockedBy("has_shell", has(shell)).save(out, id("blast_furnace_taphole_real"));
+        ShapedRecipeBuilder.shaped(RecipeCategory.MISC, PcBlocks.BLAST_FURNACE_CONTROLLER_REAL.get())
+                .pattern("IKI").pattern("RCR").pattern(" B ").define('I', sheet).define('K', Items.COMPARATOR).define('R', Items.REDSTONE)
+                .define('C', casing).define('B', Items.BELL)
+                .unlockedBy("has_shell", has(shell)).save(out, id("blast_furnace_controller_real"));
+        ShapedRecipeBuilder.shaped(RecipeCategory.MISC, dev.denfry.promptcritical.mod.site.SiteRegistry.HOT_BLAST_STOVE_REAL_DRAWING.get())
+                .pattern("PPP").pattern("SRS").pattern("RFR").define('P', Items.PAPER).define('S', shell).define('R', brick)
+                .define('F', Items.BLAST_FURNACE).unlockedBy("has_shell", has(shell)).save(out, id("hot_blast_stove_real_drawing"));
+        ShapedRecipeBuilder.shaped(RecipeCategory.MISC, dev.denfry.promptcritical.mod.site.SiteRegistry.BLAST_BLOWER_ENGINE_DRAWING.get())
+                .pattern("PPP").pattern("IFI").pattern("SCS").define('P', Items.PAPER).define('I', sheet).define('F', AllItems.PROPELLER.get())
+                .define('S', shaft).define('C', casing).unlockedBy("has_shell", has(shell)).save(out, id("blast_blower_engine_drawing"));
         ShapedRecipeBuilder.shaped(RecipeCategory.MISC, PcBlocks.DUST_CATCHER.get())
                 .pattern("I I").pattern("ICI").pattern("III").define('I', sheet).define('C', Items.CAULDRON)
                 .unlockedBy("has_shell", has(shell)).save(out, id("dust_catcher"));

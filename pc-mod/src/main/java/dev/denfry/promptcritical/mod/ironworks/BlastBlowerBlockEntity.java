@@ -24,7 +24,7 @@ import org.jetbrains.annotations.Nullable;
  * номинальной, Q₀ = {@value BlastFurnaceUnit#BLOWER_NM3S} нм³/с физ.; мощность на валу — сжатие до π = 3. Дутьё
  * забирает домна в пределах {@value BlastFurnaceControllerBlockEntity#LINK_RANGE} блоков.
  */
-public final class BlastBlowerBlockEntity extends KineticMachineBlockEntity<CyclicMachine> {
+public final class BlastBlowerBlockEntity extends KineticMachineBlockEntity<CyclicMachine> implements ColdBlastSource {
     public BlastBlowerBlockEntity(BlockPos pos, BlockState state) {
         super(IronworksBlockEntities.BLAST_BLOWER.get(), pos, state);
     }
@@ -35,7 +35,7 @@ public final class BlastBlowerBlockEntity extends KineticMachineBlockEntity<Cycl
         return Ironworks.shaftMachine(b, simId());
     }
 
-    /** Холодное дутьё сейчас, нм³/с физ. */
+    @Override
     public double coldNm3S() {
         CyclicMachine m = unit();
         return m == null ? 0 : BlastFurnaceUnit.BLOWER_NM3S * m.speedRatio();

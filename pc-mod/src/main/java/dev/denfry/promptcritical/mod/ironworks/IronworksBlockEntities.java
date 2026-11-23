@@ -32,13 +32,18 @@ public final class IronworksBlockEntities {
     public static final DeferredHolder<BlockEntityType<?>, BlockEntityType<SinterStrandBlockEntity>> SINTER_STRAND =
             type("sinter_strand", SinterStrandBlockEntity::new, PcBlocks.SINTER_STRAND);
     public static final DeferredHolder<BlockEntityType<?>, BlockEntityType<BlastFurnaceControllerBlockEntity>> BLAST_FURNACE_CONTROLLER =
-            type("blast_furnace_controller", BlastFurnaceControllerBlockEntity::new, PcBlocks.BLAST_FURNACE_CONTROLLER);
+            type("blast_furnace_controller", BlastFurnaceControllerBlockEntity::new, PcBlocks.BLAST_FURNACE_CONTROLLER,
+                    PcBlocks.BLAST_FURNACE_CONTROLLER_REAL);
     public static final DeferredHolder<BlockEntityType<?>, BlockEntityType<BlastFurnaceTopBlockEntity>> BLAST_FURNACE_TOP =
             type("blast_furnace_top", BlastFurnaceTopBlockEntity::new, PcBlocks.BLAST_FURNACE_TOP);
     public static final DeferredHolder<BlockEntityType<?>, BlockEntityType<HotBlastStoveBlockEntity>> HOT_BLAST_STOVE =
             type("hot_blast_stove", HotBlastStoveBlockEntity::new, PcBlocks.HOT_BLAST_STOVE);
     public static final DeferredHolder<BlockEntityType<?>, BlockEntityType<BlastBlowerBlockEntity>> BLAST_BLOWER =
             type("blast_blower", BlastBlowerBlockEntity::new, PcBlocks.BLAST_BLOWER);
+    public static final DeferredHolder<BlockEntityType<?>, BlockEntityType<HotBlastStoveRealBlockEntity>> HOT_BLAST_STOVE_REAL =
+            type("hot_blast_stove_real", HotBlastStoveRealBlockEntity::new, PcBlocks.HOT_BLAST_STOVE_REAL);
+    public static final DeferredHolder<BlockEntityType<?>, BlockEntityType<BlastBlowerEngineBlockEntity>> BLAST_BLOWER_ENGINE =
+            type("blast_blower_engine", BlastBlowerEngineBlockEntity::new, PcBlocks.BLAST_BLOWER_ENGINE);
     public static final DeferredHolder<BlockEntityType<?>, BlockEntityType<DustCatcherBlockEntity>> DUST_CATCHER =
             type("dust_catcher", DustCatcherBlockEntity::new, PcBlocks.DUST_CATCHER);
     public static final DeferredHolder<BlockEntityType<?>, BlockEntityType<CastHouseMachineBlockEntity>> CAST_HOUSE_MACHINE =
@@ -51,8 +56,10 @@ public final class IronworksBlockEntities {
     private IronworksBlockEntities() {
     }
 
+    @SafeVarargs
     private static <T extends BlockEntity> DeferredHolder<BlockEntityType<?>, BlockEntityType<T>> type(String name,
-            BlockEntityType.BlockEntitySupplier<T> factory, Supplier<? extends Block> block) {
-        return BLOCK_ENTITIES.register(name, () -> BlockEntityType.Builder.of(factory, block.get()).build(null));
+            BlockEntityType.BlockEntitySupplier<T> factory, Supplier<? extends Block>... blocks) {
+        return BLOCK_ENTITIES.register(name, () -> BlockEntityType.Builder.of(factory,
+                java.util.Arrays.stream(blocks).map(Supplier::get).toArray(Block[]::new)).build(null));
     }
 }

@@ -59,6 +59,7 @@ public final class IronworksBinding {
         caps(event, IronworksBlockEntities.BLAST_FURNACE_TOP.get());
         caps(event, IronworksBlockEntities.HOT_BLAST_STOVE.get());
         caps(event, IronworksBlockEntities.BLAST_BLOWER.get());
+        // реальный масштаб: каупер и воздуходувная машина — через порты цельной модели (WholePorts), не с контроллера
         caps(event, IronworksBlockEntities.DUST_CATCHER.get());
         caps(event, IronworksBlockEntities.CAST_HOUSE_MACHINE.get());
         caps(event, IronworksBlockEntities.LADLE.get());

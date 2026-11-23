@@ -330,7 +330,8 @@ public final class PcBlockStateProvider extends BlockStateProvider {
             // реальный масштаб: клетки пустые, цельную модель рисует контроллер
             case "vver_reactor", "vver_steam_generator", "vver_coolant_pump", "vver_pressurizer", "bwr240_reactor", "candu6_reactor",
                  "bn600_reactor", "am1_reactor", "lancashire_boiler", "headframe_steel", "mill_engine", "winding_engine", "guibal_fan",
-                 "cupola_furnace_real", "mine_drainage_pump_geared", "lancashire_stoker", "crucible_furnace_real" -> "whole_empty";
+                 "cupola_furnace_real", "mine_drainage_pump_geared", "lancashire_stoker", "crucible_furnace_real",
+                 "hot_blast_stove_real", "blast_blower_engine" -> "whole_empty";
             case "pressurizer" -> s.getValue(BlockStateProperties.LIT) ? id + "_lit" : id;
             // тяжёлая вода T3
             case "gs_exchange_tower" -> "absorption_tower";
@@ -438,8 +439,8 @@ public final class PcBlockStateProvider extends BlockStateProvider {
                     : id + "_" + s.getValue(PcProperties.BYPRODUCT_KIND).getSerializedName();
             case "baking_furnace", "sinter_strand" -> s.getValue(BlockStateProperties.LIT) ? id + "_lit" : id;
             case "blast_furnace_tuyere" -> s.getValue(PcProperties.BURNT) ? id + "_burnt" : id;
-            case "blast_furnace_taphole" -> s.getValue(BlockStateProperties.OPEN) ? id + "_open" : id;
-            case "blast_furnace_controller" -> s.getValue(PcProperties.ALARM) ? id + "_alarm" : id;
+            case "blast_furnace_taphole", "blast_furnace_taphole_real" -> s.getValue(BlockStateProperties.OPEN) ? id + "_open" : id;
+            case "blast_furnace_controller", "blast_furnace_controller_real" -> s.getValue(PcProperties.ALARM) ? id + "_alarm" : id;
             case "wind_turbine" -> switch (s.getValue(PcProperties.WIND_TURBINE_SEGMENT)) {
                 case BASE -> id;
                 case MIDDLE -> id + "_middle";

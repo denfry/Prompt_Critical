@@ -227,7 +227,8 @@ public final class MachineProcesses {
                 on(PcBlocks.BLAST_FURNACE_CONTROLLER, PcBlocks.BLAST_FURNACE_TOP, PcBlocks.BLAST_FURNACE_SHELL,
                         PcBlocks.BLAST_FURNACE_TUYERE, PcBlocks.BLAST_FURNACE_TAPHOLE, PcBlocks.HOT_BLAST_STOVE,
                         PcBlocks.BLAST_BLOWER, PcBlocks.DUST_CATCHER, PcBlocks.CAST_HOUSE_MACHINE, PcBlocks.IRON_RUNNER,
-                        PcBlocks.LADLE),
+                        PcBlocks.LADLE, PcBlocks.BLAST_FURNACE_CONTROLLER_REAL, PcBlocks.BLAST_FURNACE_TAPHOLE_REAL,
+                        PcBlocks.HOT_BLAST_STOVE_REAL, PcBlocks.BLAST_BLOWER_ENGINE),
                 of(tag(IronworksTags.FURNACE_ORE, 0), item(0, PcItems.COKE), tag(IronworksTags.FLUX, 0),
                         item(2, PcItems.TAPHOLE_CLAY)),
                 of(item(0, PcItems.PIG_IRON), fluid(0, "blast_furnace_gas"))));

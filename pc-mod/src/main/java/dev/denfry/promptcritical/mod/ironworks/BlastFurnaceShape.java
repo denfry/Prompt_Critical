@@ -68,7 +68,12 @@ public record BlastFurnaceShape(int cx, int cz, int y0, int yTop, BlockPos tapho
 
     public static boolean isWall(BlockState s) {
         return s.is(PcBlocks.BLAST_FURNACE_SHELL.get()) || s.is(PcBlocks.BLAST_FURNACE_TUYERE.get())
-                || s.is(PcBlocks.BLAST_FURNACE_TAPHOLE.get());
+                || isTaphole(s);
+    }
+
+    /** Лётка: старая или реального масштаба — в валидаторе одно и то же. */
+    public static boolean isTaphole(BlockState s) {
+        return s.is(PcBlocks.BLAST_FURNACE_TAPHOLE.get()) || s.is(PcBlocks.BLAST_FURNACE_TAPHOLE_REAL.get());
     }
 
     /** Найти печь у контроллера {@code controller}. */
@@ -114,7 +119,7 @@ public record BlastFurnaceShape(int cx, int cz, int y0, int yTop, BlockPos tapho
             for (BlockPos p : ringCells(cx, cz, yy)) {
                 BlockState s = level.getBlockState(p);
                 boolean corner = Math.abs(p.getX() - cx) == 2 && Math.abs(p.getZ() - cz) == 2;
-                if (s.is(PcBlocks.BLAST_FURNACE_TAPHOLE.get())) {
+                if (isTaphole(s)) {
                     if (yy != y0 + 1 || corner) return Scan.fail("taphole_place");
                     if (taphole != null) return Scan.fail("taphole_count");
                     taphole = p;

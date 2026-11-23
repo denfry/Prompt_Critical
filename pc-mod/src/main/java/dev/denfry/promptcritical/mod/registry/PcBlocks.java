@@ -953,7 +953,8 @@ public final class PcBlocks {
                 || b == BWR240_REACTOR.get() || b == CANDU6_REACTOR.get() || b == BN600_REACTOR.get() || b == AM1_REACTOR.get()
                 || b == LANCASHIRE_BOILER.get() || b == HEADFRAME_STEEL.get() || b == MILL_ENGINE.get() || b == WINDING_ENGINE.get()
                 || b == GUIBAL_FAN.get() || b == CUPOLA_FURNACE_REAL.get() || b == MINE_DRAINAGE_PUMP_GEARED.get()
-                || b == LANCASHIRE_STOKER.get() || b == CRUCIBLE_FURNACE_REAL.get();
+                || b == LANCASHIRE_STOKER.get() || b == CRUCIBLE_FURNACE_REAL.get()
+                || b == HOT_BLAST_STOVE_REAL.get() || b == BLAST_BLOWER_ENGINE.get();
     }
 
     /**
@@ -1088,6 +1089,22 @@ public final class PcBlocks {
             .footprint(Footprint.of(Segment.box(0, 1, 0, 1, 0, 1))), FoundryBlock.with(LadleBlockEntity::new));
     public static final DeferredBlock<PcDeviceBlock> SLAG_GRANULATOR = device("slag_granulator", machine(),
             Spec.facing(PcProperties.RUNNING).footprint(FP_WIDE2), FoundryBlock.with(SlagGranulatorBlockEntity::new));
+
+    // --- доменный цех реального масштаба (08 §8.5): те же юниты, что у старой серии ---
+    public static final DeferredBlock<FurnacePartBlock> BLAST_FURNACE_TAPHOLE_REAL = withItem(BLOCKS.registerBlock("blast_furnace_taphole_real",
+            p -> FurnacePartBlock.create(p, Spec.facing(BlockStateProperties.OPEN)),
+            shell().noOcclusion().lightLevel(s -> s.getValue(BlockStateProperties.OPEN) ? 12 : 0)));
+    public static final DeferredBlock<PcDeviceBlock> BLAST_FURNACE_CONTROLLER_REAL = device("blast_furnace_controller_real", machine(),
+            Spec.facing(PcProperties.ALARM), FoundryBlock.with(BlastFurnaceControllerBlockEntity::new));
+    public static final Footprint FP_HOT_BLAST_STOVE_REAL = Footprint.tiled(-2, 2, 0, 13, 0, 4);
+    public static final DeferredBlock<PcDeviceBlock> HOT_BLAST_STOVE_REAL = device("hot_blast_stove_real", lit(shell()),
+            Spec.facing(BlockStateProperties.LIT, PcProperties.RUNNING)
+                    .segments(PcProperties.wholeSegments(FP_HOT_BLAST_STOVE_REAL.segments().size()), FP_HOT_BLAST_STOVE_REAL),
+            FoundryBlock.with(dev.denfry.promptcritical.mod.ironworks.HotBlastStoveRealBlockEntity::new));
+    public static final Footprint FP_BLAST_BLOWER_ENGINE = Footprint.tiled(0, 6, 0, 2, -1, 1);
+    public static final DeferredBlock<PcDeviceBlock> BLAST_BLOWER_ENGINE = device("blast_blower_engine", machine(),
+            Spec.facing(PcProperties.RUNNING).segments(PcProperties.wholeSegments(FP_BLAST_BLOWER_ENGINE.segments().size()), FP_BLAST_BLOWER_ENGINE),
+            dev.denfry.promptcritical.mod.ironworks.BlastBlowerEngineBlock::create);
 
     // --- сталь, прокат, трубы, ВРУ (08 §8.6–8.7, §8.11, этап 10б M3) ---
     public static final DeferredBlock<PcDeviceBlock> BOF_VESSEL = device("bof_vessel", lit(machine()),

@@ -137,6 +137,10 @@ public final class PcLanguageProvider extends LanguageProvider {
         b("blast_furnace_top", "Blast Furnace Top", "Засыпной аппарат");
         b("hot_blast_stove", "Hot Blast Stove", "Воздухонагреватель");
         b("blast_blower", "Blast Blower", "Воздуходувка");
+        b("blast_furnace_taphole_real", "Hearth Jacket Taphole", "Лётка в кожухе горна");
+        b("blast_furnace_controller_real", "Blast Furnace Instrument Cabinet", "Приборный шкаф домны");
+        b("hot_blast_stove_real", "Cowper Hot Blast Stove", "Воздухонагреватель Каупера");
+        b("blast_blower_engine", "Horizontal Blowing Engine", "Горизонтальная воздуходувная машина");
         b("dust_catcher", "Dust Catcher", "Пылеуловитель");
         b("cast_house_machine", "Cast House Machine", "Машина литейного двора");
         b("iron_runner", "Iron Runner", "Чугунный жёлоб");
