@@ -58,7 +58,6 @@ public final class FoundryClient {
         event.registerBlockEntityRenderer(FoundryBlockEntities.COAL_JIG.get(), c -> new FoundryMachineRenderer<>(PULSATOR, Motion.SPIN_X, 27, 8, 1));
         event.registerBlockEntityRenderer(FoundryBlockEntities.CUPOLA.get(), c -> new FoundryMachineRenderer<>(null, Motion.STATIC, 0, 0, 1));
         event.registerBlockEntityRenderer(FoundryBlockEntities.CUPOLA_REAL.get(), c -> new CupolaRealRenderer());
-        event.registerBlockEntityRenderer(FoundryBlockEntities.CRUCIBLE.get(), c -> new FoundryMachineRenderer<>(CRUCIBLE, Motion.STATIC, 0, 0, 1));
         // тигельная печь: старая серия — свой тигель, crucible_furnace_real — цельная модель ямы
         event.registerBlockEntityRenderer(FoundryBlockEntities.CRUCIBLE.get(), c -> new net.minecraft.client.renderer.blockentity.BlockEntityRenderer<
                 dev.denfry.promptcritical.mod.foundry.CrucibleBlockEntity>() {

@@ -329,13 +329,8 @@ public final class PcBlockStateProvider extends BlockStateProvider {
             case "pwr_reactor" -> s.getValue(PcProperties.PWR_SEGMENT) == PcProperties.PwrSegment.HEAD ? id + "_head" : id;
             // реальный масштаб: клетки пустые, цельную модель рисует контроллер
             case "vver_reactor", "vver_steam_generator", "vver_coolant_pump", "vver_pressurizer", "bwr240_reactor", "candu6_reactor",
-                 "bn600_reactor", "am1_reactor", "lancashire_boiler", "headframe_steel", "mill_engine", "winding_engine", "guibal_fan" -> "whole_empty";
-                 "bn600_reactor", "am1_reactor", "lancashire_boiler", "headframe_steel", "mill_engine",
-                 "cupola_furnace_real" -> "whole_empty";
-                 "bn600_reactor", "am1_reactor", "lancashire_boiler", "headframe_steel", "mill_engine", "mine_drainage_pump_geared"
-                    -> "whole_empty";
-                 "bn600_reactor", "am1_reactor", "lancashire_boiler", "headframe_steel", "mill_engine",
-                 "lancashire_stoker", "crucible_furnace_real" -> "whole_empty";
+                 "bn600_reactor", "am1_reactor", "lancashire_boiler", "headframe_steel", "mill_engine", "winding_engine", "guibal_fan",
+                 "cupola_furnace_real", "mine_drainage_pump_geared", "lancashire_stoker", "crucible_furnace_real" -> "whole_empty";
             case "pressurizer" -> s.getValue(BlockStateProperties.LIT) ? id + "_lit" : id;
             // тяжёлая вода T3
             case "gs_exchange_tower" -> "absorption_tower";
