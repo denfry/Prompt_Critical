@@ -14,7 +14,7 @@ import java.util.Objects;
  */
 public abstract sealed class GridUnit permits GeneratorUnit, SwitchUnit, TransformerUnit, MotorUnit, ConsumerUnit, CapacitorBankUnit, ArcFurnaceUnit,
         ConnectorUnit, AuxSupplyUnit, LightingBoardUnit, WindTurbineUnit, LampRackUnit,
-        PumpedStorageUnit, ElectrodeBoilerUnit, RectifierUnit, FeInterfaceUnit {
+        PumpedStorageUnit, ElectrodeBoilerUnit, RectifierUnit, FeInterfaceUnit, PowerBoardUnit {
     /** Узел вывода, ещё не найденный миром. */
     public static final long NO_NODE = 0;
 
