@@ -40,6 +40,11 @@ public final class ConverterUnit implements IronmakingUnit {
         offgasNm3 += converter.offgasNm3S() * slowDt;
     }
 
+    /** Доля шага SLOW для потерь корпуса вне продувки ({@link Converter#setHoldShare}). */
+    public void setHoldShare(double share) {
+        converter.setHoldShare(share);
+    }
+
     /** Дуть можно: в корпусе металл, корпус вертикален, фурма опущена в горловину. */
     public boolean blowReady() {
         return converter.phase() != ConverterPhase.EMPTY && Math.abs(tiltDeg) <= UPRIGHT_DEG && lanceM < LANCE_PARKED_M;

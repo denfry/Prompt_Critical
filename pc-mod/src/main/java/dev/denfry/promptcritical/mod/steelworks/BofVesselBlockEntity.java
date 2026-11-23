@@ -136,6 +136,8 @@ public class BofVesselBlockEntity extends IronworksDeviceBlockEntity<ConverterUn
     @Override
     protected void serverTick(SimLevelBinding b, ConverterUnit u) {
         double dtp = Ironworks.tickPhysS(b);
+        // между продувками корпус остывает по часам выдержки: наклон и замер идут в реальном времени
+        u.setHoldShare(Math.min(1, Ironworks.tickHoldS() / dtp));
         OxygenLanceBlockEntity lance = lance();
         boolean lanceIn = lance != null && !lance.parked();
         // наклон

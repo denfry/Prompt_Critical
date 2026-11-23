@@ -43,6 +43,21 @@ public final class Ironworks {
         return 0.05 * b.world().clock().kSlow();
     }
 
+    /**
+     * Физические секунды за тик для горячего сосуда, который только ждёт (ковш, конвертер между продувками): перенос
+     * крана и наклон идут в реальном времени (00 §0.4), поэтому его потери идут по часам выдержки
+     * {@code metallurgy.hold_k}, а не по SLOW.
+     */
+    public static double tickHoldS() {
+        double k;
+        try {
+            k = dev.denfry.promptcritical.mod.config.ServerConfig.METALLURGY_HOLD_K.get();
+        } catch (IllegalStateException e) {
+            k = 4; // конфиг ещё не загружен
+        }
+        return 0.05 * k;
+    }
+
     @Nullable
     public static SimLevelBinding binding(@Nullable Level level) {
         return level instanceof ServerLevel s ? SimBindings.get(s) : null;
