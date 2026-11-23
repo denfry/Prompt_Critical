@@ -352,8 +352,11 @@ public final class CommissioningService {
         Unit u = require(unit);
         CommissioningDefect d = find(u, CommissioningDefectKind.SEAM_WEEP);
         if (d == null || !emptyAndCold) return false;
-        u.defects.set(u.defects.indexOf(d),
-                new CommissioningDefect(d.kind(), d.component(), CAULKED_WEEP, CAULKED_BURST, d.found()));
+        // заделанный шов держит пробное давление своей установки: у низконапорных систем оно выше 1,3 p_раб
+        double pw = u.asm.workingPressurePa();
+        double ratio = pw > 0 ? cfg.testPressurePa(pw) / pw : 0;
+        u.defects.set(u.defects.indexOf(d), new CommissioningDefect(d.kind(), d.component(),
+                Math.max(CAULKED_WEEP, ratio * 1.05), Math.max(CAULKED_BURST, ratio * 2), d.found()));
         return true;
     }
 

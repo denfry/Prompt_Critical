@@ -1,6 +1,11 @@
 package dev.denfry.promptcritical.mod.gametest;
 
 import dev.denfry.promptcritical.mod.PromptCritical;
+import dev.denfry.promptcritical.mod.ops.HydrotestPumpBlockEntity;
+import dev.denfry.promptcritical.mod.ops.OpsActions;
+import dev.denfry.promptcritical.mod.ops.OpsItem;
+import dev.denfry.promptcritical.mod.registry.PcItems;
+import net.minecraft.world.item.ItemStack;
 import com.simibubi.create.AllBlocks;
 import com.simibubi.create.content.kinetics.motor.CreativeMotorBlockEntity;
 import dev.denfry.promptcritical.mod.grid.GridPanels;
@@ -156,7 +161,7 @@ public final class LicensingGameTests {
     }
 
     /** Возбуждение генератора I1: без лицензии отказ даже после проверок (нажатие как с CC), с лицензией — включается. */
-    @GameTest(template = LARGE, timeoutTicks = 200, batch = "licensing")
+    @GameTest(template = LARGE, timeoutTicks = 200, batch = "licensing_gen_field")
     public static void generatorFieldNeedsTheI1Licence(GameTestHelper h) {
         placeGenerator(h, 0);
         h.startSequence()
@@ -166,13 +171,16 @@ public final class LicensingGameTests {
                     ops.setLicensing(true);
                     try {
                         var fake = FakePlayerFactory.getMinecraft(h.getLevel());
-                        UUID team = TeamResolver.team(fake);
+                        UUID team = UUID.randomUUID(); // мир GameTest сохраняется: лицензии прошлых запусков не мешают
                         SimId id = generator(h).simId();
                         h.assertTrue(ops.perform(id, new CheckInput.InsulationTest(true), fake.getUUID(), team).passed(), "insulation");
                         h.assertTrue(ops.perform(id, new CheckInput.Alignment(true), fake.getUUID(), team).passed(), "alignment");
                         generator(h).onPanelButton(fake, GridPanels.BUTTON_FIELD);
                         h.assertTrue(!generator(h).unit().fieldOn(), "field refused without the I1 licence");
                         h.assertValueEqual(ops.canStart(id).unlicensedEra(), PlantEra.I1, "missing licence named");
+                        boolean journaled = false;
+                        for (OpsLogEntry e : ops.log(id)) journaled |= e.kind() == OpsLogEntry.Kind.START_REFUSED;
+                        h.assertTrue(journaled, "automation refusal journaled");
                         ops.licences().grant(team, PlantEra.I1, 0);
                         generator(h).onPanelButton(fake, GridPanels.BUTTON_FIELD);
                         h.assertTrue(generator(h).unit().fieldOn(), "field on with the I1 licence");
@@ -184,7 +192,7 @@ public final class LicensingGameTests {
     }
 
     /** Вал крутит генератор без возбуждения — это не пуск: отказов в журнале нет. */
-    @GameTest(template = LARGE, timeoutTicks = 200, batch = "licensing")
+    @GameTest(template = LARGE, timeoutTicks = 200, batch = "licensing_gen_roll")
     public static void generatorRollsWithoutField(GameTestHelper h) {
         placeGenerator(h, 64);
         h.startSequence()
@@ -226,7 +234,7 @@ public final class LicensingGameTests {
      * Разрешение на процесс домны следует за профилем: под licensing непринятая печь его не получает (задувка в модели —
      * BlastFurnacePermissiveTest); без licensing в ADVISORY и OFF печь работает, как прежде.
      */
-    @GameTest(template = TALL, timeoutTicks = 300, batch = "licensing")
+    @GameTest(template = TALL, timeoutTicks = 300, batch = "licensing_bf_permit")
     public static void furnacePermissiveFollowsLicensing(GameTestHelper h) {
         buildFurnace(h);
         BlockPos controller = new BlockPos(2, 4, 5);
@@ -260,6 +268,47 @@ public final class LicensingGameTests {
                     boolean permitted = c.unit().furnace().permitted();
                     ops(h).setConfig(ops(h).config().withCommissioning(before[0]));
                     h.assertTrue(permitted, "OFF furnace still runs");
+                })
+                .thenSucceed();
+    }
+
+    /**
+     * Ревью HP2.1: домну можно принять — насос гидроиспытания видит её пульт, течь шва заделывается кувалдой у холодной
+     * печи, после КИП и пробной работы печь принята.
+     */
+    @GameTest(template = TALL, timeoutTicks = 300, batch = "licensing_bf_accept")
+    public static void furnaceCanBeAccepted(GameTestHelper h) {
+        buildFurnace(h);
+        BlockPos controller = new BlockPos(2, 4, 5);
+        BlockPos pump = new BlockPos(1, 4, 5);
+        h.setBlock(pump, PcBlocks.HYDROTEST_PUMP.get().defaultBlockState());
+        h.startSequence()
+                .thenWaitUntil(() -> {
+                    BlastFurnaceControllerBlockEntity c = (BlastFurnaceControllerBlockEntity) h.getBlockEntity(controller);
+                    h.assertTrue(c.unit() != null && c.unit().furnace() != null && ops(h).unit(c.simId()) != null, "furnace formed and registered");
+                })
+                .thenExecute(() -> {
+                    BlastFurnaceControllerBlockEntity c = (BlastFurnaceControllerBlockEntity) h.getBlockEntity(controller);
+                    HydrotestPumpBlockEntity p = (HydrotestPumpBlockEntity) h.getBlockEntity(pump);
+                    h.assertTrue(p.target() == c, "the hydrotest pump sees the furnace controller");
+                    OpsSubsystem ops = ops(h);
+                    SimId id = c.simId();
+                    var cs = ops.commissioning();
+                    var asm = cs.assembly(id).orElseThrow();
+                    cs.unregister(id);
+                    cs.register(asm, java.util.List.of(dev.denfry.promptcritical.sim.ops.CommissioningDefect.of(
+                            dev.denfry.promptcritical.sim.ops.CommissioningDefectKind.SEAM_WEEP,
+                            asm.components().get(dev.denfry.promptcritical.sim.ops.UnitComponent.SHELL), 1.1)), 0);
+                    var fake = FakePlayerFactory.getMinecraft(h.getLevel());
+                    OpsActions.instant(fake, new ItemStack(PcItems.CAULKING_HAMMER.get()), OpsItem.Kind.CAULKING_HAMMER, ops, ops.unit(id), c);
+                    // чеканка не убирает дефект, а снижает течь: без неё опрессовка ниже провалилась бы
+                    double pw = BlastFurnaceControllerBlockEntity.STAVE_WATER_PA;
+                    h.assertTrue(ops.perform(id, new CheckInput.PressureTest(true, 290, ops.config().testPressurePa(pw),
+                            ops.config().hydrotestHoldPhysS()), null).passed(), "hydrotest passes after caulking");
+                    h.assertTrue(ops.perform(id, new CheckInput.InstrumentCheck(), null).passed(), "instruments");
+                    ops.perform(id, new CheckInput.TrialRun(ops.config().trialRunS(), 1, false, true,
+                            dev.denfry.promptcritical.sim.ops.Baseline.NONE), null);
+                    h.assertTrue(cs.state(id).orElseThrow() == dev.denfry.promptcritical.sim.ops.CommissioningState.ACCEPTED, "furnace accepted");
                 })
                 .thenSucceed();
     }

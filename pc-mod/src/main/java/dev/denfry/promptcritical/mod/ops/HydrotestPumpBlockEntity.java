@@ -1,5 +1,7 @@
 package dev.denfry.promptcritical.mod.ops;
 
+import dev.denfry.promptcritical.mod.ironworks.BlastFurnaceControllerBlockEntity;
+
 import dev.denfry.promptcritical.mod.binding.SimLevelBinding;
 import dev.denfry.promptcritical.mod.block.PcProperties;
 import dev.denfry.promptcritical.mod.boiler.FireTubeBoilerBlockEntity;
@@ -59,14 +61,14 @@ public final class HydrotestPumpBlockEntity extends IronworksBlockEntity {
         if (level == null) return null;
         for (Direction d : Direction.values()) {
             OpsMachine m = OpsWorld.machine(level, worldPosition.relative(d));
-            if (m instanceof FireTubeBoilerBlockEntity || m instanceof SteamEngineBlockEntity) return m;
+            if (m instanceof FireTubeBoilerBlockEntity || m instanceof SteamEngineBlockEntity || m instanceof BlastFurnaceControllerBlockEntity)
+                return m;
         }
         return null;
     }
 
     private static double workingPa(OpsMachine m) {
-        if (m instanceof dev.denfry.promptcritical.mod.ironworks.BlastFurnaceControllerBlockEntity)
-            return dev.denfry.promptcritical.mod.ironworks.BlastFurnaceControllerBlockEntity.STAVE_WATER_PA;
+        if (m instanceof BlastFurnaceControllerBlockEntity) return BlastFurnaceControllerBlockEntity.STAVE_WATER_PA;
         return m instanceof FireTubeBoilerBlockEntity b && b.unit() != null ? b.unit().spec().workingPressurePa() : ENGINE_WORKING_PA;
     }
 
@@ -123,6 +125,8 @@ public final class HydrotestPumpBlockEntity extends IronworksBlockEntity {
         if (m instanceof FireTubeBoilerBlockEntity boiler && boiler.unit() != null) {
             fireOut = !boiler.unit().lit();
             metalK = boiler.unit().waterTempK();
+        } else if (m instanceof BlastFurnaceControllerBlockEntity furnace) {
+            fireOut = furnace.opsStopped(); // опрессовка холодильников — только у холодной печи
         }
         Player p = operator == null ? null : level.getPlayerByUUID(operator);
         var r = ops.perform(m.simId(), new CheckInput.PressureTest(fireOut, metalK, pressurePa,

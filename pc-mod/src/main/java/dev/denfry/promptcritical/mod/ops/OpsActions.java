@@ -210,11 +210,15 @@ public final class OpsActions {
                     report(p, ops.perform(m.simId(), new CheckInput.InsulationTest(g.opsStopped()), p.getUUID(), TeamResolver.team(p)));
             }
             case CAULKING_HAMMER -> {
-                if (!(m instanceof FireTubeBoilerBlockEntity b)) return;
+                // течь шва котла или холодильников домны (план HP2.1): чеканка у опорожнённой холодной установки
+                boolean cold;
+                if (m instanceof FireTubeBoilerBlockEntity b) cold = drainedAndCold(b);
+                else if (m instanceof BlastFurnaceControllerBlockEntity f) cold = f.opsStopped();
+                else return;
                 CommissioningService c = ops.commissioning();
                 if (!c.has(m.simId(), dev.denfry.promptcritical.sim.ops.CommissioningDefectKind.SEAM_WEEP)) {
                     p.displayClientMessage(OpsText.msg("caulk_none"), true);
-                } else if (c.caulk(m.simId(), drainedAndCold(b))) {
+                } else if (c.caulk(m.simId(), cold)) {
                     p.displayClientMessage(OpsText.msg("caulked"), true);
                     play(p, m.opsBearingPos(), SoundEvents.ANVIL_PLACE, 0.6f, 1.6f);
                 } else {

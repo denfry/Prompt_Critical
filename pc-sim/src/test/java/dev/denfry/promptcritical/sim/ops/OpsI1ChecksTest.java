@@ -91,6 +91,24 @@ class OpsI1ChecksTest {
         assertThat(ops.commissioning().state(g)).contains(CommissioningState.ACCEPTED);
     }
 
+    /** Ревью HP2.1: заделанный шов держит пробное давление и у низконапорной установки (0,4 МПа → 0,7 МПа). */
+    @Test
+    void caulkedSeamHoldsTheTestPressureOfALowPressureUnit() {
+        OpsSubsystem ops = ops(OpsConfig.defaults());
+        SimId f = new SimId(205);
+        double pw = 0.4e6;
+        ops.ensure(f, UnitKind.BLAST_FURNACE, pw, false, Set.of(), false);
+        CommissioningService c = ops.commissioning();
+        UnitAssembly asm = c.assembly(f).orElseThrow();
+        c.unregister(f);
+        c.register(asm, List.of(new CommissioningDefect(CommissioningDefectKind.SEAM_WEEP, asm.components().get(UnitComponent.SHELL),
+                1.1, 2.0, false)), 0);
+        assertThat(c.caulk(f, true)).isTrue();
+        double test = ops.config().testPressurePa(pw);
+        CheckResult r = ops.perform(f, new CheckInput.PressureTest(true, 290, test, ops.config().hydrotestHoldPhysS()), null);
+        assertThat(r.outcome()).isEqualTo(CheckResult.Outcome.PASSED);
+    }
+
     @Test
     void blastFurnaceChecklist() {
         assertThat(UnitKind.BLAST_FURNACE.era()).isEqualTo(PlantEra.I1);
