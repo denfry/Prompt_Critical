@@ -953,7 +953,8 @@ public final class PcBlocks {
                 || b == BWR240_REACTOR.get() || b == CANDU6_REACTOR.get() || b == BN600_REACTOR.get() || b == AM1_REACTOR.get()
                 || b == LANCASHIRE_BOILER.get() || b == HEADFRAME_STEEL.get() || b == MILL_ENGINE.get() || b == WINDING_ENGINE.get()
                 || b == GUIBAL_FAN.get() || b == CUPOLA_FURNACE_REAL.get() || b == MINE_DRAINAGE_PUMP_GEARED.get()
-                || b == LANCASHIRE_STOKER.get() || b == CRUCIBLE_FURNACE_REAL.get();
+                || b == LANCASHIRE_STOKER.get() || b == CRUCIBLE_FURNACE_REAL.get() || b == MOLDING_STATION_REAL.get()
+                || b == SHAKEOUT_GRATE_REAL.get();
     }
 
     /**
@@ -1020,6 +1021,26 @@ public final class PcBlocks {
             Spec.facing(PcProperties.RUNNING).footprint(FP_WIDE2), KineticMachineBlock.with(ShaftSide.LEFT, MoldingStationBlockEntity::new));
     public static final DeferredBlock<PcDeviceBlock> SHAKEOUT_GRATE = device("shakeout_grate", machine(),
             Spec.facing(PcProperties.RUNNING).footprint(Footprint.of(Segment.box(0, 1, 0, 0, 0, 1))),
+            KineticMachineBlock.with(ShaftSide.LEFT, ShakeoutGrateBlockEntity::new));
+    /**
+     * Формовочная машина реального масштаба: встряхивающе-прессовая с поворотной траверсой 1,9 м, привод с компрессором
+     * на западе, бункер песка с затвором и лотком на востоке (08 §8.9). Тот же BE, что {@link #MOLDING_STATION}; вал
+     * Create — в западную грань контроллера, как у старой машины.
+     */
+    public static final Footprint FP_MOLDING_STATION_REAL = Footprint.of(Segment.box(0, 1, 0, 1, 0, 0));
+    public static final DeferredBlock<PcDeviceBlock> MOLDING_STATION_REAL = device("molding_station_real", machine(),
+            Spec.facing(PcProperties.RUNNING).footprint(FP_MOLDING_STATION_REAL),
+            KineticMachineBlock.with(ShaftSide.LEFT, MoldingStationBlockEntity::new));
+    /**
+     * Выбивная решётка реального масштаба: настил 1,5 × 1,6 м на четырёх пружинах над песочной ямой, вибратор на западе
+     * за кожухом ремня, боковой отсос пыли на востоке (08 §8.9). Тот же BE, что {@link #SHAKEOUT_GRATE}. Объём — как
+     * клетки модели: над западной половиной настила пусто, туда ставят формы ({@code tops()} — клетки над объёмом).
+     */
+    public static final Footprint FP_SHAKEOUT_GRATE_REAL = Footprint.of(Segment.box(0, 1, 0, 0, 0, 1),
+            Segment.box(0, 0, 0, 0, 0, 1).at(1, 1, 0));
+    public static final DeferredBlock<PcDeviceBlock> SHAKEOUT_GRATE_REAL = device("shakeout_grate_real", machine(),
+            Spec.facing(PcProperties.RUNNING).segments(PcProperties.wholeSegments(FP_SHAKEOUT_GRATE_REAL.segments().size()),
+                    FP_SHAKEOUT_GRATE_REAL),
             KineticMachineBlock.with(ShaftSide.LEFT, ShakeoutGrateBlockEntity::new));
     public static final DeferredBlock<PcDeviceBlock> MACHINE_LATHE = device("machine_lathe", machine(),
             Spec.facing(PcProperties.RUNNING).footprint(FP_WIDE2), KineticMachineBlock.with(ShaftSide.LEFT, MachineToolBlockEntity::lathe));

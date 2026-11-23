@@ -27,9 +27,11 @@ public final class FoundryBlockEntities {
     public static final DeferredHolder<BlockEntityType<?>, BlockEntityType<SandMoldBlockEntity>> SAND_MOLD =
             type("sand_mold", SandMoldBlockEntity::new, PcBlocks.SAND_MOLD);
     public static final DeferredHolder<BlockEntityType<?>, BlockEntityType<MoldingStationBlockEntity>> MOLDING_STATION =
-            type("molding_station", MoldingStationBlockEntity::new, PcBlocks.MOLDING_STATION);
+            BLOCK_ENTITIES.register("molding_station", () -> BlockEntityType.Builder.of(MoldingStationBlockEntity::new,
+                    PcBlocks.MOLDING_STATION.get(), PcBlocks.MOLDING_STATION_REAL.get()).build(null));
     public static final DeferredHolder<BlockEntityType<?>, BlockEntityType<ShakeoutGrateBlockEntity>> SHAKEOUT_GRATE =
-            type("shakeout_grate", ShakeoutGrateBlockEntity::new, PcBlocks.SHAKEOUT_GRATE);
+            BLOCK_ENTITIES.register("shakeout_grate", () -> BlockEntityType.Builder.of(ShakeoutGrateBlockEntity::new,
+                    PcBlocks.SHAKEOUT_GRATE.get(), PcBlocks.SHAKEOUT_GRATE_REAL.get()).build(null));
     public static final DeferredHolder<BlockEntityType<?>, BlockEntityType<MachineToolBlockEntity>> MACHINE_LATHE =
             type("machine_lathe", MachineToolBlockEntity::lathe, PcBlocks.MACHINE_LATHE);
     public static final DeferredHolder<BlockEntityType<?>, BlockEntityType<MachineToolBlockEntity>> DRILL_PRESS =

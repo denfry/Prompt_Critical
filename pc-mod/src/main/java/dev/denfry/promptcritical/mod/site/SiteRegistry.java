@@ -47,6 +47,8 @@ public final class SiteRegistry {
     public static final DeferredItem<DesignDrawingItem> MINE_DRAINAGE_PUMP_GEARED_DRAWING = drawing("mine_drainage_pump_geared");
     public static final DeferredItem<DesignDrawingItem> LANCASHIRE_STOKER_DRAWING = drawing("lancashire_stoker");
     public static final DeferredItem<DesignDrawingItem> CRUCIBLE_FURNACE_REAL_DRAWING = drawing("crucible_furnace_real");
+    public static final DeferredItem<DesignDrawingItem> MOLDING_STATION_REAL_DRAWING = drawing("molding_station_real");
+    public static final DeferredItem<DesignDrawingItem> SHAKEOUT_GRATE_REAL_DRAWING = drawing("shakeout_grate_real");
 
     private SiteRegistry() {}
 

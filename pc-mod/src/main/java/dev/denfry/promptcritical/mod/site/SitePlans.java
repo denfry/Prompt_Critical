@@ -172,13 +172,25 @@ public final class SitePlans {
         }
     }
 
+    /** Литейка I0 реального масштаба (08 §8.9); третья карта — у {@link Map#of} не больше десяти пар. */
+    private static final Map<String, Plan> FOUNDRY_PLANS = Map.of(
+            // встряхивающе-прессовая машина со столом под опоку ≈ 2 т литья, привод, компрессор и эстакада бункера ≈ 0,5 т (оценки)
+            "molding_station_real", plan("molding_station_real", PcBlocks.MOLDING_STATION_REAL, 2.5,
+                    st("jolt_squeeze", 120, n(INGOT, 18), n(PLATE, 2)),
+                    st("sand_stand", 80, n(INGOT, 3), n(PLATE, 2))),
+            // настил 1,5 × 1,6 м с рамой, пружинами и вибратором ≈ 1,2 т, кожух отсоса с воздуховодом ≈ 0,6 т (оценки)
+            "shakeout_grate_real", plan("shakeout_grate_real", PcBlocks.SHAKEOUT_GRATE_REAL, 1.8,
+                    st("shakeout_deck", 100, n(INGOT, 8), n(PLATE, 4)),
+                    st("dust_hood", 60, n(INGOT, 2), n(PLATE, 4))));
+
     @Nullable
     public static Plan get(String id) {
         Plan p = PLANS.get(id);
-        return p != null ? p : I0_PLANS.get(id);
+        if (p == null) p = I0_PLANS.get(id);
+        return p != null ? p : FOUNDRY_PLANS.get(id);
     }
 
     public static Iterable<Plan> all() {
-        return java.util.stream.Stream.concat(PLANS.values().stream(), I0_PLANS.values().stream()).toList();
+        return java.util.stream.Stream.of(PLANS, I0_PLANS, FOUNDRY_PLANS).flatMap(m -> m.values().stream()).toList();
     }
 }

@@ -169,7 +169,7 @@ public final class MachineProcesses {
         p.add(new Process("ion_exchange_column", Plant.WATER, on(PcBlocks.ION_EXCHANGE_COLUMN),
                 of(fluid(0, "filtered_water"), item(0, PcItems.SALT)), of(fluid(0, "softened_water"))));
         // литейка (08 §8.9, 08 §8.10, 13 §13.6.7)
-        p.add(new Process("molding_station", Plant.FOUNDRY, on(PcBlocks.MOLDING_STATION),
+        p.add(new Process("molding_station", Plant.FOUNDRY, on(PcBlocks.MOLDING_STATION, PcBlocks.MOLDING_STATION_REAL),
                 of(item(1, PcItems.FOUNDRY_SAND), item(PcItems.CASTING_PATTERN), water(5)),
                 of(item(PcBlocks.SAND_MOLD))));
         p.add(new Process("cupola_furnace", Plant.FOUNDRY, on(PcBlocks.CUPOLA_FURNACE, PcBlocks.CUPOLA_FURNACE_REAL),
@@ -180,7 +180,7 @@ public final class MachineProcesses {
                         tagStacks(FoundryTags.ALUMINUM_INGOTS)), 1), tag(FoundryTags.FURNACE_COAL, 0),
                         item(PcBlocks.SAND_MOLD)),
                 of(item(PcItems.CASTING))));
-        p.add(new Process("shakeout_grate", Plant.FOUNDRY, on(PcBlocks.SHAKEOUT_GRATE),
+        p.add(new Process("shakeout_grate", Plant.FOUNDRY, on(PcBlocks.SHAKEOUT_GRATE, PcBlocks.SHAKEOUT_GRATE_REAL),
                 of(item(PcBlocks.SAND_MOLD)), of(item(PcItems.CASTING), item(0, PcItems.FOUNDRY_SAND))));
         p.add(new Process("machine_tool", Plant.FOUNDRY, on(PcBlocks.MACHINE_LATHE, PcBlocks.DRILL_PRESS),
                 of(item(PcItems.CASTING), item(PcItems.CUTTING_TOOL)), of(item(PcItems.CASTING))));

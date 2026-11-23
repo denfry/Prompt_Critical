@@ -39,7 +39,8 @@ import org.jetbrains.annotations.Nullable;
  * с водой вокруг {@code casting_pattern} — за цикл одна заформованная {@code sand_mold}. Модель не расходуется.
  * Вода — 5 мБ на предмет смеси (влажность 5 % на 100 кг); без воды форма выходит сухой (2 %).
  */
-public final class MoldingStationBlockEntity extends KineticMachineBlockEntity<CyclicMachine> implements PanelHost {
+public final class MoldingStationBlockEntity extends KineticMachineBlockEntity<CyclicMachine> implements PanelHost,
+        dev.denfry.promptcritical.mod.client.whole.WholeModelHost {
     public static final int WATER_PER_SAND_MB = 5;
     public static final float DRY_MOISTURE = 0.02f;
     private static final MachineInventory.Role[] ROLES = {MachineInventory.Role.INPUT, MachineInventory.Role.SERVICE,
@@ -196,5 +197,26 @@ public final class MoldingStationBlockEntity extends KineticMachineBlockEntity<C
         if (clientPacket) return;
         if (tag.contains("inventory")) inv.load(registries, tag.getCompound("inventory"));
         if (tag.contains("water")) water.readFromNBT(registries, tag.getCompound("water"));
+    }
+
+    // --- цельная модель (реальный масштаб) ---
+
+    /** Id цельной модели у машины реального масштаба; у старой — null. */
+    @Override
+    @Nullable
+    public String wholeModelId() {
+        return dev.denfry.promptcritical.mod.client.whole.WholeModelHost.idOf(getBlockState());
+    }
+
+    @Override
+    public Direction wholeModelFacing() {
+        BlockState s = getBlockState();
+        return s.getBlock() instanceof dev.denfry.promptcritical.mod.block.PcBlock b ? b.facing(s) : Direction.NORTH;
+    }
+
+    /** Свет — с фасада, перед контроллером. */
+    @Override
+    public BlockPos wholeModelLightPos() {
+        return worldPosition.relative(wholeModelFacing());
     }
 }

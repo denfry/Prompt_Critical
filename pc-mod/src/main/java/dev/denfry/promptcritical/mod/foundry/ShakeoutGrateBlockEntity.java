@@ -35,7 +35,8 @@ import org.jetbrains.annotations.Nullable;
  * Выбивная решётка {@code shakeout_grate} (08 §8.9): формы ставятся на решётку, остывшие выбиваются за цикл
  * (вал Create) — отливка с {@code casting_spec} и 90 % формовочной смеси на склад решётки.
  */
-public final class ShakeoutGrateBlockEntity extends KineticMachineBlockEntity<CyclicMachine> implements PanelHost {
+public final class ShakeoutGrateBlockEntity extends KineticMachineBlockEntity<CyclicMachine> implements PanelHost,
+        dev.denfry.promptcritical.mod.client.whole.WholeModelHost {
     /** Возврат формовочной смеси после выбивки. */
     public static final double SAND_RECOVERY = 0.9;
     private static final MachineInventory.Role[] ROLES = new MachineInventory.Role[9];
@@ -182,5 +183,26 @@ public final class ShakeoutGrateBlockEntity extends KineticMachineBlockEntity<Cy
     protected void read(CompoundTag tag, HolderLookup.Provider registries, boolean clientPacket) {
         super.read(tag, registries, clientPacket);
         if (!clientPacket && tag.contains("inventory")) inv.load(registries, tag.getCompound("inventory"));
+    }
+
+    // --- цельная модель (реальный масштаб) ---
+
+    /** Id цельной модели у машины реального масштаба; у старой — null. */
+    @Override
+    @Nullable
+    public String wholeModelId() {
+        return dev.denfry.promptcritical.mod.client.whole.WholeModelHost.idOf(getBlockState());
+    }
+
+    @Override
+    public Direction wholeModelFacing() {
+        BlockState s = getBlockState();
+        return s.getBlock() instanceof dev.denfry.promptcritical.mod.block.PcBlock b ? b.facing(s) : Direction.NORTH;
+    }
+
+    /** Свет — с фасада, перед контроллером. */
+    @Override
+    public BlockPos wholeModelLightPos() {
+        return worldPosition.relative(wholeModelFacing());
     }
 }

@@ -76,6 +76,12 @@ public final class SiteText {
         drawing("lancashire_stoker", "Lancashire Boiler Stokers", "механических забрасывателей ланкаширского котла");
         stage("stoker_frame", "bed plate, standards and line shaft", "фундаментная плита, стойки и линия вала");
         stage("stokers", "hoppers, feeding boxes and rams", "бункера, питательные коробки и толкатели");
+        drawing("molding_station_real", "Jolt-Squeeze Moulding Machine", "встряхивающе-прессовой формовочной машины");
+        stage("jolt_squeeze", "base, jolt cylinder, table and swing yoke", "станина, цилиндр встряхивания, стол и поворотная траверса");
+        stage("sand_stand", "drive box, compressor and sand hopper stand", "коробка привода, компрессор и эстакада бункера песка");
+        drawing("shakeout_grate_real", "Vibrating Shakeout Grate", "инерционной выбивной решётки");
+        stage("shakeout_deck", "springs, deck frame, bars and vibrator", "пружины, рама настила, колосники и вибратор");
+        stage("dust_hood", "side-draft dust hood and duct", "боковой отсос пыли и воздуховод");
     }
 
     private SiteText() {}
