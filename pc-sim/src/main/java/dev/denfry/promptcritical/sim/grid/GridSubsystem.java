@@ -55,6 +55,8 @@ public final class GridSubsystem implements Subsystem, GridEventSink {
     private final SplittableRandom rng = new SplittableRandom(0x5f3759dfL);
     private PowerGrid grid;
     private boolean dirty = true;
+    /** Сеть после пересборки уже сделала шаг: до него напряжения и частоты шин — нули холодного старта, а не замер. */
+    private boolean solved;
     private GeneratorUnit[] machineUnits = new GeneratorUnit[0];
     private Object[] branchOwners = new Object[0];
     private ConsumerUnit[] loadUnits = new ConsumerUnit[0];
@@ -146,6 +148,11 @@ public final class GridSubsystem implements Subsystem, GridEventSink {
     /** Обратимый агрегат ГАЭС. */
     public FeInterfaceUnit feInterface(SimId id) {
         return unit(id, FeInterfaceUnit.class, () -> new FeInterfaceUnit(id));
+    }
+
+    /** Солнечный или батарейный инвертор (15 §15.9). */
+    public InverterUnit inverter(SimId id) {
+        return unit(id, InverterUnit.class, () -> new InverterUnit(id));
     }
 
     /** Розетка, силовой щит или ИБП машин. */
@@ -288,6 +295,11 @@ public final class GridSubsystem implements Subsystem, GridEventSink {
      */
     public boolean ready() {
         return grid != null;
+    }
+
+    /** Напряжения и частоты шин — замер, а не нули только что пересобранной сети. */
+    boolean solved() {
+        return grid != null && solved;
     }
 
     /** Модель сети (тесты и отладка); {@code null} до первой сборки. */
@@ -446,11 +458,13 @@ public final class GridSubsystem implements Subsystem, GridEventSink {
             else if (u instanceof PumpedStorageUnit s) s.beforeTick(grid, dt);
             else if (u instanceof FeInterfaceUnit f) f.beforeTick(grid, dt);
             else if (u instanceof PowerBoardUnit p) p.beforeTick(grid, dt);
+            else if (u instanceof InverterUnit i) i.beforeTick(grid, dt);
             else if (u instanceof ElectrodeBoilerUnit e) e.beforeTick(grid, dt);
         }
         profile(dt);
         if (grid.busCount() > 0) {
             grid.stepFast(dt, inputs, out);
+            solved = true;
             grid.drainEvents(this);
             if (!blackoutNodes.isEmpty()) blackStart(tick);
             if (ctx.clock().due(TimeDomain.SLOW, SLOW_PHASE)) grid.stepSlow(ctx.clock().slowDtPhys());
@@ -521,6 +535,7 @@ public final class GridSubsystem implements Subsystem, GridEventSink {
         relayOwners = b.relays.toArray(new GridUnit[0]);
         relaySlots = buildingSlots.stream().mapToInt(Integer::intValue).toArray();
         dirty = false;
+        solved = false;
         rebuilds++;
     }
 
@@ -794,6 +809,7 @@ public final class GridSubsystem implements Subsystem, GridEventSink {
             case RectifierUnit r -> "rectifier";
             case FeInterfaceUnit f -> "fe_interface";
             case PowerBoardUnit p -> "power_board";
+            case InverterUnit i -> "inverter";
         };
     }
 
@@ -829,6 +845,7 @@ public final class GridSubsystem implements Subsystem, GridEventSink {
                 case "rectifier" -> new RectifierUnit(id);
                 case "fe_interface" -> new FeInterfaceUnit(id);
                 case "power_board" -> new PowerBoardUnit(id);
+                case "inverter" -> new InverterUnit(id);
                 default -> type.startsWith("switch:") ? new SwitchUnit(id, SwitchUnit.Kind.valueOf(type.substring(7))) : null;
             };
             if (u != null) {

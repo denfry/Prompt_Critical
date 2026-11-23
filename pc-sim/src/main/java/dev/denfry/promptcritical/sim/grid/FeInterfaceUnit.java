@@ -89,6 +89,11 @@ public final class FeInterfaceUnit extends GridUnit {
             g.setLoadPowerW(load, 0);
             return;
         }
+        // первый тик после пересборки сети: шины ещё не посчитаны, нули — не пропажа сети
+        if (!owner.solved()) {
+            g.setLoadPowerW(load, iface.gridW());
+            return;
+        }
         g.setLoadPowerW(load, iface.step(dt, voltagePu(), frequencyHz()));
     }
 

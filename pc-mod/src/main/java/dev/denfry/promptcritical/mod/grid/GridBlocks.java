@@ -27,7 +27,8 @@ public final class GridBlocks {
                     PcBlocks.ACHESON_FURNACE.get(), PcBlocks.LIGHTING_BOARD.get(), PcBlocks.SUBMERGED_ARC_FURNACE.get(),
                     PcBlocks.SIEMENS_REACTOR.get(), PcBlocks.CLEANROOM_AIRLOCK.get(), PcBlocks.ELECTROSTATIC_PRECIPITATOR.get(),
                     PcBlocks.GRID_FE_INTERFACE_SMALL.get(), PcBlocks.GRID_FE_INTERFACE.get(), PcBlocks.GRID_FE_INTERFACE_LARGE.get(),
-                    PcBlocks.POWER_SOCKET.get(), PcBlocks.POWER_SOCKET_3P.get(), PcBlocks.POWER_BOARD.get(), PcBlocks.UPS_CABINET.get());
+                    PcBlocks.POWER_SOCKET.get(), PcBlocks.POWER_SOCKET_3P.get(), PcBlocks.POWER_BOARD.get(), PcBlocks.UPS_CABINET.get(),
+                    PcBlocks.SOLAR_INVERTER.get(), PcBlocks.BATTERY_INVERTER.get());
         }
         return blocks;
     }

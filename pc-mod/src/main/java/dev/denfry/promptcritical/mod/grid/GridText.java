@@ -42,6 +42,17 @@ public final class GridText {
             " — отпал по нулевой защите, нажмите «Пуск»");
     public static final String POWER_BATTERY = t("power_battery", "; battery %s %%%s", "; батарея %s %%%s");
     public static final String POWER_ON_BATTERY = t("power_on_battery", ", running on battery", ", работает от батареи");
+    public static final String SOLAR_STATUS = t("solar_status", "%s panels (%s shaded, %s tracking the sun): %s kW DC, %s kW to the grid; sky %s %% clear, dust %s %%; %s",
+            "Панелей %s (в тени %s, следят за солнцем %s): %s кВт постоянного тока, %s кВт в сеть; небо ясное на %s %%, пыль %s %%; %s");
+    public static final String INVERTER_ON = t("inverter_on", "connected", "в сети");
+    public static final String INVERTER_OFF = t("inverter_off", "waiting for the grid", "ждёт сеть");
+    public static final String BATTERY_STATUS = t("battery_status", "%s modules, charge %s %%, health %s %%, %s cycles; %s kW (%s); H₂ in the room %s %% LEL (%s m³, %s air changes/h)",
+            "Модулей %s, заряд %s %%, ёмкость %s %%, циклов %s; %s кВт (%s); H₂ в помещении %s %% НКПР (%s м³, обмен %s 1/ч)");
+    public static final String BATTERY_MODE = t("battery_mode", "Battery inverter mode: %s", "Режим батарейного инвертора: %s");
+    public static final String BATTERY_OFF = t("battery_mode.off", "off", "отключён");
+    public static final String BATTERY_CHARGE = t("battery_mode.charge", "charge", "заряд");
+    public static final String BATTERY_DISCHARGE = t("battery_mode.discharge", "discharge", "разряд");
+    public static final String BATTERY_REGULATE = t("battery_mode.regulate", "frequency regulation", "регулирование частоты");
     public static final String FUSE_FITTED = t("fuse_fitted", "Fuse fitted (%s A)", "Вставка установлена (%s А)");
     public static final String FUSE_REMOVED = t("fuse_removed", "Fuse removed — visible break", "Вставка вынута — видимый разрыв");
     public static final String FUSE_BLOWN = t("fuse_blown", "The fuse has blown — fit a new one", "Вставка перегорела — поставьте новую");

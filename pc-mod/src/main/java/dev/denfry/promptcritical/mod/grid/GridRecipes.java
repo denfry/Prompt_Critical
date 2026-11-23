@@ -173,6 +173,31 @@ public final class GridRecipes extends RecipeProvider {
         ShapedRecipeBuilder.shaped(RecipeCategory.MISC, PcBlocks.UPS_CABINET.get()).pattern("SDS").pattern("BWB").pattern("SBS")
                 .define('S', AllItems.IRON_SHEET.get()).define('D', Items.COMPARATOR).define('B', PcBlocks.POWER_SOCKET.get()).define('W', wire)
                 .unlockedBy("has_power_board", has(PcBlocks.POWER_BOARD.get())).save(out, id("ups_cabinet"));
+        ShapedRecipeBuilder.shaped(RecipeCategory.MISC, PcItems.SOLAR_CELL.get(), 4).pattern(" C ").pattern("CWC").pattern(" G ")
+                .define('C', Items.COPPER_INGOT).define('W', PcItems.SILICON_WAFER.get()).define('G', Items.GLOWSTONE_DUST)
+                .unlockedBy("has_wafer", has(PcItems.SILICON_WAFER.get())).save(out, id("solar_cell"));
+        ShapedRecipeBuilder.shaped(RecipeCategory.MISC, PcBlocks.SOLAR_PANEL.get(), 2).pattern("GGG").pattern("CEC").pattern("AAA")
+                .define('G', Items.GLASS_PANE).define('C', PcItems.SOLAR_CELL.get()).define('E', PcItems.POLYETHYLENE.get())
+                .define('A', PcItems.ALUMINIUM_INGOT.get())
+                .unlockedBy("has_cell", has(PcItems.SOLAR_CELL.get())).save(out, id("solar_panel"));
+        ShapedRecipeBuilder.shaped(RecipeCategory.MISC, PcBlocks.SOLAR_PANEL_TRACKER.get(), 2).pattern("PP").pattern("SS")
+                .define('P', PcBlocks.SOLAR_PANEL.get()).define('S', AllBlocks.SHAFT.get())
+                .unlockedBy("has_panel", has(PcBlocks.SOLAR_PANEL.get())).save(out, id("solar_panel_tracker"));
+        ShapedRecipeBuilder.shaped(RecipeCategory.MISC, PcBlocks.SOLAR_TRACKER_DRIVE.get()).pattern("SGS").pattern("HCH").pattern("SSS")
+                .define('S', AllItems.IRON_SHEET.get()).define('G', AllBlocks.GEARBOX.get()).define('H', AllBlocks.SHAFT.get())
+                .define('C', AllBlocks.COGWHEEL.get())
+                .unlockedBy("has_panel", has(PcBlocks.SOLAR_PANEL.get())).save(out, id("solar_tracker_drive"));
+        ShapedRecipeBuilder.shaped(RecipeCategory.MISC, PcBlocks.SOLAR_INVERTER.get()).pattern("SDS").pattern("WTW").pattern("SCS")
+                .define('S', AllItems.IRON_SHEET.get()).define('D', Items.COMPARATOR).define('W', wire).define('C', PcItems.SOLAR_CELL.get())
+                .define('T', PcBlocks.POWER_SOCKET_3P.get())
+                .unlockedBy("has_cell", has(PcItems.SOLAR_CELL.get())).save(out, id("solar_inverter"));
+        ShapedRecipeBuilder.shaped(RecipeCategory.MISC, PcBlocks.GRID_BATTERY_RACK.get()).pattern("SLS").pattern("LAL").pattern("SLS")
+                .define('S', AllItems.IRON_SHEET.get()).define('L', PcBlocks.LEAD_BLOCK.get()).define('A', PcItems.SULFUR.get())
+                .unlockedBy("has_lead", has(PcBlocks.LEAD_BLOCK.get())).save(out, id("grid_battery_rack"));
+        ShapedRecipeBuilder.shaped(RecipeCategory.MISC, PcBlocks.BATTERY_INVERTER.get()).pattern("SDS").pattern("WTW").pattern("SRS")
+                .define('S', AllItems.IRON_SHEET.get()).define('D', Items.COMPARATOR).define('W', wire)
+                .define('T', PcBlocks.DISTRIBUTION_TRANSFORMER.get()).define('R', PcBlocks.GRID_BATTERY_RACK.get())
+                .unlockedBy("has_rack", has(PcBlocks.GRID_BATTERY_RACK.get())).save(out, id("battery_inverter"));
         ShapedRecipeBuilder.shaped(RecipeCategory.MISC, PcBlocks.RELAY_CABINET.get()).pattern("SGS").pattern("SCS").pattern("SWS")
                 .define('S', AllItems.IRON_SHEET.get()).define('G', Items.GLASS_PANE).define('C', Items.COMPARATOR).define('W', wire)
                 .unlockedBy("has_wire", hasWire).save(out, id("relay_cabinet"));

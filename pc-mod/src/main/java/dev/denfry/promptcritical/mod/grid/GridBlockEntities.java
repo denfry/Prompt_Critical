@@ -63,6 +63,12 @@ public final class GridBlockEntities {
             type("power_socket_3p", PowerBoardBlockEntity::socket3p, PcBlocks.POWER_SOCKET_3P);
     public static final DeferredHolder<BlockEntityType<?>, BlockEntityType<PowerBoardBlockEntity>> POWER_BOARD =
             type("power_board", PowerBoardBlockEntity::board, PcBlocks.POWER_BOARD);
+    public static final DeferredHolder<BlockEntityType<?>, BlockEntityType<SolarInverterBlockEntity>> SOLAR_INVERTER =
+            type("solar_inverter", SolarInverterBlockEntity::new, PcBlocks.SOLAR_INVERTER);
+    public static final DeferredHolder<BlockEntityType<?>, BlockEntityType<SolarTrackerDriveBlockEntity>> SOLAR_TRACKER_DRIVE =
+            type("solar_tracker_drive", SolarTrackerDriveBlockEntity::new, PcBlocks.SOLAR_TRACKER_DRIVE);
+    public static final DeferredHolder<BlockEntityType<?>, BlockEntityType<BatteryInverterBlockEntity>> BATTERY_INVERTER =
+            type("battery_inverter", BatteryInverterBlockEntity::new, PcBlocks.BATTERY_INVERTER);
     public static final DeferredHolder<BlockEntityType<?>, BlockEntityType<PowerBoardBlockEntity>> UPS_CABINET =
             type("ups_cabinet", PowerBoardBlockEntity::ups, PcBlocks.UPS_CABINET);
     public static final DeferredHolder<BlockEntityType<?>, BlockEntityType<LightingBoardBlockEntity>> LIGHTING_BOARD =

@@ -379,6 +379,7 @@ public final class PcBlockStateProvider extends BlockStateProvider {
                  "ceiling_light_panel", "lamp_fluorescent", "lamp_bulkhead", "lamp_explosion_proof", "lamp_emergency",
                  "lamp_high_bay", "warning_beacon", "lighting_board", "power_socket", "power_socket_3p", "power_board" ->
                     s.getValue(BlockStateProperties.LIT) ? id : id + "_off";
+            case "solar_inverter", "battery_inverter" -> s.getValue(BlockStateProperties.LIT) ? id + "_running" : id;
             case "ups_cabinet" -> !s.getValue(BlockStateProperties.LIT) ? id + "_fault" : s.getValue(PcProperties.ALARM) ? id + "_battery" : id;
             // электросеть I1 (этап 8 M3)
             case "electric_motor" -> s.getValue(PcProperties.MEDIUM_VOLTAGE) ? id + "_mv" : id;
