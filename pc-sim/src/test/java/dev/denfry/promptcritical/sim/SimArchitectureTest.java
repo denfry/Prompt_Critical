@@ -41,7 +41,7 @@ public class SimArchitectureTest {
             .layer("core").definedBy("..sim.core..")
             .layer("physics").definedBy("..sim.neutronics..", "..sim.thermal..", "..sim.thermo..",
                     "..sim.hydraulics..", "..sim.reactor..", "..sim.nuclide..", "..sim.grid..",
-                    "..sim.combustion..", "..sim.mining..", "..sim.drilling..", "..sim.production..", "..sim.refining..", "..sim.gasprocessing..", "..sim.mechanics..", "..sim.metallurgy..", "..sim.wind..", "..sim.battery..", "..sim.petrochem..", "..sim.chlor..", "..sim.nitrogen..", "..sim.methanol..", "..sim.uranium..",
+                    "..sim.combustion..", "..sim.mining..", "..sim.drilling..", "..sim.production..", "..sim.refining..", "..sim.gasprocessing..", "..sim.mechanics..", "..sim.metallurgy..", "..sim.wind..", "..sim.battery..", "..sim.solar..", "..sim.storage..", "..sim.geothermal..", "..sim.petrochem..", "..sim.chlor..", "..sim.nitrogen..", "..sim.methanol..", "..sim.uranium..",
                     "..sim.utilities..", "..sim.manufacturing..")
             .layer("systems").definedBy("..sim.protection..", "..sim.instrument..", "..sim.alarm..",
                     "..sim.acoustics..", "..sim.accident..", "..sim.radiation..", "..sim.chem..",
