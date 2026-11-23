@@ -45,11 +45,12 @@ public final class NaturalBackground {
     private NaturalBackground() {
     }
 
-    /** Земное γ, нГр/ч: Σ D∞,m · 2·f_m; f_m — доля полной сферы, зажата в 0..1, сумма не обязана быть 1. */
+    /** Земное γ, нГр/ч: Σ D∞,m · 2·f_m; f_m — доля полной сферы, зажата в 0..1 (null и NaN дают 0), сумма не обязана быть 1. */
     public static double terrestrialNGyH(Map<Ground, Double> sphereFraction) {
         double sum = 0;
         for (Map.Entry<Ground, Double> e : sphereFraction.entrySet()) {
-            double f = Math.max(0, Math.min(1, e.getValue()));
+            Double v = e.getValue();
+            double f = v == null || !(v > 0) ? 0 : Math.min(v, 1); // null и NaN — нет доли
             sum += e.getKey().infiniteNGyH * 2 * f;
         }
         return sum;

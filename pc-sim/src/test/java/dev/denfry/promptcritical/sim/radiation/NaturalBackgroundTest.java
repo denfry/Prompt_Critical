@@ -50,4 +50,13 @@ class NaturalBackgroundTest {
         assertThat(NaturalBackground.cosmicUSvH(Dimension.OVERWORLD, 63, -10))
                 .isEqualTo(NaturalBackground.cosmicUSvH(Dimension.OVERWORLD, 63, 0));
     }
+
+    @Test
+    void nanAndNullFractionsCountAsZero() {
+        Map<Ground, Double> m = new java.util.HashMap<>();
+        m.put(Ground.STONE, Double.NaN);
+        m.put(Ground.SOIL, null);
+        m.put(Ground.SAND, 0.5);
+        assertThat(NaturalBackground.terrestrialNGyH(m)).isCloseTo(22, within(1e-9));
+    }
 }

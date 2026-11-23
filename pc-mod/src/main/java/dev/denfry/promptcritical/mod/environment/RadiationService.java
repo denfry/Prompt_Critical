@@ -23,13 +23,13 @@ import net.minecraft.world.effect.MobEffectInstance;
 import net.minecraft.world.effect.MobEffects;
 import net.minecraft.world.phys.Vec3;
 import net.neoforged.neoforge.common.NeoForge;
+import net.neoforged.neoforge.event.entity.player.PlayerEvent;
 import net.neoforged.neoforge.event.tick.LevelTickEvent;
 
 /**
  * Ионизирующее излучение в мире: точечные источники γ и нейтронов (работающий котёл, остаточное тепловыделение,
  * отработанный материал) и вспышки (СЦР). Раз в секунду для каждого игрока считается мощность дозы от всех источников
- * в {@value #RANGE_M} м с ослаблением блоками на прямой ({@link ShieldBlocks}, {@link DoseRate}), плюс фон
- * {@value #BACKGROUND_USV_H} мкЗв/ч. Доза копится в данных игрока: полная (для дозиметра) и острая — она спадает
+ * в {@value #RANGE_M} м с ослаблением блоками на прямой ({@link ShieldBlocks}, {@link DoseRate}), плюс природный фон места ({@link BackgroundField}; запасное значение — {@value #BACKGROUND_USV_H} мкЗв/ч). Доза копится в данных игрока: полная (для дозиметра) и острая — она спадает
  * с периодом {@value RadiationSickness#RECOVERY_HALF_DAYS} игровых суток и задаёт лучевую болезнь
  * ({@link RadiationSickness}). Зиверт для γ и нейтронов приравнен к грею (взвешивающие коэффициенты уже в коэффициенте
  * перевода нейтронов).
@@ -99,6 +99,7 @@ public final class RadiationService {
         NeoForge.EVENT_BUS.addListener((LevelTickEvent.Post e) -> {
             if (e.getLevel() instanceof ServerLevel s) tick(s);
         });
+        NeoForge.EVENT_BUS.addListener((PlayerEvent.PlayerLoggedOutEvent e) -> BackgroundField.forget(e.getEntity().getUUID()));
     }
 
     /** Непрерывный источник в точке; источник обновляет его хотя бы раз в {@value #HOLD_TICKS} тиков. */
@@ -307,7 +308,7 @@ public final class RadiationService {
         gatherItems(level, now);
         for (ServerPlayer p : level.players()) {
             double rate = rateSvH(level, p.getEyePosition())
-                    + cloudSvH(level, p.getEyePosition(), dev.denfry.promptcritical.mod.safety.PpeService.aerosolFraction(p)) + BACKGROUND_USV_H * 1e-6;
+                    + cloudSvH(level, p.getEyePosition(), dev.denfry.promptcritical.mod.safety.PpeService.aerosolFraction(p)) + BackgroundField.ambientSvH(level, p);
             CompoundTag d = data(p);
             d.putDouble("rate", rate);
             if (p.isCreative() || p.isSpectator()) continue;
