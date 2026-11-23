@@ -36,6 +36,11 @@ public final class PcBlockStateProvider extends BlockStateProvider {
 
     @Override
     protected void registerStatesAndModels() {
+        // все чертежи площадок — один плоский значок; без модели предмет рисуется фиолетово-чёрной заглушкой
+        for (var di : dev.denfry.promptcritical.mod.site.SiteRegistry.ITEMS.getEntries())
+            if (di.get() instanceof dev.denfry.promptcritical.mod.site.DesignDrawingItem)
+                itemModels().withExistingParent(di.getId().getPath(), mcLoc("item/generated"))
+                        .texture("layer0", modLoc("item/design_drawing"));
         for (DeferredBlock<? extends Block> db : PcBlocks.withItems()) {
             Block block = db.get();
             String id = db.getId().getPath();
