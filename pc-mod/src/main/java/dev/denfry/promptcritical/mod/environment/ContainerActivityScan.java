@@ -160,6 +160,10 @@ public final class ContainerActivityScan {
 
     private static void inspect(ServerLevel level, State st, BlockPos pos, long now, boolean force) {
         BlockPos key = pos.immutable();
+        if (!level.isLoaded(key)) { // чанк выгрузили, пока позиция стояла в очереди: getBlockEntity загрузил бы его
+            st.hot.remove(key);
+            return;
+        }
         Hot known = st.hot.get(key);
         if (!force && known != null && known.nextCheck > now) return; // индекс уже перепроверяет сам
         ContainerSource s = read(level, key, now);
@@ -193,8 +197,9 @@ public final class ContainerActivityScan {
     /** Источник блочного контейнера; {@code null} — блочной сущности нет, она без инвентаря или в нём нет активности. */
     @Nullable
     private static ContainerSource read(ServerLevel level, BlockPos pos, long now) {
+        if (!level.isLoaded(pos)) return null;
         BlockEntity be = level.getBlockEntity(pos);
-        if (be == null || be.isRemoved()) return null;
+        if (be == null || be.isRemoved() || be instanceof SelfEmittingSource) return null;
         PointSource sum = PointSource.NONE;
         if (be instanceof ChestBlockEntity chest) {
             // половинка двойного сундука отдаёт через обработчик весь сундук: считаем по своим 27 ячейкам, без двойного счёта

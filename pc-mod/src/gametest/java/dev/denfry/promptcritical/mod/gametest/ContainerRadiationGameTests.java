@@ -5,6 +5,8 @@ import dev.denfry.promptcritical.mod.environment.ActivityData;
 import dev.denfry.promptcritical.mod.environment.ContainerActivityScan;
 import dev.denfry.promptcritical.mod.environment.ContainerShielding;
 import dev.denfry.promptcritical.mod.environment.RadiationService;
+import dev.denfry.promptcritical.mod.radiation.FuelRackBlockEntity;
+import dev.denfry.promptcritical.mod.registry.PcBlocks;
 import dev.denfry.promptcritical.mod.registry.PcItems;
 import dev.denfry.promptcritical.sim.radiation.Emitter;
 import java.util.Map;
@@ -100,6 +102,18 @@ public final class ContainerRadiationGameTests {
         double rate = RadiationService.rateSvH(h.getLevel(), probe(h));
         h.assertTrue(rate > empty + 1e-7, "minecart shines: " + rate + " Sv/h (empty " + empty + ")");
         cart.discard();
+        h.succeed();
+    }
+
+    /** Стеллаж сам регистрирует свой экранированный источник: сканер контейнеров его предметы не дублирует. */
+    @GameTest(template = LARGE, timeoutTicks = 100)
+    public static void selfEmittingRackIsNotInTheContainerIndex(GameTestHelper h) {
+        h.setBlock(CHEST, PcBlocks.FUEL_RACK.get());
+        FuelRackBlockEntity rack = h.getBlockEntity(CHEST);
+        rack.slots().setStackInSlot(0, hot(h));
+        int before = ContainerActivityScan.indexSize(h.getLevel());
+        ContainerActivityScan.scanAllNow(h.getLevel(), probe(h));
+        h.assertTrue(ContainerActivityScan.indexSize(h.getLevel()) == before, "rack skipped: " + ContainerActivityScan.indexSize(h.getLevel()));
         h.succeed();
     }
 }

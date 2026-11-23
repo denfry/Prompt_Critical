@@ -66,7 +66,7 @@ import org.jetbrains.annotations.Nullable;
  * Свежий ионит — мешки анионита (в слот 0), свежие патроны — в слот 1; отработанные (мешок
  * {@code spent_ion_exchange_resin} и патрон с активностью) выходят в склад снизу сами по исчерпании или по кнопке.
  */
-public final class ReactorWaterCleanupBlockEntity extends DeviceBlockEntity implements FoundryDevice, PanelHost {
+public final class ReactorWaterCleanupBlockEntity extends DeviceBlockEntity implements dev.denfry.promptcritical.mod.environment.SelfEmittingSource, FoundryDevice, PanelHost {
     public static final int LINK_RADIUS = 8, RESIN_SLOT = 0, FILTER_SLOT = 1, OUT_SLOTS = 4, LRW_MB = 8000;
     public static final double CAPTURE_BQ_Y_MW = 1e10, RESIN_SHARE = 0.9, RESIN_L_MW_Y = 3, RESIN_MW_Y = 100 / RESIN_L_MW_Y,
             FILTER_MW_Y = 25, LRW_M3_MW_Y = 1.5, RESIN_BAG_KG = 80, FILTER_KG = 10, YEAR_S = 365.25 * 86_400;

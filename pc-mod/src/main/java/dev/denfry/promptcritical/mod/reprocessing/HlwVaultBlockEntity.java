@@ -43,7 +43,7 @@ import org.jetbrains.annotations.Nullable;
  * тепловыделению. Лампа «Вентиляция» горит, если тепла больше проектного или центр хоть одного блока горячее предела
  * стекла (боросиликатное — стеклование 510 °C, фосфатное — кристаллизация 400 °C).
  */
-public final class HlwVaultBlockEntity extends DeviceBlockEntity implements FoundryDevice, PanelHost {
+public final class HlwVaultBlockEntity extends DeviceBlockEntity implements dev.denfry.promptcritical.mod.environment.SelfEmittingSource, FoundryDevice, PanelHost {
     public static final int SLOTS = 12;
     public static final double CONCRETE_CM = 100, VENT_W = 50_000, INLET_K = 293.15;
     /** Тепловыделение, с которого над вытяжной трубой виден тёплый воздух, Вт [BALANCE: порог показа]. */

@@ -38,7 +38,7 @@ import org.jetbrains.annotations.Nullable;
  * пожар бассейна без воды — сценарий NUREG-1738); здесь это аварийная лампа, дым и осевший на пол вокруг стеллажа
  * аэрозоль топлива ({@link ContaminationService#spill}).
  */
-public final class FuelRackBlockEntity extends DeviceBlockEntity implements FoundryDevice, PanelHost {
+public final class FuelRackBlockEntity extends DeviceBlockEntity implements dev.denfry.promptcritical.mod.environment.SelfEmittingSource, FoundryDevice, PanelHost {
     public static final int SLOTS = 9;
     public static final double HA_W_K = 25, CLAD_LIMIT_C = 800, WARN_C = 400;
     /**

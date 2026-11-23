@@ -35,7 +35,7 @@ import org.jetbrains.annotations.Nullable;
  * ионизационная камера, период), привод регулирующих, взвод и сброс аварийных стержней. Защита и блокировки — в
  * модели, щит лишь подаёт команды.
  */
-public final class PileControllerBlockEntity extends IronworksBlockEntity implements DeviceHost, PanelHost {
+public final class PileControllerBlockEntity extends IronworksBlockEntity implements dev.denfry.promptcritical.mod.environment.SelfEmittingSource, DeviceHost, PanelHost {
     private static final int SCAN_PERIOD = 20, FIRE_PERIOD = 40;
 
     private SimId simId = SimId.NONE;

@@ -80,7 +80,7 @@ import org.jetbrains.annotations.Nullable;
  * разгерметизирует ТВС при разогреве и отправляет горение водорода и разрыв гермооболочки через маршрутизатор
  * последствий.
  */
-public final class PwrReactorBlockEntity extends DeviceBlockEntity implements FoundryDevice, PanelHost, WiredDevice {
+public final class PwrReactorBlockEntity extends DeviceBlockEntity implements dev.denfry.promptcritical.mod.environment.SelfEmittingSource, FoundryDevice, PanelHost, WiredDevice {
     public static final int LINK_RADIUS = 12;
     /** I-131 из одной разгерметизированной ТВС, уходящий с теплоносителем через течь или ИПУ, Бк [оценка: 1 % газового зазора]. */
     public static final double I131_PER_FAILED_BQ = 5e12;

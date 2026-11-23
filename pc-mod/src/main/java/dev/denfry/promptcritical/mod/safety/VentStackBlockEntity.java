@@ -30,7 +30,7 @@ import org.jetbrains.annotations.Nullable;
  * хуже держит органический йод. Задержанная активность копится и светит от первого фильтра как точечный источник 04b.
  * Разрежение зала (−20 Па) и воздушная сеть §3a.9.2 не моделируются [допущение: вытяжка забирает весь выброс зала].
  */
-public final class VentStackBlockEntity extends UraniumProcessBlockEntity {
+public final class VentStackBlockEntity extends UraniumProcessBlockEntity implements dev.denfry.promptcritical.mod.environment.SelfEmittingSource {
     public static final int HALL_RADIUS = 16, FILTER_RANGE = 2;
     private static final Map<Level, Set<VentStackBlockEntity>> STACKS = new WeakHashMap<>();
 

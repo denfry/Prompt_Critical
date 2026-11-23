@@ -62,7 +62,7 @@ import org.jetbrains.annotations.Nullable;
  * {@code DamageBudget} как {@link DamageKind#FIRE_SPREAD} и даёт дым Na₂O; реакция натрий–вода при разрыве мембраны —
  * как {@link DamageKind#OVERPRESSURE_BREACH}.
  */
-public final class SfrReactorBlockEntity extends DeviceBlockEntity implements FoundryDevice, PanelHost, WiredDevice {
+public final class SfrReactorBlockEntity extends DeviceBlockEntity implements dev.denfry.promptcritical.mod.environment.SelfEmittingSource, FoundryDevice, PanelHost, WiredDevice {
     public static final int LINK_RADIUS = 12;
     public static final int CREEP_OUTLET_C = 700, SG_STRESS_C = 650;
     static final double MIN_PU = 0.15, MAX_PU = 0.35, PRIMARY_LEAK_KG_S = 2, SG_LEAK_KG_S = 0.5;

@@ -63,7 +63,7 @@ import org.jetbrains.annotations.Nullable;
  * «АЗ сработала», «N» — мощность 4–20 мА. Реактор — источник излучения ({@link RadiationService}) по мощности
  * делений и остаточному теплу; биологическая защита — блоки вокруг. Разрушенный канал выносит I-131 в зал.
  */
-public final class PowerReactorBlockEntity extends DeviceBlockEntity implements FoundryDevice, PanelHost, WiredDevice {
+public final class PowerReactorBlockEntity extends DeviceBlockEntity implements dev.denfry.promptcritical.mod.environment.SelfEmittingSource, FoundryDevice, PanelHost, WiredDevice {
     public static final int LINK_RADIUS = 12;
     /** Размазанная плотность канальной сборки АМ-1 (U-Mo в стальных трубках, графитовая втулка), г/см³. */
     public static final double ASSEMBLY_DENSITY = 4;

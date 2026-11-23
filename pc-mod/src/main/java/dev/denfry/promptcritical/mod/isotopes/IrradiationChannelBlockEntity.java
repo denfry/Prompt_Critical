@@ -53,7 +53,7 @@ import org.jetbrains.annotations.Nullable;
  * продукта остаётся в канале, и канал сам становится источником. Капсула в слоте несёт активность продукта
  * ({@link ActivityData}): вынутая, она излучает в руках.
  */
-public final class IrradiationChannelBlockEntity extends IronworksBlockEntity implements PanelHost {
+public final class IrradiationChannelBlockEntity extends IronworksBlockEntity implements dev.denfry.promptcritical.mod.environment.SelfEmittingSource, PanelHost {
     public static final int T1_REACH = 2, PERIOD = 20;
     /** Термическое сопротивление капсула → вода канала T1 и капсула → графит/воздух кладки T0, К/Вт. */
     public static final double R_TH_WATER = 0.05, R_TH_AIR = 0.5;

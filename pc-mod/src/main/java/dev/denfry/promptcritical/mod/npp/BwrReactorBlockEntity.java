@@ -72,7 +72,7 @@ import org.jetbrains.annotations.Nullable;
  * всасывающего трубопровода, кнопка «LOCA» — учебное событие, без вращения валов насосов — обесточивание. Насосы САОЗ
  * здесь — HPCS и LPCI, гидроёмкостей у кипящего нет, есть АДС; гермооболочка с бассейном-барботёром инертирована азотом.
  */
-public final class BwrReactorBlockEntity extends DeviceBlockEntity implements FoundryDevice, PanelHost, WiredDevice {
+public final class BwrReactorBlockEntity extends DeviceBlockEntity implements dev.denfry.promptcritical.mod.environment.SelfEmittingSource, FoundryDevice, PanelHost, WiredDevice {
     public static final int LINK_RADIUS = 12, TURBINE_RADIUS = 24;
     /** Доля номинальной мощности, с которой реактор показан работающим (огни пульта, гул). */
     private static final double AT_POWER = 0.005;

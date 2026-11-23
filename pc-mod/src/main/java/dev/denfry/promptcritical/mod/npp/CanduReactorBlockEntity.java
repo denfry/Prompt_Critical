@@ -72,7 +72,7 @@ import org.jetbrains.annotations.Nullable;
  * сорта не выше его чистоты ({@link HeavyWaterGrade#atMost}) — оттуда трубой на колонну доводки; уровень и
  * реактивность при этом падают, как при сливе замедлителя в бак на Пикеринге.
  */
-public final class CanduReactorBlockEntity extends DeviceBlockEntity implements FoundryDevice, PanelHost, WiredDevice {
+public final class CanduReactorBlockEntity extends DeviceBlockEntity implements dev.denfry.promptcritical.mod.environment.SelfEmittingSource, FoundryDevice, PanelHost, WiredDevice {
     public static final int LINK_RADIUS = 12;
 
     public static final int DRAIN_MB = 4000, DRAIN_STEP_L = 1000;

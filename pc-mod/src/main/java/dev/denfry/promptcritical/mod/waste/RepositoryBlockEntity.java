@@ -51,7 +51,7 @@ import org.jetbrains.annotations.Nullable;
  * разбавление в реке местного водосбора ({@link RiverService}, средний сток {@link RiverCatchment#MEAN_RUNOFF_MM_DAY}
  * мм/сут); пересчёт — раз в {@value #PEAK_TICKS} тиков.
  */
-public final class RepositoryBlockEntity extends DeviceBlockEntity implements FoundryDevice, PanelHost {
+public final class RepositoryBlockEntity extends DeviceBlockEntity implements dev.denfry.promptcritical.mod.environment.SelfEmittingSource, FoundryDevice, PanelHost {
     public static final int INTAKE = 0, OVERPACK = 1, PEAK_TICKS = 200;
     public static final double COVER_CM = 200, YEAR_S = 365.25 * 86_400;
     /** Имена нуклидов для щита: индекс в канале — позиция в этом списке. */

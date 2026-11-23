@@ -49,7 +49,7 @@ import org.jetbrains.annotations.Nullable;
  * (обеднённый уран и сталь у «Бета-М», полиэтилен у плутониевого) ослабляет излучение источника; разломанный РИТЭГ
  * роняет источник без защиты — он излучает как предмет ({@link RadiationService}).
  */
-public final class RtgBlockEntity extends IronworksBlockEntity implements PanelHost {
+public final class RtgBlockEntity extends IronworksBlockEntity implements dev.denfry.promptcritical.mod.environment.SelfEmittingSource, PanelHost {
     public static final int PERIOD = 20, LAMP_RANGE = 16;
     /**
      * Буферный аккумулятор маячного РИТЭГа (12 §12.5.1): «Бета-М» на 10 Вт питал маячный огонь через аккумулятор —
