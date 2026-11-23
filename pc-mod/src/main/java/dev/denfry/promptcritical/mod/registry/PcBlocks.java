@@ -295,7 +295,7 @@ public final class PcBlocks {
             Spec.facing(BlockStateProperties.OPEN, PcProperties.EARTHED).footprint(FP_DISCONNECTOR),
             FoundryBlock.with(DisconnectorBlockEntity::new));
     public static final DeferredBlock<PcDeviceBlock> SWITCHGEAR_CELL = device("switchgear_cell", machine(),
-            Spec.facing(BlockStateProperties.OPEN, PcProperties.ALARM).footprint(FP_TALL2), FoundryBlock.with(BreakerCellBlockEntity::mv));
+            Spec.facing(BlockStateProperties.OPEN, PcProperties.ALARM).footprint(FP_TALL3), FoundryBlock.with(BreakerCellBlockEntity::mv));
     public static final DeferredBlock<PcDeviceBlock> LV_SWITCHBOARD = device("lv_switchboard", machine(),
             Spec.facing(BlockStateProperties.OPEN, PcProperties.ALARM).footprint(FP_TALL2), FoundryBlock.with(BreakerCellBlockEntity::lv));
     public static final DeferredBlock<PcDeviceBlock> RELAY_CABINET = device("relay_cabinet", machine(),

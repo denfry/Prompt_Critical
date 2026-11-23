@@ -51,7 +51,8 @@ public final class GridClient {
                         new FoundryMachineRenderer<>(MOTOR_SHAFT, Motion.SPIN_Z, 8, 8, 1, false))));
         // клеммы автоматики механизмов (этап 9): катушки и блок-контакты
         // плакат наряда-допуска на дверце ячейки и на приводе разъединителя
-        event.registerBlockEntityRenderer(GridBlockEntities.SWITCHGEAR_CELL.get(), c -> new WireRenderer<>(new PosterRenderer<>(null, 5, 20)));
+        // у ячейки КРУ дверь ниже контроллера: он в средней клетке, над дверью шинный отсек
+        event.registerBlockEntityRenderer(GridBlockEntities.SWITCHGEAR_CELL.get(), c -> new WireRenderer<>(new PosterRenderer<>(null, 5, 4)));
         event.registerBlockEntityRenderer(GridBlockEntities.LV_SWITCHBOARD.get(), c -> new WireRenderer<>(new PosterRenderer<>(null, 5, 20)));
         event.registerBlockEntityRenderer(GridBlockEntities.GRID_CONSUMER.get(), c -> new WireRenderer<>(null));
         event.registerBlockEntityRenderer(GridBlockEntities.SYNCHROSCOPE.get(), c -> new SynchroscopeRenderer());
