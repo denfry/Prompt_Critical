@@ -1,0 +1,32 @@
+{
+  "parent": "minecraft:recipes/root",
+  "criteria": {
+    "has_alumina_precipitator": {
+      "conditions": {
+        "items": [
+          {
+            "items": "promptcritical:alumina_precipitator"
+          }
+        ]
+      },
+      "trigger": "minecraft:inventory_changed"
+    },
+    "has_the_recipe": {
+      "conditions": {
+        "recipe": "promptcritical:nonferrous/alumina_precipitator_real_drawing"
+      },
+      "trigger": "minecraft:recipe_unlocked"
+    }
+  },
+  "requirements": [
+    [
+      "has_the_recipe",
+      "has_alumina_precipitator"
+    ]
+  ],
+  "rewards": {
+    "recipes": [
+      "promptcritical:nonferrous/alumina_precipitator_real_drawing"
+    ]
+  }
+}
