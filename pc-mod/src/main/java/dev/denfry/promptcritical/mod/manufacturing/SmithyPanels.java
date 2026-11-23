@@ -161,7 +161,11 @@ public final class SmithyPanels {
             QUENCH_TANK = PanelText.tr("smithy.quench_tank", "Quench", "Закалить"),
             QUENCH_TANK_TIP = PanelText.tr("smithy.quench_tank_tip", "Drop the piece from the chamber into the tank: water or oil, at least a bucket",
                     "Сбросить заготовку из камеры в бак: вода или масло, не меньше ведра"),
-            CHARGE_SLOT = PanelText.tr("smithy.charge_slot", "Workpiece, steel stock or wire to anneal", "Поковка, прокат или проволока на отжиг");
+            CHARGE_SLOT = PanelText.tr("smithy.charge_slot", "Workpiece, steel stock, wire, electrical sheet or laminations",
+                    "Поковка, прокат, проволока, электротехнический лист или пластины"),
+            COATING_SLOT = PanelText.tr("smithy.coating_slot",
+                    "Paper or phenolic resin: baked on at 150–250 °C, one per item in the chamber",
+                    "Бумага или фенольная смола: запекается при 150–250 °C, по одной на предмет в камере");
     private static final Tr[] MILL_STOPS = {PanelText.tr("smithy.mill.none", "working", "в работе"),
             PanelText.tr("smithy.mill.done", "at size", "размер получен"),
             PanelText.tr("smithy.mill.anneal", "anneal it first", "нужен отжиг"),
@@ -332,9 +336,10 @@ public final class SmithyPanels {
                 .button(42, 124, 30, F_BUTTON_UP, UP.get(), null)
                 .button(76, 124, 30, F_BUTTON_OFF, OFF.get(), null)
                 .slot(150, 126, 0, SmithyFurnaceBlockEntity::isFuel, FUEL_SLOT.get())
-                .slot(170, 126, 1, SmithyFurnaceBlockEntity::isCharge, CHARGE_SLOT.get());
+                .slot(170, 126, 1, SmithyFurnaceBlockEntity::isCharge, CHARGE_SLOT.get())
+                .slot(170, 104, SmithyFurnaceBlockEntity.COATING_SLOT, Electrical::isCoatingMaterial, COATING_SLOT.get());
         if (hardening) {
-            b.readout(8, 106, 184, v -> TANK_LINE.get(v.raw(F_TANK_MB), (v.bit(FLAGS, FF_WATER) ? TANK_WATER : TANK_OIL).get(),
+            b.readout(8, 106, 158, v -> TANK_LINE.get(v.raw(F_TANK_MB), (v.bit(FLAGS, FF_WATER) ? TANK_WATER : TANK_OIL).get(),
                     v.raw(F_HRC), event(v.raw(F_EVENT)).get()), null)
                     .button(110, 124, 36, F_BUTTON_QUENCH, QUENCH_TANK.get(), QUENCH_TANK_TIP.get());
         }
@@ -349,7 +354,10 @@ public final class SmithyPanels {
     }
 
     public static List<PanelLayout> all() {
-        return List.of(BLOOMERY, FORGE, ANVIL, DRAW_PLATE, POWER_HAMMER, CRANK_PRESS, WIRE_MILL, HEATING_FURNACE, HARDENING_FURNACE);
+        var out = new java.util.ArrayList<>(List.of(BLOOMERY, FORGE, ANVIL, DRAW_PLATE, POWER_HAMMER, CRANK_PRESS, WIRE_MILL,
+                HEATING_FURNACE, HARDENING_FURNACE));
+        out.addAll(ElectricalPanels.all());
+        return List.copyOf(out);
     }
 
     private static Component bloomeryStatus(PanelValues v) {

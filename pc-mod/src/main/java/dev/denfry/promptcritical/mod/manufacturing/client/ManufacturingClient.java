@@ -34,6 +34,12 @@ public final class ManufacturingClient {
                 c -> new FoundryMachineRenderer<>(PRESS_RAM, Motion.HAMMER, 2, 0, 0.5f));
         event.registerBlockEntityRenderer(dev.denfry.promptcritical.mod.manufacturing.SmithyBlockEntities.WIRE_MILL.get(),
                 c -> new FoundryMachineRenderer<>(null, Motion.STATIC, 0, 0, 1));
+        event.registerBlockEntityRenderer(dev.denfry.promptcritical.mod.manufacturing.SmithyBlockEntities.SHEET_MILL.get(),
+                c -> new FoundryMachineRenderer<>(null, Motion.STATIC, 0, 0, 1));
+        event.registerBlockEntityRenderer(dev.denfry.promptcritical.mod.manufacturing.SmithyBlockEntities.WINDING_MACHINE.get(),
+                c -> new FoundryMachineRenderer<>(null, Motion.STATIC, 0, 0, 1));
+        event.registerBlockEntityRenderer(dev.denfry.promptcritical.mod.manufacturing.SmithyBlockEntities.NOTCHING_PRESS.get(),
+                c -> new FoundryMachineRenderer<>(null, Motion.STATIC, 0, 0, 1));
     }
 
     private static void tooltip(ItemTooltipEvent event) {
@@ -43,6 +49,18 @@ public final class ManufacturingClient {
         var lvl = net.minecraft.client.Minecraft.getInstance().level;
         if (w != null && lvl != null) ManufacturingText.workpieceTooltip(w, lvl.getGameTime(), event.getToolTip());
         var wire = event.getItemStack().get(ManufacturingComponents.WIRE.get());
-        if (wire != null) ManufacturingText.wireTooltip(wire, event.getToolTip());
+        if (wire != null) {
+            ManufacturingText.wireTooltip(wire, event.getToolTip());
+            ManufacturingText.magnetWireTooltip(wire, event.getToolTip());
+        }
+        var st = event.getItemStack();
+        var sheet = st.get(ManufacturingComponents.ELECTRICAL_SHEET.get());
+        if (sheet != null) ManufacturingText.sheetTooltip(sheet, event.getToolTip());
+        var lam = st.get(ManufacturingComponents.LAMINATION.get());
+        if (lam != null) ManufacturingText.laminationTooltip(lam, event.getToolTip());
+        var core = st.get(ManufacturingComponents.STATOR_CORE.get());
+        if (core != null) ManufacturingText.coreTooltip(core, event.getToolTip());
+        var stator = st.get(ManufacturingComponents.STATOR.get());
+        if (stator != null) ManufacturingText.statorTooltip(stator, event.getToolTip());
     }
 }

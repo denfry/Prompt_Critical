@@ -13,7 +13,7 @@ class SteelFamiliesTest {
     @Test
     void newFamiliesAreAppendedAfterRailWire() {
         assertThat(SteelFamily.MEDIUM_CARBON.ordinal()).isEqualTo(SteelFamily.RAIL_WIRE.ordinal() + 1);
-        assertThat(SteelFamily.WROUGHT_IRON.ordinal()).isEqualTo(SteelFamily.values().length - 1);
+        assertThat(SteelFamily.ELECTRICAL.ordinal()).isEqualTo(SteelFamily.WROUGHT_IRON.ordinal() + 1);
     }
 
     @Test

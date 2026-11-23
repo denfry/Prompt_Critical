@@ -85,6 +85,9 @@ public final class PcLanguageProvider extends LanguageProvider {
         b("power_hammer", "Power Hammer", "Механический молот");
         b("crank_press", "Crank Press", "Кривошипный пресс");
         b("wire_mill", "Wire Drawing Mill", "Волочильный стан");
+        b("sheet_mill", "Cold Sheet Mill", "Листовой стан холодной прокатки");
+        b("notching_press", "Slot Notching Press", "Пазовырубной пресс");
+        b("winding_machine", "Stator Winding Machine", "Намоточный станок");
         b("heating_furnace", "Heating Furnace", "Нагревательная печь");
         b("hardening_furnace", "Hardening Furnace", "Закалочная печь");
         b("sand_mold", "Sand Mould", "Песчаная форма");
@@ -240,6 +243,10 @@ public final class PcLanguageProvider extends LanguageProvider {
         i("shaft", "Shaft", "Вал");
         i("tongs", "Smith's Tongs", "Кузнечные клещи");
         i("wire", "Wire", "Проволока");
+        i("electrical_sheet", "Electrical Steel Sheet", "Лист электротехнической стали");
+        i("lamination", "Stator Lamination Bundle", "Пачка пластин статора");
+        i("stator_core", "Stator Core", "Пакет статора");
+        i("stator", "Wound Stator", "Намотанный статор");
         i("wire.rod", "Wire Rod", "Пруток");
         i("cutting_tool", "Cutting Tool", "Резец");
         i("milling_cutter", "Disc Milling Cutter", "Дисковая фреза");

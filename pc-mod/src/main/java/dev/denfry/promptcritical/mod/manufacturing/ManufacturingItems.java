@@ -21,11 +21,20 @@ public final class ManufacturingItems {
     /** Пруток или проволока с компонентом {@code wire} (18 §18.6.7). */
     public static final DeferredItem<WireItem> WIRE = ITEMS.register("wire", () -> new WireItem(new Item.Properties()));
 
+    /** Лист электротехнической стали 1,0 × 0,5 м с компонентом {@code electrical_sheet} (18 §18.6.8). */
+    public static final DeferredItem<Item> ELECTRICAL_SHEET = ITEMS.registerSimpleItem("electrical_sheet", new Item.Properties());
+    /** Пачка пластин статора — столько, сколько вырубается из листа (18 §18.6.8). */
+    public static final DeferredItem<Item> LAMINATION = ITEMS.registerSimpleItem("lamination", new Item.Properties());
+    /** Шихтованный пакет статора (18 §18.6.8). */
+    public static final DeferredItem<Item> STATOR_CORE = ITEMS.registerSimpleItem("stator_core", new Item.Properties().stacksTo(1));
+    /** Намотанный статор эталонного двигателя 5,5 кВт (18 §18.6.9). */
+    public static final DeferredItem<Item> STATOR = ITEMS.registerSimpleItem("stator", new Item.Properties().stacksTo(1));
+
     private ManufacturingItems() {
     }
 
     /** Для вкладки творческого режима. */
     public static List<DeferredItem<? extends Item>> all() {
-        return List.of(SMITH_HAMMER, TONGS, WORKPIECE, WIRE, SHAFT);
+        return List.of(SMITH_HAMMER, TONGS, WORKPIECE, WIRE, SHAFT, ELECTRICAL_SHEET, LAMINATION, STATOR_CORE, STATOR);
     }
 }

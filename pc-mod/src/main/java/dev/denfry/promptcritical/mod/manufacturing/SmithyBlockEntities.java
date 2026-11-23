@@ -36,13 +36,21 @@ public final class SmithyBlockEntities {
     public static final DeferredHolder<BlockEntityType<?>, BlockEntityType<SmithyFurnaceBlockEntity>> HARDENING_FURNACE =
             type("hardening_furnace", SmithyFurnaceBlockEntity::hardening, PcBlocks.HARDENING_FURNACE);
 
+    public static final DeferredHolder<BlockEntityType<?>, BlockEntityType<SheetMillBlockEntity>> SHEET_MILL =
+            type("sheet_mill", SheetMillBlockEntity::new, PcBlocks.SHEET_MILL);
+    public static final DeferredHolder<BlockEntityType<?>, BlockEntityType<NotchingPressBlockEntity>> NOTCHING_PRESS =
+            type("notching_press", NotchingPressBlockEntity::new, PcBlocks.NOTCHING_PRESS);
+    public static final DeferredHolder<BlockEntityType<?>, BlockEntityType<WindingMachineBlockEntity>> WINDING_MACHINE =
+            type("winding_machine", WindingMachineBlockEntity::new, PcBlocks.WINDING_MACHINE);
+
     private SmithyBlockEntities() {
     }
 
     /** Склад горнов открыт воронкам и Create — третий уровень (автоматика) подаёт руду, уголь и прокат сам. */
     static void capabilities(RegisterCapabilitiesEvent event) {
         for (var t : java.util.List.<BlockEntityType<?>>of(BLOOMERY.get(), FORGE_HEARTH.get(), SMITHING_ANVIL.get(), DRAW_PLATE.get(),
-                POWER_HAMMER.get(), CRANK_PRESS.get(), WIRE_MILL.get(), HEATING_FURNACE.get(), HARDENING_FURNACE.get()))
+                POWER_HAMMER.get(), CRANK_PRESS.get(), WIRE_MILL.get(), HEATING_FURNACE.get(), HARDENING_FURNACE.get(),
+                SHEET_MILL.get(), NOTCHING_PRESS.get(), WINDING_MACHINE.get()))
             event.registerBlockEntity(Capabilities.ItemHandler.BLOCK, cast(t),
                     (be, side) -> ((dev.denfry.promptcritical.mod.foundry.FoundryDevice) be).items(side));
         // бак закалочной печи: вода или масло трубами Create и вёдрами

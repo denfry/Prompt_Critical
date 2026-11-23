@@ -999,6 +999,13 @@ public final class PcBlocks {
             KineticMachineBlock.with(ShaftSide.BACK, dev.denfry.promptcritical.mod.manufacturing.PowerHammerBlockEntity::press));
     public static final DeferredBlock<PcDeviceBlock> WIRE_MILL = device("wire_mill", machine(), Spec.facing(PcProperties.RUNNING),
             KineticMachineBlock.with(ShaftSide.LEFT, dev.denfry.promptcritical.mod.manufacturing.WireMillBlockEntity::new));
+    // электротехника (18 §18.6.8–18.6.9, MF4): листовой стан, пазовырубной пресс, намоточный станок
+    public static final DeferredBlock<PcDeviceBlock> SHEET_MILL = device("sheet_mill", machine(), Spec.facing(PcProperties.RUNNING),
+            KineticMachineBlock.with(ShaftSide.LEFT, dev.denfry.promptcritical.mod.manufacturing.SheetMillBlockEntity::new));
+    public static final DeferredBlock<PcDeviceBlock> NOTCHING_PRESS = device("notching_press", machine(), Spec.facing(PcProperties.RUNNING),
+            KineticMachineBlock.with(ShaftSide.BACK, dev.denfry.promptcritical.mod.manufacturing.NotchingPressBlockEntity::new));
+    public static final DeferredBlock<PcDeviceBlock> WINDING_MACHINE = device("winding_machine", machine(), Spec.facing(PcProperties.RUNNING),
+            KineticMachineBlock.with(ShaftSide.LEFT, dev.denfry.promptcritical.mod.manufacturing.WindingMachineBlockEntity::new));
     public static final DeferredBlock<PcDeviceBlock> HEATING_FURNACE = device("heating_furnace", lit(brick()), Spec.facing(BlockStateProperties.LIT),
             dev.denfry.promptcritical.mod.foundry.FoundryBlock.with(dev.denfry.promptcritical.mod.manufacturing.SmithyFurnaceBlockEntity::heating));
     public static final DeferredBlock<PcDeviceBlock> HARDENING_FURNACE = device("hardening_furnace", lit(brick()), Spec.facing(BlockStateProperties.LIT),

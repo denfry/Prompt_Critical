@@ -38,6 +38,11 @@ public interface PanelHost {
     default void onPanelButton(ServerPlayer player, int id) {
     }
 
+    /** Заготовка внутри машины вне слотов (например, пакет на оправке): выпадает при разрушении и забирается. */
+    default ItemStack takeHeldItem() {
+        return ItemStack.EMPTY;
+    }
+
     boolean panelValid(Player player);
 
     /** Обычная проверка для BE: не снят и игрок рядом. */
@@ -55,7 +60,10 @@ public interface PanelHost {
 
     /** Выбросить склад щита при разрушении машины. */
     static void dropItems(Level level, BlockPos pos, @Nullable Object be) {
-        if (!(be instanceof PanelHost h) || h.panelItems() == null) return;
+        if (!(be instanceof PanelHost h)) return;
+        ItemStack held = h.takeHeldItem();
+        if (!held.isEmpty()) Containers.dropItemStack(level, pos.getX() + 0.5, pos.getY() + 0.5, pos.getZ() + 0.5, held);
+        if (h.panelItems() == null) return;
         IItemHandlerModifiable items = h.panelItems();
         for (int i = 0; i < items.getSlots(); i++) {
             ItemStack s = items.getStackInSlot(i);
