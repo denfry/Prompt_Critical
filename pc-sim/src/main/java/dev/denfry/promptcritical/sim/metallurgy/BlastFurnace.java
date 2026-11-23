@@ -115,6 +115,11 @@ public final class BlastFurnace {
     private int head, count;
 
     private BlastFurnaceState state = BlastFurnaceState.COLD;
+    /**
+     * Разрешение на процесс (профиль licensing, план HP2.1): без него холодная или остывшая печь не задувается;
+     * работающую оно не гасит. Не сохраняется — биндинг пишет его каждый тик.
+     */
+    private volatile boolean permitted = true;
     private double hearthK = T0;
     private double ironKg, ironC, ironSi, ironS, slagKg, slagCaO, slagSiO2, slagS;
     private double blowInS, lowBlastS, noBlastS, noCoolingS, hangS;
@@ -179,7 +184,7 @@ public final class BlastFurnace {
         noBlastS = v <= 0 ? noBlastS + dt : 0;
         noCoolingS = b.cooling() ? 0 : noCoolingS + dt;
 
-        if (state == BlastFurnaceState.COLD && v > 0 && count > 0 && ore[head] <= 0 && coke[head] > 0) {
+        if (state == BlastFurnaceState.COLD && permitted && v > 0 && count > 0 && ore[head] <= 0 && coke[head] > 0) {
             setState(BlastFurnaceState.BLOWING_IN);
             blowInS = 0;
         }
@@ -309,7 +314,7 @@ public final class BlastFurnace {
                 else if (v > 0 && blastFrac >= BANK_BLAST_FRAC) setState(BlastFurnaceState.RUNNING);
             }
             case CHILLED -> {
-                if (v > 0 && hearthK >= FREE_K && noCoolingS == 0) {
+                if (permitted && v > 0 && hearthK >= FREE_K && noCoolingS == 0) {
                     blowInS = 0;
                     setState(BlastFurnaceState.BLOWING_IN);
                 }
@@ -542,6 +547,14 @@ public final class BlastFurnace {
     }
 
     // --- показания ---
+
+    public void setPermitted(boolean on) {
+        permitted = on;
+    }
+
+    public boolean permitted() {
+        return permitted;
+    }
 
     public BlastFurnaceState state() {
         return state;

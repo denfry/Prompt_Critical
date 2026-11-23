@@ -198,6 +198,11 @@ public final class BlastFurnaceUnit implements IronmakingUnit {
         return v;
     }
 
+    /** Разрешение на процесс для печи (план HP2.1); пока печи нет, ничего не делает. */
+    public void setPermitted(boolean on) {
+        if (furnace != null) furnace.setPermitted(on);
+    }
+
     public BlastFurnace furnace() {
         return furnace;
     }
