@@ -51,8 +51,9 @@ public final class ForgeHeating {
 
     /**
      * Нагрев в огне {@code fireK} за {@code seconds}: температура, убыль сечения от окалины, пережог.
-     * Окалина отсчитывается от нуля на каждый вызов (она отваливается на наковальне), поэтому heat
-     * вызывают один раз на весь нагрев, а не каждый тик — иначе √Σ завышает угар.
+     * Окалина нарастает от {@link Workpiece#oxideSq()} — горн может звать heat кусками (каждую секунду, при
+     * качании мехов): прирост толщины c·(√(S₀+ΔS) − √S₀) по параболическому закону не зависит от того, как
+     * разбит нагрев. Сбивают окалину удар молота ({@link Forging}) и закалка ({@link Quenching}).
      */
     public static Workpiece heat(Workpiece w, double fireK, double seconds) {
         if (!(seconds > 0)) {
@@ -63,7 +64,8 @@ public final class ForgeHeating {
         double burnK = burningK(w.grade());
         double t = w.tempK();
         boolean startedAbove = t > fireK;
-        double oxideSq = 0;
+        double oxide0 = w.oxideSq();
+        double oxideSq = oxide0;
         boolean burnt = false;
         double left = seconds;
         while (left > 0) {
@@ -80,16 +82,16 @@ public final class ForgeHeating {
             }
         }
         // sqrt(oxideSq) — г кислорода на см²; потеря железа, затем глубина в см, затем в м
-        double recessionM = Math.sqrt(oxideSq) * FE_PER_O / RHO_G_CM3 * 0.01;
+        double recessionM = (Math.sqrt(oxideSq) - Math.sqrt(oxide0)) * FE_PER_O / RHO_G_CM3 * 0.01;
         double a = Math.max(Forging.MIN_SECTION_M, w.aM() - 2 * recessionM);
         double b = w.section() == Section.FLAT ? Math.max(Forging.MIN_SECTION_M, w.bM() - 2 * recessionM) : a;
-        var out = w.withSection(a, b, w.lengthM()).withTemp(t);
+        var out = w.withSection(a, b, w.lengthM()).withTemp(t).withOxide(oxideSq);
         // нагрев выше Ac3 + запас переводит в аустенит: закалка и улучшение стираются, деталь снова нормализована
         var state = w.grade().state();
         if (t >= HeatTreatment.ac3K(w.grade()) + HeatTreatment.AC3_MARGIN_K
                 && (state == HeatTreatState.QUENCHED || state == HeatTreatState.QUENCHED_TEMPERED)) {
             var normalized = w.grade().withState(HeatTreatState.NORMALIZED);
-            out = out.withGrade(normalized).withHardness(normalized.hardnessHrc());
+            out = out.withGrade(normalized).withHardness(normalized.hardnessHrc()).withTreatment(0, 0);
         }
         return burnt ? out.withDefect(PartDefect.BURNT, 1.0) : out;
     }

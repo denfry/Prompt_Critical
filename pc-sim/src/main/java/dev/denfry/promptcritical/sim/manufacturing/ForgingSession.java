@@ -75,9 +75,16 @@ public record ForgingSession(Workpiece piece, Place place, double clockS, List<F
     }
 
     /** Паспорт кованой детали: маршрут FORGED, состояние по марке, квалитет 0, Ra {@link #FORGED_RA_UM}. */
+    /** Id материала детали из стали: имя семейства строчными ({@code medium_carbon}, {@code wrought_iron}). */
+    public static String materialId(dev.denfry.promptcritical.sim.metallurgy.SteelGrade g) {
+        return g.family().name().toLowerCase(java.util.Locale.ROOT);
+    }
+
     public PartSpec toPart(String kind) {
         SteelGrade g = piece.grade();
-        return PartSpec.of(kind, g.designation(), PartRoute.FORGED, g.state(), piece.hardnessHrc(), 0,
+        // материал — id семейства стали, а не марка: марка кириллицей («кричное железо», «40Х») вошла бы в ключ стака,
+        // а название переводит подсказка по ключу семейства
+        return PartSpec.of(kind, materialId(g), PartRoute.FORGED, g.state(), piece.hardnessHrc(), 0,
                 FORGED_RA_UM, Map.copyOf(piece.defects()));
     }
 

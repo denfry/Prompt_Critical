@@ -86,7 +86,7 @@ public final class Quenching {
             hardness = hn + 0.5 * (hq - hn);
             events.add(ForgeEvent.NOT_THROUGH_HARDENED);
         }
-        Workpiece p = w.withGrade(hot).withHardness(hardness);
+        Workpiece p = w.withGrade(hot).withHardness(hardness).withTreatment(hardness, 0);
         if (m == Medium.WATER && (grade.frac(AlloyElement.CR) >= CRACK_CR_FRAC
                 || grade.carbonPct() >= CRACK_C_PCT)) {
             p = p.withDefect(PartDefect.CRACK, QUENCH_CRACK_SEVERITY);
@@ -99,8 +99,9 @@ public final class Quenching {
     }
 
     private static Workpiece cooled(Workpiece w, Medium m) {
+        // в ванне окалина отскакивает; на воздухе остаётся
         return m == Medium.AIR
                 ? ForgeHeating.cool(w, QUENCHED_TEMP_K, AIR_COOL_S)
-                : w.withTemp(QUENCHED_TEMP_K);
+                : w.withTemp(QUENCHED_TEMP_K).withOxide(0);
     }
 }

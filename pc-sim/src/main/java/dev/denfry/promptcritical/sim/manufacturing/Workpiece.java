@@ -10,9 +10,14 @@ import java.util.Map;
  * Заготовка: марка, сечение, размеры, температура, твёрдость и тяжесть дефектов (0..1).
  * {@code aM} — диаметр (ROUND), сторона (SQUARE) или толщина (FLAT); {@code bM} — ширина FLAT,
  * для остальных равна {@code aM}. Длины в метрах, температура в кельвинах.
+ *
+ * <p>Состояние процесса: {@code oxideSq} — Σk_p·dt окалины текущего нагрева, г²/см⁴ (сбивается на наковальне и в
+ * закалочной ванне); {@code quenchHrc} — твёрдость сразу после закалки (0 — не закалена), от неё считают отпуск;
+ * {@code temperP} — накопленный параметр Холломона-Яффе (0 — отпуска не было).
  */
 public record Workpiece(SteelGrade grade, Section section, double aM, double bM, double lengthM,
-        double tempK, double hardnessHrc, Map<PartDefect, Double> defects) {
+        double tempK, double hardnessHrc, Map<PartDefect, Double> defects, double oxideSq, double quenchHrc,
+        double temperP) {
 
     /** Форма поперечного сечения. */
     public enum Section { ROUND, SQUARE, FLAT }
@@ -28,6 +33,10 @@ public record Workpiece(SteelGrade grade, Section section, double aM, double bM,
                 || !Double.isFinite(hardnessHrc)) {
             throw new IllegalArgumentException("aM, bM, lengthM, tempK and hardnessHrc must be finite");
         }
+        if (!(oxideSq >= 0) || !(quenchHrc >= 0) || !(temperP >= 0) || !Double.isFinite(oxideSq)
+                || !Double.isFinite(quenchHrc) || !Double.isFinite(temperP)) {
+            throw new IllegalArgumentException("oxideSq, quenchHrc and temperP must be finite and non-negative");
+        }
         var copy = new EnumMap<PartDefect, Double>(PartDefect.class);
         if (defects != null) {
             defects.forEach((d, s) -> {
@@ -37,6 +46,12 @@ public record Workpiece(SteelGrade grade, Section section, double aM, double bM,
             });
         }
         defects = Collections.unmodifiableMap(copy);
+    }
+
+    /** Заготовка без истории процесса: окалины нет, не закалена, не отпущена. */
+    public Workpiece(SteelGrade grade, Section section, double aM, double bM, double lengthM, double tempK,
+            double hardnessHrc, Map<PartDefect, Double> defects) {
+        this(grade, section, aM, bM, lengthM, tempK, hardnessHrc, defects, 0, 0, 0);
     }
 
     /** Чистая заготовка без дефектов, твёрдость берётся из марки. */
@@ -77,19 +92,19 @@ public record Workpiece(SteelGrade grade, Section section, double aM, double bM,
     }
 
     public Workpiece withTemp(double tK) {
-        return new Workpiece(grade, section, aM, bM, lengthM, tK, hardnessHrc, defects);
+        return new Workpiece(grade, section, aM, bM, lengthM, tK, hardnessHrc, defects, oxideSq, quenchHrc, temperP);
     }
 
     public Workpiece withSection(double a, double b, double length) {
-        return new Workpiece(grade, section, a, b, length, tempK, hardnessHrc, defects);
+        return new Workpiece(grade, section, a, b, length, tempK, hardnessHrc, defects, oxideSq, quenchHrc, temperP);
     }
 
     public Workpiece withHardness(double hrc) {
-        return new Workpiece(grade, section, aM, bM, lengthM, tempK, hrc, defects);
+        return new Workpiece(grade, section, aM, bM, lengthM, tempK, hrc, defects, oxideSq, quenchHrc, temperP);
     }
 
     public Workpiece withGrade(SteelGrade g) {
-        return new Workpiece(g, section, aM, bM, lengthM, tempK, hardnessHrc, defects);
+        return new Workpiece(g, section, aM, bM, lengthM, tempK, hardnessHrc, defects, oxideSq, quenchHrc, temperP);
     }
 
     /** Добавляет тяжесть дефекту, результат ограничен единицей. */
@@ -97,7 +112,24 @@ public record Workpiece(SteelGrade grade, Section section, double aM, double bM,
         var m = new EnumMap<PartDefect, Double>(PartDefect.class);
         m.putAll(defects);
         m.merge(d, add, Double::sum);
-        return new Workpiece(grade, section, aM, bM, lengthM, tempK, hardnessHrc, m);
+        return new Workpiece(grade, section, aM, bM, lengthM, tempK, hardnessHrc, m, oxideSq, quenchHrc, temperP);
+    }
+
+    public Workpiece withOxide(double sq) {
+        return new Workpiece(grade, section, aM, bM, lengthM, tempK, hardnessHrc, defects, sq, quenchHrc, temperP);
+    }
+
+    /** История закалки и отпуска: {@code quench} — твёрдость после закалки, {@code p} — параметр отпуска. */
+    public Workpiece withTreatment(double quench, double p) {
+        return new Workpiece(grade, section, aM, bM, lengthM, tempK, hardnessHrc, defects, oxideSq, quench, p);
+    }
+
+    /** Убрать дефект целиком. */
+    public Workpiece withoutDefect(PartDefect d) {
+        var m = new EnumMap<PartDefect, Double>(PartDefect.class);
+        m.putAll(defects);
+        m.remove(d);
+        return new Workpiece(grade, section, aM, bM, lengthM, tempK, hardnessHrc, m, oxideSq, quenchHrc, temperP);
     }
 
     /** Тяжесть дефекта, 0 если его нет. */

@@ -14,6 +14,12 @@ public final class Forging {
 
     /** Минимальное сечение заготовки, м: тоньше уже не поковка, а проволока [BALANCE]. */
     public static final double MIN_SECTION_M = 0.003;
+    /** Проковка крицы — только при сварочном (белом) калении, от 1200 °C [сверить: Колчин «Чёрная металлургия и металлообработка в древней Руси», 1953]. */
+    public static final double SLAG_SQUEEZE_MIN_K = 1473.15;
+    /** Доля шлака, выдавливаемая одной серией ударов [BALANCE]. */
+    public static final double SLAG_SQUEEZE_PER_SERIES = 0.15;
+    /** Ниже этой тяжести шлак считается выкованным: кричное железо, а не крица [BALANCE]. */
+    public static final double SLAG_CLEAN = 0.05;
     /** КПД удара: доля энергии бойка, ушедшая в пластическую деформацию [сверить]. */
     public static final double EFFICIENCY = 0.7;
     /** Предельное отношение длины к стороне при осадке без потери устойчивости (правило кузнеца L/a ≤ 2,5) [сверить]. */
@@ -135,10 +141,18 @@ public final class Forging {
             p = p.withDefect(PartDefect.CRACK, CRACK_PER_COLD_SERIES);
             events.add(ForgeEvent.CRACKED);
         }
+        // проковка крицы (18 §18.6.1): обжатие при белом калении выдавливает шлак, ниже — шлак остаётся в металле
+        double slag = p.severity(PartDefect.SLAG_INCLUSION);
+        if (slag > 0 && op != Op.BEND && w.tempK() >= SLAG_SQUEEZE_MIN_K) {
+            double left = slag * (1 - SLAG_SQUEEZE_PER_SERIES);
+            p = left < SLAG_CLEAN ? p.withoutDefect(PartDefect.SLAG_INCLUSION)
+                    : p.withoutDefect(PartDefect.SLAG_INCLUSION).withDefect(PartDefect.SLAG_INCLUSION, left);
+        }
         if (events.isEmpty()) {
             events.add(ForgeEvent.OK);
         }
-        return new Result(ForgeHeating.cool(p, ambientK, seriesSeconds), List.copyOf(events));
+        // удар сбивает окалину: следующий нагрев начинает её заново
+        return new Result(ForgeHeating.cool(p.withOxide(0), ambientK, seriesSeconds), List.copyOf(events));
     }
 
     /** Диаметр, сторона или толщина сечения заданной площади; FLAT сохраняет отношение b/a заготовки. */
