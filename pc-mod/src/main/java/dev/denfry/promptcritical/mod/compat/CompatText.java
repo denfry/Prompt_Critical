@@ -182,7 +182,24 @@ public final class CompatText {
                 "Пишет измеряемую величину на диаграммную бумагу во времени; записанную диаграмму читают в просмотрщике.");
     }
 
+    // Display Link Create (16 §16.2.1): имена источников Create ищет по ключу <мод>.display_source.<путь>.
+    static {
+        LANG.put(PromptCritical.MOD_ID + ".display_source.panel_reading", new String[] {"Instrument Reading", "Показание прибора"});
+        LANG.put(PromptCritical.MOD_ID + ".display_source.alarms", new String[] {"Alarms, First Out First", "Сигнализации, первопричина первой"});
+        LANG.put(key("display.gauge"), new String[] {"Instrument", "Прибор"});
+        LANG.put(key("display.gauge_pressure"), new String[] {"Pressure", "Давление"});
+        LANG.put(key("display.readout"), new String[] {"Readout %s", "Табло %s"});
+        LANG.put(key("display.mpa"), new String[] {"MPa", "МПа"});
+        LANG.put(key("display.pa"), new String[] {"Pa", "Па"});
+        LANG.put(key("display.no_alarms"), new String[] {"No alarms", "Сигнализаций нет"});
+    }
+
     private CompatText() {
+    }
+
+    /** Ключ текста интеграций вне просмотрщика рецептов. */
+    public static String key(String path) {
+        return "compat." + PromptCritical.MOD_ID + "." + path;
     }
 
     private static void plant(Plant plant, String en, String ru) {
