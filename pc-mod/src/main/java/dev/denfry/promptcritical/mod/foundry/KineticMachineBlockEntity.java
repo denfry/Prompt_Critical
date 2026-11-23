@@ -228,7 +228,9 @@ public abstract class KineticMachineBlockEntity<U> extends KineticBlockEntity im
 
     @Override
     public String deviceType() {
-        return BuiltInRegistries.BLOCK.getKey(getBlockState().getBlock()).toString();
+        // блок реального масштаба — в симуляции тот же, что и старый (id без _real): иначе двойник не создаётся
+        return dev.denfry.promptcritical.mod.client.whole.RealScaleBlockEntity.simType(getBlockState(),
+                BuiltInRegistries.BLOCK.getKey(getBlockState().getBlock()).toString());
     }
 
     @Override

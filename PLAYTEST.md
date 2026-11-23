@@ -97,6 +97,18 @@ and keeps the window behind all others (`mc-background.ps1`, `pauseOnLostFocus:f
 | Ports (lathe) | A hopper at the controller front gives a cutting tool to the lathe; hoppers at the other two front cells keep it. Create motor at the west face of the countershaft port: the port runs at 16 rpm with stress on the network |
 | Not checked | Cage ride and shaft signal, steam engines from the stand, machining a casting in the client, panels, the other machines' ports |
 
+### I2 carbon line and vent stack run 2026-11-23 (integrate 64a28b07, creative, mechanics only, `runClient -PdevXmx=1536M -PskipBodyScreen`)
+
+| Check | Result |
+|---|---|
+| Place | `acheson_furnace_real` 72 cells, `electrode_extruder_real` 28, `baking_furnace_real` 80, `grid_consumer` 27: every footprint cell filled, controller plus `multiblock_part` |
+| Item ports | Hoppers: baked electrode into the Acheson bed top (3,1,1) taken, a cracked one kept, the end wall (5,0,1) east keeps it; pitch coke into the extruder hopper (-1,1,0) taken, the pump unit top (2,1,0) keeps it; a green electrode into the baking cover (0,3,1) taken and loaded into the charge at once, the cover edge (2,3,1) keeps it |
+| Extruder shaft | A creative motor on the controller's north face joins the press to its network (press at 16 and 64 rpm). **The real press did not run: no pitch drawn, no electrode in 25 s, while the old press beside it made a green electrode.** Cause: `KineticMachineBlockEntity.deviceType()` gave the block id with `_real`, so the simulation made no twin for it; fixed with `RealScaleBlockEntity.simType` like the other device bases, GameTest `realExtruderTakesItsShaftAtTheController` checks the sim type. After the fix the real press reads `running=true` at 64 rpm and makes a green electrode (352 cm) from 3 pitch coke and pitch in 30 s, like the old one |
+| Baking furnace | Coke oven gas in the buffer: LIT on, gas drawn, two green electrodes loaded into the charge. A full bake (a simulated day of soak) is not run in the client |
+| Vent stack | Three segments 3 blocks apart read base, middle, top; removing the middle leaves two single stacks (both `base`) with no part cells left; putting it back gives base, middle, top again. Filter range: GameTest `ventStackCountsFiltersOnlyWithinRange` (3 blocks counts, 4 does not) |
+| Break | A destroyed corner part removes the whole machine (no cells left) and drops one machine item each (Acheson, extruder, baking, consumer); the inventory spills beside it |
+| Not checked | Fluid ports in the client (a lone Create pipe is straight with open ends either way, so it shows nothing; the capability checks are in `CarbonRealScaleGameTests` and `pipesConnectOnlyAtPorts`), the Acheson bed under 6 kV (needs a running generator; no-power behaviour is in `achesonFurnaceNeedsTheGrid`), the site build of the carbon machines, C2 with a real hall release (covered by `ventStackFiltersHallReleases`) |
+
 ## Game test structures to look at
 
 `/test runall` builds all of these. The headless run passes all of them; in the client look at the models, the panels

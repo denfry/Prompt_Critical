@@ -76,6 +76,9 @@ public final class CarbonRealScaleGameTests {
         h.setBlock(p, north(PcBlocks.ELECTRODE_EXTRUDER_REAL.get()));
         h.assertTrue(h.getBlockEntity(p) instanceof ElectrodeExtruderBlockEntity && "electrode_extruder_real".equals(model(h, p)),
                 "the real press is the electrode extruder with its whole model");
+        // без этого симуляция не создаёт двойника, и пресс с валом стоит (плейтест I2)
+        h.assertTrue("promptcritical:electrode_extruder".equals(((ElectrodeExtruderBlockEntity) h.getBlockEntity(p)).deviceType()),
+                "the real press is the old press in the simulation");
         var block = (dev.denfry.promptcritical.mod.foundry.KineticMachineBlock) PcBlocks.ELECTRODE_EXTRUDER_REAL.get();
         h.assertTrue(block.hasShaftTowards(h.getLevel(), h.absolutePos(p), h.getBlockState(p), Direction.NORTH), "shaft into the north face");
         var level = h.getLevel();
@@ -101,5 +104,22 @@ public final class CarbonRealScaleGameTests {
         h.assertTrue(level.getCapability(Capabilities.ItemHandler.BLOCK, h.absolutePos(p.offset(0, 3, 1)), Direction.UP) != null, "electrodes under the cover");
         h.assertTrue(level.getCapability(Capabilities.FluidHandler.BLOCK, h.absolutePos(p.offset(2, 2, 0)), Direction.EAST) == null, "the east wall is no port");
         h.succeed();
+    }
+
+    /** Фильтры трубы считаются до трёх блоков от контроллера основания (два — снаружи звена 3 × 3 × 3), дальше — нет. */
+    @GameTest(template = TALL, timeoutTicks = 40)
+    public static void ventStackCountsFiltersOnlyWithinRange(GameTestHelper h) {
+        BlockPos base = new BlockPos(6, 3, 6);
+        h.setBlock(base, PcBlocks.VENT_STACK.get().defaultBlockState());
+        h.setBlock(base.east(dev.denfry.promptcritical.mod.safety.VentStackBlockEntity.FILTER_RANGE), PcBlocks.HEPA_FILTER.get().defaultBlockState());
+        h.setBlock(base.west(dev.denfry.promptcritical.mod.safety.VentStackBlockEntity.FILTER_RANGE + 1),
+                PcBlocks.CHARCOAL_FILTER.get().defaultBlockState());
+        h.runAfterDelay(2, () -> {
+            var v = (dev.denfry.promptcritical.mod.safety.VentStackBlockEntity) h.getBlockEntity(base);
+            v.survey(h.getLevel());
+            h.assertTrue(v.bank().hepaStages() == 1, "the filter 3 blocks out counts, got " + v.bank().hepaStages());
+            h.assertTrue(v.bank().charcoalStages() == 0, "the filter 4 blocks out does not count, got " + v.bank().charcoalStages());
+            h.succeed();
+        });
     }
 }
