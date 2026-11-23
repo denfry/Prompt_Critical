@@ -24,6 +24,10 @@ public record Workpiece(SteelGrade grade, Section section, double aM, double bM,
         if (!(aM > 0) || !(bM > 0) || !(lengthM > 0) || !(tempK > 0)) {
             throw new IllegalArgumentException("aM, bM, lengthM and tempK must be positive");
         }
+        if (!Double.isFinite(aM) || !Double.isFinite(bM) || !Double.isFinite(lengthM) || !Double.isFinite(tempK)
+                || !Double.isFinite(hardnessHrc)) {
+            throw new IllegalArgumentException("aM, bM, lengthM, tempK and hardnessHrc must be finite");
+        }
         var copy = new EnumMap<PartDefect, Double>(PartDefect.class);
         if (defects != null) {
             defects.forEach((d, s) -> {

@@ -23,6 +23,16 @@ class WorkpieceTest {
         assertThat(w.defects()).doesNotContainKey(PartDefect.BURNT);
     }
 
+    @Test void rejectsNonFiniteValues() {
+        var g = grade45();
+        assertThatThrownBy(() -> Workpiece.bar(g, Section.ROUND, Double.POSITIVE_INFINITY, 0.04, 0.3, 293.15))
+                .isInstanceOf(IllegalArgumentException.class);
+        assertThatThrownBy(() -> Workpiece.bar(g, Section.ROUND, 0.04, 0.04, 0.3, Double.NaN))
+                .isInstanceOf(IllegalArgumentException.class);
+        assertThatThrownBy(() -> Workpiece.bar(g, Section.ROUND, 0.04, 0.04, 0.3, 293.15).withHardness(Double.NaN))
+                .isInstanceOf(IllegalArgumentException.class);
+    }
+
     @Test void gateDefects() {
         assertThat(PartDefect.CRACK.gate).isTrue();
         assertThat(PartDefect.BURNT.gate).isTrue();
