@@ -377,16 +377,16 @@ public final class RealScaleGameTests {
 
     /**
      * Кирпичная труба реального масштаба (07 §7.9.2): три звена 3 × 3 × 3 на газоходе ланкаширского котла — основание,
-     * ствол и оголовок по соседям; котёл видит трубу высотой 8 м над газоходом (нижний ряд основания — ниже его пода),
-     * снятый оголовок делает ствол оголовком.
+     * ствол и оголовок по соседям. Основание стоит на полу котла: клетка газохода (0, 0, 10) — его нижняя северная
+     * средняя клетка, и котёл видит трубу высотой 9 м; снятый оголовок делает ствол оголовком.
      */
     @GameTest(template = "gametest/empty_40x10x10", timeoutTicks = 40)
     public static void chimneyStackStandsOnTheLancashireFlue(GameTestHelper h) {
         Direction f = Direction.WEST;
         BlockPos p = new BlockPos(15, 1, 5);
         h.setBlock(p, PcBlocks.LANCASHIRE_BOILER.get().defaultBlockState().setValue(BlockStateProperties.HORIZONTAL_FACING, f));
-        // газоход котла — клетка (0, 0, 10) модели за задним торцом; центр основания трубы — на клетку дальше
-        BlockPos base = p.offset(new BlockPos(0, 0, 11).rotate(Footprint.rotation(f)));
+        // газоход котла — клетка (0, 0, 10) модели за задним торцом; центр основания — на клетку дальше и на ряд выше
+        BlockPos base = p.offset(new BlockPos(0, 1, 11).rotate(Footprint.rotation(f)));
         var stack = PcBlocks.CHIMNEY_STACK.get().defaultBlockState().setValue(BlockStateProperties.HORIZONTAL_FACING, f);
         for (int k = 0; k < 3; k++) h.setBlock(base.above(3 * k), stack);
         h.assertBlockProperty(base, dev.denfry.promptcritical.mod.block.PcProperties.CHIMNEY_PART,
@@ -396,11 +396,11 @@ public final class RealScaleGameTests {
         h.assertBlockProperty(base.above(6), dev.denfry.promptcritical.mod.block.PcProperties.CHIMNEY_PART,
                 dev.denfry.promptcritical.mod.block.PcProperties.ChimneyPart.TOP);
         var boiler = (dev.denfry.promptcritical.mod.boiler.FireTubeBoilerBlockEntity) h.getBlockEntity(p);
-        h.assertValueEqual(boiler.chimneyHeightBlocks(), 8, "chimney height over the flue, m");
+        h.assertValueEqual(boiler.chimneyHeightBlocks(), 9, "chimney height over the flue, m");
         h.setBlock(base.above(6), Blocks.AIR);
         h.assertBlockProperty(base.above(3), dev.denfry.promptcritical.mod.block.PcProperties.CHIMNEY_PART,
                 dev.denfry.promptcritical.mod.block.PcProperties.ChimneyPart.TOP);
-        h.assertValueEqual(boiler.chimneyHeightBlocks(), 5, "two segments over the flue, m");
+        h.assertValueEqual(boiler.chimneyHeightBlocks(), 6, "two segments over the flue, m");
         h.succeed();
     }
 
