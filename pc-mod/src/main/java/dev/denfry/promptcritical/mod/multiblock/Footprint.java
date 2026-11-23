@@ -37,6 +37,26 @@ public record Footprint(List<Segment> segments) {
         return new Footprint(List.of(segments));
     }
 
+    /**
+     * Прямоугольный объём машины в реальном масштабе (спецификация real-scale machines, §1), клетки от контроллера
+     * {@code x0…x1, y0…y1, z0…z1} (фасад на север), разложенный на сегменты 3×3×3 по сетке с якорями в кратных 3:
+     * сегмент 0 — с якорем в контроллере. Объём должен содержать клетку контроллера (0, 0, 0).
+     */
+    public static Footprint tiled(int x0, int x1, int y0, int y1, int z0, int z1) {
+        if (x0 > 0 || x1 < 0 || y0 > 0 || y1 < 0 || z0 > 0 || z1 < 0) throw new IllegalArgumentException("volume must contain the controller");
+        List<Segment> out = new ArrayList<>();
+        for (int ky = Math.floorDiv(y0 + 1, 3); ky <= Math.floorDiv(y1 + 1, 3); ky++)
+            for (int kz = Math.floorDiv(z0 + 1, 3); kz <= Math.floorDiv(z1 + 1, 3); kz++)
+                for (int kx = Math.floorDiv(x0 + 1, 3); kx <= Math.floorDiv(x1 + 1, 3); kx++) {
+                    int ax = 3 * kx, ay = 3 * ky, az = 3 * kz;
+                    Segment s = new Segment(ax, ay, az, Math.max(x0, ax - 1) - ax, Math.min(x1, ax + 1) - ax,
+                            Math.max(y0, ay - 1) - ay, Math.min(y1, ay + 1) - ay, Math.max(z0, az - 1) - az, Math.min(z1, az + 1) - az);
+                    if (kx == 0 && ky == 0 && kz == 0) out.addFirst(s);
+                    else out.add(s);
+                }
+        return new Footprint(List.copyOf(out));
+    }
+
     public boolean isSingle() {
         return segments.size() == 1 && segments.getFirst().equals(SINGLE.segments.getFirst());
     }
