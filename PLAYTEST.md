@@ -93,7 +93,7 @@ and keeps the window behind all others (`mc-background.ps1`, `pauseOnLostFocus:f
 | Finish | Crucible melting hole stands with the site's facing (east) |
 | Route | "A crucible furnace" (+20 XP) and "Choose a melting furnace" (+10 XP) done on completion |
 | Break | One survival hit on a corner part removes all 8 cells, one `crucible_furnace_real` item drops |
-| Collision | Lancashire boiler and Guibal fan stop the player at the edge of the volume; headframe lets the player walk between the legs. **Winding engine: the player walks straight through it along its centre line (x = controller, the whole length, about 10 blocks), standing inside the drum between the flanges** (`shots/winding_engine_inside.png` in the session scratchpad) |
+| Collision | Lancashire boiler and Guibal fan stop the player at the edge of the volume; headframe lets the player walk between the legs. **Winding engine: the player walks straight through it along its centre line (x = controller, the whole length, about 10 blocks), standing inside the drum between the flanges** (`shots/winding_engine_inside.png` in the session scratchpad). Cause: the drum is a second whole model and the slicer only cuts the engine; fixed in `WholeShapes` (drum and the mill engine flywheel join the cell shapes), GameTests `windingEngineDrumIsSolidOnTheCentreLine`, `everyDrawnCellOfI0WholeModelsBlocksThePlayer` |
 | Ports (lathe) | A hopper at the controller front gives a cutting tool to the lathe; hoppers at the other two front cells keep it. Create motor at the west face of the countershaft port: the port runs at 16 rpm with stress on the network |
 | Not checked | Cage ride and shaft signal, steam engines from the stand, machining a casting in the client, panels, the other machines' ports |
 
