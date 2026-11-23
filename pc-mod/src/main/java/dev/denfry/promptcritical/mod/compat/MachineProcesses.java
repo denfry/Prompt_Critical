@@ -213,9 +213,9 @@ public final class MachineProcesses {
                 of(fluid(0, "coke_oven_gas"), fluidTag(SULFURIC_ACID, 0), fluidTag(WASH_OIL, 0)),
                 of(fluid(0, "coal_tar"), item(0, PcItems.AMMONIUM_SULFATE), fluid(0, "crude_benzol"))));
         // электроды (08 §8.4.5)
-        p.add(new Process("electrode_extruder", Plant.ELECTRODES, on(PcBlocks.ELECTRODE_EXTRUDER),
+        p.add(new Process("electrode_extruder", Plant.ELECTRODES, on(PcBlocks.ELECTRODE_EXTRUDER, PcBlocks.ELECTRODE_EXTRUDER_REAL),
                 of(item(3, PcItems.PITCH_COKE), item(0, PcItems.COAL_TAR_PITCH)), of(item(PcItems.GREEN_ELECTRODE))));
-        p.add(new Process("baking_furnace", Plant.ELECTRODES, on(PcBlocks.BAKING_FURNACE),
+        p.add(new Process("baking_furnace", Plant.ELECTRODES, on(PcBlocks.BAKING_FURNACE, PcBlocks.BAKING_FURNACE_REAL),
                 of(item(PcItems.GREEN_ELECTRODE), fuelGas()), of(item(PcItems.GREEN_ELECTRODE))));
         // аглофабрика и доменный цех (08 §8.5)
         p.add(new Process("magnetic_separator", Plant.IRON, on(PcBlocks.MAGNETIC_SEPARATOR),

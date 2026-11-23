@@ -130,6 +130,9 @@ public final class PcLanguageProvider extends LanguageProvider {
         b("reactor_controller", "Pile Control Desk", "Пульт графитового котла");
         b("scram_button", "Scram Button", "Кнопка аварийной защиты");
         b("acheson_furnace", "Acheson Graphitizing Furnace", "Печь графитации Ачесона");
+        b("acheson_furnace_real", "Acheson Graphitizing Furnace Bed", "Ванна графитации Ачесона");
+        b("electrode_extruder_real", "Hydraulic Electrode Extrusion Press", "Гидравлический электродный пресс");
+        b("baking_furnace_real", "Carbon Baking Furnace Chamber", "Камера обжиговой печи электродов");
         i("graphite_electrode", "Graphite Electrode", "Графитированный электрод");
         i("raw_uraninite", "Raw Pitchblende", "Урановая смолка (сырьё)");
         i("crushed_uranium_ore", "Crushed Uranium Ore", "Дроблёная урановая руда");

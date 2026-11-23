@@ -25,9 +25,11 @@ public final class IronworksBlockEntities {
             BLOCK_ENTITIES.register("quench_tower", () -> BlockEntityType.Builder.of(QuenchTowerBlockEntity::new,
                     PcBlocks.QUENCH_TOWER.get(), PcBlocks.QUENCH_TOWER_REAL.get()).build(null));
     public static final DeferredHolder<BlockEntityType<?>, BlockEntityType<ElectrodeExtruderBlockEntity>> ELECTRODE_EXTRUDER =
-            type("electrode_extruder", ElectrodeExtruderBlockEntity::new, PcBlocks.ELECTRODE_EXTRUDER);
+            BLOCK_ENTITIES.register("electrode_extruder", () -> BlockEntityType.Builder.of(ElectrodeExtruderBlockEntity::new,
+                    PcBlocks.ELECTRODE_EXTRUDER.get(), PcBlocks.ELECTRODE_EXTRUDER_REAL.get()).build(null));
     public static final DeferredHolder<BlockEntityType<?>, BlockEntityType<BakingFurnaceBlockEntity>> BAKING_FURNACE =
-            type("baking_furnace", BakingFurnaceBlockEntity::new, PcBlocks.BAKING_FURNACE);
+            BLOCK_ENTITIES.register("baking_furnace", () -> BlockEntityType.Builder.of(BakingFurnaceBlockEntity::new,
+                    PcBlocks.BAKING_FURNACE.get(), PcBlocks.BAKING_FURNACE_REAL.get()).build(null));
     public static final DeferredHolder<BlockEntityType<?>, BlockEntityType<MagneticSeparatorBlockEntity>> MAGNETIC_SEPARATOR =
             type("magnetic_separator", MagneticSeparatorBlockEntity::new, PcBlocks.MAGNETIC_SEPARATOR);
     public static final DeferredHolder<BlockEntityType<?>, BlockEntityType<SinterStrandBlockEntity>> SINTER_STRAND =

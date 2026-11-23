@@ -33,7 +33,7 @@ import org.jetbrains.annotations.Nullable;
  * воронка), газ — трубой, режим — уставка и скорость нагрева на щите; «Выгрузить» — садку в выходы (горячая
  * выгрузка трескает электроды). Обжиг 24 ч физ. выше 800 °C [BALANCE].
  */
-public final class BakingFurnaceBlockEntity extends IronworksDeviceBlockEntity<BakingFurnaceUnit> implements PanelHost {
+public final class BakingFurnaceBlockEntity extends IronworksDeviceBlockEntity<BakingFurnaceUnit> implements PanelHost, dev.denfry.promptcritical.mod.client.whole.WholeModelHost {
     private static final int OUT_SLOTS = 4;
     private final GasBuffer gas = new GasBuffer(8_000, GasBuffer::isProcessGas, this::setChanged);
     private final MachineInventory inv = new MachineInventory(roles(), (slot, s) -> slot == 0 && isGreen(s), this::setChanged);
@@ -82,6 +82,25 @@ public final class BakingFurnaceBlockEntity extends IronworksDeviceBlockEntity<B
         if (!stateFlag(BlockStateProperties.LIT)) return;
         MachineFx fx = fx();
         if (fx.chance(2)) fx.smoke(fx.at(8, 24, 8), false, 1.0);
+    }
+
+    // --- машина реального масштаба: цельная модель ---
+
+    @Override
+    @org.jetbrains.annotations.Nullable
+    public String wholeModelId() {
+        return dev.denfry.promptcritical.mod.client.whole.WholeModelHost.idOf(getBlockState());
+    }
+
+    @Override
+    public net.minecraft.core.Direction wholeModelFacing() {
+        return getBlockState().getValue(net.minecraft.world.level.block.state.properties.BlockStateProperties.HORIZONTAL_FACING);
+    }
+
+    /** Свет — с клетки перед фасадом: сам контроллер внутри корпуса. */
+    @Override
+    public net.minecraft.core.BlockPos wholeModelLightPos() {
+        return worldPosition.relative(wholeModelFacing());
     }
 
     @Override

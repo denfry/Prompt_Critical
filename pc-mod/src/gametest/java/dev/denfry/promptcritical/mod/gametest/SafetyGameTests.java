@@ -334,13 +334,17 @@ public final class SafetyGameTests {
         }).thenSucceed();
     }
 
-    /** Вытяжка зала 03a §3a.9.3: выброс рядом уходит через HEPA и уголь, выходит с верха трубы, фильтры копят активность. */
+    /**
+     * Вытяжка зала 03a §3a.9.3: выброс рядом уходит через HEPA и уголь, выходит с верха трубы, фильтры копят активность.
+     * Труба — два звена 3 × 3 × 3 (основание и оголовок), фильтры — вплотную к основанию.
+     */
     @GameTest(template = LARGE, timeoutTicks = 200)
     public static void ventStackFiltersHallReleases(GameTestHelper h) {
-        BlockPos base = new BlockPos(5, 1, 5);
-        for (int y = 0; y < 4; y++) h.setBlock(base.above(y), PcBlocks.VENT_STACK.get().defaultBlockState());
-        h.setBlock(base.east(), PcBlocks.HEPA_FILTER.get().defaultBlockState());
-        h.setBlock(base.west(), PcBlocks.CHARCOAL_FILTER.get().defaultBlockState());
+        BlockPos base = new BlockPos(5, 2, 5);
+        h.setBlock(base, PcBlocks.VENT_STACK.get().defaultBlockState());
+        h.setBlock(base.above(3), PcBlocks.VENT_STACK.get().defaultBlockState());
+        h.setBlock(base.east(2), PcBlocks.HEPA_FILTER.get().defaultBlockState());
+        h.setBlock(base.west(2), PcBlocks.CHARCOAL_FILTER.get().defaultBlockState());
         h.startSequence().thenIdle(25).thenExecute(() -> {
             VentStackBlockEntity v = h.getBlockEntity(base);
             v.survey(h.getLevel());
@@ -350,7 +354,11 @@ public final class SafetyGameTests {
             try {
                 net.minecraft.world.phys.Vec3 reactor = h.absoluteVec(new net.minecraft.world.phys.Vec3(9.5, 2, 9.5));
                 h.assertTrue(VentStackBlockEntity.capture(h.getLevel(), reactor) == v, "the hall release is not captured");
-                h.assertTrue(Math.abs(v.releasePoint().y - h.absoluteVec(new net.minecraft.world.phys.Vec3(0, 5.5, 0)).y) < 1e-6, "release height " + v.releasePoint());
+                h.assertTrue(Math.abs(v.releasePoint().y - h.absoluteVec(new net.minecraft.world.phys.Vec3(0, 7.5, 0)).y) < 1e-6, "release height " + v.releasePoint());
+                h.assertTrue(h.getBlockState(base).getValue(dev.denfry.promptcritical.mod.block.PcProperties.CHIMNEY_PART)
+                        == dev.denfry.promptcritical.mod.block.PcProperties.ChimneyPart.BASE
+                        && h.getBlockState(base.above(3)).getValue(dev.denfry.promptcritical.mod.block.PcProperties.CHIMNEY_PART)
+                        == dev.denfry.promptcritical.mod.block.PcProperties.ChimneyPart.TOP, "base and cap segments");
                 double cs = v.filter(dev.denfry.promptcritical.sim.radiation.Emitter.CS137, 1e9);
                 h.assertTrue(Math.abs(cs - 1e9 / dev.denfry.promptcritical.sim.radiation.VentFilterBank.HEPA_DF) < 1, "after HEPA " + cs);
                 h.assertTrue(v.bank().retainedCs137Bq() > 9e8, "HEPA did not keep the caesium");

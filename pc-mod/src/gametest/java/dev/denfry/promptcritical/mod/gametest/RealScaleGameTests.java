@@ -446,7 +446,7 @@ public final class RealScaleGameTests {
     public static void pipesConnectOnlyAtPorts(GameTestHelper h) {
         for (String id : new String[] {"vver_reactor", "vver_steam_generator", "vver_coolant_pump", "vver_pressurizer", "bwr240_reactor",
                 "candu6_reactor", "bn600_reactor", "am1_reactor", "lancashire_boiler", "mill_engine", "cupola_furnace_real",
-                "lancashire_stoker", "crucible_furnace_real", "coal_jig_real", "quench_tower_real", "powered_roof_support_real", "molding_station_real", "shakeout_grate_real"}) {
+                "lancashire_stoker", "crucible_furnace_real", "coal_jig_real", "quench_tower_real", "powered_roof_support_real", "molding_station_real", "shakeout_grate_real", "acheson_furnace_real", "electrode_extruder_real", "baking_furnace_real"}) {
             h.assertTrue(!dev.denfry.promptcritical.mod.multiblock.WholePorts.of(id).isEmpty(), id + " declares its ports");
             for (Direction f : Direction.Plane.HORIZONTAL)
                 for (var port : dev.denfry.promptcritical.mod.multiblock.WholePorts.of(id)) {
@@ -486,7 +486,7 @@ public final class RealScaleGameTests {
             h.assertTrue(r > 1 / 1.5 && r < 1.5, plan.id() + ": planned metal " + Math.round(plan.plannedMetalKg() / 1000) + " t vs prototype "
                     + Math.round(plan.metalKg() / 1000) + " t");
         }
-        h.assertTrue(n == 31, "thirty-one real-scale plans (eight reactors and NPP units, eleven I0 machines, two ironmaking, four power and water, four mining and coke, two steel), got " + n);
+        h.assertTrue(n == 34, "thirty-four real-scale plans (eight reactors and NPP units, eleven I0 machines, two ironmaking, four power and water, four mining and coke, two steel, three carbon), got " + n);
         h.succeed();
     }
 

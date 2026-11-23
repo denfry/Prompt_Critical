@@ -224,6 +224,24 @@ public final class SitePlans {
                     st("support_legs", 160, n(INGOT, 30), n(PIPE, 20)),
                     st("canopy", 160, n(PLATE, 40))));
 
+    /** Углеродная линия реального масштаба (08 §8.4.5): массы металла — оценки, кирпич кладки не металл. */
+    private static final Map<String, Plan> CARBON_PLANS = Map.of(
+            // ванна Ачесона 12 м: кладка ≈ 60 м³, металл — торцевые электродные головки, рамы и шины ≈ 8 т (оценки)
+            "acheson_furnace_real", plan("acheson_furnace_real", PcBlocks.ACHESON_FURNACE_REAL, 8,
+                    st("foundation", 120, n(CONCRETE, 10)),
+                    st("furnace_bed", 240, n(BRICKS, 40), n(INGOT, 30)),
+                    st("electrode_heads", 200, n(INGOT, 30), n(WIRE, 200))),
+            // горизонтальный гидравлический пресс: плиты, колонны и траверса ≈ 25 т, цилиндр массы ≈ 11 т, насосная ≈ 4 т (оценки)
+            "electrode_extruder_real", plan("electrode_extruder_real", PcBlocks.ELECTRODE_EXTRUDER_REAL, 40,
+                    st("press_frame", 300, n(INGOT, 200), n(BEAM, 50)),
+                    st("mud_cylinder", 240, n(INGOT, 100), n(PIPE, 20)),
+                    st("pump_unit", 160, n(INGOT, 30), n(PIPE, 20))),
+            // камера обжига 5 × 4 × 4 м: стальной кожух ≈ 10 т, коллектор, газоходы и крышка ≈ 5 т (оценки)
+            "baking_furnace_real", plan("baking_furnace_real", PcBlocks.BAKING_FURNACE_REAL, 15,
+                    st("foundation", 120, n(CONCRETE, 10)),
+                    st("baking_casing", 240, n(PLATE, 80), n(BEAM, 20)),
+                    st("baking_flues", 200, n(BRICKS, 40), n(PIPE, 40), n(INGOT, 30))));
+
     /**
      * Сталь и прокат эры I1 реального масштаба (08 §8.6.1, §8.7.2). Металл — оценки из таблиц размеров
      * (docs/research/bof_vessel-dimensions.md, reheating_furnace-dimensions.md), кирпич футеровки и кладки не металл.
@@ -273,12 +291,13 @@ public final class SitePlans {
         if (p == null) p = IRONMAKING_PLANS.get(id);
         if (p == null) p = POWER_PLANS.get(id);
         if (p == null) p = MINING_COKE_PLANS.get(id);
+        if (p == null) p = CARBON_PLANS.get(id);
         if (p == null) p = I1_STEEL_PLANS.get(id);
         return p != null ? p : FOUNDRY_PLANS.get(id);
     }
 
     public static Iterable<Plan> all() {
-        return java.util.stream.Stream.of(PLANS, I0_PLANS, IRONMAKING_PLANS, POWER_PLANS, MINING_COKE_PLANS, I1_STEEL_PLANS, FOUNDRY_PLANS)
+        return java.util.stream.Stream.of(PLANS, I0_PLANS, IRONMAKING_PLANS, POWER_PLANS, MINING_COKE_PLANS, I1_STEEL_PLANS, FOUNDRY_PLANS, CARBON_PLANS)
                 .flatMap(m -> m.values().stream()).toList();
     }
 }

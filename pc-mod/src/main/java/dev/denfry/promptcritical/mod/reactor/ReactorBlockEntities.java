@@ -20,7 +20,8 @@ public final class ReactorBlockEntities {
     public static final DeferredHolder<BlockEntityType<?>, BlockEntityType<FuelChannelBlockEntity>> FUEL_CHANNEL =
             type("fuel_channel", FuelChannelBlockEntity::new, PcBlocks.FUEL_CHANNEL);
     public static final DeferredHolder<BlockEntityType<?>, BlockEntityType<AchesonFurnaceBlockEntity>> ACHESON_FURNACE =
-            type("acheson_furnace", AchesonFurnaceBlockEntity::new, PcBlocks.ACHESON_FURNACE);
+            BLOCK_ENTITIES.register("acheson_furnace", () -> BlockEntityType.Builder.of(AchesonFurnaceBlockEntity::new,
+                    PcBlocks.ACHESON_FURNACE.get(), PcBlocks.ACHESON_FURNACE_REAL.get()).build(null));
 
     private ReactorBlockEntities() {
     }

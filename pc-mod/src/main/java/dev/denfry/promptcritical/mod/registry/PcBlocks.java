@@ -415,8 +415,10 @@ public final class PcBlocks {
     public static final DeferredBlock<PcBlock> HEPA_FILTER = block("hepa_filter", machine(), Spec.of());
     /** Вытяжка реакторного зала со спецфильтрами (03a §3a.9.1, §3a.9.3): йодный угольный фильтр и вентиляционная труба. */
     public static final DeferredBlock<PcBlock> CHARCOAL_FILTER = block("charcoal_filter", machine(), Spec.of());
-    public static final DeferredBlock<PcDeviceBlock> VENT_STACK = device("vent_stack", machine().noOcclusion(), Spec.facing(PcProperties.RUNNING),
-            FoundryBlock.with(dev.denfry.promptcritical.mod.safety.VentStackBlockEntity::new));
+    /** Звено 3 × 3 × 3 трубы реального масштаба; звенья — друг на друге, узел вытяжки — нижнее ({@code VentStackBlock}). */
+    public static final DeferredBlock<PcDeviceBlock> VENT_STACK = device("vent_stack", machine().noOcclusion(),
+            Spec.facing(PcProperties.RUNNING, PcProperties.CHIMNEY_PART).footprint(dev.denfry.promptcritical.mod.block.ChimneyStackBlock.FP_SEGMENT),
+            dev.denfry.promptcritical.mod.safety.VentStackBlock::create);
     // --- очистка дымовых газов и САКВ (14 §14.2) ---
     public static final DeferredBlock<PcDeviceBlock> ELECTROSTATIC_PRECIPITATOR = device("electrostatic_precipitator", machine(),
             Spec.facing(BlockStateProperties.POWERED),
@@ -444,6 +446,16 @@ public final class PcBlocks {
             instrument()));
     public static final DeferredBlock<PcDeviceBlock> ACHESON_FURNACE = device("acheson_furnace", lit(brick()),
             Spec.facing(BlockStateProperties.LIT),
+            dev.denfry.promptcritical.mod.foundry.FoundryBlock.with(dev.denfry.promptcritical.mod.reactor.AchesonFurnaceBlockEntity::new));
+    /**
+     * Печь графитации Ачесона реального масштаба (art/blockbench/fuel_fabrication/acheson_furnace_real.author.js): открытая
+     * кирпичная ванна с торцевыми электродами, 12 × 2 × 3, контроллер у северного края середины. Тот же BE и нагрузка
+     * сети 6 кВ, что у {@link #ACHESON_FURNACE}; шихту грузят и выгружают сверху.
+     */
+    public static final Footprint FP_ACHESON_FURNACE_REAL = Footprint.tiled(-6, 5, 0, 1, 0, 2);
+    public static final DeferredBlock<PcDeviceBlock> ACHESON_FURNACE_REAL = device("acheson_furnace_real", lit(brick()),
+            Spec.facing(BlockStateProperties.LIT).segments(PcProperties.wholeSegments(FP_ACHESON_FURNACE_REAL.segments().size()),
+                    FP_ACHESON_FURNACE_REAL),
             dev.denfry.promptcritical.mod.foundry.FoundryBlock.with(dev.denfry.promptcritical.mod.reactor.AchesonFurnaceBlockEntity::new));
 
     // --- шахта (08 §8.2) ---
@@ -982,7 +994,9 @@ public final class PcBlocks {
                 || b == LONGWALL_SHEARER_REAL.get() || b == COAL_JIG_REAL.get() || b == QUENCH_TOWER_REAL.get()
                 || b == POWERED_ROOF_SUPPORT_REAL.get()
                 || b == BOF_VESSEL_REAL.get() || b == REHEATING_FURNACE_REAL.get()
-                || b == MOLDING_STATION_REAL.get() || b == SHAKEOUT_GRATE_REAL.get();
+                || b == MOLDING_STATION_REAL.get() || b == SHAKEOUT_GRATE_REAL.get()
+                // углеродная линия реального масштаба
+                || b == ACHESON_FURNACE_REAL.get() || b == ELECTRODE_EXTRUDER_REAL.get() || b == BAKING_FURNACE_REAL.get();
     }
 
     /**
@@ -1125,8 +1139,26 @@ public final class PcBlocks {
     public static final DeferredBlock<PcDeviceBlock> ELECTRODE_EXTRUDER = device("electrode_extruder", machine(),
             Spec.facing(PcProperties.RUNNING).footprint(Footprint.of(Segment.box(-1, 1, 0, 0, 0, 0))),
             KineticMachineBlock.with(ShaftSide.FRONT, ElectrodeExtruderBlockEntity::new));
+    /**
+     * Горизонтальный гидравлический электродный пресс реального масштаба (08 §8.4.5,
+     * art/blockbench/coke/electrode_extruder_real.author.js): 7 × 2 × 2, ось пресса вдоль x, мундштук на западе. Тот же BE
+     * и двойник, что у {@link #ELECTRODE_EXTRUDER}; вал Create — в северную грань контроллера.
+     */
+    public static final Footprint FP_ELECTRODE_EXTRUDER_REAL = Footprint.tiled(-3, 3, 0, 1, 0, 1);
+    public static final DeferredBlock<PcDeviceBlock> ELECTRODE_EXTRUDER_REAL = device("electrode_extruder_real", machine(),
+            Spec.facing(PcProperties.RUNNING).segments(PcProperties.wholeSegments(FP_ELECTRODE_EXTRUDER_REAL.segments().size()),
+                    FP_ELECTRODE_EXTRUDER_REAL), KineticMachineBlock.with(ShaftSide.FRONT, ElectrodeExtruderBlockEntity::new));
     public static final DeferredBlock<PcDeviceBlock> BAKING_FURNACE = device("baking_furnace", lit(brick()),
             Spec.facing(BlockStateProperties.LIT).footprint(FP_FURNACE3), FoundryBlock.with(BakingFurnaceBlockEntity::new));
+    /**
+     * Камера обжиговой печи электродов реального масштаба (08 §8.4.5, art/blockbench/coke/baking_furnace_real.author.js):
+     * 5 × 4 × 4, газ — в коллектор с запада, дымовые газы — на юг к трубе, электроды — сверху под крышкой. Тот же BE
+     * и двойник, что у {@link #BAKING_FURNACE}.
+     */
+    public static final Footprint FP_BAKING_FURNACE_REAL = Footprint.tiled(-2, 2, 0, 3, 0, 3);
+    public static final DeferredBlock<PcDeviceBlock> BAKING_FURNACE_REAL = device("baking_furnace_real", lit(brick()),
+            Spec.facing(BlockStateProperties.LIT).segments(PcProperties.wholeSegments(FP_BAKING_FURNACE_REAL.segments().size()),
+                    FP_BAKING_FURNACE_REAL), FoundryBlock.with(BakingFurnaceBlockEntity::new));
     public static final DeferredBlock<PcDeviceBlock> MAGNETIC_SEPARATOR = device("magnetic_separator", machine(),
             Spec.facing(PcProperties.RUNNING).footprint(FP_WIDE2), KineticMachineBlock.with(ShaftSide.LEFT, MagneticSeparatorBlockEntity::new));
     public static final DeferredBlock<PcDeviceBlock> SINTER_STRAND = device("sinter_strand", lit(machine()),

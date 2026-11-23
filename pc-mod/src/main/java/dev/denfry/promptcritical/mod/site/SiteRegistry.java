@@ -58,6 +58,10 @@ public final class SiteRegistry {
     public static final DeferredItem<DesignDrawingItem> COAL_JIG_REAL_DRAWING = drawing("coal_jig_real");
     public static final DeferredItem<DesignDrawingItem> QUENCH_TOWER_REAL_DRAWING = drawing("quench_tower_real");
     public static final DeferredItem<DesignDrawingItem> POWERED_ROOF_SUPPORT_REAL_DRAWING = drawing("powered_roof_support_real");
+    // углеродная линия реального масштаба
+    public static final DeferredItem<DesignDrawingItem> ACHESON_FURNACE_REAL_DRAWING = drawing("acheson_furnace_real");
+    public static final DeferredItem<DesignDrawingItem> ELECTRODE_EXTRUDER_REAL_DRAWING = drawing("electrode_extruder_real");
+    public static final DeferredItem<DesignDrawingItem> BAKING_FURNACE_REAL_DRAWING = drawing("baking_furnace_real");
     public static final DeferredItem<DesignDrawingItem> BOF_VESSEL_REAL_DRAWING = drawing("bof_vessel_real");
     public static final DeferredItem<DesignDrawingItem> REHEATING_FURNACE_REAL_DRAWING = drawing("reheating_furnace_real");
     public static final DeferredItem<DesignDrawingItem> MOLDING_STATION_REAL_DRAWING = drawing("molding_station_real");
