@@ -36,6 +36,22 @@ public final class ManufacturingText {
         msg("forge.status", "Fire %s °C · fuel %s kg", "Огонь %s °C · топливо %s кг");
         msg("anvil.no_hammer", "You need a smith's hammer", "Нужен кузнечный молот");
         msg("anvil.no_water", "No water next to the anvil to quench in", "Рядом с наковальней нет воды для закалки");
+        msg("anvil.no_oil", "No quench oil next to the anvil", "Рядом с наковальней нет закалочного масла");
+        msg("anvil.second_busy", "Clear the second slot to take the cut-off half", "Освободите второй слот под отрубленную половину");
+        msg("anvil.weld_two", "Forge welding needs a piece in each slot", "Для сварки нужен кусок в каждом слоте");
+        msg("hot.burn", "The hot piece burns your hands: carry it with tongs", "Горячая поковка жжёт руки: носите её клещами");
+        msg("draw.no_tongs", "You need tongs to pull the wire through the plate", "Чтобы тянуть проволоку через доску, нужны клещи");
+        msg("draw.too_strong", "Too thick to pull by hand: %s N needed, the plate gives %s N",
+                "Руками не протянуть: нужно %s Н, доска даёт %s Н");
+        msg("draw.broke", "The wire broke at the die: anneal it in the forge first", "Проволока оборвалась у волоки: сначала отожгите её в горне");
+        msg("draw.no_reduction", "Pick a die smaller than the wire", "Выберите волоку меньше проволоки");
+        msg("draw.not_drawable", "Only copper, wrought iron and plain carbon steel are drawn, as a cold round rod up to 12 mm",
+                "В волоку идут только медь, кричное железо и углеродистая сталь — холодным круглым прутком до 12 мм");
+        msg("wire.line", "%s · Ø%s mm · %s m · work hardening %s", "%s · Ø%s мм · %s м · наклёп %s");
+        msg("wire.metal.copper", "copper", "медь");
+        msg("wire.metal.wrought_iron", "wrought iron", "кричное железо");
+        msg("wire.metal.mild_steel", "mild steel", "мягкая сталь");
+        msg("wire.metal.medium_carbon", "medium carbon steel", "среднеуглеродистая сталь");
         msg("anvil.no_piece", "Nothing on the anvil", "На наковальне ничего нет");
         msg("anvil.too_hot", "Let it cool first", "Сначала дайте остыть");
         msg("anvil.not_a_shaft", "A shaft must be round or square and at least four times as long as it is thick",
@@ -117,6 +133,15 @@ public final class ManufacturingText {
     }
 
     /** Строки подсказки поковки на тике {@code now}. */
+    /** Подсказка проволоки: металл, диаметр, длина и наклёп в процентах от предельного. */
+    public static void wireTooltip(WireData d, List<Component> out) {
+        var w = d.wire();
+        String hardening = Math.round(100 * w.strain() / w.metal().maxStrain) + " %";
+        out.add(msg("wire.line", msg("wire.metal." + w.metal().name().toLowerCase(Locale.ROOT)),
+                String.format(Locale.ROOT, "%.2f", w.diameterM() * 1000), String.format(Locale.ROOT, "%.2f", w.lengthM()), hardening)
+                .withStyle(ChatFormatting.GRAY));
+    }
+
     public static void workpieceTooltip(WorkpieceData d, long now, List<Component> out) {
         var w = d.workpiece(now);
         Component mat = material(w.grade().family().name().toLowerCase(Locale.ROOT));

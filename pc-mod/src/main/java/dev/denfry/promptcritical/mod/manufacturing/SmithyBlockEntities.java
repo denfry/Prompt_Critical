@@ -23,14 +23,35 @@ public final class SmithyBlockEntities {
             type("forge_hearth", ForgeHearthBlockEntity::new, PcBlocks.FORGE_HEARTH);
     public static final DeferredHolder<BlockEntityType<?>, BlockEntityType<SmithingAnvilBlockEntity>> SMITHING_ANVIL =
             type("smithing_anvil", SmithingAnvilBlockEntity::new, PcBlocks.SMITHING_ANVIL);
+    public static final DeferredHolder<BlockEntityType<?>, BlockEntityType<DrawPlateBlockEntity>> DRAW_PLATE =
+            type("draw_plate", DrawPlateBlockEntity::new, PcBlocks.DRAW_PLATE);
+    public static final DeferredHolder<BlockEntityType<?>, BlockEntityType<PowerHammerBlockEntity>> POWER_HAMMER =
+            type("power_hammer", PowerHammerBlockEntity::hammer, PcBlocks.POWER_HAMMER);
+    public static final DeferredHolder<BlockEntityType<?>, BlockEntityType<PowerHammerBlockEntity>> CRANK_PRESS =
+            type("crank_press", PowerHammerBlockEntity::press, PcBlocks.CRANK_PRESS);
+    public static final DeferredHolder<BlockEntityType<?>, BlockEntityType<WireMillBlockEntity>> WIRE_MILL =
+            type("wire_mill", WireMillBlockEntity::new, PcBlocks.WIRE_MILL);
+    public static final DeferredHolder<BlockEntityType<?>, BlockEntityType<SmithyFurnaceBlockEntity>> HEATING_FURNACE =
+            type("heating_furnace", SmithyFurnaceBlockEntity::heating, PcBlocks.HEATING_FURNACE);
+    public static final DeferredHolder<BlockEntityType<?>, BlockEntityType<SmithyFurnaceBlockEntity>> HARDENING_FURNACE =
+            type("hardening_furnace", SmithyFurnaceBlockEntity::hardening, PcBlocks.HARDENING_FURNACE);
 
     private SmithyBlockEntities() {
     }
 
     /** Склад горнов открыт воронкам и Create — третий уровень (автоматика) подаёт руду, уголь и прокат сам. */
     static void capabilities(RegisterCapabilitiesEvent event) {
-        for (var t : java.util.List.of(BLOOMERY.get(), FORGE_HEARTH.get(), SMITHING_ANVIL.get()))
-            event.registerBlockEntity(Capabilities.ItemHandler.BLOCK, t, (be, side) -> ((SmithyDevice) be).items(side));
+        for (var t : java.util.List.<BlockEntityType<?>>of(BLOOMERY.get(), FORGE_HEARTH.get(), SMITHING_ANVIL.get(), DRAW_PLATE.get(),
+                POWER_HAMMER.get(), CRANK_PRESS.get(), WIRE_MILL.get(), HEATING_FURNACE.get(), HARDENING_FURNACE.get()))
+            event.registerBlockEntity(Capabilities.ItemHandler.BLOCK, cast(t),
+                    (be, side) -> ((dev.denfry.promptcritical.mod.foundry.FoundryDevice) be).items(side));
+        // бак закалочной печи: вода или масло трубами Create и вёдрами
+        event.registerBlockEntity(Capabilities.FluidHandler.BLOCK, HARDENING_FURNACE.get(), (be, side) -> be.fluids(side));
+    }
+
+    @SuppressWarnings("unchecked")
+    private static BlockEntityType<BlockEntity> cast(BlockEntityType<?> t) {
+        return (BlockEntityType<BlockEntity>) t;
     }
 
     private static <T extends BlockEntity> DeferredHolder<BlockEntityType<?>, BlockEntityType<T>> type(String name,

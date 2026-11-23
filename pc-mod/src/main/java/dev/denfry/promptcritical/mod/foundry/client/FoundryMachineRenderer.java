@@ -36,7 +36,7 @@ public final class FoundryMachineRenderer<T extends BlockEntity> implements Bloc
      * <p>SLIDE_X — возвратно-поступательно по x с размахом ±a пикселей (ползун строгального), фаза — от вала × gear.
      * SWEEP_Y — медленный поворот вокруг вертикали через (a, b) с gear об/мин, пока блок {@code running} (мост
      * осветлителя: машина не на валу Create). */
-    public enum Motion { STATIC, SPIN_X, SPIN_Y, SPIN_Z, JOLT, SLIDE_X, SWEEP_Y }
+    public enum Motion { STATIC, SPIN_X, SPIN_Y, SPIN_Z, JOLT, SLIDE_X, SWEEP_Y, HAMMER }
 
     @Nullable
     private final PartialModel part;
@@ -95,6 +95,10 @@ public final class FoundryMachineRenderer<T extends BlockEntity> implements Bloc
                 if (running) buf.translate(0, (float) Math.abs(Math.sin(time * 0.6)) * 1.5f / 16f, 0);
             }
             case SLIDE_X -> buf.translate((float) Math.sin(Math.toRadians(angle)) * a, 0, 0);
+            // баба молота или ползун пресса: ход вниз на a пикселей за оборот кривошипа, только пока машина куёт
+            case HAMMER -> {
+                if (running) buf.translate(0, -(float) (0.5 * (1 - Math.cos(Math.toRadians(angle)))) * a, 0);
+            }
             case SWEEP_Y -> {
                 // фаза — от времени мира: при остановке мост встаёт в исходное положение (фазу никто не хранит)
                 if (running) buf.translate(a, 0, b).rotateYDegrees((time * gear * 360f / 1200f) % 360f).translate(-a, 0, -b);

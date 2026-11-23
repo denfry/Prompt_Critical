@@ -226,6 +226,12 @@ public final class PcTagProviders {
         @Override
         protected void addTags(HolderLookup.Provider provider) {
             CommonTags.addFluidTags(this::tag);
+            // закалочное масло кузницы (18 §18.6.4): минеральные фракции, не лёгкое топливо
+            tag(dev.denfry.promptcritical.mod.manufacturing.Smithy.QUENCH_OIL).add(
+                    dev.denfry.promptcritical.mod.registry.PcFluids.CRUDE_OIL.source.get(),
+                    dev.denfry.promptcritical.mod.registry.PcFluids.VACUUM_GAS_OIL.source.get(),
+                    dev.denfry.promptcritical.mod.registry.PcFluids.LIGHT_CYCLE_OIL.source.get(),
+                    dev.denfry.promptcritical.mod.registry.PcFluids.DIESEL_FUEL.source.get());
         }
     }
 }

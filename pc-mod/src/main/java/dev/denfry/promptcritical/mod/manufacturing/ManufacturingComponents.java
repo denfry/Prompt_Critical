@@ -57,6 +57,10 @@ public final class ManufacturingComponents {
     public static final DeferredHolder<DataComponentType<?>, DataComponentType<WorkpieceData>> WORKPIECE =
             COMPONENTS.registerComponentType("workpiece", b -> b.persistent(WorkpieceData.CODEC)
                     .networkSynchronized(net.minecraft.network.codec.ByteBufCodecs.fromCodec(WorkpieceData.CODEC)));
+    /** Пруток и проволока под волочение (18 §18.6.7). */
+    public static final DeferredHolder<DataComponentType<?>, DataComponentType<WireData>> WIRE =
+            COMPONENTS.registerComponentType("wire", b -> b.persistent(WireData.CODEC)
+                    .networkSynchronized(net.minecraft.network.codec.ByteBufCodecs.fromCodec(WireData.CODEC)));
 
     private ManufacturingComponents() {
     }

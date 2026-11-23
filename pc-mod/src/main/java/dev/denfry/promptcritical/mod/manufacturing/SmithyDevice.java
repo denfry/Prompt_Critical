@@ -39,8 +39,8 @@ public abstract class SmithyDevice extends BlockEntity implements FoundryDevice,
 
     @Override
     public ItemInteractionResult useItem(Player player, InteractionHand hand, ItemStack stack) {
-        if (Smithy.forgeable(stack) && stack.getCount() > 1) {
-            // поковку и прокат кладут по одному куску, остальное остаётся в руке
+        if ((Smithy.forgeable(stack) || Smithy.drawable(stack)) && stack.getCount() > 1) {
+            // поковку, прокат и пруток кладут по одному куску, остальное остаётся в руке
             ItemStack rest = inv.insertFromPlayer(stack.split(1));
             stack.grow(rest.getCount());
             player.setItemInHand(hand, stack);

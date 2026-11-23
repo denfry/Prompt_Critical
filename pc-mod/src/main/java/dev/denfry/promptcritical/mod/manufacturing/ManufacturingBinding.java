@@ -12,5 +12,6 @@ public final class ManufacturingBinding {
         ManufacturingItems.ITEMS.register(modBus);
         SmithyBlockEntities.BLOCK_ENTITIES.register(modBus);
         modBus.addListener(SmithyBlockEntities::capabilities);
+        net.neoforged.neoforge.common.NeoForge.EVENT_BUS.addListener(HotHandling::onPlayerTick);
     }
 }

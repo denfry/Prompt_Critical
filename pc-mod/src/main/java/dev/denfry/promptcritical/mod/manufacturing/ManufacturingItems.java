@@ -16,11 +16,16 @@ public final class ManufacturingItems {
     /** Вал (18 §18.5) — деталь с паспортом {@code part_spec}. */
     public static final DeferredItem<Item> SHAFT = ITEMS.registerSimpleItem("shaft", new Item.Properties().stacksTo(16));
 
+    /** Кузнечные клещи: с ними горячая поковка в инвентаре не жжёт руки (18 §18.7). */
+    public static final DeferredItem<Item> TONGS = ITEMS.registerSimpleItem("tongs", new Item.Properties().stacksTo(1));
+    /** Пруток или проволока с компонентом {@code wire} (18 §18.6.7). */
+    public static final DeferredItem<WireItem> WIRE = ITEMS.register("wire", () -> new WireItem(new Item.Properties()));
+
     private ManufacturingItems() {
     }
 
     /** Для вкладки творческого режима. */
     public static List<DeferredItem<? extends Item>> all() {
-        return List.of(SMITH_HAMMER, WORKPIECE, SHAFT);
+        return List.of(SMITH_HAMMER, TONGS, WORKPIECE, WIRE, SHAFT);
     }
 }

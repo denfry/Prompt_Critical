@@ -124,9 +124,110 @@
     return m;
   }
 
-  // Panel boards 200x150 in the style of the foundry boards: brass frame, dark plates under the bars and buttons.
-  function board(seed, plates) {
-    const W = 200, H = 150, im = img(W, H), r = rng(seed);
+  // Draw plate: an oak bench, an upright steel plate with a row of graded holes at the front, a windlass with a crank
+  // at the back that pulls the wire through.
+  function drawPlate() {
+    const m = mk('smithy/anvil');
+    for (const [x, z] of [[1.5, 1.5], [13, 1.5], [1.5, 13], [13, 13]]) m.box('leg', [x, 0, z], [x + 1.5, 9, z + 1.5], 'wood', { split: '' });
+    m.box('top', [0.5, 9, 0.5], [15.5, 10.4, 15.5], 'wood', { split: '' });
+    m.box('plate', [2, 10.4, 3], [14, 15, 4], 'anv', { split: '' });
+    for (let i = 0; i < 5; i++) m.box('hole' + i, [3 + i * 2.2, 12.2, 2.95], [3.4 + i * 2.2 - i * 0.05, 12.6, 3.05], 'soot', { split: '', hide: ['down', 'up', 'east', 'west', 'north'] });
+    m.box('wire', [7.6, 11.5, 4], [8.4, 11.9, 10], 'face', { split: '' });
+    m.box('drum', [4, 10.4, 10], [12, 13.2, 12.8], 'wood', { split: '' });
+    m.box('axle', [3, 11.4, 11], [13, 12.2, 11.8], 'st', { split: '' });
+    m.box('crank_arm', [12.6, 11.4, 11], [13.4, 14.6, 11.8], 'st', { split: '' });
+    m.box('crank_grip', [13.4, 14, 10.6], [15, 14.6, 12.2], 'wood', { split: '' });
+    m.box('post_w', [3.2, 10.4, 10.6], [4, 13, 12.2], 'wood', { split: '' });
+    m.box('post_e', [12, 10.4, 10.6], [12.8, 13, 12.2], 'wood', { split: '' });
+    return m;
+  }
+
+  // Powered stage (GDD 18 §18.7). The Create shaft comes in at the back (south) for the hammer and the press, at the
+  // west for the wire mill; a coupling boss marks it.
+  //  - power_hammer: a cast-iron anvil block on a footing, two columns, a cylinder head on top; the ram with its upper
+  //    die is a partial that drops 3 px per crank turn.
+  //  - crank_press: a closed cast frame, the crank housing on top with a flywheel at the back; the slide is a partial.
+  //  - wire_mill: a bench with a die box at the front and a capstan drum at the back driven from a gearbox on the west.
+  //  - heating_furnace / hardening_furnace: a brick chamber with a steel door and a stack; lit, the door slot glows.
+  //    The hardening furnace has a quench tank on its east side.
+  function coupling(m, axis) {
+    if (axis === 'z') m.box('coupling', [6, 6, 15], [10, 10, 16], 'st', { split: '' });
+    else m.box('coupling', [0, 6, 6], [1, 10, 10], 'st', { split: '' });
+  }
+
+  function powerHammer() {
+    const m = mk('smithy/anvil');
+    m.box('footing', [1, 0, 1], [15, 2, 15], 'ashlar', { split: '' });
+    m.box('anvil_block', [4, 2, 4], [12, 6, 12], 'ci', { split: '' });
+    m.box('lower_die', [5, 6, 5], [11, 6.8, 11], 'face', { split: '' });
+    m.box('column_w', [1.5, 2, 6], [3.5, 14, 10], 'ci', { split: '' });
+    m.box('column_e', [12.5, 2, 6], [14.5, 14, 10], 'ci', { split: '' });
+    m.box('head', [1.5, 14, 4], [14.5, 16, 14], 'ci', { split: '' });
+    m.box('cylinder', [5, 11.6, 5.5], [11, 14, 10.5], 'st', { split: '' });
+    m.box('drive', [5, 9, 12], [11, 15, 15], 'ci', { split: '' });
+    coupling(m, 'z');
+    return m;
+  }
+
+  function hammerRam() {
+    const m = mk('smithy/anvil');
+    m.box('ram', [5.5, 8, 6], [10.5, 11.6, 10], 'st', { split: '' });
+    m.box('upper_die', [5, 7.2, 5], [11, 8, 11], 'face', { split: '' });
+    return m;
+  }
+
+  function crankPress() {
+    const m = mk('smithy/anvil');
+    m.box('bed', [1, 0, 2], [15, 4, 14], 'ci', { split: '' });
+    m.box('bolster', [4, 4, 4], [12, 5, 12], 'face', { split: '' });
+    m.box('upright_w', [1, 4, 3], [3.5, 13, 13], 'ci', { split: '' });
+    m.box('upright_e', [12.5, 4, 3], [15, 13, 13], 'ci', { split: '' });
+    m.box('crown', [1, 13, 3], [15, 16, 13], 'ci', { split: '' });
+    m.prismZ ? m.prismZ('flywheel', [8, 12], 3.6, 13, 15, 'st', {}) : m.box('flywheel', [4.5, 8.5, 13], [11.5, 15.5, 15], 'st', { split: '' });
+    coupling(m, 'z');
+    return m;
+  }
+
+  function pressSlide() {
+    const m = mk('smithy/anvil');
+    m.box('slide', [4, 8, 4], [12, 12.6, 12], 'st', { split: '' });
+    m.box('upper_die', [4.5, 7.4, 4.5], [11.5, 8, 11.5], 'face', { split: '' });
+    return m;
+  }
+
+  function wireMill() {
+    const m = mk('smithy/anvil');
+    for (const [x, z] of [[1.5, 1.5], [13, 1.5], [1.5, 13], [13, 13]]) m.box('leg', [x, 0, z], [x + 1.5, 7, z + 1.5], 'ci', { split: '' });
+    m.box('bed', [0.5, 7, 0.5], [15.5, 8.5, 15.5], 'ci', { split: '' });
+    m.box('die_box', [5.5, 8.5, 1.5], [10.5, 12, 4.5], 'st', { split: '' });
+    m.box('soap_box', [5, 8.5, 4.5], [11, 10, 6.5], 'wood', { split: '' });
+    m.box('wire', [7.6, 10.2, 4.5], [8.4, 10.6, 9], 'face', { split: '' });
+    m.prismY('drum', [9, 11.5], 3.4, 8.5, 14.5, 'st', { ends: ['up', 'down'] });
+    m.box('gearbox', [1, 8.5, 9], [4.5, 13, 14], 'ci', { split: '' });
+    m.box('drive_shaft', [4.5, 10, 11], [6, 11, 12], 'st', { split: '' });
+    coupling(m, 'x');
+    return m;
+  }
+
+  function chamber(lit, tank) {
+    const m = mk('smithy/daub');
+    const x1 = tank ? 11 : 15.5;
+    m.box('chamber', [0.5, 0, 1], [x1, 12, 15], 'brick', { split: '' });
+    m.box('frame', [1.5, 2, 0.4], [x1 - 1, 9, 1], 'ci', { split: '' });
+    m.box('door', [2.5, 3, 0.2], [x1 - 2, 8, 0.6], 'st', { split: '' });
+    m.box(lit ? 'glow_slot' : 'slot', [3.5, 7.6, 0.1], [x1 - 3, 8.3, 0.3], lit ? 'coals' : 'soot', { split: '' });
+    m.box('firebox', [2.5, 0.5, 0.6], [x1 - 2, 2, 1], lit ? 'coals' : 'soot', { split: '' });
+    m.box('stack', [3, 12, 9], [7, 16, 13], 'brick', { split: '' });
+    if (tank) {
+      m.box('tank', [11.5, 0, 3], [15.5, 7, 13], 'st', { split: '' });
+      m.box('tank_liquid', [12, 6.6, 3.5], [15, 6.9, 12.5], 'soot', { split: '', hide: ['down', 'north', 'south', 'east', 'west'] });
+    }
+    return m;
+  }
+
+  // Panel boards 200xH in the style of the foundry boards: brass frame, dark plates under the bars and buttons.
+  function board(seed, plates, H = 150) {
+    const W = 200, im = img(W, H), r = rng(seed);
     grain(im, [62, 54, 50], seed + 1, 3, 5, 12);
     for (let y = 0; y < H; y++) for (let x = 0; x < W; x++) {
       const d = Math.min(x, y, W - 1 - x, H - 1 - y);
@@ -143,8 +244,14 @@
     const out = (n, im) => writePng(im, path.join(root, PCART.ASSETS, 'textures/gui/panel/' + n + '.png'));
     out('bloomery', board(5201, [[80, 18, 194, 104], [6, 106, 194, 146]]));
     out('forge_hearth', board(5211, [[80, 18, 194, 84], [6, 88, 194, 120], [6, 122, 194, 146]]));
-    out('smithing_anvil', board(5221, [[6, 6, 194, 92], [6, 94, 194, 134], [6, 134, 194, 146]]));
-    return 3;
+    out('smithing_anvil', board(5221, [[6, 6, 194, 92], [6, 94, 194, 154], [6, 158, 194, 186]], 190));
+    out('draw_plate', board(5231, [[6, 6, 194, 94], [6, 96, 194, 120], [6, 122, 194, 146]]));
+    out('power_hammer', board(5241, [[6, 6, 194, 92], [6, 96, 194, 146]]));
+    out('crank_press', board(5251, [[6, 6, 194, 92], [6, 96, 194, 146]]));
+    out('wire_mill', board(5261, [[6, 6, 194, 96], [6, 98, 194, 146]]));
+    out('heating_furnace', board(5271, [[80, 18, 194, 84], [6, 88, 194, 120], [6, 122, 194, 146]]));
+    out('hardening_furnace', board(5281, [[80, 18, 194, 84], [6, 88, 194, 120], [6, 122, 194, 146]]));
+    return 9;
   }
 
   // Item icons 16x16 and their item/generated models.
@@ -154,6 +261,16 @@
     smith_hammer: icon((im) => {
       for (let i = 0; i < 9; i++) put(im, 4 + i, 12 - i, [134, 96, 58]);
       for (let y = 2; y < 6; y++) for (let x = 9; x < 15; x++) put(im, x, y, y === 2 ? [170, 170, 176] : [96, 96, 102]);
+    }),
+    tongs: icon((im) => {
+      for (let i = 0; i < 9; i++) { put(im, 3 + i, 13 - i, [70, 70, 76]); put(im, 5 + i, 13 - i, [96, 96, 102]); }
+      for (let y = 2; y < 5; y++) { put(im, 12, y, [70, 70, 76]); put(im, 14, y, [96, 96, 102]); }
+    }),
+    wire: icon((im) => {
+      for (let a = 0; a < 64; a++) for (const rr of [4.5, 5.5]) {
+        const t = a / 64 * 2 * Math.PI;
+        put(im, Math.round(8 + rr * Math.cos(t)), Math.round(8 + rr * Math.sin(t)), rr > 5 ? [196, 110, 70] : [150, 80, 50]);
+      }
     }),
     shaft: icon((im) => {
       for (let i = 1; i < 15; i++) { put(im, i, 15 - i, [150, 150, 158]); put(im, i, 14 - i, [104, 104, 112]); }
@@ -173,7 +290,12 @@
   const BUILDS = {
     bloomery: { model: () => bloomery(false) }, bloomery_lit: { model: () => bloomery(true) },
     forge_hearth: { model: () => forge(false) }, forge_hearth_lit: { model: () => forge(true) },
-    smithing_anvil: { model: anvil },
+    smithing_anvil: { model: anvil }, draw_plate: { model: drawPlate },
+    power_hammer: { model: powerHammer }, 'power_hammer/ram': { model: hammerRam, java: 'power_hammer/partial/ram' },
+    crank_press: { model: crankPress }, 'crank_press/ram': { model: pressSlide, java: 'crank_press/partial/ram' },
+    wire_mill: { model: wireMill },
+    heating_furnace: { model: () => chamber(false, false) }, heating_furnace_lit: { model: () => chamber(true, false) },
+    hardening_furnace: { model: () => chamber(false, true) }, hardening_furnace_lit: { model: () => chamber(true, true) },
   };
 
   window.SMY = {

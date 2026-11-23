@@ -7,6 +7,7 @@ import dev.denfry.promptcritical.sim.manufacturing.ForgingSession;
 import dev.denfry.promptcritical.sim.manufacturing.PartDefect;
 import dev.denfry.promptcritical.sim.manufacturing.PartSpec;
 import dev.denfry.promptcritical.sim.manufacturing.Quenching;
+import dev.denfry.promptcritical.sim.manufacturing.Welding;
 import dev.denfry.promptcritical.sim.manufacturing.Workpiece;
 import java.util.Arrays;
 import java.util.List;
@@ -35,7 +36,9 @@ public final class SmithingAnvilBlockEntity extends SmithyDevice {
     public static final double SHAFT_MIN_SLENDERNESS = 4;
     /** Деталь сдают остывшей: выше 60 °C её не взять голой рукой [моё]. */
     public static final double FINISH_MAX_K = 333.15;
-    private static final MachineInventory.Role[] ROLES = {MachineInventory.Role.INPUT};
+    /** Рубят пополам: кузнец делит крицу и длинную заготовку на куски по силам ручнику [моё]. */
+    public static final double CUT_FRACTION = 0.5;
+    private static final MachineInventory.Role[] ROLES = {MachineInventory.Role.INPUT, MachineInventory.Role.INPUT};
 
     private Forging.Op op = Forging.Op.DRAW;
     private int lastEvent = -1;
@@ -49,9 +52,20 @@ public final class SmithingAnvilBlockEntity extends SmithyDevice {
         return level == null ? null : Smithy.read(inv.getStackInSlot(0), level.getGameTime());
     }
 
+    @Nullable
+    private Workpiece second() {
+        return level == null ? null : Smithy.read(inv.getStackInSlot(1), level.getGameTime());
+    }
+
     private void store(Workpiece w) {
         inv.setStackInSlot(0, Smithy.stack(w, level.getGameTime()));
         setChanged();
+    }
+
+    private boolean refuseWithoutHammer(@Nullable Player player) {
+        if (player == null || !hammer(player).isEmpty()) return false;
+        player.displayClientMessage(ManufacturingText.msg("anvil.no_hammer"), true);
+        return true;
     }
 
     public Forging.Op op() {
@@ -65,11 +79,8 @@ public final class SmithingAnvilBlockEntity extends SmithyDevice {
     public List<ForgeEvent> strike(@Nullable Player player) {
         Workpiece w = piece();
         if (w == null || inv.getStackInSlot(0).getCount() != 1) return List.of();
+        if (refuseWithoutHammer(player)) return List.of();
         ItemStack hammer = player == null ? ItemStack.EMPTY : hammer(player);
-        if (player != null && hammer.isEmpty()) {
-            player.displayClientMessage(ManufacturingText.msg("anvil.no_hammer"), true);
-            return List.of();
-        }
         Forging.Result r = Forging.series(w, op, Forging.HAND_BLOW_J, Forging.HAND_BLOWS, Forging.HAND_STRAIN_RATE,
                 Forging.HAND_SERIES_S, WorkpieceData.AMBIENT_K);
         store(r.piece());
@@ -86,13 +97,20 @@ public final class SmithingAnvilBlockEntity extends SmithyDevice {
 
     /** Закалка в воде рядом с наковальней. */
     public List<ForgeEvent> quench(@Nullable Player player) {
+        return quench(player, Quenching.Medium.WATER);
+    }
+
+    /** Закалка в воде или в масле рядом с наковальней (18 §18.6.4): масло мягче, трещин меньше, прокаливается тоньше. */
+    public List<ForgeEvent> quench(@Nullable Player player, Quenching.Medium medium) {
         Workpiece w = piece();
         if (w == null) return List.of();
-        if (!Smithy.waterNear(level, worldPosition)) {
-            if (player != null) player.displayClientMessage(ManufacturingText.msg("anvil.no_water"), true);
+        boolean bath = medium == Quenching.Medium.OIL ? Smithy.oilNear(level, worldPosition) : Smithy.waterNear(level, worldPosition);
+        if (!bath) {
+            if (player != null)
+                player.displayClientMessage(ManufacturingText.msg(medium == Quenching.Medium.OIL ? "anvil.no_oil" : "anvil.no_water"), true);
             return List.of();
         }
-        Forging.Result r = Quenching.quench(w, Quenching.Medium.WATER);
+        Forging.Result r = Quenching.quench(w, medium);
         store(r.piece());
         lastEvent = r.events().get(r.events().size() - 1).ordinal();
         if (level instanceof ServerLevel sl) {
@@ -102,6 +120,69 @@ public final class SmithingAnvilBlockEntity extends SmithyDevice {
                         worldPosition.getZ() + 0.5, 8, 0.2, 0.1, 0.2, 0.02);
         }
         return r.events();
+    }
+
+    /**
+     * Горячая рубка пополам (18 §18.6.3): отрубленная половина ложится во второй слот, он должен быть пуст. Нужен
+     * молот, как для удара.
+     */
+    @Nullable
+    public ForgeEvent cut(@Nullable Player player) {
+        Workpiece w = piece();
+        if (w == null || inv.getStackInSlot(0).getCount() != 1) return null;
+        if (!inv.getStackInSlot(1).isEmpty()) {
+            if (player != null) player.displayClientMessage(ManufacturingText.msg("anvil.second_busy"), true);
+            return null;
+        }
+        if (refuseWithoutHammer(player)) return null;
+        Forging.Split split = Forging.cut(w, CUT_FRACTION, Forging.HAND_SERIES_S, WorkpieceData.AMBIENT_K);
+        lastEvent = split.event().ordinal();
+        if (split.done()) {
+            long now = level.getGameTime();
+            inv.setStackInSlot(0, Smithy.stack(split.first(), now));
+            inv.setStackInSlot(1, Smithy.stack(split.second(), now));
+            if (player instanceof ServerPlayer sp && level instanceof ServerLevel sl) hammer(sp).hurtAndBreak(1, sl, sp, item -> { });
+            if (level instanceof ServerLevel sl) sl.playSound(null, worldPosition, SoundEvents.ANVIL_LAND, SoundSource.BLOCKS, 0.3f, 1.6f);
+        }
+        setChanged();
+        return split.event();
+    }
+
+    /**
+     * Кузнечная сварка двух кусков на наковальне (18 §18.6.10): оба при белом калении, флюс — песок из инвентаря
+     * (один на сварку; без песка шов с непроваром). {@code null} у игрока — подача с флюсом (GameTest, автоматика).
+     */
+    public List<ForgeEvent> forgeWeld(@Nullable Player player) {
+        Workpiece a = piece(), b = second();
+        if (a == null || b == null) {
+            if (player != null) player.displayClientMessage(ManufacturingText.msg("anvil.weld_two"), true);
+            return List.of();
+        }
+        if (refuseWithoutHammer(player)) return List.of();
+        boolean flux = player == null || takeFlux(player);
+        Welding.Result r = Welding.join(a, b, Welding.forgeJoint(Math.min(a.tempK(), b.tempK()), flux));
+        lastEvent = r.events().get(r.events().size() - 1).ordinal();
+        if (r.piece() != null) {
+            inv.setStackInSlot(1, ItemStack.EMPTY);
+            store(r.piece());
+            if (player instanceof ServerPlayer sp && level instanceof ServerLevel sl) hammer(sp).hurtAndBreak(1, sl, sp, item -> { });
+            if (level instanceof ServerLevel sl) {
+                sl.playSound(null, worldPosition, SoundEvents.ANVIL_PLACE, SoundSource.BLOCKS, 0.4f, 1.1f);
+                sl.sendParticles(ParticleTypes.LAVA, worldPosition.getX() + 0.5, worldPosition.getY() + 1.05,
+                        worldPosition.getZ() + 0.5, 8, 0.2, 0.02, 0.2, 0.02);
+            }
+        }
+        setChanged();
+        return r.events();
+    }
+
+    private static boolean takeFlux(Player player) {
+        for (ItemStack s : player.getInventory().items)
+            if (s.is(net.neoforged.neoforge.common.Tags.Items.SANDS)) {
+                if (!player.getAbilities().instabuild) s.shrink(1);
+                return true;
+            }
+        return false;
     }
 
     /** Сдать поковку валом: холодная, круглая или квадратная, длиной от четырёх сторон сечения. */
@@ -136,7 +217,10 @@ public final class SmithingAnvilBlockEntity extends SmithyDevice {
             case SmithyPanels.BUTTON_UPSET -> op = Forging.Op.UPSET;
             case SmithyPanels.BUTTON_BEND -> op = Forging.Op.BEND;
             case SmithyPanels.BUTTON_STRIKE -> strike(player);
-            case SmithyPanels.BUTTON_QUENCH -> quench(player);
+            case SmithyPanels.BUTTON_QUENCH -> quench(player, Quenching.Medium.WATER);
+            case SmithyPanels.BUTTON_QUENCH_OIL -> quench(player, Quenching.Medium.OIL);
+            case SmithyPanels.BUTTON_CUT -> cut(player);
+            case SmithyPanels.BUTTON_WELD -> forgeWeld(player);
             case SmithyPanels.BUTTON_SHAFT -> finishShaft(player);
             default -> { }
         }
@@ -172,6 +256,8 @@ public final class SmithingAnvilBlockEntity extends SmithyDevice {
         out[SmithyPanels.A_OP] = op.ordinal();
         out[SmithyPanels.A_EVENT] = lastEvent;
         int f = level != null && Smithy.waterNear(level, worldPosition) ? 1 << SmithyPanels.AF_WATER : 0;
+        if (level != null && Smithy.oilNear(level, worldPosition)) f |= 1 << SmithyPanels.AF_OIL;
+        if (second() != null) f |= 1 << SmithyPanels.AF_SECOND;
         Workpiece w = piece();
         if (w != null) {
             f |= 1 << SmithyPanels.AF_PIECE;
@@ -182,6 +268,7 @@ public final class SmithingAnvilBlockEntity extends SmithyDevice {
             out[SmithyPanels.A_LEN_MM] = (int) Math.round(w.lengthM() * 1000);
             out[SmithyPanels.A_SLAG_PCT] = (int) Math.round(w.severity(PartDefect.SLAG_INCLUSION) * 50);
             out[SmithyPanels.A_CRACK] = PartSpec.defectLevel(w.severity(PartDefect.CRACK));
+            out[SmithyPanels.A_FUSION] = PartSpec.defectLevel(w.severity(PartDefect.LACK_OF_FUSION));
             out[SmithyPanels.A_LOWER_C] = (int) Math.round(range.lowerK() - 273.15);
             out[SmithyPanels.A_UPPER_C] = (int) Math.round(range.upperK() - 273.15);
             out[SmithyPanels.A_ROUND] = w.section() == Workpiece.Section.ROUND ? 1 : 0;

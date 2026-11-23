@@ -3,8 +3,10 @@ package dev.denfry.promptcritical.mod.manufacturing;
 import dev.denfry.promptcritical.mod.foundry.FoundryTags;
 import dev.denfry.promptcritical.mod.foundry.MachineInventory;
 import dev.denfry.promptcritical.mod.fx.MachineFx;
+import dev.denfry.promptcritical.sim.manufacturing.Drawing;
 import dev.denfry.promptcritical.sim.manufacturing.ForgeHeating;
 import dev.denfry.promptcritical.sim.manufacturing.Tempering;
+import dev.denfry.promptcritical.sim.manufacturing.Wire;
 import dev.denfry.promptcritical.sim.manufacturing.Workpiece;
 import java.util.Arrays;
 import net.minecraft.core.BlockPos;
@@ -45,7 +47,7 @@ public final class ForgeHearthBlockEntity extends SmithyDevice {
     private double blast;
 
     public ForgeHearthBlockEntity(BlockPos pos, BlockState state) {
-        super(SmithyBlockEntities.FORGE_HEARTH.get(), pos, state, ROLES, (slot, s) -> slot == 0 ? isFuel(s) : isForgeable(s));
+        super(SmithyBlockEntities.FORGE_HEARTH.get(), pos, state, ROLES, (slot, s) -> slot == 0 ? isFuel(s) : slot == 1 ? isFireable(s) : isForgeable(s));
     }
 
     public static boolean isFuel(ItemStack s) {
@@ -54,6 +56,11 @@ public final class ForgeHearthBlockEntity extends SmithyDevice {
 
     public static boolean isForgeable(ItemStack s) {
         return Smithy.forgeable(s);
+    }
+
+    /** В огонь кладут и поковку, и проволоку на отжиг (18 §18.6.7). */
+    public static boolean isFireable(ItemStack s) {
+        return Smithy.forgeable(s) || s.has(ManufacturingComponents.WIRE.get());
     }
 
     public double fireK() {
@@ -97,6 +104,13 @@ public final class ForgeHearthBlockEntity extends SmithyDevice {
     private void heatSlot(int slot, double toK, boolean temper, double seconds, long now) {
         ItemStack s = inv.getStackInSlot(slot);
         if (s.getCount() > 1) return; // стопку проката в огонь не берут: кузнец греет по одному куску
+        WireData wire = s.get(ManufacturingComponents.WIRE.get());
+        if (wire != null) {
+            // моток проволоки тонкий: прогревается сразу, отжиг идёт при температуре огня
+            Wire annealed = Drawing.anneal(wire.wire(), toK, seconds);
+            if (annealed.strain() != wire.wire().strain()) inv.setStackInSlot(slot, Smithy.wireStack(annealed));
+            return;
+        }
         Workpiece w = Smithy.read(s, now);
         if (w == null) return;
         w = ForgeHeating.heat(w, toK, seconds);
@@ -123,7 +137,7 @@ public final class ForgeHearthBlockEntity extends SmithyDevice {
 
     @Override
     public boolean accepts(ItemStack stack) {
-        return isFuel(stack) || isForgeable(stack);
+        return isFuel(stack) || isFireable(stack);
     }
 
     @Override

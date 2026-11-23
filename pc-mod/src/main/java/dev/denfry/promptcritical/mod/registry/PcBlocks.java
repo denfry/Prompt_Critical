@@ -813,6 +813,19 @@ public final class PcBlocks {
             dev.denfry.promptcritical.mod.foundry.FoundryBlock.with(dev.denfry.promptcritical.mod.manufacturing.ForgeHearthBlockEntity::new));
     public static final DeferredBlock<PcDeviceBlock> SMITHING_ANVIL = device("smithing_anvil", machine(), Spec.facing(),
             dev.denfry.promptcritical.mod.foundry.FoundryBlock.with(dev.denfry.promptcritical.mod.manufacturing.SmithingAnvilBlockEntity::new));
+    public static final DeferredBlock<PcDeviceBlock> DRAW_PLATE = device("draw_plate", machine(), Spec.facing(),
+            dev.denfry.promptcritical.mod.foundry.FoundryBlock.with(dev.denfry.promptcritical.mod.manufacturing.DrawPlateBlockEntity::new));
+    // механизированная ступень (18 §18.7): молот и пресс на валу Create, волочильный стан, камерные печи
+    public static final DeferredBlock<PcDeviceBlock> POWER_HAMMER = device("power_hammer", machine(), Spec.facing(PcProperties.RUNNING),
+            KineticMachineBlock.with(ShaftSide.BACK, dev.denfry.promptcritical.mod.manufacturing.PowerHammerBlockEntity::hammer));
+    public static final DeferredBlock<PcDeviceBlock> CRANK_PRESS = device("crank_press", machine(), Spec.facing(PcProperties.RUNNING),
+            KineticMachineBlock.with(ShaftSide.BACK, dev.denfry.promptcritical.mod.manufacturing.PowerHammerBlockEntity::press));
+    public static final DeferredBlock<PcDeviceBlock> WIRE_MILL = device("wire_mill", machine(), Spec.facing(PcProperties.RUNNING),
+            KineticMachineBlock.with(ShaftSide.LEFT, dev.denfry.promptcritical.mod.manufacturing.WireMillBlockEntity::new));
+    public static final DeferredBlock<PcDeviceBlock> HEATING_FURNACE = device("heating_furnace", lit(brick()), Spec.facing(BlockStateProperties.LIT),
+            dev.denfry.promptcritical.mod.foundry.FoundryBlock.with(dev.denfry.promptcritical.mod.manufacturing.SmithyFurnaceBlockEntity::heating));
+    public static final DeferredBlock<PcDeviceBlock> HARDENING_FURNACE = device("hardening_furnace", lit(brick()), Spec.facing(BlockStateProperties.LIT),
+            dev.denfry.promptcritical.mod.foundry.FoundryBlock.with(dev.denfry.promptcritical.mod.manufacturing.SmithyFurnaceBlockEntity::hardening));
     public static final DeferredBlock<PcDeviceBlock> SAND_MOLD = device("sand_mold",
             Properties.of().mapColor(MapColor.SAND).strength(0.8f).sound(SoundType.SAND).noOcclusion(), Spec.of(PcProperties.MOLD_STAGE),
             SandMoldBlock.factory());

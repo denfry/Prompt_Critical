@@ -41,9 +41,20 @@ public final class Forging {
     /** КПД привода молота от вала до бойка [сверить]. */
     public static final double POWER_DRIVE_EFFICIENCY = 0.6;
 
+    /** Ходов в минуту кривошипного пресса [сверить: КГШП 40–100 ходов/мин, ручная подача — реже]. */
+    public static final double PRESS_STROKES_PER_MIN = 30;
+    /** Скорость деформации под прессом, 1/с: медленное сжатие, металл течёт легче [моё]. */
+    public static final double PRESS_STRAIN_RATE = 2;
+
     /** Энергия удара механического молота от мощности на валу, Дж: η·P·(60 / ударов в минуту). */
     public static double poweredBlowJ(double shaftW) {
-        return POWER_DRIVE_EFFICIENCY * Math.max(0, shaftW) * 60 / POWER_BLOWS_PER_MIN;
+        return strokeJ(shaftW, POWER_BLOWS_PER_MIN);
+    }
+
+    /** Энергия хода машины на валу, Дж: η·P·(60 / ходов в минуту). */
+    public static double strokeJ(double shaftW, double strokesPerMin) {
+        if (!(strokesPerMin > 0)) throw new IllegalArgumentException("strokes per minute must be positive");
+        return POWER_DRIVE_EFFICIENCY * Math.max(0, shaftW) * 60 / strokesPerMin;
     }
 
     /** Тяжесть трещины от серии ниже нижней границы интервала [BALANCE]. */

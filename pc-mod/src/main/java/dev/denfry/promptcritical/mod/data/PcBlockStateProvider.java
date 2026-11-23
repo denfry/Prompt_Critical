@@ -359,7 +359,8 @@ public final class PcBlockStateProvider extends BlockStateProvider {
                 case 2 -> id + "_full";
                 default -> id;
             };
-            case "cupola_furnace", "crucible_furnace", "bloomery", "forge_hearth" -> s.getValue(BlockStateProperties.LIT) ? id + "_lit" : id;
+            case "cupola_furnace", "crucible_furnace", "bloomery", "forge_hearth", "heating_furnace", "hardening_furnace" ->
+                    s.getValue(BlockStateProperties.LIT) ? id + "_lit" : id;
             case "sand_mold" -> switch (s.getValue(PcProperties.MOLD_STAGE)) {
                 case EMPTY -> id;
                 case POURED -> id + "_poured";

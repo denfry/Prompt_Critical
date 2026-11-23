@@ -1,0 +1,32 @@
+{
+  "parent": "minecraft:recipes/root",
+  "criteria": {
+    "has_draw_plate": {
+      "conditions": {
+        "items": [
+          {
+            "items": "promptcritical:draw_plate"
+          }
+        ]
+      },
+      "trigger": "minecraft:inventory_changed"
+    },
+    "has_the_recipe": {
+      "conditions": {
+        "recipe": "promptcritical:smithy/wire_mill"
+      },
+      "trigger": "minecraft:recipe_unlocked"
+    }
+  },
+  "requirements": [
+    [
+      "has_the_recipe",
+      "has_draw_plate"
+    ]
+  ],
+  "rewards": {
+    "recipes": [
+      "promptcritical:smithy/wire_mill"
+    ]
+  }
+}

@@ -1,0 +1,233 @@
+{
+	"credit": "Made with Blockbench",
+	"textures": {
+		"particle": "promptcritical:block/smithy/daub",
+		"material_brick": "promptcritical:block/material/brick",
+		"material_cast_iron": "promptcritical:block/material/cast_iron",
+		"material_steel": "promptcritical:block/material/steel",
+		"smithy_coals": "promptcritical:block/smithy/coals",
+		"smithy_daub": "promptcritical:block/smithy/daub"
+	},
+	"elements": [
+		{
+			"name": "chamber",
+			"from": [0.5, 0, 1],
+			"to": [15.5, 12, 15],
+			"rotation": {
+				"angle": 0,
+				"axis": "y",
+				"origin": [8, 8, 8]
+			},
+			"faces": {
+				"north": {
+					"uv": [8.25, 10, 15.75, 16],
+					"texture": "#material_brick"
+				},
+				"east": {
+					"uv": [8.5, 10, 15.5, 16],
+					"texture": "#material_brick"
+				},
+				"south": {
+					"uv": [0.25, 10, 7.75, 16],
+					"texture": "#material_brick"
+				},
+				"west": {
+					"uv": [0.5, 10, 7.5, 16],
+					"texture": "#material_brick"
+				},
+				"up": {
+					"uv": [0.25, 0.5, 7.75, 7.5],
+					"texture": "#material_brick"
+				},
+				"down": {
+					"uv": [0.25, 8.5, 7.75, 15.5],
+					"texture": "#material_brick"
+				}
+			}
+		},
+		{
+			"name": "frame",
+			"from": [1.5, 2, 0.4],
+			"to": [14.5, 9, 1],
+			"rotation": {
+				"angle": 0,
+				"axis": "y",
+				"origin": [8, 8, 8]
+			},
+			"faces": {
+				"north": {
+					"uv": [1.5, 7, 14.5, 14],
+					"texture": "#material_cast_iron"
+				},
+				"east": {
+					"uv": [15, 7, 15.6, 14],
+					"texture": "#material_cast_iron"
+				},
+				"south": {
+					"uv": [1.5, 7, 14.5, 14],
+					"texture": "#material_cast_iron"
+				},
+				"west": {
+					"uv": [0.4, 7, 1, 14],
+					"texture": "#material_cast_iron"
+				},
+				"up": {
+					"uv": [1.5, 0.4, 14.5, 1],
+					"texture": "#material_cast_iron"
+				},
+				"down": {
+					"uv": [1.5, 15, 14.5, 15.6],
+					"texture": "#material_cast_iron"
+				}
+			}
+		},
+		{
+			"name": "door",
+			"from": [2.5, 3, 0.2],
+			"to": [13.5, 8, 0.6],
+			"rotation": {
+				"angle": 0,
+				"axis": "y",
+				"origin": [8, 8, 8]
+			},
+			"faces": {
+				"north": {
+					"uv": [2.5, 8, 13.5, 13],
+					"texture": "#material_steel"
+				},
+				"east": {
+					"uv": [15.4, 8, 15.8, 13],
+					"texture": "#material_steel"
+				},
+				"south": {
+					"uv": [2.5, 8, 13.5, 13],
+					"texture": "#material_steel"
+				},
+				"west": {
+					"uv": [0.2, 8, 0.6, 13],
+					"texture": "#material_steel"
+				},
+				"up": {
+					"uv": [2.5, 0.2, 13.5, 0.6],
+					"texture": "#material_steel"
+				},
+				"down": {
+					"uv": [2.5, 15.4, 13.5, 15.8],
+					"texture": "#material_steel"
+				}
+			}
+		},
+		{
+			"name": "glow_slot",
+			"from": [3.5, 7.6, 0.1],
+			"to": [12.5, 8.3, 0.3],
+			"rotation": {
+				"angle": 0,
+				"axis": "y",
+				"origin": [8, 8, 8]
+			},
+			"faces": {
+				"north": {
+					"uv": [3.5, 7.7, 12.5, 8.4],
+					"texture": "#smithy_coals"
+				},
+				"east": {
+					"uv": [15.7, 7.7, 15.9, 8.4],
+					"texture": "#smithy_coals"
+				},
+				"south": {
+					"uv": [3.5, 7.7, 12.5, 8.4],
+					"texture": "#smithy_coals"
+				},
+				"west": {
+					"uv": [0.1, 7.7, 0.3, 8.4],
+					"texture": "#smithy_coals"
+				},
+				"up": {
+					"uv": [3.5, 0.1, 12.5, 0.3],
+					"texture": "#smithy_coals"
+				},
+				"down": {
+					"uv": [3.5, 15.7, 12.5, 15.9],
+					"texture": "#smithy_coals"
+				}
+			},
+			"neoforge_data": {
+				"block_light": 15,
+				"sky_light": 15
+			}
+		},
+		{
+			"name": "firebox",
+			"from": [2.5, 0.5, 0.6],
+			"to": [13.5, 2, 1],
+			"rotation": {
+				"angle": 0,
+				"axis": "y",
+				"origin": [8, 8, 8]
+			},
+			"faces": {
+				"north": {
+					"uv": [2.5, 14, 13.5, 15.5],
+					"texture": "#smithy_coals"
+				},
+				"east": {
+					"uv": [15, 14, 15.4, 15.5],
+					"texture": "#smithy_coals"
+				},
+				"south": {
+					"uv": [2.5, 14, 13.5, 15.5],
+					"texture": "#smithy_coals"
+				},
+				"west": {
+					"uv": [0.6, 14, 1, 15.5],
+					"texture": "#smithy_coals"
+				},
+				"up": {
+					"uv": [2.5, 0.6, 13.5, 1],
+					"texture": "#smithy_coals"
+				},
+				"down": {
+					"uv": [2.5, 15, 13.5, 15.4],
+					"texture": "#smithy_coals"
+				}
+			}
+		},
+		{
+			"name": "stack",
+			"from": [3, 12, 9],
+			"to": [7, 16, 13],
+			"rotation": {
+				"angle": 0,
+				"axis": "y",
+				"origin": [8, 8, 8]
+			},
+			"faces": {
+				"north": {
+					"uv": [12.5, 8, 14.5, 10],
+					"texture": "#material_brick"
+				},
+				"east": {
+					"uv": [9.5, 8, 11.5, 10],
+					"texture": "#material_brick"
+				},
+				"south": {
+					"uv": [1.5, 8, 3.5, 10],
+					"texture": "#material_brick"
+				},
+				"west": {
+					"uv": [4.5, 8, 6.5, 10],
+					"texture": "#material_brick"
+				},
+				"up": {
+					"uv": [1.5, 4.5, 3.5, 6.5],
+					"texture": "#material_brick"
+				},
+				"down": {
+					"uv": [1.5, 9.5, 3.5, 11.5],
+					"texture": "#material_brick"
+				}
+			}
+		}
+	]
+}
