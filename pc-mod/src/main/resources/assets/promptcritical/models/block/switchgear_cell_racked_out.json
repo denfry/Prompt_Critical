@@ -9,13 +9,16 @@
 		"material_soot": "promptcritical:block/material/soot",
 		"material_gauge_dial": "promptcritical:block/material/gauge_dial",
 		"disconnector_copper": "promptcritical:block/disconnector/copper",
-		"material_bright_steel": "promptcritical:block/material/bright_steel"
+		"material_bright_steel": "promptcritical:block/material/bright_steel",
+		"vver_grating": "promptcritical:block/vver/grating",
+		"material_paint_red": "promptcritical:block/material/paint_red",
+		"plant_hazard": "promptcritical:block/plant/hazard"
 	},
 	"elements": [
 		{
 			"name": "body_0",
-			"from": [0, 0, 1],
-			"to": [16, 16, 16],
+			"from": [0, -16, 1],
+			"to": [16, 0, 16],
 			"rotation": {
 				"angle": 0,
 				"axis": "y",
@@ -50,8 +53,8 @@
 		},
 		{
 			"name": "body_1",
-			"from": [0, 16, 1],
-			"to": [16, 31.6, 16],
+			"from": [0, 0, 1],
+			"to": [16, 15.6, 16],
 			"rotation": {
 				"angle": 0,
 				"axis": "y",
@@ -86,8 +89,8 @@
 		},
 		{
 			"name": "relay_panel",
-			"from": [0.5, 24, 0.6],
-			"to": [15.5, 31.4, 1],
+			"from": [0.5, 8, 0.6],
+			"to": [15.5, 15.4, 1],
 			"rotation": {
 				"angle": 0,
 				"axis": "y",
@@ -122,8 +125,8 @@
 		},
 		{
 			"name": "bushing_box",
-			"from": [3, 31.6, 5],
-			"to": [13, 32, 13],
+			"from": [3, 15.6, 5],
+			"to": [13, 16, 13],
 			"rotation": {
 				"angle": 0,
 				"axis": "y",
@@ -158,8 +161,8 @@
 		},
 		{
 			"name": "lamp_state_bezel",
-			"from": [2.5, 27.5, 0.2],
-			"to": [4.3, 29.3, 0.6],
+			"from": [2.5, 11.5, 0.2],
+			"to": [4.3, 13.3, 0.6],
 			"rotation": {
 				"angle": 0,
 				"axis": "y",
@@ -194,8 +197,8 @@
 		},
 		{
 			"name": "glow_lamp_state",
-			"from": [2.8, 27.8, 0],
-			"to": [4, 29, 0.2],
+			"from": [2.8, 11.8, 0],
+			"to": [4, 13, 0.2],
 			"rotation": {
 				"angle": 0,
 				"axis": "y",
@@ -234,8 +237,8 @@
 		},
 		{
 			"name": "lamp_spare_bezel",
-			"from": [5.7, 27.5, 0.2],
-			"to": [7.5, 29.3, 0.6],
+			"from": [5.7, 11.5, 0.2],
+			"to": [7.5, 13.3, 0.6],
 			"rotation": {
 				"angle": 0,
 				"axis": "y",
@@ -270,8 +273,8 @@
 		},
 		{
 			"name": "lamp_spare",
-			"from": [6, 27.8, 0],
-			"to": [7.2, 29, 0.2],
+			"from": [6, 11.8, 0],
+			"to": [7.2, 13, 0.2],
 			"rotation": {
 				"angle": 0,
 				"axis": "y",
@@ -306,8 +309,8 @@
 		},
 		{
 			"name": "ammeter",
-			"from": [10, 26.4, 0.4],
-			"to": [14, 30.4, 0.6],
+			"from": [10, 10.4, 0.4],
+			"to": [14, 14.4, 0.6],
 			"rotation": {
 				"angle": 0,
 				"axis": "y",
@@ -338,8 +341,8 @@
 		},
 		{
 			"name": "key_switch",
-			"from": [7.8, 25, 0.2],
-			"to": [9, 26.2, 0.6],
+			"from": [7.8, 9, 0.2],
+			"to": [9, 10.2, 0.6],
 			"rotation": {
 				"angle": 0,
 				"axis": "y",
@@ -374,8 +377,8 @@
 		},
 		{
 			"name": "door_open",
-			"from": [-0.4, 1, -14],
-			"to": [0, 23, 0.6],
+			"from": [-0.4, -15, -14],
+			"to": [0, 7, 0.6],
 			"rotation": {
 				"angle": 0,
 				"axis": "y",
@@ -410,8 +413,8 @@
 		},
 		{
 			"name": "cell_inside",
-			"from": [0.6, 1, 0.9],
-			"to": [15.4, 23, 1],
+			"from": [0.6, -15, 0.9],
+			"to": [15.4, 7, 1],
 			"rotation": {
 				"angle": 0,
 				"axis": "y",
@@ -446,8 +449,8 @@
 		},
 		{
 			"name": "truck",
-			"from": [2, 0.6, -10],
-			"to": [14, 9, 0.4],
+			"from": [2, -15.4, -10],
+			"to": [14, -7, 0.4],
 			"rotation": {
 				"angle": 0,
 				"axis": "y",
@@ -482,8 +485,8 @@
 		},
 		{
 			"name": "wheel_3.6_-8.6",
-			"from": [3, 0, -9.6],
-			"to": [4.2, 1.6, -7.6],
+			"from": [3, -16, -9.6],
+			"to": [4.2, -14.4, -7.6],
 			"rotation": {
 				"angle": 0,
 				"axis": "y",
@@ -518,8 +521,8 @@
 		},
 		{
 			"name": "wheel_3.6_-1",
-			"from": [3, 0, -2],
-			"to": [4.2, 1.6, 0],
+			"from": [3, -16, -2],
+			"to": [4.2, -14.4, 0],
 			"rotation": {
 				"angle": 0,
 				"axis": "y",
@@ -554,8 +557,8 @@
 		},
 		{
 			"name": "wheel_12.4_-8.6",
-			"from": [11.8, 0, -9.6],
-			"to": [13, 1.6, -7.6],
+			"from": [11.8, -16, -9.6],
+			"to": [13, -14.4, -7.6],
 			"rotation": {
 				"angle": 0,
 				"axis": "y",
@@ -590,8 +593,8 @@
 		},
 		{
 			"name": "wheel_12.4_-1",
-			"from": [11.8, 0, -2],
-			"to": [13, 1.6, 0],
+			"from": [11.8, -16, -2],
+			"to": [13, -14.4, 0],
 			"rotation": {
 				"angle": 0,
 				"axis": "y",
@@ -626,8 +629,8 @@
 		},
 		{
 			"name": "pole_4.6_0",
-			"from": [3.3, 9, -4.85859],
-			"to": [5.9, 18, -4.34141],
+			"from": [3.3, -7, -4.85859],
+			"to": [5.9, 2, -4.34141],
 			"rotation": {
 				"angle": 0,
 				"axis": "y",
@@ -650,12 +653,12 @@
 		},
 		{
 			"name": "pole_4.6_1",
-			"from": [3.3, 9, -4.85859],
-			"to": [5.9, 18, -4.34141],
+			"from": [3.3, -7, -4.85859],
+			"to": [5.9, 2, -4.34141],
 			"rotation": {
 				"angle": 22.5,
 				"axis": "y",
-				"origin": [4.6, 8, -4.6]
+				"origin": [4.6, -8, -4.6]
 			},
 			"faces": {
 				"east": {
@@ -674,12 +677,12 @@
 		},
 		{
 			"name": "pole_4.6_2",
-			"from": [3.3, 9, -4.85859],
-			"to": [5.9, 18, -4.34141],
+			"from": [3.3, -7, -4.85859],
+			"to": [5.9, 2, -4.34141],
 			"rotation": {
 				"angle": 45,
 				"axis": "y",
-				"origin": [4.6, 8, -4.6]
+				"origin": [4.6, -8, -4.6]
 			},
 			"faces": {
 				"east": {
@@ -698,12 +701,12 @@
 		},
 		{
 			"name": "pole_4.6_3",
-			"from": [3.3, 9, -4.85859],
-			"to": [5.9, 18, -4.34141],
+			"from": [3.3, -7, -4.85859],
+			"to": [5.9, 2, -4.34141],
 			"rotation": {
 				"angle": -22.5,
 				"axis": "y",
-				"origin": [4.6, 8, -4.6]
+				"origin": [4.6, -8, -4.6]
 			},
 			"faces": {
 				"east": {
@@ -722,12 +725,12 @@
 		},
 		{
 			"name": "pole_4.6_4",
-			"from": [3.3, 9, -4.85859],
-			"to": [5.9, 18, -4.34141],
+			"from": [3.3, -7, -4.85859],
+			"to": [5.9, 2, -4.34141],
 			"rotation": {
 				"angle": -45,
 				"axis": "y",
-				"origin": [4.6, 8, -4.6]
+				"origin": [4.6, -8, -4.6]
 			},
 			"faces": {
 				"east": {
@@ -746,8 +749,8 @@
 		},
 		{
 			"name": "pole_4.6_5",
-			"from": [4.34141, 9, -5.9],
-			"to": [4.85859, 18, -3.3],
+			"from": [4.34141, -7, -5.9],
+			"to": [4.85859, 2, -3.3],
 			"rotation": {
 				"angle": 0,
 				"axis": "y",
@@ -770,12 +773,12 @@
 		},
 		{
 			"name": "pole_4.6_6",
-			"from": [4.34141, 9, -5.9],
-			"to": [4.85859, 18, -3.3],
+			"from": [4.34141, -7, -5.9],
+			"to": [4.85859, 2, -3.3],
 			"rotation": {
 				"angle": 22.5,
 				"axis": "y",
-				"origin": [4.6, 8, -4.6]
+				"origin": [4.6, -8, -4.6]
 			},
 			"faces": {
 				"north": {
@@ -794,12 +797,12 @@
 		},
 		{
 			"name": "pole_4.6_7",
-			"from": [4.34141, 9, -5.9],
-			"to": [4.85859, 18, -3.3],
+			"from": [4.34141, -7, -5.9],
+			"to": [4.85859, 2, -3.3],
 			"rotation": {
 				"angle": -22.5,
 				"axis": "y",
-				"origin": [4.6, 8, -4.6]
+				"origin": [4.6, -8, -4.6]
 			},
 			"faces": {
 				"north": {
@@ -818,8 +821,8 @@
 		},
 		{
 			"name": "contact_4.6",
-			"from": [4.1, 15, -3.4],
-			"to": [5.1, 16, 0.2],
+			"from": [4.1, -1, -3.4],
+			"to": [5.1, 0, 0.2],
 			"rotation": {
 				"angle": 0,
 				"axis": "y",
@@ -854,8 +857,8 @@
 		},
 		{
 			"name": "contact_lo_4.6",
-			"from": [4.1, 11, -3.4],
-			"to": [5.1, 12, 0.2],
+			"from": [4.1, -5, -3.4],
+			"to": [5.1, -4, 0.2],
 			"rotation": {
 				"angle": 0,
 				"axis": "y",
@@ -890,8 +893,8 @@
 		},
 		{
 			"name": "pole_8_0",
-			"from": [6.7, 9, -4.85859],
-			"to": [9.3, 18, -4.34141],
+			"from": [6.7, -7, -4.85859],
+			"to": [9.3, 2, -4.34141],
 			"rotation": {
 				"angle": 0,
 				"axis": "y",
@@ -914,12 +917,12 @@
 		},
 		{
 			"name": "pole_8_1",
-			"from": [6.7, 9, -4.85859],
-			"to": [9.3, 18, -4.34141],
+			"from": [6.7, -7, -4.85859],
+			"to": [9.3, 2, -4.34141],
 			"rotation": {
 				"angle": 22.5,
 				"axis": "y",
-				"origin": [8, 8, -4.6]
+				"origin": [8, -8, -4.6]
 			},
 			"faces": {
 				"east": {
@@ -938,12 +941,12 @@
 		},
 		{
 			"name": "pole_8_2",
-			"from": [6.7, 9, -4.85859],
-			"to": [9.3, 18, -4.34141],
+			"from": [6.7, -7, -4.85859],
+			"to": [9.3, 2, -4.34141],
 			"rotation": {
 				"angle": 45,
 				"axis": "y",
-				"origin": [8, 8, -4.6]
+				"origin": [8, -8, -4.6]
 			},
 			"faces": {
 				"east": {
@@ -962,12 +965,12 @@
 		},
 		{
 			"name": "pole_8_3",
-			"from": [6.7, 9, -4.85859],
-			"to": [9.3, 18, -4.34141],
+			"from": [6.7, -7, -4.85859],
+			"to": [9.3, 2, -4.34141],
 			"rotation": {
 				"angle": -22.5,
 				"axis": "y",
-				"origin": [8, 8, -4.6]
+				"origin": [8, -8, -4.6]
 			},
 			"faces": {
 				"east": {
@@ -986,12 +989,12 @@
 		},
 		{
 			"name": "pole_8_4",
-			"from": [6.7, 9, -4.85859],
-			"to": [9.3, 18, -4.34141],
+			"from": [6.7, -7, -4.85859],
+			"to": [9.3, 2, -4.34141],
 			"rotation": {
 				"angle": -45,
 				"axis": "y",
-				"origin": [8, 8, -4.6]
+				"origin": [8, -8, -4.6]
 			},
 			"faces": {
 				"east": {
@@ -1010,8 +1013,8 @@
 		},
 		{
 			"name": "pole_8_5",
-			"from": [7.74141, 9, -5.9],
-			"to": [8.25859, 18, -3.3],
+			"from": [7.74141, -7, -5.9],
+			"to": [8.25859, 2, -3.3],
 			"rotation": {
 				"angle": 0,
 				"axis": "y",
@@ -1034,12 +1037,12 @@
 		},
 		{
 			"name": "pole_8_6",
-			"from": [7.74141, 9, -5.9],
-			"to": [8.25859, 18, -3.3],
+			"from": [7.74141, -7, -5.9],
+			"to": [8.25859, 2, -3.3],
 			"rotation": {
 				"angle": 22.5,
 				"axis": "y",
-				"origin": [8, 8, -4.6]
+				"origin": [8, -8, -4.6]
 			},
 			"faces": {
 				"north": {
@@ -1058,12 +1061,12 @@
 		},
 		{
 			"name": "pole_8_7",
-			"from": [7.74141, 9, -5.9],
-			"to": [8.25859, 18, -3.3],
+			"from": [7.74141, -7, -5.9],
+			"to": [8.25859, 2, -3.3],
 			"rotation": {
 				"angle": -22.5,
 				"axis": "y",
-				"origin": [8, 8, -4.6]
+				"origin": [8, -8, -4.6]
 			},
 			"faces": {
 				"north": {
@@ -1082,8 +1085,8 @@
 		},
 		{
 			"name": "contact_8",
-			"from": [7.5, 15, -3.4],
-			"to": [8.5, 16, 0.2],
+			"from": [7.5, -1, -3.4],
+			"to": [8.5, 0, 0.2],
 			"rotation": {
 				"angle": 0,
 				"axis": "y",
@@ -1118,8 +1121,8 @@
 		},
 		{
 			"name": "contact_lo_8",
-			"from": [7.5, 11, -3.4],
-			"to": [8.5, 12, 0.2],
+			"from": [7.5, -5, -3.4],
+			"to": [8.5, -4, 0.2],
 			"rotation": {
 				"angle": 0,
 				"axis": "y",
@@ -1154,8 +1157,8 @@
 		},
 		{
 			"name": "pole_11.4_0",
-			"from": [10.1, 9, -4.85859],
-			"to": [12.7, 18, -4.34141],
+			"from": [10.1, -7, -4.85859],
+			"to": [12.7, 2, -4.34141],
 			"rotation": {
 				"angle": 0,
 				"axis": "y",
@@ -1178,12 +1181,12 @@
 		},
 		{
 			"name": "pole_11.4_1",
-			"from": [10.1, 9, -4.85859],
-			"to": [12.7, 18, -4.34141],
+			"from": [10.1, -7, -4.85859],
+			"to": [12.7, 2, -4.34141],
 			"rotation": {
 				"angle": 22.5,
 				"axis": "y",
-				"origin": [11.4, 8, -4.6]
+				"origin": [11.4, -8, -4.6]
 			},
 			"faces": {
 				"east": {
@@ -1202,12 +1205,12 @@
 		},
 		{
 			"name": "pole_11.4_2",
-			"from": [10.1, 9, -4.85859],
-			"to": [12.7, 18, -4.34141],
+			"from": [10.1, -7, -4.85859],
+			"to": [12.7, 2, -4.34141],
 			"rotation": {
 				"angle": 45,
 				"axis": "y",
-				"origin": [11.4, 8, -4.6]
+				"origin": [11.4, -8, -4.6]
 			},
 			"faces": {
 				"east": {
@@ -1226,12 +1229,12 @@
 		},
 		{
 			"name": "pole_11.4_3",
-			"from": [10.1, 9, -4.85859],
-			"to": [12.7, 18, -4.34141],
+			"from": [10.1, -7, -4.85859],
+			"to": [12.7, 2, -4.34141],
 			"rotation": {
 				"angle": -22.5,
 				"axis": "y",
-				"origin": [11.4, 8, -4.6]
+				"origin": [11.4, -8, -4.6]
 			},
 			"faces": {
 				"east": {
@@ -1250,12 +1253,12 @@
 		},
 		{
 			"name": "pole_11.4_4",
-			"from": [10.1, 9, -4.85859],
-			"to": [12.7, 18, -4.34141],
+			"from": [10.1, -7, -4.85859],
+			"to": [12.7, 2, -4.34141],
 			"rotation": {
 				"angle": -45,
 				"axis": "y",
-				"origin": [11.4, 8, -4.6]
+				"origin": [11.4, -8, -4.6]
 			},
 			"faces": {
 				"east": {
@@ -1274,8 +1277,8 @@
 		},
 		{
 			"name": "pole_11.4_5",
-			"from": [11.14141, 9, -5.9],
-			"to": [11.65859, 18, -3.3],
+			"from": [11.14141, -7, -5.9],
+			"to": [11.65859, 2, -3.3],
 			"rotation": {
 				"angle": 0,
 				"axis": "y",
@@ -1298,12 +1301,12 @@
 		},
 		{
 			"name": "pole_11.4_6",
-			"from": [11.14141, 9, -5.9],
-			"to": [11.65859, 18, -3.3],
+			"from": [11.14141, -7, -5.9],
+			"to": [11.65859, 2, -3.3],
 			"rotation": {
 				"angle": 22.5,
 				"axis": "y",
-				"origin": [11.4, 8, -4.6]
+				"origin": [11.4, -8, -4.6]
 			},
 			"faces": {
 				"north": {
@@ -1322,12 +1325,12 @@
 		},
 		{
 			"name": "pole_11.4_7",
-			"from": [11.14141, 9, -5.9],
-			"to": [11.65859, 18, -3.3],
+			"from": [11.14141, -7, -5.9],
+			"to": [11.65859, 2, -3.3],
 			"rotation": {
 				"angle": -22.5,
 				"axis": "y",
-				"origin": [11.4, 8, -4.6]
+				"origin": [11.4, -8, -4.6]
 			},
 			"faces": {
 				"north": {
@@ -1346,8 +1349,8 @@
 		},
 		{
 			"name": "contact_11.4",
-			"from": [10.9, 15, -3.4],
-			"to": [11.9, 16, 0.2],
+			"from": [10.9, -1, -3.4],
+			"to": [11.9, 0, 0.2],
 			"rotation": {
 				"angle": 0,
 				"axis": "y",
@@ -1382,8 +1385,8 @@
 		},
 		{
 			"name": "contact_lo_11.4",
-			"from": [10.9, 11, -3.4],
-			"to": [11.9, 12, 0.2],
+			"from": [10.9, -5, -3.4],
+			"to": [11.9, -4, 0.2],
 			"rotation": {
 				"angle": 0,
 				"axis": "y",
@@ -1418,8 +1421,8 @@
 		},
 		{
 			"name": "truck_handle",
-			"from": [5, 6, -10.6],
-			"to": [11, 7, -10],
+			"from": [5, -10, -10.6],
+			"to": [11, -9, -10],
 			"rotation": {
 				"angle": 0,
 				"axis": "y",
@@ -1449,6 +1452,474 @@
 				"down": {
 					"uv": [5, 10, 11, 10.6],
 					"texture": "#material_bright_steel"
+				}
+			}
+		},
+		{
+			"name": "bus_body",
+			"from": [0, 15.6, 1],
+			"to": [16, 31.6, 16],
+			"rotation": {
+				"angle": 0,
+				"axis": "y",
+				"origin": [8, 8, 8]
+			},
+			"faces": {
+				"north": {
+					"uv": [0, 0.4, 16, 16],
+					"texture": "#switchgear_cell_enamel"
+				},
+				"east": {
+					"uv": [0, 0.4, 15, 16],
+					"texture": "#switchgear_cell_enamel"
+				},
+				"south": {
+					"uv": [0, 0.4, 16, 16],
+					"texture": "#switchgear_cell_enamel"
+				},
+				"west": {
+					"uv": [1, 0.4, 16, 16],
+					"texture": "#switchgear_cell_enamel"
+				},
+				"up": {
+					"uv": [0, 1, 16, 16],
+					"texture": "#switchgear_cell_enamel"
+				},
+				"down": {
+					"uv": [0, 0, 16, 15],
+					"texture": "#switchgear_cell_enamel"
+				}
+			}
+		},
+		{
+			"name": "bus_frame",
+			"from": [0, 15.6, 0.4],
+			"to": [16, 16.6, 1],
+			"rotation": {
+				"angle": 0,
+				"axis": "y",
+				"origin": [8, 8, 8]
+			},
+			"faces": {
+				"north": {
+					"uv": [0, 15.4, 16, 16],
+					"texture": "#switchgear_cell_enamel"
+				},
+				"east": {
+					"uv": [15, 15.4, 15.6, 16],
+					"texture": "#switchgear_cell_enamel"
+				},
+				"south": {
+					"uv": [0, 15.4, 16, 16],
+					"texture": "#switchgear_cell_enamel"
+				},
+				"west": {
+					"uv": [0.4, 15.4, 1, 16],
+					"texture": "#switchgear_cell_enamel"
+				},
+				"up": {
+					"uv": [0, 0.4, 16, 1],
+					"texture": "#switchgear_cell_enamel"
+				},
+				"down": {
+					"uv": [0, 15, 16, 15.6],
+					"texture": "#switchgear_cell_enamel"
+				}
+			}
+		},
+		{
+			"name": "bus_frame_top",
+			"from": [0, 30.6, 0.4],
+			"to": [16, 31.6, 1],
+			"rotation": {
+				"angle": 0,
+				"axis": "y",
+				"origin": [8, 8, 8]
+			},
+			"faces": {
+				"north": {
+					"uv": [0, 0.4, 16, 1.4],
+					"texture": "#switchgear_cell_enamel"
+				},
+				"east": {
+					"uv": [15, 0.4, 15.6, 1.4],
+					"texture": "#switchgear_cell_enamel"
+				},
+				"south": {
+					"uv": [0, 0.4, 16, 1.4],
+					"texture": "#switchgear_cell_enamel"
+				},
+				"west": {
+					"uv": [0.4, 0.4, 1, 1.4],
+					"texture": "#switchgear_cell_enamel"
+				},
+				"up": {
+					"uv": [0, 0.4, 16, 1],
+					"texture": "#switchgear_cell_enamel"
+				},
+				"down": {
+					"uv": [0, 15, 16, 15.6],
+					"texture": "#switchgear_cell_enamel"
+				}
+			}
+		},
+		{
+			"name": "bus_frame_0",
+			"from": [0, 16.6, 0.4],
+			"to": [1, 30.6, 1],
+			"rotation": {
+				"angle": 0,
+				"axis": "y",
+				"origin": [8, 8, 8]
+			},
+			"faces": {
+				"north": {
+					"uv": [15, 1.4, 16, 15.4],
+					"texture": "#switchgear_cell_enamel"
+				},
+				"east": {
+					"uv": [15, 1.4, 15.6, 15.4],
+					"texture": "#switchgear_cell_enamel"
+				},
+				"south": {
+					"uv": [0, 1.4, 1, 15.4],
+					"texture": "#switchgear_cell_enamel"
+				},
+				"west": {
+					"uv": [0.4, 1.4, 1, 15.4],
+					"texture": "#switchgear_cell_enamel"
+				},
+				"up": {
+					"uv": [0, 0.4, 1, 1],
+					"texture": "#switchgear_cell_enamel"
+				},
+				"down": {
+					"uv": [0, 15, 1, 15.6],
+					"texture": "#switchgear_cell_enamel"
+				}
+			}
+		},
+		{
+			"name": "bus_frame_15",
+			"from": [15, 16.6, 0.4],
+			"to": [16, 30.6, 1],
+			"rotation": {
+				"angle": 0,
+				"axis": "y",
+				"origin": [8, 8, 8]
+			},
+			"faces": {
+				"north": {
+					"uv": [0, 1.4, 1, 15.4],
+					"texture": "#switchgear_cell_enamel"
+				},
+				"east": {
+					"uv": [15, 1.4, 15.6, 15.4],
+					"texture": "#switchgear_cell_enamel"
+				},
+				"south": {
+					"uv": [15, 1.4, 16, 15.4],
+					"texture": "#switchgear_cell_enamel"
+				},
+				"west": {
+					"uv": [0.4, 1.4, 1, 15.4],
+					"texture": "#switchgear_cell_enamel"
+				},
+				"up": {
+					"uv": [15, 0.4, 16, 1],
+					"texture": "#switchgear_cell_enamel"
+				},
+				"down": {
+					"uv": [15, 15, 16, 15.6],
+					"texture": "#switchgear_cell_enamel"
+				}
+			}
+		},
+		{
+			"name": "mesh",
+			"from": [1, 16.6, 0.7],
+			"to": [15, 30.6, 0.9],
+			"rotation": {
+				"angle": 0,
+				"axis": "y",
+				"origin": [8, 8, 8]
+			},
+			"faces": {
+				"north": {
+					"uv": [1, 1.4, 15, 15.4],
+					"texture": "#vver_grating"
+				},
+				"east": {
+					"uv": [15.1, 1.4, 15.3, 15.4],
+					"texture": "#vver_grating"
+				},
+				"south": {
+					"uv": [1, 1.4, 15, 15.4],
+					"texture": "#vver_grating"
+				},
+				"west": {
+					"uv": [0.7, 1.4, 0.9, 15.4],
+					"texture": "#vver_grating"
+				},
+				"up": {
+					"uv": [1, 0.7, 15, 0.9],
+					"texture": "#vver_grating"
+				},
+				"down": {
+					"uv": [1, 15.1, 15, 15.3],
+					"texture": "#vver_grating"
+				}
+			}
+		},
+		{
+			"name": "busbar_4",
+			"from": [-0.01, 27, 4],
+			"to": [16.01, 28.4, 4.6],
+			"rotation": {
+				"angle": 0,
+				"axis": "y",
+				"origin": [8, 8, 8]
+			},
+			"faces": {
+				"north": {
+					"uv": [0, 3.6, 16, 5],
+					"texture": "#disconnector_copper"
+				},
+				"east": {
+					"uv": [11.4, 3.6, 12, 5],
+					"texture": "#disconnector_copper"
+				},
+				"south": {
+					"uv": [0, 3.6, 16, 5],
+					"texture": "#disconnector_copper"
+				},
+				"west": {
+					"uv": [4, 3.6, 4.6, 5],
+					"texture": "#disconnector_copper"
+				},
+				"up": {
+					"uv": [0, 4, 16, 4.6],
+					"texture": "#disconnector_copper"
+				},
+				"down": {
+					"uv": [0, 11.4, 16, 12],
+					"texture": "#disconnector_copper"
+				}
+			}
+		},
+		{
+			"name": "busbar_8",
+			"from": [-0.01, 27, 8],
+			"to": [16.01, 28.4, 8.6],
+			"rotation": {
+				"angle": 0,
+				"axis": "y",
+				"origin": [8, 8, 8]
+			},
+			"faces": {
+				"north": {
+					"uv": [0, 3.6, 16, 5],
+					"texture": "#disconnector_copper"
+				},
+				"east": {
+					"uv": [7.4, 3.6, 8, 5],
+					"texture": "#disconnector_copper"
+				},
+				"south": {
+					"uv": [0, 3.6, 16, 5],
+					"texture": "#disconnector_copper"
+				},
+				"west": {
+					"uv": [8, 3.6, 8.6, 5],
+					"texture": "#disconnector_copper"
+				},
+				"up": {
+					"uv": [0, 8, 16, 8.6],
+					"texture": "#disconnector_copper"
+				},
+				"down": {
+					"uv": [0, 7.4, 16, 8],
+					"texture": "#disconnector_copper"
+				}
+			}
+		},
+		{
+			"name": "busbar_12",
+			"from": [-0.01, 27, 12],
+			"to": [16.01, 28.4, 12.6],
+			"rotation": {
+				"angle": 0,
+				"axis": "y",
+				"origin": [8, 8, 8]
+			},
+			"faces": {
+				"north": {
+					"uv": [0, 3.6, 16, 5],
+					"texture": "#disconnector_copper"
+				},
+				"east": {
+					"uv": [3.4, 3.6, 4, 5],
+					"texture": "#disconnector_copper"
+				},
+				"south": {
+					"uv": [0, 3.6, 16, 5],
+					"texture": "#disconnector_copper"
+				},
+				"west": {
+					"uv": [12, 3.6, 12.6, 5],
+					"texture": "#disconnector_copper"
+				},
+				"up": {
+					"uv": [0, 12, 16, 12.6],
+					"texture": "#disconnector_copper"
+				},
+				"down": {
+					"uv": [0, 3.4, 16, 4],
+					"texture": "#disconnector_copper"
+				}
+			}
+		},
+		{
+			"name": "lever_shaft",
+			"from": [14, 22, 0],
+			"to": [15, 23, 1],
+			"rotation": {
+				"angle": 0,
+				"axis": "y",
+				"origin": [8, 8, 8]
+			},
+			"faces": {
+				"north": {
+					"uv": [1, 9, 2, 10],
+					"texture": "#material_steel"
+				},
+				"east": {
+					"uv": [15, 9, 16, 10],
+					"texture": "#material_steel"
+				},
+				"south": {
+					"uv": [14, 9, 15, 10],
+					"texture": "#material_steel"
+				},
+				"west": {
+					"uv": [0, 9, 1, 10],
+					"texture": "#material_steel"
+				},
+				"up": {
+					"uv": [14, 0, 15, 1],
+					"texture": "#material_steel"
+				},
+				"down": {
+					"uv": [14, 15, 15, 16],
+					"texture": "#material_steel"
+				}
+			}
+		},
+		{
+			"name": "lever",
+			"from": [14.1, 18, -0.6],
+			"to": [14.9, 23, 0],
+			"rotation": {
+				"angle": 0,
+				"axis": "y",
+				"origin": [8, 8, 8]
+			},
+			"faces": {
+				"north": {
+					"uv": [1.1, 9, 1.9, 14],
+					"texture": "#material_paint_red"
+				},
+				"east": {
+					"uv": [0, 9, 0.6, 14],
+					"texture": "#material_paint_red"
+				},
+				"south": {
+					"uv": [14.1, 9, 14.9, 14],
+					"texture": "#material_paint_red"
+				},
+				"west": {
+					"uv": [15.4, 9, 16, 14],
+					"texture": "#material_paint_red"
+				},
+				"up": {
+					"uv": [14.1, 15.4, 14.9, 16],
+					"texture": "#material_paint_red"
+				},
+				"down": {
+					"uv": [14.1, 0, 14.9, 0.6],
+					"texture": "#material_paint_red"
+				}
+			}
+		},
+		{
+			"name": "danger_sign",
+			"from": [5, 24, 0.3],
+			"to": [11, 28, 0.4],
+			"rotation": {
+				"angle": 0,
+				"axis": "y",
+				"origin": [8, 8, 8]
+			},
+			"faces": {
+				"north": {
+					"uv": [5, 4, 11, 8],
+					"texture": "#plant_hazard"
+				},
+				"east": {
+					"uv": [15.6, 4, 15.7, 8],
+					"texture": "#plant_hazard"
+				},
+				"south": {
+					"uv": [5, 4, 11, 8],
+					"texture": "#plant_hazard"
+				},
+				"west": {
+					"uv": [0.3, 4, 0.4, 8],
+					"texture": "#plant_hazard"
+				},
+				"up": {
+					"uv": [5, 0.3, 11, 0.4],
+					"texture": "#plant_hazard"
+				},
+				"down": {
+					"uv": [5, 15.6, 11, 15.7],
+					"texture": "#plant_hazard"
+				}
+			}
+		},
+		{
+			"name": "bushing_box",
+			"from": [3, 31.6, 5],
+			"to": [13, 32, 13],
+			"rotation": {
+				"angle": 0,
+				"axis": "y",
+				"origin": [8, 8, 8]
+			},
+			"faces": {
+				"north": {
+					"uv": [3, 0, 13, 0.4],
+					"texture": "#switchgear_cell_enamel"
+				},
+				"east": {
+					"uv": [3, 0, 11, 0.4],
+					"texture": "#switchgear_cell_enamel"
+				},
+				"south": {
+					"uv": [3, 0, 13, 0.4],
+					"texture": "#switchgear_cell_enamel"
+				},
+				"west": {
+					"uv": [5, 0, 13, 0.4],
+					"texture": "#switchgear_cell_enamel"
+				},
+				"up": {
+					"uv": [3, 5, 13, 13],
+					"texture": "#switchgear_cell_enamel"
+				},
+				"down": {
+					"uv": [3, 3, 13, 11],
+					"texture": "#switchgear_cell_enamel"
 				}
 			}
 		}
