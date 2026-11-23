@@ -255,6 +255,7 @@ public final class PcLanguageProvider extends LanguageProvider {
         b("ultrasonic_bath", "Ultrasonic Decontamination Bath", "Ультразвуковая ванна дезактивации");
         b("decon_shower", "Decontamination Shower", "Душ санпропускника");
         b("hand_foot_monitor", "Hand and Foot Contamination Monitor", "Установка контроля загрязнённости рук и ног");
+        b("portal_monitor", "Portal Gamma Monitor", "Портальный гамма-монитор");
         i("contamination_meter", "Surface Contamination Meter", "Радиометр загрязнённости поверхностей");
         i("strippable_coating", "Strippable Decontamination Coating", "Снимаемое дезактивирующее покрытие");
         i("stripped_coating", "Peeled Coating Film", "Содранная плёнка покрытия");

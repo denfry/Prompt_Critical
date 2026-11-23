@@ -84,6 +84,11 @@ public final class RadiationRecipes extends RecipeProvider {
                 .pattern("MBM").pattern("BEB").pattern("III").define('M', PcItems.CONTAMINATION_METER.get())
                 .define('B', AllItems.BRASS_SHEET.get()).define('E', AllItems.ELECTRON_TUBE.get()).define('I', AllItems.IRON_SHEET.get())
                 .unlockedBy("has_contamination_meter", has(PcItems.CONTAMINATION_METER.get())).save(out, id("hand_foot_monitor"));
+        // колонна с пластиковым сцинтиллятором: в рецепте — дозиметр как счётный тракт
+        ShapedRecipeBuilder.shaped(RecipeCategory.MISC, PcBlocks.PORTAL_MONITOR.get())
+                .pattern("IDI").pattern("BEB").pattern("III").define('D', PcItems.DOSIMETER.get())
+                .define('B', AllItems.BRASS_SHEET.get()).define('E', AllItems.ELECTRON_TUBE.get()).define('I', AllItems.IRON_SHEET.get())
+                .unlockedBy("has_dosimeter", has(PcItems.DOSIMETER.get())).save(out, id("portal_monitor"));
         // свинец выплавляют из галенита (обжиг PbS и восстановление — свёрнуты в доменную плавку)
         SimpleCookingRecipeBuilder.blasting(Ingredient.of(PcBlocks.GALENA_ORE.get(), PcBlocks.DEEPSLATE_GALENA_ORE.get()), RecipeCategory.BUILDING_BLOCKS,
                         PcBlocks.LEAD_BLOCK.get(), 0.3f, 200)

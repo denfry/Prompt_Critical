@@ -584,6 +584,9 @@ public final class PcBlocks {
             FoundryBlock.with(dev.denfry.promptcritical.mod.radiation.DeconShowerBlockEntity::new));
     public static final DeferredBlock<PcDeviceBlock> HAND_FOOT_MONITOR = device("hand_foot_monitor", machine(), Spec.facing(),
             FoundryBlock.with(dev.denfry.promptcritical.mod.radiation.HandFootMonitorBlockEntity::new));
+    /** Портальный γ-монитор выхода из зоны (04b §4b.7.2): колонна у прохода, пара колонн — рама. */
+    public static final DeferredBlock<PcDeviceBlock> PORTAL_MONITOR = device("portal_monitor", machine(),
+            Spec.facing(BlockStateProperties.POWERED), dev.denfry.promptcritical.mod.radiation.PortalMonitorBlock.create());
     public static final DeferredBlock<PcDeviceBlock> NGL_FRACTIONATOR = device("ngl_fractionator", machine(),
             Spec.facing().footprint(FP_CUBE3), FoundryBlock.with(dev.denfry.promptcritical.mod.gas.NglFractionatorBlockEntity::new));
 

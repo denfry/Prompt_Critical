@@ -8,6 +8,10 @@ import dev.denfry.promptcritical.mod.radiation.ContaminationService;
 import dev.denfry.promptcritical.mod.radiation.DeconShowerBlockEntity;
 import dev.denfry.promptcritical.mod.radiation.DeconSprayerItem;
 import dev.denfry.promptcritical.mod.radiation.HandFootMonitorBlockEntity;
+import dev.denfry.promptcritical.mod.radiation.PortalMonitorBlockEntity;
+import dev.denfry.promptcritical.mod.environment.ActivityData;
+import dev.denfry.promptcritical.sim.radiation.Emitter;
+import net.minecraft.world.level.block.state.properties.BlockStateProperties;
 import dev.denfry.promptcritical.mod.radiation.UltrasonicBathBlockEntity;
 import dev.denfry.promptcritical.mod.registry.PcBlocks;
 import dev.denfry.promptcritical.mod.registry.PcFluids;
@@ -118,6 +122,33 @@ public final class ContaminationGameTests {
         h.assertTrue(HandFootMonitorBlockEntity.worstRatio(p) == 0, "below MDA reads clean");
         ContaminationService.setHands(p, SurfaceContamination.NONE);
         h.succeed();
+    }
+
+    /** Портальный монитор 04b §4b.7.2: 37 кБк Cs-137 в кармане — тревога и редстоун, пустые карманы — чисто. */
+    @GameTest(template = LARGE, timeoutTicks = 200)
+    public static void portalMonitorCatchesCaesiumInAPocket(GameTestHelper h) {
+        FakePlayer p = cleanPlayer(h);
+        BlockPos at = new BlockPos(5, 2, 5);
+        h.setBlock(at, PcBlocks.PORTAL_MONITOR.get());
+        PortalMonitorBlockEntity m = h.getBlockEntity(at);
+        long now = h.getLevel().getGameTime();
+        h.assertTrue(PortalMonitorBlockEntity.ratio(p, m.backgroundUSvH(), now) == 0, "empty pockets read zero");
+        m.pass(p);
+        h.assertFalse(m.alarming(), "clean player passes");
+        ItemStack speck = new ItemStack(Items.IRON_NUGGET);
+        speck.set(ActivityData.ACTIVITY.get(), new ActivityData(now, 0.001, 1, java.util.Map.of(Emitter.CS137.name(), 37e3)));
+        p.getInventory().add(speck);
+        double r = PortalMonitorBlockEntity.ratio(p, m.backgroundUSvH(), now);
+        h.assertTrue(r > 1 && r < 2, "a microcurie of Cs-137 is just above the threshold: " + r);
+        m.pass(p);
+        h.assertTrue(m.alarming(), "alarm on a microcurie");
+        h.assertBlockProperty(at, BlockStateProperties.POWERED, true);
+        p.getInventory().clearContent();
+        // проход пуст: тревога держится 2 с и гаснет
+        h.runAfterDelay(60, () -> {
+            h.assertBlockProperty(at, BlockStateProperties.POWERED, false);
+            h.succeed();
+        });
     }
 
     @GameTest(template = LARGE, timeoutTicks = 600)
