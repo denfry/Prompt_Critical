@@ -63,6 +63,7 @@ public final class PcLanguageProvider extends LanguageProvider {
         b("headframe", "Headframe", "Копёр");
         b("mine_cage", "Mine Cage", "Шахтная клеть");
         b("cage_track", "Cage Track", "Путь клети");
+        b("shaft_signal", "Shaft Signal Box", "Стволовой сигнальный аппарат");
         b("mine_drainage_pump", "Mine Drainage Pump", "Насос главного водоотлива");
         b("coal_jig", "Coal Jig", "Отсадочная машина");
         b("cupola_furnace", "Cupola Furnace", "Вагранка");
@@ -962,6 +963,7 @@ public final class PcLanguageProvider extends LanguageProvider {
             b(db.getId().getPath(), n[0] + suffix[0], n[1] + " (" + suffix[1] + ")");
         });
         MISC.putAll(dev.denfry.promptcritical.mod.mine.HoistText.LANG);
+        MISC.putAll(dev.denfry.promptcritical.mod.mine.ShaftSignalText.LANG);
         // сцены Ponder (11 §11.1.4)
         dev.denfry.promptcritical.mod.content.PonderLayouts.TEXTS.forEach((scene, t) -> {
             MISC.put(dev.denfry.promptcritical.mod.content.PonderLayouts.langKey(scene, "header"), t.header());

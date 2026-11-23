@@ -425,11 +425,11 @@ public final class ContentGameTests {
         h.succeed();
     }
 
-    /** Схемы и тексты сцен Ponder 28–31 и 36: файл схемы есть, ключи text_N идут по числу реплик. */
+    /** Схемы и тексты сцен Ponder 28–31, 36 и сигнального аппарата: файл схемы есть, ключи text_N идут по числу реплик. */
     @GameTest(template = SMALL)
     public static void ponderScenesHaveSchematicsAndTexts(GameTestHelper h) {
-        h.assertTrue(PonderLayouts.LAYOUTS.size() == 5 && PonderLayouts.TEXTS.keySet().equals(PonderLayouts.LAYOUTS.keySet()),
-                "five scenes with texts");
+        h.assertTrue(PonderLayouts.LAYOUTS.size() == 6 && PonderLayouts.TEXTS.keySet().equals(PonderLayouts.LAYOUTS.keySet()),
+                "six scenes with texts");
         for (String scene : PonderLayouts.LAYOUTS.keySet()) {
             h.assertTrue(ContentGameTests.class.getResource("/assets/promptcritical/ponder/" + scene + ".nbt") != null,
                     scene + ": schematic (runData)");

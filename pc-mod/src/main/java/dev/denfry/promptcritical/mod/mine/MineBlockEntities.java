@@ -29,6 +29,8 @@ public final class MineBlockEntities {
     public static final DeferredHolder<BlockEntityType<?>, BlockEntityType<PoweredRoofSupportBlockEntity>> POWERED_ROOF_SUPPORT =
             type("powered_roof_support", PoweredRoofSupportBlockEntity::new, PcBlocks.POWERED_ROOF_SUPPORT);
 
+    public static final DeferredHolder<BlockEntityType<?>, BlockEntityType<ShaftSignalBlockEntity>> SHAFT_SIGNAL =
+            type("shaft_signal", ShaftSignalBlockEntity::new, PcBlocks.SHAFT_SIGNAL);
     public static final DeferredHolder<BlockEntityType<?>, BlockEntityType<LampRackBlockEntity>> LAMP_RACK =
             type("lamp_rack", LampRackBlockEntity::new, PcBlocks.LAMP_RACK);
 

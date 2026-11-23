@@ -172,6 +172,42 @@ final class PcPonderScenes {
         return new Lines(texts);
     }
 
+    /** Стволовой сигнальный аппарат: вызов клети, лампа «клеть здесь», компаратор и CC (08 §8.2.8). */
+    static void shaftSignal(SceneBuilder scene, SceneBuildingUtil util) {
+        Lines t = start(scene, PonderLayouts.SHAFT_SIGNAL, 8);
+        BlockPos box = PonderLayouts.SS_BOX;
+        scene.world().showSection(util.select().fromTo(1, 1, 1, 3, 3, 3), Direction.DOWN);
+        scene.idle(10);
+        scene.world().showSection(util.select().position(box), Direction.DOWN);
+        scene.idle(10);
+        t.say(scene, util.vector().blockSurface(box, Direction.EAST));
+        scene.idle(READ + 10);
+        scene.world().showSection(util.select().position(PonderLayouts.SS_BUTTON), Direction.DOWN);
+        scene.idle(10);
+        t.say(scene, util.vector().topOf(PonderLayouts.SS_BUTTON));
+        scene.effects().emitParticles(util.vector().topOf(box),
+                scene.effects().simpleParticleEmitter(ParticleTypes.NOTE, new Vec3(0, 0.1, 0)), 2, 20);
+        scene.idle(READ + 10);
+        set(scene, PonderLayouts.SS_CAGE, BlockStateProperties.OPEN, true);
+        t.say(scene, util.vector().centerOf(PonderLayouts.SS_CAGE), PonderPalette.RED);
+        scene.idle(READ + 10);
+        set(scene, PonderLayouts.SS_CAGE, BlockStateProperties.OPEN, false);
+        for (BlockPos p : PonderLayouts.SS_WIRE) scene.world().showSection(util.select().position(p), Direction.DOWN);
+        scene.world().showSection(util.select().position(PonderLayouts.SS_LAMP), Direction.DOWN);
+        scene.idle(10);
+        set(scene, box, BlockStateProperties.POWERED, true);
+        set(scene, PonderLayouts.SS_LAMP, BlockStateProperties.LIT, true);
+        t.say(scene, util.vector().topOf(box), PonderPalette.GREEN);
+        scene.idle(READ + 10);
+        scene.world().showSection(util.select().position(PonderLayouts.SS_COMPARATOR), Direction.DOWN);
+        scene.idle(10);
+        t.say(scene, util.vector().topOf(PonderLayouts.SS_COMPARATOR));
+        scene.idle(READ + 10);
+        t.say(scene, util.vector().centerOf(PonderLayouts.SS_CAGE));
+        scene.idle(READ + 10);
+        scene.markAsFinished();
+    }
+
     /** Свойство блока в сцене, если оно у блока есть (заглушки моделей могут его не иметь). */
     private static void set(SceneBuilder scene, BlockPos pos, BooleanProperty prop, boolean value) {
         scene.world().modifyBlock(pos, s -> s.hasProperty(prop) ? s.setValue(prop, value) : s, false);

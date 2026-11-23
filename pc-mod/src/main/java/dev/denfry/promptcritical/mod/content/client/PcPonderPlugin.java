@@ -29,5 +29,7 @@ public final class PcPonderPlugin implements PonderPlugin {
                 .addStoryBoard(PonderLayouts.FREQUENCY, PcPonderScenes::gridFrequency);
         helper.forComponents(PcBlocks.RELAY.getId(), PcBlocks.RELAY_POWER_SUPPLY.getId())
                 .addStoryBoard(PonderLayouts.RELAY, PcPonderScenes::relayLadder);
+        helper.forComponents(PcBlocks.SHAFT_SIGNAL.getId(), PcBlocks.MINE_HOIST.getId())
+                .addStoryBoard(PonderLayouts.SHAFT_SIGNAL, PcPonderScenes::shaftSignal);
     }
 }

@@ -114,6 +114,7 @@ public final class DeviceProfiles {
             return null; // реле и аналоговые блоки — без периферии (03d §3d.14)
         }
         if (be instanceof PlcBlockEntity) return CACHE.computeIfAbsent("plc", k -> plc());
+        if (be instanceof dev.denfry.promptcritical.mod.mine.MineHoistBlockEntity) return CACHE.computeIfAbsent("hoist", k -> HoistProfile.build());
         if (be instanceof PowerReactorBlockEntity) return CACHE.computeIfAbsent("rbmk", k -> rbmk());
         if (be instanceof PwrReactorBlockEntity) return CACHE.computeIfAbsent("pwr", k -> pwr());
         if (be instanceof BwrReactorBlockEntity) return CACHE.computeIfAbsent("bwr", k -> reactor("BWR", BwrPanels.B_SCRAM, BwrPanels.B_RESET,

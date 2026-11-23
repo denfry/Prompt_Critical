@@ -441,6 +441,10 @@ public final class PcBlocks {
     public static final DeferredBlock<MineCageBlock> MINE_CAGE = withItem(BLOCKS.registerBlock("mine_cage",
             p -> MineCageBlock.create(p, Spec.facing(BlockStateProperties.OPEN).footprint(Footprint.of(Segment.box(0, 1, -1, 1, 0, 1)))),
             machine()));
+    /** Стволовой сигнальный аппарат посадки: вызов клети и сигнал «клеть здесь» редстоуном (08 §8.2.8). */
+    public static final DeferredBlock<dev.denfry.promptcritical.mod.mine.ShaftSignalBlock> SHAFT_SIGNAL = withItem(BLOCKS.registerBlock(
+            "shaft_signal", p -> dev.denfry.promptcritical.mod.mine.ShaftSignalBlock.create(p, Spec.facing(BlockStateProperties.POWERED)),
+            instrument()));
     /** Зарядный стеллаж ламповой на 12 головных светильников: кабель 0,4 кВ — к любой грани, кроме фасада. */
     public static final DeferredBlock<PcDeviceBlock> LAMP_RACK = device("lamp_rack", machine().noOcclusion(),
             Spec.facing(BlockStateProperties.LIT), FoundryBlock.with(dev.denfry.promptcritical.mod.mine.LampRackBlockEntity::new));

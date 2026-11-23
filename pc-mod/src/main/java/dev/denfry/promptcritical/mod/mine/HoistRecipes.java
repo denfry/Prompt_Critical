@@ -60,6 +60,11 @@ public final class HoistRecipes extends RecipeProvider {
                 .pattern("BBB").pattern("BDB").pattern("III").define('B', Items.IRON_BARS).define('D', Items.IRON_DOOR)
                 .define('I', Items.IRON_INGOT)
                 .unlockedBy("has_iron_door", has(Items.IRON_DOOR)).save(out, id("mine_cage"));
+        // стволовой сигнальный аппарат: звонок, лампа «клеть здесь», кнопка вызова в чугунном корпусе
+        ShapedRecipeBuilder.shaped(RecipeCategory.REDSTONE, PcBlocks.SHAFT_SIGNAL.get())
+                .pattern(" B ").pattern("RIL").pattern(" I ").define('B', Items.BELL).define('R', Items.REDSTONE)
+                .define('I', Items.IRON_INGOT).define('L', Items.REDSTONE_LAMP)
+                .unlockedBy("has_mine_cage", has(PcBlocks.MINE_CAGE.get())).save(out, id("shaft_signal"));
         ShapedRecipeBuilder.shaped(RecipeCategory.MISC, PcBlocks.MINE_DRAINAGE_PUMP.get())
                 .pattern("IPI").pattern("SCS").pattern("III").define('I', Items.IRON_INGOT).define('P', AllBlocks.MECHANICAL_PUMP.get())
                 .define('S', AllBlocks.SHAFT.get()).define('C', AllBlocks.COGWHEEL.get())

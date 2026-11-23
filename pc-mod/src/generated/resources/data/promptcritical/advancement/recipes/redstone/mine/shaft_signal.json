@@ -1,0 +1,32 @@
+{
+  "parent": "minecraft:recipes/root",
+  "criteria": {
+    "has_mine_cage": {
+      "conditions": {
+        "items": [
+          {
+            "items": "promptcritical:mine_cage"
+          }
+        ]
+      },
+      "trigger": "minecraft:inventory_changed"
+    },
+    "has_the_recipe": {
+      "conditions": {
+        "recipe": "promptcritical:mine/shaft_signal"
+      },
+      "trigger": "minecraft:recipe_unlocked"
+    }
+  },
+  "requirements": [
+    [
+      "has_the_recipe",
+      "has_mine_cage"
+    ]
+  ],
+  "rewards": {
+    "recipes": [
+      "promptcritical:mine/shaft_signal"
+    ]
+  }
+}

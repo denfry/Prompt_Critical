@@ -13,7 +13,8 @@ import net.minecraft.core.BlockPos;
  */
 public final class PonderLayouts {
     public static final String COKE = "coke_battery_cycle", BLAST_FURNACE = "blast_furnace_tap",
-            SYNC = "generator_synchronization", FREQUENCY = "grid_frequency", RELAY = "relay_ladder";
+            SYNC = "generator_synchronization", FREQUENCY = "grid_frequency", RELAY = "relay_ladder",
+            SHAFT_SIGNAL = "shaft_signal";
 
     /** Схема сцены: размер плиты {@code size}×{@code size}, высота {@code height}, блоки над плитой (состояние строкой). */
     public record Layout(String scene, int size, int height, Map<BlockPos, String> blocks) {
@@ -45,6 +46,10 @@ public final class PonderLayouts {
     // --- релейная лестница на стенке z = 0: блок питания, СТОП, ПУСК, K1, K2, лампа
     public static final BlockPos RL_PSU = new BlockPos(1, 2, 1), RL_STOP = new BlockPos(2, 2, 1), RL_START = new BlockPos(3, 2, 1),
             RL_K1 = new BlockPos(4, 2, 1), RL_K2 = new BlockPos(5, 2, 1), RL_LAMP = new BlockPos(6, 2, 1);
+    /** Посадка ствола: клеть, сигнальный аппарат с кнопкой, провод к лампе и компаратор. */
+    public static final BlockPos SS_CAGE = new BlockPos(2, 2, 2), SS_BOX = new BlockPos(5, 1, 3), SS_BUTTON = new BlockPos(5, 2, 3),
+            SS_COMPARATOR = new BlockPos(5, 1, 4), SS_LAMP = new BlockPos(6, 1, 6);
+    public static final BlockPos[] SS_WIRE = {new BlockPos(6, 1, 3), new BlockPos(6, 1, 4), new BlockPos(6, 1, 5)};
 
     static {
         Map<BlockPos, String> b = new LinkedHashMap<>();
@@ -95,6 +100,15 @@ public final class PonderLayouts {
         b.put(RL_LAMP, pc("indicator_lamp") + "[facing=south,lit=false]");
         add(RELAY, 8, 4, b);
 
+        b = new LinkedHashMap<>();
+        b.put(SS_CAGE, pc("mine_cage") + "[facing=east,open=false]");
+        b.put(SS_BOX, pc("shaft_signal") + "[facing=east,powered=false]");
+        b.put(SS_BUTTON, "minecraft:stone_button[face=floor,facing=east]");
+        b.put(SS_COMPARATOR, "minecraft:comparator[facing=north]");
+        for (BlockPos p : SS_WIRE) b.put(p, "minecraft:redstone_wire");
+        b.put(SS_LAMP, "minecraft:redstone_lamp[lit=false]");
+        add(SHAFT_SIGNAL, 8, 5, b);
+
         texts(COKE, new String[] {"The Coke Oven Battery", "Коксовая батарея"},
                 "Narrow coking chambers alternate with heating flue walls of silica brick",
                 "Узкие камеры коксования чередуются с отопительными простенками из динаса",
@@ -139,6 +153,19 @@ public final class PonderLayouts {
                 "Без части нагрузки частота восстанавливается, остальная сеть остаётся в работе",
                 "When the frequency is back, frequency auto-reclose returns the shed consumers",
                 "Когда частота вернулась, ЧАПВ включает отключённых потребителей обратно");
+        texts(SHAFT_SIGNAL, new String[] {"Shaft Signal Box", "Стволовой сигнальный аппарат"},
+                "Put a signal box beside the cage at each landing; it finds its hoist by itself",
+                "Повесьте сигнальный аппарат у клети на каждой посадке; свой подъём он найдёт сам",
+                "A click or a redstone pulse rings the bell and calls the cage to this landing",
+                "Клик или импульс редстоуна — звонок машинисту и вызов клети на эту посадку",
+                "The hoist's interlocks still hold: with the cage door open the call is refused",
+                "Блокировки подъёма действуют: при открытой двери клети вызов отклоняется",
+                "While the cage stands here, the box lights its lamp and gives a strong signal",
+                "Пока клеть стоит здесь, у аппарата горит лампа и есть сильный сигнал",
+                "A comparator reads the cage at this landing: 1 when empty, up to 15 at full load",
+                "Компаратор читает клеть у этой посадки: 1 — пустая, до 15 — полная загрузка",
+                "The hoist is also a ComputerCraft device pc_hoist: call(n), getState() and arrival events",
+                "Подъёмная машина — ещё и устройство ComputerCraft pc_hoist: call(n), getState() и события прибытия");
         texts(RELAY, new String[] {"Relay Ladder Logic", "Релейная лестничная логика"},
                 "A relay circuit: a 24 V supply, buttons, relays and a lamp, wired terminal to terminal",
                 "Релейная схема: блок питания 24 В, кнопки, реле и лампа, соединённые проводами от клеммы к клемме",

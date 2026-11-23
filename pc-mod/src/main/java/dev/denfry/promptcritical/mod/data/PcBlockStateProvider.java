@@ -276,6 +276,7 @@ public final class PcBlockStateProvider extends BlockStateProvider {
             case "mine_dispatch_cabinet" -> s.getValue(PcProperties.ALARM) ? id + "_alarm" : id;
             case "headframe" -> s.getValue(PcProperties.TOP) ? id + "_top" : id;
             case "mine_cage" -> s.getValue(BlockStateProperties.OPEN) ? id + "_open" : id;
+            case "shaft_signal" -> s.getValue(BlockStateProperties.POWERED) ? id + "_lit" : id;
             // нефть и газ I2
             case "glycol_regenerator" -> s.getValue(PcProperties.RUNNING) ? id + "_running" : id;
             // НТС нарисована своя: art/blockbench/core/reactor_island.author.js; холодная — под инеем
