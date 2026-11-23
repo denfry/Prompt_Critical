@@ -14,6 +14,8 @@ The boiler is built freely around its [BMS panel](item:promptcritical:water_tube
 
 Fuel is fuel gas from Create pipes: mine methane, coke-oven, blast-furnace or converter gas. Or [coal dust](item:promptcritical:coal_dust), coal or washed coal milled in Create, by funnel into the panel or a burner. The fuel sets the burner type; it can only be changed with the boiler shut down. Steam engines touching the drum, a water wall or the panel take superheated steam.
 
+[Low-NOx burner kits](item:promptcritical:low_nox_burner_kit) swirl the air and bring part of it in later, so the flame burns cooler and makes about half the nitrogen oxides (×0.55) from the same fuel. Fit one kit per burner by using them on the panel while the boiler is shut down. The status line then says "low-NOx burners", and the stack sends less NOx to the emission ledger.
+
 ## Controls
 
 The panel runs three loops, each in AUTO or MAN:

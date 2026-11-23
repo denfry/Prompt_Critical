@@ -379,6 +379,8 @@ public final class PcItems {
     public static final DeferredItem<Item> SALT = item("salt", 64);
     /** Угольная пыль для пылеугольных горелок котла I1 (помол угля жерновами Create). */
     public static final DeferredItem<Item> COAL_DUST = item("coal_dust", 64);
+    /** Малотоксичные насадки горелки водотрубного котла: NOx × 0,55 (07 §7.8.4); один комплект на горелку. */
+    public static final DeferredItem<Item> LOW_NOX_BURNER_KIT = item("low_nox_burner_kit", 16);
     // справочник (11)
     public static final DeferredItem<EngineeringHandbookItem> ENGINEERING_HANDBOOK = registered(ITEMS.registerItem("engineering_handbook",
             EngineeringHandbookItem::new, new Item.Properties().stacksTo(1)));

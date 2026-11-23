@@ -7,6 +7,7 @@ import dev.denfry.promptcritical.sim.combustion.BmsResponse;
 import dev.denfry.promptcritical.sim.combustion.BmsState;
 import dev.denfry.promptcritical.sim.combustion.BoilerRupture;
 import dev.denfry.promptcritical.sim.combustion.BurnerKind;
+import dev.denfry.promptcritical.sim.combustion.BurnerSpec;
 import dev.denfry.promptcritical.sim.combustion.MftCause;
 import dev.denfry.promptcritical.sim.consequence.BudgetStats;
 import dev.denfry.promptcritical.sim.consequence.DamageBudget;
@@ -288,6 +289,37 @@ class WaterTubePlantTest {
         run(w, 10);
         assertThat(u.takeDeaeratorSteam()).isCloseTo(5.0, within(0.1));
         assertThat(u.takeDeaeratorSteam()).isZero();
+    }
+
+    /**
+     * 07 §7.8.4: малотоксичные насадки (low_nox_burner_kit) умножают NOx горелок на 0,55 при том же сжигании; насадки
+     * переживают сохранение и смену топлива.
+     */
+    @Test
+    void lowNoxBurnersCutNoxByTheKitFactor() {
+        SimulationWorld w = world();
+        SimId b = boiler(w);
+        List<SimId> engines = new ArrayList<>();
+        for (int i = 0; i < 4; i++) engines.add(engine(w, b, 3 * i));
+        lightOff(w, b);
+        for (SimId e : engines)
+            w.commands().submit(new SimCommand.Operate(e, SteamPlant.TOGGLE_STOP_VALVE),
+                    new CommandSource.Panel(new java.util.UUID(1, 1), 0L), seq++);
+        drive(w, engines, 300, 100e3);
+        WaterTubeUnit u = plant(w).waterTube(b);
+        double plain = u.outputs().combustion.noxKgS, fuel = u.outputs().fuelBurnKgS;
+        assertThat(fuel).isPositive();
+        assertThat(plain).isPositive();
+        u.setLowNoxBurners(true);
+        drive(w, engines, 1, 100e3);
+        assertThat(u.outputs().fuelBurnKgS).isCloseTo(fuel, org.assertj.core.data.Percentage.withPercentage(1));
+        assertThat(u.outputs().combustion.noxKgS / plain).isCloseTo(BurnerSpec.LOW_NOX_FACTOR, within(0.02));
+
+        SimulationWorld c = world();
+        c.load(SimulationWorld.upgrade(w.saveTree(), new MigrationRegistry()));
+        assertThat(plant(c).waterTube(b).lowNoxBurners()).isTrue();
+        assertThat(plant(c).waterTube(b).boiler().combustor().burner().noxFactor()).isEqualTo(BurnerSpec.LOW_NOX_FACTOR);
+        assertThat(c.stateHash()).isEqualTo(w.stateHash());
     }
 
     @Test

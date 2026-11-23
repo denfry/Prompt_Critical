@@ -62,6 +62,10 @@ public final class PowerhouseRecipes extends RecipeProvider {
         ShapelessRecipeBuilder.shapeless(RecipeCategory.MISC, PcBlocks.BOILER_BURNER.get())
                 .requires(wall).requires(AllBlocks.FLUID_VALVE.get()).requires(Items.FLINT_AND_STEEL).requires(plate)
                 .unlockedBy("has_boiler_wall", has(wall)).save(out, id("boiler_burner"));
+        // малотоксичные насадки (07 §7.8.4): завихритель из листа, сопла вторичного воздуха из трубы, огнеупорная амбразура
+        ShapelessRecipeBuilder.shapeless(RecipeCategory.MISC, PcItems.LOW_NOX_BURNER_KIT.get())
+                .requires(plate).requires(seamless).requires(brick)
+                .unlockedBy("has_boiler_burner", has(PcBlocks.BOILER_BURNER.get())).save(out, id("low_nox_burner_kit"));
         ShapedRecipeBuilder.shaped(RecipeCategory.MISC, PcBlocks.STEAM_DRUM.get())
                 .pattern("PPP").pattern("PTP").pattern("PPP").define('P', plate).define('T', AllBlocks.FLUID_TANK.get())
                 .unlockedBy("has_seamless_pipe", hasSeamless).save(out, id("steam_drum"));
