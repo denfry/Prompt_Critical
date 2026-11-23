@@ -274,6 +274,21 @@
     m.box('cylinder', [30, 6, 5], [32, 12, 11], 'bright', { split: '' });
     m.box('plug_w', [-9, 6.4, 5.4], [-8, 11.6, 10.6], 'st', { split: '' });
     m.box('plug_e', [23, 6.4, 5.4], [24, 11.6, 10.6], 'st', { split: '' });
+    // tie bars carrying the end thrust between the heads, pipe cradles, the ram of the moving head, the recorder
+    for (const z of [2.6, 12.4]) {
+      m.box(`tie_${z}`, [-9, 14, z], [24, 15, z + 1], 'bright', { split: 'x' });
+      for (const x of [-9.6, 23.4]) m.box(`tie_nut_${z}_${x}`, [x, 13.4, z - 0.4], [x + 1.2, 15.6, z + 1.4], 'st', { split: '' });
+    }
+    for (const x of [-2, 8, 18]) {
+      m.box(`cradle_${x}`, [x - 1, 3, 4], [x + 1, 6, 12], 'mblue', { split: '' });
+      m.box(`cradle_pad_${x}`, [x - 1.2, 6, 5.4], [x + 1.2, 6.6, 10.6], 'rubber', { split: '' });
+    }
+    m.box('ram', [30, 8.2, 7.2], [31, 9.8, 8.8], 'bright', { split: '' });
+    for (const z of [4, 11.6]) m.box(`cyl_tie_${z}`, [29.6, 5, z], [32, 6, z + 0.6], 'st', { split: '' });
+    m.prism('recorder', 'z', [-12, 7.6], 2.2, 1.6, 2.4, 'mblue', { split: '', ends: ['north'] });
+    m.disc('recorder_chart', 'z', [-12, 7.6], 1.9, 1.5, 1.6, 'mblue', 'material/gauge_dial', 'north');
+    m.box('hp_hose', [-15, 12, 6.4], [-14, 13, 8], 'rubber', { split: '' });
+    m.box('drain_trough', [-8, 3, 7], [23, 3.2, 9], 'water', { split: 'x' });
     if (!burst) m.prism('pipe', 'x', [9, 8], 2.4, -8, 23, 'st', { split: '' });
     else {
       m.prism('pipe_w', 'x', [9, 8], 2.4, -8, 6, 'st', { split: '' });
