@@ -103,16 +103,18 @@ public final class RadonField {
             st.setting = Setting.BUILDING;
             return;
         }
-        if (pocket.capped) {
+        if (pocket.blocks == 0) return; // глаз в твёрдом блоке: карман не найден, состояние не трогаем
+        double mineQ = mineFlow(level, eye);
+        if (pocket.capped && mineQ <= 0) {
             // пещера больше комнаты: источник не считаем, объём и обмен условные
             st.cBqM3 = RadonBox.step(st.cBqM3, 0, MAX_POCKET, MAX_POCKET * OPEN_EXCHANGE_PER_H / 3600, STEP_S);
             st.setting = Setting.BUILDING;
             return;
         }
+        // выработка больше предела заливки: обойдённые 4096 м³ вокруг игрока — участок, через который идёт поток ветви
         double volume = Math.max(1, pocket.blocks);
         double vent;
         Setting setting;
-        double mineQ = mineFlow(level, eye);
         if (mineQ > 0) {
             vent = mineQ;
             setting = Setting.MINE_VENTILATED;

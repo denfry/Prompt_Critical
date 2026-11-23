@@ -60,7 +60,11 @@ public final class ContainerActivityScan {
         int cursor;
         List<ContainerSource> entities = List.of();
         long nextEntityScan;
+        long nextRebuild;
     }
+
+    /** Не чаще раза в секунду пересобирать очередь [моё]. */
+    static final int REBUILD_TICKS = 20;
 
     private static final Map<ServerLevel, State> STATES = new WeakHashMap<>();
     /** Только для GameTest: подмена карты данных (блока-контейнера с готовым экраном в моде нет). */
@@ -113,9 +117,11 @@ public final class ContainerActivityScan {
         }
         List<Vec3> centers = new ArrayList<>(players.size());
         for (ServerPlayer p : players) centers.add(p.position());
-        if (st.cursor >= st.queue.size()) {
+        if (st.cursor >= st.queue.size() && now >= st.nextRebuild) {
+            // обход чанков не чаще раза в секунду: при малом числе блок-сущностей очередь иначе пересобиралась бы каждый тик
             st.queue = candidates(level, centers);
             st.cursor = 0;
+            st.nextRebuild = now + REBUILD_TICKS;
         }
         for (int i = 0; i < SCAN_PER_TICK && st.cursor < st.queue.size(); i++) inspect(level, st, st.queue.get(st.cursor++), now);
         if (now >= st.nextEntityScan) {

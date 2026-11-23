@@ -318,7 +318,7 @@ public final class RadiationService {
         if (now % 20 != 0) return;
         gatherItems(level, now);
         for (ServerPlayer p : level.players()) {
-            if (RadonField.due(now, p)) RadonField.refresh(level, p);
+            if (!p.isSpectator() && RadonField.due(now, p)) RadonField.refresh(level, p); // наблюдатель проходит сквозь стены: заливку не тратим
             double rate = rateSvH(level, p.getEyePosition())
                     + cloudSvH(level, p.getEyePosition(), dev.denfry.promptcritical.mod.safety.PpeService.aerosolFraction(p)) + BackgroundField.ambientSvH(level, p)
                     + RadonField.doseSvH(level, p);
