@@ -345,4 +345,38 @@ public final class HoistGameTests {
                 })
                 .thenSucceed();
     }
+
+    /**
+     * Трёхплунжерный насос реального масштаба (mine_drainage_pump_geared): 3 × 2 × 2 в почве штрека, мотор Create — на
+     * клетке-порте у восточного конца; шахта находит насос сканом и он качает водосборник, как ЦНС.
+     */
+    @GameTest(template = LONG, timeoutTicks = 900)
+    public static void gearedDrainagePumpLowersSump(GameTestHelper h) {
+        drift(h, 1, 20);
+        BlockPos pump = new BlockPos(10, 1, Z);                   // контроллер у западного конца, корпус до x 12, z Z+1
+        for (int x = 10; x <= 12; x++)
+            for (int y = 1; y <= 2; y++)
+                for (int z = Z; z <= Z + 1; z++) h.setBlock(new BlockPos(x, y, z), Blocks.AIR.defaultBlockState());
+        h.setBlock(pump, facing(PcBlocks.MINE_DRAINAGE_PUMP_GEARED.get().defaultBlockState(), Direction.NORTH));
+        motor(h, new BlockPos(13, 1, Z + 1), Direction.WEST, 64);
+        MineNetwork[] n = new MineNetwork[1];
+        double[] start = new double[1];
+        h.startSequence()
+                .thenWaitUntil(() -> {
+                    n[0] = mine(h, new BlockPos(10, 2, Z));
+                    h.assertTrue(binding(h).mines().scanOf(n[0]).pumps.contains(h.absolutePos(pump).asLong()), "geared pump found by the mine scan");
+                })
+                .thenWaitUntil(() -> h.assertTrue(OpsGameTests.defects(h, h.<MineDrainagePumpBlockEntity>getBlockEntity(pump)),
+                        "pump primed, without installation defects"))
+                .thenExecute(() -> {
+                    n[0].drainage().injectM3(50);
+                    start[0] = n[0].drainage().volumeM3();
+                })
+                .thenWaitUntil(() -> {
+                    h.assertTrue(n[0].drainage().pumpedM3s() > 0, "geared pump delivers");
+                    h.assertTrue(n[0].drainage().volumeM3() < start[0] - 0.5, "sump level falls");
+                    h.assertTrue(h.getBlockState(pump).getValue(PcProperties.RUNNING), "pump running");
+                })
+                .thenSucceed();
+    }
 }
