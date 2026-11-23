@@ -57,6 +57,27 @@ public record MachineParams(double sRatedVa, double vRatedV, int polePairs, doub
         return eQ + (xd - xq) * id;
     }
 
+    /** Коэффициент наклона ограничителя недовозбуждения: Q_min(P) = −V²/x_d + k·P (07 §7.3.4). */
+    public static final double K_UEL = 0.1;
+
+    /**
+     * Наибольшая реактивная мощность при активной {@code pPu} и напряжении {@code vPu}, о.е. на S_ном (диаграмма
+     * мощности 07 §7.3.4): меньшее из предела статора P² + Q² ≤ 1 и ротора (Q + V²/x_d)² + P² ≤ (V·E_q,max/x_d)²,
+     * E_q,max — номинальный ток возбуждения ({@link #ratedFieldPu()}). Вне области — NaN.
+     */
+    public double qMaxPu(double pPu, double vPu) {
+        double p = Math.abs(pPu), stator = 1 - p * p, r = vPu * ratedFieldPu() / xd, rotor = r * r - p * p;
+        if (stator < 0 || rotor < 0) return Double.NaN;
+        return Math.min(Math.sqrt(stator), Math.sqrt(rotor) - vPu * vPu / xd);
+    }
+
+    /** Наименьшая реактивная мощность (недовозбуждение): большее из −√(1 − P²) и Q_min(P) ограничителя, о.е.; вне области — NaN. */
+    public double qMinPu(double pPu, double vPu) {
+        double p = Math.abs(pPu), stator = 1 - p * p;
+        if (stator < 0) return Double.NaN;
+        return Math.max(-Math.sqrt(stator), -vPu * vPu / xd + K_UEL * p);
+    }
+
     /** Момент инерции J = 2HS/ω_m0², кг·м² (§7.2.1). */
     public double inertiaKgM2(double nominalFrequencyHz) {
         double wm = 2 * Math.PI * nominalFrequencyHz / polePairs;

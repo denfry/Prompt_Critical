@@ -88,6 +88,12 @@ public final class GeneratorUnit extends GridUnit {
         exciter = true; // возбуждение агрегата встроенное, начальное — от АКБ (§7.11.5)
     }
 
+    /** Паспорт машины при текущем классе напряжения: генератор на валу или ДГ (07 §7.3.1). */
+    public MachineParams params() {
+        return diesel != null ? MachineParams.dieselGenerator(dieselVa, voltageClass.volts)
+                : MachineParams.shaftGenerator(RATED_VA, voltageClass.volts);
+    }
+
     /** Номинальная полная мощность машины, В·А. */
     public double ratedVa() {
         return diesel != null ? dieselVa : RATED_VA;
@@ -387,8 +393,7 @@ public final class GeneratorUnit extends GridUnit {
     @Override
     void build(GridSubsystem.Build b) {
         if (node(0) == NO_NODE) return;
-        MachineParams p = diesel != null ? MachineParams.dieselGenerator(dieselVa, voltageClass.volts)
-                : MachineParams.shaftGenerator(RATED_VA, voltageClass.volts);
+        MachineParams p = params();
         double ratedW = diesel != null ? DieselEngine.RATED_TORQUE_PU * dieselVa : RATED_POWER_W;
         model = new SynchronousMachine(p, ExciterSpec.rotating(), new PrimeMover.CreateShaft(1, ratedW));
         machine = b.grid.addMachine(model, b.bus(node(0)));

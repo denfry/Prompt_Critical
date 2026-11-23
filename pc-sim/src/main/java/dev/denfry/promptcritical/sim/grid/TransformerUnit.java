@@ -34,6 +34,11 @@ public final class TransformerUnit extends GridUnit {
         return tap;
     }
 
+    /** Переключатель ответвлений: ПБВ ±2 ступени по 2,5 %, только без напряжения. */
+    public static TapChanger tapChanger() {
+        return TAPS;
+    }
+
     /** Ступень ПБВ (переключение без возбуждения): только на отключённом трансформаторе. */
     public boolean setTap(int step) {
         if (step < TAPS.minStep() || step > TAPS.maxStep()) return false;
