@@ -88,6 +88,8 @@ public final class PortalMonitorBlockEntity extends DeviceBlockEntity implements
         double r = ratio(p, backgroundUSvH, now);
         lastRatio = r;
         if (r > 1) alarmUntil = now + HOLD_TICKS;
+        // сигнал — сразу, даже если вердикт этому проходу уже вынесен: источник мог появиться в кармане в проходе
+        setSignal(now < alarmUntil);
         if (!judged.add(p.getUUID())) return;
         if (r > 1) {
             p.displayClientMessage(ContaminationText.msg("portal.alarm", ContaminationText.num(r)).withStyle(ChatFormatting.RED), false);
@@ -95,7 +97,6 @@ public final class PortalMonitorBlockEntity extends DeviceBlockEntity implements
             p.displayClientMessage(ContaminationText.msg("portal.clean").withStyle(ChatFormatting.GREEN), true);
             level.playSound(null, worldPosition, SoundEvents.NOTE_BLOCK_CHIME.value(), SoundSource.BLOCKS, 0.4f, 1.5f);
         }
-        setSignal(now < alarmUntil);
     }
 
     public double backgroundUSvH() {

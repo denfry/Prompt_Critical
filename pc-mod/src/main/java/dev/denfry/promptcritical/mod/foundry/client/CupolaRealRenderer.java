@@ -27,6 +27,8 @@ final class CupolaRealRenderer extends WholeModelRenderer<CupolaRealBlockEntity>
     private static final float SHAFT_Y = 24 / 16f, SHAFT_Z = 24 / 16f;
     /** {@code door_glow} нарисован сдвинутым на 48 px вниз (как кусок клетки y 3). */
     private static final double DOOR_GLOW_DY = 3;
+    /** {@code glow} нарисован сдвинутым на 16 px к северу: глазок на юге выступает за 32 px. */
+    private static final double GLOW_DZ = 1;
 
     static {
         WholeModels.register("cupola_furnace_real");
@@ -48,7 +50,7 @@ final class CupolaRealRenderer extends WholeModelRenderer<CupolaRealBlockEntity>
         part(BLOWER_SHAFT, be, f, 0, 0, 0).translate(0, SHAFT_Y, SHAFT_Z).rotateXDegrees(shaftAngle(be, pt))
                 .translate(0, -SHAFT_Y, -SHAFT_Z).light(light).renderInto(ms, vc);
         if (be.getBlockState().getValue(BlockStateProperties.LIT)) {
-            part(GLOW, be, f, 0, 0, 0).light(LightTexture.FULL_BRIGHT).renderInto(ms, vc);
+            part(GLOW, be, f, 0, 0, GLOW_DZ).light(LightTexture.FULL_BRIGHT).renderInto(ms, vc);
             part(DOOR_GLOW, be, f, 0, DOOR_GLOW_DY, 0).light(LightTexture.FULL_BRIGHT).renderInto(ms, vc);
         }
     }

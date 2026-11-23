@@ -26,6 +26,7 @@ import net.minecraft.gametest.framework.GameTest;
 import net.minecraft.gametest.framework.GameTestHelper;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.Items;
+import net.minecraft.world.level.block.Blocks;
 import net.neoforged.neoforge.gametest.GameTestHolder;
 import net.neoforged.neoforge.gametest.PrefixGameTestTemplate;
 
@@ -147,6 +148,8 @@ public final class ElectricalPartsGameTests {
     }
 
     private static Stator wind(GameTestHelper h, ItemStack laminations) {
+        // тот же блок поверх себя не пересоздаёт блок-сущность: второй станок унаследовал бы статор в выходе
+        h.setBlock(A, Blocks.AIR.defaultBlockState());
         h.setBlock(A, PcBlocks.WINDING_MACHINE.get().defaultBlockState());
         WindingMachineBlockEntity w = h.getBlockEntity(A);
         w.setSpeed(64);

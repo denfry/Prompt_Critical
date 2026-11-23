@@ -80,8 +80,8 @@ public final class InverterGameTests {
     public static void batteryDischargesIntoTheGridAndChargesFromIt(GameTestHelper h) {
         station(h);
         h.setBlock(INV, facing(PcBlocks.BATTERY_INVERTER.get().defaultBlockState(), Direction.NORTH));
-        // нагрузка острова 150 кВт, как в тесте шкафа FE: генератор вхолостую раскачивается выше 51 Гц, и инвертор
-        // честно не входит в окно
+        // нагрузка острова 275 кВт: при разряде 125 кВт генератор несёт те же 150 кВт, что в тесте шкафа FE. Вхолостую
+        // он раскачивается выше 51 Гц, инвертор выходит из окна и отключается (защита от островного режима)
         h.setBlock(INV.above(), facing(PcBlocks.GRID_FE_INTERFACE_LARGE.get().defaultBlockState(), Direction.NORTH));
         h.setBlock(new BlockPos(4, 1, 3), facing(PcBlocks.GRID_BATTERY_RACK.get().defaultBlockState(), Direction.NORTH));
         h.setBlock(new BlockPos(3, 1, 3), facing(PcBlocks.GRID_BATTERY_RACK.get().defaultBlockState(), Direction.NORTH));
@@ -100,7 +100,7 @@ public final class InverterGameTests {
                     inv(h).setMode(BatteryInverterBlockEntity.Mode.DISCHARGE);
                     FeInterface load = ((FeInterfaceBlockEntity) h.getBlockEntity(INV.above())).unit().iface();
                     load.setMode(FeInterface.Mode.IMPORT);
-                    load.setSetpointW(150e3);
+                    load.setSetpointW(275e3);
                 })
                 .thenWaitUntil(() -> h.assertTrue(drained(h) && inv(h).battery() != null && inv(h).battery().modules() == 2,
                         "two racks found: " + (inv(h).battery() == null ? 0 : inv(h).battery().modules())))

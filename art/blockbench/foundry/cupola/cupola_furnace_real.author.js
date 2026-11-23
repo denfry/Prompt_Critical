@@ -189,7 +189,7 @@
   }
 
   const PART = {
-    glow: { draw: glow, shift: [0, 0, 0], note: 'full-bright while in blast' },
+    glow: { draw: glow, shift: [0, 0, -16], note: 'whole z = partial z + 16; full-bright while in blast' },
     door_glow: { draw: doorGlow, shift: [0, -48, 0], note: 'full-bright while in blast' },
     drop_doors: { draw: dropDoors, shift: [0, 0, 0], note: 'north door hinge axis x at (y 13.6, z 17.6), south at (y 13.6, z 30.4); open = 90 deg down' },
     blower_shaft: { draw: blowerShaft, shift: [0, 0, 0], note: 'turns about x, axis (y 24, z 24)' },

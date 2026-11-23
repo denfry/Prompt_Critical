@@ -46,9 +46,25 @@ public final class Electrical {
     }
 
     public static ItemStack sheetStack(ElectricalSheet sh, int count) {
+        return sheetStack(sh, count, 1);
+    }
+
+    /** Стек листов длиной {@code lengthFrac} мерного листа. */
+    public static ItemStack sheetStack(ElectricalSheet sh, int count, double lengthFrac) {
         ItemStack s = new ItemStack(ManufacturingItems.ELECTRICAL_SHEET.get(), count);
-        s.set(ManufacturingComponents.ELECTRICAL_SHEET.get(), ElectricalData.Sheet.of(sh));
+        s.set(ManufacturingComponents.ELECTRICAL_SHEET.get(), ElectricalData.Sheet.of(sh, lengthFrac * ElectricalSheet.SHEET_LENGTH_M));
         return s;
+    }
+
+    /** Длина листа в стеке в долях мерного; 1 — мерный лист или не лист. */
+    public static double sheetLengthFrac(ItemStack s) {
+        var d = s.get(ManufacturingComponents.ELECTRICAL_SHEET.get());
+        return d == null ? 1 : d.lengthFrac();
+    }
+
+    /** Мерный электротехнический лист: такой берёт пазовый пресс. */
+    public static boolean isFullSheet(ItemStack s) {
+        return s.has(ManufacturingComponents.ELECTRICAL_SHEET.get()) && sheetLengthFrac(s) > 1 - 1e-3;
     }
 
     @Nullable

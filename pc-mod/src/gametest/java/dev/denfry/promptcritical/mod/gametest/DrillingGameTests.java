@@ -269,6 +269,14 @@ public final class DrillingGameTests {
      * глины, электрокаротаж — нефть по закону Арчи. Керноотборник берёт керн последних 9 м, станция меряет его в
      * пределах своих погрешностей.
      */
+    /** Среднее кривой по пяти точкам вокруг {@code i}. */
+    private static double mean(double[] c, int i) {
+        double sum = 0;
+        int n = 0;
+        for (int k = Math.max(0, i - 2); k <= Math.min(c.length - 1, i + 2); k++, n++) sum += c[k];
+        return sum / n;
+    }
+
     @GameTest(template = LARGE, timeoutTicks = 1500)
     public static void logsAndCoreReadTheOilPay(GameTestHelper h) {
         buildRig(h);
@@ -304,7 +312,9 @@ public final class DrillingGameTests {
                     if (!u.stuck()) {
                         double[] gr = u.curve(WellLogging.Curve.GR), rt = u.curve(WellLogging.Curve.RT);
                         int shale = (int) ((700 - u.topM()) / WellLogging.STEP_M), pay = (int) ((806 - u.topM()) / WellLogging.STEP_M);
-                        h.assertTrue(gr[shale] > 80 && gr[pay] < 50, "GR shale " + gr[shale] + " vs sand " + gr[pay]);
+                        // GR со счётным шумом Пуассона: по одной точке глина изредка падает ниже 80 API, берём среднее по пяти
+                        double grShale = mean(gr, shale), grPay = mean(gr, pay);
+                        h.assertTrue(grShale > 80 && grPay < 50, "GR shale " + grShale + " vs sand " + grPay);
                         h.assertTrue(rt[pay] > 5 * rt[shale], "oil is resistive: " + rt[pay]);
                         int[] out = new int[DrillingPanels.L_CHANNELS];
                         u.readPanel(out);

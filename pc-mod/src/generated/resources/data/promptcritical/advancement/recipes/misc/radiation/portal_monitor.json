@@ -1,0 +1,32 @@
+{
+  "parent": "minecraft:recipes/root",
+  "criteria": {
+    "has_dosimeter": {
+      "conditions": {
+        "items": [
+          {
+            "items": "promptcritical:dosimeter_radiometer"
+          }
+        ]
+      },
+      "trigger": "minecraft:inventory_changed"
+    },
+    "has_the_recipe": {
+      "conditions": {
+        "recipe": "promptcritical:radiation/portal_monitor"
+      },
+      "trigger": "minecraft:recipe_unlocked"
+    }
+  },
+  "requirements": [
+    [
+      "has_the_recipe",
+      "has_dosimeter"
+    ]
+  ],
+  "rewards": {
+    "recipes": [
+      "promptcritical:radiation/portal_monitor"
+    ]
+  }
+}

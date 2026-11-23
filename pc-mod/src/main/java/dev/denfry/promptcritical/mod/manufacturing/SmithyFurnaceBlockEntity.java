@@ -183,12 +183,12 @@ public final class SmithyFurnaceBlockEntity extends SmithyDevice {
         Lamination lam = Electrical.lamination(s);
         int n = s.getCount();
         if (t > ElectricalSheet.COATING_BURN_K) {
-            if (sheet != null && sheet.coating() != SheetCoating.NONE) inv.setStackInSlot(1, Electrical.sheetStack(sheet.coat(SheetCoating.NONE), n));
+            if (sheet != null && sheet.coating() != SheetCoating.NONE) inv.setStackInSlot(1, Electrical.sheetStack(sheet.coat(SheetCoating.NONE), n, Electrical.sheetLengthFrac(s)));
             if (lam != null && lam.sheet().coating() != SheetCoating.NONE) inv.setStackInSlot(1, Electrical.bundleStack(lam.coat(SheetCoating.NONE), n));
         }
         soakS = t >= ElectricalSheet.ANNEAL_K ? soakS + seconds : 0;
         if (soakS >= ElectricalSheet.ANNEAL_S) {
-            if (sheet != null && sheet.strain() > 0) inv.setStackInSlot(1, Electrical.sheetStack(sheet.anneal(), n));
+            if (sheet != null && sheet.strain() > 0) inv.setStackInSlot(1, Electrical.sheetStack(sheet.anneal(), n, Electrical.sheetLengthFrac(s)));
             if (lam != null && (!lam.edgesRelieved() || lam.sheet().strain() > 0)) inv.setStackInSlot(1, Electrical.bundleStack(lam.anneal(), n));
         }
         ItemStack mat = inv.getStackInSlot(COATING_SLOT);
@@ -198,7 +198,7 @@ public final class SmithyFurnaceBlockEntity extends SmithyDevice {
         if (bakeS >= ElectricalSheet.BAKE_S) {
             bakeS = 0;
             if (sheet != null && sheet.coating() != c) {
-                inv.setStackInSlot(1, Electrical.sheetStack(sheet.coat(c), n));
+                inv.setStackInSlot(1, Electrical.sheetStack(sheet.coat(c), n, Electrical.sheetLengthFrac(s)));
                 mat.shrink(n);
             } else if (lam != null && !(lam.coatedAfterPunch() && lam.sheet().coating() == c)) {
                 inv.setStackInSlot(1, Electrical.bundleStack(lam.coat(c), n));

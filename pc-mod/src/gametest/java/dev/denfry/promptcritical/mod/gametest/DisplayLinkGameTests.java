@@ -36,7 +36,8 @@ public final class DisplayLinkGameTests {
                 h.assertTrue(sources.contains(CreateDisplaySources.PANEL_READING.get()), "no instrument reading source at " + p);
                 BlockEntity be = h.getBlockEntity(p);
                 h.assertFalse(PanelReadings.names(be).isEmpty(), "no instruments listed at " + p);
-                String line = PanelReadings.reading(be, 0).getString();
+                // у табло 12 окон тёмные без сигнализаций; строка состояния под ними светится всегда
+                String line = PanelReadings.reading(be, p.equals(annunciator) ? 12 : 0).getString();
                 h.assertFalse(line.isEmpty() || line.equals(PanelReadings.DASHES), "no reading at " + p + ": " + line);
             }
             h.assertTrue(DisplaySource.getAll(h.getLevel(), h.absolutePos(annunciator)).contains(CreateDisplaySources.ALARMS.get()),
