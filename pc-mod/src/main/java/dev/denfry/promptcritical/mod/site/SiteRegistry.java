@@ -67,6 +67,12 @@ public final class SiteRegistry {
     public static final DeferredItem<DesignDrawingItem> MILLING_MACHINE_REAL_DRAWING = drawing("milling_machine_real");
     public static final DeferredItem<DesignDrawingItem> SHAPING_MACHINE_REAL_DRAWING = drawing("shaping_machine_real");
     public static final DeferredItem<DesignDrawingItem> SURFACE_GRINDER_REAL_DRAWING = drawing("surface_grinder_real");
+    public static final DeferredItem<DesignDrawingItem> DEGASIFICATION_PUMP_REAL_DRAWING = drawing("degasification_pump_real");
+    public static final DeferredItem<DesignDrawingItem> FORCED_DRAFT_FAN_REAL_DRAWING = drawing("forced_draft_fan_real");
+    public static final DeferredItem<DesignDrawingItem> INDUCED_DRAFT_FAN_REAL_DRAWING = drawing("induced_draft_fan_real");
+    public static final DeferredItem<DesignDrawingItem> MAGNETIC_SEPARATOR_REAL_DRAWING = drawing("magnetic_separator_real");
+    public static final DeferredItem<DesignDrawingItem> FLOTATION_CELL_REAL_DRAWING = drawing("flotation_cell_real");
+    public static final DeferredItem<DesignDrawingItem> ELECTRODE_BOILER_REAL_DRAWING = drawing("electrode_boiler_real");
 
     private SiteRegistry() {}
 

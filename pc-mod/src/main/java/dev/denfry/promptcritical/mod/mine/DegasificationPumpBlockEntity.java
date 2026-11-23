@@ -120,4 +120,20 @@ public final class DegasificationPumpBlockEntity extends KineticMachineBlockEnti
         out[MinePanels.DEGAS_KW10] = (int) Math.round(powerW(shaft) / 100);
         out[MinePanels.FLAGS] = rpm > 0 ? 1 << MinePanels.F_RUNNING : 0;
     }
+
+    /**
+     * Насос, к которому скважина подходит клеткой {@code pos} с грани {@code side}: старый — сам блок насоса; насос
+     * реального масштаба — только через патрубок всаса (порт {@code degasification_pump_real}, северная грань (1, 1, 0)).
+     */
+    @Nullable
+    public static DegasificationPumpBlockEntity at(net.minecraft.world.level.Level level, BlockPos pos, Direction side) {
+        if (level.getBlockEntity(pos) instanceof DegasificationPumpBlockEntity p) return p.wholeModelId() == null ? p : null;
+        BlockState st = level.getBlockState(pos);
+        if (!(st.getBlock() instanceof dev.denfry.promptcritical.mod.multiblock.MultiblockPartBlock)) return null;
+        BlockPos c = dev.denfry.promptcritical.mod.block.PcBlock.structureController(level,
+                dev.denfry.promptcritical.mod.multiblock.MultiblockPartBlock.anchor(st, pos));
+        if (c == null || !(level.getBlockEntity(c) instanceof DegasificationPumpBlockEntity p) || p.wholeModelId() == null) return null;
+        return dev.denfry.promptcritical.mod.multiblock.WholePorts.allows(p.wholeModelId(), p.wholeModelFacing(),
+                pos.getX() - c.getX(), pos.getY() - c.getY(), pos.getZ() - c.getZ(), side) ? p : null;
+    }
 }

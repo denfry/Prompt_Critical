@@ -14,6 +14,8 @@ Auxiliaries are found by distance, within 12 blocks of the furnace:
 
 Iron comes from [sinter](item:promptcritical:sinter) or lump ore. Magnetite is upgraded in the magnetic separator to concentrate, and the concentrate is sintered on the sinter strand with coke breeze and limestone. Hematite does not answer to a magnet; it is sintered as it is.
 
+The [wet drum magnetic separator](item:promptcritical:magnetic_separator_real) is the separator at full size, built on a construction site from its drawing. The Create shaft enters the worm reducer at the west end; ore goes into the feed box on top, the concentrate leaves the launder on the south side and the tailings the spigot at the east end.
+
 The burden goes into the furnace top by a Create funnel or from the storage of a skip contraption above it. Charges are made up by the **ore load** on the panel: kilograms of ore per kilogram of coke. A higher load means less coke per tonne of iron and a colder hearth. Flux, limestone or calcite, is set per unit of ore; it makes the slag fluid and basic, and basic slag takes up sulfur.
 
 ## Blast and heat

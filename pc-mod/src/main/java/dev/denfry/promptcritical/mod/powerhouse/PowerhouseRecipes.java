@@ -80,6 +80,16 @@ public final class PowerhouseRecipes extends RecipeProvider {
         ShapedRecipeBuilder.shaped(RecipeCategory.MISC, PcBlocks.INDUCED_DRAFT_FAN.get())
                 .pattern("PFP").pattern("SRP").define('P', plate).define('F', AllItems.PROPELLER.get()).define('S', shaft)
                 .define('R', brick).unlockedBy("has_steel_plate", has(plate)).save(out, id("induced_draft_fan"));
+        // чертёж машины реального масштаба: строится на стройплощадке по массе прототипа (SitePlans)
+        ShapedRecipeBuilder.shaped(RecipeCategory.MISC, dev.denfry.promptcritical.mod.site.SiteRegistry.FORCED_DRAFT_FAN_REAL_DRAWING.get())
+                .pattern("PPP").pattern("SBS").define('P', Items.PAPER).define('S', PcItems.STEEL_PLATE.get())
+                .define('B', PcBlocks.FORCED_DRAFT_FAN.get()).unlockedBy("has_forced_draft_fan", has(PcBlocks.FORCED_DRAFT_FAN.get()))
+                .save(out, id("forced_draft_fan_real_drawing"));
+        // чертёж машины реального масштаба: строится на стройплощадке по массе прототипа (SitePlans)
+        ShapedRecipeBuilder.shaped(RecipeCategory.MISC, dev.denfry.promptcritical.mod.site.SiteRegistry.INDUCED_DRAFT_FAN_REAL_DRAWING.get())
+                .pattern("PPP").pattern("SBS").define('P', Items.PAPER).define('S', PcItems.STEEL_PLATE.get())
+                .define('B', PcBlocks.INDUCED_DRAFT_FAN.get()).unlockedBy("has_induced_draft_fan", has(PcBlocks.INDUCED_DRAFT_FAN.get()))
+                .save(out, id("induced_draft_fan_real_drawing"));
         ShapedRecipeBuilder.shaped(RecipeCategory.MISC, PcBlocks.WATER_TUBE_BOILER.get())
                 .pattern("PKP").pattern("RCR").define('P', plate).define('K', Items.COMPARATOR).define('R', Items.REDSTONE)
                 .define('C', AllBlocks.BRASS_CASING.get()).unlockedBy("has_boiler_wall", has(wall)).save(out, id("water_tube_boiler"));
@@ -162,6 +172,11 @@ public final class PowerhouseRecipes extends RecipeProvider {
                 .pattern("PCP").pattern("CTC").pattern("PCP").define('P', plate)
                 .define('C', net.minecraft.world.item.Items.COPPER_INGOT).define('T', AllBlocks.FLUID_TANK.get())
                 .unlockedBy("has_steel_plate", has(plate)).save(out, id("electrode_boiler"));
+        // чертёж машины реального масштаба: строится на стройплощадке по массе прототипа (SitePlans)
+        ShapedRecipeBuilder.shaped(RecipeCategory.MISC, dev.denfry.promptcritical.mod.site.SiteRegistry.ELECTRODE_BOILER_REAL_DRAWING.get())
+                .pattern("PPP").pattern("SBS").define('P', Items.PAPER).define('S', PcItems.STEEL_PLATE.get())
+                .define('B', PcBlocks.ELECTRODE_BOILER.get()).unlockedBy("has_electrode_boiler", has(PcBlocks.ELECTRODE_BOILER.get()))
+                .save(out, id("electrode_boiler_real_drawing"));
         // конденсатор: корпус из листа, трубный пучок — трубы
         ShapedRecipeBuilder.shaped(RecipeCategory.MISC, PcBlocks.CONDENSER.get())
                 .pattern("PPP").pattern("FFF").pattern("PPP").define('P', plate).define('F', pipe)

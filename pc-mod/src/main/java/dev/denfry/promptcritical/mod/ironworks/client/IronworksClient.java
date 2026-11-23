@@ -22,6 +22,12 @@ public final class IronworksClient {
     private static final PartialModel BLOWER_ROTOR = partial("blast_blower/partial/rotor");
     private static final PartialModel EXTRUDER_SCREW = partial("electrode_extruder/partial/screw");
     private static final PartialModel SEPARATOR_DRUM = partial("magnetic_separator/partial/drum");
+    /** Барабанный сепаратор реального масштаба: цельная модель и барабан — до запекания. */
+    private static final PartialModel SEPARATOR_DRUM_REAL = partial("magnetic_separator_real/partial/drum");
+
+    static {
+        dev.denfry.promptcritical.mod.client.whole.WholeModels.register("magnetic_separator_real");
+    }
 
     static {
         // доменный цех реального масштаба: цельные модели и partial-модели — до запекания
@@ -54,7 +60,11 @@ public final class IronworksClient {
         event.registerBlockEntityRenderer(IronworksBlockEntities.ELECTRODE_EXTRUDER.get(), c -> new FoundryMachineRenderer<>(EXTRUDER_SCREW, Motion.SPIN_X, 8, 8, 1));
         event.registerBlockEntityRenderer(IronworksBlockEntities.HOT_BLAST_STOVE_REAL.get(), c -> new HotBlastStoveRealRenderer());
         event.registerBlockEntityRenderer(IronworksBlockEntities.BLAST_BLOWER_ENGINE.get(), c -> new BlastBlowerEngineRenderer());
-        event.registerBlockEntityRenderer(IronworksBlockEntities.MAGNETIC_SEPARATOR.get(), c -> new FoundryMachineRenderer<>(SEPARATOR_DRUM, Motion.SPIN_X, 10, 8, 1));
+        // реальный: барабан вокруг x через (y 24, z 8), хранится на 8 px восточнее; скорость — вала в клетке-порте
+        event.registerBlockEntityRenderer(IronworksBlockEntities.MAGNETIC_SEPARATOR.get(), c -> new dev.denfry.promptcritical.mod.client.whole.SpinWholeRenderer<>(
+                new FoundryMachineRenderer<>(SEPARATOR_DRUM, Motion.SPIN_X, 10, 8, 1))
+                .spin(SEPARATOR_DRUM_REAL, net.minecraft.core.Direction.Axis.X, 24, 8, -8, 0, 0,
+                        dev.denfry.promptcritical.mod.foundry.PortedKineticMachineBlock::portSpeed));
     }
 
     private static void tooltip(ItemTooltipEvent event) {

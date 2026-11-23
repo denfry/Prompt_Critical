@@ -292,6 +292,35 @@ public final class SitePlans {
                     st("shakeout_deck", 100, n(INGOT, 8), n(PLATE, 4)),
                     st("dust_hood", 60, n(INGOT, 2), n(PLATE, 4))));
 
+    /** Котельная, дегазация и обогащение реального масштаба; своя карта — у {@link Map#of} не больше десяти пар. */
+    private static final Map<String, Plan> STEAM_MINE_PLANS = Map.of(
+            // насос ВВН-25 на станине ≈ 2,5 т, сепаратор газ-вода с трубопроводами ≈ 1 т (оценки)
+            "degasification_pump_real", plan("degasification_pump_real", PcBlocks.DEGASIFICATION_PUMP_REAL, 3.5,
+                    st("vacuum_pump", 120, n(INGOT, 20), n(PLATE, 5)),
+                    st("separator", 80, n(PLATE, 6), n(PIPE, 8))),
+            // ВДН-11,2: улитка ≈ 1,5 т, ротор с валом и опорой ≈ 1 т; фундамент — бетон (оценки)
+            "forced_draft_fan_real", plan("forced_draft_fan_real", PcBlocks.FORCED_DRAFT_FAN_REAL, 2.5,
+                    st("foundation", 60, n(CONCRETE, 2)),
+                    st("fan_casing", 100, n(PLATE, 12), n(INGOT, 3)),
+                    st("impeller", 80, n(INGOT, 8), n(PLATE, 2))),
+            // ДН-12,5: улитка ≈ 2,2 т, ротор ≈ 1,3 т (оценки)
+            "induced_draft_fan_real", plan("induced_draft_fan_real", PcBlocks.INDUCED_DRAFT_FAN_REAL, 3.5,
+                    st("foundation", 60, n(CONCRETE, 2)),
+                    st("fan_casing", 100, n(PLATE, 18), n(INGOT, 4)),
+                    st("impeller", 80, n(INGOT, 10), n(PLATE, 3))),
+            // ПБМ-90/250: ванна с рамой ≈ 2,5 т, барабан с магнитной системой и редуктором ≈ 2,5 т (оценки)
+            "magnetic_separator_real", plan("magnetic_separator_real", PcBlocks.MAGNETIC_SEPARATOR_REAL, 5,
+                    st("separator_tank", 100, n(PLATE, 20), n(INGOT, 5)),
+                    st("separator_drum", 120, n(INGOT, 20), n(PLATE, 5))),
+            // камера 6,3 м³ ≈ 2,5 т листа, блок аэратора с мостом, двигателем и пеногоном ≈ 1,5 т (оценки)
+            "flotation_cell_real", plan("flotation_cell_real", PcBlocks.FLOTATION_CELL_REAL, 4,
+                    st("cell_tank", 100, n(PLATE, 25)),
+                    st("aerator", 100, n(INGOT, 12), n(PLATE, 3))),
+            // корпус ⌀1,5 м на юбке ≈ 6 т нержавеющего листа, вводы, шины и шкаф ≈ 2 т (оценки)
+            "electrode_boiler_real", plan("electrode_boiler_real", PcBlocks.ELECTRODE_BOILER_REAL, 8,
+                    st("shell", 140, n(PLATE, 50), n(INGOT, 10)),
+                    st("hv_terminals", 100, n(INGOT, 10), n(WIRE, 100))));
+
     @Nullable
     public static Plan get(String id) {
         Plan p = PLANS.get(id);
@@ -301,11 +330,12 @@ public final class SitePlans {
         if (p == null) p = MINING_COKE_PLANS.get(id);
         if (p == null) p = I1_STEEL_PLANS.get(id);
         if (p == null) p = FOUNDRY_PLANS.get(id);
-        return p != null ? p : I0_SHOP_PLANS.get(id);
+        if (p == null) p = I0_SHOP_PLANS.get(id);
+        return p != null ? p : STEAM_MINE_PLANS.get(id);
     }
 
     public static Iterable<Plan> all() {
-        return java.util.stream.Stream.of(PLANS, I0_PLANS, IRONMAKING_PLANS, POWER_PLANS, MINING_COKE_PLANS, I1_STEEL_PLANS, FOUNDRY_PLANS, I0_SHOP_PLANS)
+        return java.util.stream.Stream.of(PLANS, I0_PLANS, IRONMAKING_PLANS, POWER_PLANS, MINING_COKE_PLANS, I1_STEEL_PLANS, FOUNDRY_PLANS, I0_SHOP_PLANS, STEAM_MINE_PLANS)
                 .flatMap(m -> m.values().stream()).toList();
     }
 }

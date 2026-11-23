@@ -112,6 +112,14 @@ public final class PcProperties {
     /** Сегменты паровой машины: цилиндр и рама с маховиком. */
     public enum EngineSegment implements Named { CYLINDER, FRAME }
 
+    /**
+     * Конец ряда барабана котла (art/blockbench/boilers/steam_drum_real.author.js): NONE — средняя секция, EAST/WEST —
+     * днище с лазом на восточном или западном конце модели (+x или −x при фасаде на север); выбирается по соседям.
+     */
+    public enum DrumEnd implements Named { NONE, EAST, WEST }
+
+    public static final EnumProperty<DrumEnd> DRUM_END = EnumProperty.create("end", DrumEnd.class);
+
     /** Звено дымовой трубы; выбирается по соседям. */
     public enum ChimneyPart implements Named { BASE, MIDDLE, TOP }
 

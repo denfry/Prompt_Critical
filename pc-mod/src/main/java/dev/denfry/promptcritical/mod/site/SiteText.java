@@ -131,6 +131,21 @@ public final class SiteText {
         drawing("surface_grinder_real", "Belt-driven Surface Grinder", "плоскошлифовального станка");
         stage("machine_frame", "bed, column, slides and spindle", "станина, стойка, направляющие и шпиндель");
         stage("countershaft", "hanger columns, countershaft and belt", "стойки, контрпривод и ремень");
+        drawing("degasification_pump_real", "Liquid-Ring Degasification Pump", "водокольцевого дегазационного насоса");
+        stage("vacuum_pump", "bed, pump casing, rotor and coupling", "станина, корпус насоса, ротор и муфта");
+        stage("separator", "gas-water separator, flame arrester and piping", "сепаратор газ-вода, огнепреградитель и трубопроводы");
+        drawing("forced_draft_fan_real", "Forced Draught Blower", "дутьевого вентилятора ВДН");
+        drawing("induced_draft_fan_real", "Induced Draught Smoke Exhauster", "дымососа ДН");
+        stage("fan_casing", "scroll casing, guide vanes and inlet", "улитка, направляющий аппарат и вход");
+        stage("impeller", "impeller, shaft, bearing pedestal and coupling", "рабочее колесо, вал, опора и муфта");
+        drawing("magnetic_separator_real", "Wet Drum Magnetic Separator", "барабанного магнитного сепаратора");
+        stage("separator_tank", "tank, frame, feed box and launders", "ванна, рама, питающая коробка и лотки");
+        stage("separator_drum", "drum, magnet system and worm reducer", "барабан, магнитная система и червячный редуктор");
+        drawing("flotation_cell_real", "Mechanical Flotation Cell", "механической флотокамеры");
+        stage("cell_tank", "cell, froth launder and chamber box", "камера, пенный желоб и карман");
+        stage("aerator", "bridge, standpipe, impeller, motor and froth scraper", "мост, стояк, импеллер, двигатель и пеногон");
+        drawing("electrode_boiler_real", "6.3 kV Electrode Boiler", "электродного котла 6,3 кВ");
+        stage("hv_terminals", "HV bushings, leads, cable box and control cabinet", "вводы высокого напряжения, шины, кабельная коробка и шкаф управления");
     }
 
     private SiteText() {}

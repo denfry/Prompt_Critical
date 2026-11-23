@@ -33,12 +33,16 @@ import org.jetbrains.annotations.Nullable;
  *
  * @param <U> доменный двойник
  */
-public abstract class KineticMachineBlockEntity<U> extends KineticBlockEntity implements DeviceHost, FoundryDevice {
+public abstract class KineticMachineBlockEntity<U> extends KineticBlockEntity implements DeviceHost, FoundryDevice,
+        dev.denfry.promptcritical.mod.boiler.ShaftConsumer, dev.denfry.promptcritical.mod.client.whole.WholeModelHost {
     private final StressFilter stress = new StressFilter();
     private SimId simId = SimId.NONE;
     /** Тиков до снятия разового скачка стресса ({@link #spikeStress}). */
     private int spikeTicks;
     private boolean chunkUnloading;
+    /** Обороты и исправность сети вала с клетки-порта ({@link PortedKineticMachineBlock}). */
+    private double portRpm;
+    private boolean portHealthy = true;
 
     protected KineticMachineBlockEntity(BlockEntityType<?> type, BlockPos pos, BlockState state) {
         super(type, pos, state);
@@ -135,12 +139,60 @@ public abstract class KineticMachineBlockEntity<U> extends KineticBlockEntity im
 
     /** Скорость входного вала, об/мин со знаком; машина с валом в клетке-порте берёт её с порта. */
     protected double shaftSpeed() {
-        return getSpeed();
+        return portDriven() ? portRpm : getSpeed();
     }
 
     /** Сеть вала исправна (нет перегрузки). */
     protected boolean shaftHealthy() {
-        return !isOverStressed();
+        return portDriven() ? portHealthy : !isOverStressed();
+    }
+
+    // --- вал через клетку-порт и цельная модель (машины реального масштаба) ---
+
+    /** Вал входит в клетку-порт объёма, а не в контроллер. */
+    protected boolean portDriven() {
+        return getBlockState().getBlock() instanceof PortedKineticMachineBlock;
+    }
+
+    @Override
+    public void sampleShaft(double rpm, boolean healthy, long tick) {
+        portRpm = rpm;
+        portHealthy = healthy;
+    }
+
+    @Override
+    public double shaftPowerW() {
+        U u = unit();
+        return u == null ? 0 : powerW(u);
+    }
+
+    @Override
+    public double ratedShaftW() {
+        return ratedW();
+    }
+
+    @Override
+    public double nominalShaftRpm() {
+        return nominalRpm();
+    }
+
+    /** Id цельной модели у машины реального масштаба; у старой — null. */
+    @Override
+    @Nullable
+    public String wholeModelId() {
+        return dev.denfry.promptcritical.mod.client.whole.WholeModelHost.idOf(getBlockState());
+    }
+
+    @Override
+    public Direction wholeModelFacing() {
+        BlockState s = getBlockState();
+        return s.getBlock() instanceof PcBlock b ? b.facing(s) : Direction.NORTH;
+    }
+
+    /** Свет — с фасада, перед контроллером. */
+    @Override
+    public BlockPos wholeModelLightPos() {
+        return worldPosition.relative(wholeModelFacing());
     }
 
     /** Поставить булево свойство контроллера, если изменилось. */

@@ -85,6 +85,11 @@ public final class MineSafetyRecipes extends RecipeProvider {
         ShapelessRecipeBuilder.shapeless(RecipeCategory.MISC, PcBlocks.DEGASIFICATION_PUMP.get())
                 .requires(AllBlocks.MECHANICAL_PUMP.get()).requires(Items.IRON_INGOT, 2).requires(AllBlocks.COGWHEEL.get())
                 .unlockedBy("has_pump", has(AllBlocks.MECHANICAL_PUMP.get())).save(out, id("degasification_pump"));
+        // чертёж машины реального масштаба: строится на стройплощадке по массе прототипа (SitePlans)
+        ShapedRecipeBuilder.shaped(RecipeCategory.MISC, dev.denfry.promptcritical.mod.site.SiteRegistry.DEGASIFICATION_PUMP_REAL_DRAWING.get())
+                .pattern("PPP").pattern("SBS").define('P', Items.PAPER).define('S', PcItems.STEEL_PLATE.get())
+                .define('B', PcBlocks.DEGASIFICATION_PUMP.get()).unlockedBy("has_degasification_pump", has(PcBlocks.DEGASIFICATION_PUMP.get()))
+                .save(out, id("degasification_pump_real_drawing"));
         ShapedRecipeBuilder.shaped(RecipeCategory.REDSTONE, PcBlocks.MINE_DISPATCH_CABINET.get())
                 .pattern("IGI").pattern("RCR").pattern("III").define('I', Items.IRON_INGOT).define('G', Items.GLASS_PANE)
                 .define('R', Items.REDSTONE).define('C', Items.COMPARATOR)

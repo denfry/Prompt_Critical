@@ -77,7 +77,18 @@ public final class WholePorts {
             Map.entry("drill_press_real", List.of(p(0, 0, 0, N))),
             Map.entry("milling_machine_real", List.of(p(0, 0, 0, N))),
             Map.entry("shaping_machine_real", List.of(p(0, 0, 0, N))),
-            Map.entry("surface_grinder_real", List.of(p(0, 0, 0, N))));
+            Map.entry("surface_grinder_real", List.of(p(0, 0, 0, N))),
+            // всас метана с севера, отсосанный газ — с запада из купола сепаратора, подпитка водой — с запада внизу
+            Map.entry("degasification_pump_real", List.of(p(1, 1, 0, N), p(0, 1, 1, W), p(0, 0, 2, W))),
+            // вход — с юга у раструба или короба, выход — сверху с напорного фланца улитки
+            Map.entry("forced_draft_fan_real", List.of(p(0, 0, 2, S), p(1, 1, 1, U))),
+            Map.entry("induced_draft_fan_real", List.of(p(0, 0, 2, S), p(1, 1, 1, U))),
+            // руда сверху в питающую коробку, концентрат — на юг из лотка, хвосты — на восток, вода смыва — на восток
+            Map.entry("magnetic_separator_real", List.of(p(0, 1, 0, U), p(0, 1, 1, S), p(1, 0, 0, E), p(1, 1, 1, E))),
+            // пульпа с запада, хвосты на восток, пенный продукт — желоб на севере
+            Map.entry("flotation_cell_real", List.of(p(0, 0, 1, W), p(1, 0, 1, E), p(0, 0, 0, N), p(1, 0, 0, N))),
+            // пар — на юг в котёл за спиной, питательная вода — на юг внизу
+            Map.entry("electrode_boiler_real", List.of(p(0, 2, 1, S), p(1, 0, 1, S))));
 
     private WholePorts() {}
 

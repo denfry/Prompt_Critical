@@ -24,6 +24,7 @@ public final class NonferrousText {
         fluid("red_mud", "Red Mud (bauxite residue)", "Красный шлам");
         // медь, никель, кобальт, платиноиды, олово
         block("flotation_cell", "Flotation Cell (sulphide ores)", "Флотомашина (сульфидные руды)");
+        block("flotation_cell_real", "Mechanical Flotation Cell (sulphide ores)", "Механическая флотокамера (сульфидные руды)");
         block("matte_smelter", "Reverberatory Matte Smelter", "Отражательная печь (штейн, олово)");
         block("peirce_smith_converter", "Peirce–Smith Converter", "Конвертер Пирса–Смита");
         block("electrorefining_cell", "Electrorefining Cell Section", "Секция ванн электрорафинирования");

@@ -491,6 +491,17 @@ public final class PcBlocks {
     public static final DeferredBlock<PcDeviceBlock> DEGASIFICATION_BOREHOLE = device("degasification_borehole", machine(), Spec.facing());
     public static final DeferredBlock<PcDeviceBlock> DEGASIFICATION_PUMP = device("degasification_pump", machine(), Spec.facing(PcProperties.RUNNING),
             KineticMachineBlock.with(ShaftSide.BACK, DegasificationPumpBlockEntity::new));
+    /**
+     * Водокольцевой вакуум-насос дегазации реального масштаба (тип ВВН-25) с сепаратором газ-вода, 2 × 2 × 3
+     * (art/blockbench/mining/degasification_pump_real.author.js). Тот же BE, что {@link #DEGASIFICATION_PUMP}; вал Create —
+     * в южную грань клетки (1, 0, 2), всас метана — северная грань клетки (1, 1, 0).
+     */
+    public static final Footprint FP_DEGASIFICATION_PUMP_REAL = Footprint.tiled(0, 1, 0, 1, 0, 2);
+    public static final DeferredBlock<PcDeviceBlock> DEGASIFICATION_PUMP_REAL = device("degasification_pump_real", machine(),
+            Spec.facing(PcProperties.RUNNING).segments(PcProperties.wholeSegments(FP_DEGASIFICATION_PUMP_REAL.segments().size()),
+                    FP_DEGASIFICATION_PUMP_REAL),
+            dev.denfry.promptcritical.mod.foundry.PortedKineticMachineBlock.with(new BlockPos(1, 0, 2),
+                    net.minecraft.core.Direction.Axis.Z, DegasificationPumpBlockEntity::new));
     public static final DeferredBlock<PcDeviceBlock> MINE_DISPATCH_CABINET = device("mine_dispatch_cabinet", machine(),
             Spec.facing(PcProperties.ALARM).footprint(FP_TALL2), MineDispatchCabinetBlock::create);
     public static final DeferredBlock<PcDeviceBlock> MINE_HOIST = device("mine_hoist", machine(),
@@ -984,7 +995,9 @@ public final class PcBlocks {
                 || b == BOF_VESSEL_REAL.get() || b == REHEATING_FURNACE_REAL.get()
                 || b == MOLDING_STATION_REAL.get() || b == SHAKEOUT_GRATE_REAL.get()
                 || b == MACHINE_LATHE_REAL.get() || b == DRILL_PRESS_REAL.get() || b == MILLING_MACHINE_REAL.get()
-                || b == SHAPING_MACHINE_REAL.get() || b == SURFACE_GRINDER_REAL.get();
+                || b == SHAPING_MACHINE_REAL.get() || b == SURFACE_GRINDER_REAL.get()
+                || b == DEGASIFICATION_PUMP_REAL.get() || b == FORCED_DRAFT_FAN_REAL.get() || b == INDUCED_DRAFT_FAN_REAL.get()
+                || b == MAGNETIC_SEPARATOR_REAL.get() || b == FLOTATION_CELL_REAL.get() || b == ELECTRODE_BOILER_REAL.get();
     }
 
     /**
@@ -1174,6 +1187,17 @@ public final class PcBlocks {
             Spec.facing(BlockStateProperties.LIT).footprint(FP_FURNACE3), FoundryBlock.with(BakingFurnaceBlockEntity::new));
     public static final DeferredBlock<PcDeviceBlock> MAGNETIC_SEPARATOR = device("magnetic_separator", machine(),
             Spec.facing(PcProperties.RUNNING).footprint(FP_WIDE2), KineticMachineBlock.with(ShaftSide.LEFT, MagneticSeparatorBlockEntity::new));
+    /**
+     * Барабанный мокрый магнитный сепаратор реального масштаба (тип ПБМ-90/250), 4 × 2 × 2
+     * (art/blockbench/ore_processing/magnetic_separator_real.author.js). Тот же BE, что {@link #MAGNETIC_SEPARATOR}; вал
+     * Create — в западную грань клетки (−2, 1, 0) у червячного редуктора.
+     */
+    public static final Footprint FP_MAGNETIC_SEPARATOR_REAL = Footprint.tiled(-2, 1, 0, 1, 0, 1);
+    public static final DeferredBlock<PcDeviceBlock> MAGNETIC_SEPARATOR_REAL = device("magnetic_separator_real", machine(),
+            Spec.facing(PcProperties.RUNNING).segments(PcProperties.wholeSegments(FP_MAGNETIC_SEPARATOR_REAL.segments().size()),
+                    FP_MAGNETIC_SEPARATOR_REAL),
+            dev.denfry.promptcritical.mod.foundry.PortedKineticMachineBlock.with(new BlockPos(-2, 1, 0),
+                    net.minecraft.core.Direction.Axis.X, MagneticSeparatorBlockEntity::new));
     public static final DeferredBlock<PcDeviceBlock> SINTER_STRAND = device("sinter_strand", lit(machine()),
             Spec.facing(PcProperties.RUNNING, BlockStateProperties.LIT).footprint(FP_FURNACE3), SinterStrandBlock::create);
     public static final DeferredBlock<FurnacePartBlock> BLAST_FURNACE_SHELL = withItem(BLOCKS.registerBlock("blast_furnace_shell",
@@ -1298,6 +1322,16 @@ public final class PcBlocks {
     // медь и никель (08 §8.8.3–8.8.4)
     public static final DeferredBlock<PcDeviceBlock> FLOTATION_CELL = device("flotation_cell", machine(),
             Spec.facing(PcProperties.RUNNING), FoundryBlock.with(dev.denfry.promptcritical.mod.nonferrous.FlotationCellBlockEntity::new));
+    /**
+     * Механическая флотокамера реального масштаба (одна камера 6,3 м³ самоаэрирующейся машины типа «Механобр»),
+     * 2 × 3 × 2 (art/blockbench/ore_processing/flotation_cell_real.author.js). Тот же BE, что
+     * {@link #FLOTATION_CELL}: пульпа — с запада, хвосты — на восток, пенный продукт — желоб на севере.
+     */
+    public static final Footprint FP_FLOTATION_CELL_REAL = Footprint.tiled(0, 1, 0, 2, 0, 1);
+    public static final DeferredBlock<PcDeviceBlock> FLOTATION_CELL_REAL = device("flotation_cell_real", machine(),
+            Spec.facing(PcProperties.RUNNING).segments(PcProperties.wholeSegments(FP_FLOTATION_CELL_REAL.segments().size()),
+                    FP_FLOTATION_CELL_REAL),
+            FoundryBlock.with(dev.denfry.promptcritical.mod.nonferrous.FlotationCellBlockEntity::new));
     /** Отражательная печь 3×3×3: свод на кирпиче, горит — {@code lit}. */
     public static final DeferredBlock<PcDeviceBlock> MATTE_SMELTER = device("matte_smelter", lit(brick()),
             Spec.facing(BlockStateProperties.LIT).footprint(FP_CUBE3),
@@ -1381,7 +1415,8 @@ public final class PcBlocks {
     public static final DeferredBlock<PcBlock> BOILER_WALL = block("boiler_wall", shell(), Spec.of());
     public static final DeferredBlock<PcBlock> BOILER_BURNER = block("boiler_burner", lit(shell()),
             Spec.facing(BlockStateProperties.LIT, PcProperties.GAS_FIRED));
-    public static final DeferredBlock<PcBlock> STEAM_DRUM = block("steam_drum", shell().noOcclusion(), Spec.facing());
+    public static final DeferredBlock<dev.denfry.promptcritical.mod.powerhouse.SteamDrumBlock> STEAM_DRUM = withItem(BLOCKS.registerBlock(
+            "steam_drum", dev.denfry.promptcritical.mod.powerhouse.SteamDrumBlock::create, shell().noOcclusion()));
     public static final DeferredBlock<PcBlock> BOILER_SUPERHEATER = block("boiler_superheater", shell().noOcclusion(), Spec.of());
     public static final DeferredBlock<PcBlock> BOILER_ECONOMIZER = block("boiler_economizer", shell().noOcclusion(), Spec.of());
     public static final DeferredBlock<PcBlock> AIR_PREHEATER = block("air_preheater", shell().noOcclusion(), Spec.of());
@@ -1390,6 +1425,18 @@ public final class PcBlocks {
             KineticMachineBlock.with(ShaftSide.FRONT, dev.denfry.promptcritical.mod.powerhouse.DraftFanBlockEntity::forced));
     public static final DeferredBlock<PcDeviceBlock> INDUCED_DRAFT_FAN = device("induced_draft_fan", machine(),
             Spec.facing(PcProperties.RUNNING),
+            KineticMachineBlock.with(ShaftSide.FRONT, dev.denfry.promptcritical.mod.powerhouse.DraftFanBlockEntity::induced));
+    /**
+     * Дутьевой вентилятор (тип ВДН-11,2) и дымосос (тип ДН-12,5) реального масштаба, 3 × 3 × 3 на бетонном фундаменте
+     * под контроллером (art/blockbench/boilers/draft_fans_real.author.js). Те же BE, что у старых; вал Create — в
+     * северную грань контроллера, как у них.
+     */
+    public static final Footprint FP_DRAFT_FAN_REAL = Footprint.tiled(-1, 1, -1, 1, 0, 2);
+    public static final DeferredBlock<PcDeviceBlock> FORCED_DRAFT_FAN_REAL = device("forced_draft_fan_real", machine(),
+            Spec.facing(PcProperties.RUNNING).segments(PcProperties.wholeSegments(FP_DRAFT_FAN_REAL.segments().size()), FP_DRAFT_FAN_REAL),
+            KineticMachineBlock.with(ShaftSide.FRONT, dev.denfry.promptcritical.mod.powerhouse.DraftFanBlockEntity::forced));
+    public static final DeferredBlock<PcDeviceBlock> INDUCED_DRAFT_FAN_REAL = device("induced_draft_fan_real", machine(),
+            Spec.facing(PcProperties.RUNNING).segments(PcProperties.wholeSegments(FP_DRAFT_FAN_REAL.segments().size()), FP_DRAFT_FAN_REAL),
             KineticMachineBlock.with(ShaftSide.FRONT, dev.denfry.promptcritical.mod.powerhouse.DraftFanBlockEntity::induced));
     /** Гидроагрегат 3×2×3: вертикальный вал Create вверх, вода — от затвора водозабора выше по склону. */
     public static final DeferredBlock<PcDeviceBlock> HYDRO_TURBINE = device("hydro_turbine", machine(),
@@ -1408,6 +1455,16 @@ public final class PcBlocks {
     /** Электродный котёл 6,3 кВ: вплотную к котлу котельной, пар — в его коллектор. */
     public static final DeferredBlock<PcDeviceBlock> ELECTRODE_BOILER = device("electrode_boiler", machine(),
             Spec.facing(PcProperties.RUNNING), FoundryBlock.with(dev.denfry.promptcritical.mod.powerhouse.ElectrodeBoilerBlockEntity::new));
+    /**
+     * Электродный котёл 6,3 кВ реального масштаба (струйный, ≈ 6 МВт), 2 × 4 × 2
+     * (art/blockbench/boilers/electrode_boiler_real.author.js): пар — с южной грани клетки (0, 2, 1) в котёл за ним, кабель
+     * 6,3 кВ — сверху в клетку (1, 3, 1). Тот же BE, что {@link #ELECTRODE_BOILER}.
+     */
+    public static final Footprint FP_ELECTRODE_BOILER_REAL = Footprint.tiled(0, 1, 0, 3, 0, 1);
+    public static final DeferredBlock<PcDeviceBlock> ELECTRODE_BOILER_REAL = device("electrode_boiler_real", machine(),
+            Spec.facing(PcProperties.RUNNING).segments(PcProperties.wholeSegments(FP_ELECTRODE_BOILER_REAL.segments().size()),
+                    FP_ELECTRODE_BOILER_REAL),
+            FoundryBlock.with(dev.denfry.promptcritical.mod.powerhouse.ElectrodeBoilerBlockEntity::new));
     /** Мареограф: уровень моря по модели прилива, амплитуда M2 места и фаза Луны. */
     public static final DeferredBlock<PcDeviceBlock> TIDE_GAUGE = device("tide_gauge", machine().noOcclusion(), Spec.facing(),
             FoundryBlock.with(dev.denfry.promptcritical.mod.powerhouse.TideGaugeBlockEntity::new));

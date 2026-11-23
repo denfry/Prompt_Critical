@@ -103,6 +103,11 @@ public final class IronworksRecipes extends RecipeProvider {
         ShapedRecipeBuilder.shaped(RecipeCategory.MISC, PcBlocks.MAGNETIC_SEPARATOR.get())
                 .pattern("IRI").pattern("SCS").define('I', Items.IRON_INGOT).define('R', Items.REDSTONE_BLOCK).define('S', shaft)
                 .define('C', casing).unlockedBy("has_magnetite", has(PcItems.RAW_MAGNETITE.get())).save(out, id("magnetic_separator"));
+        // чертёж машины реального масштаба: строится на стройплощадке по массе прототипа (SitePlans)
+        ShapedRecipeBuilder.shaped(RecipeCategory.MISC, dev.denfry.promptcritical.mod.site.SiteRegistry.MAGNETIC_SEPARATOR_REAL_DRAWING.get())
+                .pattern("PPP").pattern("SBS").define('P', Items.PAPER).define('S', PcItems.STEEL_PLATE.get())
+                .define('B', PcBlocks.MAGNETIC_SEPARATOR.get()).unlockedBy("has_magnetic_separator", has(PcBlocks.MAGNETIC_SEPARATOR.get()))
+                .save(out, id("magnetic_separator_real_drawing"));
         ShapedRecipeBuilder.shaped(RecipeCategory.MISC, PcBlocks.SINTER_STRAND.get())
                 .pattern("BBB").pattern("RFR").pattern("SCS").define('B', Items.IRON_BARS).define('R', brick).define('F', Items.FURNACE)
                 .define('S', shaft).define('C', casing)

@@ -24,4 +24,6 @@ When there is nowhere else for the energy to go, it can be turned into steam. In
 
 Put the [electrode boiler](item:promptcritical:electrode_boiler) right against a boiler of the boiler house (fire-tube or water-tube), and its steam goes into the same header. If there is no boiler next to it, or the boiler has exploded or is blowing off through its safety valve, the steam has nowhere to go and the electrodes are drained.
 
+The [6.3 kV electrode boiler](item:promptcritical:electrode_boiler_real) is the same boiler at full size, built on a construction site from its drawing. Stand it with its back against the boiler: the steam outlet is on the south side. The 6.3 kV cable goes only into the gland on top of the termination box.
+
 In automatic mode the boiler starts taking load above 50.2 Hz and reaches its full 1 MW at 51 Hz. That way it soaks up the surplus that would otherwise run the generators away.

@@ -76,6 +76,7 @@ public final class PcLanguageProvider extends LanguageProvider {
         b("explosion_barrier", "Explosion Barrier", "Взрывозащитный заслон");
         b("degasification_borehole", "Degasification Borehole", "Дегазационная скважина");
         b("degasification_pump", "Degasification Pump", "Дегазационный насос");
+        b("degasification_pump_real", "Liquid-Ring Degasification Pump", "Водокольцевой дегазационный насос");
         b("mine_dispatch_cabinet", "Mine Gas Monitoring Cabinet", "Шкаф аппаратуры газовой защиты");
         b("mine_hoist", "Mine Hoist", "Шахтная подъёмная машина");
         b("headframe", "Headframe", "Копёр");
@@ -144,6 +145,7 @@ public final class PcLanguageProvider extends LanguageProvider {
         i("magnesium_ingot", "Magnesium Ingot", "Слиток магния");
         i("uranium_slug", "Natural Uranium Slug Cassette", "Кассета блочков природного урана");
         b("magnetic_separator", "Magnetic Separator", "Магнитный сепаратор");
+        b("magnetic_separator_real", "Wet Drum Magnetic Separator", "Барабанный магнитный сепаратор");
         b("sinter_strand", "Sinter Strand", "Агломашина");
         b("blast_furnace_shell", "Blast Furnace Shell", "Кожух домны");
         b("blast_furnace_tuyere", "Blast Furnace Tuyere", "Фурма домны");
@@ -646,12 +648,14 @@ public final class PcLanguageProvider extends LanguageProvider {
         b("boiler_economizer", "Economizer", "Экономайзер");
         b("air_preheater", "Air Preheater", "Воздухоподогреватель");
         b("forced_draft_fan", "Forced Draft Fan", "Дутьевой вентилятор");
+        b("forced_draft_fan_real", "Forced Draught Blower", "Дутьевой вентилятор ВДН");
         b("steam_turbine", "Steam Turbine", "Паровая турбина");
         b("hydro_turbine", "Hydro Turbine", "Гидротурбина");
         b("tidal_unit", "Tidal Bulb Unit", "Капсульный агрегат ПЭС");
         b("tide_gauge", "Tide Gauge", "Мареограф");
         b("pumped_storage_unit", "Pumped Storage Unit", "Обратимый агрегат ГАЭС");
         b("electrode_boiler", "Electrode Boiler", "Электродный котёл");
+        b("electrode_boiler_real", "6.3 kV Electrode Boiler", "Электродный котёл 6,3 кВ");
         b("wind_turbine", "Wind Power Unit D-30", "Ветроэлектростанция Д-30");
         b("dam_gate", "Dam Intake Gate", "Затвор водозабора");
         b("gas_turbine", "Gas Turbine Unit", "Газотурбинная установка");
@@ -681,6 +685,7 @@ public final class PcLanguageProvider extends LanguageProvider {
         b("condenser", "Steam Condenser", "Конденсатор");
         b("cooling_tower_cell", "Cooling Tower Cell", "Секция градирни");
         b("induced_draft_fan", "Induced Draft Fan", "Дымосос");
+        b("induced_draft_fan_real", "Induced Draught Smoke Exhauster", "Дымосос ДН");
         b("deaerator", "Deaerator", "Деаэратор");
         i("mechanic_stethoscope", "Mechanic's Stethoscope", "Слуховая трубка механика");
         i("torque_wrench", "Torque Wrench", "Динамометрический ключ");

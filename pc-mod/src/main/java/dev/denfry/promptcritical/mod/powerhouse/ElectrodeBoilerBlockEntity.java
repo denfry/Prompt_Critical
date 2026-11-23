@@ -34,7 +34,8 @@ import net.minecraft.world.level.block.state.BlockState;
  * ({@link SteamPlant#setElectricHeatW}). Кабель 6,3 кВ — к любой грани, кроме фасада. Нет котла рядом, котёл взорван
  * или стоит на предохранительном клапане — пар некуда отдать, электроды осушаются. Shift + ПКМ — следующий режим.
  */
-public class ElectrodeBoilerBlockEntity extends GridDeviceBlockEntity<ElectrodeBoilerUnit> implements PanelHost {
+public class ElectrodeBoilerBlockEntity extends GridDeviceBlockEntity<ElectrodeBoilerUnit> implements PanelHost,
+        dev.denfry.promptcritical.mod.client.whole.WholeModelHost {
     private SimId boiler = SimId.NONE;
 
     public ElectrodeBoilerBlockEntity(BlockPos pos, BlockState state) {
@@ -49,7 +50,9 @@ public class ElectrodeBoilerBlockEntity extends GridDeviceBlockEntity<ElectrodeB
     @Override
     public List<List<Face>> terminals() {
         List<Face> out = new ArrayList<>();
-        for (Direction d : Direction.values()) if (d != facing()) out.add(new Face(worldPosition, d));
+        // котёл реального масштаба: кабель 6,3 кВ — только в сальник на крыше клеммной коробки, клетка (1, 3, 1)
+        if (wholeModelId() != null) dev.denfry.promptcritical.mod.grid.GridDevice.faces(out, worldPosition, facing(), 1, 3, 1, Direction.UP);
+        else for (Direction d : Direction.values()) if (d != facing()) out.add(new Face(worldPosition, d));
         return List.of(out);
     }
 
@@ -70,8 +73,13 @@ public class ElectrodeBoilerBlockEntity extends GridDeviceBlockEntity<ElectrodeB
 
     /** Котёл, которого электродный котёл касается гранью; {@link SimId#NONE} — нет. */
     private SimId findBoiler() {
+        // котёл реального масштаба отдаёт пар только с южной грани клетки (0, 2, 1) — в котёл за его спиной
+        boolean real = wholeModelId() != null;
+        BlockPos from = real ? worldPosition.offset(new BlockPos(0, 2, 1).rotate(
+                dev.denfry.promptcritical.mod.multiblock.Footprint.rotation(facing()))) : worldPosition;
         for (Direction d : Direction.values()) {
-            BlockPos n = worldPosition.relative(d);
+            if (real && d != facing().getOpposite()) continue;
+            BlockPos n = from.relative(d);
             FireTubeBoilerBlockEntity fire = FireTubeBoilerBlockEntity.at(level, n);
             if (fire != null && !fire.simId().isNone()) return fire.simId();
             BlockState s = level.getBlockState(n);
@@ -142,5 +150,26 @@ public class ElectrodeBoilerBlockEntity extends GridDeviceBlockEntity<ElectrodeB
         if (id < ElectrodeBoiler.Mode.values().length) setMode(u, ElectrodeBoiler.Mode.values()[id], player);
         else if (id == StoragePanels.BUTTON_LESS) u.boiler().setManualSetpoint(u.boiler().manualSetpoint() - 0.1);
         else if (id == StoragePanels.BUTTON_MORE) u.boiler().setManualSetpoint(u.boiler().manualSetpoint() + 0.1);
+    }
+
+    // --- цельная модель (реальный масштаб) ---
+
+    /** Id цельной модели у машины реального масштаба; у старой — null. */
+    @Override
+    @org.jetbrains.annotations.Nullable
+    public String wholeModelId() {
+        return dev.denfry.promptcritical.mod.client.whole.WholeModelHost.idOf(getBlockState());
+    }
+
+    @Override
+    public Direction wholeModelFacing() {
+        BlockState s = getBlockState();
+        return s.getBlock() instanceof dev.denfry.promptcritical.mod.block.PcBlock b ? b.facing(s) : Direction.NORTH;
+    }
+
+    /** Свет — с фасада, перед контроллером. */
+    @Override
+    public BlockPos wholeModelLightPos() {
+        return worldPosition.relative(wholeModelFacing());
     }
 }

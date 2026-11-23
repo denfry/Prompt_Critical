@@ -27,7 +27,8 @@ import org.jetbrains.annotations.Nullable;
  * Концентрат копится по металлу и выходит мешками по {@code metallurgy.bulk_item_mass_kg} стандартного содержания
  * линии ({@link Metal#concentrateGrade}); пентландитовый — с меткой медно-никелевой линии. Хвосты сбрасываются.
  */
-public final class FlotationCellBlockEntity extends UraniumProcessBlockEntity {
+public final class FlotationCellBlockEntity extends UraniumProcessBlockEntity
+        implements dev.denfry.promptcritical.mod.client.whole.WholeModelHost {
     public static final int MB = 8_000;
     /** Медиана содержания без пробы: Cu 3 % (норильский халькопирит), Ni 1,7 % (08 §8.1.2, каталог жил). */
     public static final double DEFAULT_CU = 0.03, DEFAULT_NI = 0.017;
@@ -153,5 +154,26 @@ public final class FlotationCellBlockEntity extends UraniumProcessBlockEntity {
         oreNickel = tag.getBoolean("ore_ni");
         cuConcKg = tag.getDouble("cu");
         niConcKg = tag.getDouble("ni");
+    }
+
+    // --- цельная модель (реальный масштаб) ---
+
+    /** Id цельной модели у машины реального масштаба; у старой — null. */
+    @Override
+    @org.jetbrains.annotations.Nullable
+    public String wholeModelId() {
+        return dev.denfry.promptcritical.mod.client.whole.WholeModelHost.idOf(getBlockState());
+    }
+
+    @Override
+    public Direction wholeModelFacing() {
+        BlockState s = getBlockState();
+        return s.getBlock() instanceof dev.denfry.promptcritical.mod.block.PcBlock b ? b.facing(s) : Direction.NORTH;
+    }
+
+    /** Свет — с фасада, перед контроллером. */
+    @Override
+    public BlockPos wholeModelLightPos() {
+        return worldPosition.relative(wholeModelFacing());
     }
 }

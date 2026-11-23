@@ -82,6 +82,11 @@ public final class NonferrousRecipes extends RecipeProvider {
         ShapedRecipeBuilder.shaped(RecipeCategory.MISC, PcBlocks.FLOTATION_CELL.get())
                 .pattern("PXP").pattern("PTP").define('P', plate).define('T', tank).define('X', AllBlocks.MECHANICAL_MIXER.get())
                 .unlockedBy("has_raw_chalcopyrite", has(PcItems.RAW_CHALCOPYRITE.get())).save(out, id("flotation_cell"));
+        // чертёж машины реального масштаба: строится на стройплощадке по массе прототипа (SitePlans)
+        ShapedRecipeBuilder.shaped(RecipeCategory.MISC, dev.denfry.promptcritical.mod.site.SiteRegistry.FLOTATION_CELL_REAL_DRAWING.get())
+                .pattern("PPP").pattern("SBS").define('P', Items.PAPER).define('S', PcItems.STEEL_PLATE.get())
+                .define('B', PcBlocks.FLOTATION_CELL.get()).unlockedBy("has_flotation_cell", has(PcBlocks.FLOTATION_CELL.get()))
+                .save(out, id("flotation_cell_real_drawing"));
         ShapedRecipeBuilder.shaped(RecipeCategory.MISC, PcBlocks.MATTE_SMELTER.get())
                 .pattern("BBB").pattern("BFB").pattern("PSP").define('B', brick).define('F', Items.BLAST_FURNACE).define('P', plate)
                 .define('S', pipe)
