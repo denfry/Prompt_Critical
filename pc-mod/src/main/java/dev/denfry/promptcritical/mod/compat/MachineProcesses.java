@@ -172,7 +172,7 @@ public final class MachineProcesses {
         p.add(new Process("molding_station", Plant.FOUNDRY, on(PcBlocks.MOLDING_STATION),
                 of(item(1, PcItems.FOUNDRY_SAND), item(PcItems.CASTING_PATTERN), water(5)),
                 of(item(PcBlocks.SAND_MOLD))));
-        p.add(new Process("cupola_furnace", Plant.FOUNDRY, on(PcBlocks.CUPOLA_FURNACE),
+        p.add(new Process("cupola_furnace", Plant.FOUNDRY, on(PcBlocks.CUPOLA_FURNACE, PcBlocks.CUPOLA_FURNACE_REAL),
                 of(tag(FoundryTags.CUPOLA_IRON, 1), tag(FoundryTags.CUPOLA_COKE, 1), item(PcBlocks.SAND_MOLD)),
                 of(item(PcItems.CASTING))));
         p.add(new Process("crucible_furnace", Plant.FOUNDRY, on(PcBlocks.CRUCIBLE_FURNACE),

@@ -36,6 +36,7 @@ public final class FoundryBinding {
     private static void registerCapabilities(RegisterCapabilitiesEvent event) {
         caps(event, FoundryBlockEntities.COAL_JIG.get());
         caps(event, FoundryBlockEntities.CUPOLA.get());
+        // вагранка реального масштаба: склад колоши — только с порта площадки (WholePorts), клетка контроллера у жёлоба закрыта
         caps(event, FoundryBlockEntities.CRUCIBLE.get());
         caps(event, FoundryBlockEntities.MOLDING_STATION.get());
         caps(event, FoundryBlockEntities.SHAKEOUT_GRATE.get());

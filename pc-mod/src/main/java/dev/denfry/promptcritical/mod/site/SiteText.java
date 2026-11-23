@@ -57,6 +57,9 @@ public final class SiteText {
         stage("fan_house", "fan pit, brick casing and évasé", "приямок, кирпичный кожух и эвазе");
         stage("rotor", "axle, arms, blades and shutter", "ось, спицы, лопатки и шибер");
         stage("fan_engine", "engine on the axle crank and its bed", "машина на кривошипе оси и её фундамент");
+        drawing("cupola_furnace_real", "Foundry Cupola", "литейной вагранки");
+        stage("lining", "firebrick lining", "футеровка шамотным кирпичом");
+        stage("blower_platform", "blower, air chamber and charging platform", "воздуходувка, воздушная коробка и колошниковая площадка");
         stage("bed", "bed, cylinder and crosshead guides", "станина, цилиндр и параллели");
         stage("flywheel", "crankshaft, flywheel and governor", "коленвал, маховик и регулятор");
         stage("tower", "shaft tower and back struts", "башня над стволом и подкосы");

@@ -1,15 +1,12 @@
 package dev.denfry.promptcritical.mod.foundry;
 
 import dev.denfry.promptcritical.mod.binding.SimLevelBinding;
-import dev.denfry.promptcritical.mod.config.ServerConfig;
 import dev.denfry.promptcritical.mod.fx.MachineFx;
 import dev.denfry.promptcritical.mod.panel.PanelHost;
 import dev.denfry.promptcritical.mod.panel.PanelLayout;
 import dev.denfry.promptcritical.sim.mechanics.ShaftInput;
-import dev.denfry.promptcritical.sim.metallurgy.CupolaFurnace;
 import dev.denfry.promptcritical.sim.metallurgy.CupolaUnit;
 import dev.denfry.promptcritical.sim.metallurgy.FoundrySubsystem;
-import java.util.Arrays;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
 import net.minecraft.core.HolderLookup;
@@ -32,11 +29,9 @@ import org.jetbrains.annotations.Nullable;
  * красного камня держит лётку закрытой.
  */
 public final class CupolaBlockEntity extends KineticMachineBlockEntity<CupolaUnit> implements PanelHost {
-    private static final MachineInventory.Role[] ROLES = {MachineInventory.Role.INPUT, MachineInventory.Role.INPUT};
     static final int POUR_PERIOD_TICKS = 10;
 
-    private final MachineInventory inv = new MachineInventory(ROLES,
-            (slot, s) -> slot == 0 ? s.is(FoundryTags.CUPOLA_IRON) : s.is(FoundryTags.CUPOLA_COKE), this::setChanged);
+    private final MachineInventory inv = CupolaLogic.inventory(this::setChanged);
 
     public CupolaBlockEntity(BlockPos pos, BlockState state) {
         super(FoundryBlockEntities.CUPOLA.get(), pos, state);
@@ -70,19 +65,13 @@ public final class CupolaBlockEntity extends KineticMachineBlockEntity<CupolaUni
 
     @Override
     protected void serverTick(SimLevelBinding b, CupolaUnit u) {
-        double kg = ServerConfig.METALLURGY_INGOT_MASS_KG.get();
-        ItemStack iron = inv.getStackInSlot(0);
-        if (!iron.isEmpty() && u.charge(kg, 0)) iron.shrink(1);
-        ItemStack coke = inv.getStackInSlot(1);
-        if (!coke.isEmpty() && u.charge(0, ServerConfig.METALLURGY_BULK_ITEM_MASS_KG.get())) coke.shrink(1);
+        CupolaLogic.charge(inv, u);
         if (level.getGameTime() % POUR_PERIOD_TICKS == 0 && !level.hasNeighborSignal(worldPosition)
                 && !level.hasNeighborSignal(worldPosition.below())) {
             FoundrySubsystem shop = b.world().subsystem(FoundrySubsystem.class);
             BlockPos bottom = worldPosition.below();
-            for (Direction d : Direction.Plane.HORIZONTAL) {
-                if (SandMoldBlockEntity.pourInto(level, bottom.relative(d), shop, u)
-                        || SandMoldBlockEntity.pourInto(level, bottom.relative(d).below(), shop, u)) break;
-            }
+            for (Direction d : Direction.Plane.HORIZONTAL)
+                if (CupolaLogic.pour(level, bottom.relative(d), shop, u)) break;
         }
         setStateFlag(BlockStateProperties.LIT, u.lit());
     }
@@ -94,7 +83,7 @@ public final class CupolaBlockEntity extends KineticMachineBlockEntity<CupolaUni
 
     @Override
     public boolean accepts(ItemStack stack) {
-        return stack.is(FoundryTags.CUPOLA_IRON) || stack.is(FoundryTags.CUPOLA_COKE);
+        return CupolaLogic.accepts(stack);
     }
 
     @Override
@@ -105,12 +94,7 @@ public final class CupolaBlockEntity extends KineticMachineBlockEntity<CupolaUni
 
     @Override
     public InteractionResult use(Player player) {
-        CupolaUnit u = unit();
-        if (u != null) {
-            CupolaFurnace f = u.furnace();
-            player.displayClientMessage(FoundryText.msg("cupola", FoundryText.num(f.stackIronKg()), FoundryText.num(f.stackCokeKg()),
-                    FoundryText.num(f.wellKg()), FoundryText.num(f.wellTemperatureK() - 273.15), FoundryText.num(u.airNm3S())), true);
-        }
+        CupolaLogic.status(player, unit());
         return InteractionResult.SUCCESS;
     }
 
@@ -136,20 +120,8 @@ public final class CupolaBlockEntity extends KineticMachineBlockEntity<CupolaUni
 
     @Override
     public void readPanel(int[] out) {
-        Arrays.fill(out, 0);
-        out[FoundryPanels.SHAFT_RPM10] = shaftRpm10();
         boolean held = level.hasNeighborSignal(worldPosition) || level.hasNeighborSignal(worldPosition.below());
-        CupolaUnit u = unit();
-        out[FoundryPanels.FLAGS] = held ? 1 << FoundryPanels.F_HELD : 0;
-        if (u == null) return;
-        CupolaFurnace f = u.furnace();
-        out[FoundryPanels.C_WELL_C] = (int) Math.round(f.wellTemperatureK() - 273.15);
-        out[FoundryPanels.C_WELL_KG10] = (int) Math.round(f.wellKg() * 10);
-        out[FoundryPanels.C_IRON_KG] = (int) Math.round(f.stackIronKg());
-        out[FoundryPanels.C_COKE_KG] = (int) Math.round(f.stackCokeKg());
-        out[FoundryPanels.C_AIR_NM3H] = (int) Math.round(u.airNm3S() * 3600);
-        out[FoundryPanels.C_MELT_KGH] = (int) Math.round(f.meltRateKgS() * 3600);
-        if (u.lit()) out[FoundryPanels.FLAGS] |= 1 << FoundryPanels.F_RUNNING;
+        CupolaLogic.readPanel(out, unit(), shaftRpm10(), held);
     }
 
     @Override

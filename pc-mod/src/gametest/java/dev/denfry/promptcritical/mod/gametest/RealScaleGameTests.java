@@ -291,6 +291,43 @@ public final class RealScaleGameTests {
     }
 
     /**
+     * Вагранка реального масштаба (08 §8.9, docs/research/cupola-dimensions.md): площадка принимает чертёж на основании
+     * 3×4, вагранка — 3×8×4 с цельной моделью и тем же юнитом симуляции, что старая; вал входит в клетку вентилятора
+     * (1, 1, 1) с востока, колоша — только с порта площадки, у жёлоба склада нет; старая вагранка остаётся как была.
+     */
+    @GameTest(template = TALL, timeoutTicks = 100)
+    public static void realCupolaSiteAcceptsAndOldCupolaStillWorks(GameTestHelper h) {
+        BlockPos p = new BlockPos(5, 1, 2);
+        for (int x = -1; x <= 1; x++)
+            for (int z = 0; z <= 3; z++) h.setBlock(p.offset(x, -1, z), Blocks.STONE);
+        h.setBlock(p, SiteRegistry.SITE.get().defaultBlockState().setValue(BlockStateProperties.HORIZONTAL_FACING, Direction.NORTH));
+        var w = site(h, p).accept("cupola_furnace_real");
+        h.assertTrue(w == null, "cupola plan accepted: " + (w == null ? "" : w.getString()));
+        h.assertTrue(PcBlocks.FP_CUPOLA_FURNACE_REAL.cells(BlockPos.ZERO, Direction.NORTH).size() == 3 * 8 * 4, "3x8x4 cupola");
+        h.setBlock(p, Blocks.AIR);
+        h.setBlock(p, PcBlocks.CUPOLA_FURNACE_REAL.get().defaultBlockState().setValue(BlockStateProperties.HORIZONTAL_FACING, Direction.NORTH));
+        h.assertTrue(h.getBlockEntity(p) instanceof dev.denfry.promptcritical.mod.foundry.CupolaRealBlockEntity b
+                && "cupola_furnace_real".equals(b.wholeModelId())
+                && dev.denfry.promptcritical.sim.metallurgy.FoundrySubsystem.CUPOLA.equals(b.deviceType()),
+                "the real cupola draws its whole model and runs the cupola unit");
+        h.assertTrue(h.getBlockState(p.offset(1, 1, 1)).is(PcBlocks.KINETIC_PORT.get())
+                && h.getBlockState(p.offset(1, 1, 1)).getValue(dev.denfry.promptcritical.mod.boiler.KineticPortBlock.INPUT),
+                "the blower cell takes the Create shaft");
+        var items = net.neoforged.neoforge.capabilities.Capabilities.ItemHandler.BLOCK;
+        h.assertTrue(h.getLevel().getCapability(items, h.absolutePos(p), Direction.NORTH) == null, "no charging at the spout");
+        h.assertTrue(h.getLevel().getCapability(items, h.absolutePos(p.offset(0, 3, 3)), Direction.SOUTH) != null,
+                "charging from the platform edge");
+        h.assertTrue(h.getLevel().getCapability(items, h.absolutePos(p.offset(0, 3, 3)), Direction.EAST) == null,
+                "the platform side is no charging port");
+        BlockPos old = new BlockPos(1, 2, 9);
+        h.setBlock(old, PcBlocks.CUPOLA_FURNACE.get().defaultBlockState());
+        h.assertTrue(h.getBlockEntity(old) instanceof dev.denfry.promptcritical.mod.foundry.CupolaBlockEntity, "the old cupola keeps its block entity");
+        // тип устройства — как у старой вагранки, иначе FoundrySubsystem не создаст CupolaUnit
+        h.succeedWhen(() -> h.assertTrue(h.getBlockEntity(p) instanceof dev.denfry.promptcritical.mod.foundry.CupolaRealBlockEntity b
+                && b.unit() != null, "the real cupola is bound to a CupolaUnit"));
+    }
+
+    /**
      * Стальной копёр реального масштаба: колонна ствола 3×3 пуста по всей высоте (там ходит клеть), подъёмная машина
      * видит его собранным, клеть на верхней посадке — на три ряда ниже контроллера, как у старого копра.
      */
@@ -343,7 +380,7 @@ public final class RealScaleGameTests {
     @GameTest(template = "gametest/empty_12x12x12", timeoutTicks = 20)
     public static void pipesConnectOnlyAtPorts(GameTestHelper h) {
         for (String id : new String[] {"vver_reactor", "vver_steam_generator", "vver_coolant_pump", "vver_pressurizer", "bwr240_reactor",
-                "candu6_reactor", "bn600_reactor", "am1_reactor", "lancashire_boiler", "mill_engine"}) {
+                "candu6_reactor", "bn600_reactor", "am1_reactor", "lancashire_boiler", "mill_engine", "cupola_furnace_real"}) {
             h.assertTrue(!dev.denfry.promptcritical.mod.multiblock.WholePorts.of(id).isEmpty(), id + " declares its ports");
             for (Direction f : Direction.Plane.HORIZONTAL)
                 for (var port : dev.denfry.promptcritical.mod.multiblock.WholePorts.of(id)) {

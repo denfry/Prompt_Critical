@@ -69,6 +69,11 @@ public final class FoundryRecipes extends RecipeProvider {
                 .pattern("IRI").pattern("IRI").pattern("IFI").define('I', AllItems.IRON_SHEET.get())
                 .define('R', PcItems.REFRACTORY_BRICK.get()).define('F', Items.BLAST_FURNACE)
                 .unlockedBy("has_refractory_brick", has(PcItems.REFRACTORY_BRICK.get())).save(out, id("cupola_furnace"));
+        // чертёж вагранки реального масштаба: вагранка строится на стройплощадке по массе прототипа (SitePlans)
+        ShapedRecipeBuilder.shaped(RecipeCategory.MISC, dev.denfry.promptcritical.mod.site.SiteRegistry.CUPOLA_FURNACE_REAL_DRAWING.get())
+                .pattern("PPP").pattern("IRI").pattern("SFS").define('P', Items.PAPER).define('I', AllItems.IRON_SHEET.get())
+                .define('R', PcItems.REFRACTORY_BRICK.get()).define('S', AllBlocks.SHAFT.get()).define('F', Items.BLAST_FURNACE)
+                .unlockedBy("has_refractory_brick", has(PcItems.REFRACTORY_BRICK.get())).save(out, id("cupola_furnace_real_drawing"));
         ShapedRecipeBuilder.shaped(RecipeCategory.MISC, PcBlocks.CRUCIBLE_FURNACE.get())
                 .pattern("RCR").pattern("BFB").define('R', PcItems.REFRACTORY_BRICK.get()).define('C', Items.CAULDRON)
                 .define('B', Items.BRICKS).define('F', Items.FURNACE)

@@ -19,6 +19,8 @@ public final class FoundryBlockEntities {
             type("coal_jig", CoalJigBlockEntity::new, PcBlocks.COAL_JIG);
     public static final DeferredHolder<BlockEntityType<?>, BlockEntityType<CupolaBlockEntity>> CUPOLA =
             type("cupola_furnace", CupolaBlockEntity::new, PcBlocks.CUPOLA_FURNACE);
+    public static final DeferredHolder<BlockEntityType<?>, BlockEntityType<CupolaRealBlockEntity>> CUPOLA_REAL =
+            type("cupola_furnace_real", CupolaRealBlockEntity::new, PcBlocks.CUPOLA_FURNACE_REAL);
     public static final DeferredHolder<BlockEntityType<?>, BlockEntityType<CrucibleBlockEntity>> CRUCIBLE =
             type("crucible_furnace", CrucibleBlockEntity::new, PcBlocks.CRUCIBLE_FURNACE);
     public static final DeferredHolder<BlockEntityType<?>, BlockEntityType<SandMoldBlockEntity>> SAND_MOLD =

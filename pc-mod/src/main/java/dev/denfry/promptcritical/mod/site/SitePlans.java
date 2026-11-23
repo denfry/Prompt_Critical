@@ -138,7 +138,13 @@ public final class SitePlans {
             "guibal_fan", plan("guibal_fan", PcBlocks.GUIBAL_FAN, 29,
                     st("fan_house", 240, n(CONCRETE, 6), n(BRICKS, 40)),
                     st("rotor", 300, n(INGOT, 80), n(PLATE, 60)),
-                    st("fan_engine", 300, n(INGOT, 140), n(PIPE, 20), n(BRICKS, 30))));
+                    st("fan_engine", 300, n(INGOT, 140), n(PIPE, 20), n(BRICKS, 30))),
+            // вагранка Кирка 24″: обечайка, стойки и подовая плита ≈ 3 т, шамотная футеровка ≈ 4 т (оценки, cupola-dimensions.md)
+            "cupola_furnace_real", plan("cupola_furnace_real", PcBlocks.CUPOLA_FURNACE_REAL, 3,
+                    st("foundation", 80, n(CONCRETE, 2)),
+                    st("shell", 200, n(PLATE, 12), n(INGOT, 8)),
+                    st("lining", 160, n(BRICKS, 2)),
+                    st("blower_platform", 160, n(PLATE, 6), n(PIPE, 2), n(INGOT, 2))));
 
     private SitePlans() {}
 
