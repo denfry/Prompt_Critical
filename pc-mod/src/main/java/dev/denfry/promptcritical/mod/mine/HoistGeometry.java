@@ -184,7 +184,8 @@ public final class HoistGeometry {
         BlockState s = level.getBlockState(p);
         if (s.canBeReplaced()) return true;
         if (s.getBlock() instanceof MineCageBlock) return true;
-        if (s.getBlock() instanceof MultiblockPartBlock) return level.getBlockState(MultiblockPartBlock.anchor(s, p)).getBlock() instanceof MineCageBlock;
+        if (s.getBlock() instanceof dev.denfry.promptcritical.mod.multiblock.FootprintCell)
+            return level.getBlockState(MultiblockPartBlock.anchor(s, p)).getBlock() instanceof MineCageBlock;
         return false;
     }
 

@@ -62,6 +62,7 @@ public final class PcLanguageProvider extends LanguageProvider {
         b("mine_hoist", "Mine Hoist", "Шахтная подъёмная машина");
         b("headframe", "Headframe", "Копёр");
         b("mine_cage", "Mine Cage", "Шахтная клеть");
+        b("cage_track", "Cage Track", "Путь клети");
         b("mine_drainage_pump", "Mine Drainage Pump", "Насос главного водоотлива");
         b("coal_jig", "Coal Jig", "Отсадочная машина");
         b("cupola_furnace", "Cupola Furnace", "Вагранка");

@@ -190,7 +190,7 @@ public class PcBlock extends Block {
                     : partState(state, c);
             BlockState current = level.getBlockState(c.pos());
             // Игрока проверил getStateForPlacement; /setblock и шаблоны чужие блоки не затирают.
-            if (current != target && (current.canBeReplaced() || current.getBlock() instanceof MultiblockPartBlock))
+            if (current != target && (current.canBeReplaced() || current.getBlock() instanceof dev.denfry.promptcritical.mod.multiblock.FootprintCell))
                 level.setBlock(c.pos(), target, Block.UPDATE_ALL);
         }
     }
@@ -268,7 +268,7 @@ public class PcBlock extends Block {
         for (Footprint.Cell c : spec.footprint.cells(controller, facing(state))) {
             if (c.pos().equals(pos)) continue;
             BlockState s = level.getBlockState(c.pos());
-            if (s.is(this) || s.getBlock() instanceof MultiblockPartBlock) level.removeBlock(c.pos(), false);
+            if (s.is(this) || s.getBlock() instanceof dev.denfry.promptcritical.mod.multiblock.FootprintCell) level.removeBlock(c.pos(), false);
         }
     }
 

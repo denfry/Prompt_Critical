@@ -25,7 +25,8 @@ import net.minecraft.world.phys.shapes.VoxelShape;
  * закрывает дверь. В стволе клеть ездит контрапцией {@link CageContraption}.
  */
 public final class MineCageBlock extends PcBlock {
-    private static final double WALL = 1, SLAB = 2;
+    /** Пол — 1 px, вровень с путём и рельсами посадки; крыша — 2 px. */
+    private static final double WALL = 1, SLAB = 2, FLOOR = 1, CART_CLEAR = 13;
     /** Формы по [facing][open][клетка модели (x, y+1, z)]. */
     private static final VoxelShape[][][] SHAPES = new VoxelShape[4][2][12];
 
@@ -59,6 +60,18 @@ public final class MineCageBlock extends PcBlock {
         return isController(state) ? shape(state, BlockPos.ZERO) : Shapes.block();
     }
 
+    /**
+     * Клетки пола в столбце модели x = 0 — встроенный путь ({@link CageTrackBlock}) вдоль оси клети: вагонетка с рельсов
+     * посадки въезжает в дверь, остальные клетки — невидимые части.
+     */
+    @Override
+    protected BlockState partState(BlockState controller, Footprint.Cell cell) {
+        Direction f = facing(controller);
+        BlockPos m = cell.offsetFromAnchor().rotate(inverse(Footprint.rotation(f)));
+        if (m.getY() == -1 && m.getX() == 0) return dev.denfry.promptcritical.mod.registry.PcBlocks.CAGE_TRACK.get().forCell(cell.offsetFromAnchor(), f);
+        return super.partState(controller, cell);
+    }
+
     @Override
     public VoxelShape partShape(BlockState anchor, BlockGetter level, BlockPos anchorPos, BlockPos offsetFromAnchor) {
         return shape(anchor, offsetFromAnchor);
@@ -77,9 +90,11 @@ public final class MineCageBlock extends PcBlock {
     /** Клетка модели (фасад на север): пол внизу, крыша вверху, стены по внешним граням, дверь — северная. */
     private static VoxelShape build(BlockPos m, boolean open, Rotation rot) {
         VoxelShape s = Shapes.empty();
-        if (m.getY() == -1) s = Shapes.or(s, box(0, 0, 0, 16, SLAB, 16, rot));
+        if (m.getY() == -1) s = Shapes.or(s, box(0, 0, 0, 16, FLOOR, 16, rot));
         if (m.getY() == 1) s = Shapes.or(s, box(0, 16 - SLAB, 0, 16, 16, 16, rot));
-        if (m.getX() == 0) s = Shapes.or(s, box(0, 0, 0, WALL, 16, 16, rot));
+        // над встроенным путём (пол, x = 0) стенка начинается выше вагонетки (0,8 м): вагонетка шириной 0,98 блока
+        // проходит, а человек выше пояса упирается в стенку
+        if (m.getX() == 0) s = Shapes.or(s, box(0, m.getY() == -1 ? CART_CLEAR : 0, 0, WALL, 16, 16, rot));
         if (m.getX() == 1) s = Shapes.or(s, box(16 - WALL, 0, 0, 16, 16, 16, rot));
         if (m.getZ() == 1) s = Shapes.or(s, box(0, 0, 16 - WALL, 16, 16, 16, rot));
         if (m.getZ() == 0 && !open) s = Shapes.or(s, box(0, 0, 0, 16, 16, WALL, rot));

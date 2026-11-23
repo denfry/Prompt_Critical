@@ -72,6 +72,10 @@ public final class PcBlockStateProvider extends BlockStateProvider {
         ModelFile part = models().getBuilder("multiblock_part").texture("particle", modLoc("block/common/steel_dark"));
         simpleBlock(PcBlocks.MULTIBLOCK_PART.get(), part);
         simpleBlock(PcBlocks.KINETIC_PORT.get(), part);
+        // встроенный путь клети: плоский рельс вдоль оси клети
+        getVariantBuilder(PcBlocks.CAGE_TRACK.get()).forAllStates(s -> ConfiguredModel.builder().modelFile(existing("cage_track"))
+                .rotationY(s.getValue(dev.denfry.promptcritical.mod.mine.CageTrackBlock.SHAPE) == net.minecraft.world.level.block.state.properties.RailShape.EAST_WEST ? 90 : 0)
+                .build());
         // жидкость рисует рендер жидкостей; модели нужна только частица
         simpleBlock(PcBlocks.MINE_WATER.get(), models().getBuilder("mine_water").texture("particle", modLoc("block/fluid/mine_water_still")));
         simpleBlock(PcBlocks.HEAVY_WATER.get(), models().getBuilder("heavy_water").texture("particle", modLoc("block/fluid/heavy_water_still")));

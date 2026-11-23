@@ -434,6 +434,10 @@ public final class PcBlocks {
     public static final DeferredBlock<PcDeviceBlock> MINE_HOIST = device("mine_hoist", machine(),
             Spec.facing(PcProperties.RUNNING).footprint(Footprint.of(Segment.box(-1, 1, -1, 0, -1, 1))), MineHoistBlock::create);
     public static final DeferredBlock<HeadframeBlock> HEADFRAME = withItem(BLOCKS.registerBlock("headframe", HeadframeBlock::create, machine()));
+    /** Встроенный путь в полу клети: клетка конструкции клети, своего предмета нет. */
+    public static final DeferredBlock<dev.denfry.promptcritical.mod.mine.CageTrackBlock> CAGE_TRACK = BLOCKS.registerBlock("cage_track",
+            dev.denfry.promptcritical.mod.mine.CageTrackBlock::new, Properties.of().mapColor(MapColor.METAL).strength(3.5f, 6.0f)
+                    .noOcclusion().noLootTable().pushReaction(PushReaction.BLOCK).sound(SoundType.METAL));
     public static final DeferredBlock<MineCageBlock> MINE_CAGE = withItem(BLOCKS.registerBlock("mine_cage",
             p -> MineCageBlock.create(p, Spec.facing(BlockStateProperties.OPEN).footprint(Footprint.of(Segment.box(0, 1, -1, 1, 0, 1)))),
             machine()));

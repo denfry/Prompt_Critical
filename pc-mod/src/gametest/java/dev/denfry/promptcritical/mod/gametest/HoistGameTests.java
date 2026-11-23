@@ -121,6 +121,100 @@ public final class HoistGameTests {
                 .thenSucceed();
     }
 
+    /** Передняя (у двери) клетка встроенного пути клети на высоте {@code y} (относительной); null — пути нет. */
+    @org.jetbrains.annotations.Nullable
+    private static BlockPos frontTrack(GameTestHelper h, int y, Direction door) {
+        for (int x = 3; x <= 7; x++)
+            for (int z = 3; z <= 7; z++) {
+                BlockPos p = new BlockPos(x, y, z);
+                if (h.getBlockState(p).is(PcBlocks.CAGE_TRACK.get()) && !h.getBlockState(p.relative(door)).is(PcBlocks.CAGE_TRACK.get())) return p;
+            }
+        return null;
+    }
+
+    /**
+     * Клеть возит вагонетки (отзыв игрока rc.1): вагонетка с сундуком с рельса посадки въезжает в открытую клеть и
+     * встаёт на стопорах, клеть с ней едет на горизонт (людей с грузом не возят — это смешанный спуск), вагонетка с
+     * грузом стоит на пути клети, а после открытия двери запитанный рельс посадки выкатывает её в штрек.
+     */
+    @GameTest(template = TALL, timeoutTicks = 1600)
+    public static void cageCarriesACartBetweenLandings(GameTestHelper h) {
+        shaftSite(h);
+        for (int x = 7; x <= 9; x++)
+            for (int z = 4; z <= 6; z++) {
+                h.setBlock(new BlockPos(x, 8, z), Blocks.AIR.defaultBlockState());
+                h.setBlock(new BlockPos(x, 9, z), Blocks.AIR.defaultBlockState());
+            }
+        // клеть 2×2 с дверью на восток стоит в x 4…5: ствол у двери (x = 6) — камень, кроме проёма штрека на y 8…9
+        for (int y = 2; y <= 14; y++)
+            for (int z = 4; z <= 6; z++)
+                if (y != 8 && y != 9) h.setBlock(new BlockPos(6, y, z), Blocks.STONE.defaultBlockState());
+        h.setBlock(new BlockPos(5, 19, 5), facing(PcBlocks.HEADFRAME.get().defaultBlockState(), Direction.NORTH));
+        h.setBlock(new BlockPos(5, 22, 5), facing(PcBlocks.HEADFRAME.get().defaultBlockState(), Direction.NORTH));
+        BlockPos cage = new BlockPos(5, 16, 5);
+        h.setBlock(cage, facing(PcBlocks.MINE_CAGE.get().defaultBlockState(), Direction.EAST).setValue(BlockStateProperties.OPEN, true));
+        BlockPos hoist = new BlockPos(5, 16, 9);
+        h.setBlock(hoist, facing(PcBlocks.MINE_HOIST.get().defaultBlockState(), Direction.NORTH));
+        motor(h, new BlockPos(7, 16, 9), Direction.WEST, 64);
+        Player player = h.makeMockPlayer(GameType.CREATIVE);
+        net.minecraft.world.entity.vehicle.MinecartChest[] cart = new net.minecraft.world.entity.vehicle.MinecartChest[1];
+        BlockPos[] top = new BlockPos[1], low = new BlockPos[1];
+        h.startSequence()
+                .thenWaitUntil(() -> {
+                    MineHoistBlockEntity be = h.getBlockEntity(hoist);
+                    h.assertTrue(be.shaft() != null, "shaft found under the headframe");
+                    h.assertValueEqual(java.util.Arrays.toString(be.landingDepths()), "[0, 7, 13]", "landings");
+                })
+                .thenWaitUntil(() -> h.assertTrue(OpsGameTests.defects(h, h.<MineHoistBlockEntity>getBlockEntity(hoist)),
+                        "hoist without installation defects"))
+                .thenExecute(() -> {
+                    top[0] = frontTrack(h, 15, Direction.EAST);
+                    h.assertTrue(top[0] != null, "the cage floor has a built-in track");
+                    h.setBlock(top[0].east(), Blocks.RAIL.defaultBlockState());
+                    h.setBlock(top[0].east(2), Blocks.RAIL.defaultBlockState());
+                    cart[0] = h.spawn(net.minecraft.world.entity.EntityType.CHEST_MINECART, new net.minecraft.world.phys.Vec3(
+                            top[0].east(2).getX() + 0.5, top[0].getY() + 0.1, top[0].getZ() + 0.5));
+                    cart[0].setItem(0, new ItemStack(PcItems.STEEL_INGOT.get(), 7));
+                    cart[0].setDeltaMovement(-0.4, 0, 0);
+                })
+                .thenWaitUntil(() -> {
+                    double x = cart[0].getX() - h.absolutePos(top[0]).getX();
+                    h.assertTrue(x < 1.0 && x > -1.0 && cart[0].getDeltaMovement().horizontalDistance() < 1e-3,
+                            "the cart rolled in and stopped on the cage stops, x offset " + x);
+                })
+                .thenExecute(() -> {
+                    BlockPos c = h.absolutePos(cage);
+                    h.getLevel().setBlock(c, h.getLevel().getBlockState(c).setValue(BlockStateProperties.OPEN, false), 3);
+                    MineHoistBlockEntity be = h.getBlockEntity(hoist);
+                    be.installRope(player, new ItemStack(PcItems.WIRE_ROPE.get(), 16));
+                    MineHoistBlockEntity.CallResult r = be.call(1, null);
+                    h.assertValueEqual(r, MineHoistBlockEntity.CallResult.STARTED, "call from the landing");
+                })
+                .thenWaitUntil(() -> {
+                    MineHoistBlockEntity be = h.getBlockEntity(hoist);
+                    h.assertTrue(h.getBlockState(new BlockPos(5, 9, 5)).is(PcBlocks.MINE_CAGE.get()), "cage landed at the level: moving "
+                            + be.isMoving() + ", depth " + be.cageDepthM() + ", landing " + be.landingAtCage() + ", speed " + be.speedMs()
+                            + ", landings " + java.util.Arrays.toString(be.landingDepths()));
+                })
+                .thenIdle(10)
+                .thenExecute(() -> {
+                    low[0] = frontTrack(h, 8, Direction.EAST);
+                    h.assertTrue(low[0] != null, "the track landed with the cage");
+                    double cy = cart[0].getY() - h.absolutePos(low[0]).getY();
+                    h.assertTrue(cart[0].isAlive() && cy > -0.1 && cy < 0.6, "the cart rode down on the cage floor, y offset " + cy);
+                    h.assertTrue(cart[0].getItem(0).getCount() == 7, "the chest cart keeps its load");
+                    BlockPos c = h.absolutePos(new BlockPos(5, 9, 5));
+                    h.getLevel().setBlock(c, h.getLevel().getBlockState(c).setValue(BlockStateProperties.OPEN, true), 3);
+                    h.setBlock(low[0].east().below(), Blocks.REDSTONE_BLOCK.defaultBlockState());
+                    h.setBlock(low[0].east(), Blocks.POWERED_RAIL.defaultBlockState());
+                    h.setBlock(low[0].east(2), Blocks.RAIL.defaultBlockState());
+                    h.setBlock(low[0].east(3), Blocks.RAIL.defaultBlockState());
+                })
+                .thenWaitUntil(() -> h.assertTrue(cart[0].getX() > h.absolutePos(low[0]).getX() + 1.5,
+                        "the powered landing rail rolled the cart out into the drift"))
+                .thenSucceed();
+    }
+
     /** Без каната подъём не пускается; кнопка посадки ничего не трогает. */
     @GameTest(template = TALL, timeoutTicks = 300)
     public static void hoistRefusesWithoutRope(GameTestHelper h) {
