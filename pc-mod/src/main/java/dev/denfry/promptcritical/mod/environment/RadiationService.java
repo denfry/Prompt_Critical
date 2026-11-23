@@ -151,10 +151,9 @@ public final class RadiationService {
     /** Мощность дозы в точке от всех источников, Зв/ч (без фона). */
     public static double rateSvH(ServerLevel level, Vec3 at) {
         Map<Vec3, Held> m = SOURCES.get(level);
-        if (m == null) return 0;
         double sum = 0;
         long now = level.getGameTime();
-        for (Map.Entry<Vec3, Held> e : m.entrySet()) {
+        for (Map.Entry<Vec3, Held> e : m == null ? Map.<Vec3, Held>of().entrySet() : m.entrySet()) {
             if (e.getValue().until < now) continue; // просрочен: не зависим от того, успел ли тик уровня его вычистить
             Vec3 src = e.getKey();
             double r = src.distanceTo(at);
@@ -170,6 +169,14 @@ public final class RadiationService {
                 if (r > RANGE_M) continue;
                 sum += DoseRate.totalSvH(it.source, r, ShieldBlocks.between(level, it.at, at));
             }
+        // предметы в контейнерах (R55): свой экран контейнера стоит у источника, дальше слои блоков на прямой
+        for (ContainerActivityScan.ContainerSource c : ContainerActivityScan.sources(level)) {
+            double r = c.at().distanceTo(at);
+            if (r > RANGE_M) continue;
+            List<DoseRate.Layer> layers = new java.util.ArrayList<>(c.extraShield());
+            layers.addAll(ShieldBlocks.between(level, c.at(), at));
+            sum += DoseRate.totalSvH(c.source(), r, layers);
+        }
         return sum;
     }
 
@@ -307,6 +314,7 @@ public final class RadiationService {
             rel.values().forEach(l -> l.removeIf(r -> r.until < now));
             rel.values().removeIf(java.util.List::isEmpty);
         }
+        ContainerActivityScan.tick(level);
         if (now % 20 != 0) return;
         gatherItems(level, now);
         for (ServerPlayer p : level.players()) {
