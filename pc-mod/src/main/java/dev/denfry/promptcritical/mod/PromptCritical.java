@@ -5,6 +5,7 @@ import dev.denfry.promptcritical.api.ApiHolder;
 import dev.denfry.promptcritical.api.PromptCriticalApi;
 import dev.denfry.promptcritical.mod.binding.SimBindings;
 import dev.denfry.promptcritical.mod.foundry.FoundryBinding;
+import dev.denfry.promptcritical.mod.manufacturing.ManufacturingBinding;
 import dev.denfry.promptcritical.mod.binding.SimConfigs;
 import dev.denfry.promptcritical.mod.registry.PcDataComponents;
 import dev.denfry.promptcritical.mod.registry.PcFeatures;
@@ -50,6 +51,7 @@ public final class PromptCritical {
         dev.denfry.promptcritical.mod.sound.PcSfx.SOUNDS.register(modBus);
         SimBindings.register(modBus);
         FoundryBinding.register(modBus);
+        ManufacturingBinding.register(modBus);
         dev.denfry.promptcritical.mod.ironworks.IronworksBinding.register(modBus);
         dev.denfry.promptcritical.mod.reactor.ReactorBinding.register(modBus);
         dev.denfry.promptcritical.mod.powerhouse.PowerhouseBinding.register(modBus);

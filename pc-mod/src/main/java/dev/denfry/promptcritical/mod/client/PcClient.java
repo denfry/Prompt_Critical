@@ -4,6 +4,7 @@ import dev.denfry.promptcritical.mod.PromptCritical;
 import dev.denfry.promptcritical.mod.content.ContentRegistries;
 import dev.denfry.promptcritical.mod.content.client.WallClockRenderer;
 import dev.denfry.promptcritical.mod.foundry.client.FoundryClient;
+import dev.denfry.promptcritical.mod.manufacturing.client.ManufacturingClient;
 import dev.denfry.promptcritical.mod.panel.PanelLayouts;
 import dev.denfry.promptcritical.mod.panel.PanelMenu;
 import dev.denfry.promptcritical.mod.panel.client.PanelScreen;
@@ -28,6 +29,7 @@ public final class PcClient {
         modBus.addListener(PcClient::registerClientExtensions);
         modBus.addListener(PcClient::clientSetup);
         FoundryClient.register(modBus);
+        ManufacturingClient.register(modBus);
         dev.denfry.promptcritical.mod.ironworks.client.IronworksClient.register(modBus);
         dev.denfry.promptcritical.mod.powerhouse.client.PowerhouseClient.register(modBus);
         dev.denfry.promptcritical.mod.steelworks.client.SteelworksClient.register(modBus);

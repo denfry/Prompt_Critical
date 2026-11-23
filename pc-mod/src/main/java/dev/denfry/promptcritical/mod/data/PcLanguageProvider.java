@@ -2,6 +2,7 @@ package dev.denfry.promptcritical.mod.data;
 
 import dev.denfry.promptcritical.mod.PromptCritical;
 import dev.denfry.promptcritical.mod.foundry.FoundryText;
+import dev.denfry.promptcritical.mod.manufacturing.ManufacturingText;
 import java.util.LinkedHashMap;
 import java.util.Map;
 import net.minecraft.data.PackOutput;
@@ -823,6 +824,7 @@ public final class PcLanguageProvider extends LanguageProvider {
                 "%1$s задохнулся рудничным газом, спасаясь от %2$s"});
         MISC.put("commands.promptcritical.profile.reset", new String[] {"Simulation profile reset", "Профиль симуляции сброшен"});
         MISC.putAll(FoundryText.LANG);
+        MISC.putAll(ManufacturingText.LANG);
         MISC.putAll(dev.denfry.promptcritical.mod.paperwork.PaperworkText.LANG);
         MISC.putAll(dev.denfry.promptcritical.mod.ironworks.IronworksText.LANG);
         MISC.putAll(dev.denfry.promptcritical.mod.steelworks.SteelworksText.LANG);
