@@ -110,7 +110,7 @@ public final class SevereAccidentGameTests {
     @GameTest(template = LARGE, timeoutTicks = 900)
     public static void rodEjectionAtHotZeroPowerIsAMildBurst(GameTestHelper h) {
         hotZeroPower(h)
-                .thenExecute(() -> pwr(h).onPanelButton(FakePlayerFactory.getMinecraft(h.getLevel()), PwrPanels.B_RIA))
+                .thenExecute(() -> pwr(h).onPanelButton(TestPlayers.of(h), PwrPanels.B_RIA))
                 .thenWaitUntil(() -> {
                     PwrReactorBlockEntity r = pwr(h);
                     ReactivityInitiatedAccident.Pulse p = r.reactor().lastPulse();
@@ -139,7 +139,7 @@ public final class SevereAccidentGameTests {
     public static void tubeRuptureAlarmsOnNitrogenSixteenAndIsolates(GameTestHelper h) {
         place(h, SG, PcBlocks.STEAM_GENERATOR.get());
         critical(h, 800, 588, 563, 0.3, 0.5)
-                .thenExecute(() -> pwr(h).onPanelButton(FakePlayerFactory.getMinecraft(h.getLevel()), PwrPanels.B_SGTR))
+                .thenExecute(() -> pwr(h).onPanelButton(TestPlayers.of(h), PwrPanels.B_SGTR))
                 .thenWaitUntil(() -> {
                     PwrReactorBlockEntity r = pwr(h);
                     h.assertTrue(r.tubeRuptureModel().ruptured(), "tube torn");
@@ -155,7 +155,7 @@ public final class SevereAccidentGameTests {
                     r.readPanel(v);
                     h.assertTrue((v[PwrPanels.SG_FLAGS] & 1 << PwrPanels.S_N16) != 0, "N-16 on the panel");
                     h.assertTrue(v[PwrPanels.SGTR_KGS10] > 100, "leak on the panel " + v[PwrPanels.SGTR_KGS10]);
-                    var player = FakePlayerFactory.getMinecraft(h.getLevel());
+                    var player = TestPlayers.of(h);
                     r.onPanelButton(player, PwrPanels.B_SG_ISOLATE);
                     r.onPanelButton(player, PwrPanels.B_PORV);
                 })
@@ -166,7 +166,7 @@ public final class SevereAccidentGameTests {
                     h.assertTrue(r.tubeRuptureModel().excessWaterKg() > 10, "leak fills the isolated generator "
                             + r.tubeRuptureModel().excessWaterKg());
                     h.assertTrue(r.reactor().porvOpen(), "PORV held open");
-                    r.onPanelButton(FakePlayerFactory.getMinecraft(h.getLevel()), PwrPanels.B_SGTR);
+                    r.onPanelButton(TestPlayers.of(h), PwrPanels.B_SGTR);
                 })
                 .thenWaitUntil(() -> h.assertTrue(pwr(h).reactor().tubeLeakKgS() == 0, "tube plugged"))
                 .thenSucceed();
@@ -197,7 +197,7 @@ public final class SevereAccidentGameTests {
                 .thenIdle(110) // the cavity scan runs every 5 s
                 .thenExecute(() -> {
                     h.assertTrue(pwr(h).accident().cavityFlooded() == cavityWater, "cavity scan: " + pwr(h).accident().cavityFlooded());
-                    var player = FakePlayerFactory.getMinecraft(h.getLevel());
+                    var player = TestPlayers.of(h);
                     pwr(h).onPanelButton(player, PwrPanels.B_LOCA);
                     pwr(h).onPanelButton(player, PwrPanels.B_LOCA);
                 });

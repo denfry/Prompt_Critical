@@ -40,7 +40,7 @@ public final class StuckValveGameTests {
         BlockPos sim = new BlockPos(3, 2, 3), console = new BlockPos(5, 2, 3);
         place(h, sim, PcBlocks.TRAINING_SIMULATOR.get());
         place(h, console, PcBlocks.SIMULATOR_CONSOLE.get());
-        var player = FakePlayerFactory.getMinecraft(h.getLevel());
+        var player = TestPlayers.of(h);
         h.startSequence()
                 .thenExecute(() -> {
                     TrainingSimulatorBlockEntity t = h.getBlockEntity(sim);

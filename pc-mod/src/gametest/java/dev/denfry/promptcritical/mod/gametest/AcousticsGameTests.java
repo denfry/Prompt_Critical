@@ -46,6 +46,8 @@ public final class AcousticsGameTests {
     private static void fanRig(GameTestHelper h) {
         h.setBlock(MOTOR, AllBlocks.CREATIVE_MOTOR.getDefaultState().setValue(BlockStateProperties.FACING, Direction.EAST));
         h.setBlock(FAN, AllBlocks.ENCASED_FAN.getDefaultState().setValue(BlockStateProperties.FACING, Direction.EAST));
+        // разброс монтажа — из постоянного сида: из сида мира и места он менялся с каждым случайным углом сетки испытаний
+        MachineAcoustics.install(h.getLevel(), h.absolutePos(FAN), 42);
         h.runAfterDelay(1, () -> ((CreativeMotorBlockEntity) h.getBlockEntity(MOTOR)).generatedSpeed.setValue(CREATE_RPM));
     }
 
@@ -172,7 +174,7 @@ public final class AcousticsGameTests {
 
     @GameTest(template = LARGE, timeoutTicks = 40)
     public static void noiseDoseAndEarMuffs(GameTestHelper h) {
-        FakePlayer p = FakePlayerFactory.getMinecraft(h.getLevel());
+        FakePlayer p = TestPlayers.of(h);
         p.setItemSlot(EquipmentSlot.HEAD, ItemStack.EMPTY);
         p.removeAllEffects();
         NoiseService.setDose(p, 0);

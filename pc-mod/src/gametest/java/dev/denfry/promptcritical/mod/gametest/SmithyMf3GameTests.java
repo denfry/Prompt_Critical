@@ -95,7 +95,7 @@ public final class SmithyMf3GameTests {
 
     @GameTest(template = SMALL)
     public static void hotPiecesBurnWithoutTongs(GameTestHelper h) {
-        var player = FakePlayerFactory.getMinecraft(h.getLevel());
+        var player = TestPlayers.of(h);
         player.getInventory().clearContent();
         long now = h.getLevel().getGameTime();
         player.getInventory().add(Smithy.stack(Workpiece.bar(iron(), Workpiece.Section.SQUARE, 0.03, 0.03, 0.1, 1200), now));

@@ -73,7 +73,7 @@ public final class ChannelReactorAccidentGameTests {
                     h.assertTrue(r.accident().accident().acPower(), "AC from the turning shafts");
                 })
                 .thenExecute(() -> ((PowerReactorBlockEntity) h.getBlockEntity(REACTOR))
-                        .onPanelButton(FakePlayerFactory.getMinecraft(h.getLevel()), NppPanels.B_LOCA))
+                        .onPanelButton(TestPlayers.of(h), NppPanels.B_LOCA))
                 .thenIdle(400)
                 .thenExecute(() -> {
                     PowerReactorBlockEntity r = h.getBlockEntity(REACTOR);
@@ -109,7 +109,7 @@ public final class ChannelReactorAccidentGameTests {
                 .thenExecute(() -> {
                     CanduReactorBlockEntity r = h.getBlockEntity(REACTOR);
                     density[0] = r.reactor().coolantDensity();
-                    r.onPanelButton(FakePlayerFactory.getMinecraft(h.getLevel()), CanduPanels.B_LOCA);
+                    r.onPanelButton(TestPlayers.of(h), CanduPanels.B_LOCA);
                 })
                 .thenIdle(400)
                 .thenExecute(() -> {

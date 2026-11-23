@@ -79,7 +79,7 @@ public final class WatchdogGameTests {
                 })
                 .thenExecute(() -> {
                     WatchdogRelayBlockEntity w = h.getBlockEntity(WD);
-                    w.onPanelButton(FakePlayerFactory.getMinecraft(h.getLevel()), 0);
+                    w.onPanelButton(TestPlayers.of(h), 0);
                     h.assertTrue(w.timer().state() == WatchdogTimer.State.DISARMED, "local reset button");
                     h.assertFalse(h.getBlockState(WD).getValue(BlockStateProperties.POWERED), "no output after reset");
                 })

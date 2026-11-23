@@ -104,7 +104,7 @@ public final class CompressorSurgeGameTests {
         h.setBlock(ws, PcBlocks.SIMULATION_WORKSTATION.get().defaultBlockState()
                 .setValue(BlockStateProperties.HORIZONTAL_FACING, Direction.NORTH));
         h.setBlock(plc, PcBlocks.PLC.get().defaultBlockState().setValue(BlockStateProperties.HORIZONTAL_FACING, Direction.NORTH));
-        var player = FakePlayerFactory.getMinecraft(h.getLevel());
+        var player = TestPlayers.of(h);
         String id = "compressor_startup_no_surge";
         h.startSequence()
                 .thenWaitUntil(() -> h.assertTrue(((PlcBlockEntity) h.getBlockEntity(plc)).unit() != null, "PLC in the topology"))

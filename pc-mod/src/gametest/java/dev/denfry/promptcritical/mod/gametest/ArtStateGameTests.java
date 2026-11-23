@@ -57,7 +57,7 @@ public final class ArtStateGameTests {
     public static void containmentHatchTogglesOpen(GameTestHelper h) {
         BlockPos p = new BlockPos(5, 2, 5);
         h.setBlock(p, PcBlocks.CONTAINMENT_HATCH.get().defaultBlockState());
-        var player = FakePlayerFactory.getMinecraft(h.getLevel());
+        var player = TestPlayers.of(h);
         h.useBlock(p, player);
         h.assertTrue(h.getBlockState(p).getValue(BlockStateProperties.OPEN), "opened");
         h.useBlock(p, player);

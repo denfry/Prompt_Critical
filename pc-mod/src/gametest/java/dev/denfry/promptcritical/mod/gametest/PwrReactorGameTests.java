@@ -71,7 +71,7 @@ public final class PwrReactorGameTests {
                     h.assertFalse(r.fuelSlots().isItemValid(PwrPanels.SLOT_FRESH, assembly(FuelDesign.PWR_17X17, 1)), "one design per vessel");
                 })
                 .thenExecute(() -> ((PwrReactorBlockEntity) h.getBlockEntity(REACTOR))
-                        .onPanelButton(FakePlayerFactory.getMinecraft(h.getLevel()), PwrPanels.B_UNLOAD))
+                        .onPanelButton(TestPlayers.of(h), PwrPanels.B_UNLOAD))
                 .thenWaitUntil(() -> {
                     PwrReactorBlockEntity r = h.getBlockEntity(REACTOR);
                     ItemStack spent = r.fuelSlots().getStackInSlot(PwrPanels.SLOT_SPENT);

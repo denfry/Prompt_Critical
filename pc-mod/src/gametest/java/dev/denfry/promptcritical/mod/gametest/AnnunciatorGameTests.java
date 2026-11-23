@@ -45,7 +45,7 @@ public final class AnnunciatorGameTests {
         for (PanelLayout.Element e : host.panelLayout().elements)
             if (e instanceof PanelLayout.Button b && PanelText.shortKey(b.label()).equals(button)) id = b.id();
         h.assertTrue(id >= 0, "button " + button);
-        for (int i = 0; i < times; i++) host.onPanelButton(FakePlayerFactory.getMinecraft(h.getLevel()), id);
+        for (int i = 0; i < times; i++) host.onPanelButton(TestPlayers.of(h), id);
     }
 
     private static Alarm outlet(GameTestHelper h) {
@@ -97,10 +97,10 @@ public final class AnnunciatorGameTests {
                     }
                     h.assertTrue(shown, "the alarm has its own window");
                     h.assertTrue(ch[AnnunciatorPanels.UNACKED] >= 1, "status counts the unacknowledged alarm");
-                    a.onPanelButton(FakePlayerFactory.getMinecraft(h.getLevel()), AnnunciatorPanels.B_SILENCE);
+                    a.onPanelButton(TestPlayers.of(h), AnnunciatorPanels.B_SILENCE);
                     h.assertTrue(a.engine().hornPriority() == 0, "silence stops the horn");
                     h.assertTrue(a.engine().get(id[0]).state() == AlarmState.UNACK, "silence does not acknowledge");
-                    a.onPanelButton(FakePlayerFactory.getMinecraft(h.getLevel()), AnnunciatorPanels.B_ACK);
+                    a.onPanelButton(TestPlayers.of(h), AnnunciatorPanels.B_ACK);
                     h.assertTrue(a.engine().get(id[0]).state() == AlarmState.ACKED, "ACK turns the window steady");
                 })
                 .thenExecute(() -> press(h, "prod.t_down", 2))

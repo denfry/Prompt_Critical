@@ -50,7 +50,7 @@ public final class WorldStructureGameTests {
     @GameTest(template = LARGE, timeoutTicks = 40)
     public static void lighthouseHidesAnOrphanSource(GameTestHelper h) {
         h.assertTrue(WorldStructureFeature.buildAt(h.getLevel(), Kind.RTG_LIGHTHOUSE, h.absolutePos(CENTER), RandomSource.create(3)), "built");
-        var player = FakePlayerFactory.getMinecraft(h.getLevel());
+        var player = TestPlayers.of(h);
         ChestBlockEntity chest = null;
         BlockPos c = h.absolutePos(CENTER);
         for (BlockPos p : BlockPos.betweenClosed(c.offset(-4, -2, -4), c.offset(4, 4, 4)))
@@ -68,7 +68,7 @@ public final class WorldStructureGameTests {
 
     @GameTest(template = LARGE, timeoutTicks = 20)
     public static void assayStationTellsDepletedUranium(GameTestHelper h) {
-        var player = FakePlayerFactory.getMinecraft(h.getLevel());
+        var player = TestPlayers.of(h);
         ItemStack natural = new ItemStack(PcItems.RAW_URANINITE.get()), oklo = natural.copy();
         oklo.set(PcDataComponents.U235_PPM.get(), 6000);
         h.assertFalse(WorldFinds.assay(player, natural), "natural ore is natural");
