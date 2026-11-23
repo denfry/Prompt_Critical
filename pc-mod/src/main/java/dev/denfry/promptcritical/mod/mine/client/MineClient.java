@@ -9,6 +9,7 @@ import dev.denfry.promptcritical.mod.foundry.client.FoundryMachineRenderer.Motio
 import dev.denfry.promptcritical.mod.mine.MainMineFanBlock;
 import dev.denfry.promptcritical.mod.mine.MainMineFanBlockEntity;
 import dev.denfry.promptcritical.mod.mine.MineBlockEntities;
+import dev.denfry.promptcritical.mod.mine.MineDrainagePumpBlockEntity;
 import dev.denfry.promptcritical.mod.mine.LongwallShearerBlockEntity;
 import dev.denfry.promptcritical.mod.mine.MineHoisting;
 import dev.denfry.promptcritical.mod.mine.PoweredRoofSupportBlockEntity;
@@ -51,6 +52,8 @@ public final class MineClient {
         dev.denfry.promptcritical.mod.client.whole.WholeModels.register("winding_engine_drum");
         dev.denfry.promptcritical.mod.client.whole.WholeModels.register("guibal_fan");
         GuibalFanRenderer.init();
+        dev.denfry.promptcritical.mod.client.whole.WholeModels.register("mine_drainage_pump_geared");
+        GearedPumpRenderer.init();
     }
     /** Шнеки в контрапции вращаются, град/тик (≈ 40 об/мин). */
     private static final float DRUM_DEG_PER_TICK = 12f;
@@ -71,8 +74,32 @@ public final class MineClient {
         event.registerBlockEntityRenderer(MineBlockEntities.MAIN_MINE_FAN.get(), c -> new FanRenderer());
         event.registerBlockEntityRenderer(MineBlockEntities.DEGASIFICATION_PUMP.get(),
                 c -> new FoundryMachineRenderer<>(ROTOR, Motion.SPIN_Z, 8, 8, 1));
-        event.registerBlockEntityRenderer(MineBlockEntities.MINE_DRAINAGE_PUMP.get(),
-                c -> new FoundryMachineRenderer<>(PUMP_SHAFT, Motion.SPIN_X, 8, 8, 1));
+        // насос: ЦНС — вал на своём рендере, трёхплунжерный реального масштаба — цельная модель с механизмом
+        event.registerBlockEntityRenderer(MineBlockEntities.MINE_DRAINAGE_PUMP.get(), c -> new BlockEntityRenderer<MineDrainagePumpBlockEntity>() {
+            private final FoundryMachineRenderer<MineDrainagePumpBlockEntity> old = new FoundryMachineRenderer<>(PUMP_SHAFT, Motion.SPIN_X, 8, 8, 1);
+            private final GearedPumpRenderer geared = new GearedPumpRenderer();
+
+            @Override
+            public void render(MineDrainagePumpBlockEntity be, float pt, PoseStack ms, MultiBufferSource buf, int light, int overlay) {
+                if (be.real()) geared.render(be, pt, ms, buf, light, overlay);
+                else old.render(be, pt, ms, buf, light, overlay);
+            }
+
+            @Override
+            public boolean shouldRenderOffScreen(MineDrainagePumpBlockEntity be) {
+                return be.real() || old.shouldRenderOffScreen(be);
+            }
+
+            @Override
+            public int getViewDistance() {
+                return dev.denfry.promptcritical.mod.client.whole.WholeModelRenderer.VIEW_DISTANCE;
+            }
+
+            @Override
+            public net.minecraft.world.phys.AABB getRenderBoundingBox(MineDrainagePumpBlockEntity be) {
+                return be.real() ? geared.getRenderBoundingBox(be) : old.getRenderBoundingBox(be);
+            }
+        });
         event.registerBlockEntityRenderer(MineBlockEntities.MINE_HOIST.get(), c -> new HoistRenderer());
         event.registerBlockEntityRenderer(MineBlockEntities.HEADFRAME_STEEL.get(),
                 c -> new dev.denfry.promptcritical.mod.client.whole.WholeModelRenderer<>());

@@ -63,7 +63,7 @@ import org.jetbrains.annotations.Nullable;
  * или сбавить обороты, колесо — заменить. Найденная и устранённая кавитация до отказа — достижение «Тихий насос» (11).
  */
 public final class MineDrainagePumpBlockEntity extends KineticMachineBlockEntity<ShaftInput> implements PanelHost, OpsMachine,
-        CavitationSource {
+        CavitationSource, dev.denfry.promptcritical.mod.client.whole.WholeModelHost, dev.denfry.promptcritical.mod.boiler.ShaftConsumer {
     public static final double NOMINAL_RPM = 64;
     public static final MineSump.PumpSpec PUMP = new MineSump.PumpSpec(100.0 / 3600, 150, 0.7, NOMINAL_RPM);
     public static final double RATED_W = MineSump.pumpPowerW(PUMP.ratedFlowM3s(), PUMP.ratedHeadM(), PUMP.efficiency());
@@ -84,8 +84,71 @@ public final class MineDrainagePumpBlockEntity extends KineticMachineBlockEntity
     private double headM, pumpedM3s, pendingMb;
     private boolean acidic, seized, dry;
 
+    /** Вал насоса реального масштаба: обороты и исправность сети приходят с клетки-порта. */
+    private double portRpm;
+    private boolean portHealthy = true;
+
     public MineDrainagePumpBlockEntity(BlockPos pos, BlockState state) {
         super(MineBlockEntities.MINE_DRAINAGE_PUMP.get(), pos, state);
+    }
+
+    // --- насос реального масштаба (mine_drainage_pump_geared): цельная модель, вал через порт ---
+
+    @Override
+    @Nullable
+    public String wholeModelId() {
+        return dev.denfry.promptcritical.mod.client.whole.WholeModelHost.idOf(getBlockState());
+    }
+
+    @Override
+    public Direction wholeModelFacing() {
+        return getBlockState().getValue(net.minecraft.world.level.block.state.properties.BlockStateProperties.HORIZONTAL_FACING);
+    }
+
+    @Override
+    public BlockPos wholeModelLightPos() {
+        return worldPosition.relative(wholeModelFacing());
+    }
+
+    /** Трёхплунжерный насос с зубчатой передачей (вал — в клетку-порт) вместо ЦНС на валу контроллера. */
+    public boolean real() {
+        return wholeModelId() != null;
+    }
+
+    @Override
+    protected double shaftSpeed() {
+        return real() ? portRpm : super.shaftSpeed();
+    }
+
+    @Override
+    protected boolean shaftHealthy() {
+        return real() ? portHealthy : super.shaftHealthy();
+    }
+
+    @Override
+    public void sampleShaft(double rpm, boolean healthy, long tick) {
+        portRpm = rpm;
+        portHealthy = healthy;
+    }
+
+    @Override
+    public double shaftPowerW() {
+        return powerW(shaft);
+    }
+
+    @Override
+    public double ratedShaftW() {
+        return RATED_W;
+    }
+
+    @Override
+    public double nominalShaftRpm() {
+        return NOMINAL_RPM;
+    }
+
+    /** Клетка, в верхнюю грань которой уходит вода: над контроллером, у насоса реального масштаба — над напорным ставом. */
+    private BlockPos outletCell() {
+        return real() ? worldPosition.above() : worldPosition;
     }
 
     /** Напор: от насоса до поверхности над ним, м. */
@@ -221,7 +284,7 @@ public final class MineDrainagePumpBlockEntity extends KineticMachineBlockEntity
         int mb = (int) pendingMb;
         if (mb <= 0) return;
         pendingMb -= mb;
-        IFluidHandler out = level.getCapability(Capabilities.FluidHandler.BLOCK, worldPosition.above(), Direction.DOWN);
+        IFluidHandler out = level.getCapability(Capabilities.FluidHandler.BLOCK, outletCell().above(), Direction.DOWN);
         if (out == null) return;
         FluidStack water = new FluidStack(acidic ? PcFluids.MINE_WATER.source.get() : Fluids.WATER, mb);
         out.fill(water, IFluidHandler.FluidAction.EXECUTE);
@@ -291,6 +354,12 @@ public final class MineDrainagePumpBlockEntity extends KineticMachineBlockEntity
     protected void clientTick() {
         MachineFx fx = fx();
         if (fx == null || !runningState()) return;
+        if (real()) {
+            // капли из сальников трёх плунжеров
+            for (double x : new double[] {14, 24, 34})
+                if (fx.chance(3)) fx.leak(fx.at(x, 22, 24));
+            return;
+        }
         if (fx.chance(1.5)) fx.leak(fx.at(4.5, 5, 8));
         if (fx.chance(1.5)) fx.leak(fx.at(27, 5, 8));
     }

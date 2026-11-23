@@ -251,6 +251,11 @@ public final class PcBlockStateProvider extends BlockStateProvider {
                 default -> id;
             };
             case "sis_logic_solver" -> s.getValue(PcProperties.ALARM) ? id + "_tripped" : id;
+            case "chimney_stack" -> switch (s.getValue(PcProperties.CHIMNEY_PART)) {
+                case BASE -> id + "_base";
+                case TOP -> id + "_cap";
+                case MIDDLE -> id;
+            };
             case "chimney" -> switch (s.getValue(PcProperties.CHIMNEY_PART)) {
                 case BASE -> id + "_base";
                 case TOP -> id + "_top";
@@ -327,6 +332,8 @@ public final class PcBlockStateProvider extends BlockStateProvider {
                  "bn600_reactor", "am1_reactor", "lancashire_boiler", "headframe_steel", "mill_engine", "winding_engine", "guibal_fan" -> "whole_empty";
                  "bn600_reactor", "am1_reactor", "lancashire_boiler", "headframe_steel", "mill_engine",
                  "cupola_furnace_real" -> "whole_empty";
+                 "bn600_reactor", "am1_reactor", "lancashire_boiler", "headframe_steel", "mill_engine", "mine_drainage_pump_geared"
+                    -> "whole_empty";
             case "pressurizer" -> s.getValue(BlockStateProperties.LIT) ? id + "_lit" : id;
             // тяжёлая вода T3
             case "gs_exchange_tower" -> "absorption_tower";

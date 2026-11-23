@@ -27,7 +27,8 @@ public final class MineBlockEntities {
             BLOCK_ENTITIES.register("mine_hoist", () -> BlockEntityType.Builder.of(MineHoistBlockEntity::new,
                     PcBlocks.MINE_HOIST.get(), PcBlocks.WINDING_ENGINE.get()).build(null));
     public static final DeferredHolder<BlockEntityType<?>, BlockEntityType<MineDrainagePumpBlockEntity>> MINE_DRAINAGE_PUMP =
-            type("mine_drainage_pump", MineDrainagePumpBlockEntity::new, PcBlocks.MINE_DRAINAGE_PUMP);
+            BLOCK_ENTITIES.register("mine_drainage_pump", () -> BlockEntityType.Builder.of(MineDrainagePumpBlockEntity::new,
+                    PcBlocks.MINE_DRAINAGE_PUMP.get(), PcBlocks.MINE_DRAINAGE_PUMP_GEARED.get()).build(null));
     public static final DeferredHolder<BlockEntityType<?>, BlockEntityType<LongwallShearerBlockEntity>> LONGWALL_SHEARER =
             type("longwall_shearer", LongwallShearerBlockEntity::new, PcBlocks.LONGWALL_SHEARER);
     public static final DeferredHolder<BlockEntityType<?>, BlockEntityType<PoweredRoofSupportBlockEntity>> POWERED_ROOF_SUPPORT =

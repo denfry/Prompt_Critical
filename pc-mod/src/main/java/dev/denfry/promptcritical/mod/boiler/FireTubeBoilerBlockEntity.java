@@ -320,12 +320,20 @@ public class FireTubeBoilerBlockEntity extends DeviceBlockEntity implements Pres
         return f.isEmpty() ? AMBIENT_K : Math.min(370, f.getFluidType().getTemperature(f));
     }
 
-    /** Звенья трубы над дымоходом (рядом с задним сегментом, над газоходом). */
+    /**
+     * Высота трубы над газоходом, блоков (= м): звенья старой трубы {@link ChimneyBlock} или клетки кирпичной трубы
+     * реального масштаба {@code chimney_stack} (3 м на звено), начиная с клетки газохода за задним торцом котла.
+     */
     private int countChimney() {
         BlockPos p = cell(layout().chimney());
         int n = 0;
-        while (n < 128 && level.getBlockState(p.above(n)).getBlock() instanceof ChimneyBlock) n++;
+        while (n < 128 && dev.denfry.promptcritical.mod.block.ChimneyStackBlock.isChimneyCell(level, p.above(n))) n++;
         return n;
+    }
+
+    /** Высота трубы, как её видит котёл, м (для проверок). */
+    public int chimneyHeightBlocks() {
+        return countChimney();
     }
 
     private void sounds() {

@@ -82,7 +82,7 @@ public abstract class KineticMachineBlockEntity<U> extends KineticBlockEntity im
         SimLevelBinding b = SimBindings.get(s);
         U u = b == null || simId.isNone() ? null : unit(b);
         if (u == null) return;
-        shaft(u).sample(getSpeed(), !isOverStressed(), b.world().clock().tick());
+        shaft(u).sample(shaftSpeed(), shaftHealthy(), b.world().clock().tick());
         serverTick(b, u);
         if (spikeTicks > 0 && --spikeTicks == 0 && hasNetwork()) getOrCreateNetwork().updateStressFor(this, stress.impact());
         if (spikeTicks == 0) declareStress(powerW(u));
@@ -130,7 +130,17 @@ public abstract class KineticMachineBlockEntity<U> extends KineticBlockEntity im
 
     /** Обороты вала Create для тахометра щита, ×10. */
     protected int shaftRpm10() {
-        return Math.round(Math.abs(getSpeed()) * 10);
+        return (int) Math.round(Math.abs(shaftSpeed()) * 10);
+    }
+
+    /** Скорость входного вала, об/мин со знаком; машина с валом в клетке-порте берёт её с порта. */
+    protected double shaftSpeed() {
+        return getSpeed();
+    }
+
+    /** Сеть вала исправна (нет перегрузки). */
+    protected boolean shaftHealthy() {
+        return !isOverStressed();
     }
 
     /** Поставить булево свойство контроллера, если изменилось. */

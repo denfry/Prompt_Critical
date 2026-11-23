@@ -108,7 +108,7 @@ public final class MineScanner {
         return b instanceof MainMineFanBlock || b == PcBlocks.VENTILATION_DOOR.get() || b == PcBlocks.MINE_SUPPORT.get()
                 || b == PcBlocks.EXPLOSION_BARRIER.get() || b == PcBlocks.MINE_DISPATCH_CABINET.get()
                 || b == PcBlocks.DEGASIFICATION_BOREHOLE.get() || b == PcBlocks.MINE_DRAINAGE_PUMP.get()
-                || b == PcBlocks.POWERED_ROOF_SUPPORT.get();
+                || b == PcBlocks.MINE_DRAINAGE_PUMP_GEARED.get() || b == PcBlocks.POWERED_ROOF_SUPPORT.get();
     }
 
     private static boolean minePassable(Block b) {
@@ -229,11 +229,12 @@ public final class MineScanner {
                             boreAir.putIfAbsent(q, p);
                             out.anchors.add(q);
                         } else if (s.is(PcBlocks.MINE_DISPATCH_CABINET.get()) || s.is(PcBlocks.MINE_DRAINAGE_PUMP.get())
-                                || s.is(PcBlocks.MULTIBLOCK_PART.get())) {
+                                || s.is(PcBlocks.MINE_DRAINAGE_PUMP_GEARED.get()) || s.is(PcBlocks.MULTIBLOCK_PART.get())
+                                || s.is(PcBlocks.KINETIC_PORT.get())) {
                             BlockPos ctrl = controller(q, s);
                             BlockState cs = ctrl == null ? null : level.getBlockState(ctrl);
                             if (cs != null && cs.is(PcBlocks.MINE_DISPATCH_CABINET.get())) out.anchors.add(ctrl.asLong());
-                            if (cs != null && cs.is(PcBlocks.MINE_DRAINAGE_PUMP.get())) {
+                            if (cs != null && (cs.is(PcBlocks.MINE_DRAINAGE_PUMP.get()) || cs.is(PcBlocks.MINE_DRAINAGE_PUMP_GEARED.get()))) {
                                 out.anchors.add(ctrl.asLong());
                                 out.pumps.add(ctrl.asLong());
                             }

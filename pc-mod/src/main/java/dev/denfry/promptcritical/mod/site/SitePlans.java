@@ -144,7 +144,14 @@ public final class SitePlans {
                     st("foundation", 80, n(CONCRETE, 2)),
                     st("shell", 200, n(PLATE, 12), n(INGOT, 8)),
                     st("lining", 160, n(BRICKS, 2)),
-                    st("blower_platform", 160, n(PLATE, 6), n(PIPE, 2), n(INGOT, 2))));
+                    st("blower_platform", 160, n(PLATE, 6), n(PIPE, 2), n(INGOT, 2))),
+            // трёхплунжерный насос с передачей ≈ 8 т (оценка): чугунная станина ≈ 3,5 т, коленвал и колёса ≈ 2 т,
+            // плунжеры, клапанные коробки, коллекторы и воздушный колпак ≈ 2,5 т; бетонный фундамент
+            "mine_drainage_pump_geared", plan("mine_drainage_pump_geared", PcBlocks.MINE_DRAINAGE_PUMP_GEARED, 8,
+                    st("foundation", 80, n(CONCRETE, 3)),
+                    st("pump_bed", 200, n(INGOT, 30), n(PLATE, 5)),
+                    st("gearing", 160, n(INGOT, 20)),
+                    st("rams", 200, n(INGOT, 15), n(PIPE, 20))));
 
     private SitePlans() {}
 

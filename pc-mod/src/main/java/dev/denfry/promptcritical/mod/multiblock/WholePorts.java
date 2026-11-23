@@ -39,6 +39,8 @@ public final class WholePorts {
             Map.entry("mill_engine", List.of(p(0, 2, 0, U), p(0, 0, 0, W))),
             // колоша — с края площадки на юге (клетка (0, 3, 3)): чугун и кокс подают воронкой или лотком
             Map.entry("cupola_furnace_real", List.of(p(0, 3, 3, S))));
+            // всас вниз через пол у контроллера, напорный став вверх над ним; вал Create — в порт на восточной грани
+            Map.entry("mine_drainage_pump_geared", List.of(p(0, 0, 0, D), p(0, 1, 0, U))));
 
     private WholePorts() {}
 

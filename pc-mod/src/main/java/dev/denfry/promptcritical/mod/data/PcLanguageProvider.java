@@ -41,6 +41,8 @@ public final class PcLanguageProvider extends LanguageProvider {
         b("cupola_furnace_real", "Foundry Cupola", "Литейная вагранка");
         b("grate_stoker", "Chain Grate Stoker", "Цепная колосниковая решётка");
         b("chimney", "Chimney", "Дымовая труба");
+        b("chimney_stack", "Brick Chimney Stack", "Кирпичная дымовая труба");
+        b("mine_drainage_pump_geared", "Geared Three-Throw Ram Pump", "Трёхплунжерный насос водоотлива с передачей");
         b("steam_engine_cylinder", "Steam Engine", "Паровая машина");
         b("magnetite_ore", "Magnetite Ore", "Магнетитовая руда");
         b("hematite_ore", "Hematite Ore", "Гематитовая руда");
