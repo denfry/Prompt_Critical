@@ -7,11 +7,16 @@ import java.util.Set;
  *
  * @param accepted установка принята (лампа «НЕ ПРИНЯТА» погашена)
  * @param missing  непройденные обязательные проверки
+ * @param unlicensedEra профиль licensing: эпоха, лицензии на которую у команды-владельца нет; иначе {@code null}
  */
-public record StartPermission(boolean allowed, boolean accepted, Set<CommissioningCheck> missing) {
+public record StartPermission(boolean allowed, boolean accepted, Set<CommissioningCheck> missing, PlantEra unlicensedEra) {
     public static final StartPermission FREE = new StartPermission(true, true, Set.of());
 
     public StartPermission {
         missing = Set.copyOf(missing);
+    }
+
+    public StartPermission(boolean allowed, boolean accepted, Set<CommissioningCheck> missing) {
+        this(allowed, accepted, missing, null);
     }
 }

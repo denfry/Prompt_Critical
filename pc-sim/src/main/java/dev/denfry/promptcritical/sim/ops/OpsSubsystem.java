@@ -124,6 +124,9 @@ public final class OpsSubsystem implements Subsystem {
     private final List<OpsLogEntry> pending = new ArrayList<>();
     private final Events events = new Events();
     private final CommissioningService service;
+    private final LicenceRegistry licences = new LicenceRegistry();
+    /** Профиль licensing: пусконаладка всегда ENFORCED, пуск требует лицензии команды-владельца на эпоху. */
+    private boolean licensing;
     private OpsConfig cfg;
     private SimConfig config;
     private long tick;
@@ -162,7 +165,7 @@ public final class OpsSubsystem implements Subsystem {
             Set<UnitComponent> porousCastings, boolean dashpotFitted) {
         Unit u = units.get(unit);
         if (u == null) u = create(unit, kind);
-        if (!service.registered(unit) && cfg.commissioning() != CommissioningMode.OFF) {
+        if (!service.registered(unit) && effective(cfg).commissioning() != CommissioningMode.OFF) {
             Map<UnitComponent, SimId> comps = new EnumMap<>(UnitComponent.class);
             for (UnitComponent c : kind.components()) comps.put(c, componentId(unit, c, 0));
             service.register(new UnitAssembly(unit, kind, comps, workingPressurePa, reversedRotation, porousCastings,
@@ -239,13 +242,23 @@ public final class OpsSubsystem implements Subsystem {
     @Override
     public void onDeviceRemoved(SimId device) {
         if (units.remove(device) != null) service.unregister(device);
+        licences.forget(device);
     }
 
     // --- пусконаладка и обслуживание (биндинг) ---
 
-    /** Проверка (13 §13.6.6); установка без пусконаладки — null. */
+    /** Проверка (13 §13.6.6); установка без пусконаладки — null. Команда — сам проверяющий. */
     public CheckResult perform(SimId unit, CheckInput input, UUID by) {
+        return perform(unit, input, by, by);
+    }
+
+    /**
+     * Проверка от имени команды: первая команда, проводившая проверку, становится владельцем установки (профиль
+     * licensing). {@code team} == null (автоматика без игрока) владельца не задаёт.
+     */
+    public CheckResult perform(SimId unit, CheckInput input, UUID by, UUID team) {
         if (!service.registered(unit)) return null;
+        if (team != null) licences.owner(unit, team);
         CheckResult r = service.perform(unit, input, by, tick);
         if (r.outcome() != CheckResult.Outcome.REFUSED)
             log(unit, r.passed() ? OpsLogEntry.Kind.CHECK_PASSED : OpsLogEntry.Kind.CHECK_FAILED, r.check().name());
@@ -254,11 +267,45 @@ public final class OpsSubsystem implements Subsystem {
 
     /** Розжиг или пуск привода (13 §13.6.6): отказ в {@code ENFORCED}, запись {@code START_UNACCEPTED}. */
     public StartPermission requestStart(SimId unit) {
-        return service.requestStart(unit);
+        StartPermission p = service.requestStart(unit);
+        StartPermission gated = licenceGate(unit, p);
+        if (gated != p) log(unit, OpsLogEntry.Kind.START_REFUSED, "licence " + gated.unlicensedEra());
+        return gated;
     }
 
     public StartPermission canStart(SimId unit) {
-        return service.canStart(unit);
+        return licenceGate(unit, service.canStart(unit));
+    }
+
+    /** Профиль licensing: разрешённый пусконаладкой пуск требует лицензии команды-владельца на эпоху установки. */
+    private StartPermission licenceGate(SimId unit, StartPermission p) {
+        if (!licensing || !p.allowed()) return p;
+        Unit u = units.get(unit);
+        if (u == null) return p;
+        PlantEra era = u.kind.era();
+        UUID owner = licences.owner(unit).orElse(null);
+        if (era == PlantEra.I0 || owner != null && licences.licensed(owner, era)) return p;
+        return new StartPermission(false, p.accepted(), p.missing(), era);
+    }
+
+    /** Лицензии команд (профиль licensing). */
+    public LicenceRegistry licences() {
+        return licences;
+    }
+
+    public boolean licensing() {
+        return licensing;
+    }
+
+    /** Включает профиль licensing (биндинг — по флагу мира при запуске сервера). */
+    public void setLicensing(boolean on) {
+        licensing = on;
+        service.reconfigure(effective(cfg));
+    }
+
+    /** В профиле licensing пусконаладка всегда {@code ENFORCED}, что бы ни стояло в конфиге. */
+    private OpsConfig effective(OpsConfig c) {
+        return licensing && c.commissioning() != CommissioningMode.ENFORCED ? c.withCommissioning(CommissioningMode.ENFORCED) : c;
     }
 
     /**
@@ -417,13 +464,13 @@ public final class OpsSubsystem implements Subsystem {
     public void onConfigReload(SimConfig cfgAll) {
         config = cfgAll;
         cfg = cfgAll.section(OpsConfig.class, cfg);
-        service.reconfigure(cfg);
+        service.reconfigure(effective(cfg));
     }
 
     /** Режим пусконаладки сменён на лету (сценарии, GameTest). */
     public void setConfig(OpsConfig cfg) {
         this.cfg = cfg;
-        service.reconfigure(cfg);
+        service.reconfigure(effective(cfg));
     }
 
     // --- сохранение ---
@@ -466,6 +513,9 @@ public final class OpsSubsystem implements Subsystem {
         }
         out.beginObject("commissioning");
         service.save(out);
+        out.endObject();
+        out.beginObject("licences");
+        licences.save(out);
         out.endObject();
         out.putInt("units", units.size());
         int i = 0;
@@ -518,6 +568,13 @@ public final class OpsSubsystem implements Subsystem {
         in.beginObject("commissioning");
         service.load(in);
         in.endObject();
+        if (in.has("licences")) {
+            in.beginObject("licences");
+            licences.load(in);
+            in.endObject();
+        } else {
+            licences.clear();
+        }
         int n = in.getInt("units");
         for (int i = 0; i < n; i++) {
             in.beginObject("u" + i);
@@ -553,6 +610,8 @@ public final class OpsSubsystem implements Subsystem {
         @Override
         public void commissioningStateChanged(SimId unit, CommissioningState from, CommissioningState to) {
             log(unit, OpsLogEntry.Kind.STATE, to.name());
+            Unit u = units.get(unit);
+            if (to == CommissioningState.ACCEPTED && u != null) licences.owner(unit).ifPresent(t -> licences.accepted(t, u.kind));
         }
 
         @Override

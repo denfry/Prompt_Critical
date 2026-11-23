@@ -99,10 +99,15 @@ public final class LicenceRegistry {
         }
     }
 
-    /** Пустое состояние (сохранение до профиля licensing) читается как пустой реестр. */
-    public void load(StateReader in) {
+    /** Сохранение до профиля licensing: реестр пуст. */
+    public void clear() {
         teams.clear();
         owners.clear();
+    }
+
+    /** Пустое состояние читается как пустой реестр. */
+    public void load(StateReader in) {
+        clear();
         PlantEra[] eras = PlantEra.values();
         UnitKind[] kinds = UnitKind.values();
         int n = in.optInt("teams", 0);
