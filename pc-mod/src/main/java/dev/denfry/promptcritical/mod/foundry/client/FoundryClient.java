@@ -52,6 +52,8 @@ public final class FoundryClient {
         // вагранка реального масштаба: цельная модель и partial-модели — до запекания
         CupolaRealRenderer.init();
         CoalJigRenderer.init();
+        // станки цеха реального масштаба: цельные модели и partial-модели — до запекания
+        ShopToolRealRenderer.init();
     }
 
     public static void register(IEventBus modBus) {
@@ -98,12 +100,12 @@ public final class FoundryClient {
                 c -> new FoundryRealRenderer<>(TABLE, TABLE_REAL, FoundryRealRenderer.Shake.JOLT_SQUEEZE));
         event.registerBlockEntityRenderer(FoundryBlockEntities.SHAKEOUT_GRATE.get(),
                 c -> new FoundryRealRenderer<>(SHAKEOUT_DECK, SHAKEOUT_DECK_REAL, FoundryRealRenderer.Shake.VIBRATE));
-        event.registerBlockEntityRenderer(FoundryBlockEntities.MACHINE_LATHE.get(), c -> new FoundryMachineRenderer<>(LATHE_SPINDLE, Motion.SPIN_X, 14, 8, 1));
-        event.registerBlockEntityRenderer(FoundryBlockEntities.DRILL_PRESS.get(), c -> new FoundryMachineRenderer<>(DRILL_SPINDLE, Motion.SPIN_Y, 8, 7, 4));
-        event.registerBlockEntityRenderer(FoundryBlockEntities.MILLING_MACHINE.get(), c -> new FoundryMachineRenderer<>(MILL_SPINDLE, Motion.SPIN_Z, 8, 18, 2));
+        event.registerBlockEntityRenderer(FoundryBlockEntities.MACHINE_LATHE.get(), c -> new RealOrOldRenderer<>(new FoundryMachineRenderer<>(LATHE_SPINDLE, Motion.SPIN_X, 14, 8, 1), ShopToolRealRenderer.lathe()));
+        event.registerBlockEntityRenderer(FoundryBlockEntities.DRILL_PRESS.get(), c -> new RealOrOldRenderer<>(new FoundryMachineRenderer<>(DRILL_SPINDLE, Motion.SPIN_Y, 8, 7, 4), ShopToolRealRenderer.drillPress()));
+        event.registerBlockEntityRenderer(FoundryBlockEntities.MILLING_MACHINE.get(), c -> new RealOrOldRenderer<>(new FoundryMachineRenderer<>(MILL_SPINDLE, Motion.SPIN_Z, 8, 18, 2), ShopToolRealRenderer.milling()));
         // ползун ходит на ±4 пикселя; кривошип — один двойной ход на два оборота вала
-        event.registerBlockEntityRenderer(FoundryBlockEntities.SHAPING_MACHINE.get(), c -> new FoundryMachineRenderer<>(SHAPER_RAM, Motion.SLIDE_X, 4, 0, 0.5f));
-        event.registerBlockEntityRenderer(FoundryBlockEntities.SURFACE_GRINDER.get(), c -> new FoundryMachineRenderer<>(GRINDER_WHEEL, Motion.SPIN_Z, 13, 14, 4));
+        event.registerBlockEntityRenderer(FoundryBlockEntities.SHAPING_MACHINE.get(), c -> new RealOrOldRenderer<>(new FoundryMachineRenderer<>(SHAPER_RAM, Motion.SLIDE_X, 4, 0, 0.5f), ShopToolRealRenderer.shaper()));
+        event.registerBlockEntityRenderer(FoundryBlockEntities.SURFACE_GRINDER.get(), c -> new RealOrOldRenderer<>(new FoundryMachineRenderer<>(GRINDER_WHEEL, Motion.SPIN_Z, 13, 14, 4), ShopToolRealRenderer.grinder()));
         // мешалка автоклава ПВХ (art/blockbench/polymers/pvc_reactor.author.js): муфта в фонаре привода, ось x 8, z 8;
         // суспензионные реакторы мешают на ~100–150 об/мин
         event.registerBlockEntityRenderer(dev.denfry.promptcritical.mod.chlor.ChlorBlockEntities.PVC_REACTOR.get(),

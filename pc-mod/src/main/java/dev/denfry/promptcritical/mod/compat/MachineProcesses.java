@@ -182,18 +182,18 @@ public final class MachineProcesses {
                 of(item(PcItems.CASTING))));
         p.add(new Process("shakeout_grate", Plant.FOUNDRY, on(PcBlocks.SHAKEOUT_GRATE, PcBlocks.SHAKEOUT_GRATE_REAL),
                 of(item(PcBlocks.SAND_MOLD)), of(item(PcItems.CASTING), item(0, PcItems.FOUNDRY_SAND))));
-        p.add(new Process("machine_tool", Plant.FOUNDRY, on(PcBlocks.MACHINE_LATHE, PcBlocks.DRILL_PRESS),
+        p.add(new Process("machine_tool", Plant.FOUNDRY, on(PcBlocks.MACHINE_LATHE, PcBlocks.DRILL_PRESS, PcBlocks.MACHINE_LATHE_REAL, PcBlocks.DRILL_PRESS_REAL),
                 of(item(PcItems.CASTING), item(PcItems.CUTTING_TOOL)), of(item(PcItems.CASTING))));
         // станочный парк: детали машин завода (Ra и квалитет — от режима)
-        p.add(new Process("milling_machine", Plant.FOUNDRY, on(PcBlocks.MILLING_MACHINE),
+        p.add(new Process("milling_machine", Plant.FOUNDRY, on(PcBlocks.MILLING_MACHINE, PcBlocks.MILLING_MACHINE_REAL),
                 of(item(PcItems.CASTING), item(PcItems.MILLING_CUTTER)), of(item(PcItems.SPUR_GEAR))));
-        p.add(new Process("milling_keyway", Plant.FOUNDRY, on(PcBlocks.MILLING_MACHINE),
+        p.add(new Process("milling_keyway", Plant.FOUNDRY, on(PcBlocks.MILLING_MACHINE, PcBlocks.MILLING_MACHINE_REAL),
                 of(item(PcItems.STEEL_ROD), item(PcItems.MILLING_CUTTER)), of(item(PcItems.KEYED_SHAFT))));
-        p.add(new Process("shaping_slideway", Plant.FOUNDRY, on(PcBlocks.SHAPING_MACHINE),
+        p.add(new Process("shaping_slideway", Plant.FOUNDRY, on(PcBlocks.SHAPING_MACHINE, PcBlocks.SHAPING_MACHINE_REAL),
                 of(item(PcItems.CASTING), item(PcItems.CUTTING_TOOL)), of(item(PcItems.MACHINE_SLIDEWAY), item(PcItems.PLANED_PLATE))));
-        p.add(new Process("shaping_plate", Plant.FOUNDRY, on(PcBlocks.SHAPING_MACHINE),
+        p.add(new Process("shaping_plate", Plant.FOUNDRY, on(PcBlocks.SHAPING_MACHINE, PcBlocks.SHAPING_MACHINE_REAL),
                 of(item(PcItems.STEEL_PLATE), item(PcItems.CUTTING_TOOL)), of(item(PcItems.PLANED_PLATE))));
-        p.add(new Process("surface_grinding", Plant.FOUNDRY, on(PcBlocks.SURFACE_GRINDER),
+        p.add(new Process("surface_grinding", Plant.FOUNDRY, on(PcBlocks.SURFACE_GRINDER, PcBlocks.SURFACE_GRINDER_REAL),
                 of(item(PcItems.PLANED_PLATE), item(PcItems.GRINDING_WHEEL)), of(item(PcItems.GROUND_PLATE))));
         p.add(new Process("casting_impeller", Plant.FOUNDRY, on(() -> Items.CRAFTING_TABLE),
                 of(item(PcItems.CASTING)), of(item(PcItems.PUMP_IMPELLER))));

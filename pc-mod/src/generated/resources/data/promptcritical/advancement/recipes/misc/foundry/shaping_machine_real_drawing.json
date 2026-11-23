@@ -1,0 +1,32 @@
+{
+  "parent": "minecraft:recipes/root",
+  "criteria": {
+    "has_shaping_machine": {
+      "conditions": {
+        "items": [
+          {
+            "items": "promptcritical:shaping_machine"
+          }
+        ]
+      },
+      "trigger": "minecraft:inventory_changed"
+    },
+    "has_the_recipe": {
+      "conditions": {
+        "recipe": "promptcritical:foundry/shaping_machine_real_drawing"
+      },
+      "trigger": "minecraft:recipe_unlocked"
+    }
+  },
+  "requirements": [
+    [
+      "has_the_recipe",
+      "has_shaping_machine"
+    ]
+  ],
+  "rewards": {
+    "recipes": [
+      "promptcritical:foundry/shaping_machine_real_drawing"
+    ]
+  }
+}

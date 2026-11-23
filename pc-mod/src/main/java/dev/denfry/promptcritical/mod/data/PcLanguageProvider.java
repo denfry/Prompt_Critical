@@ -108,6 +108,11 @@ public final class PcLanguageProvider extends LanguageProvider {
         b("milling_machine", "Knee Milling Machine", "Консольно-фрезерный станок");
         b("shaping_machine", "Shaping Machine", "Поперечно-строгальный станок");
         b("surface_grinder", "Surface Grinder", "Плоскошлифовальный станок");
+        b("machine_lathe_real", "16-inch Engine Lathe", "Токарно-винторезный станок 16″");
+        b("drill_press_real", "24-inch Upright Drill", "Вертикально-сверлильный станок 24″");
+        b("milling_machine_real", "Plain Horizontal Knee Mill", "Горизонтально-фрезерный консольный станок");
+        b("shaping_machine_real", "16-inch Crank Shaper", "Поперечно-строгальный станок 16″");
+        b("surface_grinder_real", "Belt-driven Surface Grinder", "Плоскошлифовальный станок с ремённым приводом");
         b("coke_oven", "Coke Oven", "Коксовая камера");
         b("coke_battery_wall", "Coke Battery Flue Wall", "Простенок коксовой батареи");
         b("gas_collector_main", "Gas Collector Main", "Газосборник");

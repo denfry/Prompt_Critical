@@ -34,15 +34,15 @@ public final class FoundryBlockEntities {
             BLOCK_ENTITIES.register("shakeout_grate", () -> BlockEntityType.Builder.of(ShakeoutGrateBlockEntity::new,
                     PcBlocks.SHAKEOUT_GRATE.get(), PcBlocks.SHAKEOUT_GRATE_REAL.get()).build(null));
     public static final DeferredHolder<BlockEntityType<?>, BlockEntityType<MachineToolBlockEntity>> MACHINE_LATHE =
-            type("machine_lathe", MachineToolBlockEntity::lathe, PcBlocks.MACHINE_LATHE);
+            type("machine_lathe", MachineToolBlockEntity::lathe, PcBlocks.MACHINE_LATHE, PcBlocks.MACHINE_LATHE_REAL);
     public static final DeferredHolder<BlockEntityType<?>, BlockEntityType<MachineToolBlockEntity>> DRILL_PRESS =
-            type("drill_press", MachineToolBlockEntity::drillPress, PcBlocks.DRILL_PRESS);
+            type("drill_press", MachineToolBlockEntity::drillPress, PcBlocks.DRILL_PRESS, PcBlocks.DRILL_PRESS_REAL);
     public static final DeferredHolder<BlockEntityType<?>, BlockEntityType<ProductionToolBlockEntity>> MILLING_MACHINE =
-            type("milling_machine", ProductionToolBlockEntity::milling, PcBlocks.MILLING_MACHINE);
+            type("milling_machine", ProductionToolBlockEntity::milling, PcBlocks.MILLING_MACHINE, PcBlocks.MILLING_MACHINE_REAL);
     public static final DeferredHolder<BlockEntityType<?>, BlockEntityType<ProductionToolBlockEntity>> SHAPING_MACHINE =
-            type("shaping_machine", ProductionToolBlockEntity::shaper, PcBlocks.SHAPING_MACHINE);
+            type("shaping_machine", ProductionToolBlockEntity::shaper, PcBlocks.SHAPING_MACHINE, PcBlocks.SHAPING_MACHINE_REAL);
     public static final DeferredHolder<BlockEntityType<?>, BlockEntityType<ProductionToolBlockEntity>> SURFACE_GRINDER =
-            type("surface_grinder", ProductionToolBlockEntity::grinder, PcBlocks.SURFACE_GRINDER);
+            type("surface_grinder", ProductionToolBlockEntity::grinder, PcBlocks.SURFACE_GRINDER, PcBlocks.SURFACE_GRINDER_REAL);
 
     private FoundryBlockEntities() {
     }
@@ -50,5 +50,11 @@ public final class FoundryBlockEntities {
     private static <T extends BlockEntity> DeferredHolder<BlockEntityType<?>, BlockEntityType<T>> type(String name,
             BlockEntityType.BlockEntitySupplier<T> factory, Supplier<? extends Block> block) {
         return BLOCK_ENTITIES.register(name, () -> BlockEntityType.Builder.of(factory, block.get()).build(null));
+    }
+
+    /** Один BE на станок старой серии и его двойник реального масштаба (цельная модель, вал через порт). */
+    private static <T extends BlockEntity> DeferredHolder<BlockEntityType<?>, BlockEntityType<T>> type(String name,
+            BlockEntityType.BlockEntitySupplier<T> factory, Supplier<? extends Block> block, Supplier<? extends Block> real) {
+        return BLOCK_ENTITIES.register(name, () -> BlockEntityType.Builder.of(factory, block.get(), real.get()).build(null));
     }
 }

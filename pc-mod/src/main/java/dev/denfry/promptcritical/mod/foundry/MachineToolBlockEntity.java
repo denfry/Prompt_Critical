@@ -33,7 +33,7 @@ import org.jetbrains.annotations.Nullable;
  * служебном слоте (его износ — прочность предмета), обработанная отливка на выходе. Резец и заготовка в работе живут в
  * домене ({@link MachineToolUnit}); предмет резца в слоте зеркалит износ.
  */
-public final class MachineToolBlockEntity extends KineticMachineBlockEntity<MachineToolUnit> implements PanelHost {
+public final class MachineToolBlockEntity extends PortKineticMachineBlockEntity<MachineToolUnit> implements PanelHost {
     private static final MachineInventory.Role[] ROLES = {MachineInventory.Role.INPUT, MachineInventory.Role.SERVICE,
             MachineInventory.Role.OUTPUT};
 
@@ -117,7 +117,7 @@ public final class MachineToolBlockEntity extends KineticMachineBlockEntity<Mach
 
     @Override
     public IItemHandler items(@Nullable Direction side) {
-        return inv.external();
+        return itemSideOpen(side) ? inv.external() : null;
     }
 
     @Override

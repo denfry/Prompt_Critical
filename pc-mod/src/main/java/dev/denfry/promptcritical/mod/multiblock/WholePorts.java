@@ -71,7 +71,13 @@ public final class WholePorts {
             // песок — в бункер сверху на востоке; заформованная опока — с фасада у стола
             Map.entry("molding_station_real", List.of(p(1, 1, 0, U), p(0, 0, 0, N))),
             // отливки и выбитый песок — с фасада настила
-            Map.entry("shakeout_grate_real", List.of(p(0, 0, 0, N), p(1, 0, 0, N))));
+            Map.entry("shakeout_grate_real", List.of(p(0, 0, 0, N), p(1, 0, 0, N))),
+            // станки цеха: заготовки и инструмент — станочнику с фасада у контроллера (западный конец станка)
+            Map.entry("machine_lathe_real", List.of(p(0, 0, 0, N))),
+            Map.entry("drill_press_real", List.of(p(0, 0, 0, N))),
+            Map.entry("milling_machine_real", List.of(p(0, 0, 0, N))),
+            Map.entry("shaping_machine_real", List.of(p(0, 0, 0, N))),
+            Map.entry("surface_grinder_real", List.of(p(0, 0, 0, N))));
 
     private WholePorts() {}
 

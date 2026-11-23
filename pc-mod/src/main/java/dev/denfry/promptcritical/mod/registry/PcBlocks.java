@@ -982,7 +982,9 @@ public final class PcBlocks {
                 || b == LONGWALL_SHEARER_REAL.get() || b == COAL_JIG_REAL.get() || b == QUENCH_TOWER_REAL.get()
                 || b == POWERED_ROOF_SUPPORT_REAL.get()
                 || b == BOF_VESSEL_REAL.get() || b == REHEATING_FURNACE_REAL.get()
-                || b == MOLDING_STATION_REAL.get() || b == SHAKEOUT_GRATE_REAL.get();
+                || b == MOLDING_STATION_REAL.get() || b == SHAKEOUT_GRATE_REAL.get()
+                || b == MACHINE_LATHE_REAL.get() || b == DRILL_PRESS_REAL.get() || b == MILLING_MACHINE_REAL.get()
+                || b == SHAPING_MACHINE_REAL.get() || b == SURFACE_GRINDER_REAL.get();
     }
 
     /**
@@ -1093,6 +1095,49 @@ public final class PcBlocks {
     public static final DeferredBlock<PcDeviceBlock> SURFACE_GRINDER = device("surface_grinder", machine(),
             Spec.facing(PcProperties.RUNNING).footprint(FP_WIDE2),
             KineticMachineBlock.with(ShaftSide.LEFT, ProductionToolBlockEntity::grinder));
+    /**
+     * Объём станка под контрприводом x 0…x1, y 0…2, z 0…z1 (x1 ≤ 2, z1 ≤ 1): нижний ряд — сегмент контроллера, два
+     * верхних — сегмент с якорем в (0, 1, 0), чтобы клетка контрпривода (0, 2, zc) не была якорем и стала портом вала
+     * ({@link Footprint#tiled} сделал бы её якорем); третья колонна токарного (x 2) — свой сегмент.
+     */
+    private static Footprint shopFootprint(int x1, int z1) {
+        int x = Math.min(1, x1);
+        java.util.List<Segment> s = new java.util.ArrayList<>(java.util.List.of(new Segment(0, 0, 0, 0, x, 0, 0, 0, z1),
+                new Segment(0, 1, 0, 0, x, 0, 1, 0, z1)));
+        if (x1 == 2) s.add(new Segment(2, 1, 0, 0, 0, -1, 1, 0, z1));
+        return Footprint.of(s.toArray(Segment[]::new));
+    }
+
+    /**
+     * Станочный цех I0 реального масштаба (08 §8.10, art/blockbench/machine_shop/real/machine_shop_real.author.js): станки
+     * около 1900 года, каждый под своим контрприводом на двух стойках с ремнём на ступенчатый шкив; контроллер — у
+     * западного конца, вал Create — в западную грань клетки контрпривода. Тот же BE и юнит, что у старой серии.
+     */
+    /** токарно-винторезный 16″, 3 × 3 × 1. */
+    public static final Footprint FP_MACHINE_LATHE_REAL = shopFootprint(2, 0);
+    public static final DeferredBlock<PcDeviceBlock> MACHINE_LATHE_REAL = device("machine_lathe_real", machine(),
+            Spec.facing(PcProperties.RUNNING).segments(PcProperties.wholeSegments(FP_MACHINE_LATHE_REAL.segments().size()), FP_MACHINE_LATHE_REAL),
+            dev.denfry.promptcritical.mod.foundry.PortKineticMachineBlock.with(new BlockPos(0, 2, 0), MachineToolBlockEntity::lathe));
+    /** вертикально-сверлильный 24″, 1 × 3 × 1. */
+    public static final Footprint FP_DRILL_PRESS_REAL = shopFootprint(0, 0);
+    public static final DeferredBlock<PcDeviceBlock> DRILL_PRESS_REAL = device("drill_press_real", machine(),
+            Spec.facing(PcProperties.RUNNING).segments(PcProperties.wholeSegments(FP_DRILL_PRESS_REAL.segments().size()), FP_DRILL_PRESS_REAL),
+            dev.denfry.promptcritical.mod.foundry.PortKineticMachineBlock.with(new BlockPos(0, 2, 0), MachineToolBlockEntity::drillPress));
+    /** горизонтально-фрезерный консольный, 2 × 3 × 2. */
+    public static final Footprint FP_MILLING_MACHINE_REAL = shopFootprint(1, 1);
+    public static final DeferredBlock<PcDeviceBlock> MILLING_MACHINE_REAL = device("milling_machine_real", machine(),
+            Spec.facing(PcProperties.RUNNING).segments(PcProperties.wholeSegments(FP_MILLING_MACHINE_REAL.segments().size()), FP_MILLING_MACHINE_REAL),
+            dev.denfry.promptcritical.mod.foundry.PortKineticMachineBlock.with(new BlockPos(0, 2, 1), ProductionToolBlockEntity::milling));
+    /** поперечно-строгальный 16″, 2 × 3 × 1. */
+    public static final Footprint FP_SHAPING_MACHINE_REAL = shopFootprint(1, 0);
+    public static final DeferredBlock<PcDeviceBlock> SHAPING_MACHINE_REAL = device("shaping_machine_real", machine(),
+            Spec.facing(PcProperties.RUNNING).segments(PcProperties.wholeSegments(FP_SHAPING_MACHINE_REAL.segments().size()), FP_SHAPING_MACHINE_REAL),
+            dev.denfry.promptcritical.mod.foundry.PortKineticMachineBlock.with(new BlockPos(0, 2, 0), ProductionToolBlockEntity::shaper));
+    /** плоскошлифовальный, 2 × 3 × 1. */
+    public static final Footprint FP_SURFACE_GRINDER_REAL = shopFootprint(1, 0);
+    public static final DeferredBlock<PcDeviceBlock> SURFACE_GRINDER_REAL = device("surface_grinder_real", machine(),
+            Spec.facing(PcProperties.RUNNING).segments(PcProperties.wholeSegments(FP_SURFACE_GRINDER_REAL.segments().size()), FP_SURFACE_GRINDER_REAL),
+            dev.denfry.promptcritical.mod.foundry.PortKineticMachineBlock.with(new BlockPos(0, 2, 0), ProductionToolBlockEntity::grinder));
 
     // --- коксохим и домна (08 §8.4–8.5, этап 10 M3) ---
     public static final DeferredBlock<PcDeviceBlock> COKE_OVEN = device("coke_oven", brick().pushReaction(PushReaction.BLOCK),

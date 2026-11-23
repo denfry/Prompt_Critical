@@ -378,6 +378,7 @@ public final class PcBlockStateProvider extends BlockStateProvider {
                  "longwall_shearer_real", "coal_jig_real", "quench_tower_real", "powered_roof_support_real" -> "whole_empty";
             case "bof_vessel_real", "reheating_furnace_real" -> "whole_empty";
             case "molding_station_real", "shakeout_grate_real" -> "whole_empty";
+            case "machine_lathe_real", "drill_press_real", "milling_machine_real", "shaping_machine_real", "surface_grinder_real" -> "whole_empty";
             case "pressurizer" -> s.getValue(BlockStateProperties.LIT) ? id + "_lit" : id;
             // тяжёлая вода T3
             case "gs_exchange_tower" -> "absorption_tower";

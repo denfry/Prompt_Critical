@@ -128,5 +128,21 @@ public final class FoundryRecipes extends RecipeProvider {
                 .define('W', PcItems.MACHINE_SLIDEWAY.get()).define('C', AllBlocks.ANDESITE_CASING.get())
                 .define('G', PcItems.SPUR_GEAR.get()).define('S', AllBlocks.SHAFT.get())
                 .unlockedBy("has_spur_gear", has(PcItems.SPUR_GEAR.get())).save(out, id("surface_grinder"));
+        // чертежи станков реального масштаба: строятся на стройплощадке по массе прототипа (SitePlans)
+        ShapedRecipeBuilder.shaped(RecipeCategory.MISC, dev.denfry.promptcritical.mod.site.SiteRegistry.MACHINE_LATHE_REAL_DRAWING.get())
+                .pattern("PPP").pattern(" M ").pattern(" B ").define('P', Items.PAPER).define('M', PcBlocks.MACHINE_LATHE.get())
+                .define('B', AllItems.BELT_CONNECTOR.get()).unlockedBy("has_machine_lathe", has(PcBlocks.MACHINE_LATHE.get())).save(out, id("machine_lathe_real_drawing"));
+        ShapedRecipeBuilder.shaped(RecipeCategory.MISC, dev.denfry.promptcritical.mod.site.SiteRegistry.DRILL_PRESS_REAL_DRAWING.get())
+                .pattern("PPP").pattern(" M ").pattern(" B ").define('P', Items.PAPER).define('M', PcBlocks.DRILL_PRESS.get())
+                .define('B', AllItems.BELT_CONNECTOR.get()).unlockedBy("has_drill_press", has(PcBlocks.DRILL_PRESS.get())).save(out, id("drill_press_real_drawing"));
+        ShapedRecipeBuilder.shaped(RecipeCategory.MISC, dev.denfry.promptcritical.mod.site.SiteRegistry.MILLING_MACHINE_REAL_DRAWING.get())
+                .pattern("PPP").pattern(" M ").pattern(" B ").define('P', Items.PAPER).define('M', PcBlocks.MILLING_MACHINE.get())
+                .define('B', AllItems.BELT_CONNECTOR.get()).unlockedBy("has_milling_machine", has(PcBlocks.MILLING_MACHINE.get())).save(out, id("milling_machine_real_drawing"));
+        ShapedRecipeBuilder.shaped(RecipeCategory.MISC, dev.denfry.promptcritical.mod.site.SiteRegistry.SHAPING_MACHINE_REAL_DRAWING.get())
+                .pattern("PPP").pattern(" M ").pattern(" B ").define('P', Items.PAPER).define('M', PcBlocks.SHAPING_MACHINE.get())
+                .define('B', AllItems.BELT_CONNECTOR.get()).unlockedBy("has_shaping_machine", has(PcBlocks.SHAPING_MACHINE.get())).save(out, id("shaping_machine_real_drawing"));
+        ShapedRecipeBuilder.shaped(RecipeCategory.MISC, dev.denfry.promptcritical.mod.site.SiteRegistry.SURFACE_GRINDER_REAL_DRAWING.get())
+                .pattern("PPP").pattern(" M ").pattern(" B ").define('P', Items.PAPER).define('M', PcBlocks.SURFACE_GRINDER.get())
+                .define('B', AllItems.BELT_CONNECTOR.get()).unlockedBy("has_surface_grinder", has(PcBlocks.SURFACE_GRINDER.get())).save(out, id("surface_grinder_real_drawing"));
     }
 }

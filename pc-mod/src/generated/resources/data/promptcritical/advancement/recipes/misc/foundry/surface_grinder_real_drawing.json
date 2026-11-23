@@ -1,0 +1,32 @@
+{
+  "parent": "minecraft:recipes/root",
+  "criteria": {
+    "has_surface_grinder": {
+      "conditions": {
+        "items": [
+          {
+            "items": "promptcritical:surface_grinder"
+          }
+        ]
+      },
+      "trigger": "minecraft:inventory_changed"
+    },
+    "has_the_recipe": {
+      "conditions": {
+        "recipe": "promptcritical:foundry/surface_grinder_real_drawing"
+      },
+      "trigger": "minecraft:recipe_unlocked"
+    }
+  },
+  "requirements": [
+    [
+      "has_the_recipe",
+      "has_surface_grinder"
+    ]
+  ],
+  "rewards": {
+    "recipes": [
+      "promptcritical:foundry/surface_grinder_real_drawing"
+    ]
+  }
+}
