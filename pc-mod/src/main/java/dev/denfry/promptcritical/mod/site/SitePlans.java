@@ -12,64 +12,113 @@ import org.jetbrains.annotations.Nullable;
 
 /**
  * Типовые проекты, которые строятся на стройплощадке (спецификация real-scale machines, §3a): для каждой машины —
- * её блок и этапы монтажа с перечнем материалов и временем. Количества — оценка пилота [BALANCE].
+ * её блок, этапы монтажа с перечнем материалов и временем и масса прототипа. Материалы — по реальной массе
+ * (решение владельца 2026-11-23): металл этапов в сумме — масса машины из её таблицы размеров (docs/research), бетон —
+ * фундамент и шахта. Пока тяжёлых деталей GDD 18 (обечайки, днища, роторы) нет, этапы берут слитки, лист, трубы и
+ * провод по массе предмета ({@link ItemMass}); число предметов умножается на {@code site.material_scale}.
  */
 public final class SitePlans {
-    /** Позиция перечня: предмет и сколько нужно. */
-    public record Need(Supplier<? extends Item> item, int count) {}
+    /** Позиция перечня: предмет и сколько нужно при масштабе материалов 1. */
+    public record Need(Supplier<? extends Item> item, int base) {
+        /** Сколько нужно с учётом {@code site.material_scale}, не меньше одного. */
+        public int count() {
+            return Math.max(1, (int) Math.round(base * scale()));
+        }
+    }
 
     /** Этап монтажа: ключ текста, перечень, время монтажа, тиков. */
     public record Stage(String key, List<Need> needs, int erectTicks) {}
 
-    /** Проект: что ставится по окончании и этапы по порядку. */
-    public record Plan(String id, Supplier<? extends Block> unit, List<Stage> stages) {}
+    /** Проект: что ставится, этапы по порядку и масса металла прототипа, кг (оценки помечены в таблицах размеров). */
+    public record Plan(String id, Supplier<? extends Block> unit, double metalKg, List<Stage> stages) {
+        /** Масса металла в перечнях этапов при масштабе 1, кг (бетон и графит не металл). */
+        public double plannedMetalKg() {
+            double kg = 0;
+            for (Stage s : stages)
+                for (Need n : s.needs()) {
+                    Item it = n.item().get();
+                    if (it == Items.GRAY_CONCRETE || it == PcBlocks.MODERATOR_BLOCK_GRAPHITE.get().asItem()) continue;
+                    kg += n.base() * ItemMass.kg(it);
+                }
+            return kg;
+        }
+    }
 
     private static Need n(Supplier<? extends Item> item, int count) {
         return new Need(item, count);
     }
 
     private static final Supplier<Item> CONCRETE = () -> Items.GRAY_CONCRETE;
-    private static final Supplier<Item> COPPER = () -> Items.COPPER_INGOT;
+    private static final Supplier<Item> GRAPHITE = () -> PcBlocks.MODERATOR_BLOCK_GRAPHITE.get().asItem();
+    private static final Supplier<? extends Item> INGOT = PcItems.STEEL_INGOT, PLATE = PcItems.STEEL_PLATE, BEAM = PcItems.STEEL_BEAM,
+            PIPE = PcItems.SEAMLESS_PIPE, WIRE = PcItems.COPPER_WIRE, ZR = PcItems.ZIRCALOY_INGOT;
 
-    private static final Map<String, Plan> PLANS = Map.ofEntries(
-            Map.entry("bwr240_reactor", new Plan("bwr240_reactor", PcBlocks.BWR240_REACTOR, List.of(
-                    new Stage("pedestal", List.of(n(CONCRETE, 48), n(PcItems.STEEL_BEAM, 8)), 200),
-                    new Stage("drives", List.of(n(PcItems.SEAMLESS_PIPE, 16), n(PcItems.STEEL_INGOT, 16), n(COPPER, 8)), 240),
-                    new Stage("vessel", List.of(n(PcItems.STEEL_PLATE, 32), n(PcItems.STEEL_BEAM, 4)), 360),
-                    new Stage("piping", List.of(n(PcItems.SEAMLESS_PIPE, 16)), 200)))),
-            Map.entry("candu6_reactor", new Plan("candu6_reactor", PcBlocks.CANDU6_REACTOR, List.of(
-                    new Stage("vault", List.of(n(CONCRETE, 128), n(PcItems.STEEL_BEAM, 24)), 300),
-                    new Stage("calandria", List.of(n(PcItems.STEEL_PLATE, 48), n(PcItems.ZIRCALOY_INGOT, 16)), 400),
-                    new Stage("end_fittings", List.of(n(PcItems.SEAMLESS_PIPE, 48), n(PcItems.STEEL_INGOT, 16)), 360),
-                    new Stage("fuelling", List.of(n(PcItems.STEEL_BEAM, 12), n(COPPER, 16), n(PcItems.STEEL_PLATE, 8)), 240)))),
-            Map.entry("bn600_reactor", new Plan("bn600_reactor", PcBlocks.BN600_REACTOR, List.of(
-                    new Stage("shaft", List.of(n(CONCRETE, 160), n(PcItems.STEEL_BEAM, 24)), 360),
-                    new Stage("vessel", List.of(n(PcItems.STEEL_PLATE, 64), n(PcItems.STEEL_BEAM, 8)), 480),
-                    new Stage("pool_equipment", List.of(n(PcItems.SEAMLESS_PIPE, 48), n(PcItems.STEEL_INGOT, 24), n(COPPER, 24)), 400),
-                    new Stage("roof", List.of(n(PcItems.STEEL_PLATE, 32), n(PcItems.STEEL_INGOT, 16), n(COPPER, 8)), 300)))),
-            Map.entry("am1_reactor", new Plan("am1_reactor", PcBlocks.AM1_REACTOR, List.of(
-                    new Stage("shaft", List.of(n(CONCRETE, 64), n(PcItems.STEEL_BEAM, 8)), 240),
-                    new Stage("graphite", List.of(n(PcItems.STEEL_PLATE, 16), n(PcItems.STEEL_INGOT, 16)), 300),
-                    new Stage("channels", List.of(n(PcItems.SEAMLESS_PIPE, 24), n(COPPER, 8)), 300),
-                    new Stage("piping", List.of(n(PcItems.SEAMLESS_PIPE, 12), n(PcItems.STEEL_PLATE, 8)), 200)))),
-            Map.entry("vver_reactor", new Plan("vver_reactor", PcBlocks.VVER_REACTOR, List.of(
-                    new Stage("foundation", List.of(n(CONCRETE, 64), n(PcItems.STEEL_BEAM, 16)), 200),
-                    new Stage("vessel", List.of(n(PcItems.STEEL_PLATE, 48), n(PcItems.STEEL_BEAM, 8)), 400),
-                    new Stage("upper_unit", List.of(n(PcItems.STEEL_PLATE, 16), n(PcItems.SEAMLESS_PIPE, 16), n(COPPER, 16)), 300),
-                    new Stage("piping", List.of(n(PcItems.SEAMLESS_PIPE, 24)), 200)))),
-            Map.entry("vver_steam_generator", new Plan("vver_steam_generator", PcBlocks.VVER_STEAM_GENERATOR, List.of(
-                    new Stage("foundation", List.of(n(CONCRETE, 24), n(PcItems.STEEL_BEAM, 8)), 160),
-                    new Stage("shell", List.of(n(PcItems.STEEL_PLATE, 32)), 300),
-                    new Stage("tubes", List.of(n(PcItems.SEAMLESS_PIPE, 32)), 300)))),
-            Map.entry("vver_coolant_pump", new Plan("vver_coolant_pump", PcBlocks.VVER_COOLANT_PUMP, List.of(
-                    new Stage("foundation", List.of(n(CONCRETE, 16), n(PcItems.STEEL_BEAM, 4)), 120),
-                    new Stage("casing", List.of(n(PcItems.STEEL_PLATE, 16), n(PcItems.STEEL_INGOT, 8)), 240),
-                    new Stage("drive", List.of(n(COPPER, 24), n(PcItems.STEEL_INGOT, 8)), 200)))),
-            Map.entry("vver_pressurizer", new Plan("vver_pressurizer", PcBlocks.VVER_PRESSURIZER, List.of(
-                    new Stage("foundation", List.of(n(CONCRETE, 16), n(PcItems.STEEL_BEAM, 4)), 120),
-                    new Stage("vessel", List.of(n(PcItems.STEEL_PLATE, 24), n(COPPER, 8)), 300)))));
+    private static Stage st(String key, int ticks, Need... needs) {
+        return new Stage(key, List.of(needs), ticks);
+    }
+
+    private static Plan plan(String id, Supplier<? extends Block> unit, double metalT, Stage... stages) {
+        return new Plan(id, unit, metalT * 1000, List.of(stages));
+    }
+
+    private static final Map<String, Plan> PLANS = Map.of(
+            // корпус 304 т (ТПУ), внутрикорпусные ≈ 250 т, верхний блок ≈ 135 т, патрубки и трубопроводы ≈ 60 т (оценки)
+            "vver_reactor", plan("vver_reactor", PcBlocks.VVER_REACTOR, 770,
+                    st("foundation", 200, n(CONCRETE, 200), n(BEAM, 200)),
+                    st("vessel", 600, n(INGOT, 3040), n(PLATE, 2500)),
+                    st("upper_unit", 400, n(PLATE, 1000), n(PIPE, 600), n(WIRE, 500)),
+                    st("piping", 300, n(PLATE, 500), n(PIPE, 200))),
+            // ПГВ-1000 ≈ 300 т: корпус ≈ 170 т, коллекторы ≈ 50 т, трубный пучок ≈ 70 т (оценки)
+            "vver_steam_generator", plan("vver_steam_generator", PcBlocks.VVER_STEAM_GENERATOR, 300,
+                    st("foundation", 160, n(CONCRETE, 60), n(BEAM, 50)),
+                    st("shell", 400, n(PLATE, 1700), n(INGOT, 500)),
+                    st("tubes", 400, n(PIPE, 1400))),
+            // ГЦН-195М ≈ 140 т: корпус ≈ 70 т, двигатель и маховик ≈ 65 т (оценки)
+            "vver_coolant_pump", plan("vver_coolant_pump", PcBlocks.VVER_COOLANT_PUMP, 140,
+                    st("foundation", 120, n(CONCRETE, 30), n(BEAM, 30)),
+                    st("casing", 300, n(INGOT, 700)),
+                    st("drive", 300, n(WIRE, 1500), n(PLATE, 300), n(INGOT, 200))),
+            // КД-79 ≈ 220 т (оценка)
+            "vver_pressurizer", plan("vver_pressurizer", PcBlocks.VVER_PRESSURIZER, 220,
+                    st("foundation", 120, n(CONCRETE, 40), n(BEAM, 40)),
+                    st("vessel", 400, n(INGOT, 2000), n(PLATE, 150), n(WIRE, 100))),
+            // BWR класса Big Rock Point ≈ 300 т: корпус ≈ 180 т, внутрикорпусные ≈ 50 т, приводы ≈ 40 т (оценки)
+            "bwr240_reactor", plan("bwr240_reactor", PcBlocks.BWR240_REACTOR, 300,
+                    st("pedestal", 200, n(CONCRETE, 120), n(BEAM, 100)),
+                    st("drives", 300, n(PIPE, 400), n(INGOT, 200), n(WIRE, 200)),
+                    st("vessel", 500, n(INGOT, 1800), n(PLATE, 500)),
+                    st("piping", 200, n(PLATE, 150), n(PIPE, 100))),
+            // CANDU 6 ≈ 1350 т: торцевые экраны со стальной дробью ≈ 600 т, каландр ≈ 150 т, каналы и фитинги ≈ 250 т,
+            // питатели ≈ 190 т, мост перегрузки ≈ 130 т (оценки)
+            "candu6_reactor", plan("candu6_reactor", PcBlocks.CANDU6_REACTOR, 1350,
+                    st("vault", 400, n(CONCRETE, 1500), n(BEAM, 300)),
+                    st("calandria", 600, n(PLATE, 1200), n(INGOT, 6000), n(ZR, 300)),
+                    st("end_fittings", 600, n(INGOT, 2300), n(ZR, 200), n(PIPE, 3800)),
+                    st("fuelling", 300, n(BEAM, 600), n(PLATE, 400), n(WIRE, 200), n(INGOT, 300))),
+            // БН-600 ≈ 3850 т: корпус ≈ 600 т, внутрикорпусные ≈ 800 т, насосы ≈ 600 т, ПТО ≈ 900 т, крыша и пробки
+            // ≈ 900 т (оценки; корпус 12,8 × 12,6 м — OSTI 6611821)
+            "bn600_reactor", plan("bn600_reactor", PcBlocks.BN600_REACTOR, 3850,
+                    st("shaft", 500, n(CONCRETE, 2500), n(BEAM, 500)),
+                    st("vessel", 800, n(PLATE, 6000), n(INGOT, 8000)),
+                    st("pool_equipment", 800, n(INGOT, 6000), n(PIPE, 6000), n(PLATE, 6000), n(WIRE, 1000)),
+                    st("roof", 600, n(INGOT, 8000), n(PLATE, 1000), n(WIRE, 500))),
+            // АМ-1: графитовая кладка ≈ 32 м³, 151 канал по 5 м, плита ≈ 40 т, коллекторы ≈ 25 т (оценки)
+            "am1_reactor", plan("am1_reactor", PcBlocks.AM1_REACTOR, 120,
+                    st("shaft", 240, n(CONCRETE, 300), n(BEAM, 100)),
+                    st("graphite", 300, n(GRAPHITE, 32), n(PLATE, 150)),
+                    st("channels", 300, n(PIPE, 755), n(PLATE, 400), n(WIRE, 50)),
+                    st("piping", 200, n(PIPE, 300), n(PLATE, 100))));
 
     private SitePlans() {}
+
+    /** Множитель числа предметов на этапах ({@code site.material_scale}); вне сервера с конфигом — 1. */
+    public static double scale() {
+        try {
+            return dev.denfry.promptcritical.mod.config.ServerConfig.SITE_MATERIAL_SCALE.get();
+        } catch (IllegalStateException | NullPointerException e) {
+            return 1.0;
+        }
+    }
 
     @Nullable
     public static Plan get(String id) {

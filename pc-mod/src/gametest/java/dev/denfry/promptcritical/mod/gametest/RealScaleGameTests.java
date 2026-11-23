@@ -236,6 +236,69 @@ public final class RealScaleGameTests {
         h.succeed();
     }
 
+    /**
+     * Материалы машин реального масштаба — по массе прототипа (решение владельца 2026-11-23): металл этапов каждого
+     * проекта в пределах ±50 % массы из таблицы размеров, у каждого предмета есть масса.
+     */
+    @GameTest(template = "gametest/empty_12x12x12", timeoutTicks = 20)
+    public static void sitePlansFollowTheRealMass(GameTestHelper h) {
+        int n = 0;
+        for (SitePlans.Plan plan : SitePlans.all()) {
+            n++;
+            for (SitePlans.Stage st : plan.stages())
+                for (SitePlans.Need need : st.needs())
+                    h.assertTrue(!Double.isNaN(dev.denfry.promptcritical.mod.site.ItemMass.kg(need.item().get())), plan.id() + ": mass of " + need.item().get());
+            double r = plan.plannedMetalKg() / plan.metalKg();
+            h.assertTrue(r > 1 / 1.5 && r < 1.5, plan.id() + ": planned metal " + Math.round(plan.plannedMetalKg() / 1000) + " t vs prototype "
+                    + Math.round(plan.metalKg() / 1000) + " t");
+        }
+        h.assertTrue(n == 8, "eight real-scale plans, got " + n);
+        h.succeed();
+    }
+
+    /** Площадка берёт из воронки или Create только недостающее на этапе: лишнее и ненужное возвращается. */
+    @GameTest(template = TALL, timeoutTicks = 40)
+    public static void siteTakesOnlyWhatTheStageLacks(GameTestHelper h) {
+        BlockPos p = new BlockPos(5, 1, 5);
+        placeSite(h, p);
+        h.assertTrue(site(h, p).accept("vver_pressurizer") == null, "plan accepted");
+        var items = site(h, p).items();
+        SitePlans.Need beams = SitePlans.get("vver_pressurizer").stages().getFirst().needs().get(1);
+        ItemStack rest = items.insertItem(0, new ItemStack(beams.item().get(), beams.count() + 5), false);
+        h.assertTrue(rest.getCount() == 5, "only the lacking beams are taken, rest " + rest.getCount());
+        h.assertTrue(items.insertItem(0, new ItemStack(net.minecraft.world.item.Items.DIRT, 3), false).getCount() == 3, "unneeded items are refused");
+        h.assertTrue(site(h, p).missing().size() == 1, "only concrete is still missing");
+        h.succeed();
+    }
+
+    /**
+     * Клеть шахты (отзыв игрока rc.1: «в клеть не войти»): ни одна клетка клети не полный блок, а существо внутри
+     * стоит на полу клети, а не выталкивается из сплошного блока.
+     */
+    @GameTest(template = "gametest/empty_12x12x12", timeoutTicks = 60)
+    public static void mineCageCanBeEntered(GameTestHelper h) {
+        BlockPos c = new BlockPos(5, 3, 5);
+        h.setBlock(c, PcBlocks.MINE_CAGE.get().defaultBlockState().setValue(BlockStateProperties.HORIZONTAL_FACING, Direction.NORTH)
+                .setValue(BlockStateProperties.OPEN, true));
+        var level = h.getLevel();
+        double floorTop = 0;
+        for (Footprint.Cell cell : ((dev.denfry.promptcritical.mod.block.PcBlock) PcBlocks.MINE_CAGE.get()).spec().footprint()
+                .cells(h.absolutePos(c), Direction.NORTH)) {
+            var shape = level.getBlockState(cell.pos()).getCollisionShape(level, cell.pos());
+            h.assertTrue(!level.getBlockState(cell.pos()).isAir(), "cage cell placed " + cell.pos());
+            h.assertTrue(shape.isEmpty() || shape.bounds().getXsize() * shape.bounds().getYsize() * shape.bounds().getZsize() < 1
+                    || shape.toAabbs().stream().mapToDouble(b -> b.getXsize() * b.getYsize() * b.getZsize()).sum() < 0.5,
+                    "cage cell is not a solid block: " + cell.pos());
+        }
+        BlockPos floor = c.below();
+        var stand = h.spawn(net.minecraft.world.entity.EntityType.ARMOR_STAND, new net.minecraft.world.phys.Vec3(floor.getX() + 0.5, floor.getY() + 0.5, floor.getZ() + 0.5));
+        h.runAfterDelay(30, () -> {
+            double y = stand.getY() - h.absolutePos(floor).getY();
+            h.assertTrue(stand.isAlive() && y > 0.05 && y < 0.3, "standing on the cage floor (2 px slab), y offset " + y);
+            h.succeed();
+        });
+    }
+
     /** Предмет старой серии по-прежнему ставится и работает: компенсатор давления — блок того же типа BE. */
     @GameTest(template = "gametest/empty_12x12x12", timeoutTicks = 40)
     public static void legacyPressurizerStillWorks(GameTestHelper h) {

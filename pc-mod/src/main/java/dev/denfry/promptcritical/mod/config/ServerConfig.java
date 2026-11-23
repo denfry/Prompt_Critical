@@ -68,6 +68,7 @@ public final class ServerConfig {
     public static final ModConfigSpec.DoubleValue BOILER_EXPLOSION_BLAST_FRACTION;
     public static final ModConfigSpec.EnumValue<CommissioningMode> OPS_COMMISSIONING;
     public static final ModConfigSpec.DoubleValue OPS_DEFECT_RATE;
+    public static final ModConfigSpec.DoubleValue SITE_MATERIAL_SCALE;
     public static final ModConfigSpec.DoubleValue OPS_TRIAL_RUN_S;
     public static final ModConfigSpec.DoubleValue OPS_TRIAL_MIN_LOAD;
     public static final ModConfigSpec.DoubleValue OPS_TALLOW_INTERVAL_H;
@@ -450,6 +451,11 @@ public final class ServerConfig {
                 .defineInRange("rtg_te_system_factor", 0.8, 0.1, 1.0);
         ISOTOPES_RTG_TE_DEGRADATION_PER_YEAR = b.comment("[BALANCE] Thermoelement degradation per physical year (12 §12.5.4)")
                 .defineInRange("rtg_te_degradation_per_year", 0.03, 0.0, 0.5);
+        b.pop();
+
+        b.push("site");
+        SITE_MATERIAL_SCALE = b.comment("[BALANCE] Share of the real material of a real-scale machine its construction site asks for: 1 — the prototype's mass in 100 kg ingots and plates, lower for lighter play (real-scale machines; until the heavy parts of GDD 18 exist)")
+                .defineInRange("material_scale", 1.0, 0.001, 1.0);
         b.pop();
 
         b.push("machining");

@@ -22,7 +22,6 @@ import net.minecraft.world.level.block.Block;
 import net.minecraft.world.level.block.entity.BlockEntity;
 import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.level.block.state.properties.BlockStateProperties;
-import net.neoforged.neoforge.items.ItemStackHandler;
 import org.jetbrains.annotations.Nullable;
 
 /**
@@ -31,15 +30,52 @@ import org.jetbrains.annotations.Nullable;
  * этапа площадка уступает место готовой машине, которая сразу встаёт на пусконаладку.
  */
 public class ConstructionSiteBlockEntity extends BlockEntity {
-    public static final int SLOTS = 27;
+    /** Ячеек у приёма материалов: одна, принятое сразу засчитывается в стройку и не хранится в ячейках. */
+    public static final int SLOTS = 1;
 
     private String planId = "";
     private int stage;
     private int erectLeft;
-    private final ItemStackHandler items = new ItemStackHandler(SLOTS) {
+    /**
+     * Сколько уже привезли на текущий этап. При реальной массе этап — тысячи предметов: площадка не держит их на складе,
+     * а засчитывает (воронки, Create и руки идут через тот же приём {@link #items()}).
+     */
+    private final java.util.Map<Item, Integer> delivered = new java.util.HashMap<>();
+    private final net.neoforged.neoforge.items.IItemHandler items = new net.neoforged.neoforge.items.IItemHandler() {
         @Override
-        protected void onContentsChanged(int slot) {
-            setChanged();
+        public int getSlots() {
+            return SLOTS;
+        }
+
+        @Override
+        public ItemStack getStackInSlot(int slot) {
+            return ItemStack.EMPTY;
+        }
+
+        @Override
+        public ItemStack insertItem(int slot, ItemStack stack, boolean simulate) {
+            int take = Math.min(stack.getCount(), lack(stack.getItem()));
+            if (take <= 0) return stack;
+            if (!simulate) {
+                delivered.merge(stack.getItem(), take, Integer::sum);
+                setChanged();
+            }
+            return stack.copyWithCount(stack.getCount() - take);
+        }
+
+        @Override
+        public ItemStack extractItem(int slot, int amount, boolean simulate) {
+            return ItemStack.EMPTY;
+        }
+
+        @Override
+        public int getSlotLimit(int slot) {
+            return Integer.MAX_VALUE;
+        }
+
+        @Override
+        public boolean isItemValid(int slot, ItemStack stack) {
+            return lack(stack.getItem()) > 0;
         }
     };
 
@@ -47,8 +83,18 @@ public class ConstructionSiteBlockEntity extends BlockEntity {
         super(SiteRegistry.SITE_BE.get(), pos, state);
     }
 
-    public ItemStackHandler items() {
+    public net.neoforged.neoforge.items.IItemHandler items() {
         return items;
+    }
+
+    /** Сколько предмета ещё нужно на текущий и оставшиеся этапы сверх привезённого; 0 — не нужен или уже всё есть. */
+    private int lack(Item item) {
+        SitePlans.Plan p = plan();
+        if (p == null) return 0;
+        int need = 0;
+        for (int i = stage; i < p.stages().size(); i++)
+            for (SitePlans.Need n : p.stages().get(i).needs()) if (n.item().get() == item) need += n.count();
+        return Math.max(0, need - delivered.getOrDefault(item, 0));
     }
 
     @Nullable
@@ -82,6 +128,7 @@ public class ConstructionSiteBlockEntity extends BlockEntity {
         planId = id;
         stage = 0;
         erectLeft = 0;
+        delivered.clear();
         sync();
         return null;
     }
@@ -115,26 +162,13 @@ public class ConstructionSiteBlockEntity extends BlockEntity {
         return p.getX() + " " + p.getY() + " " + p.getZ();
     }
 
-    /** Принять предмет со склада игрока, если он нужен на текущем этапе; возвращает остаток. */
+    /** Принять предмет из рук игрока, если он нужен на текущем этапе: стопка уменьшается на принятое. */
     public ItemStack offer(ItemStack stack) {
-        SitePlans.Plan p = plan();
-        if (p == null || stage >= p.stages().size()) return stack;
-        for (SitePlans.Need n : p.stages().get(stage).needs()) {
-            if (!stack.is(n.item().get())) continue;
-            int lack = n.count() - count(n.item().get());
-            if (lack <= 0) return stack;
-            ItemStack part = stack.split(Math.min(lack, stack.getCount()));
-            for (int i = 0; i < SLOTS && !part.isEmpty(); i++) part = items.insertItem(i, part, false);
-            if (!part.isEmpty()) stack.grow(part.getCount());
-            return stack;
-        }
+        int take = Math.min(stack.getCount(), lack(stack.getItem()));
+        if (take <= 0) return stack;
+        items.insertItem(0, stack.copyWithCount(take), false);
+        stack.shrink(take);
         return stack;
-    }
-
-    private int count(Item item) {
-        int n = 0;
-        for (int i = 0; i < SLOTS; i++) if (items.getStackInSlot(i).is(item)) n += items.getStackInSlot(i).getCount();
-        return n;
     }
 
     /** Чего не хватает на текущем этапе. */
@@ -143,7 +177,7 @@ public class ConstructionSiteBlockEntity extends BlockEntity {
         SitePlans.Plan p = plan();
         if (p == null || stage >= p.stages().size()) return out;
         for (SitePlans.Need n : p.stages().get(stage).needs()) {
-            int lack = n.count() - count(n.item().get());
+            int lack = n.count() - delivered.getOrDefault(n.item().get(), 0);
             if (lack > 0) out.add(Component.literal(lack + " × ").append(n.item().get().getDescription()));
         }
         return out;
@@ -188,16 +222,11 @@ public class ConstructionSiteBlockEntity extends BlockEntity {
         }
         if (stage >= p.stages().size() || level.getGameTime() % 20 != 0) return;
         if (!missing().isEmpty()) return;
-        for (SitePlans.Need n : p.stages().get(stage).needs()) take(n.item().get(), n.count());
+        // этап забирает свою долю привезённого, остальное ждёт следующих этапов
+        for (SitePlans.Need n : p.stages().get(stage).needs()) delivered.merge(n.item().get(), -n.count(), Integer::sum);
+        delivered.values().removeIf(v -> v <= 0);
         erectLeft = Math.max(1, p.stages().get(stage).erectTicks());
         sync();
-    }
-
-    private void take(Item item, int count) {
-        for (int i = 0; i < SLOTS && count > 0; i++) {
-            if (!items.getStackInSlot(i).is(item)) continue;
-            count -= items.extractItem(i, count, false).getCount();
-        }
     }
 
     /** Последний этап: машина встаёт на место площадки; если объём заняли во время стройки — ждёт. */
@@ -225,7 +254,9 @@ public class ConstructionSiteBlockEntity extends BlockEntity {
         tag.putString("plan", planId);
         tag.putInt("stage", stage);
         tag.putInt("erect", erectLeft);
-        tag.put("items", items.serializeNBT(registries));
+        CompoundTag d = new CompoundTag();
+        delivered.forEach((item, n) -> d.putInt(net.minecraft.core.registries.BuiltInRegistries.ITEM.getKey(item).toString(), n));
+        tag.put("delivered", d);
     }
 
     @Override
@@ -234,7 +265,12 @@ public class ConstructionSiteBlockEntity extends BlockEntity {
         planId = tag.getString("plan");
         stage = tag.getInt("stage");
         erectLeft = tag.getInt("erect");
-        if (tag.contains("items")) items.deserializeNBT(registries, tag.getCompound("items"));
+        delivered.clear();
+        CompoundTag d = tag.getCompound("delivered");
+        for (String k : d.getAllKeys()) {
+            var rl = net.minecraft.resources.ResourceLocation.tryParse(k);
+            if (rl != null) net.minecraft.core.registries.BuiltInRegistries.ITEM.getOptional(rl).ifPresent(i -> delivered.put(i, d.getInt(k)));
+        }
     }
 
     @Override
