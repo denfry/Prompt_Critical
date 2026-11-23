@@ -44,6 +44,9 @@ public final class MineCageBlock extends PcBlock {
     @Override
     protected InteractionResult useWithoutItem(BlockState state, Level level, BlockPos pos, Player player, BlockHitResult hit) {
         if (!isController(state)) return InteractionResult.PASS;
+        // со справочником в руке ПКМ открывает справочник, а не дверь клети
+        if (player.getMainHandItem().is(dev.denfry.promptcritical.mod.registry.PcItems.ENGINEERING_HANDBOOK.get())
+                || player.getOffhandItem().is(dev.denfry.promptcritical.mod.registry.PcItems.ENGINEERING_HANDBOOK.get())) return InteractionResult.PASS;
         if (level.isClientSide) return InteractionResult.SUCCESS;
         BlockState next = state.cycle(BlockStateProperties.OPEN);
         level.setBlock(pos, next, Block.UPDATE_ALL);
