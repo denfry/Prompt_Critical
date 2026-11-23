@@ -984,7 +984,7 @@ public final class PcBlocks {
     /** Тигельная печь реального масштаба: коксовая яма 2×2×2 в полу со стоком и трубкой (crucible_furnace-dimensions.md). */
     public static final Footprint FP_CRUCIBLE_FURNACE_REAL = Footprint.tiled(0, 1, -1, 0, 0, 1);
     public static final DeferredBlock<PcDeviceBlock> CRUCIBLE_FURNACE_REAL = device("crucible_furnace_real", lit(brick()),
-            Spec.facing(BlockStateProperties.LIT).segments(PcProperties.wholeSegments(FP_CRUCIBLE_FURNACE_REAL.segments().size()), FP_CRUCIBLE_FURNACE_REAL),
+            Spec.facing(BlockStateProperties.LIT).footprint(FP_CRUCIBLE_FURNACE_REAL),
             FoundryBlock.with(CrucibleBlockEntity::new));
     // ручная ступень машиностроения (18 §18.6.1–18.6.4, §18.7): сыродутный горн, кузнечный горн, наковальня
     public static final DeferredBlock<PcDeviceBlock> BLOOMERY = device("bloomery", lit(brick()), Spec.facing(BlockStateProperties.LIT),
