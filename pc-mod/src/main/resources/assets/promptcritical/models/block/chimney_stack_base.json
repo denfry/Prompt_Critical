@@ -11,7 +11,7 @@
 	},
 	"elements": [
 		{
-			"name": "plinth_0",
+			"name": "plinth_w_0",
 			"from": [-16, -16, -16],
 			"to": [0, -12, 0],
 			"rotation": {
@@ -47,7 +47,7 @@
 			}
 		},
 		{
-			"name": "plinth_1",
+			"name": "plinth_w_1",
 			"from": [-16, -16, 0],
 			"to": [0, -12, 32],
 			"rotation": {
@@ -83,8 +83,8 @@
 			}
 		},
 		{
-			"name": "plinth_2",
-			"from": [0, -16, -16],
+			"name": "plinth_e_0",
+			"from": [16, -16, -16],
 			"to": [32, -12, 0],
 			"rotation": {
 				"angle": 0,
@@ -93,7 +93,7 @@
 			},
 			"faces": {
 				"north": {
-					"uv": [0, 6, 16, 8],
+					"uv": [0, 6, 8, 8],
 					"texture": "#material_ashlar"
 				},
 				"east": {
@@ -101,7 +101,7 @@
 					"texture": "#material_ashlar"
 				},
 				"south": {
-					"uv": [0, 6, 16, 8],
+					"uv": [8, 6, 16, 8],
 					"texture": "#material_ashlar"
 				},
 				"west": {
@@ -109,18 +109,18 @@
 					"texture": "#material_ashlar"
 				},
 				"up": {
-					"uv": [0, 8, 16, 16],
+					"uv": [8, 8, 16, 16],
 					"texture": "#material_ashlar"
 				},
 				"down": {
-					"uv": [0, 0, 16, 8],
+					"uv": [8, 0, 16, 8],
 					"texture": "#material_ashlar"
 				}
 			}
 		},
 		{
-			"name": "plinth_3",
-			"from": [0, -16, 0],
+			"name": "plinth_e_1",
+			"from": [16, -16, 0],
 			"to": [32, -12, 32],
 			"rotation": {
 				"angle": 0,
@@ -129,7 +129,7 @@
 			},
 			"faces": {
 				"north": {
-					"uv": [0, 6, 16, 8],
+					"uv": [0, 6, 8, 8],
 					"texture": "#material_ashlar"
 				},
 				"east": {
@@ -137,7 +137,7 @@
 					"texture": "#material_ashlar"
 				},
 				"south": {
-					"uv": [0, 6, 16, 8],
+					"uv": [8, 6, 16, 8],
 					"texture": "#material_ashlar"
 				},
 				"west": {
@@ -145,11 +145,83 @@
 					"texture": "#material_ashlar"
 				},
 				"up": {
-					"uv": [0, 0, 16, 16],
+					"uv": [8, 0, 16, 16],
 					"texture": "#material_ashlar"
 				},
 				"down": {
-					"uv": [0, 0, 16, 16],
+					"uv": [8, 0, 16, 16],
+					"texture": "#material_ashlar"
+				}
+			}
+		},
+		{
+			"name": "plinth_back_0",
+			"from": [0, -16, -10],
+			"to": [16, -12, 0],
+			"rotation": {
+				"angle": 0,
+				"axis": "y",
+				"origin": [8, 8, 8]
+			},
+			"faces": {
+				"north": {
+					"uv": [8, 6, 16, 8],
+					"texture": "#material_ashlar"
+				},
+				"east": {
+					"uv": [0, 6, 5, 8],
+					"texture": "#material_ashlar"
+				},
+				"south": {
+					"uv": [0, 6, 8, 8],
+					"texture": "#material_ashlar"
+				},
+				"west": {
+					"uv": [11, 6, 16, 8],
+					"texture": "#material_ashlar"
+				},
+				"up": {
+					"uv": [0, 11, 8, 16],
+					"texture": "#material_ashlar"
+				},
+				"down": {
+					"uv": [0, 0, 8, 5],
+					"texture": "#material_ashlar"
+				}
+			}
+		},
+		{
+			"name": "plinth_back_1",
+			"from": [0, -16, 0],
+			"to": [16, -12, 32],
+			"rotation": {
+				"angle": 0,
+				"axis": "y",
+				"origin": [8, 8, 8]
+			},
+			"faces": {
+				"north": {
+					"uv": [8, 6, 16, 8],
+					"texture": "#material_ashlar"
+				},
+				"east": {
+					"uv": [0, 6, 16, 8],
+					"texture": "#material_ashlar"
+				},
+				"south": {
+					"uv": [0, 6, 8, 8],
+					"texture": "#material_ashlar"
+				},
+				"west": {
+					"uv": [0, 6, 16, 8],
+					"texture": "#material_ashlar"
+				},
+				"up": {
+					"uv": [0, 0, 8, 16],
+					"texture": "#material_ashlar"
+				},
+				"down": {
+					"uv": [0, 0, 8, 16],
 					"texture": "#material_ashlar"
 				}
 			}
@@ -443,9 +515,9 @@
 			}
 		},
 		{
-			"name": "ped_low_0",
-			"from": [0, -12, -14],
-			"to": [16, 0, 0],
+			"name": "ped_high_0",
+			"from": [0, 0, -14],
+			"to": [16, 18, 0],
 			"rotation": {
 				"angle": 0,
 				"axis": "y",
@@ -453,19 +525,19 @@
 			},
 			"faces": {
 				"north": {
-					"uv": [8, 0, 16, 6],
+					"uv": [8, 7, 16, 16],
 					"texture": "#material_brick"
 				},
 				"east": {
-					"uv": [0, 0, 7, 6],
+					"uv": [0, 7, 7, 16],
 					"texture": "#material_brick"
 				},
 				"south": {
-					"uv": [0, 0, 8, 6],
+					"uv": [0, 7, 8, 16],
 					"texture": "#material_brick"
 				},
 				"west": {
-					"uv": [9, 0, 16, 6],
+					"uv": [9, 7, 16, 16],
 					"texture": "#material_brick"
 				},
 				"up": {
@@ -479,7 +551,79 @@
 			}
 		},
 		{
-			"name": "ped_low_1",
+			"name": "ped_high_1",
+			"from": [0, 0, 0],
+			"to": [16, 18, 30],
+			"rotation": {
+				"angle": 0,
+				"axis": "y",
+				"origin": [8, 8, 8]
+			},
+			"faces": {
+				"north": {
+					"uv": [8, 7, 16, 16],
+					"texture": "#material_brick"
+				},
+				"east": {
+					"uv": [1, 7, 16, 16],
+					"texture": "#material_brick"
+				},
+				"south": {
+					"uv": [0, 7, 8, 16],
+					"texture": "#material_brick"
+				},
+				"west": {
+					"uv": [0, 7, 15, 16],
+					"texture": "#material_brick"
+				},
+				"up": {
+					"uv": [0, 0, 8, 15],
+					"texture": "#material_brick"
+				},
+				"down": {
+					"uv": [0, 1, 8, 16],
+					"texture": "#material_brick"
+				}
+			}
+		},
+		{
+			"name": "ped_back_0",
+			"from": [0, -12, -10],
+			"to": [16, 0, 0],
+			"rotation": {
+				"angle": 0,
+				"axis": "y",
+				"origin": [8, 8, 8]
+			},
+			"faces": {
+				"north": {
+					"uv": [8, 0, 16, 6],
+					"texture": "#material_brick"
+				},
+				"east": {
+					"uv": [0, 0, 5, 6],
+					"texture": "#material_brick"
+				},
+				"south": {
+					"uv": [0, 0, 8, 6],
+					"texture": "#material_brick"
+				},
+				"west": {
+					"uv": [11, 0, 16, 6],
+					"texture": "#material_brick"
+				},
+				"up": {
+					"uv": [0, 11, 8, 16],
+					"texture": "#material_brick"
+				},
+				"down": {
+					"uv": [0, 0, 8, 5],
+					"texture": "#material_brick"
+				}
+			}
+		},
+		{
+			"name": "ped_back_1",
 			"from": [0, -12, 0],
 			"to": [16, 0, 30],
 			"rotation": {
@@ -515,153 +659,9 @@
 			}
 		},
 		{
-			"name": "ped_high_0",
-			"from": [0, 16, -14],
-			"to": [16, 18, 0],
-			"rotation": {
-				"angle": 0,
-				"axis": "y",
-				"origin": [8, 8, 8]
-			},
-			"faces": {
-				"north": {
-					"uv": [8, 7, 16, 8],
-					"texture": "#material_brick"
-				},
-				"east": {
-					"uv": [0, 7, 7, 8],
-					"texture": "#material_brick"
-				},
-				"south": {
-					"uv": [0, 7, 8, 8],
-					"texture": "#material_brick"
-				},
-				"west": {
-					"uv": [9, 7, 16, 8],
-					"texture": "#material_brick"
-				},
-				"up": {
-					"uv": [0, 9, 8, 16],
-					"texture": "#material_brick"
-				},
-				"down": {
-					"uv": [0, 0, 8, 7],
-					"texture": "#material_brick"
-				}
-			}
-		},
-		{
-			"name": "ped_high_1",
-			"from": [0, 16, 0],
-			"to": [16, 18, 30],
-			"rotation": {
-				"angle": 0,
-				"axis": "y",
-				"origin": [8, 8, 8]
-			},
-			"faces": {
-				"north": {
-					"uv": [8, 7, 16, 8],
-					"texture": "#material_brick"
-				},
-				"east": {
-					"uv": [1, 7, 16, 8],
-					"texture": "#material_brick"
-				},
-				"south": {
-					"uv": [0, 7, 8, 8],
-					"texture": "#material_brick"
-				},
-				"west": {
-					"uv": [0, 7, 15, 8],
-					"texture": "#material_brick"
-				},
-				"up": {
-					"uv": [0, 0, 8, 15],
-					"texture": "#material_brick"
-				},
-				"down": {
-					"uv": [0, 1, 8, 16],
-					"texture": "#material_brick"
-				}
-			}
-		},
-		{
-			"name": "ped_back_0",
-			"from": [0, 0, -10],
-			"to": [16, 16, 0],
-			"rotation": {
-				"angle": 0,
-				"axis": "y",
-				"origin": [8, 8, 8]
-			},
-			"faces": {
-				"north": {
-					"uv": [8, 8, 16, 16],
-					"texture": "#material_brick"
-				},
-				"east": {
-					"uv": [0, 8, 5, 16],
-					"texture": "#material_brick"
-				},
-				"south": {
-					"uv": [0, 8, 8, 16],
-					"texture": "#material_brick"
-				},
-				"west": {
-					"uv": [11, 8, 16, 16],
-					"texture": "#material_brick"
-				},
-				"up": {
-					"uv": [0, 11, 8, 16],
-					"texture": "#material_brick"
-				},
-				"down": {
-					"uv": [0, 0, 8, 5],
-					"texture": "#material_brick"
-				}
-			}
-		},
-		{
-			"name": "ped_back_1",
-			"from": [0, 0, 0],
-			"to": [16, 16, 30],
-			"rotation": {
-				"angle": 0,
-				"axis": "y",
-				"origin": [8, 8, 8]
-			},
-			"faces": {
-				"north": {
-					"uv": [8, 8, 16, 16],
-					"texture": "#material_brick"
-				},
-				"east": {
-					"uv": [1, 8, 16, 16],
-					"texture": "#material_brick"
-				},
-				"south": {
-					"uv": [0, 8, 8, 16],
-					"texture": "#material_brick"
-				},
-				"west": {
-					"uv": [0, 8, 15, 16],
-					"texture": "#material_brick"
-				},
-				"up": {
-					"uv": [0, 0, 8, 15],
-					"texture": "#material_brick"
-				},
-				"down": {
-					"uv": [0, 1, 8, 16],
-					"texture": "#material_brick"
-				}
-			}
-		},
-		{
 			"name": "inlet_soot",
-			"from": [0, 0, -10.2],
-			"to": [16, 16, -10],
+			"from": [0, -16, -10.2],
+			"to": [16, 0, -10],
 			"rotation": {
 				"angle": 0,
 				"axis": "y",
@@ -696,8 +696,8 @@
 		},
 		{
 			"name": "inlet_sill",
-			"from": [-1, -0.5, -15],
-			"to": [17, 0, -14],
+			"from": [-1, -16, -15],
+			"to": [17, -15.5, -14],
 			"rotation": {
 				"angle": 0,
 				"axis": "y",
@@ -705,19 +705,19 @@
 			},
 			"faces": {
 				"north": {
-					"uv": [7.5, 0, 16, 0.25],
+					"uv": [7.5, 7.75, 16, 8],
 					"texture": "#material_ashlar"
 				},
 				"east": {
-					"uv": [7, 0, 7.5, 0.25],
+					"uv": [7, 7.75, 7.5, 8],
 					"texture": "#material_ashlar"
 				},
 				"south": {
-					"uv": [0, 0, 8.5, 0.25],
+					"uv": [0, 7.75, 8.5, 8],
 					"texture": "#material_ashlar"
 				},
 				"west": {
-					"uv": [8.5, 0, 9, 0.25],
+					"uv": [8.5, 7.75, 9, 8],
 					"texture": "#material_ashlar"
 				},
 				"up": {
@@ -732,8 +732,8 @@
 		},
 		{
 			"name": "inlet_lintel",
-			"from": [-2, 16, -15],
-			"to": [18, 19, -14],
+			"from": [-2, 0, -15],
+			"to": [18, 3, -14],
 			"rotation": {
 				"angle": 0,
 				"axis": "y",
@@ -741,19 +741,19 @@
 			},
 			"faces": {
 				"north": {
-					"uv": [7, 6.5, 16, 8],
+					"uv": [7, 14.5, 16, 16],
 					"texture": "#material_ashlar"
 				},
 				"east": {
-					"uv": [7, 6.5, 7.5, 8],
+					"uv": [7, 14.5, 7.5, 16],
 					"texture": "#material_ashlar"
 				},
 				"south": {
-					"uv": [0, 6.5, 9, 8],
+					"uv": [0, 14.5, 9, 16],
 					"texture": "#material_ashlar"
 				},
 				"west": {
-					"uv": [8.5, 6.5, 9, 8],
+					"uv": [8.5, 14.5, 9, 16],
 					"texture": "#material_ashlar"
 				},
 				"up": {

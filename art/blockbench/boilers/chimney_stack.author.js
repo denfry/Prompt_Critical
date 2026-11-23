@@ -5,8 +5,8 @@
 // docs/research/chimney_stack-dimensions.md (disk only).
 //
 // Each segment is one Java block model about its middle block (x, y, z -16..32). Controller = the middle block.
-// The flue inlet of the base is the north face of the base's cell (0, 0, -1), opening x 0..16, y 0..16, which meets
-// the Lancashire boiler's flue port (south face of boiler cell (0, 0, 9)) when the base sits at boiler (0, 0, 11).
+// The flue inlet of the base is the north face of the base's cell (0, -1, -1), opening x 0..16, y -16..0, which meets
+// the Lancashire boiler's flue port (south face of boiler cell (0, 0, 9)) when the base controller sits at boiler (0, 1, 11).
 //
 // Load after pcart.js, pcround.js and vverkit.js, then CHIMNEY_STACK.build(repo, part) /* wait */
 // CHIMNEY_STACK.save(repo, part), part = 'base' | 'shaft' | 'cap'.
@@ -39,16 +39,18 @@
 
   function base() {
     const m = PCVV.mk('material/brick');
-    // ashlar plinth and the square brick pedestal round the inlet arch (north face, x 0..16, y 0..16)
-    m.box('plinth', [-16, -16, -16], [32, -12, 32], 'ashlar');
+    // ashlar plinth and the square brick pedestal round the inlet arch (north face, x 0..16, y -16..0: the bottom row,
+    // at floor level to meet the Lancashire flue); the plinth stops either side of the opening
+    m.box('plinth_w', [-16, -16, -16], [0, -12, 32], 'ashlar');
+    m.box('plinth_e', [16, -16, -16], [32, -12, 32], 'ashlar');
+    m.box('plinth_back', [0, -16, -10], [16, -12, 32], 'ashlar');
     m.box('ped_w', [-14, -12, -14], [0, 18, 30], 'brick');
     m.box('ped_e', [16, -12, -14], [30, 18, 30], 'brick');
-    m.box('ped_low', [0, -12, -14], [16, 0, 30], 'brick');
-    m.box('ped_high', [0, 16, -14], [16, 18, 30], 'brick');
-    m.box('ped_back', [0, 0, -10], [16, 16, 30], 'brick');
-    m.box('inlet_soot', [0, 0, -10.2], [16, 16, -10], 'soot', { split: '' });
-    m.box('inlet_sill', [-1, -0.5, -15], [17, 0, -14], 'ashlar', { split: '' });
-    m.box('inlet_lintel', [-2, 16, -15], [18, 19, -14], 'ashlar', { split: '' });
+    m.box('ped_high', [0, 0, -14], [16, 18, 30], 'brick');
+    m.box('ped_back', [0, -12, -10], [16, 0, 30], 'brick');
+    m.box('inlet_soot', [0, -16, -10.2], [16, 0, -10], 'soot', { split: '' });
+    m.box('inlet_sill', [-1, -16, -15], [17, -15.5, -14], 'ashlar', { split: '' });
+    m.box('inlet_lintel', [-2, 0, -15], [18, 3, -14], 'ashlar', { split: '' });
     // pedestal cornice and the start of the round shaft
     m.box('cornice', [-15, 18, -15], [31, 21, 31], 'ashlar');
     shaft(m, 21, 32, false);
