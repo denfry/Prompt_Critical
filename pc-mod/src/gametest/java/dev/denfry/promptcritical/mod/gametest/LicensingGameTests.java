@@ -106,6 +106,15 @@ public final class LicensingGameTests {
         h.succeed();
     }
 
+    /** Ревью HP1: мир, существовавший до профиля (время уже идёт), не получает licensing из конфига. */
+    @GameTest(template = LARGE, timeoutTicks = 100, batch = "licensing")
+    public static void onlyNewWorldsTakeTheConfig(GameTestHelper h) {
+        h.assertTrue(LicensingWorldData.decide(true, 0), "a fresh world takes licensing from the config");
+        h.assertTrue(!LicensingWorldData.decide(true, 72_000), "an existing world stays without licensing");
+        h.assertTrue(!LicensingWorldData.decide(false, 0), "config off stays off");
+        h.succeed();
+    }
+
     @GameTest(template = LARGE, timeoutTicks = 100, batch = "licensing")
     public static void worldFlagIsFixed(GameTestHelper h) {
         var server = h.getLevel().getServer();

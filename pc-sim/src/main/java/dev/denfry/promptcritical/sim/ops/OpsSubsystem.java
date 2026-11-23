@@ -142,8 +142,9 @@ public final class OpsSubsystem implements Subsystem {
         return ID;
     }
 
+    /** Действующий конфиг: в профиле licensing режим пусконаладки — {@code ENFORCED}. */
     public OpsConfig config() {
-        return cfg;
+        return effective(cfg);
     }
 
     public CommissioningService commissioning() {
@@ -258,8 +259,11 @@ public final class OpsSubsystem implements Subsystem {
      */
     public CheckResult perform(SimId unit, CheckInput input, UUID by, UUID team) {
         if (!service.registered(unit)) return null;
-        if (team != null) licences.owner(unit, team);
+        // владелец ставится до проверки, чтобы приёмка в этом же вызове засчиталась команде; отказ его снимает
+        boolean claimed = team != null && licences.owner(unit).isEmpty();
+        if (claimed) licences.owner(unit, team);
         CheckResult r = service.perform(unit, input, by, tick);
+        if (claimed && r.outcome() == CheckResult.Outcome.REFUSED) licences.forget(unit);
         if (r.outcome() != CheckResult.Outcome.REFUSED)
             log(unit, r.passed() ? OpsLogEntry.Kind.CHECK_PASSED : OpsLogEntry.Kind.CHECK_FAILED, r.check().name());
         return r;

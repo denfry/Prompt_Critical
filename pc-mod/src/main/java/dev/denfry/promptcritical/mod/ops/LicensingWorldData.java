@@ -28,7 +28,11 @@ public final class LicensingWorldData extends SavedData {
         return tag;
     }
 
-    /** Флаг мира; если его ещё нет — записывает {@code configValue} и возвращает его. */
+    /**
+     * Флаг мира; если его ещё нет — решает {@link #decide} и записывает решение. Мир, сохранённый до профиля, флага не
+     * имеет, но время в нём уже идёт: он остаётся без licensing, иначе профиль включился бы посреди игры, а прежний
+     * прогресс маршрута в реестр не попал бы.
+     */
     public static boolean resolve(MinecraftServer server, boolean configValue) {
         return resolve(server.overworld(), configValue);
     }
@@ -40,9 +44,14 @@ public final class LicensingWorldData extends SavedData {
         LicensingWorldData d = storage.get(new SavedData.Factory<>(LicensingWorldData::new, LicensingWorldData::load, null), NAME);
         if (d != null) return d.enabled;
         d = new LicensingWorldData();
-        d.enabled = configValue;
+        d.enabled = decide(configValue, overworld.getGameTime());
         d.setDirty();
         storage.set(NAME, d);
-        return configValue;
+        return d.enabled;
+    }
+
+    /** Профиль берётся из конфига только новым миром (игровое время ещё 0). */
+    public static boolean decide(boolean configValue, long gameTime) {
+        return configValue && gameTime == 0;
     }
 }

@@ -104,6 +104,23 @@ class OpsLicensingTest {
         assertThat(ops.licences().acceptedKinds(TEAM)).containsExactly(UnitKind.FIRE_TUBE_BOILER);
     }
 
+    /** Ревью HP1: отказанная проверка не делает команду владельцем чужой установки. */
+    @Test
+    void refusedCheckDoesNotClaimTheUnit() {
+        OpsSubsystem ops = licensed(OpsConfig.defaults().withDefectRate(0));
+        SimId b = boiler(ops, 108);
+        CheckResult r = ops.perform(b, new CheckInput.ReliefValveSet(false), PLAYER, TEAM);
+        assertThat(r.outcome()).isEqualTo(CheckResult.Outcome.REFUSED);
+        assertThat(ops.licences().owner(b)).isEmpty();
+    }
+
+    /** Ревью HP1: все читатели режима видят ENFORCED, а не сырое значение конфига. */
+    @Test
+    void configReportsEnforcedUnderLicensing() {
+        OpsSubsystem ops = licensed(OpsConfig.defaults().withCommissioning(CommissioningMode.ADVISORY));
+        assertThat(ops.config().commissioning()).isEqualTo(CommissioningMode.ENFORCED);
+    }
+
     @Test
     void withoutLicensingNothingChanges() {
         OpsSubsystem ops = ops(OpsConfig.defaults().withCommissioning(CommissioningMode.ADVISORY).withDefectRate(0));
