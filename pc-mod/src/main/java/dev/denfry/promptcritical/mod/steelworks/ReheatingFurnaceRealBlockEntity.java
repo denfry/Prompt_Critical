@@ -98,6 +98,12 @@ public final class ReheatingFurnaceRealBlockEntity extends ReheatingFurnaceBlock
         if (tag.contains("chargedAt")) chargedAt = tag.getLong("chargedAt");
     }
 
+    /** В симуляции — та же печь, что и старый блок: иначе подсистема не создаст BatchFurnaceUnit. */
+    @Override
+    public String deviceType() {
+        return dev.denfry.promptcritical.sim.metallurgy.IronmakingSubsystem.REHEATING_FURNACE;
+    }
+
     @Override
     @Nullable
     public String wholeModelId() {

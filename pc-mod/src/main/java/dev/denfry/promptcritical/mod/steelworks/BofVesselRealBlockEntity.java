@@ -24,6 +24,12 @@ public final class BofVesselRealBlockEntity extends BofVesselBlockEntity impleme
         super(SteelworksBlockEntities.BOF_VESSEL_REAL.get(), pos, state, REAL);
     }
 
+    /** В симуляции — тот же конвертер, что и старый блок: иначе подсистема не создаст ConverterUnit. */
+    @Override
+    public String deviceType() {
+        return dev.denfry.promptcritical.sim.metallurgy.IronmakingSubsystem.CONVERTER;
+    }
+
     @Override
     @Nullable
     public String wholeModelId() {
