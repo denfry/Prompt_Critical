@@ -402,6 +402,8 @@ public final class PcBlockStateProvider extends BlockStateProvider {
                  "piercing_mill_real" -> "whole_empty";
             case "acheson_furnace_real", "electrode_extruder_real", "baking_furnace_real" -> "whole_empty";
             case "power_hammer_real", "bloomery_real", "forge_hearth_real", "crank_press_real", "wire_mill_real", "sheet_mill_real", "notching_press_real", "winding_machine_real", "heating_furnace_real", "hardening_furnace_real" -> "whole_empty";
+            case "electrorefining_cell_real", "peirce_smith_converter_real", "reduction_pot_real", "bayer_digester_real",
+                 "alumina_precipitator_real", "matte_smelter_real" -> "whole_empty";
             case "pressurizer" -> s.getValue(BlockStateProperties.LIT) ? id + "_lit" : id;
             // тяжёлая вода T3
             case "gs_exchange_tower" -> "absorption_tower";

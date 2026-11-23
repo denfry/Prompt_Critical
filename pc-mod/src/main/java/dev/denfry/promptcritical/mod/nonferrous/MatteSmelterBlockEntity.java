@@ -28,7 +28,7 @@ import org.jetbrains.annotations.Nullable;
  * с коксом — восстановительная плавка (концентрат идёт первым). Топливный газ и кислород — трубой к любой грани;
  * штейн и олово — в склад (воронкой снизу). SO₂ — газоходом в сернокислотную установку рядом, иначе в трубу.
  */
-public final class MatteSmelterBlockEntity extends UraniumProcessBlockEntity {
+public final class MatteSmelterBlockEntity extends UraniumProcessBlockEntity implements dev.denfry.promptcritical.mod.client.whole.WholeModelHost {
     public static final int MB = 8_000;
     /** Кремнезём кварцевой жилы (08 §8.1.2: SiO₂ > 99 %). */
     public static final double QUARTZ_SIO2 = 0.99;
@@ -192,5 +192,23 @@ public final class MatteSmelterBlockEntity extends UraniumProcessBlockEntity {
         cuMatteKg = tag.getDouble("cu_matte");
         niMatteKg = tag.getDouble("ni_matte");
         tinKg = tag.getDouble("tin");
+    }
+
+    // --- блок реального масштаба с цельной моделью (горит — модель _lit) ---
+
+    @Override
+    @org.jetbrains.annotations.Nullable
+    public String wholeModelId() {
+        return NonferrousReal.model(getBlockState(), getBlockState().getValue(net.minecraft.world.level.block.state.properties.BlockStateProperties.LIT) ? "lit" : "");
+    }
+
+    @Override
+    public net.minecraft.core.Direction wholeModelFacing() {
+        return NonferrousReal.facing(getBlockState());
+    }
+
+    @Override
+    public net.minecraft.core.BlockPos wholeModelLightPos() {
+        return NonferrousReal.lightPos(worldPosition, getBlockState(), 4);
     }
 }

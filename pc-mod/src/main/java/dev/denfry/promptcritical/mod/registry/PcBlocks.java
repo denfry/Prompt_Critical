@@ -1016,7 +1016,10 @@ public final class PcBlocks {
                 || b == HEAT_TREATMENT_FURNACE_REAL.get() || b == PIPE_WELDER_REAL.get() || b == PIERCING_MILL_REAL.get()
                 // углеродная линия реального масштаба
                 || b == ACHESON_FURNACE_REAL.get() || b == ELECTRODE_EXTRUDER_REAL.get() || b == BAKING_FURNACE_REAL.get()
-                || isSmithyReal(b);
+                || isSmithyReal(b)
+                // цветная металлургия реального масштаба
+                || b == ELECTROREFINING_CELL_REAL.get() || b == PEIRCE_SMITH_CONVERTER_REAL.get() || b == REDUCTION_POT_REAL.get()
+                || b == BAYER_DIGESTER_REAL.get() || b == ALUMINA_PRECIPITATOR_REAL.get() || b == MATTE_SMELTER_REAL.get();
     }
 
     /** Кузница и машиностроение реального масштаба (18 §18.6–18.7). */
@@ -1484,6 +1487,43 @@ public final class PcBlocks {
     public static final DeferredBlock<PcDeviceBlock> PGM_REFINERY = device("pgm_refinery", machine(),
             Spec.facing(PcProperties.RUNNING).footprint(Footprint.of(Segment.box(0, 1, 0, 1, 0, 0))),
             FoundryBlock.with(dev.denfry.promptcritical.mod.nonferrous.PgmRefineryBlockEntity::new));
+    // --- цветная металлургия реального масштаба (08 §8.8): те же BE и юниты, что у старых блоков ---
+    /** Ванна электрорафинирования реального масштаба: бетонный бак 4,6 × 1,15 × 1,3 м с 30 анодами, 5 × 2 × 2. */
+    public static final Footprint FP_ELECTROREFINING_CELL_REAL = Footprint.tiled(-2, 2, 0, 1, 0, 1);
+    public static final DeferredBlock<PcDeviceBlock> ELECTROREFINING_CELL_REAL = device("electrorefining_cell_real", machine(),
+            Spec.facing(PcProperties.RUNNING, PcProperties.NICKEL).segments(
+                    PcProperties.wholeSegments(FP_ELECTROREFINING_CELL_REAL.segments().size()), FP_ELECTROREFINING_CELL_REAL),
+            FoundryBlock.with(dev.denfry.promptcritical.mod.nonferrous.ElectrorefiningCellBlockEntity::new));
+    /** Конвертер Пирса–Смита реального масштаба: бочка ⌀4 × 8,5 м на бандажах и роликах, 9 × 5 × 5. */
+    public static final Footprint FP_PEIRCE_SMITH_CONVERTER_REAL = Footprint.tiled(-4, 4, 0, 4, -2, 2);
+    public static final DeferredBlock<PcDeviceBlock> PEIRCE_SMITH_CONVERTER_REAL = device("peirce_smith_converter_real", machine(),
+            Spec.facing(PcProperties.RUNNING).segments(
+                    PcProperties.wholeSegments(FP_PEIRCE_SMITH_CONVERTER_REAL.segments().size()), FP_PEIRCE_SMITH_CONVERTER_REAL),
+            FoundryBlock.with(dev.denfry.promptcritical.mod.nonferrous.ConverterBlockEntity::new));
+    /** Электролизёр Холла–Эру реального масштаба: обожжённые аноды, кожух 8 × 3,5 м, ≈ 100 кА, 9 × 4 × 5. */
+    public static final Footprint FP_REDUCTION_POT_REAL = Footprint.tiled(-4, 4, 0, 3, -2, 2);
+    public static final DeferredBlock<PcDeviceBlock> REDUCTION_POT_REAL = device("reduction_pot_real", machine(),
+            Spec.facing(PcProperties.RUNNING, PcProperties.ALARM).segments(
+                    PcProperties.wholeSegments(FP_REDUCTION_POT_REAL.segments().size()), FP_REDUCTION_POT_REAL),
+            FoundryBlock.with(dev.denfry.promptcritical.mod.nonferrous.ReductionPotBlockEntity::new));
+    /** Автоклав Байера реального масштаба: ⌀2,5 × 9 м с паровым обогревом, 3 × 10 × 3. */
+    public static final Footprint FP_BAYER_DIGESTER_REAL = Footprint.tiled(-1, 1, 0, 9, -1, 1);
+    public static final DeferredBlock<PcDeviceBlock> BAYER_DIGESTER_REAL = device("bayer_digester_real", machine(),
+            Spec.facing(PcProperties.RUNNING).segments(
+                    PcProperties.wholeSegments(FP_BAYER_DIGESTER_REAL.segments().size()), FP_BAYER_DIGESTER_REAL),
+            FoundryBlock.with(dev.denfry.promptcritical.mod.nonferrous.BayerDigesterBlockEntity::new));
+    /** Декомпозер реального масштаба: бак ⌀6 × 9 м с механической мешалкой, 7 × 10 × 7. */
+    public static final Footprint FP_ALUMINA_PRECIPITATOR_REAL = Footprint.tiled(-3, 3, 0, 9, -3, 3);
+    public static final DeferredBlock<PcDeviceBlock> ALUMINA_PRECIPITATOR_REAL = device("alumina_precipitator_real", machine(),
+            Spec.facing(PcProperties.RUNNING).segments(
+                    PcProperties.wholeSegments(FP_ALUMINA_PRECIPITATOR_REAL.segments().size()), FP_ALUMINA_PRECIPITATOR_REAL),
+            FoundryBlock.with(dev.denfry.promptcritical.mod.nonferrous.AluminaPrecipitatorBlockEntity::new));
+    /** Отражательная печь реального масштаба: 16 × 6 м под распорным сводом, 16 × 4 × 6. */
+    public static final Footprint FP_MATTE_SMELTER_REAL = Footprint.tiled(-8, 7, 0, 3, -3, 2);
+    public static final DeferredBlock<PcDeviceBlock> MATTE_SMELTER_REAL = device("matte_smelter_real", lit(brick()),
+            Spec.facing(BlockStateProperties.LIT).segments(
+                    PcProperties.wholeSegments(FP_MATTE_SMELTER_REAL.segments().size()), FP_MATTE_SMELTER_REAL),
+            FoundryBlock.with(dev.denfry.promptcritical.mod.nonferrous.MatteSmelterBlockEntity::new));
 
     // --- эксплуатация и водоподготовка (13 §13.6.5–13.6.7, 08 §8.12, этап 11а M3) ---
     public static final DeferredBlock<PcDeviceBlock> MAINTENANCE_PANEL = device("maintenance_panel", instrument(),

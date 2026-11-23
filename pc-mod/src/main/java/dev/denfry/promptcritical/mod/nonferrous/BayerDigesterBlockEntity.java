@@ -31,7 +31,7 @@ import org.jetbrains.annotations.Nullable;
  * пар — трубами к боковым граням; алюминатный раствор — сверху, красный шлам — снизу. Температуру автоклава задают
  * кнопками щита: гиббсит берётся при 140–150 °C, бёмит — при 240–250 °C.
  */
-public final class BayerDigesterBlockEntity extends UraniumProcessBlockEntity {
+public final class BayerDigesterBlockEntity extends UraniumProcessBlockEntity implements dev.denfry.promptcritical.mod.client.whole.WholeModelHost {
     public static final int MB = 8_000;
 
     private final FeedTank caustic = new FeedTank(PcFluids.SODIUM_HYDROXIDE_SOLUTION.source.get(), MB);
@@ -177,5 +177,23 @@ public final class BayerDigesterBlockEntity extends UraniumProcessBlockEntity {
         bauxiteKg = tag.getDouble("bauxite");
         al2o3 = tag.contains("grade") ? tag.getDouble("grade") : BayerProcess.DEFAULT_AL2O3;
         if (tag.contains("digester")) digester.load(new TreeStateReader(NbtStateTrees.fromNbt(tag.getCompound("digester"))));
+    }
+
+    // --- блок реального масштаба с цельной моделью (одна модель) ---
+
+    @Override
+    @org.jetbrains.annotations.Nullable
+    public String wholeModelId() {
+        return NonferrousReal.model(getBlockState(), "");
+    }
+
+    @Override
+    public net.minecraft.core.Direction wholeModelFacing() {
+        return NonferrousReal.facing(getBlockState());
+    }
+
+    @Override
+    public net.minecraft.core.BlockPos wholeModelLightPos() {
+        return NonferrousReal.lightPos(worldPosition, getBlockState(), 2);
     }
 }

@@ -35,7 +35,7 @@ import org.jetbrains.annotations.Nullable;
  * {@value PgmRefinery#PGM_PER_LOT_KG} кг) — в склад (воронкой снизу). Режим меняют на пустой секции кнопкой щита.
  * Электролиз — реальное время (08 §8.0.3).
  */
-public final class ElectrorefiningCellBlockEntity extends UraniumProcessBlockEntity implements DcLoad {
+public final class ElectrorefiningCellBlockEntity extends UraniumProcessBlockEntity implements DcLoad, dev.denfry.promptcritical.mod.client.whole.WholeModelHost {
     private static final double TICK_S = 0.05;
 
     private final Electrorefining cells = new Electrorefining();
@@ -190,5 +190,23 @@ public final class ElectrorefiningCellBlockEntity extends UraniumProcessBlockEnt
         pgmKg = tag.getDouble("pgm");
         cobaltKg = tag.getDouble("co");
         if (tag.contains("cells")) cells.load(new TreeStateReader(NbtStateTrees.fromNbt(tag.getCompound("cells"))));
+    }
+
+    // --- блок реального масштаба с цельной моделью (никелевая серия — модель _ni) ---
+
+    @Override
+    @org.jetbrains.annotations.Nullable
+    public String wholeModelId() {
+        return NonferrousReal.model(getBlockState(), getBlockState().getValue(dev.denfry.promptcritical.mod.block.PcProperties.NICKEL) ? "ni" : "");
+    }
+
+    @Override
+    public net.minecraft.core.Direction wholeModelFacing() {
+        return NonferrousReal.facing(getBlockState());
+    }
+
+    @Override
+    public net.minecraft.core.BlockPos wholeModelLightPos() {
+        return NonferrousReal.lightPos(worldPosition, getBlockState(), 1);
     }
 }
