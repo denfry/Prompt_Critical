@@ -1,0 +1,32 @@
+{
+  "parent": "minecraft:recipes/root",
+  "criteria": {
+    "has_sheet_mill": {
+      "conditions": {
+        "items": [
+          {
+            "items": "promptcritical:sheet_mill"
+          }
+        ]
+      },
+      "trigger": "minecraft:inventory_changed"
+    },
+    "has_the_recipe": {
+      "conditions": {
+        "recipe": "promptcritical:smithy/sheet_mill_real_drawing"
+      },
+      "trigger": "minecraft:recipe_unlocked"
+    }
+  },
+  "requirements": [
+    [
+      "has_the_recipe",
+      "has_sheet_mill"
+    ]
+  ],
+  "rewards": {
+    "recipes": [
+      "promptcritical:smithy/sheet_mill_real_drawing"
+    ]
+  }
+}
