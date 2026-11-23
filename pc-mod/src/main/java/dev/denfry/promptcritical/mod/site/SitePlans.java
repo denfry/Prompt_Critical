@@ -31,23 +31,28 @@ public final class SitePlans {
     private static final Supplier<Item> CONCRETE = () -> Items.GRAY_CONCRETE;
     private static final Supplier<Item> COPPER = () -> Items.COPPER_INGOT;
 
-    private static final Map<String, Plan> PLANS = Map.of(
-            "vver_reactor", new Plan("vver_reactor", PcBlocks.VVER_REACTOR, List.of(
+    private static final Map<String, Plan> PLANS = Map.ofEntries(
+            Map.entry("bwr240_reactor", new Plan("bwr240_reactor", PcBlocks.BWR240_REACTOR, List.of(
+                    new Stage("pedestal", List.of(n(CONCRETE, 48), n(PcItems.STEEL_BEAM, 8)), 200),
+                    new Stage("drives", List.of(n(PcItems.SEAMLESS_PIPE, 16), n(PcItems.STEEL_INGOT, 16), n(COPPER, 8)), 240),
+                    new Stage("vessel", List.of(n(PcItems.STEEL_PLATE, 32), n(PcItems.STEEL_BEAM, 4)), 360),
+                    new Stage("piping", List.of(n(PcItems.SEAMLESS_PIPE, 16)), 200)))),
+            Map.entry("vver_reactor", new Plan("vver_reactor", PcBlocks.VVER_REACTOR, List.of(
                     new Stage("foundation", List.of(n(CONCRETE, 64), n(PcItems.STEEL_BEAM, 16)), 200),
                     new Stage("vessel", List.of(n(PcItems.STEEL_PLATE, 48), n(PcItems.STEEL_BEAM, 8)), 400),
                     new Stage("upper_unit", List.of(n(PcItems.STEEL_PLATE, 16), n(PcItems.SEAMLESS_PIPE, 16), n(COPPER, 16)), 300),
-                    new Stage("piping", List.of(n(PcItems.SEAMLESS_PIPE, 24)), 200))),
-            "vver_steam_generator", new Plan("vver_steam_generator", PcBlocks.VVER_STEAM_GENERATOR, List.of(
+                    new Stage("piping", List.of(n(PcItems.SEAMLESS_PIPE, 24)), 200)))),
+            Map.entry("vver_steam_generator", new Plan("vver_steam_generator", PcBlocks.VVER_STEAM_GENERATOR, List.of(
                     new Stage("foundation", List.of(n(CONCRETE, 24), n(PcItems.STEEL_BEAM, 8)), 160),
                     new Stage("shell", List.of(n(PcItems.STEEL_PLATE, 32)), 300),
-                    new Stage("tubes", List.of(n(PcItems.SEAMLESS_PIPE, 32)), 300))),
-            "vver_coolant_pump", new Plan("vver_coolant_pump", PcBlocks.VVER_COOLANT_PUMP, List.of(
+                    new Stage("tubes", List.of(n(PcItems.SEAMLESS_PIPE, 32)), 300)))),
+            Map.entry("vver_coolant_pump", new Plan("vver_coolant_pump", PcBlocks.VVER_COOLANT_PUMP, List.of(
                     new Stage("foundation", List.of(n(CONCRETE, 16), n(PcItems.STEEL_BEAM, 4)), 120),
                     new Stage("casing", List.of(n(PcItems.STEEL_PLATE, 16), n(PcItems.STEEL_INGOT, 8)), 240),
-                    new Stage("drive", List.of(n(COPPER, 24), n(PcItems.STEEL_INGOT, 8)), 200))),
-            "vver_pressurizer", new Plan("vver_pressurizer", PcBlocks.VVER_PRESSURIZER, List.of(
+                    new Stage("drive", List.of(n(COPPER, 24), n(PcItems.STEEL_INGOT, 8)), 200)))),
+            Map.entry("vver_pressurizer", new Plan("vver_pressurizer", PcBlocks.VVER_PRESSURIZER, List.of(
                     new Stage("foundation", List.of(n(CONCRETE, 16), n(PcItems.STEEL_BEAM, 4)), 120),
-                    new Stage("vessel", List.of(n(PcItems.STEEL_PLATE, 24), n(COPPER, 8)), 300))));
+                    new Stage("vessel", List.of(n(PcItems.STEEL_PLATE, 24), n(COPPER, 8)), 300)))));
 
     private SitePlans() {}
 

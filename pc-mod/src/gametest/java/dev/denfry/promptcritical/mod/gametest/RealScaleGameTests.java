@@ -96,6 +96,27 @@ public final class RealScaleGameTests {
                 .thenSucceed();
     }
 
+    /**
+     * Кипящий реактор BWR-240 реального масштаба: площадка принимает его чертёж на свободном основании 5×5, а готовый
+     * реактор — блок того же типа BE, что и старая серия, со своей цельной моделью; старый BWR по-прежнему работает.
+     */
+    @GameTest(template = TALL, timeoutTicks = 40)
+    public static void bwr240SiteAcceptsAndLegacyBwrStillWorks(GameTestHelper h) {
+        BlockPos p = new BlockPos(5, 1, 5);
+        placeSite(h, p);
+        var w = site(h, p).accept("bwr240_reactor");
+        h.assertTrue(w == null, "BWR-240 plan accepted: " + (w == null ? "" : w.getString()));
+        h.assertTrue(site(h, p).plan().stages().size() == 4, "four erection stages");
+        h.assertTrue(PcBlocks.FP_BWR240_REACTOR.cells(BlockPos.ZERO, Direction.NORTH).size() == 5 * 14 * 5, "5x14x5 footprint");
+        h.assertTrue(PcBlocks.isWholeModel(PcBlocks.BWR240_REACTOR.get()) && PcBlocks.legacy().contains(PcBlocks.BWR_REACTOR),
+                "BWR-240 is drawn whole, the old BWR is legacy");
+        BlockPos old = new BlockPos(1, 1, 1);
+        h.setBlock(old, PcBlocks.BWR_REACTOR.get().defaultBlockState());
+        h.assertTrue(h.getBlockEntity(old) instanceof dev.denfry.promptcritical.mod.npp.BwrReactorBlockEntity b && b.wholeModelId() == null,
+                "legacy BWR keeps its block entity and no whole model");
+        h.succeed();
+    }
+
     /** Предмет старой серии по-прежнему ставится и работает: компенсатор давления — блок того же типа BE. */
     @GameTest(template = "gametest/empty_12x12x12", timeoutTicks = 40)
     public static void legacyPressurizerStillWorks(GameTestHelper h) {

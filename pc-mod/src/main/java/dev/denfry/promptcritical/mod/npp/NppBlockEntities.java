@@ -28,7 +28,7 @@ public final class NppBlockEntities {
     public static final DeferredHolder<BlockEntityType<?>, BlockEntityType<PwrReactorBlockEntity>> PWR_REACTOR =
             type("pwr_reactor", PwrReactorBlockEntity::new, PcBlocks.PWR_REACTOR, PcBlocks.VVER_REACTOR);
     public static final DeferredHolder<BlockEntityType<?>, BlockEntityType<BwrReactorBlockEntity>> BWR_REACTOR =
-            type("bwr_reactor", BwrReactorBlockEntity::new, PcBlocks.BWR_REACTOR);
+            type("bwr_reactor", BwrReactorBlockEntity::new, PcBlocks.BWR_REACTOR, PcBlocks.BWR240_REACTOR);
     public static final DeferredHolder<BlockEntityType<?>, BlockEntityType<CanduReactorBlockEntity>> CANDU_REACTOR =
             type("candu_reactor", CanduReactorBlockEntity::new, PcBlocks.CANDU_REACTOR);
     public static final DeferredHolder<BlockEntityType<?>, BlockEntityType<SfrReactorBlockEntity>> SFR_REACTOR =

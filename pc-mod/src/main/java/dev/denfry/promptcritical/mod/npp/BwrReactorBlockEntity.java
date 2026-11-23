@@ -72,8 +72,10 @@ import org.jetbrains.annotations.Nullable;
  * всасывающего трубопровода, кнопка «LOCA» — учебное событие, без вращения валов насосов — обесточивание. Насосы САОЗ
  * здесь — HPCS и LPCI, гидроёмкостей у кипящего нет, есть АДС; гермооболочка с бассейном-барботёром инертирована азотом.
  */
-public final class BwrReactorBlockEntity extends DeviceBlockEntity implements dev.denfry.promptcritical.mod.environment.SelfEmittingSource, FoundryDevice, PanelHost, WiredDevice {
+public final class BwrReactorBlockEntity extends DeviceBlockEntity implements dev.denfry.promptcritical.mod.environment.SelfEmittingSource, FoundryDevice, PanelHost, WiredDevice, dev.denfry.promptcritical.mod.client.whole.WholeModelHost {
     public static final int LINK_RADIUS = 12, TURBINE_RADIUS = 24;
+    /** Реальный масштаб: насосы рециркуляции и барабан в десятке метров от корпуса, турбина — в соседнем зале. */
+    public static final int LINK_RADIUS_REAL = 24, TURBINE_RADIUS_REAL = 64;
     /** Доля номинальной мощности, с которой реактор показан работающим (огни пульта, гул). */
     private static final double AT_POWER = 0.005;
 
@@ -123,11 +125,12 @@ public final class BwrReactorBlockEntity extends DeviceBlockEntity implements de
         pumps.clear();
         drums.clear();
         turbines.clear();
-        AABB box = new AABB(worldPosition).inflate(LINK_RADIUS);
+        boolean real = wholeModelId() != null;
+        AABB box = new AABB(worldPosition).inflate(real ? LINK_RADIUS_REAL : LINK_RADIUS);
         for (PrimaryPumpBlockEntity p : Ironworks.blockEntities(sl, box, PrimaryPumpBlockEntity.class))
             if (pumps.size() < BoilingWaterReactor.PUMPS) pumps.add(p.getBlockPos());
         for (SteamGeneratorBlockEntity g : Ironworks.blockEntities(sl, box, SteamGeneratorBlockEntity.class)) drums.add(g.getBlockPos());
-        for (SteamTurbineBlockEntity t : Ironworks.blockEntities(sl, new AABB(worldPosition).inflate(TURBINE_RADIUS), SteamTurbineBlockEntity.class))
+        for (SteamTurbineBlockEntity t : Ironworks.blockEntities(sl, new AABB(worldPosition).inflate(real ? TURBINE_RADIUS_REAL : TURBINE_RADIUS), SteamTurbineBlockEntity.class))
             turbines.add(t.getBlockPos());
         Map<BlockPos, ReactorAccidentSystems.LoopPart> loop = new LinkedHashMap<>();
         for (BlockPos p : pumps) loop.put(p, ReactorAccidentSystems.LoopPart.PUMP);
@@ -214,6 +217,13 @@ public final class BwrReactorBlockEntity extends DeviceBlockEntity implements de
         if (!s.hasProperty(BlockStateProperties.OPEN) || !s.getValue(BlockStateProperties.OPEN)) return;
         MachineFx fx = MachineFx.of(level, worldPosition, s.getValue(BlockStateProperties.HORIZONTAL_FACING));
         if (fx == null) return;
+        if (wholeModelId() != null) {
+            // реальный масштаб: клапан на паровом патрубке (art/blockbench/core/bwr/bwr240_reactor.author.js), сброс уходит вниз
+            Vec3 valve = fx.at(8, 184, 41);
+            if (fx.chance(3)) fx.puff(valve, new Vec3(0, 0.04, 0), 1);
+            if (fx.chance(0.6)) fx.sound(valve, BoilerSounds.steam(), 0.7f, 0.8f);
+            return;
+        }
         for (double x : new double[] {-6, 22}) {
             Vec3 quencher = fx.at(x, -12, 25);
             if (fx.chance(8)) fx.bubbles(quencher, 0.3, 2);
@@ -440,5 +450,22 @@ public final class BwrReactorBlockEntity extends DeviceBlockEntity implements de
         accident.load(tag);
         wiring.load(tag);
         lastTrip = reactor.trip();
+    }
+
+    // --- цельная модель реального масштаба (спецификация real-scale machines) ---
+
+    @Override
+    public String wholeModelId() {
+        return dev.denfry.promptcritical.mod.client.whole.WholeModelHost.idOf(getBlockState());
+    }
+
+    @Override
+    public net.minecraft.core.Direction wholeModelFacing() {
+        return getBlockState().getBlock() instanceof dev.denfry.promptcritical.mod.block.PcBlock pc ? pc.facing(getBlockState()) : net.minecraft.core.Direction.NORTH;
+    }
+
+    @Override
+    public net.minecraft.core.BlockPos wholeModelLightPos() {
+        return worldPosition.relative(wholeModelFacing(), 3).above();
     }
 }

@@ -189,6 +189,8 @@
     namePlate(im, 26, 14, 46, 12, 'ПГВ-1000М');
     namePlate(im, 26, 28, 46, 12, 'ГЦН-195М');
     namePlate(im, 26, 42, 46, 12, 'КД-79');
+    // further real-scale units (RS3) take the free rows below
+    namePlate(im, 26, 56, 46, 12, 'BWR-240');
     for (let k = 0; k < 4; k++) {
       rect(im, 74 + k * 13, 0, 12, 10, [28, 30, 32]);
       stencil(im, 74 + k * 13 + 4, 2, String(k + 1), [232, 228, 214]);
@@ -212,7 +214,7 @@
   };
   const ATLAS = { pl: { tex: 'vver/plates', size: 128, rects: {
     sign: [0, 0, 24, 24], sign_s: [0, 26, 12, 12], r_name: [26, 0, 46, 12], sg_name: [26, 14, 46, 12],
-    pump_name: [26, 28, 46, 12], kd_name: [26, 42, 46, 12], n1: [74, 0, 12, 10], n2: [87, 0, 12, 10], n3: [100, 0, 12, 10],
+    pump_name: [26, 28, 46, 12], kd_name: [26, 42, 46, 12], bwr_name: [26, 56, 46, 12], n1: [74, 0, 12, 10], n2: [87, 0, 12, 10], n3: [100, 0, 12, 10],
     n4: [113, 0, 12, 10], arrow: [74, 14, 24, 8], maker: [100, 14, 24, 14] } } };
 
   function paint(root) {
@@ -385,9 +387,10 @@
 
   // PCSLICE.saveWhole, except that stale chunk files are unlinked one by one: in Blockbench's Electron a
   // recursive fs.rmSync of the chunk folder completes after the new files are written and takes them with it.
-  function save(root, id) {
+  // folder: the .bbmodel folder under art/blockbench (the real-scale series beyond the VVER keeps its sources by category).
+  function save(root, id, folder) {
     const fs = require('fs');
-    const bb = path.join(root, 'art/blockbench/core/vver', id + '.bbmodel');
+    const bb = path.join(root, 'art/blockbench', folder || 'core/vver', id + '.bbmodel');
     fs.writeFileSync(bb, Codecs.project.compile());
     let j = Codecs.java_block.compile();
     if (typeof j === 'string') j = JSON.parse(j);
@@ -402,7 +405,7 @@
     fs.writeFileSync(mf, JSON.stringify(r.manifest, null, '\t') + '\n');
     return { chunks: r.manifest.chunks.length, elements: Object.values(r.models).reduce((n, mm) => n + mm.elements.length, 0), bounds: r.manifest.bounds };
   }
-  function savePartial(root, id, part) { return PCART.save(root, 'core/vver/' + id, part, id + '/partial/' + part); }
+  function savePartial(root, id, part, dir) { return PCART.save(root, (dir || 'core/vver') + '/' + id, part, id + '/partial/' + part); }
 
   window.PCVV = { paint, mk, cut, bounds, save, savePartial, MAT, ATLAS, G };
 })();

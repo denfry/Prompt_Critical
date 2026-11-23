@@ -27,7 +27,7 @@ public final class NppClient {
 
     static {
         // цельные модели ВВЭР реального масштаба: partial-модели должны появиться до запекания
-        for (String id : new String[] {"vver_reactor", "vver_steam_generator", "vver_coolant_pump", "vver_pressurizer"})
+        for (String id : new String[] {"vver_reactor", "vver_steam_generator", "vver_coolant_pump", "vver_pressurizer", "bwr240_reactor"})
             dev.denfry.promptcritical.mod.client.whole.WholeModels.register(id);
     }
 
@@ -81,6 +81,7 @@ public final class NppClient {
                 part(VVER_RODS, be, be.wholeModelFacing(), 0, 17 + be.rodsOut() * 8 / 16.0, 0).light(light).renderInto(ms, vc);
             }
         });
+        event.registerBlockEntityRenderer(NppBlockEntities.BWR_REACTOR.get(), c -> new dev.denfry.promptcritical.mod.client.whole.WholeModelRenderer<>());
         event.registerBlockEntityRenderer(NppBlockEntities.STEAM_GENERATOR.get(), c -> new dev.denfry.promptcritical.mod.client.whole.WholeModelRenderer<>());
         event.registerBlockEntityRenderer(NppBlockEntities.PRESSURIZER.get(), c -> new dev.denfry.promptcritical.mod.client.whole.WholeModelRenderer<>());
         event.registerBlockEntityRenderer(dev.denfry.promptcritical.mod.site.SiteRegistry.SITE_BE.get(), c -> new dev.denfry.promptcritical.mod.site.SiteGhostRenderer());

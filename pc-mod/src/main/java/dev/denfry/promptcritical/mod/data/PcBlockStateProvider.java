@@ -318,7 +318,7 @@ public final class PcBlockStateProvider extends BlockStateProvider {
                     : s.getValue(BlockStateProperties.ENABLED) ? id + "_armed" : id;
             case "pwr_reactor" -> s.getValue(PcProperties.PWR_SEGMENT) == PcProperties.PwrSegment.HEAD ? id + "_head" : id;
             // реальный масштаб: клетки пустые, цельную модель рисует контроллер
-            case "vver_reactor", "vver_steam_generator", "vver_coolant_pump", "vver_pressurizer" -> "whole_empty";
+            case "vver_reactor", "vver_steam_generator", "vver_coolant_pump", "vver_pressurizer", "bwr240_reactor" -> "whole_empty";
             case "pressurizer" -> s.getValue(BlockStateProperties.LIT) ? id + "_lit" : id;
             // тяжёлая вода T3
             case "gs_exchange_tower" -> "absorption_tower";

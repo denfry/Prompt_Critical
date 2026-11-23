@@ -27,11 +27,14 @@ public final class SiteText {
         stage("tubes", "tube bundle", "трубный пучок");
         stage("casing", "pump casing", "корпус насоса");
         stage("drive", "motor and flywheel", "электродвигатель и маховик");
+        stage("pedestal", "pedestal", "пьедестал");
+        stage("drives", "control rod drives", "приводы СУЗ");
         put("block.promptcritical.construction_site", "Construction Site", "Стройплощадка");
         drawing("vver_reactor", "VVER-1000 Reactor", "реактора ВВЭР-1000");
         drawing("vver_steam_generator", "PGV-1000 Steam Generator", "парогенератора ПГВ-1000");
         drawing("vver_coolant_pump", "GCN-195 Reactor Coolant Pump", "ГЦН-195");
         drawing("vver_pressurizer", "VVER-1000 Pressurizer", "компенсатора давления ВВЭР-1000");
+        drawing("bwr240_reactor", "BWR-240 Boiling Water Reactor", "кипящего реактора BWR-240");
     }
 
     private SiteText() {}

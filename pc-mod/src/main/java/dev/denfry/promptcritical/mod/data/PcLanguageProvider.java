@@ -499,7 +499,8 @@ public final class PcLanguageProvider extends LanguageProvider {
         b("gs_exchange_tower", "Girdler Sulfide Heavy Water Plant", "Сероводородный завод тяжёлой воды");
         b("heavy_water_column", "Heavy Water Finishing Column", "Колонна доводки тяжёлой воды");
         i("heavy_water_bucket", "Heavy Water Bucket", "Ведро тяжёлой воды");
-        b("bwr_reactor", "Boiling Water Reactor", "Кипящий корпусной реактор");
+        b("bwr_reactor", "Boiling Water Reactor (legacy)", "Кипящий корпусной реактор (старая серия)");
+        b("bwr240_reactor", "BWR-240 Boiling Water Reactor", "Кипящий реактор BWR-240");
         b("sfr_reactor", "Sodium-Cooled Fast Reactor", "Реактор на быстрых нейтронах с натрием");
         b("wellhead", "Wellhead", "Колонная головка");
         b("christmas_tree", "Christmas Tree", "Фонтанная арматура");

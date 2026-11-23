@@ -833,9 +833,19 @@ public final class PcBlocks {
             Spec.facing(BlockStateProperties.LIT).segments(PcProperties.wholeSegments(FP_VVER_PRESSURIZER.segments().size()), FP_VVER_PRESSURIZER),
             FoundryBlock.with(dev.denfry.promptcritical.mod.npp.PressurizerBlockEntity::new));
 
+    /**
+     * Кипящий реактор класса Big Rock Point (240 МВт(т)) в реальном масштабе: корпус 2,95 × 9,14 м на пьедестале с
+     * приводами СУЗ снизу, площадка у фланца; 5×14×5, контроллер — под осью корпуса (docs/research/bwr-dimensions.md).
+     */
+    public static final Footprint FP_BWR240_REACTOR = Footprint.tiled(-2, 2, 0, 13, -2, 2);
+    public static final DeferredBlock<PcDeviceBlock> BWR240_REACTOR = device("bwr240_reactor", machine(),
+            Spec.facing(BlockStateProperties.LIT, BlockStateProperties.OPEN).segments(PcProperties.wholeSegments(FP_BWR240_REACTOR.segments().size()), FP_BWR240_REACTOR),
+            FoundryBlock.with(dev.denfry.promptcritical.mod.npp.BwrReactorBlockEntity::new));
+
     /** Машины реального масштаба с цельной моделью: id блока → id модели (wholemodels/). */
     public static boolean isWholeModel(net.minecraft.world.level.block.Block b) {
-        return b == VVER_REACTOR.get() || b == VVER_STEAM_GENERATOR.get() || b == VVER_COOLANT_PUMP.get() || b == VVER_PRESSURIZER.get();
+        return b == VVER_REACTOR.get() || b == VVER_STEAM_GENERATOR.get() || b == VVER_COOLANT_PUMP.get() || b == VVER_PRESSURIZER.get()
+                || b == BWR240_REACTOR.get();
     }
 
     /**
@@ -844,7 +854,7 @@ public final class PcBlocks {
      */
     public static java.util.List<DeferredBlock<? extends net.minecraft.world.level.block.Block>> legacy() {
         // ГЦН и парогенератор старой серии служат ещё АМ-1, BWR и CANDU: в старую серию они уйдут вместе с ними
-        return java.util.List.of(PWR_REACTOR, PRESSURIZER);
+        return java.util.List.of(PWR_REACTOR, PRESSURIZER, BWR_REACTOR);
     }
 
     // --- обогащение, литьё, механический цех (08 §8.3, §8.9, §8.10) ---
