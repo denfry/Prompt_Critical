@@ -1,0 +1,505 @@
+{
+	"credit": "Made with Blockbench",
+	"textures": {
+		"particle": "promptcritical:block/smithy/coals_dead",
+		"material_ashlar": "promptcritical:block/material/ashlar",
+		"material_brick": "promptcritical:block/material/brick",
+		"smithy_coals": "promptcritical:block/smithy/coals",
+		"material_soot": "promptcritical:block/material/soot",
+		"material_lagging_wood": "promptcritical:block/material/lagging_wood",
+		"smithy_leather": "promptcritical:block/smithy/leather",
+		"material_cast_iron": "promptcritical:block/material/cast_iron",
+		"material_steel": "promptcritical:block/material/steel",
+		"smithy_coals_dead": "promptcritical:block/smithy/coals_dead"
+	},
+	"elements": [
+		{
+			"name": "table",
+			"from": [0.5, 0, 0.5],
+			"to": [15.5, 9, 15.5],
+			"rotation": {
+				"angle": 0,
+				"axis": "y",
+				"origin": [8, 8, 8]
+			},
+			"faces": {
+				"north": {
+					"uv": [8.25, 11.5, 15.75, 16],
+					"texture": "#material_ashlar"
+				},
+				"east": {
+					"uv": [8.25, 11.5, 15.75, 16],
+					"texture": "#material_ashlar"
+				},
+				"south": {
+					"uv": [0.25, 11.5, 7.75, 16],
+					"texture": "#material_ashlar"
+				},
+				"west": {
+					"uv": [0.25, 11.5, 7.75, 16],
+					"texture": "#material_ashlar"
+				},
+				"up": {
+					"uv": [0.25, 0.25, 7.75, 7.75],
+					"texture": "#material_ashlar"
+				},
+				"down": {
+					"uv": [0.25, 8.25, 7.75, 15.75],
+					"texture": "#material_ashlar"
+				}
+			}
+		},
+		{
+			"name": "rim_n",
+			"from": [0.5, 9, 0.5],
+			"to": [15.5, 10, 2],
+			"rotation": {
+				"angle": 0,
+				"axis": "y",
+				"origin": [8, 8, 8]
+			},
+			"faces": {
+				"north": {
+					"uv": [8.25, 11, 15.75, 11.5],
+					"texture": "#material_brick"
+				},
+				"east": {
+					"uv": [15, 11, 15.75, 11.5],
+					"texture": "#material_brick"
+				},
+				"south": {
+					"uv": [0.25, 11, 7.75, 11.5],
+					"texture": "#material_brick"
+				},
+				"west": {
+					"uv": [0.25, 11, 1, 11.5],
+					"texture": "#material_brick"
+				},
+				"up": {
+					"uv": [0.25, 0.25, 7.75, 1],
+					"texture": "#material_brick"
+				},
+				"down": {
+					"uv": [0.25, 15, 7.75, 15.75],
+					"texture": "#material_brick"
+				}
+			}
+		},
+		{
+			"name": "rim_w",
+			"from": [0.5, 9, 2],
+			"to": [2, 10, 12],
+			"rotation": {
+				"angle": 0,
+				"axis": "y",
+				"origin": [8, 8, 8]
+			},
+			"faces": {
+				"north": {
+					"uv": [15, 11, 15.75, 11.5],
+					"texture": "#material_brick"
+				},
+				"east": {
+					"uv": [10, 11, 15, 11.5],
+					"texture": "#material_brick"
+				},
+				"south": {
+					"uv": [0.25, 11, 1, 11.5],
+					"texture": "#material_brick"
+				},
+				"west": {
+					"uv": [1, 11, 6, 11.5],
+					"texture": "#material_brick"
+				},
+				"up": {
+					"uv": [0.25, 1, 1, 6],
+					"texture": "#material_brick"
+				},
+				"down": {
+					"uv": [0.25, 10, 1, 15],
+					"texture": "#material_brick"
+				}
+			}
+		},
+		{
+			"name": "rim_e",
+			"from": [14, 9, 2],
+			"to": [15.5, 10, 12],
+			"rotation": {
+				"angle": 0,
+				"axis": "y",
+				"origin": [8, 8, 8]
+			},
+			"faces": {
+				"north": {
+					"uv": [8.25, 11, 9, 11.5],
+					"texture": "#material_brick"
+				},
+				"east": {
+					"uv": [10, 11, 15, 11.5],
+					"texture": "#material_brick"
+				},
+				"south": {
+					"uv": [7, 11, 7.75, 11.5],
+					"texture": "#material_brick"
+				},
+				"west": {
+					"uv": [1, 11, 6, 11.5],
+					"texture": "#material_brick"
+				},
+				"up": {
+					"uv": [7, 1, 7.75, 6],
+					"texture": "#material_brick"
+				},
+				"down": {
+					"uv": [7, 10, 7.75, 15],
+					"texture": "#material_brick"
+				}
+			}
+		},
+		{
+			"name": "glow_coals",
+			"from": [2, 8.8, 2],
+			"to": [14, 9.6, 12],
+			"rotation": {
+				"angle": 0,
+				"axis": "y",
+				"origin": [8, 8, 8]
+			},
+			"faces": {
+				"up": {
+					"uv": [2, 2, 14, 12],
+					"texture": "#smithy_coals"
+				}
+			},
+			"neoforge_data": {
+				"block_light": 15,
+				"sky_light": 15
+			}
+		},
+		{
+			"name": "hood",
+			"from": [2, 10, 11],
+			"to": [14, 13.5, 15.5],
+			"rotation": {
+				"angle": 0,
+				"axis": "y",
+				"origin": [8, 8, 8]
+			},
+			"faces": {
+				"north": {
+					"uv": [9, 9.25, 15, 11],
+					"texture": "#material_brick"
+				},
+				"east": {
+					"uv": [8.25, 9.25, 10.5, 11],
+					"texture": "#material_brick"
+				},
+				"south": {
+					"uv": [1, 9.25, 7, 11],
+					"texture": "#material_brick"
+				},
+				"west": {
+					"uv": [5.5, 9.25, 7.75, 11],
+					"texture": "#material_brick"
+				},
+				"up": {
+					"uv": [1, 5.5, 7, 7.75],
+					"texture": "#material_brick"
+				},
+				"down": {
+					"uv": [1, 8.25, 7, 10.5],
+					"texture": "#material_brick"
+				}
+			}
+		},
+		{
+			"name": "chimney",
+			"from": [5, 13.5, 12],
+			"to": [11, 16, 15.5],
+			"rotation": {
+				"angle": 0,
+				"axis": "y",
+				"origin": [8, 8, 8]
+			},
+			"faces": {
+				"north": {
+					"uv": [10.5, 8, 13.5, 9.25],
+					"texture": "#material_brick"
+				},
+				"east": {
+					"uv": [8.25, 8, 10, 9.25],
+					"texture": "#material_brick"
+				},
+				"south": {
+					"uv": [2.5, 8, 5.5, 9.25],
+					"texture": "#material_brick"
+				},
+				"west": {
+					"uv": [6, 8, 7.75, 9.25],
+					"texture": "#material_brick"
+				},
+				"up": {
+					"uv": [2.5, 6, 5.5, 7.75],
+					"texture": "#material_brick"
+				},
+				"down": {
+					"uv": [2.5, 8.25, 5.5, 10],
+					"texture": "#material_brick"
+				}
+			}
+		},
+		{
+			"name": "hood_lip",
+			"from": [2.5, 12.6, 10.4],
+			"to": [13.5, 13.4, 11],
+			"rotation": {
+				"angle": 0,
+				"axis": "y",
+				"origin": [8, 8, 8]
+			},
+			"faces": {
+				"north": {
+					"uv": [2.5, 2.6, 13.5, 3.4],
+					"texture": "#material_soot"
+				},
+				"east": {
+					"uv": [5, 2.6, 5.6, 3.4],
+					"texture": "#material_soot"
+				},
+				"south": {
+					"uv": [2.5, 2.6, 13.5, 3.4],
+					"texture": "#material_soot"
+				},
+				"west": {
+					"uv": [10.4, 2.6, 11, 3.4],
+					"texture": "#material_soot"
+				},
+				"up": {
+					"uv": [2.5, 10.4, 13.5, 11],
+					"texture": "#material_soot"
+				},
+				"down": {
+					"uv": [2.5, 5, 13.5, 5.6],
+					"texture": "#material_soot"
+				}
+			}
+		},
+		{
+			"name": "bellows_board_top",
+			"from": [10.6, 13.4, 2.6],
+			"to": [15.6, 13.9, 6.6],
+			"rotation": {
+				"angle": 0,
+				"axis": "y",
+				"origin": [8, 8, 8]
+			},
+			"faces": {
+				"north": {
+					"uv": [0.4, 2.1, 5.4, 2.6],
+					"texture": "#material_lagging_wood"
+				},
+				"east": {
+					"uv": [9.4, 2.1, 13.4, 2.6],
+					"texture": "#material_lagging_wood"
+				},
+				"south": {
+					"uv": [10.6, 2.1, 15.6, 2.6],
+					"texture": "#material_lagging_wood"
+				},
+				"west": {
+					"uv": [2.6, 2.1, 6.6, 2.6],
+					"texture": "#material_lagging_wood"
+				},
+				"up": {
+					"uv": [10.6, 2.6, 15.6, 6.6],
+					"texture": "#material_lagging_wood"
+				},
+				"down": {
+					"uv": [10.6, 9.4, 15.6, 13.4],
+					"texture": "#material_lagging_wood"
+				}
+			}
+		},
+		{
+			"name": "bellows_board_bot",
+			"from": [10.6, 10, 2.6],
+			"to": [15.6, 10.5, 6.6],
+			"rotation": {
+				"angle": 0,
+				"axis": "y",
+				"origin": [8, 8, 8]
+			},
+			"faces": {
+				"north": {
+					"uv": [0.4, 5.5, 5.4, 6],
+					"texture": "#material_lagging_wood"
+				},
+				"east": {
+					"uv": [9.4, 5.5, 13.4, 6],
+					"texture": "#material_lagging_wood"
+				},
+				"south": {
+					"uv": [10.6, 5.5, 15.6, 6],
+					"texture": "#material_lagging_wood"
+				},
+				"west": {
+					"uv": [2.6, 5.5, 6.6, 6],
+					"texture": "#material_lagging_wood"
+				},
+				"up": {
+					"uv": [10.6, 2.6, 15.6, 6.6],
+					"texture": "#material_lagging_wood"
+				},
+				"down": {
+					"uv": [10.6, 9.4, 15.6, 13.4],
+					"texture": "#material_lagging_wood"
+				}
+			}
+		},
+		{
+			"name": "bellows_leather",
+			"from": [11, 10.5, 2.9],
+			"to": [15.2, 13.4, 6.3],
+			"rotation": {
+				"angle": 0,
+				"axis": "y",
+				"origin": [8, 8, 8]
+			},
+			"faces": {
+				"north": {
+					"uv": [0.8, 2.6, 5, 5.5],
+					"texture": "#smithy_leather"
+				},
+				"east": {
+					"uv": [9.7, 2.6, 13.1, 5.5],
+					"texture": "#smithy_leather"
+				},
+				"south": {
+					"uv": [11, 2.6, 15.2, 5.5],
+					"texture": "#smithy_leather"
+				},
+				"west": {
+					"uv": [2.9, 2.6, 6.3, 5.5],
+					"texture": "#smithy_leather"
+				},
+				"up": {
+					"uv": [11, 2.9, 15.2, 6.3],
+					"texture": "#smithy_leather"
+				},
+				"down": {
+					"uv": [11, 9.7, 15.2, 13.1],
+					"texture": "#smithy_leather"
+				}
+			}
+		},
+		{
+			"name": "bellows_handle",
+			"from": [8.2, 13.5, 4.2],
+			"to": [10.8, 13.9, 5],
+			"rotation": {
+				"angle": 0,
+				"axis": "y",
+				"origin": [8, 8, 8]
+			},
+			"faces": {
+				"north": {
+					"uv": [5.2, 2.1, 7.8, 2.5],
+					"texture": "#material_lagging_wood"
+				},
+				"east": {
+					"uv": [11, 2.1, 11.8, 2.5],
+					"texture": "#material_lagging_wood"
+				},
+				"south": {
+					"uv": [8.2, 2.1, 10.8, 2.5],
+					"texture": "#material_lagging_wood"
+				},
+				"west": {
+					"uv": [4.2, 2.1, 5, 2.5],
+					"texture": "#material_lagging_wood"
+				},
+				"up": {
+					"uv": [8.2, 4.2, 10.8, 5],
+					"texture": "#material_lagging_wood"
+				},
+				"down": {
+					"uv": [8.2, 11, 10.8, 11.8],
+					"texture": "#material_lagging_wood"
+				}
+			}
+		},
+		{
+			"name": "blast_pipe",
+			"from": [12, 9.4, 4.2],
+			"to": [12.8, 10.6, 5],
+			"rotation": {
+				"angle": 0,
+				"axis": "y",
+				"origin": [8, 8, 8]
+			},
+			"faces": {
+				"north": {
+					"uv": [3.2, 5.4, 4, 6.6],
+					"texture": "#material_cast_iron"
+				},
+				"east": {
+					"uv": [11, 5.4, 11.8, 6.6],
+					"texture": "#material_cast_iron"
+				},
+				"south": {
+					"uv": [12, 5.4, 12.8, 6.6],
+					"texture": "#material_cast_iron"
+				},
+				"west": {
+					"uv": [4.2, 5.4, 5, 6.6],
+					"texture": "#material_cast_iron"
+				},
+				"up": {
+					"uv": [12, 4.2, 12.8, 5],
+					"texture": "#material_cast_iron"
+				},
+				"down": {
+					"uv": [12, 11, 12.8, 11.8],
+					"texture": "#material_cast_iron"
+				}
+			}
+		},
+		{
+			"name": "tongs",
+			"from": [1, 10, 4],
+			"to": [1.6, 10.3, 11],
+			"rotation": {
+				"angle": 0,
+				"axis": "y",
+				"origin": [8, 8, 8]
+			},
+			"faces": {
+				"north": {
+					"uv": [14.4, 5.7, 15, 6],
+					"texture": "#material_steel"
+				},
+				"east": {
+					"uv": [5, 5.7, 12, 6],
+					"texture": "#material_steel"
+				},
+				"south": {
+					"uv": [1, 5.7, 1.6, 6],
+					"texture": "#material_steel"
+				},
+				"west": {
+					"uv": [4, 5.7, 11, 6],
+					"texture": "#material_steel"
+				},
+				"up": {
+					"uv": [1, 4, 1.6, 11],
+					"texture": "#material_steel"
+				},
+				"down": {
+					"uv": [1, 5, 1.6, 12],
+					"texture": "#material_steel"
+				}
+			}
+		}
+	]
+}

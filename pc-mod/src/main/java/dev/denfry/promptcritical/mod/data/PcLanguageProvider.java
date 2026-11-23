@@ -66,6 +66,9 @@ public final class PcLanguageProvider extends LanguageProvider {
         b("coal_jig", "Coal Jig", "Отсадочная машина");
         b("cupola_furnace", "Cupola Furnace", "Вагранка");
         b("crucible_furnace", "Crucible Furnace", "Тигельная печь");
+        b("bloomery", "Bloomery", "Сыродутный горн");
+        b("forge_hearth", "Forge Hearth", "Кузнечный горн");
+        b("smithing_anvil", "Smithing Anvil", "Кузнечная наковальня");
         b("sand_mold", "Sand Mould", "Песчаная форма");
         b("molding_station", "Moulding Machine", "Формовочная машина");
         b("shakeout_grate", "Shakeout Grate", "Выбивная решётка");
@@ -203,6 +206,10 @@ public final class PcLanguageProvider extends LanguageProvider {
         i("casting_pattern", "Casting Pattern", "Модель отливки");
         i("casting", "Casting", "Отливка");
         i("refractory_brick", "Refractory Brick", "Огнеупорный кирпич");
+        i("workpiece", "Workpiece", "Поковка");
+        i("workpiece.bloom", "Bloom", "Крица");
+        i("smith_hammer", "Smith's Hammer", "Кузнечный молот");
+        i("shaft", "Shaft", "Вал");
         i("cutting_tool", "Cutting Tool", "Резец");
         i("milling_cutter", "Disc Milling Cutter", "Дисковая фреза");
         i("grinding_wheel", "Grinding Wheel", "Шлифовальный круг");

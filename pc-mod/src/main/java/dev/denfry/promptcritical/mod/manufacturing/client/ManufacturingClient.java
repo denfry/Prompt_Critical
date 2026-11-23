@@ -19,5 +19,8 @@ public final class ManufacturingClient {
     private static void tooltip(ItemTooltipEvent event) {
         PartSpec p = event.getItemStack().get(ManufacturingComponents.PART_SPEC.get());
         if (p != null) ManufacturingText.tooltip(p, event.getToolTip());
+        var w = event.getItemStack().get(dev.denfry.promptcritical.mod.manufacturing.ManufacturingComponents.WORKPIECE.get());
+        var lvl = net.minecraft.client.Minecraft.getInstance().level;
+        if (w != null && lvl != null) ManufacturingText.workpieceTooltip(w, lvl.getGameTime(), event.getToolTip());
     }
 }

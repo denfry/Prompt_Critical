@@ -806,6 +806,13 @@ public final class PcBlocks {
             Spec.of(BlockStateProperties.LIT).footprint(FP_TALL3), KineticMachineBlock.with(ShaftSide.X_AXIS, CupolaBlockEntity::new));
     public static final DeferredBlock<PcDeviceBlock> CRUCIBLE_FURNACE = device("crucible_furnace", lit(brick()), Spec.facing(BlockStateProperties.LIT),
             FoundryBlock.with(CrucibleBlockEntity::new));
+    // ручная ступень машиностроения (18 §18.6.1–18.6.4, §18.7): сыродутный горн, кузнечный горн, наковальня
+    public static final DeferredBlock<PcDeviceBlock> BLOOMERY = device("bloomery", lit(brick()), Spec.facing(BlockStateProperties.LIT),
+            dev.denfry.promptcritical.mod.foundry.FoundryBlock.with(dev.denfry.promptcritical.mod.manufacturing.BloomeryBlockEntity::new));
+    public static final DeferredBlock<PcDeviceBlock> FORGE_HEARTH = device("forge_hearth", lit(brick()), Spec.facing(BlockStateProperties.LIT),
+            dev.denfry.promptcritical.mod.foundry.FoundryBlock.with(dev.denfry.promptcritical.mod.manufacturing.ForgeHearthBlockEntity::new));
+    public static final DeferredBlock<PcDeviceBlock> SMITHING_ANVIL = device("smithing_anvil", machine(), Spec.facing(),
+            dev.denfry.promptcritical.mod.foundry.FoundryBlock.with(dev.denfry.promptcritical.mod.manufacturing.SmithingAnvilBlockEntity::new));
     public static final DeferredBlock<PcDeviceBlock> SAND_MOLD = device("sand_mold",
             Properties.of().mapColor(MapColor.SAND).strength(0.8f).sound(SoundType.SAND).noOcclusion(), Spec.of(PcProperties.MOLD_STAGE),
             SandMoldBlock.factory());

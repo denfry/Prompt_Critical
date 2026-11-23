@@ -53,6 +53,10 @@ public final class ManufacturingComponents {
 
     public static final DeferredHolder<DataComponentType<?>, DataComponentType<PartSpec>> PART_SPEC =
             COMPONENTS.registerComponentType("part_spec", b -> b.persistent(PART_SPEC_CODEC).networkSynchronized(PART_SPEC_STREAM));
+    /** Поковка (18 §18.7): заготовка с историей процесса. */
+    public static final DeferredHolder<DataComponentType<?>, DataComponentType<WorkpieceData>> WORKPIECE =
+            COMPONENTS.registerComponentType("workpiece", b -> b.persistent(WorkpieceData.CODEC)
+                    .networkSynchronized(net.minecraft.network.codec.ByteBufCodecs.fromCodec(WorkpieceData.CODEC)));
 
     private ManufacturingComponents() {
     }

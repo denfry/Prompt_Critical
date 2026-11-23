@@ -24,7 +24,7 @@ public final class PanelLayouts {
     private static final Map<String, PanelLayout> BY_ID = new LinkedHashMap<>();
 
     static {
-        for (List<PanelLayout> group : List.of(BoilerPanels.all(), FoundryPanels.all(), MinePanels.all(), GridPanels.all(), dev.denfry.promptcritical.mod.grid.GridDispatchPanels.all(),
+        for (List<PanelLayout> group : List.of(BoilerPanels.all(), FoundryPanels.all(), dev.denfry.promptcritical.mod.manufacturing.SmithyPanels.all(), MinePanels.all(), GridPanels.all(), dev.denfry.promptcritical.mod.grid.GridDispatchPanels.all(),
                 dev.denfry.promptcritical.mod.scada.HistorianPanels.all(),
                 dev.denfry.promptcritical.mod.scada.TwinPanels.all(),
                 dev.denfry.promptcritical.mod.scada.AnnunciatorPanels.all(),

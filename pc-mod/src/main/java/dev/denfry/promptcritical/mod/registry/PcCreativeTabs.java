@@ -18,6 +18,7 @@ public final class PcCreativeTabs {
             .displayItems((params, out) -> {
                 PcBlocks.withItems().forEach(b -> out.accept(b.get()));
                 PcItems.plainItems().forEach(i -> out.accept(i.get()));
+                dev.denfry.promptcritical.mod.manufacturing.ManufacturingItems.all().forEach(i -> out.accept(i.get()));
             })
             .build());
 
