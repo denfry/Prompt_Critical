@@ -124,7 +124,7 @@ public final class HydrotestPumpBlockEntity extends IronworksBlockEntity {
         }
         Player p = operator == null ? null : level.getPlayerByUUID(operator);
         var r = ops.perform(m.simId(), new CheckInput.PressureTest(fireOut, metalK, pressurePa,
-                Math.max(heldPhysS, leak ? ops.config().hydrotestHoldPhysS() : heldPhysS)), operator);
+                Math.max(heldPhysS, leak ? ops.config().hydrotestHoldPhysS() : heldPhysS)), operator, TeamResolver.team(operator));
         if (p != null) {
             if (leak) p.displayClientMessage(OpsText.msg("hydro_leak"), false);
             OpsActions.report(p, r);

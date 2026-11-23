@@ -194,11 +194,11 @@ public final class OpsActions {
             case TORQUE_WRENCH -> {
                 if (m instanceof FireTubeBoilerBlockEntity b) reliefValve(p, ops, b);
                 else if (m instanceof MineHoistBlockEntity h) report(p, ops.perform(m.simId(),
-                        new CheckInput.BrakeTest(h.cageLoadFraction()), p.getUUID()));
+                        new CheckInput.BrakeTest(h.cageLoadFraction()), p.getUUID(), TeamResolver.team(p)));
                 else tighten(p, ops, m);
             }
             case TEST_GAUGE -> {
-                if (m instanceof FireTubeBoilerBlockEntity) report(p, ops.perform(m.simId(), new CheckInput.InstrumentCheck(), p.getUUID()));
+                if (m instanceof FireTubeBoilerBlockEntity) report(p, ops.perform(m.simId(), new CheckInput.InstrumentCheck(), p.getUUID(), TeamResolver.team(p)));
             }
             case CAULKING_HAMMER -> {
                 if (!(m instanceof FireTubeBoilerBlockEntity b)) return;
@@ -275,7 +275,7 @@ public final class OpsActions {
             return;
         }
         CheckResult r = ops.perform(b.simId(), new CheckInput.ReliefValveSet(has(p, PcItems.TEST_PRESSURE_GAUGE.get().getDefaultInstance())),
-                p.getUUID());
+                p.getUUID(), TeamResolver.team(p));
         if (r != null && r.outcome() != CheckResult.Outcome.REFUSED) {
             p.displayClientMessage(OpsText.msg("relief_lift", OpsText.num(r.readings().getOrDefault(CheckResult.READ_LIFT, set) / 1e6, 2),
                     OpsText.num(r.readings().getOrDefault(CheckResult.READ_RESEAT, set) / 1e6, 2), OpsText.num(set / 1e6, 2)), false);
@@ -354,7 +354,7 @@ public final class OpsActions {
         OpsSubsystem ops = OpsWorld.ops(p.level());
         if (ops == null) return;
         CommissioningState before = ops.commissioning().state(m.simId()).orElse(null);
-        report(p, ops.perform(m.simId(), input, p.getUUID()));
+        report(p, ops.perform(m.simId(), input, p.getUUID(), TeamResolver.team(p)));
         announceAcceptance(p, ops, m, before);
     }
 

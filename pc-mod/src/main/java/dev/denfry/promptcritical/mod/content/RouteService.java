@@ -1,5 +1,9 @@
 package dev.denfry.promptcritical.mod.content;
 
+import dev.denfry.promptcritical.mod.ops.OpsWorld;
+import dev.denfry.promptcritical.mod.ops.TeamResolver;
+import dev.denfry.promptcritical.sim.ops.OpsSubsystem;
+
 import com.google.gson.JsonArray;
 import com.google.gson.JsonObject;
 import dev.denfry.promptcritical.mod.config.DifficultyPreset;
@@ -134,6 +138,9 @@ public final class RouteService {
         Set<ResourceLocation> done = new LinkedHashSet<>(p.getData(ContentAttachments.ROUTE_DONE));
         if (!done.add(t.id())) return;
         p.setData(ContentAttachments.ROUTE_DONE, Set.copyOf(done));
+        // профиль licensing: задание засчитывается команде игрока (лицензия на следующую эпоху)
+        OpsSubsystem ops = OpsWorld.ops(p.getServer().overworld());
+        if (ops != null) ops.licences().taskDone(TeamResolver.team(p), t.id().toString());
         if (t.xp() > 0) p.giveExperiencePoints(t.xp());
         p.sendSystemMessage(Component.translatable(ContentText.ROUTE_DONE, t.title().get(HandbookService.lang(p)), t.xp())
                 .withStyle(ChatFormatting.GOLD));
