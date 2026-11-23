@@ -161,6 +161,28 @@ public final class SitePlans {
                     st("pit", 100, n(BRICKS, 2), n(INGOT, 2)),
                     st("flue", 80, n(BRICKS, 1), n(INGOT, 2))));
 
+    /** Энергетика и водоподготовка реального масштаба (07 §7.3.1, §7.6.3, §7.9.6, 08 §8.12); массы — оценки. */
+    private static final Map<String, Plan> POWER_PLANS = Map.of(
+            // ДА-25: бак ≈ 15 м³ из листа 10 мм ≈ 6 т, колонка Ø 1 м ≈ 2 т, площадка, лестница и обвязка ≈ 1 т (оценки)
+            "deaerator_real", plan("deaerator_real", PcBlocks.DEAERATOR_REAL, 9,
+                    st("saddles", 80, n(CONCRETE, 2)),
+                    st("storage_tank", 240, n(PLATE, 50), n(INGOT, 10)),
+                    st("deaerating_column", 200, n(PLATE, 20), n(BEAM, 5), n(PIPE, 10))),
+            // фильтр Ø 0,9 м × 4 м: корпус с днищами и опорами ≈ 1 т, фронт задвижек ≈ 0,2 т (оценки)
+            "ion_exchange_column_real", plan("ion_exchange_column_real", PcBlocks.ION_EXCHANGE_COLUMN_REAL, 1.2,
+                    st("filter_vessel", 120, n(PLATE, 8), n(INGOT, 2)),
+                    st("valve_nest", 80, n(PIPE, 4))),
+            // генератор 500 кВ·А около 1905 г., тихоходный многополюсный: плита и стояки ≈ 3 т, статор ≈ 5 т, индуктор ≈ 4 т (оценки)
+            "shaft_generator_real", plan("shaft_generator_real", PcBlocks.SHAFT_GENERATOR_REAL, 12,
+                    st("bedplate", 120, n(CONCRETE, 2), n(INGOT, 30)),
+                    st("stator", 240, n(INGOT, 30), n(PLATE, 10), n(WIRE, 100)),
+                    st("field", 200, n(INGOT, 30), n(WIRE, 100))),
+            // двигатель 1 МВт 6 кВ: плита и подшипники ≈ 1,5 т, станина со статором ≈ 2,5 т, ротор ≈ 2 т (оценки)
+            "electric_motor_mv_real", plan("electric_motor_mv_real", PcBlocks.ELECTRIC_MOTOR_MV_REAL, 6,
+                    st("bedplate", 100, n(CONCRETE, 1), n(INGOT, 15)),
+                    st("motor_frame", 200, n(PLATE, 15), n(WIRE, 100)),
+                    st("motor_rotor", 160, n(INGOT, 20))));
+
     private SitePlans() {}
 
     /** Множитель числа предметов на этапах ({@code site.material_scale}); вне сервера с конфигом — 1. */
@@ -175,10 +197,11 @@ public final class SitePlans {
     @Nullable
     public static Plan get(String id) {
         Plan p = PLANS.get(id);
-        return p != null ? p : I0_PLANS.get(id);
+        if (p == null) p = I0_PLANS.get(id);
+        return p != null ? p : POWER_PLANS.get(id);
     }
 
     public static Iterable<Plan> all() {
-        return java.util.stream.Stream.concat(PLANS.values().stream(), I0_PLANS.values().stream()).toList();
+        return java.util.stream.Stream.of(PLANS, I0_PLANS, POWER_PLANS).flatMap(m -> m.values().stream()).toList();
     }
 }

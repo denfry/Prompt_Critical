@@ -201,5 +201,9 @@ public final class OpsRecipes extends RecipeProvider {
         ShapedRecipeBuilder.shaped(RecipeCategory.MISC, PcBlocks.ION_EXCHANGE_COLUMN.get())
                 .pattern("IPI").pattern("ICI").pattern("IPI").define('I', sheet).define('P', pipe).define('C', Items.COAL)
                 .unlockedBy("has_sheet", hasSheet).save(out, id("ion_exchange_column"));
+        // чертёж Na-катионитового фильтра реального масштаба: строится на стройплощадке по массе прототипа (SitePlans)
+        ShapedRecipeBuilder.shaped(RecipeCategory.MISC, dev.denfry.promptcritical.mod.site.SiteRegistry.ION_EXCHANGE_COLUMN_REAL_DRAWING.get())
+                .pattern("PPP").pattern("ICI").define('P', Items.PAPER).define('I', sheet).define('C', Items.COAL)
+                .unlockedBy("has_sheet", hasSheet).save(out, id("ion_exchange_column_real_drawing"));
     }
 }

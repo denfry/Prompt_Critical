@@ -45,7 +45,15 @@ public final class WholePorts {
             // уголь в бункера забрасывателей сверху
             Map.entry("lancashire_stoker", List.of(p(-1, 2, 0, U), p(1, 2, 0, U))),
             // тигель и кокс — через крышку ямы; клетки кладки закрыты
-            Map.entry("crucible_furnace_real", List.of(p(0, 0, 0, U))));
+            Map.entry("crucible_furnace_real", List.of(p(0, 0, 0, U))),
+            // химочищенная вода — с севера на колонку, конденсат — с юга, питательная вода — вниз из бака у контроллера;
+            // греющий пар деаэратор берёт из барабана ближнего котла (07 §7.9.6), паропровод и выпар нарисованы
+            Map.entry("deaerator_real", List.of(p(2, 4, -1, N), p(2, 4, 1, S), p(0, 0, 0, D))),
+            // вода — в верхнее днище, умягчённая — из северной грани нижней клетки
+            Map.entry("ion_exchange_column_real", List.of(p(0, 3, 0, U), p(0, 0, 0, N))),
+            // электрические машины: вал Create — через клетку-порт, кабели — к клеммам, труб и лотков нет
+            Map.entry("shaft_generator_real", List.of()),
+            Map.entry("electric_motor_mv_real", List.of()));
 
     private WholePorts() {}
 

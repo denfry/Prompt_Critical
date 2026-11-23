@@ -57,7 +57,15 @@ public final class PcClient {
         };
     }
 
+    static {
+        // Na-катионитовый фильтр реального масштаба: цельная модель — до запекания
+        dev.denfry.promptcritical.mod.client.whole.WholeModels.register("ion_exchange_column_real");
+    }
+
     private static void renderers(EntityRenderersEvent.RegisterRenderers event) {
+        // водоподготовка: у одноблочных ступеней — модель блока, у ion_exchange_column_real — цельная модель
+        event.registerBlockEntityRenderer(dev.denfry.promptcritical.mod.ops.OpsBlockEntities.WATER_TREATMENT.get(),
+                c -> new dev.denfry.promptcritical.mod.client.whole.WholeModelRenderer<>());
         event.registerBlockEntityRenderer(ContentRegistries.WALL_CLOCK.get(), WallClockRenderer::new);
         event.registerBlockEntityRenderer(dev.denfry.promptcritical.mod.ops.OpsBlockEntities.MECHANICAL_DISCONNECT.get(),
                 dev.denfry.promptcritical.mod.ops.client.MechanicalDisconnectRenderer::new);

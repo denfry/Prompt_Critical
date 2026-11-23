@@ -52,7 +52,7 @@ import org.jetbrains.annotations.Nullable;
  * 49, АЧР, 27, 51.
  */
 public class ElectricMotorBlockEntity extends GeneratingKineticBlockEntity implements DeviceHost, GridDevice, FoundryDevice,
-        PanelHost, WiredDevice {
+        PanelHost, WiredDevice, dev.denfry.promptcritical.mod.client.whole.WholeModelHost, dev.denfry.promptcritical.mod.boiler.ShaftSource {
     public static final BooleanProperty MV = PcProperties.MEDIUM_VOLTAGE;
     public static final int SLOTS = 2;
     private static final double HYSTERESIS = 0.02;
@@ -80,6 +80,8 @@ public class ElectricMotorBlockEntity extends GeneratingKineticBlockEntity imple
     private boolean lastCoil;
     private int level4, ticks;
     private float capacityPerRpm, lastRpm;
+    /** Доля нагрузки сети Create, Вт, от клетки-порта двигателя реального масштаба. */
+    private double portLoadW;
 
     public ElectricMotorBlockEntity(BlockPos pos, BlockState state) {
         super(GridBlockEntities.ELECTRIC_MOTOR.get(), pos, state);
@@ -111,7 +113,9 @@ public class ElectricMotorBlockEntity extends GeneratingKineticBlockEntity imple
     @Override
     public List<List<Face>> terminals() {
         List<Face> out = new ArrayList<>();
-        GridDevice.faces(out, worldPosition, facing(), 0, 0, 0, Direction.SOUTH, Direction.WEST, Direction.EAST, Direction.UP,
+        // у двигателя реального масштаба кабели 6 кВ заходят в клеммную коробку на востоке через пол
+        if (real()) GridDevice.faces(out, worldPosition, facing(), 1, 0, 0, Direction.EAST, Direction.DOWN);
+        else GridDevice.faces(out, worldPosition, facing(), 0, 0, 0, Direction.SOUTH, Direction.WEST, Direction.EAST, Direction.UP,
                 Direction.DOWN);
         return List.of(out);
     }
@@ -127,7 +131,50 @@ public class ElectricMotorBlockEntity extends GeneratingKineticBlockEntity imple
 
     @Override
     public float getGeneratedSpeed() {
+        // у двигателя реального масштаба контроллер вала не имеет: вращение отдаёт клетка-порт
+        return real() ? 0 : shaftRpm();
+    }
+
+    private float shaftRpm() {
         return level != null && level.isClientSide ? lastRpm : outputRpm();
+    }
+
+    // --- двигатель 1 МВт 6 кВ реального масштаба (electric_motor_mv_real): цельная модель, вал через порт ---
+
+    @Override
+    @Nullable
+    public String wholeModelId() {
+        return dev.denfry.promptcritical.mod.client.whole.WholeModelHost.idOf(getBlockState());
+    }
+
+    @Override
+    public Direction wholeModelFacing() {
+        return facing();
+    }
+
+    @Override
+    public BlockPos wholeModelLightPos() {
+        return worldPosition.relative(facing().getClockWise(), 2);
+    }
+
+    /** Двигатель 3 × 3 × 3 с валом в клетке-порте; всегда исполнение 6 кВ (07 §7.6.3). */
+    public boolean real() {
+        return wholeModelId() != null;
+    }
+
+    @Override
+    public float portRpm() {
+        return real() ? shaftRpm() : 0;
+    }
+
+    @Override
+    public float portCapacityPerRpm() {
+        return real() ? capacityPerRpm : 0;
+    }
+
+    @Override
+    public void setPortLoad(double watts) {
+        portLoadW = watts;
     }
 
     @Override
@@ -149,6 +196,7 @@ public class ElectricMotorBlockEntity extends GeneratingKineticBlockEntity imple
         MotorUnit u = unit();
         if (u == null) return;
         if (ticks % 20 == 9) u.setRelays(settings());
+        if (real()) u.setMediumVoltage(true);
         AutomationUnit a = MechanismWiring.unit(level, simId, AutomationKind.MOTOR_IO);
         if (a != null) {
             a.setInput(AutomationUnit.IN_MAIN, u.contactorClosed() ? 1 : 0);
@@ -174,9 +222,9 @@ public class ElectricMotorBlockEntity extends GeneratingKineticBlockEntity imple
             capacityPerRpm = cap;
             if (hasNetwork() && getOrCreateNetwork() != null) notifyStressCapacityChange(calculateAddedStressCapacity());
         }
-        double load = 0;
+        double load = real() ? portLoadW : 0;
         float speed = Math.abs(getSpeed());
-        if (speed > 0 && !isOverStressed() && capacity > 0) {
+        if (!real() && speed > 0 && !isOverStressed() && capacity > 0) {
             double own = lastCapacityProvided * speed;
             load = wPerSu * Math.min(stress, capacity) * own / capacity;
         }
@@ -293,6 +341,7 @@ public class ElectricMotorBlockEntity extends GeneratingKineticBlockEntity imple
                 player.displayClientMessage(GridText.msg(GridText.GEAR, u.gearRpm()), true);
             }
             case GridPanels.BUTTON_CLASS -> {
+                if (real()) return;                              // 1 МВт 6 кВ — только высоковольтное исполнение
                 if (u.speedPu() > 0.05 || u.contactorClosed()) {
                     player.displayClientMessage(GridText.msg(GridText.STOP_FIRST), true);
                     return;

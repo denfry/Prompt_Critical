@@ -281,7 +281,9 @@ public final class PcBlocks {
             Spec.facing(PcProperties.ALARM), FoundryBlock.with(dev.denfry.promptcritical.mod.grid.GridDispatchCenterBlockEntity::new));
     public static final DeferredBlock<PcDeviceBlock> SHAFT_GENERATOR = device("shaft_generator", machine(),
             Spec.facing(PcProperties.RUNNING), KineticMachineBlock.with(ShaftSide.BACK, ShaftGeneratorBlockEntity::new));
-    public static final DeferredBlock<PcBlock> GENERATOR_EXCITER = block("generator_exciter", machine(), Spec.facing());
+    /** Возбудитель 1 × 2 × 1: контроллер на оси генератора (1,5 м), литой постамент — клетка под ним. */
+    public static final DeferredBlock<PcBlock> GENERATOR_EXCITER = block("generator_exciter", machine(),
+            Spec.facing().footprint(Footprint.of(Segment.box(0, 0, -1, 0, 0, 0))));
     public static final DeferredBlock<PcDeviceBlock> INSTRUMENT_SYNCHROSCOPE = device("instrument_synchroscope", instrument(),
             Spec.facing(), GridMountedBlock.wall(InstrumentBlockEntity::synchroscope, 2, 2, 10.9, 14, 14, 16));
     public static final DeferredBlock<PcDeviceBlock> ELECTRIC_MOTOR = device("electric_motor", machine(),
@@ -299,7 +301,7 @@ public final class PcBlocks {
     public static final DeferredBlock<PcDeviceBlock> RELAY_CABINET = device("relay_cabinet", machine(),
             Spec.facing(PcProperties.ALARM).footprint(FP_TALL2), FoundryBlock.with(RelayCabinetBlockEntity::new));
     public static final DeferredBlock<PcDeviceBlock> DISTRIBUTION_TRANSFORMER = device("distribution_transformer", machine(),
-            Spec.facing().footprint(FP_TALL2), FoundryBlock.with(TransformerBlockEntity::new));
+            Spec.facing().footprint(Footprint.of(Segment.box(0, 1, 0, 1, 0, 0))), FoundryBlock.with(TransformerBlockEntity::new));
     public static final DeferredBlock<PoleBlock> WOODEN_POLE = withItem(BLOCKS.registerBlock("wooden_pole",
             p -> PoleBlock.create(p, 2.5), wood()));
     public static final DeferredBlock<PoleBlock> CONCRETE_POLE = withItem(BLOCKS.registerBlock("concrete_pole",
@@ -953,7 +955,9 @@ public final class PcBlocks {
                 || b == BWR240_REACTOR.get() || b == CANDU6_REACTOR.get() || b == BN600_REACTOR.get() || b == AM1_REACTOR.get()
                 || b == LANCASHIRE_BOILER.get() || b == HEADFRAME_STEEL.get() || b == MILL_ENGINE.get() || b == WINDING_ENGINE.get()
                 || b == GUIBAL_FAN.get() || b == CUPOLA_FURNACE_REAL.get() || b == MINE_DRAINAGE_PUMP_GEARED.get()
-                || b == LANCASHIRE_STOKER.get() || b == CRUCIBLE_FURNACE_REAL.get();
+                || b == LANCASHIRE_STOKER.get() || b == CRUCIBLE_FURNACE_REAL.get()
+                || b == DEAERATOR_REAL.get() || b == ION_EXCHANGE_COLUMN_REAL.get() || b == SHAFT_GENERATOR_REAL.get()
+                || b == ELECTRIC_MOTOR_MV_REAL.get();
     }
 
     /**
@@ -1313,6 +1317,28 @@ public final class PcBlocks {
     public static final DeferredBlock<PcDeviceBlock> DEAERATOR = device("deaerator", machine(),
             Spec.facing(PcProperties.RUNNING).footprint(Footprint.of(Segment.box(-1, 1, 0, 1, 0, 0))),
             FoundryBlock.with(dev.denfry.promptcritical.mod.powerhouse.DeaeratorBlockEntity::new));
+    // --- реальный масштаб: энергетика и водоподготовка (07 §7.3.1, §7.6.3, §7.9.6, 08 §8.12) ---
+    /** Деаэратор ДА-25 реального масштаба: бак Ø 2 м × 5,5 м с колонкой, 6 × 5 × 3 (deaerator-dimensions.md). */
+    public static final Footprint FP_DEAERATOR_REAL = Footprint.tiled(-2, 3, 0, 4, -1, 1);
+    public static final DeferredBlock<PcDeviceBlock> DEAERATOR_REAL = device("deaerator_real", machine(),
+            Spec.facing(PcProperties.RUNNING).segments(PcProperties.wholeSegments(FP_DEAERATOR_REAL.segments().size()), FP_DEAERATOR_REAL),
+            FoundryBlock.with(dev.denfry.promptcritical.mod.powerhouse.DeaeratorBlockEntity::new));
+    /** Na-катионитовый фильтр реального масштаба: корпус Ø 0,9 м, 1 × 4 × 1 (ion_exchange_column-dimensions.md). */
+    public static final Footprint FP_ION_EXCHANGE_COLUMN_REAL = Footprint.tiled(0, 0, 0, 3, 0, 0);
+    public static final DeferredBlock<PcDeviceBlock> ION_EXCHANGE_COLUMN_REAL = device("ion_exchange_column_real", machine(),
+            Spec.facing(PcProperties.RUNNING, PcProperties.ALARM).segments(
+                    PcProperties.wholeSegments(FP_ION_EXCHANGE_COLUMN_REAL.segments().size()), FP_ION_EXCHANGE_COLUMN_REAL),
+            FoundryBlock.with(WaterTreatmentBlockEntity::new));
+    /** Генератор 500 кВ·А открытого исполнения (около 1905 г.) и двигатель 1 МВт 6 кВ: 3 × 3 × 3, вал на высоте 1,5 м. */
+    public static final Footprint FP_ELECTRIC_MACHINE_REAL = Footprint.tiled(-1, 1, 0, 2, -1, 1);
+    public static final DeferredBlock<PcDeviceBlock> SHAFT_GENERATOR_REAL = device("shaft_generator_real", machine(),
+            Spec.facing(PcProperties.RUNNING).segments(PcProperties.wholeSegments(FP_ELECTRIC_MACHINE_REAL.segments().size()),
+                    FP_ELECTRIC_MACHINE_REAL),
+            dev.denfry.promptcritical.mod.grid.RealShaftMachineBlock.generator(ShaftGeneratorBlockEntity::new));
+    public static final DeferredBlock<PcDeviceBlock> ELECTRIC_MOTOR_MV_REAL = device("electric_motor_mv_real", machine(),
+            Spec.facing(PcProperties.RUNNING).segments(PcProperties.wholeSegments(FP_ELECTRIC_MACHINE_REAL.segments().size()),
+                    FP_ELECTRIC_MACHINE_REAL),
+            dev.denfry.promptcritical.mod.grid.RealShaftMachineBlock.motor(ElectricMotorBlockEntity::new));
 
     // --- справочник и мир (11) ---
     public static final DeferredBlock<DocumentLecternBlock> DOCUMENT_LECTERN = withItem(BLOCKS.registerBlock("document_lectern",

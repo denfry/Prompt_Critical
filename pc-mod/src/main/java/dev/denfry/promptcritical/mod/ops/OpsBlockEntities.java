@@ -24,7 +24,8 @@ public final class OpsBlockEntities {
     /** Один тип на три блока: ступень — по ID блока. */
     public static final DeferredHolder<BlockEntityType<?>, BlockEntityType<WaterTreatmentBlockEntity>> WATER_TREATMENT =
             BLOCK_ENTITIES.register("water_treatment", () -> BlockEntityType.Builder.of(WaterTreatmentBlockEntity::new,
-                    PcBlocks.WATER_CLARIFIER.get(), PcBlocks.SAND_FILTER.get(), PcBlocks.ION_EXCHANGE_COLUMN.get()).build(null));
+                    PcBlocks.WATER_CLARIFIER.get(), PcBlocks.SAND_FILTER.get(), PcBlocks.ION_EXCHANGE_COLUMN.get(),
+                    PcBlocks.ION_EXCHANGE_COLUMN_REAL.get()).build(null));
 
     public static final DeferredHolder<BlockEntityType<?>, BlockEntityType<LineBlindBlockEntity>> LINE_BLIND =
             BLOCK_ENTITIES.register("line_blind", () -> BlockEntityType.Builder.of(LineBlindBlockEntity::new,

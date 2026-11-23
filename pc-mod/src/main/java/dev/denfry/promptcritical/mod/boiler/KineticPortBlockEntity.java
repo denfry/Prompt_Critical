@@ -7,8 +7,8 @@ import net.minecraft.world.level.block.state.BlockState;
 import org.jetbrains.annotations.Nullable;
 
 /**
- * Источник Create на клетке вала паровой машины (03a §3a.12.3): скорость и ёмкость берёт у
- * {@link SteamEngineBlockEntity}, обратно отдаёт долю нагрузки сети
+ * Источник Create на клетке вала паровой машины или двигателя реального масштаба (03a §3a.12.3): скорость и ёмкость
+ * берёт у {@link ShaftSource}, обратно отдаёт долю нагрузки сети
  * P_Create = W_PER_SU·min(S, C)·C_own/C (03a §3a.7.3); при перегрузке сети — 0.
  */
 public class KineticPortBlockEntity extends GeneratingKineticBlockEntity {
@@ -19,21 +19,21 @@ public class KineticPortBlockEntity extends GeneratingKineticBlockEntity {
     }
 
     @Nullable
-    private SteamEngineBlockEntity owner() {
+    private ShaftSource owner() {
         if (level == null) return null;
         BlockPos c = BoilerGeometry.controllerOf(level, worldPosition);
-        return c != null && level.getBlockEntity(c) instanceof SteamEngineBlockEntity e ? e : null;
+        return c != null && level.getBlockEntity(c) instanceof ShaftSource e ? e : null;
     }
 
     @Override
     public float getGeneratedSpeed() {
-        SteamEngineBlockEntity o = owner();
+        ShaftSource o = owner();
         return o == null ? 0 : o.portRpm();
     }
 
     @Override
     public float calculateAddedStressCapacity() {
-        SteamEngineBlockEntity o = owner();
+        ShaftSource o = owner();
         float c = o == null ? 0 : o.portCapacityPerRpm();
         lastCapacityProvided = c;
         return c;
@@ -43,7 +43,7 @@ public class KineticPortBlockEntity extends GeneratingKineticBlockEntity {
     public void tick() {
         super.tick();
         if (level == null || level.isClientSide) return;
-        SteamEngineBlockEntity o = owner();
+        ShaftSource o = owner();
         if (o == null) return;
         float rpm = o.portRpm();
         if (rpm != lastRpm) {

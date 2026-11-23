@@ -16,6 +16,11 @@ public final class PowerhouseClient {
     private static final PartialModel WIND_BLADE = partial("wind_turbine/partial/blade");
     private static final PartialModel DG_FLYWHEEL = partial("diesel_generator/partial/flywheel");
 
+    static {
+        // деаэратор ДА-25 реального масштаба: цельная модель — до запекания
+        dev.denfry.promptcritical.mod.client.whole.WholeModels.register("deaerator_real");
+    }
+
     private PowerhouseClient() {
     }
 
@@ -29,6 +34,9 @@ public final class PowerhouseClient {
 
     private static void registerRenderers(EntityRenderersEvent.RegisterRenderers event) {
         // ось крыльчатки — центр блока, вдоль Z (фасад на север)
+        // старый деаэратор — модель блока, у deaerator_real — цельная модель с контроллера
+        event.registerBlockEntityRenderer(PowerhouseBlockEntities.DEAERATOR.get(),
+                c -> new dev.denfry.promptcritical.mod.client.whole.WholeModelRenderer<>());
         event.registerBlockEntityRenderer(PowerhouseBlockEntities.FORCED_DRAFT_FAN.get(), c -> new FoundryMachineRenderer<>(FD_IMPELLER, Motion.SPIN_Z, 8, 8, 1));
         event.registerBlockEntityRenderer(PowerhouseBlockEntities.INDUCED_DRAFT_FAN.get(), c -> new FoundryMachineRenderer<>(ID_IMPELLER, Motion.SPIN_Z, 8, 8, 1));
         event.registerBlockEntityRenderer(PowerhouseBlockEntities.WIND_TURBINE.get(), c -> new WindTurbineRenderer(WIND_NACELLE, WIND_BLADE));

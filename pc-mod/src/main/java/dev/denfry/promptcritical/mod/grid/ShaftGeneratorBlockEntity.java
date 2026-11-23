@@ -45,7 +45,8 @@ import org.jetbrains.annotations.Nullable;
  * {@code generator_exciter} ставится вплотную. Несинхронное включение даёт разовый скачок стресса сети Create (§7.3.5);
  * муфта {@code generator_coupling} со срезным штифтом ставится ПКМ.
  */
-public class ShaftGeneratorBlockEntity extends KineticMachineBlockEntity<GeneratorUnit> implements GridDevice, PanelHost, OpsMachine {
+public class ShaftGeneratorBlockEntity extends KineticMachineBlockEntity<GeneratorUnit> implements GridDevice, PanelHost, OpsMachine,
+        dev.denfry.promptcritical.mod.client.whole.WholeModelHost, dev.denfry.promptcritical.mod.boiler.ShaftConsumer {
     private int ticks;
     /** Что уже объявлено по громкой связи; null — машину ещё не наблюдали после загрузки. */
     private MachineState heardState;
@@ -56,8 +57,67 @@ public class ShaftGeneratorBlockEntity extends KineticMachineBlockEntity<Generat
     /** Тик, когда сеть Create была перегружена в последний раз (журнал и тесты). */
     private long overstressedAt = Long.MIN_VALUE;
 
+    /** Генератор реального масштаба: обороты и исправность сети приходят с клетки-порта. */
+    private double portRpm;
+    private boolean portHealthy = true;
+
     public ShaftGeneratorBlockEntity(BlockPos pos, BlockState state) {
         super(GridBlockEntities.SHAFT_GENERATOR.get(), pos, state);
+    }
+
+    // --- генератор реального масштаба (shaft_generator_real): цельная модель, вал через порт ---
+
+    @Override
+    @Nullable
+    public String wholeModelId() {
+        return dev.denfry.promptcritical.mod.client.whole.WholeModelHost.idOf(getBlockState());
+    }
+
+    @Override
+    public Direction wholeModelFacing() {
+        return facing();
+    }
+
+    @Override
+    public BlockPos wholeModelLightPos() {
+        return worldPosition.relative(facing().getClockWise(), 2);
+    }
+
+    /** Генератор 3 × 3 × 3 с валом в клетке-порте вместо генератора на валу контроллера. */
+    public boolean real() {
+        return wholeModelId() != null;
+    }
+
+    @Override
+    protected double shaftSpeed() {
+        return real() ? portRpm : super.shaftSpeed();
+    }
+
+    @Override
+    protected boolean shaftHealthy() {
+        return real() ? portHealthy : super.shaftHealthy();
+    }
+
+    @Override
+    public void sampleShaft(double rpm, boolean healthy, long tick) {
+        portRpm = rpm;
+        portHealthy = healthy;
+    }
+
+    @Override
+    public double shaftPowerW() {
+        GeneratorUnit u = unit();
+        return u == null ? 0 : powerW(u);
+    }
+
+    @Override
+    public double ratedShaftW() {
+        return ratedW();
+    }
+
+    @Override
+    public double nominalShaftRpm() {
+        return nominalRpm();
     }
 
     @Override
@@ -106,12 +166,17 @@ public class ShaftGeneratorBlockEntity extends KineticMachineBlockEntity<Generat
     @Override
     public List<List<Face>> terminals() {
         List<Face> out = new ArrayList<>();
-        GridDevice.faces(out, worldPosition, facing(), 0, 0, 0, Direction.NORTH, Direction.WEST, Direction.EAST, Direction.UP,
+        // у генератора реального масштаба выводы — в клеммной коробке на восточной стороне станины
+        if (real()) GridDevice.faces(out, worldPosition, facing(), 1, 0, 0, Direction.EAST, Direction.DOWN);
+        else GridDevice.faces(out, worldPosition, facing(), 0, 0, 0, Direction.NORTH, Direction.WEST, Direction.EAST, Direction.UP,
                 Direction.DOWN);
         return List.of(out);
     }
 
     private boolean exciterAdjacent() {
+        // реальный масштаб: возбудитель на оси вала у северного торца
+        if (real()) return level.getBlockState(RealShaftMachineBlock.at(worldPosition, facing(), RealShaftMachineBlock.EXCITER_CELL))
+                .is(PcBlocks.GENERATOR_EXCITER.get());
         for (Direction d : Direction.values())
             if (level.getBlockState(worldPosition.relative(d)).is(PcBlocks.GENERATOR_EXCITER.get())) return true;
         return false;

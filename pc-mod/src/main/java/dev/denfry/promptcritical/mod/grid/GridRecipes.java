@@ -120,6 +120,15 @@ public final class GridRecipes extends RecipeProvider {
                 .define('I', PcItems.STEEL_PLATE.get()).define('W', wire).define('S', PcItems.KEYED_SHAFT.get())
                 .define('C', AllBlocks.ANDESITE_CASING.get())
                 .unlockedBy("has_wire", hasWire).save(out, id("electric_motor"));
+        // чертежи генератора и двигателя реального масштаба: строятся на стройплощадке по массе прототипа (SitePlans)
+        ShapedRecipeBuilder.shaped(RecipeCategory.MISC, dev.denfry.promptcritical.mod.site.SiteRegistry.SHAFT_GENERATOR_REAL_DRAWING.get())
+                .pattern("PPP").pattern("WSW").pattern(" B ").define('P', Items.PAPER).define('W', wire)
+                .define('S', PcItems.KEYED_SHAFT.get()).define('B', PcItems.STEEL_BEAM.get())
+                .unlockedBy("has_wire", hasWire).save(out, id("shaft_generator_real_drawing"));
+        ShapedRecipeBuilder.shaped(RecipeCategory.MISC, dev.denfry.promptcritical.mod.site.SiteRegistry.ELECTRIC_MOTOR_MV_REAL_DRAWING.get())
+                .pattern("PPP").pattern("WSW").pattern(" C ").define('P', Items.PAPER).define('W', wire)
+                .define('S', PcItems.KEYED_SHAFT.get()).define('C', AllBlocks.ANDESITE_CASING.get())
+                .unlockedBy("has_wire", hasWire).save(out, id("electric_motor_mv_real_drawing"));
         ShapedRecipeBuilder.shaped(RecipeCategory.MISC, PcBlocks.DISTRIBUTION_TRANSFORMER.get()).pattern("PPP").pattern("WBW").pattern("IWI")
                 .define('P', pin).define('W', wire).define('B', PcItems.STEEL_PLATE.get()).define('I', PcItems.STEEL_BEAM.get())
                 .unlockedBy("has_pin", has(pin)).save(out, id("distribution_transformer"));

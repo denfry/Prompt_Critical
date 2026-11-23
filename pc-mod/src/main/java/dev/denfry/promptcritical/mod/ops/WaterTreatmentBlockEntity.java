@@ -7,6 +7,7 @@ import dev.denfry.promptcritical.mod.fx.MachineFx;
 import dev.denfry.promptcritical.mod.ironworks.GasBuffer;
 import dev.denfry.promptcritical.mod.ironworks.Ironworks;
 import dev.denfry.promptcritical.mod.ironworks.IronworksBlockEntity;
+import dev.denfry.promptcritical.mod.registry.PcBlocks;
 import dev.denfry.promptcritical.mod.registry.PcItems;
 import dev.denfry.promptcritical.sim.core.DeviceMode;
 import dev.denfry.promptcritical.sim.core.SimId;
@@ -42,7 +43,7 @@ import org.jetbrains.annotations.Nullable;
  * {@code burnt_lime} ({@value #KG_PER_ITEM} кг в предмете), колонне на регенерацию — соль {@code salt}; фильтр
  * промывают Shift + ПКМ пустой рукой.
  */
-public final class WaterTreatmentBlockEntity extends IronworksBlockEntity implements DeviceHost {
+public final class WaterTreatmentBlockEntity extends IronworksBlockEntity implements DeviceHost, dev.denfry.promptcritical.mod.client.whole.WholeModelHost {
     public static final int TANK_MB = 8_000, FLOW_MB = 25;
     /** Извести или соли в предмете, кг [BALANCE]. */
     public static final double KG_PER_ITEM = 10;
@@ -57,6 +58,24 @@ public final class WaterTreatmentBlockEntity extends IronworksBlockEntity implem
 
     public WaterTreatmentBlockEntity(BlockPos pos, BlockState state) {
         super(OpsBlockEntities.WATER_TREATMENT.get(), pos, state);
+    }
+
+    // --- цельная модель реального масштаба (ion_exchange_column_real, 1 × 4 × 1) ---
+
+    @Override
+    @org.jetbrains.annotations.Nullable
+    public String wholeModelId() {
+        return dev.denfry.promptcritical.mod.client.whole.WholeModelHost.idOf(getBlockState());
+    }
+
+    @Override
+    public net.minecraft.core.Direction wholeModelFacing() {
+        return getBlockState().getValue(net.minecraft.world.level.block.state.properties.BlockStateProperties.HORIZONTAL_FACING);
+    }
+
+    @Override
+    public BlockPos wholeModelLightPos() {
+        return worldPosition.relative(wholeModelFacing(), 1);
     }
 
     @Nullable
@@ -249,6 +268,8 @@ public final class WaterTreatmentBlockEntity extends IronworksBlockEntity implem
 
     @Override
     public String deviceType() {
+        // фильтр реального масштаба — та же ступень Na-катионирования, что и одноблочная колонка
+        if (getBlockState().is(PcBlocks.ION_EXCHANGE_COLUMN_REAL.get())) return UtilitiesSubsystem.ION_EXCHANGE_COLUMN;
         return BuiltInRegistries.BLOCK.getKey(getBlockState().getBlock()).toString();
     }
 

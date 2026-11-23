@@ -32,7 +32,7 @@ import org.jetbrains.annotations.Nullable;
  * выходе {@code boiler_feedwater}, 104 °C, O₂ ≤ 15 мкг/кг, вместе с конденсатом греющего пара. Пар идёт, пока в
  * барабане больше {@value WaterTubeUnit#DEAERATOR_MIN_PA} Па; производительность — до {@value #MAX_WATER_KG_S} кг/с.
  */
-public final class DeaeratorBlockEntity extends IronworksBlockEntity {
+public final class DeaeratorBlockEntity extends IronworksBlockEntity implements dev.denfry.promptcritical.mod.client.whole.WholeModelHost {
     public static final int TANK_MB = 4000;
     /** Колонка ДА-25: до 25 т/ч ≈ 7 кг/с воды. */
     public static final double MAX_WATER_KG_S = 7;
@@ -59,6 +59,24 @@ public final class DeaeratorBlockEntity extends IronworksBlockEntity {
 
     public DeaeratorBlockEntity(BlockPos pos, BlockState state) {
         super(PowerhouseBlockEntities.DEAERATOR.get(), pos, state);
+    }
+
+    // --- цельная модель реального масштаба (deaerator_real, 6 × 5 × 3) ---
+
+    @Override
+    @org.jetbrains.annotations.Nullable
+    public String wholeModelId() {
+        return dev.denfry.promptcritical.mod.client.whole.WholeModelHost.idOf(getBlockState());
+    }
+
+    @Override
+    public net.minecraft.core.Direction wholeModelFacing() {
+        return getBlockState().getValue(net.minecraft.world.level.block.state.properties.BlockStateProperties.HORIZONTAL_FACING);
+    }
+
+    @Override
+    public BlockPos wholeModelLightPos() {
+        return worldPosition.relative(wholeModelFacing(), 2);
     }
 
     public FluidTank input() {
@@ -121,7 +139,8 @@ public final class DeaeratorBlockEntity extends IronworksBlockEntity {
     protected void clientTick() {
         if (stateFlag(PcProperties.RUNNING) && level.random.nextInt(6) == 0) {
             var fx = fx();
-            var p = fx.at(8, 33, 8);
+            // выпар: у ДА-25 реального масштаба — из штуцера на крышке колонки (40, 80, 8)
+            var p = wholeModelId() != null ? fx.at(40, 80, 8) : fx.at(8, 33, 8);
             level.addParticle(ParticleTypes.CLOUD, p.x, p.y, p.z, 0, 0.08, 0);
         }
     }
