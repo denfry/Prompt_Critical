@@ -81,13 +81,27 @@ public class PowerBoardBlockEntity extends GridDeviceBlockEntity<PowerBoardUnit>
         Direction front = facing();
         List<Face> faces = new ArrayList<>();
         if (kind == PowerBoard.Kind.UPS) {
-            for (Direction d : Direction.values()) if (d != front) faces.add(new Face(worldPosition, d));
+            // шкаф 1 × 2 × 1: выводы на всех гранях, кроме фасада; верх — у верхней клетки. Шкаф, поставленный до
+            // 1 × 2 × 1, верхней части не имеет, и над ним мог лечь чужой кабель — тогда вывод сверху остаётся у контроллера
+            boolean tall = ownPartAbove();
+            for (Direction d : Direction.values()) if (d != front && !(tall && d == Direction.UP)) faces.add(new Face(worldPosition, d));
+            if (tall) for (Direction d : Direction.values())
+                if (d != front && d != Direction.DOWN) faces.add(new Face(worldPosition.above(), d));
         } else {
             faces.add(new Face(worldPosition, front.getOpposite()));
             faces.add(new Face(worldPosition, Direction.UP));
             faces.add(new Face(worldPosition, Direction.DOWN));
         }
         return List.of(faces);
+    }
+
+    /** Над контроллером — своя часть, а не чужой блок (шкаф ИБП, поставленный до 1 × 2 × 1, её не имеет). */
+    private boolean ownPartAbove() {
+        if (level == null) return false;
+        BlockPos above = worldPosition.above();
+        BlockState s = level.getBlockState(above);
+        return s.getBlock() instanceof dev.denfry.promptcritical.mod.multiblock.MultiblockPartBlock
+                && dev.denfry.promptcritical.mod.multiblock.MultiblockPartBlock.anchor(s, above).equals(worldPosition);
     }
 
     @Override

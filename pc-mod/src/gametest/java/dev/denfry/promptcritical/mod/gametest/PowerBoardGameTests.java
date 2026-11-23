@@ -17,6 +17,7 @@ import net.minecraft.core.Direction;
 import net.minecraft.gametest.framework.GameTest;
 import net.minecraft.gametest.framework.GameTestHelper;
 import net.minecraft.world.level.block.Block;
+import net.minecraft.world.level.block.Blocks;
 import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.level.block.state.properties.BlockStateProperties;
 import net.neoforged.neoforge.gametest.GameTestHolder;
@@ -43,15 +44,22 @@ public final class PowerBoardGameTests {
 
     /** Генератор, трансформатор, кабели и щит {@code board}; коробка стенда — строгая. */
     private static void stand(GameTestHelper h, Block board) {
+        stand(h, board, true);
+    }
+
+    /** {@code wired}: кабель от трансформатора к задней грани щита и сам щит; без него — только генератор и трансформатор. */
+    private static void stand(GameTestHelper h, Block board, boolean wired) {
         MachinePower.strictArea(h.getLevel(), h.absolutePos(BlockPos.ZERO), h.absolutePos(new BlockPos(11, 11, 11)));
         h.setBlock(GEN, facing(PcBlocks.SHAFT_GENERATOR.get().defaultBlockState(), Direction.NORTH));
         h.setBlock(GEN.above(), facing(PcBlocks.GENERATOR_EXCITER.get().defaultBlockState(), Direction.NORTH));
         BlockPos motor = GEN.south();
         h.setBlock(motor, AllBlocks.CREATIVE_MOTOR.getDefaultState().setValue(BlockStateProperties.FACING, Direction.NORTH));
         h.runAfterDelay(1, () -> ((CreativeMotorBlockEntity) h.getBlockEntity(motor)).generatedSpeed.setValue(64));
-        for (BlockPos c : new BlockPos[] {new BlockPos(3, 1, 5), new BlockPos(3, 2, 5), new BlockPos(2, 2, 5), new BlockPos(1, 1, 6)})
+        for (BlockPos c : new BlockPos[] {new BlockPos(3, 1, 5), new BlockPos(3, 2, 5), new BlockPos(2, 2, 5)})
             h.setBlock(c, PcBlocks.POWER_CABLE.get().defaultBlockState());
         h.setBlock(TRAFO, facing(PcBlocks.DISTRIBUTION_TRANSFORMER.get().defaultBlockState(), Direction.NORTH));
+        if (!wired) return;
+        h.setBlock(new BlockPos(1, 1, 6), PcBlocks.POWER_CABLE.get().defaultBlockState());
         h.setBlock(BOARD, facing(board.defaultBlockState(), Direction.SOUTH));
     }
 
@@ -140,6 +148,45 @@ public final class PowerBoardGameTests {
                     h.assertTrue(b.batterySoc() < 0.9999, "battery discharges: soc " + b.batterySoc() + ", on battery "
                             + b.onBattery() + ", demand " + b.demandW() + ", factor " + f + ", input " + board(h).inputPu() + " pu");
                 })
+                .thenSucceed();
+    }
+
+    /**
+     * Шкаф ИБП 1 × 2 × 1 под напряжением через кабель, который касается только верхней клетки (её западной грани), и
+     * шкаф, поставленный до 1 × 2 × 1, — через кабель на его верхней грани: сеть цепляет оба. Кабель от вывода 0,4 кВ
+     * трансформатора уходит на запад и вверх, мимо контроллера и мимо вывода 6 кВ.
+     */
+    @GameTest(template = LARGE, timeoutTicks = 1200, batch = "power_board")
+    public static void upsCabinetTakesPowerThroughItsTopCell(GameTestHelper h) {
+        upsFedFromAbove(h, false);
+    }
+
+    @GameTest(template = LARGE, timeoutTicks = 1200, batch = "power_board")
+    public static void oldUpsCabinetTakesPowerThroughACableOnTop(GameTestHelper h) {
+        upsFedFromAbove(h, true);
+    }
+
+    private static void upsFedFromAbove(GameTestHelper h, boolean old) {
+        stand(h, PcBlocks.UPS_CABINET.get(), false);
+        if (old) {
+            // старая раскладка: на месте верхней клетки при постановке был чужой блок, потом там лёг кабель
+            h.setBlock(BOARD.above(), Blocks.STONE);
+            h.setBlock(BOARD, facing(PcBlocks.UPS_CABINET.get().defaultBlockState(), Direction.SOUTH));
+            h.setBlock(BOARD.above(), PcBlocks.POWER_CABLE.get().defaultBlockState());
+        } else {
+            h.setBlock(BOARD, facing(PcBlocks.UPS_CABINET.get().defaultBlockState(), Direction.SOUTH));
+            h.assertTrue(h.getBlockState(BOARD.above()).getBlock() instanceof dev.denfry.promptcritical.mod.multiblock.MultiblockPartBlock,
+                    "a new cabinet has its top cell");
+        }
+        for (BlockPos c : new BlockPos[] {new BlockPos(0, 1, 5), new BlockPos(0, 1, 6), new BlockPos(0, 2, 6), new BlockPos(0, 2, 7)})
+            h.setBlock(c, PcBlocks.POWER_CABLE.get().defaultBlockState());
+        h.startSequence()
+                .thenWaitUntil(() -> {
+                    gen(h);
+                    board(h);
+                })
+                .thenExecute(() -> start(h))
+                .thenWaitUntil(() -> h.assertTrue(board(h).inputPu() > 0.95, "the cabinet sees the mains: " + board(h).inputPu() + " pu"))
                 .thenSucceed();
     }
 }
