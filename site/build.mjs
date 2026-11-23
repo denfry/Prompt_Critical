@@ -1,5 +1,5 @@
 // Builds the project site into site/dist. Each page is a template rendered once per language:
-// the landing page at / and /ru/, the guide at /guide/ and /ru/guide/.
+// the landing page at / and /ru/, the guide at /guide/ and /ru/guide/, the modpack route at /modpack/ and /ru/modpack/.
 // Usage: node site/build.mjs
 import { cpSync, mkdirSync, readFileSync, rmSync, writeFileSync } from "node:fs";
 import { dirname, join } from "node:path";
@@ -13,6 +13,7 @@ const LANGS = { en: "", ru: "ru/" };
 const PAGES = [
   { template: "page.html", slug: "", css: ["site.css"] },
   { template: "guide.html", slug: "guide/", css: ["site.css", "guide.css"], content: "guide" },
+  { template: "modpack.html", slug: "modpack/", css: ["site.css", "modpack.css"], content: "modpack" },
 ];
 
 const read = (...p) => readFileSync(join(...p), "utf8");
