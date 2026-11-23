@@ -60,6 +60,20 @@ public record Footprint(List<Segment> segments) {
         return new Footprint(List.copyOf(out));
     }
 
+    /**
+     * Как {@link #tiled}, но колонна сетки 3×3 над контроллером (x, z = −1…1) пуста по всей высоте, кроме самого
+     * контроллера: копёр стоит вокруг ствола, а клеть ходит в колонне.
+     */
+    public static Footprint tiledAroundShaft(int x0, int x1, int y0, int y1, int z0, int z1) {
+        List<Segment> out = new ArrayList<>();
+        out.add(new Segment(0, 0, 0, 0, 0, 0, 0, 0, 0));
+        for (Segment s : tiled(x0, x1, y0, y1, z0, z1).segments)
+            if (s.ax + s.x0 < -1 || s.ax + s.x1 > 1 || s.az + s.z0 < -1 || s.az + s.z1 > 1) out.add(s);
+            else if (s.ax + s.x0 >= -1 && s.ax + s.x1 <= 1 && s.az + s.z0 >= -1 && s.az + s.z1 <= 1) continue;
+            else throw new IllegalArgumentException("tile crosses the shaft column: " + s);
+        return new Footprint(List.copyOf(out));
+    }
+
     public boolean isSingle() {
         return segments.size() == 1 && segments.getFirst().equals(SINGLE.segments.getFirst());
     }

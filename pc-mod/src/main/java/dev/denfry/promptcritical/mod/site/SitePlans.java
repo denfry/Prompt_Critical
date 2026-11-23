@@ -37,7 +37,7 @@ public final class SitePlans {
             for (Stage s : stages)
                 for (Need n : s.needs()) {
                     Item it = n.item().get();
-                    if (it == Items.GRAY_CONCRETE || it == PcBlocks.MODERATOR_BLOCK_GRAPHITE.get().asItem()) continue;
+                    if (it == Items.GRAY_CONCRETE || it == Items.BRICKS || it == PcBlocks.MODERATOR_BLOCK_GRAPHITE.get().asItem()) continue;
                     kg += n.base() * ItemMass.kg(it);
                 }
             return kg;
@@ -49,6 +49,7 @@ public final class SitePlans {
     }
 
     private static final Supplier<Item> CONCRETE = () -> Items.GRAY_CONCRETE;
+    private static final Supplier<Item> BRICKS = () -> Items.BRICKS;
     private static final Supplier<Item> GRAPHITE = () -> PcBlocks.MODERATOR_BLOCK_GRAPHITE.get().asItem();
     private static final Supplier<? extends Item> INGOT = PcItems.STEEL_INGOT, PLATE = PcItems.STEEL_PLATE, BEAM = PcItems.STEEL_BEAM,
             PIPE = PcItems.SEAMLESS_PIPE, WIRE = PcItems.COPPER_WIRE, ZR = PcItems.ZIRCALOY_INGOT;
@@ -109,6 +110,24 @@ public final class SitePlans {
                     st("channels", 300, n(PIPE, 755), n(PLATE, 400), n(WIRE, 50)),
                     st("piping", 200, n(PIPE, 300), n(PLATE, 100))));
 
+    /** Машины эры I0 реального масштаба. */
+    private static final Map<String, Plan> I0_PLANS = Map.of(
+            // ланкаширский котёл 8,5 × ⌀2,3 м ≈ 22 т (Crofton), кладка ≈ 55 м³ кирпича (оценка)
+            "lancashire_boiler", plan("lancashire_boiler", PcBlocks.LANCASHIRE_BOILER, 22,
+                    st("setting", 200, n(CONCRETE, 6), n(BRICKS, 30)),
+                    st("shell", 300, n(PLATE, 150), n(INGOT, 50)),
+                    st("mountings", 200, n(INGOT, 10), n(PIPE, 20), n(BRICKS, 25))),
+            // стальной копёр 16 м: башня и подкосы из клёпаных балок ≈ 45 т, шкив ⌀3 м ≈ 2 т, площадка ≈ 3 т (оценки)
+            "headframe_steel", plan("headframe_steel", PcBlocks.HEADFRAME_STEEL, 50,
+                    st("foundation", 160, n(CONCRETE, 20)),
+                    st("tower", 400, n(BEAM, 400), n(PLATE, 50)),
+                    st("sheave_deck", 200, n(PLATE, 30), n(INGOT, 20))),
+            // горизонтальная машина ≈ 16 т литья и поковок + маховик ≈ 5 т (оценки), каменный фундамент
+            "mill_engine", plan("mill_engine", PcBlocks.MILL_ENGINE, 21,
+                    st("foundation", 120, n(CONCRETE, 8)),
+                    st("bed", 300, n(INGOT, 130), n(PLATE, 20), n(PIPE, 20)),
+                    st("flywheel", 240, n(INGOT, 50))));
+
     private SitePlans() {}
 
     /** Множитель числа предметов на этапах ({@code site.material_scale}); вне сервера с конфигом — 1. */
@@ -122,10 +141,11 @@ public final class SitePlans {
 
     @Nullable
     public static Plan get(String id) {
-        return PLANS.get(id);
+        Plan p = PLANS.get(id);
+        return p != null ? p : I0_PLANS.get(id);
     }
 
     public static Iterable<Plan> all() {
-        return PLANS.values();
+        return java.util.stream.Stream.concat(PLANS.values().stream(), I0_PLANS.values().stream()).toList();
     }
 }

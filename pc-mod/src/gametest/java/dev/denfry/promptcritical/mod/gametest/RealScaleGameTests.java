@@ -206,13 +206,79 @@ public final class RealScaleGameTests {
     }
 
     /**
+     * Горизонтальная паровая машина реального масштаба: тот же BE паровой машины с цельной моделью, площадка принимает
+     * чертёж на основании 3×5, клетка вала — у маховика.
+     */
+    @GameTest(template = TALL, timeoutTicks = 40)
+    public static void millEngineSiteAcceptsAndDrawsItsWholeModel(GameTestHelper h) {
+        BlockPos p = new BlockPos(3, 1, 2);
+        for (int x = 0; x <= 2; x++)
+            for (int z = 0; z <= 4; z++) h.setBlock(p.offset(x, -1, z), Blocks.STONE);
+        h.setBlock(p, SiteRegistry.SITE.get().defaultBlockState().setValue(BlockStateProperties.HORIZONTAL_FACING, Direction.NORTH));
+        var w = site(h, p).accept("mill_engine");
+        h.assertTrue(w == null, "mill engine plan accepted: " + (w == null ? "" : w.getString()));
+        h.assertTrue(PcBlocks.FP_MILL_ENGINE.cells(BlockPos.ZERO, Direction.NORTH).size() == 3 * 3 * 5, "3x3x5 engine");
+        h.setBlock(p, Blocks.AIR);
+        h.setBlock(p, PcBlocks.MILL_ENGINE.get().defaultBlockState().setValue(BlockStateProperties.HORIZONTAL_FACING, Direction.NORTH));
+        h.assertTrue(h.getBlockEntity(p) instanceof dev.denfry.promptcritical.mod.boiler.SteamEngineBlockEntity b
+                && "mill_engine".equals(b.wholeModelId()), "the mill engine is a steam engine with its whole model");
+        h.succeed();
+    }
+
+    /**
+     * Стальной копёр реального масштаба: колонна ствола 3×3 пуста по всей высоте (там ходит клеть), подъёмная машина
+     * видит его собранным, клеть на верхней посадке — на три ряда ниже контроллера, как у старого копра.
+     */
+    @GameTest(template = TALL, timeoutTicks = 20)
+    public static void steelHeadframeKeepsTheShaftColumnFree(GameTestHelper h) {
+        for (var c : PcBlocks.FP_HEADFRAME_STEEL.cells(BlockPos.ZERO, Direction.NORTH)) {
+            BlockPos o = c.pos();
+            h.assertTrue(o.equals(BlockPos.ZERO) || Math.abs(o.getX()) > 1 || Math.abs(o.getZ()) > 1, "shaft column is free at " + o);
+        }
+        BlockPos p = new BlockPos(5, 8, 5);
+        h.setBlock(p, PcBlocks.HEADFRAME_STEEL.get().defaultBlockState().setValue(BlockStateProperties.HORIZONTAL_FACING, Direction.NORTH));
+        var hf = dev.denfry.promptcritical.mod.mine.HoistGeometry.stackAt(h.getLevel(), h.absolutePos(p));
+        h.assertTrue(hf != null && hf.formed(), "the hoist sees the steel headframe formed");
+        h.assertValueEqual(hf.cageTopY(), h.absolutePos(p).getY() - 3, "cage at the top landing three rows under the controller");
+        h.assertTrue(h.getBlockEntity(p) instanceof dev.denfry.promptcritical.mod.mine.HeadframeSteelBlockEntity b
+                && "headframe_steel".equals(b.wholeModelId()), "the steel headframe draws its whole model");
+        h.succeed();
+    }
+
+    /**
+     * Ланкаширский котёл реального масштаба (07 §7.9.4): площадка принимает чертёж на основании 5×10, котёл — тот же BE
+     * жаротрубного котла с цельной моделью, лобовая клетка контроллера не патрубок; старый котёл 3×3×6 работает как был.
+     */
+    @GameTest(template = TALL, timeoutTicks = 40)
+    public static void lancashireSiteAcceptsAndOldBoilerStillWorks(GameTestHelper h) {
+        BlockPos p = new BlockPos(5, 1, 1);
+        for (int x = -2; x <= 2; x++)
+            for (int z = 0; z <= 9; z++) h.setBlock(p.offset(x, -1, z), Blocks.STONE);
+        h.setBlock(p, SiteRegistry.SITE.get().defaultBlockState().setValue(BlockStateProperties.HORIZONTAL_FACING, Direction.NORTH));
+        var w = site(h, p).accept("lancashire_boiler");
+        h.assertTrue(w == null, "Lancashire plan accepted: " + (w == null ? "" : w.getString()));
+        h.assertTrue(PcBlocks.FP_LANCASHIRE_BOILER.cells(BlockPos.ZERO, Direction.NORTH).size() == 5 * 4 * 10, "5x4x10 setting");
+        h.setBlock(p, Blocks.AIR);
+        h.setBlock(p, PcBlocks.LANCASHIRE_BOILER.get().defaultBlockState().setValue(BlockStateProperties.HORIZONTAL_FACING, Direction.NORTH));
+        h.assertTrue(h.getBlockEntity(p) instanceof dev.denfry.promptcritical.mod.boiler.FireTubeBoilerBlockEntity b
+                && "lancashire_boiler".equals(b.wholeModelId()), "the Lancashire boiler is a fire-tube boiler with its whole model");
+        h.assertTrue(h.getLevel().getCapability(net.neoforged.neoforge.capabilities.Capabilities.FluidHandler.BLOCK, h.absolutePos(p),
+                Direction.NORTH) == null, "the controller cell is no feed port");
+        BlockPos old = new BlockPos(1, 2, 8);
+        h.setBlock(old, PcBlocks.FIRE_TUBE_BOILER.get().defaultBlockState());
+        h.assertTrue(h.getBlockEntity(old) instanceof dev.denfry.promptcritical.mod.boiler.FireTubeBoilerBlockEntity b && b.wholeModelId() == null,
+                "the old fire-tube boiler keeps its own renderer");
+        h.succeed();
+    }
+
+    /**
      * Трубы цепляются к машине реального масштаба только у патрубков: при любом фасаде порт, повёрнутый как модель,
      * открыт со своей грани и закрыт с соседней; клетка без порта закрыта; стальные леса — лестница.
      */
     @GameTest(template = "gametest/empty_12x12x12", timeoutTicks = 20)
     public static void pipesConnectOnlyAtPorts(GameTestHelper h) {
         for (String id : new String[] {"vver_reactor", "vver_steam_generator", "vver_coolant_pump", "vver_pressurizer", "bwr240_reactor",
-                "candu6_reactor", "bn600_reactor", "am1_reactor"}) {
+                "candu6_reactor", "bn600_reactor", "am1_reactor", "lancashire_boiler", "mill_engine"}) {
             h.assertTrue(!dev.denfry.promptcritical.mod.multiblock.WholePorts.of(id).isEmpty(), id + " declares its ports");
             for (Direction f : Direction.Plane.HORIZONTAL)
                 for (var port : dev.denfry.promptcritical.mod.multiblock.WholePorts.of(id)) {
@@ -252,7 +318,7 @@ public final class RealScaleGameTests {
             h.assertTrue(r > 1 / 1.5 && r < 1.5, plan.id() + ": planned metal " + Math.round(plan.plannedMetalKg() / 1000) + " t vs prototype "
                     + Math.round(plan.metalKg() / 1000) + " t");
         }
-        h.assertTrue(n == 8, "eight real-scale plans, got " + n);
+        h.assertTrue(n == 11, "eleven real-scale plans (eight reactors and NPP units, three I0 machines), got " + n);
         h.succeed();
     }
 

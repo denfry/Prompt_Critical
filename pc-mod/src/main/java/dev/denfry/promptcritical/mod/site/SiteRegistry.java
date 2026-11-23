@@ -38,6 +38,9 @@ public final class SiteRegistry {
     public static final DeferredItem<DesignDrawingItem> CANDU6_REACTOR_DRAWING = drawing("candu6_reactor");
     public static final DeferredItem<DesignDrawingItem> BN600_REACTOR_DRAWING = drawing("bn600_reactor");
     public static final DeferredItem<DesignDrawingItem> AM1_REACTOR_DRAWING = drawing("am1_reactor");
+    public static final DeferredItem<DesignDrawingItem> LANCASHIRE_BOILER_DRAWING = drawing("lancashire_boiler");
+    public static final DeferredItem<DesignDrawingItem> HEADFRAME_STEEL_DRAWING = drawing("headframe_steel");
+    public static final DeferredItem<DesignDrawingItem> MILL_ENGINE_DRAWING = drawing("mill_engine");
 
     private SiteRegistry() {}
 

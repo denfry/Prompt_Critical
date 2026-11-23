@@ -38,6 +38,8 @@ public final class SiteText {
         stage("roof", "roof, rotating plugs and drives", "крыша, поворотные пробки и приводы");
         stage("graphite", "graphite stack", "графитовая кладка");
         stage("channels", "channels, top plate and rod drives", "каналы, верхняя плита и приводы СУЗ");
+        stage("setting", "brick setting and flues", "кирпичная обмуровка и газоходы");
+        stage("mountings", "mountings, fire doors and grates", "арматура, топочные дверцы и колосники");
         put("block.promptcritical.construction_site", "Construction Site", "Стройплощадка");
         drawing("vver_reactor", "VVER-1000 Reactor", "реактора ВВЭР-1000");
         drawing("vver_steam_generator", "PGV-1000 Steam Generator", "парогенератора ПГВ-1000");
@@ -47,6 +49,13 @@ public final class SiteText {
         drawing("candu6_reactor", "CANDU 6 Reactor Assembly", "реакторной сборки CANDU 6");
         drawing("bn600_reactor", "BN-600 Sodium Fast Reactor", "реактора БН-600");
         drawing("am1_reactor", "AM-1 Channel Power Reactor", "реактора АМ-1");
+        drawing("lancashire_boiler", "Lancashire Boiler", "ланкаширского котла");
+        drawing("headframe_steel", "Steel Headframe", "стального копра");
+        drawing("mill_engine", "Horizontal Mill Engine", "горизонтальной паровой машины");
+        stage("bed", "bed, cylinder and crosshead guides", "станина, цилиндр и параллели");
+        stage("flywheel", "crankshaft, flywheel and governor", "коленвал, маховик и регулятор");
+        stage("tower", "shaft tower and back struts", "башня над стволом и подкосы");
+        stage("sheave_deck", "sheave deck and sheave", "площадка и шкив");
     }
 
     private SiteText() {}

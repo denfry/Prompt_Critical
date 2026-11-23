@@ -61,7 +61,29 @@ import org.jetbrains.annotations.Nullable;
  * <p>Износ и пусконаладка — {@link OpsMachine}: заплавленный подшипник останавливает вал, сальник парит, стопорный
  * вентиль открывается только с разрешения пуска (13 §13.6.6).
  */
-public class SteamEngineBlockEntity extends DeviceBlockEntity implements PressureSource, PanelHost, OpsMachine {
+public class SteamEngineBlockEntity extends DeviceBlockEntity implements PressureSource, PanelHost, OpsMachine,
+        dev.denfry.promptcritical.mod.client.whole.WholeModelHost {
+    @Override
+    @org.jetbrains.annotations.Nullable
+    public String wholeModelId() {
+        return dev.denfry.promptcritical.mod.client.whole.WholeModelHost.idOf(getBlockState());
+    }
+
+    @Override
+    public Direction wholeModelFacing() {
+        return facing();
+    }
+
+    @Override
+    public BlockPos wholeModelLightPos() {
+        return worldPosition.relative(facing()).above();
+    }
+
+    /** Машина реального масштаба (mill_engine): контроллер на полу у задней крышки цилиндра. */
+    boolean real() {
+        return wholeModelId() != null;
+    }
+
     public static final int[] GEARS = {16, 32, 64};
     private static final int LINK_PERIOD = 20, SYNC_PERIOD = 2;
     private static final double HYSTERESIS = 0.02, CAPACITY_DEADBAND = 0.02;
@@ -203,8 +225,10 @@ public class SteamEngineBlockEntity extends DeviceBlockEntity implements Pressur
         if (!valveOpen || omega < 0.5f || (int) (before / Math.PI) == (int) (clientCrank / Math.PI)) return;
         MachineFx fx = MachineFx.of(level, worldPosition, facing());
         if (fx == null) return;
-        fx.puff(fx.at(-0.5, 32.5, -4), new Vec3(0, 0.12, 0), 3);
-        fx.sound(fx.at(-0.5, 32, -4), dev.denfry.promptcritical.mod.sound.PcSfx.STEAM_ENGINE_CHUFF.get(), 0.9f, 0.85f + Math.min(0.4f, omega / 40f));
+        // у машины реального масштаба выхлоп — фланец на западной грани у цилиндра
+        double[] ex = real() ? new double[] {-1, 8, 8} : new double[] {-0.5, 32.5, -4};
+        fx.puff(fx.at(ex[0], ex[1], ex[2]), new Vec3(0, 0.12, 0), 3);
+        fx.sound(fx.at(ex[0], ex[1], ex[2]), dev.denfry.promptcritical.mod.sound.PcSfx.STEAM_ENGINE_CHUFF.get(), 0.9f, 0.85f + Math.min(0.4f, omega / 40f));
     }
 
     private static int level4(double r) {
@@ -215,7 +239,7 @@ public class SteamEngineBlockEntity extends DeviceBlockEntity implements Pressur
 
     /** Котёл, клетка которого касается гранью любой клетки машины; {@link SimId#NONE} — нет. */
     private SimId findBoiler() {
-        Footprint fp = PcBlocks.FP_ENGINE;
+        Footprint fp = real() ? PcBlocks.FP_MILL_ENGINE : PcBlocks.FP_ENGINE;
         for (Footprint.Cell c : fp.cells(worldPosition, facing())) {
             for (Direction d : Direction.values()) {
                 var n = c.pos().relative(d);
@@ -324,6 +348,7 @@ public class SteamEngineBlockEntity extends DeviceBlockEntity implements Pressur
     /** Коренной подшипник у маховика. */
     @Override
     public Vec3 opsBearingPos() {
+        if (real()) return BoilerGeometry.world(worldPosition, facing(), 21, 32, 56); // коренной подшипник у маховика
         return BoilerGeometry.world(worldPosition, facing(), 18.5, 8, 40); // крышка восточного коренного подшипника рамы
     }
 

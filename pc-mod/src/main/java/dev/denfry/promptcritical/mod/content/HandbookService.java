@@ -32,6 +32,7 @@ public final class HandbookService {
     /** Установки I0, при постройке которых выдаётся инструкция по эксплуатации (11 §11.1.2). */
     public static final Map<ResourceLocation, ResourceLocation> PROCEDURES = Map.of(
             PcBlocks.FIRE_TUBE_BOILER.getId(), PromptCritical.id("i0/procedure_boiler"),
+            PcBlocks.LANCASHIRE_BOILER.getId(), PromptCritical.id("i0/procedure_boiler"),
             PcBlocks.MINE_HOIST.getId(), PromptCritical.id("i0/procedure_hoist"),
             PcBlocks.MAIN_MINE_FAN.getId(), PromptCritical.id("i0/procedure_ventilation"),
             PcBlocks.COKE_OVEN.getId(), PromptCritical.id("i1/procedure_coke_battery"),

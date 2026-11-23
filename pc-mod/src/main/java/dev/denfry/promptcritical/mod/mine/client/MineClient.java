@@ -38,6 +38,12 @@ public final class MineClient {
     static final PartialModel HOIST_DRUM = partial("mine_hoist/partial/drum");
     static final PartialModel HOIST_CURSOR = partial("mine_hoist/partial/cursor");
     static final PartialModel SHEAVE = partial("headframe/partial/sheave");
+    static final PartialModel SHEAVE_STEEL = partial("headframe_steel/partial/sheave");
+
+    static {
+        // стальной копёр реального масштаба — цельная модель; части — до запекания
+        dev.denfry.promptcritical.mod.client.whole.WholeModels.register("headframe_steel");
+    }
     /** Шнеки в контрапции вращаются, град/тик (≈ 40 об/мин). */
     private static final float DRUM_DEG_PER_TICK = 12f;
 
@@ -60,6 +66,8 @@ public final class MineClient {
         event.registerBlockEntityRenderer(MineBlockEntities.MINE_DRAINAGE_PUMP.get(),
                 c -> new FoundryMachineRenderer<>(PUMP_SHAFT, Motion.SPIN_X, 8, 8, 1));
         event.registerBlockEntityRenderer(MineBlockEntities.MINE_HOIST.get(), c -> new HoistRenderer());
+        event.registerBlockEntityRenderer(MineBlockEntities.HEADFRAME_STEEL.get(),
+                c -> new dev.denfry.promptcritical.mod.client.whole.WholeModelRenderer<>());
         event.registerBlockEntityRenderer(MineBlockEntities.LONGWALL_SHEARER.get(), c -> new ShearerRenderer());
         event.registerBlockEntityRenderer(MineBlockEntities.POWERED_ROOF_SUPPORT.get(), c -> new SupportRenderer());
     }

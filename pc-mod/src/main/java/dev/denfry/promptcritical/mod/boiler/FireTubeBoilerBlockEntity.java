@@ -75,7 +75,56 @@ import org.jetbrains.annotations.Nullable;
  * дефектам монтажа, розжиг через разрешение пуска, пробный пуск. Топливо — руками в топку или цепной решёткой; зола выдаётся шлаком {@code boiler_slag}
  * (по {@link #SLAG_ASH_KG} кг на предмет) — воронками или пустой рукой.
  */
-public class FireTubeBoilerBlockEntity extends DeviceBlockEntity implements PressureSource, PanelHost, OpsMachine {
+public class FireTubeBoilerBlockEntity extends DeviceBlockEntity implements PressureSource, PanelHost, OpsMachine,
+        dev.denfry.promptcritical.mod.client.whole.WholeModelHost {
+    /**
+     * Где у котла что стоит (модель с фасадом на север, клетки и пиксели от угла контроллера): основание трубы,
+     * задний сегмент старой серии (несёт состояние «разорван»), выхлоп предохранительного клапана, топочные дверцы,
+     * течь шва, дым без трубы.
+     */
+    record Layout(int[] chimney, int @Nullable [] rear, double[] valve, double[] door, double[] flameL, double[] flameR,
+            double[] seam, double[] smoke) {}
+
+    /** Старая серия 3×3×6: труба над задним сегментом. */
+    static final Layout COMPACT = new Layout(new int[] {0, 2, 4}, new int[] {0, 0, 3}, new double[] {12, 30.5, 6},
+            new double[] {8, 3.5, -16.5}, new double[] {0.5, 0.5, -16.3}, new double[] {15.5, 0.5, -16.3},
+            new double[] {8, 16, 30}, new double[] {8, 32, 77});
+    /**
+     * Ланкаширский котёл в кладке 5 × 4 × 10 (docs/research/lancashire-dimensions.md): две жаровые трубы ⌀0,7 м с
+     * дверцами на лобовой стенке, клапан на обечайке в 5 м от фронта, труба на борове за задней стенкой.
+     */
+    static final Layout LANCASHIRE = new Layout(new int[] {0, 0, 10}, null, new double[] {13.2, 62, 100.2},
+            new double[] {8, 24.9, 1.6}, new double[] {-0.6, 24.9, 1.6}, new double[] {16.6, 24.9, 1.6},
+            new double[] {8, 46.7, 107}, new double[] {8, 52, 160});
+
+    Layout layout() {
+        return getBlockState().is(dev.denfry.promptcritical.mod.registry.PcBlocks.LANCASHIRE_BOILER.get()) ? LANCASHIRE : COMPACT;
+    }
+
+    private BlockPos cell(int[] c) {
+        return BoilerGeometry.offset(worldPosition, facing(), c[0], c[1], c[2]);
+    }
+
+    private Vec3 point(double[] p) {
+        return BoilerGeometry.world(worldPosition, facing(), p[0], p[1], p[2]);
+    }
+
+    @Override
+    @Nullable
+    public String wholeModelId() {
+        return dev.denfry.promptcritical.mod.client.whole.WholeModelHost.idOf(getBlockState());
+    }
+
+    @Override
+    public Direction wholeModelFacing() {
+        return facing();
+    }
+
+    @Override
+    public BlockPos wholeModelLightPos() {
+        return worldPosition.relative(facing()).above();
+    }
+
     public static final int FEED_TANK_MB = 4000;
     /** Температура наружного воздуха, К (климат биомов 07 §7.13.1 — позже). */
     public static final double AMBIENT_K = 288.15;
@@ -223,12 +272,12 @@ public class FireTubeBoilerBlockEntity extends DeviceBlockEntity implements Pres
             if (ticks % 20 == 0 && level instanceof ServerLevel sl0) {
                 int n = countChimney();
                 dev.denfry.promptcritical.mod.environment.AirQualityService.emit(sl0,
-                        BoilerGeometry.offset(worldPosition, facing(), 0, 2, 4).above(n), Math.max(1, n), 520, u.outputs().combustion,
+                        cell(layout().chimney()).above(n), Math.max(1, n), 520, u.outputs().combustion,
                         "fire_tube_boiler@" + worldPosition.toShortString(), dev.denfry.promptcritical.sim.environment.EmissionLedger.Category.BOILER);
             }
             ops.observeTrial(simId(), TICK_S, u.lit(), Double.isFinite(load) ? load : 0, tripped, opsCurrent());
             if (ticks % 10 == 0 && ops.seamWeeping(simId(), gauge) && level instanceof ServerLevel sl) {
-                Vec3 p = BoilerGeometry.world(worldPosition, facing(), 8, 16, 30);
+                Vec3 p = point(layout().seam());
                 sl.sendParticles(ParticleTypes.DRIPPING_WATER, p.x, p.y, p.z, 2, 0.7, 0.3, 0.7, 0);
                 sl.sendParticles(ParticleTypes.CLOUD, p.x, p.y + 0.6, p.z, 1, 0.5, 0.1, 0.5, 0.01);
             }
@@ -249,8 +298,8 @@ public class FireTubeBoilerBlockEntity extends DeviceBlockEntity implements Pres
         BlockState t = s.setValue(BlockStateProperties.LIT, lit && !exploded).setValue(PcProperties.LOW_WATER, lowWater)
                 .setValue(PcProperties.EXPLODED, exploded);
         if (t != s) level.setBlock(worldPosition, t, Block.UPDATE_CLIENTS);
-        if (exploded != s.getValue(PcProperties.EXPLODED)) {
-            BlockPos rear = BoilerGeometry.offset(worldPosition, facing(), 0, 0, 3);
+        if (exploded != s.getValue(PcProperties.EXPLODED) && layout().rear() != null) {
+            BlockPos rear = cell(layout().rear());
             BlockState rs = level.getBlockState(rear);
             if (rs.is(s.getBlock())) level.setBlock(rear, rs.setValue(PcProperties.EXPLODED, exploded), Block.UPDATE_CLIENTS);
         }
@@ -273,7 +322,7 @@ public class FireTubeBoilerBlockEntity extends DeviceBlockEntity implements Pres
 
     /** Звенья трубы над дымоходом (рядом с задним сегментом, над газоходом). */
     private int countChimney() {
-        BlockPos p = BoilerGeometry.offset(worldPosition, facing(), 0, 2, 4);
+        BlockPos p = cell(layout().chimney());
         int n = 0;
         while (n < 128 && level.getBlockState(p.above(n)).getBlock() instanceof ChimneyBlock) n++;
         return n;
@@ -299,28 +348,29 @@ public class FireTubeBoilerBlockEntity extends DeviceBlockEntity implements Pres
     }
 
     Vec3 valvePos() {
-        return BoilerGeometry.world(worldPosition, facing(), 12, 30.5, 6); // выхлопная труба рычажного предохранительного клапана
+        return point(layout().valve()); // выхлопная труба рычажного предохранительного клапана
     }
 
     Vec3 doorPos() {
-        return BoilerGeometry.world(worldPosition, facing(), 8, 3.5, -16.5); // между двумя топочными дверцами
+        return point(layout().door()); // между двумя топочными дверцами
 
     }
 
     private Vec3 smokePos() {
         if (chimneyBlocks > 0) {
-            BlockPos top = BoilerGeometry.offset(worldPosition, facing(), 0, 2, 4).above(chimneyBlocks);
+            BlockPos top = cell(layout().chimney()).above(chimneyBlocks);
             return Vec3.atBottomCenterOf(top);
         }
-        return BoilerGeometry.world(worldPosition, facing(), 8, 32, 77);
+        return point(layout().smoke());
     }
 
     private void clientTick() {
         var r = level.random;
         MachineFx fx = MachineFx.of(level, worldPosition, facing());
         if (fx != null && lit) {
-            if (fx.chance(3)) fx.flame(fx.at(0.5, 0.5, -16.3), 0.15);
-            if (fx.chance(3)) fx.flame(fx.at(15.5, 0.5, -16.3), 0.15);
+            double[] fl = layout().flameL(), fr = layout().flameR();
+            if (fx.chance(3)) fx.flame(fx.at(fl[0], fl[1], fl[2]), 0.15);
+            if (fx.chance(3)) fx.flame(fx.at(fr[0], fr[1], fr[2]), 0.15);
             if (fx.chance(0.5)) fx.sound(doorPos(), SoundEvents.FIRE_AMBIENT, 0.9f, 0.9f);
         }
         if (lit && ticks % 3 == 0) {

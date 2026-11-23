@@ -233,11 +233,25 @@ public final class PcBlocks {
     public static final DeferredBlock<PcDeviceBlock> FIRE_TUBE_BOILER = device("fire_tube_boiler", lit(machine()),
             Spec.facing(BlockStateProperties.LIT, PcProperties.LOW_WATER, PcProperties.EXPLODED)
                     .segments(PcProperties.BOILER_SEGMENT, FP_BOILER), FireTubeBoilerBlock::create);
+    /** Ланкаширский котёл в кирпичной кладке, реальный масштаб: 5 × 4 × 10 за лобовой стенкой (07 §7.9.4). */
+    public static final Footprint FP_LANCASHIRE_BOILER = Footprint.tiled(-2, 2, 0, 3, 0, 9);
+    public static final DeferredBlock<PcDeviceBlock> LANCASHIRE_BOILER = device("lancashire_boiler", lit(brick()),
+            Spec.facing(BlockStateProperties.LIT, PcProperties.LOW_WATER, PcProperties.EXPLODED)
+                    .segments(PcProperties.wholeSegments(FP_LANCASHIRE_BOILER.segments().size()), FP_LANCASHIRE_BOILER),
+            FireTubeBoilerBlock::create);
     public static final DeferredBlock<PcDeviceBlock> GRATE_STOKER = device("grate_stoker", machine(), Spec.facing(PcProperties.RUNNING),
             KineticMachineBlock.with(ShaftSide.LEFT, GrateStokerBlockEntity::new));
     public static final DeferredBlock<ChimneyBlock> CHIMNEY = withItem(BLOCKS.registerBlock("chimney", ChimneyBlock::create, brick()));
     public static final DeferredBlock<PcDeviceBlock> STEAM_ENGINE_CYLINDER = device("steam_engine_cylinder", machine(),
             Spec.facing(PcProperties.RUNNING).segments(PcProperties.ENGINE_SEGMENT, FP_ENGINE), SteamEngineBlock::create);
+    /**
+     * Горизонтальная одноцилиндровая машина с маховиком (Tangye, станина-балка), реальный масштаб: 3 × 3 × 5 от крышки
+     * цилиндра до маховика (07 §7.9.7, docs/research/mill_engine-dimensions.md).
+     */
+    public static final Footprint FP_MILL_ENGINE = Footprint.tiled(0, 2, 0, 2, 0, 4);
+    public static final DeferredBlock<PcDeviceBlock> MILL_ENGINE = device("mill_engine", machine(),
+            Spec.facing(PcProperties.RUNNING).segments(PcProperties.wholeSegments(FP_MILL_ENGINE.segments().size()), FP_MILL_ENGINE),
+            SteamEngineBlock::create);
     /** Местный манометр A0 (11 §11.5.4) на любой грани котла или машины. */
     public static final DeferredBlock<PressureGaugeBlock> INSTRUMENT_PRESSURE = withItem(BLOCKS.registerBlock("instrument_pressure",
             PressureGaugeBlock::create, Properties.of().mapColor(MapColor.METAL).strength(1.0f).sound(SoundType.COPPER)
@@ -433,6 +447,11 @@ public final class PcBlocks {
             Spec.facing(PcProperties.ALARM).footprint(FP_TALL2), MineDispatchCabinetBlock::create);
     public static final DeferredBlock<PcDeviceBlock> MINE_HOIST = device("mine_hoist", machine(),
             Spec.facing(PcProperties.RUNNING).footprint(Footprint.of(Segment.box(-1, 1, -1, 0, -1, 1))), MineHoistBlock::create);
+    /** Стальной копёр реального масштаба: 16 м до оси шкива, стойки и подкосы вокруг ствола 3×3 (08 §8.2.8). */
+    public static final Footprint FP_HEADFRAME_STEEL = Footprint.tiledAroundShaft(-3, 2, -4, 12, -2, 9);
+    public static final DeferredBlock<PcDeviceBlock> HEADFRAME_STEEL = device("headframe_steel", machine(),
+            Spec.facing().segments(PcProperties.wholeSegments(FP_HEADFRAME_STEEL.segments().size()), FP_HEADFRAME_STEEL),
+            FoundryBlock.with(dev.denfry.promptcritical.mod.mine.HeadframeSteelBlockEntity::new));
     public static final DeferredBlock<HeadframeBlock> HEADFRAME = withItem(BLOCKS.registerBlock("headframe", HeadframeBlock::create, machine()));
     /** Встроенный путь в полу клети: клетка конструкции клети, своего предмета нет. */
     public static final DeferredBlock<dev.denfry.promptcritical.mod.mine.CageTrackBlock> CAGE_TRACK = BLOCKS.registerBlock("cage_track",
@@ -883,7 +902,8 @@ public final class PcBlocks {
     /** Машины реального масштаба с цельной моделью: id блока → id модели (wholemodels/). */
     public static boolean isWholeModel(net.minecraft.world.level.block.Block b) {
         return b == VVER_REACTOR.get() || b == VVER_STEAM_GENERATOR.get() || b == VVER_COOLANT_PUMP.get() || b == VVER_PRESSURIZER.get()
-                || b == BWR240_REACTOR.get() || b == CANDU6_REACTOR.get() || b == BN600_REACTOR.get() || b == AM1_REACTOR.get();
+                || b == BWR240_REACTOR.get() || b == CANDU6_REACTOR.get() || b == BN600_REACTOR.get() || b == AM1_REACTOR.get()
+                || b == LANCASHIRE_BOILER.get() || b == HEADFRAME_STEEL.get() || b == MILL_ENGINE.get();
     }
 
     /**

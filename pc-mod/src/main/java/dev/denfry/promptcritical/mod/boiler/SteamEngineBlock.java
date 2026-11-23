@@ -47,9 +47,23 @@ public final class SteamEngineBlock extends PcDeviceBlock {
         return BoilerGeometry.offset(controller, facing, PORT_X, PORT_Y, PORT_Z);
     }
 
+    /** Клетка вала машины реального масштаба (mill_engine): конец коленвала за маховиком, восточная грань (2, 1, 3). */
+    public static final BlockPos MILL_PORT = new BlockPos(2, 1, 3);
+
     @Override
     protected BlockState partState(BlockState controller, Footprint.Cell cell) {
         Direction f = facing(controller);
+        if (controller.is(dev.denfry.promptcritical.mod.registry.PcBlocks.MILL_ENGINE.get())) {
+            // клетку вала ищем по сегменту и смещению от его якоря: они не зависят от места постройки
+            BlockPos at = MILL_PORT.rotate(Footprint.rotation(f));
+            for (Footprint.Cell c : spec().footprint().cells(BlockPos.ZERO, f))
+                if (c.pos().equals(at)) {
+                    if (c.segment() == cell.segment() && c.offsetFromAnchor().equals(cell.offsetFromAnchor()))
+                        return KineticPortBlock.forOffset(cell.offsetFromAnchor(), shaftAxis(f));
+                    break;
+                }
+            return super.partState(controller, cell);
+        }
         // клетка вала — в сегменте рамы (1) на 1 по оси коленвала от его якоря
         if (cell.segment() == 1 && cell.offsetFromAnchor().equals(new BlockPos(PORT_X, 0, 0).rotate(Footprint.rotation(f))))
             return KineticPortBlock.forOffset(cell.offsetFromAnchor(), shaftAxis(f));

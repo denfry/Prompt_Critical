@@ -1,6 +1,9 @@
 package dev.denfry.promptcritical.mod.boiler.client;
 
 import com.mojang.blaze3d.vertex.PoseStack;
+import dev.denfry.promptcritical.mod.boiler.FireTubeBoilerBlockEntity;
+import dev.denfry.promptcritical.mod.boiler.SteamEngineBlockEntity;
+import net.minecraft.client.renderer.blockentity.BlockEntityRenderer;
 import com.mojang.blaze3d.vertex.VertexConsumer;
 import com.mojang.math.Axis;
 import dev.denfry.promptcritical.mod.PromptCritical;
@@ -22,6 +25,14 @@ public final class BoilerClient {
     static final PartialModel GOV_HEAD = partial("steam_engine_cylinder/partial/gov_head");
     static final PartialModel GOV_ARM = partial("steam_engine_cylinder/partial/gov_arm");
     static final PartialModel CHAIN = partial("grate_stoker/partial/chain");
+    static final PartialModel LANCASHIRE_FIRE = partial("lancashire_boiler/partial/fire");
+
+    static {
+        // ланкаширский котёл реального масштаба: цельная модель, части — до запекания
+        dev.denfry.promptcritical.mod.client.whole.WholeModels.register("lancashire_boiler");
+        dev.denfry.promptcritical.mod.client.whole.WholeModels.register("mill_engine");
+        MillEngineRenderer.init();
+    }
 
     private BoilerClient() {
     }
@@ -35,8 +46,69 @@ public final class BoilerClient {
     }
 
     private static void registerRenderers(EntityRenderersEvent.RegisterRenderers event) {
-        event.registerBlockEntityRenderer(BoilerBlockEntities.FIRE_TUBE_BOILER.get(), c -> new FireTubeBoilerRenderer());
-        event.registerBlockEntityRenderer(BoilerBlockEntities.STEAM_ENGINE.get(), c -> new SteamEngineRenderer());
+        // котёл: у старой серии — свой рендер 3×3×6, у ланкаширского реального масштаба — цельная модель
+        event.registerBlockEntityRenderer(BoilerBlockEntities.FIRE_TUBE_BOILER.get(), c -> new BlockEntityRenderer<FireTubeBoilerBlockEntity>() {
+            private final FireTubeBoilerRenderer old = new FireTubeBoilerRenderer();
+            private final dev.denfry.promptcritical.mod.client.whole.WholeModelRenderer<FireTubeBoilerBlockEntity> whole =
+                    new dev.denfry.promptcritical.mod.client.whole.WholeModelRenderer<>() {
+                        @Override
+                        protected void parts(FireTubeBoilerBlockEntity be, float pt, PoseStack ms, VertexConsumer vc, int light) {
+                            // прорези дверец и зольник светятся, пока на решётке горит
+                            if (be.getBlockState().getValue(net.minecraft.world.level.block.state.properties.BlockStateProperties.LIT))
+                                part(LANCASHIRE_FIRE, be, be.facing(), 0, 0, 0).light(net.minecraft.client.renderer.LightTexture.FULL_BRIGHT)
+                                        .renderInto(ms, vc);
+                        }
+                    };
+
+            @Override
+            public void render(FireTubeBoilerBlockEntity be, float pt, PoseStack ms, net.minecraft.client.renderer.MultiBufferSource buf,
+                    int light, int overlay) {
+                if (be.wholeModelId() != null) whole.render(be, pt, ms, buf, light, overlay);
+                else old.render(be, pt, ms, buf, light, overlay);
+            }
+
+            @Override
+            public boolean shouldRenderOffScreen(FireTubeBoilerBlockEntity be) {
+                return be.wholeModelId() != null || old.shouldRenderOffScreen(be);
+            }
+
+            @Override
+            public int getViewDistance() {
+                return dev.denfry.promptcritical.mod.client.whole.WholeModelRenderer.VIEW_DISTANCE;
+            }
+
+            @Override
+            public net.minecraft.world.phys.AABB getRenderBoundingBox(FireTubeBoilerBlockEntity be) {
+                return be.wholeModelId() != null ? whole.getRenderBoundingBox(be) : old.getRenderBoundingBox(be);
+            }
+        });
+        // паровая машина: старая серия — свой механизм 3×3×5, mill_engine — цельная модель со своим механизмом
+        event.registerBlockEntityRenderer(BoilerBlockEntities.STEAM_ENGINE.get(), c -> new BlockEntityRenderer<SteamEngineBlockEntity>() {
+            private final SteamEngineRenderer old = new SteamEngineRenderer();
+            private final MillEngineRenderer mill = new MillEngineRenderer();
+
+            @Override
+            public void render(SteamEngineBlockEntity be, float pt, PoseStack ms, net.minecraft.client.renderer.MultiBufferSource buf,
+                    int light, int overlay) {
+                if (be.wholeModelId() != null) mill.render(be, pt, ms, buf, light, overlay);
+                else old.render(be, pt, ms, buf, light, overlay);
+            }
+
+            @Override
+            public boolean shouldRenderOffScreen(SteamEngineBlockEntity be) {
+                return true;
+            }
+
+            @Override
+            public int getViewDistance() {
+                return dev.denfry.promptcritical.mod.client.whole.WholeModelRenderer.VIEW_DISTANCE;
+            }
+
+            @Override
+            public net.minecraft.world.phys.AABB getRenderBoundingBox(SteamEngineBlockEntity be) {
+                return be.wholeModelId() != null ? mill.getRenderBoundingBox(be) : old.getRenderBoundingBox(be);
+            }
+        });
         event.registerBlockEntityRenderer(BoilerBlockEntities.GRATE_STOKER.get(), c -> new GrateStokerRenderer());
         event.registerBlockEntityRenderer(BoilerBlockEntities.PRESSURE_GAUGE.get(), c -> new PressureGaugeRenderer());
     }

@@ -16,9 +16,11 @@ public final class BoilerBlockEntities {
             DeferredRegister.create(Registries.BLOCK_ENTITY_TYPE, PromptCritical.MOD_ID);
 
     public static final DeferredHolder<BlockEntityType<?>, BlockEntityType<FireTubeBoilerBlockEntity>> FIRE_TUBE_BOILER =
-            type("fire_tube_boiler", FireTubeBoilerBlockEntity::new, PcBlocks.FIRE_TUBE_BOILER);
+            BLOCK_ENTITIES.register("fire_tube_boiler", () -> BlockEntityType.Builder.of(FireTubeBoilerBlockEntity::new,
+                    PcBlocks.FIRE_TUBE_BOILER.get(), PcBlocks.LANCASHIRE_BOILER.get()).build(null));
     public static final DeferredHolder<BlockEntityType<?>, BlockEntityType<SteamEngineBlockEntity>> STEAM_ENGINE =
-            type("steam_engine_cylinder", SteamEngineBlockEntity::new, PcBlocks.STEAM_ENGINE_CYLINDER);
+            BLOCK_ENTITIES.register("steam_engine_cylinder", () -> BlockEntityType.Builder.of(SteamEngineBlockEntity::new,
+                    PcBlocks.STEAM_ENGINE_CYLINDER.get(), PcBlocks.MILL_ENGINE.get()).build(null));
     public static final DeferredHolder<BlockEntityType<?>, BlockEntityType<GrateStokerBlockEntity>> GRATE_STOKER =
             type("grate_stoker", GrateStokerBlockEntity::new, PcBlocks.GRATE_STOKER);
     public static final DeferredHolder<BlockEntityType<?>, BlockEntityType<KineticPortBlockEntity>> KINETIC_PORT =

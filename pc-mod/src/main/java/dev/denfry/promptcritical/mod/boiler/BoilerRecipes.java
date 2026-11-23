@@ -52,6 +52,15 @@ public final class BoilerRecipes extends RecipeProvider {
                 .pattern("KKK").pattern("IFI").pattern("BBB").define('K', Items.IRON_BLOCK).define('I', Items.IRON_INGOT)
                 .define('F', Items.FURNACE).define('B', Items.BRICKS)
                 .unlockedBy("has_iron_block", has(Items.IRON_BLOCK)).save(out, id("fire_tube_boiler"));
+        // чертёж ланкаширского котла: котёл строится на стройплощадке по массе прототипа (SitePlans)
+        ShapedRecipeBuilder.shaped(RecipeCategory.MISC, dev.denfry.promptcritical.mod.site.SiteRegistry.LANCASHIRE_BOILER_DRAWING.get())
+                .pattern("PPP").pattern("IFI").pattern("BBB").define('P', Items.PAPER).define('I', Items.IRON_INGOT)
+                .define('F', Items.FURNACE).define('B', Items.BRICKS)
+                .unlockedBy("has_iron_block", has(Items.IRON_BLOCK)).save(out, id("lancashire_boiler_drawing"));
+        ShapedRecipeBuilder.shaped(RecipeCategory.MISC, dev.denfry.promptcritical.mod.site.SiteRegistry.MILL_ENGINE_DRAWING.get())
+                .pattern("PPP").pattern("IXI").pattern("SCS").define('P', Items.PAPER).define('I', Items.IRON_INGOT)
+                .define('X', Items.PISTON).define('S', AllBlocks.SHAFT.get()).define('C', AllBlocks.COGWHEEL.get())
+                .unlockedBy("has_piston", has(Items.PISTON)).save(out, id("mill_engine_drawing"));
         ShapedRecipeBuilder.shaped(RecipeCategory.MISC, PcBlocks.STEAM_ENGINE_CYLINDER.get())
                 .pattern("IPI").pattern("SCS").pattern("III").define('I', Items.IRON_INGOT).define('P', Items.PISTON)
                 .define('S', AllBlocks.SHAFT.get()).define('C', AllBlocks.COGWHEEL.get())

@@ -57,29 +57,49 @@ final class HoistRenderer implements BlockEntityRenderer<MineHoistBlockEntity> {
         if (be.getLevel() == null || sheave == null) return;
         BlockPos origin = be.getBlockPos();
         BlockState hs = be.getLevel().getBlockState(sheave);
-        Direction hf = hs.is(PcBlocks.HEADFRAME.get()) ? PcBlocks.HEADFRAME.get().facing(hs) : Direction.NORTH;
-        float sheaveAngle = (float) (drum * 1.25 / 1.5);
-        int sheaveLight = LevelRenderer.getLightColor(be.getLevel(), sheave.above());
-        ms.pushPose();
-        ms.translate(sheave.getX() - origin.getX(), sheave.getY() - origin.getY(), sheave.getZ() - origin.getZ());
-        SuperByteBuffer s = CachedBuffers.partial(MineClient.SHEAVE, hs);
-        s.center().rotateYDegrees(-(hf.toYRot() + 180)).uncenter()
-                .translate(0, 1f, 0.5f).rotateX(sheaveAngle).translate(0, -1f, -0.5f)
-                .light(sheaveLight).renderInto(ms, vc);
-        ms.popPose();
+        Vec3 o = Vec3.atLowerCornerOf(origin);
+        Vec3 sheaveC;
+        double sheaveR;
+        // стальной копёр реального масштаба: «верх» — клетка над стволом, контроллер ниже на высоту оси шкива
+        BlockPos steel = sheave.below((int) Math.floor(dev.denfry.promptcritical.mod.mine.HeadframeSteelBlockEntity.SHEAVE_UP));
+        BlockState ss = be.getLevel().getBlockState(steel);
+        if (ss.is(PcBlocks.HEADFRAME_STEEL.get()) && PcBlocks.HEADFRAME_STEEL.get().isController(ss)) {
+            Direction hf = PcBlocks.HEADFRAME_STEEL.get().facing(ss);
+            sheaveR = dev.denfry.promptcritical.mod.mine.HeadframeSteelBlockEntity.SHEAVE_R;
+            Vec3 axis = BoilerGeometry.world(steel, hf, 8, 8 + 16 * dev.denfry.promptcritical.mod.mine.HeadframeSteelBlockEntity.SHEAVE_UP,
+                    8 + 16 * dev.denfry.promptcritical.mod.mine.HeadframeSteelBlockEntity.SHEAVE_BACK);
+            sheaveC = axis.subtract(o);
+            ms.pushPose();
+            ms.translate(sheaveC.x - 0.5, sheaveC.y - 0.5, sheaveC.z - 0.5);
+            CachedBuffers.partial(MineClient.SHEAVE_STEEL, ss).center().rotateYDegrees(-(hf.toYRot() + 180))
+                    .rotateX((float) (drum * DRUM_R / sheaveR)).uncenter()
+                    .light(LevelRenderer.getLightColor(be.getLevel(), BlockPos.containing(axis).above(2))).renderInto(ms, vc);
+            ms.popPose();
+        } else {
+            Direction hf = hs.is(PcBlocks.HEADFRAME.get()) ? PcBlocks.HEADFRAME.get().facing(hs) : Direction.NORTH;
+            float sheaveAngle = (float) (drum * 1.25 / 1.5);
+            int sheaveLight = LevelRenderer.getLightColor(be.getLevel(), sheave.above());
+            ms.pushPose();
+            ms.translate(sheave.getX() - origin.getX(), sheave.getY() - origin.getY(), sheave.getZ() - origin.getZ());
+            SuperByteBuffer s = CachedBuffers.partial(MineClient.SHEAVE, hs);
+            s.center().rotateYDegrees(-(hf.toYRot() + 180)).uncenter()
+                    .translate(0, 1f, 0.5f).rotateX(sheaveAngle).translate(0, -1f, -0.5f)
+                    .light(sheaveLight).renderInto(ms, vc);
+            ms.popPose();
+            sheaveC = new Vec3(sheave.getX() + 0.5, sheave.getY() + 1.0, sheave.getZ() + 0.5).subtract(o);
+            sheaveR = SHEAVE_R;
+        }
 
         // канат: точки в координатах блока машины
         TextureAtlasSprite rope = Minecraft.getInstance().getTextureAtlas(InventoryMenu.BLOCK_ATLAS)
                 .apply(PromptCritical.id("block/common/plant_rope"));
-        Vec3 o = Vec3.atLowerCornerOf(origin);
         Vec3 drumC = BoilerGeometry.world(origin, facing, 8, 0, 8).subtract(o);
-        Vec3 sheaveC = new Vec3(sheave.getX() + 0.5, sheave.getY() + 1.0, sheave.getZ() + 0.5).subtract(o);
         Vec3 toDrum = horizontal(drumC.subtract(sheaveC));
-        draw(vc, ms, drumC.add(0, DRUM_R, 0), sheaveC.add(toDrum.scale(SHEAVE_R)).add(0, 0.1, 0), rope, light);
+        draw(vc, ms, drumC.add(0, DRUM_R, 0), sheaveC.add(toDrum.scale(sheaveR)).add(0, 0.1, 0), rope, light);
         if (shaft == null) return;
         Vec3 cageTop = cageTop(shaft, depthNow).subtract(o);
         Vec3 toCage = horizontal(cageTop.subtract(sheaveC));
-        Vec3 from = sheaveC.add(toCage.scale(Math.min(SHEAVE_R, cageTop.subtract(sheaveC).multiply(1, 0, 1).length())));
+        Vec3 from = sheaveC.add(toCage.scale(Math.min(sheaveR, cageTop.subtract(sheaveC).multiply(1, 0, 1).length())));
         int cageLight = LevelRenderer.getLightColor(be.getLevel(), BlockPos.containing(cageTop.add(o)));
         draw(vc, ms, from, new Vec3(from.x, cageTop.y, from.z), rope, cageLight);
     }

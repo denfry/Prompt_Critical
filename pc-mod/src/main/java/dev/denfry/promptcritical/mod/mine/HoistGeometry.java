@@ -75,21 +75,37 @@ public final class HoistGeometry {
     /** Копёр, к которому принадлежит якорь (или {@code null}, если его там больше нет). */
     @Nullable
     public static Headframe stackAt(Level level, BlockPos anyAnchor) {
+        if (isSteel(level, anyAnchor)) return steel(anyAnchor);
         return level.getBlockState(anyAnchor).is(PcBlocks.HEADFRAME.get()) ? stack(level, anyAnchor) : null;
+    }
+
+    /** Контроллер стального копра реального масштаба. */
+    public static boolean isSteel(Level level, BlockPos p) {
+        BlockState s = level.getBlockState(p);
+        return s.is(PcBlocks.HEADFRAME_STEEL.get()) && PcBlocks.HEADFRAME_STEEL.get().isController(s);
+    }
+
+    /** Стальной копёр — цельный: «верх» — клетка над стволом на высоте оси шкива, собран всегда. */
+    private static Headframe steel(BlockPos controller) {
+        return new Headframe(controller, controller.above((int) Math.floor(HeadframeSteelBlockEntity.SHEAVE_UP)), true);
     }
 
     @Nullable
     private static BlockPos headframeAnchor(Level level, BlockPos p) {
         BlockState s = level.getBlockState(p);
         if (s.is(PcBlocks.HEADFRAME.get())) return p.immutable();
-        if (s.getBlock() instanceof MultiblockPartBlock) {
-            BlockPos a = MultiblockPartBlock.anchor(s, p);
-            if (level.getBlockState(a).is(PcBlocks.HEADFRAME.get())) return a;
-        }
+        BlockPos a = null;
+        if (s.is(PcBlocks.HEADFRAME_STEEL.get())) a = p.immutable();
+        else if (s.getBlock() instanceof MultiblockPartBlock) a = MultiblockPartBlock.anchor(s, p);
+        if (a == null) return null;
+        BlockState as = level.getBlockState(a);
+        if (as.is(PcBlocks.HEADFRAME.get())) return a;
+        if (as.is(PcBlocks.HEADFRAME_STEEL.get())) return dev.denfry.promptcritical.mod.block.PcBlock.structureController(level, a);
         return null;
     }
 
     private static Headframe stack(Level level, BlockPos anchor) {
+        if (isSteel(level, anchor)) return steel(anchor);
         HeadframeBlock hb = PcBlocks.HEADFRAME.get();
         Direction f = hb.facing(level.getBlockState(anchor));
         BlockPos bottom = anchor, top = anchor;

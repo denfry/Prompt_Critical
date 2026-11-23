@@ -56,6 +56,11 @@ public final class HoistRecipes extends RecipeProvider {
         ShapedRecipeBuilder.shaped(RecipeCategory.MISC, PcBlocks.HEADFRAME.get())
                 .pattern("B B").pattern(" B ").pattern("B B").define('B', Items.IRON_BARS)
                 .unlockedBy("has_iron_bars", has(Items.IRON_BARS)).save(out, id("headframe"));
+        // чертёж стального копра: копёр строится на стройплощадке по массе прототипа (SitePlans)
+        ShapedRecipeBuilder.shaped(RecipeCategory.MISC, dev.denfry.promptcritical.mod.site.SiteRegistry.HEADFRAME_STEEL_DRAWING.get())
+                .pattern("PPP").pattern("BWB").pattern("B B").define('P', Items.PAPER).define('B', Items.IRON_BARS)
+                .define('W', AllBlocks.LARGE_COGWHEEL.get())
+                .unlockedBy("has_iron_bars", has(Items.IRON_BARS)).save(out, id("headframe_steel_drawing"));
         ShapedRecipeBuilder.shaped(RecipeCategory.MISC, PcBlocks.MINE_CAGE.get())
                 .pattern("BBB").pattern("BDB").pattern("III").define('B', Items.IRON_BARS).define('D', Items.IRON_DOOR)
                 .define('I', Items.IRON_INGOT)

@@ -25,15 +25,30 @@ public final class BoilerBinding {
                 SimConfigs.fromServerConfig().section(SteamPlantConfig.class, SteamPlantConfig.defaults())));
     }
 
+    /**
+     * Котёл за клеткой {@code pos}; у котла реального масштаба — только с объявленного патрубка
+     * ({@link dev.denfry.promptcritical.mod.multiblock.WholePorts}): питательная вода и зольник на лобовой стенке.
+     */
+    @org.jetbrains.annotations.Nullable
+    private static FireTubeBoilerBlockEntity port(net.minecraft.world.level.Level level, net.minecraft.core.BlockPos pos,
+            @org.jetbrains.annotations.Nullable Direction side) {
+        FireTubeBoilerBlockEntity b = FireTubeBoilerBlockEntity.at(level, pos);
+        if (b == null || b.wholeModelId() == null) return b;
+        if (side == null) return null;
+        net.minecraft.core.BlockPos c = b.getBlockPos();
+        return dev.denfry.promptcritical.mod.multiblock.WholePorts.allows(b.wholeModelId(), b.facing(), pos.getX() - c.getX(),
+                pos.getY() - c.getY(), pos.getZ() - c.getZ(), side) ? b : null;
+    }
+
     private static void registerCapabilities(RegisterCapabilitiesEvent event) {
         event.registerBlock(Capabilities.FluidHandler.BLOCK, (level, pos, state, be, side) -> {
-            FireTubeBoilerBlockEntity b = FireTubeBoilerBlockEntity.at(level, pos);
+            FireTubeBoilerBlockEntity b = port(level, pos, side);
             return b == null ? null : b.feedInput();
-        }, PcBlocks.FIRE_TUBE_BOILER.get(), PcBlocks.MULTIBLOCK_PART.get());
+        }, PcBlocks.FIRE_TUBE_BOILER.get(), PcBlocks.LANCASHIRE_BOILER.get(), PcBlocks.MULTIBLOCK_PART.get());
         event.registerBlock(Capabilities.ItemHandler.BLOCK, (level, pos, state, be, side) -> {
-            FireTubeBoilerBlockEntity b = FireTubeBoilerBlockEntity.at(level, pos);
+            FireTubeBoilerBlockEntity b = port(level, pos, side);
             return b == null ? null : b.slagOutput();
-        }, PcBlocks.FIRE_TUBE_BOILER.get(), PcBlocks.MULTIBLOCK_PART.get());
+        }, PcBlocks.FIRE_TUBE_BOILER.get(), PcBlocks.LANCASHIRE_BOILER.get(), PcBlocks.MULTIBLOCK_PART.get());
         event.registerBlockEntity(Capabilities.ItemHandler.BLOCK, BoilerBlockEntities.GRATE_STOKER.get(),
                 (be, side) -> be.items((Direction) side));
     }

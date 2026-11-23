@@ -32,7 +32,11 @@ public final class WholePorts {
             "bwr240_reactor", List.of(p(2, 6, 0, E), p(-2, 6, 0, W), p(2, 9, 0, E), p(0, 10, 2, S)),
             "candu6_reactor", List.of(p(4, 10, -5, E), p(4, 10, 5, E)),
             "bn600_reactor", List.of(p(7, 9, 0, E), p(7, 11, 0, E), p(0, 9, 7, S), p(0, 11, 7, S), p(0, 9, -7, N), p(0, 11, -7, N)),
-            "am1_reactor", List.of(p(3, 7, 0, E), p(-3, 7, 0, W)));
+            "am1_reactor", List.of(p(3, 7, 0, E), p(-3, 7, 0, W)),
+            // лобовая стенка внизу: питательный клапан (x −1) и дверца зольника (x 1); пар — с вентиля на обечайке
+            "lancashire_boiler", List.of(p(-1, 0, 0, N), p(1, 0, 0, N), p(0, 3, 2, U)),
+            // пар сверху на клапанную коробку, выхлоп с западной грани у цилиндра
+            "mill_engine", List.of(p(0, 2, 0, U), p(0, 0, 0, W)));
 
     private WholePorts() {}
 
