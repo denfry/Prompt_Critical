@@ -42,7 +42,7 @@ public class SimArchitectureTest {
             .layer("physics").definedBy("..sim.neutronics..", "..sim.thermal..", "..sim.thermo..",
                     "..sim.hydraulics..", "..sim.reactor..", "..sim.nuclide..", "..sim.grid..",
                     "..sim.combustion..", "..sim.mining..", "..sim.drilling..", "..sim.production..", "..sim.refining..", "..sim.gasprocessing..", "..sim.mechanics..", "..sim.metallurgy..", "..sim.wind..", "..sim.battery..", "..sim.petrochem..", "..sim.chlor..", "..sim.nitrogen..", "..sim.methanol..", "..sim.uranium..",
-                    "..sim.utilities..")
+                    "..sim.utilities..", "..sim.manufacturing..")
             .layer("systems").definedBy("..sim.protection..", "..sim.instrument..", "..sim.alarm..",
                     "..sim.acoustics..", "..sim.accident..", "..sim.radiation..", "..sim.chem..",
                     "..sim.enrichment..", "..sim.reprocessing..", "..sim.npp..", "..sim.fuel..", "..sim.consequence..", "..sim.telemetry..", "..sim.journal..", "..sim.plant..", "..sim.ops..",
