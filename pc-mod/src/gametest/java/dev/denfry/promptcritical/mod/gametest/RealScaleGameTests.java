@@ -526,6 +526,11 @@ public final class RealScaleGameTests {
                 && in.owner() == h.getBlockEntity(p), "the port feeds the pump");
         h.assertFalse(((dev.denfry.promptcritical.mod.mine.GearedDrainagePumpBlock) PcBlocks.MINE_DRAINAGE_PUMP_GEARED.get()).hasShaftTowards(h.getLevel(), h.absolutePos(p), h.getBlockState(p), Direction.WEST),
                 "the controller has no shaft of its own");
-        h.succeed();
+        // устройство заводится в топологии по любому типу: насос получает simId, как ЦНС
+        h.runAfterDelay(5, () -> {
+            h.assertTrue(h.getBlockEntity(p) instanceof dev.denfry.promptcritical.mod.mine.MineDrainagePumpBlockEntity b
+                    && !b.simId().isNone(), "the geared pump is bound to the simulation");
+            h.succeed();
+        });
     }
 }
