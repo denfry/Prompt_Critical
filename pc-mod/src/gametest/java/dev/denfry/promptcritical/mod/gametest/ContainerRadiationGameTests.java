@@ -4,6 +4,7 @@ import dev.denfry.promptcritical.mod.PromptCritical;
 import dev.denfry.promptcritical.mod.environment.ActivityData;
 import dev.denfry.promptcritical.mod.environment.ContainerActivityScan;
 import dev.denfry.promptcritical.mod.environment.ContainerShielding;
+import dev.denfry.promptcritical.mod.environment.NestingRule;
 import dev.denfry.promptcritical.mod.environment.RadiationService;
 import dev.denfry.promptcritical.mod.radiation.FuelRackBlockEntity;
 import dev.denfry.promptcritical.mod.registry.PcBlocks;
@@ -17,6 +18,14 @@ import net.minecraft.world.Container;
 import net.minecraft.world.entity.EntityType;
 import net.minecraft.world.entity.vehicle.MinecartChest;
 import net.minecraft.world.item.ItemStack;
+import net.minecraft.world.item.Items;
+import net.minecraft.world.item.component.BundleContents;
+import net.minecraft.world.SimpleContainer;
+import net.minecraft.world.inventory.PlayerEnderChestContainer;
+import net.minecraft.world.inventory.ShulkerBoxSlot;
+import net.minecraft.world.inventory.Slot;
+import net.minecraft.world.level.block.entity.ShulkerBoxBlockEntity;
+import net.minecraft.core.Direction;
 import net.minecraft.world.level.block.Blocks;
 import net.minecraft.world.phys.Vec3;
 import net.neoforged.neoforge.gametest.GameTestHolder;
@@ -114,6 +123,38 @@ public final class ContainerRadiationGameTests {
         int before = ContainerActivityScan.indexSize(h.getLevel());
         ContainerActivityScan.scanAllNow(h.getLevel(), probe(h));
         h.assertTrue(ContainerActivityScan.indexSize(h.getLevel()) == before, "rack skipped: " + ContainerActivityScan.indexSize(h.getLevel()));
+        h.succeed();
+    }
+
+    /** 04d §4d.6.2, 16 §16.8: источник выше уровня освобождения не идёт в шалкер, мешочек и сундук Края. */
+    @GameTest(template = LARGE, timeoutTicks = 100)
+    public static void sourcesStayOutOfPocketContainers(GameTestHelper h) {
+        long now = h.getLevel().getGameTime();
+        ItemStack hot = new ItemStack(Items.IRON_NUGGET);
+        hot.set(ActivityData.ACTIVITY.get(), new ActivityData(now, 0.01, 7.8, Map.of(Emitter.CS137.name(), 1e6)));
+        // 0,5 Бк/г цезия — ниже уровня освобождения 10 Бк/г
+        ItemStack cleared = new ItemStack(Items.IRON_NUGGET);
+        cleared.set(ActivityData.ACTIVITY.get(), new ActivityData(now, 1, 7.8, Map.of(Emitter.CS137.name(), 500.0)));
+        ItemStack plain = new ItemStack(Items.IRON_NUGGET);
+        h.assertFalse(NestingRule.mayNest(hot), "100 kBq/g caesium is a source");
+        h.assertTrue(NestingRule.mayNest(cleared) && NestingRule.mayNest(plain), "cleared and plain items nest");
+
+        Slot shulker = new ShulkerBoxSlot(new SimpleContainer(27), 0, 0, 0);
+        h.assertFalse(shulker.mayPlace(hot), "no source into a shulker slot");
+        h.assertTrue(shulker.mayPlace(plain), "plain items still go into a shulker");
+        Slot ender = new Slot(new PlayerEnderChestContainer(), 0, 0, 0);
+        h.assertFalse(ender.mayPlace(hot), "no source into the ender chest");
+        h.assertTrue(ender.mayPlace(cleared), "cleared items go into the ender chest");
+        h.assertTrue(new Slot(new SimpleContainer(1), 0, 0, 0).mayPlace(hot), "ordinary chests are untouched");
+        BundleContents.Mutable bundle = new BundleContents.Mutable(BundleContents.EMPTY);
+        h.assertTrue(bundle.tryInsert(hot.copy()) == 0, "no source into a bundle");
+        h.assertTrue(bundle.tryInsert(plain.copy()) == 1, "plain items go into a bundle");
+
+        BlockPos at = new BlockPos(5, 2, 5);
+        h.setBlock(at, Blocks.SHULKER_BOX);
+        ShulkerBoxBlockEntity box = h.getBlockEntity(at);
+        h.assertFalse(box.canPlaceItemThroughFace(0, hot, Direction.UP), "a hopper cannot load a source into a shulker");
+        h.assertTrue(box.canPlaceItemThroughFace(0, plain, Direction.UP), "a hopper loads plain items");
         h.succeed();
     }
 }
