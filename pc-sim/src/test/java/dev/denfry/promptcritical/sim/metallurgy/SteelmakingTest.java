@@ -110,6 +110,33 @@ class SteelmakingTest {
         assertThat(bof.slagFeOFrac()).isGreaterThan(feo);
     }
 
+    /**
+     * Плейтест I1: чугун 8 т (4,3 % C) с ломом 2,4 т продували при 1800 нм³/ч до 5400 нм³ — железо выгорело в шлак
+     * почти целиком, температура ванны ушла за 20 000 К, в ковш вылилось 18,8 кг «стали» при 21 515 К. Передув
+     * ограничен шлаком: FeO не выше {@link Converter#FEO_MAX_FRAC}, остальной кислород уходит с газом.
+     */
+    @Test
+    void longOverblowStopsAtTheSlagLimitAndKeepsTheBath() {
+        Converter bof = new Converter(CFG);
+        bof.charge(hotMetal(8_000, 0.043, 0.005, 0.005, 0.001), 2_400, 600);
+        double maxK = 0;
+        for (int k = 0; k < 10_800; k++) {
+            bof.stepSlow(1, 0.5, 1.5);
+            maxK = Math.max(maxK, bof.tempK());
+        }
+        assertThat(bof.o2BlownNm3()).isCloseTo(5_400, within(1.0));
+        assertThat(bof.slagFeOFrac()).isLessThanOrEqualTo(Converter.FEO_MAX_FRAC + 1e-9);
+        assertThat(bof.metalKg()).as("ванна остаётся").isGreaterThan(8_000);
+        assertThat(maxK).as("ванна не перегревается за весь передув").isLessThan(2_100);
+        // три часа без углерода ванна теряет тепло корпусом: остывает, но не уходит в бесконечность
+        assertThat(bof.tempK()).isBetween(900.0, 2_100.0);
+        bof.stepSlow(1, 0, 3);
+        SteelMelt steel = bof.tap();
+        assertThat(steel.massKg()).isGreaterThan(8_000);
+        assertThat(steel.tempK()).isLessThan(2_100);
+        assertThat(bof.phase()).isEqualTo(ConverterPhase.EMPTY);
+    }
+
     @Test
     void highSiliconAndLowLanceSlop() {
         Converter bof = new Converter(CFG);
