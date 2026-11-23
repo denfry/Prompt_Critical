@@ -1,0 +1,32 @@
+{
+  "parent": "minecraft:recipes/root",
+  "criteria": {
+    "has_coal_jig": {
+      "conditions": {
+        "items": [
+          {
+            "items": "promptcritical:coal_jig"
+          }
+        ]
+      },
+      "trigger": "minecraft:inventory_changed"
+    },
+    "has_the_recipe": {
+      "conditions": {
+        "recipe": "promptcritical:foundry/dense_medium_separator"
+      },
+      "trigger": "minecraft:recipe_unlocked"
+    }
+  },
+  "requirements": [
+    [
+      "has_the_recipe",
+      "has_coal_jig"
+    ]
+  ],
+  "rewards": {
+    "recipes": [
+      "promptcritical:foundry/dense_medium_separator"
+    ]
+  }
+}

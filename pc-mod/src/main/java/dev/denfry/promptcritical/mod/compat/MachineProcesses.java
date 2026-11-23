@@ -152,6 +152,9 @@ public final class MachineProcesses {
         p.add(new Process("coal_jig", Plant.COAL_PREP, on(PcBlocks.COAL_JIG, PcBlocks.COAL_JIG_REAL),
                 of(item(0, PcItems.RAW_COAL), water(0)),
                 of(item(0, PcItems.WASHED_COAL), item(0, PcItems.COAL_MIDDLINGS), item(0, PcItems.COAL_REFUSE))));
+        p.add(new Process("dense_medium_separator", Plant.COAL_PREP, on(PcBlocks.DENSE_MEDIUM_SEPARATOR),
+                of(item(0, PcItems.RAW_COAL), item(0, PcItems.IRON_ORE_CONCENTRATE), water(0)),
+                of(item(0, PcItems.WASHED_COAL), item(0, PcItems.COAL_REFUSE))));
         p.add(new Process("fire_tube_boiler", Plant.POWER, on(PcBlocks.FIRE_TUBE_BOILER, PcBlocks.GRATE_STOKER, PcBlocks.LANCASHIRE_BOILER, PcBlocks.LANCASHIRE_STOKER),
                 of(item(1, PcItems.RAW_COAL, PcItems.WASHED_COAL, PcItems.COAL_MIDDLINGS, () -> Items.COAL,
                         () -> Items.CHARCOAL, () -> Items.OAK_LOG), water(0)),

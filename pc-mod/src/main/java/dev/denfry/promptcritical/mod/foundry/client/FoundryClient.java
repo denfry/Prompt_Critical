@@ -18,6 +18,7 @@ import net.neoforged.neoforge.event.entity.player.ItemTooltipEvent;
 public final class FoundryClient {
     /** Подвижные части из арт-реестра; создаются до запекания моделей. */
     private static final PartialModel PULSATOR = partial("coal_jig/partial/pulsator");
+    private static final PartialModel DMS_DRUM = partial("dense_medium_separator/partial/drum");
     private static final PartialModel CRUCIBLE = partial("crucible_furnace/partial/crucible");
     private static final PartialModel DRILL_SPINDLE = partial("drill_press/partial/spindle");
     private static final PartialModel LATHE_SPINDLE = partial("machine_lathe/partial/spindle");
@@ -65,6 +66,9 @@ public final class FoundryClient {
         // оси частей — центры их моделей (пиксели, фасад на север)
         event.registerBlockEntityRenderer(FoundryBlockEntities.COAL_JIG.get(),
                 c -> new CoalJigRenderer(new FoundryMachineRenderer<>(PULSATOR, Motion.SPIN_X, 27, 8, 1)));
+        // барабан тяжелосредного сепаратора вдоль x через (y 16, z 16), медленнее вала через редуктор
+        event.registerBlockEntityRenderer(FoundryBlockEntities.DENSE_MEDIUM_SEPARATOR.get(),
+                c -> new FoundryMachineRenderer<>(DMS_DRUM, Motion.SPIN_X, 16, 16, 0.25f));
         event.registerBlockEntityRenderer(FoundryBlockEntities.CUPOLA.get(), c -> new FoundryMachineRenderer<>(null, Motion.STATIC, 0, 0, 1));
         event.registerBlockEntityRenderer(FoundryBlockEntities.CUPOLA_REAL.get(), c -> new CupolaRealRenderer());
         // тигельная печь: старая серия — свой тигель, crucible_furnace_real — цельная модель ямы

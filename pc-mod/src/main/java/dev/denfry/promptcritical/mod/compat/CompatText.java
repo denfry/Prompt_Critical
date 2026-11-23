@@ -37,6 +37,10 @@ public final class CompatText {
                 "Добывается из угольных пластов под землёй. У каждого куска — анализ угля: летучие, зола, влага и сера "
                 + "решают, куда он годится.");
 
+        process("dense_medium_separator", "Run-of-mine coal is split in a magnetite suspension into washed coal and refuse, "
+                + "sharper than the jig; the cut is the medium density, set by dosing iron ore concentrate into the circuit water.",
+                "Рядовой уголь делится в магнетитовой суспензии на концентрат и породу, точнее отсадки; плотность разделения — "
+                + "плотность суспензии, её задаёт доза железорудного концентрата в воде контура.");
         process("coal_jig", "Run-of-mine coal is split by density into washed coal, middlings and refuse; the cut is set "
                 + "with a Create wrench. Make-up water by pipe or bucket.",
                 "Рядовой уголь делится по плотности на концентрат, промпродукт и породу; плотность разделения — ключом "

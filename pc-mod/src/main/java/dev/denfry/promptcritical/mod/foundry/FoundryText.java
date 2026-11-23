@@ -62,6 +62,7 @@ public final class FoundryText {
         msg("pattern", "Pattern: %s, %s", "Модель: %s, %s");
         msg("jig", "Jig: feed %s kg, water %s L, cut %s / %s g/cm³", "Отсадка: питание %s кг, вода %s л, разделение %s / %s г/см³");
         msg("jig_cut", "Clean coal cut at %s g/cm³", "Плотность разделения концентрата %s г/см³");
+        msg("dms", "Dense medium: feed %s kg, medium %s L at %s g/cm³", "Тяжёлая среда: питание %s кг, суспензия %s л плотностью %s г/см³");
         msg("cupola", "Cupola: stock %s kg iron + %s kg coke; well %s kg at %s °C; blast %s m³/s",
                 "Вагранка: в шахте %s кг металла и %s кг кокса; в горне %s кг при %s °C; дутьё %s м³/с");
         msg("crucible", "Crucible: %s %s kg at %s °C, %s%% molten; fuel %s kg",

@@ -1045,6 +1045,13 @@ public final class PcBlocks {
             Spec.facing(PcProperties.RUNNING).footprint(Footprint.of(Segment.box(0, 1, 0, 1, 0, 0))),
             KineticMachineBlock.with(ShaftSide.LEFT, CoalJigBlockEntity::new));
     /**
+     * Барабанный тяжелосредный сепаратор I1 (08 §8.3): разделение в магнетитовой суспензии, E_p 0,03; 2 × 2 × 2 по
+     * модели арт-реестра (барабан вдоль x), вал Create слева.
+     */
+    public static final DeferredBlock<PcDeviceBlock> DENSE_MEDIUM_SEPARATOR = device("dense_medium_separator", machine(),
+            Spec.facing(PcProperties.RUNNING).footprint(Footprint.of(Segment.box(0, 1, 0, 1, 0, 1))),
+            KineticMachineBlock.with(ShaftSide.LEFT, dev.denfry.promptcritical.mod.foundry.DenseMediumSeparatorBlockEntity::new));
+    /**
      * Отсадочная машина Баума реального масштаба на 36 т/ч (08 §8.3, docs/research/coal_jig-dimensions.md): клёпаный
      * бак с двумя отделениями постели, 3 × 3 × 5, загрузка с севера, уголь течёт на юг. Тот же юнит {@code CoalJig}, что
      * у {@link #COAL_JIG}; вал Create — в клетку-порт вентилятора у загрузочного конца

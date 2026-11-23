@@ -85,6 +85,7 @@ public final class PcLanguageProvider extends LanguageProvider {
         b("shaft_signal", "Shaft Signal Box", "Стволовой сигнальный аппарат");
         b("mine_drainage_pump", "Mine Drainage Pump", "Насос главного водоотлива");
         b("coal_jig", "Coal Jig", "Отсадочная машина");
+        b("dense_medium_separator", "Dense Medium Separator", "Тяжелосредный сепаратор");
         b("cupola_furnace", "Cupola Furnace", "Вагранка");
         b("crucible_furnace", "Crucible Furnace", "Тигельная печь");
         b("bloomery", "Bloomery", "Сыродутный горн");
