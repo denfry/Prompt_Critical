@@ -39,9 +39,9 @@ class ForgeHeatingTest {
     }
 
     @Test void dayInTheFireStaysFiniteAndAboveMinimumSection() {
-        var h = ForgeHeating.heat(bar45(0.010, 293.15), 1473.15, 86_400);
+        var h = ForgeHeating.heat(bar45(0.005, 293.15), 1473.15, 86_400);
         assertThat(h.tempK()).isLessThanOrEqualTo(1473.15).isNotNaN();
-        assertThat(h.aM()).isGreaterThanOrEqualTo(Forging.MIN_SECTION_M);
+        assertThat(h.aM()).isEqualTo(Forging.MIN_SECTION_M);
     }
 
     @Test void coolingDelegatesToAirCooling() {

@@ -47,7 +47,11 @@ public final class ForgeHeating {
         return 6.1 * Math.exp(-169_300 / (8.314 * tK));
     }
 
-    /** Нагрев в огне {@code fireK} за {@code seconds}: температура, убыль сечения от окалины, пережог. */
+    /**
+     * Нагрев в огне {@code fireK} за {@code seconds}: температура, убыль сечения от окалины, пережог.
+     * Окалина отсчитывается от нуля на каждый вызов (она отваливается на наковальне), поэтому heat
+     * вызывают один раз на весь нагрев, а не каждый тик — иначе √Σ завышает угар.
+     */
     public static Workpiece heat(Workpiece w, double fireK, double seconds) {
         if (!(seconds > 0)) {
             return w;

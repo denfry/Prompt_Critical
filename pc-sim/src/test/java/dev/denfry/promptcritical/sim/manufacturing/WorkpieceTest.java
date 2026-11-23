@@ -33,6 +33,19 @@ class WorkpieceTest {
                 .isInstanceOf(IllegalArgumentException.class);
     }
 
+    @Test void rejectsInfiniteValues() {
+        var g = grade45();
+        var ok = Workpiece.bar(g, Section.ROUND, 0.04, 0.04, 0.3, 293.15);
+        assertThatThrownBy(() -> Workpiece.bar(g, Section.ROUND, 0.04, 0.04, 0.3, Double.POSITIVE_INFINITY))
+                .isInstanceOf(IllegalArgumentException.class);
+        assertThatThrownBy(() -> Workpiece.bar(g, Section.ROUND, 0.04, 0.04, Double.POSITIVE_INFINITY, 293.15))
+                .isInstanceOf(IllegalArgumentException.class);
+        assertThatThrownBy(() -> Workpiece.bar(g, Section.FLAT, 0.04, Double.POSITIVE_INFINITY, 0.3, 293.15))
+                .isInstanceOf(IllegalArgumentException.class);
+        assertThatThrownBy(() -> ok.withHardness(Double.POSITIVE_INFINITY))
+                .isInstanceOf(IllegalArgumentException.class);
+    }
+
     @Test void gateDefects() {
         assertThat(PartDefect.CRACK.gate).isTrue();
         assertThat(PartDefect.BURNT.gate).isTrue();
