@@ -144,6 +144,10 @@ public final class GridSubsystem implements Subsystem, GridEventSink {
     }
 
     /** Обратимый агрегат ГАЭС. */
+    public FeInterfaceUnit feInterface(SimId id) {
+        return unit(id, FeInterfaceUnit.class, () -> new FeInterfaceUnit(id));
+    }
+
     public PumpedStorageUnit pumpedStorage(SimId id) {
         return unit(id, PumpedStorageUnit.class, () -> new PumpedStorageUnit(id));
     }
@@ -435,6 +439,7 @@ public final class GridSubsystem implements Subsystem, GridEventSink {
             if (u instanceof GeneratorUnit g) g.beforeTick(grid, dt, tick);
             else if (u instanceof WindTurbineUnit w) w.beforeTick(grid, dt);
             else if (u instanceof PumpedStorageUnit s) s.beforeTick(grid, dt);
+            else if (u instanceof FeInterfaceUnit f) f.beforeTick(grid, dt);
             else if (u instanceof ElectrodeBoilerUnit e) e.beforeTick(grid, dt);
         }
         profile(dt);
@@ -781,6 +786,7 @@ public final class GridSubsystem implements Subsystem, GridEventSink {
             case PumpedStorageUnit s -> "pumped_storage";
             case ElectrodeBoilerUnit e -> "electrode_boiler";
             case RectifierUnit r -> "rectifier";
+            case FeInterfaceUnit f -> "fe_interface";
         };
     }
 
@@ -814,6 +820,7 @@ public final class GridSubsystem implements Subsystem, GridEventSink {
                 case "pumped_storage" -> new PumpedStorageUnit(id);
                 case "electrode_boiler" -> new ElectrodeBoilerUnit(id);
                 case "rectifier" -> new RectifierUnit(id);
+                case "fe_interface" -> new FeInterfaceUnit(id);
                 default -> type.startsWith("switch:") ? new SwitchUnit(id, SwitchUnit.Kind.valueOf(type.substring(7))) : null;
             };
             if (u != null) {
