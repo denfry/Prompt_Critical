@@ -49,6 +49,8 @@ public final class SteelworksClient {
 
     public static void register(IEventBus modBus) {
         modBus.addListener(SteelworksClient::registerRenderers);
+        BofRealRenderer.init();
+        ReheatingRealRenderer.init();
         NeoForge.EVENT_BUS.addListener(SteelworksClient::tooltip);
     }
 
@@ -56,6 +58,8 @@ public final class SteelworksClient {
         event.registerBlockEntityRenderer(SteelworksBlockEntities.BOF_VESSEL.get(), c -> new VesselRenderer());
         event.registerBlockEntityRenderer(SteelworksBlockEntities.OXYGEN_LANCE.get(), c -> new LanceRenderer());
         event.registerBlockEntityRenderer(SteelworksBlockEntities.ROLLER_TABLE.get(), c -> new RollerTableRenderer());
+        event.registerBlockEntityRenderer(SteelworksBlockEntities.BOF_VESSEL_REAL.get(), c -> new BofRealRenderer());
+        event.registerBlockEntityRenderer(SteelworksBlockEntities.REHEATING_FURNACE_REAL.get(), c -> new ReheatingRealRenderer());
     }
 
     private static SuperByteBuffer facingPartial(PartialModel part, BlockState state) {

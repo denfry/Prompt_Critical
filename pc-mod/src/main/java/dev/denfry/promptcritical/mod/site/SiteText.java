@@ -111,6 +111,13 @@ public final class SiteText {
         stage("pontoons", "base pontoons, rear bridge and advancing ram", "основание, задний мост и домкрат передвижки");
         stage("support_legs", "hydraulic legs and valve bank", "гидростойки и блок клапанов");
         stage("canopy", "canopy, caving shield and lemniscate links", "перекрытие, ограждение и лемнискатные рычаги");
+        drawing("bof_vessel_real", "LD Converter", "кислородного конвертера");
+        stage("converter_stand", "trunnion ring, pedestals and bearings", "цапфовое кольцо, опоры и подшипники");
+        stage("tilt_drive_hood", "tilt drive, hood, gas duct and platform", "привод наклона, камин, газоход и площадка");
+        drawing("reheating_furnace_real", "Continuous Reheating Furnace", "методической нагревательной печи");
+        stage("furnace_brickwork", "base, walls, hearth and sprung arch", "основание, стены, под и распорный свод");
+        stage("furnace_ironwork", "buckstays, tie rods and doors", "стойки каркаса, стяжки и заслонки");
+        stage("pusher_burner", "pusher, burner and flue damper", "толкатель, горелка и шибер борова");
     }
 
     private SiteText() {}

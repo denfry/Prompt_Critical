@@ -36,8 +36,15 @@ public final class PortMachineBlock extends FoundryBlock {
     @Override
     protected BlockState partState(BlockState controller, Footprint.Cell cell) {
         Direction f = facing(controller);
-        if (cell.segment() == 0 && cell.offsetFromAnchor().equals(port.rotate(Footprint.rotation(f))))
-            return KineticPortBlock.inputForOffset(cell.offsetFromAnchor(), alongFacing ? f.getAxis() : f.getClockWise().getAxis());
+        // клетку порта ищем по сегменту и смещению от его якоря: у объёма из нескольких сегментов (конвертер
+        // реального масштаба) порт лежит не в сегменте контроллера
+        BlockPos at = port.rotate(Footprint.rotation(f));
+        for (Footprint.Cell c : spec().footprint().cells(BlockPos.ZERO, f))
+            if (c.pos().equals(at)) {
+                if (c.segment() == cell.segment() && c.offsetFromAnchor().equals(cell.offsetFromAnchor()))
+                    return KineticPortBlock.inputForOffset(cell.offsetFromAnchor(), alongFacing ? f.getAxis() : f.getClockWise().getAxis());
+                break;
+            }
         return super.partState(controller, cell);
     }
 }

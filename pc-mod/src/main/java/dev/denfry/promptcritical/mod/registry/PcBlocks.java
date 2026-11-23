@@ -980,7 +980,8 @@ public final class PcBlocks {
                 || b == ELECTRIC_MOTOR_MV_REAL.get()
                 // добыча, обогащение и коксохим реального масштаба
                 || b == LONGWALL_SHEARER_REAL.get() || b == COAL_JIG_REAL.get() || b == QUENCH_TOWER_REAL.get()
-                || b == POWERED_ROOF_SUPPORT_REAL.get();
+                || b == POWERED_ROOF_SUPPORT_REAL.get()
+                || b == BOF_VESSEL_REAL.get() || b == REHEATING_FURNACE_REAL.get();
     }
 
     /**
@@ -1178,6 +1179,22 @@ public final class PcBlocks {
     public static final DeferredBlock<PcDeviceBlock> PIPE_WELDER = device("pipe_welder", machine(),
             Spec.facing(PcProperties.RUNNING).footprint(Footprint.of(Segment.box(-1, 1, 0, 1, 0, 0))),
             PortMachineBlock.with(new BlockPos(-1, 0, 0), true, PipeWelderBlockEntity::new));
+    /**
+     * Кислородный конвертер реального масштаба на плавку ≈ 15 т: корпус в цапфовом кольце на двух опорах, 7 × 6 × 5
+     * (x −3…3, z −2…2 — круг корпуса в покое), вал Create — в редуктор наклона на западной цапфе (08 §8.6.1,
+     * docs/research/bof_vessel-dimensions.md). Тот же юнит симуляции, что у {@link #BOF_VESSEL}.
+     */
+    public static final Footprint FP_BOF_VESSEL_REAL = Footprint.tiled(-3, 3, 0, 5, -2, 2);
+    public static final DeferredBlock<PcDeviceBlock> BOF_VESSEL_REAL = device("bof_vessel_real", lit(machine()),
+            Spec.facing(PcProperties.RUNNING).segments(PcProperties.wholeSegments(FP_BOF_VESSEL_REAL.segments().size()), FP_BOF_VESSEL_REAL),
+            PortMachineBlock.with(new BlockPos(-3, 2, 0), false, dev.denfry.promptcritical.mod.steelworks.BofVesselRealBlockEntity::new));
+    /**
+     * Методическая (толкательная) печь реального масштаба на 12 заготовок, 3 × 2 × 3 (08 §8.7.2,
+     * docs/research/reheating_furnace-dimensions.md). Тот же юнит симуляции, что у {@link #REHEATING_FURNACE}.
+     */
+    public static final DeferredBlock<PcDeviceBlock> REHEATING_FURNACE_REAL = device("reheating_furnace_real", lit(brick()),
+            Spec.facing(BlockStateProperties.LIT).footprint(FP_FURNACE3),
+            FoundryBlock.with(dev.denfry.promptcritical.mod.steelworks.ReheatingFurnaceRealBlockEntity::new));
     public static final DeferredBlock<PcDeviceBlock> HYDROTEST_BENCH = device("hydrotest_bench", machine(),
             Spec.facing(PcProperties.RUNNING, PcProperties.BURST).footprint(Footprint.of(Segment.box(-1, 1, 0, 0, 0, 0))),
             FoundryBlock.with(HydrotestBenchBlockEntity::new));

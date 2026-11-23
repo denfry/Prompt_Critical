@@ -74,7 +74,7 @@ public final class DeviceProfiles {
         for (String c : List.of("BreakerCellBlockEntity", "RelayCabinetBlockEntity", "DistributionBoxBlockEntity")) GENERIC.put(c, "pc_breaker");
         GENERIC.put("TransformerBlockEntity", "pc_transformer");
         for (String c : List.of("BlastFurnaceControllerBlockEntity", "HotBlastStoveBlockEntity", "HotBlastStoveRealBlockEntity", "CokeOvenBlockEntity", "SinterStrandBlockEntity",
-                "BakingFurnaceBlockEntity", "CupolaBlockEntity", "CrucibleBlockEntity", "BofVesselBlockEntity", "BatchFurnaceBlockEntity",
+                "BakingFurnaceBlockEntity", "CupolaBlockEntity", "CrucibleBlockEntity", "BofVesselBlockEntity", "BofVesselRealBlockEntity", "BatchFurnaceBlockEntity", "ReheatingFurnaceRealBlockEntity",
                 "LadleStationBlockEntity", "SubmergedArcFurnaceBlockEntity", "AchesonFurnaceBlockEntity", "PyrolysisFurnaceBlockEntity"))
             GENERIC.put(c, "pc_furnace");
         for (String c : List.of("MillStandBlockEntity", "PiercingMillBlockEntity")) GENERIC.put(c, "pc_rolling_mill");

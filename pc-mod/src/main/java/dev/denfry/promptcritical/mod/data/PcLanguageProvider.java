@@ -609,6 +609,8 @@ public final class PcLanguageProvider extends LanguageProvider {
         b("ladle_station", "Ladle Treatment Station", "Установка доводки в ковше");
         b("ingot_mold", "Ingot Mold", "Изложница");
         b("reheating_furnace", "Reheating Furnace", "Нагревательная печь");
+        b("bof_vessel_real", "LD Converter", "Кислородный конвертер LD");
+        b("reheating_furnace_real", "Continuous Reheating Furnace", "Методическая нагревательная печь");
         b("heat_treatment_furnace", "Heat Treatment Furnace", "Термическая печь");
         b("quench_tank", "Quench Tank", "Закалочный бак");
         b("roller_table", "Roller Table", "Рольганг");

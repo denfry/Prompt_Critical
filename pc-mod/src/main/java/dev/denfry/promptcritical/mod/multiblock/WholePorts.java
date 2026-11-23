@@ -62,7 +62,12 @@ public final class WholePorts {
             // вода — в коллектор форсунок с запада, кокс — через лоток с заслонкой на востоке
             Map.entry("quench_tower_real", List.of(p(-1, -1, 0, W), p(1, -1, 0, E))),
             // эмульсия под давлением — с запада, слив — на восток у блока клапанов
-            Map.entry("powered_roof_support_real", List.of(p(0, 0, 2, W), p(1, 0, 2, E))));
+            Map.entry("powered_roof_support_real", List.of(p(0, 0, 2, W), p(1, 0, 2, E))),
+            // конвертер: газоход сверху над камином; лом и известь — с восточного края площадки у опоры (клетка лестницы
+            // (3, 2, 0) свободна)
+            Map.entry("bof_vessel_real", List.of(p(0, 5, 1, U), p(3, 2, 1, E))),
+            // методическая печь: садка и выдача в выходы — через загрузочное окно на юге, газ — к горелке на востоке
+            Map.entry("reheating_furnace_real", List.of(p(0, 0, 1, S), p(1, 0, 0, E))));
 
     private WholePorts() {}
 
