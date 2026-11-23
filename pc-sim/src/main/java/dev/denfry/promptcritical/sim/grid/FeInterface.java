@@ -15,6 +15,8 @@ public final class FeInterface {
     public static final double ANTI_ISLANDING_S = 0.2;
     /** Обратное включение: напряжение и частота держатся в окне столько секунд [моё; IEEE 1547 даёт до 300 с]. */
     public static final double RECONNECT_S = 5;
+    /** После включения мощность нарастает от нуля до задания за столько секунд [моё; IEEE 1547 по умолчанию 300 с]. */
+    public static final double RAMP_S = 10;
     /** Уровень буфера, который держит AUTO. */
     public static final double AUTO_LEVEL = 0.5;
 
@@ -49,6 +51,8 @@ public final class FeInterface {
     private boolean connected;
     /** Сколько секунд напряжение и частота вне окна (для отключения) или в окне (для обратного включения). */
     private double outS, inS;
+    /** Секунд на сети после последнего включения: для набора мощности. */
+    private double onS;
     private double gridW;
 
     public FeInterface(Spec spec) {
@@ -129,18 +133,23 @@ public final class FeInterface {
         if (inWindow) {
             outS = 0;
             inS += dt;
-            if (!connected && inS >= RECONNECT_S) connected = true;
+            if (!connected && inS >= RECONNECT_S) {
+                connected = true;
+                onS = 0;
+            }
         } else {
             inS = 0;
             outS += dt;
             if (connected && outS >= ANTI_ISLANDING_S) connected = false;
         }
+        if (connected) onS += dt;
         gridW = connected ? exchange(dt) : 0;
         return gridW;
     }
 
     private double exchange(double dt) {
         double eta = spec.efficiency();
+        double limit = setpointW * Math.min(1, onS / RAMP_S);
         double room = spec.bufferJ() - bufferJ;
         boolean importNow = switch (mode) {
             case IMPORT -> true;
@@ -149,19 +158,20 @@ public final class FeInterface {
         };
         if (importNow) {
             double want = mode == Mode.AUTO ? (AUTO_LEVEL * spec.bufferJ() - bufferJ) : room;
-            double p = Math.min(setpointW, want / (eta * dt));
+            double p = Math.min(limit, want / (eta * dt));
             p = Math.max(0, p);
             bufferJ += p * eta * dt;
             return p;
         }
         double avail = mode == Mode.AUTO ? bufferJ - AUTO_LEVEL * spec.bufferJ() : bufferJ;
-        double p = Math.max(0, Math.min(setpointW, avail * eta / dt));
+        double p = Math.max(0, Math.min(limit, avail * eta / dt));
         bufferJ -= p / eta * dt;
         return -p;
     }
 
     /** Восстановить буфер и состояние подключения после загрузки мира. */
-    public void restore(double bufferJ, boolean connected, double inS) {
+    public void restore(double bufferJ, boolean connected, double inS, double onS) {
+        this.onS = Double.isFinite(onS) ? Math.max(0, onS) : 0;
         this.bufferJ = Double.isFinite(bufferJ) ? Math.max(0, Math.min(spec.bufferJ(), bufferJ)) : 0;
         this.connected = connected;
         this.inS = Double.isFinite(inS) ? Math.max(0, inS) : 0;
@@ -173,5 +183,6 @@ public final class FeInterface {
         out.putDouble("buffer", bufferJ);
         out.putBoolean("on", connected);
         out.putDouble("in_s", inS);
+        out.putDouble("on_s", onS);
     }
 }

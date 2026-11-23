@@ -25,6 +25,15 @@ public final class GridBinding {
         SimBindings.registerSubsystem(level -> new GridSubsystem(
                 SimConfigs.fromServerConfig().section(GridConfig.class, GridConfig.defaults())));
         NeoForge.EVENT_BUS.addListener(GridBinding::onEntityJoin);
+        NeoForge.EVENT_BUS.addListener(FeEnergy::onServerStarted);
+        modBus.addListener(GridBinding::capabilities);
+    }
+
+    /** FE-сторона интерфейса сети (07 §7.7.1): capability {@code IEnergyStorage} со всех граней. */
+    private static void capabilities(net.neoforged.neoforge.capabilities.RegisterCapabilitiesEvent event) {
+        for (var t : java.util.List.of(GridBlockEntities.FE_INTERFACE_SMALL.get(), GridBlockEntities.FE_INTERFACE.get(),
+                GridBlockEntities.FE_INTERFACE_LARGE.get()))
+            event.registerBlockEntity(net.neoforged.neoforge.capabilities.Capabilities.EnergyStorage.BLOCK, t, (be, side) -> be.energy());
     }
 
     private static void onEntityJoin(EntityJoinLevelEvent event) {

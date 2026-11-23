@@ -39,6 +39,12 @@ public final class GridBlockEntities {
             type("electric_arc_furnace", dev.denfry.promptcritical.mod.steelworks.ArcFurnaceBlockEntity::new, PcBlocks.ELECTRIC_ARC_FURNACE);
     public static final DeferredHolder<BlockEntityType<?>, BlockEntityType<ConsumerBlockEntity>> GRID_CONSUMER =
             type("grid_consumer", ConsumerBlockEntity::new, PcBlocks.GRID_CONSUMER);
+    public static final DeferredHolder<BlockEntityType<?>, BlockEntityType<FeInterfaceBlockEntity>> FE_INTERFACE_SMALL =
+            type("grid_fe_interface_small", FeInterfaceBlockEntity::small, PcBlocks.GRID_FE_INTERFACE_SMALL);
+    public static final DeferredHolder<BlockEntityType<?>, BlockEntityType<FeInterfaceBlockEntity>> FE_INTERFACE =
+            type("grid_fe_interface", FeInterfaceBlockEntity::standard, PcBlocks.GRID_FE_INTERFACE);
+    public static final DeferredHolder<BlockEntityType<?>, BlockEntityType<FeInterfaceBlockEntity>> FE_INTERFACE_LARGE =
+            type("grid_fe_interface_large", FeInterfaceBlockEntity::large, PcBlocks.GRID_FE_INTERFACE_LARGE);
     public static final DeferredHolder<BlockEntityType<?>, BlockEntityType<ConnectorBlockEntity>> WIRE_CONNECTOR_LV =
             type("wire_connector_lv", ConnectorBlockEntity::lv, PcBlocks.WIRE_CONNECTOR_LV);
     public static final DeferredHolder<BlockEntityType<?>, BlockEntityType<ConnectorBlockEntity>> WIRE_CONNECTOR_MV =

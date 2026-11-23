@@ -12,7 +12,7 @@ class FeInterfaceTest {
     private static FeInterface online(FeInterface.Mode m, double ratedW) {
         var f = new FeInterface(FeInterface.Spec.standard(ratedW));
         f.setMode(m);
-        for (double t = 0; t < FeInterface.RECONNECT_S + 2; t += DT) f.step(DT, 1, 50);
+        for (double t = 0; t < FeInterface.RECONNECT_S + FeInterface.RAMP_S + 2; t += DT) f.step(DT, 1, 50);
         return f;
     }
 
@@ -67,6 +67,18 @@ class FeInterfaceTest {
         assertThat(f.receive(1, true)).isPositive();
         assertThat(online(FeInterface.Mode.IMPORT, 1e6).receive(1, true)).isZero();
         assertThat(online(FeInterface.Mode.EXPORT, 1e6).extract(1, true)).isZero();
+    }
+
+    @Test void powerRampsUpAfterReconnecting() {
+        var f = new FeInterface(FeInterface.Spec.standard(1e6));
+        f.setMode(FeInterface.Mode.IMPORT);
+        // буфер опустошается каждый шаг, чтобы мощность ограничивал только набор, а не полный буфер
+        for (double t = 0; t < FeInterface.RECONNECT_S + FeInterface.RAMP_S / 2; t += DT) {
+            f.extract(Double.MAX_VALUE, false);
+            f.step(DT, 1, 50);
+        }
+        assertThat(f.connected()).isTrue();
+        assertThat(f.gridW()).isBetween(0.3e6, 0.7e6);
     }
 
     @Test void setpointCapsThePower() {

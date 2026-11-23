@@ -156,6 +156,9 @@ public final class PcLanguageProvider extends LanguageProvider {
         b("concrete_pole", "Concrete Pole", "Железобетонная опора");
         b("power_cable", "Power Cable", "Силовой кабель");
         b("grid_consumer", "Settlement Load", "Посёлок-потребитель");
+        b("grid_fe_interface_small", "Grid FE Interface, 100 kW", "Интерфейс сети и FE, 100 кВт");
+        b("grid_fe_interface", "Grid FE Interface, 1 MW", "Интерфейс сети и FE, 1 МВт");
+        b("grid_fe_interface_large", "Grid FE Interface, 10 MW", "Интерфейс сети и FE, 10 МВт");
         b("energy_meter", "Energy Meter", "Счётчик электроэнергии");
         b("wire_connector_lv", "LV Wire Connector", "Коннектор провода 0,4 кВ");
         b("wire_connector_mv", "Pin Insulator Head", "Изолятор ВЛ 6 кВ");

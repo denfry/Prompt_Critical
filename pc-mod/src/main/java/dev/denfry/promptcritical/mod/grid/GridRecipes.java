@@ -126,6 +126,16 @@ public final class GridRecipes extends RecipeProvider {
         ShapedRecipeBuilder.shaped(RecipeCategory.MISC, PcBlocks.GRID_CONSUMER.get()).pattern("BLB").pattern("BWB").pattern("BDB")
                 .define('B', Items.BRICKS).define('L', Items.LANTERN).define('W', wire).define('D', ItemTags.WOODEN_DOORS)
                 .unlockedBy("has_wire", hasWire).save(out, id("grid_consumer"));
+        // интерфейс сети и FE: инвертор на тиристорах, щит управления и трансформатор у больших вариантов
+        ShapedRecipeBuilder.shaped(RecipeCategory.MISC, PcBlocks.GRID_FE_INTERFACE_SMALL.get()).pattern("PWP").pattern("CRC").pattern("PWP")
+                .define('P', PcItems.STEEL_PLATE.get()).define('W', wire).define('C', Items.COMPARATOR).define('R', Items.REDSTONE_BLOCK)
+                .unlockedBy("has_wire", hasWire).save(out, id("grid_fe_interface_small"));
+        ShapedRecipeBuilder.shaped(RecipeCategory.MISC, PcBlocks.GRID_FE_INTERFACE.get()).pattern("SWS").pattern("WTW").pattern("SWS")
+                .define('S', PcBlocks.GRID_FE_INTERFACE_SMALL.get()).define('W', wire).define('T', PcBlocks.DISTRIBUTION_TRANSFORMER.get())
+                .unlockedBy("has_fe_interface", has(PcBlocks.GRID_FE_INTERFACE_SMALL.get())).save(out, id("grid_fe_interface"));
+        ShapedRecipeBuilder.shaped(RecipeCategory.MISC, PcBlocks.GRID_FE_INTERFACE_LARGE.get()).pattern("SWS").pattern("WTW").pattern("SWS")
+                .define('S', PcBlocks.GRID_FE_INTERFACE.get()).define('W', wire).define('T', PcBlocks.DISTRIBUTION_TRANSFORMER.get())
+                .unlockedBy("has_fe_interface", has(PcBlocks.GRID_FE_INTERFACE.get())).save(out, id("grid_fe_interface_large"));
         // конденсаторы: обкладки — фольга из листа, диэлектрик — бумага в масле (банки на стеллаже)
         ShapedRecipeBuilder.shaped(RecipeCategory.MISC, PcBlocks.CAPACITOR_BANK.get()).pattern("SPS").pattern("SPS").pattern("WBW")
                 .define('S', AllItems.IRON_SHEET.get()).define('P', Items.PAPER).define('W', wire).define('B', PcItems.STEEL_PLATE.get())

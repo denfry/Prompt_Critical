@@ -23,7 +23,7 @@ public final class FeInterfaceUnit extends GridUnit {
         super(id, 1);
     }
 
-    private record StateCarry(String mode, double set, double buffer, boolean on, double inS) {}
+    private record StateCarry(String mode, double set, double buffer, boolean on, double inS, double onS) {}
 
     @Override
     VoltageClass terminalClass(int terminal) {
@@ -42,7 +42,7 @@ public final class FeInterfaceUnit extends GridUnit {
                     iface.setMode(FeInterface.Mode.AUTO);
                 }
                 iface.setSetpointW(carry.set);
-                iface.restore(carry.buffer, carry.on, carry.inS);
+                iface.restore(carry.buffer, carry.on, carry.inS, carry.onS);
                 carry = null;
             }
             changed();
@@ -100,6 +100,19 @@ public final class FeInterfaceUnit extends GridUnit {
             out.beginObject("iface");
             iface.save(out);
             out.endObject();
+        } else {
+            // паспорта от мира ещё нет: состояние из сохранения переносится как было, чтобы сохранение не теряло его
+            if (!Double.isNaN(savedRated)) out.putDouble("rated", savedRated);
+            if (carry != null) {
+                out.beginObject("iface");
+                out.putString("mode", carry.mode);
+                out.putDouble("set", carry.set);
+                out.putDouble("buffer", carry.buffer);
+                out.putBoolean("on", carry.on);
+                out.putDouble("in_s", carry.inS);
+                out.putDouble("on_s", carry.onS);
+                out.endObject();
+            }
         }
     }
 
@@ -110,7 +123,8 @@ public final class FeInterfaceUnit extends GridUnit {
         if (in.has("iface")) {
             in.beginObject("iface");
             carry = new StateCarry(in.optString("mode", FeInterface.Mode.AUTO.name()), in.optDouble("set", 0),
-                    in.optDouble("buffer", 0), in.has("on") && in.getBoolean("on"), in.optDouble("in_s", 0));
+                    in.optDouble("buffer", 0), in.has("on") && in.getBoolean("on"), in.optDouble("in_s", 0),
+                    in.optDouble("on_s", 0));
             in.endObject();
         }
     }

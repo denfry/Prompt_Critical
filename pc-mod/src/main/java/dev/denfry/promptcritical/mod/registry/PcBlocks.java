@@ -287,6 +287,13 @@ public final class PcBlocks {
             Properties.of().mapColor(MapColor.COLOR_BLACK).strength(0.6f).sound(SoundType.WOOL).noOcclusion()));
     public static final DeferredBlock<PcDeviceBlock> GRID_CONSUMER = device("grid_consumer", brick(),
             Spec.facing(BlockStateProperties.LIT).footprint(FP_CUBE3), FoundryBlock.with(ConsumerBlockEntity::new));
+    /** Граница сети и Forge Energy (07 §7.7.1): шкаф преобразователя 100 кВт, 1 и 10 МВт. */
+    public static final DeferredBlock<PcDeviceBlock> GRID_FE_INTERFACE_SMALL = device("grid_fe_interface_small", machine(),
+            Spec.facing(PcProperties.RUNNING), FoundryBlock.with(dev.denfry.promptcritical.mod.grid.FeInterfaceBlockEntity::small));
+    public static final DeferredBlock<PcDeviceBlock> GRID_FE_INTERFACE = device("grid_fe_interface", machine(),
+            Spec.facing(PcProperties.RUNNING), FoundryBlock.with(dev.denfry.promptcritical.mod.grid.FeInterfaceBlockEntity::standard));
+    public static final DeferredBlock<PcDeviceBlock> GRID_FE_INTERFACE_LARGE = device("grid_fe_interface_large", machine(),
+            Spec.facing(PcProperties.RUNNING), FoundryBlock.with(dev.denfry.promptcritical.mod.grid.FeInterfaceBlockEntity::large));
     /** Батарея статических конденсаторов 6 кВ: ступени по 150 квар. */
     public static final DeferredBlock<PcDeviceBlock> CAPACITOR_BANK = device("capacitor_bank", machine().noOcclusion(),
             Spec.facing(BlockStateProperties.LIT), FoundryBlock.with(dev.denfry.promptcritical.mod.grid.CapacitorBankBlockEntity::new));

@@ -28,6 +28,12 @@ public final class ServerConfig {
     public static final ModConfigSpec.IntValue OPS_MAX_LOCKS_PER_PLAYER;
     public static final ModConfigSpec.EnumValue<dev.denfry.promptcritical.sim.ops.PermitEnforcement> OPS_PERMIT_ENFORCEMENT;
     public static final ModConfigSpec.DoubleValue J_PER_FE;
+    /** Паритет SU↔FE (16 §16.7.1, R56). */
+    public enum FeSuParity { AUTO, OFF }
+    public static final ModConfigSpec.EnumValue<FeSuParity> FE_SU_PARITY;
+    public static final ModConfigSpec.ConfigValue<java.util.List<? extends Double>> GRID_FE_RATINGS_W;
+    public static final ModConfigSpec.DoubleValue GRID_FE_EFFICIENCY, GRID_FE_F_MIN, GRID_FE_F_MAX, GRID_FE_V_MIN, GRID_FE_V_MAX,
+            GRID_FE_MAX_SHARE;
     public static final ModConfigSpec.IntValue CC_TOKEN_RATE;
     public static final ModConfigSpec.IntValue CC_TOKEN_BURST;
 
@@ -164,6 +170,9 @@ public final class ServerConfig {
                 .defineInRange("w_per_su", 1000.0, 1.0, 1.0e6);
         J_PER_FE = b.comment("[BALANCE] Joules per Forge Energy unit (00 §0.9)")
                 .defineInRange("j_per_fe", 2.5, 0.01, 1.0e6);
+        FE_SU_PARITY = b.comment("SU to FE parity (16 §16.7.1, R56): AUTO uses 2 x w_per_su joules per FE at the grid FE interface",
+                        "when a mod bridging Create shafts and FE is loaded, so no loop makes energy; OFF keeps j_per_fe")
+                .defineEnum("fe_su_parity", FeSuParity.AUTO);
         b.pop();
 
         b.push("ops");
@@ -256,6 +265,17 @@ public final class ServerConfig {
                 .defineInRange("lv_breaker_thermal_k_s", 40.0, 1.0, 1000.0);
         GRID_LOAD_PROFILE_DAYS = b.comment("Minecraft days per cycle of the daily load profile of grid consumers; 0 — flat contracted load (07 §7.6.4, §7.17)")
                 .defineInRange("load_profile_days_per_cycle", 1, 0, 30);
+        GRID_FE_RATINGS_W = b.comment("Rated power of the small, standard and large grid FE interface, W (07 §7.7.1)")
+                .defineList("fe_interface_ratings_w", java.util.List.of(1.0e5, 1.0e6, 1.0e7),
+                        o -> o instanceof Double d && d > 0 && d <= 1e9);
+        GRID_FE_EFFICIENCY = b.comment("Conversion efficiency of the grid FE interface (07 §7.7.1)")
+                .defineInRange("fe_interface_efficiency", 0.97, 0.5, 1.0);
+        GRID_FE_F_MIN = b.comment("Grid FE interface works only between these frequencies, Hz").defineInRange("fe_window_f_min_hz", 49.0, 40.0, 60.0);
+        GRID_FE_F_MAX = b.defineInRange("fe_window_f_max_hz", 51.0, 40.0, 70.0);
+        GRID_FE_V_MIN = b.comment("Grid FE interface works only between these bus voltages, pu").defineInRange("fe_window_v_min_pu", 0.9, 0.5, 1.0);
+        GRID_FE_V_MAX = b.defineInRange("fe_window_v_max_pu", 1.1, 1.0, 1.5);
+        GRID_FE_MAX_SHARE = b.comment("Share of island generation from FE export above which the dispatcher is warned (07 §7.7.1)")
+                .defineInRange("fe_max_share", 0.5, 0.05, 1.0);
         b.pop();
 
         b.push("ops");
