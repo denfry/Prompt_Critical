@@ -443,8 +443,8 @@ public final class RealScaleGameTests {
     @GameTest(template = "gametest/empty_12x12x12", timeoutTicks = 20)
     public static void pipesConnectOnlyAtPorts(GameTestHelper h) {
         for (String id : new String[] {"vver_reactor", "vver_steam_generator", "vver_coolant_pump", "vver_pressurizer", "bwr240_reactor",
-                "candu6_reactor", "bn600_reactor", "am1_reactor", "lancashire_boiler", "mill_engine", "cupola_furnace_real"}) {
-                "candu6_reactor", "bn600_reactor", "am1_reactor", "lancashire_boiler", "mill_engine", "lancashire_stoker", "crucible_furnace_real"}) {
+                "candu6_reactor", "bn600_reactor", "am1_reactor", "lancashire_boiler", "mill_engine", "cupola_furnace_real",
+                "lancashire_stoker", "crucible_furnace_real"}) {
             h.assertTrue(!dev.denfry.promptcritical.mod.multiblock.WholePorts.of(id).isEmpty(), id + " declares its ports");
             for (Direction f : Direction.Plane.HORIZONTAL)
                 for (var port : dev.denfry.promptcritical.mod.multiblock.WholePorts.of(id)) {
