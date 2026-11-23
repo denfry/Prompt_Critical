@@ -41,6 +41,14 @@ public final class WholePorts {
             Map.entry("cupola_furnace_real", List.of(p(0, 3, 3, S))),
             // всас вниз через пол у контроллера, напорный став вверх над ним; вал Create — в порт на восточной грани
             Map.entry("mine_drainage_pump_geared", List.of(p(0, 0, 0, D), p(0, 1, 0, U))));
+            // с забрасывателями перед фронтом — питательная вода и зольник с боковых стенок
+            Map.entry("lancashire_boiler", List.of(p(-1, 0, 0, N), p(1, 0, 0, N), p(0, 3, 2, U), p(-2, 0, 0, W), p(2, 0, 0, E))),
+            // пар сверху на клапанную коробку, выхлоп с западной грани у цилиндра
+            Map.entry("mill_engine", List.of(p(0, 2, 0, U), p(0, 0, 0, W))),
+            // уголь в бункера забрасывателей сверху
+            Map.entry("lancashire_stoker", List.of(p(-1, 2, 0, U), p(1, 2, 0, U))),
+            // тигель и кокс — через крышку ямы; клетки кладки закрыты
+            Map.entry("crucible_furnace_real", List.of(p(0, 0, 0, U))));
 
     private WholePorts() {}
 

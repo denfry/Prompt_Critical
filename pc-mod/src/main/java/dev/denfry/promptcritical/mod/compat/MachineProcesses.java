@@ -152,7 +152,7 @@ public final class MachineProcesses {
         p.add(new Process("coal_jig", Plant.COAL_PREP, on(PcBlocks.COAL_JIG),
                 of(item(0, PcItems.RAW_COAL), water(0)),
                 of(item(0, PcItems.WASHED_COAL), item(0, PcItems.COAL_MIDDLINGS), item(0, PcItems.COAL_REFUSE))));
-        p.add(new Process("fire_tube_boiler", Plant.POWER, on(PcBlocks.FIRE_TUBE_BOILER, PcBlocks.GRATE_STOKER),
+        p.add(new Process("fire_tube_boiler", Plant.POWER, on(PcBlocks.FIRE_TUBE_BOILER, PcBlocks.GRATE_STOKER, PcBlocks.LANCASHIRE_BOILER, PcBlocks.LANCASHIRE_STOKER),
                 of(item(1, PcItems.RAW_COAL, PcItems.WASHED_COAL, PcItems.COAL_MIDDLINGS, () -> Items.COAL,
                         () -> Items.CHARCOAL, () -> Items.OAK_LOG), water(0)),
                 of(item(0, PcItems.BOILER_SLAG))));
@@ -175,7 +175,7 @@ public final class MachineProcesses {
         p.add(new Process("cupola_furnace", Plant.FOUNDRY, on(PcBlocks.CUPOLA_FURNACE, PcBlocks.CUPOLA_FURNACE_REAL),
                 of(tag(FoundryTags.CUPOLA_IRON, 1), tag(FoundryTags.CUPOLA_COKE, 1), item(PcBlocks.SAND_MOLD)),
                 of(item(PcItems.CASTING))));
-        p.add(new Process("crucible_furnace", Plant.FOUNDRY, on(PcBlocks.CRUCIBLE_FURNACE),
+        p.add(new Process("crucible_furnace", Plant.FOUNDRY, on(PcBlocks.CRUCIBLE_FURNACE, PcBlocks.CRUCIBLE_FURNACE_REAL),
                 of(new Items_(() -> concat(tagStacks(FoundryTags.COPPER_INGOTS), tagStacks(FoundryTags.BRONZE_INGOTS),
                         tagStacks(FoundryTags.ALUMINUM_INGOTS)), 1), tag(FoundryTags.FURNACE_COAL, 0),
                         item(PcBlocks.SAND_MOLD)),

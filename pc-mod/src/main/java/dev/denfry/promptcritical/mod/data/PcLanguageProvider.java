@@ -39,6 +39,8 @@ public final class PcLanguageProvider extends LanguageProvider {
         b("winding_engine", "Steam Winding Engine", "Паровая подъёмная машина");
         b("guibal_fan", "Guibal Fan", "Вентилятор Гибаля");
         b("cupola_furnace_real", "Foundry Cupola", "Литейная вагранка");
+        b("crucible_furnace_real", "Crucible Melting Hole", "Тигельная горновая печь");
+        b("lancashire_stoker", "Lancashire Boiler Stokers", "Механические забрасыватели ланкаширского котла");
         b("grate_stoker", "Chain Grate Stoker", "Цепная колосниковая решётка");
         b("chimney", "Chimney", "Дымовая труба");
         b("chimney_stack", "Brick Chimney Stack", "Кирпичная дымовая труба");

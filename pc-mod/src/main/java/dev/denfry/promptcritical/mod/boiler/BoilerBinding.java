@@ -50,6 +50,5 @@ public final class BoilerBinding {
             return b == null ? null : b.slagOutput();
         }, PcBlocks.FIRE_TUBE_BOILER.get(), PcBlocks.LANCASHIRE_BOILER.get(), PcBlocks.MULTIBLOCK_PART.get());
         event.registerBlockEntity(Capabilities.ItemHandler.BLOCK, BoilerBlockEntities.GRATE_STOKER.get(),
-                (be, side) -> be.items((Direction) side));
-    }
+                (be, side) -> be.items((Direction) side));    }
 }

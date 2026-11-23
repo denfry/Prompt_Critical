@@ -151,7 +151,15 @@ public final class SitePlans {
                     st("foundation", 80, n(CONCRETE, 3)),
                     st("pump_bed", 200, n(INGOT, 30), n(PLATE, 5)),
                     st("gearing", 160, n(INGOT, 20)),
-                    st("rams", 200, n(INGOT, 15), n(PIPE, 20))));
+                    st("rams", 200, n(INGOT, 15), n(PIPE, 20))),
+            // пара толкателей с бункерами ≈ 2 × 1 т литья, рама, плита и линия вала ≈ 2 т (оценки)
+            "lancashire_stoker", plan("lancashire_stoker", PcBlocks.LANCASHIRE_STOKER, 4,
+                    st("stoker_frame", 120, n(INGOT, 15), n(PLATE, 5)),
+                    st("stokers", 160, n(INGOT, 18), n(PLATE, 2))),
+            // коксовая яма: кладка ≈ 5 т шамота, металла — колосники, рама крышки и уголки ≈ 0,4 т (оценки)
+            "crucible_furnace_real", plan("crucible_furnace_real", PcBlocks.CRUCIBLE_FURNACE_REAL, 0.4,
+                    st("pit", 100, n(BRICKS, 2), n(INGOT, 2)),
+                    st("flue", 80, n(BRICKS, 1), n(INGOT, 2))));
 
     private SitePlans() {}
 

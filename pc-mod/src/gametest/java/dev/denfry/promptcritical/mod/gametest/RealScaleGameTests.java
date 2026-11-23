@@ -374,6 +374,69 @@ public final class RealScaleGameTests {
     }
 
     /**
+     * Механические забрасыватели ланкаширского котла: площадка принимает чертёж на основании 3×2, рама перед лобовой
+     * стенкой находит котёл, уголь идёт только в бункера сверху, вал Create — в западную грань клетки (−1, 0, −1);
+     * старая цепная решётка подаёт как прежде (общий {@code StokerFeed}).
+     */
+    @GameTest(template = TALL, timeoutTicks = 40)
+    public static void lancashireStokersFeedTheBoilerBehindThem(GameTestHelper h) {
+        BlockPos s = new BlockPos(5, 1, 1), b = s.south();
+        for (int x = -1; x <= 1; x++)
+            for (int z = -1; z <= 0; z++) h.setBlock(s.offset(x, -1, z), Blocks.STONE);
+        h.setBlock(s, SiteRegistry.SITE.get().defaultBlockState().setValue(BlockStateProperties.HORIZONTAL_FACING, Direction.NORTH));
+        var w = site(h, s).accept("lancashire_stoker");
+        h.assertTrue(w == null, "stoker plan accepted: " + (w == null ? "" : w.getString()));
+        h.assertTrue(PcBlocks.FP_LANCASHIRE_STOKER.cells(BlockPos.ZERO, Direction.NORTH).size() == 3 * 3 * 2, "3x3x2 frame");
+        h.setBlock(s, Blocks.AIR);
+        h.setBlock(b, PcBlocks.LANCASHIRE_BOILER.get().defaultBlockState().setValue(BlockStateProperties.HORIZONTAL_FACING, Direction.NORTH));
+        h.setBlock(s, PcBlocks.LANCASHIRE_STOKER.get().defaultBlockState().setValue(BlockStateProperties.HORIZONTAL_FACING, Direction.NORTH));
+        h.assertTrue(h.getBlockEntity(s) instanceof dev.denfry.promptcritical.mod.boiler.LancashireStokerBlockEntity st
+                && "lancashire_stoker".equals(st.wholeModelId()) && st.boiler() != null, "the stokers see the boiler behind them");
+        var caps = net.neoforged.neoforge.capabilities.Capabilities.ItemHandler.BLOCK;
+        h.assertTrue(h.getLevel().getCapability(caps, h.absolutePos(s.offset(-1, 2, 0)), Direction.UP) != null, "coal goes into the west hopper");
+        h.assertTrue(h.getLevel().getCapability(caps, h.absolutePos(s.offset(1, 2, 0)), Direction.UP) != null, "coal goes into the east hopper");
+        h.assertTrue(h.getLevel().getCapability(caps, h.absolutePos(s.offset(0, 2, 0)), Direction.UP) == null, "no hopper in the middle");
+        h.assertTrue(h.getBlockState(s.offset(-1, 0, -1)).is(PcBlocks.KINETIC_PORT.get()), "the line shaft cell is a kinetic port");
+        // старая решётка: тот же бункер, топливо из руки
+        BlockPos old = new BlockPos(1, 1, 8);
+        h.setBlock(old, PcBlocks.GRATE_STOKER.get().defaultBlockState());
+        h.assertTrue(h.getBlockEntity(old) instanceof dev.denfry.promptcritical.mod.boiler.GrateStokerBlockEntity g
+                && g.items(null).insertItem(0, new net.minecraft.world.item.ItemStack(net.minecraft.world.item.Items.COAL, 4), false).isEmpty(),
+                "the old grate stoker still takes coal");
+        h.succeed();
+    }
+
+    /**
+     * Тигельная печь реального масштаба: яма 2×2×2 уходит на блок под пол, площадка принимает чертёж, печь — тот же BE
+     * тигельной печи и тот же двойник литейки; тигель и кокс — только через крышку ямы.
+     */
+    @GameTest(template = TALL, timeoutTicks = 40)
+    public static void crucibleMeltingHoleIsTheSameFoundryCrucible(GameTestHelper h) {
+        BlockPos p = new BlockPos(5, 2, 5);
+        for (int x = 0; x <= 1; x++)
+            for (int z = 0; z <= 1; z++) h.setBlock(p.offset(x, -2, z), Blocks.STONE);
+        h.setBlock(p, SiteRegistry.SITE.get().defaultBlockState().setValue(BlockStateProperties.HORIZONTAL_FACING, Direction.NORTH));
+        var w = site(h, p).accept("crucible_furnace_real");
+        h.assertTrue(w == null, "crucible plan accepted: " + (w == null ? "" : w.getString()));
+        h.assertTrue(PcBlocks.FP_CRUCIBLE_FURNACE_REAL.cells(BlockPos.ZERO, Direction.NORTH).size() == 2 * 2 * 2, "2x2x2 pit");
+        h.setBlock(p, Blocks.AIR);
+        h.setBlock(p, PcBlocks.CRUCIBLE_FURNACE_REAL.get().defaultBlockState().setValue(BlockStateProperties.HORIZONTAL_FACING, Direction.NORTH));
+        h.assertTrue(h.getBlockEntity(p) instanceof dev.denfry.promptcritical.mod.foundry.CrucibleBlockEntity c
+                && "crucible_furnace_real".equals(c.wholeModelId())
+                && dev.denfry.promptcritical.sim.metallurgy.FoundrySubsystem.CRUCIBLE.equals(c.deviceType()),
+                "the melting hole is the foundry crucible with its whole model");
+        h.assertTrue(!h.getBlockState(p.offset(1, -1, 1)).isAir(), "the stoke-hole cell under the floor is part of the furnace");
+        var caps = net.neoforged.neoforge.capabilities.Capabilities.ItemHandler.BLOCK;
+        h.assertTrue(h.getLevel().getCapability(caps, h.absolutePos(p), Direction.UP) != null, "charging through the lid");
+        h.assertTrue(h.getLevel().getCapability(caps, h.absolutePos(p.offset(1, 0, 0)), Direction.UP) == null, "the stack stub takes nothing");
+        BlockPos old = new BlockPos(1, 1, 1);
+        h.setBlock(old, PcBlocks.CRUCIBLE_FURNACE.get().defaultBlockState());
+        h.assertTrue(h.getBlockEntity(old) instanceof dev.denfry.promptcritical.mod.foundry.CrucibleBlockEntity c && c.wholeModelId() == null,
+                "the old crucible furnace keeps its own renderer");
+        h.succeed();
+    }
+
+    /**
      * Трубы цепляются к машине реального масштаба только у патрубков: при любом фасаде порт, повёрнутый как модель,
      * открыт со своей грани и закрыт с соседней; клетка без порта закрыта; стальные леса — лестница.
      */
@@ -381,6 +444,7 @@ public final class RealScaleGameTests {
     public static void pipesConnectOnlyAtPorts(GameTestHelper h) {
         for (String id : new String[] {"vver_reactor", "vver_steam_generator", "vver_coolant_pump", "vver_pressurizer", "bwr240_reactor",
                 "candu6_reactor", "bn600_reactor", "am1_reactor", "lancashire_boiler", "mill_engine", "cupola_furnace_real"}) {
+                "candu6_reactor", "bn600_reactor", "am1_reactor", "lancashire_boiler", "mill_engine", "lancashire_stoker", "crucible_furnace_real"}) {
             h.assertTrue(!dev.denfry.promptcritical.mod.multiblock.WholePorts.of(id).isEmpty(), id + " declares its ports");
             for (Direction f : Direction.Plane.HORIZONTAL)
                 for (var port : dev.denfry.promptcritical.mod.multiblock.WholePorts.of(id)) {
@@ -421,6 +485,7 @@ public final class RealScaleGameTests {
                     + Math.round(plan.metalKg() / 1000) + " t");
         }
         h.assertTrue(n == 12, "twelve real-scale plans (eight reactors and NPP units, four I0 machines), got " + n);
+        h.assertTrue(n == 13, "thirteen real-scale plans (eight reactors and NPP units, five I0 machines), got " + n);
         h.succeed();
     }
 
