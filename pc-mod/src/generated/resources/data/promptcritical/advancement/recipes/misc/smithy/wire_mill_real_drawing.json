@@ -1,0 +1,32 @@
+{
+  "parent": "minecraft:recipes/root",
+  "criteria": {
+    "has_the_recipe": {
+      "conditions": {
+        "recipe": "promptcritical:smithy/wire_mill_real_drawing"
+      },
+      "trigger": "minecraft:recipe_unlocked"
+    },
+    "has_wire_mill": {
+      "conditions": {
+        "items": [
+          {
+            "items": "promptcritical:wire_mill"
+          }
+        ]
+      },
+      "trigger": "minecraft:inventory_changed"
+    }
+  },
+  "requirements": [
+    [
+      "has_the_recipe",
+      "has_wire_mill"
+    ]
+  ],
+  "rewards": {
+    "recipes": [
+      "promptcritical:smithy/wire_mill_real_drawing"
+    ]
+  }
+}

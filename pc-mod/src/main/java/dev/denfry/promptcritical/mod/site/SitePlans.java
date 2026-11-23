@@ -370,6 +370,49 @@ public final class SitePlans {
                     st("hv_terminals", 100, n(INGOT, 10), n(WIRE, 100))));
 
     @Nullable
+    /** Кузница и машиностроение реального масштаба (18 §18.6–18.7); у {@link Map#of} не больше десяти пар. */
+    private static final Map<String, Plan> SMITHY_PLANS = Map.of(
+            // молот 2 cwt: колонна с цилиндрами ≈ 3,5 т, шабот ≈ 0,7 т (каталоги Massey; оценки)
+            "power_hammer_real", plan("power_hammer_real", PcBlocks.POWER_HAMMER_REAL, 4.2,
+                    st("hammer_frame", 160, n(INGOT, 30), n(PLATE, 3)),
+                    st("hammer_anvil", 80, n(INGOT, 8), n(CONCRETE, 2))),
+            // глиняная шахта 1,7 м на каменном основании, пара мехов; железо — фурма, обручи и сопла ≈ 0,1 т (оценки)
+            "bloomery_real", plan("bloomery_real", PcBlocks.BLOOMERY_REAL, 0.1,
+                    st("bloomery_shaft", 120, n(BRICKS, 12)),
+                    st("bloomery_bellows", 60, n(() -> Items.IRON_INGOT, 1))),
+            // кирпичный горн с трубой 3 м, железный колпак и большие мехи (Holmström; оценки)
+            "forge_hearth_real", plan("forge_hearth_real", PcBlocks.FORGE_HEARTH_REAL, 0.3,
+                    st("hearth_chimney", 140, n(BRICKS, 24), n(INGOT, 1)),
+                    st("hearth_bellows", 80, n(PLATE, 2))),
+            // пресс 60 т: С-станина ≈ 5 т, кривошипный вал, маховик и привод ≈ 1 т (каталоги Bliss; оценки)
+            "crank_press_real", plan("crank_press_real", PcBlocks.CRANK_PRESS_REAL, 6.0,
+                    st("press_frame", 180, n(INGOT, 46), n(PLATE, 4)),
+                    st("press_drive", 100, n(INGOT, 8), n(PLATE, 2))),
+            // волочильный стан на одну волоку: станина 2 м и барабан 0,6 м (Bernhard; оценки)
+            "wire_mill_real", plan("wire_mill_real", PcBlocks.WIRE_MILL_REAL, 0.8,
+                    st("wire_bench", 80, n(INGOT, 4)),
+                    st("wire_drum", 80, n(INGOT, 4))),
+            // клети с валками ⌀0,35 м ≈ 6 т, шестерённая клеть и рольганги ≈ 2 т (Roberts; оценки)
+            "sheet_mill_real", plan("sheet_mill_real", PcBlocks.SHEET_MILL_REAL, 8.0,
+                    st("sheet_stand", 200, n(INGOT, 56), n(PLATE, 4)),
+                    st("sheet_tables", 100, n(INGOT, 10), n(PLATE, 10))),
+            // быстроходный пазовырубной пресс с делительным столом ≈ 3 т (оценки)
+            "notching_press_real", plan("notching_press_real", PcBlocks.NOTCHING_PRESS_REAL, 3.0,
+                    st("notch_frame", 140, n(INGOT, 24), n(PLATE, 2)),
+                    st("notch_index", 80, n(INGOT, 4), n(PLATE, 1))),
+            // станина 2 м с бабкой, планшайбой и катушечной стойкой ≈ 1,2 т (оценки)
+            "winding_machine_real", plan("winding_machine_real", PcBlocks.WINDING_MACHINE_REAL, 1.2,
+                    st("winding_bed", 100, n(INGOT, 10)),
+                    st("winding_spool", 60, n(INGOT, 2), n(WIRE, 4))),
+            // кирпичная камера 1,6 × 1,2 м с топкой, дверью и железной трубой 4 м (оценки)
+            "heating_furnace_real", plan("heating_furnace_real", PcBlocks.HEATING_FURNACE_REAL, 1.0,
+                    st("heating_chamber", 160, n(BRICKS, 30), n(CONCRETE, 2)),
+                    st("heating_iron", 100, n(INGOT, 6), n(PLATE, 6))),
+            // муфельная печь и закалочный бак (оценки)
+            "hardening_furnace_real", plan("hardening_furnace_real", PcBlocks.HARDENING_FURNACE_REAL, 0.8,
+                    st("hardening_muffle", 120, n(BRICKS, 18), n(INGOT, 3)),
+                    st("quench_tank", 60, n(PLATE, 6), n(INGOT, 1))));
+
     public static Plan get(String id) {
         Plan p = PLANS.get(id);
         if (p == null) p = I0_PLANS.get(id);
@@ -380,11 +423,13 @@ public final class SitePlans {
         if (p == null) p = I1_STEEL_PLANS.get(id);
         if (p == null) p = FOUNDRY_PLANS.get(id);
         if (p == null) p = I0_SHOP_PLANS.get(id);
-        return p != null ? p : STEAM_MINE_PLANS.get(id);
+        if (p == null) p = STEAM_MINE_PLANS.get(id);
+        return p != null ? p : SMITHY_PLANS.get(id);
     }
 
     public static Iterable<Plan> all() {
-        return java.util.stream.Stream.of(PLANS, I0_PLANS, IRONMAKING_PLANS, POWER_PLANS, MINING_COKE_PLANS, I1_STEEL_PLANS, FOUNDRY_PLANS, I0_SHOP_PLANS, STEAM_MINE_PLANS, CARBON_PLANS)
+        return java.util.stream.Stream.of(PLANS, I0_PLANS, IRONMAKING_PLANS, POWER_PLANS, MINING_COKE_PLANS, I1_STEEL_PLANS, FOUNDRY_PLANS, I0_SHOP_PLANS,
+                        STEAM_MINE_PLANS, CARBON_PLANS, SMITHY_PLANS)
                 .flatMap(m -> m.values().stream()).toList();
     }
 }

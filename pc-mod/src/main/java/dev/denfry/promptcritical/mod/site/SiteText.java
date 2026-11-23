@@ -172,6 +172,36 @@ public final class SiteText {
         stage("aerator", "bridge, standpipe, impeller, motor and froth scraper", "мост, стояк, импеллер, двигатель и пеногон");
         drawing("electrode_boiler_real", "6.3 kV Electrode Boiler", "электродного котла 6,3 кВ");
         stage("hv_terminals", "HV bushings, leads, cable box and control cabinet", "вводы высокого напряжения, шины, кабельная коробка и шкаф управления");
+        drawing("power_hammer_real", "Pneumatic Power Hammer", "пневматического молота");
+        stage("hammer_frame", "bed, column, cylinders and valve chest", "станина, колонна, цилиндры и золотниковая коробка");
+        stage("hammer_anvil", "foundation and anvil block", "фундамент и шабот");
+        drawing("bloomery_real", "Clay Bloomery", "сыродутного горна");
+        stage("bloomery_shaft", "stone footing and clay shaft", "каменное основание и глиняная шахта");
+        stage("bloomery_bellows", "bellows, rocking beam and tuyere", "мехи, коромысло и фурма");
+        drawing("forge_hearth_real", "Smith's Forge Hearth", "кузнечного горна");
+        stage("hearth_chimney", "brick hearth, firepot and chimney", "кирпичный горн, горновая коробка и труба");
+        stage("hearth_bellows", "hood and the great bellows in their frame", "колпак и большие мехи в раме");
+        drawing("crank_press_real", "Inclinable Crank Press", "открытого кривошипного пресса");
+        stage("press_frame", "C-frame, bed and ram gibs", "С-образная станина, стол и направляющие ползуна");
+        stage("press_drive", "crankshaft, flywheel and belt drive", "кривошипный вал, маховик и ремённый привод");
+        drawing("wire_mill_real", "Wire Drawing Block", "волочильного барабана");
+        stage("wire_bench", "bench, swift and die box", "верстак, вертушка и волочильная коробка");
+        stage("wire_drum", "capstan drum and bevel gear", "барабан и коническая передача");
+        drawing("sheet_mill_real", "Two-High Sheet Mill", "двухвалкового листового стана");
+        stage("sheet_stand", "housings, rolls and screw-downs", "станины, валки и нажимные винты");
+        stage("sheet_tables", "pinion box, spindles and tables", "шестерённая клеть, шпиндели и рольганги");
+        drawing("notching_press_real", "Lamination Notching Press", "пазовырубного пресса");
+        stage("notch_frame", "gap frame, ram and flywheel", "открытая станина, ползун и маховик");
+        stage("notch_index", "rotary index table and drive", "делительный стол и его привод");
+        drawing("winding_machine_real", "Stator Winding Lathe", "намоточного станка для статоров");
+        stage("winding_bed", "bed, headstock and faceplate", "станина, передняя бабка и планшайба");
+        stage("winding_spool", "spool stand and tensioner", "катушечная стойка и натяжитель");
+        drawing("heating_furnace_real", "Coal-Fired Reheating Furnace", "нагревательной печи на угле");
+        stage("heating_chamber", "base, firebox and brick chamber", "основание, топка и кирпичная камера");
+        stage("heating_iron", "buckstays, door, lever and stack", "каркас, дверь, рычаг и труба");
+        drawing("hardening_furnace_real", "Muffle Hardening Furnace", "муфельной закалочной печи");
+        stage("hardening_muffle", "brick muffle, door and stack", "кирпичный муфель, дверь и труба");
+        stage("quench_tank", "quench tank with its basket", "закалочный бак с корзиной");
     }
 
     private SiteText() {}

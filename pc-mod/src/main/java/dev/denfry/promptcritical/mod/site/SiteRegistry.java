@@ -83,6 +83,17 @@ public final class SiteRegistry {
     public static final DeferredItem<DesignDrawingItem> MAGNETIC_SEPARATOR_REAL_DRAWING = drawing("magnetic_separator_real");
     public static final DeferredItem<DesignDrawingItem> FLOTATION_CELL_REAL_DRAWING = drawing("flotation_cell_real");
     public static final DeferredItem<DesignDrawingItem> ELECTRODE_BOILER_REAL_DRAWING = drawing("electrode_boiler_real");
+    // кузница и машиностроение реального масштаба (18 §18.6–18.7)
+    public static final DeferredItem<DesignDrawingItem> POWER_HAMMER_REAL_DRAWING = drawing("power_hammer_real");
+    public static final DeferredItem<DesignDrawingItem> BLOOMERY_REAL_DRAWING = drawing("bloomery_real");
+    public static final DeferredItem<DesignDrawingItem> FORGE_HEARTH_REAL_DRAWING = drawing("forge_hearth_real");
+    public static final DeferredItem<DesignDrawingItem> CRANK_PRESS_REAL_DRAWING = drawing("crank_press_real");
+    public static final DeferredItem<DesignDrawingItem> WIRE_MILL_REAL_DRAWING = drawing("wire_mill_real");
+    public static final DeferredItem<DesignDrawingItem> SHEET_MILL_REAL_DRAWING = drawing("sheet_mill_real");
+    public static final DeferredItem<DesignDrawingItem> NOTCHING_PRESS_REAL_DRAWING = drawing("notching_press_real");
+    public static final DeferredItem<DesignDrawingItem> WINDING_MACHINE_REAL_DRAWING = drawing("winding_machine_real");
+    public static final DeferredItem<DesignDrawingItem> HEATING_FURNACE_REAL_DRAWING = drawing("heating_furnace_real");
+    public static final DeferredItem<DesignDrawingItem> HARDENING_FURNACE_REAL_DRAWING = drawing("hardening_furnace_real");
 
     private SiteRegistry() {}
 
