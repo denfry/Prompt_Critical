@@ -391,6 +391,9 @@ public final class PcBlockStateProvider extends BlockStateProvider {
                  "bn600_reactor", "am1_reactor", "lancashire_boiler", "headframe_steel", "mill_engine", "winding_engine", "guibal_fan",
                  "cupola_furnace_real", "mine_drainage_pump_geared", "lancashire_stoker", "crucible_furnace_real",
                  "hot_blast_stove_real", "blast_blower_engine",
+                 "sinter_strand_real", "dust_catcher_real", "gas_exhauster_real", "byproduct_plant_cooler_real",
+                 "byproduct_plant_precipitator_real", "byproduct_plant_saturator_real", "byproduct_plant_scrubber_real",
+                 "cast_house_mud_gun_real", "cast_house_drill_real", "ladle_real", "slag_granulator_real",
                  "deaerator_real", "ion_exchange_column_real", "shaft_generator_real", "electric_motor_mv_real",
                  "longwall_shearer_real", "coal_jig_real", "quench_tower_real", "powered_roof_support_real" -> "whole_empty";
             case "bof_vessel_real", "reheating_furnace_real" -> "whole_empty";

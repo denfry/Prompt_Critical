@@ -162,20 +162,69 @@ public final class SitePlans {
                     st("flue", 80, n(BRICKS, 1), n(INGOT, 2))));
 
     /** Доменный цех реального масштаба (08 §8.5). */
-    private static final Map<String, Plan> IRONMAKING_PLANS = Map.of(
+    private static final Map<String, Plan> IRONMAKING_PLANS = Map.ofEntries(
             // каупер ⌀4,5 × 14 м: клёпаная обечайка с куполом ≈ 25 т листа, клапаны, площадка и лестница ≈ 8 т (оценки,
             // docs/research/hot_blast_stove-dimensions.md); насадка 60 т шамота — как в симуляции
-            "hot_blast_stove_real", plan("hot_blast_stove_real", PcBlocks.HOT_BLAST_STOVE_REAL, 33,
+            Map.entry("hot_blast_stove_real", plan("hot_blast_stove_real", PcBlocks.HOT_BLAST_STOVE_REAL, 33,
                     st("foundation", 120, n(CONCRETE, 6)),
                     st("stove_shell", 320, n(PLATE, 250)),
                     st("checker", 240, n(BRICKS, 32)),
-                    st("stove_valves", 200, n(INGOT, 60), n(PIPE, 40))),
+                    st("stove_valves", 200, n(INGOT, 60), n(PIPE, 40)))),
             // горизонтальная воздуходувная машина: станина, воздушный цилиндр ⌀1,2 м и параллели ≈ 22 т литья, коленвал
             // с маховиком ≈ 8 т (оценки, docs/research/blast_blower-dimensions.md), бетонный фундамент с ямой маховика
-            "blast_blower_engine", plan("blast_blower_engine", PcBlocks.BLAST_BLOWER_ENGINE, 30,
+            Map.entry("blast_blower_engine", plan("blast_blower_engine", PcBlocks.BLAST_BLOWER_ENGINE, 30,
                     st("foundation", 100, n(CONCRETE, 6)),
                     st("blowing_tub", 280, n(INGOT, 200), n(PLATE, 20)),
-                    st("blower_flywheel", 200, n(INGOT, 80))));
+                    st("blower_flywheel", 200, n(INGOT, 80)))),
+            // лента Дуайта — Ллойда 1,07 × 8 м: паллеты ≈ 25 т литья, рама, вакуум-камеры и коллектор ≈ 20 т, бункер, горн
+            // и привод ≈ 10 т (оценки); горн зажигания выложен кирпичом
+            Map.entry("sinter_strand_real", plan("sinter_strand_real", PcBlocks.SINTER_STRAND_REAL, 55,
+                    st("foundation", 120, n(CONCRETE, 8)),
+                    st("strand_frame", 280, n(PLATE, 150), n(BEAM, 40)),
+                    st("pallets", 280, n(INGOT, 250), n(PIPE, 20)),
+                    st("ignition_hood", 200, n(PLATE, 60), n(BRICKS, 3)))),
+            // клёпаный корпус ⌀2,9 × 5 м с конусом и куполом ≈ 9 т листа, колонны, газоотвод и площадка ≈ 6 т (оценки)
+            Map.entry("dust_catcher_real", plan("dust_catcher_real", PcBlocks.DUST_CATCHER_REAL, 15,
+                    st("foundation", 80, n(CONCRETE, 2)),
+                    st("catcher_shell", 240, n(PLATE, 90), n(BEAM, 30)),
+                    st("catcher_mains", 160, n(PIPE, 40), n(PLATE, 10))),
+            // эксгаустер: улитка ⌀1,6 м, ротор и подшипники ≈ 6 т литья, редуктор, муфта и байпас ≈ 2 т (оценки)
+            Map.entry("gas_exhauster_real", plan("gas_exhauster_real", PcBlocks.GAS_EXHAUSTER_REAL, 8,
+                    st("foundation", 60, n(CONCRETE, 3)),
+                    st("exhauster", 200, n(INGOT, 50), n(PLATE, 10)),
+                    st("exhauster_drive", 120, n(INGOT, 15), n(PIPE, 10)))),
+            // аппараты улавливания: стальные корпуса с трубными пучками, тарелками или насадкой (оценки по габаритам)
+            Map.entry("byproduct_plant_cooler_real", plan("byproduct_plant_cooler_real", PcBlocks.BYPRODUCT_PLANT_COOLER_REAL, 12,
+                    st("foundation", 60, n(CONCRETE, 2)),
+                    st("byproduct_vessel", 200, n(PLATE, 70), n(PIPE, 60)),
+                    st("byproduct_piping", 120, n(PIPE, 20), n(INGOT, 10)))),
+            Map.entry("byproduct_plant_precipitator_real", plan("byproduct_plant_precipitator_real", PcBlocks.BYPRODUCT_PLANT_PRECIPITATOR_REAL, 8,
+                    st("foundation", 60, n(CONCRETE, 2)),
+                    st("byproduct_vessel", 200, n(PLATE, 55), n(INGOT, 15)),
+                    st("byproduct_piping", 120, n(PIPE, 20)))),
+            Map.entry("byproduct_plant_saturator_real", plan("byproduct_plant_saturator_real", PcBlocks.BYPRODUCT_PLANT_SATURATOR_REAL, 6,
+                    st("foundation", 60, n(CONCRETE, 2)),
+                    st("byproduct_vessel", 160, n(PLATE, 40), n(INGOT, 10)),
+                    st("byproduct_piping", 100, n(PIPE, 20)))),
+            Map.entry("byproduct_plant_scrubber_real", plan("byproduct_plant_scrubber_real", PcBlocks.BYPRODUCT_PLANT_SCRUBBER_REAL, 18,
+                    st("foundation", 80, n(CONCRETE, 3)),
+                    st("byproduct_vessel", 280, n(PLATE, 130), n(INGOT, 20)),
+                    st("byproduct_piping", 160, n(PIPE, 60)))),
+            // поворотная колонна на тумбе ≈ 2 т, пушка с двигателем или бурмашина ≈ 2–3 т (оценки)
+            Map.entry("cast_house_mud_gun_real", plan("cast_house_mud_gun_real", PcBlocks.CAST_HOUSE_MUD_GUN_REAL, 5,
+                    st("cast_house_column", 120, n(INGOT, 20), n(CONCRETE, 1)),
+                    st("mud_gun", 160, n(INGOT, 25), n(PLATE, 5), n(PIPE, 4)))),
+            Map.entry("cast_house_drill_real", plan("cast_house_drill_real", PcBlocks.CAST_HOUSE_DRILL_REAL, 4,
+                    st("cast_house_column", 120, n(INGOT, 20), n(CONCRETE, 1)),
+                    st("taphole_drill", 140, n(INGOT, 15), n(PLATE, 3), n(PIPE, 6)))),
+            // ковш на 20 т: клёпаный кожух с цапфами ≈ 8 т, стойка и червячный механизм ≈ 10 т, футеровка (оценки)
+            Map.entry("ladle_real", plan("ladle_real", PcBlocks.LADLE_REAL, 18,
+                    st("ladle_stand", 200, n(INGOT, 100), n(CONCRETE, 2)),
+                    st("ladle_shell", 240, n(PLATE, 80), n(BRICKS, 3)))),
+            // бетонный бак и струйная коробка, ковшовый элеватор с жёлобом ≈ 10 т металла (оценки)
+            Map.entry("slag_granulator_real", plan("slag_granulator_real", PcBlocks.SLAG_GRANULATOR_REAL, 10,
+                    st("granulator_tank", 200, n(CONCRETE, 10), n(PLATE, 30), n(PIPE, 20)),
+                    st("granulator_elevator", 200, n(INGOT, 40), n(BEAM, 20)))));
 
     /** Энергетика и водоподготовка реального масштаба (07 §7.3.1, §7.6.3, §7.9.6, 08 §8.12); массы — оценки. */
     private static final Map<String, Plan> POWER_PLANS = Map.of(

@@ -202,14 +202,15 @@ public final class MachineProcesses {
         // коксохим (08 §8.4)
         p.add(new Process("coke_oven", Plant.COKE,
                 on(PcBlocks.COKE_OVEN, PcBlocks.COKE_BATTERY_WALL, PcBlocks.COKE_PUSHER_RAM, PcBlocks.GAS_COLLECTOR_MAIN,
-                        PcBlocks.GAS_EXHAUSTER),
+                        PcBlocks.GAS_EXHAUSTER, PcBlocks.GAS_EXHAUSTER_REAL),
                 of(tag(IronworksTags.COKING_COAL, 0), tag(IronworksTags.FIREBOX_FUEL, 0)),
                 of(item(0, PcItems.COKE), item(0, PcItems.COKE_BREEZE), fluid(0, "coke_oven_gas"))));
         p.add(new Process("pitch_coke", Plant.COKE, on(PcBlocks.COKE_OVEN),
                 of(item(0, PcItems.COAL_TAR_PITCH)), of(item(0, PcItems.PITCH_COKE), item(0, PcItems.COKE_BREEZE))));
         p.add(new Process("quench_tower", Plant.COKE, on(PcBlocks.QUENCH_TOWER, PcBlocks.QUENCH_TOWER_REAL),
                 of(item(PcItems.COKE), water(0)), of(item(PcItems.COKE))));
-        p.add(new Process("byproduct_plant", Plant.COKE, on(PcBlocks.BYPRODUCT_PLANT),
+        p.add(new Process("byproduct_plant", Plant.COKE, on(PcBlocks.BYPRODUCT_PLANT, PcBlocks.BYPRODUCT_PLANT_COOLER_REAL, PcBlocks.BYPRODUCT_PLANT_PRECIPITATOR_REAL,
+                PcBlocks.BYPRODUCT_PLANT_SATURATOR_REAL, PcBlocks.BYPRODUCT_PLANT_SCRUBBER_REAL),
                 of(fluid(0, "coke_oven_gas"), fluidTag(SULFURIC_ACID, 0), fluidTag(WASH_OIL, 0)),
                 of(fluid(0, "coal_tar"), item(0, PcItems.AMMONIUM_SULFATE), fluid(0, "crude_benzol"))));
         // электроды (08 §8.4.5)
@@ -220,7 +221,7 @@ public final class MachineProcesses {
         // аглофабрика и доменный цех (08 §8.5)
         p.add(new Process("magnetic_separator", Plant.IRON, on(PcBlocks.MAGNETIC_SEPARATOR, PcBlocks.MAGNETIC_SEPARATOR_REAL),
                 of(item(4, PcItems.RAW_MAGNETITE)), of(item(0, PcItems.IRON_ORE_CONCENTRATE), item(0, PcItems.STONE_DUST))));
-        p.add(new Process("sinter_strand", Plant.IRON, on(PcBlocks.SINTER_STRAND),
+        p.add(new Process("sinter_strand", Plant.IRON, on(PcBlocks.SINTER_STRAND, PcBlocks.SINTER_STRAND_REAL),
                 of(tag(IronworksTags.SINTER_ORE, 10), item(0, PcItems.COKE_BREEZE), tag(IronworksTags.FLUX, 0), fuelGas()),
                 of(item(0, PcItems.SINTER))));
         p.add(new Process("blast_furnace", Plant.IRON,
@@ -228,7 +229,8 @@ public final class MachineProcesses {
                         PcBlocks.BLAST_FURNACE_TUYERE, PcBlocks.BLAST_FURNACE_TAPHOLE, PcBlocks.HOT_BLAST_STOVE,
                         PcBlocks.BLAST_BLOWER, PcBlocks.DUST_CATCHER, PcBlocks.CAST_HOUSE_MACHINE, PcBlocks.IRON_RUNNER,
                         PcBlocks.LADLE, PcBlocks.BLAST_FURNACE_CONTROLLER_REAL, PcBlocks.BLAST_FURNACE_TAPHOLE_REAL,
-                        PcBlocks.HOT_BLAST_STOVE_REAL, PcBlocks.BLAST_BLOWER_ENGINE),
+                        PcBlocks.HOT_BLAST_STOVE_REAL, PcBlocks.BLAST_BLOWER_ENGINE, PcBlocks.DUST_CATCHER_REAL,
+                        PcBlocks.CAST_HOUSE_MUD_GUN_REAL, PcBlocks.CAST_HOUSE_DRILL_REAL, PcBlocks.LADLE_REAL, PcBlocks.SLAG_GRANULATOR_REAL),
                 of(tag(IronworksTags.FURNACE_ORE, 0), item(0, PcItems.COKE), tag(IronworksTags.FLUX, 0),
                         item(2, PcItems.TAPHOLE_CLAY)),
                 of(item(0, PcItems.PIG_IRON), fluid(0, "blast_furnace_gas"))));

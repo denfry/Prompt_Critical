@@ -23,7 +23,7 @@ import org.jetbrains.annotations.Nullable;
  * бур ({@code drill}: вскрывает лётку) или пушка ({@code mud_gun}: забивает лётку, {@value #CLAY_PER_PLUG} ед.
  * {@code taphole_clay}). Срабатывает от ПКМ или фронта сигнала красного камня.
  */
-public final class CastHouseMachineBlockEntity extends IronworksBlockEntity {
+public class CastHouseMachineBlockEntity extends IronworksBlockEntity {
     /** Привод пушки или бурмашины лётки; без питания машина не срабатывает, Вт (розетка или силовой щит рядом). */
     public static final double DRIVE_W = 30e3;
     public static final int REACH = 4, CLAY_PER_PLUG = 2;
@@ -32,7 +32,12 @@ public final class CastHouseMachineBlockEntity extends IronworksBlockEntity {
     private boolean powered;
 
     public CastHouseMachineBlockEntity(BlockPos pos, BlockState state) {
-        super(IronworksBlockEntities.CAST_HOUSE_MACHINE.get(), pos, state);
+        this(IronworksBlockEntities.CAST_HOUSE_MACHINE.get(), pos, state);
+    }
+
+    /** Для машины реального масштаба на той же логике (свой тип BE). */
+    protected CastHouseMachineBlockEntity(net.minecraft.world.level.block.entity.BlockEntityType<?> type, BlockPos pos, BlockState state) {
+        super(type, pos, state);
     }
 
     public PcProperties.CastHouseKind kind() {

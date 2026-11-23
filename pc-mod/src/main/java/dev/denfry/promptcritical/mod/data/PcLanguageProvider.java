@@ -171,6 +171,17 @@ public final class PcLanguageProvider extends LanguageProvider {
         b("blast_furnace_controller_real", "Blast Furnace Instrument Cabinet", "Приборный шкаф домны");
         b("hot_blast_stove_real", "Cowper Hot Blast Stove", "Воздухонагреватель Каупера");
         b("blast_blower_engine", "Horizontal Blowing Engine", "Горизонтальная воздуходувная машина");
+        b("sinter_strand_real", "Dwight-Lloyd Sinter Strand", "Агломерационная машина Дуайта — Ллойда");
+        b("dust_catcher_real", "Blast Furnace Dust Catcher", "Пылеуловитель доменного газа");
+        b("gas_exhauster_real", "Centrifugal Gas Exhauster", "Центробежный эксгаустер");
+        b("byproduct_plant_cooler_real", "Primary Gas Cooler", "Первичный газовый холодильник");
+        b("byproduct_plant_precipitator_real", "Electrostatic Tar Precipitator", "Электрофильтр смолы");
+        b("byproduct_plant_saturator_real", "Ammonium Sulfate Saturator", "Сатуратор сульфата аммония");
+        b("byproduct_plant_scrubber_real", "Benzol Scrubber", "Бензольный скруббер");
+        b("cast_house_mud_gun_real", "Taphole Clay Gun", "Пушка для забивки лётки");
+        b("cast_house_drill_real", "Taphole Drill", "Бурмашина лётки");
+        b("ladle_real", "Hot-Metal Ladle in Stand", "Чугуновозный ковш в стойке");
+        b("slag_granulator_real", "Slag Granulation Plant", "Установка грануляции шлака");
         b("dust_catcher", "Dust Catcher", "Пылеуловитель");
         b("cast_house_machine", "Cast House Machine", "Машина литейного двора");
         b("iron_runner", "Iron Runner", "Чугунный жёлоб");

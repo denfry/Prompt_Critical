@@ -142,7 +142,7 @@ public record CokeBatteryShape(Direction.Axis axis, int y0, int wall0, int l0, i
                     continue;
                 }
                 BlockPos c = controller(level, n, st);
-                if (c != null && !devices.contains(c) && (level.getBlockEntity(c) instanceof GasExhausterBlockEntity
+                if (c != null && !devices.contains(c) && (level.getBlockEntity(c) instanceof GasExhauster
                         || level.getBlockEntity(c) instanceof ByproductPlantBlockEntity)) devices.add(c);
             }
         }
