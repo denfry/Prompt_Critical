@@ -49,6 +49,26 @@ public final class ManufacturingText {
                 "В волоку идут только медь, кричное железо и углеродистая сталь — холодным круглым прутком до 12 мм");
         msg("wire.line", "%s · Ø%s mm · %s m · work hardening %s", "%s · Ø%s мм · %s м · наклёп %s");
         msg("wire.metal.copper", "copper", "медь");
+        msg("wire.insulation", "Insulation: %s, class %s", "Изоляция: %s, класс %s");
+        msg("wire.insulation.paper", "paper", "бумага");
+        msg("wire.insulation.enamel", "phenolic enamel", "фенольная эмаль");
+        msg("wire.insulation.glass_enamel", "glass fibre and enamel", "стекловолокно и эмаль");
+        msg("sheet.line", "%s mm · Si %s %% · work hardening %s · %s", "%s мм · Si %s %% · наклёп %s · %s");
+        msg("sheet.loss", "Core loss %s W/kg at 1.5 T, 50 Hz", "Потери %s Вт/кг при 1,5 Тл, 50 Гц");
+        msg("coating.none", "bare", "без покрытия");
+        msg("coating.paper", "paper interleaf", "бумажная прокладка");
+        msg("coating.phenolic", "phenolic varnish", "фенольный лак");
+        msg("lamination.line", "%s laminations Ø%s mm · sheet %s mm · burr %s µm", "%s пластин Ø%s мм · лист %s мм · заусенец %s мкм");
+        msg("lamination.edges_raw", "Cut edges work hardened", "Кромки нагартованы вырубкой");
+        msg("lamination.edges_relieved", "Annealed after punching", "Отожжены после вырубки");
+        msg("lamination.coated_after", "Varnished after punching", "Лакированы после вырубки");
+        msg("core.line", "%s laminations · %s mm · %s kg · stacking factor %s", "%s пластин · %s мм · %s кг · заполнение %s");
+        msg("core.loss", "Core loss %s W/kg · shorted laminations %s %%", "Потери %s Вт/кг · замкнуто пластин %s %%");
+        msg("stator.line", "Insulation class %s · slot fill %s %% · phase %s Ω at 75 °C",
+                "Класс изоляции %s · заполнение паза %s %% · фаза %s Ом при 75 °C");
+        msg("stator.efficiency", "5.5 kW motor: core %s W, copper %s W, efficiency %s %%",
+                "Двигатель 5,5 кВт: сталь %s Вт, медь %s Вт, КПД %s %%");
+        msg("stator.insulation", "Insulation resistance when new: %s MΩ", "Сопротивление изоляции новой обмотки: %s МОм");
         msg("wire.metal.wrought_iron", "wrought iron", "кричное железо");
         msg("wire.metal.mild_steel", "mild steel", "мягкая сталь");
         msg("wire.metal.medium_carbon", "medium carbon steel", "среднеуглеродистая сталь");
@@ -140,6 +160,59 @@ public final class ManufacturingText {
         out.add(msg("wire.line", msg("wire.metal." + w.metal().name().toLowerCase(Locale.ROOT)),
                 String.format(Locale.ROOT, "%.2f", w.diameterM() * 1000), String.format(Locale.ROOT, "%.2f", w.lengthM()), hardening)
                 .withStyle(ChatFormatting.GRAY));
+    }
+
+    /** Изоляция обмоточного провода. */
+    public static void magnetWireTooltip(WireData d, List<Component> out) {
+        var ins = d.wireInsulation();
+        if (ins == dev.denfry.promptcritical.sim.manufacturing.WireInsulation.NONE) return;
+        out.add(msg("wire.insulation", msg("wire.insulation." + ins.name().toLowerCase(Locale.ROOT)), ins.insulationClass.name())
+                .withStyle(ChatFormatting.GRAY));
+    }
+
+    private static String f(String fmt, double v) {
+        return String.format(Locale.ROOT, fmt, v);
+    }
+
+    private static Component coating(dev.denfry.promptcritical.sim.manufacturing.SheetCoating c) {
+        return msg("coating." + c.name().toLowerCase(Locale.ROOT));
+    }
+
+    public static void sheetTooltip(ElectricalData.Sheet d, List<Component> out) {
+        var s = d.sheet();
+        out.add(msg("sheet.line", f("%.2f", s.thicknessM() * 1000), f("%.1f", s.siFrac() * 100),
+                Math.round(100 * Math.min(1, s.strain())) + " %", coating(s.coating())).withStyle(ChatFormatting.GRAY));
+        out.add(msg("sheet.loss", f("%.1f", s.lossWPerKg(1.5, 50))).withStyle(ChatFormatting.GRAY));
+    }
+
+    public static void laminationTooltip(ElectricalData.Bundle d, List<Component> out) {
+        var l = d.lamination();
+        out.add(msg("lamination.line", ElectricalData.LAMINATIONS_PER_BUNDLE, Math.round(l.shape().outerM() * 1000),
+                f("%.2f", l.sheet().thicknessM() * 1000), Math.round(l.burrM() * 1e6)).withStyle(ChatFormatting.GRAY));
+        out.add(msg(l.edgesRelieved() ? "lamination.edges_relieved" : "lamination.edges_raw").withStyle(ChatFormatting.GRAY));
+        out.add((l.coatedAfterPunch() ? msg("lamination.coated_after") : coating(l.sheet().coating())).copy()
+                .withStyle(ChatFormatting.GRAY));
+    }
+
+    private static void coreLines(dev.denfry.promptcritical.sim.manufacturing.CoreStack c, List<Component> out) {
+        out.add(msg("core.line", c.count(), Math.round(c.lengthM() * 1000), f("%.1f", c.massKg()), f("%.3f", c.stackingFactor()))
+                .withStyle(ChatFormatting.GRAY));
+        out.add(msg("core.loss", f("%.1f", c.lossWPerKg(1.5, 50)), Math.round(100 * c.shortedFraction()))
+                .withStyle(ChatFormatting.GRAY));
+    }
+
+    public static void coreTooltip(ElectricalData.Core d, List<Component> out) {
+        coreLines(d.stack(), out);
+    }
+
+    public static void statorTooltip(ElectricalData.Wound d, List<Component> out) {
+        var st = d.stator();
+        out.add(msg("stator.line", st.insulationClass().name(), Math.round(100 * st.fillFactor()), f("%.3f", st.phaseResistanceOhm()))
+                .withStyle(ChatFormatting.GRAY));
+        out.add(msg("stator.efficiency", Math.round(st.coreLossW()), Math.round(st.copperLossW()), f("%.1f", 100 * st.efficiency()))
+                .withStyle(ChatFormatting.GRAY));
+        out.add(msg("stator.insulation", Math.round(st.insulationStartMOhm())).withStyle(ChatFormatting.GRAY));
+        coreLines(st.core(), out);
     }
 
     public static void workpieceTooltip(WorkpieceData d, long now, List<Component> out) {

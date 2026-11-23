@@ -108,6 +108,7 @@ public final class SteelworksText {
         family(SteelFamily.CHROMIUM, "chromium steel 40Kh", "хромистая сталь 40Х");
         family(SteelFamily.BEARING, "bearing steel ShKh15", "подшипниковая сталь ШХ15");
         family(SteelFamily.WROUGHT_IRON, "wrought iron", "кричное железо");
+        family(SteelFamily.ELECTRICAL, "electrical steel 2212", "электротехническая сталь 2212");
         state(HeatTreatState.AS_ROLLED, "as rolled", "горячекатаная");
         state(HeatTreatState.NORMALIZED, "normalized", "нормализованная");
         state(HeatTreatState.QUENCHED, "quenched", "закалённая");

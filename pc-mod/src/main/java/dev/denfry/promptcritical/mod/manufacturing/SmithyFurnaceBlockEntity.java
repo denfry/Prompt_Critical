@@ -5,6 +5,10 @@ import dev.denfry.promptcritical.mod.foundry.MachineInventory;
 import dev.denfry.promptcritical.mod.fx.MachineFx;
 import dev.denfry.promptcritical.mod.panel.PanelLayout;
 import dev.denfry.promptcritical.sim.manufacturing.Drawing;
+import dev.denfry.promptcritical.sim.manufacturing.ElectricalSheet;
+import dev.denfry.promptcritical.sim.manufacturing.Lamination;
+import dev.denfry.promptcritical.sim.manufacturing.SheetCoating;
+import dev.denfry.promptcritical.sim.manufacturing.WireInsulation;
 import dev.denfry.promptcritical.sim.manufacturing.ForgeEvent;
 import dev.denfry.promptcritical.sim.manufacturing.ForgeHeating;
 import dev.denfry.promptcritical.sim.manufacturing.Forging;
@@ -61,13 +65,18 @@ public final class SmithyFurnaceBlockEntity extends SmithyDevice {
     public static final double TEMPER_MAX_K = 923.15;
     /** Бак закалочной печи, мБ, и сколько в нём должно быть для закалки. */
     public static final int TANK_MB = 8000, QUENCH_MIN_MB = 1000;
-    private static final MachineInventory.Role[] ROLES = {MachineInventory.Role.INPUT, MachineInventory.Role.INPUT};
+    private static final MachineInventory.Role[] ROLES = {MachineInventory.Role.INPUT, MachineInventory.Role.INPUT,
+        MachineInventory.Role.INPUT};
+    /** Слот покрывного материала: бумага или фенольная смола (18 §18.6.8–18.6.9). */
+    public static final int COATING_SLOT = 2;
 
     private final boolean hardening;
     private Furnace furnace = Furnace.cold(WorkpieceData.AMBIENT_K);
     private double fuelJ;
     private double powerW;
     private int lastEvent = -1;
+    /** Выдержка садки выше температуры отжига и в окне запекания лака, с. */
+    private double soakS, bakeS;
     private final FluidTank tank = new FluidTank(TANK_MB, f -> f.getFluid().is(FluidTags.WATER) || f.getFluid().is(Smithy.QUENCH_OIL)) {
         @Override
         protected void onContentsChanged() {
@@ -76,7 +85,8 @@ public final class SmithyFurnaceBlockEntity extends SmithyDevice {
     };
 
     public SmithyFurnaceBlockEntity(BlockEntityType<?> type, BlockPos pos, BlockState state, boolean hardening) {
-        super(type, pos, state, ROLES, (slot, s) -> slot == 0 ? isFuel(s) : isCharge(s));
+        super(type, pos, state, ROLES, (slot, s) -> slot == 0 ? isFuel(s)
+                : slot == COATING_SLOT ? Electrical.isCoatingMaterial(s) : isCharge(s));
         this.hardening = hardening;
     }
 
@@ -93,7 +103,7 @@ public final class SmithyFurnaceBlockEntity extends SmithyDevice {
     }
 
     public static boolean isCharge(ItemStack s) {
-        return Smithy.forgeable(s) || s.has(ManufacturingComponents.WIRE.get());
+        return Smithy.forgeable(s) || s.has(ManufacturingComponents.WIRE.get()) || Electrical.isElectricalCharge(s);
     }
 
     public Furnace furnace() {
@@ -140,11 +150,19 @@ public final class SmithyFurnaceBlockEntity extends SmithyDevice {
 
     private void heatCharge(double seconds, long now) {
         ItemStack s = inv.getStackInSlot(1);
+        if (s.isEmpty()) {
+            soakS = 0;
+            bakeS = 0;
+            return;
+        }
+        if (Electrical.isElectricalCharge(s)) {
+            electricalCharge(s, seconds);
+            return;
+        }
         if (s.getCount() != 1) return;
         WireData wire = s.get(ManufacturingComponents.WIRE.get());
         if (wire != null) {
-            Wire annealed = Drawing.anneal(wire.wire(), furnace.tempK(), seconds);
-            if (annealed.strain() != wire.wire().strain()) inv.setStackInSlot(1, Smithy.wireStack(annealed));
+            wireCharge(wire, seconds);
             return;
         }
         Workpiece w = Smithy.read(s, now);
@@ -152,6 +170,61 @@ public final class SmithyFurnaceBlockEntity extends SmithyDevice {
         w = ForgeHeating.heat(w, furnace.tempK(), seconds);
         if (hardening && w.quenchHrc() > 0 && furnace.tempK() <= TEMPER_MAX_K) w = Tempering.temper(w, w.tempK(), seconds);
         inv.setStackInSlot(1, Smithy.stack(w, now));
+    }
+
+    /**
+     * Лист или пачка пластин (18 §18.6.8): выше {@link ElectricalSheet#COATING_BURN_K} покрытие выгорает, выдержка
+     * {@link ElectricalSheet#ANNEAL_S} выше {@link ElectricalSheet#ANNEAL_K} — отжиг (у пластин и наклёпа кромок),
+     * выдержка {@link ElectricalSheet#BAKE_S} в окне запекания с материалом на каждый предмет садки — покрытие.
+     */
+    private void electricalCharge(ItemStack s, double seconds) {
+        double t = furnace.tempK();
+        ElectricalSheet sheet = Electrical.sheet(s);
+        Lamination lam = Electrical.lamination(s);
+        int n = s.getCount();
+        if (t > ElectricalSheet.COATING_BURN_K) {
+            if (sheet != null && sheet.coating() != SheetCoating.NONE) inv.setStackInSlot(1, Electrical.sheetStack(sheet.coat(SheetCoating.NONE), n));
+            if (lam != null && lam.sheet().coating() != SheetCoating.NONE) inv.setStackInSlot(1, Electrical.bundleStack(lam.coat(SheetCoating.NONE), n));
+        }
+        soakS = t >= ElectricalSheet.ANNEAL_K ? soakS + seconds : 0;
+        if (soakS >= ElectricalSheet.ANNEAL_S) {
+            if (sheet != null && sheet.strain() > 0) inv.setStackInSlot(1, Electrical.sheetStack(sheet.anneal(), n));
+            if (lam != null && (!lam.edgesRelieved() || lam.sheet().strain() > 0)) inv.setStackInSlot(1, Electrical.bundleStack(lam.anneal(), n));
+        }
+        ItemStack mat = inv.getStackInSlot(COATING_SLOT);
+        SheetCoating c = Electrical.sheetCoating(mat);
+        boolean window = t >= ElectricalSheet.BAKE_MIN_K && t <= ElectricalSheet.BAKE_MAX_K;
+        bakeS = window && c != null && mat.getCount() >= n ? bakeS + seconds : 0;
+        if (bakeS >= ElectricalSheet.BAKE_S) {
+            bakeS = 0;
+            if (sheet != null && sheet.coating() != c) {
+                inv.setStackInSlot(1, Electrical.sheetStack(sheet.coat(c), n));
+                mat.shrink(n);
+            } else if (lam != null && !(lam.coatedAfterPunch() && lam.sheet().coating() == c)) {
+                inv.setStackInSlot(1, Electrical.bundleStack(lam.coat(c), n));
+                mat.shrink(n);
+            }
+        }
+    }
+
+    /** Проволока (18 §18.6.7, §18.6.9): отжиг наклёпа, выгорание изоляции, эмалирование или обмотка бумагой. */
+    private void wireCharge(WireData wire, double seconds) {
+        double t = furnace.tempK();
+        Wire w = wire.wire();
+        WireInsulation ins = wire.wireInsulation();
+        if (t > ElectricalSheet.COATING_BURN_K && ins != WireInsulation.NONE) ins = WireInsulation.NONE;
+        Wire annealed = Drawing.anneal(w, t, seconds);
+        ItemStack mat = inv.getStackInSlot(COATING_SLOT);
+        WireInsulation coat = Electrical.wireInsulation(mat);
+        boolean window = t >= ElectricalSheet.BAKE_MIN_K && t <= ElectricalSheet.BAKE_MAX_K;
+        bakeS = window && coat != null && ins == WireInsulation.NONE ? bakeS + seconds : 0;
+        if (bakeS >= ElectricalSheet.BAKE_S) {
+            bakeS = 0;
+            ins = coat;
+            mat.shrink(1);
+        }
+        if (annealed.strain() != w.strain() || ins != wire.wireInsulation())
+            inv.setStackInSlot(1, Electrical.magnetWireStack(annealed, ins));
     }
 
     /** Закалить заготовку из камеры в баке печи: вода или масло по жидкости в баке. */
@@ -207,7 +280,7 @@ public final class SmithyFurnaceBlockEntity extends SmithyDevice {
 
     @Override
     public boolean accepts(ItemStack stack) {
-        return isFuel(stack) || isCharge(stack) || hardening && FluidUtil.getFluidHandler(stack).isPresent();
+        return isFuel(stack) || isCharge(stack) || Electrical.isCoatingMaterial(stack) || hardening && FluidUtil.getFluidHandler(stack).isPresent();
     }
 
     @Override
@@ -249,6 +322,8 @@ public final class SmithyFurnaceBlockEntity extends SmithyDevice {
         tag.putDouble("setpoint", furnace.setpointK());
         tag.putDouble("fuel", fuelJ);
         tag.putInt("last", lastEvent);
+        tag.putDouble("soak", soakS);
+        tag.putDouble("bake", bakeS);
         tag.put("tank", tank.writeToNBT(registries, new CompoundTag()));
     }
 
@@ -260,6 +335,8 @@ public final class SmithyFurnaceBlockEntity extends SmithyDevice {
                 tag.contains("setpoint") ? tag.getDouble("setpoint") : WorkpieceData.AMBIENT_K);
         fuelJ = Math.max(0, Math.min(FUEL_BUFFER_J, tag.getDouble("fuel")));
         lastEvent = tag.contains("last") ? tag.getInt("last") : -1;
+        soakS = Math.max(0, tag.getDouble("soak"));
+        bakeS = Math.max(0, tag.getDouble("bake"));
         if (tag.contains("tank")) tank.readFromNBT(registries, tag.getCompound("tank"));
     }
 }

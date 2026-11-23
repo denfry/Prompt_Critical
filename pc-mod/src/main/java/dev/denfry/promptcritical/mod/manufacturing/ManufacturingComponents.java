@@ -62,6 +62,23 @@ public final class ManufacturingComponents {
             COMPONENTS.registerComponentType("wire", b -> b.persistent(WireData.CODEC)
                     .networkSynchronized(net.minecraft.network.codec.ByteBufCodecs.fromCodec(WireData.CODEC)));
 
+    /** Лист электротехнической стали (18 §18.6.8). */
+    public static final DeferredHolder<DataComponentType<?>, DataComponentType<ElectricalData.Sheet>> ELECTRICAL_SHEET =
+            COMPONENTS.registerComponentType("electrical_sheet", b -> b.persistent(ElectricalData.Sheet.CODEC)
+                    .networkSynchronized(ByteBufCodecs.fromCodec(ElectricalData.Sheet.CODEC)));
+    /** Пачка вырубленных пластин статора (18 §18.6.8). */
+    public static final DeferredHolder<DataComponentType<?>, DataComponentType<ElectricalData.Bundle>> LAMINATION =
+            COMPONENTS.registerComponentType("lamination", b -> b.persistent(ElectricalData.Bundle.CODEC)
+                    .networkSynchronized(ByteBufCodecs.fromCodec(ElectricalData.Bundle.CODEC)));
+    /** Шихтованный пакет статора (18 §18.6.8). */
+    public static final DeferredHolder<DataComponentType<?>, DataComponentType<ElectricalData.Core>> STATOR_CORE =
+            COMPONENTS.registerComponentType("stator_core", b -> b.persistent(ElectricalData.Core.CODEC)
+                    .networkSynchronized(ByteBufCodecs.fromCodec(ElectricalData.Core.CODEC)));
+    /** Намотанный статор (18 §18.6.9, §18.8.3). */
+    public static final DeferredHolder<DataComponentType<?>, DataComponentType<ElectricalData.Wound>> STATOR =
+            COMPONENTS.registerComponentType("stator", b -> b.persistent(ElectricalData.Wound.CODEC)
+                    .networkSynchronized(ByteBufCodecs.fromCodec(ElectricalData.Wound.CODEC)));
+
     private ManufacturingComponents() {
     }
 

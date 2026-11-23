@@ -85,5 +85,19 @@ public final class SmithyRecipes extends RecipeProvider {
                 .pattern(" H ").pattern("ICI").define('H', PcBlocks.HEATING_FURNACE.get()).define('I', Items.IRON_INGOT)
                 .define('C', Items.CAULDRON)
                 .unlockedBy("has_heating_furnace", has(PcBlocks.HEATING_FURNACE.get())).save(out, id("hardening_furnace"));
+        // электротехника (MF4): масса по образцу при 1 слиток = 100 кг (08 §8.0.2) — двухвалковый стан ≈ 4,5 т,
+        // пазовырубной пресс ≈ 2,3 т, намоточный станок ≈ 0,6 т [сверить]; перевод на детали — MF5
+        ShapedRecipeBuilder.shaped(RecipeCategory.MISC, PcBlocks.SHEET_MILL.get())
+                .pattern("BPB").pattern("SSS").pattern("BBB").define('B', Items.IRON_BLOCK).define('P', Items.PISTON)
+                .define('S', ManufacturingItems.SHAFT.get())
+                .unlockedBy("has_wire_mill", has(PcBlocks.WIRE_MILL.get())).save(out, id("sheet_mill"));
+        ShapedRecipeBuilder.shaped(RecipeCategory.MISC, PcBlocks.NOTCHING_PRESS.get())
+                .pattern("IPI").pattern("BSB").pattern("III").define('I', Items.IRON_INGOT).define('P', Items.PISTON)
+                .define('B', Items.IRON_BLOCK).define('S', ManufacturingItems.SHAFT.get())
+                .unlockedBy("has_crank_press", has(PcBlocks.CRANK_PRESS.get())).save(out, id("notching_press"));
+        ShapedRecipeBuilder.shaped(RecipeCategory.MISC, PcBlocks.WINDING_MACHINE.get())
+                .pattern("ISI").pattern("LCL").pattern("III").define('I', Items.IRON_INGOT).define('S', ManufacturingItems.SHAFT.get())
+                .define('L', Items.LEVER).define('C', Items.CHAIN)
+                .unlockedBy("has_wire_mill", has(PcBlocks.WIRE_MILL.get())).save(out, id("winding_machine"));
     }
 }

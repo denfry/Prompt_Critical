@@ -37,7 +37,13 @@ public enum SteelFamily {
     BEARING("ШХ15", 370, 590, HeatTreatState.AS_ROLLED, Hardening.FERRITIC, 0.0002,
             Map.of(AlloyElement.C, 0.0095, AlloyElement.CR, 0.013)),
     /** Кричное железо: σ₀,₂ / σ_в [сверить]; в {@code CLASSIFY_ORDER} нет, получается только из печи-домницы (MF2). */
-    WROUGHT_IRON("кричное железо", 210, 340, HeatTreatState.AS_ROLLED, Hardening.FERRITIC, 0.0005, Map.of());
+    WROUGHT_IRON("кричное железо", 210, 340, HeatTreatState.AS_ROLLED, Hardening.FERRITIC, 0.0005, Map.of()),
+    /**
+     * Электротехническая сталь 2212 (ГОСТ 21427.2-83, изотропная холоднокатаная): Si ≥ 1,8 %, C ≤ 0,08 %, σ₀,₂ / σ_в
+     * [сверить: 300–350 / 450–500 МПа]. Углерод сверху ограничивает {@code SteelGrade.classify} (18 §18.6.8, MF4).
+     */
+    ELECTRICAL("2212", 320, 470, HeatTreatState.AS_ROLLED, Hardening.FERRITIC, 0.0002,
+            Map.of(AlloyElement.SI, 0.018));
 
     /** Длительная прочность металла труб котлов (07 §7.9.3) по классу стали. */
     public LarsonMiller creep() {

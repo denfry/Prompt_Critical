@@ -26,11 +26,16 @@ public record SteelGrade(SteelFamily family, String designation, Map<String, Flo
     /** Предел твёрдости для H₂S (NACE MR0175), HRC. */
     public static final double SOUR_MAX_HRC = 22;
     public static final int MAX_ALLOYING = 4;
+    /**
+     * Углерод электротехнической стали не выше, доля: у горячекатаной Э-стали до 0,08 % (ГОСТ 21427.3 [сверить]); выше —
+     * кремнистая рессорная, не 2212. Конвертер с передувом даёт 0,04 % — достижимо.
+     */
+    public static final double ELECTRICAL_MAX_CARBON = 0.0008;
     /** Порядок проверки семейств: от самого требовательного. */
     private static final SteelFamily[] CLASSIFY_ORDER = {SteelFamily.MARAGING, SteelFamily.INCONEL,
         SteelFamily.STAINLESS_316, SteelFamily.STAINLESS_304, SteelFamily.TOOL_HSS, SteelFamily.BEARING,
         SteelFamily.HEAT_RESISTANT, SteelFamily.CHROMIUM, SteelFamily.SOUR_SERVICE, SteelFamily.RAIL_WIRE,
-        SteelFamily.MEDIUM_CARBON, SteelFamily.LOW_ALLOY, SteelFamily.CARBON};
+        SteelFamily.ELECTRICAL, SteelFamily.MEDIUM_CARBON, SteelFamily.LOW_ALLOY, SteelFamily.CARBON};
 
     public SteelGrade {
         Objects.requireNonNull(family, "family");
@@ -70,6 +75,7 @@ public record SteelGrade(SteelFamily family, String designation, Map<String, Flo
         for (SteelFamily f : CLASSIFY_ORDER) {
             if (f == SteelFamily.SOUR_SERVICE && (state != HeatTreatState.QUENCHED_TEMPERED
                     || pct(q, AlloyElement.S) / 100 > f.maxSulfur)) continue;
+            if (f == SteelFamily.ELECTRICAL && pct(q, AlloyElement.C) / 100 > ELECTRICAL_MAX_CARBON) continue;
             if (shortfall(f, q) == 0) return of(f, f.designation, q, state);
         }
         return of(SteelFamily.CARBON, SteelFamily.CARBON.designation, q, state);

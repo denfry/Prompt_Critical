@@ -54,7 +54,12 @@
   };
   T.bark = () => { const im = img(16, 16), r = rng(5161); for (let y = 0; y < 16; y++) for (let x = 0; x < 16; x++) put(im, x, y, add(x % 3 === 0 ? [58, 42, 30] : [88, 66, 46], (r() - 0.5) * 14)); return im; };
 
+  // MF4: copper winding wire, and the edge of a stacked core: thin bright steel lines with dark varnish between them.
+  T.copper = () => { const im = img(16, 16), r = rng(5181); for (let y = 0; y < 16; y++) for (let x = 0; x < 16; x++) put(im, x, y, add(y % 2 ? [178, 98, 54] : [204, 124, 72], (r() - 0.5) * 14)); return im; };
+  T.lams = () => { const im = img(16, 16), r = rng(5191); for (let y = 0; y < 16; y++) for (let x = 0; x < 16; x++) put(im, x, y, add(y % 2 ? [62, 60, 70] : [138, 142, 156], (r() - 0.5) * 8)); return im; };
+
   const MAT = {
+    cu: { tex: 'smithy/copper', P: 16 }, lams: { tex: 'smithy/lams', P: 16 },
     daub: { tex: 'smithy/daub', P: 16 }, coals: { tex: 'smithy/coals', P: 16 }, dead: { tex: 'smithy/coals_dead', P: 16 },
     lea: { tex: 'smithy/leather', P: 16 }, anv: { tex: 'smithy/anvil', P: 16 }, face: { tex: 'smithy/anvil_face', P: 16 },
     stump: { tex: 'smithy/stump_top', P: 16 }, bark: { tex: 'smithy/bark', P: 16 },
@@ -225,6 +230,61 @@
     return m;
   }
 
+  // MF4 (§18.6.8–18.6.9).
+  //  - sheet_mill: a two-high cold rolling stand: cast housings west and east, two bright rolls along x, entry and
+  //    exit tables with a sheet on them, a pinion box on the west with the coupling.
+  //  - notching_press: a gap-frame press: a column at the back, an overhanging head with the flywheel, a rotary index
+  //    table at the front carrying a half-notched lamination; shaft at the back.
+  //  - winding_machine: a bed with a headstock on the west turning a faceplate that holds a stator core with copper
+  //    end turns, a wire spool on a stand on the east feeding through a tensioner.
+  function sheetMill() {
+    const m = mk('smithy/anvil');
+    m.box('base', [0.5, 0, 2], [15.5, 3, 14], 'ci', { split: '' });
+    m.box('housing_w', [3, 3, 5], [5, 15, 11], 'ci', { split: '' });
+    m.box('housing_e', [13, 3, 5], [15, 15, 11], 'ci', { split: '' });
+    m.box('cap', [3, 15, 5], [15, 16, 11], 'ci', { split: '' });
+    for (const [y0, y1] of [[6, 9], [9.4, 12.4]]) {
+      m.box('roll', [5, y0 + 0.5, 6.5], [13, y1 - 0.5, 9.5], 'bright', { split: '' });
+      m.box('roll', [5, y0, 7], [13, y1, 9], 'bright', { split: '' });
+    }
+    m.box('screw', [8, 12.4, 7.5], [10, 15, 8.5], 'st', { split: '' });
+    m.box('table_in', [5.5, 7.6, 0.5], [12.5, 8.6, 6.5], 'st', { split: '' });
+    m.box('table_out', [5.5, 7.6, 9.5], [12.5, 8.6, 15.5], 'st', { split: '' });
+    m.box('sheet', [6, 8.6, 1], [12, 8.8, 6.5], 'lams', { split: '' });
+    m.box('pinion_box', [0.5, 3, 4], [3, 12, 12], 'ci', { split: '' });
+    coupling(m, 'x');
+    return m;
+  }
+
+  function notchingPress() {
+    const m = mk('smithy/anvil');
+    m.box('base', [1, 0, 1], [15, 3, 15], 'ci', { split: '' });
+    m.box('column', [4, 3, 10], [12, 15, 15], 'ci', { split: '' });
+    m.box('head', [4, 12, 3], [12, 16, 10], 'ci', { split: '' });
+    m.box('ram', [6.5, 8.5, 4.5], [9.5, 12, 7.5], 'st', { split: '' });
+    m.box('punch', [7.2, 7.4, 5.2], [8.8, 8.5, 6.8], 'face', { split: '' });
+    m.prismY('index_table', [8, 6], 4.6, 3, 5.4, 'st', { ends: ['up', 'down'] });
+    m.prismY('lamination', [8, 6], 4.2, 5.4, 5.7, 'lams', { ends: ['up', 'down'] });
+    m.box('flywheel', [12, 8, 10.5], [13.2, 15.5, 14.5], 'st', { split: '' });
+    coupling(m, 'z');
+    return m;
+  }
+
+  function windingMachine() {
+    const m = mk('smithy/anvil');
+    m.box('bed', [0.5, 0, 3], [15.5, 5, 13], 'ci', { split: '' });
+    m.box('headstock', [1, 5, 4], [5, 12, 12], 'ci', { split: '' });
+    m.box('faceplate', [5, 6, 5], [5.8, 13, 11], 'st', { split: '' });
+    m.box('core', [5.8, 6.5, 5.5], [10.5, 12.5, 10.5], 'lams', { split: '' });
+    m.box('end_turns_w', [5.8, 7.3, 6.3], [6.6, 11.7, 9.7], 'cu', { split: '' });
+    m.box('end_turns_e', [10.5, 7.3, 6.3], [11.4, 11.7, 9.7], 'cu', { split: '' });
+    m.box('spool_stand', [13, 5, 6], [15, 9, 10], 'ci', { split: '' });
+    m.prismY('spool', [14, 8], 1.9, 9, 13, 'cu', { ends: ['up', 'down'] });
+    m.box('tensioner', [11.6, 9, 7.6], [13, 9.6, 8.4], 'st', { split: '' });
+    coupling(m, 'x');
+    return m;
+  }
+
   // Panel boards 200xH in the style of the foundry boards: brass frame, dark plates under the bars and buttons.
   function board(seed, plates, H = 150) {
     const W = 200, im = img(W, H), r = rng(seed);
@@ -251,7 +311,10 @@
     out('wire_mill', board(5261, [[6, 6, 194, 96], [6, 98, 194, 146]]));
     out('heating_furnace', board(5271, [[80, 18, 194, 84], [6, 88, 194, 120], [6, 122, 194, 146]]));
     out('hardening_furnace', board(5281, [[80, 18, 194, 84], [6, 88, 194, 120], [6, 122, 194, 146]]));
-    return 9;
+    out('sheet_mill', board(5291, [[6, 6, 194, 92], [6, 98, 194, 146]]));
+    out('notching_press', board(5301, [[6, 6, 194, 92], [6, 98, 194, 146]]));
+    out('winding_machine', board(5311, [[6, 6, 194, 92], [6, 98, 194, 146]]));
+    return 12;
   }
 
   // Item icons 16x16 and their item/generated models.
@@ -276,6 +339,28 @@
       for (let i = 1; i < 15; i++) { put(im, i, 15 - i, [150, 150, 158]); put(im, i, 14 - i, [104, 104, 112]); }
       for (let i = 4; i < 7; i++) put(im, i, 15 - i - 1, [70, 70, 78]);
     }),
+    // MF4: a grey-blue sheet with a varnish sheen, a lamination ring with slots, a stacked core and a wound stator
+    electrical_sheet: icon((im) => {
+      for (let y = 3; y < 13; y++) for (let x = 1; x < 15; x++) put(im, x, y, y === 3 ? [176, 182, 198] : y === 12 ? [54, 58, 70] : (x + y) % 7 === 0 ? [150, 156, 176] : [112, 118, 136]);
+    }),
+    lamination: icon((im) => {
+      for (let y = 0; y < 16; y++) for (let x = 0; x < 16; x++) {
+        const d = Math.hypot(x - 7.5, y - 7.5), a = Math.atan2(y - 7.5, x - 7.5);
+        const slot = d < 5.2 && Math.abs(Math.sin(a * 6)) < 0.3;
+        if (d <= 7.4 && d >= 3.6 && !slot) put(im, x, y, d > 6.6 ? [168, 172, 186] : [124, 128, 144]);
+      }
+    }),
+    stator_core: icon((im) => {
+      for (let y = 2; y < 14; y++) for (let x = 2; x < 14; x++) {
+        const d = Math.abs(x - 7.5);
+        if (!(d < 2.5 && y > 4 && y < 11)) put(im, x, y, y % 2 ? [70, 72, 84] : [140, 144, 160]);
+      }
+    }),
+    stator: icon((im) => {
+      for (let y = 3; y < 13; y++) for (let x = 3; x < 13; x++) put(im, x, y, y % 2 ? [70, 72, 84] : [140, 144, 160]);
+      for (let y = 4; y < 12; y++) for (const x of [1, 2, 13, 14]) put(im, x, y, (x + y) % 2 ? [204, 124, 72] : [170, 92, 50]);
+      for (let y = 6; y < 10; y++) for (let x = 6; x < 10; x++) put(im, x, y, [30, 30, 34]);
+    }),
   };
 
   function paintItems(root) {
@@ -294,6 +379,7 @@
     power_hammer: { model: powerHammer }, 'power_hammer/ram': { model: hammerRam, java: 'power_hammer/partial/ram' },
     crank_press: { model: crankPress }, 'crank_press/ram': { model: pressSlide, java: 'crank_press/partial/ram' },
     wire_mill: { model: wireMill },
+    sheet_mill: { model: sheetMill }, notching_press: { model: notchingPress }, winding_machine: { model: windingMachine },
     heating_furnace: { model: () => chamber(false, false) }, heating_furnace_lit: { model: () => chamber(true, false) },
     hardening_furnace: { model: () => chamber(false, true) }, hardening_furnace_lit: { model: () => chamber(true, true) },
   };
