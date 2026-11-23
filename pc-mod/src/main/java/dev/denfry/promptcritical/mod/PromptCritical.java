@@ -111,6 +111,7 @@ public final class PromptCritical {
         modBus.addListener(PcDataGen::gather);
         dev.denfry.promptcritical.mod.compat.OpenCompatPack.register(modBus);
         dev.denfry.promptcritical.mod.compat.create.CreateDisplaySources.register(modBus);
+        dev.denfry.promptcritical.mod.command.PcPermissions.register();
         if (FMLEnvironment.dist == Dist.CLIENT) PcClient.register(modBus);
         ApiHolder.install(new ApiImpl());
         LOGGER.info("Prompt Critical initialized (API v{})", PromptCriticalApi.CURRENT_API_VERSION);
