@@ -171,6 +171,14 @@ public final class PowerGrid {
     /** Номинальный ток двигателя, о.е. на S_b; температура обмотки, °C. */
     double[] moRatedI = new double[0], moTempC = new double[0];
     boolean[] moFaulted = new boolean[0];
+    /**
+     * Пускатель двигателя (§7.6.3, {@link MotorStarter}): порядковый номер; доля напряжения на обмотке; во сколько раз
+     * проводимость, видимая сетью, меньше прямой (звезда — k², последовательный тиристорный регулятор — k); время с
+     * включения контактора, с; пуск окончен (треугольник, шунт); заданная скорость частотного привода, о.е.
+     */
+    int[] moStarter = new int[0];
+    double[] moKv = new double[0], moYf = new double[0], moStartT = new double[0], moRef = new double[0];
+    boolean[] moStarted = new boolean[0];
     /** Напряжение шины, о.е., выше которого изоляция двигателя (машины) пробивается: U_исп/U_ном её класса (§7.4.8). */
     double[] moBreakdownPu = new double[0], mBreakdownPu = new double[0];
 
@@ -436,6 +444,13 @@ public final class PowerGrid {
         moTempC = grow(moTempC, nmo);
         moFaulted = grow(moFaulted, nmo);
         moBreakdownPu = grow(moBreakdownPu, nmo);
+        moStarter = grow(moStarter, nmo);
+        moKv = grow(moKv, nmo);
+        moYf = grow(moYf, nmo);
+        moStartT = grow(moStartT, nmo);
+        moRef = grow(moRef, nmo);
+        moStarted = grow(moStarted, nmo);
+        moKv[j] = moYf[j] = moRef[j] = 1;
         moBus[j] = bus;
         moOn[j] = true;
         moScale[j] = spec.pRatedW() / sb;
@@ -658,6 +673,60 @@ public final class PowerGrid {
         int j = motor(id);
         moFaulted[j] = false;
         if (fMotor[moBus[j]] == j) clearBusFault(moBus[j]);
+    }
+
+    /** Пускатель двигателя (§7.6.3); звезда–треугольник у двигателя выше 1 кВ не собирается — пуск прямой. */
+    public void setMotorStarter(MotorId id, MotorStarter starter) {
+        int j = motor(id);
+        MotorStarter st = starter == MotorStarter.STAR_DELTA && motorSpec.get(j).vRatedV() > 1000 ? MotorStarter.DIRECT
+                : Objects.requireNonNull(starter, "starter");
+        if (moStarter[j] == st.ordinal()) return;
+        moStarter[j] = st.ordinal();
+        // смена пускателя на ходу: работающий двигатель уже разогнан
+        moStarted[j] = moW[j] >= MotorStarter.STAR_DELTA_SWITCH_SPEED;
+        if (st == MotorStarter.SOFT && moStarted[j]) moStartT[j] = MotorStarter.SOFT_RAMP_S;
+        if (!topologyDirty) islands[busIsland[moBus[j]]].yDirty = true;
+    }
+
+    public MotorStarter motorStarter(MotorId id) {
+        return MotorStarter.values()[moStarter[motor(id)]];
+    }
+
+    /** Заданная скорость частотного привода, о.е. синхронной (0…1); у прочих пускателей не действует. */
+    public void setMotorSpeedReference(MotorId id, double pu) {
+        if (!(pu >= 0 && pu <= 1)) throw new IllegalArgumentException("pu");
+        moRef[motor(id)] = pu;
+    }
+
+    /** Доля напряжения на обмотке и проводимость, видимая сетью, по состоянию пуска (§7.6.3). */
+    private void updateStarter(int j) {
+        double k = 1, yf = 1;
+        MotorStarter st = MotorStarter.values()[moStarter[j]];
+        if (!moOn[j]) {
+            moStarted[j] = false;
+            moStartT[j] = 0;
+        } else if (st == MotorStarter.STAR_DELTA) {
+            if (moW[j] >= MotorStarter.STAR_DELTA_SWITCH_SPEED) moStarted[j] = true;
+            if (!moStarted[j]) {
+                k = 1 / Math.sqrt(3);
+                yf = 1.0 / 3;
+            }
+        } else if (st == MotorStarter.SOFT) {
+            if (moW[j] >= MotorStarter.SOFT_BYPASS_SPEED) moStarted[j] = true;
+            if (!moStarted[j]) {
+                double ramp = MotorStarter.SOFT_INITIAL_VOLTAGE
+                        + (1 - MotorStarter.SOFT_INITIAL_VOLTAGE) * Math.min(1, moStartT[j] / MotorStarter.SOFT_RAMP_S);
+                // ток прямого включения при этом скольжении и номинальном напряжении шины, о.е. I_н; регулятор
+                // последовательный — ток сети равен току двигателя и пропорционален k
+                Island isl = islands[busIsland[moBus[j]]];
+                double s = 1 - moW[j] / Math.max(isl.omegaCoi, 1e-6);
+                double iDol = Math.hypot(motorP(j, s, moVr2[j]), motorQ(j, s, moVr2[j])) * moScale[j] / moRatedI[j];
+                k = Math.min(1, Math.min(ramp, MotorStarter.SOFT_CURRENT_LIMIT_PU / Math.max(iDol, 1e-9)));
+                yf = k;
+            }
+        }
+        moKv[j] = k;
+        moYf[j] = yf;
     }
 
     /** Момент нагрузки двигателя без входа от Create, о.е. на P_ном/ω_s. */
@@ -1314,9 +1383,19 @@ public final class PowerGrid {
             ymRe = ymIm = 0;
             return;
         }
+        if (moStarter[j] == MotorStarter.VFD.ordinal()) {
+            // вход привода — выпрямитель: из сети P = T·ω/η при cos φ привода, проводимость y = (P − jQ)/|V|²
+            int b = moBus[j];
+            double v2 = Math.max(vRe[b] * vRe[b] + vIm[b] * vIm[b], 0.25);
+            double p = moTe[j] * moW[j] / MotorStarter.VFD_EFFICIENCY * moScale[j];
+            double q = p * Math.tan(Math.acos(MotorStarter.VFD_POWER_FACTOR));
+            ymRe = p / v2;
+            ymIm = -q / v2;
+            return;
+        }
         double s = 1 - moW[j] / omegaCoi;
-        ymRe = motorP(j, s, moVr2[j]) * moScale[j];
-        ymIm = -motorQ(j, s, moVr2[j]) * moScale[j];
+        ymRe = motorP(j, s, moVr2[j]) * moScale[j] * moYf[j];
+        ymIm = -motorQ(j, s, moVr2[j]) * moScale[j] * moYf[j];
     }
 
     /** I_r² схемы замещения двигателя, о.е. на P_ном. */
@@ -1345,10 +1424,16 @@ public final class PowerGrid {
         moTlUsed[j] = tl;
         int b = moBus[j];
         Island isl = islands[busIsland[b]];
+        if (moOn[j]) moStartT[j] += h;
+        updateStarter(j);
+        if (moStarter[j] == MotorStarter.VFD.ordinal()) {
+            advanceDrive(j, h, tl, isl);
+            return;
+        }
         double w = moW[j], te = 0, dte = 0;
         if (moOn[j] && isl.solvable()) {
             double wc = isl.omegaCoi, s = 1 - w / wc;
-            double vm2 = (vRe[b] * vRe[b] + vIm[b] * vIm[b]) * moVr2[j];
+            double vm2 = (vRe[b] * vRe[b] + vIm[b] * vIm[b]) * moVr2[j] * moKv[j] * moKv[j];
             double rr = moRr[j], x = moX[j], d = rr * rr + x * x * s * s;
             te = vm2 * s * rr / d;
             dte = -vm2 * rr * (rr * rr - x * x * s * s) / (d * d) / wc; // dT/dω = −(dT/ds)/ω_c
@@ -1361,6 +1446,23 @@ public final class PowerGrid {
         double a = 2 * moH[j];
         double wn = w + h * (te - tl) / a / (1 - h * Math.min(dte, 0) / a);
         moW[j] = Math.max(0, wn);
+    }
+
+    /**
+     * Двигатель за частотным преобразователем (§7.6.3): скорость идёт к заданной за {@link MotorStarter#VFD_RAMP_S}
+     * моментом не больше {@link MotorStarter#VFD_TORQUE_LIMIT_PU}·T_н; от частоты сети вал не зависит. Без напряжения
+     * на входе привод останавливается, рекуперации нет.
+     */
+    private void advanceDrive(int j, double h, double tl, Island isl) {
+        double w = moW[j], te = 0;
+        if (moOn[j] && isl.solvable() && isl.energized) {
+            double a = 2 * moH[j];
+            double want = tl + a * (moRef[j] - w) / MotorStarter.VFD_RAMP_S;
+            te = Math.max(0, Math.min(MotorStarter.VFD_TORQUE_LIMIT_PU * motorSpec.get(j).ratedTorquePu(), want));
+        }
+        moTe[j] = te;
+        double wn = w + h * (te - tl) / (2 * moH[j]);
+        moW[j] = Math.max(0, w <= 0 && te <= tl ? 0 : wn);
     }
 
     /** Подшаг машины: ω по моментам при δ_n, затем δ по ω_{n+1} (симплектический Эйлер), поток, АРВ, регулятор. */
@@ -2371,6 +2473,10 @@ public final class PowerGrid {
         Island isl = islands[busIsland[moBus[j]]];
         if (moFaulted[j]) return MotorState.FAULTED;
         if (!moOn[j] || !isl.energized) return MotorState.OFF;
+        if (moStarter[j] == MotorStarter.VFD.ordinal()) {
+            if (moW[j] >= moRef[j] - 0.05) return MotorState.RUNNING;
+            return moTe[j] > moTlUsed[j] ? MotorState.STARTING : MotorState.STALLED;
+        }
         if (1 - moW[j] / isl.omegaCoi <= motorSpec.get(j).sK()) return MotorState.RUNNING;
         return moTe[j] > moTlUsed[j] ? MotorState.STARTING : MotorState.STALLED;
     }

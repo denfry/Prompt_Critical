@@ -217,6 +217,20 @@ public final class GridRecipes extends RecipeProvider {
                 .define('G', Items.GLASS_PANE).define('W', wire).define('C', Items.COMPARATOR).define('I', Items.IRON_INGOT)
                 .unlockedBy("has_wire", hasWire).save(out, id("energy_meter"));
 
+        // пусковые модули двигателя (07 §7.6.3): звезда–треугольник — три контактора и реле времени; плавный пуск —
+        // тиристоры на кремнии, плата управления и шунтирующий контактор; частотный привод — силовые ключи и контроллер
+        ShapelessRecipeBuilder.shapeless(RecipeCategory.REDSTONE, PcItems.STAR_DELTA_STARTER.get())
+                .requires(PcItems.RELAY_COIL.get(), 3).requires(PcItems.COPPER_WIRE.get(), 2).requires(Items.IRON_INGOT).requires(Items.REPEATER)
+                .unlockedBy("has_relay_coil", has(PcItems.RELAY_COIL.get())).save(out, id("star_delta_starter"));
+        ShapelessRecipeBuilder.shapeless(RecipeCategory.REDSTONE, PcItems.SOFT_STARTER.get())
+                .requires(PcItems.SILICON_WAFER.get(), 2).requires(PcItems.PRINTED_CIRCUIT_BOARD.get()).requires(PcItems.RELAY_COIL.get())
+                .requires(PcItems.COPPER_WIRE.get(), 2).requires(Items.IRON_INGOT)
+                .unlockedBy("has_pcb", has(PcItems.PRINTED_CIRCUIT_BOARD.get())).save(out, id("soft_starter"));
+        ShapelessRecipeBuilder.shapeless(RecipeCategory.REDSTONE, PcItems.VARIABLE_FREQUENCY_DRIVE.get())
+                .requires(PcItems.TRANSISTOR.get(), 3).requires(PcItems.INTEGRATED_CIRCUIT.get()).requires(PcItems.PRINTED_CIRCUIT_BOARD.get())
+                .requires(PcItems.COPPER_WIRE.get(), 2).requires(Items.IRON_INGOT, 2)
+                .unlockedBy("has_ic", has(PcItems.INTEGRATED_CIRCUIT.get())).save(out, id("variable_frequency_drive"));
+
         // модули реле: база и механизм функции
         relay(out, PcItems.RELAY_OVERCURRENT.get(), "relay_overcurrent", Items.REDSTONE_TORCH);
         relay(out, PcItems.RELAY_SYNC_CHECK.get(), "relay_sync_check", Items.CLOCK);

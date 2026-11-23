@@ -197,6 +197,13 @@ public final class PcItems {
     public static final DeferredItem<RelayModuleItem> RELAY_AUTORECLOSE = relay("relay_autoreclose", RelaySetting.Kind.AUTORECLOSE);
     public static final DeferredItem<RelayModuleItem> RELAY_BREAKER_FAILURE = relay("relay_breaker_failure",
             RelaySetting.Kind.BREAKER_FAILURE);
+    // --- пусковые модули двигателя (07 §7.6.3) ---
+    public static final DeferredItem<dev.denfry.promptcritical.mod.grid.MotorStarterItem> STAR_DELTA_STARTER =
+            starter("star_delta_starter", dev.denfry.promptcritical.sim.grid.MotorStarter.STAR_DELTA);
+    public static final DeferredItem<dev.denfry.promptcritical.mod.grid.MotorStarterItem> SOFT_STARTER =
+            starter("soft_starter", dev.denfry.promptcritical.sim.grid.MotorStarter.SOFT);
+    public static final DeferredItem<dev.denfry.promptcritical.mod.grid.MotorStarterItem> VARIABLE_FREQUENCY_DRIVE =
+            starter("variable_frequency_drive", dev.denfry.promptcritical.sim.grid.MotorStarter.VFD);
     // --- автоматика A1–A2 (03d, этап 9 M3) ---
     public static final DeferredItem<dev.denfry.promptcritical.mod.automation.WiringToolItem> WIRING_TOOL = registered(ITEMS.registerItem(
             "wiring_tool", dev.denfry.promptcritical.mod.automation.WiringToolItem::new, new Item.Properties().stacksTo(1)));
@@ -524,6 +531,12 @@ public final class PcItems {
 
     private static DeferredItem<SteelStockItem> stock(String name, int stack) {
         return registered(ITEMS.registerItem(name, SteelStockItem::new, new Item.Properties().stacksTo(stack)));
+    }
+
+    private static DeferredItem<dev.denfry.promptcritical.mod.grid.MotorStarterItem> starter(String name,
+            dev.denfry.promptcritical.sim.grid.MotorStarter kind) {
+        return registered(ITEMS.registerItem(name, p -> new dev.denfry.promptcritical.mod.grid.MotorStarterItem(p, kind),
+                new Item.Properties().stacksTo(1)));
     }
 
     private static DeferredItem<RelayModuleItem> relay(String name, RelaySetting.Kind kind) {

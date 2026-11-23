@@ -18,6 +18,8 @@ public final class MotorUnit extends GridUnit {
     int gear = 2;
     boolean contactor;
     double loadPowerW;
+    MotorStarter starter = MotorStarter.DIRECT;
+    double speedReferencePu = 1;
     MotorId motor;
     double[] carried;
 
@@ -64,6 +66,25 @@ public final class MotorUnit extends GridUnit {
         contactor = on;
         if (motor != null && owner.ready()) owner.grid().setMotorConnected(motor, on);
         else if (carried != null) carried[3] = on ? 1 : 0;
+    }
+
+    /** Пусковой модуль в блоке двигателя (07 §7.6.3); блок пишет его каждый тик. */
+    public void setStarter(MotorStarter st) {
+        if (st == null || st == starter) return;
+        starter = st;
+        if (motor != null && owner.ready()) owner.grid().setMotorStarter(motor, st);
+    }
+
+    public MotorStarter starter() {
+        return motor != null && owner.ready() ? owner.grid().motorStarter(motor) : starter;
+    }
+
+    /** Заданная скорость частотного привода, о.е. синхронной (0…1). */
+    public void setSpeedReferencePu(double pu) {
+        double v = Math.max(0, Math.min(1, pu));
+        if (v == speedReferencePu) return;
+        speedReferencePu = v;
+        if (motor != null && owner.ready()) owner.grid().setMotorSpeedReference(motor, v);
     }
 
     /** Мощность, которую забирает сеть Create, Вт (порт пишет каждый тик). */
@@ -113,6 +134,8 @@ public final class MotorUnit extends GridUnit {
         double vr = mediumVoltage ? 6300 : 400;
         motor = b.grid.addMotor(InductionMotorSpec.standard(ratedPowerW(), vr), b.bus(node(0)));
         b.motor(motor, this);
+        b.grid.setMotorStarter(motor, starter);
+        b.grid.setMotorSpeedReference(motor, speedReferencePu);
         double[] s = carried;
         if (s == null) {
             s = new double[PowerGrid.MOTOR_STATE];
