@@ -71,6 +71,11 @@ public final class ChlorRecipes extends RecipeProvider {
         ShapedRecipeBuilder.shaped(RecipeCategory.MISC, PcBlocks.EDC_CRACKER.get())
                 .pattern("BPB").pattern("PFP").pattern("BPB").define('B', Items.BRICKS).define('P', pipe).define('F', Items.BLAST_FURNACE)
                 .unlockedBy("has_edc_unit", has(PcBlocks.EDC_UNIT.get())).save(out, id("edc_cracker"));
+        // графитовая горелка в стальной колонне с абсорбером
+        ShapedRecipeBuilder.shaped(RecipeCategory.MISC, PcBlocks.HCL_SYNTHESIS_FURNACE.get())
+                .pattern("SPS").pattern("TGT").pattern("SCS").define('S', sheet).define('P', pipe).define('T', tank)
+                .define('G', dev.denfry.promptcritical.mod.registry.PcItems.GRAPHITE_ELECTRODE.get()).define('C', copper)
+                .unlockedBy("has_chlor_alkali_cell", has(PcBlocks.CHLOR_ALKALI_CELL.get())).save(out, id("hcl_synthesis_furnace"));
         ShapedRecipeBuilder.shaped(RecipeCategory.MISC, PcBlocks.PVC_REACTOR.get())
                 .pattern("SMS").pattern("STS").pattern("SPS").define('S', sheet).define('M', AllBlocks.MECHANICAL_MIXER.get())
                 .define('T', tank).define('P', pipe).unlockedBy("has_edc_cracker", has(PcBlocks.EDC_CRACKER.get())).save(out, id("pvc_reactor"));

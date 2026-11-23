@@ -31,6 +31,8 @@ public final class ChlorBlockEntities {
             type("edc_unit", EdcUnitBlockEntity::new, PcBlocks.EDC_UNIT);
     public static final DeferredHolder<BlockEntityType<?>, BlockEntityType<EdcCrackerBlockEntity>> EDC_CRACKER =
             type("edc_cracker", EdcCrackerBlockEntity::new, PcBlocks.EDC_CRACKER);
+    public static final DeferredHolder<BlockEntityType<?>, BlockEntityType<HclFurnaceBlockEntity>> HCL_FURNACE =
+            type("hcl_synthesis_furnace", HclFurnaceBlockEntity::new, PcBlocks.HCL_SYNTHESIS_FURNACE);
     public static final DeferredHolder<BlockEntityType<?>, BlockEntityType<PvcReactorBlockEntity>> PVC_REACTOR =
             type("pvc_reactor", PvcReactorBlockEntity::new, PcBlocks.PVC_REACTOR);
 
@@ -49,6 +51,7 @@ public final class ChlorBlockEntities {
         fluids(event, EDC_UNIT.get());
         fluids(event, EDC_CRACKER.get());
         fluids(event, PVC_REACTOR.get());
+        fluids(event, HCL_FURNACE.get());
         event.registerBlockEntity(Capabilities.ItemHandler.BLOCK, BRINE_TREATER.get(), FoundryDevice::items);
         event.registerBlockEntity(Capabilities.ItemHandler.BLOCK, PVC_REACTOR.get(), FoundryDevice::items);
     }

@@ -457,6 +457,7 @@ public final class PcLanguageProvider extends LanguageProvider {
         b("chlorine_liquefier", "Chlorine Drying and Liquefaction", "Осушка и сжижение хлора");
         b("edc_unit", "EDC Unit (Chlorination and Oxychlorination)", "Установка ДХЭ (хлорирование и оксихлорирование)");
         b("edc_cracker", "EDC Cracking Furnace", "Печь пиролиза ДХЭ");
+        b("hcl_synthesis_furnace", "HCl Synthesis Furnace", "Печь синтеза хлороводорода");
         b("pvc_reactor", "PVC Suspension Autoclave", "Автоклав суспензионного ПВХ");
         b("acid_plant", "Contact Sulphuric Acid Plant", "Сернокислотная установка");
         b("hydrotreater", "Diesel Hydrotreater", "Установка гидроочистки дизельного топлива");
@@ -754,6 +755,7 @@ public final class PcLanguageProvider extends LanguageProvider {
         FLUIDS.put("hydrogen", new String[] {"Hydrogen", "Водород"});
         FLUIDS.put("sodium_hydroxide_solution", new String[] {"Cell Liquor (Caustic Soda)", "Электролитическая щёлочь"});
         FLUIDS.put("hydrogen_chloride", new String[] {"Hydrogen Chloride", "Хлористый водород"});
+        FLUIDS.put("hydrochloric_acid", new String[] {"Hydrochloric Acid", "Соляная кислота"});
         FLUIDS.put("trichlorosilane", new String[] {"Trichlorosilane", "Трихлорсилан"});
         FLUIDS.put("ethylene_dichloride", new String[] {"Ethylene Dichloride", "Дихлорэтан"});
         FLUIDS.put("vinyl_chloride", new String[] {"Vinyl Chloride", "Винилхлорид"});

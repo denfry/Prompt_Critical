@@ -117,6 +117,8 @@ public final class PcFluids {
     /** Электролитическая щёлочь диафрагменных ванн: 11 % NaOH, 15 % NaCl. */
     public static final Entry SODIUM_HYDROXIDE_SOLUTION = liquid("sodium_hydroxide_solution", 1240, 1800, 343);
     public static final Entry HYDROGEN_CHLORIDE = gas("hydrogen_chloride", 293, 2);
+    /** Соляная кислота 31–36 % HCl с абсорбера печи синтеза (10 §10.3.4), ≈ 1,16 кг/л. */
+    public static final Entry HYDROCHLORIC_ACID = liquid("hydrochloric_acid", 1160, 1700, 293);
     /** Трихлорсилан SiHCl₃, 1,342 кг/л, кипит при 31,8 °C: сырьё реактора Сименса (11 §11.5.2). */
     public static final Entry TRICHLOROSILANE = liquid("trichlorosilane", 1342, 330, 293);
 

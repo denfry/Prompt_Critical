@@ -838,6 +838,10 @@ public final class PcBlocks {
     public static final DeferredBlock<PcDeviceBlock> CO2_ABSORBER = device("co2_absorber", machine(),
             Spec.facing(BlockStateProperties.LIT).footprint(FP_COLUMN3),
             FoundryBlock.with(dev.denfry.promptcritical.mod.nitrogen.Co2AbsorberBlockEntity::new));
+    /** Печь синтеза HCl с графитовой горелкой и абсорбером (10 §10.3.4): колонна в 3 блока, как абсорбер CO₂. */
+    public static final DeferredBlock<PcDeviceBlock> HCL_SYNTHESIS_FURNACE = device("hcl_synthesis_furnace", machine(),
+            Spec.facing(BlockStateProperties.LIT, PcProperties.ALARM).footprint(FP_COLUMN3),
+            FoundryBlock.with(dev.denfry.promptcritical.mod.chlor.HclFurnaceBlockEntity::new));
     public static final DeferredBlock<PcDeviceBlock> AMMONIA_CONVERTER = device("ammonia_converter", machine(),
             Spec.facing(PcProperties.RUNNING).footprint(FP_COLUMN3),
             KineticMachineBlock.with(ShaftSide.BACK, dev.denfry.promptcritical.mod.nitrogen.AmmoniaConverterBlockEntity::new));

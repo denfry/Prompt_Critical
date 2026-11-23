@@ -25,6 +25,14 @@ public final class ChlorText {
         put("cracker.on", "EDC cracking furnace lit", "Печь пиролиза ДХЭ разожжена");
         put("cracker.off", "EDC cracking furnace out", "Печь пиролиза ДХЭ погашена");
         put("cracker.decoked", "EDC furnace coil decoked with steam and air", "Змеевик печи ДХЭ выжжен паровоздушной смесью");
+        put("hcl.off", "HCl furnace: burner out", "Печь HCl: горелка погашена");
+        put("hcl.acid", "HCl furnace: burning, hydrogen chloride absorbed into hydrochloric acid of %s %%",
+                "Печь HCl: горит, хлороводород поглощается в соляную кислоту %s %%");
+        put("hcl.dry", "HCl furnace: burning, hydrogen chloride cooled and dried, out as dry gas",
+                "Печь HCl: горит, хлороводород охлаждается и сушится, выходит сухим газом");
+        put("hcl.excess", "HCl furnace: hydrogen excess %s %%", "Печь HCl: избыток водорода %s %%");
+        put("hcl.slip", "HCl furnace: hydrogen excess %s %% is below 5 %%: unburnt chlorine goes out with the tail gas",
+                "Печь HCl: избыток водорода %s %% меньше 5 %%: несгоревший хлор уходит с хвостовым газом");
         put("pvc.auto_on", "PVC autoclave: automatic batch cycle on", "Автоклав ПВХ: автоматический цикл включён");
         put("pvc.auto_off", "PVC autoclave: automatic cycle off", "Автоклав ПВХ: автоматический цикл отключён");
     }
