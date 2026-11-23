@@ -4,6 +4,7 @@ import dev.denfry.promptcritical.mod.PromptCritical;
 import dev.denfry.promptcritical.mod.client.whole.WholeModelHost;
 import dev.denfry.promptcritical.mod.foundry.KineticMachineBlock;
 import dev.denfry.promptcritical.mod.multiblock.Footprint;
+import dev.denfry.promptcritical.mod.multiblock.WholeShapes;
 import dev.denfry.promptcritical.mod.registry.PcBlocks;
 import dev.denfry.promptcritical.mod.site.ConstructionSiteBlockEntity;
 import dev.denfry.promptcritical.mod.site.SiteRegistry;
@@ -105,6 +106,33 @@ public final class SmithyRealScaleGameTests {
                     m.id() + ": the old machine keeps its own model");
             h.setBlock(old, Blocks.AIR);
         }
+        h.succeed();
+    }
+
+    /**
+     * Каждая клетка объёма, где модель или движущаяся часть что-то рисует, твёрдая, и ничего не нарисовано вне объёма
+     * (как {@code PlaytestI0GameTests#everyDrawnCellOfI0WholeModelsBlocksThePlayer}): сквозь барабан, мехи и маховик
+     * не пройти, а воздух у трубы и над рольгангами остаётся проходимым.
+     */
+    @GameTest(template = TEMPLATE, timeoutTicks = 40)
+    public static void everyDrawnCellOfSmithyWholeModelsBlocksThePlayer(GameTestHelper h) {
+        BlockPos p = new BlockPos(5, 2, 5);
+        var level = h.getLevel();
+        StringBuilder bad = new StringBuilder();
+        for (M m : MACHINES) {
+            h.setBlock(p, north(m.real().get()));
+            BlockPos abs = h.absolutePos(p);
+            java.util.Set<BlockPos> drawn = new java.util.HashSet<>(WholeShapes.occupied(m.id()));
+            h.assertTrue(!drawn.isEmpty(), m.id() + " has cell shape data");
+            for (Footprint.Cell c : m.fp().cells(abs, Direction.NORTH)) {
+                BlockPos d = c.pos().subtract(abs);   // фасад на север: клетка мира = клетка модели
+                if (!drawn.remove(d)) continue;
+                if (level.getBlockState(c.pos()).getCollisionShape(level, c.pos()).isEmpty()) bad.append(' ').append(m.id()).append(d.toShortString());
+            }
+            for (BlockPos d : drawn) bad.append(' ').append(m.id()).append(d.toShortString()).append("(outside the volume)");
+            h.setBlock(p, Blocks.AIR);
+        }
+        h.assertTrue(bad.isEmpty(), "drawn cells the player walks through:" + bad);
         h.succeed();
     }
 

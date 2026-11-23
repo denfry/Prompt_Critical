@@ -107,9 +107,28 @@ public final class WholeShapes {
      */
     private record Extra(String path, boolean whole, int dx, int dy, int dz) {}
 
-    private static final Map<String, java.util.List<Extra>> EXTRAS = Map.of(
-            "winding_engine", java.util.List.of(new Extra("winding_engine_drum", true, 0, 0, 0)),
-            "mill_engine", java.util.List.of(new Extra("mill_engine/partial/flywheel", false, 1, 1, 3)));
+    private static final Map<String, java.util.List<Extra>> EXTRAS = Map.ofEntries(
+            Map.entry("winding_engine", java.util.List.of(new Extra("winding_engine_drum", true, 0, 0, 0))),
+            Map.entry("mill_engine", java.util.List.of(new Extra("mill_engine/partial/flywheel", false, 1, 1, 3))),
+            // кузница и машиностроение (manufacturing/client/ManufacturingClient): вращаются на месте коленвал молота,
+            // маховики прессов (у кривошипного сохранён на блок ниже), барабан, валки, делительный стол, планшайба и
+            // катушка; бабы, ползуны и мехи — в покое (ход 1–6 px внутрь станины или от неё), двери печей не двигаются
+            Map.entry("power_hammer_real", parts("power_hammer_real", 0, "ram", "crank")),
+            Map.entry("bloomery_real", parts("bloomery_real", 0, "bellows")),
+            Map.entry("forge_hearth_real", parts("forge_hearth_real", 1, "bellows")),
+            Map.entry("crank_press_real", java.util.List.of(new Extra("crank_press_real/partial/ram", false, 0, 0, 0),
+                    new Extra("crank_press_real/partial/flywheel", false, 0, 1, 0))),
+            Map.entry("wire_mill_real", parts("wire_mill_real", 0, "drum")),
+            Map.entry("sheet_mill_real", parts("sheet_mill_real", 0, "roll_top", "roll_bottom")),
+            Map.entry("notching_press_real", parts("notching_press_real", 0, "ram", "index", "flywheel")),
+            Map.entry("winding_machine_real", parts("winding_machine_real", 0, "faceplate", "spool")),
+            Map.entry("heating_furnace_real", parts("heating_furnace_real", 0, "door")),
+            Map.entry("hardening_furnace_real", parts("hardening_furnace_real", 0, "door")));
+
+    /** Partial {@code <id>/partial/<name>} машины {@code id}, нарисованные со сдвигом {@code dy} блоков. */
+    private static java.util.List<Extra> parts(String id, int dy, String... names) {
+        return java.util.Arrays.stream(names).map(n -> new Extra(id + "/partial/" + n, false, 0, dy, 0)).toList();
+    }
 
     /** Клетки модели (фасад на север, от контроллера), в которых что-то нарисовано, вместе с {@link #EXTRAS}. */
     public static java.util.Set<net.minecraft.core.BlockPos> occupied(String id) {
@@ -151,8 +170,10 @@ public final class WholeShapes {
                 double[][] b = aabb(el.getAsJsonObject());
                 int[] v0 = new int[3], v1 = new int[3];
                 for (int i = 0; i < 3; i++) {
-                    v0[i] = (int) Math.floor((b[0][i] + off[i]) / 4 + 1e-6);
-                    v1[i] = (int) Math.ceil((b[1][i] + off[i]) / 4 - 1e-6) - 1;
+                    // до 0,1 px за линией вокселя — на ней: грани ломтей 16-угольника разнесены на 0,01 px от z-fighting,
+                    // и диск, нарисованный до края клетки, не должен занимать воксель соседней
+                    v0[i] = (int) Math.floor((b[0][i] + off[i]) / 4 + 0.025);
+                    v1[i] = (int) Math.ceil((b[1][i] + off[i]) / 4 - 0.025) - 1;
                 }
                 for (int x = v0[0]; x <= v1[0]; x++)
                     for (int y = v0[1]; y <= v1[1]; y++)
