@@ -161,6 +161,32 @@ public final class SitePlans {
                     st("pit", 100, n(BRICKS, 2), n(INGOT, 2)),
                     st("flue", 80, n(BRICKS, 1), n(INGOT, 2))));
 
+    /**
+     * Станочный цех I0 реального масштаба (08 §8.10): станок около 1900 года — чугунная станина и узлы, контрпривод на
+     * двух стойках с ремнём ≈ 0,4 т (оценки по каталожным массам станков того времени), фундаментная плита.
+     */
+    private static final Map<String, Plan> I0_SHOP_PLANS = Map.of(
+            "machine_lathe_real", plan("machine_lathe_real", PcBlocks.MACHINE_LATHE_REAL, 2.1,
+                    st("foundation", 60, n(CONCRETE, 1)),
+                    st("machine_frame", 200, n(INGOT, 15)),
+                    st("countershaft", 120, n(INGOT, 4), n(PIPE, 2))),
+            "drill_press_real", plan("drill_press_real", PcBlocks.DRILL_PRESS_REAL, 1.3,
+                    st("foundation", 60, n(CONCRETE, 1)),
+                    st("machine_frame", 200, n(INGOT, 9)),
+                    st("countershaft", 120, n(INGOT, 2), n(PIPE, 2))),
+            "milling_machine_real", plan("milling_machine_real", PcBlocks.MILLING_MACHINE_REAL, 1.8,
+                    st("foundation", 60, n(CONCRETE, 1)),
+                    st("machine_frame", 200, n(INGOT, 13)),
+                    st("countershaft", 120, n(INGOT, 3), n(PIPE, 2))),
+            "shaping_machine_real", plan("shaping_machine_real", PcBlocks.SHAPING_MACHINE_REAL, 1.6,
+                    st("foundation", 60, n(CONCRETE, 1)),
+                    st("machine_frame", 200, n(INGOT, 12)),
+                    st("countershaft", 120, n(INGOT, 2), n(PIPE, 2))),
+            "surface_grinder_real", plan("surface_grinder_real", PcBlocks.SURFACE_GRINDER_REAL, 1.3,
+                    st("foundation", 60, n(CONCRETE, 1)),
+                    st("machine_frame", 200, n(INGOT, 9)),
+                    st("countershaft", 120, n(INGOT, 2), n(PIPE, 2))));
+
     private SitePlans() {}
 
     /** Множитель числа предметов на этапах ({@code site.material_scale}); вне сервера с конфигом — 1. */
@@ -175,10 +201,11 @@ public final class SitePlans {
     @Nullable
     public static Plan get(String id) {
         Plan p = PLANS.get(id);
-        return p != null ? p : I0_PLANS.get(id);
+        if (p == null) p = I0_PLANS.get(id);
+        return p != null ? p : I0_SHOP_PLANS.get(id);
     }
 
     public static Iterable<Plan> all() {
-        return java.util.stream.Stream.concat(PLANS.values().stream(), I0_PLANS.values().stream()).toList();
+        return java.util.stream.Stream.of(PLANS, I0_PLANS, I0_SHOP_PLANS).flatMap(m -> m.values().stream()).toList();
     }
 }

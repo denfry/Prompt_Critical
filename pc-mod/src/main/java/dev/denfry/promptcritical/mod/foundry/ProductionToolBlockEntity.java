@@ -45,7 +45,7 @@ import org.jetbrains.annotations.Nullable;
  * готовая деталь с компонентом {@code machined_finish} (Ra, квалитет) или лом на выходе. Ступень подачи переключает
  * кнопка щита. Круг, разогнанный выше 1,5 рабочей скорости, разрывает — осколки ранят стоящих рядом.
  */
-public final class ProductionToolBlockEntity extends KineticMachineBlockEntity<ProductionToolUnit> implements PanelHost {
+public final class ProductionToolBlockEntity extends PortKineticMachineBlockEntity<ProductionToolUnit> implements PanelHost {
     private static final MachineInventory.Role[] ROLES = {MachineInventory.Role.INPUT, MachineInventory.Role.SERVICE,
             MachineInventory.Role.OUTPUT};
     /** Осколки круга: радиус поражения, блоки, и урон. */
@@ -210,7 +210,7 @@ public final class ProductionToolBlockEntity extends KineticMachineBlockEntity<P
 
     @Override
     public IItemHandler items(@Nullable Direction side) {
-        return inv.external();
+        return itemSideOpen(side) ? inv.external() : null;
     }
 
     @Override
