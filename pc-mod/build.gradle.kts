@@ -87,6 +87,8 @@ neoForge {
             systemProperty("neoforge.enableGameTest", "true")
             // ./gradlew :pc-mod:runClient -PquickPlay=<мир> — сразу войти в мир из run/saves
             providers.gradleProperty("quickPlay").orNull?.let { programArguments.addAll("--quickPlaySingleplayer", it) }
+            // -PskipBodyScreen — плейтест через RPC: опорное тело без модального экрана выбора (FilmSession)
+            if (providers.gradleProperty("skipBodyScreen").isPresent) systemProperty("promptcritical.skipBodyScreen", "true")
         }
         // ./gradlew :pc-mod:runFilm -PquickPlay=<мир> — съёмка роликов по film.json (FilmRecorder) в своём каталоге run-film
         register("film") {
