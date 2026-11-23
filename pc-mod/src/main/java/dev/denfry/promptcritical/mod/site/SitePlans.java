@@ -161,6 +161,26 @@ public final class SitePlans {
                     st("pit", 100, n(BRICKS, 2), n(INGOT, 2)),
                     st("flue", 80, n(BRICKS, 1), n(INGOT, 2))));
 
+    /**
+     * Сталь и прокат эры I1 реального масштаба (08 §8.6.1, §8.7.2). Металл — оценки из таблиц размеров
+     * (docs/research/bof_vessel-dimensions.md, reheating_furnace-dimensions.md), кирпич футеровки и кладки не металл.
+     */
+    private static final Map<String, Plan> I1_STEEL_PLANS = Map.of(
+            // конвертер на 15 т: корпус ⌀3,6 × 4,8 м с цапфовым кольцом ≈ 32 т, опоры с подшипниками ≈ 15 т, редуктор
+            // наклона, камин и газоход ≈ 14 т; футеровка 0,6–0,7 м ≈ 40 м³ (оценки)
+            "bof_vessel_real", plan("bof_vessel_real", PcBlocks.BOF_VESSEL_REAL, 60,
+                    st("foundation", 200, n(CONCRETE, 40)),
+                    st("converter_stand", 300, n(BEAM, 100), n(INGOT, 50)),
+                    st("vessel", 400, n(PLATE, 220), n(INGOT, 100)),
+                    st("lining", 240, n(BRICKS, 40)),
+                    st("tilt_drive_hood", 300, n(INGOT, 80), n(PLATE, 40), n(PIPE, 20))),
+            // методическая печь 3 × 1,9 × 3 м: кладка ≈ 14 м³, стойки, стяжки, заслонки, толкатель и горелка ≈ 8 т (оценки)
+            "reheating_furnace_real", plan("reheating_furnace_real", PcBlocks.REHEATING_FURNACE_REAL, 8,
+                    st("foundation", 120, n(CONCRETE, 4)),
+                    st("furnace_brickwork", 240, n(BRICKS, 14)),
+                    st("furnace_ironwork", 200, n(INGOT, 40), n(BEAM, 20)),
+                    st("pusher_burner", 160, n(INGOT, 15), n(PIPE, 5))));
+
     private SitePlans() {}
 
     /** Множитель числа предметов на этапах ({@code site.material_scale}); вне сервера с конфигом — 1. */
@@ -175,10 +195,11 @@ public final class SitePlans {
     @Nullable
     public static Plan get(String id) {
         Plan p = PLANS.get(id);
-        return p != null ? p : I0_PLANS.get(id);
+        if (p == null) p = I0_PLANS.get(id);
+        return p != null ? p : I1_STEEL_PLANS.get(id);
     }
 
     public static Iterable<Plan> all() {
-        return java.util.stream.Stream.concat(PLANS.values().stream(), I0_PLANS.values().stream()).toList();
+        return java.util.stream.Stream.of(PLANS, I0_PLANS, I1_STEEL_PLANS).flatMap(m -> m.values().stream()).toList();
     }
 }

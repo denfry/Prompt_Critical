@@ -76,6 +76,13 @@ public final class SiteText {
         drawing("lancashire_stoker", "Lancashire Boiler Stokers", "механических забрасывателей ланкаширского котла");
         stage("stoker_frame", "bed plate, standards and line shaft", "фундаментная плита, стойки и линия вала");
         stage("stokers", "hoppers, feeding boxes and rams", "бункера, питательные коробки и толкатели");
+        drawing("bof_vessel_real", "LD Converter", "кислородного конвертера");
+        stage("converter_stand", "trunnion ring, pedestals and bearings", "цапфовое кольцо, опоры и подшипники");
+        stage("tilt_drive_hood", "tilt drive, hood, gas duct and platform", "привод наклона, камин, газоход и площадка");
+        drawing("reheating_furnace_real", "Continuous Reheating Furnace", "методической нагревательной печи");
+        stage("furnace_brickwork", "base, walls, hearth and sprung arch", "основание, стены, под и распорный свод");
+        stage("furnace_ironwork", "buckstays, tie rods and doors", "стойки каркаса, стяжки и заслонки");
+        stage("pusher_burner", "pusher, burner and flue damper", "толкатель, горелка и шибер борова");
     }
 
     private SiteText() {}

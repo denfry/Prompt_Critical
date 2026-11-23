@@ -45,7 +45,12 @@ public final class WholePorts {
             // уголь в бункера забрасывателей сверху
             Map.entry("lancashire_stoker", List.of(p(-1, 2, 0, U), p(1, 2, 0, U))),
             // тигель и кокс — через крышку ямы; клетки кладки закрыты
-            Map.entry("crucible_furnace_real", List.of(p(0, 0, 0, U))));
+            Map.entry("crucible_furnace_real", List.of(p(0, 0, 0, U))),
+            // конвертер: газоход сверху над камином; лом и известь — с восточного края площадки у опоры (клетка лестницы
+            // (3, 2, 0) свободна)
+            Map.entry("bof_vessel_real", List.of(p(0, 5, 1, U), p(3, 2, 1, E))),
+            // методическая печь: садка и выдача в выходы — через загрузочное окно на юге, газ — к горелке на востоке
+            Map.entry("reheating_furnace_real", List.of(p(0, 0, 1, S), p(1, 0, 0, E))));
 
     private WholePorts() {}
 

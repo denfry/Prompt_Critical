@@ -234,7 +234,7 @@ public final class MachineProcesses {
         p.add(new Process("slag_granulator", Plant.IRON, on(PcBlocks.SLAG_GRANULATOR),
                 of(water(0)), of(item(0, PcItems.GRANULATED_SLAG))));
         // сталеплавильный цех (08 §8.6, 08 §8.7.1)
-        p.add(new Process("bof_vessel", Plant.STEEL, on(PcBlocks.BOF_VESSEL, PcBlocks.OXYGEN_LANCE),
+        p.add(new Process("bof_vessel", Plant.STEEL, on(PcBlocks.BOF_VESSEL, PcBlocks.BOF_VESSEL_REAL, PcBlocks.OXYGEN_LANCE),
                 of(item(0, PcItems.PIG_IRON), item(0, PcItems.STEEL_SCRAP), item(0, PcItems.BURNT_LIME),
                         fluid(0, "oxygen")),
                 of(item(PcBlocks.LADLE), fluid(0, "converter_gas"))));
@@ -244,7 +244,7 @@ public final class MachineProcesses {
                 of(item(PcBlocks.LADLE), item(1, PcItems.REFRACTORY_BRICK)),
                 of(item(0, PcItems.STEEL_INGOT), item(0, PcItems.STEEL_SCRAP))));
         // прокат и трубы (08 §8.7)
-        p.add(new Process("reheating_furnace", Plant.ROLLING, on(PcBlocks.REHEATING_FURNACE),
+        p.add(new Process("reheating_furnace", Plant.ROLLING, on(PcBlocks.REHEATING_FURNACE, PcBlocks.REHEATING_FURNACE_REAL),
                 of(item(1, PcItems.STEEL_INGOT, PcItems.STEEL_BILLET), fuelGas()),
                 of(item(1, PcItems.STEEL_INGOT, PcItems.STEEL_BILLET))));
         p.add(new Process("rolling_mill_stand", Plant.ROLLING, on(PcBlocks.ROLLING_MILL_STAND, PcBlocks.ROLLER_TABLE),

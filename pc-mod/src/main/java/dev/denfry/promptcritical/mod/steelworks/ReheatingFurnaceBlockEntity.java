@@ -15,11 +15,15 @@ import net.minecraft.world.level.block.state.BlockState;
  * перед печью (нет рольганга — в выходы). Угар и пережог выше 1300 °C — {@link StockState#reheated}. Садка — из
  * входа или с рольганга позади печи.
  */
-public final class ReheatingFurnaceBlockEntity extends BatchFurnaceBlockEntity {
+public class ReheatingFurnaceBlockEntity extends BatchFurnaceBlockEntity {
     public static final double READY_MARGIN_K = 30;
 
     public ReheatingFurnaceBlockEntity(BlockPos pos, BlockState state) {
-        super(SteelworksBlockEntities.REHEATING_FURNACE.get(), pos, state, BatchFurnaceUnit.Spec.REHEATING.capacity());
+        this(SteelworksBlockEntities.REHEATING_FURNACE.get(), pos, state);
+    }
+
+    protected ReheatingFurnaceBlockEntity(net.minecraft.world.level.block.entity.BlockEntityType<?> type, BlockPos pos, BlockState state) {
+        super(type, pos, state, BatchFurnaceUnit.Spec.REHEATING.capacity());
     }
 
     @Override

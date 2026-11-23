@@ -45,6 +45,11 @@ public final class SteelworksBlockEntities {
             type("asu_main_compressor", AsuCompressorBlockEntity::new, PcBlocks.ASU_MAIN_COMPRESSOR);
     public static final DeferredHolder<BlockEntityType<?>, BlockEntityType<CryoTankBlockEntity>> CRYOGENIC_TANK =
             type("cryogenic_tank", CryoTankBlockEntity::new, PcBlocks.CRYOGENIC_TANK);
+    // машины реального масштаба с цельной моделью (08 §8.6.1, §8.7.2)
+    public static final DeferredHolder<BlockEntityType<?>, BlockEntityType<BofVesselRealBlockEntity>> BOF_VESSEL_REAL =
+            type("bof_vessel_real", BofVesselRealBlockEntity::new, PcBlocks.BOF_VESSEL_REAL);
+    public static final DeferredHolder<BlockEntityType<?>, BlockEntityType<ReheatingFurnaceRealBlockEntity>> REHEATING_FURNACE_REAL =
+            type("reheating_furnace_real", ReheatingFurnaceRealBlockEntity::new, PcBlocks.REHEATING_FURNACE_REAL);
 
     private SteelworksBlockEntities() {
     }

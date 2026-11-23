@@ -53,7 +53,7 @@ import org.jetbrains.annotations.Nullable;
  * вертикали с опущенной фурмой {@code oxygen_lance} над горловиной (2 блока над контроллером); пока фурма в
  * горловине, привод наклона заблокирован. Конвертерный газ — в бак газоотвода (трубы Create).
  */
-public final class BofVesselBlockEntity extends IronworksDeviceBlockEntity<ConverterUnit> implements ShaftConsumer, PanelHost {
+public class BofVesselBlockEntity extends IronworksDeviceBlockEntity<ConverterUnit> implements ShaftConsumer, PanelHost {
     /** Передача привода наклона: градусов корпуса на оборот вала. */
     public static final double GEAR = 3.6;
     public static final double CHARGE_DEG = 40, TAP_DEG = 80, MAX_TILT_DEG = 110;
@@ -72,8 +72,24 @@ public final class BofVesselBlockEntity extends IronworksDeviceBlockEntity<Conve
     private double tiltDeg, clientTilt, rpm, powerW;
     private boolean healthy, interlocked;
 
+    /**
+     * Размещение вокруг корпуса, клетки модели от контроллера (фасад на север): высота клетки фурмы, зоны ковшей
+     * завалки (впереди) и выпуска (позади) по z, высота ванны и горловины (px) для частиц.
+     */
+    protected record Layout(int lanceY, int chargeZ0, int chargeZ1, int tapZ0, int tapZ1, int bathY, double mouthPx) {}
+
+    /** Старый конвертер 3×2×3: фурма — 2 блока над контроллером. */
+    static final Layout SMALL = new Layout(2, -3, -2, 2, 3, 1, 32);
+
+    private final Layout layout;
+
     public BofVesselBlockEntity(BlockPos pos, BlockState state) {
-        super(SteelworksBlockEntities.BOF_VESSEL.get(), pos, state, ConverterUnit.class);
+        this(SteelworksBlockEntities.BOF_VESSEL.get(), pos, state, SMALL);
+    }
+
+    protected BofVesselBlockEntity(net.minecraft.world.level.block.entity.BlockEntityType<?> type, BlockPos pos, BlockState state, Layout layout) {
+        super(type, pos, state, ConverterUnit.class);
+        this.layout = layout;
     }
 
     private static boolean valid(int slot, ItemStack s) {
@@ -114,7 +130,7 @@ public final class BofVesselBlockEntity extends IronworksDeviceBlockEntity<Conve
 
     @Nullable
     public OxygenLanceBlockEntity lance() {
-        return level.getBlockEntity(worldPosition.above(2)) instanceof OxygenLanceBlockEntity l ? l : null;
+        return level.getBlockEntity(worldPosition.above(layout.lanceY())) instanceof OxygenLanceBlockEntity l ? l : null;
     }
 
     @Override
@@ -159,7 +175,7 @@ public final class BofVesselBlockEntity extends IronworksDeviceBlockEntity<Conve
             pendingLimeKg += item;
         }
         double room = MAX_HOT_METAL_KG - c.metalKg();
-        LadleBlockEntity ladle = room > 1 ? ladle(-3, -2) : null;
+        LadleBlockEntity ladle = room > 1 ? ladle(layout.chargeZ0(), layout.chargeZ1()) : null;
         SteelMelt hm = ladle == null || ladle.steel() || ladle.frozen() ? null : ladle.melt();
         double kg = 0;
         if (hm != null) kg = ladle.take(Math.min(POUR_KG_TICK, room));
@@ -171,13 +187,13 @@ public final class BofVesselBlockEntity extends IronworksDeviceBlockEntity<Conve
     }
 
     private void tap(Converter c) {
-        LadleBlockEntity ladle = ladle(2, 3);
+        LadleBlockEntity ladle = ladle(layout.tapZ0(), layout.tapZ1());
         if (ladle != null && (ladle.metalKg() > 0 && !ladle.steel() || ladle.frozen())) ladle = null;
         SteelMelt steel = c.tap();
         if (steel == null) return;
         // конвертер: PM 0,15 кг на т стали после газоочистки (14 §14.1.3); масса плавки — в журнал целиком; свеча 40 м
         if (level instanceof ServerLevel sl0)
-            dev.denfry.promptcritical.mod.environment.AirQualityService.emit(sl0, worldPosition.above(4), 40, 350, 50, 0, 0, 0.15 * steel.massKg() / 1000 / 72, 0, 0,
+            dev.denfry.promptcritical.mod.environment.AirQualityService.emit(sl0, worldPosition.above(layout.lanceY() + 2), 40, 350, 50, 0, 0, 0.15 * steel.massKg() / 1000 / 72, 0, 0,
                     "bof@" + worldPosition.toShortString(), dev.denfry.promptcritical.sim.environment.EmissionLedger.Category.PROCESS);
         if (level instanceof ServerLevel sl)
             SimAchievements.nearby(sl, worldPosition, SimAchievements.STEEL_TAPPED, "steel_kg", steel.massKg());
@@ -185,7 +201,7 @@ public final class BofVesselBlockEntity extends IronworksDeviceBlockEntity<Conve
         if (rest > 1) {
             // мимо ковша: сталь на площадку — лом
             int n = Ironworks.items(rest);
-            BlockPos at = Steelworks.world(worldPosition, facing(), 0, 0, 2);
+            BlockPos at = Steelworks.world(worldPosition, facing(), 0, 0, layout.tapZ0());
             if (n > 0) Ironworks.spill(level, at, new ItemStack(PcItems.STEEL_SCRAP.get(), n));
             level.playSound(null, at, SoundEvents.LAVA_EXTINGUISH, SoundSource.BLOCKS, 1.0f, 0.7f);
         }
@@ -213,7 +229,7 @@ public final class BofVesselBlockEntity extends IronworksDeviceBlockEntity<Conve
                 case OVERBLOWN -> near(SteelworksText.msg("bof_overblown"));
                 case LANCE_DAMAGED -> {
                     double energy = MoltenWater.steelEnergyJ(LANCE_LEAK_KG, u.converter().tempK(), SteelmakingConfig.defaults());
-                    Ironworks.blast(b, worldPosition.above(), energy, MoltenWater.radiusM(energy), MoltenWater.PRIORITY);
+                    Ironworks.blast(b, worldPosition.above(layout.bathY()), energy, MoltenWater.radiusM(energy), MoltenWater.PRIORITY);
                     near(SteelworksText.msg("bof_lance_leak"));
                 }
                 case SCRAP_UNMELTED -> near(SteelworksText.msg("bof_scrap_unmelted", SteelworksText.num(e.value())));
@@ -231,8 +247,8 @@ public final class BofVesselBlockEntity extends IronworksDeviceBlockEntity<Conve
     protected void clientTick() {
         if (!stateFlag(PcProperties.RUNNING)) return;
         MachineFx fx = fx();
-        if (fx.chance(1)) fx.sparks(fx.at(8, 32, 8), 2);
-        if (fx.chance(1)) fx.smoke(fx.at(8, 34, 8), true, 1.0);
+        if (fx.chance(1)) fx.sparks(fx.at(8, layout.mouthPx(), 8), 2);
+        if (fx.chance(1)) fx.smoke(fx.at(8, layout.mouthPx() + 2, 8), true, 1.0);
     }
 
     @Override

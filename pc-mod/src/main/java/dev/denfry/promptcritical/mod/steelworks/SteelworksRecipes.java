@@ -106,6 +106,13 @@ public final class SteelworksRecipes extends RecipeProvider {
         ShapedRecipeBuilder.shaped(RecipeCategory.MISC, PcBlocks.INGOT_MOLD.get(), 2)
                 .pattern("I I").pattern("I I").pattern("IRI").define('I', Items.IRON_INGOT).define('R', brick)
                 .unlockedBy("has_bof", has(PcBlocks.BOF_VESSEL.get())).save(out, id("ingot_mold"));
+        // чертежи машин реального масштаба: строятся на стройплощадке по массе прототипа (SitePlans)
+        ShapedRecipeBuilder.shaped(RecipeCategory.MISC, dev.denfry.promptcritical.mod.site.SiteRegistry.BOF_VESSEL_REAL_DRAWING.get())
+                .pattern("PPP").pattern("RBR").pattern("ISI").define('P', Items.PAPER).define('R', brick).define('B', PcBlocks.BOF_VESSEL.get())
+                .define('I', sheet).define('S', shaft).unlockedBy("has_bof", has(PcBlocks.BOF_VESSEL.get())).save(out, id("bof_vessel_real_drawing"));
+        ShapedRecipeBuilder.shaped(RecipeCategory.MISC, dev.denfry.promptcritical.mod.site.SiteRegistry.REHEATING_FURNACE_REAL_DRAWING.get())
+                .pattern("PPP").pattern("RFR").pattern("ITI").define('P', Items.PAPER).define('R', brick).define('F', Items.BLAST_FURNACE)
+                .define('I', sheet).define('T', pipe).unlockedBy("has_steel_ingot", has(PcItems.STEEL_INGOT.get())).save(out, id("reheating_furnace_real_drawing"));
 
         // печи
         ShapedRecipeBuilder.shaped(RecipeCategory.MISC, PcBlocks.REHEATING_FURNACE.get())
