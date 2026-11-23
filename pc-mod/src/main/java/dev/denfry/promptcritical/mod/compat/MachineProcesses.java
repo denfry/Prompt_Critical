@@ -218,7 +218,7 @@ public final class MachineProcesses {
         p.add(new Process("baking_furnace", Plant.ELECTRODES, on(PcBlocks.BAKING_FURNACE),
                 of(item(PcItems.GREEN_ELECTRODE), fuelGas()), of(item(PcItems.GREEN_ELECTRODE))));
         // аглофабрика и доменный цех (08 §8.5)
-        p.add(new Process("magnetic_separator", Plant.IRON, on(PcBlocks.MAGNETIC_SEPARATOR),
+        p.add(new Process("magnetic_separator", Plant.IRON, on(PcBlocks.MAGNETIC_SEPARATOR, PcBlocks.MAGNETIC_SEPARATOR_REAL),
                 of(item(4, PcItems.RAW_MAGNETITE)), of(item(0, PcItems.IRON_ORE_CONCENTRATE), item(0, PcItems.STONE_DUST))));
         p.add(new Process("sinter_strand", Plant.IRON, on(PcBlocks.SINTER_STRAND),
                 of(tag(IronworksTags.SINTER_ORE, 10), item(0, PcItems.COKE_BREEZE), tag(IronworksTags.FLUX, 0), fuelGas()),
@@ -272,7 +272,7 @@ public final class MachineProcesses {
         // шахта (08 §8.2)
         p.add(new Process("mine_drainage", Plant.MINE, on(PcBlocks.MINE_DRAINAGE_PUMP),
                 of(), of(fluid(0, "mine_water"))));
-        p.add(new Process("degasification", Plant.MINE, on(PcBlocks.DEGASIFICATION_PUMP, PcBlocks.DEGASIFICATION_BOREHOLE),
+        p.add(new Process("degasification", Plant.MINE, on(PcBlocks.DEGASIFICATION_PUMP, PcBlocks.DEGASIFICATION_PUMP_REAL, PcBlocks.DEGASIFICATION_BOREHOLE),
                 of(), of(fluid(0, "mine_methane"))));
         p.add(new Process("recording_gauge", Plant.POWER, on(PcBlocks.RECORDING_GAUGE),
                 of(item(PcItems.CHART_PAPER)), of(item(PcItems.RECORDED_CHART))));

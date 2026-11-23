@@ -28,7 +28,8 @@ public final class NonferrousBlockEntities {
     public static final DeferredHolder<BlockEntityType<?>, BlockEntityType<ReductionPotBlockEntity>> REDUCTION_POT =
             type("reduction_pot", ReductionPotBlockEntity::new, PcBlocks.REDUCTION_POT);
     public static final DeferredHolder<BlockEntityType<?>, BlockEntityType<FlotationCellBlockEntity>> FLOTATION_CELL =
-            type("flotation_cell", FlotationCellBlockEntity::new, PcBlocks.FLOTATION_CELL);
+            BLOCK_ENTITIES.register("flotation_cell", () -> BlockEntityType.Builder.of(FlotationCellBlockEntity::new,
+                    PcBlocks.FLOTATION_CELL.get(), PcBlocks.FLOTATION_CELL_REAL.get()).build(null));
     public static final DeferredHolder<BlockEntityType<?>, BlockEntityType<MatteSmelterBlockEntity>> MATTE_SMELTER =
             type("matte_smelter", MatteSmelterBlockEntity::new, PcBlocks.MATTE_SMELTER);
     public static final DeferredHolder<BlockEntityType<?>, BlockEntityType<ConverterBlockEntity>> PEIRCE_SMITH_CONVERTER =

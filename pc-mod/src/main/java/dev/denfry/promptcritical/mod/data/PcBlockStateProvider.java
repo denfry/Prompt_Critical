@@ -220,6 +220,8 @@ public final class PcBlockStateProvider extends BlockStateProvider {
         Direction f = state.getValue(BlockStateProperties.HORIZONTAL_FACING);
         // жёлоб в модели идёт вдоль X: по направлению взгляда при установке
         int extra = id.equals("iron_runner") ? 90 : 0;
+        // днище барабана нарисовано на восточном конце модели: на западном конце ряда модель разворачивается
+        if (id.equals("steam_drum") && state.getValue(PcProperties.DRUM_END) == PcProperties.DrumEnd.WEST) extra = 180;
         return ((int) f.toYRot() + 180 + extra) % 360;
     }
 
@@ -234,6 +236,8 @@ public final class PcBlockStateProvider extends BlockStateProvider {
                 String lit = s.getValue(BlockStateProperties.LIT) ? "_lit" : "";
                 yield id + lit + (s.getValue(PcProperties.LOW_WATER) ? "_low_water" : "");
             }
+            // барабан котла реального масштаба: средняя секция или секция с днищем на конце ряда
+            case "steam_drum" -> s.getValue(PcProperties.DRUM_END) == PcProperties.DrumEnd.NONE ? "steam_drum_real" : "steam_drum_real_end";
             case "steam_engine_cylinder" -> s.getValue(PcProperties.ENGINE_SEGMENT) == PcProperties.EngineSegment.FRAME ? id + "_frame" : id;
             case "grate_stoker", "main_mine_fan", "plc" -> s.getValue(PcProperties.RUNNING) ? id + "_running" : id;
             case "portable_ventilator" -> s.getValue(PcProperties.RUNNING) ? id + "_on" : id;
@@ -330,7 +334,9 @@ public final class PcBlockStateProvider extends BlockStateProvider {
             // реальный масштаб: клетки пустые, цельную модель рисует контроллер
             case "vver_reactor", "vver_steam_generator", "vver_coolant_pump", "vver_pressurizer", "bwr240_reactor", "candu6_reactor",
                  "bn600_reactor", "am1_reactor", "lancashire_boiler", "headframe_steel", "mill_engine", "winding_engine", "guibal_fan",
-                 "cupola_furnace_real", "mine_drainage_pump_geared", "lancashire_stoker", "crucible_furnace_real" -> "whole_empty";
+                 "cupola_furnace_real", "mine_drainage_pump_geared", "lancashire_stoker", "crucible_furnace_real",
+                 "degasification_pump_real", "forced_draft_fan_real", "induced_draft_fan_real", "magnetic_separator_real",
+                 "flotation_cell_real", "electrode_boiler_real" -> "whole_empty";
             case "pressurizer" -> s.getValue(BlockStateProperties.LIT) ? id + "_lit" : id;
             // тяжёлая вода T3
             case "gs_exchange_tower" -> "absorption_tower";

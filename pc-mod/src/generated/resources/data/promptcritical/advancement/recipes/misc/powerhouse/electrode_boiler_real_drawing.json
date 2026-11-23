@@ -1,0 +1,32 @@
+{
+  "parent": "minecraft:recipes/root",
+  "criteria": {
+    "has_electrode_boiler": {
+      "conditions": {
+        "items": [
+          {
+            "items": "promptcritical:electrode_boiler"
+          }
+        ]
+      },
+      "trigger": "minecraft:inventory_changed"
+    },
+    "has_the_recipe": {
+      "conditions": {
+        "recipe": "promptcritical:powerhouse/electrode_boiler_real_drawing"
+      },
+      "trigger": "minecraft:recipe_unlocked"
+    }
+  },
+  "requirements": [
+    [
+      "has_the_recipe",
+      "has_electrode_boiler"
+    ]
+  ],
+  "rewards": {
+    "recipes": [
+      "promptcritical:powerhouse/electrode_boiler_real_drawing"
+    ]
+  }
+}

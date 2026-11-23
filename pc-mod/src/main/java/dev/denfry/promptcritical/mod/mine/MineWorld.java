@@ -385,9 +385,10 @@ public final class MineWorld {
         for (var b : s.boreholeNode.long2IntEntrySet()) {
             BlockPos bore = BlockPos.of(b.getLongKey());
             double capture = 0;
-            for (Direction d : Direction.values())
-                if (level.getBlockEntity(bore.relative(d)) instanceof DegasificationPumpBlockEntity pump)
-                    capture = Math.max(capture, pump.capture(tick));
+            for (Direction d : Direction.values()) {
+                DegasificationPumpBlockEntity pump = DegasificationPumpBlockEntity.at(level, bore.relative(d), d.getOpposite());
+                if (pump != null) capture = Math.max(capture, pump.capture(tick));
+            }
             n.field().setDegasification(b.getIntValue(), capture);
         }
         drainage(n, s, tick);

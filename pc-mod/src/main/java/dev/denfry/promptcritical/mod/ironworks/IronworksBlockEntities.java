@@ -28,7 +28,8 @@ public final class IronworksBlockEntities {
     public static final DeferredHolder<BlockEntityType<?>, BlockEntityType<BakingFurnaceBlockEntity>> BAKING_FURNACE =
             type("baking_furnace", BakingFurnaceBlockEntity::new, PcBlocks.BAKING_FURNACE);
     public static final DeferredHolder<BlockEntityType<?>, BlockEntityType<MagneticSeparatorBlockEntity>> MAGNETIC_SEPARATOR =
-            type("magnetic_separator", MagneticSeparatorBlockEntity::new, PcBlocks.MAGNETIC_SEPARATOR);
+            BLOCK_ENTITIES.register("magnetic_separator", () -> BlockEntityType.Builder.of(MagneticSeparatorBlockEntity::new,
+                    PcBlocks.MAGNETIC_SEPARATOR.get(), PcBlocks.MAGNETIC_SEPARATOR_REAL.get()).build(null));
     public static final DeferredHolder<BlockEntityType<?>, BlockEntityType<SinterStrandBlockEntity>> SINTER_STRAND =
             type("sinter_strand", SinterStrandBlockEntity::new, PcBlocks.SINTER_STRAND);
     public static final DeferredHolder<BlockEntityType<?>, BlockEntityType<BlastFurnaceControllerBlockEntity>> BLAST_FURNACE_CONTROLLER =

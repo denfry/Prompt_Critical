@@ -1,0 +1,32 @@
+{
+  "parent": "minecraft:recipes/root",
+  "criteria": {
+    "has_induced_draft_fan": {
+      "conditions": {
+        "items": [
+          {
+            "items": "promptcritical:induced_draft_fan"
+          }
+        ]
+      },
+      "trigger": "minecraft:inventory_changed"
+    },
+    "has_the_recipe": {
+      "conditions": {
+        "recipe": "promptcritical:powerhouse/induced_draft_fan_real_drawing"
+      },
+      "trigger": "minecraft:recipe_unlocked"
+    }
+  },
+  "requirements": [
+    [
+      "has_the_recipe",
+      "has_induced_draft_fan"
+    ]
+  ],
+  "rewards": {
+    "recipes": [
+      "promptcritical:powerhouse/induced_draft_fan_real_drawing"
+    ]
+  }
+}

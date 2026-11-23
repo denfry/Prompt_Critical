@@ -40,6 +40,7 @@ public final class MineClient {
     static final PartialModel HOIST_CURSOR = partial("mine_hoist/partial/cursor");
     static final PartialModel SHEAVE = partial("headframe/partial/sheave");
     static final PartialModel SHEAVE_STEEL = partial("headframe_steel/partial/sheave");
+    static final PartialModel DEGAS_SHAFT_REAL = partial("degasification_pump_real/partial/shaft");
     static final PartialModel WINDER_CROSSHEAD = partial("winding_engine/partial/crosshead");
     static final PartialModel WINDER_CONROD = partial("winding_engine/partial/conrod");
     static final PartialModel WINDER_CURSOR = partial("winding_engine/partial/cursor");
@@ -53,6 +54,7 @@ public final class MineClient {
         dev.denfry.promptcritical.mod.client.whole.WholeModels.register("guibal_fan");
         GuibalFanRenderer.init();
         dev.denfry.promptcritical.mod.client.whole.WholeModels.register("mine_drainage_pump_geared");
+        dev.denfry.promptcritical.mod.client.whole.WholeModels.register("degasification_pump_real");
         GearedPumpRenderer.init();
     }
     /** Шнеки в контрапции вращаются, град/тик (≈ 40 об/мин). */
@@ -72,8 +74,11 @@ public final class MineClient {
 
     private static void registerRenderers(EntityRenderersEvent.RegisterRenderers event) {
         event.registerBlockEntityRenderer(MineBlockEntities.MAIN_MINE_FAN.get(), c -> new FanRenderer());
+        // реальный: вал с колесом вокруг z через (24, 8), хранится на 16 px севернее; скорость — вала в клетке-порте
         event.registerBlockEntityRenderer(MineBlockEntities.DEGASIFICATION_PUMP.get(),
-                c -> new FoundryMachineRenderer<>(ROTOR, Motion.SPIN_Z, 8, 8, 1));
+                c -> new dev.denfry.promptcritical.mod.client.whole.SpinWholeRenderer<>(new FoundryMachineRenderer<>(ROTOR, Motion.SPIN_Z, 8, 8, 1))
+                        .spin(DEGAS_SHAFT_REAL, net.minecraft.core.Direction.Axis.Z, 24, 8, 0, 0, 16,
+                                dev.denfry.promptcritical.mod.foundry.PortedKineticMachineBlock::portSpeed));
         // насос: ЦНС — вал на своём рендере, трёхплунжерный реального масштаба — цельная модель с механизмом
         event.registerBlockEntityRenderer(MineBlockEntities.MINE_DRAINAGE_PUMP.get(), c -> new BlockEntityRenderer<MineDrainagePumpBlockEntity>() {
             private final FoundryMachineRenderer<MineDrainagePumpBlockEntity> old = new FoundryMachineRenderer<>(PUMP_SHAFT, Motion.SPIN_X, 8, 8, 1);

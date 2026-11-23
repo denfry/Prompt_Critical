@@ -446,7 +446,8 @@ public final class RealScaleGameTests {
     public static void pipesConnectOnlyAtPorts(GameTestHelper h) {
         for (String id : new String[] {"vver_reactor", "vver_steam_generator", "vver_coolant_pump", "vver_pressurizer", "bwr240_reactor",
                 "candu6_reactor", "bn600_reactor", "am1_reactor", "lancashire_boiler", "mill_engine", "cupola_furnace_real",
-                "lancashire_stoker", "crucible_furnace_real"}) {
+                "lancashire_stoker", "crucible_furnace_real", "degasification_pump_real", "forced_draft_fan_real",
+                "induced_draft_fan_real", "magnetic_separator_real", "flotation_cell_real", "electrode_boiler_real"}) {
             h.assertTrue(!dev.denfry.promptcritical.mod.multiblock.WholePorts.of(id).isEmpty(), id + " declares its ports");
             for (Direction f : Direction.Plane.HORIZONTAL)
                 for (var port : dev.denfry.promptcritical.mod.multiblock.WholePorts.of(id)) {
@@ -486,7 +487,8 @@ public final class RealScaleGameTests {
             h.assertTrue(r > 1 / 1.5 && r < 1.5, plan.id() + ": planned metal " + Math.round(plan.plannedMetalKg() / 1000) + " t vs prototype "
                     + Math.round(plan.metalKg() / 1000) + " t");
         }
-        h.assertTrue(n == 17, "seventeen real-scale plans (eight reactors and NPP units, nine I0 machines), got " + n);
+        h.assertTrue(n == 23, "twenty-three real-scale plans (eight reactors and NPP units, nine I0 machines, six boiler-house, "
+                + "degasification and ore-dressing machines), got " + n);
         h.succeed();
     }
 

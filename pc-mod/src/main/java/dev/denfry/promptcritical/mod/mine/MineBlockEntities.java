@@ -20,7 +20,8 @@ public final class MineBlockEntities {
             BLOCK_ENTITIES.register("main_mine_fan", () -> BlockEntityType.Builder.of(MainMineFanBlockEntity::new,
                     PcBlocks.MAIN_MINE_FAN.get(), PcBlocks.GUIBAL_FAN.get()).build(null));
     public static final DeferredHolder<BlockEntityType<?>, BlockEntityType<DegasificationPumpBlockEntity>> DEGASIFICATION_PUMP =
-            type("degasification_pump", DegasificationPumpBlockEntity::new, PcBlocks.DEGASIFICATION_PUMP);
+            BLOCK_ENTITIES.register("degasification_pump", () -> BlockEntityType.Builder.of(DegasificationPumpBlockEntity::new,
+                    PcBlocks.DEGASIFICATION_PUMP.get(), PcBlocks.DEGASIFICATION_PUMP_REAL.get()).build(null));
     public static final DeferredHolder<BlockEntityType<?>, BlockEntityType<HeadframeSteelBlockEntity>> HEADFRAME_STEEL =
             type("headframe_steel", HeadframeSteelBlockEntity::new, PcBlocks.HEADFRAME_STEEL);
     public static final DeferredHolder<BlockEntityType<?>, BlockEntityType<MineHoistBlockEntity>> MINE_HOIST =
