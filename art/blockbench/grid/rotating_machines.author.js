@@ -123,16 +123,29 @@
     return m;
   }
 
-  // DC exciter: frame on feet, commutator end with brush gear on top, forcing lamp.
+  // DC exciter at real size (frame Ø 0.8 m, 1 m long) on a cast pedestal: 1x2x1, the controller on the generator
+  // axis (8, 8) 1.5 m up, the pedestal in the cell below (y -16..0). The coupling faces south onto the generator's
+  // shaft; the commutator and its brush gear are at the outboard (north) end, with the forcing lamp and terminal box.
   function exciter() {
     const m = mk();
-    m.box('feet', [2, 0, 2], [14, 1.6, 14], 'ge', { split: '' });
-    m.prism('frame', 'z', [8, 7.4], 5.4, 3, 13, 'ge', { split: '', ends: ['north', 'south'] });
-    m.box('brush_gear', [3.4, 12.4, 4], [12.6, 14, 9], 'ge', { split: '', face: { up: { tex: 'generator_exciter/brushes', uv: [0, 0, 16, 16] } } });
-    m.box('brush_cover', [3, 14, 9], [13, 15, 12.6], 'ge', { split: '' });
-    m.prism('shaft', 'z', [8, 7.4], 0.8, 0, 3, 'bright', { split: '', ends: ['north'] });
-    m.box('lamp_forcing', [11.8, 11.4, 2.4], [13.2, 12.8, 3], 'red', { split: '' });
-    m.box('rating_plate', [13.4, 5, 6], [14.6, 8, 10], 'br', { split: '' });
+    m.box('ped_base', [1, -16, 1], [15, -14, 15], 'ci', { split: '' });
+    m.box('ped_column', [3, -14, 3], [13, 0, 13], 'ge', { split: '' });
+    for (const [x0, x1, z0, z1] of [[2, 3, 6, 10], [13, 14, 6, 10], [6, 10, 2, 3], [6, 10, 13, 14]]) m.box(`ped_rib_${x0}_${z0}`, [x0, -14, z0], [x1, -2, z1], 'ge', { split: '' });
+    for (const x of [1.8, 13.2]) for (const z of [1.8, 13.2]) m.box(`ped_bolt_${x}_${z}`, [x, -14, z], [x + 1, -13.4, z + 1], 'st', { split: '' });
+    m.box('ped_top', [2, -0.4, 2], [14, 0, 14], 'ci', { split: '' });
+    m.box('feet', [2.4, 0, 3], [13.6, 1.8, 14], 'ge', { split: '' });
+    m.prism('frame', 'z', [8, 8], 6.4, 3.4, 14.4, 'ge', { split: '', ends: ['north', 'south'] });
+    for (const z of [3.4, 13.4]) m.prism(`yoke_ring_${z}`, 'z', [8, 8], 6.8, z, z + 1, 'ge', { split: '' });
+    // commutator end: copper commutator, four brush arms on a rocker ring, cover
+    m.prism('commutator', 'z', [8, 8], 3.2, 0.6, 3.4, 'cu', { split: '', ends: ['north'] });
+    m.prism('rocker', 'z', [8, 8], 4.6, 2.2, 2.8, 'ge', { split: '' });
+    for (const [x0, y0, x1, y1] of [[7.2, 11.2, 8.8, 13], [7.2, 3, 8.8, 4.8], [11.2, 7.2, 13, 8.8], [3, 7.2, 4.8, 8.8]]) m.box(`brush_${x0}_${y0}`, [x0, y0, 1], [x1, y1, 2.4], 'br', { split: '' });
+    m.box('brush_gear', [3.4, 14.4, 4], [12.6, 15, 9], 'ge', { split: '', face: { up: { tex: 'generator_exciter/brushes', uv: [0, 0, 16, 16] } } });
+    m.prism('shaft', 'z', [8, 8], 1.1, 0, 16, 'bright', { split: '', ends: ['north', 'south'] });
+    m.prism('coupling', 'z', [8, 8], 2.8, 14.4, 16, 'ci', { split: '', ends: ['south'] });
+    m.box('terminal_box', [5, 14.4, 9.4], [11, 16, 13], 'ge', { split: '' });
+    m.box('lamp_forcing', [11.8, 12.4, 2.4], [13.2, 13.8, 3.2], 'red', { split: '' });
+    m.box('rating_plate', [14.4, 5, 6], [14.8, 8, 10], 'br', { split: '' });
     return m;
   }
 
@@ -145,8 +158,17 @@
     m.box('foot_web_w', [3.4, 1.6, 4], [5.4, 9 - r, 12], 'me', { split: '' });
     m.box('foot_web_e', [10.6, 1.6, 4], [12.6, 9 - r, 12], 'me', { split: '' });
     m.prism('frame', 'z', [8, 8], r, 2.6, 13, 'me', { split: '', ends: ['north', 'south'] });
-    for (let k = -3; k <= 3; k++) radialZ(m, `rib_${k}`, 2.8, 13, r - 0.2, r + 0.9, 0.5, k * 22.5 + (k < 0 ? -0 : 0), 'me');
-    for (const a of [-90, 90]) radialZ(m, `rib_side_${a}`, 2.8, 13, r - 0.2, r + 0.9, 0.5, a, 'me');
+    // cooling ribs all round except under the feet (the 100 kW frame is ribbed on every side)
+    const ribs = mv ? [-3, -2, -1, 0, 1, 2, 3, -4, 4] : [-6, -5, -4, -3, -2, -1, 0, 1, 2, 3, 4, 5, 6];
+    for (const k of ribs) radialZ(m, `rib_${k}`, 2.8, 13, r - 0.2, r + 0.9, 0.5, k * 22.5, 'me');
+    if (!mv) {
+      // slide rails under the feet (belt or coupling alignment), earthing stud, lifting eye, conduit to the floor
+      for (const x of [1.1, 11.1]) m.box(`rail_${x}`, [x, 0, 1.6], [x + 3.8, 0.6, 14.4], 'st', { split: '' });
+      for (const x of [2.4, 12.2]) for (const z of [2, 13.4]) m.box(`rail_bolt_${x}_${z}`, [x, 0.6, z], [x + 1, 1.1, z + 0.6], 'bright', { split: '' });
+      m.box('eye', [7.4, 8 + r + 0.6, 6.6], [8.6, 8 + r + 2, 7.2], 'st', { split: '' });
+      m.box('earth_stud', [14.4, 1.6, 11], [15, 2.4, 12], 'br', { split: '' });
+      m.box('conduit', [11.8, 0, 7.4], [12.8, 12.6, 8.6], 'st', { split: 'y' });
+    }
     m.prism('flange', 'z', [8, 8], r - 0.6, 1.4, 2.6, 'me', { split: '', ends: ['north'] });
     m.prism('cowl', 'z', [8, 8], r + 0.4, 13, 15.4, 'me', { split: '' });
     m.disc('cowl_grille', 'z', [8, 8], r + 0.2, 15.4, 15.6, 'me', 'electric_motor/cowl', 'south');
