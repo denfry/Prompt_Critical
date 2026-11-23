@@ -351,6 +351,14 @@ public final class PcBlocks {
             KineticMachineBlock.with(ShaftSide.BACK, dev.denfry.promptcritical.mod.grid.SolarTrackerDriveBlockEntity::new));
     public static final DeferredBlock<DecorBlock> GRID_BATTERY_RACK = decor("grid_battery_rack", sheet(MapColor.COLOR_GRAY),
             Spec.facing().footprint(FP_TALL2), 1, 0, 1, 15, 16, 15);   // стеллаж 1 × 2 × 1 по модели, верх — часть
+    /**
+     * Молниезащита (07 §7.15.1): стержень заземлителя 3 м ⌀ 16 мм — под основанием опоры (до трёх блоков вниз, в
+     * квадрате 3 × 3), сопротивление по грунту вокруг; ОПН (вентильный разрядник I1) — вплотную к трансформатору.
+     */
+    public static final DeferredBlock<DecorBlock> GROUND_ELECTRODE = decor("ground_electrode", sheet(MapColor.COLOR_ORANGE), Spec.of(),
+            6, 0, 6, 10, 16, 10);
+    public static final DeferredBlock<DecorBlock> SURGE_ARRESTER = decor("surge_arrester", sheet(MapColor.TERRACOTTA_WHITE), Spec.of(),
+            4.5, 0, 4.5, 11.5, 16, 11.5);
     public static final DeferredBlock<PcDeviceBlock> SOLAR_INVERTER = device("solar_inverter", machine(),
             Spec.facing(BlockStateProperties.LIT), FoundryBlock.with(dev.denfry.promptcritical.mod.grid.SolarInverterBlockEntity::new));
     public static final DeferredBlock<PcDeviceBlock> BATTERY_INVERTER = device("battery_inverter", machine(),

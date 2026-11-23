@@ -339,6 +339,40 @@ class GridSubsystemTest {
     }
 
     /**
+     * Молния в пролёт 6 кВ (07 §7.15.1): удар в провод перекрывает изоляцию, волна, срезанная до U₅₀% = 60 кВ, приходит к
+     * трансформатору на конце пролёта. Без ОПН он пробивается с вероятностью 60/60 − 0,8 = 0,2 за удар, с ОПН волна
+     * срезана до 2,75 U_ф,max ≈ 16 кВ — пробоя нет.
+     */
+    @Test
+    void lightningBurnsATransformerWithoutAnArresterAndSparesOneWithIt() {
+        SimulationWorld w = world();
+        generator(w, BUS_A, 0);
+        cell(w, BUS_A, BUS_B, true);
+        ConnectorUnit near = grid(w).connector(device(w, "wire_connector_mv"), true);
+        near.setNodes(BUS_B);
+        ConnectorUnit far = grid(w).connector(device(w, "wire_connector_mv"), true);
+        far.setNodes(BUS_D);
+        grid(w).putLine(77, near.id(), far.id(), "m35", false, 30);
+        TransformerUnit bare = grid(w).transformer(device(w, "distribution_transformer"));
+        bare.setNodes(BUS_D, BUS_C);
+        TransformerUnit guarded = grid(w).transformer(device(w, "distribution_transformer"));
+        guarded.setNodes(BUS_D, 15);
+        guarded.setArrester(true);
+        run(w, 25);
+        int flashovers = 0;
+        for (int k = 0; k < 40; k++) {
+            GridSubsystem.Strike s = grid(w).strikeLine(77, 0.5, Lightning.Stroke.PHASE, Double.POSITIVE_INFINITY, 8, 0);
+            assertThat(s).isNotNull();
+            if (s.outcome().flashover()) flashovers++;
+            assertThat(s.outcome().surgeKv()).isEqualTo(60);
+            run(w, 0.5);
+        }
+        assertThat(flashovers).isEqualTo(40);
+        assertThat(bare.damaged()).as("0.8^40 to survive").isTrue();
+        assertThat(guarded.damaged()).isFalse();
+    }
+
+    /**
      * Батарея конденсаторов на шине генератора 500 кВА (x_d = 2): одна ступень 150 квар — генератор её поглощает
      * (Q &lt; 0), прикрыв поле. Четыре ступени — 600 квар больше, чем S/x_d = 250 квар, которые машина может принять на
      * холостом ходу: ёмкость сама возбуждает генератор, напряжение уходит вверх, и машину повреждает перенапряжением.

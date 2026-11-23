@@ -285,6 +285,8 @@ final class GridProfiles {
         m.put("p", u.powerW());
         m.put("lossOfLifeH", u.lossOfLifeH());
         m.put("cooling", "AN");
+        m.put("arrester", u.arrester());
+        m.put("damaged", u.damaged());
         return m;
     }
 }

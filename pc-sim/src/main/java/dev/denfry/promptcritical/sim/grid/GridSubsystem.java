@@ -253,11 +253,51 @@ public final class GridSubsystem implements Subsystem, GridEventSink {
      * {@code grid.ar_success_lightning} (гаснет в бестоковую паузу АПВ). {@code false} — пролёт не в сети.
      */
     public boolean strikeLine(long key, double at) {
+        return strikeLine(key, at, Lightning.Stroke.PHASE, Double.POSITIVE_INFINITY, 0, 0) != null;
+    }
+
+    /** Удар молнии и его последствия (§7.15.1): ток, перекрытие пролёта, трансформаторы, пробитые волной. */
+    public record Strike(double currentKa, Lightning.Outcome outcome, List<SimId> burntTransformers) {
+    }
+
+    /**
+     * Удар в пролёт {@code key} или рядом с ним: ток — по распределению IEEE Std 1243, перенапряжение и перекрытие —
+     * {@link Lightning#stroke}. Перекрытие — однофазное КЗ, самоустраняющееся с вероятностью
+     * {@code grid.ar_success_lightning}. Волна уходит к концам пролёта: трансформатор, подключённый к узлу конца, без ОПН
+     * пробивается с вероятностью min(1, U/BIL − 0,8), с ОПН волна срезана до 2,75 U_ф,max. {@code null} — пролёт не в сети.
+     */
+    public Strike strikeLine(long key, double at, Lightning.Stroke kind, double groundOhm, double heightM, double distanceM) {
         LineUnit l = lines.get(key);
-        if (l == null || l.branch == null || !ready()) return false;
-        boolean selfClearing = rng.nextDouble() < cfg.arSuccessLightning();
-        grid.applyBranchFault(l.branch, Math.max(0.01, Math.min(0.99, at)), FaultType.SINGLE_LINE_GROUND, 0, selfClearing);
-        return true;
+        if (l == null || l.branch == null || !ready()) return null;
+        double iKa = Lightning.currentKa(Math.max(1e-9, rng.nextDouble()));
+        VoltageClass vc = lineClass(l);
+        Lightning.Outcome o = Lightning.stroke(iKa, kind, Lightning.lineCfoKv(vc), groundOhm, heightM, distanceM);
+        if (o.flashover()) {
+            boolean selfClearing = rng.nextDouble() < cfg.arSuccessLightning();
+            grid.applyBranchFault(l.branch, Math.max(0.01, Math.min(0.99, at)), FaultType.SINGLE_LINE_GROUND, 0, selfClearing);
+        }
+        List<SimId> burnt = new ArrayList<>();
+        if (o.surgeKv() > 0 && !Double.isNaN(vc.bilKv)) {
+            for (SimId end : List.of(l.a, l.b)) {
+                GridUnit c = units.get(end);
+                if (c == null || c.node(0) == GridUnit.NO_NODE) continue;
+                for (GridUnit u : units.values()) {
+                    if (!(u instanceof TransformerUnit t) || t.damaged() || t.node(0) != c.node(0)) continue;
+                    double surge = t.arrester() ? Math.min(o.surgeKv(), Lightning.arresterLimitKv(vc)) : o.surgeKv();
+                    if (rng.nextDouble() < Lightning.transformerBreakdownProbability(surge, vc.bilKv)) {
+                        t.breakDown();
+                        burnt.add(t.id());
+                    }
+                }
+            }
+        }
+        return new Strike(iKa, o, burnt);
+    }
+
+    /** Класс напряжения пролёта: по соединителям его концов (6 кВ или 0,4 кВ). */
+    private VoltageClass lineClass(LineUnit l) {
+        return units.get(l.a) instanceof ConnectorUnit c && c.mediumVoltage || units.get(l.b) instanceof ConnectorUnit d && d.mediumVoltage
+                ? VoltageClass.MV_6_3 : VoltageClass.LV_0_4;
     }
 
     /** Температура провода пролёта, °C. */

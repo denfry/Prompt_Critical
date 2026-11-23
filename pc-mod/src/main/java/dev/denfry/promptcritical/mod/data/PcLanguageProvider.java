@@ -198,6 +198,8 @@ public final class PcLanguageProvider extends LanguageProvider {
         b("electric_arc_furnace_real", "Héroult Arc Furnace", "Дуговая печь Эру");
         b("busbar", "Busbar", "Шина");
         b("disconnector", "Disconnector", "Разъединитель");
+        b("ground_electrode", "Ground Electrode", "Заземлитель");
+        b("surge_arrester", "Surge Arrester", "Вентильный разрядник");
         b("switchgear_cell", "Switchgear Cell 6 kV", "Ячейка КРУ 6 кВ");
         b("lv_switchboard", "LV Switchboard 0.4 kV", "Щит 0,4 кВ");
         b("relay_cabinet", "Relay Protection Cabinet", "Шкаф релейной защиты");

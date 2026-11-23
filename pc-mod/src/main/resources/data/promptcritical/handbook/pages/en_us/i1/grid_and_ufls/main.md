@@ -25,6 +25,8 @@ The [6/0.4 kV transformer](item:promptcritical:distribution_transformer), a 630 
 
 Current and sun heat the wire; it lengthens and sags. Above 90 °C copper anneals and loses strength; an overheated wire breaks and falls to earth. Lightning strikes tall lines.
 
+In a thunderstorm every span catches strokes, the more the higher it hangs. A stroke to the wire always flashes the insulators over. The span trips and usually comes back on reclosing. A stroke to the ground nearby induces 30·I·h/d kV, enough to flash over a 6 kV line within tens of metres. A lightning rod on top of a pole takes the stroke into the pole. That helps only with a [ground electrode](item:promptcritical:ground_electrode) under the pole base, because the voltage is current times earth resistance. One rod is 33 Ω in loam, 10 Ω in clay and over 300 Ω in sand or rock, and more rods lower it. A flashover sends a 60 kV wave along the wire to the transformers at its ends. One without a [surge arrester](item:promptcritical:surge_arrester) touching it burns out one time in five and keeps a short circuit in its tank until it is replaced.
+
 ## Loads
 
 The 3×3×3 [settlement load](item:promptcritical:grid_consumer) is a 6 kV substation; the cable goes to any outer face. Its panel sets demand, 50–2000 kW, and its main switch. The [electric motor](item:promptcritical:electric_motor) is a Create rotation source fed from the grid: 100 kW at 0.4 kV or 1 MW at 6.3 kV. Starting current is several times rated: a weak grid sags on a start, and an overloaded motor stalls. An [energy meter](item:promptcritical:energy_meter) on a cell counts kWh both ways.

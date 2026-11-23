@@ -217,6 +217,14 @@ public final class GridRecipes extends RecipeProvider {
                 .define('G', Items.GLASS_PANE).define('W', wire).define('C', Items.COMPARATOR).define('I', Items.IRON_INGOT)
                 .unlockedBy("has_wire", hasWire).save(out, id("energy_meter"));
 
+        // молниезащита (07 §7.15.1): медный стержень с хомутом; разрядник — фарфор, искровой промежуток и резистор
+        ShapedRecipeBuilder.shaped(RecipeCategory.MISC, PcBlocks.GROUND_ELECTRODE.get(), 2).pattern("C").pattern("C").pattern("I")
+                .define('C', Items.COPPER_INGOT).define('I', Items.IRON_INGOT)
+                .unlockedBy("has_pole", has(PcBlocks.WOODEN_POLE.get())).save(out, id("ground_electrode"));
+        ShapelessRecipeBuilder.shapeless(RecipeCategory.MISC, PcBlocks.SURGE_ARRESTER.get())
+                .requires(PcItems.INSULATOR_PIN.get(), 2).requires(Items.IRON_INGOT).requires(PcItems.COPPER_WIRE.get()).requires(Items.REDSTONE)
+                .unlockedBy("has_transformer", has(PcBlocks.DISTRIBUTION_TRANSFORMER.get())).save(out, id("surge_arrester"));
+
         // пусковые модули двигателя (07 §7.6.3): звезда–треугольник — три контактора и реле времени; плавный пуск —
         // тиристоры на кремнии, плата управления и шунтирующий контактор; частотный привод — силовые ключи и контроллер
         ShapelessRecipeBuilder.shapeless(RecipeCategory.REDSTONE, PcItems.STAR_DELTA_STARTER.get())

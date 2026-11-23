@@ -47,11 +47,22 @@ public class TransformerBlockEntity extends GridDeviceBlockEntity<TransformerUni
 
     @Override
     protected void serverTick(TransformerUnit u) {
+        if (ticks % 20 == 5) u.setArrester(arresterNear());
         if (ticks % 10 != 0) return;
         int h = u.energized() ? 1 + (int) Math.min(10, Math.round(u.loading() * 10)) : 0;
         if (h == hum) return;
         hum = h;
         level.sendBlockUpdated(worldPosition, getBlockState(), getBlockState(), net.minecraft.world.level.block.Block.UPDATE_CLIENTS);
+    }
+
+    /** ОПН вплотную к любой клетке трансформатора (07 §7.15.1). */
+    boolean arresterNear() {
+        if (!(getBlockState().getBlock() instanceof dev.denfry.promptcritical.mod.block.PcBlock pb)) return false;
+        net.minecraft.core.Direction f = getBlockState().getValue(net.minecraft.world.level.block.state.properties.BlockStateProperties.HORIZONTAL_FACING);
+        for (var c : pb.spec().footprint().cells(worldPosition, f))
+            for (net.minecraft.core.Direction d : net.minecraft.core.Direction.values())
+                if (level.getBlockState(c.pos().relative(d)).is(dev.denfry.promptcritical.mod.registry.PcBlocks.SURGE_ARRESTER.get())) return true;
+        return false;
     }
 
     @Override
