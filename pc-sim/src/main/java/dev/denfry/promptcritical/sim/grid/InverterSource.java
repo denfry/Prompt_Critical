@@ -79,14 +79,6 @@ public final class InverterSource {
      *
      * @return мощность в сеть, Вт
      */
-    private int windowResets;
-    private double lastOutV = Double.NaN, lastOutF = Double.NaN;
-
-    /** Отладка: сколько раз выдержка в окне сбрасывалась и чем (напряжение, о. е.; частота, Гц). */
-    public String windowDebug() {
-        return windowResets + " resets, last at " + lastOutV + " pu " + lastOutF + " Hz";
-    }
-
     public double step(double dt, double vPu, double fHz, double demandW, double maxOutW, double maxInW) {
         if (!(dt > 0)) throw new IllegalArgumentException("dt must be positive");
         boolean inWindow = vPu >= V_MIN_PU && vPu <= V_MAX_PU && fHz >= F_MIN_HZ && fHz <= F_MAX_HZ;
@@ -98,11 +90,6 @@ public final class InverterSource {
                 onS = 0;
             }
         } else {
-            if (inS > 0) {
-                windowResets++;
-                lastOutV = vPu;
-                lastOutF = fHz;
-            }
             inS = 0;
             outS += dt;
             if (connected && outS >= FeInterface.ANTI_ISLANDING_S) connected = false;
@@ -114,9 +101,16 @@ public final class InverterSource {
             return 0;
         }
         onS += dt;
-        double target = demandW * frequencyFactor(demandW, fHz) - 2 * syntheticH * ratedW * dfdt / PowerBoard.NOMINAL_HZ;
-        double limit = CURRENT_LIMIT_PU * ratedW * Math.max(0, Math.min(1, vPu)) * Math.min(1, onS / FeInterface.RAMP_S);
-        target = Math.max(-Math.min(limit, Math.max(0, maxInW)), Math.min(Math.min(limit, Math.max(0, maxOutW)), target));
+        double out = Math.max(0, maxOutW), in = Math.max(0, maxInW);
+        // LFSM-O/U режут мощность, которую источник может дать сейчас (P_ref EN 50549-1), а не задание сверх неё:
+        // иначе при задании «номинал» и слабой батарее отдача не убывает до 52 Гц
+        double p = Math.max(-in, Math.min(out, demandW));
+        double target = p * frequencyFactor(p, fHz) - 2 * syntheticH * ratedW * dfdt / PowerBoard.NOMINAL_HZ;
+        // набор после включения — от мощности источника за инвертором, а не от предела тока: на острове с приводом
+        // через обгонную муфту отдача быстрее нагрузки, набирающей свою мощность, разгоняет генератор за окно 51 Гц
+        double ramp = Math.min(1, onS / FeInterface.RAMP_S);
+        double limit = CURRENT_LIMIT_PU * ratedW * Math.max(0, Math.min(1, vPu));
+        target = Math.max(-Math.min(limit, in * ramp), Math.min(Math.min(limit, out * ramp), target));
         powerW += (target - powerW) * Math.min(1, dt / RESPONSE_S);
         return powerW;
     }
