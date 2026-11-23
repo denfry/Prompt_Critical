@@ -9,6 +9,12 @@ import dev.denfry.promptcritical.sim.metallurgy.AirCooling;
 import org.junit.jupiter.api.Test;
 
 class ForgeHeatingTest {
+    @Test void pieceHotterThanTheFireCoolsGraduallyNotInOneStep() {
+        var hot = bar45(0.04, 1500).withTemp(1500);
+        var out = ForgeHeating.heat(hot, ForgeHeating.fireTempK(0), 1);
+        assertThat(out.tempK()).isGreaterThan(1400);
+    }
+
     @Test void fortyMillimetreBarReachesForgingHeatInMinutesNotSeconds() {
         var w = bar45(0.040, 293.15);
         assertThat(ForgeHeating.heat(w, 1573.15, 60).tempK()).isLessThan(1373.15);

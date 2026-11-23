@@ -5,7 +5,10 @@ import dev.denfry.promptcritical.mod.manufacturing.ManufacturingComponents;
 import dev.denfry.promptcritical.sim.manufacturing.PartDefect;
 import dev.denfry.promptcritical.sim.manufacturing.PartRoute;
 import dev.denfry.promptcritical.sim.manufacturing.PartSpec;
+import dev.denfry.promptcritical.mod.steelworks.SteelworksText;
 import dev.denfry.promptcritical.sim.metallurgy.HeatTreatState;
+import dev.denfry.promptcritical.sim.metallurgy.SteelFamily;
+import java.util.Locale;
 import java.util.Map;
 import net.minecraft.gametest.framework.GameTest;
 import net.minecraft.gametest.framework.GameTestHelper;
@@ -39,6 +42,26 @@ public final class ManufacturingGameTests {
         var ops = h.getLevel().registryAccess().createSerializationContext(NbtOps.INSTANCE);
         var back = ItemStack.CODEC.parse(ops, ItemStack.CODEC.encodeStart(ops, stack).getOrThrow()).getOrThrow();
         h.assertValueEqual(back.get(ManufacturingComponents.PART_SPEC.get()), spec, "part_spec");
+        h.succeed();
+    }
+
+    @GameTest(template = SMALL)
+    public static void partSpecWithoutDefectsSurvivesTheItemCodec(GameTestHelper h) {
+        var spec = PartSpec.of("shaft", "45", PartRoute.FORGED, HeatTreatState.NORMALIZED, 21, 0, 40, Map.of());
+        var stack = withSpec(spec);
+        var ops = h.getLevel().registryAccess().createSerializationContext(NbtOps.INSTANCE);
+        var back = ItemStack.CODEC.parse(ops, ItemStack.CODEC.encodeStart(ops, stack).getOrThrow()).getOrThrow();
+        h.assertValueEqual(back.get(ManufacturingComponents.PART_SPEC.get()), spec, "part_spec without defects");
+        h.succeed();
+    }
+
+    /** Ключи семейств строятся динамически, checkTranslations их не видит: проверяем здесь. */
+    @GameTest(template = SMALL)
+    public static void everySteelFamilyHasAName(GameTestHelper h) {
+        for (SteelFamily f : SteelFamily.values()) {
+            String key = "message." + PromptCritical.MOD_ID + ".steel.family." + f.name().toLowerCase(Locale.ROOT);
+            h.assertTrue(SteelworksText.LANG.containsKey(key), "no lang entry for " + key);
+        }
         h.succeed();
     }
 

@@ -2,6 +2,8 @@ package dev.denfry.promptcritical.sim.manufacturing;
 
 import dev.denfry.promptcritical.sim.manufacturing.Workpiece.Section;
 import dev.denfry.promptcritical.sim.metallurgy.AirCooling;
+import dev.denfry.promptcritical.sim.metallurgy.HeatTreatState;
+import dev.denfry.promptcritical.sim.metallurgy.HeatTreatment;
 import dev.denfry.promptcritical.sim.metallurgy.SteelGrade;
 
 /**
@@ -60,6 +62,7 @@ public final class ForgeHeating {
         double surface = w.surfaceM2();
         double burnK = burningK(w.grade());
         double t = w.tempK();
+        boolean startedAbove = t > fireK;
         double oxideSq = 0;
         boolean burnt = false;
         double left = seconds;
@@ -69,7 +72,8 @@ public final class ForgeHeating {
             double q = AirCooling.EMISSIVITY * AirCooling.SIGMA * (Math.pow(fireK, 4) - Math.pow(t, 4))
                     + FIRE_CONVECTION_W_M2K * (fireK - t);
             t += q * surface * dt / heatCapacity;
-            t = Math.min(t, fireK);
+            // к температуре огня подходят со стороны старта: горячая деталь остывает постепенно, а не скачком
+            t = startedAbove ? Math.max(t, fireK) : Math.min(t, fireK);
             oxideSq += scaleRateConstant(t) * dt;
             if (t > burnK) {
                 burnt = true;
@@ -80,6 +84,13 @@ public final class ForgeHeating {
         double a = Math.max(Forging.MIN_SECTION_M, w.aM() - 2 * recessionM);
         double b = w.section() == Section.FLAT ? Math.max(Forging.MIN_SECTION_M, w.bM() - 2 * recessionM) : a;
         var out = w.withSection(a, b, w.lengthM()).withTemp(t);
+        // нагрев выше Ac3 + запас переводит в аустенит: закалка и улучшение стираются, деталь снова нормализована
+        var state = w.grade().state();
+        if (t >= HeatTreatment.ac3K(w.grade()) + HeatTreatment.AC3_MARGIN_K
+                && (state == HeatTreatState.QUENCHED || state == HeatTreatState.QUENCHED_TEMPERED)) {
+            var normalized = w.grade().withState(HeatTreatState.NORMALIZED);
+            out = out.withGrade(normalized).withHardness(normalized.hardnessHrc());
+        }
         return burnt ? out.withDefect(PartDefect.BURNT, 1.0) : out;
     }
 

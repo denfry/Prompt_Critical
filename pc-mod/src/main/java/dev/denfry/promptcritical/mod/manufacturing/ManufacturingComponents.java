@@ -62,7 +62,7 @@ public final class ManufacturingComponents {
                                    int itGrade, double raUm, Map<PartDefect, Integer> defects, boolean inspected) {
         double ra = Double.isFinite(raUm) && raUm > 0 ? raUm : RA_FALLBACK_UM;
         return new PartSpec(kind, material, route, heatTreat, PartSpec.quantizeHrc(hrc), Math.max(0, itGrade),
-                PartSpec.quantizeRa(ra), defects, inspected);
+                ra, defects, inspected);
     }
 
     private static Map<PartDefect, Integer> decodeDefects(Map<String, Integer> raw) {

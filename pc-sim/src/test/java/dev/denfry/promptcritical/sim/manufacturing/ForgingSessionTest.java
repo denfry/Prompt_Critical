@@ -22,12 +22,24 @@ class ForgingSessionTest {
             }
         }
         assertThat(s.piece().aM()).isLessThanOrEqualTo(0.040);
+        assertThat(strikes).isBetween(25, 60);
         s = s.inFire(0.4, 300).quench(Quenching.Medium.WATER).temper(473.15, 3600);
         PartSpec p = s.toPart("shaft");
         assertThat(p.route()).isEqualTo(PartRoute.FORGED);
         assertThat(p.heatTreat()).isEqualTo(HeatTreatState.QUENCHED_TEMPERED);
         assertThat(p.passesGate()).isTrue();
         assertThat(s.clockS()).isPositive();
+    }
+
+    @Test
+    void reheatingAboveAc3ClearsHardening() {
+        var normalized = bar45(0.01, 293.15).grade().withState(HeatTreatState.NORMALIZED);
+        var s = ForgingSession.start(bar45(0.01, 293.15)).inFire(0.6, 600).quench(Quenching.Medium.WATER);
+        assertThat(s.piece().grade().state()).isEqualTo(HeatTreatState.QUENCHED);
+        assertThat(s.piece().hardnessHrc()).isGreaterThan(50);
+        s = s.inFire(0.6, 600).quench(Quenching.Medium.AIR);
+        assertThat(s.piece().grade().state()).isEqualTo(HeatTreatState.NORMALIZED);
+        assertThat(s.piece().hardnessHrc()).isEqualTo(normalized.hardnessHrc());
     }
 
     @Test

@@ -8,6 +8,12 @@ import java.util.Map;
 import org.junit.jupiter.api.Test;
 
 class PartSpecTest {
+    @Test void constructorSnapsToTheCanonicalForm() {
+        var p = new PartSpec("shaft", "45", PartRoute.FORGED, HeatTreatState.NORMALIZED, 52, 0, 2.0, Map.of(), false);
+        assertThat(p.hardnessHrc()).isEqualTo(50);
+        assertThat(p.raUm()).isEqualTo(3.2);
+    }
+
     @Test void quantization() {
         assertThat(PartSpec.quantizeHrc(52.4)).isEqualTo(50);
         assertThat(PartSpec.quantizeHrc(52.6)).isEqualTo(55);

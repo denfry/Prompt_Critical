@@ -44,6 +44,9 @@ public record PartSpec(String kind, String material, PartRoute route, HeatTreatS
         if (!Double.isFinite(raUm) || raUm <= 0) {
             throw new IllegalArgumentException("raUm must be finite and > 0: " + raUm);
         }
+        // канонический вид: конструктор и кодек дают одну и ту же запись
+        hardnessHrc = quantizeHrc(hardnessHrc);
+        raUm = quantizeRa(raUm);
         var copy = new EnumMap<PartDefect, Integer>(PartDefect.class);
         for (var e : defects.entrySet()) {
             Objects.requireNonNull(e.getKey(), "defect");

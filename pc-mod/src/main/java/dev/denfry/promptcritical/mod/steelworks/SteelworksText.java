@@ -104,6 +104,10 @@ public final class SteelworksText {
         family(SteelFamily.INCONEL, "nickel alloy", "никелевый сплав");
         family(SteelFamily.TOOL_HSS, "high-speed steel", "быстрорежущая");
         family(SteelFamily.RAIL_WIRE, "rail and wire steel", "рельсовая и пружинная");
+        family(SteelFamily.MEDIUM_CARBON, "medium-carbon steel 45", "среднеуглеродистая сталь 45");
+        family(SteelFamily.CHROMIUM, "chromium steel 40Kh", "хромистая сталь 40Х");
+        family(SteelFamily.BEARING, "bearing steel ShKh15", "подшипниковая сталь ШХ15");
+        family(SteelFamily.WROUGHT_IRON, "wrought iron", "кричное железо");
         state(HeatTreatState.AS_ROLLED, "as rolled", "горячекатаная");
         state(HeatTreatState.NORMALIZED, "normalized", "нормализованная");
         state(HeatTreatState.QUENCHED, "quenched", "закалённая");
