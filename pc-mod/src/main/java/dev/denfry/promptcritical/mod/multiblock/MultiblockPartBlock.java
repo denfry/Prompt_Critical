@@ -63,6 +63,20 @@ public class MultiblockPartBlock extends Block {
         return a.getBlock() instanceof PcBlock pc ? pc.partShape(a, level, anchor, pos.subtract(anchor)) : Shapes.block();
     }
 
+    /** Форма зависит от якоря в мире: кеш формы состояния блока её бы потерял (клетка навсегда полная). */
+    @Override
+    public boolean hasDynamicShape() {
+        return true;
+    }
+
+    /** Лестница цельной модели машины реального масштаба: решает блок якоря. */
+    @Override
+    public boolean isLadder(BlockState state, net.minecraft.world.level.LevelReader level, BlockPos pos, net.minecraft.world.entity.LivingEntity entity) {
+        BlockPos anchor = anchor(state, pos);
+        BlockState a = level.getBlockState(anchor);
+        return a.getBlock() instanceof PcBlock pc && pc.wholeClimbable(a, anchor, pos);
+    }
+
     @Override
     protected RenderShape getRenderShape(BlockState state) {
         return RenderShape.INVISIBLE;

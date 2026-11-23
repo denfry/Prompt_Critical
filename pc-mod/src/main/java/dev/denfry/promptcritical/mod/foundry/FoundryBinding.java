@@ -10,6 +10,7 @@ import net.minecraft.core.BlockPos;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.block.entity.BlockEntity;
 import net.minecraft.world.level.block.entity.BlockEntityType;
+import net.minecraft.world.level.block.Block;
 import net.minecraft.world.level.block.state.BlockState;
 import net.neoforged.bus.api.IEventBus;
 import net.neoforged.neoforge.capabilities.Capabilities;
@@ -44,13 +45,42 @@ public final class FoundryBinding {
         caps(event, FoundryBlockEntities.SHAPING_MACHINE.get());
         caps(event, FoundryBlockEntities.SURFACE_GRINDER.get());
         event.registerBlock(Capabilities.ItemHandler.BLOCK, (level, pos, state, be, side) -> {
-            FoundryDevice d = controller(level, pos, state);
+            FoundryDevice d = port(level, pos, MultiblockPartBlock.anchor(state, pos), side);
             return d == null ? null : d.items(side);
         }, PcBlocks.MULTIBLOCK_PART.get());
         event.registerBlock(Capabilities.FluidHandler.BLOCK, (level, pos, state, be, side) -> {
-            FoundryDevice d = controller(level, pos, state);
+            FoundryDevice d = port(level, pos, MultiblockPartBlock.anchor(state, pos), side);
             return d == null ? null : d.fluids(side);
         }, PcBlocks.MULTIBLOCK_PART.get());
+        // машины реального масштаба: якоря сегментов без BE тоже бывают клеткой патрубка
+        Block[] whole = net.minecraft.core.registries.BuiltInRegistries.BLOCK.stream().filter(PcBlocks::isWholeModel).toArray(Block[]::new);
+        event.registerBlock(Capabilities.ItemHandler.BLOCK, (level, pos, state, be, side) -> {
+            FoundryDevice d = be != null ? null : port(level, pos, pos, side);
+            return d == null ? null : d.items(side);
+        }, whole);
+        event.registerBlock(Capabilities.FluidHandler.BLOCK, (level, pos, state, be, side) -> {
+            FoundryDevice d = be != null ? null : port(level, pos, pos, side);
+            return d == null ? null : d.fluids(side);
+        }, whole);
+    }
+
+    /**
+     * Устройство за клеткой {@code pos} конструкции с якорем {@code anchor}; у машины реального масштаба — только если
+     * клетка и грань — объявленный порт ({@link dev.denfry.promptcritical.mod.multiblock.WholePorts}), иначе трубы
+     * цеплялись бы к любой невидимой клетке объёма.
+     */
+    @Nullable
+    private static FoundryDevice port(Level level, BlockPos pos, BlockPos anchor, @Nullable net.minecraft.core.Direction side) {
+        BlockPos c = PcBlock.structureController(level, anchor);
+        if (c == null || !(level.getBlockEntity(c) instanceof FoundryDevice d)) return null;
+        BlockState cs = level.getBlockState(c);
+        if (PcBlocks.isWholeModel(cs.getBlock()) && cs.getBlock() instanceof PcBlock pc) {
+            if (side == null) return null;
+            String id = net.minecraft.core.registries.BuiltInRegistries.BLOCK.getKey(cs.getBlock()).getPath();
+            if (!dev.denfry.promptcritical.mod.multiblock.WholePorts.allows(id, pc.facing(cs), pos.getX() - c.getX(), pos.getY() - c.getY(),
+                    pos.getZ() - c.getZ(), side)) return null;
+        }
+        return d;
     }
 
     private static <T extends BlockEntity & FoundryDevice> void caps(RegisterCapabilitiesEvent event, BlockEntityType<T> type) {

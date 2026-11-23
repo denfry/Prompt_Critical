@@ -205,7 +205,45 @@ public class PcBlock extends Block {
      * блок; клеть, например, пускает внутрь.
      */
     public VoxelShape partShape(BlockState anchor, BlockGetter level, BlockPos anchorPos, BlockPos offsetFromAnchor) {
-        return Shapes.block();
+        VoxelShape w = wholeShape(anchor, anchorPos, anchorPos.offset(offsetFromAnchor));
+        return w != null ? w : Shapes.block();
+    }
+
+    /**
+     * Машина реального масштаба с цельной моделью: клетки твёрдые только там, где их занимает модель
+     * ({@link dev.denfry.promptcritical.mod.multiblock.WholeShapes}); у прочих блоков — null.
+     */
+    @org.jetbrains.annotations.Nullable
+    protected VoxelShape wholeShape(BlockState anchor, BlockPos anchorPos, BlockPos at) {
+        if (spec.footprint.isSingle() || !dev.denfry.promptcritical.mod.registry.PcBlocks.isWholeModel(this)) return null;
+        BlockPos c = controllerPos(anchor, anchorPos);
+        return dev.denfry.promptcritical.mod.multiblock.WholeShapes.shape(net.minecraft.core.registries.BuiltInRegistries.BLOCK.getKey(this).getPath(),
+                facing(anchor), at.getX() - c.getX(), at.getY() - c.getY(), at.getZ() - c.getZ());
+    }
+
+    /** У машин реального масштаба форма клетки зависит от её места в модели — без кеша формы состояния. */
+    @Override
+    public boolean hasDynamicShape() {
+        return super.hasDynamicShape() || !spec.footprint.isSingle() && dev.denfry.promptcritical.mod.registry.PcBlocks.isWholeModel(this);
+    }
+
+    /** Клетка машины реального масштаба с нарисованной лестницей — по ней лезут, как по ванильной. */
+    public boolean wholeClimbable(BlockState anchor, BlockPos anchorPos, BlockPos at) {
+        if (spec.footprint.isSingle() || !dev.denfry.promptcritical.mod.registry.PcBlocks.isWholeModel(this)) return false;
+        BlockPos c = controllerPos(anchor, anchorPos);
+        return dev.denfry.promptcritical.mod.multiblock.WholeShapes.climbable(net.minecraft.core.registries.BuiltInRegistries.BLOCK.getKey(this).getPath(),
+                facing(anchor), at.getX() - c.getX(), at.getY() - c.getY(), at.getZ() - c.getZ());
+    }
+
+    @Override
+    public boolean isLadder(BlockState state, net.minecraft.world.level.LevelReader level, BlockPos pos, net.minecraft.world.entity.LivingEntity entity) {
+        return wholeClimbable(state, pos, pos) || super.isLadder(state, level, pos, entity);
+    }
+
+    @Override
+    protected VoxelShape getShape(BlockState state, BlockGetter level, BlockPos pos, net.minecraft.world.phys.shapes.CollisionContext context) {
+        VoxelShape w = wholeShape(state, pos, pos);
+        return w != null ? w : super.getShape(state, level, pos, context);
     }
 
     @Override

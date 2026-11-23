@@ -48,9 +48,12 @@ public record Footprint(List<Segment> segments) {
         for (int ky = Math.floorDiv(y0 + 1, 3); ky <= Math.floorDiv(y1 + 1, 3); ky++)
             for (int kz = Math.floorDiv(z0 + 1, 3); kz <= Math.floorDiv(z1 + 1, 3); kz++)
                 for (int kx = Math.floorDiv(x0 + 1, 3); kx <= Math.floorDiv(x1 + 1, 3); kx++) {
-                    int ax = 3 * kx, ay = 3 * ky, az = 3 * kz;
-                    Segment s = new Segment(ax, ay, az, Math.max(x0, ax - 1) - ax, Math.min(x1, ax + 1) - ax,
-                            Math.max(y0, ay - 1) - ay, Math.min(y1, ay + 1) - ay, Math.max(z0, az - 1) - az, Math.min(z1, az + 1) - az);
+                    // ячейка сетки 3×3×3 вокруг 3k, обрезанная объёмом; якорь — внутри обрезка, иначе на краю объёма
+                    // клетки ссылались бы на якорь, которого нет (форма, поломка и поиск контроллера терялись)
+                    int lx = Math.max(x0, 3 * kx - 1), hx = Math.min(x1, 3 * kx + 1), ly = Math.max(y0, 3 * ky - 1),
+                            hy = Math.min(y1, 3 * ky + 1), lz = Math.max(z0, 3 * kz - 1), hz = Math.min(z1, 3 * kz + 1);
+                    int ax = Math.clamp(3 * kx, lx, hx), ay = Math.clamp(3 * ky, ly, hy), az = Math.clamp(3 * kz, lz, hz);
+                    Segment s = new Segment(ax, ay, az, lx - ax, hx - ax, ly - ay, hy - ay, lz - az, hz - az);
                     if (kx == 0 && ky == 0 && kz == 0) out.addFirst(s);
                     else out.add(s);
                 }

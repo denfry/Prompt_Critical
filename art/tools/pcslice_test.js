@@ -40,4 +40,29 @@ function box(from, to, faces) {
   big.rotation = { angle: 22.5, axis: 'y', origin: [8, 8, 8] };
   assert.throws(() => S.slice({ elements: [big] }), /leaves the chunk range/);
 }
+// Collision cells: a full block sets all 64 voxels, a 4-unit cube one, a box over two cells marks both.
+{
+  assert.deepStrictEqual(S.cellsOf([box([0, 0, 0], [16, 16, 16])]), { '0,0,0': 'ffffffffffffffff' });
+  assert.deepStrictEqual(S.cellsOf([box([0, 0, 0], [4, 4, 4])]), { '0,0,0': '0000000000000001' });
+  assert.deepStrictEqual(S.cellsOf([box([12, 0, 0], [20, 4, 4])]), { '0,0,0': '0000000000000008', '1,0,0': '0000000000000001' });
+  assert.deepStrictEqual(S.cellsOf([box([-4, 0, 0], [0, 4, 4])]), { '-1,0,0': '0000000000000008' });
+  // a box turned 45 degrees about y takes its rotated bounds
+  const r = S.aabb(Object.assign(box([4, 0, 4], [12, 16, 12]), { rotation: { angle: 45, axis: 'y', origin: [8, 8, 8] } }));
+  assert.ok(Math.abs(r[0][0] - (8 - 4 * Math.SQRT2)) < 1e-9 && Math.abs(r[1][2] - (8 + 4 * Math.SQRT2)) < 1e-9);
+}
+
+// A piece whose faces all land on cuts is left out of the chunk models (Minecraft rejects faceless elements).
+{
+  const r = S.build({ textures: {}, elements: [box([0, 0, 0], [144, 16, 16], { west: { uv: [0, 0, 16, 16], texture: '#t' } })] }, 't');
+  for (const m of Object.values(r.models)) for (const e of m.elements) assert.ok(Object.keys(e.faces).length > 0, 'no faceless element');
+  assert.strictEqual(Object.keys(r.models).length, 1, 'only the piece with the west face stays');
+}
+
+// Climbable cells: a ladder over two cells marks both, other elements none.
+{
+  const lad = Object.assign(box([4, 0, 0], [6, 20, 2]), { name: 'ladder_l' });
+  assert.deepStrictEqual(S.climbOf([lad, Object.assign(box([0, 0, 0], [16, 16, 16]), { name: 'shell' })]), ['0,0,0', '0,1,0']);
+  assert.deepStrictEqual(S.climbOf([Object.assign(box([0, 0, 0], [4, 4, 4]), { name: 'fm_ladder_rung3' })]), ['0,0,0']);
+}
+
 console.log('pcslice: all checks passed');

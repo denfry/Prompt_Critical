@@ -88,7 +88,7 @@
 
   // Groups pieces by chunk and moves them into chunk-local coordinates (-16..32 about the middle block).
   function slice(model) {
-    const chunks = new Map();
+    const chunks = new Map(), pieces = [];
     let before = 0, after = 0;
     const min = [Infinity, Infinity, Infinity], max = [-Infinity, -Infinity, -Infinity];
     for (const e of model.elements || []) {
@@ -108,18 +108,58 @@
           if (local.from[i] < -16 - 1e-6 || local.to[i] > 32 + 1e-6)
             throw new Error('element leaves the chunk range: ' + (q.name || '') + ' ' + JSON.stringify([q.from, q.to]));
         }
+        // a piece whose every face fell on cuts is invisible, and Minecraft refuses a model with a faceless element
+        if (!local.faces || !Object.keys(local.faces).length) continue;
+        pieces.push(q);
         const key = c.join('_');
         if (!chunks.has(key)) chunks.set(key, { at: c, elements: [] });
         chunks.get(key).elements.push(local);
       }
     }
     if (Math.abs(before - after) > 1e-3 * Math.max(1, before)) throw new Error('volume changed: ' + before + ' -> ' + after);
-    return { chunks, bounds: { min, max } };
+    return { chunks, bounds: { min, max }, pieces };
+  }
+
+  // Axis-aligned bounds of an element in model units, its rotation (one axis, about its origin) included.
+  function aabb(e) {
+    const r = e.rotation;
+    if (!r || !r.angle) return [e.from.slice(), e.to.slice()];
+    const a = r.angle * Math.PI / 180, ax = { x: 0, y: 1, z: 2 }[r.axis], o = r.origin;
+    const u = (ax + 1) % 3, v = (ax + 2) % 3, lo = [1e9, 1e9, 1e9], hi = [-1e9, -1e9, -1e9];
+    for (let k = 0; k < 8; k++) {
+      const p = [k & 1 ? e.to[0] : e.from[0], k & 2 ? e.to[1] : e.from[1], k & 4 ? e.to[2] : e.from[2]];
+      const pu = p[u] - o[u], pv = p[v] - o[v];
+      const q = p.slice();
+      q[u] = o[u] + pu * Math.cos(a) - pv * Math.sin(a);
+      q[v] = o[v] + pu * Math.sin(a) + pv * Math.cos(a);
+      for (let i = 0; i < 3; i++) { lo[i] = Math.min(lo[i], q[i]); hi[i] = Math.max(hi[i], q[i]); }
+    }
+    return [lo, hi];
+  }
+
+  // Occupied space per block cell for collision: each cell is cut into 4x4x4 voxels of 4 units, a voxel is set when
+  // an element's bounds overlap it. Returns {"x,y,z": 16 hex digits}, bit = vx + 4 vy + 16 vz, empty cells left out.
+  const VOX = 4, CLIMB = /(^|_)(ladder|stair)/;
+  function cellsOf(elements) {
+    const cells = new Map();
+    for (const e of elements) {
+      if (CLIMB.test(e.name || '')) continue;   // ladders stay walk-in, as vanilla ladders: the player climbs inside the cell
+      const [lo, hi] = aabb(e);
+      const v0 = lo.map((w) => Math.floor(w / VOX + 1e-6)), v1 = hi.map((w) => Math.ceil(w / VOX - 1e-6) - 1);
+      for (let x = v0[0]; x <= v1[0]; x++) for (let y = v0[1]; y <= v1[1]; y++) for (let z = v0[2]; z <= v1[2]; z++) {
+        const key = [x, y, z].map((w) => Math.floor(w / 4)).join(',');
+        const bit = BigInt(((x % 4) + 4) % 4 + 4 * (((y % 4) + 4) % 4) + 16 * (((z % 4) + 4) % 4));
+        cells.set(key, (cells.get(key) || 0n) | (1n << bit));
+      }
+    }
+    const out = {};
+    for (const k of [...cells.keys()].sort()) out[k] = cells.get(k).toString(16).padStart(16, '0');
+    return out;
   }
 
   // Chunk JSON models and the manifest; the manifest offsets are in blocks to the chunk's middle block.
   function build(model, id) {
-    const { chunks, bounds } = slice(model);
+    const { chunks, bounds, pieces } = slice(model);
     const out = { models: {}, manifest: { id, chunk_blocks: CHUNK / 16, chunks: [],
       bounds: { min: bounds.min.map((v) => v / 16), max: bounds.max.map((v) => v / 16) } } };
     for (const [key, ch] of [...chunks.entries()].sort()) {
@@ -128,6 +168,8 @@
       out.models[key] = m;
       out.manifest.chunks.push(ch.at.map((v) => v * (CHUNK / 16) + 1));
     }
+    out.manifest.cells = cellsOf(pieces);
+    out.manifest.climb = climbOf(pieces);
     return out;
   }
 
@@ -155,7 +197,20 @@
     return { chunks: r.manifest.chunks.length, bounds: r.manifest.bounds };
   }
 
-  const api = { CHUNK, cut, split, slice, build, saveWhole };
+  // Cells a player can climb: those holding a ladder or stair element (kit names: ladder*, *_ladder*, stair*).
+  function climbOf(elements) {
+    const out = new Set();
+    for (const e of elements) {
+      if (!CLIMB.test(e.name || '')) continue;
+      const [lo, hi] = aabb(e);
+      for (let x = Math.floor(lo[0] / 16); x <= Math.ceil(hi[0] / 16) - 1; x++)
+        for (let y = Math.floor(lo[1] / 16); y <= Math.ceil(hi[1] / 16) - 1; y++)
+          for (let z = Math.floor(lo[2] / 16); z <= Math.ceil(hi[2] / 16) - 1; z++) out.add([x, y, z].join(','));
+    }
+    return [...out].sort();
+  }
+
+  const api = { CHUNK, cut, split, slice, build, saveWhole, aabb, cellsOf, climbOf };
   if (typeof module !== 'undefined' && module.exports) module.exports = api;
   else root.PCSLICE = api;
 })(typeof window !== 'undefined' ? window : globalThis);
