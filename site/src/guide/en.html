@@ -55,7 +55,7 @@
   <p>Create provides the mechanics: shafts, gears and contraptions. The mod adds what turns those shafts and what they drive: the steam engine, the mine fan, the hoist, pumps and machine tools.</p>
 
   <h3>How progress works</h3>
-  <p>There are no research points and no tech tree. The next step is unlocked by <strong>materials</strong>. Without steel you can't make pipe, without pipe there's no oil, and without electricity there's no reactor graphite. Old industries keep running: a plant in the nuclear era still mines coal and melts steel, because everything else is made from them.</p>
+  <p>There are no research points. The next step is unlocked by <strong>materials</strong>. Without steel you can't make pipe, without pipe there's no oil, and without electricity there's no reactor graphite. Old industries keep running: a plant in the nuclear era still mines coal and melts steel, because everything else is made from them. The handbook has a route of tasks for I0 and I1 that suggests an order. A finished task gives experience and locks nothing.</p>
   <div class="gtable"><table>
     <thead><tr><th>Ladder</th><th>Steps</th><th>What it measures</th></tr></thead>
     <tbody>
@@ -70,7 +70,7 @@
     <li><img src="{{root}}assets/guide/i/engineering_handbook.png" width="16" height="16" alt=""><span><strong>Engineering Handbook.</strong> You get it the first time you join a world. Chapters open as you play: when you place a block, pick up an item or earn an advancement.</span></li>
     <li><img src="{{root}}assets/guide/i/operating_procedure.png" width="16" height="16" alt=""><span><strong>Operating Procedure.</strong> Building a boiler, hoist or mine fan gives you its procedure. Put it on a Document Lectern by the plant, where anyone can read it.</span></li>
   </ul>
-  <p>The handbook explains the physics and teaches you to read instruments. It never shows your plant's live values: pressure comes from the gauge, and gas from the lamp and the methanometer.</p>
+  <p>The handbook explains the physics and teaches you to read instruments, but it never shows your plant's live values: pressure comes from the gauge, and gas from the lamp and the methanometer.</p>
   <div class="callout tip">
     <span class="k">The main rule</span>
     <p>Every accident has a cause, and the instruments nearly always show it in advance. Black smoke means the furnace is short of air. A whistle from the boiler means too much steam. A canary falling off its perch means carbon monoxide. Learn to read these signs and the mod stops being scary.</p>
@@ -80,7 +80,7 @@
 <section id="i0" class="g-sec" aria-labelledby="i0-h">
   <p class="era-no">ERA I0</p>
   <h2 id="i0-h">Coal and steam</h2>
-  <span class="badge live">In the game · development build</span>
+  <span class="badge live">In the game · 1.0.0-rc.1</span>
   <p>The first era rests on two things. Coal gives heat, the boiler turns heat into steam, and the steam engine turns a Create shaft. Everything else in I0, from the mine and coal preparation to the foundry and the machine shop, either produces coal or runs off that shaft.</p>
 
   <h3 id="i0-coal">1. Find coal</h3>
@@ -332,8 +332,8 @@
 
 <section id="later" class="g-sec" aria-labelledby="later-h">
   <h2 id="later-h">I1–I4: what comes next</h2>
-  <span class="badge plan">Planned · design stage</span>
-  <p>None of this is in the game yet. It's how the next eras are designed to work, and details and numbers will change. The images are placeholder models from the repository.</p>
+  <span class="badge live">In the game · 1.0.0-rc.1</span>
+  <p>The four later eras are in the game too. This guide only sketches them. Every machine has its own chapter in the engineering handbook with the numbers, and balance values here can still move.</p>
 
   <div class="era-card" id="i1">
     <p class="era-no">ERA I1</p>
@@ -346,13 +346,13 @@
       <li><img src="{{root}}assets/guide/r/instrument_synchroscope.webp" width="256" height="256" alt="" loading="lazy">Synchroscope</li>
       <li><img src="{{root}}assets/guide/r/moderator_block_graphite.webp" width="256" height="256" alt="" loading="lazy">Reactor graphite</li>
     </ul>
-    <p><strong>What you'll build.</strong> Coke ovens (coke, gas, tar, pitch and electrodes), a blast furnace, a converter, a rolling mill and seamless pipe. Then a synchronous generator, power lines, transformers and protection relays. Water treatment and air separation for oxygen, nitrogen and argon.</p>
+    <p><strong>What you build.</strong> Coke ovens (coke, gas, tar, pitch and electrodes), a blast furnace with hot blast stoves, a converter and an electric arc furnace, a rolling mill and seamless pipe. Copper, aluminium, nickel and tin come from their own smelters. On the power side: a synchronous generator, overhead lines, transformers, protection relays and a dispatch centre, with steam turbines, hydro, wind, tidal and pumped storage plants on the same grid. Water treatment and air separation give feedwater, oxygen, nitrogen and argon.</p>
     <ul>
       <li>Your I0 coking coal becomes coke, and coke becomes iron and steel.</li>
-      <li>You synchronize the generator to the grid with a synchroscope: match frequency, voltage and phase. Close the breaker out of phase and the machine takes a hit.</li>
-      <li>Under-frequency load shedding drops consumers when the grid runs short of power.</li>
-      <li><strong>First reactor, T0: a graphite pile.</strong> Natural uranium metal, graphite from coke-oven electrodes in an Acheson furnace, a neutron detector and an emergency "zip" rod on a winch. You bring it to criticality by watching the reactor period, exactly as in the <a href="{{root}}{{langPath}}#desk">browser desk</a>.</li>
-      <li>Automation steps up to relay cabinets (A1) and analog computers (A2).</li>
+      <li>You synchronize the generator to the grid with a synchroscope, matching frequency, voltage and phase. Close the breaker out of phase and the machine takes the shock.</li>
+      <li>Under-frequency load shedding drops consumers when the grid runs short. Load follows a daily curve, so the evening peak has to be covered.</li>
+      <li><strong>First reactor, T0: a graphite pile.</strong> Natural uranium metal in channels through a stack of graphite made from coke-oven electrodes in an Acheson furnace, with a neutron detector and zip rods on winches. The pile is free-form: the core solves the neutron flux in whatever you lay. You bring it to criticality by the reactor period, as on the <a href="{{root}}{{langPath}}#desk">browser desk</a>.</li>
+      <li>Automation steps up to relay cabinets (A1) and analog computers (A2). Lockout, work permits, confined spaces, protective equipment and fire fighting arrive in this era as well.</li>
     </ul>
   </div>
 
@@ -367,12 +367,14 @@
       <li><img src="{{root}}assets/guide/r/claus_reaction_furnace_lit.webp" width="256" height="256" alt="" loading="lazy">Claus furnace</li>
       <li><img src="{{root}}assets/img/gas_turbine.webp" width="128" height="128" alt="" loading="lazy">Gas turbine</li>
     </ul>
-    <p><strong>What you'll build.</strong> Seismic survey and well logging, drilling with well control, oil field production, oil treatment, pipelines, a refinery, a gas processing plant, gas boilers and gas turbines.</p>
+    <p><strong>What you build.</strong> Seismic survey, well logging and coring, drilling with well control, a producing field with pumpjacks, gas lift and water injection, pipelines, a refinery, a gas processing plant and gas turbines.</p>
     <ul>
-      <li>The drill string runs on seamless pipe from I1. A kick in the well is shut in with the blowout preventer and killed by procedure. Ignore it and you get a blowout.</li>
-      <li>The column splits crude into fractions along its true boiling point curve, with reforming, hydrotreating and coking after it.</li>
-      <li>The gas plant gives sulphur (Claus unit), helium and diesel. Each one feeds the fuel cycle later: acid for uranium leaching, helium for fuel rods, diesel for the plant's emergency generators.</li>
-      <li><strong>Reactor T1:</strong> a channel-type uranium-graphite reactor with a turbine on the grid. It teaches the void coefficient (it can be positive) and xenon.</li>
+      <li>A kick is shut in with the blowout preventer and killed by the kill sheet the driller's console fills in. Ignore it and you get a blowout.</li>
+      <li>The crude column splits oil along its true boiling point curve. Reforming, hydrotreating, cracking and coking come after it.</li>
+      <li>The refinery and the gas plant give sulphur from the Claus unit, helium and diesel, and the fuel cycle needs all three later: sulphur for the acid that leaches uranium, helium to fill fuel rods, diesel for the emergency generators of the nuclear plant.</li>
+      <li>Accidents get bigger: jet fires, vapour cloud explosions, BLEVE of LPG tanks, hydrogen sulphide and oil spills.</li>
+      <li>Automation reaches PLCs in the IEC 61131-3 languages and safety instrumented systems (A3), then telemetry and control rooms on CC: Tweaked computers (A4).</li>
+      <li><strong>Reactor T1:</strong> a channel reactor after the AM-1 at Obninsk, 30 MW of heat with water at 10 MPa in 128 channels. It teaches the iodine pit after a shutdown and burnup channel by channel.</li>
     </ul>
   </div>
 
@@ -381,17 +383,13 @@
     <h3>Chemistry</h3>
     <ul class="renders">
       <li><img src="{{root}}assets/guide/r/tube_furnace_radiant_lit.webp" width="256" height="256" alt="" loading="lazy">Pyrolysis furnace</li>
-      <li><img src="{{root}}assets/guide/r/polymer_extruder.webp" width="256" height="256" alt="" loading="lazy">Polymer extruder</li>
-      <li><img src="{{root}}assets/img/gas_centrifuge.webp" width="128" height="128" alt="" loading="lazy">Gas centrifuge</li>
-      <li><img src="{{root}}assets/guide/r/pellet_press.webp" width="256" height="256" alt="" loading="lazy">Pellet press</li>
       <li><img src="{{root}}assets/guide/r/pressurizer.webp" width="256" height="256" alt="" loading="lazy">Pressurizer</li>
       <li><img src="{{root}}assets/guide/r/steam_generator.webp" width="256" height="256" alt="" loading="lazy">Steam generator</li>
     </ul>
-    <p><strong>What you'll build.</strong> Pyrolysis, polymers and fluoropolymers, chlor-alkali, hydrogen and syngas, ammonia, ion-exchange resins, TBP, and silicon for microchips. With those you build the uranium chain: hydrometallurgy, conversion, a centrifuge cascade, pellets and fuel assemblies.</p>
+    <p><strong>What you build.</strong> Pyrolysis and polymers, chlor-alkali and PVC, steam reforming, ammonia and methanol, ion-exchange resins, and the silicon chain from the arc furnace to microchips. A combined-cycle plant burns gas through a turbine and a heat recovery boiler.</p>
     <ul>
-      <li>The cascade needs fluoropolymers for UF₆ service and a lot of shaft power. Enrichment is counted in separative work units (SWU).</li>
-      <li><strong>Reactor T2a:</strong> a PWR-type unit of about 100 MW(t) with a pressurizer, steam generators, boron control and a xenon pit you can see on the trends.</li>
-      <li>Automation reaches PLCs in the IEC 61131-3 languages, safety systems (A3) and SCADA on CC: Tweaked computers (A4).</li>
+      <li>Transistors go into PLCs, and chips into RTUs and the historian server.</li>
+      <li><strong>Reactor T2a:</strong> a VVER-type unit of 100 MW(t) with 19 assemblies at 15.7 MPa, a pressurizer, two coolant pumps on Create shafts, steam generators and boron control. <strong>T2b</strong> is a boiling water reactor on the same core, with no boron and no steam generators.</li>
     </ul>
   </div>
 
@@ -399,60 +397,61 @@
     <p class="era-no">ERA I4</p>
     <h3>Nuclear</h3>
     <ul class="renders">
+      <li><img src="{{root}}assets/img/gas_centrifuge.webp" width="128" height="128" alt="" loading="lazy">Gas centrifuge</li>
+      <li><img src="{{root}}assets/guide/r/pellet_press.webp" width="256" height="256" alt="" loading="lazy">Pellet press</li>
       <li><img src="{{root}}assets/guide/r/fuel_assembly.webp" width="256" height="256" alt="" loading="lazy">Fuel assembly</li>
       <li><img src="{{root}}assets/guide/r/control_rod_channel.webp" width="256" height="256" alt="" loading="lazy">Control rod channel</li>
       <li><img src="{{root}}assets/guide/r/neutron_detector.webp" width="256" height="256" alt="" loading="lazy">Neutron detector</li>
       <li><img src="{{root}}assets/guide/r/irradiation_channel_loaded.webp" width="256" height="256" alt="" loading="lazy">Irradiation channel</li>
-      <li><img src="{{root}}assets/img/compact_reactor_module.webp" width="128" height="128" alt="" loading="lazy">Compact reactor</li>
     </ul>
-    <p><strong>What you'll build.</strong> A closed fuel cycle (spent fuel pool, dry storage, PUREX reprocessing, MOX, vitrification and disposal), plus isotopes and RTGs.</p>
+    <p><strong>What you build.</strong> The whole fuel cycle. Uranium ore is leached and turned into yellowcake, then UF₆, which a centrifuge cascade enriches; the enrichment is counted in separative work units. Pellets go into rods filled with helium, and rods into assemblies. Spent fuel cools in the pool and goes through PUREX reprocessing into MOX, and the waste is vitrified and buried.</p>
     <ul>
-      <li>Irradiation channels make Co-60, Ir-192, Am-Be and Pu-238. They go into weld radiography, neutron well logging and RTGs.</li>
-      <li>Criticality outside the reactor is real: a solution tank of the wrong shape can go critical.</li>
-      <li>Plant-level optimization (A5), an energy exchange and emission quotas make switching to nuclear power pay off.</li>
+      <li>Irradiation channels make Co-60, Ir-192 and Pu-238, and americium is separated from aged plutonium for Am-Be sources. They end up in weld radiography, neutron well logging and RTGs. A TRIGA reactor gives pulses.</li>
+      <li>Criticality outside the reactor is real: plutonium that builds up in reprocessing can go critical in solution.</li>
+      <li>Dose, shielding, contamination and decontamination become part of every job.</li>
     </ul>
   </div>
 
   <h3>Reactor tiers</h3>
-  <p>The core has no idea what reactor "types" are. It computes the physics from the lattice you build: fuel, moderator, coolant and absorbers. A "T2a" is simply what you get when you build an enriched UO₂ lattice in pressurized light water.</p>
+  <p>The graphite pile is the only reactor you lay block by block. From T1 on, each reactor is a multiblock modelled on a real plant, with its own core, kinetics, protection and accident layer.</p>
   <div class="gtable"><table>
     <thead><tr><th>Tier</th><th>Type</th><th>What it teaches</th></tr></thead>
     <tbody>
       <tr><td class="n">T0</td><td>Graphite pile (CP-1, X-10)</td><td>criticality, delayed neutrons, reactor period</td></tr>
-      <tr><td class="n">T1</td><td>Channel uranium-graphite</td><td>void coefficient, xenon</td></tr>
-      <tr><td class="n">T2a / T2b</td><td>PWR / BWR</td><td>pressurizer, steam generator, boron; direct cycle</td></tr>
+      <tr><td class="n">T1</td><td>Channel reactor (AM-1)</td><td>xenon and the iodine pit, burnup by channel</td></tr>
+      <tr><td class="n">T2a / T2b</td><td>VVER-type PWR / BWR</td><td>pressurizer, steam generator, boron; direct cycle</td></tr>
       <tr><td class="n">T3</td><td>Heavy water (CANDU)</td><td>online refuelling, tritium</td></tr>
-      <tr><td class="n">T4</td><td>Sodium fast reactor</td><td>plutonium breeding, sodium fires</td></tr>
+      <tr><td class="n">T4</td><td>Sodium fast reactor (BN-600, BN-800)</td><td>plutonium breeding, sodium fires</td></tr>
     </tbody>
   </table></div>
 </section>
 
 <section id="automation" class="g-sec" aria-labelledby="automation-h">
   <h2 id="automation-h">Automation ladder</h2>
-  <p>The mod has no ready-made reactor controller. It gives you sensors, function blocks and peripherals, and the control system is yours to design. It grows with the plant.</p>
+  <p>The mod has no ready-made reactor controller. It gives you sensors, function blocks and peripherals, and you design the control system yourself as the plant grows.</p>
   <ol class="alevels">
-    <li><b>A0</b><div><strong>Hands and eyes.</strong><p>Valves, levers, the pressure gauge and the gauge glass. In I0 you're the controller. The flyball governor is the only automatic device.</p></div></li>
-    <li><b>A1</b><div><strong>Relay logic.</strong><p>Relays, contacts and timers as blocks in the world. For example, an interlock that trips a pump when the level is low.</p></div></li>
+    <li><b>A0</b><div><strong>Hands and eyes.</strong><p>Valves, levers, the pressure gauge and the gauge glass. In I0 you are the controller, and the flyball governor is the only automatic device.</p></div></li>
+    <li><b>A1</b><div><strong>Relay logic.</strong><p>Relays, contacts and timers as blocks in the world. A typical first job is an interlock that trips a pump on low level.</p></div></li>
     <li><b>A2</b><div><strong>Analog computers.</strong><p>Summers, integrators and controllers. A PI controller without a computer, integrator drift included.</p></div></li>
-    <li><b>A3</b><div><strong>PLC and safety systems.</strong><p>Programs in LD, FBD, SFC and ST, and a cause-and-effect matrix for safety logic.</p></div></li>
-    <li><b>A4</b><div><strong>DCS and SCADA.</strong><p>CC: Tweaked computers, telemetry, trends and a historian.</p></div></li>
-    <li><b>A5</b><div><strong>Plant level.</strong><p>Planning and optimization, with Create logistics driven by Lua.</p></div></li>
+    <li><b>A3</b><div><strong>PLC and safety systems.</strong><p>Programs in IL, ST, LD, FBD and SFC with a graphical ladder editor, and safety logic in a cause-and-effect matrix with periodic proof tests.</p></div></li>
+    <li><b>A4</b><div><strong>DCS and SCADA.</strong><p>CC: Tweaked computers with every panel machine as a peripheral, the <code>pcui</code> screen library, alarms, trends and a historian.</p></div></li>
+    <li><b>A5</b><div><strong>Plant level.</strong><p>Production planning (MES), contracts, quotas and the weekly settlement of emissions.</p></div></li>
   </ol>
   <div class="callout">
     <span class="k">Protection by hardware</span>
-    <p>Reactor protection trips on its own, independently of Lua and the PLC. On loss of drive power the rods fall by gravity. You can automate as much as you like, but a bug in your program won't stop a trip.</p>
+    <p>Reactor protection trips on its own, independently of Lua and the PLC. On loss of drive power the rods fall by gravity. Automate as much as you like: a bug in your program won't stop a trip.</p>
   </div>
 </section>
 
 <section id="faq" class="g-sec faq" aria-labelledby="faq-h">
   <h2 id="faq-h">FAQ</h2>
   <details>
-    <summary>When can I download it?</summary>
-    <p>Now. The jar is on the <a href="https://github.com/denfry/Prompt_Critical/releases/latest">releases page</a>; put it into <code>mods/</code> next to Create 6.0.11+, and add CC: Tweaked if you want SCADA. News and videos are on the <a href="https://www.youtube.com/@denfrydev">YouTube channel</a>.</p>
+    <summary>Where do I download it?</summary>
+    <p>From the <a href="https://github.com/denfry/Prompt_Critical/releases/latest">releases page</a> on GitHub. Put the jar into <code>mods/</code> next to Create 6.0.11+, and add CC: Tweaked if you want computer control. News and videos are on the <a href="https://www.youtube.com/@denfrydev">YouTube channel</a>.</p>
   </details>
   <details>
     <summary>Will my world survive updates?</summary>
-    <p>Back it up before every update. Release notes list the breaking changes, and release candidates may still change saved machines.</p>
+    <p>Back it up before every update. The changelog lists the breaking changes, and release candidates may still change saved machines.</p>
   </details>
   <details>
     <summary>What does it need?</summary>
@@ -460,11 +459,15 @@
   </details>
   <details>
     <summary>Is it too hard?</summary>
-    <p>It's built on real engineering, but you don't need to know any of it in advance. The handbook walks you through it one step at a time, and the first steam takes 20–25 minutes. Mistakes are expensive, but they're always visible on the instruments first.</p>
+    <p>It's built on real engineering, but you don't need to know any of it in advance. The handbook takes you one step at a time, and first steam takes 20–25 minutes. Mistakes are expensive, but the instruments show them first.</p>
+  </details>
+  <details>
+    <summary>Is there a modpack?</summary>
+    <p>Not yet. A pack built on Prompt Critical is planned, together with space eras I5 to I8 in the mod itself. It has no release date. The plan is on the <a href="{{root}}{{langPath}}modpack/">modpack page</a>.</p>
   </details>
 
   <div class="next">
-    <p>Try the reactor kinetics in your browser while you wait.</p>
+    <p>The reactor desk on the main page runs the same kinetics as the mod, in your browser.</p>
     <ul>
       <li><a class="primary" href="{{root}}{{langPath}}#desk">Reactor desk</a></li>
       <li><a href="https://github.com/denfry/Prompt_Critical">GitHub</a></li>
