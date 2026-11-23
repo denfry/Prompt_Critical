@@ -238,15 +238,21 @@ public final class RadiationService {
         return stack.getCount() == 1 ? one : one.scaled(stack.getCount());
     }
 
+    /** Всё, что игрок несёт в инвентаре, руке и броне, как один источник на игровое время {@code tick}. */
+    public static PointSource carried(net.minecraft.world.entity.player.Player p, long tick) {
+        PointSource carried = PointSource.NONE;
+        for (net.minecraft.world.item.ItemStack st : p.getInventory().items) carried = plus(carried, itemSource(st, tick));
+        for (net.minecraft.world.item.ItemStack st : p.getInventory().offhand) carried = plus(carried, itemSource(st, tick));
+        for (net.minecraft.world.item.ItemStack st : p.getInventory().armor) carried = plus(carried, itemSource(st, tick));
+        return carried;
+    }
+
     /** Пересобрать предметные источники: инвентари игроков и предметы на земле рядом с ними. */
     private static void gatherItems(ServerLevel level, long now) {
         List<Positioned> out = new java.util.ArrayList<>();
         java.util.Set<net.minecraft.world.entity.item.ItemEntity> seen = new java.util.HashSet<>();
         for (ServerPlayer p : level.players()) {
-            PointSource carried = PointSource.NONE;
-            for (net.minecraft.world.item.ItemStack st : p.getInventory().items) carried = plus(carried, itemSource(st, now));
-            for (net.minecraft.world.item.ItemStack st : p.getInventory().offhand) carried = plus(carried, itemSource(st, now));
-            for (net.minecraft.world.item.ItemStack st : p.getInventory().armor) carried = plus(carried, itemSource(st, now));
+            PointSource carried = carried(p, now);
             if (!carried.empty()) out.add(new Positioned(p.position().add(0, 0.9, 0), carried, now + HOLD_TICKS));
             for (net.minecraft.world.entity.item.ItemEntity e : level.getEntitiesOfClass(net.minecraft.world.entity.item.ItemEntity.class,
                     p.getBoundingBox().inflate(ITEM_SCAN_M))) {

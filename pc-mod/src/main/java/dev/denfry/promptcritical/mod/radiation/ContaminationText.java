@@ -34,6 +34,11 @@ public final class ContaminationText {
         put("monitor.clean", "Hand and foot monitor: CLEAN. You may leave the zone", "Установка контроля: ЧИСТО. Выход из зоны разрешён");
         put("monitor.dirty", "Hand and foot monitor: CONTAMINATED (%s). Go to the decontamination shower",
                 "Установка контроля: ЗАГРЯЗНЕНО (%s). Пройдите в душ санпропускника");
+        put("portal.alarm", "Portal monitor: GAMMA ALARM (%s × threshold). You are carrying active material out of the zone",
+                "Портальный монитор: ТРЕВОГА ПО ГАММА (%s × порога). Вы выносите активный материал из зоны");
+        put("portal.clean", "Portal monitor: clear", "Портальный монитор: чисто");
+        put("portal.status", "Portal monitor: background %s µSv/h · alarms above %s µSv/h at the column (2 s, 5σ)",
+                "Портальный монитор: фон %s мкЗв/ч · тревога выше %s мкЗв/ч у колонны (2 с, 5σ)");
         put("shower.status", "Decon shower: water %s l · liquid waste %s l, %s MBq",
                 "Душ санпропускника: вода %s л · ЖРО %s л, %s МБк");
         put("shower.dry", "The shower has no water: connect a pipe", "В душе нет воды: подведите трубу");

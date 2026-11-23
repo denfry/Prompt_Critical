@@ -27,6 +27,9 @@ public final class RadiationBlockEntities {
     public static final DeferredHolder<BlockEntityType<?>, BlockEntityType<HandFootMonitorBlockEntity>> HAND_FOOT_MONITOR =
             BLOCK_ENTITIES.register("hand_foot_monitor",
                     () -> BlockEntityType.Builder.of(HandFootMonitorBlockEntity::new, PcBlocks.HAND_FOOT_MONITOR.get()).build(null));
+    public static final DeferredHolder<BlockEntityType<?>, BlockEntityType<PortalMonitorBlockEntity>> PORTAL_MONITOR =
+            BLOCK_ENTITIES.register("portal_monitor",
+                    () -> BlockEntityType.Builder.of(PortalMonitorBlockEntity::new, PcBlocks.PORTAL_MONITOR.get()).build(null));
 
     private RadiationBlockEntities() {
     }
