@@ -67,7 +67,8 @@ public class BreakerCellBlockEntity extends GridDeviceBlockEntity<SwitchUnit> im
         List<Face> bus = new ArrayList<>(), feeder = new ArrayList<>();
         Direction f = facing();
         boolean mv = kind == SwitchUnit.Kind.MV_BREAKER;
-        for (int y = 0; y <= 1; y++) {
+        // ячейка КРУ 1 × 3 × 1, контроллер в средней клетке, над ним шинный отсек; щит 0,4 кВ — 1 × 2 × 1 от контроллера
+        for (int y = lowestCell(); y <= 1; y++) {
             GridDevice.faces(mv ? bus : feeder, worldPosition, f, 0, y, 0, Direction.WEST, Direction.EAST);
             GridDevice.faces(mv ? feeder : bus, worldPosition, f, 0, y, 0, Direction.SOUTH);
         }
@@ -75,11 +76,16 @@ public class BreakerCellBlockEntity extends GridDeviceBlockEntity<SwitchUnit> im
         return List.of(bus, feeder);
     }
 
+    /** Нижняя клетка от контроллера: у ячейки КРУ — под ним, у щита 0,4 кВ — сам контроллер. */
+    private int lowestCell() {
+        return kind == SwitchUnit.Kind.MV_BREAKER ? -1 : 0;
+    }
+
     /** Модули РЗА из шкафов, примыкающих к ячейке. */
     private List<RelaySetting> cabinetRelays() {
         List<RelaySetting> out = new ArrayList<>();
         List<BlockPos> seen = new ArrayList<>();
-        for (int y = 0; y <= 1; y++) {
+        for (int y = lowestCell(); y <= 1; y++) {
             BlockPos cell = worldPosition.above(y);
             for (Direction d : Direction.values()) {
                 RelayCabinetBlockEntity c = RelayCabinetBlockEntity.at(level, cell.relative(d));

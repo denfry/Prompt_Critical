@@ -8,7 +8,7 @@ The voltage classes of this era are **0.4 kV** and **6.3 kV**. Every block is bu
 
 ## Switching
 
-- The [6 kV switchgear cell](item:promptcritical:switchgear_cell), 1×2×1, is an oil circuit breaker. The bus is on its side faces: a row of cells makes the busbar. The feeder is the back face and the top. It closes in 0.45 s, opens in 0.1 s and interrupts up to 20 kA.
+- The [6 kV switchgear cell](item:promptcritical:switchgear_cell), 1×3×1 with the busbar compartment on top, is an oil circuit breaker. The bus is on its side faces: a row of cells makes the busbar. The feeder is the back face and the top. It closes in 0.45 s, opens in 0.1 s and interrupts up to 20 kA.
 - The [0.4 kV switchboard](item:promptcritical:lv_switchboard) is an air circuit breaker with a trip unit: thermal against overload, instantaneous against short circuit. Incoming at the back, outgoing at the sides and top. The trip rating is a panel button.
 - A [distribution box](item:promptcritical:lv_distribution_box) splits the 0.4 kV network into sections with a [fuse](item:promptcritical:lv_fuse). A blown fuse is replaced by hand; Shift + right-click pulls it out for a visible break.
 - A [disconnector](item:promptcritical:disconnector), 3×2×1, gives a visible break but cannot interrupt load current. Opened on load, its blades draw an arc: burns nearby and an even chance of a phase-to-phase fault. Breaker first, then disconnector. Shift + right-click works the earthing switch on the feeder side.

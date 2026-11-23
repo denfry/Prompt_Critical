@@ -39,7 +39,7 @@ public final class PonderLayouts {
     public static final BlockPos[] BF_RUNNER = {new BlockPos(4, 1, 7), new BlockPos(4, 1, 8)};
     // --- генератор: стенка щита z = 0, синхроноскоп на ней, генератор с валом Create, ячейка КРУ
     public static final BlockPos SYNC_GENERATOR = new BlockPos(3, 1, 4), SYNC_SCOPE = new BlockPos(3, 2, 1),
-            SYNC_CELL = new BlockPos(1, 1, 4), SYNC_EXCITER = new BlockPos(2, 1, 4);
+            SYNC_CELL = new BlockPos(1, 2, 4), SYNC_EXCITER = new BlockPos(2, 1, 4);
     // --- частота: генератор и два потребителя 3×3×3 с модулями АЧР
     public static final BlockPos FREQ_GENERATOR = new BlockPos(2, 1, 4);
     public static final BlockPos[] FREQ_CONSUMERS = {new BlockPos(6, 1, 2), new BlockPos(6, 1, 6)};
