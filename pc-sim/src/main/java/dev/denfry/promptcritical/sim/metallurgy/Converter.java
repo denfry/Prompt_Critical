@@ -72,9 +72,20 @@ public final class Converter {
     private double feo, sio2, mno, p2o5, cao;
     private double blowS, o2Blown, coMolS, co2MolS;
     private boolean slopped, overblownLatched, lanceLatched;
+    /** Доля шага SLOW, за которую корпус теряет тепло, пока не дуют (часы выдержки мира к SLOW); 1 — как в продувке. */
+    private double holdShare = 1;
 
     public Converter(SteelmakingConfig cfg) {
         this.cfg = Objects.requireNonNull(cfg, "cfg");
+    }
+
+    /**
+     * Корпус между продувками только ждёт (завалка, замер, наклон на выпуск): мир идёт в реальном времени, и потери
+     * корпуса за шаг SLOW берутся с долей {@code share} (00 §0.4). В продувке — полностью, это тепловой баланс §8.6.1.
+     */
+    public void setHoldShare(double share) {
+        if (!(share > 0 && share <= 1)) throw new IllegalArgumentException("share");
+        holdShare = share;
     }
 
     public void setEventSink(SteelmakingEvents sink) {
@@ -219,7 +230,7 @@ public final class Converter {
             }
         }
         if (metalKg < MIN_BATH_KG) return;
-        double loss = LOSS_W_PER_T23 * Math.pow(metalKg / 1000, 2.0 / 3) * dt;
+        double loss = LOSS_W_PER_T23 * Math.pow(metalKg / 1000, 2.0 / 3) * (blowing ? dt : dt * holdShare);
         tempK += (q - sink - loss) / (metalKg * STEEL_CP);
     }
 

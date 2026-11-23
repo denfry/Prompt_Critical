@@ -148,7 +148,8 @@ public final class LadleBlockEntity extends IronworksBlockEntity {
 
     @Override
     protected void serverTick(SimLevelBinding b) {
-        double dtp = Ironworks.tickPhysS(b);
+        // ковш только ждёт: остывает по часам выдержки, налив и выпуск — в реальном времени
+        double dtp = Ironworks.tickHoldS();
         if (metalKg > 0) {
             tempK -= LOSS_W * dtp / (metalKg * (steel ? Converter.STEEL_CP : BlastFurnace.HM_CP));
             lining = new LadleState(Math.max(lining.preheatedK(), tempK - 300), lining.wet(), lining.refractoryWear());

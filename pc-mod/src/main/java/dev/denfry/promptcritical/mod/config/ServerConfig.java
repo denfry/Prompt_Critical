@@ -88,6 +88,7 @@ public final class ServerConfig {
     // --- 08 §8.19 (I0) ---
     public static final ModConfigSpec.DoubleValue METALLURGY_BULK_ITEM_MASS_KG;
     public static final ModConfigSpec.DoubleValue METALLURGY_INGOT_MASS_KG;
+    public static final ModConfigSpec.DoubleValue METALLURGY_HOLD_K;
     public static final ModConfigSpec.DoubleValue METALLURGY_WIRE_ITEM_MASS_KG;
     public static final ModConfigSpec.BooleanValue VEINS_ENABLED;
     public static final ModConfigSpec.IntValue VEINS_CELL_CHUNKS;
@@ -320,6 +321,9 @@ public final class ServerConfig {
                 .defineInRange("ingot_mass_kg", 100.0, 0.01, 10_000.0);
         METALLURGY_WIRE_ITEM_MASS_KG = b.comment("[BALANCE] Mass of one wire item, kg (08 §8.0.2)")
                 .defineInRange("wire_item_mass_kg", 10.0, 0.01, 10_000.0);
+        METALLURGY_HOLD_K = b.comment("[BALANCE] Physical seconds per real second for hot vessels that only wait (ladles, the converter "
+                + "between blows): their heat loss runs on this clock, not on time.k_slow, since carrying and tilting are real time (00 §0.4)")
+                .defineInRange("hold_k", 4.0, 1.0, 72.0);
         b.pop();
 
         b.push("worldgen");

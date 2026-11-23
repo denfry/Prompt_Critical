@@ -259,8 +259,9 @@ public final class IronworksGameTests {
         h.setBlock(ladle, PcBlocks.LADLE.get().defaultBlockState());
         h.runAfterDelay(2, () -> {
             LadleBlockEntity l = (LadleBlockEntity) h.getBlockEntity(ladle);
-            h.assertTrue(l.receive(1000, 1700, 0.045, 0.006, 0.0003) == 1000, "ladle takes a tonne");
-            h.assertTrue(l.tempK() < 1700, "cold lining chills the metal");
+            // чугун на ≈ 120 К выше солидуса: холодная футеровка снимает ≈ 110 К, остальное ковш теряет по часам выдержки
+            h.assertTrue(l.receive(1000, 1540, 0.045, 0.006, 0.0003) == 1000, "ladle takes a tonne");
+            h.assertTrue(l.tempK() < 1540, "cold lining chills the metal");
         });
         h.startSequence()
                 .thenWaitUntil(() -> h.assertBlockProperty(ladle, PcProperties.FILLED, true))

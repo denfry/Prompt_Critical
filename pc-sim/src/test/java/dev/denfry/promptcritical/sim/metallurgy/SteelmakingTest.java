@@ -137,6 +137,41 @@ class SteelmakingTest {
         assertThat(bof.phase()).isEqualTo(ConverterPhase.EMPTY);
     }
 
+    /**
+     * Часы выдержки (00 §0.4): между продувками корпус остывает по {@code metallurgy.hold_k} = 4, а не по K_slow = 72.
+     * Минута реального времени — 60 шагов SLOW по 72 с; 10 т стали теряют ≈ 22 К, а не ≈ 390 К.
+     */
+    @Test
+    void heldConverterLosesHeatOnTheHoldClock() {
+        Converter held = new Converter(CFG), slow = new Converter(CFG);
+        for (Converter bof : new Converter[] {held, slow}) {
+            bof.charge(hotMetal(10_000, 0.045, 0, 0, 0), 0, 0);
+            blowTo(bof, 0.0005, 1, 1.0);
+            bof.stepSlow(1, 0, 3);
+        }
+        held.setHoldShare(4.0 / 72);
+        double t0 = held.tempK();
+        for (int k = 0; k < 60; k++) {
+            held.stepSlow(72, 0, 3);
+            slow.stepSlow(72, 0, 3);
+        }
+        assertThat(t0 - held.tempK()).as("минута выдержки, К").isBetween(10.0, 30.0);
+        assertThat(t0 - slow.tempK()).as("по SLOW — в 18 раз больше").isGreaterThan(300);
+    }
+
+    /** Продувка не зависит от часов выдержки: потери корпуса в ней — часть теплового баланса T8.10. */
+    @Test
+    void holdClockLeavesTheBlowUnchanged() {
+        Converter held = new Converter(CFG), plain = new Converter(CFG);
+        held.setHoldShare(4.0 / 72);
+        held.charge(hotMetal(10_000, 0.045, 0, 0, 0), 0, 0);
+        plain.charge(hotMetal(10_000, 0.045, 0, 0, 0), 0, 0);
+        held.stepSlow(1, 0.5, 1.0);
+        plain.stepSlow(1, 0.5, 1.0);
+        assertThat(blowTo(held, 0.0005, 1, 1.0)).isEqualTo(blowTo(plain, 0.0005, 1, 1.0));
+        assertThat(held.tempK()).isCloseTo(plain.tempK(), within(1e-9));
+    }
+
     @Test
     void highSiliconAndLowLanceSlop() {
         Converter bof = new Converter(CFG);
