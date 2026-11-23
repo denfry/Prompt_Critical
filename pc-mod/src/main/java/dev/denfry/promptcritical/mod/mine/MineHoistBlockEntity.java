@@ -280,8 +280,11 @@ public final class MineHoistBlockEntity extends DeviceBlockEntity implements Sha
                 // игрок — со своей массой тела и снаряжением; прочие живые — опорный человек
                 kg += e instanceof Player pl ? dev.denfry.promptcritical.mod.body.BodyService.loadedMassKg(pl) : PERSON_KG;
                 people++;
-            } else if (e instanceof AbstractMinecart) {
+            } else if (e instanceof AbstractMinecart cart) {
                 kg += CART_KG;
+                // вагонетка с грузом: её содержимое тянет канат так же, как россыпь в клети
+                if (cart instanceof net.minecraft.world.Container box2)
+                    for (int i = 0; i < box2.getContainerSize(); i++) kg += ITEM_KG * box2.getItem(i).getCount();
                 cargo++;
             } else if (e instanceof ItemEntity it) {
                 kg += ITEM_KG * it.getItem().getCount();
@@ -319,17 +322,32 @@ public final class MineHoistBlockEntity extends DeviceBlockEntity implements Sha
         setChanged();
     }
 
-    private void depart(Player player, HoistUnit u, int landing) {
-        if (!OpsActions.startAllowed(player, level, this)) return;
+    /** Чем кончился вызов клети: с панели, кнопки посадки, редстоуна или компьютера. */
+    public enum CallResult { STARTED, ALREADY_HERE, DOOR_OPEN, NO_CAGE, BLOCKED, FORBIDDEN, BAD_LANDING }
+
+    /**
+     * Вызвать клеть на посадку {@code landing} (0 — верхняя). Все блокировки здесь: допуск эксплуатации, канат, дверь
+     * клети, запас прочности каната по роду спуска. {@code who} — кому писать отказ; null — автоматика (редстоун, CC).
+     */
+    public CallResult call(int landing, @Nullable Player who) {
+        HoistUnit u = unit();
+        if (u == null || level == null) return CallResult.BLOCKED;
+        CallResult r = depart(who, u, landing);
+        setChanged();
+        return r;
+    }
+
+    private CallResult depart(@Nullable Player player, HoistUnit u, int landing) {
+        if (!OpsActions.startAllowed(player, level, this)) return CallResult.BLOCKED;
         if (shaft == null || !u.ready()) {
-            player.displayClientMessage(HoistText.msg("hoist.blocked", HoistText.problem(problem == HoistText.Problem.NONE
+            tell(player, HoistText.msg("hoist.blocked", HoistText.problem(problem == HoistText.Problem.NONE
                     ? HoistText.Problem.NO_ROPE : problem)), true);
-            return;
+            return CallResult.BLOCKED;
         }
-        if (landing >= shaft.landings().length) return;
+        if (landing < 0 || landing >= shaft.landings().length) return CallResult.BAD_LANDING;
         if (u.landingAtCage() == landing && cage == null) {
-            player.displayClientMessage(HoistText.msg("hoist.here"), true);
-            return;
+            tell(player, HoistText.msg("hoist.here"), true);
+            return CallResult.ALREADY_HERE;
         }
         BlockPos cagePos = null;
         HoistDuty duty = u.hoist().duty();
@@ -338,13 +356,13 @@ public final class MineHoistBlockEntity extends DeviceBlockEntity implements Sha
             cagePos = shaft.cageAt((int) Math.round(u.positionM()));
             BlockState cs = level.getBlockState(cagePos);
             if (!(cs.getBlock() instanceof MineCageBlock mc) || !mc.isController(cs)) {
-                player.displayClientMessage(HoistText.msg("hoist.blocked", HoistText.problem(HoistText.Problem.NO_CAGE)), true);
+                tell(player, HoistText.msg("hoist.blocked", HoistText.problem(HoistText.Problem.NO_CAGE)), true);
                 nextScan = 0;
-                return;
+                return CallResult.NO_CAGE;
             }
             if (mc.open(cs)) {
-                player.displayClientMessage(HoistText.msg("hoist.door_open"), true);
-                return;
+                tell(player, HoistText.msg("hoist.door_open"), true);
+                return CallResult.DOOR_OPEN;
             }
             Load l = load(cagePos, mc, cs);
             duty = l.duty();
@@ -352,17 +370,65 @@ public final class MineHoistBlockEntity extends DeviceBlockEntity implements Sha
         }
         Hoist.Verdict v = u.depart(landing, duty, kg);
         if (v == null) {
-            player.displayClientMessage(HoistText.msg("hoist.blocked", HoistText.state(u.hoist().state())), true);
-            return;
+            tell(player, HoistText.msg("hoist.blocked", HoistText.state(u.hoist().state())), true);
+            return CallResult.BLOCKED;
         }
         if (v == Hoist.Verdict.FORBIDDEN) {
             double need = ServerConfigHoist.required(duty);
-            player.displayClientMessage(HoistText.msg("hoist.forbidden", HoistText.num(u.hoist().safetyFactor(kg)),
+            tell(player, HoistText.msg("hoist.forbidden", HoistText.num(u.hoist().safetyFactor(kg)),
                     HoistText.num(need), HoistText.duty(duty)), false);
-            return;
+            return CallResult.FORBIDDEN;
         }
-        if (v == Hoist.Verdict.UNSAFE_OPERATION) player.displayClientMessage(HoistText.msg("hoist.unsafe"), false);
-        if (cagePos != null && !assemble(cagePos)) u.stop();
+        if (v == Hoist.Verdict.UNSAFE_OPERATION) tell(player, HoistText.msg("hoist.unsafe"), false);
+        if (cagePos != null && !assemble(cagePos)) {
+            u.stop();
+            return CallResult.NO_CAGE;
+        }
+        return CallResult.STARTED;
+    }
+
+    private static void tell(@Nullable Player player, net.minecraft.network.chat.Component msg, boolean bar) {
+        if (player != null) player.displayClientMessage(msg, bar);
+    }
+
+    /** Глубины посадок, м ниже верхней; индекс — номер посадки. Пусто без ствола. */
+    public int[] landingDepths() {
+        return shaft == null ? new int[0] : shaft.landings().clone();
+    }
+
+    /** Посадка, на которой стоит клеть; −1 на ходу или без ствола. */
+    public int landingAtCage() {
+        HoistUnit u = unit();
+        return u == null || shaft == null || cage != null ? -1 : u.landingAtCage();
+    }
+
+    /** Клеть едет контрапцией на канате. */
+    public boolean isMoving() {
+        return cage != null;
+    }
+
+    /** Глубина клети ниже верхней посадки, м. */
+    public double cageDepthM() {
+        HoistUnit u = unit();
+        return u == null ? 0 : u.positionM();
+    }
+
+    /** Клеть стоит на посадке с открытой дверью. */
+    public boolean cageDoorOpen() {
+        if (cage != null || shaft == null || level == null) return false;
+        HoistUnit u = unit();
+        if (u == null) return false;
+        BlockState cs = level.getBlockState(shaft.cageAt((int) Math.round(u.positionM())));
+        return cs.getBlock() instanceof MineCageBlock mc && mc.isController(cs) && mc.open(cs);
+    }
+
+    /** Посадка, у которой клеть (якорь, пол на y − 1, верх на y + 1) занимает высоту {@code y}; −1 — ни у какой. */
+    public int landingAt(int y) {
+        if (shaft == null) return -1;
+        int[] l = shaft.landings();
+        for (int i = 0; i < l.length; i++)
+            if (Math.abs(shaft.cageAt(l[i]).getY() - y) <= 1) return i;
+        return -1;
     }
 
     /** Повесить канат из стопки в руке: нужно ⌈(глубина + подвеска)/длина бухты⌉ бухт. */
