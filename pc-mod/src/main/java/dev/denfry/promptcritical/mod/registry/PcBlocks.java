@@ -242,6 +242,9 @@ public final class PcBlocks {
     public static final DeferredBlock<PcDeviceBlock> GRATE_STOKER = device("grate_stoker", machine(), Spec.facing(PcProperties.RUNNING),
             KineticMachineBlock.with(ShaftSide.LEFT, GrateStokerBlockEntity::new));
     public static final DeferredBlock<ChimneyBlock> CHIMNEY = withItem(BLOCKS.registerBlock("chimney", ChimneyBlock::create, brick()));
+    /** Кирпичная труба котельной реального масштаба: звенья 3 × 3 × 3 друг на друге (07 §7.9.2). */
+    public static final DeferredBlock<dev.denfry.promptcritical.mod.block.ChimneyStackBlock> CHIMNEY_STACK = withItem(BLOCKS.registerBlock(
+            "chimney_stack", dev.denfry.promptcritical.mod.block.ChimneyStackBlock::create, brick()));
     public static final DeferredBlock<PcDeviceBlock> STEAM_ENGINE_CYLINDER = device("steam_engine_cylinder", machine(),
             Spec.facing(PcProperties.RUNNING).segments(PcProperties.ENGINE_SEGMENT, FP_ENGINE), SteamEngineBlock::create);
     /**
@@ -475,6 +478,15 @@ public final class PcBlocks {
     public static final DeferredBlock<PcDeviceBlock> MINE_DRAINAGE_PUMP = device("mine_drainage_pump", machine(),
             Spec.facing(PcProperties.RUNNING).footprint(FP_WIDE2),
             KineticMachineBlock.with(ShaftSide.LEFT, MineDrainagePumpBlockEntity::new));
+    /**
+     * Трёхплунжерный насос водоотлива с зубчатой передачей реального масштаба: 3 × 2 × 2, вал Create — в клетку-порт на
+     * восточной грани (08 §8.2.9, docs/research/mine_drainage_pump-dimensions.md).
+     */
+    public static final Footprint FP_DRAINAGE_PUMP_GEARED = Footprint.tiled(0, 2, 0, 1, 0, 1);
+    public static final DeferredBlock<PcDeviceBlock> MINE_DRAINAGE_PUMP_GEARED = device("mine_drainage_pump_geared", machine(),
+            Spec.facing(PcProperties.RUNNING).segments(PcProperties.wholeSegments(FP_DRAINAGE_PUMP_GEARED.segments().size()),
+                    FP_DRAINAGE_PUMP_GEARED),
+            dev.denfry.promptcritical.mod.mine.GearedDrainagePumpBlock.create());
 
     // --- нефть и газ I2: геология, сейсморазведка, буровая ---
     public static final DeferredBlock<PcBlock> RESERVOIR_SANDSTONE = geology("reservoir_sandstone", MapColor.TERRACOTTA_ORANGE);
@@ -903,7 +915,8 @@ public final class PcBlocks {
     public static boolean isWholeModel(net.minecraft.world.level.block.Block b) {
         return b == VVER_REACTOR.get() || b == VVER_STEAM_GENERATOR.get() || b == VVER_COOLANT_PUMP.get() || b == VVER_PRESSURIZER.get()
                 || b == BWR240_REACTOR.get() || b == CANDU6_REACTOR.get() || b == BN600_REACTOR.get() || b == AM1_REACTOR.get()
-                || b == LANCASHIRE_BOILER.get() || b == HEADFRAME_STEEL.get() || b == MILL_ENGINE.get();
+                || b == LANCASHIRE_BOILER.get() || b == HEADFRAME_STEEL.get() || b == MILL_ENGINE.get()
+                || b == MINE_DRAINAGE_PUMP_GEARED.get();
     }
 
     /**

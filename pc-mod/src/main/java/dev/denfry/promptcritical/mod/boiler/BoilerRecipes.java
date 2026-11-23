@@ -72,6 +72,10 @@ public final class BoilerRecipes extends RecipeProvider {
         ShapedRecipeBuilder.shaped(RecipeCategory.BUILDING_BLOCKS, PcBlocks.CHIMNEY.get(), 4)
                 .pattern("B B").pattern("B B").pattern("B B").define('B', Items.BRICK)
                 .unlockedBy("has_brick", has(Items.BRICK)).save(out, id("chimney"));
+        // звено трубы реального масштаба: кольцо ⌀2,5/1,8 м высотой 3 м ≈ 7 м³ кладки ≈ 13 т — восемь блоков кирпича
+        ShapedRecipeBuilder.shaped(RecipeCategory.BUILDING_BLOCKS, PcBlocks.CHIMNEY_STACK.get())
+                .pattern("BBB").pattern("B B").pattern("BBB").define('B', Items.BRICKS)
+                .unlockedBy("has_bricks", has(Items.BRICKS)).save(out, id("chimney_stack"));
         ShapedRecipeBuilder.shaped(RecipeCategory.MISC, PcBlocks.INSTRUMENT_PRESSURE.get())
                 .pattern(" G ").pattern("CNC").pattern(" C ").define('G', Items.GLASS_PANE).define('C', Items.COPPER_INGOT)
                 .define('N', Items.IRON_NUGGET)

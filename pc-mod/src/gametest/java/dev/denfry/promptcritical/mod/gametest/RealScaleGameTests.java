@@ -318,7 +318,7 @@ public final class RealScaleGameTests {
             h.assertTrue(r > 1 / 1.5 && r < 1.5, plan.id() + ": planned metal " + Math.round(plan.plannedMetalKg() / 1000) + " t vs prototype "
                     + Math.round(plan.metalKg() / 1000) + " t");
         }
-        h.assertTrue(n == 11, "eleven real-scale plans (eight reactors and NPP units, three I0 machines), got " + n);
+        h.assertTrue(n == 12, "twelve real-scale plans (eight reactors and NPP units, four I0 machines), got " + n);
         h.succeed();
     }
 
@@ -372,6 +372,58 @@ public final class RealScaleGameTests {
         h.setBlock(p, PcBlocks.PRESSURIZER.get().defaultBlockState());
         h.assertTrue(h.getBlockEntity(p) instanceof dev.denfry.promptcritical.mod.npp.PressurizerBlockEntity, "legacy pressurizer has its block entity");
         h.assertTrue(PcItems.STEEL_PLATE.get() != null, "items available");
+        h.succeed();
+    }
+
+    /**
+     * Кирпичная труба реального масштаба (07 §7.9.2): три звена 3 × 3 × 3 на газоходе ланкаширского котла — основание,
+     * ствол и оголовок по соседям; котёл видит трубу высотой 8 м над газоходом (нижний ряд основания — ниже его пода),
+     * снятый оголовок делает ствол оголовком.
+     */
+    @GameTest(template = "gametest/empty_40x10x10", timeoutTicks = 40)
+    public static void chimneyStackStandsOnTheLancashireFlue(GameTestHelper h) {
+        Direction f = Direction.WEST;
+        BlockPos p = new BlockPos(15, 1, 5);
+        h.setBlock(p, PcBlocks.LANCASHIRE_BOILER.get().defaultBlockState().setValue(BlockStateProperties.HORIZONTAL_FACING, f));
+        // газоход котла — клетка (0, 0, 10) модели за задним торцом; центр основания трубы — на клетку дальше
+        BlockPos base = p.offset(new BlockPos(0, 0, 11).rotate(Footprint.rotation(f)));
+        var stack = PcBlocks.CHIMNEY_STACK.get().defaultBlockState().setValue(BlockStateProperties.HORIZONTAL_FACING, f);
+        for (int k = 0; k < 3; k++) h.setBlock(base.above(3 * k), stack);
+        h.assertBlockProperty(base, dev.denfry.promptcritical.mod.block.PcProperties.CHIMNEY_PART,
+                dev.denfry.promptcritical.mod.block.PcProperties.ChimneyPart.BASE);
+        h.assertBlockProperty(base.above(3), dev.denfry.promptcritical.mod.block.PcProperties.CHIMNEY_PART,
+                dev.denfry.promptcritical.mod.block.PcProperties.ChimneyPart.MIDDLE);
+        h.assertBlockProperty(base.above(6), dev.denfry.promptcritical.mod.block.PcProperties.CHIMNEY_PART,
+                dev.denfry.promptcritical.mod.block.PcProperties.ChimneyPart.TOP);
+        var boiler = (dev.denfry.promptcritical.mod.boiler.FireTubeBoilerBlockEntity) h.getBlockEntity(p);
+        h.assertValueEqual(boiler.chimneyHeightBlocks(), 8, "chimney height over the flue, m");
+        h.setBlock(base.above(6), Blocks.AIR);
+        h.assertBlockProperty(base.above(3), dev.denfry.promptcritical.mod.block.PcProperties.CHIMNEY_PART,
+                dev.denfry.promptcritical.mod.block.PcProperties.ChimneyPart.TOP);
+        h.assertValueEqual(boiler.chimneyHeightBlocks(), 5, "two segments over the flue, m");
+        h.succeed();
+    }
+
+    /**
+     * Трёхплунжерный насос реального масштаба (08 §8.2.9): тот же BE насоса водоотлива с цельной моделью, вал Create
+     * входит в клетку-порт на восточной грани, и порт отдаёт обороты насосу.
+     */
+    @GameTest(template = "gametest/empty_12x12x12", timeoutTicks = 40)
+    public static void gearedDrainagePumpTakesItsShaftAtThePort(GameTestHelper h) {
+        Direction f = Direction.NORTH;
+        BlockPos p = new BlockPos(4, 2, 4);
+        h.assertTrue(PcBlocks.FP_DRAINAGE_PUMP_GEARED.cells(BlockPos.ZERO, f).size() == 3 * 2 * 2, "3x2x2 pump");
+        h.setBlock(p, PcBlocks.MINE_DRAINAGE_PUMP_GEARED.get().defaultBlockState().setValue(BlockStateProperties.HORIZONTAL_FACING, f));
+        h.assertTrue(h.getBlockEntity(p) instanceof dev.denfry.promptcritical.mod.mine.MineDrainagePumpBlockEntity b && b.real()
+                && "mine_drainage_pump_geared".equals(b.wholeModelId()), "the geared pump is a drainage pump with its whole model");
+        BlockPos port = dev.denfry.promptcritical.mod.mine.GearedDrainagePumpBlock.portPos(h.absolutePos(p), f);
+        var ps = h.getLevel().getBlockState(port);
+        h.assertTrue(ps.is(PcBlocks.KINETIC_PORT.get()) && ps.getValue(dev.denfry.promptcritical.mod.boiler.KineticPortBlock.INPUT)
+                && ps.getValue(dev.denfry.promptcritical.mod.boiler.KineticPortBlock.AXIS) == Direction.Axis.X, "input port on the east face, shaft along x");
+        h.assertTrue(h.getLevel().getBlockEntity(port) instanceof dev.denfry.promptcritical.mod.boiler.KineticInputBlockEntity in
+                && in.owner() == h.getBlockEntity(p), "the port feeds the pump");
+        h.assertFalse(((dev.denfry.promptcritical.mod.mine.GearedDrainagePumpBlock) PcBlocks.MINE_DRAINAGE_PUMP_GEARED.get()).hasShaftTowards(h.getLevel(), h.absolutePos(p), h.getBlockState(p), Direction.WEST),
+                "the controller has no shaft of its own");
         h.succeed();
     }
 }

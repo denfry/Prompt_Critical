@@ -52,6 +52,10 @@ public final class SiteText {
         drawing("lancashire_boiler", "Lancashire Boiler", "ланкаширского котла");
         drawing("headframe_steel", "Steel Headframe", "стального копра");
         drawing("mill_engine", "Horizontal Mill Engine", "горизонтальной паровой машины");
+        drawing("mine_drainage_pump_geared", "Geared Three-Throw Ram Pump", "трёхплунжерного насоса водоотлива");
+        stage("pump_bed", "cast iron bed and crankshaft standards", "чугунная станина и стойки коленвала");
+        stage("gearing", "crankshaft, spur wheel and pinion", "коленвал, зубчатое колесо и шестерня");
+        stage("rams", "rams, valve boxes, manifolds and air vessel", "плунжеры, клапанные коробки, коллекторы и воздушный колпак");
         stage("bed", "bed, cylinder and crosshead guides", "станина, цилиндр и параллели");
         stage("flywheel", "crankshaft, flywheel and governor", "коленвал, маховик и регулятор");
         stage("tower", "shaft tower and back struts", "башня над стволом и подкосы");
