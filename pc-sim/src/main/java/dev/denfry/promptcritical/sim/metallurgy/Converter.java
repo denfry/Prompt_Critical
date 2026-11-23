@@ -56,6 +56,13 @@ public final class Converter {
     public static final double OVERBLOW_C = 0.0004;
     /** Фурма ниже — в ванне. */
     public static final double LANCE_MIN_M = 0.2;
+    /**
+     * Предел FeO в шлаке при передуве: выше шлак железо уже не берёт, лишний кислород уходит с газом [BALANCE;
+     * передутые шлаки — до 35–45 % FeO].
+     */
+    public static final double FEO_MAX_FRAC = 0.5;
+    /** Меньше металла — ванны нет: дутьё её не греет, плавка не продувается и не выпускается [моё]. */
+    public static final double MIN_BATH_KG = 100;
 
     private final SteelmakingConfig cfg;
     private SteelmakingEvents events = SteelmakingEvents.NONE;
@@ -107,7 +114,8 @@ public final class Converter {
         if (!(dt > 0) || !(o2Nm3S >= 0)) throw new IllegalArgumentException("dt/o2");
         coMolS = co2MolS = 0;
         if (phase == ConverterPhase.EMPTY) return;
-        boolean blowing = o2Nm3S > 0;
+        // без ванны дутьё проходит насквозь: продувка кончилась
+        boolean blowing = o2Nm3S > 0 && metalKg >= MIN_BATH_KG;
         if (blowing && phase != ConverterPhase.BLOWING) setPhase(ConverterPhase.BLOWING);
         else if (!blowing && phase == ConverterPhase.BLOWING) setPhase(ConverterPhase.BLOWN);
 
@@ -179,7 +187,10 @@ public final class Converter {
             double o2Pc = Math.min(rest * (1 - feoShare), 0.5 * POST_COMBUSTION_MAX * coMol * VM);
             double co2Mol = 2 * o2Pc / VM;
             double o2Fe = rest - o2Pc;
-            double dFe = Math.min(o2Fe / VM * 2 * M_FE / 1000, Math.max(0, metalKg - c - si - mn - p - s) * 0.5);
+            // железо горит в FeO, пока шлак его берёт; остаток кислорода уходит с газом
+            double feoRoom = Math.max(0, (FEO_MAX_FRAC * slagKg() - feo) / (1 - FEO_MAX_FRAC));
+            double dFe = Math.min(Math.min(o2Fe / VM * 2 * M_FE / 1000, Math.max(0, metalKg - c - si - mn - p - s) * 0.5),
+                    feoRoom * M_FE / M_FEO);
             metalKg -= dc + dSi + dMn + dP + dFe;
             sio2 += dSi * M_SIO2 / M_SI;
             mno += dMn * M_MNO / M_MN;
@@ -207,21 +218,18 @@ public final class Converter {
                 events.lanceDamaged();
             }
         }
+        if (metalKg < MIN_BATH_KG) return;
         double loss = LOSS_W_PER_T23 * Math.pow(metalKg / 1000, 2.0 / 3) * dt;
         tempK += (q - sink - loss) / (metalKg * STEEL_CP);
     }
 
-    /** Выпуск в ковш: жидкая сталь с растворённым O ([C][O] = 0,0025 %²); шлак и нерасплавленный лом уходят. */
+    /**
+     * Выпуск в ковш: жидкая сталь с растворённым O ([C][O] = 0,0025 %²); шлак и нерасплавленный лом уходят.
+     * {@code null} — выпускать нечего (пустой конвертер или ванны меньше {@link #MIN_BATH_KG}).
+     */
     public SteelMelt tap() {
         if (phase == ConverterPhase.EMPTY) return null;
-        Map<AlloyElement, Double> chem = new EnumMap<>(AlloyElement.class);
-        chem.put(AlloyElement.C, carbonFrac());
-        chem.put(AlloyElement.SI, si / metalKg);
-        chem.put(AlloyElement.MN, mn / metalKg);
-        chem.put(AlloyElement.P, p / metalKg);
-        chem.put(AlloyElement.S, s / metalKg);
-        chem.put(AlloyElement.O, dissolvedOxygenFrac());
-        SteelMelt melt = new SteelMelt(metalKg, tempK, chem);
+        SteelMelt melt = metalKg >= MIN_BATH_KG ? bath() : null;
         if (scrapKg > 1) events.scrapUnmelted(scrapKg);
         metalKg = c = si = mn = p = s = scrapKg = limeKg = mnCharged = pCharged = chargeSi = 0;
         feo = sio2 = mno = p2o5 = cao = 0;
@@ -230,6 +238,17 @@ public final class Converter {
         tempK = 298.15;
         setPhase(ConverterPhase.EMPTY);
         return melt;
+    }
+
+    private SteelMelt bath() {
+        Map<AlloyElement, Double> chem = new EnumMap<>(AlloyElement.class);
+        chem.put(AlloyElement.C, carbonFrac());
+        chem.put(AlloyElement.SI, si / metalKg);
+        chem.put(AlloyElement.MN, mn / metalKg);
+        chem.put(AlloyElement.P, p / metalKg);
+        chem.put(AlloyElement.S, s / metalKg);
+        chem.put(AlloyElement.O, dissolvedOxygenFrac());
+        return new SteelMelt(metalKg, tempK, chem);
     }
 
     public void save(StateWriter out) {

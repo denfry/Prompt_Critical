@@ -322,7 +322,9 @@ public class BofVesselBlockEntity extends IronworksDeviceBlockEntity<ConverterUn
         if (c.phase() == ConverterPhase.BLOWING && u.lastOxygenNm3S() > 0) flags |= 1 << SteelworksPanels.CF_BLOWING;
         if (interlocked) flags |= 1 << SteelworksPanels.CF_INTERLOCK;
         if (u.blowReady()) flags |= 1 << SteelworksPanels.CF_READY;
-        if (c.carbonFrac() > 0 && c.carbonFrac() < Converter.OVERBLOW_C) flags |= 1 << SteelworksPanels.CF_OVERBLOWN;
+        // передув горит и тогда, когда углерода не осталось совсем: до выпуска
+        if ((c.phase() == ConverterPhase.BLOWING || c.phase() == ConverterPhase.BLOWN) && c.carbonFrac() <= Converter.OVERBLOW_C)
+            flags |= 1 << SteelworksPanels.CF_OVERBLOWN;
         out[SteelworksPanels.C_FLAGS] = flags;
     }
 

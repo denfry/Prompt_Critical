@@ -168,6 +168,12 @@ and the effects of each structure, not only the beacon colour.
 
 ## Known gaps (do not report as bugs)
 
+- The alternator's 0.4/6.3 kV switch works only at standstill (speed ≤ 5 %), and an unloaded rotor coasts for
+  minutes after the Create shaft stops (I1 run). Kept as designed.
+- Hot ladles and the converter lose heat at their physical rate times `k_slow` (72 by default): a 10 t steel ladle
+  loses ≈ 15 K per physical 10 min (200 kW), which is ≈ 1.8 K per real second, so a full ladle freezes in one to two
+  real minutes and a slow tilt (16 rpm, ≈ 1 °/s) costs the heat several hundred kelvin before tapping. Drive the
+  converter tilt at its nominal 64 rpm.
 - Art is postponed: many new machines use placeholder or borrowed models (for example the uranium ion exchange column
   uses the water treatment column's model, the T1 reactor both segments use `reactor_vessel_wall`). Report only missing
   models, wrong orientation and parts outside the body.
