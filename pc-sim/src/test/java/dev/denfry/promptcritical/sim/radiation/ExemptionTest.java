@@ -26,8 +26,9 @@ class ExemptionTest {
 
     @Test
     void massDilutesAndMasslessSourcesNeverClear() {
-        assertThat(Exemption.exempt(Map.of(Emitter.CO60, 1e6), 1000)).isFalse();
-        assertThat(Exemption.exempt(Map.of(Emitter.CO60, 1e6), 1e5)).isTrue();
+        // 1 МБк Co-60 в 1 кг — 1000 Бк/г при уровне 10 Бк/г; в тонне — 1 Бк/г, свободен
+        assertThat(Exemption.exempt(Map.of(Emitter.CO60, 1e6), 1)).isFalse();
+        assertThat(Exemption.exempt(Map.of(Emitter.CO60, 1e6), 1000)).isTrue();
         assertThat(Exemption.exempt(Map.of(Emitter.CO60, 1.0), 0)).isFalse();
         assertThat(Exemption.exempt(Map.of(), 0)).isTrue();
     }

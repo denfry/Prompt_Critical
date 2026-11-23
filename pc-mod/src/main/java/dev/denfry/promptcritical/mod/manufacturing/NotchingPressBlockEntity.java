@@ -53,7 +53,7 @@ public final class NotchingPressBlockEntity extends PoweredSmithyDevice {
 
     public NotchingPressBlockEntity(BlockPos pos, BlockState state) {
         super(SmithyBlockEntities.NOTCHING_PRESS.get(), pos, state, ROLES,
-                (slot, s) -> slot == 0 && s.has(ManufacturingComponents.ELECTRICAL_SHEET.get()));
+                (slot, s) -> slot == 0 && Electrical.isFullSheet(s));
     }
 
     @Override
@@ -101,7 +101,8 @@ public final class NotchingPressBlockEntity extends PoweredSmithyDevice {
             setChanged();
             return;
         }
-        ElectricalSheet sheet = Electrical.sheet(inv.getStackInSlot(0));
+        // короткий лист стана между отжигами не по штампу: пресс его не берёт
+        ElectricalSheet sheet = Electrical.isFullSheet(inv.getStackInSlot(0)) ? Electrical.sheet(inv.getStackInSlot(0)) : null;
         if (!on || stop != STOP_NONE || shaftW <= 0) return;
         if (sheet == null) {
             halt(STOP_DONE);
@@ -174,7 +175,7 @@ public final class NotchingPressBlockEntity extends PoweredSmithyDevice {
 
     @Override
     public boolean accepts(ItemStack stack) {
-        return stack.has(ManufacturingComponents.ELECTRICAL_SHEET.get());
+        return Electrical.isFullSheet(stack);
     }
 
     @Override

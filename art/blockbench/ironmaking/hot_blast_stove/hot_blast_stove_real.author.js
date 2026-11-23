@@ -134,8 +134,8 @@
 
   const PART = {
     hot_valve: { draw: hotGate, shift: [0, -64, 0], note: 'whole y = partial y + 64; open = +13 px y' },
-    cold_valve: { draw: (m) => stem(m, 'cold', 'z'), shift: [0, 0, -64], note: 'whole z = partial z + 64; open = +6 px y' },
-    chimney_valve: { draw: (m) => stem(m, 'chimney', 'x'), shift: [-32, 0, -32], note: 'whole = partial + (32, 0, 32); open = +6 px y' },
+    cold_valve: { draw: (m) => stem(m, 'cold', 'z'), shift: [0, -16, -64], note: 'whole y = partial y + 16, z = partial z + 64; open = +6 px y' },
+    chimney_valve: { draw: (m) => stem(m, 'chimney', 'x'), shift: [-32, -16, -32], note: 'whole = partial + (32, 16, 32); open = +6 px y' },
     burner_glow: { draw: burnerGlow, shift: [0, -16, 0], note: 'whole y = partial y + 16; full-bright on gas' },
   };
   function model() {

@@ -28,6 +28,7 @@ import net.neoforged.neoforge.gametest.PrefixGameTestTemplate;
 @PrefixGameTestTemplate(false)
 public final class RealScaleGameTests {
     private static final String TALL = "gametest/empty_12x24x12";
+    private static final String WIDE_TALL = "gametest/empty_16x24x16";
 
     private RealScaleGameTests() {}
 
@@ -265,7 +266,8 @@ public final class RealScaleGameTests {
      * — тот же BE главного вентилятора с цельной моделью, вал Create входит в клетку у кривошипа, в сеть шахты выходит
      * только глаз.
      */
-    @GameTest(template = TALL, timeoutTicks = 40)
+    // основание 13 клеток по x не помещается в 12-клеточный шаблон: 13-я клетка попадала на барьерную стенку теста
+    @GameTest(template = WIDE_TALL, timeoutTicks = 40)
     public static void guibalFanTakesItsShaftAtTheCrankAndAirAtTheEye(GameTestHelper h) {
         BlockPos p = new BlockPos(5, 5, 5);
         for (int x = -5; x <= 7; x++)

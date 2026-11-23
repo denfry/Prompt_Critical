@@ -96,9 +96,10 @@ public final class SheetMillBlockEntity extends PoweredSmithyDevice {
         if (s == null) return;
         int fit = (int) Math.max(1, Math.floor(MAX_SHEETS * Math.min(1, targetM() / s.thicknessM())));
         int take = Math.min(in.getCount(), fit);
+        double len = Electrical.sheetLengthFrac(in);
         in.shrink(take);
         strip = s;
-        sheets = take;
+        sheets = take * len;
         workJ = 0;
     }
 
@@ -127,10 +128,22 @@ public final class SheetMillBlockEntity extends PoweredSmithyDevice {
         setChanged();
     }
 
-    /** Полосу — на выход листами, стан стоит с причиной {@code why}. */
+    /**
+     * Полосу — на выход листами, стан стоит с причиной {@code why}. Готовая полоса режется на мерные листы, остаток
+     * короче листа — обрезь в отход. Полоса на отжиг режется без отхода на равные листы не длиннее мерного: металл
+     * идёт дальше весь (1,92 листа — два листа по 0,96 м), иначе каждый отжиг съедал бы до листа.
+     */
     private void eject(int why) {
-        int n = (int) Math.max(1, Math.min(MAX_SHEETS, Math.floor(sheets + 1e-6)));
-        inv.setStackInSlot(1, Electrical.sheetStack(strip, n));
+        if (why == STOP_DONE) {
+            int n = (int) Math.max(1, Math.min(MAX_SHEETS, Math.floor(sheets + 1e-6)));
+            inv.setStackInSlot(1, Electrical.sheetStack(strip, n));
+        } else {
+            // предмет хранит толщину до микрона: площадь пересчитана на неё, чтобы объём металла не уплыл
+            double stored = ElectricalData.Sheet.of(strip).sheet().thicknessM();
+            double area = sheets * strip.thicknessM() / stored;
+            int n = (int) Math.max(1, Math.min(MAX_SHEETS, Math.ceil(area - 1e-6)));
+            inv.setStackInSlot(1, Electrical.sheetStack(strip, n, Math.min(1, area / n)));
+        }
         strip = null;
         sheets = 0;
         stop = why;

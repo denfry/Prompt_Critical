@@ -72,7 +72,10 @@ public final class PanelReadings {
                     : Component.literal(v.num(s.ch(), 10, 0) + "°");
             case PanelLayout.Firebox f -> Component.literal(v.num(f.bedCh(), f.bedScale(), 2) + " / " + PanelText.num(f.bedMax(), 2));
             // Табло красит строку и мигает на клиенте; дисплею Create нужен только текст.
-            case PanelLayout.Readout r -> Component.literal(r.text().apply(v).getString());
+            case PanelLayout.Readout r -> {
+                String text = r.text().apply(v).getString();
+                yield Component.literal(text.isBlank() ? DASHES : text); // тёмное окно табло — нет показания
+            }
             default -> Component.literal(DASHES);
         };
     }
