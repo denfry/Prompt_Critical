@@ -65,6 +65,11 @@ public final class FoundryRecipes extends RecipeProvider {
                 .pattern("SBS").pattern("ICI").pattern("I I").define('S', AllBlocks.SHAFT.get()).define('B', Items.BUCKET)
                 .define('I', AllItems.IRON_SHEET.get()).define('C', AllBlocks.ANDESITE_CASING.get())
                 .unlockedBy("has_casing", has(AllBlocks.ANDESITE_CASING.get())).save(out, id("coal_jig"));
+        // тяжелосредный сепаратор: барабан из стального листа и насос суспензии на основе отсадочной машины
+        ShapedRecipeBuilder.shaped(RecipeCategory.MISC, PcBlocks.DENSE_MEDIUM_SEPARATOR.get())
+                .pattern("SPS").pattern("IJI").pattern("IMI").define('S', AllBlocks.SHAFT.get()).define('P', AllBlocks.MECHANICAL_PUMP.get())
+                .define('I', AllItems.IRON_SHEET.get()).define('J', PcBlocks.COAL_JIG.get()).define('M', PcItems.IRON_ORE_CONCENTRATE.get())
+                .unlockedBy("has_coal_jig", has(PcBlocks.COAL_JIG.get())).save(out, id("dense_medium_separator"));
         // чертёж отсадочной машины Баума: строится на стройплощадке по массе прототипа (SitePlans)
         ShapedRecipeBuilder.shaped(RecipeCategory.MISC, dev.denfry.promptcritical.mod.site.SiteRegistry.COAL_JIG_REAL_DRAWING.get())
                 .pattern("PPP").pattern("SBS").pattern("ICI").define('P', Items.PAPER).define('S', AllBlocks.SHAFT.get())

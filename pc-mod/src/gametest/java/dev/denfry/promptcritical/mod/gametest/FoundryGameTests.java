@@ -268,4 +268,35 @@ public final class FoundryGameTests {
             h.assertBlockProperty(jig, PcProperties.RUNNING, true);
         });
     }
+
+    /**
+     * Тяжелосредный сепаратор (08 §8.3): вода и железорудный концентрат дают суспензию ≈ 1,5 г/см³, рядовой уголь
+     * делится в ней на мытый уголь чище питания и породу.
+     */
+    @GameTest(template = LARGE, timeoutTicks = 900)
+    public static void denseMediumSeparatorWashesCoalInMagnetiteSuspension(GameTestHelper h) {
+        BlockPos dms = new BlockPos(5, 2, 5);
+        h.setBlock(dms, facing(PcBlocks.DENSE_MEDIUM_SEPARATOR.get().defaultBlockState(), Direction.NORTH));
+        motor(h, dms.west(), Direction.EAST, 64);
+        h.runAfterDelay(2, () -> {
+            IFluidHandler water = ((FoundryDevice) h.getBlockEntity(dms)).fluids(null);
+            h.assertTrue(water.fill(new FluidStack(Fluids.WATER, 1000), IFluidHandler.FluidAction.EXECUTE) == 1000, "water");
+            insert(h, dms, new ItemStack(PcItems.IRON_ORE_CONCENTRATE.get(), 7));
+            insert(h, dms, new ItemStack(PcItems.RAW_COAL.get(), 3));
+        });
+        h.succeedWhen(() -> {
+            BlockEntity be = h.getBlockEntity(dms);
+            SimId id = ((dev.denfry.promptcritical.mod.binding.DeviceHost) be).simId();
+            var u = binding(h).world().subsystem(dev.denfry.promptcritical.sim.mining.DenseMediumSubsystem.class)
+                    .unit(binding(h).world().topology(), id);
+            h.assertTrue(u != null && u.mediumDensity() > 1.45 && u.mediumDensity() < 1.55,
+                    "seven concentrate items in 1000 L give about 1.5 g/cm³, got " + (u == null ? null : u.mediumDensity()));
+            ItemStack washed = find(items(h, dms), PcItems.WASHED_COAL.get());
+            h.assertFalse(washed.isEmpty(), "washed coal");
+            CoalAssayData a = washed.get(PcDataComponents.COAL_ASSAY.get());
+            h.assertTrue(a != null && a.ashPct() < 21, "cleaner than the feed (21 % ash), got " + a);
+            h.assertTrue(u.productKg(dev.denfry.promptcritical.sim.mining.DenseMediumSeparator.Product.REFUSE) > 0
+                    || !find(items(h, dms), PcItems.COAL_REFUSE.get()).isEmpty(), "refuse sinks");
+        });
+    }
 }

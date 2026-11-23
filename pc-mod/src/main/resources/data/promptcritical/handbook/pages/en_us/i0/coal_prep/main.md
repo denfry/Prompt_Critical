@@ -36,3 +36,12 @@ A Create wrench on the jig changes the **cut density** for clean coal: 1.40, 1.5
 A jig is not perfect. Pieces near the cut density split at random; some coal is always lost to refuse and some rock always reaches the clean coal. The closer the cut is to the bulk of the coal, the bigger this misplacement.
 
 Sulphur behaves in two ways. Pyritic sulphur, as separate grains of pyrite, leaves with the heavy product. Organic sulphur is bound into the coal itself and stays in the clean coal.
+
+## The dense medium separator
+
+A [dense medium separator](item:promptcritical:dense_medium_separator) does not rely on settling speed. Coal goes into a suspension of fine magnetite in water, and the suspension's density is the cut: what is lighter floats off with the overflow as clean coal, and what is heavier sinks and is lifted out by the drum as refuse. Its probable error is 0.03 g/cm³, against 0.10 for the jig, so far less coal is lost and far less rock gets into the clean coal. There are two products and no middlings.
+
+- Drive: a Create shaft, on the left. At 64 rpm it passes 10 kg/s and takes about 22 kW, including the medium pump.
+- Medium: water by bucket or pipe, and magnetite as [iron ore concentrate](item:promptcritical:iron_ore_concentrate) in its own slot. The circuit holds 1500 l; it needs at least 500 l to run.
+- The cut is the medium density, 1.4–1.8 g/cm³ in practice. Each concentrate item raises it; water lowers it. It will not take magnetite past 2.0 g/cm³: the pump cannot move it.
+- Magnetite leaves with the products, 0.75 kg per tonne of coal. The density stays, but the circuit slowly empties: top it up with water and concentrate together.

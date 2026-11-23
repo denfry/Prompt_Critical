@@ -31,10 +31,12 @@ public final class FoundryBinding {
         modBus.addListener(FoundryBinding::registerCapabilities);
         SimBindings.registerSubsystem(level -> new FoundrySubsystem());
         SimBindings.registerSubsystem(level -> new CoalPrepSubsystem());
+        SimBindings.registerSubsystem(level -> new dev.denfry.promptcritical.sim.mining.DenseMediumSubsystem());
     }
 
     private static void registerCapabilities(RegisterCapabilitiesEvent event) {
         caps(event, FoundryBlockEntities.COAL_JIG.get());
+        caps(event, FoundryBlockEntities.DENSE_MEDIUM_SEPARATOR.get());
         caps(event, FoundryBlockEntities.CUPOLA.get());
         // вагранка реального масштаба: склад колоши — только с порта площадки (WholePorts), клетка контроллера у жёлоба закрыта
         caps(event, FoundryBlockEntities.CRUCIBLE.get());

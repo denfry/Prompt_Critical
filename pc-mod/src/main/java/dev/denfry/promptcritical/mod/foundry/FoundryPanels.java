@@ -19,6 +19,7 @@ import dev.denfry.promptcritical.sim.metallurgy.CrucibleUnit;
 import dev.denfry.promptcritical.sim.metallurgy.CupolaUnit;
 import dev.denfry.promptcritical.sim.metallurgy.MachinedPart;
 import dev.denfry.promptcritical.sim.mining.CoalJig;
+import dev.denfry.promptcritical.sim.mining.DenseMediumSeparator;
 import java.util.List;
 import net.minecraft.ChatFormatting;
 import net.minecraft.network.chat.Component;
@@ -41,6 +42,9 @@ public final class FoundryPanels {
     public static final int J_FEED_KG = OWN, J_WATER_L = OWN + 1, J_RHO_CLEAN = OWN + 2, J_RHO_REFUSE = OWN + 3,
             J_CHANNELS = OWN + 4;
     public static final int BUTTON_JIG_CUT = 0;
+    /** Тяжелосредный сепаратор. */
+    public static final int D_FEED_KG = OWN, D_MEDIUM_L = OWN + 1, D_RHO100 = OWN + 2, D_MAGNETITE_KG = OWN + 3,
+            D_CHANNELS = OWN + 4;
     // формовка, выбивка
     public static final int M_SAND = OWN, M_NEED = OWN + 1, M_WATER_MB = OWN + 2, M_PROGRESS_PERMIL = OWN + 3, M_KIND = OWN + 4,
             M_CHANNELS = OWN + 5;
@@ -91,6 +95,9 @@ public final class FoundryPanels {
             JIG_CLEAN = PanelText.tr("jig.clean", "Clean coal", "Концентрат"),
             JIG_MID = PanelText.tr("jig.middlings", "Middlings", "Промпродукт"),
             JIG_REFUSE = PanelText.tr("jig.refuse", "Refuse", "Отходы");
+    private static final Tr DMS_MEDIUM = PanelText.tr("dms.medium", "Magnetite medium in the circuit", "Магнетитовая суспензия в контуре"),
+            DMS_STATUS = PanelText.tr("dms.status", "Cut %s g/cm³ · magnetite %s kg", "Разделение %s г/см³ · магнетит %s кг"),
+            DMS_MAGNETITE = PanelText.tr("dms.magnetite", "Magnetite: iron ore concentrate", "Магнетит: железорудный концентрат");
 
     private static final Tr SAND = PanelText.tr("molding.sand", "Foundry sand", "Формовочная смесь"),
             PATTERN = PanelText.tr("molding.pattern", "Casting pattern (not used up)", "Модель отливки (не расходуется)"),
@@ -161,6 +168,21 @@ public final class FoundryPanels {
             .caption(40, 125, Component.literal("→"))
             .build();
 
+    /** Тяжелосредный сепаратор: без фона, суспензия — вода и магнетит, плотность — разделение (08 §8.3). */
+    public static final PanelLayout DENSE_MEDIUM = PanelLayout.builder("dense_medium_separator", 200, 150, D_CHANNELS)
+            .dial(8, 24, false, SHAFT_RPM10, 10, 256, Double.NaN, 0, RPM.get(), SHAFT.get(), shaftTip())
+            .lamp(8, 88, FLAGS, F_RUNNING, LampColor.AMBER, RUNNING.get())
+            .bar(66, 34, 126, D_MEDIUM_L, 1, DenseMediumSeparator.MEDIUM_CAPACITY_L, 0xFF2E2E34, DMS_MEDIUM.get(),
+                    v -> L_OF.get(v.raw(D_MEDIUM_L), PanelText.num(DenseMediumSeparator.MEDIUM_CAPACITY_L, 0)))
+            .bar(66, 58, 126, D_FEED_KG, 1, 1000, 0xFF404040, JIG_FEED.get(), v -> KG.get(v.raw(D_FEED_KG)))
+            .readout(66, 72, 126, v -> DMS_STATUS.get(v.num(D_RHO100, 100, 2), v.raw(D_MAGNETITE_KG)), null)
+            .slot(16, 120, 0, s -> s.is(FoundryTags.JIG_FEED), JIG_IN.get())
+            .slot(40, 120, 1, s -> s.is(PcItems.IRON_ORE_CONCENTRATE.get()), DMS_MAGNETITE.get())
+            .output(128, 120, 2, JIG_CLEAN.get())
+            .output(152, 120, 3, JIG_REFUSE.get())
+            .caption(70, 125, Component.literal("→"))
+            .build();
+
     /** Фон — art/blockbench/foundry/molding.author.js ({@code paintGui}). */
     public static final PanelLayout MOLDING = PanelLayout.builder("molding_station", 200, 150, M_CHANNELS)
             .art(PromptCritical.id("textures/gui/panel/molding_station.png"))
@@ -220,7 +242,7 @@ public final class FoundryPanels {
     }
 
     public static List<PanelLayout> all() {
-        return List.of(CUPOLA, CRUCIBLE, COAL_JIG, MOLDING, SHAKEOUT, LATHE, DRILL_PRESS, MILLING, SHAPER, GRINDER);
+        return List.of(CUPOLA, CRUCIBLE, COAL_JIG, DENSE_MEDIUM, MOLDING, SHAKEOUT, LATHE, DRILL_PRESS, MILLING, SHAPER, GRINDER);
     }
 
     /** Фоны станков — art/blockbench/machine_shop/machine_tools.author.js ({@code guiTool}). */
