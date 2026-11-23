@@ -129,6 +129,7 @@ public final class ServerConfig {
 
     // --- 04d §4d.11, 11 §11.10 ---
     public static final ModConfigSpec.EnumValue<DifficultyPreset> DIFFICULTY_PRESET;
+    public static final ModConfigSpec.BooleanValue LICENSING_ENABLED;
     public static final ModConfigSpec.BooleanValue CONTENT_GIVE_HANDBOOK_ON_JOIN;
     public static final ModConfigSpec.BooleanValue CONTENT_HANDBOOK_ALL_UNLOCKED;
     public static final ModConfigSpec.IntValue TWIN_MAX_SESSIONS, TWIN_MAX_SPEED, TWIN_MAX_DURATION_S, CONTENT_MAX_SIMULATORS;
@@ -376,6 +377,11 @@ public final class ServerConfig {
         b.push("difficulty");
         DIFFICULTY_PRESET = b.comment("Difficulty preset (04d §4d.11); for now it only selects handbook hints (11 §11.1.1)")
                 .defineEnum("preset", DifficultyPreset.STANDARD);
+        b.pop();
+
+        b.push("licensing");
+        LICENSING_ENABLED = b.comment("Licensing profile: era licences held by a team gate unit starts, commissioning is always ENFORCED. Read once when a world is created and fixed for that world afterwards (modpack design, hardcore profile)")
+                .define("enabled", false);
         b.pop();
 
         b.push("content");

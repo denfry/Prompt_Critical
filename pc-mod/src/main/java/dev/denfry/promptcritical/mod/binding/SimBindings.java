@@ -155,5 +155,6 @@ public final class SimBindings {
 
     private static void onRegisterCommands(RegisterCommandsEvent event) {
         PcCommands.register(event.getDispatcher());
+        dev.denfry.promptcritical.mod.ops.LicenceCommand.register(event.getDispatcher());
     }
 }

@@ -4,6 +4,7 @@ import dev.denfry.promptcritical.mod.PromptCritical;
 import dev.denfry.promptcritical.sim.ops.CheckCondition;
 import dev.denfry.promptcritical.sim.ops.CommissioningCheck;
 import dev.denfry.promptcritical.sim.ops.CommissioningDefectKind;
+import dev.denfry.promptcritical.sim.ops.UnitKind;
 import dev.denfry.promptcritical.sim.ops.CommissioningState;
 import dev.denfry.promptcritical.sim.ops.MachineWear;
 import dev.denfry.promptcritical.sim.ops.MaintenanceFaultKind;
@@ -63,6 +64,22 @@ public final class OpsText {
         def("weeping", "The shell seam weeps under pressure", "Шов обечайки парит под давлением");
         // пусконаладка
         def("start_refused", "Start refused — commissioning checks not passed: %s", "Пуск запрещён — не пройдены проверки: %s");
+        def("start_unlicensed", "Start refused — your team has no licence for era %s: apply with /promptcritical licence apply %s",
+                "Пуск запрещён — у команды нет лицензии на эпоху %s: оформить — /promptcritical licence apply %s");
+        def("licence.off", "Licensing is off in this world", "В этом мире профиль лицензий выключен");
+        def("licence.header", "Era licences of your team:", "Лицензии вашей команды на эпохи:");
+        def("licence.held", "%s — licensed", "%s — лицензия есть");
+        def("licence.ready", "%s — can be granted: /promptcritical licence apply %s", "%s — можно оформить: /promptcritical licence apply %s");
+        def("licence.missing_era", "%s — first get the licence for %s", "%s — сначала нужна лицензия на %s");
+        def("licence.missing_tasks", "%s — route tasks not done: %s", "%s — не выполнены задания маршрута: %s");
+        def("licence.missing_kinds", "%s — unit kinds not commissioned: %s", "%s — не введены в эксплуатацию: %s");
+        def("licence.granted", "Licence for era %s granted to your team", "Команда получила лицензию на эпоху %s");
+        def("licence.unknown_era", "Unknown era: %s (use I1, I2, I3 or I4)", "Неизвестная эпоха: %s (I1, I2, I3 или I4)");
+        def("unit.fire_tube_boiler", "fire-tube boiler", "жаротрубный котёл");
+        def("unit.steam_engine", "steam engine", "паровая машина");
+        def("unit.main_mine_fan", "main mine fan", "главный вентилятор шахты");
+        def("unit.mine_drainage_pump", "mine drainage pump", "водоотливной насос");
+        def("unit.mine_hoist", "mine hoist", "шахтный подъём");
         def("start_unaccepted", "Unit not accepted — started at your own risk (logged)", "Установка не принята — пуск под вашу ответственность (записано)");
         def("check_passed", "%s: passed", "%s: пройдена");
         def("check_failed", "%s: FAILED — %s", "%s: НЕ ПРОЙДЕНА — %s");
@@ -188,6 +205,7 @@ public final class OpsText {
             case MaintenanceFaultKind k -> "fault.";
             case MachineWear.StethoscopeSound s -> "sound.";
             case PlainBearing.HandFeel f -> "feel.";
+            case UnitKind u -> "unit.";
             default -> "";
         };
         return Component.translatable(P + kind + lower(e));

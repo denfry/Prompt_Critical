@@ -367,7 +367,10 @@ public final class OpsActions {
         if (ops == null || ops.unit(m.simId()) == null) return true;
         var permit = ops.requestStart(m.simId());
         if (player != null) {
-            if (!permit.allowed()) player.displayClientMessage(OpsText.msg("start_refused", OpsText.list(permit.missing())), false);
+            if (permit.unlicensedEra() != null) {
+                String era = permit.unlicensedEra().name();
+                player.displayClientMessage(OpsText.msg("start_unlicensed", era, era), false);
+            } else if (!permit.allowed()) player.displayClientMessage(OpsText.msg("start_refused", OpsText.list(permit.missing())), false);
             else if (!permit.accepted()) player.displayClientMessage(OpsText.msg("start_unaccepted"), true);
         }
         return permit.allowed();

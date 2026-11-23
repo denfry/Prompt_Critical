@@ -48,7 +48,11 @@ public final class OpsBinding {
                 // нефтепроявление горит и выгорает, как горючий блок (13 §13.5.4, пролив класса B)
                 ((net.minecraft.world.level.block.FireBlock) net.minecraft.world.level.block.Blocks.FIRE)
                         .setFlammable(dev.denfry.promptcritical.mod.registry.PcBlocks.OIL_SEEP.get(), 30, 20)));
-        SimBindings.registerSubsystem(level -> new OpsSubsystem(SimConfigs.ops(), level.getSeed()));
+        SimBindings.registerSubsystem(level -> {
+            OpsSubsystem ops = new OpsSubsystem(SimConfigs.ops(), level.getSeed());
+            ops.setLicensing(LicensingWorldData.resolve(level, dev.denfry.promptcritical.mod.config.ServerConfig.LICENSING_ENABLED.get()));
+            return ops;
+        });
     }
 
     private static void registerCapabilities(RegisterCapabilitiesEvent event) {
