@@ -37,6 +37,7 @@ public final class SiteRegistry {
     public static final DeferredItem<DesignDrawingItem> BWR240_REACTOR_DRAWING = drawing("bwr240_reactor");
     public static final DeferredItem<DesignDrawingItem> CANDU6_REACTOR_DRAWING = drawing("candu6_reactor");
     public static final DeferredItem<DesignDrawingItem> BN600_REACTOR_DRAWING = drawing("bn600_reactor");
+    public static final DeferredItem<DesignDrawingItem> AM1_REACTOR_DRAWING = drawing("am1_reactor");
 
     private SiteRegistry() {}
 
@@ -47,7 +48,8 @@ public final class SiteRegistry {
     /** Предметы для вкладки творческого режима. */
     public static List<DeferredItem<? extends Item>> items() {
         return List.of(SITE_ITEM, VVER_REACTOR_DRAWING, VVER_STEAM_GENERATOR_DRAWING, VVER_COOLANT_PUMP_DRAWING, VVER_PRESSURIZER_DRAWING,
-                BWR240_REACTOR_DRAWING, CANDU6_REACTOR_DRAWING, BN600_REACTOR_DRAWING);
+                BWR240_REACTOR_DRAWING, CANDU6_REACTOR_DRAWING, BN600_REACTOR_DRAWING,
+                AM1_REACTOR_DRAWING);
     }
 
     public static void register(IEventBus modBus) {

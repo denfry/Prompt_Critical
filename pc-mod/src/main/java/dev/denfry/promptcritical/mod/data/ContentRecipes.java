@@ -100,6 +100,10 @@ public final class ContentRecipes extends RecipeProvider {
         ShapedRecipeBuilder.shaped(RecipeCategory.DECORATIONS, PcBlocks.CAGE_LADDER.get(), 3)
                 .pattern("B B").pattern("BLB").pattern("B B").define('B', Items.IRON_BARS).define('L', Items.LADDER)
                 .unlockedBy("has_ladder", has(Items.LADDER)).save(out, id("cage_ladder"));
+        // леса: стойки из прутка (100 кг каждый) и настил — около 70 кг на модуль 1 × 1 × 1 м
+        ShapedRecipeBuilder.shaped(RecipeCategory.DECORATIONS, PcBlocks.STEEL_SCAFFOLD.get(), 8)
+                .pattern("RGR").pattern("R R").pattern("R R").define('R', PcItems.STEEL_ROD.get()).define('G', PcBlocks.GRATING.get())
+                .unlockedBy("has_steel_rod", has(PcItems.STEEL_ROD.get())).save(out, id("steel_scaffold"));
         ShapedRecipeBuilder.shaped(RecipeCategory.DECORATIONS, PcBlocks.INDUSTRIAL_LIGHT.get(), 2)
                 .pattern(" N ").pattern("IGI").define('N', Items.IRON_NUGGET).define('I', Items.IRON_INGOT)
                 .define('G', Items.GLOWSTONE)

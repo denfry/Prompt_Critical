@@ -47,6 +47,11 @@ public final class SitePlans {
                     new Stage("vessel", List.of(n(PcItems.STEEL_PLATE, 64), n(PcItems.STEEL_BEAM, 8)), 480),
                     new Stage("pool_equipment", List.of(n(PcItems.SEAMLESS_PIPE, 48), n(PcItems.STEEL_INGOT, 24), n(COPPER, 24)), 400),
                     new Stage("roof", List.of(n(PcItems.STEEL_PLATE, 32), n(PcItems.STEEL_INGOT, 16), n(COPPER, 8)), 300)))),
+            Map.entry("am1_reactor", new Plan("am1_reactor", PcBlocks.AM1_REACTOR, List.of(
+                    new Stage("shaft", List.of(n(CONCRETE, 64), n(PcItems.STEEL_BEAM, 8)), 240),
+                    new Stage("graphite", List.of(n(PcItems.STEEL_PLATE, 16), n(PcItems.STEEL_INGOT, 16)), 300),
+                    new Stage("channels", List.of(n(PcItems.SEAMLESS_PIPE, 24), n(COPPER, 8)), 300),
+                    new Stage("piping", List.of(n(PcItems.SEAMLESS_PIPE, 12), n(PcItems.STEEL_PLATE, 8)), 200)))),
             Map.entry("vver_reactor", new Plan("vver_reactor", PcBlocks.VVER_REACTOR, List.of(
                     new Stage("foundation", List.of(n(CONCRETE, 64), n(PcItems.STEEL_BEAM, 16)), 200),
                     new Stage("vessel", List.of(n(PcItems.STEEL_PLATE, 48), n(PcItems.STEEL_BEAM, 8)), 400),

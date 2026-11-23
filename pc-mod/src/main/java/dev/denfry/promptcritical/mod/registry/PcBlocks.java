@@ -862,10 +862,20 @@ public final class PcBlocks {
             Spec.facing().segments(PcProperties.wholeSegments(FP_BN600_REACTOR.segments().size()), FP_BN600_REACTOR),
             FoundryBlock.with(dev.denfry.promptcritical.mod.npp.SfrReactorBlockEntity::new));
 
+    /**
+     * АМ-1 Обнинской АЭС в реальном масштабе: бетонная шахта вокруг графитовой кладки, чугунная плита с 151 головкой
+     * канала (23 — СУЗ с сервоприводами) и кольцевые коллекторы; 7×10×7, контроллер — на полу под осью
+     * (docs/research/am1-dimensions.md).
+     */
+    public static final Footprint FP_AM1_REACTOR = Footprint.tiled(-3, 3, 0, 9, -3, 3);
+    public static final DeferredBlock<PcDeviceBlock> AM1_REACTOR = device("am1_reactor", machine(),
+            Spec.facing().segments(PcProperties.wholeSegments(FP_AM1_REACTOR.segments().size()), FP_AM1_REACTOR),
+            FoundryBlock.with(dev.denfry.promptcritical.mod.npp.PowerReactorBlockEntity::new));
+
     /** Машины реального масштаба с цельной моделью: id блока → id модели (wholemodels/). */
     public static boolean isWholeModel(net.minecraft.world.level.block.Block b) {
         return b == VVER_REACTOR.get() || b == VVER_STEAM_GENERATOR.get() || b == VVER_COOLANT_PUMP.get() || b == VVER_PRESSURIZER.get()
-                || b == BWR240_REACTOR.get() || b == CANDU6_REACTOR.get() || b == BN600_REACTOR.get();
+                || b == BWR240_REACTOR.get() || b == CANDU6_REACTOR.get() || b == BN600_REACTOR.get() || b == AM1_REACTOR.get();
     }
 
     /**
@@ -874,7 +884,7 @@ public final class PcBlocks {
      */
     public static java.util.List<DeferredBlock<? extends net.minecraft.world.level.block.Block>> legacy() {
         // ГЦН и парогенератор старой серии служат ещё АМ-1, BWR и CANDU: в старую серию они уйдут вместе с ними
-        return java.util.List.of(PWR_REACTOR, PRESSURIZER, BWR_REACTOR, CANDU_REACTOR, SFR_REACTOR);
+        return java.util.List.of(PWR_REACTOR, PRESSURIZER, BWR_REACTOR, CANDU_REACTOR, SFR_REACTOR, POWER_REACTOR);
     }
 
     // --- обогащение, литьё, механический цех (08 §8.3, §8.9, §8.10) ---
@@ -1241,6 +1251,9 @@ public final class PcBlocks {
             0, 0, 7, 16, 24, 8.5);
     public static final DeferredBlock<DecorBlock> CAGE_LADDER = decorOf(BLOCKS.registerBlock("cage_ladder",
             p -> DecorBlock.create(p, Spec.facing(), new double[] {1, 0, 13, 15, 16, 15}, true), sheet(MapColor.METAL)));
+    /** Стальные строительные леса: рама с настилом, лезут как по ванильным лесам (подход к машинам реального масштаба). */
+    public static final DeferredBlock<dev.denfry.promptcritical.mod.content.SteelScaffoldBlock> STEEL_SCAFFOLD = decorOf(BLOCKS.registerBlock(
+            "steel_scaffold", dev.denfry.promptcritical.mod.content.SteelScaffoldBlock::new, sheet(MapColor.METAL).strength(1.5f, 6.0f)));
     // светильники горят от щитка освещения (lighting_board) в радиусе группы
     public static final DeferredBlock<LampBlock> INDUSTRIAL_LIGHT = lampBlock("industrial_light", LampKind.PENDANT,
             Spec.of(BlockStateProperties.LIT), 3, 5, 3, 13, 16, 13);

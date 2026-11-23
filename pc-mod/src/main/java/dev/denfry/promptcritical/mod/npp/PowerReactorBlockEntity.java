@@ -63,8 +63,10 @@ import org.jetbrains.annotations.Nullable;
  * «АЗ сработала», «N» — мощность 4–20 мА. Реактор — источник излучения ({@link RadiationService}) по мощности
  * делений и остаточному теплу; биологическая защита — блоки вокруг. Разрушенный канал выносит I-131 в зал.
  */
-public final class PowerReactorBlockEntity extends DeviceBlockEntity implements dev.denfry.promptcritical.mod.environment.SelfEmittingSource, FoundryDevice, PanelHost, WiredDevice {
+public final class PowerReactorBlockEntity extends DeviceBlockEntity implements dev.denfry.promptcritical.mod.environment.SelfEmittingSource, FoundryDevice, PanelHost, WiredDevice, dev.denfry.promptcritical.mod.client.whole.WholeModelHost {
     public static final int LINK_RADIUS = 12;
+    /** Реальный масштаб: насосы и парогенераторы АМ-1 стоят в соседних боксах, в пределах двух десятков метров. */
+    public static final int LINK_RADIUS_REAL = 24;
     /** Размазанная плотность канальной сборки АМ-1 (U-Mo в стальных трубках, графитовая втулка), г/см³. */
     public static final double ASSEMBLY_DENSITY = 4;
     /** I-131, выходящий из одного разрушенного канала (1 % равновесного запаса канала), Бк [оценка]. */
@@ -139,7 +141,7 @@ public final class PowerReactorBlockEntity extends DeviceBlockEntity implements 
     private void link(ServerLevel sl) {
         pumps.clear();
         generators.clear();
-        AABB box = new AABB(worldPosition).inflate(LINK_RADIUS);
+        AABB box = new AABB(worldPosition).inflate(wholeModelId() != null ? LINK_RADIUS_REAL : LINK_RADIUS);
         for (PrimaryPumpBlockEntity p : Ironworks.blockEntities(sl, box, PrimaryPumpBlockEntity.class)) pumps.add(p.getBlockPos());
         for (SteamGeneratorBlockEntity g : Ironworks.blockEntities(sl, box, SteamGeneratorBlockEntity.class)) generators.add(g.getBlockPos());
         // сорванный с контура ГЦН под давлением — разрыв главного трубопровода
@@ -466,5 +468,22 @@ public final class PowerReactorBlockEntity extends DeviceBlockEntity implements 
         wiring.load(tag);
         lastTrip = reactor.trip();
         accident.load(tag);
+    }
+
+    // --- цельная модель реального масштаба (спецификация real-scale machines) ---
+
+    @Override
+    public String wholeModelId() {
+        return dev.denfry.promptcritical.mod.client.whole.WholeModelHost.idOf(getBlockState());
+    }
+
+    @Override
+    public net.minecraft.core.Direction wholeModelFacing() {
+        return getBlockState().getBlock() instanceof dev.denfry.promptcritical.mod.block.PcBlock pc ? pc.facing(getBlockState()) : net.minecraft.core.Direction.NORTH;
+    }
+
+    @Override
+    public net.minecraft.core.BlockPos wholeModelLightPos() {
+        return worldPosition.relative(wholeModelFacing(), 4).above();
     }
 }

@@ -89,7 +89,7 @@ public final class PcTagProviders {
                 case "stairs" -> BlockTags.STAIRS;
                 default -> BlockTags.WALLS;
             }).add(db.get()));
-            tag(BlockTags.CLIMBABLE).add(PcBlocks.CAGE_LADDER.get());
+            tag(BlockTags.CLIMBABLE).add(PcBlocks.CAGE_LADDER.get(), PcBlocks.STEEL_SCAFFOLD.get());
             tag(PcTags.Blocks.TOPOLOGY_RELEVANT).add(PcBlocks.topologyRelevant().toArray(Block[]::new));
             tag(PcTags.Blocks.DAMAGE_IMMUNE).add(Blocks.BEDROCK, Blocks.BARRIER, Blocks.LIGHT, Blocks.END_PORTAL,
                     Blocks.END_PORTAL_FRAME, Blocks.END_GATEWAY, Blocks.NETHER_PORTAL, Blocks.COMMAND_BLOCK,

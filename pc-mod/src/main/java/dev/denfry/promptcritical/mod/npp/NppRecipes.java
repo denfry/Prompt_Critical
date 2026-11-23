@@ -45,19 +45,19 @@ public final class NppRecipes extends RecipeProvider {
     protected void buildRecipes(RecipeOutput out) {
         var graphite = PcBlocks.MODERATOR_BLOCK_GRAPHITE.get();
         // реактор: графитовая кладка с каналами, приводы СУЗ, стальной кожух
-        ShapedRecipeBuilder.shaped(RecipeCategory.MISC, PcBlocks.POWER_REACTOR.get())
+        ShapedRecipeBuilder.shaped(RecipeCategory.MISC, dev.denfry.promptcritical.mod.site.SiteRegistry.AM1_REACTOR_DRAWING.get())
                 .pattern("DCD").pattern("GRG").pattern("PGP").define('D', PcBlocks.CONTROL_ROD_DRIVE.get())
                 .define('C', PcBlocks.CONTROL_ROD_CHANNEL.get()).define('G', graphite).define('R', PcBlocks.REACTOR_CONTROLLER.get())
                 .define('P', PcItems.STEEL_PLATE.get())
-                .unlockedBy("has_reactor_controller", has(PcBlocks.REACTOR_CONTROLLER.get())).save(out, id("power_reactor"));
+                .unlockedBy("has_reactor_controller", has(PcBlocks.REACTOR_CONTROLLER.get())).save(out, id("am1_reactor_drawing"));
         ShapedRecipeBuilder.shaped(RecipeCategory.MISC, PcBlocks.PRIMARY_PUMP.get())
                 .pattern("PMP").pattern("FTF").pattern("PHP").define('P', PcItems.STEEL_PLATE.get()).define('M', AllItems.PRECISION_MECHANISM.get())
                 .define('F', AllBlocks.FLYWHEEL.get()).define('T', AllBlocks.MECHANICAL_PUMP.get()).define('H', AllBlocks.SHAFT.get())
-                .unlockedBy("has_power_reactor", has(PcBlocks.POWER_REACTOR.get())).save(out, id("primary_pump"));
+                .unlockedBy("has_am1_reactor_drawing", has(dev.denfry.promptcritical.mod.site.SiteRegistry.AM1_REACTOR_DRAWING.get())).save(out, id("primary_pump"));
         ShapedRecipeBuilder.shaped(RecipeCategory.MISC, PcBlocks.STEAM_GENERATOR.get())
                 .pattern("PTP").pattern("SXS").pattern("PTP").define('P', PcItems.STEEL_PLATE.get()).define('T', PcItems.SEAMLESS_PIPE.get())
                 .define('S', AllItems.IRON_SHEET.get()).define('X', AllBlocks.FLUID_TANK.get())
-                .unlockedBy("has_power_reactor", has(PcBlocks.POWER_REACTOR.get())).save(out, id("steam_generator"));
+                .unlockedBy("has_am1_reactor_drawing", has(dev.denfry.promptcritical.mod.site.SiteRegistry.AM1_REACTOR_DRAWING.get())).save(out, id("steam_generator"));
         // чертежи ГЦН-195 и ПГВ-1000 реального масштаба: проект по образцу насоса и парогенератора, которые уже есть
         net.minecraft.data.recipes.ShapelessRecipeBuilder.shapeless(RecipeCategory.MISC, dev.denfry.promptcritical.mod.site.SiteRegistry.VVER_COOLANT_PUMP_DRAWING.get())
                 .requires(net.minecraft.world.item.Items.PAPER, 3).requires(PcBlocks.PRIMARY_PUMP.get())

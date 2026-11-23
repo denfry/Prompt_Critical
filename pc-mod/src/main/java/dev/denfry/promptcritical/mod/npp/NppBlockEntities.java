@@ -20,7 +20,7 @@ public final class NppBlockEntities {
             DeferredRegister.create(Registries.BLOCK_ENTITY_TYPE, PromptCritical.MOD_ID);
 
     public static final DeferredHolder<BlockEntityType<?>, BlockEntityType<PowerReactorBlockEntity>> POWER_REACTOR =
-            type("power_reactor", PowerReactorBlockEntity::new, PcBlocks.POWER_REACTOR);
+            type("power_reactor", PowerReactorBlockEntity::new, PcBlocks.POWER_REACTOR, PcBlocks.AM1_REACTOR);
     public static final DeferredHolder<BlockEntityType<?>, BlockEntityType<PrimaryPumpBlockEntity>> PRIMARY_PUMP =
             type("primary_pump", PrimaryPumpBlockEntity::new, PcBlocks.PRIMARY_PUMP, PcBlocks.VVER_COOLANT_PUMP);
     public static final DeferredHolder<BlockEntityType<?>, BlockEntityType<SteamGeneratorBlockEntity>> STEAM_GENERATOR =

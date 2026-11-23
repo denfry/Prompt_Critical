@@ -40,6 +40,9 @@ public final class RealScaleGameTests {
         Set<BlockPos> seen = new HashSet<>();
         for (Footprint.Cell c : fp.cells(BlockPos.ZERO, Direction.NORTH)) h.assertTrue(seen.add(c.pos()), "cell twice: " + c.pos());
         h.assertTrue(seen.size() == 5 * 20 * 5, "volume covered, got " + seen.size());
+        for (Footprint.Segment s : fp.segments())
+            h.assertTrue(s.x0() <= 0 && s.x1() >= 0 && s.y0() <= 0 && s.y1() >= 0 && s.z0() <= 0 && s.z1() >= 0,
+                    "every segment anchor is one of its own cells: " + s);
         double[] r = WholeModelMath.rotate(new double[] {3, 0, 1}, Direction.EAST);
         h.assertTrue(Math.abs(r[0] - 0) < 1e-9 && Math.abs(r[2] - 3) < 1e-9, "east rotation of a model point");
         h.succeed();
@@ -152,6 +155,84 @@ public final class RealScaleGameTests {
         h.setBlock(old, PcBlocks.SFR_REACTOR.get().defaultBlockState());
         h.assertTrue(h.getBlockEntity(old) instanceof dev.denfry.promptcritical.mod.npp.SfrReactorBlockEntity b && b.wholeModelId() == null,
                 "legacy SFR keeps its block entity and no whole model");
+        h.succeed();
+    }
+
+    /**
+     * Клетки машины реального масштаба твёрдые только там, где их занимает модель: у поставленного компенсатора давления
+     * угол коробки 5×18×5 проходим, ось сосуда — полный блок; поворот клеток совпадает с поворотом отрисовки.
+     */
+    @GameTest(template = TALL, timeoutTicks = 20)
+    public static void wholeModelCellsFollowTheModel(GameTestHelper h) {
+        BlockPos p = new BlockPos(5, 1, 5);
+        h.setBlock(p, PcBlocks.VVER_PRESSURIZER.get().defaultBlockState().setValue(BlockStateProperties.HORIZONTAL_FACING, Direction.NORTH));
+        BlockPos corner = h.absolutePos(p.offset(-2, 5, -2)), axis = h.absolutePos(p.offset(0, 5, 0));
+        var level = h.getLevel();
+        h.assertTrue(!level.getBlockState(corner).isAir(), "the corner cell is part of the unit");
+        h.assertTrue(level.getBlockState(corner).getCollisionShape(level, corner).isEmpty(), "empty corner of the box is walkable");
+        h.assertTrue(level.getBlockState(axis).getCollisionShape(level, axis).bounds().getYsize() == 1, "the vessel cell is solid");
+        for (Direction f : Direction.Plane.HORIZONTAL)
+            for (double[] q : new double[][] {{2.5, 0.5}, {-1.25, 3.75}, {0.5, -7.5}}) {
+                double[] w = WholeModelMath.rotate(new double[] {q[0], 0, q[1]}, f);
+                double[] m = dev.denfry.promptcritical.mod.multiblock.WholeShapes.unrotate(w[0], w[2], f);
+                h.assertTrue(Math.abs(m[0] - q[0]) < 1e-9 && Math.abs(m[1] - q[1]) < 1e-9, "cells turn with the model, " + f);
+            }
+        // сломанная клетка на краю объёма находит контроллер, и машина уходит целиком, без невидимых остатков
+        BlockPos top = h.absolutePos(p.offset(2, 17, 2));
+        h.assertTrue(!level.getBlockState(top).isAir(), "the top corner cell is part of the unit");
+        level.destroyBlock(top, false);
+        h.assertTrue(level.getBlockState(h.absolutePos(p)).isAir() && level.getBlockState(axis).isAir() && level.getBlockState(corner).isAir(),
+                "the whole unit is gone after breaking an edge cell");
+        h.succeed();
+    }
+
+    /** АМ-1 реального масштаба: площадка принимает чертёж на основании 7×7, старый АМ-1 — в старой серии и работает. */
+    @GameTest(template = TALL, timeoutTicks = 40)
+    public static void am1SiteAcceptsAndLegacyAm1StillWorks(GameTestHelper h) {
+        BlockPos p = new BlockPos(5, 1, 5);
+        for (int x = -3; x <= 3; x++)
+            for (int z = -3; z <= 3; z++) h.setBlock(p.offset(x, -1, z), Blocks.STONE);
+        h.setBlock(p, SiteRegistry.SITE.get().defaultBlockState().setValue(BlockStateProperties.HORIZONTAL_FACING, Direction.NORTH));
+        var w = site(h, p).accept("am1_reactor");
+        h.assertTrue(w == null, "AM-1 plan accepted: " + (w == null ? "" : w.getString()));
+        h.assertTrue(PcBlocks.FP_AM1_REACTOR.cells(BlockPos.ZERO, Direction.NORTH).size() == 7 * 10 * 7, "7x10x7 footprint");
+        h.assertTrue(PcBlocks.legacy().contains(PcBlocks.POWER_REACTOR) && !PcBlocks.legacy().contains(PcBlocks.PRIMARY_PUMP),
+                "old AM-1 is legacy, the pump it shares with the real-scale reactors is not");
+        BlockPos old = new BlockPos(1, 1, 1);
+        h.setBlock(old, PcBlocks.POWER_REACTOR.get().defaultBlockState());
+        h.assertTrue(h.getBlockEntity(old) instanceof dev.denfry.promptcritical.mod.npp.PowerReactorBlockEntity b && b.wholeModelId() == null,
+                "legacy AM-1 keeps its block entity and no whole model");
+        h.succeed();
+    }
+
+    /**
+     * Трубы цепляются к машине реального масштаба только у патрубков: при любом фасаде порт, повёрнутый как модель,
+     * открыт со своей грани и закрыт с соседней; клетка без порта закрыта; стальные леса — лестница.
+     */
+    @GameTest(template = "gametest/empty_12x12x12", timeoutTicks = 20)
+    public static void pipesConnectOnlyAtPorts(GameTestHelper h) {
+        for (String id : new String[] {"vver_reactor", "vver_steam_generator", "vver_coolant_pump", "vver_pressurizer", "bwr240_reactor",
+                "candu6_reactor", "bn600_reactor", "am1_reactor"}) {
+            h.assertTrue(!dev.denfry.promptcritical.mod.multiblock.WholePorts.of(id).isEmpty(), id + " declares its ports");
+            for (Direction f : Direction.Plane.HORIZONTAL)
+                for (var port : dev.denfry.promptcritical.mod.multiblock.WholePorts.of(id)) {
+                    double[] w = WholeModelMath.rotate(new double[] {port.x() + 0.5, 0, port.z() + 0.5}, f);
+                    int wx = (int) Math.floor(w[0]), wz = (int) Math.floor(w[2]);
+                    Direction side = Direction.NORTH;
+                    for (Direction d : Direction.values()) {
+                        double[] v = WholeModelMath.rotate(new double[] {port.x() + 0.5 + port.face().getStepX(), 0, port.z() + 0.5 + port.face().getStepZ()}, f);
+                        if (port.face().getAxis().isVertical() ? d == port.face()
+                                : (int) Math.round(v[0] - w[0]) == d.getStepX() && (int) Math.round(v[2] - w[2]) == d.getStepZ() && d.getStepY() == 0) side = d;
+                    }
+                    h.assertTrue(dev.denfry.promptcritical.mod.multiblock.WholePorts.allows(id, f, wx, port.y(), wz, side), id + " port open " + port + " " + f);
+                    h.assertTrue(!dev.denfry.promptcritical.mod.multiblock.WholePorts.allows(id, f, wx, port.y(), wz, side.getAxis().isVertical() ? Direction.NORTH : side.getClockWise()),
+                            id + " port closed from the side " + port + " " + f);
+                }
+            h.assertTrue(!dev.denfry.promptcritical.mod.multiblock.WholePorts.allows(id, Direction.NORTH, 0, 1, 0, Direction.EAST), id + " inner cell has no port");
+        }
+        BlockPos s = new BlockPos(3, 1, 3);
+        h.setBlock(s, PcBlocks.STEEL_SCAFFOLD.get());
+        h.assertTrue(h.getBlockState(s).is(net.minecraft.tags.BlockTags.CLIMBABLE), "steel scaffold is climbable");
         h.succeed();
     }
 
