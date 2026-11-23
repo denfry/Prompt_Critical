@@ -97,6 +97,27 @@ and keeps the window behind all others (`mc-background.ps1`, `pauseOnLostFocus:f
 | Ports (lathe) | A hopper at the controller front gives a cutting tool to the lathe; hoppers at the other two front cells keep it. Create motor at the west face of the countershaft port: the port runs at 16 rpm with stress on the network |
 | Not checked | Cage ride and shaft signal, steam engines from the stand, machining a casting in the client, panels, the other machines' ports |
 
+### I1 run 2026-11-23 (integrate eb19c2e0, `runClient -PskipBodyScreen`, mechanics only)
+
+All twelve I1 real-scale machines were placed facing north on a flat lane (x 1000 + 24 i, z 1000). Inputs that a
+player gets from earlier stages (hot metal, oxygen, process gas) were put in with `/data merge`; the lance height too,
+since the winch needs a power board.
+
+| Check | Result |
+|---|---|
+| Place | All twelve place from the item; the quench tower lifts itself so its bottom row stands on the clicked block |
+| Break | One survival hit on a part cell removes the whole machine (stove 350 cells, converter 210, ...) and drops exactly one item, all twelve |
+| Ladders | **Not climbable on the hot blast stove (`-2,0..12,2`), the deaerator (`-2,0..2,0`) and the LD converter (`3,0..2,0`)**: the climb cells are solid for 12/16 of their width (the deaerator cell is solid above 4 px), so the player can never stand in them and `isLadder` is never asked; forward + jump against the drawn ladder only hops (`shots/hot_blast_stove_real_ladder.png`) |
+| Ports (items) | Converter: a hopper at `(3,2,1)` east takes scrap and lime, hoppers at `(3,2,0)` and `(3,2,2)` keep theirs. Reheating furnace: a hopper at `(0,0,1)` south takes graded billets (a billet without `steel_stock` is refused, as intended), hoppers at the neighbour cells keep theirs |
+| Ports (fluids) | Not checkable by hand: a Create pipe placed against any face turns to it whatever the capability; covered by the GameTests (`gas into the burner port`, `the burner cell takes gas only from the north`, ...) |
+| E3 rolling | Reheating furnace on coke oven gas: panel values move (furnace 300 → 1230 °C, pieces 20 → 1187 °C), the first billet leaves at setpoint − 30 K onto the roller table at `(0,0,-2)` with `hot_k` 1475 |
+| E4 power | `shaft_generator_real` on a Create shaft at the south port, exciter on the axis: 16 rpm on gear 16 gives 50 Hz, field on gives 0.40 kV; switched to 6.3 kV (only at standstill, the rotor coasts for minutes), power cable to `electric_motor_mv_real` at the east terminal box: Start → 66 A, 22 kW, the north port drives a Create shaft (48 rpm, the 500 kVA set is too small to bring the 1 MW motor up quickly: winding heats). Deaerator feed pump not built |
+| E2 LD | Tilt drive at the west trunnion port (16 rpm, ≈1 °/s). Forward ≥ 40°: 8 t hot metal from the front ladle, scrap and lime charged; upright, lance at 1.5 m: blowing, 1800 Nm³/h; lance parked at 396 Nm³: blown, 9.4 t, C 0.069 %; back to −84°: 9.45 t steel in the rear ladle |
+| E2 overblow | **Blowing on to an empty bath gives non-physical steel**: after 5400 Nm³ the panel shows metal 0.0 t, C 0.000 %, FeO 94 %, phase still "blowing"; tapping put 18.8 kg at 21 515 K with Mn 83 %, S 12.8 % into the ladle and its lining went to 32 517 K. `Converter.stepSlow` divides heat by `metalKg`. The "Overblown" lamp also goes dark once C reaches 0 (`carbonFrac() > 0 &&`). The chat warning "The heat is overblown" does fire |
+| E2 ladles | **Ladles cool very fast**: the 9.45 t tap (panel ≈ 1700 °C) stood frozen at 800 K a few seconds later in a ladle whose lining had cooled to 514 K; a hot-metal ladle set to 1620 K was frozen at 1144 K under a minute later. To check against `LadleBlockEntity` cooling before calling it a bug |
+| Panels (en) | Alternator, MV motor, reheating furnace and converter panels fit; the converter "O₂ set … blown … Nm³" line ends just before its − button |
+| Not checked | E1 (stoves, blowing engine and blast furnace together), survival site builds of the converter and the furnace, collisions apart from the ladders, the shearer, roof supports, coal jig and quench car runs, fluid flow through the ports, ru panels |
+
 ## Game test structures to look at
 
 `/test runall` builds all of these. The headless run passes all of them; in the client look at the models, the panels
