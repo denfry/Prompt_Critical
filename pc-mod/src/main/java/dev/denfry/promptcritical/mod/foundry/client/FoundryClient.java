@@ -37,6 +37,11 @@ public final class FoundryClient {
         return PartialModel.of(PromptCritical.id("block/" + path));
     }
 
+    static {
+        // вагранка реального масштаба: цельная модель и partial-модели — до запекания
+        CupolaRealRenderer.init();
+    }
+
     public static void register(IEventBus modBus) {
         modBus.addListener(FoundryClient::registerRenderers);
         NeoForge.EVENT_BUS.addListener(FoundryClient::tooltip);
@@ -46,6 +51,7 @@ public final class FoundryClient {
         // оси частей — центры их моделей (пиксели, фасад на север)
         event.registerBlockEntityRenderer(FoundryBlockEntities.COAL_JIG.get(), c -> new FoundryMachineRenderer<>(PULSATOR, Motion.SPIN_X, 27, 8, 1));
         event.registerBlockEntityRenderer(FoundryBlockEntities.CUPOLA.get(), c -> new FoundryMachineRenderer<>(null, Motion.STATIC, 0, 0, 1));
+        event.registerBlockEntityRenderer(FoundryBlockEntities.CUPOLA_REAL.get(), c -> new CupolaRealRenderer());
         event.registerBlockEntityRenderer(FoundryBlockEntities.CRUCIBLE.get(), c -> new FoundryMachineRenderer<>(CRUCIBLE, Motion.STATIC, 0, 0, 1));
         event.registerBlockEntityRenderer(FoundryBlockEntities.MOLDING_STATION.get(), c -> new FoundryMachineRenderer<>(TABLE, Motion.JOLT, 0, 0, 1));
         event.registerBlockEntityRenderer(FoundryBlockEntities.SHAKEOUT_GRATE.get(), c -> new FoundryMachineRenderer<>(SHAKEOUT_DECK, Motion.JOLT, 0, 0, 1));

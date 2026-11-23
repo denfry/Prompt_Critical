@@ -21,22 +21,24 @@ public final class WholePorts {
     private static final Direction E = Direction.EAST, W = Direction.WEST, N = Direction.NORTH, S = Direction.SOUTH,
             U = Direction.UP, D = Direction.DOWN;
 
-    private static final Map<String, List<Port>> PORTS = Map.of(
+    private static final Map<String, List<Port>> PORTS = Map.ofEntries(
             // холодные (y 7) и горячие (y 9) нитки по обе стороны корпуса
-            "vver_reactor", List.of(p(2, 7, -1, E), p(2, 7, 1, E), p(-2, 7, -1, W), p(-2, 7, 1, W),
-                    p(2, 9, -1, E), p(2, 9, 1, E), p(-2, 9, -1, W), p(-2, 9, 1, W)),
+            Map.entry("vver_reactor", List.of(p(2, 7, -1, E), p(2, 7, 1, E), p(-2, 7, -1, W), p(-2, 7, 1, W),
+                    p(2, 9, -1, E), p(2, 9, 1, E), p(-2, 9, -1, W), p(-2, 9, 1, W))),
             // первый контур снизу, пар — с торца коллектора, питательная вода — сбоку
-            "vver_steam_generator", List.of(p(-1, 0, 0, D), p(1, 0, 0, D), p(7, 7, 0, E), p(2, 4, 2, S)),
-            "vver_coolant_pump", List.of(p(-2, 1, 0, W), p(2, 1, 0, E)),
-            "vver_pressurizer", List.of(p(2, 0, 0, E), p(0, 17, 0, U)),
-            "bwr240_reactor", List.of(p(2, 6, 0, E), p(-2, 6, 0, W), p(2, 9, 0, E), p(0, 10, 2, S)),
-            "candu6_reactor", List.of(p(4, 10, -5, E), p(4, 10, 5, E)),
-            "bn600_reactor", List.of(p(7, 9, 0, E), p(7, 11, 0, E), p(0, 9, 7, S), p(0, 11, 7, S), p(0, 9, -7, N), p(0, 11, -7, N)),
-            "am1_reactor", List.of(p(3, 7, 0, E), p(-3, 7, 0, W)),
+            Map.entry("vver_steam_generator", List.of(p(-1, 0, 0, D), p(1, 0, 0, D), p(7, 7, 0, E), p(2, 4, 2, S))),
+            Map.entry("vver_coolant_pump", List.of(p(-2, 1, 0, W), p(2, 1, 0, E))),
+            Map.entry("vver_pressurizer", List.of(p(2, 0, 0, E), p(0, 17, 0, U))),
+            Map.entry("bwr240_reactor", List.of(p(2, 6, 0, E), p(-2, 6, 0, W), p(2, 9, 0, E), p(0, 10, 2, S))),
+            Map.entry("candu6_reactor", List.of(p(4, 10, -5, E), p(4, 10, 5, E))),
+            Map.entry("bn600_reactor", List.of(p(7, 9, 0, E), p(7, 11, 0, E), p(0, 9, 7, S), p(0, 11, 7, S), p(0, 9, -7, N), p(0, 11, -7, N))),
+            Map.entry("am1_reactor", List.of(p(3, 7, 0, E), p(-3, 7, 0, W))),
             // лобовая стенка внизу: питательный клапан (x −1) и дверца зольника (x 1); пар — с вентиля на обечайке
-            "lancashire_boiler", List.of(p(-1, 0, 0, N), p(1, 0, 0, N), p(0, 3, 2, U)),
+            Map.entry("lancashire_boiler", List.of(p(-1, 0, 0, N), p(1, 0, 0, N), p(0, 3, 2, U))),
             // пар сверху на клапанную коробку, выхлоп с западной грани у цилиндра
-            "mill_engine", List.of(p(0, 2, 0, U), p(0, 0, 0, W)));
+            Map.entry("mill_engine", List.of(p(0, 2, 0, U), p(0, 0, 0, W))),
+            // колоша — с края площадки на юге (клетка (0, 3, 3)): чугун и кокс подают воронкой или лотком
+            Map.entry("cupola_furnace_real", List.of(p(0, 3, 3, S))));
 
     private WholePorts() {}
 

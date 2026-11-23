@@ -126,7 +126,13 @@ public final class SitePlans {
             "mill_engine", plan("mill_engine", PcBlocks.MILL_ENGINE, 21,
                     st("foundation", 120, n(CONCRETE, 8)),
                     st("bed", 300, n(INGOT, 130), n(PLATE, 20), n(PIPE, 20)),
-                    st("flywheel", 240, n(INGOT, 50))));
+                    st("flywheel", 240, n(INGOT, 50))),
+            // вагранка Кирка 24″: обечайка, стойки и подовая плита ≈ 3 т, шамотная футеровка ≈ 4 т (оценки, cupola-dimensions.md)
+            "cupola_furnace_real", plan("cupola_furnace_real", PcBlocks.CUPOLA_FURNACE_REAL, 3,
+                    st("foundation", 80, n(CONCRETE, 2)),
+                    st("shell", 200, n(PLATE, 12), n(INGOT, 8)),
+                    st("lining", 160, n(BRICKS, 2)),
+                    st("blower_platform", 160, n(PLATE, 6), n(PIPE, 2), n(INGOT, 2))));
 
     private SitePlans() {}
 

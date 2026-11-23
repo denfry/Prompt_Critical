@@ -52,6 +52,9 @@ public final class SiteText {
         drawing("lancashire_boiler", "Lancashire Boiler", "ланкаширского котла");
         drawing("headframe_steel", "Steel Headframe", "стального копра");
         drawing("mill_engine", "Horizontal Mill Engine", "горизонтальной паровой машины");
+        drawing("cupola_furnace_real", "Foundry Cupola", "литейной вагранки");
+        stage("lining", "firebrick lining", "футеровка шамотным кирпичом");
+        stage("blower_platform", "blower, air chamber and charging platform", "воздуходувка, воздушная коробка и колошниковая площадка");
         stage("bed", "bed, cylinder and crosshead guides", "станина, цилиндр и параллели");
         stage("flywheel", "crankshaft, flywheel and governor", "коленвал, маховик и регулятор");
         stage("tower", "shaft tower and back struts", "башня над стволом и подкосы");

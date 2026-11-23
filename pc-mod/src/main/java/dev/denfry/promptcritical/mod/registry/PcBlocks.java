@@ -903,7 +903,8 @@ public final class PcBlocks {
     public static boolean isWholeModel(net.minecraft.world.level.block.Block b) {
         return b == VVER_REACTOR.get() || b == VVER_STEAM_GENERATOR.get() || b == VVER_COOLANT_PUMP.get() || b == VVER_PRESSURIZER.get()
                 || b == BWR240_REACTOR.get() || b == CANDU6_REACTOR.get() || b == BN600_REACTOR.get() || b == AM1_REACTOR.get()
-                || b == LANCASHIRE_BOILER.get() || b == HEADFRAME_STEEL.get() || b == MILL_ENGINE.get();
+                || b == LANCASHIRE_BOILER.get() || b == HEADFRAME_STEEL.get() || b == MILL_ENGINE.get()
+                || b == CUPOLA_FURNACE_REAL.get();
     }
 
     /**
@@ -921,6 +922,14 @@ public final class PcBlocks {
             KineticMachineBlock.with(ShaftSide.LEFT, CoalJigBlockEntity::new));
     public static final DeferredBlock<PcDeviceBlock> CUPOLA_FURNACE = device("cupola_furnace", lit(brick()),
             Spec.of(BlockStateProperties.LIT).footprint(FP_TALL3), KineticMachineBlock.with(ShaftSide.X_AXIS, CupolaBlockEntity::new));
+    /**
+     * Вагранка реального масштаба: 24-дюймовая вагранка Кирка (1899) на чугунных стойках, 3 × 8 × 4 с площадкой
+     * колошника (08 §8.9, docs/research/cupola-dimensions.md). Тот же юнит симуляции, что у {@link #CUPOLA_FURNACE}.
+     */
+    public static final Footprint FP_CUPOLA_FURNACE_REAL = Footprint.tiled(-1, 1, 0, 7, 0, 3);
+    public static final DeferredBlock<PcDeviceBlock> CUPOLA_FURNACE_REAL = device("cupola_furnace_real", lit(brick()),
+            Spec.facing(BlockStateProperties.LIT).segments(PcProperties.wholeSegments(FP_CUPOLA_FURNACE_REAL.segments().size()),
+                    FP_CUPOLA_FURNACE_REAL), dev.denfry.promptcritical.mod.foundry.CupolaRealBlock::create);
     public static final DeferredBlock<PcDeviceBlock> CRUCIBLE_FURNACE = device("crucible_furnace", lit(brick()), Spec.facing(BlockStateProperties.LIT),
             FoundryBlock.with(CrucibleBlockEntity::new));
     // ручная ступень машиностроения (18 §18.6.1–18.6.4, §18.7): сыродутный горн, кузнечный горн, наковальня
