@@ -257,6 +257,18 @@ public class PcBlock extends Block {
         super.onRemove(state, level, pos, newState, movedByPiston);
     }
 
+    /**
+     * Клетка {@code c} — своя: часть, якорь которой — якорь её сегмента, или якорь сегмента того же блока. Объём блока
+     * может вырасти (ячейка КРУ 1 × 2 × 1 стала 1 × 3 × 1), и в старом мире на месте новой клетки стоит чужая часть
+     * соседней конструкции: её не трогаем, иначе снос одной машины ломал бы соседнюю.
+     */
+    private boolean ownCell(BlockState s, Footprint.Cell c) {
+        if (s.getBlock() instanceof dev.denfry.promptcritical.mod.multiblock.MultiblockPartBlock)
+            return dev.denfry.promptcritical.mod.multiblock.MultiblockPartBlock.anchor(s, c.pos()).equals(c.pos().subtract(c.offsetFromAnchor()));
+        if (s.is(this)) return c.isAnchor();
+        return s.getBlock() instanceof dev.denfry.promptcritical.mod.multiblock.FootprintCell;
+    }
+
     /** Убрать остальные клетки конструкции; если ушла не контроллерная клетка — разрушить контроллер с выпадением. */
     private void breakStructure(BlockState state, Level level, BlockPos pos) {
         BlockPos controller = controllerPos(state, pos);
@@ -268,7 +280,7 @@ public class PcBlock extends Block {
         for (Footprint.Cell c : spec.footprint.cells(controller, facing(state))) {
             if (c.pos().equals(pos)) continue;
             BlockState s = level.getBlockState(c.pos());
-            if (s.is(this) || s.getBlock() instanceof dev.denfry.promptcritical.mod.multiblock.FootprintCell) level.removeBlock(c.pos(), false);
+            if (ownCell(s, c)) level.removeBlock(c.pos(), false);
         }
     }
 
