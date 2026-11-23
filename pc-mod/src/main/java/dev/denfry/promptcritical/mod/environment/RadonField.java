@@ -80,6 +80,12 @@ public final class RadonField {
         return STATES.size();
     }
 
+    /** Обстановка последнего пересчёта (для тестов); без состояния — {@link Setting#BUILDING}. */
+    public static Setting setting(ServerPlayer p) {
+        State s = STATES.get(p.getUUID());
+        return s == null ? Setting.BUILDING : s.setting;
+    }
+
     /** Концентрация радона у игрока, Бк/м³ (для тестов). */
     public static double concentration(ServerPlayer p) {
         State s = STATES.get(p.getUUID());
@@ -110,7 +116,8 @@ public final class RadonField {
         if (mineQ > 0) {
             vent = mineQ;
             setting = Setting.MINE_VENTILATED;
-        } else if (eye.getY() < level.getHeight(Heightmap.Types.WORLD_SURFACE, eye.getX(), eye.getZ())) {
+        } else if (pocket.naturalEnclosure() && eye.getY() < level.getHeight(Heightmap.Types.WORLD_SURFACE, eye.getX(), eye.getZ())) {
+            // под землёй — только если стенки природные: крыша и стены постройки не делают её шахтой
             vent = STILL_EXCHANGE_PER_H * volume / 3600;
             setting = Setting.MINE_STILL;
         } else {
@@ -135,12 +142,16 @@ public final class RadonField {
         return sum / 2;
     }
 
-    private record Pocket(int blocks, double sourceBqS, boolean skyOpen, boolean capped) {
+    private record Pocket(int blocks, double sourceBqS, boolean skyOpen, boolean capped, int naturalFaces, int solidFaces) {
+        /** Большинство граней — порода или грунт. */
+        boolean naturalEnclosure() {
+            return solidFaces > 0 && naturalFaces * 2 > solidFaces;
+        }
     }
 
     /** Заливка воздуха по 6 соседям от глаз, не более {@value #MAX_POCKET} блоков; грани породы дают источник. */
     private static Pocket flood(ServerLevel level, BlockPos start) {
-        if (!passable(level.getBlockState(start), level, start)) return new Pocket(0, 0, false, false);
+        if (!passable(level.getBlockState(start), level, start)) return new Pocket(0, 0, false, false, 0, 0);
         LongOpenHashSet seen = new LongOpenHashSet();
         LongArrayList queue = new LongArrayList();
         seen.add(start.asLong());
@@ -148,25 +159,30 @@ public final class RadonField {
         BlockPos.MutableBlockPos at = new BlockPos.MutableBlockPos();
         BlockPos.MutableBlockPos nb = new BlockPos.MutableBlockPos();
         double source = 0;
+        int natural = 0;
+        int solid = 0;
         for (int head = 0; head < queue.size(); head++) {
             at.set(queue.getLong(head));
             // небо над блоком — по карте высот: LevelReader.canSeeSky ниже уровня моря смотрит на столб от моря и ошибается
-            if (at.getY() >= level.getHeight(Heightmap.Types.MOTION_BLOCKING, at.getX(), at.getZ())) return new Pocket(seen.size(), 0, true, false);
+            if (at.getY() >= level.getHeight(Heightmap.Types.MOTION_BLOCKING, at.getX(), at.getZ())) return new Pocket(seen.size(), 0, true, false, 0, 0);
             for (Direction d : Direction.values()) {
                 nb.setWithOffset(at, d);
-                if (level.isOutsideBuildHeight(nb) || !level.hasChunkAt(nb)) return new Pocket(seen.size(), 0, true, false);
+                if (level.isOutsideBuildHeight(nb) || !level.hasChunkAt(nb)) return new Pocket(seen.size(), 0, true, false, 0, 0);
                 BlockState s = level.getBlockState(nb);
                 if (passable(s, level, nb)) {
                     if (seen.add(nb.asLong())) {
-                        if (seen.size() >= MAX_POCKET) return new Pocket(seen.size(), 0, false, true);
+                        if (seen.size() >= MAX_POCKET) return new Pocket(seen.size(), 0, false, true, 0, 0);
                         queue.add(nb.asLong());
                     }
                 } else {
-                    source += flux(BackgroundField.ground(s));
+                    Ground g = BackgroundField.ground(s);
+                    source += flux(g);
+                    solid++;
+                    if (g != Ground.NONE) natural++;
                 }
             }
         }
-        return new Pocket(seen.size(), source, false, false);
+        return new Pocket(seen.size(), source, false, false, natural, solid);
     }
 
     /** Воздух и всё, что не мешает проходу: блок без коллизии. */

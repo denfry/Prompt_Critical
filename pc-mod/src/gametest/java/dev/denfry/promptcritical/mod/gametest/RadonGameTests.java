@@ -46,9 +46,27 @@ public final class RadonGameTests {
         for (int i = 0; i < 50; i++) RadonField.refresh(h.getLevel(), p);
         double c = RadonField.concentration(p);
         double dose = RadonField.doseSvH(h.getLevel(), p);
+        var setting = RadonField.setting(p);
         RadonField.forget(p.getUUID());
+        if (setting != dev.denfry.promptcritical.sim.radiation.RadonBox.Setting.MINE_STILL) h.fail("Обстановка " + setting + ", ждали MINE_STILL");
         if (!(c > 0)) h.fail("В закрытой комнате радон " + c + " Бк/м³, ждали больше 0");
         if (!(dose > 0)) h.fail("Доза радона " + dose + " Зв/ч, ждали больше 0");
+        h.succeed();
+    }
+
+    @GameTest(template = LARGE)
+    public static void plankRoomUnderRoofIsABuilding(GameTestHelper h) {
+        fill(h, 4, 1, 4, 8, 1, 8, Blocks.DIRT);
+        fill(h, 4, 2, 4, 8, 5, 8, Blocks.OAK_PLANKS);
+        fill(h, 5, 2, 5, 7, 4, 7, Blocks.AIR);
+        ServerPlayer p = playerAt(h, 6.5, 3, 6.5);
+        for (int i = 0; i < 50; i++) RadonField.refresh(h.getLevel(), p);
+        double c = RadonField.concentration(p);
+        var setting = RadonField.setting(p);
+        RadonField.forget(p.getUUID());
+        // сравнение с гранитной комнатой того же объёма: там ~10 Бк/м³ за те же 50 шагов, здесь около 2,6
+        if (setting != dev.denfry.promptcritical.sim.radiation.RadonBox.Setting.BUILDING) h.fail("Обстановка " + setting + ", ждали BUILDING");
+        if (!(c < 5.0)) h.fail("В дощатой комнате радон " + c + " Бк/м³, ждали заметно меньше гранитной");
         h.succeed();
     }
 
