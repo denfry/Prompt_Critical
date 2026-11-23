@@ -187,7 +187,7 @@ public final class SitePlans {
             Map.entry("dust_catcher_real", plan("dust_catcher_real", PcBlocks.DUST_CATCHER_REAL, 15,
                     st("foundation", 80, n(CONCRETE, 2)),
                     st("catcher_shell", 240, n(PLATE, 90), n(BEAM, 30)),
-                    st("catcher_mains", 160, n(PIPE, 40), n(PLATE, 10))),
+                    st("catcher_mains", 160, n(PIPE, 40), n(PLATE, 10)))),
             // эксгаустер: улитка ⌀1,6 м, ротор и подшипники ≈ 6 т литья, редуктор, муфта и байпас ≈ 2 т (оценки)
             Map.entry("gas_exhauster_real", plan("gas_exhauster_real", PcBlocks.GAS_EXHAUSTER_REAL, 8,
                     st("foundation", 60, n(CONCRETE, 3)),
