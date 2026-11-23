@@ -62,8 +62,10 @@ import org.jetbrains.annotations.Nullable;
  * {@code DamageBudget} как {@link DamageKind#FIRE_SPREAD} и даёт дым Na₂O; реакция натрий–вода при разрыве мембраны —
  * как {@link DamageKind#OVERPRESSURE_BREACH}.
  */
-public final class SfrReactorBlockEntity extends DeviceBlockEntity implements dev.denfry.promptcritical.mod.environment.SelfEmittingSource, FoundryDevice, PanelHost, WiredDevice {
+public final class SfrReactorBlockEntity extends DeviceBlockEntity implements dev.denfry.promptcritical.mod.environment.SelfEmittingSource, FoundryDevice, PanelHost, WiredDevice, dev.denfry.promptcritical.mod.client.whole.WholeModelHost {
     public static final int LINK_RADIUS = 12;
+    /** Реальный масштаб: промежуточные контуры БН-600 уходят из шахты в соседние помещения, их насосы и ПГ дальше. */
+    public static final int LINK_RADIUS_REAL = 40;
     public static final int CREEP_OUTLET_C = 700, SG_STRESS_C = 650;
     static final double MIN_PU = 0.15, MAX_PU = 0.35, PRIMARY_LEAK_KG_S = 2, SG_LEAK_KG_S = 0.5;
     /** Ход регулирующих стержней на один слышимый шаг привода, доля полного хода. */
@@ -111,7 +113,7 @@ public final class SfrReactorBlockEntity extends DeviceBlockEntity implements de
     private void link(ServerLevel sl) {
         pumps.clear();
         generators.clear();
-        AABB box = new AABB(worldPosition).inflate(LINK_RADIUS);
+        AABB box = new AABB(worldPosition).inflate(wholeModelId() != null ? LINK_RADIUS_REAL : LINK_RADIUS);
         for (PrimaryPumpBlockEntity p : Ironworks.blockEntities(sl, box, PrimaryPumpBlockEntity.class))
             if (pumps.size() < 2) pumps.add(p.getBlockPos());
         for (SteamGeneratorBlockEntity g : Ironworks.blockEntities(sl, box, SteamGeneratorBlockEntity.class)) generators.add(g.getBlockPos());
@@ -208,7 +210,10 @@ public final class SfrReactorBlockEntity extends DeviceBlockEntity implements de
         if (Double.isNaN(lastRods)) lastRods = rods;
         boolean step = Math.abs(rods - lastRods) >= ROD_STEP && ticks % 3 == 0;
         if (!step && !scram) return;
-        var p = dev.denfry.promptcritical.mod.boiler.BoilerGeometry.world(worldPosition.above(3), b.facing(getBlockState()), 10, 15.6, 4);
+        // у БН-600 реального масштаба приводы стоят на малой пробке (art/blockbench/core/bn/bn600_reactor.author.js)
+        var p = wholeModelId() != null
+                ? dev.denfry.promptcritical.mod.boiler.BoilerGeometry.world(worldPosition, b.facing(getBlockState()), 32, 272, 8)
+                : dev.denfry.promptcritical.mod.boiler.BoilerGeometry.world(worldPosition.above(3), b.facing(getBlockState()), 10, 15.6, 4);
         if (scram) sl.playSound(null, p.x, p.y, p.z, dev.denfry.promptcritical.mod.sound.PcSfx.BREAKER_OPERATE.get(), SoundSource.BLOCKS, 1.2f, 0.7f);
         if (step) {
             sl.playSound(null, p.x, p.y, p.z, dev.denfry.promptcritical.mod.sound.PcSfx.RELAY_CLICK.get(), SoundSource.BLOCKS, 0.6f,
@@ -448,5 +453,22 @@ public final class SfrReactorBlockEntity extends DeviceBlockEntity implements de
             lastTrip = reactor.trip();
         }
         wiring.load(tag);
+    }
+
+    // --- цельная модель реального масштаба (спецификация real-scale machines) ---
+
+    @Override
+    public String wholeModelId() {
+        return dev.denfry.promptcritical.mod.client.whole.WholeModelHost.idOf(getBlockState());
+    }
+
+    @Override
+    public net.minecraft.core.Direction wholeModelFacing() {
+        return getBlockState().getBlock() instanceof dev.denfry.promptcritical.mod.block.PcBlock pc ? pc.facing(getBlockState()) : net.minecraft.core.Direction.NORTH;
+    }
+
+    @Override
+    public net.minecraft.core.BlockPos wholeModelLightPos() {
+        return worldPosition.relative(wholeModelFacing(), 8).above();
     }
 }

@@ -117,6 +117,44 @@ public final class RealScaleGameTests {
         h.succeed();
     }
 
+    /**
+     * CANDU 6 реального масштаба: у площадки свой проект в четыре этапа, сборка — блок того же типа BE, что и
+     * старая серия; машина перегрузки на модели доходит до узла решётки 380 каналов и возвращается на стоянку.
+     */
+    @GameTest(template = TALL, timeoutTicks = 40)
+    public static void candu6PlanAndFuellingMachineOnTheRealLattice(GameTestHelper h) {
+        SitePlans.Plan plan = SitePlans.get("candu6_reactor");
+        h.assertTrue(plan != null && plan.stages().size() == 4 && plan.unit().get() == PcBlocks.CANDU6_REACTOR.get(), "CANDU 6 site plan");
+        h.assertTrue(PcBlocks.FP_CANDU6_REACTOR.cells(BlockPos.ZERO, Direction.NORTH).size() == 9 * 13 * 15, "9x13x15 footprint");
+        h.assertTrue(PcBlocks.isWholeModel(PcBlocks.CANDU6_REACTOR.get()) && PcBlocks.legacy().contains(PcBlocks.CANDU_REACTOR),
+                "CANDU 6 is drawn whole, the old CANDU is legacy");
+        double[] home = dev.denfry.promptcritical.mod.npp.CanduFuelling.offsetReal(-1, 0);
+        double[] at = dev.denfry.promptcritical.mod.npp.CanduFuelling.offsetReal(0, dev.denfry.promptcritical.mod.npp.CanduFuelling.TRAVEL + 40);
+        double r = Math.hypot(at[0], at[1]) / dev.denfry.promptcritical.mod.npp.CanduFuelling.REAL_PITCH;
+        h.assertTrue(home[0] == dev.denfry.promptcritical.mod.npp.CanduFuelling.REAL_HOME_X && at[2] > 0 && r < 11,
+                "fuelling machine latched on a channel inside the 380 lattice, r = " + r);
+        BlockPos old = new BlockPos(1, 1, 1);
+        h.setBlock(old, PcBlocks.CANDU_REACTOR.get().defaultBlockState());
+        h.assertTrue(h.getBlockEntity(old) instanceof dev.denfry.promptcritical.mod.npp.CanduReactorBlockEntity b && b.wholeModelId() == null,
+                "legacy CANDU keeps its block entity and no whole model");
+        h.succeed();
+    }
+
+    /** БН-600 реального масштаба: свой проект стройки, объём 15×19×15, старый натриевый реактор — в старой серии и работает. */
+    @GameTest(template = "gametest/empty_12x12x12", timeoutTicks = 20)
+    public static void bn600PlanAndLegacySfrStillWorks(GameTestHelper h) {
+        SitePlans.Plan plan = SitePlans.get("bn600_reactor");
+        h.assertTrue(plan != null && plan.stages().size() == 4 && plan.unit().get() == PcBlocks.BN600_REACTOR.get(), "BN-600 site plan");
+        h.assertTrue(PcBlocks.FP_BN600_REACTOR.cells(BlockPos.ZERO, Direction.NORTH).size() == 15 * 19 * 15, "15x19x15 footprint");
+        h.assertTrue(PcBlocks.isWholeModel(PcBlocks.BN600_REACTOR.get()) && PcBlocks.legacy().contains(PcBlocks.SFR_REACTOR),
+                "BN-600 is drawn whole, the old SFR is legacy");
+        BlockPos old = new BlockPos(1, 1, 1);
+        h.setBlock(old, PcBlocks.SFR_REACTOR.get().defaultBlockState());
+        h.assertTrue(h.getBlockEntity(old) instanceof dev.denfry.promptcritical.mod.npp.SfrReactorBlockEntity b && b.wholeModelId() == null,
+                "legacy SFR keeps its block entity and no whole model");
+        h.succeed();
+    }
+
     /** Предмет старой серии по-прежнему ставится и работает: компенсатор давления — блок того же типа BE. */
     @GameTest(template = "gametest/empty_12x12x12", timeoutTicks = 40)
     public static void legacyPressurizerStillWorks(GameTestHelper h) {

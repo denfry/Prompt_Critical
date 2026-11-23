@@ -98,11 +98,11 @@ public final class NppRecipes extends RecipeProvider {
                 .define('X', AllBlocks.FLUID_TANK.get()).define('G', PcBlocks.INSTRUMENT_PRESSURE.get()).define('C', Items.COPPER_INGOT)
                 .unlockedBy("has_vver_reactor_drawing", has(dev.denfry.promptcritical.mod.site.SiteRegistry.VVER_REACTOR_DRAWING.get())).save(out, id("vver_pressurizer_drawing"));
         // CANDU: каландр из листа с каналами из циркалоя, перегрузочная машина сверху
-        ShapedRecipeBuilder.shaped(RecipeCategory.MISC, PcBlocks.CANDU_REACTOR.get())
+        ShapedRecipeBuilder.shaped(RecipeCategory.MISC, dev.denfry.promptcritical.mod.site.SiteRegistry.CANDU6_REACTOR_DRAWING.get())
                 .pattern("PMP").pattern("ZRZ").pattern("PCP").define('M', PcBlocks.CONTROL_ROD_DRIVE.get())
                 .define('C', PcBlocks.CONTROL_ROD_CHANNEL.get()).define('R', PcBlocks.REACTOR_CONTROLLER.get())
                 .define('P', PcItems.STEEL_PLATE.get()).define('Z', PcItems.ZIRCALOY_INGOT.get())
-                .unlockedBy("has_reactor_controller", has(PcBlocks.REACTOR_CONTROLLER.get())).save(out, id("candu_reactor"));
+                .unlockedBy("has_reactor_controller", has(PcBlocks.REACTOR_CONTROLLER.get())).save(out, id("candu6_reactor_drawing"));
         // кипящий реактор: корпус ВВЭР без КД, сверху сепараторы — барабан, снизу приводы стержней
         ShapedRecipeBuilder.shaped(RecipeCategory.MISC, dev.denfry.promptcritical.mod.site.SiteRegistry.BWR240_REACTOR_DRAWING.get())
                 .pattern("PSP").pattern("PRP").pattern("DZD").define('S', PcBlocks.STEAM_DRUM.get())
@@ -110,10 +110,10 @@ public final class NppRecipes extends RecipeProvider {
                 .define('P', PcItems.STEEL_PLATE.get()).define('Z', PcItems.ZIRCALOY_INGOT.get())
                 .unlockedBy("has_vver_reactor_drawing", has(dev.denfry.promptcritical.mod.site.SiteRegistry.VVER_REACTOR_DRAWING.get())).save(out, id("bwr240_reactor_drawing"));
         // быстрый натриевый: бассейн натрия (баки) под пробкой с приводами стержней, открывается после кипящего
-        ShapedRecipeBuilder.shaped(RecipeCategory.MISC, PcBlocks.SFR_REACTOR.get())
+        ShapedRecipeBuilder.shaped(RecipeCategory.MISC, dev.denfry.promptcritical.mod.site.SiteRegistry.BN600_REACTOR_DRAWING.get())
                 .pattern("DDD").pattern("PRP").pattern("PTP").define('D', PcBlocks.CONTROL_ROD_DRIVE.get())
                 .define('R', PcBlocks.REACTOR_CONTROLLER.get()).define('T', AllBlocks.FLUID_TANK.get())
                 .define('P', PcItems.STEEL_PLATE.get())
-                .unlockedBy("has_bwr240_reactor_drawing", has(dev.denfry.promptcritical.mod.site.SiteRegistry.BWR240_REACTOR_DRAWING.get())).save(out, id("sfr_reactor"));
+                .unlockedBy("has_bwr240_reactor_drawing", has(dev.denfry.promptcritical.mod.site.SiteRegistry.BWR240_REACTOR_DRAWING.get())).save(out, id("bn600_reactor_drawing"));
     }
 }

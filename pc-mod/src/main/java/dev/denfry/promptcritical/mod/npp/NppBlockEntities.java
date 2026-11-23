@@ -30,9 +30,9 @@ public final class NppBlockEntities {
     public static final DeferredHolder<BlockEntityType<?>, BlockEntityType<BwrReactorBlockEntity>> BWR_REACTOR =
             type("bwr_reactor", BwrReactorBlockEntity::new, PcBlocks.BWR_REACTOR, PcBlocks.BWR240_REACTOR);
     public static final DeferredHolder<BlockEntityType<?>, BlockEntityType<CanduReactorBlockEntity>> CANDU_REACTOR =
-            type("candu_reactor", CanduReactorBlockEntity::new, PcBlocks.CANDU_REACTOR);
+            type("candu_reactor", CanduReactorBlockEntity::new, PcBlocks.CANDU_REACTOR, PcBlocks.CANDU6_REACTOR);
     public static final DeferredHolder<BlockEntityType<?>, BlockEntityType<SfrReactorBlockEntity>> SFR_REACTOR =
-            type("sfr_reactor", SfrReactorBlockEntity::new, PcBlocks.SFR_REACTOR);
+            type("sfr_reactor", SfrReactorBlockEntity::new, PcBlocks.SFR_REACTOR, PcBlocks.BN600_REACTOR);
     public static final DeferredHolder<BlockEntityType<?>, BlockEntityType<PressurizerBlockEntity>> PRESSURIZER =
             type("pressurizer", PressurizerBlockEntity::new, PcBlocks.PRESSURIZER, PcBlocks.VVER_PRESSURIZER);
     public static final DeferredHolder<BlockEntityType<?>, BlockEntityType<EccsPumpBlockEntity>> ECCS_PUMP =

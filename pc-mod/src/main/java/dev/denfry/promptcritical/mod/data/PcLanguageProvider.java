@@ -495,13 +495,15 @@ public final class PcLanguageProvider extends LanguageProvider {
         b("vver_steam_generator", "PGV-1000 Steam Generator", "Парогенератор ПГВ-1000");
         b("vver_coolant_pump", "GCN-195 Reactor Coolant Pump", "Главный циркуляционный насос ГЦН-195");
         b("vver_pressurizer", "VVER-1000 Pressurizer", "Компенсатор давления ВВЭР-1000");
-        b("candu_reactor", "Heavy Water Reactor (CANDU type)", "Тяжеловодный реактор (типа CANDU)");
+        b("candu_reactor", "Heavy Water Reactor (CANDU type, legacy)", "Тяжеловодный реактор (типа CANDU, старая серия)");
+        b("candu6_reactor", "CANDU 6 Reactor Assembly", "Реакторная сборка CANDU 6");
         b("gs_exchange_tower", "Girdler Sulfide Heavy Water Plant", "Сероводородный завод тяжёлой воды");
         b("heavy_water_column", "Heavy Water Finishing Column", "Колонна доводки тяжёлой воды");
         i("heavy_water_bucket", "Heavy Water Bucket", "Ведро тяжёлой воды");
         b("bwr_reactor", "Boiling Water Reactor (legacy)", "Кипящий корпусной реактор (старая серия)");
         b("bwr240_reactor", "BWR-240 Boiling Water Reactor", "Кипящий реактор BWR-240");
-        b("sfr_reactor", "Sodium-Cooled Fast Reactor", "Реактор на быстрых нейтронах с натрием");
+        b("sfr_reactor", "Sodium-Cooled Fast Reactor (legacy)", "Реактор на быстрых нейтронах с натрием (старая серия)");
+        b("bn600_reactor", "BN-600 Sodium Fast Reactor", "Реактор на быстрых нейтронах БН-600");
         b("wellhead", "Wellhead", "Колонная головка");
         b("christmas_tree", "Christmas Tree", "Фонтанная арматура");
         b("pumpjack", "Pumpjack", "Станок-качалка");

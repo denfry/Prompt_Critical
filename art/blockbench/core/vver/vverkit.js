@@ -191,6 +191,9 @@
     namePlate(im, 26, 42, 46, 12, 'КД-79');
     // further real-scale units (RS3) take the free rows below
     namePlate(im, 26, 56, 46, 12, 'BWR-240');
+    namePlate(im, 26, 70, 46, 12, 'CANDU 6');
+    namePlate(im, 26, 84, 46, 12, 'БН-600');
+    namePlate(im, 26, 98, 46, 12, 'АМ-1');
     for (let k = 0; k < 4; k++) {
       rect(im, 74 + k * 13, 0, 12, 10, [28, 30, 32]);
       stencil(im, 74 + k * 13 + 4, 2, String(k + 1), [232, 228, 214]);
@@ -214,7 +217,7 @@
   };
   const ATLAS = { pl: { tex: 'vver/plates', size: 128, rects: {
     sign: [0, 0, 24, 24], sign_s: [0, 26, 12, 12], r_name: [26, 0, 46, 12], sg_name: [26, 14, 46, 12],
-    pump_name: [26, 28, 46, 12], kd_name: [26, 42, 46, 12], bwr_name: [26, 56, 46, 12], n1: [74, 0, 12, 10], n2: [87, 0, 12, 10], n3: [100, 0, 12, 10],
+    pump_name: [26, 28, 46, 12], kd_name: [26, 42, 46, 12], bwr_name: [26, 56, 46, 12], candu_name: [26, 70, 46, 12], bn_name: [26, 84, 46, 12], am_name: [26, 98, 46, 12], n1: [74, 0, 12, 10], n2: [87, 0, 12, 10], n3: [100, 0, 12, 10],
     n4: [113, 0, 12, 10], arrow: [74, 14, 24, 8], maker: [100, 14, 24, 14] } } };
 
   function paint(root) {

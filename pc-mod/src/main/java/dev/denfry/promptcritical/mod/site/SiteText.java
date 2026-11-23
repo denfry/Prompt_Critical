@@ -29,12 +29,21 @@ public final class SiteText {
         stage("drive", "motor and flywheel", "электродвигатель и маховик");
         stage("pedestal", "pedestal", "пьедестал");
         stage("drives", "control rod drives", "приводы СУЗ");
+        stage("vault", "reactor vault", "свод реактора");
+        stage("calandria", "calandria and end shields", "каландр и торцевые экраны");
+        stage("end_fittings", "fuel channels, end fittings and feeders", "каналы, концевые фитинги и питатели");
+        stage("fuelling", "fuelling machine bridge", "мост перегрузочной машины");
+        stage("shaft", "concrete shaft", "бетонная шахта");
+        stage("pool_equipment", "pumps and intermediate heat exchangers", "насосы и промежуточные теплообменники");
+        stage("roof", "roof, rotating plugs and drives", "крыша, поворотные пробки и приводы");
         put("block.promptcritical.construction_site", "Construction Site", "Стройплощадка");
         drawing("vver_reactor", "VVER-1000 Reactor", "реактора ВВЭР-1000");
         drawing("vver_steam_generator", "PGV-1000 Steam Generator", "парогенератора ПГВ-1000");
         drawing("vver_coolant_pump", "GCN-195 Reactor Coolant Pump", "ГЦН-195");
         drawing("vver_pressurizer", "VVER-1000 Pressurizer", "компенсатора давления ВВЭР-1000");
         drawing("bwr240_reactor", "BWR-240 Boiling Water Reactor", "кипящего реактора BWR-240");
+        drawing("candu6_reactor", "CANDU 6 Reactor Assembly", "реакторной сборки CANDU 6");
+        drawing("bn600_reactor", "BN-600 Sodium Fast Reactor", "реактора БН-600");
     }
 
     private SiteText() {}

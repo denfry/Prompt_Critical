@@ -23,11 +23,13 @@ public final class NppClient {
     }
 
     /** Подвижные части цельных моделей ВВЭР реального масштаба. */
+    static final PartialModel CANDU6_HEAD = partial("candu6_reactor/partial/head"), CANDU6_BEAM = partial("candu6_reactor/partial/beam");
     static final PartialModel VVER_RODS = partial("vver_reactor/partial/rods"), VVER_PUMP_COUPLING = partial("vver_coolant_pump/partial/coupling");
 
     static {
         // цельные модели ВВЭР реального масштаба: partial-модели должны появиться до запекания
-        for (String id : new String[] {"vver_reactor", "vver_steam_generator", "vver_coolant_pump", "vver_pressurizer", "bwr240_reactor"})
+        for (String id : new String[] {"vver_reactor", "vver_steam_generator", "vver_coolant_pump", "vver_pressurizer", "bwr240_reactor",
+                "candu6_reactor", "bn600_reactor"})
             dev.denfry.promptcritical.mod.client.whole.WholeModels.register(id);
     }
 
@@ -81,10 +83,47 @@ public final class NppClient {
                 part(VVER_RODS, be, be.wholeModelFacing(), 0, 17 + be.rodsOut() * 8 / 16.0, 0).light(light).renderInto(ms, vc);
             }
         });
+        event.registerBlockEntityRenderer(NppBlockEntities.SFR_REACTOR.get(), c -> new dev.denfry.promptcritical.mod.client.whole.WholeModelRenderer<>());
         event.registerBlockEntityRenderer(NppBlockEntities.BWR_REACTOR.get(), c -> new dev.denfry.promptcritical.mod.client.whole.WholeModelRenderer<>());
         event.registerBlockEntityRenderer(NppBlockEntities.STEAM_GENERATOR.get(), c -> new dev.denfry.promptcritical.mod.client.whole.WholeModelRenderer<>());
         event.registerBlockEntityRenderer(NppBlockEntities.PRESSURIZER.get(), c -> new dev.denfry.promptcritical.mod.client.whole.WholeModelRenderer<>());
         event.registerBlockEntityRenderer(dev.denfry.promptcritical.mod.site.SiteRegistry.SITE_BE.get(), c -> new dev.denfry.promptcritical.mod.site.SiteGhostRenderer());
-        event.registerBlockEntityRenderer(NppBlockEntities.CANDU_REACTOR.get(), c -> new CanduRenderer());
+        // CANDU: у старой серии — машина на торце 3×6×3, у CANDU 6 реального масштаба — цельная модель с мостом и машиной
+        var canduOld = new CanduRenderer();
+        var canduWhole = new dev.denfry.promptcritical.mod.client.whole.WholeModelRenderer<dev.denfry.promptcritical.mod.npp.CanduReactorBlockEntity>() {
+            @Override
+            protected void parts(dev.denfry.promptcritical.mod.npp.CanduReactorBlockEntity be, float pt, com.mojang.blaze3d.vertex.PoseStack ms,
+                    com.mojang.blaze3d.vertex.VertexConsumer vc, int light) {
+                double t = be.getLevel().getGameTime() - be.refuelTick() + pt;
+                double[] p = dev.denfry.promptcritical.mod.npp.CanduFuelling.offsetReal(be.refuelChannel(), t);
+                var f = be.wholeModelFacing();
+                double y = (72 + p[1]) / 16;
+                for (int k = 0; k < 3; k++) part(CANDU6_BEAM, be, f, k * 3 - 3, y, -8).light(light).renderInto(ms, vc);
+                part(CANDU6_HEAD, be, f, p[0] / 16, y, (-129 + p[2]) / 16).light(light).renderInto(ms, vc);
+            }
+        };
+        event.registerBlockEntityRenderer(NppBlockEntities.CANDU_REACTOR.get(), c -> new net.minecraft.client.renderer.blockentity.BlockEntityRenderer<>() {
+            @Override
+            public void render(dev.denfry.promptcritical.mod.npp.CanduReactorBlockEntity be, float pt, com.mojang.blaze3d.vertex.PoseStack ms,
+                    net.minecraft.client.renderer.MultiBufferSource buf, int light, int overlay) {
+                if (be.wholeModelId() != null) canduWhole.render(be, pt, ms, buf, light, overlay);
+                else canduOld.render(be, pt, ms, buf, light, overlay);
+            }
+
+            @Override
+            public boolean shouldRenderOffScreen(dev.denfry.promptcritical.mod.npp.CanduReactorBlockEntity be) {
+                return be.wholeModelId() != null;
+            }
+
+            @Override
+            public int getViewDistance() {
+                return dev.denfry.promptcritical.mod.client.whole.WholeModelRenderer.VIEW_DISTANCE;
+            }
+
+            @Override
+            public net.minecraft.world.phys.AABB getRenderBoundingBox(dev.denfry.promptcritical.mod.npp.CanduReactorBlockEntity be) {
+                return be.wholeModelId() != null ? canduWhole.getRenderBoundingBox(be) : canduOld.getRenderBoundingBox(be);
+            }
+        });
     }
 }

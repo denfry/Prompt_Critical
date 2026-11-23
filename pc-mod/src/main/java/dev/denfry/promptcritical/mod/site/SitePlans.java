@@ -37,6 +37,16 @@ public final class SitePlans {
                     new Stage("drives", List.of(n(PcItems.SEAMLESS_PIPE, 16), n(PcItems.STEEL_INGOT, 16), n(COPPER, 8)), 240),
                     new Stage("vessel", List.of(n(PcItems.STEEL_PLATE, 32), n(PcItems.STEEL_BEAM, 4)), 360),
                     new Stage("piping", List.of(n(PcItems.SEAMLESS_PIPE, 16)), 200)))),
+            Map.entry("candu6_reactor", new Plan("candu6_reactor", PcBlocks.CANDU6_REACTOR, List.of(
+                    new Stage("vault", List.of(n(CONCRETE, 128), n(PcItems.STEEL_BEAM, 24)), 300),
+                    new Stage("calandria", List.of(n(PcItems.STEEL_PLATE, 48), n(PcItems.ZIRCALOY_INGOT, 16)), 400),
+                    new Stage("end_fittings", List.of(n(PcItems.SEAMLESS_PIPE, 48), n(PcItems.STEEL_INGOT, 16)), 360),
+                    new Stage("fuelling", List.of(n(PcItems.STEEL_BEAM, 12), n(COPPER, 16), n(PcItems.STEEL_PLATE, 8)), 240)))),
+            Map.entry("bn600_reactor", new Plan("bn600_reactor", PcBlocks.BN600_REACTOR, List.of(
+                    new Stage("shaft", List.of(n(CONCRETE, 160), n(PcItems.STEEL_BEAM, 24)), 360),
+                    new Stage("vessel", List.of(n(PcItems.STEEL_PLATE, 64), n(PcItems.STEEL_BEAM, 8)), 480),
+                    new Stage("pool_equipment", List.of(n(PcItems.SEAMLESS_PIPE, 48), n(PcItems.STEEL_INGOT, 24), n(COPPER, 24)), 400),
+                    new Stage("roof", List.of(n(PcItems.STEEL_PLATE, 32), n(PcItems.STEEL_INGOT, 16), n(COPPER, 8)), 300)))),
             Map.entry("vver_reactor", new Plan("vver_reactor", PcBlocks.VVER_REACTOR, List.of(
                     new Stage("foundation", List.of(n(CONCRETE, 64), n(PcItems.STEEL_BEAM, 16)), 200),
                     new Stage("vessel", List.of(n(PcItems.STEEL_PLATE, 48), n(PcItems.STEEL_BEAM, 8)), 400),

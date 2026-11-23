@@ -54,6 +54,27 @@ public final class CanduFuelling {
         return new double[] {HOME_X + (tx - HOME_X) * s, HOME_Y + (ty - HOME_Y) * s, snout};
     }
 
+    /** Шаг решётки CANDU-6 в единицах модели реального масштаба (286 мм) и стоянка машины там (от оси каландра). */
+    public static final double REAL_PITCH = 4.576, REAL_HOME_X = -48, REAL_HOME_Y = -64, REAL_SNOUT = 1;
+
+    /**
+     * То же, что {@link #offset}, для модели реального масштаба (art/blockbench/core/candu/candu6_reactor.author.js):
+     * смещение машины от оси каландра в единицах модели (x, y) и выдвижение хобота (z). Узел игровой решётки i ∈ −6…6
+     * переходит в столбец round(i·10,5/6 − 0,5) + 0,5 решётки 380 каналов.
+     */
+    public static double[] offsetReal(int ch, double t) {
+        double[] o = offset(ch, t);
+        if (ch < 0 || t < 0 || t >= CYCLE) return new double[] {REAL_HOME_X, REAL_HOME_Y, 0};
+        int[] n = node(ch);
+        double s = Math.abs(n[0] * PITCH - HOME_X) > 1e-9 ? (o[0] - HOME_X) / (n[0] * PITCH - HOME_X) : (o[1] - HOME_Y) / (n[1] * PITCH - HOME_Y);
+        double tx = real(n[0]) * REAL_PITCH, ty = real(n[1]) * REAL_PITCH;
+        return new double[] {REAL_HOME_X + (tx - REAL_HOME_X) * s, REAL_HOME_Y + (ty - REAL_HOME_Y) * s, o[2] > 0 ? REAL_SNOUT : 0};
+    }
+
+    private static double real(int i) {
+        return Math.round(i * 10.5 / 6 - 0.5) + 0.5;
+    }
+
     /** Машина едет (моторы моста и тележки работают). */
     public static boolean moving(int ch, double t) {
         return ch >= 0 && t >= 0 && t < CYCLE && (t < TRAVEL || t >= TRAVEL + DWELL);

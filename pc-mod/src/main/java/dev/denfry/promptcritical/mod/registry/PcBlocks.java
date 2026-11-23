@@ -842,10 +842,30 @@ public final class PcBlocks {
             Spec.facing(BlockStateProperties.LIT, BlockStateProperties.OPEN).segments(PcProperties.wholeSegments(FP_BWR240_REACTOR.segments().size()), FP_BWR240_REACTOR),
             FoundryBlock.with(dev.denfry.promptcritical.mod.npp.BwrReactorBlockEntity::new));
 
+    /**
+     * Реакторная сборка CANDU 6 в реальном масштабе: горизонтальный каландр Ø7,6 × 6 м между торцевыми стенами свода,
+     * на торцах по 380 концевых фитингов, сверху площадка СУЗ, на северном торце мост перегрузочной машины; 9×13×15,
+     * контроллер — на полу под центром каландра (docs/research/candu-dimensions.md).
+     */
+    public static final Footprint FP_CANDU6_REACTOR = Footprint.tiled(-4, 4, 0, 12, -8, 6);
+    public static final DeferredBlock<PcDeviceBlock> CANDU6_REACTOR = device("candu6_reactor", machine(),
+            Spec.facing().segments(PcProperties.wholeSegments(FP_CANDU6_REACTOR.segments().size()), FP_CANDU6_REACTOR),
+            FoundryBlock.with(dev.denfry.promptcritical.mod.npp.CanduReactorBlockEntity::new));
+
+    /**
+     * Натриевый быстрый реактор БН-600 в реальном масштабе: бетонная шахта с бассейновым корпусом 12,8 × 12,6 м, на
+     * крыше поворотные пробки, приводы СУЗ, три насоса и шесть ПТО; 15×19×15, контроллер — на полу под осью
+     * (docs/research/bn600-dimensions.md).
+     */
+    public static final Footprint FP_BN600_REACTOR = Footprint.tiled(-7, 7, 0, 18, -7, 7);
+    public static final DeferredBlock<PcDeviceBlock> BN600_REACTOR = device("bn600_reactor", machine(),
+            Spec.facing().segments(PcProperties.wholeSegments(FP_BN600_REACTOR.segments().size()), FP_BN600_REACTOR),
+            FoundryBlock.with(dev.denfry.promptcritical.mod.npp.SfrReactorBlockEntity::new));
+
     /** Машины реального масштаба с цельной моделью: id блока → id модели (wholemodels/). */
     public static boolean isWholeModel(net.minecraft.world.level.block.Block b) {
         return b == VVER_REACTOR.get() || b == VVER_STEAM_GENERATOR.get() || b == VVER_COOLANT_PUMP.get() || b == VVER_PRESSURIZER.get()
-                || b == BWR240_REACTOR.get();
+                || b == BWR240_REACTOR.get() || b == CANDU6_REACTOR.get() || b == BN600_REACTOR.get();
     }
 
     /**
@@ -854,7 +874,7 @@ public final class PcBlocks {
      */
     public static java.util.List<DeferredBlock<? extends net.minecraft.world.level.block.Block>> legacy() {
         // ГЦН и парогенератор старой серии служат ещё АМ-1, BWR и CANDU: в старую серию они уйдут вместе с ними
-        return java.util.List.of(PWR_REACTOR, PRESSURIZER, BWR_REACTOR);
+        return java.util.List.of(PWR_REACTOR, PRESSURIZER, BWR_REACTOR, CANDU_REACTOR, SFR_REACTOR);
     }
 
     // --- обогащение, литьё, механический цех (08 §8.3, §8.9, §8.10) ---

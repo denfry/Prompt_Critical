@@ -72,8 +72,10 @@ import org.jetbrains.annotations.Nullable;
  * сорта не выше его чистоты ({@link HeavyWaterGrade#atMost}) — оттуда трубой на колонну доводки; уровень и
  * реактивность при этом падают, как при сливе замедлителя в бак на Пикеринге.
  */
-public final class CanduReactorBlockEntity extends DeviceBlockEntity implements dev.denfry.promptcritical.mod.environment.SelfEmittingSource, FoundryDevice, PanelHost, WiredDevice {
+public final class CanduReactorBlockEntity extends DeviceBlockEntity implements dev.denfry.promptcritical.mod.environment.SelfEmittingSource, FoundryDevice, PanelHost, WiredDevice, dev.denfry.promptcritical.mod.client.whole.WholeModelHost {
     public static final int LINK_RADIUS = 12;
+    /** Реальный масштаб: насосы и парогенераторы CANDU 6 стоят над сводом в десятках метров от оси каландра. */
+    public static final int LINK_RADIUS_REAL = 32;
 
     public static final int DRAIN_MB = 4000, DRAIN_STEP_L = 1000;
 
@@ -195,7 +197,7 @@ public final class CanduReactorBlockEntity extends DeviceBlockEntity implements 
     private void link(ServerLevel sl) {
         pumps.clear();
         generators.clear();
-        AABB box = new AABB(worldPosition).inflate(LINK_RADIUS);
+        AABB box = new AABB(worldPosition).inflate(wholeModelId() != null ? LINK_RADIUS_REAL : LINK_RADIUS);
         for (PrimaryPumpBlockEntity p : Ironworks.blockEntities(sl, box, PrimaryPumpBlockEntity.class)) pumps.add(p.getBlockPos());
         for (SteamGeneratorBlockEntity g : Ironworks.blockEntities(sl, box, SteamGeneratorBlockEntity.class)) generators.add(g.getBlockPos());
         // насос, сорванный с контура под давлением, — разрыв коллектора
@@ -303,6 +305,13 @@ public final class CanduReactorBlockEntity extends DeviceBlockEntity implements 
         if (!CanduFuelling.latched(refuelChannel, t)) return;
         dev.denfry.promptcritical.mod.fx.MachineFx fx = dev.denfry.promptcritical.mod.fx.MachineFx.of(level, worldPosition, facing());
         if (fx == null) return;
+        if (wholeModelId() != null) {
+            // реальный масштаб: хобот машины у закрывающей пробки канала на северном торце
+            double[] r = CanduFuelling.offsetReal(refuelChannel, t);
+            if (fx.chance(2)) fx.leak(fx.at(8 + r[0], 80 + r[1] - 3, -97));
+            if (t - (CanduFuelling.TRAVEL + 10) < 1) fx.sound(fx.at(8 + r[0], 80 + r[1], -98), SoundEvents.PISTON_EXTEND, 0.6f, 0.6f);
+            return;
+        }
         double[] p = CanduFuelling.offset(refuelChannel, t);
         if (fx.chance(2)) fx.leak(fx.at(8 + p[0], 9 + p[1] - 1.4, -9.8));
         if (t - (CanduFuelling.TRAVEL + 10) < 1)
@@ -560,5 +569,22 @@ public final class CanduReactorBlockEntity extends DeviceBlockEntity implements 
             refuelChannel = tag.getInt("view_refuel_ch");
         }
         accident.load(tag);
+    }
+
+    // --- цельная модель реального масштаба (спецификация real-scale machines) ---
+
+    @Override
+    public String wholeModelId() {
+        return dev.denfry.promptcritical.mod.client.whole.WholeModelHost.idOf(getBlockState());
+    }
+
+    @Override
+    public net.minecraft.core.Direction wholeModelFacing() {
+        return facing();
+    }
+
+    @Override
+    public net.minecraft.core.BlockPos wholeModelLightPos() {
+        return worldPosition.relative(facing(), 9).above();
     }
 }
