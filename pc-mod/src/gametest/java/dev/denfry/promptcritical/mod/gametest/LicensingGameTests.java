@@ -1,6 +1,14 @@
 package dev.denfry.promptcritical.mod.gametest;
 
 import dev.denfry.promptcritical.mod.PromptCritical;
+import com.simibubi.create.AllBlocks;
+import com.simibubi.create.content.kinetics.motor.CreativeMotorBlockEntity;
+import dev.denfry.promptcritical.mod.grid.GridPanels;
+import dev.denfry.promptcritical.mod.grid.ShaftGeneratorBlockEntity;
+import dev.denfry.promptcritical.mod.ironworks.BlastFurnaceControllerBlockEntity;
+import dev.denfry.promptcritical.sim.ops.CommissioningMode;
+import dev.denfry.promptcritical.sim.ops.OpsLogEntry;
+import net.minecraft.world.level.block.state.BlockState;
 import dev.denfry.promptcritical.mod.binding.SimBindings;
 import dev.denfry.promptcritical.mod.boiler.FireTubeBoilerBlockEntity;
 import dev.denfry.promptcritical.mod.content.HandbookManager;
@@ -121,5 +129,138 @@ public final class LicensingGameTests {
         boolean stored = LicensingWorldData.resolve(server, false);
         h.assertValueEqual(LicensingWorldData.resolve(server, !stored), stored, "config change does not flip the world");
         h.succeed();
+    }
+
+    // --- HP2.1: генератор и домна ---
+
+    private static final BlockPos GEN = new BlockPos(2, 2, 2);
+    private static final String TALL = "gametest/empty_12x24x12";
+
+    private static void placeGenerator(GameTestHelper h, int rpm) {
+        h.setBlock(GEN, PcBlocks.SHAFT_GENERATOR.get().defaultBlockState().setValue(BlockStateProperties.HORIZONTAL_FACING, Direction.NORTH));
+        h.setBlock(GEN.above(), PcBlocks.GENERATOR_EXCITER.get().defaultBlockState().setValue(BlockStateProperties.HORIZONTAL_FACING, Direction.NORTH));
+        if (rpm > 0) {
+            BlockPos motor = GEN.south();
+            h.setBlock(motor, AllBlocks.CREATIVE_MOTOR.getDefaultState().setValue(BlockStateProperties.FACING, Direction.NORTH));
+            h.runAfterDelay(1, () -> ((CreativeMotorBlockEntity) h.getBlockEntity(motor)).generatedSpeed.setValue(rpm));
+        }
+    }
+
+    private static ShaftGeneratorBlockEntity generator(GameTestHelper h) {
+        return h.getBlockEntity(GEN);
+    }
+
+    private static boolean generatorReady(GameTestHelper h) {
+        ShaftGeneratorBlockEntity g = generator(h);
+        return g.unit() != null && !g.simId().isNone() && ops(h).unit(g.simId()) != null;
+    }
+
+    /** Возбуждение генератора I1: без лицензии отказ даже после проверок (нажатие как с CC), с лицензией — включается. */
+    @GameTest(template = LARGE, timeoutTicks = 200, batch = "licensing")
+    public static void generatorFieldNeedsTheI1Licence(GameTestHelper h) {
+        placeGenerator(h, 0);
+        h.startSequence()
+                .thenWaitUntil(() -> h.assertTrue(generatorReady(h), "generator and its ops unit"))
+                .thenExecute(() -> {
+                    OpsSubsystem ops = ops(h);
+                    ops.setLicensing(true);
+                    try {
+                        var fake = FakePlayerFactory.getMinecraft(h.getLevel());
+                        UUID team = TeamResolver.team(fake);
+                        SimId id = generator(h).simId();
+                        h.assertTrue(ops.perform(id, new CheckInput.InsulationTest(true), fake.getUUID(), team).passed(), "insulation");
+                        h.assertTrue(ops.perform(id, new CheckInput.Alignment(true), fake.getUUID(), team).passed(), "alignment");
+                        generator(h).onPanelButton(fake, GridPanels.BUTTON_FIELD);
+                        h.assertTrue(!generator(h).unit().fieldOn(), "field refused without the I1 licence");
+                        h.assertValueEqual(ops.canStart(id).unlicensedEra(), PlantEra.I1, "missing licence named");
+                        ops.licences().grant(team, PlantEra.I1, 0);
+                        generator(h).onPanelButton(fake, GridPanels.BUTTON_FIELD);
+                        h.assertTrue(generator(h).unit().fieldOn(), "field on with the I1 licence");
+                    } finally {
+                        ops.setLicensing(false);
+                    }
+                })
+                .thenSucceed();
+    }
+
+    /** Вал крутит генератор без возбуждения — это не пуск: отказов в журнале нет. */
+    @GameTest(template = LARGE, timeoutTicks = 200, batch = "licensing")
+    public static void generatorRollsWithoutField(GameTestHelper h) {
+        placeGenerator(h, 64);
+        h.startSequence()
+                .thenWaitUntil(() -> h.assertTrue(generatorReady(h), "generator and its ops unit"))
+                .thenExecute(() -> ops(h).setLicensing(true))
+                .thenWaitUntil(() -> h.assertTrue(generator(h).unit().speedPu() > 0.05, "shaft turns the generator"))
+                .thenExecute(() -> {
+                    OpsSubsystem ops = ops(h);
+                    try {
+                        boolean refused = false;
+                        for (OpsLogEntry e : ops.log(generator(h).simId())) refused |= e.kind() == OpsLogEntry.Kind.START_REFUSED;
+                        h.assertTrue(!refused, "rolling is not a start");
+                    } finally {
+                        ops.setLicensing(false);
+                    }
+                })
+                .thenSucceed();
+    }
+
+    private static void buildFurnace(GameTestHelper h) {
+        BlockState shell = PcBlocks.BLAST_FURNACE_SHELL.get().defaultBlockState();
+        for (int y = 1; y <= 12; y++)
+            for (int x = 3; x <= 7; x++)
+                for (int z = 3; z <= 7; z++) {
+                    boolean ring = x == 3 || x == 7 || z == 3 || z == 7;
+                    if (y == 1 || ring) h.setBlock(new BlockPos(x, y, z), shell);
+                }
+        h.setBlock(new BlockPos(5, 2, 3), PcBlocks.BLAST_FURNACE_TAPHOLE.get().defaultBlockState().setValue(BlockStateProperties.HORIZONTAL_FACING, Direction.NORTH));
+        BlockState tuyere = PcBlocks.BLAST_FURNACE_TUYERE.get().defaultBlockState();
+        h.setBlock(new BlockPos(5, 3, 3), tuyere.setValue(BlockStateProperties.HORIZONTAL_FACING, Direction.NORTH));
+        h.setBlock(new BlockPos(5, 3, 7), tuyere.setValue(BlockStateProperties.HORIZONTAL_FACING, Direction.SOUTH));
+        h.setBlock(new BlockPos(3, 3, 5), tuyere.setValue(BlockStateProperties.HORIZONTAL_FACING, Direction.WEST));
+        h.setBlock(new BlockPos(7, 3, 5), tuyere.setValue(BlockStateProperties.HORIZONTAL_FACING, Direction.EAST));
+        h.setBlock(new BlockPos(5, 13, 5), PcBlocks.BLAST_FURNACE_TOP.get().defaultBlockState());
+        h.setBlock(new BlockPos(2, 4, 5), PcBlocks.BLAST_FURNACE_CONTROLLER.get().defaultBlockState().setValue(BlockStateProperties.HORIZONTAL_FACING, Direction.WEST));
+    }
+
+    /**
+     * Разрешение на процесс домны следует за профилем: под licensing непринятая печь его не получает (задувка в модели —
+     * BlastFurnacePermissiveTest); без licensing в ADVISORY и OFF печь работает, как прежде.
+     */
+    @GameTest(template = TALL, timeoutTicks = 300, batch = "licensing")
+    public static void furnacePermissiveFollowsLicensing(GameTestHelper h) {
+        buildFurnace(h);
+        BlockPos controller = new BlockPos(2, 4, 5);
+        CommissioningMode[] before = new CommissioningMode[1];
+        h.startSequence()
+                .thenWaitUntil(() -> {
+                    BlastFurnaceControllerBlockEntity c = (BlastFurnaceControllerBlockEntity) h.getBlockEntity(controller);
+                    h.assertTrue(c.unit() != null && c.unit().furnace() != null && ops(h).unit(c.simId()) != null, "furnace formed and registered");
+                })
+                .thenExecute(() -> {
+                    before[0] = ops(h).config().commissioning();
+                    ops(h).setLicensing(true);
+                })
+                .thenIdle(3)
+                .thenExecute(() -> {
+                    BlastFurnaceControllerBlockEntity c = (BlastFurnaceControllerBlockEntity) h.getBlockEntity(controller);
+                    boolean permitted = c.unit().furnace().permitted();
+                    ops(h).setLicensing(false);
+                    h.assertTrue(!permitted, "unaccepted furnace has no process permissive under licensing");
+                    ops(h).setConfig(ops(h).config().withCommissioning(CommissioningMode.ADVISORY));
+                })
+                .thenIdle(3)
+                .thenExecute(() -> {
+                    BlastFurnaceControllerBlockEntity c = (BlastFurnaceControllerBlockEntity) h.getBlockEntity(controller);
+                    h.assertTrue(c.unit().furnace().permitted(), "ADVISORY furnace still runs");
+                    ops(h).setConfig(ops(h).config().withCommissioning(CommissioningMode.OFF));
+                })
+                .thenIdle(3)
+                .thenExecute(() -> {
+                    BlastFurnaceControllerBlockEntity c = (BlastFurnaceControllerBlockEntity) h.getBlockEntity(controller);
+                    boolean permitted = c.unit().furnace().permitted();
+                    ops(h).setConfig(ops(h).config().withCommissioning(before[0]));
+                    h.assertTrue(permitted, "OFF furnace still runs");
+                })
+                .thenSucceed();
     }
 }

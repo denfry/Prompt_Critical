@@ -60,7 +60,10 @@ import org.jetbrains.annotations.Nullable;
  * бур открывает лётку ({@link CastHouseMachineBlockEntity}), чугун течёт по жёлобу {@code iron_runner} в ковш
  * ({@link LadleBlockEntity}) или на песок (чушки); шлак — в грануляцию у жёлоба. Пушка забивает лётку глиной.
  */
-public final class BlastFurnaceControllerBlockEntity extends IronworksDeviceBlockEntity<BlastFurnaceUnit> implements PanelHost {
+public final class BlastFurnaceControllerBlockEntity extends IronworksDeviceBlockEntity<BlastFurnaceUnit> implements PanelHost,
+        dev.denfry.promptcritical.mod.ops.OpsMachine {
+    /** Рабочее давление воды охлаждения кладки (холодильники), Па: для гидроиспытания (план HP2.1, оценка исполнителя). */
+    public static final double STAVE_WATER_PA = 0.4e6;
     public static final int LINK_RANGE = 12;
     private static final int VALIDATE_PERIOD = 40, LOOK_PERIOD = 20, RUNNER_MAX = 64, FILL_HOLD = 40;
     /** Выпуск — в реальном времени (08 §8.5.5): секунд на тик. */
@@ -125,6 +128,7 @@ public final class BlastFurnaceControllerBlockEntity extends IronworksDeviceBloc
             return;
         }
         BlastFurnace f = u.furnace();
+        operations(u, f);
         feedHopper(u);
         double cold = 0;
         for (BlockPos p : blowers) if (level.getBlockEntity(p) instanceof BlastBlowerBlockEntity bl) cold += bl.coldNm3S();
@@ -142,6 +146,37 @@ public final class BlastFurnaceControllerBlockEntity extends IronworksDeviceBloc
         if (fillTicks > 0 && --fillTicks == 0) fillRunner(false);
         setStateFlag(PcProperties.ALARM, f.state() == BlastFurnaceState.CHILLED || f.state() == BlastFurnaceState.HANGING
                 || f.state() == BlastFurnaceState.BURNTHROUGH || f.tuyereLeak());
+    }
+
+    /**
+     * Пусконаладка (план HP2.1): разрешение на процесс — непринятая печь в профиле licensing не задувается; пробная
+     * работа — печь не холодная, нагрузка — производительность к номинальной.
+     */
+    private void operations(BlastFurnaceUnit u, BlastFurnace f) {
+        var ops = dev.denfry.promptcritical.mod.ops.OpsWorld.ops(level);
+        if (ops == null || dev.denfry.promptcritical.mod.ops.OpsWorld.ensure(level, simId(),
+                dev.denfry.promptcritical.sim.ops.UnitKind.BLAST_FURNACE, STAVE_WATER_PA, false) == null) return;
+        u.setPermitted(dev.denfry.promptcritical.mod.ops.OpsActions.processAllowed(level, this));
+        ops.observeTrial(simId(), 0.05, f.state() != BlastFurnaceState.COLD,
+                f.productivityTM3Day() / dev.denfry.promptcritical.sim.metallurgy.BlastFurnaceSpec.NOMINAL_T_M3_DAY,
+                f.state() == BlastFurnaceState.BURNTHROUGH, opsCurrent());
+    }
+
+    @Override
+    public dev.denfry.promptcritical.sim.ops.UnitKind opsKind() {
+        return dev.denfry.promptcritical.sim.ops.UnitKind.BLAST_FURNACE;
+    }
+
+    /** Остановлена — печь холодная. */
+    @Override
+    public boolean opsStopped() {
+        BlastFurnaceUnit u = level != null && !level.isClientSide ? unit() : null;
+        return u == null || u.furnace() == null || u.furnace().state() == BlastFurnaceState.COLD;
+    }
+
+    @Override
+    public net.minecraft.world.phys.Vec3 opsBearingPos() {
+        return net.minecraft.world.phys.Vec3.atCenterOf(worldPosition);
     }
 
     private void validate(SimLevelBinding b, BlastFurnaceUnit u) {

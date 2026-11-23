@@ -1,5 +1,9 @@
 package dev.denfry.promptcritical.mod.ops;
 
+import dev.denfry.promptcritical.mod.grid.ShaftGeneratorBlockEntity;
+import dev.denfry.promptcritical.mod.ironworks.BlastFurnaceControllerBlockEntity;
+import net.neoforged.neoforge.common.util.FakePlayer;
+
 import dev.denfry.promptcritical.mod.boiler.FireTubeBoilerBlockEntity;
 import dev.denfry.promptcritical.mod.mine.MineHoistBlockEntity;
 import dev.denfry.promptcritical.mod.registry.PcItems;
@@ -195,10 +199,15 @@ public final class OpsActions {
                 if (m instanceof FireTubeBoilerBlockEntity b) reliefValve(p, ops, b);
                 else if (m instanceof MineHoistBlockEntity h) report(p, ops.perform(m.simId(),
                         new CheckInput.BrakeTest(h.cageLoadFraction()), p.getUUID(), TeamResolver.team(p)));
+                else if (m instanceof ShaftGeneratorBlockEntity g) report(p, ops.perform(m.simId(),
+                        new CheckInput.Alignment(g.opsStopped()), p.getUUID(), TeamResolver.team(p)));
                 else tighten(p, ops, m);
             }
             case TEST_GAUGE -> {
-                if (m instanceof FireTubeBoilerBlockEntity) report(p, ops.perform(m.simId(), new CheckInput.InstrumentCheck(), p.getUUID(), TeamResolver.team(p)));
+                if (m instanceof FireTubeBoilerBlockEntity || m instanceof BlastFurnaceControllerBlockEntity)
+                    report(p, ops.perform(m.simId(), new CheckInput.InstrumentCheck(), p.getUUID(), TeamResolver.team(p)));
+                else if (m instanceof ShaftGeneratorBlockEntity g)
+                    report(p, ops.perform(m.simId(), new CheckInput.InsulationTest(g.opsStopped()), p.getUUID(), TeamResolver.team(p)));
             }
             case CAULKING_HAMMER -> {
                 if (!(m instanceof FireTubeBoilerBlockEntity b)) return;
@@ -366,7 +375,8 @@ public final class OpsActions {
         OpsSubsystem ops = OpsWorld.ops(level);
         if (ops == null || ops.unit(m.simId()) == null) return true;
         var permit = ops.requestStart(m.simId());
-        if (player != null) {
+        // нажатие с компьютера CC приходит от фейкового игрока: это автоматика, отказ уже записан в журнал
+        if (player != null && !(player instanceof FakePlayer)) {
             if (permit.unlicensedEra() != null) {
                 String era = permit.unlicensedEra().name();
                 player.displayClientMessage(OpsText.msg("start_unlicensed", era, era), false);
@@ -374,6 +384,16 @@ public final class OpsActions {
             else if (!permit.accepted()) player.displayClientMessage(OpsText.msg("start_unaccepted"), true);
         }
         return permit.allowed();
+    }
+
+    /**
+     * Разрешение на процесс для установок без события пуска (план HP2.1): опрашивается каждый тик, в журнал не пишет.
+     * Нет подсистемы или установки — разрешено.
+     */
+    public static boolean processAllowed(Level level, OpsMachine m) {
+        OpsSubsystem ops = OpsWorld.ops(level);
+        if (ops == null || ops.unit(m.simId()) == null) return true;
+        return ops.canStart(m.simId()).allowed();
     }
 
     static boolean isCheck(CommissioningCheck c, UnitKind kind) {

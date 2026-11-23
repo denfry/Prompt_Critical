@@ -4,6 +4,12 @@ import dev.denfry.promptcritical.mod.binding.SimBindings;
 import dev.denfry.promptcritical.mod.binding.SimLevelBinding;
 import dev.denfry.promptcritical.mod.block.PcProperties;
 import dev.denfry.promptcritical.mod.foundry.KineticMachineBlockEntity;
+import dev.denfry.promptcritical.mod.ops.OpsActions;
+import dev.denfry.promptcritical.mod.ops.OpsMachine;
+import dev.denfry.promptcritical.mod.ops.OpsWorld;
+import dev.denfry.promptcritical.sim.ops.OpsSubsystem;
+import dev.denfry.promptcritical.sim.ops.UnitKind;
+import net.minecraft.world.phys.Vec3;
 import dev.denfry.promptcritical.mod.pa.PaAnnouncer;
 import dev.denfry.promptcritical.mod.pa.PaLine;
 import dev.denfry.promptcritical.mod.panel.PanelHost;
@@ -39,7 +45,7 @@ import org.jetbrains.annotations.Nullable;
  * {@code generator_exciter} ставится вплотную. Несинхронное включение даёт разовый скачок стресса сети Create (§7.3.5);
  * муфта {@code generator_coupling} со срезным штифтом ставится ПКМ.
  */
-public class ShaftGeneratorBlockEntity extends KineticMachineBlockEntity<GeneratorUnit> implements GridDevice, PanelHost {
+public class ShaftGeneratorBlockEntity extends KineticMachineBlockEntity<GeneratorUnit> implements GridDevice, PanelHost, OpsMachine {
     private int ticks;
     /** Что уже объявлено по громкой связи; null — машину ещё не наблюдали после загрузки. */
     private MachineState heardState;
@@ -123,6 +129,41 @@ public class ShaftGeneratorBlockEntity extends KineticMachineBlockEntity<Generat
         if (isOverStressed()) overstressedAt = level.getGameTime();
         if (ticks % 5 == 0) setStateFlag(PcProperties.RUNNING, u.speedPu() > GeneratorUnit.ONLINE_SPEED);
         if (ticks % 10 == 0) announce(u);
+        operations(u);
+    }
+
+    /** Пусконаладка (план HP2.1): изоляция, центровка, пробный пуск в сети под нагрузкой. */
+    private void operations(GeneratorUnit u) {
+        OpsSubsystem ops = OpsWorld.ops(level);
+        if (ops == null || OpsWorld.ensure(level, simId(), UnitKind.SYNC_GENERATOR, 0, false) == null) return;
+        MachineState s = u.state();
+        boolean online = s == MachineState.SYNCHRONIZED || s == MachineState.LOADED;
+        ops.observeTrial(simId(), 0.05, online, u.electricalPowerW() / GeneratorUnit.RATED_POWER_W,
+                s == MachineState.TRIPPED, opsCurrent());
+    }
+
+    /** Включение возбуждения — пуск генератора: пусконаладка и лицензия на I1; снятие возбуждения не запирается. */
+    private boolean fieldToggleAllowed(@Nullable Player player, GeneratorUnit u) {
+        return u.fieldOn() || OpsActions.startAllowed(player, level, this);
+    }
+
+    // --- эксплуатация ---
+
+    @Override
+    public UnitKind opsKind() {
+        return UnitKind.SYNC_GENERATOR;
+    }
+
+    /** Остановлен: вал стоит и возбуждение снято (условие замера изоляции и центровки). */
+    @Override
+    public boolean opsStopped() {
+        GeneratorUnit u = level != null && !level.isClientSide ? unit() : null;
+        return u == null || u.speedPu() < 0.02 && !u.fieldOn();
+    }
+
+    @Override
+    public Vec3 opsBearingPos() {
+        return Vec3.atCenterOf(worldPosition);
     }
 
     /** Громкая связь: включение в сеть, выход из синхронизма, отключение, частота сети. */
@@ -207,7 +248,7 @@ public class ShaftGeneratorBlockEntity extends KineticMachineBlockEntity<Generat
     public InteractionResult use(Player player) {
         GeneratorUnit u = unit();
         if (u == null) return InteractionResult.PASS;
-        u.setFieldOn(!u.fieldOn());
+        if (fieldToggleAllowed(player, u)) u.setFieldOn(!u.fieldOn());
         return InteractionResult.SUCCESS;
     }
 
@@ -244,7 +285,9 @@ public class ShaftGeneratorBlockEntity extends KineticMachineBlockEntity<Generat
         GeneratorUnit u = unit();
         if (u == null) return;
         switch (id) {
-            case GridPanels.BUTTON_FIELD -> u.setFieldOn(!u.fieldOn());
+            case GridPanels.BUTTON_FIELD -> {
+                if (fieldToggleAllowed(player, u)) u.setFieldOn(!u.fieldOn());
+            }
             case GridPanels.BUTTON_VREF_DOWN -> u.setVoltageReferencePu(u.voltageReferencePu() - 0.005);
             case GridPanels.BUTTON_VREF_UP -> u.setVoltageReferencePu(u.voltageReferencePu() + 0.005);
             case GridPanels.BUTTON_TRIM_DOWN -> u.setTrimPermil(u.trimPermil() - 1);

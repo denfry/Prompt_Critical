@@ -65,6 +65,8 @@ public final class HydrotestPumpBlockEntity extends IronworksBlockEntity {
     }
 
     private static double workingPa(OpsMachine m) {
+        if (m instanceof dev.denfry.promptcritical.mod.ironworks.BlastFurnaceControllerBlockEntity)
+            return dev.denfry.promptcritical.mod.ironworks.BlastFurnaceControllerBlockEntity.STAVE_WATER_PA;
         return m instanceof FireTubeBoilerBlockEntity b && b.unit() != null ? b.unit().spec().workingPressurePa() : ENGINE_WORKING_PA;
     }
 
