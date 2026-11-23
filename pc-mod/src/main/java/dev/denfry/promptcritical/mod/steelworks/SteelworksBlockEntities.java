@@ -20,9 +20,9 @@ public final class SteelworksBlockEntities {
     public static final DeferredHolder<BlockEntityType<?>, BlockEntityType<OxygenLanceBlockEntity>> OXYGEN_LANCE =
             type("oxygen_lance", OxygenLanceBlockEntity::new, PcBlocks.OXYGEN_LANCE);
     public static final DeferredHolder<BlockEntityType<?>, BlockEntityType<LadleStationBlockEntity>> LADLE_STATION =
-            type("ladle_station", LadleStationBlockEntity::new, PcBlocks.LADLE_STATION);
+            type("ladle_station", LadleStationBlockEntity::new, PcBlocks.LADLE_STATION, PcBlocks.LADLE_STATION_REAL);
     public static final DeferredHolder<BlockEntityType<?>, BlockEntityType<IngotMoldBlockEntity>> INGOT_MOLD =
-            type("ingot_mold", IngotMoldBlockEntity::new, PcBlocks.INGOT_MOLD);
+            type("ingot_mold", IngotMoldBlockEntity::new, PcBlocks.INGOT_MOLD, PcBlocks.INGOT_MOLD_REAL);
     public static final DeferredHolder<BlockEntityType<?>, BlockEntityType<ReheatingFurnaceBlockEntity>> REHEATING_FURNACE =
             type("reheating_furnace", ReheatingFurnaceBlockEntity::new, PcBlocks.REHEATING_FURNACE);
     public static final DeferredHolder<BlockEntityType<?>, BlockEntityType<RollerTableBlockEntity>> ROLLER_TABLE =
@@ -30,13 +30,13 @@ public final class SteelworksBlockEntities {
     public static final DeferredHolder<BlockEntityType<?>, BlockEntityType<MillStandBlockEntity>> ROLLING_MILL_STAND =
             type("rolling_mill_stand", MillStandBlockEntity::new, PcBlocks.ROLLING_MILL_STAND);
     public static final DeferredHolder<BlockEntityType<?>, BlockEntityType<PiercingMillBlockEntity>> PIERCING_MILL =
-            type("piercing_mill", PiercingMillBlockEntity::new, PcBlocks.PIERCING_MILL);
+            type("piercing_mill", PiercingMillBlockEntity::new, PcBlocks.PIERCING_MILL, PcBlocks.PIERCING_MILL_REAL);
     public static final DeferredHolder<BlockEntityType<?>, BlockEntityType<PipeWelderBlockEntity>> PIPE_WELDER =
-            type("pipe_welder", PipeWelderBlockEntity::new, PcBlocks.PIPE_WELDER);
+            type("pipe_welder", PipeWelderBlockEntity::new, PcBlocks.PIPE_WELDER, PcBlocks.PIPE_WELDER_REAL);
     public static final DeferredHolder<BlockEntityType<?>, BlockEntityType<HydrotestBenchBlockEntity>> HYDROTEST_BENCH =
             type("hydrotest_bench", HydrotestBenchBlockEntity::new, PcBlocks.HYDROTEST_BENCH);
     public static final DeferredHolder<BlockEntityType<?>, BlockEntityType<HeatTreatFurnaceBlockEntity>> HEAT_TREATMENT_FURNACE =
-            type("heat_treatment_furnace", HeatTreatFurnaceBlockEntity::new, PcBlocks.HEAT_TREATMENT_FURNACE);
+            type("heat_treatment_furnace", HeatTreatFurnaceBlockEntity::new, PcBlocks.HEAT_TREATMENT_FURNACE, PcBlocks.HEAT_TREATMENT_FURNACE_REAL);
     public static final DeferredHolder<BlockEntityType<?>, BlockEntityType<QuenchTankBlockEntity>> QUENCH_TANK =
             type("quench_tank", QuenchTankBlockEntity::new, PcBlocks.QUENCH_TANK);
     public static final DeferredHolder<BlockEntityType<?>, BlockEntityType<AirSeparatorBlockEntity>> AIR_SEPARATOR =
@@ -57,5 +57,11 @@ public final class SteelworksBlockEntities {
     private static <T extends BlockEntity> DeferredHolder<BlockEntityType<?>, BlockEntityType<T>> type(String name,
             BlockEntityType.BlockEntitySupplier<T> factory, Supplier<? extends Block> block) {
         return BLOCK_ENTITIES.register(name, () -> BlockEntityType.Builder.of(factory, block.get()).build(null));
+    }
+
+    /** Один BE на машину старой серии и её двойника реального масштаба (цельная модель). */
+    private static <T extends BlockEntity> DeferredHolder<BlockEntityType<?>, BlockEntityType<T>> type(String name,
+            BlockEntityType.BlockEntitySupplier<T> factory, Supplier<? extends Block> block, Supplier<? extends Block> real) {
+        return BLOCK_ENTITIES.register(name, () -> BlockEntityType.Builder.of(factory, block.get(), real.get()).build(null));
     }
 }

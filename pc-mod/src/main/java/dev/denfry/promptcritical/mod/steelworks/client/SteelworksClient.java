@@ -50,6 +50,7 @@ public final class SteelworksClient {
     public static void register(IEventBus modBus) {
         modBus.addListener(SteelworksClient::registerRenderers);
         BofRealRenderer.init();
+        SteelI2RealRenderer.init();
         ReheatingRealRenderer.init();
         NeoForge.EVENT_BUS.addListener(SteelworksClient::tooltip);
     }
@@ -60,6 +61,15 @@ public final class SteelworksClient {
         event.registerBlockEntityRenderer(SteelworksBlockEntities.ROLLER_TABLE.get(), c -> new RollerTableRenderer());
         event.registerBlockEntityRenderer(SteelworksBlockEntities.BOF_VESSEL_REAL.get(), c -> new BofRealRenderer());
         event.registerBlockEntityRenderer(SteelworksBlockEntities.REHEATING_FURNACE_REAL.get(), c -> new ReheatingRealRenderer());
+        // сталь и прокат I2: один BE на старый блок и двойника; рисуется только у двойника (цельная модель)
+        event.registerBlockEntityRenderer(dev.denfry.promptcritical.mod.grid.GridBlockEntities.ARC_FURNACE.get(),
+                c -> new SteelI2RealRenderer<>(SteelI2RealRenderer.arcFurnace()));
+        event.registerBlockEntityRenderer(SteelworksBlockEntities.LADLE_STATION.get(), c -> new SteelI2RealRenderer<>(SteelI2RealRenderer.ladleStation()));
+        event.registerBlockEntityRenderer(SteelworksBlockEntities.INGOT_MOLD.get(), c -> new SteelI2RealRenderer<>(SteelI2RealRenderer.ingotMold()));
+        event.registerBlockEntityRenderer(SteelworksBlockEntities.HEAT_TREATMENT_FURNACE.get(),
+                c -> new SteelI2RealRenderer<>(SteelI2RealRenderer.heatTreatment()));
+        event.registerBlockEntityRenderer(SteelworksBlockEntities.PIPE_WELDER.get(), c -> new SteelI2RealRenderer<>(SteelI2RealRenderer.pipeWelder()));
+        event.registerBlockEntityRenderer(SteelworksBlockEntities.PIERCING_MILL.get(), c -> new SteelI2RealRenderer<>(SteelI2RealRenderer.piercingMill()));
     }
 
     private static SuperByteBuffer facingPartial(PartialModel part, BlockState state) {

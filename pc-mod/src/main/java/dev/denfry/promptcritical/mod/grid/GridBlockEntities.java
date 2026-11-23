@@ -38,7 +38,7 @@ public final class GridBlockEntities {
     public static final DeferredHolder<BlockEntityType<?>, BlockEntityType<CapacitorBankBlockEntity>> CAPACITOR_BANK =
             type("capacitor_bank", CapacitorBankBlockEntity::new, PcBlocks.CAPACITOR_BANK);
     public static final DeferredHolder<BlockEntityType<?>, BlockEntityType<dev.denfry.promptcritical.mod.steelworks.ArcFurnaceBlockEntity>> ARC_FURNACE =
-            type("electric_arc_furnace", dev.denfry.promptcritical.mod.steelworks.ArcFurnaceBlockEntity::new, PcBlocks.ELECTRIC_ARC_FURNACE);
+            type("electric_arc_furnace", dev.denfry.promptcritical.mod.steelworks.ArcFurnaceBlockEntity::new, PcBlocks.ELECTRIC_ARC_FURNACE, PcBlocks.ELECTRIC_ARC_FURNACE_REAL);
     public static final DeferredHolder<BlockEntityType<?>, BlockEntityType<ConsumerBlockEntity>> GRID_CONSUMER =
             type("grid_consumer", ConsumerBlockEntity::new, PcBlocks.GRID_CONSUMER);
     public static final DeferredHolder<BlockEntityType<?>, BlockEntityType<FeInterfaceBlockEntity>> FE_INTERFACE_SMALL =
@@ -83,5 +83,11 @@ public final class GridBlockEntities {
     private static <T extends BlockEntity> DeferredHolder<BlockEntityType<?>, BlockEntityType<T>> type(String name,
             BlockEntityType.BlockEntitySupplier<T> factory, Supplier<? extends Block> block) {
         return BLOCK_ENTITIES.register(name, () -> BlockEntityType.Builder.of(factory, block.get()).build(null));
+    }
+
+    /** Один BE на машину старой серии и её двойника реального масштаба (цельная модель). */
+    private static <T extends BlockEntity> DeferredHolder<BlockEntityType<?>, BlockEntityType<T>> type(String name,
+            BlockEntityType.BlockEntitySupplier<T> factory, Supplier<? extends Block> block, Supplier<? extends Block> real) {
+        return BLOCK_ENTITIES.register(name, () -> BlockEntityType.Builder.of(factory, block.get(), real.get()).build(null));
     }
 }

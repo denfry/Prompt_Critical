@@ -43,7 +43,7 @@ import org.jetbrains.annotations.Nullable;
  * {@value #KW_PER_MM} кВт на мм стенки при v_opt (пропорционально скорости) [моё]. Отклонение увеличивает
  * вероятность скрытого дефекта шва ({@link PipeMill#weldDefectPerM}). Трубы по 1 м — {@code welded_pipe}.
  */
-public final class PipeWelderBlockEntity extends IronworksBlockEntity implements ShaftConsumer, PanelHost, PieceReceiver {
+public final class PipeWelderBlockEntity extends IronworksBlockEntity implements ShaftConsumer, PanelHost, PieceReceiver, dev.denfry.promptcritical.mod.client.whole.RealScaleBlockEntity {
     public static final double FORMING_W = 30_000, HF_EFFICIENCY = 0.85, V_OPT_M_MIN = 20, KW_PER_MM = 50, MIN_RPM = 16;
     public static final int[] ODS_MM = {114, 159, 219, 273, 325};
     public static final PipeKind[] KINDS = {PipeKind.LINE, PipeKind.STRUCTURAL, PipeKind.BOILER};
@@ -119,7 +119,8 @@ public final class PipeWelderBlockEntity extends IronworksBlockEntity implements
 
     @Override
     public boolean acceptPiece(ItemStack in, Direction travel) {
-        return start(in);
+        // реальный масштаб: лента входит с севера вдоль линии стана
+        return (!real() || travel == facing().getOpposite()) && start(in);
     }
 
     @Override
@@ -154,6 +155,8 @@ public final class PipeWelderBlockEntity extends IronworksBlockEntity implements
         pipes.set(SteelworksComponents.STEEL_STOCK.get(), SteelworksComponents.SteelStock.of(s.grade(), s.thicknessM(), d, s.porous(),
                 s.cracked(), st.heatNo(), s.tempK(), now));
         level.playSound(null, worldPosition, SoundEvents.FIRE_EXTINGUISH, SoundSource.BLOCKS, 0.5f, 1.4f);
+        // реальный масштаб: труба уходит на рольганг за южным торцом стана (клетка (0, 1, 6) модели)
+        if (real() && Steelworks.handOff(level, Steelworks.world(worldPosition, facing(), 0, 1, 6), pipes, facing().getOpposite())) return;
         ItemStack rest = inv.output(pipes);
         if (!rest.isEmpty()) Ironworks.spill(level, worldPosition.above(2), rest);
     }

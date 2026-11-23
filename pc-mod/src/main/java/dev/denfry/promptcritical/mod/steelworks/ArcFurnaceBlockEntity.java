@@ -38,7 +38,7 @@ import org.jetbrains.annotations.Nullable;
  * воронкой), дуга — правый клик, плавка готова — выпуск в ковш перед носком (Shift и правый клик или сам при 1620 °C,
  * если ковш стоит). Кабель — к любой наружной грани корпуса.
  */
-public class ArcFurnaceBlockEntity extends GridDeviceBlockEntity<ArcFurnaceUnit> {
+public class ArcFurnaceBlockEntity extends GridDeviceBlockEntity<ArcFurnaceUnit> implements dev.denfry.promptcritical.mod.client.whole.RealScaleBlockEntity {
     private static final double DT = 0.05;
     /** Химия переплавленного лома углеродистой стали [допущение]. */
     private static final Map<AlloyElement, Double> SCRAP_CHEM = new EnumMap<>(Map.of(AlloyElement.C, 0.002,
@@ -66,6 +66,9 @@ public class ArcFurnaceBlockEntity extends GridDeviceBlockEntity<ArcFurnaceUnit>
 
     @Override
     public List<List<Face>> terminals() {
+        // реальный масштаб: кабель — только к вводу на западной грани (−1, 3, 0) модели
+        if (real()) return List.of(List.of(new Face(Steelworks.world(worldPosition, facing(), -1, 3, 0),
+                dev.denfry.promptcritical.mod.multiblock.Footprint.rotation(facing()).rotate(Direction.WEST))));
         List<Face> out = new ArrayList<>();
         for (int x = -1; x <= 1; x++) for (int y = -1; y <= 1; y++) for (int z = -1; z <= 1; z++) {
             for (Direction d : Direction.values()) {

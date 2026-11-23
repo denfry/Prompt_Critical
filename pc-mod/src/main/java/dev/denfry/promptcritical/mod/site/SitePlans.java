@@ -242,7 +242,37 @@ public final class SitePlans {
                     st("foundation", 120, n(CONCRETE, 4)),
                     st("furnace_brickwork", 240, n(BRICKS, 14)),
                     st("furnace_ironwork", 200, n(INGOT, 40), n(BEAM, 20)),
-                    st("pusher_burner", 160, n(INGOT, 15), n(PIPE, 5))));
+                    st("pusher_burner", 160, n(INGOT, 15), n(PIPE, 5))),
+            // ДСП Эру на 6 т: кожух и свод ≈ 16 т, люлька, стойки и рукава электродов ≈ 9 т; футеровка ≈ 15 м³ (оценки)
+            "electric_arc_furnace_real", plan("electric_arc_furnace_real", PcBlocks.ELECTRIC_ARC_FURNACE_REAL, 25,
+                    st("foundation", 160, n(CONCRETE, 15)),
+                    st("vessel", 300, n(PLATE, 120), n(INGOT, 40)),
+                    st("lining", 200, n(BRICKS, 15)),
+                    st("electrode_gear", 240, n(INGOT, 80), n(PIPE, 10), n(WIRE, 100))),
+            // стенд доводки: портал с бункерами ≈ 7 т, тележка ковша с рельсами ≈ 3 т (оценки)
+            "ladle_station_real", plan("ladle_station_real", PcBlocks.LADLE_STATION_REAL, 10,
+                    st("foundation", 120, n(CONCRETE, 6)),
+                    st("station_frame", 240, n(BEAM, 50), n(PLATE, 20)),
+                    st("ladle_car", 160, n(INGOT, 25), n(PIPE, 5))),
+            // чугунная изложница на слиток ≈ 1,2 т весит ≈ 1,5 т (оценка)
+            "ingot_mold_real", plan("ingot_mold_real", PcBlocks.INGOT_MOLD_REAL, 1.5,
+                    st("ingot_mold_casting", 100, n(INGOT, 15))),
+            // печь с выкатным подом 3 × 4 × 5 м: каркас, кожух, тележка и дверь ≈ 18 т, горелки ≈ 2 т, кладка ≈ 25 м³ (оценки)
+            "heat_treatment_furnace_real", plan("heat_treatment_furnace_real", PcBlocks.HEAT_TREATMENT_FURNACE_REAL, 20,
+                    st("foundation", 160, n(CONCRETE, 10)),
+                    st("furnace_brickwork", 240, n(BRICKS, 25)),
+                    st("casing_car", 300, n(PLATE, 100), n(INGOT, 60), n(BEAM, 20)),
+                    st("burners", 120, n(PIPE, 20))),
+            // стан ТВЧ: формовочные клети ≈ 20 т, сварочный узел с генератором ≈ 10 т (оценки)
+            "pipe_welder_real", plan("pipe_welder_real", PcBlocks.PIPE_WELDER_REAL, 30,
+                    st("foundation", 160, n(CONCRETE, 10)),
+                    st("forming_stands", 300, n(INGOT, 200)),
+                    st("weld_box", 240, n(INGOT, 70), n(PLATE, 20), n(WIRE, 100))),
+            // прошивной стан с валками ⌀0,9 м: станина, клеть шестерён и шпиндели ≈ 30 т, жёлоб, стержень и столы ≈ 10 т (оценки)
+            "piercing_mill_real", plan("piercing_mill_real", PcBlocks.PIERCING_MILL_REAL, 40,
+                    st("foundation", 200, n(CONCRETE, 20)),
+                    st("mill_housing", 400, n(INGOT, 250), n(PLATE, 50)),
+                    st("run_out", 240, n(INGOT, 60), n(BEAM, 40))));
 
     private SitePlans() {}
 

@@ -1,0 +1,32 @@
+{
+  "parent": "minecraft:recipes/root",
+  "criteria": {
+    "has_pipe_welder": {
+      "conditions": {
+        "items": [
+          {
+            "items": "promptcritical:pipe_welder"
+          }
+        ]
+      },
+      "trigger": "minecraft:inventory_changed"
+    },
+    "has_the_recipe": {
+      "conditions": {
+        "recipe": "promptcritical:steelworks/pipe_welder_real_drawing"
+      },
+      "trigger": "minecraft:recipe_unlocked"
+    }
+  },
+  "requirements": [
+    [
+      "has_the_recipe",
+      "has_pipe_welder"
+    ]
+  ],
+  "rewards": {
+    "recipes": [
+      "promptcritical:steelworks/pipe_welder_real_drawing"
+    ]
+  }
+}

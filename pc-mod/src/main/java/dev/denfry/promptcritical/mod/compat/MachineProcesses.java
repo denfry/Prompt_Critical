@@ -239,9 +239,9 @@ public final class MachineProcesses {
                 of(item(0, PcItems.PIG_IRON), item(0, PcItems.STEEL_SCRAP), item(0, PcItems.BURNT_LIME),
                         fluid(0, "oxygen")),
                 of(item(PcBlocks.LADLE), fluid(0, "converter_gas"))));
-        p.add(new Process("ladle_station", Plant.STEEL, on(PcBlocks.LADLE_STATION),
+        p.add(new Process("ladle_station", Plant.STEEL, on(PcBlocks.LADLE_STATION, PcBlocks.LADLE_STATION_REAL),
                 of(item(PcBlocks.LADLE), item(0, PcItems.FERROALLOY), fluid(0, "argon")), of(item(PcBlocks.LADLE))));
-        p.add(new Process("ingot_mold", Plant.STEEL, on(PcBlocks.INGOT_MOLD),
+        p.add(new Process("ingot_mold", Plant.STEEL, on(PcBlocks.INGOT_MOLD, PcBlocks.INGOT_MOLD_REAL),
                 of(item(PcBlocks.LADLE), item(1, PcItems.REFRACTORY_BRICK)),
                 of(item(0, PcItems.STEEL_INGOT), item(0, PcItems.STEEL_SCRAP))));
         // прокат и трубы (08 §8.7)
@@ -251,11 +251,11 @@ public final class MachineProcesses {
         p.add(new Process("rolling_mill_stand", Plant.ROLLING, on(PcBlocks.ROLLING_MILL_STAND, PcBlocks.ROLLER_TABLE),
                 of(item(1, PcItems.STEEL_INGOT, PcItems.STEEL_BILLET)),
                 of(item(0, PcItems.STEEL_BILLET, PcItems.STEEL_PLATE, PcItems.STEEL_ROD, PcItems.STEEL_BEAM))));
-        p.add(new Process("piercing_mill", Plant.ROLLING, on(PcBlocks.PIERCING_MILL),
+        p.add(new Process("piercing_mill", Plant.ROLLING, on(PcBlocks.PIERCING_MILL, PcBlocks.PIERCING_MILL_REAL),
                 of(item(1, PcItems.STEEL_BILLET, PcItems.STEEL_INGOT)), of(item(0, PcItems.SEAMLESS_PIPE))));
-        p.add(new Process("pipe_welder", Plant.ROLLING, on(PcBlocks.PIPE_WELDER),
+        p.add(new Process("pipe_welder", Plant.ROLLING, on(PcBlocks.PIPE_WELDER, PcBlocks.PIPE_WELDER_REAL),
                 of(item(PcItems.STEEL_PLATE)), of(item(0, PcItems.WELDED_PIPE))));
-        p.add(new Process("heat_treatment", Plant.ROLLING, on(PcBlocks.HEAT_TREATMENT_FURNACE, PcBlocks.QUENCH_TANK),
+        p.add(new Process("heat_treatment", Plant.ROLLING, on(PcBlocks.HEAT_TREATMENT_FURNACE, PcBlocks.HEAT_TREATMENT_FURNACE_REAL, PcBlocks.QUENCH_TANK),
                 of(item(1, PcItems.STEEL_PLATE, PcItems.STEEL_ROD, PcItems.STEEL_BEAM, PcItems.SEAMLESS_PIPE,
                         PcItems.WELDED_PIPE), fuelGas(), water(0)),
                 of(item(1, PcItems.STEEL_PLATE, PcItems.STEEL_ROD, PcItems.STEEL_BEAM, PcItems.SEAMLESS_PIPE,

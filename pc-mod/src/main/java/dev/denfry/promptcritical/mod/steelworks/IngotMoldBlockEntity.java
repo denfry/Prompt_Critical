@@ -42,7 +42,7 @@ import org.jetbrains.annotations.Nullable;
  * [BALANCE]; затем слиток выбивается в выходы — горячие {@code steel_ingot} по 100 кг (≈ 160 мм) и обрезь
  * головной части ломом. Огнеупорный кирпич на пустую изложницу — прибыльная надставка (обрезь 12 % вместо 17 %).
  */
-public final class IngotMoldBlockEntity extends IronworksBlockEntity {
+public final class IngotMoldBlockEntity extends IronworksBlockEntity implements dev.denfry.promptcritical.mod.client.whole.RealScaleBlockEntity {
     public static final double CAPACITY_KG = 1_000, TEEM_KG_TICK = 50, SOLIDIFY_S = 3_600, STRIP_K = 1373.15;
     public static final int POUR_REACH = 4;
     private static final MachineInventory.Role[] ROLES = new MachineInventory.Role[12];
