@@ -448,7 +448,8 @@ public final class RealScaleGameTests {
                 "candu6_reactor", "bn600_reactor", "am1_reactor", "lancashire_boiler", "mill_engine", "cupola_furnace_real",
                 "lancashire_stoker", "crucible_furnace_real", "coal_jig_real", "quench_tower_real", "powered_roof_support_real", "molding_station_real", "shakeout_grate_real",
                 "degasification_pump_real", "forced_draft_fan_real", "induced_draft_fan_real", "magnetic_separator_real",
-                "flotation_cell_real", "electrode_boiler_real"}) {
+                "flotation_cell_real", "electrode_boiler_real",
+                "acheson_furnace_real", "electrode_extruder_real", "baking_furnace_real"}) {
             h.assertTrue(!dev.denfry.promptcritical.mod.multiblock.WholePorts.of(id).isEmpty(), id + " declares its ports");
             for (Direction f : Direction.Plane.HORIZONTAL)
                 for (var port : dev.denfry.promptcritical.mod.multiblock.WholePorts.of(id)) {
@@ -488,7 +489,7 @@ public final class RealScaleGameTests {
             h.assertTrue(r > 1 / 1.5 && r < 1.5, plan.id() + ": planned metal " + Math.round(plan.plannedMetalKg() / 1000) + " t vs prototype "
                     + Math.round(plan.metalKg() / 1000) + " t");
         }
-        h.assertTrue(n == 48, "forty-eight real-scale plans (eight reactors and NPP units, sixteen I0 machines, two ironmaking, four power and water, four mining and coke, eight steel, six boiler-house, degasification and ore-dressing), got " + n);
+        h.assertTrue(n == 51, "fifty-one real-scale plans (eight reactors and NPP units, sixteen I0 machines, two ironmaking, four power and water, four mining and coke, eight steel, six boiler-house, degasification and ore-dressing, three carbon), got " + n);
         h.succeed();
     }
 

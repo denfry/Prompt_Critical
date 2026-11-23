@@ -37,7 +37,7 @@ import org.jetbrains.annotations.Nullable;
  * печь стоит. Энергия на электрод — {@link #GRAPHITIZE_J} [BALANCE]; электроды с трещинами не берёт — из них не
  * выйдет графит ядерной чистоты.
  */
-public final class AchesonFurnaceBlockEntity extends GridDeviceBlockEntity<ConsumerUnit> implements PanelHost {
+public final class AchesonFurnaceBlockEntity extends GridDeviceBlockEntity<ConsumerUnit> implements PanelHost, dev.denfry.promptcritical.mod.client.whole.WholeModelHost {
     public static final int DEMAND_KW = 500;
     /** Энергия графитации одного электрода, Дж [BALANCE]: 50 с при полной мощности. */
     public static final double GRAPHITIZE_J = 25e6;
@@ -141,6 +141,25 @@ public final class AchesonFurnaceBlockEntity extends GridDeviceBlockEntity<Consu
 
     private void output(ItemStack s) {
         for (int i = 1; i <= OUT && !s.isEmpty(); i++) s = inv.insertItem(i, s, false);
+    }
+
+    // --- машина реального масштаба: цельная модель ---
+
+    @Override
+    @org.jetbrains.annotations.Nullable
+    public String wholeModelId() {
+        return dev.denfry.promptcritical.mod.client.whole.WholeModelHost.idOf(getBlockState());
+    }
+
+    @Override
+    public net.minecraft.core.Direction wholeModelFacing() {
+        return getBlockState().getValue(net.minecraft.world.level.block.state.properties.BlockStateProperties.HORIZONTAL_FACING);
+    }
+
+    /** Свет — с клетки перед фасадом: сам контроллер внутри корпуса. */
+    @Override
+    public net.minecraft.core.BlockPos wholeModelLightPos() {
+        return worldPosition.relative(wholeModelFacing());
     }
 
     @Override

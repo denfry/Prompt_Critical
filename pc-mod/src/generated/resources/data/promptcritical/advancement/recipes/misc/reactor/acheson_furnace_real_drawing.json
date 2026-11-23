@@ -1,0 +1,32 @@
+{
+  "parent": "minecraft:recipes/root",
+  "criteria": {
+    "has_acheson_furnace": {
+      "conditions": {
+        "items": [
+          {
+            "items": "promptcritical:acheson_furnace"
+          }
+        ]
+      },
+      "trigger": "minecraft:inventory_changed"
+    },
+    "has_the_recipe": {
+      "conditions": {
+        "recipe": "promptcritical:reactor/acheson_furnace_real_drawing"
+      },
+      "trigger": "minecraft:recipe_unlocked"
+    }
+  },
+  "requirements": [
+    [
+      "has_the_recipe",
+      "has_acheson_furnace"
+    ]
+  ],
+  "rewards": {
+    "recipes": [
+      "promptcritical:reactor/acheson_furnace_real_drawing"
+    ]
+  }
+}

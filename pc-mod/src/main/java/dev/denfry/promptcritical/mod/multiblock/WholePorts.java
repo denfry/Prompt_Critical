@@ -63,6 +63,13 @@ public final class WholePorts {
             Map.entry("quench_tower_real", List.of(p(-1, -1, 0, W), p(1, -1, 0, E))),
             // эмульсия под давлением — с запада, слив — на восток у блока клапанов
             Map.entry("powered_roof_support_real", List.of(p(0, 0, 2, W), p(1, 0, 2, E))),
+            // ванна Ачесона открыта сверху: шихту грузят и выгружают через верх любой клетки ванны; ток — кабелем
+            Map.entry("acheson_furnace_real", top(-6, 5, 1, 0, 2)),
+            // масса — в бункер над цилиндром, сырые электроды — с рольганга на запад, пар — в рубашку с юга
+            Map.entry("electrode_extruder_real", List.of(p(-1, 1, 0, U), p(-1, 1, 1, U), p(-3, 1, 0, W), p(0, 1, 1, S))),
+            // газ — в коллектор с запада, дымовые газы — на юг к трубе, электроды — сверху под крышкой
+            Map.entry("baking_furnace_real", List.of(p(-2, 2, 0, W), p(0, 1, 3, S), p(-1, 3, 1, U), p(0, 3, 1, U), p(1, 3, 1, U),
+                    p(-1, 3, 2, U), p(0, 3, 2, U), p(1, 3, 2, U))),
             // конвертер: газоход сверху над камином; лом и известь — с восточного края площадки у опоры (клетка лестницы
             // (3, 2, 0) свободна)
             Map.entry("bof_vessel_real", List.of(p(0, 5, 1, U), p(3, 2, 1, E))),
@@ -98,6 +105,14 @@ public final class WholePorts {
             Map.entry("electrode_boiler_real", List.of(p(0, 2, 1, S), p(1, 0, 1, S))));
 
     private WholePorts() {}
+
+    /** Верхние грани ряда клеток {@code y} в прямоугольнике x0…x1, z0…z1 (открытый сверху объём). */
+    private static List<Port> top(int x0, int x1, int y, int z0, int z1) {
+        List<Port> l = new java.util.ArrayList<>();
+        for (int x = x0; x <= x1; x++)
+            for (int z = z0; z <= z1; z++) l.add(p(x, y, z, U));
+        return List.copyOf(l);
+    }
 
     /** Порты машины; пустой список — машина портов не объявила. */
     public static List<Port> of(String id) {

@@ -24,7 +24,7 @@ public class WholeModelRenderer<T extends BlockEntity & WholeModelHost> implemen
     @Override
     public void render(T be, float partialTicks, PoseStack ms, MultiBufferSource buffers, int light, int overlay) {
         if (be.getLevel() == null) return;
-        String id = be.wholeModelId();
+        String id = modelId(be);
         WholeModels.Model m = id == null ? null : WholeModels.get(id);
         if (m == null) return;
         Direction facing = be.wholeModelFacing();
@@ -36,6 +36,15 @@ public class WholeModelRenderer<T extends BlockEntity & WholeModelHost> implemen
             b.center().rotateYDegrees(yRot).uncenter().translate(c.x(), c.y(), c.z()).light(lit).renderInto(ms, vc);
         }
         parts(be, partialTicks, ms, vc, lit);
+    }
+
+    /**
+     * Какую цельную модель рисовать: по умолчанию — {@link WholeModelHost#wholeModelId()}; машина с вариантом состояния
+     * (горит — {@code <id>_lit}) подменяет её здесь, а порты и формы клеток остаются по id блока.
+     */
+    @org.jetbrains.annotations.Nullable
+    protected String modelId(T be) {
+        return be.wholeModelId();
     }
 
     /** Подвижные части (partial-модели) поверх цельной модели; по умолчанию их нет. */
@@ -77,7 +86,7 @@ public class WholeModelRenderer<T extends BlockEntity & WholeModelHost> implemen
 
     @Override
     public AABB getRenderBoundingBox(T be) {
-        String id = be.wholeModelId();
+        String id = modelId(be);
         WholeModels.Model m = id == null ? null : WholeModels.get(id);
         if (m == null) return new AABB(be.getBlockPos());
         double[] a = WholeModelMath.rotate(m.min(), be.wholeModelFacing()), b = WholeModelMath.rotate(m.max(), be.wholeModelFacing());

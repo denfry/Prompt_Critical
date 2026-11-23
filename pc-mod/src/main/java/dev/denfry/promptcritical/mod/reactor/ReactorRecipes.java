@@ -106,5 +106,9 @@ public final class ReactorRecipes extends RecipeProvider {
                 .pattern("BWB").pattern("KKK").pattern("BWB")
                 .define('B', PcItems.REFRACTORY_BRICK.get()).define('W', wire).define('K', PcItems.COKE_BREEZE.get())
                 .unlockedBy("has_green_electrode", has(PcItems.GREEN_ELECTRODE.get())).save(out, id("acheson_furnace"));
+        // чертёж: машина реального масштаба строится на стройплощадке по массе прототипа (SitePlans)
+        ShapedRecipeBuilder.shaped(RecipeCategory.MISC, dev.denfry.promptcritical.mod.site.SiteRegistry.ACHESON_FURNACE_REAL_DRAWING.get())
+                .pattern("PPP").pattern(" M ").define('P', net.minecraft.world.item.Items.PAPER).define('M', PcBlocks.ACHESON_FURNACE.get())
+                .unlockedBy("has_acheson_furnace", has(PcBlocks.ACHESON_FURNACE.get())).save(out, id("acheson_furnace_real_drawing"));
     }
 }

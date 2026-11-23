@@ -95,9 +95,17 @@ public final class IronworksRecipes extends RecipeProvider {
         ShapedRecipeBuilder.shaped(RecipeCategory.MISC, PcBlocks.ELECTRODE_EXTRUDER.get())
                 .pattern("IPI").pattern("SCS").define('I', sheet).define('P', Items.PISTON).define('S', shaft).define('C', casing)
                 .unlockedBy("has_pitch", has(PcItems.COAL_TAR_PITCH.get())).save(out, id("electrode_extruder"));
+        // чертёж: машина реального масштаба строится на стройплощадке по массе прототипа (SitePlans)
+        ShapedRecipeBuilder.shaped(RecipeCategory.MISC, dev.denfry.promptcritical.mod.site.SiteRegistry.ELECTRODE_EXTRUDER_REAL_DRAWING.get())
+                .pattern("PPP").pattern(" M ").define('P', net.minecraft.world.item.Items.PAPER).define('M', PcBlocks.ELECTRODE_EXTRUDER.get())
+                .unlockedBy("has_electrode_extruder", has(PcBlocks.ELECTRODE_EXTRUDER.get())).save(out, id("electrode_extruder_real_drawing"));
         ShapedRecipeBuilder.shaped(RecipeCategory.MISC, PcBlocks.BAKING_FURNACE.get())
                 .pattern("RRR").pattern("RFR").pattern("RRR").define('R', brick).define('F', Items.FURNACE)
                 .unlockedBy("has_green_electrode", has(PcItems.GREEN_ELECTRODE.get())).save(out, id("baking_furnace"));
+        // чертёж: машина реального масштаба строится на стройплощадке по массе прототипа (SitePlans)
+        ShapedRecipeBuilder.shaped(RecipeCategory.MISC, dev.denfry.promptcritical.mod.site.SiteRegistry.BAKING_FURNACE_REAL_DRAWING.get())
+                .pattern("PPP").pattern(" M ").define('P', net.minecraft.world.item.Items.PAPER).define('M', PcBlocks.BAKING_FURNACE.get())
+                .unlockedBy("has_baking_furnace", has(PcBlocks.BAKING_FURNACE.get())).save(out, id("baking_furnace_real_drawing"));
 
         // подготовка руды
         ShapedRecipeBuilder.shaped(RecipeCategory.MISC, PcBlocks.MAGNETIC_SEPARATOR.get())

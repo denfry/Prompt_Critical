@@ -41,6 +41,9 @@ public final class IronworksClient {
     static {
         // башня тушения реального масштаба: цельная модель и partial — до запекания
         QuenchTowerRenderer.init();
+        ElectrodeExtruderRenderer.init();
+        for (String id : new String[] {"acheson_furnace_real", "acheson_furnace_real_lit", "baking_furnace_real", "baking_furnace_real_lit"})
+            dev.denfry.promptcritical.mod.client.whole.WholeModels.register(id);
     }
 
     private static PartialModel partial(String path) {
@@ -57,7 +60,13 @@ public final class IronworksClient {
         event.registerBlockEntityRenderer(IronworksBlockEntities.QUENCH_TOWER.get(), c -> new QuenchTowerRenderer());
         event.registerBlockEntityRenderer(IronworksBlockEntities.GAS_EXHAUSTER.get(), c -> new FoundryMachineRenderer<>(EXHAUSTER_ROTOR, Motion.SPIN_Z, 16, 16, 1));
         event.registerBlockEntityRenderer(IronworksBlockEntities.BLAST_BLOWER.get(), c -> new FoundryMachineRenderer<>(BLOWER_ROTOR, Motion.SPIN_Z, 16, 16, 1));
-        event.registerBlockEntityRenderer(IronworksBlockEntities.ELECTRODE_EXTRUDER.get(), c -> new FoundryMachineRenderer<>(EXTRUDER_SCREW, Motion.SPIN_X, 8, 8, 1));
+        event.registerBlockEntityRenderer(IronworksBlockEntities.ELECTRODE_EXTRUDER.get(),
+                c -> new ElectrodeExtruderRenderer(new FoundryMachineRenderer<>(EXTRUDER_SCREW, Motion.SPIN_X, 8, 8, 1)));
+        // углеродная линия реального масштаба: печи Ачесона и обжига — цельные модели с горящим вариантом
+        event.registerBlockEntityRenderer(dev.denfry.promptcritical.mod.reactor.ReactorBlockEntities.ACHESON_FURNACE.get(),
+                c -> new dev.denfry.promptcritical.mod.client.whole.LitWholeModelRenderer<>());
+        event.registerBlockEntityRenderer(IronworksBlockEntities.BAKING_FURNACE.get(),
+                c -> new dev.denfry.promptcritical.mod.client.whole.LitWholeModelRenderer<>());
         event.registerBlockEntityRenderer(IronworksBlockEntities.HOT_BLAST_STOVE_REAL.get(), c -> new HotBlastStoveRealRenderer());
         event.registerBlockEntityRenderer(IronworksBlockEntities.BLAST_BLOWER_ENGINE.get(), c -> new BlastBlowerEngineRenderer());
         // реальный: барабан вокруг x через (y 24, z 8), хранится на 8 px восточнее; скорость — вала в клетке-порте

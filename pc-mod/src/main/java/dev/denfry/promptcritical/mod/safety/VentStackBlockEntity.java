@@ -22,16 +22,17 @@ import net.minecraft.world.phys.Vec3;
 import org.jetbrains.annotations.Nullable;
 
 /**
- * Вентиляционная труба реакторного зала {@code vent_stack} со спецфильтрами (03a §3a.9.1, §3a.9.3). Нижний блок трубы
- * — узел вытяжки: включённая вытяжка забирает выбросы радионуклидов ({@link RadiationService#airRelease}) из точек в
- * {@value #HALL_RADIUS} блоках и выпускает их с верха трубы (столб блоков {@code vent_stack}), пропустив через фильтры
- * в {@value #FILTER_RANGE} блоках от основания: каждый {@code hepa_filter} — ступень по аэрозолю (цезий), каждый
+ * Вентиляционная труба реакторного зала {@code vent_stack} со спецфильтрами (03a §3a.9.1, §3a.9.3). Нижнее звено трубы
+ * ({@link VentStackBlock}, 3 × 3 × 3) — узел вытяжки: включённая вытяжка забирает выбросы радионуклидов
+ * ({@link RadiationService#airRelease}) из точек в {@value #HALL_RADIUS} блоках и выпускает их с верха трубы (звенья
+ * {@code vent_stack} друг на друге), пропустив через фильтры в {@value #FILTER_RANGE} блоках от контроллера основания
+ * (до двух блоков снаружи звена): каждый {@code hepa_filter} — ступень по аэрозолю (цезий), каждый
  * {@code charcoal_filter} — ступень по йоду ({@link VentFilterBank}); в дождь воздух влажный (выше 70 %), и уголь
  * хуже держит органический йод. Задержанная активность копится и светит от первого фильтра как точечный источник 04b.
  * Разрежение зала (−20 Па) и воздушная сеть §3a.9.2 не моделируются [допущение: вытяжка забирает весь выброс зала].
  */
 public final class VentStackBlockEntity extends UraniumProcessBlockEntity implements dev.denfry.promptcritical.mod.environment.SelfEmittingSource {
-    public static final int HALL_RADIUS = 16, FILTER_RANGE = 2;
+    public static final int HALL_RADIUS = 16, FILTER_RANGE = 3;
     private static final Map<Level, Set<VentStackBlockEntity>> STACKS = new WeakHashMap<>();
 
     private VentFilterBank bank = new VentFilterBank(0, 0);
@@ -124,10 +125,12 @@ public final class VentStackBlockEntity extends UraniumProcessBlockEntity implem
     /** Пересчитать фильтры и высоту трубы. */
     public void survey(ServerLevel level) {
         STACKS.computeIfAbsent(level, k -> new HashSet<>()).add(this);
-        base = !level.getBlockState(worldPosition.below()).is(PcBlocks.VENT_STACK.get());
+        int seg = VentStackBlock.SEGMENT_H;
+        base = !level.getBlockState(worldPosition.below(seg)).is(PcBlocks.VENT_STACK.get());
         BlockPos t = worldPosition;
-        while (level.getBlockState(t.above()).is(PcBlocks.VENT_STACK.get()) && t.getY() < level.getMaxBuildHeight()) t = t.above();
-        top = t;
+        while (level.getBlockState(t.above(seg)).is(PcBlocks.VENT_STACK.get()) && t.getY() < level.getMaxBuildHeight()) t = t.above(seg);
+        // верх — верхний ряд клеток последнего звена (контроллер звена — в его середине)
+        top = t.above();
         int hepa = 0, charcoal = 0;
         firstFilter = null;
         for (BlockPos p : BlockPos.betweenClosed(worldPosition.offset(-FILTER_RANGE, -FILTER_RANGE, -FILTER_RANGE),

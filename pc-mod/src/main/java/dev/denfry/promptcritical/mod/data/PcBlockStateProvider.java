@@ -297,6 +297,14 @@ public final class PcBlockStateProvider extends BlockStateProvider {
                 default -> id;
             };
             case "sis_logic_solver" -> s.getValue(PcProperties.ALARM) ? id + "_tripped" : id;
+            // вентиляционная труба реального масштаба: основание с патрубком, ствол, оголовок
+            case "vent_stack" -> switch (s.getValue(PcProperties.CHIMNEY_PART)) {
+                case BASE -> "vent_stack_real_base";
+                case TOP -> "vent_stack_real_cap";
+                case MIDDLE -> "vent_stack_real";
+            };
+            case "hepa_filter", "charcoal_filter", "grid_consumer" -> id + "_real"
+                    + (id.equals("grid_consumer") && s.getValue(BlockStateProperties.LIT) ? "_lit" : "");
             case "chimney_stack" -> switch (s.getValue(PcProperties.CHIMNEY_PART)) {
                 case BASE -> id + "_base";
                 case TOP -> id + "_cap";
@@ -387,6 +395,7 @@ public final class PcBlockStateProvider extends BlockStateProvider {
                  "flotation_cell_real", "electrode_boiler_real" -> "whole_empty";
             case "electric_arc_furnace_real", "ladle_station_real", "ingot_mold_real", "heat_treatment_furnace_real", "pipe_welder_real",
                  "piercing_mill_real" -> "whole_empty";
+            case "acheson_furnace_real", "electrode_extruder_real", "baking_furnace_real" -> "whole_empty";
             case "pressurizer" -> s.getValue(BlockStateProperties.LIT) ? id + "_lit" : id;
             // тяжёлая вода T3
             case "gs_exchange_tower" -> "absorption_tower";
@@ -463,7 +472,6 @@ public final class PcBlockStateProvider extends BlockStateProvider {
             case "relay_cabinet" -> s.getValue(PcProperties.ALARM) ? id + "_tripped" : id;
             case "lv_distribution_box" -> s.getValue(PcProperties.ALARM) ? id + "_tripped" : id;
             case "station_battery" -> s.getValue(PcProperties.CHARGE) == 4 ? id : id + "_soc" + s.getValue(PcProperties.CHARGE);
-            case "grid_consumer" -> s.getValue(BlockStateProperties.LIT) ? id : id + "_dark";
             case "capacitor_bank" -> s.getValue(BlockStateProperties.LIT) ? id + "_on" : id;
             case "electric_arc_furnace" -> s.getValue(PcProperties.ARC_FURNACE_SEGMENT) == PcProperties.ArcFurnaceSegment.SHELL ? id
                     : s.getValue(BlockStateProperties.LIT) ? id + "_roof_arcing" : id + "_roof";

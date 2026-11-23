@@ -108,6 +108,16 @@ public final class SiteText {
         stage("quench_chamber", "spray chamber, header and nozzles", "камера орошения, коллектор и форсунки");
         stage("stack", "hood and steel stack", "зонт и стальная труба");
         drawing("powered_roof_support_real", "Two-Leg Shield Support", "двухстоечной щитовой секции крепи");
+        drawing("acheson_furnace_real", "Acheson Graphitizing Furnace Bed", "ванны графитации Ачесона");
+        stage("furnace_bed", "brick bed and end walls", "кирпичная ванна и торцевые стенки");
+        stage("electrode_heads", "electrode heads and bus bars", "электродные головки и шины");
+        drawing("electrode_extruder_real", "Hydraulic Electrode Extrusion Press", "гидравлического электродного пресса");
+        stage("press_frame", "platens, tie rods and crosshead", "плиты, колонны и траверса");
+        stage("mud_cylinder", "jacketed mud cylinder, hopper and die", "цилиндр массы с рубашкой, бункер и мундштук");
+        stage("pump_unit", "hydraulic pump unit and roller table", "гидронасосная установка и рольганг");
+        drawing("baking_furnace_real", "Carbon Baking Furnace Chamber", "камеры обжиговой печи электродов");
+        stage("baking_casing", "steel casing and refractory pit", "стальной кожух и огнеупорная камера");
+        stage("baking_flues", "gas header, flues and cover", "газовый коллектор, газоходы и крышка");
         stage("pontoons", "base pontoons, rear bridge and advancing ram", "основание, задний мост и домкрат передвижки");
         stage("support_legs", "hydraulic legs and valve bank", "гидростойки и блок клапанов");
         stage("canopy", "canopy, caving shield and lemniscate links", "перекрытие, ограждение и лемнискатные рычаги");

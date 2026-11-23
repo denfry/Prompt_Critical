@@ -32,7 +32,7 @@ import org.jetbrains.annotations.Nullable;
  * ({@code pitch_coke}) и пек ({@code coal_tar_pitch}) по доле связующего со щита (окно 25–30 %); масса греется паром
  * до 160 °C (моё: температура рубашки постоянна). Электрод ⌀ 0,3 м — {@code green_electrode} с {@code electrode_state}.
  */
-public final class ElectrodeExtruderBlockEntity extends KineticMachineBlockEntity<CyclicMachine> implements PanelHost {
+public final class ElectrodeExtruderBlockEntity extends KineticMachineBlockEntity<CyclicMachine> implements PanelHost, dev.denfry.promptcritical.mod.client.whole.WholeModelHost {
     public static final int FILLER_ITEMS = 3;
     public static final double PASTE_K = 433.15, DIAMETER_M = 0.3;
     private static final MachineInventory.Role[] ROLES = {MachineInventory.Role.INPUT, MachineInventory.Role.INPUT,
@@ -102,6 +102,25 @@ public final class ElectrodeExtruderBlockEntity extends KineticMachineBlockEntit
             }
         }
         setStateFlag(PcProperties.RUNNING, u.running());
+    }
+
+    // --- машина реального масштаба: цельная модель ---
+
+    @Override
+    @org.jetbrains.annotations.Nullable
+    public String wholeModelId() {
+        return dev.denfry.promptcritical.mod.client.whole.WholeModelHost.idOf(getBlockState());
+    }
+
+    @Override
+    public net.minecraft.core.Direction wholeModelFacing() {
+        return getBlockState().getValue(net.minecraft.world.level.block.state.properties.BlockStateProperties.HORIZONTAL_FACING);
+    }
+
+    /** Свет — с клетки перед фасадом: сам контроллер внутри корпуса. */
+    @Override
+    public net.minecraft.core.BlockPos wholeModelLightPos() {
+        return worldPosition.relative(wholeModelFacing());
     }
 
     @Override
