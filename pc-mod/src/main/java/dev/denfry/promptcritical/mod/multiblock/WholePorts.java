@@ -55,7 +55,7 @@ public final class WholePorts {
             Map.entry("ion_exchange_column_real", List.of(p(0, 3, 0, U), p(0, 0, 0, N))),
             // электрические машины: вал Create — через клетку-порт, кабели — к клеммам, труб и лотков нет
             Map.entry("shaft_generator_real", List.of()),
-            Map.entry("electric_motor_mv_real", List.of())),
+            Map.entry("electric_motor_mv_real", List.of()),
             // рядовой уголь — в загрузочную воронку сверху, мытый уголь — с жёлоба за сливным порогом на юге; порода и
             // промпродукт — из затворов под постелью на запад, подпиточная вода — в подрешётное отделение с запада
             Map.entry("coal_jig_real", List.of(p(0, 2, 0, U), p(0, 1, 4, S), p(-1, 0, 1, W), p(-1, 0, 3, W), p(-1, 1, 2, W))),
