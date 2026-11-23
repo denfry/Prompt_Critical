@@ -74,6 +74,51 @@ public final class Lightning {
         return Math.max(0, Math.min(1, surgeKv / bilKv - 0.8));
     }
 
+    /** Куда пришёлся удар: в фазный провод, в опору (через её заземлитель) или в землю рядом с линией. */
+    public enum Stroke { PHASE, TOWER, NEARBY }
+
+    /**
+     * Исход удара для изоляции линии с U₅₀% {@code cfoKv}: перекрытие — если перенапряжение выше U₅₀%; волна, ушедшая по
+     * проводу к концам пролёта, после перекрытия срезана до U₅₀%, без перекрытия — само перенапряжение (удар в опору
+     * без обратного перекрытия волны на проводе не даёт).
+     */
+    public record Outcome(boolean flashover, double overvoltageKv, double surgeKv) {
+    }
+
+    /**
+     * Перенапряжение и перекрытие по таблице §7.15.1. {@code groundOhm} — заземлитель опоры (бесконечность — опора без
+     * заземления: ток идёт в провод); {@code heightM}, {@code distanceM} — подвес провода и расстояние удара рядом.
+     */
+    public static Outcome stroke(double iKa, Stroke kind, double cfoKv, double groundOhm, double heightM, double distanceM) {
+        double u = switch (kind) {
+            case PHASE -> directStrokeKv(iKa);
+            case TOWER -> Double.isFinite(groundOhm) ? towerStrokeKv(iKa, groundOhm) : directStrokeKv(iKa);
+            case NEARBY -> inducedKv(iKa, heightM, Math.max(distanceM, 1));
+        };
+        boolean flash = u > cfoKv;
+        double surge = flash ? cfoKv : kind == Stroke.TOWER && Double.isFinite(groundOhm) ? 0 : u;
+        return new Outcome(flash, u, surge);
+    }
+
+    /** U₅₀% штыревой изоляции линии класса {@code vc}, кВ: у 6–10 кВ — грозовой импульс класса, у 0,4 кВ [BALANCE] 30 кВ. */
+    public static double lineCfoKv(VoltageClass vc) {
+        return Double.isNaN(vc.bilKv) ? LV_LINE_CFO_KV : vc.bilKv;
+    }
+
+    /** U₅₀% изоляции линии 0,4 кВ (штыревые изоляторы на крюках), кВ [BALANCE]. */
+    public static final double LV_LINE_CFO_KV = 30;
+    /** Стержень {@code ground_electrode}: 3 м, ⌀ 16 мм (тест T7.18). */
+    public static final double ROD_LENGTH_M = 3, ROD_DIAMETER_M = 0.016;
+    /** Коэффициент использования нескольких стержней рядом (взаимное экранирование) [BALANCE]. */
+    public static final double ROD_UTILIZATION = 0.8;
+
+    /** Заземлитель из {@code rods} стержней в грунте ρ, Ом: R₁/n, у нескольких — с коэффициентом использования. */
+    public static double electrodeOhm(double soilOhmM, int rods) {
+        if (rods <= 0) return Double.POSITIVE_INFINITY;
+        double r1 = rodResistanceOhm(soilOhmM, ROD_LENGTH_M, ROD_DIAMETER_M);
+        return rods == 1 ? r1 : r1 / (rods * ROD_UTILIZATION);
+    }
+
     /** ОПН ограничивает волну до 2,5–3 U_ф,max; берём 2,75. */
     public static double arresterLimitKv(VoltageClass vc) {
         return 2.75 * vc.volts * 1.1 * Math.sqrt(2.0 / 3) / 1e3;

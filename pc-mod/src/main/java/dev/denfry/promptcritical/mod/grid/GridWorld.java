@@ -43,7 +43,12 @@ public final class GridWorld {
     /** Шаг поиска блоков вдоль провода, м; концы пролёта на этой длине не проверяются. */
     static final double TOUCH_STEP_M = 0.25, TOUCH_END_M = 0.7;
     /** Радиус, в котором молния ищет пролёт, блоков. */
-    static final double LIGHTNING_RADIUS = 6;
+    /**
+     * Молния (07 §7.15.1): провод ближе {@link #DIRECT_STROKE_M} — прямой удар в фазу; дальше, до
+     * {@link #LIGHTNING_RADIUS}, — индуктированное перенапряжение 30·I·h/d. Плотность ударов в грозу
+     * {@code lightning.flash_density_storm}, км⁻²·с⁻¹; полоса сбора — по расстоянию между проводами {@link #PHASE_SPACING_M}.
+     */
+    static final double LIGHTNING_RADIUS = 64, DIRECT_STROKE_M = 1.5, FLASH_DENSITY_STORM = 1e-3, PHASE_SPACING_M = 1;
 
     private final SimLevelBinding binding;
     private final Set<BlockPos> devices = new TreeSet<>();
@@ -124,6 +129,7 @@ public final class GridWorld {
         }
         if (gameTime % 20 == 0) maintainSpans(g);
         if (gameTime % 100 == 0) weather(g);
+        if (gameTime % 20 == 7) storm(g);
     }
 
     // ================================================================ узлы
@@ -205,7 +211,7 @@ public final class GridWorld {
     }
 
     /** Натянуть пролёт между загруженными коннекторами. */
-    void addSpan(ConnectorBlockEntity a, ConnectorBlockEntity b, String conductor, boolean insulated) {
+    public void addSpan(ConnectorBlockEntity a, ConnectorBlockEntity b, String conductor, boolean insulated) {
         double len = Math.sqrt(a.getBlockPos().distSqr(b.getBlockPos()));
         a.addSpan(b.getBlockPos(), conductor, insulated, len);
         b.addSpan(a.getBlockPos(), conductor, insulated, len);
@@ -334,10 +340,16 @@ public final class GridWorld {
         g.setHourOfDay(days == 0 ? Double.NaN : dev.denfry.promptcritical.sim.grid.DailyLoadProfile.hourOfDay(level.getDayTime(), days));
     }
 
-    /** Удар молнии в точку: ближайший пролёт в радиусе получает перекрытие изоляции. */
+    /**
+     * Удар молнии в точку (§7.15.1). Громоотвод на вершине опоры отводит ток в её заземлитель — удар в опору:
+     * перекрытие, только если I·R_з выше U₅₀% изоляции (опора без заземлителя — как удар в провод). Удар в саму опору,
+     * соединитель или в провод — прямой удар в фазу. Удар в землю рядом с линией наводит 30·I·h/d. Перекрытие —
+     * однофазное КЗ пролёта с АПВ; волна доходит до трансформаторов на концах пролёта.
+     */
     public void lightning(Vec3 at) {
         GridSubsystem g = grid();
         if (g == null) return;
+        ServerLevel level = level();
         SpanView best = null;
         double bestD = LIGHTNING_RADIUS, bestT = 0.5;
         for (SpanView s : spans) {
@@ -352,10 +364,110 @@ public final class GridWorld {
                 bestT = t;
             }
         }
-        if (best == null || !g.strikeLine(best.key, bestT)) return;
+        if (best == null) return;
         Vec3 p = point(ConnectorBlockEntity.attachPoint(best.a, best.mv), ConnectorBlockEntity.attachPoint(best.b, best.mv),
                 sagOf(g, best), bestT);
-        level().sendParticles(ParticleTypes.ELECTRIC_SPARK, p.x, p.y, p.z, 40, 0.3, 0.3, 0.3, 0.3);
+        BlockPos hit = BlockPos.containing(at.x, at.y - 0.5, at.z);
+        dev.denfry.promptcritical.sim.grid.Lightning.Stroke kind;
+        double groundOhm = Double.POSITIVE_INFINITY, distance = Math.hypot(p.x - at.x, p.z - at.z);
+        BlockPos rod = rodAbovePole(level, hit);
+        if (rod != null) {
+            kind = dev.denfry.promptcritical.sim.grid.Lightning.Stroke.TOWER;
+            groundOhm = poleGroundOhm(level, rod.below());
+        } else if (onPole(level, hit) || distance <= DIRECT_STROKE_M) {
+            kind = dev.denfry.promptcritical.sim.grid.Lightning.Stroke.PHASE;
+        } else {
+            kind = dev.denfry.promptcritical.sim.grid.Lightning.Stroke.NEARBY;
+        }
+        double height = Math.max(1, p.y - level.getHeight(net.minecraft.world.level.levelgen.Heightmap.Types.WORLD_SURFACE,
+                (int) Math.floor(p.x), (int) Math.floor(p.z)));
+        GridSubsystem.Strike s = g.strikeLine(best.key, bestT, kind, groundOhm, height, distance);
+        if (s == null) return;
+        if (s.outcome().flashover()) level.sendParticles(ParticleTypes.ELECTRIC_SPARK, p.x, p.y, p.z, 40, 0.3, 0.3, 0.3, 0.3);
+        if (!s.burntTransformers().isEmpty()) burnt(level, s.burntTransformers());
+    }
+
+    /** Громоотвод, в который ударило, если он стоит на вершине опоры. */
+    @org.jetbrains.annotations.Nullable
+    private static BlockPos rodAbovePole(ServerLevel level, BlockPos hit) {
+        for (BlockPos q : new BlockPos[] {hit, hit.below()})
+            if (level.getBlockState(q).is(net.minecraft.world.level.block.Blocks.LIGHTNING_ROD) && onPole(level, q.below())) return q;
+        return null;
+    }
+
+    private static boolean onPole(ServerLevel level, BlockPos pos) {
+        BlockState st = level.getBlockState(pos);
+        return st.getBlock() instanceof PoleBlock || level.getBlockEntity(pos) instanceof ConnectorBlockEntity;
+    }
+
+    /**
+     * Сопротивление заземлителя опоры, Ом: стержни {@code ground_electrode} под её основанием (квадрат 3 × 3, до трёх
+     * блоков вниз), грунт — средний по блокам вокруг стержней (§7.15.1); без стержней — бесконечность.
+     */
+    public static double poleGroundOhm(ServerLevel level, BlockPos top) {
+        BlockPos base = top;
+        while (onPole(level, base.below()) && top.getY() - base.getY() < 64) base = base.below();
+        int rods = 0;
+        double rho = 0;
+        int soil = 0;
+        for (BlockPos q : BlockPos.betweenClosed(base.offset(-1, -3, -1), base.offset(1, -1, 1))) {
+            if (!level.getBlockState(q).is(PcBlocks.GROUND_ELECTRODE.get())) continue;
+            rods++;
+            for (Direction d : Direction.values()) {
+                double r = soilOhmM(level.getBlockState(q.relative(d)));
+                if (r > 0) {
+                    rho += r;
+                    soil++;
+                }
+            }
+        }
+        return dev.denfry.promptcritical.sim.grid.Lightning.electrodeOhm(soil == 0 ? 100 : rho / soil, rods);
+    }
+
+    /**
+     * Удельное сопротивление грунта по блоку, Ом·м (§7.15.1 [BALANCE]): глина, ил и болото — 30, земля и суглинок — 100,
+     * песок и гравий — 1000, камень — 3000; не грунт (воздух, стержень) — 0.
+     */
+    static double soilOhmM(BlockState st) {
+        if (st.is(net.minecraft.world.level.block.Blocks.CLAY) || st.is(net.minecraft.world.level.block.Blocks.MUD)
+                || st.is(net.minecraft.world.level.block.Blocks.MUDDY_MANGROVE_ROOTS)) return 30;
+        if (st.is(BlockTags.DIRT)) return 100;
+        if (st.is(BlockTags.SAND) || st.is(net.minecraft.world.level.block.Blocks.GRAVEL)) return 1000;
+        if (st.is(BlockTags.BASE_STONE_OVERWORLD) || st.is(BlockTags.TERRACOTTA)) return 3000;
+        return 0;
+    }
+
+    /** Трансформаторы, пробитые волной: дым и хлопок у блока. */
+    private void burnt(ServerLevel level, List<dev.denfry.promptcritical.sim.core.SimId> ids) {
+        for (BlockPos pos : devices)
+            if (level.isLoaded(pos) && level.getBlockEntity(pos) instanceof TransformerBlockEntity t && t.unit() != null
+                    && ids.contains(t.unit().id())) {
+                level.sendParticles(ParticleTypes.LARGE_SMOKE, pos.getX() + 0.5, pos.getY() + 1.2, pos.getZ() + 0.5, 30, 0.4, 0.4, 0.4, 0.02);
+                level.playSound(null, pos, SoundEvents.GENERIC_EXPLODE.value(), SoundSource.BLOCKS, 1.0f, 1.4f);
+            }
+    }
+
+    /**
+     * Гроза: каждый пролёт в загруженных чанках ловит удары пуассоновским потоком λ = n_g·W·l, W = b + 28·h^0,6
+     * (Eriksson, §7.15.1). Удар — настоящая молния в точку провода; дальше её разбирает {@link #lightning}.
+     */
+    private void storm(GridSubsystem g) {
+        ServerLevel level = level();
+        if (!level.isThundering()) return;
+        for (SpanView s : List.copyOf(spans)) {
+            if (!level.isLoaded(s.a) || !level.isLoaded(s.b)) continue;
+            Vec3 a = ConnectorBlockEntity.attachPoint(s.a, s.mv), b = ConnectorBlockEntity.attachPoint(s.b, s.mv);
+            double h = Math.max(1, (a.y + b.y) / 2 - level.getHeight(net.minecraft.world.level.levelgen.Heightmap.Types.WORLD_SURFACE,
+                    (s.a.getX() + s.b.getX()) / 2, (s.a.getZ() + s.b.getZ()) / 2));
+            double w = dev.denfry.promptcritical.sim.grid.Lightning.collectionWidthM(PHASE_SPACING_M, h);
+            double rate = dev.denfry.promptcritical.sim.grid.Lightning.strokeRatePerS(FLASH_DENSITY_STORM, w, a.distanceTo(b));
+            if (level.random.nextDouble() >= rate) continue; // шаг — 1 с
+            Vec3 p = point(a, b, sagOf(g, s), 0.1 + 0.8 * level.random.nextDouble());
+            net.minecraft.world.entity.LightningBolt bolt = net.minecraft.world.entity.EntityType.LIGHTNING_BOLT.create(level);
+            if (bolt == null) continue;
+            bolt.moveTo(p.x, p.y, p.z);
+            level.addFreshEntity(bolt);
+        }
     }
 
     /** Отчёт для команды отладки. */

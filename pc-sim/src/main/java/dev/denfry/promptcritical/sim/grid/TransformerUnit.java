@@ -13,6 +13,7 @@ public final class TransformerUnit extends GridUnit {
     static final TapChanger TAPS = new TapChanger(-2, 2, 0.025, 0, false);
 
     int tap;
+    boolean arrester, damaged;
     BranchId branch;
     double[] carried;
 
@@ -32,6 +33,25 @@ public final class TransformerUnit extends GridUnit {
 
     public int tap() {
         return tap;
+    }
+
+    /** ОПН {@code surge_arrester} у выводов ВН (§7.15.1); блок пишет его каждую секунду. */
+    public void setArrester(boolean present) {
+        arrester = present;
+    }
+
+    public boolean arrester() {
+        return arrester;
+    }
+
+    /** Изоляция обмотки пробита волной: внутреннее КЗ в баке, пока трансформатор не заменят. */
+    public boolean damaged() {
+        return damaged;
+    }
+
+    void breakDown() {
+        damaged = true;
+        if (branch != null && owner.ready()) owner.grid().applyBranchFault(branch, 0.05, FaultType.LINE_LINE, 0, false);
     }
 
     /** Переключатель ответвлений: ПБВ ±2 ступени по 2,5 %, только без напряжения. */
@@ -98,6 +118,7 @@ public final class TransformerUnit extends GridUnit {
             b.grid.importBranch(branch, s);
         }
         if (tap != 0) b.grid.setTap(branch, tap);
+        if (damaged) b.grid.applyBranchFault(branch, 0.05, FaultType.LINE_LINE, 0, false);
     }
 
     @Override
@@ -116,6 +137,7 @@ public final class TransformerUnit extends GridUnit {
     void save(StateWriter out) {
         saveCommon(out);
         out.putInt("tap", tap);
+        out.putBoolean("damaged", damaged);
         if (carried != null) out.putDoubles("branch", carried, carried.length);
     }
 
@@ -123,6 +145,7 @@ public final class TransformerUnit extends GridUnit {
     void load(StateReader in) {
         loadCommon(in);
         tap = in.getInt("tap");
+        damaged = in.has("damaged") && in.getBoolean("damaged");
         carried = in.has("branch") ? in.getDoubles("branch") : null;
         carried = PowerGrid.savedBranchState(carried);
     }
