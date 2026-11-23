@@ -44,7 +44,7 @@ import org.jetbrains.annotations.Nullable;
  * ({@code seamless_pipe} с {@code pipe_spec}), сколько выйдет из массы заготовки; уходит на рольганг справа или в
  * выходы. Типоразмер и назначение — со щита.
  */
-public final class PiercingMillBlockEntity extends IronworksBlockEntity implements ShaftConsumer, PanelHost, PieceReceiver {
+public final class PiercingMillBlockEntity extends IronworksBlockEntity implements ShaftConsumer, PanelHost, PieceReceiver, dev.denfry.promptcritical.mod.client.whole.RealScaleBlockEntity {
     public static final double PIERCE_S = 3, RATED_W = 800_000, MIN_RPM = 16, EXIT_CHILL_K = 50;
     /** Типоразмеры, мм: наружный диаметр × стенка [BALANCE]. */
     public static final int[][] SIZES = {{57, 4}, {76, 5}, {89, 6}, {114, 7}, {159, 8}, {219, 8}};
@@ -116,13 +116,15 @@ public final class PiercingMillBlockEntity extends IronworksBlockEntity implemen
 
     @Override
     public boolean acceptPiece(ItemStack in, Direction dir) {
+        // реальный масштаб: заготовка идёт с рольганга с севера вдоль оси прошивки (на юг)
+        if (real()) return dir == facing().getOpposite() && start(in, dir);
         return dir.getAxis() == facing().getClockWise().getAxis() && start(in, dir);
     }
 
     @Override
     protected void serverTick(SimLevelBinding b) {
         ItemStack in = inv.getStackInSlot(0);
-        if (!in.isEmpty() && ready() && start(in, facing().getClockWise())) in.shrink(1);
+        if (!in.isEmpty() && ready() && start(in, real() ? facing().getOpposite() : facing().getClockWise())) in.shrink(1);
         if (!billet.isEmpty() && healthy && Math.abs(rpm) >= MIN_RPM) {
             leftS -= 0.05;
             if (leftS <= 0) finish();
@@ -150,7 +152,9 @@ public final class PiercingMillBlockEntity extends IronworksBlockEntity implemen
         pipes.set(SteelworksComponents.STEEL_STOCK.get(), SteelworksComponents.SteelStock.of(s.grade(), wall, od, s.porous(), s.cracked(),
                 st.heatNo(), s.tempK() - EXIT_CHILL_K, now));
         level.playSound(null, worldPosition, SoundEvents.ANVIL_USE, SoundSource.BLOCKS, 0.8f, 0.8f);
-        if (Steelworks.handOff(level, worldPosition.relative(travel, 2), pipes, travel)) return;
+        // реальный масштаб: гильза сбрасывается вбок на восток с выходного стола (клетка (1, 1, 5) модели)
+        if (real() ? Steelworks.handOff(level, Steelworks.world(worldPosition, facing(), 2, 1, 5), pipes, facing().getClockWise())
+                : Steelworks.handOff(level, worldPosition.relative(travel, 2), pipes, travel)) return;
         ItemStack rest = inv.output(pipes);
         if (!rest.isEmpty()) Ironworks.spill(level, worldPosition.above(2), rest);
     }

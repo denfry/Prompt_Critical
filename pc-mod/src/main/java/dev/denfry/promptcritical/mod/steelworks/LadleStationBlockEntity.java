@@ -46,7 +46,7 @@ import org.jetbrains.annotations.Nullable;
  * {@value #ARGON_NM3_MIN} нм³/мин физ.) перемешивает ванну и остужает её. Щит показывает химию и марку, которая
  * получится при разливке.
  */
-public final class LadleStationBlockEntity extends IronworksBlockEntity implements PanelHost {
+public final class LadleStationBlockEntity extends IronworksBlockEntity implements PanelHost, dev.denfry.promptcritical.mod.client.whole.RealScaleBlockEntity {
     public static final int REACH = 2, BINS = 3;
     public static final double ARGON_NM3_MIN = 0.1;
     private static final MachineInventory.Role[] ROLES = {MachineInventory.Role.INPUT, MachineInventory.Role.INPUT,

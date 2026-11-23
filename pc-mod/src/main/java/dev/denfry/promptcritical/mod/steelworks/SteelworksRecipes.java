@@ -113,6 +113,24 @@ public final class SteelworksRecipes extends RecipeProvider {
         ShapedRecipeBuilder.shaped(RecipeCategory.MISC, dev.denfry.promptcritical.mod.site.SiteRegistry.REHEATING_FURNACE_REAL_DRAWING.get())
                 .pattern("PPP").pattern("RFR").pattern("ITI").define('P', Items.PAPER).define('R', brick).define('F', Items.BLAST_FURNACE)
                 .define('I', sheet).define('T', pipe).unlockedBy("has_steel_ingot", has(PcItems.STEEL_INGOT.get())).save(out, id("reheating_furnace_real_drawing"));
+        ShapedRecipeBuilder.shaped(RecipeCategory.MISC, dev.denfry.promptcritical.mod.site.SiteRegistry.ELECTRIC_ARC_FURNACE_REAL_DRAWING.get())
+                .pattern("PPP").pattern("IMI").define('P', Items.PAPER).define('I', sheet).define('M', PcBlocks.ELECTRIC_ARC_FURNACE.get())
+                .unlockedBy("has_electric_arc_furnace", has(PcBlocks.ELECTRIC_ARC_FURNACE.get())).save(out, id("electric_arc_furnace_real_drawing"));
+        ShapedRecipeBuilder.shaped(RecipeCategory.MISC, dev.denfry.promptcritical.mod.site.SiteRegistry.LADLE_STATION_REAL_DRAWING.get())
+                .pattern("PPP").pattern("IMI").define('P', Items.PAPER).define('I', sheet).define('M', PcBlocks.LADLE_STATION.get())
+                .unlockedBy("has_ladle_station", has(PcBlocks.LADLE_STATION.get())).save(out, id("ladle_station_real_drawing"));
+        ShapedRecipeBuilder.shaped(RecipeCategory.MISC, dev.denfry.promptcritical.mod.site.SiteRegistry.INGOT_MOLD_REAL_DRAWING.get())
+                .pattern("PPP").pattern("IMI").define('P', Items.PAPER).define('I', sheet).define('M', PcBlocks.INGOT_MOLD.get())
+                .unlockedBy("has_ingot_mold", has(PcBlocks.INGOT_MOLD.get())).save(out, id("ingot_mold_real_drawing"));
+        ShapedRecipeBuilder.shaped(RecipeCategory.MISC, dev.denfry.promptcritical.mod.site.SiteRegistry.HEAT_TREATMENT_FURNACE_REAL_DRAWING.get())
+                .pattern("PPP").pattern("IMI").define('P', Items.PAPER).define('I', sheet).define('M', PcBlocks.HEAT_TREATMENT_FURNACE.get())
+                .unlockedBy("has_heat_treatment_furnace", has(PcBlocks.HEAT_TREATMENT_FURNACE.get())).save(out, id("heat_treatment_furnace_real_drawing"));
+        ShapedRecipeBuilder.shaped(RecipeCategory.MISC, dev.denfry.promptcritical.mod.site.SiteRegistry.PIPE_WELDER_REAL_DRAWING.get())
+                .pattern("PPP").pattern("IMI").define('P', Items.PAPER).define('I', sheet).define('M', PcBlocks.PIPE_WELDER.get())
+                .unlockedBy("has_pipe_welder", has(PcBlocks.PIPE_WELDER.get())).save(out, id("pipe_welder_real_drawing"));
+        ShapedRecipeBuilder.shaped(RecipeCategory.MISC, dev.denfry.promptcritical.mod.site.SiteRegistry.PIERCING_MILL_REAL_DRAWING.get())
+                .pattern("PPP").pattern("IMI").define('P', Items.PAPER).define('I', sheet).define('M', PcBlocks.PIERCING_MILL.get())
+                .unlockedBy("has_piercing_mill", has(PcBlocks.PIERCING_MILL.get())).save(out, id("piercing_mill_real_drawing"));
 
         // печи
         ShapedRecipeBuilder.shaped(RecipeCategory.MISC, PcBlocks.REHEATING_FURNACE.get())

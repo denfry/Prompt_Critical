@@ -60,6 +60,12 @@ public final class SiteRegistry {
     public static final DeferredItem<DesignDrawingItem> POWERED_ROOF_SUPPORT_REAL_DRAWING = drawing("powered_roof_support_real");
     public static final DeferredItem<DesignDrawingItem> BOF_VESSEL_REAL_DRAWING = drawing("bof_vessel_real");
     public static final DeferredItem<DesignDrawingItem> REHEATING_FURNACE_REAL_DRAWING = drawing("reheating_furnace_real");
+    public static final DeferredItem<DesignDrawingItem> ELECTRIC_ARC_FURNACE_REAL_DRAWING = drawing("electric_arc_furnace_real");
+    public static final DeferredItem<DesignDrawingItem> LADLE_STATION_REAL_DRAWING = drawing("ladle_station_real");
+    public static final DeferredItem<DesignDrawingItem> INGOT_MOLD_REAL_DRAWING = drawing("ingot_mold_real");
+    public static final DeferredItem<DesignDrawingItem> HEAT_TREATMENT_FURNACE_REAL_DRAWING = drawing("heat_treatment_furnace_real");
+    public static final DeferredItem<DesignDrawingItem> PIPE_WELDER_REAL_DRAWING = drawing("pipe_welder_real");
+    public static final DeferredItem<DesignDrawingItem> PIERCING_MILL_REAL_DRAWING = drawing("piercing_mill_real");
     public static final DeferredItem<DesignDrawingItem> MOLDING_STATION_REAL_DRAWING = drawing("molding_station_real");
     public static final DeferredItem<DesignDrawingItem> SHAKEOUT_GRATE_REAL_DRAWING = drawing("shakeout_grate_real");
     public static final DeferredItem<DesignDrawingItem> MACHINE_LATHE_REAL_DRAWING = drawing("machine_lathe_real");

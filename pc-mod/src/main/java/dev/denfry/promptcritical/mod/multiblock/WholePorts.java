@@ -68,6 +68,13 @@ public final class WholePorts {
             Map.entry("bof_vessel_real", List.of(p(0, 5, 1, U), p(3, 2, 1, E))),
             // методическая печь: садка и выдача в выходы — через загрузочное окно на юге, газ — к горелке на востоке
             Map.entry("reheating_furnace_real", List.of(p(0, 0, 1, S), p(1, 0, 0, E))),
+            // сталь и прокат I2: шихта — в боковое окно дуговой печи; ферросплавы сверху и аргон сбоку у доводки;
+            // газ к горелкам термической печи; лента и труба по линии стана ТВЧ; заготовка и гильза прошивного
+            Map.entry("electric_arc_furnace_real", List.of(p(1, 1, 0, E))),
+            Map.entry("ladle_station_real", List.of(p(1, 4, 1, U), p(-1, 3, 0, W))),
+            Map.entry("heat_treatment_furnace_real", List.of(p(-1, 1, 2, W))),
+            Map.entry("pipe_welder_real", List.of(p(0, 1, 0, N), p(0, 1, 5, S))),
+            Map.entry("piercing_mill_real", List.of(p(0, 1, 0, N), p(1, 1, 5, E))),
             // песок — в бункер сверху на востоке; заформованная опока — с фасада у стола
             Map.entry("molding_station_real", List.of(p(1, 1, 0, U), p(0, 0, 0, N))),
             // отливки и выбитый песок — с фасада настила

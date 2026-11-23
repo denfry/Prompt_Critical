@@ -24,7 +24,7 @@ import org.jetbrains.annotations.Nullable;
  * холодным; режим «Воздух» — {@link HeatTreatment#airCool} (отпуск закалённой, нормализация, снятие напряжений,
  * старение), металл выходит горячим. Трубам марка меняется и в {@code pipe_spec}.
  */
-public final class HeatTreatFurnaceBlockEntity extends BatchFurnaceBlockEntity {
+public final class HeatTreatFurnaceBlockEntity extends BatchFurnaceBlockEntity implements dev.denfry.promptcritical.mod.client.whole.RealScaleBlockEntity {
     public static final int TANK_REACH = 2, DOOR_TICKS = 40;
     private boolean quench;
     private int doorTicks;

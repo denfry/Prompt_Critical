@@ -997,7 +997,9 @@ public final class PcBlocks {
                 || b == MACHINE_LATHE_REAL.get() || b == DRILL_PRESS_REAL.get() || b == MILLING_MACHINE_REAL.get()
                 || b == SHAPING_MACHINE_REAL.get() || b == SURFACE_GRINDER_REAL.get()
                 || b == DEGASIFICATION_PUMP_REAL.get() || b == FORCED_DRAFT_FAN_REAL.get() || b == INDUCED_DRAFT_FAN_REAL.get()
-                || b == MAGNETIC_SEPARATOR_REAL.get() || b == FLOTATION_CELL_REAL.get() || b == ELECTRODE_BOILER_REAL.get();
+                || b == MAGNETIC_SEPARATOR_REAL.get() || b == FLOTATION_CELL_REAL.get() || b == ELECTRODE_BOILER_REAL.get()
+                || b == ELECTRIC_ARC_FURNACE_REAL.get() || b == LADLE_STATION_REAL.get() || b == INGOT_MOLD_REAL.get()
+                || b == HEAT_TREATMENT_FURNACE_REAL.get() || b == PIPE_WELDER_REAL.get() || b == PIERCING_MILL_REAL.get();
     }
 
     /**
@@ -1291,6 +1293,39 @@ public final class PcBlocks {
     public static final DeferredBlock<PcDeviceBlock> HEAT_TREATMENT_FURNACE = device("heat_treatment_furnace", lit(brick()),
             Spec.facing(BlockStateProperties.LIT, BlockStateProperties.OPEN).footprint(Footprint.of(Segment.box(0, 1, 0, 1, 0, 1))),
             FoundryBlock.with(HeatTreatFurnaceBlockEntity::new));
+    /**
+     * Сталь и прокат I2 реального масштаба (08 §8.6.2–8.7.5; art/blockbench/steelworks/real/steel_i2_real.author.js,
+     * rolling/real/rolling_shop_real.author.js, rolling/piercing_mill): те же BE и юниты, что у старой серии, — BE
+     * отличает двойника по {@link dev.denfry.promptcritical.mod.client.whole.RealScaleBlockEntity#real()}.
+     */
+    public static final Footprint FP_ELECTRIC_ARC_FURNACE_REAL = Footprint.tiled(-1, 1, 0, 4, -1, 1);
+    public static final DeferredBlock<PcDeviceBlock> ELECTRIC_ARC_FURNACE_REAL = device("electric_arc_furnace_real", machine().noOcclusion(),
+            Spec.facing(BlockStateProperties.LIT).segments(PcProperties.wholeSegments(FP_ELECTRIC_ARC_FURNACE_REAL.segments().size()),
+                    FP_ELECTRIC_ARC_FURNACE_REAL),
+            FoundryBlock.with(dev.denfry.promptcritical.mod.steelworks.ArcFurnaceBlockEntity::new));
+    public static final Footprint FP_LADLE_STATION_REAL = Footprint.tiled(-1, 1, 0, 4, -1, 1);
+    public static final DeferredBlock<PcDeviceBlock> LADLE_STATION_REAL = device("ladle_station_real", machine(),
+            Spec.facing(PcProperties.RUNNING).segments(PcProperties.wholeSegments(FP_LADLE_STATION_REAL.segments().size()), FP_LADLE_STATION_REAL),
+            FoundryBlock.with(LadleStationBlockEntity::new));
+    /** Изложница, уширенная книзу, на слиток ≈ 1,2 т: объём как у старой, 1 × 2 × 1. */
+    public static final DeferredBlock<PcDeviceBlock> INGOT_MOLD_REAL = device("ingot_mold_real", movable().lightLevel(s ->
+            s.hasProperty(PcProperties.FILLED) && s.getValue(PcProperties.FILLED) ? 10 : 0),
+            Spec.of(PcProperties.FILLED).footprint(FP_TALL2), FoundryBlock.with(IngotMoldBlockEntity::new));
+    public static final Footprint FP_HEAT_TREATMENT_FURNACE_REAL = Footprint.tiled(-1, 1, 0, 3, 0, 4);
+    public static final DeferredBlock<PcDeviceBlock> HEAT_TREATMENT_FURNACE_REAL = device("heat_treatment_furnace_real", lit(brick()),
+            Spec.facing(BlockStateProperties.LIT, BlockStateProperties.OPEN).segments(
+                    PcProperties.wholeSegments(FP_HEAT_TREATMENT_FURNACE_REAL.segments().size()), FP_HEAT_TREATMENT_FURNACE_REAL),
+            FoundryBlock.with(HeatTreatFurnaceBlockEntity::new));
+    /** Стан ТВЧ: вал Create — в западную грань клетки (−1, 0, 1), поперёк линии. */
+    public static final Footprint FP_PIPE_WELDER_REAL = Footprint.tiled(-1, 1, 0, 1, 0, 5);
+    public static final DeferredBlock<PcDeviceBlock> PIPE_WELDER_REAL = device("pipe_welder_real", machine(),
+            Spec.facing(PcProperties.RUNNING).segments(PcProperties.wholeSegments(FP_PIPE_WELDER_REAL.segments().size()), FP_PIPE_WELDER_REAL),
+            PortMachineBlock.with(new BlockPos(-1, 0, 1), false, PipeWelderBlockEntity::new));
+    /** Прошивной стан Маннесмана: прошивка вдоль z, вал Create — в западную грань клети шестерён (−1, 0, 0). */
+    public static final Footprint FP_PIERCING_MILL_REAL = Footprint.tiled(-1, 1, 0, 2, 0, 7);
+    public static final DeferredBlock<PcDeviceBlock> PIERCING_MILL_REAL = device("piercing_mill_real", machine(),
+            Spec.facing(PcProperties.RUNNING).segments(PcProperties.wholeSegments(FP_PIERCING_MILL_REAL.segments().size()), FP_PIERCING_MILL_REAL),
+            PortMachineBlock.with(new BlockPos(-1, 0, 0), false, PiercingMillBlockEntity::new));
     public static final DeferredBlock<PcDeviceBlock> QUENCH_TANK = device("quench_tank", machine(),
             Spec.facing(PcProperties.QUENCH_MEDIUM).footprint(Footprint.of(Segment.box(0, 1, 0, 0, 0, 1))),
             FoundryBlock.with(QuenchTankBlockEntity::new));
