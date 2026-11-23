@@ -105,7 +105,7 @@ public final class WholeShapes {
      * MillEngineRenderer {@code part(FLYWHEEL, …, 1, 1, 3)}). Их форма в покое — та же, что заметает вращение, так что
      * клетки под ними твёрдые: сквозь барабан и обод маховика не пройти (плейтест I0, 2026-11-23).
      */
-    private record Extra(String path, boolean whole, int dx, int dy, int dz) {}
+    private record Extra(String path, boolean whole, double dx, double dy, double dz) {}
 
     private static final Map<String, java.util.List<Extra>> EXTRAS = Map.ofEntries(
             Map.entry("winding_engine", java.util.List.of(new Extra("winding_engine_drum", true, 0, 0, 0))),
@@ -123,7 +123,17 @@ public final class WholeShapes {
             Map.entry("notching_press_real", parts("notching_press_real", 0, "ram", "index", "flywheel")),
             Map.entry("winding_machine_real", parts("winding_machine_real", 0, "faceplate", "spool")),
             Map.entry("heating_furnace_real", parts("heating_furnace_real", 0, "door")),
-            Map.entry("hardening_furnace_real", parts("hardening_furnace_real", 0, "door")));
+            Map.entry("hardening_furnace_real", parts("hardening_furnace_real", 0, "door")),
+            // электромашины (grid/client/RealShaftRenderer): ротор генератора и конец вала с полумуфтой двигателя
+            // крутятся на месте вокруг оси вала, нарисованы на блок выше контроллера
+            Map.entry("shaft_generator_real", parts("shaft_generator_real", 1, "rotor")),
+            Map.entry("electric_motor_mv_real", parts("electric_motor_mv_real", 1, "shaft")),
+            // дуговая печь (steelworks/client/SteelI2RealRenderer.arcFurnace): электроды сохранены на 48 px ниже и
+            // стоят на 3 блока выше контроллера, под дугой опущены ещё на 8 px — твёрдо и то и другое положение;
+            // свечение окна и дуги — свет, а не тело
+            Map.entry("electric_arc_furnace_real", java.util.List.of(
+                    new Extra("electric_arc_furnace_real/partial/electrodes", false, 0, 3, 0),
+                    new Extra("electric_arc_furnace_real/partial/electrodes", false, 0, 2.5, 0))));
 
     /** Partial {@code <id>/partial/<name>} машины {@code id}, нарисованные со сдвигом {@code dy} блоков. */
     private static java.util.List<Extra> parts(String id, int dy, String... names) {
@@ -157,15 +167,15 @@ public final class WholeShapes {
     }
 
     /**
-     * Занятость partial-модели {@code models/block/<path>.json}, сдвинутой на (dx, dy, dz) блоков: как у нарезчика
+     * Занятость partial-модели {@code models/block/<path>.json}, сдвинутой на (dx, dy, dz) блоков (можно дробно — как в отрисовщике): как у нарезчика
      * (pcslice.js {@code cellsOf}) — воксели по 4 px под рамкой каждого элемента с учётом его поворота.
      */
-    private static Map<Long, Long> partial(String path, int dx, int dy, int dz) {
+    private static Map<Long, Long> partial(String path, double dx, double dy, double dz) {
         try (InputStream in = WholeShapes.class.getResourceAsStream("/assets/" + PromptCritical.MOD_ID + "/models/block/" + path + ".json")) {
             if (in == null) return NONE;
             JsonObject m = JsonParser.parseReader(new InputStreamReader(in, StandardCharsets.UTF_8)).getAsJsonObject();
             Map<Long, Long> out = new HashMap<>();
-            int[] off = {16 * dx, 16 * dy, 16 * dz};
+            double[] off = {16 * dx, 16 * dy, 16 * dz};
             for (JsonElement el : m.getAsJsonArray("elements")) {
                 double[][] b = aabb(el.getAsJsonObject());
                 int[] v0 = new int[3], v1 = new int[3];
