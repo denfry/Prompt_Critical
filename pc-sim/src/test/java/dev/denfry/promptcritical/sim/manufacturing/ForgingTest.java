@@ -53,6 +53,15 @@ class ForgingTest {
         assertThat(r.piece().aM()).isEqualTo(0.020);
     }
 
+    @Test void hugeUpsetEnergyIsTooThinAndKeepsGeometry() {
+        var w = Workpiece.bar(grade45(), Workpiece.Section.ROUND, 0.040, 0.040, 0.080, 1473.15);
+        var r = Forging.series(w, Forging.Op.UPSET, 1e12, 8, 10, 5, 293.15);
+        assertThat(r.events()).containsExactly(ForgeEvent.TOO_THIN);
+        assertThat(r.piece().lengthM()).isEqualTo(w.lengthM());
+        assertThat(r.piece().aM()).isEqualTo(w.aM());
+        assertThat(r.piece().tempK()).isLessThan(w.tempK());
+    }
+
     @Test void shortBarUpsetsShorterAndFatter() {
         var w = Workpiece.bar(grade45(), Workpiece.Section.ROUND, 0.040, 0.040, 0.080, 1473.15);
         var r = Forging.series(w, Forging.Op.UPSET, 200, 8, 10, 0, 293.15);

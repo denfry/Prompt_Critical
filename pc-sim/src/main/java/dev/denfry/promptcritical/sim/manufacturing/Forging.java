@@ -88,7 +88,7 @@ public final class Forging {
 
     /**
      * Серия ударов: Δε = η·E·n / (σ·V), затем геометрия по операции, трещины по температуре
-     * удара и остывание за {@code seriesSeconds}. Если протяжка дала бы сечение тоньше
+     * удара и остывание за {@code seriesSeconds}. Если протяжка дала бы сечение, а осадка длину тоньше
      * {@link #MIN_SECTION_M}, геометрия не меняется, событие только TOO_THIN (трещины не проверяются).
      */
     public static Result series(Workpiece w, Op op, double blowEnergyJ, int blows, double strainRate,
@@ -117,6 +117,10 @@ public final class Forging {
                     events.add(ForgeEvent.BUCKLED);
                 } else {
                     double length = w.lengthM() * Math.exp(-strain);
+                    if (length < MIN_SECTION_M) {
+                        return new Result(ForgeHeating.cool(w, ambientK, seriesSeconds),
+                                List.of(ForgeEvent.TOO_THIN));
+                    }
                     double a = sideFor(w, w.volumeM3() / length);
                     p = w.withSection(a, secondSide(w, a), length);
                 }
