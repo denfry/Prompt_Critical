@@ -14,7 +14,7 @@ Instruments and messages in the mod use SI units. Here is what you will meet in 
 ## Power and energy
 
 - **kW and MW.** The I0 boiler delivers about 5 MW of heat; the steam engine about 119 kW at the shaft. The gap is the efficiency of the whole chain: thermal power and shaft power are not the same thing.
-- **Create stress.** In this mod 1 Create stress unit (SU) = 1 kW. A 119 kW engine gives the network about 119 SU; fans, pumps and machine tools draw stress according to the power they actually use.
+- **Create stress.** In this mod 1 Create stress unit (SU) = 190 W. A 119 kW engine gives the network about 626 SU, more than a Create water wheel; fans, pumps and machine tools draw stress according to the power they actually use.
 
 ## Flow rates
 

@@ -170,7 +170,7 @@ public final class ServerConfig {
 
         b.push("energy");
         W_PER_SU = b.comment("[BALANCE] Watts of shaft power per Create stress unit (00 §0.9, 00 §0.13 R4)")
-                .defineInRange("w_per_su", 1000.0, 1.0, 1.0e6);
+                .defineInRange("w_per_su", 190.0, 1.0, 1.0e6);
         J_PER_FE = b.comment("[BALANCE] Joules per Forge Energy unit (00 §0.9)")
                 .defineInRange("j_per_fe", 2.5, 0.01, 1.0e6);
         FE_SU_PARITY = b.comment("SU to FE parity (16 §16.7.1, R56): AUTO uses 2 x w_per_su joules per FE at the grid FE interface",
