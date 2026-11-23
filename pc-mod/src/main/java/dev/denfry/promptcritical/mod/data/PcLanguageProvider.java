@@ -101,6 +101,8 @@ public final class PcLanguageProvider extends LanguageProvider {
         b("sand_mold", "Sand Mould", "Песчаная форма");
         b("molding_station", "Moulding Machine", "Формовочная машина");
         b("shakeout_grate", "Shakeout Grate", "Выбивная решётка");
+        b("molding_station_real", "Jolt-Squeeze Moulding Machine", "Встряхивающе-прессовая формовочная машина");
+        b("shakeout_grate_real", "Vibrating Shakeout Grate", "Инерционная выбивная решётка");
         b("machine_lathe", "Lathe", "Токарный станок");
         b("drill_press", "Drill Press", "Сверлильный станок");
         b("milling_machine", "Knee Milling Machine", "Консольно-фрезерный станок");

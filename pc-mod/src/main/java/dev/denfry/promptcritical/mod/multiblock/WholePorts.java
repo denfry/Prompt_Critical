@@ -67,7 +67,11 @@ public final class WholePorts {
             // (3, 2, 0) свободна)
             Map.entry("bof_vessel_real", List.of(p(0, 5, 1, U), p(3, 2, 1, E))),
             // методическая печь: садка и выдача в выходы — через загрузочное окно на юге, газ — к горелке на востоке
-            Map.entry("reheating_furnace_real", List.of(p(0, 0, 1, S), p(1, 0, 0, E))));
+            Map.entry("reheating_furnace_real", List.of(p(0, 0, 1, S), p(1, 0, 0, E))),
+            // песок — в бункер сверху на востоке; заформованная опока — с фасада у стола
+            Map.entry("molding_station_real", List.of(p(1, 1, 0, U), p(0, 0, 0, N))),
+            // отливки и выбитый песок — с фасада настила
+            Map.entry("shakeout_grate_real", List.of(p(0, 0, 0, N), p(1, 0, 0, N))));
 
     private WholePorts() {}
 

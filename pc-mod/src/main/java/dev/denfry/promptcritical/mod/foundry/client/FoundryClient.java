@@ -23,6 +23,8 @@ public final class FoundryClient {
     private static final PartialModel LATHE_SPINDLE = partial("machine_lathe/partial/spindle");
     private static final PartialModel TABLE = partial("molding_station/partial/table");
     private static final PartialModel SHAKEOUT_DECK = partial("shakeout_grate/partial/deck");
+    private static final PartialModel TABLE_REAL = partial("molding_station_real/partial/table");
+    private static final PartialModel SHAKEOUT_DECK_REAL = partial("shakeout_grate_real/partial/deck");
     private static final PartialModel MILL_SPINDLE = partial("milling_machine/partial/spindle");
     private static final PartialModel SHAPER_RAM = partial("shaping_machine/partial/ram");
     private static final PartialModel GRINDER_WHEEL = partial("surface_grinder/partial/wheel");
@@ -33,6 +35,9 @@ public final class FoundryClient {
     static {
         // тигельная печь реального масштаба: цельная модель, части — до запекания
         dev.denfry.promptcritical.mod.client.whole.WholeModels.register("crucible_furnace_real");
+        // формовочная машина и выбивная решётка реального масштаба
+        dev.denfry.promptcritical.mod.client.whole.WholeModels.register("molding_station_real");
+        dev.denfry.promptcritical.mod.client.whole.WholeModels.register("shakeout_grate_real");
         CrucibleRealRenderer.init();
     }
 
@@ -89,8 +94,10 @@ public final class FoundryClient {
                 return be.wholeModelId() != null ? real.getRenderBoundingBox(be) : old.getRenderBoundingBox(be);
             }
         });
-        event.registerBlockEntityRenderer(FoundryBlockEntities.MOLDING_STATION.get(), c -> new FoundryMachineRenderer<>(TABLE, Motion.JOLT, 0, 0, 1));
-        event.registerBlockEntityRenderer(FoundryBlockEntities.SHAKEOUT_GRATE.get(), c -> new FoundryMachineRenderer<>(SHAKEOUT_DECK, Motion.JOLT, 0, 0, 1));
+        event.registerBlockEntityRenderer(FoundryBlockEntities.MOLDING_STATION.get(),
+                c -> new FoundryRealRenderer<>(TABLE, TABLE_REAL, FoundryRealRenderer.Shake.JOLT_SQUEEZE));
+        event.registerBlockEntityRenderer(FoundryBlockEntities.SHAKEOUT_GRATE.get(),
+                c -> new FoundryRealRenderer<>(SHAKEOUT_DECK, SHAKEOUT_DECK_REAL, FoundryRealRenderer.Shake.VIBRATE));
         event.registerBlockEntityRenderer(FoundryBlockEntities.MACHINE_LATHE.get(), c -> new FoundryMachineRenderer<>(LATHE_SPINDLE, Motion.SPIN_X, 14, 8, 1));
         event.registerBlockEntityRenderer(FoundryBlockEntities.DRILL_PRESS.get(), c -> new FoundryMachineRenderer<>(DRILL_SPINDLE, Motion.SPIN_Y, 8, 7, 4));
         event.registerBlockEntityRenderer(FoundryBlockEntities.MILLING_MACHINE.get(), c -> new FoundryMachineRenderer<>(MILL_SPINDLE, Motion.SPIN_Z, 8, 18, 2));

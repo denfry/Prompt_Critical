@@ -15,6 +15,8 @@ A [casting pattern](item:promptcritical:casting_pattern) is a wooden copy of the
 
 The [moulding machine](item:promptcritical:molding_station) jolts on a Create shaft and rams [foundry sand](item:promptcritical:foundry_sand) around the pattern. Give it sand, the pattern and a bucket of water. Each cycle makes one prepared [sand mould](item:promptcritical:sand_mold). The pattern is not used up. A crafted flask is empty: only the machine gives a mould with an impression.
 
+The [jolt-squeeze moulding machine](item:promptcritical:molding_station_real) is the same machine at full size, built on a construction site from its drawing. The Create shaft enters its west side, sand goes into the hopper on top of the east stand, and the mould comes off at the front of the table.
+
 ## Solidification
 
 A casting cools through the surface of the mould. Solidification time grows with the square of the **modulus**, the ratio of volume to surface: this is Chvorinov's rule. A thick part freezes many times slower than a thin one. An empty-hand click on a mould shows how long is left.
@@ -32,5 +34,7 @@ A **riser** is a reservoir of liquid metal above the casting. Metal shrinks as i
 ## Shakeout
 
 The [shakeout grate](item:promptcritical:shakeout_grate) on a Create shaft knocks out cooled moulds placed on it. The casting and 90 % of the sand go to its store; take them with an empty hand. You can also break a cooled mould by hand, but the sand is lost. Leave a mould with liquid metal alone: the metal will run out.
+
+The [vibrating shakeout grate](item:promptcritical:shakeout_grate_real) is the same grate at full size, built on a construction site from its drawing. The Create shaft enters its west side; set the moulds on the open west half of the deck, and take castings and sand from the front.
 
 Castings go on to the [machine shop](promptcritical:i0/machine_shop).

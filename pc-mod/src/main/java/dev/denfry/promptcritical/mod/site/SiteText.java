@@ -118,6 +118,12 @@ public final class SiteText {
         stage("furnace_brickwork", "base, walls, hearth and sprung arch", "основание, стены, под и распорный свод");
         stage("furnace_ironwork", "buckstays, tie rods and doors", "стойки каркаса, стяжки и заслонки");
         stage("pusher_burner", "pusher, burner and flue damper", "толкатель, горелка и шибер борова");
+        drawing("molding_station_real", "Jolt-Squeeze Moulding Machine", "встряхивающе-прессовой формовочной машины");
+        stage("jolt_squeeze", "base, jolt cylinder, table and swing yoke", "станина, цилиндр встряхивания, стол и поворотная траверса");
+        stage("sand_stand", "drive box, compressor and sand hopper stand", "коробка привода, компрессор и эстакада бункера песка");
+        drawing("shakeout_grate_real", "Vibrating Shakeout Grate", "инерционной выбивной решётки");
+        stage("shakeout_deck", "springs, deck frame, bars and vibrator", "пружины, рама настила, колосники и вибратор");
+        stage("dust_hood", "side-draft dust hood and duct", "боковой отсос пыли и воздуховод");
     }
 
     private SiteText() {}

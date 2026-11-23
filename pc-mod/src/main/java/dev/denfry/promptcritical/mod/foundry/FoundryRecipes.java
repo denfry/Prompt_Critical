@@ -88,6 +88,15 @@ public final class FoundryRecipes extends RecipeProvider {
                 .pattern("PPP").pattern("RCR").pattern("BBB").define('P', Items.PAPER).define('R', PcItems.REFRACTORY_BRICK.get())
                 .define('C', Items.CAULDRON).define('B', Items.BRICKS)
                 .unlockedBy("has_refractory_brick", has(PcItems.REFRACTORY_BRICK.get())).save(out, id("crucible_furnace_real_drawing"));
+        // чертежи формовочной машины и выбивной решётки реального масштаба: строятся на стройплощадке (SitePlans)
+        ShapedRecipeBuilder.shaped(RecipeCategory.MISC, dev.denfry.promptcritical.mod.site.SiteRegistry.MOLDING_STATION_REAL_DRAWING.get())
+                .pattern("PPP").pattern("IHI").pattern("SXS").define('P', Items.PAPER).define('I', AllItems.IRON_SHEET.get())
+                .define('H', Items.HOPPER).define('S', AllBlocks.SHAFT.get()).define('X', Items.PISTON)
+                .unlockedBy("has_molding_station", has(PcBlocks.MOLDING_STATION.get())).save(out, id("molding_station_real_drawing"));
+        ShapedRecipeBuilder.shaped(RecipeCategory.MISC, dev.denfry.promptcritical.mod.site.SiteRegistry.SHAKEOUT_GRATE_REAL_DRAWING.get())
+                .pattern("PPP").pattern("BBB").pattern("SXS").define('P', Items.PAPER).define('B', Items.IRON_BARS)
+                .define('S', AllBlocks.SHAFT.get()).define('X', Items.PISTON)
+                .unlockedBy("has_shakeout_grate", has(PcBlocks.SHAKEOUT_GRATE.get())).save(out, id("shakeout_grate_real_drawing"));
         ShapedRecipeBuilder.shaped(RecipeCategory.MISC, PcBlocks.MOLDING_STATION.get())
                 .pattern("IHI").pattern("SCS").define('I', AllItems.IRON_SHEET.get()).define('H', Items.HOPPER)
                 .define('S', AllBlocks.SHAFT.get()).define('C', AllBlocks.ANDESITE_CASING.get())
