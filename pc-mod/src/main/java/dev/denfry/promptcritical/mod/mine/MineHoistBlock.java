@@ -46,9 +46,23 @@ public final class MineHoistBlock extends PcDeviceBlock {
         return BoilerGeometry.offset(controller, facing, PORT_X, 0, 0);
     }
 
+    /** Клетка входа вала у машины реального масштаба (winding_engine): западный конец вала барабана, (−2, 2, 0) модели. */
+    public static final BlockPos REAL_PORT = new BlockPos(-2, 2, 0);
+
     @Override
     protected BlockState partState(BlockState controller, Footprint.Cell cell) {
         Direction f = facing(controller);
+        if (controller.is(dev.denfry.promptcritical.mod.registry.PcBlocks.WINDING_ENGINE.get())) {
+            // клетку вала ищем по сегменту и смещению от его якоря: они не зависят от места постройки
+            BlockPos at = REAL_PORT.rotate(Footprint.rotation(f));
+            for (Footprint.Cell c : spec().footprint().cells(BlockPos.ZERO, f))
+                if (c.pos().equals(at)) {
+                    if (c.segment() == cell.segment() && c.offsetFromAnchor().equals(cell.offsetFromAnchor()))
+                        return KineticPortBlock.inputForOffset(cell.offsetFromAnchor(), drumAxis(f));
+                    break;
+                }
+            return super.partState(controller, cell);
+        }
         if (cell.offsetFromAnchor().equals(new BlockPos(PORT_X, 0, 0).rotate(Footprint.rotation(f))))
             return KineticPortBlock.inputForOffset(cell.offsetFromAnchor(), drumAxis(f));
         return super.partState(controller, cell);

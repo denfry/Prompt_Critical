@@ -42,6 +42,21 @@ public class WholeModelRenderer<T extends BlockEntity & WholeModelHost> implemen
     protected void parts(T be, float partialTicks, PoseStack ms, VertexConsumer vc, int light) {}
 
     /**
+     * Вторая цельная модель (wholemodels/{@code id}.json), повёрнутая на {@code angle} рад вокруг оси x модели через точку
+     * ({@code px}, {@code py}, {@code pz}) блоков от угла клетки контроллера, — например барабан подъёмной машины или
+     * поворотный корпус конвертера; фасад — как у основной модели. Модели нет — ничего не рисует.
+     */
+    protected static void wholeAboutX(String id, BlockEntity be, Direction facing, double px, double py, double pz, float angle,
+            PoseStack ms, VertexConsumer vc, int light) {
+        WholeModels.Model m = WholeModels.get(id);
+        if (m == null) return;
+        for (WholeModels.Chunk c : m.chunks())
+            CachedBuffers.partial(c.partial(), be.getBlockState()).center().rotateYDegrees(-(facing.toYRot() + 180)).uncenter()
+                    .translate(px, py, pz).rotateX(angle).translate(-px, -py, -pz)
+                    .translate(c.x(), c.y(), c.z()).light(light).renderInto(ms, vc);
+    }
+
+    /**
      * Partial подвижной части, повёрнутая по фасаду вокруг контроллера и сдвинутая на (dx, dy, dz) блоков в пространстве
      * модели (фасад на север) — как куски цельной модели; дальше вызывающий добавляет своё движение.
      */

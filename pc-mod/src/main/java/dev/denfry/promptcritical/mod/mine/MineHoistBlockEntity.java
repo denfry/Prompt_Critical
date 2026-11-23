@@ -63,7 +63,8 @@ import org.jetbrains.annotations.Nullable;
  * момента до испытания ключом под грузом; пробный пуск — один рейс на всю глубину ствола; износ каната — строкой
  * щита обслуживания; заплавленный подшипник клинит вал.
  */
-public final class MineHoistBlockEntity extends DeviceBlockEntity implements ShaftConsumer, IControlContraption, OpsMachine {
+public final class MineHoistBlockEntity extends DeviceBlockEntity
+        implements ShaftConsumer, IControlContraption, OpsMachine, dev.denfry.promptcritical.mod.client.whole.WholeModelHost {
     /** Масса человека, тележки, предмета в клети, кг [BALANCE]. */
     public static final double PERSON_KG = 80, CART_KG = 300, ITEM_KG = 1;
     private static final int SCAN_PERIOD_TICKS = 100, SYNC_PERIOD_TICKS = 2;
@@ -103,6 +104,12 @@ public final class MineHoistBlockEntity extends DeviceBlockEntity implements Sha
 
     public Direction facing() {
         return MineHoistBlock.class.cast(getBlockState().getBlock()).facing(getBlockState());
+    }
+
+    /** Двойник подъёма создаётся по типу {@link HoistUnit#DEVICE_TYPE}: у машины реального масштаба он тот же. */
+    @Override
+    public String deviceType() {
+        return HoistUnit.DEVICE_TYPE;
     }
 
     @Nullable
@@ -198,10 +205,32 @@ public final class MineHoistBlockEntity extends DeviceBlockEntity implements Sha
         clientMoving = speed != 0;
         drumAnglePrev = drumAngle;
         drumAngle += (float) (speed / HoistUnit.DRUM_RADIUS_M * 0.05);
+        if (speed != 0 && wholeModelId() != null) chuff(drumAnglePrev, drumAngle);
         clientDepth -= speed * 0.05;
         clientDepth += (depth - clientDepth) * 0.3;
         if (Math.abs(depth - clientDepth) > 2) clientDepth = depth;
         if (cage != null && shaft != null) placeCage(clientDepth);
+    }
+
+    /**
+     * Паровая машина реального масштаба: у каждой из двух машин выхлоп и клуб пара из продувочных кранов цилиндра, когда
+     * кривошип проходит мёртвую точку (четыре удара на оборот барабана, восточная машина сдвинута на 90°).
+     */
+    private void chuff(float before, float after) {
+        double k = HoistUnit.DRUM_RADIUS_M / (36.5 / 16.0);
+        double a0 = -before * k, a1 = -after * k;
+        dev.denfry.promptcritical.mod.fx.MachineFx fx = null;
+        for (int e = 0; e < 2; e++) {
+            double shift = e == 0 ? 0 : Math.PI / 2;
+            if (Math.floor((a0 + shift) / Math.PI) == Math.floor((a1 + shift) / Math.PI)) continue;
+            if (fx == null) fx = dev.denfry.promptcritical.mod.fx.MachineFx.of(level, worldPosition, facing());
+            if (fx == null) return;
+            // торец цилиндра, оси машин x −22 и 38 px, ось вала y 40, задняя крышка z 90
+            var at = fx.at(e == 0 ? -22 : 38, 40, 90);
+            fx.puff(at, new Vec3(0, 0.08, 0), 2);
+            fx.sound(at, dev.denfry.promptcritical.mod.sound.PcSfx.STEAM_ENGINE_CHUFF.get(), 0.8f,
+                    0.8f + (float) Math.min(0.4, Math.abs(speed) / 25));
+        }
     }
 
     private void placeCage(double d) {
@@ -594,10 +623,14 @@ public final class MineHoistBlockEntity extends DeviceBlockEntity implements Sha
         return speed == 0;
     }
 
-    /** Западный коренной подшипник барабана (крышка над осью y 0, z 8 модели). */
+    /**
+     * Западный коренной подшипник барабана: у старой машины — крышка над осью y 0, z 8 модели; у машины реального
+     * масштаба — подшипник между западным кривошипом и барабаном, над осью вала (y 40).
+     */
     @Override
     public Vec3 opsBearingPos() {
-        return BoilerGeometry.world(worldPosition, facing(), -14.25, 4, 8);
+        return wholeModelId() != null ? BoilerGeometry.world(worldPosition, facing(), -14, 46, 8)
+                : BoilerGeometry.world(worldPosition, facing(), -14.25, 4, 8);
     }
 
     @Override
@@ -666,6 +699,25 @@ public final class MineHoistBlockEntity extends DeviceBlockEntity implements Sha
     }
 
     // --- клиент: рендер -----------------------------------------------------------------------------------
+
+    // --- цельная модель (winding_engine) ---
+
+    @Override
+    @Nullable
+    public String wholeModelId() {
+        return dev.denfry.promptcritical.mod.client.whole.WholeModelHost.idOf(getBlockState());
+    }
+
+    @Override
+    public Direction wholeModelFacing() {
+        return facing();
+    }
+
+    /** Свет — снаружи машины, за восточной площадкой машиниста. */
+    @Override
+    public BlockPos wholeModelLightPos() {
+        return BoilerGeometry.offset(worldPosition, facing(), 4, 1, 0);
+    }
 
     /** Угол барабана, рад. */
     public float drumAngle(float partialTicks) {

@@ -27,6 +27,8 @@ import net.minecraft.world.phys.Vec3;
  * и канат — от барабана к шкиву и от шкива вниз к крыше клети.
  */
 final class HoistRenderer implements BlockEntityRenderer<MineHoistBlockEntity> {
+    private final WinderRenderer winder = new WinderRenderer();
+
     /** Видимые радиусы навитого каната на барабане и шкива по моделям, блоков. */
     private static final double DRUM_R = 14.6 / 16.0, SHEAVE_R = 14.6 / 16.0, ROPE_W = 0.07;
     /** Ход курсора указателя глубины по шкале модели (y 12 → −10), блоков. */
@@ -35,23 +37,29 @@ final class HoistRenderer implements BlockEntityRenderer<MineHoistBlockEntity> {
     @Override
     public void render(MineHoistBlockEntity be, float partialTicks, PoseStack ms, MultiBufferSource buffers, int light, int overlay) {
         BlockState state = be.getBlockState();
-        if (!state.is(PcBlocks.MINE_HOIST.get())) return;
+        boolean real = state.is(PcBlocks.WINDING_ENGINE.get());
+        if (!real && !state.is(PcBlocks.MINE_HOIST.get())) return;
         Direction facing = be.facing();
         VertexConsumer vc = buffers.getBuffer(RenderType.cutoutMipped());
         float drum = be.drumAngle(partialTicks);
-        SuperByteBuffer d = CachedBuffers.partial(MineClient.HOIST_DRUM, state);
-        d.center().rotateYDegrees(-(facing.toYRot() + 180)).uncenter()
-                .translate(0, 0, 0.5f).rotateX(drum).translate(0, 0, -0.5f)
-                .light(light).renderInto(ms, vc);
-
         HoistGeometry.Shaft shaft = be.shaft();
         double depthNow = be.renderDepth(partialTicks);
-        float travel = shaft == null || shaft.depth() <= 0 ? 0
-                : (float) Math.max(0, Math.min(1, depthNow / shaft.depth())) * CURSOR_TRAVEL;
-        CachedBuffers.partial(MineClient.HOIST_CURSOR, state)
-                .center().rotateYDegrees(-(facing.toYRot() + 180)).uncenter()
-                .translate(0, -travel, 0)
-                .light(light).renderInto(ms, vc);
+        float fill = shaft == null || shaft.depth() <= 0 ? 0 : (float) Math.max(0, Math.min(1, depthNow / shaft.depth()));
+        if (real) {
+            winder.render(be, partialTicks, ms, buffers, light, overlay);
+        } else {
+            SuperByteBuffer d = CachedBuffers.partial(MineClient.HOIST_DRUM, state);
+            d.center().rotateYDegrees(-(facing.toYRot() + 180)).uncenter()
+                    .translate(0, 0, 0.5f).rotateX(drum).translate(0, 0, -0.5f)
+                    .light(light).renderInto(ms, vc);
+            CachedBuffers.partial(MineClient.HOIST_CURSOR, state)
+                    .center().rotateYDegrees(-(facing.toYRot() + 180)).uncenter()
+                    .translate(0, -fill * CURSOR_TRAVEL, 0)
+                    .light(light).renderInto(ms, vc);
+        }
+        // длина каната, сошедшего с барабана, блоков: угол барабана двойника на его радиус (HoistUnit.DRUM_RADIUS_M)
+        double rope = drum * dev.denfry.promptcritical.sim.mining.HoistUnit.DRUM_RADIUS_M;
+        double drumR = real ? WinderRenderer.DRUM_R : DRUM_R;
 
         BlockPos sheave = be.sheave();
         if (be.getLevel() == null || sheave == null) return;
@@ -72,7 +80,7 @@ final class HoistRenderer implements BlockEntityRenderer<MineHoistBlockEntity> {
             ms.pushPose();
             ms.translate(sheaveC.x - 0.5, sheaveC.y - 0.5, sheaveC.z - 0.5);
             CachedBuffers.partial(MineClient.SHEAVE_STEEL, ss).center().rotateYDegrees(-(hf.toYRot() + 180))
-                    .rotateX((float) (drum * DRUM_R / sheaveR)).uncenter()
+                    .rotateX((float) ((real ? rope : drum * DRUM_R) / sheaveR)).uncenter()
                     .light(LevelRenderer.getLightColor(be.getLevel(), BlockPos.containing(axis).above(2))).renderInto(ms, vc);
             ms.popPose();
         } else {
@@ -91,17 +99,18 @@ final class HoistRenderer implements BlockEntityRenderer<MineHoistBlockEntity> {
         }
 
         // канат: точки в координатах блока машины
-        TextureAtlasSprite rope = Minecraft.getInstance().getTextureAtlas(InventoryMenu.BLOCK_ATLAS)
+        TextureAtlasSprite ropeTex = Minecraft.getInstance().getTextureAtlas(InventoryMenu.BLOCK_ATLAS)
                 .apply(PromptCritical.id("block/common/plant_rope"));
-        Vec3 drumC = BoilerGeometry.world(origin, facing, 8, 0, 8).subtract(o);
+        // ось барабана: у старой машины — (8, 0, 8) модели, у машины реального масштаба — (8, 40, 8)
+        Vec3 drumC = BoilerGeometry.world(origin, facing, 8, real ? WinderRenderer.AXIS_Y : 0, 8).subtract(o);
         Vec3 toDrum = horizontal(drumC.subtract(sheaveC));
-        draw(vc, ms, drumC.add(0, DRUM_R, 0), sheaveC.add(toDrum.scale(sheaveR)).add(0, 0.1, 0), rope, light);
+        draw(vc, ms, drumC.add(0, drumR, 0), sheaveC.add(toDrum.scale(sheaveR)).add(0, 0.1, 0), ropeTex, light);
         if (shaft == null) return;
         Vec3 cageTop = cageTop(shaft, depthNow).subtract(o);
         Vec3 toCage = horizontal(cageTop.subtract(sheaveC));
         Vec3 from = sheaveC.add(toCage.scale(Math.min(sheaveR, cageTop.subtract(sheaveC).multiply(1, 0, 1).length())));
         int cageLight = LevelRenderer.getLightColor(be.getLevel(), BlockPos.containing(cageTop.add(o)));
-        draw(vc, ms, from, new Vec3(from.x, cageTop.y, from.z), rope, cageLight);
+        draw(vc, ms, from, new Vec3(from.x, cageTop.y, from.z), ropeTex, cageLight);
     }
 
     /** Центр крыши клети (бриделя) при глубине {@code depth}. */

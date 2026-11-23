@@ -52,10 +52,13 @@ public final class SiteText {
         drawing("lancashire_boiler", "Lancashire Boiler", "ланкаширского котла");
         drawing("headframe_steel", "Steel Headframe", "стального копра");
         drawing("mill_engine", "Horizontal Mill Engine", "горизонтальной паровой машины");
+        drawing("winding_engine", "Steam Winding Engine", "паровой подъёмной машины");
         stage("bed", "bed, cylinder and crosshead guides", "станина, цилиндр и параллели");
         stage("flywheel", "crankshaft, flywheel and governor", "коленвал, маховик и регулятор");
         stage("tower", "shaft tower and back struts", "башня над стволом и подкосы");
         stage("sheave_deck", "sheave deck and sheave", "площадка и шкив");
+        stage("engines", "engine beds, cylinders and valve gear", "станины, цилиндры и парораспределение");
+        stage("drum", "drum shaft, drum and post brake", "вал, барабан и тормоз");
     }
 
     private SiteText() {}
