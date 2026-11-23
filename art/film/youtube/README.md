@@ -48,7 +48,7 @@ What is in the alpha:
 • Foundry and machine shop: cupola and crucible furnaces, sand moulds, lathe and drill press with tool wear, coal jig.
 • Local instrument panels on every machine: dial gauges with needle lag, gauge glass, signal lamps, buttons and slots.
 
-Requires Minecraft 1.21.1, NeoForge 21.1.259+, Create 6.0.11+. CC: Tweaked is optional.
+Requires Minecraft 1.21.1, NeoForge 21.1.259+, Create 6.0.10+. CC: Tweaked is optional.
 Alpha: expect breaking world changes between versions, back up your worlds.
 
 Chapters
@@ -77,7 +77,7 @@ Modrinth: <MODRINTH_URL>
 • Литейный и механический цех: вагранка и тигельная печь, песчаные формы, токарный и сверлильный станки с износом резца, отсадочная машина для угля.
 • Местные приборные щиты на каждой машине: стрелочные манометры с инерцией стрелки, водомерное стекло, сигнальные лампы, кнопки и слоты.
 
-Нужны Minecraft 1.21.1, NeoForge 21.1.259+, Create 6.0.11+. CC: Tweaked — по желанию.
+Нужны Minecraft 1.21.1, NeoForge 21.1.259+, Create 6.0.10+. CC: Tweaked — по желанию.
 Это альфа: между версиями возможны ломающие мир изменения, делайте резервные копии.
 
 Главы

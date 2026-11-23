@@ -3,7 +3,7 @@
 ## 1.0.1 (2026-11-24)
 
 Real-scale machines for the eras I0 to I2, the first GDD gaps closed after rc.1, and fixes from survival playtests.
-Requires Minecraft 1.21.1, NeoForge 21.1.259+, Create 6.0.11+; CC: Tweaked 1.120.2+ is optional. Back up worlds
+Requires Minecraft 1.21.1, NeoForge 21.1.259+, Create 6.0.10+; CC: Tweaked 1.120.2+ is optional. Back up worlds
 before updating: see *Breaking changes*.
 
 ### Breaking changes
@@ -55,7 +55,7 @@ before updating: see *Breaking changes*.
 
 Release candidate of the first full release: every era of the design up to the closed fuel cycle is in the game,
 together with the plant I&C, operations and accident layers. Requires Minecraft 1.21.1, NeoForge 21.1.259+,
-Create 6.0.11+; CC: Tweaked 1.120.2+ is optional. Balance values marked [BALANCE] in the code and the config are
+Create 6.0.10+; CC: Tweaked 1.120.2+ is optional. Balance values marked [BALANCE] in the code and the config are
 not final. Back up worlds before updating: see *Breaking changes*.
 
 ### Breaking changes
@@ -421,7 +421,7 @@ not final. Back up worlds before updating: see *Breaking changes*.
 
 ## 0.1.0-alpha (M2: era I0, coal and steam)
 
-First public alpha. Requires Minecraft 1.21.1, NeoForge 21.1.259+, Create 6.0.11+;
+First public alpha. Requires Minecraft 1.21.1, NeoForge 21.1.259+, Create 6.0.10+;
 CC: Tweaked 1.120.2+ is optional.
 
 ### Mine

@@ -95,7 +95,7 @@ Some of the hand-made machine models of the later eras, from the 220 kV transfor
 ## Installation
 
 1. Install Minecraft 1.21.1 with NeoForge 21.1.259 or newer and Java 21.
-2. Put [Create](https://www.curseforge.com/minecraft/mc-mods/create) 6.0.11+ and the
+2. Put [Create](https://www.curseforge.com/minecraft/mc-mods/create) 6.0.10+ and the
    `promptcritical-*.jar` from the [latest release](https://github.com/denfry/Prompt_Critical/releases/latest)
    into `mods/`. Add [CC: Tweaked](https://www.curseforge.com/minecraft/mc-mods/cc-tweaked) 1.120.2+ if you want
    the DCS/SCADA level.
@@ -153,7 +153,7 @@ in detail.
 | Minecraft | 1.21.1 | required |
 | NeoForge | 21.1.259+ | required |
 | Java | 21 | required |
-| Create | 6.0.11+ | required |
+| Create | 6.0.10+ | required |
 | CC: Tweaked | 1.120.2+ | optional, needed for the DCS/SCADA level |
 
 Without CC: Tweaked the plant runs on analog desks, relays and PLCs. Other
