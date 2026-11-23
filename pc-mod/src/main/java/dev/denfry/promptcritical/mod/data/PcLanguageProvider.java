@@ -36,6 +36,7 @@ public final class PcLanguageProvider extends LanguageProvider {
         b("lancashire_boiler", "Lancashire Boiler", "Ланкаширский котёл");
         b("headframe_steel", "Steel Headframe", "Стальной копёр");
         b("mill_engine", "Horizontal Mill Engine", "Горизонтальная паровая машина");
+        b("winding_engine", "Steam Winding Engine", "Паровая подъёмная машина");
         b("grate_stoker", "Chain Grate Stoker", "Цепная колосниковая решётка");
         b("chimney", "Chimney", "Дымовая труба");
         b("steam_engine_cylinder", "Steam Engine", "Паровая машина");

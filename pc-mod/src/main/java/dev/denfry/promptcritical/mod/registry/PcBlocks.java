@@ -457,6 +457,15 @@ public final class PcBlocks {
             Spec.facing(PcProperties.ALARM).footprint(FP_TALL2), MineDispatchCabinetBlock::create);
     public static final DeferredBlock<PcDeviceBlock> MINE_HOIST = device("mine_hoist", machine(),
             Spec.facing(PcProperties.RUNNING).footprint(Footprint.of(Segment.box(-1, 1, -1, 0, -1, 1))), MineHoistBlock::create);
+    /**
+     * Паровая подъёмная машина реального масштаба: пара горизонтальных машин прямого действия на барабан ⌀4,6 м
+     * (Parkfield Colliery), 7 × 5 × 9 от каната на север до цилиндров на юг (08 §8.2.8,
+     * docs/research/winding_engine-dimensions.md). Тот же подъём, что {@link #MINE_HOIST}; вал Create — с запада.
+     */
+    public static final Footprint FP_WINDING_ENGINE = Footprint.tiled(-3, 3, 0, 4, -3, 5);
+    public static final DeferredBlock<PcDeviceBlock> WINDING_ENGINE = device("winding_engine", machine(),
+            Spec.facing(PcProperties.RUNNING).segments(PcProperties.wholeSegments(FP_WINDING_ENGINE.segments().size()), FP_WINDING_ENGINE),
+            MineHoistBlock::create);
     /** Стальной копёр реального масштаба: 16 м до оси шкива, стойки и подкосы вокруг ствола 3×3 (08 §8.2.8). */
     public static final Footprint FP_HEADFRAME_STEEL = Footprint.tiledAroundShaft(-3, 2, -4, 12, -2, 9);
     public static final DeferredBlock<PcDeviceBlock> HEADFRAME_STEEL = device("headframe_steel", machine(),
@@ -913,7 +922,7 @@ public final class PcBlocks {
     public static boolean isWholeModel(net.minecraft.world.level.block.Block b) {
         return b == VVER_REACTOR.get() || b == VVER_STEAM_GENERATOR.get() || b == VVER_COOLANT_PUMP.get() || b == VVER_PRESSURIZER.get()
                 || b == BWR240_REACTOR.get() || b == CANDU6_REACTOR.get() || b == BN600_REACTOR.get() || b == AM1_REACTOR.get()
-                || b == LANCASHIRE_BOILER.get() || b == HEADFRAME_STEEL.get() || b == MILL_ENGINE.get();
+                || b == LANCASHIRE_BOILER.get() || b == HEADFRAME_STEEL.get() || b == MILL_ENGINE.get() || b == WINDING_ENGINE.get();
     }
 
     /**

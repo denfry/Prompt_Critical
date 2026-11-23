@@ -226,6 +226,41 @@ public final class RealScaleGameTests {
     }
 
     /**
+     * Паровая подъёмная машина реального масштаба: площадка принимает чертёж на основании 7×9, машина — тот же BE
+     * подъёма с цельной моделью, вал Create входит с запада в клетку (−2, 2, 0) по оси барабана при любом фасаде.
+     */
+    @GameTest(template = TALL, timeoutTicks = 200)
+    public static void windingEngineSiteAcceptsAndTakesTheShaftFromTheWest(GameTestHelper h) {
+        BlockPos p = new BlockPos(5, 1, 4);
+        for (int x = -3; x <= 3; x++)
+            for (int z = -3; z <= 5; z++) h.setBlock(p.offset(x, -1, z), Blocks.STONE);
+        h.setBlock(p, SiteRegistry.SITE.get().defaultBlockState().setValue(BlockStateProperties.HORIZONTAL_FACING, Direction.NORTH));
+        var w = site(h, p).accept("winding_engine");
+        h.assertTrue(w == null, "winding engine plan accepted: " + (w == null ? "" : w.getString()));
+        h.assertTrue(PcBlocks.FP_WINDING_ENGINE.cells(BlockPos.ZERO, Direction.NORTH).size() == 7 * 5 * 9, "7x5x9 engine house");
+        h.setBlock(p, Blocks.AIR);
+        for (Direction f : new Direction[] {Direction.NORTH, Direction.EAST}) {
+            h.setBlock(p, PcBlocks.WINDING_ENGINE.get().defaultBlockState().setValue(BlockStateProperties.HORIZONTAL_FACING, f));
+            h.assertTrue(h.getBlockEntity(p) instanceof dev.denfry.promptcritical.mod.mine.MineHoistBlockEntity b
+                    && "winding_engine".equals(b.wholeModelId()), "the winding engine is a hoist with its whole model, " + f);
+            BlockPos port = p.offset(dev.denfry.promptcritical.mod.mine.MineHoistBlock.REAL_PORT.rotate(
+                    dev.denfry.promptcritical.mod.multiblock.Footprint.rotation(f)));
+            var ps = h.getBlockState(port);
+            h.assertTrue(ps.is(PcBlocks.KINETIC_PORT.get()) && ps.getValue(dev.denfry.promptcritical.mod.boiler.KineticPortBlock.INPUT)
+                    && ps.getValue(dev.denfry.promptcritical.mod.boiler.KineticPortBlock.AXIS) == f.getClockWise().getAxis(),
+                    "Create input on the drum axis at the west end, " + f + ": " + ps);
+            if (f == Direction.NORTH) h.setBlock(p, Blocks.AIR);
+        }
+        // двойник подъёма: тип устройства тот же, что у старой машины, иначе подсистема его не создаст
+        h.succeedWhen(() -> {
+            var be = (dev.denfry.promptcritical.mod.mine.MineHoistBlockEntity) h.getBlockEntity(p);
+            var b = dev.denfry.promptcritical.mod.binding.SimBindings.get(h.getLevel());
+            h.assertTrue(b != null && !be.simId().isNone() && b.world().subsystem(dev.denfry.promptcritical.sim.mining.HoistSubsystem.class)
+                    .unit(b.world().topology(), be.simId()) != null, "the winding engine has its hoist unit in the simulation");
+        });
+    }
+
+    /**
      * Стальной копёр реального масштаба: колонна ствола 3×3 пуста по всей высоте (там ходит клеть), подъёмная машина
      * видит его собранным, клеть на верхней посадке — на три ряда ниже контроллера, как у старого копра.
      */
@@ -318,7 +353,7 @@ public final class RealScaleGameTests {
             h.assertTrue(r > 1 / 1.5 && r < 1.5, plan.id() + ": planned metal " + Math.round(plan.plannedMetalKg() / 1000) + " t vs prototype "
                     + Math.round(plan.metalKg() / 1000) + " t");
         }
-        h.assertTrue(n == 11, "eleven real-scale plans (eight reactors and NPP units, three I0 machines), got " + n);
+        h.assertTrue(n == 12, "twelve real-scale plans (eight reactors and NPP units, four I0 machines), got " + n);
         h.succeed();
     }
 

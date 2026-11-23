@@ -39,10 +39,16 @@ public final class MineClient {
     static final PartialModel HOIST_CURSOR = partial("mine_hoist/partial/cursor");
     static final PartialModel SHEAVE = partial("headframe/partial/sheave");
     static final PartialModel SHEAVE_STEEL = partial("headframe_steel/partial/sheave");
+    static final PartialModel WINDER_CROSSHEAD = partial("winding_engine/partial/crosshead");
+    static final PartialModel WINDER_CONROD = partial("winding_engine/partial/conrod");
+    static final PartialModel WINDER_CURSOR = partial("winding_engine/partial/cursor");
 
     static {
         // стальной копёр реального масштаба — цельная модель; части — до запекания
         dev.denfry.promptcritical.mod.client.whole.WholeModels.register("headframe_steel");
+        // паровая подъёмная машина: станины и машины — одна цельная модель, барабан с валом — вторая, вращается
+        dev.denfry.promptcritical.mod.client.whole.WholeModels.register("winding_engine");
+        dev.denfry.promptcritical.mod.client.whole.WholeModels.register("winding_engine_drum");
     }
     /** Шнеки в контрапции вращаются, град/тик (≈ 40 об/мин). */
     private static final float DRUM_DEG_PER_TICK = 12f;

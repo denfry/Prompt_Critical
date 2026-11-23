@@ -126,7 +126,13 @@ public final class SitePlans {
             "mill_engine", plan("mill_engine", PcBlocks.MILL_ENGINE, 21,
                     st("foundation", 120, n(CONCRETE, 8)),
                     st("bed", 300, n(INGOT, 130), n(PLATE, 20), n(PIPE, 20)),
-                    st("flywheel", 240, n(INGOT, 50))));
+                    st("flywheel", 240, n(INGOT, 50))),
+            // пара машин 28 × 48 дюймов на барабан ⌀15 футов (Parkfield): машины и станины ≈ 46 т, вал с барабаном и
+            // тормозом ≈ 42 т (оценки, docs/research/winding_engine-dimensions.md), каменные фундаменты
+            "winding_engine", plan("winding_engine", PcBlocks.WINDING_ENGINE, 88,
+                    st("foundation", 160, n(CONCRETE, 30)),
+                    st("engines", 400, n(INGOT, 400), n(PLATE, 40), n(PIPE, 40)),
+                    st("drum", 320, n(INGOT, 300), n(PLATE, 120))));
 
     private SitePlans() {}
 

@@ -61,6 +61,11 @@ public final class HoistRecipes extends RecipeProvider {
                 .pattern("PPP").pattern("BWB").pattern("B B").define('P', Items.PAPER).define('B', Items.IRON_BARS)
                 .define('W', AllBlocks.LARGE_COGWHEEL.get())
                 .unlockedBy("has_iron_bars", has(Items.IRON_BARS)).save(out, id("headframe_steel_drawing"));
+        // чертёж паровой подъёмной машины: машина строится на стройплощадке по массе прототипа (SitePlans)
+        ShapedRecipeBuilder.shaped(RecipeCategory.MISC, dev.denfry.promptcritical.mod.site.SiteRegistry.WINDING_ENGINE_DRAWING.get())
+                .pattern("PPP").pattern("XWX").pattern("SCS").define('P', Items.PAPER).define('X', Items.PISTON)
+                .define('W', AllBlocks.LARGE_COGWHEEL.get()).define('S', AllBlocks.SHAFT.get()).define('C', Items.CHAIN)
+                .unlockedBy("has_piston", has(Items.PISTON)).save(out, id("winding_engine_drawing"));
         ShapedRecipeBuilder.shaped(RecipeCategory.MISC, PcBlocks.MINE_CAGE.get())
                 .pattern("BBB").pattern("BDB").pattern("III").define('B', Items.IRON_BARS).define('D', Items.IRON_DOOR)
                 .define('I', Items.IRON_INGOT)
