@@ -54,6 +54,10 @@ public final class WholeShapes {
         // клетка мира → клетка модели: обратный поворот центра клетки вокруг центра контроллера
         double[] c = unrotate(dx + 0.5, dz + 0.5, facing);
         int mx = (int) Math.floor(c[0]), mz = (int) Math.floor(c[1]);
+        // клетка с нарисованной лестницей не сталкивается, как ванильная лестница: игрок входит в неё и лезет (isLadder
+        // проверяется в клетке, где стоит игрок); стенка сосуда за лестницей — в соседних клетках (плейтест I1)
+        java.util.Set<Long> climb = CLIMB.get(id);
+        if (climb != null && climb.contains(pack(mx, dy, mz))) return Shapes.empty();
         Long mask = cells.get(pack(mx, dy, mz));
         if (mask == null || mask == 0) return Shapes.empty();
         if (mask == -1L) return Shapes.block();
@@ -140,15 +144,28 @@ public final class WholeShapes {
         return java.util.Arrays.stream(names).map(n -> new Extra(id + "/partial/" + n, false, 0, dy, 0)).toList();
     }
 
-    /** Клетки модели (фасад на север, от контроллера), в которых что-то нарисовано, вместе с {@link #EXTRAS}. */
+    /**
+     * Клетки модели (фасад на север, от контроллера), в которых что-то нарисовано, вместе с {@link #EXTRAS}; клетки с
+     * лестницами ({@link #climbCells}) сюда не входят — они проходимы намеренно.
+     */
     public static java.util.Set<net.minecraft.core.BlockPos> occupied(String id) {
         java.util.Set<net.minecraft.core.BlockPos> out = new java.util.HashSet<>();
         for (Map.Entry<Long, Long> e : CELLS.computeIfAbsent(id, WholeShapes::load).entrySet())
-            if (e.getValue() != 0) {
-                long k = e.getKey();
-                out.add(new net.minecraft.core.BlockPos(signed(k >>> 42), signed(k >>> 21), signed(k)));
-            }
+            if (e.getValue() != 0) out.add(unpack(e.getKey()));
+        out.removeAll(climbCells(id));
         return out;
+    }
+
+    /** Клетки модели (фасад на север, от контроллера) с нарисованной лестницей или трапом. */
+    public static java.util.Set<net.minecraft.core.BlockPos> climbCells(String id) {
+        CELLS.computeIfAbsent(id, WholeShapes::load);
+        java.util.Set<net.minecraft.core.BlockPos> out = new java.util.HashSet<>();
+        for (long k : CLIMB.getOrDefault(id, java.util.Set.of())) out.add(unpack(k));
+        return out;
+    }
+
+    private static net.minecraft.core.BlockPos unpack(long k) {
+        return new net.minecraft.core.BlockPos(signed(k >>> 42), signed(k >>> 21), signed(k));
     }
 
     private static int signed(long v) {
