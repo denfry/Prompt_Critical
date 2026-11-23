@@ -107,7 +107,7 @@
     m.box('web', [8 - CRANK - 4, 4, 2], [12, 12, 6], 'ci', { split: '' });
     m.prism('pin', 'z', [8 - CRANK, 8], 1.8, 6, 10, 'bright', { split: '', ends: ['north', 'south'] });
     m.prism('boss', 'z', [8, 8], 5, 0, 6, 'ci', { split: '' });
-    m.prism('stub', 'z', [8, 8], 3.2, 22, 26, 'st', { split: '', ends: ['south'] });
+    m.prism('stub', 'z', [8, 8], 3.2, 18, 22, 'st', { split: '', ends: ['south'] });
     return m;
   }
 
