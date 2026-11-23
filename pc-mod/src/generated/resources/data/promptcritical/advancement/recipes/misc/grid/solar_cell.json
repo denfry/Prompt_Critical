@@ -1,0 +1,32 @@
+{
+  "parent": "minecraft:recipes/root",
+  "criteria": {
+    "has_the_recipe": {
+      "conditions": {
+        "recipe": "promptcritical:grid/solar_cell"
+      },
+      "trigger": "minecraft:recipe_unlocked"
+    },
+    "has_wafer": {
+      "conditions": {
+        "items": [
+          {
+            "items": "promptcritical:silicon_wafer"
+          }
+        ]
+      },
+      "trigger": "minecraft:inventory_changed"
+    }
+  },
+  "requirements": [
+    [
+      "has_the_recipe",
+      "has_wafer"
+    ]
+  ],
+  "rewards": {
+    "recipes": [
+      "promptcritical:grid/solar_cell"
+    ]
+  }
+}

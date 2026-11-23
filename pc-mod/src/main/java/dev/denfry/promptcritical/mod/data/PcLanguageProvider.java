@@ -198,6 +198,9 @@ public final class PcLanguageProvider extends LanguageProvider {
         b("power_socket_3p", "Three-Phase Socket 32 A", "Трёхфазная розетка 32 А");
         b("power_board", "Power Board", "Силовой щит");
         b("ups_cabinet", "UPS Cabinet", "Шкаф ИБП");
+        b("solar_inverter", "Solar Inverter", "Солнечный инвертор");
+        b("solar_tracker_drive", "Solar Tracker Drive", "Привод солнечного трекера");
+        b("battery_inverter", "Battery Inverter", "Батарейный инвертор");
 
         i("fusible_plug", "Fusible Plug", "Легкоплавкая пробка");
         i("governor_dashpot", "Governor Dashpot", "Катаракт регулятора");
@@ -461,6 +464,7 @@ public final class PcLanguageProvider extends LanguageProvider {
         i("polysilicon", "Polysilicon Rod", "Стержень поликремния");
         i("silicon_ingot", "Silicon Ingot", "Слиток кремния");
         i("silicon_wafer", "Silicon Wafer", "Кремниевая пластина");
+        i("solar_cell", "Solar Cell", "Солнечный элемент");
         i("transistor", "Transistor", "Транзистор");
         i("integrated_circuit", "Logic Integrated Circuit", "Логическая микросхема");
         i("memory_chip", "Memory Chip", "Микросхема памяти");
@@ -933,6 +937,9 @@ public final class PcLanguageProvider extends LanguageProvider {
                 {"room_sign_control", "Sign: Main Control Room", "Табличка «ГЩУ»"},
                 {"electrical_cabinet", "Distribution Cabinet", "Распределительный шкаф"},
                 {"junction_box", "Junction Box", "Распаечная коробка"},
+                {"solar_panel", "Solar Panel", "Солнечная панель"},
+                {"solar_panel_tracker", "Tracking Solar Panel", "Солнечная панель на трекере"},
+                {"grid_battery_rack", "Grid Battery Rack (250 kWh)", "Стеллаж сетевой батареи (250 кВт·ч)"},
                 {"wall_socket", "Industrial Sockets", "Силовые розетки"},
                 {"knife_switch", "Knife Switch", "Рубильник"},
                 {"voltage_warning_sign", "Sign: Danger, High Voltage", "Плакат «Стой! Напряжение»"},

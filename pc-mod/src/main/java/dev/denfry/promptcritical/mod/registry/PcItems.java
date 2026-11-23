@@ -277,6 +277,8 @@ public final class PcItems {
     /** Слиток Чохральского: компонент {@code silicon_ingot}. */
     public static final DeferredItem<Item> SILICON_INGOT = item("silicon_ingot", 1);
     public static final DeferredItem<Item> SILICON_WAFER = item("silicon_wafer", 64);
+    /** Солнечный элемент (15 §15.5.1): пластина кремния с контактами. */
+    public static final DeferredItem<Item> SOLAR_CELL = item("solar_cell", 64);
     /** Кристаллы с компонентом {@code chip_spec}. */
     public static final DeferredItem<Item> TRANSISTOR = item("transistor", 64);
     public static final DeferredItem<Item> INTEGRATED_CIRCUIT = item("integrated_circuit", 64);

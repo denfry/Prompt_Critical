@@ -76,6 +76,11 @@ public final class SolarSky {
         return clear;
     }
 
+    /** Восстановить облачность (сохранение мира). */
+    public void setClear(double c) {
+        clear = Double.isFinite(c) ? Math.max(0, Math.min(1, c)) : 1;
+    }
+
     /** Облучённость с облаками и осадками. */
     public Sample sample(double celestialAngle, Weather weather) {
         Sample s = clearSky(celestialAngle);

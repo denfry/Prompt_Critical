@@ -333,6 +333,16 @@ public final class PcBlocks {
             Spec.facing(BlockStateProperties.LIT), GridMountedBlock.wall(dev.denfry.promptcritical.mod.grid.PowerBoardBlockEntity::socket3p, 3, 2, 12.2, 13, 14, 16));
     public static final DeferredBlock<PcDeviceBlock> POWER_BOARD = device("power_board", machine(),
             Spec.facing(BlockStateProperties.LIT), GridMountedBlock.wall(dev.denfry.promptcritical.mod.grid.PowerBoardBlockEntity::board, 1.5, 0.5, 10.8, 14.5, 15.5, 16));
+    /** Солнечная энергетика и сетевая батарея (15 §15.5, §15.7.1): панели и стеллажи собирает инвертор рядом. */
+    public static final DeferredBlock<DecorBlock> SOLAR_PANEL = decor("solar_panel", sheet(MapColor.COLOR_BLUE), Spec.of(), 0, 0, 0, 16, 8, 16);
+    public static final DeferredBlock<DecorBlock> SOLAR_PANEL_TRACKER = decor("solar_panel_tracker", sheet(MapColor.COLOR_BLUE), Spec.of(), 0, 0, 0, 16, 8, 16);
+    public static final DeferredBlock<PcDeviceBlock> SOLAR_TRACKER_DRIVE = device("solar_tracker_drive", machine(), Spec.facing(PcProperties.RUNNING),
+            KineticMachineBlock.with(ShaftSide.BACK, dev.denfry.promptcritical.mod.grid.SolarTrackerDriveBlockEntity::new));
+    public static final DeferredBlock<DecorBlock> GRID_BATTERY_RACK = decor("grid_battery_rack", sheet(MapColor.COLOR_GRAY), Spec.facing(), 1, 0, 1, 15, 16, 15);
+    public static final DeferredBlock<PcDeviceBlock> SOLAR_INVERTER = device("solar_inverter", machine(),
+            Spec.facing(BlockStateProperties.LIT), FoundryBlock.with(dev.denfry.promptcritical.mod.grid.SolarInverterBlockEntity::new));
+    public static final DeferredBlock<PcDeviceBlock> BATTERY_INVERTER = device("battery_inverter", machine(),
+            Spec.facing(BlockStateProperties.LIT), FoundryBlock.with(dev.denfry.promptcritical.mod.grid.BatteryInverterBlockEntity::new));
     public static final DeferredBlock<PcDeviceBlock> UPS_CABINET = device("ups_cabinet", machine(),
             Spec.facing(BlockStateProperties.LIT, PcProperties.ALARM), FoundryBlock.with(dev.denfry.promptcritical.mod.grid.PowerBoardBlockEntity::ups));
 
