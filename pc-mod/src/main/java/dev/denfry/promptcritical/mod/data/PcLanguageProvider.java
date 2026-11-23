@@ -104,6 +104,16 @@ public final class PcLanguageProvider extends LanguageProvider {
         b("shakeout_grate", "Shakeout Grate", "Выбивная решётка");
         b("molding_station_real", "Jolt-Squeeze Moulding Machine", "Встряхивающе-прессовая формовочная машина");
         b("shakeout_grate_real", "Vibrating Shakeout Grate", "Инерционная выбивная решётка");
+        b("power_hammer_real", "Pneumatic Power Hammer", "Пневматический молот");
+        b("bloomery_real", "Clay Bloomery", "Сыродутный горн");
+        b("forge_hearth_real", "Smith's Forge Hearth", "Кузнечный горн");
+        b("crank_press_real", "Inclinable Crank Press", "Открытый кривошипный пресс");
+        b("wire_mill_real", "Wire Drawing Block", "Волочильный барабан");
+        b("sheet_mill_real", "Two-High Sheet Mill", "Двухвалковый листовой стан");
+        b("notching_press_real", "Lamination Notching Press", "Пазовырубной пресс");
+        b("winding_machine_real", "Stator Winding Lathe", "Намоточный станок для статоров");
+        b("heating_furnace_real", "Coal-Fired Reheating Furnace", "Нагревательная печь на угле");
+        b("hardening_furnace_real", "Muffle Hardening Furnace", "Муфельная закалочная печь");
         b("machine_lathe", "Lathe", "Токарный станок");
         b("drill_press", "Drill Press", "Сверлильный станок");
         b("milling_machine", "Knee Milling Machine", "Консольно-фрезерный станок");

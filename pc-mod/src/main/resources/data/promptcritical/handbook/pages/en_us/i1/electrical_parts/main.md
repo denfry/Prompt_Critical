@@ -25,3 +25,5 @@ The [stator winding machine](item:promptcritical:winding_machine) stacks bundles
 Thick wire lowers resistance but must still fit the slot. The panel shows the slot fill: above 44 % the insulation is scraped on the slot edges. Without wire the machine gives a bare core.
 
 The tooltip of a wound stator shows what a 5.5 kW motor built on it would lose in iron and copper, its efficiency and the insulation resistance of the new winding. A careful stator reaches about 86 %, a careless one barely 83 %, and a damaged winding starts its life closer to failure.
+
+The [two-high sheet mill](item:promptcritical:sheet_mill_real), the [lamination notching press](item:promptcritical:notching_press_real) and the [stator winding lathe](item:promptcritical:winding_machine_real) also come at full size, built on a construction site from their drawings. The Create shaft enters them on the same side as the small machines. Sheet goes onto the mill's north table and comes off the south one; laminations go onto the press's index table at the front.

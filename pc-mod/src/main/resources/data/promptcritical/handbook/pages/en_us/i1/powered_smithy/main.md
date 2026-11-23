@@ -17,3 +17,5 @@ The [hardening furnace](item:promptcritical:hardening_furnace) is a heating furn
 ## The wire drawing mill
 
 The [wire drawing mill](item:promptcritical:wire_mill) does the draw plate's work on a shaft. Choose the final diameter and start it: the mill goes from die to die with soap in the box. It stops at size, when the shaft cannot pull the wire through, or before a pass that would snap the hardened wire. Anneal the coil in the furnace and start it again.
+
+Each machine also comes at full size, built on a construction site from its drawing and working the same way. The [pneumatic power hammer](item:promptcritical:power_hammer_real), the [inclinable crank press](item:promptcritical:crank_press_real) and the [wire drawing block](item:promptcritical:wire_mill_real) take the Create shaft at the back cell, on the same side as the small machines, and take the work at the cell in front of it. The [coal-fired reheating furnace](item:promptcritical:heating_furnace_real) and the [muffle hardening furnace](item:promptcritical:hardening_furnace_real) take work through the door at the front; the hardening furnace's quench tank is filled from above.

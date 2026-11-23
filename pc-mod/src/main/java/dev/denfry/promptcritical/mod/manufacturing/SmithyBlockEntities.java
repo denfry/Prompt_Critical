@@ -18,30 +18,30 @@ public final class SmithyBlockEntities {
             DeferredRegister.create(Registries.BLOCK_ENTITY_TYPE, PromptCritical.MOD_ID);
 
     public static final DeferredHolder<BlockEntityType<?>, BlockEntityType<BloomeryBlockEntity>> BLOOMERY =
-            type("bloomery", BloomeryBlockEntity::new, PcBlocks.BLOOMERY);
+            type("bloomery", BloomeryBlockEntity::new, PcBlocks.BLOOMERY, PcBlocks.BLOOMERY_REAL);
     public static final DeferredHolder<BlockEntityType<?>, BlockEntityType<ForgeHearthBlockEntity>> FORGE_HEARTH =
-            type("forge_hearth", ForgeHearthBlockEntity::new, PcBlocks.FORGE_HEARTH);
+            type("forge_hearth", ForgeHearthBlockEntity::new, PcBlocks.FORGE_HEARTH, PcBlocks.FORGE_HEARTH_REAL);
     public static final DeferredHolder<BlockEntityType<?>, BlockEntityType<SmithingAnvilBlockEntity>> SMITHING_ANVIL =
             type("smithing_anvil", SmithingAnvilBlockEntity::new, PcBlocks.SMITHING_ANVIL);
     public static final DeferredHolder<BlockEntityType<?>, BlockEntityType<DrawPlateBlockEntity>> DRAW_PLATE =
             type("draw_plate", DrawPlateBlockEntity::new, PcBlocks.DRAW_PLATE);
     public static final DeferredHolder<BlockEntityType<?>, BlockEntityType<PowerHammerBlockEntity>> POWER_HAMMER =
-            type("power_hammer", PowerHammerBlockEntity::hammer, PcBlocks.POWER_HAMMER);
+            type("power_hammer", PowerHammerBlockEntity::hammer, PcBlocks.POWER_HAMMER, PcBlocks.POWER_HAMMER_REAL);
     public static final DeferredHolder<BlockEntityType<?>, BlockEntityType<PowerHammerBlockEntity>> CRANK_PRESS =
-            type("crank_press", PowerHammerBlockEntity::press, PcBlocks.CRANK_PRESS);
+            type("crank_press", PowerHammerBlockEntity::press, PcBlocks.CRANK_PRESS, PcBlocks.CRANK_PRESS_REAL);
     public static final DeferredHolder<BlockEntityType<?>, BlockEntityType<WireMillBlockEntity>> WIRE_MILL =
-            type("wire_mill", WireMillBlockEntity::new, PcBlocks.WIRE_MILL);
+            type("wire_mill", WireMillBlockEntity::new, PcBlocks.WIRE_MILL, PcBlocks.WIRE_MILL_REAL);
     public static final DeferredHolder<BlockEntityType<?>, BlockEntityType<SmithyFurnaceBlockEntity>> HEATING_FURNACE =
-            type("heating_furnace", SmithyFurnaceBlockEntity::heating, PcBlocks.HEATING_FURNACE);
+            type("heating_furnace", SmithyFurnaceBlockEntity::heating, PcBlocks.HEATING_FURNACE, PcBlocks.HEATING_FURNACE_REAL);
     public static final DeferredHolder<BlockEntityType<?>, BlockEntityType<SmithyFurnaceBlockEntity>> HARDENING_FURNACE =
-            type("hardening_furnace", SmithyFurnaceBlockEntity::hardening, PcBlocks.HARDENING_FURNACE);
+            type("hardening_furnace", SmithyFurnaceBlockEntity::hardening, PcBlocks.HARDENING_FURNACE, PcBlocks.HARDENING_FURNACE_REAL);
 
     public static final DeferredHolder<BlockEntityType<?>, BlockEntityType<SheetMillBlockEntity>> SHEET_MILL =
-            type("sheet_mill", SheetMillBlockEntity::new, PcBlocks.SHEET_MILL);
+            type("sheet_mill", SheetMillBlockEntity::new, PcBlocks.SHEET_MILL, PcBlocks.SHEET_MILL_REAL);
     public static final DeferredHolder<BlockEntityType<?>, BlockEntityType<NotchingPressBlockEntity>> NOTCHING_PRESS =
-            type("notching_press", NotchingPressBlockEntity::new, PcBlocks.NOTCHING_PRESS);
+            type("notching_press", NotchingPressBlockEntity::new, PcBlocks.NOTCHING_PRESS, PcBlocks.NOTCHING_PRESS_REAL);
     public static final DeferredHolder<BlockEntityType<?>, BlockEntityType<WindingMachineBlockEntity>> WINDING_MACHINE =
-            type("winding_machine", WindingMachineBlockEntity::new, PcBlocks.WINDING_MACHINE);
+            type("winding_machine", WindingMachineBlockEntity::new, PcBlocks.WINDING_MACHINE, PcBlocks.WINDING_MACHINE_REAL);
 
     private SmithyBlockEntities() {
     }
@@ -65,5 +65,11 @@ public final class SmithyBlockEntities {
     private static <T extends BlockEntity> DeferredHolder<BlockEntityType<?>, BlockEntityType<T>> type(String name,
             BlockEntityType.BlockEntitySupplier<T> factory, Supplier<? extends Block> block) {
         return BLOCK_ENTITIES.register(name, () -> BlockEntityType.Builder.of(factory, block.get()).build(null));
+    }
+
+    /** Тип BE старой машины и её пары реального масштаба (тот же BE на обоих блоках). */
+    private static <T extends BlockEntity> DeferredHolder<BlockEntityType<?>, BlockEntityType<T>> type(String name,
+            BlockEntityType.BlockEntitySupplier<T> factory, Supplier<? extends Block> block, Supplier<? extends Block> real) {
+        return BLOCK_ENTITIES.register(name, () -> BlockEntityType.Builder.of(factory, block.get(), real.get()).build(null));
     }
 }

@@ -23,7 +23,29 @@ import org.jetbrains.annotations.Nullable;
  * Устройство кузницы: состояние процесса живёт в самом BE (своего узла в топологии симуляции у ручной ступени нет —
  * один кузнец, один горн), склад под слоты щита, рука игрока кладёт в склад.
  */
-public abstract class SmithyDevice extends BlockEntity implements FoundryDevice, PanelHost {
+public abstract class SmithyDevice extends BlockEntity implements FoundryDevice, PanelHost,
+        dev.denfry.promptcritical.mod.client.whole.WholeModelHost {
+    // --- цельная модель (реальный масштаб) ---
+
+    /** Id цельной модели у машины реального масштаба (блок {@code *_real}); у старой — null. */
+    @Override
+    @Nullable
+    public String wholeModelId() {
+        return dev.denfry.promptcritical.mod.client.whole.WholeModelHost.idOf(getBlockState());
+    }
+
+    @Override
+    public Direction wholeModelFacing() {
+        BlockState s = getBlockState();
+        return s.getBlock() instanceof dev.denfry.promptcritical.mod.block.PcBlock b ? b.facing(s) : Direction.NORTH;
+    }
+
+    /** Свет — с фасада, перед контроллером. */
+    @Override
+    public BlockPos wholeModelLightPos() {
+        return worldPosition.relative(wholeModelFacing());
+    }
+
     protected final MachineInventory inv;
 
     protected SmithyDevice(BlockEntityType<?> type, BlockPos pos, BlockState state, MachineInventory.Role[] roles,
