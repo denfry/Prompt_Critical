@@ -89,6 +89,12 @@ public final class BlastFurnaceControllerBlockEntity extends IronworksDeviceBloc
         super(IronworksBlockEntities.BLAST_FURNACE_CONTROLLER.get(), pos, state, BlastFurnaceUnit.class);
     }
 
+    /** Один тип домны в симуляции и для старого пульта, и для пульта реального масштаба {@code blast_furnace_controller_real}. */
+    @Override
+    public String deviceType() {
+        return IronmakingSubsystem.BLAST_FURNACE;
+    }
+
     private static boolean slotValid(int slot, ItemStack s) {
         return switch (slot) {
             case SLOT_ORE -> s.is(IronworksTags.FURNACE_ORE);
@@ -131,7 +137,7 @@ public final class BlastFurnaceControllerBlockEntity extends IronworksDeviceBloc
         operations(u, f);
         feedHopper(u);
         double cold = 0;
-        for (BlockPos p : blowers) if (level.getBlockEntity(p) instanceof BlastBlowerBlockEntity bl) cold += bl.coldNm3S();
+        for (BlockPos p : blowers) if (level.getBlockEntity(p) instanceof ColdBlastSource bl) cold += bl.coldNm3S();
         List<HotBlastStoveUnit> su = new ArrayList<>();
         for (BlockPos p : stoves) {
             if (level.getBlockEntity(p) instanceof HotBlastStoveBlockEntity s && s.unit() != null) su.add(s.unit());
@@ -193,7 +199,8 @@ public final class BlastFurnaceControllerBlockEntity extends IronworksDeviceBloc
         problem = "";
         u.form(b.world().subsystem(IronmakingSubsystem.class).config(), s.spec());
         AABB near = s.bounds().inflate(LINK_RANGE);
-        blowers = positions(Ironworks.blockEntities(level, near, BlastBlowerBlockEntity.class));
+        blowers = positions(Ironworks.blockEntities(level, near, net.minecraft.world.level.block.entity.BlockEntity.class).stream()
+                .filter(be -> be instanceof ColdBlastSource).toList());
         stoves = positions(Ironworks.blockEntities(level, near, HotBlastStoveBlockEntity.class));
         catchers = positions(Ironworks.blockEntities(level, near, DustCatcherBlockEntity.class));
         runner = runnerPath(s);

@@ -24,15 +24,30 @@ import org.jetbrains.annotations.Nullable;
  * Воздухонагреватель Каупера {@code hot_blast_stove} 3×9×3 (08 §8.5.2): «на газе» жжёт горючий газ из трубы по
  * клапану и греет насадку; «на дутье» отдаёт тепло дутью домны. Режим переключает домна (автоцикл) или щит.
  */
-public final class HotBlastStoveBlockEntity extends IronworksDeviceBlockEntity<HotBlastStoveUnit> implements PanelHost {
+public class HotBlastStoveBlockEntity extends IronworksDeviceBlockEntity<HotBlastStoveUnit> implements PanelHost {
     private final GasBuffer gas = new GasBuffer(16_000, GasBuffer::isProcessGas, this::setChanged);
 
     public HotBlastStoveBlockEntity(BlockPos pos, BlockState state) {
-        super(IronworksBlockEntities.HOT_BLAST_STOVE.get(), pos, state, HotBlastStoveUnit.class);
+        this(IronworksBlockEntities.HOT_BLAST_STOVE.get(), pos, state);
+    }
+
+    protected HotBlastStoveBlockEntity(net.minecraft.world.level.block.entity.BlockEntityType<?> type, BlockPos pos, BlockState state) {
+        super(type, pos, state, HotBlastStoveUnit.class);
+    }
+
+    /** Один тип воздухонагревателя в симуляции и для старого, и для каупера реального масштаба. */
+    @Override
+    public String deviceType() {
+        return dev.denfry.promptcritical.sim.metallurgy.IronmakingSubsystem.HOT_BLAST_STOVE;
     }
 
     @Override
     protected void serverTick(SimLevelBinding b, HotBlastStoveUnit u) {
+        stoveTick(b, u);
+    }
+
+    /** Газ из буфера в юнит и выброс дымовых газов; реальный масштаб добавляет к этому состояние клапанов. */
+    protected final void stoveTick(SimLevelBinding b, HotBlastStoveUnit u) {
         double dtp = Ironworks.tickPhysS(b);
         ProcessGas g = gas.gas();
         if (g != null) u.setGasSupply(g, gas.draw(u.gasDemandNm3S() * dtp) / dtp);

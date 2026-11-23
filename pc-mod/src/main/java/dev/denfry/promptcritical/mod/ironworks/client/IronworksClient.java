@@ -23,6 +23,12 @@ public final class IronworksClient {
     private static final PartialModel EXTRUDER_SCREW = partial("electrode_extruder/partial/screw");
     private static final PartialModel SEPARATOR_DRUM = partial("magnetic_separator/partial/drum");
 
+    static {
+        // доменный цех реального масштаба: цельные модели и partial-модели — до запекания
+        HotBlastStoveRealRenderer.init();
+        BlastBlowerEngineRenderer.init();
+    }
+
     private IronworksClient() {
     }
 
@@ -40,6 +46,8 @@ public final class IronworksClient {
         event.registerBlockEntityRenderer(IronworksBlockEntities.GAS_EXHAUSTER.get(), c -> new FoundryMachineRenderer<>(EXHAUSTER_ROTOR, Motion.SPIN_Z, 16, 16, 1));
         event.registerBlockEntityRenderer(IronworksBlockEntities.BLAST_BLOWER.get(), c -> new FoundryMachineRenderer<>(BLOWER_ROTOR, Motion.SPIN_Z, 16, 16, 1));
         event.registerBlockEntityRenderer(IronworksBlockEntities.ELECTRODE_EXTRUDER.get(), c -> new FoundryMachineRenderer<>(EXTRUDER_SCREW, Motion.SPIN_X, 8, 8, 1));
+        event.registerBlockEntityRenderer(IronworksBlockEntities.HOT_BLAST_STOVE_REAL.get(), c -> new HotBlastStoveRealRenderer());
+        event.registerBlockEntityRenderer(IronworksBlockEntities.BLAST_BLOWER_ENGINE.get(), c -> new BlastBlowerEngineRenderer());
         event.registerBlockEntityRenderer(IronworksBlockEntities.MAGNETIC_SEPARATOR.get(), c -> new FoundryMachineRenderer<>(SEPARATOR_DRUM, Motion.SPIN_X, 10, 8, 1));
     }
 
