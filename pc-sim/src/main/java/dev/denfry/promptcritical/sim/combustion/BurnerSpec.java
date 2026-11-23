@@ -18,6 +18,17 @@ public record BurnerSpec(BurnerKind kind, double ratedFuelKgS, double turndown, 
         if (!(mixingQuality >= 1)) throw new IllegalArgumentException("mixingQuality: " + mixingQuality);
     }
 
+    /**
+     * Множитель NOx малотоксичных горелок со ступенчатым подводом воздуха (комплект {@code low_nox_burner_kit},
+     * 07 §7.8.4: 0,5–0,6 — середина диапазона).
+     */
+    public static final double LOW_NOX_FACTOR = 0.55;
+
+    /** Та же горелка с другим множителем NOx. */
+    public BurnerSpec withNoxFactor(double factor) {
+        return new BurnerSpec(kind, ratedFuelKgS, turndown, factor, mixingQuality);
+    }
+
     /** Исправная горелка без подавления NOx. */
     public static BurnerSpec of(BurnerKind kind, double ratedFuelKgS) {
         return new BurnerSpec(kind, ratedFuelKgS, 3, 1, 1);

@@ -6,6 +6,7 @@ import dev.denfry.promptcritical.sim.combustion.BoilerInputs;
 import dev.denfry.promptcritical.sim.combustion.BoilerOutputs;
 import dev.denfry.promptcritical.sim.combustion.BoilerRupture;
 import dev.denfry.promptcritical.sim.combustion.BurnerKind;
+import dev.denfry.promptcritical.sim.combustion.BurnerSpec;
 import dev.denfry.promptcritical.sim.combustion.FlammabilityLimits;
 import dev.denfry.promptcritical.sim.combustion.FuelSpec;
 import dev.denfry.promptcritical.sim.combustion.LarsonMiller;
@@ -99,6 +100,8 @@ public final class WaterTubeUnit {
     double deaeratorDemandKgS, deaeratorTakenKg;
     /** Регуляторы. */
     boolean combustionAuto = true, feedAuto = true;
+    /** На горелках малотоксичные насадки (07 §7.8.4, {@code low_nox_burner_kit}). */
+    boolean lowNox;
     double pressureSetPa = PRESSURE_SET_PA, manualFuel, manualAir, manualDraft, manualFeed;
     double firingDemand, pressureIntegral, fuelPos, airPos, draftPos, feedRateKgS;
     double coTimer;
@@ -134,6 +137,7 @@ public final class WaterTubeUnit {
         WaterTubeBoiler b = new WaterTubeBoiler(spec, f, limits(fuelKey), events(), initialTempK);
         if (boiler != null) b.inheritFrom(boiler);
         boiler = b;
+        applyNox();
         this.fuelKey = fuelKey;
         this.fuel = f;
         this.furnaceVolumeM3 = furnaceVolumeM3;
@@ -276,6 +280,20 @@ public final class WaterTubeUnit {
         combustionAuto = auto;
     }
 
+    /** Ставит или снимает малотоксичные насадки горелок: NOx × {@link BurnerSpec#LOW_NOX_FACTOR} (07 §7.8.4). */
+    public void setLowNoxBurners(boolean fitted) {
+        lowNox = fitted;
+        applyNox();
+    }
+
+    public boolean lowNoxBurners() {
+        return lowNox;
+    }
+
+    private void applyNox() {
+        boiler.combustor().setNoxFactor(lowNox ? BurnerSpec.LOW_NOX_FACTOR : 1);
+    }
+
     public boolean combustionAuto() {
         return combustionAuto;
     }
@@ -413,6 +431,7 @@ public final class WaterTubeUnit {
                 feedO2, feedChloride, fdCapacityKgS, idCapacityKgS, deaeratorDemandKgS, deaeratorTakenKg}, 12);
         o.putBoolean("combustion_auto", combustionAuto);
         o.putBoolean("feed_auto", feedAuto);
+        o.putBoolean("low_nox", lowNox);
         o.putDoubles("control", new double[] {pressureSetPa, manualFuel, manualAir, manualDraft, manualFeed, firingDemand,
                 pressureIntegral, fuelPos, airPos, draftPos, feedRateKgS, coTimer}, 12);
         o.putInt("last_trip", lastTrip == null ? -1 : lastTrip.ordinal());
@@ -445,6 +464,7 @@ public final class WaterTubeUnit {
         u.deaeratorTakenKg = s[11];
         u.combustionAuto = i.getBoolean("combustion_auto");
         u.feedAuto = i.getBoolean("feed_auto");
+        u.setLowNoxBurners(i.has("low_nox") && i.getBoolean("low_nox"));
         double[] c = i.getDoubles("control");
         u.pressureSetPa = c[0];
         u.manualFuel = c[1];

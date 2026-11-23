@@ -12,6 +12,7 @@ import dev.denfry.promptcritical.mod.powerhouse.DeaeratorBlockEntity;
 import dev.denfry.promptcritical.mod.powerhouse.WaterTubeBoilerBlockEntity;
 import dev.denfry.promptcritical.mod.powerhouse.WaterTubeBoilerShape;
 import dev.denfry.promptcritical.mod.registry.PcBlocks;
+import dev.denfry.promptcritical.mod.registry.PcItems;
 import dev.denfry.promptcritical.sim.combustion.BmsResponse;
 import dev.denfry.promptcritical.sim.combustion.BmsState;
 import dev.denfry.promptcritical.sim.combustion.BoilerRupture;
@@ -158,6 +159,32 @@ public final class PowerhouseGameTests {
                 })
                 .thenIdle(2)
                 .thenExecute(() -> h.assertTrue(unit(h).bms() == BmsState.PURGE, "purge accepted with fans running"))
+                .thenSucceed();
+    }
+
+    /**
+     * 07 §7.8.4: малотоксичные насадки ставятся по комплекту на горелку и только на погашенный котёл; после этого
+     * множитель NOx горелок — 0,55, а неполный комплект не тратится.
+     */
+    @GameTest(template = LARGE, timeoutTicks = 400)
+    public static void lowNoxKitFitsOneTipPerBurnerOnAColdBoiler(GameTestHelper h) {
+        build(h);
+        h.startSequence()
+                .thenWaitUntil(() -> ready(h))
+                .thenExecute(() -> {
+                    var player = TestPlayers.of(h);
+                    var kit = PcItems.LOW_NOX_BURNER_KIT.get();
+                    net.minecraft.world.item.ItemStack one = new net.minecraft.world.item.ItemStack(kit, 1);
+                    panel(h).useItem(player, net.minecraft.world.InteractionHand.MAIN_HAND, one);
+                    h.assertTrue(!unit(h).lowNoxBurners() && one.getCount() == 1, "one kit is not enough for two burners");
+                    net.minecraft.world.item.ItemStack three = new net.minecraft.world.item.ItemStack(kit, 3);
+                    panel(h).useItem(player, net.minecraft.world.InteractionHand.MAIN_HAND, three);
+                    h.assertTrue(unit(h).lowNoxBurners() && three.getCount() == 1, "two kits fitted, one left: " + three.getCount());
+                    h.assertTrue(unit(h).boiler().combustor().burner().noxFactor() == dev.denfry.promptcritical.sim.combustion.BurnerSpec.LOW_NOX_FACTOR,
+                            "burners run with the low-NOx factor");
+                    panel(h).useItem(player, net.minecraft.world.InteractionHand.MAIN_HAND, three);
+                    h.assertTrue(three.getCount() == 1, "a fitted boiler takes no more kits");
+                })
                 .thenSucceed();
     }
 

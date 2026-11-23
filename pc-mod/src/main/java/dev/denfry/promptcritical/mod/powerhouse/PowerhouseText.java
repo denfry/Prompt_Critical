@@ -71,6 +71,13 @@ public final class PowerhouseText {
                 "Это топливо не подходит горелкам сейчас: остановите котёл, чтобы сменить топливо");
         msg("status", "Boiler: %s · drum %s MPa · fuel %s · feed water %s L",
                 "Котёл: %s · барабан %s МПа · топливо %s · питательной воды %s л");
+        msg("status_low_nox", "Boiler: %s · drum %s MPa · fuel %s · feed water %s L · low-NOx burners",
+                "Котёл: %s · барабан %s МПа · топливо %s · питательной воды %s л · малотоксичные горелки");
+        msg("low_nox.fitted", "The burners already have low-NOx tips", "На горелках уже стоят малотоксичные насадки");
+        msg("low_nox.lit", "Shut the boiler down before changing the burner tips", "Остановите котёл, прежде чем менять насадки горелок");
+        msg("low_nox.need", "One kit per burner: this boiler needs %s", "По комплекту на горелку: этому котлу нужно %s");
+        msg("low_nox.done", "Low-NOx tips fitted on %s burners: staged air cuts NOx by almost half",
+                "Малотоксичные насадки стоят на %s горелках: ступенчатый подвод воздуха почти вдвое снижает NOx");
         msg("unformed", "Water-tube boiler not formed: %s", "Водотрубный котёл не собран: %s");
         msg("deaerator", "Deaerator: %s · steam %s kg/h · in %s L, out %s L", "Деаэратор: %s · пар %s кг/ч · вход %s л, выход %s л");
         msg("deaerator.no_boiler", "no water-tube boiler within 12 blocks", "нет водотрубного котла в 12 блоках");

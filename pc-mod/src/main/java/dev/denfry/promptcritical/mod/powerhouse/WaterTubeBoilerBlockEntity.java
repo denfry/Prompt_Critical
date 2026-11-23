@@ -513,6 +513,7 @@ public final class WaterTubeBoilerBlockEntity extends IronworksBlockEntity imple
     @Override
     public ItemInteractionResult useItem(Player player, InteractionHand hand, ItemStack stack) {
         if (FluidUtil.interactWithFluidHandler(player, hand, inlet)) return ItemInteractionResult.SUCCESS;
+        if (stack.is(PcItems.LOW_NOX_BURNER_KIT.get())) return fitLowNox(player, stack);
         if (stack.is(PcItems.COAL_DUST.get())) {
             WaterTubeUnit u = unit();
             if (u != null && WaterTubeUnit.burnerKind(u.fuelKey()) != BurnerKind.PULVERIZED_COAL && u.bms() != BmsState.OFF) {
@@ -526,6 +527,27 @@ public final class WaterTubeBoilerBlockEntity extends IronworksBlockEntity imple
         return ItemInteractionResult.PASS_TO_DEFAULT_BLOCK_INTERACTION;
     }
 
+    /**
+     * Малотоксичные насадки (07 §7.8.4): по комплекту на горелку, ставятся только на погашенный котёл; после этого NOx
+     * горелок × 0,55 при том же сжигании.
+     */
+    private ItemInteractionResult fitLowNox(Player player, ItemStack stack) {
+        WaterTubeUnit u = unit();
+        if (u == null) return ItemInteractionResult.PASS_TO_DEFAULT_BLOCK_INTERACTION;
+        int need = u.spec().burners();
+        if (u.lowNoxBurners()) player.displayClientMessage(PowerhouseText.msg("low_nox.fitted"), true);
+        else if (u.bms() != BmsState.OFF) player.displayClientMessage(PowerhouseText.msg("low_nox.lit"), true);
+        else if (!player.getAbilities().instabuild && stack.getCount() < need)
+            player.displayClientMessage(PowerhouseText.msg("low_nox.need", need), true);
+        else {
+            if (!player.getAbilities().instabuild) stack.shrink(need);
+            u.setLowNoxBurners(true);
+            player.displayClientMessage(PowerhouseText.msg("low_nox.done", need), true);
+            return ItemInteractionResult.SUCCESS;
+        }
+        return ItemInteractionResult.CONSUME;
+    }
+
     @Override
     public InteractionResult use(Player player) {
         if (shape == null) {
@@ -537,7 +559,7 @@ public final class WaterTubeBoilerBlockEntity extends IronworksBlockEntity imple
         String fuel = u.fuelKey().equals(PlantFuels.COAL_DUST)
                 ? dust.getStackInSlot(0).getCount() + " × " + Component.translatable(PcItems.COAL_DUST.get().getDescriptionId()).getString()
                 : gas.amount() + " mB";
-        player.displayClientMessage(PowerhouseText.msg("status", PowerhouseText.bmsState(u.bms()),
+        player.displayClientMessage(PowerhouseText.msg(u.lowNoxBurners() ? "status_low_nox" : "status", PowerhouseText.bmsState(u.bms()),
                 PowerhouseText.num(u.drumPressurePa() / 1e6, 2), fuel, feed.getFluidAmount()), true);
         return InteractionResult.SUCCESS;
     }

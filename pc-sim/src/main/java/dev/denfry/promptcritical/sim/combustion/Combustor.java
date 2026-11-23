@@ -36,7 +36,7 @@ public final class Combustor {
     }
 
     private final FuelSpec fuel;
-    private final BurnerSpec burner;
+    private BurnerSpec burner;
     private final double lhv, o2st, l0, alphaCrit, q4;
     /** Углерод механического недожога q₄, кг/кг топлива: q₄·Q / 32,76 МДж/кг C — в шлак и унос, не в газ. */
     private final double carbonLeft;
@@ -62,6 +62,11 @@ public final class Combustor {
 
     public BurnerSpec burner() {
         return burner;
+    }
+
+    /** Меняет множитель NOx горелок (07 §7.8.4: малотоксичные насадки ставятся на ту же горелку). */
+    public void setNoxFactor(double factor) {
+        burner = burner.withNoxFactor(factor);
     }
 
     /** Q_н^р, Дж/кг. */

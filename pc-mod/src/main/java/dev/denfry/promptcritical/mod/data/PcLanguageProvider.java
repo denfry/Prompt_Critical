@@ -721,6 +721,7 @@ public final class PcLanguageProvider extends LanguageProvider {
         i("recorded_chart", "Recorded Chart", "Записанная диаграмма");
         i("salt", "Salt", "Соль");
         i("coal_dust", "Coal Dust", "Угольная пыль");
+        i("low_nox_burner_kit", "Low-NOx Burner Kit", "Комплект малотоксичной горелки");
         i("steel_ingot", "Steel Ingot", "Стальной слиток");
         i("steel_billet", "Steel Billet", "Стальная заготовка");
         i("steel_plate", "Steel Plate", "Стальной лист");
