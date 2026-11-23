@@ -361,7 +361,7 @@ public final class PcBlockStateProvider extends BlockStateProvider {
             case "edc_cracker" -> s.getValue(PcProperties.ALARM) ? id + "_coked" : s.getValue(BlockStateProperties.LIT) ? id + "_lit" : id;
             // химия I3, азот
             case "steam_reformer" -> s.getValue(BlockStateProperties.LIT) ? id + "_lit" : id;
-            case "co2_absorber" -> "absorption_tower";
+            case "co2_absorber", "hcl_synthesis_furnace" -> "absorption_tower";
             case "nitric_acid_unit", "chlor_alkali_cell" -> s.getValue(PcProperties.RUNNING) ? id + "_running" : id;
             case "acid_concentrator" -> s.getValue(BlockStateProperties.LIT) ? id + "_lit" : id;
             // химия I3, метанол
