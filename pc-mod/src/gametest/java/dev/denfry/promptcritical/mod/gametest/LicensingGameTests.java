@@ -93,7 +93,7 @@ public final class LicensingGameTests {
     @GameTest(template = LARGE, timeoutTicks = 100, batch = "licensing")
     public static void applyI1WhenI0Done(GameTestHelper h) {
         OpsSubsystem ops = ops(h);
-        UUID team = new UUID(0x1ce, 1);
+        UUID team = UUID.randomUUID(); // мир GameTest сохраняется между запусками: команда каждый раз новая
         Set<String> keys = RouteKeyTasks.of(HandbookManager.data(), "I0");
         h.assertTrue(!keys.isEmpty(), "I0 has key route tasks");
         LicenceVerdict before = LicenceCommand.apply(h.getLevel().getServer(), team, PlantEra.I1, 0);
