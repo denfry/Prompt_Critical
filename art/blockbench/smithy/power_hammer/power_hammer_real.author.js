@@ -98,7 +98,7 @@
 
   // ------------------------------------------------------------------ partials
   function ram(m) {
-    m.cylY('piston_rod', W, 1.2, 27, 33, 'bright');
+    m.cylY('piston_rod', W, 1.2, 27, 32, 'bright');
     m.box('tup', [4.6, 20, 2.6], [11.4, 27, 9.4], 'st', { split: '' });
     m.box('tup_key', [11.4, 21, 5.4], [12.4, 22, 6.6], 'st', { split: '' });
     m.box('upper_die', [5, 18.6, 3], [11, 20, 9], 'bright', { split: '' });
