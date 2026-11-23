@@ -61,6 +61,42 @@ the facing and the log line, if there is one.
 | Lockout and fire | Hang padlocks with tags on an open switchgear cell, a disengaged mechanical disconnect and a blind line blind; fit a hasp; use the lockout box; start a fire under a sprinkler and between two smoke detectors with a fire panel and a deluge; try each extinguisher on a plain fire, at the SFR sodium leak and next to a live cell | Locked blocks refuse every action with the owners' names; models of the disconnect, box and detectors change state; the sprinkler bursts and the deluge opens; water at the sodium fire flashes, water at the live cell shocks |
 | Chunk save | Save and quit with machines running (reactor at power, cascade spinning, PUREX line busy), reload | Everything resumes in the same state; the T1/T2a reactors do not trip on the first tick after loading |
 
+## Player journey I0 (survival, real-scale machines)
+
+Play these as a survival player, not with `/setblock`. An agent drives the client through mcpfabric (`players.teleport`,
+`control.lookAt`, `interact.placeBlock`, `interact.breakBlock` with `survival`, `interact.useItem`, `vision.screenshot`)
+and keeps the window behind all others (`mc-background.ps1`, `pauseOnLostFocus:false`).
+
+| Step | What to do | Expected |
+|---|---|---|
+| Handbook | First join in survival | The engineering handbook is in the inventory; the body screen is chosen once (seen in the I0 run: the screen is modal, Esc does nothing until "Confirm", and "Confirm" closes it; agent clients start with `runClient -PskipBodyScreen`, which submits the reference body at login) |
+| Drawing | Hold each `*_drawing` in the hand and look at it in the creative tab | The design drawing icon, never the purple-black cube; every drawing is in the tab |
+| Site plan | Place `construction_site`, right-click it with a drawing on ground that is not cleared | The message names the first block in the way with its position; the drawing is not used up |
+| Pit | Dig what the message names (the crucible melting hole needs a 2 × 2 pit one block deep) and right-click again | "Drawing accepted: the site is marked out", the drawing is used up, the ghost of the machine shows its volume |
+| Delivery | Right-click the site with the stage materials, then with an empty hand | It takes only what the current and the remaining stages still lack; the chat shows the stage name, what is missing and, while erecting, the seconds left |
+| Finish | Wait for the last stage | The machine stands in the site's place with the site's facing |
+| Route credit | Open the handbook route after the machine is finished | The I0 route task of its old-series twin (crucible, boiler, hoist, fan, cupola, moulding, shakeout, the shop machines) is done, machines whose twin has an operating procedure (boiler, hoist, fan) also give that procedure |
+| Break | Break any cell of a real-scale machine in survival | The whole machine goes at once and drops one item |
+| Facings | Place every I0 real-scale machine facing north, east, south and west and look from its front-left | All four views are the same picture: parts and partials turn with the facing |
+| Cage | Walk into the mine cage at the top landing, close the door, ride down and up, use the shaft signal | Bells ring three, two and one strokes; the action bar shows the depth; the player walks out at each landing |
+| Engines | Feed the Lancashire stokers, light the boiler, start the mill engine and the winding engine from the driver's stand | Pressure rises on the gauge; crank, crosshead, rod and drum move with the shaft; the hoist cage moves |
+| Ports | Insert and extract with a hopper and a pipe at every declared port of each real-scale machine, then at a cell without a port | Ports take and give; other cells of the volume take nothing |
+| Collision | Walk around and under each big model (boiler, headframe, Guibal fan, winding engine) | The player is not stuck in invisible cells and does not walk through drawn parts |
+
+### I0 run 2026-11-23 (integrate 0dd1c125, survival, `runClient -PskipBodyScreen`)
+
+| Check | Result |
+|---|---|
+| Site plan on grass | "The site is not free: Grass Block at 3030 -61 3000", drawing kept; four messages walk the 2 × 2 pit cell by cell |
+| Pit dug | "Drawing accepted: the site is marked out", drawing used up, ghost shown |
+| Delivery | 10 bricks and 10 steel ingots: the site took 3 and 4, the need of both stages; status line in the chat |
+| Finish | Crucible melting hole stands with the site's facing (east) |
+| Route | "A crucible furnace" (+20 XP) and "Choose a melting furnace" (+10 XP) done on completion |
+| Break | One survival hit on a corner part removes all 8 cells, one `crucible_furnace_real` item drops |
+| Collision | Lancashire boiler and Guibal fan stop the player at the edge of the volume; headframe lets the player walk between the legs. **Winding engine: the player walks straight through it along its centre line (x = controller, the whole length, about 10 blocks), standing inside the drum between the flanges** (`shots/winding_engine_inside.png` in the session scratchpad). Cause: the drum is a second whole model and the slicer only cuts the engine; fixed in `WholeShapes` (drum and the mill engine flywheel join the cell shapes), GameTests `windingEngineDrumIsSolidOnTheCentreLine`, `everyDrawnCellOfI0WholeModelsBlocksThePlayer` |
+| Ports (lathe) | A hopper at the controller front gives a cutting tool to the lathe; hoppers at the other two front cells keep it. Create motor at the west face of the countershaft port: the port runs at 16 rpm with stress on the network |
+| Not checked | Cage ride and shaft signal, steam engines from the stand, machining a casting in the client, panels, the other machines' ports |
+
 ## Game test structures to look at
 
 `/test runall` builds all of these. The headless run passes all of them; in the client look at the models, the panels

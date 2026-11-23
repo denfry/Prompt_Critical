@@ -318,6 +318,48 @@ public final class SitePlans {
                     st("machine_frame", 200, n(INGOT, 9)),
                     st("countershaft", 120, n(INGOT, 2), n(PIPE, 2))));
 
+    /**
+     * Машина старой серии, которую заменяет машина реального масштаба {@code id}, и сколько её блоков она стоит: игроку,
+     * приложившему чертёж, постройка засчитывается и как постановка двойника — задания маршрута, главы и инструкции
+     * справочника (11 §11.1) ждут блоки старой серии. У реакторов двойников нет.
+     */
+    public record Twin(java.util.function.Supplier<? extends Block> block, int count) {}
+
+    private static final Map<String, Twin> TWINS = Map.ofEntries(
+            Map.entry("lancashire_boiler", new Twin(PcBlocks.FIRE_TUBE_BOILER, 1)),
+            Map.entry("lancashire_stoker", new Twin(PcBlocks.GRATE_STOKER, 1)),
+            Map.entry("mill_engine", new Twin(PcBlocks.STEAM_ENGINE_CYLINDER, 1)),
+            Map.entry("winding_engine", new Twin(PcBlocks.MINE_HOIST, 1)),
+            Map.entry("headframe_steel", new Twin(PcBlocks.HEADFRAME, 2)),
+            Map.entry("guibal_fan", new Twin(PcBlocks.MAIN_MINE_FAN, 1)),
+            Map.entry("mine_drainage_pump_geared", new Twin(PcBlocks.MINE_DRAINAGE_PUMP, 1)),
+            Map.entry("cupola_furnace_real", new Twin(PcBlocks.CUPOLA_FURNACE, 1)),
+            Map.entry("crucible_furnace_real", new Twin(PcBlocks.CRUCIBLE_FURNACE, 1)),
+            Map.entry("coal_jig_real", new Twin(PcBlocks.COAL_JIG, 1)),
+            Map.entry("longwall_shearer_real", new Twin(PcBlocks.LONGWALL_SHEARER, 1)),
+            Map.entry("powered_roof_support_real", new Twin(PcBlocks.POWERED_ROOF_SUPPORT, 1)),
+            Map.entry("machine_lathe_real", new Twin(PcBlocks.MACHINE_LATHE, 1)),
+            Map.entry("drill_press_real", new Twin(PcBlocks.DRILL_PRESS, 1)),
+            Map.entry("milling_machine_real", new Twin(PcBlocks.MILLING_MACHINE, 1)),
+            Map.entry("shaping_machine_real", new Twin(PcBlocks.SHAPING_MACHINE, 1)),
+            Map.entry("surface_grinder_real", new Twin(PcBlocks.SURFACE_GRINDER, 1)),
+            Map.entry("molding_station_real", new Twin(PcBlocks.MOLDING_STATION, 1)),
+            Map.entry("shakeout_grate_real", new Twin(PcBlocks.SHAKEOUT_GRATE, 1)),
+            Map.entry("hot_blast_stove_real", new Twin(PcBlocks.HOT_BLAST_STOVE, 1)),
+            Map.entry("blast_blower_engine", new Twin(PcBlocks.BLAST_BLOWER, 1)),
+            Map.entry("deaerator_real", new Twin(PcBlocks.DEAERATOR, 1)),
+            Map.entry("ion_exchange_column_real", new Twin(PcBlocks.ION_EXCHANGE_COLUMN, 1)),
+            Map.entry("shaft_generator_real", new Twin(PcBlocks.SHAFT_GENERATOR, 1)),
+            Map.entry("electric_motor_mv_real", new Twin(PcBlocks.ELECTRIC_MOTOR, 1)),
+            Map.entry("quench_tower_real", new Twin(PcBlocks.QUENCH_TOWER, 1)),
+            Map.entry("bof_vessel_real", new Twin(PcBlocks.BOF_VESSEL, 1)),
+            Map.entry("reheating_furnace_real", new Twin(PcBlocks.REHEATING_FURNACE, 1)));
+
+    @Nullable
+    public static Twin twin(String id) {
+        return TWINS.get(id);
+    }
+
     private SitePlans() {}
 
     /** Множитель числа предметов на этапах ({@code site.material_scale}); вне сервера с конфигом — 1. */
