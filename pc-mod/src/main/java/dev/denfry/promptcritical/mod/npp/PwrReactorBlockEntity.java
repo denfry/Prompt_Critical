@@ -253,6 +253,23 @@ public final class PwrReactorBlockEntity extends DeviceBlockEntity implements de
         accident.radiation(sl, worldPosition, reactor.failedAssemblies());
         if (reactor.shutDown()) loadFresh();
         if (ticks % 100 == 0) setChanged();
+        syncRods(sl);
+    }
+
+    /** Указатели положения стержней на цельной модели: клиенту — выведенная доля регулирующей группы, раз в секунду. */
+    private float rodsOut, rodsSent = -1;
+
+    private void syncRods(ServerLevel sl) {
+        if (ticks % 20 != 0 || wholeModelId() == null) return;
+        rodsOut = (float) Math.max(0, Math.min(1, 1 - reactor.rg()));
+        if (Math.abs(rodsOut - rodsSent) < 0.02f) return;
+        rodsSent = rodsOut;
+        sl.sendBlockUpdated(worldPosition, getBlockState(), getBlockState(), 2);
+    }
+
+    /** Выведенная доля регулирующей группы СУЗ (0 — введена, 1 — выведена) для partial-модели указателей. */
+    public float rodsOut() {
+        return rodsOut;
     }
 
     private void radiation(ServerLevel sl) {
@@ -676,6 +693,7 @@ public final class PwrReactorBlockEntity extends DeviceBlockEntity implements de
     public CompoundTag getUpdateTag(HolderLookup.Provider registries) {
         CompoundTag tag = super.getUpdateTag(registries);
         wiring.save(tag);
+        tag.putFloat("rods_out", (float) Math.max(0, Math.min(1, 1 - reactor.rg())));
         return tag;
     }
 
@@ -713,6 +731,7 @@ public final class PwrReactorBlockEntity extends DeviceBlockEntity implements de
         if (tag.contains("sgtr")) sgtr.load(new TreeStateReader(NbtStateTrees.fromNbt(tag.getCompound("sgtr"))));
         wiring.load(tag);
         wasTripped = reactor.protection().isTripped();
+        if (tag.contains("rods_out")) rodsOut = tag.getFloat("rods_out");
     }
 
 

@@ -35,6 +35,19 @@ public class WholeModelRenderer<T extends BlockEntity & WholeModelHost> implemen
             SuperByteBuffer b = CachedBuffers.partial(c.partial(), be.getBlockState());
             b.center().rotateYDegrees(yRot).uncenter().translate(c.x(), c.y(), c.z()).light(lit).renderInto(ms, vc);
         }
+        parts(be, partialTicks, ms, vc, lit);
+    }
+
+    /** Подвижные части (partial-модели) поверх цельной модели; по умолчанию их нет. */
+    protected void parts(T be, float partialTicks, PoseStack ms, VertexConsumer vc, int light) {}
+
+    /**
+     * Partial подвижной части, повёрнутая по фасаду вокруг контроллера и сдвинутая на (dx, dy, dz) блоков в пространстве
+     * модели (фасад на север) — как куски цельной модели; дальше вызывающий добавляет своё движение.
+     */
+    protected static SuperByteBuffer part(dev.engine_room.flywheel.lib.model.baked.PartialModel p, BlockEntity be, Direction facing,
+            double dx, double dy, double dz) {
+        return CachedBuffers.partial(p, be.getBlockState()).center().rotateYDegrees(-(facing.toYRot() + 180)).uncenter().translate(dx, dy, dz);
     }
 
     @Override
