@@ -7,8 +7,10 @@ The boiler is built freely around its [BMS panel](item:promptcritical:water_tube
 - **Furnace**: a hollow box of [water walls](item:promptcritical:boiler_wall) on all six sides, 5–9 blocks across and 8–16 high, empty inside. Output follows furnace volume, 200 kW per cubic metre.
 - [Burners](item:promptcritical:boiler_burner): 1–8 in the side walls, not on the edges; up to 4 MW per burner.
 - [Steam drum](item:promptcritical:steam_drum): at least one on the furnace roof. Steam separates from water in it.
+- Drum sections in a row along their axis join into one drum; the sections at the ends get the dished head with the manhole.
 - **Convection pass**: [superheater](item:promptcritical:boiler_superheater), [economizer](item:promptcritical:boiler_economizer) and [air preheater](item:promptcritical:air_preheater), up to six blocks of each, within two blocks of the furnace. Three superheater blocks give steam at about 250 °C; the economizer and the air preheater take the flue gas down to 150 °C.
 - **Draught**: a [forced draft fan](item:promptcritical:forced_draft_fan) and an [induced draft fan](item:promptcritical:induced_draft_fan) on Create shafts within 12 blocks of the boiler. Flow follows shaft speed; the inlet vanes set the share.
+- The [forced draught blower](item:promptcritical:forced_draft_fan_real) and the [smoke exhauster](item:promptcritical:induced_draft_fan_real) are the same fans at full size, each built on a construction site from its drawing on a concrete foundation one block down. The Create shaft enters the coupling at the front.
 
 Fuel is fuel gas from Create pipes: mine methane, coke-oven, blast-furnace or converter gas. Or [coal dust](item:promptcritical:coal_dust), coal or washed coal milled in Create, by funnel into the panel or a burner. The fuel sets the burner type; it can only be changed with the boiler shut down. Steam engines touching the drum, a water wall or the panel take superheated steam.
 

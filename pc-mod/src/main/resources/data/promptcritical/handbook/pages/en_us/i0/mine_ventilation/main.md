@@ -36,4 +36,6 @@ A [self-rescuer](item:promptcritical:self_rescuer): right-click, and for 30 minu
 
 Part of the methane can be drawn from the seam before it reaches the workings. A [degasification borehole](item:promptcritical:degasification_borehole) with a vacuum pump on a Create shaft next to it takes gas from the strata and cuts the methane released into the face.
 
+The [liquid-ring degasification pump](item:promptcritical:degasification_pump_real) is the same pump at full size, built on a construction site from its drawing. The Create shaft enters the coupling at the south end; the borehole must touch the suction flange on the north side, next to the vacuum gauge.
+
 For explosions, see [Firedamp and dust explosions](promptcritical:i0/mine_explosions).
