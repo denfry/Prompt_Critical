@@ -54,6 +54,18 @@ public final class NaturalBackgroundGameTests {
         h.succeed();
     }
 
+    /** Железная руда считается породой, в которой лежит, а не пустотой: в коробке из неё фон как у камня. */
+    @GameTest(template = LARGE)
+    public static void playerBoxedInIronOreReadsLikeStone(GameTestHelper h) {
+        fill(h, 3, 1, 3, 9, 8, 9, Blocks.IRON_ORE);
+        fill(h, 6, 4, 6, 6, 5, 6, Blocks.AIR);
+        ServerPlayer p = playerAt(h, 4);
+        double v = BackgroundField.ambientSvH(h.getLevel(), p);
+        if (!(v > 0.2e-6)) h.fail("В железной руде фон " + v + " Зв/ч, ждали больше 0,2 мкЗв/ч");
+        h.succeed();
+    }
+
+
     @GameTest(template = LARGE)
     public static void openWaterIsCosmicOnly(GameTestHelper h) {
         fill(h, 1, 1, 1, 10, 2, 10, Blocks.WATER);

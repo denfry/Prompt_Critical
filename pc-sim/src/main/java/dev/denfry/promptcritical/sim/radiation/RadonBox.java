@@ -71,6 +71,7 @@ public final class RadonBox {
             throw new IllegalArgumentException("dtS must be >= 0: " + dtS);
         }
         double cInf = steady(sourceBqS, volumeM3, ventM3S);
+        if (dtS == 0) return cBqM3;
         double k = LAMBDA_RN + ventM3S / volumeM3;
         return cInf + (cBqM3 - cInf) * Math.exp(-k * dtS);
     }

@@ -10,6 +10,7 @@ import java.util.Map;
 import java.util.Set;
 import java.util.UUID;
 import net.minecraft.core.BlockPos;
+import net.minecraft.core.registries.BuiltInRegistries;
 import net.minecraft.resources.ResourceKey;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.server.level.ServerPlayer;
@@ -19,6 +20,7 @@ import net.minecraft.world.level.block.Block;
 import net.minecraft.world.level.block.Blocks;
 import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.phys.Vec3;
+import net.neoforged.neoforge.common.Tags;
 
 /**
  * Природный фон в точке мира (04b §4b.13): земное γ от грунта, который игрок видит из 26 направлений куба 3×3×3,
@@ -59,8 +61,11 @@ public final class BackgroundField {
         ResourceKey<Level> dim = level.dimension();
         Cached c = CACHE.get(p.getUUID());
         if (c != null && c.pos.equals(feet) && c.dimension.equals(dim)) return c.svH;
-        double v = compute(level, p, feet);
-        CACHE.put(p.getUUID(), new Cached(dim, feet.immutable(), v));
+        boolean[] gap = new boolean[1];
+        double v = compute(level, p, feet, gap);
+        // луч или столб дошли до незагруженного чанка: значение неполное, пересчитаем в следующий раз
+        if (gap[0]) CACHE.remove(p.getUUID());
+        else CACHE.put(p.getUUID(), new Cached(dim, feet.immutable(), v));
         return v;
     }
 
@@ -80,6 +85,9 @@ public final class BackgroundField {
         if (s.is(PcBlocks.URANINITE_ORE.get()) || s.is(PcBlocks.DEEPSLATE_URANINITE_ORE.get())
                 || s.is(PcBlocks.OKLO_URANINITE_ORE.get())) return Ground.URANIUM_ORE;
         if (s.is(BlockTags.DEEPSLATE_ORE_REPLACEABLES) || DEEP.contains(s.getBlock())) return Ground.DEEP;
+        // не урановая руда (ванильная или чужая) излучает как порода, в которой лежит: deepslate_* — глубинная
+        if (s.is(Tags.Blocks.ORES))
+            return BuiltInRegistries.BLOCK.getKey(s.getBlock()).getPath().startsWith("deepslate_") ? Ground.DEEP : Ground.STONE;
         if (s.is(BlockTags.BASE_STONE_OVERWORLD)) return Ground.STONE;
         if (s.is(BlockTags.DIRT) || s.is(Blocks.MUD)) return Ground.SOIL;
         if (s.is(BlockTags.SAND) || SANDSTONE.contains(s.getBlock())) return Ground.SAND;
@@ -87,22 +95,26 @@ public final class BackgroundField {
         return Ground.NONE;
     }
 
-    private static double compute(ServerLevel level, ServerPlayer p, BlockPos feet) {
+    private static double compute(ServerLevel level, ServerPlayer p, BlockPos feet, boolean[] gap) {
         Vec3 origin = Vec3.atCenterOf(feet);
         Map<Ground, Double> fractions = new EnumMap<>(Ground.class);
         double w = 1.0 / RAYS.length;
-        for (Vec3 dir : RAYS) fractions.merge(firstGround(level, origin, dir, feet), w, Double::sum);
+        for (Vec3 dir : RAYS) fractions.merge(firstGround(level, origin, dir, feet, gap), w, Double::sum);
         double terrestrial = NaturalBackground.terrestrialNGyH(fractions);
-        double cosmic = NaturalBackground.cosmicUSvH(dimension(level), p.getY(), overburden(level, feet));
+        double cosmic = NaturalBackground.cosmicUSvH(dimension(level), p.getY(), overburden(level, feet, gap));
         return NaturalBackground.ambientUSvH(terrestrial, cosmic) * 1e-6;
     }
 
     /** Грунт первого непустого блока на луче (блок самого игрока не считается); луч в пустоту — {@link Ground#NONE}. */
-    private static Ground firstGround(ServerLevel level, Vec3 origin, Vec3 dir, BlockPos feet) {
+    private static Ground firstGround(ServerLevel level, Vec3 origin, Vec3 dir, BlockPos feet, boolean[] gap) {
         BlockPos.MutableBlockPos at = new BlockPos.MutableBlockPos();
         for (double t = STEP; t <= RAY_BLOCKS; t += STEP) {
             at.set(origin.x + dir.x * t, origin.y + dir.y * t, origin.z + dir.z * t);
-            if (at.equals(feet) || level.isOutsideBuildHeight(at) || !level.hasChunkAt(at)) continue;
+            if (at.equals(feet) || level.isOutsideBuildHeight(at)) continue;
+            if (!level.hasChunkAt(at)) {
+                gap[0] = true;
+                continue;
+            }
             BlockState s = level.getBlockState(at);
             if (!s.isAir()) return ground(s);
         }
@@ -110,12 +122,16 @@ public final class BackgroundField {
     }
 
     /** Сплошные блоки в столбе над головой, не выше {@value #OVERBURDEN_MAX_M}: 1 блок = 1 м. */
-    private static double overburden(ServerLevel level, BlockPos feet) {
+    private static double overburden(ServerLevel level, BlockPos feet, boolean[] gap) {
         BlockPos.MutableBlockPos at = new BlockPos.MutableBlockPos();
         int solid = 0;
         for (int dy = 2; dy < 2 + OVERBURDEN_MAX_M; dy++) {
             at.set(feet.getX(), feet.getY() + dy, feet.getZ());
-            if (level.isOutsideBuildHeight(at) || !level.hasChunkAt(at)) break;
+            if (level.isOutsideBuildHeight(at)) break;
+            if (!level.hasChunkAt(at)) {
+                gap[0] = true;
+                break;
+            }
             if (level.getBlockState(at).isSolidRender(level, at)) solid++;
         }
         return solid;

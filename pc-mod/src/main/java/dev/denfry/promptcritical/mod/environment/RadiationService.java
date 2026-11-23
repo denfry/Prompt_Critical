@@ -99,7 +99,10 @@ public final class RadiationService {
         NeoForge.EVENT_BUS.addListener((LevelTickEvent.Post e) -> {
             if (e.getLevel() instanceof ServerLevel s) tick(s);
         });
-        NeoForge.EVENT_BUS.addListener((PlayerEvent.PlayerLoggedOutEvent e) -> BackgroundField.forget(e.getEntity().getUUID()));
+        NeoForge.EVENT_BUS.addListener((PlayerEvent.PlayerLoggedOutEvent e) -> {
+            BackgroundField.forget(e.getEntity().getUUID());
+            RadonField.forget(e.getEntity().getUUID());
+        });
     }
 
     /** Непрерывный источник в точке; источник обновляет его хотя бы раз в {@value #HOLD_TICKS} тиков. */
@@ -307,8 +310,10 @@ public final class RadiationService {
         if (now % 20 != 0) return;
         gatherItems(level, now);
         for (ServerPlayer p : level.players()) {
+            if (RadonField.due(now, p)) RadonField.refresh(level, p);
             double rate = rateSvH(level, p.getEyePosition())
-                    + cloudSvH(level, p.getEyePosition(), dev.denfry.promptcritical.mod.safety.PpeService.aerosolFraction(p)) + BackgroundField.ambientSvH(level, p);
+                    + cloudSvH(level, p.getEyePosition(), dev.denfry.promptcritical.mod.safety.PpeService.aerosolFraction(p)) + BackgroundField.ambientSvH(level, p)
+                    + RadonField.doseSvH(level, p);
             CompoundTag d = data(p);
             d.putDouble("rate", rate);
             if (p.isCreative() || p.isSpectator()) continue;
