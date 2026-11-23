@@ -80,8 +80,9 @@ public final class InverterGameTests {
     public static void batteryDischargesIntoTheGridAndChargesFromIt(GameTestHelper h) {
         station(h);
         h.setBlock(INV, facing(PcBlocks.BATTERY_INVERTER.get().defaultBlockState(), Direction.NORTH));
-        // нагрузка острова 275 кВт: при разряде 125 кВт генератор несёт те же 150 кВт, что в тесте шкафа FE. Вхолостую
-        // он раскачивается выше 51 Гц, инвертор выходит из окна и отключается (защита от островного режима)
+        // нагрузка острова 150 кВт, как в тесте шкафа FE: инвертор набирает отдачу не быстрее батареи за ним, нагрузка его
+        // опережает, и генератор на обгонной муфте не уходит выше окна 51 Гц. На заряде нагрузка 50 кВт: при статизме
+        // привода 4 % остров от 49,97 Гц до края окна 49 Гц несёт ≈ 250 кВт, 150 кВт с зарядом 129 кВт в него не входят
         h.setBlock(INV.above(), facing(PcBlocks.GRID_FE_INTERFACE_LARGE.get().defaultBlockState(), Direction.NORTH));
         h.setBlock(new BlockPos(4, 1, 3), facing(PcBlocks.GRID_BATTERY_RACK.get().defaultBlockState(), Direction.NORTH));
         h.setBlock(new BlockPos(3, 1, 3), facing(PcBlocks.GRID_BATTERY_RACK.get().defaultBlockState(), Direction.NORTH));
@@ -100,15 +101,16 @@ public final class InverterGameTests {
                     inv(h).setMode(BatteryInverterBlockEntity.Mode.DISCHARGE);
                     FeInterface load = ((FeInterfaceBlockEntity) h.getBlockEntity(INV.above())).unit().iface();
                     load.setMode(FeInterface.Mode.IMPORT);
-                    load.setSetpointW(275e3);
+                    load.setSetpointW(150e3);
                 })
                 .thenWaitUntil(() -> h.assertTrue(drained(h) && inv(h).battery() != null && inv(h).battery().modules() == 2,
                         "two racks found: " + (inv(h).battery() == null ? 0 : inv(h).battery().modules())))
                 .thenWaitUntil(() -> h.assertTrue(drained(h) && unit(h).powerW() > 100e3, "discharge reaches a quarter C of two modules: "
-                        + unit(h).powerW() + " W, on " + unit(h).source().connected() + ", " + unit(h).frequencyHz() + " Hz, " + unit(h).voltagePu() + " pu, in window " + unit(h).source().secondsInWindow() + " s, bound " + unit(h).bound() + ", " + unit(h).source().windowDebug()))
+                        + unit(h).powerW() + " W, on " + unit(h).source().connected() + ", " + unit(h).frequencyHz() + " Hz, " + unit(h).voltagePu() + " pu, in window " + unit(h).source().secondsInWindow() + " s, bound " + unit(h).bound()))
                 .thenExecute(() -> {
                     h.assertTrue(unit(h).powerW() < 2 * 250e3 / 4 + 1, "not above the battery limit");
                     h.assertTrue(inv(h).battery().soc() < 0.5, "the battery gives energy: " + inv(h).battery().soc());
+                    ((FeInterfaceBlockEntity) h.getBlockEntity(INV.above())).unit().iface().setSetpointW(50e3);
                     inv(h).setMode(BatteryInverterBlockEntity.Mode.CHARGE);
                 })
                 .thenWaitUntil(() -> h.assertTrue(drained(h) && unit(h).powerW() < -40e3, "charging draws from the grid: " + unit(h).powerW()))
