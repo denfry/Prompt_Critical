@@ -77,7 +77,7 @@ public final class ManufacturingComponents {
 
     private static Map<String, Integer> encodeDefects(Map<PartDefect, Integer> defects) {
         var out = new LinkedHashMap<String, Integer>();
-        for (var e : new EnumMap<>(defects).entrySet()) out.put(e.getKey().name(), e.getValue());
+        for (var e : defects.entrySet()) out.put(e.getKey().name(), e.getValue());
         return out;
     }
 

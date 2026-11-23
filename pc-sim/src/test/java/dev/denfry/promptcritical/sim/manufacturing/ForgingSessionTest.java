@@ -12,10 +12,16 @@ class ForgingSessionTest {
     @Test
     void handForgedShaftFromFireToPassport() {
         var s = ForgingSession.start(bar45(0.045, 293.15)).inFire(0.6, 600);
+        int strikes = 0;
         for (int i = 0; i < 200 && s.piece().aM() > 0.040; i++) {
-            s = s.piece().tempK() < Forging.range(SteelFamily.MEDIUM_CARBON).lowerK() + 50
-                    ? s.inFire(0.6, 120) : s.strike(Forging.Op.DRAW);
+            if (s.piece().tempK() < Forging.range(SteelFamily.MEDIUM_CARBON).lowerK() + 50) {
+                s = s.inFire(0.6, 120);
+            } else {
+                s = s.strike(Forging.Op.DRAW);
+                strikes++;
+            }
         }
+        assertThat(s.piece().aM()).isLessThanOrEqualTo(0.040);
         s = s.inFire(0.4, 300).quench(Quenching.Medium.WATER).temper(473.15, 3600);
         PartSpec p = s.toPart("shaft");
         assertThat(p.route()).isEqualTo(PartRoute.FORGED);

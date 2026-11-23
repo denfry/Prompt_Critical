@@ -71,4 +71,30 @@ public final class ManufacturingGameTests {
         h.assertValueEqual(spec.defects(), Map.of(PartDefect.CRACK, 1), "defects");
         h.succeed();
     }
+
+    @GameTest(template = SMALL)
+    public static void hostileTagDecodesToASafePassport(GameTestHelper h) {
+        var tag = new CompoundTag();
+        tag.putString("kind", "shaft");
+        tag.putString("material", "45");
+        tag.putString("route", "NOPE");
+        tag.putString("heat_treat", "NOPE");
+        tag.putInt("hardness_hrc", 52);
+        tag.putInt("it_grade", -3);
+        tag.putDouble("ra_um", 0.0);
+        tag.putBoolean("inspected", false);
+        var defects = new CompoundTag();
+        defects.putInt("CRACK", 0);
+        defects.putInt("POROSITY", 5);
+        defects.putInt("BURNT", 2);
+        tag.put("defects", defects);
+        var spec = ManufacturingComponents.PART_SPEC_CODEC.parse(NbtOps.INSTANCE, tag).getOrThrow();
+        h.assertValueEqual(spec.route(), PartRoute.FORGED, "route");
+        h.assertValueEqual(spec.heatTreat(), HeatTreatState.AS_ROLLED, "heat_treat");
+        h.assertValueEqual(spec.hardnessHrc(), 50, "hardness_hrc");
+        h.assertValueEqual(spec.itGrade(), 0, "it_grade");
+        h.assertValueEqual(spec.raUm(), 100.0, "ra_um");
+        h.assertValueEqual(spec.defects(), Map.of(PartDefect.BURNT, 2), "defects");
+        h.succeed();
+    }
 }
