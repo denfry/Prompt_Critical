@@ -12,5 +12,11 @@ public enum ForgeEvent {
     BURNT,
     NOT_HARDENED,
     NOT_THROUGH_HARDENED,
-    QUENCH_CRACKED
+    QUENCH_CRACKED,
+    /** Металл холоднее, чем требует операция: рубка или сварка не приняты. */
+    TOO_COLD,
+    /** Сварной шов с непроваром: стыки сплавились не целиком. */
+    POOR_FUSION,
+    /** Части разной стали или формы сечения: сварка не принята. */
+    MISMATCH
 }

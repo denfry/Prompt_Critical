@@ -32,6 +32,20 @@ public final class Forging {
     public static final double HAND_STRAIN_RATE = 10;
     /** Длительность серии ручной ковки, с [BALANCE]. */
     public static final double HAND_SERIES_S = 5;
+    /** Отрубленная часть не короче этой доли стороны сечения: тоньше зубило сминает, а не рубит [моё]. */
+    public static final double CUT_MIN_LENGTH_SIDES = 0.5;
+    /** Ударов в минуту механического молота [сверить: пневматические молоты МА41 — 100–200 уд/мин]. */
+    public static final double POWER_BLOWS_PER_MIN = 120;
+    /** Скорость деформации под механическим молотом, 1/с [моё]. */
+    public static final double POWER_STRAIN_RATE = 20;
+    /** КПД привода молота от вала до бойка [сверить]. */
+    public static final double POWER_DRIVE_EFFICIENCY = 0.6;
+
+    /** Энергия удара механического молота от мощности на валу, Дж: η·P·(60 / ударов в минуту). */
+    public static double poweredBlowJ(double shaftW) {
+        return POWER_DRIVE_EFFICIENCY * Math.max(0, shaftW) * 60 / POWER_BLOWS_PER_MIN;
+    }
+
     /** Тяжесть трещины от серии ниже нижней границы интервала [BALANCE]. */
     public static final double CRACK_PER_COLD_SERIES = 0.25;
     /** Тяжесть трещины от серии при температуре более чем на 100 К ниже нижней границы [BALANCE]. */
@@ -55,6 +69,13 @@ public final class Forging {
 
     /** Ковочный интервал: верхняя и нижняя граница, К. */
     public record Range(double upperK, double lowerK) {}
+
+    /** Итог рубки: две части, или исходная заготовка и {@code second == null}, если рубка не принята. */
+    public record Split(Workpiece first, Workpiece second, ForgeEvent event) {
+        public boolean done() {
+            return second != null;
+        }
+    }
 
     /** Итог серии: новая заготовка и события. */
     public record Result(Workpiece piece, List<ForgeEvent> events) {}
@@ -153,6 +174,26 @@ public final class Forging {
         }
         // удар сбивает окалину: следующий нагрев начинает её заново
         return new Result(ForgeHeating.cool(p.withOxide(0), ambientK, seriesSeconds), List.copyOf(events));
+    }
+
+    /**
+     * Горячая рубка зубилом (18 §18.6.3): заготовку делят по длине, первая часть получает долю {@code fraction}.
+     * Рубят в ковочном интервале (холодную сталь зубило не берёт — TOO_COLD); обе части не короче половины стороны
+     * (иначе TOO_THIN). Объём и дефекты сохраняются, рубка занимает одну серию, заготовка остывает.
+     */
+    public static Split cut(Workpiece w, double fraction, double seriesSeconds, double ambientK) {
+        if (!(fraction > 0 && fraction < 1)) {
+            throw new IllegalArgumentException("fraction must be in (0, 1): " + fraction);
+        }
+        if (w.tempK() < range(w.grade().family()).lowerK()) {
+            return new Split(w, null, ForgeEvent.TOO_COLD);
+        }
+        double l1 = w.lengthM() * fraction, l2 = w.lengthM() - l1;
+        if (Math.min(l1, l2) < Math.max(CUT_MIN_LENGTH_SIDES * w.aM(), MIN_SECTION_M)) {
+            return new Split(w, null, ForgeEvent.TOO_THIN);
+        }
+        Workpiece rest = ForgeHeating.cool(w, ambientK, seriesSeconds);
+        return new Split(rest.withSection(w.aM(), w.bM(), l1), rest.withSection(w.aM(), w.bM(), l2), ForgeEvent.OK);
     }
 
     /** Диаметр, сторона или толщина сечения заданной площади; FLAT сохраняет отношение b/a заготовки. */
