@@ -26,7 +26,9 @@ run by plant I&C that you design and build yourself.
 
 > [!NOTE]
 > **1.0.1 is out.** Every industry era of the design, I0 to I4, and every reactor tier from the graphite pile
-> to the fast reactor are in the game, with the plant I&C, operations and accident layers. Get the jar from the
+> to the fast reactor are in the game, with the plant I&C, operations and accident layers. New in 1.0.1: 78 machines
+> of eras I0 to I2 at real scale, built on construction sites from drawings, motor starters, lightning protection,
+> a dense medium separator, an HCl furnace and fixes from survival playtests. Get the jar from the
 > [releases page](https://github.com/denfry/Prompt_Critical/releases/latest). Balance values are not final yet, and
 > worlds from earlier builds need a backup before updating: see the breaking changes in the [changelog](CHANGELOG.md).
 
@@ -52,6 +54,10 @@ run by plant I&C that you design and build yourself.
   and training simulator, and a CC: Tweaked device layer with the `pcui` screen library.
 - **Operations**: lockout/tagout, work permits with gas testing, confined spaces, equipment rounds, personal
   protective equipment, turnarounds, crew dose, flares and fire fighting with foam.
+- **Real scale**: the big machines of eras I0 to I2 (boilers, engines, hoists, furnaces, converters, mills, presses,
+  the carbon and non-ferrous lines) stand at their real size as multi-block models. Each is raised on a
+  construction site from its drawing, stage by stage, with materials delivered by the player, and takes pipes,
+  shafts and items only at the faces the model shows.
 - **World**: generated survey camps, old mines, asphalt lakes, gas craters, natural reactors; an engineering handbook,
   a route of tasks and the full achievement catalogue.
 
