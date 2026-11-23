@@ -49,6 +49,8 @@ public final class MineClient {
         // паровая подъёмная машина: станины и машины — одна цельная модель, барабан с валом — вторая, вращается
         dev.denfry.promptcritical.mod.client.whole.WholeModels.register("winding_engine");
         dev.denfry.promptcritical.mod.client.whole.WholeModels.register("winding_engine_drum");
+        dev.denfry.promptcritical.mod.client.whole.WholeModels.register("guibal_fan");
+        GuibalFanRenderer.init();
     }
     /** Шнеки в контрапции вращаются, град/тик (≈ 40 об/мин). */
     private static final float DRUM_DEG_PER_TICK = 12f;
@@ -84,8 +86,15 @@ public final class MineClient {
 
     /** Крыльчатка на оси фасада, pivot [8, 8, 8] центрального блока; скорость — вала в клетке-входе × редуктор. */
     private static final class FanRenderer implements BlockEntityRenderer<MainMineFanBlockEntity> {
+        /** Guibal реального масштаба: цельная модель и машина на кривошипе. */
+        private final GuibalFanRenderer guibal = new GuibalFanRenderer();
+
         @Override
         public void render(MainMineFanBlockEntity be, float partialTicks, PoseStack ms, MultiBufferSource buffers, int light, int overlay) {
+            if (be.wholeModelId() != null) {
+                guibal.render(be, partialTicks, ms, buffers, light, overlay);
+                return;
+            }
             var state = be.getBlockState();
             if (!state.is(PcBlocks.MAIN_MINE_FAN.get())) return;
             Direction facing = PcBlocks.MAIN_MINE_FAN.get().facing(state);
@@ -103,6 +112,16 @@ public final class MineClient {
         @Override
         public boolean shouldRenderOffScreen(MainMineFanBlockEntity be) {
             return true;
+        }
+
+        @Override
+        public int getViewDistance() {
+            return dev.denfry.promptcritical.mod.client.whole.WholeModelRenderer.VIEW_DISTANCE;
+        }
+
+        @Override
+        public net.minecraft.world.phys.AABB getRenderBoundingBox(MainMineFanBlockEntity be) {
+            return be.wholeModelId() != null ? guibal.getRenderBoundingBox(be) : new net.minecraft.world.phys.AABB(be.getBlockPos()).inflate(1);
         }
     }
 

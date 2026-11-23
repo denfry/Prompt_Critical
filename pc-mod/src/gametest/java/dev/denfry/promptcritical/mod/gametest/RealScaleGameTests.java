@@ -261,6 +261,36 @@ public final class RealScaleGameTests {
     }
 
     /**
+     * Вентилятор Guibal реального масштаба (08 §8.2.7): площадка принимает чертёж на основании 13×6 в приямке, вентилятор
+     * — тот же BE главного вентилятора с цельной моделью, вал Create входит в клетку у кривошипа, в сеть шахты выходит
+     * только глаз.
+     */
+    @GameTest(template = TALL, timeoutTicks = 40)
+    public static void guibalFanTakesItsShaftAtTheCrankAndAirAtTheEye(GameTestHelper h) {
+        BlockPos p = new BlockPos(5, 5, 5);
+        for (int x = -5; x <= 7; x++)
+            for (int z = -2; z <= 3; z++) h.setBlock(p.offset(x, -4, z), Blocks.STONE);
+        h.setBlock(p, SiteRegistry.SITE.get().defaultBlockState().setValue(BlockStateProperties.HORIZONTAL_FACING, Direction.NORTH));
+        var w = site(h, p).accept("guibal_fan");
+        h.assertTrue(w == null, "Guibal plan accepted: " + (w == null ? "" : w.getString()));
+        h.assertTrue(PcBlocks.FP_GUIBAL_FAN.cells(BlockPos.ZERO, Direction.NORTH).size() == 13 * 20 * 6, "13x20x6 fan house");
+        h.setBlock(p, Blocks.AIR);
+        net.minecraft.world.level.block.state.BlockState fan = PcBlocks.GUIBAL_FAN.get().defaultBlockState().setValue(BlockStateProperties.HORIZONTAL_FACING, Direction.NORTH);
+        h.setBlock(p, fan);
+        h.assertTrue(h.getBlockEntity(p) instanceof dev.denfry.promptcritical.mod.mine.MainMineFanBlockEntity b
+                && "guibal_fan".equals(b.wholeModelId()), "the Guibal fan is the main fan with its whole model");
+        h.assertTrue(h.getBlockState(p.offset(0, 2, 3)).getBlock() instanceof dev.denfry.promptcritical.mod.boiler.KineticPortBlock,
+                "the Create input sits at the crank end of the axle");
+        BlockPos abs = h.absolutePos(p);
+        h.assertValueEqual(dev.denfry.promptcritical.mod.mine.MainMineFanBlock.portPos(h.getLevel().getBlockState(abs), abs), abs.offset(0, 2, 3),
+                "the fan reads its shaft from that cell");
+        h.assertValueEqual(dev.denfry.promptcritical.mod.mine.MainMineFanBlock.eyePos(h.getLevel().getBlockState(abs), abs), abs.offset(0, 2, -2),
+                "the eye is on the axle at the north wall");
+        h.assertTrue(dev.denfry.promptcritical.mod.mine.MineScanner.isAnchorBlock(h.getLevel().getBlockState(abs)), "the mine scanner anchors on it");
+        h.succeed();
+    }
+
+    /**
      * Стальной копёр реального масштаба: колонна ствола 3×3 пуста по всей высоте (там ходит клеть), подъёмная машина
      * видит его собранным, клеть на верхней посадке — на три ряда ниже контроллера, как у старого копра.
      */

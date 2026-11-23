@@ -118,7 +118,9 @@ public final class MachineSoundscape {
             case CupolaBlockEntity b -> flag(s, BlockStateProperties.LIT) ? new Loop(PcSfx.CUPOLA_BLAST, 0.9f, 0.8f + 0.2f * n) : null;
             case ElectricMotorBlockEntity m -> running || n > 0 ? new Loop(PcSfx.ELECTRIC_MOTOR, 0.5f, 1) : null;
             case TransformerBlockEntity t -> t.hum() > 0 ? new Loop(PcSfx.TRANSFORMER_HUM, 0.25f + 0.05f * t.hum(), 1) : null;
-            case MainMineFanBlockEntity f -> running ? new Loop(PcSfx.MINE_FAN, 1.2f, 1) : null;
+            // Guibal: ротор ⌀9 м на 60–90 об/мин — низкий гул вместо воя крыльчатки
+            case MainMineFanBlockEntity f -> running ? (f.wholeModelId() != null ? new Loop(PcSfx.MINE_FAN, 1.6f, 0.55f)
+                    : new Loop(PcSfx.MINE_FAN, 1.2f, 1)) : null;
             case MineDrainagePumpBlockEntity p -> running ? new Loop(PcSfx.PUMP, 0.4f + 0.4f * n, 0.6f + 0.4f * n) : null;
             case DegasificationPumpBlockEntity p -> running ? new Loop(PcSfx.PUMP, 0.3f + 0.3f * n, 0.7f + 0.4f * n) : null;
             // лебёдка: громче и выше с ростом скорости каната до предельной Hoist.MAX_SPEED

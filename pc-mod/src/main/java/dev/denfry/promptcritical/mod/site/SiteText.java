@@ -53,6 +53,10 @@ public final class SiteText {
         drawing("headframe_steel", "Steel Headframe", "стального копра");
         drawing("mill_engine", "Horizontal Mill Engine", "горизонтальной паровой машины");
         drawing("winding_engine", "Steam Winding Engine", "паровой подъёмной машины");
+        drawing("guibal_fan", "Guibal Fan", "вентилятора Гибаля");
+        stage("fan_house", "fan pit, brick casing and évasé", "приямок, кирпичный кожух и эвазе");
+        stage("rotor", "axle, arms, blades and shutter", "ось, спицы, лопатки и шибер");
+        stage("fan_engine", "engine on the axle crank and its bed", "машина на кривошипе оси и её фундамент");
         stage("bed", "bed, cylinder and crosshead guides", "станина, цилиндр и параллели");
         stage("flywheel", "crankshaft, flywheel and governor", "коленвал, маховик и регулятор");
         stage("tower", "shaft tower and back struts", "башня над стволом и подкосы");
