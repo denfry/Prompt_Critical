@@ -65,6 +65,7 @@
     en: { tex: 'switchgear_cell/enamel', P: 16 }, rel: { tex: 'switchgear_cell/relay', P: 16 },
     fin: { tex: 'distribution_transformer/fins', P: 16 }, tx: { tex: 'distribution_transformer/enamel', P: 16 },
     por: { tex: 'disconnector/porcelain', P: 16 }, cu: { tex: 'disconnector/copper', P: 16 }, gal: { tex: 'disconnector/galvanised', P: 16 },
+    grate: { tex: 'vver/grating', P: 16 }, haz: { tex: 'plant/hazard', P: 16 },
   };
   const mk = (particle) => Object.assign(new PCART.Model(MAT, {}), { particle: particle || 'switchgear_cell/enamel' });
 
@@ -87,7 +88,7 @@
   }
 
   // ---------------------------------------------------------------- switchgear cell
-  function cell(state) {
+  function cellLower(state) {
     const m = mk();
     m.box('body', [0, 0, 1], [16, 31.6, 16], 'en', { split: 'y' });
     m.box('relay_panel', [0.5, 24, 0.6], [15.5, 31.4, 1], 'rel', { split: '' });
@@ -115,6 +116,25 @@
       for (const y of [3, 19]) m.box(`hinge_${y}`, [0, y, 0.2], [0.6, y + 1.6, 0.8], 'st', { split: '' });
       if (state === 'alarm') m.box('glow_alarm_flag', [10.4, 24.4, 0.2], [14, 25.4, 0.6], 'br', { split: '' });
     }
+    return m;
+  }
+
+  // KSO-type cell at real size, 1 x 3 x 1 with the controller in the middle cell (y -16..32): the breaker and relay
+  // compartments (the old 2-block cell) below, and on top the busbar compartment behind a mesh front: the bus
+  // disconnector's operating lever, three busbars running through both side walls to the next cell, a danger
+  // sign and the bushing box.
+  function cell(state) {
+    const m = mk().merge(cellLower(state), 0, -16, 0, '');
+    m.box('bus_body', [0, 15.6, 1], [16, 31.6, 16], 'en', { split: '' });
+    m.box('bus_frame', [0, 15.6, 0.4], [16, 16.6, 1], 'en', { split: '' });
+    m.box('bus_frame_top', [0, 30.6, 0.4], [16, 31.6, 1], 'en', { split: '' });
+    for (const x of [0, 15]) m.box(`bus_frame_${x}`, [x, 16.6, 0.4], [x + 1, 30.6, 1], 'en', { split: '' });
+    m.box('mesh', [1, 16.6, 0.7], [15, 30.6, 0.9], 'grate', { split: '' });
+    for (const x of [4, 8, 12]) m.box(`busbar_${x}`, [-0.01, 27, x], [16.01, 28.4, x + 0.6], 'cu', { split: '' });
+    m.box('lever_shaft', [14, 22, 0], [15, 23, 1], 'st', { split: '' });
+    m.box('lever', [14.1, 18, -0.6], [14.9, 23, 0], 'red', { split: '' });
+    m.box('danger_sign', [5, 24, 0.3], [11, 28, 0.4], 'haz', { split: '' });
+    m.box('bushing_box', [3, 31.6, 5], [13, 32, 13], 'en', { split: '' });
     return m;
   }
 
@@ -173,24 +193,37 @@
 
   // ---------------------------------------------------------------- distribution transformer
   function transformer() {
+    // TM-630/6 at real size, 2 x 2 x 1 (x 0..32, y 0..32, z 0..16): tank 1.5 x 1.2 x 0.5 m on wheeled skids,
+    // tubular radiators on both long sides, cover with three HV bushings (top cell) and four LV bushings, the
+    // conservator on brackets with its oil gauge and the Buchholz pipe, off-circuit tap changer handle.
     const m = mk('distribution_transformer/enamel');
-    m.box('skid_w', [1, 0, 2], [3, 1.6, 14], 'ci', { split: '' });
-    m.box('skid_e', [13, 0, 2], [15, 1.6, 14], 'ci', { split: '' });
-    m.box('tank', [2.4, 1.6, 3.4], [13.6, 18, 12.6], 'tx', { split: '' });
-    for (const [n, f, t] of [['n', [2.4, 2, 2], [13.6, 17.6, 3.4]], ['s', [2.4, 2, 12.6], [13.6, 17.6, 14]],
-      ['w', [1, 2, 3.4], [2.4, 17.6, 12.6]], ['e', [13.6, 2, 3.4], [15, 17.6, 12.6]]]) m.box(`fins_${n}`, f, t, 'fin', { split: '' });
-    m.box('cover', [1.6, 18, 2.6], [14.4, 19, 13.4], 'tx', { split: '' });
-    for (const [i, x] of [[0, 4.6], [1, 8], [2, 11.4]]) insulator(m, `hv_${i}`, x, 9, 19, 8, 1.3);
-    for (let i = 0; i < 4; i++) {
-      const x = 4.4 + i * 2.4;
-      m.prismY(`lv_${i}`, [x, 5], 0.6, 19, 22, 'por');
-      m.box(`lv_stud_${i}`, [x - 0.3, 22, 4.7], [x + 0.3, 23, 5.3], 'cu', { split: '' });
+    for (const z of [2, 12]) m.box(`skid_${z}`, [3, 1.4, z], [29, 3, z + 2], 'ci', { split: 'x' });
+    for (const x of [5, 27]) for (const z of [2, 12]) m.box(`wheel_${x}_${z}`, [x - 1.4, 0, z + 0.2], [x + 1.4, 2.8, z + 1.8], 'soot', { split: '' });
+    m.box('tank', [4, 3, 4], [28, 20, 12], 'tx', { split: 'x' });
+    for (const [n, z0, z1] of [['n', 0.6, 4], ['s', 12, 15.4]]) {
+      m.box(`header_top_${n}`, [5, 17, z0 + 0.6], [27, 18.4, z1 - 0.6], 'tx', { split: 'x' });
+      m.box(`header_bot_${n}`, [5, 4.6, z0 + 0.6], [27, 6, z1 - 0.6], 'tx', { split: 'x' });
+      for (let x = 5.6; x < 27; x += 2.2) m.box(`tube_${n}_${x.toFixed(1)}`, [x, 6, z0], [x + 1.2, 17, z1], 'fin', { split: '' });
     }
-    for (const x of [2, 13]) m.box(`lug_${x}`, [x, 18.6, 7.4], [x + 1, 20, 8.6], 'st', { split: '' });
-    m.plate('oil_gauge', [11.6, 14.6, 1.8], [13.4, 16.4, 2], 'tx', 'north', 'material/gauge_dial', { hide: ['south'] });
-    m.box('nameplate', [5, 11, 1.8], [9, 13.6, 2], 'br', { split: '' });
-    m.box('drain_valve', [3.4, 2.4, 1.6], [4.6, 3.6, 2], 'ci', { split: '' });
-    m.box('earth_bolt', [12, 2.4, 1.6], [13, 3.4, 2], 'cu', { split: '' });
+    m.box('cover', [3.4, 20, 3.4], [28.6, 21, 12.6], 'tx', { split: 'x' });
+    for (const [i, x] of [[0, 9], [1, 16], [2, 23]]) insulator(m, `hv_${i}`, x, 7, 21, 8, 1.4);
+    for (let i = 0; i < 4; i++) {
+      const x = 8 + i * 5;
+      m.prismY(`lv_${i}`, [x, 10.6], 0.8, 21, 25, 'por');
+      m.box(`lv_stud_${i}`, [x - 0.3, 25, 10.3], [x + 0.3, 26.2, 10.9], 'cu', { split: '' });
+    }
+    // conservator on two brackets over the east end, Buchholz pipe down to the cover, oil gauge on its end
+    for (const x of [22, 28]) m.box(`cons_bracket_${x}`, [x, 21, 13], [x + 0.8, 26, 14], 'tx', { split: '' });
+    m.prism('conservator', 'x', [27.6, 13.4], 2.4, 20, 31, 'tx', { split: '', ends: ['east', 'west'] });
+    m.box('buchholz_pipe', [21, 21, 12.6], [22.4, 26, 14], 'tx', { split: '' });
+    m.box('buchholz', [20.6, 23, 12.2], [22.8, 25, 14.4], 'ci', { split: '' });
+    m.plate('oil_gauge', [31, 26.4, 12.4], [31.2, 28.6, 14.4], 'tx', 'east', 'material/gauge_dial', { hide: ['west'] });
+    m.box('tap_handle', [5, 21, 9], [6.4, 23, 10.4], 'red', { split: '' });
+    for (const x of [3.4, 27.6]) m.box(`lug_${x}`, [x, 19.6, 7.4], [x + 1, 22, 8.6], 'st', { split: '' });
+    m.box('nameplate', [6, 12, 3.6], [11, 15.4, 4], 'br', { split: '' });
+    m.box('drain_valve', [26, 3.4, 3.4], [27.4, 4.8, 4], 'ci', { split: '' });
+    m.box('earth_bolt', [4.6, 3.4, 3.4], [5.6, 4.4, 4], 'cu', { split: '' });
+    m.plate('thermometer', [12, 21, 10.6], [13.4, 22.6, 10.8], 'tx', 'north', 'material/gauge_dial', { hide: ['south'] });
     return m;
   }
 
