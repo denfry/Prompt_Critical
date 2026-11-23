@@ -30,7 +30,8 @@ import net.minecraft.world.phys.Vec3;
  * N = hQ/η_f из последнего решения сети {@link MineWorld} возвращает сюда — её и видит сеть Create. Заплавленный
  * подшипник ({@link OpsMachine}) клинит вал: огромный момент перегружает сеть Create.
  */
-public final class MainMineFanBlockEntity extends DeviceBlockEntity implements ShaftConsumer, PanelHost, OpsMachine {
+public final class MainMineFanBlockEntity extends DeviceBlockEntity implements ShaftConsumer, PanelHost, OpsMachine,
+        dev.denfry.promptcritical.mod.client.whole.WholeModelHost {
     /** Номинальная скорость вала, об/мин [BALANCE: как у машин литейки]. */
     public static final double NOMINAL_RPM = 64;
     /** Передаточное число редуктора: n₀ крыльчатки / номинал вала. */
@@ -39,12 +40,73 @@ public final class MainMineFanBlockEntity extends DeviceBlockEntity implements S
     /** Заклинивший вал: во столько раз больше номинальной мощности — перегрузка сети Create. */
     public static final double SEIZED_FACTOR = 100;
 
+    /** Guibal: ось вала (y), плоскость кривошипа (z) и цилиндр машины (x от − до +), px модели. */
+    private static final double AXLE_Y = 40, CRANK_Z = 50, CYL_X0 = -74, CYL_X1 = -46;
+    /** Guibal: середина верха эвазе, px модели. */
+    private static final double EVASE_X = 96, EVASE_Y = 266, EVASE_Z = 8;
+
     private final ShaftInput shaft = new ShaftInput();
+    /** Клиент, Guibal: угол кривошипа, рад, и его скорость, рад/тик. */
+    private float clientCrank, omega;
     private double powerW, pressurePa, flowM3s;
     private boolean seized;
 
     public MainMineFanBlockEntity(BlockPos pos, BlockState state) {
         super(MineBlockEntities.MAIN_MINE_FAN.get(), pos, state);
+    }
+
+    @Override
+    @org.jetbrains.annotations.Nullable
+    public String wholeModelId() {
+        return dev.denfry.promptcritical.mod.client.whole.WholeModelHost.idOf(getBlockState());
+    }
+
+    @Override
+    public net.minecraft.core.Direction wholeModelFacing() {
+        return facing();
+    }
+
+    @Override
+    public BlockPos wholeModelLightPos() {
+        // глаз снаружи кожуха, перед северной стеной
+        return MainMineFanBlock.eyePos(getBlockState(), worldPosition).relative(facing());
+    }
+
+    /** Вентилятор Guibal реального масштаба. */
+    boolean real() {
+        return wholeModelId() != null;
+    }
+
+    private net.minecraft.core.Direction facing() {
+        return MainMineFanBlock.class.cast(getBlockState().getBlock()).facing(getBlockState());
+    }
+
+    /** Угол кривошипа Guibal для кадра, рад. */
+    public float renderCrank(float partialTick) {
+        return clientCrank + omega * partialTick;
+    }
+
+    /**
+     * Клиент, Guibal: машина вращает ось прямо на кривошипе, со скоростью вала Create во входной клетке. Клуб пара у
+     * продувочных кранов цилиндра на каждой мёртвой точке, у верха эвазе — струя пыльного воздуха.
+     */
+    void clientTick() {
+        float rpm = level != null && level.getBlockEntity(MainMineFanBlock.portPos(getBlockState(), worldPosition))
+                instanceof com.simibubi.create.content.kinetics.base.KineticBlockEntity k ? Math.abs(k.getSpeed()) : 0;
+        omega = (float) (rpm * 2 * Math.PI / 60 / 20);
+        float before = clientCrank;
+        clientCrank = (float) ((clientCrank + omega) % (2 * Math.PI));
+        if (omega <= 0) return;
+        dev.denfry.promptcritical.mod.fx.MachineFx fx = dev.denfry.promptcritical.mod.fx.MachineFx.of(this);
+        if (fx == null) return;
+        if ((int) (before / Math.PI) != (int) (clientCrank / Math.PI)) {
+            // выхлоп у того конца цилиндра, куда поршень пришёл
+            double x = clientCrank < Math.PI ? CYL_X0 + 4 : CYL_X1 - 4;
+            Vec3 at = fx.at(x, AXLE_Y - 8, CRANK_Z);
+            fx.puff(at, new Vec3(0, 0.08, 0), 2);
+            fx.sound(at, dev.denfry.promptcritical.mod.sound.PcSfx.STEAM_ENGINE_CHUFF.get(), 0.7f, 0.8f + Math.min(0.3f, rpm / 200f));
+        }
+        if (fx.chance(3 * Math.min(1, rpm / NOMINAL_RPM))) fx.dust(fx.at(EVASE_X, EVASE_Y, EVASE_Z), 1.5, 1);
     }
 
     /** Скорость крыльчатки, об/мин; 0 — вала нет или сеть перегружена. */
@@ -147,7 +209,8 @@ public final class MainMineFanBlockEntity extends DeviceBlockEntity implements S
 
     @Override
     public Vec3 opsBearingPos() {
-        return BoilerGeometry.world(worldPosition, MainMineFanBlock.class.cast(getBlockState().getBlock()).facing(getBlockState()), 8, 8, 25); // редуктор
+        if (real()) return BoilerGeometry.world(worldPosition, facing(), 8, AXLE_Y, CRANK_Z - 6); // подшипник у кривошипа
+        return BoilerGeometry.world(worldPosition, facing(), 8, 8, 25); // редуктор
     }
 
     @Override

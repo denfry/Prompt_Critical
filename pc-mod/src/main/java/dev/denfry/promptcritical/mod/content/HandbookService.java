@@ -35,6 +35,7 @@ public final class HandbookService {
             PcBlocks.LANCASHIRE_BOILER.getId(), PromptCritical.id("i0/procedure_boiler"),
             PcBlocks.MINE_HOIST.getId(), PromptCritical.id("i0/procedure_hoist"),
             PcBlocks.MAIN_MINE_FAN.getId(), PromptCritical.id("i0/procedure_ventilation"),
+            PcBlocks.GUIBAL_FAN.getId(), PromptCritical.id("i0/procedure_ventilation"),
             PcBlocks.COKE_OVEN.getId(), PromptCritical.id("i1/procedure_coke_battery"),
             PcBlocks.BLAST_FURNACE_CONTROLLER.getId(), PromptCritical.id("i1/procedure_blast_furnace"),
             PcBlocks.SHAFT_GENERATOR.getId(), PromptCritical.id("i1/procedure_generator"));

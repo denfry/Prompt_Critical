@@ -105,7 +105,7 @@ public final class MineScanner {
     public static boolean isAnchorBlock(BlockState s) {
         Block b = s.getBlock();
         if (b instanceof PcBlock pc && !pc.isController(s)) return false;
-        return b == PcBlocks.MAIN_MINE_FAN.get() || b == PcBlocks.VENTILATION_DOOR.get() || b == PcBlocks.MINE_SUPPORT.get()
+        return b instanceof MainMineFanBlock || b == PcBlocks.VENTILATION_DOOR.get() || b == PcBlocks.MINE_SUPPORT.get()
                 || b == PcBlocks.EXPLOSION_BARRIER.get() || b == PcBlocks.MINE_DISPATCH_CABINET.get()
                 || b == PcBlocks.DEGASIFICATION_BOREHOLE.get() || b == PcBlocks.MINE_DRAINAGE_PUMP.get()
                 || b == PcBlocks.POWERED_ROOF_SUPPORT.get();
@@ -138,6 +138,13 @@ public final class MineScanner {
         }
         if (b == PcBlocks.VENTILATION_DOOR.get()) return DOOR;
         if (b == PcBlocks.MAIN_MINE_FAN.get()) return FAN;
+        if (b == PcBlocks.GUIBAL_FAN.get()) {
+            // у Guibal с выработкой сообщается только глаз; кирпичный кожух, эвазе и машина для воздуха — порода
+            BlockPos ctrl = BlockPos.of(lastCtrl);
+            boolean eye = pos.equals(MainMineFanBlock.eyePos(level.getBlockState(ctrl), ctrl));
+            cursor.set(key);
+            return eye ? FAN : SOLID;
+        }
         boolean passable = minePassable(b) || s.isAir()
                 || s.getFluidState().isEmpty() && s.getCollisionShape(level, pos).isEmpty();
         if (!passable) return SOLID;

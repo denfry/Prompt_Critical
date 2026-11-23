@@ -437,6 +437,15 @@ public final class PcBlocks {
             Spec.facing(PcProperties.RUNNING).footprint(Footprint.of(Segment.box(-1, 1, 0, 0, 0, 0))), LongwallShearerBlock::create);
     public static final DeferredBlock<PcDeviceBlock> MAIN_MINE_FAN = device("main_mine_fan", machine(),
             Spec.facing(PcProperties.RUNNING).footprint(FP_CUBE3), MainMineFanBlock::create);
+    /**
+     * Центробежный вентилятор Guibal реального масштаба (08 §8.2.7, docs/research/guibal_fan-dimensions.md): ротор
+     * ⌀9,1 м в кирпичном кожухе, наполовину в приямке, эвазе с шибером, паровая машина на кривошипе оси. Контроллер на
+     * земле под серединой оси, фасад (север) — глаз, к нему подводят канал от ствола.
+     */
+    public static final Footprint FP_GUIBAL_FAN = Footprint.tiled(-5, 7, -3, 16, -2, 3);
+    public static final DeferredBlock<PcDeviceBlock> GUIBAL_FAN = device("guibal_fan", brick(),
+            Spec.facing(PcProperties.RUNNING).segments(PcProperties.wholeSegments(FP_GUIBAL_FAN.segments().size()), FP_GUIBAL_FAN),
+            MainMineFanBlock::create);
     public static final DeferredBlock<VentilationDoorBlock> VENTILATION_DOOR = withItem(BLOCKS.registerBlock("ventilation_door",
             p -> VentilationDoorBlock.create(p, Spec.facing(PcProperties.DOOR_KIND, BlockStateProperties.OPEN, PcProperties.WINDOW).footprint(FP_TALL2)), wood()));
     public static final DeferredBlock<PcBlock> EXPLOSION_BARRIER = block("explosion_barrier", wood(), Spec.of(PcProperties.BARRIER_KIND));
@@ -903,7 +912,7 @@ public final class PcBlocks {
     public static boolean isWholeModel(net.minecraft.world.level.block.Block b) {
         return b == VVER_REACTOR.get() || b == VVER_STEAM_GENERATOR.get() || b == VVER_COOLANT_PUMP.get() || b == VVER_PRESSURIZER.get()
                 || b == BWR240_REACTOR.get() || b == CANDU6_REACTOR.get() || b == BN600_REACTOR.get() || b == AM1_REACTOR.get()
-                || b == LANCASHIRE_BOILER.get() || b == HEADFRAME_STEEL.get() || b == MILL_ENGINE.get();
+                || b == LANCASHIRE_BOILER.get() || b == HEADFRAME_STEEL.get() || b == MILL_ENGINE.get() || b == GUIBAL_FAN.get();
     }
 
     /**

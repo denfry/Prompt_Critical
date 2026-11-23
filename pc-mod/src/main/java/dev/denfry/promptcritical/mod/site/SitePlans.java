@@ -126,7 +126,13 @@ public final class SitePlans {
             "mill_engine", plan("mill_engine", PcBlocks.MILL_ENGINE, 21,
                     st("foundation", 120, n(CONCRETE, 8)),
                     st("bed", 300, n(INGOT, 130), n(PLATE, 20), n(PIPE, 20)),
-                    st("flywheel", 240, n(INGOT, 50))));
+                    st("flywheel", 240, n(INGOT, 50))),
+            // Guibal ⌀9,1 м: ротор с осью, спицами и лопатками ≈ 14 т, машина 28 × 48 дюймов ≈ 15 т (оценки);
+            // кирпичный кожух в приямке и эвазе 16,5 м
+            "guibal_fan", plan("guibal_fan", PcBlocks.GUIBAL_FAN, 29,
+                    st("fan_house", 240, n(CONCRETE, 6), n(BRICKS, 40)),
+                    st("rotor", 300, n(INGOT, 80), n(PLATE, 60)),
+                    st("fan_engine", 300, n(INGOT, 140), n(PIPE, 20), n(BRICKS, 30))));
 
     private SitePlans() {}
 
