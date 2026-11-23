@@ -99,5 +99,37 @@ public final class SmithyRecipes extends RecipeProvider {
                 .pattern("ISI").pattern("LCL").pattern("III").define('I', Items.IRON_INGOT).define('S', ManufacturingItems.SHAFT.get())
                 .define('L', Items.LEVER).define('C', Items.CHAIN)
                 .unlockedBy("has_wire_mill", has(PcBlocks.WIRE_MILL.get())).save(out, id("winding_machine"));
+
+        // чертежи машин реального масштаба (18 §18.6–18.7): бумага вокруг старой машины; строятся на стройплощадке (SitePlans)
+        ShapedRecipeBuilder.shaped(RecipeCategory.MISC, dev.denfry.promptcritical.mod.site.SiteRegistry.POWER_HAMMER_REAL_DRAWING.get())
+                .pattern("PPP").pattern("PMP").pattern("PPP").define('P', Items.PAPER).define('M', PcBlocks.POWER_HAMMER.get())
+                .unlockedBy("has_power_hammer", has(PcBlocks.POWER_HAMMER.get())).save(out, id("power_hammer_real_drawing"));
+        ShapedRecipeBuilder.shaped(RecipeCategory.MISC, dev.denfry.promptcritical.mod.site.SiteRegistry.BLOOMERY_REAL_DRAWING.get())
+                .pattern("PPP").pattern("PMP").pattern("PPP").define('P', Items.PAPER).define('M', PcBlocks.BLOOMERY.get())
+                .unlockedBy("has_bloomery", has(PcBlocks.BLOOMERY.get())).save(out, id("bloomery_real_drawing"));
+        ShapedRecipeBuilder.shaped(RecipeCategory.MISC, dev.denfry.promptcritical.mod.site.SiteRegistry.FORGE_HEARTH_REAL_DRAWING.get())
+                .pattern("PPP").pattern("PMP").pattern("PPP").define('P', Items.PAPER).define('M', PcBlocks.FORGE_HEARTH.get())
+                .unlockedBy("has_forge_hearth", has(PcBlocks.FORGE_HEARTH.get())).save(out, id("forge_hearth_real_drawing"));
+        ShapedRecipeBuilder.shaped(RecipeCategory.MISC, dev.denfry.promptcritical.mod.site.SiteRegistry.CRANK_PRESS_REAL_DRAWING.get())
+                .pattern("PPP").pattern("PMP").pattern("PPP").define('P', Items.PAPER).define('M', PcBlocks.CRANK_PRESS.get())
+                .unlockedBy("has_crank_press", has(PcBlocks.CRANK_PRESS.get())).save(out, id("crank_press_real_drawing"));
+        ShapedRecipeBuilder.shaped(RecipeCategory.MISC, dev.denfry.promptcritical.mod.site.SiteRegistry.WIRE_MILL_REAL_DRAWING.get())
+                .pattern("PPP").pattern("PMP").pattern("PPP").define('P', Items.PAPER).define('M', PcBlocks.WIRE_MILL.get())
+                .unlockedBy("has_wire_mill", has(PcBlocks.WIRE_MILL.get())).save(out, id("wire_mill_real_drawing"));
+        ShapedRecipeBuilder.shaped(RecipeCategory.MISC, dev.denfry.promptcritical.mod.site.SiteRegistry.SHEET_MILL_REAL_DRAWING.get())
+                .pattern("PPP").pattern("PMP").pattern("PPP").define('P', Items.PAPER).define('M', PcBlocks.SHEET_MILL.get())
+                .unlockedBy("has_sheet_mill", has(PcBlocks.SHEET_MILL.get())).save(out, id("sheet_mill_real_drawing"));
+        ShapedRecipeBuilder.shaped(RecipeCategory.MISC, dev.denfry.promptcritical.mod.site.SiteRegistry.NOTCHING_PRESS_REAL_DRAWING.get())
+                .pattern("PPP").pattern("PMP").pattern("PPP").define('P', Items.PAPER).define('M', PcBlocks.NOTCHING_PRESS.get())
+                .unlockedBy("has_notching_press", has(PcBlocks.NOTCHING_PRESS.get())).save(out, id("notching_press_real_drawing"));
+        ShapedRecipeBuilder.shaped(RecipeCategory.MISC, dev.denfry.promptcritical.mod.site.SiteRegistry.WINDING_MACHINE_REAL_DRAWING.get())
+                .pattern("PPP").pattern("PMP").pattern("PPP").define('P', Items.PAPER).define('M', PcBlocks.WINDING_MACHINE.get())
+                .unlockedBy("has_winding_machine", has(PcBlocks.WINDING_MACHINE.get())).save(out, id("winding_machine_real_drawing"));
+        ShapedRecipeBuilder.shaped(RecipeCategory.MISC, dev.denfry.promptcritical.mod.site.SiteRegistry.HEATING_FURNACE_REAL_DRAWING.get())
+                .pattern("PPP").pattern("PMP").pattern("PPP").define('P', Items.PAPER).define('M', PcBlocks.HEATING_FURNACE.get())
+                .unlockedBy("has_heating_furnace", has(PcBlocks.HEATING_FURNACE.get())).save(out, id("heating_furnace_real_drawing"));
+        ShapedRecipeBuilder.shaped(RecipeCategory.MISC, dev.denfry.promptcritical.mod.site.SiteRegistry.HARDENING_FURNACE_REAL_DRAWING.get())
+                .pattern("PPP").pattern("PMP").pattern("PPP").define('P', Items.PAPER).define('M', PcBlocks.HARDENING_FURNACE.get())
+                .unlockedBy("has_hardening_furnace", has(PcBlocks.HARDENING_FURNACE.get())).save(out, id("hardening_furnace_real_drawing"));
     }
 }

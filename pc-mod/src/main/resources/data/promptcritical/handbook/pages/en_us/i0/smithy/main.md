@@ -37,3 +37,5 @@ A cold piece, round or square and at least four thicknesses long, is handed over
 The [draw plate](item:promptcritical:draw_plate) pulls a copper ingot, or a cold round rod of wrought iron or plain steel up to 12 mm, through a row of dies. Keep tongs in your inventory and pick a die a size smaller than the wire. The windlass gives 1500 N: copper and thin iron go, a steel rod does not. A honeycomb in the second slot waxes the die for eight passes and cuts the force.
 
 Every pass work-hardens the wire. Do not take more than about a third of the area in one pass, or it breaks. When it breaks from hardening, anneal it in the fire of the forge hearth and carry on.
+
+Both have full-size versions built on a construction site from their drawings, with the same work inside: the [clay bloomery](item:promptcritical:bloomery_real), 1.7 m high with its pair of bellows on the west, is charged from the top and the bloom comes out under the arch at the front. At the [smith's forge hearth](item:promptcritical:forge_hearth_real), with its hood, its 3 m chimney and the great bellows on the east, the work goes into the fire from the front.

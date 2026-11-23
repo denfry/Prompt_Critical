@@ -102,7 +102,22 @@ public final class WholePorts {
             // пульпа с запада, хвосты на восток, пенный продукт — желоб на севере
             Map.entry("flotation_cell_real", List.of(p(0, 0, 1, W), p(1, 0, 1, E), p(0, 0, 0, N), p(1, 0, 0, N))),
             // пар — на юг в котёл за спиной, питательная вода — на юг внизу
-            Map.entry("electrode_boiler_real", List.of(p(0, 2, 1, S), p(1, 0, 1, S))));
+            Map.entry("electrode_boiler_real", List.of(p(0, 2, 1, S), p(1, 0, 1, S))),
+            // кузница и машиностроение (18 §18.6–18.7): заготовку подают к нарисованному рабочему месту
+            // молот, пресс, волочильный стан, пазовырубной пресс: рабочая клетка перед контроллером (z −1)
+            Map.entry("power_hammer_real", List.of(p(0, 0, -1, N), p(0, 0, -1, W))),
+            Map.entry("crank_press_real", List.of(p(0, 0, -1, N))),
+            Map.entry("wire_mill_real", List.of(p(0, 0, -1, N))),
+            Map.entry("notching_press_real", List.of(p(0, 0, -1, N))),
+            // руда и уголь — в колошник сверху, крица — из-под арки с фасада
+            Map.entry("bloomery_real", List.of(p(0, 1, 0, U), p(0, 0, 0, N))),
+            Map.entry("forge_hearth_real", List.of(p(0, 0, 0, N))),
+            // лист — на входной рольганг с севера, с выходного — на юг
+            Map.entry("sheet_mill_real", List.of(p(1, 0, -1, N), p(1, 0, 1, S))),
+            Map.entry("winding_machine_real", List.of(p(0, 0, 0, N), p(1, 0, 0, N))),
+            // печи: заготовки через дверцу; закалочный бак — сверху (вода или масло)
+            Map.entry("heating_furnace_real", List.of(p(0, 0, 0, N))),
+            Map.entry("hardening_furnace_real", List.of(p(0, 0, 0, N), p(1, 0, 0, U))));
 
     private WholePorts() {}
 

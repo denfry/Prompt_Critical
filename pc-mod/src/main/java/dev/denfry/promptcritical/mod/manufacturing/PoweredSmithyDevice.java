@@ -30,7 +30,29 @@ import org.jetbrains.annotations.Nullable;
  * постоянный импульс стресса {@code RATED_W / (W_PER_SU · n_ном)}, поэтому мощность растёт с оборотами:
  * P = W_PER_SU · impact · |n|. Пока вал перегружен или стоит, машина не работает. Процесс идёт раз в секунду игры.
  */
-public abstract class PoweredSmithyDevice extends KineticBlockEntity implements FoundryDevice, PanelHost {
+public abstract class PoweredSmithyDevice extends KineticBlockEntity implements FoundryDevice, PanelHost,
+        dev.denfry.promptcritical.mod.client.whole.WholeModelHost {
+    // --- цельная модель (реальный масштаб) ---
+
+    /** Id цельной модели у машины реального масштаба (блок {@code *_real}); у старой — null. */
+    @Override
+    @Nullable
+    public String wholeModelId() {
+        return dev.denfry.promptcritical.mod.client.whole.WholeModelHost.idOf(getBlockState());
+    }
+
+    @Override
+    public Direction wholeModelFacing() {
+        BlockState s = getBlockState();
+        return s.getBlock() instanceof dev.denfry.promptcritical.mod.block.PcBlock b ? b.facing(s) : Direction.NORTH;
+    }
+
+    /** Свет — с фасада, перед контроллером. */
+    @Override
+    public BlockPos wholeModelLightPos() {
+        return worldPosition.relative(wholeModelFacing());
+    }
+
     protected final MachineInventory inv;
 
     protected PoweredSmithyDevice(BlockEntityType<?> type, BlockPos pos, BlockState state, MachineInventory.Role[] roles,

@@ -1013,7 +1013,15 @@ public final class PcBlocks {
                 || b == ELECTRIC_ARC_FURNACE_REAL.get() || b == LADLE_STATION_REAL.get() || b == INGOT_MOLD_REAL.get()
                 || b == HEAT_TREATMENT_FURNACE_REAL.get() || b == PIPE_WELDER_REAL.get() || b == PIERCING_MILL_REAL.get()
                 // углеродная линия реального масштаба
-                || b == ACHESON_FURNACE_REAL.get() || b == ELECTRODE_EXTRUDER_REAL.get() || b == BAKING_FURNACE_REAL.get();
+                || b == ACHESON_FURNACE_REAL.get() || b == ELECTRODE_EXTRUDER_REAL.get() || b == BAKING_FURNACE_REAL.get()
+                || isSmithyReal(b);
+    }
+
+    /** Кузница и машиностроение реального масштаба (18 §18.6–18.7). */
+    public static boolean isSmithyReal(net.minecraft.world.level.block.Block b) {
+        return b == POWER_HAMMER_REAL.get() || b == BLOOMERY_REAL.get() || b == FORGE_HEARTH_REAL.get() || b == CRANK_PRESS_REAL.get()
+                || b == WIRE_MILL_REAL.get() || b == SHEET_MILL_REAL.get() || b == NOTCHING_PRESS_REAL.get()
+                || b == WINDING_MACHINE_REAL.get() || b == HEATING_FURNACE_REAL.get() || b == HARDENING_FURNACE_REAL.get();
     }
 
     /**
@@ -1083,6 +1091,65 @@ public final class PcBlocks {
             dev.denfry.promptcritical.mod.foundry.FoundryBlock.with(dev.denfry.promptcritical.mod.manufacturing.SmithyFurnaceBlockEntity::heating));
     public static final DeferredBlock<PcDeviceBlock> HARDENING_FURNACE = device("hardening_furnace", lit(brick()), Spec.facing(BlockStateProperties.LIT),
             dev.denfry.promptcritical.mod.foundry.FoundryBlock.with(dev.denfry.promptcritical.mod.manufacturing.SmithyFurnaceBlockEntity::hardening));
+
+    // кузница и машиностроение реального масштаба (18 §18.6–18.7): цельные модели, те же BE, что у старых блоков;
+    // вал Create входит в контроллер с той же стороны, что у старой машины (контроллер — клетка привода)
+    /** Пневматический молот 2 cwt: колонна с двумя цилиндрами, шабот перед ней (клетка z −1), вал — в западную грань. */
+    public static final Footprint FP_POWER_HAMMER_REAL = Footprint.tiled(0, 0, 0, 2, -1, 0);
+    public static final DeferredBlock<PcDeviceBlock> POWER_HAMMER_REAL = device("power_hammer_real", machine(),
+            real(Spec.facing(PcProperties.RUNNING), FP_POWER_HAMMER_REAL),
+            KineticMachineBlock.with(ShaftSide.LEFT, dev.denfry.promptcritical.mod.manufacturing.PowerHammerBlockEntity::hammer));
+    /** Сыродутный горн 1,7 м с парой мехов на западе. */
+    public static final Footprint FP_BLOOMERY_REAL = Footprint.tiled(-1, 0, 0, 1, 0, 0);
+    public static final DeferredBlock<PcDeviceBlock> BLOOMERY_REAL = device("bloomery_real", lit(brick()),
+            real(Spec.facing(BlockStateProperties.LIT), FP_BLOOMERY_REAL),
+            dev.denfry.promptcritical.mod.foundry.FoundryBlock.with(dev.denfry.promptcritical.mod.manufacturing.BloomeryBlockEntity::new));
+    /** Кузнечный горн с колпаком, трубой 3 м и большими мехами на востоке. */
+    public static final Footprint FP_FORGE_HEARTH_REAL = Footprint.tiled(0, 1, 0, 2, 0, 1);
+    public static final DeferredBlock<PcDeviceBlock> FORGE_HEARTH_REAL = device("forge_hearth_real", lit(brick()),
+            real(Spec.facing(BlockStateProperties.LIT), FP_FORGE_HEARTH_REAL),
+            dev.denfry.promptcritical.mod.foundry.FoundryBlock.with(dev.denfry.promptcritical.mod.manufacturing.ForgeHearthBlockEntity::new));
+    /** Открытый наклоняемый кривошипный пресс 60 т; вал — в заднюю грань, ремнём к маховику. */
+    public static final Footprint FP_CRANK_PRESS_REAL = Footprint.tiled(0, 0, 0, 2, -1, 0);
+    public static final DeferredBlock<PcDeviceBlock> CRANK_PRESS_REAL = device("crank_press_real", machine(),
+            real(Spec.facing(PcProperties.RUNNING), FP_CRANK_PRESS_REAL),
+            KineticMachineBlock.with(ShaftSide.BACK, dev.denfry.promptcritical.mod.manufacturing.PowerHammerBlockEntity::press));
+    /** Волочильный стан с барабаном; вал — в западную грань задней клетки. */
+    public static final Footprint FP_WIRE_MILL_REAL = Footprint.tiled(0, 0, 0, 1, -1, 0);
+    public static final DeferredBlock<PcDeviceBlock> WIRE_MILL_REAL = device("wire_mill_real", machine(),
+            real(Spec.facing(PcProperties.RUNNING), FP_WIRE_MILL_REAL),
+            KineticMachineBlock.with(ShaftSide.LEFT, dev.denfry.promptcritical.mod.manufacturing.WireMillBlockEntity::new));
+    /** Двухвалковый листовой стан холодной прокатки; вал — в западную грань контроллера, как у старого. */
+    public static final Footprint FP_SHEET_MILL_REAL = Footprint.tiled(0, 1, 0, 1, -1, 1);
+    public static final DeferredBlock<PcDeviceBlock> SHEET_MILL_REAL = device("sheet_mill_real", machine(),
+            real(Spec.facing(PcProperties.RUNNING), FP_SHEET_MILL_REAL),
+            KineticMachineBlock.with(ShaftSide.LEFT, dev.denfry.promptcritical.mod.manufacturing.SheetMillBlockEntity::new));
+    /** Пазовырубной пресс; вал — в заднюю грань контроллера, как у старого. */
+    public static final Footprint FP_NOTCHING_PRESS_REAL = Footprint.tiled(0, 0, 0, 1, -1, 0);
+    public static final DeferredBlock<PcDeviceBlock> NOTCHING_PRESS_REAL = device("notching_press_real", machine(),
+            real(Spec.facing(PcProperties.RUNNING), FP_NOTCHING_PRESS_REAL),
+            KineticMachineBlock.with(ShaftSide.BACK, dev.denfry.promptcritical.mod.manufacturing.NotchingPressBlockEntity::new));
+    /** Намоточный станок; вал — в западную грань контроллера, как у старого. */
+    public static final Footprint FP_WINDING_MACHINE_REAL = Footprint.tiled(0, 1, 0, 1, 0, 0);
+    public static final DeferredBlock<PcDeviceBlock> WINDING_MACHINE_REAL = device("winding_machine_real", machine(),
+            real(Spec.facing(PcProperties.RUNNING), FP_WINDING_MACHINE_REAL),
+            KineticMachineBlock.with(ShaftSide.LEFT, dev.denfry.promptcritical.mod.manufacturing.WindingMachineBlockEntity::new));
+    /** Нагревательная печь кузницы на угле с подъёмной дверью и трубой 4 м. */
+    public static final Footprint FP_HEATING_FURNACE_REAL = Footprint.tiled(0, 1, 0, 3, 0, 1);
+    public static final DeferredBlock<PcDeviceBlock> HEATING_FURNACE_REAL = device("heating_furnace_real", lit(brick()),
+            real(Spec.facing(BlockStateProperties.LIT), FP_HEATING_FURNACE_REAL),
+            dev.denfry.promptcritical.mod.foundry.FoundryBlock.with(dev.denfry.promptcritical.mod.manufacturing.SmithyFurnaceBlockEntity::heating));
+    /** Муфельная закалочная печь с закалочным баком на востоке. */
+    public static final Footprint FP_HARDENING_FURNACE_REAL = Footprint.tiled(0, 1, 0, 1, 0, 1);
+    public static final DeferredBlock<PcDeviceBlock> HARDENING_FURNACE_REAL = device("hardening_furnace_real", lit(brick()),
+            real(Spec.facing(BlockStateProperties.LIT), FP_HARDENING_FURNACE_REAL),
+            dev.denfry.promptcritical.mod.foundry.FoundryBlock.with(dev.denfry.promptcritical.mod.manufacturing.SmithyFurnaceBlockEntity::hardening));
+
+    /** Объём цельной модели: один сегмент — {@code footprint}, больше — свойство {@code segment} по сегментам. */
+    private static Spec real(Spec spec, Footprint fp) {
+        int n = fp.segments().size();
+        return n == 1 ? spec.footprint(fp) : spec.segments(PcProperties.wholeSegments(n), fp);
+    }
     public static final DeferredBlock<PcDeviceBlock> SAND_MOLD = device("sand_mold",
             Properties.of().mapColor(MapColor.SAND).strength(0.8f).sound(SoundType.SAND).noOcclusion(), Spec.of(PcProperties.MOLD_STAGE),
             SandMoldBlock.factory());
