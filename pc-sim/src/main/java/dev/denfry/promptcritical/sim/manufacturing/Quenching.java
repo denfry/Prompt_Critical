@@ -65,7 +65,7 @@ public final class Quenching {
     }
 
     /**
-     * Закалка нагретой заготовки. Не закалилась (холодная, C &lt; 0,25 % или критический диаметр среды 0):
+     * Закалка нагретой заготовки. Не закалилась (холодная, в том числе уже закалённая и остывшая, C &lt; 0,25 % или критический диаметр среды 0):
      * твёрдость прежняя, NOT_HARDENED. Иначе при {@code aM} выше критического твёрдость hn + 0,5·(hq − hn)
      * и NOT_THROUGH_HARDENED. В воде Cr ≥ 0,8 % или C ≥ 0,6 % дают CRACK 0,7 и QUENCH_CRACKED.
      * OK ставится, только когда других событий нет.
@@ -74,7 +74,8 @@ public final class Quenching {
         SteelGrade grade = w.grade();
         SteelGrade hot = HeatTreatment.quench(grade, w.tempK());
         double critical = critical(grade.family()).forMedium(m);
-        if (hot.state() != HeatTreatState.QUENCHED || grade.carbonPct() < MIN_HARDENING_C_PCT || !(critical > 0)) {
+        if (w.tempK() < HeatTreatment.ac3K(grade) + HeatTreatment.AC3_MARGIN_K
+                || hot.state() != HeatTreatState.QUENCHED || grade.carbonPct() < MIN_HARDENING_C_PCT || !(critical > 0)) {
             return new Forging.Result(cooled(w, m), List.of(ForgeEvent.NOT_HARDENED));
         }
         double hq = hot.hardnessHrc();

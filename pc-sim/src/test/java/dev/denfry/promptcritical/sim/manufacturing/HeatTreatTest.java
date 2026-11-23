@@ -86,4 +86,27 @@ class HeatTreatTest {
         assertThat(Tempering.temper(q, 573.15, Double.NaN)).isEqualTo(q);
         assertThat(Tempering.temper(q, 573.15, -5)).isEqualTo(q);
     }
+
+    @Test void secondQuenchOfColdQuenchedPieceChangesNothing() {
+        var first = Quenching.quench(Workpiece.bar(gradeShKh15(), Workpiece.Section.ROUND, 0.012, 0.012, 0.2, 1123.15),
+                Quenching.Medium.WATER);
+        var second = Quenching.quench(first.piece(), Quenching.Medium.WATER);
+        assertThat(second.events()).containsExactly(ForgeEvent.NOT_HARDENED);
+        assertThat(second.piece().hardnessHrc()).isEqualTo(first.piece().hardnessHrc());
+        assertThat(second.piece().severity(PartDefect.CRACK)).isEqualTo(first.piece().severity(PartDefect.CRACK));
+    }
+
+    @Test void secondQuenchOfThin45BarChangesNothing() {
+        var first = Quenching.quench(bar45(0.012, 1123.15), Quenching.Medium.WATER);
+        var second = Quenching.quench(first.piece(), Quenching.Medium.WATER);
+        assertThat(second.events()).containsExactly(ForgeEvent.NOT_HARDENED);
+        assertThat(second.piece().hardnessHrc()).isEqualTo(first.piece().hardnessHrc());
+        assertThat(second.piece().severity(PartDefect.CRACK)).isEqualTo(first.piece().severity(PartDefect.CRACK));
+    }
+
+    @Test void thickBearingSteelInWaterIsNotThroughHardenedAndCracks() {
+        var r = Quenching.quench(Workpiece.bar(gradeShKh15(), Workpiece.Section.ROUND, 0.05, 0.05, 0.3, 1123.15),
+                Quenching.Medium.WATER);
+        assertThat(r.events()).containsExactlyInAnyOrder(ForgeEvent.NOT_THROUGH_HARDENED, ForgeEvent.QUENCH_CRACKED);
+    }
 }
