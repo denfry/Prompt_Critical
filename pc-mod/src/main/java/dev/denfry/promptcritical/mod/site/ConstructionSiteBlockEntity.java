@@ -254,9 +254,14 @@ public class ConstructionSiteBlockEntity extends BlockEntity {
     private void credit(SitePlans.Plan p, Block unit) {
         if (owner == null || !(level instanceof net.minecraft.server.level.ServerLevel sl)
                 || !(sl.getPlayerByUUID(owner) instanceof net.minecraft.server.level.ServerPlayer player)) return;
+        credit(player, p.id(), unit);
+    }
+
+    /** Засчитать игроку достроенную по плану {@code planId} машину {@code unit} и её двойника старой серии. */
+    public static void credit(net.minecraft.server.level.ServerPlayer player, String planId, Block unit) {
         player.awardStat(net.minecraft.stats.Stats.ITEM_USED.get(unit.asItem()));
         dev.denfry.promptcritical.mod.content.HandbookService.issueProcedure(player, unit);
-        SitePlans.Twin twin = SitePlans.twin(p.id());
+        SitePlans.Twin twin = SitePlans.twin(planId);
         if (twin == null) return;
         player.awardStat(net.minecraft.stats.Stats.ITEM_USED.get(twin.block().get().asItem()), twin.count());
         dev.denfry.promptcritical.mod.content.HandbookService.issueProcedure(player, twin.block().get());

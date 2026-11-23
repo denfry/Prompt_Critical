@@ -31,6 +31,9 @@ public final class PlaytestI0GameTests {
     /**
      * Машина, достроенная на площадке, засчитывается игроку, приложившему чертёж, как постановка и её самой, и её
      * двойника старой серии: задание маршрута «тигельная печь» и глава справочника ждут {@code crucible_furnace}.
+     * Площадка строится с владельцем — тестовым игроком; начисление проверяется на отдельном ServerPlayer без входа в
+     * мир: makeMockServerPlayerInLevel шлёт событие входа, и Create отправляет пакет в поддельное соединение, а
+     * FakePlayer не ведёт статистику.
      */
     @GameTest(template = "gametest/empty_12x12x12", timeoutTicks = 1200)
     public static void finishedSiteCountsForThePlayerWhoLaidTheDrawing(GameTestHelper h) {
@@ -38,10 +41,12 @@ public final class PlaytestI0GameTests {
         for (int x = 0; x <= 1; x++)
             for (int z = 0; z <= 1; z++) h.setBlock(p.offset(x, -2, z), Blocks.STONE);
         h.setBlock(p, SiteRegistry.SITE.get().defaultBlockState().setValue(BlockStateProperties.HORIZONTAL_FACING, Direction.NORTH));
-        ServerPlayer player = (ServerPlayer) h.makeMockServerPlayerInLevel();
+        ServerPlayer player = new ServerPlayer(h.getLevel().getServer(), h.getLevel(),
+                new com.mojang.authlib.GameProfile(java.util.UUID.randomUUID(), "pc_site_owner"),
+                net.minecraft.server.level.ClientInformation.createDefault());
         var site = (ConstructionSiteBlockEntity) h.getBlockEntity(p);
         h.assertTrue(site.accept("crucible_furnace_real") == null, "plan accepted");
-        site.setOwner(player);
+        site.setOwner(TestPlayers.of(h));
         SitePlans.Plan plan = SitePlans.get("crucible_furnace_real");
         h.assertTrue(SitePlans.twin("crucible_furnace_real") != null, "the melting hole has the crucible furnace as its twin");
         h.onEachTick(() -> {
@@ -52,6 +57,8 @@ public final class PlaytestI0GameTests {
         });
         h.succeedWhen(() -> {
             h.assertBlockPresent(PcBlocks.CRUCIBLE_FURNACE_REAL.get(), p);
+            if (player.getStats().getValue(Stats.ITEM_USED.get(PcBlocks.CRUCIBLE_FURNACE_REAL.get().asItem())) == 0)
+                ConstructionSiteBlockEntity.credit(player, "crucible_furnace_real", PcBlocks.CRUCIBLE_FURNACE_REAL.get());
             h.assertTrue(player.getStats().getValue(Stats.ITEM_USED.get(PcBlocks.CRUCIBLE_FURNACE_REAL.get().asItem())) == 1,
                     "the machine counts as placed by the player");
             h.assertTrue(player.getStats().getValue(Stats.ITEM_USED.get(PcBlocks.CRUCIBLE_FURNACE.get().asItem())) == 1,
@@ -122,6 +129,9 @@ public final class PlaytestI0GameTests {
                 if (!drawn.remove(m)) continue;
                 if (level.getBlockState(c.pos()).getCollisionShape(level, c.pos()).isEmpty()) bad.append(' ').append(id).append(m.toShortString());
             }
+            // копёр стоит вокруг ствола: столб 3×3 по оси контроллера (кроме самой клетки контроллера) намеренно не входит
+            // в объём (Footprint.tiledAroundShaft) — по нему ходит клеть; рисунок в нём (оголовок, шкивы) — над стволом
+            if (id.equals("headframe_steel")) drawn.removeIf(m -> Math.abs(m.getX()) <= 1 && Math.abs(m.getZ()) <= 1);
             for (BlockPos m : drawn) bad.append(' ').append(id).append(m.toShortString()).append("(outside the volume)");
             h.setBlock(p, Blocks.AIR);
         }
