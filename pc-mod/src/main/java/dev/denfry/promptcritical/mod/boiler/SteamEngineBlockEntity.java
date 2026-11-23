@@ -62,7 +62,7 @@ import org.jetbrains.annotations.Nullable;
  * вентиль открывается только с разрешения пуска (13 §13.6.6).
  */
 public class SteamEngineBlockEntity extends DeviceBlockEntity implements PressureSource, PanelHost, OpsMachine,
-        dev.denfry.promptcritical.mod.client.whole.WholeModelHost {
+        dev.denfry.promptcritical.mod.client.whole.WholeModelHost, ShaftSource {
     @Override
     @org.jetbrains.annotations.Nullable
     public String wholeModelId() {

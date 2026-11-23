@@ -159,14 +159,14 @@ public final class MachineProcesses {
         p.add(new Process("water_tube_boiler", Plant.POWER,
                 on(PcBlocks.WATER_TUBE_BOILER, PcBlocks.BOILER_BURNER, PcBlocks.STEAM_DRUM),
                 of(item(0, PcItems.COAL_DUST), fuelGas(), fluid(0, "boiler_feedwater")), of()));
-        p.add(new Process("deaerator", Plant.POWER, on(PcBlocks.DEAERATOR),
+        p.add(new Process("deaerator", Plant.POWER, on(PcBlocks.DEAERATOR, PcBlocks.DEAERATOR_REAL),
                 of(fluid(0, "softened_water")), of(fluid(0, "boiler_feedwater"))));
         // водоподготовка (08 §8.12)
         p.add(new Process("water_clarifier", Plant.WATER, on(PcBlocks.WATER_CLARIFIER),
                 of(water(0), item(0, PcItems.BURNT_LIME)), of(fluid(0, "clarified_water"))));
         p.add(new Process("sand_filter", Plant.WATER, on(PcBlocks.SAND_FILTER),
                 of(fluid(0, "clarified_water")), of(fluid(0, "filtered_water"))));
-        p.add(new Process("ion_exchange_column", Plant.WATER, on(PcBlocks.ION_EXCHANGE_COLUMN),
+        p.add(new Process("ion_exchange_column", Plant.WATER, on(PcBlocks.ION_EXCHANGE_COLUMN, PcBlocks.ION_EXCHANGE_COLUMN_REAL),
                 of(fluid(0, "filtered_water"), item(0, PcItems.SALT)), of(fluid(0, "softened_water"))));
         // литейка (08 §8.9, 08 §8.10, 13 §13.6.7)
         p.add(new Process("molding_station", Plant.FOUNDRY, on(PcBlocks.MOLDING_STATION),

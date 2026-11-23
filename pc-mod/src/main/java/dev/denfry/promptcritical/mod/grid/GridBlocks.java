@@ -28,7 +28,8 @@ public final class GridBlocks {
                     PcBlocks.SIEMENS_REACTOR.get(), PcBlocks.CLEANROOM_AIRLOCK.get(), PcBlocks.ELECTROSTATIC_PRECIPITATOR.get(),
                     PcBlocks.GRID_FE_INTERFACE_SMALL.get(), PcBlocks.GRID_FE_INTERFACE.get(), PcBlocks.GRID_FE_INTERFACE_LARGE.get(),
                     PcBlocks.POWER_SOCKET.get(), PcBlocks.POWER_SOCKET_3P.get(), PcBlocks.POWER_BOARD.get(), PcBlocks.UPS_CABINET.get(),
-                    PcBlocks.SOLAR_INVERTER.get(), PcBlocks.BATTERY_INVERTER.get());
+                    PcBlocks.SOLAR_INVERTER.get(), PcBlocks.BATTERY_INVERTER.get(),
+                    PcBlocks.SHAFT_GENERATOR_REAL.get(), PcBlocks.ELECTRIC_MOTOR_MV_REAL.get());
         }
         return blocks;
     }

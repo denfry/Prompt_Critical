@@ -83,6 +83,20 @@ public final class SiteText {
         drawing("blast_blower_engine", "Horizontal Blowing Engine", "горизонтальной воздуходувной машины");
         stage("blowing_tub", "bed, blowing tub and crosshead guides", "станина, воздушный цилиндр и параллели");
         stage("blower_flywheel", "crankshaft, flywheel and bevel drive", "коленвал, маховик и коническая передача");
+        drawing("deaerator_real", "DA-25 Atmospheric Deaerator", "атмосферного деаэратора ДА-25");
+        stage("saddles", "concrete saddles", "бетонные опоры");
+        stage("storage_tank", "storage tank and cladding", "бак-аккумулятор и обшивка");
+        stage("deaerating_column", "deaerating column, platform and piping", "деаэрационная колонка, площадка и трубопроводы");
+        drawing("ion_exchange_column_real", "Sodium Cation Softening Filter", "Na-катионитового фильтра");
+        stage("filter_vessel", "vessel on legs with dished heads", "корпус на опорах с днищами");
+        stage("valve_nest", "headers, valves and brine line", "коллекторы, задвижки и солевая линия");
+        drawing("shaft_generator_real", "500 kVA Open-Frame Alternator", "генератора 500 кВ·А открытого исполнения");
+        stage("bedplate", "bedplate and pedestal bearings", "фундаментная плита и стояковые подшипники");
+        stage("stator", "stator frame, core and windings", "станина статора, сердечник и обмотки");
+        stage("field", "revolving field, slip rings and brush gear", "вращающийся индуктор, кольца и щёткодержатели");
+        drawing("electric_motor_mv_real", "1 MW 6 kV Induction Motor", "асинхронного двигателя 1 МВт 6 кВ");
+        stage("motor_frame", "frame, stator core and 6 kV winding", "станина, сердечник статора и обмотка 6 кВ");
+        stage("motor_rotor", "squirrel-cage rotor and shaft", "короткозамкнутый ротор и вал");
     }
 
     private SiteText() {}

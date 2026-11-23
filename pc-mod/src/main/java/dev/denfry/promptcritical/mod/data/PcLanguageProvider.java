@@ -40,6 +40,10 @@ public final class PcLanguageProvider extends LanguageProvider {
         b("guibal_fan", "Guibal Fan", "Вентилятор Гибаля");
         b("cupola_furnace_real", "Foundry Cupola", "Литейная вагранка");
         b("crucible_furnace_real", "Crucible Melting Hole", "Тигельная горновая печь");
+        b("deaerator_real", "DA-25 Atmospheric Deaerator", "Атмосферный деаэратор ДА-25");
+        b("ion_exchange_column_real", "Sodium Cation Softening Filter", "Na-катионитовый фильтр");
+        b("shaft_generator_real", "500 kVA Open-Frame Alternator", "Генератор 500 кВ·А открытого исполнения");
+        b("electric_motor_mv_real", "1 MW 6 kV Induction Motor", "Асинхронный двигатель 1 МВт 6 кВ");
         b("lancashire_stoker", "Lancashire Boiler Stokers", "Механические забрасыватели ланкаширского котла");
         b("grate_stoker", "Chain Grate Stoker", "Цепная колосниковая решётка");
         b("chimney", "Chimney", "Дымовая труба");

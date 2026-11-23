@@ -16,11 +16,13 @@ public final class GridBlockEntities {
             DeferredRegister.create(Registries.BLOCK_ENTITY_TYPE, PromptCritical.MOD_ID);
 
     public static final DeferredHolder<BlockEntityType<?>, BlockEntityType<ShaftGeneratorBlockEntity>> SHAFT_GENERATOR =
-            type("shaft_generator", ShaftGeneratorBlockEntity::new, PcBlocks.SHAFT_GENERATOR);
+            BLOCK_ENTITIES.register("shaft_generator", () -> BlockEntityType.Builder.of(ShaftGeneratorBlockEntity::new,
+                    PcBlocks.SHAFT_GENERATOR.get(), PcBlocks.SHAFT_GENERATOR_REAL.get()).build(null));
     public static final DeferredHolder<BlockEntityType<?>, BlockEntityType<GridDispatchCenterBlockEntity>> GRID_DISPATCH_CENTER =
             type("grid_dispatch_center", GridDispatchCenterBlockEntity::new, PcBlocks.GRID_DISPATCH_CENTER);
     public static final DeferredHolder<BlockEntityType<?>, BlockEntityType<ElectricMotorBlockEntity>> ELECTRIC_MOTOR =
-            type("electric_motor", ElectricMotorBlockEntity::new, PcBlocks.ELECTRIC_MOTOR);
+            BLOCK_ENTITIES.register("electric_motor", () -> BlockEntityType.Builder.of(ElectricMotorBlockEntity::new,
+                    PcBlocks.ELECTRIC_MOTOR.get(), PcBlocks.ELECTRIC_MOTOR_MV_REAL.get()).build(null));
     public static final DeferredHolder<BlockEntityType<?>, BlockEntityType<BreakerCellBlockEntity>> SWITCHGEAR_CELL =
             type("switchgear_cell", BreakerCellBlockEntity::mv, PcBlocks.SWITCHGEAR_CELL);
     public static final DeferredHolder<BlockEntityType<?>, BlockEntityType<BreakerCellBlockEntity>> LV_SWITCHBOARD =

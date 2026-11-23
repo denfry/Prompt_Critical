@@ -86,6 +86,10 @@ public final class PowerhouseRecipes extends RecipeProvider {
         ShapedRecipeBuilder.shaped(RecipeCategory.MISC, PcBlocks.DEAERATOR.get())
                 .pattern("PTP").pattern("FVF").define('P', plate).define('T', AllBlocks.FLUID_TANK.get()).define('F', pipe)
                 .define('V', AllBlocks.FLUID_VALVE.get()).unlockedBy("has_steel_plate", has(plate)).save(out, id("deaerator"));
+        // чертёж ДА-25 реального масштаба: деаэратор строится на стройплощадке по массе прототипа (SitePlans)
+        ShapedRecipeBuilder.shaped(RecipeCategory.MISC, dev.denfry.promptcritical.mod.site.SiteRegistry.DEAERATOR_REAL_DRAWING.get())
+                .pattern("PPP").pattern("FTV").define('P', Items.PAPER).define('T', AllBlocks.FLUID_TANK.get()).define('F', pipe)
+                .define('V', AllBlocks.FLUID_VALVE.get()).unlockedBy("has_steel_plate", has(plate)).save(out, id("deaerator_real_drawing"));
         // турбина: корпус из листа, ротор — лопатки (пропеллеры Create) на валу, клапан на подводе пара
         ShapedRecipeBuilder.shaped(RecipeCategory.MISC, PcBlocks.STEAM_TURBINE.get())
                 .pattern("PVP").pattern("FSF").pattern("PGP").define('P', plate).define('V', AllBlocks.FLUID_VALVE.get())

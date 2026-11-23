@@ -22,7 +22,8 @@ public final class PowerhouseBlockEntities {
     public static final DeferredHolder<BlockEntityType<?>, BlockEntityType<DraftFanBlockEntity>> INDUCED_DRAFT_FAN =
             type("induced_draft_fan", DraftFanBlockEntity::induced, PcBlocks.INDUCED_DRAFT_FAN);
     public static final DeferredHolder<BlockEntityType<?>, BlockEntityType<DeaeratorBlockEntity>> DEAERATOR =
-            type("deaerator", DeaeratorBlockEntity::new, PcBlocks.DEAERATOR);
+            BLOCK_ENTITIES.register("deaerator", () -> BlockEntityType.Builder.of(DeaeratorBlockEntity::new,
+                    PcBlocks.DEAERATOR.get(), PcBlocks.DEAERATOR_REAL.get()).build(null));
     public static final DeferredHolder<BlockEntityType<?>, BlockEntityType<SteamTurbineBlockEntity>> STEAM_TURBINE =
             type("steam_turbine", SteamTurbineBlockEntity::new, PcBlocks.STEAM_TURBINE);
     public static final DeferredHolder<BlockEntityType<?>, BlockEntityType<HydroTurbineBlockEntity>> HYDRO_TURBINE =
