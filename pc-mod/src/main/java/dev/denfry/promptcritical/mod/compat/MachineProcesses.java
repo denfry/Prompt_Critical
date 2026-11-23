@@ -149,7 +149,7 @@ public final class MachineProcesses {
     private static List<Process> build() {
         List<Process> p = new ArrayList<>();
         // углеобогащение и котельная I0 (08 §8.3, 07 §7.9.1)
-        p.add(new Process("coal_jig", Plant.COAL_PREP, on(PcBlocks.COAL_JIG),
+        p.add(new Process("coal_jig", Plant.COAL_PREP, on(PcBlocks.COAL_JIG, PcBlocks.COAL_JIG_REAL),
                 of(item(0, PcItems.RAW_COAL), water(0)),
                 of(item(0, PcItems.WASHED_COAL), item(0, PcItems.COAL_MIDDLINGS), item(0, PcItems.COAL_REFUSE))));
         p.add(new Process("fire_tube_boiler", Plant.POWER, on(PcBlocks.FIRE_TUBE_BOILER, PcBlocks.GRATE_STOKER, PcBlocks.LANCASHIRE_BOILER, PcBlocks.LANCASHIRE_STOKER),
@@ -207,7 +207,7 @@ public final class MachineProcesses {
                 of(item(0, PcItems.COKE), item(0, PcItems.COKE_BREEZE), fluid(0, "coke_oven_gas"))));
         p.add(new Process("pitch_coke", Plant.COKE, on(PcBlocks.COKE_OVEN),
                 of(item(0, PcItems.COAL_TAR_PITCH)), of(item(0, PcItems.PITCH_COKE), item(0, PcItems.COKE_BREEZE))));
-        p.add(new Process("quench_tower", Plant.COKE, on(PcBlocks.QUENCH_TOWER),
+        p.add(new Process("quench_tower", Plant.COKE, on(PcBlocks.QUENCH_TOWER, PcBlocks.QUENCH_TOWER_REAL),
                 of(item(PcItems.COKE), water(0)), of(item(PcItems.COKE))));
         p.add(new Process("byproduct_plant", Plant.COKE, on(PcBlocks.BYPRODUCT_PLANT),
                 of(fluid(0, "coke_oven_gas"), fluidTag(SULFURIC_ACID, 0), fluidTag(WASH_OIL, 0)),

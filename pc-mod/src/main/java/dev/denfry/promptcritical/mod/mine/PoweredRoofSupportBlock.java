@@ -28,6 +28,11 @@ public final class PoweredRoofSupportBlock extends PcDeviceBlock {
         return construct(spec, () -> new PoweredRoofSupportBlock(props, spec));
     }
 
+    /** Секция мехкрепи: старая или реального масштаба (у неё и якоря сегментов — этот же блок). */
+    public static boolean isSupport(BlockState s) {
+        return s.getBlock() instanceof PoweredRoofSupportBlock;
+    }
+
     /** Секция распёрта: держит кровлю, двигать нельзя. */
     public static boolean set(BlockState controller) {
         return controller.getValue(BlockStateProperties.EXTENDED);

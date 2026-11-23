@@ -108,12 +108,14 @@ public final class MineScanner {
         return b instanceof MainMineFanBlock || b == PcBlocks.VENTILATION_DOOR.get() || b == PcBlocks.MINE_SUPPORT.get()
                 || b == PcBlocks.EXPLOSION_BARRIER.get() || b == PcBlocks.MINE_DISPATCH_CABINET.get()
                 || b == PcBlocks.DEGASIFICATION_BOREHOLE.get() || b == PcBlocks.MINE_DRAINAGE_PUMP.get()
-                || b == PcBlocks.MINE_DRAINAGE_PUMP_GEARED.get() || b == PcBlocks.POWERED_ROOF_SUPPORT.get();
+                || b == PcBlocks.MINE_DRAINAGE_PUMP_GEARED.get() || b == PcBlocks.POWERED_ROOF_SUPPORT.get()
+                || b == PcBlocks.POWERED_ROOF_SUPPORT_REAL.get();
     }
 
     private static boolean minePassable(Block b) {
         return b == PcBlocks.MINE_SUPPORT.get() || b == PcBlocks.EXPLOSION_BARRIER.get() || b == PcBlocks.CANARY_CAGE.get()
-                || b == PcBlocks.POWERED_ROOF_SUPPORT.get() || b == PcBlocks.LONGWALL_SHEARER.get();
+                || b == PcBlocks.POWERED_ROOF_SUPPORT.get() || b == PcBlocks.POWERED_ROOF_SUPPORT_REAL.get()
+                || b == PcBlocks.LONGWALL_SHEARER.get() || b == PcBlocks.LONGWALL_SHEARER_REAL.get();
     }
 
     /** Класс клетки; контроллер многоклеточного блока — в {@link #lastCtrl}. */
@@ -272,6 +274,8 @@ public final class MineScanner {
 
     private BlockPos controller(long key, BlockState s) {
         BlockPos pos = BlockPos.of(key);
+        // якорь сегмента секции крепи реального масштаба — тот же блок, что контроллер
+        if (s.getBlock() instanceof PoweredRoofSupportBlock b) return b.controllerPos(s, pos);
         if (!(s.getBlock() instanceof MultiblockPartBlock)) return pos;
         BlockPos anchor = MultiblockPartBlock.anchor(s, pos);
         BlockPos ctrl = PcBlock.structureController(level, anchor);
@@ -390,14 +394,15 @@ public final class MineScanner {
                     out.anchors.add(k);
                 } else if (b == PcBlocks.CANARY_CAGE.get()) {
                     out.cages.add(k);
-                } else if (b == PcBlocks.MINE_SUPPORT.get() || b == PcBlocks.POWERED_ROOF_SUPPORT.get() || b == PcBlocks.MULTIBLOCK_PART.get()) {
+                } else if (b == PcBlocks.MINE_SUPPORT.get() || b == PcBlocks.POWERED_ROOF_SUPPORT.get()
+                        || b == PcBlocks.POWERED_ROOF_SUPPORT_REAL.get() || b == PcBlocks.MULTIBLOCK_PART.get()) {
                     BlockPos ctrl = controller(k, s);
                     BlockState cs = level.getBlockState(ctrl);
                     if (cs.is(PcBlocks.MINE_SUPPORT.get())) {
                         if (cs.getValue(PcProperties.SUPPORT_KIND) == PcProperties.SupportKind.ARCH) c.arch = true;
                         else c.timber = true;
                         out.anchors.add(ctrl.asLong());
-                    } else if (cs.is(PcBlocks.POWERED_ROOF_SUPPORT.get())) {
+                    } else if (PoweredRoofSupportBlock.isSupport(cs)) {
                         c.powered = true;
                         out.anchors.add(ctrl.asLong());
                     }

@@ -23,7 +23,7 @@ import net.minecraft.world.level.block.state.properties.BlockStateProperties;
  * редстоуна на любую клетку (ПЛК 03d и Lua — позже) или ручной рычаг пустой рукой; без них она распирается сама.
  * На клиенте — ход штоков для BER.
  */
-public final class PoweredRoofSupportBlockEntity extends DeviceBlockEntity {
+public final class PoweredRoofSupportBlockEntity extends DeviceBlockEntity implements dev.denfry.promptcritical.mod.client.whole.WholeModelHost {
     /** Доля насосной станции мехкрепи на одну секцию; без давления стойки не двигаются, Вт (розетка или силовой щит рядом). */
     public static final double SECTION_W = 5e3;
     private final dev.denfry.promptcritical.mod.grid.MachinePower.Drive drive = new dev.denfry.promptcritical.mod.grid.MachinePower.Drive();
@@ -104,6 +104,25 @@ public final class PoweredRoofSupportBlockEntity extends DeviceBlockEntity {
 
     public boolean manualLowered() {
         return manualLowered;
+    }
+
+    // --- секция реального масштаба (powered_roof_support_real): цельная модель ---
+
+    @Override
+    @org.jetbrains.annotations.Nullable
+    public String wholeModelId() {
+        return dev.denfry.promptcritical.mod.client.whole.WholeModelHost.idOf(getBlockState());
+    }
+
+    @Override
+    public Direction wholeModelFacing() {
+        return getBlockState().getValue(BlockStateProperties.HORIZONTAL_FACING);
+    }
+
+    /** Свет — с клетки у конвейера перед контроллером: сам контроллер под перекрытием. */
+    @Override
+    public BlockPos wholeModelLightPos() {
+        return worldPosition.relative(wholeModelFacing());
     }
 
     /** Выдвижение штоков 0 (разгружена) … 1 (распёрта) с интерполяцией кадра. */

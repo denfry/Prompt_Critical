@@ -845,7 +845,7 @@ public final class MineWorld {
         public MineSupport support(int x, int z) {
             BlockState s = supportState(x, z);
             if (s == null) return null;
-            if (s.is(PcBlocks.POWERED_ROOF_SUPPORT.get())) return MineSupport.POWERED;
+            if (PoweredRoofSupportBlock.isSupport(s)) return MineSupport.POWERED;
             return s.getValue(PcProperties.SUPPORT_KIND) == PcProperties.SupportKind.ARCH ? MineSupport.ARCH : MineSupport.TIMBER;
         }
 
@@ -854,7 +854,7 @@ public final class MineWorld {
             BlockState s = supportState(x, z);
             if (s == null) return 0;
             // разгруженная секция мехкрепи кровлю не держит
-            if (s.is(PcBlocks.POWERED_ROOF_SUPPORT.get())) return PoweredRoofSupportBlock.set(s) ? 1.0 : 0;
+            if (PoweredRoofSupportBlock.isSupport(s)) return PoweredRoofSupportBlock.set(s) ? 1.0 : 0;
             return s.getValue(PcProperties.DAMAGED) ? 0.4 : 1.0;
         }
 
@@ -864,10 +864,12 @@ public final class MineWorld {
                 BlockPos p = new BlockPos(x, y - dy, z);
                 BlockState s = level.getBlockState(p);
                 if (s.is(PcBlocks.MULTIBLOCK_PART.get())) {
-                    BlockPos a = MultiblockPartBlock.anchor(s, p);
-                    s = level.getBlockState(a);
+                    p = MultiblockPartBlock.anchor(s, p);
+                    s = level.getBlockState(p);
                 }
-                if (s.is(PcBlocks.MINE_SUPPORT.get()) || s.is(PcBlocks.POWERED_ROOF_SUPPORT.get())) return s;
+                // у секции реального масштаба якорь сегмента — тот же блок: распор — в состоянии контроллера
+                if (s.getBlock() instanceof PoweredRoofSupportBlock b && !b.isController(s)) s = level.getBlockState(b.controllerPos(s, p));
+                if (s.is(PcBlocks.MINE_SUPPORT.get()) || PoweredRoofSupportBlock.isSupport(s)) return s;
             }
             return null;
         }

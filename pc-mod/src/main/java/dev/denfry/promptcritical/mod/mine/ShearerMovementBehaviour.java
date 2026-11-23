@@ -80,7 +80,7 @@ public final class ShearerMovementBehaviour implements MovementBehaviour {
 
     @Override
     public void tick(MovementContext ctx) {
-        if (!(ctx.world instanceof ServerLevel level)) return;
+        if (!(ctx.world instanceof ServerLevel level) || !controller(ctx)) return;
         Work w = work(ctx);
         LongwallConfig cfg = SimConfigs.longwall();
         Direction facing = ctx.state.getValue(BlockStateProperties.HORIZONTAL_FACING);
@@ -96,9 +96,14 @@ public final class ShearerMovementBehaviour implements MovementBehaviour {
         int s = m > 0 ? 1 : -1;
         double c = axis.choose(ctx.position.x, ctx.position.y, ctx.position.z);
         BlockPos ctrl = BlockPos.containing(ctx.position);
+        // крайние клетки шнеков вдоль хода в мире: +x модели — по часовой от фасада
+        int k = facing.getClockWise().getAxisDirection().getStep();
+        int[] drums = LongwallShearerBlock.drumCells(ctx.state);
+        int east = k * drums[1], west = k * drums[0];
         for (int d = LEAD; d <= TRAIL; d++) {
-            // Столбец, в который шнек вот-вот войдёт: центр шнека ± 1 вдоль хода, следующая граница блока.
-            int col = Mth.floor(c + (d == LEAD ? s : -s) + s * 0.501);
+            // Столбец, в который шнек вот-вот войдёт: за крайней клеткой шнека по ходу, следующая граница блока.
+            int lead = s * east > s * west ? east : west, trail = lead == east ? west : east;
+            int col = Mth.floor(c + (d == LEAD ? lead : trail) + s * 0.501);
             long key = ((long) col << 1) | (s > 0 ? 1 : 0);
             if (w.column[d] == key) continue;
             clearDrum(level, w, d);
@@ -139,7 +144,7 @@ public final class ShearerMovementBehaviour implements MovementBehaviour {
 
     @Override
     public void stopMoving(MovementContext ctx) {
-        if (!(ctx.world instanceof ServerLevel level)) return;
+        if (!(ctx.world instanceof ServerLevel level) || !controller(ctx)) return;
         Work w = work(ctx);
         idle(level, w);
         bindShaft(w, null);
@@ -148,7 +153,12 @@ public final class ShearerMovementBehaviour implements MovementBehaviour {
     @Override
     public void cancelStall(MovementContext ctx) {
         MovementBehaviour.super.cancelStall(ctx);
-        if (ctx.world instanceof ServerLevel level) idle(level, work(ctx));
+        if (ctx.world instanceof ServerLevel level && controller(ctx)) idle(level, work(ctx));
+    }
+
+    /** Режет только контроллер: якоря сегментов комбайна реального масштаба — тот же блок. */
+    private static boolean controller(MovementContext ctx) {
+        return ctx.state.getBlock() instanceof LongwallShearerBlock b && b.isController(ctx.state);
     }
 
     private static Work work(MovementContext ctx) {
@@ -197,7 +207,7 @@ public final class ShearerMovementBehaviour implements MovementBehaviour {
             Direction facing) {
         double dust = spray(ctx, cfg, w.coalTonnes[d]) ? cfg.sprayDustFactor() : 1;
         SimLevelBinding b = SimBindings.get(level);
-        BlockPos behind = ctrl.relative(facing.getOpposite());
+        BlockPos behind = ctrl.relative(facing.getOpposite(), LongwallShearerBlock.depth(ctx.state));
         Vec3 drop = level.getBlockState(behind).getCollisionShape(level, behind).isEmpty()
                 ? new Vec3(behind.getX() + 0.5, ctrl.getY() + 0.75, behind.getZ() + 0.5)
                 : Vec3.atCenterOf(ctrl).add(0, 0.9, 0);

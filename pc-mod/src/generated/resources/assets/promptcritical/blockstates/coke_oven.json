@@ -1,13 +1,221 @@
 {
-  "variants": {
-    "state=coking": {
-      "model": "promptcritical:block/coke_oven"
+  "multipart": [
+    {
+      "apply": {
+        "model": "promptcritical:block/coke_oven/bottom",
+        "y": 90
+      },
+      "when": {
+        "axis": "x",
+        "door": "none",
+        "level": "bottom"
+      }
     },
-    "state=empty": {
-      "model": "promptcritical:block/coke_oven"
+    {
+      "apply": {
+        "model": "promptcritical:block/coke_oven/bottom"
+      },
+      "when": {
+        "axis": "z",
+        "door": "none",
+        "level": "bottom"
+      }
     },
-    "state=ready": {
-      "model": "promptcritical:block/coke_oven"
+    {
+      "apply": {
+        "model": "promptcritical:block/coke_oven/bottom_door",
+        "y": 270
+      },
+      "when": {
+        "axis": "x",
+        "door": "neg",
+        "level": "bottom"
+      }
+    },
+    {
+      "apply": {
+        "model": "promptcritical:block/coke_oven/bottom_door"
+      },
+      "when": {
+        "axis": "z",
+        "door": "neg",
+        "level": "bottom"
+      }
+    },
+    {
+      "apply": {
+        "model": "promptcritical:block/coke_oven/bottom_door",
+        "y": 90
+      },
+      "when": {
+        "axis": "x",
+        "door": "pos",
+        "level": "bottom"
+      }
+    },
+    {
+      "apply": {
+        "model": "promptcritical:block/coke_oven/bottom_door",
+        "y": 180
+      },
+      "when": {
+        "axis": "z",
+        "door": "pos",
+        "level": "bottom"
+      }
+    },
+    {
+      "apply": {
+        "model": "promptcritical:block/coke_oven/middle",
+        "y": 90
+      },
+      "when": {
+        "axis": "x",
+        "door": "none",
+        "level": "middle"
+      }
+    },
+    {
+      "apply": {
+        "model": "promptcritical:block/coke_oven/middle"
+      },
+      "when": {
+        "axis": "z",
+        "door": "none",
+        "level": "middle"
+      }
+    },
+    {
+      "apply": {
+        "model": "promptcritical:block/coke_oven/middle_door",
+        "y": 270
+      },
+      "when": {
+        "axis": "x",
+        "door": "neg",
+        "level": "middle"
+      }
+    },
+    {
+      "apply": {
+        "model": "promptcritical:block/coke_oven/middle_door"
+      },
+      "when": {
+        "axis": "z",
+        "door": "neg",
+        "level": "middle"
+      }
+    },
+    {
+      "apply": {
+        "model": "promptcritical:block/coke_oven/middle_door",
+        "y": 90
+      },
+      "when": {
+        "axis": "x",
+        "door": "pos",
+        "level": "middle"
+      }
+    },
+    {
+      "apply": {
+        "model": "promptcritical:block/coke_oven/middle_door",
+        "y": 180
+      },
+      "when": {
+        "axis": "z",
+        "door": "pos",
+        "level": "middle"
+      }
+    },
+    {
+      "apply": {
+        "model": "promptcritical:block/coke_oven/top_open",
+        "y": 90
+      },
+      "when": {
+        "axis": "x",
+        "door": "none",
+        "level": "top",
+        "state": "empty"
+      }
+    },
+    {
+      "apply": {
+        "model": "promptcritical:block/coke_oven/top",
+        "y": 90
+      },
+      "when": {
+        "axis": "x",
+        "door": "none",
+        "level": "top",
+        "state": "coking|ready"
+      }
+    },
+    {
+      "apply": {
+        "model": "promptcritical:block/coke_oven/top_open"
+      },
+      "when": {
+        "axis": "z",
+        "door": "none",
+        "level": "top",
+        "state": "empty"
+      }
+    },
+    {
+      "apply": {
+        "model": "promptcritical:block/coke_oven/top"
+      },
+      "when": {
+        "axis": "z",
+        "door": "none",
+        "level": "top",
+        "state": "coking|ready"
+      }
+    },
+    {
+      "apply": {
+        "model": "promptcritical:block/coke_oven/top_door",
+        "y": 270
+      },
+      "when": {
+        "axis": "x",
+        "door": "neg",
+        "level": "top"
+      }
+    },
+    {
+      "apply": {
+        "model": "promptcritical:block/coke_oven/top_door"
+      },
+      "when": {
+        "axis": "z",
+        "door": "neg",
+        "level": "top"
+      }
+    },
+    {
+      "apply": {
+        "model": "promptcritical:block/coke_oven/top_door",
+        "y": 90
+      },
+      "when": {
+        "axis": "x",
+        "door": "pos",
+        "level": "top"
+      }
+    },
+    {
+      "apply": {
+        "model": "promptcritical:block/coke_oven/top_door",
+        "y": 180
+      },
+      "when": {
+        "axis": "z",
+        "door": "pos",
+        "level": "top"
+      }
     }
-  }
+  ]
 }

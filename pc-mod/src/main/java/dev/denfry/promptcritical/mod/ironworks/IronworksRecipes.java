@@ -88,6 +88,10 @@ public final class IronworksRecipes extends RecipeProvider {
         ShapedRecipeBuilder.shaped(RecipeCategory.MISC, PcBlocks.QUENCH_TOWER.get())
                 .pattern("BBB").pattern("B B").pattern("BWB").define('B', Items.BRICKS).define('W', Items.WATER_BUCKET)
                 .unlockedBy("has_coke", has(PcItems.COKE.get())).save(out, id("quench_tower"));
+        // чертёж башни тушения реального масштаба: строится на стройплощадке по массе прототипа (SitePlans)
+        ShapedRecipeBuilder.shaped(RecipeCategory.MISC, dev.denfry.promptcritical.mod.site.SiteRegistry.QUENCH_TOWER_REAL_DRAWING.get())
+                .pattern("PPP").pattern("S S").pattern("SWS").define('P', Items.PAPER).define('S', sheet).define('W', Items.WATER_BUCKET)
+                .unlockedBy("has_coke", has(PcItems.COKE.get())).save(out, id("quench_tower_real_drawing"));
         ShapedRecipeBuilder.shaped(RecipeCategory.MISC, PcBlocks.ELECTRODE_EXTRUDER.get())
                 .pattern("IPI").pattern("SCS").define('I', sheet).define('P', Items.PISTON).define('S', shaft).define('C', casing)
                 .unlockedBy("has_pitch", has(PcItems.COAL_TAR_PITCH.get())).save(out, id("electrode_extruder"));

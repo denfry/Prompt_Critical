@@ -56,6 +56,10 @@ public final class PcBlockStateProvider extends BlockStateProvider {
                 gasMain(block, id);
                 continue;
             }
+            if (id.equals("coke_oven") || id.equals("coke_battery_wall")) {
+                cokeCell(block, id);
+                continue;
+            }
             if (PARTS.contains(id)) {
                 parts(block, id);
                 itemModel(id, block);
@@ -199,16 +203,54 @@ public final class PcBlockStateProvider extends BlockStateProvider {
         };
     }
 
-    /** Газосборник: труба и горизонтальные плечи к соседям; модель плеча смотрит на запад. */
+    /**
+     * Газосборник реального масштаба (art/blockbench/coke/coke_oven/coke_oven_real.author.js): стояк со ступицей
+     * коллектора и горизонтальные плечи к соседям; модель плеча смотрит на север.
+     */
     private void gasMain(Block block, String id) {
         var mp = getMultipartBuilder(block);
-        mp.part().modelFile(existing(id)).addModel().end();
-        ModelFile side = existing(id + "_side");
+        mp.part().modelFile(existing(id + "/core")).addModel().end();
+        ModelFile side = existing(id + "/side");
         for (Direction d : Direction.Plane.HORIZONTAL) {
-            mp.part().modelFile(side).rotationY(((int) d.toYRot() + 270) % 360).uvLock(false).addModel()
+            mp.part().modelFile(side).rotationY(((int) d.toYRot() + 180) % 360).uvLock(false).addModel()
                     .condition(GasMainBlock.SIDES.get(d), true).end();
         }
-        itemModels().withExistingParent(id, modLoc("block/" + id));
+        itemModels().withExistingParent(id, modLoc("block/" + id + "/core"));
+    }
+
+    /**
+     * Клетки коксовой батареи реального масштаба (08 §8.4.1, art/blockbench/coke/coke_oven/coke_oven_real.author.js):
+     * модель — по ярусу и торцу, поворот — по оси камер и стороне торца (дверь и анкерная колонна модели — на севере).
+     * У пустой камеры люк загрузки на своде открыт, у горячего простенка светятся гляделка нижнего торца и лючки свода.
+     */
+    private void cokeCell(Block block, String id) {
+        boolean oven = id.equals("coke_oven");
+        var mp = getMultipartBuilder(block);
+        var axisProp = net.minecraft.world.level.block.state.properties.BlockStateProperties.HORIZONTAL_AXIS;
+        for (PcProperties.CellLevel lv : PcProperties.CellLevel.values())
+            for (PcProperties.CellDoor door : PcProperties.CellDoor.values())
+                for (Direction.Axis axis : new Direction.Axis[] {Direction.Axis.X, Direction.Axis.Z}) {
+                    boolean end = door != PcProperties.CellDoor.NONE;
+                    int y = axis == Direction.Axis.Z ? (door == PcProperties.CellDoor.POS ? 180 : 0)
+                            : (door == PcProperties.CellDoor.NEG ? 270 : 90);
+                    String base = id + "/" + lv.getSerializedName();
+                    if (oven && lv == PcProperties.CellLevel.TOP && !end) {
+                        mp.part().modelFile(existing(base + "_open")).rotationY(y).addModel()
+                                .condition(PcProperties.CELL_LEVEL, lv).condition(PcProperties.CELL_DOOR, door).condition(axisProp, axis)
+                                .condition(PcProperties.OVEN_STATE, PcProperties.OvenLook.EMPTY).end();
+                        mp.part().modelFile(existing(base)).rotationY(y).addModel()
+                                .condition(PcProperties.CELL_LEVEL, lv).condition(PcProperties.CELL_DOOR, door).condition(axisProp, axis)
+                                .condition(PcProperties.OVEN_STATE, PcProperties.OvenLook.COKING, PcProperties.OvenLook.READY).end();
+                        continue;
+                    }
+                    mp.part().modelFile(existing(base + (end ? (oven ? "_door" : "_end") : ""))).rotationY(y).addModel()
+                            .condition(PcProperties.CELL_LEVEL, lv).condition(PcProperties.CELL_DOOR, door).condition(axisProp, axis).end();
+                    if (!oven && (lv == PcProperties.CellLevel.TOP ? !end : lv == PcProperties.CellLevel.BOTTOM && end))
+                        mp.part().modelFile(existing(id + "/partial/wall_glow")).rotationY(y).addModel()
+                                .condition(PcProperties.CELL_LEVEL, lv).condition(PcProperties.CELL_DOOR, door).condition(axisProp, axis)
+                                .condition(PcProperties.HOT, true).end();
+                }
+        itemModels().withExistingParent(id, modLoc("block/" + id + (oven ? "/middle_door" : "/middle_end")));
     }
 
     private ModelFile existing(String name) {
@@ -332,7 +374,8 @@ public final class PcBlockStateProvider extends BlockStateProvider {
                  "bn600_reactor", "am1_reactor", "lancashire_boiler", "headframe_steel", "mill_engine", "winding_engine", "guibal_fan",
                  "cupola_furnace_real", "mine_drainage_pump_geared", "lancashire_stoker", "crucible_furnace_real",
                  "hot_blast_stove_real", "blast_blower_engine",
-                 "deaerator_real", "ion_exchange_column_real", "shaft_generator_real", "electric_motor_mv_real" -> "whole_empty";
+                 "deaerator_real", "ion_exchange_column_real", "shaft_generator_real", "electric_motor_mv_real",
+                 "longwall_shearer_real", "coal_jig_real", "quench_tower_real", "powered_roof_support_real" -> "whole_empty";
             case "pressurizer" -> s.getValue(BlockStateProperties.LIT) ? id + "_lit" : id;
             // тяжёлая вода T3
             case "gs_exchange_tower" -> "absorption_tower";
@@ -435,7 +478,6 @@ public final class PcBlockStateProvider extends BlockStateProvider {
             };
             case "analog_comparator" -> s.getValue(PcProperties.ALARM) ? id + "_tripped" : id;
             case "manual_station" -> s.getValue(PcProperties.MANUAL) ? id + "_manual" : id;
-            case "coke_battery_wall" -> s.getValue(PcProperties.HOT) ? id + "_hot" : id;
             case "byproduct_plant" -> s.getValue(PcProperties.BYPRODUCT_KIND) == PcProperties.ByproductKind.COOLER ? id
                     : id + "_" + s.getValue(PcProperties.BYPRODUCT_KIND).getSerializedName();
             case "baking_furnace", "sinter_strand" -> s.getValue(BlockStateProperties.LIT) ? id + "_lit" : id;

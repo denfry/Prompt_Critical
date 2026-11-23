@@ -53,6 +53,11 @@ public final class SiteRegistry {
     public static final DeferredItem<DesignDrawingItem> ION_EXCHANGE_COLUMN_REAL_DRAWING = drawing("ion_exchange_column_real");
     public static final DeferredItem<DesignDrawingItem> SHAFT_GENERATOR_REAL_DRAWING = drawing("shaft_generator_real");
     public static final DeferredItem<DesignDrawingItem> ELECTRIC_MOTOR_MV_REAL_DRAWING = drawing("electric_motor_mv_real");
+    // добыча, обогащение и коксохим реального масштаба
+    public static final DeferredItem<DesignDrawingItem> LONGWALL_SHEARER_REAL_DRAWING = drawing("longwall_shearer_real");
+    public static final DeferredItem<DesignDrawingItem> COAL_JIG_REAL_DRAWING = drawing("coal_jig_real");
+    public static final DeferredItem<DesignDrawingItem> QUENCH_TOWER_REAL_DRAWING = drawing("quench_tower_real");
+    public static final DeferredItem<DesignDrawingItem> POWERED_ROOF_SUPPORT_REAL_DRAWING = drawing("powered_roof_support_real");
 
     private SiteRegistry() {}
 

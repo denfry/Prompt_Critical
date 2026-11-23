@@ -52,6 +52,9 @@ public final class PcProperties {
     public static final BooleanProperty BURNT = BooleanProperty.create("burnt");
     public static final BooleanProperty FILLED = BooleanProperty.create("filled");
     public static final EnumProperty<OvenLook> OVEN_STATE = EnumProperty.create("state", OvenLook.class);
+    /** Клетка коксовой батареи реального масштаба: ярус и торец с дверью (или анкерной колонной) вдоль оси камер. */
+    public static final EnumProperty<CellLevel> CELL_LEVEL = EnumProperty.create("level", CellLevel.class);
+    public static final EnumProperty<CellDoor> CELL_DOOR = EnumProperty.create("door", CellDoor.class);
     public static final EnumProperty<ByproductKind> BYPRODUCT_KIND = EnumProperty.create("kind", ByproductKind.class);
     public static final EnumProperty<CastHouseKind> CAST_HOUSE_KIND = EnumProperty.create("kind", CastHouseKind.class);
     public static final EnumProperty<StoveSegment> STOVE_SEGMENT = EnumProperty.create("segment", StoveSegment.class);
@@ -130,6 +133,12 @@ public final class PcProperties {
 
     /** Камера коксовой батареи на вид: пусто, коксуется (в т. ч. загрузка), готов. */
     public enum OvenLook implements Named { EMPTY, COKING, READY }
+
+    /** Ярус клетки коксовой батареи: под, середина, свод. */
+    public enum CellLevel implements Named { BOTTOM, MIDDLE, TOP }
+
+    /** Торец клетки вдоль оси камер: внутри, торец к −оси, торец к +оси. */
+    public enum CellDoor implements Named { NONE, NEG, POS }
 
     /** Аппарат улавливания (08 §8.4.4). */
     public enum ByproductKind implements Named { COOLER, PRECIPITATOR, SATURATOR, SCRUBBER }

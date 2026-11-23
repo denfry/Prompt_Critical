@@ -44,6 +44,10 @@ public final class PcLanguageProvider extends LanguageProvider {
         b("ion_exchange_column_real", "Sodium Cation Softening Filter", "Na-катионитовый фильтр");
         b("shaft_generator_real", "500 kVA Open-Frame Alternator", "Генератор 500 кВ·А открытого исполнения");
         b("electric_motor_mv_real", "1 MW 6 kV Induction Motor", "Асинхронный двигатель 1 МВт 6 кВ");
+        b("longwall_shearer_real", "Ranging Drum Shearer", "Двухшнековый очистной комбайн");
+        b("coal_jig_real", "Baum Coal Jig", "Отсадочная машина Баума");
+        b("quench_tower_real", "Wet Coke Quench Tower", "Башня мокрого тушения кокса");
+        b("powered_roof_support_real", "Two-Leg Shield Support", "Двухстоечная щитовая секция крепи");
         b("lancashire_stoker", "Lancashire Boiler Stokers", "Механические забрасыватели ланкаширского котла");
         b("grate_stoker", "Chain Grate Stoker", "Цепная колосниковая решётка");
         b("chimney", "Chimney", "Дымовая труба");

@@ -1,10 +1,266 @@
 {
-  "variants": {
-    "hot=false": {
-      "model": "promptcritical:block/coke_battery_wall"
+  "multipart": [
+    {
+      "apply": {
+        "model": "promptcritical:block/coke_battery_wall/bottom",
+        "y": 90
+      },
+      "when": {
+        "axis": "x",
+        "door": "none",
+        "level": "bottom"
+      }
     },
-    "hot=true": {
-      "model": "promptcritical:block/coke_battery_wall_hot"
+    {
+      "apply": {
+        "model": "promptcritical:block/coke_battery_wall/bottom"
+      },
+      "when": {
+        "axis": "z",
+        "door": "none",
+        "level": "bottom"
+      }
+    },
+    {
+      "apply": {
+        "model": "promptcritical:block/coke_battery_wall/bottom_end",
+        "y": 270
+      },
+      "when": {
+        "axis": "x",
+        "door": "neg",
+        "level": "bottom"
+      }
+    },
+    {
+      "apply": {
+        "model": "promptcritical:block/coke_battery_wall/partial/wall_glow",
+        "y": 270
+      },
+      "when": {
+        "axis": "x",
+        "door": "neg",
+        "hot": "true",
+        "level": "bottom"
+      }
+    },
+    {
+      "apply": {
+        "model": "promptcritical:block/coke_battery_wall/bottom_end"
+      },
+      "when": {
+        "axis": "z",
+        "door": "neg",
+        "level": "bottom"
+      }
+    },
+    {
+      "apply": {
+        "model": "promptcritical:block/coke_battery_wall/partial/wall_glow"
+      },
+      "when": {
+        "axis": "z",
+        "door": "neg",
+        "hot": "true",
+        "level": "bottom"
+      }
+    },
+    {
+      "apply": {
+        "model": "promptcritical:block/coke_battery_wall/bottom_end",
+        "y": 90
+      },
+      "when": {
+        "axis": "x",
+        "door": "pos",
+        "level": "bottom"
+      }
+    },
+    {
+      "apply": {
+        "model": "promptcritical:block/coke_battery_wall/partial/wall_glow",
+        "y": 90
+      },
+      "when": {
+        "axis": "x",
+        "door": "pos",
+        "hot": "true",
+        "level": "bottom"
+      }
+    },
+    {
+      "apply": {
+        "model": "promptcritical:block/coke_battery_wall/bottom_end",
+        "y": 180
+      },
+      "when": {
+        "axis": "z",
+        "door": "pos",
+        "level": "bottom"
+      }
+    },
+    {
+      "apply": {
+        "model": "promptcritical:block/coke_battery_wall/partial/wall_glow",
+        "y": 180
+      },
+      "when": {
+        "axis": "z",
+        "door": "pos",
+        "hot": "true",
+        "level": "bottom"
+      }
+    },
+    {
+      "apply": {
+        "model": "promptcritical:block/coke_battery_wall/middle",
+        "y": 90
+      },
+      "when": {
+        "axis": "x",
+        "door": "none",
+        "level": "middle"
+      }
+    },
+    {
+      "apply": {
+        "model": "promptcritical:block/coke_battery_wall/middle"
+      },
+      "when": {
+        "axis": "z",
+        "door": "none",
+        "level": "middle"
+      }
+    },
+    {
+      "apply": {
+        "model": "promptcritical:block/coke_battery_wall/middle_end",
+        "y": 270
+      },
+      "when": {
+        "axis": "x",
+        "door": "neg",
+        "level": "middle"
+      }
+    },
+    {
+      "apply": {
+        "model": "promptcritical:block/coke_battery_wall/middle_end"
+      },
+      "when": {
+        "axis": "z",
+        "door": "neg",
+        "level": "middle"
+      }
+    },
+    {
+      "apply": {
+        "model": "promptcritical:block/coke_battery_wall/middle_end",
+        "y": 90
+      },
+      "when": {
+        "axis": "x",
+        "door": "pos",
+        "level": "middle"
+      }
+    },
+    {
+      "apply": {
+        "model": "promptcritical:block/coke_battery_wall/middle_end",
+        "y": 180
+      },
+      "when": {
+        "axis": "z",
+        "door": "pos",
+        "level": "middle"
+      }
+    },
+    {
+      "apply": {
+        "model": "promptcritical:block/coke_battery_wall/top",
+        "y": 90
+      },
+      "when": {
+        "axis": "x",
+        "door": "none",
+        "level": "top"
+      }
+    },
+    {
+      "apply": {
+        "model": "promptcritical:block/coke_battery_wall/partial/wall_glow",
+        "y": 90
+      },
+      "when": {
+        "axis": "x",
+        "door": "none",
+        "hot": "true",
+        "level": "top"
+      }
+    },
+    {
+      "apply": {
+        "model": "promptcritical:block/coke_battery_wall/top"
+      },
+      "when": {
+        "axis": "z",
+        "door": "none",
+        "level": "top"
+      }
+    },
+    {
+      "apply": {
+        "model": "promptcritical:block/coke_battery_wall/partial/wall_glow"
+      },
+      "when": {
+        "axis": "z",
+        "door": "none",
+        "hot": "true",
+        "level": "top"
+      }
+    },
+    {
+      "apply": {
+        "model": "promptcritical:block/coke_battery_wall/top_end",
+        "y": 270
+      },
+      "when": {
+        "axis": "x",
+        "door": "neg",
+        "level": "top"
+      }
+    },
+    {
+      "apply": {
+        "model": "promptcritical:block/coke_battery_wall/top_end"
+      },
+      "when": {
+        "axis": "z",
+        "door": "neg",
+        "level": "top"
+      }
+    },
+    {
+      "apply": {
+        "model": "promptcritical:block/coke_battery_wall/top_end",
+        "y": 90
+      },
+      "when": {
+        "axis": "x",
+        "door": "pos",
+        "level": "top"
+      }
+    },
+    {
+      "apply": {
+        "model": "promptcritical:block/coke_battery_wall/top_end",
+        "y": 180
+      },
+      "when": {
+        "axis": "z",
+        "door": "pos",
+        "level": "top"
+      }
     }
-  }
+  ]
 }
