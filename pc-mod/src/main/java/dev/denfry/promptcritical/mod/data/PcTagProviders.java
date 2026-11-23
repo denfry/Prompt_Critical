@@ -95,8 +95,51 @@ public final class PcTagProviders {
                     Blocks.END_PORTAL_FRAME, Blocks.END_GATEWAY, Blocks.NETHER_PORTAL, Blocks.COMMAND_BLOCK,
                     Blocks.CHAIN_COMMAND_BLOCK, Blocks.REPEATING_COMMAND_BLOCK, Blocks.STRUCTURE_BLOCK, Blocks.JIGSAW,
                     Blocks.REINFORCED_DEEPSLATE);
+            contraptionTags();
+        }
+
+        /**
+         * Теги контрапций Create (16 §16.2.4, K22). {@code create:non_movable} — каждый наш блок с блок-сущностью:
+         * работающая машина, активная зона, части мультиблоков; контрапция не должна увозить их вместе с состоянием.
+         * Перевозить можно ёмкости и тару ({@link #MOVABLE_SUFFIXES}), кроме частей живого парового тракта
+         * ({@link #NOT_MOVABLE_VESSELS}). {@code create:brittle} — приборы и элементы пульта 03c: они не входят
+         * в {@code non_movable}, чтобы теги не пересекались. {@code create:safe_nbt} остаётся пустым.
+         */
+        private void contraptionTags() {
+            TagKey<Block> nonMovable = createTag("non_movable");
+            TagKey<Block> brittle = createTag("brittle");
+            for (Block b : net.minecraft.core.registries.BuiltInRegistries.BLOCK) {
+                var key = net.minecraft.core.registries.BuiltInRegistries.BLOCK.getKey(b);
+                if (!PromptCritical.MOD_ID.equals(key.getNamespace())) continue;
+                String id = key.getPath();
+                if (BRITTLE.contains(id)) tag(brittle).add(b);
+                else if ((b instanceof net.minecraft.world.level.block.EntityBlock || NOT_MOVABLE_VESSELS.contains(id))
+                        && !movableVessel(id)) tag(nonMovable).add(b);
+            }
+            tag(nonMovable).add(PcBlocks.MULTIBLOCK_PART.get(), PcBlocks.KINETIC_PORT.get());
+        }
+
+        private static boolean movableVessel(String id) {
+            if (NOT_MOVABLE_VESSELS.contains(id)) return false;
+            for (String s : MOVABLE_SUFFIXES) if (id.endsWith(s)) return true;
+            return false;
+        }
+
+        private static TagKey<Block> createTag(String path) {
+            return TagKey.create(net.minecraft.core.registries.Registries.BLOCK,
+                    net.minecraft.resources.ResourceLocation.fromNamespaceAndPath("create", path));
         }
     }
+
+    /** Ёмкости и тара, которые контрапция может везти (16 §16.2.4: «перевозить можно контейнеры, ёмкости»). */
+    static final List<String> MOVABLE_SUFFIXES = List.of("_tank", "_drum", "_barrel", "_crate", "_cask", "_flask",
+            "_cylinder", "_bullet", "_container");
+    /** Подходят по суффиксу, но это части работающего парового тракта [моё]. */
+    static final Set<String> NOT_MOVABLE_VESSELS = Set.of("steam_drum", "steam_engine_cylinder");
+    /** Приборы и элементы пульта 03c — {@code create:brittle}. */
+    static final Set<String> BRITTLE = Set.of("annunciator_panel", "alarm_horn", "control_desk", "historian_server",
+            "rtu_station", "simulation_workstation", "training_simulator", "simulator_console", "instructor_station",
+            "watchdog_relay", "indicator_lamp", "recording_gauge", "tank_gauge", "energy_meter", "relay_rack");
 
     public static final class ItemTagProvider extends ItemTagsProvider {
         public ItemTagProvider(PackOutput output, CompletableFuture<HolderLookup.Provider> lookup,
