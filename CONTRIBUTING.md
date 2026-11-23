@@ -1,6 +1,6 @@
 # Contributing to Prompt Critical
 
-The first release candidate, 1.0.0-rc.1, is out. The most useful contributions
+Version 1.0.1 is out. The most useful contributions
 right now are bug and balance reports from playing it, physics reports where the
 numbers disagree with real engineering, translations, and small, focused pull requests.
 

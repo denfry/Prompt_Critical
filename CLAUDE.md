@@ -1,7 +1,7 @@
 # Prompt Critical
 
 Public repo `denfry/Prompt_Critical`. Industrial-complex mod for Minecraft 1.21.1, NeoForge 21.1 (libs.versions),
-Java 21, built on Create and CC: Tweaked. Released as 1.0.0-rc.1: eras I0-I4, reactor tiers T0-T4, plant I&C,
+Java 21, built on Create and CC: Tweaked. Released as 1.0.1: eras I0-I4, reactor tiers T0-T4, plant I&C,
 operations and accident layers are in the game. Talk to the user in Russian. This file is the map: use it instead of exploring the repo.
 
 ## Map

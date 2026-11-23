@@ -25,7 +25,7 @@ run by plant I&C that you design and build yourself.
 </div>
 
 > [!NOTE]
-> **1.0.0-rc.1 is out.** Every industry era of the design, I0 to I4, and every reactor tier from the graphite pile
+> **1.0.1 is out.** Every industry era of the design, I0 to I4, and every reactor tier from the graphite pile
 > to the fast reactor are in the game, with the plant I&C, operations and accident layers. Get the jar from the
 > [releases page](https://github.com/denfry/Prompt_Critical/releases/latest). Balance values are not final yet, and
 > worlds from earlier builds need a backup before updating: see the breaking changes in the [changelog](CHANGELOG.md).

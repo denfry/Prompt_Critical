@@ -1,5 +1,56 @@
 # Changelog
 
+## 1.0.1 (2026-11-24)
+
+Real-scale machines for the eras I0 to I2, the first GDD gaps closed after rc.1, and fixes from survival playtests.
+Requires Minecraft 1.21.1, NeoForge 21.1.259+, Create 6.0.11+; CC: Tweaked 1.120.2+ is optional. Back up worlds
+before updating: see *Breaking changes*.
+
+### Breaking changes
+- The medium-voltage switchgear cell is 1 x 3 x 1 (controller in the middle, busbar compartment on top). Cells placed
+  in rc.1 keep working as they are; breaking a structure now removes only its own parts.
+- The grid dispatch center is 3 x 2 x 1, the UPS cabinet and the grid battery rack are 1 x 2 x 1, so every cell their
+  models draw blocks the player. Placing them needs the free volume; old single-block ones keep working.
+- Cells drawn as ladders or stairs in real-scale models no longer collide, like vanilla ladders.
+- Ladles and a converter that is not blowing lose heat on a real-time hold clock (`metallurgy.hold_k`, default 4,
+  range 1-72) instead of the ×72 process clock, so a full 10 t ladle stays liquid for about 20 real minutes; the blow
+  itself is unchanged.
+
+### Real-scale machines
+- 78 site plans with drawings: every I0 machine (22), the I1 ironmaking, coke by-product, power, water, mining and
+  steel lines, the boiler house, degasification and ore dressing, the I2 steel line, the carbon line and vent stack,
+  the smithy and machine building, and the non-ferrous line. Each is a whole-model block on the old block entity, built
+  through a construction site from its drawing, with ports only on the faces the model shows.
+- Parts the renderers draw over a model (the winding engine drum, flywheels, rotors, electrodes, rams, rolls) count in
+  the collision shape, and GameTests check that every drawn cell blocks the player.
+
+### New mechanics (GDD)
+- Motor starters (07 §7.6.3): star-delta, soft starter and variable frequency drive modules in the motor panel.
+- CC methods for pc_generator, pc_breaker and pc_transformer (07 §7.17).
+- Lightning protection (07 §7.15.1): stroke currents, flashover above the insulation CFO, ground electrodes and surge
+  arresters; an unprotected transformer at the end of a struck span can fail.
+- Low-NOx burner kit for the water-tube boiler (07 §7.8.4).
+- Dense medium separator for coal (08 §8.3).
+- HCl synthesis furnace and hydrochloric acid (10 §10.3.4).
+
+### Fixes
+- Real-scale kinetic machines (electrode extruder, coal jig, molding station, shakeout grate, shaft generator) stood
+  still on a turning shaft.
+- The winding engine could be walked through along its drum; drawn ladders on vessels could not be climbed.
+- Site drawings showed the missing-texture icon.
+- An overblown converter no longer burns the whole bath and taps metal at tens of thousands of kelvin; the Overblown
+  lamp stays lit at zero carbon.
+- Two different site stage texts shared one key; a clash now fails at load.
+- GameTests no longer share one fake player or depend on where the runner places them.
+
+### Known gaps
+- Checked in survival only partly: I0 (site build, crucible furnace, lathe), I1 real-scale machines, the I2 carbon
+  line and vent stack. Other eras are covered by GameTests only.
+- Not done from the GDD audit: 35/110/220 kV switchyard, condenser fouling, soot blowers, spray pond, coal mill,
+  process heaters, coal tar distillation, continuous casting, mine fires, and most of 10 petrochemistry.
+- Steam turbine trips do not reach the annunciator alarm list (the turbine has no panel).
+- The alternator's voltage switch works only at standstill.
+
 ## 1.0.0-rc.1 (2026-11-19)
 
 Release candidate of the first full release: every era of the design up to the closed fuel cycle is in the game,
