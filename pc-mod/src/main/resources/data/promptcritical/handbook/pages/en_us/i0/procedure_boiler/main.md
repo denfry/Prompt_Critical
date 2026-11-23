@@ -18,6 +18,7 @@ This procedure sets out how to start, run and shut down a fire-tube boiler with 
 - Charge one coal and light the furnace with flint and steel, a torch or a fire charge.
 - Fire with a thin bed: add one coal at a time while the smoke stays light. On black smoke, stop firing until it clears.
 - As the chimney warms, bring the feed up to rated: three coal on the grate or 0.3 kg/s from the stoker.
+- A [Lancashire boiler](item:promptcritical:lancashire_boiler) is fired by its [stokers](item:promptcritical:lancashire_stoker): two rams with hoppers on one frame against the front wall. Coal goes into the hoppers from above, the Create shaft into the west side of the frame. They feed like the chain grate stoker, rated at 32 rpm.
 - At no less than 0.5 MPa on the gauge, open the stop valve.
 - If the engine stops on dead centre, bar it over: sneak and right-click with an empty hand.
 
