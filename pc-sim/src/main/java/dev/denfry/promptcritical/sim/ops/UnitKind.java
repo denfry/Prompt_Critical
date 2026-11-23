@@ -1,6 +1,8 @@
 package dev.denfry.promptcritical.sim.ops;
 
+import static dev.denfry.promptcritical.sim.ops.CommissioningCheck.ALIGNMENT;
 import static dev.denfry.promptcritical.sim.ops.CommissioningCheck.BRAKE_TEST;
+import static dev.denfry.promptcritical.sim.ops.CommissioningCheck.INSULATION_TEST;
 import static dev.denfry.promptcritical.sim.ops.CommissioningCheck.INSTRUMENT_CHECK;
 import static dev.denfry.promptcritical.sim.ops.CommissioningCheck.PRESSURE_TEST;
 import static dev.denfry.promptcritical.sim.ops.CommissioningCheck.PRIMING;
@@ -28,7 +30,15 @@ public enum UnitKind {
             EnumSet.of(UnitComponent.PUMP, UnitComponent.DRIVE),
             EnumSet.of(CommissioningDefectKind.DRY_PUMP, CommissioningDefectKind.REVERSED_ROTATION)),
     MINE_HOIST(PlantEra.I0, EnumSet.of(BRAKE_TEST, TRIAL_RUN), EnumSet.of(UnitComponent.BRAKE),
-            EnumSet.of(CommissioningDefectKind.BRAKE_MISADJUSTED));
+            EnumSet.of(CommissioningDefectKind.BRAKE_MISADJUSTED)),
+    /** Синхронный генератор I1: изоляция, центровка, пробный пуск под нагрузкой (план HP2.1). */
+    SYNC_GENERATOR(PlantEra.I1, EnumSet.of(INSULATION_TEST, ALIGNMENT, TRIAL_RUN),
+            EnumSet.of(UnitComponent.STATOR, UnitComponent.COUPLING),
+            EnumSet.of(CommissioningDefectKind.WINDING_DAMP, CommissioningDefectKind.COUPLING_MISALIGNED)),
+    /** Доменная печь I1: опрессовка охлаждения кладки, КИП, пробная работа (план HP2.1). */
+    BLAST_FURNACE(PlantEra.I1, EnumSet.of(PRESSURE_TEST, INSTRUMENT_CHECK, TRIAL_RUN),
+            EnumSet.of(UnitComponent.SHELL, UnitComponent.PRESSURE_GAUGE),
+            EnumSet.of(CommissioningDefectKind.SEAM_WEEP, CommissioningDefectKind.GAUGE_OFFSET));
 
     private final PlantEra era;
     private final Set<CommissioningCheck> checklist;

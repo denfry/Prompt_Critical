@@ -80,6 +80,8 @@ public final class OpsText {
         def("unit.main_mine_fan", "main mine fan", "главный вентилятор шахты");
         def("unit.mine_drainage_pump", "mine drainage pump", "водоотливной насос");
         def("unit.mine_hoist", "mine hoist", "шахтный подъём");
+        def("unit.sync_generator", "synchronous generator", "синхронный генератор");
+        def("unit.blast_furnace", "blast furnace", "доменная печь");
         def("start_unaccepted", "Unit not accepted — started at your own risk (logged)", "Установка не принята — пуск под вашу ответственность (записано)");
         def("check_passed", "%s: passed", "%s: пройдена");
         def("check_failed", "%s: FAILED — %s", "%s: НЕ ПРОЙДЕНА — %s");
@@ -124,18 +126,22 @@ public final class OpsText {
             CommissioningCheck.ROTATION_CHECK, new String[] {"Rotation", "Вращение"},
             CommissioningCheck.PRIMING, new String[] {"Priming", "Заливка"},
             CommissioningCheck.BRAKE_TEST, new String[] {"Brake test", "Испытание тормоза"},
-            CommissioningCheck.TRIAL_RUN, new String[] {"Trial run", "Пробный пуск"});
-    private static final Map<CommissioningDefectKind, String[]> DEFECTS = Map.of(
-            CommissioningDefectKind.SEAM_WEEP, new String[] {"weeping seam", "течь шва"},
-            CommissioningDefectKind.CASTING_POROSITY, new String[] {"porous casting", "пористая отливка"},
-            CommissioningDefectKind.PSV_OFFSET, new String[] {"relief valve set point off", "смещена уставка ПК"},
-            CommissioningDefectKind.PSV_STUCK, new String[] {"relief valve stuck", "ПК прикипел"},
-            CommissioningDefectKind.GAUGE_OFFSET, new String[] {"gauge zero offset", "смещён нуль манометра"},
-            CommissioningDefectKind.GAUGE_GLASS_BLOCKED, new String[] {"gauge glass blocked", "засорено водоуказательное стекло"},
-            CommissioningDefectKind.REVERSED_ROTATION, new String[] {"reversed rotation", "обратное вращение"},
-            CommissioningDefectKind.DRY_PUMP, new String[] {"pump not primed", "насос не залит"},
-            CommissioningDefectKind.BRAKE_MISADJUSTED, new String[] {"brake misadjusted", "тормоз не отрегулирован"},
-            CommissioningDefectKind.DASHPOT_DRY, new String[] {"dashpot dry", "катаракт без масла"});
+            CommissioningCheck.TRIAL_RUN, new String[] {"Trial run", "Пробный пуск"},
+            CommissioningCheck.INSULATION_TEST, new String[] {"Insulation test", "Замер изоляции"},
+            CommissioningCheck.ALIGNMENT, new String[] {"Alignment", "Центровка"});
+    private static final Map<CommissioningDefectKind, String[]> DEFECTS = Map.ofEntries(
+            Map.entry(CommissioningDefectKind.SEAM_WEEP, new String[] {"weeping seam", "течь шва"}),
+            Map.entry(CommissioningDefectKind.CASTING_POROSITY, new String[] {"porous casting", "пористая отливка"}),
+            Map.entry(CommissioningDefectKind.PSV_OFFSET, new String[] {"relief valve set point off", "смещена уставка ПК"}),
+            Map.entry(CommissioningDefectKind.PSV_STUCK, new String[] {"relief valve stuck", "ПК прикипел"}),
+            Map.entry(CommissioningDefectKind.GAUGE_OFFSET, new String[] {"gauge zero offset", "смещён нуль манометра"}),
+            Map.entry(CommissioningDefectKind.GAUGE_GLASS_BLOCKED, new String[] {"gauge glass blocked", "засорено водоуказательное стекло"}),
+            Map.entry(CommissioningDefectKind.REVERSED_ROTATION, new String[] {"reversed rotation", "обратное вращение"}),
+            Map.entry(CommissioningDefectKind.DRY_PUMP, new String[] {"pump not primed", "насос не залит"}),
+            Map.entry(CommissioningDefectKind.BRAKE_MISADJUSTED, new String[] {"brake misadjusted", "тормоз не отрегулирован"}),
+            Map.entry(CommissioningDefectKind.DASHPOT_DRY, new String[] {"dashpot dry", "катаракт без масла"}),
+            Map.entry(CommissioningDefectKind.WINDING_DAMP, new String[] {"damp winding", "отсыревшая обмотка"}),
+            Map.entry(CommissioningDefectKind.COUPLING_MISALIGNED, new String[] {"coupling misaligned", "расцентровка муфты"}));
     private static final Map<CommissioningState, String[]> STATES = Map.of(
             CommissioningState.NEW, new String[] {"NOT ACCEPTED", "НЕ ПРИНЯТА"},
             CommissioningState.TESTING, new String[] {"TESTING", "ИСПЫТАНИЯ"},

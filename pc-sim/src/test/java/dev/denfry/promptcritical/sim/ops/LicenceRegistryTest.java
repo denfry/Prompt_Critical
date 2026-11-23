@@ -72,6 +72,7 @@ class LicenceRegistryTest {
         assertThat(PlantEra.I3.previous()).isEqualTo(PlantEra.I2);
         assertThat(PlantEra.of("I4")).isEqualTo(PlantEra.I4);
         assertThatThrownBy(() -> PlantEra.of("I9")).isInstanceOf(IllegalArgumentException.class);
-        for (UnitKind k : UnitKind.values()) assertThat(k.era()).isEqualTo(PlantEra.I0);
+        for (UnitKind k : new UnitKind[] {UnitKind.FIRE_TUBE_BOILER, UnitKind.STEAM_ENGINE, UnitKind.MAIN_MINE_FAN,
+                UnitKind.MINE_DRAINAGE_PUMP, UnitKind.MINE_HOIST}) assertThat(k.era()).isEqualTo(PlantEra.I0);
     }
 }

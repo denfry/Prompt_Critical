@@ -51,4 +51,14 @@ public sealed interface CheckInput {
             Baseline baseline) implements CheckInput {
         @Override public CommissioningCheck check() { return CommissioningCheck.TRIAL_RUN; }
     }
+
+    /** Замер сопротивления изоляции обмоток; только у остановленной машины со снятым возбуждением. */
+    record InsulationTest(boolean stoppedAndDeenergised) implements CheckInput {
+        @Override public CommissioningCheck check() { return CommissioningCheck.INSULATION_TEST; }
+    }
+
+    /** Центровка муфты по индикатору; только у остановленной машины. */
+    record Alignment(boolean stopped) implements CheckInput {
+        @Override public CommissioningCheck check() { return CommissioningCheck.ALIGNMENT; }
+    }
 }

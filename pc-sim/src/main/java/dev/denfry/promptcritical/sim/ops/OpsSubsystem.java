@@ -180,7 +180,8 @@ public final class OpsSubsystem implements Subsystem {
             case FIRE_TUBE_BOILER -> null;
             case STEAM_ENGINE -> MachineWear.newI0(cfg, SimRandom.of(worldSeed, unit, WEAR_STREAM), true, false);
             case MINE_DRAINAGE_PUMP -> MachineWear.newI0(cfg, SimRandom.of(worldSeed, unit, WEAR_STREAM), true, true);
-            case MAIN_MINE_FAN, MINE_HOIST -> MachineWear.newI0(cfg, SimRandom.of(worldSeed, unit, WEAR_STREAM), false, false);
+            case MAIN_MINE_FAN, MINE_HOIST, SYNC_GENERATOR -> MachineWear.newI0(cfg, SimRandom.of(worldSeed, unit, WEAR_STREAM), false, false);
+            case BLAST_FURNACE -> null;
         };
         MaintenancePanel panel = new MaintenancePanel(unit, cfg, events);
         if (wear != null) for (FaultSource s : wear.sources()) panel.add(s);

@@ -20,7 +20,11 @@ public enum UnitComponent {
     /** Корпус и колесо насоса. */
     PUMP(CommissioningCheck.PRIMING),
     /** Тормоз подъёмной машины. */
-    BRAKE(CommissioningCheck.BRAKE_TEST);
+    BRAKE(CommissioningCheck.BRAKE_TEST),
+    /** Обмотка статора генератора. */
+    STATOR(CommissioningCheck.INSULATION_TEST),
+    /** Муфта между приводом и генератором. */
+    COUPLING(CommissioningCheck.ALIGNMENT);
 
     private final CommissioningCheck coveredBy;
 

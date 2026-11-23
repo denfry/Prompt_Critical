@@ -25,6 +25,9 @@ public record CheckResult(CommissioningCheck check, Outcome outcome, Set<CheckCo
     public static final String READ_REVERSED = "reversed";
     public static final String READ_BRAKE_TORQUE = "brake_torque";
     public static final String READ_HUNTING = "hunting";
+    public static final String READ_INSULATION_BEFORE_MOHM = "insulation_before_mohm";
+    public static final String READ_INSULATION_AFTER_MOHM = "insulation_after_mohm";
+    public static final String READ_MISALIGNMENT_MM = "misalignment_mm";
 
     public CheckResult {
         unmet = unmet.isEmpty() ? Set.of() : Set.copyOf(EnumSet.copyOf(unmet));

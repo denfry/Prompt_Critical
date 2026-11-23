@@ -39,6 +39,12 @@ public final class CommissioningService {
     // Вероятности и диапазоны монтажных дефектов [BALANCE]; PSV_OFFSET и GAUGE_OFFSET — p моё.
     static final double P_SEAM = 0.3, P_PSV_STUCK = 0.15, P_PSV_OFFSET = 0.3, P_GAUGE = 0.3, P_GLASS = 0.2,
             P_BRAKE = 0.25, P_DASHPOT = 0.3;
+    /**
+     * Вероятности отсыревшей обмотки и расцентровки муфты (план HP2.1, оценка исполнителя по практике монтажа) и
+     * сопротивление изоляции сухой обмотки, МОм (IEEE 43: минимум 100 МОм для обмоток формованной изоляции).
+     */
+    static final double P_WINDING = 0.15, P_COUPLING = 0.15;
+    public static final double INSULATION_DRY_MOHM = 200;
 
     private static final class Unit {
         UnitAssembly asm;
@@ -158,6 +164,14 @@ public final class CommissioningService {
                     out.add(CommissioningDefect.of(CommissioningDefectKind.REVERSED_ROTATION, id, 1));
             }
             case PUMP -> out.add(CommissioningDefect.of(CommissioningDefectKind.DRY_PUMP, id, 1));
+            case STATOR -> {
+                double u = rnd.nextDouble(), mohm = uniform(rnd, 0.5, 5);
+                if (u < P_WINDING * rate) out.add(CommissioningDefect.of(CommissioningDefectKind.WINDING_DAMP, id, mohm));
+            }
+            case COUPLING -> {
+                double u = rnd.nextDouble(), mm = uniform(rnd, 0.1, 0.5);
+                if (u < P_COUPLING * rate) out.add(CommissioningDefect.of(CommissioningDefectKind.COUPLING_MISALIGNED, id, mm));
+            }
             case BRAKE -> {
                 double u = rnd.nextDouble(), torque = uniform(rnd, 0.5, 0.9);
                 if (u < P_BRAKE * rate)
@@ -242,6 +256,21 @@ public final class CommissioningService {
                     }
                 }
                 case CheckInput.TrialRun t -> outcome = trialRun(u, t, unmet, found, readings);
+                case CheckInput.InsulationTest i -> {
+                    if (!i.stoppedAndDeenergised()) unmet.add(CheckCondition.UNIT_RUNNING);
+                    else {
+                        CommissioningDefect d = fix(u, CommissioningDefectKind.WINDING_DAMP, found);
+                        readings.put(CheckResult.READ_INSULATION_BEFORE_MOHM, d == null ? INSULATION_DRY_MOHM : d.magnitude());
+                        readings.put(CheckResult.READ_INSULATION_AFTER_MOHM, INSULATION_DRY_MOHM);
+                    }
+                }
+                case CheckInput.Alignment a -> {
+                    if (!a.stopped()) unmet.add(CheckCondition.UNIT_RUNNING);
+                    else {
+                        CommissioningDefect d = fix(u, CommissioningDefectKind.COUPLING_MISALIGNED, found);
+                        readings.put(CheckResult.READ_MISALIGNMENT_MM, d == null ? 0.02 : d.magnitude());
+                    }
+                }
             }
         }
         if (!unmet.isEmpty()) outcome = CheckResult.Outcome.REFUSED;

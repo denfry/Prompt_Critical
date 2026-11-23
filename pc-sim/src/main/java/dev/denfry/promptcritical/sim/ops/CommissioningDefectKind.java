@@ -21,7 +21,11 @@ public enum CommissioningDefectKind {
     /** Тормозной момент подъёма — доля расчётного. */
     BRAKE_MISADJUSTED(CommissioningCheck.BRAKE_TEST),
     /** Катаракт регулятора без масла. */
-    DASHPOT_DRY(CommissioningCheck.TRIAL_RUN);
+    DASHPOT_DRY(CommissioningCheck.TRIAL_RUN),
+    /** Отсыревшая обмотка: сопротивление изоляции, МОм (сухая — {@link CommissioningService#INSULATION_DRY_MOHM}). */
+    WINDING_DAMP(CommissioningCheck.INSULATION_TEST),
+    /** Расцентровка муфты, мм. */
+    COUPLING_MISALIGNED(CommissioningCheck.ALIGNMENT);
 
     private final CommissioningCheck revealedBy;
 
