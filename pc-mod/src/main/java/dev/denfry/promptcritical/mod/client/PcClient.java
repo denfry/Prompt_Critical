@@ -33,6 +33,7 @@ public final class PcClient {
         dev.denfry.promptcritical.mod.ironworks.client.IronworksClient.register(modBus);
         dev.denfry.promptcritical.mod.powerhouse.client.PowerhouseClient.register(modBus);
         dev.denfry.promptcritical.mod.steelworks.client.SteelworksClient.register(modBus);
+        dev.denfry.promptcritical.mod.nonferrous.client.NonferrousClient.register(modBus);
         dev.denfry.promptcritical.mod.boiler.client.BoilerClient.register(modBus);
         dev.denfry.promptcritical.mod.mine.client.MineClient.register(modBus);
         dev.denfry.promptcritical.mod.grid.client.GridClient.register(modBus);

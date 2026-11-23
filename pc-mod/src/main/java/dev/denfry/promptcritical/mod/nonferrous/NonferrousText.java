@@ -29,6 +29,13 @@ public final class NonferrousText {
         block("peirce_smith_converter", "Peirce–Smith Converter", "Конвертер Пирса–Смита");
         block("electrorefining_cell", "Electrorefining Cell Section", "Секция ванн электрорафинирования");
         block("pgm_refinery", "Platinum Metals Refinery", "Аффинаж платиноидов");
+        // реальный масштаб (08 §8.8): те же процессы, цельные модели
+        block("electrorefining_cell_real", "Copper Electrorefining Cell", "Ванна электрорафинирования меди");
+        block("peirce_smith_converter_real", "Peirce–Smith Converter (4 × 8.5 m)", "Конвертер Пирса–Смита (4 × 8,5 м)");
+        block("reduction_pot_real", "Prebake Reduction Pot (100 kA)", "Электролизёр с обожжёнными анодами (100 кА)");
+        block("bayer_digester_real", "Bayer Digester (autoclave)", "Автоклав выщелачивания");
+        block("alumina_precipitator_real", "Alumina Precipitator (agitated)", "Декомпозёр с мешалкой");
+        block("matte_smelter_real", "Reverberatory Matte Furnace (16 m)", "Отражательная печь (16 м)");
         item("flotation_concentrate", "Copper Flotation Concentrate", "Медный флотоконцентрат");
         item("flotation_concentrate.nickel", "Copper-Nickel Flotation Concentrate", "Медно-никелевый флотоконцентрат");
         item("sulfide_matte", "Copper Matte", "Медный штейн");

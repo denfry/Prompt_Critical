@@ -44,7 +44,7 @@ import org.jetbrains.annotations.Nullable;
  * <p>Электролиз идёт в реальном времени (08 §8.0.3), шаг — 0,05 с на тик. Перфторуглероды анодного эффекта
  * записываются в учёт выбросов (14) источником {@code reduction_pot@…}.
  */
-public final class ReductionPotBlockEntity extends UraniumProcessBlockEntity implements DcLoad {
+public final class ReductionPotBlockEntity extends UraniumProcessBlockEntity implements DcLoad, dev.denfry.promptcritical.mod.client.whole.WholeModelHost {
     public static final int SERIES_REACH = 4, SERIES_MAX = 24;
     /** Капремонт: подовые блоки и огнеупорный кирпич [BALANCE]. */
     public static final int RELINE_CATHODES = 4, RELINE_BRICKS = 8;
@@ -262,5 +262,23 @@ public final class ReductionPotBlockEntity extends UraniumProcessBlockEntity imp
         hopperKg = tag.getDouble("hopper");
         if (tag.contains("pot")) pot.load(new TreeStateReader(NbtStateTrees.fromNbt(tag.getCompound("pot"))));
         lastState = pot.state();
+    }
+
+    // --- блок реального масштаба с цельной моделью (анодный эффект, работа, холодная) ---
+
+    @Override
+    @org.jetbrains.annotations.Nullable
+    public String wholeModelId() {
+        return NonferrousReal.model(getBlockState(), getBlockState().getValue(dev.denfry.promptcritical.mod.block.PcProperties.ALARM) ? "alarm" : getBlockState().getValue(dev.denfry.promptcritical.mod.block.PcProperties.RUNNING) ? "running" : "");
+    }
+
+    @Override
+    public net.minecraft.core.Direction wholeModelFacing() {
+        return NonferrousReal.facing(getBlockState());
+    }
+
+    @Override
+    public net.minecraft.core.BlockPos wholeModelLightPos() {
+        return NonferrousReal.lightPos(worldPosition, getBlockState(), 3);
     }
 }

@@ -29,7 +29,7 @@ import org.jetbrains.annotations.Nullable;
  * {@code metallurgy.bulk_item_mass_kg} в склад (воронкой снизу); отработанный раствор — сверху щёлочью обратно на
  * выщелачивание (по массе NaOH: {@value BayerProcess#NAOH_G_L} г/л раствора — в 11 %-ю щёлочь).
  */
-public final class AluminaPrecipitatorBlockEntity extends UraniumProcessBlockEntity {
+public final class AluminaPrecipitatorBlockEntity extends UraniumProcessBlockEntity implements dev.denfry.promptcritical.mod.client.whole.WholeModelHost {
     public static final int HOLDUP_MB = 20_000, SPENT_MB = 8_000;
 
     private final FeedTank liquor = new FeedTank(PcFluids.SODIUM_ALUMINATE_LIQUOR.source.get(), HOLDUP_MB);
@@ -130,5 +130,23 @@ public final class AluminaPrecipitatorBlockEntity extends UraniumProcessBlockEnt
         spent.load(tag, "spent");
         hydroxideKg = tag.getDouble("hydrate");
         if (tag.contains("precip")) precipitator.load(new TreeStateReader(NbtStateTrees.fromNbt(tag.getCompound("precip"))));
+    }
+
+    // --- блок реального масштаба с цельной моделью (одна модель; привод мешалки — partial) ---
+
+    @Override
+    @org.jetbrains.annotations.Nullable
+    public String wholeModelId() {
+        return NonferrousReal.model(getBlockState(), "");
+    }
+
+    @Override
+    public net.minecraft.core.Direction wholeModelFacing() {
+        return NonferrousReal.facing(getBlockState());
+    }
+
+    @Override
+    public net.minecraft.core.BlockPos wholeModelLightPos() {
+        return NonferrousReal.lightPos(worldPosition, getBlockState(), 4);
     }
 }

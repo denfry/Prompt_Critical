@@ -105,6 +105,13 @@ public final class SiteRegistry {
     public static final DeferredItem<DesignDrawingItem> WINDING_MACHINE_REAL_DRAWING = drawing("winding_machine_real");
     public static final DeferredItem<DesignDrawingItem> HEATING_FURNACE_REAL_DRAWING = drawing("heating_furnace_real");
     public static final DeferredItem<DesignDrawingItem> HARDENING_FURNACE_REAL_DRAWING = drawing("hardening_furnace_real");
+    // цветная металлургия реального масштаба (08 §8.8)
+    public static final DeferredItem<DesignDrawingItem> ELECTROREFINING_CELL_REAL_DRAWING = drawing("electrorefining_cell_real");
+    public static final DeferredItem<DesignDrawingItem> PEIRCE_SMITH_CONVERTER_REAL_DRAWING = drawing("peirce_smith_converter_real");
+    public static final DeferredItem<DesignDrawingItem> REDUCTION_POT_REAL_DRAWING = drawing("reduction_pot_real");
+    public static final DeferredItem<DesignDrawingItem> BAYER_DIGESTER_REAL_DRAWING = drawing("bayer_digester_real");
+    public static final DeferredItem<DesignDrawingItem> ALUMINA_PRECIPITATOR_REAL_DRAWING = drawing("alumina_precipitator_real");
+    public static final DeferredItem<DesignDrawingItem> MATTE_SMELTER_REAL_DRAWING = drawing("matte_smelter_real");
 
     private SiteRegistry() {}
 

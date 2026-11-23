@@ -229,6 +229,27 @@ public final class SiteText {
         drawing("hardening_furnace_real", "Muffle Hardening Furnace", "муфельной закалочной печи");
         stage("hardening_muffle", "brick muffle, door and stack", "кирпичный муфель, дверь и труба");
         stage("quench_tank", "quench tank with its basket", "закалочный бак с корзиной");
+        // цветная металлургия реального масштаба (08 §8.8)
+        drawing("electrorefining_cell_real", "Copper Electrorefining Cell", "ванны электрорафинирования меди");
+        stage("refining_tank", "piers, concrete tank and lead lining", "опоры, бетонная ванна и свинцовая футеровка");
+        stage("contact_bars", "contact bars, hanger bars and insulators", "контактные шины, штанги и изоляторы");
+        drawing("peirce_smith_converter_real", "Peirce-Smith Converter", "конвертера Пирса–Смита");
+        stage("roller_stands", "piers, trunnion rollers and riding rings", "опоры, роликоопоры и бандажи");
+        stage("tuyeres_drive", "tuyere line, air header and tilting drive", "фурмы, воздушный коллектор и привод поворота");
+        drawing("reduction_pot_real", "Prebake Reduction Pot", "алюминиевого электролизёра с обожжёнными анодами");
+        stage("cathode_lining", "carbon cathode blocks and lining", "угольные подовые блоки и футеровка");
+        stage("busbars", "collector bars, side busbars and risers", "катодные стержни, ошиновка и стояки");
+        stage("anode_superstructure", "portals, beam jacks, anode beams and hoods", "порталы, домкраты, анодные шины и укрытие");
+        drawing("bayer_digester_real", "Bayer Digester", "автоклава выщелачивания");
+        drawing("alumina_precipitator_real", "Alumina Precipitator", "декомпозёра");
+        stage("ring_foundation", "ring foundation", "кольцевой фундамент");
+        stage("tank", "tank rings, roof and launder", "пояса бака, крыша и переливной жёлоб");
+        stage("agitator", "bridge, agitator and drive", "мост, мешалка и привод");
+        drawing("matte_smelter_real", "Reverberatory Matte Furnace", "отражательной печи");
+        stage("hearth_walls", "hearth and side and end walls", "подина, боковые и торцевые стены");
+        stage("sprung_arch", "skewbacks and sprung arch", "пяты и распорный свод");
+        stage("buckstays", "buckstays and tie rods", "стойки каркаса и стяжки");
+        stage("burners_flue", "burners, charge pipes, taps and flue", "горелки, загрузочные трубы, лётки и газоход");
     }
 
     private SiteText() {}

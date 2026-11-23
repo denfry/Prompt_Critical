@@ -460,6 +460,49 @@ public final class SitePlans {
                     st("shell", 140, n(PLATE, 50), n(INGOT, 10)),
                     st("hv_terminals", 100, n(INGOT, 10), n(WIRE, 100))));
 
+    /**
+     * Цветная металлургия реального масштаба (08 §8.8). Металл — оценки по размерам моделей (листы, отливки, шины);
+     * бетон, кирпич и угольные блоки — не металл.
+     */
+    private static final Map<String, Plan> NONFERROUS_PLANS = Map.of(
+            // бак 4,6 × 1,15 × 1,3 м ≈ 4 м³ бетона, свинцовая футеровка ≈ 1,5 т, контактные шины и штанги ≈ 1,5 т меди (оценки)
+            "electrorefining_cell_real", plan("electrorefining_cell_real", PcBlocks.ELECTROREFINING_CELL_REAL, 3,
+                    st("refining_tank", 160, n(CONCRETE, 4), n(PLATE, 14)),
+                    st("contact_bars", 120, n(WIRE, 60), n(INGOT, 8))),
+            // бочка ⌀4 × 8,5 м из листа 30–40 мм ≈ 65 т, бандажи ≈ 25 т, роликоопоры, венец и привод ≈ 20 т; магнезитовая
+            // футеровка ≈ 45 м³ (оценки)
+            "peirce_smith_converter_real", plan("peirce_smith_converter_real", PcBlocks.PEIRCE_SMITH_CONVERTER_REAL, 110,
+                    st("foundation", 200, n(CONCRETE, 24)),
+                    st("roller_stands", 240, n(INGOT, 220), n(BEAM, 60)),
+                    st("shell", 400, n(PLATE, 600), n(INGOT, 120)),
+                    st("lining", 240, n(BRICKS, 45)),
+                    st("tuyeres_drive", 300, n(INGOT, 80), n(PIPE, 40))),
+            // кожух 8 × 3,5 × 1,25 м ≈ 25 т, катодные стержни ≈ 5 т, анодная ошиновка ≈ 5 т алюминия, портальная надстройка
+            // ≈ 10 т; угольные подовые блоки и футеровка (оценки)
+            "reduction_pot_real", plan("reduction_pot_real", PcBlocks.REDUCTION_POT_REAL, 45,
+                    st("shell", 300, n(PLATE, 220), n(INGOT, 50)),
+                    st("cathode_lining", 240, n(BRICKS, 20), n(GRAPHITE, 24)),
+                    st("busbars", 240, n(WIRE, 300), n(INGOT, 50)),
+                    st("anode_superstructure", 300, n(BEAM, 60), n(INGOT, 70))),
+            // автоклав ⌀2,5 × 9 м из листа 30 мм ≈ 17 т, днища ≈ 3 т, площадка, лестница и обвязка ≈ 2 т (оценки)
+            "bayer_digester_real", plan("bayer_digester_real", PcBlocks.BAYER_DIGESTER_REAL, 22,
+                    st("foundation", 120, n(CONCRETE, 4)),
+                    st("vessel", 320, n(PLATE, 180), n(INGOT, 20)),
+                    st("piping", 160, n(PIPE, 20), n(INGOT, 10))),
+            // бак ⌀6 × 9 м из листа 12 мм ≈ 16 т, днище ≈ 3 т, мост с мешалкой и приводом ≈ 8 т (оценки)
+            "alumina_precipitator_real", plan("alumina_precipitator_real", PcBlocks.ALUMINA_PRECIPITATOR_REAL, 27,
+                    st("ring_foundation", 160, n(CONCRETE, 30)),
+                    st("tank", 320, n(PLATE, 190), n(INGOT, 10)),
+                    st("agitator", 200, n(BEAM, 30), n(INGOT, 40))),
+            // печь 16 × 6 м: кладка подины и стен ≈ 160 м³, свод ≈ 90 м³; стойки каркаса, стяжки, пяты свода, горелки,
+            // загрузочные трубы и газоход ≈ 40 т (оценки)
+            "matte_smelter_real", plan("matte_smelter_real", PcBlocks.MATTE_SMELTER_REAL, 40,
+                    st("foundation", 200, n(CONCRETE, 60)),
+                    st("hearth_walls", 300, n(BRICKS, 160)),
+                    st("sprung_arch", 300, n(BRICKS, 90)),
+                    st("buckstays", 240, n(BEAM, 200), n(INGOT, 120)),
+                    st("burners_flue", 200, n(PIPE, 40), n(INGOT, 60))));
+
     @Nullable
     /** Кузница и машиностроение реального масштаба (18 §18.6–18.7); у {@link Map#of} не больше десяти пар. */
     private static final Map<String, Plan> SMITHY_PLANS = Map.of(
@@ -515,12 +558,13 @@ public final class SitePlans {
         if (p == null) p = FOUNDRY_PLANS.get(id);
         if (p == null) p = I0_SHOP_PLANS.get(id);
         if (p == null) p = STEAM_MINE_PLANS.get(id);
-        return p != null ? p : SMITHY_PLANS.get(id);
+        if (p == null) p = SMITHY_PLANS.get(id);
+        return p != null ? p : NONFERROUS_PLANS.get(id);
     }
 
     public static Iterable<Plan> all() {
         return java.util.stream.Stream.of(PLANS, I0_PLANS, IRONMAKING_PLANS, POWER_PLANS, MINING_COKE_PLANS, I1_STEEL_PLANS, FOUNDRY_PLANS, I0_SHOP_PLANS,
-                        STEAM_MINE_PLANS, CARBON_PLANS, SMITHY_PLANS)
+                        STEAM_MINE_PLANS, CARBON_PLANS, SMITHY_PLANS, NONFERROUS_PLANS)
                 .flatMap(m -> m.values().stream()).toList();
     }
 }

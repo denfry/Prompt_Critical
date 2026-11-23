@@ -32,7 +32,7 @@ import org.jetbrains.annotations.Nullable;
  * {@code metallurgy.ingot_mass_kg} в склад (воронкой снизу). Кнопка «Рафинировать» на щите решает, что выдаёт плавка.
  * Поворот бочки валом Create в игре не нужен: дутьё — воздуходувкой цеха.
  */
-public final class ConverterBlockEntity extends UraniumProcessBlockEntity {
+public final class ConverterBlockEntity extends UraniumProcessBlockEntity implements dev.denfry.promptcritical.mod.client.whole.WholeModelHost {
     public static final int MB = 4_000;
 
     private final FeedTank gas = new FeedTank(PcFluids.SALES_GAS.source.get(), MB);
@@ -147,5 +147,23 @@ public final class ConverterBlockEntity extends UraniumProcessBlockEntity {
         blisterKg = tag.getDouble("blister");
         anodeKg = tag.getDouble("anode");
         if (tag.contains("converter")) converter.load(new TreeStateReader(NbtStateTrees.fromNbt(tag.getCompound("converter"))));
+    }
+
+    // --- блок реального масштаба с цельной моделью (дутьё — модель _running) ---
+
+    @Override
+    @org.jetbrains.annotations.Nullable
+    public String wholeModelId() {
+        return NonferrousReal.model(getBlockState(), getBlockState().getValue(dev.denfry.promptcritical.mod.block.PcProperties.RUNNING) ? "running" : "");
+    }
+
+    @Override
+    public net.minecraft.core.Direction wholeModelFacing() {
+        return NonferrousReal.facing(getBlockState());
+    }
+
+    @Override
+    public net.minecraft.core.BlockPos wholeModelLightPos() {
+        return NonferrousReal.lightPos(worldPosition, getBlockState(), 3);
     }
 }

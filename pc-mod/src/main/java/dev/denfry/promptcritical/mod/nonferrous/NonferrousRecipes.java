@@ -110,5 +110,21 @@ public final class NonferrousRecipes extends RecipeProvider {
         ShapelessRecipeBuilder.shapeless(RecipeCategory.MISC, PcItems.BRONZE_INGOT.get(), 4).requires(Items.COPPER_INGOT, 3)
                 .requires(PcItems.TIN_INGOT.get())
                 .unlockedBy("has_tin_ingot", has(PcItems.TIN_INGOT.get())).save(out, id("bronze_ingot_from_tin"));
+        // чертежи машин реального масштаба: строятся на стройплощадке по массе прототипа (SitePlans), образец — старый блок
+        drawing(out, dev.denfry.promptcritical.mod.site.SiteRegistry.ELECTROREFINING_CELL_REAL_DRAWING.get(), PcBlocks.ELECTROREFINING_CELL.get(), plate, "electrorefining_cell_real_drawing");
+        drawing(out, dev.denfry.promptcritical.mod.site.SiteRegistry.PEIRCE_SMITH_CONVERTER_REAL_DRAWING.get(), PcBlocks.PEIRCE_SMITH_CONVERTER.get(), brick, "peirce_smith_converter_real_drawing");
+        drawing(out, dev.denfry.promptcritical.mod.site.SiteRegistry.REDUCTION_POT_REAL_DRAWING.get(), PcBlocks.REDUCTION_POT.get(), brick, "reduction_pot_real_drawing");
+        drawing(out, dev.denfry.promptcritical.mod.site.SiteRegistry.BAYER_DIGESTER_REAL_DRAWING.get(), PcBlocks.BAYER_DIGESTER.get(), pipe, "bayer_digester_real_drawing");
+        drawing(out, dev.denfry.promptcritical.mod.site.SiteRegistry.ALUMINA_PRECIPITATOR_REAL_DRAWING.get(), PcBlocks.ALUMINA_PRECIPITATOR.get(), plate, "alumina_precipitator_real_drawing");
+        drawing(out, dev.denfry.promptcritical.mod.site.SiteRegistry.MATTE_SMELTER_REAL_DRAWING.get(), PcBlocks.MATTE_SMELTER.get(), brick, "matte_smelter_real_drawing");
+    }
+
+    /** Чертёж: бумага, старый блок как образец, материал корпуса по сторонам. */
+    private static void drawing(RecipeOutput out, net.minecraft.world.item.Item drawing, net.minecraft.world.level.block.Block old,
+            net.minecraft.world.item.Item side, String name) {
+        ShapedRecipeBuilder.shaped(RecipeCategory.MISC, drawing)
+                .pattern("PPP").pattern("SBS").pattern("SSS").define('P', Items.PAPER).define('B', old).define('S', side)
+                .unlockedBy("has_" + net.minecraft.core.registries.BuiltInRegistries.BLOCK.getKey(old).getPath(), has(old))
+                .save(out, id(name));
     }
 }
