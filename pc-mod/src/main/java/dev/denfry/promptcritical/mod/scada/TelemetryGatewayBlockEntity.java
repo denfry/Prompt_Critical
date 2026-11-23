@@ -86,7 +86,8 @@ public final class TelemetryGatewayBlockEntity extends DeviceBlockEntity impleme
         long tick = now();
         if (!cycle.due(tick)) return;
         offGrid = dev.denfry.promptcritical.mod.isotopes.RtgBlockEntity.adjacent(level, worldPosition);
-        double pu = offGrid ? dev.denfry.promptcritical.mod.isotopes.RtgBlockEntity.supplyPu(level, worldPosition, RtuPower.DEMAND_W, tick) : 1;
+        double pu = offGrid ? dev.denfry.promptcritical.mod.isotopes.RtgBlockEntity.supplyPu(level, worldPosition, RtuPower.DEMAND_W, tick)
+                : dev.denfry.promptcritical.mod.grid.MachinePower.supply(level, worldPosition, RtuPower.DEMAND_W);
         boolean wasEverlasting = power.everlasting();
         if (power.step(SCAN_TICKS / 20.0, offGrid, pu, pollsWell())) {
             scan(tick);

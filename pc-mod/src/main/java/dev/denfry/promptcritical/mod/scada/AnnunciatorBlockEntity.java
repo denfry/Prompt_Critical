@@ -66,6 +66,8 @@ import org.jetbrains.annotations.Nullable;
  * гашения), табло даёт редстоун 15 в стену и включает {@code alarm_horn} рядом.
  */
 public class AnnunciatorBlockEntity extends DeviceBlockEntity implements FoundryDevice, PanelHost {
+    /** Табло сигнализации, Вт: прибор питается от розетки, щита или ИБП рядом, без питания гаснет и не опрашивает сигналы. */
+    public static final double POWER_W = 300;
     public static final int RADIUS = 16, WINDOWS = 12, SCAN_TICKS = 20, LAMP_TEST_TICKS = 60;
     /** Сколько опросов подряд встроенная сигнализация может не находиться (машина снесена, чанк выгружен). */
     public static final int MISSING_SCANS = 30;
@@ -109,6 +111,7 @@ public class AnnunciatorBlockEntity extends DeviceBlockEntity implements Foundry
     @Override
     public void tickDevice() {
         if (!(level instanceof ServerLevel)) return;
+        if (!dev.denfry.promptcritical.mod.grid.MachinePower.powered(level, worldPosition, POWER_W)) return;
         if (++ticks % SCAN_TICKS != 0) return;
         scan();
         engine.step(nowS(), tag -> values.getOrDefault(tag, Double.NaN));

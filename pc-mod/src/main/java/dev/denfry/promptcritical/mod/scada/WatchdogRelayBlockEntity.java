@@ -42,6 +42,8 @@ import org.jetbrains.annotations.Nullable;
  * <p>На щите реле — кнопка «Сброс» (местный сброс без владельца, как кнопка на реальном реле) и таймаут ±.
  */
 public class WatchdogRelayBlockEntity extends DeviceBlockEntity implements FoundryDevice, PanelHost {
+    /** Реле контроля исправности, Вт: прибор питается от розетки, щита или ИБП рядом, без питания отпадает и выдаёт отключение, как при срабатывании. */
+    public static final double POWER_W = 20;
     /** Отказ команды реле: сообщение — ошибка Lua. */
     public static final class WatchdogException extends RuntimeException {
         public WatchdogException(String message) {
@@ -112,7 +114,7 @@ public class WatchdogRelayBlockEntity extends DeviceBlockEntity implements Found
 
     private void output() {
         BlockState s = getBlockState();
-        boolean on = timer.tripped();
+        boolean on = timer.tripped() || !dev.denfry.promptcritical.mod.grid.MachinePower.powered(level, worldPosition, POWER_W);
         if (s.hasProperty(BlockStateProperties.POWERED) && s.getValue(BlockStateProperties.POWERED) != on)
             level.setBlock(worldPosition, s.setValue(BlockStateProperties.POWERED, on), Block.UPDATE_ALL);
     }

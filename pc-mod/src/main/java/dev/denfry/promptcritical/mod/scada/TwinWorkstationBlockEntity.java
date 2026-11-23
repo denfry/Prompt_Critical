@@ -50,6 +50,8 @@ import org.jetbrains.annotations.Nullable;
  * сервера и в достижения ({@link TunerChallenges}).
  */
 public class TwinWorkstationBlockEntity extends DeviceBlockEntity implements FoundryDevice, PanelHost {
+    /** Рабочая станция двойника, Вт: прибор питается от розетки, щита или ИБП рядом, без питания останавливает сценарий. */
+    public static final double POWER_W = 1e3;
     public static final int RADIUS = 16;
     /** Событие {@code sim_event}: прошедшая FAT программа загружена в ПЛК; тег — шаблон установки. */
     public static final String DIGITAL_TWIN = "promptcritical:digital_twin";
@@ -110,7 +112,7 @@ public class TwinWorkstationBlockEntity extends DeviceBlockEntity implements Fou
 
     @Override
     public void tickDevice() {
-        if (!(level instanceof ServerLevel sl) || run == null) return;
+        if (!(level instanceof ServerLevel sl) || run == null || !dev.denfry.promptcritical.mod.grid.MachinePower.powered(level, worldPosition, POWER_W)) return;
         TwinSessions.advance(sl.getServer(), run, speed);
         if (run.status() != ScenarioRun.Status.RUNNING) finish(null);
         else if (sl.getGameTime() - startedTick > TwinSessions.maxTicks()) {

@@ -50,6 +50,8 @@ import org.jetbrains.annotations.Nullable;
  * Время — FAST (1 с игры = 1 с), кроме малых дыханий: суточный цикл — SLOW, ×72 (00 §0.7).
  */
 public class TankGaugeBlockEntity extends DeviceBlockEntity implements FoundryDevice, PanelHost {
+    /** Уровнемер резервуара, Вт: прибор питается от розетки, щита или ИБП рядом, без питания не даёт сигнала. */
+    public static final double POWER_W = 50;
     public static final int ROOF_PLATES = 8;
     /** Порог облака у дыхательного клапана, кг/с [моё]. */
     static final double VENT_CLOUD_KG_S = 0.01;
@@ -113,7 +115,7 @@ public class TankGaugeBlockEntity extends DeviceBlockEntity implements FoundryDe
 
     @Override
     public void tickDevice() {
-        if (!(level instanceof ServerLevel sl) || ++ticks % 20 != 0) return;
+        if (!(level instanceof ServerLevel sl) || !dev.denfry.promptcritical.mod.grid.MachinePower.powered(level, worldPosition, POWER_W) || ++ticks % 20 != 0) return;
         FluidTankBlockEntity t = tank();
         if (t == null) {
             lastAmountL = -1;

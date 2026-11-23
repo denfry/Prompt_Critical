@@ -52,6 +52,8 @@ import org.jetbrains.annotations.Nullable;
  * шкафов (T11.8).
  */
 public class TrainingSimulatorBlockEntity extends DeviceBlockEntity implements FoundryDevice, PanelHost {
+    /** Вычислительный шкаф тренажёра, Вт: прибор питается от розетки, щита или ИБП рядом, без питания останавливает сценарий. */
+    public static final double POWER_W = 2e3;
     public static final int LINK_RADIUS = 8;
     public static final String SCENARIO_PASSED = "promptcritical:scenario_passed";
 
@@ -115,6 +117,7 @@ public class TrainingSimulatorBlockEntity extends DeviceBlockEntity implements F
     @Override
     public void tickDevice() {
         if (!(level instanceof ServerLevel sl)) return;
+        if (run != null && !dev.denfry.promptcritical.mod.grid.MachinePower.powered(level, worldPosition, POWER_W)) return;
         if (run != null) {
             TwinSessions.advance(sl.getServer(), run, speed);
             if (run.status() != ScenarioRun.Status.RUNNING) finish(sl);

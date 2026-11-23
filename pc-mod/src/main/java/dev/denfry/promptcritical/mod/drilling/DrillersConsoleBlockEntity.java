@@ -65,6 +65,8 @@ import org.jetbrains.annotations.Nullable;
  * репрессии прилипает; прихваченную ротор не вращает, расхаживание — кнопкой щита.
  */
 public final class DrillersConsoleBlockEntity extends DeviceBlockEntity implements FoundryDevice, PanelHost {
+    /** Пульт бурильщика с датчиками, Вт: прибор питается от розетки, щита или ИБП рядом, без питания не показывает параметры. */
+    public static final double POWER_W = 1e3;
     public static final int RIG_RADIUS = 8, SCAN_PERIOD = 40, MIN_TANKS = 4;
     /** Объём ёмкости-блока, м³: кубометр стали на кубометр раствора. */
     public static final double TANK_M3 = 1.0;
@@ -266,6 +268,7 @@ public final class DrillersConsoleBlockEntity extends DeviceBlockEntity implemen
         if (!(level instanceof ServerLevel s)) return;
         SimLevelBinding b = SimBindings.get(s);
         if (b == null) return;
+        if (!dev.denfry.promptcritical.mod.grid.MachinePower.powered(level, worldPosition, POWER_W)) return;
         ticks++;
         if (ticks == 1 || ticks % SCAN_PERIOD == 0) {
             scan();

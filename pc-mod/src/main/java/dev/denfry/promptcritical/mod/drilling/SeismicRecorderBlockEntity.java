@@ -32,6 +32,8 @@ import org.jetbrains.annotations.Nullable;
  * выдаёт сейсмический разрез ближайшей структуры.
  */
 public final class SeismicRecorderBlockEntity extends DeviceBlockEntity implements FoundryDevice {
+    /** Сейсмостанция, Вт: прибор питается от розетки, щита или ИБП рядом, без питания не пишет запись. */
+    public static final double POWER_W = 500;
     public static final int SPREAD_BLOCKS = 24, MIN_GEOPHONES = 4, RECORD_TICKS = 200;
 
     private int recording = -1;
@@ -57,7 +59,7 @@ public final class SeismicRecorderBlockEntity extends DeviceBlockEntity implemen
 
     @Override
     public void tickDevice() {
-        if (!(level instanceof ServerLevel s) || recording < 0) return;
+        if (!(level instanceof ServerLevel s) || recording < 0 || !dev.denfry.promptcritical.mod.grid.MachinePower.powered(level, worldPosition, POWER_W)) return;
         if (++recording < RECORD_TICKS) return;
         recording = -1;
         setLit(false);

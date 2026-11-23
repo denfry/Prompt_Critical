@@ -35,6 +35,8 @@ import org.jetbrains.annotations.Nullable;
  * обесточенный остров с шинами (блэкаут).
  */
 public class GridDispatchCenterBlockEntity extends DeviceBlockEntity implements FoundryDevice, PanelHost {
+    /** Диспетчерский щит и ЭВМ, Вт: прибор питается от розетки, щита или ИБП рядом, без питания не обновляет картину сети. */
+    public static final double POWER_W = 2e3;
     /** Ошибка прогноза нагрузки, доля (§7.17.4: 3 %). */
     public static final double FORECAST_SIGMA = 0.03;
     /** Полоса нормальной частоты для тревоги пульта, Гц. */
@@ -73,7 +75,7 @@ public class GridDispatchCenterBlockEntity extends DeviceBlockEntity implements 
 
     @Override
     public void tickDevice() {
-        if (level == null || level.isClientSide || ++ticks % 20 != 0) return;
+        if (level == null || level.isClientSide || !dev.denfry.promptcritical.mod.grid.MachinePower.powered(level, worldPosition, POWER_W) || ++ticks % 20 != 0) return;
         BlockState s = getBlockState();
         boolean a = alarm();
         if (s.hasProperty(PcProperties.ALARM) && s.getValue(PcProperties.ALARM) != a)

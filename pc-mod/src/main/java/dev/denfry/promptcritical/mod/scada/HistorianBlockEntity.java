@@ -44,6 +44,8 @@ import org.jetbrains.annotations.Nullable;
  * тег (вместо 2000 и 20 000 GDD — архив живёт в NBT блока).
  */
 public class HistorianBlockEntity extends DeviceBlockEntity implements FoundryDevice, PanelHost {
+    /** Сервер архива, Вт: прибор питается от розетки, щита или ИБП рядом, без питания не пишет архив. */
+    public static final double POWER_W = 500;
     public static final int RADIUS = 16, MAX_TAGS = 256, MAX_POINTS = 2048, QUERY_MAX = 4096;
     /** E_c — доля величины значения (как 0,25 % шкалы при шкале ≈ значению), не меньше 0,01. */
     static final double EC_SHARE = 0.0025, EC_MIN = 0.01;
@@ -61,7 +63,7 @@ public class HistorianBlockEntity extends DeviceBlockEntity implements FoundryDe
 
     @Override
     public void tickDevice() {
-        if (!(level instanceof ServerLevel) || ++ticks % 20 != 0) return;
+        if (!(level instanceof ServerLevel) || !dev.denfry.promptcritical.mod.grid.MachinePower.powered(level, worldPosition, POWER_W) || ++ticks % 20 != 0) return;
         double t = nowS();
         int seen = 0;
         for (TelemetryGatewayBlockEntity rtu : Ironworks.blockEntities(level, new AABB(worldPosition).inflate(RADIUS), TelemetryGatewayBlockEntity.class))

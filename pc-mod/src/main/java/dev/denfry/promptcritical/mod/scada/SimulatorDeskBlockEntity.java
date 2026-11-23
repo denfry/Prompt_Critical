@@ -38,6 +38,8 @@ import org.jetbrains.annotations.Nullable;
  * {@value TrainingSimulatorBlockEntity#LINK_RADIUS} блоках, а не с реальной установкой. Лампа «активен» — шкаф ведёт урок.
  */
 public class SimulatorDeskBlockEntity extends DeviceBlockEntity implements FoundryDevice, PanelHost {
+    /** Пульт тренажёра, Вт: прибор питается от розетки, щита или ИБП рядом, без питания не работает. */
+    public static final double POWER_W = 1e3;
     /** Событие {@code sim_event}: выдано удостоверение; тег {@code level}, значение — уровень (0 стажёр, 1 оператор, 2 НСС). */
     public static final String OPERATOR_LICENSE = "promptcritical:operator_license";
 
@@ -70,7 +72,7 @@ public class SimulatorDeskBlockEntity extends DeviceBlockEntity implements Found
 
     @Override
     public void tickDevice() {
-        if (!(level instanceof ServerLevel sl) || ++ticks % 10 != 0) return;
+        if (!(level instanceof ServerLevel sl) || !dev.denfry.promptcritical.mod.grid.MachinePower.powered(level, worldPosition, POWER_W) || ++ticks % 10 != 0) return;
         TrainingSimulatorBlockEntity sim = simulator();
         boolean active = sim != null && sim.run() != null;
         BlockState s = getBlockState();

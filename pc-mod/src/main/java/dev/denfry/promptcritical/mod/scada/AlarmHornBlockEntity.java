@@ -28,6 +28,8 @@ import org.jetbrains.annotations.Nullable;
  * Кнопка «ЗВУК» табло глушит и сирену. ПКМ — какой приоритет звучит.
  */
 public class AlarmHornBlockEntity extends DeviceBlockEntity implements FoundryDevice {
+    /** Сирена с усилителем, Вт: прибор питается от розетки, щита или ИБП рядом, без питания молчит. */
+    public static final double POWER_W = 100;
     public static final int RADIUS = 16;
     private int ticks, priority;
 
@@ -43,6 +45,7 @@ public class AlarmHornBlockEntity extends DeviceBlockEntity implements FoundryDe
     @Override
     public void tickDevice() {
         if (!(level instanceof ServerLevel sl)) return;
+        if (!dev.denfry.promptcritical.mod.grid.MachinePower.powered(level, worldPosition, POWER_W)) return;
         ticks++;
         if (ticks % 20 == 0) {
             int p = 0;
