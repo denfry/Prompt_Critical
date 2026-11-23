@@ -76,6 +76,20 @@ public final class SiteText {
         drawing("lancashire_stoker", "Lancashire Boiler Stokers", "механических забрасывателей ланкаширского котла");
         stage("stoker_frame", "bed plate, standards and line shaft", "фундаментная плита, стойки и линия вала");
         stage("stokers", "hoppers, feeding boxes and rams", "бункера, питательные коробки и толкатели");
+        drawing("longwall_shearer_real", "Ranging Drum Shearer", "двухшнекового очистного комбайна");
+        stage("face_conveyor", "armoured face conveyor pans and rack", "рештаки забойного конвейера и рейка");
+        stage("shearer_body", "shearer body, haulage and cable handler", "корпус комбайна, механизм подачи и кабелеукладчик");
+        stage("ranging_arms", "ranging arms, gearheads and cutting drums", "поворотные рукояти, редукторы и шнеки");
+        drawing("coal_jig_real", "Baum Coal Jig", "отсадочной машины Баума");
+        stage("jig_tank", "riveted tank, bed screens and hutch hoppers", "клёпаный бак, решёта постели и подрешётные бункера");
+        stage("air_valves", "fan, line shaft and rotary air valves", "вентилятор, линия вала и поворотные воздушные клапаны");
+        drawing("quench_tower_real", "Wet Coke Quench Tower", "башни мокрого тушения кокса");
+        stage("quench_chamber", "spray chamber, header and nozzles", "камера орошения, коллектор и форсунки");
+        stage("stack", "hood and steel stack", "зонт и стальная труба");
+        drawing("powered_roof_support_real", "Two-Leg Shield Support", "двухстоечной щитовой секции крепи");
+        stage("pontoons", "base pontoons, rear bridge and advancing ram", "основание, задний мост и домкрат передвижки");
+        stage("support_legs", "hydraulic legs and valve bank", "гидростойки и блок клапанов");
+        stage("canopy", "canopy, caving shield and lemniscate links", "перекрытие, ограждение и лемнискатные рычаги");
     }
 
     private SiteText() {}

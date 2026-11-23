@@ -31,7 +31,7 @@ import org.jetbrains.annotations.Nullable;
  * башней (тушильный вагон въехал под неё) или в собственном входном слоте поливается водой — 0,45 кг на кг кокса
  * испаряется ({@link CokeQuenching#WET_WATER_KG_PER_KG}), кокс выходит с влагой 4 %. Вода — трубой.
  */
-public final class QuenchTowerBlockEntity extends IronworksBlockEntity {
+public final class QuenchTowerBlockEntity extends IronworksBlockEntity implements dev.denfry.promptcritical.mod.client.whole.WholeModelHost {
     private static final int PERIOD = 10;
     private final GasBuffer water = new GasBuffer(16_000,
             s -> s.is(FluidTags.WATER) || s.is(PcFluids.RAW_WATER.source.get()), this::setChanged);
@@ -103,8 +103,29 @@ public final class QuenchTowerBlockEntity extends IronworksBlockEntity {
     protected void clientTick() {
         if (!stateFlag(PcProperties.RUNNING)) return;
         MachineFx fx = fx();
-        for (int i = 0; i < 3; i++) fx.smoke(fx.at(8, 40, 8), false, 1.2);
+        // у башни реального масштаба пар выходит из трубы на высоте 12 м
+        double top = wholeModelId() != null ? 192 : 40;
+        for (int i = 0; i < 3; i++) fx.smoke(fx.at(8, top, 8), false, 1.2);
         if (fx.chance(1)) fx.splash(fx.at(8, -20, 8), 1.0, 3);
+    }
+
+    // --- башня реального масштаба (quench_tower_real): цельная модель ---
+
+    @Override
+    @Nullable
+    public String wholeModelId() {
+        return dev.denfry.promptcritical.mod.client.whole.WholeModelHost.idOf(getBlockState());
+    }
+
+    @Override
+    public Direction wholeModelFacing() {
+        return getBlockState().getValue(net.minecraft.world.level.block.state.properties.BlockStateProperties.HORIZONTAL_FACING);
+    }
+
+    /** Свет — из-под камеры, где стоит вагон: сам контроллер внутри башни. */
+    @Override
+    public BlockPos wholeModelLightPos() {
+        return worldPosition.below(2);
     }
 
     @Override

@@ -22,7 +22,8 @@ public final class IronworksBlockEntities {
     public static final DeferredHolder<BlockEntityType<?>, BlockEntityType<ByproductPlantBlockEntity>> BYPRODUCT_PLANT =
             type("byproduct_plant", ByproductPlantBlockEntity::new, PcBlocks.BYPRODUCT_PLANT);
     public static final DeferredHolder<BlockEntityType<?>, BlockEntityType<QuenchTowerBlockEntity>> QUENCH_TOWER =
-            type("quench_tower", QuenchTowerBlockEntity::new, PcBlocks.QUENCH_TOWER);
+            BLOCK_ENTITIES.register("quench_tower", () -> BlockEntityType.Builder.of(QuenchTowerBlockEntity::new,
+                    PcBlocks.QUENCH_TOWER.get(), PcBlocks.QUENCH_TOWER_REAL.get()).build(null));
     public static final DeferredHolder<BlockEntityType<?>, BlockEntityType<ElectrodeExtruderBlockEntity>> ELECTRODE_EXTRUDER =
             type("electrode_extruder", ElectrodeExtruderBlockEntity::new, PcBlocks.ELECTRODE_EXTRUDER);
     public static final DeferredHolder<BlockEntityType<?>, BlockEntityType<BakingFurnaceBlockEntity>> BAKING_FURNACE =

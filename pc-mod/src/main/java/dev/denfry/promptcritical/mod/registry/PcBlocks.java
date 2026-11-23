@@ -451,8 +451,27 @@ public final class PcBlocks {
     public static final DeferredBlock<PcDeviceBlock> POWERED_ROOF_SUPPORT = device("powered_roof_support", machine(),
             Spec.facing(BlockStateProperties.EXTENDED).footprint(Footprint.of(Segment.box(0, 0, -1, 1, 0, 1))),
             PoweredRoofSupportBlock::create);
+    /**
+     * Двухстоечная щитовая секция крепи реального масштаба для пласта 2 м (08 §8.2.2–8.2.3,
+     * art/blockbench/mining/powered_roof_support_real.author.js): шаг 2 м, перекрытие 1,85 × 4 м, 2 × 2 × 4, контроллер
+     * на почве у забоя, фасад (север) — к конвейеру. Тот же блок и BE, что {@link #POWERED_ROOF_SUPPORT}.
+     */
+    public static final Footprint FP_POWERED_ROOF_SUPPORT_REAL = Footprint.tiled(0, 1, 0, 1, 0, 3);
+    public static final DeferredBlock<PcDeviceBlock> POWERED_ROOF_SUPPORT_REAL = device("powered_roof_support_real", machine(),
+            Spec.facing(BlockStateProperties.EXTENDED).segments(PcProperties.wholeSegments(FP_POWERED_ROOF_SUPPORT_REAL.segments().size()),
+                    FP_POWERED_ROOF_SUPPORT_REAL), PoweredRoofSupportBlock::create);
     public static final DeferredBlock<PcDeviceBlock> LONGWALL_SHEARER = device("longwall_shearer", machine(),
             Spec.facing(PcProperties.RUNNING).footprint(Footprint.of(Segment.box(-1, 1, 0, 0, 0, 0))), LongwallShearerBlock::create);
+    /**
+     * Двухшнековый очистной комбайн реального масштаба на забойном конвейере (08 §8.2.3,
+     * docs/research/longwall_shearer-dimensions.md): 12 × 2 × 2, контроллер посередине в ряду шнеков у забоя, шнеки
+     * ⌀1,6 м на поворотных рукоятях у концов. Тот же блок и BE, что {@link #LONGWALL_SHEARER}: везёт контрапция Create
+     * на gantry, режет {@link dev.denfry.promptcritical.mod.mine.ShearerMovementBehaviour}.
+     */
+    public static final Footprint FP_LONGWALL_SHEARER_REAL = Footprint.tiled(-6, 5, 0, 1, 0, 1);
+    public static final DeferredBlock<PcDeviceBlock> LONGWALL_SHEARER_REAL = device("longwall_shearer_real", machine(),
+            Spec.facing(PcProperties.RUNNING).segments(PcProperties.wholeSegments(FP_LONGWALL_SHEARER_REAL.segments().size()),
+                    FP_LONGWALL_SHEARER_REAL), LongwallShearerBlock::create);
     public static final DeferredBlock<PcDeviceBlock> MAIN_MINE_FAN = device("main_mine_fan", machine(),
             Spec.facing(PcProperties.RUNNING).footprint(FP_CUBE3), MainMineFanBlock::create);
     /**
@@ -953,7 +972,10 @@ public final class PcBlocks {
                 || b == BWR240_REACTOR.get() || b == CANDU6_REACTOR.get() || b == BN600_REACTOR.get() || b == AM1_REACTOR.get()
                 || b == LANCASHIRE_BOILER.get() || b == HEADFRAME_STEEL.get() || b == MILL_ENGINE.get() || b == WINDING_ENGINE.get()
                 || b == GUIBAL_FAN.get() || b == CUPOLA_FURNACE_REAL.get() || b == MINE_DRAINAGE_PUMP_GEARED.get()
-                || b == LANCASHIRE_STOKER.get() || b == CRUCIBLE_FURNACE_REAL.get();
+                || b == LANCASHIRE_STOKER.get() || b == CRUCIBLE_FURNACE_REAL.get()
+                // добыча, обогащение и коксохим реального масштаба
+                || b == LONGWALL_SHEARER_REAL.get() || b == COAL_JIG_REAL.get() || b == QUENCH_TOWER_REAL.get()
+                || b == POWERED_ROOF_SUPPORT_REAL.get();
     }
 
     /**
@@ -969,6 +991,16 @@ public final class PcBlocks {
     public static final DeferredBlock<PcDeviceBlock> COAL_JIG = device("coal_jig", machine(),
             Spec.facing(PcProperties.RUNNING).footprint(Footprint.of(Segment.box(0, 1, 0, 1, 0, 0))),
             KineticMachineBlock.with(ShaftSide.LEFT, CoalJigBlockEntity::new));
+    /**
+     * Отсадочная машина Баума реального масштаба на 36 т/ч (08 §8.3, docs/research/coal_jig-dimensions.md): клёпаный
+     * бак с двумя отделениями постели, 3 × 3 × 5, загрузка с севера, уголь течёт на юг. Тот же юнит {@code CoalJig}, что
+     * у {@link #COAL_JIG}; вал Create — в клетку-порт вентилятора у загрузочного конца
+     * ({@link dev.denfry.promptcritical.mod.foundry.CoalJigRealBlock#PORT}).
+     */
+    public static final Footprint FP_COAL_JIG_REAL = Footprint.tiled(-1, 1, 0, 2, 0, 4);
+    public static final DeferredBlock<PcDeviceBlock> COAL_JIG_REAL = device("coal_jig_real", machine(),
+            Spec.facing(PcProperties.RUNNING).segments(PcProperties.wholeSegments(FP_COAL_JIG_REAL.segments().size()), FP_COAL_JIG_REAL),
+            dev.denfry.promptcritical.mod.foundry.CoalJigRealBlock.create());
     public static final DeferredBlock<PcDeviceBlock> CUPOLA_FURNACE = device("cupola_furnace", lit(brick()),
             Spec.of(BlockStateProperties.LIT).footprint(FP_TALL3), KineticMachineBlock.with(ShaftSide.X_AXIS, CupolaBlockEntity::new));
     /**
@@ -1037,9 +1069,12 @@ public final class PcBlocks {
 
     // --- коксохим и домна (08 §8.4–8.5, этап 10 M3) ---
     public static final DeferredBlock<PcDeviceBlock> COKE_OVEN = device("coke_oven", brick().pushReaction(PushReaction.BLOCK),
-            Spec.of(PcProperties.OVEN_STATE), CokeOvenBlock::create);
-    public static final DeferredBlock<PcBlock> COKE_BATTERY_WALL = block("coke_battery_wall",
-            brick().mapColor(MapColor.TERRACOTTA_WHITE).pushReaction(PushReaction.BLOCK), Spec.of(PcProperties.HOT));
+            Spec.of(PcProperties.OVEN_STATE, PcProperties.CELL_LEVEL, PcProperties.CELL_DOOR, BlockStateProperties.HORIZONTAL_AXIS),
+            CokeOvenBlock::create);
+    public static final DeferredBlock<dev.denfry.promptcritical.mod.ironworks.CokeBatteryWallBlock> COKE_BATTERY_WALL = withItem(
+            BLOCKS.registerBlock("coke_battery_wall", p -> dev.denfry.promptcritical.mod.ironworks.CokeBatteryWallBlock.create(p,
+                    Spec.of(PcProperties.HOT, PcProperties.CELL_LEVEL, PcProperties.CELL_DOOR, BlockStateProperties.HORIZONTAL_AXIS)),
+                    brick().mapColor(MapColor.TERRACOTTA_WHITE).pushReaction(PushReaction.BLOCK)));
     public static final DeferredBlock<GasMainBlock> GAS_COLLECTOR_MAIN = withItem(BLOCKS.registerBlock("gas_collector_main",
             GasMainBlock::create, machine()));
     public static final DeferredBlock<PcBlock> COKE_PUSHER_RAM = block("coke_pusher_ram", movable(), Spec.facing());
@@ -1051,6 +1086,15 @@ public final class PcBlocks {
             FoundryBlock.with(ByproductPlantBlockEntity::new));
     public static final DeferredBlock<PcDeviceBlock> QUENCH_TOWER = device("quench_tower", brick().mapColor(MapColor.STONE),
             Spec.facing(PcProperties.RUNNING).footprint(FP_CUBE3), FoundryBlock.with(QuenchTowerBlockEntity::new));
+    /**
+     * Башня мокрого тушения кокса реального масштаба (08 §8.4.3, docs/research/quench_tower-dimensions.md): камера
+     * орошения 3 × 3 без дна над путём тушильного вагона, стальная труба 2,5 × 2,5 м с жалюзи, 3 × 12 × 3. Тот же BE,
+     * что у {@link #QUENCH_TOWER}: вагон стоит в той же зоне под башней, вода — с запада, лоток — с востока.
+     */
+    public static final Footprint FP_QUENCH_TOWER_REAL = Footprint.tiled(-1, 1, -1, 10, -1, 1);
+    public static final DeferredBlock<PcDeviceBlock> QUENCH_TOWER_REAL = device("quench_tower_real", machine(),
+            Spec.facing(PcProperties.RUNNING).segments(PcProperties.wholeSegments(FP_QUENCH_TOWER_REAL.segments().size()),
+                    FP_QUENCH_TOWER_REAL), FoundryBlock.with(QuenchTowerBlockEntity::new));
     public static final DeferredBlock<PcDeviceBlock> ELECTRODE_EXTRUDER = device("electrode_extruder", machine(),
             Spec.facing(PcProperties.RUNNING).footprint(Footprint.of(Segment.box(-1, 1, 0, 0, 0, 0))),
             KineticMachineBlock.with(ShaftSide.FRONT, ElectrodeExtruderBlockEntity::new));

@@ -65,6 +65,11 @@ public final class FoundryRecipes extends RecipeProvider {
                 .pattern("SBS").pattern("ICI").pattern("I I").define('S', AllBlocks.SHAFT.get()).define('B', Items.BUCKET)
                 .define('I', AllItems.IRON_SHEET.get()).define('C', AllBlocks.ANDESITE_CASING.get())
                 .unlockedBy("has_casing", has(AllBlocks.ANDESITE_CASING.get())).save(out, id("coal_jig"));
+        // чертёж отсадочной машины Баума: строится на стройплощадке по массе прототипа (SitePlans)
+        ShapedRecipeBuilder.shaped(RecipeCategory.MISC, dev.denfry.promptcritical.mod.site.SiteRegistry.COAL_JIG_REAL_DRAWING.get())
+                .pattern("PPP").pattern("SBS").pattern("ICI").define('P', Items.PAPER).define('S', AllBlocks.SHAFT.get())
+                .define('B', Items.BUCKET).define('I', AllItems.IRON_SHEET.get()).define('C', AllBlocks.ANDESITE_CASING.get())
+                .unlockedBy("has_casing", has(AllBlocks.ANDESITE_CASING.get())).save(out, id("coal_jig_real_drawing"));
         ShapedRecipeBuilder.shaped(RecipeCategory.MISC, PcBlocks.CUPOLA_FURNACE.get())
                 .pattern("IRI").pattern("IRI").pattern("IFI").define('I', AllItems.IRON_SHEET.get())
                 .define('R', PcItems.REFRACTORY_BRICK.get()).define('F', Items.BLAST_FURNACE)

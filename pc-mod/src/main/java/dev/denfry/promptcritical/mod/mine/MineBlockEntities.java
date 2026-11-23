@@ -30,9 +30,11 @@ public final class MineBlockEntities {
             BLOCK_ENTITIES.register("mine_drainage_pump", () -> BlockEntityType.Builder.of(MineDrainagePumpBlockEntity::new,
                     PcBlocks.MINE_DRAINAGE_PUMP.get(), PcBlocks.MINE_DRAINAGE_PUMP_GEARED.get()).build(null));
     public static final DeferredHolder<BlockEntityType<?>, BlockEntityType<LongwallShearerBlockEntity>> LONGWALL_SHEARER =
-            type("longwall_shearer", LongwallShearerBlockEntity::new, PcBlocks.LONGWALL_SHEARER);
+            BLOCK_ENTITIES.register("longwall_shearer", () -> BlockEntityType.Builder.of(LongwallShearerBlockEntity::new,
+                    PcBlocks.LONGWALL_SHEARER.get(), PcBlocks.LONGWALL_SHEARER_REAL.get()).build(null));
     public static final DeferredHolder<BlockEntityType<?>, BlockEntityType<PoweredRoofSupportBlockEntity>> POWERED_ROOF_SUPPORT =
-            type("powered_roof_support", PoweredRoofSupportBlockEntity::new, PcBlocks.POWERED_ROOF_SUPPORT);
+            BLOCK_ENTITIES.register("powered_roof_support", () -> BlockEntityType.Builder.of(PoweredRoofSupportBlockEntity::new,
+                    PcBlocks.POWERED_ROOF_SUPPORT.get(), PcBlocks.POWERED_ROOF_SUPPORT_REAL.get()).build(null));
 
     public static final DeferredHolder<BlockEntityType<?>, BlockEntityType<ShaftSignalBlockEntity>> SHAFT_SIGNAL =
             type("shaft_signal", ShaftSignalBlockEntity::new, PcBlocks.SHAFT_SIGNAL);

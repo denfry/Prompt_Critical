@@ -46,6 +46,7 @@ public final class FoundryClient {
     static {
         // вагранка реального масштаба: цельная модель и partial-модели — до запекания
         CupolaRealRenderer.init();
+        CoalJigRenderer.init();
     }
 
     public static void register(IEventBus modBus) {
@@ -55,7 +56,8 @@ public final class FoundryClient {
 
     private static void registerRenderers(EntityRenderersEvent.RegisterRenderers event) {
         // оси частей — центры их моделей (пиксели, фасад на север)
-        event.registerBlockEntityRenderer(FoundryBlockEntities.COAL_JIG.get(), c -> new FoundryMachineRenderer<>(PULSATOR, Motion.SPIN_X, 27, 8, 1));
+        event.registerBlockEntityRenderer(FoundryBlockEntities.COAL_JIG.get(),
+                c -> new CoalJigRenderer(new FoundryMachineRenderer<>(PULSATOR, Motion.SPIN_X, 27, 8, 1)));
         event.registerBlockEntityRenderer(FoundryBlockEntities.CUPOLA.get(), c -> new FoundryMachineRenderer<>(null, Motion.STATIC, 0, 0, 1));
         event.registerBlockEntityRenderer(FoundryBlockEntities.CUPOLA_REAL.get(), c -> new CupolaRealRenderer());
         // тигельная печь: старая серия — свой тигель, crucible_furnace_real — цельная модель ямы

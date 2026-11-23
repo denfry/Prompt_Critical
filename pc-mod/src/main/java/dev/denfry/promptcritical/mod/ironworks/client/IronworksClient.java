@@ -26,6 +26,11 @@ public final class IronworksClient {
     private IronworksClient() {
     }
 
+    static {
+        // башня тушения реального масштаба: цельная модель и partial — до запекания
+        QuenchTowerRenderer.init();
+    }
+
     private static PartialModel partial(String path) {
         return PartialModel.of(PromptCritical.id("block/" + path));
     }
@@ -37,6 +42,7 @@ public final class IronworksClient {
 
     private static void registerRenderers(EntityRenderersEvent.RegisterRenderers event) {
         // оси частей — центры их моделей (пиксели, фасад на север)
+        event.registerBlockEntityRenderer(IronworksBlockEntities.QUENCH_TOWER.get(), c -> new QuenchTowerRenderer());
         event.registerBlockEntityRenderer(IronworksBlockEntities.GAS_EXHAUSTER.get(), c -> new FoundryMachineRenderer<>(EXHAUSTER_ROTOR, Motion.SPIN_Z, 16, 16, 1));
         event.registerBlockEntityRenderer(IronworksBlockEntities.BLAST_BLOWER.get(), c -> new FoundryMachineRenderer<>(BLOWER_ROTOR, Motion.SPIN_Z, 16, 16, 1));
         event.registerBlockEntityRenderer(IronworksBlockEntities.ELECTRODE_EXTRUDER.get(), c -> new FoundryMachineRenderer<>(EXTRUDER_SCREW, Motion.SPIN_X, 8, 8, 1));

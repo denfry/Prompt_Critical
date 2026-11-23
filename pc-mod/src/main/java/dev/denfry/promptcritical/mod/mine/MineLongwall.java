@@ -31,6 +31,7 @@ public final class MineLongwall {
     private static void setup(FMLCommonSetupEvent event) {
         event.enqueueWork(() -> {
             MovementBehaviour.REGISTRY.register(PcBlocks.LONGWALL_SHEARER.get(), new ShearerMovementBehaviour());
+            MovementBehaviour.REGISTRY.register(PcBlocks.LONGWALL_SHEARER_REAL.get(), new ShearerMovementBehaviour());
             BlockMovementChecks.registerMovementAllowedCheck(MineLongwall::movementAllowed);
             BlockMovementChecks.registerAttachedCheck(MineLongwall::attached);
         });
@@ -39,21 +40,22 @@ public final class MineLongwall {
     /** Контроллер лавной конструкции (комбайн или секция), к которой относится клетка; иначе {@code null}. */
     @Nullable
     static BlockPos longwallController(Level level, BlockPos pos, BlockState state) {
-        if (isLongwall(state)) return pos;
+        // якорь сегмента комбайна реального масштаба — тот же блок: контроллер — по его сегменту
+        if (isLongwall(state)) return state.getBlock() instanceof PcBlock b ? b.controllerPos(state, pos) : pos;
         if (!(state.getBlock() instanceof MultiblockPartBlock)) return null;
         BlockPos c = PcBlock.structureController(level, MultiblockPartBlock.anchor(state, pos));
         return c != null && isLongwall(level.getBlockState(c)) ? c : null;
     }
 
     private static boolean isLongwall(BlockState s) {
-        return s.is(PcBlocks.LONGWALL_SHEARER.get()) || s.is(PcBlocks.POWERED_ROOF_SUPPORT.get());
+        return s.is(PcBlocks.LONGWALL_SHEARER.get()) || s.is(PcBlocks.LONGWALL_SHEARER_REAL.get()) || PoweredRoofSupportBlock.isSupport(s);
     }
 
     private static CheckResult movementAllowed(BlockState state, Level level, BlockPos pos) {
         BlockPos c = longwallController(level, pos, state);
         if (c == null) return CheckResult.PASS;
         BlockState cs = level.getBlockState(c);
-        if (cs.is(PcBlocks.POWERED_ROOF_SUPPORT.get())) return CheckResult.of(!PoweredRoofSupportBlock.set(cs));
+        if (PoweredRoofSupportBlock.isSupport(cs)) return CheckResult.of(!PoweredRoofSupportBlock.set(cs));
         return CheckResult.SUCCESS;
     }
 

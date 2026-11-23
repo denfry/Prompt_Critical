@@ -161,6 +161,31 @@ public final class SitePlans {
                     st("pit", 100, n(BRICKS, 2), n(INGOT, 2)),
                     st("flue", 80, n(BRICKS, 1), n(INGOT, 2))));
 
+    /** Добыча, обогащение и коксохим реального масштаба (оценки масс — в комментариях). */
+    private static final Map<String, Plan> MINING_COKE_PLANS = Map.of(
+            // двухшнековый комбайн для пласта 2 м ≈ 37 т, 12 м забойного конвейера (рештаки ≈ 0,8 т на 1,5 м) ≈ 6,5 т (оценки)
+            "longwall_shearer_real", plan("longwall_shearer_real", PcBlocks.LONGWALL_SHEARER_REAL, 44,
+                    st("face_conveyor", 160, n(PLATE, 55), n(INGOT, 10)),
+                    st("shearer_body", 300, n(INGOT, 180), n(PLATE, 40), n(WIRE, 50)),
+                    st("ranging_arms", 240, n(INGOT, 120), n(PLATE, 20))),
+            // машина Баума на 36 т/ч: клёпаный бак 2,3 × 3,3 м с бункерами ≈ 9 т, стойки ≈ 1 т, клапаны, вал и
+            // вентилятор ≈ 2 т (оценки, docs/research/coal_jig-dimensions.md)
+            "coal_jig_real", plan("coal_jig_real", PcBlocks.COAL_JIG_REAL, 12,
+                    st("foundation", 80, n(CONCRETE, 4)),
+                    st("jig_tank", 240, n(PLATE, 80), n(BEAM, 15)),
+                    st("air_valves", 160, n(INGOT, 15), n(PIPE, 20))),
+            // башня тушения: камера 3 × 3 м с коллектором ≈ 5 т, зонт и труба 2,5 × 2,5 × 9 м из листа 8 мм ≈ 7 т (оценки,
+            // docs/research/quench_tower-dimensions.md); опоры над путём игрок ставит сам
+            "quench_tower_real", plan("quench_tower_real", PcBlocks.QUENCH_TOWER_REAL, 12,
+                    st("quench_chamber", 200, n(PLATE, 40), n(PIPE, 20)),
+                    st("stack", 240, n(PLATE, 60), n(BEAM, 10))),
+            // двухстоечная щитовая секция шага 2 м для пласта 2 м ≈ 13 т: основание с мостом ≈ 5 т, стойки и
+            // гидроблок ≈ 4 т, перекрытие с ограждением ≈ 4 т (оценки)
+            "powered_roof_support_real", plan("powered_roof_support_real", PcBlocks.POWERED_ROOF_SUPPORT_REAL, 13,
+                    st("pontoons", 160, n(PLATE, 40), n(INGOT, 10)),
+                    st("support_legs", 160, n(INGOT, 30), n(PIPE, 20)),
+                    st("canopy", 160, n(PLATE, 40))));
+
     private SitePlans() {}
 
     /** Множитель числа предметов на этапах ({@code site.material_scale}); вне сервера с конфигом — 1. */
@@ -175,10 +200,11 @@ public final class SitePlans {
     @Nullable
     public static Plan get(String id) {
         Plan p = PLANS.get(id);
-        return p != null ? p : I0_PLANS.get(id);
+        if (p == null) p = I0_PLANS.get(id);
+        return p != null ? p : MINING_COKE_PLANS.get(id);
     }
 
     public static Iterable<Plan> all() {
-        return java.util.stream.Stream.concat(PLANS.values().stream(), I0_PLANS.values().stream()).toList();
+        return java.util.stream.Stream.of(PLANS, I0_PLANS, MINING_COKE_PLANS).flatMap(m -> m.values().stream()).toList();
     }
 }

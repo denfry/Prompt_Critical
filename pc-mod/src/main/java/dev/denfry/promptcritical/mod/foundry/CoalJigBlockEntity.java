@@ -41,7 +41,8 @@ import org.jetbrains.annotations.Nullable;
  * Отсадочная машина {@code coal_jig} (08 §8.3): рядовой уголь на входе, три продукта с {@code coal_assay} на выходе,
  * подпиточная вода — трубой или ведром (в домене, {@link CoalJig}). Ключ Create меняет плотность разделения.
  */
-public final class CoalJigBlockEntity extends KineticMachineBlockEntity<CoalJig> implements KineticMachineBlock.Wrenchable, PanelHost {
+public final class CoalJigBlockEntity extends KineticMachineBlockEntity<CoalJig> implements KineticMachineBlock.Wrenchable, PanelHost,
+        dev.denfry.promptcritical.mod.client.whole.WholeModelHost, dev.denfry.promptcritical.mod.boiler.ShaftConsumer {
     /** Уголь без анализа — уголь Г из T8.1. */
     static final CoalAssayData DEFAULT_ASSAY = new CoalAssayData(37, 21, 6, 20);
     private static final MachineInventory.Role[] ROLES = {MachineInventory.Role.INPUT, MachineInventory.Role.OUTPUT,
@@ -50,8 +51,68 @@ public final class CoalJigBlockEntity extends KineticMachineBlockEntity<CoalJig>
     private final MachineInventory inv = new MachineInventory(ROLES, (slot, s) -> s.is(FoundryTags.JIG_FEED), this::setChanged);
     private final IFluidHandler water = new Water();
 
+    /** Вал машины реального масштаба: обороты и исправность сети приходят с клетки-порта. */
+    private double portRpm;
+    private boolean portHealthy = true;
+
     public CoalJigBlockEntity(BlockPos pos, BlockState state) {
         super(FoundryBlockEntities.COAL_JIG.get(), pos, state);
+    }
+
+    // --- машина реального масштаба (coal_jig_real): цельная модель, вал через порт ---
+
+    @Override
+    @Nullable
+    public String wholeModelId() {
+        return dev.denfry.promptcritical.mod.client.whole.WholeModelHost.idOf(getBlockState());
+    }
+
+    @Override
+    public net.minecraft.core.Direction wholeModelFacing() {
+        return getBlockState().getValue(net.minecraft.world.level.block.state.properties.BlockStateProperties.HORIZONTAL_FACING);
+    }
+
+    /** Свет — с клетки перед загрузочным концом: сам контроллер внутри бака. */
+    @Override
+    public BlockPos wholeModelLightPos() {
+        return worldPosition.relative(wholeModelFacing());
+    }
+
+    /** Машина Баума реального масштаба: вал — в клетку-порт ({@link CoalJigRealBlock#PORT}), а не в контроллер. */
+    public boolean real() {
+        return wholeModelId() != null;
+    }
+
+    @Override
+    protected double shaftSpeed() {
+        return real() ? portRpm : super.shaftSpeed();
+    }
+
+    @Override
+    protected boolean shaftHealthy() {
+        return real() ? portHealthy : super.shaftHealthy();
+    }
+
+    @Override
+    public void sampleShaft(double rpm, boolean healthy, long tick) {
+        portRpm = rpm;
+        portHealthy = healthy;
+    }
+
+    @Override
+    public double shaftPowerW() {
+        CoalJig u = unit();
+        return u == null ? 0 : u.powerW();
+    }
+
+    @Override
+    public double ratedShaftW() {
+        return CoalJig.RATED_W;
+    }
+
+    @Override
+    public double nominalShaftRpm() {
+        return CoalJig.NOMINAL_RPM;
     }
 
     @Override
@@ -100,6 +161,14 @@ public final class CoalJigBlockEntity extends KineticMachineBlockEntity<CoalJig>
         MachineFx fx = fx();
         if (fx == null || !runningState()) return;
         var r = fx.random();
+        if (real()) {
+            // постель x −8…12, z 12…60 на уровне воды y 34; сливной порог и жёлоб мытого угля у южного торца
+            if (fx.chance(8)) fx.bubbles(fx.at(-7 + r.nextDouble() * 18, 34.1, 13 + r.nextDouble() * 46), 0.2, 2);
+            if (fx.chance(3)) fx.splash(fx.at(-7 + r.nextDouble() * 18, 34.1, 13 + r.nextDouble() * 46), 0.3, 2);
+            if (fx.chance(4)) fx.leak(fx.at(-6 + r.nextDouble() * 16, 33.5, 62));
+            if (fx.chance(0.5)) fx.sound(fx.at(2, 34, 36), SoundEvents.WATER_AMBIENT, 0.25f, 1.2f);
+            return;
+        }
         if (fx.chance(8)) fx.bubbles(fx.at(3 + r.nextDouble() * 26, 23.1, 9 + r.nextDouble() * 5.5), 0.2, 2);
         if (fx.chance(3)) fx.splash(fx.at(3 + r.nextDouble() * 26, 23.1, 9 + r.nextDouble() * 5.5), 0.3, 2);
         if (fx.chance(4)) fx.leak(fx.at(33.5, 20.4, 9.5 + r.nextDouble() * 5));

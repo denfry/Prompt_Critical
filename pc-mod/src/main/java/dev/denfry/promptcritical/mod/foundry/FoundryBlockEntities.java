@@ -16,7 +16,8 @@ public final class FoundryBlockEntities {
             DeferredRegister.create(Registries.BLOCK_ENTITY_TYPE, PromptCritical.MOD_ID);
 
     public static final DeferredHolder<BlockEntityType<?>, BlockEntityType<CoalJigBlockEntity>> COAL_JIG =
-            type("coal_jig", CoalJigBlockEntity::new, PcBlocks.COAL_JIG);
+            BLOCK_ENTITIES.register("coal_jig", () -> BlockEntityType.Builder.of(CoalJigBlockEntity::new,
+                    PcBlocks.COAL_JIG.get(), PcBlocks.COAL_JIG_REAL.get()).build(null));
     public static final DeferredHolder<BlockEntityType<?>, BlockEntityType<CupolaBlockEntity>> CUPOLA =
             type("cupola_furnace", CupolaBlockEntity::new, PcBlocks.CUPOLA_FURNACE);
     public static final DeferredHolder<BlockEntityType<?>, BlockEntityType<CupolaRealBlockEntity>> CUPOLA_REAL =

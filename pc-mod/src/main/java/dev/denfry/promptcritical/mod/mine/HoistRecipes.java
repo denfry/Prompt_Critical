@@ -89,6 +89,15 @@ public final class HoistRecipes extends RecipeProvider {
                 .pattern("DGD").pattern("III").define('D', AllBlocks.MECHANICAL_DRILL.get()).define('G', AllBlocks.GEARBOX.get())
                 .define('I', Items.IRON_BLOCK)
                 .unlockedBy("has_mechanical_drill", has(AllBlocks.MECHANICAL_DRILL.get())).save(out, id("longwall_shearer"));
+        // чертёж комбайна реального масштаба: строится на стройплощадке по массе прототипа (SitePlans)
+        ShapedRecipeBuilder.shaped(RecipeCategory.MISC, dev.denfry.promptcritical.mod.site.SiteRegistry.LONGWALL_SHEARER_REAL_DRAWING.get())
+                .pattern("PPP").pattern("DGD").pattern("III").define('P', Items.PAPER).define('D', AllBlocks.MECHANICAL_DRILL.get())
+                .define('G', AllBlocks.GEARBOX.get()).define('I', Items.IRON_BLOCK)
+                .unlockedBy("has_mechanical_drill", has(AllBlocks.MECHANICAL_DRILL.get())).save(out, id("longwall_shearer_real_drawing"));
+        // чертёж щитовой секции крепи реального масштаба (SitePlans)
+        ShapedRecipeBuilder.shaped(RecipeCategory.MISC, dev.denfry.promptcritical.mod.site.SiteRegistry.POWERED_ROOF_SUPPORT_REAL_DRAWING.get())
+                .pattern("PPP").pattern("III").pattern("T T").define('P', Items.PAPER).define('I', Items.IRON_INGOT).define('T', Items.PISTON)
+                .unlockedBy("has_piston", has(Items.PISTON)).save(out, id("powered_roof_support_real_drawing"));
         ShapedRecipeBuilder.shaped(RecipeCategory.MISC, PcBlocks.POWERED_ROOF_SUPPORT.get())
                 .pattern("III").pattern("P P").pattern("III").define('I', Items.IRON_INGOT).define('P', Items.PISTON)
                 .unlockedBy("has_piston", has(Items.PISTON)).save(out, id("powered_roof_support"));
