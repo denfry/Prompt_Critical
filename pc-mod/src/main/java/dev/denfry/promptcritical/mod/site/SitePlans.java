@@ -428,7 +428,7 @@ public final class SitePlans {
                     st("hearth_bellows", 80, n(PLATE, 2))),
             // пресс 60 т: С-станина ≈ 5 т, кривошипный вал, маховик и привод ≈ 1 т (каталоги Bliss; оценки)
             "crank_press_real", plan("crank_press_real", PcBlocks.CRANK_PRESS_REAL, 6.0,
-                    st("press_frame", 180, n(INGOT, 46), n(PLATE, 4)),
+                    st("crank_press_frame", 180, n(INGOT, 46), n(PLATE, 4)),
                     st("press_drive", 100, n(INGOT, 8), n(PLATE, 2))),
             // волочильный стан на одну волоку: станина 2 м и барабан 0,6 м (Bernhard; оценки)
             "wire_mill_real", plan("wire_mill_real", PcBlocks.WIRE_MILL_REAL, 0.8,

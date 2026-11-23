@@ -182,7 +182,7 @@ public final class SiteText {
         stage("hearth_chimney", "brick hearth, firepot and chimney", "кирпичный горн, горновая коробка и труба");
         stage("hearth_bellows", "hood and the great bellows in their frame", "колпак и большие мехи в раме");
         drawing("crank_press_real", "Inclinable Crank Press", "открытого кривошипного пресса");
-        stage("press_frame", "C-frame, bed and ram gibs", "С-образная станина, стол и направляющие ползуна");
+        stage("crank_press_frame", "C-frame, bed and ram gibs", "С-образная станина, стол и направляющие ползуна");
         stage("press_drive", "crankshaft, flywheel and belt drive", "кривошипный вал, маховик и ремённый привод");
         drawing("wire_mill_real", "Wire Drawing Block", "волочильного барабана");
         stage("wire_bench", "bench, swift and die box", "верстак, вертушка и волочильная коробка");
@@ -219,6 +219,10 @@ public final class SiteText {
     }
 
     private static void put(String key, String en, String ru) {
-        LANG.put(key, new String[] {en, ru});
+        // a stage key is shared by every plan that names it: two different texts under one key would silently
+        // overwrite each other, so a clash fails at class load (datagen and every test run)
+        String[] was = LANG.put(key, new String[] {en, ru});
+        if (was != null && !(was[0].equals(en) && was[1].equals(ru)))
+            throw new IllegalStateException("Site text key " + key + " defined twice with different texts");
     }
 }
