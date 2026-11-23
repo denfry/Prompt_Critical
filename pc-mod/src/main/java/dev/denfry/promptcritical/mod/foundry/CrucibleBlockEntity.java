@@ -34,7 +34,8 @@ import org.jetbrains.annotations.Nullable;
  * горн; расплав выливается в заформованную форму перед печью (на уровне печи или на блок ниже). Сигнал красного
  * камня держит тигель.
  */
-public final class CrucibleBlockEntity extends DeviceBlockEntity implements FoundryDevice, PanelHost {
+public final class CrucibleBlockEntity extends DeviceBlockEntity implements FoundryDevice, PanelHost,
+        dev.denfry.promptcritical.mod.client.whole.WholeModelHost {
     private static final MachineInventory.Role[] ROLES = {MachineInventory.Role.INPUT, MachineInventory.Role.INPUT};
 
     private final MachineInventory inv = new MachineInventory(ROLES,
@@ -42,6 +43,29 @@ public final class CrucibleBlockEntity extends DeviceBlockEntity implements Foun
 
     public CrucibleBlockEntity(BlockPos pos, BlockState state) {
         super(FoundryBlockEntities.CRUCIBLE.get(), pos, state);
+    }
+
+    /** Двойник один для обеих серий: печь реального масштаба — та же тигельная печь домена литейки. */
+    @Override
+    public String deviceType() {
+        return FoundrySubsystem.CRUCIBLE;
+    }
+
+    /** Коксовая яма реального масштаба (crucible_furnace_real) — цельная модель; старая печь — свой рендер. */
+    @Override
+    @Nullable
+    public String wholeModelId() {
+        return dev.denfry.promptcritical.mod.client.whole.WholeModelHost.idOf(getBlockState());
+    }
+
+    @Override
+    public Direction wholeModelFacing() {
+        return getBlockState().getValue(BlockStateProperties.HORIZONTAL_FACING);
+    }
+
+    @Override
+    public BlockPos wholeModelLightPos() {
+        return worldPosition.above();
     }
 
     @Nullable
@@ -87,6 +111,12 @@ public final class CrucibleBlockEntity extends DeviceBlockEntity implements Foun
     private void clientTick() {
         MachineFx fx = MachineFx.of(level, worldPosition, getBlockState().getValue(BlockStateProperties.HORIZONTAL_FACING));
         if (fx == null || !getBlockState().getValue(BlockStateProperties.LIT)) return;
+        if (wholeModelId() != null) {
+            // дым из устья трубки, мерцание жара в щелях крышки над ямой
+            if (fx.chance(3)) fx.smoke(fx.at(26.5, 15.5, 8), false, 0.1);
+            if (fx.chance(2)) fx.flame(fx.at(12, 0.5, 8), 0.08);
+            return;
+        }
         if (fx.chance(5)) fx.flame(fx.at(8, 13.6, 8), 0.15);
         if (fx.chance(2)) fx.smoke(fx.at(8, 14, 8), false, 0.1);
     }

@@ -30,6 +30,12 @@ public final class FoundryClient {
     private static final PartialModel GAS_CRANKSHAFT = partial("gas_compressor/partial/crankshaft");
     private static final PartialModel CC_ROTOR = partial("centrifugal_compressor/partial/rotor");
 
+    static {
+        // тигельная печь реального масштаба: цельная модель, части — до запекания
+        dev.denfry.promptcritical.mod.client.whole.WholeModels.register("crucible_furnace_real");
+        CrucibleRealRenderer.init();
+    }
+
     private FoundryClient() {
     }
 
@@ -46,7 +52,35 @@ public final class FoundryClient {
         // оси частей — центры их моделей (пиксели, фасад на север)
         event.registerBlockEntityRenderer(FoundryBlockEntities.COAL_JIG.get(), c -> new FoundryMachineRenderer<>(PULSATOR, Motion.SPIN_X, 27, 8, 1));
         event.registerBlockEntityRenderer(FoundryBlockEntities.CUPOLA.get(), c -> new FoundryMachineRenderer<>(null, Motion.STATIC, 0, 0, 1));
-        event.registerBlockEntityRenderer(FoundryBlockEntities.CRUCIBLE.get(), c -> new FoundryMachineRenderer<>(CRUCIBLE, Motion.STATIC, 0, 0, 1));
+        // тигельная печь: старая серия — свой тигель, crucible_furnace_real — цельная модель ямы
+        event.registerBlockEntityRenderer(FoundryBlockEntities.CRUCIBLE.get(), c -> new net.minecraft.client.renderer.blockentity.BlockEntityRenderer<
+                dev.denfry.promptcritical.mod.foundry.CrucibleBlockEntity>() {
+            private final FoundryMachineRenderer<dev.denfry.promptcritical.mod.foundry.CrucibleBlockEntity> old =
+                    new FoundryMachineRenderer<>(CRUCIBLE, Motion.STATIC, 0, 0, 1);
+            private final CrucibleRealRenderer real = new CrucibleRealRenderer();
+
+            @Override
+            public void render(dev.denfry.promptcritical.mod.foundry.CrucibleBlockEntity be, float pt, com.mojang.blaze3d.vertex.PoseStack ms,
+                    net.minecraft.client.renderer.MultiBufferSource buf, int light, int overlay) {
+                if (be.wholeModelId() != null) real.render(be, pt, ms, buf, light, overlay);
+                else old.render(be, pt, ms, buf, light, overlay);
+            }
+
+            @Override
+            public boolean shouldRenderOffScreen(dev.denfry.promptcritical.mod.foundry.CrucibleBlockEntity be) {
+                return be.wholeModelId() != null;
+            }
+
+            @Override
+            public int getViewDistance() {
+                return dev.denfry.promptcritical.mod.client.whole.WholeModelRenderer.VIEW_DISTANCE;
+            }
+
+            @Override
+            public net.minecraft.world.phys.AABB getRenderBoundingBox(dev.denfry.promptcritical.mod.foundry.CrucibleBlockEntity be) {
+                return be.wholeModelId() != null ? real.getRenderBoundingBox(be) : old.getRenderBoundingBox(be);
+            }
+        });
         event.registerBlockEntityRenderer(FoundryBlockEntities.MOLDING_STATION.get(), c -> new FoundryMachineRenderer<>(TABLE, Motion.JOLT, 0, 0, 1));
         event.registerBlockEntityRenderer(FoundryBlockEntities.SHAKEOUT_GRATE.get(), c -> new FoundryMachineRenderer<>(SHAKEOUT_DECK, Motion.JOLT, 0, 0, 1));
         event.registerBlockEntityRenderer(FoundryBlockEntities.MACHINE_LATHE.get(), c -> new FoundryMachineRenderer<>(LATHE_SPINDLE, Motion.SPIN_X, 14, 8, 1));

@@ -56,6 +56,12 @@ public final class SiteText {
         stage("flywheel", "crankshaft, flywheel and governor", "коленвал, маховик и регулятор");
         stage("tower", "shaft tower and back struts", "башня над стволом и подкосы");
         stage("sheave_deck", "sheave deck and sheave", "площадка и шкив");
+        drawing("crucible_furnace_real", "Crucible Melting Hole", "тигельной горновой печи");
+        stage("pit", "pit, firebrick lining and grate", "яма, футеровка и колосники");
+        stage("flue", "flue, stack stub and lid", "боров, трубка и крышка");
+        drawing("lancashire_stoker", "Lancashire Boiler Stokers", "механических забрасывателей ланкаширского котла");
+        stage("stoker_frame", "bed plate, standards and line shaft", "фундаментная плита, стойки и линия вала");
+        stage("stokers", "hoppers, feeding boxes and rams", "бункера, питательные коробки и толкатели");
     }
 
     private SiteText() {}

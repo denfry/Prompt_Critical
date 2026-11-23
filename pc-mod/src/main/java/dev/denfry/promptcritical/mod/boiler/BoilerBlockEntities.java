@@ -23,6 +23,8 @@ public final class BoilerBlockEntities {
                     PcBlocks.STEAM_ENGINE_CYLINDER.get(), PcBlocks.MILL_ENGINE.get()).build(null));
     public static final DeferredHolder<BlockEntityType<?>, BlockEntityType<GrateStokerBlockEntity>> GRATE_STOKER =
             type("grate_stoker", GrateStokerBlockEntity::new, PcBlocks.GRATE_STOKER);
+    public static final DeferredHolder<BlockEntityType<?>, BlockEntityType<LancashireStokerBlockEntity>> LANCASHIRE_STOKER =
+            type("lancashire_stoker", LancashireStokerBlockEntity::new, PcBlocks.LANCASHIRE_STOKER);
     public static final DeferredHolder<BlockEntityType<?>, BlockEntityType<KineticPortBlockEntity>> KINETIC_PORT =
             type("kinetic_port", KineticPortBlockEntity::new, PcBlocks.KINETIC_PORT);
     public static final DeferredHolder<BlockEntityType<?>, BlockEntityType<KineticInputBlockEntity>> KINETIC_INPUT =

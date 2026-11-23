@@ -241,6 +241,11 @@ public final class PcBlocks {
             FireTubeBoilerBlock::create);
     public static final DeferredBlock<PcDeviceBlock> GRATE_STOKER = device("grate_stoker", machine(), Spec.facing(PcProperties.RUNNING),
             KineticMachineBlock.with(ShaftSide.LEFT, GrateStokerBlockEntity::new));
+    /** Механические забрасыватели ланкаширского котла: рама 3×3×2 перед лобовой стенкой (lancashire_stoker-dimensions.md). */
+    public static final Footprint FP_LANCASHIRE_STOKER = Footprint.tiled(-1, 1, 0, 2, -1, 0);
+    public static final DeferredBlock<PcDeviceBlock> LANCASHIRE_STOKER = device("lancashire_stoker", machine(),
+            Spec.facing(PcProperties.RUNNING).segments(PcProperties.wholeSegments(FP_LANCASHIRE_STOKER.segments().size()), FP_LANCASHIRE_STOKER),
+            dev.denfry.promptcritical.mod.boiler.LancashireStokerBlock::create);
     public static final DeferredBlock<ChimneyBlock> CHIMNEY = withItem(BLOCKS.registerBlock("chimney", ChimneyBlock::create, brick()));
     public static final DeferredBlock<PcDeviceBlock> STEAM_ENGINE_CYLINDER = device("steam_engine_cylinder", machine(),
             Spec.facing(PcProperties.RUNNING).segments(PcProperties.ENGINE_SEGMENT, FP_ENGINE), SteamEngineBlock::create);
@@ -903,7 +908,8 @@ public final class PcBlocks {
     public static boolean isWholeModel(net.minecraft.world.level.block.Block b) {
         return b == VVER_REACTOR.get() || b == VVER_STEAM_GENERATOR.get() || b == VVER_COOLANT_PUMP.get() || b == VVER_PRESSURIZER.get()
                 || b == BWR240_REACTOR.get() || b == CANDU6_REACTOR.get() || b == BN600_REACTOR.get() || b == AM1_REACTOR.get()
-                || b == LANCASHIRE_BOILER.get() || b == HEADFRAME_STEEL.get() || b == MILL_ENGINE.get();
+                || b == LANCASHIRE_BOILER.get() || b == HEADFRAME_STEEL.get() || b == MILL_ENGINE.get()
+                || b == LANCASHIRE_STOKER.get() || b == CRUCIBLE_FURNACE_REAL.get();
     }
 
     /**
@@ -922,6 +928,11 @@ public final class PcBlocks {
     public static final DeferredBlock<PcDeviceBlock> CUPOLA_FURNACE = device("cupola_furnace", lit(brick()),
             Spec.of(BlockStateProperties.LIT).footprint(FP_TALL3), KineticMachineBlock.with(ShaftSide.X_AXIS, CupolaBlockEntity::new));
     public static final DeferredBlock<PcDeviceBlock> CRUCIBLE_FURNACE = device("crucible_furnace", lit(brick()), Spec.facing(BlockStateProperties.LIT),
+            FoundryBlock.with(CrucibleBlockEntity::new));
+    /** Тигельная печь реального масштаба: коксовая яма 2×2×2 в полу со стоком и трубкой (crucible_furnace-dimensions.md). */
+    public static final Footprint FP_CRUCIBLE_FURNACE_REAL = Footprint.tiled(0, 1, -1, 0, 0, 1);
+    public static final DeferredBlock<PcDeviceBlock> CRUCIBLE_FURNACE_REAL = device("crucible_furnace_real", lit(brick()),
+            Spec.facing(BlockStateProperties.LIT).segments(PcProperties.wholeSegments(FP_CRUCIBLE_FURNACE_REAL.segments().size()), FP_CRUCIBLE_FURNACE_REAL),
             FoundryBlock.with(CrucibleBlockEntity::new));
     // ручная ступень машиностроения (18 §18.6.1–18.6.4, §18.7): сыродутный горн, кузнечный горн, наковальня
     public static final DeferredBlock<PcDeviceBlock> BLOOMERY = device("bloomery", lit(brick()), Spec.facing(BlockStateProperties.LIT),

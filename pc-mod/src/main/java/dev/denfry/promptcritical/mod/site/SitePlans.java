@@ -126,7 +126,15 @@ public final class SitePlans {
             "mill_engine", plan("mill_engine", PcBlocks.MILL_ENGINE, 21,
                     st("foundation", 120, n(CONCRETE, 8)),
                     st("bed", 300, n(INGOT, 130), n(PLATE, 20), n(PIPE, 20)),
-                    st("flywheel", 240, n(INGOT, 50))));
+                    st("flywheel", 240, n(INGOT, 50))),
+            // пара толкателей с бункерами ≈ 2 × 1 т литья, рама, плита и линия вала ≈ 2 т (оценки)
+            "lancashire_stoker", plan("lancashire_stoker", PcBlocks.LANCASHIRE_STOKER, 4,
+                    st("stoker_frame", 120, n(INGOT, 15), n(PLATE, 5)),
+                    st("stokers", 160, n(INGOT, 18), n(PLATE, 2))),
+            // коксовая яма: кладка ≈ 5 т шамота, металла — колосники, рама крышки и уголки ≈ 0,4 т (оценки)
+            "crucible_furnace_real", plan("crucible_furnace_real", PcBlocks.CRUCIBLE_FURNACE_REAL, 0.4,
+                    st("pit", 100, n(BRICKS, 2), n(INGOT, 2)),
+                    st("flue", 80, n(BRICKS, 1), n(INGOT, 2))));
 
     private SitePlans() {}
 

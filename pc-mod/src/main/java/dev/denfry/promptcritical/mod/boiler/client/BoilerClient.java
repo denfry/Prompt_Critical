@@ -31,7 +31,9 @@ public final class BoilerClient {
         // ланкаширский котёл реального масштаба: цельная модель, части — до запекания
         dev.denfry.promptcritical.mod.client.whole.WholeModels.register("lancashire_boiler");
         dev.denfry.promptcritical.mod.client.whole.WholeModels.register("mill_engine");
+        dev.denfry.promptcritical.mod.client.whole.WholeModels.register("lancashire_stoker");
         MillEngineRenderer.init();
+        LancashireStokerRenderer.init();
     }
 
     private BoilerClient() {
@@ -110,6 +112,7 @@ public final class BoilerClient {
             }
         });
         event.registerBlockEntityRenderer(BoilerBlockEntities.GRATE_STOKER.get(), c -> new GrateStokerRenderer());
+        event.registerBlockEntityRenderer(BoilerBlockEntities.LANCASHIRE_STOKER.get(), c -> new LancashireStokerRenderer());
         event.registerBlockEntityRenderer(BoilerBlockEntities.PRESSURE_GAUGE.get(), c -> new PressureGaugeRenderer());
     }
 

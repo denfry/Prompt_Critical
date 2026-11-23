@@ -20,7 +20,8 @@ public final class FoundryBlockEntities {
     public static final DeferredHolder<BlockEntityType<?>, BlockEntityType<CupolaBlockEntity>> CUPOLA =
             type("cupola_furnace", CupolaBlockEntity::new, PcBlocks.CUPOLA_FURNACE);
     public static final DeferredHolder<BlockEntityType<?>, BlockEntityType<CrucibleBlockEntity>> CRUCIBLE =
-            type("crucible_furnace", CrucibleBlockEntity::new, PcBlocks.CRUCIBLE_FURNACE);
+            BLOCK_ENTITIES.register("crucible_furnace", () -> BlockEntityType.Builder.of(CrucibleBlockEntity::new,
+                    PcBlocks.CRUCIBLE_FURNACE.get(), PcBlocks.CRUCIBLE_FURNACE_REAL.get()).build(null));
     public static final DeferredHolder<BlockEntityType<?>, BlockEntityType<SandMoldBlockEntity>> SAND_MOLD =
             type("sand_mold", SandMoldBlockEntity::new, PcBlocks.SAND_MOLD);
     public static final DeferredHolder<BlockEntityType<?>, BlockEntityType<MoldingStationBlockEntity>> MOLDING_STATION =
