@@ -6,6 +6,7 @@ This procedure sets out how to start and run the main mine fan and the rules for
 
 - The 3×3×3 fan stands in the mouth of a heading: one side open to the outside, the other into the mine.
 - A Create shaft is brought in from behind to the coupling on the fan axis. Rated shaft speed is 64 rpm.
+- The [Guibal fan](item:promptcritical:guibal_fan) is the full-size main fan: a 9 m rotor in a brick casing, built on a construction site from its drawing. Only its eye in the north wall opens to the mine: bring the heading from the shaft to it. The Create shaft enters at the crank end of the axle.
 - Ventilation doors are placed so that air cannot short-cut from the intake to the fan but has to sweep the faces.
 - All doors are closed.
 - Canary cages with birds are in place at the faces.

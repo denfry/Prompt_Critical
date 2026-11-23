@@ -10,6 +10,7 @@ This procedure sets out how to prepare, start and run a mine hoisting installati
 - A Create shaft is connected to the drum coupling. Rated speed is 64 rpm. The network must have spare power to lift the load.
 - The rope is hung: a stack of coils right-clicked onto the hoist. There are enough coils for the shaft depth plus the run over the sheave.
 - The panel opens with an empty hand: landings are listed, protections are reset, the speed limit is set.
+- The [steam winding engine](item:promptcritical:winding_engine) is the same hoist at full size: a pair of horizontal engines on a 4.6 m drum, built on a construction site from its drawing. Its Create shaft enters at the west end of the drum shaft, two blocks up. Rope, headframe, panel and protections work as for the small hoist.
 
 ## Starting a trip
 
