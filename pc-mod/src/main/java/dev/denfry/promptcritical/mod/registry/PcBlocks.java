@@ -276,9 +276,10 @@ public final class PcBlocks {
 
     // --- электросеть I1 (07 §7.3–7.6, этап 8 M3) ---
     private static final Footprint FP_DISCONNECTOR = Footprint.of(Segment.box(-1, 1, 0, 1, 0, 0));
-    /** Пульт диспетчера энергосистемы (07 §7.6.6), CC-периферия {@code pc_grid}. */
+    /** Пульт диспетчера энергосистемы (07 §7.6.6), CC-периферия {@code pc_grid}: стол и экраны 3 × 2 × 1, контроллер внизу в середине. */
+    private static final Footprint FP_DISPATCH_CENTER = Footprint.of(Segment.box(-1, 1, 0, 1, 0, 0));
     public static final DeferredBlock<PcDeviceBlock> GRID_DISPATCH_CENTER = device("grid_dispatch_center", instrument(),
-            Spec.facing(PcProperties.ALARM), FoundryBlock.with(dev.denfry.promptcritical.mod.grid.GridDispatchCenterBlockEntity::new));
+            Spec.facing(PcProperties.ALARM).footprint(FP_DISPATCH_CENTER), FoundryBlock.with(dev.denfry.promptcritical.mod.grid.GridDispatchCenterBlockEntity::new));
     public static final DeferredBlock<PcDeviceBlock> SHAFT_GENERATOR = device("shaft_generator", machine(),
             Spec.facing(PcProperties.RUNNING), KineticMachineBlock.with(ShaftSide.BACK, ShaftGeneratorBlockEntity::new));
     /** Возбудитель 1 × 2 × 1: контроллер на оси генератора (1,5 м), литой постамент — клетка под ним. */
@@ -348,13 +349,14 @@ public final class PcBlocks {
     public static final DeferredBlock<DecorBlock> SOLAR_PANEL_TRACKER = decor("solar_panel_tracker", sheet(MapColor.COLOR_BLUE), Spec.of(), 0, 0, 0, 16, 8, 16);
     public static final DeferredBlock<PcDeviceBlock> SOLAR_TRACKER_DRIVE = device("solar_tracker_drive", machine(), Spec.facing(PcProperties.RUNNING),
             KineticMachineBlock.with(ShaftSide.BACK, dev.denfry.promptcritical.mod.grid.SolarTrackerDriveBlockEntity::new));
-    public static final DeferredBlock<DecorBlock> GRID_BATTERY_RACK = decor("grid_battery_rack", sheet(MapColor.COLOR_GRAY), Spec.facing(), 1, 0, 1, 15, 16, 15);
+    public static final DeferredBlock<DecorBlock> GRID_BATTERY_RACK = decor("grid_battery_rack", sheet(MapColor.COLOR_GRAY),
+            Spec.facing().footprint(FP_TALL2), 1, 0, 1, 15, 16, 15);   // стеллаж 1 × 2 × 1 по модели, верх — часть
     public static final DeferredBlock<PcDeviceBlock> SOLAR_INVERTER = device("solar_inverter", machine(),
             Spec.facing(BlockStateProperties.LIT), FoundryBlock.with(dev.denfry.promptcritical.mod.grid.SolarInverterBlockEntity::new));
     public static final DeferredBlock<PcDeviceBlock> BATTERY_INVERTER = device("battery_inverter", machine(),
             Spec.facing(BlockStateProperties.LIT), FoundryBlock.with(dev.denfry.promptcritical.mod.grid.BatteryInverterBlockEntity::new));
     public static final DeferredBlock<PcDeviceBlock> UPS_CABINET = device("ups_cabinet", machine(),
-            Spec.facing(BlockStateProperties.LIT, PcProperties.ALARM), FoundryBlock.with(dev.denfry.promptcritical.mod.grid.PowerBoardBlockEntity::ups));
+            Spec.facing(BlockStateProperties.LIT, PcProperties.ALARM).footprint(FP_TALL2), FoundryBlock.with(dev.denfry.promptcritical.mod.grid.PowerBoardBlockEntity::ups));
 
     // --- руды и пласты (08 §8.1) ---
     public static final DeferredBlock<PcBlock> MAGNETITE_ORE = ore("magnetite_ore", "raw_magnetite");

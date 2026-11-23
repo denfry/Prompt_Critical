@@ -143,7 +143,8 @@ public final class InverterGameTests {
         h.setBlock(inv.north(), facing(PcBlocks.GRID_BATTERY_RACK.get().defaultBlockState(), Direction.NORTH));
         BatteryRoom room = new BatteryRoom(1, 0);
         BatteryInverterBlockEntity.measureRoom(h.getLevel(), h.absolutePos(inv), room);
-        h.assertTrue(room.volumeM3() == 73, "sealed room volume: " + room.volumeM3());
+        // 5 × 3 × 5 = 75 м³ без инвертора и стеллажа 1 × 2 × 1
+        h.assertTrue(room.volumeM3() == 72, "sealed room volume: " + room.volumeM3());
         h.assertTrue(room.airChangesPerHour() == BatteryRoom.ACH_SEALED, "sealed room air changes: " + room.airChangesPerHour());
         h.setBlock(new BlockPos(4, 5, 4), Blocks.AIR.defaultBlockState()); // проём в крыше
         BatteryInverterBlockEntity.measureRoom(h.getLevel(), h.absolutePos(inv), room);
