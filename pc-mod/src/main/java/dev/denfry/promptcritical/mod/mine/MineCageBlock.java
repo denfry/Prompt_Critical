@@ -49,6 +49,13 @@ public final class MineCageBlock extends PcBlock {
         if (player.getMainHandItem().is(dev.denfry.promptcritical.mod.registry.PcItems.ENGINEERING_HANDBOOK.get())
                 || player.getOffhandItem().is(dev.denfry.promptcritical.mod.registry.PcItems.ENGINEERING_HANDBOOK.get())) return InteractionResult.PASS;
         if (level.isClientSide) return InteractionResult.SUCCESS;
+        // Shift + ПКМ — пульт подъёма из клети: выбрать горизонт, не выходя к машине
+        if (player.isShiftKeyDown() && player instanceof net.minecraft.server.level.ServerPlayer sp) {
+            MineHoistBlockEntity hoist = MineHoistBlockEntity.serving(level, pos);
+            if (hoist == null) player.displayClientMessage(HoistText.msg("hoist.no_hoist"), true);
+            else hoist.openPanel(sp);
+            return InteractionResult.CONSUME;
+        }
         BlockState next = state.cycle(BlockStateProperties.OPEN);
         level.setBlock(pos, next, Block.UPDATE_ALL);
         level.playSound(null, pos, open(next) ? SoundEvents.IRON_DOOR_OPEN : SoundEvents.IRON_DOOR_CLOSE, SoundSource.BLOCKS, 1, 1);

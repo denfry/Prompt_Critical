@@ -64,6 +64,9 @@ public final class HoistText {
                 "Запас прочности каната ниже нормы: записано UNSAFE_OPERATION");
         msg("hoist.blocked", "The hoist cannot start: %s", "Подъём не пускается: %s");
         msg("hoist.here", "The cage is already at this landing", "Клеть уже на этой посадке");
+        msg("hoist.depth", "Depth %s m · %s m/s · to landing %s", "Глубина %s м · %s м/с · на посадку %s");
+        msg("hoist.no_hoist", "This cage hangs on no hoist: build a headframe and a winding engine over the shaft",
+                "Клеть не подвешена: над стволом нужны копёр и подъёмная машина");
         msg("hoist.rope_need", "The rope needs %s m: %s coils", "Канату нужно %s м: %s бухт");
         msg("hoist.rope_busy", "Stop the cage before changing the rope", "Остановите клеть перед заменой каната");
         msg("hoist.rope_installed", "Rope hung: ⌀%s mm, %s m", "Канат навешен: ⌀%s мм, %s м");

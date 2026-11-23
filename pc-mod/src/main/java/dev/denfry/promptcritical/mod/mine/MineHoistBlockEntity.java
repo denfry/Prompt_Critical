@@ -36,6 +36,8 @@ import net.minecraft.network.protocol.game.ClientGamePacketListener;
 import net.minecraft.network.protocol.game.ClientboundBlockEntityDataPacket;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.server.level.ServerPlayer;
+import net.minecraft.sounds.SoundEvents;
+import net.minecraft.sounds.SoundSource;
 import net.minecraft.world.ItemInteractionResult;
 import net.minecraft.world.entity.Entity;
 import net.minecraft.world.entity.LivingEntity;
@@ -73,6 +75,12 @@ public final class MineHoistBlockEntity extends DeviceBlockEntity implements Sha
     @Nullable private HoistGeometry.Headframe headframe;
     @Nullable private HoistGeometry.Shaft shaft;
     @Nullable private ControlledContraptionEntity cage;
+    /** Сигнал колоколом: ударов осталось, тик следующего, где звонить (у клети). */
+    private int bells;
+    private long nextBell;
+    @Nullable private BlockPos bellAt;
+    /** Пауза между ударами сигнала, тиков; строка глубины едущим — раз в столько тиков. */
+    private static final int BELL_GAP_TICKS = 8, DEPTH_LINE_TICKS = 10;
     private HoistText.Problem problem = HoistText.Problem.NO_HEADFRAME;
     private boolean chunkUnloading, dirtySync, seized;
     /** Глубина начала рейса; NaN — клеть стоит. */
@@ -127,8 +135,18 @@ public final class MineHoistBlockEntity extends DeviceBlockEntity implements Sha
         if (cage != null && !cage.isAlive()) cage = null;
         if (cage != null && shaft != null) {
             placeCage(depth);
+            if (now % DEPTH_LINE_TICKS == 0) depthLine(u);
             int at = u.landingAtCage();
-            if (u.target() < 0 && at >= 0 && v == 0) disassemble(shaft.landings()[at]);
+            if (u.target() < 0 && at >= 0 && v == 0) {
+                disassemble(shaft.landings()[at]);
+                signal(1, shaft.cageAt(shaft.landings()[at]));
+            }
+        }
+        if (bells > 0 && now >= nextBell) {
+            bells--;
+            nextBell = now + BELL_GAP_TICKS;
+            if (bellAt != null) level.playSound(null, bellAt, SoundEvents.BELL_BLOCK, SoundSource.BLOCKS, 1.2f, 1.4f);
+            level.playSound(null, worldPosition, SoundEvents.BELL_BLOCK, SoundSource.BLOCKS, 0.8f, 1.4f);
         }
         BlockState s = getBlockState();
         boolean running = v != 0;
@@ -380,12 +398,51 @@ public final class MineHoistBlockEntity extends DeviceBlockEntity implements Sha
             return CallResult.FORBIDDEN;
         }
         if (v == Hoist.Verdict.UNSAFE_OPERATION) tell(player, HoistText.msg("hoist.unsafe"), false);
+        int from = u.landingAtCage();
         if (cagePos != null && !assemble(cagePos)) {
             u.stop();
             return CallResult.NO_CAGE;
         }
+        // рудничная сигнализация: 2 удара — подъём, 3 — спуск, 1 — стоп (по прибытии)
+        signal(from >= 0 && landing < from ? 2 : 3, cagePos != null ? cagePos : shaft.cageAt((int) Math.round(u.positionM())));
         return CallResult.STARTED;
     }
+
+    private void signal(int strokes, BlockPos at) {
+        bells = strokes;
+        bellAt = at.immutable();
+        nextBell = level == null ? 0 : level.getGameTime();
+    }
+
+    /** Едущим в клети — глубина, скорость и посадка назначения в строке действия. */
+    private void depthLine(HoistUnit u) {
+        int target = u.target();
+        net.minecraft.network.chat.Component line = HoistText.msg("hoist.depth", HoistText.num(u.positionM()),
+                HoistText.num(Math.abs(u.speedMs())), target < 0 ? "—" : Integer.toString(target));
+        for (Player p : level.getEntitiesOfClass(Player.class, cage.getBoundingBox().inflate(0.5))) p.displayClientMessage(line, true);
+    }
+
+    /** Ударов сигнала ещё впереди (для проверок). */
+    public int bellsPending() {
+        return bells;
+    }
+
+    /** Подъёмная машина, на канате которой висит клеть с якорем {@code cagePos}; null — такой рядом нет. */
+    @Nullable
+    public static MineHoistBlockEntity serving(net.minecraft.world.level.Level level, BlockPos cagePos) {
+        int cx = cagePos.getX() >> 4, cz = cagePos.getZ() >> 4;
+        for (int dx = -SERVE_CHUNKS; dx <= SERVE_CHUNKS; dx++)
+            for (int dz = -SERVE_CHUNKS; dz <= SERVE_CHUNKS; dz++) {
+                if (!level.hasChunk(cx + dx, cz + dz)) continue;
+                for (var be : level.getChunk(cx + dx, cz + dz).getBlockEntities().values())
+                    if (be instanceof MineHoistBlockEntity h && h.shaft != null && h.shaft.cageX() == cagePos.getX()
+                            && h.shaft.cageZ() == cagePos.getZ() && cagePos.getY() <= h.shaft.topY()) return h;
+            }
+        return null;
+    }
+
+    /** Радиус поиска машины от клети, чанков: канат от барабана к копру не длиннее нескольких десятков метров. */
+    private static final int SERVE_CHUNKS = 2;
 
     private static void tell(@Nullable Player player, net.minecraft.network.chat.Component msg, boolean bar) {
         if (player != null) player.displayClientMessage(msg, bar);
@@ -495,8 +552,13 @@ public final class MineHoistBlockEntity extends DeviceBlockEntity implements Sha
         }
     };
 
-    boolean stillValid(Player player) {
-        return !isRemoved() && player.distanceToSqr(worldPosition.getCenter()) <= 64;
+    /** Пульт открыт у машины или из клети: пока игрок рядом с машиной или в клети (стоящей или едущей). */
+    public boolean stillValid(Player player) {
+        if (isRemoved()) return false;
+        if (player.distanceToSqr(worldPosition.getCenter()) <= 64) return true;
+        if (cage != null) return cage.getBoundingBox().inflate(1).contains(player.position());
+        HoistUnit u = unit();
+        return shaft != null && u != null && player.distanceToSqr(shaft.cageAt((int) Math.round(u.positionM())).getCenter()) <= 9;
     }
 
     // --- ShaftConsumer ---------------------------------------------------------------------------------------

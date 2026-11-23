@@ -27,6 +27,7 @@ import net.minecraft.world.level.block.Blocks;
 import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.level.block.state.properties.BlockStateProperties;
 import net.minecraft.world.phys.AABB;
+import net.minecraft.world.phys.Vec3;
 import net.neoforged.neoforge.gametest.GameTestHolder;
 import net.neoforged.neoforge.gametest.PrefixGameTestTemplate;
 
@@ -103,7 +104,15 @@ public final class HoistGameTests {
                 .thenExecute(() -> {
                     MineHoistBlockEntity be = h.getBlockEntity(hoist);
                     be.installRope(player, new ItemStack(PcItems.WIRE_ROPE.get(), 16));
+                    // пульт из клети: клеть находит свою машину, игрок у клети держит пульт открытым, вдали — нет
+                    h.assertTrue(MineHoistBlockEntity.serving(h.getLevel(), h.absolutePos(cage)) == be, "the cage finds its hoist");
+                    Vec3 inCage = Vec3.atBottomCenterOf(h.absolutePos(cage));
+                    player.setPos(inCage.x, inCage.y, inCage.z);
+                    h.assertTrue(be.stillValid(player), "the panel stays open from inside the cage");
+                    player.setPos(inCage.x + 40, inCage.y, inCage.z);
+                    h.assertFalse(be.stillValid(player), "the panel closes far from the hoist and the cage");
                     be.onButton(player, 1);
+                    h.assertValueEqual(be.bellsPending(), 3, "three strokes of the bell signal a descent");
                 })
                 .thenWaitUntil(() -> {
                     h.assertBlockNotPresent(PcBlocks.MINE_CAGE.get(), cage);
