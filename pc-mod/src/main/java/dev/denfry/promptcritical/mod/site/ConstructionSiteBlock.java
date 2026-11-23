@@ -76,7 +76,10 @@ public class ConstructionSiteBlock extends BaseEntityBlock {
         if (stack.getItem() instanceof DesignDrawingItem d) {
             MutableComponent why = site.accept(d.planId());
             player.displayClientMessage(why == null ? Component.translatable(SiteText.ACCEPTED) : why, false);
-            if (why == null) stack.consume(1, player);
+            if (why == null) {
+                stack.consume(1, player);
+                site.setOwner(player);
+            }
             return ItemInteractionResult.SUCCESS;
         }
         if (site.plan() == null) return ItemInteractionResult.PASS_TO_DEFAULT_BLOCK_INTERACTION;

@@ -34,6 +34,9 @@ public class ConstructionSiteBlockEntity extends BlockEntity {
     public static final int SLOTS = 1;
 
     private String planId = "";
+    /** Игрок, приложивший чертёж: ему засчитывается постройка ({@link #complete}). */
+    @Nullable
+    private java.util.UUID owner;
     private int stage;
     private int erectLeft;
     /**
@@ -241,6 +244,28 @@ public class ConstructionSiteBlockEntity extends BlockEntity {
         BlockState target = unit.defaultBlockState();
         if (target.hasProperty(BlockStateProperties.HORIZONTAL_FACING)) target = target.setValue(BlockStateProperties.HORIZONTAL_FACING, facing());
         level.setBlock(worldPosition, target, Block.UPDATE_ALL);
+        credit(p, unit);
+    }
+
+    /**
+     * Постройка засчитывается игроку, приложившему чертёж, как постановка машины и её двойника старой серии (статистика
+     * «использован предмет»): по ней идут задания маршрута и главы справочника; плюс инструкция по эксплуатации.
+     */
+    private void credit(SitePlans.Plan p, Block unit) {
+        if (owner == null || !(level instanceof net.minecraft.server.level.ServerLevel sl)
+                || !(sl.getPlayerByUUID(owner) instanceof net.minecraft.server.level.ServerPlayer player)) return;
+        player.awardStat(net.minecraft.stats.Stats.ITEM_USED.get(unit.asItem()));
+        dev.denfry.promptcritical.mod.content.HandbookService.issueProcedure(player, unit);
+        SitePlans.Twin twin = SitePlans.twin(p.id());
+        if (twin == null) return;
+        player.awardStat(net.minecraft.stats.Stats.ITEM_USED.get(twin.block().get().asItem()), twin.count());
+        dev.denfry.promptcritical.mod.content.HandbookService.issueProcedure(player, twin.block().get());
+    }
+
+    /** Запомнить игрока, приложившего чертёж. */
+    public void setOwner(net.minecraft.world.entity.player.Player player) {
+        owner = player.getUUID();
+        setChanged();
     }
 
     private void sync() {
@@ -252,6 +277,7 @@ public class ConstructionSiteBlockEntity extends BlockEntity {
     protected void saveAdditional(CompoundTag tag, HolderLookup.Provider registries) {
         super.saveAdditional(tag, registries);
         tag.putString("plan", planId);
+        if (owner != null) tag.putUUID("owner", owner);
         tag.putInt("stage", stage);
         tag.putInt("erect", erectLeft);
         CompoundTag d = new CompoundTag();
@@ -263,6 +289,7 @@ public class ConstructionSiteBlockEntity extends BlockEntity {
     protected void loadAdditional(CompoundTag tag, HolderLookup.Provider registries) {
         super.loadAdditional(tag, registries);
         planId = tag.getString("plan");
+        owner = tag.hasUUID("owner") ? tag.getUUID("owner") : null;
         stage = tag.getInt("stage");
         erectLeft = tag.getInt("erect");
         delivered.clear();

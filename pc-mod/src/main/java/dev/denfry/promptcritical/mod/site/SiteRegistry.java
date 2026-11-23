@@ -92,9 +92,19 @@ public final class SiteRegistry {
 
     /** Предметы для вкладки творческого режима. */
     public static List<DeferredItem<? extends Item>> items() {
-        return List.of(SITE_ITEM, VVER_REACTOR_DRAWING, VVER_STEAM_GENERATOR_DRAWING, VVER_COOLANT_PUMP_DRAWING, VVER_PRESSURIZER_DRAWING,
-                BWR240_REACTOR_DRAWING, CANDU6_REACTOR_DRAWING, BN600_REACTOR_DRAWING,
-                AM1_REACTOR_DRAWING);
+        List<DeferredItem<? extends Item>> out = new java.util.ArrayList<>();
+        out.add(SITE_ITEM);
+        out.addAll(drawings());
+        return out;
+    }
+
+    /** Все чертежи машин реального масштаба, в порядке регистрации. */
+    @SuppressWarnings("unchecked")
+    public static List<DeferredItem<? extends Item>> drawings() {
+        List<DeferredItem<? extends Item>> out = new java.util.ArrayList<>();
+        for (var e : ITEMS.getEntries())
+            if (e.getId().getPath().endsWith("_drawing")) out.add((DeferredItem<? extends Item>) e);
+        return out;
     }
 
     public static void register(IEventBus modBus) {
