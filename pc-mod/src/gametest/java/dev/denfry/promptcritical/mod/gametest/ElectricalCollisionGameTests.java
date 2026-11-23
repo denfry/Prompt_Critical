@@ -1,13 +1,17 @@
 package dev.denfry.promptcritical.mod.gametest;
 
 import dev.denfry.promptcritical.mod.PromptCritical;
+import dev.denfry.promptcritical.mod.block.PcBlock;
 import dev.denfry.promptcritical.mod.grid.GridDevice;
 import dev.denfry.promptcritical.mod.grid.PowerBoardBlockEntity;
+import dev.denfry.promptcritical.mod.multiblock.Footprint;
 import dev.denfry.promptcritical.mod.multiblock.MultiblockPartBlock;
+import dev.denfry.promptcritical.mod.multiblock.WholeShapes;
 import dev.denfry.promptcritical.mod.registry.PcBlocks;
 import java.util.List;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
+import net.minecraft.core.registries.BuiltInRegistries;
 import net.minecraft.gametest.framework.GameTest;
 import net.minecraft.gametest.framework.GameTestHelper;
 import net.minecraft.world.level.block.Block;
@@ -97,6 +101,36 @@ public final class ElectricalCollisionGameTests {
         h.destroyBlock(low);
         h.assertBlockPresent(PcBlocks.GRID_BATTERY_RACK.get(), low.above());
         h.assertTrue(h.getBlockState(low.above(2)).getBlock() instanceof MultiblockPartBlock, "the upper rack keeps its top");
+        h.succeed();
+    }
+
+    /**
+     * Цельные электрические модели I1/I2 вместе с частями, которые рисует отрисовщик ({@code WholeShapes} EXTRAS):
+     * каждая нарисованная клетка объёма твёрдая, вне объёма ничего не нарисовано. Сквозь стойки электродов на крыше
+     * дуговой печи не пройти (аудит коллизий 2026-11-23).
+     */
+    @GameTest(template = "gametest/empty_12x12x12", timeoutTicks = 40)
+    public static void everyDrawnCellOfElectricalWholeModelsBlocksThePlayer(GameTestHelper h) {
+        h.assertTrue(WholeShapes.occupied("electric_arc_furnace_real").contains(new BlockPos(0, 4, 0)), "the electrode masts count as drawn");
+        BlockPos p = new BlockPos(5, 2, 5);
+        var level = h.getLevel();
+        StringBuilder bad = new StringBuilder();
+        for (String id : new String[] {"shaft_generator_real", "electric_motor_mv_real", "electrode_boiler_real", "electric_arc_furnace_real"}) {
+            Block b = BuiltInRegistries.BLOCK.get(PromptCritical.id(id));
+            h.assertTrue(b instanceof PcBlock, id + " is a machine block");
+            place(h, p, b);
+            BlockPos abs = h.absolutePos(p);
+            java.util.Set<BlockPos> drawn = new java.util.HashSet<>(WholeShapes.occupied(id));
+            h.assertTrue(!drawn.isEmpty(), id + " has cell shape data");
+            for (Footprint.Cell c : ((PcBlock) b).spec().footprint().cells(abs, Direction.NORTH)) {
+                BlockPos d = c.pos().subtract(abs);   // фасад на север: клетка мира = клетка модели
+                if (!drawn.remove(d)) continue;
+                if (level.getBlockState(c.pos()).getCollisionShape(level, c.pos()).isEmpty()) bad.append(' ').append(id).append(d.toShortString());
+            }
+            for (BlockPos d : drawn) bad.append(' ').append(id).append(d.toShortString()).append("(outside the volume)");
+            h.setBlock(p, Blocks.AIR);
+        }
+        h.assertTrue(bad.isEmpty(), "drawn cells the player walks through:" + bad);
         h.succeed();
     }
 }
