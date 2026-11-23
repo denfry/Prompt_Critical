@@ -20,6 +20,8 @@ import org.jetbrains.annotations.Nullable;
  * колошника домны ({@link BlastFurnaceUnit}); колоши набираются по рудной нагрузке со щита.
  */
 public final class BlastFurnaceTopBlockEntity extends IronworksBlockEntity {
+    /** Скиповая лебёдка; при недостатке за подъём скипа уходит меньше шихты, Вт (розетка или силовой щит рядом). */
+    public static final double WINCH_W = 160e3;
     private static final int SKIP_PERIOD = 10, SKIP_ITEMS = 8;
 
     public BlastFurnaceTopBlockEntity(BlockPos pos, BlockState state) {
@@ -33,7 +35,9 @@ public final class BlastFurnaceTopBlockEntity extends IronworksBlockEntity {
 
     @Override
     protected void serverTick(SimLevelBinding b) {
+        double power = dev.denfry.promptcritical.mod.grid.MachinePower.supply(level, worldPosition, WINCH_W);
         if (level.getGameTime() % SKIP_PERIOD != 0) return;
+        int limit = (int) Math.floor(SKIP_ITEMS * power);
         List<IItemHandlerModifiable> skips = Ironworks.contraptionStores(level,
                 new AABB(worldPosition).inflate(1, 0, 1).expandTowards(0, 3, 0));
         if (skips.isEmpty()) return;
@@ -42,8 +46,8 @@ public final class BlastFurnaceTopBlockEntity extends IronworksBlockEntity {
         if (u == null) return;
         int moved = 0;
         for (IItemHandlerModifiable st : skips)
-            for (int slot = 0; slot < st.getSlots() && moved < SKIP_ITEMS; slot++)
-                while (moved < SKIP_ITEMS && !st.getStackInSlot(slot).isEmpty() && c.charge(u, st.getStackInSlot(slot))) {
+            for (int slot = 0; slot < st.getSlots() && moved < limit; slot++)
+                while (moved < limit && !st.getStackInSlot(slot).isEmpty() && c.charge(u, st.getStackInSlot(slot))) {
                     st.extractItem(slot, 1, false);
                     moved++;
                 }

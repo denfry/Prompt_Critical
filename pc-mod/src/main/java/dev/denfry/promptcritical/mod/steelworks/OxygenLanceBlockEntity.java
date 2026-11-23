@@ -22,6 +22,8 @@ import org.jetbrains.annotations.Nullable;
  * со скоростью лебёдки {@value #TRAVEL_M_S} м/с. Клиент рисует ход фурмы.
  */
 public final class OxygenLanceBlockEntity extends IronworksBlockEntity {
+    /** Лебёдка каретки фурмы, Вт (розетка или силовой щит рядом). */
+    public static final double WINCH_W = 11e3;
     public static final double TRAVEL_M_S = 0.5;
     private final GasBuffer oxygen = new GasBuffer(8_000, s -> s.getFluid().isSame(PcFluids.OXYGEN.source.get()), this::setChanged);
     private double heightM = ConverterUnit.MAX_LANCE_M, setM = ConverterUnit.MAX_LANCE_M;
@@ -55,7 +57,7 @@ public final class OxygenLanceBlockEntity extends IronworksBlockEntity {
 
     @Override
     protected void serverTick(SimLevelBinding b) {
-        double step = TRAVEL_M_S * 0.05;
+        double step = TRAVEL_M_S * 0.05 * dev.denfry.promptcritical.mod.grid.MachinePower.supply(level, worldPosition, Math.abs(setM - heightM) > 1e-6 ? WINCH_W : 0);
         double before = heightM;
         heightM += Math.max(-step, Math.min(step, setM - heightM));
         if (Math.abs(heightM - clientHeight) > 0.05 || before != heightM && heightM == setM) {

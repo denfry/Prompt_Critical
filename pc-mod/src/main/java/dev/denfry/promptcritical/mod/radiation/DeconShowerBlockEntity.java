@@ -35,6 +35,8 @@ import org.jetbrains.annotations.Nullable;
  * грани или сверху; смыв — жидкие радиоактивные отходы — снизу (спецканализация санпропускника). Без воды не моет.
  */
 public final class DeconShowerBlockEntity extends DeviceBlockEntity implements FoundryDevice {
+    /** Насос и проточный водонагреватель душа; без питания душ сухой, Вт (розетка или силовой щит рядом). */
+    public static final double POWER_W = 9e3;
     public static final int WATER_MB = 4000, WASTE_MB = 8000;
     public static final double FULL_WASH_S = 60, FLOW_L_S = 0.2;
 
@@ -88,9 +90,11 @@ public final class DeconShowerBlockEntity extends DeviceBlockEntity implements F
         syncWaste();
         if (s.getGameTime() % 20 != 0) return;
         boolean any = false;
-        for (ServerPlayer p : s.getEntitiesOfClass(ServerPlayer.class, new AABB(worldPosition).inflate(1, 1, 1))) {
+        java.util.List<ServerPlayer> inside = s.getEntitiesOfClass(ServerPlayer.class, new AABB(worldPosition).inflate(1, 1, 1));
+        boolean powered = dev.denfry.promptcritical.mod.grid.MachinePower.powered(s, worldPosition, inside.isEmpty() ? 0 : POWER_W);
+        for (ServerPlayer p : inside) {
             if (p.isSpectator()) continue;
-            if (wash(p, 1)) any = true;
+            if (powered && wash(p, 1)) any = true;
             else p.displayClientMessage(ContaminationText.msg("shower.dry").withStyle(ChatFormatting.GOLD), true);
         }
         if (any) {

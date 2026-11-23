@@ -27,6 +27,9 @@ import org.jetbrains.annotations.Nullable;
  * [допущение: время анализа и расход гелия не моделируются].
  */
 public final class CoreAnalysisStationBlockEntity extends DeviceBlockEntity implements FoundryDevice {
+    /** Приборы кернохранилища: пермеаметр, сушильный шкаф, Вт (розетка или силовой щит рядом). */
+    public static final double LAB_W = 3e3;
+    private final dev.denfry.promptcritical.mod.grid.MachinePower.Drive drive = new dev.denfry.promptcritical.mod.grid.MachinePower.Drive();
     private int busyTicks, done;
 
     public CoreAnalysisStationBlockEntity(BlockPos pos, BlockState state) {
@@ -70,7 +73,7 @@ public final class CoreAnalysisStationBlockEntity extends DeviceBlockEntity impl
     @Override
     public void tickDevice() {
         if (level == null || level.isClientSide) return;
-        if (busyTicks > 0) busyTicks--;
+        if (busyTicks > 0 && drive.advance(level, worldPosition, LAB_W)) busyTicks--;
         if (level.getGameTime() % 10 == 0) {
             BlockState st = getBlockState();
             boolean busy = busyTicks > 0;

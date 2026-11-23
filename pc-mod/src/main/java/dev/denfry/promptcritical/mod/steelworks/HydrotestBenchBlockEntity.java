@@ -39,6 +39,8 @@ import org.jetbrains.annotations.Nullable;
  */
 public final class HydrotestBenchBlockEntity extends IronworksBlockEntity implements PanelHost {
     public static final int TEST_TICKS = 60, WATER_MB = 20, BURST_TICKS = 40;
+    /** Опрессовочный насос высокого давления, Вт (питание — розетка или силовой щит рядом). */
+    public static final double PUMP_W = 15e3;
     public static final double MAX_PIPE_K = 373.15;
     private static final MachineInventory.Role[] ROLES = {MachineInventory.Role.INPUT, MachineInventory.Role.OUTPUT,
             MachineInventory.Role.OUTPUT, MachineInventory.Role.OUTPUT, MachineInventory.Role.OUTPUT};
@@ -49,6 +51,7 @@ public final class HydrotestBenchBlockEntity extends IronworksBlockEntity implem
     private int ticks, burstTicks, tested, burst;
     private double scrapKg, lastTestPa;
     private boolean lastBurst;
+    private final dev.denfry.promptcritical.mod.grid.MachinePower.Drive drive = new dev.denfry.promptcritical.mod.grid.MachinePower.Drive();
 
     public HydrotestBenchBlockEntity(BlockPos pos, BlockState state) {
         super(SteelworksBlockEntities.HYDROTEST_BENCH.get(), pos, state);
@@ -69,7 +72,7 @@ public final class HydrotestBenchBlockEntity extends IronworksBlockEntity implem
             ticks = 0;
             setChanged();
         }
-        if (!pipe.isEmpty() && ++ticks >= TEST_TICKS) finish();
+        if (!pipe.isEmpty() && drive.advance(level, worldPosition, PUMP_W) && ++ticks >= TEST_TICKS) finish();
         if (burstTicks > 0 && --burstTicks == 0) setStateFlag(PcProperties.BURST, false);
         setStateFlag(PcProperties.RUNNING, !pipe.isEmpty());
     }

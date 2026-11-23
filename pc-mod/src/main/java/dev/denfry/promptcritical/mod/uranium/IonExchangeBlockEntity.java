@@ -81,6 +81,12 @@ public final class IonExchangeBlockEntity extends UraniumProcessBlockEntity {
         eluate.add(e / UraniumUnits.ELUATE_KG_U_L);
     }
 
+    /** Насосы раствора и элюата, Вт. */
+    @Override
+    protected double ratedPowerW() {
+        return 15e3;
+    }
+
     @Override
     protected boolean running() {
         return on && column.resinL() > 0 && (pls.amount() > 0 || column.loadedKg() > 0);

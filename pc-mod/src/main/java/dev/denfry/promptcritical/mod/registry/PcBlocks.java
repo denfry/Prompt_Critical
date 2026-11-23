@@ -312,6 +312,15 @@ public final class PcBlocks {
             Spec.facing(BlockStateProperties.LIT), GridMountedBlock.wall(LightingBoardBlockEntity::new, 3, 1, 12.5, 13, 15, 16));
     public static final DeferredBlock<PcDeviceBlock> LV_DISTRIBUTION_BOX = device("lv_distribution_box", machine(),
             Spec.facing(PcProperties.ALARM), GridMountedBlock.wall(DistributionBoxBlockEntity::new, 2, 0.5, 10.4, 14, 14, 16));
+    /** Питание машин от сети 0,4 кВ: розетки 16 и 32 А, силовой щит и ИБП (MachinePower). */
+    public static final DeferredBlock<PcDeviceBlock> POWER_SOCKET = device("power_socket", instrument(),
+            Spec.facing(BlockStateProperties.LIT), GridMountedBlock.wall(dev.denfry.promptcritical.mod.grid.PowerBoardBlockEntity::socket, 4, 2, 14, 12, 13, 16));
+    public static final DeferredBlock<PcDeviceBlock> POWER_SOCKET_3P = device("power_socket_3p", instrument(),
+            Spec.facing(BlockStateProperties.LIT), GridMountedBlock.wall(dev.denfry.promptcritical.mod.grid.PowerBoardBlockEntity::socket3p, 3, 2, 12.2, 13, 14, 16));
+    public static final DeferredBlock<PcDeviceBlock> POWER_BOARD = device("power_board", machine(),
+            Spec.facing(BlockStateProperties.LIT), GridMountedBlock.wall(dev.denfry.promptcritical.mod.grid.PowerBoardBlockEntity::board, 1.5, 0.5, 10.8, 14.5, 15.5, 16));
+    public static final DeferredBlock<PcDeviceBlock> UPS_CABINET = device("ups_cabinet", machine(),
+            Spec.facing(BlockStateProperties.LIT, PcProperties.ALARM), FoundryBlock.with(dev.denfry.promptcritical.mod.grid.PowerBoardBlockEntity::ups));
 
     // --- руды и пласты (08 §8.1) ---
     public static final DeferredBlock<PcBlock> MAGNETITE_ORE = ore("magnetite_ore", "raw_magnetite");

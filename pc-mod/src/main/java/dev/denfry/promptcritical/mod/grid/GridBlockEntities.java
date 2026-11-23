@@ -57,6 +57,14 @@ public final class GridBlockEntities {
     private GridBlockEntities() {
     }
 
+    public static final DeferredHolder<BlockEntityType<?>, BlockEntityType<PowerBoardBlockEntity>> POWER_SOCKET =
+            type("power_socket", PowerBoardBlockEntity::socket, PcBlocks.POWER_SOCKET);
+    public static final DeferredHolder<BlockEntityType<?>, BlockEntityType<PowerBoardBlockEntity>> POWER_SOCKET_3P =
+            type("power_socket_3p", PowerBoardBlockEntity::socket3p, PcBlocks.POWER_SOCKET_3P);
+    public static final DeferredHolder<BlockEntityType<?>, BlockEntityType<PowerBoardBlockEntity>> POWER_BOARD =
+            type("power_board", PowerBoardBlockEntity::board, PcBlocks.POWER_BOARD);
+    public static final DeferredHolder<BlockEntityType<?>, BlockEntityType<PowerBoardBlockEntity>> UPS_CABINET =
+            type("ups_cabinet", PowerBoardBlockEntity::ups, PcBlocks.UPS_CABINET);
     public static final DeferredHolder<BlockEntityType<?>, BlockEntityType<LightingBoardBlockEntity>> LIGHTING_BOARD =
             type("lighting_board", LightingBoardBlockEntity::new, PcBlocks.LIGHTING_BOARD);
     /** Все светильники с питанием от щитка освещения. */

@@ -42,6 +42,8 @@ import org.jetbrains.annotations.Nullable;
  * меньше нормы, Ca и Mg остаются в растворе и выходит сырой рассол — он тоже течёт снизу, но забивает диафрагмы.
  */
 public final class BrineTreaterBlockEntity extends DeviceBlockEntity implements FoundryDevice, PanelHost {
+    /** Насосы рассола и мешалки отстойника, Вт (розетка или силовой щит рядом; при недостатке установка работает медленнее). */
+    public static final double PUMP_W = 15e3;
     public static final int MB = 16_000;
     /** Производительность по рассолу, л/с [BALANCE: под серию 20 ванн на 30 кА — 2 л/с]. */
     public static final double CAPACITY_LS = 4;
@@ -106,7 +108,7 @@ public final class BrineTreaterBlockEntity extends DeviceBlockEntity implements 
         SimLevelBinding b = SimBindings.get(s);
         if (b == null) return;
         double dt = 0.05 * b.world().clock().kSlow();
-        double litres = CAPACITY_LS * dt;
+        double litres = CAPACITY_LS * dt * dev.denfry.promptcritical.mod.grid.MachinePower.supply(s, worldPosition, PUMP_W);
         litres = Math.min(litres, water.amount() / BrineTreatment.WATER_KG_PER_L);
         while (saltKg < litres * BrineTreatment.NACL_KG_PER_L && takeBag()) saltKg += ChlorUnits.SALT_BAG_KG;
         litres = Math.min(litres, saltKg / BrineTreatment.NACL_KG_PER_L);

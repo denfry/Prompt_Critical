@@ -46,6 +46,8 @@ import org.jetbrains.annotations.Nullable;
  * не берёт: на 400 тарелках при α ≈ 1,05 из него реакторную воду не получить.
  */
 public final class HeavyWaterColumnBlockEntity extends DeviceBlockEntity implements FoundryDevice, PanelHost {
+    /** Электрический кипятильник и вакуум-насос колонны, Вт (розетка или силовой щит рядом). */
+    public static final double POWER_W = 100e3;
     public static final int STILL_MB = 16_000, MB = 16_000;
 
     private final WaterDistillationColumn column = new WaterDistillationColumn();
@@ -103,7 +105,7 @@ public final class HeavyWaterColumnBlockEntity extends DeviceBlockEntity impleme
         if (running && still.kg() > 0 && !tooLean) {
             double x = still.purity();
             IsotopeColumn.Split split = column.split(x);
-            double feed = Math.min(still.kg(), WaterDistillationColumn.FEED_KG_S * dt);
+            double feed = Math.min(still.kg(), WaterDistillationColumn.FEED_KG_S * dt * dev.denfry.promptcritical.mod.grid.MachinePower.supply(sl, worldPosition, POWER_W));
             double outKg = HeavyWater.kg(HeavyWater.moles(feed, x) * split.productPerFeed(), HeavyWaterGrade.REACTOR.x);
             double litres = HeavyWater.litres(outKg, HeavyWaterGrade.REACTOR.x);
             if (product.room() >= litres) {

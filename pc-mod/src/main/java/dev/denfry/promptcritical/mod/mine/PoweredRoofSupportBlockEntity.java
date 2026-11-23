@@ -24,6 +24,9 @@ import net.minecraft.world.level.block.state.properties.BlockStateProperties;
  * На клиенте — ход штоков для BER.
  */
 public final class PoweredRoofSupportBlockEntity extends DeviceBlockEntity {
+    /** Доля насосной станции мехкрепи на одну секцию; без давления стойки не двигаются, Вт (розетка или силовой щит рядом). */
+    public static final double SECTION_W = 5e3;
+    private final dev.denfry.promptcritical.mod.grid.MachinePower.Drive drive = new dev.denfry.promptcritical.mod.grid.MachinePower.Drive();
     /** Ход штоков в модели между распором и разгрузкой, px. */
     public static final float LEG_TRAVEL_PX = 2f;
 
@@ -51,6 +54,7 @@ public final class PoweredRoofSupportBlockEntity extends DeviceBlockEntity {
             pendingTicks = 0;
             return;
         }
+        if (!drive.advance(level, worldPosition, SECTION_W)) return;
         if (++pendingTicks < setTicks()) return;
         pendingTicks = 0;
         level.setBlock(worldPosition, getBlockState().setValue(BlockStateProperties.EXTENDED, want), Block.UPDATE_ALL);

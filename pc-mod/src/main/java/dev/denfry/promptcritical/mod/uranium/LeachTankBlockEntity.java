@@ -95,6 +95,12 @@ public final class LeachTankBlockEntity extends UraniumProcessBlockEntity {
         leach.takeLossKg();
     }
 
+    /** Мешалка пачука и насос пульпы, Вт. */
+    @Override
+    protected double ratedPowerW() {
+        return 30e3;
+    }
+
     @Override
     protected boolean running() {
         return on && leach.dissolutionKgH() > 0;

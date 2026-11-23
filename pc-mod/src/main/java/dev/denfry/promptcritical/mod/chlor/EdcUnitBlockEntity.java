@@ -42,6 +42,8 @@ import org.jetbrains.annotations.Nullable;
  * граням; ЭДХ — снизу (л). Свободный хлор при прямом хлорировании расходуется полностью, избыток хлора стоит в баке.
  */
 public final class EdcUnitBlockEntity extends DeviceBlockEntity implements FoundryDevice, PanelHost {
+    /** Циркуляционные насосы реакторов и компрессор рецикла, Вт (розетка или силовой щит рядом; при недостатке установка работает медленнее). */
+    public static final double POWER_W = 45e3;
     public static final int GAS_MB = 4_000, LIQ_MB = 8_000;
 
     private final FeedTank ethylene = new FeedTank(PcFluids.ETHYLENE.source.get(), GAS_MB);
@@ -78,8 +80,9 @@ public final class EdcUnitBlockEntity extends DeviceBlockEntity implements Found
         // доступно на шаг, моль/с; ЭДХ не влезет — реакторы на себя
         double roomMol = edc.room() * ChlorUnits.EDC_KG_L / ChlorUnits.EDC_KG_MOL / dt;
         double cl2Mol = (chlorine.amount() / ChlorUnits.NM3_PER_MOL + liquidChlorine.amount() * ChlorUnits.LIQUID_CL2_KG_L / EdcUnit.M_CL2) / dt;
-        unit.step(ethylene.amount() / ChlorUnits.NM3_PER_MOL / dt, Math.min(cl2Mol, roomMol), hcl.amount() / ChlorUnits.NM3_PER_MOL / dt,
-                oxygen.amount() / ChlorUnits.NM3_PER_MOL / dt);
+        double power = dev.denfry.promptcritical.mod.grid.MachinePower.supply(s, worldPosition, POWER_W);
+        unit.step(ethylene.amount() / ChlorUnits.NM3_PER_MOL / dt * power, Math.min(cl2Mol, roomMol) * power,
+                hcl.amount() / ChlorUnits.NM3_PER_MOL / dt * power, oxygen.amount() / ChlorUnits.NM3_PER_MOL / dt * power);
         if (unit.edcMolS() > roomMol) unit.step(0, 0, 0, 0); // нет места — стоим целиком
         ethylene.take(ChlorUnits.molToNm3(unit.c2h4UsedMolS() * dt));
         hcl.take(ChlorUnits.molToNm3(unit.hclUsedMolS() * dt));

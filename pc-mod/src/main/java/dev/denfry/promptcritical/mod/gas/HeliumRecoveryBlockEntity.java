@@ -38,6 +38,8 @@ import org.jetbrains.annotations.Nullable;
  * газ без гелия обратно в сеть — снизу. Азотная фракция второй ступени сбрасывается в атмосферу.
  */
 public final class HeliumRecoveryBlockEntity extends DeviceBlockEntity implements FoundryDevice, PanelHost {
+    /** Компрессор и детандер блока, Вт (розетка или силовой щит рядом; при недостатке установка работает медленнее). */
+    public static final double POWER_W = 150e3;
     public static final int GAS_MB = 8_000, LN2_MB = 4_000, HE_MB = 4_000;
     static final double LN2_KG_L = 0.808;
 
@@ -91,7 +93,7 @@ public final class HeliumRecoveryBlockEntity extends DeviceBlockEntity implement
         SimLevelBinding b = SimBindings.get(s);
         if (b == null) return;
         double dt = 0.05 * b.world().clock().kSlow();
-        double q = Math.min(feed.amount(), Math.min(HeliumRecovery.CAPACITY_NM3_S * dt, returned.room()));
+        double q = Math.min(feed.amount(), Math.min(HeliumRecovery.CAPACITY_NM3_S * dt * dev.denfry.promptcritical.mod.grid.MachinePower.supply(s, worldPosition, POWER_W), returned.room()));
         unit.step(q / dt, ln2.amount() * LN2_KG_L / dt);
         double he = Math.min(unit.heliumNm3S() * dt, helium.room());
         feed.take(q);

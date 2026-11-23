@@ -84,6 +84,12 @@ public final class PgmRefineryBlockEntity extends UraniumProcessBlockEntity {
             iridiumKg -= NonferrousUnits.IRIDIUM_INGOT_KG;
     }
 
+    /** Мешалки и насосы аффинажа, Вт. */
+    @Override
+    protected double ratedPowerW() {
+        return 20e3;
+    }
+
     @Override
     protected boolean running() {
         return leaching || dissolving;

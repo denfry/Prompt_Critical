@@ -159,6 +159,20 @@ public final class GridRecipes extends RecipeProvider {
                 .define('S', AllItems.IRON_SHEET.get()).define('L', Items.LEVER).define('F', PcItems.LV_FUSE.get()).define('W', wire)
                 .define('G', Items.GLOWSTONE_DUST)
                 .unlockedBy("has_fuse", has(PcItems.LV_FUSE.get())).save(out, id("lighting_board"));
+        ShapedRecipeBuilder.shaped(RecipeCategory.MISC, PcBlocks.POWER_SOCKET.get(), 2).pattern(" Q ").pattern("CWC").pattern(" Q ")
+                .define('Q', Items.QUARTZ).define('C', Items.COPPER_INGOT).define('W', wire)
+                .unlockedBy("has_fuse", has(PcItems.LV_FUSE.get())).save(out, id("power_socket"));
+        ShapedRecipeBuilder.shaped(RecipeCategory.MISC, PcBlocks.POWER_SOCKET_3P.get()).pattern("SRS").pattern("CWC").pattern("SFS")
+                .define('S', AllItems.IRON_SHEET.get()).define('R', Items.RED_DYE).define('C', Items.COPPER_INGOT).define('W', wire)
+                .define('F', PcItems.LV_FUSE.get())
+                .unlockedBy("has_fuse", has(PcItems.LV_FUSE.get())).save(out, id("power_socket_3p"));
+        ShapedRecipeBuilder.shaped(RecipeCategory.MISC, PcBlocks.POWER_BOARD.get()).pattern("SLS").pattern("FWF").pattern("SRS")
+                .define('S', AllItems.IRON_SHEET.get()).define('L', Items.LEVER).define('F', PcItems.LV_FUSE.get()).define('W', wire)
+                .define('R', Items.REDSTONE)
+                .unlockedBy("has_fuse", has(PcItems.LV_FUSE.get())).save(out, id("power_board"));
+        ShapedRecipeBuilder.shaped(RecipeCategory.MISC, PcBlocks.UPS_CABINET.get()).pattern("SDS").pattern("BWB").pattern("SBS")
+                .define('S', AllItems.IRON_SHEET.get()).define('D', Items.COMPARATOR).define('B', PcBlocks.POWER_SOCKET.get()).define('W', wire)
+                .unlockedBy("has_power_board", has(PcBlocks.POWER_BOARD.get())).save(out, id("ups_cabinet"));
         ShapedRecipeBuilder.shaped(RecipeCategory.MISC, PcBlocks.RELAY_CABINET.get()).pattern("SGS").pattern("SCS").pattern("SWS")
                 .define('S', AllItems.IRON_SHEET.get()).define('G', Items.GLASS_PANE).define('C', Items.COMPARATOR).define('W', wire)
                 .unlockedBy("has_wire", hasWire).save(out, id("relay_cabinet"));

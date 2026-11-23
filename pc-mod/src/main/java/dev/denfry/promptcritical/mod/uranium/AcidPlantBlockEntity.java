@@ -90,6 +90,12 @@ public final class AcidPlantBlockEntity extends UraniumProcessBlockEntity {
         acid.add(plant.acidKgS() * dt / UraniumUnits.ACID_KG_L);
     }
 
+    /** Воздуходувка контактного аппарата, Вт. */
+    @Override
+    protected double ratedPowerW() {
+        return 55e3;
+    }
+
     @Override
     protected boolean running() {
         return plant.acidKgS() > 0;

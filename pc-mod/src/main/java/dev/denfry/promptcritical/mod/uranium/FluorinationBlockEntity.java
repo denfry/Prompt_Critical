@@ -113,6 +113,12 @@ public final class FluorinationBlockEntity extends UraniumProcessBlockEntity {
         return -1;
     }
 
+    /** Электролизёры фтора и вентиляторы, Вт. */
+    @Override
+    protected double ratedPowerW() {
+        return 110e3;
+    }
+
     @Override
     protected boolean running() {
         return stage.lastKgS() > 0;

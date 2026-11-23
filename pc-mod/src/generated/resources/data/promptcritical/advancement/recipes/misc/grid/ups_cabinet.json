@@ -1,0 +1,32 @@
+{
+  "parent": "minecraft:recipes/root",
+  "criteria": {
+    "has_power_board": {
+      "conditions": {
+        "items": [
+          {
+            "items": "promptcritical:power_board"
+          }
+        ]
+      },
+      "trigger": "minecraft:inventory_changed"
+    },
+    "has_the_recipe": {
+      "conditions": {
+        "recipe": "promptcritical:grid/ups_cabinet"
+      },
+      "trigger": "minecraft:recipe_unlocked"
+    }
+  },
+  "requirements": [
+    [
+      "has_the_recipe",
+      "has_power_board"
+    ]
+  ],
+  "rewards": {
+    "recipes": [
+      "promptcritical:grid/ups_cabinet"
+    ]
+  }
+}

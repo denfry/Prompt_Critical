@@ -371,8 +371,9 @@ public final class PcBlockStateProvider extends BlockStateProvider {
             case "document_lectern" -> s.getValue(PcProperties.HAS_DOCUMENT) ? id + "_document" : id;
             case "industrial_light", "industrial_light_street", "industrial_light_floodlight", "industrial_light_exit",
                  "ceiling_light_panel", "lamp_fluorescent", "lamp_bulkhead", "lamp_explosion_proof", "lamp_emergency",
-                 "lamp_high_bay", "warning_beacon", "lighting_board" ->
+                 "lamp_high_bay", "warning_beacon", "lighting_board", "power_socket", "power_socket_3p", "power_board" ->
                     s.getValue(BlockStateProperties.LIT) ? id : id + "_off";
+            case "ups_cabinet" -> !s.getValue(BlockStateProperties.LIT) ? id + "_fault" : s.getValue(PcProperties.ALARM) ? id + "_battery" : id;
             // электросеть I1 (этап 8 M3)
             case "electric_motor" -> s.getValue(PcProperties.MEDIUM_VOLTAGE) ? id + "_mv" : id;
             case "disconnector" -> s.getValue(PcProperties.EARTHED) ? id + "_earthed" : id;

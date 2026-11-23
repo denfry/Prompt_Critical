@@ -100,6 +100,12 @@ public final class ClausUnitBlockEntity extends UraniumProcessBlockEntity {
         while (sulfurKg >= SULFUR_KG_PER_ITEM && emit(PcItems.SULFUR.get())) sulfurKg -= SULFUR_KG_PER_ITEM;
     }
 
+    /** Воздуходувка печи Клауса, Вт. */
+    @Override
+    protected double ratedPowerW() {
+        return 75e3;
+    }
+
     @Override
     protected boolean running() {
         return h2sKgS > 0;

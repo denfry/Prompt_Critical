@@ -93,6 +93,12 @@ public final class FlotationCellBlockEntity extends UraniumProcessBlockEntity {
             niConcKg -= niPer;
     }
 
+    /** Флотомашина: импеллер и воздуходувка, Вт. */
+    @Override
+    protected double ratedPowerW() {
+        return 37e3;
+    }
+
     @Override
     protected boolean running() {
         return lastOreKgS > 0;

@@ -67,6 +67,8 @@ import org.jetbrains.annotations.Nullable;
  * {@code spent_ion_exchange_resin} и патрон с активностью) выходят в склад снизу сами по исчерпании или по кнопке.
  */
 public final class ReactorWaterCleanupBlockEntity extends DeviceBlockEntity implements dev.denfry.promptcritical.mod.environment.SelfEmittingSource, FoundryDevice, PanelHost {
+    /** Насосы и подогреватели установки очистки; при недостатке поток через фильтры меньше, Вт (розетка или силовой щит рядом). */
+    public static final double POWER_W = 75e3;
     public static final int LINK_RADIUS = 8, RESIN_SLOT = 0, FILTER_SLOT = 1, OUT_SLOTS = 4, LRW_MB = 8000;
     public static final double CAPTURE_BQ_Y_MW = 1e10, RESIN_SHARE = 0.9, RESIN_L_MW_Y = 3, RESIN_MW_Y = 100 / RESIN_L_MW_Y,
             FILTER_MW_Y = 25, LRW_M3_MW_Y = 1.5, RESIN_BAG_KG = 80, FILTER_KG = 10, YEAR_S = 365.25 * 86_400;
@@ -140,7 +142,7 @@ public final class ReactorWaterCleanupBlockEntity extends DeviceBlockEntity impl
         failed = 0;
         if (reactorPos != null) read(level.getBlockEntity(reactorPos));
         load();
-        capture(thermalW, failed, dtS);
+        capture(thermalW, failed, dtS * dev.denfry.promptcritical.mod.grid.MachinePower.supply(s, worldPosition, reactorPos != null ? POWER_W : 0));
         BlockState st = getBlockState();
         boolean run = thermalW > 0;
         if (st.hasProperty(PcProperties.RUNNING) && st.getValue(PcProperties.RUNNING) != run)

@@ -70,6 +70,14 @@ public abstract class UraniumProcessBlockEntity extends DeviceBlockEntity implem
     /** Шаг процесса: {@code dtS} — секунды процесса (тик × kSlow). */
     protected abstract void process(ServerLevel level, double dtS);
 
+    /**
+     * Мощность мешалок, насосов и воздуходувок установки, Вт: включённая установка берёт её от розетки или силового
+     * щита рядом и при недостатке работает медленнее ({@link dev.denfry.promptcritical.mod.grid.MachinePower}).
+     */
+    protected double ratedPowerW() {
+        return 30e3;
+    }
+
     /** Установка работает (для флага на блоке и щита). */
     protected abstract boolean running();
 
@@ -98,7 +106,8 @@ public abstract class UraniumProcessBlockEntity extends DeviceBlockEntity implem
         if (!(level instanceof ServerLevel s)) return;
         SimLevelBinding b = SimBindings.get(s);
         if (b == null) return;
-        process(s, 0.05 * b.world().clock().kSlow());
+        double power = dev.denfry.promptcritical.mod.grid.MachinePower.supply(s, worldPosition, on ? ratedPowerW() : 0);
+        if (power > 0) process(s, 0.05 * b.world().clock().kSlow() * power);
         if (level.getGameTime() % 10 == 0) {
             setFlag(PcProperties.RUNNING, running());
             setFlag(BlockStateProperties.LIT, running());

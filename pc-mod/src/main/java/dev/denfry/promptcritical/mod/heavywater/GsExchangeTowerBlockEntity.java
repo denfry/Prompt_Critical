@@ -40,6 +40,8 @@ import org.jetbrains.annotations.Nullable;
  * {@code time.k_slow}, как у всех медленных процессов.
  */
 public final class GsExchangeTowerBlockEntity extends DeviceBlockEntity implements FoundryDevice, PanelHost {
+    /** Циркуляционные насосы воды и газодувки H₂S, Вт (розетка или силовой щит рядом). */
+    public static final double POWER_W = 500e3;
     public static final int LAKE_BLOCKS = 32, LAKE_RADIUS = 4, MB = 16_000;
 
     private final GirdlerSulfidePlant plant = new GirdlerSulfidePlant();
@@ -100,7 +102,7 @@ public final class GsExchangeTowerBlockEntity extends DeviceBlockEntity implemen
         double dt = 0.05 * (b == null ? 1 : b.world().clock().kSlow());
         lastIntake = 0;
         if (running && intake() > 0) {
-            double feedKg = GirdlerSulfidePlant.FEED_KG_S * intake() * dt;
+            double feedKg = GirdlerSulfidePlant.FEED_KG_S * intake() * dt * dev.denfry.promptcritical.mod.grid.MachinePower.supply(sl, worldPosition, POWER_W);
             IsotopeColumn.Split split = plant.split(HeavyWater.NATURAL_X);
             double x = HeavyWaterGrade.ENRICHED.x;
             double litres = split.works()

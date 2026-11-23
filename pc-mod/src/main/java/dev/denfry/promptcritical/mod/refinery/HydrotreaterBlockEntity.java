@@ -107,6 +107,12 @@ public final class HydrotreaterBlockEntity extends UraniumProcessBlockEntity {
         feedLs = l / dt;
     }
 
+    /** Компрессор циркулирующего водорода и сырьевой насос, Вт. */
+    @Override
+    protected double ratedPowerW() {
+        return 200e3;
+    }
+
     @Override
     protected boolean running() {
         return feedLs > 0;

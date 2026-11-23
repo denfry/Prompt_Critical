@@ -49,6 +49,8 @@ import net.minecraft.world.phys.Vec3;
  * Водород в хлоре берётся с ближайшей серии ванн в {@value #CELLS_REACH} блоках.
  */
 public final class LiquefierBlockEntity extends DeviceBlockEntity implements FoundryDevice, PanelHost {
+    /** Компрессор хлора и холодильная машина, Вт (розетка или силовой щит рядом; при недостатке установка работает медленнее). */
+    public static final double POWER_W = 250e3;
     public static final int GAS_MB = 4_000, LIQUOR_MB = 8_000, LIQUID_MB = 16_000, CELLS_REACH = 16;
     /** Производительность по хлору, кг/с [BALANCE]. */
     public static final double CAPACITY_KG_S = 0.4;
@@ -108,7 +110,8 @@ public final class LiquefierBlockEntity extends DeviceBlockEntity implements Fou
             CellRoomBlockEntity cells = CellRoomBlockEntity.near(level, worldPosition, CELLS_REACH);
             h2 = cells != null && cells.cells().cl2KgS() > 0 ? cells.cells().h2InCl2() : ChlorineLiquefier.H2_NORMAL;
         }
-        double inKg = unit.on() && !unit.tripped() ? Math.min(CAPACITY_KG_S * dt, chlorine.amount() * ChlorUnits.CL2_KG_NM3) : 0;
+        double power = dev.denfry.promptcritical.mod.grid.MachinePower.supply(s, worldPosition, unit.on() && !unit.tripped() ? POWER_W : 0);
+        double inKg = unit.on() && !unit.tripped() ? Math.min(CAPACITY_KG_S * dt * power, chlorine.amount() * ChlorUnits.CL2_KG_NM3) : 0;
         unit.step(inKg / dt, h2);
         chlorine.take(inKg / ChlorUnits.CL2_KG_NM3);
         // жидкость в хранилище; не влезло — сброс с предохранительного клапана

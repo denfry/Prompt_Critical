@@ -189,6 +189,10 @@ public final class PcLanguageProvider extends LanguageProvider {
         b("sis_logic_solver", "Safety Logic Solver (SIS)", "Логический блок ПАЗ");
         b("lv_distribution_box", "Fuse Box", "Распределительный ящик с предохранителями");
         b("lighting_board", "Lighting Board", "Щиток освещения");
+        b("power_socket", "Socket 16 A", "Розетка 16 А");
+        b("power_socket_3p", "Three-Phase Socket 32 A", "Трёхфазная розетка 32 А");
+        b("power_board", "Power Board", "Силовой щит");
+        b("ups_cabinet", "UPS Cabinet", "Шкаф ИБП");
 
         i("fusible_plug", "Fusible Plug", "Легкоплавкая пробка");
         i("governor_dashpot", "Governor Dashpot", "Катаракт регулятора");

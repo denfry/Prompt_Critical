@@ -31,6 +31,17 @@ public final class GridText {
     public static final String LIGHTING_OFF = t("lighting_off", "Lighting group switched off", "Группа освещения отключена");
     public static final String LIGHTING_STATUS = t("lighting_status", "Lighting group: %s lamps, %s kW, %s V",
             "Группа освещения: светильников %s, %s кВт, %s В");
+    public static final String POWER_START = t("power_start", "Contactor on: the machines of the group run",
+            "Контактор включён: машины группы работают");
+    public static final String POWER_STOP = t("power_stop", "Contactor off: the machines of the group stop",
+            "Контактор отключён: машины группы стоят");
+    public static final String POWER_RATING = t("power_rating", "Incomer breaker set to %s kW", "Вводной автомат: %s кВт");
+    public static final String POWER_STATUS = t("power_status", "%s machines ask %s kW of %s kW; they get %s %%; input %s V%s",
+            "Машин %s, просят %s кВт из %s кВт; получают %s %%; на вводе %s В%s");
+    public static final String POWER_TRIPPED = t("power_tripped", " — dropped out on undervoltage, press Start",
+            " — отпал по нулевой защите, нажмите «Пуск»");
+    public static final String POWER_BATTERY = t("power_battery", "; battery %s %%%s", "; батарея %s %%%s");
+    public static final String POWER_ON_BATTERY = t("power_on_battery", ", running on battery", ", работает от батареи");
     public static final String FUSE_FITTED = t("fuse_fitted", "Fuse fitted (%s A)", "Вставка установлена (%s А)");
     public static final String FUSE_REMOVED = t("fuse_removed", "Fuse removed — visible break", "Вставка вынута — видимый разрыв");
     public static final String FUSE_BLOWN = t("fuse_blown", "The fuse has blown — fit a new one", "Вставка перегорела — поставьте новую");

@@ -24,6 +24,8 @@ import org.jetbrains.annotations.Nullable;
  * {@code taphole_clay}). Срабатывает от ПКМ или фронта сигнала красного камня.
  */
 public final class CastHouseMachineBlockEntity extends IronworksBlockEntity {
+    /** Привод пушки или бурмашины лётки; без питания машина не срабатывает, Вт (розетка или силовой щит рядом). */
+    public static final double DRIVE_W = 30e3;
     public static final int REACH = 4, CLAY_PER_PLUG = 2;
     private final MachineInventory clay = new MachineInventory(new MachineInventory.Role[] {MachineInventory.Role.INPUT},
             (slot, s) -> s.is(PcItems.TAPHOLE_CLAY.get()), this::setChanged);
@@ -57,7 +59,7 @@ public final class CastHouseMachineBlockEntity extends IronworksBlockEntity {
     @Override
     protected void serverTick(SimLevelBinding b) {
         boolean now = level.hasNeighborSignal(worldPosition);
-        if (now && !powered) act();
+        if (now && !powered && dev.denfry.promptcritical.mod.grid.MachinePower.powered(level, worldPosition, DRIVE_W)) act();
         if (now != powered) {
             powered = now;
             setChanged();

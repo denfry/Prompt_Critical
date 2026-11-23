@@ -27,6 +27,9 @@ import org.jetbrains.annotations.Nullable;
  * уловленного SO₂ уходит 1,562 × 1,05 кг. Без известняка аппарат не очищает.
  */
 public final class FgdAbsorberBlockEntity extends IronworksBlockEntity implements FlueGasCleaner {
+    /** Насосы орошения суспензией; при недостатке орошения улавливается меньше SO₂, Вт (розетка или силовой щит рядом). */
+    public static final double PUMP_W = 200e3;
+    private double power = 1;
     public static final double LG = 15, CALCITE_KG = 10;
     private final ItemStackHandler limestone = new ItemStackHandler(1) {
         @Override
@@ -61,6 +64,7 @@ public final class FgdAbsorberBlockEntity extends IronworksBlockEntity implement
 
     @Override
     protected void serverTick(SimLevelBinding b) {
+        power = dev.denfry.promptcritical.mod.grid.MachinePower.supply(level, worldPosition, slurryKg > 0 ? PUMP_W : 0);
         if (slurryKg < CALCITE_KG && !limestone.getStackInSlot(0).isEmpty()) {
             limestone.getStackInSlot(0).shrink(1);
             slurryKg += CALCITE_KG;
@@ -74,7 +78,7 @@ public final class FgdAbsorberBlockEntity extends IronworksBlockEntity implement
             lastEta = 0;
             return;
         }
-        double eta = GasCleaning.fgd(LG);
+        double eta = GasCleaning.fgd(LG) * power;
         double caught = q[0] * eta * dtS;
         double need = caught * GasCleaning.LIMESTONE_PER_SO2 * GasCleaning.CA_S;
         double share = need > slurryKg ? slurryKg / need : 1;

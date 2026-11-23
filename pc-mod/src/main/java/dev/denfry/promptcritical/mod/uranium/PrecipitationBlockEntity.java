@@ -99,6 +99,12 @@ public final class PrecipitationBlockEntity extends UraniumProcessBlockEntity {
         return cryoliteKg;
     }
 
+    /** Мешалка и фильтр-пресс, Вт. */
+    @Override
+    protected double ratedPowerW() {
+        return 20e3;
+    }
+
     @Override
     protected boolean running() {
         return on && (eluate.amount() > 0 || lastCryoliteKgS > 0);

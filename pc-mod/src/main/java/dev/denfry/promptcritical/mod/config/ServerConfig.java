@@ -31,6 +31,8 @@ public final class ServerConfig {
     /** Паритет SU↔FE (16 §16.7.1, R56). */
     public enum FeSuParity { AUTO, OFF }
     public static final ModConfigSpec.EnumValue<FeSuParity> FE_SU_PARITY;
+    /** Машины берут мощность от розеток, силовых щитов и ИБП. */
+    public static final ModConfigSpec.BooleanValue MACHINES_NEED_POWER;
     public static final ModConfigSpec.ConfigValue<java.util.List<? extends Double>> GRID_FE_RATINGS_W;
     public static final ModConfigSpec.DoubleValue GRID_FE_EFFICIENCY, GRID_FE_F_MIN, GRID_FE_F_MAX, GRID_FE_V_MIN, GRID_FE_V_MAX,
             GRID_FE_MAX_SHARE;
@@ -173,6 +175,9 @@ public final class ServerConfig {
         FE_SU_PARITY = b.comment("SU to FE parity (16 §16.7.1, R56): AUTO uses 2 x w_per_su joules per FE at the grid FE interface",
                         "when a mod bridging Create shafts and FE is loaded, so no loop makes energy; OFF keeps j_per_fe")
                 .defineEnum("fe_su_parity", FeSuParity.AUTO);
+        MACHINES_NEED_POWER = b.comment("Machines take power from sockets, power boards and UPS cabinets on the 0.4 kV grid and slow down",
+                        "when they get less than they ask for; false runs every machine for free")
+                .define("machines_need_power", true);
         b.pop();
 
         b.push("ops");

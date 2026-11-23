@@ -70,6 +70,12 @@ public final class AluminaPrecipitatorBlockEntity extends UraniumProcessBlockEnt
         while (hydroxideKg >= kg && emit(PcItems.ALUMINIUM_HYDROXIDE.get())) hydroxideKg -= kg;
     }
 
+    /** Мешалка декомпозёра, Вт. */
+    @Override
+    protected double ratedPowerW() {
+        return 30e3;
+    }
+
     @Override
     protected boolean running() {
         return precipitator.lastLiquorLs() > 0;
