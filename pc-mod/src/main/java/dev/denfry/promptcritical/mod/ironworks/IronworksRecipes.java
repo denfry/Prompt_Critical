@@ -158,6 +158,40 @@ public final class IronworksRecipes extends RecipeProvider {
         ShapedRecipeBuilder.shaped(RecipeCategory.MISC, dev.denfry.promptcritical.mod.site.SiteRegistry.BLAST_BLOWER_ENGINE_DRAWING.get())
                 .pattern("PPP").pattern("IFI").pattern("SCS").define('P', Items.PAPER).define('I', sheet).define('F', AllItems.PROPELLER.get())
                 .define('S', shaft).define('C', casing).unlockedBy("has_shell", has(shell)).save(out, id("blast_blower_engine_drawing"));
+        // чертежи доменного цеха и коксохима реального масштаба: бумага вокруг старой машины, низ различает виды
+        ShapedRecipeBuilder.shaped(RecipeCategory.MISC, dev.denfry.promptcritical.mod.site.SiteRegistry.SINTER_STRAND_REAL_DRAWING.get())
+                .pattern("PPP").pattern("POP").pattern("PXP").define('P', Items.PAPER).define('O', PcBlocks.SINTER_STRAND.get()).define('X', Items.PAPER)
+                .unlockedBy("has_old", has(PcBlocks.SINTER_STRAND.get())).save(out, id("sinter_strand_real_drawing"));
+        ShapedRecipeBuilder.shaped(RecipeCategory.MISC, dev.denfry.promptcritical.mod.site.SiteRegistry.DUST_CATCHER_REAL_DRAWING.get())
+                .pattern("PPP").pattern("POP").pattern("PXP").define('P', Items.PAPER).define('O', PcBlocks.DUST_CATCHER.get()).define('X', Items.PAPER)
+                .unlockedBy("has_old", has(PcBlocks.DUST_CATCHER.get())).save(out, id("dust_catcher_real_drawing"));
+        ShapedRecipeBuilder.shaped(RecipeCategory.MISC, dev.denfry.promptcritical.mod.site.SiteRegistry.GAS_EXHAUSTER_REAL_DRAWING.get())
+                .pattern("PPP").pattern("POP").pattern("PXP").define('P', Items.PAPER).define('O', PcBlocks.GAS_EXHAUSTER.get()).define('X', Items.PAPER)
+                .unlockedBy("has_old", has(PcBlocks.GAS_EXHAUSTER.get())).save(out, id("gas_exhauster_real_drawing"));
+        ShapedRecipeBuilder.shaped(RecipeCategory.MISC, dev.denfry.promptcritical.mod.site.SiteRegistry.BYPRODUCT_PLANT_COOLER_REAL_DRAWING.get())
+                .pattern("PPP").pattern("POP").pattern("PXP").define('P', Items.PAPER).define('O', PcBlocks.BYPRODUCT_PLANT.get()).define('X', Items.WATER_BUCKET)
+                .unlockedBy("has_old", has(PcBlocks.BYPRODUCT_PLANT.get())).save(out, id("byproduct_plant_cooler_real_drawing"));
+        ShapedRecipeBuilder.shaped(RecipeCategory.MISC, dev.denfry.promptcritical.mod.site.SiteRegistry.BYPRODUCT_PLANT_PRECIPITATOR_REAL_DRAWING.get())
+                .pattern("PPP").pattern("POP").pattern("PXP").define('P', Items.PAPER).define('O', PcBlocks.BYPRODUCT_PLANT.get()).define('X', Items.REDSTONE)
+                .unlockedBy("has_old", has(PcBlocks.BYPRODUCT_PLANT.get())).save(out, id("byproduct_plant_precipitator_real_drawing"));
+        ShapedRecipeBuilder.shaped(RecipeCategory.MISC, dev.denfry.promptcritical.mod.site.SiteRegistry.BYPRODUCT_PLANT_SATURATOR_REAL_DRAWING.get())
+                .pattern("PPP").pattern("POP").pattern("PXP").define('P', Items.PAPER).define('O', PcBlocks.BYPRODUCT_PLANT.get()).define('X', Items.GLASS_BOTTLE)
+                .unlockedBy("has_old", has(PcBlocks.BYPRODUCT_PLANT.get())).save(out, id("byproduct_plant_saturator_real_drawing"));
+        ShapedRecipeBuilder.shaped(RecipeCategory.MISC, dev.denfry.promptcritical.mod.site.SiteRegistry.BYPRODUCT_PLANT_SCRUBBER_REAL_DRAWING.get())
+                .pattern("PPP").pattern("POP").pattern("PXP").define('P', Items.PAPER).define('O', PcBlocks.BYPRODUCT_PLANT.get()).define('X', Items.IRON_BARS)
+                .unlockedBy("has_old", has(PcBlocks.BYPRODUCT_PLANT.get())).save(out, id("byproduct_plant_scrubber_real_drawing"));
+        ShapedRecipeBuilder.shaped(RecipeCategory.MISC, dev.denfry.promptcritical.mod.site.SiteRegistry.CAST_HOUSE_MUD_GUN_REAL_DRAWING.get())
+                .pattern("PPP").pattern("POP").pattern("PXP").define('P', Items.PAPER).define('O', PcBlocks.CAST_HOUSE_MACHINE.get()).define('X', PcItems.TAPHOLE_CLAY.get())
+                .unlockedBy("has_old", has(PcBlocks.CAST_HOUSE_MACHINE.get())).save(out, id("cast_house_mud_gun_real_drawing"));
+        ShapedRecipeBuilder.shaped(RecipeCategory.MISC, dev.denfry.promptcritical.mod.site.SiteRegistry.CAST_HOUSE_DRILL_REAL_DRAWING.get())
+                .pattern("PPP").pattern("POP").pattern("PXP").define('P', Items.PAPER).define('O', PcBlocks.CAST_HOUSE_MACHINE.get()).define('X', Items.IRON_PICKAXE)
+                .unlockedBy("has_old", has(PcBlocks.CAST_HOUSE_MACHINE.get())).save(out, id("cast_house_drill_real_drawing"));
+        ShapedRecipeBuilder.shaped(RecipeCategory.MISC, dev.denfry.promptcritical.mod.site.SiteRegistry.LADLE_REAL_DRAWING.get())
+                .pattern("PPP").pattern("POP").pattern("PXP").define('P', Items.PAPER).define('O', PcBlocks.LADLE.get()).define('X', Items.PAPER)
+                .unlockedBy("has_old", has(PcBlocks.LADLE.get())).save(out, id("ladle_real_drawing"));
+        ShapedRecipeBuilder.shaped(RecipeCategory.MISC, dev.denfry.promptcritical.mod.site.SiteRegistry.SLAG_GRANULATOR_REAL_DRAWING.get())
+                .pattern("PPP").pattern("POP").pattern("PXP").define('P', Items.PAPER).define('O', PcBlocks.SLAG_GRANULATOR.get()).define('X', Items.PAPER)
+                .unlockedBy("has_old", has(PcBlocks.SLAG_GRANULATOR.get())).save(out, id("slag_granulator_real_drawing"));
         ShapedRecipeBuilder.shaped(RecipeCategory.MISC, PcBlocks.DUST_CATCHER.get())
                 .pattern("I I").pattern("ICI").pattern("III").define('I', sheet).define('C', Items.CAULDRON)
                 .unlockedBy("has_shell", has(shell)).save(out, id("dust_catcher"));

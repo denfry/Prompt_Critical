@@ -73,7 +73,7 @@ public final class DeviceProfiles {
                 "PumpedStorageBlockEntity", "RtgBlockEntity")) GENERIC.put(c, "pc_generator");
         for (String c : List.of("BreakerCellBlockEntity", "RelayCabinetBlockEntity", "DistributionBoxBlockEntity")) GENERIC.put(c, "pc_breaker");
         GENERIC.put("TransformerBlockEntity", "pc_transformer");
-        for (String c : List.of("BlastFurnaceControllerBlockEntity", "HotBlastStoveBlockEntity", "HotBlastStoveRealBlockEntity", "CokeOvenBlockEntity", "SinterStrandBlockEntity",
+        for (String c : List.of("BlastFurnaceControllerBlockEntity", "HotBlastStoveBlockEntity", "HotBlastStoveRealBlockEntity", "SinterStrandRealBlockEntity", "CokeOvenBlockEntity", "SinterStrandBlockEntity",
                 "BakingFurnaceBlockEntity", "CupolaBlockEntity", "CrucibleBlockEntity", "BofVesselBlockEntity", "BofVesselRealBlockEntity", "BatchFurnaceBlockEntity", "ReheatingFurnaceRealBlockEntity",
                 "LadleStationBlockEntity", "SubmergedArcFurnaceBlockEntity", "AchesonFurnaceBlockEntity", "PyrolysisFurnaceBlockEntity"))
             GENERIC.put(c, "pc_furnace");
@@ -95,7 +95,7 @@ public final class DeviceProfiles {
                 "GasPlantBlockEntity", "HeliumRecoveryBlockEntity", "AcidConcentratorBlockEntity", "AmmoniaConverterBlockEntity",
                 "Co2AbsorberBlockEntity", "NitricAcidBlockEntity", "SteamReformerBlockEntity", "MethanolConverterBlockEntity",
                 "UraniumProcessBlockEntity", "PurexCellBlockEntity", "ReactorWaterCleanupBlockEntity", "FuelShopBlockEntity",
-                "PelletPressBlockEntity", "MagneticSeparatorBlockEntity", "ByproductPlantBlockEntity", "ElectrodeExtruderBlockEntity",
+                "PelletPressBlockEntity", "MagneticSeparatorBlockEntity", "ByproductPlantBlockEntity", "ByproductPlantRealBlockEntity", "ElectrodeExtruderBlockEntity",
                 "UltrasonicBathBlockEntity")) GENERIC.put(c, "pc_chem_process");
     }
 

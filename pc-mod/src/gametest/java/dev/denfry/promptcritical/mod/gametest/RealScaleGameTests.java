@@ -489,7 +489,7 @@ public final class RealScaleGameTests {
             h.assertTrue(r > 1 / 1.5 && r < 1.5, plan.id() + ": planned metal " + Math.round(plan.plannedMetalKg() / 1000) + " t vs prototype "
                     + Math.round(plan.metalKg() / 1000) + " t");
         }
-        h.assertTrue(n == 61, "sixty-one real-scale plans (eight reactors and NPP units, sixteen I0 machines, two ironmaking, four power and water, four mining and coke, eight steel, six boiler-house, degasification and ore-dressing, three carbon, ten smithy), got " + n);
+        h.assertTrue(n == 72, "seventy-two real-scale plans (eight reactors and NPP units, sixteen I0 machines, thirteen ironmaking and coke by-products, four power and water, four mining and coke, eight steel, six boiler-house, degasification and ore-dressing, three carbon, ten smithy), got " + n);
         h.succeed();
     }
 

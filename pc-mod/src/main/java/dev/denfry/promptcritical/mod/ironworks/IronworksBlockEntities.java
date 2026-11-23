@@ -48,6 +48,20 @@ public final class IronworksBlockEntities {
             type("hot_blast_stove_real", HotBlastStoveRealBlockEntity::new, PcBlocks.HOT_BLAST_STOVE_REAL);
     public static final DeferredHolder<BlockEntityType<?>, BlockEntityType<BlastBlowerEngineBlockEntity>> BLAST_BLOWER_ENGINE =
             type("blast_blower_engine", BlastBlowerEngineBlockEntity::new, PcBlocks.BLAST_BLOWER_ENGINE);
+    public static final DeferredHolder<BlockEntityType<?>, BlockEntityType<SinterStrandRealBlockEntity>> SINTER_STRAND_REAL =
+            type("sinter_strand_real", SinterStrandRealBlockEntity::new, PcBlocks.SINTER_STRAND_REAL);
+    public static final DeferredHolder<BlockEntityType<?>, BlockEntityType<DustCatcherRealBlockEntity>> DUST_CATCHER_REAL =
+            type("dust_catcher_real", DustCatcherRealBlockEntity::new, PcBlocks.DUST_CATCHER_REAL);
+    public static final DeferredHolder<BlockEntityType<?>, BlockEntityType<GasExhausterRealBlockEntity>> GAS_EXHAUSTER_REAL =
+            type("gas_exhauster_real", GasExhausterRealBlockEntity::new, PcBlocks.GAS_EXHAUSTER_REAL);
+    public static final DeferredHolder<BlockEntityType<?>, BlockEntityType<ByproductPlantRealBlockEntity>> BYPRODUCT_PLANT_REAL =
+            type("byproduct_plant_real", ByproductPlantRealBlockEntity::new, PcBlocks.BYPRODUCT_PLANT_COOLER_REAL, PcBlocks.BYPRODUCT_PLANT_PRECIPITATOR_REAL, PcBlocks.BYPRODUCT_PLANT_SATURATOR_REAL, PcBlocks.BYPRODUCT_PLANT_SCRUBBER_REAL);
+    public static final DeferredHolder<BlockEntityType<?>, BlockEntityType<CastHouseMachineRealBlockEntity>> CAST_HOUSE_MACHINE_REAL =
+            type("cast_house_machine_real", CastHouseMachineRealBlockEntity::new, PcBlocks.CAST_HOUSE_MUD_GUN_REAL, PcBlocks.CAST_HOUSE_DRILL_REAL);
+    public static final DeferredHolder<BlockEntityType<?>, BlockEntityType<LadleRealBlockEntity>> LADLE_REAL =
+            type("ladle_real", LadleRealBlockEntity::new, PcBlocks.LADLE_REAL);
+    public static final DeferredHolder<BlockEntityType<?>, BlockEntityType<SlagGranulatorRealBlockEntity>> SLAG_GRANULATOR_REAL =
+            type("slag_granulator_real", SlagGranulatorRealBlockEntity::new, PcBlocks.SLAG_GRANULATOR_REAL);
     public static final DeferredHolder<BlockEntityType<?>, BlockEntityType<DustCatcherBlockEntity>> DUST_CATCHER =
             type("dust_catcher", DustCatcherBlockEntity::new, PcBlocks.DUST_CATCHER);
     public static final DeferredHolder<BlockEntityType<?>, BlockEntityType<CastHouseMachineBlockEntity>> CAST_HOUSE_MACHINE =

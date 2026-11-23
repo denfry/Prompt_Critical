@@ -30,7 +30,7 @@ import org.jetbrains.annotations.Nullable;
  * но с износом футеровки. Футеровка — {@link LadleState}: холодный ковш захолаживает первую порцию. Чугун и сталь
  * в одном ковше не смешиваются.
  */
-public final class LadleBlockEntity extends IronworksBlockEntity {
+public class LadleBlockEntity extends IronworksBlockEntity {
     /** Вместимость, кг [BALANCE]; потери тепла полного ковша, Вт (≈ 0,5 К/мин физ. на 30 т) [BALANCE]. */
     public static final double CAPACITY_KG = 30_000, LOSS_W = 200_000;
     /** Солидус передельного чугуна (≈ 1150 °C), К; остывание пустой футеровки, с физ. */
@@ -45,7 +45,12 @@ public final class LadleBlockEntity extends IronworksBlockEntity {
     private boolean frozen;
 
     public LadleBlockEntity(BlockPos pos, BlockState state) {
-        super(IronworksBlockEntities.LADLE.get(), pos, state);
+        this(IronworksBlockEntities.LADLE.get(), pos, state);
+    }
+
+    /** Для машины реального масштаба на той же логике (свой тип BE). */
+    protected LadleBlockEntity(net.minecraft.world.level.block.entity.BlockEntityType<?> type, BlockPos pos, BlockState state) {
+        super(type, pos, state);
     }
 
     public double metalKg() {

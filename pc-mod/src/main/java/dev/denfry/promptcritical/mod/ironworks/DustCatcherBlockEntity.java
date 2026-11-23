@@ -17,12 +17,17 @@ import org.jetbrains.annotations.Nullable;
  * {@value BlastFurnaceControllerBlockEntity#LINK_RANGE} блоков приходит сюда очищенным — {@code blast_furnace_gas}
  * в бак, откуда его забирают трубы Create (кауперы, батарея). Чего бак не принял — горит на свечах колошника.
  */
-public final class DustCatcherBlockEntity extends IronworksBlockEntity {
+public class DustCatcherBlockEntity extends IronworksBlockEntity {
     private final GasBuffer outlet = new GasBuffer(32_000,
             s -> s.is(GasBuffer.fluid(ProcessGas.BLAST_FURNACE.fluidId)), this::setChanged);
 
     public DustCatcherBlockEntity(BlockPos pos, BlockState state) {
-        super(IronworksBlockEntities.DUST_CATCHER.get(), pos, state);
+        this(IronworksBlockEntities.DUST_CATCHER.get(), pos, state);
+    }
+
+    /** Для машины реального масштаба на той же логике (свой тип BE). */
+    protected DustCatcherBlockEntity(net.minecraft.world.level.block.entity.BlockEntityType<?> type, BlockPos pos, BlockState state) {
+        super(type, pos, state);
     }
 
     public GasBuffer outlet() {

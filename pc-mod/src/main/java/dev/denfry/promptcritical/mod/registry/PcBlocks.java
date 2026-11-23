@@ -1001,6 +1001,11 @@ public final class PcBlocks {
                 || b == GUIBAL_FAN.get() || b == CUPOLA_FURNACE_REAL.get() || b == MINE_DRAINAGE_PUMP_GEARED.get()
                 || b == LANCASHIRE_STOKER.get() || b == CRUCIBLE_FURNACE_REAL.get()
                 || b == HOT_BLAST_STOVE_REAL.get() || b == BLAST_BLOWER_ENGINE.get()
+                || b == SINTER_STRAND_REAL.get() || b == DUST_CATCHER_REAL.get() || b == GAS_EXHAUSTER_REAL.get()
+                || b == BYPRODUCT_PLANT_COOLER_REAL.get() || b == BYPRODUCT_PLANT_PRECIPITATOR_REAL.get()
+                || b == BYPRODUCT_PLANT_SATURATOR_REAL.get() || b == BYPRODUCT_PLANT_SCRUBBER_REAL.get()
+                || b == CAST_HOUSE_MUD_GUN_REAL.get() || b == CAST_HOUSE_DRILL_REAL.get() || b == LADLE_REAL.get()
+                || b == SLAG_GRANULATOR_REAL.get()
                 || b == DEAERATOR_REAL.get() || b == ION_EXCHANGE_COLUMN_REAL.get() || b == SHAFT_GENERATOR_REAL.get()
                 || b == ELECTRIC_MOTOR_MV_REAL.get()
                 // добыча, обогащение и коксохим реального масштаба
@@ -1347,6 +1352,51 @@ public final class PcBlocks {
     public static final DeferredBlock<PcDeviceBlock> BLAST_BLOWER_ENGINE = device("blast_blower_engine", machine(),
             Spec.facing(PcProperties.RUNNING).segments(PcProperties.wholeSegments(FP_BLAST_BLOWER_ENGINE.segments().size()), FP_BLAST_BLOWER_ENGINE),
             dev.denfry.promptcritical.mod.ironworks.BlastBlowerEngineBlock::create);
+    // агломерация, газоочистка, улавливание и литейный двор реального масштаба (08 §8.4–8.5): логика старой серии
+    public static final Footprint FP_SINTER_STRAND_REAL = Footprint.tiled(-1, 1, 0, 2, 0, 8);
+    public static final DeferredBlock<PcDeviceBlock> SINTER_STRAND_REAL = device("sinter_strand_real", lit(machine()),
+            Spec.facing(PcProperties.RUNNING, BlockStateProperties.LIT)
+                    .segments(PcProperties.wholeSegments(FP_SINTER_STRAND_REAL.segments().size()), FP_SINTER_STRAND_REAL),
+            dev.denfry.promptcritical.mod.ironworks.RealShaftBlock.with(dev.denfry.promptcritical.mod.ironworks.SinterStrandRealBlockEntity.SHAFT_PORT, dev.denfry.promptcritical.mod.ironworks.SinterStrandRealBlockEntity::new));
+    public static final Footprint FP_DUST_CATCHER_REAL = Footprint.tiled(-1, 1, 0, 9, -1, 1);
+    public static final DeferredBlock<PcDeviceBlock> DUST_CATCHER_REAL = device("dust_catcher_real", machine(),
+            Spec.facing().segments(PcProperties.wholeSegments(FP_DUST_CATCHER_REAL.segments().size()), FP_DUST_CATCHER_REAL),
+            FoundryBlock.with(dev.denfry.promptcritical.mod.ironworks.DustCatcherRealBlockEntity::new));
+    public static final Footprint FP_GAS_EXHAUSTER_REAL = Footprint.tiled(0, 2, 0, 2, -1, 1);
+    public static final DeferredBlock<PcDeviceBlock> GAS_EXHAUSTER_REAL = device("gas_exhauster_real", machine(),
+            Spec.facing(PcProperties.RUNNING).segments(PcProperties.wholeSegments(FP_GAS_EXHAUSTER_REAL.segments().size()), FP_GAS_EXHAUSTER_REAL),
+            dev.denfry.promptcritical.mod.ironworks.RealShaftBlock.with(dev.denfry.promptcritical.mod.ironworks.GasExhausterRealBlockEntity.SHAFT_PORT, dev.denfry.promptcritical.mod.ironworks.GasExhausterRealBlockEntity::new));
+    public static final Footprint FP_BYPRODUCT_COOLER_REAL = Footprint.tiled(-1, 1, 0, 9, -1, 1);
+    public static final Footprint FP_BYPRODUCT_PRECIPITATOR_REAL = Footprint.tiled(-1, 1, 0, 8, -1, 1);
+    public static final Footprint FP_BYPRODUCT_SATURATOR_REAL = Footprint.tiled(-1, 1, 0, 3, -1, 1);
+    public static final Footprint FP_BYPRODUCT_SCRUBBER_REAL = Footprint.tiled(-1, 1, 0, 15, -1, 1);
+    public static final DeferredBlock<PcDeviceBlock> BYPRODUCT_PLANT_COOLER_REAL = byproductReal("cooler", FP_BYPRODUCT_COOLER_REAL);
+    public static final DeferredBlock<PcDeviceBlock> BYPRODUCT_PLANT_PRECIPITATOR_REAL = byproductReal("precipitator", FP_BYPRODUCT_PRECIPITATOR_REAL);
+    public static final DeferredBlock<PcDeviceBlock> BYPRODUCT_PLANT_SATURATOR_REAL = byproductReal("saturator", FP_BYPRODUCT_SATURATOR_REAL);
+    public static final DeferredBlock<PcDeviceBlock> BYPRODUCT_PLANT_SCRUBBER_REAL = byproductReal("scrubber", FP_BYPRODUCT_SCRUBBER_REAL);
+    public static final Footprint FP_CAST_HOUSE_MACHINE_REAL = Footprint.tiled(-1, 1, 0, 2, 0, 2);
+    public static final DeferredBlock<PcDeviceBlock> CAST_HOUSE_MUD_GUN_REAL = castHouseReal("cast_house_mud_gun_real");
+    public static final DeferredBlock<PcDeviceBlock> CAST_HOUSE_DRILL_REAL = castHouseReal("cast_house_drill_real");
+    public static final Footprint FP_LADLE_REAL = Footprint.tiled(-1, 1, 0, 2, -1, 1);
+    public static final DeferredBlock<PcDeviceBlock> LADLE_REAL = device("ladle_real", machine().lightLevel(s -> s.hasProperty(PcProperties.FILLED)
+            && s.getValue(PcProperties.FILLED) ? 10 : 0), Spec.facing(PcProperties.FILLED, PcProperties.HOT)
+            .segments(PcProperties.wholeSegments(FP_LADLE_REAL.segments().size()), FP_LADLE_REAL),
+            FoundryBlock.with(dev.denfry.promptcritical.mod.ironworks.LadleRealBlockEntity::new));
+    public static final Footprint FP_SLAG_GRANULATOR_REAL = Footprint.tiled(-1, 1, 0, 3, 0, 3);
+    public static final DeferredBlock<PcDeviceBlock> SLAG_GRANULATOR_REAL = device("slag_granulator_real", machine(),
+            Spec.facing(PcProperties.RUNNING).segments(PcProperties.wholeSegments(FP_SLAG_GRANULATOR_REAL.segments().size()), FP_SLAG_GRANULATOR_REAL),
+            FoundryBlock.with(dev.denfry.promptcritical.mod.ironworks.SlagGranulatorRealBlockEntity::new));
+
+    private static DeferredBlock<PcDeviceBlock> byproductReal(String kind, Footprint fp) {
+        return device("byproduct_plant_" + kind + "_real", machine(),
+                Spec.facing().segments(PcProperties.wholeSegments(fp.segments().size()), fp),
+                FoundryBlock.with(dev.denfry.promptcritical.mod.ironworks.ByproductPlantRealBlockEntity::new));
+    }
+
+    private static DeferredBlock<PcDeviceBlock> castHouseReal(String id) {
+        return device(id, machine(), Spec.facing().segments(PcProperties.wholeSegments(FP_CAST_HOUSE_MACHINE_REAL.segments().size()),
+                FP_CAST_HOUSE_MACHINE_REAL), FoundryBlock.with(dev.denfry.promptcritical.mod.ironworks.CastHouseMachineRealBlockEntity::new));
+    }
 
     // --- сталь, прокат, трубы, ВРУ (08 §8.6–8.7, §8.11, этап 10б M3) ---
     public static final DeferredBlock<PcDeviceBlock> BOF_VESSEL = device("bof_vessel", lit(machine()),

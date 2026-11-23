@@ -1,0 +1,32 @@
+{
+  "parent": "minecraft:recipes/root",
+  "criteria": {
+    "has_old": {
+      "conditions": {
+        "items": [
+          {
+            "items": "promptcritical:slag_granulator"
+          }
+        ]
+      },
+      "trigger": "minecraft:inventory_changed"
+    },
+    "has_the_recipe": {
+      "conditions": {
+        "recipe": "promptcritical:ironworks/slag_granulator_real_drawing"
+      },
+      "trigger": "minecraft:recipe_unlocked"
+    }
+  },
+  "requirements": [
+    [
+      "has_the_recipe",
+      "has_old"
+    ]
+  ],
+  "rewards": {
+    "recipes": [
+      "promptcritical:ironworks/slag_granulator_real_drawing"
+    ]
+  }
+}

@@ -39,7 +39,7 @@ import org.jetbrains.annotations.Nullable;
  * щита; шихту поджигает горн — {@value #IGNITION_NM3} нм³ горючего газа на спекание. Мелочь вне окна 45–70 кг/т даёт
  * слабый агломерат: возврат {@value #WEAK_RETURN} массы теряется пылью [BALANCE].
  */
-public final class SinterStrandBlockEntity extends IronworksBlockEntity implements DeviceHost, ShaftConsumer, PanelHost {
+public class SinterStrandBlockEntity extends IronworksBlockEntity implements DeviceHost, ShaftConsumer, PanelHost {
     public static final int ORE_ITEMS = 10;
     public static final double BREEZE_KG_T = 55, IGNITION_NM3 = 3, WEAK_RETURN = 0.4;
     private static final MachineInventory.Role[] ROLES = {MachineInventory.Role.INPUT, MachineInventory.Role.INPUT,
@@ -55,7 +55,12 @@ public final class SinterStrandBlockEntity extends IronworksBlockEntity implemen
     private double shaftRpm;
 
     public SinterStrandBlockEntity(BlockPos pos, BlockState state) {
-        super(IronworksBlockEntities.SINTER_STRAND.get(), pos, state);
+        this(IronworksBlockEntities.SINTER_STRAND.get(), pos, state);
+    }
+
+    /** Для машины реального масштаба на той же логике (свой тип BE). */
+    protected SinterStrandBlockEntity(net.minecraft.world.level.block.entity.BlockEntityType<?> type, BlockPos pos, BlockState state) {
+        super(type, pos, state);
     }
 
     private static boolean valid(int slot, ItemStack s) {

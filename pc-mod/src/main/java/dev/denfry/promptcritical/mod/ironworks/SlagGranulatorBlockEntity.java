@@ -24,7 +24,7 @@ import org.jetbrains.annotations.Nullable;
  * стоит у лётки) гасится струёй воды — {@value #WATER_L_PER_KG} л на кг уходит паром [BALANCE], на выходе
  * {@code granulated_slag}. Без воды шлак не принимается — он остаётся на площадке.
  */
-public final class SlagGranulatorBlockEntity extends IronworksBlockEntity {
+public class SlagGranulatorBlockEntity extends IronworksBlockEntity {
     public static final double WATER_L_PER_KG = 1.0;
     private final GasBuffer water = new GasBuffer(16_000,
             s -> s.is(FluidTags.WATER) || s.is(PcFluids.RAW_WATER.source.get()), this::setChanged);
@@ -34,7 +34,12 @@ public final class SlagGranulatorBlockEntity extends IronworksBlockEntity {
     private int steamTicks;
 
     public SlagGranulatorBlockEntity(BlockPos pos, BlockState state) {
-        super(IronworksBlockEntities.SLAG_GRANULATOR.get(), pos, state);
+        this(IronworksBlockEntities.SLAG_GRANULATOR.get(), pos, state);
+    }
+
+    /** Для машины реального масштаба на той же логике (свой тип BE). */
+    protected SlagGranulatorBlockEntity(net.minecraft.world.level.block.entity.BlockEntityType<?> type, BlockPos pos, BlockState state) {
+        super(type, pos, state);
     }
 
     /** Принять жидкий шлак, кг; вернуть принятое. */

@@ -224,8 +224,8 @@ public final class CokeOvenBlockEntity extends BlockEntity implements DeviceHost
     }
 
     private void exhausters(SimLevelBinding b, CokeBatteryUnit u, double dtp) {
-        List<GasExhausterBlockEntity> ex = new ArrayList<>();
-        for (BlockPos p : shape.devices()) if (level.getBlockEntity(p) instanceof GasExhausterBlockEntity e) ex.add(e);
+        List<GasExhauster> ex = new ArrayList<>();
+        for (BlockPos p : shape.devices()) if (level.getBlockEntity(p) instanceof GasExhauster e) ex.add(e);
         double cap = 0, sum = 0, room = 0;
         int running = 0;
         double[] s = new double[ex.size()];

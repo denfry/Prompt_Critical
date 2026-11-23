@@ -48,6 +48,19 @@ public final class WholePorts {
             Map.entry("crucible_furnace_real", List.of(p(0, 0, 0, U))),
             // каупер: доменный газ — в патрубок горелки с севера (клетка (−1, 1, 0)); дутьё домна забирает по соседству
             Map.entry("hot_blast_stove_real", List.of(p(-1, 1, 0, N))),
+            // агломашина: шихта — в бункер сверху, газ зажигания — с востока, агломерат — с разгрузочного конца
+            Map.entry("sinter_strand_real", List.of(p(0, 2, 0, U), p(0, 2, 1, U), p(1, 1, 2, E), p(0, 0, 8, S))),
+            // очищенный газ — из патрубка газопровода; грязный газ домна подаёт по соседству
+            Map.entry("dust_catcher_real", List.of(p(0, 8, 1, S))),
+            // нагнетательный патрубок сверху; всас — газосборник батареи у любой клетки
+            Map.entry("gas_exhauster_real", List.of(p(0, 2, -1, U))),
+            // смола (холодильник, электрофильтр), кислота и сульфат (сатуратор), поглотительное масло (скруббер)
+            Map.entry("byproduct_plant_cooler_real", List.of(p(-1, 0, 0, W))),
+            Map.entry("byproduct_plant_precipitator_real", List.of(p(-1, 0, 0, W))),
+            Map.entry("byproduct_plant_saturator_real", List.of(p(1, 2, 0, E), p(-1, 0, 0, W))),
+            Map.entry("byproduct_plant_scrubber_real", List.of(p(1, 14, 0, E), p(1, 0, 0, E))),
+            // вода — в струйную коробку с востока, гранулы — из жёлоба элеватора на западе
+            Map.entry("slag_granulator_real", List.of(p(1, 0, 1, E), p(-1, 3, 3, W))),
             // химочищенная вода — с севера на колонку, конденсат — с юга, питательная вода — вниз из бака у контроллера;
             // греющий пар деаэратор берёт из барабана ближнего котла (07 §7.9.6), паропровод и выпар нарисованы
             Map.entry("deaerator_real", List.of(p(2, 4, -1, N), p(2, 4, 1, S), p(0, 0, 0, D))),

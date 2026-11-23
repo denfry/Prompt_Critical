@@ -30,7 +30,7 @@ import org.jetbrains.annotations.Nullable;
  * 15,5 кг NH₃ + 44,7 кг H₂SO₄ → 60,2 кг; скруббер — бензол поглотительным маслом ({@code c:wash_oil}, потери
  * 0,1 л/кг [BALANCE]) → {@code crude_benzol}. Чего не уловили — уходит с газом.
  */
-public final class ByproductPlantBlockEntity extends IronworksBlockEntity implements PanelHost {
+public class ByproductPlantBlockEntity extends IronworksBlockEntity implements PanelHost {
     static final double TAR_DENSITY = 1.17, BENZOL_DENSITY = 0.88, ACID_DENSITY = 1.84, ACID_PER_NH3 = 44.7 / 15.5,
             SULFATE_PER_NH3 = 60.2 / 15.5, WASH_OIL_L_PER_KG = 0.1;
 
@@ -41,7 +41,12 @@ public final class ByproductPlantBlockEntity extends IronworksBlockEntity implem
     private double sulfateKg, capturedKg;
 
     public ByproductPlantBlockEntity(BlockPos pos, BlockState state) {
-        super(IronworksBlockEntities.BYPRODUCT_PLANT.get(), pos, state);
+        this(IronworksBlockEntities.BYPRODUCT_PLANT.get(), pos, state);
+    }
+
+    /** Для машины реального масштаба на той же логике (свой тип BE). */
+    protected ByproductPlantBlockEntity(net.minecraft.world.level.block.entity.BlockEntityType<?> type, BlockPos pos, BlockState state) {
+        super(type, pos, state);
     }
 
     public PcProperties.ByproductKind kind() {

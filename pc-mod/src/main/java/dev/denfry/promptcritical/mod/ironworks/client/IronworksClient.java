@@ -33,6 +33,7 @@ public final class IronworksClient {
         // доменный цех реального масштаба: цельные модели и partial-модели — до запекания
         HotBlastStoveRealRenderer.init();
         BlastBlowerEngineRenderer.init();
+        IronmakingRealRenderers.init();
     }
 
     private IronworksClient() {
@@ -69,6 +70,13 @@ public final class IronworksClient {
                 c -> new dev.denfry.promptcritical.mod.client.whole.LitWholeModelRenderer<>());
         event.registerBlockEntityRenderer(IronworksBlockEntities.HOT_BLAST_STOVE_REAL.get(), c -> new HotBlastStoveRealRenderer());
         event.registerBlockEntityRenderer(IronworksBlockEntities.BLAST_BLOWER_ENGINE.get(), c -> new BlastBlowerEngineRenderer());
+        event.registerBlockEntityRenderer(IronworksBlockEntities.SINTER_STRAND_REAL.get(), c -> new IronmakingRealRenderers.Sinter());
+        event.registerBlockEntityRenderer(IronworksBlockEntities.DUST_CATCHER_REAL.get(), c -> new IronmakingRealRenderers.Catcher());
+        event.registerBlockEntityRenderer(IronworksBlockEntities.GAS_EXHAUSTER_REAL.get(), c -> new IronmakingRealRenderers.Exhauster());
+        event.registerBlockEntityRenderer(IronworksBlockEntities.BYPRODUCT_PLANT_REAL.get(), c -> IronmakingRealRenderers.plain());
+        event.registerBlockEntityRenderer(IronworksBlockEntities.CAST_HOUSE_MACHINE_REAL.get(), c -> new IronmakingRealRenderers.CastHouse());
+        event.registerBlockEntityRenderer(IronworksBlockEntities.LADLE_REAL.get(), c -> new IronmakingRealRenderers.Ladle());
+        event.registerBlockEntityRenderer(IronworksBlockEntities.SLAG_GRANULATOR_REAL.get(), c -> new IronmakingRealRenderers.Granulator());
         // реальный: барабан вокруг x через (y 24, z 8), хранится на 8 px восточнее; скорость — вала в клетке-порте
         event.registerBlockEntityRenderer(IronworksBlockEntities.MAGNETIC_SEPARATOR.get(), c -> new dev.denfry.promptcritical.mod.client.whole.SpinWholeRenderer<>(
                 new FoundryMachineRenderer<>(SEPARATOR_DRUM, Motion.SPIN_X, 10, 8, 1))

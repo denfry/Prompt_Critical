@@ -53,7 +53,7 @@ public final class GasMainBlock extends PcBlock {
         if (level.getBlockState(pos).getBlock() instanceof GasMainBlock) return true;
         if (!(level instanceof net.minecraft.world.level.Level l)) return false;
         BlockPos c = Ironworks.controllerOf(l, pos);
-        return l.getBlockEntity(c) instanceof GasExhausterBlockEntity || l.getBlockEntity(c) instanceof ByproductPlantBlockEntity;
+        return l.getBlockEntity(c) instanceof GasExhauster || l.getBlockEntity(c) instanceof ByproductPlantBlockEntity;
     }
 
     @Override

@@ -27,7 +27,7 @@ import org.jetbrains.annotations.Nullable;
  * отсасывает Q₀·s, s — скорость вала к номинальной (давление считает {@link GasMain}); газ — в свой бак, откуда его
  * забирают трубы Create.
  */
-public final class GasExhausterBlockEntity extends KineticMachineBlockEntity<CyclicMachine> {
+public final class GasExhausterBlockEntity extends KineticMachineBlockEntity<CyclicMachine> implements GasExhauster {
     private final GasBuffer outlet = new GasBuffer(16_000, s -> s.is(GasBuffer.fluid(ProcessGas.COKE_OVEN.fluidId)), this::setChanged);
 
     public GasExhausterBlockEntity(BlockPos pos, BlockState state) {
@@ -40,11 +40,13 @@ public final class GasExhausterBlockEntity extends KineticMachineBlockEntity<Cyc
         return Ironworks.shaftMachine(b, simId());
     }
 
+    @Override
     @Nullable
     public CyclicMachine machine() {
         return unit();
     }
 
+    @Override
     public GasBuffer outlet() {
         return outlet;
     }
