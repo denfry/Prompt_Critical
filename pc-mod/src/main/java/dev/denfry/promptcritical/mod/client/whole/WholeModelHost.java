@@ -8,10 +8,18 @@ import net.minecraft.core.Direction;
  * из {@code wholemodels/<id>.json}, фасад и клетка, по которой берётся освещение.
  */
 public interface WholeModelHost {
+    @org.jetbrains.annotations.Nullable
     String wholeModelId();
 
     Direction wholeModelFacing();
 
     /** Клетка со светом снаружи корпуса (сам контроллер внутри глухого объёма). */
     BlockPos wholeModelLightPos();
+
+    /** Id цельной модели для состояния блока: у машин реального масштаба — id блока, у старой серии — null. */
+    @org.jetbrains.annotations.Nullable
+    static String idOf(net.minecraft.world.level.block.state.BlockState state) {
+        if (!dev.denfry.promptcritical.mod.registry.PcBlocks.isWholeModel(state.getBlock())) return null;
+        return net.minecraft.core.registries.BuiltInRegistries.BLOCK.getKey(state.getBlock()).getPath();
+    }
 }

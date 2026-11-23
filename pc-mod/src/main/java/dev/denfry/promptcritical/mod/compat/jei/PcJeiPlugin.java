@@ -63,6 +63,14 @@ public final class PcJeiPlugin implements IModPlugin {
         });
     }
 
+    /** Старая серия машин (спецификация real-scale machines, M4) не крафтится и скрыта. */
+    @Override
+    public void onRuntimeAvailable(mezz.jei.api.runtime.IJeiRuntime runtime) {
+        var legacy = new java.util.ArrayList<net.minecraft.world.item.ItemStack>();
+        for (var b : dev.denfry.promptcritical.mod.registry.PcBlocks.legacy()) legacy.add(new net.minecraft.world.item.ItemStack(b.get()));
+        runtime.getIngredientManager().removeIngredientsAtRuntime(mezz.jei.api.constants.VanillaTypes.ITEM_STACK, legacy);
+    }
+
     @Override
     public void registerCategories(IRecipeCategoryRegistration registration) {
         for (Plant plant : Plant.values()) {

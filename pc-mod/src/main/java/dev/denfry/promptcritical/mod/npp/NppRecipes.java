@@ -58,16 +58,23 @@ public final class NppRecipes extends RecipeProvider {
                 .pattern("PTP").pattern("SXS").pattern("PTP").define('P', PcItems.STEEL_PLATE.get()).define('T', PcItems.SEAMLESS_PIPE.get())
                 .define('S', AllItems.IRON_SHEET.get()).define('X', AllBlocks.FLUID_TANK.get())
                 .unlockedBy("has_power_reactor", has(PcBlocks.POWER_REACTOR.get())).save(out, id("steam_generator"));
+        // чертежи ГЦН-195 и ПГВ-1000 реального масштаба: проект по образцу насоса и парогенератора, которые уже есть
+        net.minecraft.data.recipes.ShapelessRecipeBuilder.shapeless(RecipeCategory.MISC, dev.denfry.promptcritical.mod.site.SiteRegistry.VVER_COOLANT_PUMP_DRAWING.get())
+                .requires(net.minecraft.world.item.Items.PAPER, 3).requires(PcBlocks.PRIMARY_PUMP.get())
+                .unlockedBy("has_primary_pump", has(PcBlocks.PRIMARY_PUMP.get())).save(out, id("vver_coolant_pump_drawing"));
+        net.minecraft.data.recipes.ShapelessRecipeBuilder.shapeless(RecipeCategory.MISC, dev.denfry.promptcritical.mod.site.SiteRegistry.VVER_STEAM_GENERATOR_DRAWING.get())
+                .requires(net.minecraft.world.item.Items.PAPER, 3).requires(PcBlocks.STEAM_GENERATOR.get())
+                .unlockedBy("has_steam_generator", has(PcBlocks.STEAM_GENERATOR.get())).save(out, id("vver_steam_generator_drawing"));
         // ВВЭР: блок приводов СУЗ над корпусом из листа, внутрикорпусная шахта из циркалоя, пульт
-        ShapedRecipeBuilder.shaped(RecipeCategory.MISC, PcBlocks.PWR_REACTOR.get())
+        ShapedRecipeBuilder.shaped(RecipeCategory.MISC, dev.denfry.promptcritical.mod.site.SiteRegistry.VVER_REACTOR_DRAWING.get())
                 .pattern("DCD").pattern("PRP").pattern("PZP").define('D', PcBlocks.CONTROL_ROD_DRIVE.get())
                 .define('C', PcBlocks.CONTROL_ROD_CHANNEL.get()).define('R', PcBlocks.REACTOR_CONTROLLER.get())
                 .define('P', PcItems.STEEL_PLATE.get()).define('Z', PcItems.ZIRCALOY_INGOT.get())
-                .unlockedBy("has_reactor_controller", has(PcBlocks.REACTOR_CONTROLLER.get())).save(out, id("pwr_reactor"));
+                .unlockedBy("has_reactor_controller", has(PcBlocks.REACTOR_CONTROLLER.get())).save(out, id("vver_reactor_drawing"));
         // гермооболочка: железобетон со стальной облицовкой; люк — стальная дверь в обойме; ПАР — каталитические пластины
         ShapedRecipeBuilder.shaped(RecipeCategory.BUILDING_BLOCKS, PcBlocks.CONTAINMENT_WALL.get(), 8)
                 .pattern("CCC").pattern("CPC").pattern("CCC").define('C', Items.GRAY_CONCRETE).define('P', PcItems.STEEL_PLATE.get())
-                .unlockedBy("has_pwr_reactor", has(PcBlocks.PWR_REACTOR.get())).save(out, id("containment_wall"));
+                .unlockedBy("has_vver_reactor_drawing", has(dev.denfry.promptcritical.mod.site.SiteRegistry.VVER_REACTOR_DRAWING.get())).save(out, id("containment_wall"));
         ShapedRecipeBuilder.shaped(RecipeCategory.BUILDING_BLOCKS, PcBlocks.CONTAINMENT_HATCH.get())
                 .pattern("PWP").pattern("PDP").pattern("PWP").define('P', PcItems.STEEL_PLATE.get())
                 .define('W', PcBlocks.CONTAINMENT_WALL.get()).define('D', Items.IRON_DOOR)
@@ -80,16 +87,16 @@ public final class NppRecipes extends RecipeProvider {
         ShapedRecipeBuilder.shaped(RecipeCategory.MISC, PcBlocks.ECCS_PUMP.get())
                 .pattern("PMP").pattern("TXT").pattern("PHP").define('P', PcItems.STEEL_PLATE.get()).define('M', AllItems.PRECISION_MECHANISM.get())
                 .define('T', AllBlocks.MECHANICAL_PUMP.get()).define('X', PcItems.SEAMLESS_PIPE.get()).define('H', AllBlocks.SHAFT.get())
-                .unlockedBy("has_pwr_reactor", has(PcBlocks.PWR_REACTOR.get())).save(out, id("eccs_pump"));
+                .unlockedBy("has_vver_reactor_drawing", has(dev.denfry.promptcritical.mod.site.SiteRegistry.VVER_REACTOR_DRAWING.get())).save(out, id("eccs_pump"));
         ShapedRecipeBuilder.shaped(RecipeCategory.MISC, PcBlocks.ECCS_ACCUMULATOR.get())
                 .pattern("PVP").pattern("PXP").pattern("PTP").define('P', PcItems.STEEL_PLATE.get()).define('V', PcItems.SAFETY_VALVE.get())
                 .define('X', AllBlocks.FLUID_TANK.get()).define('T', PcItems.SEAMLESS_PIPE.get())
-                .unlockedBy("has_pwr_reactor", has(PcBlocks.PWR_REACTOR.get())).save(out, id("eccs_accumulator"));
+                .unlockedBy("has_vver_reactor_drawing", has(dev.denfry.promptcritical.mod.site.SiteRegistry.VVER_REACTOR_DRAWING.get())).save(out, id("eccs_accumulator"));
         // компенсатор давления: сосуд, ИПУ сверху, манометр, ТЭНы — медная обмотка
-        ShapedRecipeBuilder.shaped(RecipeCategory.MISC, PcBlocks.PRESSURIZER.get())
+        ShapedRecipeBuilder.shaped(RecipeCategory.MISC, dev.denfry.promptcritical.mod.site.SiteRegistry.VVER_PRESSURIZER_DRAWING.get())
                 .pattern("PVP").pattern("PXP").pattern("CGC").define('P', PcItems.STEEL_PLATE.get()).define('V', PcItems.SAFETY_VALVE.get())
                 .define('X', AllBlocks.FLUID_TANK.get()).define('G', PcBlocks.INSTRUMENT_PRESSURE.get()).define('C', Items.COPPER_INGOT)
-                .unlockedBy("has_pwr_reactor", has(PcBlocks.PWR_REACTOR.get())).save(out, id("pressurizer"));
+                .unlockedBy("has_vver_reactor_drawing", has(dev.denfry.promptcritical.mod.site.SiteRegistry.VVER_REACTOR_DRAWING.get())).save(out, id("vver_pressurizer_drawing"));
         // CANDU: каландр из листа с каналами из циркалоя, перегрузочная машина сверху
         ShapedRecipeBuilder.shaped(RecipeCategory.MISC, PcBlocks.CANDU_REACTOR.get())
                 .pattern("PMP").pattern("ZRZ").pattern("PCP").define('M', PcBlocks.CONTROL_ROD_DRIVE.get())
@@ -101,7 +108,7 @@ public final class NppRecipes extends RecipeProvider {
                 .pattern("PSP").pattern("PRP").pattern("DZD").define('S', PcBlocks.STEAM_DRUM.get())
                 .define('R', PcBlocks.REACTOR_CONTROLLER.get()).define('D', PcBlocks.CONTROL_ROD_DRIVE.get())
                 .define('P', PcItems.STEEL_PLATE.get()).define('Z', PcItems.ZIRCALOY_INGOT.get())
-                .unlockedBy("has_pwr_reactor", has(PcBlocks.PWR_REACTOR.get())).save(out, id("bwr_reactor"));
+                .unlockedBy("has_vver_reactor_drawing", has(dev.denfry.promptcritical.mod.site.SiteRegistry.VVER_REACTOR_DRAWING.get())).save(out, id("bwr_reactor"));
         // быстрый натриевый: бассейн натрия (баки) под пробкой с приводами стержней, открывается после кипящего
         ShapedRecipeBuilder.shaped(RecipeCategory.MISC, PcBlocks.SFR_REACTOR.get())
                 .pattern("DDD").pattern("PRP").pattern("PTP").define('D', PcBlocks.CONTROL_ROD_DRIVE.get())

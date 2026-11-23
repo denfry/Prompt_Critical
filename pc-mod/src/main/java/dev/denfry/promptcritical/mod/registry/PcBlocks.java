@@ -798,6 +798,39 @@ public final class PcBlocks {
     public static final DeferredBlock<PcDeviceBlock> PRESSURIZER = device("pressurizer", machine(), Spec.facing(BlockStateProperties.LIT),
             FoundryBlock.with(dev.denfry.promptcritical.mod.npp.PressurizerBlockEntity::new));
 
+    // --- ВВЭР-1000 в реальном масштабе (спецификация real-scale machines): 1 блок ≈ 1 м, цельные модели, ставятся
+    // стройплощадкой; контроллер — средний блок низа, фасад на север. Объёмы — по таблице размеров (docs/research). ---
+    public static final Footprint FP_VVER_REACTOR = Footprint.tiled(-2, 2, 0, 19, -2, 2);
+    public static final DeferredBlock<PcDeviceBlock> VVER_REACTOR = device("vver_reactor", machine(),
+            Spec.facing().segments(PcProperties.wholeSegments(FP_VVER_REACTOR.segments().size()), FP_VVER_REACTOR),
+            FoundryBlock.with(dev.denfry.promptcritical.mod.npp.PwrReactorBlockEntity::new));
+    public static final Footprint FP_VVER_STEAM_GENERATOR = Footprint.tiled(-7, 7, 0, 7, -2, 2);
+    public static final DeferredBlock<PcDeviceBlock> VVER_STEAM_GENERATOR = device("vver_steam_generator", machine(),
+            Spec.facing(BlockStateProperties.LIT).segments(PcProperties.wholeSegments(FP_VVER_STEAM_GENERATOR.segments().size()), FP_VVER_STEAM_GENERATOR),
+            FoundryBlock.with(dev.denfry.promptcritical.mod.npp.SteamGeneratorBlockEntity::new));
+    public static final Footprint FP_VVER_COOLANT_PUMP = Footprint.tiled(-2, 2, 0, 9, -1, 1);
+    public static final DeferredBlock<PcDeviceBlock> VVER_COOLANT_PUMP = device("vver_coolant_pump", machine(),
+            Spec.facing(PcProperties.RUNNING).segments(PcProperties.wholeSegments(FP_VVER_COOLANT_PUMP.segments().size()), FP_VVER_COOLANT_PUMP),
+            KineticMachineBlock.with(ShaftSide.BACK, dev.denfry.promptcritical.mod.npp.PrimaryPumpBlockEntity::new));
+    public static final Footprint FP_VVER_PRESSURIZER = Footprint.tiled(-2, 2, 0, 17, -2, 2);
+    public static final DeferredBlock<PcDeviceBlock> VVER_PRESSURIZER = device("vver_pressurizer", machine(),
+            Spec.facing(BlockStateProperties.LIT).segments(PcProperties.wholeSegments(FP_VVER_PRESSURIZER.segments().size()), FP_VVER_PRESSURIZER),
+            FoundryBlock.with(dev.denfry.promptcritical.mod.npp.PressurizerBlockEntity::new));
+
+    /** Машины реального масштаба с цельной моделью: id блока → id модели (wholemodels/). */
+    public static boolean isWholeModel(net.minecraft.world.level.block.Block b) {
+        return b == VVER_REACTOR.get() || b == VVER_STEAM_GENERATOR.get() || b == VVER_COOLANT_PUMP.get() || b == VVER_PRESSURIZER.get();
+    }
+
+    /**
+     * Старая серия (спецификация real-scale machines, M4): поставленные работают и выпадают сами, но не крафтятся и
+     * скрыты во вкладке творческого режима и в JEI/EMI.
+     */
+    public static java.util.List<DeferredBlock<? extends net.minecraft.world.level.block.Block>> legacy() {
+        // ГЦН и парогенератор старой серии служат ещё АМ-1, BWR и CANDU: в старую серию они уйдут вместе с ними
+        return java.util.List.of(PWR_REACTOR, PRESSURIZER);
+    }
+
     // --- обогащение, литьё, механический цех (08 §8.3, §8.9, §8.10) ---
     public static final DeferredBlock<PcDeviceBlock> COAL_JIG = device("coal_jig", machine(),
             Spec.facing(PcProperties.RUNNING).footprint(Footprint.of(Segment.box(0, 1, 0, 1, 0, 0))),

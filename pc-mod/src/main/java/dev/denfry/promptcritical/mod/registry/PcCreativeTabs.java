@@ -16,7 +16,11 @@ public final class PcCreativeTabs {
             .title(Component.translatable("itemGroup." + PromptCritical.MOD_ID))
             .icon(() -> new ItemStack(PcBlocks.FIRE_TUBE_BOILER.get()))
             .displayItems((params, out) -> {
-                PcBlocks.withItems().forEach(b -> out.accept(b.get()));
+                var legacy = PcBlocks.legacy().stream().map(b -> b.get()).collect(java.util.stream.Collectors.toSet());
+                PcBlocks.withItems().forEach(b -> {
+                    if (!legacy.contains(b.get())) out.accept(b.get());
+                });
+                dev.denfry.promptcritical.mod.site.SiteRegistry.items().forEach(i -> out.accept(i.get()));
                 PcItems.plainItems().forEach(i -> out.accept(i.get()));
                 dev.denfry.promptcritical.mod.manufacturing.ManufacturingItems.all().forEach(i -> out.accept(i.get()));
             })

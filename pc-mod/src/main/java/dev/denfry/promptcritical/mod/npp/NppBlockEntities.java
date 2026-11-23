@@ -22,11 +22,11 @@ public final class NppBlockEntities {
     public static final DeferredHolder<BlockEntityType<?>, BlockEntityType<PowerReactorBlockEntity>> POWER_REACTOR =
             type("power_reactor", PowerReactorBlockEntity::new, PcBlocks.POWER_REACTOR);
     public static final DeferredHolder<BlockEntityType<?>, BlockEntityType<PrimaryPumpBlockEntity>> PRIMARY_PUMP =
-            type("primary_pump", PrimaryPumpBlockEntity::new, PcBlocks.PRIMARY_PUMP);
+            type("primary_pump", PrimaryPumpBlockEntity::new, PcBlocks.PRIMARY_PUMP, PcBlocks.VVER_COOLANT_PUMP);
     public static final DeferredHolder<BlockEntityType<?>, BlockEntityType<SteamGeneratorBlockEntity>> STEAM_GENERATOR =
-            type("steam_generator", SteamGeneratorBlockEntity::new, PcBlocks.STEAM_GENERATOR);
+            type("steam_generator", SteamGeneratorBlockEntity::new, PcBlocks.STEAM_GENERATOR, PcBlocks.VVER_STEAM_GENERATOR);
     public static final DeferredHolder<BlockEntityType<?>, BlockEntityType<PwrReactorBlockEntity>> PWR_REACTOR =
-            type("pwr_reactor", PwrReactorBlockEntity::new, PcBlocks.PWR_REACTOR);
+            type("pwr_reactor", PwrReactorBlockEntity::new, PcBlocks.PWR_REACTOR, PcBlocks.VVER_REACTOR);
     public static final DeferredHolder<BlockEntityType<?>, BlockEntityType<BwrReactorBlockEntity>> BWR_REACTOR =
             type("bwr_reactor", BwrReactorBlockEntity::new, PcBlocks.BWR_REACTOR);
     public static final DeferredHolder<BlockEntityType<?>, BlockEntityType<CanduReactorBlockEntity>> CANDU_REACTOR =
@@ -34,7 +34,7 @@ public final class NppBlockEntities {
     public static final DeferredHolder<BlockEntityType<?>, BlockEntityType<SfrReactorBlockEntity>> SFR_REACTOR =
             type("sfr_reactor", SfrReactorBlockEntity::new, PcBlocks.SFR_REACTOR);
     public static final DeferredHolder<BlockEntityType<?>, BlockEntityType<PressurizerBlockEntity>> PRESSURIZER =
-            type("pressurizer", PressurizerBlockEntity::new, PcBlocks.PRESSURIZER);
+            type("pressurizer", PressurizerBlockEntity::new, PcBlocks.PRESSURIZER, PcBlocks.VVER_PRESSURIZER);
     public static final DeferredHolder<BlockEntityType<?>, BlockEntityType<EccsPumpBlockEntity>> ECCS_PUMP =
             type("eccs_pump", EccsPumpBlockEntity::new, PcBlocks.ECCS_PUMP);
 
@@ -58,5 +58,11 @@ public final class NppBlockEntities {
     private static <T extends BlockEntity> DeferredHolder<BlockEntityType<?>, BlockEntityType<T>> type(String name,
             BlockEntityType.BlockEntitySupplier<T> factory, Supplier<? extends Block> block) {
         return BLOCK_ENTITIES.register(name, () -> BlockEntityType.Builder.of(factory, block.get()).build(null));
+    }
+
+    /** Тип для нескольких блоков: старая серия и машина реального масштаба с той же логикой. */
+    private static <T extends BlockEntity> DeferredHolder<BlockEntityType<?>, BlockEntityType<T>> type(String name,
+            BlockEntityType.BlockEntitySupplier<T> factory, Supplier<? extends Block> a, Supplier<? extends Block> b) {
+        return BLOCK_ENTITIES.register(name, () -> BlockEntityType.Builder.of(factory, a.get(), b.get()).build(null));
     }
 }

@@ -476,14 +476,18 @@ public final class PcLanguageProvider extends LanguageProvider {
         i("sr90_heat_source", "Sr-90 Heat Source", "Источник тепла Sr-90");
         b("primary_pump", "Primary Circulation Pump", "Главный циркуляционный насос");
         b("steam_generator", "Steam Generator", "Парогенератор");
-        b("pwr_reactor", "Pressurized Water Reactor (VVER type)", "Водо-водяной энергетический реактор (типа ВВЭР)");
+        b("pwr_reactor", "Pressurized Water Reactor (VVER type, legacy)", "Водо-водяной энергетический реактор (типа ВВЭР, старая серия)");
         b("containment_wall", "Containment Wall", "Стена гермооболочки");
         b("corium", "Corium", "Кориум");
         b("containment_hatch", "Containment Personnel Hatch", "Шлюзовой люк гермооболочки");
         b("hydrogen_recombiner", "Passive Hydrogen Recombiner", "Пассивный каталитический рекомбинатор водорода");
         b("eccs_pump", "ECCS Pump Train", "Насос САОЗ");
         b("eccs_accumulator", "ECCS Hydroaccumulator", "Гидроёмкость САОЗ");
-        b("pressurizer", "Pressurizer", "Компенсатор давления");
+        b("pressurizer", "Pressurizer (legacy)", "Компенсатор давления (старая серия)");
+        b("vver_reactor", "VVER-1000 Reactor", "Реактор ВВЭР-1000");
+        b("vver_steam_generator", "PGV-1000 Steam Generator", "Парогенератор ПГВ-1000");
+        b("vver_coolant_pump", "GCN-195 Reactor Coolant Pump", "Главный циркуляционный насос ГЦН-195");
+        b("vver_pressurizer", "VVER-1000 Pressurizer", "Компенсатор давления ВВЭР-1000");
         b("candu_reactor", "Heavy Water Reactor (CANDU type)", "Тяжеловодный реактор (типа CANDU)");
         b("gs_exchange_tower", "Girdler Sulfide Heavy Water Plant", "Сероводородный завод тяжёлой воды");
         b("heavy_water_column", "Heavy Water Finishing Column", "Колонна доводки тяжёлой воды");
@@ -842,6 +846,7 @@ public final class PcLanguageProvider extends LanguageProvider {
         MISC.putAll(FoundryText.LANG);
         MISC.putAll(ManufacturingText.LANG);
         MISC.putAll(dev.denfry.promptcritical.mod.paperwork.PaperworkText.LANG);
+        MISC.putAll(dev.denfry.promptcritical.mod.site.SiteText.LANG);
         MISC.putAll(dev.denfry.promptcritical.mod.ironworks.IronworksText.LANG);
         MISC.putAll(dev.denfry.promptcritical.mod.steelworks.SteelworksText.LANG);
         MISC.putAll(dev.denfry.promptcritical.mod.ops.OpsText.LANG);

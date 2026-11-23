@@ -145,8 +145,9 @@
     }
     const r = build(j, id);
     const dir = path.join(repo, ASSETS, 'models/block', id, 'chunk');
-    fs.rmSync(dir, { recursive: true, force: true });
+    // старые куски удаляются по одному и до записи новых: удаление всей папки в Blockbench завершается позже записи
     fs.mkdirSync(dir, { recursive: true });
+    for (const f of fs.readdirSync(dir)) if (f.endsWith('.json')) fs.unlinkSync(path.join(dir, f));
     for (const [key, m] of Object.entries(r.models)) fs.writeFileSync(path.join(dir, key + '.json'), JSON.stringify(m) + '\n');
     const mf = path.join(repo, ASSETS, 'wholemodels', id + '.json');
     fs.mkdirSync(path.dirname(mf), { recursive: true });

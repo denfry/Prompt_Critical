@@ -80,8 +80,10 @@ import org.jetbrains.annotations.Nullable;
  * разгерметизирует ТВС при разогреве и отправляет горение водорода и разрыв гермооболочки через маршрутизатор
  * последствий.
  */
-public final class PwrReactorBlockEntity extends DeviceBlockEntity implements dev.denfry.promptcritical.mod.environment.SelfEmittingSource, FoundryDevice, PanelHost, WiredDevice {
+public final class PwrReactorBlockEntity extends DeviceBlockEntity implements dev.denfry.promptcritical.mod.environment.SelfEmittingSource, FoundryDevice, PanelHost, WiredDevice, dev.denfry.promptcritical.mod.client.whole.WholeModelHost {
     public static final int LINK_RADIUS = 12;
+    /** Реальный масштаб: петли ВВЭР-1000 лежат в десятках метров от корпуса. */
+    public static final int LINK_RADIUS_REAL = 32;
     /** I-131 из одной разгерметизированной ТВС, уходящий с теплоносителем через течь или ИПУ, Бк [оценка: 1 % газового зазора]. */
     public static final double I131_PER_FAILED_BQ = 5e12;
     /**
@@ -166,7 +168,7 @@ public final class PwrReactorBlockEntity extends DeviceBlockEntity implements de
         pumps.clear();
         generators.clear();
         pressurizer = null;
-        AABB box = new AABB(worldPosition).inflate(LINK_RADIUS);
+        AABB box = new AABB(worldPosition).inflate(getBlockState().is(dev.denfry.promptcritical.mod.registry.PcBlocks.VVER_REACTOR.get()) ? LINK_RADIUS_REAL : LINK_RADIUS);
         for (PrimaryPumpBlockEntity p : Ironworks.blockEntities(sl, box, PrimaryPumpBlockEntity.class)) {
             if (pumps.size() < PressurizedWaterReactor.LOOPS) pumps.add(p.getBlockPos());
         }
@@ -711,5 +713,23 @@ public final class PwrReactorBlockEntity extends DeviceBlockEntity implements de
         if (tag.contains("sgtr")) sgtr.load(new TreeStateReader(NbtStateTrees.fromNbt(tag.getCompound("sgtr"))));
         wiring.load(tag);
         wasTripped = reactor.protection().isTripped();
+    }
+
+
+    // --- цельная модель реального масштаба (спецификация real-scale machines) ---
+
+    @Override
+    public String wholeModelId() {
+        return dev.denfry.promptcritical.mod.client.whole.WholeModelHost.idOf(getBlockState());
+    }
+
+    @Override
+    public net.minecraft.core.Direction wholeModelFacing() {
+        return getBlockState().getBlock() instanceof dev.denfry.promptcritical.mod.block.PcBlock pc ? pc.facing(getBlockState()) : net.minecraft.core.Direction.NORTH;
+    }
+
+    @Override
+    public net.minecraft.core.BlockPos wholeModelLightPos() {
+        return worldPosition.relative(wholeModelFacing(), 4).above();
     }
 }

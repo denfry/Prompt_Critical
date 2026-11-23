@@ -24,7 +24,8 @@ public class WholeModelRenderer<T extends BlockEntity & WholeModelHost> implemen
     @Override
     public void render(T be, float partialTicks, PoseStack ms, MultiBufferSource buffers, int light, int overlay) {
         if (be.getLevel() == null) return;
-        WholeModels.Model m = WholeModels.get(be.wholeModelId());
+        String id = be.wholeModelId();
+        WholeModels.Model m = id == null ? null : WholeModels.get(id);
         if (m == null) return;
         Direction facing = be.wholeModelFacing();
         int lit = LevelRenderer.getLightColor(be.getLevel(), be.wholeModelLightPos());
@@ -48,7 +49,8 @@ public class WholeModelRenderer<T extends BlockEntity & WholeModelHost> implemen
 
     @Override
     public AABB getRenderBoundingBox(T be) {
-        WholeModels.Model m = WholeModels.get(be.wholeModelId());
+        String id = be.wholeModelId();
+        WholeModels.Model m = id == null ? null : WholeModels.get(id);
         if (m == null) return new AABB(be.getBlockPos());
         double[] a = WholeModelMath.rotate(m.min(), be.wholeModelFacing()), b = WholeModelMath.rotate(m.max(), be.wholeModelFacing());
         var p = be.getBlockPos();

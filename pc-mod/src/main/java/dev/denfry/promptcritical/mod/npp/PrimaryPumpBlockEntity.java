@@ -21,7 +21,7 @@ import org.jetbrains.annotations.Nullable;
  * номинального расхода реактора — у АМ-1 их работало два. Мощность — гидравлическая (≈ 70 л/с на 1 МПа) с КПД 0,7.
  * Обороты ниже номинальных — расход пропорционально ниже; остановленный насос выбегает на маховике.
  */
-public final class PrimaryPumpBlockEntity extends KineticMachineBlockEntity<ShaftInput> {
+public final class PrimaryPumpBlockEntity extends KineticMachineBlockEntity<ShaftInput> implements dev.denfry.promptcritical.mod.client.whole.WholeModelHost {
     /** Сальник насоса (art/blockbench/mechanics/primary_pump.author.js): протечка тем чаще, чем быстрее вал. */
     @Override
     protected void clientTick() {
@@ -106,5 +106,23 @@ public final class PrimaryPumpBlockEntity extends KineticMachineBlockEntity<Shaf
     @Override
     public InteractionResult use(Player player) {
         return InteractionResult.PASS;
+    }
+
+
+    // --- цельная модель реального масштаба (спецификация real-scale machines) ---
+
+    @Override
+    public String wholeModelId() {
+        return dev.denfry.promptcritical.mod.client.whole.WholeModelHost.idOf(getBlockState());
+    }
+
+    @Override
+    public net.minecraft.core.Direction wholeModelFacing() {
+        return getBlockState().getBlock() instanceof dev.denfry.promptcritical.mod.block.PcBlock pc ? pc.facing(getBlockState()) : net.minecraft.core.Direction.NORTH;
+    }
+
+    @Override
+    public net.minecraft.core.BlockPos wholeModelLightPos() {
+        return worldPosition.relative(wholeModelFacing(), 4).above();
     }
 }

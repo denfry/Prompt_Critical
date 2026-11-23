@@ -34,7 +34,7 @@ import org.jetbrains.annotations.Nullable;
  * {@value PowerReactorBlockEntity#LINK_RADIUS} блоках. Нет котла или котёл на предохранительном клапане — тепло некуда
  * отдать, первый контур греется.
  */
-public final class SteamGeneratorBlockEntity extends DeviceBlockEntity implements FoundryDevice {
+public final class SteamGeneratorBlockEntity extends DeviceBlockEntity implements FoundryDevice, dev.denfry.promptcritical.mod.client.whole.WholeModelHost {
     private SimId boiler = SimId.NONE;
     private double heatW;
     private boolean sink;
@@ -149,5 +149,23 @@ public final class SteamGeneratorBlockEntity extends DeviceBlockEntity implement
     @Override
     public InteractionResult use(Player player) {
         return InteractionResult.PASS;
+    }
+
+
+    // --- цельная модель реального масштаба (спецификация real-scale machines) ---
+
+    @Override
+    public String wholeModelId() {
+        return dev.denfry.promptcritical.mod.client.whole.WholeModelHost.idOf(getBlockState());
+    }
+
+    @Override
+    public net.minecraft.core.Direction wholeModelFacing() {
+        return getBlockState().getBlock() instanceof dev.denfry.promptcritical.mod.block.PcBlock pc ? pc.facing(getBlockState()) : net.minecraft.core.Direction.NORTH;
+    }
+
+    @Override
+    public net.minecraft.core.BlockPos wholeModelLightPos() {
+        return worldPosition.relative(wholeModelFacing(), 4).above();
     }
 }

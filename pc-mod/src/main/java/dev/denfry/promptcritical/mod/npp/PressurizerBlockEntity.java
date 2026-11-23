@@ -25,7 +25,7 @@ import org.jetbrains.annotations.Nullable;
  * парит и шипит, когда ИПУ или ПК сбрасывают пар в барботёр. Без него первый контур не держит давление — реактор не
  * взводится.
  */
-public final class PressurizerBlockEntity extends DeviceBlockEntity implements FoundryDevice {
+public final class PressurizerBlockEntity extends DeviceBlockEntity implements FoundryDevice, dev.denfry.promptcritical.mod.client.whole.WholeModelHost {
     private boolean heaters, relief;
     private long lastReport = -100;
 
@@ -81,5 +81,23 @@ public final class PressurizerBlockEntity extends DeviceBlockEntity implements F
     @Override
     public InteractionResult use(Player player) {
         return InteractionResult.PASS;
+    }
+
+
+    // --- цельная модель реального масштаба (спецификация real-scale machines) ---
+
+    @Override
+    public String wholeModelId() {
+        return dev.denfry.promptcritical.mod.client.whole.WholeModelHost.idOf(getBlockState());
+    }
+
+    @Override
+    public net.minecraft.core.Direction wholeModelFacing() {
+        return getBlockState().getBlock() instanceof dev.denfry.promptcritical.mod.block.PcBlock pc ? pc.facing(getBlockState()) : net.minecraft.core.Direction.NORTH;
+    }
+
+    @Override
+    public net.minecraft.core.BlockPos wholeModelLightPos() {
+        return worldPosition.relative(wholeModelFacing(), 4).above();
     }
 }
