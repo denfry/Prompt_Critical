@@ -87,41 +87,65 @@
   }
 
   // ---------------------------------------------------------------- mill stand
-  // Two-high stand: two closed-top housings in machine blue on soleplates, chocks round the roll necks, the
-  // screwdown (screws, nuts and the worm box with its motor) on top, entry and exit guides at the pass line
-  // (y 8), the spindle carriers to the east.
+  // Two-high stand (duo 500, rolls 0.6 m) at real scale, the drive on the west where the Create port is (cell
+  // (-1, 0, 0)): a pinion stand x -16..-8 takes the Create shaft on its west face at (y 8, z 8) and splits it to
+  // the two rolls; short spindles with wobbler couplings x -8..-4; the closed-top housings in machine blue at
+  // x -4..4 and 24..32 on soleplates bolted to the foundation, chocks round the roll necks with the balance springs
+  // between them, the hand screwdown (screws, brass nuts, a worm shaft across both caps with its hand wheel), entry
+  // and exit guides at the pass line (y 8), and cooling water sprays along the barrels. Rolls (partials roll_top at
+  // y 14, roll_bottom at y 2, axis along x at z 8): barrel x 4..24.
+  const HOUS = [[-4, 4], [24, 32]];
   function millStand() {
     const m = mk(TEX + 'mill_blue');
     m.box('foundation', [-16, -16, 0], [32, -13, 16], 'conc', { split: 'x' });
-    for (const [n, x0, x1] of [['w', -14, -6], ['e', 22, 30]]) {
-      m.box(`sole_${n}`, [x0 - 1, -13, 0], [x1 + 1, -12, 16], 'ci', { split: '' });
+    for (let x = -14; x <= 30; x += 4) for (const z of [0.6, 14.6]) m.box(`hd_bolt_${x}_${z}`, [x - 0.4, -13, z], [x + 0.4, -12.2, z + 0.8], 'bright', { split: '' });
+    HOUS.forEach(([x0, x1], k) => {
+      const n = k ? 'e' : 'w';
+      m.box(`sole_${n}`, [x0 - 0.6, -13, 0], [x1 + (k ? 0 : 0.6), -12, 16], 'ci', { split: '' });
       m.box(`post_${n}_n`, [x0, -12, 0], [x1, 26, 3], 'mblue', { split: 'y' });
       m.box(`post_${n}_s`, [x0, -12, 13], [x1, 26, 16], 'mblue', { split: 'y' });
       m.box(`cap_${n}`, [x0, 22, 3], [x1, 27, 13], 'mblue', { split: '' });
       m.box(`sill_${n}`, [x0, -12, 3], [x1, -8, 13], 'mblue', { split: '' });
-      m.box(`chock_lo_${n}`, [x0 + 0.4, -8, 3], [x1 - 0.4, 7.6, 13], 'ci', { split: 'y' });
-      m.box(`chock_hi_${n}`, [x0 + 0.4, 8.4, 3], [x1 - 0.4, 20, 13], 'ci', { split: 'y' });
-      m.box(`screw_${n}`, [x0 + 2.6, 20, 6.6], [x1 - 2.6, 29, 9.4], 'bright', { split: '' });
+      for (const [z0, z1] of [[-0.3, 0], [16, 16.3]]) for (const y of [-8, 0, 16, 24]) m.box(`post_bolt_${n}_${y}_${z0}`, [x0 + 1, y, z0], [x0 + 2, y + 1, z1], 'bright', { split: '' });
+      // chocks: bottom on the sill, top hung from the screw, balance springs between them
+      m.box(`chock_lo_${n}`, [x0 + 0.4, -8, 3.2], [x1 - 0.4, 6.4, 12.8], 'ci', { split: 'y' });
+      m.box(`chock_hi_${n}`, [x0 + 0.4, 9.6, 3.2], [x1 - 0.4, 20, 12.8], 'ci', { split: 'y' });
+      for (const z of [4, 11]) m.box(`spring_${n}_${z}`, [x0 + 1.4, 6.4, z], [x0 + 2.6, 9.6, z + 1], 'st', { split: '' });
+      m.box(`screw_${n}`, [x0 + 2.8, 20, 6.8], [x1 - 2.8, 30, 9.2], 'bright', { split: '' });
       m.box(`nut_${n}`, [x0 + 1, 27, 5], [x1 - 1, 29, 11], 'br', { split: '' });
-    }
-    m.box('worm_box', [-14, 29, 4.4], [30, 31.4, 11.6], 'mblue', { split: 'x' });
-    m.box('screw_motor', [6, 29, 4], [12, 32, 12], 'blue', { split: '' });
+      m.box(`worm_case_${n}`, [x0 + 0.6, 29, 4.6], [x1 - 0.6, 31.6, 11.4], 'mblue', { split: '' });
+    });
+    // worm shaft across both caps, hand wheel on the east end
+    m.prism('worm_shaft', 'x', [30.3, 8], 0.9, -3, 31, 'bright', { split: '', ends: ['east', 'west'] });
+    m.disc('hand_wheel', 'x', [30.3, 8], 1.6, 31, 31.6, 'ci', 'material/cast_iron', 'east');
+    // pinion stand on the drive side: housing with the bearing caps of the two pinions and the input boss
+    m.box('pinion_stand', [-15.4, -12, 1], [-8, 20, 15], 'mblue', { split: 'y' });
+    m.box('pinion_sole', [-16, -13, 0], [-7.4, -12, 16], 'ci', { split: '' });
+    m.box('pinion_parting', [-15.6, 7.6, 0.6], [-7.8, 8.4, 15.4], 'ci', { split: '' });
+    for (const y of [2, 14]) m.disc(`pinion_cap_${y}`, 'x', [y, 8], 3.6, -8, -7.2, 'ci', 'material/cast_iron', 'east');
+    m.disc('input_boss', 'x', [8, 8], 3, -15.9, -15.4, 'ci', 'material/cast_iron', 'west');
+    // entry and exit guides at the pass line, with their tables
     for (const [n, z0, z1] of [['entry', 0, 3], ['exit', 13, 16]]) {
-      m.box(`guide_${n}`, [-6, 6.6, z0], [22, 7.6, z1], 'st', { split: '' });
-      m.box(`guide_${n}_top`, [-6, 8.4, z0], [22, 9.2, z1], 'st', { split: '' });
+      m.box(`guide_${n}`, [4, 6.2, z0], [24, 7.2, z1], 'st', { split: '' });
+      m.box(`guide_${n}_top`, [4, 8.8, z0], [24, 9.6, z1], 'st', { split: '' });
+      for (const x of [6, 21]) m.box(`guide_${n}_cheek_${x}`, [x, 7.2, z0], [x + 1, 8.8, z1], 'st', { split: '' });
     }
-    m.box('spindle_carrier', [30, -4, 4], [32, 20, 12], 'ci', { split: '' });
-    m.box('pass_mark', [-6, -12, 7.4], [22, -11.8, 8.6], 'yel', { split: '' });
+    // cooling water: a header along each side of the barrels, GOST 14202 water green
+    m.prism('spray_n', 'x', [19.5, 3.6], 0.6, 4, 24, 'p_water', { split: '', ends: ['east', 'west'] });
+    m.prism('spray_s', 'x', [19.5, 12.4], 0.6, 4, 24, 'p_water', { split: '', ends: ['east', 'west'] });
+    m.box('pass_mark', [4, -12, 7.4], [24, -11.8, 8.6], 'yel', { split: '' });
     return m;
   }
-  // A roll: barrel between the housings, necks into the chocks, a wobbler coupling out to the east.
+  // A roll: barrel between the housings, necks into the chocks, a wobbler and a short spindle west to the pinion
+  // stand. About x through (y cy, z 8).
   function roll(cy) {
     const m = mk(TEX + 'roll');
-    m.prism('barrel', 'x', [cy, 8], 5, -6, 22, 'roll', { split: '', ends: ['east', 'west'] });
-    m.prism('neck_w', 'x', [cy, 8], 3, -14, -6, 'bright', { split: '' });
-    m.prism('neck_e', 'x', [cy, 8], 3, 22, 30, 'bright', { split: '' });
-    m.box('wobbler', [30, cy - 2.6, 5.4], [32, cy + 2.6, 10.6], 'st', { split: '' });
-    m.box('wobbler_b', [30, cy - 1.2, 4], [32, cy + 1.2, 12], 'st', { split: '' });
+    m.prism('barrel', 'x', [cy, 8], 5, 4, 24, 'roll', { split: '', ends: ['east', 'west'] });
+    m.prism('neck_w', 'x', [cy, 8], 3, -4, 4, 'bright', { split: '' });
+    m.prism('neck_e', 'x', [cy, 8], 3, 24, 31.4, 'bright', { split: '', ends: ['east'] });
+    m.box('wobbler', [-6, cy - 2.6, 5.4], [-4, cy + 2.6, 10.6], 'st', { split: '' });
+    m.box('wobbler_b', [-6, cy - 1.2, 4], [-4, cy + 1.2, 12], 'st', { split: '' });
+    m.box('spindle', [-8, cy - 1.4, 6.6], [-6, cy + 1.4, 9.4], 'bright', { split: '' });
     return m;
   }
 
