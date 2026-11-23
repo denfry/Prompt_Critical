@@ -98,7 +98,101 @@ public final class WholeShapes {
         return ((long) (x & 0x1FFFFF) << 42) | ((long) (y & 0x1FFFFF) << 21) | (z & 0x1FFFFF);
     }
 
+    /**
+     * Части, которые отрисовщик рисует поверх нарезанной модели в её же пространстве (фасад на север, клетки от
+     * контроллера) и которые нарезчик в манифест не кладёт: вторая цельная модель (барабан подъёмной машины,
+     * WinderRenderer — без сдвига, вращение вокруг x) и partial, вращающиеся на месте (маховик паровой машины,
+     * MillEngineRenderer {@code part(FLYWHEEL, …, 1, 1, 3)}). Их форма в покое — та же, что заметает вращение, так что
+     * клетки под ними твёрдые: сквозь барабан и обод маховика не пройти (плейтест I0, 2026-11-23).
+     */
+    private record Extra(String path, boolean whole, int dx, int dy, int dz) {}
+
+    private static final Map<String, java.util.List<Extra>> EXTRAS = Map.of(
+            "winding_engine", java.util.List.of(new Extra("winding_engine_drum", true, 0, 0, 0)),
+            "mill_engine", java.util.List.of(new Extra("mill_engine/partial/flywheel", false, 1, 1, 3)));
+
+    /** Клетки модели (фасад на север, от контроллера), в которых что-то нарисовано, вместе с {@link #EXTRAS}. */
+    public static java.util.Set<net.minecraft.core.BlockPos> occupied(String id) {
+        java.util.Set<net.minecraft.core.BlockPos> out = new java.util.HashSet<>();
+        for (Map.Entry<Long, Long> e : CELLS.computeIfAbsent(id, WholeShapes::load).entrySet())
+            if (e.getValue() != 0) {
+                long k = e.getKey();
+                out.add(new net.minecraft.core.BlockPos(signed(k >>> 42), signed(k >>> 21), signed(k)));
+            }
+        return out;
+    }
+
+    private static int signed(long v) {
+        return (int) (v & 0x1FFFFF) << 11 >> 11;
+    }
+
     private static Map<Long, Long> load(String id) {
+        Map<Long, Long> cells = manifest(id, true);
+        if (cells == NONE) return NONE;
+        for (Extra x : EXTRAS.getOrDefault(id, java.util.List.of())) {
+            Map<Long, Long> more = x.whole() ? manifest(x.path(), false) : partial(x.path(), x.dx(), x.dy(), x.dz());
+            if (more == NONE) PromptCritical.LOGGER.error("Whole model {}: drawn part {} has no shape data", id, x.path());
+            more.forEach((k, m) -> cells.merge(k, m, (a, b) -> a | b));
+        }
+        return cells;
+    }
+
+    /**
+     * Занятость partial-модели {@code models/block/<path>.json}, сдвинутой на (dx, dy, dz) блоков: как у нарезчика
+     * (pcslice.js {@code cellsOf}) — воксели по 4 px под рамкой каждого элемента с учётом его поворота.
+     */
+    private static Map<Long, Long> partial(String path, int dx, int dy, int dz) {
+        try (InputStream in = WholeShapes.class.getResourceAsStream("/assets/" + PromptCritical.MOD_ID + "/models/block/" + path + ".json")) {
+            if (in == null) return NONE;
+            JsonObject m = JsonParser.parseReader(new InputStreamReader(in, StandardCharsets.UTF_8)).getAsJsonObject();
+            Map<Long, Long> out = new HashMap<>();
+            int[] off = {16 * dx, 16 * dy, 16 * dz};
+            for (JsonElement el : m.getAsJsonArray("elements")) {
+                double[][] b = aabb(el.getAsJsonObject());
+                int[] v0 = new int[3], v1 = new int[3];
+                for (int i = 0; i < 3; i++) {
+                    v0[i] = (int) Math.floor((b[0][i] + off[i]) / 4 + 1e-6);
+                    v1[i] = (int) Math.ceil((b[1][i] + off[i]) / 4 - 1e-6) - 1;
+                }
+                for (int x = v0[0]; x <= v1[0]; x++)
+                    for (int y = v0[1]; y <= v1[1]; y++)
+                        for (int z = v0[2]; z <= v1[2]; z++) {
+                            long bit = 1L << (Math.floorMod(x, 4) + 4 * Math.floorMod(y, 4) + 16 * Math.floorMod(z, 4));
+                            out.merge(pack(Math.floorDiv(x, 4), Math.floorDiv(y, 4), Math.floorDiv(z, 4)), bit, (p, q) -> p | q);
+                        }
+            }
+            return out;
+        } catch (Exception e) {
+            PromptCritical.LOGGER.error("Partial {} could not be read for cell shapes", path, e);
+            return NONE;
+        }
+    }
+
+    /** Рамка элемента модели в px с его поворотом (одна ось, вокруг origin), как {@code aabb} в pcslice.js. */
+    private static double[][] aabb(JsonObject e) {
+        double[] f = vec(e.getAsJsonArray("from")), t = vec(e.getAsJsonArray("to"));
+        JsonObject r = e.has("rotation") ? e.getAsJsonObject("rotation") : null;
+        if (r == null || r.get("angle").getAsDouble() == 0) return new double[][] {f, t};
+        double a = Math.toRadians(r.get("angle").getAsDouble());
+        int ax = switch (r.get("axis").getAsString()) { case "x" -> 0; case "y" -> 1; default -> 2; };
+        double[] o = vec(r.getAsJsonArray("origin")), lo = {1e9, 1e9, 1e9}, hi = {-1e9, -1e9, -1e9};
+        int u = (ax + 1) % 3, v = (ax + 2) % 3;
+        for (int k = 0; k < 8; k++) {
+            double[] p = {(k & 1) != 0 ? t[0] : f[0], (k & 2) != 0 ? t[1] : f[1], (k & 4) != 0 ? t[2] : f[2]};
+            double pu = p[u] - o[u], pv = p[v] - o[v];
+            double[] q = p.clone();
+            q[u] = o[u] + pu * Math.cos(a) - pv * Math.sin(a);
+            q[v] = o[v] + pu * Math.sin(a) + pv * Math.cos(a);
+            for (int i = 0; i < 3; i++) { lo[i] = Math.min(lo[i], q[i]); hi[i] = Math.max(hi[i], q[i]); }
+        }
+        return new double[][] {lo, hi};
+    }
+
+    private static double[] vec(com.google.gson.JsonArray a) {
+        return new double[] {a.get(0).getAsDouble(), a.get(1).getAsDouble(), a.get(2).getAsDouble()};
+    }
+
+    private static Map<Long, Long> manifest(String id, boolean main) {
         try (InputStream in = WholeShapes.class.getResourceAsStream("/assets/" + PromptCritical.MOD_ID + "/wholemodels/" + id + ".json")) {
             if (in == null) return NONE;
             JsonObject m = JsonParser.parseReader(new InputStreamReader(in, StandardCharsets.UTF_8)).getAsJsonObject();
@@ -108,7 +202,7 @@ public final class WholeShapes {
                     String[] k = e.getAsString().split(",");
                     climb.add(pack(Integer.parseInt(k[0]), Integer.parseInt(k[1]), Integer.parseInt(k[2])));
                 }
-            CLIMB.put(id, climb);
+            if (main) CLIMB.put(id, climb);
             if (!m.has("cells")) return NONE;
             Map<Long, Long> out = new HashMap<>();
             for (Map.Entry<String, JsonElement> e : m.getAsJsonObject("cells").entrySet()) {
