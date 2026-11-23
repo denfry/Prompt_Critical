@@ -27,3 +27,7 @@ The [DKS-04 dosimeter-radiometer](item:promptcritical:dosimeter_radiometer) in y
 - **over 20 Gy**: cerebral form: death within minutes
 
 Acute dose is what was taken recently. The body recovers, and the acute dose halves every 30 game days. The lifetime total stays on the dosimeter. Long-term effects, cancer and hereditary effects, are not modelled.
+
+## Where a source cannot go
+
+An item stays a source until its specific activity drops below the exemption level: 10 Bq/g for caesium-137 and cobalt-60, 1 Bq/g for plutonium and americium, and the fractions of several nuclides add up. Above that level it will not go into a shulker box, a bundle or the ender chest. All three are pockets outside the world where the radiation would simply vanish. Ordinary chests and barrels are fine: a source in them still shines through the walls.
