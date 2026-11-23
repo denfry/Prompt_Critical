@@ -50,6 +50,20 @@ class InverterSourceTest {
         assertThat(b.powerW()).isGreaterThan(a.powerW() + 10e3);
     }
 
+    @Test void highFrequencyCutsOutputAndLowFrequencyCutsCharging() {
+        var out = online(100e3);
+        for (int i = 0; i < 40; i++) out.step(DT, 1, 50.7, 80e3, 100e3, 0);
+        // 0,5 Гц выше 50,2 — минус 20 % задания
+        assertThat(out.powerW()).isCloseTo(80e3 * 0.8, within(10.0));
+        var charge = online(100e3);
+        for (int i = 0; i < 40; i++) charge.step(DT, 1, 49.3, -60e3, 0, 80e3);
+        assertThat(charge.powerW()).isCloseTo(-60e3 * 0.8, within(10.0));
+        // в полосе 49,8–50,2 Гц задание не трогают; заряд высокой частотой не режут
+        assertThat(InverterSource.frequencyFactor(80e3, 50.1)).isEqualTo(1);
+        assertThat(InverterSource.frequencyFactor(-60e3, 50.9)).isEqualTo(1);
+        assertThat(InverterSource.frequencyFactor(80e3, 53)).isZero();
+    }
+
     @Test void batteryChargingDrawsFromTheGrid() {
         var s = online(100e3);
         for (int i = 0; i < 40; i++) s.step(DT, 1, 50, -60e3, 0, 80e3);

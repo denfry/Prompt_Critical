@@ -25,17 +25,32 @@ public final class ElectricalData {
     }
 
     /** Лист: толщина, мм, кремний, %, наклёп ε и покрытие. */
-    public record Sheet(float thicknessMm, float siPct, float strain, String coating) {
+    /**
+     * Лист 0,5 м шириной; {@code lengthM} — длина, 1,0 м у мерного листа. Короче бывают только листы стана между
+     * отжигами: полоса режется на равные куски без потери металла.
+     */
+    public record Sheet(float thicknessMm, float siPct, float strain, String coating, float lengthM) {
         public static final Codec<Sheet> CODEC = RecordCodecBuilder.create(i -> i.group(
                 Codec.FLOAT.fieldOf("t_mm").forGetter(Sheet::thicknessMm),
                 Codec.FLOAT.fieldOf("si_pct").forGetter(Sheet::siPct),
                 Codec.FLOAT.optionalFieldOf("strain", 0f).forGetter(Sheet::strain),
-                Codec.STRING.optionalFieldOf("coating", "NONE").forGetter(Sheet::coating)).apply(i, Sheet::new));
+                Codec.STRING.optionalFieldOf("coating", "NONE").forGetter(Sheet::coating),
+                Codec.FLOAT.optionalFieldOf("len", 1f).forGetter(Sheet::lengthM)).apply(i, Sheet::new));
 
         public static Sheet of(ElectricalSheet s) {
-            // толщина квантуется до микрона, наклёп до сотых: листы одной прокатки складываются в стек
+            return of(s, 1);
+        }
+
+        public static Sheet of(ElectricalSheet s, double lengthM) {
+            // толщина квантуется до микрона, наклёп до сотых: листы одной прокатки складываются в стек. Длина не
+            // квантуется: стан режет полосу на равные куски, и по ней объём металла сходится до float
             return new Sheet(Math.round(s.thicknessM() * 1e6) / 1000f, Math.round(s.siFrac() * 1000) / 10f,
-                    Math.round(s.strain() * 100) / 100f, s.coating().name());
+                    Math.round(s.strain() * 100) / 100f, s.coating().name(), (float) lengthM);
+        }
+
+        /** Длина листа, м, в долях мерного листа {@link ElectricalSheet#SHEET_LENGTH_M}: (0; 1]. */
+        public double lengthFrac() {
+            return Float.isFinite(lengthM) && lengthM > 0 ? Math.min(1, lengthM / ElectricalSheet.SHEET_LENGTH_M) : 1;
         }
 
         public ElectricalSheet sheet() {

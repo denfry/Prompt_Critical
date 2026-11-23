@@ -1,6 +1,7 @@
 package dev.denfry.promptcritical.mod.manufacturing;
 
 import dev.denfry.promptcritical.mod.PromptCritical;
+import dev.denfry.promptcritical.sim.manufacturing.ElectricalSheet;
 import dev.denfry.promptcritical.sim.manufacturing.PartDefect;
 import dev.denfry.promptcritical.sim.manufacturing.PartRoute;
 import dev.denfry.promptcritical.sim.manufacturing.PartSpec;
@@ -55,6 +56,8 @@ public final class ManufacturingText {
         msg("wire.insulation.glass_enamel", "glass fibre and enamel", "стекловолокно и эмаль");
         msg("sheet.line", "%s mm · Si %s %% · work hardening %s · %s", "%s мм · Si %s %% · наклёп %s · %s");
         msg("sheet.loss", "Core loss %s W/kg at 1.5 T, 50 Hz", "Потери %s Вт/кг при 1,5 Тл, 50 Гц");
+        msg("sheet.short", "Cut %s m long: roll on to full sheets before the notching press",
+                "Отрезок %s м: докатать до мерных листов, пресс короткие не берёт");
         msg("coating.none", "bare", "без покрытия");
         msg("coating.paper", "paper interleaf", "бумажная прокладка");
         msg("coating.phenolic", "phenolic varnish", "фенольный лак");
@@ -183,6 +186,8 @@ public final class ManufacturingText {
         out.add(msg("sheet.line", f("%.2f", s.thicknessM() * 1000), f("%.1f", s.siFrac() * 100),
                 Math.round(100 * Math.min(1, s.strain())) + " %", coating(s.coating())).withStyle(ChatFormatting.GRAY));
         out.add(msg("sheet.loss", f("%.1f", s.lossWPerKg(1.5, 50))).withStyle(ChatFormatting.GRAY));
+        if (d.lengthFrac() < 1 - 1e-3)
+            out.add(msg("sheet.short", f("%.2f", d.lengthFrac() * ElectricalSheet.SHEET_LENGTH_M)).withStyle(ChatFormatting.GOLD));
     }
 
     public static void laminationTooltip(ElectricalData.Bundle d, List<Component> out) {

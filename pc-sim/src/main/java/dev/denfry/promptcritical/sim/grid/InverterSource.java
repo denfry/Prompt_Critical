@@ -15,6 +15,10 @@ import dev.denfry.promptcritical.sim.core.StateWriter;
  *   <li>Синтетическая инерция: ΔP = −2·H·S·df/dt, H = 0–5 с задаёт игрок (§15.9.3). Энергию на неё даёт источник за
  *       инвертором, поэтому вверх она не больше доступной мощности.</li>
  *   <li>Инерции без синтетической нет, остров без синхронных машин он не держит.</li>
+ *   <li>Снижение мощности по частоте (LFSM-O/LFSM-U, EN 50549-1 §4.6, статизм 5 %): выше {@value #F_LFSM_O_HZ} Гц
+ *       отдача падает на {@value #LFSM_PER_HZ} задания на 1 Гц, ниже {@value #F_LFSM_U_HZ} Гц так же падает заряд.
+ *       Без этого разряд на острове разгружает генератор, частота уходит за окно, инвертор отключается и снова
+ *       включается по кругу.</li>
  * </ul>
  */
 public final class InverterSource {
@@ -22,6 +26,8 @@ public final class InverterSource {
     public static final double RESPONSE_S = 0.2;
     public static final double MAX_SYNTHETIC_H_S = 5;
     public static final double F_MIN_HZ = 49, F_MAX_HZ = 51, V_MIN_PU = 0.9, V_MAX_PU = 1.1;
+    /** Пороги и наклон снижения мощности по частоте: статизм 5 % от 50 Гц — 40 % задания на 1 Гц. */
+    public static final double F_LFSM_O_HZ = 50.2, F_LFSM_U_HZ = 49.8, LFSM_PER_HZ = 0.4;
 
     private final double ratedW;
     private final double efficiency;
@@ -108,11 +114,17 @@ public final class InverterSource {
             return 0;
         }
         onS += dt;
-        double target = demandW - 2 * syntheticH * ratedW * dfdt / PowerBoard.NOMINAL_HZ;
+        double target = demandW * frequencyFactor(demandW, fHz) - 2 * syntheticH * ratedW * dfdt / PowerBoard.NOMINAL_HZ;
         double limit = CURRENT_LIMIT_PU * ratedW * Math.max(0, Math.min(1, vPu)) * Math.min(1, onS / FeInterface.RAMP_S);
         target = Math.max(-Math.min(limit, Math.max(0, maxInW)), Math.min(Math.min(limit, Math.max(0, maxOutW)), target));
         powerW += (target - powerW) * Math.min(1, dt / RESPONSE_S);
         return powerW;
+    }
+
+    /** Доля задания по частоте: отдачу режет высокая частота, заряд — низкая (LFSM-O/LFSM-U). */
+    public static double frequencyFactor(double demandW, double fHz) {
+        double over = demandW > 0 ? fHz - F_LFSM_O_HZ : demandW < 0 ? F_LFSM_U_HZ - fHz : 0;
+        return over > 0 ? Math.max(0, 1 - LFSM_PER_HZ * over) : 1;
     }
 
     public void save(StateWriter out) {

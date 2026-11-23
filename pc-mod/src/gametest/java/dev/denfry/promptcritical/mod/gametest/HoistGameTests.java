@@ -363,7 +363,7 @@ public final class HoistGameTests {
         double[] start = new double[1];
         h.startSequence()
                 .thenWaitUntil(() -> {
-                    n[0] = mine(h, new BlockPos(10, 2, Z));
+                    n[0] = mine(h, new BlockPos(5, 2, Z));                 // воздух штрека: x 10…12 на y 2 занимает корпус насоса
                     h.assertTrue(binding(h).mines().scanOf(n[0]).pumps.contains(h.absolutePos(pump).asLong()), "geared pump found by the mine scan");
                 })
                 .thenWaitUntil(() -> h.assertTrue(OpsGameTests.defects(h, h.<MineDrainagePumpBlockEntity>getBlockEntity(pump)),
