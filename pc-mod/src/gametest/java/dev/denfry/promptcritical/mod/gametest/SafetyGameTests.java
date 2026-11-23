@@ -50,7 +50,7 @@ public final class SafetyGameTests {
     }
 
     static FakePlayer bare(GameTestHelper h) {
-        FakePlayer p = FakePlayerFactory.getMinecraft(h.getLevel());
+        FakePlayer p = TestPlayers.of(h);
         for (EquipmentSlot s : EquipmentSlot.values()) p.setItemSlot(s, ItemStack.EMPTY);
         p.getInventory().clearContent();
         return p;
@@ -412,7 +412,8 @@ public final class SafetyGameTests {
         }).thenIdle(25).thenExecute(() -> {
             WaterIntakeBlockEntity w = h.getBlockEntity(intake);
             double lake = dev.denfry.promptcritical.sim.thermal.WaterIntake.bodyLimitM3s(dev.denfry.promptcritical.sim.thermal.WaterIntake.Body.LAKE, 0, 72);
-            h.assertTrue(Math.abs(w.capacityM3s() - lake) < 1e-12, "pond limit " + w.capacityM3s() + " vs " + lake);
+            h.assertTrue(Math.abs(w.capacityM3s() - lake) < 1e-12, "pond limit " + w.capacityM3s() + " vs " + lake + " (wet " + w.wet() + ", body " + w.body()
+                    + ", clog " + w.intake().clog() + ")");
             h.assertTrue(h.getBlockState(intake).getValue(PcProperties.ALARM), "clogged screen not shown");
             w.intake().clean();
         }).thenIdle(25).thenExecute(() -> h.assertFalse(h.getBlockState(intake).getValue(PcProperties.ALARM), "raked screen still clogged"))

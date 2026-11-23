@@ -51,7 +51,7 @@ public final class TwinGameTests {
         BlockPos ws = new BlockPos(3, 2, 3), plc = new BlockPos(7, 2, 3);
         place(h, ws, PcBlocks.SIMULATION_WORKSTATION.get());
         place(h, plc, PcBlocks.PLC.get());
-        var player = FakePlayerFactory.getMinecraft(h.getLevel());
+        var player = TestPlayers.of(h);
         h.startSequence()
                 .thenWaitUntil(() -> h.assertTrue(((PlcBlockEntity) h.getBlockEntity(plc)).unit() != null, "PLC in the topology"))
                 .thenExecute(() -> {
@@ -83,7 +83,7 @@ public final class TwinGameTests {
         place(h, sim, PcBlocks.TRAINING_SIMULATOR.get());
         place(h, console, PcBlocks.SIMULATOR_CONSOLE.get());
         place(h, desk, PcBlocks.INSTRUCTOR_STATION.get());
-        var player = FakePlayerFactory.getMinecraft(h.getLevel());
+        var player = TestPlayers.of(h);
         h.startSequence()
                 .thenExecute(() -> {
                     SimulatorDeskBlockEntity instructor = h.getBlockEntity(desk);

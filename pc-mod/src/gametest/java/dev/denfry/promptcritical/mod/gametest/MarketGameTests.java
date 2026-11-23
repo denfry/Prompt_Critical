@@ -32,7 +32,7 @@ public final class MarketGameTests {
     @GameTest(template = SMALL, timeoutTicks = 100)
     public static void terminalSellsSteelForCredits(GameTestHelper h) {
         h.setBlock(TERMINAL, PcBlocks.MARKET_TERMINAL.get());
-        Player p = FakePlayerFactory.getMinecraft(h.getLevel());
+        Player p = TestPlayers.of(h);
         long before = MarketData.get(h.getLevel().getServer()).account(p.getUUID()).balanceCents();
         h.startSequence()
                 .thenIdle(2)

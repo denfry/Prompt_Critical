@@ -87,7 +87,7 @@ public final class AccidentGameTests {
                     h.assertTrue(r.accident().accumulators() == 1, "accumulator found: " + r.accident().accumulators());
                     h.assertTrue(r.accident().accident().acPower(), "AC from the turning shafts");
                 })
-                .thenExecute(() -> pwr(h).onPanelButton(FakePlayerFactory.getMinecraft(h.getLevel()), PwrPanels.B_LOCA))
+                .thenExecute(() -> pwr(h).onPanelButton(TestPlayers.of(h), PwrPanels.B_LOCA))
                 .thenWaitUntil(() -> {
                     PlantAccident a = pwr(h).accident().accident();
                     h.assertTrue(a.active(), "LOCA under way");
@@ -111,7 +111,7 @@ public final class AccidentGameTests {
                 })
                 // the drill escalates to the guillotine break and then isolates it
                 .thenExecute(() -> {
-                    var player = FakePlayerFactory.getMinecraft(h.getLevel());
+                    var player = TestPlayers.of(h);
                     pwr(h).onPanelButton(player, PwrPanels.B_LOCA);
                     pwr(h).onPanelButton(player, PwrPanels.B_LOCA);
                 })
@@ -204,7 +204,7 @@ public final class AccidentGameTests {
                 .thenWaitUntil(() -> h.assertTrue(((BwrReactorBlockEntity) h.getBlockEntity(REACTOR)).accident().eccsTrains() == 1,
                         "ECCS train linked"))
                 .thenExecute(() -> ((BwrReactorBlockEntity) h.getBlockEntity(REACTOR))
-                        .onPanelButton(FakePlayerFactory.getMinecraft(h.getLevel()), BwrPanels.B_LOCA))
+                        .onPanelButton(TestPlayers.of(h), BwrPanels.B_LOCA))
                 .thenIdle(400)
                 .thenExecute(() -> {
                     BwrReactorBlockEntity r = h.getBlockEntity(REACTOR);

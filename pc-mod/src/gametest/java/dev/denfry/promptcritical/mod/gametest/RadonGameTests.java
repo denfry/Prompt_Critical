@@ -32,7 +32,7 @@ public final class RadonGameTests {
 
     /** Игрок стоит ногами в блоке (x, y, z); прежнее состояние радона стёрто. */
     private static ServerPlayer playerAt(GameTestHelper h, double x, double y, double z) {
-        ServerPlayer p = FakePlayerFactory.getMinecraft(h.getLevel());
+        ServerPlayer p = TestPlayers.of(h);
         p.moveTo(h.absoluteVec(new Vec3(x, y, z)));
         RadonField.forget(p.getUUID());
         return p;

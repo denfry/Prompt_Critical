@@ -75,7 +75,7 @@ public final class ElectronicsGameTests {
                     CzochralskiPullerBlockEntity p = h.getBlockEntity(PULLER);
                     p.panelItems().setStackInSlot(0, new ItemStack(PcItems.POLYSILICON.get()));
                     // 2 мм/мин — верх окна: слиток за ~110 мин физики
-                    for (int i = 0; i < 4; i++) p.onPanelButton(net.neoforged.neoforge.common.util.FakePlayerFactory.getMinecraft(h.getLevel()),
+                    for (int i = 0; i < 4; i++) p.onPanelButton(TestPlayers.of(h),
                             ElectronicsPanels.BTN_PULL_UP);
                 })
                 .thenExecuteFor(2400, () -> {

@@ -179,6 +179,24 @@ public final class MachineAcoustics {
         return s;
     }
 
+    /**
+     * Смонтировать машину в клетке заново с разбросом из сида {@code seed}, а не из сида мира и места (сценарии и
+     * тесты): исход не зависит от того, где мир поставил испытание.
+     */
+    public static void install(ServerLevel level, BlockPos pos, long seed) {
+        Data d = data(level);
+        d.machines.remove(pos.asLong());
+        RotatingMachine fresh = RotatingMachine.installed(MachineClass.I, BearingGeometry.SKF_6205, NOMINAL_RPM, 0, 0,
+                new SplittableRandom(seed));
+        State s = new State();
+        s.imbalance = fresh.imbalance();
+        s.misalignmentMm = fresh.misalignmentMm();
+        s.lifeFactor = fresh.bearing().lifeFactor();
+        s.lastTick = level.getGameTime();
+        d.machines.put(pos.asLong(), s);
+        d.setDirty();
+    }
+
     /** Машину убрали или она разрушена: новая на этом месте ставится с новым подшипником. */
     public static void forget(ServerLevel level, BlockPos pos) {
         Data d = data(level);

@@ -24,7 +24,7 @@ public final class PermissionGameTests {
             h.assertTrue(PermissionAPI.getRegisteredNodes().contains(node), "node not registered: " + node.getNodeName());
         h.assertTrue(PcPermissions.ALL.stream().allMatch(n -> n.getNodeName().startsWith(PromptCritical.MOD_ID + ".")),
                 "nodes must live under " + PromptCritical.MOD_ID);
-        ServerPlayer player = FakePlayerFactory.getMinecraft(h.getLevel());
+        ServerPlayer player = TestPlayers.of(h);
         h.assertTrue(PcPermissions.allows(player, PcPermissions.COMMAND_ENV), "command.env is open to everyone");
         h.assertTrue(PcPermissions.allows(player, PcPermissions.STATION_CREATE), "station.create is open to everyone");
         h.assertFalse(PcPermissions.allows(player, PcPermissions.LOTO_OVERRIDE), "ops.loto_override is for operators");

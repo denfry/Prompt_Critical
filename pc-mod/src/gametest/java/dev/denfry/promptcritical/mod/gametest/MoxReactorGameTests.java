@@ -82,7 +82,7 @@ public final class MoxReactorGameTests {
                     near(h, lot.pu() * F241, r.reactor().core().fuel(0).pu241Kg(), "Pu-241 kept as Pu-241");
                 })
                 .thenExecute(() -> ((BwrReactorBlockEntity) h.getBlockEntity(REACTOR))
-                        .onPanelButton(FakePlayerFactory.getMinecraft(h.getLevel()), BwrPanels.B_UNLOAD))
+                        .onPanelButton(TestPlayers.of(h), BwrPanels.B_UNLOAD))
                 .thenWaitUntil(() -> {
                     ItemStack spent = ((BwrReactorBlockEntity) h.getBlockEntity(REACTOR)).fuelSlots().getStackInSlot(BwrPanels.SLOT_SPENT);
                     h.assertTrue(spent.is(PcItems.FUEL_ASSEMBLY.get()), "unloaded: " + spent);
@@ -114,7 +114,7 @@ public final class MoxReactorGameTests {
                     near(h, lot.heavyMetalKg(), r.reactor().fuel(0).heavyMetalKg(), "heavy metal in the channel");
                 })
                 .thenExecute(() -> ((PowerReactorBlockEntity) h.getBlockEntity(REACTOR))
-                        .onPanelButton(FakePlayerFactory.getMinecraft(h.getLevel()), NppPanels.B_UNLOAD))
+                        .onPanelButton(TestPlayers.of(h), NppPanels.B_UNLOAD))
                 .thenWaitUntil(() -> {
                     ItemStack spent = ((PowerReactorBlockEntity) h.getBlockEntity(REACTOR)).fuelSlots().getStackInSlot(NppPanels.SLOT_SPENT);
                     h.assertTrue(spent.is(PcItems.FUEL_ASSEMBLY.get()) && FuelLot.of(spent).designOrNull() == d, "unloaded: " + spent);
@@ -143,7 +143,7 @@ public final class MoxReactorGameTests {
                     });
         }
         seq.thenExecute(() -> ((CanduReactorBlockEntity) h.getBlockEntity(REACTOR))
-                        .onPanelButton(FakePlayerFactory.getMinecraft(h.getLevel()), CanduPanels.B_REFUEL))
+                        .onPanelButton(TestPlayers.of(h), CanduPanels.B_REFUEL))
                 .thenWaitUntil(() -> {
                     CanduReactorBlockEntity r = h.getBlockEntity(REACTOR);
                     h.assertTrue(r.reactor().core().loaded(0), "channel 1 loaded");

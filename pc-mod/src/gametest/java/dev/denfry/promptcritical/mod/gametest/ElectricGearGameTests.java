@@ -29,7 +29,7 @@ public final class ElectricGearGameTests {
 
     @GameTest(template = LARGE)
     public static void respiratorFiltersTheCloudOnceTheBlowerRuns(GameTestHelper h) {
-        FakePlayer p = FakePlayerFactory.getMinecraft(h.getLevel());
+        FakePlayer p = TestPlayers.of(h);
         ItemStack mask = new ItemStack(PcItems.POWERED_RESPIRATOR.get());
         p.setItemSlot(EquipmentSlot.CHEST, mask);
         try {

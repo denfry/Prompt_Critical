@@ -93,7 +93,7 @@ public final class LicensingGameTests {
                 .thenWaitUntil(() -> h.assertTrue(ready(h), "boiler and its ops unit"))
                 .thenExecute(() -> {
                     OpsSubsystem ops = ops(h);
-                    Player p = FakePlayerFactory.getMinecraft(h.getLevel());
+                    Player p = TestPlayers.of(h);
                     UUID team = TeamResolver.team(p);
                     h.assertValueEqual(team, p.getUUID(), "without FTB Teams a player is their own team");
                     SimId id = ((FireTubeBoilerBlockEntity) h.getBlockEntity(BOILER)).simId();
@@ -170,7 +170,7 @@ public final class LicensingGameTests {
                     OpsSubsystem ops = ops(h);
                     ops.setLicensing(true);
                     try {
-                        var fake = FakePlayerFactory.getMinecraft(h.getLevel());
+                        var fake = TestPlayers.of(h);
                         UUID team = UUID.randomUUID(); // мир GameTest сохраняется: лицензии прошлых запусков не мешают
                         SimId id = generator(h).simId();
                         h.assertTrue(ops.perform(id, new CheckInput.InsulationTest(true), fake.getUUID(), team).passed(), "insulation");
@@ -299,7 +299,7 @@ public final class LicensingGameTests {
                     cs.register(asm, java.util.List.of(dev.denfry.promptcritical.sim.ops.CommissioningDefect.of(
                             dev.denfry.promptcritical.sim.ops.CommissioningDefectKind.SEAM_WEEP,
                             asm.components().get(dev.denfry.promptcritical.sim.ops.UnitComponent.SHELL), 1.1)), 0);
-                    var fake = FakePlayerFactory.getMinecraft(h.getLevel());
+                    var fake = TestPlayers.of(h);
                     OpsActions.instant(fake, new ItemStack(PcItems.CAULKING_HAMMER.get()), OpsItem.Kind.CAULKING_HAMMER, ops, ops.unit(id), c);
                     // чеканка не убирает дефект, а снижает течь: без неё опрессовка ниже провалилась бы
                     double pw = BlastFurnaceControllerBlockEntity.STAVE_WATER_PA;

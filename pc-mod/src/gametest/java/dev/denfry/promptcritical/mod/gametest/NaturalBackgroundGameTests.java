@@ -23,7 +23,7 @@ public final class NaturalBackgroundGameTests {
 
     /** Игрок стоит ногами в блоке (6, y, 6) относительно шаблона; возвращает его на нужном месте. */
     private static ServerPlayer playerAt(GameTestHelper h, int y) {
-        ServerPlayer p = FakePlayerFactory.getMinecraft(h.getLevel());
+        ServerPlayer p = TestPlayers.of(h);
         p.moveTo(h.absoluteVec(new net.minecraft.world.phys.Vec3(6.5, y, 6.5)));
         BackgroundField.forget(p.getUUID());
         return p;

@@ -51,7 +51,7 @@ public final class ContaminationGameTests {
 
     /** Общий FakePlayer уровня: начать с чистыми руками и обувью. */
     private static FakePlayer cleanPlayer(GameTestHelper h) {
-        FakePlayer p = FakePlayerFactory.getMinecraft(h.getLevel());
+        FakePlayer p = TestPlayers.of(h);
         ContaminationService.setHands(p, SurfaceContamination.NONE);
         ContaminationService.setShoes(p, SurfaceContamination.NONE);
         p.getInventory().clearContent();
