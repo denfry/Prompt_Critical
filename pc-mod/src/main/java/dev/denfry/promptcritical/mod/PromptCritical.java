@@ -66,6 +66,7 @@ public final class PromptCritical {
         dev.denfry.promptcritical.mod.drilling.DrillingBlockEntities.register(modBus);
         dev.denfry.promptcritical.mod.production.ProductionBlockEntities.register(modBus);
         dev.denfry.promptcritical.mod.scada.ScadaBlockEntities.register(modBus);
+        dev.denfry.promptcritical.mod.pa.PaBlockEntities.register(modBus);
         dev.denfry.promptcritical.mod.mes.MesBlockEntities.register(modBus);
         dev.denfry.promptcritical.mod.gas.GasBlockEntities.register(modBus);
         dev.denfry.promptcritical.mod.chem.ChemBlockEntities.register(modBus);

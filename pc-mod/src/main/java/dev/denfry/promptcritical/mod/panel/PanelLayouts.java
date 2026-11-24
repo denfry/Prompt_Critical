@@ -27,6 +27,7 @@ public final class PanelLayouts {
         for (List<PanelLayout> group : List.of(BoilerPanels.all(), FoundryPanels.all(), dev.denfry.promptcritical.mod.manufacturing.SmithyPanels.all(), MinePanels.all(), GridPanels.all(), dev.denfry.promptcritical.mod.grid.GridDispatchPanels.all(), dev.denfry.promptcritical.mod.grid.FePanels.all(),
                 dev.denfry.promptcritical.mod.scada.HistorianPanels.all(),
                 dev.denfry.promptcritical.mod.scada.OperatorTerminalPanels.all(),
+                dev.denfry.promptcritical.mod.pa.PaPanels.all(),
                 dev.denfry.promptcritical.mod.scada.TwinPanels.all(),
                 dev.denfry.promptcritical.mod.scada.AnnunciatorPanels.all(),
                 dev.denfry.promptcritical.mod.scada.ControlRoomPanels.all(),

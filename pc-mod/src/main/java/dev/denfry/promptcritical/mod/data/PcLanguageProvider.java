@@ -717,6 +717,8 @@ public final class PcLanguageProvider extends LanguageProvider {
         b("flame_detector", "Flame Detector", "Извещатель пламени");
         b("manual_call_point", "Manual Call Point", "Ручной пожарный извещатель");
         b("fire_alarm_panel", "Fire Alarm Panel", "Прибор приёмно-контрольный пожарный");
+        b("intercom_station", "Public Address Station", "Пульт громкоговорящей связи");
+        b("plant_loudspeaker", "Plant Loudspeaker", "Рупорный громкоговоритель");
         b("sprinkler_head", "Sprinkler Head", "Спринклерный ороситель");
         b("deluge_nozzle", "Deluge Nozzle", "Дренчерный ороситель");
         b("gas_suppression_cylinder", "Gas Suppression Cylinder", "Модуль газового пожаротушения");
@@ -1087,6 +1089,10 @@ public final class PcLanguageProvider extends LanguageProvider {
             }
         }
         MISC.putAll(dev.denfry.promptcritical.mod.panel.PanelText.lang());
+        // категория громкости Simple Voice Chat для ГГС (16 §16.4.1)
+        MISC.put("promptcritical.voicechat.pa", new String[] {"Plant PA", "ГГС станции"});
+        MISC.put("promptcritical.voicechat.pa.description", new String[] {"Plant public address loudspeakers",
+                "Громкоговорители громкоговорящей связи станции"});
         MISC.putAll(dev.denfry.promptcritical.mod.drilling.DrillingText.lang());
         MISC.putAll(dev.denfry.promptcritical.mod.production.ProductionText.lang());
         MISC.putAll(dev.denfry.promptcritical.mod.scada.ScadaText.lang());

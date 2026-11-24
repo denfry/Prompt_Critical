@@ -28,6 +28,10 @@ public final class PcProperties {
     public static final BooleanProperty MEDIUM_VOLTAGE = BooleanProperty.create("mv");
 
     public static final EnumProperty<OreHost> HOST = EnumProperty.create("host", OreHost.class);
+    /** Монтаж ГГС (13 §13.3.4): пульт на стене или на столе, громкоговоритель на стене, на мачте или под потолком. */
+    public static final EnumProperty<PaMount> INTERCOM_MOUNT = EnumProperty.create("mount", PaMount.class, PaMount.WALL, PaMount.DESK);
+    public static final EnumProperty<PaMount> SPEAKER_MOUNT = EnumProperty.create("mount", PaMount.class, PaMount.WALL, PaMount.POLE,
+            PaMount.CEILING);
     public static final EnumProperty<CoalRank> RANK = EnumProperty.create("rank", CoalRank.class);
     public static final EnumProperty<BoilerSegment> BOILER_SEGMENT = EnumProperty.create("segment", BoilerSegment.class);
     public static final EnumProperty<EngineSegment> ENGINE_SEGMENT = EnumProperty.create("segment", EngineSegment.class);
@@ -102,6 +106,9 @@ public final class PcProperties {
 
     /** Вмещающая порода руды 08 (модели {@code <id>}, {@code <id>_deepslate}, {@code <id>_tuff}). */
     public enum OreHost implements Named { STONE, DEEPSLATE, TUFF }
+
+    /** Монтаж устройств ГГС. */
+    public enum PaMount implements Named { WALL, DESK, POLE, CEILING }
 
     /** Марка угля пласта (08 §8.1.4). */
     public enum CoalRank implements Named { LIGNITE, BITUMINOUS, ANTHRACITE }
