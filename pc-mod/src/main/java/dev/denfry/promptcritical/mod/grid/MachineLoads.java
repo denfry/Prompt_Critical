@@ -397,6 +397,8 @@ public final class MachineLoads {
         put(Load.PASSIVE, dev.denfry.promptcritical.mod.radiation.LockerBlockEntity.class);
         // клетка-патрубок машины реального масштаба: пустой BE, чтобы труба Create пристыковалась; нагрузка — у контроллера
         put(Load.PASSIVE, dev.denfry.promptcritical.mod.multiblock.PortCellBlockEntity.class);
+        // регистр теплицы: водяной теплообменник без привода, насос охлаждающей воды — у турбины
+        put(Load.PASSIVE, dev.denfry.promptcritical.mod.greenhouse.GreenhouseCoilBlockEntity.class);
         put(Load.PASSIVE, dev.denfry.promptcritical.mod.radiation.ZoneControllerBlockEntity.class);
         put(Load.PASSIVE, SteamGeneratorBlockEntity.class);
         put(Load.PASSIVE, TideGaugeBlockEntity.class);

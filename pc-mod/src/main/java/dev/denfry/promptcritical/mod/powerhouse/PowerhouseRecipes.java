@@ -210,5 +210,14 @@ public final class PowerhouseRecipes extends RecipeProvider {
                 .pattern("PFP").pattern("WWW").pattern("PBP").define('P', plate).define('F', AllItems.PROPELLER.get())
                 .define('W', net.minecraft.tags.ItemTags.PLANKS).define('B', brick)
                 .unlockedBy("has_steel_plate", has(plate)).save(out, id("cooling_tower_cell"));
+        // регистр теплицы (17 §17.3.6): оребрённые медные трубы на стальной раме с патрубками
+        ShapedRecipeBuilder.shaped(RecipeCategory.MISC, PcBlocks.GREENHOUSE_COIL.get())
+                .pattern("PCP").pattern("CCC").pattern("PCP").define('P', pipe).define('C', Items.COPPER_INGOT)
+                .unlockedBy("has_condenser", has(PcBlocks.CONDENSER.get())).save(out, id("greenhouse_coil"));
+        // парник: рама из досок, остекление
+        ShapedRecipeBuilder.shaped(RecipeCategory.MISC, PcBlocks.COLD_FRAME.get())
+                .pattern("GGG").pattern("W W").define('G', net.minecraft.world.level.block.Blocks.GLASS_PANE)
+                .define('W', net.minecraft.tags.ItemTags.PLANKS)
+                .unlockedBy("has_glass_pane", has(net.minecraft.world.level.block.Blocks.GLASS_PANE)).save(out, id("cold_frame"));
     }
 }

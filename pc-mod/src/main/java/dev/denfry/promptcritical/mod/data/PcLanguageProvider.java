@@ -1217,6 +1217,8 @@ public final class PcLanguageProvider extends LanguageProvider {
         i("lifeline", "Lifeline", "Страховочный фал");
         b("manway", "Manway", "Люк-лаз");
         b("rescue_tripod", "Rescue Tripod", "Спасательная тренога");
+        b("greenhouse_coil", "Greenhouse Heating Coil", "Регистр обогрева теплицы");
+        b("cold_frame", "Cold Frame", "Парник");
         b("portable_ventilator", "Portable Ventilator", "Переносной вентилятор");
         b("patrol_checkpoint", "Patrol Checkpoint", "Метка обхода");
         i("patrol_reader", "Patrol Reader", "Считыватель обходчика");
@@ -1231,6 +1233,7 @@ public final class PcLanguageProvider extends LanguageProvider {
         b("hazard_diamond", "NFPA 704 Diamond", "Ромб NFPA 704");
         b("un_placard", "ADR Placard", "Табличка ДОПОГ");
         MISC.putAll(dev.denfry.promptcritical.mod.safety.SafetyText.LANG);
+        MISC.putAll(dev.denfry.promptcritical.mod.greenhouse.GreenhouseText.LANG);
     }
 
     @Override

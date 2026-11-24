@@ -22,6 +22,7 @@ import net.minecraft.core.HolderLookup;
 import net.minecraft.core.registries.BuiltInRegistries;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.server.level.ServerLevel;
+import net.minecraft.world.level.Level;
 import net.minecraft.sounds.SoundEvents;
 import net.minecraft.sounds.SoundSource;
 import net.minecraft.world.InteractionHand;
@@ -137,6 +138,17 @@ public class SteamTurbineBlockEntity extends GeneratingKineticBlockEntity
         if (r >= 0.95) return 4;
         if (r >= 0.2) return Math.max(1, Math.min(3, (int) Math.floor(4 * r)));
         return 0;
+    }
+
+    /**
+     * Тепло, которое отработавший пар отдаёт охлаждающей воде конденсатора {@code condenser}, Вт: теплота конденсации
+     * расхода пара, если турбина стоит на этом конденсаторе; иначе 0. Его берёт регистр теплицы (17 §17.3.6).
+     */
+    public static double condenserHeatW(Level level, BlockPos condenser) {
+        if (!level.getBlockState(condenser).is(PcBlocks.CONDENSER.get())) return 0;
+        if (!(level.getBlockEntity(condenser.above()) instanceof SteamTurbineBlockEntity t)) return 0;
+        EngineUnit e = t.unit();
+        return e == null ? 0 : Math.max(0, e.steamFlowKgS()) * 2.3e6;
     }
 
     /**

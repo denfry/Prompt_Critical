@@ -89,6 +89,7 @@ public final class PromptCritical {
         dev.denfry.promptcritical.mod.environment.AirQualityService.register();
         dev.denfry.promptcritical.mod.market.PlantAccounting.register();
         dev.denfry.promptcritical.mod.environment.EnvironmentBlockEntities.register(modBus);
+        dev.denfry.promptcritical.mod.greenhouse.GreenhouseBlockEntities.register(modBus);
         dev.denfry.promptcritical.mod.environment.DosimeterItem.register(modBus);
         dev.denfry.promptcritical.mod.acoustics.Acoustics.register(modBus);
         dev.denfry.promptcritical.mod.environment.ActivityData.register(modBus);
