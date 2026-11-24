@@ -56,10 +56,10 @@ public final class TelemetryGameTests {
                     h.assertTrue(before[0] == 360, "outlet 360 C by default: " + v);
                     h.assertTrue(v.get("prod.lit") instanceof Boolean, "lamps are status points");
                     h.assertTrue(((Number) v.get("_age")).doubleValue() <= 1.0, "snapshot not older than one scan cycle");
-                    g.press(id, "prod.t_up");
+                    g.press(id, "prod.t_up", -1, null, "test");
                     boolean unknown = false;
                     try {
-                        g.press(id, "prod.no_such_button");
+                        g.press(id, "prod.no_such_button", -1, null, "test");
                     } catch (TelemetryException e) {
                         unknown = true;
                     }
@@ -74,7 +74,7 @@ public final class TelemetryGameTests {
                     int refused = 0;
                     for (int i = 0; i < 20; i++) {
                         try {
-                            g.press(id, "prod.t_down");
+                            g.press(id, "prod.t_down", -1, null, "test");
                         } catch (TelemetryException e) {
                             refused++;
                         }

@@ -113,14 +113,16 @@ public final class AnnunciatorPeripheral implements IPeripheral {
     }
 
     @LuaFunction(mainThread = true)
-    public final int acknowledge(IArguments args) throws LuaException {
+    public final int acknowledge(IComputerAccess computer, IArguments args) throws LuaException {
+        CcAccess.gate(computer, ann, dev.denfry.promptcritical.sim.journal.Permission.ACK_ALARM, "acknowledge", false);
         Object target = args.get(0);
         String group = args.optString(1).orElse(null);
         return call(() -> ann.acknowledge(target, group));
     }
 
     @LuaFunction(mainThread = true)
-    public final boolean silence() throws LuaException {
+    public final boolean silence(IComputerAccess computer) throws LuaException {
+        CcAccess.gate(computer, ann, dev.denfry.promptcritical.sim.journal.Permission.ACK_ALARM, "silence", false);
         return call(() -> {
             ann.silenceLua();
             return true;
@@ -128,32 +130,38 @@ public final class AnnunciatorPeripheral implements IPeripheral {
     }
 
     @LuaFunction(mainThread = true)
-    public final boolean shelve(int id, double seconds) throws LuaException {
+    public final boolean shelve(IComputerAccess computer, int id, double seconds) throws LuaException {
+        CcAccess.gate(computer, ann, dev.denfry.promptcritical.sim.journal.Permission.PROTECTION, "shelve", true);
         return call(() -> ann.shelve(id, seconds));
     }
 
     @LuaFunction(mainThread = true)
-    public final boolean unshelve(int id) throws LuaException {
+    public final boolean unshelve(IComputerAccess computer, int id) throws LuaException {
+        CcAccess.gate(computer, ann, dev.denfry.promptcritical.sim.journal.Permission.PROTECTION, "unshelve", true);
         return call(() -> ann.unshelve(id));
     }
 
     @LuaFunction(mainThread = true)
-    public final boolean reset(int id) throws LuaException {
+    public final boolean reset(IComputerAccess computer, int id) throws LuaException {
+        CcAccess.gate(computer, ann, dev.denfry.promptcritical.sim.journal.Permission.ACK_ALARM, "reset", false);
         return call(() -> ann.engine().reset(id, ann.engine().now()));
     }
 
     @LuaFunction(mainThread = true)
-    public final int defineAlarm(Map<?, ?> spec) throws LuaException {
+    public final int defineAlarm(IComputerAccess computer, Map<?, ?> spec) throws LuaException {
+        CcAccess.gate(computer, ann, dev.denfry.promptcritical.sim.journal.Permission.TESTS_AND_SETUP, "defineAlarm", true);
         return call(() -> ann.defineAlarm(spec));
     }
 
     @LuaFunction(mainThread = true)
-    public final boolean deleteAlarm(int id) throws LuaException {
+    public final boolean deleteAlarm(IComputerAccess computer, int id) throws LuaException {
+        CcAccess.gate(computer, ann, dev.denfry.promptcritical.sim.journal.Permission.TESTS_AND_SETUP, "deleteAlarm", true);
         return call(() -> ann.deleteAlarm(id));
     }
 
     @LuaFunction(mainThread = true)
-    public final boolean raise(IArguments args) throws LuaException {
+    public final boolean raise(IComputerAccess computer, IArguments args) throws LuaException {
+        CcAccess.gate(computer, ann, dev.denfry.promptcritical.sim.journal.Permission.TESTS_AND_SETUP, "raise", true);
         int id = args.getInt(0);
         double value = args.optDouble(1, 1);
         return call(() -> {
@@ -163,7 +171,8 @@ public final class AnnunciatorPeripheral implements IPeripheral {
     }
 
     @LuaFunction(mainThread = true)
-    public final boolean clear(int id) throws LuaException {
+    public final boolean clear(IComputerAccess computer, int id) throws LuaException {
+        CcAccess.gate(computer, ann, dev.denfry.promptcritical.sim.journal.Permission.TESTS_AND_SETUP, "clear", true);
         return call(() -> {
             ann.clear(id);
             return true;
@@ -171,7 +180,8 @@ public final class AnnunciatorPeripheral implements IPeripheral {
     }
 
     @LuaFunction(mainThread = true)
-    public final boolean setSuppression(String group, boolean active) throws LuaException {
+    public final boolean setSuppression(IComputerAccess computer, String group, boolean active) throws LuaException {
+        CcAccess.gate(computer, ann, dev.denfry.promptcritical.sim.journal.Permission.TESTS_AND_SETUP, "setSuppression", true);
         return call(() -> {
             ann.setSuppression(group, active);
             return true;
@@ -184,7 +194,8 @@ public final class AnnunciatorPeripheral implements IPeripheral {
     }
 
     @LuaFunction(mainThread = true)
-    public final boolean setWindow(int n, int alarmId) throws LuaException {
+    public final boolean setWindow(IComputerAccess computer, int n, int alarmId) throws LuaException {
+        CcAccess.gate(computer, ann, dev.denfry.promptcritical.sim.journal.Permission.TESTS_AND_SETUP, "setWindow", true);
         return call(() -> {
             ann.setWindow(n, alarmId);
             return true;
@@ -192,7 +203,8 @@ public final class AnnunciatorPeripheral implements IPeripheral {
     }
 
     @LuaFunction(mainThread = true)
-    public final boolean lampTest() throws LuaException {
+    public final boolean lampTest(IComputerAccess computer) throws LuaException {
+        CcAccess.gate(computer, ann, dev.denfry.promptcritical.sim.journal.Permission.TESTS_AND_SETUP, "lampTest", true);
         return call(() -> {
             ann.lampTestLua();
             return true;

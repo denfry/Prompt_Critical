@@ -22,6 +22,7 @@ import java.util.Locale;
 import java.util.Map;
 import java.util.Set;
 import java.util.UUID;
+import net.minecraft.core.GlobalPos;
 import net.minecraft.core.HolderLookup;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.nbt.ListTag;
@@ -48,6 +49,14 @@ public final class StationRegistry extends SavedData {
     private final StationJournal journal;
     final AccessDenialLimiter denials = new AccessDenialLimiter();
     final BlockSeriesAggregator blockSeries = new BlockSeriesAggregator();
+    /** Кто поставил компьютер CC с этим id (04d §4d.9: права компьютера — права его владельца). */
+    final Map<Integer, Placer> computers = new HashMap<>();
+    /** Поставленные блоки-исполнители (компьютер без id, сервер MES) → кто поставил. */
+    final Map<GlobalPos, Placer> placed = new HashMap<>();
+
+    /** Игрок, поставивший блок; имя — на момент установки, для команды и журнала. */
+    public record Placer(UUID uuid, String name) {
+    }
 
     private StationRegistry() {
         journal = new StationJournal(maxEntries());
@@ -124,6 +133,16 @@ public final class StationRegistry extends SavedData {
         setDirty();
     }
 
+    /** Снимает станцию с её чанками и журналом. */
+    public void remove(UUID id) {
+        StationRecord old = stations.remove(id);
+        if (old == null) return;
+        Map<Long, UUID> idx = chunkIndex.get(old.dimension());
+        if (idx != null) for (long c : old.chunks()) idx.remove(c, id);
+        journal.forget(id);
+        setDirty();
+    }
+
     public String uniqueName(String base) {
         Set<String> taken = new LinkedHashSet<>();
         for (StationRecord s : stations.values()) taken.add(s.name().toLowerCase(Locale.ROOT));
@@ -176,6 +195,21 @@ public final class StationRegistry extends SavedData {
             list.add(c);
         }
         tag.put("stations", list);
+        ListTag comps = new ListTag();
+        computers.forEach((id, p) -> {
+            CompoundTag c = placer(p);
+            c.putInt("computer", id);
+            comps.add(c);
+        });
+        tag.put("computers", comps);
+        ListTag at = new ListTag();
+        placed.forEach((pos, p) -> {
+            CompoundTag c = placer(p);
+            c.putString("dim", pos.dimension().location().toString());
+            c.putLong("pos", pos.pos().asLong());
+            at.add(c);
+        });
+        tag.put("placed", at);
         return tag;
     }
 
@@ -204,8 +238,26 @@ public final class StationRegistry extends SavedData {
                 if (e != null) r.journal.restore(e);
             }
         }
+        for (Tag t : tag.getList("computers", Tag.TAG_COMPOUND)) {
+            CompoundTag c = (CompoundTag) t;
+            if (c.hasUUID("uuid")) r.computers.put(c.getInt("computer"), new Placer(c.getUUID("uuid"), c.getString("name")));
+        }
+        for (Tag t : tag.getList("placed", Tag.TAG_COMPOUND)) {
+            CompoundTag c = (CompoundTag) t;
+            net.minecraft.resources.ResourceLocation dim = net.minecraft.resources.ResourceLocation.tryParse(c.getString("dim"));
+            if (!c.hasUUID("uuid") || dim == null) continue;
+            r.placed.put(GlobalPos.of(ResourceKey.create(net.minecraft.core.registries.Registries.DIMENSION, dim),
+                    net.minecraft.core.BlockPos.of(c.getLong("pos"))), new Placer(c.getUUID("uuid"), c.getString("name")));
+        }
         r.setDirty(false);
         return r;
+    }
+
+    private static CompoundTag placer(Placer p) {
+        CompoundTag c = new CompoundTag();
+        c.putUUID("uuid", p.uuid());
+        c.putString("name", p.name());
+        return c;
     }
 
     /** Запись в журнал от имени автоматики, без игрока. */

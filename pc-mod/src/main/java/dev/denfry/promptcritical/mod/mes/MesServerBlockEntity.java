@@ -163,7 +163,8 @@ public final class MesServerBlockEntity extends DeviceBlockEntity implements Fou
             if (Math.abs(err) <= band) continue;
             for (String key : err > 0 ? RAISE : LOWER) {
                 try {
-                    rtu.press(u.id(), key);
+                    rtu.press(u.id(), key, -1, level instanceof net.minecraft.server.level.ServerLevel sl
+                            ? dev.denfry.promptcritical.mod.station.Stations.placerAt(sl, worldPosition) : null, "MES");
                     break;
                 } catch (TelemetryException ignored) {
                     // у этого агрегата такой кнопки нет или канал занят — следующая кнопка или следующий цикл

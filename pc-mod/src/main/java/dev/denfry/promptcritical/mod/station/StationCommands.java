@@ -70,7 +70,8 @@ public final class StationCommands {
                 .then(Commands.literal("journal").executes(ctx -> journal(ctx, 10))
                         .then(Commands.argument("n", IntegerArgumentType.integer(1, MAX_LINES))
                                 .executes(ctx -> journal(ctx, IntegerArgumentType.getInteger(ctx, "n")))))
-                .then(Commands.literal("claim").executes(StationCommands::claim));
+                .then(Commands.literal("claim").executes(StationCommands::claim))
+                .then(Commands.literal("computer").executes(StationCommands::computer));
     }
 
     /** Ветка {@code journal export <станция>}: члены станции и администраторы — весь журнал, прочие — свои действия. */
@@ -209,6 +210,44 @@ public final class StationCommands {
             }
         src.sendFailure(StationText.msg("claim_none"));
         return 0;
+    }
+
+    /**
+     * Записывает игрока владельцем компьютера CC или сервера MES, на который он смотрит: для поставленных до учёта
+     * владельцев. Чужой записанный исполнитель перезаписывает только администратор или держатель права выдавать роли на
+     * станции этого чанка.
+     */
+    private static int computer(CommandContext<CommandSourceStack> ctx) {
+        CommandSourceStack src = ctx.getSource();
+        ServerPlayer p = src.getPlayer();
+        StationRegistry r = StationRegistry.of(src.getServer());
+        if (p == null || r == null) return 0;
+        if (!(p.pick(5.0, 0f, false) instanceof net.minecraft.world.phys.BlockHitResult hit)
+                || hit.getType() != net.minecraft.world.phys.HitResult.Type.BLOCK
+                || !Stations.isExecutor(src.getLevel().getBlockState(hit.getBlockPos()))) {
+            src.sendFailure(StationText.msg("computer.look"));
+            return 0;
+        }
+        ServerLevel level = src.getLevel();
+        net.minecraft.core.BlockPos pos = hit.getBlockPos();
+        int id = Stations.computerIdAt(level, pos);
+        StationRegistry.Placer was = id >= 0 ? Stations.computerOwner(src.getServer(), id) : Stations.placerAt(level, pos);
+        StationRecord s = r.at(level.dimension(), new ChunkPos(pos));
+        boolean manager = s != null && s.has(p.getUUID(), Stations.teamOf(p), dev.denfry.promptcritical.sim.journal.Permission.MANAGE_ROLES);
+        if (was != null && !was.uuid().equals(p.getUUID()) && !PcPermissions.admin(src) && !manager) {
+            src.sendFailure(StationText.msg("computer.owned", was.name()));
+            return 0;
+        }
+        Stations.recordPlacer(r, level, pos, p);
+        if (s != null) {
+            long tick = level.getGameTime();
+            r.append(new JournalEntry(0, tick, tick / 20.0, s.stationId(), Stations.actor(p), JournalAction.COMMAND,
+                    Stations.device(level, pos), "computer owner " + (was == null ? "-" : was.name()) + " -> " + p.getGameProfile().getName(),
+                    Severity.NOTICE));
+        }
+        String what = id >= 0 ? "#" + id : pos.toShortString();
+        src.sendSuccess(() -> StationText.msg("computer.bound", what), true);
+        return 1;
     }
 
     private static int export(CommandContext<CommandSourceStack> ctx) {

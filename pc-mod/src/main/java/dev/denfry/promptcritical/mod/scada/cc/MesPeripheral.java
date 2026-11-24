@@ -2,6 +2,7 @@ package dev.denfry.promptcritical.mod.scada.cc;
 
 import dan200.computercraft.api.lua.LuaException;
 import dan200.computercraft.api.lua.LuaFunction;
+import dan200.computercraft.api.peripheral.IComputerAccess;
 import dan200.computercraft.api.peripheral.IPeripheral;
 import dev.denfry.promptcritical.mod.mes.MesServerBlockEntity;
 import dev.denfry.promptcritical.mod.scada.TelemetryGatewayBlockEntity.TelemetryException;
@@ -57,13 +58,15 @@ public final class MesPeripheral implements IPeripheral {
 
     /** Замкнутый контур: сервер сам ведёт агрегаты к уставкам. */
     @LuaFunction(mainThread = true)
-    public final boolean setAuto(boolean on) {
+    public final boolean setAuto(IComputerAccess computer, boolean on) throws LuaException {
+        CcAccess.gate(computer, server, dev.denfry.promptcritical.sim.journal.Permission.CONTROL, "setAuto", true);
         server.setAuto(on);
         return true;
     }
 
     @LuaFunction(mainThread = true)
-    public final boolean setDispatchTarget(double mw) throws LuaException {
+    public final boolean setDispatchTarget(IComputerAccess computer, double mw) throws LuaException {
+        CcAccess.gate(computer, server, dev.denfry.promptcritical.sim.journal.Permission.CONTROL, "setDispatchTarget", true);
         return call(() -> {
             server.setTarget(mw);
             return true;

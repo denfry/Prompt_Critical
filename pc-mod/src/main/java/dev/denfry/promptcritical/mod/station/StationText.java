@@ -33,6 +33,10 @@ public final class StationText {
         m("claimed", "Chunk %s joined station %s", "Чанк %s присоединён к станции %s");
         m("claim_none", "No station of yours borders this chunk", "Рядом с этим чанком нет вашей станции");
         m("claim_taken", "This chunk already belongs to station %s", "Этот чанк уже принадлежит станции %s");
+        m("computer.look", "Look at a computer, turtle or MES server within 5 blocks",
+                "Смотрите на компьютер, черепаху или сервер MES в пределах 5 блоков");
+        m("computer.owned", "E_ACCESS: this computer is recorded as %s's", "E_ACCESS: этот компьютер записан за игроком %s");
+        m("computer.bound", "Computer %s now acts with your station rights", "Компьютер %s теперь действует с вашими правами на станции");
         m("announce", "[Station %s] level %s event: %s", "[Станция %s] событие уровня %s: %s");
     }
 

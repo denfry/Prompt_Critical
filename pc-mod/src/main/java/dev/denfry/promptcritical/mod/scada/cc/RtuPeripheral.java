@@ -2,6 +2,7 @@ package dev.denfry.promptcritical.mod.scada.cc;
 
 import dan200.computercraft.api.lua.LuaException;
 import dan200.computercraft.api.lua.LuaFunction;
+import dan200.computercraft.api.peripheral.IComputerAccess;
 import dan200.computercraft.api.peripheral.IPeripheral;
 import dev.denfry.promptcritical.mod.scada.TelemetryGatewayBlockEntity;
 import dev.denfry.promptcritical.mod.scada.TelemetryGatewayBlockEntity.TelemetryException;
@@ -64,9 +65,10 @@ public final class RtuPeripheral implements IPeripheral {
     }
 
     @LuaFunction(mainThread = true)
-    public final boolean press(String id, String button) throws LuaException {
+    public final boolean press(IComputerAccess computer, String id, String button) throws LuaException {
         return call(() -> {
-            gateway.press(id, button);
+            gateway.press(id, button, computer.getID(),
+                    dev.denfry.promptcritical.mod.station.Stations.computerOwner(gateway.getLevel().getServer(), computer.getID()), "");
             return true;
         });
     }
