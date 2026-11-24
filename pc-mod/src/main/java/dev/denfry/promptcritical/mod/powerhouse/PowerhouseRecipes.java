@@ -181,6 +181,26 @@ public final class PowerhouseRecipes extends RecipeProvider {
                 .pattern("PPP").pattern("SBS").define('P', Items.PAPER).define('S', PcItems.STEEL_PLATE.get())
                 .define('B', PcBlocks.ELECTRODE_BOILER.get()).unlockedBy("has_electrode_boiler", has(PcBlocks.ELECTRODE_BOILER.get()))
                 .save(out, id("electrode_boiler_real_drawing"));
+        // водородная станция: чертежи — по знакомым машинам (электролиз хлора, двигатель, инвертор)
+        ShapedRecipeBuilder.shaped(RecipeCategory.MISC, dev.denfry.promptcritical.mod.site.SiteRegistry.H2_ELECTROLYSER_REAL_DRAWING.get())
+                .pattern("PPP").pattern("WCW").define('P', Items.PAPER).define('W', PcItems.COPPER_WIRE.get())
+                .define('C', PcBlocks.CHLOR_ALKALI_CELL.get()).unlockedBy("has_chlor_alkali_cell", has(PcBlocks.CHLOR_ALKALI_CELL.get()))
+                .save(out, id("h2_electrolyser_real_drawing"));
+        ShapedRecipeBuilder.shaped(RecipeCategory.MISC, dev.denfry.promptcritical.mod.site.SiteRegistry.H2_COMPRESSOR_REAL_DRAWING.get())
+                .pattern("PPP").pattern("SMU").define('P', Items.PAPER).define('S', PcItems.STEEL_PLATE.get())
+                .define('M', PcBlocks.ELECTRIC_MOTOR.get()).define('U', AllBlocks.MECHANICAL_PUMP.get())
+                .unlockedBy("has_electric_motor", has(PcBlocks.ELECTRIC_MOTOR.get())).save(out, id("h2_compressor_real_drawing"));
+        ShapedRecipeBuilder.shaped(RecipeCategory.MISC, dev.denfry.promptcritical.mod.site.SiteRegistry.H2_TUBE_BANK_REAL_DRAWING.get())
+                .pattern("PPP").pattern("TTT").define('P', Items.PAPER).define('T', PcItems.SEAMLESS_PIPE.get())
+                .unlockedBy("has_seamless_pipe", has(PcItems.SEAMLESS_PIPE.get())).save(out, id("h2_tube_bank_real_drawing"));
+        ShapedRecipeBuilder.shaped(RecipeCategory.MISC, dev.denfry.promptcritical.mod.site.SiteRegistry.H2_GASHOLDER_REAL_DRAWING.get())
+                .pattern("PPP").pattern("STS").define('P', Items.PAPER).define('S', PcItems.STEEL_PLATE.get())
+                .define('T', AllBlocks.FLUID_TANK.get()).unlockedBy("has_steel_plate", has(PcItems.STEEL_PLATE.get()))
+                .save(out, id("h2_gasholder_real_drawing"));
+        ShapedRecipeBuilder.shaped(RecipeCategory.MISC, dev.denfry.promptcritical.mod.site.SiteRegistry.H2_FUEL_CELL_REAL_DRAWING.get())
+                .pattern("PPP").pattern("WIW").define('P', Items.PAPER).define('W', PcItems.COPPER_WIRE.get())
+                .define('I', PcBlocks.BATTERY_INVERTER.get()).unlockedBy("has_battery_inverter", has(PcBlocks.BATTERY_INVERTER.get()))
+                .save(out, id("h2_fuel_cell_real_drawing"));
         // конденсатор: корпус из листа, трубный пучок — трубы
         ShapedRecipeBuilder.shaped(RecipeCategory.MISC, PcBlocks.CONDENSER.get())
                 .pattern("PPP").pattern("FFF").pattern("PPP").define('P', plate).define('F', pipe)

@@ -706,6 +706,11 @@ public final class PcLanguageProvider extends LanguageProvider {
         b("pumped_storage_unit", "Pumped Storage Unit", "Обратимый агрегат ГАЭС");
         b("electrode_boiler", "Electrode Boiler", "Электродный котёл");
         b("electrode_boiler_real", "6.3 kV Electrode Boiler", "Электродный котёл 6,3 кВ");
+        b("h2_electrolyser_real", "Alkaline Water Electrolyser", "Щелочной электролизёр воды");
+        b("h2_compressor_real", "Hydrogen Diaphragm Compressor", "Мембранный компрессор водорода");
+        b("h2_tube_bank_real", "Hydrogen Tube Bank, 200 bar", "Баллонная рампа водорода 200 бар");
+        b("h2_gasholder_real", "Hydrogen Gasholder", "Газгольдер водорода");
+        b("h2_fuel_cell_real", "PEM Fuel Cell Module, 200 kW", "Модуль топливных элементов PEM 200 кВт");
         b("wind_turbine", "Wind Power Unit D-30", "Ветроэлектростанция Д-30");
         b("dam_gate", "Dam Intake Gate", "Затвор водозабора");
         b("gas_turbine", "Gas Turbine Unit", "Газотурбинная установка");
@@ -968,6 +973,7 @@ public final class PcLanguageProvider extends LanguageProvider {
         MISC.putAll(dev.denfry.promptcritical.mod.ops.PermitText.LANG);
         MISC.putAll(dev.denfry.promptcritical.mod.ops.OpsFireText.LANG);
         MISC.putAll(dev.denfry.promptcritical.mod.powerhouse.PowerhouseText.LANG);
+        MISC.putAll(dev.denfry.promptcritical.mod.hydrogen.HydrogenText.LANG);
         MISC.putAll(dev.denfry.promptcritical.mod.grid.GridText.LANG);
         MISC.putAll(dev.denfry.promptcritical.mod.automation.AutomationText.LANG);
         MISC.putAll(dev.denfry.promptcritical.mod.content.ContentText.LANG);

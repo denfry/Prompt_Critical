@@ -62,6 +62,32 @@ public final class SitePlans {
         return new Plan(id, unit, metalT * 1000, List.of(stages));
     }
 
+    /**
+     * Водородная станция (art/blockbench/hydrogen, оценки по размерам моделей): батарея A485 с сепараторами и щелочным
+     * контуром ≈ 45 т, компрессор PDC на раме ≈ 12 т, рампа из девяти бесшовных баллонов ≈ 27 т, газгольдер 70 м³ с
+     * площадкой ≈ 12 т, модуль ТЭ с инвертором ≈ 3,5 т.
+     */
+    private static final Map<String, Plan> H2_PLANS = Map.of(
+            "h2_electrolyser_real", plan("h2_electrolyser_real", PcBlocks.H2_ELECTROLYSER_REAL, 45,
+                    st("foundation", 100, n(CONCRETE, 20)),
+                    st("cell_stack", 240, n(PLATE, 200), n(INGOT, 100)),
+                    st("gas_separators", 160, n(PLATE, 80), n(PIPE, 60)),
+                    st("dc_busbars", 100, n(WIRE, 300))),
+            "h2_compressor_real", plan("h2_compressor_real", PcBlocks.H2_COMPRESSOR_REAL, 12,
+                    st("foundation", 60, n(CONCRETE, 4)),
+                    st("compressor_frame", 140, n(BEAM, 30), n(INGOT, 60)),
+                    st("coolers_piping", 100, n(PIPE, 40), n(WIRE, 80))),
+            "h2_tube_bank_real", plan("h2_tube_bank_real", PcBlocks.H2_TUBE_BANK_REAL, 27,
+                    st("tube_frame", 80, n(BEAM, 40)),
+                    st("pressure_tubes", 200, n(PIPE, 460))),
+            "h2_gasholder_real", plan("h2_gasholder_real", PcBlocks.H2_GASHOLDER_REAL, 12,
+                    st("foundation", 80, n(CONCRETE, 10)),
+                    st("shell", 160, n(PLATE, 90), n(PIPE, 10)),
+                    st("platform", 80, n(BEAM, 25))),
+            "h2_fuel_cell_real", plan("h2_fuel_cell_real", PcBlocks.H2_FUEL_CELL_REAL, 3.5,
+                    st("fuel_cell_stack", 120, n(PLATE, 20), n(INGOT, 5), n(WIRE, 50)),
+                    st("inverter_cabinet", 80, n(PLATE, 3), n(WIRE, 30))));
+
     private static final Map<String, Plan> PLANS = Map.of(
             // корпус 304 т (ТПУ), внутрикорпусные ≈ 250 т, верхний блок ≈ 135 т, патрубки и трубопроводы ≈ 60 т (оценки)
             "vver_reactor", plan("vver_reactor", PcBlocks.VVER_REACTOR, 770,
@@ -566,12 +592,13 @@ public final class SitePlans {
         if (p == null) p = STEAM_MINE_PLANS.get(id);
         if (p == null) p = SMITHY_PLANS.get(id);
         if (p == null) p = ASSEMBLY_PLANS.get(id);
+        if (p == null) p = H2_PLANS.get(id);
         return p != null ? p : NONFERROUS_PLANS.get(id);
     }
 
     public static Iterable<Plan> all() {
         return java.util.stream.Stream.of(PLANS, I0_PLANS, IRONMAKING_PLANS, POWER_PLANS, MINING_COKE_PLANS, I1_STEEL_PLANS, FOUNDRY_PLANS, I0_SHOP_PLANS,
-                        STEAM_MINE_PLANS, CARBON_PLANS, SMITHY_PLANS, ASSEMBLY_PLANS, NONFERROUS_PLANS)
+                        STEAM_MINE_PLANS, CARBON_PLANS, SMITHY_PLANS, ASSEMBLY_PLANS, NONFERROUS_PLANS, H2_PLANS)
                 .flatMap(m -> m.values().stream()).toList();
     }
 }

@@ -95,6 +95,12 @@ public final class HydrogenStorage {
         return got;
     }
 
+    /** Сколько можно отобрать, не опустив давление ниже {@code minPa}, моль. */
+    public double availableMol(double minPa) {
+        double floor = HydrogenGas.molarDensity(Math.max(minPa, ATM_PA), tempK) * spec.volumeM3();
+        return Math.max(0, mol - floor);
+    }
+
     public void setVentOpen(boolean open) {
         ventOpen = open;
     }

@@ -306,6 +306,11 @@ public final class MachineLoads {
         put(Load.OWN, WaterTubeBoilerBlockEntity.class);
         // источник энергии
         put(Load.SOURCE, BwrReactorBlockEntity.class);
+        // водородная станция: топливный элемент отдаёт в сеть, компрессор — от щита 0,4 кВ, сосуды пассивны;
+        // электролизёр — свой ввод 6,3 кВ (GridDevice → GRID)
+        put(Load.SOURCE, dev.denfry.promptcritical.mod.hydrogen.FuelCellBlockEntity.class);
+        put(Load.ACTIVE_LV, dev.denfry.promptcritical.mod.hydrogen.H2CompressorBlockEntity.class);
+        put(Load.PASSIVE, dev.denfry.promptcritical.mod.hydrogen.H2StorageBlockEntity.class);
         put(Load.SOURCE, CanduReactorBlockEntity.class);
         put(Load.SOURCE, GasTurbineBlockEntity.class);
         put(Load.SOURCE, HrsgBlockEntity.class);
