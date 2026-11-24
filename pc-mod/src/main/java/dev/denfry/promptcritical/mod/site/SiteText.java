@@ -59,6 +59,13 @@ public final class SiteText {
         stage("rm_trolley", "trolley, cabin, telescopic mast and gripper", "тележка, кабина, телескопическая штанга и захват");
         stage("canned_motor", "canned motor and its cooling jacket", "экранированный двигатель и рубашка охлаждения");
         stage("gas_rack", "nitrogen bottle rack and gas line", "стойка азотных баллонов и газовая линия");
+        drawing("candu_npd_reactor_real", "CANDU NPD Reactor (Rolphton)", "реактора CANDU NPD (Ролфтон)");
+        drawing("candu_npd_fuelling_machine_real", "NPD Fuelling Machine", "перегрузочной машины NPD");
+        drawing("candu_npd_boiler_real", "NPD Boiler with Steam Drum", "котла NPD с барабаном");
+        drawing("candu_npd_pump_real", "NPD Heat Transport Pump", "насоса теплоносителя NPD");
+        stage("npd_fm_columns", "rail, columns and hoists", "рельс, колонны и подъёмники");
+        stage("npd_fm_head", "bridge, carriage and magazine head", "мост, тележка и головка с магазином");
+        stage("npd_steam_drum", "steam drum, risers and downcomers", "барабан, подъёмные и опускные трубы");
         drawing("bwr240_reactor", "BWR-240 Boiling Water Reactor", "кипящего реактора BWR-240");
         drawing("candu6_reactor", "CANDU 6 Reactor Assembly", "реакторной сборки CANDU 6");
         drawing("bn600_reactor", "BN-600 Sodium Fast Reactor", "реактора БН-600");

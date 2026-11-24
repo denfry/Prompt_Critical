@@ -325,6 +325,8 @@ public final class MachineLoads {
         put(Load.ACTIVE_LV, dev.denfry.promptcritical.mod.hydrogen.H2CompressorBlockEntity.class);
         put(Load.PASSIVE, dev.denfry.promptcritical.mod.hydrogen.H2StorageBlockEntity.class);
         put(Load.SOURCE, CanduReactorBlockEntity.class);
+        put(Load.SOURCE, dev.denfry.promptcritical.mod.npp.NpdReactorBlockEntity.class);
+        put(Load.ACTIVE_LV, dev.denfry.promptcritical.mod.npp.NpdFuellingMachineBlockEntity.class);
         put(Load.SOURCE, GasTurbineBlockEntity.class);
         put(Load.SOURCE, HrsgBlockEntity.class);
         put(Load.SOURCE, PowerReactorBlockEntity.class);

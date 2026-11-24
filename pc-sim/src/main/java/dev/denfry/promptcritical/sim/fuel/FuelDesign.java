@@ -27,7 +27,14 @@ public enum FuelDesign {
      * Пучок CANDU-6: 37 элементов ⌀13,08 мм, оболочка Zircaloy-4 0,38 мм, таблетка ⌀12,15 мм, столб 0,48 м (пучок 0,495 м),
      * природный UO₂ — ≈ 19 кг урана в пучке (AECL, «CANDU 6 Technical Summary», 2005). 12 пучков в канале.
      */
-    CANDU_37(37, 0, 0, 12.15e-3, 0, 0.48, 13.08e-3, 0.38e-3, 0.1e6, Cladding.ZIRCALOY_4, false);
+    CANDU_37(37, 0, 0, 12.15e-3, 0, 0.48, 13.08e-3, 0.38e-3, 0.1e6, Cladding.ZIRCALOY_4, false),
+    /**
+     * Пучок NPD (Rolphton, 1962): 19 элементов в трёх кольцах 1 + 6 + 12 в трубе давления ⌀82,8 мм (IAEA-NDS, WIMS-D
+     * burnup benchmarks, ячейка NPD), природный UO₂; элемент ⌀15,25 мм, оболочка 0,4 мм, таблетка ⌀14,4 мм, пучок
+     * 0,495 м [оценка: размеры элемента]. Оболочка — Zircaloy-2, у нас {@link Cladding#ZIRCALOY_4} [замена материала].
+     * Девять пучков в канале каландра 4,6 м.
+     */
+    NPD_19(19, 0, 0, 14.4e-3, 0, 0.48, 15.25e-3, 0.4e-3, 0.1e6, Cladding.ZIRCALOY_4, false);
 
     public enum Cladding { E110, ZIRCALOY_4, STEEL }
 

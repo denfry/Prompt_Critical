@@ -22,9 +22,11 @@ public final class NppBlockEntities {
     public static final DeferredHolder<BlockEntityType<?>, BlockEntityType<PowerReactorBlockEntity>> POWER_REACTOR =
             type("power_reactor", PowerReactorBlockEntity::new, PcBlocks.POWER_REACTOR, PcBlocks.AM1_REACTOR);
     public static final DeferredHolder<BlockEntityType<?>, BlockEntityType<PrimaryPumpBlockEntity>> PRIMARY_PUMP =
-            type("primary_pump", PrimaryPumpBlockEntity::new, PcBlocks.PRIMARY_PUMP, PcBlocks.VVER_COOLANT_PUMP, PcBlocks.VVER70_COOLANT_PUMP_REAL);
+            type("primary_pump", PrimaryPumpBlockEntity::new, PcBlocks.PRIMARY_PUMP, PcBlocks.VVER_COOLANT_PUMP, PcBlocks.VVER70_COOLANT_PUMP_REAL,
+                    PcBlocks.NPD_PUMP_REAL);
     public static final DeferredHolder<BlockEntityType<?>, BlockEntityType<SteamGeneratorBlockEntity>> STEAM_GENERATOR =
-            type("steam_generator", SteamGeneratorBlockEntity::new, PcBlocks.STEAM_GENERATOR, PcBlocks.VVER_STEAM_GENERATOR, PcBlocks.VVER70_STEAM_GENERATOR_REAL);
+            type("steam_generator", SteamGeneratorBlockEntity::new, PcBlocks.STEAM_GENERATOR, PcBlocks.VVER_STEAM_GENERATOR, PcBlocks.VVER70_STEAM_GENERATOR_REAL,
+                    PcBlocks.NPD_BOILER_REAL);
     public static final DeferredHolder<BlockEntityType<?>, BlockEntityType<PwrReactorBlockEntity>> PWR_REACTOR =
             type("pwr_reactor", PwrReactorBlockEntity::new, PcBlocks.PWR_REACTOR, PcBlocks.VVER_REACTOR, PcBlocks.VVER70_REACTOR_REAL);
     public static final DeferredHolder<BlockEntityType<?>, BlockEntityType<BwrReactorBlockEntity>> BWR_REACTOR =
@@ -42,6 +44,10 @@ public final class NppBlockEntities {
             type("vver70_fuel_pool", SpentFuelPoolBlockEntity::new, PcBlocks.VVER70_FUEL_POOL_REAL);
     public static final DeferredHolder<BlockEntityType<?>, BlockEntityType<RefuellingMachineBlockEntity>> REFUELLING_MACHINE =
             type("vver70_refuelling_machine", RefuellingMachineBlockEntity::new, PcBlocks.VVER70_REFUELLING_MACHINE_REAL);
+    public static final DeferredHolder<BlockEntityType<?>, BlockEntityType<NpdReactorBlockEntity>> NPD_REACTOR =
+            type("npd_reactor", NpdReactorBlockEntity::new, PcBlocks.NPD_REACTOR_REAL);
+    public static final DeferredHolder<BlockEntityType<?>, BlockEntityType<NpdFuellingMachineBlockEntity>> NPD_FUELLING_MACHINE =
+            type("npd_fuelling_machine", NpdFuellingMachineBlockEntity::new, PcBlocks.NPD_FUELLING_MACHINE_REAL);
 
     private NppBlockEntities() {
     }
@@ -59,6 +65,17 @@ public final class NppBlockEntities {
         event.registerBlockEntity(Capabilities.FluidHandler.BLOCK, CANDU_REACTOR.get(), FoundryDevice::fluids);
         event.registerBlockEntity(Capabilities.ItemHandler.BLOCK, SFR_REACTOR.get(), FoundryDevice::items);
         event.registerBlockEntity(Capabilities.ItemHandler.BLOCK, FUEL_POOL.get(), FoundryDevice::items);
+        event.registerBlockEntity(Capabilities.ItemHandler.BLOCK, NPD_REACTOR.get(), FoundryDevice::items);
+        event.registerBlockEntity(Capabilities.FluidHandler.BLOCK, NPD_REACTOR.get(), FoundryDevice::fluids);
+        event.registerBlockEntity(Capabilities.ItemHandler.BLOCK, NPD_FUELLING_MACHINE.get(), FoundryDevice::items);
+        event.registerBlockEntity(Capabilities.FluidHandler.BLOCK, NPD_FUELLING_MACHINE.get(), FoundryDevice::fluids);
+    }
+
+    /** Тип для четырёх блоков с одной логикой: старая серия, ВВЭР-1000, ВВЭР-70 и NPD. */
+    private static <T extends BlockEntity> DeferredHolder<BlockEntityType<?>, BlockEntityType<T>> type(String name,
+            BlockEntityType.BlockEntitySupplier<T> factory, Supplier<? extends Block> a, Supplier<? extends Block> b,
+            Supplier<? extends Block> c, Supplier<? extends Block> d) {
+        return BLOCK_ENTITIES.register(name, () -> BlockEntityType.Builder.of(factory, a.get(), b.get(), c.get(), d.get()).build(null));
     }
 
     private static <T extends BlockEntity> DeferredHolder<BlockEntityType<?>, BlockEntityType<T>> type(String name,
