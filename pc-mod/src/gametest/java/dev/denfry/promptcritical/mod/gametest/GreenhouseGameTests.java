@@ -140,8 +140,11 @@ public final class GreenhouseGameTests {
     public static void districtHeaterCountsTheSettlementLoadAndGivesNothingWithoutSteam(GameTestHelper h) {
         BlockPos heater = new BlockPos(8, 2, 8);
         h.setBlock(heater, PcBlocks.DISTRICT_HEAT_EXCHANGER.get());
-        h.setBlock(new BlockPos(2, 2, 2), Blocks.RED_BED);
-        h.setBlock(new BlockPos(2, 2, 6), Blocks.RED_BED);
+        // точка интереса «дом» — изголовье кровати, а не изножье (состояние по умолчанию)
+        var head = Blocks.RED_BED.defaultBlockState().setValue(net.minecraft.world.level.block.BedBlock.PART,
+                net.minecraft.world.level.block.state.properties.BedPart.HEAD);
+        h.setBlock(new BlockPos(2, 2, 2), head);
+        h.setBlock(new BlockPos(2, 2, 6), head);
         h.runAfterDelay(5, () -> {
             var be = (DistrictHeatExchangerBlockEntity) h.getBlockEntity(heater);
             be.rescan(h.getLevel());
