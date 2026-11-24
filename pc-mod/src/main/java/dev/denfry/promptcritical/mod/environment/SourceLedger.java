@@ -291,9 +291,12 @@ public final class SourceLedger extends SavedData {
         BlockPos p = BlockPos.containing(e.at);
         PromptCritical.LOGGER.warn("Orphan source {} at {} {}: unseen for {} s", e.id, e.dim.location(), p.toShortString(), orphanTicks() / 20);
         ServerPlayer owner = e.lastPlayer == null ? null : level.getServer().getPlayerList().getPlayer(e.lastPlayer);
-        if (owner != null)
+        if (owner != null) {
             owner.displayClientMessage(RadiationService.msg("source_orphan", shortId(e.id), p.getX(), p.getY(), p.getZ())
                     .withStyle(ChatFormatting.RED), false);
+            dev.denfry.promptcritical.mod.compat.XaeroWaypoints.offer(owner, "Source " + shortId(e.id), p,
+                    dev.denfry.promptcritical.mod.compat.XaeroWaypoints.RED, e.dim);
+        }
     }
 
     /** Наша установка рядом (свой учёт активности или блок-сущность мода) — пропажу считаем приёмом в установку. */
@@ -409,9 +412,12 @@ public final class SourceLedger extends SavedData {
         BlockPos p = item.blockPosition();
         PromptCritical.LOGGER.warn("Tracked source {} destroyed at {} {}", id, level.dimension().location(), p.toShortString());
         ServerPlayer owner = e.lastPlayer == null ? null : level.getServer().getPlayerList().getPlayer(e.lastPlayer);
-        if (owner != null)
+        if (owner != null) {
             owner.displayClientMessage(RadiationService.msg("source_destroyed", shortId(id), p.getX(), p.getY(), p.getZ())
                     .withStyle(ChatFormatting.RED), false);
+            dev.denfry.promptcritical.mod.compat.XaeroWaypoints.offer(owner, "Source " + shortId(id), p,
+                    dev.denfry.promptcritical.mod.compat.XaeroWaypoints.RED, level.dimension());
+        }
     }
 
     /**
