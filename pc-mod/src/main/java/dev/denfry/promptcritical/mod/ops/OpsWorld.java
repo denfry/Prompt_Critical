@@ -70,6 +70,16 @@ public final class OpsWorld {
         return c != null && level.getBlockEntity(c) instanceof OpsMachine m ? m : null;
     }
 
+    /**
+     * Как {@link #machine}, а ещё стена, горелка или барабан водотрубного котла (план HP2.2). Поиск котла обходит
+     * блоки вокруг, поэтому — только на действие игрока или насоса, не каждый тик.
+     */
+    @Nullable
+    public static OpsMachine machineOrBoilerPart(Level level, BlockPos pos) {
+        OpsMachine m = machine(level, pos);
+        return m != null ? m : dev.denfry.promptcritical.mod.powerhouse.WaterTubeBoilerBlockEntity.of(level, pos);
+    }
+
     /** Строка панели по виду неисправности; −1 — нет. */
     public static int index(OpsSubsystem.Unit u, MaintenanceFaultKind kind) {
         for (int i = 0; i < u.panel().size(); i++) if (u.panel().source(i).kind() == kind) return i;
