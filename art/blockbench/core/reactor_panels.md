@@ -33,7 +33,12 @@ The title plate is drawn by the code at y 5.
 | MCP-2 stop | button | 114 | 188 | w 30 |
 | MCP-3 start | button | 148 | 188 | w 30 |
 | MCP-3 stop | button | 182 | 188 | w 30 |
+| trip reset | button | 12 | 214 | w 30 |
+| low-flux permit | button | 46 | 214 | w 30 |
 | AZ (scram) | button (guarded) | 80 | 214 | w 60 |
+| RG up | button | 146 | 214 | w 18 |
+| RG stop | button | 166 | 214 | w 18 |
+| RG down | button | 186 | 214 | w 18 |
 
 ## candu_npd: textures/gui/panel/candu_npd.png, 220 x 172
 
@@ -61,4 +66,8 @@ The title plate is drawn by the code at y 5.
 | primary sodium flow | bar | 12 | 114 | w 196 |
 | secondary sodium flow | bar | 12 | 134 | w 196 |
 | IHX delta-T | readout | 12 | 148 | w 196 |
+| trip reset | button | 12 | 174 | w 36 |
 | AZ (scram) | button (guarded) | 72 | 174 | w 76 |
+| rods up | button | 154 | 174 | w 18 |
+| rods stop | button | 172 | 174 | w 18 |
+| rods down | button | 190 | 174 | w 18 |

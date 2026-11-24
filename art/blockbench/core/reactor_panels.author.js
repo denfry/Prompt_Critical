@@ -25,7 +25,9 @@
       ['button', 'MCP-1 start', 12, 188, 30], ['button', 'MCP-1 stop', 46, 188, 30],
       ['button', 'MCP-2 start', 80, 188, 30], ['button', 'MCP-2 stop', 114, 188, 30],
       ['button', 'MCP-3 start', 148, 188, 30], ['button', 'MCP-3 stop', 182, 188, 30],
+      ['button', 'trip reset', 12, 214, 30], ['button', 'low-flux permit', 46, 214, 30],
       ['guard', 'AZ (scram)', 80, 214, 60],
+      ['button', 'RG up', 146, 214, 18], ['button', 'RG stop', 166, 214, 18], ['button', 'RG down', 186, 214, 18],
     ] },
     candu_npd: { w: 220, h: 172, seed: 64111, style: CANADA, els: [
       ['glass', 'zone 1', 14, 26, 48], ['glass', 'zone 2', 36, 26, 48], ['glass', 'zone 3', 58, 26, 48],
@@ -40,7 +42,9 @@
       ['lamp', 'sodium leak', 154, 40, 'hazard'],
       ['bar', 'primary sodium flow', 12, 114, 196], ['bar', 'secondary sodium flow', 12, 134, 196],
       ['readout', 'IHX delta-T', 12, 148, 196],
+      ['button', 'trip reset', 12, 174, 36],
       ['guard', 'AZ (scram)', 72, 174, 76],
+      ['button', 'rods up', 154, 174, 18], ['button', 'rods stop', 172, 174, 18], ['button', 'rods down', 190, 174, 18],
     ] },
   };
 
@@ -62,9 +66,11 @@
     for (const [x, y] of [[6, 6], [W - 8, 6], [6, H - 8], [W - 8, H - 8]]) {
       put(im, x, y, [110, 112, 108]); put(im, x + 1, y, [200, 202, 196]); put(im, x, y + 1, [200, 202, 196]); put(im, x + 1, y + 1, [80, 82, 78]);
     }
+    // one recessed strip per button row (the guard is painted over its own row afterwards)
     const btn = p.els.filter((e) => e[0] === 'button');
-    if (btn.length) {
-      const y0 = Math.min(...btn.map((e) => e[3])), x0 = Math.min(...btn.map((e) => e[2])), x1 = Math.max(...btn.map((e) => e[2] + e[4]));
+    for (const y0 of [...new Set(btn.map((e) => e[3]))]) {
+      const row = btn.filter((e) => e[3] === y0);
+      const x0 = Math.min(...row.map((e) => e[2])), x1 = Math.max(...row.map((e) => e[2] + e[4]));
       inset(x0 - 4, y0 - 4, x1 + 4, Math.min(y0 + 20, H - 4), add(base, -12), 16);
     }
     let glassTab = 0;

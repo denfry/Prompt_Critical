@@ -170,4 +170,51 @@ public final class Vver70GameTests {
             h.assertTrue(p.racks().getStackInSlot(0).is(PcItems.FUEL_ASSEMBLY.get()), "assembly in the pool rack");
         }));
     }
+
+    /**
+     * Пуск с БПУ только кнопками пульта: ключи ГЦН, взвод АЗ, извлечение РГ — мощность растёт. Пульт без этих кнопок
+     * (как в первой версии) реактор не пускал, а тесты этого не видели: они взводили защиту прямо в модели.
+     */
+    @GameTest(template = TALL, timeoutTicks = 1200)
+    public static void vver70StartsFromItsBoardButtons(GameTestHelper h) {
+        place(h, REACTOR, PcBlocks.VVER70_REACTOR_REAL.get());
+        place(h, PZR, PcBlocks.VVER70_PRESSURIZER_REAL.get());
+        for (BlockPos p : PUMPS) pump(h, p);
+        double[] before = new double[2];
+        h.startSequence()
+                .thenIdle(2)
+                .thenExecute(() -> {
+                    PressurizedWaterReactor r = pwr(h).reactor();
+                    double kg = FuelDesign.VVER_440.uKgPerAssembly(0.96, 0.03);
+                    for (int i = 0; i < r.plant().positions(); i++) r.load(i, FuelDesign.VVER_440, kg, 0.03, 0.0003);
+                    var op = net.neoforged.neoforge.common.util.FakePlayerFactory.getMinecraft(h.getLevel());
+                    for (int l = 0; l < 3; l++) pwr(h).onPanelButton(op, dev.denfry.promptcritical.mod.npp.Vver70Panels.B_MCP_START + l);
+                })
+                .thenWaitUntil(() -> {
+                    for (int l = 0; l < 3; l++) h.assertTrue(pwr(h).reactor().pumpSpeed(l) > 0.99, "pump " + l + " at speed");
+                })
+                .thenIdle(240)
+                .thenExecute(() -> {
+                    h.assertTrue(pwr(h).panelLayout() == dev.denfry.promptcritical.mod.npp.Vver70Panels.BPU, "BPU board");
+                    for (int id : new int[] {PwrPanels.B_RESET, PwrPanels.B_LOW_FLUX, PwrPanels.B_RG_UP, PwrPanels.B_RG_STOP, PwrPanels.B_RG_DOWN})
+                        h.assertTrue(pwr(h).panelLayout().elements.stream().anyMatch(e -> e instanceof dev.denfry.promptcritical.mod.panel.PanelLayout.Button b && b.id() == id), "BPU has button " + id);
+                    var op = net.neoforged.neoforge.common.util.FakePlayerFactory.getMinecraft(h.getLevel());
+                    PressurizedWaterReactor r = pwr(h).reactor();
+                    pwr(h).onPanelButton(op, PwrPanels.B_RESET);
+                    h.assertFalse(r.protection().isTripped(), "AZ cocked from the board: " + r.protection().activeReasons());
+                    before[0] = r.power();
+                    before[1] = r.rg();
+                    pwr(h).onPanelButton(op, PwrPanels.B_RG_UP);
+                })
+                .thenIdle(100)
+                .thenExecute(() -> {
+                    var op = net.neoforged.neoforge.common.util.FakePlayerFactory.getMinecraft(h.getLevel());
+                    pwr(h).onPanelButton(op, PwrPanels.B_RG_STOP);
+                    PressurizedWaterReactor r = pwr(h).reactor();
+                    h.assertTrue(r.rg() < before[1], "control group withdrawn from the board: " + before[1] + " -> " + r.rg());
+                    h.assertTrue(r.power() > before[0], "power rising: " + before[0] + " -> " + r.power());
+                })
+                .thenSucceed();
+    }
+
 }
