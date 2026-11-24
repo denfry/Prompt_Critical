@@ -55,6 +55,12 @@ import org.jetbrains.annotations.Nullable;
  * блоков от излучения ≥ 12,5 кВт/м² не сделано: нет общего бюджета разрушений (04d).
  */
 public final class FlareIgnitionPanelBlockEntity extends UraniumProcessBlockEntity {
+    /** Автоматика розжига и запальники, Вт. */
+    @Override
+    protected double ratedPowerW() {
+        return 500;
+    }
+
     public static final int TIP_RANGE = 8, DRUM_RANGE = 8, BOILER_RANGE = 16, FUEL_MB = 1000;
     public static final double PILOT_NM3S = 4.2e-4, KG_PER_NM3 = 0.8, CONDENSATE_L_PER_NM3 = 0.05, RAIN_RADIUS_M = 40,
             SEAL_LOSS_MB_S = 1.0 / 60, SEAL_LOW_MB = 250, FLAME_HEIGHT_M = 3, RATIO_STEP = 0.05, RATIO_MAX = 1.5;

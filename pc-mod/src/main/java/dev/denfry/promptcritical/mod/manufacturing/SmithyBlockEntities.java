@@ -23,6 +23,9 @@ public final class SmithyBlockEntities {
             type("forge_hearth", ForgeHearthBlockEntity::new, PcBlocks.FORGE_HEARTH, PcBlocks.FORGE_HEARTH_REAL);
     public static final DeferredHolder<BlockEntityType<?>, BlockEntityType<SmithingAnvilBlockEntity>> SMITHING_ANVIL =
             type("smithing_anvil", SmithingAnvilBlockEntity::new, PcBlocks.SMITHING_ANVIL);
+    /** Сборочный стенд (18 §18.8.2). */
+    public static final DeferredHolder<BlockEntityType<?>, BlockEntityType<AssemblyStandBlockEntity>> ASSEMBLY_STAND =
+            type("assembly_stand", AssemblyStandBlockEntity::new, PcBlocks.ASSEMBLY_STAND);
     public static final DeferredHolder<BlockEntityType<?>, BlockEntityType<DrawPlateBlockEntity>> DRAW_PLATE =
             type("draw_plate", DrawPlateBlockEntity::new, PcBlocks.DRAW_PLATE);
     public static final DeferredHolder<BlockEntityType<?>, BlockEntityType<PowerHammerBlockEntity>> POWER_HAMMER =
@@ -50,7 +53,7 @@ public final class SmithyBlockEntities {
     static void capabilities(RegisterCapabilitiesEvent event) {
         for (var t : java.util.List.<BlockEntityType<?>>of(BLOOMERY.get(), FORGE_HEARTH.get(), SMITHING_ANVIL.get(), DRAW_PLATE.get(),
                 POWER_HAMMER.get(), CRANK_PRESS.get(), WIRE_MILL.get(), HEATING_FURNACE.get(), HARDENING_FURNACE.get(),
-                SHEET_MILL.get(), NOTCHING_PRESS.get(), WINDING_MACHINE.get()))
+                SHEET_MILL.get(), NOTCHING_PRESS.get(), WINDING_MACHINE.get(), ASSEMBLY_STAND.get()))
             event.registerBlockEntity(Capabilities.ItemHandler.BLOCK, cast(t),
                     (be, side) -> ((dev.denfry.promptcritical.mod.foundry.FoundryDevice) be).items(side));
         // бак закалочной печи: вода или масло трубами Create и вёдрами

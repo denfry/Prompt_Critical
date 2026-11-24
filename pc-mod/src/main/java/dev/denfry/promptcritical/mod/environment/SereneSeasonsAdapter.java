@@ -4,7 +4,6 @@ import com.mojang.logging.LogUtils;
 import dev.denfry.promptcritical.sim.environment.SeasonProvider;
 import java.lang.reflect.Method;
 import net.minecraft.world.level.Level;
-import net.neoforged.fml.ModList;
 import org.slf4j.Logger;
 
 /**
@@ -28,7 +27,8 @@ final class SereneSeasonsAdapter implements SeasonProvider {
 
     /** Источник сезонов уровня: Serene Seasons, если загружен и его API на месте, иначе {@code fallback}. */
     static SeasonProvider forLevel(Level level, SeasonProvider fallback) {
-        if (broken || !ModList.get().isLoaded("sereneseasons")) return fallback;
+        if (broken || !dev.denfry.promptcritical.mod.compat.CompatSwitch.active(
+                dev.denfry.promptcritical.mod.config.ServerConfig.COMPAT_SEASONS, "sereneseasons")) return fallback;
         if (stateOf == null) {
             try {
                 Class<?> helper = Class.forName("sereneseasons.api.season.SeasonHelper");

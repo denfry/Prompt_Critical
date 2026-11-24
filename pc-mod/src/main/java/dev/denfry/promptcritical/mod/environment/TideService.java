@@ -88,18 +88,19 @@ public final class TideService {
             double a = 2 * Math.PI * i / RING_POINTS;
             if (sea(biome(source, sampler, c, FAR_RING, a, sea))) far++;
             Holder<Biome> n = biome(source, sampler, c, NEAR_RING, a, sea);
-            if (sea(n) || n.is(BiomeTags.IS_BEACH) || n.is(BiomeTags.IS_RIVER)) near++;
+            if (sea(n) || n.is(BiomeTags.IS_BEACH) || BiomeEnvironment.waterOf(n) != BiomeEnvironment.Water.NONE) near++;
         }
         if (far == 0) return new Cell(0, null);
         Holder<Biome> here = biome(source, sampler, c, 0, 0, sea);
-        double depth = here.is(BiomeTags.IS_DEEP_OCEAN) ? DEEP_M : here.is(BiomeTags.IS_OCEAN) ? SHELF_M : COAST_M;
+        BiomeEnvironment.Water w = BiomeEnvironment.waterOf(here);
+        double depth = w == BiomeEnvironment.Water.DEEP_OCEAN ? DEEP_M : w == BiomeEnvironment.Water.OCEAN ? SHELF_M : COAST_M;
         double gain = Tide.greensLaw(DEEP_M, depth, far / RING_POINTS, Math.max(1, near) / RING_POINTS);
         double m2 = OCEAN_M2_M * gain;
         return new Cell(m2, new Tide(Tide.Site.semidiurnal(m2), calendar()));
     }
 
     private static boolean sea(Holder<Biome> b) {
-        return b.is(BiomeTags.IS_OCEAN) || b.is(BiomeTags.IS_DEEP_OCEAN);
+        return BiomeEnvironment.waterOf(b).sea();
     }
 
     private static Holder<Biome> biome(BiomeSource source, Climate.Sampler sampler, BlockPos c, int r, double a, int y) {

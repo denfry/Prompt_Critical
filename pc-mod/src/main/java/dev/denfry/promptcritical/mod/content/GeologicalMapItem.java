@@ -33,6 +33,17 @@ public class GeologicalMapItem extends Item {
         super(props);
     }
 
+    /** 16 §16.5.1: прочитанная карта в руке ставит путевую точку JourneyMap на центр рудного тела. */
+    @Override
+    public void inventoryTick(ItemStack stack, Level level, net.minecraft.world.entity.Entity entity, int slot, boolean selected) {
+        if (!level.isClientSide || !selected || level.getGameTime() % 20 != 0) return;
+        MapTargetData t = stack.get(PcDataComponents.MAP_TARGET.get());
+        if (t == null || !(entity instanceof Player p) || !p.isLocalPlayer()) return;
+        if (dev.denfry.promptcritical.mod.compat.CompatSwitch.active(
+                dev.denfry.promptcritical.mod.config.ServerConfig.COMPAT_JOURNEYMAP, "journeymap"))
+            dev.denfry.promptcritical.mod.compat.journeymap.JourneyMapWaypoints.held(t, level.dimension());
+    }
+
     @Override
     public InteractionResultHolder<ItemStack> use(Level level, Player player, InteractionHand hand) {
         ItemStack stack = player.getItemInHand(hand);

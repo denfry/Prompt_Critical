@@ -4,6 +4,11 @@
 //
 //   node art/tools/pcart_headless.js <repo> <cat>/<name>.author.js <GLOBAL> [--paint] [--only id,id,...]
 //
+// PCART.saveWhole(repo, cat, id) saves a real-scale whole model as PCSLICE.saveWhole does in Blockbench: the model is
+// compiled without the -16..32 clamp and cut into 3x3x3-block chunks (models/block/<id>/chunk/*.json and
+// wholemodels/<id>.json). Rotated elements must not cross the 48-unit chunk grid (the slicer only cuts axis-aligned
+// ones). A script that sets `handless: true` keeps its ids out of art/hand_models.json (whole models and partials).
+//
 // <GLOBAL> is the window object the script defines (M3U, ...). --paint repaints the script's own textures first.
 // Java output follows Blockbench's java_block codec: textures keyed by folder_name in first-use order with the
 // particle first, every element with its rotation block, faces in north/east/south/west/up/down order, glow_*
@@ -45,7 +50,9 @@ load('lib/pcart.js');
 PCART.writePng = writePng;
 let current = null;
 PCART.realize = (_root, m, name) => { current = { m, name }; return current; };
-PCART.save = (r, cat, id, javaPath) => compile(r, cat, id, javaPath, current.m);
+PCART.save = (r, cat, id, javaPath) => compile(r, cat, id, javaPath, current.m, false);
+PCART.saveWhole = (r, cat, id) => compile(r, cat, id, null, current.m, true);
+const PCSLICE = require(path.resolve(root, 'art/blockbench/lib/pcslice.js'));
 load('lib/pcround.js');
 load('lib/plantkit.js');
 load('lib/futurekit.js');
@@ -84,7 +91,7 @@ const problems = [];
 let uuidSeed = '', uuidN = 0;
 const uuid = () => { const h = crypto.createHash('md5').update(uuidSeed + ':' + uuidN++).digest('hex'); return `${h.slice(0, 8)}-${h.slice(8, 12)}-${h.slice(12, 16)}-${h.slice(16, 20)}-${h.slice(20)}`; };
 
-function compile(r, cat, id, javaPath, m) {
+function compile(r, cat, id, javaPath, m, whole) {
   uuidSeed = id; uuidN = 0;
   const texRoot = path.join(r, PCART.ASSETS, 'textures/block');
   const order = [];
@@ -115,7 +122,7 @@ function compile(r, cat, id, javaPath, m) {
     }
     if (!Object.keys(faces).length) continue;
     const axis = e.rot ? e.rot.axis : 'y';
-    const clamp = (v) => { if (v < -16.1 || v > 32.1) problems.push(`${id}: ${e.name} out of the -16..32 range (${v})`); return r4(Math.min(32, Math.max(-16, v))); };
+    const clamp = (v) => { if (whole) return r4(v); if (v < -16.1 || v > 32.1) problems.push(`${id}: ${e.name} out of the -16..32 range (${v})`); return r4(Math.min(32, Math.max(-16, v))); };
     const el = { name: e.name, from: e.from.map(clamp), to: e.to.map(clamp), rotation: { angle: e.rot ? e.rot.angle : 0, axis, origin: origin.map(r4) }, faces };
     if (e.name.startsWith('glow_')) el.neoforge_data = { block_light: 15, sky_light: 15 };
     elements.push(el);
@@ -127,9 +134,23 @@ function compile(r, cat, id, javaPath, m) {
   const textures = { particle: 'promptcritical:block/' + particle };
   for (const n of order) if (used.has(n) || n === particle) textures[key(n)] = 'promptcritical:block/' + n;
   const java = Object.assign({ credit: 'Made with Blockbench' }, m.renderType ? { render_type: m.renderType } : {}, { textures, elements });
-  const jp = path.join(r, PCART.ASSETS, 'models/block', (javaPath || id) + '.json');
-  fs.mkdirSync(path.dirname(jp), { recursive: true });
-  fs.writeFileSync(jp, fmt(java, 0));
+  if (whole) {
+    const sl = PCSLICE.build(java, id);
+    const dir = path.join(r, PCART.ASSETS, 'models/block', id, 'chunk');
+    fs.mkdirSync(dir, { recursive: true });
+    for (const f of fs.readdirSync(dir)) if (f.endsWith('.json')) fs.unlinkSync(path.join(dir, f));
+    for (const [k, cm] of Object.entries(sl.models)) {
+      cm.elements = cm.elements.filter((e) => e.faces && Object.keys(e.faces).length);
+      fs.writeFileSync(path.join(dir, k + '.json'), JSON.stringify(cm) + '\n');
+    }
+    const mf = path.join(r, PCART.ASSETS, 'wholemodels', id + '.json');
+    fs.mkdirSync(path.dirname(mf), { recursive: true });
+    fs.writeFileSync(mf, JSON.stringify(sl.manifest, null, '\t') + '\n');
+  } else {
+    const jp = path.join(r, PCART.ASSETS, 'models/block', (javaPath || id) + '.json');
+    fs.mkdirSync(path.dirname(jp), { recursive: true });
+    fs.writeFileSync(jp, fmt(java, 0));
+  }
 
   const bb = {
     meta: { format_version: '5.0', model_format: 'java_block', box_uv: false }, name: id, parent: '', ambientocclusion: true,
@@ -154,6 +175,7 @@ const out = M.exportAll(root, ids);
 if (problems.length) { console.error(problems.join('\n')); process.exitCode = 1; }
 console.log(JSON.stringify(out));
 // Record the Java model paths written by hand so the placeholder generator (art/tools/pclib.py) skips them.
+if (M.handless) process.exit();
 const handFile = path.join(root, 'art/hand_models.json');
 const hand = fs.existsSync(handFile) ? JSON.parse(fs.readFileSync(handFile, 'utf8')) : { _comment: 'Models drawn by hand (art/blockbench/**/*.author.js); art/tools/pclib.py does not register these ids, so the placeholder generator cannot overwrite them. Kept by art/tools/pcart_headless.js.', models: [] };
 const java = ids.map((id) => 'block/' + ((M.javaOf ? M.javaOf(id) : null) || id));

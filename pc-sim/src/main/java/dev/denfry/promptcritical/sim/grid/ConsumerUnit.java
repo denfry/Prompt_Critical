@@ -86,6 +86,16 @@ public final class ConsumerUnit extends GridUnit {
         return load != null && owner.ready() && owner.grid().loadConnected(load) && owner.voltageV(node(0)) > 0;
     }
 
+    /** Напряжение на вводе, о.е. 6,3 кВ; 0 — ввод не в сети или отключён. */
+    public double inputPu() {
+        return energized() ? owner.voltageV(node(0)) / VoltageClass.MV_6_3.volts : 0;
+    }
+
+    /** Частота на вводе, Гц; 0 — ввод не в сети. */
+    public double frequencyHz() {
+        return node(0) == NO_NODE || owner == null || !owner.ready() ? 0 : owner.frequencyHz(node(0));
+    }
+
     /** Отключён АЧР (или 27) и ждёт ЧАПВ. */
     public boolean shed() {
         return shed;

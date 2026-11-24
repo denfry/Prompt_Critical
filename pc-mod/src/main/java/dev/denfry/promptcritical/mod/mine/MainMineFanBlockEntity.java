@@ -129,7 +129,7 @@ public final class MainMineFanBlockEntity extends DeviceBlockEntity implements S
     public void sampleShaft(double rpm, boolean healthy, long tick) {
         shaft.sample(rpm, healthy, tick);
         OpsSubsystem ops = OpsWorld.ops(level);
-        OpsSubsystem.Unit u = OpsWorld.ensure(level, simId(), UnitKind.MAIN_MINE_FAN, 0, false);
+        OpsSubsystem.Unit u = OpsWorld.ensure(level, simId(), UnitKind.MAIN_MINE_FAN, 0, false, this);
         if (ops == null || u == null) return;
         boolean running = shaft.rpm(tick) > 0;
         u.setRunning(running, false, Double.NaN);

@@ -238,12 +238,15 @@ public final class RadiationService {
         return stack.getCount() == 1 ? one : one.scaled(stack.getCount());
     }
 
-    /** Всё, что игрок несёт в инвентаре, руке и броне, как один источник на игровое время {@code tick}. */
+    /** Всё, что игрок несёт в инвентаре, руке, броне и слотах снаряжения, как один источник на игровое время {@code tick}. */
     public static PointSource carried(net.minecraft.world.entity.player.Player p, long tick) {
         PointSource carried = PointSource.NONE;
         for (net.minecraft.world.item.ItemStack st : p.getInventory().items) carried = plus(carried, itemSource(st, tick));
         for (net.minecraft.world.item.ItemStack st : p.getInventory().offhand) carried = plus(carried, itemSource(st, tick));
         for (net.minecraft.world.item.ItemStack st : p.getInventory().armor) carried = plus(carried, itemSource(st, tick));
+        // слоты Curios и Accessories (16 §16.8.2, §16.9)
+        for (net.minecraft.world.item.ItemStack st : dev.denfry.promptcritical.mod.compat.WornGear.accessories(p))
+            carried = plus(carried, itemSource(st, tick));
         return carried;
     }
 

@@ -44,6 +44,8 @@ import org.jetbrains.annotations.Nullable;
  * 1 м].
  */
 public final class CrudeColumnBlockEntity extends DeviceBlockEntity implements FoundryDevice, PanelHost {
+    /** Сырьевые насосы, насосы орошений и дымосос трубчатой печи, Вт. Розетка или силовой щит рядом; при недостатке машина работает медленнее. */
+    public static final double POWER_W = 160e3;
     public static final int MIN_SECTIONS = 3, MAX_SECTIONS = 30, FURNACE_RADIUS = 6, PRODUCT_MB = 16_000;
     public static final double STAGES_PER_SECTION = 2, FEED_M3H = 10, CRUDE_KGM3 = 850;
     /** Бензин в спецификации (11 §11.2.2 {@code first_cut}): перекрытие с керосином ≤ 30 К — верх диапазона 10–30 К АВТ (09). */
@@ -155,7 +157,7 @@ public final class CrudeColumnBlockEntity extends DeviceBlockEntity implements F
         if (sections < MIN_SECTIONS || f == null) return;
         double dt = 0.05 * b.world().clock().kSlow();
         AtmosphericUnit.Result r = result();
-        double maxKg = FEED_M3H * CRUDE_KGM3 / 3600 * dt;
+        double maxKg = FEED_M3H * CRUDE_KGM3 / 3600 * dt * dev.denfry.promptcritical.mod.grid.MachinePower.supply(s, worldPosition, POWER_W);
         for (Product p : Product.values()) {
             double perKg = r.yield(p) / p.densityKgM3 * 1000;
             if (perKg > 0) maxKg = Math.min(maxKg, tanks[p.ordinal()].room() / perKg);

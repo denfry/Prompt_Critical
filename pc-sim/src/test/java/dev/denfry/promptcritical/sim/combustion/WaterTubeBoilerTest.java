@@ -114,6 +114,32 @@ class WaterTubeBoilerTest {
         assertThat(out.screenMetalK - TSAT).isBetween(10.0, 60.0);
     }
 
+    /** План HP2.2: без разрешения пусконаладки продувка идёт, розжиг после неё блокирован; горящий котёл не гаснет. */
+    @Test
+    void permissiveBlocksOnlyTheLightOff() {
+        BoilerInputs in = inputs();
+        BoilerOutputs out = new BoilerOutputs();
+        WaterTubeBoiler b = boiler(new Log());
+        BurnerManagementSystem bms = b.bmsControl();
+        bms.setPermitted(false);
+        run(b, in, out, 1);
+        assertThat(bms.requestPurge()).isEqualTo(BmsResponse.ACCEPTED);
+        run(b, in, out, 301);
+        assertThat(b.bms()).isEqualTo(BmsState.PURGE_COMPLETE);
+        in.forcedAirKgS = 0.3 * AIR;
+        assertThat(bms.requestIgniter(0)).isEqualTo(BmsResponse.INTERLOCK_PERMIT);
+        bms.setPermitted(true);
+        assertThat(bms.requestIgniter(0)).isEqualTo(BmsResponse.ACCEPTED);
+        run(b, in, out, 1);
+        in.fuelFeedKgS = 0.6;
+        assertThat(bms.requestMainFuel(0)).isEqualTo(BmsResponse.ACCEPTED);
+        run(b, in, out, 1);
+        assertThat(b.bms()).isEqualTo(BmsState.RUNNING);
+        bms.setPermitted(false);
+        run(b, in, out, 5);
+        assertThat(b.bms()).isEqualTo(BmsState.RUNNING);
+    }
+
     /** T7.24: топливо и запальник без продувки, продувка без вентиляторов — блокировка. */
     @Test
     void interlocksWithoutPurge() {

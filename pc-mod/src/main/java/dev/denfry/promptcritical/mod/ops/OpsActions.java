@@ -1,6 +1,10 @@
 package dev.denfry.promptcritical.mod.ops;
 
+import dev.denfry.promptcritical.mod.grid.BreakerCellBlockEntity;
 import dev.denfry.promptcritical.mod.grid.ShaftGeneratorBlockEntity;
+import dev.denfry.promptcritical.mod.powerhouse.WaterTubeBoilerBlockEntity;
+import dev.denfry.promptcritical.mod.reactor.AchesonFurnaceBlockEntity;
+import dev.denfry.promptcritical.mod.reactor.PileControllerBlockEntity;
 import dev.denfry.promptcritical.mod.ironworks.BlastFurnaceControllerBlockEntity;
 import net.neoforged.neoforge.common.util.FakePlayer;
 
@@ -68,7 +72,7 @@ public final class OpsActions {
         boolean hand = stack.isEmpty() && p.isShiftKeyDown() && e.getHand() == InteractionHand.MAIN_HAND;
         if (!(stack.getItem() instanceof OpsItem) && !hand) return;
         Level level = e.getLevel();
-        OpsMachine m = OpsWorld.machine(level, e.getPos());
+        OpsMachine m = OpsWorld.machineOrBoilerPart(level, e.getPos());
         if (m == null) return;
         if (hand && OpsWorld.unit(level, m.simId()) == null && !level.isClientSide) return;
         InteractionResult r;
@@ -201,19 +205,29 @@ public final class OpsActions {
                         new CheckInput.BrakeTest(h.cageLoadFraction()), p.getUUID(), TeamResolver.team(p)));
                 else if (m instanceof ShaftGeneratorBlockEntity g) report(p, ops.perform(m.simId(),
                         new CheckInput.Alignment(g.opsStopped()), p.getUUID(), TeamResolver.team(p)));
+                // план HP2.2: проверка срабатывания защиты — расцепитель ячейки, продувка поплавковой камеры
+                // отсечки по уровню, сброс аварийных стержней; только у остановленной установки
+                else if (m instanceof BreakerCellBlockEntity || m instanceof WaterTubeBoilerBlockEntity
+                        || m instanceof PileControllerBlockEntity) report(p, ops.perform(m.simId(),
+                        new CheckInput.SisProofTest(m.opsStopped()), p.getUUID(), TeamResolver.team(p)));
                 else tighten(p, ops, m);
             }
             case TEST_GAUGE -> {
-                if (m instanceof FireTubeBoilerBlockEntity || m instanceof BlastFurnaceControllerBlockEntity)
+                if (m instanceof FireTubeBoilerBlockEntity || m instanceof BlastFurnaceControllerBlockEntity
+                        || m instanceof WaterTubeBoilerBlockEntity)
                     report(p, ops.perform(m.simId(), new CheckInput.InstrumentCheck(), p.getUUID(), TeamResolver.team(p)));
-                else if (m instanceof ShaftGeneratorBlockEntity g)
-                    report(p, ops.perform(m.simId(), new CheckInput.InsulationTest(g.opsStopped()), p.getUUID(), TeamResolver.team(p)));
+                else if (m instanceof ShaftGeneratorBlockEntity || m instanceof BreakerCellBlockEntity
+                        || m instanceof AchesonFurnaceBlockEntity)
+                    report(p, ops.perform(m.simId(), new CheckInput.InsulationTest(m.opsStopped()), p.getUUID(), TeamResolver.team(p)));
+                else if (m instanceof PileControllerBlockEntity)
+                    report(p, ops.perform(m.simId(), new CheckInput.LoopCheck(m.opsStopped()), p.getUUID(), TeamResolver.team(p)));
             }
             case CAULKING_HAMMER -> {
                 // течь шва котла или холодильников домны (план HP2.1): чеканка у опорожнённой холодной установки
                 boolean cold;
                 if (m instanceof FireTubeBoilerBlockEntity b) cold = drainedAndCold(b);
                 else if (m instanceof BlastFurnaceControllerBlockEntity f) cold = f.opsStopped();
+                else if (m instanceof WaterTubeBoilerBlockEntity w) cold = w.drumCold();
                 else return;
                 CommissioningService c = ops.commissioning();
                 if (!c.has(m.simId(), dev.denfry.promptcritical.sim.ops.CommissioningDefectKind.SEAM_WEEP)) {

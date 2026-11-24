@@ -25,7 +25,13 @@ public enum CommissioningDefectKind {
     /** Отсыревшая обмотка: сопротивление изоляции, МОм (сухая — {@link CommissioningService#INSULATION_DRY_MOHM}). */
     WINDING_DAMP(CommissioningCheck.INSULATION_TEST),
     /** Расцентровка муфты, мм. */
-    COUPLING_MISALIGNED(CommissioningCheck.ALIGNMENT);
+    COUPLING_MISALIGNED(CommissioningCheck.ALIGNMENT),
+    /** Отсыревшая изоляция шин или кабеля, МОм. */
+    INSULATION_DAMP(CommissioningCheck.INSULATION_TEST),
+    /** Защита срабатывает с задержкой: время срабатывания в долях допустимого (больше 1). */
+    TRIP_SLOW(CommissioningCheck.SIS_PROOF_TEST),
+    /** Перепутан контур КИП: ошибка показания в долях шкалы. */
+    LOOP_MISWIRED(CommissioningCheck.LOOP_CHECK);
 
     private final CommissioningCheck revealedBy;
 

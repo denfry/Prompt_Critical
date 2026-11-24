@@ -35,7 +35,7 @@ public final class ManufacturingClient {
     /** Цельные модели кузницы и машиностроения реального масштаба. */
     private static final String[] REAL = {"power_hammer_real", "bloomery_real", "forge_hearth_real", "crank_press_real",
             "wire_mill_real", "sheet_mill_real", "notching_press_real", "winding_machine_real", "heating_furnace_real",
-            "hardening_furnace_real"};
+            "hardening_furnace_real", "assembly_stand"};
 
     private static dev.engine_room.flywheel.lib.model.baked.PartialModel partial(String path) {
         return dev.engine_room.flywheel.lib.model.baked.PartialModel.of(dev.denfry.promptcritical.mod.PromptCritical.id("block/" + path));
@@ -109,6 +109,8 @@ public final class ManufacturingClient {
     private static void tooltip(ItemTooltipEvent event) {
         PartSpec p = event.getItemStack().get(ManufacturingComponents.PART_SPEC.get());
         if (p != null) ManufacturingText.tooltip(p, event.getToolTip());
+        var passport = event.getItemStack().get(ManufacturingComponents.MACHINE_PASSPORT.get());
+        if (passport != null) ManufacturingText.passportTooltip(passport, event.getToolTip());
         var w = event.getItemStack().get(dev.denfry.promptcritical.mod.manufacturing.ManufacturingComponents.WORKPIECE.get());
         var lvl = net.minecraft.client.Minecraft.getInstance().level;
         if (w != null && lvl != null) ManufacturingText.workpieceTooltip(w, lvl.getGameTime(), event.getToolTip());

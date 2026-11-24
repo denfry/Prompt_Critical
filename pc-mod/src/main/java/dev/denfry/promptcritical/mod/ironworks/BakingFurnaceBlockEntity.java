@@ -34,6 +34,8 @@ import org.jetbrains.annotations.Nullable;
  * выгрузка трескает электроды). Обжиг 24 ч физ. выше 800 °C [BALANCE].
  */
 public final class BakingFurnaceBlockEntity extends IronworksDeviceBlockEntity<BakingFurnaceUnit> implements PanelHost, dev.denfry.promptcritical.mod.client.whole.WholeModelHost {
+    /** Дымососы, вентиляторы горелок и кран-манипулятор, Вт. Розетка или силовой щит рядом; при недостатке машина работает медленнее. */
+    public static final double POWER_W = 75e3;
     private static final int OUT_SLOTS = 4;
     private final GasBuffer gas = new GasBuffer(8_000, GasBuffer::isProcessGas, this::setChanged);
     private final MachineInventory inv = new MachineInventory(roles(), (slot, s) -> slot == 0 && isGreen(s), this::setChanged);
@@ -58,7 +60,8 @@ public final class BakingFurnaceBlockEntity extends IronworksDeviceBlockEntity<B
     protected void serverTick(SimLevelBinding b, BakingFurnaceUnit u) {
         double dtp = Ironworks.tickPhysS(b);
         ProcessGas g = gas.gas();
-        if (g != null) u.setGasSupply(g, gas.draw(u.gasDemandNm3S(g) * dtp) / dtp);
+        double power = dev.denfry.promptcritical.mod.grid.MachinePower.supply(level, worldPosition, g != null ? POWER_W : 0);
+        if (g != null) u.setGasSupply(g, gas.draw(u.gasDemandNm3S(g) * dtp * power) / dtp);
         else u.setGasSupply(null, 0);
         ItemStack in = inv.getStackInSlot(0);
         if (!in.isEmpty() && isGreen(in) && u.furnace().load(in.get(IronworksComponents.ELECTRODE_STATE.get()).toState())) in.shrink(1);

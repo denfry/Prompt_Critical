@@ -31,6 +31,12 @@ import org.jetbrains.annotations.Nullable;
  * уходить, сбрасывается из конденсатора в атмосферу — облако фтористого водорода.
  */
 public final class HfKilnBlockEntity extends UraniumProcessBlockEntity {
+    /** Привод вращающейся печи и шнеки, Вт. */
+    @Override
+    protected double ratedPowerW() {
+        return 37e3;
+    }
+
     public static final int MB = 8_000;
 
     private final FeedTank acid = new FeedTank(PcFluids.SULFURIC_ACID.source.get(), MB);

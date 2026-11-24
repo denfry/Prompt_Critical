@@ -44,6 +44,8 @@ import org.jetbrains.annotations.Nullable;
  * горелку при избытке водорода меньше 5 %, уходит в воздух с хвостовым газом.
  */
 public final class HclFurnaceBlockEntity extends DeviceBlockEntity implements FoundryDevice {
+    /** Насосы охлаждающей воды и абсорбера, вентилятор, Вт. Розетка или силовой щит рядом; при недостатке установка работает медленнее. */
+    public static final double POWER_W = 15e3;
     public static final int GAS_MB = 4_000, LIQ_MB = 8_000;
     /** Ступени избытка водорода, которые перебирает Shift + ПКМ. */
     private static final double[] EXCESS_STEPS = {1.07, 1.10, 1.15, 1.00, 1.03, 1.05};
@@ -85,7 +87,8 @@ public final class HclFurnaceBlockEntity extends DeviceBlockEntity implements Fo
         double roomMol = acidMode
                 ? acid.room() * ACID_KG_L * unit.strength() / HclSynthesis.M_HCL / dt
                 : dryHcl.room() / ChlorUnits.NM3_PER_MOL / dt;
-        unit.step(hydrogen.amount() / ChlorUnits.NM3_PER_MOL / dt, chlorine.amount() / ChlorUnits.NM3_PER_MOL / dt,
+        double power = dev.denfry.promptcritical.mod.grid.MachinePower.supply(s, worldPosition, hydrogen.amount() > 0 && chlorine.amount() > 0 ? POWER_W : 0);
+        unit.step(hydrogen.amount() / ChlorUnits.NM3_PER_MOL / dt * power, chlorine.amount() / ChlorUnits.NM3_PER_MOL / dt * power,
                 water.amount() / dt, roomMol);
         hydrogen.take(ChlorUnits.molToNm3(unit.h2UsedMolS() * dt));
         chlorine.take(ChlorUnits.molToNm3(unit.cl2UsedMolS() * dt));

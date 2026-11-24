@@ -29,6 +29,12 @@ import org.jetbrains.annotations.Nullable;
  * штейн и олово — в склад (воронкой снизу). SO₂ — газоходом в сернокислотную установку рядом, иначе в трубу.
  */
 public final class MatteSmelterBlockEntity extends UraniumProcessBlockEntity implements dev.denfry.promptcritical.mod.client.whole.WholeModelHost {
+    /** Дутьевые вентиляторы горелок и загрузка шихты, Вт. */
+    @Override
+    protected double ratedPowerW() {
+        return 55e3;
+    }
+
     public static final int MB = 8_000;
     /** Кремнезём кварцевой жилы (08 §8.1.2: SiO₂ > 99 %). */
     public static final double QUARTZ_SIO2 = 0.99;

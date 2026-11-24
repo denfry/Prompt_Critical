@@ -45,6 +45,12 @@ import org.jetbrains.annotations.Nullable;
  * колонны [допущение]. Коксуемость газойля — {@value #FEED_CCR} [BALANCE: прямогонный ВГО].
  */
 public final class FccUnitBlockEntity extends UraniumProcessBlockEntity {
+    /** Насосы сырья, шлама и орошений главной колонны; воздух регенератору даёт отдельный компрессор, Вт. */
+    @Override
+    protected double ratedPowerW() {
+        return 160e3;
+    }
+
     public static final int MB = 8_000, BLOWER_RADIUS = 8;
     /** Производительность — 0,75 л/с газойля (весь газойль вакуумной колонны) [BALANCE]. */
     public static final double FEED_L_S = 0.75, VGO_KG_L = 0.91, FEED_C = 250, FEED_CCR = 0.005;
