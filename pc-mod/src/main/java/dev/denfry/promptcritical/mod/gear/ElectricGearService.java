@@ -74,6 +74,13 @@ public final class ElectricGearService {
             r.breathe(DT_S, 0, air[0]);
             chest.set(PcDataComponents.ELECTRIC_GEAR.get(), ElectricGearItem.of(r.pack(), r.filterMol(), now));
         }
+        // радиологическая маска: вентилятор садит ту же батарею; фильтр P3 + йодный — без химической нагрузки
+        ItemStack head = worn(p, ElectricGearItem.Kind.PAPR);
+        if (head != null) {
+            PoweredRespirator r = ElectricGearItem.respirator(ElectricGearItem.data(head));
+            r.breathe(DT_S, 0, air[0]);
+            head.set(PcDataComponents.ELECTRIC_GEAR.get(), ElectricGearItem.of(r.pack(), 0, now));
+        }
         if (p.isCreative()) return;
         Body b = BODIES.computeIfAbsent(p.getUUID(), k -> new Body());
         BodyProfile prof = BodyService.profile(p);
@@ -122,7 +129,7 @@ public final class ElectricGearService {
     }
 
     /** Надетый предмет этого вида или {@code null}. */
-    static ItemStack worn(Player p, ElectricGearItem.Kind kind) {
+    public static ItemStack worn(Player p, ElectricGearItem.Kind kind) {
         ItemStack s = p.getItemBySlot(kind.slot);
         return s.getItem() instanceof ElectricGearItem g && g.kind() == kind ? s : null;
     }

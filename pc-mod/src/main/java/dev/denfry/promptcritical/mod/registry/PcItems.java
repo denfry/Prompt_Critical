@@ -502,6 +502,9 @@ public final class PcItems {
             dev.denfry.promptcritical.mod.radiation.RadGearItems.Tld::new, new Item.Properties()));
     public static final DeferredItem<dev.denfry.promptcritical.mod.radiation.RadGearItems.Iodide> POTASSIUM_IODIDE = registered(ITEMS.registerItem("potassium_iodide",
             dev.denfry.promptcritical.mod.radiation.RadGearItems.Iodide::new, new Item.Properties().stacksTo(16)));
+    public static final DeferredItem<dev.denfry.promptcritical.mod.gear.ElectricGearItem> PAPR = registered(ITEMS.registerItem("papr",
+            p -> new dev.denfry.promptcritical.mod.gear.ElectricGearItem(p, dev.denfry.promptcritical.mod.gear.ElectricGearItem.Kind.PAPR),
+            new Item.Properties()));
     public static final DeferredItem<Item> IODINE_CARTRIDGE = registered(ITEMS.registerSimpleItem("iodine_cartridge",
             new Item.Properties().stacksTo(16)));
     public static final DeferredItem<dev.denfry.promptcritical.mod.safety.PpeItem> RESPIRATOR = ppe("respirator",

@@ -135,6 +135,14 @@ public final class RadGear {
             if (PpeItem.is(mask, PpeItem.Kind.RESPIRATOR)) r = r.best(RadRespirator.HALF_MASK_P3);
             else r = r.best(cartridge(mask) > 0 ? RadRespirator.FULL_FACE_IODINE : RadRespirator.FULL_FACE);
         }
+        // PAPR: с работающим вентилятором ×1000, с севшей батареей — как полнолицевая маска ×50 (PoweredRespirator)
+        ItemStack papr = dev.denfry.promptcritical.mod.gear.ElectricGearService.worn(p, dev.denfry.promptcritical.mod.gear.ElectricGearItem.Kind.PAPR);
+        if (papr != null) {
+            boolean blowing = dev.denfry.promptcritical.mod.gear.ElectricGearItem.data(papr).powerW10() > 0;
+            double apf = blowing ? dev.denfry.promptcritical.sim.gear.PoweredRespirator.APF_POWERED
+                    : dev.denfry.promptcritical.sim.gear.PoweredRespirator.APF_UNPOWERED;
+            r = r.best(new RadRespirator(apf, apf, 0));
+        }
         if (fullPneumosuit(p)) r = r.best(hoseConnected(p) ? RadRespirator.PNEUMOSUIT
                 : new RadRespirator(1, 1, RadRespirator.PNEUMOSUIT.skinRetained()));
         return r;

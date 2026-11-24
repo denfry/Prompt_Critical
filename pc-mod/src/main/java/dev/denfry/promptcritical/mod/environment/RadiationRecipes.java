@@ -133,6 +133,11 @@ public final class RadiationRecipes extends RecipeProvider {
         ShapedRecipeBuilder.shaped(RecipeCategory.COMBAT, PcItems.FULL_FACE_RESPIRATOR.get())
                 .pattern("LGL").pattern("IWI").define('L', Items.LEATHER).define('G', Items.GLASS_PANE).define('I', iron)
                 .define('W', Items.WHITE_WOOL).unlockedBy("has_respirator", has(PcItems.RESPIRATOR.get())).save(out, id("full_face_respirator"));
+        // PAPR — полнолицевая маска на капюшоне с блоком вентилятора (тот же, что у химического респиратора)
+        ShapedRecipeBuilder.shaped(RecipeCategory.COMBAT, PcItems.PAPR.get())
+                .pattern(" F ").pattern("CRC").define('F', PcItems.FULL_FACE_RESPIRATOR.get()).define('C', PcItems.IODINE_CARTRIDGE.get())
+                .define('R', PcItems.POWERED_RESPIRATOR.get()).unlockedBy("has_full_face_respirator", has(PcItems.FULL_FACE_RESPIRATOR.get()))
+                .save(out, id("papr"));
         // пневмокостюм — пластикат (ПВХ), как ЛГ-1
         var pvc = PcItems.PVC.get();
         ShapedRecipeBuilder.shaped(RecipeCategory.COMBAT, PcItems.PNEUMOSUIT_HELMET.get())

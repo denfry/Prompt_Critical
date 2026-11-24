@@ -35,6 +35,10 @@ public final class RadGearText {
         item("iodine_cartridge", "Iodine Cartridge", "Йодный патрон",
                 "Charcoal cartridge for the full-face respirator: stops gaseous iodine for 8 hours of breathing it",
                 "Угольный патрон к полнолицевой маске: держит газообразный йод 8 часов дыхания в нём");
+        LANG.put("item.promptcritical.papr", new String[] {"Powered Air-Purifying Respirator Hood (radiological)",
+                "Шлем-капюшон с принудительной подачей воздуха (радиационный)"});
+        LANG.put("item.promptcritical.papr.apf", new String[] {"Aerosols and iodine ×%s while the blower runs, ×%s on a flat battery. Charge on the lamp room rack",
+                "Аэрозоли и йод ×%s, пока работает вентилятор, ×%s с севшей батареей. Заряжается на стеллаже ламповой"});
         item("respirator", "Half-Mask Respirator P3", "Респиратор-полумаска P3",
                 "Aerosols ×10. Gaseous iodine passes the particle filter. Fits into a hard hat",
                 "Аэрозоли ×10. Газообразный йод через фильтр P3 проходит. Вставляется в каску");
