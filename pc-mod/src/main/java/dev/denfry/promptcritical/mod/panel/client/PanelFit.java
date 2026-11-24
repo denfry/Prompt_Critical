@@ -125,6 +125,7 @@ public final class PanelFit {
                     labels.add(new Label(e, str(ic.label()), true, x + ic.w() / 2, y + ic.h() + 2, font.width(ic.label())));
                 }
                 case PanelLayout.Readout r -> bodies.add(new Box("readout", x, y, x + r.w(), y + 13));
+                case PanelLayout.Trace t -> bodies.add(new Box("trace", x, y, x + t.w(), y + t.h()));
                 case PanelLayout.Caption c -> labels.add(new Label(e, str(c.text()), false, x, y, font.width(c.text())));
                 case PanelLayout.Button b -> bodies.add(new Box("button " + str(b.label()), x, y, x + b.w(), y + 16));
             }

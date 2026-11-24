@@ -450,6 +450,7 @@ public final class PcLanguageProvider extends LanguageProvider {
         b("ngl_fractionator", "NGL Fractionation Unit", "Газофракционирующая установка");
         b("rtu_station", "Telemetry Gateway (RTU)", "Шлюз телемеханики (КП)");
         b("historian_server", "Historian Server", "Сервер историана");
+        b("operator_terminal", "Operator Terminal", "Терминал оператора");
         b("annunciator_panel", "Annunciator Panel", "Светосигнальное табло");
         b("alarm_horn", "Alarm Horn", "Сирена сигнализации");
         b("control_desk", "Control Desk", "Секция пульта");

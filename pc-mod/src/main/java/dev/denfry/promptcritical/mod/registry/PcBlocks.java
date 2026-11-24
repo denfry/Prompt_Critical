@@ -721,6 +721,10 @@ public final class PcBlocks {
     public static final DeferredBlock<PcDeviceBlock> HISTORIAN_SERVER = device("historian_server", machine(),
             Spec.facing(BlockStateProperties.LIT).footprint(FP_TALL2),
             FoundryBlock.with(dev.denfry.promptcritical.mod.scada.HistorianBlockEntity::new));
+    /** Терминал оператора 16 §16.3.4 (R58): видеокадры A4 без CC, пульт с ЭЛТ 1×1×1. */
+    public static final DeferredBlock<PcDeviceBlock> OPERATOR_TERMINAL = device("operator_terminal", machine(),
+            Spec.facing(BlockStateProperties.POWERED, PcProperties.ALARM),
+            FoundryBlock.with(dev.denfry.promptcritical.mod.scada.OperatorTerminalBlockEntity::new));
     /** Инженерная станция 03d §3d.9.1: цифровой двойник для FAT программ ПЛК, стол 2×1×1. */
     public static final DeferredBlock<PcDeviceBlock> SIMULATION_WORKSTATION = device("simulation_workstation", machine(),
             Spec.facing().footprint(FP_WIDE2),

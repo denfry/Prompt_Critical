@@ -91,7 +91,7 @@ public final class PanelLayout {
     public interface Tip extends Function<PanelValues, Component> {
     }
 
-    public sealed interface Element permits Dial, Scope, Glass, Bar, Lamp, Readout, Caption, Button, Firebox, UTube, IndicatorCard, Plot {
+    public sealed interface Element permits Dial, Scope, Glass, Bar, Lamp, Readout, Caption, Button, Firebox, UTube, IndicatorCard, Plot, Trace {
         int x();
 
         int y();
@@ -166,6 +166,13 @@ public final class PanelLayout {
      */
     public record Plot(int x, int y, int w, int h, int ch0, int points, double xMax, double yMax, int flagsCh, int runBit,
             Component label, @Nullable Tip tip) implements Element {
+    }
+
+    /**
+     * Экран ЭЛТ видеокадра (16 §16.3.4): {@code values} — доли шкалы 0…1 по каналам; одно значение — столбик, несколько —
+     * тренд слева направо, {@code NaN} — разрыв. Считается на клиенте из каналов щита.
+     */
+    public record Trace(int x, int y, int w, int h, Function<PanelValues, double[]> values, @Nullable Tip tip) implements Element {
     }
 
     /**
@@ -301,6 +308,11 @@ public final class PanelLayout {
         }
 
         /** Нарисованный фон поля машины: {@code textures/gui/panel/<id>.png} размером с поле. */
+        public Builder trace(int x, int y, int w, int h, Function<PanelValues, double[]> values, @Nullable Tip tip) {
+            elements.add(new Trace(x, y, w, h, values, tip));
+            return this;
+        }
+
         public Builder art(ResourceLocation texture) {
             art = texture;
             return this;
