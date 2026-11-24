@@ -1,6 +1,8 @@
 package dev.denfry.promptcritical.mod.grid;
 
 import dev.denfry.promptcritical.mod.config.ServerConfig;
+import dev.denfry.promptcritical.sim.core.SimId;
+import dev.denfry.promptcritical.sim.grid.MvDrive;
 import dev.denfry.promptcritical.sim.grid.PowerBoard;
 import java.util.HashSet;
 import java.util.Map;
@@ -106,6 +108,64 @@ public final class MachinePower {
         /** Доля питания на последнем тике, 0…1. */
         public double factor() {
             return last;
+        }
+    }
+
+    /**
+     * Ввод 6,3 кВ машины мощнее 200 кВт: BE машины — {@link GridDevice} со своим потребителем {@link
+     * dev.denfry.promptcritical.sim.grid.ConsumerUnit} (регистрация через {@link GridLoad}). Выключатель с нулевой
+     * защитой {@link MvDrive}: ниже 0,85 о.е. отпадает и ждёт «Пуска» ({@link #start}); скорость идёт за частотой.
+     * На сервере GameTest вне {@link #strictArea} машина питается даром.
+     */
+    public static final class Mv {
+        /** Шаг защиты за тик сервера, с. */
+        private static final double TICK_S = 0.05;
+        private final MvDrive drive = new MvDrive();
+
+        /**
+         * Тик машины, которой сейчас нужна мощность {@code watts} (0 — простаивает, выключатель остаётся включён).
+         *
+         * @return доля номинальной скорости 0…1
+         */
+        public double supply(@Nullable Level level, BlockPos pos, SimId id, double watts) {
+            if (level == null || level.isClientSide) return 1;
+            if (free(level, pos)) return 1;
+            dev.denfry.promptcritical.sim.grid.ConsumerUnit u = GridLoad.unit(level, id);
+            if (u == null) return drive.step(TICK_S, 0, 0);
+            u.setDemandW(drive.demandW(watts));
+            return drive.step(TICK_S, u.inputPu(), u.frequencyHz());
+        }
+
+        /** Доля номинальной скорости на прошлом тике. */
+        public double factor() {
+            return drive.factor();
+        }
+
+        /** Выключатель отпал по нулевой защите. */
+        public boolean tripped() {
+            return drive.tripped();
+        }
+
+        public boolean on() {
+            return drive.on();
+        }
+
+        /** Кнопка «Пуск». */
+        public void start() {
+            drive.start();
+        }
+
+        /** Кнопка «Стоп». */
+        public void stop() {
+            drive.stop();
+        }
+
+        public void save(net.minecraft.nbt.CompoundTag tag) {
+            tag.putInt("mv_drive", drive.bits());
+        }
+
+        public void load(net.minecraft.nbt.CompoundTag tag) {
+            if (tag.contains("mv_drive")) drive.restore(tag.getInt("mv_drive"));
         }
     }
 

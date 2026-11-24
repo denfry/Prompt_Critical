@@ -72,7 +72,8 @@ public abstract class UraniumProcessBlockEntity extends DeviceBlockEntity implem
 
     /**
      * Мощность мешалок, насосов и воздуходувок установки, Вт: включённая установка берёт её от розетки или силового
-     * щита рядом и при недостатке работает медленнее ({@link dev.denfry.promptcritical.mod.grid.MachinePower}).
+     * щита рядом и при недостатке работает медленнее ({@link dev.denfry.promptcritical.mod.grid.MachinePower}). Ноль —
+     * щит не нужен: пассивный блок, машина со своим вводом 6,3 кВ или ванны на постоянном токе выпрямителя.
      */
     protected double ratedPowerW() {
         return 30e3;
@@ -106,7 +107,9 @@ public abstract class UraniumProcessBlockEntity extends DeviceBlockEntity implem
         if (!(level instanceof ServerLevel s)) return;
         SimLevelBinding b = SimBindings.get(s);
         if (b == null) return;
-        double power = dev.denfry.promptcritical.mod.grid.MachinePower.supply(s, worldPosition, on ? ratedPowerW() : 0);
+        double rated = ratedPowerW();
+        // 0 Вт: установка ничего не берёт с щита 0,4 кВ (пассивный блок, свой ввод 6,3 кВ или постоянный ток выпрямителя)
+        double power = rated <= 0 ? 1 : dev.denfry.promptcritical.mod.grid.MachinePower.supply(s, worldPosition, on ? rated : 0);
         if (power > 0) process(s, 0.05 * b.world().clock().kSlow() * power);
         if (level.getGameTime() % 10 == 0) {
             setFlag(PcProperties.RUNNING, running());

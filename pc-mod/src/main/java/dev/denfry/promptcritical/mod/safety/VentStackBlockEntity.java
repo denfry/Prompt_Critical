@@ -32,6 +32,12 @@ import org.jetbrains.annotations.Nullable;
  * Разрежение зала (−20 Па) и воздушная сеть §3a.9.2 не моделируются [допущение: вытяжка забирает весь выброс зала].
  */
 public final class VentStackBlockEntity extends UraniumProcessBlockEntity implements dev.denfry.promptcritical.mod.environment.SelfEmittingSource {
+    /** Труба — пассивный блок: вентиляторы стоят отдельно. */
+    @Override
+    protected double ratedPowerW() {
+        return 0;
+    }
+
     public static final int HALL_RADIUS = 16, FILTER_RANGE = 3;
     private static final Map<Level, Set<VentStackBlockEntity>> STACKS = new WeakHashMap<>();
 

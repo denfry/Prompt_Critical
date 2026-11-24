@@ -57,6 +57,12 @@ import org.jetbrains.annotations.Nullable;
  * моделируются [допущение: источником газа служит только штуцер].
  */
 public final class ManwayBlockEntity extends UraniumProcessBlockEntity {
+    /** Люк — пассивный блок. */
+    @Override
+    protected double ratedPowerW() {
+        return 0;
+    }
+
     public static final double PURGE_NM3S = 0.05, MOL_PER_NM3 = 44.6, ATTENDANT_M = 4;
     public static final int VENTILATOR_RANGE = 3, TANK_MB = 1000, RESCAN_TICKS = 200;
 

@@ -27,6 +27,12 @@ import org.jetbrains.annotations.Nullable;
  * газ — трубой к любой грани, глинозём — мешками в склад (воронкой снизу). Температура — кнопками щита.
  */
 public final class AluminaCalcinerBlockEntity extends UraniumProcessBlockEntity {
+    /** Дымосос, питатели и транспорт гидроксида, Вт. */
+    @Override
+    protected double ratedPowerW() {
+        return 160e3;
+    }
+
     public static final int MB = 4_000;
 
     private final FeedTank fuel = new FeedTank(PcFluids.SALES_GAS.source.get(), MB);

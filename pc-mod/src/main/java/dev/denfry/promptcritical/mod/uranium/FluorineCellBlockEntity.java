@@ -27,6 +27,12 @@ import org.jetbrains.annotations.Nullable;
  * его в расплаве на норме; фтор (нм³) — сверху, водород (нм³) — снизу.
  */
 public final class FluorineCellBlockEntity extends UraniumProcessBlockEntity implements DcLoad {
+    /** Ванны питает постоянным током выпрямитель, щит 0,4 кВ не нужен. */
+    @Override
+    protected double ratedPowerW() {
+        return 0;
+    }
+
     public static final int MB = 4_000;
 
     private final FeedTank hf = new FeedTank(PcFluids.HYDROGEN_FLUORIDE.source.get(), MB);

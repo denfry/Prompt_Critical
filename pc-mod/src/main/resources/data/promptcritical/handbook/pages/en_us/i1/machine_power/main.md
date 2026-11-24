@@ -21,4 +21,10 @@ Right click switches the contactor, Start or Stop. Shift + right click shows the
 
 The UPS feeds its group from the grid and charges its battery. When the grid fails it carries on from the battery, about twenty minutes at full load, and does not drop out. Put the instruments and the controls that must see a blackout through on a UPS.
 
+## Large machines: 6.3 kV
+
+A power board at 0.4 kV cannot carry plants above 200 kW (catalytic cracking, reforming, delayed coking, the alumina calciner): they need their own 6.3 kV feed. Run a 6 kV cable to any face of the plant. It asks the grid for its rated power while it is switched on and follows the grid frequency like the rest. If the voltage stays below 85 % for half a second, the incomer breaker drops out and the plant stops; it will not start by itself, so switch it on again (Shift + right click).
+
+Electrolysis cells take direct current from their rectifier, and machines on a Create shaft take their power from the motor or steam engine on that shaft. Boilers, furnaces that burn their own fuel and passive blocks (tanks, manways, needle gauges) take nothing from the grid.
+
 The server key `energy.machines_need_power` turns the whole rule off.
