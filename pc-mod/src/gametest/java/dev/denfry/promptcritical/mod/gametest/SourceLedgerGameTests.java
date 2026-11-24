@@ -4,16 +4,20 @@ import dev.denfry.promptcritical.mod.PromptCritical;
 import dev.denfry.promptcritical.mod.environment.ActivityData;
 import dev.denfry.promptcritical.mod.environment.RadiationService;
 import dev.denfry.promptcritical.mod.environment.SourceLedger;
+import dev.denfry.promptcritical.mod.radiation.ContaminationService;
 import dev.denfry.promptcritical.mod.registry.PcItems;
 import dev.denfry.promptcritical.sim.radiation.Emitter;
 import java.util.List;
 import java.util.Map;
 import java.util.UUID;
+import net.minecraft.core.BlockPos;
 import net.minecraft.gametest.framework.GameTest;
 import net.minecraft.gametest.framework.GameTestHelper;
 import net.minecraft.server.level.ServerLevel;
+import net.minecraft.world.damagesource.DamageSource;
 import net.minecraft.world.entity.item.ItemEntity;
 import net.minecraft.world.item.ItemStack;
+import net.minecraft.world.level.block.Blocks;
 import net.minecraft.world.phys.Vec3;
 import net.neoforged.neoforge.gametest.GameTestHolder;
 import net.neoforged.neoforge.gametest.PrefixGameTestTemplate;
@@ -67,6 +71,57 @@ public final class SourceLedgerGameTests {
         level.addFreshEntity(drop);
         drop.kill();
         h.assertTrue(SourceLedger.get(level.getServer(), id) == null, "a destroyed source leaves the ledger");
+        h.succeed();
+    }
+
+    /**
+     * Уничтоженный источник отдаёт активность в мир (16 §16.8.4): взрыв поднимает сотую часть цезия облаком и
+     * разбрасывает остальное на три блока, лава поднимает 30 % цезия и оставляет остаток рядом, кактус только рассыпает
+     * содержимое. Учтённый источник при этом уходит из реестра.
+     */
+    @GameTest(template = LARGE)
+    public static void explodedSourceScattersItsActivity(GameTestHelper h) {
+        ruined(h, h.getLevel().damageSources().explosion(null, null), 0.01, true);
+    }
+
+    @GameTest(template = LARGE)
+    public static void sourceBurnedInLavaGoesUpAsAerosol(GameTestHelper h) {
+        ruined(h, h.getLevel().damageSources().lava(), 0.3, false);
+    }
+
+    @GameTest(template = LARGE)
+    public static void cactusBreaksTheSourceOpen(GameTestHelper h) {
+        ruined(h, h.getLevel().damageSources().cactus(), 0, false);
+    }
+
+    /**
+     * Источник Cs-137 на каменной площадке уничтожен ударом {@code hit}: в воздух уходит доля {@code airborne}, пол под
+     * ним загрязнён, в трёх блоках — только если разброс широкий ({@code wide}).
+     */
+    private static void ruined(GameTestHelper h, DamageSource hit, double airborne, boolean wide) {
+        ServerLevel level = h.getLevel();
+        for (int x = 1; x <= 10; x++)
+            for (int z = 1; z <= 10; z++) h.setBlock(new BlockPos(x, 1, z), Blocks.STONE.defaultBlockState());
+        long now = level.getGameTime();
+        double bq = 1.4e15;
+        Vec3 at = h.absoluteVec(new Vec3(5.5, 2.2, 5.5));
+        ItemStack hot = canister(now, bq);
+        UUID id = SourceLedger.sight(level, hot, at, null, true);
+        h.assertTrue(id != null, "the source is tracked");
+        ItemEntity drop = new ItemEntity(level, at.x, at.y, at.z, hot);
+        drop.setDeltaMovement(Vec3.ZERO);
+        level.addFreshEntity(drop);
+        Vec3 where = drop.position();
+        drop.hurt(hit, 1000);
+        h.assertTrue(drop.isRemoved(), "the hit destroys the item");
+        h.assertTrue(SourceLedger.get(level.getServer(), id) == null, "a destroyed source leaves the ledger");
+        double air = RadiationService.airReleaseBqS(level, where, Emitter.CS137);
+        double expect = bq * airborne / (RadiationService.HOLD_TICKS / 20.0);
+        h.assertTrue(airborne == 0 ? air == 0 : Math.abs(air - expect) <= 1e-6 * expect,
+                "airborne Cs-137 " + air + " Bq/s, expected " + expect);
+        h.assertTrue(ContaminationService.surface(level, h.absolutePos(new BlockPos(5, 1, 5))).beta() > 0, "the floor under it is contaminated");
+        boolean far = ContaminationService.surface(level, h.absolutePos(new BlockPos(8, 1, 5))).beta() > 0;
+        h.assertTrue(far == wide, wide ? "an explosion throws it three blocks away" : "nothing three blocks away");
         h.succeed();
     }
 }

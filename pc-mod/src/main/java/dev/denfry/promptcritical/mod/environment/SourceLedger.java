@@ -4,6 +4,7 @@ import dev.denfry.promptcritical.mod.PromptCritical;
 import dev.denfry.promptcritical.mod.config.ServerConfig;
 import dev.denfry.promptcritical.sim.isotopes.IaeaCategory;
 import dev.denfry.promptcritical.sim.radiation.ActivityInventory;
+import dev.denfry.promptcritical.sim.radiation.Emitter;
 import dev.denfry.promptcritical.sim.radiation.PointSource;
 import java.util.ArrayList;
 import java.util.Collection;
@@ -11,6 +12,7 @@ import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.UUID;
+import java.util.WeakHashMap;
 import net.minecraft.ChatFormatting;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.HolderLookup;
@@ -26,6 +28,9 @@ import net.minecraft.resources.ResourceLocation;
 import net.minecraft.server.MinecraftServer;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.server.level.ServerPlayer;
+import net.minecraft.tags.DamageTypeTags;
+import net.minecraft.world.damagesource.DamageSource;
+import net.minecraft.world.damagesource.DamageTypes;
 import net.minecraft.world.entity.Entity;
 import net.minecraft.world.entity.item.ItemEntity;
 import net.minecraft.world.item.ItemStack;
@@ -34,7 +39,9 @@ import net.minecraft.world.level.block.entity.BlockEntity;
 import net.minecraft.world.level.chunk.LevelChunk;
 import net.minecraft.world.level.saveddata.SavedData;
 import net.minecraft.world.phys.Vec3;
+import net.neoforged.bus.api.EventPriority;
 import net.neoforged.neoforge.common.NeoForge;
+import net.neoforged.neoforge.event.entity.EntityInvulnerabilityCheckEvent;
 import net.neoforged.neoforge.event.entity.EntityLeaveLevelEvent;
 import net.neoforged.neoforge.registries.DeferredHolder;
 import org.jetbrains.annotations.Nullable;
@@ -49,7 +56,13 @@ import org.jetbrains.annotations.Nullable;
  * нигде нет дольше {@link #GRACE_TICKS} тиков, он становится призраком {@link Status#UNSEEN} и излучает из этой точки.
  * Через {@code isotopes.orphan_after_s} призрак — бесхозный источник: последний державший его игрок получает тревогу,
  * запись уходит в журнал сервера. Призрак снимается, когда предмет снова увиден, когда он пропал рядом с нашей установкой
- * (она приняла его в свой учёт) или когда записано его уничтожение (лава, пустота, взрыв).
+ * (она приняла его в свой учёт) или когда записано его уничтожение (лава и огонь, взрыв, кактус, пустота, /kill).
+ * <p>
+ * Уничтоженный предмет с активностью не уносит её из мира ({@link Ruin}): сгоревший в лаве или огне отдаёт летучие
+ * нуклиды облаком выброса ({@link RadiationService#airRelease}), остальное ложится рыхлым загрязнением вокруг
+ * ({@link dev.denfry.promptcritical.mod.radiation.ContaminationService#spill}); взрыв разбрасывает его шире и поднимает
+ * в воздух долю аэрозоля, кактус рвёт оболочку и рассыпает содержимое рядом. Это касается любого предмета с
+ * активностью, не только учтённого.
  * <p>
  * Пока держатель источника не в сети, запись заморожена: вышедший игрок унёс источник с собой.
  */
@@ -118,7 +131,15 @@ public final class SourceLedger extends SavedData {
 
     private final Map<UUID, Entry> entries = new LinkedHashMap<>();
 
+    /** Последний удар по предмету с активностью: по нему {@link #onLeave} узнаёт, чем предмет уничтожен. */
+    private static final Map<ItemEntity, Hit> LAST_HIT = new WeakHashMap<>();
+
+    /** Удар и тик, когда он пришёл: старый удар (предмет обгорел и уцелел) уничтожение не объясняет. */
+    private record Hit(DamageSource source, long tick) {
+    }
+
     public static void register() {
+        NeoForge.EVENT_BUS.addListener(EventPriority.LOWEST, SourceLedger::onHurtCheck);
         NeoForge.EVENT_BUS.addListener(SourceLedger::onLeave);
     }
 
@@ -295,12 +316,90 @@ public final class SourceLedger extends SavedData {
         return false;
     }
 
-    /** Предмет на земле сгорел в лаве, упал в пустоту, взорван: журнал и тревога державшему (04d §4d.6.2). */
+    /**
+     * {@code ItemEntity.hurt} спрашивает неуязвимость перед каждым ударом: запоминаем удар, который прошёл, — если он
+     * уничтожит предмет, {@link #onLeave} знает чем.
+     */
+    private static void onHurtCheck(EntityInvulnerabilityCheckEvent ev) {
+        if (ev.isInvulnerable() || !(ev.getEntity() instanceof ItemEntity item) || item.level().isClientSide) return;
+        if (item.getItem().has(ActivityData.ACTIVITY.get())) LAST_HIT.put(item, new Hit(ev.getSource(), item.level().getGameTime()));
+    }
+
+    /**
+     * Чем уничтожен предмет и куда уходит его активность: доля в воздух по нуклиду и радиус, на который остальное
+     * ложится рыхлым загрязнением. Доли — порядок величин DOE-HDBK-3010-94 для нагрева, взрыва и механического
+     * разрушения твёрдого материала [моё]: инертный газ уходит весь, йод при нагреве — весь, цезий и рутений (RuO4) —
+     * заметная доля, тугоплавкие оксиды — тысячная; взрыв поднимает аэрозолем сотую часть, кактус — только газ.
+     */
+    public enum Ruin {
+        FIRE(1), EXPLOSION(3), CACTUS(1),
+        /** Пустота и /kill: активность уходит из мира. */
+        GONE(0);
+
+        /** Радиус пролива остатка, блоков. */
+        public final int radius;
+
+        Ruin(int radius) {
+            this.radius = radius;
+        }
+
+        /** Доля активности нуклида {@code e}, уходящая в воздух. */
+        public double airborne(Emitter e) {
+            if (this == GONE) return 0;
+            if (e == Emitter.KR85) return 1;
+            return switch (this) {
+                case FIRE -> switch (e) {
+                    case I131 -> 1;
+                    case CS137, CS134, RU106 -> 0.3;
+                    default -> 1e-3;
+                };
+                case EXPLOSION -> 0.01;
+                default -> 0;
+            };
+        }
+    }
+
+    /** α-излучатели среди нуклидов модели: при проливе идут в α-загрязнение, остальные — в β. */
+    private static boolean alpha(Emitter e) {
+        return e == Emitter.PU238 || e == Emitter.AM241 || e == Emitter.CM244;
+    }
+
+    /** Облако держится {@code RadiationService.HOLD_TICKS}: выброс за это время отдаёт долю активности целиком, с. */
+    static final double PUFF_S = RadiationService.HOLD_TICKS / 20.0;
+
+    /**
+     * Активность уничтоженного стека {@code stack} уходит в мир по {@code ruin}: летучее — облаком из точки {@code at},
+     * остальное — рыхлым загрязнением поверхностей вокруг.
+     */
+    public static void release(ServerLevel level, Vec3 at, ItemStack stack, Ruin ruin) {
+        ActivityData a = stack.get(ActivityData.ACTIVITY.get());
+        if (a == null || ruin == Ruin.GONE) return;
+        double alphaBq = 0, betaBq = 0;
+        for (Map.Entry<Emitter, Double> n : a.inventory(level.getGameTime()).activities().entrySet()) {
+            double bq = n.getValue() * stack.getCount();
+            if (!(bq > 0)) continue;
+            double air = ruin.airborne(n.getKey());
+            if (air > 0) RadiationService.airRelease(level, at, n.getKey(), bq * air / PUFF_S);
+            if (n.getKey() == Emitter.KR85) continue; // газ на поверхностях не оседает
+            if (alpha(n.getKey())) alphaBq += bq * (1 - air);
+            else betaBq += bq * (1 - air);
+        }
+        dev.denfry.promptcritical.mod.radiation.ContaminationService.spill(level, BlockPos.containing(at), ruin.radius, alphaBq, betaBq);
+    }
+
+    /**
+     * Предмет на земле уничтожен (04d §4d.6.2): его активность уходит в мир ({@link #release}), учтённый источник — из
+     * реестра, с журналом и тревогой державшему.
+     */
     private static void onLeave(EntityLeaveLevelEvent ev) {
         if (!(ev.getEntity() instanceof ItemEntity item) || !(ev.getLevel() instanceof ServerLevel level)) return;
-        if (!destroyed(item, level)) return;
+        Hit hit = LAST_HIT.remove(item);
+        Ruin ruin = ruin(item, level, hit != null && level.getGameTime() - hit.tick() <= 1 ? hit.source() : null);
+        if (ruin == null) return;
         ItemStack stack = item.getItem();
-        UUID id = stack.isEmpty() ? null : stack.get(SOURCE_ID.get());
+        if (stack.isEmpty()) return;
+        release(level, item.position(), stack, ruin);
+        UUID id = stack.get(SOURCE_ID.get());
         if (id == null) return;
         SourceLedger l = of(level.getServer());
         Entry e = l == null ? null : l.entries.remove(id);
@@ -316,15 +415,24 @@ public final class SourceLedger extends SavedData {
     }
 
     /**
-     * Уничтожен ли снятый с уровня предмет: убит командой, сгорел в лаве или огне, упал в пустоту. Прочее снятие
+     * Чем уничтожен снятый с уровня предмет; {@code null} — не уничтожен. Решает удар {@code hit}, после которого предмет
+     * снят: взрыв, кактус, огонь и лава. Без удара — убит командой, упал в пустоту, горел в лаве или огне. Прочее снятие
      * (подобран, слит со стеком, забран воронкой или воронкой Create, не опустошившей стек) уничтожением не считаем:
      * если предмет и правда пропал, его закроет правило призрака.
      */
-    private static boolean destroyed(ItemEntity item, ServerLevel level) {
+    @Nullable
+    static Ruin ruin(ItemEntity item, ServerLevel level, @Nullable DamageSource hit) {
         Entity.RemovalReason why = item.getRemovalReason();
-        if (why == Entity.RemovalReason.KILLED) return true;
-        if (why != Entity.RemovalReason.DISCARDED) return false;
-        return item.isInLava() || item.isOnFire() || item.getY() < level.getMinBuildHeight() - 32;
+        if (why == Entity.RemovalReason.KILLED) return Ruin.GONE;
+        if (why != Entity.RemovalReason.DISCARDED) return null;
+        if (hit != null) {
+            if (hit.is(DamageTypeTags.IS_EXPLOSION)) return Ruin.EXPLOSION;
+            if (hit.is(DamageTypes.CACTUS)) return Ruin.CACTUS;
+            if (hit.is(DamageTypeTags.IS_FIRE)) return Ruin.FIRE;
+        }
+        if (item.getY() < level.getMinBuildHeight() - 32) return Ruin.GONE;
+        if (item.isInLava() || item.isOnFire()) return Ruin.FIRE;
+        return null;
     }
 
     public static String shortId(UUID id) {
