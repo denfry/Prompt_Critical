@@ -25,10 +25,9 @@ final class SereneSeasonsAdapter implements SeasonProvider {
         this.fallback = fallback;
     }
 
-    /** Источник сезонов уровня: Serene Seasons, если загружен и его API на месте, иначе {@code fallback}. */
-    static SeasonProvider forLevel(Level level, SeasonProvider fallback) {
-        if (broken || !dev.denfry.promptcritical.mod.compat.CompatSwitch.active(
-                dev.denfry.promptcritical.mod.config.ServerConfig.COMPAT_SEASONS, "sereneseasons")) return fallback;
+    /** Serene Seasons для уровня, если его API на месте; иначе {@code fallback}. Загружен ли мод, решает {@link SeasonMods}. */
+    static SeasonProvider of(Level level, SeasonProvider fallback) {
+        if (broken) return fallback;
         if (stateOf == null) {
             try {
                 Class<?> helper = Class.forName("sereneseasons.api.season.SeasonHelper");

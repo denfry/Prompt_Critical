@@ -12,7 +12,7 @@ import net.minecraft.world.level.biome.Biome;
 
 /**
  * Погода измерения для машин: {@link Environment} с зерном мира и измерения, климат и шероховатость — по биому
- * точки, дождь и гроза — ванильные, время года — Serene Seasons, если стоит, иначе встроенный календарь. Модель — чистая функция, поэтому кеш по уровню хранит только сам объект.
+ * точки, дождь и гроза — ванильные, время года — Serene Seasons или Ecliptic Seasons, если стоит ({@link SeasonMods}), иначе встроенный календарь. Модель — чистая функция, поэтому кеш по уровню хранит только сам объект.
  */
 public final class EnvironmentService {
     private static final Map<ServerLevel, Environment> ENVS = new WeakHashMap<>();
@@ -22,7 +22,7 @@ public final class EnvironmentService {
 
     public static Environment environment(ServerLevel level) {
         return ENVS.computeIfAbsent(level, l -> new Environment(l.getSeed() ^ l.dimension().location().hashCode() * 0x9E3779B97F4A7C15L,
-                SereneSeasonsAdapter.forLevel(l, new SeasonProvider.Calendar(ServerConfig.ENVIRONMENT_DAYS_PER_SEASON.get()))));
+                SeasonMods.forLevel(l, new SeasonProvider.Calendar(ServerConfig.ENVIRONMENT_DAYS_PER_SEASON.get()))));
     }
 
     /** Погода в точке на высоте {@code heightM} над ней. */

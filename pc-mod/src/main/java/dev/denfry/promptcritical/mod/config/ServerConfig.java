@@ -507,7 +507,8 @@ public final class ServerConfig {
 
         b.push("mod");
         b.push("compat");
-        COMPAT_SEASONS = b.comment("Read the season from Serene Seasons when it is installed (16 §16.10.2); off keeps the built-in calendar")
+        COMPAT_SEASONS = b.comment("Read the season from Serene Seasons or Ecliptic Seasons when one is installed, Serene Seasons if both (16 §16.10.2);",
+                        "off keeps the built-in calendar")
                 .defineEnum("seasons", CompatMode.AUTO);
         COMPAT_CURIOS = b.comment("Read worn gear from Curios slots when it is installed (16 §16.9)").defineEnum("curios", CompatMode.AUTO);
         COMPAT_ACCESSORIES = b.comment("Read worn gear from Accessories slots when it is installed (16 §16.9)")
