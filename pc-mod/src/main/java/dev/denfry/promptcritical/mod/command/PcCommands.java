@@ -112,6 +112,8 @@ public final class PcCommands {
                         .then(Commands.argument("page", IntegerArgumentType.integer(1))
                                 .executes(ctx -> handbook(ctx, IntegerArgumentType.getInteger(ctx, "page") - 1)))))
                 // реестр учтённых источников 04d §4d.6.1 и призраки 16 §16.8.4
+                .then(Commands.literal("export").requires(PcPermissions::admin)
+                        .then(dev.denfry.promptcritical.mod.compat.ftbquests.FtbQuestsCommand.node()))
                 .then(Commands.literal("sources").requires(PcPermissions::admin)
                         .then(Commands.literal("list").executes(PcCommands::sourcesList)))
                 .then(Commands.literal("body").requires(PcPermissions::admin).then(Commands.argument("player", EntityArgument.player())
