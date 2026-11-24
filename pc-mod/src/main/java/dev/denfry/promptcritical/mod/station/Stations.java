@@ -69,6 +69,7 @@ public final class Stations {
         // основание — после всех проверок: отменённая другой защитой установка станцию не создаёт
         NeoForge.EVENT_BUS.addListener(EventPriority.LOWEST, Stations::onPlaceFound);
         NeoForge.EVENT_BUS.addListener(EventPriority.HIGH, Stations::onBreak);
+        NeoForge.EVENT_BUS.addListener(EventPriority.HIGH, Stations::onUseExecutor);
         NeoForge.EVENT_BUS.addListener(Stations::onServerTick);
         NeoForge.EVENT_BUS.addListener(Stations::onStopping);
         dev.denfry.promptcritical.mod.api.ApiEvents.stations(new RegistryStationDirectory());
@@ -242,7 +243,8 @@ public final class Stations {
     }
 
     static void recordPlacer(StationRegistry r, ServerLevel level, BlockPos pos, Player p) {
-        StationRegistry.Placer who = new StationRegistry.Placer(p.getUUID(), p.getGameProfile().getName());
+        StationRegistry.Placer who = new StationRegistry.Placer(p.getUUID(), p.getGameProfile().getName(),
+                GlobalPos.of(level.dimension(), pos.immutable()));
         int id = computerIdAt(level, pos);
         if (id >= 0) {
             r.computers.put(id, who);
@@ -290,12 +292,54 @@ public final class Stations {
         return r == null ? null : r.placed.get(GlobalPos.of(level.dimension(), pos));
     }
 
-    /** Записывает владельца компьютера {@code id} напрямую (GameTest, перенос мира). */
-    public static void bindComputer(MinecraftServer server, int id, UUID owner, String name) {
+    /** Записывает владельца компьютера {@code id}, стоящего в {@code at}, напрямую (GameTest, перенос мира). */
+    public static void bindComputer(MinecraftServer server, int id, UUID owner, String name, GlobalPos at) {
         StationRegistry r = StationRegistry.of(server);
         if (r == null) return;
-        r.computers.put(id, new StationRegistry.Placer(owner, name));
+        r.computers.put(id, new StationRegistry.Placer(owner, name, at));
         r.setDirty();
+    }
+
+    /** Владелец исполнителя в {@code pos}: компьютера CC по его id, сервера MES по месту. */
+    @Nullable
+    static StationRegistry.Placer executorOwner(ServerLevel level, BlockPos pos) {
+        int id = computerIdAt(level, pos);
+        return id >= 0 ? computerOwner(level.getServer(), id) : placerAt(level, pos);
+    }
+
+    /**
+     * Почему исполнитель не может действовать на станции {@code s}, или {@code null}: он должен стоять в её чанках и
+     * быть там, где записан (сдвинутая черепаха или переставленный компьютер теряет права до {@code /pc station
+     * computer}). Иначе права владельца получил бы любой, кто сел за его компьютер вне станции (R74).
+     */
+    @Nullable
+    private static String executorOutside(MinecraftServer server, StationRegistry r, StationRecord s, int computerId,
+                                          StationRegistry.Placer owner) {
+        GlobalPos at = owner.at();
+        if (at == null) return "the computer's place is not recorded, use /pc station computer";
+        StationRecord there = r.at(at.dimension(), new ChunkPos(at.pos()));
+        if (there == null || !there.stationId().equals(s.stationId()))
+            return "the computer stands outside the station at " + at.pos().toShortString();
+        ServerLevel l = server.getLevel(at.dimension());
+        if (l == null || !l.isLoaded(at.pos())) return "the computer's chunk is not loaded";
+        boolean present = computerId >= 0 ? computerIdAt(l, at.pos()) == computerId
+                : l.getBlockState(at.pos()).is(PcBlocks.MES_SERVER.get());
+        return present ? null : "the computer is not where it was recorded, use /pc station computer";
+    }
+
+    /**
+     * Открыть чужой компьютер, черепаху или сервер MES в чанке станции можно только с правом управления (§4d.9.2):
+     * иначе посетитель отдал бы команды с правами владельца исполнителя. Свой исполнитель владелец открывает всегда.
+     * Запрещается только использование блока, предмет в руке (установка блока к грани) работает как обычно.
+     */
+    private static void onUseExecutor(net.neoforged.neoforge.event.entity.player.PlayerInteractEvent.RightClickBlock e) {
+        if (!(e.getLevel() instanceof ServerLevel level) || !(e.getEntity() instanceof ServerPlayer p)) return;
+        BlockPos pos = e.getPos();
+        if (!isExecutor(level.getBlockState(pos)) || stationAt(level, pos) == null) return;
+        StationRegistry.Placer who = executorOwner(level, pos);
+        if (who != null && who.uuid().equals(p.getUUID())) return;
+        if (!check(p, level, pos, Permission.CONTROL, device(level, pos)))
+            e.setUseBlock(net.neoforged.neoforge.common.util.TriState.FALSE);
     }
 
     /**
@@ -323,16 +367,17 @@ public final class Stations {
             PlayerTeam t = level.getServer().getScoreboard().getPlayersTeam(owner.name());
             team = t == null ? null : StationRecord.teamId(t.getName());
         }
-        if (owner != null && s.has(owner.uuid(), team, perm)) {
+        String outside = owner == null ? null : executorOutside(level.getServer(), r, s, computerId, owner);
+        if (owner != null && outside == null && s.has(owner.uuid(), team, perm)) {
             if (journal) r.append(new JournalEntry(0, tick, tick / 20.0, s.stationId(), actor, JournalAction.COMMAND, device, command,
                     Severity.INFO));
             return null;
         }
         if (r.denials.shouldLog(owner == null ? NO_OWNER : owner.uuid(), "computer#" + computerId + "@" + device, tick))
             r.append(new JournalEntry(0, tick, tick / 20.0, s.stationId(), actor, JournalAction.UNAUTHORIZED_ACCESS, device,
-                    command + " needs " + perm.name(), Severity.WARNING));
+                    command + (outside != null ? ": " + outside : " needs " + perm.name()), Severity.WARNING));
         return "E_ACCESS: station " + s.name() + ", " + (owner == null ? "the computer has no recorded owner"
-                : owner.name() + " lacks " + perm.name().toLowerCase(Locale.ROOT));
+                : outside != null ? outside : owner.name() + " lacks " + perm.name().toLowerCase(Locale.ROOT));
     }
 
     /** Ключ ограничителя отказов для компьютеров без владельца. */

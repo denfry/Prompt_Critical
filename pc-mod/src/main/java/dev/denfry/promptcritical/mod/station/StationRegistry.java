@@ -54,8 +54,11 @@ public final class StationRegistry extends SavedData {
     /** Поставленные блоки-исполнители (компьютер без id, сервер MES) → кто поставил. */
     final Map<GlobalPos, Placer> placed = new HashMap<>();
 
-    /** Игрок, поставивший блок; имя — на момент установки, для команды и журнала. */
-    public record Placer(UUID uuid, String name) {
+    /**
+     * Игрок, поставивший блок-исполнитель; имя — на момент установки, для команды и журнала. {@code at} — где стоит
+     * исполнитель: права станции он получает только из её чанков (§4d.9.2, R74); {@code null} — место неизвестно.
+     */
+    public record Placer(UUID uuid, String name, @Nullable GlobalPos at) {
     }
 
     private StationRegistry() {
@@ -204,9 +207,7 @@ public final class StationRegistry extends SavedData {
         tag.put("computers", comps);
         ListTag at = new ListTag();
         placed.forEach((pos, p) -> {
-            CompoundTag c = placer(p);
-            c.putString("dim", pos.dimension().location().toString());
-            c.putLong("pos", pos.pos().asLong());
+            CompoundTag c = placer(new Placer(p.uuid(), p.name(), pos));
             at.add(c);
         });
         tag.put("placed", at);
@@ -240,14 +241,21 @@ public final class StationRegistry extends SavedData {
         }
         for (Tag t : tag.getList("computers", Tag.TAG_COMPOUND)) {
             CompoundTag c = (CompoundTag) t;
-            if (c.hasUUID("uuid")) r.computers.put(c.getInt("computer"), new Placer(c.getUUID("uuid"), c.getString("name")));
+            if (!c.hasUUID("uuid")) continue;
+            GlobalPos at = null;
+            net.minecraft.resources.ResourceLocation adim = net.minecraft.resources.ResourceLocation.tryParse(c.getString("dim"));
+            if (c.contains("pos") && adim != null)
+                at = GlobalPos.of(ResourceKey.create(net.minecraft.core.registries.Registries.DIMENSION, adim),
+                        net.minecraft.core.BlockPos.of(c.getLong("pos")));
+            r.computers.put(c.getInt("computer"), new Placer(c.getUUID("uuid"), c.getString("name"), at));
         }
         for (Tag t : tag.getList("placed", Tag.TAG_COMPOUND)) {
             CompoundTag c = (CompoundTag) t;
             net.minecraft.resources.ResourceLocation dim = net.minecraft.resources.ResourceLocation.tryParse(c.getString("dim"));
             if (!c.hasUUID("uuid") || dim == null) continue;
-            r.placed.put(GlobalPos.of(ResourceKey.create(net.minecraft.core.registries.Registries.DIMENSION, dim),
-                    net.minecraft.core.BlockPos.of(c.getLong("pos"))), new Placer(c.getUUID("uuid"), c.getString("name")));
+            GlobalPos at = GlobalPos.of(ResourceKey.create(net.minecraft.core.registries.Registries.DIMENSION, dim),
+                    net.minecraft.core.BlockPos.of(c.getLong("pos")));
+            r.placed.put(at, new Placer(c.getUUID("uuid"), c.getString("name"), at));
         }
         r.setDirty(false);
         return r;
@@ -257,6 +265,10 @@ public final class StationRegistry extends SavedData {
         CompoundTag c = new CompoundTag();
         c.putUUID("uuid", p.uuid());
         c.putString("name", p.name());
+        if (p.at() != null) {
+            c.putString("dim", p.at().dimension().location().toString());
+            c.putLong("pos", p.at().pos().asLong());
+        }
         return c;
     }
 
