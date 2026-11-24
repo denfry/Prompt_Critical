@@ -38,8 +38,8 @@ public class FoundryBlock extends PcDeviceBlock {
 
     @Override
     @Nullable
-    public BlockEntity newBlockEntity(BlockPos pos, BlockState state) {
-        return isController(state) ? factory.apply(pos, state) : null;
+    protected BlockEntity controllerEntity(BlockPos pos, BlockState state) {
+        return factory.apply(pos, state);
     }
 
     @Override

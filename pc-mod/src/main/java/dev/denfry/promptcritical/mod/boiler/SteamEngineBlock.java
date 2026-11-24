@@ -72,8 +72,8 @@ public final class SteamEngineBlock extends PcDeviceBlock {
 
     @Override
     @Nullable
-    public BlockEntity newBlockEntity(BlockPos pos, BlockState state) {
-        return isController(state) ? new SteamEngineBlockEntity(pos, state) : null;
+    protected BlockEntity controllerEntity(BlockPos pos, BlockState state) {
+        return new SteamEngineBlockEntity(pos, state);
     }
 
     @Override

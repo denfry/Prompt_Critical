@@ -187,12 +187,57 @@ public class PcBlock extends Block {
             if (c.pos().equals(pos)) continue;
             BlockState target = c.isAnchor()
                     ? withSegment(state, c.segment())
-                    : partState(state, c);
+                    : portCellOr(partState(state, c), pos, f, c);
             BlockState current = level.getBlockState(c.pos());
             // Игрока проверил getStateForPlacement; /setblock и шаблоны чужие блоки не затирают.
             if (current != target && (current.canBeReplaced() || current.getBlock() instanceof dev.denfry.promptcritical.mod.multiblock.FootprintCell))
                 level.setBlock(c.pos(), target, Block.UPDATE_ALL);
         }
+    }
+
+    /**
+     * Обычная часть машины реального масштаба там, где у модели нарисован патрубок ({@link
+     * dev.denfry.promptcritical.mod.multiblock.WholePorts}), становится клеткой-патрубком с BE: без BE труба Create к
+     * клетке не стыкуется. Порт вала и прочие особые части не трогаем.
+     */
+    private BlockState portCellOr(BlockState part, BlockPos controller, Direction f, Footprint.Cell c) {
+        if (!part.is(PcBlocks.MULTIBLOCK_PART.get())) return part;
+        double[] m = dev.denfry.promptcritical.mod.multiblock.WholeShapes.unrotate(c.pos().getX() - controller.getX() + 0.5,
+                c.pos().getZ() - controller.getZ() + 0.5, f);
+        return dev.denfry.promptcritical.mod.multiblock.PortCellBlock.isPortCell(this, (int) Math.floor(m[0]), c.pos().getY() - controller.getY(),
+                (int) Math.floor(m[1])) ? dev.denfry.promptcritical.mod.multiblock.PortCellBlock.forOffset(c.offsetFromAnchor()) : part;
+    }
+
+    /**
+     * Перевод машины, построенной до клеток-патрубков (миры 1.0.1): обычные части её объёма на клетках патрубков
+     * становятся {@link dev.denfry.promptcritical.mod.multiblock.PortCellBlock} с тем же смещением от якоря. Замена —
+     * как перенос контрапцией ({@link #relocating}): часть уходит без разрушения конструкции и выпадения; соседи
+     * получают обновление формы, чтобы труба Create у патрубка пристыковалась.
+     *
+     * @return сколько клеток заменено; −1 — часть клеток машины не загружена (повторить позже)
+     */
+    public static int migratePortCells(Level level, BlockPos controller) {
+        if (!level.isLoaded(controller)) return 0;
+        BlockState cs = level.getBlockState(controller);
+        if (!(cs.getBlock() instanceof PcBlock pc) || pc.spec.footprint.isSingle() || !pc.isController(cs)) return 0;
+        Direction f = pc.facing(cs);
+        List<Footprint.Cell> todo = new java.util.ArrayList<>();
+        for (Footprint.Cell c : pc.spec.footprint.cells(controller, f)) {
+            if (c.isAnchor()) continue;
+            if (!level.isLoaded(c.pos())) return -1;
+            BlockState s = level.getBlockState(c.pos());
+            if (!s.is(PcBlocks.MULTIBLOCK_PART.get()) || !MultiblockPartBlock.anchor(s, c.pos()).equals(c.pos().subtract(c.offsetFromAnchor())))
+                continue;
+            if (pc.portCellOr(s, controller, f, c).is(PcBlocks.PORT_CELL.get())) todo.add(c);
+        }
+        if (!todo.isEmpty()) relocating(() -> {
+            for (Footprint.Cell c : todo) {
+                BlockState s = level.getBlockState(c.pos());
+                level.setBlock(c.pos(), PcBlocks.PORT_CELL.get().defaultBlockState().setValue(MultiblockPartBlock.CELL, s.getValue(MultiblockPartBlock.CELL)),
+                        Block.UPDATE_ALL);
+            }
+        });
+        return todo.size();
     }
 
     /** Состояние клетки-части; машины ставят на место вала порт Create ({@code kinetic_port}). */

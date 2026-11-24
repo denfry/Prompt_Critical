@@ -88,7 +88,8 @@ public final class FilmAudit {
                 for (Footprint.Cell c : pc.spec().footprint().cells(p, pc.facing(have))) {
                     if (c.pos().equals(p)) continue;
                     BlockState s = level.getBlockState(c.pos());
-                    if (!s.is(PcBlocks.MULTIBLOCK_PART.get()) && !s.is(PcBlocks.KINETIC_PORT.get()) && !s.is(want)) {
+                    if (!s.is(PcBlocks.MULTIBLOCK_PART.get()) && !s.is(PcBlocks.KINETIC_PORT.get()) && !s.is(PcBlocks.PORT_CELL.get())
+                            && !s.is(want)) {
                         broken.add(c.pos().toShortString() + " " + BuiltInRegistries.BLOCK.getKey(s.getBlock()).getPath());
                         if (broken.size() >= 4) break;
                     }

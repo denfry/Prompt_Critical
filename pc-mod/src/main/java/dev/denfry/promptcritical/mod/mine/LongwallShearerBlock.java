@@ -42,7 +42,7 @@ public final class LongwallShearerBlock extends PcDeviceBlock {
 
     @Override
     @Nullable
-    public BlockEntity newBlockEntity(BlockPos pos, BlockState state) {
-        return isController(state) ? new LongwallShearerBlockEntity(pos, state) : null;
+    protected BlockEntity controllerEntity(BlockPos pos, BlockState state) {
+        return new LongwallShearerBlockEntity(pos, state);
     }
 }

@@ -3,9 +3,12 @@ package dev.denfry.promptcritical.mod.gametest;
 import com.simibubi.create.AllBlocks;
 import com.simibubi.create.content.kinetics.motor.CreativeMotorBlockEntity;
 import dev.denfry.promptcritical.mod.PromptCritical;
+import dev.denfry.promptcritical.mod.block.PcBlock;
 import dev.denfry.promptcritical.mod.boiler.KineticPortBlock;
 import dev.denfry.promptcritical.mod.client.whole.WholeModelHost;
 import dev.denfry.promptcritical.mod.multiblock.Footprint;
+import dev.denfry.promptcritical.mod.multiblock.MultiblockPartBlock;
+import dev.denfry.promptcritical.mod.multiblock.PortCellBlockEntity;
 import dev.denfry.promptcritical.mod.multiblock.WholePorts;
 import dev.denfry.promptcritical.mod.production.LineHeaterBlockEntity;
 import dev.denfry.promptcritical.mod.production.MainlinePumpBlockEntity;
@@ -22,8 +25,10 @@ import net.minecraft.gametest.framework.GameTest;
 import net.minecraft.gametest.framework.GameTestHelper;
 import net.minecraft.world.level.block.Block;
 import net.minecraft.world.level.block.Blocks;
+import net.minecraft.world.level.block.PipeBlock;
 import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.level.block.state.properties.BlockStateProperties;
+import net.neoforged.neoforge.capabilities.Capabilities;
 import net.neoforged.neoforge.fluids.FluidStack;
 import net.neoforged.neoforge.fluids.capability.IFluidHandler;
 import net.neoforged.neoforge.gametest.GameTestHolder;
@@ -56,6 +61,71 @@ public final class OilTransportGameTests {
         h.setBlock(p, north(block));
         h.assertTrue(h.getBlockEntity(p) instanceof WholeModelHost host && id.equals(host.wholeModelId()), id + " has its whole model");
         return (WholeModelHost) h.getBlockEntity(p);
+    }
+
+    /** Труба Create в клетке {@code at} после пересчёта формы по соседям. */
+    private static BlockState settledPipe(GameTestHelper h, BlockPos at) {
+        h.setBlock(at, AllBlocks.FLUID_PIPE.get().defaultBlockState());
+        BlockPos abs = h.absolutePos(at);
+        BlockState s = Block.updateFromNeighbourShapes(h.getLevel().getBlockState(abs), h.getLevel(), abs);
+        h.getLevel().setBlock(abs, s, Block.UPDATE_CLIENTS);
+        return s;
+    }
+
+    /**
+     * Труба Create стыкуется с патрубком машины реального масштаба: у клетки патрубка есть BE (Create без BE трубу не
+     * подводит). Всас насоса — обычная клетка-часть.
+     */
+    @GameTest(template = TEMPLATE, timeoutTicks = 20)
+    public static void createPipeDocksAtThePumpSuctionNozzle(GameTestHelper h) {
+        BlockPos p = new BlockPos(4, 1, 4);
+        build(h, p, "mainline_pump_real", PcBlocks.FP_MAINLINE_PUMP_REAL, PcBlocks.MAINLINE_PUMP_REAL.get());
+        BlockPos suction = p.offset(-1, 0, -1);
+        h.assertTrue(h.getBlockState(suction).is(PcBlocks.PORT_CELL.get()), "the suction nozzle cell is a port cell");
+        h.assertTrue(h.getBlockEntity(suction) instanceof PortCellBlockEntity, "the suction nozzle cell has a block entity");
+        h.assertTrue(h.getBlockState(p.offset(0, 0, -1)).is(PcBlocks.MULTIBLOCK_PART.get()), "a plain shell cell stays a part");
+        h.assertTrue(settledPipe(h, suction.north()).getValue(PipeBlock.SOUTH), "the pipe turns into the suction nozzle");
+        h.succeed();
+    }
+
+    /**
+     * Насос из мира 1.0.1: на клетке всаса — обычная часть без BE. Перевод меняет её на клетку-патрубок, не трогая
+     * машину, и бак всаса снова доступен трубе.
+     */
+    @GameTest(template = TEMPLATE, timeoutTicks = 20)
+    public static void oldPumpGetsItsSuctionPortCellBack(GameTestHelper h) {
+        BlockPos p = new BlockPos(4, 1, 4);
+        build(h, p, "mainline_pump_real", PcBlocks.FP_MAINLINE_PUMP_REAL, PcBlocks.MAINLINE_PUMP_REAL.get());
+        var level = h.getLevel();
+        BlockPos suction = h.absolutePos(p.offset(-1, 0, -1)), controller = h.absolutePos(p);
+        BlockState port = level.getBlockState(suction);
+        // как в старом мире: обычная часть с тем же смещением от якоря
+        PcBlock.relocating(() -> level.setBlock(suction, PcBlocks.MULTIBLOCK_PART.get().defaultBlockState()
+                .setValue(MultiblockPartBlock.CELL, port.getValue(MultiblockPartBlock.CELL)), Block.UPDATE_CLIENTS));
+        h.assertTrue(level.getBlockEntity(suction) == null, "an old part has no block entity");
+        h.assertTrue(PcBlock.migratePortCells(level, controller) == 1, "one port cell to bring back");
+        h.assertTrue(level.getBlockState(suction).is(PcBlocks.PORT_CELL.get()), "the suction cell is a port cell again");
+        h.assertTrue(level.getBlockEntity(suction) instanceof PortCellBlockEntity, "with its block entity");
+        h.assertTrue(level.getBlockState(controller).is(PcBlocks.MAINLINE_PUMP_REAL.get()), "the pump stands");
+        h.assertTrue(level.getCapability(Capabilities.FluidHandler.BLOCK, suction, Direction.NORTH) != null, "the suction tank is at the nozzle");
+        h.assertTrue(PcBlock.migratePortCells(level, controller) == 0, "nothing left to change");
+        h.succeed();
+    }
+
+    /** Приёмный патрубок РВС — якорь сегмента: BE клетки-патрубка у него свой, бак отдаёт только западная грань. */
+    @GameTest(template = TALL, timeoutTicks = 20)
+    public static void createPipeDocksAtTheTankReceiveNozzleOnASegmentAnchor(GameTestHelper h) {
+        BlockPos t = new BlockPos(7, 1, 7);
+        build(h, t, "oil_tank_real", PcBlocks.FP_OIL_TANK_REAL, PcBlocks.OIL_TANK_REAL.get());
+        BlockPos receive = t.offset(-6, 0, 0);
+        h.assertTrue(h.getBlockState(receive).is(PcBlocks.OIL_TANK_REAL.get()), "the receive nozzle sits on a segment anchor");
+        h.assertTrue(h.getBlockEntity(receive) instanceof PortCellBlockEntity, "the anchor nozzle has a port block entity");
+        h.assertTrue(h.getLevel().getCapability(Capabilities.FluidHandler.BLOCK, h.absolutePos(receive), Direction.WEST) != null,
+                "the receive nozzle gives the tank");
+        h.assertTrue(h.getLevel().getCapability(Capabilities.FluidHandler.BLOCK, h.absolutePos(receive), Direction.UP) == null,
+                "the nozzle is on the west face only");
+        h.assertTrue(settledPipe(h, receive.west()).getValue(PipeBlock.EAST), "the pipe turns into the receive nozzle");
+        h.succeed();
     }
 
     private static FluidStack crude(int mb) {

@@ -29,6 +29,7 @@ public final class FoundryBinding {
         FoundryComponents.COMPONENTS.register(modBus);
         FoundryBlockEntities.BLOCK_ENTITIES.register(modBus);
         modBus.addListener(FoundryBinding::registerCapabilities);
+        dev.denfry.promptcritical.mod.multiblock.PortCellMigration.register();
         SimBindings.registerSubsystem(level -> new FoundrySubsystem());
         SimBindings.registerSubsystem(level -> new CoalPrepSubsystem());
         SimBindings.registerSubsystem(level -> new dev.denfry.promptcritical.sim.mining.DenseMediumSubsystem());
@@ -50,16 +51,22 @@ public final class FoundryBinding {
         event.registerBlock(Capabilities.ItemHandler.BLOCK, (level, pos, state, be, side) -> {
             FoundryDevice d = port(level, pos, MultiblockPartBlock.anchor(state, pos), side);
             return d == null ? null : d.items(side);
-        }, PcBlocks.MULTIBLOCK_PART.get());
+        }, PcBlocks.MULTIBLOCK_PART.get(), PcBlocks.PORT_CELL.get());
         event.registerBlock(Capabilities.FluidHandler.BLOCK,
-                (level, pos, state, be, side) -> portFluids(level, pos, MultiblockPartBlock.anchor(state, pos), side), PcBlocks.MULTIBLOCK_PART.get());
-        // машины реального масштаба: якоря сегментов без BE тоже бывают клеткой патрубка
+                (level, pos, state, be, side) -> portFluids(level, pos, MultiblockPartBlock.anchor(state, pos), side), PcBlocks.MULTIBLOCK_PART.get(),
+                PcBlocks.PORT_CELL.get());
+        // машины реального масштаба: якорь сегмента тоже бывает клеткой патрубка (тогда у него пустой BE клетки-патрубка)
         Block[] whole = net.minecraft.core.registries.BuiltInRegistries.BLOCK.stream().filter(PcBlocks::isWholeModel).toArray(Block[]::new);
         event.registerBlock(Capabilities.ItemHandler.BLOCK, (level, pos, state, be, side) -> {
-            FoundryDevice d = be != null ? null : port(level, pos, pos, side);
+            FoundryDevice d = ownEntity(be) ? null : port(level, pos, pos, side);
             return d == null ? null : d.items(side);
         }, whole);
-        event.registerBlock(Capabilities.FluidHandler.BLOCK, (level, pos, state, be, side) -> be != null ? null : portFluids(level, pos, pos, side), whole);
+        event.registerBlock(Capabilities.FluidHandler.BLOCK, (level, pos, state, be, side) -> ownEntity(be) ? null : portFluids(level, pos, pos, side), whole);
+    }
+
+    /** У клетки свой BE машины (контроллер): его баки отдаёт провайдер BE, а не порт. */
+    private static boolean ownEntity(@Nullable BlockEntity be) {
+        return be != null && !(be instanceof dev.denfry.promptcritical.mod.multiblock.PortCellBlockEntity);
     }
 
     /**

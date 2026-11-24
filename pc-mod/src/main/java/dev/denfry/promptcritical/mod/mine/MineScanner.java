@@ -231,7 +231,7 @@ public final class MineScanner {
                             boreAir.putIfAbsent(q, p);
                             out.anchors.add(q);
                         } else if (s.is(PcBlocks.MINE_DISPATCH_CABINET.get()) || s.is(PcBlocks.MINE_DRAINAGE_PUMP.get())
-                                || s.is(PcBlocks.MINE_DRAINAGE_PUMP_GEARED.get()) || s.is(PcBlocks.MULTIBLOCK_PART.get())
+                                || s.is(PcBlocks.MINE_DRAINAGE_PUMP_GEARED.get()) || s.is(PcBlocks.MULTIBLOCK_PART.get()) || s.is(PcBlocks.PORT_CELL.get())
                                 || s.is(PcBlocks.KINETIC_PORT.get())) {
                             BlockPos ctrl = controller(q, s);
                             BlockState cs = ctrl == null ? null : level.getBlockState(ctrl);
@@ -395,7 +395,7 @@ public final class MineScanner {
                 } else if (b == PcBlocks.CANARY_CAGE.get()) {
                     out.cages.add(k);
                 } else if (b == PcBlocks.MINE_SUPPORT.get() || b == PcBlocks.POWERED_ROOF_SUPPORT.get()
-                        || b == PcBlocks.POWERED_ROOF_SUPPORT_REAL.get() || b == PcBlocks.MULTIBLOCK_PART.get()) {
+                        || b == PcBlocks.POWERED_ROOF_SUPPORT_REAL.get() || b == PcBlocks.MULTIBLOCK_PART.get() || b == PcBlocks.PORT_CELL.get()) {
                     BlockPos ctrl = controller(k, s);
                     BlockState cs = level.getBlockState(ctrl);
                     if (cs.is(PcBlocks.MINE_SUPPORT.get())) {

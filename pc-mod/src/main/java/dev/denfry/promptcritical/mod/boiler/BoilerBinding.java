@@ -44,11 +44,13 @@ public final class BoilerBinding {
         event.registerBlock(Capabilities.FluidHandler.BLOCK, (level, pos, state, be, side) -> {
             FireTubeBoilerBlockEntity b = port(level, pos, side);
             return b == null ? null : b.feedInput();
-        }, PcBlocks.FIRE_TUBE_BOILER.get(), PcBlocks.LANCASHIRE_BOILER.get(), PcBlocks.MULTIBLOCK_PART.get());
+        }, PcBlocks.FIRE_TUBE_BOILER.get(), PcBlocks.LANCASHIRE_BOILER.get(), PcBlocks.MULTIBLOCK_PART.get(),
+                PcBlocks.PORT_CELL.get());
         event.registerBlock(Capabilities.ItemHandler.BLOCK, (level, pos, state, be, side) -> {
             FireTubeBoilerBlockEntity b = port(level, pos, side);
             return b == null ? null : b.slagOutput();
-        }, PcBlocks.FIRE_TUBE_BOILER.get(), PcBlocks.LANCASHIRE_BOILER.get(), PcBlocks.MULTIBLOCK_PART.get());
+        }, PcBlocks.FIRE_TUBE_BOILER.get(), PcBlocks.LANCASHIRE_BOILER.get(), PcBlocks.MULTIBLOCK_PART.get(),
+                PcBlocks.PORT_CELL.get());
         event.registerBlockEntity(Capabilities.ItemHandler.BLOCK, BoilerBlockEntities.GRATE_STOKER.get(),
                 (be, side) -> be.items((Direction) side));    }
 }

@@ -29,6 +29,14 @@ public final class BoilerBlockEntities {
             type("kinetic_port", KineticPortBlockEntity::new, PcBlocks.KINETIC_PORT);
     public static final DeferredHolder<BlockEntityType<?>, BlockEntityType<KineticInputBlockEntity>> KINETIC_INPUT =
             type("kinetic_input", KineticInputBlockEntity::new, PcBlocks.KINETIC_PORT);
+    /**
+     * Пустой BE клетки-патрубка машины реального масштаба: на клетке {@code port_cell} и на якоре сегмента любой машины
+     * с цельной моделью, где нарисован патрубок.
+     */
+    public static final DeferredHolder<BlockEntityType<?>, BlockEntityType<dev.denfry.promptcritical.mod.multiblock.PortCellBlockEntity>> PORT_CELL =
+            BLOCK_ENTITIES.register("port_cell", () -> BlockEntityType.Builder.of(dev.denfry.promptcritical.mod.multiblock.PortCellBlockEntity::new,
+                    java.util.stream.Stream.concat(java.util.stream.Stream.of(PcBlocks.PORT_CELL.get()),
+                            net.minecraft.core.registries.BuiltInRegistries.BLOCK.stream().filter(PcBlocks::isWholeModel)).toArray(Block[]::new)).build(null));
     public static final DeferredHolder<BlockEntityType<?>, BlockEntityType<PressureGaugeBlockEntity>> PRESSURE_GAUGE =
             type("instrument_pressure", PressureGaugeBlockEntity::new, PcBlocks.INSTRUMENT_PRESSURE);
 

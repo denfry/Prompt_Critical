@@ -45,7 +45,7 @@ public final class FilmCatalog {
         if (!Files.exists(request)) return;
         List<Entry> out = new ArrayList<>();
         for (Block b : PcBlocks.topologyRelevant()) {
-            if (b == PcBlocks.MULTIBLOCK_PART.get() || b == PcBlocks.KINETIC_PORT.get()) continue;
+            if (b == PcBlocks.MULTIBLOCK_PART.get() || b == PcBlocks.KINETIC_PORT.get() || b == PcBlocks.PORT_CELL.get()) continue;
             List<int[]> cells = new ArrayList<>();
             boolean facing = false;
             if (b instanceof PcBlock pc) {
