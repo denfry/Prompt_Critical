@@ -204,12 +204,11 @@ public class IntercomStationBlockEntity extends DeviceBlockEntity implements Fou
         } else if (id == PaPanels.B_PREV || id == PaPanels.B_NEXT) {
             zone = Math.floorMod(zone - 1 + (id == PaPanels.B_NEXT ? 1 : -1), PlantLoudspeakerBlockEntity.MAX_ZONE) + 1;
         } else if (id >= PaPanels.B_MESSAGE0 && id < PaPanels.B_MESSAGE0 + PaMessage.values().length) {
-            if (!powered) {
+            int sent = announce(zone, PaMessage.values()[id - PaPanels.B_MESSAGE0]);
+            if (sent < 0) {
                 player.displayClientMessage(PaPanels.FAULT.get().withStyle(ChatFormatting.RED), true);
                 return;
             }
-            PaMessage msg = PaMessage.values()[id - PaPanels.B_MESSAGE0];
-            int sent = PaSystem.announce(sl, team, zone, msg);
             player.displayClientMessage(sent > 0 ? PaPanels.SENT.get(sent) : PaPanels.NOT_SENT.get(), true);
         }
         setChanged();
@@ -227,24 +226,53 @@ public class IntercomStationBlockEntity extends DeviceBlockEntity implements Fou
      * @return число громкоговорителей, которые его передали; 0 — отказ (чужой пульт, нет питания, пауза, зона пуста или занята)
      */
     public int page(ServerPlayer player, String text) {
-        if (!(level instanceof ServerLevel sl)) return 0;
         if (!mayUse(player)) {
             player.displayClientMessage(PaPanels.NOT_YOURS.get().withStyle(ChatFormatting.RED), true);
             return 0;
         }
-        if (!powered) {
-            player.displayClientMessage(PaPanels.FAULT.get().withStyle(ChatFormatting.RED), true);
-            return 0;
-        }
+        CallResult r = call(channel(), zone, text);
+        Component msg = r.refusal() == null ? PaPanels.SENT.get(r.sent()) : switch (r.refusal()) {
+            case NO_POWER -> PaPanels.FAULT.get().withStyle(ChatFormatting.RED);
+            case WAIT -> PaPanels.PAGE_WAIT.get((r.waitTicks() + 19) / 20);
+            case NOT_SENT -> PaPanels.NOT_SENT.get();
+        };
+        player.displayClientMessage(msg, true);
+        return r.sent();
+    }
+
+    /** Почему пульт не передал текстовый вызов. */
+    public enum Refusal {
+        NO_POWER, WAIT, NOT_SENT
+    }
+
+    /** Итог вызова: {@code sent} громкоговорителей или отказ; {@code waitTicks} — сколько ждать паузы при {@link Refusal#WAIT}. */
+    public record CallResult(int sent, @Nullable Refusal refusal, long waitTicks) {
+    }
+
+    /**
+     * Текстовый вызов от пульта по каналу {@code channel} в зону {@code zone} — общий путь щита и Lua ({@code pc_ops}):
+     * питание пульта, пауза {@code ops.pa_page_cooldown_s} от последнего переданного вызова, громкоговорители команды
+     * пульта. Текст уже проверен вызывающим.
+     */
+    public CallResult call(PaChannel channel, int zone, String text) {
+        if (!(level instanceof ServerLevel sl) || !powered) return new CallResult(0, Refusal.NO_POWER, 0);
         long now = sl.getGameTime();
-        if (now < nextPage) {
-            player.displayClientMessage(PaPanels.PAGE_WAIT.get((nextPage - now + 19) / 20), true);
-            return 0;
-        }
-        int sent = PaSystem.page(sl, team, channel(), zone, text);
-        if (sent > 0) nextPage = now + 20L * dev.denfry.promptcritical.mod.config.ServerConfig.PA_PAGE_COOLDOWN_S.get();
-        player.displayClientMessage(sent > 0 ? PaPanels.SENT.get(sent) : PaPanels.NOT_SENT.get(), true);
-        return sent;
+        if (now < nextPage) return new CallResult(0, Refusal.WAIT, nextPage - now);
+        int sent = PaSystem.page(sl, team, channel, zone, text);
+        if (sent == 0) return new CallResult(0, Refusal.NOT_SENT, 0);
+        nextPage = now + 20L * dev.denfry.promptcritical.mod.config.ServerConfig.PA_PAGE_COOLDOWN_S.get();
+        return new CallResult(sent, null, 0);
+    }
+
+    /**
+     * Предзаписанное сообщение от пульта в зону {@code zone} (у сообщений во все зоны она не важна) — общий путь щита и
+     * Lua.
+     *
+     * @return число передавших громкоговорителей; −1 — у пульта нет питания
+     */
+    public int announce(int zone, PaMessage msg) {
+        if (!(level instanceof ServerLevel sl) || !powered) return -1;
+        return PaSystem.announce(sl, team, zone, msg);
     }
 
     // ------------------------------------------------------------------ руки и сохранение

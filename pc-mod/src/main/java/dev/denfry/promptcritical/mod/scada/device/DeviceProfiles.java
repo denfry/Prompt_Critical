@@ -52,6 +52,8 @@ import org.jetbrains.annotations.Nullable;
  * запись маркеров {@code writeMarker}/{@code writeWord}; {@code setMode} — ключ ЦП, только руками.</li>
  * <li>{@code pc_sis} (03d §3d.14.2): логический контроллер ПАЗ — только чтение; {@code reset}, {@code setBypass},
  * {@code requestTrip}, {@code setSetpoint}, {@code setMatrix} — {@code E_HARDWARE_ONLY}.</li>
+ * <li>{@code pc_ops} (13 §13.3.4): пульт ГГС — {@code page(channel, zone, text)}, {@code announce(message, zone)}
+ * ({@link PaProfile}).</li>
  * <li>{@code pc_well}, {@code pc_drilling} (09): фонтанная арматура, станок-качалка, пульт бурильщика.</li>
  * <li>Остальные типы 00 §0.7.2 — по классам машин в {@link #GENERIC}; методы — общие.</li>
  * </ul>
@@ -192,6 +194,8 @@ public final class DeviceProfiles {
                         return t -> ((dev.denfry.promptcritical.mod.drilling.DrillersConsoleBlockEntity) t).openComponent(comp, null);
                     }).build());
             case "GasolineBlenderBlockEntity" -> CACHE.computeIfAbsent(simple, k -> blender());
+            // ГГС (13 §13.3.4): сообщение и текстовый вызов от пульта
+            case "IntercomStationBlockEntity" -> CACHE.computeIfAbsent(simple, k -> PaProfile.build());
             // электросеть (07 §7.17.1–7.17.3): свои методы поверх общих
             case "ShaftGeneratorBlockEntity" -> CACHE.computeIfAbsent(simple, k -> GridProfiles.generator("SHAFT"));
             case "DieselGeneratorBlockEntity" -> CACHE.computeIfAbsent(simple, k -> GridProfiles.generator("DIESEL"));
