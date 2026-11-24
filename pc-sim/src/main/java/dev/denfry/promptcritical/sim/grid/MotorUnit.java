@@ -22,6 +22,13 @@ public final class MotorUnit extends GridUnit {
     double speedReferencePu = 1;
     MotorId motor;
     double[] carried;
+    /**
+     * Нулевая защита пускателя (энергопроект 2, решение владельца 2026-11-23): двигатель, вышедший на скорость, при
+     * напряжении ниже {@link PowerBoard#UV_TRIP_PU} дольше {@link PowerBoard#UV_DELAY_S} с отключается и сам не
+     * включается. Пусковой провал напряжения не считается. Выключается для стенда (GameTest).
+     */
+    boolean uvRelease = true, uvArmed, uvTripped;
+    double uvUnderS;
 
     MotorUnit(SimId id) {
         super(id, 1);
@@ -64,8 +71,39 @@ public final class MotorUnit extends GridUnit {
     /** Пускатель: «пуск» — прямой пуск, «стоп» — выбег. */
     public void setContactor(boolean on) {
         contactor = on;
+        if (on) uvTripped = false;
         if (motor != null && owner.ready()) owner.grid().setMotorConnected(motor, on);
         else if (carried != null) carried[3] = on ? 1 : 0;
+    }
+
+    /** Контактор отпал по нулевой защите и ждёт пуска. */
+    public boolean undervoltageTripped() {
+        return uvTripped;
+    }
+
+    /** Включить или снять нулевую защиту (стенд). */
+    public void setUndervoltageRelease(boolean on) {
+        uvRelease = on;
+        if (!on) uvUnderS = 0;
+    }
+
+    /** Перед тиком сети: нулевая защита по напряжению прошлого шага. */
+    void beforeTick(PowerGrid g, double dt) {
+        if (motor == null || !owner.ready() || node(0) == NO_NODE) return;
+        double v = owner.voltageV(node(0)) / (mediumVoltage ? 6300 : 400);
+        if (v >= PowerBoard.UV_TRIP_PU) {
+            if (g.motorState(motor) == MotorState.RUNNING) uvArmed = true;
+            uvUnderS = 0;
+            return;
+        }
+        if (!uvRelease || !uvArmed || !g.motorConnected(motor)) return;
+        uvUnderS += dt;
+        if (uvUnderS >= PowerBoard.UV_DELAY_S) {
+            setContactor(false);
+            uvTripped = true;
+            uvArmed = false;
+            uvUnderS = 0;
+        }
     }
 
     /** Пусковой модуль в блоке двигателя (07 §7.6.3); блок пишет его каждый тик. */
@@ -164,6 +202,7 @@ public final class MotorUnit extends GridUnit {
         out.putBoolean("mv", mediumVoltage);
         out.putInt("gear", gear);
         out.putBoolean("contactor", contactor);
+        out.putBoolean("uv_tripped", uvTripped);
         if (carried != null) out.putDoubles("motor", carried, carried.length);
     }
 
@@ -173,6 +212,7 @@ public final class MotorUnit extends GridUnit {
         mediumVoltage = in.getBoolean("mv");
         gear = Math.floorMod(in.getInt("gear"), GEARS.length);
         contactor = in.getBoolean("contactor");
+        uvTripped = in.has("uv_tripped") && in.getBoolean("uv_tripped");
         carried = in.has("motor") ? in.getDoubles("motor") : null;
         if (carried != null && carried.length != PowerGrid.MOTOR_STATE) carried = null;
     }

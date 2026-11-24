@@ -307,6 +307,55 @@ class GridSubsystemTest {
         assertThat(feeder.protectionTrips()).isEqualTo(1);
     }
 
+    /** Двигатель 0,4 кВ 100 кВт за трансформатором от генератора 6,3 кВ: разогнан вхолостую и несёт 20 кВт. */
+    private MotorUnit runningMotor(SimulationWorld w, GeneratorUnit[] gen) {
+        gen[0] = generator(w, BUS_A, 0);
+        cell(w, BUS_A, BUS_B, true);
+        grid(w).transformer(device(w, "distribution_transformer")).setNodes(BUS_B, BUS_D);
+        MotorUnit motor = grid(w).motor(device(w, "electric_motor"));
+        motor.setNodes(BUS_D);
+        motor.setStarter(MotorStarter.SOFT);
+        motor.setContactor(true);
+        run(w, 30); // разгон вхолостую: нагрузка постоянной мощности на малой скорости не даёт разогнаться
+        motor.setLoadPowerW(20e3);
+        run(w, 5);
+        assertThat(motor.state()).isEqualTo(MotorState.RUNNING);
+        return motor;
+    }
+
+    /** Нулевая защита двигателя (энергопроект 2): провал ниже 0,85 о.е. дольше 0,5 с отключает его, самозапуска нет. */
+    @Test
+    void motorDropsOutOnUndervoltageAndDoesNotRestartItself() {
+        SimulationWorld w = world();
+        GeneratorUnit[] g = new GeneratorUnit[1];
+        MotorUnit motor = runningMotor(w, g);
+        g[0].setFieldOn(false);
+        run(w, 3);
+        assertThat(motor.undervoltageTripped()).isTrue();
+        assertThat(motor.contactorClosed()).isFalse();
+        g[0].setFieldOn(true);
+        run(w, 10);
+        assertThat(motor.contactorClosed()).isFalse();
+        assertThat(motor.state()).isNotEqualTo(MotorState.RUNNING);
+        motor.setLoadPowerW(0); // вал Create стоит, пока двигатель не вышел на скорость (как в моде)
+        motor.setContactor(true);
+        assertThat(motor.undervoltageTripped()).isFalse();
+        run(w, 30);
+        assertThat(motor.state()).isEqualTo(MotorState.RUNNING);
+    }
+
+    @Test
+    void benchMotorWithoutUndervoltageReleaseRidesThroughTheBlackout() {
+        SimulationWorld w = world();
+        GeneratorUnit[] g = new GeneratorUnit[1];
+        MotorUnit motor = runningMotor(w, g);
+        motor.setUndervoltageRelease(false);
+        g[0].setFieldOn(false);
+        run(w, 3);
+        assertThat(motor.undervoltageTripped()).isFalse();
+        assertThat(motor.contactorClosed()).isTrue();
+    }
+
     /**
      * Постройки рядом пересобирают сеть каждые 4 тика, пока идёт КЗ: выдержка МТЗ при этом не сбрасывается, и
      * защита отключает в те же 2 с. Раньше каждая пересборка обнуляла интеграл обратнозависимой характеристики.
