@@ -384,8 +384,9 @@ public final class GridGameTests {
                 .thenWaitUntil(() -> h.assertTrue(cell(h).breakerState() == BreakerState.OPEN, "breaker open " + diag(h)
                         + " faulted " + faultedAt[0] + " tripped " + trippedAt[0]))
                 .thenExecute(() -> {
-                    // пробой — при подаче напряжения; пересборка сети соседним тестом добавляет такт-другой до новой топологии
-                    h.assertTrue(faultedAt[0] - closedAt[0] <= 5, "breakdown on energizing: " + (faultedAt[0] - closedAt[0]));
+                    // пробой — при подаче напряжения; пересборка сети соседними тестами добавляет несколько тактов до новой
+                    // топологии (в полном прогоне видели 6), поэтому допуск полсекунды — всё ещё много меньше 2 с защиты
+                    h.assertTrue(faultedAt[0] - closedAt[0] <= 10, "breakdown on energizing: " + (faultedAt[0] - closedAt[0]));
                     h.assertTrue(trippedAt[0] - faultedAt[0] <= 40, "overcurrent trip within 2 s: " + (trippedAt[0] - faultedAt[0]));
                     h.assertTrue(cell(h).protectionTrips() == 1, "one protection trip: " + cell(h).protectionTrips() + " " + diag(h)
                             + " closed " + closedAt[0] + " faulted " + faultedAt[0] + " tripped " + trippedAt[0]);

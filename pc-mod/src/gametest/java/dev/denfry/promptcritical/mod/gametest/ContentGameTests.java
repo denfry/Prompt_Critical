@@ -217,6 +217,24 @@ public final class ContentGameTests {
         h.succeed();
     }
 
+    /** Достроенный VVER-70 засчитывается и за реактор ВВЭР старой серии, которого ждёт задание t/pwr. */
+    @GameTest(template = SMALL)
+    public static void realScaleReactorCountsAsItsLegacyTwin(GameTestHelper h) {
+        // FakePlayer не пишет статистику: нужен настоящий ServerPlayer, как в тесте двойника тигля
+        var player = new net.minecraft.server.level.ServerPlayer(h.getLevel().getServer(), h.getLevel(),
+                new GameProfile(java.util.UUID.randomUUID(), "pc_twin_owner"),
+                net.minecraft.server.level.ClientInformation.createDefault());
+        var legacy = PcBlocks.PWR_REACTOR.get().asItem();
+        int before = player.getStats().getValue(net.minecraft.stats.Stats.ITEM_USED.get(legacy));
+        dev.denfry.promptcritical.mod.site.ConstructionSiteBlockEntity.credit(player, "vver70_reactor_real",
+                PcBlocks.VVER70_REACTOR_REAL.get());
+        h.assertTrue(player.getStats().getValue(net.minecraft.stats.Stats.ITEM_USED.get(legacy)) == before + 1,
+                "VVER-70 counts as the legacy PWR for the route");
+        h.assertTrue(dev.denfry.promptcritical.mod.site.SitePlans.isTwinTarget(PcBlocks.SFR_REACTOR.get())
+                && dev.denfry.promptcritical.mod.site.SitePlans.isTwinTarget(PcBlocks.POWER_REACTOR.get()), "every legacy reactor has a twin");
+        h.succeed();
+    }
+
     @GameTest(template = SMALL)
     public static void handbookIsConsistent(GameTestHelper h) {
         HandbookManager.Data d = HandbookManager.data();

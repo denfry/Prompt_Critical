@@ -1,5 +1,21 @@
 # Changelog
 
+## 1.1.1 (2026-11-24)
+
+A survival progression fix found by a reachability audit of every item and route task.
+
+### Fixes
+
+- The T branch of the handbook route could not be finished in survival: its tasks asked for the legacy reactors,
+  pressurizer, primary pump and steam generator, which have no recipes since the real-scale reactors replaced them.
+  A finished AM-1, VVER-1000, VVER-70, BWR-240, CANDU NPD, CANDU-6, BOR-60 or BN-600 now counts as the legacy
+  reactor of its type, and their steam generators, coolant pumps and pressurizers count as the legacy loop blocks.
+- The assembly stand drawing had no recipe, so the stand could not be built in survival, and with it the assembled
+  shaft generator, mine hoist, steam engine, main fan, drainage pump and the diesel generator that needs the shaft
+  generator. The drawing is now eight paper around a fastener kit.
+- A GameTest now fails when a route build task or a design drawing has no survival source.
+- The low-voltage motor breakdown GameTest no longer fails when neighbouring tests rebuild the grid in a full run.
+
 ## 1.1.0 (2026-11-24)
 
 Reactor prototypes at real scale, hydrogen power, the I2 and I3 real-scale plants, waste heat for greenhouses,
