@@ -82,7 +82,19 @@ public final class PlacedItemBlockEntity extends DeviceBlockEntity implements Fo
         BlockState st = block.getStateForPlacement(ctx);
         if (st == null) return false;
         BlockPos at = ctx.getClickedPos();
+        // права игрока как у обычной постановки блока: режим приключений, защита спавна и приваты — на каждую клетку объёма
+        if (!player.mayBuild() || !player.mayUseItemAt(at, Direction.UP, held)) return false;
+        if (block instanceof dev.denfry.promptcritical.mod.block.PcBlock pc) {
+            for (var cell : pc.spec().footprint().cells(at, pc.facing(st)))
+                if (!level.mayInteract(player, cell.pos())) return false;
+        } else if (!level.mayInteract(player, at)) return false;
+        net.neoforged.neoforge.common.util.BlockSnapshot snapshot = net.neoforged.neoforge.common.util.BlockSnapshot.create(level.dimension(), level, at);
         if (!level.setBlock(at, st, Block.UPDATE_ALL)) return false;
+        // событие постановки, как у BlockItem: моды защиты могут его отменить — тогда блок снимается
+        if (net.neoforged.neoforge.event.EventHooks.onBlockPlace(player, snapshot, Direction.UP)) {
+            level.removeBlock(at, false);
+            return false;
+        }
         if (level.getBlockEntity(at) instanceof PlacedItemBlockEntity be) be.slot.setStackInSlot(0, held.copyWithCount(1));
         if (!player.isCreative()) held.shrink(1);
         level.playSound(null, at, SoundEvents.CHAIN_PLACE, SoundSource.BLOCKS, 0.8f, 0.7f);
