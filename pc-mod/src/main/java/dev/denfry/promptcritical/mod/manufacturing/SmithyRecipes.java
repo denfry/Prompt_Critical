@@ -151,6 +151,11 @@ public final class SmithyRecipes extends RecipeProvider {
         ShapedRecipeBuilder.shaped(RecipeCategory.MISC, dev.denfry.promptcritical.mod.site.SiteRegistry.HARDENING_FURNACE_REAL_DRAWING.get())
                 .pattern("PPP").pattern("PMP").pattern("PPP").define('P', Items.PAPER).define('M', PcBlocks.HARDENING_FURNACE.get())
                 .unlockedBy("has_hardening_furnace", has(PcBlocks.HARDENING_FURNACE.get())).save(out, id("hardening_furnace_real_drawing"));
+        // у сборочного стенда (18 §18.8.2) нет старой машины: бумага вокруг крепежа ручной работы. Без этого рецепта
+        // стенд, а с ним собранные генератор, подъёмник, паровая машина, вентилятор, водоотлив и дизель в выживании недоступны
+        ShapedRecipeBuilder.shaped(RecipeCategory.MISC, dev.denfry.promptcritical.mod.site.SiteRegistry.ASSEMBLY_STAND_DRAWING.get())
+                .pattern("PPP").pattern("PFP").pattern("PPP").define('P', Items.PAPER).define('F', ManufacturingItems.FASTENER_KIT.get())
+                .unlockedBy("has_fastener_kit", has(ManufacturingItems.FASTENER_KIT.get())).save(out, id("assembly_stand_drawing"));
     }
 
     /**

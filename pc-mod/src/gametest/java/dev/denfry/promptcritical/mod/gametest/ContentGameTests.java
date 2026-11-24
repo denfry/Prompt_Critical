@@ -189,6 +189,34 @@ public final class ContentGameTests {
         h.succeed();
     }
 
+    /**
+     * Каждое задание маршрута «построить» выполнимо в выживании: блок делается рецептом, строится на стройплощадке,
+     * собирается на стенде или засчитывается двойником; каждый чертёж делается рецептом. Ловит старые реакторы без
+     * рецепта и двойника (ветка T стояла) и чертёж сборочного стенда без рецепта.
+     */
+    @GameTest(template = SMALL)
+    public static void everyRouteBuildTaskIsReachableInSurvival(GameTestHelper h) {
+        var server = h.getLevel().getServer();
+        java.util.Set<net.minecraft.world.item.Item> crafted = new java.util.HashSet<>();
+        for (var r : server.getRecipeManager().getRecipes())
+            crafted.add(r.value().getResultItem(server.registryAccess()).getItem());
+        java.util.List<String> stuck = new java.util.ArrayList<>();
+        for (RouteTask t : HandbookManager.data().tasks().values()) {
+            if (!(t.condition() instanceof RouteCondition.Build b) || !PromptCritical.MOD_ID.equals(b.block().getNamespace())) continue;
+            net.minecraft.world.level.block.Block block = BuiltInRegistries.BLOCK.get(b.block());
+            String path = b.block().getPath();
+            boolean ok = crafted.contains(block.asItem()) || dev.denfry.promptcritical.mod.site.SitePlans.get(path) != null
+                    || dev.denfry.promptcritical.mod.site.SitePlans.isTwinTarget(block)
+                    || dev.denfry.promptcritical.mod.manufacturing.MachineSpecManager.data().byOutput(b.block().toString()) != null
+                    || dev.denfry.promptcritical.mod.manufacturing.MachineSpecManager.data().byOutput(path) != null;
+            if (!ok) stuck.add(t.id() + " -> " + b.block());
+        }
+        for (var d : dev.denfry.promptcritical.mod.site.SiteRegistry.drawings())
+            if (!crafted.contains(d.get())) stuck.add("drawing without a recipe: " + d.getId());
+        h.assertTrue(stuck.isEmpty(), "not reachable in survival: " + stuck);
+        h.succeed();
+    }
+
     @GameTest(template = SMALL)
     public static void handbookIsConsistent(GameTestHelper h) {
         HandbookManager.Data d = HandbookManager.data();

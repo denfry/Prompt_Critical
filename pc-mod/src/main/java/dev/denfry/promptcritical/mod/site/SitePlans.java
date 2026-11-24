@@ -486,7 +486,9 @@ public final class SitePlans {
     /**
      * Машина старой серии, которую заменяет машина реального масштаба {@code id}, и сколько её блоков она стоит: игроку,
      * приложившему чертёж, постройка засчитывается и как постановка двойника — задания маршрута, главы и инструкции
-     * справочника (11 §11.1) ждут блоки старой серии. У реакторов двойников нет.
+     * справочника (11 §11.1) ждут блоки старой серии. Реакторы реального масштаба засчитываются за реактор старой серии
+     * своего типа, а их парогенераторы, ГЦН и компенсаторы — за старые блоки контура: у старых реакторов и компенсатора
+     * больше нет рецептов, и без двойника ветка T маршрута в выживании не проходится.
      */
     public record Twin(java.util.function.Supplier<? extends Block> block, int count) {}
 
@@ -534,11 +536,35 @@ public final class SitePlans {
             Map.entry("drawworks_real", new Twin(PcBlocks.DRAWWORKS, 1)),
             Map.entry("mud_pump_real", new Twin(PcBlocks.MUD_PUMP, 1)),
             Map.entry("pumpjack_real", new Twin(PcBlocks.PUMPJACK, 1)),
-            Map.entry("three_phase_separator_real", new Twin(PcBlocks.THREE_PHASE_SEPARATOR, 1)));
+            Map.entry("three_phase_separator_real", new Twin(PcBlocks.THREE_PHASE_SEPARATOR, 1)),
+            Map.entry("am1_reactor", new Twin(PcBlocks.POWER_REACTOR, 1)),
+            Map.entry("vver_reactor", new Twin(PcBlocks.PWR_REACTOR, 1)),
+            Map.entry("vver70_reactor_real", new Twin(PcBlocks.PWR_REACTOR, 1)),
+            Map.entry("vver_pressurizer", new Twin(PcBlocks.PRESSURIZER, 1)),
+            Map.entry("vver70_pressurizer_real", new Twin(PcBlocks.PRESSURIZER, 1)),
+            Map.entry("vver_steam_generator", new Twin(PcBlocks.STEAM_GENERATOR, 1)),
+            Map.entry("vver70_steam_generator_real", new Twin(PcBlocks.STEAM_GENERATOR, 1)),
+            Map.entry("candu_npd_boiler_real", new Twin(PcBlocks.STEAM_GENERATOR, 1)),
+            Map.entry("bor60_steam_generator_real", new Twin(PcBlocks.STEAM_GENERATOR, 1)),
+            Map.entry("vver_coolant_pump", new Twin(PcBlocks.PRIMARY_PUMP, 1)),
+            Map.entry("vver70_coolant_pump_real", new Twin(PcBlocks.PRIMARY_PUMP, 1)),
+            Map.entry("candu_npd_pump_real", new Twin(PcBlocks.PRIMARY_PUMP, 1)),
+            Map.entry("bor60_primary_pump_real", new Twin(PcBlocks.PRIMARY_PUMP, 1)),
+            Map.entry("bwr240_reactor", new Twin(PcBlocks.BWR_REACTOR, 1)),
+            Map.entry("candu_npd_reactor_real", new Twin(PcBlocks.CANDU_REACTOR, 1)),
+            Map.entry("candu6_reactor", new Twin(PcBlocks.CANDU_REACTOR, 1)),
+            Map.entry("bor60_reactor_real", new Twin(PcBlocks.SFR_REACTOR, 1)),
+            Map.entry("bn600_reactor", new Twin(PcBlocks.SFR_REACTOR, 1)));
 
     @Nullable
     public static Twin twin(String id) {
         return TWINS.get(id);
+    }
+
+    /** Засчитывается ли {@code block} старой серии постройкой какой-либо машины реального масштаба. */
+    public static boolean isTwinTarget(Block block) {
+        for (Twin t : TWINS.values()) if (t.block().get() == block) return true;
+        return false;
     }
 
     private SitePlans() {}
