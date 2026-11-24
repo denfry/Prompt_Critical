@@ -74,6 +74,10 @@ public final class RadiationService {
                 "Костный мозг не работает: острая лучевая болезнь III степени (больше 4 Гр)");
         text("extreme", "Lethal dose: acute radiation sickness, grade IV (over 6 Gy)",
                 "Смертельная доза: острая лучевая болезнь IV степени (больше 6 Гр)");
+        text("source_orphan", "ORPHAN SOURCE %s: unseen too long, last at %s %s %s. It keeps radiating there until found",
+                "БЕСХОЗНЫЙ ИСТОЧНИК %s: давно не виден, последний раз — %s %s %s. Он излучает оттуда, пока его не найдут");
+        text("source_destroyed", "Tracked source %s destroyed at %s %s %s: entered in the log",
+                "Учтённый источник %s уничтожен в точке %s %s %s: запись в журнале");
         text("burst", "BLUE FLASH: criticality excursion. Your dose: %s Sv", "ГОЛУБАЯ ВСПЫШКА: СЦР. Ваша доза: %s Зв");
         LANG.put("death.attack.promptcritical.radiation", new String[] {"%1$s died of radiation sickness", "%1$s умер от лучевой болезни"});
         LANG.put("death.attack.promptcritical.radiation.player", new String[] {"%1$s died of radiation sickness while fighting %2$s",
@@ -102,6 +106,16 @@ public final class RadiationService {
         NeoForge.EVENT_BUS.addListener((PlayerEvent.PlayerLoggedOutEvent e) -> {
             BackgroundField.forget(e.getEntity().getUUID());
             RadonField.forget(e.getEntity().getUUID());
+            IODINE.remove(e.getEntity().getUUID());
+        });
+        // учёт доз за жизнь и за год и официальная доза ТЛД переживают смерть (04b §4b.6.1: copyOnDeath); острая — нет
+        NeoForge.EVENT_BUS.addListener((PlayerEvent.Clone e) -> {
+            if (!e.isWasDeath()) return;
+            CompoundTag old = e.getOriginal().getPersistentData().getCompound(TAG), now = new CompoundTag();
+            for (String k : new String[] {LEDGER, OFFICIAL, "ki"}) if (old.contains(k)) now.put(k, old.get(k).copy());
+            if (old.contains("total")) now.putDouble("total", old.getDouble("total"));
+            if (old.contains("internal")) now.putDouble("internal", old.getDouble("internal"));
+            e.getEntity().getPersistentData().put(TAG, now);
         });
     }
 
@@ -150,6 +164,11 @@ public final class RadiationService {
 
     /** Мощность дозы в точке от всех источников, Зв/ч (без фона). */
     public static double rateSvH(ServerLevel level, Vec3 at) {
+        return rateSvH(level, at, e -> 1);
+    }
+
+    /** То же для человека в носимой защите с пропусканием {@code worn(E)} (свинцовый фартук, 04b §4b.7.3). */
+    public static double rateSvH(ServerLevel level, Vec3 at, java.util.function.DoubleUnaryOperator worn) {
         Map<Vec3, Held> m = SOURCES.get(level);
         double sum = 0;
         long now = level.getGameTime();
@@ -159,7 +178,7 @@ public final class RadiationService {
             double r = src.distanceTo(at);
             if (r > RANGE_M) continue;
             List<DoseRate.Layer> layers = ShieldBlocks.between(level, src, at);
-            sum += DoseRate.totalSvH(e.getValue().source, r, layers);
+            sum += DoseRate.totalSvH(e.getValue().source, r, layers, worn);
         }
         List<Positioned> items = ITEMS.get(level);
         if (items != null)
@@ -167,7 +186,7 @@ public final class RadiationService {
                 if (it.until < now) continue;
                 double r = it.at.distanceTo(at);
                 if (r > RANGE_M) continue;
-                sum += DoseRate.totalSvH(it.source, r, ShieldBlocks.between(level, it.at, at));
+                sum += DoseRate.totalSvH(it.source, r, ShieldBlocks.between(level, it.at, at), worn);
             }
         // предметы в контейнерах (R55): свой экран контейнера стоит у источника, дальше слои блоков на прямой
         for (ContainerActivityScan.ContainerSource c : ContainerActivityScan.sources(level)) {
@@ -175,7 +194,7 @@ public final class RadiationService {
             if (r > RANGE_M) continue;
             List<DoseRate.Layer> layers = new java.util.ArrayList<>(c.extraShield());
             layers.addAll(ShieldBlocks.between(level, c.at(), at));
-            sum += DoseRate.totalSvH(c.source(), r, layers);
+            sum += DoseRate.totalSvH(c.source(), r, layers, worn);
         }
         return sum;
     }
@@ -226,6 +245,38 @@ public final class RadiationService {
         return sum;
     }
 
+    /**
+     * Облака выбросов у человека в маске {@code mask} (04b §4b.7.3, §4b.8): [0] — погружение в облако, Зв/ч;
+     * [1] — вдох аэрозолей под маску, Зв/ч; [2] — вдох I-131 под маску, Зв/ч (без йодной профилактики);
+     * [3] — объёмная активность I-131, Бк/м³ (по ней расходуется йодный патрон).
+     */
+    public static double[] cloudParts(ServerLevel level, Vec3 at, dev.denfry.promptcritical.sim.radiation.RadRespirator mask) {
+        double[] out = new double[4];
+        Map<Vec3, java.util.List<Release>> m = RELEASES.get(level);
+        if (m == null) return out;
+        long now = level.getGameTime();
+        for (Map.Entry<Vec3, java.util.List<Release>> e : m.entrySet()) {
+            Vec3 src = e.getKey();
+            double dx = at.x - src.x, dz = at.z - src.z;
+            if (dx * dx + dz * dz > 4 * RANGE_M * RANGE_M) continue;
+            var w = EnvironmentService.sample(level, net.minecraft.core.BlockPos.containing(src), 10);
+            var st = dev.denfry.promptcritical.sim.consequence.GasDispersion.stability(w.meanWindMs(), w.solarWm2());
+            double[] f = dev.denfry.promptcritical.sim.consequence.GasDispersion.windFrame(dx, dz, w.windDirRad());
+            for (Release r : e.getValue()) {
+                if (r.until < now) continue;
+                double bqM3 = dev.denfry.promptcritical.sim.consequence.GasDispersion.plumeKgM3(r.bqS, w.meanWindMs(), st, f[0], f[1]);
+                double outside = dev.denfry.promptcritical.sim.radiation.AirborneDose.svH(r.nuclide, bqM3, 0);
+                double inhaled = dev.denfry.promptcritical.sim.radiation.AirborneDose.svH(r.nuclide, bqM3, mask.inhaledFraction(r.nuclide)) - outside;
+                out[0] += outside;
+                if (r.nuclide == dev.denfry.promptcritical.sim.radiation.Emitter.I131) {
+                    out[2] += inhaled;
+                    out[3] += bqM3;
+                } else out[1] += inhaled;
+            }
+        }
+        return out;
+    }
+
     /** Источник от предмета с активностью на игровое время {@code tick}; {@code null} — у предмета её нет. */
     @org.jetbrains.annotations.Nullable
     public static PointSource itemSource(net.minecraft.world.item.ItemStack stack, long tick) {
@@ -255,11 +306,13 @@ public final class RadiationService {
         List<Positioned> out = new java.util.ArrayList<>();
         java.util.Set<net.minecraft.world.entity.item.ItemEntity> seen = new java.util.HashSet<>();
         for (ServerPlayer p : level.players()) {
+            SourceLedger.sightCarried(level, p);
             PointSource carried = carried(p, now);
             if (!carried.empty()) out.add(new Positioned(p.position().add(0, 0.9, 0), carried, now + HOLD_TICKS));
             for (net.minecraft.world.entity.item.ItemEntity e : level.getEntitiesOfClass(net.minecraft.world.entity.item.ItemEntity.class,
                     p.getBoundingBox().inflate(ITEM_SCAN_M))) {
                 if (!seen.add(e)) continue;
+                SourceLedger.sightOnGround(level, e);
                 PointSource s = itemSource(e.getItem(), now);
                 if (s != null && !s.empty()) out.add(new Positioned(e.position().add(0, 0.2, 0), s, now + HOLD_TICKS));
             }
@@ -286,6 +339,98 @@ public final class RadiationService {
         return data(p).getDouble("rate");
     }
 
+    /** Мощность дозы внешнего облучения у игрока на последнем пересчёте (то, что меряют ЭПД, ТЛД и счётчик), Зв/ч. */
+    public static double externalRateSvH(ServerPlayer p) {
+        return data(p).getDouble("ext");
+    }
+
+    /** Игровые сутки мира (по времени верхнего мира): шкала годового учёта. */
+    public static long day(ServerPlayer p) {
+        return p.server.overworld().getGameTime() / 24000;
+    }
+
+    /** Физические часы мира: шкала йодной профилактики (игровые сутки = 24 физ. ч, R9). */
+    static double hour(ServerPlayer p) {
+        return p.server.overworld().getGameTime() * GAME_S_PER_TICK / 3600;
+    }
+
+    static final String LEDGER = "ledger", OFFICIAL = "official";
+
+    private static dev.denfry.promptcritical.sim.radiation.DoseLedger ledger(CompoundTag d, String key) {
+        if (!d.contains(key)) return new dev.denfry.promptcritical.sim.radiation.DoseLedger();
+        CompoundTag t = d.getCompound(key);
+        var list = t.getList("b", net.minecraft.nbt.Tag.TAG_DOUBLE);
+        double[] b = new double[dev.denfry.promptcritical.sim.radiation.DoseLedger.BUCKETS];
+        for (int i = 0; i < Math.min(b.length, list.size()); i++) b[i] = list.getDouble(i);
+        return new dev.denfry.promptcritical.sim.radiation.DoseLedger(b, t.getLong("last"), t.getDouble("life"));
+    }
+
+    private static void store(CompoundTag d, String key, dev.denfry.promptcritical.sim.radiation.DoseLedger l) {
+        CompoundTag t = new CompoundTag();
+        var list = new net.minecraft.nbt.ListTag();
+        for (double v : l.buckets()) list.add(net.minecraft.nbt.DoubleTag.valueOf(v));
+        t.put("b", list);
+        t.putLong("last", l.lastBucket());
+        t.putDouble("life", l.lifetimeSv());
+        d.put(key, t);
+    }
+
+    /** Доза игрока за последние 365 игровых суток (внешняя и ожидаемая внутренняя), Зв. */
+    public static double annualSv(ServerPlayer p) {
+        return ledger(data(p), LEDGER).annualSv(day(p));
+    }
+
+    /** «Официальная» доза за год — сумма считанных ТЛД (04b §4b.7.1), Зв. */
+    public static double officialAnnualSv(ServerPlayer p) {
+        return ledger(data(p), OFFICIAL).annualSv(day(p));
+    }
+
+    /** Записать считанную с ТЛД дозу в официальный учёт. */
+    public static void recordOfficial(ServerPlayer p, double sv) {
+        CompoundTag d = data(p);
+        var l = ledger(d, OFFICIAL);
+        l.add(day(p), sv);
+        store(d, OFFICIAL, l);
+    }
+
+    private static void ledgerAdd(ServerPlayer p, double sv) {
+        CompoundTag d = data(p);
+        var l = ledger(d, LEDGER);
+        l.add(day(p), sv);
+        store(d, LEDGER, l);
+    }
+
+    private static final Map<java.util.UUID, dev.denfry.promptcritical.sim.radiation.IodineProphylaxis> IODINE = new HashMap<>();
+
+    private static dev.denfry.promptcritical.sim.radiation.IodineProphylaxis iodine(ServerPlayer p) {
+        return IODINE.computeIfAbsent(p.getUUID(), k -> {
+            CompoundTag d = data(p);
+            return d.contains("ki") ? dev.denfry.promptcritical.sim.radiation.IodineProphylaxis.restored(d.getDouble("ki")) : new dev.denfry.promptcritical.sim.radiation.IodineProphylaxis();
+        });
+    }
+
+    /**
+     * Игрок выпил таблетку KI (04b §4b.8.3): блокирование будущих поступлений I-131 на сутки и возврат части дозы от
+     * поступлений последних суток (из дозы за жизнь и внутренней; годовой учёт ведётся по корзинам и не уменьшается).
+     *
+     * @return возвращённая ожидаемая доза, Зв
+     */
+    public static double takeIodide(ServerPlayer p) {
+        double refund = iodine(p).takeTablet(hour(p));
+        CompoundTag d = data(p);
+        d.putDouble("ki", hour(p));
+        if (refund > 0) {
+            d.putDouble("total", Math.max(0, d.getDouble("total") - refund));
+            d.putDouble("internal", Math.max(0, d.getDouble("internal") - refund));
+        }
+        return refund;
+    }
+
+    /** Действует ли сейчас таблетка KI. */
+    public static boolean iodideActive(ServerPlayer p) {
+        return iodine(p).active(hour(p));
+    }
+
     private static CompoundTag data(ServerPlayer p) {
         CompoundTag root = p.getPersistentData();
         if (!root.contains(TAG)) root.put(TAG, new CompoundTag());
@@ -301,6 +446,7 @@ public final class RadiationService {
         CompoundTag d = data(p);
         d.putDouble("total", d.getDouble("total") + sv);
         d.putDouble("internal", d.getDouble("internal") + sv);
+        ledgerAdd(p, sv);
     }
 
     /** Накопленная ожидаемая доза внутреннего облучения, Зв. */
@@ -312,6 +458,7 @@ public final class RadiationService {
         CompoundTag d = data(p);
         d.putDouble("total", d.getDouble("total") + sv);
         d.putDouble("acute", d.getDouble("acute") + sv);
+        ledgerAdd(p, sv);
     }
 
     private static void tick(ServerLevel level) {
@@ -326,18 +473,36 @@ public final class RadiationService {
         ContainerActivityScan.tick(level);
         if (now % 20 != 0) return;
         gatherItems(level, now);
+        SourceLedger.tick(level, now);
         for (ServerPlayer p : level.players()) {
             if (!p.isSpectator() && RadonField.due(now, p)) RadonField.refresh(level, p); // наблюдатель проходит сквозь стены: заливку не тратим
-            double rate = rateSvH(level, p.getEyePosition())
-                    + cloudSvH(level, p.getEyePosition(), dev.denfry.promptcritical.mod.safety.PpeService.aerosolFraction(p)) + BackgroundField.ambientSvH(level, p)
-                    + RadonField.doseSvH(level, p);
+            // внешнее облучение — за фартуком, если он надет; вдох облака — под маску по нуклиду (йод отдельно, 04b §4b.7.3)
+            var mask = dev.denfry.promptcritical.mod.radiation.RadGear.respirator(p);
+            double[] cloud = cloudParts(level, p.getEyePosition(), mask);
+            double ext = rateSvH(level, p.getEyePosition(), dev.denfry.promptcritical.mod.radiation.RadGear.armorTransmission(p)) + cloud[0] + BackgroundField.ambientSvH(level, p);
+            double rate = ext + cloud[1] + RadonField.doseSvH(level, p);
             CompoundTag d = data(p);
             d.putDouble("rate", rate);
+            d.putDouble("ext", ext);
             if (p.isCreative() || p.isSpectator()) continue;
             add(p, rate / 3600);
+            // I-131: ожидаемая доза с йодной профилактикой; йодный патрон тратится, пока в воздухе есть йод
+            if (cloud[2] > 0) addCommitted(p, iodine(p).intake(hour(p), cloud[2] / 3600));
+            if (cloud[3] > 0) cartridge(p);
             d.putDouble("acute", RadiationSickness.recover(d.getDouble("acute"), 20 * GAME_S_PER_TICK / 86400));
             effects(p, level);
         }
+    }
+
+    /** Секунда йодного патрона полнолицевой маски в воздухе с I-131 (вставка каски хранится копией — пишем обратно). */
+    private static void cartridge(ServerPlayer p) {
+        net.minecraft.world.item.ItemStack m = dev.denfry.promptcritical.mod.radiation.RadGear.radMask(p);
+        if (m == null || dev.denfry.promptcritical.mod.radiation.RadGear.cartridge(m) <= 0) return;
+        double left = Math.max(0, dev.denfry.promptcritical.mod.radiation.RadGear.cartridge(m) - 20 * GAME_S_PER_TICK);
+        m.set(dev.denfry.promptcritical.mod.radiation.RadGear.IODINE_CARTRIDGE.get(), left);
+        net.minecraft.world.item.ItemStack head = p.getItemBySlot(net.minecraft.world.entity.EquipmentSlot.HEAD);
+        if (head != m) dev.denfry.promptcritical.mod.safety.SafetyComponents.setInsert(head, m);
+        if (left == 0) p.displayClientMessage(dev.denfry.promptcritical.mod.radiation.RadGearText.msg("cartridge_spent").withStyle(ChatFormatting.GOLD), true);
     }
 
     /** Детерминированные эффекты по острой дозе; сообщение — при переходе на новую ступень. */

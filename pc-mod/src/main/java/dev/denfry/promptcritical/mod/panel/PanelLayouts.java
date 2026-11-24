@@ -26,6 +26,8 @@ public final class PanelLayouts {
     static {
         for (List<PanelLayout> group : List.of(BoilerPanels.all(), FoundryPanels.all(), dev.denfry.promptcritical.mod.manufacturing.SmithyPanels.all(), MinePanels.all(), GridPanels.all(), dev.denfry.promptcritical.mod.grid.GridDispatchPanels.all(), dev.denfry.promptcritical.mod.grid.FePanels.all(),
                 dev.denfry.promptcritical.mod.scada.HistorianPanels.all(),
+                dev.denfry.promptcritical.mod.scada.OperatorTerminalPanels.all(),
+                dev.denfry.promptcritical.mod.pa.PaPanels.all(),
                 dev.denfry.promptcritical.mod.scada.TwinPanels.all(),
                 dev.denfry.promptcritical.mod.scada.AnnunciatorPanels.all(),
                 dev.denfry.promptcritical.mod.scada.ControlRoomPanels.all(),
@@ -90,5 +92,17 @@ public final class PanelLayouts {
 
     public static Map<String, PanelLayout> all() {
         return BY_ID;
+    }
+
+    private static final List<PanelLayout> ORDER = List.copyOf(BY_ID.values());
+
+    /** Номер раскладки: одинаков на сервере и клиенте одной версии мода; −1 — неизвестна. */
+    public static int index(PanelLayout layout) {
+        return ORDER.indexOf(layout);
+    }
+
+    @org.jetbrains.annotations.Nullable
+    public static PanelLayout byIndex(int i) {
+        return i >= 0 && i < ORDER.size() ? ORDER.get(i) : null;
     }
 }

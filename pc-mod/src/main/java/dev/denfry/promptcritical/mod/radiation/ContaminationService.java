@@ -175,21 +175,33 @@ public final class ContaminationService {
     /** Прошёл {@code metres} по полу {@code floor}: обмен рыхлым загрязнением обуви и пола. */
     public static void walk(ServerLevel level, ServerPlayer p, BlockPos floor, double metres) {
         ContaminationMap m = ContaminationMap.of(level);
-        SurfaceContamination shoes = shoes(p), f = m.get(floor);
+        // бахилы или боты пневмокостюма берут пол на себя и пропускают на обувь только свою долю (04b §4b.7.3)
+        ItemStack cover = RadGear.footCover(p);
+        SurfaceContamination shoes = cover != null ? ContaminationData.get(cover) : shoes(p), f = m.get(floor);
         if (shoes.negligible() && f.negligible()) return;
         ContaminationTransfer.Pair r = ContaminationTransfer.walk(shoes, f, ContaminationTransfer.BLOCK_FACE_CM2, metres);
-        setShoes(p, r.a());
+        if (cover != null) {
+            SurfaceContamination leak = r.a().minus(shoes).scaled(1 - RadGear.footRetained(cover));
+            ContaminationData.set(cover, r.a().minus(leak));
+            setShoes(p, shoes(p).plus(leak));
+        } else setShoes(p, r.a());
         m.set(floor, r.b());
     }
 
     /** Секунда с предметом в руке: обмен рыхлым загрязнением рук и предмета (стопка — площадь всех предметов). */
     public static void handle(ServerPlayer p, ItemStack stack) {
         if (stack.isEmpty()) return;
-        SurfaceContamination h = hands(p), it = ContaminationData.get(stack);
+        // в пневмокостюме предмет держат перчатки куртки: загрязнение ложится на неё
+        ItemStack gloves = RadGear.handCover(p);
+        SurfaceContamination h = gloves != null ? ContaminationData.get(gloves) : hands(p), it = ContaminationData.get(stack);
         if (h.loose().negligible() && it.loose().negligible()) return;
         ContaminationTransfer.Pair r = ContaminationTransfer.contact(h, ContaminationTransfer.HANDS_CM2, it,
                 ContaminationTransfer.ITEM_CM2 * stack.getCount(), GRIP_CM2, ContaminationTransfer.GRIP_K);
-        setHands(p, r.a());
+        if (gloves != null) {
+            SurfaceContamination leak = r.a().minus(h).scaled(1 - dev.denfry.promptcritical.sim.radiation.RadRespirator.PNEUMOSUIT.skinRetained());
+            ContaminationData.set(gloves, r.a().minus(leak));
+            setHands(p, hands(p).plus(leak));
+        } else setHands(p, r.a());
         ContaminationData.set(stack, r.b());
     }
 

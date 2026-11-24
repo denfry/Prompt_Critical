@@ -122,6 +122,22 @@ public final class SiteRegistry {
     public static final DeferredItem<DesignDrawingItem> BAYER_DIGESTER_REAL_DRAWING = drawing("bayer_digester_real");
     public static final DeferredItem<DesignDrawingItem> ALUMINA_PRECIPITATOR_REAL_DRAWING = drawing("alumina_precipitator_real");
     public static final DeferredItem<DesignDrawingItem> MATTE_SMELTER_REAL_DRAWING = drawing("matte_smelter_real");
+    // радзащита реального масштаба (04b §4b.4, §4b.7, 02 §2.7.4–2.7.5)
+    public static final DeferredItem<DesignDrawingItem> PORTAL_MONITOR_REAL_DRAWING = drawing("portal_monitor_real");
+    public static final DeferredItem<DesignDrawingItem> HAND_FOOT_MONITOR_REAL_DRAWING = drawing("hand_foot_monitor_real");
+    public static final DeferredItem<DesignDrawingItem> HOT_CELL_REAL_DRAWING = drawing("hot_cell_real");
+    public static final DeferredItem<DesignDrawingItem> SPENT_FUEL_CASK_REAL_DRAWING = drawing("spent_fuel_cask_real");
+    public static final DeferredItem<DesignDrawingItem> CASK_TRANSPORT_CART_REAL_DRAWING = drawing("cask_transport_cart_real");
+    public static final DeferredItem<DesignDrawingItem> DRY_STORAGE_MODULE_REAL_DRAWING = drawing("dry_storage_module_real");
+    // топливный цикл реального масштаба (fuelcycle-dimensions)
+    public static final DeferredItem<DesignDrawingItem> GAS_CENTRIFUGE_REAL_DRAWING = drawing("gas_centrifuge_real");
+    public static final DeferredItem<DesignDrawingItem> CENTRIFUGE_CASCADE_SECTION_REAL_DRAWING = drawing("centrifuge_cascade_section_real");
+    public static final DeferredItem<DesignDrawingItem> FLUORINATOR_REAL_DRAWING = drawing("fluorinator_real");
+    public static final DeferredItem<DesignDrawingItem> UF6_AUTOCLAVE_REAL_DRAWING = drawing("uf6_autoclave_real");
+    public static final DeferredItem<DesignDrawingItem> PELLET_PRESS_REAL_DRAWING = drawing("pellet_press_real");
+    public static final DeferredItem<DesignDrawingItem> SINTERING_FURNACE_REAL_DRAWING = drawing("sintering_furnace_real");
+    public static final DeferredItem<DesignDrawingItem> FUEL_ROD_WELDER_REAL_DRAWING = drawing("fuel_rod_welder_real");
+    public static final DeferredItem<DesignDrawingItem> FUEL_ASSEMBLY_STAND_REAL_DRAWING = drawing("fuel_assembly_stand_real");
 
     private SiteRegistry() {}
 

@@ -1,8 +1,8 @@
 // M10 operations, fire water, flare and spill response equipment not yet in the mod, hand-authored (replaces the
 // spec_ops.py, spec_environment.py, spec_oilgas.py and spec_petrochem.py placeholders): caustic scrubber and fan,
 // oiled gravel and sand, fire hydrant, fire water pumps and impeller, foam chamber and proportioner, flare
-// ignition panel, knockout and seal drums, intercom, manway and cover, patrol checkpoint, permit board,
-// loudspeakers, portable ventilator and fan, rescue tripod and winch drum, valve test bench, hazard signs, UN
+// ignition panel, knockout and seal drums, manway and cover, patrol checkpoint, permit board,
+// portable ventilator and fan, rescue tripod and winch drum, valve test bench, hazard signs, UN
 // placard, boom anchor, oil boom pieces, oil skimmer and drum.
 // Run headless: node art/tools/pcart_headless.js <repo> ops/m10_safety.author.js M10S --paint
 //
@@ -162,24 +162,6 @@
   }
 
   // ---------------------------------------------------------------- operations
-  function intercom(state) {
-    const m = mk('m6auto/dark');
-    if (state === 'desk') {
-      P(m, 'base', [2, 0, 3], [14, 3, 13], 'dk');
-      P(m, 'face', [2.4, 3, 4], [13.6, 7, 12], 'dk', { rot: { axis: 'x', angle: -22.5, origin: [8, 3, 12] } });
-      m.box('grille', [4, 3, 3.8], [12, 6, 4], 'dk', { split: '', face: { north: { tex: D + 'mesh', uv: [0, 0, 16, 8] } } });
-      P(m, 'handset', [2, 3, 12], [6, 5, 13], 'bk');
-      return m;
-    }
-    P(m, 'box', [2, 1, 12], [14, 15, 16], 'dk');
-    m.box('grille', [4, 7, 11.8], [12, 13, 12], 'dk', { split: '', face: { north: { tex: D + 'mesh', uv: [0, 0, 16, 12] } } });
-    P(m, 'call', [6.6, 3, 11.6], [9.4, 5, 12], 'yel');
-    lamp(m, 'talk', 4, 4, 12, 'l_g', state === 'talking', 0.5);
-    lamp(m, 'fault', 12, 4, 12, 'l_r', state === 'fault', 0.5);
-    P(m, 'handset', [13, 4, 10.6], [14.6, 12, 12], 'bk');
-    P(m, 'cord', [13.6, 1, 11.2], [14.2, 4, 11.8], 'bk');
-    return m;
-  }
   function manway() {
     const m = mk('material/steel');
     m.prism('neck', 'z', [8, 8], 6.4, 12, 16.07, 'st', { split: '' });
@@ -203,15 +185,6 @@
     P(m, 'cork', [0.6, 2.6, 14.8], [31.4, 13.4, 15.2], 'cork');
     for (const x of [2, 10, 18, 25]) m.box('pocket' + x, [x, 3.4, 14.6], [x + 6, 12, 14.8], 'cork', { split: '', face: { north: { tex: D + 'permit', uv: [0, 0, 16, 16] } } });
     P(m, 'title', [10, 12.4, 14.7], [22, 13.2, 14.8], 'red');
-    return m;
-  }
-  function loudspeaker(mount, active) {
-    const m = mk('m6auto/dark');
-    const horn = (y, z0) => { m.prism('throat', 'z', [8, y], 1.6, z0 + 5, z0 + 8, 'dk', { split: '' }); m.prism('bell', 'z', [8, y], 4, z0, z0 + 2, 'dk', { split: '', ends: ['north'] }); m.prism('cone', 'z', [8, y], 2.8, z0 + 2, z0 + 5, 'dk', { split: '' }); };
-    if (mount === 'wall') { P(m, 'bracket', [6.4, 6, 12], [9.6, 10, 16], 'dk'); horn(8, 4); }
-    if (mount === 'pole') { P(m, 'pole', [6.6, -0.03, 12], [9.4, 16.03, 14.8], 'galv'); P(m, 'clamp', [6, 6, 11.4], [10, 10, 15.4], 'dk'); horn(8, 4); }
-    if (mount === 'ceiling') { P(m, 'rod', [7.4, 12, 7.4], [8.6, 16, 8.6], 'dk'); horn(8, 4); }
-    if (active) lamp(m, 'active', 11, 11.6, 9, 'l_g', true, 0.4);
     return m;
   }
   function ventilator(on) {
@@ -305,12 +278,8 @@
     flare_ignition_panel_pilots2: B(() => ignitionPanel(2), 'flare'), flare_ignition_panel_pilots3: B(() => ignitionPanel(3), 'flare'),
     flare_knockout_drum: B(() => koDrum(0), 'flare'), flare_knockout_drum_level2: B(() => koDrum(2), 'flare'), flare_knockout_drum_level4: B(() => koDrum(4), 'flare'),
     flare_seal_drum: B(sealDrum, 'flare'),
-    intercom_station: B(() => intercom('idle'), 'ops'), intercom_station_talking: B(() => intercom('talking'), 'ops'),
-    intercom_station_fault: B(() => intercom('fault'), 'ops'), intercom_station_desk: B(() => intercom('desk'), 'ops'),
     manway: B(manway, 'ops'), 'manway/cover': B(manwayCover, 'ops', 'manway/partial/cover'),
     patrol_checkpoint: B(checkpoint, 'ops'), permit_board: B(permitBoard, 'ops'),
-    plant_loudspeaker: B(() => loudspeaker('wall', false), 'ops'), plant_loudspeaker_active: B(() => loudspeaker('wall', true), 'ops'),
-    plant_loudspeaker_pole: B(() => loudspeaker('pole', false), 'ops'), plant_loudspeaker_ceiling: B(() => loudspeaker('ceiling', false), 'ops'),
     portable_ventilator: B(() => ventilator(false), 'ops'), portable_ventilator_on: B(() => ventilator(true), 'ops'),
     'portable_ventilator/fan': B(ventFan, 'ops', 'portable_ventilator/partial/fan'),
     rescue_tripod: B(tripod, 'ops'), 'rescue_tripod/winch_drum': B(winchDrum, 'ops', 'rescue_tripod/partial/winch_drum'),

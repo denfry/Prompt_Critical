@@ -30,7 +30,9 @@ import net.minecraft.world.level.Level;
  */
 public class ElectricGearItem extends Item implements Equipable {
     public enum Kind {
-        RESPIRATOR(EquipmentSlot.CHEST), HEATED_SUIT(EquipmentSlot.LEGS);
+        RESPIRATOR(EquipmentSlot.CHEST), HEATED_SUIT(EquipmentSlot.LEGS),
+        /** Радиологическая маска с принудительной подачей (04b §4b.7.3): шлем-капюшон, фильтр аэрозолей и йода. */
+        PAPR(EquipmentSlot.HEAD);
 
         public final EquipmentSlot slot;
 
@@ -90,7 +92,7 @@ public class ElectricGearItem extends Item implements Equipable {
 
     /** Батарея снаряжения этого вида в состоянии предмета. */
     public PowerPack pack(ElectricGearData d) {
-        return kind == Kind.RESPIRATOR ? respirator(d).pack() : suit(d).pack();
+        return kind == Kind.HEATED_SUIT ? suit(d).pack() : respirator(d).pack();
     }
 
     /** Состояние после шага модели. */
@@ -127,7 +129,10 @@ public class ElectricGearItem extends Item implements Equipable {
                 fmt("%.1f", b.spec().nominalVolts()), fmt("%.0f", b.spec().ratedAh()), fmt("%.0f", p.ratedWh())).withStyle(ChatFormatting.GRAY));
         tip.add(Component.translatable("item.promptcritical.electric_gear.charge", fmt("%.0f", 100 * b.soc()),
                 fmt("%.1f", d.powerW10() / 10.0), fmt("%.0f", b.cycles())).withStyle(ChatFormatting.GRAY));
-        if (kind == Kind.RESPIRATOR) {
+        if (kind == Kind.PAPR) {
+            tip.add(Component.translatable("item.promptcritical.papr.apf", fmt("%.0f", PoweredRespirator.APF_POWERED),
+                    fmt("%.0f", PoweredRespirator.APF_UNPOWERED)).withStyle(ChatFormatting.DARK_GREEN));
+        } else if (kind == Kind.RESPIRATOR) {
             PoweredRespirator r = respirator(d);
             tip.add(Component.translatable(r.filterSpent() ? "item.promptcritical.powered_respirator.filter_spent"
                     : "item.promptcritical.powered_respirator.filter", fmt("%.0f", 100 * r.filterLoad()))

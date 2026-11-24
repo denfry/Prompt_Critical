@@ -15,7 +15,7 @@ import net.minecraft.world.level.block.state.BlockState;
  * перед печью (нет рольганга — в выходы). Угар и пережог выше 1300 °C — {@link StockState#reheated}. Садка — из
  * входа или с рольганга позади печи.
  */
-public class ReheatingFurnaceBlockEntity extends BatchFurnaceBlockEntity {
+public class ReheatingFurnaceBlockEntity extends BatchFurnaceBlockEntity implements dev.denfry.promptcritical.mod.ops.OpsMachine {
     /** Толкатель, вентиляторы горелок и дымосос методической печи, Вт. */
     @Override
     protected double ratedPowerW() {
@@ -35,6 +35,34 @@ public class ReheatingFurnaceBlockEntity extends BatchFurnaceBlockEntity {
     @Override
     public boolean accepts(ItemStack stack) {
         return Steelworks.isStock(stack);
+    }
+
+    // --- пусконаладка (план HP2.3) ---
+
+    /** Непринятую холодную печь в профиле licensing не греют; пробная работа — горелки горят, нагрузка — к уставке. */
+    @Override
+    protected boolean heatPermitted(BatchFurnaceUnit u) {
+        boolean heat = dev.denfry.promptcritical.mod.ops.OpsActions.processPermit(level, this, 0)
+                || u.furnace().tempK() >= dev.denfry.promptcritical.mod.ops.OpsActions.WARM_K;
+        dev.denfry.promptcritical.mod.ops.OpsActions.trial(level, this, u.gasSupplyLit(), u.furnace().tempK() / u.setpointK(), false);
+        return heat;
+    }
+
+    @Override
+    public dev.denfry.promptcritical.sim.ops.UnitKind opsKind() {
+        return dev.denfry.promptcritical.sim.ops.UnitKind.REHEATING_FURNACE;
+    }
+
+    /** Остановлена — горелки погашены (условие пневмоиспытания). */
+    @Override
+    public boolean opsStopped() {
+        BatchFurnaceUnit u = level != null && !level.isClientSide ? unit() : null;
+        return u == null || !u.gasSupplyLit();
+    }
+
+    @Override
+    public net.minecraft.world.phys.Vec3 opsBearingPos() {
+        return net.minecraft.world.phys.Vec3.atCenterOf(worldPosition);
     }
 
     @Override

@@ -1,0 +1,14 @@
+{
+  "run_in": true,
+  "parts": [
+    {"role": "drum", "items": ["rope_drum"], "aspects": ["rotor"]},
+    {"role": "shaft", "items": ["shaft", "keyed_shaft"], "it": 7, "min_hrc": 30,
+     "heat_treat": ["quenched_tempered"], "aspects": ["bearing_seat"]},
+    {"role": "bearings", "items": ["rolling_bearing", "bronze_bearing_shell"], "count": 2, "aspects": ["bearing"]},
+    {"role": "gearing", "items": ["spur_gear"], "count": 2, "aspects": ["alignment"]},
+    {"role": "brake", "items": ["brake_shoe"], "count": 2},
+    {"role": "brake_spring", "items": ["spring"], "count": 2},
+    {"role": "fasteners", "items": ["fastener_kit"], "count": 2},
+    {"role": "bed", "items": ["machine_bed"], "aspects": ["alignment"]}
+  ]
+}

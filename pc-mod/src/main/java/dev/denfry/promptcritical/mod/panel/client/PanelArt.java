@@ -374,6 +374,37 @@ public final class PanelArt {
         paintCentered(g, font, e.label(), x + w / 2, y + h + 2, room);
     }
 
+    /** Экран ЭЛТ: тёмное стекло, зелёный люминофор; одно значение — столбик, несколько — тренд (16 §16.3.4). */
+    public static void trace(GuiGraphics g, double[] v, int x, int y, int w, int h) {
+        g.fill(x, y, x + w, y + h, 0xFF1A2420);
+        g.fill(x + 1, y + 1, x + w - 1, y + h - 1, 0xFF06120C);
+        int px0 = x + 2, py0 = y + 2, px1 = x + w - 2, py1 = y + h - 2;
+        if (v.length == 1) {
+            if (!Double.isNaN(v[0])) g.fill(px0, py0, px0 + (int) Math.round((px1 - px0) * Math.clamp(v[0], 0, 1)), py1, 0xFF3CD070);
+            return;
+        }
+        for (int gy = py0 + (py1 - py0) / 4; gy < py1; gy += Math.max(1, (py1 - py0) / 4)) g.fill(px0, gy, px1, gy + 1, 0x3020A050);
+        int prevX = 0, prevY = 0;
+        boolean prev = false;
+        for (int i = 0; i < v.length; i++) {
+            if (Double.isNaN(v[i])) {
+                prev = false;
+                continue;
+            }
+            int qx = px0 + (int) Math.round((px1 - px0 - 1) * i / (double) (v.length - 1));
+            int qy = py1 - 1 - (int) Math.round((py1 - py0 - 1) * Math.clamp(v[i], 0, 1));
+            if (prev) {
+                int n = Math.max(Math.abs(qx - prevX), Math.abs(qy - prevY)) + 1;
+                for (int k = 0; k <= n; k++)
+                    g.fill(prevX + (qx - prevX) * k / n, prevY + (qy - prevY) * k / n, prevX + (qx - prevX) * k / n + 1,
+                            prevY + (qy - prevY) * k / n + 1, 0xFF5CF08A);
+            }
+            prevX = qx;
+            prevY = qy;
+            prev = true;
+        }
+    }
+
     private static int hash(int a, int b) {
         int h = a * 73856093 ^ b * 19349663;
         h ^= h >>> 13;

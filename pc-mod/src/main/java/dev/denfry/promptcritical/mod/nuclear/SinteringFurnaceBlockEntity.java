@@ -163,10 +163,28 @@ public final class SinteringFurnaceBlockEntity extends FuelShopBlockEntity imple
         }
         flushSludge();
         if (level.getGameTime() % 10 == 0) setLit(true);
-        if (level.getGameTime() % 20 == 0)
+        if (level.getGameTime() % 20 == 0 && !real())
             level.sendParticles(ParticleTypes.SMALL_FLAME, worldPosition.getX() + 0.5, worldPosition.getY() + 1.1, worldPosition.getZ() + 0.5,
                     1, 0.2, 0.05, 0.2, 0.0);
     }
+
+    /**
+     * Толкательная печь реального масштаба (fuelcycle §3b): водород сгорает огненными завесами у обеих дверей, гудит
+     * дожиг, толкатель лязгает раз в цикл лодочки.
+     */
+    @Override
+    protected void clientTick() {
+        if (!real() || !lit()) return;
+        dev.denfry.promptcritical.mod.fx.MachineFx fx = dev.denfry.promptcritical.mod.fx.MachineFx.of(this);
+        if (fx == null) return;
+        if (fx.chance(4)) fx.flame(fx.at(-64, 20, 8), 0.15);
+        if (fx.chance(4)) fx.flame(fx.at(80, 20, 8), 0.15);
+        if (fx.chance(0.4)) fx.sound(fx.at(-64, 20, 8), net.minecraft.sounds.SoundEvents.FIRE_AMBIENT, 0.8f, 0.6f);
+        if (level.getGameTime() % PUSH_TICKS == 0) fx.sound(fx.at(-56, 20, 8), net.minecraft.sounds.SoundEvents.PISTON_EXTEND, 0.5f, 0.5f);
+    }
+
+    /** Цикл толкателя в тиках: ход штока и открытие дверей на клиенте (лодочка ≈ 20 мин, сжато для глаза) [BALANCE]. */
+    public static final int PUSH_TICKS = 80;
 
     private void addSludge(double kg) {
         sludgeX = sludgeKg + kg > 0 ? (sludgeX * sludgeKg + x * kg) / (sludgeKg + kg) : x;

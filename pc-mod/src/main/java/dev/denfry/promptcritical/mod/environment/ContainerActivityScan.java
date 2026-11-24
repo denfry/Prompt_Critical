@@ -217,6 +217,7 @@ public final class ContainerActivityScan {
             } else if (be instanceof Container c) sum = sumContainer(c, now);
         }
         if (sum.empty()) return null;
+        sightAll(level, be, pos);
         List<DoseRate.Layer> extra = new ArrayList<>(1);
         Block block = be.getBlockState().getBlock();
         ContainerShielding cs = TEST_SHIELDING.get(block);
@@ -243,10 +244,32 @@ public final class ContainerActivityScan {
                 } else if (e instanceof ArmorStand a) {
                     for (ItemStack s : a.getAllSlots()) sum = plus(sum, RadiationService.itemSource(s, now));
                 }
-                if (!sum.empty()) out.add(new ContainerSource(e.position().add(0, 0.5, 0), sum, List.of()));
+                if (sum.empty()) continue;
+                out.add(new ContainerSource(e.position().add(0, 0.5, 0), sum, List.of()));
+                Vec3 at = e.position().add(0, 0.5, 0);
+                if (e instanceof ContainerEntity ce) ce.getItemStacks().forEach(s -> SourceLedger.sight(level, s, at, null, false));
+                else if (e instanceof AbstractChestedHorse horse) sightContainer(level, horse.getInventory(), at);
+                else if (e instanceof ItemFrame f) SourceLedger.sight(level, f.getItem(), at, null, false);
+                else if (e instanceof ArmorStand a) a.getAllSlots().forEach(s -> SourceLedger.sight(level, s, at, null, false));
             }
         }
         return out;
+    }
+
+    /** Учтённые источники в блочном контейнере (16 §16.8.4): только уже помеченные, чужой обработчик не меняем. */
+    private static void sightAll(ServerLevel level, BlockEntity be, BlockPos pos) {
+        Vec3 at = Vec3.atCenterOf(pos);
+        if (be instanceof ChestBlockEntity chest) {
+            sightContainer(level, chest, at);
+            return;
+        }
+        IItemHandler h = level.getCapability(Capabilities.ItemHandler.BLOCK, pos, null);
+        if (h != null) for (int i = 0; i < h.getSlots(); i++) SourceLedger.sight(level, h.getStackInSlot(i), at, null, false);
+        else if (be instanceof Container c) sightContainer(level, c, at);
+    }
+
+    private static void sightContainer(ServerLevel level, Container c, Vec3 at) {
+        for (int i = 0; i < c.getContainerSize(); i++) SourceLedger.sight(level, c.getItem(i), at, null, false);
     }
 
     private static boolean isContainerEntity(Entity e) {

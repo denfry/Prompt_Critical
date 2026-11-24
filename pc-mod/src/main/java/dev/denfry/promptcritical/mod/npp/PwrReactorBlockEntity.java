@@ -197,6 +197,9 @@ public final class PwrReactorBlockEntity extends DeviceBlockEntity implements de
         if (b == null) return;
         if (ticks++ % 20 == 0) link(sl);
         double gameDt = PressurizedWaterReactor.DT * b.world().clock().kSlow();
+        // ТЭНы КД — собственные нужды 0,4 кВ: щит или ИБП у компенсатора давления (без него — у реактора)
+        reactor.setHeaterSupply(dev.denfry.promptcritical.mod.grid.MachinePower.supply(sl, pressurizer != null ? pressurizer : worldPosition,
+                reactor.heaterDemandW()));
         // ГЦН: петля i — i-й найденный насос; нет насоса — петля без привода
         boolean pumpsDriven = false;
         for (int l = 0; l < PressurizedWaterReactor.LOOPS; l++) {

@@ -38,14 +38,26 @@ import net.neoforged.neoforge.registries.DeferredRegister;
 public final class PpeItem extends ArmorItem {
     public enum Kind {
         HARD_HAT(Type.HELMET, 1), GAS_MASK(Type.HELMET, 0), SCBA(Type.CHESTPLATE, 0), FIRE_SUIT(Type.CHESTPLATE, 1),
-        SAFETY_HARNESS(Type.LEGGINGS, 0);
+        SAFETY_HARNESS(Type.LEGGINGS, 0),
+        // радиационные СИЗ 04b §4b.7.3 (действие — radiation.RadGear): маски, пневмокостюм, спецодежда, фартук
+        RESPIRATOR(Type.HELMET, 0), FULL_FACE_RESPIRATOR(Type.HELMET, 0), PNEUMOSUIT_HELMET(Type.HELMET, 0, "pneumosuit"),
+        PNEUMOSUIT_JACKET(Type.CHESTPLATE, 0, "pneumosuit"), PNEUMOSUIT_TROUSERS(Type.LEGGINGS, 0, "pneumosuit"),
+        PNEUMOSUIT_BOOTS(Type.BOOTS, 0, "pneumosuit"), PROTECTIVE_OVERALLS(Type.CHESTPLATE, 0), BOOT_COVERS(Type.BOOTS, 0),
+        LEAD_APRON(Type.CHESTPLATE, 1);
 
         final Type type;
         final int defense;
+        /** Слой брони {@code textures/models/armor/<layer>_layer_N.png}: части пневмокостюма делят один. */
+        final String layer;
 
         Kind(Type type, int defense) {
+            this(type, defense, null);
+        }
+
+        Kind(Type type, int defense, String layer) {
             this.type = type;
             this.defense = defense;
+            this.layer = layer == null ? name().toLowerCase(Locale.ROOT) : layer;
         }
 
         public String id() {
@@ -60,7 +72,7 @@ public final class PpeItem extends ArmorItem {
         for (Kind k : Kind.values())
             BY_KIND.put(k, MATERIALS.register(k.id(), () -> new ArmorMaterial(Map.of(k.type, k.defense), 0,
                     SoundEvents.ARMOR_EQUIP_GENERIC, () -> Ingredient.EMPTY,
-                    List.of(new ArmorMaterial.Layer(PromptCritical.id(k.id()))), 0, 0)));
+                    List.of(new ArmorMaterial.Layer(PromptCritical.id(k.layer))), 0, 0)));
     }
 
     private final Kind kind;
@@ -104,7 +116,8 @@ public final class PpeItem extends ArmorItem {
                     if (!player.level().isClientSide) player.displayClientMessage(SafetyText.msg("insert_removed", insert.getHoverName()), true);
                     return true;
                 }
-                if (insert == null && (is(other, Kind.GAS_MASK) || other.getItem() instanceof HearingProtectionItem)) {
+                if (insert == null && (is(other, Kind.GAS_MASK) || dev.denfry.promptcritical.mod.radiation.RadGear.isRadMask(other)
+                        || other.getItem() instanceof HearingProtectionItem)) {
                     SafetyComponents.setInsert(stack, other);
                     if (!player.level().isClientSide) player.displayClientMessage(SafetyText.msg("insert_added", other.getHoverName()), true);
                     other.shrink(1);
@@ -120,6 +133,16 @@ public final class PpeItem extends ArmorItem {
                     if (old != null && old.loaded() < old.type().capacity())
                         player.getInventory().placeItemBackInInventory(GasMaskFilterItem.of(old));
                     if (!player.level().isClientSide) player.displayClientMessage(SafetyText.msg("filter_fitted", f.type().name()), true);
+                    return true;
+                }
+            }
+            case FULL_FACE_RESPIRATOR -> {
+                if (other.getItem() == dev.denfry.promptcritical.mod.registry.PcItems.IODINE_CARTRIDGE.get()) {
+                    stack.set(dev.denfry.promptcritical.mod.radiation.RadGear.IODINE_CARTRIDGE.get(),
+                            dev.denfry.promptcritical.sim.radiation.RadRespirator.IODINE_CARTRIDGE_PHYS_S);
+                    other.shrink(1);
+                    if (!player.level().isClientSide) player.displayClientMessage(
+                            dev.denfry.promptcritical.mod.radiation.RadGearText.msg("cartridge_fitted"), true);
                     return true;
                 }
             }
@@ -149,6 +172,7 @@ public final class PpeItem extends ArmorItem {
                 }
             }
             case GAS_MASK -> maskLine(stack, tooltip);
+            case FULL_FACE_RESPIRATOR, PNEUMOSUIT_JACKET -> dev.denfry.promptcritical.mod.radiation.RadGearText.gearLine(stack, tooltip);
             case SCBA -> {
                 double a = air(stack);
                 tooltip.add(Component.translatable("item.promptcritical.scba.air", Math.round(a), Math.round(a / Scba.CONSUMPTION_LPM))

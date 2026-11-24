@@ -619,6 +619,26 @@ public final class PcBlocks {
     public static final DeferredBlock<PcBlock> DRAWWORKS = block("drawworks", machine(),
             Spec.facing().footprint(Footprint.of(Segment.box(-1, 1, 0, 1, 0, 1))));
     public static final DeferredBlock<PcBlock> DERRICK_SEGMENT = block("derrick_segment", machine(), Spec.facing().footprint(FP_CUBE3));
+    /**
+     * Буровая I2 реального масштаба (09 §9.5, art/blockbench/drilling/*_real.author.js): те же BE и симуляция, что у
+     * старых блоков, пульт бурильщика узнаёт и те, и другие. Ротор Р-560 3 × 1 × 2 на оси скважины, вал Create — в
+     * южную грань клетки (0, 0, 1); лебёдка У2-5-5 6 × 3 × 3; насос У8-6М 6 × 3 × 3, вал — в северную грань клетки
+     * (−2, 0, −1); секция вышки 3 × 3 × 3 над ротором, нижняя и верхняя рисуются по соседям.
+     */
+    public static final Footprint FP_ROTARY_TABLE_REAL = Footprint.tiled(-1, 1, 0, 0, 0, 1);
+    public static final DeferredBlock<PcDeviceBlock> ROTARY_TABLE_REAL = device("rotary_table_real", machine(),
+            real(Spec.facing(PcProperties.RUNNING), FP_ROTARY_TABLE_REAL),
+            dev.denfry.promptcritical.mod.foundry.PortedKineticMachineBlock.with(new BlockPos(0, 0, 1), net.minecraft.core.Direction.Axis.Z,
+                    dev.denfry.promptcritical.mod.drilling.RotaryTableBlockEntity::new));
+    public static final Footprint FP_DRAWWORKS_REAL = Footprint.tiled(-2, 3, 0, 2, -1, 1);
+    public static final DeferredBlock<PcDeviceBlock> DRAWWORKS_REAL = device("drawworks_real", machine(),
+            real(Spec.facing(PcProperties.RUNNING), FP_DRAWWORKS_REAL),
+            FoundryBlock.with(dev.denfry.promptcritical.mod.drilling.DrawworksRealBlockEntity::new));
+    public static final Footprint FP_MUD_PUMP_REAL = Footprint.tiled(-2, 3, 0, 2, -1, 1);
+    public static final DeferredBlock<PcDeviceBlock> MUD_PUMP_REAL = device("mud_pump_real", machine(),
+            real(Spec.facing(PcProperties.RUNNING), FP_MUD_PUMP_REAL), dev.denfry.promptcritical.mod.drilling.MudPumpBlock::createReal);
+    public static final DeferredBlock<PcDeviceBlock> DERRICK_SEGMENT_REAL = device("derrick_segment_real", machine(),
+            real(Spec.facing(), FP_CUBE3), FoundryBlock.with(dev.denfry.promptcritical.mod.drilling.DerrickRealBlockEntity::new));
     public static final DeferredBlock<PcBlock> BOP_ANNULAR = block("bop_annular", machine(), Spec.facing(PcProperties.SHUT));
     // стек ПВО 09 §9.5.7: плашечный превентор (вид плашек — пустой рукой на открытом) и аккумуляторная установка
     public static final DeferredBlock<PcDeviceBlock> BOP_RAM = device("bop_ram", machine(), Spec.facing(PcProperties.RAM_KIND, PcProperties.SHUT),
@@ -638,8 +658,23 @@ public final class PcBlocks {
     public static final DeferredBlock<PcDeviceBlock> PUMPJACK = device("pumpjack", machine(),
             Spec.facing(PcProperties.RUNNING).footprint(Footprint.of(Segment.box(-1, 1, 0, 0, -1, 1))),
             dev.denfry.promptcritical.mod.production.PumpjackBlock::create);
+    /**
+     * Качалка СК-8 реального масштаба 9 × 7 × 3 (art/blockbench/oil_production/pumpjack_real.author.js), тот же BE и
+     * сим, что у {@link #PUMPJACK}: объём без колонны x 4, y 0…2 под головкой балансира — туда ставят устье.
+     */
+    public static final Footprint FP_PUMPJACK_REAL = pumpjackRealFootprint();
+    public static final DeferredBlock<PcDeviceBlock> PUMPJACK_REAL = device("pumpjack_real", machine(),
+            real(Spec.facing(PcProperties.RUNNING), FP_PUMPJACK_REAL), dev.denfry.promptcritical.mod.production.PumpjackBlock::createReal);
     public static final DeferredBlock<PcDeviceBlock> THREE_PHASE_SEPARATOR = device("three_phase_separator", machine(),
             Spec.facing().footprint(Footprint.of(Segment.box(-1, 1, 0, 1, 0, 1))),
+            FoundryBlock.with(dev.denfry.promptcritical.mod.production.SeparatorBlockEntity::new));
+    /**
+     * Трёхфазный сепаратор НГС-1,6-2000 реального масштаба 11 × 3 × 3
+     * (art/blockbench/oil_production/three_phase_separator_real.author.js), тот же BE, что у {@link #THREE_PHASE_SEPARATOR}.
+     */
+    public static final Footprint FP_THREE_PHASE_SEPARATOR_REAL = Footprint.tiled(-5, 5, 0, 2, -1, 1);
+    public static final DeferredBlock<PcDeviceBlock> THREE_PHASE_SEPARATOR_REAL = device("three_phase_separator_real", machine(),
+            real(Spec.facing(), FP_THREE_PHASE_SEPARATOR_REAL),
             FoundryBlock.with(dev.denfry.promptcritical.mod.production.SeparatorBlockEntity::new));
     public static final DeferredBlock<PcBlock> FLARE_STACK = block("flare_stack", machine(), Spec.of());
     public static final DeferredBlock<PcBlock> FLARE_TIP = block("flare_tip", lit(machine()), Spec.of(BlockStateProperties.LIT));
@@ -713,6 +748,69 @@ public final class PcBlocks {
     /** Портальный γ-монитор выхода из зоны (04b §4b.7.2): колонна у прохода, пара колонн — рама. */
     public static final DeferredBlock<PcDeviceBlock> PORTAL_MONITOR = device("portal_monitor", machine(),
             Spec.facing(BlockStateProperties.POWERED), dev.denfry.promptcritical.mod.radiation.PortalMonitorBlock.create());
+    // зона контролируемого доступа и санпропускник (04b §4b.7, §4b.12)
+    public static final DeferredBlock<dev.denfry.promptcritical.mod.radiation.SanitaryBlocks.DoseRateInstrument> INSTRUMENT_DOSE_RATE = withItem(BLOCKS.registerBlock(
+            "instrument_dose_rate", dev.denfry.promptcritical.mod.radiation.SanitaryBlocks.DoseRateInstrument::create, instrument()));
+    public static final DeferredBlock<dev.denfry.promptcritical.mod.radiation.SanitaryBlocks.ZoneController> ZONE_CONTROLLER = withItem(BLOCKS.registerBlock(
+            "zone_controller", dev.denfry.promptcritical.mod.radiation.SanitaryBlocks.ZoneController::create, instrument()));
+    public static final DeferredBlock<dev.denfry.promptcritical.mod.radiation.SanitaryBlocks.ZoneAccessDoor> ZONE_ACCESS_DOOR = withItem(BLOCKS.registerBlock(
+            "zone_access_door", dev.denfry.promptcritical.mod.radiation.SanitaryBlocks.ZoneAccessDoor::new, machine()));
+    public static final DeferredBlock<dev.denfry.promptcritical.mod.radiation.SanitaryBlocks.Locker> CLEAN_LOCKER = withItem(BLOCKS.registerBlock(
+            "clean_locker", dev.denfry.promptcritical.mod.radiation.SanitaryBlocks.Locker::clean, machine()));
+    public static final DeferredBlock<dev.denfry.promptcritical.mod.radiation.SanitaryBlocks.Locker> DIRTY_LOCKER = withItem(BLOCKS.registerBlock(
+            "dirty_locker", dev.denfry.promptcritical.mod.radiation.SanitaryBlocks.Locker::dirty, machine()));
+    public static final DeferredBlock<dev.denfry.promptcritical.mod.radiation.SanitaryBlocks.TldReader> TLD_READER = withItem(BLOCKS.registerBlock(
+            "tld_reader", dev.denfry.promptcritical.mod.radiation.SanitaryBlocks.TldReader::create, machine()));
+    public static final DeferredBlock<dev.denfry.promptcritical.mod.radiation.SanitaryBlocks.AirSupplyPort> AIR_SUPPLY_PORT = withItem(BLOCKS.registerBlock(
+            "air_supply_port", dev.denfry.promptcritical.mod.radiation.SanitaryBlocks.AirSupplyPort::create, instrument()));
+    // --- радзащита реального масштаба (art/blockbench/radprot/radprot.author.js, docs/research/2026-11-24-radprot) ---
+    /**
+     * Портальная рама контроля загрязнения (по типу TPM-903B, 04b §4b.7.2): две колонны со сцинтилляторами и табло,
+     * 3 × 3 × 1, проход — сама клетка контроллера, идут вдоль z. Тот же BE, что {@link #PORTAL_MONITOR}, плюс β рук и
+     * обуви; {@code powered} — тревога (вариант {@code _alarm}, маячок крутится).
+     */
+    public static final Footprint FP_PORTAL_MONITOR_REAL = Footprint.tiled(-1, 1, 0, 2, 0, 0);
+    public static final DeferredBlock<PcDeviceBlock> PORTAL_MONITOR_REAL = device("portal_monitor_real", machine().noOcclusion(),
+            real(Spec.facing(BlockStateProperties.POWERED), FP_PORTAL_MONITOR_REAL), dev.denfry.promptcritical.mod.radiation.PortalMonitorBlock.create());
+    /** Установка контроля рук и ног (по Mirion HandFoot-Fibre), 1 × 2 × 1; тот же BE, что {@link #HAND_FOOT_MONITOR}. */
+    public static final Footprint FP_HAND_FOOT_MONITOR_REAL = Footprint.tiled(0, 0, 0, 1, 0, 0);
+    public static final DeferredBlock<PcDeviceBlock> HAND_FOOT_MONITOR_REAL = device("hand_foot_monitor_real", machine().noOcclusion(),
+            real(Spec.facing(BlockStateProperties.POWERED), FP_HAND_FOOT_MONITOR_REAL), FoundryBlock.with(dev.denfry.promptcritical.mod.radiation.HandFootMonitorBlockEntity::new));
+    /**
+     * Рабочее место горячей камеры: стена из магнетитового бетона 1 м, окно из свинцового стекла, два копирующих
+     * манипулятора, шлюз; 5 × 4 × 4, контроллер у окна на стороне оператора (фасад на север), камера — z 1..2.
+     */
+    public static final Footprint FP_HOT_CELL_REAL = Footprint.tiled(-2, 2, 0, 3, -1, 2);
+    public static final DeferredBlock<PcDeviceBlock> HOT_CELL_REAL = device("hot_cell_real", machine().noOcclusion(),
+            real(Spec.facing(BlockStateProperties.LIT), FP_HOT_CELL_REAL),
+            FoundryBlock.with(dev.denfry.promptcritical.mod.radiation.HotCellBlockEntity::new));
+    /** Контейнер ОЯТ класса CASTOR V/19: ∅2,44 × 5,94 м, 3 × 6 × 3, стоит на оси (8, y, 8). {@code open} — крышки сняты. */
+    public static final Footprint FP_SPENT_FUEL_CASK_REAL = Footprint.tiled(-1, 1, 0, 5, -1, 1);
+    public static final DeferredBlock<PcDeviceBlock> SPENT_FUEL_CASK_REAL = device("spent_fuel_cask_real", machine().noOcclusion(),
+            real(Spec.facing(BlockStateProperties.OPEN, BlockStateProperties.LIT), FP_SPENT_FUEL_CASK_REAL),
+            FoundryBlock.with(dev.denfry.promptcritical.mod.radiation.SpentFuelCaskBlockEntity::new));
+    /** Рельсовая тележка контейнера, 9 × 4 × 3; {@code occupied} — контейнер на ложементе (вариант {@code _loaded}). */
+    public static final Footprint FP_CASK_TRANSPORT_CART_REAL = Footprint.tiled(-4, 4, 0, 3, -1, 1);
+    public static final DeferredBlock<PcDeviceBlock> CASK_TRANSPORT_CART_REAL = device("cask_transport_cart_real", machine().noOcclusion(),
+            real(Spec.facing(BlockStateProperties.OCCUPIED), FP_CASK_TRANSPORT_CART_REAL),
+            FoundryBlock.with(dev.denfry.promptcritical.mod.radiation.CaskCartBlockEntity::new));
+    /** Горизонтальный модуль сухого хранения класса NUHOMS, 3 × 5 × 6, контроллер у двери на фасаде. {@code lit} — тёплый воздух. */
+    public static final Footprint FP_DRY_STORAGE_MODULE_REAL = Footprint.tiled(-1, 1, 0, 4, 0, 5);
+    public static final DeferredBlock<PcDeviceBlock> DRY_STORAGE_MODULE_REAL = device("dry_storage_module_real", machine(),
+            real(Spec.facing(BlockStateProperties.LIT), FP_DRY_STORAGE_MODULE_REAL),
+            FoundryBlock.with(dev.denfry.promptcritical.mod.radiation.DryStorageModuleBlockEntity::new));
+    /**
+     * Плитки защиты 1 × 1 × 1 (04b §4b.4.1, §4b.4.3): магнетитовый бетон 3,6 г/см³, шевронные свинцовые кирпичи 11,34,
+     * бак воды с 4 % H₃BO₃ и борированный полиэтилен (5 % B) — материалы в {@code ShieldBlocks}.
+     */
+    public static final DeferredBlock<PcBlock> SHIELD_HEAVY_CONCRETE_REAL = block("shield_heavy_concrete_real",
+            Properties.of().mapColor(MapColor.TERRACOTTA_BROWN).requiresCorrectToolForDrops().strength(4f, 12f).sound(SoundType.STONE), Spec.of());
+    public static final DeferredBlock<PcBlock> SHIELD_LEAD_BRICK_REAL = block("shield_lead_brick_real",
+            Properties.of().mapColor(MapColor.COLOR_GRAY).requiresCorrectToolForDrops().strength(3f, 10f).sound(SoundType.METAL), Spec.of());
+    public static final DeferredBlock<PcBlock> SHIELD_BORATED_WATER_TANK_REAL = block("shield_borated_water_tank_real",
+            Properties.of().mapColor(MapColor.METAL).requiresCorrectToolForDrops().strength(3f, 6f).sound(SoundType.METAL), Spec.of());
+    public static final DeferredBlock<PcBlock> SHIELD_BORATED_PE_REAL = block("shield_borated_pe_real",
+            Properties.of().mapColor(MapColor.TERRACOTTA_WHITE).strength(1.5f, 3f).sound(SoundType.WOOD), Spec.of());
     public static final DeferredBlock<PcDeviceBlock> NGL_FRACTIONATOR = device("ngl_fractionator", machine(),
             Spec.facing().footprint(FP_CUBE3), FoundryBlock.with(dev.denfry.promptcritical.mod.gas.NglFractionatorBlockEntity::new));
 
@@ -721,6 +819,10 @@ public final class PcBlocks {
     public static final DeferredBlock<PcDeviceBlock> HISTORIAN_SERVER = device("historian_server", machine(),
             Spec.facing(BlockStateProperties.LIT).footprint(FP_TALL2),
             FoundryBlock.with(dev.denfry.promptcritical.mod.scada.HistorianBlockEntity::new));
+    /** Терминал оператора 16 §16.3.4 (R58): видеокадры A4 без CC, пульт с ЭЛТ 1×1×1. */
+    public static final DeferredBlock<PcDeviceBlock> OPERATOR_TERMINAL = device("operator_terminal", machine(),
+            Spec.facing(BlockStateProperties.POWERED, PcProperties.ALARM),
+            FoundryBlock.with(dev.denfry.promptcritical.mod.scada.OperatorTerminalBlockEntity::new));
     /** Инженерная станция 03d §3d.9.1: цифровой двойник для FAT программ ПЛК, стол 2×1×1. */
     public static final DeferredBlock<PcDeviceBlock> SIMULATION_WORKSTATION = device("simulation_workstation", machine(),
             Spec.facing().footprint(FP_WIDE2),
@@ -924,6 +1026,60 @@ public final class PcBlocks {
     public static final DeferredBlock<PcDeviceBlock> ASSEMBLY_JIG = device("assembly_jig", machine(), Spec.facing(BlockStateProperties.LIT),
             FoundryBlock.with(dev.denfry.promptcritical.mod.nuclear.AssemblyJigBlockEntity::new));
 
+    // --- топливный цикл реального масштаба (art/blockbench/fuelcycle/fuelcycle.author.js — шапки и есть спецификация;
+    // наружный вид на уровне открытых описаний, без устройства машин внутри). Те же BE, что у старой серии. ---
+    /** Газовая центрифуга: корпус ∅0,25 × 1,8 м, 1 × 2 × 1; {@code open} — корпус вскрыт (ротор виден, машина стоит). */
+    public static final Footprint FP_GAS_CENTRIFUGE_REAL = Footprint.tiled(0, 0, 0, 1, 0, 0);
+    public static final DeferredBlock<PcDeviceBlock> GAS_CENTRIFUGE_REAL = device("gas_centrifuge_real", machine().noOcclusion(),
+            real(Spec.facing(BlockStateProperties.OPEN, BlockStateProperties.POWERED), FP_GAS_CENTRIFUGE_REAL),
+            FoundryBlock.with(dev.denfry.promptcritical.mod.nuclear.CentrifugeRealBlockEntity::new));
+    /** Секция каскада: 16 машин в два ряда с коллекторами, 4 × 2 × 1, ставится в ряд вдоль x. */
+    public static final Footprint FP_CENTRIFUGE_CASCADE_SECTION_REAL = Footprint.tiled(0, 3, 0, 1, 0, 0);
+    public static final DeferredBlock<PcDeviceBlock> CENTRIFUGE_CASCADE_SECTION_REAL = device("centrifuge_cascade_section_real",
+            machine().noOcclusion(), real(Spec.facing(BlockStateProperties.POWERED), FP_CENTRIFUGE_CASCADE_SECTION_REAL),
+            FoundryBlock.with(dev.denfry.promptcritical.mod.nuclear.CentrifugeRealBlockEntity::new));
+    /** Пламенный реактор фторирования UF₄ → UF₆: башня ∅0,6 × 4,3 м с бункером и фильтром, 3 × 6 × 3. */
+    public static final Footprint FP_FLUORINATOR_REAL = Footprint.tiled(-1, 1, 0, 5, -1, 1);
+    public static final DeferredBlock<PcDeviceBlock> FLUORINATOR_REAL = device("fluorinator_real", machine().noOcclusion(),
+            real(Spec.facing(PcProperties.RUNNING, BlockStateProperties.LIT), FP_FLUORINATOR_REAL),
+            FoundryBlock.with(dev.denfry.promptcritical.mod.uranium.FluorinationBlockEntity::new));
+    /** Баллон 30B на подкладках: ∅0,76 × 2,07 м, 3 × 1 × 1. Кладут баллоном UF₆ 30B (Shift + ПКМ по верху блока). */
+    public static final Footprint FP_UF6_CYLINDER_30B_REAL = Footprint.tiled(-1, 1, 0, 0, 0, 0);
+    public static final DeferredBlock<PcDeviceBlock> UF6_CYLINDER_30B_REAL = device("uf6_cylinder_30b_real", machine().noOcclusion(),
+            real(Spec.facing(), FP_UF6_CYLINDER_30B_REAL),
+            FoundryBlock.with(dev.denfry.promptcritical.mod.nuclear.PlacedItemBlockEntity::new));
+    /** Автоклав баллона: ∅1,6 × 4 м с дверью на западном торце, 5 × 2 × 3; {@code occupied} — баллон внутри, {@code lit} — прогрет. */
+    public static final Footprint FP_UF6_AUTOCLAVE_REAL = Footprint.tiled(-2, 2, 0, 1, -1, 1);
+    public static final DeferredBlock<PcDeviceBlock> UF6_AUTOCLAVE_REAL = device("uf6_autoclave_real", machine().noOcclusion(),
+            real(Spec.facing(BlockStateProperties.LIT, BlockStateProperties.OCCUPIED), FP_UF6_AUTOCLAVE_REAL),
+            FoundryBlock.with(dev.denfry.promptcritical.mod.nuclear.Uf6AutoclaveBlockEntity::new));
+    /** Роторный таблеточный пресс, 3 × 2 × 3; вал Create — в западную грань клетки (−1, 0, 0), где привод. */
+    public static final Footprint FP_PELLET_PRESS_REAL = Footprint.tiled(-1, 1, 0, 1, -1, 1);
+    public static final DeferredBlock<PcDeviceBlock> PELLET_PRESS_REAL = device("pellet_press_real", machine().noOcclusion(),
+            real(Spec.facing(PcProperties.RUNNING), FP_PELLET_PRESS_REAL),
+            dev.denfry.promptcritical.mod.foundry.PortKineticMachineBlock.with(new BlockPos(-1, 0, 0),
+                    dev.denfry.promptcritical.mod.nuclear.PelletPressBlockEntity::new));
+    /** Толкательная печь спекания (1 700 °C, водород), около 14 м с тамбурами, 9 × 3 × 3. */
+    public static final Footprint FP_SINTERING_FURNACE_REAL = Footprint.tiled(-4, 4, 0, 2, -1, 1);
+    public static final DeferredBlock<PcDeviceBlock> SINTERING_FURNACE_REAL = device("sintering_furnace_real", machine().noOcclusion(),
+            real(Spec.facing(BlockStateProperties.LIT), FP_SINTERING_FURNACE_REAL),
+            FoundryBlock.with(dev.denfry.promptcritical.mod.nuclear.SinteringFurnaceBlockEntity::new));
+    /** Пост сварки заглушек твэлов: рольганг, камера с гелием, баллон и шкаф, 4 × 2 × 1. */
+    public static final Footprint FP_FUEL_ROD_WELDER_REAL = Footprint.tiled(-2, 1, 0, 1, 0, 0);
+    public static final DeferredBlock<PcDeviceBlock> FUEL_ROD_WELDER_REAL = device("fuel_rod_welder_real", machine().noOcclusion(),
+            real(Spec.facing(BlockStateProperties.LIT), FP_FUEL_ROD_WELDER_REAL),
+            FoundryBlock.with(dev.denfry.promptcritical.mod.nuclear.RodStationBlockEntity::new));
+    /** Стенд сборки ТВС ВВЭР-440: поворотное гнездо, две колонны 4,5 м, балка с талью, 3 × 5 × 3. */
+    public static final Footprint FP_FUEL_ASSEMBLY_STAND_REAL = Footprint.tiled(-1, 1, 0, 4, -1, 1);
+    public static final DeferredBlock<PcDeviceBlock> FUEL_ASSEMBLY_STAND_REAL = device("fuel_assembly_stand_real", machine().noOcclusion(),
+            real(Spec.facing(BlockStateProperties.LIT), FP_FUEL_ASSEMBLY_STAND_REAL),
+            FoundryBlock.with(dev.denfry.promptcritical.mod.nuclear.AssemblyJigBlockEntity::new));
+    /** ТВС ВВЭР-440, поставленная стоймя (3,2 м, 144 мм под ключ), 1 × 4 × 1. Ставят саму ТВС (Shift + ПКМ по верху блока). */
+    public static final Footprint FP_VVER440_FUEL_ASSEMBLY_REAL = Footprint.tiled(0, 0, 0, 3, 0, 0);
+    public static final DeferredBlock<PcDeviceBlock> VVER440_FUEL_ASSEMBLY_REAL = device("vver440_fuel_assembly_real", machine().noOcclusion(),
+            real(Spec.facing(), FP_VVER440_FUEL_ASSEMBLY_REAL),
+            FoundryBlock.with(dev.denfry.promptcritical.mod.nuclear.PlacedItemBlockEntity::new));
+
     // --- АЭС T1: канальный уран-графитовый реактор (АМ-1), ГЦН, парогенератор ---
     /** Кладка 3×6×3: нижний куб — активная зона с отражателем, верхний — приводы СУЗ; контроллер — в центре низа. */
     private static final Footprint FP_POWER_REACTOR = Footprint.of(CUBE3, CUBE3.at(0, 3, 0));
@@ -1046,7 +1202,12 @@ public final class PcBlocks {
 
     /** Машины реального масштаба с цельной моделью: id блока → id модели (wholemodels/). */
     public static boolean isWholeModel(net.minecraft.world.level.block.Block b) {
-        return b == VVER_REACTOR.get() || b == VVER_STEAM_GENERATOR.get() || b == VVER_COOLANT_PUMP.get() || b == VVER_PRESSURIZER.get()
+        return b == PUMPJACK_REAL.get() || b == THREE_PHASE_SEPARATOR_REAL.get() || b == ROTARY_TABLE_REAL.get() || b == DRAWWORKS_REAL.get() || b == MUD_PUMP_REAL.get() || b == DERRICK_SEGMENT_REAL.get()
+                || b == GAS_CENTRIFUGE_REAL.get() || b == CENTRIFUGE_CASCADE_SECTION_REAL.get() || b == FLUORINATOR_REAL.get()
+                || b == UF6_CYLINDER_30B_REAL.get() || b == UF6_AUTOCLAVE_REAL.get() || b == PELLET_PRESS_REAL.get()
+                || b == SINTERING_FURNACE_REAL.get() || b == FUEL_ROD_WELDER_REAL.get() || b == FUEL_ASSEMBLY_STAND_REAL.get()
+                || b == VVER440_FUEL_ASSEMBLY_REAL.get()
+                || b == VVER_REACTOR.get() || b == VVER_STEAM_GENERATOR.get() || b == VVER_COOLANT_PUMP.get() || b == VVER_PRESSURIZER.get()
                 || b == BWR240_REACTOR.get() || b == CANDU6_REACTOR.get() || b == BN600_REACTOR.get() || b == AM1_REACTOR.get()
                 || b == GAS_TURBINE_HEAVY_REAL.get() || b == HRSG_REAL.get() || b == STEAM_REFORMER_REAL.get() || b == AMMONIA_CONVERTER_REAL.get()
                 || b == METHANOL_CONVERTER_REAL.get() || b == PYROLYSIS_FURNACE_REAL.get() || b == CHLOR_ALKALI_ELECTROLYSER_REAL.get()
@@ -1060,6 +1221,8 @@ public final class PcBlocks {
                 || b == BYPRODUCT_PLANT_SATURATOR_REAL.get() || b == BYPRODUCT_PLANT_SCRUBBER_REAL.get()
                 || b == CAST_HOUSE_MUD_GUN_REAL.get() || b == CAST_HOUSE_DRILL_REAL.get() || b == LADLE_REAL.get()
                 || b == SLAG_GRANULATOR_REAL.get()
+                || b == PORTAL_MONITOR_REAL.get() || b == HAND_FOOT_MONITOR_REAL.get() || b == HOT_CELL_REAL.get()
+                || b == SPENT_FUEL_CASK_REAL.get() || b == CASK_TRANSPORT_CART_REAL.get() || b == DRY_STORAGE_MODULE_REAL.get()
                 || b == DEAERATOR_REAL.get() || b == ION_EXCHANGE_COLUMN_REAL.get() || b == SHAFT_GENERATOR_REAL.get()
                 || b == ELECTRIC_MOTOR_MV_REAL.get()
                 // добыча, обогащение и коксохим реального масштаба
@@ -1235,6 +1398,14 @@ public final class PcBlocks {
             dev.denfry.promptcritical.mod.foundry.FoundryBlock.with(dev.denfry.promptcritical.mod.manufacturing.SmithyFurnaceBlockEntity::hardening));
 
     /** Объём цельной модели: один сегмент — {@code footprint}, больше — свойство {@code segment} по сегментам. */
+    /** Объём качалки реального масштаба: x −4…4, y 0…6, z −1…1 без колонны x 4, y 0…2 (устье скважины). */
+    private static Footprint pumpjackRealFootprint() {
+        java.util.List<Segment> s = new java.util.ArrayList<>(Footprint.tiled(-4, 3, 0, 6, -1, 1).segments());
+        s.add(new Segment(4, 4, 0, 0, 0, -1, 1, -1, 1));
+        s.add(new Segment(4, 6, 0, 0, 0, 0, 0, -1, 1));
+        return Footprint.of(s.toArray(Segment[]::new));
+    }
+
     private static Spec real(Spec spec, Footprint fp) {
         int n = fp.segments().size();
         return n == 1 ? spec.footprint(fp) : spec.segments(PcProperties.wholeSegments(n), fp);
@@ -1662,6 +1833,13 @@ public final class PcBlocks {
     public static final DeferredBlock<PcDeviceBlock> HEAT_DETECTOR = device("heat_detector", instrument(), Spec.facing(PcProperties.ALARM), FoundryBlock.with(dev.denfry.promptcritical.mod.ops.FireDeviceBlockEntity::new));
     public static final DeferredBlock<PcDeviceBlock> FLAME_DETECTOR = device("flame_detector", instrument(), Spec.facing(PcProperties.ALARM), FoundryBlock.with(dev.denfry.promptcritical.mod.ops.FireDeviceBlockEntity::new));
     public static final DeferredBlock<PcDeviceBlock> MANUAL_CALL_POINT = device("manual_call_point", instrument(), Spec.facing(PcProperties.ALARM), FoundryBlock.with(dev.denfry.promptcritical.mod.ops.FireDeviceBlockEntity::new));
+    /** ГГС 13 §13.3.4: пульт (на стене или на столе) и рупорный громкоговоритель (стена, мачта, потолок). */
+    public static final DeferredBlock<PcDeviceBlock> INTERCOM_STATION = device("intercom_station", instrument(),
+            Spec.facing(PcProperties.INTERCOM_MOUNT, PcProperties.RUNNING, BlockStateProperties.POWERED),
+            dev.denfry.promptcritical.mod.pa.PaDeviceBlock.with(dev.denfry.promptcritical.mod.pa.IntercomStationBlockEntity::new));
+    public static final DeferredBlock<PcDeviceBlock> PLANT_LOUDSPEAKER = device("plant_loudspeaker", instrument(),
+            Spec.facing(PcProperties.SPEAKER_MOUNT, PcProperties.RUNNING),
+            dev.denfry.promptcritical.mod.pa.PaDeviceBlock.with(dev.denfry.promptcritical.mod.pa.PlantLoudspeakerBlockEntity::new));
     public static final DeferredBlock<PcDeviceBlock> FIRE_ALARM_PANEL = device("fire_alarm_panel", instrument(), Spec.facing(PcProperties.ALARM, BlockStateProperties.POWERED), FoundryBlock.with(dev.denfry.promptcritical.mod.ops.FireDeviceBlockEntity::new));
     public static final DeferredBlock<PcDeviceBlock> SPRINKLER_HEAD = device("sprinkler_head", instrument(), Spec.facing(PcProperties.ALARM), FoundryBlock.with(dev.denfry.promptcritical.mod.ops.FireDeviceBlockEntity::new));
     public static final DeferredBlock<PcDeviceBlock> DELUGE_NOZZLE = device("deluge_nozzle", instrument(), Spec.facing(PcProperties.RUNNING), FoundryBlock.with(dev.denfry.promptcritical.mod.ops.FireDeviceBlockEntity::new));

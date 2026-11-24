@@ -60,7 +60,8 @@ public final class CastingPartRecipe extends CustomRecipe {
             case PUMP_CASING -> dev.denfry.promptcritical.mod.manufacturing.ManufacturingItems.PUMP_CASING.get();
             case MACHINE_BED -> dev.denfry.promptcritical.mod.manufacturing.ManufacturingItems.MACHINE_BED.get();
             case VALVE_BODY -> dev.denfry.promptcritical.mod.manufacturing.ManufacturingItems.VALVE_BODY.get();
-            case WHEEL, FLYWHEEL -> dev.denfry.promptcritical.mod.manufacturing.ManufacturingItems.PULLEY.get();
+            case WHEEL -> dev.denfry.promptcritical.mod.manufacturing.ManufacturingItems.PULLEY.get();
+            case FLYWHEEL -> dev.denfry.promptcritical.mod.manufacturing.ManufacturingItems.FLYWHEEL_RIM.get();
             case BASE_PLATE -> dev.denfry.promptcritical.mod.manufacturing.ManufacturingItems.END_COVER.get();
             default -> null;
         };

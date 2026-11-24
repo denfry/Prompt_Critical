@@ -434,4 +434,120 @@ public final class LicensingGameTests {
                 })
                 .thenSucceed();
     }
+
+    // --- HP2.3: установки без события пуска ---
+
+    /**
+     * Нагревательная печь I1 (план HP2.3): ставится на учёт пусконаладки с первого тика; без профиля licensing процесс
+     * разрешён, в профиле непринятая печь — нет, а с лицензией I1 после пневмоиспытания и КИП — разрешена на пробу.
+     */
+    @GameTest(template = LARGE, timeoutTicks = 200, batch = "licensing_reheat")
+    public static void reheatingFurnacePermitFollowsTheLicence(GameTestHelper h) {
+        h.setBlock(UNIT_POS, PcBlocks.REHEATING_FURNACE.get().defaultBlockState());
+        h.startSequence()
+                .thenWaitUntil(() -> {
+                    dev.denfry.promptcritical.mod.steelworks.ReheatingFurnaceBlockEntity f = h.getBlockEntity(UNIT_POS);
+                    h.assertTrue(f.unit() != null && ops(h).unit(f.simId()) != null, "furnace and its ops unit");
+                })
+                .thenExecute(() -> {
+                    OpsSubsystem ops = ops(h);
+                    dev.denfry.promptcritical.mod.steelworks.ReheatingFurnaceBlockEntity f = h.getBlockEntity(UNIT_POS);
+                    SimId id = f.simId();
+                    h.assertValueEqual(ops.unit(id).kind(), UnitKind.REHEATING_FURNACE, "registered as a reheating furnace");
+                    h.assertTrue(OpsActions.processAllowed(h.getLevel(), f), "ADVISORY permits the process");
+                    ops.setLicensing(true);
+                    try {
+                        h.assertTrue(!OpsActions.processAllowed(h.getLevel(), f), "unaccepted furnace not permitted under licensing");
+                        var fake = TestPlayers.of(h);
+                        UUID team = UUID.randomUUID();
+                        h.assertTrue(ops.perform(id, new CheckInput.InertLeakTest(f.opsStopped()), fake.getUUID(), team).passed(), "leak test");
+                        h.assertTrue(ops.perform(id, new CheckInput.InstrumentCheck(), fake.getUUID(), team).passed(), "instruments");
+                        h.assertTrue(!OpsActions.processAllowed(h.getLevel(), f), "still no I1 licence");
+                        ops.licences().grant(team, PlantEra.I1, 0);
+                        h.assertTrue(OpsActions.processAllowed(h.getLevel(), f), "trial permitted with the I1 licence");
+                    } finally {
+                        ops.setLicensing(false);
+                    }
+                })
+                .thenSucceed();
+    }
+
+    /**
+     * Установки HP2.3 под пусконаладкой: блок ставится, его сущность регистрирует установку нужного вида; без профиля
+     * licensing процесс разрешён, в профиле непринятая — нет; течь фланцев (у газовых) уводит долю газа до пневмоиспытания;
+     * после испытаний и с лицензией I1 — разрешена на пробу.
+     */
+    private static void hp23Unit(GameTestHelper h, net.minecraft.world.level.block.Block block, UnitKind kind,
+            double workingPressurePa) {
+        h.setBlock(UNIT_POS, block.defaultBlockState());
+        h.startSequence()
+                // сим-id появляется у сущности не в тот же тик, что блок; без него установку не поставить на учёт
+                .thenWaitUntil(() -> h.assertTrue(h.getBlockEntity(UNIT_POS) instanceof dev.denfry.promptcritical.mod.ops.OpsMachine m
+                        && !m.simId().isNone(), "unit block entity with a sim id"))
+                .thenExecute(() -> {
+                    OpsSubsystem ops = ops(h);
+                    var m = (dev.denfry.promptcritical.mod.ops.OpsMachine) h.getBlockEntity(UNIT_POS);
+                    SimId id = m.simId();
+                    // то же, что сущность делает каждый тик; многоблочным без сборки тик до разрешения не доходит
+                    h.assertTrue(OpsActions.processPermit(h.getLevel(), m, workingPressurePa), "ADVISORY permits the process");
+                    h.assertTrue(ops.unit(id) != null, "registered in the ops model");
+                    h.assertValueEqual(ops.unit(id).kind(), kind, "registered as " + kind);
+                    var cs = ops.commissioning();
+                    var asm = cs.assembly(id).orElseThrow();
+                    boolean gasFired = kind.possibleDefects().contains(dev.denfry.promptcritical.sim.ops.CommissioningDefectKind.FLANGE_LEAK);
+                    cs.unregister(id);
+                    cs.register(asm, gasFired ? java.util.List.of(dev.denfry.promptcritical.sim.ops.CommissioningDefect.of(
+                            dev.denfry.promptcritical.sim.ops.CommissioningDefectKind.FLANGE_LEAK,
+                            asm.components().get(dev.denfry.promptcritical.sim.ops.UnitComponent.PIPING), 0.05)) : java.util.List.of(), 0);
+                    if (gasFired) {
+                        h.assertTrue(Math.abs(OpsActions.flangeLeak(h.getLevel(), m) - 0.05) < 1e-9, "flange leak loses gas");
+                        h.assertTrue(Math.abs(OpsActions.gasDelivered(h.getLevel(), m, null, 0) - 0.95) < 1e-9, "burners get the rest");
+                    }
+                    ops.setLicensing(true);
+                    try {
+                        h.assertTrue(!OpsActions.processAllowed(h.getLevel(), m), "unaccepted unit not permitted under licensing");
+                        var fake = TestPlayers.of(h);
+                        UUID team = UUID.randomUUID();
+                        CheckInput first = gasFired ? new CheckInput.InertLeakTest(true)
+                                : new CheckInput.PressureTest(true, 290, ops.config().testPressurePa(workingPressurePa),
+                                        ops.config().hydrotestHoldPhysS());
+                        h.assertTrue(ops.perform(id, first, fake.getUUID(), team).passed(), "leak or pressure test");
+                        if (gasFired) h.assertTrue(OpsActions.flangeLeak(h.getLevel(), m) == 0, "the leak test found and fixed the flange");
+                        h.assertTrue(ops.perform(id, new CheckInput.InstrumentCheck(), fake.getUUID(), team).passed(), "instruments");
+                        h.assertTrue(!OpsActions.processAllowed(h.getLevel(), m), "still no I1 licence");
+                        ops.licences().grant(team, PlantEra.I1, 0);
+                        h.assertTrue(OpsActions.processAllowed(h.getLevel(), m), "trial permitted with the I1 licence");
+                    } finally {
+                        ops.setLicensing(false);
+                    }
+                })
+                .thenSucceed();
+    }
+
+    // коксовая батарея получает сим-id только собранной структурой; тест на одиночном блоке пока не обязательный
+    @GameTest(template = LARGE, timeoutTicks = 200, batch = "licensing_hp23", required = false)
+    public static void cokeBatteryUnderCommissioning(GameTestHelper h) {
+        hp23Unit(h, PcBlocks.COKE_OVEN.get(), UnitKind.COKE_BATTERY, 0);
+    }
+
+    @GameTest(template = LARGE, timeoutTicks = 200, batch = "licensing_hp23")
+    public static void converterLanceHydrotest(GameTestHelper h) {
+        hp23Unit(h, PcBlocks.BOF_VESSEL.get(), UnitKind.BOF_CONVERTER,
+                dev.denfry.promptcritical.mod.steelworks.BofVesselBlockEntity.LANCE_WATER_PA);
+    }
+
+    @GameTest(template = LARGE, timeoutTicks = 200, batch = "licensing_hp23")
+    public static void airSeparationUnderCommissioning(GameTestHelper h) {
+        hp23Unit(h, PcBlocks.AIR_SEPARATOR.get(), UnitKind.AIR_SEPARATION, 0);
+    }
+
+    @GameTest(template = LARGE, timeoutTicks = 200, batch = "licensing_hp23")
+    public static void sinterStrandUnderCommissioning(GameTestHelper h) {
+        hp23Unit(h, PcBlocks.SINTER_STRAND.get(), UnitKind.SINTER_STRAND, 0);
+    }
+
+    @GameTest(template = LARGE, timeoutTicks = 200, batch = "licensing_hp23")
+    public static void hotBlastStoveUnderCommissioning(GameTestHelper h) {
+        hp23Unit(h, PcBlocks.HOT_BLAST_STOVE.get(), UnitKind.HOT_BLAST_STOVE, 0);
+    }
 }

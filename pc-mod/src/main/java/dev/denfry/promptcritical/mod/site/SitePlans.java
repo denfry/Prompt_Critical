@@ -37,7 +37,8 @@ public final class SitePlans {
             for (Stage s : stages)
                 for (Need n : s.needs()) {
                     Item it = n.item().get();
-                    if (it == Items.GRAY_CONCRETE || it == Items.BRICKS || it == PcBlocks.MODERATOR_BLOCK_GRAPHITE.get().asItem()) continue;
+                    if (it == Items.GRAY_CONCRETE || it == Items.BRICKS || it == PcBlocks.MODERATOR_BLOCK_GRAPHITE.get().asItem()
+                            || it == PcBlocks.SHIELD_HEAVY_CONCRETE_REAL.get().asItem()) continue;
                     kg += n.base() * ItemMass.kg(it);
                 }
             return kg;
@@ -50,6 +51,7 @@ public final class SitePlans {
 
     private static final Supplier<Item> CONCRETE = () -> Items.GRAY_CONCRETE;
     private static final Supplier<Item> BRICKS = () -> Items.BRICKS;
+    private static final Supplier<Item> HEAVY_CONCRETE = () -> PcBlocks.SHIELD_HEAVY_CONCRETE_REAL.get().asItem();
     private static final Supplier<Item> GRAPHITE = () -> PcBlocks.MODERATOR_BLOCK_GRAPHITE.get().asItem();
     private static final Supplier<? extends Item> INGOT = PcItems.STEEL_INGOT, PLATE = PcItems.STEEL_PLATE, BEAM = PcItems.STEEL_BEAM,
             PIPE = PcItems.SEAMLESS_PIPE, WIRE = PcItems.COPPER_WIRE, ZR = PcItems.ZIRCALOY_INGOT;
@@ -398,6 +400,8 @@ public final class SitePlans {
             Map.entry("blast_blower_engine", new Twin(PcBlocks.BLAST_BLOWER, 1)),
             Map.entry("deaerator_real", new Twin(PcBlocks.DEAERATOR, 1)),
             Map.entry("ion_exchange_column_real", new Twin(PcBlocks.ION_EXCHANGE_COLUMN, 1)),
+            Map.entry("portal_monitor_real", new Twin(PcBlocks.PORTAL_MONITOR, 2)),
+            Map.entry("hand_foot_monitor_real", new Twin(PcBlocks.HAND_FOOT_MONITOR, 1)),
             Map.entry("shaft_generator_real", new Twin(PcBlocks.SHAFT_GENERATOR, 1)),
             Map.entry("electric_motor_mv_real", new Twin(PcBlocks.ELECTRIC_MOTOR, 1)),
             Map.entry("quench_tower_real", new Twin(PcBlocks.QUENCH_TOWER, 1)),
@@ -611,6 +615,72 @@ public final class SitePlans {
                     st("hardening_muffle", 120, n(BRICKS, 18), n(INGOT, 3)),
                     st("quench_tank", 60, n(PLATE, 6), n(INGOT, 1))));
 
+    /**
+     * Радзащита реального масштаба (docs/research/2026-11-24-radprot): стена горячей камеры — плитки магнетитового
+     * бетона (по 3,6 т), модуль хранения — бетон; металл — сталь и чугун.
+     */
+    private static final Map<String, Plan> RADPROT_PLANS = Map.of(
+            // две колонны со сцинтилляторами, перекладина с табло ≈ 0,3 т, кабели и электроника ≈ 0,1 т (TPM-903B 40 кг — переносной; оценки)
+            "portal_monitor_real", plan("portal_monitor_real", PcBlocks.PORTAL_MONITOR_REAL, 0.4,
+                    st("detector_columns", 80, n(PLATE, 3), n(WIRE, 10))),
+            // HandFoot-Fibre 57–63 кг (SPC-284), округлено до листа
+            "hand_foot_monitor_real", plan("hand_foot_monitor_real", PcBlocks.HAND_FOOT_MONITOR_REAL, 0.1,
+                    st("monitor_body", 60, n(PLATE, 1))),
+            // стена 5 × 4 × 1 м магнетитового бетона = 20 м³ (72 т); облицовка камеры, корпус окна, шлюз и два
+            // манипулятора ≈ 4,5 т стали (оценки)
+            "hot_cell_real", plan("hot_cell_real", PcBlocks.HOT_CELL_REAL, 4.5,
+                    st("shield_wall", 300, n(HEAVY_CONCRETE, 20), n(PLATE, 20)),
+                    st("window_and_manipulators", 240, n(PLATE, 10), n(INGOT, 15))),
+            // CASTOR V/19: ≈ 108 т порожний, корпус из чугуна с шаровидным графитом, крышки стальные (GNS)
+            "spent_fuel_cask_real", plan("spent_fuel_cask_real", PcBlocks.SPENT_FUEL_CASK_REAL, 108,
+                    st("cast_body", 400, n(INGOT, 1000)),
+                    st("lids", 160, n(PLATE, 80))),
+            // тележка 160 т грузоподъёмности: рама и ложементы ≈ 35 т, тележки с колёсными парами и привод ≈ 5 т (оценки)
+            "cask_transport_cart_real", plan("cask_transport_cart_real", PcBlocks.CASK_TRANSPORT_CART_REAL, 40,
+                    st("cart_frame", 240, n(BEAM, 200), n(PLATE, 150)),
+                    st("cart_bogies", 160, n(INGOT, 45), n(WIRE, 50))),
+            // NUHOMS: ≈ 63 м³ железобетона (≈ 150 т), арматура ≈ 8 т, дверь и тепловые экраны ≈ 6 т (оценки)
+            "dry_storage_module_real", plan("dry_storage_module_real", PcBlocks.DRY_STORAGE_MODULE_REAL, 14,
+                    st("module_body", 400, n(CONCRETE, 63), n(INGOT, 80)),
+                    st("module_door", 160, n(PLATE, 60))));
+
+    /**
+     * Топливный цикл реального масштаба (fuelcycle-dimensions; массы — оценки по классу оборудования, металл без
+     * футеровки и бетона).
+     */
+    private static final Map<String, Plan> FUELCYCLE_PLANS = Map.of(
+            // корпус ∅0,25 × 1,8 м с приводом и опорной плитой ≈ 0,1 т
+            "gas_centrifuge_real", plan("gas_centrifuge_real", PcBlocks.GAS_CENTRIFUGE_REAL, 0.1,
+                    st("centrifuge_casing", 40, n(PLATE, 1))),
+            // 16 машин по 0,1 т, коллекторы, рама и кабельный лоток ≈ 0,6 т
+            "centrifuge_cascade_section_real", plan("centrifuge_cascade_section_real", PcBlocks.CENTRIFUGE_CASCADE_SECTION_REAL, 2.2,
+                    st("cascade_machines", 200, n(PLATE, 16)),
+                    st("cascade_headers", 120, n(PIPE, 6), n(BEAM, 3))),
+            // башня ∅0,6 × 4,3 м, бункер, фильтр, каркас с площадкой ≈ 6 т
+            "fluorinator_real", plan("fluorinator_real", PcBlocks.FLUORINATOR_REAL, 6,
+                    st("fluorinator_tower", 240, n(PLATE, 30)),
+                    st("fluorinator_frame", 160, n(BEAM, 25), n(PIPE, 10))),
+            // сосуд давления ∅1,6 × 4 м с дверью и кольцом затвора ≈ 12 т
+            "uf6_autoclave_real", plan("uf6_autoclave_real", PcBlocks.UF6_AUTOCLAVE_REAL, 12,
+                    st("autoclave_shell", 300, n(PLATE, 90)),
+                    st("autoclave_door", 160, n(INGOT, 30))),
+            // станина, карусель на 16 позиций, головка с роликами ≈ 8 т
+            "pellet_press_real", plan("pellet_press_real", PcBlocks.PELLET_PRESS_REAL, 8,
+                    st("press_base", 240, n(INGOT, 60)),
+                    st("press_turret", 200, n(PLATE, 20))),
+            // кожух 14 м, муфели, водоохлаждаемая зона, толкатель и двери ≈ 25 т металла
+            "sintering_furnace_real", plan("sintering_furnace_real", PcBlocks.SINTERING_FURNACE_REAL, 25,
+                    st("furnace_shell", 400, n(PLATE, 150)),
+                    st("furnace_pusher", 200, n(BEAM, 80), n(PIPE, 40))),
+            // рольганг, камера с окном, баллон и шкаф ≈ 3 т
+            "fuel_rod_welder_real", plan("fuel_rod_welder_real", PcBlocks.FUEL_ROD_WELDER_REAL, 3,
+                    st("welder_table", 160, n(BEAM, 15)),
+                    st("weld_chamber", 160, n(PLATE, 10), n(WIRE, 50))),
+            // основание с поворотным гнездом, две колонны 4,5 м, балка с талью ≈ 5 т
+            "fuel_assembly_stand_real", plan("fuel_assembly_stand_real", PcBlocks.FUEL_ASSEMBLY_STAND_REAL, 5,
+                    st("stand_columns", 240, n(BEAM, 35)),
+                    st("stand_hoist", 160, n(PLATE, 15))));
+
     public static Plan get(String id) {
         Plan p = PLANS.get(id);
         if (p == null) p = I0_PLANS.get(id);
@@ -625,12 +695,15 @@ public final class SitePlans {
         if (p == null) p = STEAM_MINE_PLANS.get(id);
         if (p == null) p = SMITHY_PLANS.get(id);
         if (p == null) p = ASSEMBLY_PLANS.get(id);
+        if (p == null) p = RADPROT_PLANS.get(id);
+        if (p == null) p = FUELCYCLE_PLANS.get(id);
         return p != null ? p : NONFERROUS_PLANS.get(id);
     }
 
     public static Iterable<Plan> all() {
         return java.util.stream.Stream.of(PLANS, I3_PLANS, I0_PLANS, IRONMAKING_PLANS, POWER_PLANS, MINING_COKE_PLANS, I1_STEEL_PLANS, FOUNDRY_PLANS, I0_SHOP_PLANS,
-                        STEAM_MINE_PLANS, CARBON_PLANS, SMITHY_PLANS, ASSEMBLY_PLANS, NONFERROUS_PLANS)
+                        STEAM_MINE_PLANS, CARBON_PLANS, SMITHY_PLANS, ASSEMBLY_PLANS, NONFERROUS_PLANS, RADPROT_PLANS,
+                        FUELCYCLE_PLANS)
                 .flatMap(m -> m.values().stream()).toList();
     }
 }

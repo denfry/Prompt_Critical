@@ -90,5 +90,30 @@ public final class NuclearRecipes extends RecipeProvider {
         ShapedRecipeBuilder.shaped(RecipeCategory.MISC, PcItems.UF6_CYLINDER_5A.get())
                 .pattern(" V ").pattern("S S").pattern(" S ").define('S', sheet).define('V', valve)
                 .unlockedBy("has_iron_sheet", has(sheet)).save(out, id("uf6_cylinder_5a"));
+        // чертежи топливного цикла реального масштаба: бумага вокруг машины старой серии
+        ShapedRecipeBuilder.shaped(RecipeCategory.MISC, dev.denfry.promptcritical.mod.site.SiteRegistry.GAS_CENTRIFUGE_REAL_DRAWING.get()).pattern("PPP")
+                .pattern("PMP").pattern("PPP").define('P', net.minecraft.world.item.Items.PAPER).define('M', PcBlocks.GAS_CENTRIFUGE.get())
+                .unlockedBy("has_core", has(PcBlocks.GAS_CENTRIFUGE.get())).save(out, id("gas_centrifuge_real_drawing"));
+        ShapedRecipeBuilder.shaped(RecipeCategory.MISC, dev.denfry.promptcritical.mod.site.SiteRegistry.CENTRIFUGE_CASCADE_SECTION_REAL_DRAWING.get()).pattern("PPP")
+                .pattern("PMP").pattern("PPP").define('P', net.minecraft.world.item.Items.PAPER).define('M', PcBlocks.GAS_CENTRIFUGE.get())
+                .unlockedBy("has_core", has(PcBlocks.GAS_CENTRIFUGE.get())).save(out, id("centrifuge_cascade_section_real_drawing"));
+        ShapedRecipeBuilder.shaped(RecipeCategory.MISC, dev.denfry.promptcritical.mod.site.SiteRegistry.FLUORINATOR_REAL_DRAWING.get()).pattern("PPP")
+                .pattern("PMP").pattern("PPP").define('P', net.minecraft.world.item.Items.PAPER).define('M', PcBlocks.FLUORINATION_REACTOR.get())
+                .unlockedBy("has_core", has(PcBlocks.FLUORINATION_REACTOR.get())).save(out, id("fluorinator_real_drawing"));
+        ShapedRecipeBuilder.shaped(RecipeCategory.MISC, dev.denfry.promptcritical.mod.site.SiteRegistry.UF6_AUTOCLAVE_REAL_DRAWING.get()).pattern("PPP")
+                .pattern("PMP").pattern("PPP").define('P', net.minecraft.world.item.Items.PAPER).define('M', PcItems.UF6_CYLINDER_30B.get())
+                .unlockedBy("has_core", has(PcItems.UF6_CYLINDER_30B.get())).save(out, id("uf6_autoclave_real_drawing"));
+        ShapedRecipeBuilder.shaped(RecipeCategory.MISC, dev.denfry.promptcritical.mod.site.SiteRegistry.PELLET_PRESS_REAL_DRAWING.get()).pattern("PPP")
+                .pattern("PMP").pattern("PPP").define('P', net.minecraft.world.item.Items.PAPER).define('M', PcBlocks.PELLET_PRESS.get())
+                .unlockedBy("has_core", has(PcBlocks.PELLET_PRESS.get())).save(out, id("pellet_press_real_drawing"));
+        ShapedRecipeBuilder.shaped(RecipeCategory.MISC, dev.denfry.promptcritical.mod.site.SiteRegistry.SINTERING_FURNACE_REAL_DRAWING.get()).pattern("PPP")
+                .pattern("PMP").pattern("PPP").define('P', net.minecraft.world.item.Items.PAPER).define('M', PcBlocks.SINTERING_FURNACE.get())
+                .unlockedBy("has_core", has(PcBlocks.SINTERING_FURNACE.get())).save(out, id("sintering_furnace_real_drawing"));
+        ShapedRecipeBuilder.shaped(RecipeCategory.MISC, dev.denfry.promptcritical.mod.site.SiteRegistry.FUEL_ROD_WELDER_REAL_DRAWING.get()).pattern("PPP")
+                .pattern("PMP").pattern("PPP").define('P', net.minecraft.world.item.Items.PAPER).define('M', PcBlocks.ROD_LOADING_STATION.get())
+                .unlockedBy("has_core", has(PcBlocks.ROD_LOADING_STATION.get())).save(out, id("fuel_rod_welder_real_drawing"));
+        ShapedRecipeBuilder.shaped(RecipeCategory.MISC, dev.denfry.promptcritical.mod.site.SiteRegistry.FUEL_ASSEMBLY_STAND_REAL_DRAWING.get()).pattern("PPP")
+                .pattern("PMP").pattern("PPP").define('P', net.minecraft.world.item.Items.PAPER).define('M', PcBlocks.ASSEMBLY_JIG.get())
+                .unlockedBy("has_core", has(PcBlocks.ASSEMBLY_JIG.get())).save(out, id("fuel_assembly_stand_real_drawing"));
     }
 }

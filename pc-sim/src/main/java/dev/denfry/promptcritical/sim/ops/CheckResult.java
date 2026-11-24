@@ -31,6 +31,7 @@ public record CheckResult(CommissioningCheck check, Outcome outcome, Set<CheckCo
     public static final String READ_TRIP_TIME_RATIO = "trip_time_ratio";
     public static final String READ_LOOP_ERROR = "loop_error";
     public static final String READ_PURGE_VOLUMES = "purge_volumes";
+    public static final String READ_LEAK_RATE = "leak_rate";
 
     public CheckResult {
         unmet = unmet.isEmpty() ? Set.of() : Set.copyOf(EnumSet.copyOf(unmet));

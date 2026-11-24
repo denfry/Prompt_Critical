@@ -53,6 +53,11 @@ public final class PpeService {
         return PpeItem.is(chest, PpeItem.Kind.SCBA) && PpeItem.air(chest) > 0;
     }
 
+    /** Надет противогаз: на голове, вставкой в каске или в слоте снаряжения. */
+    public static boolean wearsGasMask(Player p) {
+        return maskStack(p) != null;
+    }
+
     /** Противогаз игрока: на голове или вставкой в каске; {@code null} — нет. */
     @Nullable
     static ItemStack maskStack(Player p) {
@@ -93,11 +98,17 @@ public final class PpeService {
 
     /** Доля аэрозоля, попадающая под маску (радиоактивное облако, пыль загрязнения): аппарат, фильтр P или всё. */
     public static double aerosolFraction(Player p) {
-        if (isolated(p)) return 1 / Ppe.SCBA_FACTOR;
+        // радиационные маски и пневмокостюм 04b §4b.7.3 вместе с противогазом и аппаратом (лучшая из защит)
+        return dev.denfry.promptcritical.mod.radiation.RadGear.respirator(p)
+                .inhaledFraction(dev.denfry.promptcritical.sim.radiation.Emitter.CS137);
+    }
+
+    /** Противогаз с несработанным фильтром P на голове или во вставке каски. */
+    public static boolean particleMask(Player p) {
         ItemStack mask = maskStack(p);
-        if (mask == null) return 1;
+        if (mask == null) return false;
         GasMask m = PpeItem.mask(mask);
-        return m.filter() == FilterType.P && !m.spent() ? 1 / Ppe.GAS_MASK_FACTOR : 1;
+        return m.filter() == FilterType.P && !m.spent();
     }
 
     /** Органы дыхания закрыты от смога: аппарат или противогаз с несработанным фильтром E или P. */
@@ -161,6 +172,7 @@ public final class PpeService {
             d.putDouble("heat", Math.max(0, d.getDouble("heat") - dtS));
         }
         p.getPersistentData().put(TAG, d);
+        dev.denfry.promptcritical.mod.radiation.RadGearService.tick(p);
     }
 
     // ------------------------------------------------------------------ урон

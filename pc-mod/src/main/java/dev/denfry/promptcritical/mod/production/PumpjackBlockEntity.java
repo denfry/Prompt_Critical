@@ -30,7 +30,8 @@ import org.jetbrains.annotations.Nullable;
  * 64 об/мин вала. Нагрузку на вал по динамограмме сообщает устье скважины в {@link #RADIUS} блоках; щит качалки —
  * тот же, что у устья: динамограмма, давления, дебит.
  */
-public final class PumpjackBlockEntity extends DeviceBlockEntity implements ShaftConsumer, FoundryDevice, PanelHost {
+public final class PumpjackBlockEntity extends DeviceBlockEntity implements ShaftConsumer, FoundryDevice, PanelHost,
+        dev.denfry.promptcritical.mod.client.whole.RealScaleBlockEntity {
     public static final double NOMINAL_RPM = 64, GEAR = 8, RATED_W = 30e3, RADIUS = 4;
 
     private final ShaftInput shaft = new ShaftInput();
@@ -148,7 +149,12 @@ public final class PumpjackBlockEntity extends DeviceBlockEntity implements Shaf
 
     @Override
     public PanelLayout panelLayout() {
-        return ProductionPanels.WELLHEAD;
+        return real() ? ProductionPanels.PUMPJACK_REAL : ProductionPanels.WELLHEAD;
+    }
+
+    @Override
+    public BlockPos wholeModelLightPos() {
+        return worldPosition.relative(wholeModelFacing(), real() ? 2 : 1);
     }
 
     @Override

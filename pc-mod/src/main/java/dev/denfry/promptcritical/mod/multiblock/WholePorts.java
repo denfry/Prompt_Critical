@@ -23,6 +23,22 @@ public final class WholePorts {
 
     private static final Map<String, List<Port>> PORTS = Map.ofEntries(
             // холодные (y 7) и горячие (y 9) нитки по обе стороны корпуса
+            // топливный цикл (fuelcycle-dimensions): коллекторы центрифуг сверху / с торцов, питание снизу
+            Map.entry("gas_centrifuge_real", List.of(p(0, 1, 0, U), p(0, 0, 0, D))),
+            Map.entry("centrifuge_cascade_section_real", List.of(p(0, 1, 0, W), p(3, 1, 0, E), p(0, 0, 0, D))),
+            // UF₄ сверху, фтор на голове, UF₆ к ловушкам, зола снизу, нагреватели
+            Map.entry("fluorinator_real", List.of(p(0, 5, 0, U), p(-1, 5, 0, W), p(1, 2, 0, E), p(0, 0, 0, D), p(-1, 0, 0, W))),
+            Map.entry("uf6_cylinder_30b_real", List.of(p(1, 0, 0, E))),
+            // пар, конденсат, отвод UF₆, дверь баллона
+            Map.entry("uf6_autoclave_real", List.of(p(0, 1, 0, U), p(1, 0, 0, D), p(2, 0, 0, E), p(-2, 0, 0, W))),
+            // порошок в бункер, таблетки с лотка, привод с запада
+            Map.entry("pellet_press_real", List.of(p(0, 1, -1, U), p(1, 0, 0, E), p(-1, 0, 0, W))),
+            // лодочки вход/выход, водород, шины, вода, вытяжка
+            Map.entry("sintering_furnace_real", List.of(p(-4, 1, 0, W), p(4, 1, 0, E), p(0, 2, 0, U), p(0, 1, -1, N),
+                    p(3, 0, 1, S), p(-3, 2, 0, U))),
+            Map.entry("fuel_rod_welder_real", List.of(p(-2, 0, 0, W), p(-1, 0, 0, D))),
+            Map.entry("fuel_assembly_stand_real", List.of(p(-1, 0, 0, W))),
+            Map.entry("vver440_fuel_assembly_real", List.of()),
             Map.entry("vver_reactor", List.of(p(2, 7, -1, E), p(2, 7, 1, E), p(-2, 7, -1, W), p(-2, 7, 1, W),
                     p(2, 9, -1, E), p(2, 9, 1, E), p(-2, 9, -1, W), p(-2, 9, 1, W))),
             // первый контур снизу, пар — с торца коллектора, питательная вода — сбоку
@@ -65,6 +81,15 @@ public final class WholePorts {
             // греющий пар деаэратор берёт из барабана ближнего котла (07 §7.9.6), паропровод и выпар нарисованы
             Map.entry("deaerator_real", List.of(p(2, 4, -1, N), p(2, 4, 1, S), p(0, 0, 0, D))),
             // вода — в верхнее днище, умягчённая — из северной грани нижней клетки
+            // радзащита: питание — по зоне щита (MachinePower), портов-кабелей нет. Горячая камера: шлюз для
+            // контейнеров на севере (2, 0, −1), вытяжка камеры сверху (−2, 3, 2), трап камеры снизу (0, 0, 2);
+            // модуль хранения: порт пенала на фасаде (0, 1, 0) — к нему подходит тележка, воздух — решётки, не трубы
+            Map.entry("portal_monitor_real", List.of()),
+            Map.entry("hand_foot_monitor_real", List.of()),
+            Map.entry("hot_cell_real", List.of(p(2, 0, -1, N), p(-2, 3, 2, U), p(0, 0, 2, D))),
+            Map.entry("spent_fuel_cask_real", List.of()),
+            Map.entry("cask_transport_cart_real", List.of()),
+            Map.entry("dry_storage_module_real", List.of(p(0, 1, 0, N))),
             Map.entry("ion_exchange_column_real", List.of(p(0, 3, 0, U), p(0, 0, 0, N))),
             // электрические машины: вал Create — через клетку-порт, кабели — к клеммам, труб и лотков нет
             Map.entry("shaft_generator_real", List.of()),
@@ -111,6 +136,9 @@ public final class WholePorts {
             Map.entry("forced_draft_fan_real", List.of(p(0, 0, 2, S), p(1, 1, 1, U))),
             Map.entry("induced_draft_fan_real", List.of(p(0, 0, 2, S), p(1, 1, 1, U))),
             // руда сверху в питающую коробку, концентрат — на юг из лотка, хвосты — на восток, вода смыва — на восток
+            // сепаратор НГС реального масштаба: газ сверху, нефть с восточного днища, вода снизу из водосборника;
+            // продукция скважин приходит от устья без трубы (WellheadBlockEntity), входной патрубок — только на модели
+            Map.entry("three_phase_separator_real", List.of(p(4, 2, 0, U), p(5, 0, 0, E), p(2, 0, 0, D))),
             Map.entry("magnetic_separator_real", List.of(p(0, 1, 0, U), p(0, 1, 1, S), p(1, 0, 0, E), p(1, 1, 1, E))),
             // пульпа с запада, хвосты на восток, пенный продукт — желоб на севере
             Map.entry("flotation_cell_real", List.of(p(0, 0, 1, W), p(1, 0, 1, E), p(0, 0, 0, N), p(1, 0, 0, N))),

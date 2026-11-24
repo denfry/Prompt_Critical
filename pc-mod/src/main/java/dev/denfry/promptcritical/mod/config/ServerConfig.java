@@ -19,7 +19,8 @@ public final class ServerConfig {
     // --- 00, 01, 02 ---
     public static final ModConfigSpec.DoubleValue K_SLOW;
     public static final ModConfigSpec.DoubleValue ISOTOPES_GAMMA_HEATING_W_PER_G, ISOTOPES_FILM_EXPOSURE_GY, ISOTOPES_RTG_TE_SYSTEM_FACTOR,
-            ISOTOPES_RTG_TE_DEGRADATION_PER_YEAR;
+            ISOTOPES_RTG_TE_DEGRADATION_PER_YEAR, TRANSPORT_TRACKED_ACTIVITY_BQ;
+    public static final ModConfigSpec.IntValue ISOTOPES_ORPHAN_AFTER_S;
     public static final ModConfigSpec.DoubleValue K_STORAGE;
     public static final ModConfigSpec.DoubleValue K_BURN;
     public static final ModConfigSpec.EnumValue<DecayHeatClock> DECAY_HEAT_CLOCK;
@@ -36,7 +37,12 @@ public final class ServerConfig {
     public enum CompatMode { AUTO, OFF }
     /** Кто владеет температурой тела (16 §16.10.1, R60): {@code auto} уступает Cold Sweat или Tough As Nails. */
     public enum BodyTemperatureOwner { AUTO, PROMPTCRITICAL, EXTERNAL }
-    public static final ModConfigSpec.EnumValue<CompatMode> COMPAT_SEASONS, COMPAT_CURIOS, COMPAT_ACCESSORIES, COMPAT_JOURNEYMAP;
+    public static final ModConfigSpec.EnumValue<CompatMode> COMPAT_SEASONS, COMPAT_CURIOS, COMPAT_ACCESSORIES, COMPAT_JOURNEYMAP,
+            COMPAT_VOICECHAT;
+    public static final ModConfigSpec.BooleanValue VOICE_NOISE_MASKING;
+    public static final ModConfigSpec.DoubleValue VOICE_SPEECH_SPL_DB, VOICE_MIN_RANGE_M;
+    public static final ModConfigSpec.DoubleValue PA_SPEAKER_SPL_DB, PA_SNR_DB, PA_MAX_RANGE_M;
+    public static final ModConfigSpec.IntValue PA_MAX_SPEAKERS_PER_ZONE;
     public static final ModConfigSpec.EnumValue<BodyTemperatureOwner> COMPAT_BODY_TEMPERATURE;
     /** Машины берут мощность от розеток, силовых щитов и ИБП. */
     public static final ModConfigSpec.BooleanValue MACHINES_NEED_POWER;
@@ -155,6 +161,8 @@ public final class ServerConfig {
     public static final ModConfigSpec.BooleanValue CONTENT_CC_RECIPE_OVERRIDE;
     public static final ModConfigSpec.IntValue ENVIRONMENT_DAYS_PER_SEASON;
     public static final ModConfigSpec.BooleanValue BODY_ELECTRIC_SHOCK;
+    public static final ModConfigSpec.BooleanValue RADIATION_ENFORCE_ZONES;
+    public static final ModConfigSpec.DoubleValue RADIATION_WORKER_ANNUAL_SV;
 
     static {
         var b = new ModConfigSpec.Builder();
@@ -459,6 +467,16 @@ public final class ServerConfig {
                 .define("electric_shock", true);
         b.pop();
 
+        b.push("radiation");
+        RADIATION_ENFORCE_ZONES = b.comment("Zone access doors stay shut for a player without an electronic dosimeter or over the annual limit, "
+                + "and on the way out while hands or shoes are contaminated; off — the door opens and only warns (04b §4b.12.2)")
+                .define("enforce_zones", false);
+        b.push("limits");
+        RADIATION_WORKER_ANNUAL_SV = b.comment("Annual dose limit of a radiation worker, Sv per 365 game days (04b §4b.5.2: 20 mSv, NRB-99/2009, ICRP 103)")
+                .defineInRange("worker_annual_sv", 0.02, 0.001, 1.0);
+        b.pop();
+        b.pop();
+
         b.push("isotopes");
         ISOTOPES_GAMMA_HEATING_W_PER_G = b.comment("Gamma heating of a capsule in a PWR-like core at 100 W/cm3, W/g; scaled by the local power density (12 §12.1.4)")
                 .defineInRange("gamma_heating_w_per_g", 5.0, 0.0, 100.0);
@@ -468,6 +486,13 @@ public final class ServerConfig {
                 .defineInRange("rtg_te_system_factor", 0.8, 0.1, 1.0);
         ISOTOPES_RTG_TE_DEGRADATION_PER_YEAR = b.comment("[BALANCE] Thermoelement degradation per physical year (12 §12.5.4)")
                 .defineInRange("rtg_te_degradation_per_year", 0.03, 0.0, 0.5);
+        ISOTOPES_ORPHAN_AFTER_S = b.comment("A tracked source unseen this long becomes an orphan source: alarm to its last holder and the server log (16 §16.8.4)")
+                .defineInRange("orphan_after_s", 600, 10, 86_400);
+        b.pop();
+
+        b.push("transport");
+        TRANSPORT_TRACKED_ACTIVITY_BQ = b.comment("[BALANCE] Items above this activity, Bq, or in IAEA categories 1-3, are tracked sources (04d §4d.6.1)")
+                .defineInRange("tracked_activity_bq", 1e12, 1e6, 1e20);
         b.pop();
 
         b.push("site");
@@ -489,6 +514,29 @@ public final class ServerConfig {
                 .defineEnum("accessories", CompatMode.AUTO);
         COMPAT_JOURNEYMAP = b.comment("A read geological map in hand sets a JourneyMap waypoint on the ore body (16 §16.5.1)")
                 .defineEnum("journeymap", CompatMode.AUTO);
+        COMPAT_VOICECHAT = b.comment("Simple Voice Chat integration (16 §16.4)").defineEnum("voicechat", CompatMode.AUTO);
+        // 16 §16.14 пишет mod.compat.voicechat.noise_masking, но в TOML ключ voicechat не может быть и значением, и таблицей
+        VOICE_NOISE_MASKING = b.comment("Workshop noise at the speaker limits how far direct speech carries (16 §16.4.2)")
+                .define("voicechat_noise_masking", true);
+        b.pop();
+        b.pop();
+
+        b.push("ops");
+        VOICE_SPEECH_SPL_DB = b.comment("[BALANCE] A shout at 1 m, dB(A): speech range is 10^((this - noise)/20) metres (16 §16.4.2)")
+                .defineInRange("voice_speech_spl_db", 84.0, 40.0, 130.0);
+        VOICE_MIN_RANGE_M = b.comment("Speech range never falls below this, m (16 §16.4.2)")
+                .defineInRange("voice_min_range_m", 2.0, 0.5, 16.0);
+        PA_SPEAKER_SPL_DB = b.comment("[BALANCE] PA horn loudspeaker at 1 m, dB(A) (13 §13.3.4)")
+                .defineInRange("pa_speaker_spl_db", 110.0, 80.0, 140.0);
+        PA_SNR_DB = b.comment("Margin over the noise for intelligible voice alarm, dB (13 §13.3.4; STI 0.5, IEC 60268-16)")
+                .defineInRange("pa_snr_db", 10.0, 0.0, 30.0);
+        PA_MAX_RANGE_M = b.comment("Farthest a PA loudspeaker carries, m; not above the Simple Voice Chat voice range (16 §16.4.1)")
+                .defineInRange("pa_max_range_m", 48.0, 4.0, 256.0);
+        PA_MAX_SPEAKERS_PER_ZONE = b.comment("Loudspeakers one PA zone may hold (13 §13.3.4)")
+                .defineInRange("pa_max_speakers_per_zone", 16, 1, 256);
+        b.pop();
+        b.push("mod");
+        b.push("compat");
         COMPAT_BODY_TEMPERATURE = b.comment("Who owns body temperature (16 §16.10.1, R60): auto hands it to Cold Sweat or Tough As Nails when one is",
                 "installed and turns our hypothermia off, so the player is not punished twice; promptcritical always keeps ours; external always defers")
                 .defineEnum("body_temperature", BodyTemperatureOwner.AUTO);

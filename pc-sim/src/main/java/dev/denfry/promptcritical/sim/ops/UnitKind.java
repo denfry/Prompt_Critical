@@ -60,7 +60,34 @@ public enum UnitKind {
     /** Графитовый котёл T0: контуры контроля потока, сброс аварийных стержней, работа на мощности (план HP2.2). */
     GRAPHITE_PILE(PlantEra.I1, EnumSet.of(LOOP_CHECK, SIS_PROOF_TEST, TRIAL_RUN),
             EnumSet.of(UnitComponent.FLUX_CHANNEL, UnitComponent.TRIP_DEVICE),
-            EnumSet.of(CommissioningDefectKind.LOOP_MISWIRED, CommissioningDefectKind.TRIP_SLOW));
+            EnumSet.of(CommissioningDefectKind.LOOP_MISWIRED, CommissioningDefectKind.TRIP_SLOW)),
+    /** Коксовая батарея I1: пневмоиспытание газа обогрева, КИП, работа на температуре коксования (план HP2.3). */
+    COKE_BATTERY(PlantEra.I1, gasFiredChecks(), gasFiredParts(), gasFiredDefects()),
+    /** Кислородный конвертер I1: опрессовка охлаждения фурмы, КИП, пробная продувка (план HP2.3). */
+    BOF_CONVERTER(PlantEra.I1, EnumSet.of(PRESSURE_TEST, INSTRUMENT_CHECK, TRIAL_RUN),
+            EnumSet.of(UnitComponent.SHELL, UnitComponent.PRESSURE_GAUGE),
+            EnumSet.of(CommissioningDefectKind.SEAM_WEEP, CommissioningDefectKind.GAUGE_OFFSET)),
+    /** Воздухоразделительная установка I1: пневмоиспытание холодного блока, КИП, работа компрессора (план HP2.3). */
+    AIR_SEPARATION(PlantEra.I1, gasFiredChecks(), gasFiredParts(), gasFiredDefects()),
+    /** Агломерационная машина I1: газ зажигательного горна, КИП, работа ленты (план HP2.3). */
+    SINTER_STRAND(PlantEra.I1, gasFiredChecks(), gasFiredParts(), gasFiredDefects()),
+    /** Воздухонагреватель I1: пневмоиспытание газа, КИП, нагрев купола (план HP2.3). */
+    HOT_BLAST_STOVE(PlantEra.I1, gasFiredChecks(), gasFiredParts(), gasFiredDefects()),
+    /** Нагревательная печь I1: пневмоиспытание газа, КИП, нагрев до уставки (план HP2.3). */
+    REHEATING_FURNACE(PlantEra.I1, gasFiredChecks(), gasFiredParts(), gasFiredDefects());
+
+    /** Общий чек-лист газовых установок HP2.3 (оценка исполнителя): пневмоиспытание, КИП, пробная работа. */
+    private static EnumSet<CommissioningCheck> gasFiredChecks() {
+        return EnumSet.of(CommissioningCheck.INERT_LEAK_TEST, INSTRUMENT_CHECK, TRIAL_RUN);
+    }
+
+    private static EnumSet<UnitComponent> gasFiredParts() {
+        return EnumSet.of(UnitComponent.PIPING, UnitComponent.PRESSURE_GAUGE);
+    }
+
+    private static EnumSet<CommissioningDefectKind> gasFiredDefects() {
+        return EnumSet.of(CommissioningDefectKind.FLANGE_LEAK, CommissioningDefectKind.GAUGE_OFFSET);
+    }
 
     private final PlantEra era;
     private final Set<CommissioningCheck> checklist;

@@ -30,16 +30,17 @@ public final class SpinWholeRenderer<T extends BlockEntity & WholeModelHost> imp
     private final BlockEntityRenderer<T> old;
     private final List<Spin> spins = new ArrayList<>();
     private final List<PartialModel> whileRunning = new ArrayList<>();
-    /** Горящий вариант модели ({@code <id>_lit}), пока у контроллера {@code lit}. */
-    private boolean lit;
+    /** Вариант модели по состоянию (горит, тревога): суффикс к id и когда он рисуется. */
+    private record Variant(String suffix, java.util.function.Predicate<BlockState> when) {}
+    private final List<Variant> variants = new ArrayList<>();
     private final WholeModelRenderer<T> real = new WholeModelRenderer<>() {
         @Override
         @Nullable
         protected String modelId(T be) {
             String id = be.wholeModelId();
-            BlockState s = be.getBlockState();
-            return lit && id != null && s.hasProperty(net.minecraft.world.level.block.state.properties.BlockStateProperties.LIT)
-                    && s.getValue(net.minecraft.world.level.block.state.properties.BlockStateProperties.LIT) ? id + "_lit" : id;
+            if (id == null) return null;
+            for (Variant v : variants) if (v.when().test(be.getBlockState())) return id + v.suffix();
+            return id;
         }
 
         @Override
@@ -77,10 +78,19 @@ public final class SpinWholeRenderer<T extends BlockEntity & WholeModelHost> imp
         return this;
     }
 
-    /** Печь с горящим вариантом цельной модели: обе модели регистрирует вызывающий. */
-    public SpinWholeRenderer<T> lit() {
-        lit = true;
+    /**
+     * Вариант цельной модели {@code <id><suffix>}, пока состояние удовлетворяет {@code when} (первый подходящий);
+     * модель варианта регистрирует вызывающий.
+     */
+    public SpinWholeRenderer<T> variant(String suffix, java.util.function.Predicate<BlockState> when) {
+        variants.add(new Variant(suffix, when));
         return this;
+    }
+
+    /** Печь с горящим вариантом цельной модели ({@code <id>_lit}, пока у контроллера {@code lit}). */
+    public SpinWholeRenderer<T> lit() {
+        return variant("_lit", st -> st.hasProperty(net.minecraft.world.level.block.state.properties.BlockStateProperties.LIT)
+                && st.getValue(net.minecraft.world.level.block.state.properties.BlockStateProperties.LIT));
     }
 
     /** Часть, видимая только пока машина работает (пена флотокамеры). */

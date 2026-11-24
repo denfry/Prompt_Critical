@@ -46,6 +46,19 @@ public final class FluorinationBlockEntity extends UraniumProcessBlockEntity {
         super(UraniumBlockEntities.FLUORINATION.get(), pos, state, 4, 2, FluorinationBlockEntity::loadable);
     }
 
+    /** Пламенная башня реального масштаба: гул нагревательных поясов, изредка — продувка фильтра (fuelcycle §2a). */
+    @Override
+    protected void clientTick() {
+        if (!real() || !on()) return;
+        dev.denfry.promptcritical.mod.fx.MachineFx fx = dev.denfry.promptcritical.mod.fx.MachineFx.of(this);
+        if (fx == null) return;
+        if (fx.chance(0.3)) fx.sound(fx.at(8, 40, 8), net.minecraft.sounds.SoundEvents.FURNACE_FIRE_CRACKLE, 0.4f, 0.6f);
+        if (fx.chance(0.08)) {
+            fx.sound(fx.at(26, 20, 8), net.minecraft.sounds.SoundEvents.FIRE_EXTINGUISH, 0.5f, 1.4f);
+            fx.puff(fx.at(26, 30, 8), new net.minecraft.world.phys.Vec3(0, 0.05, 0), 4);
+        }
+    }
+
     static boolean loadable(ItemStack s) {
         return s.is(PcItems.UF4_POWDER.get()) || s.is(PcItems.UF6_CYLINDER_48Y.get()) || s.is(PcItems.UF6_CYLINDER_5A.get());
     }

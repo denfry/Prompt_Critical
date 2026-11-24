@@ -31,7 +31,9 @@ public enum CommissioningDefectKind {
     /** Защита срабатывает с задержкой: время срабатывания в долях допустимого (больше 1). */
     TRIP_SLOW(CommissioningCheck.SIS_PROOF_TEST),
     /** Перепутан контур КИП: ошибка показания в долях шкалы. */
-    LOOP_MISWIRED(CommissioningCheck.LOOP_CHECK);
+    LOOP_MISWIRED(CommissioningCheck.LOOP_CHECK),
+    /** Течь фланца газопровода: утечка в долях испытательного объёма за час. */
+    FLANGE_LEAK(CommissioningCheck.INERT_LEAK_TEST);
 
     private final CommissioningCheck revealedBy;
 

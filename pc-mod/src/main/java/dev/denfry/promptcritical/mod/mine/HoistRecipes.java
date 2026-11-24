@@ -49,10 +49,6 @@ public final class HoistRecipes extends RecipeProvider {
         ShapedRecipeBuilder.shaped(RecipeCategory.MISC, PcItems.WIRE_ROPE.get(), 2)
                 .pattern("CCC").pattern("CIC").pattern("CCC").define('C', Items.CHAIN).define('I', Items.IRON_INGOT)
                 .unlockedBy("has_chain", has(Items.CHAIN)).save(out, id("wire_rope"));
-        ShapedRecipeBuilder.shaped(RecipeCategory.MISC, PcBlocks.MINE_HOIST.get())
-                .pattern("III").pattern("SDS").pattern("KCK").define('I', Items.IRON_INGOT).define('S', AllBlocks.SHAFT.get())
-                .define('D', AllBlocks.LARGE_COGWHEEL.get()).define('K', Items.IRON_BLOCK).define('C', AllBlocks.COGWHEEL.get())
-                .unlockedBy("has_large_cogwheel", has(AllBlocks.LARGE_COGWHEEL.get())).save(out, id("mine_hoist"));
         ShapedRecipeBuilder.shaped(RecipeCategory.MISC, PcBlocks.HEADFRAME.get())
                 .pattern("B B").pattern(" B ").pattern("B B").define('B', Items.IRON_BARS)
                 .unlockedBy("has_iron_bars", has(Items.IRON_BARS)).save(out, id("headframe"));
@@ -80,10 +76,7 @@ public final class HoistRecipes extends RecipeProvider {
                 .pattern(" B ").pattern("RIL").pattern(" I ").define('B', Items.BELL).define('R', Items.REDSTONE)
                 .define('I', Items.IRON_INGOT).define('L', Items.REDSTONE_LAMP)
                 .unlockedBy("has_mine_cage", has(PcBlocks.MINE_CAGE.get())).save(out, id("shaft_signal"));
-        ShapedRecipeBuilder.shaped(RecipeCategory.MISC, PcBlocks.MINE_DRAINAGE_PUMP.get())
-                .pattern("IPI").pattern("SCS").pattern("III").define('I', Items.IRON_INGOT).define('P', AllBlocks.MECHANICAL_PUMP.get())
-                .define('S', AllBlocks.SHAFT.get()).define('C', AllBlocks.COGWHEEL.get())
-                .unlockedBy("has_mechanical_pump", has(AllBlocks.MECHANICAL_PUMP.get())).save(out, id("mine_drainage_pump"));
+        // водоотливной насос собирают на сборочном стенде (18 §18.8, §18.11): верстачного рецепта нет
         // механизированная лава (08 §8.2.3): шнеки — буры Create, гидростойки — поршни
         ShapedRecipeBuilder.shaped(RecipeCategory.MISC, PcBlocks.LONGWALL_SHEARER.get())
                 .pattern("DGD").pattern("III").define('D', AllBlocks.MECHANICAL_DRILL.get()).define('G', AllBlocks.GEARBOX.get())

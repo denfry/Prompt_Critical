@@ -186,6 +186,141 @@
     box(a, 9, 0, 9, 2, '#d0884a');
   };
 
+  // ---------------------------------------------------------------- I0 machines on assembly: fan, hoist, steam engine
+  // Ring sector between r0 and r of the circle at (cx, cy), angles a0..a1 in radians (image y down).
+  function arc(a, cx, cy, r, r0, a0, a1, c) {
+    for (let y = 0; y < 16; y++) for (let x = 0; x < 16; x++) {
+      const d = Math.hypot(x - cx, y - cy), t = Math.atan2(y - cy, x - cx);
+      if (d >= r0 && d < r && t >= a0 && t <= a1) px(a, x, y, c);
+    }
+  }
+  // Centrifugal fan wheel face on: backplate, ten backward-curved blades, hub with a keyed bore.
+  I.fan_wheel = (a) => {
+    circ(a, 7.5, 7.5, 7, '#7a8288');
+    circ(a, 7.5, 7.5, 6.4, '#8e969c');
+    for (let k = 0; k < 10; k++) {
+      const t = 2 * Math.PI * k / 10, [x0, y0] = at(7.5, 7.5, 2.6, t), [x1, y1] = at(7.5, 7.5, 6.4, t + 0.55);
+      line(a, x0, y0, x1, y1, '#4e555a');
+    }
+    circ(a, 7.5, 7.5, 2.2, '#a4aab0');
+    circ(a, 7.5, 7.5, 1, '#1d1d1f');
+    px(a, 7, 6, '#1d1d1f');
+  };
+  // Hoist rope drum from the side: cast flanges, the barrel wound with steel rope in turns, the shaft ends.
+  I.rope_drum = (a) => {
+    box(a, 0, 7, 15, 8, '#a4aab0');
+    box(a, 3, 4, 12, 11, '#5f6266');
+    for (let x = 3; x <= 12; x++) for (let y = 4; y <= 11; y++) if ((x + y) % 3 === 0) px(a, x, y, '#9a9e9e'); else if ((x + y) % 3 === 1) px(a, x, y, '#6e7276');
+    box(a, 1, 2, 2, 13, '#7a7f84');
+    box(a, 13, 2, 14, 13, '#7a7f84');
+    px(a, 1, 2, '#c8ccd0'); px(a, 13, 2, '#c8ccd0');
+  };
+  // Brake shoe: curved steel back with the brown friction lining inside, the pivot lug under its middle.
+  I.brake_shoe = (a) => {
+    arc(a, 7.5, 15, 9.6, 7.4, -2.75, -0.39, '#7a7f84');
+    arc(a, 7.5, 15, 7.4, 5.2, -2.75, -0.39, '#6b4a30');
+    box(a, 6, 2, 9, 5, '#7a7f84');
+    box(a, 7, 3, 8, 4, '#1d1d1f');
+    for (const [x, y] of [[3, 10], [12, 10], [7, 9]]) px(a, x, y, '#a88a60');
+  };
+  // Steam engine cylinder: cast-iron barrel with the valve chest on top, bolted covers, the piston rod gland.
+  I.cylinder_block = (a) => {
+    box(a, 2, 5, 12, 12, '#5f6266');
+    box(a, 4, 2, 10, 4, '#6e7378');
+    box(a, 5, 1, 9, 1, '#8e9399');
+    box(a, 1, 4, 2, 13, '#7a7f84');
+    box(a, 12, 4, 13, 13, '#7a7f84');
+    for (const y of [5, 8, 11]) { px(a, 1, y, '#c8ccd0'); px(a, 13, y, '#c8ccd0'); }
+    box(a, 14, 8, 15, 9, '#b4b9be');
+    px(a, 13, 8, '#c9a14a'); px(a, 13, 9, '#c9a14a');
+    px(a, 7, 13, '#c9a14a');
+  };
+  // Piston from the side: bright crown, three ring grooves, the rod with its nut.
+  I.piston = (a) => {
+    box(a, 2, 3, 9, 12, '#a4aab0');
+    for (const x of [3, 5, 7]) box(a, x, 3, x, 12, '#3a3d40');
+    box(a, 10, 7, 15, 8, '#b4b9be');
+    box(a, 9, 6, 10, 9, '#7d8288');
+  };
+  // Connecting rod across the icon: big end with its bearing cap and bolts low left, small end eye top right.
+  I.connecting_rod = (a) => {
+    for (let i = 0; i < 7; i++) { px(a, 5 + i, 10 - i, '#8e9399'); px(a, 6 + i, 10 - i, '#7d8288'); px(a, 5 + i, 9 - i, '#a4aab0'); }
+    circ(a, 4, 11, 3.2, '#8e9399');
+    circ(a, 4, 11, 1.5, '#c9a14a');
+    circ(a, 4, 11, 0.9, '#1d1d1f');
+    px(a, 1, 13, '#c8ccd0'); px(a, 6, 14, '#c8ccd0');
+    circ(a, 12, 4, 2.2, '#8e9399');
+    circ(a, 12, 4, 1, '#1d1d1f');
+  };
+  // Crosshead: steel block with white-metal slippers top and bottom, the gudgeon pin, the piston rod in from the left.
+  I.crosshead = (a) => {
+    box(a, 0, 7, 5, 8, '#b4b9be');
+    box(a, 5, 5, 11, 10, '#7d8288');
+    box(a, 4, 3, 12, 4, '#cfc6a8');
+    box(a, 4, 11, 12, 12, '#cfc6a8');
+    circ(a, 8, 7.5, 1.5, '#a4aab0');
+    px(a, 8, 7, '#1d1d1f'); px(a, 8, 8, '#1d1d1f');
+  };
+  // Flywheel rim segment: a heavy cast arc with the spoke stub and the bolted joint plate at one end.
+  I.flywheel_rim = (a) => {
+    arc(a, 15.5, 15.5, 15, 10.4, -Math.PI, -Math.PI / 2, '#5a5e62');
+    arc(a, 15.5, 15.5, 15, 14, -Math.PI, -Math.PI / 2, '#7a7f84');
+    line(a, 8, 8, 12, 12, '#5a5e62'); line(a, 9, 8, 13, 12, '#5a5e62'); line(a, 8, 9, 12, 13, '#4e5256');
+    box(a, 13, 0, 15, 4, '#7a7f84');
+    px(a, 14, 1, '#c8ccd0'); px(a, 14, 3, '#c8ccd0');
+  };
+  // Watt centrifugal governor: spindle, two brass balls on their arms, the links to the sliding sleeve, base gear.
+  I.governor = (a) => {
+    box(a, 7, 1, 8, 13, '#a4aab0');
+    line(a, 7, 2, 3, 7, '#7d8288');
+    line(a, 8, 2, 12, 7, '#7d8288');
+    line(a, 4, 9, 6, 10, '#7d8288');
+    line(a, 11, 9, 9, 10, '#7d8288');
+    box(a, 6, 10, 9, 11, '#8e9399');
+    circ(a, 3.5, 8.5, 2.6, '#c9a14a');
+    circ(a, 11.5, 8.5, 2.6, '#c9a14a');
+    box(a, 4, 13, 11, 14, '#7a7f84');
+    for (const x of [4, 6, 8, 10]) px(a, x, 12, '#7a7f84');
+  };
+
+  // ---------------------------------------------------------------- generator assembly (stator_core: smithy.author.js)
+  // Stator winding set: formed copper coils laid round in a ring, the end turns showing, taped leads out at the top.
+  I.stator_winding = (a) => {
+    circ(a, 7.5, 8, 7, '#b8733a', 4.2);
+    for (let k = 0; k < 12; k++) {
+      const t = 2 * Math.PI * k / 12, [x0, y0] = at(7.5, 8, 4.4, t), [x1, y1] = at(7.5, 8, 6.6, t + 0.2);
+      line(a, x0, y0, x1, y1, '#8a5428');
+    }
+    circ(a, 7.5, 8, 5.4, '#d0884a', 5);
+    box(a, 5, 0, 5, 2, '#d8cfa8'); box(a, 10, 0, 10, 2, '#d8cfa8');
+    px(a, 5, 0, '#d0884a'); px(a, 10, 0, '#d0884a');
+  };
+  // Commutator from the side: copper bars with mica strips between, the riser lugs, the shaft through.
+  I.commutator = (a) => {
+    box(a, 0, 7, 15, 8, '#b4b9be');
+    box(a, 4, 3, 11, 12, '#b8733a');
+    for (let y = 4; y <= 11; y += 2) box(a, 4, y, 11, y, '#4a3a2a');
+    box(a, 2, 2, 4, 13, '#c88848');
+    for (let y = 3; y <= 12; y += 3) px(a, 3, y, '#e0a060');
+  };
+  // Brush holder: a brass box clamped on its insulated stud, the carbon brush out of the bottom, its spring and pigtail.
+  I.brush_holder = (a) => {
+    box(a, 1, 2, 13, 3, '#5a4a3a');
+    box(a, 5, 3, 10, 9, '#c9a14a');
+    box(a, 6, 9, 9, 13, '#2a2a2c');
+    line(a, 10, 4, 13, 7, '#a4aab0');
+    line(a, 9, 10, 12, 12, '#b8733a'); px(a, 13, 12, '#b8733a');
+    px(a, 7, 5, '#1d1d1f');
+  };
+  // Slip rings: two bronze rings on an insulating hub on the shaft, from the side.
+  I.slip_ring = (a) => {
+    box(a, 0, 7, 15, 8, '#b4b9be');
+    box(a, 3, 4, 12, 11, '#5a4a3a');
+    box(a, 4, 2, 6, 13, '#c9a14a');
+    box(a, 9, 2, 11, 13, '#c9a14a');
+    for (const x of [4, 9]) box(a, x, 3, x, 12, '#e0c070');
+  };
+
   function paint(root) {
     const A = path.join(root, PCART.ASSETS);
     for (const [n, f] of Object.entries(I)) {

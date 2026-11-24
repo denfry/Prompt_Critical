@@ -231,6 +231,9 @@ public final class MachineLoads {
         put(Load.ACTIVE_LV, CrudeColumnBlockEntity.class);
         put(Load.ACTIVE_LV, EdcCrackerBlockEntity.class);
         put(Load.ACTIVE_LV, FuelShopBlockEntity.class);
+        put(Load.PASSIVE, dev.denfry.promptcritical.mod.nuclear.CentrifugeRealBlockEntity.class);
+        put(Load.PASSIVE, dev.denfry.promptcritical.mod.nuclear.PlacedItemBlockEntity.class);
+        put(Load.ACTIVE_LV, dev.denfry.promptcritical.mod.nuclear.Uf6AutoclaveBlockEntity.class);
         put(Load.ACTIVE_LV, GasPlantBlockEntity.class);
         put(Load.ACTIVE_LV, HclFurnaceBlockEntity.class);
         put(Load.ACTIVE_LV, MethanolColumnBlockEntity.class);
@@ -268,6 +271,11 @@ public final class MachineLoads {
         put(Load.IC, MarketTerminalBlockEntity.class);
         put(Load.IC, MesServerBlockEntity.class);
         put(Load.IC, PortalMonitorBlockEntity.class);
+        // горячая камера: лампы, вытяжка и приводы манипуляторов; контейнер, тележка (своя батарея) и модуль — без сети
+        put(Load.ACTIVE_LV, dev.denfry.promptcritical.mod.radiation.HotCellBlockEntity.class);
+        put(Load.PASSIVE, dev.denfry.promptcritical.mod.radiation.SpentFuelCaskBlockEntity.class);
+        put(Load.PASSIVE, dev.denfry.promptcritical.mod.radiation.CaskCartBlockEntity.class);
+        put(Load.PASSIVE, dev.denfry.promptcritical.mod.radiation.DryStorageModuleBlockEntity.class);
         put(Load.IC, QualityLabBlockEntity.class);
         put(Load.IC, ShaftSignalBlockEntity.class);
         put(Load.IC, VibrationTransmitterBlockEntity.class);
@@ -333,6 +341,8 @@ public final class MachineLoads {
         put(Load.PASSIVE, FuelRackBlockEntity.class);
         put(Load.PASSIVE, GasStorageBulletBlockEntity.class);
         put(Load.PASSIVE, HeadframeSteelBlockEntity.class);
+        put(Load.PASSIVE, dev.denfry.promptcritical.mod.drilling.DerrickRealBlockEntity.class);
+        put(Load.PASSIVE, dev.denfry.promptcritical.mod.drilling.DrawworksRealBlockEntity.class);
         put(Load.PASSIVE, HlwVaultBlockEntity.class);
         put(Load.PASSIVE, HydrotestPumpBlockEntity.class);
         put(Load.PASSIVE, IngotMoldBlockEntity.class);
@@ -364,6 +374,13 @@ public final class MachineLoads {
         put(Load.OWN, dev.denfry.promptcritical.mod.grid.LampBlock.LampBlockEntity.class);
         // настенные часы — механические
         put(Load.PASSIVE, dev.denfry.promptcritical.mod.content.WallClockBlock.WallClockBlockEntity.class);
+        // ГГС и операторский терминал (16 §16.3.4, §16.4.1): электроника 0,4 кВ от ИБП
+        put(Load.IC, dev.denfry.promptcritical.mod.pa.IntercomStationBlockEntity.class);
+        put(Load.IC, dev.denfry.promptcritical.mod.pa.PlantLoudspeakerBlockEntity.class);
+        put(Load.IC, dev.denfry.promptcritical.mod.scada.OperatorTerminalBlockEntity.class);
+        // санпропускник 04b: шкафы — мебель; контроллер ЗКД — табличка с журналом, дозу берёт с приборов зоны
+        put(Load.PASSIVE, dev.denfry.promptcritical.mod.radiation.LockerBlockEntity.class);
+        put(Load.PASSIVE, dev.denfry.promptcritical.mod.radiation.ZoneControllerBlockEntity.class);
         put(Load.PASSIVE, SteamGeneratorBlockEntity.class);
         put(Load.PASSIVE, TideGaugeBlockEntity.class);
         put(Load.PASSIVE, VentStackBlockEntity.class);

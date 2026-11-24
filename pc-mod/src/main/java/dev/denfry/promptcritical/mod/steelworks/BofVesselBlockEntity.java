@@ -5,6 +5,9 @@ import net.minecraft.server.level.ServerLevel;
 import dev.denfry.promptcritical.mod.binding.SimLevelBinding;
 import dev.denfry.promptcritical.mod.block.PcProperties;
 import dev.denfry.promptcritical.mod.boiler.ShaftConsumer;
+import dev.denfry.promptcritical.mod.ops.OpsActions;
+import dev.denfry.promptcritical.mod.ops.OpsMachine;
+import dev.denfry.promptcritical.sim.ops.UnitKind;
 import dev.denfry.promptcritical.mod.foundry.MachineInventory;
 import dev.denfry.promptcritical.mod.fx.MachineFx;
 import dev.denfry.promptcritical.mod.ironworks.GasBuffer;
@@ -53,7 +56,26 @@ import org.jetbrains.annotations.Nullable;
  * вертикали с опущенной фурмой {@code oxygen_lance} над горловиной (2 блока над контроллером); пока фурма в
  * горловине, привод наклона заблокирован. Конвертерный газ — в бак газоотвода (трубы Create).
  */
-public class BofVesselBlockEntity extends IronworksDeviceBlockEntity<ConverterUnit> implements ShaftConsumer, PanelHost {
+public class BofVesselBlockEntity extends IronworksDeviceBlockEntity<ConverterUnit> implements ShaftConsumer, PanelHost, OpsMachine {
+    /** Рабочее давление воды охлаждения фурмы и кессона, Па: для гидроиспытания (план HP2.3, оценка исполнителя). */
+    public static final double LANCE_WATER_PA = 1.2e6;
+
+    @Override
+    public UnitKind opsKind() {
+        return UnitKind.BOF_CONVERTER;
+    }
+
+    /** Остановлен — кислород не идёт (условие опрессовки и чеканки). */
+    @Override
+    public boolean opsStopped() {
+        ConverterUnit u = level != null && !level.isClientSide ? unit() : null;
+        return u == null || u.lastOxygenNm3S() <= 0;
+    }
+
+    @Override
+    public net.minecraft.world.phys.Vec3 opsBearingPos() {
+        return net.minecraft.world.phys.Vec3.atCenterOf(worldPosition);
+    }
     /** Передача привода наклона: градусов корпуса на оборот вала. */
     public static final double GEAR = 3.6;
     public static final double CHARGE_DEG = 40, TAP_DEG = 80, MAX_TILT_DEG = 110;
@@ -153,8 +175,12 @@ public class BofVesselBlockEntity extends IronworksDeviceBlockEntity<ConverterUn
         }
         u.setTilt(tiltDeg);
         u.setLance(lance == null ? ConverterUnit.MAX_LANCE_M : lance.heightM());
-        // кислород из буфера фурмы
-        if (lance != null) u.supplyOxygen(lance.oxygen().draw(u.oxygenDemandNm3S() * dtp));
+        // кислород из буфера фурмы; пусконаладка (план HP2.3): непринятый конвертер в профиле licensing не начинает
+        // продувку, а начатую не обрывает
+        boolean permitted = OpsActions.processPermit(level, this, LANCE_WATER_PA) || u.lastOxygenNm3S() > 0;
+        if (lance != null && permitted) u.supplyOxygen(lance.oxygen().draw(u.oxygenDemandNm3S() * dtp));
+        OpsActions.trial(level, this, u.lastOxygenNm3S() > 0 && u.converter().phase() == ConverterPhase.BLOWING,
+                u.lastOxygenNm3S() / ConverterUnit.DEFAULT_O2_NM3S, false);
         // газоотвод: что не влезло в бак — на свечу
         offgas.put(PcFluids.CONVERTER_GAS.source.get(), u.takeOffgasNm3(Double.MAX_VALUE));
         Converter c = u.converter();

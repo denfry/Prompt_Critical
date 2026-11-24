@@ -74,8 +74,13 @@ public final class PcBlockLoot extends BlockLootSubProvider {
                                 .when(LootItemBlockStatePropertyCondition.hasBlockStateProperties(block).setProperties(
                                         StatePropertiesPredicate.Builder.properties().hasProperty(PcProperties.DOOR_KIND, PcProperties.DoorKind.REGULATOR)))
                                 .otherwise(LootItem.lootTableItem(block))))));
+            } else if (block instanceof net.minecraft.world.level.block.DoorBlock) {
+                add(block, createDoorTable(block)); // дверь зоны: предмет — с нижней половины
             } else if (block instanceof net.minecraft.world.level.block.SlabBlock) {
                 add(block, createSlabItemTable(block));
+            } else if (db == PcBlocks.UF6_CYLINDER_30B_REAL || db == PcBlocks.VVER440_FUEL_ASSEMBLY_REAL) {
+                // положенный баллон или ТВС роняет только свой предмет (его отдаёт BE)
+                add(block, LootTable.lootTable());
             } else if (block instanceof PcBlock pc && pc.spec().segment() != null) {
                 add(block, controllerOnly(pc, PcBlocks.passportMachines().contains(db)));
             } else if (PcBlocks.passportMachines().contains(db)) {

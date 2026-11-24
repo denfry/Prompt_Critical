@@ -65,6 +65,11 @@ public final class PcBlockStateProvider extends BlockStateProvider {
                 cokeCell(block, id);
                 continue;
             }
+            if (block instanceof net.minecraft.world.level.block.DoorBlock) {
+                zoneDoor(block, id);
+                itemModel(id, block);
+                continue;
+            }
             if (PARTS.contains(id)) {
                 parts(block, id);
                 itemModel(id, block);
@@ -94,6 +99,22 @@ public final class PcBlockStateProvider extends BlockStateProvider {
             int age = st.getValue(dev.denfry.promptcritical.mod.hazard.SpillBlocks.OilSlickBlock.AGE);
             return ConfiguredModel.builder().modelFile(existing(age == 0 ? "oil_slick" : "oil_slick_age" + age)).build();
         });
+    }
+
+    /**
+     * Дверь зоны (04b §4b.12.2): одна модель полотна на половину, полотно у южной грани (дверь к северу, закрыта).
+     * Повороты — как у ванильной двери: закрытое полотно — у грани против фасада, открытое уходит к петлям (левые —
+     * против часовой стрелки, правые — по ней).
+     */
+    private void zoneDoor(Block block, String id) {
+        getVariantBuilder(block).forAllStatesExcept(s -> {
+            Direction closed = s.getValue(net.minecraft.world.level.block.DoorBlock.FACING).getOpposite();
+            Direction side = !s.getValue(net.minecraft.world.level.block.DoorBlock.OPEN) ? closed
+                    : s.getValue(net.minecraft.world.level.block.DoorBlock.HINGE) == net.minecraft.world.level.block.state.properties.DoorHingeSide.LEFT
+                            ? closed.getCounterClockWise() : closed.getClockWise();
+            boolean top = s.getValue(net.minecraft.world.level.block.DoorBlock.HALF) == net.minecraft.world.level.block.state.properties.DoubleBlockHalf.UPPER;
+            return ConfiguredModel.builder().modelFile(existing(top ? id + "_top" : id)).rotationY((int) side.toYRot()).build();
+        }, net.minecraft.world.level.block.DoorBlock.POWERED);
     }
 
     /** Расцепная муфта: модель вдоль Z; ось X — поворот на 90° вокруг Y, ось Y — на 90° вокруг X. */
@@ -398,13 +419,20 @@ public final class PcBlockStateProvider extends BlockStateProvider {
                  "longwall_shearer_real", "coal_jig_real", "quench_tower_real", "powered_roof_support_real" -> "whole_empty";
             case "bof_vessel_real", "reheating_furnace_real" -> "whole_empty";
             case "molding_station_real", "shakeout_grate_real" -> "whole_empty";
+            case "gas_centrifuge_real", "centrifuge_cascade_section_real", "fluorinator_real", "uf6_cylinder_30b_real",
+                 "uf6_autoclave_real", "pellet_press_real", "sintering_furnace_real", "fuel_rod_welder_real",
+                 "fuel_assembly_stand_real", "vver440_fuel_assembly_real" -> "whole_empty";
             case "machine_lathe_real", "drill_press_real", "milling_machine_real", "shaping_machine_real", "surface_grinder_real" -> "whole_empty";
             case "degasification_pump_real", "forced_draft_fan_real", "induced_draft_fan_real", "magnetic_separator_real",
                  "flotation_cell_real", "electrode_boiler_real" -> "whole_empty";
             case "electric_arc_furnace_real", "ladle_station_real", "ingot_mold_real", "heat_treatment_furnace_real", "pipe_welder_real",
                  "piercing_mill_real" -> "whole_empty";
             case "acheson_furnace_real", "electrode_extruder_real", "baking_furnace_real" -> "whole_empty";
-            case "power_hammer_real", "bloomery_real", "forge_hearth_real", "crank_press_real", "wire_mill_real", "sheet_mill_real", "notching_press_real", "winding_machine_real", "heating_furnace_real", "hardening_furnace_real", "assembly_stand" -> "whole_empty";
+            case "power_hammer_real", "bloomery_real", "forge_hearth_real", "crank_press_real", "wire_mill_real", "sheet_mill_real", "notching_press_real", "winding_machine_real", "heating_furnace_real", "hardening_furnace_real", "assembly_stand",
+                    "rotary_table_real", "drawworks_real", "mud_pump_real", "derrick_segment_real", "pumpjack_real",
+                    "three_phase_separator_real" -> "whole_empty";
+            case "portal_monitor_real", "hand_foot_monitor_real", "hot_cell_real", "spent_fuel_cask_real", "cask_transport_cart_real",
+                 "dry_storage_module_real" -> "whole_empty";
             case "gas_turbine_heavy_real", "hrsg_real", "steam_reformer_real", "ammonia_converter_real", "methanol_converter_real",
                  "pyrolysis_furnace_real", "chlor_alkali_electrolyser_real", "pvc_reactor_real" -> "whole_empty";
             case "electrorefining_cell_real", "peirce_smith_converter_real", "reduction_pot_real", "bayer_digester_real",
@@ -544,6 +572,15 @@ public final class PcBlockStateProvider extends BlockStateProvider {
             case "fire_alarm_panel" -> s.getValue(PcProperties.ALARM) ? id + "_fire"
                     : s.getValue(BlockStateProperties.POWERED) ? id + "_fault" : id;
             case "historian_server" -> s.getValue(BlockStateProperties.LIT) ? id + "_busy" : id;
+            case "intercom_station" -> s.getValue(PcProperties.INTERCOM_MOUNT) == PcProperties.PaMount.DESK ? id + "_desk"
+                    : !s.getValue(BlockStateProperties.POWERED) ? id + "_fault" : s.getValue(PcProperties.RUNNING) ? id + "_talking" : id;
+            case "plant_loudspeaker" -> switch (s.getValue(PcProperties.SPEAKER_MOUNT)) {
+                case POLE -> id + "_pole";
+                case CEILING -> id + "_ceiling";
+                default -> s.getValue(PcProperties.RUNNING) ? id + "_active" : id;
+            };
+            case "operator_terminal" -> !s.getValue(BlockStateProperties.POWERED) ? id
+                    : s.getValue(PcProperties.ALARM) ? id + "_alarm" : id + "_on";
             case "foam_proportioner" -> s.getValue(BlockStateProperties.POWERED) ? id + "_6" : id;
             case "oil_skimmer", "cp_rectifier" -> s.getValue(PcProperties.RUNNING) ? id + "_on" : id;
             case "oil_boom" -> s.getValue(BlockStateProperties.HORIZONTAL_AXIS) == Direction.Axis.X ? id + "_x" : id;

@@ -87,7 +87,7 @@ public final class SteelworksGameTests {
 
     @GameTest(template = LARGE)
     public static void steelAndPipesGoIntoRecipes(GameTestHelper h) {
-        h.assertTrue(uses(h, PcBlocks.SHAFT_GENERATOR.get().asItem(), PcItems.STEEL_PLATE.get()), "generator from steel plate");
+        h.assertTrue(uses(h, dev.denfry.promptcritical.mod.manufacturing.ManufacturingItems.ROPE_DRUM.get(), PcItems.STEEL_PLATE.get()), "hoist rope drum from steel plate");
         h.assertTrue(uses(h, PcBlocks.SWITCHGEAR_CELL.get().asItem(), PcItems.STEEL_BEAM.get()), "switchgear cell from steel beam");
         h.assertTrue(uses(h, PcBlocks.RELAY_RACK.get().asItem(), PcItems.STEEL_PLATE.get()), "relay rack from steel plate");
         h.assertTrue(uses(h, AllBlocks.FLUID_PIPE.get().asItem(), PcItems.SEAMLESS_PIPE.get()), "Create pipe from seamless pipe");

@@ -250,8 +250,17 @@ public class PcBlock extends Block {
     protected void onRemove(BlockState state, Level level, BlockPos pos, BlockState newState, boolean movedByPiston) {
         if (!level.isClientSide && !newState.is(this)) {
             SimBindings.markDirty(level, pos);
-            if (isController(state) && !isRelocating() && !movedByPiston)
+            if (isController(state) && !isRelocating() && !movedByPiston) {
                 dev.denfry.promptcritical.mod.panel.PanelHost.dropItems(level, pos, level.getBlockEntity(pos));
+                if (level.getBlockEntity(pos) instanceof dev.denfry.promptcritical.mod.radiation.ShieldedContents c) {
+                    var h = c.contents();
+                    for (int i = 0; i < h.getSlots(); i++)
+                        net.minecraft.world.Containers.dropItemStack(level, pos.getX() + 0.5, pos.getY() + 0.5, pos.getZ() + 0.5,
+                                h.extractItem(i, 64, false));
+                    if (!c.extraDrop().isEmpty())
+                        net.minecraft.world.Containers.dropItemStack(level, pos.getX() + 0.5, pos.getY() + 0.5, pos.getZ() + 0.5, c.extraDrop());
+                }
+            }
             if (!spec.footprint.isSingle() && !isRelocating() && !movedByPiston) breakStructure(state, level, pos);
         }
         super.onRemove(state, level, pos, newState, movedByPiston);

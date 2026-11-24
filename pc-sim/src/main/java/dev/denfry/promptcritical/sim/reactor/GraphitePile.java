@@ -135,6 +135,13 @@ public final class GraphitePile {
      * аварийные взводятся. Не сохраняется — биндинг пишет его каждый тик.
      */
     private volatile boolean permitted = true;
+    /**
+     * Монтажные дефекты защиты (план HP2.3), пишутся биндингом каждый тик: запаздывание срабатывания, с
+     * ({@code TRIP_SLOW}), и доля, на которую перепутанный канал контроля потока занижает мощность
+     * ({@code LOOP_MISWIRED}) — защита по мощности и прибор на щите видят заниженное значение.
+     */
+    private volatile double tripDelayS, loopError;
+    private double tripTimer;
     private PileTrip trip = PileTrip.NONE;
     private double criticalTimer;
     private boolean criticalReported, cladFailed, graphiteFire;
@@ -563,9 +570,11 @@ public final class GraphitePile {
         if (tripped()) return;
         double t = periodMeter.period();
         PileTrip reason = PileTrip.NONE;
-        if (pW > cfg.powerTripW()) reason = PileTrip.HIGH_POWER;
+        if (pW * (1 - loopError) > cfg.powerTripW()) reason = PileTrip.HIGH_POWER;
         else if (t > 0 && t < cfg.periodTripS()) reason = PileTrip.SHORT_PERIOD;
-        if (reason != PileTrip.NONE) {
+        tripTimer = reason == PileTrip.NONE ? 0 : tripTimer + DT;
+        if (reason != PileTrip.NONE && tripTimer >= tripDelayS) {
+            tripTimer = 0;
             trip = reason;
             winding = false;
             events.tripped(reason, pW, t);
@@ -643,6 +652,16 @@ public final class GraphitePile {
 
     public boolean permitted() {
         return permitted;
+    }
+
+    public void setDefects(double tripDelayS, double loopError) {
+        this.tripDelayS = Math.max(0, tripDelayS);
+        this.loopError = Math.clamp(loopError, 0, 1);
+    }
+
+    /** Мощность по каналу контроля потока, Вт: с перепутанным контуром — заниженная. */
+    public double indicatedPowerW() {
+        return powerW() * (1 - loopError);
     }
 
     /** Взвести аварийные стержни лебёдкой; при сработавшей защите — нельзя. */

@@ -48,6 +48,14 @@ public final class SwitchUnit extends GridUnit {
      * ни автоматикой. Не сохраняется — биндинг пишет его каждый тик; отключение не запирается никогда.
      */
     private volatile boolean permitted = true;
+    /**
+     * Монтажные дефекты ячейки (план HP2.3), пишутся биндингом каждый тик: кратность времени отключения привода
+     * ({@code TRIP_SLOW}) и отсыревшая изоляция присоединения ({@code INSULATION_DAMP}) — замыкание на землю при
+     * каждом включении. Не сохраняются.
+     */
+    private volatile double openTimeFactor = 1;
+    private volatile boolean insulationDamp;
+    private boolean wasClosed;
 
     SwitchUnit(SimId id, Kind kind) {
         super(id, 2);
@@ -199,6 +207,16 @@ public final class SwitchUnit extends GridUnit {
 
     public boolean permitted() {
         return permitted;
+    }
+
+    /** На присоединении замыкание на землю (пробой отсыревшей изоляции при включении). */
+    public boolean earthFault() {
+        return branch != null && owner.ready() && owner.grid().branchFault(branch) == FaultType.SINGLE_LINE_GROUND;
+    }
+
+    public void setDefects(double openTimeFactor, boolean insulationDamp) {
+        this.openTimeFactor = openTimeFactor;
+        this.insulationDamp = insulationDamp;
     }
 
     /** Открытых нарядов на аппарате. */
@@ -356,6 +374,11 @@ public final class SwitchUnit extends GridUnit {
         if (branch == null) return;
         // привод выключателя под нарядом заперт, оперативный ток снят — АПВ и команды РЗА его тоже не включат
         if ((permits > 0 || lockedOut) && (kind == Kind.MV_BREAKER || kind == Kind.LV_BREAKER)) g.setBreakerControlPower(branch, false);
+        if (kind == Kind.MV_BREAKER || kind == Kind.LV_BREAKER) g.setBreakerOpenFactor(branch, openTimeFactor);
+        // отсыревшая изоляция пробивается при подаче напряжения: замыкание на землю на присоединении, гаснет с отключением
+        boolean closedNow = kind != Kind.DISCONNECTOR && g.isBreakerClosed(branch);
+        if (closedNow && !wasClosed && insulationDamp) g.applyBranchFault(branch, 0.5, FaultType.SINGLE_LINE_GROUND, 0, true);
+        wasClosed = closedNow;
         double p = g.branchPowerFromW(branch) * dt;
         if (p > 0) energyForwardJ += p;
         else energyReverseJ -= p;
