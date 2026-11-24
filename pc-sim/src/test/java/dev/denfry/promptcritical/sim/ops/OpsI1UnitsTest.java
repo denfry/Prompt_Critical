@@ -51,7 +51,8 @@ class OpsI1UnitsTest {
     @Test
     void checklistsAndEras() {
         for (UnitKind k : EnumSet.of(UnitKind.BREAKER_CELL, UnitKind.WATER_TUBE_BOILER, UnitKind.ACHESON_FURNACE,
-                UnitKind.GRAPHITE_PILE)) {
+                UnitKind.GRAPHITE_PILE, UnitKind.COKE_BATTERY, UnitKind.BOF_CONVERTER, UnitKind.AIR_SEPARATION,
+                UnitKind.SINTER_STRAND, UnitKind.HOT_BLAST_STOVE, UnitKind.REHEATING_FURNACE)) {
             assertThat(k.era()).isEqualTo(PlantEra.I1);
             assertThat(k.checklist()).contains(CommissioningCheck.TRIAL_RUN);
             // каждый возможный дефект находит проверка из чек-листа, каждый компонент покрыт проверкой из чек-листа
@@ -98,6 +99,18 @@ class OpsI1UnitsTest {
         assertThat(r.passed()).isTrue();
         assertThat(r.readings().get(CheckResult.READ_LOOP_ERROR)).isEqualTo(0.3);
         assertThat(ops.commissioning().has(p, CommissioningDefectKind.LOOP_MISWIRED)).isFalse();
+    }
+
+    /** План HP2.3: пневмоиспытание находит течь фланца только без газа в установке. */
+    @Test
+    void inertLeakTestFindsFlangeLeak() {
+        OpsSubsystem ops = ops(OpsConfig.defaults());
+        SimId c = unit(ops, 308, UnitKind.COKE_BATTERY, CommissioningDefectKind.FLANGE_LEAK, 0.05);
+        assertThat(ops.perform(c, new CheckInput.InertLeakTest(false), null).unmet()).containsExactly(CheckCondition.UNIT_RUNNING);
+        CheckResult r = ops.perform(c, new CheckInput.InertLeakTest(true), null);
+        assertThat(r.passed()).isTrue();
+        assertThat(r.readings().get(CheckResult.READ_LEAK_RATE)).isEqualTo(0.05);
+        assertThat(ops.commissioning().has(c, CommissioningDefectKind.FLANGE_LEAK)).isFalse();
     }
 
     @Test

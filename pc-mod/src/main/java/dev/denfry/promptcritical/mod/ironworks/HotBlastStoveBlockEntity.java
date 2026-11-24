@@ -2,6 +2,7 @@ package dev.denfry.promptcritical.mod.ironworks;
 
 import dev.denfry.promptcritical.mod.binding.SimLevelBinding;
 import dev.denfry.promptcritical.mod.fx.MachineFx;
+import dev.denfry.promptcritical.mod.ops.OpsActions;
 import dev.denfry.promptcritical.mod.panel.PanelHost;
 import dev.denfry.promptcritical.mod.panel.PanelLayout;
 import dev.denfry.promptcritical.sim.metallurgy.HotBlastStove;
@@ -24,7 +25,30 @@ import org.jetbrains.annotations.Nullable;
  * Воздухонагреватель Каупера {@code hot_blast_stove} 3×9×3 (08 §8.5.2): «на газе» жжёт горючий газ из трубы по
  * клапану и греет насадку; «на дутье» отдаёт тепло дутью домны. Режим переключает домна (автоцикл) или щит.
  */
-public class HotBlastStoveBlockEntity extends IronworksDeviceBlockEntity<HotBlastStoveUnit> implements PanelHost {
+public class HotBlastStoveBlockEntity extends IronworksDeviceBlockEntity<HotBlastStoveUnit> implements PanelHost,
+        dev.denfry.promptcritical.mod.ops.OpsMachine {
+    /**
+     * Купол на пробе (план HP2.3, оценки исполнителя по практике доменных цехов): в работе — от 1000 °C, номинал —
+     * 1300 °C.
+     */
+    static final double HOT_DOME_K = 1273, DESIGN_DOME_K = 1573;
+
+    @Override
+    public dev.denfry.promptcritical.sim.ops.UnitKind opsKind() {
+        return dev.denfry.promptcritical.sim.ops.UnitKind.HOT_BLAST_STOVE;
+    }
+
+    /** Остановлен — газ на горелку не подаётся (условие пневмоиспытания). */
+    @Override
+    public boolean opsStopped() {
+        HotBlastStoveUnit u = level != null && !level.isClientSide ? unit() : null;
+        return u == null || u.gasSupplyNm3S() <= 0;
+    }
+
+    @Override
+    public net.minecraft.world.phys.Vec3 opsBearingPos() {
+        return net.minecraft.world.phys.Vec3.atCenterOf(worldPosition);
+    }
     private final GasBuffer gas = new GasBuffer(16_000, GasBuffer::isProcessGas, this::setChanged);
 
     public HotBlastStoveBlockEntity(BlockPos pos, BlockState state) {
@@ -49,9 +73,12 @@ public class HotBlastStoveBlockEntity extends IronworksDeviceBlockEntity<HotBlas
     /** Газ из буфера в юнит и выброс дымовых газов; реальный масштаб добавляет к этому состояние клапанов. */
     protected final void stoveTick(SimLevelBinding b, HotBlastStoveUnit u) {
         double dtp = Ironworks.tickPhysS(b);
+        // пусконаладка (план HP2.3): непринятый холодный воздухонагреватель в профиле licensing газа не получает
+        boolean heat = OpsActions.processPermit(level, this, 0) || u.stove().domeK() >= OpsActions.WARM_K;
         ProcessGas g = gas.gas();
-        if (g != null) u.setGasSupply(g, gas.draw(u.gasDemandNm3S() * dtp) / dtp);
+        if (g != null && heat) u.setGasSupply(g, gas.draw(u.gasDemandNm3S() * dtp) / dtp);
         else u.setGasSupply(null, 0);
+        OpsActions.trial(level, this, u.stove().domeK() >= HOT_DOME_K, u.stove().domeK() / DESIGN_DOME_K, false);
         // дымовые газы воздухонагревателя — труба 40 м, ≈ 520 К (08 §8.3)
         if (level.getGameTime() % 20 == 0 && level instanceof net.minecraft.server.level.ServerLevel sl)
             dev.denfry.promptcritical.mod.environment.AirQualityService.emit(sl, worldPosition.above(4), 40, 520, u.stove().combustion(),

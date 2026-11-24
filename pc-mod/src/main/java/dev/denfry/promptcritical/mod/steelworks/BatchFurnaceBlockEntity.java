@@ -76,13 +76,20 @@ public abstract class BatchFurnaceBlockEntity extends IronworksDeviceBlockEntity
     protected void serverTick(SimLevelBinding b, BatchFurnaceUnit u) {
         double dtp = Ironworks.tickPhysS(b);
         ProcessGas g = gas.gas();
-        double power = dev.denfry.promptcritical.mod.grid.MachinePower.supply(level, worldPosition, g != null ? ratedPowerW() : 0);
-        if (g != null) u.setGasSupply(g, gas.draw(u.gasDemandNm3S(g) * dtp * power) / dtp);
+        // без разрешения пусконаладки (план HP2.3) горелки не зажигают и тягодутьевые машины не берут мощность
+        boolean heat = g != null && heatPermitted(u);
+        double power = dev.denfry.promptcritical.mod.grid.MachinePower.supply(level, worldPosition, heat ? ratedPowerW() : 0);
+        if (heat) u.setGasSupply(g, gas.draw(u.gasDemandNm3S(g) * dtp * power) / dtp);
         else u.setGasSupply(null, 0);
         ItemStack in = inv.getStackInSlot(0);
         if (!in.isEmpty() && accepts(in) && load(u, in.copyWithCount(1))) in.shrink(1);
         discharge(u, level.getGameTime());
         setStateFlag(BlockStateProperties.LIT, u.gasSupplyLit());
+    }
+
+    /** Можно ли подавать газ на горелки; печи под пусконаладкой переопределяют (план HP2.3). */
+    protected boolean heatPermitted(BatchFurnaceUnit u) {
+        return true;
     }
 
     /** Посадить предмет на свободное место печи. */

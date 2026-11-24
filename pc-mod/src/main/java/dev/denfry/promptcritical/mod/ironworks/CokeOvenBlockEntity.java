@@ -7,6 +7,10 @@ import dev.denfry.promptcritical.mod.block.PcProperties;
 import dev.denfry.promptcritical.mod.foundry.FoundryDevice;
 import dev.denfry.promptcritical.mod.foundry.MachineInventory;
 import dev.denfry.promptcritical.mod.item.CoalAssayData;
+import dev.denfry.promptcritical.mod.ops.OpsActions;
+import dev.denfry.promptcritical.mod.ops.OpsMachine;
+import dev.denfry.promptcritical.sim.ops.UnitKind;
+import net.minecraft.world.phys.Vec3;
 import dev.denfry.promptcritical.mod.panel.PanelHost;
 import dev.denfry.promptcritical.mod.panel.PanelLayout;
 import dev.denfry.promptcritical.mod.registry.PcBlocks;
@@ -63,7 +67,26 @@ import org.jetbrains.annotations.Nullable;
  * (тушильный вагон) или в склад-блок у двери; иначе — горящий кокс на землю. Воронкой можно грузить и в люк
  * (верх камеры). Газ обогрева — в любую клетку трубой Create; топки разогрева — слот щита или боковые грани.
  */
-public final class CokeOvenBlockEntity extends BlockEntity implements DeviceHost, FoundryDevice, PanelHost {
+public final class CokeOvenBlockEntity extends BlockEntity implements DeviceHost, FoundryDevice, PanelHost, OpsMachine {
+    /** Температура простенков, с которой батарея считается в работе на пробе, К (план HP2.3, оценка исполнителя). */
+    static final double COKING_K = 1273;
+
+    @Override
+    public UnitKind opsKind() {
+        return UnitKind.COKE_BATTERY;
+    }
+
+    /** Остановлена — нет ни газа обогрева, ни огня в топке (условие пневмоиспытания). */
+    @Override
+    public boolean opsStopped() {
+        CokeBatteryUnit u = level != null && !level.isClientSide ? unit() : null;
+        return u == null || u.gasSupplyNm3S() <= 0 && u.fireboxW() <= 0;
+    }
+
+    @Override
+    public Vec3 opsBearingPos() {
+        return Vec3.atCenterOf(worldPosition);
+    }
     private static final int VALIDATE_PERIOD = 40, ORPHAN_TICKS = 100, CHARGE_PERIOD = 5, SLOW_PERIOD = 20;
     private static final int CHARGE_ITEMS_PER_PASS = 4;
     /** Шихта без анализа — типичная Ж+К+ОС (08 §8.4.2). */
@@ -200,14 +223,18 @@ public final class CokeOvenBlockEntity extends BlockEntity implements DeviceHost
         CokeBattery bat = u == null ? null : u.battery();
         if (bat == null || bat.ovenCount() != shape.ovens()) return;
         double dtp = Ironworks.tickPhysS(b);
+        // пусконаладка (план HP2.3): непринятую холодную батарею в профиле licensing не греют ни газом, ни топкой
+        boolean heat = OpsActions.processPermit(level, this, 0) || bat.wallTempK() >= OpsActions.WARM_K;
         ProcessGas g = gas.gas();
-        if (g != null) u.setGasSupply(g, gas.draw(u.gasDemandNm3S(g) * dtp) / dtp);
+        if (g != null && heat) u.setGasSupply(g, gas.draw(u.gasDemandNm3S(g) * dtp) / dtp);
         else u.setGasSupply(null, 0);
+        OpsActions.trial(level, this, bat.wallTempK() >= COKING_K && (u.gasSupplyNm3S() > 0 || u.fireboxW() > 0),
+                bat.wallTempK() / u.setpointK(), false);
         // обогрев батареи — дымовая труба 60 м, ≈ 500 К (08 §8.4, 14 §14.1.3)
         if (now % 20 == 0 && level instanceof net.minecraft.server.level.ServerLevel sl)
             dev.denfry.promptcritical.mod.environment.AirQualityService.emit(sl, worldPosition.above(6), 60, 500, bat.heatingResult(),
                     "coke_battery@" + worldPosition.toShortString(), dev.denfry.promptcritical.sim.environment.EmissionLedger.Category.COKE_OVEN);
-        if (u.fireboxHungry()) {
+        if (heat && u.fireboxHungry()) {
             ItemStack fuel = firebox.getStackInSlot(0);
             if (!fuel.isEmpty()) {
                 fuel.shrink(1);

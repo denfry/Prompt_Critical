@@ -62,7 +62,8 @@ public final class HydrotestPumpBlockEntity extends IronworksBlockEntity {
         for (Direction d : Direction.values()) {
             OpsMachine m = OpsWorld.machineOrBoilerPart(level, worldPosition.relative(d));
             if (m instanceof FireTubeBoilerBlockEntity || m instanceof SteamEngineBlockEntity || m instanceof BlastFurnaceControllerBlockEntity
-                    || m instanceof dev.denfry.promptcritical.mod.powerhouse.WaterTubeBoilerBlockEntity)
+                    || m instanceof dev.denfry.promptcritical.mod.powerhouse.WaterTubeBoilerBlockEntity
+                    || m instanceof dev.denfry.promptcritical.mod.steelworks.BofVesselBlockEntity)
                 return m;
         }
         return null;
@@ -72,6 +73,8 @@ public final class HydrotestPumpBlockEntity extends IronworksBlockEntity {
         if (m instanceof BlastFurnaceControllerBlockEntity) return BlastFurnaceControllerBlockEntity.STAVE_WATER_PA;
         if (m instanceof dev.denfry.promptcritical.mod.powerhouse.WaterTubeBoilerBlockEntity)
             return dev.denfry.promptcritical.sim.plant.WaterTubeUnit.WORKING_PRESSURE_PA;
+        if (m instanceof dev.denfry.promptcritical.mod.steelworks.BofVesselBlockEntity)
+            return dev.denfry.promptcritical.mod.steelworks.BofVesselBlockEntity.LANCE_WATER_PA;
         return m instanceof FireTubeBoilerBlockEntity b && b.unit() != null ? b.unit().spec().workingPressurePa() : ENGINE_WORKING_PA;
     }
 
@@ -131,6 +134,8 @@ public final class HydrotestPumpBlockEntity extends IronworksBlockEntity {
         } else if (m instanceof dev.denfry.promptcritical.mod.powerhouse.WaterTubeBoilerBlockEntity w) {
             fireOut = w.opsStopped();
             metalK = w.metalTempK();
+        } else if (m instanceof dev.denfry.promptcritical.mod.steelworks.BofVesselBlockEntity bof) {
+            fireOut = bof.opsStopped(); // опрессовка охлаждения фурмы — без продувки
         } else if (m instanceof BlastFurnaceControllerBlockEntity furnace) {
             fireOut = furnace.opsStopped(); // опрессовка холодильников — только у холодной печи
         }
