@@ -36,7 +36,7 @@ import net.neoforged.neoforge.event.tick.LevelTickEvent;
  */
 public final class RadiationService {
     public static final double RANGE_M = 200, BACKGROUND_USV_H = 0.1;
-    static final int HOLD_TICKS = 40;
+    public static final int HOLD_TICKS = 40;
     /** Игровые секунды за тик (тик — 3,6 с игрового времени): для восстановления. */
     static final double GAME_S_PER_TICK = 3.6;
     static final String TAG = PromptCritical.MOD_ID + ":dose";
@@ -216,6 +216,15 @@ public final class RadiationService {
         var list = RELEASES.computeIfAbsent(level, l -> new HashMap<>()).computeIfAbsent(stack, k -> new java.util.ArrayList<>());
         list.removeIf(r -> r.nuclide == nuclide);
         list.add(new Release(nuclide, bqS, level.getGameTime() + HOLD_TICKS));
+    }
+
+    /** Действующий выброс нуклида {@code nuclide} из точки {@code stack}, Бк/с; 0 — нет. */
+    public static double airReleaseBqS(ServerLevel level, Vec3 stack, dev.denfry.promptcritical.sim.radiation.Emitter nuclide) {
+        var m = RELEASES.get(level);
+        var list = m == null ? null : m.get(stack);
+        if (list == null) return 0;
+        for (Release r : list) if (r.nuclide == nuclide && r.until >= level.getGameTime()) return r.bqS;
+        return 0;
     }
 
     /** Мощность дозы от облаков выбросов в точке, Зв/ч. */
