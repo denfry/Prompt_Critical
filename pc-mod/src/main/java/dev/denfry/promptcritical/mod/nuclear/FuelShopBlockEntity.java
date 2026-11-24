@@ -38,7 +38,8 @@ import org.jetbrains.annotations.Nullable;
  * Участок топливного цеха: склад слотов (щит и воронки), пуск/стоп, учёт ядерных материалов
  * ({@link MaterialBalance}: уран и U-235) и сохранение. Наследники задают слоты, шаг и щит.
  */
-public abstract class FuelShopBlockEntity extends DeviceBlockEntity implements FoundryDevice, PanelHost {
+public abstract class FuelShopBlockEntity extends DeviceBlockEntity implements FoundryDevice, PanelHost,
+        dev.denfry.promptcritical.mod.client.whole.RealScaleBlockEntity {
     /** Приводы и нагреватели участка, Вт: розетка или силовой щит рядом; при недостатке участок работает медленнее. */
     protected double ratedPowerW() {
         return 15e3;
@@ -91,12 +92,26 @@ public abstract class FuelShopBlockEntity extends DeviceBlockEntity implements F
 
     @Override
     public void tickDevice() {
+        if (level != null && level.isClientSide) {
+            clientTick();
+            return;
+        }
         if (!(level instanceof ServerLevel s)) return;
         SimLevelBinding b = SimBindings.get(s);
         if (b == null) return;
         double power = dev.denfry.promptcritical.mod.grid.MachinePower.supply(s, worldPosition, running ? ratedPowerW() : 0);
         if (running && power > 0) step(s, 0.05 * b.world().clock().kSlow() * power);
         if (level.getGameTime() % 100 == 0) setChanged();
+    }
+
+    /** Клиентский тик: частицы и звуки работы по состоянию блока ({@code lit}). */
+    protected void clientTick() {
+    }
+
+    /** Блок горит (идёт работа). */
+    protected boolean lit() {
+        BlockState st = getBlockState();
+        return st.hasProperty(BlockStateProperties.LIT) && st.getValue(BlockStateProperties.LIT);
     }
 
     protected void setLit(boolean lit) {

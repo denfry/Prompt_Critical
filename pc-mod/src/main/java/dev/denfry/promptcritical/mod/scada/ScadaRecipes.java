@@ -52,6 +52,13 @@ public final class ScadaRecipes extends RecipeProvider {
                 .define('P', PcItems.MICROPROCESSOR.get()).define('B', PcItems.PRINTED_CIRCUIT_BOARD.get())
                 .unlockedBy("has_memory_chip", has(PcItems.MEMORY_CHIP.get()))
                 .save(out, PromptCritical.id("scada/historian_server").toString());
+        // терминал оператора без CC (16 §16.3.4, R58): процессор, память, плата и ЭЛТ цепочки кремния (15 §15.6)
+        ShapedRecipeBuilder.shaped(RecipeCategory.REDSTONE, PcBlocks.OPERATOR_TERMINAL.get())
+                .pattern("SCS").pattern("MPM").pattern("SBS").define('S', sheet).define('C', PcItems.CATHODE_RAY_TUBE.get())
+                .define('M', PcItems.MEMORY_CHIP.get()).define('P', PcItems.MICROPROCESSOR.get())
+                .define('B', PcItems.PRINTED_CIRCUIT_BOARD.get())
+                .unlockedBy("has_cathode_ray_tube", has(PcItems.CATHODE_RAY_TUBE.get()))
+                .save(out, PromptCritical.id("scada/operator_terminal").toString());
         // A5: сервер завода — микропроцессор и память на плате, связь с КП по медной линии
         ShapedRecipeBuilder.shaped(RecipeCategory.REDSTONE, PcBlocks.MES_SERVER.get())
                 .pattern("SPS").pattern("MBM").pattern("SWS").define('S', sheet).define('P', PcItems.MICROPROCESSOR.get())

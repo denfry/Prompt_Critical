@@ -498,6 +498,7 @@ public final class GridSubsystem implements Subsystem, GridEventSink {
             else if (u instanceof PumpedStorageUnit s) s.beforeTick(grid, dt);
             else if (u instanceof FeInterfaceUnit f) f.beforeTick(grid, dt);
             else if (u instanceof PowerBoardUnit p) p.beforeTick(grid, dt);
+            else if (u instanceof MotorUnit m) m.beforeTick(grid, dt);
             else if (u instanceof InverterUnit i) i.beforeTick(grid, dt);
             else if (u instanceof ElectrodeBoilerUnit e) e.beforeTick(grid, dt);
         }

@@ -69,10 +69,6 @@ public final class MineSafetyRecipes extends RecipeProvider {
                 .pattern("S S").pattern("III").pattern("IBI").define('S', Items.STRING).define('I', Items.IRON_INGOT)
                 .define('B', Items.BUCKET)
                 .unlockedBy("has_stone_dust", has(PcItems.STONE_DUST.get())).save(out, id("stone_duster"));
-        ShapedRecipeBuilder.shaped(RecipeCategory.MISC, PcBlocks.MAIN_MINE_FAN.get())
-                .pattern("IPI").pattern("SCS").pattern("IPI").define('I', Items.IRON_INGOT).define('P', AllItems.PROPELLER.get())
-                .define('S', AllBlocks.SHAFT.get()).define('C', AllBlocks.COGWHEEL.get())
-                .unlockedBy("has_propeller", has(AllItems.PROPELLER.get())).save(out, id("main_mine_fan"));
         // чертёж вентилятора Guibal: сам вентилятор строится на стройплощадке по массе прототипа (SitePlans)
         ShapedRecipeBuilder.shaped(RecipeCategory.MISC, dev.denfry.promptcritical.mod.site.SiteRegistry.GUIBAL_FAN_DRAWING.get())
                 .pattern("PPP").pattern("IXI").pattern("BSB").define('P', Items.PAPER).define('I', Items.IRON_INGOT)

@@ -83,4 +83,9 @@ public sealed interface CheckInput {
     record Purge(double volumeChanges) implements CheckInput {
         @Override public CommissioningCheck check() { return CommissioningCheck.PURGE; }
     }
+
+    /** Пневмоиспытание газовых коллекторов азотом с обмыливанием фланцев; только без газа в установке. */
+    record InertLeakTest(boolean stopped) implements CheckInput {
+        @Override public CommissioningCheck check() { return CommissioningCheck.INERT_LEAK_TEST; }
+    }
 }

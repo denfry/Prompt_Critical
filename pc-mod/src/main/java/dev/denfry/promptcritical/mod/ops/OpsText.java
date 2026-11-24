@@ -86,6 +86,14 @@ public final class OpsText {
         def("unit.water_tube_boiler", "water-tube boiler", "водотрубный котёл");
         def("unit.acheson_furnace", "Acheson furnace", "печь Ачесона");
         def("unit.graphite_pile", "graphite pile", "графитовый котёл");
+        def("unit.coke_battery", "coke oven battery", "коксовая батарея");
+        def("unit.bof_converter", "oxygen converter", "кислородный конвертер");
+        def("unit.air_separation", "air separation unit", "воздухоразделительная установка");
+        def("unit.sinter_strand", "sinter strand", "агломерационная машина");
+        def("unit.hot_blast_stove", "hot blast stove", "воздухонагреватель");
+        def("unit.reheating_furnace", "reheating furnace", "нагревательная печь");
+        def("earth_fault", "Earth fault on energising: the insulation is damp, dry it out and test it",
+                "Замыкание на землю при подаче напряжения: изоляция отсырела, просушите и испытайте её");
         def("start_unaccepted", "Unit not accepted — started at your own risk (logged)", "Установка не принята — пуск под вашу ответственность (записано)");
         def("check_passed", "%s: passed", "%s: пройдена");
         def("check_failed", "%s: FAILED — %s", "%s: НЕ ПРОЙДЕНА — %s");
@@ -135,7 +143,8 @@ public final class OpsText {
             Map.entry(CommissioningCheck.ALIGNMENT, new String[] {"Alignment", "Центровка"}),
             Map.entry(CommissioningCheck.LOOP_CHECK, new String[] {"Loop check", "Проверка контуров КИП"}),
             Map.entry(CommissioningCheck.SIS_PROOF_TEST, new String[] {"Trip test", "Проверка срабатывания защиты"}),
-            Map.entry(CommissioningCheck.PURGE, new String[] {"Pre-purge", "Предпусковая вентиляция"}));
+            Map.entry(CommissioningCheck.PURGE, new String[] {"Pre-purge", "Предпусковая вентиляция"}),
+            Map.entry(CommissioningCheck.INERT_LEAK_TEST, new String[] {"Pneumatic leak test", "Пневмоиспытание"}));
     private static final Map<CommissioningDefectKind, String[]> DEFECTS = Map.ofEntries(
             Map.entry(CommissioningDefectKind.SEAM_WEEP, new String[] {"weeping seam", "течь шва"}),
             Map.entry(CommissioningDefectKind.CASTING_POROSITY, new String[] {"porous casting", "пористая отливка"}),
@@ -151,7 +160,8 @@ public final class OpsText {
             Map.entry(CommissioningDefectKind.COUPLING_MISALIGNED, new String[] {"coupling misaligned", "расцентровка муфты"}),
             Map.entry(CommissioningDefectKind.INSULATION_DAMP, new String[] {"damp insulation", "отсыревшая изоляция"}),
             Map.entry(CommissioningDefectKind.TRIP_SLOW, new String[] {"trip too slow", "защита срабатывает с задержкой"}),
-            Map.entry(CommissioningDefectKind.LOOP_MISWIRED, new String[] {"instrument loop miswired", "перепутан контур КИП"}));
+            Map.entry(CommissioningDefectKind.LOOP_MISWIRED, new String[] {"instrument loop miswired", "перепутан контур КИП"}),
+            Map.entry(CommissioningDefectKind.FLANGE_LEAK, new String[] {"leaking gas flange", "течь фланца газопровода"}));
     private static final Map<CommissioningState, String[]> STATES = Map.of(
             CommissioningState.NEW, new String[] {"NOT ACCEPTED", "НЕ ПРИНЯТА"},
             CommissioningState.TESTING, new String[] {"TESTING", "ИСПЫТАНИЯ"},

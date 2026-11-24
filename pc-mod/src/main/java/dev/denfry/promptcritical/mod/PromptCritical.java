@@ -66,6 +66,7 @@ public final class PromptCritical {
         dev.denfry.promptcritical.mod.drilling.DrillingBlockEntities.register(modBus);
         dev.denfry.promptcritical.mod.production.ProductionBlockEntities.register(modBus);
         dev.denfry.promptcritical.mod.scada.ScadaBlockEntities.register(modBus);
+        dev.denfry.promptcritical.mod.pa.PaBlockEntities.register(modBus);
         dev.denfry.promptcritical.mod.mes.MesBlockEntities.register(modBus);
         dev.denfry.promptcritical.mod.gas.GasBlockEntities.register(modBus);
         dev.denfry.promptcritical.mod.chem.ChemBlockEntities.register(modBus);
@@ -80,8 +81,10 @@ public final class PromptCritical {
         dev.denfry.promptcritical.mod.environment.ToxicReleaseService.register();
         dev.denfry.promptcritical.mod.environment.RadiationService.register();
         dev.denfry.promptcritical.mod.environment.ContainerActivityScan.register();
+        dev.denfry.promptcritical.mod.environment.SourceLedger.register();
         modBus.addListener(dev.denfry.promptcritical.mod.environment.ContainerShielding::register);
         modBus.addListener(dev.denfry.promptcritical.mod.environment.BiomeEnvironment::register);
+        if (net.neoforged.fml.ModList.get().isLoaded("voicechat")) dev.denfry.promptcritical.mod.compat.voicechat.SpeechMasking.register();
         dev.denfry.promptcritical.mod.environment.AirQualityService.register();
         dev.denfry.promptcritical.mod.market.PlantAccounting.register();
         dev.denfry.promptcritical.mod.environment.EnvironmentBlockEntities.register(modBus);

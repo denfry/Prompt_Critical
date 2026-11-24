@@ -39,9 +39,29 @@ import org.jetbrains.annotations.Nullable;
  * щита; шихту поджигает горн — {@value #IGNITION_NM3} нм³ горючего газа на спекание. Мелочь вне окна 45–70 кг/т даёт
  * слабый агломерат: возврат {@value #WEAK_RETURN} массы теряется пылью [BALANCE].
  */
-public class SinterStrandBlockEntity extends IronworksBlockEntity implements DeviceHost, ShaftConsumer, PanelHost {
+public class SinterStrandBlockEntity extends IronworksBlockEntity implements DeviceHost, ShaftConsumer, PanelHost,
+        dev.denfry.promptcritical.mod.ops.OpsMachine {
+    @Override
+    public dev.denfry.promptcritical.sim.ops.UnitKind opsKind() {
+        return dev.denfry.promptcritical.sim.ops.UnitKind.SINTER_STRAND;
+    }
+
+    /** Остановлена — лента стоит (условие пневмоиспытания газа зажигательного горна). */
+    @Override
+    public boolean opsStopped() {
+        SimLevelBinding b = level != null && !level.isClientSide ? Ironworks.binding(level) : null;
+        CyclicMachine u = b == null ? null : Ironworks.shaftMachine(b, simId);
+        return u == null || !u.running();
+    }
+
+    @Override
+    public net.minecraft.world.phys.Vec3 opsBearingPos() {
+        return net.minecraft.world.phys.Vec3.atCenterOf(worldPosition);
+    }
     public static final int ORE_ITEMS = 10;
     public static final double BREEZE_KG_T = 55, IGNITION_NM3 = 3, WEAK_RETURN = 0.4;
+    /** Горн горит весь цикл ленты, с (оценка исполнителя, план HP2.3): для расхода утечки через фланцы. */
+    static final double IGNITION_CYCLE_S = 60;
     private static final MachineInventory.Role[] ROLES = {MachineInventory.Role.INPUT, MachineInventory.Role.INPUT,
             MachineInventory.Role.INPUT, MachineInventory.Role.OUTPUT, MachineInventory.Role.OUTPUT};
 
@@ -127,11 +147,19 @@ public class SinterStrandBlockEntity extends IronworksBlockEntity implements Dev
             inv.getStackInSlot(2).shrink(1);
             limeKg += item;
         }
+        // течь фланцев газопровода горна (план HP2.3): горн горит весь цикл, порядок минуты — утечка по этой оценке,
+        // на зажигание уходит больше газа
+        double delivered = dev.denfry.promptcritical.mod.ops.OpsActions.gasDelivered(level, this, gas.gas(),
+                u.running() ? IGNITION_NM3 / IGNITION_CYCLE_S : 0);
+        double ignitionNm3 = IGNITION_NM3 / Math.max(0.5, delivered);
         boolean ready = chem != null && ore.getCount() >= ORE_ITEMS && breezeKg >= breezeNeedKg() && limeKg >= limeNeed
-                && gas.amount() >= IGNITION_NM3 && sinterKg < item;
+                && gas.amount() >= ignitionNm3 && sinterKg < item;
+        // пусконаладка (план HP2.3): непринятую остановленную ленту в профиле licensing не загружают, идущую не останавливают
+        ready &= dev.denfry.promptcritical.mod.ops.OpsActions.processPermit(level, this, 0) || u.running();
         u.setLoaded(ready);
+        dev.denfry.promptcritical.mod.ops.OpsActions.trial(level, this, u.running(), u.speedRatio(), false);
         if (ready && u.takeCycle()) {
-            gas.draw(IGNITION_NM3);
+            gas.draw(ignitionNm3);
             double breeze = breezeNeedKg();
             OreDressing.Sinter s = OreDressing.sinter(oreKg(), chem.fe(), chem.sio2(), chem.cao(), breeze, limeNeed);
             ore.shrink(ORE_ITEMS);

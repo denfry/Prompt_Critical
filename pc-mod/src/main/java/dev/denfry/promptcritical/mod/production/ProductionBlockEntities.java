@@ -25,9 +25,9 @@ public final class ProductionBlockEntities {
     public static final DeferredHolder<BlockEntityType<?>, BlockEntityType<WellheadBlockEntity>> WELLHEAD =
             type("wellhead", WellheadBlockEntity::new, PcBlocks.WELLHEAD);
     public static final DeferredHolder<BlockEntityType<?>, BlockEntityType<PumpjackBlockEntity>> PUMPJACK =
-            type("pumpjack", PumpjackBlockEntity::new, PcBlocks.PUMPJACK);
+            type("pumpjack", PumpjackBlockEntity::new, PcBlocks.PUMPJACK, PcBlocks.PUMPJACK_REAL);
     public static final DeferredHolder<BlockEntityType<?>, BlockEntityType<SeparatorBlockEntity>> SEPARATOR =
-            type("three_phase_separator", SeparatorBlockEntity::new, PcBlocks.THREE_PHASE_SEPARATOR);
+            type("three_phase_separator", SeparatorBlockEntity::new, PcBlocks.THREE_PHASE_SEPARATOR, PcBlocks.THREE_PHASE_SEPARATOR_REAL);
     public static final DeferredHolder<BlockEntityType<?>, BlockEntityType<TubeFurnaceBlockEntity>> TUBE_FURNACE =
             type("tube_furnace", TubeFurnaceBlockEntity::new, PcBlocks.TUBE_FURNACE);
     public static final DeferredHolder<BlockEntityType<?>, BlockEntityType<CrudeColumnBlockEntity>> CRUDE_COLUMN =
@@ -55,8 +55,10 @@ public final class ProductionBlockEntities {
         event.registerBlockEntity(Capabilities.FluidHandler.BLOCK, type, FoundryDevice::fluids);
     }
 
+    @SafeVarargs
     private static <T extends BlockEntity> DeferredHolder<BlockEntityType<?>, BlockEntityType<T>> type(String name,
-            BlockEntityType.BlockEntitySupplier<T> factory, Supplier<? extends Block> block) {
-        return BLOCK_ENTITIES.register(name, () -> BlockEntityType.Builder.of(factory, block.get()).build(null));
+            BlockEntityType.BlockEntitySupplier<T> factory, Supplier<? extends Block>... blocks) {
+        return BLOCK_ENTITIES.register(name, () -> BlockEntityType.Builder.of(factory,
+                java.util.Arrays.stream(blocks).map(Supplier::get).toArray(Block[]::new)).build(null));
     }
 }

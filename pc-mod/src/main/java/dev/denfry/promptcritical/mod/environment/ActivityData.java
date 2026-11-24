@@ -40,6 +40,10 @@ public record ActivityData(long refTick, double massKg, double densityGcc, Map<S
             DeferredRegister.createDataComponents(Registries.DATA_COMPONENT_TYPE, PromptCritical.MOD_ID);
     public static final DeferredHolder<DataComponentType<?>, DataComponentType<ActivityData>> ACTIVITY =
             COMPONENTS.registerComponentType("activity", b -> b.persistent(CODEC).networkSynchronized(STREAM_CODEC));
+    /** Метка учтённого источника (04d §4d.6.1; реестр — {@link SourceLedger}). */
+    public static final DeferredHolder<DataComponentType<?>, DataComponentType<java.util.UUID>> SOURCE_ID =
+            COMPONENTS.registerComponentType("source_id", b -> b.persistent(net.minecraft.core.UUIDUtil.CODEC)
+                    .networkSynchronized(net.minecraft.core.UUIDUtil.STREAM_CODEC));
 
     public ActivityData {
         bq = Map.copyOf(bq);

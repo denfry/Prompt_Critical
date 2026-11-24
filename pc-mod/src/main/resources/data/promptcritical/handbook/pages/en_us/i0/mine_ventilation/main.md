@@ -39,3 +39,5 @@ Part of the methane can be drawn from the seam before it reaches the workings. A
 The [liquid-ring degasification pump](item:promptcritical:degasification_pump_real) is the same pump at full size, built on a construction site from its drawing. The Create shaft enters the coupling at the south end; the borehole must touch the suction flange on the north side, next to the vacuum gauge.
 
 For explosions, see [Firedamp and dust explosions](promptcritical:i0/mine_explosions).
+
+The [main mine fan](item:promptcritical:main_mine_fan) is no longer made on the crafting table. You build it on the [assembly stand](item:promptcritical:assembly_stand) from a riveted fan wheel, a forged shaft, two bearings, a pulley or coupling, sheet casing, fasteners and a bed. A rough shaft or a badly balanced wheel shows up in the passport as faster bearing wear and vibration.

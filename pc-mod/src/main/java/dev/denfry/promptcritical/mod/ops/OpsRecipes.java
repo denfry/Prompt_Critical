@@ -105,6 +105,15 @@ public final class OpsRecipes extends RecipeProvider {
         ShapedRecipeBuilder.shaped(RecipeCategory.MISC, PcBlocks.FIRE_ALARM_PANEL.get()).pattern("IRI").pattern("RBR").pattern("IRI")
                 .define('I', Items.IRON_INGOT).define('R', Items.REDSTONE).define('B', Items.BELL)
                 .unlockedBy("has_redstone", has(Items.REDSTONE)).save(out, id("fire_alarm_panel"));
+        // ГГС 13 §13.3.4: пульт — микрофон и усилитель на плате, громкоговоритель — рупор с катушкой из медного провода
+        ShapedRecipeBuilder.shaped(RecipeCategory.MISC, PcBlocks.INTERCOM_STATION.get()).pattern("IWI").pattern("RBR").pattern("IRI")
+                .define('I', Items.IRON_INGOT).define('R', Items.REDSTONE).define('B', Items.NOTE_BLOCK)
+                .define('W', dev.denfry.promptcritical.mod.registry.PcItems.COPPER_WIRE.get())
+                .unlockedBy("has_redstone", has(Items.REDSTONE)).save(out, id("intercom_station"));
+        ShapedRecipeBuilder.shaped(RecipeCategory.MISC, PcBlocks.PLANT_LOUDSPEAKER.get(), 2).pattern(" II").pattern("WNI").pattern(" II")
+                .define('I', Items.IRON_INGOT).define('N', Items.NOTE_BLOCK)
+                .define('W', dev.denfry.promptcritical.mod.registry.PcItems.COPPER_WIRE.get())
+                .unlockedBy("has_redstone", has(Items.REDSTONE)).save(out, id("plant_loudspeaker"));
         ShapedRecipeBuilder.shaped(RecipeCategory.MISC, PcBlocks.SPRINKLER_HEAD.get(), 2).pattern(" P ").pattern("CGC")
                 .define('P', pipe).define('C', Items.COPPER_INGOT).define('G', Items.GLASS_PANE)
                 .unlockedBy("has_pipe", has(pipe)).save(out, id("sprinkler_head"));

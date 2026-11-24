@@ -48,6 +48,10 @@ repositories {
         name = "JourneyMap API"
         content { includeGroup("info.journeymap") }
     }
+    maven("https://maven.maxhenkel.de/repository/public") {
+        name = "Simple Voice Chat API"
+        content { includeGroup("de.maxhenkel.voicechat") }
+    }
 }
 
 val gametest: SourceSet by sourceSets.creating {
@@ -155,6 +159,8 @@ dependencies {
     compileOnly(libs.jade)
     // Путевая точка из geological_map (16 §16.5.1): API v2 опубликован только снимками, версия закреплена точно
     compileOnly(libs.journeymap.api)
+    // Маскировка речи шумом (16 §16.4.2): плагин Simple Voice Chat
+    compileOnly(libs.voicechat.api)
 }
 
 tasks.processResources {

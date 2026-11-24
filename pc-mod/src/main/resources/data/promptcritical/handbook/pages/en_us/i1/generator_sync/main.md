@@ -49,3 +49,5 @@ A clean closure is a torque blow of 0.2 pu or less: 1–2° at the moment of clo
 ## Synchronism check relay
 
 A [synchronism check relay](item:promptcritical:relay_sync_check) module in the relay cabinet next to the cell refuses to let the breaker close outside the window: the command comes back "interlock". It does not adjust slip or lead for you; that is still the operator's job.
+
+The [shaft generator](item:promptcritical:shaft_generator) is a DC machine built on the [assembly stand](item:promptcritical:assembly_stand): wound stator, rotor core, four field coils, commutator, two brush holders, shaft, two bearings and two end covers and fasteners. A poor winding lowers the insulation resistance in its passport.

@@ -229,6 +229,7 @@ public class ElectricMotorBlockEntity extends GeneratingKineticBlockEntity imple
         MotorUnit u = unit();
         if (u == null) return;
         if (ticks % 20 == 9) u.setRelays(settings());
+        u.setUndervoltageRelease(!MachinePower.exempt(level, worldPosition));
         u.setStarter(installedStarter());
         u.setSpeedReferencePu(Math.min(1, driveRpm / (double) u.gearRpm()));
         if (real()) u.setMediumVoltage(true);

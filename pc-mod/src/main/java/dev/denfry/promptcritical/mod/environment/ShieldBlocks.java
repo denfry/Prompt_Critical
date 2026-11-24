@@ -16,7 +16,8 @@ import org.jetbrains.annotations.Nullable;
  * Защитные свойства блоков мира: материал {@link ShieldMaterial} и плотность. Блок — куб 1 м; вода — по жидкости.
  * Сопоставление по идентификатору: свинец, железо и сталь, графит (кладка котла и каналы), бетон и камень (по плотности
  * породы), кирпич и стекло — как бетон с их плотностью, грунт, дерево. Прочие твёрдые блоки — бетоном плотности 1,5
- * (смесь всего подряд); проходимые — воздух.
+ * (смесь всего подряд); проходимые — воздух. Плитки радзащиты — тяжёлый бетон, свинцовый кирпич, бак борированной
+ * воды и борированный полиэтилен — со своими материалами.
  */
 public final class ShieldBlocks {
     /** Шаг трассировки луча, м. */
@@ -31,6 +32,16 @@ public final class ShieldBlocks {
         if (s.getFluidState().is(FluidTags.WATER)) return new DoseRate.Layer(ShieldMaterial.WATER, cm, 1.0);
         if (s.isAir()) return null;
         String id = BuiltInRegistries.BLOCK.getKey(s.getBlock()).getPath();
+        // защитные плитки реального масштаба (04b §4b.4.1, §4b.4.3) и узлы со своей защитой: камера, контейнер, модуль
+        // хранения и тележка ослабляют свой источник сами (DoseRate.behind), их клетки — воздух для чужих лучей
+        switch (id) {
+            case "shield_heavy_concrete_real": return new DoseRate.Layer(ShieldMaterial.HEAVY_CONCRETE, cm, 3.6);
+            case "shield_lead_brick_real": return new DoseRate.Layer(ShieldMaterial.LEAD, cm, 11.34);
+            case "shield_borated_water_tank_real": return new DoseRate.Layer(ShieldMaterial.BORATED_WATER, cm, 1.02);
+            case "shield_borated_pe_real": return new DoseRate.Layer(ShieldMaterial.BORATED_POLYETHYLENE, cm, 0.97);
+            case "hot_cell_real", "spent_fuel_cask_real", "dry_storage_module_real", "cask_transport_cart_real": return null;
+            default: break;
+        }
         if (id.contains("lead")) return new DoseRate.Layer(ShieldMaterial.LEAD, cm, 11.35);
         if (id.contains("graphite") || id.contains("fuel_channel")) return new DoseRate.Layer(ShieldMaterial.GRAPHITE, cm, 1.70);
         if (id.contains("iron_block") || id.contains("steel") || id.equals("anvil") || id.contains("iron_door"))

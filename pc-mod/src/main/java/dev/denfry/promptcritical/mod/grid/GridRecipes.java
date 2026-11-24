@@ -106,9 +106,6 @@ public final class GridRecipes extends RecipeProvider {
 
         // машины
         // вал ротора и вал двигателя — стальной пруток со шпоночным пазом под полумуфту (фрезерный станок)
-        ShapedRecipeBuilder.shaped(RecipeCategory.MISC, PcBlocks.SHAFT_GENERATOR.get()).pattern("IWI").pattern("WSW").pattern("IBI")
-                .define('I', PcItems.STEEL_PLATE.get()).define('W', wire).define('S', PcItems.KEYED_SHAFT.get()).define('B', PcItems.STEEL_BEAM.get())
-                .unlockedBy("has_wire", hasWire).save(out, id("shaft_generator"));
         // пульт диспетчера: щит с приборами, мнемосхема (карта) и телемеханика (компаратор)
         ShapedRecipeBuilder.shaped(RecipeCategory.MISC, PcBlocks.GRID_DISPATCH_CENTER.get()).pattern("PMP").pattern("WCW").pattern("PPP")
                 .define('P', PcItems.STEEL_PLATE.get()).define('M', net.minecraft.world.item.Items.MAP).define('W', wire)

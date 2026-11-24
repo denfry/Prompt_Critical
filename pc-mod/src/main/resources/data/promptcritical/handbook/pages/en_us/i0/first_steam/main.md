@@ -24,3 +24,5 @@ Black smoke is an instrument. It tells you the furnace is short of air: stop fir
 When the engine runs up to speed and turns a Create shaft, you earn the "First Steam" advancement. Then hang a pressure gauge and read [The boiler](promptcritical:i0/boiler), [The steam engine](promptcritical:i0/steam_engine) and [Safety valve and fusible plug](promptcritical:i0/safety_valves).
 
 The boiler house layout and recipes are on the next pages; the step-by-step order is at the end of the chapter.
+
+The [steam engine cylinder](item:promptcritical:steam_engine_cylinder) comes off the [assembly stand](item:promptcritical:assembly_stand): cylinder, piston, rod packing, crosshead, connecting rod, crankshaft, four cast flywheel rim segments, a Watt governor and a bed. Turn the rim segments from flywheel castings.

@@ -1,0 +1,15 @@
+{
+  "run_in": true,
+  "parts": [
+    {"role": "stator", "items": ["stator"], "aspects": ["winding"]},
+    {"role": "fasteners", "items": ["fastener_kit"]},
+    {"role": "rotor", "items": ["rotor_core"], "aspects": ["rotor"]},
+    {"role": "field", "items": ["field_coil"], "count": 4, "aspects": ["winding"]},
+    {"role": "commutator", "items": ["commutator"]},
+    {"role": "brushes", "items": ["brush_holder"], "count": 2},
+    {"role": "shaft", "items": ["shaft", "keyed_shaft"], "it": 7, "min_hrc": 30,
+     "heat_treat": ["quenched_tempered"], "aspects": ["bearing_seat"]},
+    {"role": "bearings", "items": ["rolling_bearing", "bronze_bearing_shell"], "count": 2, "aspects": ["bearing"]},
+    {"role": "end_covers", "items": ["end_cover"], "count": 2}
+  ]
+}

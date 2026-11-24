@@ -231,6 +231,8 @@ public final class PressurizedWaterReactor {
     private double boronKg;
     private double exchangeKgS, exchangeGkg;
     private double leakAreaM2, leakKgS, siKgS, chargingKgS, sprayKgS, heaterW, siHold;
+    /** ТЭНы КД: мощность, которую просит регулятор, Вт, и доля, которую даёт сеть собственных нужд 0,4 кВ. */
+    private double heaterDemandW, heaterSupply = 1;
     private double flowKgS, qCoreW, qSgW, voidM3;
     private double hotK, coldK, coolantDensity, pressure;
     private double secondaryK = Double.NaN, sgLevel = Double.NaN;
@@ -734,8 +736,9 @@ public final class PressurizedWaterReactor {
         double pErr = p - d.pNominal();
         double sprayDemand = Math.max(0, Math.min(1, (pErr - 0.1e6) / 0.3e6));
         sprayKgS = d.sprayMaxKgS() * sprayDemand * Math.min(1, pumps[0].speed());
-        heaterW = pzr.level() < 0.1 ? 0
+        heaterDemandW = pzr.level() < 0.1 ? 0
                 : d.heaterPropW() * Math.max(0, Math.min(1, (0.1e6 - pErr) / 0.2e6)) + (pErr < -0.15e6 ? d.heaterBackupW() : 0);
+        heaterW = heaterDemandW * heaterSupply;
         // газовый КД: давление держит газовая система — подпитка азотом из баллонов и сдувка в газгольдер [est]
         if (pzr.gas()) {
             if (pErr < -GAS_BAND_PA) pzr.addNitrogenKg(GAS_MAKEUP_KG_S * DT);
@@ -1004,6 +1007,16 @@ public final class PressurizedWaterReactor {
 
     public double pressurizerLevel() {
         return pzr.level();
+    }
+
+    /** Мощность ТЭНов, которую просит регулятор давления, Вт (до ограничения сетью). */
+    public double heaterDemandW() {
+        return heaterDemandW;
+    }
+
+    /** Доля мощности ТЭНов, которую даёт сеть собственных нужд, 0…1 (без питания — 0). */
+    public void setHeaterSupply(double f) {
+        heaterSupply = Double.isFinite(f) ? Math.max(0, Math.min(1, f)) : 0;
     }
 
     public double heaterW() {

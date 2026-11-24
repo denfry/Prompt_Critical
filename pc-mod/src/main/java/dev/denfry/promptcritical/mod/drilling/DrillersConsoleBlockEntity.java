@@ -149,9 +149,11 @@ public final class DrillersConsoleBlockEntity extends DeviceBlockEntity implemen
         for (BlockPos p : BlockPos.betweenClosed(worldPosition.offset(-RIG_RADIUS, -RIG_RADIUS, -RIG_RADIUS),
                 worldPosition.offset(RIG_RADIUS, RIG_RADIUS, RIG_RADIUS))) {
             BlockState s = level.getBlockState(p);
-            if (s.is(PcBlocks.ROTARY_TABLE.get())) {
-                if (rotaryPos == null || p.distSqr(worldPosition) < rotaryPos.distSqr(worldPosition)) rotaryPos = p.immutable();
-            } else if (s.is(PcBlocks.MUD_PUMP.get()) && level.getBlockEntity(p) instanceof MudPumpBlockEntity) {
+            if (s.is(PcBlocks.ROTARY_TABLE.get()) || s.is(PcBlocks.ROTARY_TABLE_REAL.get())) {
+                // у ротора реального масштаба — его контроллер на оси скважины, а не ближняя клетка объёма
+                BlockPos r = s.is(PcBlocks.ROTARY_TABLE_REAL.get()) ? dev.denfry.promptcritical.mod.block.PcBlock.structureController(level, p) : p;
+                if (r != null && (rotaryPos == null || r.distSqr(worldPosition) < rotaryPos.distSqr(worldPosition))) rotaryPos = r.immutable();
+            } else if ((s.is(PcBlocks.MUD_PUMP.get()) || s.is(PcBlocks.MUD_PUMP_REAL.get())) && level.getBlockEntity(p) instanceof MudPumpBlockEntity) {
                 pumps.add(p.immutable());
             } else if (s.is(PcBlocks.BOP_ANNULAR.get()) || s.is(PcBlocks.BOP_RAM.get())) {
                 bops.add(p.immutable());
@@ -159,11 +161,11 @@ public final class DrillersConsoleBlockEntity extends DeviceBlockEntity implemen
                 if (accumulatorPos == null || p.distSqr(worldPosition) < accumulatorPos.distSqr(worldPosition)) accumulatorPos = p.immutable();
             } else if (s.is(PcBlocks.MUD_TANK.get())) {
                 tanks.add(p.immutable());
-            } else if (s.is(PcBlocks.DRAWWORKS.get())) {
+            } else if (s.is(PcBlocks.DRAWWORKS.get()) || s.is(PcBlocks.DRAWWORKS_REAL.get())) {
                 drawworks = true;
             } else if (s.is(PcBlocks.CHOKE_MANIFOLD.get())) {
                 choke = true;
-            } else if (s.is(PcBlocks.DERRICK_SEGMENT.get())) {
+            } else if (s.is(PcBlocks.DERRICK_SEGMENT.get()) || s.is(PcBlocks.DERRICK_SEGMENT_REAL.get())) {
                 derricks.add(p.immutable());
             }
         }

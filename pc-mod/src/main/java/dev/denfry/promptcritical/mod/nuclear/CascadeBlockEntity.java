@@ -74,6 +74,10 @@ public final class CascadeBlockEntity extends KineticMachineBlockEntity<ShaftInp
     };
     private final CentrifugeHall hall = new CentrifugeHall();
     private final List<BlockPos> sections = new ArrayList<>();
+    private int machineCount;
+    /** Ближайший автоклав с баллоном: питание каскада, когда слот питания пуст. */
+    @Nullable
+    private BlockPos autoclave;
     private final Random rng = new Random();
     private long tick;
     private int powered;
@@ -93,7 +97,22 @@ public final class CascadeBlockEntity extends KineticMachineBlockEntity<ShaftInp
     }
 
     public int machines() {
-        return sections.size() * MACHINES_PER_SECTION;
+        return machineCount;
+    }
+
+    /**
+     * Машин в блоке: секция старой серии — {@value #MACHINES_PER_SECTION}, секция каскада реального масштаба —
+     * {@value CentrifugeRealBlockEntity#SECTION_MACHINES}, одиночная центрифуга — 1, если корпус не вскрыт; части
+     * многоблочных машин не считаются.
+     */
+    static int machinesAt(BlockState st) {
+        if (st.is(PcBlocks.GAS_CENTRIFUGE.get())) return MACHINES_PER_SECTION;
+        if (!(st.getBlock() instanceof dev.denfry.promptcritical.mod.block.PcBlock b) || !b.isController(st)) return 0;
+        if (st.is(PcBlocks.CENTRIFUGE_CASCADE_SECTION_REAL.get())) return CentrifugeRealBlockEntity.SECTION_MACHINES;
+        if (st.is(PcBlocks.GAS_CENTRIFUGE_REAL.get()))
+            return st.hasProperty(net.minecraft.world.level.block.state.properties.BlockStateProperties.OPEN)
+                    && st.getValue(net.minecraft.world.level.block.state.properties.BlockStateProperties.OPEN) ? 0 : 1;
+        return 0;
     }
 
     public boolean excursion() {
@@ -132,8 +151,29 @@ public final class CascadeBlockEntity extends KineticMachineBlockEntity<ShaftInp
     /** Секции центрифуг вокруг пульта. */
     private void scan() {
         sections.clear();
-        for (BlockPos p : BlockPos.betweenClosed(worldPosition.offset(-RADIUS, -2, -RADIUS), worldPosition.offset(RADIUS, 2, RADIUS)))
-            if (level.getBlockState(p).is(PcBlocks.GAS_CENTRIFUGE.get())) sections.add(p.immutable());
+        machineCount = 0;
+        autoclave = null;
+        boolean spinning = powered > 0;
+        for (BlockPos p : BlockPos.betweenClosed(worldPosition.offset(-RADIUS, -2, -RADIUS), worldPosition.offset(RADIUS, 2, RADIUS))) {
+            BlockState st = level.getBlockState(p);
+            int n = machinesAt(st);
+            if (n > 0) {
+                sections.add(p.immutable());
+                machineCount += n;
+                // реальные машины гудят, пока пульт их питает (преобразователь частоты — за кадром)
+                if (st.hasProperty(net.minecraft.world.level.block.state.properties.BlockStateProperties.POWERED)
+                        && st.getValue(net.minecraft.world.level.block.state.properties.BlockStateProperties.POWERED) != spinning)
+                    level.setBlock(p, st.setValue(net.minecraft.world.level.block.state.properties.BlockStateProperties.POWERED, spinning),
+                            net.minecraft.world.level.block.Block.UPDATE_CLIENTS);
+            } else if (autoclave == null && level.getBlockEntity(p) instanceof Uf6AutoclaveBlockEntity a && a.loaded()) autoclave = p.immutable();
+        }
+    }
+
+    /** Баллон питания: из слота щита, а если там пусто — прогретый баллон в автоклаве рядом. */
+    private ItemStack feedCylinder() {
+        ItemStack s = cylinders.getStackInSlot(EnrichmentPanels.SLOT_FEED);
+        if (!Uf6CylinderItem.charge(s).empty() || autoclave == null) return s;
+        return level.getBlockEntity(autoclave) instanceof Uf6AutoclaveBlockEntity a ? a.feed() : s;
     }
 
     private static double uf6PerU(double u235, double u234) {
@@ -147,7 +187,7 @@ public final class CascadeBlockEntity extends KineticMachineBlockEntity<ShaftInp
         ServerLevel sl = (ServerLevel) level;
         if (level.getGameTime() % SCAN_TICKS == 0) scan();
         double dt = 0.05 * binding.world().clock().kSlow();
-        ItemStack feedStack = cylinders.getStackInSlot(EnrichmentPanels.SLOT_FEED);
+        ItemStack feedStack = feedCylinder();
         Uf6Charge feed = Uf6CylinderItem.charge(feedStack);
         // машины без питания стоят: на ЕРР — 50 кВт·ч
         double perMachineW = hall.machineSwuPerS() * J_PER_SWU;
@@ -189,11 +229,13 @@ public final class CascadeBlockEntity extends KineticMachineBlockEntity<ShaftInp
     private void crash(ServerLevel sl, int count) {
         for (int i = 0; i < count && !sections.isEmpty(); i++) {
             BlockPos p = sections.remove(rng.nextInt(sections.size()));
+            machineCount -= machinesAt(sl.getBlockState(p));
             wreck(sl, p);
             if (rng.nextDouble() < DOMINO)
                 for (Direction d : Direction.Plane.HORIZONTAL) {
                     BlockPos n = p.relative(d);
                     if (sections.remove(n)) {
+                        machineCount -= machinesAt(sl.getBlockState(n));
                         wreck(sl, n);
                         break;
                     }
@@ -203,7 +245,12 @@ public final class CascadeBlockEntity extends KineticMachineBlockEntity<ShaftInp
     }
 
     private void wreck(ServerLevel sl, BlockPos p) {
-        sl.destroyBlock(p, false);
+        BlockState st = sl.getBlockState(p);
+        if (st.is(PcBlocks.GAS_CENTRIFUGE_REAL.get())) {
+            // одиночная машина: корпус вскрыло, ротор лежит на виду — её чинят, а не строят заново
+            sl.setBlock(p, st.setValue(net.minecraft.world.level.block.state.properties.BlockStateProperties.OPEN, true)
+                    .setValue(net.minecraft.world.level.block.state.properties.BlockStateProperties.POWERED, false), net.minecraft.world.level.block.Block.UPDATE_ALL);
+        } else sl.destroyBlock(p, false);
         sl.playSound(null, p, SoundEvents.ANVIL_LAND, SoundSource.BLOCKS, 1.0f, 0.6f);
         sl.sendParticles(ParticleTypes.CRIT, p.getX() + 0.5, p.getY() + 0.8, p.getZ() + 0.5, 20, 0.3, 0.3, 0.3, 0.3);
     }

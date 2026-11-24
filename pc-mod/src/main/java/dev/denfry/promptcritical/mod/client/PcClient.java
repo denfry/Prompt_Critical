@@ -33,11 +33,15 @@ public final class PcClient {
         dev.denfry.promptcritical.mod.ironworks.client.IronworksClient.register(modBus);
         dev.denfry.promptcritical.mod.powerhouse.client.PowerhouseClient.register(modBus);
         dev.denfry.promptcritical.mod.steelworks.client.SteelworksClient.register(modBus);
+        dev.denfry.promptcritical.mod.drilling.client.DrillingClient.register(modBus);
+        dev.denfry.promptcritical.mod.production.client.ProductionClient.register(modBus);
+        dev.denfry.promptcritical.mod.nuclear.client.FuelCycleClient.register(modBus);
         dev.denfry.promptcritical.mod.nonferrous.client.NonferrousClient.register(modBus);
         dev.denfry.promptcritical.mod.boiler.client.BoilerClient.register(modBus);
         dev.denfry.promptcritical.mod.mine.client.MineClient.register(modBus);
         dev.denfry.promptcritical.mod.grid.client.GridClient.register(modBus);
         dev.denfry.promptcritical.mod.npp.client.NppClient.register(modBus);
+        dev.denfry.promptcritical.mod.radiation.client.RadProtClient.register(modBus);
         dev.denfry.promptcritical.mod.fx.client.ProcessArtClient.register(modBus);
         dev.denfry.promptcritical.mod.automation.client.AutomationClient.register(modBus);
         dev.denfry.promptcritical.mod.chlor.client.ChlorClient.register(modBus);

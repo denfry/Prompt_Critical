@@ -1,0 +1,32 @@
+{
+  "parent": "minecraft:recipes/root",
+  "criteria": {
+    "has_respirator": {
+      "conditions": {
+        "items": [
+          {
+            "items": "promptcritical:respirator"
+          }
+        ]
+      },
+      "trigger": "minecraft:inventory_changed"
+    },
+    "has_the_recipe": {
+      "conditions": {
+        "recipe": "promptcritical:radiation/full_face_respirator"
+      },
+      "trigger": "minecraft:recipe_unlocked"
+    }
+  },
+  "requirements": [
+    [
+      "has_the_recipe",
+      "has_respirator"
+    ]
+  ],
+  "rewards": {
+    "recipes": [
+      "promptcritical:radiation/full_face_respirator"
+    ]
+  }
+}

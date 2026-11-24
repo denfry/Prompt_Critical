@@ -62,6 +62,20 @@ public final class PcCommands {
     private PcCommands() {
     }
 
+    private static int sourcesList(com.mojang.brigadier.context.CommandContext<CommandSourceStack> ctx) {
+        var src = ctx.getSource();
+        var all = dev.denfry.promptcritical.mod.environment.SourceLedger.entries(src.getServer());
+        long now = src.getLevel().getGameTime();
+        src.sendSuccess(() -> Component.literal("Tracked sources: " + all.size()), false);
+        for (var e : all) {
+            var p = net.minecraft.core.BlockPos.containing(e.at());
+            String line = String.format(java.util.Locale.ROOT, "%s %s %s %s %.3g Bq", dev.denfry.promptcritical.mod.environment.SourceLedger.shortId(e.id()),
+                    e.status(), e.dimension().location(), p.toShortString(), e.totalBq(now));
+            src.sendSuccess(() -> Component.literal(line), false);
+        }
+        return all.size();
+    }
+
     public static void register(CommandDispatcher<CommandSourceStack> dispatcher) {
         // корень открыт всем, у кого есть хоть одна ветка; остальное — администратор (16 §16.11.4)
         dispatcher.register(Commands.literal("pc").requires(s -> PcPermissions.admin(s) || PcPermissions.allows(s, PcPermissions.COMMAND_ENV)
@@ -97,6 +111,9 @@ public final class PcCommands {
                         .executes(ctx -> handbook(ctx, 0))
                         .then(Commands.argument("page", IntegerArgumentType.integer(1))
                                 .executes(ctx -> handbook(ctx, IntegerArgumentType.getInteger(ctx, "page") - 1)))))
+                // реестр учтённых источников 04d §4d.6.1 и призраки 16 §16.8.4
+                .then(Commands.literal("sources").requires(PcPermissions::admin)
+                        .then(Commands.literal("list").executes(PcCommands::sourcesList)))
                 .then(Commands.literal("body").requires(PcPermissions::admin).then(Commands.argument("player", EntityArgument.player())
                         .executes(PcCommands::bodyShow)
                         .then(Commands.literal("reset").executes(PcCommands::bodyReset))))

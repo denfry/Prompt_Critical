@@ -1,0 +1,15 @@
+{
+  "run_in": true,
+  "parts": [
+    {"role": "cylinder", "items": ["cylinder_block"], "aspects": ["gasket"]},
+    {"role": "piston", "items": ["piston"], "aspects": ["seal"]},
+    {"role": "rod_seal", "items": ["gland_packing"], "aspects": ["seal"]},
+    {"role": "crosshead", "items": ["crosshead"], "aspects": ["alignment"]},
+    {"role": "connecting_rod", "items": ["connecting_rod"], "aspects": ["bearing"]},
+    {"role": "crankshaft", "items": ["shaft", "keyed_shaft"], "it": 7, "min_hrc": 30,
+     "heat_treat": ["quenched_tempered"], "aspects": ["bearing_seat"]},
+    {"role": "flywheel", "items": ["flywheel_rim"], "count": 4, "aspects": ["rotor"]},
+    {"role": "governor", "items": ["governor"]},
+    {"role": "bed", "items": ["machine_bed"], "aspects": ["alignment"]}
+  ]
+}

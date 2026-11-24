@@ -49,8 +49,16 @@ public final class CommissioningService {
      * контур КИП. Предпусковая вентиляция — не меньше пяти объёмов топки (NFPA 85, как у BMS).
      */
     static final double P_BUSBAR = 0.15, P_TRIP = 0.15, P_LOOP = 0.2;
+    /** План HP2.3, оценка исполнителя: течь фланцевых соединений газопровода после монтажа. */
+    static final double P_FLANGE = 0.2;
     public static final double PURGE_MIN_VOLUMES = 5;
     public static final double INSULATION_DRY_MOHM = 200;
+    /**
+     * Действие дефектов в игре (план HP2.3, оценки исполнителя): паспортное время реакции защиты (реле + привод
+     * отсечки), с; порог сопротивления изоляции, ниже которого подача напряжения даёт замыкание на землю, МОм
+     * (IEEE 43: минимум 5 МОм для обмоток и шин до 1 кВ).
+     */
+    public static final double TRIP_RESPONSE_S = 2, EARTH_FAULT_MOHM = 5;
 
     private static final class Unit {
         UnitAssembly asm;
@@ -190,6 +198,10 @@ public final class CommissioningService {
                 double u = rnd.nextDouble(), error = uniform(rnd, 0.1, 0.5);
                 if (u < P_LOOP * rate) out.add(CommissioningDefect.of(CommissioningDefectKind.LOOP_MISWIRED, id, error));
             }
+            case PIPING -> {
+                double u = rnd.nextDouble(), leak = uniform(rnd, 0.01, 0.1);
+                if (u < P_FLANGE * rate) out.add(CommissioningDefect.of(CommissioningDefectKind.FLANGE_LEAK, id, leak));
+            }
             case BRAKE -> {
                 double u = rnd.nextDouble(), torque = uniform(rnd, 0.5, 0.9);
                 if (u < P_BRAKE * rate)
@@ -302,6 +314,13 @@ public final class CommissioningService {
                     else {
                         CommissioningDefect d = fix(u, CommissioningDefectKind.TRIP_SLOW, found);
                         readings.put(CheckResult.READ_TRIP_TIME_RATIO, d == null ? 0.6 : d.magnitude());
+                    }
+                }
+                case CheckInput.InertLeakTest l -> {
+                    if (!l.stopped()) unmet.add(CheckCondition.UNIT_RUNNING);
+                    else {
+                        CommissioningDefect d = fix(u, CommissioningDefectKind.FLANGE_LEAK, found);
+                        readings.put(CheckResult.READ_LEAK_RATE, d == null ? 0.001 : d.magnitude());
                     }
                 }
                 case CheckInput.Purge p -> {
@@ -510,6 +529,42 @@ public final class CommissioningService {
         Unit u = units.get(unit);
         CommissioningDefect d = u == null ? null : find(u, CommissioningDefectKind.BRAKE_MISADJUSTED);
         return d == null ? 1 : d.magnitude();
+    }
+
+    /** Доля газа, уходящая через фланцы газопровода мимо горелок (план HP2.3, {@code FLANGE_LEAK}); 0 — плотно. */
+    public double flangeLeakFraction(SimId unit) {
+        Unit u = units.get(unit);
+        CommissioningDefect d = u == null ? null : find(u, CommissioningDefectKind.FLANGE_LEAK);
+        return d == null ? 0 : d.magnitude();
+    }
+
+    /** Кратность времени срабатывания защиты к паспортному ({@code TRIP_SLOW}); 1 — исправна. */
+    public double tripTimeRatio(SimId unit) {
+        Unit u = units.get(unit);
+        CommissioningDefect d = u == null ? null : find(u, CommissioningDefectKind.TRIP_SLOW);
+        return d == null ? 1 : d.magnitude();
+    }
+
+    /** Запаздывание защиты, с: (кратность − 1) × паспортное время реакции {@value #TRIP_RESPONSE_S} с. */
+    public double tripDelayS(SimId unit) {
+        return (tripTimeRatio(unit) - 1) * TRIP_RESPONSE_S;
+    }
+
+    /** Доля, на которую канал контроля занижает измеряемую величину ({@code LOOP_MISWIRED}); 0 — исправен. */
+    public double loopError(SimId unit) {
+        Unit u = units.get(unit);
+        CommissioningDefect d = u == null ? null : find(u, CommissioningDefectKind.LOOP_MISWIRED);
+        return d == null ? 0 : d.magnitude();
+    }
+
+    /**
+     * Изоляция присоединения отсырела ниже {@value #EARTH_FAULT_MOHM} МОм ({@code INSULATION_DAMP}): при подаче
+     * напряжения — замыкание на землю, пока испытание изоляции с просушкой его не устранит.
+     */
+    public boolean insulationDamp(SimId unit) {
+        Unit u = units.get(unit);
+        CommissioningDefect d = u == null ? null : find(u, CommissioningDefectKind.INSULATION_DAMP);
+        return d != null && d.magnitude() < EARTH_FAULT_MOHM;
     }
 
     // ---- Сохранение ----

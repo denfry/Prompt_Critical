@@ -25,4 +25,12 @@ public class PcDeviceBlock extends PcBlock implements EntityBlock {
     public BlockEntity newBlockEntity(BlockPos pos, BlockState state) {
         return isController(state) ? new DeviceBlockEntity(pos, state) : null;
     }
+
+    /** Событие блока ({@code Level#blockEvent}) — его BE, как у ванильных блоков с BE (анимации на клиенте). */
+    @Override
+    protected boolean triggerEvent(BlockState state, net.minecraft.world.level.Level level, BlockPos pos, int id, int param) {
+        super.triggerEvent(state, level, pos, id, param);
+        BlockEntity be = level.getBlockEntity(pos);
+        return be != null && be.triggerEvent(id, param);
+    }
 }

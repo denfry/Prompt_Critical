@@ -112,7 +112,6 @@ class GridSubsystemTest {
         assertThat(s.energyForwardKwh()).isGreaterThan(0.3);
     }
 
-    /** LOTO 13 §13.1.3: замок на приводе — аппарат не включается ни по какой команде, а снят — включается. */
     /** План HP2.2: непринятую ячейку не включить; включённую запрет не отключает, отключить можно всегда. */
     @Test
     void unpermittedBreakerRefusesOnlyClosing() {
@@ -136,6 +135,49 @@ class GridSubsystemTest {
         assertThat(c.energized()).isFalse();
     }
 
+    /** План HP2.3: медленный привод ({@code TRIP_SLOW}) отключает в кратность раз дольше паспортных 0,1 с. */
+    @Test
+    void slowTripDeviceOpensLate() {
+        SimulationWorld w = world();
+        generator(w, BUS_A, 0);
+        SwitchUnit s = cell(w, BUS_A, BUS_B, false);
+        consumer(w, BUS_B, 100);
+        run(w, 20);
+        s.operate(true);
+        run(w, 1);
+        s.setDefects(6, false);
+        run(w, 0.1);
+        s.operate(false);
+        run(w, 0.3);
+        assertThat(s.closed()).isTrue(); // паспорт 0,1 с, с дефектом 0,6 с
+        run(w, 0.5);
+        assertThat(s.closed()).isFalse();
+    }
+
+    /** План HP2.3: отсыревшая изоляция ({@code INSULATION_DAMP}) пробивается при включении, гаснет с отключением. */
+    @Test
+    void dampInsulationFaultsToEarthOnClosing() {
+        SimulationWorld w = world();
+        generator(w, BUS_A, 0);
+        SwitchUnit s = cell(w, BUS_A, BUS_B, false);
+        consumer(w, BUS_B, 100);
+        run(w, 20);
+        s.setDefects(1, true);
+        run(w, 0.5);
+        assertThat(s.earthFault()).isFalse();
+        s.operate(true);
+        run(w, 1);
+        assertThat(s.earthFault()).isTrue();
+        s.operate(false);
+        run(w, 1);
+        assertThat(s.earthFault()).isFalse();
+        s.setDefects(1, false); // просушили и испытали — включение чистое
+        s.operate(true);
+        run(w, 1);
+        assertThat(s.earthFault()).isFalse();
+    }
+
+    /** LOTO 13 §13.1.3: замок на приводе — аппарат не включается ни по какой команде, а снят — включается. */
     @Test
     void lockedOutBreakerRefusesEveryCommand() {
         SimulationWorld w = world();
@@ -305,6 +347,53 @@ class GridSubsystemTest {
         }
         assertThat(motor.state()).isEqualTo(MotorState.FAULTED);
         assertThat(feeder.protectionTrips()).isEqualTo(1);
+    }
+
+    /** Двигатель 0,4 кВ 100 кВт за трансформатором от генератора 6,3 кВ: разгоняется под нагрузкой 20 кВт. */
+    private MotorUnit runningMotor(SimulationWorld w, GeneratorUnit[] gen) {
+        gen[0] = generator(w, BUS_A, 0);
+        cell(w, BUS_A, BUS_B, true);
+        grid(w).transformer(device(w, "distribution_transformer")).setNodes(BUS_B, BUS_D);
+        MotorUnit motor = grid(w).motor(device(w, "electric_motor"));
+        motor.setNodes(BUS_D);
+        motor.setStarter(MotorStarter.SOFT);
+        motor.setLoadPowerW(20e3);
+        motor.setContactor(true);
+        run(w, 30); // нагрузка на малой скорости — как у насоса (∝ ω²), разгон под ней
+        assertThat(motor.state()).isEqualTo(MotorState.RUNNING);
+        return motor;
+    }
+
+    /** Нулевая защита двигателя (энергопроект 2): провал ниже 0,85 о.е. дольше 0,5 с отключает его, самозапуска нет. */
+    @Test
+    void motorDropsOutOnUndervoltageAndDoesNotRestartItself() {
+        SimulationWorld w = world();
+        GeneratorUnit[] g = new GeneratorUnit[1];
+        MotorUnit motor = runningMotor(w, g);
+        g[0].setFieldOn(false);
+        run(w, 3);
+        assertThat(motor.undervoltageTripped()).isTrue();
+        assertThat(motor.contactorClosed()).isFalse();
+        g[0].setFieldOn(true);
+        run(w, 10);
+        assertThat(motor.contactorClosed()).isFalse();
+        assertThat(motor.state()).isNotEqualTo(MotorState.RUNNING);
+        motor.setContactor(true);
+        assertThat(motor.undervoltageTripped()).isFalse();
+        run(w, 30);
+        assertThat(motor.state()).isEqualTo(MotorState.RUNNING);
+    }
+
+    @Test
+    void benchMotorWithoutUndervoltageReleaseRidesThroughTheBlackout() {
+        SimulationWorld w = world();
+        GeneratorUnit[] g = new GeneratorUnit[1];
+        MotorUnit motor = runningMotor(w, g);
+        motor.setUndervoltageRelease(false);
+        g[0].setFieldOn(false);
+        run(w, 3);
+        assertThat(motor.undervoltageTripped()).isFalse();
+        assertThat(motor.contactorClosed()).isTrue();
     }
 
     /**

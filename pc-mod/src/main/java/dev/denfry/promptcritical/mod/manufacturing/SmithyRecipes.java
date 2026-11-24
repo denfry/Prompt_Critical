@@ -83,6 +83,7 @@ public final class SmithyRecipes extends RecipeProvider {
         ShapedRecipeBuilder.shaped(RecipeCategory.MISC, ManufacturingItems.ROLLING_BEARING.get(), 2)
                 .pattern(" S ").pattern("SNS").pattern(" S ").define('S', steel).define('N', Items.IRON_NUGGET)
                 .unlockedBy("has_steel", has(steel)).save(out, id("rolling_bearing"));
+        mf5Parts(out, steel, plate);
         // механизированная ступень: пока из ванили и Create-вала, перевод на детали — MF5–MF7
         ShapedRecipeBuilder.shaped(RecipeCategory.MISC, PcBlocks.POWER_HAMMER.get())
                 .pattern("PAP").pattern("ISI").pattern("BBB").define('P', Items.PISTON).define('A', PcBlocks.SMITHING_ANVIL.get())
@@ -150,5 +151,54 @@ public final class SmithyRecipes extends RecipeProvider {
         ShapedRecipeBuilder.shaped(RecipeCategory.MISC, dev.denfry.promptcritical.mod.site.SiteRegistry.HARDENING_FURNACE_REAL_DRAWING.get())
                 .pattern("PPP").pattern("PMP").pattern("PPP").define('P', Items.PAPER).define('M', PcBlocks.HARDENING_FURNACE.get())
                 .unlockedBy("has_hardening_furnace", has(PcBlocks.HARDENING_FURNACE.get())).save(out, id("hardening_furnace_real_drawing"));
+    }
+
+    /**
+     * Детали машин I0, переведённых на сборку (18 §18.8, MF5): вентилятор, подъёмник, паровая машина, генератор. Ручные
+     * рецепты дают номинальную деталь без паспорта; обод маховика — только литьём с обточкой (CastingPartRecipe).
+     */
+    private static void mf5Parts(RecipeOutput out, net.minecraft.world.item.Item steel, net.minecraft.world.item.Item plate) {
+        var fasteners = ManufacturingItems.FASTENER_KIT.get();
+        var spring = ManufacturingItems.SPRING.get();
+        var wire = ManufacturingItems.WIRE.get();
+        // клёпаное колесо: лопатки из листа на ступице
+        ShapedRecipeBuilder.shaped(RecipeCategory.MISC, ManufacturingItems.FAN_WHEEL.get())
+                .pattern("P P").pattern(" S ").pattern("P P").define('P', plate).define('S', steel)
+                .unlockedBy("has_plate", has(plate)).save(out, id("fan_wheel"));
+        ShapedRecipeBuilder.shaped(RecipeCategory.MISC, ManufacturingItems.ROPE_DRUM.get())
+                .pattern("PPP").pattern("SFS").pattern("PPP").define('P', plate).define('S', steel).define('F', fasteners)
+                .unlockedBy("has_fasteners", has(fasteners)).save(out, id("rope_drum"));
+        // колодка: деревянная накладка на стальной башмак
+        net.minecraft.data.recipes.ShapelessRecipeBuilder.shapeless(RecipeCategory.MISC, ManufacturingItems.BRAKE_SHOE.get(), 2)
+                .requires(plate).requires(net.minecraft.tags.ItemTags.PLANKS)
+                .unlockedBy("has_plate", has(plate)).save(out, id("brake_shoe"));
+        ShapedRecipeBuilder.shaped(RecipeCategory.MISC, ManufacturingItems.CYLINDER_BLOCK.get())
+                .pattern("PPP").pattern("PFP").pattern("PPP").define('P', plate).define('F', fasteners)
+                .unlockedBy("has_fasteners", has(fasteners)).save(out, id("cylinder_block"));
+        // поршень с пружинными кольцами
+        ShapedRecipeBuilder.shaped(RecipeCategory.MISC, ManufacturingItems.PISTON.get())
+                .pattern(" S ").pattern("RSR").define('S', steel).define('R', spring)
+                .unlockedBy("has_spring", has(spring)).save(out, id("piston"));
+        ShapedRecipeBuilder.shaped(RecipeCategory.MISC, ManufacturingItems.CONNECTING_ROD.get())
+                .pattern("S  ").pattern(" S ").pattern("  S").define('S', steel)
+                .unlockedBy("has_steel", has(steel)).save(out, id("connecting_rod"));
+        ShapedRecipeBuilder.shaped(RecipeCategory.MISC, ManufacturingItems.CROSSHEAD.get())
+                .pattern("PSP").define('P', plate).define('S', steel)
+                .unlockedBy("has_plate", has(plate)).save(out, id("crosshead"));
+        // центробежный регулятор: два шара на рычагах, пружина, муфта на вал
+        ShapedRecipeBuilder.shaped(RecipeCategory.MISC, ManufacturingItems.GOVERNOR.get())
+                .pattern("NSN").pattern(" R ").pattern(" C ").define('N', Items.IRON_INGOT).define('S', steel)
+                .define('R', spring).define('C', ManufacturingItems.COUPLING.get())
+                .unlockedBy("has_coupling", has(ManufacturingItems.COUPLING.get())).save(out, id("governor"));
+        // коллектор: медные пластины, изолированные слюдой (здесь прессшпан), на стальной втулке
+        ShapedRecipeBuilder.shaped(RecipeCategory.MISC, ManufacturingItems.COMMUTATOR.get())
+                .pattern("CAC").pattern("CSC").pattern("CAC").define('C', Items.COPPER_INGOT).define('A', Items.PAPER).define('S', steel)
+                .unlockedBy("has_copper", has(Items.COPPER_INGOT)).save(out, id("commutator"));
+        net.minecraft.data.recipes.ShapelessRecipeBuilder.shapeless(RecipeCategory.MISC, ManufacturingItems.BRUSH_HOLDER.get(), 2)
+                .requires(Items.COPPER_INGOT).requires(steel).requires(spring)
+                .unlockedBy("has_spring", has(spring)).save(out, id("brush_holder"));
+        ShapedRecipeBuilder.shaped(RecipeCategory.MISC, ManufacturingItems.SLIP_RING.get(), 2)
+                .pattern("C").pattern("A").pattern("C").define('C', Items.COPPER_INGOT).define('A', Items.PAPER)
+                .unlockedBy("has_copper", has(Items.COPPER_INGOT)).save(out, id("slip_ring"));
     }
 }

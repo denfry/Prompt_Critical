@@ -43,6 +43,19 @@ public final class ManufacturingItems {
     public static final DeferredItem<Item> END_COVER = ITEMS.registerSimpleItem("end_cover", new Item.Properties().stacksTo(8));
     public static final DeferredItem<Item> ROTOR_CORE = ITEMS.registerSimpleItem("rotor_core", new Item.Properties().stacksTo(4));
     public static final DeferredItem<Item> FIELD_COIL = ITEMS.registerSimpleItem("field_coil", new Item.Properties().stacksTo(8));
+    // детали машин I0, переведённых на сборку (веха MF5)
+    public static final DeferredItem<Item> FAN_WHEEL = ITEMS.registerSimpleItem("fan_wheel", new Item.Properties().stacksTo(1));
+    public static final DeferredItem<Item> ROPE_DRUM = ITEMS.registerSimpleItem("rope_drum", new Item.Properties().stacksTo(1));
+    public static final DeferredItem<Item> BRAKE_SHOE = ITEMS.registerSimpleItem("brake_shoe", new Item.Properties().stacksTo(8));
+    public static final DeferredItem<Item> CYLINDER_BLOCK = ITEMS.registerSimpleItem("cylinder_block", new Item.Properties().stacksTo(1));
+    public static final DeferredItem<Item> PISTON = ITEMS.registerSimpleItem("piston", new Item.Properties().stacksTo(4));
+    public static final DeferredItem<Item> CONNECTING_ROD = ITEMS.registerSimpleItem("connecting_rod", new Item.Properties().stacksTo(4));
+    public static final DeferredItem<Item> CROSSHEAD = ITEMS.registerSimpleItem("crosshead", new Item.Properties().stacksTo(4));
+    public static final DeferredItem<Item> FLYWHEEL_RIM = ITEMS.registerSimpleItem("flywheel_rim", new Item.Properties().stacksTo(4));
+    public static final DeferredItem<Item> GOVERNOR = ITEMS.registerSimpleItem("governor", new Item.Properties().stacksTo(1));
+    public static final DeferredItem<Item> COMMUTATOR = ITEMS.registerSimpleItem("commutator", new Item.Properties().stacksTo(1));
+    public static final DeferredItem<Item> BRUSH_HOLDER = ITEMS.registerSimpleItem("brush_holder", new Item.Properties().stacksTo(8));
+    public static final DeferredItem<Item> SLIP_RING = ITEMS.registerSimpleItem("slip_ring", new Item.Properties().stacksTo(4));
 
     private ManufacturingItems() {
     }
@@ -50,6 +63,7 @@ public final class ManufacturingItems {
     /** Для вкладки творческого режима. */
     public static List<DeferredItem<? extends Item>> all() {
         return List.of(SMITH_HAMMER, TONGS, WORKPIECE, WIRE, SHAFT, ELECTRICAL_SHEET, LAMINATION, STATOR_CORE, STATOR,
-                ROLLING_BEARING, COUPLING, FASTENER_KIT, SPRING, PULLEY, MACHINE_BED, PUMP_CASING, VALVE_BODY, FLANGE, END_COVER, ROTOR_CORE, FIELD_COIL);
+                ROLLING_BEARING, COUPLING, FASTENER_KIT, SPRING, PULLEY, MACHINE_BED, PUMP_CASING, VALVE_BODY, FLANGE, END_COVER, ROTOR_CORE, FIELD_COIL,
+                FAN_WHEEL, ROPE_DRUM, BRAKE_SHOE, CYLINDER_BLOCK, PISTON, CONNECTING_ROD, CROSSHEAD, FLYWHEEL_RIM, GOVERNOR, COMMUTATOR, BRUSH_HOLDER, SLIP_RING);
     }
 }

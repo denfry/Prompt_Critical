@@ -303,6 +303,18 @@ public final class PcLanguageProvider extends LanguageProvider {
         i("end_cover", "End Cover", "Крышка");
         i("rotor_core", "Rotor Core", "Пакет ротора");
         i("field_coil", "Field Coil", "Катушка возбуждения");
+        i("fan_wheel", "Fan Wheel", "Колесо вентилятора");
+        i("rope_drum", "Rope Drum", "Канатный барабан");
+        i("brake_shoe", "Brake Shoe", "Тормозная колодка");
+        i("cylinder_block", "Cylinder Block", "Цилиндр паровой машины");
+        i("piston", "Piston", "Поршень");
+        i("connecting_rod", "Connecting Rod", "Шатун");
+        i("crosshead", "Crosshead", "Крейцкопф");
+        i("flywheel_rim", "Flywheel Rim Segment", "Сегмент обода маховика");
+        i("governor", "Watt Governor", "Регулятор Уатта");
+        i("commutator", "Commutator", "Коллектор");
+        i("brush_holder", "Brush Holder", "Щёткодержатель");
+        i("slip_ring", "Slip Ring", "Контактное кольцо");
         i("tongs", "Smith's Tongs", "Кузнечные клещи");
         i("wire", "Wire", "Проволока");
         i("electrical_sheet", "Electrical Steel Sheet", "Лист электротехнической стали");
@@ -334,6 +346,16 @@ public final class PcLanguageProvider extends LanguageProvider {
         i("spacer_grid", "Spacer Grid", "Дистанционирующая решётка");
         i("dosimeter_radiometer", "Dosimeter-Radiometer DKS-04", "Дозиметр-радиометр ДКС-04");
         b("lead_block", "Lead Shielding Block", "Свинцовый блок защиты");
+        b("portal_monitor_real", "Portal Contamination Monitor", "Портальная рама контроля загрязнения");
+        b("hand_foot_monitor_real", "Hand and Foot Monitor", "Установка контроля рук и ног");
+        b("hot_cell_real", "Hot Cell Operating Station", "Рабочее место горячей камеры");
+        b("spent_fuel_cask_real", "Spent Fuel Cask (CASTOR V/19 class)", "Контейнер ОЯТ (класса CASTOR V/19)");
+        b("cask_transport_cart_real", "Cask Transfer Cart", "Тележка контейнера ОЯТ");
+        b("dry_storage_module_real", "Dry Storage Module (NUHOMS class)", "Модуль сухого хранения (класса NUHOMS)");
+        b("shield_heavy_concrete_real", "Heavy Concrete Shielding (magnetite)", "Тяжёлый бетон защиты (магнетитовый)");
+        b("shield_lead_brick_real", "Lead Shielding Bricks", "Свинцовые кирпичи защиты");
+        b("shield_borated_water_tank_real", "Borated Water Shield Tank", "Бак защиты с борированной водой");
+        b("shield_borated_pe_real", "Borated Polyethylene Shielding", "Борированный полиэтилен защиты");
         b("helium_recovery_unit", "Helium Recovery Unit", "Гелиевая установка");
         b("fuel_rack", "Spent Fuel Pool Rack", "Стеллаж бассейна выдержки");
         b("ultrasonic_bath", "Ultrasonic Decontamination Bath", "Ультразвуковая ванна дезактивации");
@@ -434,6 +456,12 @@ public final class PcLanguageProvider extends LanguageProvider {
         b("mud_pump", "Triplex Mud Pump", "Буровой насос");
         b("drawworks", "Drawworks", "Буровая лебёдка");
         b("derrick_segment", "Derrick Section", "Секция вышки");
+        b("rotary_table_real", "R-560 Rotary Table", "Ротор Р-560");
+        b("drawworks_real", "U2-5-5 Drawworks", "Буровая лебёдка У2-5-5");
+        b("mud_pump_real", "U8-6M Duplex Mud Pump", "Буровой насос У8-6М");
+        b("derrick_segment_real", "Drilling Derrick Section, 3 m", "Секция буровой вышки, 3 м");
+        b("pumpjack_real", "SK-8 Beam Pumping Unit", "Станок-качалка СК-8");
+        b("three_phase_separator_real", "NGS-1.6-2000 Three-Phase Separator", "Трёхфазный сепаратор НГС-1,6-2000");
         b("bop_annular", "Annular Preventer", "Кольцевой превентор");
         b("bop_ram", "Ram Preventer", "Плашечный превентор");
         b("logging_unit", "Logging Unit", "Каротажный подъёмник");
@@ -450,6 +478,7 @@ public final class PcLanguageProvider extends LanguageProvider {
         b("ngl_fractionator", "NGL Fractionation Unit", "Газофракционирующая установка");
         b("rtu_station", "Telemetry Gateway (RTU)", "Шлюз телемеханики (КП)");
         b("historian_server", "Historian Server", "Сервер историана");
+        b("operator_terminal", "Operator Terminal", "Терминал оператора");
         b("annunciator_panel", "Annunciator Panel", "Светосигнальное табло");
         b("alarm_horn", "Alarm Horn", "Сирена сигнализации");
         b("control_desk", "Control Desk", "Секция пульта");
@@ -523,6 +552,16 @@ public final class PcLanguageProvider extends LanguageProvider {
         b("sintering_furnace", "Pellet Sintering Furnace", "Печь спекания таблеток");
         b("rod_loading_station", "Fuel Rod Loading and Welding Station", "Участок снаряжения и заварки твэлов");
         b("assembly_jig", "Fuel Assembly Jig", "Стапель сборки ТВС");
+        b("gas_centrifuge_real", "Gas Centrifuge", "Газовая центрифуга");
+        b("centrifuge_cascade_section_real", "Centrifuge Cascade Section", "Секция каскада центрифуг");
+        b("fluorinator_real", "Flame Tower Fluorinator", "Пламенный реактор фторирования");
+        b("uf6_cylinder_30b_real", "30B UF₆ Cylinder (placed)", "Баллон UF₆ 30B (на подкладках)");
+        b("uf6_autoclave_real", "UF₆ Cylinder Autoclave", "Автоклав баллонов UF₆");
+        b("pellet_press_real", "Rotary Pellet Press", "Роторный таблеточный пресс");
+        b("sintering_furnace_real", "Pusher Sintering Furnace", "Толкательная печь спекания");
+        b("fuel_rod_welder_real", "Fuel Rod End Plug Welder", "Пост сварки заглушек твэлов");
+        b("fuel_assembly_stand_real", "VVER-440 Fuel Assembly Stand", "Стенд сборки ТВС ВВЭР-440");
+        b("vver440_fuel_assembly_real", "VVER-440 Fuel Assembly (standing)", "ТВС ВВЭР-440 (стоймя)");
         b("power_reactor", "Channel Power Reactor (AM-1 type, legacy)", "Канальный энергетический реактор (типа АМ-1, старая серия)");
         b("am1_reactor", "AM-1 Channel Power Reactor", "Канальный энергетический реактор АМ-1");
         b("irradiation_channel", "Irradiation Channel", "Канал облучения");
@@ -720,6 +759,8 @@ public final class PcLanguageProvider extends LanguageProvider {
         b("flame_detector", "Flame Detector", "Извещатель пламени");
         b("manual_call_point", "Manual Call Point", "Ручной пожарный извещатель");
         b("fire_alarm_panel", "Fire Alarm Panel", "Прибор приёмно-контрольный пожарный");
+        b("intercom_station", "Public Address Station", "Пульт громкоговорящей связи");
+        b("plant_loudspeaker", "Plant Loudspeaker", "Рупорный громкоговоритель");
         b("sprinkler_head", "Sprinkler Head", "Спринклерный ороситель");
         b("deluge_nozzle", "Deluge Nozzle", "Дренчерный ороситель");
         b("gas_suppression_cylinder", "Gas Suppression Cylinder", "Модуль газового пожаротушения");
@@ -1090,6 +1131,10 @@ public final class PcLanguageProvider extends LanguageProvider {
             }
         }
         MISC.putAll(dev.denfry.promptcritical.mod.panel.PanelText.lang());
+        // категория громкости Simple Voice Chat для ГГС (16 §16.4.1)
+        MISC.put("promptcritical.voicechat.pa", new String[] {"Plant PA", "ГГС станции"});
+        MISC.put("promptcritical.voicechat.pa.description", new String[] {"Plant public address loudspeakers",
+                "Громкоговорители громкоговорящей связи станции"});
         MISC.putAll(dev.denfry.promptcritical.mod.drilling.DrillingText.lang());
         MISC.putAll(dev.denfry.promptcritical.mod.production.ProductionText.lang());
         MISC.putAll(dev.denfry.promptcritical.mod.scada.ScadaText.lang());
@@ -1100,6 +1145,7 @@ public final class PcLanguageProvider extends LanguageProvider {
         MISC.putAll(dev.denfry.promptcritical.mod.nonferrous.NonferrousText.lang());
         MISC.putAll(dev.denfry.promptcritical.mod.nuclear.NuclearText.lang());
         MISC.putAll(dev.denfry.promptcritical.mod.npp.NppText.lang());
+        MISC.putAll(dev.denfry.promptcritical.mod.radiation.RadGearText.lang());
         MISC.putAll(dev.denfry.promptcritical.mod.isotopes.IsotopeText.lang());
         MISC.putAll(dev.denfry.promptcritical.mod.electronics.ElectronicsText.lang());
         MISC.putAll(dev.denfry.promptcritical.mod.environment.AirQualityService.lang());
@@ -1116,6 +1162,7 @@ public final class PcLanguageProvider extends LanguageProvider {
         b("instrument_vibration", "Vibration Transmitter", "Вибродатчик");
         MISC.putAll(dev.denfry.promptcritical.mod.acoustics.Acoustics.lang());
         MISC.putAll(dev.denfry.promptcritical.mod.radiation.RadiationBlocksText.lang());
+        MISC.putAll(dev.denfry.promptcritical.mod.radiation.RadProtText.lang());
         MISC.putAll(dev.denfry.promptcritical.mod.radiation.ContaminationText.lang());
         MISC.putAll(dev.denfry.promptcritical.mod.reprocessing.ReprocessingText.lang());
         MISC.putAll(dev.denfry.promptcritical.mod.waste.WasteText.lang());

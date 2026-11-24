@@ -15,6 +15,7 @@ import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
 import net.minecraft.core.BlockPos;
+import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.core.Direction;
 import net.minecraft.core.registries.BuiltInRegistries;
 import net.minecraft.server.level.ServerLevel;
@@ -213,6 +214,36 @@ public final class TelemetryGatewayBlockEntity extends DeviceBlockEntity impleme
         if (!(level.getBlockEntity(s.pos()) instanceof PanelHost host) || !(level instanceof ServerLevel sl))
             throw new TelemetryException("Machine " + id + " is gone");
         host.onPanelButton(FakePlayerFactory.getMinecraft(sl), buttonId);
+    }
+
+    /** Машина последнего цикла опроса для терминала оператора (16 §16.3.4): щит, показания и возраст среза в тиках. */
+    public record Station(String id, String type, BlockPos pos, PanelLayout layout, int[] channels, long ageTicks) {
+    }
+
+    /** Срез всех машин шлюза без расхода токенов: терминал оператора — часть мода, а не вызов Lua. */
+    public List<Station> stations() {
+        List<Station> out = new ArrayList<>();
+        long now = now();
+        snapshots.forEach((id, s) -> out.add(new Station(id, s.type(), s.pos(), s.layout(), s.channels().clone(), now - s.tick())));
+        return out;
+    }
+
+    /**
+     * Телеуправление с терминала оператора (16 §16.3.4): кнопка {@code buttonId} щита машины нажимается от имени
+     * игрока, так что права и блокировки щита 03c действуют как у рукояти. Аппаратные ключи — только рукой у щита.
+     */
+    public void pressAs(ServerPlayer player, String id, int buttonId) {
+        if (commands == null) commands = new TokenBucket(COMMANDS_PER_SECOND, COMMAND_BURST);
+        Snapshot s = snapshot(id);
+        PanelLayout.Button button = null;
+        for (PanelLayout.Element e : s.layout().elements)
+            if (e instanceof PanelLayout.Button b && b.id() == buttonId) button = b;
+        if (button == null) throw new TelemetryException("No button " + buttonId + " on " + id);
+        if (dev.denfry.promptcritical.mod.scada.device.DeviceRuntime.hardwareKey(PanelText.shortKey(button.label())))
+            throw new TelemetryException(PanelText.shortKey(button.label()) + " is done only at the panel, by hand");
+        if (!commands.tryTake(now(), 1)) throw new TelemetryException("Telecontrol channel is busy: wait for the previous command");
+        if (!(level.getBlockEntity(s.pos()) instanceof PanelHost host)) throw new TelemetryException("Machine " + id + " is gone");
+        host.onPanelButton(player, buttonId);
     }
 
     /** Телеизмерение для верхнего уровня (сервер завода): машина, её тип, точка и значение последнего опроса. */

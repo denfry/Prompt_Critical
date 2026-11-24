@@ -20,6 +20,9 @@ public final class ScadaBlockEntities {
     public static final DeferredHolder<BlockEntityType<?>, BlockEntityType<HistorianBlockEntity>> HISTORIAN =
             BLOCK_ENTITIES.register("historian_server",
                     () -> BlockEntityType.Builder.of(HistorianBlockEntity::new, PcBlocks.HISTORIAN_SERVER.get()).build(null));
+    public static final DeferredHolder<BlockEntityType<?>, BlockEntityType<OperatorTerminalBlockEntity>> OPERATOR_TERMINAL =
+            BLOCK_ENTITIES.register("operator_terminal",
+                    () -> BlockEntityType.Builder.of(OperatorTerminalBlockEntity::new, PcBlocks.OPERATOR_TERMINAL.get()).build(null));
     public static final DeferredHolder<BlockEntityType<?>, BlockEntityType<TelemetryGatewayBlockEntity>> TELEMETRY_GATEWAY =
             BLOCK_ENTITIES.register("rtu_station",
                     () -> BlockEntityType.Builder.of(TelemetryGatewayBlockEntity::new, PcBlocks.RTU_STATION.get()).build(null));

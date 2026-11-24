@@ -30,7 +30,19 @@ public final class SpinWholeRenderer<T extends BlockEntity & WholeModelHost> imp
     private final BlockEntityRenderer<T> old;
     private final List<Spin> spins = new ArrayList<>();
     private final List<PartialModel> whileRunning = new ArrayList<>();
+    /** Вариант модели по состоянию (горит, тревога): суффикс к id и когда он рисуется. */
+    private record Variant(String suffix, java.util.function.Predicate<BlockState> when) {}
+    private final List<Variant> variants = new ArrayList<>();
     private final WholeModelRenderer<T> real = new WholeModelRenderer<>() {
+        @Override
+        @Nullable
+        protected String modelId(T be) {
+            String id = be.wholeModelId();
+            if (id == null) return null;
+            for (Variant v : variants) if (v.when().test(be.getBlockState())) return id + v.suffix();
+            return id;
+        }
+
         @Override
         protected void parts(T be, float pt, PoseStack ms, VertexConsumer vc, int light) {
             Direction f = be.wholeModelFacing();
@@ -63,6 +75,15 @@ public final class SpinWholeRenderer<T extends BlockEntity & WholeModelHost> imp
     public SpinWholeRenderer<T> spin(PartialModel part, Direction.Axis axis, float a, float b, float dx, float dy, float dz,
             ToDoubleFunction<BlockEntity> rpm) {
         spins.add(new Spin(part, axis, a, b, dx, dy, dz, rpm));
+        return this;
+    }
+
+    /**
+     * Вариант цельной модели {@code <id><suffix>}, пока состояние удовлетворяет {@code when} (первый подходящий);
+     * модель варианта регистрирует вызывающий.
+     */
+    public SpinWholeRenderer<T> variant(String suffix, java.util.function.Predicate<BlockState> when) {
+        variants.add(new Variant(suffix, when));
         return this;
     }
 
