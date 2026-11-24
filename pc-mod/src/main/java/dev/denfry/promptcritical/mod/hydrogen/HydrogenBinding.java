@@ -28,7 +28,9 @@ public final class HydrogenBinding {
             H2Machine m = GasLines.machineAt(level, pos);
             if (m == null) return null;
             int port = m.portAt(pos, side);
-            return port < 0 ? null : m.portFluids(port);
+            if (port < 0) return null;
+            var h = m.portFluids(port);
+            return h != null ? h : m.gasPort(port) ? net.neoforged.neoforge.fluids.capability.templates.EmptyFluidHandler.INSTANCE : null;
         }, blocks);
     }
 }

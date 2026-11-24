@@ -182,6 +182,11 @@ public class FuelCellBlockEntity extends GridDeviceBlockEntity<InverterUnit> imp
     // --- порты и модель ---
 
     @Override
+    public boolean gasPort(int port) {
+        return port == 0 || port == 3;
+    }
+
+    @Override
     public String h2ModelId() {
         return "h2_fuel_cell_real";
     }

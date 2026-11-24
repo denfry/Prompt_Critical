@@ -28,6 +28,14 @@ public interface H2Machine {
         return null;
     }
 
+    /**
+     * Порт газовый: трубы Create к нему подключаются (пустой бак, без него последняя труба смотрела бы раструбом в
+     * воздух и линия считалась бы разорванной), но насос газ не возьмёт — он ходит по {@link GasLines}.
+     */
+    default boolean gasPort(int port) {
+        return false;
+    }
+
     /** Номер порта в клетке {@code cell} с мировой грани {@code side}; −1 — не порт. */
     default int portAt(BlockPos cell, Direction side) {
         BlockPos c = h2Controller();

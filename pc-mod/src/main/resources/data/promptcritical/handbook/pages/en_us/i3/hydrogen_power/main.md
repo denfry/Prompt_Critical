@@ -21,3 +21,7 @@ The two-stage diaphragm compressor takes from the gasholder and fills the tube b
 ## Fuel cell
 
 The 200 kW PEM module runs on hydrogen from the tube bank. It stops below 3 bar. Its inverter feeds a 0.4 kV cable on the east face. At full power it is about 50 % efficient on the lower heating value, and at part load it does better. A cold module gives only about 175 kW until it has warmed up to 70 °C. It makes 9 L of water for every kilogram of hydrogen; the water runs out of the bottom port into a tank, or to the drain.
+
+## Leaks and the hydrogen cloud
+
+A pipe that ends in the open on a hydrogen line is a broken line, and gas pours out of it. A broken line on a full tube bank lets out more than a kilogram a second; in a closed hall of 4000 m³ the air reaches 4 % hydrogen, the lowest mixture that burns, within a quarter of a minute. A stack that vents outdoors throws the hydrogen up and away. Under a roof it fills the room, and so does an electrolyser left with no gas line. The gas alarm rings at a quarter of the lower limit. At the limit itself any flame, lava, torch, lit campfire or running machine in the room sets the cloud off. Hydrogen is light, so keep the vents under the open sky, give halls an opening or fans, and keep fire away from the gas plant.

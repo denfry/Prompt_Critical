@@ -25,8 +25,9 @@ public final class HydrogenPanels {
     public static final int C_SUCTION_KPA = 0, C_DISCHARGE_BAR10 = 1, C_STAGE_C = 2, C_NM3H = 3, C_KW = 4, C_FLAGS = 5, C_CHANNELS = 6;
     public static final int F_LOADED = 8, F_NO_SUCTION = 9, F_NO_DISCHARGE = 10;
     // сосуд
-    public static final int S_BAR100 = 0, S_NM3 = 1, S_MAX_NM3 = 2, S_TEMP_C = 3, S_KG10 = 4, S_MAX_BAR100 = 5, S_FLAGS = 6, S_CHANNELS = 7;
-    public static final int F_RELIEF = 0, F_BURST = 1, F_VENT = 2;
+    public static final int S_BAR100 = 0, S_NM3 = 1, S_MAX_NM3 = 2, S_TEMP_C = 3, S_KG10 = 4, S_MAX_BAR100 = 5, S_FLAGS = 6, S_LEL_PCT = 7,
+            S_CHANNELS = 8;
+    public static final int F_RELIEF = 0, F_BURST = 1, F_VENT = 2, F_LEAK = 3;
     // топливный элемент
     public static final int FC_H2_BAR10 = 0, FC_VOLTS = 1, FC_KW = 2, FC_WATER_LH = 3, FC_TEMP_C = 4, FC_EFF_PCT = 5, FC_TRIP = 6,
             FC_FLAGS = 7, FC_CHANNELS = 8;
@@ -78,6 +79,8 @@ public final class HydrogenPanels {
             S_RELIEF = PanelText.tr("h2.s_relief", "relief valve open", "открыт предохранительный клапан"),
             S_BURST = PanelText.tr("h2.s_burst", "burst disc open: replace it (Shift + right click)", "мембрана разорвана: замените (Shift + ПКМ)"),
             S_VENT = PanelText.tr("h2.s_vent", "venting to the stack", "сброс на свечу"),
+            S_LEAK = PanelText.tr("h2.s_leak", "LEAK: open line end · H₂ in air %s %% LEL", "УТЕЧКА: открытый конец линии · H₂ в воздухе %s %% НКПР"),
+            S_GAS = PanelText.tr("h2.s_gas", "GAS ALARM: H₂ in air %s %% LEL", "ЗАГАЗОВАННОСТЬ: H₂ в воздухе %s %% НКПР"),
             H2_IN = PanelText.tr("h2.h2_in", "H₂ in", "H₂ на входе"),
             STACK_V = PanelText.tr("h2.stack_v", "Stack", "Батарея"),
             AC_OUT = PanelText.tr("h2.ac_out", "AC out", "Выдача"),
@@ -180,6 +183,8 @@ public final class HydrogenPanels {
     }
 
     private static Component storageStatus(PanelValues v) {
+        if (v.bit(S_FLAGS, F_LEAK)) return S_LEAK.get(v.raw(S_LEL_PCT)).withStyle(ChatFormatting.RED);
+        if (v.raw(S_LEL_PCT) >= 25) return S_GAS.get(v.raw(S_LEL_PCT)).withStyle(ChatFormatting.RED);
         Tr s = v.bit(S_FLAGS, F_BURST) ? S_BURST : v.bit(S_FLAGS, F_RELIEF) ? S_RELIEF : v.bit(S_FLAGS, F_VENT) ? S_VENT : S_OK;
         return S_STATUS.get(v.raw(S_TEMP_C), s.get());
     }

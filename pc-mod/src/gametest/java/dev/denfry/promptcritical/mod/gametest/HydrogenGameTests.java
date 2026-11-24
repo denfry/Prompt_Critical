@@ -131,6 +131,29 @@ public final class HydrogenGameTests {
                 .thenSucceed();
     }
 
+    /**
+     * Открытый конец трубы на линии рампы — разрыв: газ уходит в воздух, давление падает, газоанализатор звенит. Огня
+     * рядом нет — без взрыва.
+     */
+    @GameTest(template = "gametest/empty_12x12x12", timeoutTicks = 200)
+    public static void anOpenLineEndLeaksTheTubeBankAndRaisesTheGasAlarm(GameTestHelper h) {
+        BlockPos t = new BlockPos(5, 2, 5);
+        build(h, t, Direction.NORTH, "h2_tube_bank_real", PcBlocks.FP_H2_TUBE_BANK_REAL, PcBlocks.H2_TUBE_BANK_REAL.get());
+        // патрубок рампы — восточная грань (8, 3, 5); прямая труба с раструбом на восток в воздух
+        h.setBlock(new BlockPos(9, 3, 5), AllBlocks.FLUID_PIPE.get().defaultBlockState()
+                .setValue(net.minecraft.world.level.block.PipeBlock.EAST, true).setValue(net.minecraft.world.level.block.PipeBlock.WEST, true));
+        H2StorageBlockEntity tubes = (H2StorageBlockEntity) h.getBlockEntity(t);
+        HydrogenStorage g = tubes.storage();
+        g.add(dev.denfry.promptcritical.sim.hydrogen.HydrogenGas.molarDensity(50e5, 293.15) * g.spec().volumeM3() - g.mol(), 293.15);
+        double start = g.pressurePa();
+        h.succeedWhen(() -> {
+            h.assertTrue(tubes.leaking(), "the open pipe end leaks");
+            h.assertTrue(g.pressurePa() < start - 2e5, "the tube bank loses pressure: " + Math.round(g.pressurePa() / 1e5) + " bar");
+            h.assertTrue(tubes.hazard().alarm(), "the gas alarm sounds: " + Math.round(tubes.hazard().room().lelFraction() * 100) + " % LEL");
+            h.assertTrue(tubes.hazard().explosions() == 0, "nothing to light it");
+        });
+    }
+
     @GameTest(template = "gametest/empty_12x12x12", timeoutTicks = 60)
     public static void fuelCellWithoutAHydrogenLineTripsOnLowPressure(GameTestHelper h) {
         BlockPos p = new BlockPos(5, 2, 5);

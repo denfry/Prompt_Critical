@@ -186,6 +186,11 @@ public class H2CompressorBlockEntity extends DeviceBlockEntity implements H2Mach
     // --- порты и модель ---
 
     @Override
+    public boolean gasPort(int port) {
+        return port == 0 || port == 1;
+    }
+
+    @Override
     public String h2ModelId() {
         return "h2_compressor_real";
     }

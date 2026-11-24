@@ -55,11 +55,27 @@ public final class GasLines {
         return c != null && level.getBlockEntity(c) instanceof H2Machine m ? m : null;
     }
 
+    /** Линия: концы у машин и открытые концы труб (клетки воздуха, куда труба смотрит раструбом). */
+    public record Line(List<End> ends, List<BlockPos> open) {}
+
     /** Концы линии от порта {@code port} машины {@code from}, ближние первыми; пусто — к порту не подведена труба. */
     public static List<End> trace(Level level, H2Machine from, int port) {
+        return line(level, from, port).ends();
+    }
+
+    /** Труба Create смотрит открытым концом в сторону {@code d}. */
+    static boolean openTowards(BlockState s, Direction d) {
+        if (!(s.getBlock() instanceof FluidPipeBlock)) return false;
+        var prop = net.minecraft.world.level.block.PipeBlock.PROPERTY_BY_DIRECTION.get(d);
+        return s.hasProperty(prop) && s.getValue(prop);
+    }
+
+    /** Вся линия от порта: машины на концах и открытые концы труб. */
+    public static Line line(Level level, H2Machine from, int port) {
         List<End> out = new ArrayList<>();
+        List<BlockPos> open = new ArrayList<>();
         BlockPos start = from.portCell(port).relative(from.portFace(port));
-        if (!level.isLoaded(start) || !pipe(level.getBlockState(start))) return out;
+        if (!level.isLoaded(start) || !pipe(level.getBlockState(start))) return new Line(out, open);
         Set<BlockPos> seen = new HashSet<>();
         ArrayDeque<BlockPos> q = new ArrayDeque<>();
         q.add(start);
@@ -75,6 +91,10 @@ public final class GasLines {
                     q.add(n);
                     continue;
                 }
+                if (s.isAir()) {
+                    if (openTowards(level.getBlockState(p), d) && !open.contains(n)) open.add(n);
+                    continue;
+                }
                 H2Machine m = machineAt(level, n);
                 if (m == null) continue;
                 int i = m.portAt(n, d.getOpposite());
@@ -83,7 +103,7 @@ public final class GasLines {
                 if (!out.contains(e)) out.add(e);
             }
         }
-        return out;
+        return new Line(out, open);
     }
 
     /** Первый сосуд с газом на линии; {@code null} — нет. */

@@ -258,6 +258,33 @@ class HydrogenChainTest {
         assertThat(cycle).isBetween(0.27, 0.40);
     }
 
+    /**
+     * Разрыв линии DN 15 у рампы на 160 бар: критическое истечение ≈ 1,1 кг/с (струя, как в 09 §9.11); в закрытом зале
+     * 4000 м³ водород доходит до НКПР (4 %) за десяток секунд, а без подпитки рампа опустошается за минуты.
+     */
+    @Test
+    void lineBreakAtTheTubeBankFillsASealedHallToTheLowerFlammableLimit() {
+        HydrogenStorage tubes = new HydrogenStorage(HydrogenStorage.TUBE_BANK);
+        // разом до 160 бар: горячий газ даёт ≈ 225 бар, ниже мембраны 240; остывает до 160
+        tubes.add(HydrogenGas.molarDensity(160e5, AMB) * 11.7 - tubes.mol(), AMB);
+        for (int s = 0; s < 5 * 3600; s++) tubes.step(1, AMB);
+        assertThat(tubes.burst()).isFalse();
+        double kgS = HydrogenGas.orificeMolS(1.8e-4, tubes.pressurePa(), HydrogenStorage.ATM_PA, tubes.tempK()) * HydrogenGas.M;
+        assertThat(kgS).isBetween(1.0, 2.0);
+        dev.denfry.promptcritical.sim.storage.BatteryRoom hall = new dev.denfry.promptcritical.sim.storage.BatteryRoom(4000,
+                dev.denfry.promptcritical.sim.storage.BatteryRoom.ACH_SEALED);
+        int s = 0;
+        while (!hall.explosive() && s < 600) {
+            double mol = tubes.take(HydrogenGas.orificeMolS(1.8e-4, tubes.pressurePa(), HydrogenStorage.ATM_PA, tubes.tempK()), HydrogenStorage.ATM_PA);
+            hall.step(1, mol * HydrogenGas.M);
+            s++;
+        }
+        assertThat(s).isBetween(5, 30);
+        // дальше рампа пустеет: за 10 минут — ниже 10 бар
+        for (int k = 0; k < 600; k++) tubes.take(HydrogenGas.orificeMolS(1.8e-4, tubes.pressurePa(), HydrogenStorage.ATM_PA, tubes.tempK()), HydrogenStorage.ATM_PA);
+        assertThat(tubes.pressurePa()).isLessThan(10e5);
+    }
+
     @Test
     void stateSurvivesSaveAndLoad() {
         AlkalineElectrolyser e = warmElectrolyser();

@@ -41,10 +41,12 @@ public class H2StorageBlockEntity extends DeviceBlockEntity implements H2Machine
     static final double LINE_M2 = 1.8e-4;
     static final double AMBIENT_K = 293.15;
     private HydrogenStorage gas;
+    private final H2Hazard hazard = new H2Hazard();
     private int ticks;
     /** Давление для стрелки манометра на клиенте, бар. */
     private float shownBar;
     private float lastSentBar = -1;
+    private boolean leaking;
 
     public H2StorageBlockEntity(BlockPos pos, BlockState state) {
         super(HydrogenBlockEntities.H2_STORAGE.get(), pos, state);
@@ -60,6 +62,16 @@ public class H2StorageBlockEntity extends DeviceBlockEntity implements H2Machine
         return gas;
     }
 
+    /** Облако у мест утечки этого сосуда. */
+    public H2Hazard hazard() {
+        return hazard;
+    }
+
+    /** На прошлой секунде газ уходил в воздух (разрыв линии или сброс под крышей). */
+    public boolean leaking() {
+        return leaking;
+    }
+
     public float shownBar() {
         return shownBar;
     }
@@ -70,10 +82,20 @@ public class H2StorageBlockEntity extends DeviceBlockEntity implements H2Machine
         if (!(level instanceof ServerLevel sl)) return;
         HydrogenStorage g = storage();
         double dt = 0.05;
-        // выравнивание с другим сосудом на линии: течёт от большего давления, считает сторона с большим
+        // выравнивание с другим сосудом на линии: течёт от большего давления, считает сторона с большим;
+        // открытый конец трубы на линии — разрыв: газ уходит через сечение трубы в воздух помещения
         if (ticks % 20 == 3) {
+            BlockPos leakAt = null;
+            double leakMol = 0;
             for (int port : tubeBank() ? new int[] {0} : new int[] {0, 1}) {
-                for (GasLines.End e : GasLines.trace(sl, this, port)) {
+                GasLines.Line line = GasLines.line(sl, this, port);
+                for (BlockPos open : line.open()) {
+                    double mol = g.take(HydrogenGas.orificeMolS(LINE_M2, g.pressurePa(), HydrogenStorage.ATM_PA, g.tempK()), HydrogenStorage.ATM_PA);
+                    if (mol <= 0) continue;
+                    leakMol += mol;
+                    if (leakAt == null) leakAt = open;
+                }
+                for (GasLines.End e : line.ends()) {
                     HydrogenStorage other = e.machine().storage();
                     if (other == null || other == g || other.pressurePa() >= g.pressurePa()) continue;
                     // за секунду не больше, чем до равного давления (доли по объёмам сосудов)
@@ -84,6 +106,17 @@ public class H2StorageBlockEntity extends DeviceBlockEntity implements H2Machine
                     other.add(moved, g.tempK());
                 }
             }
+            // сброс на свечу: под открытым небом рассеивается вверху, под крышей — в помещение
+            double vented = g.clearVented();
+            BlockPos vent = portCell(tubeBank() ? 1 : 2).above();
+            if (vented > 0 && !H2Hazard.underSky(sl, vent)) {
+                leakMol += vented;
+                if (leakAt == null) leakAt = vent;
+            }
+            leaking = leakMol > 0;
+            hazard.step(sl, leakAt, leakMol, 1.0);
+            if (leakAt != null && ticks % 40 == 3)
+                sl.sendParticles(ParticleTypes.CLOUD, leakAt.getX() + 0.5, leakAt.getY() + 0.5, leakAt.getZ() + 0.5, 4, 0.2, 0.2, 0.2, 0.1);
         }
         g.step(dt, AMBIENT_K);
         if (g.ventMolS() > 0 && ticks % 4 == 0) {
@@ -101,6 +134,11 @@ public class H2StorageBlockEntity extends DeviceBlockEntity implements H2Machine
     }
 
     // --- порты, щит ---
+
+    @Override
+    public boolean gasPort(int port) {
+        return tubeBank() ? port <= 1 : port <= 2;
+    }
 
     @Override
     public String h2ModelId() {
@@ -149,7 +187,8 @@ public class H2StorageBlockEntity extends DeviceBlockEntity implements H2Machine
         out[HydrogenPanels.S_KG10] = (int) Math.round(g.massKg() * 10);
         out[HydrogenPanels.S_MAX_BAR100] = (int) Math.round(g.spec().maxPa() / 1e3);
         out[HydrogenPanels.S_FLAGS] = (g.reliefOpen() ? 1 << HydrogenPanels.F_RELIEF : 0) | (g.burst() ? 1 << HydrogenPanels.F_BURST : 0)
-                | (g.ventOpen() ? 1 << HydrogenPanels.F_VENT : 0);
+                | (g.ventOpen() ? 1 << HydrogenPanels.F_VENT : 0) | (leaking ? 1 << HydrogenPanels.F_LEAK : 0);
+        out[HydrogenPanels.S_LEL_PCT] = (int) Math.round(hazard.room().lelFraction() * 100);
     }
 
     @Override

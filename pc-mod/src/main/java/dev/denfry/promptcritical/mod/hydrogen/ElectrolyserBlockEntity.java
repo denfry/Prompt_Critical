@@ -53,6 +53,7 @@ public class ElectrolyserBlockEntity extends DeviceBlockEntity implements H2Mach
     static final double AMBIENT_K = 293.15, H2_OUT_K = 308.15;
     private final AlkalineElectrolyser cells = new AlkalineElectrolyser();
     private final MachinePower.Mv mv = new MachinePower.Mv();
+    private final H2Hazard hazard = new H2Hazard();
     private final FluidTank water = tank(), cooling = tank();
     private int ticks;
     private double coolingDebt, waterDebt;
@@ -60,6 +61,8 @@ public class ElectrolyserBlockEntity extends DeviceBlockEntity implements H2Mach
     private GasLines.End outlet;
     /** Водород, ушедший в воздух (нет линии), моль — для облака. */
     private double releasedMol;
+    /** Всего ушло в воздух с пуска, моль. */
+    private double releasedTotal;
 
     public ElectrolyserBlockEntity(BlockPos pos, BlockState state) {
         super(HydrogenBlockEntities.ELECTROLYSER.get(), pos, state);
@@ -78,8 +81,13 @@ public class ElectrolyserBlockEntity extends DeviceBlockEntity implements H2Mach
         return cells;
     }
 
+    /** Водород, ушедший в воздух (нет газовой линии), моль, всего. */
     public double releasedMol() {
-        return releasedMol;
+        return releasedTotal + releasedMol;
+    }
+
+    public H2Hazard hazard() {
+        return hazard;
     }
 
     /** Забрать учтённый выброс водорода в воздух, моль. */
@@ -133,6 +141,14 @@ public class ElectrolyserBlockEntity extends DeviceBlockEntity implements H2Mach
                 BlockPos h2 = portCell(2).above();
                 sl.sendParticles(ParticleTypes.CLOUD, h2.getX() + 0.5, h2.getY() + 0.1, h2.getZ() + 0.5, 2, 0.05, 0.2, 0.05, 0.04);
             }
+        }
+        // водород без линии уходит из патрубка: под открытым небом рассеивается, в зале копится облаком
+        if (ticks % 20 == 7) {
+            BlockPos h2 = portCell(2).above();
+            double r = takeReleased();
+            boolean indoors = r > 0 && !H2Hazard.underSky(sl, h2);
+            hazard.step(sl, indoors ? h2 : null, indoors ? r : 0, 1.0);
+            releasedTotal += r;
         }
         if (ticks % 40 == 0 && cells.amps() > 0) sl.playSound(null, worldPosition, SoundEvents.BEACON_AMBIENT, SoundSource.BLOCKS, 0.25f, 0.6f);
         if (ticks % 10 == 0) setFlag(cells.amps() > 0);
@@ -285,6 +301,11 @@ public class ElectrolyserBlockEntity extends DeviceBlockEntity implements H2Mach
     }
 
     // --- порты и модель ---
+
+    @Override
+    public boolean gasPort(int port) {
+        return port == 2 || port == 3;
+    }
 
     @Override
     public String h2ModelId() {
