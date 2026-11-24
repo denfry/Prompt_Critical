@@ -1,5 +1,6 @@
 package dev.denfry.promptcritical.sim.ops;
 
+import dev.denfry.promptcritical.sim.manufacturing.assembly.MachinePassport;
 import dev.denfry.promptcritical.sim.core.FastContext;
 import dev.denfry.promptcritical.sim.core.GridPos;
 import dev.denfry.promptcritical.sim.core.Severity;
@@ -17,6 +18,7 @@ import java.util.EnumMap;
 import java.util.List;
 import java.util.Map;
 import java.util.NavigableMap;
+import java.util.Objects;
 import java.util.Set;
 import java.util.TreeMap;
 import java.util.UUID;
@@ -59,6 +61,8 @@ public final class OpsSubsystem implements Subsystem {
         double trialRunS;
         boolean trialArmed, trialRejected;
         Baseline trialBaseline = Baseline.NONE;
+        /** Паспорт сборки (18 §18.8.3); номинальный у машин без паспорта. */
+        MachinePassport passport = MachinePassport.nominal();
 
         Unit(SimId id, UnitKind kind, MachineWear wear, MaintenancePanel panel) {
             this.id = id;
@@ -82,6 +86,11 @@ public final class OpsSubsystem implements Subsystem {
 
         public MaintenancePanel panel() {
             return panel;
+        }
+
+        /** Паспорт сборки: изоляция обмотки и КПД читает биндинг сети, износ уже учтён в {@link #wear()}. */
+        public MachinePassport passport() {
+            return passport;
         }
 
         /**
@@ -164,8 +173,22 @@ public final class OpsSubsystem implements Subsystem {
      */
     public Unit ensure(SimId unit, UnitKind kind, double workingPressurePa, boolean reversedRotation,
             Set<UnitComponent> porousCastings, boolean dashpotFitted) {
+        return ensure(unit, kind, workingPressurePa, reversedRotation, porousCastings, dashpotFitted,
+                MachinePassport.nominal());
+    }
+
+    /**
+     * То же с паспортом сборки (18 §18.15.7): паспорт задаёт начальное состояние только при первом создании машины;
+     * у уже известной машины он игнорируется.
+     */
+    public Unit ensure(SimId unit, UnitKind kind, double workingPressurePa, boolean reversedRotation,
+            Set<UnitComponent> porousCastings, boolean dashpotFitted, MachinePassport passport) {
+        Objects.requireNonNull(passport, "passport");
         Unit u = units.get(unit);
-        if (u == null) u = create(unit, kind);
+        if (u == null) {
+            u = create(unit, kind);
+            applyPassport(u, passport);
+        }
         if (!service.registered(unit) && effective(cfg).commissioning() != CommissioningMode.OFF) {
             Map<UnitComponent, SimId> comps = new EnumMap<>(UnitComponent.class);
             for (UnitComponent c : kind.components()) comps.put(c, componentId(unit, c, 0));
@@ -173,6 +196,11 @@ public final class OpsSubsystem implements Subsystem {
                     dashpotFitted), tick);
         }
         return u;
+    }
+
+    private static void applyPassport(Unit u, MachinePassport passport) {
+        u.passport = passport;
+        if (u.wear != null) for (FaultSource s : u.wear.applyPassport(passport)) u.panel.add(s);
     }
 
     private Unit create(SimId unit, UnitKind kind) {
@@ -533,6 +561,12 @@ public final class OpsSubsystem implements Subsystem {
             out.putDouble("trial_run_s", u.trialRunS);
             out.putBoolean("trial_armed", u.trialArmed);
             out.putBoolean("trial_rejected", u.trialRejected);
+            if (!u.passport.equals(MachinePassport.nominal())) {
+                MachinePassport p = u.passport;
+                out.putDoubles("passport", new double[] {p.bearingWearFactor(), p.imbalanceMmS(), p.misalignmentMm(),
+                        p.sealLeak(), p.flangeLeak(), p.hasWinding() ? p.insulationMOhm() : -1, p.efficiencyFactor(),
+                        p.score()}, 8);
+            }
             if (u.wear != null) {
                 out.beginObject("wear");
                 u.wear.save(out);
@@ -591,9 +625,14 @@ public final class OpsSubsystem implements Subsystem {
             u.trialRunS = in.getDouble("trial_run_s");
             u.trialArmed = in.getBoolean("trial_armed");
             u.trialRejected = in.getBoolean("trial_rejected");
+            if (in.has("passport")) {
+                double[] p = in.getDoubles("passport");
+                u.passport = new MachinePassport(p[0], p[1], p[2], p[3], p[4], p[5] < 0 ? Double.NaN : p[5], p[6],
+                        (int) p[7]);
+            }
             if (u.wear != null && in.has("wear")) {
                 in.beginObject("wear");
-                u.wear.load(in);
+                for (FaultSource s : u.wear.load(in)) u.panel.add(s);
                 in.endObject();
             }
             int[] rows = in.getInts("rows");
