@@ -38,6 +38,10 @@ public final class SiteRegistry {
     public static final DeferredItem<DesignDrawingItem> VVER70_STEAM_GENERATOR_REAL_DRAWING = drawing("vver70_steam_generator_real");
     public static final DeferredItem<DesignDrawingItem> VVER70_COOLANT_PUMP_REAL_DRAWING = drawing("vver70_coolant_pump_real");
     public static final DeferredItem<DesignDrawingItem> VVER70_PRESSURIZER_REAL_DRAWING = drawing("vver70_pressurizer_real");
+    public static final DeferredItem<DesignDrawingItem> NPD_REACTOR_REAL_DRAWING = drawing("candu_npd_reactor_real");
+    public static final DeferredItem<DesignDrawingItem> NPD_FUELLING_MACHINE_REAL_DRAWING = drawing("candu_npd_fuelling_machine_real");
+    public static final DeferredItem<DesignDrawingItem> NPD_BOILER_REAL_DRAWING = drawing("candu_npd_boiler_real");
+    public static final DeferredItem<DesignDrawingItem> NPD_PUMP_REAL_DRAWING = drawing("candu_npd_pump_real");
     public static final DeferredItem<DesignDrawingItem> BWR240_REACTOR_DRAWING = drawing("bwr240_reactor");
     public static final DeferredItem<DesignDrawingItem> CANDU6_REACTOR_DRAWING = drawing("candu6_reactor");
     public static final DeferredItem<DesignDrawingItem> BN600_REACTOR_DRAWING = drawing("bn600_reactor");

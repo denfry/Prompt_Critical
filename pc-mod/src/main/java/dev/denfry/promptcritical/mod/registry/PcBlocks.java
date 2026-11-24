@@ -1165,6 +1165,30 @@ public final class PcBlocks {
             Spec.facing().segments(PcProperties.wholeSegments(FP_CANDU6_REACTOR.segments().size()), FP_CANDU6_REACTOR),
             FoundryBlock.with(dev.denfry.promptcritical.mod.npp.CanduReactorBlockEntity::new));
 
+    // --- CANDU NPD (Rolphton, 1962) в реальном масштабе: 92 МВт(т), 132 канала, мощность — уровнем замедлителя,
+    // останов — сбросом D₂O в бак; контроллеры и порты — шапки art/blockbench/core/candu_npd/*.author.js ---
+    public static final Footprint FP_NPD_REACTOR = Footprint.tiled(-3, 3, 0, 6, -3, 3);
+    public static final DeferredBlock<PcDeviceBlock> NPD_REACTOR_REAL = device("candu_npd_reactor_real", machine(),
+            real(Spec.facing(), FP_NPD_REACTOR), FoundryBlock.with(dev.denfry.promptcritical.mod.npp.NpdReactorBlockEntity::new));
+    public static final Footprint FP_NPD_FUELLING_MACHINE = Footprint.tiled(-3, 3, 0, 6, 0, 1);
+    public static final DeferredBlock<PcDeviceBlock> NPD_FUELLING_MACHINE_REAL = device("candu_npd_fuelling_machine_real", machine(),
+            real(Spec.facing(PcProperties.RUNNING), FP_NPD_FUELLING_MACHINE),
+            FoundryBlock.with(dev.denfry.promptcritical.mod.npp.NpdFuellingMachineBlockEntity::new));
+    public static final Footprint FP_NPD_BOILER = Footprint.tiled(-3, 3, 0, 5, -1, 1);
+    public static final DeferredBlock<PcDeviceBlock> NPD_BOILER_REAL = device("candu_npd_boiler_real", machine(),
+            real(Spec.facing(BlockStateProperties.LIT), FP_NPD_BOILER),
+            FoundryBlock.with(dev.denfry.promptcritical.mod.npp.SteamGeneratorBlockEntity::new));
+    public static final Footprint FP_NPD_PUMP = Footprint.tiled(-1, 1, 0, 4, -1, 1);
+    public static final DeferredBlock<PcDeviceBlock> NPD_PUMP_REAL = device("candu_npd_pump_real", machine(),
+            real(Spec.facing(PcProperties.RUNNING), FP_NPD_PUMP),
+            KineticMachineBlock.with(ShaftSide.BACK, dev.denfry.promptcritical.mod.npp.PrimaryPumpBlockEntity::new));
+
+    /** Блоки NPD реального масштаба. */
+    public static boolean isNpd(net.minecraft.world.level.block.Block b) {
+        return b == NPD_REACTOR_REAL.get() || b == NPD_FUELLING_MACHINE_REAL.get() || b == NPD_BOILER_REAL.get()
+                || b == NPD_PUMP_REAL.get();
+    }
+
     /**
      * Натриевый быстрый реактор БН-600 в реальном масштабе: бетонная шахта с бассейновым корпусом 12,8 × 12,6 м, на
      * крыше поворотные пробки, приводы СУЗ, три насоса и шесть ПТО; 15×19×15, контроллер — на полу под осью
@@ -1223,7 +1247,8 @@ public final class PcBlocks {
                 || isSmithyReal(b)
                 // цветная металлургия реального масштаба
                 || b == ELECTROREFINING_CELL_REAL.get() || b == PEIRCE_SMITH_CONVERTER_REAL.get() || b == REDUCTION_POT_REAL.get()
-                || b == BAYER_DIGESTER_REAL.get() || b == ALUMINA_PRECIPITATOR_REAL.get() || b == MATTE_SMELTER_REAL.get();
+                || b == BAYER_DIGESTER_REAL.get() || b == ALUMINA_PRECIPITATOR_REAL.get() || b == MATTE_SMELTER_REAL.get()
+                || isNpd(b);
     }
 
     /**

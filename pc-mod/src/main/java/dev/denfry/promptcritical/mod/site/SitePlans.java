@@ -117,6 +117,32 @@ public final class SitePlans {
      * оценки по габаритам листов и толщинам стенок (корпус ∅2,85 × 11 м со стенкой 140 мм ≈ 115 т, днище и крышка
      * ≈ 30 т, внутрикорпусные ≈ 50 т, верхний блок с 19 приводами ≈ 25 т, патрубки и задвижки ≈ 15 т).
      */
+    /**
+     * CANDU NPD реального масштаба (docs/research/2026-11-24-reactor-prototypes/candu_npd*.md). Массы — оценки:
+     * алюминиевый каландр ∅5,2 × 4,6 м со стенкой 25 мм ≈ 5 т и стальные торцевые решётки и экраны ≈ 35 т, 132 трубы
+     * давления из циркалоя ≈ 5 т, 264 концевых фитинга с пробками ≈ 40 т, питатели и коллекторы ≈ 15 т; машина —
+     * колонны, мост и головка ≈ 27 т; котёл — корпус ∅1,6 × 6 м и барабан ∅1,4 × 5 м ≈ 40 т; насос ≈ 11 т.
+     */
+    private static final Map<String, Plan> NPD_PLANS = Map.of(
+            "candu_npd_reactor_real", plan("candu_npd_reactor_real", PcBlocks.NPD_REACTOR_REAL, 100,
+                    st("foundation", 160, n(BEAM, 30)),
+                    st("calandria", 480, n(PLATE, 350), n(INGOT, 50)),
+                    st("end_fittings", 480, n(INGOT, 300), n(PIPE, 200)),
+                    st("piping", 240, n(PIPE, 300))),
+            "candu_npd_fuelling_machine_real", plan("candu_npd_fuelling_machine_real", PcBlocks.NPD_FUELLING_MACHINE_REAL, 27,
+                    st("foundation", 80, n(BEAM, 20)),
+                    st("npd_fm_columns", 200, n(BEAM, 120)),
+                    st("npd_fm_head", 240, n(PLATE, 100), n(WIRE, 100), n(PIPE, 40))),
+            "candu_npd_boiler_real", plan("candu_npd_boiler_real", PcBlocks.NPD_BOILER_REAL, 40,
+                    st("foundation", 80, n(BEAM, 20)),
+                    st("shell", 240, n(PLATE, 150)),
+                    st("tubes", 240, n(PIPE, 300)),
+                    st("npd_steam_drum", 200, n(PLATE, 80))),
+            "candu_npd_pump_real", plan("candu_npd_pump_real", PcBlocks.NPD_PUMP_REAL, 11,
+                    st("foundation", 60, n(BEAM, 10)),
+                    st("casing", 200, n(INGOT, 60)),
+                    st("stator", 160, n(WIRE, 200), n(PLATE, 20))));
+
     private static final Map<String, Plan> PROTOTYPE_PLANS = Map.of(
             "vver70_reactor_real", plan("vver70_reactor_real", PcBlocks.VVER70_REACTOR_REAL, 235,
                     st("foundation", 160, n(CONCRETE, 60), n(BEAM, 50)),
@@ -653,6 +679,7 @@ public final class SitePlans {
     public static Plan get(String id) {
         Plan p = PLANS.get(id);
         if (p == null) p = PROTOTYPE_PLANS.get(id);
+        if (p == null) p = NPD_PLANS.get(id);
         if (p == null) p = I0_PLANS.get(id);
         if (p == null) p = IRONMAKING_PLANS.get(id);
         if (p == null) p = POWER_PLANS.get(id);
@@ -670,7 +697,7 @@ public final class SitePlans {
     }
 
     public static Iterable<Plan> all() {
-        return java.util.stream.Stream.of(PLANS, PROTOTYPE_PLANS, I0_PLANS, IRONMAKING_PLANS, POWER_PLANS, MINING_COKE_PLANS, I1_STEEL_PLANS, FOUNDRY_PLANS, I0_SHOP_PLANS,
+        return java.util.stream.Stream.of(PLANS, PROTOTYPE_PLANS, NPD_PLANS, I0_PLANS, IRONMAKING_PLANS, POWER_PLANS, MINING_COKE_PLANS, I1_STEEL_PLANS, FOUNDRY_PLANS, I0_SHOP_PLANS,
                         STEAM_MINE_PLANS, CARBON_PLANS, SMITHY_PLANS, ASSEMBLY_PLANS, NONFERROUS_PLANS, RADPROT_PLANS,
                         FUELCYCLE_PLANS)
                 .flatMap(m -> m.values().stream()).toList();

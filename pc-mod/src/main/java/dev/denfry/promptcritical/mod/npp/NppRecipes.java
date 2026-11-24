@@ -110,6 +110,24 @@ public final class NppRecipes extends RecipeProvider {
                 .define('X', AllBlocks.FLUID_TANK.get()).define('G', PcBlocks.INSTRUMENT_PRESSURE.get())
                 .unlockedBy("has_vver70_reactor_real_drawing", has(dev.denfry.promptcritical.mod.site.SiteRegistry.VVER70_REACTOR_REAL_DRAWING.get()))
                 .save(out, id("vver70_pressurizer_real_drawing"));
+        // CANDU NPD: каландр с каналами из циркалоя, машина и петля — от чертежа реактора
+        ShapedRecipeBuilder.shaped(RecipeCategory.MISC, dev.denfry.promptcritical.mod.site.SiteRegistry.NPD_REACTOR_REAL_DRAWING.get())
+                .pattern("PZP").pattern("ZRZ").pattern("PZP").define('Z', PcItems.ZIRCALOY_INGOT.get())
+                .define('R', PcBlocks.REACTOR_CONTROLLER.get()).define('P', PcItems.STEEL_PLATE.get())
+                .unlockedBy("has_reactor_controller", has(PcBlocks.REACTOR_CONTROLLER.get())).save(out, id("candu_npd_reactor_real_drawing"));
+        net.minecraft.data.recipes.ShapelessRecipeBuilder.shapeless(RecipeCategory.MISC, dev.denfry.promptcritical.mod.site.SiteRegistry.NPD_FUELLING_MACHINE_REAL_DRAWING.get())
+                .requires(net.minecraft.world.item.Items.PAPER, 2).requires(dev.denfry.promptcritical.mod.site.SiteRegistry.NPD_REACTOR_REAL_DRAWING.get())
+                .requires(PcItems.STEEL_PLATE.get())
+                .unlockedBy("has_candu_npd_reactor_real_drawing", has(dev.denfry.promptcritical.mod.site.SiteRegistry.NPD_REACTOR_REAL_DRAWING.get()))
+                .save(out, id("candu_npd_fuelling_machine_real_drawing"));
+        net.minecraft.data.recipes.ShapelessRecipeBuilder.shapeless(RecipeCategory.MISC, dev.denfry.promptcritical.mod.site.SiteRegistry.NPD_BOILER_REAL_DRAWING.get())
+                .requires(net.minecraft.world.item.Items.PAPER, 2).requires(PcBlocks.STEAM_GENERATOR.get())
+                .unlockedBy("has_candu_npd_reactor_real_drawing", has(dev.denfry.promptcritical.mod.site.SiteRegistry.NPD_REACTOR_REAL_DRAWING.get()))
+                .save(out, id("candu_npd_boiler_real_drawing"));
+        net.minecraft.data.recipes.ShapelessRecipeBuilder.shapeless(RecipeCategory.MISC, dev.denfry.promptcritical.mod.site.SiteRegistry.NPD_PUMP_REAL_DRAWING.get())
+                .requires(net.minecraft.world.item.Items.PAPER, 2).requires(PcBlocks.PRIMARY_PUMP.get())
+                .unlockedBy("has_candu_npd_reactor_real_drawing", has(dev.denfry.promptcritical.mod.site.SiteRegistry.NPD_REACTOR_REAL_DRAWING.get()))
+                .save(out, id("candu_npd_pump_real_drawing"));
         // компенсатор давления: сосуд, ИПУ сверху, манометр, ТЭНы — медная обмотка
         ShapedRecipeBuilder.shaped(RecipeCategory.MISC, dev.denfry.promptcritical.mod.site.SiteRegistry.VVER_PRESSURIZER_DRAWING.get())
                 .pattern("PVP").pattern("PXP").pattern("CGC").define('P', PcItems.STEEL_PLATE.get()).define('V', PcItems.SAFETY_VALVE.get())

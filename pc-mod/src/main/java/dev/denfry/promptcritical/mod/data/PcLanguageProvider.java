@@ -626,6 +626,10 @@ public final class PcLanguageProvider extends LanguageProvider {
         b("vver70_steam_generator_real", "VVER-70 Vertical Steam Generator", "Вертикальный парогенератор ВВЭР-70");
         b("vver70_coolant_pump_real", "VVER-70 Canned Coolant Pump", "Экранированный ГЦН ВВЭР-70");
         b("vver70_pressurizer_real", "VVER-70 Gas Volume Compensator", "Газовый компенсатор объёма ВВЭР-70");
+        b("candu_npd_reactor_real", "CANDU NPD Reactor (Rolphton)", "Реактор CANDU NPD (Ролфтон)");
+        b("candu_npd_fuelling_machine_real", "NPD Fuelling Machine", "Перегрузочная машина NPD");
+        b("candu_npd_boiler_real", "NPD Boiler with Steam Drum", "Котёл NPD с барабаном");
+        b("candu_npd_pump_real", "NPD Heat Transport Pump", "Насос теплоносителя NPD");
         b("candu_reactor", "Heavy Water Reactor (CANDU type, legacy)", "Тяжеловодный реактор (типа CANDU, старая серия)");
         b("candu6_reactor", "CANDU 6 Reactor Assembly", "Реакторная сборка CANDU 6");
         b("gs_exchange_tower", "Girdler Sulfide Heavy Water Plant", "Сероводородный завод тяжёлой воды");
@@ -1145,6 +1149,7 @@ public final class PcLanguageProvider extends LanguageProvider {
         MISC.putAll(dev.denfry.promptcritical.mod.nonferrous.NonferrousText.lang());
         MISC.putAll(dev.denfry.promptcritical.mod.nuclear.NuclearText.lang());
         MISC.putAll(dev.denfry.promptcritical.mod.npp.NppText.lang());
+        MISC.putAll(dev.denfry.promptcritical.mod.npp.NpdText.lang());
         MISC.putAll(dev.denfry.promptcritical.mod.radiation.RadGearText.lang());
         MISC.putAll(dev.denfry.promptcritical.mod.isotopes.IsotopeText.lang());
         MISC.putAll(dev.denfry.promptcritical.mod.electronics.ElectronicsText.lang());

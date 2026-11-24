@@ -176,7 +176,16 @@ public final class WholePorts {
             Map.entry("matte_smelter_real", List.of(p(-8, 1, 0, W),
                     p(-4, 3, -2, U), p(-2, 3, -2, U), p(0, 3, -2, U), p(2, 3, -2, U), p(4, 3, -2, U),
                     p(-4, 3, 1, U), p(-2, 3, 1, U), p(0, 3, 1, U), p(2, 3, 1, U), p(4, 3, 1, U),
-                    p(2, 0, -3, D), p(6, 0, -3, D))));
+                    p(2, 0, -3, D), p(6, 0, -3, D))),
+            // CANDU NPD (docs/research/2026-11-24-reactor-prototypes/candu_npd*.md): коллекторы теплоносителя по углам
+            // торцов, замедлитель — снизу из бака сброса и сверху на слив; машина — D₂O головки с запада, питание с
+            // востока, лоток пучков с севера; котёл и насос — по листу петли
+            Map.entry("candu_npd_reactor_real", List.of(p(-3, 3, -3, W), p(3, 3, -3, E), p(3, 3, 3, E), p(-3, 3, 3, W),
+                    p(0, 0, 0, D), p(0, 6, 0, U))),
+            Map.entry("candu_npd_fuelling_machine_real", List.of(p(-3, 0, 1, W), p(3, 0, 1, E), p(0, 0, 0, N))),
+            Map.entry("candu_npd_boiler_real", List.of(p(-3, 1, 0, W), p(-3, 0, 0, W), p(1, 4, 1, S), p(0, 5, 0, U),
+                    p(2, 0, 0, D))),
+            Map.entry("candu_npd_pump_real", List.of(p(0, 0, -1, N), p(0, 0, 1, S), p(1, 3, 0, E), p(-1, 1, 0, W))));
 
     private WholePorts() {}
 

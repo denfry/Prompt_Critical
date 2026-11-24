@@ -60,6 +60,7 @@ public final class NuclearText {
         put("design.pwr_17x17", "PWR 17×17", "PWR 17×17");
         put("design.am_1", "AM-1 channel", "Канал АМ-1");
         put("design.candu_37", "CANDU 37-element bundle", "37-элементный пучок CANDU");
+        put("design.npd_19", "NPD 19-element bundle", "19-элементный пучок NPD");
         put("lot.burnup", "Spent: %s MWd/kg · U-236 %s %% · Pu %s g (Pu-239 %s %%)",
                 "Отработанное: %s МВт·сут/кг · U-236 %s %% · Pu %s г (Pu-239 %s %%)");
         put("lot.mox", "MOX: Pu %s %% of heavy metal (%s g) · Pu-239 %s %% · Pu-240 %s %%",

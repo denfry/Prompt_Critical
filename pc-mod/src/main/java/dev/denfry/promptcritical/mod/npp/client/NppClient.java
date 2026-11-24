@@ -22,6 +22,16 @@ public final class NppClient {
         return PartialModel.of(PromptCritical.id("block/" + path));
     }
 
+    /** CANDU NPD (art/blockbench/core/candu_npd/*.author.js): муфта насоса, поплавок барабана котла. */
+    static final PartialModel NPD_COUPLING = partial("candu_npd_pump_real/partial/coupling_flywheel"),
+            NPD_BOILER_FLOAT = partial("candu_npd_boiler_real/partial/level_float"),
+            NPD_PLUG = partial("candu_npd_reactor_real/partial/closure_plug"),
+            NPD_BRIDGE_W = partial("candu_npd_fuelling_machine_real/partial/bridge_w"),
+            NPD_BRIDGE_E = partial("candu_npd_fuelling_machine_real/partial/bridge_e"),
+            NPD_CARRIAGE = partial("candu_npd_fuelling_machine_real/partial/carriage"),
+            NPD_HEAD = partial("candu_npd_fuelling_machine_real/partial/head"),
+            NPD_SNOUT = partial("candu_npd_fuelling_machine_real/partial/snout");
+
     /** Подвижные части цельных моделей ВВЭР реального масштаба. */
     static final PartialModel CANDU6_HEAD = partial("candu6_reactor/partial/head"), CANDU6_BEAM = partial("candu6_reactor/partial/beam");
     static final PartialModel VVER_RODS = partial("vver_reactor/partial/rods"), VVER_PUMP_COUPLING = partial("vver_coolant_pump/partial/coupling");
@@ -36,7 +46,8 @@ public final class NppClient {
         // цельные модели ВВЭР реального масштаба: partial-модели должны появиться до запекания
         for (String id : new String[] {"vver_reactor", "vver_steam_generator", "vver_coolant_pump", "vver_pressurizer", "bwr240_reactor",
                 "candu6_reactor", "bn600_reactor", "am1_reactor", "vver70_reactor_real", "vver70_steam_generator_real",
-                "vver70_coolant_pump_real", "vver70_pressurizer_real"})
+                "vver70_coolant_pump_real", "vver70_pressurizer_real", "candu_npd_reactor_real", "candu_npd_fuelling_machine_real",
+                "candu_npd_boiler_real", "candu_npd_pump_real"})
             dev.denfry.promptcritical.mod.client.whole.WholeModels.register(id);
     }
 
@@ -54,6 +65,12 @@ public final class NppClient {
             protected void parts(dev.denfry.promptcritical.mod.npp.PrimaryPumpBlockEntity be, float pt, com.mojang.blaze3d.vertex.PoseStack ms,
                     com.mojang.blaze3d.vertex.VertexConsumer vc, int light) {
                 float deg = net.createmod.catnip.animation.AnimationTickHolder.getRenderTime(be.getLevel()) * be.getSpeed() * 3f / 10 % 360;
+                if ("candu_npd_pump_real".equals(be.wholeModelId())) {
+                    // муфта с маховиком NPD в окне фонаря: хранится на 32 px ниже, вращается вокруг вертикали (8, 8)
+                    part(NPD_COUPLING, be, be.wholeModelFacing(), 0, 2, 0).translate(0.5, 0, 0.5).rotateYDegrees(deg).translate(-0.5, 0, -0.5)
+                            .light(light).renderInto(ms, vc);
+                    return;
+                }
                 if ("vver70_coolant_pump_real".equals(be.wholeModelId())) {
                     // диск тахометра над экранированным двигателем: хранится на 48 px ниже, вращается вокруг (8, 8)
                     part(V70_PUMP_DISC, be, be.wholeModelFacing(), 0, 3, 0).translate(0.5, 0, 0.5).rotateYDegrees(deg).translate(-0.5, 0, -0.5)
@@ -105,6 +122,9 @@ public final class NppClient {
             @Override
             protected void parts(dev.denfry.promptcritical.mod.npp.SteamGeneratorBlockEntity be, float pt, com.mojang.blaze3d.vertex.PoseStack ms,
                     com.mojang.blaze3d.vertex.VertexConsumer vc, int light) {
+                // котёл NPD: поплавок уровня барабана на середине хода 0..12 px
+                if ("candu_npd_boiler_real".equals(be.wholeModelId()))
+                    part(NPD_BOILER_FLOAT, be, be.wholeModelFacing(), 0, 6 / 16.0, 0).light(light).renderInto(ms, vc);
                 if ("vver70_steam_generator_real".equals(be.wholeModelId()))
                     part(V70_SG_FLOAT, be, be.wholeModelFacing(), 0, 20 / 16.0, 0).light(light).renderInto(ms, vc);
             }
@@ -123,6 +143,8 @@ public final class NppClient {
                         .translate(-26 / 16.0, -16 / 16.0, 13.4 / 16).light(light).renderInto(ms, vc);
             }
         });
+        event.registerBlockEntityRenderer(NppBlockEntities.NPD_REACTOR.get(), c -> new NpdRenderers.Reactor());
+        event.registerBlockEntityRenderer(NppBlockEntities.NPD_FUELLING_MACHINE.get(), c -> new NpdRenderers.Machine());
         event.registerBlockEntityRenderer(dev.denfry.promptcritical.mod.site.SiteRegistry.SITE_BE.get(), c -> new dev.denfry.promptcritical.mod.site.SiteGhostRenderer());
         // CANDU: у старой серии — машина на торце 3×6×3, у CANDU 6 реального масштаба — цельная модель с мостом и машиной
         var canduOld = new CanduRenderer();
