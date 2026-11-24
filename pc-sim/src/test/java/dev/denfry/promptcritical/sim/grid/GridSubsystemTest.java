@@ -113,6 +113,29 @@ class GridSubsystemTest {
     }
 
     /** LOTO 13 §13.1.3: замок на приводе — аппарат не включается ни по какой команде, а снят — включается. */
+    /** План HP2.2: непринятую ячейку не включить; включённую запрет не отключает, отключить можно всегда. */
+    @Test
+    void unpermittedBreakerRefusesOnlyClosing() {
+        SimulationWorld w = world();
+        generator(w, BUS_A, 0);
+        SwitchUnit s = cell(w, BUS_A, BUS_B, false);
+        ConsumerUnit c = consumer(w, BUS_B, 100);
+        run(w, 20);
+        s.setPermitted(false);
+        assertThat(s.operate(true)).isEqualTo(BreakerResponse.INTERLOCK);
+        run(w, 2);
+        assertThat(c.energized()).isFalse();
+        s.setPermitted(true);
+        assertThat(s.operate(true)).isEqualTo(BreakerResponse.ACCEPTED);
+        run(w, 2);
+        s.setPermitted(false);
+        run(w, 2);
+        assertThat(c.energized()).isTrue();
+        assertThat(s.operate(false)).isEqualTo(BreakerResponse.ACCEPTED);
+        run(w, 2);
+        assertThat(c.energized()).isFalse();
+    }
+
     @Test
     void lockedOutBreakerRefusesEveryCommand() {
         SimulationWorld w = world();
