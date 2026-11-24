@@ -44,6 +44,12 @@ public final class CommissioningService {
      * сопротивление изоляции сухой обмотки, МОм (IEEE 43: минимум 100 МОм для обмоток формованной изоляции).
      */
     static final double P_WINDING = 0.15, P_COUPLING = 0.15;
+    /**
+     * План HP2.2, оценки исполнителя по практике наладки: отсыревшая изоляция шин, медленная защита, перепутанный
+     * контур КИП. Предпусковая вентиляция — не меньше пяти объёмов топки (NFPA 85, как у BMS).
+     */
+    static final double P_BUSBAR = 0.15, P_TRIP = 0.15, P_LOOP = 0.2;
+    public static final double PURGE_MIN_VOLUMES = 5;
     public static final double INSULATION_DRY_MOHM = 200;
 
     private static final class Unit {
@@ -172,6 +178,18 @@ public final class CommissioningService {
                 double u = rnd.nextDouble(), mm = uniform(rnd, 0.1, 0.5);
                 if (u < P_COUPLING * rate) out.add(CommissioningDefect.of(CommissioningDefectKind.COUPLING_MISALIGNED, id, mm));
             }
+            case BUSBAR -> {
+                double u = rnd.nextDouble(), mohm = uniform(rnd, 0.5, 5);
+                if (u < P_BUSBAR * rate) out.add(CommissioningDefect.of(CommissioningDefectKind.INSULATION_DAMP, id, mohm));
+            }
+            case TRIP_DEVICE -> {
+                double u = rnd.nextDouble(), ratio = uniform(rnd, 1.5, 6);
+                if (u < P_TRIP * rate) out.add(CommissioningDefect.of(CommissioningDefectKind.TRIP_SLOW, id, ratio));
+            }
+            case FLUX_CHANNEL -> {
+                double u = rnd.nextDouble(), error = uniform(rnd, 0.1, 0.5);
+                if (u < P_LOOP * rate) out.add(CommissioningDefect.of(CommissioningDefectKind.LOOP_MISWIRED, id, error));
+            }
             case BRAKE -> {
                 double u = rnd.nextDouble(), torque = uniform(rnd, 0.5, 0.9);
                 if (u < P_BRAKE * rate)
@@ -260,6 +278,7 @@ public final class CommissioningService {
                     if (!i.stoppedAndDeenergised()) unmet.add(CheckCondition.UNIT_RUNNING);
                     else {
                         CommissioningDefect d = fix(u, CommissioningDefectKind.WINDING_DAMP, found);
+                        if (d == null) d = fix(u, CommissioningDefectKind.INSULATION_DAMP, found);
                         readings.put(CheckResult.READ_INSULATION_BEFORE_MOHM, d == null ? INSULATION_DRY_MOHM : d.magnitude());
                         readings.put(CheckResult.READ_INSULATION_AFTER_MOHM, INSULATION_DRY_MOHM);
                     }
@@ -270,6 +289,24 @@ public final class CommissioningService {
                         CommissioningDefect d = fix(u, CommissioningDefectKind.COUPLING_MISALIGNED, found);
                         readings.put(CheckResult.READ_MISALIGNMENT_MM, d == null ? 0.02 : d.magnitude());
                     }
+                }
+                case CheckInput.LoopCheck l -> {
+                    if (!l.stopped()) unmet.add(CheckCondition.UNIT_RUNNING);
+                    else {
+                        CommissioningDefect d = fix(u, CommissioningDefectKind.LOOP_MISWIRED, found);
+                        readings.put(CheckResult.READ_LOOP_ERROR, d == null ? 0.005 : d.magnitude());
+                    }
+                }
+                case CheckInput.SisProofTest s -> {
+                    if (!s.safeState()) unmet.add(CheckCondition.UNIT_RUNNING);
+                    else {
+                        CommissioningDefect d = fix(u, CommissioningDefectKind.TRIP_SLOW, found);
+                        readings.put(CheckResult.READ_TRIP_TIME_RATIO, d == null ? 0.6 : d.magnitude());
+                    }
+                }
+                case CheckInput.Purge p -> {
+                    if (!(p.volumeChanges() >= PURGE_MIN_VOLUMES)) unmet.add(CheckCondition.PURGE_SHORT);
+                    else readings.put(CheckResult.READ_PURGE_VOLUMES, p.volumeChanges());
                 }
             }
         }

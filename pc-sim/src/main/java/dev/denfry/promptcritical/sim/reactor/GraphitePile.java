@@ -130,6 +130,11 @@ public final class GraphitePile {
     private DelayedGroups groups;
     private int controlDrive;
     private boolean winding;
+    /**
+     * Разрешение на подъём регулирующих стержней от пусконаладки (план HP2.2): без него стержни только опускаются,
+     * аварийные взводятся. Не сохраняется — биндинг пишет его каждый тик.
+     */
+    private volatile boolean permitted = true;
     private PileTrip trip = PileTrip.NONE;
     private double criticalTimer;
     private boolean criticalReported, cladFailed, graphiteFire;
@@ -246,7 +251,7 @@ public final class GraphitePile {
                 else if (winding) x -= cfg.zipWindSpeedMS() * DT / len;
             } else {
                 int dir = tripped() ? -1 : controlDrive;
-                if (dir > 0 && !zipCocked()) dir = 0;
+                if (dir > 0 && (!zipCocked() || !permitted)) dir = 0;
                 x -= dir * cfg.controlRodSpeedMS() * DT / len;
             }
             rodInsertion.put(r.key(), Math.max(0, Math.min(1, x)));
@@ -630,6 +635,14 @@ public final class GraphitePile {
 
     public int controlDrive() {
         return controlDrive;
+    }
+
+    public void setPermitted(boolean permitted) {
+        this.permitted = permitted;
+    }
+
+    public boolean permitted() {
+        return permitted;
     }
 
     /** Взвести аварийные стержни лебёдкой; при сработавшей защите — нельзя. */

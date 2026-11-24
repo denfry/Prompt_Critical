@@ -61,4 +61,26 @@ public sealed interface CheckInput {
     record Alignment(boolean stopped) implements CheckInput {
         @Override public CommissioningCheck check() { return CommissioningCheck.ALIGNMENT; }
     }
+
+    /** Проверка контуров КИП тестовым сигналом от датчика до щита; только у остановленной установки. */
+    record LoopCheck(boolean stopped) implements CheckInput {
+        @Override public CommissioningCheck check() { return CommissioningCheck.LOOP_CHECK; }
+    }
+
+    /**
+     * Проверка срабатывания защиты: отключение выключателя от РЗА, отсечка топлива по уровню в барабане, сброс
+     * аварийных стержней. Только в безопасном состоянии установки.
+     */
+    record SisProofTest(boolean safeState) implements CheckInput {
+        @Override public CommissioningCheck check() { return CommissioningCheck.SIS_PROOF_TEST; }
+    }
+
+    /**
+     * Предпусковая вентиляция топки, которую BMS довела до конца.
+     *
+     * @param volumeChanges сколько объёмов топки прокачано
+     */
+    record Purge(double volumeChanges) implements CheckInput {
+        @Override public CommissioningCheck check() { return CommissioningCheck.PURGE; }
+    }
 }
