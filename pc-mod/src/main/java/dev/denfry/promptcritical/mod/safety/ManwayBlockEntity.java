@@ -224,9 +224,7 @@ public final class ManwayBlockEntity extends UraniumProcessBlockEntity {
     private boolean ventilator(ServerLevel level) {
         for (BlockPos p : BlockPos.betweenClosed(worldPosition.offset(-VENTILATOR_RANGE, -VENTILATOR_RANGE, -VENTILATOR_RANGE),
                 worldPosition.offset(VENTILATOR_RANGE, VENTILATOR_RANGE, VENTILATOR_RANGE))) {
-            BlockState s = level.getBlockState(p);
-            if (s.getBlock() == dev.denfry.promptcritical.mod.registry.PcBlocks.PORTABLE_VENTILATOR.get()
-                    && s.hasProperty(PcProperties.RUNNING) && s.getValue(PcProperties.RUNNING)) return true;
+            if (level.getBlockEntity(p) instanceof PortableVentilatorBlockEntity v && v.running()) return true;
         }
         return false;
     }

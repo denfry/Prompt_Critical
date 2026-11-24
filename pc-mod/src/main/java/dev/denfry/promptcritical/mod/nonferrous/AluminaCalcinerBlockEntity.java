@@ -5,7 +5,7 @@ import dev.denfry.promptcritical.mod.panel.PanelLayout;
 import dev.denfry.promptcritical.mod.production.FeedTank;
 import dev.denfry.promptcritical.mod.registry.PcFluids;
 import dev.denfry.promptcritical.mod.registry.PcItems;
-import dev.denfry.promptcritical.mod.uranium.UraniumProcessBlockEntity;
+import dev.denfry.promptcritical.mod.uranium.MvProcessBlockEntity;
 import dev.denfry.promptcritical.sim.core.MutableStateTree;
 import dev.denfry.promptcritical.sim.core.TreeStateReader;
 import dev.denfry.promptcritical.sim.core.TreeStateWriter;
@@ -26,12 +26,13 @@ import org.jetbrains.annotations.Nullable;
  * Печь прокалки гидроксида ({@link AluminaCalciner}, 08 §8.8.1): гидроксид — мешками воронкой или рукой, топливный
  * газ — трубой к любой грани, глинозём — мешками в склад (воронкой снизу). Температура — кнопками щита.
  */
-public final class AluminaCalcinerBlockEntity extends UraniumProcessBlockEntity {
-    /** Дымосос, питатели и транспорт гидроксида, Вт. */
+public final class AluminaCalcinerBlockEntity extends MvProcessBlockEntity {
+    /** Дымосос с электрофильтром, питатели и транспорт гидроксида, Вт. */
     @Override
-    protected double ratedPowerW() {
-        return 160e3;
+    protected double mvRatedW() {
+        return 600e3;
     }
+
 
     public static final int MB = 4_000;
 

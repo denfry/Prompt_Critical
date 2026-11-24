@@ -158,6 +158,11 @@ import dev.denfry.promptcritical.mod.steelworks.ReheatingFurnaceBlockEntity;
 import dev.denfry.promptcritical.mod.uranium.UraniumProcessBlockEntity;
 import dev.denfry.promptcritical.mod.waste.ReactorWaterCleanupBlockEntity;
 import dev.denfry.promptcritical.mod.waste.RepositoryBlockEntity;
+import dev.denfry.promptcritical.mod.uranium.MvProcessBlockEntity;
+import dev.denfry.promptcritical.mod.nonferrous.ElectrorefiningCellBlockEntity;
+import dev.denfry.promptcritical.mod.uranium.FluorineCellBlockEntity;
+import dev.denfry.promptcritical.mod.refinery.DesalterBlockEntity;
+import dev.denfry.promptcritical.mod.waste.LrwEvaporatorBlockEntity;
 import com.simibubi.create.content.kinetics.base.KineticBlockEntity;
 import java.util.LinkedHashMap;
 import java.util.Map;
@@ -222,14 +227,12 @@ public final class MachineLoads {
         put(Load.ACTIVE_LV, BakingFurnaceBlockEntity.class);
         put(Load.ACTIVE_LV, BatchFurnaceBlockEntity.class);
         put(Load.ACTIVE_LV, ByproductPlantBlockEntity.class);
-        put(Load.ACTIVE_LV, Co2AbsorberBlockEntity.class);
         put(Load.ACTIVE_LV, CrackedGasUnitBlockEntity.class);
         put(Load.ACTIVE_LV, CrudeColumnBlockEntity.class);
         put(Load.ACTIVE_LV, EdcCrackerBlockEntity.class);
         put(Load.ACTIVE_LV, FuelShopBlockEntity.class);
         put(Load.ACTIVE_LV, GasPlantBlockEntity.class);
         put(Load.ACTIVE_LV, HclFurnaceBlockEntity.class);
-        put(Load.ACTIVE_LV, LadleStationBlockEntity.class);
         put(Load.ACTIVE_LV, MethanolColumnBlockEntity.class);
         put(Load.ACTIVE_LV, NglFractionatorBlockEntity.class);
         put(Load.ACTIVE_LV, PortableVentilatorBlockEntity.class);
@@ -241,11 +244,8 @@ public final class MachineLoads {
         put(Load.ACTIVE_LV, SlagGranulatorBlockEntity.class);
         put(Load.ACTIVE_LV, SteamReformerBlockEntity.class);
         put(Load.ACTIVE_LV, TrichlorosilaneReactorBlockEntity.class);
-        put(Load.ACTIVE_LV, TubeFurnaceBlockEntity.class);
         put(Load.ACTIVE_LV, Uo2ConversionBlockEntity.class);
         put(Load.ACTIVE_LV, WaterTreatmentBlockEntity.class);
-        // электролиз, мощнее 200 кВт
-        put(Load.ACTIVE_MV, ReductionPotBlockEntity.class);
         // лаборатория, пульт, приборы
         put(Load.IC, AlarmHornBlockEntity.class);
         put(Load.IC, AnnunciatorBlockEntity.class);
@@ -261,17 +261,12 @@ public final class MachineLoads {
         put(Load.IC, TwinWorkstationBlockEntity.class);
         put(Load.IC, WatchdogRelayBlockEntity.class);
         // автоматика, вычислитель, монитор
-        put(Load.IC, AutomationPanelBlockEntity.class);
-        put(Load.IC, BlastFurnaceControllerBlockEntity.class);
         put(Load.IC, ControlDeskBlockEntity.class);
-        put(Load.IC, ControlRoomCoreBlockEntity.class);
         put(Load.IC, FireDeviceBlockEntity.class);
         put(Load.IC, FlareIgnitionPanelBlockEntity.class);
         put(Load.IC, HandFootMonitorBlockEntity.class);
         put(Load.IC, MarketTerminalBlockEntity.class);
         put(Load.IC, MesServerBlockEntity.class);
-        put(Load.IC, PileControllerBlockEntity.class);
-        put(Load.IC, PlcBlockEntity.class);
         put(Load.IC, PortalMonitorBlockEntity.class);
         put(Load.IC, QualityLabBlockEntity.class);
         put(Load.IC, ShaftSignalBlockEntity.class);
@@ -368,6 +363,31 @@ public final class MachineLoads {
         put(Load.PASSIVE, VentStackBlockEntity.class);
         put(Load.PASSIVE, WaterIntakeBlockEntity.class);
         put(Load.PASSIVE, WellheadBlockEntity.class);
+
+        // установки со своим вводом 6,3 кВ
+        put(Load.ACTIVE_MV, MvProcessBlockEntity.class);
+        // ванны на постоянном токе выпрямителя
+        put(Load.OWN, ReductionPotBlockEntity.class);
+        put(Load.OWN, ElectrorefiningCellBlockEntity.class);
+        put(Load.OWN, FluorineCellBlockEntity.class);
+        // свой ввод 6,3 кВ: GridLoad
+        put(Load.GRID, DesalterBlockEntity.class);
+        put(Load.GRID, LrwEvaporatorBlockEntity.class);
+        // насосы раствора учтены в номинале печи риформинга метана
+        put(Load.PASSIVE, Co2AbsorberBlockEntity.class);
+
+        // аргон из труб и ферросплавы по кнопке; дымосос трубчатой печи — в номинале атмосферной колонны
+        put(Load.PASSIVE, LadleStationBlockEntity.class);
+        put(Load.PASSIVE, TubeFurnaceBlockEntity.class);
+
+        // ПЛК и ПАЗ: оперативное питание 24 В от блока питания автоматики по цепям
+        put(Load.OWN, AutomationPanelBlockEntity.class);
+        put(Load.OWN, PlcBlockEntity.class);
+        // ядро щитовой оценивает помещение, само ничего не берёт
+        put(Load.PASSIVE, ControlRoomCoreBlockEntity.class);
+        // пульты котла и домны: питание и останов при его потере — решение владельца, пока не подключены
+        put(Load.PASSIVE, PileControllerBlockEntity.class);
+        put(Load.PASSIVE, BlastFurnaceControllerBlockEntity.class);
 
         // общий BE устройства: по id блока
         BY_BLOCK.put("degasification_borehole", Load.PASSIVE);

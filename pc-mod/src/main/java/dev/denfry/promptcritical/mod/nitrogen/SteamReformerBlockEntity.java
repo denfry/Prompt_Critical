@@ -48,6 +48,8 @@ import org.jetbrains.annotations.Nullable;
  * трубы печи, железохромовый — в конвертор СТК, медноцинковый — в конвертор НТК.
  */
 public final class SteamReformerBlockEntity extends DeviceBlockEntity implements FoundryDevice, PanelHost {
+    /** Дымосос и дутьевой вентилятор печи, насосы раствора очистки от CO₂, Вт. Розетка или силовой щит рядом; при недостатке установка работает медленнее. */
+    public static final double POWER_W = 160e3;
     public static final int GAS_MB = 8_000, WATER_MB = 8_000;
     /** Низшая теплота сгорания товарного газа, Дж/нм³; доля метана в нём. */
     public static final double SALES_GAS_J_PER_NM3 = 35.8e6, CH4_SHARE = 0.99, WATER_L_PER_MOL = 0.018;
@@ -112,7 +114,7 @@ public final class SteamReformerBlockEntity extends DeviceBlockEntity implements
         ch4MolS = 0;
         fuelW = 0;
         if (running && !noAbsorber && train.primaryActivity() > 0) {
-            double want = ReformerTrain.RATED_CH4_MOL_S * train.rateFraction();
+            double want = ReformerTrain.RATED_CH4_MOL_S * train.rateFraction() * dev.denfry.promptcritical.mod.grid.MachinePower.supply(s, worldPosition, POWER_W);
             double fuelPerMol = train.fuelPerMolW();
             // газ: сырьё и топливо сверх продувочного газа; вода — на пар
             double gasMolAvailable = gas.amount() * Species.MOL_PER_NM3 * CH4_SHARE;

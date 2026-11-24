@@ -25,6 +25,12 @@ import org.jetbrains.annotations.Nullable;
  * партий не смешиваются: пока слот занят чужой партией, участок ждёт.
  */
 public final class Uo2ConversionBlockEntity extends FuelShopBlockEntity {
+    /** Электропечь конверсии, испаритель UF₆ и газодувки, Вт. */
+    @Override
+    protected double ratedPowerW() {
+        return 150e3;
+    }
+
     public static final int MB = 8_000;
     public static final double NH3_KG_L = 0.682, H2_KG_NM3 = 0.0899;
 

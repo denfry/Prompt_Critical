@@ -79,6 +79,29 @@ public abstract class UraniumProcessBlockEntity extends DeviceBlockEntity implem
         return 30e3;
     }
 
+    /** Доля номинальной скорости на этом тике: щит 0,4 кВ по {@link #ratedPowerW()}; 0 Вт — щит не нужен. */
+    protected double powerFactor(ServerLevel s) {
+        double rated = ratedPowerW();
+        return rated <= 0 ? 1 : dev.denfry.promptcritical.mod.grid.MachinePower.supply(s, worldPosition, on ? rated : 0);
+    }
+
+    /** Игрок пустил или остановил установку. */
+    protected void onSwitched(boolean nowOn) {
+    }
+
+    /** Приписка к сообщению о пуске (например, что ввод отпал); {@code null} — без неё. */
+    @org.jetbrains.annotations.Nullable
+    protected net.minecraft.network.chat.Component switchNote() {
+        return null;
+    }
+
+    /** Состояние питания для сохранения. */
+    protected void savePower(CompoundTag tag) {
+    }
+
+    protected void loadPower(CompoundTag tag) {
+    }
+
     /** Установка работает (для флага на блоке и щита). */
     protected abstract boolean running();
 
@@ -107,9 +130,7 @@ public abstract class UraniumProcessBlockEntity extends DeviceBlockEntity implem
         if (!(level instanceof ServerLevel s)) return;
         SimLevelBinding b = SimBindings.get(s);
         if (b == null) return;
-        double rated = ratedPowerW();
-        // 0 Вт: установка ничего не берёт с щита 0,4 кВ (пассивный блок, свой ввод 6,3 кВ или постоянный ток выпрямителя)
-        double power = rated <= 0 ? 1 : dev.denfry.promptcritical.mod.grid.MachinePower.supply(s, worldPosition, on ? rated : 0);
+        double power = powerFactor(s);
         if (power > 0) process(s, 0.05 * b.world().clock().kSlow() * power);
         if (level.getGameTime() % 10 == 0) {
             setFlag(PcProperties.RUNNING, running());
@@ -208,9 +229,13 @@ public abstract class UraniumProcessBlockEntity extends DeviceBlockEntity implem
     /** Shift + ПКМ: пуск или останов. */
     @Override
     public InteractionResult use(Player player) {
+        net.minecraft.network.chat.Component note = switchNote();
         on = !on;
+        onSwitched(on);
         level.playSound(null, worldPosition, SoundEvents.LEVER_CLICK, SoundSource.BLOCKS, 0.6f, 0.8f);
-        player.displayClientMessage(UraniumText.msg(on ? "on" : "off", getBlockState().getBlock().getName()), true);
+        net.minecraft.network.chat.MutableComponent msg = UraniumText.msg(on ? "on" : "off", getBlockState().getBlock().getName()).copy();
+        if (note != null && on) msg.append(net.minecraft.network.chat.Component.translatable(dev.denfry.promptcritical.mod.grid.GridText.POWER_RESTARTED));
+        player.displayClientMessage(msg, true);
         setChanged();
         return InteractionResult.SUCCESS;
     }
@@ -221,6 +246,7 @@ public abstract class UraniumProcessBlockEntity extends DeviceBlockEntity implem
         tag.put("in", input.serializeNBT(registries));
         tag.put("out", output.serializeNBT(registries));
         tag.putBoolean("on", on);
+        savePower(tag);
         saveExtra(tag, registries);
     }
 
@@ -230,6 +256,7 @@ public abstract class UraniumProcessBlockEntity extends DeviceBlockEntity implem
         if (tag.contains("in")) input.deserializeNBT(registries, tag.getCompound("in"));
         if (tag.contains("out")) output.deserializeNBT(registries, tag.getCompound("out"));
         on = !tag.contains("on") || tag.getBoolean("on");
+        loadPower(tag);
         loadExtra(tag, registries);
     }
 }

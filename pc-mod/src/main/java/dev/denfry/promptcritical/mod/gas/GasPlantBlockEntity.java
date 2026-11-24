@@ -47,6 +47,8 @@ import org.jetbrains.annotations.Nullable;
  * температуры в штуцере растёт гидратная пробка и перекрывает установку.
  */
 public final class GasPlantBlockEntity extends DeviceBlockEntity implements FoundryDevice, PanelHost {
+    /** Насосы гликоля, сепараторы и аппараты воздушного охлаждения, Вт. Розетка или силовой щит рядом; при недостатке машина работает медленнее. */
+    public static final double POWER_W = 75e3;
     public static final int RADIUS = 6, GAS_MB = 4_000, LIQUID_MB = 8_000;
     /** Наибольшая производительность установки, нм³/с [BALANCE: малый блок, 3600 нм³/ч]. */
     public static final double MAX_SM3S = 1.0, FUEL_J_PER_SM3 = 36e6, HEATER_EFFICIENCY = 0.85, METHANOL_KGM3 = 791;
@@ -145,7 +147,7 @@ public final class GasPlantBlockEntity extends DeviceBlockEntity implements Foun
         double specificW = lts.process(1, 0, 0).compressorW();
         double q = Math.min(MAX_SM3S, Math.min(gasIn.amount() / dt, comp.availableW() / Math.max(1, specificW)));
         q = Math.min(q, Math.min(sales.room() / dt, Math.min(ngl.room() / (dt * 1.5), water.room() / dt)));
-        q = Math.max(0, q);
+        q = Math.max(0, q * dev.denfry.promptcritical.mod.grid.MachinePower.supply(s, worldPosition, POWER_W));
         double dose = 0;
         if (inhibit && last != null && freeWaterPerSm3 > 0) {
             double need = Hydrates.methanolForDepression(last.hydrateK() - last.ltsK() + INHIBITION_MARGIN_K);

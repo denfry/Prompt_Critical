@@ -46,6 +46,8 @@ import org.jetbrains.annotations.Nullable;
  * трубам его не перенести. Без газоразделения печь не работает. Коксование — по игровому времени (тик — 3,6 с).
  */
 public final class PyrolysisFurnaceBlockEntity extends DeviceBlockEntity implements FoundryDevice, PanelHost {
+    /** Дымососы, насосы закалочного масла и питательной воды, Вт. Розетка или силовой щит рядом; при недостатке установка работает медленнее. */
+    public static final double POWER_W = 90e3;
     public static final int FEED_MB = 8_000, WATER_MB = 8_000, FUEL_MB = 4_000;
     /** Сырьё по умолчанию, кг/с [BALANCE: опытная печь 1,1 т/ч; промышленные — 20–50 т/ч]. */
     public static final double RATED_FEED_KG_S = 0.3, SALES_GAS_J_PER_NM3 = 36e6, GAME_S_PER_TICK = 3.6;
@@ -131,7 +133,8 @@ public final class PyrolysisFurnaceBlockEntity extends DeviceBlockEntity impleme
         CrackedGasUnitBlockEntity sep = separation();
         noSeparation = sep == null;
         PyrolysisFeed f = furnace.feed();
-        double want = furnace.mode() == PyrolysisFurnace.Mode.RUN && !noSeparation ? RATED_FEED_KG_S * rateFraction * dt : 0;
+        boolean run = furnace.mode() == PyrolysisFurnace.Mode.RUN && !noSeparation;
+        double want = run ? RATED_FEED_KG_S * rateFraction * dt * dev.denfry.promptcritical.mod.grid.MachinePower.supply(s, worldPosition, POWER_W) : 0;
         double kg = Math.min(want, feedAvailableKg(f));
         // пар разбавления — из питательной воды (1 л ≈ 1 кг)
         kg = Math.min(kg, water.amount() / 1000 / Math.max(furnace.steamRatio(), 1e-9));

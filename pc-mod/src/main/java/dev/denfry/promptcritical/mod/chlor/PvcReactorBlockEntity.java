@@ -47,6 +47,8 @@ import dev.denfry.promptcritical.mod.sound.PcSfx;
  * она задаёт марку K — меняют между загрузками.
  */
 public final class PvcReactorBlockEntity extends DeviceBlockEntity implements FoundryDevice, PanelHost {
+    /** Мешалка автоклава и насос охлаждающей воды рубашки, Вт: без мешалки суспензия не идёт. Розетка или силовой щит рядом; при недостатке машина работает медленнее. */
+    public static final double POWER_W = 75e3;
     public static final int VCM_MB = 4_000, WATER_MB = 4_000;
     public static final double GAME_S_PER_TICK = 3.6;
 
@@ -104,7 +106,7 @@ public final class PvcReactorBlockEntity extends DeviceBlockEntity implements Fo
                 water.take(took[1]);
                 if (reactor.start()) level.playSound(null, worldPosition, SoundEvents.BREWING_STAND_BREW, SoundSource.BLOCKS, 0.6f, 0.6f);
             }
-            case REACTING -> heatW = reactor.step(GAME_S_PER_TICK);
+            case REACTING -> heatW = reactor.step(GAME_S_PER_TICK * dev.denfry.promptcritical.mod.grid.MachinePower.supply(level, worldPosition, POWER_W));
             case DONE -> {
                 double[] r = reactor.discharge();
                 resinKg += r[0];
