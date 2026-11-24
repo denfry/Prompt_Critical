@@ -943,60 +943,53 @@ public final class PcBlocks {
     /** Газовая центрифуга: корпус ∅0,25 × 1,8 м, 1 × 2 × 1; {@code open} — корпус вскрыт (ротор виден, машина стоит). */
     public static final Footprint FP_GAS_CENTRIFUGE_REAL = Footprint.tiled(0, 0, 0, 1, 0, 0);
     public static final DeferredBlock<PcDeviceBlock> GAS_CENTRIFUGE_REAL = device("gas_centrifuge_real", machine().noOcclusion(),
-            Spec.facing(BlockStateProperties.OPEN, BlockStateProperties.POWERED).segments(
-                    PcProperties.wholeSegments(FP_GAS_CENTRIFUGE_REAL.segments().size()), FP_GAS_CENTRIFUGE_REAL),
+            real(Spec.facing(BlockStateProperties.OPEN, BlockStateProperties.POWERED), FP_GAS_CENTRIFUGE_REAL),
             FoundryBlock.with(dev.denfry.promptcritical.mod.nuclear.CentrifugeRealBlockEntity::new));
     /** Секция каскада: 16 машин в два ряда с коллекторами, 4 × 2 × 1, ставится в ряд вдоль x. */
     public static final Footprint FP_CENTRIFUGE_CASCADE_SECTION_REAL = Footprint.tiled(0, 3, 0, 1, 0, 0);
     public static final DeferredBlock<PcDeviceBlock> CENTRIFUGE_CASCADE_SECTION_REAL = device("centrifuge_cascade_section_real",
-            machine().noOcclusion(), Spec.facing(BlockStateProperties.POWERED).segments(
-                    PcProperties.wholeSegments(FP_CENTRIFUGE_CASCADE_SECTION_REAL.segments().size()), FP_CENTRIFUGE_CASCADE_SECTION_REAL),
+            machine().noOcclusion(), real(Spec.facing(BlockStateProperties.POWERED), FP_CENTRIFUGE_CASCADE_SECTION_REAL),
             FoundryBlock.with(dev.denfry.promptcritical.mod.nuclear.CentrifugeRealBlockEntity::new));
     /** Пламенный реактор фторирования UF₄ → UF₆: башня ∅0,6 × 4,3 м с бункером и фильтром, 3 × 6 × 3. */
     public static final Footprint FP_FLUORINATOR_REAL = Footprint.tiled(-1, 1, 0, 5, -1, 1);
     public static final DeferredBlock<PcDeviceBlock> FLUORINATOR_REAL = device("fluorinator_real", machine().noOcclusion(),
-            Spec.facing(PcProperties.RUNNING, BlockStateProperties.LIT).segments(
-                    PcProperties.wholeSegments(FP_FLUORINATOR_REAL.segments().size()), FP_FLUORINATOR_REAL),
+            real(Spec.facing(PcProperties.RUNNING, BlockStateProperties.LIT), FP_FLUORINATOR_REAL),
             FoundryBlock.with(dev.denfry.promptcritical.mod.uranium.FluorinationBlockEntity::new));
     /** Баллон 30B на подкладках: ∅0,76 × 2,07 м, 3 × 1 × 1. Кладут баллоном UF₆ 30B (Shift + ПКМ по верху блока). */
     public static final Footprint FP_UF6_CYLINDER_30B_REAL = Footprint.tiled(-1, 1, 0, 0, 0, 0);
     public static final DeferredBlock<PcDeviceBlock> UF6_CYLINDER_30B_REAL = device("uf6_cylinder_30b_real", machine().noOcclusion(),
-            Spec.facing().segments(PcProperties.wholeSegments(FP_UF6_CYLINDER_30B_REAL.segments().size()), FP_UF6_CYLINDER_30B_REAL),
+            real(Spec.facing(), FP_UF6_CYLINDER_30B_REAL),
             FoundryBlock.with(dev.denfry.promptcritical.mod.nuclear.PlacedItemBlockEntity::new));
     /** Автоклав баллона: ∅1,6 × 4 м с дверью на западном торце, 5 × 2 × 3; {@code occupied} — баллон внутри, {@code lit} — прогрет. */
     public static final Footprint FP_UF6_AUTOCLAVE_REAL = Footprint.tiled(-2, 2, 0, 1, -1, 1);
     public static final DeferredBlock<PcDeviceBlock> UF6_AUTOCLAVE_REAL = device("uf6_autoclave_real", machine().noOcclusion(),
-            Spec.facing(BlockStateProperties.LIT, BlockStateProperties.OCCUPIED).segments(
-                    PcProperties.wholeSegments(FP_UF6_AUTOCLAVE_REAL.segments().size()), FP_UF6_AUTOCLAVE_REAL),
+            real(Spec.facing(BlockStateProperties.LIT, BlockStateProperties.OCCUPIED), FP_UF6_AUTOCLAVE_REAL),
             FoundryBlock.with(dev.denfry.promptcritical.mod.nuclear.Uf6AutoclaveBlockEntity::new));
     /** Роторный таблеточный пресс, 3 × 2 × 3; вал Create — в западную грань клетки (−1, 0, 0), где привод. */
     public static final Footprint FP_PELLET_PRESS_REAL = Footprint.tiled(-1, 1, 0, 1, -1, 1);
     public static final DeferredBlock<PcDeviceBlock> PELLET_PRESS_REAL = device("pellet_press_real", machine().noOcclusion(),
-            Spec.facing(PcProperties.RUNNING).segments(PcProperties.wholeSegments(FP_PELLET_PRESS_REAL.segments().size()), FP_PELLET_PRESS_REAL),
+            real(Spec.facing(PcProperties.RUNNING), FP_PELLET_PRESS_REAL),
             dev.denfry.promptcritical.mod.foundry.PortKineticMachineBlock.with(new BlockPos(-1, 0, 0),
                     dev.denfry.promptcritical.mod.nuclear.PelletPressBlockEntity::new));
     /** Толкательная печь спекания (1 700 °C, водород), около 14 м с тамбурами, 9 × 3 × 3. */
     public static final Footprint FP_SINTERING_FURNACE_REAL = Footprint.tiled(-4, 4, 0, 2, -1, 1);
     public static final DeferredBlock<PcDeviceBlock> SINTERING_FURNACE_REAL = device("sintering_furnace_real", machine().noOcclusion(),
-            Spec.facing(BlockStateProperties.LIT).segments(
-                    PcProperties.wholeSegments(FP_SINTERING_FURNACE_REAL.segments().size()), FP_SINTERING_FURNACE_REAL),
+            real(Spec.facing(BlockStateProperties.LIT), FP_SINTERING_FURNACE_REAL),
             FoundryBlock.with(dev.denfry.promptcritical.mod.nuclear.SinteringFurnaceBlockEntity::new));
     /** Пост сварки заглушек твэлов: рольганг, камера с гелием, баллон и шкаф, 4 × 2 × 1. */
     public static final Footprint FP_FUEL_ROD_WELDER_REAL = Footprint.tiled(-2, 1, 0, 1, 0, 0);
     public static final DeferredBlock<PcDeviceBlock> FUEL_ROD_WELDER_REAL = device("fuel_rod_welder_real", machine().noOcclusion(),
-            Spec.facing(BlockStateProperties.LIT).segments(
-                    PcProperties.wholeSegments(FP_FUEL_ROD_WELDER_REAL.segments().size()), FP_FUEL_ROD_WELDER_REAL),
+            real(Spec.facing(BlockStateProperties.LIT), FP_FUEL_ROD_WELDER_REAL),
             FoundryBlock.with(dev.denfry.promptcritical.mod.nuclear.RodStationBlockEntity::new));
     /** Стенд сборки ТВС ВВЭР-440: поворотное гнездо, две колонны 4,5 м, балка с талью, 3 × 5 × 3. */
     public static final Footprint FP_FUEL_ASSEMBLY_STAND_REAL = Footprint.tiled(-1, 1, 0, 4, -1, 1);
     public static final DeferredBlock<PcDeviceBlock> FUEL_ASSEMBLY_STAND_REAL = device("fuel_assembly_stand_real", machine().noOcclusion(),
-            Spec.facing(BlockStateProperties.LIT).segments(
-                    PcProperties.wholeSegments(FP_FUEL_ASSEMBLY_STAND_REAL.segments().size()), FP_FUEL_ASSEMBLY_STAND_REAL),
+            real(Spec.facing(BlockStateProperties.LIT), FP_FUEL_ASSEMBLY_STAND_REAL),
             FoundryBlock.with(dev.denfry.promptcritical.mod.nuclear.AssemblyJigBlockEntity::new));
     /** ТВС ВВЭР-440, поставленная стоймя (3,2 м, 144 мм под ключ), 1 × 4 × 1. Ставят саму ТВС (Shift + ПКМ по верху блока). */
     public static final Footprint FP_VVER440_FUEL_ASSEMBLY_REAL = Footprint.tiled(0, 0, 0, 3, 0, 0);
     public static final DeferredBlock<PcDeviceBlock> VVER440_FUEL_ASSEMBLY_REAL = device("vver440_fuel_assembly_real", machine().noOcclusion(),
-            Spec.facing().segments(PcProperties.wholeSegments(FP_VVER440_FUEL_ASSEMBLY_REAL.segments().size()), FP_VVER440_FUEL_ASSEMBLY_REAL),
+            real(Spec.facing(), FP_VVER440_FUEL_ASSEMBLY_REAL),
             FoundryBlock.with(dev.denfry.promptcritical.mod.nuclear.PlacedItemBlockEntity::new));
 
     // --- АЭС T1: канальный уран-графитовый реактор (АМ-1), ГЦН, парогенератор ---
