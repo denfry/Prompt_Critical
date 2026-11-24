@@ -400,6 +400,7 @@ public final class MachineLoads {
         // регистр теплицы: водяной теплообменник без привода, насос охлаждающей воды — у турбины
         put(Load.PASSIVE, dev.denfry.promptcritical.mod.greenhouse.GreenhouseCoilBlockEntity.class);
         put(Load.PASSIVE, dev.denfry.promptcritical.mod.greenhouse.FishCageBlockEntity.class);
+        put(Load.PASSIVE, dev.denfry.promptcritical.mod.greenhouse.DistrictHeatExchangerBlockEntity.class);
         put(Load.PASSIVE, dev.denfry.promptcritical.mod.radiation.ZoneControllerBlockEntity.class);
         put(Load.PASSIVE, SteamGeneratorBlockEntity.class);
         put(Load.PASSIVE, TideGaugeBlockEntity.class);

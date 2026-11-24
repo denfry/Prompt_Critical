@@ -25,3 +25,11 @@ A cold frame over a crop has no heating: by day the crop sits 8 K warmer than th
 A condenser cooled straight from a river or pond puts its heat into that water. A pond warms by Q/(K·F), with K = 30 W/(m²·K) over its open surface F, so 100 MW warms a 0.42 km² pond by 8 K. A river carries 15 m³/s and warms by Q/(ρ·c·flow): 1.6 K at 100 MW. The ocean never warms. The warm water also costs the condenser vacuum, because the turbine sees it.
 
 The fish cage floats on that water. Fish grow by the water temperature, from nothing at 8 °C to their best at 26 °C and nothing again at 34 °C, about 2 % of their mass a day at best, and only while there is feed: wheat, seeds or kelp, one item a kilogram, by hand or hopper. Feed turns into fish at 1.5 to 1. Right-click to see the water and to take the catch, one raw cod a kilogram over the 50 kg stock. Above 36 °C every fish dies, and the server logs a fish kill. Restock the cage with a bucket of cod.
+
+## Combined heat and power
+
+Put a district heating steam heater under a turbine instead of a condenser. The exhaust steam condenses at the network supply temperature plus 5 K, so the turbine runs against a backpressure of 0.4 to 5.4 bar instead of a vacuum and makes less electricity. In exchange the whole condensation heat, about 2.2 MJ per kilogram of steam, goes to the town.
+
+The network follows the 150/70 heating schedule: 150 °C supply at −25 °C outside, falling to 70 °C at +8 °C, with 70 °C return; above +8 °C the heating season is over and the network keeps 70/40 for hot water only. A settlement needs q₀·V·(18 − T_out), q₀ = 0.4 W/(m³·K), counted over 150 m³ of house for every bed within 256 blocks. Right-click the heater for the schedule, the steam heat, the load and any shortfall.
+
+Pipes of the heat network are not built: the heater serves the settlements in range directly, without network losses.

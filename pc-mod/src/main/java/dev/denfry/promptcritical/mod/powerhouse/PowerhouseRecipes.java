@@ -223,5 +223,9 @@ public final class PowerhouseRecipes extends RecipeProvider {
         ShapedRecipeBuilder.shaped(RecipeCategory.MISC, PcBlocks.FISH_CAGE.get())
                 .pattern("WSW").pattern("SBS").pattern("WSW").define('W', net.minecraft.tags.ItemTags.PLANKS).define('S', Items.STRING)
                 .define('B', Items.COD_BUCKET).unlockedBy("has_cod_bucket", has(Items.COD_BUCKET)).save(out, id("fish_cage"));
+        // сетевой подогреватель ТЭЦ: корпус из листа, трубный пучок, как у конденсатора, и медь трубок
+        ShapedRecipeBuilder.shaped(RecipeCategory.MISC, PcBlocks.DISTRICT_HEAT_EXCHANGER.get())
+                .pattern("PCP").pattern("FFF").pattern("PCP").define('P', plate).define('F', pipe).define('C', Items.COPPER_INGOT)
+                .unlockedBy("has_condenser", has(PcBlocks.CONDENSER.get())).save(out, id("district_heat_exchanger"));
     }
 }

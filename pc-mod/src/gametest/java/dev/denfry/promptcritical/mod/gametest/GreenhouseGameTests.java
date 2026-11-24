@@ -2,11 +2,13 @@ package dev.denfry.promptcritical.mod.gametest;
 
 import dev.denfry.promptcritical.mod.PromptCritical;
 import dev.denfry.promptcritical.mod.environment.HeatedWater;
+import dev.denfry.promptcritical.mod.greenhouse.DistrictHeatExchangerBlockEntity;
 import dev.denfry.promptcritical.mod.greenhouse.FishCageBlockEntity;
 import dev.denfry.promptcritical.mod.greenhouse.GreenhouseCoilBlockEntity;
 import dev.denfry.promptcritical.mod.greenhouse.GreenhouseGrowth;
 import dev.denfry.promptcritical.mod.registry.PcBlocks;
 import dev.denfry.promptcritical.sim.thermal.CoolingPond;
+import dev.denfry.promptcritical.sim.thermal.DistrictHeating;
 import dev.denfry.promptcritical.sim.thermal.FishCage;
 import dev.denfry.promptcritical.sim.thermal.Greenhouse;
 import net.minecraft.core.BlockPos;
@@ -130,6 +132,26 @@ public final class GreenhouseGameTests {
                 h.assertTrue(be.cage().killed() && be.cage().biomassKg() == 0, "fish kill above 36 C");
                 h.succeed();
             });
+        });
+    }
+
+    /** Сетевой подогреватель считает кровати поселения вокруг, нагрузку отопления по ним; без турбины над ним пара нет. */
+    @GameTest(template = TEMPLATE, timeoutTicks = 100)
+    public static void districtHeaterCountsTheSettlementLoadAndGivesNothingWithoutSteam(GameTestHelper h) {
+        BlockPos heater = new BlockPos(8, 2, 8);
+        h.setBlock(heater, PcBlocks.DISTRICT_HEAT_EXCHANGER.get());
+        h.setBlock(new BlockPos(2, 2, 2), Blocks.RED_BED);
+        h.setBlock(new BlockPos(2, 2, 6), Blocks.RED_BED);
+        h.runAfterDelay(5, () -> {
+            var be = (DistrictHeatExchangerBlockEntity) h.getBlockEntity(heater);
+            be.rescan(h.getLevel());
+            h.assertTrue(be.beds() >= 2, "the two beds are homes of the settlement: " + be.beds());
+            be.sample(h.getLevel());
+            double outdoor = dev.denfry.promptcritical.mod.environment.EnvironmentService.sample(h.getLevel(), h.absolutePos(heater), 2).airTempC();
+            double load = DistrictHeating.heatingLoadW(be.beds() * (double) DistrictHeatExchangerBlockEntity.HOUSE_M3, outdoor);
+            h.assertTrue(Math.abs(be.loadW() - load) < 1e-6, "heating load by beds: " + be.loadW() + " vs " + load);
+            h.assertTrue(be.supplyW() == 0 && be.deliveredW() == 0, "no turbine, no steam heat");
+            h.succeed();
         });
     }
 }

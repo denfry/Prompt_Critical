@@ -1220,6 +1220,7 @@ public final class PcLanguageProvider extends LanguageProvider {
         b("greenhouse_coil", "Greenhouse Heating Coil", "Регистр обогрева теплицы");
         b("cold_frame", "Cold Frame", "Парник");
         b("fish_cage", "Fish Cage", "Рыбный садок");
+        b("district_heat_exchanger", "District Heating Steam Heater", "Сетевой подогреватель ТЭЦ");
         b("portable_ventilator", "Portable Ventilator", "Переносной вентилятор");
         b("patrol_checkpoint", "Patrol Checkpoint", "Метка обхода");
         i("patrol_reader", "Patrol Reader", "Считыватель обходчика");

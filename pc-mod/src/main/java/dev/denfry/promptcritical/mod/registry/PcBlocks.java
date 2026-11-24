@@ -2143,6 +2143,9 @@ public final class PcBlocks {
     public static final DeferredBlock<PcBlock> COLD_FRAME = block("cold_frame", glassBlock(), Spec.of());
     public static final DeferredBlock<PcDeviceBlock> FISH_CAGE = device("fish_cage", wood().noOcclusion(), Spec.of(),
             dev.denfry.promptcritical.mod.foundry.FoundryBlock.with(dev.denfry.promptcritical.mod.greenhouse.FishCageBlockEntity::new));
+    // ТЭЦ (07 §7.14.2): сетевой подогреватель под турбиной вместо конденсатора
+    public static final DeferredBlock<PcDeviceBlock> DISTRICT_HEAT_EXCHANGER = device("district_heat_exchanger", machine().noOcclusion(), Spec.facing(),
+            dev.denfry.promptcritical.mod.foundry.FoundryBlock.with(dev.denfry.promptcritical.mod.greenhouse.DistrictHeatExchangerBlockEntity::new));
     /** Паровая турбина с противодавлением: вал Create спереди, пар — от котла, которого касается. */
     /** Водозабор техводы с решёткой (07 §7.13.4), 1×2×1. */
     public static final DeferredBlock<PcDeviceBlock> WATER_INTAKE = device("water_intake", brick().noOcclusion(),

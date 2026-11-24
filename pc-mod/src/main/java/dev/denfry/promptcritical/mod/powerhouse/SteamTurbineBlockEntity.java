@@ -144,6 +144,13 @@ public class SteamTurbineBlockEntity extends GeneratingKineticBlockEntity
      * Тепло, которое отработавший пар отдаёт охлаждающей воде конденсатора {@code condenser}, Вт: теплота конденсации
      * расхода пара, если турбина стоит на этом конденсаторе; иначе 0. Его берёт регистр теплицы (17 §17.3.6).
      */
+    /** Расход отработавшего пара турбины, стоящей на блоке {@code below}, кг/с; 0 — турбины нет. */
+    public static double exhaustSteamKgS(Level level, BlockPos below) {
+        if (!(level.getBlockEntity(below.above()) instanceof SteamTurbineBlockEntity t)) return 0;
+        EngineUnit e = t.unit();
+        return e == null ? 0 : Math.max(0, e.steamFlowKgS());
+    }
+
     public static double condenserHeatW(Level level, BlockPos condenser) {
         if (!level.getBlockState(condenser).is(PcBlocks.CONDENSER.get())) return 0;
         if (!(level.getBlockEntity(condenser.above()) instanceof SteamTurbineBlockEntity t)) return 0;
@@ -157,6 +164,10 @@ public class SteamTurbineBlockEntity extends GeneratingKineticBlockEntity
      */
     private double exhaustPa(ServerLevel sl) {
         BlockPos c = worldPosition.below();
+        // ТЭЦ (07 §7.14.2): сетевой подогреватель под турбиной — пар конденсируется при температуре подачи теплосети
+        if (sl.getBlockState(c).is(PcBlocks.DISTRICT_HEAT_EXCHANGER.get()))
+            return dev.denfry.promptcritical.sim.thermal.DistrictHeating.exhaustPa(dev.denfry.promptcritical.sim.thermo.WaterProperties.tables(),
+                    dev.denfry.promptcritical.mod.environment.EnvironmentService.sample(sl, c, 2).airTempC());
         if (!sl.getBlockState(c).is(PcBlocks.CONDENSER.get())) return SteamPlant.EXHAUST_PA;
         Double twC = coolingWaterC(sl, c);
         if (twC == null) return SteamPlant.EXHAUST_PA;

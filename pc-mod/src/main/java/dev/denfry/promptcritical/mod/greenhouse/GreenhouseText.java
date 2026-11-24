@@ -25,6 +25,11 @@ public final class GreenhouseText {
         m("cage_status", "Water %s °C (waste heat +%s K), fish %s kg, feed %s kg, caught %s",
                 "Вода %s °C (сбросное тепло +%s K), рыба %s кг, корм %s кг, выловлено %s");
         m("cage_dead", "The fish died of overheating: restock with a bucket of cod", "Рыба погибла от перегрева: зарыбьте ведром трески");
+        m("dh_status", "Outside %s °C: network supply %s °C, return %s °C, turbine backpressure %s bar",
+                "Снаружи %s °C: подача сети %s °C, обратка %s °C, противодавление турбины %s бар");
+        m("dh_heat", "Steam gives %s kW, settlements need %s kW (%s beds), delivered %s kW, network water %s kg/s",
+                "Пар даёт %s кВт, поселениям нужно %s кВт (кроватей: %s), отпущено %s кВт, сетевая вода %s кг/с");
+        m("dh_short", "Heat shortfall: settlements get %s %% less than they need", "Недоотпуск тепла: поселения недополучают %s %%");
         m("fish_kill", "Fish kill: the cage water reached %s °C", "Замор рыбы: вода у садка %s °C");
     }
 

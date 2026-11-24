@@ -2,11 +2,10 @@ package dev.denfry.promptcritical.mod.environment;
 
 import dev.denfry.promptcritical.mod.block.PcBlock;
 import dev.denfry.promptcritical.sim.thermal.CoolingPond;
+import it.unimi.dsi.fastutil.longs.LongOpenHashSet;
 import java.util.ArrayDeque;
 import java.util.HashMap;
-import java.util.HashSet;
 import java.util.Map;
-import java.util.Set;
 import java.util.WeakHashMap;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
@@ -18,11 +17,14 @@ import org.jetbrains.annotations.Nullable;
 /**
  * Сбросное тепло в водоёмах (07 §7.13.4): конденсатор, охлаждаемый рекой или прудом, отдаёт тепло воде, и вода этого
  * водоёма теплеет. Пруд — по площади зеркала (заливка по поверхности, 1 блок — 1 м²) и теплоотдаче K·F; река — по
- * расходу {@link CoolingPond#RIVER_FLOW_M3S}; водоём больше {@value #MAX_AREA} м² или океан считается бесконечным.
+ * расходу {@link CoolingPond#RIVER_FLOW_M3S}; водоём больше {@value #MAX_AREA} м² или океан считается бесконечным. Заливки ограничены по числу за тик, кэш чистится от устаревших записей.
  * Сбросы забываются, если их не обновляли {@value #STALE_TICKS} тиков (турбина встала или выгружена).
  */
 public final class HeatedWater {
-    public static final int MAX_AREA = 65_536, RESCAN_TICKS = 600, STALE_TICKS = 100;
+    /** Водоём больше этого (≈ 128 × 128 м) — бесконечный; ограничивает и работу одной заливки. */
+    public static final int MAX_AREA = 16_384, RESCAN_TICKS = 600, STALE_TICKS = 100;
+    /** Не больше стольких пересчётов за тик на мир: остальные берут прежний результат и ждут следующего тика. */
+    public static final int SCANS_PER_TICK = 2, CACHE_SOFT_LIMIT = 256;
 
     /** Водоём: ключ (наименьшая клетка зеркала), площадь, река ли. */
     record Body(long key, int areaM2, boolean river) {
@@ -36,6 +38,7 @@ public final class HeatedWater {
 
     private static final Map<ServerLevel, Map<Long, Discharge>> DISCHARGES = new WeakHashMap<>();
     private static final Map<ServerLevel, Map<Long, CachedBody>> BODIES = new WeakHashMap<>();
+    private static final Map<ServerLevel, long[]> BUDGET = new WeakHashMap<>(); // {тик, заливок в этот тик}
 
     private HeatedWater() {
     }
@@ -47,6 +50,15 @@ public final class HeatedWater {
         long now = sl.getGameTime();
         CachedBody c = cache.get(waterPos.asLong());
         if (c != null && now - c.tick() < RESCAN_TICKS) return c.body();
+        long[] budget = BUDGET.computeIfAbsent(sl, l -> new long[2]);
+        if (budget[0] != now) {
+            budget[0] = now;
+            budget[1] = 0;
+        }
+        // бюджет тика исчерпан: пересчёт известного водоёма ждёт; первую заливку новой точки делаем сразу
+        if (budget[1] >= SCANS_PER_TICK && c != null) return c.body();
+        budget[1]++;
+        if (cache.size() >= CACHE_SOFT_LIMIT) cache.values().removeIf(e -> now - e.tick() >= 2L * RESCAN_TICKS);
         Body b = scan(sl, waterPos);
         cache.put(waterPos.asLong(), new CachedBody(b, now));
         return b;
@@ -58,7 +70,7 @@ public final class HeatedWater {
         if (s == null || sl.getBiome(s).is(BiomeTags.IS_OCEAN)) return null;
         boolean river = sl.getBiome(s).is(BiomeTags.IS_RIVER);
         int y = s.getY();
-        Set<Long> seen = new HashSet<>();
+        LongOpenHashSet seen = new LongOpenHashSet();
         ArrayDeque<BlockPos> q = new ArrayDeque<>();
         q.add(s);
         seen.add(s.asLong());
