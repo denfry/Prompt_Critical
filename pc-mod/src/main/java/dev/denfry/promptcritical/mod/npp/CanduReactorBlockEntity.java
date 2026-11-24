@@ -263,6 +263,7 @@ public final class CanduReactorBlockEntity extends DeviceBlockEntity implements 
                 p.displayClientMessage(NppText.msg("scram", net.minecraft.network.chat.Component.translatable(
                         "panel.promptcritical.npp.trip." + t.name().toLowerCase(java.util.Locale.ROOT))).withStyle(ChatFormatting.RED), false);
         }
+        dev.denfry.promptcritical.mod.station.Stations.tripState(sl, worldPosition, t != CanduReactor.Trip.NONE, t.name()); // журнал станции 04d §4d.8.2
         lastTrip = t;
         takeBundle();
         if (ticks % 100 == 0) setChanged();

@@ -253,6 +253,7 @@ public final class SfrReactorBlockEntity extends DeviceBlockEntity implements de
             for (ServerPlayer p : sl.getPlayers(p -> p.distanceToSqr(worldPosition.getCenter()) < 48 * 48))
                 p.displayClientMessage(NppText.msg("scram", SfrPanels.reason(t)).withStyle(ChatFormatting.RED), false);
         }
+        dev.denfry.promptcritical.mod.station.Stations.tripState(sl, worldPosition, t != SodiumFastReactor.Trip.NONE, t.name()); // журнал станции 04d §4d.8.2
         lastTrip = t;
     }
 

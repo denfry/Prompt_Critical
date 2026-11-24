@@ -84,6 +84,8 @@ public final class PileControllerBlockEntity extends IronworksBlockEntity implem
         }
         if (ticks++ % SCAN_PERIOD == 0) rescan(u);
         GraphitePile p = u.pile();
+        if (level instanceof net.minecraft.server.level.ServerLevel sl) // журнал станции 04d §4d.8.2
+            dev.denfry.promptcritical.mod.station.Stations.tripState(sl, worldPosition, p.tripped(), p.tripped() ? p.trip().name() : "");
         if (ticks % FIRE_PERIOD == 0 && !top.isEmpty()) consequences(p);
         if (ticks % 20 == 0) {
             radiate(p);

@@ -216,6 +216,7 @@ public final class PowerReactorBlockEntity extends DeviceBlockEntity implements 
             for (ServerPlayer p : sl.getPlayers(p -> p.distanceToSqr(worldPosition.getCenter()) < 48 * 48))
                 p.displayClientMessage(NppText.msg("scram", tripName(t)).withStyle(ChatFormatting.RED), false);
         }
+        dev.denfry.promptcritical.mod.station.Stations.tripState(sl, worldPosition, t != ChannelReactor.Trip.NONE, t.name()); // журнал станции 04d §4d.8.2
         lastTrip = t;
         if (reactor.xenonPitEscaped())
             dev.denfry.promptcritical.mod.content.SimAchievements.nearby(sl, worldPosition,

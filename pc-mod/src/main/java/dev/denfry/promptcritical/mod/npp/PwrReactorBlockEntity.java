@@ -360,6 +360,7 @@ public final class PwrReactorBlockEntity extends DeviceBlockEntity implements de
             for (ServerPlayer p : sl.getPlayers(p -> p.distanceToSqr(worldPosition.getCenter()) < 48 * 48))
                 p.displayClientMessage(NppText.msg("scram", why).withStyle(ChatFormatting.RED), false);
         }
+        dev.denfry.promptcritical.mod.station.Stations.tripState(sl, worldPosition, tripped, tripped ? reactor.protection().firstOut().name() : ""); // журнал станции 04d §4d.8.2
         wasTripped = tripped;
         // «Чистая АЗ» (11 §11.2.2): с мощности выше 50 % и без новых разгерметизаций за минуту после срабатывания
         if (tripTick >= 0 && ticks - tripTick == SCRAM_CLEAN_TICKS) {

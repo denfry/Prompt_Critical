@@ -248,6 +248,7 @@ public final class NpdReactorBlockEntity extends DeviceBlockEntity implements de
                 p.displayClientMessage(NpdText.msg("dump", Component.translatable(
                         "panel.promptcritical.npd.trip." + t.name().toLowerCase(Locale.ROOT))).withStyle(ChatFormatting.RED), false);
         }
+        dev.denfry.promptcritical.mod.station.Stations.tripState(sl, worldPosition, t != NpdReactor.Trip.NONE, t.name()); // журнал станции 04d §4d.8.2
         lastTrip = t;
         takeBundle();
         if (ticks % 100 == 0) setChanged();

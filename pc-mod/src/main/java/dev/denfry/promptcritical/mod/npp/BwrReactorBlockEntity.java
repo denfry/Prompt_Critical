@@ -240,6 +240,7 @@ public final class BwrReactorBlockEntity extends DeviceBlockEntity implements de
                 p.displayClientMessage(NppText.msg("scram", net.minecraft.network.chat.Component.translatable(
                         "panel.promptcritical.bwr.reason." + t.name().toLowerCase(Locale.ROOT))).withStyle(ChatFormatting.RED), false);
         }
+        dev.denfry.promptcritical.mod.station.Stations.tripState(sl, worldPosition, t != BoilingWaterReactor.Trip.NONE, t.name()); // журнал станции 04d §4d.8.2
         lastTrip = t;
     }
 
