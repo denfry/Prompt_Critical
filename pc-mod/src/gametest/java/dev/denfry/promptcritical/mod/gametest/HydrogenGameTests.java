@@ -119,7 +119,9 @@ public final class HydrogenGameTests {
                         "the electrolyser makes hydrogen into the gasholder: " + el.cells().h2Nm3h() + " Nm3/h, "
                                 + Math.round(holder.storage().pressurePa()) + " Pa"))
                 .thenWaitUntil(() -> h.assertTrue(comp.compressor().powerW() > 0,
-                        "the compressor starts on its suction switch: gasholder " + Math.round(holder.storage().pressurePa()) + " Pa"))
+                        "the compressor starts on its suction switch: gasholder " + Math.round(holder.storage().pressurePa()) + " Pa, leaking "
+                                + holder.leaking() + ", released " + Math.round(el.releasedMol()) + " mol, H2 " + Math.round(el.cells().h2MolS() * 100) / 100.0
+                                + " mol/s, trip " + el.cells().trip() + ", loaded " + comp.compressor().loaded()))
                 .thenWaitUntil(() -> h.assertTrue(tubes.storage().mol() > tubesStart + 50,
                         "hydrogen reaches the tube bank: " + Math.round(tubes.storage().mol() - tubesStart) + " mol"))
                 .thenExecute(() -> {

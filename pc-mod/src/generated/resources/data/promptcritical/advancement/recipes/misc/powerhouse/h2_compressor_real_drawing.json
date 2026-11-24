@@ -1,0 +1,32 @@
+{
+  "parent": "minecraft:recipes/root",
+  "criteria": {
+    "has_electric_motor": {
+      "conditions": {
+        "items": [
+          {
+            "items": "promptcritical:electric_motor"
+          }
+        ]
+      },
+      "trigger": "minecraft:inventory_changed"
+    },
+    "has_the_recipe": {
+      "conditions": {
+        "recipe": "promptcritical:powerhouse/h2_compressor_real_drawing"
+      },
+      "trigger": "minecraft:recipe_unlocked"
+    }
+  },
+  "requirements": [
+    [
+      "has_the_recipe",
+      "has_electric_motor"
+    ]
+  ],
+  "rewards": {
+    "recipes": [
+      "promptcritical:powerhouse/h2_compressor_real_drawing"
+    ]
+  }
+}
