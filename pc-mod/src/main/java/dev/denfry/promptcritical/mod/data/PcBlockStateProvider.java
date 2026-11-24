@@ -65,6 +65,11 @@ public final class PcBlockStateProvider extends BlockStateProvider {
                 cokeCell(block, id);
                 continue;
             }
+            if (block instanceof net.minecraft.world.level.block.DoorBlock) {
+                zoneDoor(block, id);
+                itemModel(id, block);
+                continue;
+            }
             if (PARTS.contains(id)) {
                 parts(block, id);
                 itemModel(id, block);
@@ -94,6 +99,22 @@ public final class PcBlockStateProvider extends BlockStateProvider {
             int age = st.getValue(dev.denfry.promptcritical.mod.hazard.SpillBlocks.OilSlickBlock.AGE);
             return ConfiguredModel.builder().modelFile(existing(age == 0 ? "oil_slick" : "oil_slick_age" + age)).build();
         });
+    }
+
+    /**
+     * Дверь зоны (04b §4b.12.2): одна модель полотна на половину, полотно у южной грани (дверь к северу, закрыта).
+     * Повороты — как у ванильной двери: закрытое полотно — у грани против фасада, открытое уходит к петлям (левые —
+     * против часовой стрелки, правые — по ней).
+     */
+    private void zoneDoor(Block block, String id) {
+        getVariantBuilder(block).forAllStatesExcept(s -> {
+            Direction closed = s.getValue(net.minecraft.world.level.block.DoorBlock.FACING).getOpposite();
+            Direction side = !s.getValue(net.minecraft.world.level.block.DoorBlock.OPEN) ? closed
+                    : s.getValue(net.minecraft.world.level.block.DoorBlock.HINGE) == net.minecraft.world.level.block.state.properties.DoorHingeSide.LEFT
+                            ? closed.getCounterClockWise() : closed.getClockWise();
+            boolean top = s.getValue(net.minecraft.world.level.block.DoorBlock.HALF) == net.minecraft.world.level.block.state.properties.DoubleBlockHalf.UPPER;
+            return ConfiguredModel.builder().modelFile(existing(top ? id + "_top" : id)).rotationY((int) side.toYRot()).build();
+        }, net.minecraft.world.level.block.DoorBlock.POWERED);
     }
 
     /** Расцепная муфта: модель вдоль Z; ось X — поворот на 90° вокруг Y, ось Y — на 90° вокруг X. */

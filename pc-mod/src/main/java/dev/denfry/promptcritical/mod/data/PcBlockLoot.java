@@ -74,6 +74,8 @@ public final class PcBlockLoot extends BlockLootSubProvider {
                                 .when(LootItemBlockStatePropertyCondition.hasBlockStateProperties(block).setProperties(
                                         StatePropertiesPredicate.Builder.properties().hasProperty(PcProperties.DOOR_KIND, PcProperties.DoorKind.REGULATOR)))
                                 .otherwise(LootItem.lootTableItem(block))))));
+            } else if (block instanceof net.minecraft.world.level.block.DoorBlock) {
+                add(block, createDoorTable(block)); // дверь зоны: предмет — с нижней половины
             } else if (block instanceof net.minecraft.world.level.block.SlabBlock) {
                 add(block, createSlabItemTable(block));
             } else if (block instanceof PcBlock pc && pc.spec().segment() != null) {

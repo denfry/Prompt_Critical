@@ -36,6 +36,14 @@ public final class DoseRate {
 
     /** Мощность кермы γ в воздухе, Гр/ч (для выброса — керма, Гр, если {@code src} — числа частиц). */
     public static double gammaGyH(PointSource src, double rM, List<Layer> layers) {
+        return gammaGyH(src, rM, layers, e -> 1);
+    }
+
+    /**
+     * То же за носимой защитой с пропусканием {@code worn(E)} (свинцовый фартук, 04b §4b.7.3): тонкий слой на теле
+     * множит поток каждой линии и не меняет фактор накопления стены.
+     */
+    public static double gammaGyH(PointSource src, double rM, List<Layer> layers, java.util.function.DoubleUnaryOperator worn) {
         double r2 = 4 * Math.PI * Math.pow(Math.max(MIN_R_M, rM) * 100, 2);
         double sum = 0;
         for (int i = 0; i < src.energyMeV().length; i++) {
@@ -43,7 +51,7 @@ public final class DoseRate {
             for (Layer l : layers) mfp += l.material().mu(e, l.density()) * l.cm();
             ShieldMaterial last = layers.isEmpty() ? null : layers.get(layers.size() - 1).material();
             double b = last == null ? 1 : last.buildup(mfp);
-            double fluence = src.photons()[i] / r2 * b * Math.exp(-mfp);
+            double fluence = src.photons()[i] / r2 * b * Math.exp(-mfp) * worn.applyAsDouble(e);
             sum += fluence * e * airMuEn(e); // МэВ/г
         }
         return sum * MEV_J * 1000 * 3600;
@@ -60,6 +68,11 @@ public final class DoseRate {
     /** Полная мощность дозы, Зв/ч. */
     public static double totalSvH(PointSource src, double rM, List<Layer> layers) {
         return gammaGyH(src, rM, layers) + neutronSvH(src, rM, layers);
+    }
+
+    /** Полная мощность дозы за носимой защитой {@code worn(E)} (нейтроны она не ослабляет), Зв/ч. */
+    public static double totalSvH(PointSource src, double rM, List<Layer> layers, java.util.function.DoubleUnaryOperator worn) {
+        return gammaGyH(src, rM, layers, worn) + neutronSvH(src, rM, layers);
     }
 
     /** Доза от выброса частиц (вспышка), Зв: та же формула без перевода в час. */

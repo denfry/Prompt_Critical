@@ -13,6 +13,7 @@ import net.minecraft.data.recipes.RecipeCategory;
 import net.minecraft.data.recipes.RecipeOutput;
 import net.minecraft.data.recipes.RecipeProvider;
 import net.minecraft.data.recipes.ShapedRecipeBuilder;
+import net.minecraft.data.recipes.ShapelessRecipeBuilder;
 import net.minecraft.data.recipes.SimpleCookingRecipeBuilder;
 import net.minecraft.world.item.Items;
 import net.minecraft.world.item.crafting.Ingredient;
@@ -89,9 +90,90 @@ public final class RadiationRecipes extends RecipeProvider {
                 .pattern("IDI").pattern("BEB").pattern("III").define('D', PcItems.DOSIMETER.get())
                 .define('B', AllItems.BRASS_SHEET.get()).define('E', AllItems.ELECTRON_TUBE.get()).define('I', AllItems.IRON_SHEET.get())
                 .unlockedBy("has_dosimeter", has(PcItems.DOSIMETER.get())).save(out, id("portal_monitor"));
+        gear(out);
         // свинец выплавляют из галенита (обжиг PbS и восстановление — свёрнуты в доменную плавку)
         SimpleCookingRecipeBuilder.blasting(Ingredient.of(PcBlocks.GALENA_ORE.get(), PcBlocks.DEEPSLATE_GALENA_ORE.get()), RecipeCategory.BUILDING_BLOCKS,
                         PcBlocks.LEAD_BLOCK.get(), 0.3f, 200)
                 .unlockedBy("has_galena", has(PcBlocks.GALENA_ORE.get())).save(out, id("lead_block_from_galena"));
+    }
+
+    /** Индивидуальная дозиметрия, радиационные СИЗ и санпропускник (04b §4b.7, §4b.8.3, §4b.12). */
+    private void gear(RecipeOutput out) {
+        var brass = AllItems.BRASS_SHEET.get();
+        var iron = AllItems.IRON_SHEET.get();
+        var tube = AllItems.ELECTRON_TUBE.get();
+        var pipe = com.simibubi.create.AllBlocks.FLUID_PIPE.get();
+        // бытовой счётчик: та же трубка, без второго (камерного) тракта и коррекции — дешевле ДКС
+        ShapedRecipeBuilder.shaped(RecipeCategory.TOOLS, PcItems.GEIGER_COUNTER.get())
+                .pattern(" G ").pattern("BEB").pattern(" R ").define('G', Items.GLASS).define('B', brass).define('E', tube)
+                .define('R', Items.REDSTONE).unlockedBy("has_electron_tube", has(tube)).save(out, id("geiger_counter"));
+        // ЭПД: кремниевый диод — пластина, счёт и память — микросхема
+        ShapedRecipeBuilder.shaped(RecipeCategory.TOOLS, PcItems.PERSONAL_DOSIMETER_EPD.get())
+                .pattern("BWB").pattern("BCB").pattern(" R ").define('B', brass).define('W', PcItems.SILICON_WAFER.get())
+                .define('C', PcItems.INTEGRATED_CIRCUIT.get()).define('R', Items.REDSTONE)
+                .unlockedBy("has_integrated_circuit", has(PcItems.INTEGRATED_CIRCUIT.get())).save(out, id("personal_dosimeter_epd"));
+        // ТЛД: кристалл-термолюминофор в кассете
+        ShapedRecipeBuilder.shaped(RecipeCategory.TOOLS, PcItems.TLD_BADGE.get(), 2)
+                .pattern("Q").pattern("I").define('Q', Items.QUARTZ).define('I', iron)
+                .unlockedBy("has_dosimeter", has(PcItems.DOSIMETER.get())).save(out, id("tld_badge"));
+        // считыватель: нагрев кассеты и фотоумножитель — лампа за стеклом
+        ShapedRecipeBuilder.shaped(RecipeCategory.MISC, PcBlocks.TLD_READER.get())
+                .pattern("GEG").pattern("ITI").pattern("III").define('G', Items.GLASS_PANE).define('E', tube).define('I', iron)
+                .define('T', PcItems.TLD_BADGE.get()).unlockedBy("has_tld_badge", has(PcItems.TLD_BADGE.get())).save(out, id("tld_reader"));
+        // йод добывали из золы морских водорослей; таблетки в блистере
+        ShapelessRecipeBuilder.shapeless(RecipeCategory.MISC, PcItems.POTASSIUM_IODIDE.get(), 4)
+                .requires(Items.DRIED_KELP, 3).requires(Items.PAPER).unlockedBy("has_dried_kelp", has(Items.DRIED_KELP))
+                .save(out, id("potassium_iodide"));
+        ShapedRecipeBuilder.shaped(RecipeCategory.MISC, PcItems.IODINE_CARTRIDGE.get(), 2)
+                .pattern("ICI").pattern("CCC").pattern("ICI").define('I', iron).define('C', Items.CHARCOAL)
+                .unlockedBy("has_charcoal", has(Items.CHARCOAL)).save(out, id("iodine_cartridge"));
+        ShapedRecipeBuilder.shaped(RecipeCategory.COMBAT, PcItems.RESPIRATOR.get())
+                .pattern("LSL").pattern(" W ").define('L', Items.LEATHER).define('S', Items.STRING).define('W', Items.WHITE_WOOL)
+                .unlockedBy("has_leather", has(Items.LEATHER)).save(out, id("respirator"));
+        ShapedRecipeBuilder.shaped(RecipeCategory.COMBAT, PcItems.FULL_FACE_RESPIRATOR.get())
+                .pattern("LGL").pattern("IWI").define('L', Items.LEATHER).define('G', Items.GLASS_PANE).define('I', iron)
+                .define('W', Items.WHITE_WOOL).unlockedBy("has_respirator", has(PcItems.RESPIRATOR.get())).save(out, id("full_face_respirator"));
+        // пневмокостюм — пластикат (ПВХ), как ЛГ-1
+        var pvc = PcItems.PVC.get();
+        ShapedRecipeBuilder.shaped(RecipeCategory.COMBAT, PcItems.PNEUMOSUIT_HELMET.get())
+                .pattern("PPP").pattern("PGP").define('P', pvc).define('G', Items.GLASS_PANE)
+                .unlockedBy("has_pvc", has(pvc)).save(out, id("pneumosuit_helmet"));
+        ShapedRecipeBuilder.shaped(RecipeCategory.COMBAT, PcItems.PNEUMOSUIT_JACKET.get())
+                .pattern("P P").pattern("PTP").pattern("PPP").define('P', pvc).define('T', pipe)
+                .unlockedBy("has_pvc", has(pvc)).save(out, id("pneumosuit_jacket"));
+        ShapedRecipeBuilder.shaped(RecipeCategory.COMBAT, PcItems.PNEUMOSUIT_TROUSERS.get())
+                .pattern("PPP").pattern("P P").pattern("P P").define('P', pvc)
+                .unlockedBy("has_pvc", has(pvc)).save(out, id("pneumosuit_trousers"));
+        ShapedRecipeBuilder.shaped(RecipeCategory.COMBAT, PcItems.PNEUMOSUIT_BOOTS.get())
+                .pattern("P P").pattern("P P").define('P', pvc)
+                .unlockedBy("has_pvc", has(pvc)).save(out, id("pneumosuit_boots"));
+        ShapedRecipeBuilder.shaped(RecipeCategory.COMBAT, PcItems.PROTECTIVE_OVERALLS.get())
+                .pattern("W W").pattern("WWW").pattern("WWW").define('W', Items.WHITE_WOOL)
+                .unlockedBy("has_white_wool", has(Items.WHITE_WOOL)).save(out, id("protective_overalls"));
+        ShapedRecipeBuilder.shaped(RecipeCategory.COMBAT, PcItems.BOOT_COVERS.get(), 4)
+                .pattern("P P").pattern("P P").define('P', PcItems.POLYETHYLENE.get())
+                .unlockedBy("has_polyethylene", has(PcItems.POLYETHYLENE.get())).save(out, id("boot_covers"));
+        ShapedRecipeBuilder.shaped(RecipeCategory.COMBAT, PcItems.LEAD_APRON.get())
+                .pattern("L L").pattern("LBL").pattern("LLL").define('L', Items.LEATHER).define('B', PcBlocks.LEAD_BLOCK.get())
+                .unlockedBy("has_lead_block", has(PcBlocks.LEAD_BLOCK.get())).save(out, id("lead_apron"));
+        // санпропускник и зона
+        ShapedRecipeBuilder.shaped(RecipeCategory.MISC, PcBlocks.INSTRUMENT_DOSE_RATE.get())
+                .pattern("IDI").pattern("IEI").define('I', iron).define('D', PcItems.DOSIMETER.get()).define('E', tube)
+                .unlockedBy("has_dosimeter", has(PcItems.DOSIMETER.get())).save(out, id("instrument_dose_rate"));
+        ShapedRecipeBuilder.shaped(RecipeCategory.MISC, PcBlocks.ZONE_CONTROLLER.get())
+                .pattern("BEB").pattern("IRI").define('B', brass).define('E', tube).define('I', iron).define('R', Items.REDSTONE)
+                .unlockedBy("has_dosimeter", has(PcItems.DOSIMETER.get())).save(out, id("zone_controller"));
+        ShapelessRecipeBuilder.shapeless(RecipeCategory.REDSTONE, PcBlocks.ZONE_ACCESS_DOOR.get())
+                .requires(Items.IRON_DOOR).requires(brass).requires(Items.REDSTONE)
+                .unlockedBy("has_dosimeter", has(PcItems.DOSIMETER.get())).save(out, id("zone_access_door"));
+        ShapedRecipeBuilder.shaped(RecipeCategory.MISC, PcBlocks.CLEAN_LOCKER.get())
+                .pattern("III").pattern("ICI").pattern("III").define('I', iron).define('C', Items.CHEST)
+                .unlockedBy("has_iron_sheet", has(iron)).save(out, id("clean_locker"));
+        ShapelessRecipeBuilder.shapeless(RecipeCategory.MISC, PcBlocks.DIRTY_LOCKER.get())
+                .requires(PcBlocks.CLEAN_LOCKER.get()).requires(Items.YELLOW_DYE)
+                .unlockedBy("has_clean_locker", has(PcBlocks.CLEAN_LOCKER.get())).save(out, id("dirty_locker"));
+        ShapedRecipeBuilder.shaped(RecipeCategory.MISC, PcBlocks.AIR_SUPPLY_PORT.get())
+                .pattern("P").pattern("I").pattern("P").define('P', pipe).define('I', iron)
+                .unlockedBy("has_fluid_pipe", has(pipe)).save(out, id("air_supply_port"));
     }
 }

@@ -493,6 +493,36 @@ public final class PcItems {
                 new Item.Properties()));
     }
 
+    // --- индивидуальная дозиметрия и радиационные СИЗ (04b §4b.7, §4b.8.3) ---
+    public static final DeferredItem<dev.denfry.promptcritical.mod.radiation.RadGearItems.Geiger> GEIGER_COUNTER = registered(ITEMS.registerItem("geiger_counter",
+            dev.denfry.promptcritical.mod.radiation.RadGearItems.Geiger::new, new Item.Properties()));
+    public static final DeferredItem<dev.denfry.promptcritical.mod.radiation.RadGearItems.Epd> PERSONAL_DOSIMETER_EPD = registered(ITEMS.registerItem("personal_dosimeter_epd",
+            dev.denfry.promptcritical.mod.radiation.RadGearItems.Epd::new, new Item.Properties()));
+    public static final DeferredItem<dev.denfry.promptcritical.mod.radiation.RadGearItems.Tld> TLD_BADGE = registered(ITEMS.registerItem("tld_badge",
+            dev.denfry.promptcritical.mod.radiation.RadGearItems.Tld::new, new Item.Properties()));
+    public static final DeferredItem<dev.denfry.promptcritical.mod.radiation.RadGearItems.Iodide> POTASSIUM_IODIDE = registered(ITEMS.registerItem("potassium_iodide",
+            dev.denfry.promptcritical.mod.radiation.RadGearItems.Iodide::new, new Item.Properties().stacksTo(16)));
+    public static final DeferredItem<Item> IODINE_CARTRIDGE = registered(ITEMS.registerSimpleItem("iodine_cartridge",
+            new Item.Properties().stacksTo(16)));
+    public static final DeferredItem<dev.denfry.promptcritical.mod.safety.PpeItem> RESPIRATOR = ppe("respirator",
+            dev.denfry.promptcritical.mod.safety.PpeItem.Kind.RESPIRATOR);
+    public static final DeferredItem<dev.denfry.promptcritical.mod.safety.PpeItem> FULL_FACE_RESPIRATOR = ppe("full_face_respirator",
+            dev.denfry.promptcritical.mod.safety.PpeItem.Kind.FULL_FACE_RESPIRATOR);
+    public static final DeferredItem<dev.denfry.promptcritical.mod.safety.PpeItem> PNEUMOSUIT_HELMET = ppe("pneumosuit_helmet",
+            dev.denfry.promptcritical.mod.safety.PpeItem.Kind.PNEUMOSUIT_HELMET);
+    public static final DeferredItem<dev.denfry.promptcritical.mod.safety.PpeItem> PNEUMOSUIT_JACKET = ppe("pneumosuit_jacket",
+            dev.denfry.promptcritical.mod.safety.PpeItem.Kind.PNEUMOSUIT_JACKET);
+    public static final DeferredItem<dev.denfry.promptcritical.mod.safety.PpeItem> PNEUMOSUIT_TROUSERS = ppe("pneumosuit_trousers",
+            dev.denfry.promptcritical.mod.safety.PpeItem.Kind.PNEUMOSUIT_TROUSERS);
+    public static final DeferredItem<dev.denfry.promptcritical.mod.safety.PpeItem> PNEUMOSUIT_BOOTS = ppe("pneumosuit_boots",
+            dev.denfry.promptcritical.mod.safety.PpeItem.Kind.PNEUMOSUIT_BOOTS);
+    public static final DeferredItem<dev.denfry.promptcritical.mod.safety.PpeItem> PROTECTIVE_OVERALLS = ppe("protective_overalls",
+            dev.denfry.promptcritical.mod.safety.PpeItem.Kind.PROTECTIVE_OVERALLS);
+    public static final DeferredItem<dev.denfry.promptcritical.mod.safety.PpeItem> BOOT_COVERS = ppe("boot_covers",
+            dev.denfry.promptcritical.mod.safety.PpeItem.Kind.BOOT_COVERS);
+    public static final DeferredItem<dev.denfry.promptcritical.mod.safety.PpeItem> LEAD_APRON = ppe("lead_apron",
+            dev.denfry.promptcritical.mod.safety.PpeItem.Kind.LEAD_APRON);
+
     /** Радиометр загрязнённости поверхностей с α/β-зондом. */
     public static final DeferredItem<dev.denfry.promptcritical.mod.radiation.ContaminationMeterItem> CONTAMINATION_METER = registered(
             ITEMS.registerItem("contamination_meter", dev.denfry.promptcritical.mod.radiation.ContaminationMeterItem::new, new Item.Properties()));

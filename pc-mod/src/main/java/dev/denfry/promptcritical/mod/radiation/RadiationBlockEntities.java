@@ -31,6 +31,14 @@ public final class RadiationBlockEntities {
             BLOCK_ENTITIES.register("portal_monitor",
                     () -> BlockEntityType.Builder.of(PortalMonitorBlockEntity::new, PcBlocks.PORTAL_MONITOR.get()).build(null));
 
+    public static final DeferredHolder<BlockEntityType<?>, BlockEntityType<ZoneControllerBlockEntity>> ZONE_CONTROLLER =
+            BLOCK_ENTITIES.register("zone_controller",
+                    () -> BlockEntityType.Builder.of(ZoneControllerBlockEntity::new, PcBlocks.ZONE_CONTROLLER.get()).build(null));
+    /** Шкафы санпропускника: «чистый» и «грязный» — один тип с разной логикой блока. */
+    public static final DeferredHolder<BlockEntityType<?>, BlockEntityType<LockerBlockEntity>> LOCKER =
+            BLOCK_ENTITIES.register("locker",
+                    () -> BlockEntityType.Builder.of(LockerBlockEntity::new, PcBlocks.CLEAN_LOCKER.get(), PcBlocks.DIRTY_LOCKER.get()).build(null));
+
     private RadiationBlockEntities() {
     }
 
@@ -43,6 +51,7 @@ public final class RadiationBlockEntities {
             e.registerBlockEntity(Capabilities.FluidHandler.BLOCK, DECON_SHOWER.get(), FoundryDevice::fluids);
         });
         ContaminationData.register(modBus);
+        RadGear.register(modBus);
         ContaminationService.register();
     }
 }

@@ -149,6 +149,8 @@ public final class ServerConfig {
     public static final ModConfigSpec.BooleanValue CONTENT_CC_RECIPE_OVERRIDE;
     public static final ModConfigSpec.IntValue ENVIRONMENT_DAYS_PER_SEASON;
     public static final ModConfigSpec.BooleanValue BODY_ELECTRIC_SHOCK;
+    public static final ModConfigSpec.BooleanValue RADIATION_ENFORCE_ZONES;
+    public static final ModConfigSpec.DoubleValue RADIATION_WORKER_ANNUAL_SV;
 
     static {
         var b = new ModConfigSpec.Builder();
@@ -451,6 +453,16 @@ public final class ServerConfig {
         b.push("body");
         BODY_ELECTRIC_SHOCK = b.comment("A player touching a live bare busbar while earthed gets an electric shock (IEC 60479-1, Dalziel)")
                 .define("electric_shock", true);
+        b.pop();
+
+        b.push("radiation");
+        RADIATION_ENFORCE_ZONES = b.comment("Zone access doors stay shut for a player without an electronic dosimeter or over the annual limit, "
+                + "and on the way out while hands or shoes are contaminated; off — the door opens and only warns (04b §4b.12.2)")
+                .define("enforce_zones", false);
+        b.push("limits");
+        RADIATION_WORKER_ANNUAL_SV = b.comment("Annual dose limit of a radiation worker, Sv per 365 game days (04b §4b.5.2: 20 mSv, NRB-99/2009, ICRP 103)")
+                .defineInRange("worker_annual_sv", 0.02, 0.001, 1.0);
+        b.pop();
         b.pop();
 
         b.push("isotopes");

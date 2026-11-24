@@ -713,6 +713,21 @@ public final class PcBlocks {
     /** Портальный γ-монитор выхода из зоны (04b §4b.7.2): колонна у прохода, пара колонн — рама. */
     public static final DeferredBlock<PcDeviceBlock> PORTAL_MONITOR = device("portal_monitor", machine(),
             Spec.facing(BlockStateProperties.POWERED), dev.denfry.promptcritical.mod.radiation.PortalMonitorBlock.create());
+    // зона контролируемого доступа и санпропускник (04b §4b.7, §4b.12)
+    public static final DeferredBlock<dev.denfry.promptcritical.mod.radiation.SanitaryBlocks.DoseRateInstrument> INSTRUMENT_DOSE_RATE = withItem(BLOCKS.registerBlock(
+            "instrument_dose_rate", dev.denfry.promptcritical.mod.radiation.SanitaryBlocks.DoseRateInstrument::create, instrument()));
+    public static final DeferredBlock<dev.denfry.promptcritical.mod.radiation.SanitaryBlocks.ZoneController> ZONE_CONTROLLER = withItem(BLOCKS.registerBlock(
+            "zone_controller", dev.denfry.promptcritical.mod.radiation.SanitaryBlocks.ZoneController::create, instrument()));
+    public static final DeferredBlock<dev.denfry.promptcritical.mod.radiation.SanitaryBlocks.ZoneAccessDoor> ZONE_ACCESS_DOOR = withItem(BLOCKS.registerBlock(
+            "zone_access_door", dev.denfry.promptcritical.mod.radiation.SanitaryBlocks.ZoneAccessDoor::new, machine()));
+    public static final DeferredBlock<dev.denfry.promptcritical.mod.radiation.SanitaryBlocks.Locker> CLEAN_LOCKER = withItem(BLOCKS.registerBlock(
+            "clean_locker", dev.denfry.promptcritical.mod.radiation.SanitaryBlocks.Locker::clean, machine()));
+    public static final DeferredBlock<dev.denfry.promptcritical.mod.radiation.SanitaryBlocks.Locker> DIRTY_LOCKER = withItem(BLOCKS.registerBlock(
+            "dirty_locker", dev.denfry.promptcritical.mod.radiation.SanitaryBlocks.Locker::dirty, machine()));
+    public static final DeferredBlock<dev.denfry.promptcritical.mod.radiation.SanitaryBlocks.TldReader> TLD_READER = withItem(BLOCKS.registerBlock(
+            "tld_reader", dev.denfry.promptcritical.mod.radiation.SanitaryBlocks.TldReader::create, machine()));
+    public static final DeferredBlock<dev.denfry.promptcritical.mod.radiation.SanitaryBlocks.AirSupplyPort> AIR_SUPPLY_PORT = withItem(BLOCKS.registerBlock(
+            "air_supply_port", dev.denfry.promptcritical.mod.radiation.SanitaryBlocks.AirSupplyPort::create, instrument()));
     public static final DeferredBlock<PcDeviceBlock> NGL_FRACTIONATOR = device("ngl_fractionator", machine(),
             Spec.facing().footprint(FP_CUBE3), FoundryBlock.with(dev.denfry.promptcritical.mod.gas.NglFractionatorBlockEntity::new));
 
