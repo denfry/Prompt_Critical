@@ -1,32 +1,32 @@
 {
   "parent": "minecraft:recipes/root",
   "criteria": {
-    "has_the_recipe": {
-      "conditions": {
-        "recipe": "promptcritical:grid/shaft_generator"
-      },
-      "trigger": "minecraft:recipe_unlocked"
-    },
-    "has_wire": {
+    "has_redstone": {
       "conditions": {
         "items": [
           {
-            "items": "promptcritical:copper_wire"
+            "items": "minecraft:redstone"
           }
         ]
       },
       "trigger": "minecraft:inventory_changed"
+    },
+    "has_the_recipe": {
+      "conditions": {
+        "recipe": "promptcritical:ops/plant_loudspeaker"
+      },
+      "trigger": "minecraft:recipe_unlocked"
     }
   },
   "requirements": [
     [
       "has_the_recipe",
-      "has_wire"
+      "has_redstone"
     ]
   ],
   "rewards": {
     "recipes": [
-      "promptcritical:grid/shaft_generator"
+      "promptcritical:ops/plant_loudspeaker"
     ]
   }
 }

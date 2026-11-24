@@ -1,0 +1,32 @@
+{
+  "parent": "minecraft:recipes/root",
+  "criteria": {
+    "has_fasteners": {
+      "conditions": {
+        "items": [
+          {
+            "items": "promptcritical:fastener_kit"
+          }
+        ]
+      },
+      "trigger": "minecraft:inventory_changed"
+    },
+    "has_the_recipe": {
+      "conditions": {
+        "recipe": "promptcritical:smithy/cylinder_block"
+      },
+      "trigger": "minecraft:recipe_unlocked"
+    }
+  },
+  "requirements": [
+    [
+      "has_the_recipe",
+      "has_fasteners"
+    ]
+  ],
+  "rewards": {
+    "recipes": [
+      "promptcritical:smithy/cylinder_block"
+    ]
+  }
+}

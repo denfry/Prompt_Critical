@@ -1,11 +1,11 @@
 {
   "parent": "minecraft:recipes/root",
   "criteria": {
-    "has_propeller": {
+    "has_plate": {
       "conditions": {
         "items": [
           {
-            "items": "create:propeller"
+            "items": "promptcritical:steel_plate"
           }
         ]
       },
@@ -13,7 +13,7 @@
     },
     "has_the_recipe": {
       "conditions": {
-        "recipe": "promptcritical:mine/main_mine_fan"
+        "recipe": "promptcritical:smithy/fan_wheel"
       },
       "trigger": "minecraft:recipe_unlocked"
     }
@@ -21,12 +21,12 @@
   "requirements": [
     [
       "has_the_recipe",
-      "has_propeller"
+      "has_plate"
     ]
   ],
   "rewards": {
     "recipes": [
-      "promptcritical:mine/main_mine_fan"
+      "promptcritical:smithy/fan_wheel"
     ]
   }
 }

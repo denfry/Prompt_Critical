@@ -1,11 +1,11 @@
 {
   "parent": "minecraft:recipes/root",
   "criteria": {
-    "has_large_cogwheel": {
+    "has_coupling": {
       "conditions": {
         "items": [
           {
-            "items": "create:large_cogwheel"
+            "items": "promptcritical:coupling"
           }
         ]
       },
@@ -13,7 +13,7 @@
     },
     "has_the_recipe": {
       "conditions": {
-        "recipe": "promptcritical:mine/mine_hoist"
+        "recipe": "promptcritical:smithy/governor"
       },
       "trigger": "minecraft:recipe_unlocked"
     }
@@ -21,12 +21,12 @@
   "requirements": [
     [
       "has_the_recipe",
-      "has_large_cogwheel"
+      "has_coupling"
     ]
   ],
   "rewards": {
     "recipes": [
-      "promptcritical:mine/mine_hoist"
+      "promptcritical:smithy/governor"
     ]
   }
 }
