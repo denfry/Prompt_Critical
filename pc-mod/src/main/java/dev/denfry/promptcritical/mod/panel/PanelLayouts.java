@@ -84,6 +84,7 @@ public final class PanelLayouts {
 
     public static void register(IEventBus modBus) {
         MENUS.register(modBus);
+        modBus.addListener(PanelNet::register);
     }
 
     public static PanelLayout get(String id) {

@@ -8,11 +8,16 @@ import java.util.IdentityHashMap;
 import java.util.List;
 import java.util.Map;
 import net.minecraft.Util;
+import dev.denfry.promptcritical.mod.panel.PanelNet;
 import net.minecraft.client.gui.GuiGraphics;
+import net.minecraft.client.gui.components.EditBox;
+import net.minecraft.client.gui.components.Tooltip;
 import net.minecraft.client.gui.screens.inventory.AbstractContainerScreen;
 import net.minecraft.network.chat.Component;
 import net.minecraft.world.entity.player.Inventory;
 import net.minecraft.world.inventory.Slot;
+import net.neoforged.neoforge.network.PacketDistributor;
+import org.lwjgl.glfw.GLFW;
 
 /**
  * Экран местного щита по {@link PanelLayout}: латунная табличка с именем машины, приборы и слоты на крашеной
@@ -25,6 +30,11 @@ public final class PanelScreen extends AbstractContainerScreen<PanelMenu> {
     private final Map<PanelLayout.Element, Double> shown = new IdentityHashMap<>();
     private long lastFrame = Util.getMillis();
     private PanelFit fit;
+    /** Строки ввода щита; набранное переживает пересборку экрана (смена размера окна). */
+    private final List<Field> fields = new ArrayList<>();
+
+    private record Field(PanelLayout.TextField spec, EditBox box) {
+    }
 
     public PanelScreen(PanelMenu menu, Inventory inv, Component title) {
         super(menu, inv, title);
@@ -37,12 +47,53 @@ public final class PanelScreen extends AbstractContainerScreen<PanelMenu> {
     protected void init() {
         super.init();
         fit = PanelFit.of(layout, font, title);
+        Map<Integer, String> typed = new java.util.HashMap<>();
+        for (Field f : fields) typed.put(f.spec().id(), f.box().getValue());
+        fields.clear();
         for (PanelLayout.Element e : layout.elements) {
             if (e instanceof PanelLayout.Button b) {
                 addRenderableWidget(new PanelButton(leftPos + b.x(), topPos + b.y(), b.w(), 16, b.label(), b.tip(), b.holdMs(),
                         () -> click(b.id())));
+            } else if (e instanceof PanelLayout.TextField t) {
+                // рамка EditBox рисуется на пиксель снаружи: поле на 2 px уже и ниже места под ним
+                EditBox box = new EditBox(font, leftPos + t.x() + 1, topPos + t.y() + 1, t.w() - PanelLayout.TextField.SEND_W - 6, 14,
+                        t.hint());
+                box.setMaxLength(t.maxLength());
+                box.setHint(t.hint());
+                box.setValue(typed.getOrDefault(t.id(), ""));
+                if (t.tip() != null) box.setTooltip(Tooltip.create(t.tip()));
+                Field f = new Field(t, box);
+                fields.add(f);
+                addRenderableWidget(box);
+                addRenderableWidget(new PanelButton(leftPos + t.x() + t.w() - PanelLayout.TextField.SEND_W, topPos + t.y(),
+                        PanelLayout.TextField.SEND_W, 16, t.send(), null, () -> send(f)));
             }
         }
+    }
+
+    /** Отправить строку поля серверу и очистить поле; пустую не шлём. */
+    private void send(Field f) {
+        String text = f.box().getValue().strip();
+        if (text.isEmpty()) return;
+        PacketDistributor.sendToServer(new PanelNet.Text(menu.containerId, f.spec().id(), text));
+        f.box().setValue("");
+    }
+
+    /**
+     * Пока поле в фокусе, клавиши идут ему: иначе клавиша инвентаря ({@code E}) закрыла бы щит посреди набора. Enter
+     * отправляет, Esc закрывает щит как обычно.
+     */
+    @Override
+    public boolean keyPressed(int key, int scan, int mods) {
+        for (Field f : fields) {
+            if (!f.box().isFocused() || key == GLFW.GLFW_KEY_ESCAPE) continue;
+            if (key == GLFW.GLFW_KEY_ENTER || key == GLFW.GLFW_KEY_KP_ENTER) {
+                send(f);
+                return true;
+            }
+            return f.box().keyPressed(key, scan, mods) || f.box().canConsumeInput();
+        }
+        return super.keyPressed(key, scan, mods);
     }
 
     private void click(int id) {
@@ -94,6 +145,8 @@ public final class PanelScreen extends AbstractContainerScreen<PanelMenu> {
                         fit.room(ic, font.width(ic.label())));
                 case PanelLayout.Trace t -> PanelArt.trace(g, t.values().apply(menu), ex, ey, t.w(), t.h());
                 case PanelLayout.Button b -> {
+                }
+                case PanelLayout.TextField t -> {
                 }
             }
         }

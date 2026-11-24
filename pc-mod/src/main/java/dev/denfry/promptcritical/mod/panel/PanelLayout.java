@@ -91,7 +91,14 @@ public final class PanelLayout {
     public interface Tip extends Function<PanelValues, Component> {
     }
 
-    public sealed interface Element permits Dial, Scope, Glass, Bar, Lamp, Readout, Caption, Button, Firebox, UTube, IndicatorCard, Plot, Trace {
+    /** Строка ввода с номером {@code id}; {@code null} — у щита такой нет. */
+    @Nullable
+    public TextField textField(int id) {
+        for (Element e : elements) if (e instanceof TextField t && t.id() == id) return t;
+        return null;
+    }
+
+    public sealed interface Element permits Dial, Scope, Glass, Bar, Lamp, Readout, Caption, Button, TextField, Firebox, UTube, IndicatorCard, Plot, Trace {
         int x();
 
         int y();
@@ -147,6 +154,16 @@ public final class PanelLayout {
         public Button(int x, int y, int w, int id, Component label, @Nullable Component tip) {
             this(x, y, w, id, label, tip, 0);
         }
+    }
+
+    /**
+     * Строка ввода щита шириной {@code w}: поле и кнопка {@code send} (36 px) справа; Enter — то же, что кнопка.
+     * Набранное (не длиннее {@code maxLength}) уходит хосту ({@link PanelHost#onPanelText}) с номером поля {@code id}.
+     */
+    public record TextField(int x, int y, int w, int id, int maxLength, Component hint, Component send, @Nullable Component tip)
+            implements Element {
+        /** Ширина кнопки отправки справа от поля. */
+        public static final int SEND_W = 36;
     }
 
     /**
@@ -287,6 +304,13 @@ public final class PanelLayout {
 
         public Builder button(int x, int y, int w, int id, Component label, @Nullable Component tip) {
             elements.add(new Button(x, y, w, id, label, tip));
+            return this;
+        }
+
+        /** Строка ввода с кнопкой отправки; {@code maxLength} — предел строки, сервер режет так же. */
+        public Builder textField(int x, int y, int w, int id, int maxLength, Component hint, Component send, @Nullable Component tip) {
+            if (w <= TextField.SEND_W + 24) throw new IllegalArgumentException(id + ": text field too narrow");
+            elements.add(new TextField(x, y, w, id, maxLength, hint, send, tip));
             return this;
         }
 

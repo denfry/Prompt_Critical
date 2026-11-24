@@ -177,6 +177,12 @@ public final class GuiCheck {
                         j.addProperty("tw", font.width(c.text()));
                         j.addProperty("t", c.text().getString());
                     }
+                    case PanelLayout.TextField t -> {
+                        j.addProperty("k", "text");
+                        j.addProperty("w", t.w());
+                        j.addProperty("tw", font.width(t.send()));
+                        j.addProperty("t", t.send().getString());
+                    }
                     case PanelLayout.Button b -> {
                         j.addProperty("k", "button");
                         j.addProperty("w", b.w());

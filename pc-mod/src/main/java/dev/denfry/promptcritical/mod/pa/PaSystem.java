@@ -113,28 +113,42 @@ public final class PaSystem {
      * @return число громкоговорителей, которые его передали; 0 — нет зоны, нет питания или занято важнее
      */
     public static int announce(ServerLevel level, @Nullable UUID team, int zone, PaMessage msg) {
-        int target = msg.channel.allZones ? 0 : zone;
-        List<PlantLoudspeakerBlockEntity> list = speakers(level, team, target);
+        return broadcast(level, team, msg.channel, zone, msg.text.get(), msg);
+    }
+
+    /**
+     * Текстовый вызов (13 §13.3.4): без Simple Voice Chat живую речь заменяет сообщение, набранное в пульте, — гонг и
+     * субтитр по каналу пульта, с его приоритетом.
+     *
+     * @return число громкоговорителей, которые его передали
+     */
+    public static int page(ServerLevel level, @Nullable UUID team, PaChannel channel, int zone, String text) {
+        return broadcast(level, team, channel, zone, Component.literal(text), null);
+    }
+
+    /** Гонг, сигнал сообщения {@code signal} (у текстового вызова его нет) и субтитр {@code body} по каналу. */
+    private static int broadcast(ServerLevel level, @Nullable UUID team, PaChannel channel, int zone, Component body,
+            @Nullable PaMessage signal) {
+        List<PlantLoudspeakerBlockEntity> list = speakers(level, team, channel.allZones ? 0 : zone);
         long now = level.getGameTime();
-        for (PlantLoudspeakerBlockEntity s : list) if (s.busyAbove(msg.channel.priority, now)) return 0;
-        Component text = msg.channel.allZones ? SUBTITLE_ALL.get(msg.channel.label.get(), msg.text.get())
-                : SUBTITLE.get(msg.channel.label.get(), zone, msg.text.get());
+        for (PlantLoudspeakerBlockEntity s : list) if (s.busyAbove(channel.priority, now)) return 0;
+        Component text = channel.allZones ? SUBTITLE_ALL.get(channel.label.get(), body) : SUBTITLE.get(channel.label.get(), zone, body);
         Set<ServerPlayer> told = new HashSet<>();
         int sent = 0;
         for (PlantLoudspeakerBlockEntity s : list) {
             if (!s.powered()) continue;
-            s.play(msg.channel.priority, now + MESSAGE_TICKS);
+            s.play(channel.priority, now + MESSAGE_TICKS);
             BlockPos p = s.getBlockPos();
             level.playSound(null, p, SoundEvents.NOTE_BLOCK_CHIME.value(), SoundSource.BLOCKS, 3f, 0.7f);
-            switch (msg) {
-                case EVACUATE, GAS -> level.playSound(null, p, PcSfx.AGZ_SIREN.get(), SoundSource.BLOCKS, 3f, msg == PaMessage.EVACUATE ? 0.8f : 1.1f);
+            if (signal != null) switch (signal) {
+                case EVACUATE, GAS -> level.playSound(null, p, PcSfx.AGZ_SIREN.get(), SoundSource.BLOCKS, 3f, signal == PaMessage.EVACUATE ? 0.8f : 1.1f);
                 case FIRE -> level.playSound(null, p, SoundEvents.NOTE_BLOCK_BELL.value(), SoundSource.BLOCKS, 3f, 1.2f);
                 case ALL_CLEAR -> level.playSound(null, p, SoundEvents.NOTE_BLOCK_CHIME.value(), SoundSource.BLOCKS, 3f, 1.0f);
             }
             double r = rangeM(level, p);
             for (ServerPlayer pl : level.players())
                 if (pl.distanceToSqr(p.getCenter()) <= r * r && told.add(pl))
-                    pl.displayClientMessage(text.copy().withStyle(msg.channel.priority <= 1 ? ChatFormatting.RED : ChatFormatting.YELLOW), true);
+                    pl.displayClientMessage(text.copy().withStyle(channel.priority <= 1 ? ChatFormatting.RED : ChatFormatting.YELLOW), true);
             sent++;
         }
         return sent;

@@ -14,16 +14,20 @@ public final class PaPanels {
     public static final int S_ZONE = 0, S_FLAGS = 1, S_RANGE10 = 2, SPEAKER_CHANNELS = 3;
     public static final int F_POWERED = 1, F_ACTIVE = 2, F_VOICE = 4;
     public static final int B_CHANNEL0 = 0, B_PREV = 10, B_NEXT = 11, B_MESSAGE0 = 20;
+    /** Поле текстового вызова и предел его строки, знаков (строка субтитра над хотбаром). */
+    public static final int T_PAGE = 0, PAGE_MAX_CHARS = 80;
 
     static final Tr ZONE = PanelText.tr("pa.zone", "Zone %s", "Зона %s"),
             ALL_ZONES = PanelText.tr("pa.all_zones", "all zones", "все зоны"),
             INTERCOM_STATUS = PanelText.tr("pa.intercom_status", "Channel %s · %s · loudspeakers: %s",
                     "Канал %s · %s · громкоговорителей: %s"),
             TALKING = PanelText.tr("pa.talking", "PTT pressed: live speech on air", "Тангента нажата: живая речь в эфире"),
-            HINT = PanelText.tr("pa.hint", "Shift+RMB at the station: press-to-talk (Simple Voice Chat)",
-                    "Shift+ПКМ у пульта: тангента (Simple Voice Chat)"),
-            HINT_NO_VOICE = PanelText.tr("pa.hint_no_voice", "No Simple Voice Chat: prerecorded messages only",
-                    "Нет Simple Voice Chat: только предзаписанные сообщения"),
+            PAGE_HINT = PanelText.tr("pa.page_hint", "Type a call, Enter", "Текст вызова, Enter"),
+            PAGE_SEND = PanelText.tr("pa.page_send", "Call", "Вызов"),
+            PAGE_TIP = PanelText.tr("pa.page_tip",
+                    "Typed call: a gong, then the text as a subtitle by the loudspeakers of the channel. Live speech: Shift+RMB at the station (Simple Voice Chat)",
+                    "Текстовый вызов: гонг и текст субтитром у громкоговорителей канала. Живая речь: Shift+ПКМ у пульта (Simple Voice Chat)"),
+            PAGE_WAIT = PanelText.tr("pa.page_wait", "The station can call again in %s s", "Следующий вызов с пульта через %s с"),
             FAULT = PanelText.tr("pa.fault", "PA fault: no power", "Неисправность ГГС: нет питания"),
             NOT_YOURS = PanelText.tr("pa.not_yours", "This PA belongs to another station", "Это ГГС другой станции"),
             TALK_ON = PanelText.tr("pa.talk_on", "On air: %s, %s", "В эфире: %s, %s"),
@@ -63,7 +67,7 @@ public final class PaPanels {
         b.readout(8, 64, 216, PaPanels::intercomStatus, null);
         PaMessage[] m = PaMessage.values();
         for (int i = 0; i < m.length; i++) b.button(8 + 54 * i, 82, 50, B_MESSAGE0 + i, m[i].button.get(), m[i].text.get());
-        b.readout(8, 104, 216, v -> (v.raw(I_FLAGS) & F_VOICE) != 0 ? HINT.get() : HINT_NO_VOICE.get(), null);
+        b.textField(8, 102, 216, T_PAGE, PAGE_MAX_CHARS, PAGE_HINT.get(), PAGE_SEND.get(), PAGE_TIP.get());
         return b.art(PromptCritical.id("textures/gui/panel/intercom_station.png")).noInventory().build();
     }
 

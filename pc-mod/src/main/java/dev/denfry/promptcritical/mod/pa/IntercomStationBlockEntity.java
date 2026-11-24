@@ -51,6 +51,8 @@ public class IntercomStationBlockEntity extends DeviceBlockEntity implements Fou
     @Nullable
     private UUID team, talker;
     private long talkUntil;
+    /** Время мира, раньше которого пульт не даёт новый текстовый вызов ({@code ops.pa_page_cooldown_s}). */
+    private long nextPage;
 
     public IntercomStationBlockEntity(BlockPos pos, BlockState state) {
         super(PaBlockEntities.INTERCOM_STATION.get(), pos, state);
@@ -211,6 +213,38 @@ public class IntercomStationBlockEntity extends DeviceBlockEntity implements Fou
             player.displayClientMessage(sent > 0 ? PaPanels.SENT.get(sent) : PaPanels.NOT_SENT.get(), true);
         }
         setChanged();
+    }
+
+    @Override
+    public void onPanelText(ServerPlayer player, int id, String text) {
+        if (id == PaPanels.T_PAGE) page(player, text);
+    }
+
+    /**
+     * Текстовый вызов с пульта по выбранному каналу и зоне (13 §13.3.4): не чаще раза в {@code ops.pa_page_cooldown_s};
+     * пауза отсчитывается только от переданного вызова.
+     *
+     * @return число громкоговорителей, которые его передали; 0 — отказ (чужой пульт, нет питания, пауза, зона пуста или занята)
+     */
+    public int page(ServerPlayer player, String text) {
+        if (!(level instanceof ServerLevel sl)) return 0;
+        if (!mayUse(player)) {
+            player.displayClientMessage(PaPanels.NOT_YOURS.get().withStyle(ChatFormatting.RED), true);
+            return 0;
+        }
+        if (!powered) {
+            player.displayClientMessage(PaPanels.FAULT.get().withStyle(ChatFormatting.RED), true);
+            return 0;
+        }
+        long now = sl.getGameTime();
+        if (now < nextPage) {
+            player.displayClientMessage(PaPanels.PAGE_WAIT.get((nextPage - now + 19) / 20), true);
+            return 0;
+        }
+        int sent = PaSystem.page(sl, team, channel(), zone, text);
+        if (sent > 0) nextPage = now + 20L * dev.denfry.promptcritical.mod.config.ServerConfig.PA_PAGE_COOLDOWN_S.get();
+        player.displayClientMessage(sent > 0 ? PaPanels.SENT.get(sent) : PaPanels.NOT_SENT.get(), true);
+        return sent;
     }
 
     // ------------------------------------------------------------------ руки и сохранение

@@ -128,6 +128,7 @@ public final class PanelFit {
                 case PanelLayout.Trace t -> bodies.add(new Box("trace", x, y, x + t.w(), y + t.h()));
                 case PanelLayout.Caption c -> labels.add(new Label(e, str(c.text()), false, x, y, font.width(c.text())));
                 case PanelLayout.Button b -> bodies.add(new Box("button " + str(b.label()), x, y, x + b.w(), y + 16));
+                case PanelLayout.TextField t -> bodies.add(new Box("text field " + t.id(), x, y, x + t.w(), y + 16));
             }
         }
         for (PanelLayout.SlotSpec s : layout.slots) bodies.add(new Box("slot " + s.index(), s.x() - 1, s.y() - 1, s.x() + 17, s.y() + 17));
