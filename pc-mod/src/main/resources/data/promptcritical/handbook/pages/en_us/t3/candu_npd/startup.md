@@ -4,9 +4,11 @@ A new reactor is dry and its calandria is empty. Load the core first, while the 
 
 Fill the heat transport circuit to the top through the headers: a half-empty circuit is a voided one. Then pipe some 100 t of heavy water into the dump tank. Start the heat transport pumps and press "Reset" to close the dump valves.
 
-The moderator rises about 4 t a minute, and the board's tall glass shows the level and how fast it moves. A fresh core goes critical with the calandria only about a third full. Near that point the margin is thin: a few hundred kilograms above critical already give a period shorter than 10 s, and the dump trips. That is ten seconds of pumping, so stopping by hand with ■ at the right moment is hard.
+The board's tall glass shows the level and how fast it moves. A fresh core goes critical with the calandria only about a third full, and near that point the margin is thin: every 100 kg of heavy water above critical adds about 0.36 mk, and some 700 kg give a period shorter than 10 s and trip the dump.
 
-The safe way is to let the controller do it. Set the power you want with − and + and press "Auto" before raising anything: it pumps the moderator up, slows down as the core approaches critical and never lets the period fall below 30 s. From an empty calandria to 10 % power takes about a quarter of an hour. ▲ and ▼ switch back to manual. As the fuel burns the critical level creeps up, and when it reaches the top it is time to refuel.
+NPD was run on its automatic level controller, and so is this one. Set the power you want with − and + and press "Auto": it runs the pumps at full rate, about 4 t a minute, while the core is far from critical, slows down as it gets close and never lets the period fall below 30 s. From an empty calandria to 10 % power takes about a quarter of an hour.
+
+▲ and ▼ switch to manual and move the level through the fine control valve, about 0.4 t a minute. That is slow enough to bring a core critical by hand: raise the level, watch the period, stop with ■ when it is down to a minute or so, and lower with ▼ if it keeps shortening. Filling the calandria by hand would take hours, so let "Auto" do the bulk. As the fuel burns the critical level creeps up, and when it reaches the top it is time to refuel.
 
 ## The dump
 

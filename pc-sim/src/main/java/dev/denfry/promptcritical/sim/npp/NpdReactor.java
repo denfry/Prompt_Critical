@@ -56,7 +56,13 @@ public final class NpdReactor {
      * клапан спуска — тот же расход.
      */
     public static final double PUMP_KG_S = 70, DRAIN_KG_S = 70;
-    /** Сбросные проёмы: площадь, м², и коэффициент расхода [оценка: уровень падает на треть за ~3 с]. */
+    /**
+     * Ручной подъём и спуск — тонким регулирующим клапаном, кг/с [оценка: документа NPD о скорости не нашли; у критического
+     * уровня 100 кг ≈ 0,36 mk, так что 7 кг/с — ≈ 0,025 mk/с, и до периода 10 с остаются минуты, а не секунды]. Полный
+     * расход насосов {@link #PUMP_KG_S} — только у автомата, пока он далеко от критического уровня.
+     */
+    public static final double FINE_KG_S = 7;
+    /** Сбросные проёмы: площадь, м², и коэффициент расхода [оценка: с уровня свежей зоны каландр пуст за ~5 с]. */
     public static final double DUMP_AREA_M2 = 2.5, DUMP_CD = 0.62;
     /** Автомат: наибольшая целевая обратная величина периода на подъёме и спуске, 1/с; усиление по ней. */
     public static final double MAX_RISE_PER_S = 1.0 / 30, MAX_FALL_PER_S = 1.0 / 20, LEVEL_GAIN = 40;
@@ -235,8 +241,9 @@ public final class NpdReactor {
             down = D2O_DENSITY * DUMP_CD * DUMP_AREA_M2 * Math.sqrt(2 * dev.denfry.promptcritical.sim.combustion.Chimney.GRAVITY * Math.max(0, h));
         } else {
             double u = mode == LevelMode.AUTO ? autoCommand() : levelDrive;
-            if (u > 0 && pumpsPowered) up = u * PUMP_KG_S;
-            if (u < 0) down = -u * DRAIN_KG_S;
+            double upKgS = mode == LevelMode.AUTO ? PUMP_KG_S : FINE_KG_S, downKgS = mode == LevelMode.AUTO ? DRAIN_KG_S : FINE_KG_S;
+            if (u > 0 && pumpsPowered) up = u * upKgS;
+            if (u < 0) down = -u * downKgS;
         }
         double moved = 0;
         if (up > 0) moved = transfer(dumpTank, moderator, Math.min(up * DT, moderatorCapacityKg() - moderator.kg()));
@@ -381,10 +388,14 @@ public final class NpdReactor {
         double w = Math.max(0.03, flowActual * coolantFill());
         double ua = Math.max(1e3, core.rodLengthM() * 1000 / FUEL_R_K_PER_KW_M);
         double c = Math.max(1e5, FUEL_C_J_PER_KG_HM * core.heavyMetalKg());
-        double cool = (INLET_K + outletK) / 2;
-        double q = ua * (fuelK - cool);
+        // Нагрев теплоносителя k·q и средняя температура (вход + выход)/2 решаются вместе: при явной подстановке
+        // прошлого выхода петля «выход → средняя → q» при малом расходе (естественная циркуляция, w = 0,03) имеет
+        // усиление ua·k/2 ≈ 3, раскачивается, и топливо разогревается само по себе.
+        double k = (OUTLET_K - INLET_K) / NOMINAL_W / w;
+        double dT = fuelK - INLET_K;
+        double q = dT > 0 ? ua * dT / (1 + ua * k / 2) : ua * dT;
         fuelK += ((core.loadedAssemblies() > 0 ? heat : 0) - q) / c * DT;
-        outletK = INLET_K + (OUTLET_K - INLET_K) * Math.max(0, q) / NOMINAL_W / w;
+        outletK = INLET_K + k * Math.max(0, q);
         properties();
     }
 
