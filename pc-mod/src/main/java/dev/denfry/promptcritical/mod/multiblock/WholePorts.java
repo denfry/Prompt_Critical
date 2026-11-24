@@ -22,6 +22,17 @@ public final class WholePorts {
             U = Direction.UP, D = Direction.DOWN;
 
     private static final Map<String, List<Port>> PORTS = Map.ofEntries(
+            // водородная станция (art/blockbench/hydrogen/hydrogen.author.js); порядок портов — роли в mod.hydrogen
+            // электролизёр: 0 шины постоянного тока, 1 обессоленная вода, 2 водород, 3 кислород, 4 вода охлаждения
+            Map.entry("h2_electrolyser_real", List.of(p(-4, 1, 0, W), p(2, 0, 1, S), p(4, 3, 0, U), p(3, 3, 0, U), p(-1, 0, 1, S))),
+            // компрессор: 0 всас, 1 нагнетание, 2 питание, 3 вода охлаждения
+            Map.entry("h2_compressor_real", List.of(p(-2, 0, 0, W), p(2, 0, 0, E), p(1, 0, -1, N), p(0, 0, 1, S))),
+            // рампа: 0 вход-выход, 1 свеча
+            Map.entry("h2_tube_bank_real", List.of(p(3, 1, 0, E), p(3, 2, 0, U))),
+            // газгольдер: 0 вход, 1 выход, 2 свеча, 3 дренаж
+            Map.entry("h2_gasholder_real", List.of(p(-2, 1, 0, W), p(2, 1, 0, E), p(0, 12, 0, U), p(0, 0, 0, D))),
+            // топливный элемент: 0 водород, 1 переменный ток, 2 вода, 3 выхлоп воздуха
+            Map.entry("h2_fuel_cell_real", List.of(p(-1, 0, 0, W), p(1, 0, 0, E), p(-1, 0, 0, D), p(-1, 2, 0, U))),
             // холодные (y 7) и горячие (y 9) нитки по обе стороны корпуса
             // топливный цикл (fuelcycle-dimensions): коллекторы центрифуг сверху / с торцов, питание снизу
             Map.entry("gas_centrifuge_real", List.of(p(0, 1, 0, U), p(0, 0, 0, D))),
@@ -212,6 +223,30 @@ public final class WholePorts {
         Direction face = side.getAxis().isVertical() ? side : modelFace(side, facing);
         for (Port p : ports) if (p.x() == mx && p.y() == dy && p.z() == mz && p.face() == face) return true;
         return false;
+    }
+
+    /** Номер порта машины {@code id} в клетке (dx, dy, dz) от контроллера с мировой грани {@code side}; −1 — не порт. */
+    public static int portIndex(String id, Direction facing, int dx, int dy, int dz, Direction side) {
+        List<Port> ports = PORTS.get(id);
+        if (ports == null) return -1;
+        double[] m = WholeShapes.unrotate(dx + 0.5, dz + 0.5, facing);
+        int mx = (int) Math.floor(m[0]), mz = (int) Math.floor(m[1]);
+        Direction face = side.getAxis().isVertical() ? side : modelFace(side, facing);
+        for (int i = 0; i < ports.size(); i++) {
+            Port p = ports.get(i);
+            if (p.x() == mx && p.y() == dy && p.z() == mz && p.face() == face) return i;
+        }
+        return -1;
+    }
+
+    /** Мировая клетка порта {@code p} машины с контроллером {@code controller}, повёрнутой на {@code facing}. */
+    public static net.minecraft.core.BlockPos cell(net.minecraft.core.BlockPos controller, Direction facing, Port p) {
+        return controller.offset(new net.minecraft.core.BlockPos(p.x(), p.y(), p.z()).rotate(Footprint.rotation(facing)));
+    }
+
+    /** Мировая грань порта {@code p}. */
+    public static Direction worldFace(Direction facing, Port p) {
+        return p.face().getAxis().isVertical() ? p.face() : Footprint.rotation(facing).rotate(p.face());
     }
 
     /** Мировая горизонтальная грань → грань модели (обратный поворот, как у отрисовки). */

@@ -94,6 +94,12 @@ public final class SiteRegistry {
     public static final DeferredItem<DesignDrawingItem> MAGNETIC_SEPARATOR_REAL_DRAWING = drawing("magnetic_separator_real");
     public static final DeferredItem<DesignDrawingItem> FLOTATION_CELL_REAL_DRAWING = drawing("flotation_cell_real");
     public static final DeferredItem<DesignDrawingItem> ELECTRODE_BOILER_REAL_DRAWING = drawing("electrode_boiler_real");
+    // водородная станция
+    public static final DeferredItem<DesignDrawingItem> H2_ELECTROLYSER_REAL_DRAWING = drawing("h2_electrolyser_real");
+    public static final DeferredItem<DesignDrawingItem> H2_COMPRESSOR_REAL_DRAWING = drawing("h2_compressor_real");
+    public static final DeferredItem<DesignDrawingItem> H2_TUBE_BANK_REAL_DRAWING = drawing("h2_tube_bank_real");
+    public static final DeferredItem<DesignDrawingItem> H2_GASHOLDER_REAL_DRAWING = drawing("h2_gasholder_real");
+    public static final DeferredItem<DesignDrawingItem> H2_FUEL_CELL_REAL_DRAWING = drawing("h2_fuel_cell_real");
     // кузница и машиностроение реального масштаба (18 §18.6–18.7)
     public static final DeferredItem<DesignDrawingItem> POWER_HAMMER_REAL_DRAWING = drawing("power_hammer_real");
     public static final DeferredItem<DesignDrawingItem> BLOOMERY_REAL_DRAWING = drawing("bloomery_real");
