@@ -191,6 +191,9 @@ public final class MethanolConverterBlockEntity extends KineticMachineBlockEntit
     /** Колонна ректификации, касающаяся агрегата (любой его клетки). */
     @Nullable
     private MethanolColumnBlockEntity column() {
+        // реактор реального масштаба: колонна — у патрубка метанола-сырца (восток, внизу), вплотную или по трубе
+        if (wholeModelId() != null)
+            return dev.denfry.promptcritical.mod.multiblock.WholeLinks.across(level, worldPosition, wholeModelFacing(), new BlockPos(2, 0, 0), Direction.EAST, MethanolColumnBlockEntity::at);
         for (BlockPos cell : new BlockPos[] {worldPosition, worldPosition.above()})
             for (Direction d : Direction.values()) {
                 MethanolColumnBlockEntity c = MethanolColumnBlockEntity.at(level, cell.relative(d));
@@ -276,8 +279,11 @@ public final class MethanolConverterBlockEntity extends KineticMachineBlockEntit
         var fx = fx();
         if (fx == null || !runningState()) return;
         double n = Math.min(1.5, Math.abs(getSpeed()) / 64.0);
-        if (fx.chance(1 + 3 * n)) fx.wisp(fx.at(8, 31.6, 5), 0.1);
-        if (fx.chance(0.3 * n)) fx.puff(fx.at(8, 31.6, 5), new net.minecraft.world.phys.Vec3(0, 0.08, 0), 2);
+        boolean real = wholeModelId() != null;
+        // у реального — предохранительный клапан парового барабана над корпусом
+        net.minecraft.world.phys.Vec3 valve = real ? fx.at(-8, 210, -16) : fx.at(8, 31.6, 5);
+        if (fx.chance(1 + 3 * n)) fx.wisp(valve, 0.1);
+        if (fx.chance(0.3 * n)) fx.puff(valve, new net.minecraft.world.phys.Vec3(0, 0.08, 0), 2);
     }
 
     @Override

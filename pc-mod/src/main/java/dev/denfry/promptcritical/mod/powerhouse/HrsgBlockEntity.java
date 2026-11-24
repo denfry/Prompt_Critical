@@ -43,7 +43,9 @@ import net.minecraft.world.level.block.state.properties.BlockStateProperties;
  * даёт сам котёл. Тепло — по пинч-точке: газ на выходе испарителя на 10 К горячее кипящей воды, питательная вода
  * 104 °C (после деаэратора). Холодный выхлоп (холостой ход ГТУ) пара не даёт.
  */
-public final class HrsgBlockEntity extends DeviceBlockEntity implements FoundryDevice, PanelHost {
+public final class HrsgBlockEntity extends DeviceBlockEntity implements FoundryDevice, PanelHost, dev.denfry.promptcritical.mod.client.whole.RealScaleBlockEntity {
+    /** Котёл реального масштаба: вход газохода (запад) и паровой патрубок (север), клетки модели. */
+    private static final BlockPos GT_PORT = new BlockPos(-6, 3, 0), STEAM_PORT = new BlockPos(0, 16, -3), STACK = new BlockPos(6, 17, 0);
     public static final double FEED_K = 377.15;
     private static final WaterProperties WATER = WaterProperties.tables();
 
@@ -94,7 +96,7 @@ public final class HrsgBlockEntity extends DeviceBlockEntity implements FoundryD
     private void clientFx() {
         MachineFx fx = MachineFx.of(level, worldPosition, getBlockState().getValue(BlockStateProperties.HORIZONTAL_FACING));
         if (fx == null || !getBlockState().getValue(PcProperties.RUNNING)) return;
-        if (fx.chance(3)) fx.wisp(fx.at(8, 48 + 32, -6), 0.6);
+        if (fx.chance(3)) fx.wisp(real() ? fx.at(104, 290, 8) : fx.at(8, 48 + 32, -6), 0.6);
     }
 
     @Override
@@ -105,8 +107,8 @@ public final class HrsgBlockEntity extends DeviceBlockEntity implements FoundryD
         }
         if (!(level instanceof ServerLevel sl)) return;
         if (ticks++ % 20 == 0) {
-            turbine = findTurbine();
-            boiler = findBoiler();
+            turbine = real() ? findTurbineReal() : findTurbine();
+            boiler = real() ? findBoilerReal() : findBoiler();
         }
         GasTurbineBlockEntity gt = turbine != null && level.getBlockEntity(turbine) instanceof GasTurbineBlockEntity g ? g : null;
         SteamPlant p = plant();
@@ -121,9 +123,9 @@ public final class HrsgBlockEntity extends DeviceBlockEntity implements FoundryD
         sink = p != null && !boiler.isNone() && p.setElectricHeatW(boiler, last.dutyW());
         if (ticks % 10 == 0) {
             setFlag(deliveredW() > 1e4);
+            BlockPos top = real() ? dev.denfry.promptcritical.mod.multiblock.WholeLinks.portCell(worldPosition, wholeModelFacing(), STACK).above() : worldPosition.above(5);
             if (deliveredW() > 1e5)
-                sl.sendParticles(ParticleTypes.CLOUD, worldPosition.getX() + 0.5, worldPosition.getY() + 5.2, worldPosition.getZ() + 0.5,
-                        1, 0.3, 0.05, 0.3, 0.02);
+                sl.sendParticles(ParticleTypes.CLOUD, top.getX() + 0.5, top.getY() + 0.2, top.getZ() + 0.5, 1, 0.3, 0.05, 0.3, 0.02);
         }
     }
 
@@ -171,6 +173,37 @@ public final class HrsgBlockEntity extends DeviceBlockEntity implements FoundryD
         return null;
     }
 
+    /** Котёл реального масштаба: ГТУ — у входа газохода (касанием выхлопного диффузора, контроллер ГТУ на 13 западнее). */
+    @Nullable
+    private BlockPos findTurbineReal() {
+        GasTurbineBlockEntity g = dev.denfry.promptcritical.mod.multiblock.WholeLinks.across(level, worldPosition, wholeModelFacing(), GT_PORT, Direction.WEST, GasTurbineBlockEntity::at);
+        return g == null ? null : g.getBlockPos();
+    }
+
+    /** Котёл реального масштаба: котёл-приёмник пара — у парового патрубка, вплотную или в конце трубы Create. */
+    private SimId findBoilerReal() {
+        SimId id = dev.denfry.promptcritical.mod.multiblock.WholeLinks.across(level, worldPosition, wholeModelFacing(), STEAM_PORT, Direction.NORTH, HrsgBlockEntity::boilerAt);
+        return id == null ? SimId.NONE : id;
+    }
+
+    /** Котёл, которому принадлежит клетка {@code n}; {@code null} — не котёл. */
+    @Nullable
+    private static SimId boilerAt(net.minecraft.world.level.Level level, BlockPos n) {
+        FireTubeBoilerBlockEntity fire = FireTubeBoilerBlockEntity.at(level, n);
+        if (fire != null && !fire.simId().isNone()) return fire.simId();
+        BlockState s = level.getBlockState(n);
+        if (s.is(PcBlocks.STEAM_DRUM.get()) || s.is(PcBlocks.BOILER_WALL.get()) || s.is(PcBlocks.WATER_TUBE_BOILER.get())) {
+            WaterTubeBoilerBlockEntity wt = WaterTubeBoilerBlockEntity.of(level, n);
+            if (wt != null && wt.shape() != null && !wt.simId().isNone()) return wt.simId();
+        }
+        return null;
+    }
+
+    @Override
+    public BlockPos wholeModelLightPos() {
+        return worldPosition.relative(wholeModelFacing(), real() ? 4 : 1);
+    }
+
     /** Котёл, которого касается котёл-утилизатор (любая клетка обоих кубов). */
     private SimId findBoiler() {
         for (int x = -2; x <= 2; x++)
@@ -178,14 +211,8 @@ public final class HrsgBlockEntity extends DeviceBlockEntity implements FoundryD
                 for (int z = -2; z <= 2; z++) {
                     int out = (Math.abs(x) == 2 ? 1 : 0) + (Math.abs(z) == 2 ? 1 : 0) + (y == -2 || y == 5 ? 1 : 0);
                     if (out != 1) continue;
-                    BlockPos n = worldPosition.offset(x, y, z);
-                    FireTubeBoilerBlockEntity fire = FireTubeBoilerBlockEntity.at(level, n);
-                    if (fire != null && !fire.simId().isNone()) return fire.simId();
-                    BlockState s = level.getBlockState(n);
-                    if (s.is(PcBlocks.STEAM_DRUM.get()) || s.is(PcBlocks.BOILER_WALL.get()) || s.is(PcBlocks.WATER_TUBE_BOILER.get())) {
-                        WaterTubeBoilerBlockEntity wt = WaterTubeBoilerBlockEntity.of(level, n);
-                        if (wt != null && wt.shape() != null && !wt.simId().isNone()) return wt.simId();
-                    }
+                    SimId id = boilerAt(level, worldPosition.offset(x, y, z));
+                    if (id != null) return id;
                 }
         return SimId.NONE;
     }

@@ -51,20 +51,15 @@ public final class FoundryBinding {
             FoundryDevice d = port(level, pos, MultiblockPartBlock.anchor(state, pos), side);
             return d == null ? null : d.items(side);
         }, PcBlocks.MULTIBLOCK_PART.get());
-        event.registerBlock(Capabilities.FluidHandler.BLOCK, (level, pos, state, be, side) -> {
-            FoundryDevice d = port(level, pos, MultiblockPartBlock.anchor(state, pos), side);
-            return d == null ? null : d.fluids(side);
-        }, PcBlocks.MULTIBLOCK_PART.get());
+        event.registerBlock(Capabilities.FluidHandler.BLOCK,
+                (level, pos, state, be, side) -> portFluids(level, pos, MultiblockPartBlock.anchor(state, pos), side), PcBlocks.MULTIBLOCK_PART.get());
         // машины реального масштаба: якоря сегментов без BE тоже бывают клеткой патрубка
         Block[] whole = net.minecraft.core.registries.BuiltInRegistries.BLOCK.stream().filter(PcBlocks::isWholeModel).toArray(Block[]::new);
         event.registerBlock(Capabilities.ItemHandler.BLOCK, (level, pos, state, be, side) -> {
             FoundryDevice d = be != null ? null : port(level, pos, pos, side);
             return d == null ? null : d.items(side);
         }, whole);
-        event.registerBlock(Capabilities.FluidHandler.BLOCK, (level, pos, state, be, side) -> {
-            FoundryDevice d = be != null ? null : port(level, pos, pos, side);
-            return d == null ? null : d.fluids(side);
-        }, whole);
+        event.registerBlock(Capabilities.FluidHandler.BLOCK, (level, pos, state, be, side) -> be != null ? null : portFluids(level, pos, pos, side), whole);
     }
 
     /**
@@ -84,6 +79,22 @@ public final class FoundryBinding {
                     pos.getZ() - c.getZ(), side)) return null;
         }
         return d;
+    }
+
+    /** Бак за патрубком в клетке {@code pos} машины реального масштаба: машина различает патрубки по клетке модели. */
+    @Nullable
+    private static net.neoforged.neoforge.fluids.capability.IFluidHandler portFluids(Level level, BlockPos pos, BlockPos anchor,
+            @Nullable net.minecraft.core.Direction side) {
+        FoundryDevice d = port(level, pos, anchor, side);
+        if (d == null || side == null) return d == null ? null : d.fluids(side);
+        BlockPos c = PcBlock.structureController(level, anchor);
+        BlockState cs = c == null ? null : level.getBlockState(c);
+        if (cs == null || !(cs.getBlock() instanceof PcBlock pc)) return d.fluids(side);
+        net.minecraft.core.Direction f = pc.facing(cs);
+        double[] m = dev.denfry.promptcritical.mod.multiblock.WholeShapes.unrotate(pos.getX() - c.getX() + 0.5, pos.getZ() - c.getZ() + 0.5, f);
+        net.minecraft.core.Direction face = side.getAxis().isVertical() ? side
+                : dev.denfry.promptcritical.mod.multiblock.WholePorts.modelFace(side, f);
+        return d.fluidsAt((int) Math.floor(m[0]), pos.getY() - c.getY(), (int) Math.floor(m[1]), face, side);
     }
 
     private static <T extends BlockEntity & FoundryDevice> void caps(RegisterCapabilitiesEvent event, BlockEntityType<T> type) {

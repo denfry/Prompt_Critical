@@ -105,6 +105,15 @@ public final class SiteRegistry {
     public static final DeferredItem<DesignDrawingItem> BLOOMERY_REAL_DRAWING = drawing("bloomery_real");
     public static final DeferredItem<DesignDrawingItem> FORGE_HEARTH_REAL_DRAWING = drawing("forge_hearth_real");
     public static final DeferredItem<DesignDrawingItem> ASSEMBLY_STAND_DRAWING = drawing("assembly_stand");
+    // I3 реального масштаба: ПГУ, азот, метанол, пиролиз, хлор и ПВХ
+    public static final DeferredItem<DesignDrawingItem> GAS_TURBINE_HEAVY_REAL_DRAWING = drawing("gas_turbine_heavy_real");
+    public static final DeferredItem<DesignDrawingItem> HRSG_REAL_DRAWING = drawing("hrsg_real");
+    public static final DeferredItem<DesignDrawingItem> STEAM_REFORMER_REAL_DRAWING = drawing("steam_reformer_real");
+    public static final DeferredItem<DesignDrawingItem> AMMONIA_CONVERTER_REAL_DRAWING = drawing("ammonia_converter_real");
+    public static final DeferredItem<DesignDrawingItem> METHANOL_CONVERTER_REAL_DRAWING = drawing("methanol_converter_real");
+    public static final DeferredItem<DesignDrawingItem> PYROLYSIS_FURNACE_REAL_DRAWING = drawing("pyrolysis_furnace_real");
+    public static final DeferredItem<DesignDrawingItem> CHLOR_ALKALI_ELECTROLYSER_REAL_DRAWING = drawing("chlor_alkali_electrolyser_real");
+    public static final DeferredItem<DesignDrawingItem> PVC_REACTOR_REAL_DRAWING = drawing("pvc_reactor_real");
     public static final DeferredItem<DesignDrawingItem> CRANK_PRESS_REAL_DRAWING = drawing("crank_press_real");
     public static final DeferredItem<DesignDrawingItem> WIRE_MILL_REAL_DRAWING = drawing("wire_mill_real");
     public static final DeferredItem<DesignDrawingItem> SHEET_MILL_REAL_DRAWING = drawing("sheet_mill_real");

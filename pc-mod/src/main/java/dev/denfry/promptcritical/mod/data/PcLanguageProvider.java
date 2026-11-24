@@ -754,6 +754,14 @@ public final class PcLanguageProvider extends LanguageProvider {
         b("h2_tube_bank_real", "Hydrogen Tube Bank, 200 bar", "Баллонная рампа водорода 200 бар");
         b("h2_gasholder_real", "Hydrogen Gasholder", "Газгольдер водорода");
         b("h2_fuel_cell_real", "PEM Fuel Cell Module, 200 kW", "Модуль топливных элементов PEM 200 кВт");
+        b("gas_turbine_heavy_real", "Heavy Gas Turbine (V94.2 Class)", "Тяжёлая газовая турбина класса V94.2");
+        b("hrsg_real", "Horizontal Heat Recovery Steam Generator", "Горизонтальный котёл-утилизатор");
+        b("steam_reformer_real", "Top-Fired Primary Steam Reformer", "Трубчатая печь первичного риформинга");
+        b("ammonia_converter_real", "Quench Ammonia Converter", "Колонна синтеза аммиака с холодными байпасами");
+        b("methanol_converter_real", "Lurgi Isothermal Methanol Converter", "Изотермический реактор синтеза метанола Lurgi");
+        b("pyrolysis_furnace_real", "SRT Ethylene Pyrolysis Furnace", "Печь пиролиза этилена типа SRT");
+        b("chlor_alkali_electrolyser_real", "Bipolar Membrane Electrolyser", "Биполярный мембранный электролизёр");
+        b("pvc_reactor_real", "30 m³ Suspension PVC Reactor", "Реактор суспензионной полимеризации 30 м³");
         b("wind_turbine", "Wind Power Unit D-30", "Ветроэлектростанция Д-30");
         b("dam_gate", "Dam Intake Gate", "Затвор водозабора");
         b("gas_turbine", "Gas Turbine Unit", "Газотурбинная установка");

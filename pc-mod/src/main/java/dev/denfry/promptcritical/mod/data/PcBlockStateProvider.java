@@ -435,6 +435,8 @@ public final class PcBlockStateProvider extends BlockStateProvider {
                     "oil_tank_floating_real" -> "whole_empty";
             case "portal_monitor_real", "hand_foot_monitor_real", "hot_cell_real", "spent_fuel_cask_real", "cask_transport_cart_real",
                  "dry_storage_module_real" -> "whole_empty";
+            case "gas_turbine_heavy_real", "hrsg_real", "steam_reformer_real", "ammonia_converter_real", "methanol_converter_real",
+                 "pyrolysis_furnace_real", "chlor_alkali_electrolyser_real", "pvc_reactor_real" -> "whole_empty";
             case "electrorefining_cell_real", "peirce_smith_converter_real", "reduction_pot_real", "bayer_digester_real",
                  "alumina_precipitator_real", "matte_smelter_real" -> "whole_empty";
             case "pressurizer" -> s.getValue(BlockStateProperties.LIT) ? id + "_lit" : id;

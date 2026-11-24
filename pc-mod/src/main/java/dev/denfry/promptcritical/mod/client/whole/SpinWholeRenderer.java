@@ -87,6 +87,12 @@ public final class SpinWholeRenderer<T extends BlockEntity & WholeModelHost> imp
         return this;
     }
 
+    /** Печь с горящим вариантом цельной модели ({@code <id>_lit}, пока у контроллера {@code lit}). */
+    public SpinWholeRenderer<T> lit() {
+        return variant("_lit", st -> st.hasProperty(net.minecraft.world.level.block.state.properties.BlockStateProperties.LIT)
+                && st.getValue(net.minecraft.world.level.block.state.properties.BlockStateProperties.LIT));
+    }
+
     /** Часть, видимая только пока машина работает (пена флотокамеры). */
     public SpinWholeRenderer<T> whileRunning(PartialModel part) {
         whileRunning.add(part);

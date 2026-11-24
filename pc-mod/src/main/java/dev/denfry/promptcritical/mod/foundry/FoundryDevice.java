@@ -22,6 +22,16 @@ public interface FoundryDevice {
         return null;
     }
 
+    /**
+     * Бак за патрубком машины реального масштаба: клетка (mx, my, mz) и грань {@code modelFace} — в координатах модели
+     * ({@link dev.denfry.promptcritical.mod.multiblock.WholePorts}), {@code side} — мировая грань. Машине, у которой на
+     * одной грани несколько патрубков разных жидкостей, клетка различает их; по умолчанию — {@link #fluids}.
+     */
+    @Nullable
+    default IFluidHandler fluidsAt(int mx, int my, int mz, Direction modelFace, Direction side) {
+        return fluids(side);
+    }
+
     /** Предмет можно положить в машину рукой (проверяется на обеих сторонах). */
     boolean accepts(ItemStack stack);
 

@@ -31,11 +31,11 @@ public final class PowerhouseBlockEntities {
     public static final DeferredHolder<BlockEntityType<?>, BlockEntityType<HydroTurbineBlockEntity>> HYDRO_TURBINE =
             type("hydro_turbine", HydroTurbineBlockEntity::new, PcBlocks.HYDRO_TURBINE);
     public static final DeferredHolder<BlockEntityType<?>, BlockEntityType<GasTurbineBlockEntity>> GAS_TURBINE =
-            type("gas_turbine", GasTurbineBlockEntity::new, PcBlocks.GAS_TURBINE);
+            type("gas_turbine", GasTurbineBlockEntity::new, PcBlocks.GAS_TURBINE, PcBlocks.GAS_TURBINE_HEAVY_REAL);
     public static final DeferredHolder<BlockEntityType<?>, BlockEntityType<DieselGeneratorBlockEntity>> DIESEL_GENERATOR =
             type("diesel_generator", DieselGeneratorBlockEntity::new, PcBlocks.DIESEL_GENERATOR);
     public static final DeferredHolder<BlockEntityType<?>, BlockEntityType<HrsgBlockEntity>> HRSG =
-            type("hrsg", HrsgBlockEntity::new, PcBlocks.HRSG);
+            type("hrsg", HrsgBlockEntity::new, PcBlocks.HRSG, PcBlocks.HRSG_REAL);
     public static final DeferredHolder<BlockEntityType<?>, BlockEntityType<TurbineGearboxBlockEntity>> TURBINE_GEARBOX =
             type("turbine_gearbox", TurbineGearboxBlockEntity::new, PcBlocks.TURBINE_GEARBOX);
 
@@ -56,8 +56,10 @@ public final class PowerhouseBlockEntities {
     private PowerhouseBlockEntities() {
     }
 
+    @SafeVarargs
     private static <T extends BlockEntity> DeferredHolder<BlockEntityType<?>, BlockEntityType<T>> type(String name,
-            BlockEntityType.BlockEntitySupplier<T> factory, Supplier<? extends Block> block) {
-        return BLOCK_ENTITIES.register(name, () -> BlockEntityType.Builder.of(factory, block.get()).build(null));
+            BlockEntityType.BlockEntitySupplier<T> factory, Supplier<? extends Block>... blocks) {
+        return BLOCK_ENTITIES.register(name, () -> BlockEntityType.Builder.of(factory,
+                java.util.Arrays.stream(blocks).map(Supplier::get).toArray(Block[]::new)).build(null));
     }
 }

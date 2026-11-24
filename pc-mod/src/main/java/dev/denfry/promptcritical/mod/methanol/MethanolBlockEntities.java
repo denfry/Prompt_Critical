@@ -20,7 +20,7 @@ public final class MethanolBlockEntities {
             DeferredRegister.create(Registries.BLOCK_ENTITY_TYPE, PromptCritical.MOD_ID);
 
     public static final DeferredHolder<BlockEntityType<?>, BlockEntityType<MethanolConverterBlockEntity>> METHANOL_CONVERTER =
-            type("methanol_converter", MethanolConverterBlockEntity::new, PcBlocks.METHANOL_CONVERTER);
+            type("methanol_converter", MethanolConverterBlockEntity::new, PcBlocks.METHANOL_CONVERTER, PcBlocks.METHANOL_CONVERTER_REAL);
     public static final DeferredHolder<BlockEntityType<?>, BlockEntityType<MethanolColumnBlockEntity>> METHANOL_COLUMN =
             type("methanol_column", MethanolColumnBlockEntity::new, PcBlocks.METHANOL_COLUMN);
 
@@ -41,8 +41,10 @@ public final class MethanolBlockEntities {
         event.registerBlockEntity(Capabilities.FluidHandler.BLOCK, type, FoundryDevice::fluids);
     }
 
+    @SafeVarargs
     private static <T extends BlockEntity> DeferredHolder<BlockEntityType<?>, BlockEntityType<T>> type(String name,
-            BlockEntityType.BlockEntitySupplier<T> factory, Supplier<? extends Block> block) {
-        return BLOCK_ENTITIES.register(name, () -> BlockEntityType.Builder.of(factory, block.get()).build(null));
+            BlockEntityType.BlockEntitySupplier<T> factory, Supplier<? extends Block>... blocks) {
+        return BLOCK_ENTITIES.register(name, () -> BlockEntityType.Builder.of(factory,
+                java.util.Arrays.stream(blocks).map(Supplier::get).toArray(Block[]::new)).build(null));
     }
 }
