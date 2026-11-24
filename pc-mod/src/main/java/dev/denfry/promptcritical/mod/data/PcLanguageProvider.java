@@ -462,6 +462,10 @@ public final class PcLanguageProvider extends LanguageProvider {
         b("derrick_segment_real", "Drilling Derrick Section, 3 m", "Секция буровой вышки, 3 м");
         b("pumpjack_real", "SK-8 Beam Pumping Unit", "Станок-качалка СК-8");
         b("three_phase_separator_real", "NGS-1.6-2000 Three-Phase Separator", "Трёхфазный сепаратор НГС-1,6-2000");
+        b("mainline_pump_real", "NM 1250-260 Mainline Pump Unit", "Магистральный насосный агрегат НМ 1250-260");
+        b("line_heater_real", "PP-0.63 Line Heater", "Путевой подогреватель ПП-0,63");
+        b("oil_tank_real", "RVS-1000 Stock Tank", "Резервуар РВС-1000");
+        b("oil_tank_floating_real", "RVS-1000 Floating-Roof Tank", "Резервуар РВС-1000 с плавающей крышей");
         b("bop_annular", "Annular Preventer", "Кольцевой превентор");
         b("bop_ram", "Ram Preventer", "Плашечный превентор");
         b("logging_unit", "Logging Unit", "Каротажный подъёмник");
@@ -749,6 +753,19 @@ public final class PcLanguageProvider extends LanguageProvider {
         b("pumped_storage_unit", "Pumped Storage Unit", "Обратимый агрегат ГАЭС");
         b("electrode_boiler", "Electrode Boiler", "Электродный котёл");
         b("electrode_boiler_real", "6.3 kV Electrode Boiler", "Электродный котёл 6,3 кВ");
+        b("h2_electrolyser_real", "Alkaline Water Electrolyser", "Щелочной электролизёр воды");
+        b("h2_compressor_real", "Hydrogen Diaphragm Compressor", "Мембранный компрессор водорода");
+        b("h2_tube_bank_real", "Hydrogen Tube Bank, 200 bar", "Баллонная рампа водорода 200 бар");
+        b("h2_gasholder_real", "Hydrogen Gasholder", "Газгольдер водорода");
+        b("h2_fuel_cell_real", "PEM Fuel Cell Module, 200 kW", "Модуль топливных элементов PEM 200 кВт");
+        b("gas_turbine_heavy_real", "Heavy Gas Turbine (V94.2 Class)", "Тяжёлая газовая турбина класса V94.2");
+        b("hrsg_real", "Horizontal Heat Recovery Steam Generator", "Горизонтальный котёл-утилизатор");
+        b("steam_reformer_real", "Top-Fired Primary Steam Reformer", "Трубчатая печь первичного риформинга");
+        b("ammonia_converter_real", "Quench Ammonia Converter", "Колонна синтеза аммиака с холодными байпасами");
+        b("methanol_converter_real", "Lurgi Isothermal Methanol Converter", "Изотермический реактор синтеза метанола Lurgi");
+        b("pyrolysis_furnace_real", "SRT Ethylene Pyrolysis Furnace", "Печь пиролиза этилена типа SRT");
+        b("chlor_alkali_electrolyser_real", "Bipolar Membrane Electrolyser", "Биполярный мембранный электролизёр");
+        b("pvc_reactor_real", "30 m³ Suspension PVC Reactor", "Реактор суспензионной полимеризации 30 м³");
         b("wind_turbine", "Wind Power Unit D-30", "Ветроэлектростанция Д-30");
         b("dam_gate", "Dam Intake Gate", "Затвор водозабора");
         b("gas_turbine", "Gas Turbine Unit", "Газотурбинная установка");
@@ -1013,6 +1030,7 @@ public final class PcLanguageProvider extends LanguageProvider {
         MISC.putAll(dev.denfry.promptcritical.mod.ops.PermitText.LANG);
         MISC.putAll(dev.denfry.promptcritical.mod.ops.OpsFireText.LANG);
         MISC.putAll(dev.denfry.promptcritical.mod.powerhouse.PowerhouseText.LANG);
+        MISC.putAll(dev.denfry.promptcritical.mod.hydrogen.HydrogenText.LANG);
         MISC.putAll(dev.denfry.promptcritical.mod.grid.GridText.LANG);
         MISC.putAll(dev.denfry.promptcritical.mod.automation.AutomationText.LANG);
         MISC.putAll(dev.denfry.promptcritical.mod.content.ContentText.LANG);

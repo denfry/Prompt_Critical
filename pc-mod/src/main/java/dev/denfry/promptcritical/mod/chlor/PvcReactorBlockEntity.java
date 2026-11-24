@@ -46,7 +46,7 @@ import dev.denfry.promptcritical.mod.sound.PcSfx;
  * обратно в бак, смола — мешками по {@value ChlorUnits#PVC_BAG_KG} кг в выходной склад (воронкой снизу). Температуру —
  * она задаёт марку K — меняют между загрузками.
  */
-public final class PvcReactorBlockEntity extends DeviceBlockEntity implements FoundryDevice, PanelHost {
+public final class PvcReactorBlockEntity extends DeviceBlockEntity implements FoundryDevice, PanelHost, dev.denfry.promptcritical.mod.client.whole.RealScaleBlockEntity {
     /** Мешалка автоклава и насос охлаждающей воды рубашки, Вт: без мешалки суспензия не идёт. Розетка или силовой щит рядом; при недостатке машина работает медленнее. */
     public static final double POWER_W = 75e3;
     public static final int VCM_MB = 4_000, WATER_MB = 4_000;
@@ -87,7 +87,7 @@ public final class PvcReactorBlockEntity extends DeviceBlockEntity implements Fo
     private void clientFx() {
         MachineFx fx = MachineFx.of(level, worldPosition, getBlockState().getValue(BlockStateProperties.HORIZONTAL_FACING));
         if (fx == null || !getBlockState().getValue(PcProperties.RUNNING)) return;
-        if (fx.chance(0.5)) fx.sound(fx.at(13.6, 30, 8), PcSfx.ELECTRIC_MOTOR.get(), 0.35f, 1.1f);
+        if (fx.chance(0.5)) fx.sound(real() ? fx.at(8, 120, 8) : fx.at(13.6, 30, 8), PcSfx.ELECTRIC_MOTOR.get(), 0.35f, 1.1f);
     }
 
     @Override
@@ -129,6 +129,11 @@ public final class PvcReactorBlockEntity extends DeviceBlockEntity implements Fo
                 level.setBlock(worldPosition, st.setValue(PcProperties.RUNNING, run), Block.UPDATE_CLIENTS);
         }
         if (level.getGameTime() % 100 == 0) setChanged();
+    }
+
+    @Override
+    public BlockPos wholeModelLightPos() {
+        return worldPosition.relative(wholeModelFacing(), real() ? 3 : 1);
     }
 
     @Override

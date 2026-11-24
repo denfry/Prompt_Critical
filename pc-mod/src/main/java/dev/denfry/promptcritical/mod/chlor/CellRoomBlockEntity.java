@@ -57,7 +57,7 @@ import org.jetbrains.annotations.Nullable;
  * коллекторе растёт и хлор выходит через гидрозатворы наружу — облако. Если рассола не хватает и водород в хлоре
  * переходит 4 %, защита отключает серию, но смесь в газовых пространствах уже взрывается и выбрасывает хлор.
  */
-public final class CellRoomBlockEntity extends DeviceBlockEntity implements FoundryDevice, PanelHost, DcLoad {
+public final class CellRoomBlockEntity extends DeviceBlockEntity implements FoundryDevice, PanelHost, DcLoad, dev.denfry.promptcritical.mod.client.whole.RealScaleBlockEntity {
     public static final int BRINE_MB = 16_000, GAS_MB = 4_000, LIQUOR_MB = 16_000;
     /** Хлор в анодных пространствах серии, кг: столько уходит облаком при взрыве. */
     public static final double CELL_HOLDUP_CL2_KG = 40;
@@ -150,7 +150,7 @@ public final class CellRoomBlockEntity extends DeviceBlockEntity implements Foun
         if (!st.hasProperty(PcProperties.RUNNING) || !st.getValue(PcProperties.RUNNING)) return;
         dev.denfry.promptcritical.mod.fx.MachineFx fx = dev.denfry.promptcritical.mod.fx.MachineFx.of(level, worldPosition,
                 st.getBlock() instanceof dev.denfry.promptcritical.mod.block.PcBlock pb ? pb.facing(st) : net.minecraft.core.Direction.NORTH);
-        if (fx != null && fx.chance(3)) fx.leak(fx.at(11.5, 3.3, 1));
+        if (fx != null && fx.chance(3)) fx.leak(real() ? fx.at(8, 9, 32) : fx.at(11.5, 3.3, 1));
     }
 
     @Override
@@ -215,6 +215,23 @@ public final class CellRoomBlockEntity extends DeviceBlockEntity implements Foun
         if (side == Direction.UP) return chlorine;
         if (side == Direction.DOWN) return hydrogen;
         return side == null ? brineIn : new SideHandler();
+    }
+
+    /**
+     * Электролизёр реального масштаба: у каждого патрубка свой поток — рассол с юга, щёлочь (x 0) и вода (x 2) с
+     * севера, хлор (x −3) и водород (x 4) сверху.
+     */
+    @Override
+    public IFluidHandler fluidsAt(int mx, int my, int mz, Direction modelFace, Direction side) {
+        if (!real()) return fluids(side);
+        if (modelFace == Direction.UP) return mx < 0 ? chlorine : hydrogen;
+        if (modelFace == Direction.SOUTH) return brineIn;
+        return mx == 0 ? liquor : brineIn;
+    }
+
+    @Override
+    public BlockPos wholeModelLightPos() {
+        return worldPosition.relative(wholeModelFacing(), real() ? 2 : 1);
     }
 
     /** Боковая грань: рассол внутрь, щёлочь наружу. */

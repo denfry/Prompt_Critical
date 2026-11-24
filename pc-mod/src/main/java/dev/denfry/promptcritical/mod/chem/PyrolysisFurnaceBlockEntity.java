@@ -45,7 +45,7 @@ import org.jetbrains.annotations.Nullable;
  * ({@link CrackedGasUnitBlockEntity}), которая должна касаться печи: состав пирогаза зависит от сырья и режима, по
  * трубам его не перенести. Без газоразделения печь не работает. Коксование — по игровому времени (тик — 3,6 с).
  */
-public final class PyrolysisFurnaceBlockEntity extends DeviceBlockEntity implements FoundryDevice, PanelHost {
+public final class PyrolysisFurnaceBlockEntity extends DeviceBlockEntity implements FoundryDevice, PanelHost, dev.denfry.promptcritical.mod.client.whole.RealScaleBlockEntity {
     /** Дымососы, насосы закалочного масла и питательной воды, Вт. Розетка или силовой щит рядом; при недостатке установка работает медленнее. */
     public static final double POWER_W = 90e3;
     public static final int FEED_MB = 8_000, WATER_MB = 8_000, FUEL_MB = 4_000;
@@ -164,9 +164,9 @@ public final class PyrolysisFurnaceBlockEntity extends DeviceBlockEntity impleme
         // излишек хвостового газа — на факел
         if (level.getGameTime() % 20 == 0 && level instanceof net.minecraft.server.level.ServerLevel sl0) {
             double heat = kg > 0 && furnace.feedKgS() > 0 ? furnace.fuelW() : 0;
-            dev.denfry.promptcritical.mod.environment.AirQualityService.emitGasFiring(sl0, worldPosition.above(4), 50, 420, heat, heat / 2.5e6, 0.09, 0,
+            dev.denfry.promptcritical.mod.environment.AirQualityService.emitGasFiring(sl0, stackTop(4), 50, 420, heat, heat / 2.5e6, 0.09, 0,
                     "pyrolysis_furnace@" + worldPosition.toShortString(), dev.denfry.promptcritical.sim.environment.EmissionLedger.Category.REFINERY);
-            dev.denfry.promptcritical.mod.environment.AirQualityService.emitGasFiring(sl0, worldPosition.above(6), 40, 1000, flaredW, flaredW / 2.5e6, 0.03, 0.02,
+            dev.denfry.promptcritical.mod.environment.AirQualityService.emitGasFiring(sl0, stackTop(6), 40, 1000, flaredW, flaredW / 2.5e6, 0.03, 0.02,
                     "pyrolysis_flare@" + worldPosition.toShortString(), dev.denfry.promptcritical.sim.environment.EmissionLedger.Category.FLARE);
         }
         if (level.getGameTime() % 10 == 0) setLit(furnace.feedKgS() > 0 || furnace.mode() == PyrolysisFurnace.Mode.DECOKE);
@@ -186,8 +186,24 @@ public final class PyrolysisFurnaceBlockEntity extends DeviceBlockEntity impleme
         dev.denfry.promptcritical.mod.fx.MachineFx fx = dev.denfry.promptcritical.mod.fx.MachineFx.of(level, worldPosition,
                 st.getBlock() instanceof dev.denfry.promptcritical.mod.block.PcBlock b ? b.facing(st) : net.minecraft.core.Direction.NORTH);
         if (fx == null) return;
+        if (real()) {
+            // печь реального масштаба: горячий газ над трубой, пар из воздушника барабана ЗИА
+            if (fx.chance(4)) fx.wisp(fx.at(8, 258, 8), 0.5);
+            if (fx.chance(0.3)) fx.puff(fx.at(56, 258, 20), new net.minecraft.world.phys.Vec3(0, 0.06, 0), 2);
+            return;
+        }
         if (fx.chance(4)) fx.wisp(fx.at(8, 32, 8), 0.4);
         if (fx.chance(0.3)) fx.puff(fx.at(8, 32, 24), new net.minecraft.world.phys.Vec3(0, 0.06, 0), 2);
+    }
+
+    @Override
+    public BlockPos wholeModelLightPos() {
+        return worldPosition.relative(wholeModelFacing(), real() ? 3 : 1);
+    }
+
+    /** Устье дымовой трубы: у старой печи — над контроллером на {@code up}, у реальной — верх клетки (0, 15, 0). */
+    private BlockPos stackTop(int up) {
+        return real() ? dev.denfry.promptcritical.mod.multiblock.WholeLinks.portCell(worldPosition, wholeModelFacing(), new BlockPos(0, 15, 0)).above() : worldPosition.above(up);
     }
 
     private void setLit(boolean lit) {
@@ -199,6 +215,13 @@ public final class PyrolysisFurnaceBlockEntity extends DeviceBlockEntity impleme
     /** Установка газоразделения, касающаяся радиантной камеры (3×3×3 вокруг контроллера). */
     @Nullable
     private CrackedGasUnitBlockEntity separation() {
+        if (real()) {
+            // печь реального масштаба: газоразделение — у патрубка пирогаза (север, коллектор ЗИА), вплотную или по трубе
+            CrackedGasUnitBlockEntity c = dev.denfry.promptcritical.mod.multiblock.WholeLinks.across(level, worldPosition, wholeModelFacing(), new BlockPos(0, 13, -2), Direction.NORTH,
+                    CrackedGasUnitBlockEntity::at);
+            if (c != null) c.bindFurnace(worldPosition);
+            return c;
+        }
         for (int x = -2; x <= 2; x++)
             for (int y = -1; y <= 1; y++)
                 for (int z = -2; z <= 2; z++) {

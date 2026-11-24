@@ -1,0 +1,32 @@
+{
+  "parent": "minecraft:recipes/root",
+  "criteria": {
+    "has_sample": {
+      "conditions": {
+        "items": [
+          {
+            "items": "create:fluid_tank"
+          }
+        ]
+      },
+      "trigger": "minecraft:inventory_changed"
+    },
+    "has_the_recipe": {
+      "conditions": {
+        "recipe": "promptcritical:drilling/oil_tank_real_drawing"
+      },
+      "trigger": "minecraft:recipe_unlocked"
+    }
+  },
+  "requirements": [
+    [
+      "has_the_recipe",
+      "has_sample"
+    ]
+  ],
+  "rewards": {
+    "recipes": [
+      "promptcritical:drilling/oil_tank_real_drawing"
+    ]
+  }
+}

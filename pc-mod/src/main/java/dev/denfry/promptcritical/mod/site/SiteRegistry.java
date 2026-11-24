@@ -98,11 +98,26 @@ public final class SiteRegistry {
     public static final DeferredItem<DesignDrawingItem> MAGNETIC_SEPARATOR_REAL_DRAWING = drawing("magnetic_separator_real");
     public static final DeferredItem<DesignDrawingItem> FLOTATION_CELL_REAL_DRAWING = drawing("flotation_cell_real");
     public static final DeferredItem<DesignDrawingItem> ELECTRODE_BOILER_REAL_DRAWING = drawing("electrode_boiler_real");
+    // водородная станция
+    public static final DeferredItem<DesignDrawingItem> H2_ELECTROLYSER_REAL_DRAWING = drawing("h2_electrolyser_real");
+    public static final DeferredItem<DesignDrawingItem> H2_COMPRESSOR_REAL_DRAWING = drawing("h2_compressor_real");
+    public static final DeferredItem<DesignDrawingItem> H2_TUBE_BANK_REAL_DRAWING = drawing("h2_tube_bank_real");
+    public static final DeferredItem<DesignDrawingItem> H2_GASHOLDER_REAL_DRAWING = drawing("h2_gasholder_real");
+    public static final DeferredItem<DesignDrawingItem> H2_FUEL_CELL_REAL_DRAWING = drawing("h2_fuel_cell_real");
     // кузница и машиностроение реального масштаба (18 §18.6–18.7)
     public static final DeferredItem<DesignDrawingItem> POWER_HAMMER_REAL_DRAWING = drawing("power_hammer_real");
     public static final DeferredItem<DesignDrawingItem> BLOOMERY_REAL_DRAWING = drawing("bloomery_real");
     public static final DeferredItem<DesignDrawingItem> FORGE_HEARTH_REAL_DRAWING = drawing("forge_hearth_real");
     public static final DeferredItem<DesignDrawingItem> ASSEMBLY_STAND_DRAWING = drawing("assembly_stand");
+    // I3 реального масштаба: ПГУ, азот, метанол, пиролиз, хлор и ПВХ
+    public static final DeferredItem<DesignDrawingItem> GAS_TURBINE_HEAVY_REAL_DRAWING = drawing("gas_turbine_heavy_real");
+    public static final DeferredItem<DesignDrawingItem> HRSG_REAL_DRAWING = drawing("hrsg_real");
+    public static final DeferredItem<DesignDrawingItem> STEAM_REFORMER_REAL_DRAWING = drawing("steam_reformer_real");
+    public static final DeferredItem<DesignDrawingItem> AMMONIA_CONVERTER_REAL_DRAWING = drawing("ammonia_converter_real");
+    public static final DeferredItem<DesignDrawingItem> METHANOL_CONVERTER_REAL_DRAWING = drawing("methanol_converter_real");
+    public static final DeferredItem<DesignDrawingItem> PYROLYSIS_FURNACE_REAL_DRAWING = drawing("pyrolysis_furnace_real");
+    public static final DeferredItem<DesignDrawingItem> CHLOR_ALKALI_ELECTROLYSER_REAL_DRAWING = drawing("chlor_alkali_electrolyser_real");
+    public static final DeferredItem<DesignDrawingItem> PVC_REACTOR_REAL_DRAWING = drawing("pvc_reactor_real");
     public static final DeferredItem<DesignDrawingItem> CRANK_PRESS_REAL_DRAWING = drawing("crank_press_real");
     public static final DeferredItem<DesignDrawingItem> WIRE_MILL_REAL_DRAWING = drawing("wire_mill_real");
     public static final DeferredItem<DesignDrawingItem> SHEET_MILL_REAL_DRAWING = drawing("sheet_mill_real");
@@ -133,6 +148,18 @@ public final class SiteRegistry {
     public static final DeferredItem<DesignDrawingItem> SINTERING_FURNACE_REAL_DRAWING = drawing("sintering_furnace_real");
     public static final DeferredItem<DesignDrawingItem> FUEL_ROD_WELDER_REAL_DRAWING = drawing("fuel_rod_welder_real");
     public static final DeferredItem<DesignDrawingItem> FUEL_ASSEMBLY_STAND_REAL_DRAWING = drawing("fuel_assembly_stand_real");
+    // буровая и промысел I2 реального масштаба (09 §9.5, §9.6)
+    public static final DeferredItem<DesignDrawingItem> DERRICK_SEGMENT_REAL_DRAWING = drawing("derrick_segment_real");
+    public static final DeferredItem<DesignDrawingItem> ROTARY_TABLE_REAL_DRAWING = drawing("rotary_table_real");
+    public static final DeferredItem<DesignDrawingItem> DRAWWORKS_REAL_DRAWING = drawing("drawworks_real");
+    public static final DeferredItem<DesignDrawingItem> MUD_PUMP_REAL_DRAWING = drawing("mud_pump_real");
+    public static final DeferredItem<DesignDrawingItem> PUMPJACK_REAL_DRAWING = drawing("pumpjack_real");
+    public static final DeferredItem<DesignDrawingItem> THREE_PHASE_SEPARATOR_REAL_DRAWING = drawing("three_phase_separator_real");
+    // транспорт нефти I2 (09 §9.8)
+    public static final DeferredItem<DesignDrawingItem> MAINLINE_PUMP_REAL_DRAWING = drawing("mainline_pump_real");
+    public static final DeferredItem<DesignDrawingItem> LINE_HEATER_REAL_DRAWING = drawing("line_heater_real");
+    public static final DeferredItem<DesignDrawingItem> OIL_TANK_REAL_DRAWING = drawing("oil_tank_real");
+    public static final DeferredItem<DesignDrawingItem> OIL_TANK_FLOATING_REAL_DRAWING = drawing("oil_tank_floating_real");
 
     private SiteRegistry() {}
 

@@ -22,7 +22,7 @@ public final class ChlorBlockEntities {
     public static final DeferredHolder<BlockEntityType<?>, BlockEntityType<BrineTreaterBlockEntity>> BRINE_TREATER =
             type("brine_treater", BrineTreaterBlockEntity::new, PcBlocks.BRINE_TREATER);
     public static final DeferredHolder<BlockEntityType<?>, BlockEntityType<CellRoomBlockEntity>> CELL_ROOM =
-            type("chlor_alkali_cell", CellRoomBlockEntity::new, PcBlocks.CHLOR_ALKALI_CELL);
+            type("chlor_alkali_cell", CellRoomBlockEntity::new, PcBlocks.CHLOR_ALKALI_CELL, PcBlocks.CHLOR_ALKALI_ELECTROLYSER_REAL);
     public static final DeferredHolder<BlockEntityType<?>, BlockEntityType<RectifierBlockEntity>> RECTIFIER =
             type("rectifier_unit", RectifierBlockEntity::new, PcBlocks.RECTIFIER_UNIT);
     public static final DeferredHolder<BlockEntityType<?>, BlockEntityType<LiquefierBlockEntity>> LIQUEFIER =
@@ -34,7 +34,7 @@ public final class ChlorBlockEntities {
     public static final DeferredHolder<BlockEntityType<?>, BlockEntityType<HclFurnaceBlockEntity>> HCL_FURNACE =
             type("hcl_synthesis_furnace", HclFurnaceBlockEntity::new, PcBlocks.HCL_SYNTHESIS_FURNACE);
     public static final DeferredHolder<BlockEntityType<?>, BlockEntityType<PvcReactorBlockEntity>> PVC_REACTOR =
-            type("pvc_reactor", PvcReactorBlockEntity::new, PcBlocks.PVC_REACTOR);
+            type("pvc_reactor", PvcReactorBlockEntity::new, PcBlocks.PVC_REACTOR, PcBlocks.PVC_REACTOR_REAL);
 
     private ChlorBlockEntities() {
     }
@@ -60,8 +60,10 @@ public final class ChlorBlockEntities {
         event.registerBlockEntity(Capabilities.FluidHandler.BLOCK, type, FoundryDevice::fluids);
     }
 
+    @SafeVarargs
     private static <T extends BlockEntity> DeferredHolder<BlockEntityType<?>, BlockEntityType<T>> type(String name,
-            BlockEntityType.BlockEntitySupplier<T> factory, Supplier<? extends Block> block) {
-        return BLOCK_ENTITIES.register(name, () -> BlockEntityType.Builder.of(factory, block.get()).build(null));
+            BlockEntityType.BlockEntitySupplier<T> factory, Supplier<? extends Block>... blocks) {
+        return BLOCK_ENTITIES.register(name, () -> BlockEntityType.Builder.of(factory,
+                java.util.Arrays.stream(blocks).map(Supplier::get).toArray(Block[]::new)).build(null));
     }
 }

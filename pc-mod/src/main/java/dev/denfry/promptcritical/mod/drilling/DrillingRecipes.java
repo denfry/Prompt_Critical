@@ -46,6 +46,16 @@ public final class DrillingRecipes extends RecipeProvider {
         return PromptCritical.id("drilling/" + name).toString();
     }
 
+    /**
+     * Чертёж машины реального масштаба: бумага, старый блок как образец и железные листы; саму машину строят на
+     * стройплощадке по массе прототипа ({@link dev.denfry.promptcritical.mod.site.SitePlans}).
+     */
+    public static void drawing(RecipeOutput out, net.minecraft.world.item.Item drawing, net.minecraft.world.level.ItemLike sample, String name) {
+        ShapedRecipeBuilder.shaped(RecipeCategory.MISC, drawing)
+                .pattern("PPP").pattern("ISI").define('P', Items.PAPER).define('I', AllItems.IRON_SHEET.get()).define('S', sample)
+                .unlockedBy("has_sample", has(sample)).save(out, id(name));
+    }
+
     @Override
     protected void buildRecipes(RecipeOutput out) {
         var sheet = AllItems.IRON_SHEET.get();
@@ -76,6 +86,11 @@ public final class DrillingRecipes extends RecipeProvider {
                 .define('I', Items.IRON_BLOCK).define('M', AllBlocks.MECHANICAL_PUMP.get()).define('C', AllBlocks.COGWHEEL.get())
                 .define('A', AllBlocks.ANDESITE_CASING.get()).unlockedBy("has_mechanical_pump", has(AllBlocks.MECHANICAL_PUMP.get()))
                 .save(out, id("mud_pump"));
+        // чертежи буровой реального масштаба: строятся на стройплощадке по массе прототипа (SitePlans), старый блок — образец
+        drawing(out, dev.denfry.promptcritical.mod.site.SiteRegistry.DERRICK_SEGMENT_REAL_DRAWING.get(), PcBlocks.DERRICK_SEGMENT.get(), "derrick_segment_real_drawing");
+        drawing(out, dev.denfry.promptcritical.mod.site.SiteRegistry.ROTARY_TABLE_REAL_DRAWING.get(), PcBlocks.ROTARY_TABLE.get(), "rotary_table_real_drawing");
+        drawing(out, dev.denfry.promptcritical.mod.site.SiteRegistry.DRAWWORKS_REAL_DRAWING.get(), PcBlocks.DRAWWORKS.get(), "drawworks_real_drawing");
+        drawing(out, dev.denfry.promptcritical.mod.site.SiteRegistry.MUD_PUMP_REAL_DRAWING.get(), PcBlocks.MUD_PUMP.get(), "mud_pump_real_drawing");
         // кольцевой превентор: стальной корпус и резиновое уплотнение (сухая ламинария вместо резины)
         ShapedRecipeBuilder.shaped(RecipeCategory.MISC, PcBlocks.BOP_ANNULAR.get())
                 .pattern("ISI").pattern("PRP").pattern("ISI").define('I', Items.IRON_BLOCK).define('S', sheet)
