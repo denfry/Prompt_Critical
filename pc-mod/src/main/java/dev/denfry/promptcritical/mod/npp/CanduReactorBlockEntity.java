@@ -445,6 +445,12 @@ public final class CanduReactorBlockEntity extends DeviceBlockEntity implements 
         accident.readPanel(v, CanduPanels.ACCIDENT);
     }
 
+    /** Сброс АЗ и байпас — право {@code PROTECTION} станции (04d §4d.9.2). */
+    @Override
+    public dev.denfry.promptcritical.sim.journal.Permission requiredPermission(int id) {
+        return id == CanduPanels.B_RESET ? dev.denfry.promptcritical.sim.journal.Permission.PROTECTION : dev.denfry.promptcritical.sim.journal.Permission.CONTROL;
+    }
+
     @Override
     public void onPanelButton(ServerPlayer player, int id) {
         switch (id) {

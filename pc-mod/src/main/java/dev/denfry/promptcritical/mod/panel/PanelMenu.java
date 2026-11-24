@@ -97,7 +97,9 @@ public final class PanelMenu extends AbstractContainerMenu implements PanelValue
 
     @Override
     public boolean clickMenuButton(Player player, int id) {
-        if (host != null && player instanceof ServerPlayer sp) host.onPanelButton(sp, id);
+        // права станции (04d §4d.9.2) проверяются здесь, в одном месте для всех щитов
+        if (host != null && player instanceof ServerPlayer sp
+                && dev.denfry.promptcritical.mod.station.Stations.allowPanel(sp, host, id)) host.onPanelButton(sp, id);
         return true;
     }
 
@@ -111,7 +113,8 @@ public final class PanelMenu extends AbstractContainerMenu implements PanelValue
         if (f == null) return;
         String text = StringUtil.filterText(raw).strip();
         if (text.length() > f.maxLength()) text = text.substring(0, f.maxLength()).strip();
-        if (!text.isEmpty()) host.onPanelText(player, field, text);
+        if (!text.isEmpty() && dev.denfry.promptcritical.mod.station.Stations.allowPanelText(player, host))
+            host.onPanelText(player, field, text);
     }
 
     @Override

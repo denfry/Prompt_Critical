@@ -358,6 +358,12 @@ public final class PowerReactorBlockEntity extends DeviceBlockEntity implements 
         accident.readPanel(v, NppPanels.ACCIDENT);
     }
 
+    /** Сброс АЗ и байпас — право {@code PROTECTION} станции (04d §4d.9.2). */
+    @Override
+    public dev.denfry.promptcritical.sim.journal.Permission requiredPermission(int id) {
+        return id == NppPanels.B_RESET ? dev.denfry.promptcritical.sim.journal.Permission.PROTECTION : dev.denfry.promptcritical.sim.journal.Permission.CONTROL;
+    }
+
     @Override
     public void onPanelButton(ServerPlayer player, int id) {
         switch (id) {

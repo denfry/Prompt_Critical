@@ -150,6 +150,12 @@ public final class TrigaBlockEntity extends IronworksBlockEntity implements Pane
         out[TrigaPanels.T_FLAGS] = f;
     }
 
+    /** Сброс АЗ и байпас — право {@code PROTECTION} станции (04d §4d.9.2). */
+    @Override
+    public dev.denfry.promptcritical.sim.journal.Permission requiredPermission(int id) {
+        return id == TrigaPanels.BTN_RESET ? dev.denfry.promptcritical.sim.journal.Permission.PROTECTION : dev.denfry.promptcritical.sim.journal.Permission.CONTROL;
+    }
+
     @Override
     public void onPanelButton(ServerPlayer player, int id) {
         if (!(level instanceof ServerLevel sl)) return;

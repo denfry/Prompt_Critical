@@ -1,5 +1,6 @@
 package dev.denfry.promptcritical.mod.panel;
 
+import dev.denfry.promptcritical.sim.journal.Permission;
 import net.minecraft.core.BlockPos;
 import net.minecraft.network.chat.Component;
 import net.minecraft.server.level.ServerPlayer;
@@ -40,6 +41,14 @@ public interface PanelHost {
     }
 
     default void onPanelButton(ServerPlayer player, int id) {
+    }
+
+    /**
+     * Право станции, нужное кнопке {@code id} (04d §4d.9.2); проверяет {@link PanelMenu} до {@link #onPanelButton}.
+     * По умолчанию — управление механизмами; сброс АЗ и байпас переопределяют на {@link Permission#PROTECTION}.
+     */
+    default Permission requiredPermission(int id) {
+        return Permission.CONTROL;
     }
 
     /** Заготовка внутри машины вне слотов (например, пакет на оправке): выпадает при разрушении и забирается. */

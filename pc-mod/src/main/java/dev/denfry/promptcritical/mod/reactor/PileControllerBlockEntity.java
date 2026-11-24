@@ -288,6 +288,12 @@ public final class PileControllerBlockEntity extends IronworksBlockEntity implem
         return Double.isNaN(x) ? 0 : (int) Math.round(x * 100);
     }
 
+    /** Сброс АЗ и байпас — право {@code PROTECTION} станции (04d §4d.9.2). */
+    @Override
+    public dev.denfry.promptcritical.sim.journal.Permission requiredPermission(int id) {
+        return id == ReactorPanels.BTN_RESET ? dev.denfry.promptcritical.sim.journal.Permission.PROTECTION : dev.denfry.promptcritical.sim.journal.Permission.CONTROL;
+    }
+
     @Override
     public void onPanelButton(ServerPlayer player, int id) {
         PileUnit u = unit();

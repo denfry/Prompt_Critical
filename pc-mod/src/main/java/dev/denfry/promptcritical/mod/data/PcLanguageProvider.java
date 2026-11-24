@@ -1038,6 +1038,7 @@ public final class PcLanguageProvider extends LanguageProvider {
         MISC.putAll(dev.denfry.promptcritical.mod.ops.OpsText.LANG);
         MISC.putAll(dev.denfry.promptcritical.mod.worldgen.WorldFinds.LANG);
         MISC.putAll(dev.denfry.promptcritical.mod.ops.LockoutText.LANG);
+        MISC.putAll(dev.denfry.promptcritical.mod.station.StationText.LANG);
         MISC.putAll(dev.denfry.promptcritical.mod.ops.PermitText.LANG);
         MISC.putAll(dev.denfry.promptcritical.mod.ops.OpsFireText.LANG);
         MISC.putAll(dev.denfry.promptcritical.mod.powerhouse.PowerhouseText.LANG);

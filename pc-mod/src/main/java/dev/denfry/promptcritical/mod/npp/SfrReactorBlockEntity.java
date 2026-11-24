@@ -412,6 +412,12 @@ public final class SfrReactorBlockEntity extends DeviceBlockEntity implements de
         }
     }
 
+    /** Сброс АЗ и байпас — право {@code PROTECTION} станции (04d §4d.9.2). */
+    @Override
+    public dev.denfry.promptcritical.sim.journal.Permission requiredPermission(int id) {
+        return id == SfrPanels.B_RESET ? dev.denfry.promptcritical.sim.journal.Permission.PROTECTION : dev.denfry.promptcritical.sim.journal.Permission.CONTROL;
+    }
+
     @Override
     public void onPanelButton(ServerPlayer player, int id) {
         SodiumFastReactor r = reactor;

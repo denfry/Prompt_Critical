@@ -632,6 +632,12 @@ public final class PwrReactorBlockEntity extends DeviceBlockEntity implements de
         }
     }
 
+    /** Сброс АЗ и байпас — право {@code PROTECTION} станции (04d §4d.9.2). */
+    @Override
+    public dev.denfry.promptcritical.sim.journal.Permission requiredPermission(int id) {
+        return id == PwrPanels.B_RESET || id == PwrPanels.B_LOW_FLUX ? dev.denfry.promptcritical.sim.journal.Permission.PROTECTION : dev.denfry.promptcritical.sim.journal.Permission.CONTROL;
+    }
+
     @Override
     public void onPanelButton(ServerPlayer player, int id) {
         PressurizedWaterReactor r = reactor;
