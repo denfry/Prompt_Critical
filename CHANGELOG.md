@@ -6,22 +6,106 @@
 - Machines draw their rated power: about twenty-five process machines take it from a socket, power board or UPS and
   slow down when underpowered; the catalytic reformer, delayed coker and alumina calciner need their own 6.3 kV feed
   and drop out below 0.85 pu until the player switches them on again.
+- Grid motors have undervoltage release: half a second below 0.85 pu after reaching speed opens the contactor, and the
+  motor stays off until the player starts it again.
 - The graphite pile console is a 2 kW instrument load: without power its rods drop and stay in. Existing piles without
   a power board or UPS nearby shut down on load. The blast furnace console loses its gauges and alarms without power,
   the furnace keeps running.
+- PWR pressurizer heaters are fed from the 0.4 kV station-service board or a UPS next to the pressurizer.
 - In the licensing profile the breaker cell, water-tube boiler, Acheson furnace and T0 graphite pile need
-  commissioning before closing, light-off or rod withdrawal; running units are not stopped.
+  commissioning before closing, light-off or rod withdrawal; the coke battery, oxygen converter, air separation unit,
+  sinter strand, hot blast stove and reheating furnace need it before they heat, blow or load. Running units are not
+  stopped.
+- The drainage pump, main mine fan, mine hoist, steam engine and shaft generator are no longer crafted: they are built
+  from parts on the assembly stand.
+
+### Real-scale machines
+- I2 drilling and production: the R-560 rotary table under a derrick whose sections are drawn as bottom, middle or top
+  by their neighbours, the U2-5-5 drawworks paying out while drilling, the U8-6M duplex mud pump, the SK-8 pumpjack
+  that solves its four-bar linkage for the walking beam, and the NGS-1.6-2000 three-phase separator with its level
+  floats, each on its own panel board.
+- I2 oil transport (09 §9.8): the NM 1250-260 mainline pump on its head-flow curve, driven from a Create shaft, on a
+  6 km DN 350 line whose friction follows the crude viscosity; the PP-0.63 line heater; the RVS-1000 stock tank with a
+  fixed or floating roof, breathing losses and a vapour cloud.
+- I3 plant: the 150 MW class gas turbine, the horizontal HRSG behind it, the primary steam reformer, the SRT ethylene
+  pyrolysis furnace, the quench ammonia and Lurgi methanol converters, the bipolar membrane chlor-alkali electrolyser
+  and the 30 m3 suspension PVC reactor. Downstream units are found at the outlet nozzle or along Create pipes.
+- Radiation protection: heavy concrete, lead brick, borated water and borated polyethylene shield tiles, portal and
+  hand-and-foot monitors, a hot cell with master-slave manipulators, a CASTOR-class cask that closes only within the
+  heat and SSR-6 dose limits, a rail cart and a NUHOMS-class dry storage module whose cladding fails when its vents
+  stay blocked.
+- Fuel cycle: gas centrifuges and sixteen-machine cascade sections, the UF6 autoclave, the 30B cylinder, the flame
+  tower fluorinator, the rotary pellet press, the pusher sintering furnace, the end plug welder and the VVER-440
+  assembly stand. Placing a 30B cylinder or a fuel assembly respects build rights and protection mods.
+- Create pipes connect to the nozzles of real-scale machines. Machines built in 1.0.1 get their nozzle cells when the
+  chunk loads, without being rebuilt.
+
+### Reactor prototypes
+- VVER-70 after Rheinsberg (265 MWt, three loops): reactor, steam generator, sealless main coolant pump and a gas
+  volume compensator on a nitrogen cushion, a unit board with ARK group bars, PZ-1 and PZ-2 lamps and an AZ key that
+  trips only when held, a spent fuel pool that boils off without power and bursts uncovered cladding, and a
+  refuelling machine that carries assemblies between core and pool. Spent assemblies leave the core with their
+  activity.
+- CANDU NPD (92 MWt): 132 horizontal channels of natural uranium whose power is held by the moderator level and shut
+  down by dumping the moderator, fuelling machines that refuel on power and can leak D2O at the snout seal, the NPD
+  boiler and the heat transport pump.
+- BOR-60 (60 MWt loop-type sodium fast reactor): reactor under argon cover gas, intermediate heat exchanger, primary
+  sodium pump and sodium-water steam generator, a board with a hold-to-scram key, and a tube leak drill whose
+  sodium-water reaction bursts the rupture disc.
+
+### Hydrogen power
+- An alkaline electrolyser of the Nel A485 class on its own 6.3 kV rectifier feed with a hydrogen-in-oxygen trip, a
+  two-stage diaphragm compressor to 200 bar, a tube bank and a gasholder with relief valve and burst disc, and a
+  200 kW PEM fuel cell that feeds the grid through its inverter. Hydrogen flows by pressure along Create pipes.
+- Leaks: an open pipe end on a gas line empties the vessel at choked flow, the hydrogen mixes with the room air, a gas
+  alarm rings at a quarter of the lower flammable limit, and a flame, lava or running machine ignites the mixture at
+  the limit.
+
+### Radiation protection (04b)
+- Geiger counter with tube saturation, electronic personal dosimeter, TLD badge and reader, and an annual dose
+  ledger.
+- Half-mask, full-face mask with iodine cartridge, powered air-purifying hood, air-fed suit on a 16 m hose,
+  overalls, boot covers, lead apron and potassium iodide.
+- Radiation zone controller with a class check, controlled area door, clean and dirty lockers and a dose rate
+  detector. Heavy concrete, polyethylene, borated materials and lead glass join the shielding model, with capture
+  gammas.
 
 ### Machines from parts (GDD 18, MF5)
 - Assembly stand: pick a machine spec, lay out the parts, the stand rejects wrong parts, materials, cracks and burnt
   parts, scores fits, balancing, alignment and seals, runs the machine in and hands it out with a machine passport.
 - The passport sets the starting wear of the maintenance model when the machine is placed and stays with the machine
-  when it is broken. The drainage pump has the first spec; twelve new parts, cast parts come from turned castings.
+  when it is broken.
+- Specs for the drainage pump, the main mine fan, the mine hoist, the steam engine and the DC shaft generator, with
+  their parts (fan wheel, rope drum, brake shoe, cylinder, piston, connecting rod, crosshead, flywheel rim, governor,
+  stator winding, commutator, brush holder, slip rings and others).
+
+### Plant operation
+- Commissioning defects have effects: flange leaks vent gas into the flammable cloud, a slow trip device delays the
+  breaker and the boiler and pile trips, a miswired flux loop under-reads pile power, and damp insulation faults to
+  earth when the unit is energised.
+- A loaded grid motor follows a pump curve below 0.9 pu speed, so it accelerates from standstill instead of sticking
+  in the start.
 
 ### Integrations (GDD 16)
 - Commodity chemicals and fuels in c: fluid tags (nuclear materials never), Curios and Accessories slots, body
   temperature handed to Cold Sweat or Tough As Nails, Carry On blacklist, foreign biome environment data map,
   JourneyMap waypoints from read geological maps.
+- Operator terminal: a workstation without CC: Tweaked that shows every machine on the RTUs within 16 blocks with its
+  values, a ten-minute trend, the alarm summary and the panel's telecontrol buttons.
+- Plant public address: an intercom station with six priority channels, sixteen zones, prerecorded messages,
+  press-to-talk through Simple Voice Chat and a typed call with a gong and a subtitle, and horn loudspeakers heard as
+  far as the workshop noise allows.
+- Direct speech in Simple Voice Chat carries as far as the workshop noise allows and is muffled by masks and
+  breathing apparatus.
+- Ghost rule: tracked radioactive sources are followed to where they were last seen; an unseen source keeps radiating
+  there, its last holder gets an orphan alarm, and sources on the ground never despawn. `/pc sources list` shows them.
+- The Immersive Engineering diesel generator burns c:diesel. Its burn time stops at IE's limit of 10000 ticks per
+  bucket, so it gives under one percent of the fuel's real energy.
+
+### Panels and art
+- Drawn panel boards for the I2 oilfield machines, the hydrogen machines and the reactor prototypes; the operator
+  terminal and the public address redrawn; item icons for the new machine parts.
+- Panel buttons can be keys that trip only when held, and panels can have a text field.
 
 ## 1.0.1 (2026-11-24)
 
