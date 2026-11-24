@@ -24,16 +24,17 @@ import org.jetbrains.annotations.Nullable;
 /**
  * Сетевой подогреватель ТЭЦ {@code district_heat_exchanger} (07 §7.14.2): стоит под паровой турбиной вместо
  * конденсатора, принимает её отработавший пар при давлении насыщения температуры подачи теплосети и отдаёт теплоту
- * конденсации поселениям в радиусе {@value #RADIUS} блоков. Объём зданий поселения — по кроватям (точкам интереса
+ * конденсации поселениям в радиусе {@value #RADIUS} блоков (поиск — раз в минуту и не чаще раза в 5 с по клику). Объём зданий поселения — по кроватям (точкам интереса
  * «дом»), {@value #HOUSE_M3} м³ на кровать [оценка: деревенский дом около 6 × 5 × 5 м].
  *
  * <p>Упрощение: трубопроводы теплосети не строятся — подогреватель отдаёт тепло напрямую поселениям в радиусе, без
  * гидравлики и потерь в сети; недоотпуск зимой показывается, но штраф 14 не начисляется (экономики плат пока нет).
  */
 public final class DistrictHeatExchangerBlockEntity extends DeviceBlockEntity implements FoundryDevice {
-    public static final int RADIUS = 256, HOUSE_M3 = 150, RESCAN_TICKS = 1200;
+    public static final int RADIUS = 128, HOUSE_M3 = 150, RESCAN_TICKS = 1200, USE_RESCAN_TICKS = 100;
 
     private int beds = -1, ticks;
+    private long lastScan = Long.MIN_VALUE;
     private double supplyW, loadW, outdoorC;
 
     public DistrictHeatExchangerBlockEntity(BlockPos pos, BlockState state) {
@@ -60,6 +61,7 @@ public final class DistrictHeatExchangerBlockEntity extends DeviceBlockEntity im
 
     /** Пересчитать кровати поселений вокруг. */
     public void rescan(ServerLevel sl) {
+        lastScan = sl.getGameTime();
         beds = (int) sl.getPoiManager().getInRange(t -> t.is(PoiTypes.HOME), worldPosition, RADIUS, PoiManager.Occupancy.ANY).count();
     }
 
@@ -80,7 +82,8 @@ public final class DistrictHeatExchangerBlockEntity extends DeviceBlockEntity im
     @Override
     public InteractionResult use(Player player) {
         if (!(level instanceof ServerLevel sl)) return InteractionResult.SUCCESS;
-        rescan(sl);
+        // по клику — не чаще раза в 5 с: поиск кроватей по точкам интереса дорогой
+        if (sl.getGameTime() - lastScan >= USE_RESCAN_TICKS) rescan(sl);
         sample(sl);
         player.displayClientMessage(GreenhouseText.msg("dh_status", f(outdoorC), f(DistrictHeating.supplyC(outdoorC)), f(DistrictHeating.returnC(outdoorC)),
                 f(DistrictHeating.exhaustPa(dev.denfry.promptcritical.sim.thermo.WaterProperties.tables(), outdoorC) / 1e5)), false);
