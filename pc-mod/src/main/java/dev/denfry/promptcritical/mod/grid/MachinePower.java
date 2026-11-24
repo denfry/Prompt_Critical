@@ -63,6 +63,11 @@ public final class MachinePower {
         return false;
     }
 
+    /** Правило питания здесь не действует: ключ сервера выключен или стенд GameTest вне {@link #strictArea}. */
+    public static boolean exempt(Level level, BlockPos pos) {
+        return free(level, pos);
+    }
+
     private static boolean free(Level level, BlockPos pos) {
         boolean need;
         try {

@@ -21,6 +21,12 @@ Right click switches the contactor, Start or Stop. Shift + right click shows the
 
 The UPS feeds its group from the grid and charges its battery. When the grid fails it carries on from the battery, about twenty minutes at full load, and does not drop out. Put the instruments and the controls that must see a blackout through on a UPS. A graphite pile console without power drops the rods and will not let them out until the power is back; a blast furnace console does not stop the furnace, but its gauges and alarms go dark.
 
+## Grid motors and station service
+
+An electric motor on the grid has the same undervoltage protection: once it has reached speed, half a second below 85 % opens its contactor, and it stays stopped when the voltage returns. Start it again with Shift + right click or the Start button on its panel. A dip while it is starting does not count.
+
+The pressurizer heaters of a pressurized water reactor are station-service load at 0.4 kV, up to 200 kW. They draw from the power board or UPS nearest the pressurizer. With no supply the regulator cannot heat the steam bubble and the primary pressure drifts down. Main coolant pumps turn on a Create shaft, so their power comes from the motor that drives that shaft, and a motor that drops out on undervoltage stops the pump.
+
 ## Large machines: 6.3 kV
 
 A power board at 0.4 kV cannot carry plants above 200 kW (catalytic reforming, delayed coking, the alumina calciner): they need their own 6.3 kV feed. Run a 6 kV cable to any face of the plant. It asks the grid for its rated power while it is switched on and follows the grid frequency like the rest. If the voltage stays below 85 % for half a second, the incomer breaker drops out and the plant stops; it will not start by itself, so switch it on again (Shift + right click).
