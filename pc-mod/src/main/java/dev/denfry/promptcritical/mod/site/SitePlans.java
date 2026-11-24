@@ -402,7 +402,13 @@ public final class SitePlans {
             Map.entry("electric_motor_mv_real", new Twin(PcBlocks.ELECTRIC_MOTOR, 1)),
             Map.entry("quench_tower_real", new Twin(PcBlocks.QUENCH_TOWER, 1)),
             Map.entry("bof_vessel_real", new Twin(PcBlocks.BOF_VESSEL, 1)),
-            Map.entry("reheating_furnace_real", new Twin(PcBlocks.REHEATING_FURNACE, 1)));
+            Map.entry("reheating_furnace_real", new Twin(PcBlocks.REHEATING_FURNACE, 1)),
+            Map.entry("derrick_segment_real", new Twin(PcBlocks.DERRICK_SEGMENT, 1)),
+            Map.entry("rotary_table_real", new Twin(PcBlocks.ROTARY_TABLE, 1)),
+            Map.entry("drawworks_real", new Twin(PcBlocks.DRAWWORKS, 1)),
+            Map.entry("mud_pump_real", new Twin(PcBlocks.MUD_PUMP, 1)),
+            Map.entry("pumpjack_real", new Twin(PcBlocks.PUMPJACK, 1)),
+            Map.entry("three_phase_separator_real", new Twin(PcBlocks.THREE_PHASE_SEPARATOR, 1)));
 
     @Nullable
     public static Twin twin(String id) {
@@ -511,6 +517,57 @@ public final class SitePlans {
                     st("assembly_plate", 120, n(INGOT, 20), n(CONCRETE, 2)),
                     st("assembly_hoist", 80, n(PLATE, 3), n(BEAM, 2))));
 
+    /**
+     * Буровая и промысел I2 реального масштаба (09 §9.5, §9.6): массы прототипов — по каталогам (ротор Р-560 5,9 т,
+     * насос У8-6М 25,5 т, качалка СК-8 11,6 т) или оценкам по габаритам (секция вышки, лебёдка, сепаратор).
+     */
+    private static final Map<String, Plan> OIL_RIG_PLANS = Map.of(
+            // секция четырёхногой вышки 3 м: ноги и пояса из уголка, раскосы ≈ 2,2 т (оценка по вышке ВМ-41, 30 т)
+            "derrick_segment_real", plan("derrick_segment_real", PcBlocks.DERRICK_SEGMENT_REAL, 2.2,
+                    st("rig_derrick_legs", 100, n(BEAM, 16), n(PLATE, 6))),
+            // ротор Р-560: литой корпус, стол с коническим венцом, вкладыши ≈ 5,9 т (каталог Уралмаша)
+            "rotary_table_real", plan("rotary_table_real", PcBlocks.ROTARY_TABLE_REAL, 5.9,
+                    st("rig_rotary_housing", 120, n(INGOT, 40), n(PLATE, 4)),
+                    st("rig_rotary_table", 100, n(INGOT, 15))),
+            // лебёдка У2-5-5: барабан с тормозами, цепная трансмиссия, гидротормоз, рама ≈ 25 т (оценка)
+            "drawworks_real", plan("drawworks_real", PcBlocks.DRAWWORKS_REAL, 25,
+                    st("rig_drawworks_skid", 120, n(BEAM, 40), n(CONCRETE, 4)),
+                    st("rig_drawworks_drum", 200, n(INGOT, 120), n(PLATE, 30)),
+                    st("rig_drawworks_drive", 160, n(INGOT, 60))),
+            // насос У8-6М: приводная часть с коленчатым валом, гидравлическая коробка, рама ≈ 25,5 т (каталог)
+            "mud_pump_real", plan("mud_pump_real", PcBlocks.MUD_PUMP_REAL, 25.5,
+                    st("rig_pump_power_end", 200, n(INGOT, 140)),
+                    st("rig_pump_fluid_end", 160, n(INGOT, 80), n(BEAM, 35))),
+            // качалка СК-8: рама и стойка, редуктор с кривошипами и противовесами, балансир с головкой ≈ 11,6 т (ГОСТ 5866)
+            "pumpjack_real", plan("pumpjack_real", PcBlocks.PUMPJACK_REAL, 11.6,
+                    st("pumpjack_frame", 120, n(BEAM, 40), n(CONCRETE, 4)),
+                    st("pumpjack_gearbox", 160, n(INGOT, 56)),
+                    st("pumpjack_beam", 120, n(PLATE, 20))),
+            // НГС-1,6-2000: обечайка ⌀2 м и днища ≈ 7,6 т листа, внутренние устройства, опоры и арматура ≈ 3 т (оценка)
+            "three_phase_separator_real", plan("three_phase_separator_real", PcBlocks.THREE_PHASE_SEPARATOR_REAL, 10.5,
+                    st("separator_shell", 160, n(PLATE, 80), n(CONCRETE, 4)),
+                    st("separator_internals", 120, n(INGOT, 15), n(BEAM, 10))),
+            // НМ 1250-260 с двигателем 1250 кВт на общей раме: агрегат 10,95 т, насос 2,81 т (ГОСТ 12124-87, каталоги)
+            "mainline_pump_real", plan("mainline_pump_real", PcBlocks.MAINLINE_PUMP_REAL, 10.95,
+                    st("mainline_pump_frame", 100, n(BEAM, 20), n(CONCRETE, 4)),
+                    st("mainline_pump_casing", 160, n(INGOT, 28)),
+                    st("mainline_pump_motor", 160, n(INGOT, 60))),
+            // ПП-0,63: обечайка с днищами и жаровой трубой, змеевики, рама, горелка и труба — 12,5–13 т порожний (каталоги)
+            "line_heater_real", plan("line_heater_real", PcBlocks.LINE_HEATER_REAL, 12.8,
+                    st("line_heater_skid", 100, n(BEAM, 20), n(CONCRETE, 4)),
+                    st("line_heater_shell", 160, n(PLATE, 70)),
+                    st("line_heater_coils", 140, n(INGOT, 38))),
+            // РВС-1000: стенка из восьми поясов, днище, коническая крыша, лестница и площадки ≈ 30 т стали (оценка листа)
+            "oil_tank_real", plan("oil_tank_real", PcBlocks.OIL_TANK_REAL, 30,
+                    st("tank_foundation", 160, n(CONCRETE, 20)),
+                    st("tank_shell", 300, n(PLATE, 220)),
+                    st("tank_roof", 160, n(PLATE, 50), n(BEAM, 30))),
+            // то же с плавающей крышей: понтон с затвором и катучая лестница вместо конической крыши ≈ 33 т (оценка)
+            "oil_tank_floating_real", plan("oil_tank_floating_real", PcBlocks.OIL_TANK_FLOATING_REAL, 33,
+                    st("tank_foundation", 160, n(CONCRETE, 20)),
+                    st("tank_shell", 300, n(PLATE, 220)),
+                    st("tank_pontoon", 200, n(PLATE, 80), n(BEAM, 30))));
+
     private static final Map<String, Plan> SMITHY_PLANS = Map.of(
             // молот 2 cwt: колонна с цилиндрами ≈ 3,5 т, шабот ≈ 0,7 т (каталоги Massey; оценки)
             "power_hammer_real", plan("power_hammer_real", PcBlocks.POWER_HAMMER_REAL, 4.2,
@@ -566,12 +623,13 @@ public final class SitePlans {
         if (p == null) p = STEAM_MINE_PLANS.get(id);
         if (p == null) p = SMITHY_PLANS.get(id);
         if (p == null) p = ASSEMBLY_PLANS.get(id);
+        if (p == null) p = OIL_RIG_PLANS.get(id);
         return p != null ? p : NONFERROUS_PLANS.get(id);
     }
 
     public static Iterable<Plan> all() {
         return java.util.stream.Stream.of(PLANS, I0_PLANS, IRONMAKING_PLANS, POWER_PLANS, MINING_COKE_PLANS, I1_STEEL_PLANS, FOUNDRY_PLANS, I0_SHOP_PLANS,
-                        STEAM_MINE_PLANS, CARBON_PLANS, SMITHY_PLANS, ASSEMBLY_PLANS, NONFERROUS_PLANS)
+                        STEAM_MINE_PLANS, CARBON_PLANS, SMITHY_PLANS, ASSEMBLY_PLANS, NONFERROUS_PLANS, OIL_RIG_PLANS)
                 .flatMap(m -> m.values().stream()).toList();
     }
 }

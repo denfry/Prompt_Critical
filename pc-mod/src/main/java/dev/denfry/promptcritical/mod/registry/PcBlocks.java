@@ -676,6 +676,23 @@ public final class PcBlocks {
     public static final DeferredBlock<PcDeviceBlock> THREE_PHASE_SEPARATOR_REAL = device("three_phase_separator_real", machine(),
             real(Spec.facing(), FP_THREE_PHASE_SEPARATOR_REAL),
             FoundryBlock.with(dev.denfry.promptcritical.mod.production.SeparatorBlockEntity::new));
+    /**
+     * Транспорт нефти I2 реального масштаба (09 §9.8): магистральный насосный агрегат НМ 1250-260 6 × 2 × 3, путевой
+     * подогреватель ПП-0,63 11 × 4 × 3 с дымовой трубой, резервуар РВС-1000 13 × 14 × 13 со стационарной или плавающей
+     * крышей (art/blockbench/oil_transport, oil_production, storage).
+     */
+    public static final Footprint FP_MAINLINE_PUMP_REAL = Footprint.tiled(-2, 3, 0, 1, -1, 1);
+    public static final DeferredBlock<PcDeviceBlock> MAINLINE_PUMP_REAL = device("mainline_pump_real", machine(),
+            real(Spec.facing(PcProperties.RUNNING), FP_MAINLINE_PUMP_REAL), dev.denfry.promptcritical.mod.production.MainlinePumpBlock::create);
+    public static final Footprint FP_LINE_HEATER_REAL = lineHeaterRealFootprint();
+    public static final DeferredBlock<PcDeviceBlock> LINE_HEATER_REAL = device("line_heater_real", machine(),
+            real(Spec.facing(BlockStateProperties.LIT), FP_LINE_HEATER_REAL),
+            FoundryBlock.with(dev.denfry.promptcritical.mod.production.LineHeaterBlockEntity::new));
+    public static final Footprint FP_OIL_TANK_REAL = Footprint.tiled(-6, 6, 0, 13, -6, 6);
+    public static final DeferredBlock<PcDeviceBlock> OIL_TANK_REAL = device("oil_tank_real", machine(),
+            real(Spec.facing(), FP_OIL_TANK_REAL), FoundryBlock.with(dev.denfry.promptcritical.mod.production.OilTankBlockEntity::new));
+    public static final DeferredBlock<PcDeviceBlock> OIL_TANK_FLOATING_REAL = device("oil_tank_floating_real", machine(),
+            real(Spec.facing(), FP_OIL_TANK_REAL), FoundryBlock.with(dev.denfry.promptcritical.mod.production.OilTankBlockEntity::new));
     public static final DeferredBlock<PcBlock> FLARE_STACK = block("flare_stack", machine(), Spec.of());
     public static final DeferredBlock<PcBlock> FLARE_TIP = block("flare_tip", lit(machine()), Spec.of(BlockStateProperties.LIT));
     /** Факельная система 13 §13.4.3: щит розжига, сепаратор капель 3×1×1, гидрозатвор 1×2×1. */
@@ -1042,7 +1059,8 @@ public final class PcBlocks {
 
     /** Машины реального масштаба с цельной моделью: id блока → id модели (wholemodels/). */
     public static boolean isWholeModel(net.minecraft.world.level.block.Block b) {
-        return b == PUMPJACK_REAL.get() || b == THREE_PHASE_SEPARATOR_REAL.get() || b == ROTARY_TABLE_REAL.get() || b == DRAWWORKS_REAL.get() || b == MUD_PUMP_REAL.get() || b == DERRICK_SEGMENT_REAL.get()
+        return b == MAINLINE_PUMP_REAL.get() || b == LINE_HEATER_REAL.get() || b == OIL_TANK_REAL.get() || b == OIL_TANK_FLOATING_REAL.get()
+                || b == PUMPJACK_REAL.get() || b == THREE_PHASE_SEPARATOR_REAL.get() || b == ROTARY_TABLE_REAL.get() || b == DRAWWORKS_REAL.get() || b == MUD_PUMP_REAL.get() || b == DERRICK_SEGMENT_REAL.get()
                 || b == VVER_REACTOR.get() || b == VVER_STEAM_GENERATOR.get() || b == VVER_COOLANT_PUMP.get() || b == VVER_PRESSURIZER.get()
                 || b == BWR240_REACTOR.get() || b == CANDU6_REACTOR.get() || b == BN600_REACTOR.get() || b == AM1_REACTOR.get()
                 || b == LANCASHIRE_BOILER.get() || b == HEADFRAME_STEEL.get() || b == MILL_ENGINE.get() || b == WINDING_ENGINE.get()
@@ -1234,6 +1252,14 @@ public final class PcBlocks {
         java.util.List<Segment> s = new java.util.ArrayList<>(Footprint.tiled(-4, 3, 0, 6, -1, 1).segments());
         s.add(new Segment(4, 4, 0, 0, 0, -1, 1, -1, 1));
         s.add(new Segment(4, 6, 0, 0, 0, 0, 0, -1, 1));
+        return Footprint.of(s.toArray(Segment[]::new));
+    }
+
+    /** Корпус подогревателя и колонна дымовой трубы (−4, 4…8, 0): сегменты трубы — не дальше ±1 от якоря. */
+    private static Footprint lineHeaterRealFootprint() {
+        java.util.List<Segment> s = new java.util.ArrayList<>(Footprint.tiled(-5, 5, 0, 3, -1, 1).segments());
+        s.add(new Segment(-4, 5, 0, 0, 0, -1, 1, 0, 0));
+        s.add(new Segment(-4, 8, 0, 0, 0, -1, 0, 0, 0));
         return Footprint.of(s.toArray(Segment[]::new));
     }
 
