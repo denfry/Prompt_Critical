@@ -658,8 +658,23 @@ public final class PcBlocks {
     public static final DeferredBlock<PcDeviceBlock> PUMPJACK = device("pumpjack", machine(),
             Spec.facing(PcProperties.RUNNING).footprint(Footprint.of(Segment.box(-1, 1, 0, 0, -1, 1))),
             dev.denfry.promptcritical.mod.production.PumpjackBlock::create);
+    /**
+     * Качалка СК-8 реального масштаба 9 × 7 × 3 (art/blockbench/oil_production/pumpjack_real.author.js), тот же BE и
+     * сим, что у {@link #PUMPJACK}: объём без колонны x 4, y 0…2 под головкой балансира — туда ставят устье.
+     */
+    public static final Footprint FP_PUMPJACK_REAL = pumpjackRealFootprint();
+    public static final DeferredBlock<PcDeviceBlock> PUMPJACK_REAL = device("pumpjack_real", machine(),
+            real(Spec.facing(PcProperties.RUNNING), FP_PUMPJACK_REAL), dev.denfry.promptcritical.mod.production.PumpjackBlock::createReal);
     public static final DeferredBlock<PcDeviceBlock> THREE_PHASE_SEPARATOR = device("three_phase_separator", machine(),
             Spec.facing().footprint(Footprint.of(Segment.box(-1, 1, 0, 1, 0, 1))),
+            FoundryBlock.with(dev.denfry.promptcritical.mod.production.SeparatorBlockEntity::new));
+    /**
+     * Трёхфазный сепаратор НГС-1,6-2000 реального масштаба 11 × 3 × 3
+     * (art/blockbench/oil_production/three_phase_separator_real.author.js), тот же BE, что у {@link #THREE_PHASE_SEPARATOR}.
+     */
+    public static final Footprint FP_THREE_PHASE_SEPARATOR_REAL = Footprint.tiled(-5, 5, 0, 2, -1, 1);
+    public static final DeferredBlock<PcDeviceBlock> THREE_PHASE_SEPARATOR_REAL = device("three_phase_separator_real", machine(),
+            real(Spec.facing(), FP_THREE_PHASE_SEPARATOR_REAL),
             FoundryBlock.with(dev.denfry.promptcritical.mod.production.SeparatorBlockEntity::new));
     public static final DeferredBlock<PcBlock> FLARE_STACK = block("flare_stack", machine(), Spec.of());
     public static final DeferredBlock<PcBlock> FLARE_TIP = block("flare_tip", lit(machine()), Spec.of(BlockStateProperties.LIT));
@@ -1027,7 +1042,7 @@ public final class PcBlocks {
 
     /** Машины реального масштаба с цельной моделью: id блока → id модели (wholemodels/). */
     public static boolean isWholeModel(net.minecraft.world.level.block.Block b) {
-        return b == ROTARY_TABLE_REAL.get() || b == DRAWWORKS_REAL.get() || b == MUD_PUMP_REAL.get() || b == DERRICK_SEGMENT_REAL.get()
+        return b == PUMPJACK_REAL.get() || b == THREE_PHASE_SEPARATOR_REAL.get() || b == ROTARY_TABLE_REAL.get() || b == DRAWWORKS_REAL.get() || b == MUD_PUMP_REAL.get() || b == DERRICK_SEGMENT_REAL.get()
                 || b == VVER_REACTOR.get() || b == VVER_STEAM_GENERATOR.get() || b == VVER_COOLANT_PUMP.get() || b == VVER_PRESSURIZER.get()
                 || b == BWR240_REACTOR.get() || b == CANDU6_REACTOR.get() || b == BN600_REACTOR.get() || b == AM1_REACTOR.get()
                 || b == LANCASHIRE_BOILER.get() || b == HEADFRAME_STEEL.get() || b == MILL_ENGINE.get() || b == WINDING_ENGINE.get()
@@ -1214,6 +1229,14 @@ public final class PcBlocks {
             dev.denfry.promptcritical.mod.foundry.FoundryBlock.with(dev.denfry.promptcritical.mod.manufacturing.SmithyFurnaceBlockEntity::hardening));
 
     /** Объём цельной модели: один сегмент — {@code footprint}, больше — свойство {@code segment} по сегментам. */
+    /** Объём качалки реального масштаба: x −4…4, y 0…6, z −1…1 без колонны x 4, y 0…2 (устье скважины). */
+    private static Footprint pumpjackRealFootprint() {
+        java.util.List<Segment> s = new java.util.ArrayList<>(Footprint.tiled(-4, 3, 0, 6, -1, 1).segments());
+        s.add(new Segment(4, 4, 0, 0, 0, -1, 1, -1, 1));
+        s.add(new Segment(4, 6, 0, 0, 0, 0, 0, -1, 1));
+        return Footprint.of(s.toArray(Segment[]::new));
+    }
+
     private static Spec real(Spec spec, Footprint fp) {
         int n = fp.segments().size();
         return n == 1 ? spec.footprint(fp) : spec.segments(PcProperties.wholeSegments(n), fp);

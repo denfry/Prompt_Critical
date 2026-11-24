@@ -171,6 +171,33 @@ public final class ProductionPanels {
             .readout(8, 104, 224, v -> SEPARATOR.get(v.raw(S_FLARE_M3H)), null)
             .noInventory().build();
 
+    private static final Tr SPM_LINE = PanelText.tr("prod.spm_line", "%s strokes/min · peak %s kN", "%s кач/мин · пик %s кН"),
+            ROD_LOAD = PanelText.tr("prod.rod_load", "Polished rod, peak", "Шток, пик"),
+            ROD_LOAD_TIP = PanelText.tr("prod.rod_load_tip", "Peak polished rod load %s kN of the 80 kN (8 t) rating",
+                    "Пиковая нагрузка на шток %s кН из 80 кН (8 т) по паспорту"),
+            FLARE_LINE = PanelText.tr("prod.flare_line", "To the flare %s nm³/h", "На факел %s нм³/ч");
+
+    /** Качалка реального масштаба на фоне pumpjack.png (oilfield_panels.author.js): каналы и кнопки устья. */
+    public static final PanelLayout PUMPJACK_REAL = PanelLayout.builder("pumpjack_real", 220, 134, W_CHANNELS)
+            .art(dev.denfry.promptcritical.mod.PromptCritical.id("textures/gui/panel/pumpjack.png"))
+            .plot(12, 24, 100, 50, W_CARD, BeamPump.CARD_POINTS, 2000, 1500, W_FLAGS, WF_PUMPING, CARD.get(),
+                    v -> CARD_TIP.get(v.raw(W_PEAK_KN), v.num(W_FILL_PERMIL, 10, 0), v.num(W_SPM10, 10, 1)))
+            .readout(124, 28, 84, v -> SPM_LINE.get(v.num(W_SPM10, 10, 1), v.raw(W_PEAK_KN)), null)
+            .bar(124, 58, 84, W_PEAK_KN, 1, 80, 0xFFC08040, ROD_LOAD.get(), v -> ROD_LOAD_TIP.get(v.raw(W_PEAK_KN)))
+            .button(12, 110, 96, WB_VALVE, VALVE.get(), VALVE_TIP.get())
+            .button(112, 110, 96, WB_ECHO, ECHO.get(), ECHO_TIP.get())
+            .noInventory().build();
+
+    /** Сепаратор реального масштаба на фоне separator.png: вода в нефти, уровни нефти и воды, факел, унос. */
+    public static final PanelLayout SEPARATOR_REAL = PanelLayout.builder("three_phase_separator_real", 220, 104, S_CHANNELS)
+            .art(dev.denfry.promptcritical.mod.PromptCritical.id("textures/gui/panel/separator.png"))
+            .dial(12, 26, false, S_BSW_X100, 100, 10, 2, 2, PERCENT.get(), BSW.get(), v -> BSW_TIP.get(v.num(S_BSW_X100, 100, 2)))
+            .glass(82, 26, 56, S_OIL_PERMIL, 0xFF3A2A18, Double.NaN, Double.NaN, OIL_LEVEL.get(), null)
+            .glass(108, 26, 56, S_WATER_PERMIL, 0xFF4A6A8A, Double.NaN, Double.NaN, WATER_LEVEL.get(), null)
+            .readout(132, 30, 76, v -> FLARE_LINE.get(v.raw(S_FLARE_M3H)), null)
+            .lamp(132, 52, S_FLAGS, SF_CARRYOVER, LampColor.RED, CARRYOVER.get())
+            .noInventory().build();
+
     public static final PanelLayout COLUMN = PanelLayout.builder("crude_column", 300, 170, C_CHANNELS)
             .dial(8, 22, false, C_T_OUT, 1, 400, 380, 0, CELSIUS.get(), OUTLET.get(), null)
             .dial(64, 22, false, C_FEED_M3H10, 10, 12, Double.NaN, 1, M3H.get(), FEED.get(), null)
@@ -196,6 +223,6 @@ public final class ProductionPanels {
     }
 
     public static List<PanelLayout> all() {
-        return List.of(WELLHEAD, SEPARATOR_PANEL, COLUMN);
+        return List.of(WELLHEAD, SEPARATOR_PANEL, COLUMN, PUMPJACK_REAL, SEPARATOR_REAL);
     }
 }

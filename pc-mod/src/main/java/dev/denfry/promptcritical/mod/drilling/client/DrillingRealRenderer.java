@@ -116,8 +116,9 @@ final class DrillingRealRenderer<T extends BlockEntity & WholeModelHost> extends
                     .light(light).renderInto(ms, vc);
             part(BRAKE_LEVER, be, f, 0, 0, 0).translate(0, 14 / 16f, -10 / 16f).rotateXDegrees(run ? -30 : 0)
                     .translate(0, -14 / 16f, 10 / 16f).light(light).renderInto(ms, vc);
-            part(CATHEAD, be, f, 24 / 16.0, 1, 0).translate(0, 38 / 16f, 22 / 16f).rotateXDegrees(cat)
-                    .translate(0, -38 / 16f, -22 / 16f).light(light).renderInto(ms, vc);
+            // сдвиг хранения возвращается до поворота: ось катушек (y 38, z 22) — в координатах модели
+            part(CATHEAD, be, f, 0, 0, 0).translate(0, 38 / 16f, 22 / 16f).rotateXDegrees(cat)
+                    .translate(0, -38 / 16f, -22 / 16f).translate(24 / 16f, 1, 0).light(light).renderInto(ms, vc);
         }, null);
     }
 

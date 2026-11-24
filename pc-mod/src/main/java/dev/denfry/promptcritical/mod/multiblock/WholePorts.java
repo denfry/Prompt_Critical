@@ -111,6 +111,9 @@ public final class WholePorts {
             Map.entry("forced_draft_fan_real", List.of(p(0, 0, 2, S), p(1, 1, 1, U))),
             Map.entry("induced_draft_fan_real", List.of(p(0, 0, 2, S), p(1, 1, 1, U))),
             // руда сверху в питающую коробку, концентрат — на юг из лотка, хвосты — на восток, вода смыва — на восток
+            // сепаратор НГС реального масштаба: газ сверху, нефть с восточного днища, вода снизу из водосборника;
+            // продукция скважин приходит от устья без трубы (WellheadBlockEntity), входной патрубок — только на модели
+            Map.entry("three_phase_separator_real", List.of(p(4, 2, 0, U), p(5, 0, 0, E), p(2, 0, 0, D))),
             Map.entry("magnetic_separator_real", List.of(p(0, 1, 0, U), p(0, 1, 1, S), p(1, 0, 0, E), p(1, 1, 1, E))),
             // пульпа с запада, хвосты на восток, пенный продукт — желоб на севере
             Map.entry("flotation_cell_real", List.of(p(0, 0, 1, W), p(1, 0, 1, E), p(0, 0, 0, N), p(1, 0, 0, N))),

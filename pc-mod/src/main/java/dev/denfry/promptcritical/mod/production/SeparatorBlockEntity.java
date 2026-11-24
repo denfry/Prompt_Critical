@@ -30,8 +30,13 @@ import org.jetbrains.annotations.Nullable;
  * нефть (трубы — к боковым граням), пластовую воду (к нижней) и попутный газ (к верхней). Газ, который некуда
  * девать, уходит на факел ({@code flare_tip} в {@link #FLARE_RADIUS} блоках); без факела переполненный газовый объём
  * останавливает приём — скважины закрываются.
+ * <p>
+ * Тот же BE служит сепаратору реального масштаба {@code three_phase_separator_real} (НГС-1,6-2000, 11 × 3 × 3): трубы
+ * цепляются к его патрубкам (газ сверху, нефть с востока, вода снизу — {@code WholePorts}), а поплавки уровнемеров и
+ * штоки регулирующих клапанов на модели идут по уровням, которые BE шлёт клиенту.
  */
-public final class SeparatorBlockEntity extends DeviceBlockEntity implements FoundryDevice, PanelHost {
+public final class SeparatorBlockEntity extends DeviceBlockEntity implements FoundryDevice, PanelHost,
+        dev.denfry.promptcritical.mod.client.whole.RealScaleBlockEntity {
     public static final int OIL_MB = 16_000, WATER_MB = 16_000, GAS_MB = 4_000, FLARE_RADIUS = 16;
 
     private final ProductTank oil = new ProductTank(PcFluids.CRUDE_OIL.source.get(), OIL_MB);
@@ -42,6 +47,8 @@ public final class SeparatorBlockEntity extends DeviceBlockEntity implements Fou
     @Nullable
     private BlockPos flare;
     private int ticks;
+    /** Уровни нефти и воды, доли, как их видит клиент (поплавки и клапаны модели реального масштаба). */
+    private float viewOil, viewWater;
 
     public SeparatorBlockEntity(BlockPos pos, BlockState state) {
         super(ProductionBlockEntities.SEPARATOR.get(), pos, state);
@@ -106,6 +113,39 @@ public final class SeparatorBlockEntity extends DeviceBlockEntity implements Fou
                 level.setBlock(flare, tip.setValue(BlockStateProperties.LIT, lit), Block.UPDATE_ALL);
         }
         if (ticks % 100 == 0) setChanged();
+        if (ticks % 20 == 0 && real() && (Math.abs(oil.fill() - viewOil) > 0.01 || Math.abs(water.fill() - viewWater) > 0.01)) {
+            viewOil = (float) oil.fill();
+            viewWater = (float) water.fill();
+            level.sendBlockUpdated(worldPosition, getBlockState(), getBlockState(), Block.UPDATE_CLIENTS);
+        }
+    }
+
+    /** Уровень нефти, доля (на клиенте — последний присланный). */
+    public float viewOil() {
+        return viewOil;
+    }
+
+    /** Уровень воды, доля (на клиенте — последний присланный). */
+    public float viewWater() {
+        return viewWater;
+    }
+
+    @Override
+    public CompoundTag getUpdateTag(HolderLookup.Provider registries) {
+        CompoundTag tag = new CompoundTag();
+        tag.putFloat("view_oil", (float) oil.fill());
+        tag.putFloat("view_water", (float) water.fill());
+        return tag;
+    }
+
+    @Override
+    public net.minecraft.network.protocol.Packet<net.minecraft.network.protocol.game.ClientGamePacketListener> getUpdatePacket() {
+        return net.minecraft.network.protocol.game.ClientboundBlockEntityDataPacket.create(this);
+    }
+
+    @Override
+    public BlockPos wholeModelLightPos() {
+        return worldPosition.relative(wholeModelFacing(), real() ? 2 : 1);
     }
 
     @Nullable
@@ -147,7 +187,7 @@ public final class SeparatorBlockEntity extends DeviceBlockEntity implements Fou
 
     @Override
     public PanelLayout panelLayout() {
-        return ProductionPanels.SEPARATOR_PANEL;
+        return real() ? ProductionPanels.SEPARATOR_REAL : ProductionPanels.SEPARATOR_PANEL;
     }
 
     @Override
@@ -176,6 +216,12 @@ public final class SeparatorBlockEntity extends DeviceBlockEntity implements Fou
 
     @Override
     protected void loadAdditional(CompoundTag tag, HolderLookup.Provider registries) {
+        if (tag.contains("view_oil")) {
+            // пакет клиенту: только уровни для модели, сохранённое состояние не трогаем
+            viewOil = tag.getFloat("view_oil");
+            viewWater = tag.getFloat("view_water");
+            return;
+        }
         super.loadAdditional(tag, registries);
         oil.load(tag, "oil");
         water.load(tag, "water");
