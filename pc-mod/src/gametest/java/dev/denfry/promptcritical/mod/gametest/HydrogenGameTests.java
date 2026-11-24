@@ -61,6 +61,22 @@ public final class HydrogenGameTests {
         h.setBlock(new BlockPos(x, y, z), AllBlocks.FLUID_PIPE.get().defaultBlockState());
     }
 
+    /**
+     * Трубы, поставленные через setBlock, не пересчитывают свои соединения сами (последняя в цепочке остаётся в
+     * состоянии по умолчанию). Пересчёт по соседям, как при установке игроком, — иначе линия видит ложные открытые концы.
+     */
+    private static void settlePipes(GameTestHelper h, int sx, int sy, int sz) {
+        var level = h.getLevel();
+        for (int pass = 0; pass < 2; pass++)
+            for (BlockPos rel : BlockPos.betweenClosed(0, 0, 0, sx - 1, sy - 1, sz - 1)) {
+                BlockPos abs = h.absolutePos(rel);
+                BlockState s = level.getBlockState(abs);
+                if (!AllBlocks.FLUID_PIPE.has(s)) continue;
+                BlockState settled = Block.updateFromNeighbourShapes(s, level, abs);
+                if (settled != s) level.setBlock(abs, settled, Block.UPDATE_CLIENTS);
+            }
+    }
+
     @GameTest(template = "gametest/empty_3x3x3", timeoutTicks = 20)
     public static void hydrogenPortsMapBackToThemselvesAtEveryFacing(GameTestHelper h) {
         BlockPos c = new BlockPos(100, 64, -40);
@@ -102,6 +118,7 @@ public final class HydrogenGameTests {
         pipe(h, 8, 2, 3);
         pipe(h, 8, 2, 2);
         pipe(h, 8, 3, 2);
+        settlePipes(h, 16, 24, 16);
 
         ElectrolyserBlockEntity el = (ElectrolyserBlockEntity) h.getBlockEntity(e);
         H2StorageBlockEntity holder = (H2StorageBlockEntity) h.getBlockEntity(g);
@@ -121,7 +138,9 @@ public final class HydrogenGameTests {
                 .thenWaitUntil(() -> h.assertTrue(comp.compressor().powerW() > 0,
                         "the compressor starts on its suction switch: gasholder " + Math.round(holder.storage().pressurePa()) + " Pa, leaking "
                                 + holder.leaking() + ", released " + Math.round(el.releasedMol()) + " mol, H2 " + Math.round(el.cells().h2MolS() * 100) / 100.0
-                                + " mol/s, trip " + el.cells().trip() + ", loaded " + comp.compressor().loaded()))
+                                + " mol/s, trip " + el.cells().trip() + ", loaded " + comp.compressor().loaded()
+                                + ", open ends " + dev.denfry.promptcritical.mod.hydrogen.GasLines.line(h.getLevel(), holder, 0).open().stream()
+                                        .map(h::relativePos).toList()))
                 .thenWaitUntil(() -> h.assertTrue(tubes.storage().mol() > tubesStart + 50,
                         "hydrogen reaches the tube bank: " + Math.round(tubes.storage().mol() - tubesStart) + " mol"))
                 .thenExecute(() -> {
