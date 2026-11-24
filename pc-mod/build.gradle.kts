@@ -314,7 +314,7 @@ tasks.named("check") { dependsOn(checkTranslations) }
 // рисуется пурпурно-чёрным кубом, а ни сборка, ни GameTest этого не видят (только лог клиента)
 val checkModelBounds by tasks.registering {
     group = "verification"
-    description = "Fails on block or item model elements outside the vanilla -16..32 bounds"
+    description = "Fails on block or item model elements outside the vanilla -16..32 bounds or turned by an angle the game rejects"
     val roots = listOf("src/main/resources", "src/generated/resources").map { layout.projectDirectory.dir("$it/assets/$modId/models") }
     roots.forEach { inputs.dir(it).optional() }
     doLast {
@@ -328,10 +328,14 @@ val checkModelBounds by tasks.registering {
                         val d = (v as Number).toDouble()
                         if (d < -16.0 || d > 32.0) bad += "${f.relativeTo(root).invariantSeparatorsPath} element $i $k $d"
                     }
+                    // игра принимает только 0, +-22,5 и +-45: другой угол — и модель не загружается целиком
+                    val angle = ((e["rotation"] as? Map<*, *>)?.get("angle") as? Number)?.toDouble()
+                    if (angle != null && angle !in listOf(0.0, 22.5, -22.5, 45.0, -45.0))
+                        bad += "${f.relativeTo(root).invariantSeparatorsPath} element $i rotation $angle"
                 }
             }
         }
-        if (bad.isNotEmpty()) throw GradleException("model elements outside -16..32: " + bad.take(40).joinToString("; "))
+        if (bad.isNotEmpty()) throw GradleException("model elements outside -16..32 or with a rejected rotation: " + bad.take(40).joinToString("; "))
     }
 }
 tasks.named("check") { dependsOn(checkModelBounds) }

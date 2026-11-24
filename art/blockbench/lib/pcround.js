@@ -61,7 +61,9 @@
   // Square post at angle `deg` (a multiple of 22.5) on radius r about a vertical axis: placed on the east side and
   // turned, or on the north side for the angles a single +-45 turn cannot reach.
   PCART.Model.prototype.postY = function (name, c, r, deg, w, y0, y1, mat, o = {}) {
-    let a = ((deg % 360) + 360) % 360, f, t;
+    // Minecraft принимает только повороты 0, +-22,5 и +-45: другой угол (шаг 60 у шестигранной опоры) ставим к
+    // ближайшему кратному 22,5, иначе игра не загрузит модель целиком
+    let a = ((Math.round(deg / 22.5) * 22.5 % 360) + 360) % 360, f, t;
     const east = a <= 45 || a >= 315, west = a >= 135 && a <= 225;
     if (east || west) {
       const s = east ? 1 : -1;
