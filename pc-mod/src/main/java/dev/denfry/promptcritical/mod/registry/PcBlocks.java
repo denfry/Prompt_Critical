@@ -1949,30 +1949,27 @@ public final class PcBlocks {
     /** Щелочной электролизёр класса Nel A485: x −4…4, y 0…3, z −1…1. */
     public static final Footprint FP_H2_ELECTROLYSER_REAL = Footprint.tiled(-4, 4, 0, 3, -1, 1);
     public static final DeferredBlock<PcDeviceBlock> H2_ELECTROLYSER_REAL = device("h2_electrolyser_real", machine(),
-            Spec.facing(PcProperties.RUNNING).segments(PcProperties.wholeSegments(FP_H2_ELECTROLYSER_REAL.segments().size()),
-                    FP_H2_ELECTROLYSER_REAL),
+            real(Spec.facing(PcProperties.RUNNING), FP_H2_ELECTROLYSER_REAL),
             FoundryBlock.with(dev.denfry.promptcritical.mod.hydrogen.ElectrolyserBlockEntity::new));
     /** Мембранный компрессор водорода: x −2…2, y 0…2, z −1…1. */
     public static final Footprint FP_H2_COMPRESSOR_REAL = Footprint.tiled(-2, 2, 0, 2, -1, 1);
     public static final DeferredBlock<PcDeviceBlock> H2_COMPRESSOR_REAL = device("h2_compressor_real", machine(),
-            Spec.facing(PcProperties.RUNNING).segments(PcProperties.wholeSegments(FP_H2_COMPRESSOR_REAL.segments().size()),
-                    FP_H2_COMPRESSOR_REAL),
+            real(Spec.facing(PcProperties.RUNNING), FP_H2_COMPRESSOR_REAL),
             FoundryBlock.with(dev.denfry.promptcritical.mod.hydrogen.H2CompressorBlockEntity::new));
     /** Баллонная рампа 200 бар: x −3…3, y 0…2, z −1…1. */
     public static final Footprint FP_H2_TUBE_BANK_REAL = Footprint.tiled(-3, 3, 0, 2, -1, 1);
     public static final DeferredBlock<PcDeviceBlock> H2_TUBE_BANK_REAL = device("h2_tube_bank_real", machine(),
-            Spec.facing().segments(PcProperties.wholeSegments(FP_H2_TUBE_BANK_REAL.segments().size()), FP_H2_TUBE_BANK_REAL),
+            real(Spec.facing(), FP_H2_TUBE_BANK_REAL),
             FoundryBlock.with(dev.denfry.promptcritical.mod.hydrogen.H2StorageBlockEntity::new));
     /** Газгольдер-ресивер: x −2…2, y 0…12, z −2…2. */
     public static final Footprint FP_H2_GASHOLDER_REAL = Footprint.tiled(-2, 2, 0, 12, -2, 2);
     public static final DeferredBlock<PcDeviceBlock> H2_GASHOLDER_REAL = device("h2_gasholder_real", machine(),
-            Spec.facing().segments(PcProperties.wholeSegments(FP_H2_GASHOLDER_REAL.segments().size()), FP_H2_GASHOLDER_REAL),
+            real(Spec.facing(), FP_H2_GASHOLDER_REAL),
             FoundryBlock.with(dev.denfry.promptcritical.mod.hydrogen.H2StorageBlockEntity::new));
     /** Модуль топливных элементов PEM 200 кВт с инвертором: x −1…1, y 0…2, z 0. */
     public static final Footprint FP_H2_FUEL_CELL_REAL = Footprint.tiled(-1, 1, 0, 2, 0, 0);
     public static final DeferredBlock<PcDeviceBlock> H2_FUEL_CELL_REAL = device("h2_fuel_cell_real", machine(),
-            Spec.facing(PcProperties.RUNNING).segments(PcProperties.wholeSegments(FP_H2_FUEL_CELL_REAL.segments().size()),
-                    FP_H2_FUEL_CELL_REAL),
+            real(Spec.facing(PcProperties.RUNNING), FP_H2_FUEL_CELL_REAL),
             FoundryBlock.with(dev.denfry.promptcritical.mod.hydrogen.FuelCellBlockEntity::new));
     /** Мареограф: уровень моря по модели прилива, амплитуда M2 места и фаза Луны. */
     public static final DeferredBlock<PcDeviceBlock> TIDE_GAUGE = device("tide_gauge", machine().noOcclusion(), Spec.facing(),
