@@ -81,6 +81,7 @@ public final class PromptCritical {
         dev.denfry.promptcritical.mod.environment.ToxicReleaseService.register();
         dev.denfry.promptcritical.mod.environment.RadiationService.register();
         dev.denfry.promptcritical.mod.environment.ContainerActivityScan.register();
+        dev.denfry.promptcritical.mod.environment.SourceLedger.register();
         modBus.addListener(dev.denfry.promptcritical.mod.environment.ContainerShielding::register);
         modBus.addListener(dev.denfry.promptcritical.mod.environment.BiomeEnvironment::register);
         if (net.neoforged.fml.ModList.get().isLoaded("voicechat")) dev.denfry.promptcritical.mod.compat.voicechat.SpeechMasking.register();

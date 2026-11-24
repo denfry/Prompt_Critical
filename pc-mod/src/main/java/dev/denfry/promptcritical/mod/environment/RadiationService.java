@@ -74,6 +74,10 @@ public final class RadiationService {
                 "Костный мозг не работает: острая лучевая болезнь III степени (больше 4 Гр)");
         text("extreme", "Lethal dose: acute radiation sickness, grade IV (over 6 Gy)",
                 "Смертельная доза: острая лучевая болезнь IV степени (больше 6 Гр)");
+        text("source_orphan", "ORPHAN SOURCE %s: unseen too long, last at %s %s %s. It keeps radiating there until found",
+                "БЕСХОЗНЫЙ ИСТОЧНИК %s: давно не виден, последний раз — %s %s %s. Он излучает оттуда, пока его не найдут");
+        text("source_destroyed", "Tracked source %s destroyed at %s %s %s: entered in the log",
+                "Учтённый источник %s уничтожен в точке %s %s %s: запись в журнале");
         text("burst", "BLUE FLASH: criticality excursion. Your dose: %s Sv", "ГОЛУБАЯ ВСПЫШКА: СЦР. Ваша доза: %s Зв");
         LANG.put("death.attack.promptcritical.radiation", new String[] {"%1$s died of radiation sickness", "%1$s умер от лучевой болезни"});
         LANG.put("death.attack.promptcritical.radiation.player", new String[] {"%1$s died of radiation sickness while fighting %2$s",
@@ -255,11 +259,13 @@ public final class RadiationService {
         List<Positioned> out = new java.util.ArrayList<>();
         java.util.Set<net.minecraft.world.entity.item.ItemEntity> seen = new java.util.HashSet<>();
         for (ServerPlayer p : level.players()) {
+            SourceLedger.sightCarried(level, p);
             PointSource carried = carried(p, now);
             if (!carried.empty()) out.add(new Positioned(p.position().add(0, 0.9, 0), carried, now + HOLD_TICKS));
             for (net.minecraft.world.entity.item.ItemEntity e : level.getEntitiesOfClass(net.minecraft.world.entity.item.ItemEntity.class,
                     p.getBoundingBox().inflate(ITEM_SCAN_M))) {
                 if (!seen.add(e)) continue;
+                SourceLedger.sightOnGround(level, e);
                 PointSource s = itemSource(e.getItem(), now);
                 if (s != null && !s.empty()) out.add(new Positioned(e.position().add(0, 0.2, 0), s, now + HOLD_TICKS));
             }
@@ -326,6 +332,7 @@ public final class RadiationService {
         ContainerActivityScan.tick(level);
         if (now % 20 != 0) return;
         gatherItems(level, now);
+        SourceLedger.tick(level, now);
         for (ServerPlayer p : level.players()) {
             if (!p.isSpectator() && RadonField.due(now, p)) RadonField.refresh(level, p); // наблюдатель проходит сквозь стены: заливку не тратим
             double rate = rateSvH(level, p.getEyePosition())

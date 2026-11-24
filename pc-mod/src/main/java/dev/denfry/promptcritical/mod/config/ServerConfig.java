@@ -19,7 +19,8 @@ public final class ServerConfig {
     // --- 00, 01, 02 ---
     public static final ModConfigSpec.DoubleValue K_SLOW;
     public static final ModConfigSpec.DoubleValue ISOTOPES_GAMMA_HEATING_W_PER_G, ISOTOPES_FILM_EXPOSURE_GY, ISOTOPES_RTG_TE_SYSTEM_FACTOR,
-            ISOTOPES_RTG_TE_DEGRADATION_PER_YEAR;
+            ISOTOPES_RTG_TE_DEGRADATION_PER_YEAR, TRANSPORT_TRACKED_ACTIVITY_BQ;
+    public static final ModConfigSpec.IntValue ISOTOPES_ORPHAN_AFTER_S;
     public static final ModConfigSpec.DoubleValue K_STORAGE;
     public static final ModConfigSpec.DoubleValue K_BURN;
     public static final ModConfigSpec.EnumValue<DecayHeatClock> DECAY_HEAT_CLOCK;
@@ -473,6 +474,13 @@ public final class ServerConfig {
                 .defineInRange("rtg_te_system_factor", 0.8, 0.1, 1.0);
         ISOTOPES_RTG_TE_DEGRADATION_PER_YEAR = b.comment("[BALANCE] Thermoelement degradation per physical year (12 §12.5.4)")
                 .defineInRange("rtg_te_degradation_per_year", 0.03, 0.0, 0.5);
+        ISOTOPES_ORPHAN_AFTER_S = b.comment("A tracked source unseen this long becomes an orphan source: alarm to its last holder and the server log (16 §16.8.4)")
+                .defineInRange("orphan_after_s", 600, 10, 86_400);
+        b.pop();
+
+        b.push("transport");
+        TRANSPORT_TRACKED_ACTIVITY_BQ = b.comment("[BALANCE] Items above this activity, Bq, or in IAEA categories 1-3, are tracked sources (04d §4d.6.1)")
+                .defineInRange("tracked_activity_bq", 1e12, 1e6, 1e20);
         b.pop();
 
         b.push("site");
