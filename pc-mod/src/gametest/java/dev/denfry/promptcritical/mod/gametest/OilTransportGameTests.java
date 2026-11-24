@@ -125,8 +125,8 @@ public final class OilTransportGameTests {
         h.assertTrue(WholePorts.allows("oil_tank_real", Direction.NORTH, -6, 0, 0, Direction.WEST), "receive on the west");
         h.assertFalse(WholePorts.allows("oil_tank_real", Direction.NORTH, 0, 0, -6, Direction.NORTH), "no pipe through the shell");
         h.succeedWhen(() -> {
-            // налив 0,4 м³/с — как с магистрального насоса
-            tank.oil().fill(crude(20), IFluidHandler.FluidAction.EXECUTE);
+            // налив 0,4 м³/с через приёмный патрубок — как с магистрального насоса
+            h.assertTrue(tank.fluids(Direction.WEST).fill(crude(20), IFluidHandler.FluidAction.EXECUTE) == 20, "the tank takes crude by pipe");
             h.assertFalse(tank.floatingRoof(), "fixed roof");
             h.assertTrue(tank.venting(), "the breather valve vents vapour while filling");
             h.assertTrue(tank.lossKgS() > 0, "breathing losses");
@@ -137,9 +137,9 @@ public final class OilTransportGameTests {
     public static void floatingRoofTankKeepsTheVapourIn(GameTestHelper h) {
         BlockPos p = new BlockPos(7, 1, 7);
         var tank = (OilTankBlockEntity) build(h, p, "oil_tank_floating_real", PcBlocks.FP_OIL_TANK_REAL, PcBlocks.OIL_TANK_FLOATING_REAL.get());
-        tank.oil().fill(crude(300_000), IFluidHandler.FluidAction.EXECUTE);
+        h.assertTrue(tank.fluids(Direction.WEST).fill(crude(300_000), IFluidHandler.FluidAction.EXECUTE) == 300_000, "the tank takes 300 m3");
         h.runAfterDelay(60, () -> {
-            tank.oil().fill(crude(20), IFluidHandler.FluidAction.EXECUTE);
+            tank.fluids(Direction.WEST).fill(crude(20), IFluidHandler.FluidAction.EXECUTE);
             h.succeedWhen(() -> {
                 h.assertTrue(tank.floatingRoof(), "floating roof");
                 h.assertTrue(tank.lossKgS() > 0, "the rim seal still loses some vapour");
