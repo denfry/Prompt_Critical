@@ -1,7 +1,8 @@
 package dev.denfry.promptcritical.mod.gametest;
 
+import com.simibubi.create.AllBlocks;
+import com.simibubi.create.content.kinetics.motor.CreativeMotorBlockEntity;
 import dev.denfry.promptcritical.mod.PromptCritical;
-import dev.denfry.promptcritical.mod.binding.SimBindings;
 import dev.denfry.promptcritical.mod.boiler.KineticPortBlock;
 import dev.denfry.promptcritical.mod.client.whole.WholeModelHost;
 import dev.denfry.promptcritical.mod.multiblock.Footprint;
@@ -69,12 +70,14 @@ public final class OilTransportGameTests {
         h.assertTrue(WholePorts.allows("mainline_pump_real", Direction.NORTH, -1, 0, -1, Direction.NORTH), "suction on the north nozzle");
         h.assertTrue(WholePorts.allows("mainline_pump_real", Direction.NORTH, -1, 0, 1, Direction.SOUTH), "discharge on the south nozzle");
         h.assertFalse(WholePorts.allows("mainline_pump_real", Direction.NORTH, 2, 0, 1, Direction.SOUTH), "no pipe on the motor");
+        // вал Create на номинальной скорости — настоящий мотор у хвостовика: клетка-порт каждый тик сама пишет насосу
+        // скорость своего вала, поэтому подставлять отсчёт из теста бесполезно (порт без вала перетирает его нулём)
+        BlockPos motor = p.offset(4, 0, 0);
+        h.setBlock(motor, AllBlocks.CREATIVE_MOTOR.getDefaultState().setValue(BlockStateProperties.FACING, Direction.WEST));
+        h.runAfterDelay(1, () -> ((CreativeMotorBlockEntity) h.getBlockEntity(motor)).generatedSpeed.setValue((int) MainlinePumpBlockEntity.NOMINAL_RPM));
         pump.suction().fill(crude(MainlinePumpBlockEntity.SUCTION_MB), IFluidHandler.FluidAction.EXECUTE);
         pump.setOn(true);
-        var level = h.getLevel();
         h.succeedWhen(() -> {
-            // вал Create на номинальной скорости
-            pump.sampleShaft(MainlinePumpBlockEntity.NOMINAL_RPM, true, SimBindings.get(level).world().clock().tick());
             h.assertTrue(pump.discharge().amount() > 0, "the pump moved crude to the discharge");
             double q = pump.flowM3s();
             h.assertTrue(Math.abs(q - pump.operatingFlowM3s()) < 1e-9, "the flow is the operating point while the suction is full: " + q);
