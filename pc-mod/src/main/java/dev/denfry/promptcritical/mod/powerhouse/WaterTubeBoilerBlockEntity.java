@@ -6,7 +6,18 @@ import dev.denfry.promptcritical.mod.block.PcProperties;
 import dev.denfry.promptcritical.mod.ironworks.GasBuffer;
 import dev.denfry.promptcritical.mod.ironworks.Ironworks;
 import dev.denfry.promptcritical.mod.ironworks.IronworksBlockEntity;
+import dev.denfry.promptcritical.mod.ops.OpsActions;
+import dev.denfry.promptcritical.mod.ops.OpsMachine;
+import dev.denfry.promptcritical.mod.ops.OpsWorld;
+import dev.denfry.promptcritical.mod.ops.TeamResolver;
 import dev.denfry.promptcritical.mod.ops.WaterTreatmentBlockEntity;
+import dev.denfry.promptcritical.sim.combustion.BurnerManagementSystem;
+import dev.denfry.promptcritical.sim.ops.CheckInput;
+import dev.denfry.promptcritical.sim.ops.CheckResult;
+import dev.denfry.promptcritical.sim.ops.CommissioningCheck;
+import dev.denfry.promptcritical.sim.ops.OpsSubsystem;
+import dev.denfry.promptcritical.sim.ops.UnitKind;
+import net.minecraft.world.phys.Vec3;
 import dev.denfry.promptcritical.mod.panel.PanelHost;
 import dev.denfry.promptcritical.mod.panel.PanelLayout;
 import dev.denfry.promptcritical.mod.registry.PcItems;
@@ -73,7 +84,7 @@ import org.jetbrains.annotations.Nullable;
  * водоподготовки; {@code boiler_feedwater} после деаэратора горячая и без кислорода. Тип горелок — по топливу; смена
  * топлива другого типа — только на остановленном котле.
  */
-public final class WaterTubeBoilerBlockEntity extends IronworksBlockEntity implements DeviceHost, PanelHost {
+public final class WaterTubeBoilerBlockEntity extends IronworksBlockEntity implements DeviceHost, PanelHost, OpsMachine {
     public static final int LINK_RANGE = 12, FEED_TANK_MB = 8000, GAS_TANK_MB = 4000;
     public static final double AMBIENT_K = 288.15;
     /** Шаг ручного задания и уставки давления кнопками щита. */
@@ -227,6 +238,75 @@ public final class WaterTubeBoilerBlockEntity extends IronworksBlockEntity imple
             looks(u);
             announce(u);
         }
+        operations(u);
+    }
+
+    // --- эксплуатация (план HP2.2) ---
+
+    /** Кто последним дал команду продувки: ему — итог проверки {@code PURGE}, его команде — установка. */
+    @Nullable
+    private UUID purgeBy;
+    private boolean purgeSeen;
+
+    /**
+     * Пусконаладка: разрешение на розжиг пишется в BMS каждый тик (запирает и щит, и CC); завершённая BMS продувка —
+     * проверка {@code PURGE}; пробная работа — BMS в {@code RUNNING}, нагрузка — пар к номинальному, MFT не по команде
+     * оператора — срабатывание защиты.
+     */
+    private void operations(WaterTubeUnit u) {
+        OpsSubsystem ops = OpsWorld.ops(level);
+        if (ops == null || OpsWorld.ensure(level, simId, UnitKind.WATER_TUBE_BOILER, WaterTubeUnit.WORKING_PRESSURE_PA,
+                false) == null) return;
+        BurnerManagementSystem bms = u.boiler().bmsControl();
+        bms.setPermitted(OpsActions.processAllowed(level, this));
+        BmsState s = u.bms();
+        if (s == BmsState.PURGE_COMPLETE) {
+            if (!purgeSeen && !ops.commissioning().passedChecks(simId).contains(CommissioningCheck.PURGE)) {
+                CheckResult r = ops.perform(simId, new CheckInput.Purge(bms.purgeVolumeChanges()), purgeBy,
+                        TeamResolver.team(purgeBy));
+                Player p = purgeBy == null ? null : level.getPlayerByUUID(purgeBy);
+                if (p != null) OpsActions.report(p, r);
+            }
+            purgeSeen = true;
+        } else {
+            purgeSeen = false;
+        }
+        double rated = u.ratedSteamKgS(), flow = u.steamFlowKgS();
+        ops.observeTrial(simId, 0.05, s == BmsState.RUNNING, rated > 0 && flow > 0 ? flow / rated : 0,
+                s == BmsState.MFT && bms.lastMftCause() != MftCause.OPERATOR, opsCurrent());
+    }
+
+    @Override
+    public UnitKind opsKind() {
+        return UnitKind.WATER_TUBE_BOILER;
+    }
+
+    /** Остановлен — в топке нет ни запальника, ни основного факела. */
+    @Override
+    public boolean opsStopped() {
+        WaterTubeUnit u = level != null && !level.isClientSide ? unit() : null;
+        if (u == null) return true;
+        return switch (u.bms()) {
+            case IGNITER_TRIAL, IGNITER_ON, MAIN_TRIAL, RUNNING -> false;
+            default -> true;
+        };
+    }
+
+    @Override
+    public Vec3 opsBearingPos() {
+        return Vec3.atCenterOf(worldPosition);
+    }
+
+    /** Температура металла барабана для гидроиспытания, К: по пару на выходе; котёл не собран — наружная. */
+    public double metalTempK() {
+        WaterTubeUnit u = unit();
+        double t = u == null ? Double.NaN : u.steamTempK();
+        return Double.isFinite(t) ? t : AMBIENT_K;
+    }
+
+    /** Погашен и остыл ниже 60 °C: можно опрессовывать и чеканить швы. */
+    public boolean drumCold() {
+        return opsStopped() && metalTempK() < OpsActions.HYDRO_COLD_K;
     }
 
     /** Громкая связь: смена состояния BMS, причина отсечки, подрыв предохранительного клапана. */
@@ -374,6 +454,7 @@ public final class WaterTubeBoilerBlockEntity extends IronworksBlockEntity imple
     public void bmsCommand(String action, UUID who) {
         SimLevelBinding b = Ironworks.binding(level);
         if (b == null || unit() == null) return;
+        if (SteamPlant.BMS_PURGE.equals(action)) purgeBy = who;
         b.submit(new SimCommand.Operate(simId, action), new CommandSource.Panel(who, worldPosition.asLong()));
     }
 
@@ -383,7 +464,11 @@ public final class WaterTubeBoilerBlockEntity extends IronworksBlockEntity imple
         if (u == null) return;
         switch (id) {
             case PowerhousePanels.BUTTON_PURGE -> bmsCommand(SteamPlant.BMS_PURGE, player.getUUID());
-            case PowerhousePanels.BUTTON_IGNITER -> bmsCommand(SteamPlant.BMS_IGNITER, player.getUUID());
+            case PowerhousePanels.BUTTON_IGNITER -> {
+                // розжиг после продувки — пуск котла: пусконаладка и лицензия I1; запальники к горящему котлу не запираются
+                if (u.bms() != BmsState.PURGE_COMPLETE || OpsActions.startAllowed(player, level, this))
+                    bmsCommand(SteamPlant.BMS_IGNITER, player.getUUID());
+            }
             case PowerhousePanels.BUTTON_MAIN_FUEL -> bmsCommand(SteamPlant.BMS_MAIN_FUEL, player.getUUID());
             case PowerhousePanels.BUTTON_SHUTDOWN -> bmsCommand(SteamPlant.BMS_SHUTDOWN, player.getUUID());
             case PowerhousePanels.BUTTON_BYPASS -> {

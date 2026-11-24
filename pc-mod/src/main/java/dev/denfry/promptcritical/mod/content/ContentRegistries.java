@@ -80,6 +80,7 @@ public final class ContentRegistries {
 
     private static void reload(AddReloadListenerEvent event) {
         event.addListener(new HandbookManager());
+        event.addListener(new dev.denfry.promptcritical.mod.manufacturing.MachineSpecManager());
     }
 
     private static void login(PlayerEvent.PlayerLoggedInEvent event) {

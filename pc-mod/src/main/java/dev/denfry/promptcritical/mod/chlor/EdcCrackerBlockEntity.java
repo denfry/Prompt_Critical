@@ -45,6 +45,8 @@ import org.jetbrains.annotations.Nullable;
  * (Shift + ПКМ на остановленной печи).
  */
 public final class EdcCrackerBlockEntity extends DeviceBlockEntity implements FoundryDevice, PanelHost {
+    /** Насосы дихлорэтана, закалки и колонн HCl и ВХ, Вт. Розетка или силовой щит рядом; при недостатке установка работает медленнее. */
+    public static final double POWER_W = 55e3;
     public static final int LIQ_MB = 8_000, GAS_MB = 4_000;
     /** Подача в змеевик (свежий ЭДХ и рецикл), моль/с [BALANCE]. */
     public static final double COIL_MOL_S = 8;
@@ -85,7 +87,8 @@ public final class EdcCrackerBlockEntity extends DeviceBlockEntity implements Fo
         if (b == null) return;
         double dt = 0.05 * b.world().clock().kSlow();
         double freshMol = edcIn.amount() * ChlorUnits.EDC_KG_L / ChlorUnits.EDC_KG_MOL;
-        double feed = Math.min(COIL_MOL_S * dt, recycleMol + freshMol);
+        double power = dev.denfry.promptcritical.mod.grid.MachinePower.supply(s, worldPosition, recycleMol + freshMol > 0 ? POWER_W : 0);
+        double feed = Math.min(COIL_MOL_S * dt * power, recycleMol + freshMol);
         // топливо и место под продукты
         double x = EdcCracker.conversion(cracker.cotK());
         double vcmRoomMol = vcm.room() * ChlorUnits.VCM_KG_L / ChlorUnits.VCM_KG_MOL, hclRoomMol = hcl.room() / ChlorUnits.NM3_PER_MOL;

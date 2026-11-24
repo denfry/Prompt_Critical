@@ -82,6 +82,11 @@ public final class ElectricGearService {
             head.set(PcDataComponents.ELECTRIC_GEAR.get(), ElectricGearItem.of(r.pack(), 0, now));
         }
         if (p.isCreative()) return;
+        if (dev.denfry.promptcritical.mod.compat.CompatSwitch.bodyTemperatureIsExternal()) {
+            // 16 §16.10.1, R60: температурой тела владеет Cold Sweat или Tough As Nails
+            BODIES.remove(p.getUUID());
+            return;
+        }
         Body b = BODIES.computeIfAbsent(p.getUUID(), k -> new Body());
         BodyProfile prof = BodyService.profile(p);
         double met = activity(p, b).met;

@@ -6,6 +6,12 @@ import dev.denfry.promptcritical.sim.automation.AutomationKind;
 import dev.denfry.promptcritical.sim.automation.AutomationSubsystem;
 import dev.denfry.promptcritical.sim.automation.AutomationUnit;
 import dev.denfry.promptcritical.mod.block.PcProperties;
+import dev.denfry.promptcritical.mod.ops.OpsActions;
+import dev.denfry.promptcritical.mod.ops.OpsMachine;
+import dev.denfry.promptcritical.mod.ops.OpsWorld;
+import dev.denfry.promptcritical.sim.ops.OpsSubsystem;
+import dev.denfry.promptcritical.sim.ops.UnitKind;
+import net.minecraft.world.phys.Vec3;
 import dev.denfry.promptcritical.mod.panel.PanelHost;
 import dev.denfry.promptcritical.mod.panel.PanelLayout;
 import dev.denfry.promptcritical.sim.grid.BreakerResponse;
@@ -33,7 +39,7 @@ import org.jetbrains.annotations.Nullable;
  * по бокам и сверху. Модули РЗА — в соседнем шкафу {@code relay_cabinet}.
  */
 public class BreakerCellBlockEntity extends GridDeviceBlockEntity<SwitchUnit> implements PanelHost, WiredDevice,
-        dev.denfry.promptcritical.mod.ops.IsolationPoint {
+        dev.denfry.promptcritical.mod.ops.IsolationPoint, OpsMachine {
     private final SwitchUnit.Kind kind;
     private final MechanismWiring wiring = new MechanismWiring();
     /** Электромагниты включения/отключения под напряжением на прошлом тике (команда — по фронту). */
@@ -126,12 +132,27 @@ public class BreakerCellBlockEntity extends GridDeviceBlockEntity<SwitchUnit> im
             setFlag(BlockStateProperties.OPEN, !u.closed());
             setFlag(PcProperties.ALARM, s == BreakerState.FAULTED || s == BreakerState.FAILED_TO_INTERRUPT);
         }
+        operations(u);
     }
 
-    /** Включить или отключить; ответ привода — игроку. */
+    /**
+     * Пусконаладка (план HP2.2): разрешение на включение пишется в модель каждый тик (запирает и Lua, и автоматику),
+     * опробование — ячейка включена и присоединение под напряжением.
+     */
+    private void operations(SwitchUnit u) {
+        OpsSubsystem ops = OpsWorld.ops(level);
+        if (ops == null || OpsWorld.ensure(level, simId(), UnitKind.BREAKER_CELL, 0, false) == null) return;
+        u.setPermitted(OpsActions.processAllowed(level, this));
+        BreakerState s = u.breakerState();
+        ops.observeTrial(simId(), 0.05, u.closed() && !noEnergy(), 1,
+                s == BreakerState.FAULTED || s == BreakerState.FAILED_TO_INTERRUPT, opsCurrent());
+    }
+
+    /** Включить или отключить; ответ привода — игроку. Включение отключённой ячейки — пуск: пусконаладка и лицензия I1. */
     public BreakerResponse operate(@Nullable Player player, boolean close) {
         SwitchUnit u = unit();
         if (u == null) return BreakerResponse.UNAVAILABLE;
+        if (close && !u.closed() && !OpsActions.startAllowed(player, level, this)) return BreakerResponse.INTERLOCK;
         BreakerResponse r = u.operate(close);
         if (player != null) player.displayClientMessage(r == BreakerResponse.LOCKED_OUT
                 ? dev.denfry.promptcritical.mod.ops.Lockouts.lockedMessage(level, worldPosition)
@@ -139,6 +160,25 @@ public class BreakerCellBlockEntity extends GridDeviceBlockEntity<SwitchUnit> im
         if (r == BreakerResponse.ACCEPTED)
             level.playSound(null, worldPosition, dev.denfry.promptcritical.mod.sound.PcSfx.BREAKER_OPERATE.get(), SoundSource.BLOCKS, 0.9f, close ? 0.85f : 1.0f);
         return r;
+    }
+
+    // --- эксплуатация ---
+
+    @Override
+    public UnitKind opsKind() {
+        return UnitKind.BREAKER_CELL;
+    }
+
+    /** Остановлена — выключатель отключён (условие замера изоляции и проверки отключения от защиты). */
+    @Override
+    public boolean opsStopped() {
+        SwitchUnit u = level != null && !level.isClientSide ? unit() : null;
+        return u == null || !u.closed();
+    }
+
+    @Override
+    public Vec3 opsBearingPos() {
+        return Vec3.atCenterOf(worldPosition);
     }
 
     static net.minecraft.network.chat.Component response(BreakerResponse r) {

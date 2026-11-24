@@ -33,6 +33,12 @@ import org.jetbrains.annotations.Nullable;
  * Поворот бочки валом Create в игре не нужен: дутьё — воздуходувкой цеха.
  */
 public final class ConverterBlockEntity extends UraniumProcessBlockEntity implements dev.denfry.promptcritical.mod.client.whole.WholeModelHost {
+    /** Привод поворота конвертера и пылеуборка, Вт. */
+    @Override
+    protected double ratedPowerW() {
+        return 75e3;
+    }
+
     public static final int MB = 4_000;
 
     private final FeedTank gas = new FeedTank(PcFluids.SALES_GAS.source.get(), MB);

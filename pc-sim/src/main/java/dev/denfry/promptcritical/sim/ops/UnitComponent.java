@@ -24,7 +24,13 @@ public enum UnitComponent {
     /** Обмотка статора генератора. */
     STATOR(CommissioningCheck.INSULATION_TEST),
     /** Муфта между приводом и генератором. */
-    COUPLING(CommissioningCheck.ALIGNMENT);
+    COUPLING(CommissioningCheck.ALIGNMENT),
+    /** Шины и кабели присоединения (ячейка выключателя, печь Ачесона). */
+    BUSBAR(CommissioningCheck.INSULATION_TEST),
+    /** Исполнительный орган защиты: расцепитель выключателя, отсечной клапан топлива, аварийные стержни. */
+    TRIP_DEVICE(CommissioningCheck.SIS_PROOF_TEST),
+    /** Каналы контроля нейтронного потока. */
+    FLUX_CHANNEL(CommissioningCheck.LOOP_CHECK);
 
     private final CommissioningCheck coveredBy;
 

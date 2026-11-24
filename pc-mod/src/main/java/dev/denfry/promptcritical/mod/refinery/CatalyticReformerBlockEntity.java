@@ -6,7 +6,7 @@ import dev.denfry.promptcritical.mod.production.FeedTank;
 import dev.denfry.promptcritical.mod.production.ProductTank;
 import dev.denfry.promptcritical.mod.registry.PcFluids;
 import dev.denfry.promptcritical.mod.registry.PcItems;
-import dev.denfry.promptcritical.mod.uranium.UraniumProcessBlockEntity;
+import dev.denfry.promptcritical.mod.uranium.MvProcessBlockEntity;
 import dev.denfry.promptcritical.sim.refining.CatalyticReforming;
 import java.util.Arrays;
 import net.minecraft.core.BlockPos;
@@ -29,7 +29,13 @@ import org.jetbrains.annotations.Nullable;
  * избыток своего газа гидрокрекинга — с боковых граней. Печи сначала жгут свой газ, недостачу добирают товарным.
  * Регенерация — кнопкой на остановленной установке: выжиг кокса, с хлором — ещё и редиспергирование платины.
  */
-public final class CatalyticReformerBlockEntity extends UraniumProcessBlockEntity {
+public final class CatalyticReformerBlockEntity extends MvProcessBlockEntity {
+    /** Циркуляционный компрессор водородсодержащего газа, сырьевые насосы и дымососы печей, Вт. */
+    @Override
+    protected double mvRatedW() {
+        return 1.2e6;
+    }
+
     public static final int MB = 8_000, CHLORINE_MB = 1_000;
     /** 1 л/с сырья при LHSV 1,5 ч⁻¹ [BALANCE], давление и кратность циркуляции по Л-35-11/600. */
     public static final double FEED_L_S = 1, LHSV = 1.5, PRESSURE_MPA = 2.5, H2_RATIO = 6, FEED_SULFUR_PPM = 0.5;

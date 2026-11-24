@@ -36,6 +36,8 @@ import org.jetbrains.annotations.Nullable;
  * Тревога — звонок, сообщение и сигнал редстоуна, пока нарушитель в проходе и ещё {@value #HOLD_TICKS} тиков.
  */
 public final class PortalMonitorBlockEntity extends DeviceBlockEntity implements FoundryDevice {
+    /** Блоки детектирования и электроника портального монитора, Вт. Малая нагрузка 0,4 кВ: розетка, щит или ИБП рядом. */
+    public static final double POWER_W = 200;
     static final int PERIOD_TICKS = 10, HOLD_TICKS = 40;
 
     /** Фон места по последнему замеру при пустом проходе, мкЗв/ч. */
@@ -67,7 +69,7 @@ public final class PortalMonitorBlockEntity extends DeviceBlockEntity implements
     public void tickDevice() {
         if (!(level instanceof ServerLevel sl)) return;
         long now = sl.getGameTime();
-        if (now % PERIOD_TICKS != 0) return;
+        if (now % PERIOD_TICKS != 0 || !dev.denfry.promptcritical.mod.grid.MachinePower.powered(sl, worldPosition, POWER_W)) return;
         List<Player> inside = sl.getEntitiesOfClass(Player.class, gate(), p -> !p.isSpectator());
         if (inside.isEmpty()) {
             judged.clear();

@@ -5,7 +5,7 @@ import dev.denfry.promptcritical.mod.production.FeedTank;
 import dev.denfry.promptcritical.mod.production.ProductTank;
 import dev.denfry.promptcritical.mod.registry.PcFluids;
 import dev.denfry.promptcritical.mod.registry.PcItems;
-import dev.denfry.promptcritical.mod.uranium.UraniumProcessBlockEntity;
+import dev.denfry.promptcritical.mod.uranium.MvProcessBlockEntity;
 import dev.denfry.promptcritical.sim.refining.DelayedCoking;
 import java.util.Arrays;
 import net.minecraft.core.BlockPos;
@@ -26,7 +26,13 @@ import org.jetbrains.annotations.Nullable;
  * камера доходит до гидрорезки. H₂S из газа копится в аппарате и уходит в установку Клауса, которая касается его;
  * сухой газ сгорает в печи. Время процесса ускорено в {@link #TIME_SCALE} раз [BALANCE]: цикл камеры 28 ч — 14 мин.
  */
-public final class DelayedCokerBlockEntity extends UraniumProcessBlockEntity {
+public final class DelayedCokerBlockEntity extends MvProcessBlockEntity {
+    /** Насос гидрорезки кокса, сырьевые насосы и дымосос печи, Вт. */
+    @Override
+    protected double mvRatedW() {
+        return 800e3;
+    }
+
     public static final int MB = 8_000;
     /** Мазут западносибирской нефти: коксуемость 10 %, сера 1,8 % [BALANCE: типичный атмосферный остаток]. */
     public static final double FEED_CCR = 0.10, FEED_SULFUR = 0.018, FUEL_OIL_KG_L = 0.95, GASOLINE_KG_L = 0.735, DIESEL_KG_L = 0.84;

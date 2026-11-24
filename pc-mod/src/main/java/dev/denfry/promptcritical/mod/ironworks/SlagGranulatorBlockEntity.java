@@ -25,6 +25,10 @@ import org.jetbrains.annotations.Nullable;
  * {@code granulated_slag}. Без воды шлак не принимается — он остаётся на площадке.
  */
 public class SlagGranulatorBlockEntity extends IronworksBlockEntity {
+    /** Насосы оборотной воды грануляции и обезвоживающий барабан, Вт. Розетка или силовой щит рядом; при недостатке машина работает медленнее. */
+    public static final double POWER_W = 160e3;
+    /** Доля питания на последнем тике, 0…1. */
+    private double power;
     public static final double WATER_L_PER_KG = 1.0;
     private final GasBuffer water = new GasBuffer(16_000,
             s -> s.is(FluidTags.WATER) || s.is(PcFluids.RAW_WATER.source.get()), this::setChanged);
@@ -45,7 +49,7 @@ public class SlagGranulatorBlockEntity extends IronworksBlockEntity {
     /** Принять жидкий шлак, кг; вернуть принятое. */
     double accept(double kg) {
         if (!(kg > 0) || !out.outputFits(new ItemStack(PcItems.GRANULATED_SLAG.get()))) return 0;
-        double take = Math.min(kg, water.amount() / WATER_L_PER_KG);
+        double take = Math.min(kg * power, water.amount() / WATER_L_PER_KG);
         if (!(take > 0)) return 0;
         water.draw(take * WATER_L_PER_KG);
         slagKg += take;
@@ -62,6 +66,7 @@ public class SlagGranulatorBlockEntity extends IronworksBlockEntity {
     @Override
     protected void serverTick(SimLevelBinding b) {
         if (steamTicks > 0) steamTicks--;
+        power = dev.denfry.promptcritical.mod.grid.MachinePower.supply(level, worldPosition, POWER_W);
         setStateFlag(PcProperties.RUNNING, steamTicks > 0);
     }
 

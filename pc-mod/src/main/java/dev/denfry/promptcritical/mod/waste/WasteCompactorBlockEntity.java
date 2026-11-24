@@ -34,6 +34,12 @@ import net.minecraft.world.level.block.state.BlockState;
  * (бумага, пластик, спецодежда — «DAW»). Коэффициент сокращения — средний по объёму.
  */
 public final class WasteCompactorBlockEntity extends UraniumProcessBlockEntity {
+    /** Насосная станция гидравлики суперпресса, Вт. */
+    @Override
+    protected double ratedPowerW() {
+        return 110e3;
+    }
+
     public static final int IN_SLOTS = 8, OUT_SLOTS = 4;
     public static final double DRUM_L = 200, FILTER_L = 20, ITEM_L = 10, STROKE_S = 600, OVERPACK_FILL = 0.9, DRUM_STEEL_KG = 20;
 

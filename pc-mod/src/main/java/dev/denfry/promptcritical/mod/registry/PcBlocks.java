@@ -1054,11 +1054,21 @@ public final class PcBlocks {
                 || b == BAYER_DIGESTER_REAL.get() || b == ALUMINA_PRECIPITATOR_REAL.get() || b == MATTE_SMELTER_REAL.get();
     }
 
+    /**
+     * Машины с паспортом сборки (18 §18.8.3): паспорт переходит из предмета в блок и обратно при сломе. Пока это
+     * машины с моделью износа 13 (OpsMachine); MF6 расширит список.
+     */
+    public static java.util.Set<DeferredBlock<? extends net.minecraft.world.level.block.Block>> passportMachines() {
+        return java.util.Set.of(MINE_DRAINAGE_PUMP, MINE_DRAINAGE_PUMP_GEARED, MAIN_MINE_FAN, GUIBAL_FAN, MINE_HOIST,
+                WINDING_ENGINE, STEAM_ENGINE_CYLINDER, SHAFT_GENERATOR, SHAFT_GENERATOR_REAL);
+    }
+
     /** Кузница и машиностроение реального масштаба (18 §18.6–18.7). */
     public static boolean isSmithyReal(net.minecraft.world.level.block.Block b) {
         return b == POWER_HAMMER_REAL.get() || b == BLOOMERY_REAL.get() || b == FORGE_HEARTH_REAL.get() || b == CRANK_PRESS_REAL.get()
                 || b == WIRE_MILL_REAL.get() || b == SHEET_MILL_REAL.get() || b == NOTCHING_PRESS_REAL.get()
-                || b == WINDING_MACHINE_REAL.get() || b == HEATING_FURNACE_REAL.get() || b == HARDENING_FURNACE_REAL.get();
+                || b == WINDING_MACHINE_REAL.get() || b == HEATING_FURNACE_REAL.get() || b == HARDENING_FURNACE_REAL.get()
+                || b == ASSEMBLY_STAND.get();
     }
 
     /**
@@ -1148,6 +1158,14 @@ public final class PcBlocks {
     public static final DeferredBlock<PcDeviceBlock> BLOOMERY_REAL = device("bloomery_real", lit(brick()),
             real(Spec.facing(BlockStateProperties.LIT), FP_BLOOMERY_REAL),
             dev.denfry.promptcritical.mod.foundry.FoundryBlock.with(dev.denfry.promptcritical.mod.manufacturing.BloomeryBlockEntity::new));
+    /**
+     * Сборочный стенд (18 §18.8.2): чугунная плита с Т-пазами 3 × 3 м, портальная таль и балансировочные опоры;
+     * контроллер — северо-западный нижний угол.
+     */
+    public static final Footprint FP_ASSEMBLY_STAND = Footprint.tiled(0, 2, 0, 2, 0, 2);
+    public static final DeferredBlock<PcDeviceBlock> ASSEMBLY_STAND = device("assembly_stand", machine(),
+            real(Spec.facing(), FP_ASSEMBLY_STAND),
+            dev.denfry.promptcritical.mod.foundry.FoundryBlock.with(dev.denfry.promptcritical.mod.manufacturing.AssemblyStandBlockEntity::new));
     /** Кузнечный горн с колпаком, трубой 3 м и большими мехами на востоке. */
     public static final Footprint FP_FORGE_HEARTH_REAL = Footprint.tiled(0, 1, 0, 2, 0, 1);
     public static final DeferredBlock<PcDeviceBlock> FORGE_HEARTH_REAL = device("forge_hearth_real", lit(brick()),

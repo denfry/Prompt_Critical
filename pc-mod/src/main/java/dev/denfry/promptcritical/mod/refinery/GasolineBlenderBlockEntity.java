@@ -40,6 +40,12 @@ import org.jetbrains.annotations.Nullable;
  * рецепт — через CC: {@code getBlendData()} и {@code setValves(...)} периферии {@code pc_tank}.
  */
 public final class GasolineBlenderBlockEntity extends UraniumProcessBlockEntity {
+    /** Насосы компонентов, Вт. */
+    @Override
+    protected double ratedPowerW() {
+        return 55e3;
+    }
+
     public static final int FEED_MB = 8_000, BLEND_MB = 16_000;
     /** Клапан компонента — до 6 м³/ч [BALANCE: больше, чем дают установки модели]. */
     public static final double VALVE_MAX_M3H = 6, VALVE_STEP_M3H = 0.1, DRIFT_RON_PER_H = 0.3;

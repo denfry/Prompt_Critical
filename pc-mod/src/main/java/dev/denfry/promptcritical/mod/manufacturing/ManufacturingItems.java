@@ -30,11 +30,26 @@ public final class ManufacturingItems {
     /** Намотанный статор эталонного двигателя 5,5 кВт (18 §18.6.9). */
     public static final DeferredItem<Item> STATOR = ITEMS.registerSimpleItem("stator", new Item.Properties().stacksTo(1));
 
+    /** Детали сборки машин (18 §18.5, MF5); путь изготовления у каждой — в справочнике i0/assembly. */
+    public static final DeferredItem<Item> ROLLING_BEARING = ITEMS.registerSimpleItem("rolling_bearing", new Item.Properties().stacksTo(16));
+    public static final DeferredItem<Item> COUPLING = ITEMS.registerSimpleItem("coupling", new Item.Properties().stacksTo(8));
+    public static final DeferredItem<Item> FASTENER_KIT = ITEMS.registerSimpleItem("fastener_kit", new Item.Properties().stacksTo(16));
+    public static final DeferredItem<Item> SPRING = ITEMS.registerSimpleItem("spring", new Item.Properties().stacksTo(16));
+    public static final DeferredItem<Item> PULLEY = ITEMS.registerSimpleItem("pulley", new Item.Properties().stacksTo(8));
+    public static final DeferredItem<Item> MACHINE_BED = ITEMS.registerSimpleItem("machine_bed", new Item.Properties().stacksTo(1));
+    public static final DeferredItem<Item> PUMP_CASING = ITEMS.registerSimpleItem("pump_casing", new Item.Properties().stacksTo(4));
+    public static final DeferredItem<Item> VALVE_BODY = ITEMS.registerSimpleItem("valve_body", new Item.Properties().stacksTo(4));
+    public static final DeferredItem<Item> FLANGE = ITEMS.registerSimpleItem("flange", new Item.Properties().stacksTo(16));
+    public static final DeferredItem<Item> END_COVER = ITEMS.registerSimpleItem("end_cover", new Item.Properties().stacksTo(8));
+    public static final DeferredItem<Item> ROTOR_CORE = ITEMS.registerSimpleItem("rotor_core", new Item.Properties().stacksTo(4));
+    public static final DeferredItem<Item> FIELD_COIL = ITEMS.registerSimpleItem("field_coil", new Item.Properties().stacksTo(8));
+
     private ManufacturingItems() {
     }
 
     /** Для вкладки творческого режима. */
     public static List<DeferredItem<? extends Item>> all() {
-        return List.of(SMITH_HAMMER, TONGS, WORKPIECE, WIRE, SHAFT, ELECTRICAL_SHEET, LAMINATION, STATOR_CORE, STATOR);
+        return List.of(SMITH_HAMMER, TONGS, WORKPIECE, WIRE, SHAFT, ELECTRICAL_SHEET, LAMINATION, STATOR_CORE, STATOR,
+                ROLLING_BEARING, COUPLING, FASTENER_KIT, SPRING, PULLEY, MACHINE_BED, PUMP_CASING, VALVE_BODY, FLANGE, END_COVER, ROTOR_CORE, FIELD_COIL);
     }
 }

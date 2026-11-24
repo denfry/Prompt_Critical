@@ -61,6 +61,7 @@ public final class PowerhouseText {
                 case INTERLOCK_PURGE -> new String[] {"no completed purge", "нет завершённой продувки"};
                 case INTERLOCK_STATE -> new String[] {"not allowed now", "сейчас не допускается"};
                 case INTERLOCK_BURNER -> new String[] {"no such burner", "нет такой горелки"};
+                case INTERLOCK_PERMIT -> new String[] {"boiler not accepted or no era licence", "котёл не принят или нет лицензии на эпоху"};
             };
             msg("response." + r.name().toLowerCase(Locale.ROOT), n[0], n[1]);
         }

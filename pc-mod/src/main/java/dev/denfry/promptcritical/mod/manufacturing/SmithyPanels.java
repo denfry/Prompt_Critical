@@ -357,6 +357,7 @@ public final class SmithyPanels {
         var out = new java.util.ArrayList<>(List.of(BLOOMERY, FORGE, ANVIL, DRAW_PLATE, POWER_HAMMER, CRANK_PRESS, WIRE_MILL,
                 HEATING_FURNACE, HARDENING_FURNACE));
         out.addAll(ElectricalPanels.all());
+        out.addAll(AssemblyPanels.all());
         return List.copyOf(out);
     }
 

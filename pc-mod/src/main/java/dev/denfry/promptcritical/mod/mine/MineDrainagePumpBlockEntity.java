@@ -292,7 +292,7 @@ public final class MineDrainagePumpBlockEntity extends KineticMachineBlockEntity
 
     private void operations(ShaftInput u) {
         OpsSubsystem ops = OpsWorld.ops(level);
-        OpsSubsystem.Unit ou = OpsWorld.ensure(level, simId(), UnitKind.MINE_DRAINAGE_PUMP, 0, false);
+        OpsSubsystem.Unit ou = OpsWorld.ensure(level, simId(), UnitKind.MINE_DRAINAGE_PUMP, 0, false, this);
         if (ops == null || ou == null) return;
         boolean running = u.rpm(tick) > 0;
         dry = !ops.commissioning().primed(simId());

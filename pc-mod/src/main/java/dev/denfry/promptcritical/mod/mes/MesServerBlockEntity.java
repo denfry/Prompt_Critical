@@ -48,6 +48,8 @@ import org.jetbrains.annotations.Nullable;
  * постоянные {@link #TARIFF} и {@link #CO2_FEE}.
  */
 public final class MesServerBlockEntity extends DeviceBlockEntity implements FoundryDevice, PanelHost {
+    /** Сервер и сетевое оборудование, Вт. Малая нагрузка 0,4 кВ: розетка, щит или ИБП рядом. */
+    public static final double POWER_W = 1.5e3;
     public static final int RADIUS = 16, SCAN_TICKS = 20;
     /** Цена электроэнергии, CR/МВт·ч, и плата за выбросы, CR/т CO2. */
     public static final double TARIFF = 40, CO2_FEE = 25;
@@ -109,7 +111,7 @@ public final class MesServerBlockEntity extends DeviceBlockEntity implements Fou
     public void tickDevice() {
         if (!(level instanceof ServerLevel)) return;
         long tick = now();
-        if (!cycle.due(tick)) return;
+        if (!cycle.due(tick) || !dev.denfry.promptcritical.mod.grid.MachinePower.powered(level, worldPosition, POWER_W)) return;
         scan();
         cycle.scanned(tick);
         BlockState st = getBlockState();

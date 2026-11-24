@@ -74,6 +74,8 @@ import org.jetbrains.annotations.Nullable;
  * Криптон и непойманный иод уходят в трубу — облако по ветру. СЦР разбрызгивает раствор по полу вокруг камеры.
  */
 public final class PurexCellBlockEntity extends DeviceBlockEntity implements FoundryDevice, PanelHost {
+    /** Ножницы, растворитель, насосы и эрлифты экстракции, вытяжная вентиляция каньона, Вт. Розетка или силовой щит рядом; при недостатке машина работает медленнее. */
+    public static final double POWER_W = 160e3;
     public static final int REACH = 8, IN_SLOTS = 4, CHARCOAL_SLOT = 4, OUT_SLOTS = 6;
     public static final double PU_BATCH_KG = 0.1, CANISTER_KG = 50, HLW_TANK_KG = 500, KG_HM_PER_CHARCOAL = 25;
     /** HNO₃ в кислоте 3b (≈ 57 %, 1,345 кг/л), кг/л; керосин на кг ТМ, л. */
@@ -175,11 +177,12 @@ public final class PurexCellBlockEntity extends DeviceBlockEntity implements Fou
         if (!(level instanceof ServerLevel s)) return;
         SimLevelBinding b = SimBindings.get(s);
         if (b == null) return;
-        double dt = 0.05 * b.world().clock().kSlow();
+        double power = dev.denfry.promptcritical.mod.grid.MachinePower.supply(s, worldPosition, on ? POWER_W : 0);
+        double dt = 0.05 * b.world().clock().kSlow() * power;
         long now = level.getGameTime();
         if (now % 40 == 0) scanEquipment();
         // приём порции
-        if (on && busyS <= 0 && shear && dissolver && extraction && glassKg < HLW_TANK_KG) intake(s, now);
+        if (on && power > 0 && busyS <= 0 && shear && dissolver && extraction && glassKg < HLW_TANK_KG) intake(s, now);
         if (busyS > 0) {
             plant.meter(puFlowKgS * dt);
             busyS -= dt;

@@ -79,7 +79,11 @@ public final class PcBlockLoot extends BlockLootSubProvider {
             } else if (block instanceof net.minecraft.world.level.block.SlabBlock) {
                 add(block, createSlabItemTable(block));
             } else if (block instanceof PcBlock pc && pc.spec().segment() != null) {
-                add(block, controllerOnly(pc));
+                add(block, controllerOnly(pc, PcBlocks.passportMachines().contains(db)));
+            } else if (PcBlocks.passportMachines().contains(db)) {
+                // машина со стенда уносит паспорт сборки (18 §18.8.3)
+                add(block, LootTable.lootTable().withPool(applyExplosionCondition(block, LootPool.lootPool()
+                        .setRolls(ConstantValue.exactly(1)).add(LootItem.lootTableItem(block).apply(passport())))));
             } else {
                 dropSelf(block);
             }
@@ -95,12 +99,17 @@ public final class PcBlockLoot extends BlockLootSubProvider {
     }
 
     /** Предмет выпадает только с сегмента 0 (контроллера). */
-    private LootTable.Builder controllerOnly(PcBlock block) {
+    private static CopyComponentsFunction.Builder passport() {
+        return CopyComponentsFunction.copyComponents(CopyComponentsFunction.Source.BLOCK_ENTITY)
+                .include(dev.denfry.promptcritical.mod.manufacturing.ManufacturingComponents.MACHINE_PASSPORT.get());
+    }
+
+    private LootTable.Builder controllerOnly(PcBlock block, boolean passport) {
         var prop = block.spec().segment();
         String first = ((StringRepresentable) prop.getPossibleValues().iterator().next()).getSerializedName();
         return LootTable.lootTable().withPool(applyExplosionCondition(block, LootPool.lootPool()
                 .setRolls(ConstantValue.exactly(1))
-                .add(LootItem.lootTableItem(block))
+                .add(passport ? LootItem.lootTableItem(block).apply(passport()) : LootItem.lootTableItem(block))
                 .when(LootItemBlockStatePropertyCondition.hasBlockStateProperties(block)
                         .setProperties(StatePropertiesPredicate.Builder.properties().hasProperty(prop, first)))));
     }

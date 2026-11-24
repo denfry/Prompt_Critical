@@ -38,6 +38,12 @@ import org.jetbrains.annotations.Nullable;
  * теплообменниками продуктов до {@value #CRUDE_C} °C [допущение: теплообмен не моделируется].
  */
 public final class DesalterBlockEntity extends UraniumProcessBlockEntity implements GridDevice {
+    /** Электрическое поле и насосы — от своего ввода 6,3 кВ, щит 0,4 кВ не нужен. */
+    @Override
+    protected double ratedPowerW() {
+        return 0;
+    }
+
     public static final int MB = 8_000, FURNACE_RADIUS = 6;
     /** Производительность — 3 л/с (10,8 м³/ч), чуть больше атмосферной колонны 10 м³/ч [BALANCE]. */
     public static final double FEED_L_S = 3, POWER_W = 100e3, CRUDE_C = 120;

@@ -108,6 +108,7 @@ public final class PcLanguageProvider extends LanguageProvider {
         b("power_hammer_real", "Pneumatic Power Hammer", "Пневматический молот");
         b("bloomery_real", "Clay Bloomery", "Сыродутный горн");
         b("forge_hearth_real", "Smith's Forge Hearth", "Кузнечный горн");
+        b("assembly_stand", "Assembly Stand", "Сборочный стенд");
         b("crank_press_real", "Inclinable Crank Press", "Открытый кривошипный пресс");
         b("wire_mill_real", "Wire Drawing Block", "Волочильный барабан");
         b("sheet_mill_real", "Two-High Sheet Mill", "Двухвалковый листовой стан");
@@ -290,6 +291,18 @@ public final class PcLanguageProvider extends LanguageProvider {
         i("workpiece.bloom", "Bloom", "Крица");
         i("smith_hammer", "Smith's Hammer", "Кузнечный молот");
         i("shaft", "Shaft", "Вал");
+        i("rolling_bearing", "Rolling Bearing", "Подшипник качения");
+        i("coupling", "Shaft Coupling", "Муфта");
+        i("fastener_kit", "Fastener Kit", "Комплект крепежа");
+        i("spring", "Spring", "Пружина");
+        i("pulley", "Pulley", "Шкив");
+        i("machine_bed", "Machine Bed", "Станина");
+        i("pump_casing", "Pump Casing", "Корпус насоса");
+        i("valve_body", "Valve Body", "Корпус клапана");
+        i("flange", "Flange", "Фланец");
+        i("end_cover", "End Cover", "Крышка");
+        i("rotor_core", "Rotor Core", "Пакет ротора");
+        i("field_coil", "Field Coil", "Катушка возбуждения");
         i("tongs", "Smith's Tongs", "Кузнечные клещи");
         i("wire", "Wire", "Проволока");
         i("electrical_sheet", "Electrical Steel Sheet", "Лист электротехнической стали");

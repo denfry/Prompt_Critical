@@ -15,7 +15,9 @@ public enum BmsResponse {
     /** Команда не допустима в текущем состоянии (нет запальника на горелке, идёт останов). */
     INTERLOCK_STATE,
     /** Нет такой горелки. */
-    INTERLOCK_BURNER;
+    INTERLOCK_BURNER,
+    /** Котёл не принят пусконаладкой или у команды нет лицензии на эпоху (профиль licensing, план HP2.2). */
+    INTERLOCK_PERMIT;
 
     public boolean accepted() {
         return this == ACCEPTED;
