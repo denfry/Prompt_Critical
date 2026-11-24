@@ -32,6 +32,12 @@ import org.jetbrains.annotations.Nullable;
  * кнопками щита: гиббсит берётся при 140–150 °C, бёмит — при 240–250 °C.
  */
 public final class BayerDigesterBlockEntity extends UraniumProcessBlockEntity implements dev.denfry.promptcritical.mod.client.whole.WholeModelHost {
+    /** Мешалки автоклавов, насосы пульпы и сгустителя, Вт. */
+    @Override
+    protected double ratedPowerW() {
+        return 110e3;
+    }
+
     public static final int MB = 8_000;
 
     private final FeedTank caustic = new FeedTank(PcFluids.SODIUM_HYDROXIDE_SOLUTION.source.get(), MB);

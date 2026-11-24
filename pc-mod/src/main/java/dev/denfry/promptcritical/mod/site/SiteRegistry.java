@@ -98,6 +98,7 @@ public final class SiteRegistry {
     public static final DeferredItem<DesignDrawingItem> POWER_HAMMER_REAL_DRAWING = drawing("power_hammer_real");
     public static final DeferredItem<DesignDrawingItem> BLOOMERY_REAL_DRAWING = drawing("bloomery_real");
     public static final DeferredItem<DesignDrawingItem> FORGE_HEARTH_REAL_DRAWING = drawing("forge_hearth_real");
+    public static final DeferredItem<DesignDrawingItem> ASSEMBLY_STAND_DRAWING = drawing("assembly_stand");
     public static final DeferredItem<DesignDrawingItem> CRANK_PRESS_REAL_DRAWING = drawing("crank_press_real");
     public static final DeferredItem<DesignDrawingItem> WIRE_MILL_REAL_DRAWING = drawing("wire_mill_real");
     public static final DeferredItem<DesignDrawingItem> SHEET_MILL_REAL_DRAWING = drawing("sheet_mill_real");

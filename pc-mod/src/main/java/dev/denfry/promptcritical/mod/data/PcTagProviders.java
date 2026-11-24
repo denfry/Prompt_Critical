@@ -99,6 +99,24 @@ public final class PcTagProviders {
                     Blocks.CHAIN_COMMAND_BLOCK, Blocks.REPEATING_COMMAND_BLOCK, Blocks.STRUCTURE_BLOCK, Blocks.JIGSAW,
                     Blocks.REINFORCED_DEEPSLATE);
             contraptionTags();
+            carryOnBlacklist();
+        }
+
+        /**
+         * Переноска блоков (16 §16.8.5, R55): Carry On поднимает блок-сущность вместе с содержимым, и ОЯТ, источник
+         * или работающая машина уезжают в данные игрока, где их не видят ни просмотр контейнеров, ни привязка
+         * симуляции. Поэтому в {@code carryon:block_blacklist} — каждый наш блок с блок-сущностью, не только
+         * стеллажи, бассейны и активные зоны: заранее не известно, в какой ёмкости окажется источник.
+         */
+        private void carryOnBlacklist() {
+            TagKey<Block> blacklist = TagKey.create(net.minecraft.core.registries.Registries.BLOCK,
+                    net.minecraft.resources.ResourceLocation.fromNamespaceAndPath("carryon", "block_blacklist"));
+            for (Block b : net.minecraft.core.registries.BuiltInRegistries.BLOCK) {
+                var key = net.minecraft.core.registries.BuiltInRegistries.BLOCK.getKey(b);
+                if (PromptCritical.MOD_ID.equals(key.getNamespace()) && b instanceof net.minecraft.world.level.block.EntityBlock)
+                    tag(blacklist).add(b);
+            }
+            tag(blacklist).add(PcBlocks.MULTIBLOCK_PART.get());
         }
 
         /**

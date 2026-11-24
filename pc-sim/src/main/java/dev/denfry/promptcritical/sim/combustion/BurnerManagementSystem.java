@@ -42,6 +42,7 @@ public final class BurnerManagementSystem {
     private MftCause lastCause;
     private double timer, purgeS, purgeChanges;
     private boolean fansRunning;
+    private volatile boolean permitted = true;
 
     public BurnerManagementSystem(int burners, BurnerKind kind, BoilerEvents events) {
         if (burners < 1) throw new IllegalArgumentException("burners: " + burners);
@@ -97,6 +98,18 @@ public final class BurnerManagementSystem {
 
     public double purgeElapsedS() {
         return purgeS;
+    }
+
+    /**
+     * Разрешение на розжиг от пусконаладки (план HP2.2): без него запальник после продувки не открывается, продувка
+     * и останов доступны. Не сохраняется — биндинг пишет его каждый тик; горящий котёл не гасит.
+     */
+    public void setPermitted(boolean permitted) {
+        this.permitted = permitted;
+    }
+
+    public boolean permitted() {
+        return permitted;
     }
 
     public double purgeVolumeChanges() {
@@ -196,6 +209,7 @@ public final class BurnerManagementSystem {
                 return BmsResponse.INTERLOCK_PURGE;
             }
             case PURGE_COMPLETE -> {
+                if (!permitted) return BmsResponse.INTERLOCK_PERMIT;
                 startPhase(b, BurnerPhase.IGNITER_TRIAL);
                 setState(BmsState.IGNITER_TRIAL);
                 return BmsResponse.ACCEPTED;

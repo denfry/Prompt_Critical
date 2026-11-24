@@ -205,7 +205,7 @@ public class SteamEngineBlockEntity extends DeviceBlockEntity implements Pressur
     /** Износ, заклинивание, сальник и пробный пуск (13 §13.6.5–13.6.7). */
     private void operations(EngineUnit e) {
         OpsSubsystem ops = OpsWorld.ops(level);
-        OpsSubsystem.Unit u = OpsWorld.ensure(level, simId(), UnitKind.STEAM_ENGINE, WORKING_PA, e.dashpotFitted());
+        OpsSubsystem.Unit u = OpsWorld.ensure(level, simId(), UnitKind.STEAM_ENGINE, WORKING_PA, e.dashpotFitted(), this);
         if (ops == null || u == null) return;
         boolean running = e.omega() > 0.05 * e.nominalOmega();
         u.setRunning(running, false, Double.NaN);

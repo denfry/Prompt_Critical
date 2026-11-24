@@ -32,6 +32,9 @@ import org.jetbrains.annotations.Nullable;
  * испаряется ({@link CokeQuenching#WET_WATER_KG_PER_KG}), кокс выходит с влагой 4 %. Вода — трубой.
  */
 public final class QuenchTowerBlockEntity extends IronworksBlockEntity implements dev.denfry.promptcritical.mod.client.whole.WholeModelHost {
+    /** Насос тушильной воды, Вт. Розетка или силовой щит рядом; при недостатке машина работает медленнее. */
+    public static final double POWER_W = 90e3;
+    private final dev.denfry.promptcritical.mod.grid.MachinePower.Drive drive = new dev.denfry.promptcritical.mod.grid.MachinePower.Drive();
     private static final int PERIOD = 10;
     private final GasBuffer water = new GasBuffer(16_000,
             s -> s.is(FluidTags.WATER) || s.is(PcFluids.RAW_WATER.source.get()), this::setChanged);
@@ -58,7 +61,7 @@ public final class QuenchTowerBlockEntity extends IronworksBlockEntity implement
     @Override
     protected void serverTick(SimLevelBinding b) {
         if (steamTicks > 0 && --steamTicks == 0) setStateFlag(PcProperties.RUNNING, false);
-        if (level.getGameTime() % PERIOD != 0) return;
+        if (level.getGameTime() % PERIOD != 0 || !drive.advance(level, worldPosition, POWER_W)) return;
         boolean any = false;
         List<IItemHandlerModifiable> stores = Ironworks.contraptionStores(level, zone());
         for (IItemHandlerModifiable st : stores) any |= quench(st);

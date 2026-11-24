@@ -57,6 +57,12 @@ import org.jetbrains.annotations.Nullable;
  * конденсат (почти чистая вода) — сверху; бочки и стеклоблоки — воронкой снизу. Shift + ПКМ — пуск/стоп.
  */
 public final class LrwEvaporatorBlockEntity extends UraniumProcessBlockEntity implements dev.denfry.promptcritical.mod.grid.GridDevice {
+    /** Нагреватели — от своего ввода 6,3 кВ, щит 0,4 кВ не нужен. */
+    @Override
+    protected double ratedPowerW() {
+        return 0;
+    }
+
     public static final int REACH = 4, IN_SLOTS = 6, OUT_SLOTS = 6, POOL_MB = 16_000;
     public static final double CEMENT_BAG_KG = 50, RESIN_BAG_L = 100, FUEL_OIL_KG_L = 0.95, DRUM_S = 1800, CANISTER_KG = 50;
     /** Масса оксидов на килограмм солей куба после прокалки (нитраты и бораты натрия теряют NOₓ и воду). */

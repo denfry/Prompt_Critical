@@ -116,6 +116,16 @@ public final class ManufacturingText {
         defect(PartDefect.LACK_OF_FUSION, "lack of fusion", "непровар");
         defect(PartDefect.INSULATION_FLAW, "insulation flaw", "дефект изоляции");
         defect(PartDefect.BUCKLED, "buckling", "коробление");
+        msg("assembly.output_busy", "Take the assembled machine out first", "Сначала заберите собранную машину");
+        msg("assembly.not_ready", "Not every position holds a fitting part", "Не во всех позициях подходящие детали");
+        msg("passport.score", "Assembly passport: %s/100", "Паспорт сборки: %s/100");
+        msg("passport.bearing", "Bearing wear ×%s (seat fit)", "Износ подшипника ×%s (посадка)");
+        msg("passport.imbalance", "Imbalance %s mm/s", "Дисбаланс %s мм/с");
+        msg("passport.misalignment", "Misalignment %s mm", "Несоосность %s мм");
+        msg("passport.seal", "Shaft seal leak %s", "Течь уплотнения вала %s");
+        msg("passport.flange", "Flange leak %s", "Течь по фланцам %s");
+        msg("passport.insulation", "Winding insulation %s MΩ", "Изоляция обмотки %s МОм");
+        msg("passport.efficiency", "Efficiency ×%s (core losses)", "КПД ×%s (потери в пакете)");
     }
 
     private ManufacturingText() {
@@ -208,6 +218,19 @@ public final class ManufacturingText {
 
     public static void coreTooltip(ElectricalData.Core d, List<Component> out) {
         coreLines(d.stack(), out);
+    }
+
+    /** Подсказка машины со стенда (18 §18.8.3): оценка и только отличные от номинала строки. */
+    public static void passportTooltip(dev.denfry.promptcritical.sim.manufacturing.assembly.MachinePassport p,
+            List<Component> out) {
+        out.add(msg("passport.score", p.score()).withStyle(ChatFormatting.GOLD));
+        if (p.bearingWearFactor() != 1) out.add(msg("passport.bearing", f("%.2f", p.bearingWearFactor())).withStyle(ChatFormatting.GRAY));
+        if (p.imbalanceMmS() > 0) out.add(msg("passport.imbalance", f("%.1f", p.imbalanceMmS())).withStyle(ChatFormatting.GRAY));
+        if (p.misalignmentMm() > 0) out.add(msg("passport.misalignment", f("%.3f", p.misalignmentMm())).withStyle(ChatFormatting.GRAY));
+        if (p.sealLeak() > 0) out.add(msg("passport.seal", f("%.3f", p.sealLeak())).withStyle(ChatFormatting.GRAY));
+        if (p.flangeLeak() > 0) out.add(msg("passport.flange", f("%.2f", p.flangeLeak())).withStyle(ChatFormatting.GRAY));
+        if (p.hasWinding()) out.add(msg("passport.insulation", num(p.insulationMOhm())).withStyle(ChatFormatting.GRAY));
+        if (p.efficiencyFactor() != 1) out.add(msg("passport.efficiency", f("%.3f", p.efficiencyFactor())).withStyle(ChatFormatting.GRAY));
     }
 
     public static void statorTooltip(ElectricalData.Wound d, List<Component> out) {

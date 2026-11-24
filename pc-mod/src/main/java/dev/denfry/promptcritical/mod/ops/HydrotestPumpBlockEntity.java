@@ -60,8 +60,9 @@ public final class HydrotestPumpBlockEntity extends IronworksBlockEntity {
     public OpsMachine target() {
         if (level == null) return null;
         for (Direction d : Direction.values()) {
-            OpsMachine m = OpsWorld.machine(level, worldPosition.relative(d));
-            if (m instanceof FireTubeBoilerBlockEntity || m instanceof SteamEngineBlockEntity || m instanceof BlastFurnaceControllerBlockEntity)
+            OpsMachine m = OpsWorld.machineOrBoilerPart(level, worldPosition.relative(d));
+            if (m instanceof FireTubeBoilerBlockEntity || m instanceof SteamEngineBlockEntity || m instanceof BlastFurnaceControllerBlockEntity
+                    || m instanceof dev.denfry.promptcritical.mod.powerhouse.WaterTubeBoilerBlockEntity)
                 return m;
         }
         return null;
@@ -69,6 +70,8 @@ public final class HydrotestPumpBlockEntity extends IronworksBlockEntity {
 
     private static double workingPa(OpsMachine m) {
         if (m instanceof BlastFurnaceControllerBlockEntity) return BlastFurnaceControllerBlockEntity.STAVE_WATER_PA;
+        if (m instanceof dev.denfry.promptcritical.mod.powerhouse.WaterTubeBoilerBlockEntity)
+            return dev.denfry.promptcritical.sim.plant.WaterTubeUnit.WORKING_PRESSURE_PA;
         return m instanceof FireTubeBoilerBlockEntity b && b.unit() != null ? b.unit().spec().workingPressurePa() : ENGINE_WORKING_PA;
     }
 
@@ -125,6 +128,9 @@ public final class HydrotestPumpBlockEntity extends IronworksBlockEntity {
         if (m instanceof FireTubeBoilerBlockEntity boiler && boiler.unit() != null) {
             fireOut = !boiler.unit().lit();
             metalK = boiler.unit().waterTempK();
+        } else if (m instanceof dev.denfry.promptcritical.mod.powerhouse.WaterTubeBoilerBlockEntity w) {
+            fireOut = w.opsStopped();
+            metalK = w.metalTempK();
         } else if (m instanceof BlastFurnaceControllerBlockEntity furnace) {
             fireOut = furnace.opsStopped(); // опрессовка холодильников — только у холодной печи
         }

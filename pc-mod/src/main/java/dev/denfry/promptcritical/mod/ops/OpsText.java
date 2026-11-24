@@ -82,6 +82,10 @@ public final class OpsText {
         def("unit.mine_hoist", "mine hoist", "шахтный подъём");
         def("unit.sync_generator", "synchronous generator", "синхронный генератор");
         def("unit.blast_furnace", "blast furnace", "доменная печь");
+        def("unit.breaker_cell", "breaker cell", "ячейка выключателя");
+        def("unit.water_tube_boiler", "water-tube boiler", "водотрубный котёл");
+        def("unit.acheson_furnace", "Acheson furnace", "печь Ачесона");
+        def("unit.graphite_pile", "graphite pile", "графитовый котёл");
         def("start_unaccepted", "Unit not accepted — started at your own risk (logged)", "Установка не принята — пуск под вашу ответственность (записано)");
         def("check_passed", "%s: passed", "%s: пройдена");
         def("check_failed", "%s: FAILED — %s", "%s: НЕ ПРОЙДЕНА — %s");
@@ -119,16 +123,19 @@ public final class OpsText {
         def("regen_need", "Regeneration needs %s kg of salt", "Для регенерации нужно соли %s кг");
     }
 
-    private static final Map<CommissioningCheck, String[]> CHECKS = Map.of(
-            CommissioningCheck.PRESSURE_TEST, new String[] {"Hydrotest", "Гидроиспытание"},
-            CommissioningCheck.RELIEF_VALVE_SET, new String[] {"Relief valve", "Проверка ПК"},
-            CommissioningCheck.INSTRUMENT_CHECK, new String[] {"Instruments", "Проверка КИП"},
-            CommissioningCheck.ROTATION_CHECK, new String[] {"Rotation", "Вращение"},
-            CommissioningCheck.PRIMING, new String[] {"Priming", "Заливка"},
-            CommissioningCheck.BRAKE_TEST, new String[] {"Brake test", "Испытание тормоза"},
-            CommissioningCheck.TRIAL_RUN, new String[] {"Trial run", "Пробный пуск"},
-            CommissioningCheck.INSULATION_TEST, new String[] {"Insulation test", "Замер изоляции"},
-            CommissioningCheck.ALIGNMENT, new String[] {"Alignment", "Центровка"});
+    private static final Map<CommissioningCheck, String[]> CHECKS = Map.ofEntries(
+            Map.entry(CommissioningCheck.PRESSURE_TEST, new String[] {"Hydrotest", "Гидроиспытание"}),
+            Map.entry(CommissioningCheck.RELIEF_VALVE_SET, new String[] {"Relief valve", "Проверка ПК"}),
+            Map.entry(CommissioningCheck.INSTRUMENT_CHECK, new String[] {"Instruments", "Проверка КИП"}),
+            Map.entry(CommissioningCheck.ROTATION_CHECK, new String[] {"Rotation", "Вращение"}),
+            Map.entry(CommissioningCheck.PRIMING, new String[] {"Priming", "Заливка"}),
+            Map.entry(CommissioningCheck.BRAKE_TEST, new String[] {"Brake test", "Испытание тормоза"}),
+            Map.entry(CommissioningCheck.TRIAL_RUN, new String[] {"Trial run", "Пробный пуск"}),
+            Map.entry(CommissioningCheck.INSULATION_TEST, new String[] {"Insulation test", "Замер изоляции"}),
+            Map.entry(CommissioningCheck.ALIGNMENT, new String[] {"Alignment", "Центровка"}),
+            Map.entry(CommissioningCheck.LOOP_CHECK, new String[] {"Loop check", "Проверка контуров КИП"}),
+            Map.entry(CommissioningCheck.SIS_PROOF_TEST, new String[] {"Trip test", "Проверка срабатывания защиты"}),
+            Map.entry(CommissioningCheck.PURGE, new String[] {"Pre-purge", "Предпусковая вентиляция"}));
     private static final Map<CommissioningDefectKind, String[]> DEFECTS = Map.ofEntries(
             Map.entry(CommissioningDefectKind.SEAM_WEEP, new String[] {"weeping seam", "течь шва"}),
             Map.entry(CommissioningDefectKind.CASTING_POROSITY, new String[] {"porous casting", "пористая отливка"}),
@@ -141,7 +148,10 @@ public final class OpsText {
             Map.entry(CommissioningDefectKind.BRAKE_MISADJUSTED, new String[] {"brake misadjusted", "тормоз не отрегулирован"}),
             Map.entry(CommissioningDefectKind.DASHPOT_DRY, new String[] {"dashpot dry", "катаракт без масла"}),
             Map.entry(CommissioningDefectKind.WINDING_DAMP, new String[] {"damp winding", "отсыревшая обмотка"}),
-            Map.entry(CommissioningDefectKind.COUPLING_MISALIGNED, new String[] {"coupling misaligned", "расцентровка муфты"}));
+            Map.entry(CommissioningDefectKind.COUPLING_MISALIGNED, new String[] {"coupling misaligned", "расцентровка муфты"}),
+            Map.entry(CommissioningDefectKind.INSULATION_DAMP, new String[] {"damp insulation", "отсыревшая изоляция"}),
+            Map.entry(CommissioningDefectKind.TRIP_SLOW, new String[] {"trip too slow", "защита срабатывает с задержкой"}),
+            Map.entry(CommissioningDefectKind.LOOP_MISWIRED, new String[] {"instrument loop miswired", "перепутан контур КИП"}));
     private static final Map<CommissioningState, String[]> STATES = Map.of(
             CommissioningState.NEW, new String[] {"NOT ACCEPTED", "НЕ ПРИНЯТА"},
             CommissioningState.TESTING, new String[] {"TESTING", "ИСПЫТАНИЯ"},
@@ -158,7 +168,8 @@ public final class OpsText {
             Map.entry(CheckCondition.LOAD_LOW, new String[] {"load too low", "мала нагрузка"}),
             Map.entry(CheckCondition.PREREQUISITES, new String[] {"other checks first", "сначала прочие проверки"}),
             Map.entry(CheckCondition.RUN_SHORT, new String[] {"run too short", "мала наработка"}),
-            Map.entry(CheckCondition.NO_LOAD_REJECTION, new String[] {"no load rejection", "не было сброса нагрузки"}));
+            Map.entry(CheckCondition.NO_LOAD_REJECTION, new String[] {"no load rejection", "не было сброса нагрузки"}),
+            Map.entry(CheckCondition.PURGE_SHORT, new String[] {"purge shorter than five furnace volumes", "прокачано меньше пяти объёмов топки"}));
     private static final Map<MaintenanceFaultKind, String[]> FAULTS = Map.of(
             MaintenanceFaultKind.BEARING_WEAR, new String[] {"BEARING", "ПОДШИПНИК"},
             MaintenanceFaultKind.LUBRICATION, new String[] {"LUBRICATION", "СМАЗКА"},

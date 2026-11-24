@@ -34,6 +34,8 @@ import org.jetbrains.annotations.Nullable;
  * остаток партии ждёт в слоте следующих суток.
  */
 public final class MarketTerminalBlockEntity extends IronworksBlockEntity implements PanelHost {
+    /** Терминал и модем, Вт. Малая нагрузка 0,4 кВ: розетка, щит или ИБП рядом. */
+    public static final double POWER_W = 300;
     public static final int PERIOD = 20;
 
     private final ItemStackHandler goods = new ItemStackHandler(1) {
@@ -71,7 +73,7 @@ public final class MarketTerminalBlockEntity extends IronworksBlockEntity implem
     protected void serverTick(SimLevelBinding b) {
         if (!(level instanceof ServerLevel sl)) return;
         long now = sl.getGameTime();
-        if (Math.floorMod(now + worldPosition.hashCode(), PERIOD) != 0) return;
+        if (Math.floorMod(now + worldPosition.hashCode(), PERIOD) != 0 || !dev.denfry.promptcritical.mod.grid.MachinePower.powered(sl, worldPosition, POWER_W)) return;
         MarketData data = MarketData.get(sl.getServer());
         NpcMarket market = data.market(now);
         ItemStack st = goods.getStackInSlot(0);

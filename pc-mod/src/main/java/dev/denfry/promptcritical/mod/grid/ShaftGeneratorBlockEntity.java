@@ -200,7 +200,7 @@ public class ShaftGeneratorBlockEntity extends KineticMachineBlockEntity<Generat
     /** Пусконаладка (план HP2.1): изоляция, центровка, пробный пуск в сети под нагрузкой. */
     private void operations(GeneratorUnit u) {
         OpsSubsystem ops = OpsWorld.ops(level);
-        if (ops == null || OpsWorld.ensure(level, simId(), UnitKind.SYNC_GENERATOR, 0, false) == null) return;
+        if (ops == null || OpsWorld.ensure(level, simId(), UnitKind.SYNC_GENERATOR, 0, false, this) == null) return;
         MachineState s = u.state();
         boolean online = s == MachineState.SYNCHRONIZED || s == MachineState.LOADED;
         ops.observeTrial(simId(), 0.05, online, u.electricalPowerW() / GeneratorUnit.RATED_POWER_W,

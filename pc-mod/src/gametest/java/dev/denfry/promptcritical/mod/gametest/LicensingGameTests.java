@@ -9,6 +9,11 @@ import net.minecraft.world.item.ItemStack;
 import com.simibubi.create.AllBlocks;
 import com.simibubi.create.content.kinetics.motor.CreativeMotorBlockEntity;
 import dev.denfry.promptcritical.mod.grid.GridPanels;
+import dev.denfry.promptcritical.mod.grid.BreakerCellBlockEntity;
+import dev.denfry.promptcritical.mod.reactor.AchesonFurnaceBlockEntity;
+import dev.denfry.promptcritical.mod.reactor.PileControllerBlockEntity;
+import dev.denfry.promptcritical.mod.reactor.ReactorPanels;
+import dev.denfry.promptcritical.sim.grid.BreakerResponse;
 import dev.denfry.promptcritical.mod.grid.ShaftGeneratorBlockEntity;
 import dev.denfry.promptcritical.mod.ironworks.BlastFurnaceControllerBlockEntity;
 import dev.denfry.promptcritical.sim.ops.CommissioningMode;
@@ -309,6 +314,123 @@ public final class LicensingGameTests {
                     ops.perform(id, new CheckInput.TrialRun(ops.config().trialRunS(), 1, false, true,
                             dev.denfry.promptcritical.sim.ops.Baseline.NONE), null);
                     h.assertTrue(cs.state(id).orElseThrow() == dev.denfry.promptcritical.sim.ops.CommissioningState.ACCEPTED, "furnace accepted");
+                })
+                .thenSucceed();
+    }
+
+    // --- HP2.2: ячейка выключателя, графитовый котёл, печь Ачесона ---
+
+    private static final BlockPos UNIT_POS = new BlockPos(2, 1, 2);
+
+    private static boolean refusalJournaled(OpsSubsystem ops, SimId id) {
+        for (OpsLogEntry e : ops.log(id)) if (e.kind() == OpsLogEntry.Kind.START_REFUSED) return true;
+        return false;
+    }
+
+    /** Включение ячейки I1: без лицензии отказ даже после проверок, с лицензией — включается (план HP2.2). */
+    @GameTest(template = LARGE, timeoutTicks = 200, batch = "licensing_breaker")
+    public static void breakerCloseNeedsTheI1Licence(GameTestHelper h) {
+        h.setBlock(UNIT_POS, PcBlocks.SWITCHGEAR_CELL.get().defaultBlockState().setValue(BlockStateProperties.HORIZONTAL_FACING, Direction.NORTH));
+        h.startSequence()
+                .thenWaitUntil(() -> {
+                    BreakerCellBlockEntity c = h.getBlockEntity(UNIT_POS);
+                    h.assertTrue(c.unit() != null && !c.simId().isNone() && ops(h).unit(c.simId()) != null, "cell and its ops unit");
+                })
+                .thenExecute(() -> {
+                    OpsSubsystem ops = ops(h);
+                    BreakerCellBlockEntity c = h.getBlockEntity(UNIT_POS);
+                    h.assertTrue(!c.unit().closed(), "a new cell is open");
+                    ops.setLicensing(true);
+                    try {
+                        var fake = TestPlayers.of(h);
+                        UUID team = UUID.randomUUID(); // мир GameTest сохраняется: лицензии прошлых запусков не мешают
+                        SimId id = c.simId();
+                        h.assertTrue(ops.perform(id, new CheckInput.InsulationTest(c.opsStopped()), fake.getUUID(), team).passed(), "insulation");
+                        h.assertTrue(ops.perform(id, new CheckInput.SisProofTest(c.opsStopped()), fake.getUUID(), team).passed(), "trip test");
+                        h.assertTrue(c.operate(fake, true) != BreakerResponse.ACCEPTED, "close refused without the I1 licence");
+                        h.assertTrue(!c.unit().closed(), "cell stays open");
+                        h.assertValueEqual(ops.canStart(id).unlicensedEra(), PlantEra.I1, "missing licence named");
+                        h.assertTrue(refusalJournaled(ops, id), "refusal journaled");
+                        ops.licences().grant(team, PlantEra.I1, 0);
+                        c.unit().setPermitted(OpsActions.processAllowed(h.getLevel(), c)); // как на следующем тике
+                        h.assertValueEqual(c.operate(fake, true), BreakerResponse.ACCEPTED, "close with the I1 licence");
+                    } finally {
+                        ops.setLicensing(false);
+                    }
+                })
+                .thenSucceed();
+    }
+
+    /** Без профиля licensing (ADVISORY) непринятая ячейка включается, как до HP2.2. */
+    @GameTest(template = LARGE, timeoutTicks = 200, batch = "licensing_breaker_advisory")
+    public static void advisoryBreakerStillCloses(GameTestHelper h) {
+        h.setBlock(UNIT_POS, PcBlocks.SWITCHGEAR_CELL.get().defaultBlockState().setValue(BlockStateProperties.HORIZONTAL_FACING, Direction.NORTH));
+        h.startSequence()
+                .thenWaitUntil(() -> {
+                    BreakerCellBlockEntity c = h.getBlockEntity(UNIT_POS);
+                    h.assertTrue(c.unit() != null && ops(h).unit(c.simId()) != null, "cell and its ops unit");
+                })
+                .thenIdle(2)
+                .thenExecute(() -> {
+                    BreakerCellBlockEntity c = h.getBlockEntity(UNIT_POS);
+                    h.assertTrue(!ops(h).licensing(), "licensing off");
+                    h.assertValueEqual(c.operate(null, true), BreakerResponse.ACCEPTED, "unaccepted cell closes in ADVISORY");
+                })
+                .thenSucceed();
+    }
+
+    /** Графитовый котёл I1 без лицензии: модель не поднимает стержни, кнопка «вверх» с CC — отказ в журнал. */
+    @GameTest(template = LARGE, timeoutTicks = 200, batch = "licensing_pile")
+    public static void pileRodsStayInWithoutTheI1Licence(GameTestHelper h) {
+        h.setBlock(UNIT_POS, PcBlocks.REACTOR_CONTROLLER.get().defaultBlockState());
+        h.startSequence()
+                .thenWaitUntil(() -> {
+                    PileControllerBlockEntity c = h.getBlockEntity(UNIT_POS);
+                    h.assertTrue(c.unit() != null && ops(h).unit(c.simId()) != null, "pile desk and its ops unit");
+                    h.assertTrue(c.unit().pile().permitted(), "permitted without licensing");
+                })
+                .thenExecute(() -> ops(h).setLicensing(true))
+                .thenExecuteAfter(2, () -> {
+                    OpsSubsystem ops = ops(h);
+                    try {
+                        PileControllerBlockEntity c = h.getBlockEntity(UNIT_POS);
+                        h.assertTrue(!c.unit().pile().permitted(), "unaccepted pile is not permitted under licensing");
+                        c.onPanelButton(TestPlayers.of(h), ReactorPanels.BTN_UP);
+                        h.assertValueEqual(c.unit().pile().controlDrive(), 0, "rods not driven up");
+                        h.assertTrue(refusalJournaled(ops, c.simId()), "refusal journaled");
+                    } finally {
+                        ops.setLicensing(false);
+                    }
+                })
+                .thenSucceed();
+    }
+
+    /** Печь Ачесона I1 без лицензии: блокировка отключает рубильник и не даёт включить его снова. */
+    @GameTest(template = LARGE, timeoutTicks = 200, batch = "licensing_acheson")
+    public static void achesonSwitchedOffWithoutTheI1Licence(GameTestHelper h) {
+        h.setBlock(UNIT_POS, PcBlocks.ACHESON_FURNACE.get().defaultBlockState());
+        h.startSequence()
+                .thenWaitUntil(() -> {
+                    AchesonFurnaceBlockEntity f = h.getBlockEntity(UNIT_POS);
+                    h.assertTrue(f.unit() != null && ops(h).unit(f.simId()) != null, "furnace and its ops unit");
+                })
+                .thenIdle(2)
+                .thenExecute(() -> {
+                    AchesonFurnaceBlockEntity f = h.getBlockEntity(UNIT_POS);
+                    h.assertTrue(f.unit().switchedOn(), "ADVISORY keeps the switch on");
+                    ops(h).setLicensing(true);
+                })
+                .thenExecuteAfter(2, () -> {
+                    OpsSubsystem ops = ops(h);
+                    try {
+                        AchesonFurnaceBlockEntity f = h.getBlockEntity(UNIT_POS);
+                        h.assertTrue(!f.unit().switchedOn(), "interlock opened the switch");
+                        f.onPanelButton(TestPlayers.of(h), ReactorPanels.BTN_SWITCH);
+                        h.assertTrue(!f.unit().switchedOn(), "switch-on refused");
+                        h.assertTrue(refusalJournaled(ops, f.simId()), "refusal journaled");
+                    } finally {
+                        ops.setLicensing(false);
+                    }
                 })
                 .thenSucceed();
     }

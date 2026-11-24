@@ -25,6 +25,12 @@ import org.jetbrains.annotations.Nullable;
  * ещё и пишет паспорт в станцию ({@code certifiedAt}) и выдаёт бумагу {@code batch_certificate}.
  */
 public final class QualityLabBlockEntity extends UraniumProcessBlockEntity {
+    /** Моторные установки CFR и приборы лаборатории, Вт. */
+    @Override
+    protected double ratedPowerW() {
+        return 7.5e3;
+    }
+
     public static final double ANALYSIS_S = 2400, R_OCTANE = 0.7, R_SULFUR_REL = 0.05, R_TO_SIGMA = 2.77;
 
     private double progressS;

@@ -43,6 +43,11 @@ public final class SwitchUnit extends GridUnit {
     int permits;
     /** На приводе висит замок LOTO (13 §13.1): аппарат не двигается ни по чьей команде, оперативный ток снят. */
     boolean lockedOut;
+    /**
+     * Разрешение на включение от пусконаладки (план HP2.2): непринятую ячейку в профиле licensing не включить ни рукой,
+     * ни автоматикой. Не сохраняется — биндинг пишет его каждый тик; отключение не запирается никогда.
+     */
+    private volatile boolean permitted = true;
 
     SwitchUnit(SimId id, Kind kind) {
         super(id, 2);
@@ -117,6 +122,7 @@ public final class SwitchUnit extends GridUnit {
         if (kind == Kind.FUSE) return BreakerResponse.UNAVAILABLE;
         if (lockedOut) return BreakerResponse.LOCKED_OUT;
         if (close && permits > 0) return BreakerResponse.PERMIT;
+        if (close && !permitted && !closed()) return BreakerResponse.INTERLOCK;
         if (kind == Kind.DISCONNECTOR) return operateDisconnector(close);
         if (branch == null || !owner.ready()) {
             closedIdle = close;
@@ -185,6 +191,14 @@ public final class SwitchUnit extends GridUnit {
 
     public boolean lockedOut() {
         return lockedOut;
+    }
+
+    public void setPermitted(boolean permitted) {
+        this.permitted = permitted;
+    }
+
+    public boolean permitted() {
+        return permitted;
     }
 
     /** Открытых нарядов на аппарате. */
