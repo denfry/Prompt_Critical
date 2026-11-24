@@ -240,6 +240,27 @@ class WaterTubePlantTest {
         assertThat(u.outputs().flame).isFalse();
     }
 
+    /** План HP2.3: медленная отсечка ({@code TRIP_SLOW}) — MFT по низкому уровню на своё запаздывание позже. */
+    @Test
+    void slowProtectionTripsLate() {
+        int sound = secondsToLowLevelTrip(0), slow = secondsToLowLevelTrip(10);
+        assertThat(slow - sound).isBetween(9, 11);
+    }
+
+    private int secondsToLowLevelTrip(double delayS) {
+        SimulationWorld w = world();
+        SimId b = boiler(w);
+        lightOff(w, b);
+        WaterTubeUnit u = plant(w).waterTube(b);
+        u.setTripDelay(delayS);
+        u.setFeedSupply(0, Deaerator.outletTempK());
+        u.setDeaeratorDemand(2.0);
+        int s = 0;
+        for (; s < 1200 && u.bms() == BmsState.RUNNING; s++) run(w, 1);
+        assertThat(u.lastTrip()).isEqualTo(WaterTubeUnit.Protection.DRUM_LEVEL_LOW_LOW);
+        return s;
+    }
+
     /**
      * T7.24 (домен): байпас датчиков пламени ключом и неисправный запальник первой горелки — BMS «видит» факел, газ
      * копится в холодной топке (оператор на ручном: газ 60 %, воздух 30 %); через 90 с облако выше нижнего предела, и

@@ -149,6 +149,12 @@ public final class AchesonFurnaceBlockEntity extends GridDeviceBlockEntity<Consu
         if (OpsWorld.ensure(level, simId(), UnitKind.ACHESON_FURNACE, 0, false) == null) return true;
         boolean ok = OpsActions.processAllowed(level, this);
         if (!ok && u.switchedOn()) u.setSwitchedOn(false);
+        // отсыревшая изоляция токоподвода (план HP2.3): под напряжением — замыкание на землю, рубильник отпадает
+        if (ok && u.switchedOn() && u.energized() && OpsActions.insulationDamp(level, this)) {
+            u.setSwitchedOn(false);
+            OpsActions.earthFault(level, worldPosition);
+            return false;
+        }
         return ok;
     }
 

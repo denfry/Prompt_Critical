@@ -106,6 +106,8 @@ public final class PileControllerBlockEntity extends IronworksBlockEntity implem
         OpsSubsystem ops = OpsWorld.ops(level);
         if (ops == null || OpsWorld.ensure(level, simId, UnitKind.GRAPHITE_PILE, 0, false) == null) return;
         p.setPermitted(OpsActions.processAllowed(level, this));
+        // монтажные дефекты (план HP2.3): медленная защита и перепутанный канал контроля потока
+        p.setDefects(OpsActions.tripDelayS(level, this), OpsActions.loopError(level, this));
         ReactorSubsystem r = b.world().subsystem(ReactorSubsystem.class);
         double nominalW = r == null ? Double.NaN : NOMINAL_OF_TRIP * r.pileConfig().powerTripW();
         boolean running = p.critical() && !p.tripped();
@@ -241,7 +243,7 @@ public final class PileControllerBlockEntity extends IronworksBlockEntity implem
         if (u == null) return;
         GraphitePile p = u.pile();
         PileLayout l = p.layout();
-        double powerW = p.powerW();
+        double powerW = p.indicatedPowerW(); // прибор — по каналу контроля потока, с перепутанным контуром занижен
         out[ReactorPanels.P_POWER_LOG100] = ReactorPanels.log100(powerW);
         // шкала мощности: 0 — 1 мВт, 90 — 1 МВт (по 10 на декаду)
         out[ReactorPanels.P_POWER_DIAL] = powerW > 0 ? (int) Math.round(Math.max(0, Math.min(90, 10 * (Math.log10(powerW) + 3)))) : 0;

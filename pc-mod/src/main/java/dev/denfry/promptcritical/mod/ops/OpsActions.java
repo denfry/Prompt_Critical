@@ -11,6 +11,9 @@ import net.neoforged.neoforge.common.util.FakePlayer;
 import dev.denfry.promptcritical.mod.boiler.FireTubeBoilerBlockEntity;
 import dev.denfry.promptcritical.mod.mine.MineHoistBlockEntity;
 import dev.denfry.promptcritical.mod.registry.PcItems;
+import dev.denfry.promptcritical.mod.hazard.HazardService;
+import dev.denfry.promptcritical.sim.hazard.Flammable;
+import dev.denfry.promptcritical.sim.metallurgy.ProcessGas;
 import dev.denfry.promptcritical.sim.ops.CheckInput;
 import dev.denfry.promptcritical.sim.ops.CheckResult;
 import dev.denfry.promptcritical.sim.ops.CommissioningCheck;
@@ -30,6 +33,7 @@ import java.util.Map;
 import java.util.UUID;
 import net.minecraft.core.BlockPos;
 import net.minecraft.network.chat.Component;
+import net.minecraft.server.level.ServerLevel;
 import net.minecraft.sounds.SoundEvent;
 import net.minecraft.sounds.SoundEvents;
 import net.minecraft.sounds.SoundSource;
@@ -410,10 +414,6 @@ public final class OpsActions {
     }
 
     /**
-     * Разрешение на процесс для установок без события пуска (план HP2.1): опрашивается каждый тик, в журнал не пишет.
-     * Нет подсистемы или установки — разрешено.
-     */
-    /**
      * Металл и кладка теплее этого, К, — установку уже грели: разрешение на процесс её не гасит (план HP2.3: запрет
      * держит непринятую установку холодной, но не выводит из работы разогретую).
      */
@@ -441,10 +441,81 @@ public final class OpsActions {
                 m.opsCurrent());
     }
 
+    /**
+     * Разрешение на процесс для установок без события пуска (план HP2.1): опрашивается каждый тик, в журнал не пишет.
+     * Нет подсистемы или установки — разрешено.
+     */
     public static boolean processAllowed(Level level, OpsMachine m) {
         OpsSubsystem ops = OpsWorld.ops(level);
         if (ops == null || ops.unit(m.simId()) == null) return true;
         return ops.canStart(m.simId()).allowed();
+    }
+
+    // ---- Монтажные дефекты в работе (план HP2.3): нет подсистемы или установки — исправно ----
+
+    @Nullable
+    private static CommissioningService service(Level level, OpsMachine m) {
+        OpsSubsystem ops = OpsWorld.ops(level);
+        return ops == null || ops.unit(m.simId()) == null ? null : ops.commissioning();
+    }
+
+    /** Запаздывание защиты установки, с ({@code TRIP_SLOW}). */
+    public static double tripDelayS(Level level, OpsMachine m) {
+        CommissioningService c = service(level, m);
+        return c == null ? 0 : c.tripDelayS(m.simId());
+    }
+
+    /** Кратность времени срабатывания защиты ({@code TRIP_SLOW}); 1 — исправна. */
+    public static double tripTimeRatio(Level level, OpsMachine m) {
+        CommissioningService c = service(level, m);
+        return c == null ? 1 : c.tripTimeRatio(m.simId());
+    }
+
+    /** Занижение показаний перепутанного контура КИП ({@code LOOP_MISWIRED}). */
+    public static double loopError(Level level, OpsMachine m) {
+        CommissioningService c = service(level, m);
+        return c == null ? 0 : c.loopError(m.simId());
+    }
+
+    /** Отсыревшая изоляция присоединения: подача напряжения даёт замыкание на землю ({@code INSULATION_DAMP}). */
+    public static boolean insulationDamp(Level level, OpsMachine m) {
+        CommissioningService c = service(level, m);
+        return c != null && c.insulationDamp(m.simId());
+    }
+
+    /** Замыкание на землю при подаче напряжения: вспышка, треск и сообщение тем, кто рядом. */
+    public static void earthFault(Level level, BlockPos pos) {
+        if (!(level instanceof ServerLevel sl)) return;
+        sl.sendParticles(net.minecraft.core.particles.ParticleTypes.ELECTRIC_SPARK, pos.getX() + 0.5, pos.getY() + 1.2,
+                pos.getZ() + 0.5, 20, 0.4, 0.3, 0.4, 0.2);
+        sl.playSound(null, pos, SoundEvents.LIGHTNING_BOLT_IMPACT, SoundSource.BLOCKS, 0.6f, 1.6f);
+        for (var p : sl.players())
+            if (p.blockPosition().closerThan(pos, 16)) p.displayClientMessage(OpsText.msg("earth_fault"), true);
+    }
+
+    /** Доля продукта или газа, теряемая через фланцы ({@code FLANGE_LEAK}). */
+    public static double flangeLeak(Level level, OpsMachine m) {
+        CommissioningService c = service(level, m);
+        return c == null ? 0 : c.flangeLeakFraction(m.simId());
+    }
+
+    /**
+     * Газ к горелкам через газопровод с течью фланцев ({@code FLANGE_LEAK}, план HP2.3): возвращает долю, дошедшую до
+     * горелок; ушедшее — утечка у установки в модель горючего облака ({@link HazardService#vent}): газоанализатор видит
+     * её долю НКПР, источник зажигания в облаке (сама печь — открытое пламя) даёт пожар-вспышку или струйный факел.
+     * Доменный и конвертерный газы (CO, НКПР ≈ 35 %) горючего облака на открытом воздухе не дают — только потерю газа.
+     */
+    public static double gasDelivered(Level level, OpsMachine m, @Nullable ProcessGas g, double nm3S) {
+        double leak = flangeLeak(level, m);
+        if (leak <= 0) return 1;
+        Flammable cloud = g == null ? null : switch (g) {
+            case COKE_OVEN, MINE_METHANE, SALES, ASSOCIATED -> Flammable.METHANE;
+            case BLAST_FURNACE, CONVERTER -> null;
+        };
+        if (cloud != null && nm3S > 0 && level instanceof ServerLevel sl && sl.getGameTime() % 20 == 0)
+            HazardService.vent(sl, "flange_leak:" + m.simId(), BlockPos.containing(m.opsBearingPos()).above(), cloud,
+                    leak * nm3S * g.densityKgNm3, 0, false);
+        return 1 - leak;
     }
 
     static boolean isCheck(CommissioningCheck c, UnitKind kind) {

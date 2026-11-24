@@ -113,6 +113,40 @@ class OpsI1UnitsTest {
         assertThat(ops.commissioning().has(c, CommissioningDefectKind.FLANGE_LEAK)).isFalse();
     }
 
+    /** План HP2.3: дефекты действуют на модели-владельцы до проверки, которая их находит. */
+    @Test
+    void defectsActUntilTheCheckFindsThem() {
+        OpsSubsystem ops = ops(OpsConfig.defaults());
+        CommissioningService c = ops.commissioning();
+        SimId clean = unit(ops, 320, UnitKind.BREAKER_CELL, null, 0);
+        assertThat(c.flangeLeakFraction(clean)).isZero();
+        assertThat(c.tripTimeRatio(clean)).isEqualTo(1);
+        assertThat(c.tripDelayS(clean)).isZero();
+        assertThat(c.loopError(clean)).isZero();
+        assertThat(c.insulationDamp(clean)).isFalse();
+
+        SimId leak = unit(ops, 321, UnitKind.HOT_BLAST_STOVE, CommissioningDefectKind.FLANGE_LEAK, 0.07);
+        assertThat(c.flangeLeakFraction(leak)).isEqualTo(0.07);
+        ops.perform(leak, new CheckInput.InertLeakTest(true), null);
+        assertThat(c.flangeLeakFraction(leak)).isZero();
+
+        SimId slow = unit(ops, 322, UnitKind.WATER_TUBE_BOILER, CommissioningDefectKind.TRIP_SLOW, 3.5);
+        assertThat(c.tripTimeRatio(slow)).isEqualTo(3.5);
+        assertThat(c.tripDelayS(slow)).isEqualTo(2.5 * CommissioningService.TRIP_RESPONSE_S);
+        ops.perform(slow, new CheckInput.SisProofTest(true), null);
+        assertThat(c.tripDelayS(slow)).isZero();
+
+        SimId loop = unit(ops, 323, UnitKind.GRAPHITE_PILE, CommissioningDefectKind.LOOP_MISWIRED, 0.3);
+        assertThat(c.loopError(loop)).isEqualTo(0.3);
+        ops.perform(loop, new CheckInput.LoopCheck(true), null);
+        assertThat(c.loopError(loop)).isZero();
+
+        SimId damp = unit(ops, 324, UnitKind.ACHESON_FURNACE, CommissioningDefectKind.INSULATION_DAMP, 1.2);
+        assertThat(c.insulationDamp(damp)).isTrue();
+        ops.perform(damp, new CheckInput.InsulationTest(true), null);
+        assertThat(c.insulationDamp(damp)).isFalse();
+    }
+
     @Test
     void shortPurgeRefused() {
         OpsSubsystem ops = ops(OpsConfig.defaults());
