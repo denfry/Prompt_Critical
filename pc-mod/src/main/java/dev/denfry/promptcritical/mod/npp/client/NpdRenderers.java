@@ -15,8 +15,12 @@ import dev.denfry.promptcritical.sim.npp.NpdFuellingMachine;
  * (выдвигается на 12 px к торцу); положение — от автомата реактора, у южного торца поперёк зеркально.
  */
 final class NpdRenderers {
-    /** Ось каландра над полом машины, px: машина стоит на том же полу, что реактор (ось на 56 px). */
-    private static final double AXIS_PX = 56, BEAM_PX = 44, BRIDGE_MAX = 56, CARRIAGE_MAX = 40;
+    /**
+     * Ось каландра над полом реактора (56 px) и ось хобота над полом машины при опущенном мосте (66 px); ход моста
+     * 0…56 px, тележки ±40 px. На одном полу с реактором хобот достаёт только каналы выше оси — машину ставят в
+     * приямок на два блока ниже, тогда достаёт почти все.
+     */
+    private static final double AXIS_PX = 56, SNOUT_PX = 66, BRIDGE_MAX = 56, CARRIAGE_MAX = 40;
 
     private NpdRenderers() {
     }
@@ -39,13 +43,15 @@ final class NpdRenderers {
         @Override
         protected void parts(NpdFuellingMachineBlockEntity be, float pt, PoseStack ms, VertexConsumer vc, int light) {
             var f = be.wholeModelFacing();
-            double lift = clamp(AXIS_PX + be.viewY() * 16 - BEAM_PX, 0, BRIDGE_MAX);
+            double lift = clamp(AXIS_PX + be.viewY() * 16 - SNOUT_PX - be.viewDy() * 16, 0, BRIDGE_MAX);
             double across = clamp(be.viewSign() * be.viewX() * 16, -CARRIAGE_MAX, CARRIAGE_MAX);
             double snout = be.viewSnout() * 12;
             part(NppClient.NPD_BRIDGE_W, be, f, -24 / 16.0, (24 + lift) / 16, 0).light(light).renderInto(ms, vc);
             part(NppClient.NPD_BRIDGE_E, be, f, 24 / 16.0, (24 + lift) / 16, 0).light(light).renderInto(ms, vc);
             part(NppClient.NPD_CARRIAGE, be, f, across / 16, (48 + lift) / 16, 0).light(light).renderInto(ms, vc);
-            part(NppClient.NPD_HEAD, be, f, across / 16, (48 + lift) / 16, 0).light(light).renderInto(ms, vc);
+            // барабан магазина: 1/8 оборота на пучок вокруг z через (8, 66) px
+            part(NppClient.NPD_HEAD, be, f, across / 16, (48 + lift) / 16, 0).translate(8 / 16.0, 18 / 16.0, 0)
+                    .rotateZDegrees(45f * be.viewPushed()).translate(-8 / 16.0, -18 / 16.0, 0).light(light).renderInto(ms, vc);
             part(NppClient.NPD_SNOUT, be, f, across / 16, (48 + lift) / 16, snout / 16).light(light).renderInto(ms, vc);
         }
     }

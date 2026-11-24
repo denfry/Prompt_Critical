@@ -64,7 +64,7 @@ public final class NpdPanels {
                     "Shut down with the moderator dumped: load the next empty channel with nine bundles. At power: send both machines to the most burnt channel to push the set number of bundles with the flow. While they work: abort",
                     "Заглушен, замедлитель сброшен: загрузить следующий пустой канал девятью пучками. На мощности: отправить обе машины к самому выгоревшему каналу и вдвинуть заданное число пучков по течению. Во время работы — прервать"),
             SHIFT_TIP = PanelText.tr("npd.shift_tip", "Bundles per visit: 2, 4 or 8", "Пучков за заход: 2, 4 или 8"),
-            RESET = PanelText.tr("npd.reset", "Reset", "Сброс"),
+            RESET = PanelText.tr("npd.reset", "Reset", "Взвод"),
             RESET_TIP = PanelText.tr("npd.reset_tip",
                     "Close the dump valves once the cause is gone; also clears a fuelling machine fault once its magazine is empty",
                     "Закрыть сбросные клапаны, когда причина ушла; заодно снять неисправность машины, если её магазин пуст"),

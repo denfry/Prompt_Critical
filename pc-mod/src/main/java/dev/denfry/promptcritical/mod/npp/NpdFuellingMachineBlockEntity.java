@@ -49,7 +49,7 @@ public final class NpdFuellingMachineBlockEntity extends DeviceBlockEntity imple
     private int ticks;
     /** Для клиента — копия положения машины от реактора. */
     private float viewX = (float) NpdFuellingMachine.HOME_X, viewY = (float) NpdFuellingMachine.HOME_Y, viewSnout;
-    private int viewPhase, viewSign = 1;
+    private int viewPhase, viewSign = 1, viewDy, viewPushed;
 
     public NpdFuellingMachineBlockEntity(BlockPos pos, BlockState state) {
         super(NppBlockEntities.NPD_FUELLING_MACHINE.get(), pos, state);
@@ -87,8 +87,10 @@ public final class NpdFuellingMachineBlockEntity extends DeviceBlockEntity imple
         viewY = r.viewY();
         viewSnout = r.viewSnout();
         viewPhase = r.viewPhase();
+        viewPushed = r.viewPushed();
         // машина у южного торца смотрит навстречу реактору: поперёк каландра её ось x обратная
         viewSign = facing() == r.wholeModelFacing() ? 1 : -1;
+        viewDy = worldPosition.getY() - r.getBlockPos().getY();
         level.sendBlockUpdated(worldPosition, getBlockState(), getBlockState(), net.minecraft.world.level.block.Block.UPDATE_CLIENTS);
     }
 
@@ -107,6 +109,15 @@ public final class NpdFuellingMachineBlockEntity extends DeviceBlockEntity imple
     /** +1 — машина смотрит туда же, куда реактор (северный торец), −1 — у южного торца. */
     public int viewSign() {
         return viewSign;
+    }
+
+    /** Пол машины относительно пола реактора, блоки (машину ставят в приямок, чтобы хобот доставал нижние ряды). */
+    public int viewDy() {
+        return viewDy;
+    }
+
+    public int viewPushed() {
+        return viewPushed;
     }
 
     public int viewPhase() {
@@ -173,6 +184,8 @@ public final class NpdFuellingMachineBlockEntity extends DeviceBlockEntity imple
         tag.putFloat("view_snout", viewSnout);
         tag.putInt("view_phase", viewPhase);
         tag.putInt("view_sign", viewSign);
+        tag.putInt("view_dy", viewDy);
+        tag.putInt("view_pushed", viewPushed);
         return tag;
     }
 
@@ -199,6 +212,8 @@ public final class NpdFuellingMachineBlockEntity extends DeviceBlockEntity imple
             viewSnout = tag.getFloat("view_snout");
             viewPhase = tag.getInt("view_phase");
             viewSign = tag.contains("view_sign") ? tag.getInt("view_sign") : 1;
+            viewDy = tag.getInt("view_dy");
+            viewPushed = tag.getInt("view_pushed");
         }
     }
 

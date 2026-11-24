@@ -106,7 +106,7 @@ public final class NpdReactorBlockEntity extends DeviceBlockEntity implements de
     /** Для клиента: мощность, положение машин и пробки, фаза. */
     private float viewPower, sentPower = -1;
     private float viewX = (float) NpdFuellingMachine.HOME_X, viewY = (float) NpdFuellingMachine.HOME_Y, viewSnout, viewPlug;
-    private int viewChannel = -1, viewPhase, sentPhase = -1;
+    private int viewChannel = -1, viewPhase, sentPhase = -1, viewPushed, sentPushed;
 
     public NpdReactorBlockEntity(BlockPos pos, BlockState state) {
         super(NppBlockEntities.NPD_REACTOR.get(), pos, state);
@@ -323,14 +323,16 @@ public final class NpdReactorBlockEntity extends DeviceBlockEntity implements de
         viewPlug = (float) machine.plugOut();
         if (machine.channel() >= 0) viewChannel = machine.channel();
         viewPhase = machine.phase().ordinal();
+        viewPushed = machine.phase() == NpdFuellingMachine.Phase.IDLE ? 0 : machine.pushed();
         boolean moving = machine.phase() == NpdFuellingMachine.Phase.TRAVEL || machine.phase() == NpdFuellingMachine.Phase.RETURN
                 || viewSnout > 0 && viewSnout < 1 || viewPlug > 0 && viewPlug < 1;
-        if (Math.abs(viewPower - sentPower) > 0.02f || viewPhase != sentPhase || moving && ticks % 4 == 0) sync();
+        if (Math.abs(viewPower - sentPower) > 0.02f || viewPhase != sentPhase || viewPushed != sentPushed || moving && ticks % 4 == 0) sync();
     }
 
     private void sync() {
         sentPower = viewPower;
         sentPhase = viewPhase;
+        sentPushed = viewPushed;
         level.sendBlockUpdated(worldPosition, getBlockState(), getBlockState(), net.minecraft.world.level.block.Block.UPDATE_CLIENTS);
         for (BlockPos p : machines)
             if (level.getBlockEntity(p) instanceof NpdFuellingMachineBlockEntity m) m.mirror(this);
@@ -573,6 +575,11 @@ public final class NpdReactorBlockEntity extends DeviceBlockEntity implements de
         return viewPhase;
     }
 
+    /** Пучков, вдвинутых за этот заход: барабан магазина повёрнут на столько восьмых оборота. */
+    public int viewPushed() {
+        return viewPushed;
+    }
+
     /** Машин в радиусе связи (по одной у торца нужно две). */
     public int linkedMachines() {
         return linkedMachines;
@@ -647,6 +654,7 @@ public final class NpdReactorBlockEntity extends DeviceBlockEntity implements de
         tag.putFloat("view_plug", viewPlug);
         tag.putInt("view_ch", viewChannel);
         tag.putInt("view_phase", viewPhase);
+        tag.putInt("view_pushed", viewPushed);
     }
 
     @Override
@@ -700,6 +708,7 @@ public final class NpdReactorBlockEntity extends DeviceBlockEntity implements de
             viewPlug = tag.getFloat("view_plug");
             viewChannel = tag.getInt("view_ch");
             viewPhase = tag.getInt("view_phase");
+            viewPushed = tag.getInt("view_pushed");
         }
         accident.load(tag);
     }
