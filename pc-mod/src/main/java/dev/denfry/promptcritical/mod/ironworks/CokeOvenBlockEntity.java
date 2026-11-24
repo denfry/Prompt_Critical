@@ -226,7 +226,10 @@ public final class CokeOvenBlockEntity extends BlockEntity implements DeviceHost
         // пусконаладка (план HP2.3): непринятую холодную батарею в профиле licensing не греют ни газом, ни топкой
         boolean heat = OpsActions.processPermit(level, this, 0) || bat.wallTempK() >= OpsActions.WARM_K;
         ProcessGas g = gas.gas();
-        if (g != null && heat) u.setGasSupply(g, gas.draw(u.gasDemandNm3S(g) * dtp) / dtp);
+        if (g != null && heat) {
+            double nm3S = gas.draw(u.gasDemandNm3S(g) * dtp) / dtp;
+            u.setGasSupply(g, nm3S * OpsActions.gasDelivered(level, this, g, nm3S)); // течь фланцев (план HP2.3)
+        }
         else u.setGasSupply(null, 0);
         OpsActions.trial(level, this, bat.wallTempK() >= COKING_K && (u.gasSupplyNm3S() > 0 || u.fireboxW() > 0),
                 bat.wallTempK() / u.setpointK(), false);

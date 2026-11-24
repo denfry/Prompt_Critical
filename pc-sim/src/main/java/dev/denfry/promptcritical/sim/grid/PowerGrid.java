@@ -108,6 +108,8 @@ public final class PowerGrid {
     final List<BreakerSpec> breakerSpec = new ArrayList<>(); // null — идеальный ключ
     BreakerState[] brState = new BreakerState[0];
     private double[] brTimer = new double[0], brWear = new double[0];
+    /** Кратность времени отключения к паспортному (медленный привод, план HP2.3); 0 и меньше 1 — паспортное. */
+    private double[] brOpenFactor = new double[0];
     private int[] brOps = new int[0];
     boolean[] brDc = new boolean[0];
     /** Последнюю команду «откл» подала защита; сброс — команда оператора или включение. */
@@ -257,6 +259,7 @@ public final class PowerGrid {
         breakerSpec.add(null);
         brState = grow(brState, nbr);
         brTimer = grow(brTimer, nbr);
+        brOpenFactor = grow(brOpenFactor, nbr);
         brWear = grow(brWear, nbr);
         brOps = grow(brOps, nbr);
         brDc = grow(brDc, nbr);
@@ -551,7 +554,7 @@ public final class PowerGrid {
             brTimer[k] = 0;
             setBreakerState(k, BreakerState.OPEN);
         } else if (s == BreakerState.CLOSED) {
-            brTimer[k] = breakerSpec.get(k).openTimeS();
+            brTimer[k] = breakerSpec.get(k).openTimeS() * Math.max(1, brOpenFactor[k]);
             setBreakerState(k, BreakerState.OPENING);
         }
     }
@@ -560,6 +563,11 @@ public final class PowerGrid {
     void protectionTrip(int k) {
         brProtTrip[k] = true;
         command(k, false);
+    }
+
+    /** Привод выключателя отключает в {@code factor} раз медленнее паспорта (дефект {@code TRIP_SLOW}, план HP2.3). */
+    public void setBreakerOpenFactor(BranchId id, double factor) {
+        brOpenFactor[breaker(id)] = factor;
     }
 
     /** Оперативный постоянный ток привода (§7.11.5): без него выключатель не включается и не отключается. */
@@ -789,6 +797,11 @@ public final class PowerGrid {
         bfSelf[k] = selfClearing;
         groundEvent(bFrom[k], wasGround, groundType(type, branchFaultClass(k)));
         markY(bFrom[k]);
+    }
+
+    /** Вид КЗ внутри ветви, {@code null} — нет. */
+    public FaultType branchFault(BranchId id) {
+        return bfType[branch(id)];
     }
 
     public void clearBranchFault(BranchId id) {

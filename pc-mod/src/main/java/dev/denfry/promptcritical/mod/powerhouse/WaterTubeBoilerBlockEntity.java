@@ -259,6 +259,7 @@ public final class WaterTubeBoilerBlockEntity extends IronworksBlockEntity imple
                 false) == null) return;
         BurnerManagementSystem bms = u.boiler().bmsControl();
         bms.setPermitted(OpsActions.processAllowed(level, this));
+        u.setTripDelay(OpsActions.tripDelayS(level, this)); // медленная отсечка топлива (план HP2.3)
         BmsState s = u.bms();
         if (s == BmsState.PURGE_COMPLETE) {
             if (!purgeSeen && !ops.commissioning().passedChecks(simId).contains(CommissioningCheck.PURGE)) {

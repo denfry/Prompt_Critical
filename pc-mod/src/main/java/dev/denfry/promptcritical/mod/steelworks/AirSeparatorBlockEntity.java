@@ -144,9 +144,11 @@ public final class AirSeparatorBlockEntity extends IronworksBlockEntity implemen
         dev.denfry.promptcritical.mod.ops.OpsActions.trial(level, this, formed && w > 0, w / AsuUnit.SPEC.ratedCompressorW(), false);
         u.setCompressor(w, compressor == null ? 0 : compressor.coolingWater(AsuUnit.coolingWaterNeedKgS(w)));
         // продукт за реальный тик: газы 1 мБ = 1 нм³, жидкости — литры
-        oxygen.put(PcFluids.OXYGEN.source.get(), u.productRate("oxygen") * TICK_S);
-        nitrogen.put(PcFluids.NITROGEN.source.get(), u.productRate("nitrogen") * TICK_S);
-        argon.put(PcFluids.ARGON.source.get(), u.productRate("argon") * TICK_S);
+        // течь фланцев продуктовых трубопроводов (план HP2.3): часть газообразного продукта уходит в атмосферу
+        double kept = 1 - dev.denfry.promptcritical.mod.ops.OpsActions.flangeLeak(level, this);
+        oxygen.put(PcFluids.OXYGEN.source.get(), u.productRate("oxygen") * TICK_S * kept);
+        nitrogen.put(PcFluids.NITROGEN.source.get(), u.productRate("nitrogen") * TICK_S * kept);
+        argon.put(PcFluids.ARGON.source.get(), u.productRate("argon") * TICK_S * kept);
         liquid(PcFluids.LIQUID_OXYGEN.source.get(), u.productRate("liquid_oxygen") * TICK_S, CryoTankBlockEntity.RHO_LOX);
         liquid(PcFluids.LIQUID_NITROGEN.source.get(), u.productRate("liquid_nitrogen") * TICK_S, CryoTankBlockEntity.RHO_LIN);
         for (CryoTankBlockEntity t : tanks) {

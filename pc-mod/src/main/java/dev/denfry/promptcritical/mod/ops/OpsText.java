@@ -92,6 +92,8 @@ public final class OpsText {
         def("unit.sinter_strand", "sinter strand", "агломерационная машина");
         def("unit.hot_blast_stove", "hot blast stove", "воздухонагреватель");
         def("unit.reheating_furnace", "reheating furnace", "нагревательная печь");
+        def("earth_fault", "Earth fault on energising: the insulation is damp, dry it out and test it",
+                "Замыкание на землю при подаче напряжения: изоляция отсырела, просушите и испытайте её");
         def("start_unaccepted", "Unit not accepted — started at your own risk (logged)", "Установка не принята — пуск под вашу ответственность (записано)");
         def("check_passed", "%s: passed", "%s: пройдена");
         def("check_failed", "%s: FAILED — %s", "%s: НЕ ПРОЙДЕНА — %s");

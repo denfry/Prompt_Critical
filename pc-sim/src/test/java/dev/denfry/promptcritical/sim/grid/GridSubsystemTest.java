@@ -112,7 +112,6 @@ class GridSubsystemTest {
         assertThat(s.energyForwardKwh()).isGreaterThan(0.3);
     }
 
-    /** LOTO 13 §13.1.3: замок на приводе — аппарат не включается ни по какой команде, а снят — включается. */
     /** План HP2.2: непринятую ячейку не включить; включённую запрет не отключает, отключить можно всегда. */
     @Test
     void unpermittedBreakerRefusesOnlyClosing() {
@@ -136,6 +135,49 @@ class GridSubsystemTest {
         assertThat(c.energized()).isFalse();
     }
 
+    /** План HP2.3: медленный привод ({@code TRIP_SLOW}) отключает в кратность раз дольше паспортных 0,1 с. */
+    @Test
+    void slowTripDeviceOpensLate() {
+        SimulationWorld w = world();
+        generator(w, BUS_A, 0);
+        SwitchUnit s = cell(w, BUS_A, BUS_B, false);
+        consumer(w, BUS_B, 100);
+        run(w, 20);
+        s.operate(true);
+        run(w, 1);
+        s.setDefects(6, false);
+        run(w, 0.1);
+        s.operate(false);
+        run(w, 0.3);
+        assertThat(s.closed()).isTrue(); // паспорт 0,1 с, с дефектом 0,6 с
+        run(w, 0.5);
+        assertThat(s.closed()).isFalse();
+    }
+
+    /** План HP2.3: отсыревшая изоляция ({@code INSULATION_DAMP}) пробивается при включении, гаснет с отключением. */
+    @Test
+    void dampInsulationFaultsToEarthOnClosing() {
+        SimulationWorld w = world();
+        generator(w, BUS_A, 0);
+        SwitchUnit s = cell(w, BUS_A, BUS_B, false);
+        consumer(w, BUS_B, 100);
+        run(w, 20);
+        s.setDefects(1, true);
+        run(w, 0.5);
+        assertThat(s.earthFault()).isFalse();
+        s.operate(true);
+        run(w, 1);
+        assertThat(s.earthFault()).isTrue();
+        s.operate(false);
+        run(w, 1);
+        assertThat(s.earthFault()).isFalse();
+        s.setDefects(1, false); // просушили и испытали — включение чистое
+        s.operate(true);
+        run(w, 1);
+        assertThat(s.earthFault()).isFalse();
+    }
+
+    /** LOTO 13 §13.1.3: замок на приводе — аппарат не включается ни по какой команде, а снят — включается. */
     @Test
     void lockedOutBreakerRefusesEveryCommand() {
         SimulationWorld w = world();

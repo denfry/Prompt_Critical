@@ -76,7 +76,10 @@ public class HotBlastStoveBlockEntity extends IronworksDeviceBlockEntity<HotBlas
         // пусконаладка (план HP2.3): непринятый холодный воздухонагреватель в профиле licensing газа не получает
         boolean heat = OpsActions.processPermit(level, this, 0) || u.stove().domeK() >= OpsActions.WARM_K;
         ProcessGas g = gas.gas();
-        if (g != null && heat) u.setGasSupply(g, gas.draw(u.gasDemandNm3S() * dtp) / dtp);
+        if (g != null && heat) {
+            double nm3S = gas.draw(u.gasDemandNm3S() * dtp) / dtp;
+            u.setGasSupply(g, nm3S * OpsActions.gasDelivered(level, this, g, nm3S)); // течь фланцев (план HP2.3)
+        }
         else u.setGasSupply(null, 0);
         OpsActions.trial(level, this, u.stove().domeK() >= HOT_DOME_K, u.stove().domeK() / DESIGN_DOME_K, false);
         // дымовые газы воздухонагревателя — труба 40 м, ≈ 520 К (08 §8.3)

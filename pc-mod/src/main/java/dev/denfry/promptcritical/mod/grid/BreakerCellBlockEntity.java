@@ -139,10 +139,18 @@ public class BreakerCellBlockEntity extends GridDeviceBlockEntity<SwitchUnit> im
      * Пусконаладка (план HP2.2): разрешение на включение пишется в модель каждый тик (запирает и Lua, и автоматику),
      * опробование — ячейка включена и присоединение под напряжением.
      */
+    /** Замыкание на землю уже показано игрокам (не сохраняется). */
+    private boolean earthSeen;
+
     private void operations(SwitchUnit u) {
         OpsSubsystem ops = OpsWorld.ops(level);
         if (ops == null || OpsWorld.ensure(level, simId(), UnitKind.BREAKER_CELL, 0, false) == null) return;
         u.setPermitted(OpsActions.processAllowed(level, this));
+        // монтажные дефекты (план HP2.3): медленный привод отключения, отсыревшая изоляция — земля при включении
+        u.setDefects(OpsActions.tripTimeRatio(level, this), OpsActions.insulationDamp(level, this));
+        boolean earth = u.earthFault();
+        if (earth && !earthSeen) OpsActions.earthFault(level, worldPosition);
+        earthSeen = earth;
         BreakerState s = u.breakerState();
         ops.observeTrial(simId(), 0.05, u.closed() && !noEnergy(), 1,
                 s == BreakerState.FAULTED || s == BreakerState.FAILED_TO_INTERRUPT, opsCurrent());

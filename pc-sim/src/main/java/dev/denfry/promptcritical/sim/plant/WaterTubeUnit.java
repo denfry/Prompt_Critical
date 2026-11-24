@@ -105,6 +105,12 @@ public final class WaterTubeUnit {
     double pressureSetPa = PRESSURE_SET_PA, manualFuel, manualAir, manualDraft, manualFeed;
     double firingDemand, pressureIntegral, fuelPos, airPos, draftPos, feedRateKgS;
     double coTimer;
+    /**
+     * Запаздывание отсечки топлива от защиты, с (дефект {@code TRIP_SLOW}, план HP2.3): условие должно держаться
+     * столько, прежде чем MFT сработает. Пишется биндингом каждый тик, не сохраняется.
+     */
+    private volatile double tripDelayS;
+    private double tripTimer;
     Protection lastTrip;
     boolean exploded;
     long reliefLifts;
@@ -387,6 +393,10 @@ public final class WaterTubeUnit {
         return draftPos;
     }
 
+    public void setTripDelay(double seconds) {
+        tripDelayS = Math.max(0, seconds);
+    }
+
     public Protection lastTrip() {
         return lastTrip;
     }
@@ -601,7 +611,13 @@ public final class WaterTubeUnit {
         else if (pf < FURNACE_LOW_PA) trip = Protection.FURNACE_PRESSURE_LOW;
         else if (fuelPos > 0.05 && fuelSupplyKg <= 0) trip = Protection.FUEL_PRESSURE_LOW;
         else if (coTimer >= FLUE_CO_DELAY_S) trip = Protection.FLUE_CO_HIGH;
-        if (trip == null) return;
+        if (trip == null) {
+            tripTimer = 0;
+            return;
+        }
+        tripTimer += dt;
+        if (tripTimer < tripDelayS) return;
+        tripTimer = 0;
         lastTrip = trip;
         boiler.bmsControl().trip(MftCause.PROTECTION);
     }
