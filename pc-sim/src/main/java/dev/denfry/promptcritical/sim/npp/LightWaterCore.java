@@ -141,6 +141,7 @@ public final class LightWaterCore {
             case VVER_1000 -> 0.236;
             case PWR_17X17 -> 0.215;
             case CANDU_37 -> 0.286;
+            case NPD_19 -> 0.26035;
             default -> 0.147;
         };
     }

@@ -10,7 +10,7 @@ import java.util.Set;
  */
 public final class LatticeDesigns {
     public static final String T0_SLUG = "t0_slug", T1_CLUSTER = "t1_cluster", T2_HEX = "t2_hex", T1_AM1 = "t1_am1",
-            T3_CLUSTER_D2O = "t3_cluster_d2o";
+            T3_CLUSTER_D2O = "t3_cluster_d2o", T3_NPD = "t3_npd";
 
     /**
      * Примесь графита ядерной чистоты по умолчанию, ppm бор-эквивалента [BALANCE, третья константа
@@ -40,18 +40,27 @@ public final class LatticeDesigns {
             // 37 стержней ⌀13,1 мм в напорной трубе, прир. UO₂, шаг 286 мм.
             T3_CLUSTER_D2O, new LatticeDesign(T3_CLUSTER_D2O, FuelGeometry.CLUSTER_IN_TUBE, FuelMaterial.UO2,
                     CladMaterial.ZR_NB, CoolantKind.D2O, ModeratorKind.D2O, 0.00655, 0.00612, 0.0004, 0.286, 37,
-                    0.0517, 0.0042, 12, 444, 0.053, 0.045, 0.037, 0.83));
+                    0.0517, 0.0042, 12, 444, 0.053, 0.045, 0.037, 0.83),
+            // NPD (Rolphton, 1962): шаг 260,35 мм (15 каналов на м²), 19 элементов ⌀15,25 мм, труба давления r 41,4 мм
+            // и стенка 4,3 мм, алюминиевая каландровая труба r 50,8 мм (IAEA-NDS, WIMS-D burnup benchmarks, ячейка
+            // NPD). Доли: топливо 285·π·7,2² мм²; конструкции — оболочки, обе трубы, концевые решётки — с тем же
+            // запасом на арматуру, что у T3; теплоноситель — проход трубы давления; остальное — D₂O замедлителя.
+            T3_NPD, new LatticeDesign(T3_NPD, FuelGeometry.CLUSTER_IN_TUBE, FuelMaterial.UO2,
+                    CladMaterial.ZR_NB, CoolantKind.D2O, ModeratorKind.D2O, 0.007625, 0.0072, 0.0004, 0.26035, 19,
+                    0.041402, 0.004318, 15, 285, 0.0464, 0.043, 0.0287, 0.872));
 
     private static final Map<String, CellFeedbackState> REFERENCE = Map.of(
             T1_AM1, new CellFeedbackState(700, 830, 800, 0, 0, 0),
             T0_SLUG, new CellFeedbackState(300, 1.2, 300, 0, 0, 0),
             T1_CLUSTER, new CellFeedbackState(900, 450, 800, 0, 0, 0),
             T2_HEX, new CellFeedbackState(900, 715, 578, 0, 0, 0),
-            T3_CLUSTER_D2O, new CellFeedbackState(900, 830, 340, 0, 0, 0));
+            T3_CLUSTER_D2O, new CellFeedbackState(900, 830, 340, 0, 0, 0),
+            T3_NPD, new CellFeedbackState(900, 860, 340, 0, 0, 0));
 
     /** Обогащение (массовая доля U-235) референсного свежего топлива. */
     private static final Map<String, Double> ENRICHMENT = Map.of(
-            T0_SLUG, 0.00711, T1_AM1, 0.050, T1_CLUSTER, 0.020, T2_HEX, 0.040, T3_CLUSTER_D2O, 0.00711);
+            T0_SLUG, 0.00711, T1_AM1, 0.050, T1_CLUSTER, 0.020, T2_HEX, 0.040, T3_CLUSTER_D2O, 0.00711,
+            T3_NPD, 0.00711);
 
     private LatticeDesigns() {}
 
