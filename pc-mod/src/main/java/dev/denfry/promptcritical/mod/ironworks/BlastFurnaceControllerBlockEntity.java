@@ -62,6 +62,13 @@ import org.jetbrains.annotations.Nullable;
  */
 public final class BlastFurnaceControllerBlockEntity extends IronworksDeviceBlockEntity<BlastFurnaceUnit> implements PanelHost,
         dev.denfry.promptcritical.mod.ops.OpsMachine {
+    /**
+     * Приборы и сигнализация пульта, Вт: малая нагрузка 0,4 кВ. Без питания печь не останавливается, но показания и
+     * сигнализация гаснут, пока питание не вернут (решение 2026-11-24).
+     */
+    public static final double POWER_W = 3e3;
+    private boolean powered = true;
+
     /** Рабочее давление воды охлаждения кладки (холодильники), Па: для гидроиспытания (план HP2.1, оценка исполнителя). */
     public static final double STAVE_WATER_PA = 0.4e6;
     public static final int LINK_RANGE = 12;
@@ -128,6 +135,7 @@ public final class BlastFurnaceControllerBlockEntity extends IronworksDeviceBloc
     @Override
     protected void serverTick(SimLevelBinding b, BlastFurnaceUnit u) {
         long now = level.getGameTime();
+        if (now % 20 == 0) powered = dev.denfry.promptcritical.mod.grid.MachinePower.powered(level, worldPosition, POWER_W);
         if (now % VALIDATE_PERIOD == Math.floorMod(worldPosition.asLong(), VALIDATE_PERIOD)) validate(b, u);
         if (shape == null || u.furnace() == null) {
             setStateFlag(PcProperties.ALARM, false);
@@ -150,8 +158,8 @@ public final class BlastFurnaceControllerBlockEntity extends IronworksDeviceBloc
         for (IronmakingLog.Entry e; (e = u.log().poll()) != null; ) event(b, u, e);
         if (now % LOOK_PERIOD == 0) looks(f);
         if (fillTicks > 0 && --fillTicks == 0) fillRunner(false);
-        setStateFlag(PcProperties.ALARM, f.state() == BlastFurnaceState.CHILLED || f.state() == BlastFurnaceState.HANGING
-                || f.state() == BlastFurnaceState.BURNTHROUGH || f.tuyereLeak());
+        setStateFlag(PcProperties.ALARM, powered && (f.state() == BlastFurnaceState.CHILLED || f.state() == BlastFurnaceState.HANGING
+                || f.state() == BlastFurnaceState.BURNTHROUGH || f.tuyereLeak()));
     }
 
     /**
@@ -547,6 +555,7 @@ public final class BlastFurnaceControllerBlockEntity extends IronworksDeviceBloc
     @Override
     public void readPanel(int[] out) {
         Arrays.fill(out, 0);
+        if (!powered) return; // приборы пульта погасли: печь идёт, операторы работают вслепую
         BlastFurnaceUnit u = unit();
         BlastFurnace f = u == null ? null : u.furnace();
         if (f == null || shape == null) {

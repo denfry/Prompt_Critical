@@ -385,9 +385,9 @@ public final class MachineLoads {
         put(Load.OWN, PlcBlockEntity.class);
         // ядро щитовой оценивает помещение, само ничего не берёт
         put(Load.PASSIVE, ControlRoomCoreBlockEntity.class);
-        // пульты котла и домны: питание и останов при его потере — решение владельца, пока не подключены
-        put(Load.PASSIVE, PileControllerBlockEntity.class);
-        put(Load.PASSIVE, BlastFurnaceControllerBlockEntity.class);
+        // пульты котла (без питания — сброс стержней) и домны (без питания — гаснут приборы)
+        put(Load.IC, PileControllerBlockEntity.class);
+        put(Load.IC, BlastFurnaceControllerBlockEntity.class);
 
         // общий BE устройства: по id блока
         BY_BLOCK.put("degasification_borehole", Load.PASSIVE);

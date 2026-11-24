@@ -19,7 +19,7 @@ Right click switches the contactor, Start or Stop. Shift + right click shows the
 
 ## UPS
 
-The UPS feeds its group from the grid and charges its battery. When the grid fails it carries on from the battery, about twenty minutes at full load, and does not drop out. Put the instruments and the controls that must see a blackout through on a UPS.
+The UPS feeds its group from the grid and charges its battery. When the grid fails it carries on from the battery, about twenty minutes at full load, and does not drop out. Put the instruments and the controls that must see a blackout through on a UPS. A graphite pile console without power drops the rods and will not let them out until the power is back; a blast furnace console does not stop the furnace, but its gauges and alarms go dark.
 
 ## Large machines: 6.3 kV
 
