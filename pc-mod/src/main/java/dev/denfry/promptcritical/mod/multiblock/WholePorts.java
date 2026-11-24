@@ -23,6 +23,22 @@ public final class WholePorts {
 
     private static final Map<String, List<Port>> PORTS = Map.ofEntries(
             // холодные (y 7) и горячие (y 9) нитки по обе стороны корпуса
+            // топливный цикл (fuelcycle-dimensions): коллекторы центрифуг сверху / с торцов, питание снизу
+            Map.entry("gas_centrifuge_real", List.of(p(0, 1, 0, U), p(0, 0, 0, D))),
+            Map.entry("centrifuge_cascade_section_real", List.of(p(0, 1, 0, W), p(3, 1, 0, E), p(0, 0, 0, D))),
+            // UF₄ сверху, фтор на голове, UF₆ к ловушкам, зола снизу, нагреватели
+            Map.entry("fluorinator_real", List.of(p(0, 5, 0, U), p(-1, 5, 0, W), p(1, 2, 0, E), p(0, 0, 0, D), p(-1, 0, 0, W))),
+            Map.entry("uf6_cylinder_30b_real", List.of(p(1, 0, 0, E))),
+            // пар, конденсат, отвод UF₆, дверь баллона
+            Map.entry("uf6_autoclave_real", List.of(p(0, 1, 0, U), p(1, 0, 0, D), p(2, 0, 0, E), p(-2, 0, 0, W))),
+            // порошок в бункер, таблетки с лотка, привод с запада
+            Map.entry("pellet_press_real", List.of(p(0, 1, -1, U), p(1, 0, 0, E), p(-1, 0, 0, W))),
+            // лодочки вход/выход, водород, шины, вода, вытяжка
+            Map.entry("sintering_furnace_real", List.of(p(-4, 1, 0, W), p(4, 1, 0, E), p(0, 2, 0, U), p(0, 1, -1, N),
+                    p(3, 0, 1, S), p(-3, 2, 0, U))),
+            Map.entry("fuel_rod_welder_real", List.of(p(-2, 0, 0, W), p(-1, 0, 0, D))),
+            Map.entry("fuel_assembly_stand_real", List.of(p(-1, 0, 0, W))),
+            Map.entry("vver440_fuel_assembly_real", List.of()),
             Map.entry("vver_reactor", List.of(p(2, 7, -1, E), p(2, 7, 1, E), p(-2, 7, -1, W), p(-2, 7, 1, W),
                     p(2, 9, -1, E), p(2, 9, 1, E), p(-2, 9, -1, W), p(-2, 9, 1, W))),
             // первый контур снизу, пар — с торца коллектора, питательная вода — сбоку

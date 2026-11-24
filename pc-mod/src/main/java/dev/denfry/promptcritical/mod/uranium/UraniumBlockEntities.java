@@ -35,8 +35,10 @@ public final class UraniumBlockEntities {
             type("reduction_furnace", ConversionBlockEntity::reduction, PcBlocks.REDUCTION_FURNACE);
     public static final DeferredHolder<BlockEntityType<?>, BlockEntityType<ConversionBlockEntity>> HYDROFLUORINATION =
             type("hydrofluorination_reactor", ConversionBlockEntity::hydrofluorination, PcBlocks.HYDROFLUORINATION_REACTOR);
+    /** Реактор фторирования старой серии и пламенная башня реального масштаба — один BE. */
     public static final DeferredHolder<BlockEntityType<?>, BlockEntityType<FluorinationBlockEntity>> FLUORINATION =
-            type("fluorination_reactor", FluorinationBlockEntity::new, PcBlocks.FLUORINATION_REACTOR);
+            BLOCK_ENTITIES.register("fluorination_reactor", () -> BlockEntityType.Builder.of(FluorinationBlockEntity::new,
+                    PcBlocks.FLUORINATION_REACTOR.get(), PcBlocks.FLUORINATOR_REAL.get()).build(null));
     public static final DeferredHolder<BlockEntityType<?>, BlockEntityType<FluorineCellBlockEntity>> FLUORINE_CELL =
             type("fluorine_cell", FluorineCellBlockEntity::new, PcBlocks.FLUORINE_CELL);
 

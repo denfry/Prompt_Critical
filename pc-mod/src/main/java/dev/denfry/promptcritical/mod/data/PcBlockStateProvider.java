@@ -419,6 +419,9 @@ public final class PcBlockStateProvider extends BlockStateProvider {
                  "longwall_shearer_real", "coal_jig_real", "quench_tower_real", "powered_roof_support_real" -> "whole_empty";
             case "bof_vessel_real", "reheating_furnace_real" -> "whole_empty";
             case "molding_station_real", "shakeout_grate_real" -> "whole_empty";
+            case "gas_centrifuge_real", "centrifuge_cascade_section_real", "fluorinator_real", "uf6_cylinder_30b_real",
+                 "uf6_autoclave_real", "pellet_press_real", "sintering_furnace_real", "fuel_rod_welder_real",
+                 "fuel_assembly_stand_real", "vver440_fuel_assembly_real" -> "whole_empty";
             case "machine_lathe_real", "drill_press_real", "milling_machine_real", "shaping_machine_real", "surface_grinder_real" -> "whole_empty";
             case "degasification_pump_real", "forced_draft_fan_real", "induced_draft_fan_real", "magnetic_separator_real",
                  "flotation_cell_real", "electrode_boiler_real" -> "whole_empty";

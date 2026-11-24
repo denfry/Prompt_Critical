@@ -41,6 +41,20 @@ public final class RodStationBlockEntity extends FuelShopBlockEntity {
     private int rods, defects;
     private boolean starved, lastArgon;
 
+    /** Пост сварки заглушек реального масштаба (fuelcycle §4a): треск TIG и голубые искры в окне камеры. */
+    @Override
+    protected void clientTick() {
+        if (!real() || !lit()) return;
+        dev.denfry.promptcritical.mod.fx.MachineFx fx = dev.denfry.promptcritical.mod.fx.MachineFx.of(this);
+        if (fx == null) return;
+        if (fx.chance(6)) {
+            net.minecraft.world.phys.Vec3 at = fx.at(4, 15, 8);
+            level.addParticle(net.minecraft.core.particles.ParticleTypes.ELECTRIC_SPARK, at.x, at.y, at.z,
+                    (fx.random().nextDouble() - 0.5) * 0.1, 0.05, (fx.random().nextDouble() - 0.5) * 0.1);
+        }
+        if (fx.chance(1)) fx.sound(fx.at(4, 15, 8), net.minecraft.sounds.SoundEvents.BEE_LOOP, 0.25f, 2.0f);
+    }
+
     public RodStationBlockEntity(BlockPos pos, BlockState state) {
         super(NuclearBlockEntities.ROD_LOADING_STATION.get(), pos, state, 3);
     }

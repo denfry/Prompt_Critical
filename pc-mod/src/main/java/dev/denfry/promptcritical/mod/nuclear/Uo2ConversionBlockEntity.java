@@ -54,17 +54,9 @@ public final class Uo2ConversionBlockEntity extends FuelShopBlockEntity {
         return line.balance();
     }
 
-    @Override
-    public void tickDevice() {
-        if (level != null && level.isClientSide) {
-            clientTick();
-            return;
-        }
-        super.tickDevice();
-    }
-
     /** Нагретая печь (art/blockbench/conversion/uo2_conversion.author.js): над крышкой бункера дрожит тёплый воздух. */
-    private void clientTick() {
+    @Override
+    protected void clientTick() {
         BlockState st = getBlockState();
         if (!st.hasProperty(net.minecraft.world.level.block.state.properties.BlockStateProperties.LIT)
                 || !st.getValue(net.minecraft.world.level.block.state.properties.BlockStateProperties.LIT)) return;

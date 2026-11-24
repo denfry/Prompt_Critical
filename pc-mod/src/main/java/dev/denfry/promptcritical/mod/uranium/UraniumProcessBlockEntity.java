@@ -37,7 +37,8 @@ import org.jetbrains.annotations.Nullable;
  * (воронкой снизу), пуск/останов Shift + ПКМ, шаг процесса с dt мира, флаг работы на блоке. Жидкости, щит и
  * собственно процесс — у наследника.
  */
-public abstract class UraniumProcessBlockEntity extends DeviceBlockEntity implements FoundryDevice, PanelHost {
+public abstract class UraniumProcessBlockEntity extends DeviceBlockEntity implements FoundryDevice, PanelHost,
+        dev.denfry.promptcritical.mod.client.whole.RealScaleBlockEntity {
     protected final ItemStackHandler input, output;
     private final IItemHandler outputView;
     private final IItemHandlerModifiable panelItems;

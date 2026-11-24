@@ -35,6 +35,18 @@ public final class AssemblyJigBlockEntity extends FuelShopBlockEntity {
 
     public AssemblyJigBlockEntity(BlockPos pos, BlockState state) {
         super(NuclearBlockEntities.ASSEMBLY_JIG.get(), pos, state, 4);
+        // стенд реального масштаба нарисован под ТВС ВВЭР-440 (fuelcycle §4b): с ней он и стоит по умолчанию
+        if (state.is(dev.denfry.promptcritical.mod.registry.PcBlocks.FUEL_ASSEMBLY_STAND_REAL.get())) design = FuelDesign.VVER_440;
+    }
+
+    /** Стенд реального масштаба: таль подвывает, каретка калибра щёлкает у решёток. */
+    @Override
+    protected void clientTick() {
+        if (!real() || !lit()) return;
+        dev.denfry.promptcritical.mod.fx.MachineFx fx = dev.denfry.promptcritical.mod.fx.MachineFx.of(this);
+        if (fx == null) return;
+        if (fx.chance(0.5)) fx.sound(fx.at(8, 70, 8), net.minecraft.sounds.SoundEvents.MINECART_RIDING, 0.15f, 1.6f);
+        if (fx.chance(0.6)) fx.sound(fx.at(8, 30, 8), net.minecraft.sounds.SoundEvents.LEVER_CLICK, 0.4f, 1.8f);
     }
 
     public FuelDesign design() {
