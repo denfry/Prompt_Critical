@@ -44,6 +44,10 @@ repositories {
         name = "Modrinth"
         content { includeGroup("maven.modrinth") }
     }
+    maven("https://jm.gserv.me/repository/maven-public") {
+        name = "JourneyMap API"
+        content { includeGroup("info.journeymap") }
+    }
 }
 
 val gametest: SourceSet by sourceSets.creating {
@@ -149,6 +153,8 @@ dependencies {
     compileOnly(libs.jei.neoforge.api)
     runtimeOnly(libs.jei.neoforge)
     compileOnly(libs.jade)
+    // Путевая точка из geological_map (16 §16.5.1): API v2 опубликован только снимками, версия закреплена точно
+    compileOnly(libs.journeymap.api)
 }
 
 tasks.processResources {

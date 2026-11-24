@@ -81,6 +81,7 @@ public final class PromptCritical {
         dev.denfry.promptcritical.mod.environment.RadiationService.register();
         dev.denfry.promptcritical.mod.environment.ContainerActivityScan.register();
         modBus.addListener(dev.denfry.promptcritical.mod.environment.ContainerShielding::register);
+        modBus.addListener(dev.denfry.promptcritical.mod.environment.BiomeEnvironment::register);
         dev.denfry.promptcritical.mod.environment.AirQualityService.register();
         dev.denfry.promptcritical.mod.market.PlantAccounting.register();
         dev.denfry.promptcritical.mod.environment.EnvironmentBlockEntities.register(modBus);

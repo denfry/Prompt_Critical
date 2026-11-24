@@ -132,8 +132,19 @@ public final class CapLampService {
     /** Поставить, передвинуть или снять свет фары игрока (каждый тик игрока). */
     public static void tickLight(ServerPlayer p) {
         if (!(p.level() instanceof ServerLevel level)) return;
-        ItemStack head = p.isSpectator() ? ItemStack.EMPTY : p.getItemBySlot(EquipmentSlot.HEAD);
+        ItemStack head = p.isSpectator() ? ItemStack.EMPTY : worn(p);
+        // в слоте Curios или Accessories inventoryTick не зовётся: батарея считается отсюда (16 §16.9)
+        if (head.getItem() instanceof CapLampItem && (level.getGameTime() + p.getId()) % UPDATE_TICKS == 0
+                && dev.denfry.promptcritical.mod.compat.WornGear.inAccessorySlot(p, head))
+            update(head, level, true);
         updateLight(level, p.getUUID(), BlockPos.containing(p.getEyePosition()), p.blockPosition(), head);
+    }
+
+    /** Надетый головной светильник: в слоте головы или в слоте Curios {@code head} / Accessories {@code hat}. */
+    private static ItemStack worn(ServerPlayer p) {
+        ItemStack head = p.getItemBySlot(EquipmentSlot.HEAD);
+        if (head.getItem() instanceof CapLampItem) return head;
+        return dev.denfry.promptcritical.mod.compat.WornGear.find(p, EquipmentSlot.HEAD, s -> s.getItem() instanceof CapLampItem);
     }
 
     /**
@@ -197,7 +208,7 @@ public final class CapLampService {
 
     private static void onDamage(LivingDamageEvent.Post e) {
         if (!(e.getEntity() instanceof ServerPlayer p) || !(p.level() instanceof ServerLevel level)) return;
-        ItemStack head = p.getItemBySlot(EquipmentSlot.HEAD);
+        ItemStack head = worn(p);
         if (!(head.getItem() instanceof CapLampItem) || !breaks(e.getSource(), e.getNewDamage())) return;
         breakGlass(level, p, head);
     }
