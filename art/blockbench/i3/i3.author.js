@@ -19,7 +19,7 @@
 // reformer (steam_reformer_real, lit variant steam_reformer_real_lit), x -4..4, y 0..13, z -2..2: feed on the west
 //   face of (-4, 13, 0) at (-64, 214, 8); reformed gas on the west face of (-4, 0, 0) at (-64, 10, 8); fuel gas on the
 //   north face of (0, 12, -2) at (8, 204, -32); flue gas on the top face of (4, 13, 0) at (64, 224, 8). Partial
-//   fan_coupling: turns about z at (64, 10); stored -48 x.
+//   fan_coupling: turns about z at (64, 10); stored -48 x, +8 z.
 // ammonia (ammonia_converter_real), x -1..1, y 0..13, z -1..1: gas in on the west face of (-1, 1, 0) at (-16, 24, 8);
 //   gas out on the east face of (1, 1, 0) at (32, 24, 8); quench gas on the top face of (0, 13, 0) at (8, 224, 8).
 // methanol (methanol_converter_real), x -2..2, y 0..12, z -2..2: syngas in on the top face of (0, 12, 0) at
@@ -352,7 +352,7 @@
   const UNITS = {
     gt: { id: 'gas_turbine_heavy_real', draw: gt, parts: { coupling: { draw: coupling, shift: [80, -32, 0] } } },
     hrsg: { id: 'hrsg_real', draw: hrsg, parts: { damper: { draw: hrsgDamper, shift: [-96, -184, 0] } } },
-    reformer: { id: 'steam_reformer_real', draw: () => reformer(false), parts: { fan_coupling: { draw: fanCoupling, shift: [-48, 0, 0] } } },
+    reformer: { id: 'steam_reformer_real', draw: () => reformer(false), parts: { fan_coupling: { draw: fanCoupling, shift: [-48, 0, 8] } } },
     reformer_lit: { id: 'steam_reformer_real_lit', draw: () => reformer(true), parts: {} },
     ammonia: { id: 'ammonia_converter_real', draw: ammonia, parts: {} },
     pyrolysis: { id: 'pyrolysis_furnace_real', draw: () => pyrolysis(false), parts: { damper: { draw: pyroDamper, shift: [0, -224, 0] } } },
