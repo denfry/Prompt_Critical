@@ -268,6 +268,11 @@ public final class MachineLoads {
         put(Load.IC, MarketTerminalBlockEntity.class);
         put(Load.IC, MesServerBlockEntity.class);
         put(Load.IC, PortalMonitorBlockEntity.class);
+        // горячая камера: лампы, вытяжка и приводы манипуляторов; контейнер, тележка (своя батарея) и модуль — без сети
+        put(Load.ACTIVE_LV, dev.denfry.promptcritical.mod.radiation.HotCellBlockEntity.class);
+        put(Load.PASSIVE, dev.denfry.promptcritical.mod.radiation.SpentFuelCaskBlockEntity.class);
+        put(Load.PASSIVE, dev.denfry.promptcritical.mod.radiation.CaskCartBlockEntity.class);
+        put(Load.PASSIVE, dev.denfry.promptcritical.mod.radiation.DryStorageModuleBlockEntity.class);
         put(Load.IC, QualityLabBlockEntity.class);
         put(Load.IC, ShaftSignalBlockEntity.class);
         put(Load.IC, VibrationTransmitterBlockEntity.class);
