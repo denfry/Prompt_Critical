@@ -95,9 +95,14 @@ public final class DosimeterItem extends Item {
         // щелчки счётчика: пуассоновский поток, не чаще раза в тик (дальше — сплошной треск)
         double cps = Math.min(r.rateSvH(), MAX_SV_H) * 1e6 * CPS_PER_USV_H;
         double p = 1 - Math.exp(-cps / 20);
-        if (level.random.nextDouble() < p)
+        if (level.random.nextDouble() >= p) return;
+        float pitch = 0.95f + level.random.nextFloat() * 0.1f;
+        // свой дозиметр щёлкает у слушателя, и Sound Physics его не трогает (16 §16.4.4); чужой — позиционно
+        if (player.isLocalPlayer() && net.neoforged.fml.loading.FMLEnvironment.dist.isClient())
+            dev.denfry.promptcritical.mod.sound.client.ListenerSounds.play(PcSfx.GEIGER_CLICK.get(), SoundSource.PLAYERS, 0.5f, pitch);
+        else
             level.playLocalSound(player.getX(), player.getEyeY(), player.getZ(), PcSfx.GEIGER_CLICK.get(), SoundSource.PLAYERS, 0.5f,
-                    0.95f + level.random.nextFloat() * 0.1f, false);
+                    pitch, false);
     }
 
     @Override

@@ -62,14 +62,18 @@ public final class PpeService {
             ItemStack insert = SafetyComponents.insert(head);
             if (insert != null && PpeItem.is(insert, PpeItem.Kind.GAS_MASK)) return insert;
         }
-        return null;
+        // слот Accessories {@code face} или любой слот Curios (16 §16.9)
+        ItemStack worn = dev.denfry.promptcritical.mod.compat.WornGear.find(p, EquipmentSlot.HEAD, s -> PpeItem.is(s, PpeItem.Kind.GAS_MASK));
+        return worn.isEmpty() ? null : worn;
     }
 
     private static void storeMask(Player p, ItemStack mask, GasMask m) {
         if (m.filter() == null) return;
         mask.set(SafetyComponents.FILTER_TYPE.get(), new SafetyComponents.Filter(m.filter(), m.loaded()));
         ItemStack head = p.getItemBySlot(EquipmentSlot.HEAD);
-        if (head != mask) SafetyComponents.setInsert(head, mask); // вставка хранится копией в компоненте каски
+        // вставка хранится копией в компоненте каски; маска в слоте снаряжения — живой стек, писать некуда
+        if (head != mask && !dev.denfry.promptcritical.mod.compat.WornGear.inAccessorySlot(p, mask))
+            SafetyComponents.setInsert(head, mask);
     }
 
     /**
