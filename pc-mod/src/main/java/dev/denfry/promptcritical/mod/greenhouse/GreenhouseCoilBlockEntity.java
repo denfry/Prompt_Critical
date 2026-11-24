@@ -58,6 +58,7 @@ public final class GreenhouseCoilBlockEntity extends DeviceBlockEntity implement
     private final LongArrayList plants = new LongArrayList();
     private double glassM2, wallM2, ambientC, availableW;
     private int ticks;
+    private long lastScan = Long.MIN_VALUE;
 
     public GreenhouseCoilBlockEntity(BlockPos pos, BlockState state) {
         super(GreenhouseBlockEntities.GREENHOUSE_COIL.get(), pos, state);
@@ -125,6 +126,7 @@ public final class GreenhouseCoilBlockEntity extends DeviceBlockEntity implement
 
     /** Пересчитать объём теплицы заливкой от регистра. */
     public void rescan(ServerLevel sl) {
+        lastScan = sl.getGameTime();
         zone.clear();
         plants.clear();
         glassM2 = wallM2 = 0;
@@ -242,7 +244,7 @@ public final class GreenhouseCoilBlockEntity extends DeviceBlockEntity implement
     @Override
     public InteractionResult use(Player player) {
         if (!(level instanceof ServerLevel sl)) return InteractionResult.SUCCESS;
-        rescan(sl);
+        if (sl.getGameTime() - lastScan >= 100) rescan(sl); // заливка по клику — не чаще раза в 5 с
         if (greenhouse == null) {
             player.displayClientMessage(GreenhouseText.msg("not_enclosed").withStyle(ChatFormatting.GOLD), false);
             return InteractionResult.SUCCESS;

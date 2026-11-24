@@ -30,6 +30,6 @@ The fish cage floats on that water. Fish grow by the water temperature, from not
 
 Put a district heating steam heater under a turbine instead of a condenser. The exhaust steam condenses at the network supply temperature plus 5 K, so the turbine runs against a backpressure of 0.4 to 5.4 bar instead of a vacuum and makes less electricity. In exchange the whole condensation heat, about 2.2 MJ per kilogram of steam, goes to the town.
 
-The network follows the 150/70 heating schedule: 150 °C supply at −25 °C outside, falling to 70 °C at +8 °C, with 70 °C return; above +8 °C the heating season is over and the network keeps 70/40 for hot water only. A settlement needs q₀·V·(18 − T_out), q₀ = 0.4 W/(m³·K), counted over 150 m³ of house for every bed within 256 blocks. Right-click the heater for the schedule, the steam heat, the load and any shortfall.
+The network follows the 150/70 heating schedule: 150 °C supply at −25 °C outside, falling to 70 °C at +8 °C, with 70 °C return; above +8 °C the heating season is over and the network keeps 70/40 for hot water only. A settlement needs q₀·V·(18 − T_out), q₀ = 0.4 W/(m³·K), counted over 150 m³ of house for every bed within 128 blocks. Right-click the heater for the schedule, the steam heat, the load and any shortfall.
 
 Pipes of the heat network are not built: the heater serves the settlements in range directly, without network losses.
