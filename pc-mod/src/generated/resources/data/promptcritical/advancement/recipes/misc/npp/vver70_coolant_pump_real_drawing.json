@@ -1,0 +1,32 @@
+{
+  "parent": "minecraft:recipes/root",
+  "criteria": {
+    "has_the_recipe": {
+      "conditions": {
+        "recipe": "promptcritical:npp/vver70_coolant_pump_real_drawing"
+      },
+      "trigger": "minecraft:recipe_unlocked"
+    },
+    "has_vver70_reactor_real_drawing": {
+      "conditions": {
+        "items": [
+          {
+            "items": "promptcritical:vver70_reactor_real_drawing"
+          }
+        ]
+      },
+      "trigger": "minecraft:inventory_changed"
+    }
+  },
+  "requirements": [
+    [
+      "has_the_recipe",
+      "has_vver70_reactor_real_drawing"
+    ]
+  ],
+  "rewards": {
+    "recipes": [
+      "promptcritical:npp/vver70_coolant_pump_real_drawing"
+    ]
+  }
+}

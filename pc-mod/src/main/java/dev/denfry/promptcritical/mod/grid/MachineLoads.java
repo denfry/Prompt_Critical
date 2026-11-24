@@ -393,6 +393,8 @@ public final class MachineLoads {
         put(Load.IC, dev.denfry.promptcritical.mod.scada.OperatorTerminalBlockEntity.class);
         // санпропускник 04b: шкафы — мебель; контроллер ЗКД — табличка с журналом, дозу берёт с приборов зоны
         put(Load.PASSIVE, dev.denfry.promptcritical.mod.radiation.LockerBlockEntity.class);
+        // клетка-патрубок машины реального масштаба: пустой BE, чтобы труба Create пристыковалась; нагрузка — у контроллера
+        put(Load.PASSIVE, dev.denfry.promptcritical.mod.multiblock.PortCellBlockEntity.class);
         put(Load.PASSIVE, dev.denfry.promptcritical.mod.radiation.ZoneControllerBlockEntity.class);
         put(Load.PASSIVE, SteamGeneratorBlockEntity.class);
         put(Load.PASSIVE, TideGaugeBlockEntity.class);
