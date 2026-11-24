@@ -19,3 +19,9 @@ With a seasons mod (Serene Seasons or Ecliptic Seasons) a warm greenhouse lets c
 ## Cold frame
 
 A cold frame over a crop has no heating: by day the crop sits 8 K warmer than the air, at night it is as cold as outside. It speeds growth by the same curve and stops it below 5 °C.
+
+## Warm water and the fish cage
+
+A condenser cooled straight from a river or pond puts its heat into that water. A pond warms by Q/(K·F), with K = 30 W/(m²·K) over its open surface F, so 100 MW warms a 0.42 km² pond by 8 K. A river carries 15 m³/s and warms by Q/(ρ·c·flow): 1.6 K at 100 MW. The ocean never warms. The warm water also costs the condenser vacuum, because the turbine sees it.
+
+The fish cage floats on that water. Fish grow by the water temperature, from nothing at 8 °C to their best at 26 °C and nothing again at 34 °C, about 2 % of their mass a day at best, and only while there is feed: wheat, seeds or kelp, one item a kilogram, by hand or hopper. Feed turns into fish at 1.5 to 1. Right-click to see the water and to take the catch, one raw cod a kilogram over the 50 kg stock. Above 36 °C every fish dies, and the server logs a fish kill. Restock the cage with a bucket of cod.

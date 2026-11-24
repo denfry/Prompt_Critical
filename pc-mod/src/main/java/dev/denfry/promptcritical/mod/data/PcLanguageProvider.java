@@ -1219,6 +1219,7 @@ public final class PcLanguageProvider extends LanguageProvider {
         b("rescue_tripod", "Rescue Tripod", "Спасательная тренога");
         b("greenhouse_coil", "Greenhouse Heating Coil", "Регистр обогрева теплицы");
         b("cold_frame", "Cold Frame", "Парник");
+        b("fish_cage", "Fish Cage", "Рыбный садок");
         b("portable_ventilator", "Portable Ventilator", "Переносной вентилятор");
         b("patrol_checkpoint", "Patrol Checkpoint", "Метка обхода");
         i("patrol_reader", "Patrol Reader", "Считыватель обходчика");

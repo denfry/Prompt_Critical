@@ -21,6 +21,11 @@ public final class GreenhouseText {
         m("no_condenser", "No heat: put the coil against a turbine condenser", "Нет тепла: поставьте регистр вплотную к конденсатору турбины");
         m("growth", "Growth ×%s for %s plants", "Рост ×%s для растений: %s");
         m("too_cold", "Below 5 °C: plants inside do not grow", "Ниже 5 °C: растения внутри не растут");
+        m("cage_dry", "The fish cage must float on water", "Садок должен стоять на воде");
+        m("cage_status", "Water %s °C (waste heat +%s K), fish %s kg, feed %s kg, caught %s",
+                "Вода %s °C (сбросное тепло +%s K), рыба %s кг, корм %s кг, выловлено %s");
+        m("cage_dead", "The fish died of overheating: restock with a bucket of cod", "Рыба погибла от перегрева: зарыбьте ведром трески");
+        m("fish_kill", "Fish kill: the cage water reached %s °C", "Замор рыбы: вода у садка %s °C");
     }
 
     private GreenhouseText() {

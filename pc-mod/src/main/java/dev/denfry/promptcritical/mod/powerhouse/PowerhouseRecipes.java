@@ -219,5 +219,9 @@ public final class PowerhouseRecipes extends RecipeProvider {
                 .pattern("GGG").pattern("W W").define('G', net.minecraft.world.level.block.Blocks.GLASS_PANE)
                 .define('W', net.minecraft.tags.ItemTags.PLANKS)
                 .unlockedBy("has_glass_pane", has(net.minecraft.world.level.block.Blocks.GLASS_PANE)).save(out, id("cold_frame"));
+        // садок: рама из досок, сеть из нити, зарыбление — ведро трески
+        ShapedRecipeBuilder.shaped(RecipeCategory.MISC, PcBlocks.FISH_CAGE.get())
+                .pattern("WSW").pattern("SBS").pattern("WSW").define('W', net.minecraft.tags.ItemTags.PLANKS).define('S', Items.STRING)
+                .define('B', Items.COD_BUCKET).unlockedBy("has_cod_bucket", has(Items.COD_BUCKET)).save(out, id("fish_cage"));
     }
 }

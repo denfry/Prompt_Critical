@@ -1,9 +1,13 @@
 package dev.denfry.promptcritical.mod.gametest;
 
 import dev.denfry.promptcritical.mod.PromptCritical;
+import dev.denfry.promptcritical.mod.environment.HeatedWater;
+import dev.denfry.promptcritical.mod.greenhouse.FishCageBlockEntity;
 import dev.denfry.promptcritical.mod.greenhouse.GreenhouseCoilBlockEntity;
 import dev.denfry.promptcritical.mod.greenhouse.GreenhouseGrowth;
 import dev.denfry.promptcritical.mod.registry.PcBlocks;
+import dev.denfry.promptcritical.sim.thermal.CoolingPond;
+import dev.denfry.promptcritical.sim.thermal.FishCage;
 import dev.denfry.promptcritical.sim.thermal.Greenhouse;
 import net.minecraft.core.BlockPos;
 import net.minecraft.gametest.framework.GameTest;
@@ -94,5 +98,38 @@ public final class GreenhouseGameTests {
         h.assertFalse(Double.isNaN(t), "the crop under a cold frame is protected");
         h.assertTrue(grows(h, crop) == (Greenhouse.growthMultiplier(t) > 0), "the frame grows or holds the crop by its temperature " + t);
         h.succeed();
+    }
+
+    /**
+     * Пруд 5×5 в каменной чаше: сброс 15 кВт греет его на 15000/(30·25) = 20 К, садок видит эту воду; сброс 60 кВт
+     * перегревает воду выше 36 °C — замор, рыба гибнет вся, зарыбление ведром трески возвращает её.
+     */
+    @GameTest(template = TEMPLATE, timeoutTicks = 200)
+    public static void fishCageSeesThePondWarmedByWasteHeatAndDiesAboveThirtySix(GameTestHelper h) {
+        for (int x = 1; x <= 7; x++)
+            for (int z = 1; z <= 7; z++) {
+                h.setBlock(new BlockPos(x, 1, z), Blocks.STONE);
+                h.setBlock(new BlockPos(x, 2, z), x == 1 || x == 7 || z == 1 || z == 7 ? Blocks.STONE : Blocks.WATER);
+            }
+        BlockPos cage = new BlockPos(4, 3, 4), water = new BlockPos(4, 2, 4), condenser = new BlockPos(9, 2, 9);
+        h.setBlock(cage, PcBlocks.FISH_CAGE.get());
+        var sl = h.getLevel();
+        BlockPos wAbs = h.absolutePos(water);
+        double base = HeatedWater.waterTempC(sl, wAbs);
+        HeatedWater.discharge(sl, h.absolutePos(condenser), wAbs, 15e3);
+        double rise = HeatedWater.riseK(sl, wAbs);
+        h.assertTrue(Math.abs(rise - CoolingPond.pondRiseK(15e3, 25)) < 1e-9 && Math.abs(rise - 20) < 1e-9, "25 m2 pond warms 20 K: " + rise);
+        h.runAfterDelay(25, () -> {
+            var be = (FishCageBlockEntity) h.getBlockEntity(cage);
+            h.assertTrue(be.onWater(), "the cage floats on the pond");
+            h.assertTrue(Math.abs(be.waterC() - (base + 20)) < 0.5, "the cage water is the warmed pond: " + be.waterC() + " vs " + (base + 20));
+            h.assertFalse(be.cage().killed(), "the fish live at " + be.waterC());
+            HeatedWater.discharge(sl, h.absolutePos(condenser), wAbs, 60e3);
+            h.runAfterDelay(25, () -> {
+                h.assertTrue(be.waterC() > FishCage.KILL_C, "80 K of waste heat overheats the pond: " + be.waterC());
+                h.assertTrue(be.cage().killed() && be.cage().biomassKg() == 0, "fish kill above 36 C");
+                h.succeed();
+            });
+        });
     }
 }
