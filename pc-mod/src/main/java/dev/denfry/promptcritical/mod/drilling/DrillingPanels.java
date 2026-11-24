@@ -44,6 +44,11 @@ public final class DrillingPanels {
     // буровой насос
     public static final int P_SHAFT_RPM10 = 0, P_SPM = 1, P_SPP_X100 = 2, P_FLAGS = 3, P_KW = 4, P_CHANNELS = 5;
     public static final int PF_RUNNING = 0;
+    /** Насос реального масштаба: те же каналы и уровень в приёмных ёмкостях от пульта, ‰. */
+    public static final int P_PIT_PERMIL = 5, P_REAL_CHANNELS = 6;
+    // лебёдка реального масштаба: вес на крюке, высота талевого блока над ротором, забой и проходка, флаги
+    public static final int W_HOOK_T10 = 0, W_BLOCK_PERMIL = 1, W_FLAGS = 2, W_DEPTH_X10 = 3, W_ROP_X10 = 4, W_CHANNELS = 5;
+    public static final int WF_BRAKE = 0, WF_RIG = 1;
 
     private static final Tr TONNES = PanelText.tr("unit.tonnes", "t", "т"),
             SPM = PanelText.tr("unit.spm", "spm", "ход/мин"),
@@ -219,6 +224,38 @@ public final class DrillingPanels {
                     v.raw(P_KW)), null)
             .noInventory().build();
 
+    private static final Tr PIT = PanelText.tr("drill.pit", "Pits", "Ёмкости"),
+            PIT_TIP = PanelText.tr("drill.pit_tip", "Active mud pits from the driller's console: %s %%", "Приёмные ёмкости по пульту бурильщика: %s %%"),
+            SPM_LINE = PanelText.tr("drill.spm_line", "%s spm · shaft %s rpm", "%s ход/мин · вал %s об/мин"),
+            PUMP_FLOW = PanelText.tr("drill.pump_flow", "Flow %s l/s · shaft power %s kW", "Подача %s л/с · мощность на валу %s кВт"),
+            BLOCK = PanelText.tr("drill.block", "Travelling block", "Талевый блок"),
+            BLOCK_TIP = PanelText.tr("drill.block_tip", "Block height over the rotary on the 9 m kelly: full at a connection, empty when the kelly is down",
+                    "Высота талевого блока над ротором на 9-метровой ведущей трубе: вверху после наращивания, внизу — труба ушла в ротор"),
+            BRAKE = PanelText.tr("drill.brake", "Brake on", "Тормоз"),
+            DRAWWORKS_STATUS = PanelText.tr("drill.drawworks_status", "Depth %s m · %s m/h", "Забой %s м · %s м/ч"),
+            NO_CONSOLE = PanelText.tr("drill.no_console", "No driller's console within the rig", "Нет пульта бурильщика на буровой");
+
+    /** Насос реального масштаба на фоне mud_pump.png (oilfield_panels.author.js). */
+    public static final PanelLayout PUMP_REAL = PanelLayout.builder("mud_pump_real", 220, 116, P_REAL_CHANNELS)
+            .art(dev.denfry.promptcritical.mod.PromptCritical.id("textures/gui/panel/mud_pump.png"))
+            .dial(12, 26, false, P_SPP_X100, 100, 35, Well.BOP_RATED_PA / 1e6, 1, MPA.get(), DISCHARGE.get(), null)
+            .readout(72, 40, 96, v -> SPM_LINE.get(v.raw(P_SPM), v.num(P_SHAFT_RPM10, 10, 0)), null)
+            .lamp(72, 58, P_FLAGS, PF_RUNNING, LampColor.GREEN, RUNNING.get())
+            .glass(184, 26, 64, P_PIT_PERMIL, 0xFF7A6046, Double.NaN, Double.NaN, PIT.get(), v -> PIT_TIP.get(v.num(P_PIT_PERMIL, 10, 0)))
+            .readout(12, 94, 160, v -> PUMP_FLOW.get(PanelText.num(v.raw(P_SPM) * MudPumpBlockEntity.M3_PER_STROKE / 60 * 1000, 1),
+                    v.raw(P_KW)), null)
+            .noInventory().build();
+
+    /** Лебёдка реального масштаба на фоне drawworks.png: индикатор веса типа Martin-Decker. */
+    public static final PanelLayout DRAWWORKS_REAL = PanelLayout.builder("drawworks_real", 220, 124, W_CHANNELS)
+            .art(dev.denfry.promptcritical.mod.PromptCritical.id("textures/gui/panel/drawworks.png"))
+            .dial(12, 24, true, W_HOOK_T10, 10, 200, Double.NaN, 1, TONNES.get(), HOOK.get(), v -> HOOK_TIP.get())
+            .bar(92, 40, 116, W_BLOCK_PERMIL, 1000, 1, 0xFF4A86C0, BLOCK.get(), v -> BLOCK_TIP.get())
+            .lamp(92, 56, W_FLAGS, WF_BRAKE, LampColor.AMBER, BRAKE.get())
+            .readout(12, 102, 196, v -> (v.raw(W_FLAGS) & 1 << WF_RIG) == 0 ? NO_CONSOLE.get()
+                    : DRAWWORKS_STATUS.get(v.num(W_DEPTH_X10, 10, 1), v.num(W_ROP_X10, 10, 1)), null)
+            .noInventory().build();
+
     private DrillingPanels() {
     }
 
@@ -228,6 +265,6 @@ public final class DrillingPanels {
     }
 
     public static List<PanelLayout> all() {
-        return List.of(CONSOLE, PUMP, ACCUMULATOR, LOGGING);
+        return List.of(CONSOLE, PUMP, ACCUMULATOR, LOGGING, PUMP_REAL, DRAWWORKS_REAL);
     }
 }

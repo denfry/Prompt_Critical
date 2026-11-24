@@ -619,6 +619,26 @@ public final class PcBlocks {
     public static final DeferredBlock<PcBlock> DRAWWORKS = block("drawworks", machine(),
             Spec.facing().footprint(Footprint.of(Segment.box(-1, 1, 0, 1, 0, 1))));
     public static final DeferredBlock<PcBlock> DERRICK_SEGMENT = block("derrick_segment", machine(), Spec.facing().footprint(FP_CUBE3));
+    /**
+     * Буровая I2 реального масштаба (09 §9.5, art/blockbench/drilling/*_real.author.js): те же BE и симуляция, что у
+     * старых блоков, пульт бурильщика узнаёт и те, и другие. Ротор Р-560 3 × 1 × 2 на оси скважины, вал Create — в
+     * южную грань клетки (0, 0, 1); лебёдка У2-5-5 6 × 3 × 3; насос У8-6М 6 × 3 × 3, вал — в северную грань клетки
+     * (−2, 0, −1); секция вышки 3 × 3 × 3 над ротором, нижняя и верхняя рисуются по соседям.
+     */
+    public static final Footprint FP_ROTARY_TABLE_REAL = Footprint.tiled(-1, 1, 0, 0, 0, 1);
+    public static final DeferredBlock<PcDeviceBlock> ROTARY_TABLE_REAL = device("rotary_table_real", machine(),
+            real(Spec.facing(PcProperties.RUNNING), FP_ROTARY_TABLE_REAL),
+            dev.denfry.promptcritical.mod.foundry.PortedKineticMachineBlock.with(new BlockPos(0, 0, 1), net.minecraft.core.Direction.Axis.Z,
+                    dev.denfry.promptcritical.mod.drilling.RotaryTableBlockEntity::new));
+    public static final Footprint FP_DRAWWORKS_REAL = Footprint.tiled(-2, 3, 0, 2, -1, 1);
+    public static final DeferredBlock<PcDeviceBlock> DRAWWORKS_REAL = device("drawworks_real", machine(),
+            real(Spec.facing(PcProperties.RUNNING), FP_DRAWWORKS_REAL),
+            FoundryBlock.with(dev.denfry.promptcritical.mod.drilling.DrawworksRealBlockEntity::new));
+    public static final Footprint FP_MUD_PUMP_REAL = Footprint.tiled(-2, 3, 0, 2, -1, 1);
+    public static final DeferredBlock<PcDeviceBlock> MUD_PUMP_REAL = device("mud_pump_real", machine(),
+            real(Spec.facing(PcProperties.RUNNING), FP_MUD_PUMP_REAL), dev.denfry.promptcritical.mod.drilling.MudPumpBlock::createReal);
+    public static final DeferredBlock<PcDeviceBlock> DERRICK_SEGMENT_REAL = device("derrick_segment_real", machine(),
+            real(Spec.facing(), FP_CUBE3), FoundryBlock.with(dev.denfry.promptcritical.mod.drilling.DerrickRealBlockEntity::new));
     public static final DeferredBlock<PcBlock> BOP_ANNULAR = block("bop_annular", machine(), Spec.facing(PcProperties.SHUT));
     // стек ПВО 09 §9.5.7: плашечный превентор (вид плашек — пустой рукой на открытом) и аккумуляторная установка
     public static final DeferredBlock<PcDeviceBlock> BOP_RAM = device("bop_ram", machine(), Spec.facing(PcProperties.RAM_KIND, PcProperties.SHUT),
@@ -1007,7 +1027,8 @@ public final class PcBlocks {
 
     /** Машины реального масштаба с цельной моделью: id блока → id модели (wholemodels/). */
     public static boolean isWholeModel(net.minecraft.world.level.block.Block b) {
-        return b == VVER_REACTOR.get() || b == VVER_STEAM_GENERATOR.get() || b == VVER_COOLANT_PUMP.get() || b == VVER_PRESSURIZER.get()
+        return b == ROTARY_TABLE_REAL.get() || b == DRAWWORKS_REAL.get() || b == MUD_PUMP_REAL.get() || b == DERRICK_SEGMENT_REAL.get()
+                || b == VVER_REACTOR.get() || b == VVER_STEAM_GENERATOR.get() || b == VVER_COOLANT_PUMP.get() || b == VVER_PRESSURIZER.get()
                 || b == BWR240_REACTOR.get() || b == CANDU6_REACTOR.get() || b == BN600_REACTOR.get() || b == AM1_REACTOR.get()
                 || b == LANCASHIRE_BOILER.get() || b == HEADFRAME_STEEL.get() || b == MILL_ENGINE.get() || b == WINDING_ENGINE.get()
                 || b == GUIBAL_FAN.get() || b == CUPOLA_FURNACE_REAL.get() || b == MINE_DRAINAGE_PUMP_GEARED.get()

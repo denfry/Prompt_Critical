@@ -21,9 +21,14 @@ public final class DrillingBlockEntities {
     public static final DeferredHolder<BlockEntityType<?>, BlockEntityType<DrillersConsoleBlockEntity>> DRILLERS_CONSOLE =
             type("drillers_console", DrillersConsoleBlockEntity::new, PcBlocks.DRILLERS_CONSOLE);
     public static final DeferredHolder<BlockEntityType<?>, BlockEntityType<RotaryTableBlockEntity>> ROTARY_TABLE =
-            type("rotary_table", RotaryTableBlockEntity::new, PcBlocks.ROTARY_TABLE);
+            type("rotary_table", RotaryTableBlockEntity::new, PcBlocks.ROTARY_TABLE, PcBlocks.ROTARY_TABLE_REAL);
     public static final DeferredHolder<BlockEntityType<?>, BlockEntityType<MudPumpBlockEntity>> MUD_PUMP =
-            type("mud_pump", MudPumpBlockEntity::new, PcBlocks.MUD_PUMP);
+            type("mud_pump", MudPumpBlockEntity::new, PcBlocks.MUD_PUMP, PcBlocks.MUD_PUMP_REAL);
+    /** Буровая реального масштаба: секция вышки и лебёдка — контроллеры цельных моделей (09 §9.5). */
+    public static final DeferredHolder<BlockEntityType<?>, BlockEntityType<DerrickRealBlockEntity>> DERRICK_REAL =
+            type("derrick_segment_real", DerrickRealBlockEntity::new, PcBlocks.DERRICK_SEGMENT_REAL);
+    public static final DeferredHolder<BlockEntityType<?>, BlockEntityType<DrawworksRealBlockEntity>> DRAWWORKS_REAL =
+            type("drawworks_real", DrawworksRealBlockEntity::new, PcBlocks.DRAWWORKS_REAL);
     public static final DeferredHolder<BlockEntityType<?>, BlockEntityType<MudHopperBlockEntity>> MUD_MIXING_HOPPER =
             type("mud_mixing_hopper", MudHopperBlockEntity::new, PcBlocks.MUD_MIXING_HOPPER);
     public static final DeferredHolder<BlockEntityType<?>, BlockEntityType<LoggingUnitBlockEntity>> LOGGING_UNIT =
@@ -42,8 +47,10 @@ public final class DrillingBlockEntities {
         BLOCK_ENTITIES.register(modBus);
     }
 
+    @SafeVarargs
     private static <T extends BlockEntity> DeferredHolder<BlockEntityType<?>, BlockEntityType<T>> type(String name,
-            BlockEntityType.BlockEntitySupplier<T> factory, Supplier<? extends Block> block) {
-        return BLOCK_ENTITIES.register(name, () -> BlockEntityType.Builder.of(factory, block.get()).build(null));
+            BlockEntityType.BlockEntitySupplier<T> factory, Supplier<? extends Block>... blocks) {
+        return BLOCK_ENTITIES.register(name, () -> BlockEntityType.Builder.of(factory,
+                java.util.Arrays.stream(blocks).map(Supplier::get).toArray(Block[]::new)).build(null));
     }
 }

@@ -333,6 +333,8 @@ public final class MachineLoads {
         put(Load.PASSIVE, FuelRackBlockEntity.class);
         put(Load.PASSIVE, GasStorageBulletBlockEntity.class);
         put(Load.PASSIVE, HeadframeSteelBlockEntity.class);
+        put(Load.PASSIVE, dev.denfry.promptcritical.mod.drilling.DerrickRealBlockEntity.class);
+        put(Load.PASSIVE, dev.denfry.promptcritical.mod.drilling.DrawworksRealBlockEntity.class);
         put(Load.PASSIVE, HlwVaultBlockEntity.class);
         put(Load.PASSIVE, HydrotestPumpBlockEntity.class);
         put(Load.PASSIVE, IngotMoldBlockEntity.class);
