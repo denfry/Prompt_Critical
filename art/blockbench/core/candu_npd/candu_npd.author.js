@@ -20,11 +20,13 @@
 // footprint x -3..3, y 0..6, z 0..1, set with its south side against a fuelling face (mirrored for the other face).
 // Ports: D2O to the head on the west face of (-3, 0, 1) at (-48, 8, 24); power and control on the east face of
 // (3, 0, 1) at (64, 8, 24); fuel in / spent out on the north face of (0, 0, 0) at (8, 8, 0).
-// Partials: bridge_w and bridge_e (the bridge beam in two halves) slide together along y, stored at y 40 (beam
-// y 40..48), range 0..56 px up; stored shifts bridge_w (+24, -24, 0), bridge_e (-24, -24, 0). carriage rides the
-// bridge along x -40..40 px about x 8, stored on the beam at y 48, shift (0, -48, 0). head: magazine drum turning about
-// z through (8, 66) by 1/8 turn per bundle position, shift (0, -48, 0). snout: slides +z 0..12 px onto the end fitting,
-// shift (0, -48, 0). Carriage, head and snout move with the bridge.
+// Partials: bridge_w and bridge_e (the bridge beam in two halves) slide together along y, drawn lowered at y 3 (beam
+// y 3..11), range 0..54 px up, so that the snout axis runs from y 29 to y 83 and covers the whole fuelling face (the
+// channels sit 29..83 px above the floor when machine and reactor stand on one floor); stored shifts bridge_w
+// (+24, 0, 0), bridge_e (-24, 0, 0). carriage rides the bridge along x -40..40 px about x 8, on the beam at y 11,
+// shift (0, 0, 0). head: magazine drum turning about z through (8, 29) by 1/8 turn per bundle position, shift
+// (0, -16, 0). snout: slides +z 0..12 px onto the end fitting, shift (0, -8, 0). Carriage, head and snout move with
+// the bridge.
 (function () {
   const AX = [8, 56], RC = 41.6, Z0 = -29, Z1 = 45, P = 0.26035 * 16;
 
@@ -112,35 +114,35 @@
   function bridge(x0, x1) {
     return () => {
       const m = PCVV.mk();
-      m.box(`beam_${x0}`, [x0, 40, 4], [x1, 48, 28], 'yel', { split: '' });
-      m.box(`beam_rail_${x0}`, [x0, 48, 8], [x1, 48.6, 10], 'bright', { split: '' });
-      m.box(`beam_rail2_${x0}`, [x0, 48, 22], [x1, 48.6, 24], 'bright', { split: '' });
+      m.box(`beam_${x0}`, [x0, 3, 4], [x1, 11, 28], 'yel', { split: '' });
+      m.box(`beam_rail_${x0}`, [x0, 11, 8], [x1, 11.6, 10], 'bright', { split: '' });
+      m.box(`beam_rail2_${x0}`, [x0, 11, 22], [x1, 11.6, 24], 'bright', { split: '' });
       return m;
     };
   }
   function carriage() {
     const m = PCVV.mk();
-    m.box('carriage', [-4, 48.6, 4], [20, 54, 28], 'pnt', { split: '' });
-    for (const x of [-2, 16]) m.box(`wheel_${x}`, [x, 48, 7], [x + 2, 50, 25], 'dark', { split: '' });
-    m.box('cradle_n', [-2, 54, 6], [18, 58, 8], 'pnt', { split: '' });
-    m.box('cradle_s', [-2, 54, 24], [18, 58, 26], 'pnt', { split: '' });
+    m.box('carriage', [-4, 11.6, 4], [20, 17, 28], 'pnt', { split: '' });
+    for (const x of [-2, 16]) m.box(`wheel_${x}`, [x, 11, 7], [x + 2, 13, 25], 'dark', { split: '' });
+    m.box('cradle_n', [-2, 17, 6], [18, 21, 8], 'pnt', { split: '' });
+    m.box('cradle_s', [-2, 17, 24], [18, 21, 26], 'pnt', { split: '' });
     return m;
   }
   function head() {
     const m = PCVV.mk();
-    m.prism('drum', 'z', [8, 66], 10.5, 6, 26, 'clad', { split: '', ends: ['north', 'south'] });
-    m.disc('drum_cover', 'z', [8, 66], 10.8, 5.4, 6, 'forged', 'vver/flange', 'north');
+    m.prism('drum', 'z', [8, 29], 10.5, 6, 26, 'clad', { split: '', ends: ['north', 'south'] });
+    m.disc('drum_cover', 'z', [8, 29], 10.8, 5.4, 6, 'forged', 'vver/flange', 'north');
     for (let k = 0; k < 8; k++) {
-      const a = k * Math.PI / 4, x = 8 + 7 * Math.cos(a), y = 66 + 7 * Math.sin(a);
+      const a = k * Math.PI / 4, x = 8 + 7 * Math.cos(a), y = 29 + 7 * Math.sin(a);
       m.box(`port_${k}`, [x - 1.4, y - 1.4, 5], [x + 1.4, y + 1.4, 5.4], 'dark', { split: '' });
     }
-    m.box('ram_drive', [4, 76, 4], [12, 80, 20], 'motor', { split: '' });
+    m.box('ram_drive', [4, 39, 4], [12, 43, 20], 'motor', { split: '' });
     return m;
   }
   function snout() {
     const m = PCVV.mk();
-    m.prism('snout', 'z', [8, 66], 3.4, 26, 32, 'forged', { split: '', ends: ['south'] });
-    m.ring('snout_lock', 'z', [8, 66], 4.4, 1, 29, 31, 'bright');
+    m.prism('snout', 'z', [8, 29], 3.4, 26, 32, 'forged', { split: '', ends: ['south'] });
+    m.ring('snout_lock', 'z', [8, 29], 4.4, 1, 29, 31, 'bright');
     return m;
   }
 
@@ -148,11 +150,11 @@
     reactor: { id: 'candu_npd_reactor_real', draw: reactor, parts: { closure_plug: { draw: closurePlug, shift: [0, -40, 40] } } },
     fuelling_machine: {
       id: 'candu_npd_fuelling_machine_real', draw: fm, parts: {
-        bridge_w: { draw: bridge(-40, 8), shift: [24, -24, 0] },
-        bridge_e: { draw: bridge(8, 56), shift: [-24, -24, 0] },
-        carriage: { draw: carriage, shift: [0, -48, 0] },
-        head: { draw: head, shift: [0, -48, 0] },
-        snout: { draw: snout, shift: [0, -48, 0] },
+        bridge_w: { draw: bridge(-40, 8), shift: [24, 0, 0] },
+        bridge_e: { draw: bridge(8, 56), shift: [-24, 0, 0] },
+        carriage: { draw: carriage, shift: [0, 0, 0] },
+        head: { draw: head, shift: [0, -16, 0] },
+        snout: { draw: snout, shift: [0, -8, 0] },
       },
     },
   };

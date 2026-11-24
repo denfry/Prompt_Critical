@@ -164,6 +164,9 @@ class NpdReactorTest {
         for (int ch = 0; ch < NpdReactor.CHANNELS; ch++) {
             assertTrue(seen.add(NpdChannels.label(ch)), "duplicate " + NpdChannels.label(ch));
             assertTrue(Math.hypot(NpdChannels.x(ch), NpdChannels.y(ch)) < 1.75, "outside " + ch);
+            // мост и тележка перегрузочной машины достают каждый канал с пола реактора
+            assertTrue(Math.abs(NpdChannels.y(ch)) <= NpdFuellingMachine.BRIDGE_REACH_M, "bridge cannot reach " + ch);
+            assertTrue(Math.abs(NpdChannels.x(ch)) <= NpdFuellingMachine.CARRIAGE_REACH_M, "carriage cannot reach " + ch);
             if (NpdChannels.fuelledFromNorth(ch)) north++;
         }
         assertTrue(north >= 60 && north <= 72, "north " + north);

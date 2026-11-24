@@ -39,8 +39,14 @@ public final class NpdFuellingMachine {
     public static final double BRIDGE_M_S = 0.05, CARRIAGE_M_S = 0.05;
     public static final double LOCK_S = 45, PRESSURISE_S = 60, UNPLUG_S = 90, PUSH_S = 45, REPLUG_S = 90, DEPRESSURISE_S = 45,
             UNLOCK_S = 30;
-    /** Стоянка у лотка передачи: смещение от оси каландра, м (внизу у западной колонны). */
-    public static final double HOME_X = -2.6, HOME_Y = -2.4;
+    /**
+     * Ход моста и тележки от оси каландра, м: мост ведёт ось хобота от нижнего ряда каналов до верхнего (±1,7 м — шесть
+     * с половиной шагов решётки), тележка — ±2,5 м поперёк (art/blockbench/core/candu_npd/candu_npd.author.js: мост
+     * 0…54 px, хобот 29…83 px над полом, ось каландра на 56 px).
+     */
+    public static final double BRIDGE_REACH_M = 1.7, CARRIAGE_REACH_M = 2.5;
+    /** Стоянка у лотка передачи: смещение от оси каландра, м (внизу у западной колонны: мост опущен, тележка у края). */
+    public static final double HOME_X = -CARRIAGE_REACH_M, HOME_Y = -BRIDGE_REACH_M;
     /** Течь уплотнения хобота под давлением, кг/с [оценка]. */
     public static final double SEAL_LEAK_KG_S = 0.01;
     /**
@@ -200,6 +206,8 @@ public final class NpdFuellingMachine {
     }
 
     private boolean move(double dt, double tx, double ty) {
+        tx = Math.max(-CARRIAGE_REACH_M, Math.min(CARRIAGE_REACH_M, tx));
+        ty = Math.max(-BRIDGE_REACH_M, Math.min(BRIDGE_REACH_M, ty));
         x = approach(x, tx, CARRIAGE_M_S * dt);
         y = approach(y, ty, BRIDGE_M_S * dt);
         return Math.abs(x - tx) < 1e-9 && Math.abs(y - ty) < 1e-9;

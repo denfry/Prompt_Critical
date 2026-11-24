@@ -111,7 +111,7 @@ public final class NpdFuellingMachineBlockEntity extends DeviceBlockEntity imple
         return viewSign;
     }
 
-    /** Пол машины относительно пола реактора, блоки (машину ставят в приямок, чтобы хобот доставал нижние ряды). */
+    /** Пол машины относительно пола реактора, блоки (обычно 0: мост проходит весь торец с пола реактора). */
     public int viewDy() {
         return viewDy;
     }
