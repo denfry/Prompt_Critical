@@ -481,14 +481,16 @@ public final class LicensingGameTests {
             double workingPressurePa) {
         h.setBlock(UNIT_POS, block.defaultBlockState());
         h.startSequence()
-                .thenWaitUntil(() -> h.assertTrue(h.getBlockEntity(UNIT_POS) instanceof dev.denfry.promptcritical.mod.ops.OpsMachine,
-                        "unit block entity"))
+                // сим-id появляется у сущности не в тот же тик, что блок; без него установку не поставить на учёт
+                .thenWaitUntil(() -> h.assertTrue(h.getBlockEntity(UNIT_POS) instanceof dev.denfry.promptcritical.mod.ops.OpsMachine m
+                        && !m.simId().isNone(), "unit block entity with a sim id"))
                 .thenExecute(() -> {
                     OpsSubsystem ops = ops(h);
                     var m = (dev.denfry.promptcritical.mod.ops.OpsMachine) h.getBlockEntity(UNIT_POS);
                     SimId id = m.simId();
                     // то же, что сущность делает каждый тик; многоблочным без сборки тик до разрешения не доходит
                     h.assertTrue(OpsActions.processPermit(h.getLevel(), m, workingPressurePa), "ADVISORY permits the process");
+                    h.assertTrue(ops.unit(id) != null, "registered in the ops model");
                     h.assertValueEqual(ops.unit(id).kind(), kind, "registered as " + kind);
                     var cs = ops.commissioning();
                     var asm = cs.assembly(id).orElseThrow();
