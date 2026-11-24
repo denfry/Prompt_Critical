@@ -119,6 +119,7 @@ public final class PromptCritical {
         dev.denfry.promptcritical.mod.compat.create.CreateDisplaySources.register(modBus);
         dev.denfry.promptcritical.mod.command.PcPermissions.register();
         if (FMLEnvironment.dist == Dist.CLIENT) PcClient.register(modBus);
+        dev.denfry.promptcritical.mod.api.ApiDevices.register();
         ApiHolder.install(new ApiImpl());
         LOGGER.info("Prompt Critical initialized (API v{})", PromptCriticalApi.CURRENT_API_VERSION);
     }
@@ -131,6 +132,11 @@ public final class PromptCritical {
         @Override
         public int apiVersion() {
             return CURRENT_API_VERSION;
+        }
+
+        @Override
+        public dev.denfry.promptcritical.api.SimulationAccess simulation(String dimension) {
+            return new dev.denfry.promptcritical.mod.api.SimulationAccessImpl(java.util.Objects.requireNonNull(dimension, "dimension"));
         }
     }
 }

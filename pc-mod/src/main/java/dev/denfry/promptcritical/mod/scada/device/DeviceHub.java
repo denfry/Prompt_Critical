@@ -29,7 +29,12 @@ public final class DeviceHub {
     private DeviceHub() {
     }
 
-    public static void register() {
+    private static boolean registered;
+
+    /** Повторный вызов ничего не делает: реестр нужен и CC, и API аддонов. */
+    public static synchronized void register() {
+        if (registered) return;
+        registered = true;
         NeoForge.EVENT_BUS.addListener(DeviceHub::onServerTick);
         NeoForge.EVENT_BUS.addListener(DeviceHub::onServerStopped);
     }

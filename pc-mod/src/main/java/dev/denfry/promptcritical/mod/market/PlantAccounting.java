@@ -137,8 +137,10 @@ public final class PlantAccounting extends SavedData {
         SupplyContract t = SupplyContract.propose(nextContractId++, seller, NPC_BUYER, commodityId, CONTRACT_QTY, Math.max(1, priceCents),
                 CONTRACT_PERIODS);
         if (!market.transfer(seller, -t.depositCents())) return null;
+        SupplyContract proposed = t;
         t = t.accept();
         contracts.add(new Contract(t));
+        dev.denfry.promptcritical.mod.api.ApiEvents.contract(proposed, t);
         setDirty();
         return t;
     }
@@ -154,7 +156,9 @@ public final class PlantAccounting extends SavedData {
         for (Contract c : contracts) {
             if (!c.terms.seller().equals(seller) || c.terms.state() != ContractState.ACTIVE) continue;
             market.transfer(seller, Math.round(Math.min(c.delivered, c.terms.qtyPerPeriod()) * c.terms.priceCents()) + c.terms.depositCents());
+            SupplyContract before = c.terms;
             c.terms = c.terms.close();
+            dev.denfry.promptcritical.mod.api.ApiEvents.contract(before, c.terms);
             n++;
         }
         contracts.removeIf(c -> c.terms.state() == ContractState.CLOSED);
@@ -240,7 +244,9 @@ public final class PlantAccounting extends SavedData {
             charge(market, s.penaltyCents());
             lastContractCents += s.paymentCents() - s.penaltyCents();
             c.shortStreak = s.shortStreak();
+            SupplyContract before = c.terms;
             c.terms = c.terms.withState(s.state());
+            dev.denfry.promptcritical.mod.api.ApiEvents.contract(before, c.terms);
             c.delivered = 0;
         }
         contracts.removeIf(c -> c.terms.state() != ContractState.ACTIVE && c.terms.state() != ContractState.SUSPENDED);
