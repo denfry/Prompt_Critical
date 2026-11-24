@@ -56,6 +56,18 @@ public final class WholePorts {
             Map.entry("vver_steam_generator", List.of(p(-1, 0, 0, D), p(1, 0, 0, D), p(7, 7, 0, E), p(2, 4, 2, S))),
             Map.entry("vver_coolant_pump", List.of(p(-2, 1, 0, W), p(2, 1, 0, E))),
             Map.entry("vver_pressurizer", List.of(p(2, 0, 0, E), p(0, 17, 0, U))),
+            // ВВЭР-70 (шапки art/blockbench/core/vver70/*.author.js): патрубки петель на y 7, кабели приводов сверху
+            Map.entry("vver70_reactor_real", List.of(p(0, 7, -2, N), p(-2, 7, -1, W), p(-2, 7, 1, W), p(0, 7, 2, S), p(2, 7, 1, E),
+                    p(2, 7, -1, E), p(0, 18, 0, U))),
+            // первый контур вход/выход, питательная вода, пар сверху, продувка
+            Map.entry("vver70_steam_generator_real", List.of(p(0, 0, -1, N), p(0, 0, 1, S), p(1, 5, 0, E), p(0, 8, 0, U), p(-1, 0, 0, W))),
+            // всас, напор, питание 6 кВ, охлаждение статора
+            Map.entry("vver70_coolant_pump_real", List.of(p(0, 0, -1, N), p(0, 1, 1, S), p(1, 3, 0, E), p(-1, 2, 0, W))),
+            // дыхательная линия, сброс, подпитка азотом
+            Map.entry("vver70_pressurizer_real", List.of(p(0, 0, 1, S), p(0, 7, 0, U), p(1, 0, 0, E))),
+            // вода охлаждения из бассейна и в него, проём для ТВС в северной стене
+            Map.entry("vver70_fuel_pool_real", List.of(p(-3, 6, 0, W), p(3, 6, 0, E), p(0, 7, -3, N))),
+            Map.entry("vver70_refuelling_machine_real", List.of(p(4, 0, 6, E))),
             Map.entry("bwr240_reactor", List.of(p(2, 6, 0, E), p(-2, 6, 0, W), p(2, 9, 0, E), p(0, 10, 2, S))),
             Map.entry("candu6_reactor", List.of(p(4, 10, -5, E), p(4, 10, 5, E))),
             Map.entry("bn600_reactor", List.of(p(7, 9, 0, E), p(7, 11, 0, E), p(0, 9, 7, S), p(0, 11, 7, S), p(0, 9, -7, N), p(0, 11, -7, N))),

@@ -163,7 +163,18 @@ public final class SitePlans {
             "vver70_pressurizer_real", plan("vver70_pressurizer_real", PcBlocks.VVER70_PRESSURIZER_REAL, 25,
                     st("foundation", 80, n(CONCRETE, 6), n(BEAM, 6)),
                     st("vessel", 240, n(INGOT, 150), n(PLATE, 60)),
-                    st("gas_rack", 120, n(PIPE, 40), n(PLATE, 10))));
+                    st("gas_rack", 120, n(PIPE, 40), n(PLATE, 10))),
+            // бассейн выдержки: облицовка 4 мм нержавейки на 185 м² ≈ 6 т, стеллажи на 256 гнёзд ≈ 8 т, трубы
+            // охлаждения ≈ 2 т; бетон стен не металл (оценки)
+            "vver70_fuel_pool_real", plan("vver70_fuel_pool_real", PcBlocks.VVER70_FUEL_POOL_REAL, 16,
+                    st("pool_walls", 300, n(CONCRETE, 120)),
+                    st("pool_liner", 240, n(PLATE, 60), n(PIPE, 40)),
+                    st("pool_racks", 200, n(PLATE, 80))),
+            // перегрузочная машина: рельсы ≈ 4 т, мост пролётом 9 м ≈ 25 т, тележка со штангой ≈ 13 т, кабели ≈ 2 т (оценки)
+            "vver70_refuelling_machine_real", plan("vver70_refuelling_machine_real", PcBlocks.VVER70_REFUELLING_MACHINE_REAL, 45,
+                    st("rm_rails", 120, n(BEAM, 40)),
+                    st("rm_bridge", 300, n(BEAM, 250)),
+                    st("rm_trolley", 240, n(PLATE, 100), n(PIPE, 60), n(WIRE, 200))));
 
     /** Машины эры I0 реального масштаба. */
     private static final Map<String, Plan> I0_PLANS = Map.of(

@@ -1195,6 +1195,16 @@ public final class PcBlocks {
     public static final DeferredBlock<PcDeviceBlock> VVER70_PRESSURIZER_REAL = device("vver70_pressurizer_real", machine(),
             real(Spec.facing(BlockStateProperties.LIT), FP_VVER70_PRESSURIZER),
             FoundryBlock.with(dev.denfry.promptcritical.mod.npp.PressurizerBlockEntity::new));
+    /** Бассейн выдержки ВВЭР-70: 5 × 5 м, 8 м глубиной, 256 гнёзд стеллажей; контроллер в центре пола, проём на север. */
+    public static final Footprint FP_VVER70_FUEL_POOL = Footprint.tiled(-3, 3, 0, 8, -3, 3);
+    public static final DeferredBlock<PcDeviceBlock> VVER70_FUEL_POOL_REAL = device("vver70_fuel_pool_real", machine().noOcclusion(),
+            real(Spec.facing(PcProperties.RUNNING), FP_VVER70_FUEL_POOL),
+            FoundryBlock.with(dev.denfry.promptcritical.mod.npp.SpentFuelPoolBlockEntity::new));
+    /** Перегрузочная машина ВВЭР-70: мост на рельсах над шахтой реактора и бассейном; контроллер в середине пути. */
+    public static final Footprint FP_VVER70_REFUELLING_MACHINE = Footprint.tiled(-4, 4, 0, 3, -6, 6);
+    public static final DeferredBlock<PcDeviceBlock> VVER70_REFUELLING_MACHINE_REAL = device("vver70_refuelling_machine_real",
+            machine().noOcclusion(), real(Spec.facing(PcProperties.RUNNING), FP_VVER70_REFUELLING_MACHINE),
+            FoundryBlock.with(dev.denfry.promptcritical.mod.npp.RefuellingMachineBlockEntity::new));
 
     /** Блоки ВВЭР-70: корпус считается конструкцией {@code PressurizedWaterReactor.VVER70}. */
     public static boolean isVver70(net.minecraft.world.level.block.Block b) {
@@ -1250,7 +1260,7 @@ public final class PcBlocks {
                 || b == SINTERING_FURNACE_REAL.get() || b == FUEL_ROD_WELDER_REAL.get() || b == FUEL_ASSEMBLY_STAND_REAL.get()
                 || b == VVER440_FUEL_ASSEMBLY_REAL.get()
                 || b == VVER_REACTOR.get() || b == VVER_STEAM_GENERATOR.get() || b == VVER_COOLANT_PUMP.get() || b == VVER_PRESSURIZER.get()
-                || isVver70(b) || b == BWR240_REACTOR.get() || b == CANDU6_REACTOR.get() || b == BN600_REACTOR.get() || b == AM1_REACTOR.get()
+                || isVver70(b) || b == VVER70_FUEL_POOL_REAL.get() || b == VVER70_REFUELLING_MACHINE_REAL.get() || b == BWR240_REACTOR.get() || b == CANDU6_REACTOR.get() || b == BN600_REACTOR.get() || b == AM1_REACTOR.get()
                 || b == GAS_TURBINE_HEAVY_REAL.get() || b == HRSG_REAL.get() || b == STEAM_REFORMER_REAL.get() || b == AMMONIA_CONVERTER_REAL.get()
                 || b == METHANOL_CONVERTER_REAL.get() || b == PYROLYSIS_FURNACE_REAL.get() || b == CHLOR_ALKALI_ELECTROLYSER_REAL.get()
                 || b == PVC_REACTOR_REAL.get()

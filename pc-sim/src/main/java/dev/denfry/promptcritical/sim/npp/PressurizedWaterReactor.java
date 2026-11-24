@@ -366,6 +366,16 @@ public final class PressurizedWaterReactor {
         return core;
     }
 
+    /** ПЗ-2 последнего шага: запрет вывода стержней (период или мощность у уставки предупреждения). */
+    public boolean rodBlocked() {
+        return rodBlock;
+    }
+
+    /** ПЗ-1 последнего шага: ступенчатое снижение мощности (перемощность или отключённый ГЦН на мощности). */
+    public boolean steppingBack() {
+        return stepback;
+    }
+
     /** Заглушен: мощность ниже 0,1 % и аварийная группа внизу. */
     public boolean shutDown() {
         return power() < 1e-3 && az > 0.99;

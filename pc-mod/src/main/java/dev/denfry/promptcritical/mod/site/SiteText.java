@@ -49,6 +49,14 @@ public final class SiteText {
         drawing("vver70_steam_generator_real", "VVER-70 Vertical Steam Generator", "вертикального парогенератора ВВЭР-70");
         drawing("vver70_coolant_pump_real", "VVER-70 Canned Coolant Pump", "экранированного ГЦН ВВЭР-70");
         drawing("vver70_pressurizer_real", "VVER-70 Gas Volume Compensator", "газового компенсатора объёма ВВЭР-70");
+        drawing("vver70_fuel_pool_real", "VVER-70 Spent Fuel Pool", "бассейна выдержки ВВЭР-70");
+        drawing("vver70_refuelling_machine_real", "VVER-70 Refuelling Machine", "перегрузочной машины ВВЭР-70");
+        stage("pool_walls", "concrete basin walls and floor", "бетонные стены и днище бассейна");
+        stage("pool_liner", "stainless liner, cooling and make-up piping", "облицовка из нержавейки, трубы охлаждения и подпитки");
+        stage("pool_racks", "fuel racks for 256 assemblies", "стеллажи на 256 ТВС");
+        stage("rm_rails", "floor rails and end stops", "напольные рельсы и упоры");
+        stage("rm_bridge", "gantry bridge with legs and drives", "мост с опорами и приводами");
+        stage("rm_trolley", "trolley, cabin, telescopic mast and gripper", "тележка, кабина, телескопическая штанга и захват");
         stage("canned_motor", "canned motor and its cooling jacket", "экранированный двигатель и рубашка охлаждения");
         stage("gas_rack", "nitrogen bottle rack and gas line", "стойка азотных баллонов и газовая линия");
         drawing("bwr240_reactor", "BWR-240 Boiling Water Reactor", "кипящего реактора BWR-240");

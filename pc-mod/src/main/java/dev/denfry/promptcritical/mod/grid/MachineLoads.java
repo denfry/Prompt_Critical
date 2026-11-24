@@ -234,6 +234,9 @@ public final class MachineLoads {
         put(Load.PASSIVE, dev.denfry.promptcritical.mod.nuclear.CentrifugeRealBlockEntity.class);
         put(Load.PASSIVE, dev.denfry.promptcritical.mod.nuclear.PlacedItemBlockEntity.class);
         put(Load.ACTIVE_LV, dev.denfry.promptcritical.mod.nuclear.Uf6AutoclaveBlockEntity.class);
+        // ВВЭР-70: насосы охлаждения и подпитки бассейна, приводы перегрузочной машины
+        put(Load.ACTIVE_LV, dev.denfry.promptcritical.mod.npp.SpentFuelPoolBlockEntity.class);
+        put(Load.ACTIVE_LV, dev.denfry.promptcritical.mod.npp.RefuellingMachineBlockEntity.class);
         put(Load.ACTIVE_LV, GasPlantBlockEntity.class);
         put(Load.ACTIVE_LV, HclFurnaceBlockEntity.class);
         put(Load.ACTIVE_LV, MethanolColumnBlockEntity.class);
