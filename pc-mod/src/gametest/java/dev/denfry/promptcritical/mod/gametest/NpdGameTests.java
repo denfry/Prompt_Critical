@@ -55,6 +55,11 @@ public final class NpdGameTests {
                 .on(new ItemStack(PcItems.FUEL_ASSEMBLY.get()));
     }
 
+    private static void insertBundle(GameTestHelper h) {
+        ItemStack left = npd(h).panelItems().insertItem(NpdPanels.SLOT_FRESH, bundle(FuelDesign.NPD_19), false);
+        h.assertTrue(left.isEmpty(), "bundle into the fresh slot");
+    }
+
     /** Полная зона природного урана, контур и каландр залиты, горячий старт на номинале. */
     private static void hot(NpdReactor r) {
         double kg = FuelDesign.NPD_19.uKgPerAssembly(0.96, 0.00711);
@@ -177,11 +182,16 @@ public final class NpdGameTests {
                         m.fluids(Direction.WEST).fill(new FluidStack(HeavyWaterFluids.fluid(HeavyWaterGrade.REACTOR), 4000),
                                 IFluidHandler.FluidAction.EXECUTE);
                     }
-                    ItemStack s = bundle(FuelDesign.NPD_19);
-                    s.setCount(4);
-                    npd(h).panelItems().insertItem(NpdPanels.SLOT_FRESH, s, false);
                 })
-                .thenIdle(45)
+                // пучок не складывается в стопку: слот берёт по одному, лоток забирает его за тик
+                .thenExecute(() -> insertBundle(h))
+                .thenIdle(2)
+                .thenExecute(() -> insertBundle(h))
+                .thenIdle(2)
+                .thenExecute(() -> insertBundle(h))
+                .thenIdle(2)
+                .thenExecute(() -> insertBundle(h))
+                .thenIdle(40)
                 .thenExecute(() -> {
                     NpdReactorBlockEntity be = npd(h);
                     h.assertTrue(be.linkedMachines() == 2, "two machines linked: " + be.linkedMachines());
