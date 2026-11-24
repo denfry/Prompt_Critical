@@ -7,26 +7,24 @@ bar 8 high with its label 10 px above; readout 13 high; lamp 14 x 14 with its la
 `area` is blank chart paper (grid every 10 px from the bottom-left corner) for the code to draw into.
 The title plate is drawn by the code at y 5. `mainline_pump` serves both the mainline pump and the line heater.
 
-## drawworks: textures/gui/panel/drawworks.png, 220 x 136
+## drawworks: textures/gui/panel/drawworks.png, 220 x 124
 
 | element | kind | x | y | size |
 |---|---|---|---|---|
 | hook load (weight indicator) | dial | 12 | 24 | large |
 | block height | bar | 92 | 40 | w 116 |
 | brake | lamp | 92 | 56 | 14 x 14 |
-| hoist | button | 12 | 112 | w 62 |
-| lower | button | 79 | 112 | w 62 |
-| stop | button | 146 | 112 | w 62 |
+| status | readout | 12 | 102 | w 196 |
 
-## mud_pump: textures/gui/panel/mud_pump.png, 220 x 136
+## mud_pump: textures/gui/panel/mud_pump.png, 220 x 116
 
 | element | kind | x | y | size |
 |---|---|---|---|---|
 | standpipe pressure | dial | 12 | 26 | medium |
 | strokes per minute | readout | 72 | 40 | w 96 |
+| running | lamp | 72 | 58 | 14 x 14 |
 | mud pit level | glass | 184 | 26 | h 64 |
-| start | button | 12 | 112 | w 96 |
-| stop | button | 112 | 112 | w 96 |
+| status | readout | 12 | 94 | w 160 |
 
 ## pumpjack: textures/gui/panel/pumpjack.png, 220 x 134
 
@@ -35,18 +33,18 @@ The title plate is drawn by the code at y 5. `mainline_pump` serves both the mai
 | dynamometer card | area | 12 | 24 | 100 x 50 |
 | SPM | readout | 124 | 28 | w 84 |
 | polished-rod load | bar | 124 | 58 | w 84 |
-| start | button | 12 | 110 | w 96 |
-| stop | button | 112 | 110 | w 96 |
+| wellhead valve | button | 12 | 110 | w 96 |
+| echo sounder | button | 112 | 110 | w 96 |
 
 ## separator: textures/gui/panel/separator.png, 220 x 104
 
 | element | kind | x | y | size |
 |---|---|---|---|---|
-| vessel pressure | dial | 12 | 26 | medium |
+| BS&W in the oil | dial | 12 | 26 | medium |
 | oil level | glass | 82 | 26 | h 56 |
 | water level | glass | 108 | 26 | h 56 |
-| gas flow | readout | 132 | 30 | w 76 |
-| dump valve | lamp | 132 | 52 | 14 x 14 |
+| status (gas to flare) | readout | 132 | 30 | w 76 |
+| carryover | lamp | 132 | 52 | 14 x 14 |
 
 ## mainline_pump: textures/gui/panel/mainline_pump.png, 220 x 130
 

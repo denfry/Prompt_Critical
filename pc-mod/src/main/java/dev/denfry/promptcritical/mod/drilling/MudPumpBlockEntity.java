@@ -30,8 +30,12 @@ import org.jetbrains.annotations.Nullable;
  * 3·π/4·d²·L·η_v = 0,0190 м³ при объёмном КПД 0,97 (Bourgoyne et al., §4.2). Номинал 120 ходов в минуту при 64
  * об/мин вала Create; ходы задаёт пульт бурильщика, не больше, чем позволяет вал. Мощность на валу — гидравлическая
  * мощность p·q, деленная на механический КПД 0,85, её считает скважина и раздаёт насосам пульт.
+ * <p>
+ * Тот же BE служит насосу реального масштаба {@code mud_pump_real} (дуплекс У8-6М по арту): насос в симуляции один и
+ * тот же, а щит реального — на фоне oilfield_panels.author.js, с уровнем в приёмных ёмкостях от пульта бурильщика.
  */
-public final class MudPumpBlockEntity extends DeviceBlockEntity implements ShaftConsumer, FoundryDevice, PanelHost {
+public final class MudPumpBlockEntity extends DeviceBlockEntity implements ShaftConsumer, FoundryDevice, PanelHost,
+        dev.denfry.promptcritical.mod.client.whole.RealScaleBlockEntity {
     public static final double NOMINAL_RPM = 64, MAX_SPM = 120;
     public static final double M3_PER_STROKE = 3 * Math.PI / 4 * Math.pow(6.5 * 0.0254, 2) * 12 * 0.0254 * 0.97;
     /** Номинальная мощность: 120 ходов при 25 МПа, КПД 0,85. */
@@ -115,7 +119,8 @@ public final class MudPumpBlockEntity extends DeviceBlockEntity implements Shaft
         BlockState st = getBlockState();
         if (!st.getValue(PcProperties.RUNNING)) return;
         MachineFx fx = MachineFx.of(level, worldPosition, st.getValue(BlockStateProperties.HORIZONTAL_FACING));
-        if (fx != null && fx.chance(2)) fx.leak(fx.at(20, 14, 12));
+        // реальный насос подтекает у сальников штоков (по арту: штоки на y 18, z 2 и 14, сальники у x 10)
+        if (fx != null && fx.chance(2)) fx.leak(real() ? fx.at(10, 18, level.random.nextBoolean() ? 2 : 14) : fx.at(20, 14, 12));
     }
 
     @Override
@@ -141,7 +146,12 @@ public final class MudPumpBlockEntity extends DeviceBlockEntity implements Shaft
 
     @Override
     public PanelLayout panelLayout() {
-        return DrillingPanels.PUMP;
+        return real() ? DrillingPanels.PUMP_REAL : DrillingPanels.PUMP;
+    }
+
+    @Override
+    public BlockPos wholeModelLightPos() {
+        return worldPosition.relative(wholeModelFacing(), real() ? 2 : 1);
     }
 
     @Override
@@ -152,5 +162,10 @@ public final class MudPumpBlockEntity extends DeviceBlockEntity implements Shaft
         out[DrillingPanels.P_SPP_X100] = (int) Math.round(dischargePa / 1e4);
         out[DrillingPanels.P_KW] = (int) Math.round(shaftPowerW() / 1000);
         out[DrillingPanels.P_FLAGS] = spm > 0 ? 1 << DrillingPanels.PF_RUNNING : 0;
+        if (out.length > DrillingPanels.P_PIT_PERMIL) {
+            DrillersConsoleBlockEntity c = DrillersConsoleBlockEntity.near(level, worldPosition);
+            dev.denfry.promptcritical.sim.drilling.Well w = c == null ? null : c.well();
+            if (w != null && w.pitCapacityM3() > 0) out[DrillingPanels.P_PIT_PERMIL] = (int) Math.round(1000 * w.pitVolumeM3() / w.pitCapacityM3());
+        }
     }
 }

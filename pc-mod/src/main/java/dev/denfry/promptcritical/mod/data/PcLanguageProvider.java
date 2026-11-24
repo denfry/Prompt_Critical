@@ -446,6 +446,12 @@ public final class PcLanguageProvider extends LanguageProvider {
         b("mud_pump", "Triplex Mud Pump", "Буровой насос");
         b("drawworks", "Drawworks", "Буровая лебёдка");
         b("derrick_segment", "Derrick Section", "Секция вышки");
+        b("rotary_table_real", "R-560 Rotary Table", "Ротор Р-560");
+        b("drawworks_real", "U2-5-5 Drawworks", "Буровая лебёдка У2-5-5");
+        b("mud_pump_real", "U8-6M Duplex Mud Pump", "Буровой насос У8-6М");
+        b("derrick_segment_real", "Drilling Derrick Section, 3 m", "Секция буровой вышки, 3 м");
+        b("pumpjack_real", "SK-8 Beam Pumping Unit", "Станок-качалка СК-8");
+        b("three_phase_separator_real", "NGS-1.6-2000 Three-Phase Separator", "Трёхфазный сепаратор НГС-1,6-2000");
         b("bop_annular", "Annular Preventer", "Кольцевой превентор");
         b("bop_ram", "Ram Preventer", "Плашечный превентор");
         b("logging_unit", "Logging Unit", "Каротажный подъёмник");

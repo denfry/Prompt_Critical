@@ -14,25 +14,26 @@
   // lamp (x, y [, 'hazard']), button (x, y, w), area (x, y, w, h: blank chart paper the code draws into).
   const OIL = [150, 110, 40], WATER = [60, 110, 170], MUD = [120, 96, 70];
   const PANELS = {
-    drawworks: { w: 220, h: 136, seed: 65101, els: [
+    // the drawworks and the mud pump have no start keys: the drawworks follows the driller's console, the pump its shaft
+    drawworks: { w: 220, h: 124, seed: 65101, els: [
       ['dial', 'hook load (weight indicator)', 12, 24, 64, 'wide'],
       ['bar', 'block height', 92, 40, 116], ['lamp', 'brake', 92, 56],
-      ['button', 'hoist', 12, 112, 62], ['button', 'lower', 79, 112, 62], ['button', 'stop', 146, 112, 62],
+      ['readout', 'status', 12, 102, 196],
     ] },
-    mud_pump: { w: 220, h: 136, seed: 65111, els: [
-      ['dial', 'standpipe pressure', 12, 26, 48], ['readout', 'strokes per minute', 72, 40, 96],
+    mud_pump: { w: 220, h: 116, seed: 65111, els: [
+      ['dial', 'standpipe pressure', 12, 26, 48], ['readout', 'strokes per minute', 72, 40, 96], ['lamp', 'running', 72, 58],
       ['glass', 'mud pit level', 184, 26, 64, MUD],
-      ['button', 'start', 12, 112, 96], ['button', 'stop', 112, 112, 96],
+      ['readout', 'status', 12, 94, 160],
     ] },
     pumpjack: { w: 220, h: 134, seed: 65121, els: [
       ['area', 'dynamometer card', 12, 24, 100, 50],
       ['readout', 'SPM', 124, 28, 84], ['bar', 'polished-rod load', 124, 58, 84],
-      ['button', 'start', 12, 110, 96], ['button', 'stop', 112, 110, 96],
+      ['button', 'wellhead valve', 12, 110, 96], ['button', 'echo sounder', 112, 110, 96],
     ] },
     separator: { w: 220, h: 104, seed: 65131, els: [
-      ['dial', 'vessel pressure', 12, 26, 48],
+      ['dial', 'BS&W in the oil', 12, 26, 48],
       ['glass', 'oil level', 82, 26, 56, OIL], ['glass', 'water level', 108, 26, 56, WATER],
-      ['readout', 'gas flow', 132, 30, 76], ['lamp', 'dump valve', 132, 52],
+      ['readout', 'status (gas to flare)', 132, 30, 76], ['lamp', 'carryover', 132, 52],
     ] },
     mainline_pump: { w: 220, h: 130, seed: 65141, els: [
       ['dial', 'suction pressure', 12, 26, 48], ['dial', 'discharge pressure', 70, 26, 48],
