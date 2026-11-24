@@ -307,7 +307,7 @@ class GridSubsystemTest {
         assertThat(feeder.protectionTrips()).isEqualTo(1);
     }
 
-    /** Двигатель 0,4 кВ 100 кВт за трансформатором от генератора 6,3 кВ: разогнан вхолостую и несёт 20 кВт. */
+    /** Двигатель 0,4 кВ 100 кВт за трансформатором от генератора 6,3 кВ: разгоняется под нагрузкой 20 кВт. */
     private MotorUnit runningMotor(SimulationWorld w, GeneratorUnit[] gen) {
         gen[0] = generator(w, BUS_A, 0);
         cell(w, BUS_A, BUS_B, true);
@@ -315,10 +315,9 @@ class GridSubsystemTest {
         MotorUnit motor = grid(w).motor(device(w, "electric_motor"));
         motor.setNodes(BUS_D);
         motor.setStarter(MotorStarter.SOFT);
-        motor.setContactor(true);
-        run(w, 30); // разгон вхолостую: нагрузка постоянной мощности на малой скорости не даёт разогнаться
         motor.setLoadPowerW(20e3);
-        run(w, 5);
+        motor.setContactor(true);
+        run(w, 30); // нагрузка на малой скорости — как у насоса (∝ ω²), разгон под ней
         assertThat(motor.state()).isEqualTo(MotorState.RUNNING);
         return motor;
     }
@@ -337,7 +336,6 @@ class GridSubsystemTest {
         run(w, 10);
         assertThat(motor.contactorClosed()).isFalse();
         assertThat(motor.state()).isNotEqualTo(MotorState.RUNNING);
-        motor.setLoadPowerW(0); // вал Create стоит, пока двигатель не вышел на скорость (как в моде)
         motor.setContactor(true);
         assertThat(motor.undervoltageTripped()).isFalse();
         run(w, 30);

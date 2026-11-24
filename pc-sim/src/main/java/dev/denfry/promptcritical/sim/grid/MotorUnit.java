@@ -161,9 +161,20 @@ public final class MotorUnit extends GridUnit {
         return ratedPowerW() * Math.min(1, v * v / 0.81);
     }
 
+    /** Скорость, ниже которой нагрузка идёт как у насоса или вентилятора, о.е. */
+    static final double LOAD_KNEE_PU = 0.9;
+
+    /**
+     * Момент нагрузки, о.е. Выше {@link #LOAD_KNEE_PU} — постоянная мощность {@code loadPowerW} (её задаёт стресс
+     * Create на рабочей скорости), ниже — момент ∝ ω², как у насоса или вентилятора, непрерывно на изломе: нагруженный
+     * двигатель разгоняется с нуля, а не застревает в пуске.
+     */
     double loadTorquePu() {
-        double w = speedPu();
-        return w < 0.05 ? 0 : loadPowerW / (ratedPowerW() * w);
+        double w = Math.max(0, speedPu());
+        double atKnee = loadPowerW / (ratedPowerW() * LOAD_KNEE_PU);
+        if (w >= LOAD_KNEE_PU) return loadPowerW / (ratedPowerW() * w);
+        double r = w / LOAD_KNEE_PU;
+        return atKnee * r * r;
     }
 
     @Override
