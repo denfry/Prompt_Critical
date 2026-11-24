@@ -283,6 +283,44 @@
     for (const x of [4, 6, 8, 10]) px(a, x, 12, '#7a7f84');
   };
 
+  // ---------------------------------------------------------------- generator assembly (stator_core: smithy.author.js)
+  // Stator winding set: formed copper coils laid round in a ring, the end turns showing, taped leads out at the top.
+  I.stator_winding = (a) => {
+    circ(a, 7.5, 8, 7, '#b8733a', 4.2);
+    for (let k = 0; k < 12; k++) {
+      const t = 2 * Math.PI * k / 12, [x0, y0] = at(7.5, 8, 4.4, t), [x1, y1] = at(7.5, 8, 6.6, t + 0.2);
+      line(a, x0, y0, x1, y1, '#8a5428');
+    }
+    circ(a, 7.5, 8, 5.4, '#d0884a', 5);
+    box(a, 5, 0, 5, 2, '#d8cfa8'); box(a, 10, 0, 10, 2, '#d8cfa8');
+    px(a, 5, 0, '#d0884a'); px(a, 10, 0, '#d0884a');
+  };
+  // Commutator from the side: copper bars with mica strips between, the riser lugs, the shaft through.
+  I.commutator = (a) => {
+    box(a, 0, 7, 15, 8, '#b4b9be');
+    box(a, 4, 3, 11, 12, '#b8733a');
+    for (let y = 4; y <= 11; y += 2) box(a, 4, y, 11, y, '#4a3a2a');
+    box(a, 2, 2, 4, 13, '#c88848');
+    for (let y = 3; y <= 12; y += 3) px(a, 3, y, '#e0a060');
+  };
+  // Brush holder: a brass box clamped on its insulated stud, the carbon brush out of the bottom, its spring and pigtail.
+  I.brush_holder = (a) => {
+    box(a, 1, 2, 13, 3, '#5a4a3a');
+    box(a, 5, 3, 10, 9, '#c9a14a');
+    box(a, 6, 9, 9, 13, '#2a2a2c');
+    line(a, 10, 4, 13, 7, '#a4aab0');
+    line(a, 9, 10, 12, 12, '#b8733a'); px(a, 13, 12, '#b8733a');
+    px(a, 7, 5, '#1d1d1f');
+  };
+  // Slip rings: two bronze rings on an insulating hub on the shaft, from the side.
+  I.slip_ring = (a) => {
+    box(a, 0, 7, 15, 8, '#b4b9be');
+    box(a, 3, 4, 12, 11, '#5a4a3a');
+    box(a, 4, 2, 6, 13, '#c9a14a');
+    box(a, 9, 2, 11, 13, '#c9a14a');
+    for (const x of [4, 9]) box(a, x, 3, x, 12, '#e0c070');
+  };
+
   function paint(root) {
     const A = path.join(root, PCART.ASSETS);
     for (const [n, f] of Object.entries(I)) {
