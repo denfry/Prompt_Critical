@@ -83,12 +83,13 @@ public final class Vver70Panels {
             .button(114, 188, 30, B_MCP_STOP + 1, OFF.get(), OFF_TIP.get(2))
             .button(148, 188, 30, B_MCP_START + 2, ON.get(3), ON_TIP.get(3))
             .button(182, 188, 30, B_MCP_STOP + 2, OFF.get(), OFF_TIP.get(3))
-            .button(12, 214, 30, PwrPanels.B_RESET, RESET.get(), RESET_TIP.get())
-            .button(46, 214, 30, PwrPanels.B_LOW_FLUX, LOW_FLUX.get(), LOW_FLUX_TIP.get())
-            .holdButton(80, 214, 60, PwrPanels.B_SCRAM, AZ_HOLD_MS, AZ.get(), AZ_TIP.get())
-            .button(146, 214, 18, PwrPanels.B_RG_UP, UP.get(), RG_UP_TIP.get())
+            // «Взвод» и «Разреш.» не влезают в 30 px: шире кнопки, уже ключ АЗ
+            .button(12, 214, 38, PwrPanels.B_RESET, RESET.get(), RESET_TIP.get())
+            .button(52, 214, 42, PwrPanels.B_LOW_FLUX, LOW_FLUX.get(), LOW_FLUX_TIP.get())
+            .holdButton(98, 214, 46, PwrPanels.B_SCRAM, AZ_HOLD_MS, AZ.get(), AZ_TIP.get())
+            .button(148, 214, 18, PwrPanels.B_RG_UP, UP.get(), RG_UP_TIP.get())
             .button(166, 214, 18, PwrPanels.B_RG_STOP, STOP.get(), RG_STOP_TIP.get())
-            .button(186, 214, 18, PwrPanels.B_RG_DOWN, DOWN.get(), RG_DOWN_TIP.get())
+            .button(184, 214, 18, PwrPanels.B_RG_DOWN, DOWN.get(), RG_DOWN_TIP.get())
             .noInventory()
             .build();
 

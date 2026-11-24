@@ -48,7 +48,7 @@ public final class HydrogenPanels {
             HTO = PanelText.tr("h2.hto", "H₂ in O₂", "H₂ в O₂"),
             START = PanelText.tr("h2.start", "Start", "Пуск"),
             STOP = PanelText.tr("h2.stop", "Stop", "Стоп"),
-            PURGE = PanelText.tr("h2.purge", "N₂ purge", "Продувка N₂"),
+            PURGE = PanelText.tr("h2.purge", "N₂ purge", "Продувка"),
             PURGE_TIP = PanelText.tr("h2.purge_tip", "Purge the stack with nitrogen for two minutes: clears a trip once its cause is gone",
                     "Продуть батарею азотом две минуты: снимает отключение, если его причина ушла"),
             E_STATUS = PanelText.tr("h2.e_status", "KOH %s %% · H₂ in O₂ %s %% · %s Nm³/h · %s kWh/Nm³",

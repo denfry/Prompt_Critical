@@ -109,17 +109,18 @@ public final class NpdPanels {
 
     public static final PanelLayout REACTOR = PanelLayout.builder("candu_npd", 220, 172, CHANNELS)
             .art(PromptCritical.id("textures/gui/panel/candu_npd.png"))
-            .glass(14, 26, 48, POWER, 0xFFE0A040, Double.NaN, Double.NaN, G_POWER.get(),
+            // столбики через 26 px: подписи в 4 буквы не налезают; уровень отодвинут от правого края
+            .glass(12, 26, 48, POWER, 0xFFE0A040, Double.NaN, Double.NaN, G_POWER.get(),
                     v -> POWER_TIP.get(v.num(POWER, 10, 1), v.raw(SETPOINT), v.num(PERIOD, 10, 1), v.raw(RHO_PCM)))
-            .glass(36, 26, 48, DUMP_TANK, 0xFF4F86B8, Double.NaN, Double.NaN, G_DUMP.get(), v -> DUMP_TIP.get(v.num(DUMP_TANK, 10, 1)))
-            .glass(58, 26, 48, COOL_FILL, 0xFF7FA8C8, Double.NaN, Double.NaN, G_HT.get(),
+            .glass(38, 26, 48, DUMP_TANK, 0xFF4F86B8, Double.NaN, Double.NaN, G_DUMP.get(), v -> DUMP_TIP.get(v.num(DUMP_TANK, 10, 1)))
+            .glass(64, 26, 48, COOL_FILL, 0xFF7FA8C8, Double.NaN, Double.NaN, G_HT.get(),
                     v -> HT_TIP.get(v.num(COOL_FILL, 10, 1), v.num(COOL_PURITY, 100, 2), v.raw(FLOW)))
-            .glass(80, 26, 48, OUT_C, 0xFFC05040, Double.NaN, Double.NaN, G_OUT.get(), v -> OUT_TIP.get(Math.round(v.raw(OUT_C) * 0.32)))
-            .glass(102, 26, 48, FUEL_C, 0xFFD07030, Double.NaN, Double.NaN, G_FUEL.get(),
+            .glass(90, 26, 48, OUT_C, 0xFFC05040, Double.NaN, Double.NaN, G_OUT.get(), v -> OUT_TIP.get(Math.round(v.raw(OUT_C) * 0.32)))
+            .glass(116, 26, 48, FUEL_C, 0xFFD07030, Double.NaN, Double.NaN, G_FUEL.get(),
                     v -> FUEL_TIP.get(Math.round(v.raw(FUEL_C) * 2.0), v.raw(XE_PCM), v.raw(LOADED), v.num(BURNUP, 100, 2)))
-            .glass(124, 26, 48, HEAD_D2O, 0xFF6FA0D0, Double.NaN, Double.NaN, G_HEAD.get(),
+            .glass(142, 26, 48, HEAD_D2O, 0xFF6FA0D0, Double.NaN, Double.NaN, G_HEAD.get(),
                     v -> HEAD_TIP.get(v.raw(MACHINES), v.num(HEAD_D2O, 10, 0)))
-            .glass(178, 26, 60, LEVEL, 0xFF3F70B0, Double.NaN, Double.NaN, G_LEVEL.get(),
+            .glass(170, 26, 60, LEVEL, 0xFF3F70B0, Double.NaN, Double.NaN, G_LEVEL.get(),
                     v -> LEVEL_TIP.get(v.num(LEVEL, 10, 1), v.num(LEVEL_RATE, 10, 1), v.num(MOD_PURITY, 100, 2)))
             .button(12, 86, 18, B_UP, UP.get(), UP_TIP.get())
             .button(32, 86, 18, B_STOP, STOP.get(), STOP_TIP.get())
@@ -132,9 +133,9 @@ public final class NpdPanels {
             .readout(12, 122, 96, NpdPanels::status, v -> STATUS_TIP.get(v.num(MOD_PURITY, 100, 2), v.num(COOL_PURITY, 100, 2),
                     v.raw(TRITIUM_GBQ), v.raw(REFUELLED)))
             .readout(112, 122, 96, NpdPanels::machine, v -> FM_TIP.get(v.raw(BAY), v.raw(MAG_FRESH), v.raw(MAG_SPENT), v.raw(MAG_C), v.raw(SHIFT)))
-            .button(12, 146, 28, B_RESET, RESET.get(), RESET_TIP.get())
-            .button(42, 146, 28, B_AUTO, AUTO.get(), AUTO_TIP.get())
-            .button(72, 146, 76, B_SDS, SDS.get(), SDS_TIP.get())
+            .button(12, 146, 34, B_RESET, RESET.get(), RESET_TIP.get())
+            .button(48, 146, 34, B_AUTO, AUTO.get(), AUTO_TIP.get())
+            .button(86, 146, 62, B_SDS, SDS.get(), SDS_TIP.get())
             .slot(152, 146, SLOT_FRESH, s -> s.is(PcItems.FUEL_ASSEMBLY.get()), FRESH.get())
             .slot(172, 146, SLOT_SPENT, s -> false, SPENT.get())
             .button(192, 146, 18, B_DRAIN, DRAIN.get(), DRAIN_TIP.get())

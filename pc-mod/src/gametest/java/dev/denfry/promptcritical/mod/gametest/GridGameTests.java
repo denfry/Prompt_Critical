@@ -318,14 +318,15 @@ public final class GridGameTests {
                     s.setDemandKw(200);
                     s.setSwitchedOn(true);
                     ConsumerBlockEntity b = h.getBlockEntity(big);
-                    b.unit().setDemandKw(500);
+                    // 1,6 о.е.: с саморегулированием нагрузки по частоте дефицит 1,4 о.е. оседал у самой уставки 48,8 Гц
+                    b.unit().setDemandKw(650);
                     b.unit().setSwitchedOn(false);
                     h.assertTrue(b.panelItems().insertItem(0, new ItemStack(PcItems.RELAY_UFLS.get()), false).isEmpty(), "AChR module fitted");
                 })
                 .thenWaitUntil(() -> h.assertTrue(running(gen(h, G1)) && gen(h, G1).frequencyHz() > 49, "machine carries the village"))
                 .thenWaitUntil(() -> h.assertTrue(((ConsumerBlockEntity) h.getBlockEntity(big)).unit().relays().stream()
                         .anyMatch(r -> r.kind() == RelaySetting.Kind.UFLS), "module reaches the twin"))
-                .thenExecute(() -> ((ConsumerBlockEntity) h.getBlockEntity(big)).unit().setSwitchedOn(true)) // 1,4 о.е. на машину
+                .thenExecute(() -> ((ConsumerBlockEntity) h.getBlockEntity(big)).unit().setSwitchedOn(true)) // 1,6 о.е. на машину
                 .thenWaitUntil(() -> {
                     fmin[0] = Math.min(fmin[0], gen(h, G1).frequencyHz());
                     h.assertTrue(((ConsumerBlockEntity) h.getBlockEntity(big)).unit().shed(), "load shed at " + gen(h, G1).frequencyHz());

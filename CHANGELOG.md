@@ -1,6 +1,9 @@
 # Changelog
 
-## Unreleased
+## 1.1.0 (2026-11-24)
+
+Reactor prototypes at real scale, hydrogen power, the I2 and I3 real-scale plants, waste heat for greenhouses,
+fish and district heating, stations with roles and a journal for multiplayer, and an addon API.
 
 ### Breaking changes
 - Machines draw their rated power: about twenty-five process machines take it from a socket, power board or UPS and
@@ -101,11 +104,50 @@
   there, its last holder gets an orphan alarm, and sources on the ground never despawn. `/pc sources list` shows them.
 - The Immersive Engineering diesel generator burns c:diesel. Its burn time stops at IE's limit of 10000 ticks per
   bucket, so it gives under one percent of the fuel's real energy.
+- Ghost rule: a source burned in fire or lava releases its iodine, part of its caesium and a trace of the rest into
+  the air; an explosion throws one percent up and spreads the rest over three blocks; cactus breaks it open.
+- Typed public address calls and announcements from CC: Tweaked through the intercom station (`pc_ops`), with the
+  same filter, length limit and cooldown as the panel.
+- Xaero's Minimap waypoints in chat for orphaned sources and read geological maps; Ecliptic Seasons next to Serene
+  Seasons for the season of the climate.
+- Addon API: read-only access to the sensor tags Lua sees and an event bus for alarms, trips, SIS trips, releases,
+  milestones and contract states; a KubeJS plugin with `PromptCriticalEvents` and a read-only `PromptCritical`
+  binding; `/pc export ftbquests` writes the route as an FTB Quests book in English and Russian.
+
+### Stations and roles (multiplayer, 04d)
+- Placing a reactor, cascade or fuel cycle controller founds a station on its chunk, owned by the player's scoreboard
+  team or the player; `/pc station grant|revoke|claim|info|journal|computer` manage roles and chunks.
+- Eight roles with the permission matrix of 04d: panel buttons, protection resets and bypasses, tests, chemistry,
+  breaking and placing station blocks. A single player owns everything; outside stations nothing changes.
+- Computers, RTUs, MES servers and watchdog relays act with their owner's role only while they stand in the station;
+  any CC block in a station needs the control permission to open.
+- The station journal records commands, trips and resets, bypasses, block series and refused access, exports to CSV
+  with `/pc journal export`, and announces incidents by a scale after INES.
+
+### Waste heat (17, 07)
+- Greenhouse: a heating coil inside a glazed room takes up to 200 kW from the turbine condenser it touches, holds
+  18 °C, speeds growth by the cardinal temperature curve, stops it below 5 °C and lets crops grow in winter with a
+  seasons mod. A cold frame keeps a crop 8 K above the air by day.
+- Condensers cooled straight from a pond or river warm that water; a fish cage grows fish on it by temperature and
+  feed, and every fish dies above 36 °C.
+- Combined heat and power: a district heating steam heater under a turbine makes it exhaust against the 150/70
+  heating schedule and heats the settlements within 128 blocks by their beds.
+
+### Simulation
+- Geothermal station model: flash separator, silica scaling, reservoir with a cold front, induced seismicity with a
+  traffic light and an isobutane binary cycle (no blocks yet).
 
 ### Panels and art
 - Drawn panel boards for the I2 oilfield machines, the hydrogen machines and the reactor prototypes; the operator
   terminal and the public address redrawn; item icons for the new machine parts.
 - Panel buttons can be keys that trip only when held, and panels can have a text field.
+
+### Fixes
+- The VVER-70 reactor model loads in the game: fourteen of its parts used a rotation the game rejects. The build now
+  fails on such rotations.
+- Create pipes dock at the nozzles of real-scale machines, and machines from 1.0.1 worlds get their nozzle cells
+  converted on load.
+- Panel labels of the VVER-70, CANDU NPD and electrolyser boards fit their buttons.
 
 ## 1.0.1 (2026-11-24)
 

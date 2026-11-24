@@ -25,10 +25,11 @@ run by plant I&C that you design and build yourself.
 </div>
 
 > [!NOTE]
-> **1.0.1 is out.** Every industry era of the design, I0 to I4, and every reactor tier from the graphite pile
-> to the fast reactor are in the game, with the plant I&C, operations and accident layers. New in 1.0.1: 78 machines
-> of eras I0 to I2 at real scale, built on construction sites from drawings, motor starters, lightning protection,
-> a dense medium separator, an HCl furnace and fixes from survival playtests. Get the jar from the
+> **1.1.0 is out.** Every industry era of the design, I0 to I4, and every reactor tier from the graphite pile
+> to the fast reactor are in the game, with the plant I&C, operations and accident layers. New in 1.1.0: the
+> VVER-70, CANDU NPD and BOR-60 prototypes at real scale, hydrogen power, the I2 and I3 plants at real scale,
+> greenhouses, fish cages and district heating on waste heat, stations with roles and a journal for multiplayer,
+> and an addon API with KubeJS and FTB Quests export. Get the jar from the
 > [releases page](https://github.com/denfry/Prompt_Critical/releases/latest). Balance values are not final yet, and
 > worlds from earlier builds need a backup before updating: see the breaking changes in the [changelog](CHANGELOG.md).
 
