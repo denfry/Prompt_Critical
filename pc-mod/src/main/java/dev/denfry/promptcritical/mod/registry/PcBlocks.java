@@ -681,7 +681,7 @@ public final class PcBlocks {
      * подогреватель ПП-0,63 11 × 4 × 3 с дымовой трубой, резервуар РВС-1000 13 × 14 × 13 со стационарной или плавающей
      * крышей (art/blockbench/oil_transport, oil_production, storage).
      */
-    public static final Footprint FP_MAINLINE_PUMP_REAL = Footprint.tiled(-2, 3, 0, 1, -1, 1);
+    public static final Footprint FP_MAINLINE_PUMP_REAL = mainlinePumpRealFootprint();
     public static final DeferredBlock<PcDeviceBlock> MAINLINE_PUMP_REAL = device("mainline_pump_real", machine(),
             real(Spec.facing(PcProperties.RUNNING), FP_MAINLINE_PUMP_REAL), dev.denfry.promptcritical.mod.production.MainlinePumpBlock::create);
     public static final Footprint FP_LINE_HEATER_REAL = lineHeaterRealFootprint();
@@ -1383,6 +1383,16 @@ public final class PcBlocks {
     }
 
     /** Корпус подогревателя и колонна дымовой трубы (−4, 4…8, 0): сегменты трубы — не дальше ±1 от якоря. */
+    /**
+     * Насосный агрегат 6 × 2 × 3: x −2…2 сеткой, столбец хвостовика двигателя (x 3) — отдельным сегментом с якорем
+     * наверху (3, 1, 0), чтобы клетка вала (3, 0, 0) была частью, а не якорем: якорь не становится портом вала.
+     */
+    private static Footprint mainlinePumpRealFootprint() {
+        java.util.List<Segment> s = new java.util.ArrayList<>(Footprint.tiled(-2, 2, 0, 1, -1, 1).segments());
+        s.add(new Segment(3, 1, 0, 0, 0, -1, 0, -1, 1));
+        return Footprint.of(s.toArray(Segment[]::new));
+    }
+
     private static Footprint lineHeaterRealFootprint() {
         java.util.List<Segment> s = new java.util.ArrayList<>(Footprint.tiled(-5, 5, 0, 3, -1, 1).segments());
         s.add(new Segment(-4, 5, 0, 0, 0, -1, 1, 0, 0));

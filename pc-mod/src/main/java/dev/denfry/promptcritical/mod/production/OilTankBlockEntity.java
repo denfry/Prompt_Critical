@@ -60,6 +60,8 @@ public final class OilTankBlockEntity extends DeviceBlockEntity implements Found
     private static final BlockPos RECEIVE_CELL = new BlockPos(-6, 0, 0), BREATHER_CELL = new BlockPos(2, 12, 0);
 
     private final ProductTank oil = new ProductTank(PcFluids.CRUDE_OIL.source.get(), CAPACITY_MB);
+    /** Резервуар и принимает, и отдаёт: {@link ProductTank} трубам только сливает, налив — через {@link ProductTank#add}. */
+    private final IFluidHandler store = new Store();
     private double lastMb = -1, inflowLs, lossKgS, remainderL, productC = Double.NaN, sourceC = Double.NaN;
     private boolean venting;
     private int ticks;
@@ -151,7 +153,47 @@ public final class OilTankBlockEntity extends DeviceBlockEntity implements Found
     /** Приём и раздача — один и тот же объём; к каким граням можно подключиться, решают порты модели. */
     @Override
     public IFluidHandler fluids(@Nullable Direction side) {
-        return oil;
+        return store;
+    }
+
+    private final class Store implements IFluidHandler {
+        @Override
+        public int getTanks() {
+            return 1;
+        }
+
+        @Override
+        public net.neoforged.neoforge.fluids.FluidStack getFluidInTank(int tank) {
+            return oil.getFluidInTank(0);
+        }
+
+        @Override
+        public int getTankCapacity(int tank) {
+            return CAPACITY_MB;
+        }
+
+        @Override
+        public boolean isFluidValid(int tank, net.neoforged.neoforge.fluids.FluidStack stack) {
+            return stack.is(PcFluids.CRUDE_OIL.source.get());
+        }
+
+        @Override
+        public int fill(net.neoforged.neoforge.fluids.FluidStack resource, FluidAction action) {
+            if (resource.isEmpty() || !isFluidValid(0, resource)) return 0;
+            int n = (int) Math.min(resource.getAmount(), Math.floor(oil.room()));
+            if (n > 0 && action.execute()) oil.add(n);
+            return Math.max(0, n);
+        }
+
+        @Override
+        public net.neoforged.neoforge.fluids.FluidStack drain(net.neoforged.neoforge.fluids.FluidStack resource, FluidAction action) {
+            return oil.drain(resource, action);
+        }
+
+        @Override
+        public net.neoforged.neoforge.fluids.FluidStack drain(int maxDrain, FluidAction action) {
+            return oil.drain(maxDrain, action);
+        }
     }
 
     @Override
