@@ -37,7 +37,21 @@ public final class OpsWorld {
             boolean dashpotFitted) {
         OpsSubsystem ops = ops(level);
         if (ops == null || id.isNone()) return null;
-        return ops.ensure(id, kind, workingPressurePa, false, Set.<UnitComponent>of(), dashpotFitted);
+        return ops.ensure(id, kind, workingPressurePa, false, Set.<UnitComponent>of(), dashpotFitted,
+                dev.denfry.promptcritical.sim.manufacturing.assembly.MachinePassport.nominal());
+    }
+
+    /**
+     * То же для машины с паспортом сборки (18 §18.15.7): паспорт задаёт начальный износ только при первом создании
+     * машины в {@link OpsSubsystem}.
+     */
+    @Nullable
+    public static OpsSubsystem.Unit ensure(Level level, SimId id, UnitKind kind, double workingPressurePa,
+            boolean dashpotFitted, OpsMachine machine) {
+        OpsSubsystem ops = ops(level);
+        if (ops == null || id.isNone()) return null;
+        return ops.ensure(id, kind, workingPressurePa, false, Set.<UnitComponent>of(), dashpotFitted,
+                machine.opsPassport());
     }
 
     @Nullable

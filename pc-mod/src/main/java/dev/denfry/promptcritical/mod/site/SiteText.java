@@ -208,6 +208,9 @@ public final class SiteText {
         drawing("forge_hearth_real", "Smith's Forge Hearth", "кузнечного горна");
         stage("hearth_chimney", "brick hearth, firepot and chimney", "кирпичный горн, горновая коробка и труба");
         stage("hearth_bellows", "hood and the great bellows in their frame", "колпак и большие мехи в раме");
+        drawing("assembly_stand", "Assembly Stand", "сборочного стенда");
+        stage("assembly_plate", "cast-iron T-slot plate on its foundation", "чугунная плита с Т-пазами на фундаменте");
+        stage("assembly_hoist", "portal hoist, balancing stands and dial indicator", "портальная таль, балансировочные опоры и индикатор");
         drawing("crank_press_real", "Inclinable Crank Press", "открытого кривошипного пресса");
         stage("crank_press_frame", "C-frame, bed and ram gibs", "С-образная станина, стол и направляющие ползуна");
         stage("press_drive", "crankshaft, flywheel and belt drive", "кривошипный вал, маховик и ремённый привод");

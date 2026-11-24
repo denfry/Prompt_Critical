@@ -25,4 +25,10 @@ public interface OpsMachine {
     default Baseline opsCurrent() {
         return Baseline.NONE;
     }
+
+    /** Паспорт сборки (18 §18.8.3): задаёт начальное состояние износа при первой регистрации машины. */
+    default dev.denfry.promptcritical.sim.manufacturing.assembly.MachinePassport opsPassport() {
+        return this instanceof dev.denfry.promptcritical.mod.manufacturing.PassportSlot.Holder h ? h.passportSlot().get()
+                : dev.denfry.promptcritical.sim.manufacturing.assembly.MachinePassport.nominal();
+    }
 }
