@@ -92,6 +92,7 @@ public final class PanelScreen extends AbstractContainerScreen<PanelMenu> {
                 case PanelLayout.IndicatorCard ic -> PanelArt.indicator(g, font, ic,
                         smooth(ic, menu.get(ic.chestCh(), 1) * 1000 + 101_325, dt), menu.bit(ic.flagsCh(), ic.runBit()), ex, ey,
                         fit.room(ic, font.width(ic.label())));
+                case PanelLayout.Trace t -> PanelArt.trace(g, t.values().apply(menu), ex, ey, t.w(), t.h());
                 case PanelLayout.Button b -> {
                 }
             }
@@ -177,6 +178,10 @@ public final class PanelScreen extends AbstractContainerScreen<PanelMenu> {
                 case PanelLayout.IndicatorCard ic -> {
                     lines.add(ic.tip() != null ? ic.tip().apply(menu) : ic.label());
                     yield inside(mx, my, ic.x(), ic.y(), ic.w(), ic.h() + 12);
+                }
+                case PanelLayout.Trace t -> {
+                    if (t.tip() != null) lines.add(t.tip().apply(menu));
+                    yield t.tip() != null && inside(mx, my, t.x(), t.y(), t.w(), t.h());
                 }
                 default -> false;
             };

@@ -736,6 +736,10 @@ public final class PcBlocks {
     public static final DeferredBlock<PcDeviceBlock> HISTORIAN_SERVER = device("historian_server", machine(),
             Spec.facing(BlockStateProperties.LIT).footprint(FP_TALL2),
             FoundryBlock.with(dev.denfry.promptcritical.mod.scada.HistorianBlockEntity::new));
+    /** Терминал оператора 16 §16.3.4 (R58): видеокадры A4 без CC, пульт с ЭЛТ 1×1×1. */
+    public static final DeferredBlock<PcDeviceBlock> OPERATOR_TERMINAL = device("operator_terminal", machine(),
+            Spec.facing(BlockStateProperties.POWERED, PcProperties.ALARM),
+            FoundryBlock.with(dev.denfry.promptcritical.mod.scada.OperatorTerminalBlockEntity::new));
     /** Инженерная станция 03d §3d.9.1: цифровой двойник для FAT программ ПЛК, стол 2×1×1. */
     public static final DeferredBlock<PcDeviceBlock> SIMULATION_WORKSTATION = device("simulation_workstation", machine(),
             Spec.facing().footprint(FP_WIDE2),
@@ -1635,6 +1639,13 @@ public final class PcBlocks {
     public static final DeferredBlock<PcDeviceBlock> HEAT_DETECTOR = device("heat_detector", instrument(), Spec.facing(PcProperties.ALARM), FoundryBlock.with(dev.denfry.promptcritical.mod.ops.FireDeviceBlockEntity::new));
     public static final DeferredBlock<PcDeviceBlock> FLAME_DETECTOR = device("flame_detector", instrument(), Spec.facing(PcProperties.ALARM), FoundryBlock.with(dev.denfry.promptcritical.mod.ops.FireDeviceBlockEntity::new));
     public static final DeferredBlock<PcDeviceBlock> MANUAL_CALL_POINT = device("manual_call_point", instrument(), Spec.facing(PcProperties.ALARM), FoundryBlock.with(dev.denfry.promptcritical.mod.ops.FireDeviceBlockEntity::new));
+    /** ГГС 13 §13.3.4: пульт (на стене или на столе) и рупорный громкоговоритель (стена, мачта, потолок). */
+    public static final DeferredBlock<PcDeviceBlock> INTERCOM_STATION = device("intercom_station", instrument(),
+            Spec.facing(PcProperties.INTERCOM_MOUNT, PcProperties.RUNNING, BlockStateProperties.POWERED),
+            dev.denfry.promptcritical.mod.pa.PaDeviceBlock.with(dev.denfry.promptcritical.mod.pa.IntercomStationBlockEntity::new));
+    public static final DeferredBlock<PcDeviceBlock> PLANT_LOUDSPEAKER = device("plant_loudspeaker", instrument(),
+            Spec.facing(PcProperties.SPEAKER_MOUNT, PcProperties.RUNNING),
+            dev.denfry.promptcritical.mod.pa.PaDeviceBlock.with(dev.denfry.promptcritical.mod.pa.PlantLoudspeakerBlockEntity::new));
     public static final DeferredBlock<PcDeviceBlock> FIRE_ALARM_PANEL = device("fire_alarm_panel", instrument(), Spec.facing(PcProperties.ALARM, BlockStateProperties.POWERED), FoundryBlock.with(dev.denfry.promptcritical.mod.ops.FireDeviceBlockEntity::new));
     public static final DeferredBlock<PcDeviceBlock> SPRINKLER_HEAD = device("sprinkler_head", instrument(), Spec.facing(PcProperties.ALARM), FoundryBlock.with(dev.denfry.promptcritical.mod.ops.FireDeviceBlockEntity::new));
     public static final DeferredBlock<PcDeviceBlock> DELUGE_NOZZLE = device("deluge_nozzle", instrument(), Spec.facing(PcProperties.RUNNING), FoundryBlock.with(dev.denfry.promptcritical.mod.ops.FireDeviceBlockEntity::new));

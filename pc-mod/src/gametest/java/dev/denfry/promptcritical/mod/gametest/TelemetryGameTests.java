@@ -111,4 +111,53 @@ public final class TelemetryGameTests {
                 .thenSucceed();
     }
 
+    /** 16 §16.3.4, R58: терминал без CC видит машину на КП, тренд из историана и нажимает её кнопку от имени игрока. */
+    @GameTest(template = LARGE, timeoutTicks = 600)
+    public static void operatorTerminalShowsAndControlsTheMachine(GameTestHelper h) {
+        var facing = BlockStateProperties.HORIZONTAL_FACING;
+        BlockPos hist = new BlockPos(9, 2, 7), term = new BlockPos(5, 2, 9);
+        h.setBlock(COLUMN, PcBlocks.CRUDE_COLUMN.get().defaultBlockState().setValue(facing, Direction.NORTH));
+        h.setBlock(RTU, PcBlocks.RTU_STATION.get().defaultBlockState().setValue(facing, Direction.NORTH));
+        h.setBlock(hist, PcBlocks.HISTORIAN_SERVER.get().defaultBlockState().setValue(facing, Direction.NORTH));
+        h.setBlock(term, PcBlocks.OPERATOR_TERMINAL.get().defaultBlockState().setValue(facing, Direction.NORTH));
+        String id = TelemetryGatewayBlockEntity.id("crude_column", h.absolutePos(COLUMN));
+        int[] view = new int[dev.denfry.promptcritical.mod.scada.OperatorTerminalPanels.CHANNELS];
+        double[] before = new double[1];
+        h.startSequence()
+                .thenWaitUntil(() -> {
+                    var t = (dev.denfry.promptcritical.mod.scada.OperatorTerminalBlockEntity) h.getBlockEntity(term);
+                    t.readPanel(view);
+                    h.assertTrue((view[dev.denfry.promptcritical.mod.scada.OperatorTerminalPanels.FLAGS]
+                            & dev.denfry.promptcritical.mod.scada.OperatorTerminalPanels.F_POWERED) != 0, "terminal powered");
+                    h.assertTrue(view[dev.denfry.promptcritical.mod.scada.OperatorTerminalPanels.COUNT] >= 1, "machines on the terminal");
+                    var layout = dev.denfry.promptcritical.mod.panel.PanelLayouts.byIndex(
+                            view[dev.denfry.promptcritical.mod.scada.OperatorTerminalPanels.S_LAYOUT] - 1);
+                    h.assertTrue(layout != null && layout.id.equals("crude_column"), "column selected: " + (layout == null ? null : layout.id));
+                    h.assertTrue((view[dev.denfry.promptcritical.mod.scada.OperatorTerminalPanels.FLAGS]
+                            & dev.denfry.promptcritical.mod.scada.OperatorTerminalPanels.F_TREND) != 0, "trend from the historian");
+                    h.assertTrue(h.getBlockState(term).getValue(BlockStateProperties.POWERED), "screen lit");
+                })
+                .thenExecute(() -> {
+                    TelemetryGatewayBlockEntity g = h.getBlockEntity(RTU);
+                    before[0] = ((Number) g.read(id).get("prod.outlet")).doubleValue();
+                    var layout = dev.denfry.promptcritical.mod.panel.PanelLayouts.get("crude_column");
+                    int up = -1;
+                    for (var e : layout.elements)
+                        if (e instanceof dev.denfry.promptcritical.mod.panel.PanelLayout.Button b
+                                && dev.denfry.promptcritical.mod.panel.PanelText.shortKey(b.label()).equals("prod.t_up")) up = b.id();
+                    int column = -1;
+                    for (int k = 0; k < dev.denfry.promptcritical.mod.scada.OperatorTerminalPanels.COMMANDS; k++)
+                        if (view[dev.denfry.promptcritical.mod.scada.OperatorTerminalPanels.CMD0 + k] - 1 == up) column = k;
+                    h.assertTrue(up >= 0 && column >= 0, "T+ among the terminal commands");
+                    var t = (dev.denfry.promptcritical.mod.scada.OperatorTerminalBlockEntity) h.getBlockEntity(term);
+                    t.onPanelButton(net.neoforged.neoforge.common.util.FakePlayerFactory.getMinecraft(h.getLevel()),
+                            dev.denfry.promptcritical.mod.scada.OperatorTerminalPanels.CMD_B0 + column);
+                })
+                .thenWaitUntil(() -> {
+                    TelemetryGatewayBlockEntity g = h.getBlockEntity(RTU);
+                    double now = ((Number) g.read(id).get("prod.outlet")).doubleValue();
+                    h.assertTrue(now > before[0], "T+ from the terminal raised the outlet setpoint: " + before[0] + " -> " + now);
+                })
+                .thenSucceed();
+    }
 }

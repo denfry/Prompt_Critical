@@ -158,7 +158,7 @@ public final class PcTagProviders {
     /** Подходят по суффиксу, но это части работающего парового тракта [моё]. */
     static final Set<String> NOT_MOVABLE_VESSELS = Set.of("steam_drum", "steam_engine_cylinder");
     /** Приборы и элементы пульта 03c — {@code create:brittle}. */
-    static final Set<String> BRITTLE = Set.of("annunciator_panel", "alarm_horn", "control_desk", "historian_server",
+    static final Set<String> BRITTLE = Set.of("annunciator_panel", "alarm_horn", "control_desk", "historian_server", "operator_terminal", "intercom_station", "plant_loudspeaker",
             "rtu_station", "simulation_workstation", "training_simulator", "simulator_console", "instructor_station",
             "watchdog_relay", "indicator_lamp", "recording_gauge", "tank_gauge", "energy_meter", "relay_rack");
 

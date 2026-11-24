@@ -15,7 +15,21 @@ public final class SpeechRange {
     /** Маска изолирующего аппарата с переговорной мембраной [BALANCE]. */
     public static final double SCBA_FACTOR = 0.8;
 
+    /** Рупорный громкоговоритель ГГС на 1 м, дБ(А) [BALANCE] ({@code ops.pa_speaker_spl_db}, 13 §13.3.4). */
+    public static final double PA_SPEAKER_DB = 110;
+    /** Запас над шумом для разборчивости речевого оповещения (STI ≥ 0,5, МЭК 60268-16), дБ ({@code ops.pa_snr_db}). */
+    public static final double PA_SNR_DB = 10;
+
     private SpeechRange() {}
+
+    /**
+     * Радиус разборчивости громкоговорителя (13 §13.3.4): {@code L₁ − 20·lg r ≥ L_шум + Δ}, то есть
+     * {@code r = 10^((L₁ − L_шум − Δ)/20)}, не больше {@code maxM}; шум −∞ — тихо, весь предел.
+     */
+    public static double speakerMetres(double speakerDb, double noiseDb, double snrDb, double maxM) {
+        if (Double.isNaN(noiseDb)) return maxM;
+        return Math.min(maxM, Math.pow(10, (speakerDb - noiseDb - snrDb) / 20));
+    }
 
     /**
      * Дальность речи, м.

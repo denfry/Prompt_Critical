@@ -563,6 +563,15 @@ public final class PcBlockStateProvider extends BlockStateProvider {
             case "fire_alarm_panel" -> s.getValue(PcProperties.ALARM) ? id + "_fire"
                     : s.getValue(BlockStateProperties.POWERED) ? id + "_fault" : id;
             case "historian_server" -> s.getValue(BlockStateProperties.LIT) ? id + "_busy" : id;
+            case "intercom_station" -> s.getValue(PcProperties.INTERCOM_MOUNT) == PcProperties.PaMount.DESK ? id + "_desk"
+                    : !s.getValue(BlockStateProperties.POWERED) ? id + "_fault" : s.getValue(PcProperties.RUNNING) ? id + "_talking" : id;
+            case "plant_loudspeaker" -> switch (s.getValue(PcProperties.SPEAKER_MOUNT)) {
+                case POLE -> id + "_pole";
+                case CEILING -> id + "_ceiling";
+                default -> s.getValue(PcProperties.RUNNING) ? id + "_active" : id;
+            };
+            case "operator_terminal" -> !s.getValue(BlockStateProperties.POWERED) ? id
+                    : s.getValue(PcProperties.ALARM) ? id + "_alarm" : id + "_on";
             case "foam_proportioner" -> s.getValue(BlockStateProperties.POWERED) ? id + "_6" : id;
             case "oil_skimmer", "cp_rectifier" -> s.getValue(PcProperties.RUNNING) ? id + "_on" : id;
             case "oil_boom" -> s.getValue(BlockStateProperties.HORIZONTAL_AXIS) == Direction.Axis.X ? id + "_x" : id;

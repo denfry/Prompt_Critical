@@ -40,6 +40,8 @@ public final class ServerConfig {
             COMPAT_VOICECHAT;
     public static final ModConfigSpec.BooleanValue VOICE_NOISE_MASKING;
     public static final ModConfigSpec.DoubleValue VOICE_SPEECH_SPL_DB, VOICE_MIN_RANGE_M;
+    public static final ModConfigSpec.DoubleValue PA_SPEAKER_SPL_DB, PA_SNR_DB, PA_MAX_RANGE_M;
+    public static final ModConfigSpec.IntValue PA_MAX_SPEAKERS_PER_ZONE;
     public static final ModConfigSpec.EnumValue<BodyTemperatureOwner> COMPAT_BODY_TEMPERATURE;
     /** Машины берут мощность от розеток, силовых щитов и ИБП. */
     public static final ModConfigSpec.BooleanValue MACHINES_NEED_POWER;
@@ -516,6 +518,14 @@ public final class ServerConfig {
                 .defineInRange("voice_speech_spl_db", 84.0, 40.0, 130.0);
         VOICE_MIN_RANGE_M = b.comment("Speech range never falls below this, m (16 §16.4.2)")
                 .defineInRange("voice_min_range_m", 2.0, 0.5, 16.0);
+        PA_SPEAKER_SPL_DB = b.comment("[BALANCE] PA horn loudspeaker at 1 m, dB(A) (13 §13.3.4)")
+                .defineInRange("pa_speaker_spl_db", 110.0, 80.0, 140.0);
+        PA_SNR_DB = b.comment("Margin over the noise for intelligible voice alarm, dB (13 §13.3.4; STI 0.5, IEC 60268-16)")
+                .defineInRange("pa_snr_db", 10.0, 0.0, 30.0);
+        PA_MAX_RANGE_M = b.comment("Farthest a PA loudspeaker carries, m; not above the Simple Voice Chat voice range (16 §16.4.1)")
+                .defineInRange("pa_max_range_m", 48.0, 4.0, 256.0);
+        PA_MAX_SPEAKERS_PER_ZONE = b.comment("Loudspeakers one PA zone may hold (13 §13.3.4)")
+                .defineInRange("pa_max_speakers_per_zone", 16, 1, 256);
         b.pop();
         b.push("mod");
         b.push("compat");
