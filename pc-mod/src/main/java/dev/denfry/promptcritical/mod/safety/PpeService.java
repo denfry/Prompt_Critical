@@ -53,6 +53,11 @@ public final class PpeService {
         return PpeItem.is(chest, PpeItem.Kind.SCBA) && PpeItem.air(chest) > 0;
     }
 
+    /** Надет противогаз: на голове, вставкой в каске или в слоте снаряжения. */
+    public static boolean wearsGasMask(Player p) {
+        return maskStack(p) != null;
+    }
+
     /** Противогаз игрока: на голове или вставкой в каске; {@code null} — нет. */
     @Nullable
     static ItemStack maskStack(Player p) {
