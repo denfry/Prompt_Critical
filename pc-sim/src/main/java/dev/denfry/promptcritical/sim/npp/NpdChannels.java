@@ -5,8 +5,9 @@ import java.util.List;
 
 /**
  * Решётка каналов NPD на торце: квадратная сетка шагом 260,35 мм со смещением на полшага от оси каландра, 132 узла,
- * ближайшие к оси первыми, — так же, как в модели (art/blockbench/core/candu_npd/candu_npd.author.js) и в
- * {@link LightWaterCore} (радиусы по возрастанию). Номер канала — индекс в этом порядке.
+ * ближайшие к оси первыми, — те же 132 узла, что в модели (art/blockbench/core/candu_npd/candu_npd.author.js), и
+ * радиусы по возрастанию, как в {@link LightWaterCore}. Номер канала — индекс в этом порядке (порядок внутри кольца
+ * у модели может отличаться: там он задаёт только цвет фидеров; канал 0 в обоих — узел (−1, −1)).
  *
  * <p>Течение в соседних каналах встречное (CANTEACH, «CANDU Origins and Evolution»: отсюда двусторонняя перегрузка):
  * по шахматному порядку свежие пучки вводятся то с северного, то с южного торца — всегда по течению.
@@ -19,14 +20,19 @@ public final class NpdChannels {
     }
 
     private static int[][] nodes() {
-        // тот же порядок, что в скрипте модели: i снаружи, j внутри, устойчивая сортировка по расстоянию от оси
-        double p = PITCH_M * 16;
-        List<double[]> pts = new ArrayList<>();
+        // Расстояние — точным целым (2i+1)² + (2j+1)²: на краю 132 узлов два семейства лежат на одном радиусе
+        // (5½, 3½) и (6½, ½) шага, и сравнение плавающих hypot выбирало между ними по шуму округления — решётка
+        // выходила несимметричной и расходилась с моделью. При равном радиусе ближе узел с меньшей наибольшей
+        // координатой: так берётся восьмёрка (5½, 3½), как в модели, и зона симметрична. Дальше — i снаружи, j внутри.
+        List<int[]> pts = new ArrayList<>();
         for (int i = -8; i < 8; i++)
-            for (int j = -8; j < 8; j++) pts.add(new double[] {i, j, Math.hypot((i + 0.5) * p, (j + 0.5) * p)});
-        pts.sort((a, b) -> Double.compare(a[2], b[2]));
+            for (int j = -8; j < 8; j++) {
+                int a = 2 * i + 1, b = 2 * j + 1;
+                pts.add(new int[] {i, j, a * a + b * b, Math.max(Math.abs(a), Math.abs(b))});
+            }
+        pts.sort((u, v) -> u[2] != v[2] ? Integer.compare(u[2], v[2]) : Integer.compare(u[3], v[3]));
         int[][] out = new int[NpdReactor.CHANNELS][];
-        for (int k = 0; k < out.length; k++) out[k] = new int[] {(int) pts.get(k)[0], (int) pts.get(k)[1]};
+        for (int k = 0; k < out.length; k++) out[k] = new int[] {pts.get(k)[0], pts.get(k)[1]};
         return out;
     }
 

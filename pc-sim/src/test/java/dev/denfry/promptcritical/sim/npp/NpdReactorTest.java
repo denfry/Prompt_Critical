@@ -1,5 +1,6 @@
 package dev.denfry.promptcritical.sim.npp;
 
+import static org.junit.jupiter.api.Assertions.assertArrayEquals;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
@@ -170,6 +171,20 @@ class NpdReactorTest {
             if (NpdChannels.fuelledFromNorth(ch)) north++;
         }
         assertTrue(north >= 60 && north <= 72, "north " + north);
+        // зона симметрична, как в модели: зеркальный узел каждого канала по обеим осям — тоже канал (на краю два
+        // семейства узлов на одном радиусе, и выбор между ними не должен зависеть от округления)
+        for (int ch = 0; ch < NpdReactor.CHANNELS; ch++) {
+            int[] n = NpdChannels.node(ch);
+            assertTrue(seen.contains(label(-1 - n[0], n[1])) && seen.contains(label(n[0], -1 - n[1])),
+                    "asymmetric " + NpdChannels.label(ch));
+        }
+        assertArrayEquals(new int[] {-1, -1}, NpdChannels.node(0));
+    }
+
+    /** Обозначение узла (i, j) по правилу {@link NpdChannels#label}. */
+    private static String label(int i, int j) {
+        int row = 7 - j, col = i + 8 + 1;
+        return (char) ('A' + row) + (col < 10 ? "0" : "") + col;
     }
 
     @Test
