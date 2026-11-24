@@ -65,6 +65,7 @@ public final class TrigaBlockEntity extends IronworksBlockEntity implements Pane
         if (ticks++ % 20 == 0) pool = checkPool(sl);
         if (!pool && !core.scrammed()) core.scram(events(sl));
         core.step(DT, events(sl));
+        dev.denfry.promptcritical.mod.station.Stations.tripState(sl, worldPosition, core.scrammed(), "SCRAM"); // журнал станции 04d §4d.8.2
         BlockState s = getBlockState();
         boolean armed = core.armed(), fired = core.transientInsertion() < 1;
         if (s.hasProperty(BlockStateProperties.ENABLED) && s.hasProperty(BlockStateProperties.TRIGGERED)
@@ -148,6 +149,12 @@ public final class TrigaBlockEntity extends IronworksBlockEntity implements Pane
         if (core.fuelDamaged()) f |= 1 << TrigaPanels.TF_FUEL_FAILED;
         if (!pool) f |= 1 << TrigaPanels.TF_NO_POOL;
         out[TrigaPanels.T_FLAGS] = f;
+    }
+
+    /** Сброс АЗ и байпас — право {@code PROTECTION} станции (04d §4d.9.2). */
+    @Override
+    public dev.denfry.promptcritical.sim.journal.Permission requiredPermission(int id) {
+        return id == TrigaPanels.BTN_RESET ? dev.denfry.promptcritical.sim.journal.Permission.PROTECTION : dev.denfry.promptcritical.sim.journal.Permission.CONTROL;
     }
 
     @Override

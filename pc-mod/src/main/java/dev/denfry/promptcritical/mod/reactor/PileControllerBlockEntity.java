@@ -84,6 +84,8 @@ public final class PileControllerBlockEntity extends IronworksBlockEntity implem
         }
         if (ticks++ % SCAN_PERIOD == 0) rescan(u);
         GraphitePile p = u.pile();
+        if (level instanceof net.minecraft.server.level.ServerLevel sl) // журнал станции 04d §4d.8.2
+            dev.denfry.promptcritical.mod.station.Stations.tripState(sl, worldPosition, p.tripped(), p.tripped() ? p.trip().name() : "");
         if (ticks % FIRE_PERIOD == 0 && !top.isEmpty()) consequences(p);
         if (ticks % 20 == 0) {
             radiate(p);
@@ -286,6 +288,12 @@ public final class PileControllerBlockEntity extends IronworksBlockEntity implem
 
     private static int pct(double x) {
         return Double.isNaN(x) ? 0 : (int) Math.round(x * 100);
+    }
+
+    /** Сброс АЗ и байпас — право {@code PROTECTION} станции (04d §4d.9.2). */
+    @Override
+    public dev.denfry.promptcritical.sim.journal.Permission requiredPermission(int id) {
+        return id == ReactorPanels.BTN_RESET ? dev.denfry.promptcritical.sim.journal.Permission.PROTECTION : dev.denfry.promptcritical.sim.journal.Permission.CONTROL;
     }
 
     @Override

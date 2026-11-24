@@ -459,6 +459,12 @@ public final class WaterTubeBoilerBlockEntity extends IronworksBlockEntity imple
         b.submit(new SimCommand.Operate(simId, action), new CommandSource.Panel(who, worldPosition.asLong()));
     }
 
+    /** Сброс АЗ и байпас — право {@code PROTECTION} станции (04d §4d.9.2). */
+    @Override
+    public dev.denfry.promptcritical.sim.journal.Permission requiredPermission(int id) {
+        return id == PowerhousePanels.BUTTON_BYPASS ? dev.denfry.promptcritical.sim.journal.Permission.PROTECTION : dev.denfry.promptcritical.sim.journal.Permission.CONTROL;
+    }
+
     @Override
     public void onPanelButton(ServerPlayer player, int id) {
         WaterTubeUnit u = unit();

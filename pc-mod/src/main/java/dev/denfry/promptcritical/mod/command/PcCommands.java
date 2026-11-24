@@ -79,7 +79,10 @@ public final class PcCommands {
     public static void register(CommandDispatcher<CommandSourceStack> dispatcher) {
         // корень открыт всем, у кого есть хоть одна ветка; остальное — администратор (16 §16.11.4)
         dispatcher.register(Commands.literal("pc").requires(s -> PcPermissions.admin(s) || PcPermissions.allows(s, PcPermissions.COMMAND_ENV)
-                        || PcPermissions.allows(s, PcPermissions.COMMAND_STATS) || PcPermissions.allows(s, PcPermissions.LOTO_OVERRIDE))
+                        || PcPermissions.allows(s, PcPermissions.COMMAND_STATS) || PcPermissions.allows(s, PcPermissions.LOTO_OVERRIDE)
+                        || s.isPlayer()) // станции 04d §4d.9: свои ветки у каждого игрока
+                .then(dev.denfry.promptcritical.mod.station.StationCommands.station())
+                .then(dev.denfry.promptcritical.mod.station.StationCommands.journal())
                 .then(Commands.literal("debug").requires(PcPermissions::admin)
                         .then(Commands.literal("hash").executes(PcCommands::hash))
                         .then(Commands.literal("devices").executes(PcCommands::devices)))

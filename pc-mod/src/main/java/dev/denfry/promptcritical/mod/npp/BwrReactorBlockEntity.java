@@ -240,6 +240,7 @@ public final class BwrReactorBlockEntity extends DeviceBlockEntity implements de
                 p.displayClientMessage(NppText.msg("scram", net.minecraft.network.chat.Component.translatable(
                         "panel.promptcritical.bwr.reason." + t.name().toLowerCase(Locale.ROOT))).withStyle(ChatFormatting.RED), false);
         }
+        dev.denfry.promptcritical.mod.station.Stations.tripState(sl, worldPosition, t != BoilingWaterReactor.Trip.NONE, t.name()); // журнал станции 04d §4d.8.2
         lastTrip = t;
     }
 
@@ -347,6 +348,12 @@ public final class BwrReactorBlockEntity extends DeviceBlockEntity implements de
                 | (r.reliefKgS() > 0 || acc.adsOpen() ? 1 << BwrPanels.F_RELIEF : 0)
                 | (r.controlDrive() < 0 ? 1 << BwrPanels.F_UP : 0) | (r.controlDrive() > 0 ? 1 << BwrPanels.F_DOWN : 0);
         accident.readPanel(v, BwrPanels.ACCIDENT);
+    }
+
+    /** Сброс АЗ и байпас — право {@code PROTECTION} станции (04d §4d.9.2). */
+    @Override
+    public dev.denfry.promptcritical.sim.journal.Permission requiredPermission(int id) {
+        return id == BwrPanels.B_RESET ? dev.denfry.promptcritical.sim.journal.Permission.PROTECTION : dev.denfry.promptcritical.sim.journal.Permission.CONTROL;
     }
 
     @Override

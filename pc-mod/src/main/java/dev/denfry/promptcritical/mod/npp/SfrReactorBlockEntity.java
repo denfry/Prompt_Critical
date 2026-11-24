@@ -253,6 +253,7 @@ public final class SfrReactorBlockEntity extends DeviceBlockEntity implements de
             for (ServerPlayer p : sl.getPlayers(p -> p.distanceToSqr(worldPosition.getCenter()) < 48 * 48))
                 p.displayClientMessage(NppText.msg("scram", SfrPanels.reason(t)).withStyle(ChatFormatting.RED), false);
         }
+        dev.denfry.promptcritical.mod.station.Stations.tripState(sl, worldPosition, t != SodiumFastReactor.Trip.NONE, t.name()); // журнал станции 04d §4d.8.2
         lastTrip = t;
     }
 
@@ -410,6 +411,12 @@ public final class SfrReactorBlockEntity extends DeviceBlockEntity implements de
             for (BlockPos x : exchangers) if (level.getBlockEntity(x) instanceof IhxBlockEntity ihx && ihx.pumping()) pumping++;
             v[Bor60Panels.IHX_PUMPS] = pumping;
         }
+    }
+
+    /** Сброс АЗ и байпас — право {@code PROTECTION} станции (04d §4d.9.2). */
+    @Override
+    public dev.denfry.promptcritical.sim.journal.Permission requiredPermission(int id) {
+        return id == SfrPanels.B_RESET ? dev.denfry.promptcritical.sim.journal.Permission.PROTECTION : dev.denfry.promptcritical.sim.journal.Permission.CONTROL;
     }
 
     @Override

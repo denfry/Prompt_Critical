@@ -220,8 +220,27 @@ public final class DeviceRuntime {
         snapshot = new Snapshot(tags, index, buttons, ch, clock, simTime, maintenance, present);
     }
 
-    /** Тик устройства: исполнить команды, снять срез, проверить подписки и зонды, разослать события. */
-    void tick(long clock) {
+    /** Есть ли у профиля зонд событий (лампа АЗ, состояние ПАЗ). */
+    public boolean hasProbe() {
+        return probe != null;
+    }
+
+    /** Id устройства, как его видят шлюз телемеханики и аннунциатор ({@code pwr_reactor@12,64,-30}). */
+    public String deviceId() {
+        return deviceId;
+    }
+
+    /** Снять срез сейчас (поток сервера): API аддонов читает устройство и без подключённого компьютера. */
+    public Snapshot sampleNow() {
+        sample(DeviceHub.clock());
+        return snapshot;
+    }
+
+    /**
+     * Тик устройства: исполнить команды, снять срез, проверить подписки и зонды, разослать события. Без компьютеров его
+     * вызывает {@code mod.api.ApiDevices}, пока API аддонов слушают.
+     */
+    public void tick(long clock) {
         Outgoing o;
         while ((o = outbox.poll()) != null) result(o.clientKey(), o.ticket());
         Pending p;
@@ -266,6 +285,7 @@ public final class DeviceRuntime {
             @Override
             public void emit(String event, Map<String, Object> payload) {
                 broadcast(event, payload, clock);
+                dev.denfry.promptcritical.mod.api.ApiEvents.device(be, deviceId, event, payload);
             }
 
             @Override
@@ -356,7 +376,7 @@ public final class DeviceRuntime {
         if (clients.isEmpty()) DeviceHub.idle(this);
     }
 
-    boolean hasClients() {
+    public boolean hasClients() {
         return !clients.isEmpty();
     }
 

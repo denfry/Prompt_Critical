@@ -1,11 +1,8 @@
 package dev.denfry.promptcritical.api;
 
-/**
- * Точка входа API для аддонов (05 §5.8.1). Доступ к симуляции и события
- * регистрации добавляются по мере появления доменных подсистем.
- */
+/** Entry point of the addon API (05 §5.8.1). */
 public interface PromptCriticalApi {
-    /** Мажорная версия API: увеличивается при несовместимых изменениях. */
+    /** Major API version: raised on incompatible changes. */
     int CURRENT_API_VERSION = 1;
 
     static PromptCriticalApi get() {
@@ -13,4 +10,10 @@ public interface PromptCriticalApi {
     }
 
     int apiVersion();
+
+    /**
+     * Read-only access to the simulation of dimension {@code dimension} ({@code minecraft:overworld}). The dimension is
+     * a resource location string so that this module stays free of Minecraft classes.
+     */
+    SimulationAccess simulation(String dimension);
 }

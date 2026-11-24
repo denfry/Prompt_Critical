@@ -21,6 +21,8 @@ public final class ServerConfig {
     public static final ModConfigSpec.DoubleValue ISOTOPES_GAMMA_HEATING_W_PER_G, ISOTOPES_FILM_EXPOSURE_GY, ISOTOPES_RTG_TE_SYSTEM_FACTOR,
             ISOTOPES_RTG_TE_DEGRADATION_PER_YEAR, TRANSPORT_TRACKED_ACTIVITY_BQ;
     public static final ModConfigSpec.IntValue ISOTOPES_ORPHAN_AFTER_S;
+    public static final ModConfigSpec.IntValue JOURNAL_MAX_ENTRIES_PER_STATION;
+    public static final ModConfigSpec.IntValue JOURNAL_ANNOUNCE_MIN_LEVEL;
     public static final ModConfigSpec.DoubleValue K_STORAGE;
     public static final ModConfigSpec.DoubleValue K_BURN;
     public static final ModConfigSpec.EnumValue<DecayHeatClock> DECAY_HEAT_CLOCK;
@@ -496,6 +498,13 @@ public final class ServerConfig {
         b.push("transport");
         TRANSPORT_TRACKED_ACTIVITY_BQ = b.comment("[BALANCE] Items above this activity, Bq, or in IAEA categories 1-3, are tracked sources (04d §4d.6.1)")
                 .defineInRange("tracked_activity_bq", 1e12, 1e6, 1e20);
+        b.pop();
+
+        b.push("journal");
+        JOURNAL_MAX_ENTRIES_PER_STATION = b.comment("[BALANCE] Station journal ring buffer size, entries per station; about 1.5 MB at 10000 (04d §4d.8.2)")
+                .defineInRange("max_entries_per_station", 10_000, 100, 1_000_000);
+        JOURNAL_ANNOUNCE_MIN_LEVEL = b.comment("Lowest event scale level (0-7, INES-like) announced in chat beyond the station team (04d §4d.8.3)")
+                .defineInRange("announce_min_level", 3, 0, 8);
         b.pop();
 
         b.push("site");

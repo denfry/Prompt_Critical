@@ -360,6 +360,7 @@ public final class PwrReactorBlockEntity extends DeviceBlockEntity implements de
             for (ServerPlayer p : sl.getPlayers(p -> p.distanceToSqr(worldPosition.getCenter()) < 48 * 48))
                 p.displayClientMessage(NppText.msg("scram", why).withStyle(ChatFormatting.RED), false);
         }
+        dev.denfry.promptcritical.mod.station.Stations.tripState(sl, worldPosition, tripped, tripped ? reactor.protection().firstOut().name() : ""); // журнал станции 04d §4d.8.2
         wasTripped = tripped;
         // «Чистая АЗ» (11 §11.2.2): с мощности выше 50 % и без новых разгерметизаций за минуту после срабатывания
         if (tripTick >= 0 && ticks - tripTick == SCRAM_CLEAN_TICKS) {
@@ -630,6 +631,12 @@ public final class PwrReactorBlockEntity extends DeviceBlockEntity implements de
             if (r.plant().loops() > 2) v[Vver70Panels.PUMP3] = (int) Math.round(r.pumpSpeed(2) * 100);
             v[Vver70Panels.V70_FLAGS] = flags;
         }
+    }
+
+    /** Сброс АЗ и байпас — право {@code PROTECTION} станции (04d §4d.9.2). */
+    @Override
+    public dev.denfry.promptcritical.sim.journal.Permission requiredPermission(int id) {
+        return id == PwrPanels.B_RESET || id == PwrPanels.B_LOW_FLUX ? dev.denfry.promptcritical.sim.journal.Permission.PROTECTION : dev.denfry.promptcritical.sim.journal.Permission.CONTROL;
     }
 
     @Override

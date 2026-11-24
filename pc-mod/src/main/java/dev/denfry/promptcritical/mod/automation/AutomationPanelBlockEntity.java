@@ -67,6 +67,17 @@ public class AutomationPanelBlockEntity extends AutomationBlockEntity implements
         for (int i = 0; i < rows.size() && i < out.length; i++) out[i] = rows.get(i).read().read(u, cursor);
     }
 
+    /** Сброс и байпас ПАЗ — {@code PROTECTION}, калибровка — {@code TESTS_AND_SETUP} (04d §4d.9.2). */
+    @Override
+    public dev.denfry.promptcritical.sim.journal.Permission requiredPermission(int id) {
+        if (id >= 0 && id < 2 * spec().rows().size()) return dev.denfry.promptcritical.sim.journal.Permission.CONTROL;
+        return switch (id) {
+            case AutomationPanels.BUTTON_SIS_RESET, AutomationPanels.BUTTON_SIS_BYPASS -> dev.denfry.promptcritical.sim.journal.Permission.PROTECTION;
+            case AutomationPanels.BUTTON_CALIBRATE -> dev.denfry.promptcritical.sim.journal.Permission.TESTS_AND_SETUP;
+            default -> dev.denfry.promptcritical.sim.journal.Permission.CONTROL;
+        };
+    }
+
     @Override
     public void onPanelButton(ServerPlayer player, int id) {
         AutomationUnit u = unit();

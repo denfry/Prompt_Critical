@@ -91,7 +91,12 @@ public class AnnunciatorBlockEntity extends DeviceBlockEntity implements Foundry
 
     public AnnunciatorBlockEntity(BlockPos pos, BlockState state) {
         super(ScadaBlockEntities.ANNUNCIATOR.get(), pos, state);
-        engine.setListener(e -> sinks.values().forEach(s -> s.accept(e)));
+        engine.setListener(e -> {
+            sinks.values().forEach(s -> s.accept(e));
+            if (dev.denfry.promptcritical.mod.api.ApiEvents.active()) dev.denfry.promptcritical.mod.api.ApiEvents.alarm(this,
+                    TelemetryGatewayBlockEntity.id(BuiltInRegistries.BLOCK.getKey(getBlockState().getBlock()).getPath(), worldPosition),
+                    e, e.id() == 0 ? null : engine.get(e.id()));
+        });
     }
 
     public AlarmEngine engine() {

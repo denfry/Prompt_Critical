@@ -263,6 +263,7 @@ public final class CanduReactorBlockEntity extends DeviceBlockEntity implements 
                 p.displayClientMessage(NppText.msg("scram", net.minecraft.network.chat.Component.translatable(
                         "panel.promptcritical.npp.trip." + t.name().toLowerCase(java.util.Locale.ROOT))).withStyle(ChatFormatting.RED), false);
         }
+        dev.denfry.promptcritical.mod.station.Stations.tripState(sl, worldPosition, t != CanduReactor.Trip.NONE, t.name()); // журнал станции 04d §4d.8.2
         lastTrip = t;
         takeBundle();
         if (ticks % 100 == 0) setChanged();
@@ -443,6 +444,12 @@ public final class CanduReactorBlockEntity extends DeviceBlockEntity implements 
                 | (r.moderator().kg() > 0 && r.moderator().purity() < HeavyWater.REACTOR_GRADE_X - 5e-4 ? 1 << CanduPanels.F_DOWNGRADED : 0)
                 | (r.moderatorLevel() < 0.999 || r.coolantFill() < 0.999 ? 1 << CanduPanels.F_LOW_D2O : 0);
         accident.readPanel(v, CanduPanels.ACCIDENT);
+    }
+
+    /** Сброс АЗ и байпас — право {@code PROTECTION} станции (04d §4d.9.2). */
+    @Override
+    public dev.denfry.promptcritical.sim.journal.Permission requiredPermission(int id) {
+        return id == CanduPanels.B_RESET ? dev.denfry.promptcritical.sim.journal.Permission.PROTECTION : dev.denfry.promptcritical.sim.journal.Permission.CONTROL;
     }
 
     @Override

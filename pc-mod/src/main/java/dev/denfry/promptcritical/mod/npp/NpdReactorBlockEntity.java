@@ -248,6 +248,7 @@ public final class NpdReactorBlockEntity extends DeviceBlockEntity implements de
                 p.displayClientMessage(NpdText.msg("dump", Component.translatable(
                         "panel.promptcritical.npd.trip." + t.name().toLowerCase(Locale.ROOT))).withStyle(ChatFormatting.RED), false);
         }
+        dev.denfry.promptcritical.mod.station.Stations.tripState(sl, worldPosition, t != NpdReactor.Trip.NONE, t.name()); // журнал станции 04d §4d.8.2
         lastTrip = t;
         takeBundle();
         if (ticks % 100 == 0) setChanged();
@@ -511,6 +512,12 @@ public final class NpdReactorBlockEntity extends DeviceBlockEntity implements de
         double base = p.ordinal() - 1, n = NpdFuellingMachine.Phase.values().length - 1;
         if (p == NpdFuellingMachine.Phase.EXCHANGE && machine.toPush() > 0) base += (double) machine.pushed() / machine.toPush();
         return Math.min(1, base / n);
+    }
+
+    /** Сброс АЗ и байпас — право {@code PROTECTION} станции (04d §4d.9.2). */
+    @Override
+    public dev.denfry.promptcritical.sim.journal.Permission requiredPermission(int id) {
+        return id == NpdPanels.B_RESET ? dev.denfry.promptcritical.sim.journal.Permission.PROTECTION : dev.denfry.promptcritical.sim.journal.Permission.CONTROL;
     }
 
     @Override

@@ -216,6 +216,7 @@ public final class PowerReactorBlockEntity extends DeviceBlockEntity implements 
             for (ServerPlayer p : sl.getPlayers(p -> p.distanceToSqr(worldPosition.getCenter()) < 48 * 48))
                 p.displayClientMessage(NppText.msg("scram", tripName(t)).withStyle(ChatFormatting.RED), false);
         }
+        dev.denfry.promptcritical.mod.station.Stations.tripState(sl, worldPosition, t != ChannelReactor.Trip.NONE, t.name()); // журнал станции 04d §4d.8.2
         lastTrip = t;
         if (reactor.xenonPitEscaped())
             dev.denfry.promptcritical.mod.content.SimAchievements.nearby(sl, worldPosition,
@@ -356,6 +357,12 @@ public final class PowerReactorBlockEntity extends DeviceBlockEntity implements 
                 | (r.marginLow() ? 1 << NppPanels.F_ORM_LOW : 0);
         v[NppPanels.ORM] = (int) Math.round(r.operationalMargin() * 10);
         accident.readPanel(v, NppPanels.ACCIDENT);
+    }
+
+    /** Сброс АЗ и байпас — право {@code PROTECTION} станции (04d §4d.9.2). */
+    @Override
+    public dev.denfry.promptcritical.sim.journal.Permission requiredPermission(int id) {
+        return id == NppPanels.B_RESET ? dev.denfry.promptcritical.sim.journal.Permission.PROTECTION : dev.denfry.promptcritical.sim.journal.Permission.CONTROL;
     }
 
     @Override
