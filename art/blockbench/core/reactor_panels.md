@@ -7,7 +7,7 @@ bar 8 high with its label 10 px above; readout 13 high; lamp 14 x 14 with its la
 `guard` is an ordinary button drawn under the painted hinged guard; give it a confirm-twice or hold-to-trip action in code.
 The title plate is drawn by the code at y 5.
 
-## vver70_bpu: textures/gui/panel/vver70_bpu.png, 220 x 252
+## vver70_bpu: textures/gui/panel/vver70_bpu.png, 220 x 240
 
 | element | kind | x | y | size |
 |---|---|---|---|---|
@@ -15,25 +15,25 @@ The title plate is drawn by the code at y 5.
 | period | dial | 66 | 24 | medium |
 | primary pressure 0-16 MPa | dial | 120 | 24 | medium |
 | pressuriser level | glass | 184 | 24 | h 56 |
-| ARK group 1 | bar | 12 | 104 | w 92 |
-| ARK group 2 | bar | 116 | 104 | w 92 |
-| ARK group 3 | bar | 12 | 124 | w 92 |
-| ARK group 4 | bar | 116 | 124 | w 92 |
-| ARK group 5 | bar | 12 | 144 | w 92 |
-| ARK group 6 | bar | 116 | 144 | w 92 |
-| loop 1 hot/cold | readout | 12 | 158 | w 62 |
-| loop 2 hot/cold | readout | 79 | 158 | w 62 |
-| loop 3 hot/cold | readout | 146 | 158 | w 62 |
-| boron concentration | readout | 12 | 176 | w 96 |
-| PZ-1 | lamp | 116 | 175 | 14 x 14 |
-| PZ-2 | lamp | 162 | 175 | 14 x 14 |
-| MCP-1 start | button | 12 | 198 | w 30 |
-| MCP-1 stop | button | 46 | 198 | w 30 |
-| MCP-2 start | button | 80 | 198 | w 30 |
-| MCP-2 stop | button | 114 | 198 | w 30 |
-| MCP-3 start | button | 148 | 198 | w 30 |
-| MCP-3 stop | button | 182 | 198 | w 30 |
-| AZ (scram) | button (guarded) | 80 | 226 | w 60 |
+| ARK group 1 | bar | 12 | 98 | w 92 |
+| ARK group 2 | bar | 116 | 98 | w 92 |
+| ARK group 3 | bar | 12 | 116 | w 92 |
+| ARK group 4 | bar | 116 | 116 | w 92 |
+| ARK group 5 | bar | 12 | 134 | w 92 |
+| ARK group 6 | bar | 116 | 134 | w 92 |
+| loop 1 hot/cold | readout | 12 | 148 | w 62 |
+| loop 2 hot/cold | readout | 79 | 148 | w 62 |
+| loop 3 hot/cold | readout | 146 | 148 | w 62 |
+| boron concentration | readout | 12 | 166 | w 96 |
+| PZ-1 | lamp | 116 | 165 | 14 x 14 |
+| PZ-2 | lamp | 162 | 165 | 14 x 14 |
+| MCP-1 start | button | 12 | 188 | w 30 |
+| MCP-1 stop | button | 46 | 188 | w 30 |
+| MCP-2 start | button | 80 | 188 | w 30 |
+| MCP-2 stop | button | 114 | 188 | w 30 |
+| MCP-3 start | button | 148 | 188 | w 30 |
+| MCP-3 stop | button | 182 | 188 | w 30 |
+| AZ (scram) | button (guarded) | 80 | 214 | w 60 |
 
 ## candu_npd: textures/gui/panel/candu_npd.png, 220 x 172
 
