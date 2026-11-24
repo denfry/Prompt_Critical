@@ -113,9 +113,10 @@ public final class NpdGameTests {
      * Первый пуск: зона загружена, контур и бак сброса залиты через патрубки, «Взвод» закрывает сбросные клапаны,
      * ▲ гонит замедлитель из бака в каландр. Уровень проходит критический, мощность растёт от источника; насосы не
      * остановлены, период становится короче 10 с — защита сбрасывает замедлитель обратно в бак, и реактор глохнет.
-     * Подъём от пустого каландра — минут восемь, поэтому каландр заранее налит до 97 % критического уровня.
+     * Ручной ▲ идёт тонким клапаном (7 кг/с), поэтому каландр заранее налит до 99,5 % критического уровня: до
+     * критического ~50 с, до периода короче 10 с (≈ +0,7 % уровня) ещё ~100 с.
      */
-    @GameTest(template = TALL, timeoutTicks = 1600)
+    @GameTest(template = TALL, timeoutTicks = 4000)
     public static void npdGoesCriticalOnModeratorLevelAndDumpsOnAShortPeriod(GameTestHelper h) {
         place(h, REACTOR, PcBlocks.NPD_REACTOR_REAL.get(), Direction.NORTH);
         double[] at = new double[3]; // критический уровень, мощность на нём, мощность при сбросе
@@ -136,7 +137,7 @@ public final class NpdGameTests {
                             "all moderator in the dump tank: " + r.dumpTank().kg());
                     at[0] = r.criticalLevel();
                     h.assertTrue(at[0] > 0.2 && at[0] < 0.9, "fresh core critical part-full: " + at[0]);
-                    double pre = 0.97 * at[0] * r.moderatorCapacityKg(), total = r.dumpTank().kg();
+                    double pre = 0.995 * at[0] * r.moderatorCapacityKg(), total = r.dumpTank().kg();
                     r.moderator().set(pre, r.dumpTank().purity());
                     r.dumpTank().set(total - pre, r.moderator().purity());
                     ServerPlayer op = FakePlayerFactory.getMinecraft((ServerLevel) h.getLevel());

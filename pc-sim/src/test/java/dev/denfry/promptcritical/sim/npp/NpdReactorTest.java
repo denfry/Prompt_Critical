@@ -9,6 +9,7 @@ import static org.junit.jupiter.api.Assertions.assertTrue;
 import dev.denfry.promptcritical.sim.core.TreeStateReader;
 import dev.denfry.promptcritical.sim.core.TreeStateWriter;
 import dev.denfry.promptcritical.sim.fuel.FuelDesign;
+import dev.denfry.promptcritical.sim.heavywater.HeavyWater;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
@@ -100,7 +101,9 @@ class NpdReactorTest {
         assertTrue(r.resetTrip());
         r.driveLevel(1);
         run(r, 120);
-        assertTrue(r.moderatorLevel() > 0.05 && r.moderatorLevel() < 0.25, "pumped " + r.moderatorLevel());
+        // вручную — тонким клапаном: за две минуты меньше тонны, до критического уровня так не дойти быстро
+        double pumped = NpdReactor.FINE_KG_S * 120 / r.moderatorCapacityKg();
+        assertEquals(pumped, r.moderatorLevel(), 0.1 * pumped, "pumped " + r.moderatorLevel());
         r.setPumpsPowered(false);
         double held = r.moderatorLevel();
         run(r, 30);
@@ -179,6 +182,61 @@ class NpdReactorTest {
                     "asymmetric " + NpdChannels.label(ch));
         }
         assertArrayEquals(new int[] {-1, -1}, NpdChannels.node(0));
+    }
+
+    /** Сухой реактор с полной зоной: контур залит, вся D₂O замедлителя в баке сброса, клапаны взведены. */
+    private static NpdReactor coldFresh() {
+        NpdReactor r = NpdReactor.dry();
+        for (int i = 0; i < NpdReactor.CHANNELS; i++) assertTrue(r.loadChannel(i, BUNDLE_KG, 0.00711, 0.000054));
+        r.addCoolant(r.coolantCapacityKg(), HeavyWater.REACTOR_GRADE_X);
+        r.addModerator(r.moderatorCapacityKg(), HeavyWater.REACTOR_GRADE_X);
+        assertTrue(r.resetTrip());
+        return r;
+    }
+
+    private static void setLevel(NpdReactor r, double fraction) {
+        double cap = r.moderatorCapacityKg();
+        r.moderator().set(fraction * cap, HeavyWater.REACTOR_GRADE_X);
+        r.dumpTank().set((1 - fraction) * cap, HeavyWater.REACTOR_GRADE_X);
+    }
+
+    /**
+     * Статический критический уровень совпадает с динамикой: на 0,1 % уровня ниже него реактивность отрицательна и
+     * мощность лишь подтягивается к умножению источника, на 0,1 % выше — положительна и растёт с конечным периодом.
+     * Пока явная схема нагрева теплоносителя раскачивалась при естественной циркуляции, топливо грелось само и
+     * реальный критический уровень уходил примерно на 0,4 % выше расчётного.
+     */
+    @Test
+    void criticalLevelMatchesTheDynamicCritical() {
+        double crit = coldFresh().criticalLevel();
+        for (double d : new double[] {-0.001, 0.001}) {
+            NpdReactor r = coldFresh();
+            setLevel(r, crit + d);
+            run(r, 600);
+            double period = r.core().periodS();
+            boolean rising = period > 0 && period < 1000;
+            assertTrue(r.trip() == NpdReactor.Trip.NONE, "no trip at " + d);
+            assertTrue(d > 0 == r.core().reactivity() > 0, "reactivity sign at " + d + ": " + r.core().reactivity());
+            assertTrue(d > 0 == rising, "asymptotic period at " + d + ": " + period);
+            assertTrue(Math.abs(r.fuelK() - NpdReactor.INLET_K) < 1, "fuel stays at the inlet temperature: " + r.fuelK());
+        }
+    }
+
+    /** Вручную уровень идёт тонким клапаном, автомат вдали от критического — полным расходом насосов. */
+    @Test
+    void manualLevelMovesAtTheFineRate() {
+        NpdReactor r = coldFresh();
+        r.driveLevel(1);
+        run(r, 100);
+        assertEquals(NpdReactor.FINE_KG_S * 100, r.moderator().kg(), 0.05 * NpdReactor.FINE_KG_S * 100, "manual raise");
+        r.driveLevel(-1);
+        run(r, 50);
+        assertEquals(NpdReactor.FINE_KG_S * 50, r.moderator().kg(), 0.05 * NpdReactor.FINE_KG_S * 100, "manual lower");
+        NpdReactor a = coldFresh();
+        a.setPowerSetpoint(0.1);
+        a.setLevelMode(NpdReactor.LevelMode.AUTO);
+        run(a, 60);
+        assertTrue(a.moderator().kg() > 0.9 * NpdReactor.PUMP_KG_S * 60, "auto far from critical pumps fast: " + a.moderator().kg());
     }
 
     /** Обозначение узла (i, j) по правилу {@link NpdChannels#label}. */
