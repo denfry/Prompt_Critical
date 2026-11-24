@@ -49,6 +49,8 @@ public final class CommissioningService {
      * контур КИП. Предпусковая вентиляция — не меньше пяти объёмов топки (NFPA 85, как у BMS).
      */
     static final double P_BUSBAR = 0.15, P_TRIP = 0.15, P_LOOP = 0.2;
+    /** План HP2.3, оценка исполнителя: течь фланцевых соединений газопровода после монтажа. */
+    static final double P_FLANGE = 0.2;
     public static final double PURGE_MIN_VOLUMES = 5;
     public static final double INSULATION_DRY_MOHM = 200;
 
@@ -190,6 +192,10 @@ public final class CommissioningService {
                 double u = rnd.nextDouble(), error = uniform(rnd, 0.1, 0.5);
                 if (u < P_LOOP * rate) out.add(CommissioningDefect.of(CommissioningDefectKind.LOOP_MISWIRED, id, error));
             }
+            case PIPING -> {
+                double u = rnd.nextDouble(), leak = uniform(rnd, 0.01, 0.1);
+                if (u < P_FLANGE * rate) out.add(CommissioningDefect.of(CommissioningDefectKind.FLANGE_LEAK, id, leak));
+            }
             case BRAKE -> {
                 double u = rnd.nextDouble(), torque = uniform(rnd, 0.5, 0.9);
                 if (u < P_BRAKE * rate)
@@ -302,6 +308,13 @@ public final class CommissioningService {
                     else {
                         CommissioningDefect d = fix(u, CommissioningDefectKind.TRIP_SLOW, found);
                         readings.put(CheckResult.READ_TRIP_TIME_RATIO, d == null ? 0.6 : d.magnitude());
+                    }
+                }
+                case CheckInput.InertLeakTest l -> {
+                    if (!l.stopped()) unmet.add(CheckCondition.UNIT_RUNNING);
+                    else {
+                        CommissioningDefect d = fix(u, CommissioningDefectKind.FLANGE_LEAK, found);
+                        readings.put(CheckResult.READ_LEAK_RATE, d == null ? 0.001 : d.magnitude());
                     }
                 }
                 case CheckInput.Purge p -> {

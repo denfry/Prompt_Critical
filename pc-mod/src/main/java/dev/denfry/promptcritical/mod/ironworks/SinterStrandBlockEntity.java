@@ -39,7 +39,25 @@ import org.jetbrains.annotations.Nullable;
  * щита; шихту поджигает горн — {@value #IGNITION_NM3} нм³ горючего газа на спекание. Мелочь вне окна 45–70 кг/т даёт
  * слабый агломерат: возврат {@value #WEAK_RETURN} массы теряется пылью [BALANCE].
  */
-public class SinterStrandBlockEntity extends IronworksBlockEntity implements DeviceHost, ShaftConsumer, PanelHost {
+public class SinterStrandBlockEntity extends IronworksBlockEntity implements DeviceHost, ShaftConsumer, PanelHost,
+        dev.denfry.promptcritical.mod.ops.OpsMachine {
+    @Override
+    public dev.denfry.promptcritical.sim.ops.UnitKind opsKind() {
+        return dev.denfry.promptcritical.sim.ops.UnitKind.SINTER_STRAND;
+    }
+
+    /** Остановлена — лента стоит (условие пневмоиспытания газа зажигательного горна). */
+    @Override
+    public boolean opsStopped() {
+        SimLevelBinding b = level != null && !level.isClientSide ? Ironworks.binding(level) : null;
+        CyclicMachine u = b == null ? null : Ironworks.shaftMachine(b, simId);
+        return u == null || !u.running();
+    }
+
+    @Override
+    public net.minecraft.world.phys.Vec3 opsBearingPos() {
+        return net.minecraft.world.phys.Vec3.atCenterOf(worldPosition);
+    }
     public static final int ORE_ITEMS = 10;
     public static final double BREEZE_KG_T = 55, IGNITION_NM3 = 3, WEAK_RETURN = 0.4;
     private static final MachineInventory.Role[] ROLES = {MachineInventory.Role.INPUT, MachineInventory.Role.INPUT,
@@ -129,7 +147,10 @@ public class SinterStrandBlockEntity extends IronworksBlockEntity implements Dev
         }
         boolean ready = chem != null && ore.getCount() >= ORE_ITEMS && breezeKg >= breezeNeedKg() && limeKg >= limeNeed
                 && gas.amount() >= IGNITION_NM3 && sinterKg < item;
+        // пусконаладка (план HP2.3): непринятую остановленную ленту в профиле licensing не загружают, идущую не останавливают
+        ready &= dev.denfry.promptcritical.mod.ops.OpsActions.processPermit(level, this, 0) || u.running();
         u.setLoaded(ready);
+        dev.denfry.promptcritical.mod.ops.OpsActions.trial(level, this, u.running(), u.speedRatio(), false);
         if (ready && u.takeCycle()) {
             gas.draw(IGNITION_NM3);
             double breeze = breezeNeedKg();

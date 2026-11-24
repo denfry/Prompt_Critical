@@ -30,7 +30,9 @@ public enum UnitComponent {
     /** Исполнительный орган защиты: расцепитель выключателя, отсечной клапан топлива, аварийные стержни. */
     TRIP_DEVICE(CommissioningCheck.SIS_PROOF_TEST),
     /** Каналы контроля нейтронного потока. */
-    FLUX_CHANNEL(CommissioningCheck.LOOP_CHECK);
+    FLUX_CHANNEL(CommissioningCheck.LOOP_CHECK),
+    /** Газовые коллекторы и трубопроводы (обогрев батареи, горелки, холодный блок ВРУ). */
+    PIPING(CommissioningCheck.INERT_LEAK_TEST);
 
     private final CommissioningCheck coveredBy;
 

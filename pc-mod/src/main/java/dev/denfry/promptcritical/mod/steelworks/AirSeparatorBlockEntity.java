@@ -51,7 +51,25 @@ import org.jetbrains.annotations.Nullable;
  * {@value #COKE_REACH} блоках) несёт ацетилен: без ПАЗ по углеводородам LOX копит его до взрыва
  * конденсатора-испарителя. Разрушенный блок чинят 8 стальными листами.
  */
-public final class AirSeparatorBlockEntity extends IronworksBlockEntity implements DeviceHost, PanelHost {
+public final class AirSeparatorBlockEntity extends IronworksBlockEntity implements DeviceHost, PanelHost,
+        dev.denfry.promptcritical.mod.ops.OpsMachine {
+    @Override
+    public dev.denfry.promptcritical.sim.ops.UnitKind opsKind() {
+        return dev.denfry.promptcritical.sim.ops.UnitKind.AIR_SEPARATION;
+    }
+
+    /** Остановлена — компрессор не подаёт воздух (условие пневмоиспытания холодного блока). */
+    @Override
+    public boolean opsStopped() {
+        SimLevelBinding b = level != null && !level.isClientSide ? Ironworks.binding(level) : null;
+        AsuUnit u = b == null ? null : unit(b);
+        return u == null || u.compressorW() <= 0;
+    }
+
+    @Override
+    public net.minecraft.world.phys.Vec3 opsBearingPos() {
+        return net.minecraft.world.phys.Vec3.atCenterOf(worldPosition);
+    }
     public static final int REACH = 8, COKE_REACH = 24, SCAN_TICKS = 20, REPAIR_PLATES = 8;
     /** Ацетилен в воздухе у коксохима и в чистом месте, ppm [BALANCE]. */
     public static final double COKE_C2H2_PPM = 0.3, CLEAN_C2H2_PPM = 0.01;
@@ -121,6 +139,9 @@ public final class AirSeparatorBlockEntity extends IronworksBlockEntity implemen
         AirSeparationUnit asu = u.asu();
         asu.setInletHydrocarbons(inletPpm);
         double w = compressor == null ? 0 : compressor.shaftPowerW();
+        // пусконаладка (план HP2.3): непринятая остановленная ВРУ в профиле licensing не берёт воздух, работающую не глушат
+        if (!dev.denfry.promptcritical.mod.ops.OpsActions.processPermit(level, this, 0) && u.compressorW() <= 0) w = 0;
+        dev.denfry.promptcritical.mod.ops.OpsActions.trial(level, this, formed && w > 0, w / AsuUnit.SPEC.ratedCompressorW(), false);
         u.setCompressor(w, compressor == null ? 0 : compressor.coolingWater(AsuUnit.coolingWaterNeedKgS(w)));
         // продукт за реальный тик: газы 1 мБ = 1 нм³, жидкости — литры
         oxygen.put(PcFluids.OXYGEN.source.get(), u.productRate("oxygen") * TICK_S);

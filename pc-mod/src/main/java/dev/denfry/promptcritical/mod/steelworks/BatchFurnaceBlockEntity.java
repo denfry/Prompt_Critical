@@ -71,12 +71,17 @@ public abstract class BatchFurnaceBlockEntity extends IronworksDeviceBlockEntity
     protected void serverTick(SimLevelBinding b, BatchFurnaceUnit u) {
         double dtp = Ironworks.tickPhysS(b);
         ProcessGas g = gas.gas();
-        if (g != null) u.setGasSupply(g, gas.draw(u.gasDemandNm3S(g) * dtp) / dtp);
+        if (g != null && heatPermitted(u)) u.setGasSupply(g, gas.draw(u.gasDemandNm3S(g) * dtp) / dtp);
         else u.setGasSupply(null, 0);
         ItemStack in = inv.getStackInSlot(0);
         if (!in.isEmpty() && accepts(in) && load(u, in.copyWithCount(1))) in.shrink(1);
         discharge(u, level.getGameTime());
         setStateFlag(BlockStateProperties.LIT, u.gasSupplyLit());
+    }
+
+    /** Можно ли подавать газ на горелки; печи под пусконаладкой переопределяют (план HP2.3). */
+    protected boolean heatPermitted(BatchFurnaceUnit u) {
+        return true;
     }
 
     /** Посадить предмет на свободное место печи. */

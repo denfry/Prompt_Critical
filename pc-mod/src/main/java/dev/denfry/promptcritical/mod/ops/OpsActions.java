@@ -210,11 +210,15 @@ public final class OpsActions {
                 else if (m instanceof BreakerCellBlockEntity || m instanceof WaterTubeBoilerBlockEntity
                         || m instanceof PileControllerBlockEntity) report(p, ops.perform(m.simId(),
                         new CheckInput.SisProofTest(m.opsStopped()), p.getUUID(), TeamResolver.team(p)));
+                // план HP2.3: пневмоиспытание газовых коллекторов — фланцы обтянуты и обмылены под азотом
+                else if (gasFired(m)) report(p, ops.perform(m.simId(), new CheckInput.InertLeakTest(m.opsStopped()),
+                        p.getUUID(), TeamResolver.team(p)));
                 else tighten(p, ops, m);
             }
             case TEST_GAUGE -> {
                 if (m instanceof FireTubeBoilerBlockEntity || m instanceof BlastFurnaceControllerBlockEntity
-                        || m instanceof WaterTubeBoilerBlockEntity)
+                        || m instanceof WaterTubeBoilerBlockEntity || gasFired(m)
+                        || m.opsKind() == dev.denfry.promptcritical.sim.ops.UnitKind.BOF_CONVERTER)
                     report(p, ops.perform(m.simId(), new CheckInput.InstrumentCheck(), p.getUUID(), TeamResolver.team(p)));
                 else if (m instanceof ShaftGeneratorBlockEntity || m instanceof BreakerCellBlockEntity
                         || m instanceof AchesonFurnaceBlockEntity)
@@ -228,6 +232,7 @@ public final class OpsActions {
                 if (m instanceof FireTubeBoilerBlockEntity b) cold = drainedAndCold(b);
                 else if (m instanceof BlastFurnaceControllerBlockEntity f) cold = f.opsStopped();
                 else if (m instanceof WaterTubeBoilerBlockEntity w) cold = w.drumCold();
+                else if (m.opsKind() == dev.denfry.promptcritical.sim.ops.UnitKind.BOF_CONVERTER) cold = m.opsStopped();
                 else return;
                 CommissioningService c = ops.commissioning();
                 if (!c.has(m.simId(), dev.denfry.promptcritical.sim.ops.CommissioningDefectKind.SEAM_WEEP)) {
@@ -408,6 +413,34 @@ public final class OpsActions {
      * Разрешение на процесс для установок без события пуска (план HP2.1): опрашивается каждый тик, в журнал не пишет.
      * Нет подсистемы или установки — разрешено.
      */
+    /**
+     * Металл и кладка теплее этого, К, — установку уже грели: разрешение на процесс её не гасит (план HP2.3: запрет
+     * держит непринятую установку холодной, но не выводит из работы разогретую).
+     */
+    public static final double WARM_K = 373;
+
+    /**
+     * Установка без события пуска (план HP2.3): зарегистрировать её у пусконаладки и вернуть разрешение на процесс.
+     * Пусконаладка выключена — разрешено.
+     */
+    public static boolean processPermit(Level level, OpsMachine m, double workingPressurePa) {
+        if (OpsWorld.ensure(level, m.simId(), m.opsKind(), workingPressurePa, false) == null) return true;
+        return processAllowed(level, m);
+    }
+
+    /** Установка с газовыми коллекторами под пневмоиспытание (план HP2.3). */
+    static boolean gasFired(OpsMachine m) {
+        return m.opsKind().checklist().contains(dev.denfry.promptcritical.sim.ops.CommissioningCheck.INERT_LEAK_TEST);
+    }
+
+    /** Пробная работа за серверный тик (13 §13.6.6): нагрузка — доля номинальной. */
+    public static void trial(Level level, OpsMachine m, boolean running, double loadFraction, boolean protectionTripped) {
+        OpsSubsystem ops = OpsWorld.ops(level);
+        if (ops == null || ops.unit(m.simId()) == null) return;
+        ops.observeTrial(m.simId(), 0.05, running, Double.isFinite(loadFraction) ? loadFraction : 0, protectionTripped,
+                m.opsCurrent());
+    }
+
     public static boolean processAllowed(Level level, OpsMachine m) {
         OpsSubsystem ops = OpsWorld.ops(level);
         if (ops == null || ops.unit(m.simId()) == null) return true;

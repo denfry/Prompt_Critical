@@ -434,4 +434,41 @@ public final class LicensingGameTests {
                 })
                 .thenSucceed();
     }
+
+    // --- HP2.3: установки без события пуска ---
+
+    /**
+     * Нагревательная печь I1 (план HP2.3): ставится на учёт пусконаладки с первого тика; без профиля licensing процесс
+     * разрешён, в профиле непринятая печь — нет, а с лицензией I1 после пневмоиспытания и КИП — разрешена на пробу.
+     */
+    @GameTest(template = LARGE, timeoutTicks = 200, batch = "licensing_reheat")
+    public static void reheatingFurnacePermitFollowsTheLicence(GameTestHelper h) {
+        h.setBlock(UNIT_POS, PcBlocks.REHEATING_FURNACE.get().defaultBlockState());
+        h.startSequence()
+                .thenWaitUntil(() -> {
+                    dev.denfry.promptcritical.mod.steelworks.ReheatingFurnaceBlockEntity f = h.getBlockEntity(UNIT_POS);
+                    h.assertTrue(f.unit() != null && ops(h).unit(f.simId()) != null, "furnace and its ops unit");
+                })
+                .thenExecute(() -> {
+                    OpsSubsystem ops = ops(h);
+                    dev.denfry.promptcritical.mod.steelworks.ReheatingFurnaceBlockEntity f = h.getBlockEntity(UNIT_POS);
+                    SimId id = f.simId();
+                    h.assertValueEqual(ops.unit(id).kind(), UnitKind.REHEATING_FURNACE, "registered as a reheating furnace");
+                    h.assertTrue(OpsActions.processAllowed(h.getLevel(), f), "ADVISORY permits the process");
+                    ops.setLicensing(true);
+                    try {
+                        h.assertTrue(!OpsActions.processAllowed(h.getLevel(), f), "unaccepted furnace not permitted under licensing");
+                        var fake = TestPlayers.of(h);
+                        UUID team = UUID.randomUUID();
+                        h.assertTrue(ops.perform(id, new CheckInput.InertLeakTest(f.opsStopped()), fake.getUUID(), team).passed(), "leak test");
+                        h.assertTrue(ops.perform(id, new CheckInput.InstrumentCheck(), fake.getUUID(), team).passed(), "instruments");
+                        h.assertTrue(!OpsActions.processAllowed(h.getLevel(), f), "still no I1 licence");
+                        ops.licences().grant(team, PlantEra.I1, 0);
+                        h.assertTrue(OpsActions.processAllowed(h.getLevel(), f), "trial permitted with the I1 licence");
+                    } finally {
+                        ops.setLicensing(false);
+                    }
+                })
+                .thenSucceed();
+    }
 }
