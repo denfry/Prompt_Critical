@@ -52,6 +52,8 @@ public class OperatorTerminalBlockEntity extends DeviceBlockEntity implements Fo
     public static final double POWER_W = 300;
     /** Радиус поиска КП, историана и табло, блоков. */
     public static final int RADIUS = 16;
+    /** Полупериод мигания лампы тревоги, тиков. */
+    static final int BLINK_TICKS = 10;
 
     private final int[] view = new int[CHANNELS];
     private String selectedId = "";
@@ -67,11 +69,14 @@ public class OperatorTerminalBlockEntity extends DeviceBlockEntity implements Fo
 
     @Override
     public void tickDevice() {
-        if (!(level instanceof ServerLevel) || ++ticks % 20 != 0) return;
-        powered = dev.denfry.promptcritical.mod.grid.MachinePower.powered(level, worldPosition, POWER_W);
-        refresh();
+        if (!(level instanceof ServerLevel) || ++ticks % BLINK_TICKS != 0) return;
+        if (ticks % 20 == 0) {
+            powered = dev.denfry.promptcritical.mod.grid.MachinePower.powered(level, worldPosition, POWER_W);
+            refresh();
+        }
         BlockState s = getBlockState();
-        boolean alarm = powered && view[UNACK] > 0;
+        // неквитированная сигнализация: лампа на корпусе мигает, модели _on и _alarm сменяются
+        boolean alarm = powered && view[UNACK] > 0 && ticks / BLINK_TICKS % 2 == 0;
         BlockState next = s;
         if (s.hasProperty(BlockStateProperties.POWERED)) next = next.setValue(BlockStateProperties.POWERED, powered);
         if (s.hasProperty(PcProperties.ALARM)) next = next.setValue(PcProperties.ALARM, alarm);

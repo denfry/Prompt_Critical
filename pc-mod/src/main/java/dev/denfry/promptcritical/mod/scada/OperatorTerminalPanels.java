@@ -89,7 +89,7 @@ public final class OperatorTerminalPanels {
             b.readout(x, 186, 32, v -> commandLabel(v, k), null);
             b.button(x, 204, 32, CMD_B0 + i, Component.literal("●"), CMD_TIP.get());
         }
-        return b.noInventory().build();
+        return b.art(dev.denfry.promptcritical.mod.PromptCritical.id("textures/gui/panel/operator_terminal.png")).noInventory().build();
     }
 
     // ------------------------------------------------------------------ клиент: подписи из раскладки машины
