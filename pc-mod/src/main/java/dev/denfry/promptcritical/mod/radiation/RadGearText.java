@@ -68,45 +68,45 @@ public final class RadGearText {
         block("tld_reader", "TLD Reader", "Считыватель ТЛД");
         block("air_supply_port", "Breathing Air Supply Port", "Пост подачи воздуха");
 
-        msg("geiger", "Geiger: %s µSv/h", "Счётчик: %s мкЗв/ч");
-        msg("epd", "EPD [%s]: %s · %s", "ЭПД [%s]: %s · %s");
-        msg("epd_preset", "EPD preset %s: dose %s, rate %s. Dose reset", "Уставки ЭПД %s: доза %s, мощность %s. Доза сброшена");
-        msg("epd_rate_alarm", "EPD RATE ALARM: %s · dose %s", "ЭПД: ТРЕВОГА ПО МОЩНОСТИ: %s · доза %s");
-        msg("epd_dose_alarm", "EPD DOSE ALARM: dose %s (rate %s)", "ЭПД: ТРЕВОГА ПО ДОЗЕ: доза %s (мощность %s)");
-        msg("preset.routine", "routine", "плановая");
-        msg("preset.emergency_100", "emergency 100 mSv", "аварийная 100 мЗв");
-        msg("preset.lifesaving_500", "life-saving 500 mSv", "спасение жизни 500 мЗв");
-        msg("cartridge_fitted", "Iodine cartridge fitted", "Йодный патрон вставлен");
-        msg("cartridge_spent", "Iodine cartridge spent: iodine passes the mask", "Йодный патрон выработан: йод проходит маску");
-        msg("cartridge", "Iodine cartridge: %s h of breathing iodine left", "Йодный патрон: осталось %s ч дыхания в йоде");
-        msg("no_cartridge", "No iodine cartridge: iodine passes", "Без йодного патрона: йод проходит");
-        msg("hose", "Hose clipped to the port at %s", "Шланг пристёгнут к посту у %s");
-        msg("no_hose", "No air hose: the suit does not protect breathing", "Шланг не пристёгнут: костюм не защищает дыхание");
-        msg("hose_on", "Hose clipped: stay within %s m of the port", "Шланг пристёгнут: не уходите от поста дальше %s м");
-        msg("hose_off", "Hose unclipped", "Шланг отстёгнут");
-        msg("hose_no_suit", "Put on the pneumosuit jacket to clip the hose", "Чтобы пристегнуть шланг, наденьте куртку пневмокостюма");
-        msg("hose_torn", "The air hose tore off: no air in the suit", "Шланг оборвался: воздух в костюм не идёт");
-        msg("iodide_taken", "Potassium iodide taken: the thyroid is blocked for a day", "Йодистый калий принят: щитовидная железа заблокирована на сутки");
-        msg("iodide_refund", "Potassium iodide taken: %s of the radioiodine dose averted", "Йодистый калий принят: предотвращено %s дозы от радиойода");
-        msg("instrument", "Dose rate here: %s", "Мощность дозы здесь: %s");
-        msg("zone", "%s · %s cells · %s (design up to %s) · %s detectors", "%s · %s клеток · %s (проект до %s) · датчиков: %s");
-        msg("zone_open", "%s · the room is not closed: walls and doors must enclose it (at most %s cells)",
+        text("geiger", "Geiger: %s µSv/h", "Счётчик: %s мкЗв/ч");
+        text("epd", "EPD [%s]: %s · %s", "ЭПД [%s]: %s · %s");
+        text("epd_preset", "EPD preset %s: dose %s, rate %s. Dose reset", "Уставки ЭПД %s: доза %s, мощность %s. Доза сброшена");
+        text("epd_rate_alarm", "EPD RATE ALARM: %s · dose %s", "ЭПД: ТРЕВОГА ПО МОЩНОСТИ: %s · доза %s");
+        text("epd_dose_alarm", "EPD DOSE ALARM: dose %s (rate %s)", "ЭПД: ТРЕВОГА ПО ДОЗЕ: доза %s (мощность %s)");
+        text("preset.routine", "routine", "плановая");
+        text("preset.emergency_100", "emergency 100 mSv", "аварийная 100 мЗв");
+        text("preset.lifesaving_500", "life-saving 500 mSv", "спасение жизни 500 мЗв");
+        text("cartridge_fitted", "Iodine cartridge fitted", "Йодный патрон вставлен");
+        text("cartridge_spent", "Iodine cartridge spent: iodine passes the mask", "Йодный патрон выработан: йод проходит маску");
+        text("cartridge", "Iodine cartridge: %s h of breathing iodine left", "Йодный патрон: осталось %s ч дыхания в йоде");
+        text("no_cartridge", "No iodine cartridge: iodine passes", "Без йодного патрона: йод проходит");
+        text("hose", "Hose clipped to the port at %s", "Шланг пристёгнут к посту у %s");
+        text("no_hose", "No air hose: the suit does not protect breathing", "Шланг не пристёгнут: костюм не защищает дыхание");
+        text("hose_on", "Hose clipped: stay within %s m of the port", "Шланг пристёгнут: не уходите от поста дальше %s м");
+        text("hose_off", "Hose unclipped", "Шланг отстёгнут");
+        text("hose_no_suit", "Put on the pneumosuit jacket to clip the hose", "Чтобы пристегнуть шланг, наденьте куртку пневмокостюма");
+        text("hose_torn", "The air hose tore off: no air in the suit", "Шланг оборвался: воздух в костюм не идёт");
+        text("iodide_taken", "Potassium iodide taken: the thyroid is blocked for a day", "Йодистый калий принят: щитовидная железа заблокирована на сутки");
+        text("iodide_refund", "Potassium iodide taken: %s of the radioiodine dose averted", "Йодистый калий принят: предотвращено %s дозы от радиойода");
+        text("instrument", "Dose rate here: %s", "Мощность дозы здесь: %s");
+        text("zone", "%s · %s cells · %s (design up to %s) · %s detectors", "%s · %s клеток · %s (проект до %s) · датчиков: %s");
+        text("zone_open", "%s · the room is not closed: walls and doors must enclose it (at most %s cells)",
                 "%s · помещение не замкнуто: его должны закрывать стены и двери (не больше %s клеток)");
-        msg("zone_exceeded", "DOSE RATE OVER THE DESIGN OF THE CLASS", "МОЩНОСТЬ ДОЗЫ ВЫШЕ ПРОЕКТНОЙ ДЛЯ КЛАССА");
-        msg("zone.free", "Free access area", "Зона свободного доступа");
-        msg("zone.controlled_serviced", "Controlled area, serviced rooms", "ЗКД, обслуживаемые помещения");
-        msg("zone.controlled_periodic", "Controlled area, periodically serviced", "ЗКД, периодически обслуживаемые");
-        msg("zone.controlled_unserviced", "Controlled area, unserviced boxes (work permit)", "ЗКД, необслуживаемые боксы (по наряду)");
-        msg("door.no_dosimeter", "%s: no electronic dosimeter on you", "%s: при себе нет электронного дозиметра");
-        msg("door.over_annual_limit", "%s: your annual dose is over the limit", "%s: годовая доза выше предела");
-        msg("door.contaminated", "%s: hands or shoes contaminated — back to the shower", "%s: руки или обувь загрязнены — обратно в душ");
-        msg("door.let_through", " (let through, violation logged)", " (пропуск с нарушением)");
-        msg("locker_swapped", "Changed clothes", "Переоделись");
-        msg("locker_dirty_in", "Took off %s zone items · in the locker: %s", "Снято зонных вещей: %s · в шкафу: %s");
-        msg("locker_dirty_none", "Nothing to take off (%s) · in the locker: %s", "Снимать нечего (%s) · в шкафу: %s");
-        msg("locker_dirty_left", "In the locker: %s", "В шкафу: %s");
-        msg("tld", "TLD read: %s. Official dose this year: %s of %s", "ТЛД считан: %s. Официальная доза за год: %s из %s");
-        msg("tld_none", "Official dose this year: %s of %s. Hold a TLD badge to read it",
+        text("zone_exceeded", "DOSE RATE OVER THE DESIGN OF THE CLASS", "МОЩНОСТЬ ДОЗЫ ВЫШЕ ПРОЕКТНОЙ ДЛЯ КЛАССА");
+        text("zone.free", "Free access area", "Зона свободного доступа");
+        text("zone.controlled_serviced", "Controlled area, serviced rooms", "ЗКД, обслуживаемые помещения");
+        text("zone.controlled_periodic", "Controlled area, periodically serviced", "ЗКД, периодически обслуживаемые");
+        text("zone.controlled_unserviced", "Controlled area, unserviced boxes (work permit)", "ЗКД, необслуживаемые боксы (по наряду)");
+        text("door.no_dosimeter", "%s: no electronic dosimeter on you", "%s: при себе нет электронного дозиметра");
+        text("door.over_annual_limit", "%s: your annual dose is over the limit", "%s: годовая доза выше предела");
+        text("door.contaminated", "%s: hands or shoes contaminated — back to the shower", "%s: руки или обувь загрязнены — обратно в душ");
+        text("door.let_through", " (let through, violation logged)", " (пропуск с нарушением)");
+        text("locker_swapped", "Changed clothes", "Переоделись");
+        text("locker_dirty_in", "Took off %s zone items · in the locker: %s", "Снято зонных вещей: %s · в шкафу: %s");
+        text("locker_dirty_none", "Nothing to take off (%s) · in the locker: %s", "Снимать нечего (%s) · в шкафу: %s");
+        text("locker_dirty_left", "In the locker: %s", "В шкафу: %s");
+        text("tld", "TLD read: %s. Official dose this year: %s of %s", "ТЛД считан: %s. Официальная доза за год: %s из %s");
+        text("tld_none", "Official dose this year: %s of %s. Hold a TLD badge to read it",
                 "Официальная доза за год: %s из %s. Чтобы считать ТЛД, держите его в руке");
     }
 
@@ -131,7 +131,7 @@ public final class RadGearText {
         LANG.put("block.promptcritical." + id, new String[] {en, ru});
     }
 
-    private static void msg(String key, String en, String ru) {
+    private static void text(String key, String en, String ru) {
         LANG.put("message.promptcritical.radgear." + key, new String[] {en, ru});
     }
 
