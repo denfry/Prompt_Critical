@@ -116,6 +116,8 @@ public final class PressurizedWaterReactor {
      * accident layer's breaks are.
      */
     public static final double ROD_HOUSING_BREAK_M2 = 20e-4 / 3;
+    /** Газовый КД: подпитка и сдувка азота, кг/с, и зона нечувствительности регулятора, Па [est]. */
+    public static final double GAS_MAKEUP_KG_S = 0.5, GAS_BAND_PA = 0.05e6;
     /** UO₂ melting point, K: the lumped fuel does not go above it on a burst (04c §4c.5.3). */
     public static final double UO2_MELT_K = 3120;
 
@@ -133,9 +135,82 @@ public final class PressurizedWaterReactor {
     /** ГЦН — агрегат ПР-300: J = 300 кг·м², 1500 об/мин, 617 кВт на валу (τ выбега 12 с, 01 §1.14.1). */
     public static final double PUMP_RPM = 1500, PUMP_SHAFT_W = 617e3;
 
+    /**
+     * Конструкция блока: всё, что отличает один корпусной реактор с водой под давлением от другого. {@link #DEFAULT} —
+     * стартовый блок 100 МВт(т) (константы класса), {@link #VVER70} — В-2 (ВВЭР-70) АЭС Райнсберг.
+     *
+     * @param core           зона (число ТВС — {@link #positions()})
+     * @param hotStandbyK    температура горячего останова, К
+     * @param ambientRefK    средняя температура контура, к которой отнесены теплопотери {@code ambientLossW}, К
+     * @param gasPressurizer газовый КД (азот) вместо парового с ТЭНами и впрыском
+     * @param secondaryPa    давление пара ПГ на номинале, Па (из него — UA ПГ)
+     * @param hotChannelFuel ТВС, по которой считается горячий канал
+     */
+    public record Design(String id, double nominalW, LightWaterCore.Spec core, int loops, double pNominal, double inletK,
+            double outletK, double hotStandbyK, double ambientRefK, double vHot, double vCold, double pzrVolume, double pzrLevel,
+            boolean gasPressurizer, double reliefPa, double safetyPa, double reliefKgS, double safetyKgS, double designPa,
+            double heaterPropW, double heaterBackupW, double sprayMaxKgS, double pzrLossW, double chargingMaxKgS,
+            double siPressurePa, double siShutoffPa, double siMaxKgS, double ambientLossW, double secondaryPa,
+            double pumpRpm, double pumpShaftW, double rodHousingBreakM2, FuelDesign hotChannelFuel) {
+        public int positions() {
+            return core.positions();
+        }
+
+        public double rupturePa() {
+            return 1.25 * designPa;
+        }
+
+        public double hInNom() {
+            return W.enthalpyPT(pNominal, inletK);
+        }
+
+        public double hOutNom() {
+            return W.enthalpyPT(pNominal, outletK);
+        }
+
+        /** Номинальный расход через зону, кг/с. */
+        public double nominalFlowKgS() {
+            return nominalW / (hOutNom() - hInNom());
+        }
+
+        /** UA всех ПГ, Вт/К: NTU номинала на среднюю теплоёмкость между T_гор и T_s второго контура. */
+        public double uaSg() {
+            double tSec = W.saturationP(secondaryPa).tSat();
+            double hSec = W.enthalpyPT(pNominal, tSec);
+            double eps = (hOutNom() - hInNom()) / (hOutNom() - hSec);
+            return -Math.log(1 - eps) * nominalFlowKgS() * (hOutNom() - hSec) / (outletK - tSec);
+        }
+    }
+
+    /** Стартовый блок 100 МВт(т): значения констант класса. */
+    public static final Design DEFAULT = new Design("t2a", NOMINAL_W, LightWaterCore.LWR, LOOPS, P_NOMINAL, INLET_K, OUTLET_K,
+            553.15, 578, V_HOT, V_COLD, PZR_VOLUME, PZR_LEVEL, false, RELIEF_PA, SAFETY_PA, RELIEF_KG_S, SAFETY_KG_S, DESIGN_PA,
+            HEATER_PROP_W, HEATER_BACKUP_W, SPRAY_MAX_KG_S, PZR_LOSS_W, CHARGING_MAX_KG_S, SI_PRESSURE_PA, SI_SHUTOFF_PA,
+            SI_MAX_KG_S, AMBIENT_LOSS_W, SecondarySide.P_NOMINAL, PUMP_RPM, PUMP_SHAFT_W, ROD_HOUSING_BREAK_M2,
+            FuelDesign.VVER_440);
+
+    /** Зона ВВЭР-70: 132 шестигранные кассеты (под ключ 144 мм, как ВВЭР-440), вода, водяной отражатель. */
+    public static final LightWaterCore.Spec VVER70_CORE = new LightWaterCore.Spec(LatticeDesigns.T2_HEX, 132, false,
+            LightWaterCore.LWR.reflector(), LightWaterCore.LWR.reflectorM(), 1, LightWaterCore.LWR.fallbackEnrichment(),
+            FuelDesign.VVER_440, java.util.EnumSet.of(FuelDesign.VVER_440));
+
+    /**
+     * В-2 (ВВЭР-70), АЭС Райнсберг, 1966–1990 (docs/research/2026-11-24-reactor-prototypes): 265 МВт(т), 10,0 МПа,
+     * 250 → 267 °C, три петли, 132 кассеты, газовый КД 8 м³ (вода 4, азот 4) без ТЭНов и впрыска, пар ПГ 3,2 МПа
+     * (Поваров, Асмолов, «АЭС с PWR», 2025, §1.6; leg.co.ua, «ВВЭР для АЭС Райнсберг»). Объёмы петель, уставки
+     * клапанов, САОЗ и ГЦН (экранированный, ≈ 900 кВт) — оценки [est]: объёмы и расходы масштабом 2,65 от стартового
+     * блока, уставки в тех же долях номинального давления.
+     */
+    public static final Design VVER70 = new Design("vver70", 265e6, VVER70_CORE, 3, 10.0e6, 523.15, 540.15,
+            513.15, 531.65, 8.0, 13.0, 8.0, 0.5, true, 10.8e6, 11.2e6, 13, 40, 11.2e6,
+            0, 0, 0, 0, 16, 8.0e6, 9.0e6, 40, 800e3, 3.2e6,
+            1500, 900e3, 20e-4 * 265 / 300, FuelDesign.VVER_440);
+
     // ----------------------------------------------------------------- зона
-    private final LightWaterCore core = new LightWaterCore(NOMINAL_W, DT);
-    private final double[] dnbTimer = new double[POSITIONS];
+    private final Design d;
+    private final double hInNom, hOutNom, nominalFlow, uaSg;
+    private final LightWaterCore core;
+    private final double[] dnbTimer;
 
     // ----------------------------------------------------------------- СУЗ
     private double az = 1, rg = 1, azSpeed, rgSpeed;
@@ -149,10 +224,10 @@ public final class PressurizedWaterReactor {
     private boolean rodBlock, stepback, rodWithdrawal;
 
     // ----------------------------------------------------------------- контур
-    private final CoolantPump[] pumps = new CoolantPump[LOOPS];
-    private final double[] pumpDrive = new double[LOOPS];
-    private final Pressurizer pzr = new Pressurizer(W, PZR_VOLUME);
-    private double hHot = H_OUT_NOM, hCold = H_IN_NOM, loopKg, fuelK = 573.15;
+    private final CoolantPump[] pumps;
+    private final double[] pumpDrive;
+    private final Pressurizer pzr;
+    private double hHot, hCold, loopKg, fuelK = 573.15;
     private double boronKg;
     private double exchangeKgS, exchangeGkg;
     private double leakAreaM2, leakKgS, siKgS, chargingKgS, sprayKgS, heaterW, siHold;
@@ -166,7 +241,7 @@ public final class PressurizedWaterReactor {
     private ReactivityInitiatedAccident.Pulse lastPulse;
     private ReactivityInitiatedAccident.Damage lastRiaDamage = ReactivityInitiatedAccident.Damage.NONE;
     /** Steam-generator tube rupture: break area to the secondary and the back pressure of the damaged SG. */
-    private double tubeLeakAreaM2, tubeBackPa = SecondarySide.P_NOMINAL, tubeLeakKgS;
+    private double tubeLeakAreaM2, tubeBackPa, tubeLeakKgS;
     /** Pressurizer relief valve held open from the panel: the operator's depressurisation (04c §4c.6.4, §4c.10.3). */
     private boolean porvOpen;
     private int newlyFailed;
@@ -178,11 +253,28 @@ public final class PressurizedWaterReactor {
     private final SaturationState sat = new SaturationState();
 
     public PressurizedWaterReactor() {
-        for (int i = 0; i < LOOPS; i++) pumps[i] = new CoolantPump(CoolantPump.INERTIA_KGM2, PUMP_RPM, PUMP_SHAFT_W);
-        hotChannel = hotChannelModel(FuelDesign.VVER_440);
+        this(DEFAULT);
+    }
+
+    public PressurizedWaterReactor(Design design) {
+        this.d = design;
+        hInNom = d.hInNom();
+        hOutNom = d.hOutNom();
+        nominalFlow = d.nominalFlowKgS();
+        uaSg = d.uaSg();
+        hHot = hOutNom;
+        hCold = hInNom;
+        tubeBackPa = d.secondaryPa();
+        core = new LightWaterCore(d.core(), d.nominalW(), DT);
+        dnbTimer = new double[d.positions()];
+        pumps = new CoolantPump[d.loops()];
+        pumpDrive = new double[d.loops()];
+        pzr = d.gasPressurizer() ? Pressurizer.nitrogen(W, d.pzrVolume()) : new Pressurizer(W, d.pzrVolume());
+        for (int i = 0; i < d.loops(); i++) pumps[i] = new CoolantPump(CoolantPump.INERTIA_KGM2, d.pumpRpm(), d.pumpShaftW());
+        hotChannel = hotChannelModel(d, d.hotChannelFuel());
         ProtectionConfig cfg = ProtectionConfig.defaults();
         trueDnbr = new DnbrCalculator(hotChannel, cfg.withoutDnbrUncertainty(), W);
-        PlantNominals nom = PlantNominals.of(W, P_NOMINAL, OUTLET_K, SAFETY_PA, SI_PRESSURE_PA);
+        PlantNominals nom = PlantNominals.of(W, d.pNominal(), d.outletK(), d.safetyPa(), d.siPressurePa());
         protection = ProtectionSystem.pressurizedWater(cfg, nom, new DnbrCalculator(hotChannel, cfg, W), ProtectionEventSink.NONE);
         hotStandby();
     }
@@ -191,14 +283,18 @@ public final class PressurizedWaterReactor {
      * Модель горячего канала: проходное сечение и D_h — из ячейки ТВС (шаг минус твэлы и направляющие), тепловой поток —
      * на поверхность оболочек, F_ΔH = 2,0/1,55, консервативный F_z = 1,55 (01 §1.11.4).
      */
-    static HotChannelModel hotChannelModel(FuelDesign d) {
+    static HotChannelModel hotChannelModel(FuelDesign fd) {
+        return hotChannelModel(DEFAULT, fd);
+    }
+
+    static HotChannelModel hotChannelModel(Design dd, FuelDesign d) {
         double cellArea = d.hexagonal ? Math.sqrt(3) / 2 * pitch(d) * pitch(d) : pitch(d) * pitch(d);
         double rodArea = Math.PI / 4 * d.cladOd * d.cladOd;
         double flowPer = cellArea - d.rods * rodArea - d.guideTubes * rodArea * 1.6;
         double wetted = d.rods * Math.PI * d.cladOd;
-        double area = flowPer * POSITIONS;
-        double heated = wetted * d.stackM * POSITIONS;
-        return new HotChannelModel(NOMINAL_W, NOMINAL_FLOW_KG_S, area, 4 * flowPer / wetted, NOMINAL_W / heated, 2.0 / 1.55, 1.55, 8);
+        double area = flowPer * dd.positions();
+        double heated = wetted * d.stackM * dd.positions();
+        return new HotChannelModel(dd.nominalW(), dd.nominalFlowKgS(), area, 4 * flowPer / wetted, dd.nominalW() / heated, 2.0 / 1.55, 1.55, 8);
     }
 
     /** Шаг ТВС под ключ, м — {@link LightWaterCore#pitch}. */
@@ -213,11 +309,11 @@ public final class PressurizedWaterReactor {
 
     /** Горячий останов: контур 280 °C при номинальном давлении, КД на уровне, бор 12 г/кг, стержни внизу. */
     public void hotStandby() {
-        double t = 553.15;
-        hHot = hCold = W.enthalpyPT(P_NOMINAL, t);
-        pzr.initialize(P_NOMINAL, PZR_LEVEL);
-        pressure = P_NOMINAL;
-        loopKg = requiredLoopKg(P_NOMINAL, hHot, hCold);
+        double t = d.hotStandbyK();
+        hHot = hCold = W.enthalpyPT(d.pNominal(), t);
+        pzr.initialize(d.pNominal(), d.pzrLevel(), hHot);
+        pressure = d.pNominal();
+        loopKg = requiredLoopKg(d.pNominal(), hHot, hCold);
         setBoronGkg(12);
         fuelK = t;
         az = rg = 1;
@@ -257,6 +353,11 @@ public final class PressurizedWaterReactor {
 
     public FuelDesign design() {
         return core.design();
+    }
+
+    /** Конструкция блока. */
+    public Design plant() {
+        return d;
     }
 
     public LightWaterCore core() {
@@ -304,7 +405,7 @@ public final class PressurizedWaterReactor {
     public void setSecondary(double tK, double levelFrac, int count) {
         secondaryK = tK;
         sgLevel = levelFrac;
-        sgCount = Math.max(0, Math.min(LOOPS, count));
+        sgCount = Math.max(0, Math.min(d.loops(), count));
     }
 
     /** Водообмен: расход, кг/с, и концентрация подаваемой воды, г/кг H₃BO₃ (0 — чистый конденсат). */
@@ -546,7 +647,7 @@ public final class PressurizedWaterReactor {
         W.stateFromPressureEnthalpy(p, hh, ts);
         double rh = ts.density;
         W.stateFromPressureEnthalpy(p, hc, ts);
-        return rh * V_HOT + ts.density * V_COLD;
+        return rh * d.vHot() + ts.density * d.vCold();
     }
 
     private SaturationState sat(double p) {
@@ -558,14 +659,14 @@ public final class PressurizedWaterReactor {
         double p = pressure;
         // насосы и расход
         double speedSum = 0;
-        for (int i = 0; i < LOOPS; i++) {
+        for (int i = 0; i < d.loops(); i++) {
             pumps[i].step(DT, pumpDrive[i]);
             speedSum += pumps[i].speed();
         }
         double heat = core.heatW();
-        double natural = NATURAL_FLOW * Math.cbrt(Math.max(0, heat) / NOMINAL_W);
-        double flowFrac = Math.max(Math.max(0.005, natural), speedSum / LOOPS);
-        flowKgS = NOMINAL_FLOW_KG_S * flowFrac;
+        double natural = NATURAL_FLOW * Math.cbrt(Math.max(0, heat) / d.nominalW());
+        double flowFrac = Math.max(Math.max(0.005, natural), speedSum / d.loops());
+        flowKgS = nominalFlow * flowFrac;
         // топливо
         double hmTotal = 0, rodLength = 0;
         hmTotal = core.heavyMetalKg();
@@ -584,19 +685,19 @@ public final class PressurizedWaterReactor {
             // кипящий второй контур изотермичен: ε = 1 − e^(−NTU), теплоёмкость — средняя между T_гор и T_s
             double hSec = W.enthalpyPT(p, secondaryK);
             double cBar = (hHot - hSec) / Math.max(0.1, hotK - secondaryK);
-            double ntu = UA_SG * sgCount / LOOPS / Math.max(1, flowKgS * cBar);
+            double ntu = uaSg * sgCount / d.loops() / Math.max(1, flowKgS * cBar);
             qSgW = (1 - Math.exp(-ntu)) * flowKgS * (hHot - hSec);
         }
-        double loss = AMBIENT_LOSS_W * Math.max(0, (moderatorK() - 293.15) / (578 - 293.15));
+        double loss = d.ambientLossW() * Math.max(0, (moderatorK() - 293.15) / (d.ambientRefK() - 293.15));
         // узлы: горячий — выход зоны, холодный — выход ПГ
-        double mHot = densityPH(p, hHot) * V_HOT, mCold = densityPH(p, hCold) * V_COLD;
+        double mHot = densityPH(p, hHot) * d.vHot(), mCold = densityPH(p, hCold) * d.vCold();
         double hSgOut = hHot - qSgW / Math.max(1e-6, flowKgS);
         hHot += (flowKgS * (hCold - hHot) + qCoreW) / mHot * DT;
         hCold += (flowKgS * (hSgOut - hCold) + pumpHeat - loss) / mCold * DT;
         // подпитка, продувка, водообмен, САОЗ, течь
-        double levelErr = PZR_LEVEL - pzr.level();
+        double levelErr = d.pzrLevel() - pzr.level();
         double letdown = LETDOWN_KG_S + exchangeKgS;
-        chargingKgS = Math.max(0, Math.min(CHARGING_MAX_KG_S, LETDOWN_KG_S + 0.2 * levelErr * 100 * 0.25));
+        chargingKgS = Math.max(0, Math.min(d.chargingMaxKgS(), LETDOWN_KG_S + 0.2 * levelErr * 100 * 0.25));
         double ppm = boronPpm();
         SaturationState sc = sat(p);
         W.stateFromPressureEnthalpy(p, hCold, ts);
@@ -605,7 +706,7 @@ public final class PressurizedWaterReactor {
         double pSatCold = W.saturationPressure(Math.min(640, tColdNow));
         leakKgS = leakAreaM2 > 0 ? 0.61 * leakAreaM2 * Math.sqrt(2 * rhoCold * Math.max(0.05 * p, p - Math.max(pSatCold, 0.1e6))) : 0;
         tubeLeakKgS = tubeLeakAreaM2 > 0 ? 0.6 * tubeLeakAreaM2 * Math.sqrt(2 * rhoCold * Math.max(0, p - Math.max(pSatCold, tubeBackPa))) : 0;
-        siKgS = siHold > 0 ? SI_MAX_KG_S * Math.max(0, Math.min(1, (SI_SHUTOFF_PA - p) / (SI_SHUTOFF_PA - 3e6))) : 0;
+        siKgS = siHold > 0 ? d.siMaxKgS() * Math.max(0, Math.min(1, (d.siShutoffPa() - p) / (d.siShutoffPa() - 3e6))) : 0;
         double hCharge = W.enthalpyPT(p, CHARGING_K), hSi = W.enthalpyPT(p, SI_K);
         double inKg = (chargingKgS + exchangeKgS + siKgS) * DT;
         double outKg = (letdown + leakKgS + tubeLeakKgS) * DT;
@@ -627,23 +728,28 @@ public final class PressurizedWaterReactor {
             double deficit = -surge - fromPzr;
             surge = -fromPzr;
             W.stateFromPressureEnthalpy(p, hHot, ts);
-            voidM3 = Math.min(V_HOT, deficit / Math.max(1, ts.density));
+            voidM3 = Math.min(d.vHot(), deficit / Math.max(1, ts.density));
         }
         // впрыск — из напора ГЦН первой петли
-        double pErr = p - P_NOMINAL;
+        double pErr = p - d.pNominal();
         double sprayDemand = Math.max(0, Math.min(1, (pErr - 0.1e6) / 0.3e6));
-        sprayKgS = SPRAY_MAX_KG_S * sprayDemand * Math.min(1, pumps[0].speed());
+        sprayKgS = d.sprayMaxKgS() * sprayDemand * Math.min(1, pumps[0].speed());
         heaterW = pzr.level() < 0.1 ? 0
-                : HEATER_PROP_W * Math.max(0, Math.min(1, (0.1e6 - pErr) / 0.2e6)) + (pErr < -0.15e6 ? HEATER_BACKUP_W : 0);
+                : d.heaterPropW() * Math.max(0, Math.min(1, (0.1e6 - pErr) / 0.2e6)) + (pErr < -0.15e6 ? d.heaterBackupW() : 0);
+        // газовый КД: давление держит газовая система — подпитка азотом из баллонов и сдувка в газгольдер [est]
+        if (pzr.gas()) {
+            if (pErr < -GAS_BAND_PA) pzr.addNitrogenKg(GAS_MAKEUP_KG_S * DT);
+            else if (pErr > GAS_BAND_PA) pzr.addNitrogenKg(-GAS_MAKEUP_KG_S * DT);
+        }
         // ИПУ ключом оператора: открыт при любом давлении, расход — как у ИПУ на уставке, ∝ P (critical flow)
-        double reliefPa = porvOpen ? 0.1e6 : RELIEF_PA, reliefKgS = porvOpen ? RELIEF_KG_S * 0.1e6 / RELIEF_PA : RELIEF_KG_S;
-        double outH = pzr.step(DT, surge, hHot, sprayKgS, hCold, heaterW - PZR_LOSS_W, reliefPa, reliefKgS, SAFETY_PA, SAFETY_KG_S);
+        double reliefPa = porvOpen ? 0.1e6 : d.reliefPa(), reliefKgS = porvOpen ? d.reliefKgS() * 0.1e6 / d.reliefPa() : d.reliefKgS();
+        double outH = pzr.step(DT, surge, hHot, sprayKgS, hCold, heaterW - d.pzrLossW(), reliefPa, reliefKgS, d.safetyPa(), d.safetyKgS());
         // впрыск забирается из холодной нитки и возвращается через КД; outsurge приносит энтальпию КД в горячий узел
         loopKg -= sprayKgS * DT;
         if (surge > 0) loopKg -= surge;
         else if (surge < 0) {
             double back = -surge;
-            double mh = densityPH(p, hHot) * V_HOT;
+            double mh = densityPH(p, hHot) * d.vHot();
             hHot = (hHot * mh + back * outH) / (mh + back);
             loopKg += back;
         }
@@ -654,7 +760,7 @@ public final class PressurizedWaterReactor {
             pzr.initialize(pressure, Math.max(0, pzr.level()));
             loopKg = requiredLoopKg(pressure, hHot, hCold) - voidM3 * densityPH(pressure, hHot);
         }
-        if (pressure > RUPTURE_PA && !ruptured) {
+        if (pressure > d.rupturePa() && !ruptured) {
             ruptured = true;
             ruptureEvent = true;
             leakAreaM2 = Math.max(leakAreaM2, 0.01);
@@ -675,16 +781,16 @@ public final class PressurizedWaterReactor {
         hotK = temperaturePH(pressure, hHot);
         coldK = temperaturePH(pressure, hCold);
         double rho = densityPH(pressure, (hHot + hCold) / 2);
-        double voidFrac = voidM3 / (V_HOT + V_COLD);
+        double voidFrac = voidM3 / (d.vHot() + d.vCold());
         coolantDensity = rho * (1 - 2 * voidFrac); // пар собирается в верхней части зоны и горячих нитках
     }
 
     private void dnb() {
-        mdnbr = trueDnbr.calculate(pressure, coldK, flowKgS / NOMINAL_FLOW_KG_S, core.heatW() / NOMINAL_W, Double.NaN);
+        mdnbr = trueDnbr.calculate(pressure, coldK, flowKgS / nominalFlow, core.heatW() / d.nominalW(), Double.NaN);
         // пар заполнил весь горячий узел (верхняя камера, горячие нитки) — уровень смеси опускается в зону: кризис
-        if (voidM3 >= 0.98 * V_HOT) mdnbr = Math.min(mdnbr, 0.8);
+        if (voidM3 >= 0.98 * d.vHot()) mdnbr = Math.min(mdnbr, 0.8);
         double maxShare = core.maxShare();
-        for (int i = 0; i < POSITIONS; i++) {
+        for (int i = 0; i < d.positions(); i++) {
             if (!core.loaded(i) || core.failed(i)) continue;
             // горячий канал — у ТВС с наибольшей долей; у остальных запас больше на отношение долей
             double local = mdnbr * (maxShare > 0 ? maxShare / Math.max(1e-6, core.share(i)) : 1);
@@ -703,7 +809,7 @@ public final class PressurizedWaterReactor {
         public int channelCount(TripReason r) {
             return switch (r) {
                 case HIGH_FLUX, SHORT_PERIOD, HIGH_PRIMARY_PRESSURE, LOW_PRIMARY_PRESSURE, HIGH_COOLANT_TEMP, LOW_DNBR -> 3;
-                case LOW_COOLANT_FLOW, LOSS_OF_DRIVE_POWER -> 3 * LOOPS;
+                case LOW_COOLANT_FLOW, LOSS_OF_DRIVE_POWER -> 3 * d.loops();
                 case LOW_SG_LEVEL -> Double.isNaN(sgLevel) ? 0 : 3 * Math.max(1, sgCount);
                 default -> 0;
             };
@@ -712,7 +818,7 @@ public final class PressurizedWaterReactor {
         @Override
         public int groupCount(TripReason r) {
             return switch (r) {
-                case LOW_COOLANT_FLOW, LOSS_OF_DRIVE_POWER -> LOOPS;
+                case LOW_COOLANT_FLOW, LOSS_OF_DRIVE_POWER -> d.loops();
                 case LOW_SG_LEVEL -> Math.max(1, sgCount);
                 default -> 1;
             };
@@ -762,7 +868,7 @@ public final class PressurizedWaterReactor {
             return switch (s) {
                 case PRESSURE -> pressure;
                 case INLET_TEMPERATURE -> coldK;
-                case FLOW_FRAC -> flowKgS / NOMINAL_FLOW_KG_S;
+                case FLOW_FRAC -> flowKgS / nominalFlow;
                 case POWER_FRAC -> power();
                 case AXIAL_PEAKING -> Double.NaN;
             };
@@ -787,7 +893,7 @@ public final class PressurizedWaterReactor {
 
     /** Расход петли, доля её номинала (половина номинала зоны). */
     public double loopFlowFrac(int loop) {
-        double natural = flowKgS / NOMINAL_FLOW_KG_S;
+        double natural = flowKgS / nominalFlow;
         return Math.max(pumps[loop].speed(), Math.min(natural, NATURAL_FLOW));
     }
 
@@ -925,7 +1031,7 @@ public final class PressurizedWaterReactor {
     }
 
     public double flowFraction() {
-        return flowKgS / NOMINAL_FLOW_KG_S;
+        return flowKgS / nominalFlow;
     }
 
     public double pumpSpeed(int loop) {
@@ -1024,7 +1130,7 @@ public final class PressurizedWaterReactor {
         hHot = W.enthalpyPT(pressure, hot);
         hCold = W.enthalpyPT(pressure, cold);
         loopKg = requiredLoopKg(pressure, hHot, hCold);
-        for (int i = 0; i < LOOPS; i++) pumps[i].setSpeed(pumpDrive[i]);
+        for (int i = 0; i < d.loops(); i++) pumps[i].setSpeed(pumpDrive[i]);
         properties();
         core.invalidate();
     }
@@ -1078,7 +1184,7 @@ public final class PressurizedWaterReactor {
         out.beginObject("pzr");
         pzr.save(out);
         out.endObject();
-        for (int i = 0; i < LOOPS; i++) {
+        for (int i = 0; i < d.loops(); i++) {
             out.beginObject("pump" + i);
             pumps[i].save(out);
             out.endObject();
@@ -1101,7 +1207,7 @@ public final class PressurizedWaterReactor {
             pzr.load(in);
             in.endObject();
         }
-        for (int i = 0; i < LOOPS; i++)
+        for (int i = 0; i < d.loops(); i++)
             if (in.has("pump" + i)) {
                 in.beginObject("pump" + i);
                 pumps[i].load(in);
@@ -1123,7 +1229,7 @@ public final class PressurizedWaterReactor {
             }
         }
         tubeLeakAreaM2 = Math.max(0, in.optDouble("tube", 0));
-        tubeBackPa = in.optDouble("tubeP", SecondarySide.P_NOMINAL);
+        tubeBackPa = in.optDouble("tubeP", d.secondaryPa());
         porvOpen = in.optInt("porv", 0) != 0;
         properties();
         core.load(in, this::feedbackState);

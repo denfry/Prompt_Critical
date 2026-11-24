@@ -16,13 +16,27 @@ import dev.denfry.promptcritical.sim.thermo.WaterProperties;
  *
  * <p>ТЭНы греют жидкость; впрыск — холодная вода из напорной нитки ГЦН; импульсное предохранительное устройство (ИПУ)
  * и предохранительный клапан (ПК) сбрасывают пар в барботёр. Расслоение жидкости не моделируется.
+ *
+ * <p><b>Газовый КД</b> ({@link #nitrogen}) — компенсатор объёма ВВЭР-70 (В-2, АЭС Райнсберг): над водой азотная подушка,
+ * ТЭНов и впрыска нет. Давление задаёт газ: P = m_N₂·R·T/V_газ, газ изотермичен с водой под ним; вода не кипит
+ * (подушка держит её недогретой), её объём — m·v(P, h). Входящий скачок сжимает газ, и давление растёт по объёму,
+ * а не по теплу; ИПУ и ПК сбрасывают азот, и давление после сброса восстанавливают только баллоны
+ * ({@link #addNitrogenKg}).
  */
 public final class Pressurizer {
     public static final double TAU_FLASH_S = 0.2, TAU_COND_S = 1.0, SPRAY_EFFICIENCY = 0.9;
     private static final double P_MIN = 0.12e6, P_MAX = 24e6;
 
+    /** Газовая постоянная азота, Дж/(кг·К). */
+    public static final double R_N2 = 8.314_462 / 0.028_014;
+    /** Наименьший объём подушки — доля объёма КД (дальше «твёрдый» КД, давление растёт на сжатии воды). */
+    static final double MIN_GAS_FRACTION = 0.005;
+
     private final WaterProperties water;
     private final double volume;
+    private final boolean gas;
+    /** Газовый КД: масса азота, кг, и энтальпия воды, Дж/кг. */
+    private double n2Kg, hGas;
     private double ml, ul, mv, uv, pressure, liquidVolume;
     private boolean reliefOpen, safetyOpen;
     private double relievedKg, lastReliefKgS;
@@ -31,12 +45,107 @@ public final class Pressurizer {
     private final ThermoState ts = new ThermoState();
 
     public Pressurizer(WaterProperties water, double volumeM3) {
+        this(water, volumeM3, false);
+    }
+
+    private Pressurizer(WaterProperties water, double volumeM3, boolean gas) {
         this.water = water;
         this.volume = volumeM3;
+        this.gas = gas;
+    }
+
+    /** Газовый компенсатор объёма с азотной подушкой (без ТЭНов и впрыска). */
+    public static Pressurizer nitrogen(WaterProperties water, double volumeM3) {
+        return new Pressurizer(water, volumeM3, true);
+    }
+
+    public boolean gas() {
+        return gas;
+    }
+
+    /** Азот в подушке, кг (у парового КД — 0). */
+    public double nitrogenKg() {
+        return n2Kg;
+    }
+
+    /** Подкачка азота из баллонов (плюс) или сдувка (минус), кг; у парового КД ничего не делает. */
+    public void addNitrogenKg(double kg) {
+        if (!gas || !Double.isFinite(kg) || kg == 0) return;
+        n2Kg = Math.max(0.05 * n2Kg, n2Kg + kg);
+        pressure = gasPressure(pressure);
+    }
+
+    /**
+     * Газовый КД: вода с энтальпией {@code liquidH} до уровня {@code level}, азота столько, чтобы при температуре воды
+     * давление было {@code p}. Паровой КД — как {@link #initialize(double, double)}.
+     */
+    public void initialize(double p, double level, double liquidH) {
+        if (!gas) {
+            initialize(p, level);
+            return;
+        }
+        double vl = volume * Math.max(0, Math.min(1 - MIN_GAS_FRACTION, level));
+        water.stateFromPressureEnthalpy(p, liquidH, ts);
+        hGas = liquidH;
+        ml = vl * ts.density;
+        ul = ml * liquidH;
+        mv = uv = 0;
+        n2Kg = p * (volume - vl) / (R_N2 * ts.temperature);
+        pressure = p;
+        liquidVolume = vl;
+        reliefOpen = safetyOpen = false;
+    }
+
+    /** Давление газового КД при текущих массах: неподвижная точка по плотности воды. */
+    private double gasPressure(double guess) {
+        double p = Math.max(P_MIN, guess);
+        for (int i = 0; i < 4; i++) {
+            water.stateFromPressureEnthalpy(p, hGas, ts);
+            double vl = Math.min(volume * (1 - MIN_GAS_FRACTION), ml / ts.density);
+            double vg = volume - vl;
+            liquidVolume = vl;
+            p = Math.max(P_MIN, Math.min(P_MAX, n2Kg * R_N2 * ts.temperature / vg));
+        }
+        return p;
+    }
+
+    private double stepGas(double dt, double surgeKg, double surgeH, double heaterW, double reliefOpenPa, double reliefKgS,
+            double safetyOpenPa, double safetyKgS) {
+        double outH = hGas;
+        if (surgeKg > 0) {
+            hGas = (hGas * ml + surgeKg * surgeH) / Math.max(1e-9, ml + surgeKg);
+            ml += surgeKg;
+        } else if (surgeKg < 0) {
+            ml -= Math.min(ml, -surgeKg);
+        }
+        if (ml > 1e-9) hGas += heaterW * dt / ml;
+        ul = ml * hGas;
+        if (pressure >= reliefOpenPa) reliefOpen = true;
+        else if (pressure < reliefOpenPa - 0.4e6) reliefOpen = false;
+        if (pressure >= safetyOpenPa) safetyOpen = true;
+        else if (pressure < safetyOpenPa - 0.3e6) safetyOpen = false;
+        double vent = ((reliefOpen ? reliefKgS * pressure / reliefOpenPa : 0) + (safetyOpen ? safetyKgS * pressure / safetyOpenPa : 0)) * dt;
+        lastReliefKgS = vent / dt;
+        if (vent > 0) {
+            // через клапан уходит азот; подушки почти нет — вода
+            double reserve = 0.05 * n2Kg;
+            double fromGas = Math.min(vent, Math.max(0, n2Kg - reserve));
+            n2Kg -= fromGas;
+            double fromLiquid = Math.min(ml, 3 * (vent - fromGas));
+            ml -= fromLiquid;
+            relievedKg += fromGas + fromLiquid;
+        }
+        ml = Math.max(0, ml);
+        pressure = gasPressure(pressure);
+        return outH;
     }
 
     /** Насыщенное состояние при давлении {@code p} и уровне {@code level} (доля объёма под водой). */
     public void initialize(double p, double level) {
+        if (gas) {
+            initialize(p, level, sat(p).hF() - 100e3);
+            return;
+        }
         sat(p);
         double vl = volume * Math.max(0, Math.min(1, level));
         ml = vl / sat.vF();
@@ -126,6 +235,7 @@ public final class Pressurizer {
      */
     public double step(double dt, double surgeKg, double surgeH, double sprayKgS, double sprayH, double heaterW,
             double reliefOpenPa, double reliefKgS, double safetyOpenPa, double safetyKgS) {
+        if (gas) return stepGas(dt, surgeKg, surgeH, heaterW, reliefOpenPa, reliefKgS, safetyOpenPa, safetyKgS);
         double hl = ml > 1e-9 ? ul / ml + pressure * liquidVolume / ml : sat(pressure).hF();
         double outH = hl;
         // массообмен с контуром
@@ -225,6 +335,7 @@ public final class Pressurizer {
 
     /** Температура жидкости, К. */
     public double liquidTempK() {
+        if (gas) return water.temperaturePH(pressure, hGas);
         if (ml <= 1e-9) return water.saturationP(pressure).tSat();
         return water.temperaturePH(pressure, (ul + pressure * liquidVolume) / ml);
     }
@@ -259,6 +370,10 @@ public final class Pressurizer {
         out.putDouble("p", pressure);
         out.putDouble("vl", liquidVolume);
         out.putDouble("relieved", relievedKg);
+        if (gas) {
+            out.putDouble("n2", n2Kg);
+            out.putDouble("hgas", hGas);
+        }
     }
 
     public void load(StateReader in) {
@@ -269,6 +384,12 @@ public final class Pressurizer {
         pressure = in.optDouble("p", 0.1e6);
         liquidVolume = in.optDouble("vl", 0);
         relievedKg = in.optDouble("relieved", 0);
+        if (gas) {
+            n2Kg = Math.max(0, in.optDouble("n2", 0));
+            hGas = in.optDouble("hgas", ml > 0 ? ul / ml : 1.0e6);
+            if (n2Kg > 0) pressure = gasPressure(Math.max(P_MIN, pressure));
+            return;
+        }
         if (ml + mv > 0) pressure = solvePressure(Math.max(P_MIN, pressure));
     }
 }

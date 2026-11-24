@@ -20,7 +20,6 @@ import dev.denfry.promptcritical.sim.automation.AutomationUnit;
 import dev.denfry.promptcritical.sim.accident.PlantAccident;
 import dev.denfry.promptcritical.sim.accident.ReactivityInitiatedAccident;
 import dev.denfry.promptcritical.sim.accident.SteamGeneratorTubeRupture;
-import dev.denfry.promptcritical.sim.reactor.pwr.SecondarySide;
 import dev.denfry.promptcritical.sim.consequence.ConsequenceRouter;
 import dev.denfry.promptcritical.sim.core.GridPos;
 import dev.denfry.promptcritical.sim.core.MutableStateTree;
@@ -100,7 +99,7 @@ public final class PwrReactorBlockEntity extends DeviceBlockEntity implements de
 
     private static long requestSeq;
 
-    private final PressurizedWaterReactor reactor = new PressurizedWaterReactor();
+    private final PressurizedWaterReactor reactor;
     private final MechanismWiring wiring = new MechanismWiring();
     private final ItemStackHandler fuel = new ItemStackHandler(2) {
         @Override
@@ -108,7 +107,7 @@ public final class PwrReactorBlockEntity extends DeviceBlockEntity implements de
             if (slot != PwrPanels.SLOT_FRESH || !stack.is(PcItems.FUEL_ASSEMBLY.get())) return false;
             FuelLot l = FuelLot.of(stack);
             FuelDesign d = l.designOrNull();
-            return d != null && PressurizedWaterReactor.accepts(d) && l.freshThermal()
+            return d != null && reactor.plant().core().designs().contains(d) && l.freshThermal()
                     && (reactor.design() == null || reactor.design() == d);
         }
 
@@ -124,7 +123,7 @@ public final class PwrReactorBlockEntity extends DeviceBlockEntity implements de
     /** LOCA, blackout and containment (04c M10): the accident layer and its world glue. */
     private final ReactorAccidentSystems accident = new ReactorAccidentSystems(PlantAccident.PWR_T2A);
     /** Tube rupture in the first steam generator (04c §4c.6): the damaged generator's side of the leak. */
-    private final SteamGeneratorTubeRupture sgtr = new SteamGeneratorTubeRupture(SecondarySide.P_NOMINAL);
+    private final SteamGeneratorTubeRupture sgtr;
     /**
      * I-131 in the primary coolant of intact fuel, Bq/kg [оценка: ≈ 0.03 µCi/g, a typical PWR well under the 1 µCi/g
      * dose-equivalent limit]; failed assemblies add their {@link #I131_PER_FAILED_BQ} over the primary inventory.
@@ -145,6 +144,14 @@ public final class PwrReactorBlockEntity extends DeviceBlockEntity implements de
 
     public PwrReactorBlockEntity(BlockPos pos, BlockState state) {
         super(NppBlockEntities.PWR_REACTOR.get(), pos, state);
+        reactor = new PressurizedWaterReactor(design(state));
+        sgtr = new SteamGeneratorTubeRupture(reactor.plant().secondaryPa());
+    }
+
+    /** Конструкция по блоку: ВВЭР-70 реального масштаба — В-2 Райнсберга, остальные корпуса — стартовый блок T2a. */
+    public static PressurizedWaterReactor.Design design(BlockState state) {
+        return state.is(dev.denfry.promptcritical.mod.registry.PcBlocks.VVER70_REACTOR_REAL.get())
+                ? PressurizedWaterReactor.VVER70 : PressurizedWaterReactor.DEFAULT;
     }
 
     public PressurizedWaterReactor reactor() {
@@ -168,12 +175,12 @@ public final class PwrReactorBlockEntity extends DeviceBlockEntity implements de
         pumps.clear();
         generators.clear();
         pressurizer = null;
-        AABB box = new AABB(worldPosition).inflate(getBlockState().is(dev.denfry.promptcritical.mod.registry.PcBlocks.VVER_REACTOR.get()) ? LINK_RADIUS_REAL : LINK_RADIUS);
+        AABB box = new AABB(worldPosition).inflate(wholeModelId() != null ? LINK_RADIUS_REAL : LINK_RADIUS);
         for (PrimaryPumpBlockEntity p : Ironworks.blockEntities(sl, box, PrimaryPumpBlockEntity.class)) {
-            if (pumps.size() < PressurizedWaterReactor.LOOPS) pumps.add(p.getBlockPos());
+            if (pumps.size() < reactor.plant().loops()) pumps.add(p.getBlockPos());
         }
         for (SteamGeneratorBlockEntity g : Ironworks.blockEntities(sl, box, SteamGeneratorBlockEntity.class)) {
-            if (generators.size() < PressurizedWaterReactor.LOOPS) generators.add(g.getBlockPos());
+            if (generators.size() < reactor.plant().loops()) generators.add(g.getBlockPos());
         }
         for (PressurizerBlockEntity k : Ironworks.blockEntities(sl, box, PressurizerBlockEntity.class)) {
             pressurizer = k.getBlockPos();
@@ -199,7 +206,7 @@ public final class PwrReactorBlockEntity extends DeviceBlockEntity implements de
         double gameDt = PressurizedWaterReactor.DT * b.world().clock().kSlow();
         // ГЦН: петля i — i-й найденный насос; нет насоса — петля без привода
         boolean pumpsDriven = false;
-        for (int l = 0; l < PressurizedWaterReactor.LOOPS; l++) {
+        for (int l = 0; l < reactor.plant().loops(); l++) {
             double drive = 0;
             if (l < pumps.size() && level.getBlockEntity(pumps.get(l)) instanceof PrimaryPumpBlockEntity p) drive = p.drive();
             reactor.setPumpDrive(l, drive);
@@ -234,7 +241,8 @@ public final class PwrReactorBlockEntity extends DeviceBlockEntity implements de
             dev.denfry.promptcritical.mod.content.SimAchievements.nearby(sl, worldPosition, dev.denfry.promptcritical.mod.content.SimAchievements.LOAD_FOLLOW, "hours", follow.hours());
         double q = reactor.steamGeneratorW();
         for (SteamGeneratorBlockEntity sg : sgs) sg.deliver(q / sgs.size());
-        if (kd != null) kd.report(reactor.heaterW() > 1e3, reactor.pressurizer().reliefOpen() || reactor.pressurizer().safetyOpen());
+        if (kd != null) kd.report(reactor.heaterW() > 1e3, reactor.pressurizer().reliefOpen() || reactor.pressurizer().safetyOpen(),
+                reactor.pressurizerLevel(), reactor.pressure());
         if (a != null) {
             a.setInput(AutomationUnit.IN_MAIN, reactor.protection().isTripped() ? 1 : 0);
             a.setInput(AutomationUnit.IN_AUX, reactor.power());
@@ -397,7 +405,7 @@ public final class PwrReactorBlockEntity extends DeviceBlockEntity implements de
         FuelLot l = FuelLot.of(s);
         FuelDesign d = l.designOrNull();
         if (d == null) return;
-        for (int pos = 0; pos < PressurizedWaterReactor.POSITIONS; pos++) {
+        for (int pos = 0; pos < reactor.plant().positions(); pos++) {
             if (reactor.loaded(pos)) continue;
             // МОКС: плутоний идёт в зону по изотопам — ячейка видит его сечения и β (LightWaterCore)
             if (reactor.load(pos, d, l.uKg(), l.u235(), l.u234(), l.plutonium())) {
@@ -418,7 +426,7 @@ public final class PwrReactorBlockEntity extends DeviceBlockEntity implements de
         }
         if (!fuel.getStackInSlot(PwrPanels.SLOT_SPENT).isEmpty()) return;
         int best = -1;
-        for (int pos = 0; pos < PressurizedWaterReactor.POSITIONS; pos++)
+        for (int pos = 0; pos < reactor.plant().positions(); pos++)
             if (reactor.loaded(pos) && (best < 0 || reactor.burnup(pos) > reactor.burnup(best))) best = pos;
         if (best < 0) return;
         dev.denfry.promptcritical.sim.npp.LightWaterCore.AssemblyFuel f = reactor.unload(best);

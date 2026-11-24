@@ -45,6 +45,12 @@ public final class SiteText {
         drawing("vver_steam_generator", "PGV-1000 Steam Generator", "парогенератора ПГВ-1000");
         drawing("vver_coolant_pump", "GCN-195 Reactor Coolant Pump", "ГЦН-195");
         drawing("vver_pressurizer", "VVER-1000 Pressurizer", "компенсатора давления ВВЭР-1000");
+        drawing("vver70_reactor_real", "VVER-70 Reactor (Rheinsberg)", "реактора ВВЭР-70 (Райнсберг)");
+        drawing("vver70_steam_generator_real", "VVER-70 Vertical Steam Generator", "вертикального парогенератора ВВЭР-70");
+        drawing("vver70_coolant_pump_real", "VVER-70 Canned Coolant Pump", "экранированного ГЦН ВВЭР-70");
+        drawing("vver70_pressurizer_real", "VVER-70 Gas Volume Compensator", "газового компенсатора объёма ВВЭР-70");
+        stage("canned_motor", "canned motor and its cooling jacket", "экранированный двигатель и рубашка охлаждения");
+        stage("gas_rack", "nitrogen bottle rack and gas line", "стойка азотных баллонов и газовая линия");
         drawing("bwr240_reactor", "BWR-240 Boiling Water Reactor", "кипящего реактора BWR-240");
         drawing("candu6_reactor", "CANDU 6 Reactor Assembly", "реакторной сборки CANDU 6");
         drawing("bn600_reactor", "BN-600 Sodium Fast Reactor", "реактора БН-600");

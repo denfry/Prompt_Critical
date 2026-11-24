@@ -92,6 +92,24 @@ public final class NppRecipes extends RecipeProvider {
                 .pattern("PVP").pattern("PXP").pattern("PTP").define('P', PcItems.STEEL_PLATE.get()).define('V', PcItems.SAFETY_VALVE.get())
                 .define('X', AllBlocks.FLUID_TANK.get()).define('T', PcItems.SEAMLESS_PIPE.get())
                 .unlockedBy("has_vver_reactor_drawing", has(dev.denfry.promptcritical.mod.site.SiteRegistry.VVER_REACTOR_DRAWING.get())).save(out, id("eccs_accumulator"));
+        // ВВЭР-70 (В-2 Райнсберга): корпус меньше, ПГ вертикальный, ГЦН экранированный, КД газовый (баллоны азота вместо ТЭНов)
+        ShapedRecipeBuilder.shaped(RecipeCategory.MISC, dev.denfry.promptcritical.mod.site.SiteRegistry.VVER70_REACTOR_REAL_DRAWING.get())
+                .pattern("PDP").pattern("PRP").pattern("PZP").define('D', PcBlocks.CONTROL_ROD_DRIVE.get())
+                .define('R', PcBlocks.REACTOR_CONTROLLER.get()).define('P', PcItems.STEEL_PLATE.get()).define('Z', PcItems.ZIRCALOY_INGOT.get())
+                .unlockedBy("has_reactor_controller", has(PcBlocks.REACTOR_CONTROLLER.get())).save(out, id("vver70_reactor_real_drawing"));
+        net.minecraft.data.recipes.ShapelessRecipeBuilder.shapeless(RecipeCategory.MISC, dev.denfry.promptcritical.mod.site.SiteRegistry.VVER70_STEAM_GENERATOR_REAL_DRAWING.get())
+                .requires(net.minecraft.world.item.Items.PAPER, 2).requires(PcBlocks.STEAM_GENERATOR.get())
+                .unlockedBy("has_vver70_reactor_real_drawing", has(dev.denfry.promptcritical.mod.site.SiteRegistry.VVER70_REACTOR_REAL_DRAWING.get()))
+                .save(out, id("vver70_steam_generator_real_drawing"));
+        net.minecraft.data.recipes.ShapelessRecipeBuilder.shapeless(RecipeCategory.MISC, dev.denfry.promptcritical.mod.site.SiteRegistry.VVER70_COOLANT_PUMP_REAL_DRAWING.get())
+                .requires(net.minecraft.world.item.Items.PAPER, 2).requires(PcBlocks.PRIMARY_PUMP.get())
+                .unlockedBy("has_vver70_reactor_real_drawing", has(dev.denfry.promptcritical.mod.site.SiteRegistry.VVER70_REACTOR_REAL_DRAWING.get()))
+                .save(out, id("vver70_coolant_pump_real_drawing"));
+        ShapedRecipeBuilder.shaped(RecipeCategory.MISC, dev.denfry.promptcritical.mod.site.SiteRegistry.VVER70_PRESSURIZER_REAL_DRAWING.get())
+                .pattern("PVP").pattern("PXP").pattern("PGP").define('P', PcItems.STEEL_PLATE.get()).define('V', PcItems.SAFETY_VALVE.get())
+                .define('X', AllBlocks.FLUID_TANK.get()).define('G', PcBlocks.INSTRUMENT_PRESSURE.get())
+                .unlockedBy("has_vver70_reactor_real_drawing", has(dev.denfry.promptcritical.mod.site.SiteRegistry.VVER70_REACTOR_REAL_DRAWING.get()))
+                .save(out, id("vver70_pressurizer_real_drawing"));
         // компенсатор давления: сосуд, ИПУ сверху, манометр, ТЭНы — медная обмотка
         ShapedRecipeBuilder.shaped(RecipeCategory.MISC, dev.denfry.promptcritical.mod.site.SiteRegistry.VVER_PRESSURIZER_DRAWING.get())
                 .pattern("PVP").pattern("PXP").pattern("CGC").define('P', PcItems.STEEL_PLATE.get()).define('V', PcItems.SAFETY_VALVE.get())

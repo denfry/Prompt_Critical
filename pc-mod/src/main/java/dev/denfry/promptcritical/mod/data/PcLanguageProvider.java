@@ -583,6 +583,10 @@ public final class PcLanguageProvider extends LanguageProvider {
         b("vver_steam_generator", "PGV-1000 Steam Generator", "Парогенератор ПГВ-1000");
         b("vver_coolant_pump", "GCN-195 Reactor Coolant Pump", "Главный циркуляционный насос ГЦН-195");
         b("vver_pressurizer", "VVER-1000 Pressurizer", "Компенсатор давления ВВЭР-1000");
+        b("vver70_reactor_real", "VVER-70 Reactor (Rheinsberg)", "Реактор ВВЭР-70 (Райнсберг)");
+        b("vver70_steam_generator_real", "VVER-70 Vertical Steam Generator", "Вертикальный парогенератор ВВЭР-70");
+        b("vver70_coolant_pump_real", "VVER-70 Canned Coolant Pump", "Экранированный ГЦН ВВЭР-70");
+        b("vver70_pressurizer_real", "VVER-70 Gas Volume Compensator", "Газовый компенсатор объёма ВВЭР-70");
         b("candu_reactor", "Heavy Water Reactor (CANDU type, legacy)", "Тяжеловодный реактор (типа CANDU, старая серия)");
         b("candu6_reactor", "CANDU 6 Reactor Assembly", "Реакторная сборка CANDU 6");
         b("gs_exchange_tower", "Girdler Sulfide Heavy Water Plant", "Сероводородный завод тяжёлой воды");

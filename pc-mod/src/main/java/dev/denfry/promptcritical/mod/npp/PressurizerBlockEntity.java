@@ -28,6 +28,8 @@ import org.jetbrains.annotations.Nullable;
 public final class PressurizerBlockEntity extends DeviceBlockEntity implements FoundryDevice, dev.denfry.promptcritical.mod.client.whole.WholeModelHost {
     private boolean heaters, relief;
     private long lastReport = -100;
+    /** Уровень (доля объёма) и давление, МПа, для поплавка и манометра цельной модели; отправлены клиенту. */
+    private float level01, pressureMpa, levelSent = -1, pressureSent = -1;
 
     public PressurizerBlockEntity(BlockPos pos, BlockState state) {
         super(NppBlockEntities.PRESSURIZER.get(), pos, state);
@@ -38,6 +40,21 @@ public final class PressurizerBlockEntity extends DeviceBlockEntity implements F
         heaters = heatersOn;
         relief = reliefOpen;
         lastReport = level == null ? 0 : level.getGameTime();
+    }
+
+    /** Состояние от реактора с уровнем (доля объёма) и давлением, Па — для указателей цельной модели. */
+    void report(boolean heatersOn, boolean reliefOpen, double level, double pressurePa) {
+        report(heatersOn, reliefOpen);
+        level01 = (float) Math.max(0, Math.min(1, level));
+        pressureMpa = (float) Math.max(0, pressurePa / 1e6);
+    }
+
+    public float level01() {
+        return level01;
+    }
+
+    public float pressureMpa() {
+        return pressureMpa;
     }
 
     /** Реактор видел этот КД в последние 2 секунды. */
@@ -54,6 +71,12 @@ public final class PressurizerBlockEntity extends DeviceBlockEntity implements F
             sl.sendParticles(ParticleTypes.CLOUD, worldPosition.getX() + 0.5, worldPosition.getY() + 1.2, worldPosition.getZ() + 0.5,
                     3, 0.2, 0.1, 0.2, 0.08);
             if (t % 20 == 0) sl.playSound(null, worldPosition, SoundEvents.LAVA_EXTINGUISH, SoundSource.BLOCKS, 1.2f, 0.5f);
+        }
+        if (t % 20 == 0 && wholeModelId() != null
+                && (Math.abs(level01 - levelSent) > 0.01f || Math.abs(pressureMpa - pressureSent) > 0.05f)) {
+            levelSent = level01;
+            pressureSent = pressureMpa;
+            sl.sendBlockUpdated(worldPosition, getBlockState(), getBlockState(), 2);
         }
         if (t % 10 == 0) {
             BlockState st = getBlockState();
@@ -83,6 +106,26 @@ public final class PressurizerBlockEntity extends DeviceBlockEntity implements F
         return InteractionResult.PASS;
     }
 
+
+    @Override
+    public net.minecraft.nbt.CompoundTag getUpdateTag(net.minecraft.core.HolderLookup.Provider registries) {
+        net.minecraft.nbt.CompoundTag tag = super.getUpdateTag(registries);
+        tag.putFloat("level01", level01);
+        tag.putFloat("p_mpa", pressureMpa);
+        return tag;
+    }
+
+    @Override
+    public net.minecraft.network.protocol.Packet<net.minecraft.network.protocol.game.ClientGamePacketListener> getUpdatePacket() {
+        return net.minecraft.network.protocol.game.ClientboundBlockEntityDataPacket.create(this);
+    }
+
+    @Override
+    protected void loadAdditional(net.minecraft.nbt.CompoundTag tag, net.minecraft.core.HolderLookup.Provider registries) {
+        super.loadAdditional(tag, registries);
+        if (tag.contains("level01")) level01 = tag.getFloat("level01");
+        if (tag.contains("p_mpa")) pressureMpa = tag.getFloat("p_mpa");
+    }
 
     // --- цельная модель реального масштаба (спецификация real-scale machines) ---
 

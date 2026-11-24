@@ -67,12 +67,14 @@ public final class PrimaryPumpBlockEntity extends KineticMachineBlockEntity<Shaf
 
     @Override
     protected double powerW(ShaftInput u) {
-        return u.rpm(tick) > 0 ? RATED_W * flow / SHARE : 0;
+        return u.rpm(tick) > 0 ? ratedW() * flow / SHARE : 0;
     }
 
+    /** Экранированный ГЦН ВВЭР-70 — ≈ 900 кВт на валу [est]; остальные — {@link #RATED_W}. */
     @Override
     protected double ratedW() {
-        return RATED_W;
+        return getBlockState().is(dev.denfry.promptcritical.mod.registry.PcBlocks.VVER70_COOLANT_PUMP_REAL.get())
+                ? dev.denfry.promptcritical.sim.npp.PressurizedWaterReactor.VVER70.pumpShaftW() : RATED_W;
     }
 
     @Override

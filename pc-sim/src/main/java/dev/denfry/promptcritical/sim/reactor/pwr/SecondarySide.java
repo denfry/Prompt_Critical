@@ -17,6 +17,7 @@ public final class SecondarySide {
     public static final double METAL_J_PER_K = 3.0e7;
 
     private final WaterProperties water;
+    private final double pNominal, feedK;
     private final double nominalSteamKgS, nominalWaterKg;
     private double waterKg, pressure, valve = 1;
     private double steamKgS, feedKgS;
@@ -28,12 +29,19 @@ public final class SecondarySide {
      * @param waterKg       масса воды второго контура на номинальном уровне, кг
      */
     public SecondarySide(WaterProperties water, double nominalPowerW, double waterKg) {
+        this(water, nominalPowerW, waterKg, P_NOMINAL, FEED_K);
+    }
+
+    /** ПГ с другим номиналом: давление пара {@code pNominalPa}, питательная вода {@code feedK}. */
+    public SecondarySide(WaterProperties water, double nominalPowerW, double waterKg, double pNominalPa, double feedK) {
         this.water = water;
-        SaturationState s = water.saturationP(P_NOMINAL);
-        this.nominalSteamKgS = nominalPowerW / (s.hG() - water.enthalpyPT(P_NOMINAL, FEED_K));
+        this.pNominal = pNominalPa;
+        this.feedK = feedK;
+        SaturationState s = water.saturationP(pNominal);
+        this.nominalSteamKgS = nominalPowerW / (s.hG() - water.enthalpyPT(pNominal, feedK));
         this.nominalWaterKg = waterKg;
         this.waterKg = waterKg;
-        this.pressure = P_NOMINAL;
+        this.pressure = pNominal;
     }
 
     /** Регулирующий клапан турбины, доля открытия на номинале (1 — номинальный расход пара). */
@@ -49,10 +57,10 @@ public final class SecondarySide {
     public void step(double dt, double qW) {
         water.saturationP(pressure, satBuf);
         SaturationState s = sat.set(pressure, satBuf);
-        steamKgS = valve * nominalSteamKgS * pressure / P_NOMINAL;
+        steamKgS = valve * nominalSteamKgS * pressure / pNominal;
         double level = level();
         feedKgS = Math.max(0, steamKgS + 0.02 * nominalWaterKg * (0.5 - level) / 10);
-        double hFeed = water.enthalpyPT(pressure, FEED_K);
+        double hFeed = water.enthalpyPT(pressure, feedK);
         double capacity = waterKg * s.cpF() + METAL_J_PER_K;
         double dT = (qW - steamKgS * (s.hG() - s.hF()) - feedKgS * (s.hF() - hFeed)) / capacity * dt;
         double tNew = Math.max(373.15, Math.min(620, s.tSat() + dT));

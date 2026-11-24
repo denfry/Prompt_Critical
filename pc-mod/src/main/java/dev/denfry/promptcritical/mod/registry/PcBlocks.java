@@ -966,6 +966,30 @@ public final class PcBlocks {
             Spec.facing(BlockStateProperties.LIT).segments(PcProperties.wholeSegments(FP_VVER_PRESSURIZER.segments().size()), FP_VVER_PRESSURIZER),
             FoundryBlock.with(dev.denfry.promptcritical.mod.npp.PressurizerBlockEntity::new));
 
+    // --- ВВЭР-70 (В-2, АЭС Райнсберг) в реальном масштабе: 265 МВт(т), три петли, газовый КД; контроллер под осью,
+    // фасад на север (docs/research/2026-11-24-reactor-prototypes, шапки art/blockbench/core/vver70/*.author.js) ---
+    public static final Footprint FP_VVER70_REACTOR = Footprint.tiled(-2, 2, 0, 18, -2, 2);
+    public static final DeferredBlock<PcDeviceBlock> VVER70_REACTOR_REAL = device("vver70_reactor_real", machine(),
+            real(Spec.facing(), FP_VVER70_REACTOR), FoundryBlock.with(dev.denfry.promptcritical.mod.npp.PwrReactorBlockEntity::new));
+    public static final Footprint FP_VVER70_STEAM_GENERATOR = Footprint.tiled(-1, 1, 0, 8, -1, 1);
+    public static final DeferredBlock<PcDeviceBlock> VVER70_STEAM_GENERATOR_REAL = device("vver70_steam_generator_real", machine(),
+            real(Spec.facing(BlockStateProperties.LIT), FP_VVER70_STEAM_GENERATOR),
+            FoundryBlock.with(dev.denfry.promptcritical.mod.npp.SteamGeneratorBlockEntity::new));
+    public static final Footprint FP_VVER70_COOLANT_PUMP = Footprint.tiled(-1, 1, 0, 4, -1, 1);
+    public static final DeferredBlock<PcDeviceBlock> VVER70_COOLANT_PUMP_REAL = device("vver70_coolant_pump_real", machine(),
+            real(Spec.facing(PcProperties.RUNNING), FP_VVER70_COOLANT_PUMP),
+            KineticMachineBlock.with(ShaftSide.BACK, dev.denfry.promptcritical.mod.npp.PrimaryPumpBlockEntity::new));
+    public static final Footprint FP_VVER70_PRESSURIZER = Footprint.tiled(-1, 1, 0, 7, -1, 1);
+    public static final DeferredBlock<PcDeviceBlock> VVER70_PRESSURIZER_REAL = device("vver70_pressurizer_real", machine(),
+            real(Spec.facing(BlockStateProperties.LIT), FP_VVER70_PRESSURIZER),
+            FoundryBlock.with(dev.denfry.promptcritical.mod.npp.PressurizerBlockEntity::new));
+
+    /** Блоки ВВЭР-70: корпус считается конструкцией {@code PressurizedWaterReactor.VVER70}. */
+    public static boolean isVver70(net.minecraft.world.level.block.Block b) {
+        return b == VVER70_REACTOR_REAL.get() || b == VVER70_STEAM_GENERATOR_REAL.get() || b == VVER70_COOLANT_PUMP_REAL.get()
+                || b == VVER70_PRESSURIZER_REAL.get();
+    }
+
     /**
      * Кипящий реактор класса Big Rock Point (240 МВт(т)) в реальном масштабе: корпус 2,95 × 9,14 м на пьедестале с
      * приводами СУЗ снизу, площадка у фланца; 5×14×5, контроллер — под осью корпуса (docs/research/bwr-dimensions.md).
@@ -1008,7 +1032,7 @@ public final class PcBlocks {
     /** Машины реального масштаба с цельной моделью: id блока → id модели (wholemodels/). */
     public static boolean isWholeModel(net.minecraft.world.level.block.Block b) {
         return b == VVER_REACTOR.get() || b == VVER_STEAM_GENERATOR.get() || b == VVER_COOLANT_PUMP.get() || b == VVER_PRESSURIZER.get()
-                || b == BWR240_REACTOR.get() || b == CANDU6_REACTOR.get() || b == BN600_REACTOR.get() || b == AM1_REACTOR.get()
+                || isVver70(b) || b == BWR240_REACTOR.get() || b == CANDU6_REACTOR.get() || b == BN600_REACTOR.get() || b == AM1_REACTOR.get()
                 || b == LANCASHIRE_BOILER.get() || b == HEADFRAME_STEEL.get() || b == MILL_ENGINE.get() || b == WINDING_ENGINE.get()
                 || b == GUIBAL_FAN.get() || b == CUPOLA_FURNACE_REAL.get() || b == MINE_DRAINAGE_PUMP_GEARED.get()
                 || b == LANCASHIRE_STOKER.get() || b == CRUCIBLE_FURNACE_REAL.get()

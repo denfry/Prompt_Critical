@@ -110,6 +110,33 @@ public final class SitePlans {
                     st("channels", 300, n(PIPE, 755), n(PLATE, 400), n(WIRE, 50)),
                     st("piping", 200, n(PIPE, 300), n(PLATE, 100))));
 
+    /**
+     * Прототипы АЭС реального масштаба (docs/research/2026-11-24-reactor-prototypes): ВВЭР-70 Райнсберга. Массы —
+     * оценки по габаритам листов и толщинам стенок (корпус ∅2,85 × 11 м со стенкой 140 мм ≈ 115 т, днище и крышка
+     * ≈ 30 т, внутрикорпусные ≈ 50 т, верхний блок с 19 приводами ≈ 25 т, патрубки и задвижки ≈ 15 т).
+     */
+    private static final Map<String, Plan> PROTOTYPE_PLANS = Map.of(
+            "vver70_reactor_real", plan("vver70_reactor_real", PcBlocks.VVER70_REACTOR_REAL, 235,
+                    st("foundation", 160, n(CONCRETE, 60), n(BEAM, 50)),
+                    st("vessel", 500, n(INGOT, 1250), n(PLATE, 400)),
+                    st("upper_unit", 300, n(PLATE, 200), n(PIPE, 200), n(WIRE, 300)),
+                    st("piping", 240, n(PLATE, 150), n(PIPE, 200))),
+            // вертикальный ПГ ∅2,2 × 8 м: корпус ≈ 38 т, трубный пучок ≈ 20 т (оценки)
+            "vver70_steam_generator_real", plan("vver70_steam_generator_real", PcBlocks.VVER70_STEAM_GENERATOR_REAL, 60,
+                    st("foundation", 100, n(CONCRETE, 10), n(BEAM, 10)),
+                    st("shell", 240, n(PLATE, 300), n(INGOT, 100)),
+                    st("tubes", 240, n(PIPE, 400))),
+            // экранированный ГЦН: улитка ≈ 8 т литья, статор с рубашкой и ротор ≈ 6 т (оценки)
+            "vver70_coolant_pump_real", plan("vver70_coolant_pump_real", PcBlocks.VVER70_COOLANT_PUMP_REAL, 15,
+                    st("foundation", 80, n(CONCRETE, 5), n(BEAM, 5)),
+                    st("casing", 200, n(INGOT, 80)),
+                    st("canned_motor", 200, n(WIRE, 200), n(PLATE, 30), n(INGOT, 15))),
+            // газовый КД 8 м³: сосуд ∅1,4 × 6,2 м со стенкой 80 мм ≈ 21 т, стойка баллонов азота ≈ 3 т (оценки)
+            "vver70_pressurizer_real", plan("vver70_pressurizer_real", PcBlocks.VVER70_PRESSURIZER_REAL, 25,
+                    st("foundation", 80, n(CONCRETE, 6), n(BEAM, 6)),
+                    st("vessel", 240, n(INGOT, 150), n(PLATE, 60)),
+                    st("gas_rack", 120, n(PIPE, 40), n(PLATE, 10))));
+
     /** Машины эры I0 реального масштаба. */
     private static final Map<String, Plan> I0_PLANS = Map.of(
             // ланкаширский котёл 8,5 × ⌀2,3 м ≈ 22 т (Crofton), кладка ≈ 55 м³ кирпича (оценка)
@@ -555,6 +582,7 @@ public final class SitePlans {
 
     public static Plan get(String id) {
         Plan p = PLANS.get(id);
+        if (p == null) p = PROTOTYPE_PLANS.get(id);
         if (p == null) p = I0_PLANS.get(id);
         if (p == null) p = IRONMAKING_PLANS.get(id);
         if (p == null) p = POWER_PLANS.get(id);
@@ -570,7 +598,7 @@ public final class SitePlans {
     }
 
     public static Iterable<Plan> all() {
-        return java.util.stream.Stream.of(PLANS, I0_PLANS, IRONMAKING_PLANS, POWER_PLANS, MINING_COKE_PLANS, I1_STEEL_PLANS, FOUNDRY_PLANS, I0_SHOP_PLANS,
+        return java.util.stream.Stream.of(PLANS, PROTOTYPE_PLANS, I0_PLANS, IRONMAKING_PLANS, POWER_PLANS, MINING_COKE_PLANS, I1_STEEL_PLANS, FOUNDRY_PLANS, I0_SHOP_PLANS,
                         STEAM_MINE_PLANS, CARBON_PLANS, SMITHY_PLANS, ASSEMBLY_PLANS, NONFERROUS_PLANS)
                 .flatMap(m -> m.values().stream()).toList();
     }
