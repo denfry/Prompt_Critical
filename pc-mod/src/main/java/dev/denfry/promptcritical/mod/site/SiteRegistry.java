@@ -129,6 +129,18 @@ public final class SiteRegistry {
     public static final DeferredItem<DesignDrawingItem> SINTERING_FURNACE_REAL_DRAWING = drawing("sintering_furnace_real");
     public static final DeferredItem<DesignDrawingItem> FUEL_ROD_WELDER_REAL_DRAWING = drawing("fuel_rod_welder_real");
     public static final DeferredItem<DesignDrawingItem> FUEL_ASSEMBLY_STAND_REAL_DRAWING = drawing("fuel_assembly_stand_real");
+    // буровая и промысел I2 реального масштаба (09 §9.5, §9.6)
+    public static final DeferredItem<DesignDrawingItem> DERRICK_SEGMENT_REAL_DRAWING = drawing("derrick_segment_real");
+    public static final DeferredItem<DesignDrawingItem> ROTARY_TABLE_REAL_DRAWING = drawing("rotary_table_real");
+    public static final DeferredItem<DesignDrawingItem> DRAWWORKS_REAL_DRAWING = drawing("drawworks_real");
+    public static final DeferredItem<DesignDrawingItem> MUD_PUMP_REAL_DRAWING = drawing("mud_pump_real");
+    public static final DeferredItem<DesignDrawingItem> PUMPJACK_REAL_DRAWING = drawing("pumpjack_real");
+    public static final DeferredItem<DesignDrawingItem> THREE_PHASE_SEPARATOR_REAL_DRAWING = drawing("three_phase_separator_real");
+    // транспорт нефти I2 (09 §9.8)
+    public static final DeferredItem<DesignDrawingItem> MAINLINE_PUMP_REAL_DRAWING = drawing("mainline_pump_real");
+    public static final DeferredItem<DesignDrawingItem> LINE_HEATER_REAL_DRAWING = drawing("line_heater_real");
+    public static final DeferredItem<DesignDrawingItem> OIL_TANK_REAL_DRAWING = drawing("oil_tank_real");
+    public static final DeferredItem<DesignDrawingItem> OIL_TANK_FLOATING_REAL_DRAWING = drawing("oil_tank_floating_real");
 
     private SiteRegistry() {}
 
