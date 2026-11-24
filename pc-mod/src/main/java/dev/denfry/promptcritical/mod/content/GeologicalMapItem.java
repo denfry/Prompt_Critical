@@ -57,6 +57,10 @@ public class GeologicalMapItem extends Item {
             }
             stack.set(PcDataComponents.MAP_TARGET.get(), t);
             level.playSound(null, player.blockPosition(), SoundEvents.BOOK_PAGE_TURN, SoundSource.PLAYERS, 1.0f, 1.0f);
+            // 16 §16.5.1: Xaero получает точку строкой чата один раз — когда карта прочитана
+            if (player instanceof net.minecraft.server.level.ServerPlayer sp)
+                dev.denfry.promptcritical.mod.compat.XaeroWaypoints.offer(sp, Component.translatable(ContentText.vein(t.vein())).getString(),
+                        t.pos(), dev.denfry.promptcritical.mod.compat.XaeroWaypoints.GOLD, level.dimension());
         }
         player.displayClientMessage(describe(t, player.blockPosition()), true);
         return InteractionResultHolder.consume(stack);

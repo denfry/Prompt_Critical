@@ -35,6 +35,9 @@ public final class ServerConfig {
     public static final ModConfigSpec.EnumValue<FeSuParity> FE_SU_PARITY;
     /** Интеграция с необязательным модом (16 §16.14): {@code auto} — включена, если мод загружен. */
     public enum CompatMode { AUTO, OFF }
+    /** Строки путевых точек Xaero в чате (16 §16.5.1): клиентский мод на выделенном сервере не виден, отсюда {@code always}. */
+    public enum XaeroChat { AUTO, ALWAYS, OFF }
+    public static final ModConfigSpec.EnumValue<XaeroChat> COMPAT_XAERO_CHAT_WAYPOINTS;
     /** Кто владеет температурой тела (16 §16.10.1, R60): {@code auto} уступает Cold Sweat или Tough As Nails. */
     public enum BodyTemperatureOwner { AUTO, PROMPTCRITICAL, EXTERNAL }
     public static final ModConfigSpec.EnumValue<CompatMode> COMPAT_SEASONS, COMPAT_CURIOS, COMPAT_ACCESSORIES, COMPAT_JOURNEYMAP,
@@ -514,6 +517,10 @@ public final class ServerConfig {
                 .defineEnum("accessories", CompatMode.AUTO);
         COMPAT_JOURNEYMAP = b.comment("A read geological map in hand sets a JourneyMap waypoint on the ore body (16 §16.5.1)")
                 .defineEnum("journeymap", CompatMode.AUTO);
+        COMPAT_XAERO_CHAT_WAYPOINTS = b.comment("Offer Xaero's Minimap waypoints as chat lines for coordinates in source alarms and read",
+                        "geological maps (16 §16.5.1): auto only when Xaero is loaded in this game (singleplayer, LAN host), always for a",
+                        "server whose players use Xaero, off never. Without Xaero the line shows in chat as it is")
+                .defineEnum("xaero_chat_waypoints", XaeroChat.AUTO);
         COMPAT_VOICECHAT = b.comment("Simple Voice Chat integration (16 §16.4)").defineEnum("voicechat", CompatMode.AUTO);
         // 16 §16.14 пишет mod.compat.voicechat.noise_masking, но в TOML ключ voicechat не может быть и значением, и таблицей
         VOICE_NOISE_MASKING = b.comment("Workshop noise at the speaker limits how far direct speech carries (16 §16.4.2)")
