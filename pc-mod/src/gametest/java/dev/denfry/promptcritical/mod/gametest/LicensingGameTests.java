@@ -480,13 +480,19 @@ public final class LicensingGameTests {
     private static void hp23Unit(GameTestHelper h, net.minecraft.world.level.block.Block block, UnitKind kind,
             double workingPressurePa) {
         h.setBlock(UNIT_POS, block.defaultBlockState());
+        hp23Unit(h, () -> h.getBlockEntity(UNIT_POS) instanceof dev.denfry.promptcritical.mod.ops.OpsMachine m ? m : null, kind,
+                workingPressurePa);
+    }
+
+    /** То же для установки, сущность которой ищет {@code unit} (у батареи — контроллер собранной структуры). */
+    private static void hp23Unit(GameTestHelper h, java.util.function.Supplier<dev.denfry.promptcritical.mod.ops.OpsMachine> unit,
+            UnitKind kind, double workingPressurePa) {
         h.startSequence()
                 // сим-id появляется у сущности не в тот же тик, что блок; без него установку не поставить на учёт
-                .thenWaitUntil(() -> h.assertTrue(h.getBlockEntity(UNIT_POS) instanceof dev.denfry.promptcritical.mod.ops.OpsMachine m
-                        && !m.simId().isNone(), "unit block entity with a sim id"))
+                .thenWaitUntil(() -> h.assertTrue(unit.get() != null && !unit.get().simId().isNone(), "unit block entity with a sim id"))
                 .thenExecute(() -> {
                     OpsSubsystem ops = ops(h);
-                    var m = (dev.denfry.promptcritical.mod.ops.OpsMachine) h.getBlockEntity(UNIT_POS);
+                    var m = unit.get();
                     SimId id = m.simId();
                     // то же, что сущность делает каждый тик; многоблочным без сборки тик до разрешения не доходит
                     h.assertTrue(OpsActions.processPermit(h.getLevel(), m, workingPressurePa), "ADVISORY permits the process");
@@ -524,10 +530,22 @@ public final class LicensingGameTests {
                 .thenSucceed();
     }
 
-    // коксовая батарея получает сим-id только собранной структурой; тест на одиночном блоке пока не обязательный
-    @GameTest(template = LARGE, timeoutTicks = 200, batch = "licensing_hp23", required = false)
+    /**
+     * Коксовая батарея получает сим-id только собранной структурой: 3 камеры × 4 блока вдоль X (простенки z = 1, 3, 5, 7,
+     * камеры z = 2, 4, 6, x = 3…6, y = 1…3) со стояками газосборника, как в {@code IronworksGameTests}; на учёт
+     * ставится контроллер батареи.
+     */
+    @GameTest(template = LARGE, timeoutTicks = 200, batch = "licensing_hp23")
     public static void cokeBatteryUnderCommissioning(GameTestHelper h) {
-        hp23Unit(h, PcBlocks.COKE_OVEN.get(), UnitKind.COKE_BATTERY, 0);
+        for (int z = 1; z <= 7; z++)
+            for (int x = 3; x <= 6; x++)
+                for (int y = 1; y <= 3; y++)
+                    h.setBlock(new BlockPos(x, y, z), z % 2 == 1 ? PcBlocks.COKE_BATTERY_WALL.get().defaultBlockState()
+                            : PcBlocks.COKE_OVEN.get().defaultBlockState());
+        for (int z = 2; z <= 6; z += 2) h.setBlock(new BlockPos(3, 4, z), PcBlocks.GAS_COLLECTOR_MAIN.get().defaultBlockState());
+        BlockPos origin = new BlockPos(3, 1, 2);
+        hp23Unit(h, () -> h.getBlockEntity(origin) instanceof dev.denfry.promptcritical.mod.ironworks.CokeOvenBlockEntity c ? c.master() : null,
+                UnitKind.COKE_BATTERY, 0);
     }
 
     @GameTest(template = LARGE, timeoutTicks = 200, batch = "licensing_hp23")
