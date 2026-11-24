@@ -297,12 +297,10 @@ public final class MachineLoads {
         put(Load.SHAFT, PiercingMillBlockEntity.class);
         put(Load.SHAFT, PipeWelderBlockEntity.class);
         put(Load.SHAFT, PumpjackBlockEntity.class);
-        put(Load.SHAFT, dev.denfry.promptcritical.mod.production.MainlinePumpBlockEntity.class);
         put(Load.SHAFT, SinterStrandBlockEntity.class);
         put(Load.SHAFT, TurningGearBlockEntity.class);
         // своё топливо, пар, ручной привод или свой источник
         put(Load.OWN, BloomeryBlockEntity.class);
-        put(Load.OWN, dev.denfry.promptcritical.mod.production.LineHeaterBlockEntity.class);
         put(Load.OWN, BofVesselBlockEntity.class);
         put(Load.OWN, CellRoomBlockEntity.class);
         put(Load.OWN, CokeOvenBlockEntity.class);
@@ -368,7 +366,6 @@ public final class MachineLoads {
         put(Load.PASSIVE, RescueTripodBlockEntity.class);
         put(Load.PASSIVE, SandMoldBlockEntity.class);
         put(Load.PASSIVE, SeparatorBlockEntity.class);
-        put(Load.PASSIVE, dev.denfry.promptcritical.mod.production.OilTankBlockEntity.class);
         put(Load.PASSIVE, SignageBlockEntity.class);
         put(Load.PASSIVE, SmithingAnvilBlockEntity.class);
         // сборочный стенд ручной ступени (18 §18.8.2): балансировка на ножах, обкатка вручную

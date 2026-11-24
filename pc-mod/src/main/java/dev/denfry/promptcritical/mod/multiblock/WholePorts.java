@@ -138,13 +138,6 @@ public final class WholePorts {
             // руда сверху в питающую коробку, концентрат — на юг из лотка, хвосты — на восток, вода смыва — на восток
             // сепаратор НГС реального масштаба: газ сверху, нефть с восточного днища, вода снизу из водосборника;
             // продукция скважин приходит от устья без трубы (WellheadBlockEntity), входной патрубок — только на модели
-            // магистральный насос: всас с севера, нагнетание с юга у корпуса насоса; вал Create — в порт на хвостовике
-            Map.entry("mainline_pump_real", List.of(p(-1, 0, -1, N), p(-1, 0, 1, S))),
-            // подогреватель: нефть в змеевик и из него — с восточного днища, газ на горелку — с западного
-            Map.entry("line_heater_real", List.of(p(5, 1, -1, E), p(5, 1, 1, E), p(-5, 0, 1, W))),
-            // резервуар: приёмный патрубок на западе, раздаточный на востоке
-            Map.entry("oil_tank_real", List.of(p(-6, 0, 0, W), p(6, 0, 0, E))),
-            Map.entry("oil_tank_floating_real", List.of(p(-6, 0, 0, W), p(6, 0, 0, E))),
             Map.entry("three_phase_separator_real", List.of(p(4, 2, 0, U), p(5, 0, 0, E), p(2, 0, 0, D))),
             Map.entry("magnetic_separator_real", List.of(p(0, 1, 0, U), p(0, 1, 1, S), p(1, 0, 0, E), p(1, 1, 1, E))),
             // пульпа с запада, хвосты на восток, пенный продукт — желоб на севере
@@ -215,7 +208,7 @@ public final class WholePorts {
     }
 
     /** Мировая горизонтальная грань → грань модели (обратный поворот, как у отрисовки). */
-    public static Direction modelFace(Direction world, Direction facing) {
+    static Direction modelFace(Direction world, Direction facing) {
         return switch (facing) {
             case EAST -> world.getCounterClockWise();
             case SOUTH -> world.getOpposite();

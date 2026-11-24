@@ -60,21 +60,6 @@ public final class ProductionRecipes extends RecipeProvider {
                 .pattern("III").pattern("CLH").pattern("AAA").define('I', Items.IRON_BLOCK).define('C', Items.CHAIN)
                 .define('L', AllBlocks.LARGE_COGWHEEL.get()).define('H', AllBlocks.SHAFT.get()).define('A', AllBlocks.ANDESITE_CASING.get())
                 .unlockedBy("has_large_cogwheel", has(AllBlocks.LARGE_COGWHEEL.get())).save(out, id("pumpjack"));
-        // чертежи промысла реального масштаба: строятся на стройплощадке по массе прототипа (SitePlans), старый блок — образец
-        dev.denfry.promptcritical.mod.drilling.DrillingRecipes.drawing(out, dev.denfry.promptcritical.mod.site.SiteRegistry.PUMPJACK_REAL_DRAWING.get(),
-                PcBlocks.PUMPJACK.get(), "pumpjack_real_drawing");
-        dev.denfry.promptcritical.mod.drilling.DrillingRecipes.drawing(out,
-                dev.denfry.promptcritical.mod.site.SiteRegistry.THREE_PHASE_SEPARATOR_REAL_DRAWING.get(), PcBlocks.THREE_PHASE_SEPARATOR.get(),
-                "three_phase_separator_real_drawing");
-        // транспорт нефти: старых блоков нет, образец — насос и бак Create, трубчатая печь
-        dev.denfry.promptcritical.mod.drilling.DrillingRecipes.drawing(out, dev.denfry.promptcritical.mod.site.SiteRegistry.MAINLINE_PUMP_REAL_DRAWING.get(),
-                AllBlocks.MECHANICAL_PUMP.get(), "mainline_pump_real_drawing");
-        dev.denfry.promptcritical.mod.drilling.DrillingRecipes.drawing(out, dev.denfry.promptcritical.mod.site.SiteRegistry.LINE_HEATER_REAL_DRAWING.get(),
-                PcBlocks.TUBE_FURNACE.get(), "line_heater_real_drawing");
-        dev.denfry.promptcritical.mod.drilling.DrillingRecipes.drawing(out, dev.denfry.promptcritical.mod.site.SiteRegistry.OIL_TANK_REAL_DRAWING.get(),
-                AllBlocks.FLUID_TANK.get(), "oil_tank_real_drawing");
-        dev.denfry.promptcritical.mod.drilling.DrillingRecipes.drawing(out, dev.denfry.promptcritical.mod.site.SiteRegistry.OIL_TANK_FLOATING_REAL_DRAWING.get(),
-                dev.denfry.promptcritical.mod.site.SiteRegistry.OIL_TANK_REAL_DRAWING.get(), "oil_tank_floating_real_drawing");
         // штанга — пруток с муфтой; глубинный насос — цилиндр из трубы, плунжер и два шаровых клапана
         ShapedRecipeBuilder.shaped(RecipeCategory.MISC, PcItems.SUCKER_ROD.get(), 4)
                 .pattern("  I").pattern(" I ").pattern("N  ").define('I', Items.IRON_INGOT).define('N', Items.IRON_NUGGET)

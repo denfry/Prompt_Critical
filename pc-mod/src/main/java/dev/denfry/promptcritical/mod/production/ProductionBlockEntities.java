@@ -33,13 +33,6 @@ public final class ProductionBlockEntities {
     public static final DeferredHolder<BlockEntityType<?>, BlockEntityType<CrudeColumnBlockEntity>> CRUDE_COLUMN =
             type("crude_column", CrudeColumnBlockEntity::new, PcBlocks.CRUDE_COLUMN);
 
-    public static final DeferredHolder<BlockEntityType<?>, BlockEntityType<MainlinePumpBlockEntity>> MAINLINE_PUMP =
-            type("mainline_pump", MainlinePumpBlockEntity::new, PcBlocks.MAINLINE_PUMP_REAL);
-    public static final DeferredHolder<BlockEntityType<?>, BlockEntityType<LineHeaterBlockEntity>> LINE_HEATER =
-            type("line_heater", LineHeaterBlockEntity::new, PcBlocks.LINE_HEATER_REAL);
-    public static final DeferredHolder<BlockEntityType<?>, BlockEntityType<OilTankBlockEntity>> OIL_TANK =
-            type("oil_tank", OilTankBlockEntity::new, PcBlocks.OIL_TANK_REAL, PcBlocks.OIL_TANK_FLOATING_REAL);
-
     private ProductionBlockEntities() {
     }
 
