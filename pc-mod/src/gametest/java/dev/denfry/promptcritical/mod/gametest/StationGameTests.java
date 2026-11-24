@@ -223,4 +223,24 @@ public final class StationGameTests {
                 .thenExecute(() -> reg.remove(st.stationId()))
                 .thenSucceed();
     }
+
+    /** Дисковод CC на станции посетитель не открывает: загрузочный диск выполнился бы на соседнем компьютере. */
+    @GameTest(template = LARGE, timeoutTicks = 100)
+    public static void visitorCannotUseADiskDriveInTheStation(GameTestHelper h) {
+        Block drive = BuiltInRegistries.BLOCK.get(ResourceLocation.fromNamespaceAndPath("computercraft", "disk_drive"));
+        h.assertTrue(drive != Blocks.AIR, "CC disk drive registered");
+        h.setBlock(MES, drive.defaultBlockState());
+        StationRegistry reg = StationRegistry.of(h.getLevel().getServer());
+        StationRecord st = station(h, uuid("drive-owner"), MES);
+        BlockPos abs = h.absolutePos(MES);
+        BlockHitResult hit = new BlockHitResult(Vec3.atCenterOf(abs), Direction.UP, abs, false);
+        var visitor = FakePlayerFactory.get(h.getLevel(), new GameProfile(uuid("drive-visitor"), "visitor"));
+        h.startSequence()
+                .thenExecute(() -> {
+                    var e = NeoForge.EVENT_BUS.post(new PlayerInteractEvent.RightClickBlock(visitor, InteractionHand.MAIN_HAND, abs, hit));
+                    h.assertTrue(e.getUseBlock().isFalse(), "visitor may not use the disk drive");
+                })
+                .thenExecute(() -> reg.remove(st.stationId()))
+                .thenSucceed();
+    }
 }

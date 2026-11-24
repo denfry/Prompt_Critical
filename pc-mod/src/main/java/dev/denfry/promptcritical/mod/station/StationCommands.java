@@ -214,8 +214,8 @@ public final class StationCommands {
 
     /**
      * Записывает игрока владельцем компьютера CC или сервера MES, на который он смотрит: для поставленных до учёта
-     * владельцев. Чужой записанный исполнитель перезаписывает только администратор или держатель права выдавать роли на
-     * станции этого чанка.
+     * владельцев. На станции чужой или незаписанный исполнитель записывает только администратор или держатель права
+     * выдавать роли; вне станции игрок записывает незаписанный исполнитель, чужой — только администратор.
      */
     private static int computer(CommandContext<CommandSourceStack> ctx) {
         CommandSourceStack src = ctx.getSource();
@@ -234,7 +234,10 @@ public final class StationCommands {
         StationRegistry.Placer was = id >= 0 ? Stations.computerOwner(src.getServer(), id) : Stations.placerAt(level, pos);
         StationRecord s = r.at(level.dimension(), new ChunkPos(pos));
         boolean manager = s != null && s.has(p.getUUID(), Stations.teamOf(p), dev.denfry.promptcritical.sim.journal.Permission.MANAGE_ROLES);
-        if (was != null && !was.uuid().equals(p.getUUID()) && !PcPermissions.admin(src) && !manager) {
+        // на станции чужой или незаписанный исполнитель записывает только держатель права выдавать роли: иначе
+        // любой перехватил бы общий компьютер с чужими программами (R74); вне станции — только незаписанный
+        boolean own = was != null && was.uuid().equals(p.getUUID());
+        if (!own && !PcPermissions.admin(src) && !manager && (s != null || was != null)) {
             src.sendFailure(StationText.msg("computer.owned", was.name()));
             return 0;
         }

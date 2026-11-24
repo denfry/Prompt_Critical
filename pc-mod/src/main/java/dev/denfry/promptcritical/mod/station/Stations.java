@@ -329,15 +329,23 @@ public final class Stations {
 
     /**
      * Открыть чужой компьютер, черепаху или сервер MES в чанке станции можно только с правом управления (§4d.9.2):
-     * иначе посетитель отдал бы команды с правами владельца исполнителя. Свой исполнитель владелец открывает всегда.
-     * Запрещается только использование блока, предмет в руке (установка блока к грани) работает как обычно.
+     * иначе посетитель отдал бы команды с правами владельца исполнителя. Свой исполнитель владелец открывает всегда, но
+     * команды тот всё равно отдаёт только с правами владельца. Остальные блоки CC на станции (дисковод, монитор, модем)
+     * тоже требуют управления: диск с {@code startup} в дисководе рядом выполнился бы на чужом компьютере. Запрещается
+     * только использование блока, предмет в руке (установка блока к грани) работает как обычно.
      */
     private static void onUseExecutor(net.neoforged.neoforge.event.entity.player.PlayerInteractEvent.RightClickBlock e) {
         if (!(e.getLevel() instanceof ServerLevel level) || !(e.getEntity() instanceof ServerPlayer p)) return;
         BlockPos pos = e.getPos();
-        if (!isExecutor(level.getBlockState(pos)) || stationAt(level, pos) == null) return;
-        StationRegistry.Placer who = executorOwner(level, pos);
-        if (who != null && who.uuid().equals(p.getUUID())) return;
+        BlockState state = level.getBlockState(pos);
+        boolean executor = isExecutor(state);
+        if (!executor && !"computercraft".equals(net.minecraft.core.registries.BuiltInRegistries.BLOCK.getKey(state.getBlock())
+                .getNamespace())) return;
+        if (stationAt(level, pos) == null) return;
+        if (executor) {
+            StationRegistry.Placer who = executorOwner(level, pos);
+            if (who != null && who.uuid().equals(p.getUUID())) return;
+        }
         if (!check(p, level, pos, Permission.CONTROL, device(level, pos)))
             e.setUseBlock(net.neoforged.neoforge.common.util.TriState.FALSE);
     }
