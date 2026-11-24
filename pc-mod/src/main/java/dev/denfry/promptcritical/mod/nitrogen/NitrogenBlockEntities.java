@@ -20,11 +20,11 @@ public final class NitrogenBlockEntities {
             DeferredRegister.create(Registries.BLOCK_ENTITY_TYPE, PromptCritical.MOD_ID);
 
     public static final DeferredHolder<BlockEntityType<?>, BlockEntityType<SteamReformerBlockEntity>> STEAM_REFORMER =
-            type("steam_reformer", SteamReformerBlockEntity::new, PcBlocks.STEAM_REFORMER);
+            type("steam_reformer", SteamReformerBlockEntity::new, PcBlocks.STEAM_REFORMER, PcBlocks.STEAM_REFORMER_REAL);
     public static final DeferredHolder<BlockEntityType<?>, BlockEntityType<Co2AbsorberBlockEntity>> CO2_ABSORBER =
             type("co2_absorber", Co2AbsorberBlockEntity::new, PcBlocks.CO2_ABSORBER);
     public static final DeferredHolder<BlockEntityType<?>, BlockEntityType<AmmoniaConverterBlockEntity>> AMMONIA_CONVERTER =
-            type("ammonia_converter", AmmoniaConverterBlockEntity::new, PcBlocks.AMMONIA_CONVERTER);
+            type("ammonia_converter", AmmoniaConverterBlockEntity::new, PcBlocks.AMMONIA_CONVERTER, PcBlocks.AMMONIA_CONVERTER_REAL);
     public static final DeferredHolder<BlockEntityType<?>, BlockEntityType<NitricAcidBlockEntity>> NITRIC_ACID_UNIT =
             type("nitric_acid_unit", NitricAcidBlockEntity::new, PcBlocks.NITRIC_ACID_UNIT);
     public static final DeferredHolder<BlockEntityType<?>, BlockEntityType<AcidConcentratorBlockEntity>> ACID_CONCENTRATOR =
@@ -50,8 +50,10 @@ public final class NitrogenBlockEntities {
         event.registerBlockEntity(Capabilities.FluidHandler.BLOCK, type, FoundryDevice::fluids);
     }
 
+    @SafeVarargs
     private static <T extends BlockEntity> DeferredHolder<BlockEntityType<?>, BlockEntityType<T>> type(String name,
-            BlockEntityType.BlockEntitySupplier<T> factory, Supplier<? extends Block> block) {
-        return BLOCK_ENTITIES.register(name, () -> BlockEntityType.Builder.of(factory, block.get()).build(null));
+            BlockEntityType.BlockEntitySupplier<T> factory, Supplier<? extends Block>... blocks) {
+        return BLOCK_ENTITIES.register(name, () -> BlockEntityType.Builder.of(factory,
+                java.util.Arrays.stream(blocks).map(Supplier::get).toArray(Block[]::new)).build(null));
     }
 }

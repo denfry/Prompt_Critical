@@ -676,6 +676,23 @@ public final class PcBlocks {
     public static final DeferredBlock<PcDeviceBlock> THREE_PHASE_SEPARATOR_REAL = device("three_phase_separator_real", machine(),
             real(Spec.facing(), FP_THREE_PHASE_SEPARATOR_REAL),
             FoundryBlock.with(dev.denfry.promptcritical.mod.production.SeparatorBlockEntity::new));
+    /**
+     * Транспорт нефти I2 реального масштаба (09 §9.8): магистральный насосный агрегат НМ 1250-260 6 × 2 × 3, путевой
+     * подогреватель ПП-0,63 11 × 4 × 3 с дымовой трубой, резервуар РВС-1000 13 × 14 × 13 со стационарной или плавающей
+     * крышей (art/blockbench/oil_transport, oil_production, storage).
+     */
+    public static final Footprint FP_MAINLINE_PUMP_REAL = mainlinePumpRealFootprint();
+    public static final DeferredBlock<PcDeviceBlock> MAINLINE_PUMP_REAL = device("mainline_pump_real", machine(),
+            real(Spec.facing(PcProperties.RUNNING), FP_MAINLINE_PUMP_REAL), dev.denfry.promptcritical.mod.production.MainlinePumpBlock::create);
+    public static final Footprint FP_LINE_HEATER_REAL = lineHeaterRealFootprint();
+    public static final DeferredBlock<PcDeviceBlock> LINE_HEATER_REAL = device("line_heater_real", machine(),
+            real(Spec.facing(BlockStateProperties.LIT), FP_LINE_HEATER_REAL),
+            FoundryBlock.with(dev.denfry.promptcritical.mod.production.LineHeaterBlockEntity::new));
+    public static final Footprint FP_OIL_TANK_REAL = Footprint.tiled(-6, 6, 0, 13, -6, 6);
+    public static final DeferredBlock<PcDeviceBlock> OIL_TANK_REAL = device("oil_tank_real", machine(),
+            real(Spec.facing(), FP_OIL_TANK_REAL), FoundryBlock.with(dev.denfry.promptcritical.mod.production.OilTankBlockEntity::new));
+    public static final DeferredBlock<PcDeviceBlock> OIL_TANK_FLOATING_REAL = device("oil_tank_floating_real", machine(),
+            real(Spec.facing(), FP_OIL_TANK_REAL), FoundryBlock.with(dev.denfry.promptcritical.mod.production.OilTankBlockEntity::new));
     public static final DeferredBlock<PcBlock> FLARE_STACK = block("flare_stack", machine(), Spec.of());
     public static final DeferredBlock<PcBlock> FLARE_TIP = block("flare_tip", lit(machine()), Spec.of(BlockStateProperties.LIT));
     /** Факельная система 13 §13.4.3: щит розжига, сепаратор капель 3×1×1, гидрозатвор 1×2×1. */
@@ -969,6 +986,45 @@ public final class PcBlocks {
             Spec.facing(BlockStateProperties.LIT).footprint(FP_COLUMN3),
             FoundryBlock.with(dev.denfry.promptcritical.mod.methanol.MethanolColumnBlockEntity::new));
 
+    // --- I3 реального масштаба (art/blockbench/i3/i3.author.js): двойники старых машин на тех же BE ---
+    public static final Footprint FP_GAS_TURBINE_HEAVY_REAL = Footprint.tiled(-6, 6, 0, 5, -2, 2);
+    /** Тяжёлая ГТУ класса V94.2 13 × 6 × 5 на BE {@link #GAS_TURBINE}: газ — с севера, выхлоп — на восток в котёл-утилизатор. */
+    public static final DeferredBlock<PcDeviceBlock> GAS_TURBINE_HEAVY_REAL = device("gas_turbine_heavy_real", machine(),
+            real(Spec.facing(PcProperties.RUNNING), FP_GAS_TURBINE_HEAVY_REAL),
+            FoundryBlock.with(dev.denfry.promptcritical.mod.powerhouse.GasTurbineBlockEntity::new));
+    public static final Footprint FP_HRSG_REAL = Footprint.tiled(-6, 7, 0, 17, -3, 3);
+    /** Горизонтальный котёл-утилизатор 14 × 18 × 7 на BE {@link #HRSG}: вплотную к восточной грани ГТУ (контроллер +13 по x). */
+    public static final DeferredBlock<PcDeviceBlock> HRSG_REAL = device("hrsg_real", machine(),
+            real(Spec.facing(PcProperties.RUNNING), FP_HRSG_REAL), FoundryBlock.with(dev.denfry.promptcritical.mod.powerhouse.HrsgBlockEntity::new));
+    public static final Footprint FP_STEAM_REFORMER_REAL = Footprint.tiled(-4, 4, 0, 13, -2, 2);
+    public static final DeferredBlock<PcDeviceBlock> STEAM_REFORMER_REAL = device("steam_reformer_real", lit(brick()),
+            real(Spec.facing(BlockStateProperties.LIT), FP_STEAM_REFORMER_REAL),
+            FoundryBlock.with(dev.denfry.promptcritical.mod.nitrogen.SteamReformerBlockEntity::new));
+    public static final Footprint FP_AMMONIA_CONVERTER_REAL = Footprint.tiled(-1, 1, 0, 13, -1, 1);
+    /** Колонна синтеза 3 × 14 × 3: циркуляционный компрессор на валу Create — в клетку (0, 0, 1) юбки, вал вдоль фасада. */
+    public static final DeferredBlock<PcDeviceBlock> AMMONIA_CONVERTER_REAL = device("ammonia_converter_real", machine(),
+            real(Spec.facing(PcProperties.RUNNING), FP_AMMONIA_CONVERTER_REAL),
+            dev.denfry.promptcritical.mod.foundry.PortedKineticMachineBlock.with(new BlockPos(0, 0, 1), net.minecraft.core.Direction.Axis.Z,
+                    dev.denfry.promptcritical.mod.nitrogen.AmmoniaConverterBlockEntity::new));
+    public static final Footprint FP_METHANOL_CONVERTER_REAL = Footprint.tiled(-2, 2, 0, 12, -2, 2);
+    /** Реактор Lurgi 5 × 13 × 5: циркуляционный компрессор на валу Create — в клетку (1, 0, 2) юбки (не якорь сегмента), вал вдоль фасада. */
+    public static final DeferredBlock<PcDeviceBlock> METHANOL_CONVERTER_REAL = device("methanol_converter_real", machine(),
+            real(Spec.facing(PcProperties.RUNNING), FP_METHANOL_CONVERTER_REAL),
+            dev.denfry.promptcritical.mod.foundry.PortedKineticMachineBlock.with(new BlockPos(1, 0, 2), net.minecraft.core.Direction.Axis.Z,
+                    dev.denfry.promptcritical.mod.methanol.MethanolConverterBlockEntity::new));
+    public static final Footprint FP_PYROLYSIS_FURNACE_REAL = Footprint.tiled(-4, 4, 0, 15, -2, 2);
+    public static final DeferredBlock<PcDeviceBlock> PYROLYSIS_FURNACE_REAL = device("pyrolysis_furnace_real", lit(brick()),
+            real(Spec.facing(BlockStateProperties.LIT), FP_PYROLYSIS_FURNACE_REAL),
+            FoundryBlock.with(dev.denfry.promptcritical.mod.chem.PyrolysisFurnaceBlockEntity::new));
+    public static final Footprint FP_CHLOR_ALKALI_ELECTROLYSER_REAL = Footprint.tiled(-4, 5, 0, 2, -1, 1);
+    public static final DeferredBlock<PcDeviceBlock> CHLOR_ALKALI_ELECTROLYSER_REAL = device("chlor_alkali_electrolyser_real", machine(),
+            real(Spec.facing(PcProperties.RUNNING), FP_CHLOR_ALKALI_ELECTROLYSER_REAL),
+            FoundryBlock.with(dev.denfry.promptcritical.mod.chlor.CellRoomBlockEntity::new));
+    public static final Footprint FP_PVC_REACTOR_REAL = Footprint.tiled(-2, 2, 0, 7, -2, 2);
+    public static final DeferredBlock<PcDeviceBlock> PVC_REACTOR_REAL = device("pvc_reactor_real", machine(),
+            real(Spec.facing(PcProperties.RUNNING), FP_PVC_REACTOR_REAL),
+            FoundryBlock.with(dev.denfry.promptcritical.mod.chlor.PvcReactorBlockEntity::new));
+
     // --- ядерное топливо I4: обогащение урана на газовых центрифугах ---
     /** Секция газовых центрифуг (20 машин); их считает пульт каскада в радиусе {@code CascadeBlockEntity#RADIUS}. */
     public static final DeferredBlock<PcBlock> GAS_CENTRIFUGE = block("gas_centrifuge", machine(), Spec.facing());
@@ -1139,6 +1195,16 @@ public final class PcBlocks {
     public static final DeferredBlock<PcDeviceBlock> VVER70_PRESSURIZER_REAL = device("vver70_pressurizer_real", machine(),
             real(Spec.facing(BlockStateProperties.LIT), FP_VVER70_PRESSURIZER),
             FoundryBlock.with(dev.denfry.promptcritical.mod.npp.PressurizerBlockEntity::new));
+    /** Бассейн выдержки ВВЭР-70: 5 × 5 м, 8 м глубиной, 256 гнёзд стеллажей; контроллер в центре пола, проём на север. */
+    public static final Footprint FP_VVER70_FUEL_POOL = Footprint.tiled(-3, 3, 0, 8, -3, 3);
+    public static final DeferredBlock<PcDeviceBlock> VVER70_FUEL_POOL_REAL = device("vver70_fuel_pool_real", machine().noOcclusion(),
+            real(Spec.facing(PcProperties.RUNNING), FP_VVER70_FUEL_POOL),
+            FoundryBlock.with(dev.denfry.promptcritical.mod.npp.SpentFuelPoolBlockEntity::new));
+    /** Перегрузочная машина ВВЭР-70: мост на рельсах над шахтой реактора и бассейном; контроллер в середине пути. */
+    public static final Footprint FP_VVER70_REFUELLING_MACHINE = Footprint.tiled(-4, 4, 0, 3, -6, 6);
+    public static final DeferredBlock<PcDeviceBlock> VVER70_REFUELLING_MACHINE_REAL = device("vver70_refuelling_machine_real",
+            machine().noOcclusion(), real(Spec.facing(PcProperties.RUNNING), FP_VVER70_REFUELLING_MACHINE),
+            FoundryBlock.with(dev.denfry.promptcritical.mod.npp.RefuellingMachineBlockEntity::new));
 
     /** Блоки ВВЭР-70: корпус считается конструкцией {@code PressurizedWaterReactor.VVER70}. */
     public static boolean isVver70(net.minecraft.world.level.block.Block b) {
@@ -1211,13 +1277,17 @@ public final class PcBlocks {
 
     /** Машины реального масштаба с цельной моделью: id блока → id модели (wholemodels/). */
     public static boolean isWholeModel(net.minecraft.world.level.block.Block b) {
-        return b == PUMPJACK_REAL.get() || b == THREE_PHASE_SEPARATOR_REAL.get() || b == ROTARY_TABLE_REAL.get() || b == DRAWWORKS_REAL.get() || b == MUD_PUMP_REAL.get() || b == DERRICK_SEGMENT_REAL.get()
+        return b == MAINLINE_PUMP_REAL.get() || b == LINE_HEATER_REAL.get() || b == OIL_TANK_REAL.get() || b == OIL_TANK_FLOATING_REAL.get()
+                || b == PUMPJACK_REAL.get() || b == THREE_PHASE_SEPARATOR_REAL.get() || b == ROTARY_TABLE_REAL.get() || b == DRAWWORKS_REAL.get() || b == MUD_PUMP_REAL.get() || b == DERRICK_SEGMENT_REAL.get()
                 || b == GAS_CENTRIFUGE_REAL.get() || b == CENTRIFUGE_CASCADE_SECTION_REAL.get() || b == FLUORINATOR_REAL.get()
                 || b == UF6_CYLINDER_30B_REAL.get() || b == UF6_AUTOCLAVE_REAL.get() || b == PELLET_PRESS_REAL.get()
                 || b == SINTERING_FURNACE_REAL.get() || b == FUEL_ROD_WELDER_REAL.get() || b == FUEL_ASSEMBLY_STAND_REAL.get()
                 || b == VVER440_FUEL_ASSEMBLY_REAL.get()
                 || b == VVER_REACTOR.get() || b == VVER_STEAM_GENERATOR.get() || b == VVER_COOLANT_PUMP.get() || b == VVER_PRESSURIZER.get()
-                || isVver70(b) || b == BWR240_REACTOR.get() || b == CANDU6_REACTOR.get() || b == BN600_REACTOR.get() || b == AM1_REACTOR.get()
+                || isVver70(b) || b == VVER70_FUEL_POOL_REAL.get() || b == VVER70_REFUELLING_MACHINE_REAL.get() || b == BWR240_REACTOR.get() || b == CANDU6_REACTOR.get() || b == BN600_REACTOR.get() || b == AM1_REACTOR.get()
+                || b == GAS_TURBINE_HEAVY_REAL.get() || b == HRSG_REAL.get() || b == STEAM_REFORMER_REAL.get() || b == AMMONIA_CONVERTER_REAL.get()
+                || b == METHANOL_CONVERTER_REAL.get() || b == PYROLYSIS_FURNACE_REAL.get() || b == CHLOR_ALKALI_ELECTROLYSER_REAL.get()
+                || b == PVC_REACTOR_REAL.get()
                 || b == LANCASHIRE_BOILER.get() || b == HEADFRAME_STEEL.get() || b == MILL_ENGINE.get() || b == WINDING_ENGINE.get()
                 || b == GUIBAL_FAN.get() || b == CUPOLA_FURNACE_REAL.get() || b == MINE_DRAINAGE_PUMP_GEARED.get()
                 || b == LANCASHIRE_STOKER.get() || b == CRUCIBLE_FURNACE_REAL.get()
@@ -1240,6 +1310,8 @@ public final class PcBlocks {
                 || b == SHAPING_MACHINE_REAL.get() || b == SURFACE_GRINDER_REAL.get()
                 || b == DEGASIFICATION_PUMP_REAL.get() || b == FORCED_DRAFT_FAN_REAL.get() || b == INDUCED_DRAFT_FAN_REAL.get()
                 || b == MAGNETIC_SEPARATOR_REAL.get() || b == FLOTATION_CELL_REAL.get() || b == ELECTRODE_BOILER_REAL.get()
+                || b == H2_ELECTROLYSER_REAL.get() || b == H2_COMPRESSOR_REAL.get() || b == H2_TUBE_BANK_REAL.get()
+                || b == H2_GASHOLDER_REAL.get() || b == H2_FUEL_CELL_REAL.get()
                 || b == ELECTRIC_ARC_FURNACE_REAL.get() || b == LADLE_STATION_REAL.get() || b == INGOT_MOLD_REAL.get()
                 || b == HEAT_TREATMENT_FURNACE_REAL.get() || b == PIPE_WELDER_REAL.get() || b == PIERCING_MILL_REAL.get()
                 // углеродная линия реального масштаба
@@ -1410,6 +1482,24 @@ public final class PcBlocks {
         java.util.List<Segment> s = new java.util.ArrayList<>(Footprint.tiled(-4, 3, 0, 6, -1, 1).segments());
         s.add(new Segment(4, 4, 0, 0, 0, -1, 1, -1, 1));
         s.add(new Segment(4, 6, 0, 0, 0, 0, 0, -1, 1));
+        return Footprint.of(s.toArray(Segment[]::new));
+    }
+
+    /** Корпус подогревателя и колонна дымовой трубы (−4, 4…8, 0): сегменты трубы — не дальше ±1 от якоря. */
+    /**
+     * Насосный агрегат 6 × 2 × 3: x −2…2 сеткой, столбец хвостовика двигателя (x 3) — отдельным сегментом с якорем
+     * наверху (3, 1, 0), чтобы клетка вала (3, 0, 0) была частью, а не якорем: якорь не становится портом вала.
+     */
+    private static Footprint mainlinePumpRealFootprint() {
+        java.util.List<Segment> s = new java.util.ArrayList<>(Footprint.tiled(-2, 2, 0, 1, -1, 1).segments());
+        s.add(new Segment(3, 1, 0, 0, 0, -1, 0, -1, 1));
+        return Footprint.of(s.toArray(Segment[]::new));
+    }
+
+    private static Footprint lineHeaterRealFootprint() {
+        java.util.List<Segment> s = new java.util.ArrayList<>(Footprint.tiled(-5, 5, 0, 3, -1, 1).segments());
+        s.add(new Segment(-4, 5, 0, 0, 0, -1, 1, 0, 0));
+        s.add(new Segment(-4, 8, 0, 0, 0, -1, 0, 0, 0));
         return Footprint.of(s.toArray(Segment[]::new));
     }
 
@@ -1955,6 +2045,33 @@ public final class PcBlocks {
             Spec.facing(PcProperties.RUNNING).segments(PcProperties.wholeSegments(FP_ELECTRODE_BOILER_REAL.segments().size()),
                     FP_ELECTRODE_BOILER_REAL),
             FoundryBlock.with(dev.denfry.promptcritical.mod.powerhouse.ElectrodeBoilerBlockEntity::new));
+
+    // водородная станция реального масштаба (art/blockbench/hydrogen/hydrogen.author.js): контроллер (0, 0, 0), фасад на север
+    /** Щелочной электролизёр класса Nel A485: x −4…4, y 0…3, z −1…1. */
+    public static final Footprint FP_H2_ELECTROLYSER_REAL = Footprint.tiled(-4, 4, 0, 3, -1, 1);
+    public static final DeferredBlock<PcDeviceBlock> H2_ELECTROLYSER_REAL = device("h2_electrolyser_real", machine(),
+            real(Spec.facing(PcProperties.RUNNING), FP_H2_ELECTROLYSER_REAL),
+            FoundryBlock.with(dev.denfry.promptcritical.mod.hydrogen.ElectrolyserBlockEntity::new));
+    /** Мембранный компрессор водорода: x −2…2, y 0…2, z −1…1. */
+    public static final Footprint FP_H2_COMPRESSOR_REAL = Footprint.tiled(-2, 2, 0, 2, -1, 1);
+    public static final DeferredBlock<PcDeviceBlock> H2_COMPRESSOR_REAL = device("h2_compressor_real", machine(),
+            real(Spec.facing(PcProperties.RUNNING), FP_H2_COMPRESSOR_REAL),
+            FoundryBlock.with(dev.denfry.promptcritical.mod.hydrogen.H2CompressorBlockEntity::new));
+    /** Баллонная рампа 200 бар: x −3…3, y 0…2, z −1…1. */
+    public static final Footprint FP_H2_TUBE_BANK_REAL = Footprint.tiled(-3, 3, 0, 2, -1, 1);
+    public static final DeferredBlock<PcDeviceBlock> H2_TUBE_BANK_REAL = device("h2_tube_bank_real", machine(),
+            real(Spec.facing(), FP_H2_TUBE_BANK_REAL),
+            FoundryBlock.with(dev.denfry.promptcritical.mod.hydrogen.H2StorageBlockEntity::new));
+    /** Газгольдер-ресивер: x −2…2, y 0…12, z −2…2. */
+    public static final Footprint FP_H2_GASHOLDER_REAL = Footprint.tiled(-2, 2, 0, 12, -2, 2);
+    public static final DeferredBlock<PcDeviceBlock> H2_GASHOLDER_REAL = device("h2_gasholder_real", machine(),
+            real(Spec.facing(), FP_H2_GASHOLDER_REAL),
+            FoundryBlock.with(dev.denfry.promptcritical.mod.hydrogen.H2StorageBlockEntity::new));
+    /** Модуль топливных элементов PEM 200 кВт с инвертором: x −1…1, y 0…2, z 0. */
+    public static final Footprint FP_H2_FUEL_CELL_REAL = Footprint.tiled(-1, 1, 0, 2, 0, 0);
+    public static final DeferredBlock<PcDeviceBlock> H2_FUEL_CELL_REAL = device("h2_fuel_cell_real", machine(),
+            real(Spec.facing(PcProperties.RUNNING), FP_H2_FUEL_CELL_REAL),
+            FoundryBlock.with(dev.denfry.promptcritical.mod.hydrogen.FuelCellBlockEntity::new));
     /** Мареограф: уровень моря по модели прилива, амплитуда M2 места и фаза Луны. */
     public static final DeferredBlock<PcDeviceBlock> TIDE_GAUGE = device("tide_gauge", machine().noOcclusion(), Spec.facing(),
             FoundryBlock.with(dev.denfry.promptcritical.mod.powerhouse.TideGaugeBlockEntity::new));

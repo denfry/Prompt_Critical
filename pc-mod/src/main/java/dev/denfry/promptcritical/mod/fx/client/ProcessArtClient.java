@@ -36,8 +36,11 @@ public final class ProcessArtClient {
                 c -> new RunningPartRenderer<>(COKER_DRILL, Motion.STROKE_Y, 4, 0, 400));
         // муфта циркулятора на оси вала у задней грани контроллера (x 8, y 8)
         event.registerBlockEntityRenderer(MethanolBlockEntities.METHANOL_CONVERTER.get(),
-                c -> new FoundryMachineRenderer<>(METHANOL_COUPLING, FoundryMachineRenderer.Motion.SPIN_Z, 8, 8, 1));
+                c -> new dev.denfry.promptcritical.mod.client.whole.SpinWholeRenderer<>(
+                        new FoundryMachineRenderer<>(METHANOL_COUPLING, FoundryMachineRenderer.Motion.SPIN_Z, 8, 8, 1)));
+        // двойники реального масштаба (I3RealClient) — цельной моделью, без частей
         event.registerBlockEntityRenderer(NitrogenBlockEntities.AMMONIA_CONVERTER.get(),
-                c -> new FoundryMachineRenderer<>(AMMONIA_COUPLING, FoundryMachineRenderer.Motion.SPIN_Z, 8, 8, 1));
+                c -> new dev.denfry.promptcritical.mod.client.whole.SpinWholeRenderer<>(
+                        new FoundryMachineRenderer<>(AMMONIA_COUPLING, FoundryMachineRenderer.Motion.SPIN_Z, 8, 8, 1)));
     }
 }

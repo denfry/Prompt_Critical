@@ -234,6 +234,9 @@ public final class MachineLoads {
         put(Load.PASSIVE, dev.denfry.promptcritical.mod.nuclear.CentrifugeRealBlockEntity.class);
         put(Load.PASSIVE, dev.denfry.promptcritical.mod.nuclear.PlacedItemBlockEntity.class);
         put(Load.ACTIVE_LV, dev.denfry.promptcritical.mod.nuclear.Uf6AutoclaveBlockEntity.class);
+        // ВВЭР-70: насосы охлаждения и подпитки бассейна, приводы перегрузочной машины
+        put(Load.ACTIVE_LV, dev.denfry.promptcritical.mod.npp.SpentFuelPoolBlockEntity.class);
+        put(Load.ACTIVE_LV, dev.denfry.promptcritical.mod.npp.RefuellingMachineBlockEntity.class);
         put(Load.ACTIVE_LV, GasPlantBlockEntity.class);
         put(Load.ACTIVE_LV, HclFurnaceBlockEntity.class);
         put(Load.ACTIVE_LV, MethanolColumnBlockEntity.class);
@@ -297,10 +300,12 @@ public final class MachineLoads {
         put(Load.SHAFT, PiercingMillBlockEntity.class);
         put(Load.SHAFT, PipeWelderBlockEntity.class);
         put(Load.SHAFT, PumpjackBlockEntity.class);
+        put(Load.SHAFT, dev.denfry.promptcritical.mod.production.MainlinePumpBlockEntity.class);
         put(Load.SHAFT, SinterStrandBlockEntity.class);
         put(Load.SHAFT, TurningGearBlockEntity.class);
         // своё топливо, пар, ручной привод или свой источник
         put(Load.OWN, BloomeryBlockEntity.class);
+        put(Load.OWN, dev.denfry.promptcritical.mod.production.LineHeaterBlockEntity.class);
         put(Load.OWN, BofVesselBlockEntity.class);
         put(Load.OWN, CellRoomBlockEntity.class);
         put(Load.OWN, CokeOvenBlockEntity.class);
@@ -314,6 +319,11 @@ public final class MachineLoads {
         put(Load.OWN, WaterTubeBoilerBlockEntity.class);
         // источник энергии
         put(Load.SOURCE, BwrReactorBlockEntity.class);
+        // водородная станция: топливный элемент отдаёт в сеть, компрессор — от щита 0,4 кВ, сосуды пассивны;
+        // электролизёр — свой ввод 6,3 кВ (GridDevice → GRID)
+        put(Load.SOURCE, dev.denfry.promptcritical.mod.hydrogen.FuelCellBlockEntity.class);
+        put(Load.ACTIVE_LV, dev.denfry.promptcritical.mod.hydrogen.H2CompressorBlockEntity.class);
+        put(Load.PASSIVE, dev.denfry.promptcritical.mod.hydrogen.H2StorageBlockEntity.class);
         put(Load.SOURCE, CanduReactorBlockEntity.class);
         put(Load.SOURCE, dev.denfry.promptcritical.mod.npp.NpdReactorBlockEntity.class);
         put(Load.ACTIVE_LV, dev.denfry.promptcritical.mod.npp.NpdFuellingMachineBlockEntity.class);
@@ -368,6 +378,7 @@ public final class MachineLoads {
         put(Load.PASSIVE, RescueTripodBlockEntity.class);
         put(Load.PASSIVE, SandMoldBlockEntity.class);
         put(Load.PASSIVE, SeparatorBlockEntity.class);
+        put(Load.PASSIVE, dev.denfry.promptcritical.mod.production.OilTankBlockEntity.class);
         put(Load.PASSIVE, SignageBlockEntity.class);
         put(Load.PASSIVE, SmithingAnvilBlockEntity.class);
         // сборочный стенд ручной ступени (18 §18.8.2): балансировка на ножах, обкатка вручную

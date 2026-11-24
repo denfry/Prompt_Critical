@@ -110,6 +110,16 @@ public final class NppRecipes extends RecipeProvider {
                 .define('X', AllBlocks.FLUID_TANK.get()).define('G', PcBlocks.INSTRUMENT_PRESSURE.get())
                 .unlockedBy("has_vver70_reactor_real_drawing", has(dev.denfry.promptcritical.mod.site.SiteRegistry.VVER70_REACTOR_REAL_DRAWING.get()))
                 .save(out, id("vver70_pressurizer_real_drawing"));
+        // бассейн выдержки — по стеллажу старой серии, перегрузочная машина — балка и цепь
+        net.minecraft.data.recipes.ShapelessRecipeBuilder.shapeless(RecipeCategory.MISC, dev.denfry.promptcritical.mod.site.SiteRegistry.VVER70_FUEL_POOL_REAL_DRAWING.get())
+                .requires(net.minecraft.world.item.Items.PAPER, 2).requires(PcBlocks.FUEL_RACK.get())
+                .unlockedBy("has_vver70_reactor_real_drawing", has(dev.denfry.promptcritical.mod.site.SiteRegistry.VVER70_REACTOR_REAL_DRAWING.get()))
+                .save(out, id("vver70_fuel_pool_real_drawing"));
+        ShapedRecipeBuilder.shaped(RecipeCategory.MISC, dev.denfry.promptcritical.mod.site.SiteRegistry.VVER70_REFUELLING_MACHINE_REAL_DRAWING.get())
+                .pattern("PBP").pattern("PCP").pattern("PPP").define('P', net.minecraft.world.item.Items.PAPER).define('B', PcItems.STEEL_BEAM.get())
+                .define('C', net.minecraft.world.item.Items.CHAIN)
+                .unlockedBy("has_vver70_reactor_real_drawing", has(dev.denfry.promptcritical.mod.site.SiteRegistry.VVER70_REACTOR_REAL_DRAWING.get()))
+                .save(out, id("vver70_refuelling_machine_real_drawing"));
         // CANDU NPD: каландр с каналами из циркалоя, машина и петля — от чертежа реактора
         ShapedRecipeBuilder.shaped(RecipeCategory.MISC, dev.denfry.promptcritical.mod.site.SiteRegistry.NPD_REACTOR_REAL_DRAWING.get())
                 .pattern("PZP").pattern("ZRZ").pattern("PZP").define('Z', PcItems.ZIRCALOY_INGOT.get())

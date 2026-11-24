@@ -64,6 +64,32 @@ public final class SitePlans {
         return new Plan(id, unit, metalT * 1000, List.of(stages));
     }
 
+    /**
+     * Водородная станция (art/blockbench/hydrogen, оценки по размерам моделей): батарея A485 с сепараторами и щелочным
+     * контуром ≈ 45 т, компрессор PDC на раме ≈ 12 т, рампа из девяти бесшовных баллонов ≈ 27 т, газгольдер 70 м³ с
+     * площадкой ≈ 12 т, модуль ТЭ с инвертором ≈ 3,5 т.
+     */
+    private static final Map<String, Plan> H2_PLANS = Map.of(
+            "h2_electrolyser_real", plan("h2_electrolyser_real", PcBlocks.H2_ELECTROLYSER_REAL, 45,
+                    st("foundation", 100, n(CONCRETE, 20)),
+                    st("cell_stack", 240, n(PLATE, 200), n(INGOT, 100)),
+                    st("gas_separators", 160, n(PLATE, 80), n(PIPE, 60)),
+                    st("dc_busbars", 100, n(WIRE, 300))),
+            "h2_compressor_real", plan("h2_compressor_real", PcBlocks.H2_COMPRESSOR_REAL, 12,
+                    st("foundation", 60, n(CONCRETE, 4)),
+                    st("compressor_frame", 140, n(BEAM, 30), n(INGOT, 60)),
+                    st("coolers_piping", 100, n(PIPE, 40), n(WIRE, 80))),
+            "h2_tube_bank_real", plan("h2_tube_bank_real", PcBlocks.H2_TUBE_BANK_REAL, 27,
+                    st("tube_frame", 80, n(BEAM, 40)),
+                    st("pressure_tubes", 200, n(PIPE, 460))),
+            "h2_gasholder_real", plan("h2_gasholder_real", PcBlocks.H2_GASHOLDER_REAL, 12,
+                    st("foundation", 80, n(CONCRETE, 10)),
+                    st("shell", 160, n(PLATE, 90), n(PIPE, 10)),
+                    st("platform", 80, n(BEAM, 25))),
+            "h2_fuel_cell_real", plan("h2_fuel_cell_real", PcBlocks.H2_FUEL_CELL_REAL, 3.5,
+                    st("fuel_cell_stack", 120, n(PLATE, 20), n(INGOT, 5), n(WIRE, 50)),
+                    st("inverter_cabinet", 80, n(PLATE, 3), n(WIRE, 30))));
+
     private static final Map<String, Plan> PLANS = Map.of(
             // корпус 304 т (ТПУ), внутрикорпусные ≈ 250 т, верхний блок ≈ 135 т, патрубки и трубопроводы ≈ 60 т (оценки)
             "vver_reactor", plan("vver_reactor", PcBlocks.VVER_REACTOR, 770,
@@ -163,7 +189,18 @@ public final class SitePlans {
             "vver70_pressurizer_real", plan("vver70_pressurizer_real", PcBlocks.VVER70_PRESSURIZER_REAL, 25,
                     st("foundation", 80, n(CONCRETE, 6), n(BEAM, 6)),
                     st("vessel", 240, n(INGOT, 150), n(PLATE, 60)),
-                    st("gas_rack", 120, n(PIPE, 40), n(PLATE, 10))));
+                    st("gas_rack", 120, n(PIPE, 40), n(PLATE, 10))),
+            // бассейн выдержки: облицовка 4 мм нержавейки на 185 м² ≈ 6 т, стеллажи на 256 гнёзд ≈ 8 т, трубы
+            // охлаждения ≈ 2 т; бетон стен не металл (оценки)
+            "vver70_fuel_pool_real", plan("vver70_fuel_pool_real", PcBlocks.VVER70_FUEL_POOL_REAL, 16,
+                    st("pool_walls", 300, n(CONCRETE, 120)),
+                    st("pool_liner", 240, n(PLATE, 60), n(PIPE, 40)),
+                    st("pool_racks", 200, n(PLATE, 80))),
+            // перегрузочная машина: рельсы ≈ 4 т, мост пролётом 9 м ≈ 25 т, тележка со штангой ≈ 13 т, кабели ≈ 2 т (оценки)
+            "vver70_refuelling_machine_real", plan("vver70_refuelling_machine_real", PcBlocks.VVER70_REFUELLING_MACHINE_REAL, 45,
+                    st("rm_rails", 120, n(BEAM, 40)),
+                    st("rm_bridge", 300, n(BEAM, 250)),
+                    st("rm_trolley", 240, n(PLATE, 100), n(PIPE, 60), n(WIRE, 200))));
 
     /** Машины эры I0 реального масштаба. */
     private static final Map<String, Plan> I0_PLANS = Map.of(
@@ -458,8 +495,22 @@ public final class SitePlans {
             Map.entry("shaft_generator_real", new Twin(PcBlocks.SHAFT_GENERATOR, 1)),
             Map.entry("electric_motor_mv_real", new Twin(PcBlocks.ELECTRIC_MOTOR, 1)),
             Map.entry("quench_tower_real", new Twin(PcBlocks.QUENCH_TOWER, 1)),
+            Map.entry("gas_turbine_heavy_real", new Twin(PcBlocks.GAS_TURBINE, 1)),
+            Map.entry("hrsg_real", new Twin(PcBlocks.HRSG, 1)),
+            Map.entry("steam_reformer_real", new Twin(PcBlocks.STEAM_REFORMER, 1)),
+            Map.entry("ammonia_converter_real", new Twin(PcBlocks.AMMONIA_CONVERTER, 1)),
+            Map.entry("methanol_converter_real", new Twin(PcBlocks.METHANOL_CONVERTER, 1)),
+            Map.entry("pyrolysis_furnace_real", new Twin(PcBlocks.PYROLYSIS_FURNACE, 1)),
+            Map.entry("chlor_alkali_electrolyser_real", new Twin(PcBlocks.CHLOR_ALKALI_CELL, 1)),
+            Map.entry("pvc_reactor_real", new Twin(PcBlocks.PVC_REACTOR, 1)),
             Map.entry("bof_vessel_real", new Twin(PcBlocks.BOF_VESSEL, 1)),
-            Map.entry("reheating_furnace_real", new Twin(PcBlocks.REHEATING_FURNACE, 1)));
+            Map.entry("reheating_furnace_real", new Twin(PcBlocks.REHEATING_FURNACE, 1)),
+            Map.entry("derrick_segment_real", new Twin(PcBlocks.DERRICK_SEGMENT, 1)),
+            Map.entry("rotary_table_real", new Twin(PcBlocks.ROTARY_TABLE, 1)),
+            Map.entry("drawworks_real", new Twin(PcBlocks.DRAWWORKS, 1)),
+            Map.entry("mud_pump_real", new Twin(PcBlocks.MUD_PUMP, 1)),
+            Map.entry("pumpjack_real", new Twin(PcBlocks.PUMPJACK, 1)),
+            Map.entry("three_phase_separator_real", new Twin(PcBlocks.THREE_PHASE_SEPARATOR, 1)));
 
     @Nullable
     public static Twin twin(String id) {
@@ -521,6 +572,56 @@ public final class SitePlans {
      * Цветная металлургия реального масштаба (08 §8.8). Металл — оценки по размерам моделей (листы, отливки, шины);
      * бетон, кирпич и угольные блоки — не металл.
      */
+    /**
+     * I3 реального масштаба (art/blockbench/i3): массы — оценки по классу прототипа (каталожных масс в листе
+     * docs/research/2026-11-24-i3 нет): металл в позициях, огнеупор и бетон сверх него.
+     */
+    private static final Map<String, Plan> I3_PLANS = Map.of(
+            // ГТУ класса V94.2: корпуса компрессора, камеры и турбины, ротор, рама ≈ 234 т (оценка класса)
+            "gas_turbine_heavy_real", plan("gas_turbine_heavy_real", PcBlocks.GAS_TURBINE_HEAVY_REAL, 234,
+                    st("gt_foundation", 300, n(CONCRETE, 150), n(BEAM, 140)),
+                    st("gt_casings", 500, n(INGOT, 1000), n(PLATE, 500)),
+                    st("gt_rotor", 400, n(INGOT, 600), n(PIPE, 100))),
+            // горизонтальный КУ за ГТУ 150 МВт: каркас, обшивка, трубные пакеты, барабан ≈ 1500 т (оценка)
+            "hrsg_real", plan("hrsg_real", PcBlocks.HRSG_REAL, 1500,
+                    st("hrsg_steelwork", 400, n(CONCRETE, 600), n(BEAM, 1000)),
+                    st("hrsg_casing", 500, n(PLATE, 4000)),
+                    st("hrsg_banks", 800, n(PIPE, 8000)),
+                    st("hrsg_drum", 400, n(INGOT, 1000), n(PLATE, 1000))),
+            // трубчатая печь риформинга 100 т/сут: каркас, обшивка, реакционные трубы, конвекционная шахта ≈ 400 т (оценка)
+            "steam_reformer_real", plan("steam_reformer_real", PcBlocks.STEAM_REFORMER_REAL, 400,
+                    st("reformer_structure", 300, n(CONCRETE, 200), n(BEAM, 600)),
+                    st("reformer_box", 500, n(PLATE, 1200), n(BRICKS, 1500)),
+                    st("reformer_tubes", 400, n(PIPE, 800)),
+                    st("reformer_convection", 400, n(PIPE, 600), n(PLATE, 800))),
+            // колонна синтеза ⌀1,5 × 11 м, многослойный корпус и насадка ≈ 80 т (оценка)
+            "ammonia_converter_real", plan("ammonia_converter_real", PcBlocks.AMMONIA_CONVERTER_REAL, 80,
+                    st("converter_foundation", 120, n(CONCRETE, 40)),
+                    st("converter_shell", 400, n(INGOT, 500), n(PLATE, 200)),
+                    st("converter_internals", 200, n(PIPE, 100))),
+            // реактор Lurgi ⌀3 м, ≈ 2000 труб, барабан ≈ 150 т (оценка)
+            "methanol_converter_real", plan("methanol_converter_real", PcBlocks.METHANOL_CONVERTER_REAL, 150,
+                    st("methanol_foundation", 120, n(CONCRETE, 60), n(BEAM, 100)),
+                    st("methanol_shell", 300, n(PLATE, 500)),
+                    st("methanol_tubes", 400, n(PIPE, 700)),
+                    st("methanol_drum", 200, n(PLATE, 200))),
+            // печь пиролиза 60 тыс. т/год: каркас, радиантная камера, змеевики, ЗИА и конвекция ≈ 600 т (оценка)
+            "pyrolysis_furnace_real", plan("pyrolysis_furnace_real", PcBlocks.PYROLYSIS_FURNACE_REAL, 600,
+                    st("pyrolysis_structure", 400, n(CONCRETE, 300), n(BEAM, 1000)),
+                    st("pyrolysis_box", 500, n(PLATE, 1500), n(BRICKS, 2000)),
+                    st("pyrolysis_coils", 400, n(PIPE, 1000)),
+                    st("pyrolysis_convection", 500, n(PIPE, 1500), n(PLATE, 1000))),
+            // биполярный электролизёр на 120 элементов: стойка, элементы, шины ≈ 60 т (оценка)
+            "chlor_alkali_electrolyser_real", plan("chlor_alkali_electrolyser_real", PcBlocks.CHLOR_ALKALI_ELECTROLYSER_REAL, 60,
+                    st("electrolyser_rack", 160, n(BEAM, 150)),
+                    st("electrolyser_elements", 300, n(PLATE, 300)),
+                    st("electrolyser_busbars", 160, n(INGOT, 150))),
+            // реактор ПВХ 30 м³ с рубашкой, приводом мешалки и площадкой обслуживания ≈ 40 т (оценка)
+            "pvc_reactor_real", plan("pvc_reactor_real", PcBlocks.PVC_REACTOR_REAL, 40,
+                    st("pvc_floor", 160, n(CONCRETE, 20), n(BEAM, 100)),
+                    st("pvc_vessel", 300, n(PLATE, 250)),
+                    st("pvc_drive", 160, n(INGOT, 50))));
+
     private static final Map<String, Plan> NONFERROUS_PLANS = Map.of(
             // бак 4,6 × 1,15 × 1,3 м ≈ 4 м³ бетона, свинцовая футеровка ≈ 1,5 т, контактные шины и штанги ≈ 1,5 т меди (оценки)
             "electrorefining_cell_real", plan("electrorefining_cell_real", PcBlocks.ELECTROREFINING_CELL_REAL, 3,
@@ -567,6 +668,57 @@ public final class SitePlans {
             "assembly_stand", plan("assembly_stand", PcBlocks.ASSEMBLY_STAND, 3.0,
                     st("assembly_plate", 120, n(INGOT, 20), n(CONCRETE, 2)),
                     st("assembly_hoist", 80, n(PLATE, 3), n(BEAM, 2))));
+
+    /**
+     * Буровая и промысел I2 реального масштаба (09 §9.5, §9.6): массы прототипов — по каталогам (ротор Р-560 5,9 т,
+     * насос У8-6М 25,5 т, качалка СК-8 11,6 т) или оценкам по габаритам (секция вышки, лебёдка, сепаратор).
+     */
+    private static final Map<String, Plan> OIL_RIG_PLANS = Map.of(
+            // секция четырёхногой вышки 3 м: ноги и пояса из уголка, раскосы ≈ 2,2 т (оценка по вышке ВМ-41, 30 т)
+            "derrick_segment_real", plan("derrick_segment_real", PcBlocks.DERRICK_SEGMENT_REAL, 2.2,
+                    st("rig_derrick_legs", 100, n(BEAM, 16), n(PLATE, 6))),
+            // ротор Р-560: литой корпус, стол с коническим венцом, вкладыши ≈ 5,9 т (каталог Уралмаша)
+            "rotary_table_real", plan("rotary_table_real", PcBlocks.ROTARY_TABLE_REAL, 5.9,
+                    st("rig_rotary_housing", 120, n(INGOT, 40), n(PLATE, 4)),
+                    st("rig_rotary_table", 100, n(INGOT, 15))),
+            // лебёдка У2-5-5: барабан с тормозами, цепная трансмиссия, гидротормоз, рама ≈ 25 т (оценка)
+            "drawworks_real", plan("drawworks_real", PcBlocks.DRAWWORKS_REAL, 25,
+                    st("rig_drawworks_skid", 120, n(BEAM, 40), n(CONCRETE, 4)),
+                    st("rig_drawworks_drum", 200, n(INGOT, 120), n(PLATE, 30)),
+                    st("rig_drawworks_drive", 160, n(INGOT, 60))),
+            // насос У8-6М: приводная часть с коленчатым валом, гидравлическая коробка, рама ≈ 25,5 т (каталог)
+            "mud_pump_real", plan("mud_pump_real", PcBlocks.MUD_PUMP_REAL, 25.5,
+                    st("rig_pump_power_end", 200, n(INGOT, 140)),
+                    st("rig_pump_fluid_end", 160, n(INGOT, 80), n(BEAM, 35))),
+            // качалка СК-8: рама и стойка, редуктор с кривошипами и противовесами, балансир с головкой ≈ 11,6 т (ГОСТ 5866)
+            "pumpjack_real", plan("pumpjack_real", PcBlocks.PUMPJACK_REAL, 11.6,
+                    st("pumpjack_frame", 120, n(BEAM, 40), n(CONCRETE, 4)),
+                    st("pumpjack_gearbox", 160, n(INGOT, 56)),
+                    st("pumpjack_beam", 120, n(PLATE, 20))),
+            // НГС-1,6-2000: обечайка ⌀2 м и днища ≈ 7,6 т листа, внутренние устройства, опоры и арматура ≈ 3 т (оценка)
+            "three_phase_separator_real", plan("three_phase_separator_real", PcBlocks.THREE_PHASE_SEPARATOR_REAL, 10.5,
+                    st("separator_shell", 160, n(PLATE, 80), n(CONCRETE, 4)),
+                    st("separator_internals", 120, n(INGOT, 15), n(BEAM, 10))),
+            // НМ 1250-260 с двигателем 1250 кВт на общей раме: агрегат 10,95 т, насос 2,81 т (ГОСТ 12124-87, каталоги)
+            "mainline_pump_real", plan("mainline_pump_real", PcBlocks.MAINLINE_PUMP_REAL, 10.95,
+                    st("mainline_pump_frame", 100, n(BEAM, 20), n(CONCRETE, 4)),
+                    st("mainline_pump_casing", 160, n(INGOT, 28)),
+                    st("mainline_pump_motor", 160, n(INGOT, 60))),
+            // ПП-0,63: обечайка с днищами и жаровой трубой, змеевики, рама, горелка и труба — 12,5–13 т порожний (каталоги)
+            "line_heater_real", plan("line_heater_real", PcBlocks.LINE_HEATER_REAL, 12.8,
+                    st("line_heater_skid", 100, n(BEAM, 20), n(CONCRETE, 4)),
+                    st("line_heater_shell", 160, n(PLATE, 70)),
+                    st("line_heater_coils", 140, n(INGOT, 38))),
+            // РВС-1000: стенка из восьми поясов, днище, коническая крыша, лестница и площадки ≈ 30 т стали (оценка листа)
+            "oil_tank_real", plan("oil_tank_real", PcBlocks.OIL_TANK_REAL, 30,
+                    st("tank_foundation", 160, n(CONCRETE, 20)),
+                    st("tank_shell", 300, n(PLATE, 220)),
+                    st("tank_roof", 160, n(PLATE, 50), n(BEAM, 30))),
+            // то же с плавающей крышей: понтон с затвором и катучая лестница вместо конической крыши ≈ 33 т (оценка)
+            "oil_tank_floating_real", plan("oil_tank_floating_real", PcBlocks.OIL_TANK_FLOATING_REAL, 33,
+                    st("tank_foundation", 160, n(CONCRETE, 20)),
+                    st("tank_shell", 300, n(PLATE, 220)),
+                    st("tank_pontoon", 200, n(PLATE, 80), n(BEAM, 30))));
 
     private static final Map<String, Plan> SMITHY_PLANS = Map.of(
             // молот 2 cwt: колонна с цилиндрами ≈ 3,5 т, шабот ≈ 0,7 т (каталоги Massey; оценки)
@@ -681,6 +833,7 @@ public final class SitePlans {
         if (p == null) p = PROTOTYPE_PLANS.get(id);
         if (p == null) p = NPD_PLANS.get(id);
         if (p == null) p = I0_PLANS.get(id);
+        if (p == null) p = I3_PLANS.get(id);
         if (p == null) p = IRONMAKING_PLANS.get(id);
         if (p == null) p = POWER_PLANS.get(id);
         if (p == null) p = MINING_COKE_PLANS.get(id);
@@ -693,13 +846,15 @@ public final class SitePlans {
         if (p == null) p = ASSEMBLY_PLANS.get(id);
         if (p == null) p = RADPROT_PLANS.get(id);
         if (p == null) p = FUELCYCLE_PLANS.get(id);
+        if (p == null) p = OIL_RIG_PLANS.get(id);
+        if (p == null) p = H2_PLANS.get(id);
         return p != null ? p : NONFERROUS_PLANS.get(id);
     }
 
     public static Iterable<Plan> all() {
-        return java.util.stream.Stream.of(PLANS, PROTOTYPE_PLANS, NPD_PLANS, I0_PLANS, IRONMAKING_PLANS, POWER_PLANS, MINING_COKE_PLANS, I1_STEEL_PLANS, FOUNDRY_PLANS, I0_SHOP_PLANS,
+        return java.util.stream.Stream.of(PLANS, PROTOTYPE_PLANS, I3_PLANS, NPD_PLANS, I0_PLANS, IRONMAKING_PLANS, POWER_PLANS, MINING_COKE_PLANS, I1_STEEL_PLANS, FOUNDRY_PLANS, I0_SHOP_PLANS,
                         STEAM_MINE_PLANS, CARBON_PLANS, SMITHY_PLANS, ASSEMBLY_PLANS, NONFERROUS_PLANS, RADPROT_PLANS,
-                        FUELCYCLE_PLANS)
+                        FUELCYCLE_PLANS, OIL_RIG_PLANS, H2_PLANS)
                 .flatMap(m -> m.values().stream()).toList();
     }
 }

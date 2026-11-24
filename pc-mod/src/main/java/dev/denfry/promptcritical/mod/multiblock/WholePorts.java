@@ -22,6 +22,17 @@ public final class WholePorts {
             U = Direction.UP, D = Direction.DOWN;
 
     private static final Map<String, List<Port>> PORTS = Map.ofEntries(
+            // водородная станция (art/blockbench/hydrogen/hydrogen.author.js); порядок портов — роли в mod.hydrogen
+            // электролизёр: 0 шины постоянного тока, 1 обессоленная вода, 2 водород, 3 кислород, 4 вода охлаждения
+            Map.entry("h2_electrolyser_real", List.of(p(-4, 1, 0, W), p(2, 0, 1, S), p(4, 3, 0, U), p(3, 3, 0, U), p(-1, 0, 1, S))),
+            // компрессор: 0 всас, 1 нагнетание, 2 питание, 3 вода охлаждения
+            Map.entry("h2_compressor_real", List.of(p(-2, 0, 0, W), p(2, 0, 0, E), p(1, 0, -1, N), p(0, 0, 1, S))),
+            // рампа: 0 вход-выход, 1 свеча
+            Map.entry("h2_tube_bank_real", List.of(p(3, 1, 0, E), p(3, 2, 0, U))),
+            // газгольдер: 0 вход, 1 выход, 2 свеча, 3 дренаж
+            Map.entry("h2_gasholder_real", List.of(p(-2, 1, 0, W), p(2, 1, 0, E), p(0, 12, 0, U), p(0, 0, 0, D))),
+            // топливный элемент: 0 водород, 1 переменный ток, 2 вода, 3 выхлоп воздуха
+            Map.entry("h2_fuel_cell_real", List.of(p(-1, 0, 0, W), p(1, 0, 0, E), p(-1, 0, 0, D), p(-1, 2, 0, U))),
             // холодные (y 7) и горячие (y 9) нитки по обе стороны корпуса
             // топливный цикл (fuelcycle-dimensions): коллекторы центрифуг сверху / с торцов, питание снизу
             Map.entry("gas_centrifuge_real", List.of(p(0, 1, 0, U), p(0, 0, 0, D))),
@@ -45,6 +56,18 @@ public final class WholePorts {
             Map.entry("vver_steam_generator", List.of(p(-1, 0, 0, D), p(1, 0, 0, D), p(7, 7, 0, E), p(2, 4, 2, S))),
             Map.entry("vver_coolant_pump", List.of(p(-2, 1, 0, W), p(2, 1, 0, E))),
             Map.entry("vver_pressurizer", List.of(p(2, 0, 0, E), p(0, 17, 0, U))),
+            // ВВЭР-70 (шапки art/blockbench/core/vver70/*.author.js): патрубки петель на y 7, кабели приводов сверху
+            Map.entry("vver70_reactor_real", List.of(p(0, 7, -2, N), p(-2, 7, -1, W), p(-2, 7, 1, W), p(0, 7, 2, S), p(2, 7, 1, E),
+                    p(2, 7, -1, E), p(0, 18, 0, U))),
+            // первый контур вход/выход, питательная вода, пар сверху, продувка
+            Map.entry("vver70_steam_generator_real", List.of(p(0, 0, -1, N), p(0, 0, 1, S), p(1, 5, 0, E), p(0, 8, 0, U), p(-1, 0, 0, W))),
+            // всас, напор, питание 6 кВ, охлаждение статора
+            Map.entry("vver70_coolant_pump_real", List.of(p(0, 0, -1, N), p(0, 1, 1, S), p(1, 3, 0, E), p(-1, 2, 0, W))),
+            // дыхательная линия, сброс, подпитка азотом
+            Map.entry("vver70_pressurizer_real", List.of(p(0, 0, 1, S), p(0, 7, 0, U), p(1, 0, 0, E))),
+            // вода охлаждения из бассейна и в него, проём для ТВС в северной стене
+            Map.entry("vver70_fuel_pool_real", List.of(p(-3, 6, 0, W), p(3, 6, 0, E), p(0, 7, -3, N))),
+            Map.entry("vver70_refuelling_machine_real", List.of(p(4, 0, 6, E))),
             Map.entry("bwr240_reactor", List.of(p(2, 6, 0, E), p(-2, 6, 0, W), p(2, 9, 0, E), p(0, 10, 2, S))),
             Map.entry("candu6_reactor", List.of(p(4, 10, -5, E), p(4, 10, 5, E))),
             Map.entry("bn600_reactor", List.of(p(7, 9, 0, E), p(7, 11, 0, E), p(0, 9, 7, S), p(0, 11, 7, S), p(0, 9, -7, N), p(0, 11, -7, N))),
@@ -138,6 +161,13 @@ public final class WholePorts {
             // руда сверху в питающую коробку, концентрат — на юг из лотка, хвосты — на восток, вода смыва — на восток
             // сепаратор НГС реального масштаба: газ сверху, нефть с восточного днища, вода снизу из водосборника;
             // продукция скважин приходит от устья без трубы (WellheadBlockEntity), входной патрубок — только на модели
+            // магистральный насос: всас с севера, нагнетание с юга у корпуса насоса; вал Create — в порт на хвостовике
+            Map.entry("mainline_pump_real", List.of(p(-1, 0, -1, N), p(-1, 0, 1, S))),
+            // подогреватель: нефть в змеевик и из него — с восточного днища, газ на горелку — с западного
+            Map.entry("line_heater_real", List.of(p(5, 1, -1, E), p(5, 1, 1, E), p(-5, 0, 1, W))),
+            // резервуар: приёмный патрубок на западе, раздаточный на востоке
+            Map.entry("oil_tank_real", List.of(p(-6, 0, 0, W), p(6, 0, 0, E))),
+            Map.entry("oil_tank_floating_real", List.of(p(-6, 0, 0, W), p(6, 0, 0, E))),
             Map.entry("three_phase_separator_real", List.of(p(4, 2, 0, U), p(5, 0, 0, E), p(2, 0, 0, D))),
             Map.entry("magnetic_separator_real", List.of(p(0, 1, 0, U), p(0, 1, 1, S), p(1, 0, 0, E), p(1, 1, 1, E))),
             // пульпа с запада, хвосты на восток, пенный продукт — желоб на севере
@@ -173,6 +203,22 @@ public final class WholePorts {
             Map.entry("alumina_precipitator_real", List.of(p(0, 9, -2, U), p(-3, 0, 0, W), p(3, 8, 0, E), p(0, 0, 0, D))),
             // отражательная печь: топливо и кислород — к горелкам с запада, шихта — в загрузочные трубы на своде,
             // штейн и шлак — из-под жёлоба лётки и порога шлаковой двери на севере
+            // I3: ГТУ — топливный газ с севера (выхлоп в котёл-утилизатор — касанием, масло не моделируется)
+            Map.entry("gas_turbine_heavy_real", List.of(p(0, 0, -2, N))),
+            // котёл-утилизатор: труб нет — тепло он отдаёт котлу у парового патрубка (WholeLinks), выхлоп берёт касанием
+            Map.entry("hrsg_real", List.of()),
+            // риформинг: сырьё (газ и пар) — в западный коллектор сверху, топливный газ — с севера
+            Map.entry("steam_reformer_real", List.of(p(-4, 13, 0, W), p(0, 12, -2, N))),
+            // колонна синтеза: газ — с запада, газ с аммиаком — на восток, холодный байпас — сверху
+            Map.entry("ammonia_converter_real", List.of(p(-1, 1, 0, W), p(1, 1, 0, E), p(0, 13, 0, U))),
+            // реактор метанола: синтез-газ сверху
+            Map.entry("methanol_converter_real", List.of(p(0, 12, 0, U))),
+            // печь пиролиза: сырьё и пар разбавления — с востока, топливный газ — с юга
+            Map.entry("pyrolysis_furnace_real", List.of(p(4, 11, 0, E), p(0, 0, 2, S))),
+            // электролизёр: рассол — с юга, щёлочь и вода — с севера, хлор и водород — сверху
+            Map.entry("chlor_alkali_electrolyser_real", List.of(p(0, 0, 1, S), p(0, 0, -1, N), p(2, 0, -1, N), p(-3, 2, 0, U), p(4, 2, 1, U))),
+            // реактор ПВХ: мономер сверху, вода с инициатором — с запада, суспензия — вниз
+            Map.entry("pvc_reactor_real", List.of(p(-1, 7, 0, U), p(-2, 6, 0, W), p(0, 0, 0, D))),
             Map.entry("matte_smelter_real", List.of(p(-8, 1, 0, W),
                     p(-4, 3, -2, U), p(-2, 3, -2, U), p(0, 3, -2, U), p(2, 3, -2, U), p(4, 3, -2, U),
                     p(-4, 3, 1, U), p(-2, 3, 1, U), p(0, 3, 1, U), p(2, 3, 1, U), p(4, 3, 1, U),
@@ -216,8 +262,32 @@ public final class WholePorts {
         return false;
     }
 
+    /** Номер порта машины {@code id} в клетке (dx, dy, dz) от контроллера с мировой грани {@code side}; −1 — не порт. */
+    public static int portIndex(String id, Direction facing, int dx, int dy, int dz, Direction side) {
+        List<Port> ports = PORTS.get(id);
+        if (ports == null) return -1;
+        double[] m = WholeShapes.unrotate(dx + 0.5, dz + 0.5, facing);
+        int mx = (int) Math.floor(m[0]), mz = (int) Math.floor(m[1]);
+        Direction face = side.getAxis().isVertical() ? side : modelFace(side, facing);
+        for (int i = 0; i < ports.size(); i++) {
+            Port p = ports.get(i);
+            if (p.x() == mx && p.y() == dy && p.z() == mz && p.face() == face) return i;
+        }
+        return -1;
+    }
+
+    /** Мировая клетка порта {@code p} машины с контроллером {@code controller}, повёрнутой на {@code facing}. */
+    public static net.minecraft.core.BlockPos cell(net.minecraft.core.BlockPos controller, Direction facing, Port p) {
+        return controller.offset(new net.minecraft.core.BlockPos(p.x(), p.y(), p.z()).rotate(Footprint.rotation(facing)));
+    }
+
+    /** Мировая грань порта {@code p}. */
+    public static Direction worldFace(Direction facing, Port p) {
+        return p.face().getAxis().isVertical() ? p.face() : Footprint.rotation(facing).rotate(p.face());
+    }
+
     /** Мировая горизонтальная грань → грань модели (обратный поворот, как у отрисовки). */
-    static Direction modelFace(Direction world, Direction facing) {
+    public static Direction modelFace(Direction world, Direction facing) {
         return switch (facing) {
             case EAST -> world.getCounterClockWise();
             case SOUTH -> world.getOpposite();

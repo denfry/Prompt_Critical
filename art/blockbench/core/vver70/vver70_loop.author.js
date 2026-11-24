@@ -12,7 +12,7 @@
 // Steam generator, y 0..8: primary in on the north face of (0, 0, -1) at (8, 14, -16), primary out on the south face
 //   of (0, 0, 1) at (8, 14, 32), feedwater in on the east face of (1, 5, 0) at (32, 80, 8), steam out on the top face
 //   of (0, 8, 0) at (8, 144, 8), blowdown on the west face of (-1, 0, 0) at (-16, 6, 8). Partial level_float: float
-//   of the secondary level gauge at (-12, 60, 8), slides y 0..40; no shift.
+//   of the secondary level gauge at (-12, 60, 8), slides y 0..40; stored -48 y.
 // Coolant pump, y 0..4: suction in on the north face of (0, 0, -1) at (8, 10, -16), discharge out on the south face of
 //   (0, 1, 1) at (8, 18, 32), power (6 kV) on the east face of (1, 3, 0) at (32, 56, 8), stator cooling water on the
 //   west face of (-1, 2, 0) at (-16, 40, 8). Partial speed_disc: tacho disc on top, turns about y at (8, 8); stored
@@ -145,7 +145,7 @@
   function needle() { const m = PCVV.mk(); m.box('needle', [25.7, 39.7, -14.3], [26.3, 41.8, -14.15], 'red', { split: '' }); return m; }
 
   const UNITS = {
-    steam_generator: { draw: sg, parts: { level_float: { draw: sgFloat, shift: [0, 0, 0] } } },
+    steam_generator: { draw: sg, parts: { level_float: { draw: sgFloat, shift: [0, -48, 0] } } },
     coolant_pump: { draw: pump, parts: { speed_disc: { draw: speedDisc, shift: [0, -48, 0] } } },
     pressurizer: { draw: przr, parts: { level_float: { draw: przrFloat, shift: [0, 0, 0] }, gas_gauge_needle: { draw: needle, shift: [0, -24, 0] } } },
   };

@@ -25,6 +25,47 @@ public final class NppText {
         put("protection_on", "Reactor protections in service", "Защиты реактора введены");
         put("candu_refuelled", "Fuelling machine: channel %s refuelled", "Перегрузочная машина: канал %s перегружен");
         put("pwr_unloaded", "Assembly %s unloaded: %s MWd/kg", "ТВС %s выгружена: %s МВт·сут/кг");
+        put("mcp_on", "Main coolant pump %s breaker closed", "Выключатель ГЦН-%s включён");
+        put("mcp_off", "Main coolant pump %s tripped", "ГЦН-%s отключён");
+        // бассейн выдержки и перегрузочная машина ВВЭР-70
+        put("pool_status", "Spent fuel pool: %s/%s assemblies, water %s m at %s °C, decay heat %s kW, cooling %s kW, %s m of water over the heads, %s µSv/h at the surface; %s",
+                "Бассейн выдержки: ТВС %s/%s, вода %s м при %s °C, остаточное тепло %s кВт, охлаждение %s кВт, над головками %s м воды, у зеркала %s мкЗв/ч; %s");
+        put("pool_cooling", "cooling pumps running", "насосы охлаждения работают");
+        put("pool_no_suction", "LEVEL BELOW THE COOLING SUCTION: pumps idle, make up the water", "УРОВЕНЬ НИЖЕ ВСАСА ОХЛАЖДЕНИЯ: насосы без воды, нужна подпитка");
+        put("pool_no_power", "NO POWER to the cooling and make-up pumps", "НЕТ ПИТАНИЯ насосов охлаждения и подпитки");
+        put("pool_full", "Every rack position in the pool is taken", "Все гнёзда стеллажей бассейна заняты");
+        put("pool_clad", "SPENT FUEL POOL: uncovered assemblies burst their cladding, fuel aerosol around the pool",
+                "БАССЕЙН ВЫДЕРЖКИ: оголённые ТВС разрушили оболочки, аэрозоль топлива вокруг бассейна");
+        put("rm_busy", "The refuelling machine is busy", "Перегрузочная машина занята");
+        put("rm_no_power", "Refuelling machine: no power to the drives", "Перегрузочная машина: нет питания приводов");
+        put("rm_no_reactor", "Refuelling machine: no VVER-70 reactor under the bridge", "Перегрузочная машина: под мостом нет реактора ВВЭР-70");
+        put("rm_no_pool", "Refuelling machine: no spent fuel pool under the bridge", "Перегрузочная машина: под мостом нет бассейна выдержки");
+        put("rm_out_of_reach", "Refuelling machine: the reactor or the pool is out of reach of the bridge, trolley or mast",
+                "Перегрузочная машина: реактор или бассейн вне хода моста, тележки или штанги");
+        put("rm_not_shut_down", "Refuelling machine: the reactor is not shut down", "Перегрузочная машина: реактор не остановлен");
+        put("rm_core_empty", "Refuelling machine: the core is empty", "Перегрузочная машина: зона пуста");
+        put("rm_core_full", "Refuelling machine: no free position in the core, the assembly stays in the mast",
+                "Перегрузочная машина: свободной позиции в зоне нет, ТВС осталась в штанге");
+        put("rm_pool_full", "Refuelling machine: no free rack in the pool", "Перегрузочная машина: в бассейне нет свободного гнезда");
+        put("rm_no_fresh", "Refuelling machine: no fresh assembly in the pool", "Перегрузочная машина: в бассейне нет свежей ТВС");
+        put("rm_nothing", "Refuelling machine: nothing to grip, returning to park", "Перегрузочная машина: захватывать нечего, на стоянку");
+        put("rm_start_unload", "Refuelling machine: unloading the most burnt assembly to the pool", "Перегрузочная машина: выгрузка самой выгоревшей ТВС в бассейн");
+        put("rm_start_load", "Refuelling machine: loading a fresh assembly from the pool", "Перегрузочная машина: загрузка свежей ТВС из бассейна");
+        put("rm_done_unload", "Refuelling machine: assembly set in the pool rack", "Перегрузочная машина: ТВС установлена в стеллаж бассейна");
+        put("rm_done_load", "Refuelling machine: assembly set in the core", "Перегрузочная машина: ТВС установлена в зону");
+        put("rm_status", "Refuelling machine: %s (%s)", "Перегрузочная машина: %s (%s)");
+        put("rm_unloading", "unloading", "выгрузка");
+        put("rm_loading", "loading", "загрузка");
+        put("rm_phase_idle", "parked", "на стоянке");
+        put("rm_phase_to_source", "travelling to the pick-up", "переезд к месту захвата");
+        put("rm_phase_lower_source", "lowering the mast", "штанга вниз");
+        put("rm_phase_grip", "gripping", "захват");
+        put("rm_phase_raise_source", "raising the assembly", "подъём сборки");
+        put("rm_phase_to_target", "carrying the assembly", "перенос сборки");
+        put("rm_phase_lower_target", "lowering the assembly", "опускание сборки");
+        put("rm_phase_release", "releasing", "расцепка");
+        put("rm_phase_raise_target", "raising the mast", "штанга вверх");
+        put("rm_phase_park", "returning to park", "на стоянку");
         put("pwr_permit", "Start-up power trip lifted", "Пусковая уставка АЗ по мощности снята");
         put("pwr_permit_refused", "The start-up trip can be lifted only above 10 % power", "Снять пусковую уставку можно только выше 10 % мощности");
         put("pwr_dnb", "DEPARTURE FROM NUCLEATE BOILING: assemblies with failed cladding: %s, activity in the coolant",

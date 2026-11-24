@@ -36,7 +36,7 @@ import org.jetbrains.annotations.Nullable;
  * днём мощность ниже. Вал выходит через редуктор {@link TurbineGearboxBlockEntity}, поставленный вплотную к агрегату.
  * Правый клик — пуск и останов; с Shift — взвод автомата безопасности.
  */
-public final class GasTurbineBlockEntity extends IronworksBlockEntity {
+public final class GasTurbineBlockEntity extends IronworksBlockEntity implements dev.denfry.promptcritical.mod.client.whole.RealScaleBlockEntity {
     public static final int GAS_TANK_MB = 4000;
     /** 3 МВт ISO, 3000 об/мин. */
     public static final double RATED_W = 3e6, NOMINAL_OMEGA = 2 * Math.PI * 3000 / 60;
@@ -110,6 +110,11 @@ public final class GasTurbineBlockEntity extends IronworksBlockEntity {
                     turbine.exhaustKgS(airK, airPa), 0.2, 0, "gas_turbine@" + worldPosition.toShortString(),
                     dev.denfry.promptcritical.sim.environment.EmissionLedger.Category.GAS_TURBINE);
         if (ticks % 100 == 0) setChanged();
+    }
+
+    @Override
+    public BlockPos wholeModelLightPos() {
+        return worldPosition.relative(wholeModelFacing(), real() ? 3 : 1);
     }
 
     @Override

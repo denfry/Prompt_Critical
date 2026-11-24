@@ -46,8 +46,8 @@ public final class NppClient {
         // цельные модели ВВЭР реального масштаба: partial-модели должны появиться до запекания
         for (String id : new String[] {"vver_reactor", "vver_steam_generator", "vver_coolant_pump", "vver_pressurizer", "bwr240_reactor",
                 "candu6_reactor", "bn600_reactor", "am1_reactor", "vver70_reactor_real", "vver70_steam_generator_real",
-                "vver70_coolant_pump_real", "vver70_pressurizer_real", "candu_npd_reactor_real", "candu_npd_fuelling_machine_real",
-                "candu_npd_boiler_real", "candu_npd_pump_real"})
+                "vver70_coolant_pump_real", "vver70_pressurizer_real", "vver70_fuel_pool_real", "vver70_refuelling_machine_real",
+                "candu_npd_reactor_real", "candu_npd_fuelling_machine_real", "candu_npd_boiler_real", "candu_npd_pump_real"})
             dev.denfry.promptcritical.mod.client.whole.WholeModels.register(id);
     }
 
@@ -115,10 +115,13 @@ public final class NppClient {
             }
         });
         event.registerBlockEntityRenderer(NppBlockEntities.POWER_REACTOR.get(), c -> new dev.denfry.promptcritical.mod.client.whole.WholeModelRenderer<>());
+        event.registerBlockEntityRenderer(NppBlockEntities.FUEL_POOL.get(), c -> new Vver70FuelHandlingRenderers.Pool());
+        event.registerBlockEntityRenderer(NppBlockEntities.REFUELLING_MACHINE.get(), c -> new Vver70FuelHandlingRenderers.Machine());
         event.registerBlockEntityRenderer(NppBlockEntities.SFR_REACTOR.get(), c -> new dev.denfry.promptcritical.mod.client.whole.WholeModelRenderer<>());
         event.registerBlockEntityRenderer(NppBlockEntities.BWR_REACTOR.get(), c -> new dev.denfry.promptcritical.mod.client.whole.WholeModelRenderer<>());
         event.registerBlockEntityRenderer(NppBlockEntities.STEAM_GENERATOR.get(), c -> new dev.denfry.promptcritical.mod.client.whole.WholeModelRenderer<dev.denfry.promptcritical.mod.npp.SteamGeneratorBlockEntity>() {
-            // ПГ ВВЭР-70: поплавок указателя уровня второго контура на нормальном уровне (середина хода 0..40 px)
+            // ПГ ВВЭР-70: поплавок указателя уровня второго контура на нормальном уровне (середина хода 0..40 px); частичная
+            // модель хранится на 48 px ниже — сдвиг возвращается здесь
             @Override
             protected void parts(dev.denfry.promptcritical.mod.npp.SteamGeneratorBlockEntity be, float pt, com.mojang.blaze3d.vertex.PoseStack ms,
                     com.mojang.blaze3d.vertex.VertexConsumer vc, int light) {
@@ -126,7 +129,7 @@ public final class NppClient {
                 if ("candu_npd_boiler_real".equals(be.wholeModelId()))
                     part(NPD_BOILER_FLOAT, be, be.wholeModelFacing(), 0, 6 / 16.0, 0).light(light).renderInto(ms, vc);
                 if ("vver70_steam_generator_real".equals(be.wholeModelId()))
-                    part(V70_SG_FLOAT, be, be.wholeModelFacing(), 0, 20 / 16.0, 0).light(light).renderInto(ms, vc);
+                    part(V70_SG_FLOAT, be, be.wholeModelFacing(), 0, (48 + 20) / 16.0, 0).light(light).renderInto(ms, vc);
             }
         });
         event.registerBlockEntityRenderer(NppBlockEntities.PRESSURIZER.get(), c -> new dev.denfry.promptcritical.mod.client.whole.WholeModelRenderer<dev.denfry.promptcritical.mod.npp.PressurizerBlockEntity>() {

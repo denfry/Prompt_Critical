@@ -117,6 +117,8 @@ public final class PwrReactorBlockEntity extends DeviceBlockEntity implements de
         }
     };
     private final List<BlockPos> pumps = new ArrayList<>(), generators = new ArrayList<>();
+    /** Выключатели ГЦН с БПУ ВВЭР-70: отключённый насос не крутит петлю, даже если вал Create вращается. */
+    private final boolean[] pumpKeyed = {true, true, true, true, true, true, true, true};
     @Nullable
     private BlockPos pressurizer;
     private boolean wasTripped, concentrate;
@@ -211,7 +213,7 @@ public final class PwrReactorBlockEntity extends DeviceBlockEntity implements de
         boolean pumpsDriven = false;
         for (int l = 0; l < reactor.plant().loops(); l++) {
             double drive = 0;
-            if (l < pumps.size() && level.getBlockEntity(pumps.get(l)) instanceof PrimaryPumpBlockEntity p) drive = p.drive();
+            if (l < pumps.size() && level.getBlockEntity(pumps.get(l)) instanceof PrimaryPumpBlockEntity p && pumpKeyed[l]) drive = p.drive();
             reactor.setPumpDrive(l, drive);
             pumpsDriven |= drive > 0.5;
         }
@@ -428,19 +430,77 @@ public final class PwrReactorBlockEntity extends DeviceBlockEntity implements de
             return;
         }
         if (!fuel.getStackInSlot(PwrPanels.SLOT_SPENT).isEmpty()) return;
+        int best = mostBurnt();
+        if (best < 0) return;
+        double burnup = reactor.burnup(best);
+        ItemStack spent = discharge(best);
+        if (spent.isEmpty()) return;
+        fuel.setStackInSlot(PwrPanels.SLOT_SPENT, spent);
+        if (player != null)
+            player.displayClientMessage(NppText.msg("pwr_unloaded", best + 1, String.format(Locale.ROOT, "%.2f", burnup)), true);
+        setChanged();
+    }
+
+    /** Позиция самой выгоревшей ТВС; −1 — зона пуста. */
+    public int mostBurnt() {
         int best = -1;
         for (int pos = 0; pos < reactor.plant().positions(); pos++)
             if (reactor.loaded(pos) && (best < 0 || reactor.burnup(pos) > reactor.burnup(best))) best = pos;
-        if (best < 0) return;
-        dev.denfry.promptcritical.sim.npp.LightWaterCore.AssemblyFuel f = reactor.unload(best);
-        if (f == null) return;
+        return best;
+    }
+
+    /** Остановлен ли реактор (перегрузка разрешена). */
+    public boolean refuellable() {
+        return reactor.shutDown();
+    }
+
+    /**
+     * Перегрузочная машина забирает самую выгоревшую ТВС: облучённая сборка уходит с составом и активностью на момент
+     * выгрузки (12 §12.0.2). Пусто — реактор не остановлен или зона пуста.
+     */
+    public ItemStack dischargeMostBurnt() {
+        int best = reactor.shutDown() ? mostBurnt() : -1;
+        if (best < 0) return ItemStack.EMPTY;
+        ItemStack s = discharge(best);
+        setChanged();
+        return s;
+    }
+
+    /** Перегрузочная машина ставит свежую ТВС в первую свободную позицию; false — не встала (зона полна или чужая сборка). */
+    public boolean loadAssembly(ItemStack s) {
+        if (!reactor.shutDown() || s.isEmpty()) return false;
+        FuelLot l = FuelLot.of(s);
+        FuelDesign d = l.designOrNull();
+        if (d == null || s.has(dev.denfry.promptcritical.mod.environment.ActivityData.ACTIVITY.get())) return false;
+        for (int pos = 0; pos < reactor.plant().positions(); pos++) {
+            if (reactor.loaded(pos)) continue;
+            if (!reactor.load(pos, d, l.uKg(), l.u235(), l.u234(), l.plutonium())) return false;
+            setChanged();
+            return true;
+        }
+        return false;
+    }
+
+    /**
+     * Размазанная плотность шестигранной ТВС ВВЭР, г/см³: ≈ 120 кг UO₂ и ≈ 100 кг циркония и стали в чехле 14,4 см под
+     * ключ длиной ≈ 3,2 м [est]. Ниже 10 — с Co-60 конструкций.
+     */
+    public static final double ASSEMBLY_DENSITY = 3.8;
+
+    private ItemStack discharge(int pos) {
+        double hmZone = reactor.core().heavyMetalKg();
+        dev.denfry.promptcritical.sim.npp.LightWaterCore.AssemblyFuel f = reactor.unload(pos);
+        if (f == null) return ItemStack.EMPTY;
         FuelDesign d = f.design();
         FuelLot lot = FuelLot.irradiated(d, 0.96, d.rods, f.uraniumKg(), f.u235Kg(), f.u234() * f.hm0Kg(), f.u236Kg(), f.pu239Kg(),
                 f.pu240Kg(), f.pu241Kg(), f.pu242Kg(), f.burnupMwdKg());
-        fuel.setStackInSlot(PwrPanels.SLOT_SPENT, lot.on(new ItemStack(PcItems.FUEL_ASSEMBLY.get())));
-        if (player != null)
-            player.displayClientMessage(NppText.msg("pwr_unloaded", best + 1, String.format(Locale.ROOT, "%.2f", f.burnupMwdKg())), true);
-        setChanged();
+        ItemStack spent = lot.on(new ItemStack(PcItems.FUEL_ASSEMBLY.get()));
+        // удельная мощность — номинал на весь тяжёлый металл зоны до выгрузки
+        double wPerG = hmZone > 0 ? reactor.plant().nominalW() / (hmZone * 1000) : 1;
+        if (f.burnupMwdKg() > 0) spent.set(dev.denfry.promptcritical.mod.environment.ActivityData.ACTIVITY.get(),
+                dev.denfry.promptcritical.mod.environment.SpentFuel.discharge(f.uraniumKg() + f.plutoniumKg(), f.burnupMwdKg(), wPerG, ASSEMBLY_DENSITY,
+                        level.getGameTime()));
+        return spent;
     }
 
     // --- руки ---
@@ -482,7 +542,16 @@ public final class PwrReactorBlockEntity extends DeviceBlockEntity implements de
 
     @Override
     public PanelLayout panelLayout() {
-        return PwrPanels.REACTOR;
+        return vver70() ? Vver70Panels.BPU : PwrPanels.REACTOR;
+    }
+
+    /** Корпус ВВЭР-70: свой блочный пульт. */
+    public boolean vver70() {
+        return reactor.plant() == PressurizedWaterReactor.VVER70;
+    }
+
+    public boolean pumpKeyed(int loop) {
+        return pumpKeyed[loop];
     }
 
     @Override
@@ -552,6 +621,15 @@ public final class PwrReactorBlockEntity extends DeviceBlockEntity implements de
         } else if (r.rodClusterEjected()) {
             v[PwrPanels.RIA_FLAGS] = 1 << PwrPanels.R_EJECTED;
         }
+        if (v.length >= Vver70Panels.CHANNELS) {
+            int flags = (r.steppingBack() ? 1 << Vver70Panels.F_PZ1 : 0) | (r.rodBlocked() ? 1 << Vver70Panels.F_PZ2 : 0);
+            for (int l = 0; l < Math.min(3, r.plant().loops()); l++) {
+                v[Vver70Panels.LOOP_FLOW + l] = (int) Math.round(r.loopFlowFrac(l) * 100);
+                if (pumpKeyed[l]) flags |= 1 << (Vver70Panels.F_MCP0 + l);
+            }
+            if (r.plant().loops() > 2) v[Vver70Panels.PUMP3] = (int) Math.round(r.pumpSpeed(2) * 100);
+            v[Vver70Panels.V70_FLAGS] = flags;
+        }
     }
 
     @Override
@@ -590,6 +668,15 @@ public final class PwrReactorBlockEntity extends DeviceBlockEntity implements de
                 player.displayClientMessage(NppText.msg(r.porvOpen() ? "porv_open" : "porv_closed"), true);
             }
             default -> {
+                // ключи ГЦН БПУ ВВЭР-70
+                int start = id - Vver70Panels.B_MCP_START, stop = id - Vver70Panels.B_MCP_STOP;
+                if (start >= 0 && start < 3 && start < r.plant().loops()) {
+                    pumpKeyed[start] = true;
+                    player.displayClientMessage(NppText.msg("mcp_on", start + 1), true);
+                } else if (stop >= 0 && stop < 3 && stop < r.plant().loops()) {
+                    pumpKeyed[stop] = false;
+                    player.displayClientMessage(NppText.msg("mcp_off", stop + 1), true);
+                }
             }
         }
         setChanged();
@@ -724,6 +811,9 @@ public final class PwrReactorBlockEntity extends DeviceBlockEntity implements de
         reactor.save(new TreeStateWriter(tree));
         tag.put("reactor", NbtStateTrees.toNbt(tree));
         tag.putBoolean("concentrate", concentrate);
+        byte[] keys = new byte[pumpKeyed.length];
+        for (int i = 0; i < keys.length; i++) keys[i] = (byte) (pumpKeyed[i] ? 1 : 0);
+        tag.putByteArray("pump_keys", keys);
         accident.save(tag);
         MutableStateTree sg = new MutableStateTree();
         sgtr.save(new TreeStateWriter(sg));
@@ -738,6 +828,10 @@ public final class PwrReactorBlockEntity extends DeviceBlockEntity implements de
         if (tag.contains("fuel")) fuel.deserializeNBT(registries, tag.getCompound("fuel"));
         if (tag.contains("reactor")) reactor.load(new TreeStateReader(NbtStateTrees.fromNbt(tag.getCompound("reactor"))));
         concentrate = tag.getBoolean("concentrate");
+        if (tag.contains("pump_keys")) {
+            byte[] keys = tag.getByteArray("pump_keys");
+            for (int i = 0; i < Math.min(keys.length, pumpKeyed.length); i++) pumpKeyed[i] = keys[i] != 0;
+        }
         accident.load(tag);
         if (tag.contains("sgtr")) sgtr.load(new TreeStateReader(NbtStateTrees.fromNbt(tag.getCompound("sgtr"))));
         wiring.load(tag);

@@ -55,6 +55,7 @@ public final class PromptCritical {
         dev.denfry.promptcritical.mod.ironworks.IronworksBinding.register(modBus);
         dev.denfry.promptcritical.mod.reactor.ReactorBinding.register(modBus);
         dev.denfry.promptcritical.mod.powerhouse.PowerhouseBinding.register(modBus);
+        dev.denfry.promptcritical.mod.hydrogen.HydrogenBinding.register(modBus);
         dev.denfry.promptcritical.mod.steelworks.SteelworksBinding.register(modBus);
         dev.denfry.promptcritical.mod.ops.OpsBinding.register(modBus);
         dev.denfry.promptcritical.mod.compat.CreateGeneratorBalance.register(modBus);

@@ -14,11 +14,15 @@ public final class ProductionClient {
 
     public static void register(IEventBus modBus) {
         ProductionRealRenderer.init();
+        TransportRealRenderer.init();
         modBus.addListener(ProductionClient::registerRenderers);
     }
 
     private static void registerRenderers(EntityRenderersEvent.RegisterRenderers event) {
         event.registerBlockEntityRenderer(ProductionBlockEntities.PUMPJACK.get(), c -> ProductionRealRenderer.pumpjack());
         event.registerBlockEntityRenderer(ProductionBlockEntities.SEPARATOR.get(), c -> ProductionRealRenderer.separator());
+        event.registerBlockEntityRenderer(ProductionBlockEntities.MAINLINE_PUMP.get(), c -> TransportRealRenderer.mainlinePump());
+        event.registerBlockEntityRenderer(ProductionBlockEntities.LINE_HEATER.get(), c -> TransportRealRenderer.lineHeater());
+        event.registerBlockEntityRenderer(ProductionBlockEntities.OIL_TANK.get(), c -> TransportRealRenderer.oilTank());
     }
 }

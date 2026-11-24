@@ -40,6 +40,10 @@ public final class NppBlockEntities {
     public static final DeferredHolder<BlockEntityType<?>, BlockEntityType<EccsPumpBlockEntity>> ECCS_PUMP =
             type("eccs_pump", EccsPumpBlockEntity::new, PcBlocks.ECCS_PUMP);
 
+    public static final DeferredHolder<BlockEntityType<?>, BlockEntityType<SpentFuelPoolBlockEntity>> FUEL_POOL =
+            type("vver70_fuel_pool", SpentFuelPoolBlockEntity::new, PcBlocks.VVER70_FUEL_POOL_REAL);
+    public static final DeferredHolder<BlockEntityType<?>, BlockEntityType<RefuellingMachineBlockEntity>> REFUELLING_MACHINE =
+            type("vver70_refuelling_machine", RefuellingMachineBlockEntity::new, PcBlocks.VVER70_REFUELLING_MACHINE_REAL);
     public static final DeferredHolder<BlockEntityType<?>, BlockEntityType<NpdReactorBlockEntity>> NPD_REACTOR =
             type("npd_reactor", NpdReactorBlockEntity::new, PcBlocks.NPD_REACTOR_REAL);
     public static final DeferredHolder<BlockEntityType<?>, BlockEntityType<NpdFuellingMachineBlockEntity>> NPD_FUELLING_MACHINE =
@@ -60,6 +64,7 @@ public final class NppBlockEntities {
         event.registerBlockEntity(Capabilities.ItemHandler.BLOCK, CANDU_REACTOR.get(), FoundryDevice::items);
         event.registerBlockEntity(Capabilities.FluidHandler.BLOCK, CANDU_REACTOR.get(), FoundryDevice::fluids);
         event.registerBlockEntity(Capabilities.ItemHandler.BLOCK, SFR_REACTOR.get(), FoundryDevice::items);
+        event.registerBlockEntity(Capabilities.ItemHandler.BLOCK, FUEL_POOL.get(), FoundryDevice::items);
         event.registerBlockEntity(Capabilities.ItemHandler.BLOCK, NPD_REACTOR.get(), FoundryDevice::items);
         event.registerBlockEntity(Capabilities.FluidHandler.BLOCK, NPD_REACTOR.get(), FoundryDevice::fluids);
         event.registerBlockEntity(Capabilities.ItemHandler.BLOCK, NPD_FUELLING_MACHINE.get(), FoundryDevice::items);

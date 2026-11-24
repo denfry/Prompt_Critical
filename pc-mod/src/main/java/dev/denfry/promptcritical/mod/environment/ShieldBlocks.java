@@ -39,7 +39,7 @@ public final class ShieldBlocks {
             case "shield_lead_brick_real": return new DoseRate.Layer(ShieldMaterial.LEAD, cm, 11.34);
             case "shield_borated_water_tank_real": return new DoseRate.Layer(ShieldMaterial.BORATED_WATER, cm, 1.02);
             case "shield_borated_pe_real": return new DoseRate.Layer(ShieldMaterial.BORATED_POLYETHYLENE, cm, 0.97);
-            case "hot_cell_real", "spent_fuel_cask_real", "dry_storage_module_real", "cask_transport_cart_real": return null;
+            case "hot_cell_real", "spent_fuel_cask_real", "dry_storage_module_real", "cask_transport_cart_real", "vver70_fuel_pool_real": return null;
             default: break;
         }
         if (id.contains("lead")) return new DoseRate.Layer(ShieldMaterial.LEAD, cm, 11.35);

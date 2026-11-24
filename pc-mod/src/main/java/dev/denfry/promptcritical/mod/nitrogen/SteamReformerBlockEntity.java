@@ -47,7 +47,7 @@ import org.jetbrains.annotations.Nullable;
  * которая должна касаться печи: состав газа по трубам не передать. Катализаторы загружают с руки: никелевый — в
  * трубы печи, железохромовый — в конвертор СТК, медноцинковый — в конвертор НТК.
  */
-public final class SteamReformerBlockEntity extends DeviceBlockEntity implements FoundryDevice, PanelHost {
+public final class SteamReformerBlockEntity extends DeviceBlockEntity implements FoundryDevice, PanelHost, dev.denfry.promptcritical.mod.client.whole.RealScaleBlockEntity {
     /** Дымосос и дутьевой вентилятор печи, насосы раствора очистки от CO₂, Вт. Розетка или силовой щит рядом; при недостатке установка работает медленнее. */
     public static final double POWER_W = 160e3;
     public static final int GAS_MB = 8_000, WATER_MB = 8_000;
@@ -137,7 +137,7 @@ public final class SteamReformerBlockEntity extends DeviceBlockEntity implements
         }
         // выбросы топки трубчатой печи (14 §14.1): газ, NOx 0,09 кг/ГДж (EMEP), труба 40 м, ≈ 430 К
         if (level.getGameTime() % 20 == 0 && level instanceof net.minecraft.server.level.ServerLevel sl0)
-            dev.denfry.promptcritical.mod.environment.AirQualityService.emitGasFiring(sl0, worldPosition.above(4), 40, 430, fuelW, fuelW / 2.5e6, 0.09, 0,
+            dev.denfry.promptcritical.mod.environment.AirQualityService.emitGasFiring(sl0, real() ? dev.denfry.promptcritical.mod.multiblock.WholeLinks.portCell(worldPosition, wholeModelFacing(), new BlockPos(4, 13, 0)).above() : worldPosition.above(4), 40, 430, fuelW, fuelW / 2.5e6, 0.09, 0,
                     "steam_reformer@" + worldPosition.toShortString(), dev.denfry.promptcritical.sim.environment.EmissionLedger.Category.PROCESS);
         // излишек продувочного газа — на факел
         if (purgeJ > 1e9) purgeJ = 1e9;
@@ -154,9 +154,20 @@ public final class SteamReformerBlockEntity extends DeviceBlockEntity implements
         if (!st.hasProperty(BlockStateProperties.LIT) || !st.getValue(BlockStateProperties.LIT)) return;
         MachineFx fx = MachineFx.of(level, worldPosition, st.getValue(BlockStateProperties.HORIZONTAL_FACING));
         if (fx == null) return;
+        if (real()) {
+            // печь реального масштаба: дым из трубы над конвекционной шахтой, жар у горелок на своде
+            if (fx.chance(4)) fx.smoke(fx.at(64, 226, 8), false, 0.4);
+            if (fx.chance(0.6)) fx.wisp(fx.at(-48 + fx.random().nextInt(5) * 20, 204, 8), 0.2);
+            return;
+        }
         if (fx.chance(4)) fx.smoke(fx.at(26.5, 32.5, 8), false, 0.3);
         if (fx.chance(1.5)) fx.flame(fx.at(fx.random().nextInt(3) * 8, 1, -12.8), 0.1);
         if (fx.chance(0.4)) fx.wisp(fx.at(-7 + fx.random().nextInt(3) * 12, 20.5, fx.random().nextBoolean() ? 2 : 14), 0.1);
+    }
+
+    @Override
+    public BlockPos wholeModelLightPos() {
+        return worldPosition.relative(wholeModelFacing(), real() ? 3 : 1);
     }
 
     private void setLit(boolean lit) {
@@ -168,6 +179,8 @@ public final class SteamReformerBlockEntity extends DeviceBlockEntity implements
     /** Колонна очистки, касающаяся печи (3×3×3 вокруг контроллера). */
     @Nullable
     private Co2AbsorberBlockEntity absorber() {
+        // печь реального масштаба: колонна — у патрубка конвертированного газа (запад, внизу), вплотную или по трубе
+        if (real()) return dev.denfry.promptcritical.mod.multiblock.WholeLinks.across(level, worldPosition, wholeModelFacing(), new BlockPos(-4, 0, 0), Direction.WEST, Co2AbsorberBlockEntity::at);
         for (int x = -2; x <= 2; x++)
             for (int y = -1; y <= 1; y++)
                 for (int z = -2; z <= 2; z++) {

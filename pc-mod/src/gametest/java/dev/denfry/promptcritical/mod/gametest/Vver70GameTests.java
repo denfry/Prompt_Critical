@@ -120,4 +120,54 @@ public final class Vver70GameTests {
                 })
                 .thenSucceed();
     }
+
+    /** Бассейн выдержки: отработавшая ТВС стоит под 4 м воды, её тепло уходит в воду; облучённую рукой не забрать. */
+    @GameTest(template = TALL, timeoutTicks = 100)
+    public static void vver70PoolHoldsSpentFuelUnderWater(GameTestHelper h) {
+        BlockPos at = new BlockPos(8, 1, 8);
+        place(h, at, PcBlocks.VVER70_FUEL_POOL_REAL.get());
+        h.runAfterDelay(1, () -> {
+            dev.denfry.promptcritical.mod.npp.SpentFuelPoolBlockEntity pool = h.getBlockEntity(at);
+            ItemStack spent = assembly(FuelDesign.VVER_440);
+            spent.set(dev.denfry.promptcritical.mod.environment.ActivityData.ACTIVITY.get(),
+                    dev.denfry.promptcritical.mod.environment.SpentFuel.discharge(120, 30, 30, PwrReactorBlockEntity.ASSEMBLY_DENSITY,
+                            h.getLevel().getGameTime()));
+            h.assertTrue(pool.store(spent), "rack takes the assembly");
+            h.assertTrue(pool.takeFresh().isEmpty(), "an irradiated assembly is not handed out");
+        });
+        h.runAfterDelay(45, () -> {
+            dev.denfry.promptcritical.mod.npp.SpentFuelPoolBlockEntity pool = h.getBlockEntity(at);
+            h.assertTrue(pool.assemblies() == 1 && pool.decayW() > 1e3, "decay heat " + pool.decayW() + " W");
+            h.assertTrue(Math.abs(pool.pool().levelM() - 7.5) < 0.01 && pool.pool().shieldWaterCm() > 390, "four metres of water over the heads");
+            h.succeed();
+        });
+    }
+
+    /**
+     * Перегрузочная машина над остановленным реактором и бассейном: ТВС из зоны уходит в стеллаж бассейна, машина
+     * возвращается на стоянку. Реактор под мостом на 3 блока к северу, бассейн на 3 к югу.
+     */
+    @GameTest(template = TALL, timeoutTicks = 6000)
+    public static void vver70RefuellingMachineMovesAnAssemblyToThePool(GameTestHelper h) {
+        BlockPos reactor = new BlockPos(8, 1, 5), pool = new BlockPos(8, 9, 11), machine = new BlockPos(8, 20, 8);
+        place(h, reactor, PcBlocks.VVER70_REACTOR_REAL.get());
+        place(h, pool, PcBlocks.VVER70_FUEL_POOL_REAL.get());
+        place(h, machine, PcBlocks.VVER70_REFUELLING_MACHINE_REAL.get());
+        h.runAfterDelay(2, () -> {
+            PwrReactorBlockEntity r = h.getBlockEntity(reactor);
+            r.reactor().scram();
+            h.assertTrue(r.loadAssembly(assembly(FuelDesign.VVER_440)), "assembly in the core");
+            dev.denfry.promptcritical.mod.npp.RefuellingMachineBlockEntity m = h.getBlockEntity(machine);
+            String refusal = m.start(true);
+            h.assertTrue(refusal == null, "cycle started, refusal " + refusal);
+        });
+        h.runAfterDelay(4, () -> h.succeedWhen(() -> {
+            dev.denfry.promptcritical.mod.npp.RefuellingMachineBlockEntity m = h.getBlockEntity(machine);
+            dev.denfry.promptcritical.mod.npp.SpentFuelPoolBlockEntity p = h.getBlockEntity(pool);
+            PwrReactorBlockEntity r = h.getBlockEntity(reactor);
+            h.assertTrue(!m.busy(), "machine back in park, phase " + m.phase());
+            h.assertTrue(r.reactor().loadedAssemblies() == 0, "core emptied");
+            h.assertTrue(p.racks().getStackInSlot(0).is(PcItems.FUEL_ASSEMBLY.get()), "assembly in the pool rack");
+        }));
+    }
 }

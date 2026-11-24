@@ -418,6 +418,9 @@ public final class PcBlockStateProvider extends BlockStateProvider {
                  "deaerator_real", "ion_exchange_column_real", "shaft_generator_real", "electric_motor_mv_real",
                  "longwall_shearer_real", "coal_jig_real", "quench_tower_real", "powered_roof_support_real" -> "whole_empty";
             case "bof_vessel_real", "reheating_furnace_real" -> "whole_empty";
+            case "h2_electrolyser_real", "h2_compressor_real", "h2_tube_bank_real", "h2_gasholder_real", "h2_fuel_cell_real" -> "whole_empty";
+            case "vver70_reactor_real", "vver70_steam_generator_real", "vver70_coolant_pump_real", "vver70_pressurizer_real",
+                 "vver70_fuel_pool_real", "vver70_refuelling_machine_real" -> "whole_empty";
             case "molding_station_real", "shakeout_grate_real" -> "whole_empty";
             case "gas_centrifuge_real", "centrifuge_cascade_section_real", "fluorinator_real", "uf6_cylinder_30b_real",
                  "uf6_autoclave_real", "pellet_press_real", "sintering_furnace_real", "fuel_rod_welder_real",
@@ -430,9 +433,12 @@ public final class PcBlockStateProvider extends BlockStateProvider {
             case "acheson_furnace_real", "electrode_extruder_real", "baking_furnace_real" -> "whole_empty";
             case "power_hammer_real", "bloomery_real", "forge_hearth_real", "crank_press_real", "wire_mill_real", "sheet_mill_real", "notching_press_real", "winding_machine_real", "heating_furnace_real", "hardening_furnace_real", "assembly_stand",
                     "rotary_table_real", "drawworks_real", "mud_pump_real", "derrick_segment_real", "pumpjack_real",
-                    "three_phase_separator_real" -> "whole_empty";
+                    "three_phase_separator_real", "mainline_pump_real", "line_heater_real", "oil_tank_real",
+                    "oil_tank_floating_real" -> "whole_empty";
             case "portal_monitor_real", "hand_foot_monitor_real", "hot_cell_real", "spent_fuel_cask_real", "cask_transport_cart_real",
                  "dry_storage_module_real" -> "whole_empty";
+            case "gas_turbine_heavy_real", "hrsg_real", "steam_reformer_real", "ammonia_converter_real", "methanol_converter_real",
+                 "pyrolysis_furnace_real", "chlor_alkali_electrolyser_real", "pvc_reactor_real" -> "whole_empty";
             case "electrorefining_cell_real", "peirce_smith_converter_real", "reduction_pot_real", "bayer_digester_real",
                  "alumina_precipitator_real", "matte_smelter_real" -> "whole_empty";
             case "pressurizer" -> s.getValue(BlockStateProperties.LIT) ? id + "_lit" : id;
