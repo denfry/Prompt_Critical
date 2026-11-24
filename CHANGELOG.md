@@ -1,5 +1,28 @@
 # Changelog
 
+## Unreleased
+
+### Breaking changes
+- Machines draw their rated power: about twenty-five process machines take it from a socket, power board or UPS and
+  slow down when underpowered; the catalytic reformer, delayed coker and alumina calciner need their own 6.3 kV feed
+  and drop out below 0.85 pu until the player switches them on again.
+- The graphite pile console is a 2 kW instrument load: without power its rods drop and stay in. Existing piles without
+  a power board or UPS nearby shut down on load. The blast furnace console loses its gauges and alarms without power,
+  the furnace keeps running.
+- In the licensing profile the breaker cell, water-tube boiler, Acheson furnace and T0 graphite pile need
+  commissioning before closing, light-off or rod withdrawal; running units are not stopped.
+
+### Machines from parts (GDD 18, MF5)
+- Assembly stand: pick a machine spec, lay out the parts, the stand rejects wrong parts, materials, cracks and burnt
+  parts, scores fits, balancing, alignment and seals, runs the machine in and hands it out with a machine passport.
+- The passport sets the starting wear of the maintenance model when the machine is placed and stays with the machine
+  when it is broken. The drainage pump has the first spec; twelve new parts, cast parts come from turned castings.
+
+### Integrations (GDD 16)
+- Commodity chemicals and fuels in c: fluid tags (nuclear materials never), Curios and Accessories slots, body
+  temperature handed to Cold Sweat or Tough As Nails, Carry On blacklist, foreign biome environment data map,
+  JourneyMap waypoints from read geological maps.
+
 ## 1.0.1 (2026-11-24)
 
 Real-scale machines for the eras I0 to I2, the first GDD gaps closed after rc.1, and fixes from survival playtests.

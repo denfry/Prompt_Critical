@@ -358,6 +358,12 @@ public final class MachineLoads {
         put(Load.PASSIVE, SeparatorBlockEntity.class);
         put(Load.PASSIVE, SignageBlockEntity.class);
         put(Load.PASSIVE, SmithingAnvilBlockEntity.class);
+        // сборочный стенд ручной ступени (18 §18.8.2): балансировка на ножах, обкатка вручную
+        put(Load.PASSIVE, dev.denfry.promptcritical.mod.manufacturing.AssemblyStandBlockEntity.class);
+        // светильники берут свои ватты у осветительного щитка или РИТЭГа (LightingBoards), не у машинного щита
+        put(Load.OWN, dev.denfry.promptcritical.mod.grid.LampBlock.LampBlockEntity.class);
+        // настенные часы — механические
+        put(Load.PASSIVE, dev.denfry.promptcritical.mod.content.WallClockBlock.WallClockBlockEntity.class);
         put(Load.PASSIVE, SteamGeneratorBlockEntity.class);
         put(Load.PASSIVE, TideGaugeBlockEntity.class);
         put(Load.PASSIVE, VentStackBlockEntity.class);
@@ -391,6 +397,8 @@ public final class MachineLoads {
 
         // общий BE устройства: по id блока
         BY_BLOCK.put("degasification_borehole", Load.PASSIVE);
+        // шкаф горного диспетчера: связь и сигнализация — приборная нагрузка
+        BY_BLOCK.put("mine_dispatch_cabinet", Load.IC);
     }
 
     private MachineLoads() {
