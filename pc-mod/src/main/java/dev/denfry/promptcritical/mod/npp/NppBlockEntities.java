@@ -73,16 +73,25 @@ public final class NppBlockEntities {
         event.registerBlockEntity(Capabilities.FluidHandler.BLOCK, NPD_FUELLING_MACHINE.get(), FoundryDevice::fluids);
     }
 
-    /** Тип для четырёх блоков с одной логикой: старая серия, ВВЭР-1000, ВВЭР-70 и NPD. */
-    private static <T extends BlockEntity> DeferredHolder<BlockEntityType<?>, BlockEntityType<T>> type(String name,
-            BlockEntityType.BlockEntitySupplier<T> factory, Supplier<? extends Block> a, Supplier<? extends Block> b,
-            Supplier<? extends Block> c, Supplier<? extends Block> d) {
-        return BLOCK_ENTITIES.register(name, () -> BlockEntityType.Builder.of(factory, a.get(), b.get(), c.get(), d.get()).build(null));
-    }
-
     private static <T extends BlockEntity> DeferredHolder<BlockEntityType<?>, BlockEntityType<T>> type(String name,
             BlockEntityType.BlockEntitySupplier<T> factory, Supplier<? extends Block> block) {
         return BLOCK_ENTITIES.register(name, () -> BlockEntityType.Builder.of(factory, block.get()).build(null));
+    }
+
+    /** Тип для любого числа блоков: старые серии и прототипы реального масштаба с той же логикой. */
+    @SafeVarargs
+    private static <T extends BlockEntity> DeferredHolder<BlockEntityType<?>, BlockEntityType<T>> type(String name,
+            BlockEntityType.BlockEntitySupplier<T> factory, Supplier<? extends Block> a, Supplier<? extends Block> b,
+            Supplier<? extends Block> c, Supplier<? extends Block> d, Supplier<? extends Block>... more) {
+        return BLOCK_ENTITIES.register(name, () -> {
+            Block[] blocks = new Block[4 + more.length];
+            blocks[0] = a.get();
+            blocks[1] = b.get();
+            blocks[2] = c.get();
+            blocks[3] = d.get();
+            for (int i = 0; i < more.length; i++) blocks[4 + i] = more[i].get();
+            return BlockEntityType.Builder.of(factory, blocks).build(null);
+        });
     }
 
     /** Тип для нескольких блоков: старая серия и машина реального масштаба с той же логикой. */
@@ -96,11 +105,5 @@ public final class NppBlockEntities {
             BlockEntityType.BlockEntitySupplier<T> factory, Supplier<? extends Block> a, Supplier<? extends Block> b,
             Supplier<? extends Block> c) {
         return BLOCK_ENTITIES.register(name, () -> BlockEntityType.Builder.of(factory, a.get(), b.get(), c.get()).build(null));
-    }
-
-    private static <T extends BlockEntity> DeferredHolder<BlockEntityType<?>, BlockEntityType<T>> type(String name,
-            BlockEntityType.BlockEntitySupplier<T> factory, Supplier<? extends Block> a, Supplier<? extends Block> b,
-            Supplier<? extends Block> c, Supplier<? extends Block> d) {
-        return BLOCK_ENTITIES.register(name, () -> BlockEntityType.Builder.of(factory, a.get(), b.get(), c.get(), d.get()).build(null));
     }
 }
