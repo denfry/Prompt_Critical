@@ -29,8 +29,8 @@ public final class FireTubeBoilerBlock extends PcDeviceBlock {
 
     @Override
     @Nullable
-    public BlockEntity newBlockEntity(BlockPos pos, BlockState state) {
-        return isController(state) ? new FireTubeBoilerBlockEntity(pos, state) : null;
+    protected BlockEntity controllerEntity(BlockPos pos, BlockState state) {
+        return new FireTubeBoilerBlockEntity(pos, state);
     }
 
     @Override

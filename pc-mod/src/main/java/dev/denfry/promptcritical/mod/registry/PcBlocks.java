@@ -2264,6 +2264,10 @@ public final class PcBlocks {
     public static final DeferredBlock<MultiblockPartBlock> MULTIBLOCK_PART = BLOCKS.registerBlock("multiblock_part",
             MultiblockPartBlock::new, Properties.of().mapColor(MapColor.METAL).strength(3.5f, 6.0f).noOcclusion()
                     .noLootTable().pushReaction(PushReaction.BLOCK).isViewBlocking((s, l, p) -> false));
+    /** Клетка-часть машины реального масштаба с патрубком: пустой BE, чтобы к ней стыковалась труба Create. */
+    public static final DeferredBlock<dev.denfry.promptcritical.mod.multiblock.PortCellBlock> PORT_CELL = BLOCKS.registerBlock("port_cell",
+            dev.denfry.promptcritical.mod.multiblock.PortCellBlock::new, Properties.of().mapColor(MapColor.METAL).strength(3.5f, 6.0f)
+                    .noOcclusion().noLootTable().pushReaction(PushReaction.BLOCK).isViewBlocking((s, l, p) -> false));
     // --- автоматика A1–A2 и пульт (03d, 03c, этап 9 M3) ---
     public static final DeferredBlock<PcDeviceBlock> RELAY = automationWall("relay", Spec.facing(PcProperties.PICKED), RELAY_BOX);
     public static final DeferredBlock<PcDeviceBlock> RELAY_LATCHING = automationWall("relay_latching", Spec.facing(PcProperties.PICKED),
@@ -2448,6 +2452,7 @@ public final class PcBlocks {
         }
         out.add(MULTIBLOCK_PART.get());
         out.add(KINETIC_PORT.get());
+        out.add(PORT_CELL.get());
         return out;
     }
 }

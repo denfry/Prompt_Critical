@@ -241,6 +241,12 @@ public final class WholePorts {
         return false;
     }
 
+    /** Объявлен ли у машины {@code id} порт в клетке модели (mx, my, mz) — с любой грани. */
+    public static boolean isPortCell(String id, int mx, int my, int mz) {
+        for (Port p : PORTS.getOrDefault(id, List.of())) if (p.x() == mx && p.y() == my && p.z() == mz) return true;
+        return false;
+    }
+
     /** Номер порта машины {@code id} в клетке (dx, dy, dz) от контроллера с мировой грани {@code side}; −1 — не порт. */
     public static int portIndex(String id, Direction facing, int dx, int dy, int dz, Direction side) {
         List<Port> ports = PORTS.get(id);

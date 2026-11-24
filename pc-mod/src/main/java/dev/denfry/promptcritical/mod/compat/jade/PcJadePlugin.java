@@ -36,6 +36,7 @@ public final class PcJadePlugin implements IWailaPlugin {
     public void registerClient(IWailaClientRegistration registration) {
         registration.registerFluidStorageClient(HIDE_FLUIDS);
         registration.usePickedResult(PcBlocks.MULTIBLOCK_PART.get());
+        registration.usePickedResult(PcBlocks.PORT_CELL.get());
     }
 
     /** Пустая группа для блок-сущностей мода (Jade прячет вид), {@code null} для чужих — их обслужит следующий. */

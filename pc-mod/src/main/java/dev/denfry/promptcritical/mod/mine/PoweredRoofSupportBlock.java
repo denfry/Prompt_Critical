@@ -40,8 +40,8 @@ public final class PoweredRoofSupportBlock extends PcDeviceBlock {
 
     @Override
     @Nullable
-    public BlockEntity newBlockEntity(BlockPos pos, BlockState state) {
-        return isController(state) ? new PoweredRoofSupportBlockEntity(pos, state) : null;
+    protected BlockEntity controllerEntity(BlockPos pos, BlockState state) {
+        return new PoweredRoofSupportBlockEntity(pos, state);
     }
 
     @Override

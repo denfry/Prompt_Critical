@@ -82,7 +82,7 @@ public final class PcTagProviders {
                     Blocks.SANDSTONE, Blocks.RED_SANDSTONE, Blocks.SMOOTH_SANDSTONE, Blocks.SMOOTH_RED_SANDSTONE);
             tag(PcTags.Blocks.ROOF_WEAK).add(PcBlocks.COAL_SEAM.get(), PcBlocks.FIRECLAY.get(), Blocks.GRAVEL, Blocks.DIRT,
                     Blocks.COARSE_DIRT, Blocks.CLAY, Blocks.SAND, Blocks.RED_SAND, Blocks.COAL_ORE, Blocks.DEEPSLATE_COAL_ORE);
-            tag(BlockTags.MINEABLE_WITH_PICKAXE).add(PcBlocks.MULTIBLOCK_PART.get(), PcBlocks.KINETIC_PORT.get());
+            tag(BlockTags.MINEABLE_WITH_PICKAXE).add(PcBlocks.MULTIBLOCK_PART.get(), PcBlocks.KINETIC_PORT.get(), PcBlocks.PORT_CELL.get());
             // формы декора (11 §11.6.2)
             PcBlocks.decorForms().forEach((db, form) -> tag(switch (form.kind()) {
                 case "slab" -> BlockTags.SLABS;
@@ -137,7 +137,7 @@ public final class PcTagProviders {
                 else if ((b instanceof net.minecraft.world.level.block.EntityBlock || NOT_MOVABLE_VESSELS.contains(id))
                         && !movableVessel(id)) tag(nonMovable).add(b);
             }
-            tag(nonMovable).add(PcBlocks.MULTIBLOCK_PART.get(), PcBlocks.KINETIC_PORT.get());
+            tag(nonMovable).add(PcBlocks.MULTIBLOCK_PART.get(), PcBlocks.KINETIC_PORT.get(), PcBlocks.PORT_CELL.get());
         }
 
         private static boolean movableVessel(String id) {

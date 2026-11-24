@@ -87,8 +87,8 @@ public final class MainMineFanBlock extends PcDeviceBlock {
 
     @Override
     @Nullable
-    public BlockEntity newBlockEntity(BlockPos pos, BlockState state) {
-        return isController(state) ? new MainMineFanBlockEntity(pos, state) : null;
+    protected BlockEntity controllerEntity(BlockPos pos, BlockState state) {
+        return new MainMineFanBlockEntity(pos, state);
     }
 
     /** На клиенте у Guibal крутится кривошип машины и идут её эффекты; сервер считает вентилятор через сеть шахты. */

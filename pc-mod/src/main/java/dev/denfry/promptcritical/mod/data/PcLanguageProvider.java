@@ -198,6 +198,7 @@ public final class PcLanguageProvider extends LanguageProvider {
         b("fluorite_ore", "Fluorite Ore", "Флюоритовая руда");
         b("multiblock_part", "Structure Part", "Часть конструкции");
         b("kinetic_port", "Shaft Coupling", "Муфта вала");
+        b("port_cell", "Nozzle", "Патрубок");
         b("instrument_pressure", "Pressure Gauge", "Манометр");
         // электросеть I1 (07 §7.22)
         b("shaft_generator", "Shaft Generator", "Генератор на валу");

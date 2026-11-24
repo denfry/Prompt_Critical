@@ -100,9 +100,7 @@ public final class HydrogenGameTests {
      * Электролизёр (фасад на север) → линия по x = 9 на высоте 6 → газгольдер; от линии тройник вниз к всасу компрессора,
      * повёрнутого на юг; нагнетание — в рампу. Питание на стенде даром; вода охлаждения компрессора налита в его порт.
      */
-    // необязателен, пока у клеток-патрубков машин реального масштаба нет BE: Create стыкует трубу только с клеткой с BE
-    // (FluidPropagator.hasFluidCapability), иначе труба у патрубка остаётся прямой с открытым концом — линия видит разрыв
-    @GameTest(template = "gametest/empty_16x24x16", timeoutTicks = 3200, required = false)
+    @GameTest(template = "gametest/empty_16x24x16", timeoutTicks = 3200)
     public static void electrolyserFillsTheGasholderAndTheCompressorFillsTheTubeBank(GameTestHelper h) {
         BlockPos e = new BlockPos(5, 2, 13), g = new BlockPos(12, 2, 3), c = new BlockPos(6, 2, 7), t = new BlockPos(4, 2, 2);
         build(h, e, Direction.NORTH, "h2_electrolyser_real", PcBlocks.FP_H2_ELECTROLYSER_REAL, PcBlocks.H2_ELECTROLYSER_REAL.get());

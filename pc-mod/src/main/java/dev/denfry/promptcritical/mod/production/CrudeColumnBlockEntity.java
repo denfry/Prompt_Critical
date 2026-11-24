@@ -197,7 +197,8 @@ public final class CrudeColumnBlockEntity extends DeviceBlockEntity implements F
             p = p.below();
             if (level.getBlockEntity(p) instanceof CrudeColumnBlockEntity c) return c;
             BlockState s = level.getBlockState(p);
-            if (!s.is(PcBlocks.COLUMN_TRAY_SECTION.get()) && !s.is(PcBlocks.MULTIBLOCK_PART.get()) && !s.is(PcBlocks.CRUDE_COLUMN.get())) return null;
+            if (!s.is(PcBlocks.COLUMN_TRAY_SECTION.get()) && !s.is(PcBlocks.MULTIBLOCK_PART.get()) && !s.is(PcBlocks.PORT_CELL.get())
+                    && !s.is(PcBlocks.CRUDE_COLUMN.get())) return null;
         }
         return null;
     }

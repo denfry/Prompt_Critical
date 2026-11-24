@@ -864,7 +864,7 @@ public final class MineWorld {
             for (int dy = 1; dy <= 3; dy++) {
                 BlockPos p = new BlockPos(x, y - dy, z);
                 BlockState s = level.getBlockState(p);
-                if (s.is(PcBlocks.MULTIBLOCK_PART.get())) {
+                if (s.is(PcBlocks.MULTIBLOCK_PART.get()) || s.is(PcBlocks.PORT_CELL.get())) {
                     p = MultiblockPartBlock.anchor(s, p);
                     s = level.getBlockState(p);
                 }

@@ -70,8 +70,8 @@ public final class MineHoistBlock extends PcDeviceBlock {
 
     @Override
     @Nullable
-    public BlockEntity newBlockEntity(BlockPos pos, BlockState state) {
-        return isController(state) ? new MineHoistBlockEntity(pos, state) : null;
+    protected BlockEntity controllerEntity(BlockPos pos, BlockState state) {
+        return new MineHoistBlockEntity(pos, state);
     }
 
     @Override

@@ -20,10 +20,22 @@ public class PcDeviceBlock extends PcBlock implements EntityBlock {
         return construct(spec, () -> new PcDeviceBlock(props, spec));
     }
 
+    /**
+     * BE контроллера — от {@link #controllerEntity}; якорь другого сегмента получает пустой BE клетки-патрубка, если на
+     * нём нарисован патрубок машины реального масштаба (труба Create стыкуется только с клеткой с BE), иначе BE нет.
+     */
     @Override
     @Nullable
-    public BlockEntity newBlockEntity(BlockPos pos, BlockState state) {
-        return isController(state) ? new DeviceBlockEntity(pos, state) : null;
+    public final BlockEntity newBlockEntity(BlockPos pos, BlockState state) {
+        if (isController(state)) return controllerEntity(pos, state);
+        return dev.denfry.promptcritical.mod.multiblock.PortCellBlock.isPortAnchor(this, state)
+                ? new dev.denfry.promptcritical.mod.multiblock.PortCellBlockEntity(pos, state) : null;
+    }
+
+    /** BE контроллера машины. */
+    @Nullable
+    protected BlockEntity controllerEntity(BlockPos pos, BlockState state) {
+        return new DeviceBlockEntity(pos, state);
     }
 
     /** Событие блока ({@code Level#blockEvent}) — его BE, как у ванильных блоков с BE (анимации на клиенте). */

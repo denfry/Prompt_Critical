@@ -22,7 +22,8 @@ public final class HydrogenBinding {
 
     private static void registerCapabilities(RegisterCapabilitiesEvent event) {
         Block[] blocks = {PcBlocks.H2_ELECTROLYSER_REAL.get(), PcBlocks.H2_COMPRESSOR_REAL.get(), PcBlocks.H2_TUBE_BANK_REAL.get(),
-                PcBlocks.H2_GASHOLDER_REAL.get(), PcBlocks.H2_FUEL_CELL_REAL.get(), PcBlocks.MULTIBLOCK_PART.get()};
+                PcBlocks.H2_GASHOLDER_REAL.get(), PcBlocks.H2_FUEL_CELL_REAL.get(), PcBlocks.MULTIBLOCK_PART.get(),
+                PcBlocks.PORT_CELL.get()};
         event.registerBlock(Capabilities.FluidHandler.BLOCK, (level, pos, state, be, side) -> {
             if (side == null) return null;
             H2Machine m = GasLines.machineAt(level, pos);
