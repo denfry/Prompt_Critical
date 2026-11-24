@@ -59,6 +59,7 @@ public final class WatchdogPeripheral implements IPeripheral {
 
     @LuaFunction(mainThread = true)
     public final boolean arm(IComputerAccess computer) throws LuaException {
+        CcAccess.gate(computer, relay, dev.denfry.promptcritical.sim.journal.Permission.CONTROL, "arm", true);
         return call(() -> relay.arm(computer.getID()));
     }
 
@@ -69,21 +70,25 @@ public final class WatchdogPeripheral implements IPeripheral {
 
     @LuaFunction(mainThread = true)
     public final boolean reset(IComputerAccess computer) throws LuaException {
+        CcAccess.gate(computer, relay, dev.denfry.promptcritical.sim.journal.Permission.CONTROL, "reset", true);
         return call(() -> relay.reset(computer.getID()));
     }
 
     @LuaFunction(mainThread = true)
     public final boolean takeover(IComputerAccess computer) throws LuaException {
+        CcAccess.gate(computer, relay, dev.denfry.promptcritical.sim.journal.Permission.CONTROL, "takeover", true);
         return call(() -> relay.takeover(computer.getID()));
     }
 
     @LuaFunction(mainThread = true)
     public final boolean release(IComputerAccess computer) throws LuaException {
+        CcAccess.gate(computer, relay, dev.denfry.promptcritical.sim.journal.Permission.CONTROL, "release", true);
         return call(() -> relay.release(computer.getID()));
     }
 
     @LuaFunction(mainThread = true)
-    public final boolean configure(double timeout) throws LuaException {
+    public final boolean configure(IComputerAccess computer, double timeout) throws LuaException {
+        CcAccess.gate(computer, relay, dev.denfry.promptcritical.sim.journal.Permission.TESTS_AND_SETUP, "configure", true);
         return call(() -> relay.configure(timeout));
     }
 

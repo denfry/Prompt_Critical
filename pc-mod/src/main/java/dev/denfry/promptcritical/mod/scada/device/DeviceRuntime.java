@@ -96,7 +96,8 @@ public final class DeviceRuntime {
         }
     }
 
-    private record Pending(long ticket, String channel, DeviceProfile.Action action, Object clientKey) {
+    private record Pending(long ticket, String channel, DeviceProfile.Action action, Object clientKey, int computerId,
+                           dev.denfry.promptcritical.sim.journal.Permission permission) {
     }
 
     private record Outgoing(Object clientKey, CommandTickets.Ticket ticket) {
@@ -343,7 +344,16 @@ public final class DeviceRuntime {
             state = CommandTickets.State.REJECTED;
             err = DeviceException.ACCESS + ": MAINTENANCE (locked out)";
         } else {
-            try {
+            // права станции (04d §4d.9.2) — у игрока, поставившего компьютер; проверка на потоке сервера
+            String denied = be.getLevel() instanceof net.minecraft.server.level.ServerLevel sl
+                    ? dev.denfry.promptcritical.mod.station.Stations.allowComputer(sl, be.getBlockPos(), p.computerId(),
+                    dev.denfry.promptcritical.mod.station.Stations.computerOwner(sl.getServer(), p.computerId()), "",
+                    p.permission(), p.channel(), true)
+                    : null;
+            if (denied != null) {
+                state = CommandTickets.State.REJECTED;
+                err = denied;
+            } else try {
                 p.action().apply(be);
                 lastLua.put(p.channel(), clock);
             } catch (DeviceException e) {
@@ -443,7 +453,7 @@ public final class DeviceRuntime {
         if (cmd != null) {
             admit(c, 8);
             DeviceProfile.Action act = cmd.prepare(a);
-            return new Object[] {submit(c, method, act)};
+            return new Object[] {submit(c, method, dev.denfry.promptcritical.sim.journal.Permission.CONTROL, act)};
         }
         Integer button = profile.buttonCommands.get(method);
         if (button != null) {
@@ -693,7 +703,8 @@ public final class DeviceRuntime {
         for (Button x : s.buttons()) if (x.id() == id) b = x;
         if (b == null) throw new DeviceException(DeviceException.BUSY, "the panel does not show this button now");
         if (b.hardwareOnly()) throw new DeviceException(DeviceException.HARDWARE_ONLY, b.name() + " is done only at the panel, by hand");
-        return submit(c, "button:" + id, target -> {
+        dev.denfry.promptcritical.sim.journal.Permission perm = be instanceof PanelHost h ? h.requiredPermission(id) : dev.denfry.promptcritical.sim.journal.Permission.CONTROL;
+        return submit(c, "button:" + id, perm, target -> {
             if (!(target instanceof PanelHost host) || !(target.getLevel() instanceof ServerLevel sl))
                 throw new DeviceException(DeviceException.UNLOADED, "device is not loaded");
             host.onPanelButton(FakePlayerFactory.getMinecraft(sl), id);
@@ -701,7 +712,7 @@ public final class DeviceRuntime {
     }
 
     /** Принять команду: права, частота, квитанция; исполнение — на ближайшем тике сервера. */
-    private long submit(Client c, String channel, DeviceProfile.Action action) throws DeviceException {
+    private long submit(Client c, String channel, dev.denfry.promptcritical.sim.journal.Permission permission, DeviceProfile.Action action) throws DeviceException {
         Snapshot s = live();
         if (s.maintenance()) throw new DeviceException(DeviceException.ACCESS, "MAINTENANCE (locked out)");
         if (!clients.containsKey(c.key())) throw new DeviceException(DeviceException.ACCESS, "computer is not attached");
@@ -719,7 +730,7 @@ public final class DeviceRuntime {
             Object owner = owners.remove(tr.ticket().id());
             if (owner != null) outbox.add(new Outgoing(owner, tr.ticket()));
         }
-        queue.add(new Pending(id, channel, action, c.key()));
+        queue.add(new Pending(id, channel, action, c.key(), c.computerId(), permission));
         return id;
     }
 }

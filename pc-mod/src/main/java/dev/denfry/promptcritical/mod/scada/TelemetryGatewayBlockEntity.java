@@ -199,8 +199,13 @@ public final class TelemetryGatewayBlockEntity extends DeviceBlockEntity impleme
         return out;
     }
 
-    /** Команда телеуправления: нажать кнопку {@code button} на щите машины. */
-    public void press(String id, String button) {
+    /**
+     * Команда телеуправления: нажать кнопку {@code button} на щите машины. Права станции (04d §4d.9.2) — у владельца
+     * исполнителя: компьютера CC с id {@code computerId} или сервера MES (-1, {@code owner} передаётся явно).
+     */
+    public void press(String id, String button, int computerId,
+                      @org.jetbrains.annotations.Nullable dev.denfry.promptcritical.mod.station.StationRegistry.Placer owner,
+                      String label) {
         admit();
         if (commands == null) commands = new TokenBucket(COMMANDS_PER_SECOND, COMMAND_BURST);
         Snapshot s = snapshot(id);
@@ -213,6 +218,9 @@ public final class TelemetryGatewayBlockEntity extends DeviceBlockEntity impleme
         if (!commands.tryTake(now(), 1)) throw new TelemetryException("Telecontrol channel is busy: wait for the previous command");
         if (!(level.getBlockEntity(s.pos()) instanceof PanelHost host) || !(level instanceof ServerLevel sl))
             throw new TelemetryException("Machine " + id + " is gone");
+        String denied = dev.denfry.promptcritical.mod.station.Stations.allowComputer(sl, s.pos(), computerId, owner, label,
+                host.requiredPermission(buttonId), "rtu " + button, true);
+        if (denied != null) throw new TelemetryException(denied);
         host.onPanelButton(FakePlayerFactory.getMinecraft(sl), buttonId);
     }
 

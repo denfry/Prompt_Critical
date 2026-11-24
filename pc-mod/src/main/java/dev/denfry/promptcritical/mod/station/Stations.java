@@ -173,10 +173,12 @@ public final class Stations {
     }
 
     private static void onPlaceFound(BlockEvent.EntityPlaceEvent e) {
-        if (!(e.getLevel() instanceof ServerLevel level) || !(e.getEntity() instanceof ServerPlayer p)
-                || !isFounder(e.getPlacedBlock())) return;
+        if (!(e.getLevel() instanceof ServerLevel level) || !(e.getEntity() instanceof ServerPlayer p)) return;
         StationRegistry r = StationRegistry.of(level.getServer());
-        if (r != null && r.at(level.dimension(), new ChunkPos(e.getPos())) == null) found(r, level, p, e.getPos());
+        if (r == null) return;
+        if (isExecutor(e.getPlacedBlock())) recordPlacer(r, level, e.getPos(), p);
+        if (isFounder(e.getPlacedBlock()) && r.at(level.dimension(), new ChunkPos(e.getPos())) == null)
+            found(r, level, p, e.getPos());
     }
 
     private static void onBreak(BlockEvent.BreakEvent e) {
@@ -185,11 +187,13 @@ public final class Stations {
         if (r == null) return;
         BlockPos pos = e.getPos();
         StationRecord s = r.at(level.dimension(), new ChunkPos(pos));
-        if (s == null) return;
-        if (!check(p, level, pos, Permission.BREAK_PLACE, device(level, pos))) {
+        if (s != null && !check(p, level, pos, Permission.BREAK_PLACE, device(level, pos))) {
             e.setCanceled(true);
             return;
         }
+        // компьютер уносит свой id в предмете, его владелец остаётся; запись по месту снимается
+        if (r.placed.remove(GlobalPos.of(level.dimension(), pos)) != null) r.setDirty();
+        if (s == null) return;
         note(r, s, p, JournalAction.BLOCK_BREAK, pos, level.getGameTime());
     }
 
@@ -226,6 +230,113 @@ public final class Stations {
         if (r != null) for (JournalEntry closed : r.blockSeries.flush(Long.MAX_VALUE, true)) r.append(closed);
         TRIP_STATE.clear();
     }
+
+    // ------------------------------------------------------------------ компьютеры
+
+    /** Блоки, от имени которых уходят команды: компьютеры и черепахи CC, сервер MES. */
+    public static boolean isExecutor(BlockState state) {
+        if (state.is(PcBlocks.MES_SERVER.get())) return true;
+        var key = net.minecraft.core.registries.BuiltInRegistries.BLOCK.getKey(state.getBlock());
+        return "computercraft".equals(key.getNamespace())
+                && (key.getPath().startsWith("computer_") || key.getPath().startsWith("turtle_"));
+    }
+
+    static void recordPlacer(StationRegistry r, ServerLevel level, BlockPos pos, Player p) {
+        StationRegistry.Placer who = new StationRegistry.Placer(p.getUUID(), p.getGameProfile().getName());
+        int id = computerIdAt(level, pos);
+        if (id >= 0) {
+            r.computers.put(id, who);
+            r.placed.remove(GlobalPos.of(level.dimension(), pos));
+        } else r.placed.put(GlobalPos.of(level.dimension(), pos.immutable()), who);
+        r.setDirty();
+    }
+
+    /**
+     * Id компьютера CC в блоке или -1: читается из сохранения блока ({@code ComputerId}), API CC его по месту не даёт.
+     * Новый компьютер получает id при первом запуске, поэтому запись по месту привязывается к id позже.
+     */
+    static int computerIdAt(ServerLevel level, BlockPos pos) {
+        net.minecraft.world.level.block.entity.BlockEntity be = level.getBlockEntity(pos);
+        if (be == null) return -1;
+        net.minecraft.nbt.CompoundTag tag = be.saveWithoutMetadata(level.registryAccess());
+        return tag.contains("ComputerId", net.minecraft.nbt.Tag.TAG_INT) ? tag.getInt("ComputerId") : -1;
+    }
+
+    /** Кто поставил компьютер {@code id}; записи по месту из загруженных чанков привязываются к id при поиске. */
+    @Nullable
+    public static StationRegistry.Placer computerOwner(MinecraftServer server, int id) {
+        StationRegistry r = StationRegistry.of(server);
+        if (r == null || id < 0) return null;
+        StationRegistry.Placer p = r.computers.get(id);
+        if (p != null) return p;
+        for (var it = r.placed.entrySet().iterator(); it.hasNext(); ) {
+            var e = it.next();
+            ServerLevel l = server.getLevel(e.getKey().dimension());
+            BlockPos at = e.getKey().pos();
+            if (l == null || !l.isLoaded(at) || l.getBlockState(at).is(PcBlocks.MES_SERVER.get())) continue;
+            int found = computerIdAt(l, at);
+            if (found < 0) continue;
+            r.computers.putIfAbsent(found, e.getValue()); // явная запись командой важнее старой по месту
+            it.remove();
+            r.setDirty();
+        }
+        return r.computers.get(id);
+    }
+
+    /** Кто поставил блок-исполнитель в {@code pos} (сервер MES). */
+    @Nullable
+    public static StationRegistry.Placer placerAt(ServerLevel level, BlockPos pos) {
+        StationRegistry r = StationRegistry.of(level.getServer());
+        return r == null ? null : r.placed.get(GlobalPos.of(level.dimension(), pos));
+    }
+
+    /** Записывает владельца компьютера {@code id} напрямую (GameTest, перенос мира). */
+    public static void bindComputer(MinecraftServer server, int id, UUID owner, String name) {
+        StationRegistry r = StationRegistry.of(server);
+        if (r == null) return;
+        r.computers.put(id, new StationRegistry.Placer(owner, name));
+        r.setDirty();
+    }
+
+    /**
+     * Команда устройству в {@code pos} от компьютера или автоматики (Lua, RTU, MES): права — у игрока, поставившего
+     * исполнитель (§4d.9.2). Вне станции — можно. Принятая на станции команда — запись INFO от {@link Actor.Computer};
+     * отказ — запись WARNING не чаще раза в минуту на пару (компьютер, устройство) и текст {@code E_ACCESS}.
+     *
+     * @param computerId id компьютера CC, -1 у сервера MES
+     * @param owner      владелец исполнителя; {@code null} — неизвестен (поставлен до учёта), прав нет
+     * @param journal    писать ли принятую команду (отказ пишется всегда, с прореживанием)
+     * @return {@code null} — разрешено, иначе текст отказа для квитанции или исключения Lua
+     */
+    @Nullable
+    public static String allowComputer(ServerLevel level, BlockPos pos, int computerId, @Nullable StationRegistry.Placer owner,
+                                       String label, Permission perm, String command, boolean journal) {
+        StationRegistry r = StationRegistry.of(level.getServer());
+        if (r == null) return null;
+        StationRecord s = r.at(level.dimension(), new ChunkPos(pos));
+        if (s == null) return null;
+        String device = device(level, pos);
+        long tick = level.getGameTime();
+        Actor actor = new Actor.Computer(computerId, owner == null ? null : owner.uuid(), label);
+        UUID team = null;
+        if (owner != null) {
+            PlayerTeam t = level.getServer().getScoreboard().getPlayersTeam(owner.name());
+            team = t == null ? null : StationRecord.teamId(t.getName());
+        }
+        if (owner != null && s.has(owner.uuid(), team, perm)) {
+            if (journal) r.append(new JournalEntry(0, tick, tick / 20.0, s.stationId(), actor, JournalAction.COMMAND, device, command,
+                    Severity.INFO));
+            return null;
+        }
+        if (r.denials.shouldLog(owner == null ? NO_OWNER : owner.uuid(), "computer#" + computerId + "@" + device, tick))
+            r.append(new JournalEntry(0, tick, tick / 20.0, s.stationId(), actor, JournalAction.UNAUTHORIZED_ACCESS, device,
+                    command + " needs " + perm.name(), Severity.WARNING));
+        return "E_ACCESS: station " + s.name() + ", " + (owner == null ? "the computer has no recorded owner"
+                : owner.name() + " lacks " + perm.name().toLowerCase(Locale.ROOT));
+    }
+
+    /** Ключ ограничителя отказов для компьютеров без владельца. */
+    private static final UUID NO_OWNER = new UUID(0, 0);
 
     // ------------------------------------------------------------------ защита
 
