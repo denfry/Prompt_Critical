@@ -16,6 +16,12 @@ import net.minecraft.world.level.block.state.BlockState;
  * входа или с рольганга позади печи.
  */
 public class ReheatingFurnaceBlockEntity extends BatchFurnaceBlockEntity {
+    /** Толкатель, вентиляторы горелок и дымосос методической печи, Вт. */
+    @Override
+    protected double ratedPowerW() {
+        return 110e3;
+    }
+
     public static final double READY_MARGIN_K = 30;
 
     public ReheatingFurnaceBlockEntity(BlockPos pos, BlockState state) {

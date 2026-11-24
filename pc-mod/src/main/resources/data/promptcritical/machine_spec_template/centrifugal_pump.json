@@ -1,0 +1,13 @@
+{
+  "run_in": true,
+  "parts": [
+    {"role": "casing", "items": ["pump_casing"], "materials": ["gray_iron"], "aspects": ["gasket"]},
+    {"role": "impeller", "items": ["pump_impeller"], "aspects": ["rotor"]},
+    {"role": "shaft", "items": ["shaft", "keyed_shaft"], "it": 7, "min_hrc": 30,
+     "heat_treat": ["quenched_tempered"], "aspects": ["bearing_seat"]},
+    {"role": "bearings", "items": ["rolling_bearing", "bronze_bearing_shell"], "count": 2, "aspects": ["bearing"]},
+    {"role": "seal", "items": ["gland_packing"], "aspects": ["seal"]},
+    {"role": "fasteners", "items": ["fastener_kit"]},
+    {"role": "bed", "items": ["machine_bed"], "aspects": ["alignment"]}
+  ]
+}

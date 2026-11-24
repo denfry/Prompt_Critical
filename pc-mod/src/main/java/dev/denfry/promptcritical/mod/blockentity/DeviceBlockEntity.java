@@ -23,7 +23,28 @@ import net.minecraft.world.level.block.state.BlockState;
  * привязывается к доменному объекту или создаёт его, при разрушении блока — снимает его с топологии, при выгрузке
  * чанка — только отвязывается.
  */
-public class DeviceBlockEntity extends BlockEntity implements DeviceHost {
+public class DeviceBlockEntity extends BlockEntity implements dev.denfry.promptcritical.mod.manufacturing.PassportSlot.Holder, DeviceHost {
+    /** Паспорт машины, собранной на стенде (18 §18.8.3); номинальный у прочих. */
+    private final dev.denfry.promptcritical.mod.manufacturing.PassportSlot passportSlot =
+            new dev.denfry.promptcritical.mod.manufacturing.PassportSlot();
+
+    @Override
+    public dev.denfry.promptcritical.mod.manufacturing.PassportSlot passportSlot() {
+        return passportSlot;
+    }
+
+    @Override
+    protected void applyImplicitComponents(DataComponentInput input) {
+        super.applyImplicitComponents(input);
+        passportSlot.set(input.get(dev.denfry.promptcritical.mod.manufacturing.ManufacturingComponents.MACHINE_PASSPORT.get()));
+    }
+
+    @Override
+    protected void collectImplicitComponents(net.minecraft.core.component.DataComponentMap.Builder builder) {
+        super.collectImplicitComponents(builder);
+        passportSlot.collect(builder);
+    }
+
     private SimId simId = SimId.NONE;
     private boolean chunkUnloading;
 
@@ -102,12 +123,14 @@ public class DeviceBlockEntity extends BlockEntity implements DeviceHost {
     protected void saveAdditional(CompoundTag tag, HolderLookup.Provider registries) {
         super.saveAdditional(tag, registries);
         tag.putLong("sim_id", simId.raw());
+        passportSlot.save(tag, registries);
     }
 
     @Override
     protected void loadAdditional(CompoundTag tag, HolderLookup.Provider registries) {
         super.loadAdditional(tag, registries);
         simId = new SimId(tag.getLong("sim_id"));
+        passportSlot.load(tag, registries);
     }
 
     // --- местный щит (для наследников, реализующих PanelHost) ---

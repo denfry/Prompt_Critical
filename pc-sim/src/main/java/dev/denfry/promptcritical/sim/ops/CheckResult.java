@@ -28,6 +28,9 @@ public record CheckResult(CommissioningCheck check, Outcome outcome, Set<CheckCo
     public static final String READ_INSULATION_BEFORE_MOHM = "insulation_before_mohm";
     public static final String READ_INSULATION_AFTER_MOHM = "insulation_after_mohm";
     public static final String READ_MISALIGNMENT_MM = "misalignment_mm";
+    public static final String READ_TRIP_TIME_RATIO = "trip_time_ratio";
+    public static final String READ_LOOP_ERROR = "loop_error";
+    public static final String READ_PURGE_VOLUMES = "purge_volumes";
 
     public CheckResult {
         unmet = unmet.isEmpty() ? Set.of() : Set.copyOf(EnumSet.copyOf(unmet));

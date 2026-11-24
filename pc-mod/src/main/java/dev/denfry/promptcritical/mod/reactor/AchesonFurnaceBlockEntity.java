@@ -3,6 +3,12 @@ package dev.denfry.promptcritical.mod.reactor;
 import dev.denfry.promptcritical.mod.grid.GridDevice;
 import dev.denfry.promptcritical.mod.grid.GridDeviceBlockEntity;
 import dev.denfry.promptcritical.mod.ironworks.IronworksComponents;
+import dev.denfry.promptcritical.mod.ops.OpsActions;
+import dev.denfry.promptcritical.mod.ops.OpsMachine;
+import dev.denfry.promptcritical.mod.ops.OpsWorld;
+import dev.denfry.promptcritical.sim.ops.OpsSubsystem;
+import dev.denfry.promptcritical.sim.ops.UnitKind;
+import net.minecraft.world.phys.Vec3;
 import dev.denfry.promptcritical.mod.panel.PanelHost;
 import dev.denfry.promptcritical.mod.panel.PanelLayout;
 import dev.denfry.promptcritical.mod.registry.PcItems;
@@ -37,7 +43,8 @@ import org.jetbrains.annotations.Nullable;
  * печь стоит. Энергия на электрод — {@link #GRAPHITIZE_J} [BALANCE]; электроды с трещинами не берёт — из них не
  * выйдет графит ядерной чистоты.
  */
-public final class AchesonFurnaceBlockEntity extends GridDeviceBlockEntity<ConsumerUnit> implements PanelHost, dev.denfry.promptcritical.mod.client.whole.WholeModelHost {
+public final class AchesonFurnaceBlockEntity extends GridDeviceBlockEntity<ConsumerUnit> implements PanelHost, dev.denfry.promptcritical.mod.client.whole.WholeModelHost,
+        OpsMachine {
     public static final int DEMAND_KW = 500;
     /** Энергия графитации одного электрода, Дж [BALANCE]: 50 с при полной мощности. */
     public static final double GRAPHITIZE_J = 25e6;
@@ -115,7 +122,10 @@ public final class AchesonFurnaceBlockEntity extends GridDeviceBlockEntity<Consu
             u.setDemandKw(DEMAND_KW);
             demandSet = true;
         }
-        boolean running = u.energized() && isBaked(inv.getStackInSlot(0)) && hasRoom();
+        boolean running = permitted(u) && u.energized() && isBaked(inv.getStackInSlot(0)) && hasRoom();
+        OpsSubsystem ops = OpsWorld.ops(level);
+        if (ops != null && ops.unit(simId()) != null)
+            ops.observeTrial(simId(), 0.05, running, u.powerW() / (DEMAND_KW * 1e3), false, opsCurrent());
         if (running) {
             energyJ += u.powerW() * 0.05;
             if (energyJ >= GRAPHITIZE_J) {
@@ -129,6 +139,36 @@ public final class AchesonFurnaceBlockEntity extends GridDeviceBlockEntity<Consu
             }
         }
         if (ticks % 10 == 0) setFlag(BlockStateProperties.LIT, running);
+    }
+
+    /**
+     * Пусконаладка (план HP2.2): непринятая печь в профиле licensing не греется — блокировка держит рубильник
+     * отключённым, пока пусконаладка или лицензия не разрешат пробную графитизацию.
+     */
+    private boolean permitted(ConsumerUnit u) {
+        if (OpsWorld.ensure(level, simId(), UnitKind.ACHESON_FURNACE, 0, false) == null) return true;
+        boolean ok = OpsActions.processAllowed(level, this);
+        if (!ok && u.switchedOn()) u.setSwitchedOn(false);
+        return ok;
+    }
+
+    // --- эксплуатация ---
+
+    @Override
+    public UnitKind opsKind() {
+        return UnitKind.ACHESON_FURNACE;
+    }
+
+    /** Остановлена — рубильник отключён или нет напряжения (условие замера изоляции токоподвода). */
+    @Override
+    public boolean opsStopped() {
+        ConsumerUnit u = level != null && !level.isClientSide ? unit() : null;
+        return u == null || !u.switchedOn() || !u.energized();
+    }
+
+    @Override
+    public Vec3 opsBearingPos() {
+        return Vec3.atCenterOf(worldPosition);
     }
 
     private boolean hasRoom() {
@@ -232,7 +272,9 @@ public final class AchesonFurnaceBlockEntity extends GridDeviceBlockEntity<Consu
     @Override
     public void onPanelButton(ServerPlayer player, int id) {
         ConsumerUnit u = unit();
-        if (u != null && id == ReactorPanels.BTN_SWITCH) u.setSwitchedOn(!u.switchedOn());
+        // включение рубильника — пуск печи: пусконаладка и лицензия I1; отключение не запирается
+        if (u != null && id == ReactorPanels.BTN_SWITCH && (u.switchedOn() || OpsActions.startAllowed(player, level, this)))
+            u.setSwitchedOn(!u.switchedOn());
     }
 
     @Override

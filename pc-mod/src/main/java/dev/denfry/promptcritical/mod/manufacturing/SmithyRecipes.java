@@ -64,6 +64,25 @@ public final class SmithyRecipes extends RecipeProvider {
                 .pattern("III").pattern("LCL").pattern("P P").define('I', Items.IRON_INGOT).define('L', Items.LEVER)
                 .define('C', Items.CRAFTING_TABLE).define('P', net.minecraft.tags.ItemTags.PLANKS)
                 .unlockedBy("has_copper", has(Items.COPPER_INGOT)).save(out, id("draw_plate"));
+        // детали сборки (18 §18.5, MF5) без своего процесса в моде: кузнечный крепёж, пружина из навитого прутка,
+        // кованый фланец и муфта, подшипник качения; паспорта у них нет — стенд считает их номинальными.
+        // Корпус насоса, станина, корпус клапана, шкив и крышка — только литьём с обточкой (CastingPartRecipe).
+        var steel = dev.denfry.promptcritical.mod.registry.PcItems.STEEL_INGOT.get();
+        var plate = dev.denfry.promptcritical.mod.registry.PcItems.STEEL_PLATE.get();
+        net.minecraft.data.recipes.ShapelessRecipeBuilder.shapeless(RecipeCategory.MISC, ManufacturingItems.FASTENER_KIT.get(), 2)
+                .requires(steel).requires(Items.IRON_NUGGET).requires(Items.IRON_NUGGET).requires(Items.IRON_NUGGET)
+                .unlockedBy("has_steel", has(steel)).save(out, id("fastener_kit"));
+        ShapedRecipeBuilder.shaped(RecipeCategory.MISC, ManufacturingItems.SPRING.get(), 2)
+                .pattern("S").pattern("S").pattern("S").define('S', steel)
+                .unlockedBy("has_steel", has(steel)).save(out, id("spring"));
+        net.minecraft.data.recipes.ShapelessRecipeBuilder.shapeless(RecipeCategory.MISC, ManufacturingItems.FLANGE.get(), 2)
+                .requires(plate).unlockedBy("has_plate", has(plate)).save(out, id("flange"));
+        ShapedRecipeBuilder.shaped(RecipeCategory.MISC, ManufacturingItems.COUPLING.get())
+                .pattern("SFS").define('S', steel).define('F', ManufacturingItems.FASTENER_KIT.get())
+                .unlockedBy("has_fasteners", has(ManufacturingItems.FASTENER_KIT.get())).save(out, id("coupling"));
+        ShapedRecipeBuilder.shaped(RecipeCategory.MISC, ManufacturingItems.ROLLING_BEARING.get(), 2)
+                .pattern(" S ").pattern("SNS").pattern(" S ").define('S', steel).define('N', Items.IRON_NUGGET)
+                .unlockedBy("has_steel", has(steel)).save(out, id("rolling_bearing"));
         // механизированная ступень: пока из ванили и Create-вала, перевод на детали — MF5–MF7
         ShapedRecipeBuilder.shaped(RecipeCategory.MISC, PcBlocks.POWER_HAMMER.get())
                 .pattern("PAP").pattern("ISI").pattern("BBB").define('P', Items.PISTON).define('A', PcBlocks.SMITHING_ANVIL.get())

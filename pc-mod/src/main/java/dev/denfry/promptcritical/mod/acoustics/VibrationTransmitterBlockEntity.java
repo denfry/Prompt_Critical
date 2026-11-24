@@ -10,6 +10,8 @@ import net.minecraft.world.level.block.state.BlockState;
 
 /** Вибродатчик: общий уровень машины под ним раз в секунду и сигнал редстоуна 0–15 ({@link VibrationTransmitterBlock}). */
 public final class VibrationTransmitterBlockEntity extends BlockEntity {
+    /** Преобразователь 4–20 мА, Вт: без питания сигнал ноль. Малая нагрузка 0,4 кВ: розетка, щит или ИБП рядом. */
+    public static final double POWER_W = 5;
     private int signal;
     private double overall;
 
@@ -26,7 +28,8 @@ public final class VibrationTransmitterBlockEntity extends BlockEntity {
 
     void tick() {
         if (!(level instanceof ServerLevel sl) || (sl.getGameTime() + worldPosition.asLong()) % 20 != 0) return;
-        VibrationSpectrum s = MachineAcoustics.spectrum(sl, VibrationTransmitterBlock.mountPos(getBlockState(), worldPosition));
+        VibrationSpectrum s = dev.denfry.promptcritical.mod.grid.MachinePower.powered(sl, worldPosition, POWER_W)
+                ? MachineAcoustics.spectrum(sl, VibrationTransmitterBlock.mountPos(getBlockState(), worldPosition)) : null;
         overall = s == null ? 0 : s.overallRms();
         int next = s == null ? 0 : signalFor(s);
         if (next == signal) return;

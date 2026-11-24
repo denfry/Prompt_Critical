@@ -19,5 +19,7 @@ public enum CheckCondition {
     /** Пройдены не все прочие проверки. */
     PREREQUISITES,
     RUN_SHORT,
-    NO_LOAD_REJECTION
+    NO_LOAD_REJECTION,
+    /** Прокачано меньше {@link CommissioningService#PURGE_MIN_VOLUMES} объёмов топки. */
+    PURGE_SHORT
 }

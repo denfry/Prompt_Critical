@@ -44,6 +44,8 @@ import org.jetbrains.annotations.Nullable;
  * промывают Shift + ПКМ пустой рукой.
  */
 public final class WaterTreatmentBlockEntity extends IronworksBlockEntity implements DeviceHost, dev.denfry.promptcritical.mod.client.whole.WholeModelHost {
+    /** Насосы, мешалки осветлителя и дозаторы реагентов, Вт. Розетка или силовой щит рядом; при недостатке машина работает медленнее. */
+    public static final double POWER_W = 55e3;
     public static final int TANK_MB = 8_000, FLOW_MB = 25;
     /** Извести или соли в предмете, кг [BALANCE]. */
     public static final double KG_PER_ITEM = 10;
@@ -136,7 +138,7 @@ public final class WaterTreatmentBlockEntity extends IronworksBlockEntity implem
         WaterGrade g = in.amount() > 0 ? grade(in.fluidStack().getFluid()) : null;
         if (g != null && u.accepts(g)) {
             Fluid o = fluid(u.outlet(g));
-            int mb = Math.min(FLOW_MB, Math.min(in.amount(), out.room()));
+            int mb = Math.min((int) Math.floor(FLOW_MB * dev.denfry.promptcritical.mod.grid.MachinePower.supply(level, worldPosition, POWER_W)), Math.min(in.amount(), out.room()));
             if (mb > 0 && (out.amount() == 0 || out.fluidStack().getFluid().isSame(o))) {
                 in.draw(mb);
                 out.put(o, mb);

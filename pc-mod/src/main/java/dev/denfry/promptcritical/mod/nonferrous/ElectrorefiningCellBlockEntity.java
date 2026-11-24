@@ -36,6 +36,12 @@ import org.jetbrains.annotations.Nullable;
  * Электролиз — реальное время (08 §8.0.3).
  */
 public final class ElectrorefiningCellBlockEntity extends UraniumProcessBlockEntity implements DcLoad, dev.denfry.promptcritical.mod.client.whole.WholeModelHost {
+    /** Ванны питает постоянным током выпрямитель, щит 0,4 кВ не нужен. */
+    @Override
+    protected double ratedPowerW() {
+        return 0;
+    }
+
     private static final double TICK_S = 0.05;
 
     private final Electrorefining cells = new Electrorefining();

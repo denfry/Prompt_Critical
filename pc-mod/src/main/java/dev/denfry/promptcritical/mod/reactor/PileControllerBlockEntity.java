@@ -4,6 +4,12 @@ import dev.denfry.promptcritical.mod.binding.DeviceHost;
 import dev.denfry.promptcritical.mod.binding.SimLevelBinding;
 import dev.denfry.promptcritical.mod.ironworks.Ironworks;
 import dev.denfry.promptcritical.mod.ironworks.IronworksBlockEntity;
+import dev.denfry.promptcritical.mod.ops.OpsActions;
+import dev.denfry.promptcritical.mod.ops.OpsMachine;
+import dev.denfry.promptcritical.mod.ops.OpsWorld;
+import dev.denfry.promptcritical.sim.ops.OpsSubsystem;
+import dev.denfry.promptcritical.sim.ops.UnitKind;
+import net.minecraft.world.phys.Vec3;
 import dev.denfry.promptcritical.mod.panel.PanelHost;
 import dev.denfry.promptcritical.mod.panel.PanelLayout;
 import dev.denfry.promptcritical.sim.core.DeviceMode;
@@ -35,7 +41,20 @@ import org.jetbrains.annotations.Nullable;
  * ионизационная камера, период), привод регулирующих, взвод и сброс аварийных стержней. Защита и блокировки — в
  * модели, щит лишь подаёт команды.
  */
-public final class PileControllerBlockEntity extends IronworksBlockEntity implements dev.denfry.promptcritical.mod.environment.SelfEmittingSource, DeviceHost, PanelHost {
+public final class PileControllerBlockEntity extends IronworksBlockEntity implements dev.denfry.promptcritical.mod.environment.SelfEmittingSource, DeviceHost, PanelHost,
+        OpsMachine {
+    /**
+     * Пульт и приводы СУЗ, Вт: малая нагрузка 0,4 кВ, ставьте на ИБП. Без питания стержни падают (аварийная защита
+     * по потере питания, решение 2026-11-24) и не поднимаются, пока питание не вернётся.
+     */
+    public static final double POWER_W = 2e3;
+    private boolean powered = true;
+
+    /** Пульт под питанием (на прошлой проверке). */
+    public boolean powered() {
+        return powered;
+    }
+
     private static final int SCAN_PERIOD = 20, FIRE_PERIOD = 40;
 
     private SimId simId = SimId.NONE;
@@ -56,6 +75,13 @@ public final class PileControllerBlockEntity extends IronworksBlockEntity implem
     protected void serverTick(SimLevelBinding b) {
         PileUnit u = Reactor.unit(b, simId);
         if (u == null) return;
+        // приводы СУЗ без питания не держат стержни: сброс, пока питание не вернут (fail-safe)
+        if (ticks % 20 == 0) {
+            boolean was = powered;
+            powered = dev.denfry.promptcritical.mod.grid.MachinePower.powered(level, worldPosition, POWER_W);
+            if (!powered) u.scram();
+            if (was != powered) setChanged();
+        }
         if (ticks++ % SCAN_PERIOD == 0) rescan(u);
         GraphitePile p = u.pile();
         if (ticks % FIRE_PERIOD == 0 && !top.isEmpty()) consequences(p);
@@ -63,6 +89,49 @@ public final class PileControllerBlockEntity extends IronworksBlockEntity implem
             radiate(p);
             irradiate(p);
         }
+        operations(b, p);
+    }
+
+    /**
+     * Доля уставки защиты по мощности, принятая за номинал при опробовании (план HP2.2, оценка исполнителя: уставку
+     * аварийной защиты обычно ставят на 120–125 % номинальной мощности).
+     */
+    static final double NOMINAL_OF_TRIP = 0.8;
+
+    /**
+     * Пусконаладка (план HP2.2): разрешение на подъём регулирующих стержней пишется в модель каждый тик; опробование —
+     * котёл критичен и не сброшен, нагрузка — мощность к номиналу; срабатывание защиты, кроме кнопки АЗ, — провал.
+     */
+    private void operations(SimLevelBinding b, GraphitePile p) {
+        OpsSubsystem ops = OpsWorld.ops(level);
+        if (ops == null || OpsWorld.ensure(level, simId, UnitKind.GRAPHITE_PILE, 0, false) == null) return;
+        p.setPermitted(OpsActions.processAllowed(level, this));
+        ReactorSubsystem r = b.world().subsystem(ReactorSubsystem.class);
+        double nominalW = r == null ? Double.NaN : NOMINAL_OF_TRIP * r.pileConfig().powerTripW();
+        boolean running = p.critical() && !p.tripped();
+        boolean protection = p.tripped() && p.trip() != dev.denfry.promptcritical.sim.reactor.PileTrip.MANUAL;
+        ops.observeTrial(simId, 0.05, running, nominalW > 0 ? p.powerW() / nominalW : 0, protection, opsCurrent());
+    }
+
+    // --- эксплуатация ---
+
+    @Override
+    public UnitKind opsKind() {
+        return UnitKind.GRAPHITE_PILE;
+    }
+
+    /** Заглушен: не критичен и регулирующие стержни введены (условие проверки контуров и сброса стержней). */
+    @Override
+    public boolean opsStopped() {
+        PileUnit u = level != null && !level.isClientSide ? unit() : null;
+        if (u == null) return true;
+        GraphitePile p = u.pile();
+        return !p.critical() && p.controlInsertion() > 0.99;
+    }
+
+    @Override
+    public Vec3 opsBearingPos() {
+        return Vec3.atCenterOf(worldPosition);
     }
 
     private double[] fluxBuf = new double[0];
@@ -226,6 +295,8 @@ public final class PileControllerBlockEntity extends IronworksBlockEntity implem
             case ReactorPanels.BTN_DOWN -> p.driveControlRods(-1);
             case ReactorPanels.BTN_STOP -> p.driveControlRods(0);
             case ReactorPanels.BTN_UP -> {
+                // подъём регулирующих — пуск котла: пусконаладка и лицензия I1 (модель запирает подъём и сама)
+                if (!OpsActions.startAllowed(player, level, this)) return;
                 p.driveControlRods(1);
                 if (p.tripped() || !p.zipCocked()) player.displayClientMessage(ReactorPanels.MSG_INTERLOCK.get(), true);
             }

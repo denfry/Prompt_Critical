@@ -32,6 +32,12 @@ import org.jetbrains.annotations.Nullable;
  * гликоля [допущение: потери амина не учитываются]. Циркуляцию и пар на ребойлер задают кнопками щита.
  */
 public final class AmineUnitBlockEntity extends UraniumProcessBlockEntity {
+    /** Насосы амина и аппараты воздушного охлаждения, Вт. */
+    @Override
+    protected double ratedPowerW() {
+        return 90e3;
+    }
+
     public static final int MB = 4_000, PLANT_RADIUS = 6;
     public static final double Y_H2S = 0.02, Y_CO2 = 0.01, H2S_HOLDUP_KG = 50, FUEL_J_PER_NM3 = 36e6, EFFICIENCY = 0.85;
     public static final double Q_MIN = 0.25, Q_MAX = 6, Q_STEP = 0.25, STEAM_MIN = 60, STEAM_MAX = 160, STEAM_STEP = 10;

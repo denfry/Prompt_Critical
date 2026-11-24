@@ -59,6 +59,16 @@ import org.jetbrains.annotations.Nullable;
  * </ul>
  */
 public class FireDeviceBlockEntity extends DeviceBlockEntity implements FoundryDevice, IsolationPoint {
+    /** Извещатели и приёмно-контрольный прибор пожарной сигнализации, Вт; спринклеры и дренчеры питания не берут. Малая нагрузка 0,4 кВ: розетка, щит или ИБП рядом. */
+    public static final double POWER_W = 20;
+
+    /** Извещатели и прибор работают от питания; спринклер, дренчер и лафет — нет. */
+    private boolean needsPower() {
+        return switch (kind()) {
+            case SPRINKLER, DELUGE, MONITOR -> false;
+            default -> true;
+        };
+    }
     public enum Kind { SMOKE_DETECTOR, HEAT_DETECTOR, FLAME_DETECTOR, CALL_POINT, ALARM_PANEL, SPRINKLER, DELUGE, GAS_CYLINDER, MONITOR }
 
     static final int ZONE = 16, DETECT = 6, FLAME_RANGE = 30, SPRINKLER_RADIUS = 2, DELUGE_RADIUS = 3, GAS_RADIUS = 8, MONITOR_RANGE = 20;
@@ -135,6 +145,7 @@ public class FireDeviceBlockEntity extends DeviceBlockEntity implements FoundryD
     @Override
     public void tickDevice() {
         if (!(level instanceof ServerLevel sl) || ++ticks % 20 != 0) return;
+        if (needsPower() && !dev.denfry.promptcritical.mod.grid.MachinePower.powered(sl, worldPosition, POWER_W)) return;
         double dt = 1;
         switch (kind()) {
             case SMOKE_DETECTOR -> {
