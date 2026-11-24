@@ -12,4 +12,4 @@ NPD has no control rods. Its power is held by the height of the moderator in the
 
 The fuel is the 19-element NPD bundle of natural uranium, about 14 kg of uranium each. Put bundles in the board's fresh slot: they go into the fuel bay, up to 27.
 
-Heavy water goes in through the ports: into the heat transport circuit through the headers, and into the dump tank from below. Any grade is accepted, but light water dilutes it, and reactivity falls about 12 mk per percent of light water in the moderator.
+Heavy water goes in through the ports: into the heat transport circuit through the headers, and into the dump tank from below. Any grade is accepted, but light water dilutes it, and reactivity falls about 20 mk per percent of light water in the moderator.
