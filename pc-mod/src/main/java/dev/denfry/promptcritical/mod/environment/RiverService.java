@@ -5,7 +5,6 @@ import net.minecraft.core.BlockPos;
 import net.minecraft.core.HolderLookup;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.server.level.ServerLevel;
-import net.minecraft.tags.BiomeTags;
 import net.minecraft.world.level.saveddata.SavedData;
 import net.neoforged.neoforge.common.NeoForge;
 import net.neoforged.neoforge.event.tick.LevelTickEvent;
@@ -43,7 +42,7 @@ public final class RiverService {
 
     /** Площадь водосбора у воды в {@code pos}, км². */
     public static double catchmentAreaKm2(ServerLevel level, BlockPos pos) {
-        boolean river = level.getBiome(pos).is(BiomeTags.IS_RIVER);
+        boolean river = BiomeEnvironment.waterOf(level.getBiome(pos)) == BiomeEnvironment.Water.RIVER;
         long h = level.getSeed() ^ (pos.getX() >> 6) * 0x9E3779B97F4A7C15L ^ (pos.getZ() >> 6) * 0xC2B2AE3D27D4EB4FL;
         h ^= h >>> 29;
         h *= 0xBF58476D1CE4E5B9L;

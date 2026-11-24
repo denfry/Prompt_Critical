@@ -124,6 +124,27 @@ public final class CompatGameTests {
         h.succeed();
     }
 
+    /** 16 §16.10.3: без карты данных биом описывают теги {@code c:} и ванильные; значения прежние. */
+    @GameTest(template = EMPTY)
+    public static void biomeEnvironmentFallsBackToTags(GameTestHelper h) {
+        var biomes = h.getLevel().registryAccess().registryOrThrow(Registries.BIOME);
+        java.util.function.Function<net.minecraft.resources.ResourceKey<net.minecraft.world.level.biome.Biome>,
+                net.minecraft.core.Holder<net.minecraft.world.level.biome.Biome>> b = biomes::getHolderOrThrow;
+        h.assertValueEqual(dev.denfry.promptcritical.mod.environment.BiomeEnvironment.waterOf(b.apply(net.minecraft.world.level.biome.Biomes.RIVER)),
+                dev.denfry.promptcritical.mod.environment.BiomeEnvironment.Water.RIVER, "river");
+        h.assertValueEqual(dev.denfry.promptcritical.mod.environment.BiomeEnvironment.waterOf(b.apply(net.minecraft.world.level.biome.Biomes.DEEP_OCEAN)),
+                dev.denfry.promptcritical.mod.environment.BiomeEnvironment.Water.DEEP_OCEAN, "deep ocean");
+        h.assertValueEqual(dev.denfry.promptcritical.mod.environment.BiomeEnvironment.waterOf(b.apply(net.minecraft.world.level.biome.Biomes.OCEAN)),
+                dev.denfry.promptcritical.mod.environment.BiomeEnvironment.Water.OCEAN, "ocean");
+        h.assertValueEqual(dev.denfry.promptcritical.mod.environment.BiomeEnvironment.surfaceOf(b.apply(net.minecraft.world.level.biome.Biomes.FOREST)),
+                dev.denfry.promptcritical.sim.environment.Environment.Surface.FOREST, "forest");
+        h.assertValueEqual(dev.denfry.promptcritical.mod.environment.BiomeEnvironment.surfaceOf(b.apply(net.minecraft.world.level.biome.Biomes.BEACH)),
+                dev.denfry.promptcritical.sim.environment.Environment.Surface.WATER, "beach");
+        h.assertValueEqual(dev.denfry.promptcritical.mod.environment.BiomeEnvironment.surfaceOf(b.apply(net.minecraft.world.level.biome.Biomes.PLAINS)),
+                dev.denfry.promptcritical.sim.environment.Environment.Surface.OPEN, "plains");
+        h.succeed();
+    }
+
     /** 16 §16.8.5: Carry On не поднимает ни одну нашу блок-сущность вместе с содержимым. */
     @GameTest(template = EMPTY)
     public static void carryOnCannotLiftOurBlockEntities(GameTestHelper h) {
