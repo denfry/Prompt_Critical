@@ -364,6 +364,9 @@ public final class MachineLoads {
         put(Load.OWN, dev.denfry.promptcritical.mod.grid.LampBlock.LampBlockEntity.class);
         // настенные часы — механические
         put(Load.PASSIVE, dev.denfry.promptcritical.mod.content.WallClockBlock.WallClockBlockEntity.class);
+        // санпропускник 04b: шкафы — мебель; контроллер ЗКД — табличка с журналом, дозу берёт с приборов зоны
+        put(Load.PASSIVE, dev.denfry.promptcritical.mod.radiation.LockerBlockEntity.class);
+        put(Load.PASSIVE, dev.denfry.promptcritical.mod.radiation.ZoneControllerBlockEntity.class);
         put(Load.PASSIVE, SteamGeneratorBlockEntity.class);
         put(Load.PASSIVE, TideGaugeBlockEntity.class);
         put(Load.PASSIVE, VentStackBlockEntity.class);

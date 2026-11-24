@@ -1,11 +1,11 @@
 {
   "parent": "minecraft:recipes/root",
   "criteria": {
-    "has_mechanical_pump": {
+    "has_pvc": {
       "conditions": {
         "items": [
           {
-            "items": "create:mechanical_pump"
+            "items": "promptcritical:pvc"
           }
         ]
       },
@@ -13,7 +13,7 @@
     },
     "has_the_recipe": {
       "conditions": {
-        "recipe": "promptcritical:mine/mine_drainage_pump"
+        "recipe": "promptcritical:radiation/pneumosuit_trousers"
       },
       "trigger": "minecraft:recipe_unlocked"
     }
@@ -21,12 +21,12 @@
   "requirements": [
     [
       "has_the_recipe",
-      "has_mechanical_pump"
+      "has_pvc"
     ]
   ],
   "rewards": {
     "recipes": [
-      "promptcritical:mine/mine_drainage_pump"
+      "promptcritical:radiation/pneumosuit_trousers"
     ]
   }
 }

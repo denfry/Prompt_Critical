@@ -106,27 +106,30 @@ public final class RadProtectionGameTests {
         // контроллер на восточной стене изнутри смотрит на запад, в комнату
         h.setBlock(new BlockPos(4, 3, 3), PcBlocks.ZONE_CONTROLLER.get().defaultBlockState()
                 .setValue(BlockStateProperties.HORIZONTAL_FACING, Direction.WEST));
-        FakePlayer p = SafetyGameTests.bare(h);
-        try {
-            ZoneControllerBlockEntity z = ZoneControllerBlockEntity.zoneAt(level, h.absolutePos(new BlockPos(2, 2, 3)));
-            h.assertTrue(z != null && z.enclosed() && z.zone() == RadZone.CONTROLLED_SERVICED, "room not registered as a controlled zone");
-            BlockPos lower = h.absolutePos(new BlockPos(1, 2, 3));
-            BlockPos outside = h.absolutePos(new BlockPos(0, 2, 3));
-            p.moveTo(outside.getX() + 0.5, outside.getY(), outside.getZ() + 0.5);
-            h.assertTrue(SanitaryBlocks.check(level, lower, Direction.EAST, p).verdict() == RadZone.Verdict.NO_DOSIMETER, "let in without an EPD");
-            p.getInventory().add(new ItemStack(PcItems.PERSONAL_DOSIMETER_EPD.get()));
-            h.assertTrue(SanitaryBlocks.check(level, lower, Direction.EAST, p).verdict() == RadZone.Verdict.OK, "kept out with an EPD");
-            BlockPos inside = h.absolutePos(new BlockPos(2, 2, 3));
-            p.moveTo(inside.getX() + 0.5, inside.getY(), inside.getZ() + 0.5);
-            ContaminationService.setShoes(p, SurfaceContamination.of(0, 50, 0.5));
-            h.assertTrue(SanitaryBlocks.check(level, lower, Direction.EAST, p).verdict() == RadZone.Verdict.CONTAMINATED, "let out with dirty shoes");
-            ContaminationService.setShoes(p, SurfaceContamination.NONE);
-            h.assertTrue(SanitaryBlocks.check(level, lower, Direction.EAST, p).verdict() == RadZone.Verdict.OK, "kept in with clean shoes");
-        } finally {
-            SafetyGameTests.strip(p);
-            ContaminationService.setShoes(p, SurfaceContamination.NONE);
-        }
-        h.succeed();
+        // onLoad блок-сущности, поставленной setBlock, NeoForge вызывает на следующем тике: контроллер ещё не в реестре зон
+        h.runAfterDelay(1, () -> {
+            FakePlayer p = SafetyGameTests.bare(h);
+            try {
+                ZoneControllerBlockEntity z = ZoneControllerBlockEntity.zoneAt(level, h.absolutePos(new BlockPos(2, 2, 3)));
+                h.assertTrue(z != null && z.enclosed() && z.zone() == RadZone.CONTROLLED_SERVICED, "room not registered as a controlled zone");
+                BlockPos lower = h.absolutePos(new BlockPos(1, 2, 3));
+                BlockPos outside = h.absolutePos(new BlockPos(0, 2, 3));
+                p.moveTo(outside.getX() + 0.5, outside.getY(), outside.getZ() + 0.5);
+                h.assertTrue(SanitaryBlocks.check(level, lower, Direction.EAST, p).verdict() == RadZone.Verdict.NO_DOSIMETER, "let in without an EPD");
+                p.getInventory().add(new ItemStack(PcItems.PERSONAL_DOSIMETER_EPD.get()));
+                h.assertTrue(SanitaryBlocks.check(level, lower, Direction.EAST, p).verdict() == RadZone.Verdict.OK, "kept out with an EPD");
+                BlockPos inside = h.absolutePos(new BlockPos(2, 2, 3));
+                p.moveTo(inside.getX() + 0.5, inside.getY(), inside.getZ() + 0.5);
+                ContaminationService.setShoes(p, SurfaceContamination.of(0, 50, 0.5));
+                h.assertTrue(SanitaryBlocks.check(level, lower, Direction.EAST, p).verdict() == RadZone.Verdict.CONTAMINATED, "let out with dirty shoes");
+                ContaminationService.setShoes(p, SurfaceContamination.NONE);
+                h.assertTrue(SanitaryBlocks.check(level, lower, Direction.EAST, p).verdict() == RadZone.Verdict.OK, "kept in with clean shoes");
+            } finally {
+                SafetyGameTests.strip(p);
+                ContaminationService.setShoes(p, SurfaceContamination.NONE);
+            }
+            h.succeed();
+        });
     }
 
     /** Грязный шкаф забирает зонные вещи вместе с загрязнением, чистый меняет одежду местами. */

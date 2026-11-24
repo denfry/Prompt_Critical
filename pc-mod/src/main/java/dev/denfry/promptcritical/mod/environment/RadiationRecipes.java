@@ -66,7 +66,7 @@ public final class RadiationRecipes extends RecipeProvider {
                 .define('E', AllItems.ELECTRON_TUBE.get()).define('R', Items.REDSTONE)
                 .unlockedBy("has_dosimeter", has(PcItems.DOSIMETER.get())).save(out, id("contamination_meter"));
         // латекс покрытия — полимер (слизь) в банке
-        ShapedRecipeBuilder.shaped(RecipeCategory.MISC, PcItems.STRIPPABLE_COATING.get(), 4)
+        ShapedRecipeBuilder.shaped(RecipeCategory.MISC, PcItems.STRIPPABLE_COATING.get())
                 .pattern(" S ").pattern("IBI").pattern(" I ").define('S', Items.SLIME_BALL).define('I', AllItems.IRON_SHEET.get())
                 .define('B', Items.GLASS_BOTTLE).unlockedBy("has_slime_ball", has(Items.SLIME_BALL)).save(out, id("strippable_coating"));
         ShapedRecipeBuilder.shaped(RecipeCategory.TOOLS, PcItems.DECON_SPRAYER.get())
@@ -113,7 +113,7 @@ public final class RadiationRecipes extends RecipeProvider {
                 .define('C', PcItems.INTEGRATED_CIRCUIT.get()).define('R', Items.REDSTONE)
                 .unlockedBy("has_integrated_circuit", has(PcItems.INTEGRATED_CIRCUIT.get())).save(out, id("personal_dosimeter_epd"));
         // ТЛД: кристалл-термолюминофор в кассете
-        ShapedRecipeBuilder.shaped(RecipeCategory.TOOLS, PcItems.TLD_BADGE.get(), 2)
+        ShapedRecipeBuilder.shaped(RecipeCategory.TOOLS, PcItems.TLD_BADGE.get())
                 .pattern("Q").pattern("I").define('Q', Items.QUARTZ).define('I', iron)
                 .unlockedBy("has_dosimeter", has(PcItems.DOSIMETER.get())).save(out, id("tld_badge"));
         // считыватель: нагрев кассеты и фотоумножитель — лампа за стеклом
@@ -155,7 +155,7 @@ public final class RadiationRecipes extends RecipeProvider {
         ShapedRecipeBuilder.shaped(RecipeCategory.COMBAT, PcItems.PROTECTIVE_OVERALLS.get())
                 .pattern("W W").pattern("WWW").pattern("WWW").define('W', Items.WHITE_WOOL)
                 .unlockedBy("has_white_wool", has(Items.WHITE_WOOL)).save(out, id("protective_overalls"));
-        ShapedRecipeBuilder.shaped(RecipeCategory.COMBAT, PcItems.BOOT_COVERS.get(), 4)
+        ShapedRecipeBuilder.shaped(RecipeCategory.COMBAT, PcItems.BOOT_COVERS.get())
                 .pattern("P P").pattern("P P").define('P', PcItems.POLYETHYLENE.get())
                 .unlockedBy("has_polyethylene", has(PcItems.POLYETHYLENE.get())).save(out, id("boot_covers"));
         ShapedRecipeBuilder.shaped(RecipeCategory.COMBAT, PcItems.LEAD_APRON.get())
