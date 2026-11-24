@@ -2137,6 +2137,12 @@ public final class PcBlocks {
                     Spec.facing(PcProperties.RUNNING, PcProperties.ICED).footprint(FP_CUBE3)), machine().noOcclusion()));
     /** Конденсатор под паровой турбиной: охлаждается водой, которой касается (река, пруд). */
     public static final DeferredBlock<PcBlock> CONDENSER = block("condenser", machine().noOcclusion(), Spec.facing());
+    // теплица на сбросном тепле (17 §17.3.6): регистр от конденсатора турбины и парник 1×1 без обогрева
+    public static final DeferredBlock<PcDeviceBlock> GREENHOUSE_COIL = device("greenhouse_coil", machine().noOcclusion(), Spec.facing(),
+            dev.denfry.promptcritical.mod.foundry.FoundryBlock.with(dev.denfry.promptcritical.mod.greenhouse.GreenhouseCoilBlockEntity::new));
+    public static final DeferredBlock<PcBlock> COLD_FRAME = block("cold_frame", glassBlock(), Spec.of());
+    public static final DeferredBlock<PcDeviceBlock> FISH_CAGE = device("fish_cage", wood().noOcclusion(), Spec.of(),
+            dev.denfry.promptcritical.mod.foundry.FoundryBlock.with(dev.denfry.promptcritical.mod.greenhouse.FishCageBlockEntity::new));
     /** Паровая турбина с противодавлением: вал Create спереди, пар — от котла, которого касается. */
     /** Водозабор техводы с решёткой (07 §7.13.4), 1×2×1. */
     public static final DeferredBlock<PcDeviceBlock> WATER_INTAKE = device("water_intake", brick().noOcclusion(),

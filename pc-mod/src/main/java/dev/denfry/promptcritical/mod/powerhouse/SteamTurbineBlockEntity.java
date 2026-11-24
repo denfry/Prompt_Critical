@@ -22,6 +22,7 @@ import net.minecraft.core.HolderLookup;
 import net.minecraft.core.registries.BuiltInRegistries;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.server.level.ServerLevel;
+import net.minecraft.world.level.Level;
 import net.minecraft.sounds.SoundEvents;
 import net.minecraft.sounds.SoundSource;
 import net.minecraft.world.InteractionHand;
@@ -140,6 +141,17 @@ public class SteamTurbineBlockEntity extends GeneratingKineticBlockEntity
     }
 
     /**
+     * Тепло, которое отработавший пар отдаёт охлаждающей воде конденсатора {@code condenser}, Вт: теплота конденсации
+     * расхода пара, если турбина стоит на этом конденсаторе; иначе 0. Его берёт регистр теплицы (17 §17.3.6).
+     */
+    public static double condenserHeatW(Level level, BlockPos condenser) {
+        if (!level.getBlockState(condenser).is(PcBlocks.CONDENSER.get())) return 0;
+        if (!(level.getBlockEntity(condenser.above()) instanceof SteamTurbineBlockEntity t)) return 0;
+        EngineUnit e = t.unit();
+        return e == null ? 0 : Math.max(0, e.steamFlowKgS()) * 2.3e6;
+    }
+
+    /**
      * Противодавление: конденсатор под турбиной, который касается воды, держит вакуум по температуре этой воды;
      * без него — выхлоп в атмосферу.
      */
@@ -172,9 +184,14 @@ public class SteamTurbineBlockEntity extends GeneratingKineticBlockEntity
             if (ts.getValue(PcProperties.ICED) != iced) sl.setBlock(tower, ts.setValue(PcProperties.ICED, iced), Block.UPDATE_CLIENTS);
             return dev.denfry.promptcritical.sim.thermal.CoolingTowerCell.coldWaterC(env.airTempC(), rh, heat, fan);
         }
-        boolean water = sl.getFluidState(c.below()).is(net.minecraft.tags.FluidTags.WATER);
-        for (Direction d : Direction.Plane.HORIZONTAL) water |= sl.getFluidState(c.relative(d)).is(net.minecraft.tags.FluidTags.WATER);
-        return water ? dev.denfry.promptcritical.mod.environment.EnvironmentService.waterTempC(sl, c) : null;
+        // прямоточное охлаждение рекой или прудом: тепло конденсации уходит в этот водоём и греет его (07 §7.13.4)
+        BlockPos water = sl.getFluidState(c.below()).is(net.minecraft.tags.FluidTags.WATER) ? c.below() : null;
+        for (Direction d : Direction.Plane.HORIZONTAL)
+            if (water == null && sl.getFluidState(c.relative(d)).is(net.minecraft.tags.FluidTags.WATER)) water = c.relative(d);
+        if (water == null) return null;
+        EngineUnit e = unit();
+        double heat = e == null ? 0 : e.steamFlowKgS() * 2.3e6;
+        return dev.denfry.promptcritical.mod.environment.HeatedWater.discharge(sl, c, water, heat);
     }
 
     /** Котёл, которого турбина касается гранью; {@link SimId#NONE} — нет. */
