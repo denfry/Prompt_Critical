@@ -123,7 +123,12 @@ public class PlantLoudspeakerBlockEntity extends DeviceBlockEntity implements Fo
 
     @Override
     public void onPanelButton(ServerPlayer player, int id) {
-        if (!(level instanceof ServerLevel sl)) return;
+        if (!(level instanceof ServerLevel sl) || id != PaPanels.B_PREV && id != PaPanels.B_NEXT) return;
+        // зону рупора меняет только своя станция, как и пульт (04d §4d.5)
+        if (team != null && !java.util.Objects.equals(team, PaSystem.teamOf(player))) {
+            player.displayClientMessage(PaPanels.NOT_YOURS.get().withStyle(net.minecraft.ChatFormatting.RED), true);
+            return;
+        }
         int next = Math.floorMod(zone - 1 + (id == PaPanels.B_NEXT ? 1 : -1), MAX_ZONE) + 1;
         // не больше ops.pa_max_speakers_per_zone громкоговорителей на зону
         if (PaSystem.speakers(sl, team, next).size() >= ServerConfig.PA_MAX_SPEAKERS_PER_ZONE.get()) {
