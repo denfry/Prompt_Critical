@@ -867,6 +867,45 @@ public final class PcBlocks {
             Spec.facing(BlockStateProperties.LIT).footprint(FP_COLUMN3),
             FoundryBlock.with(dev.denfry.promptcritical.mod.methanol.MethanolColumnBlockEntity::new));
 
+    // --- I3 реального масштаба (art/blockbench/i3/i3.author.js): двойники старых машин на тех же BE ---
+    public static final Footprint FP_GAS_TURBINE_HEAVY_REAL = Footprint.tiled(-6, 6, 0, 5, -2, 2);
+    /** Тяжёлая ГТУ класса V94.2 13 × 6 × 5 на BE {@link #GAS_TURBINE}: газ — с севера, выхлоп — на восток в котёл-утилизатор. */
+    public static final DeferredBlock<PcDeviceBlock> GAS_TURBINE_HEAVY_REAL = device("gas_turbine_heavy_real", machine(),
+            real(Spec.facing(PcProperties.RUNNING), FP_GAS_TURBINE_HEAVY_REAL),
+            FoundryBlock.with(dev.denfry.promptcritical.mod.powerhouse.GasTurbineBlockEntity::new));
+    public static final Footprint FP_HRSG_REAL = Footprint.tiled(-6, 7, 0, 17, -3, 3);
+    /** Горизонтальный котёл-утилизатор 14 × 18 × 7 на BE {@link #HRSG}: вплотную к восточной грани ГТУ (контроллер +13 по x). */
+    public static final DeferredBlock<PcDeviceBlock> HRSG_REAL = device("hrsg_real", machine(),
+            real(Spec.facing(PcProperties.RUNNING), FP_HRSG_REAL), FoundryBlock.with(dev.denfry.promptcritical.mod.powerhouse.HrsgBlockEntity::new));
+    public static final Footprint FP_STEAM_REFORMER_REAL = Footprint.tiled(-4, 4, 0, 13, -2, 2);
+    public static final DeferredBlock<PcDeviceBlock> STEAM_REFORMER_REAL = device("steam_reformer_real", lit(brick()),
+            real(Spec.facing(BlockStateProperties.LIT), FP_STEAM_REFORMER_REAL),
+            FoundryBlock.with(dev.denfry.promptcritical.mod.nitrogen.SteamReformerBlockEntity::new));
+    public static final Footprint FP_AMMONIA_CONVERTER_REAL = Footprint.tiled(-1, 1, 0, 13, -1, 1);
+    /** Колонна синтеза 3 × 14 × 3: циркуляционный компрессор на валу Create — в клетку (0, 0, 1) юбки, вал вдоль фасада. */
+    public static final DeferredBlock<PcDeviceBlock> AMMONIA_CONVERTER_REAL = device("ammonia_converter_real", machine(),
+            real(Spec.facing(PcProperties.RUNNING), FP_AMMONIA_CONVERTER_REAL),
+            dev.denfry.promptcritical.mod.foundry.PortedKineticMachineBlock.with(new BlockPos(0, 0, 1), net.minecraft.core.Direction.Axis.Z,
+                    dev.denfry.promptcritical.mod.nitrogen.AmmoniaConverterBlockEntity::new));
+    public static final Footprint FP_METHANOL_CONVERTER_REAL = Footprint.tiled(-2, 2, 0, 12, -2, 2);
+    /** Реактор Lurgi 5 × 13 × 5: циркуляционный компрессор на валу Create — в клетку (1, 0, 2) юбки (не якорь сегмента), вал вдоль фасада. */
+    public static final DeferredBlock<PcDeviceBlock> METHANOL_CONVERTER_REAL = device("methanol_converter_real", machine(),
+            real(Spec.facing(PcProperties.RUNNING), FP_METHANOL_CONVERTER_REAL),
+            dev.denfry.promptcritical.mod.foundry.PortedKineticMachineBlock.with(new BlockPos(1, 0, 2), net.minecraft.core.Direction.Axis.Z,
+                    dev.denfry.promptcritical.mod.methanol.MethanolConverterBlockEntity::new));
+    public static final Footprint FP_PYROLYSIS_FURNACE_REAL = Footprint.tiled(-4, 4, 0, 15, -2, 2);
+    public static final DeferredBlock<PcDeviceBlock> PYROLYSIS_FURNACE_REAL = device("pyrolysis_furnace_real", lit(brick()),
+            real(Spec.facing(BlockStateProperties.LIT), FP_PYROLYSIS_FURNACE_REAL),
+            FoundryBlock.with(dev.denfry.promptcritical.mod.chem.PyrolysisFurnaceBlockEntity::new));
+    public static final Footprint FP_CHLOR_ALKALI_ELECTROLYSER_REAL = Footprint.tiled(-4, 5, 0, 2, -1, 1);
+    public static final DeferredBlock<PcDeviceBlock> CHLOR_ALKALI_ELECTROLYSER_REAL = device("chlor_alkali_electrolyser_real", machine(),
+            real(Spec.facing(PcProperties.RUNNING), FP_CHLOR_ALKALI_ELECTROLYSER_REAL),
+            FoundryBlock.with(dev.denfry.promptcritical.mod.chlor.CellRoomBlockEntity::new));
+    public static final Footprint FP_PVC_REACTOR_REAL = Footprint.tiled(-2, 2, 0, 7, -2, 2);
+    public static final DeferredBlock<PcDeviceBlock> PVC_REACTOR_REAL = device("pvc_reactor_real", machine(),
+            real(Spec.facing(PcProperties.RUNNING), FP_PVC_REACTOR_REAL),
+            FoundryBlock.with(dev.denfry.promptcritical.mod.chlor.PvcReactorBlockEntity::new));
+
     // --- ядерное топливо I4: обогащение урана на газовых центрифугах ---
     /** Секция газовых центрифуг (20 машин); их считает пульт каскада в радиусе {@code CascadeBlockEntity#RADIUS}. */
     public static final DeferredBlock<PcBlock> GAS_CENTRIFUGE = block("gas_centrifuge", machine(), Spec.facing());
@@ -1009,6 +1048,9 @@ public final class PcBlocks {
     public static boolean isWholeModel(net.minecraft.world.level.block.Block b) {
         return b == VVER_REACTOR.get() || b == VVER_STEAM_GENERATOR.get() || b == VVER_COOLANT_PUMP.get() || b == VVER_PRESSURIZER.get()
                 || b == BWR240_REACTOR.get() || b == CANDU6_REACTOR.get() || b == BN600_REACTOR.get() || b == AM1_REACTOR.get()
+                || b == GAS_TURBINE_HEAVY_REAL.get() || b == HRSG_REAL.get() || b == STEAM_REFORMER_REAL.get() || b == AMMONIA_CONVERTER_REAL.get()
+                || b == METHANOL_CONVERTER_REAL.get() || b == PYROLYSIS_FURNACE_REAL.get() || b == CHLOR_ALKALI_ELECTROLYSER_REAL.get()
+                || b == PVC_REACTOR_REAL.get()
                 || b == LANCASHIRE_BOILER.get() || b == HEADFRAME_STEEL.get() || b == MILL_ENGINE.get() || b == WINDING_ENGINE.get()
                 || b == GUIBAL_FAN.get() || b == CUPOLA_FURNACE_REAL.get() || b == MINE_DRAINAGE_PUMP_GEARED.get()
                 || b == LANCASHIRE_STOKER.get() || b == CRUCIBLE_FURNACE_REAL.get()

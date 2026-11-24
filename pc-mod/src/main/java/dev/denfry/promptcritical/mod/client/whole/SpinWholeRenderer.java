@@ -30,7 +30,18 @@ public final class SpinWholeRenderer<T extends BlockEntity & WholeModelHost> imp
     private final BlockEntityRenderer<T> old;
     private final List<Spin> spins = new ArrayList<>();
     private final List<PartialModel> whileRunning = new ArrayList<>();
+    /** Горящий вариант модели ({@code <id>_lit}), пока у контроллера {@code lit}. */
+    private boolean lit;
     private final WholeModelRenderer<T> real = new WholeModelRenderer<>() {
+        @Override
+        @Nullable
+        protected String modelId(T be) {
+            String id = be.wholeModelId();
+            BlockState s = be.getBlockState();
+            return lit && id != null && s.hasProperty(net.minecraft.world.level.block.state.properties.BlockStateProperties.LIT)
+                    && s.getValue(net.minecraft.world.level.block.state.properties.BlockStateProperties.LIT) ? id + "_lit" : id;
+        }
+
         @Override
         protected void parts(T be, float pt, PoseStack ms, VertexConsumer vc, int light) {
             Direction f = be.wholeModelFacing();
@@ -63,6 +74,12 @@ public final class SpinWholeRenderer<T extends BlockEntity & WholeModelHost> imp
     public SpinWholeRenderer<T> spin(PartialModel part, Direction.Axis axis, float a, float b, float dx, float dy, float dz,
             ToDoubleFunction<BlockEntity> rpm) {
         spins.add(new Spin(part, axis, a, b, dx, dy, dz, rpm));
+        return this;
+    }
+
+    /** Печь с горящим вариантом цельной модели: обе модели регистрирует вызывающий. */
+    public SpinWholeRenderer<T> lit() {
+        lit = true;
         return this;
     }
 

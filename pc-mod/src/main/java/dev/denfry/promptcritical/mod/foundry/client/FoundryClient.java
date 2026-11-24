@@ -113,7 +113,10 @@ public final class FoundryClient {
         // мешалка автоклава ПВХ (art/blockbench/polymers/pvc_reactor.author.js): муфта в фонаре привода, ось x 8, z 8;
         // суспензионные реакторы мешают на ~100–150 об/мин
         event.registerBlockEntityRenderer(dev.denfry.promptcritical.mod.chlor.ChlorBlockEntities.PVC_REACTOR.get(),
-                c -> FoundryMachineRenderer.whileRunning(PVC_AGITATOR, Motion.SPIN_Y, 8, 8, 120));
+                c -> new dev.denfry.promptcritical.mod.client.whole.SpinWholeRenderer<>(FoundryMachineRenderer.whileRunning(PVC_AGITATOR, Motion.SPIN_Y, 8, 8, 120))
+                        // pvc_reactor_real: муфта мешалки вокруг y через (8, 8), хранится на 96 px ниже
+                        .spin(dev.denfry.promptcritical.mod.fx.client.I3RealClient.PVC_COUPLING, net.minecraft.core.Direction.Axis.Y, 8, 8, 0, 96, 0,
+                                be -> be.getBlockState().getValue(dev.denfry.promptcritical.mod.block.PcProperties.RUNNING) ? 120 : 0));
         // коленвал газового компрессора с маховиком (art/blockbench/gas_processing/gas_compressor.author.js): ось x на y 8, z 16
         event.registerBlockEntityRenderer(dev.denfry.promptcritical.mod.gas.GasBlockEntities.GAS_COMPRESSOR.get(),
                 c -> new FoundryMachineRenderer<>(GAS_CRANKSHAFT, Motion.SPIN_X, 8, 16, 1));

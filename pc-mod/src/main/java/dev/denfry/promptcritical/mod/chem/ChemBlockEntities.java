@@ -20,7 +20,7 @@ public final class ChemBlockEntities {
             DeferredRegister.create(Registries.BLOCK_ENTITY_TYPE, PromptCritical.MOD_ID);
 
     public static final DeferredHolder<BlockEntityType<?>, BlockEntityType<PyrolysisFurnaceBlockEntity>> PYROLYSIS_FURNACE =
-            type("pyrolysis_furnace", PyrolysisFurnaceBlockEntity::new, PcBlocks.PYROLYSIS_FURNACE);
+            type("pyrolysis_furnace", PyrolysisFurnaceBlockEntity::new, PcBlocks.PYROLYSIS_FURNACE, PcBlocks.PYROLYSIS_FURNACE_REAL);
     public static final DeferredHolder<BlockEntityType<?>, BlockEntityType<CrackedGasUnitBlockEntity>> CRACKED_GAS_UNIT =
             type("cracked_gas_unit", CrackedGasUnitBlockEntity::new, PcBlocks.CRACKED_GAS_UNIT);
     public static final DeferredHolder<BlockEntityType<?>, BlockEntityType<LdpeReactorBlockEntity>> LDPE_REACTOR =
@@ -45,8 +45,10 @@ public final class ChemBlockEntities {
         event.registerBlockEntity(Capabilities.FluidHandler.BLOCK, type, FoundryDevice::fluids);
     }
 
+    @SafeVarargs
     private static <T extends BlockEntity> DeferredHolder<BlockEntityType<?>, BlockEntityType<T>> type(String name,
-            BlockEntityType.BlockEntitySupplier<T> factory, Supplier<? extends Block> block) {
-        return BLOCK_ENTITIES.register(name, () -> BlockEntityType.Builder.of(factory, block.get()).build(null));
+            BlockEntityType.BlockEntitySupplier<T> factory, Supplier<? extends Block>... blocks) {
+        return BLOCK_ENTITIES.register(name, () -> BlockEntityType.Builder.of(factory,
+                java.util.Arrays.stream(blocks).map(Supplier::get).toArray(Block[]::new)).build(null));
     }
 }

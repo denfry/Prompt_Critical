@@ -401,6 +401,14 @@ public final class SitePlans {
             Map.entry("shaft_generator_real", new Twin(PcBlocks.SHAFT_GENERATOR, 1)),
             Map.entry("electric_motor_mv_real", new Twin(PcBlocks.ELECTRIC_MOTOR, 1)),
             Map.entry("quench_tower_real", new Twin(PcBlocks.QUENCH_TOWER, 1)),
+            Map.entry("gas_turbine_heavy_real", new Twin(PcBlocks.GAS_TURBINE, 1)),
+            Map.entry("hrsg_real", new Twin(PcBlocks.HRSG, 1)),
+            Map.entry("steam_reformer_real", new Twin(PcBlocks.STEAM_REFORMER, 1)),
+            Map.entry("ammonia_converter_real", new Twin(PcBlocks.AMMONIA_CONVERTER, 1)),
+            Map.entry("methanol_converter_real", new Twin(PcBlocks.METHANOL_CONVERTER, 1)),
+            Map.entry("pyrolysis_furnace_real", new Twin(PcBlocks.PYROLYSIS_FURNACE, 1)),
+            Map.entry("chlor_alkali_electrolyser_real", new Twin(PcBlocks.CHLOR_ALKALI_CELL, 1)),
+            Map.entry("pvc_reactor_real", new Twin(PcBlocks.PVC_REACTOR, 1)),
             Map.entry("bof_vessel_real", new Twin(PcBlocks.BOF_VESSEL, 1)),
             Map.entry("reheating_furnace_real", new Twin(PcBlocks.REHEATING_FURNACE, 1)));
 
@@ -464,6 +472,56 @@ public final class SitePlans {
      * Цветная металлургия реального масштаба (08 §8.8). Металл — оценки по размерам моделей (листы, отливки, шины);
      * бетон, кирпич и угольные блоки — не металл.
      */
+    /**
+     * I3 реального масштаба (art/blockbench/i3): массы — оценки по классу прототипа (каталожных масс в листе
+     * docs/research/2026-11-24-i3 нет): металл в позициях, огнеупор и бетон сверх него.
+     */
+    private static final Map<String, Plan> I3_PLANS = Map.of(
+            // ГТУ класса V94.2: корпуса компрессора, камеры и турбины, ротор, рама ≈ 234 т (оценка класса)
+            "gas_turbine_heavy_real", plan("gas_turbine_heavy_real", PcBlocks.GAS_TURBINE_HEAVY_REAL, 234,
+                    st("gt_foundation", 300, n(CONCRETE, 150), n(BEAM, 140)),
+                    st("gt_casings", 500, n(INGOT, 1000), n(PLATE, 500)),
+                    st("gt_rotor", 400, n(INGOT, 600), n(PIPE, 100))),
+            // горизонтальный КУ за ГТУ 150 МВт: каркас, обшивка, трубные пакеты, барабан ≈ 1500 т (оценка)
+            "hrsg_real", plan("hrsg_real", PcBlocks.HRSG_REAL, 1500,
+                    st("hrsg_steelwork", 400, n(CONCRETE, 600), n(BEAM, 1000)),
+                    st("hrsg_casing", 500, n(PLATE, 4000)),
+                    st("hrsg_banks", 800, n(PIPE, 8000)),
+                    st("hrsg_drum", 400, n(INGOT, 1000), n(PLATE, 1000))),
+            // трубчатая печь риформинга 100 т/сут: каркас, обшивка, реакционные трубы, конвекционная шахта ≈ 400 т (оценка)
+            "steam_reformer_real", plan("steam_reformer_real", PcBlocks.STEAM_REFORMER_REAL, 400,
+                    st("reformer_structure", 300, n(CONCRETE, 200), n(BEAM, 600)),
+                    st("reformer_box", 500, n(PLATE, 1200), n(BRICKS, 1500)),
+                    st("reformer_tubes", 400, n(PIPE, 800)),
+                    st("reformer_convection", 400, n(PIPE, 600), n(PLATE, 800))),
+            // колонна синтеза ⌀1,5 × 11 м, многослойный корпус и насадка ≈ 80 т (оценка)
+            "ammonia_converter_real", plan("ammonia_converter_real", PcBlocks.AMMONIA_CONVERTER_REAL, 80,
+                    st("converter_foundation", 120, n(CONCRETE, 40)),
+                    st("converter_shell", 400, n(INGOT, 500), n(PLATE, 200)),
+                    st("converter_internals", 200, n(PIPE, 100))),
+            // реактор Lurgi ⌀3 м, ≈ 2000 труб, барабан ≈ 150 т (оценка)
+            "methanol_converter_real", plan("methanol_converter_real", PcBlocks.METHANOL_CONVERTER_REAL, 150,
+                    st("methanol_foundation", 120, n(CONCRETE, 60), n(BEAM, 100)),
+                    st("methanol_shell", 300, n(PLATE, 500)),
+                    st("methanol_tubes", 400, n(PIPE, 700)),
+                    st("methanol_drum", 200, n(PLATE, 200))),
+            // печь пиролиза 60 тыс. т/год: каркас, радиантная камера, змеевики, ЗИА и конвекция ≈ 600 т (оценка)
+            "pyrolysis_furnace_real", plan("pyrolysis_furnace_real", PcBlocks.PYROLYSIS_FURNACE_REAL, 600,
+                    st("pyrolysis_structure", 400, n(CONCRETE, 300), n(BEAM, 1000)),
+                    st("pyrolysis_box", 500, n(PLATE, 1500), n(BRICKS, 2000)),
+                    st("pyrolysis_coils", 400, n(PIPE, 1000)),
+                    st("pyrolysis_convection", 500, n(PIPE, 1500), n(PLATE, 1000))),
+            // биполярный электролизёр на 120 элементов: стойка, элементы, шины ≈ 60 т (оценка)
+            "chlor_alkali_electrolyser_real", plan("chlor_alkali_electrolyser_real", PcBlocks.CHLOR_ALKALI_ELECTROLYSER_REAL, 60,
+                    st("electrolyser_rack", 160, n(BEAM, 150)),
+                    st("electrolyser_elements", 300, n(PLATE, 300)),
+                    st("electrolyser_busbars", 160, n(INGOT, 150))),
+            // реактор ПВХ 30 м³ с рубашкой, приводом мешалки и площадкой обслуживания ≈ 40 т (оценка)
+            "pvc_reactor_real", plan("pvc_reactor_real", PcBlocks.PVC_REACTOR_REAL, 40,
+                    st("pvc_floor", 160, n(CONCRETE, 20), n(BEAM, 100)),
+                    st("pvc_vessel", 300, n(PLATE, 250)),
+                    st("pvc_drive", 160, n(INGOT, 50))));
+
     private static final Map<String, Plan> NONFERROUS_PLANS = Map.of(
             // бак 4,6 × 1,15 × 1,3 м ≈ 4 м³ бетона, свинцовая футеровка ≈ 1,5 т, контактные шины и штанги ≈ 1,5 т меди (оценки)
             "electrorefining_cell_real", plan("electrorefining_cell_real", PcBlocks.ELECTROREFINING_CELL_REAL, 3,
@@ -556,6 +614,7 @@ public final class SitePlans {
     public static Plan get(String id) {
         Plan p = PLANS.get(id);
         if (p == null) p = I0_PLANS.get(id);
+        if (p == null) p = I3_PLANS.get(id);
         if (p == null) p = IRONMAKING_PLANS.get(id);
         if (p == null) p = POWER_PLANS.get(id);
         if (p == null) p = MINING_COKE_PLANS.get(id);
@@ -570,7 +629,7 @@ public final class SitePlans {
     }
 
     public static Iterable<Plan> all() {
-        return java.util.stream.Stream.of(PLANS, I0_PLANS, IRONMAKING_PLANS, POWER_PLANS, MINING_COKE_PLANS, I1_STEEL_PLANS, FOUNDRY_PLANS, I0_SHOP_PLANS,
+        return java.util.stream.Stream.of(PLANS, I3_PLANS, I0_PLANS, IRONMAKING_PLANS, POWER_PLANS, MINING_COKE_PLANS, I1_STEEL_PLANS, FOUNDRY_PLANS, I0_SHOP_PLANS,
                         STEAM_MINE_PLANS, CARBON_PLANS, SMITHY_PLANS, ASSEMBLY_PLANS, NONFERROUS_PLANS)
                 .flatMap(m -> m.values().stream()).toList();
     }

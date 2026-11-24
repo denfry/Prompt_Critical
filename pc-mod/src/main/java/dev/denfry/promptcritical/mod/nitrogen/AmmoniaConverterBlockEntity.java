@@ -175,7 +175,7 @@ public final class AmmoniaConverterBlockEntity extends KineticMachineBlockEntity
         var fx = fx();
         if (fx == null || !runningState()) return;
         double n = Math.min(1.5, Math.abs(getSpeed()) / 64.0);
-        if (fx.chance(1 + 2 * n)) fx.wisp(fx.at(15.6, -4.2, 7), 0.1);
+        if (fx.chance(1 + 2 * n)) fx.wisp(wholeModelId() != null ? fx.at(8, 218, 8) : fx.at(15.6, -4.2, 7), 0.1);
     }
 
     @Override
