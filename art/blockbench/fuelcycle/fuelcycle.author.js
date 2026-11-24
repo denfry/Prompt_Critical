@@ -115,7 +115,13 @@
     const m = mk();
     for (const [x, z] of [[-15, -15], [29, -15], [-15, 29], [29, 29]]) m.box(`leg_${x}_${z}`, [x, 0, z], [x + 2, 76, z + 2], 'frame', { split: 'y' });
     m.box('platform', [-16, 76, -16], [32, 77, 32], 'grate', { split: 'xz' });
-    for (const [f, t] of [[[-16, 77, -16], [32, 85, -15.6]], [[-16, 77, 31.6], [32, 85, 32]], [[31.6, 77, -16], [32, 85, 32]]]) m.box(`rail_${f[0]}_${f[2]}`, f, t, 'yel', { split: 'x' });
+    for (const y of [80.5, 84.4]) {
+      m.box(`rail_n_${y}`, [-16, y, -16], [32, y + 0.6, -15.4], 'yel', { split: 'x' });
+      m.box(`rail_s_${y}`, [-16, y, 31.4], [32, y + 0.6, 32], 'yel', { split: 'x' });
+      m.box(`rail_e_${y}`, [31.4, y, -16], [32, y + 0.6, 32], 'yel', { split: 'z' });
+    }
+    for (const x of [-4, 8, 20]) for (const z of [-16, 31.4]) m.box(`rail_post_${x}_${z}`, [x, 77, z], [x + 0.6, 85, z + 0.6], 'yel', S);
+    for (const z of [-4, 8, 20]) m.box(`rail_post_e_${z}`, [31.4, 77, z], [32, 85, z + 0.6], 'yel', S);
     for (let y = 2; y < 76; y += 4) m.box(`ladder_rung_${y}`, [-15.6, y, -10], [-15, y + 0.5, -6], 'st', S);
     for (const z of [-10, -6.4]) m.box(`ladder_side_${z}`, [-15.6, 0, z], [-15, 77, z + 0.4], 'st', { split: 'y' });
     m.prismY('ash_can', [8, 8], 3, 0, 4, 'dark', { ends: ['up'] });
