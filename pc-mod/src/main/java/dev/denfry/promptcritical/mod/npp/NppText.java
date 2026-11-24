@@ -27,6 +27,14 @@ public final class NppText {
         put("pwr_unloaded", "Assembly %s unloaded: %s MWd/kg", "ТВС %s выгружена: %s МВт·сут/кг");
         put("mcp_on", "Main coolant pump %s breaker closed", "Выключатель ГЦН-%s включён");
         put("mcp_off", "Main coolant pump %s tripped", "ГЦН-%s отключён");
+        // БОР-60
+        put("ihx_status", "IHX: secondary sodium pump running, secondary %s → %s °C", "ПТО: насос второго контура работает, 2К %s → %s °C");
+        put("ihx_no_power", "IHX: NO POWER to the secondary sodium pump, secondary %s → %s °C",
+                "ПТО: НЕТ ПИТАНИЯ насоса второго контура, 2К %s → %s °C");
+        put("sg_leak_drill_on", "Drill: a steam generator tube leaks water into the sodium", "Учения: трубка ПГ течёт, вода в натрии");
+        put("sg_leak_drill_off", "Tube leak drill over: the tube is plugged", "Учения закончены: трубка заглушена");
+        put("na_water_disc", "SODIUM-WATER REACTION: the steam generator rupture disc burst, hydrogen and caustic vented",
+                "РЕАКЦИЯ НАТРИЙ–ВОДА: мембрана ПГ разорвана, сброс водорода и щёлочи");
         // бассейн выдержки и перегрузочная машина ВВЭР-70
         put("pool_status", "Spent fuel pool: %s/%s assemblies, water %s m at %s °C, decay heat %s kW, cooling %s kW, %s m of water over the heads, %s µSv/h at the surface; %s",
                 "Бассейн выдержки: ТВС %s/%s, вода %s м при %s °C, остаточное тепло %s кВт, охлаждение %s кВт, над головками %s м воды, у зеркала %s мкЗв/ч; %s");

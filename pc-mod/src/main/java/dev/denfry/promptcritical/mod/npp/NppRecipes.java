@@ -143,5 +143,22 @@ public final class NppRecipes extends RecipeProvider {
                 .define('R', PcBlocks.REACTOR_CONTROLLER.get()).define('T', AllBlocks.FLUID_TANK.get())
                 .define('P', PcItems.STEEL_PLATE.get())
                 .unlockedBy("has_bwr240_reactor_drawing", has(dev.denfry.promptcritical.mod.site.SiteRegistry.BWR240_REACTOR_DRAWING.get())).save(out, id("bn600_reactor_drawing"));
+        // БОР-60: петлевой быстрый реактор — бак под пробками с приводами, ПТО, натриевый насос и ПГ своей петли
+        ShapedRecipeBuilder.shaped(RecipeCategory.MISC, dev.denfry.promptcritical.mod.site.SiteRegistry.BOR60_REACTOR_REAL_DRAWING.get())
+                .pattern("PDP").pattern("PRP").pattern("PTP").define('D', PcBlocks.CONTROL_ROD_DRIVE.get())
+                .define('R', PcBlocks.REACTOR_CONTROLLER.get()).define('T', AllBlocks.FLUID_TANK.get()).define('P', PcItems.STEEL_PLATE.get())
+                .unlockedBy("has_vver70_reactor_real_drawing", has(dev.denfry.promptcritical.mod.site.SiteRegistry.VVER70_REACTOR_REAL_DRAWING.get())).save(out, id("bor60_reactor_real_drawing"));
+        net.minecraft.data.recipes.ShapelessRecipeBuilder.shapeless(RecipeCategory.MISC, dev.denfry.promptcritical.mod.site.SiteRegistry.BOR60_IHX_REAL_DRAWING.get())
+                .requires(net.minecraft.world.item.Items.PAPER, 2).requires(PcItems.STEEL_PLATE.get(), 2).requires(AllBlocks.FLUID_TANK.get())
+                .unlockedBy("has_bor60_reactor_real_drawing", has(dev.denfry.promptcritical.mod.site.SiteRegistry.BOR60_REACTOR_REAL_DRAWING.get()))
+                .save(out, id("bor60_ihx_real_drawing"));
+        net.minecraft.data.recipes.ShapelessRecipeBuilder.shapeless(RecipeCategory.MISC, dev.denfry.promptcritical.mod.site.SiteRegistry.BOR60_PRIMARY_PUMP_REAL_DRAWING.get())
+                .requires(net.minecraft.world.item.Items.PAPER, 2).requires(PcBlocks.PRIMARY_PUMP.get()).requires(PcItems.STEEL_PLATE.get())
+                .unlockedBy("has_bor60_reactor_real_drawing", has(dev.denfry.promptcritical.mod.site.SiteRegistry.BOR60_REACTOR_REAL_DRAWING.get()))
+                .save(out, id("bor60_primary_pump_real_drawing"));
+        net.minecraft.data.recipes.ShapelessRecipeBuilder.shapeless(RecipeCategory.MISC, dev.denfry.promptcritical.mod.site.SiteRegistry.BOR60_STEAM_GENERATOR_REAL_DRAWING.get())
+                .requires(net.minecraft.world.item.Items.PAPER, 2).requires(PcBlocks.STEAM_GENERATOR.get()).requires(PcItems.SAFETY_VALVE.get())
+                .unlockedBy("has_bor60_reactor_real_drawing", has(dev.denfry.promptcritical.mod.site.SiteRegistry.BOR60_REACTOR_REAL_DRAWING.get()))
+                .save(out, id("bor60_steam_generator_real_drawing"));
     }
 }

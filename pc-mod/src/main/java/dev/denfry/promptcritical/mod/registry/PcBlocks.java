@@ -1206,6 +1206,31 @@ public final class PcBlocks {
             machine().noOcclusion(), real(Spec.facing(PcProperties.RUNNING), FP_VVER70_REFUELLING_MACHINE),
             FoundryBlock.with(dev.denfry.promptcritical.mod.npp.RefuellingMachineBlockEntity::new));
 
+    /** БОР-60: корпус реактора 5 × 5 × 9 блоков (бак, поворотные пробки, приводы СУЗ сверху); контроллер в центре днища. */
+    public static final Footprint FP_BOR60_REACTOR = Footprint.tiled(-2, 2, 0, 8, -2, 2);
+    public static final DeferredBlock<PcDeviceBlock> BOR60_REACTOR_REAL = device("bor60_reactor_real", machine(),
+            real(Spec.facing(), FP_BOR60_REACTOR), FoundryBlock.with(dev.denfry.promptcritical.mod.npp.SfrReactorBlockEntity::new));
+    /** Промежуточный теплообменник натрий–натрий одной петли БОР-60 с насосом второго контура. */
+    public static final Footprint FP_BOR60_IHX = Footprint.tiled(-1, 1, 0, 7, -1, 1);
+    public static final DeferredBlock<PcDeviceBlock> BOR60_IHX_REAL = device("bor60_ihx_real", machine(),
+            real(Spec.facing(PcProperties.RUNNING), FP_BOR60_IHX), FoundryBlock.with(dev.denfry.promptcritical.mod.npp.IhxBlockEntity::new));
+    /** Главный циркуляционный насос натрия первого контура петли БОР-60 (вертикальный, вал сзади). */
+    public static final Footprint FP_BOR60_PRIMARY_PUMP = Footprint.tiled(-1, 1, 0, 5, -1, 1);
+    public static final DeferredBlock<PcDeviceBlock> BOR60_PRIMARY_PUMP_REAL = device("bor60_primary_pump_real", machine(),
+            real(Spec.facing(PcProperties.RUNNING), FP_BOR60_PRIMARY_PUMP),
+            KineticMachineBlock.with(ShaftSide.BACK, dev.denfry.promptcritical.mod.npp.PrimaryPumpBlockEntity::new));
+    /** Прямоточный парогенератор натрий–вода петли БОР-60 с мембраной на линии сброса. */
+    public static final Footprint FP_BOR60_STEAM_GENERATOR = Footprint.tiled(-1, 1, 0, 9, -1, 1);
+    public static final DeferredBlock<PcDeviceBlock> BOR60_STEAM_GENERATOR_REAL = device("bor60_steam_generator_real", machine(),
+            real(Spec.facing(BlockStateProperties.LIT), FP_BOR60_STEAM_GENERATOR),
+            FoundryBlock.with(dev.denfry.promptcritical.mod.npp.SteamGeneratorBlockEntity::new));
+
+    /** Блоки БОР-60: корпус считается конструкцией {@code SodiumFastReactor.BOR60}. */
+    public static boolean isBor60(net.minecraft.world.level.block.Block b) {
+        return b == BOR60_REACTOR_REAL.get() || b == BOR60_IHX_REAL.get() || b == BOR60_PRIMARY_PUMP_REAL.get()
+                || b == BOR60_STEAM_GENERATOR_REAL.get();
+    }
+
     /** Блоки ВВЭР-70: корпус считается конструкцией {@code PressurizedWaterReactor.VVER70}. */
     public static boolean isVver70(net.minecraft.world.level.block.Block b) {
         return b == VVER70_REACTOR_REAL.get() || b == VVER70_STEAM_GENERATOR_REAL.get() || b == VVER70_COOLANT_PUMP_REAL.get()
@@ -1260,7 +1285,7 @@ public final class PcBlocks {
                 || b == SINTERING_FURNACE_REAL.get() || b == FUEL_ROD_WELDER_REAL.get() || b == FUEL_ASSEMBLY_STAND_REAL.get()
                 || b == VVER440_FUEL_ASSEMBLY_REAL.get()
                 || b == VVER_REACTOR.get() || b == VVER_STEAM_GENERATOR.get() || b == VVER_COOLANT_PUMP.get() || b == VVER_PRESSURIZER.get()
-                || isVver70(b) || b == VVER70_FUEL_POOL_REAL.get() || b == VVER70_REFUELLING_MACHINE_REAL.get() || b == BWR240_REACTOR.get() || b == CANDU6_REACTOR.get() || b == BN600_REACTOR.get() || b == AM1_REACTOR.get()
+                || isVver70(b) || isBor60(b) || b == VVER70_FUEL_POOL_REAL.get() || b == VVER70_REFUELLING_MACHINE_REAL.get() || b == BWR240_REACTOR.get() || b == CANDU6_REACTOR.get() || b == BN600_REACTOR.get() || b == AM1_REACTOR.get()
                 || b == GAS_TURBINE_HEAVY_REAL.get() || b == HRSG_REAL.get() || b == STEAM_REFORMER_REAL.get() || b == AMMONIA_CONVERTER_REAL.get()
                 || b == METHANOL_CONVERTER_REAL.get() || b == PYROLYSIS_FURNACE_REAL.get() || b == CHLOR_ALKALI_ELECTROLYSER_REAL.get()
                 || b == PVC_REACTOR_REAL.get()

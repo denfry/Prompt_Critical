@@ -38,6 +38,8 @@ public final class SteamGeneratorBlockEntity extends DeviceBlockEntity implement
     private SimId boiler = SimId.NONE;
     private double heatW;
     private boolean sink;
+    /** Учения на ПГ БОР-60: течь воды в натрий через трубку змеевика (реакция натрий–вода). */
+    private boolean tubeLeakDrill;
     private int ticks;
 
     public SteamGeneratorBlockEntity(BlockPos pos, BlockState state) {
@@ -146,9 +148,24 @@ public final class SteamGeneratorBlockEntity extends DeviceBlockEntity implement
         return ItemInteractionResult.PASS_TO_DEFAULT_BLOCK_INTERACTION;
     }
 
+    /** Учения «течь трубки ПГ» идут. */
+    public boolean tubeLeakDrill() {
+        return tubeLeakDrill;
+    }
+
+    public void setTubeLeakDrill(boolean on) {
+        tubeLeakDrill = on;
+        setChanged();
+    }
+
+    /** ПГ БОР-60: Shift + ПКМ — учения «течь трубки» (вода в натрий), повторно — конец учений. */
     @Override
     public InteractionResult use(Player player) {
-        return InteractionResult.PASS;
+        if (!"bor60_steam_generator_real".equals(wholeModelId()) || !player.isShiftKeyDown()) return InteractionResult.PASS;
+        if (level.isClientSide) return InteractionResult.SUCCESS;
+        setTubeLeakDrill(!tubeLeakDrill);
+        player.displayClientMessage(NppText.msg(tubeLeakDrill ? "sg_leak_drill_on" : "sg_leak_drill_off"), true);
+        return InteractionResult.SUCCESS;
     }
 
 

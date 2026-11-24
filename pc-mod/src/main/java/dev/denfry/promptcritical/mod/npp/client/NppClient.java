@@ -31,12 +31,18 @@ public final class NppClient {
             V70_SG_FLOAT = partial("vver70_steam_generator_real/partial/level_float"),
             V70_PZR_FLOAT = partial("vver70_pressurizer_real/partial/level_float"),
             V70_PZR_NEEDLE = partial("vver70_pressurizer_real/partial/gas_gauge_needle");
+    /** БОР-60 (art/blockbench/core/bor60/*.author.js): поворотные пробки, указатели приводов СУЗ, муфта ГЦН. */
+    static final PartialModel BOR60_LARGE_PLUG = partial("bor60_reactor_real/partial/large_plug"),
+            BOR60_SMALL_PLUG = partial("bor60_reactor_real/partial/small_plug"),
+            BOR60_RODS = partial("bor60_reactor_real/partial/rods"),
+            BOR60_PUMP_COUPLING = partial("bor60_primary_pump_real/partial/coupling");
 
     static {
         // цельные модели ВВЭР реального масштаба: partial-модели должны появиться до запекания
         for (String id : new String[] {"vver_reactor", "vver_steam_generator", "vver_coolant_pump", "vver_pressurizer", "bwr240_reactor",
                 "candu6_reactor", "bn600_reactor", "am1_reactor", "vver70_reactor_real", "vver70_steam_generator_real",
-                "vver70_coolant_pump_real", "vver70_pressurizer_real", "vver70_fuel_pool_real", "vver70_refuelling_machine_real"})
+                "vver70_coolant_pump_real", "vver70_pressurizer_real", "vver70_fuel_pool_real", "vver70_refuelling_machine_real",
+                "bor60_reactor_real", "bor60_ihx_real", "bor60_primary_pump_real", "bor60_steam_generator_real"})
             dev.denfry.promptcritical.mod.client.whole.WholeModels.register(id);
     }
 
@@ -54,6 +60,12 @@ public final class NppClient {
             protected void parts(dev.denfry.promptcritical.mod.npp.PrimaryPumpBlockEntity be, float pt, com.mojang.blaze3d.vertex.PoseStack ms,
                     com.mojang.blaze3d.vertex.VertexConsumer vc, int light) {
                 float deg = net.createmod.catnip.animation.AnimationTickHolder.getRenderTime(be.getLevel()) * be.getSpeed() * 3f / 10 % 360;
+                if ("bor60_primary_pump_real".equals(be.wholeModelId())) {
+                    // муфта вала над корпусом насоса: хранится на 56 px ниже, вращается вокруг (8, 8)
+                    part(BOR60_PUMP_COUPLING, be, be.wholeModelFacing(), 0, 56 / 16.0, 0).translate(0.5, 0, 0.5).rotateYDegrees(deg)
+                            .translate(-0.5, 0, -0.5).light(light).renderInto(ms, vc);
+                    return;
+                }
                 if ("vver70_coolant_pump_real".equals(be.wholeModelId())) {
                     // диск тахометра над экранированным двигателем: хранится на 48 px ниже, вращается вокруг (8, 8)
                     part(V70_PUMP_DISC, be, be.wholeModelFacing(), 0, 3, 0).translate(0.5, 0, 0.5).rotateYDegrees(deg).translate(-0.5, 0, -0.5)
@@ -100,7 +112,18 @@ public final class NppClient {
         event.registerBlockEntityRenderer(NppBlockEntities.POWER_REACTOR.get(), c -> new dev.denfry.promptcritical.mod.client.whole.WholeModelRenderer<>());
         event.registerBlockEntityRenderer(NppBlockEntities.FUEL_POOL.get(), c -> new Vver70FuelHandlingRenderers.Pool());
         event.registerBlockEntityRenderer(NppBlockEntities.REFUELLING_MACHINE.get(), c -> new Vver70FuelHandlingRenderers.Machine());
-        event.registerBlockEntityRenderer(NppBlockEntities.SFR_REACTOR.get(), c -> new dev.denfry.promptcritical.mod.client.whole.WholeModelRenderer<>());
+        event.registerBlockEntityRenderer(NppBlockEntities.SFR_REACTOR.get(), c -> new dev.denfry.promptcritical.mod.client.whole.WholeModelRenderer<dev.denfry.promptcritical.mod.npp.SfrReactorBlockEntity>() {
+            // БОР-60: пробки на месте (перегрузка не идёт), указатели приводов поднимаются на 8 px при выведенных стержнях
+            @Override
+            protected void parts(dev.denfry.promptcritical.mod.npp.SfrReactorBlockEntity be, float pt, com.mojang.blaze3d.vertex.PoseStack ms,
+                    com.mojang.blaze3d.vertex.VertexConsumer vc, int light) {
+                if (!be.bor60()) return;
+                net.minecraft.core.Direction f = be.wholeModelFacing();
+                part(BOR60_LARGE_PLUG, be, f, 0, 104 / 16.0, 0).light(light).renderInto(ms, vc);
+                part(BOR60_SMALL_PLUG, be, f, 0, 104 / 16.0, 0).light(light).renderInto(ms, vc);
+                part(BOR60_RODS, be, f, 0, (112 + be.rodsOut() * 8) / 16.0, 0).light(light).renderInto(ms, vc);
+            }
+        });
         event.registerBlockEntityRenderer(NppBlockEntities.BWR_REACTOR.get(), c -> new dev.denfry.promptcritical.mod.client.whole.WholeModelRenderer<>());
         event.registerBlockEntityRenderer(NppBlockEntities.STEAM_GENERATOR.get(), c -> new dev.denfry.promptcritical.mod.client.whole.WholeModelRenderer<dev.denfry.promptcritical.mod.npp.SteamGeneratorBlockEntity>() {
             // ПГ ВВЭР-70: поплавок указателя уровня второго контура на нормальном уровне (середина хода 0..40 px); частичная

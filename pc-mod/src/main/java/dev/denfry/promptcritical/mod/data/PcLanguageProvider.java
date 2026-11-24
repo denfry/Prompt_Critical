@@ -632,6 +632,10 @@ public final class PcLanguageProvider extends LanguageProvider {
         b("vver70_pressurizer_real", "VVER-70 Gas Volume Compensator", "Газовый компенсатор объёма ВВЭР-70");
         b("vver70_fuel_pool_real", "VVER-70 Spent Fuel Pool", "Бассейн выдержки ВВЭР-70");
         b("vver70_refuelling_machine_real", "VVER-70 Refuelling Machine", "Перегрузочная машина ВВЭР-70");
+        b("bor60_reactor_real", "BOR-60 Fast Reactor (Dimitrovgrad)", "Быстрый реактор БОР-60 (Димитровград)");
+        b("bor60_ihx_real", "BOR-60 Sodium-Sodium Intermediate Heat Exchanger", "Промежуточный теплообменник натрий–натрий БОР-60");
+        b("bor60_primary_pump_real", "BOR-60 Primary Sodium Pump", "Главный натриевый насос БОР-60");
+        b("bor60_steam_generator_real", "BOR-60 Sodium-Water Steam Generator", "Парогенератор натрий–вода БОР-60");
         b("candu_reactor", "Heavy Water Reactor (CANDU type, legacy)", "Тяжеловодный реактор (типа CANDU, старая серия)");
         b("candu6_reactor", "CANDU 6 Reactor Assembly", "Реакторная сборка CANDU 6");
         b("gs_exchange_tower", "Girdler Sulfide Heavy Water Plant", "Сероводородный завод тяжёлой воды");

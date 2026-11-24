@@ -22,9 +22,11 @@ public final class NppBlockEntities {
     public static final DeferredHolder<BlockEntityType<?>, BlockEntityType<PowerReactorBlockEntity>> POWER_REACTOR =
             type("power_reactor", PowerReactorBlockEntity::new, PcBlocks.POWER_REACTOR, PcBlocks.AM1_REACTOR);
     public static final DeferredHolder<BlockEntityType<?>, BlockEntityType<PrimaryPumpBlockEntity>> PRIMARY_PUMP =
-            type("primary_pump", PrimaryPumpBlockEntity::new, PcBlocks.PRIMARY_PUMP, PcBlocks.VVER_COOLANT_PUMP, PcBlocks.VVER70_COOLANT_PUMP_REAL);
+            type("primary_pump", PrimaryPumpBlockEntity::new, PcBlocks.PRIMARY_PUMP, PcBlocks.VVER_COOLANT_PUMP, PcBlocks.VVER70_COOLANT_PUMP_REAL,
+                    PcBlocks.BOR60_PRIMARY_PUMP_REAL);
     public static final DeferredHolder<BlockEntityType<?>, BlockEntityType<SteamGeneratorBlockEntity>> STEAM_GENERATOR =
-            type("steam_generator", SteamGeneratorBlockEntity::new, PcBlocks.STEAM_GENERATOR, PcBlocks.VVER_STEAM_GENERATOR, PcBlocks.VVER70_STEAM_GENERATOR_REAL);
+            type("steam_generator", SteamGeneratorBlockEntity::new, PcBlocks.STEAM_GENERATOR, PcBlocks.VVER_STEAM_GENERATOR, PcBlocks.VVER70_STEAM_GENERATOR_REAL,
+                    PcBlocks.BOR60_STEAM_GENERATOR_REAL);
     public static final DeferredHolder<BlockEntityType<?>, BlockEntityType<PwrReactorBlockEntity>> PWR_REACTOR =
             type("pwr_reactor", PwrReactorBlockEntity::new, PcBlocks.PWR_REACTOR, PcBlocks.VVER_REACTOR, PcBlocks.VVER70_REACTOR_REAL);
     public static final DeferredHolder<BlockEntityType<?>, BlockEntityType<BwrReactorBlockEntity>> BWR_REACTOR =
@@ -32,7 +34,7 @@ public final class NppBlockEntities {
     public static final DeferredHolder<BlockEntityType<?>, BlockEntityType<CanduReactorBlockEntity>> CANDU_REACTOR =
             type("candu_reactor", CanduReactorBlockEntity::new, PcBlocks.CANDU_REACTOR, PcBlocks.CANDU6_REACTOR);
     public static final DeferredHolder<BlockEntityType<?>, BlockEntityType<SfrReactorBlockEntity>> SFR_REACTOR =
-            type("sfr_reactor", SfrReactorBlockEntity::new, PcBlocks.SFR_REACTOR, PcBlocks.BN600_REACTOR);
+            type("sfr_reactor", SfrReactorBlockEntity::new, PcBlocks.SFR_REACTOR, PcBlocks.BN600_REACTOR, PcBlocks.BOR60_REACTOR_REAL);
     public static final DeferredHolder<BlockEntityType<?>, BlockEntityType<PressurizerBlockEntity>> PRESSURIZER =
             type("pressurizer", PressurizerBlockEntity::new, PcBlocks.PRESSURIZER, PcBlocks.VVER_PRESSURIZER, PcBlocks.VVER70_PRESSURIZER_REAL);
     public static final DeferredHolder<BlockEntityType<?>, BlockEntityType<EccsPumpBlockEntity>> ECCS_PUMP =
@@ -42,6 +44,8 @@ public final class NppBlockEntities {
             type("vver70_fuel_pool", SpentFuelPoolBlockEntity::new, PcBlocks.VVER70_FUEL_POOL_REAL);
     public static final DeferredHolder<BlockEntityType<?>, BlockEntityType<RefuellingMachineBlockEntity>> REFUELLING_MACHINE =
             type("vver70_refuelling_machine", RefuellingMachineBlockEntity::new, PcBlocks.VVER70_REFUELLING_MACHINE_REAL);
+    public static final DeferredHolder<BlockEntityType<?>, BlockEntityType<IhxBlockEntity>> IHX =
+            type("bor60_ihx", IhxBlockEntity::new, PcBlocks.BOR60_IHX_REAL);
 
     private NppBlockEntities() {
     }
@@ -77,5 +81,11 @@ public final class NppBlockEntities {
             BlockEntityType.BlockEntitySupplier<T> factory, Supplier<? extends Block> a, Supplier<? extends Block> b,
             Supplier<? extends Block> c) {
         return BLOCK_ENTITIES.register(name, () -> BlockEntityType.Builder.of(factory, a.get(), b.get(), c.get()).build(null));
+    }
+
+    private static <T extends BlockEntity> DeferredHolder<BlockEntityType<?>, BlockEntityType<T>> type(String name,
+            BlockEntityType.BlockEntitySupplier<T> factory, Supplier<? extends Block> a, Supplier<? extends Block> b,
+            Supplier<? extends Block> c, Supplier<? extends Block> d) {
+        return BLOCK_ENTITIES.register(name, () -> BlockEntityType.Builder.of(factory, a.get(), b.get(), c.get(), d.get()).build(null));
     }
 }
