@@ -21,7 +21,8 @@ public final class ItemMass {
             Map.entry(PcItems.WELDED_PIPE, 50.0), Map.entry(PcItems.COPPER_WIRE, 10.0), Map.entry(PcItems.COPPER_CATHODE, 100.0),
             Map.entry(PcItems.ZIRCALOY_INGOT, 100.0), Map.entry(() -> Items.GRAY_CONCRETE, 2400.0),
             Map.entry(() -> PcBlocks.MODERATOR_BLOCK_GRAPHITE.get().asItem(), 1700.0),
-            Map.entry(() -> Items.IRON_INGOT, 100.0), Map.entry(() -> Items.BRICKS, 1850.0), Map.entry(() -> Items.COPPER_INGOT, 100.0), Map.entry(() -> Items.IRON_BLOCK, 900.0));
+            Map.entry(() -> Items.IRON_INGOT, 100.0), Map.entry(() -> Items.BRICKS, 1850.0), Map.entry(() -> Items.COPPER_INGOT, 100.0), Map.entry(() -> Items.IRON_BLOCK, 900.0),
+            Map.entry(() -> PcBlocks.SHIELD_HEAVY_CONCRETE_REAL.get().asItem(), 3600.0));
     private static volatile Map<Item, Double> byItem;
 
     private ItemMass() {}

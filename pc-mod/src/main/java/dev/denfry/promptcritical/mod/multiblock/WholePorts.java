@@ -65,6 +65,15 @@ public final class WholePorts {
             // греющий пар деаэратор берёт из барабана ближнего котла (07 §7.9.6), паропровод и выпар нарисованы
             Map.entry("deaerator_real", List.of(p(2, 4, -1, N), p(2, 4, 1, S), p(0, 0, 0, D))),
             // вода — в верхнее днище, умягчённая — из северной грани нижней клетки
+            // радзащита: питание — по зоне щита (MachinePower), портов-кабелей нет. Горячая камера: шлюз для
+            // контейнеров на севере (2, 0, −1), вытяжка камеры сверху (−2, 3, 2), трап камеры снизу (0, 0, 2);
+            // модуль хранения: порт пенала на фасаде (0, 1, 0) — к нему подходит тележка, воздух — решётки, не трубы
+            Map.entry("portal_monitor_real", List.of()),
+            Map.entry("hand_foot_monitor_real", List.of()),
+            Map.entry("hot_cell_real", List.of(p(2, 0, -1, N), p(-2, 3, 2, U), p(0, 0, 2, D))),
+            Map.entry("spent_fuel_cask_real", List.of()),
+            Map.entry("cask_transport_cart_real", List.of()),
+            Map.entry("dry_storage_module_real", List.of(p(0, 1, 0, N))),
             Map.entry("ion_exchange_column_real", List.of(p(0, 3, 0, U), p(0, 0, 0, N))),
             // электрические машины: вал Create — через клетку-порт, кабели — к клеммам, труб и лотков нет
             Map.entry("shaft_generator_real", List.of()),

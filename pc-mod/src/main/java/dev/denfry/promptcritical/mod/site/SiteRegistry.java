@@ -113,6 +113,13 @@ public final class SiteRegistry {
     public static final DeferredItem<DesignDrawingItem> BAYER_DIGESTER_REAL_DRAWING = drawing("bayer_digester_real");
     public static final DeferredItem<DesignDrawingItem> ALUMINA_PRECIPITATOR_REAL_DRAWING = drawing("alumina_precipitator_real");
     public static final DeferredItem<DesignDrawingItem> MATTE_SMELTER_REAL_DRAWING = drawing("matte_smelter_real");
+    // радзащита реального масштаба (04b §4b.4, §4b.7, 02 §2.7.4–2.7.5)
+    public static final DeferredItem<DesignDrawingItem> PORTAL_MONITOR_REAL_DRAWING = drawing("portal_monitor_real");
+    public static final DeferredItem<DesignDrawingItem> HAND_FOOT_MONITOR_REAL_DRAWING = drawing("hand_foot_monitor_real");
+    public static final DeferredItem<DesignDrawingItem> HOT_CELL_REAL_DRAWING = drawing("hot_cell_real");
+    public static final DeferredItem<DesignDrawingItem> SPENT_FUEL_CASK_REAL_DRAWING = drawing("spent_fuel_cask_real");
+    public static final DeferredItem<DesignDrawingItem> CASK_TRANSPORT_CART_REAL_DRAWING = drawing("cask_transport_cart_real");
+    public static final DeferredItem<DesignDrawingItem> DRY_STORAGE_MODULE_REAL_DRAWING = drawing("dry_storage_module_real");
 
     private SiteRegistry() {}
 

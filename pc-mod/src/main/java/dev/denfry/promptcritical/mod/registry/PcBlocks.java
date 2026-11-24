@@ -713,6 +713,59 @@ public final class PcBlocks {
     /** Портальный γ-монитор выхода из зоны (04b §4b.7.2): колонна у прохода, пара колонн — рама. */
     public static final DeferredBlock<PcDeviceBlock> PORTAL_MONITOR = device("portal_monitor", machine(),
             Spec.facing(BlockStateProperties.POWERED), dev.denfry.promptcritical.mod.radiation.PortalMonitorBlock.create());
+    // --- радзащита реального масштаба (art/blockbench/radprot/radprot.author.js, docs/research/2026-11-24-radprot) ---
+    /**
+     * Портальная рама контроля загрязнения (по типу TPM-903B, 04b §4b.7.2): две колонны со сцинтилляторами и табло,
+     * 3 × 3 × 1, проход — сама клетка контроллера, идут вдоль z. Тот же BE, что {@link #PORTAL_MONITOR}, плюс β рук и
+     * обуви; {@code powered} — тревога (вариант {@code _alarm}, маячок крутится).
+     */
+    public static final Footprint FP_PORTAL_MONITOR_REAL = Footprint.tiled(-1, 1, 0, 2, 0, 0);
+    public static final DeferredBlock<PcDeviceBlock> PORTAL_MONITOR_REAL = device("portal_monitor_real", machine().noOcclusion(),
+            Spec.facing(BlockStateProperties.POWERED).segments(PcProperties.wholeSegments(FP_PORTAL_MONITOR_REAL.segments().size()),
+                    FP_PORTAL_MONITOR_REAL), dev.denfry.promptcritical.mod.radiation.PortalMonitorBlock.create());
+    /** Установка контроля рук и ног (по Mirion HandFoot-Fibre), 1 × 2 × 1; тот же BE, что {@link #HAND_FOOT_MONITOR}. */
+    public static final Footprint FP_HAND_FOOT_MONITOR_REAL = Footprint.tiled(0, 0, 0, 1, 0, 0);
+    public static final DeferredBlock<PcDeviceBlock> HAND_FOOT_MONITOR_REAL = device("hand_foot_monitor_real", machine().noOcclusion(),
+            Spec.facing(BlockStateProperties.POWERED).segments(PcProperties.wholeSegments(FP_HAND_FOOT_MONITOR_REAL.segments().size()),
+                    FP_HAND_FOOT_MONITOR_REAL), FoundryBlock.with(dev.denfry.promptcritical.mod.radiation.HandFootMonitorBlockEntity::new));
+    /**
+     * Рабочее место горячей камеры: стена из магнетитового бетона 1 м, окно из свинцового стекла, два копирующих
+     * манипулятора, шлюз; 5 × 4 × 4, контроллер у окна на стороне оператора (фасад на север), камера — z 1..2.
+     */
+    public static final Footprint FP_HOT_CELL_REAL = Footprint.tiled(-2, 2, 0, 3, -1, 2);
+    public static final DeferredBlock<PcDeviceBlock> HOT_CELL_REAL = device("hot_cell_real", machine().noOcclusion(),
+            Spec.facing(BlockStateProperties.LIT).segments(PcProperties.wholeSegments(FP_HOT_CELL_REAL.segments().size()), FP_HOT_CELL_REAL),
+            FoundryBlock.with(dev.denfry.promptcritical.mod.radiation.HotCellBlockEntity::new));
+    /** Контейнер ОЯТ класса CASTOR V/19: ∅2,44 × 5,94 м, 3 × 6 × 3, стоит на оси (8, y, 8). {@code open} — крышки сняты. */
+    public static final Footprint FP_SPENT_FUEL_CASK_REAL = Footprint.tiled(-1, 1, 0, 5, -1, 1);
+    public static final DeferredBlock<PcDeviceBlock> SPENT_FUEL_CASK_REAL = device("spent_fuel_cask_real", machine().noOcclusion(),
+            Spec.facing(BlockStateProperties.OPEN, BlockStateProperties.LIT).segments(
+                    PcProperties.wholeSegments(FP_SPENT_FUEL_CASK_REAL.segments().size()), FP_SPENT_FUEL_CASK_REAL),
+            FoundryBlock.with(dev.denfry.promptcritical.mod.radiation.SpentFuelCaskBlockEntity::new));
+    /** Рельсовая тележка контейнера, 9 × 4 × 3; {@code occupied} — контейнер на ложементе (вариант {@code _loaded}). */
+    public static final Footprint FP_CASK_TRANSPORT_CART_REAL = Footprint.tiled(-4, 4, 0, 3, -1, 1);
+    public static final DeferredBlock<PcDeviceBlock> CASK_TRANSPORT_CART_REAL = device("cask_transport_cart_real", machine().noOcclusion(),
+            Spec.facing(BlockStateProperties.OCCUPIED).segments(
+                    PcProperties.wholeSegments(FP_CASK_TRANSPORT_CART_REAL.segments().size()), FP_CASK_TRANSPORT_CART_REAL),
+            FoundryBlock.with(dev.denfry.promptcritical.mod.radiation.CaskCartBlockEntity::new));
+    /** Горизонтальный модуль сухого хранения класса NUHOMS, 3 × 5 × 6, контроллер у двери на фасаде. {@code lit} — тёплый воздух. */
+    public static final Footprint FP_DRY_STORAGE_MODULE_REAL = Footprint.tiled(-1, 1, 0, 4, 0, 5);
+    public static final DeferredBlock<PcDeviceBlock> DRY_STORAGE_MODULE_REAL = device("dry_storage_module_real", machine(),
+            Spec.facing(BlockStateProperties.LIT).segments(
+                    PcProperties.wholeSegments(FP_DRY_STORAGE_MODULE_REAL.segments().size()), FP_DRY_STORAGE_MODULE_REAL),
+            FoundryBlock.with(dev.denfry.promptcritical.mod.radiation.DryStorageModuleBlockEntity::new));
+    /**
+     * Плитки защиты 1 × 1 × 1 (04b §4b.4.1, §4b.4.3): магнетитовый бетон 3,6 г/см³, шевронные свинцовые кирпичи 11,34,
+     * бак воды с 4 % H₃BO₃ и борированный полиэтилен (5 % B) — материалы в {@code ShieldBlocks}.
+     */
+    public static final DeferredBlock<PcBlock> SHIELD_HEAVY_CONCRETE_REAL = block("shield_heavy_concrete_real",
+            Properties.of().mapColor(MapColor.TERRACOTTA_BROWN).requiresCorrectToolForDrops().strength(4f, 12f).sound(SoundType.STONE), Spec.of());
+    public static final DeferredBlock<PcBlock> SHIELD_LEAD_BRICK_REAL = block("shield_lead_brick_real",
+            Properties.of().mapColor(MapColor.COLOR_GRAY).requiresCorrectToolForDrops().strength(3f, 10f).sound(SoundType.METAL), Spec.of());
+    public static final DeferredBlock<PcBlock> SHIELD_BORATED_WATER_TANK_REAL = block("shield_borated_water_tank_real",
+            Properties.of().mapColor(MapColor.METAL).requiresCorrectToolForDrops().strength(3f, 6f).sound(SoundType.METAL), Spec.of());
+    public static final DeferredBlock<PcBlock> SHIELD_BORATED_PE_REAL = block("shield_borated_pe_real",
+            Properties.of().mapColor(MapColor.TERRACOTTA_WHITE).strength(1.5f, 3f).sound(SoundType.WOOD), Spec.of());
     public static final DeferredBlock<PcDeviceBlock> NGL_FRACTIONATOR = device("ngl_fractionator", machine(),
             Spec.facing().footprint(FP_CUBE3), FoundryBlock.with(dev.denfry.promptcritical.mod.gas.NglFractionatorBlockEntity::new));
 
@@ -1018,6 +1071,8 @@ public final class PcBlocks {
                 || b == BYPRODUCT_PLANT_SATURATOR_REAL.get() || b == BYPRODUCT_PLANT_SCRUBBER_REAL.get()
                 || b == CAST_HOUSE_MUD_GUN_REAL.get() || b == CAST_HOUSE_DRILL_REAL.get() || b == LADLE_REAL.get()
                 || b == SLAG_GRANULATOR_REAL.get()
+                || b == PORTAL_MONITOR_REAL.get() || b == HAND_FOOT_MONITOR_REAL.get() || b == HOT_CELL_REAL.get()
+                || b == SPENT_FUEL_CASK_REAL.get() || b == CASK_TRANSPORT_CART_REAL.get() || b == DRY_STORAGE_MODULE_REAL.get()
                 || b == DEAERATOR_REAL.get() || b == ION_EXCHANGE_COLUMN_REAL.get() || b == SHAFT_GENERATOR_REAL.get()
                 || b == ELECTRIC_MOTOR_MV_REAL.get()
                 // добыча, обогащение и коксохим реального масштаба
