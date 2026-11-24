@@ -533,6 +533,16 @@ public final class PcLanguageProvider extends LanguageProvider {
         b("sintering_furnace", "Pellet Sintering Furnace", "Печь спекания таблеток");
         b("rod_loading_station", "Fuel Rod Loading and Welding Station", "Участок снаряжения и заварки твэлов");
         b("assembly_jig", "Fuel Assembly Jig", "Стапель сборки ТВС");
+        b("gas_centrifuge_real", "Gas Centrifuge", "Газовая центрифуга");
+        b("centrifuge_cascade_section_real", "Centrifuge Cascade Section", "Секция каскада центрифуг");
+        b("fluorinator_real", "Flame Tower Fluorinator", "Пламенный реактор фторирования");
+        b("uf6_cylinder_30b_real", "30B UF₆ Cylinder (placed)", "Баллон UF₆ 30B (на подкладках)");
+        b("uf6_autoclave_real", "UF₆ Cylinder Autoclave", "Автоклав баллонов UF₆");
+        b("pellet_press_real", "Rotary Pellet Press", "Роторный таблеточный пресс");
+        b("sintering_furnace_real", "Pusher Sintering Furnace", "Толкательная печь спекания");
+        b("fuel_rod_welder_real", "Fuel Rod End Plug Welder", "Пост сварки заглушек твэлов");
+        b("fuel_assembly_stand_real", "VVER-440 Fuel Assembly Stand", "Стенд сборки ТВС ВВЭР-440");
+        b("vver440_fuel_assembly_real", "VVER-440 Fuel Assembly (standing)", "ТВС ВВЭР-440 (стоймя)");
         b("power_reactor", "Channel Power Reactor (AM-1 type, legacy)", "Канальный энергетический реактор (типа АМ-1, старая серия)");
         b("am1_reactor", "AM-1 Channel Power Reactor", "Канальный энергетический реактор АМ-1");
         b("irradiation_channel", "Irradiation Channel", "Канал облучения");

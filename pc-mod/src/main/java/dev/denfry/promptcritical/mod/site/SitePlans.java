@@ -586,6 +586,43 @@ public final class SitePlans {
                     st("module_body", 400, n(CONCRETE, 63), n(INGOT, 80)),
                     st("module_door", 160, n(PLATE, 60))));
 
+    /**
+     * Топливный цикл реального масштаба (fuelcycle-dimensions; массы — оценки по классу оборудования, металл без
+     * футеровки и бетона).
+     */
+    private static final Map<String, Plan> FUELCYCLE_PLANS = Map.of(
+            // корпус ∅0,25 × 1,8 м с приводом и опорной плитой ≈ 0,1 т
+            "gas_centrifuge_real", plan("gas_centrifuge_real", PcBlocks.GAS_CENTRIFUGE_REAL, 0.1,
+                    st("centrifuge_casing", 40, n(PLATE, 1))),
+            // 16 машин по 0,1 т, коллекторы, рама и кабельный лоток ≈ 0,6 т
+            "centrifuge_cascade_section_real", plan("centrifuge_cascade_section_real", PcBlocks.CENTRIFUGE_CASCADE_SECTION_REAL, 2.2,
+                    st("cascade_machines", 200, n(PLATE, 16)),
+                    st("cascade_headers", 120, n(PIPE, 6), n(BEAM, 3))),
+            // башня ∅0,6 × 4,3 м, бункер, фильтр, каркас с площадкой ≈ 6 т
+            "fluorinator_real", plan("fluorinator_real", PcBlocks.FLUORINATOR_REAL, 6,
+                    st("fluorinator_tower", 240, n(PLATE, 30)),
+                    st("fluorinator_frame", 160, n(BEAM, 25), n(PIPE, 10))),
+            // сосуд давления ∅1,6 × 4 м с дверью и кольцом затвора ≈ 12 т
+            "uf6_autoclave_real", plan("uf6_autoclave_real", PcBlocks.UF6_AUTOCLAVE_REAL, 12,
+                    st("autoclave_shell", 300, n(PLATE, 90)),
+                    st("autoclave_door", 160, n(INGOT, 30))),
+            // станина, карусель на 16 позиций, головка с роликами ≈ 8 т
+            "pellet_press_real", plan("pellet_press_real", PcBlocks.PELLET_PRESS_REAL, 8,
+                    st("press_base", 240, n(INGOT, 60)),
+                    st("press_turret", 200, n(PLATE, 20))),
+            // кожух 14 м, муфели, водоохлаждаемая зона, толкатель и двери ≈ 25 т металла
+            "sintering_furnace_real", plan("sintering_furnace_real", PcBlocks.SINTERING_FURNACE_REAL, 25,
+                    st("furnace_shell", 400, n(PLATE, 150)),
+                    st("furnace_pusher", 200, n(BEAM, 80), n(PIPE, 40))),
+            // рольганг, камера с окном, баллон и шкаф ≈ 3 т
+            "fuel_rod_welder_real", plan("fuel_rod_welder_real", PcBlocks.FUEL_ROD_WELDER_REAL, 3,
+                    st("welder_table", 160, n(BEAM, 15)),
+                    st("weld_chamber", 160, n(PLATE, 10), n(WIRE, 50))),
+            // основание с поворотным гнездом, две колонны 4,5 м, балка с талью ≈ 5 т
+            "fuel_assembly_stand_real", plan("fuel_assembly_stand_real", PcBlocks.FUEL_ASSEMBLY_STAND_REAL, 5,
+                    st("stand_columns", 240, n(BEAM, 35)),
+                    st("stand_hoist", 160, n(PLATE, 15))));
+
     public static Plan get(String id) {
         Plan p = PLANS.get(id);
         if (p == null) p = I0_PLANS.get(id);
@@ -600,12 +637,14 @@ public final class SitePlans {
         if (p == null) p = SMITHY_PLANS.get(id);
         if (p == null) p = ASSEMBLY_PLANS.get(id);
         if (p == null) p = RADPROT_PLANS.get(id);
+        if (p == null) p = FUELCYCLE_PLANS.get(id);
         return p != null ? p : NONFERROUS_PLANS.get(id);
     }
 
     public static Iterable<Plan> all() {
         return java.util.stream.Stream.of(PLANS, I0_PLANS, IRONMAKING_PLANS, POWER_PLANS, MINING_COKE_PLANS, I1_STEEL_PLANS, FOUNDRY_PLANS, I0_SHOP_PLANS,
-                        STEAM_MINE_PLANS, CARBON_PLANS, SMITHY_PLANS, ASSEMBLY_PLANS, NONFERROUS_PLANS, RADPROT_PLANS)
+                        STEAM_MINE_PLANS, CARBON_PLANS, SMITHY_PLANS, ASSEMBLY_PLANS, NONFERROUS_PLANS, RADPROT_PLANS,
+                        FUELCYCLE_PLANS)
                 .flatMap(m -> m.values().stream()).toList();
     }
 }

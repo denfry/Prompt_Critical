@@ -48,7 +48,8 @@ import org.jetbrains.annotations.Nullable;
  * ({@link MoxBlend}). Плутония на мешок не хватает — мешок ждёт; бункер PuO₂ пуст — пресс идёт на урановом топливе.
  * Мешок, уже несущий плутоний (шлам МОКС), идёт со своей долей.
  */
-public final class PelletPressBlockEntity extends KineticMachineBlockEntity<ShaftInput> implements PanelHost {
+public final class PelletPressBlockEntity extends dev.denfry.promptcritical.mod.foundry.PortKineticMachineBlockEntity<ShaftInput>
+        implements PanelHost {
     public static final double NOMINAL_RPM = 64, RATED_W = 60e3, RATED_KG_U_S = 0.01;
     /** Доля Pu в ТМ теплового МОКС, середина 5–8 % ({@link MoxBlend}). */
     public static final double MOX_PU_FRACTION = 0.07;
@@ -159,6 +160,18 @@ public final class PelletPressBlockEntity extends KineticMachineBlockEntity<Shaf
             if (f != null) return f;
         }
         return null;
+    }
+
+    /** Роторный пресс реального масштаба: ритмичный стук пуансонов и тёмная пыль у башмака питателя (fuelcycle §3a). */
+    @Override
+    protected void clientTick() {
+        BlockState st = getBlockState();
+        if (!real() || !st.hasProperty(dev.denfry.promptcritical.mod.block.PcProperties.RUNNING)
+                || !st.getValue(dev.denfry.promptcritical.mod.block.PcProperties.RUNNING)) return;
+        dev.denfry.promptcritical.mod.fx.MachineFx fx = fx();
+        if (fx == null) return;
+        if (fx.chance(3)) fx.sound(fx.at(8, 26, 8), net.minecraft.sounds.SoundEvents.STONE_HIT, 0.35f, 1.5f);
+        if (fx.chance(1)) fx.dust(fx.at(8, 26, -2), 0.1, 2);
     }
 
     @Override

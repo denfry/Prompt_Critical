@@ -34,6 +34,22 @@ public final class NuclearText {
         put("rods.stop", "Rod line stopped", "Линия твэлов остановлена");
         put("jig.start", "Assembly jig: rods are being pulled into the skeleton", "Стапель: твэлы протягивают в каркас");
         put("jig.stop", "Assembly jig stopped", "Стапель остановлен");
+        // топливный цикл реального масштаба
+        put("centrifuge.single", "Gas centrifuge (the cascade console counts 1 machine; a section holds %s): %s",
+                "Газовая центрифуга (пульт каскада считает 1 машину; в секции их %s): %s");
+        put("centrifuge.section", "Cascade section of %s centrifuges: %s", "Секция каскада из %s центрифуг: %s");
+        put("centrifuge.spinning", "rotors at speed", "роторы на оборотах");
+        put("centrifuge.idle", "stopped, no power from a cascade console", "стоит, нет питания от пульта каскада");
+        put("centrifuge.open", "casing torn open by a rotor crash; Shift + right-click to fit a new rotor",
+                "корпус вскрыт разрывом ротора; Shift + ПКМ — поставить новый ротор");
+        put("centrifuge.repaired", "New rotor fitted, casing closed", "Новый ротор поставлен, корпус закрыт");
+        put("autoclave.empty", "Autoclave empty: right-click with a UF₆ cylinder to roll it in",
+                "Автоклав пуст: ПКМ баллоном UF₆ — закатить");
+        put("autoclave.busy", "A cylinder is already inside", "Баллон уже внутри");
+        put("autoclave.heating", "Heating: cylinder %s °C (UF₆ melts above 64 °C) · UF₆ %s kg · U-235 %s %%",
+                "Прогрев: баллон %s °C (UF₆ плавится выше 64 °C) · UF₆ %s кг · U-235 %s %%");
+        put("autoclave.ready", "Hot: cylinder %s °C, feeding the cascade · UF₆ %s kg · U-235 %s %%",
+                "Прогрет: баллон %s °C, питает каскад · UF₆ %s кг · U-235 %s %%");
         put("lot.uranium", "U %s kg · U-235 %s %% (%s g)", "U %s кг · U-235 %s %% (%s г)");
         put("lot.density", "Pellets %s %% of theoretical density · %s pcs", "Таблетки %s %% теоретической плотности · %s шт.");
         put("lot.design", "%s%s", "%s%s");
