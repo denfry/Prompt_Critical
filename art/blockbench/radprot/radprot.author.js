@@ -163,7 +163,7 @@
     m.box('power_conduit', [-30, 12, -6], [-29, 40, -5], 'dark', { split: '' });
     m.box('intercom', [-26, 20, -1], [-20, 30, 0], 'dark', { split: '' });
     m.box(on ? 'glow_intercom_lamp' : 'intercom_lamp', [-24, 27, -1.3], [-22, 28.5, -1], on ? 'gw' : 'dark', { split: '' });
-    m.decal('sign', [24, 44, -0.6], [32, 52, 0], 'hc', 'north', 'pl.sign');
+    m.decal('sign', [35, 46, -0.6], [43, 54, 0], 'hc', 'north', 'pl.sign');
     m.decal('plate', [-26, 34, -0.6], [-18, 38, 0], 'hc', 'north', 'pl.maker');
     // cell: floor, drain, table and a lead pot, lamps on the wall top, exhaust duct
     m.box('cell_floor', [-32, 0, 16.3], [48, 0.5, 48], 'bright');
