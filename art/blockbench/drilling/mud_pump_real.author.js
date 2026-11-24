@@ -15,7 +15,7 @@
 // along z); mud suction in on the south face of (2, 0, 1) at (40, 4, 32); mud discharge out on the east face of
 // (3, 1, 0) at (64, 24, 8), toward the standpipe.
 // Partials (mud_pump_real/partial/*):
-// - input: pinion shaft end and coupling; turns about z at (x -26, y 12).
+// - input: pinion shaft end and coupling; turns about z at (x -26, y 12); stored +16 x, draw at -16 x.
 // - rod_a, rod_b: crosshead and piston rod of the north and south cylinders; slide along x, stroke 0..+6.4 px
 //   (crank end as stored), the two 90 deg apart in crank angle.
 (function () {
@@ -121,7 +121,7 @@
   }
 
   const PART = {
-    input: { draw: input, shift: [0, 0, 0], note: 'turns about z at (x -26, y 12)' },
+    input: { draw: input, shift: [16, 0, 0], note: 'turns about z at (x -26, y 12); stored +16 x (Java range), draw at -16 x' },
     rod_a: { draw: rod(RODS[0]), shift: [0, 0, 0], note: 'slides along x, stroke 0..+6.4' },
     rod_b: { draw: rod(RODS[1]), shift: [0, 0, 0], note: 'slides along x, stroke 0..+6.4, 90 deg after rod_a' },
   };

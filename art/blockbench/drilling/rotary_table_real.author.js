@@ -18,7 +18,8 @@
 //   table at y 12 (draw at +12 y).
 // - kelly: one metre of square kelly (2.6 px across, y 0..16), repeated up the derrick; turns with the table.
 // - swivel: swivel with bail and gooseneck, y 0..24 (the kelly hangs from y 0); does not turn.
-// - traveling_block: hook and five-sheave traveling block, y 0..40 (the hook eye at y 1); slides along y.
+// - traveling_block: hook and five-sheave traveling block, y 0..40 (the hook eye at y 1); slides along y; stored -16 y,
+//   draw at +16 y.
 // - drill_stand: one metre of drill pipe 127 mm with a tool joint at the bottom, y 0..16, repeated for a stand.
 (function () {
   const MAT = Object.assign({}, PCVV.MAT, { frame: { tex: 'plant/structure', P: 16 } });
@@ -127,7 +128,7 @@
     kelly_bushing: { draw: kellyBushing, shift: [0, 0, 0], note: 'turns with the table; seated: draw at +12 y' },
     kelly: { draw: kelly, shift: [0, 0, 0], note: 'one metre, repeated up the derrick' },
     swivel: { draw: swivel, shift: [0, 0, 0], note: 'hangs from the hook, kelly below y 0' },
-    traveling_block: { draw: travelingBlock, shift: [0, 0, 0], note: 'slides along y' },
+    traveling_block: { draw: travelingBlock, shift: [0, -16, 0], note: 'slides along y; stored -16 y (Java range), draw at +16 y' },
     drill_stand: { draw: drillStand, shift: [0, 0, 0], note: 'one metre of pipe, repeated' },
   };
   function model() { const m = mk(); floor(m); housing(m); drive(m); return m; }

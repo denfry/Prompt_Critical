@@ -95,7 +95,8 @@ final class DrillingRealRenderer<T extends BlockEntity & WholeModelHost> extends
             for (int k = 0; k < KELLY_M; k++) spinY(KELLY, be, f, 17 + 16 * k, a, ms, vc, light);
             float top = 17 + 16 * KELLY_M;
             part(SWIVEL, be, f, 0, top / 16, 0).light(light).renderInto(ms, vc);
-            part(TRAVELING_BLOCK, be, f, 0, (top + 23) / 16, 0).light(light).renderInto(ms, vc);
+            // талевый блок хранится сдвинутым на −16 px по y (диапазон Java-модели)
+            part(TRAVELING_BLOCK, be, f, 0, (top + 23 + 16) / 16, 0).light(light).renderInto(ms, vc);
         }, null);
     }
 
@@ -123,15 +124,17 @@ final class DrillingRealRenderer<T extends BlockEntity & WholeModelHost> extends
     }
 
     /**
-     * Буровой насос: приводной вал с муфтой вращается вокруг z через (x −26, y 12) со скоростью вала Create;
+     * Буровой насос: приводной вал с муфтой вращается вокруг z через (x −26, y 12) со скоростью вала Create (хранится на
+     * +16 px по x);
      * крейцкопфы со штоками двух цилиндров ходят вдоль x на 0…6,4 px от кривошипов, сдвинутых на 90°.
      */
     static DrillingRealRenderer<MudPumpBlockEntity> mudPump() {
         return new DrillingRealRenderer<>((be, f, s, t, ms, vc, light) -> {
             double rpm = MudPumpBlock.portSpeed(be);
             float in = angle(t, rpm);
+            // хранится сдвинутым на +16 px по x (диапазон Java-модели): сдвиг снимается до поворота
             part(PUMP_INPUT, be, f, 0, 0, 0).translate(-26 / 16f, 12 / 16f, 0).rotateZDegrees(in).translate(26 / 16f, -12 / 16f, 0)
-                    .light(light).renderInto(ms, vc);
+                    .translate(-1, 0, 0).light(light).renderInto(ms, vc);
             double crank = Math.toRadians(angle(t, Math.abs(rpm) * MudPumpBlockEntity.MAX_SPM / MudPumpBlockEntity.NOMINAL_RPM / 2));
             rod(ROD_A, be, f, crank, ms, vc, light);
             rod(ROD_B, be, f, crank + Math.PI / 2, ms, vc, light);
