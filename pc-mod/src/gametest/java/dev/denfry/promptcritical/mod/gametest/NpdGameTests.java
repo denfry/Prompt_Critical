@@ -18,6 +18,7 @@ import net.minecraft.core.Direction;
 import net.minecraft.gametest.framework.GameTest;
 import net.minecraft.gametest.framework.GameTestHelper;
 import net.minecraft.server.level.ServerLevel;
+import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.level.block.Block;
 import net.minecraft.world.level.block.state.properties.BlockStateProperties;
@@ -99,6 +100,65 @@ public final class NpdGameTests {
                     h.assertTrue(r.dumping(), "dump valves open");
                     h.assertTrue(r.power() < 0.05, "power after the dump " + r.power());
                     h.assertTrue(r.dumpTank().kg() > 0.3 * r.moderatorCapacityKg(), "moderator in the dump tank " + r.dumpTank().kg());
+                })
+                .thenSucceed();
+    }
+
+    /**
+     * Первый пуск: зона загружена, контур и бак сброса залиты через патрубки, «Взвод» закрывает сбросные клапаны,
+     * ▲ гонит замедлитель из бака в каландр. Уровень проходит критический, мощность растёт от источника; насосы не
+     * остановлены, период становится короче 10 с — защита сбрасывает замедлитель обратно в бак, и реактор глохнет.
+     * Подъём от пустого каландра — минут восемь, поэтому каландр заранее налит до 97 % критического уровня.
+     */
+    @GameTest(template = TALL, timeoutTicks = 1600)
+    public static void npdGoesCriticalOnModeratorLevelAndDumpsOnAShortPeriod(GameTestHelper h) {
+        place(h, REACTOR, PcBlocks.NPD_REACTOR_REAL.get(), Direction.NORTH);
+        double[] at = new double[3]; // критический уровень, мощность на нём, мощность при сбросе
+        h.startSequence()
+                .thenIdle(2)
+                .thenExecute(() -> {
+                    NpdReactorBlockEntity be = npd(h);
+                    NpdReactor r = be.reactor();
+                    double kg = FuelDesign.NPD_19.uKgPerAssembly(0.96, 0.00711);
+                    for (int i = 0; i < NpdReactor.CHANNELS; i++) r.loadChannel(i, kg, 0.00711, 0.000054);
+                    var d2o = HeavyWaterFluids.fluid(HeavyWaterGrade.REACTOR);
+                    int coolantMb = (int) Math.ceil(HeavyWater.litres(r.coolantCapacityKg(), HeavyWaterGrade.REACTOR.x)) + 10;
+                    be.fluids(Direction.EAST).fill(new FluidStack(d2o, coolantMb), IFluidHandler.FluidAction.EXECUTE);
+                    int moderatorMb = (int) Math.ceil(HeavyWater.litres(r.moderatorCapacityKg(), HeavyWaterGrade.REACTOR.x));
+                    be.fluids(Direction.DOWN).fill(new FluidStack(d2o, moderatorMb), IFluidHandler.FluidAction.EXECUTE);
+                    h.assertTrue(r.coolantFill() > 0.999, "coolant circuit full: " + r.coolantFill());
+                    h.assertTrue(r.moderator().kg() == 0 && r.dumpTank().kg() > 0.99 * r.moderatorCapacityKg(),
+                            "all moderator in the dump tank: " + r.dumpTank().kg());
+                    at[0] = r.criticalLevel();
+                    h.assertTrue(at[0] > 0.2 && at[0] < 0.9, "fresh core critical part-full: " + at[0]);
+                    double pre = 0.97 * at[0] * r.moderatorCapacityKg(), total = r.dumpTank().kg();
+                    r.moderator().set(pre, r.dumpTank().purity());
+                    r.dumpTank().set(total - pre, r.moderator().purity());
+                    ServerPlayer op = FakePlayerFactory.getMinecraft((ServerLevel) h.getLevel());
+                    h.assertTrue(r.dumping(), "a new reactor stands with the dump valves open");
+                    be.onPanelButton(op, NpdPanels.B_RESET);
+                    h.assertFalse(r.dumping(), "reset closes the dump valves");
+                    be.onPanelButton(op, NpdPanels.B_UP);
+                })
+                .thenWaitUntil(() -> h.assertTrue(npd(h).reactor().moderatorLevel() >= at[0], "level below critical"))
+                .thenExecute(() -> {
+                    NpdReactor r = npd(h).reactor();
+                    h.assertFalse(r.dumping(), "no trip below critical: " + r.trip());
+                    at[1] = r.power();
+                })
+                .thenWaitUntil(() -> h.assertTrue(npd(h).reactor().dumping(), "no trip yet"))
+                .thenExecute(() -> {
+                    NpdReactor r = npd(h).reactor();
+                    at[2] = r.power();
+                    h.assertTrue(r.trip() == NpdReactor.Trip.PERIOD, "tripped on the period: " + r.trip());
+                    h.assertTrue(at[2] > 10 * at[1], "power grew above critical: " + at[1] + " -> " + at[2]);
+                })
+                .thenIdle(60)
+                .thenExecute(() -> {
+                    NpdReactor r = npd(h).reactor();
+                    h.assertTrue(r.moderatorLevel() < 0.5 * at[0], "moderator dumped: level " + r.moderatorLevel());
+                    h.assertTrue(r.power() < 0.1 * at[2], "power falls after the dump: " + r.power());
+                    h.assertTrue(r.dumpTank().kg() > 0.8 * r.moderatorCapacityKg(), "back in the dump tank: " + r.dumpTank().kg());
                 })
                 .thenSucceed();
     }
