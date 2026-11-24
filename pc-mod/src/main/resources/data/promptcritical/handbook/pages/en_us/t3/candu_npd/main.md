@@ -6,7 +6,7 @@ NPD has no control rods. Its power is held by the height of the moderator in the
 
 ## What you build
 
-- **The reactor** (7 x 7 x 7). The heat transport headers are at the corners of both faces, the moderator dump tank connects at the bottom and its drain at the top. The board is on the controller.
+- **The reactor** (7 × 7 × 7). The heat transport headers are at the corners of both faces, the moderator dump tank connects at the bottom and its drain at the top. The board is on the controller.
 - **Two fuelling machines**, one in front of each face, with their backs to the reactor. One machine is not enough: the fresh fuel goes in at one end and the spent fuel comes out at the other.
 - **Heat transport pumps and boilers** within 24 blocks. The pumps run from a Create shaft, and the boilers raise steam for the turbine just like a steam generator.
 
