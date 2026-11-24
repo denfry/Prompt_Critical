@@ -36,7 +36,7 @@ public final class ServerConfig {
     public enum CompatMode { AUTO, OFF }
     /** Кто владеет температурой тела (16 §16.10.1, R60): {@code auto} уступает Cold Sweat или Tough As Nails. */
     public enum BodyTemperatureOwner { AUTO, PROMPTCRITICAL, EXTERNAL }
-    public static final ModConfigSpec.EnumValue<CompatMode> COMPAT_SEASONS, COMPAT_CURIOS, COMPAT_ACCESSORIES;
+    public static final ModConfigSpec.EnumValue<CompatMode> COMPAT_SEASONS, COMPAT_CURIOS, COMPAT_ACCESSORIES, COMPAT_JOURNEYMAP;
     public static final ModConfigSpec.EnumValue<BodyTemperatureOwner> COMPAT_BODY_TEMPERATURE;
     /** Машины берут мощность от розеток, силовых щитов и ИБП. */
     public static final ModConfigSpec.BooleanValue MACHINES_NEED_POWER;
@@ -487,6 +487,8 @@ public final class ServerConfig {
         COMPAT_CURIOS = b.comment("Read worn gear from Curios slots when it is installed (16 §16.9)").defineEnum("curios", CompatMode.AUTO);
         COMPAT_ACCESSORIES = b.comment("Read worn gear from Accessories slots when it is installed (16 §16.9)")
                 .defineEnum("accessories", CompatMode.AUTO);
+        COMPAT_JOURNEYMAP = b.comment("A read geological map in hand sets a JourneyMap waypoint on the ore body (16 §16.5.1)")
+                .defineEnum("journeymap", CompatMode.AUTO);
         COMPAT_BODY_TEMPERATURE = b.comment("Who owns body temperature (16 §16.10.1, R60): auto hands it to Cold Sweat or Tough As Nails when one is",
                 "installed and turns our hypothermia off, so the player is not punished twice; promptcritical always keeps ours; external always defers")
                 .defineEnum("body_temperature", BodyTemperatureOwner.AUTO);
