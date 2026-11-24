@@ -42,7 +42,7 @@ public final class ServerConfig {
     public static final ModConfigSpec.BooleanValue VOICE_NOISE_MASKING;
     public static final ModConfigSpec.DoubleValue VOICE_SPEECH_SPL_DB, VOICE_MIN_RANGE_M;
     public static final ModConfigSpec.DoubleValue PA_SPEAKER_SPL_DB, PA_SNR_DB, PA_MAX_RANGE_M;
-    public static final ModConfigSpec.IntValue PA_MAX_SPEAKERS_PER_ZONE;
+    public static final ModConfigSpec.IntValue PA_MAX_SPEAKERS_PER_ZONE, PA_PAGE_COOLDOWN_S;
     public static final ModConfigSpec.EnumValue<BodyTemperatureOwner> COMPAT_BODY_TEMPERATURE;
     /** Машины берут мощность от розеток, силовых щитов и ИБП. */
     public static final ModConfigSpec.BooleanValue MACHINES_NEED_POWER;
@@ -534,6 +534,8 @@ public final class ServerConfig {
                 .defineInRange("pa_max_range_m", 48.0, 4.0, 256.0);
         PA_MAX_SPEAKERS_PER_ZONE = b.comment("Loudspeakers one PA zone may hold (13 §13.3.4)")
                 .defineInRange("pa_max_speakers_per_zone", 16, 1, 256);
+        PA_PAGE_COOLDOWN_S = b.comment("Pause between typed calls from one PA station, s (13 §13.3.4)")
+                .defineInRange("pa_page_cooldown_s", 10, 0, 600);
         b.pop();
         b.push("mod");
         b.push("compat");

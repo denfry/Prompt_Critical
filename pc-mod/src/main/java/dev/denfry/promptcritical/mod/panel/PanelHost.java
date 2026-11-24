@@ -35,6 +35,10 @@ public interface PanelHost {
         return null;
     }
 
+    /** Строка из поля ввода {@code id} щита: уже очищена от управляющих символов, не пустая и не длиннее поля. */
+    default void onPanelText(ServerPlayer player, int id, String text) {
+    }
+
     default void onPanelButton(ServerPlayer player, int id) {
     }
 

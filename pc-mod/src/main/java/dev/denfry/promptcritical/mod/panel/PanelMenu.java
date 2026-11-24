@@ -3,6 +3,7 @@ package dev.denfry.promptcritical.mod.panel;
 import net.minecraft.core.BlockPos;
 import net.minecraft.network.RegistryFriendlyByteBuf;
 import net.minecraft.server.level.ServerPlayer;
+import net.minecraft.util.StringUtil;
 import net.minecraft.world.entity.player.Inventory;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.inventory.AbstractContainerMenu;
@@ -98,6 +99,19 @@ public final class PanelMenu extends AbstractContainerMenu implements PanelValue
     public boolean clickMenuButton(Player player, int id) {
         if (host != null && player instanceof ServerPlayer sp) host.onPanelButton(sp, id);
         return true;
+    }
+
+    /**
+     * Строка из поля щита ({@link PanelNet.Text}). Клиенту не верим: поле должно быть в раскладке, щит — в досягаемости,
+     * текст — без управляющих символов и не длиннее поля.
+     */
+    void panelText(ServerPlayer player, int field, String raw) {
+        if (host == null || !stillValid(player)) return;
+        PanelLayout.TextField f = layout.textField(field);
+        if (f == null) return;
+        String text = StringUtil.filterText(raw).strip();
+        if (text.length() > f.maxLength()) text = text.substring(0, f.maxLength()).strip();
+        if (!text.isEmpty()) host.onPanelText(player, field, text);
     }
 
     @Override
