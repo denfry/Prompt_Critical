@@ -44,6 +44,8 @@ import net.minecraft.world.phys.Vec3;
  * 1,50 кг) — из той же грани. Если верхний продукт слабее 97 %, колонна работает «на себя» и кислоту не отдаёт.
  */
 public final class AcidConcentratorBlockEntity extends DeviceBlockEntity implements FoundryDevice, PanelHost {
+    /** Насосы кислоты и плава нитрата магния, Вт. Розетка или силовой щит рядом; при недостатке установка работает медленнее. */
+    public static final double POWER_W = 45e3;
     public static final int MB = 8_000;
     /** Номинальное питание слабой кислотой, кг/с (≈ 1,5 т/ч) [BALANCE: под один агрегат азотной кислоты]. */
     public static final double RATED_FEED_KG_S = 0.42, WEAK_KG_L = 1.345, STRONG_KG_L = 1.50, FURNACE_EFFICIENCY = 0.85;
@@ -107,7 +109,7 @@ public final class AcidConcentratorBlockEntity extends DeviceBlockEntity impleme
         feedKgS = productKgS = 0;
         noFuel = false;
         if (running) {
-            double kg = Math.min(RATED_FEED_KG_S * dt, weak.amount() * WEAK_KG_L);
+            double kg = Math.min(RATED_FEED_KG_S * dt * dev.denfry.promptcritical.mod.grid.MachinePower.supply(s, worldPosition, POWER_W), weak.amount() * WEAK_KG_L);
             if (kg > 0) {
                 AcidConcentrator.Result r = column.run(kg / dt);
                 last = r;

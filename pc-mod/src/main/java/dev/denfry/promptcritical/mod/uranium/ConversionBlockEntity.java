@@ -31,6 +31,12 @@ import org.jetbrains.annotations.Nullable;
  * топливный газ — трубами к любой грани; продукт — в склад (воронкой снизу). Температура стенки — кнопками на щите.
  */
 public final class ConversionBlockEntity extends UraniumProcessBlockEntity {
+    /** Привод печи, шнеки и электрообогрев, Вт. */
+    @Override
+    protected double ratedPowerW() {
+        return 75e3;
+    }
+
     public static final int MB = 4_000;
 
     private final DryConversion stage;

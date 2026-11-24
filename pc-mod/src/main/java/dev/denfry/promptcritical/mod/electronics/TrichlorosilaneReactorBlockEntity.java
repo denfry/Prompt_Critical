@@ -34,6 +34,9 @@ import org.jetbrains.annotations.Nullable;
  * отходы. Партия — кусок кремния 4 кг за {@value #BATCH_TICKS} тиков.
  */
 public final class TrichlorosilaneReactorBlockEntity extends IronworksBlockEntity implements PanelHost {
+    /** Электронагрев кипящего слоя, питатели кремния и холодильная установка, Вт. Розетка или силовой щит рядом; при недостатке машина работает медленнее. */
+    public static final double POWER_W = 120e3;
+    private final dev.denfry.promptcritical.mod.grid.MachinePower.Drive drive = new dev.denfry.promptcritical.mod.grid.MachinePower.Drive();
     public static final int BATCH_TICKS = 400;
     static final double KG = ElectronicsComponents.MG_SI_KG_PER_ITEM, HCL_NM3 = SiliconChain.hclNm3PerKgSi() * KG,
             TCS_L = SiliconChain.tcsLitresPerKgSi() * KG, H2_NM3 = SiliconChain.hydrogenNm3PerKgSi() * KG;
@@ -67,7 +70,7 @@ public final class TrichlorosilaneReactorBlockEntity extends IronworksBlockEntit
     @Override
     protected void serverTick(SimLevelBinding b) {
         running = fed();
-        if (!running) return;
+        if (!drive.advance(level, worldPosition, running ? POWER_W : 0) || !running) return;
         if (++progress >= BATCH_TICKS) {
             progress = 0;
             inv.getStackInSlot(0).shrink(1);

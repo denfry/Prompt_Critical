@@ -20,6 +20,8 @@ import org.jetbrains.annotations.Nullable;
  * клети). Поиск идёт по загруженным чанкам в радиусе {@value #SEARCH_CHUNKS} чанков, только пока связи нет.
  */
 public class ShaftSignalBlockEntity extends BlockEntity {
+    /** Звонки и табло стволовой сигнализации, Вт. Малая нагрузка 0,4 кВ: розетка, щит или ИБП рядом. */
+    public static final double POWER_W = 100;
     static final int AXIS_REACH = 3;
     static final int SEARCH_CHUNKS = 4;
     private static final int PERIOD = 4, RESCAN = 100;
@@ -50,7 +52,7 @@ public class ShaftSignalBlockEntity extends BlockEntity {
     }
 
     static void tick(ShaftSignalBlockEntity be) {
-        if (!(be.level instanceof ServerLevel sl) || sl.getGameTime() % PERIOD != 0) return;
+        if (!(be.level instanceof ServerLevel sl) || sl.getGameTime() % PERIOD != 0 || !dev.denfry.promptcritical.mod.grid.MachinePower.powered(sl, be.worldPosition, POWER_W)) return;
         MineHoistBlockEntity h = be.hoist();
         if (h == null && --be.nextScan <= 0) {
             be.nextScan = RESCAN / PERIOD;

@@ -39,6 +39,11 @@ import org.jetbrains.annotations.Nullable;
  * ({@link MaterialBalance}: уран и U-235) и сохранение. Наследники задают слоты, шаг и щит.
  */
 public abstract class FuelShopBlockEntity extends DeviceBlockEntity implements FoundryDevice, PanelHost {
+    /** Приводы и нагреватели участка, Вт: розетка или силовой щит рядом; при недостатке участок работает медленнее. */
+    protected double ratedPowerW() {
+        return 15e3;
+    }
+
     protected final ItemStackHandler items;
     protected final MaterialBalance balance = new MaterialBalance();
     protected boolean running;
@@ -89,7 +94,8 @@ public abstract class FuelShopBlockEntity extends DeviceBlockEntity implements F
         if (!(level instanceof ServerLevel s)) return;
         SimLevelBinding b = SimBindings.get(s);
         if (b == null) return;
-        if (running) step(s, 0.05 * b.world().clock().kSlow());
+        double power = dev.denfry.promptcritical.mod.grid.MachinePower.supply(s, worldPosition, running ? ratedPowerW() : 0);
+        if (running && power > 0) step(s, 0.05 * b.world().clock().kSlow() * power);
         if (level.getGameTime() % 100 == 0) setChanged();
     }
 

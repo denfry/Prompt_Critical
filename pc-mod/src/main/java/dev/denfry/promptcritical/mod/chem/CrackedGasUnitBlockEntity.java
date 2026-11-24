@@ -34,6 +34,9 @@ import org.jetbrains.annotations.Nullable;
  * пиролиза — с запада (жидкости, 1 мБ = 1 л). Этан и пропан возвращаются в печь, водород с метаном — её топливом.
  */
 public final class CrackedGasUnitBlockEntity extends DeviceBlockEntity implements FoundryDevice, PanelHost {
+    /** Холодильные компрессоры деметанизатора, насосы колонн и аппараты воздушного охлаждения, Вт. Розетка или силовой щит рядом; при недостатке машина работает медленнее. */
+    public static final double POWER_W = 160e3;
+    private final dev.denfry.promptcritical.mod.grid.MachinePower.Drive drive = new dev.denfry.promptcritical.mod.grid.MachinePower.Drive();
     public static final int MB = 16_000;
     /** Теплота сгорания (низшая): водород 120, метан 50 МДж/кг. */
     static final double H2_J_KG = 120e6, CH4_J_KG = 50e6, NM3_PER_MOL = 0.022414;
@@ -102,7 +105,7 @@ public final class CrackedGasUnitBlockEntity extends DeviceBlockEntity implement
                         net.minecraft.world.level.block.Block.UPDATE_CLIENTS);
         }
         double total = CrackedGasSeparation.Result.total(buffer);
-        if (total <= 0) return;
+        if (!drive.advance(level, worldPosition, total > 0 ? POWER_W : 0) || total <= 0) return;
         CrackedGasSeparation.Result r = CrackedGasSeparation.split(buffer.clone());
         // продукты не влезли — газ ждёт в буфере (колонны «на себя»)
         double ethNm3 = CrackedGasSeparation.Result.total(r.ethylene()) * NM3_PER_MOL;

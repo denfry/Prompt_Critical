@@ -33,6 +33,12 @@ import org.jetbrains.annotations.Nullable;
  * не даёт газойля. Состав мазута — остаток атмосферной колонны на западносибирской нефти в номинальном режиме.
  */
 public final class VacuumColumnBlockEntity extends UraniumProcessBlockEntity {
+    /** Насосы мазута и гудрона, аппараты воздушного охлаждения, Вт. */
+    @Override
+    protected double ratedPowerW() {
+        return 110e3;
+    }
+
     public static final int MB = 8_000, MAX_EJECTORS = 3;
     public static final double[] EJECTOR_KPA = {VacuumUnit.P0_KPA, 8, 5, 3};
     /** Производительность — 1,5 л/с мазута: вся кубовая атмосферной колонны 10 м³/ч с запасом [BALANCE]. */

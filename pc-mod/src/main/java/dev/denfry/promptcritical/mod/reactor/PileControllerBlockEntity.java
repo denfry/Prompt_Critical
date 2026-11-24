@@ -36,6 +36,18 @@ import org.jetbrains.annotations.Nullable;
  * модели, щит лишь подаёт команды.
  */
 public final class PileControllerBlockEntity extends IronworksBlockEntity implements dev.denfry.promptcritical.mod.environment.SelfEmittingSource, DeviceHost, PanelHost {
+    /**
+     * Пульт и приводы СУЗ, Вт: малая нагрузка 0,4 кВ, ставьте на ИБП. Без питания стержни падают (аварийная защита
+     * по потере питания, решение 2026-11-24) и не поднимаются, пока питание не вернётся.
+     */
+    public static final double POWER_W = 2e3;
+    private boolean powered = true;
+
+    /** Пульт под питанием (на прошлой проверке). */
+    public boolean powered() {
+        return powered;
+    }
+
     private static final int SCAN_PERIOD = 20, FIRE_PERIOD = 40;
 
     private SimId simId = SimId.NONE;
@@ -56,6 +68,13 @@ public final class PileControllerBlockEntity extends IronworksBlockEntity implem
     protected void serverTick(SimLevelBinding b) {
         PileUnit u = Reactor.unit(b, simId);
         if (u == null) return;
+        // приводы СУЗ без питания не держат стержни: сброс, пока питание не вернут (fail-safe)
+        if (ticks % 20 == 0) {
+            boolean was = powered;
+            powered = dev.denfry.promptcritical.mod.grid.MachinePower.powered(level, worldPosition, POWER_W);
+            if (!powered) u.scram();
+            if (was != powered) setChanged();
+        }
         if (ticks++ % SCAN_PERIOD == 0) rescan(u);
         GraphitePile p = u.pile();
         if (ticks % FIRE_PERIOD == 0 && !top.isEmpty()) consequences(p);

@@ -31,6 +31,10 @@ import org.jetbrains.annotations.Nullable;
  * 0,1 л/кг [BALANCE]) → {@code crude_benzol}. Чего не уловили — уходит с газом.
  */
 public class ByproductPlantBlockEntity extends IronworksBlockEntity implements PanelHost {
+    /** Насосы надсмольной воды, реагента и продукта, Вт. Розетка или силовой щит рядом; при недостатке машина работает медленнее. */
+    public static final double POWER_W = 55e3;
+    /** Доля питания на последнем тике, 0…1. */
+    private double power;
     static final double TAR_DENSITY = 1.17, BENZOL_DENSITY = 0.88, ACID_DENSITY = 1.84, ACID_PER_NH3 = 44.7 / 15.5,
             SULFATE_PER_NH3 = 60.2 / 15.5, WASH_OIL_L_PER_KG = 0.1;
 
@@ -64,6 +68,7 @@ public class ByproductPlantBlockEntity extends IronworksBlockEntity implements P
 
     /** Уловить {@code kg} своего продукта из газа батареи (за период SLOW). */
     void capture(double kg) {
+        kg *= power;
         if (!(kg > 0)) return;
         switch (kind()) {
             case COOLER, PRECIPITATOR -> capturedKg += product.put(GasBuffer.fluid("coal_tar"), kg / TAR_DENSITY) * TAR_DENSITY;
@@ -89,6 +94,7 @@ public class ByproductPlantBlockEntity extends IronworksBlockEntity implements P
 
     @Override
     protected void serverTick(SimLevelBinding b) {
+        power = dev.denfry.promptcritical.mod.grid.MachinePower.supply(level, worldPosition, POWER_W);
     }
 
     @Override

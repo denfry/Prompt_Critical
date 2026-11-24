@@ -37,6 +37,11 @@ import org.jetbrains.annotations.Nullable;
  * когда и куда выдавать заготовку.
  */
 public abstract class BatchFurnaceBlockEntity extends IronworksDeviceBlockEntity<BatchFurnaceUnit> implements PanelHost, PieceReceiver {
+    /** Вентиляторы горелок, дымосос и механизм двери, Вт: розетка или силовой щит рядом; без них газ не горит. */
+    protected double ratedPowerW() {
+        return 22e3;
+    }
+
     protected static final int OUT_SLOTS = 4;
     protected final GasBuffer gas = new GasBuffer(8_000, GasBuffer::isProcessGas, this::setChanged);
     protected final MachineInventory inv = new MachineInventory(roles(), (slot, s) -> slot == 0 && accepts(s), this::setChanged);
@@ -71,7 +76,8 @@ public abstract class BatchFurnaceBlockEntity extends IronworksDeviceBlockEntity
     protected void serverTick(SimLevelBinding b, BatchFurnaceUnit u) {
         double dtp = Ironworks.tickPhysS(b);
         ProcessGas g = gas.gas();
-        if (g != null) u.setGasSupply(g, gas.draw(u.gasDemandNm3S(g) * dtp) / dtp);
+        double power = dev.denfry.promptcritical.mod.grid.MachinePower.supply(level, worldPosition, g != null ? ratedPowerW() : 0);
+        if (g != null) u.setGasSupply(g, gas.draw(u.gasDemandNm3S(g) * dtp * power) / dtp);
         else u.setGasSupply(null, 0);
         ItemStack in = inv.getStackInSlot(0);
         if (!in.isEmpty() && accepts(in) && load(u, in.copyWithCount(1))) in.shrink(1);

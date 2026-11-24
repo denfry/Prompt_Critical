@@ -45,6 +45,12 @@ import org.jetbrains.annotations.Nullable;
  * записываются в учёт выбросов (14) источником {@code reduction_pot@…}.
  */
 public final class ReductionPotBlockEntity extends UraniumProcessBlockEntity implements DcLoad, dev.denfry.promptcritical.mod.client.whole.WholeModelHost {
+    /** Ванны питает постоянным током выпрямитель, щит 0,4 кВ не нужен. */
+    @Override
+    protected double ratedPowerW() {
+        return 0;
+    }
+
     public static final int SERIES_REACH = 4, SERIES_MAX = 24;
     /** Капремонт: подовые блоки и огнеупорный кирпич [BALANCE]. */
     public static final int RELINE_CATHODES = 4, RELINE_BRICKS = 8;

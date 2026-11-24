@@ -46,6 +46,8 @@ import org.jetbrains.annotations.Nullable;
  * уходит на очистку. Если продукт не в марке (мало флегмы или пара), колонна работает «на себя» и метанол не отдаёт.
  */
 public final class MethanolColumnBlockEntity extends DeviceBlockEntity implements FoundryDevice, PanelHost {
+    /** Насосы флегмы и аппараты воздушного охлаждения, Вт. Розетка или силовой щит рядом; при недостатке установка работает медленнее. */
+    public static final double POWER_W = 45e3;
     public static final int MB = 8_000;
     public static final double METHANOL_KG_L = 0.791, CRUDE_HOLDUP_MOL = 6000;
     /** Номинальная производительность по метанолу, моль/с — с запасом над агрегатом. */
@@ -123,7 +125,7 @@ public final class MethanolColumnBlockEntity extends DeviceBlockEntity implement
             // пар решает, сколько сырца колонна переработает при заданной флегме
             double byHeat = heatW / ((1 + column.reflux()) * MethanolColumn.LATENT_J_MOL * (1 - MethanolColumn.TOPPING_LOSS)
                     * MethanolColumn.RECOVERY);
-            double rate = Math.min(RATED_MEOH_MOL_S, byHeat);
+            double rate = Math.min(RATED_MEOH_MOL_S * dev.denfry.promptcritical.mod.grid.MachinePower.supply(s, worldPosition, POWER_W), byHeat);
             heatLimited = byHeat < RATED_MEOH_MOL_S && crudeMeoh > rate * dt;
             double m = Math.min(crudeMeoh, rate * dt);
             double w = crudeWater * m / crudeMeoh;
