@@ -66,9 +66,12 @@ public final class Stations {
 
     public static void register() {
         NeoForge.EVENT_BUS.addListener(EventPriority.HIGH, Stations::onPlace);
+        // основание — после всех проверок: отменённая другой защитой установка станцию не создаёт
+        NeoForge.EVENT_BUS.addListener(EventPriority.LOWEST, Stations::onPlaceFound);
         NeoForge.EVENT_BUS.addListener(EventPriority.HIGH, Stations::onBreak);
         NeoForge.EVENT_BUS.addListener(Stations::onServerTick);
         NeoForge.EVENT_BUS.addListener(Stations::onStopping);
+        dev.denfry.promptcritical.mod.api.ApiEvents.stations(new RegistryStationDirectory());
     }
 
     public static boolean isFounder(BlockState state) {
@@ -114,7 +117,9 @@ public final class Stations {
         p.displayClientMessage(StationText.msg("denied", s.name(), perm.name().toLowerCase(Locale.ROOT))
                 .withStyle(ChatFormatting.RED), true);
         long tick = level.getGameTime();
-        if (r.denials.shouldLog(p.getUUID(), device, tick))
+        // блоки — один ключ на станцию, иначе серия по разным координатам вытеснила бы журнал (§4d.8.2)
+        String key = perm == Permission.BREAK_PLACE ? "blocks@" + s.stationId() : device;
+        if (r.denials.shouldLog(p.getUUID(), key, tick))
             r.append(new JournalEntry(0, tick, tick / 20.0, s.stationId(), actor(p), JournalAction.UNAUTHORIZED_ACCESS,
                     device, "needs " + perm.name(), Severity.WARNING));
         return false;
@@ -159,15 +164,19 @@ public final class Stations {
         if (r == null) return;
         BlockPos pos = e.getPos();
         StationRecord s = r.at(level.dimension(), new ChunkPos(pos));
-        if (s == null) {
-            if (isFounder(e.getPlacedBlock())) found(r, level, p, pos);
-            return;
-        }
+        if (s == null) return;
         if (!check(p, level, pos, Permission.BREAK_PLACE, device(level, pos))) {
             e.setCanceled(true);
             return;
         }
         note(r, s, p, JournalAction.BLOCK_PLACE, pos, level.getGameTime());
+    }
+
+    private static void onPlaceFound(BlockEvent.EntityPlaceEvent e) {
+        if (!(e.getLevel() instanceof ServerLevel level) || !(e.getEntity() instanceof ServerPlayer p)
+                || !isFounder(e.getPlacedBlock())) return;
+        StationRegistry r = StationRegistry.of(level.getServer());
+        if (r != null && r.at(level.dimension(), new ChunkPos(e.getPos())) == null) found(r, level, p, e.getPos());
     }
 
     private static void onBreak(BlockEvent.BreakEvent e) {
