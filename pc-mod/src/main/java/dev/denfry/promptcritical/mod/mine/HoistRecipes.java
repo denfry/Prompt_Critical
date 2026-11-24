@@ -80,10 +80,7 @@ public final class HoistRecipes extends RecipeProvider {
                 .pattern(" B ").pattern("RIL").pattern(" I ").define('B', Items.BELL).define('R', Items.REDSTONE)
                 .define('I', Items.IRON_INGOT).define('L', Items.REDSTONE_LAMP)
                 .unlockedBy("has_mine_cage", has(PcBlocks.MINE_CAGE.get())).save(out, id("shaft_signal"));
-        ShapedRecipeBuilder.shaped(RecipeCategory.MISC, PcBlocks.MINE_DRAINAGE_PUMP.get())
-                .pattern("IPI").pattern("SCS").pattern("III").define('I', Items.IRON_INGOT).define('P', AllBlocks.MECHANICAL_PUMP.get())
-                .define('S', AllBlocks.SHAFT.get()).define('C', AllBlocks.COGWHEEL.get())
-                .unlockedBy("has_mechanical_pump", has(AllBlocks.MECHANICAL_PUMP.get())).save(out, id("mine_drainage_pump"));
+        // водоотливной насос собирают на сборочном стенде (18 §18.8, §18.11): верстачного рецепта нет
         // механизированная лава (08 §8.2.3): шнеки — буры Create, гидростойки — поршни
         ShapedRecipeBuilder.shaped(RecipeCategory.MISC, PcBlocks.LONGWALL_SHEARER.get())
                 .pattern("DGD").pattern("III").define('D', AllBlocks.MECHANICAL_DRILL.get()).define('G', AllBlocks.GEARBOX.get())

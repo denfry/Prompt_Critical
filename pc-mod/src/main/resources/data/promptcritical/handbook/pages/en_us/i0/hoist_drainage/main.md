@@ -27,7 +27,7 @@ The load is whatever is in the cage when it departs: a person is 80 kg, a mineca
 
 Water reaches a mine in two ways: every ton mined opens up about a cubic metre of water, and another 2 m³/h or so seeps in from the strata. Water drains to the **sump** by the lowest workings. Its capacity is about 400 m³. When it overflows, water floods the lowest levels.
 
-The [mine drainage pump](item:promptcritical:mine_drainage_pump) is a multistage centrifugal pump on a Create shaft, shaft on the left. At 64 rpm it delivers 100 m³/h against 150 m and takes about 58 kW. The head is the height from the pump to the surface. Pumped water leaves through a pipe on the top face.
+The [mine drainage pump](item:promptcritical:mine_drainage_pump) is a multistage centrifugal pump on a Create shaft, shaft on the left. At 64 rpm it delivers 100 m³/h against 150 m and takes about 58 kW. The head is the height from the pump to the surface. Pumped water leaves through a pipe on the top face. You build it on the [assembly stand](item:promptcritical:assembly_stand) from a cast casing and impeller, a forged shaft, bearings, packing, fasteners and a bed.
 
 The rule: the sump must hold at least four hours of inflow. The gas monitoring cabinet's summary warns you if it is too small. An empty-hand click on the pump shows flow, head and power.
 
