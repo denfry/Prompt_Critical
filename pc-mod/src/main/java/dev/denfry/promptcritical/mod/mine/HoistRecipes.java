@@ -49,10 +49,6 @@ public final class HoistRecipes extends RecipeProvider {
         ShapedRecipeBuilder.shaped(RecipeCategory.MISC, PcItems.WIRE_ROPE.get(), 2)
                 .pattern("CCC").pattern("CIC").pattern("CCC").define('C', Items.CHAIN).define('I', Items.IRON_INGOT)
                 .unlockedBy("has_chain", has(Items.CHAIN)).save(out, id("wire_rope"));
-        ShapedRecipeBuilder.shaped(RecipeCategory.MISC, PcBlocks.MINE_HOIST.get())
-                .pattern("III").pattern("SDS").pattern("KCK").define('I', Items.IRON_INGOT).define('S', AllBlocks.SHAFT.get())
-                .define('D', AllBlocks.LARGE_COGWHEEL.get()).define('K', Items.IRON_BLOCK).define('C', AllBlocks.COGWHEEL.get())
-                .unlockedBy("has_large_cogwheel", has(AllBlocks.LARGE_COGWHEEL.get())).save(out, id("mine_hoist"));
         ShapedRecipeBuilder.shaped(RecipeCategory.MISC, PcBlocks.HEADFRAME.get())
                 .pattern("B B").pattern(" B ").pattern("B B").define('B', Items.IRON_BARS)
                 .unlockedBy("has_iron_bars", has(Items.IRON_BARS)).save(out, id("headframe"));

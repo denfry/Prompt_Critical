@@ -65,10 +65,6 @@ public final class BoilerRecipes extends RecipeProvider {
                 .pattern("PPP").pattern("IHI").pattern("ISI").define('P', Items.PAPER).define('I', Items.IRON_INGOT)
                 .define('H', Items.HOPPER).define('S', AllBlocks.SHAFT.get())
                 .unlockedBy("has_hopper", has(Items.HOPPER)).save(out, id("lancashire_stoker_drawing"));
-        ShapedRecipeBuilder.shaped(RecipeCategory.MISC, PcBlocks.STEAM_ENGINE_CYLINDER.get())
-                .pattern("IPI").pattern("SCS").pattern("III").define('I', Items.IRON_INGOT).define('P', Items.PISTON)
-                .define('S', AllBlocks.SHAFT.get()).define('C', AllBlocks.COGWHEEL.get())
-                .unlockedBy("has_piston", has(Items.PISTON)).save(out, id("steam_engine_cylinder"));
         ShapedRecipeBuilder.shaped(RecipeCategory.MISC, PcBlocks.GRATE_STOKER.get())
                 .pattern(" H ").pattern("ICI").pattern("III").define('H', Items.HOPPER).define('I', Items.IRON_INGOT)
                 .define('C', AllBlocks.COGWHEEL.get())

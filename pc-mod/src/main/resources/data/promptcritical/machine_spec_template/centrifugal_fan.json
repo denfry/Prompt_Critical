@@ -1,0 +1,13 @@
+{
+  "run_in": true,
+  "parts": [
+    {"role": "casing", "items": ["create:iron_sheet"], "count": 8},
+    {"role": "wheel", "items": ["fan_wheel"], "aspects": ["rotor"]},
+    {"role": "shaft", "items": ["shaft", "keyed_shaft"], "it": 7, "min_hrc": 30,
+     "heat_treat": ["quenched_tempered"], "aspects": ["bearing_seat"]},
+    {"role": "bearings", "items": ["rolling_bearing", "bronze_bearing_shell"], "count": 2, "aspects": ["bearing"]},
+    {"role": "drive", "items": ["pulley", "coupling"], "aspects": ["alignment"]},
+    {"role": "fasteners", "items": ["fastener_kit"], "count": 2},
+    {"role": "bed", "items": ["machine_bed"], "aspects": ["alignment"]}
+  ]
+}

@@ -48,3 +48,5 @@ When the margin runs short, vapour bubbles form in the impeller eye and collapse
 - the bubbles eat the impeller. At full cavitation it is gone in about 200 hours of physical time, under three hours of play, and a worn impeller cavitates even more readily. Holed, it pumps nothing until replaced.
 
 The cure is to give the pump back its suction head. Set it down at the sump (no more than a block or two above the bottom of the workings), or slow it down. Then replace the damaged impeller. Catching a cavitating pump and making it quiet before the impeller fails earns *Quiet Pump*.
+
+The [mine hoist](item:promptcritical:mine_hoist) is built on the same stand: rope drum, forged shaft, two bearings, a pair of spur gears, two brake shoes with their springs, fasteners and a bed.

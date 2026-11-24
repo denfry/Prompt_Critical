@@ -303,6 +303,18 @@ public final class PcLanguageProvider extends LanguageProvider {
         i("end_cover", "End Cover", "Крышка");
         i("rotor_core", "Rotor Core", "Пакет ротора");
         i("field_coil", "Field Coil", "Катушка возбуждения");
+        i("fan_wheel", "Fan Wheel", "Колесо вентилятора");
+        i("rope_drum", "Rope Drum", "Канатный барабан");
+        i("brake_shoe", "Brake Shoe", "Тормозная колодка");
+        i("cylinder_block", "Cylinder Block", "Цилиндр паровой машины");
+        i("piston", "Piston", "Поршень");
+        i("connecting_rod", "Connecting Rod", "Шатун");
+        i("crosshead", "Crosshead", "Крейцкопф");
+        i("flywheel_rim", "Flywheel Rim Segment", "Сегмент обода маховика");
+        i("governor", "Watt Governor", "Регулятор Уатта");
+        i("commutator", "Commutator", "Коллектор");
+        i("brush_holder", "Brush Holder", "Щёткодержатель");
+        i("slip_ring", "Slip Ring", "Контактное кольцо");
         i("tongs", "Smith's Tongs", "Кузнечные клещи");
         i("wire", "Wire", "Проволока");
         i("electrical_sheet", "Electrical Steel Sheet", "Лист электротехнической стали");
