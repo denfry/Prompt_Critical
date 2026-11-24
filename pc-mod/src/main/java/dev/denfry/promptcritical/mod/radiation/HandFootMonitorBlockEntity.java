@@ -26,6 +26,8 @@ import org.jetbrains.annotations.Nullable;
  * чего прибор не видит (ниже МДА), того для него нет.
  */
 public final class HandFootMonitorBlockEntity extends DeviceBlockEntity implements FoundryDevice {
+    /** Блоки детектирования и табло установки, Вт. Малая нагрузка 0,4 кВ: розетка, щит или ИБП рядом. */
+    public static final double POWER_W = 100;
     public HandFootMonitorBlockEntity(BlockPos pos, BlockState state) {
         super(RadiationBlockEntities.HAND_FOOT_MONITOR.get(), pos, state);
     }
@@ -47,6 +49,10 @@ public final class HandFootMonitorBlockEntity extends DeviceBlockEntity implemen
     @Override
     public InteractionResult use(Player player) {
         if (!(player instanceof ServerPlayer p)) return InteractionResult.SUCCESS;
+        if (!dev.denfry.promptcritical.mod.grid.MachinePower.powered(level, worldPosition, POWER_W)) {
+            p.displayClientMessage(net.minecraft.network.chat.Component.translatable(dev.denfry.promptcritical.mod.grid.GridText.NO_POWER), true);
+            return InteractionResult.SUCCESS;
+        }
         double r = worstRatio(p);
         if (r > 1) {
             p.displayClientMessage(ContaminationText.msg("monitor.dirty", ContaminationText.num(r)).withStyle(ChatFormatting.RED), false);

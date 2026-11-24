@@ -39,6 +39,8 @@ import org.jetbrains.annotations.Nullable;
  * грань рядом, а секция — общий обзор; CC-периферии {@code pc_panel} у секции нет.
  */
 public class ControlDeskBlockEntity extends DeviceBlockEntity implements FoundryDevice, PanelHost {
+    /** Мониторы и клавиатура пульта, Вт. Малая нагрузка 0,4 кВ: розетка, щит или ИБП рядом. */
+    public static final double POWER_W = 500;
     public static final int RADIUS = 32, ROWS = 8;
 
     private int page;
@@ -182,6 +184,10 @@ public class ControlDeskBlockEntity extends DeviceBlockEntity implements Foundry
 
     @Override
     public InteractionResult use(Player player) {
+        if (!level.isClientSide && !dev.denfry.promptcritical.mod.grid.MachinePower.powered(level, worldPosition, POWER_W)) {
+            player.displayClientMessage(net.minecraft.network.chat.Component.translatable(dev.denfry.promptcritical.mod.grid.GridText.NO_POWER), true);
+            return InteractionResult.SUCCESS;
+        }
         int n = acknowledgeAll();
         player.displayClientMessage(ControlRoomPanels.DESK_ACKED.get(n, annunciators().size()), true);
         return InteractionResult.SUCCESS;

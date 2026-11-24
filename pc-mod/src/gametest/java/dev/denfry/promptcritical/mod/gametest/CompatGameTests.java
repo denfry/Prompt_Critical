@@ -104,6 +104,81 @@ public final class CompatGameTests {
         h.succeed();
     }
 
+    /** 16 §16.7.2–§16.7.3: товарная химия и топлива уходят в {@code c:}, ядерные среды и вода контуров — никогда. */
+    @GameTest(template = EMPTY)
+    public static void fluidExportKeepsTheClosedListUntagged(GameTestHelper h) {
+        h.assertTrue(dev.denfry.promptcritical.mod.compat.CommonTags.exportViolations().isEmpty(),
+                "closed list: " + dev.denfry.promptcritical.mod.compat.CommonTags.exportViolations());
+        dev.denfry.promptcritical.mod.compat.CommonTags.FLUID_EXPORT.forEach((name, tags) -> {
+            Fluid f = net.minecraft.core.registries.BuiltInRegistries.FLUID.get(PromptCritical.id(name));
+            for (String t : tags)
+                h.assertTrue(f.defaultFluidState().is(TagKey.create(Registries.FLUID, ResourceLocation.fromNamespaceAndPath("c", t))),
+                        name + " in c:" + t);
+        });
+        for (String name : dev.denfry.promptcritical.mod.compat.CommonTags.NEVER_EXPORTED) {
+            Fluid f = net.minecraft.core.registries.BuiltInRegistries.FLUID.get(PromptCritical.id(name));
+            h.assertTrue(f != net.minecraft.world.level.material.Fluids.EMPTY, "closed-list fluid " + name + " exists");
+            h.assertTrue(f.builtInRegistryHolder().tags().noneMatch(t -> t.location().getNamespace().equals("c")),
+                    name + " must carry no c: tag");
+        }
+        h.succeed();
+    }
+
+    /** 16 §16.10.3: без карты данных биом описывают теги {@code c:} и ванильные; значения прежние. */
+    @GameTest(template = EMPTY)
+    public static void biomeEnvironmentFallsBackToTags(GameTestHelper h) {
+        var biomes = h.getLevel().registryAccess().registryOrThrow(Registries.BIOME);
+        java.util.function.Function<net.minecraft.resources.ResourceKey<net.minecraft.world.level.biome.Biome>,
+                net.minecraft.core.Holder<net.minecraft.world.level.biome.Biome>> b = biomes::getHolderOrThrow;
+        h.assertValueEqual(dev.denfry.promptcritical.mod.environment.BiomeEnvironment.waterOf(b.apply(net.minecraft.world.level.biome.Biomes.RIVER)),
+                dev.denfry.promptcritical.mod.environment.BiomeEnvironment.Water.RIVER, "river");
+        h.assertValueEqual(dev.denfry.promptcritical.mod.environment.BiomeEnvironment.waterOf(b.apply(net.minecraft.world.level.biome.Biomes.DEEP_OCEAN)),
+                dev.denfry.promptcritical.mod.environment.BiomeEnvironment.Water.DEEP_OCEAN, "deep ocean");
+        h.assertValueEqual(dev.denfry.promptcritical.mod.environment.BiomeEnvironment.waterOf(b.apply(net.minecraft.world.level.biome.Biomes.OCEAN)),
+                dev.denfry.promptcritical.mod.environment.BiomeEnvironment.Water.OCEAN, "ocean");
+        h.assertValueEqual(dev.denfry.promptcritical.mod.environment.BiomeEnvironment.surfaceOf(b.apply(net.minecraft.world.level.biome.Biomes.FOREST)),
+                dev.denfry.promptcritical.sim.environment.Environment.Surface.FOREST, "forest");
+        h.assertValueEqual(dev.denfry.promptcritical.mod.environment.BiomeEnvironment.surfaceOf(b.apply(net.minecraft.world.level.biome.Biomes.BEACH)),
+                dev.denfry.promptcritical.sim.environment.Environment.Surface.WATER, "beach");
+        h.assertValueEqual(dev.denfry.promptcritical.mod.environment.BiomeEnvironment.surfaceOf(b.apply(net.minecraft.world.level.biome.Biomes.PLAINS)),
+                dev.denfry.promptcritical.sim.environment.Environment.Surface.OPEN, "plains");
+        h.succeed();
+    }
+
+    /** 16 §16.8.5: Carry On не поднимает ни одну нашу блок-сущность вместе с содержимым. */
+    @GameTest(template = EMPTY)
+    public static void carryOnCannotLiftOurBlockEntities(GameTestHelper h) {
+        TagKey<net.minecraft.world.level.block.Block> blacklist = TagKey.create(Registries.BLOCK,
+                ResourceLocation.fromNamespaceAndPath("carryon", "block_blacklist"));
+        int n = 0;
+        for (var b : net.minecraft.core.registries.BuiltInRegistries.BLOCK) {
+            var key = net.minecraft.core.registries.BuiltInRegistries.BLOCK.getKey(b);
+            if (!key.getNamespace().equals(PromptCritical.MOD_ID) || !(b instanceof net.minecraft.world.level.block.EntityBlock)) continue;
+            h.assertTrue(b.defaultBlockState().is(blacklist), key + " in carryon:block_blacklist");
+            n++;
+        }
+        h.assertTrue(n > 50, "block entities checked: " + n);
+        h.succeed();
+    }
+
+    /** 16 §16.9 и §16.10.1: слоты снаряжения назначены тегами; без Cold Sweat и Tough As Nails переохлаждение наше. */
+    @GameTest(template = EMPTY)
+    public static void wornGearSlotsAndBodyTemperatureOwner(GameTestHelper h) {
+        h.assertTrue(PcItems.DOSIMETER.get().getDefaultInstance().is(TagKey.create(Registries.ITEM,
+                ResourceLocation.fromNamespaceAndPath("curios", "belt"))), "dosimeter in curios:belt");
+        h.assertTrue(PcItems.CAP_LAMP.get().getDefaultInstance().is(TagKey.create(Registries.ITEM,
+                ResourceLocation.fromNamespaceAndPath("accessories", "hat"))), "cap lamp in accessories:hat");
+        h.assertTrue(PcItems.GAS_MASK.get().getDefaultInstance().is(TagKey.create(Registries.ITEM,
+                ResourceLocation.fromNamespaceAndPath("accessories", "face"))), "gas mask in accessories:face");
+        h.assertTrue(PcItems.HEATED_SUIT.get().getDefaultInstance().is(TagKey.create(Registries.ITEM,
+                ResourceLocation.fromNamespaceAndPath("toughasnails", "heating_armor"))), "heated suit in toughasnails:heating_armor");
+        h.assertFalse(dev.denfry.promptcritical.mod.compat.CompatSwitch.bodyTemperatureIsExternal(),
+                "no Cold Sweat or Tough As Nails: hypothermia stays ours");
+        var p = net.neoforged.neoforge.common.util.FakePlayerFactory.getMinecraft(h.getLevel());
+        h.assertTrue(dev.denfry.promptcritical.mod.compat.WornGear.accessories(p).isEmpty(), "no slot mods: no accessories");
+        h.succeed();
+    }
+
     @GameTest(template = EMPTY)
     public static void coldSweatHeatSourcesMatchBlockStates(GameTestHelper h) {
         // данные Cold Sweat не проверяются без самого мода: сверяем id блоков и свойства состояний, чтобы

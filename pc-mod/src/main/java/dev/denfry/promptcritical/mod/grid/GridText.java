@@ -40,6 +40,10 @@ public final class GridText {
             "Машин %s, просят %s кВт из %s кВт; получают %s %%; на вводе %s В%s");
     public static final String POWER_TRIPPED = t("power_tripped", " — dropped out on undervoltage, press Start",
             " — отпал по нулевой защите, нажмите «Пуск»");
+    public static final String POWER_RESTARTED = t("power_restarted", " — incomer breaker closed again after the undervoltage trip",
+            " — выключатель ввода снова включён после отпадания по нулевой защите");
+    public static final String NO_POWER = t("no_power", "No power: place a socket, power board or UPS within reach",
+            "Нет питания: поставьте рядом розетку, силовой щит или ИБП");
     public static final String POWER_BATTERY = t("power_battery", "; battery %s %%%s", "; батарея %s %%%s");
     public static final String POWER_ON_BATTERY = t("power_on_battery", ", running on battery", ", работает от батареи");
     public static final String SOLAR_STATUS = t("solar_status", "%s panels (%s shaded, %s tracking the sun): %s kW DC, %s kW to the grid; sky %s %% clear, dust %s %%; %s",

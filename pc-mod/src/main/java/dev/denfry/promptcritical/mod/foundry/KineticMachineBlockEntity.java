@@ -34,8 +34,12 @@ import org.jetbrains.annotations.Nullable;
  * @param <U> доменный двойник
  */
 public abstract class KineticMachineBlockEntity<U> extends KineticBlockEntity implements DeviceHost, FoundryDevice,
+        dev.denfry.promptcritical.mod.manufacturing.PassportSlot.Holder,
         dev.denfry.promptcritical.mod.boiler.ShaftConsumer, dev.denfry.promptcritical.mod.client.whole.WholeModelHost {
     private final StressFilter stress = new StressFilter();
+    /** Паспорт машины, собранной на стенде (18 §18.8.3); номинальный у прочих. */
+    private final dev.denfry.promptcritical.mod.manufacturing.PassportSlot passportSlot =
+            new dev.denfry.promptcritical.mod.manufacturing.PassportSlot();
     private SimId simId = SimId.NONE;
     /** Тиков до снятия разового скачка стресса ({@link #spikeStress}). */
     private int spikeTicks;
@@ -269,12 +273,31 @@ public abstract class KineticMachineBlockEntity<U> extends KineticBlockEntity im
     protected void write(CompoundTag tag, HolderLookup.Provider registries, boolean clientPacket) {
         super.write(tag, registries, clientPacket);
         if (!clientPacket) tag.putLong("sim_id", simId.raw());
+        if (!clientPacket) passportSlot.save(tag, registries);
     }
 
     @Override
     protected void read(CompoundTag tag, HolderLookup.Provider registries, boolean clientPacket) {
         super.read(tag, registries, clientPacket);
         if (!clientPacket) simId = new SimId(tag.getLong("sim_id"));
+        if (!clientPacket) passportSlot.load(tag, registries);
+    }
+
+    @Override
+    public dev.denfry.promptcritical.mod.manufacturing.PassportSlot passportSlot() {
+        return passportSlot;
+    }
+
+    @Override
+    protected void applyImplicitComponents(DataComponentInput input) {
+        super.applyImplicitComponents(input);
+        passportSlot.set(input.get(dev.denfry.promptcritical.mod.manufacturing.ManufacturingComponents.MACHINE_PASSPORT.get()));
+    }
+
+    @Override
+    protected void collectImplicitComponents(net.minecraft.core.component.DataComponentMap.Builder builder) {
+        super.collectImplicitComponents(builder);
+        passportSlot.collect(builder);
     }
 
     // --- местный щит (для наследников, реализующих PanelHost) ---

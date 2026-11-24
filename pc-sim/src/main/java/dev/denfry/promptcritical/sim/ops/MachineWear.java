@@ -2,8 +2,11 @@ package dev.denfry.promptcritical.sim.ops;
 
 import dev.denfry.promptcritical.sim.core.StateReader;
 import dev.denfry.promptcritical.sim.core.StateWriter;
+import dev.denfry.promptcritical.sim.manufacturing.assembly.MachinePassport;
 import java.util.ArrayList;
+import java.util.EnumMap;
 import java.util.List;
+import java.util.Map;
 import java.util.SplittableRandom;
 
 /**
@@ -19,6 +22,10 @@ public final class MachineWear {
     private final GlandPacking packing;
     private final ImpellerWear impeller;
     private final double wearMultiplier;
+    /** Множитель износа подшипника от посадки при сборке (18 §18.8.3); переживает замену подшипника. */
+    private double assemblyWearFactor = 1;
+    /** Дефекты сборки из паспорта, в порядке {@link MaintenanceFaultKind}. */
+    private final Map<MaintenanceFaultKind, AssemblyDefect> assembly = new EnumMap<>(MaintenanceFaultKind.class);
 
     public MachineWear(PlainBearing bearing, Lubrication lubrication, GlandPacking packing, ImpellerWear impeller,
             double wearMultiplier) {
@@ -48,7 +55,7 @@ public final class MachineWear {
         lubrication.step(dtPhysS);
         if (packing != null) packing.step(dtPhysS, dryRunning);
         if (impeller != null && !Double.isNaN(waterPh)) impeller.step(dtPhysS, waterPh);
-        return bearing.step(dtPhysS, wearMultiplier, aLub);
+        return bearing.step(dtPhysS, wearMultiplier * assemblyWearFactor, aLub);
     }
 
     public PlainBearing bearing() {
@@ -77,7 +84,44 @@ public final class MachineWear {
         return StethoscopeSound.HUM;
     }
 
+    /**
+     * Начальное состояние из паспорта машины (18 §18.15.7): посадка подшипника и дефекты сборки. Вызывается один раз
+     * при установке; номинальный паспорт ничего не меняет.
+     *
+     * @return новые источники для щита обслуживания
+     */
+    public List<FaultSource> applyPassport(MachinePassport p) {
+        assemblyWearFactor = p.bearingWearFactor();
+        List<FaultSource> added = new ArrayList<>();
+        addDefect(MaintenanceFaultKind.IMBALANCE, p.imbalanceMmS(), added);
+        addDefect(MaintenanceFaultKind.MISALIGNMENT, p.misalignmentMm(), added);
+        addDefect(MaintenanceFaultKind.SEAL_LEAK, p.sealLeak(), added);
+        addDefect(MaintenanceFaultKind.FLANGE_LEAK, p.flangeLeak(), added);
+        return added;
+    }
+
+    private void addDefect(MaintenanceFaultKind kind, double value, List<FaultSource> added) {
+        if (!(value > 0) || assembly.containsKey(kind)) return;
+        AssemblyDefect d = new AssemblyDefect(kind, value);
+        assembly.put(kind, d);
+        added.add(d);
+    }
+
+    public double assemblyWearFactor() {
+        return assemblyWearFactor;
+    }
+
     public void save(StateWriter out) {
+        if (assemblyWearFactor != 1) out.putDouble("assembly_wear", assemblyWearFactor);
+        if (!assembly.isEmpty()) {
+            out.beginObject("assembly");
+            for (AssemblyDefect d : assembly.values()) {
+                out.beginObject(d.kind().name());
+                d.save(out);
+                out.endObject();
+            }
+            out.endObject();
+        }
         out.beginObject("bearing");
         bearing.save(out);
         out.endObject();
@@ -96,7 +140,27 @@ public final class MachineWear {
         }
     }
 
-    public void load(StateReader in) {
+    /**
+     * @return источники дефектов сборки, восстановленные из сохранения (щит добавляет их после базовых, как при
+     * установке)
+     */
+    public List<FaultSource> load(StateReader in) {
+        assemblyWearFactor = in.optDouble("assembly_wear", 1);
+        assembly.clear();
+        List<FaultSource> restored = new ArrayList<>();
+        if (in.has("assembly")) {
+            in.beginObject("assembly");
+            for (MaintenanceFaultKind k : MaintenanceFaultKind.values()) {
+                if (!in.has(k.name())) continue;
+                in.beginObject(k.name());
+                AssemblyDefect d = new AssemblyDefect(k, 0);
+                d.load(in);
+                in.endObject();
+                assembly.put(k, d);
+                restored.add(d);
+            }
+            in.endObject();
+        }
         in.beginObject("bearing");
         bearing.load(in);
         in.endObject();
@@ -113,6 +177,7 @@ public final class MachineWear {
             impeller.load(in);
             in.endObject();
         }
+        return restored;
     }
 
     /** Источники для {@link MaintenancePanel}. */
@@ -120,6 +185,7 @@ public final class MachineWear {
         List<FaultSource> out = new ArrayList<>(List.of(bearing, lubrication));
         if (packing != null) out.add(packing);
         if (impeller != null) out.add(impeller);
+        out.addAll(assembly.values());
         return out;
     }
 }

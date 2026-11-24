@@ -167,7 +167,7 @@ public final class MineHoistBlockEntity extends DeviceBlockEntity
     /** Тормоз по пусконаладке, канат и подшипник на щите обслуживания, пробный рейс (13 §13.6.6). */
     private void operations(HoistUnit u, double d, double v) {
         OpsSubsystem ops = OpsWorld.ops(level);
-        OpsSubsystem.Unit ou = OpsWorld.ensure(level, simId(), UnitKind.MINE_HOIST, 0, false);
+        OpsSubsystem.Unit ou = OpsWorld.ensure(level, simId(), UnitKind.MINE_HOIST, 0, false, this);
         if (ops == null || ou == null) return;
         if (level.getGameTime() % 20 == 0) ops.attach(simId(), FaultSource.of(MaintenanceFaultKind.ROPE_WEAR,
                 () -> u.rope() == null ? 0 : u.rope().damage(), () -> { }));

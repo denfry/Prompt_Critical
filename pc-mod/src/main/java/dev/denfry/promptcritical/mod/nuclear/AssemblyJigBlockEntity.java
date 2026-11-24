@@ -20,6 +20,12 @@ import net.minecraft.world.level.block.state.BlockState;
  * несёт партию: уран, обогащение, конструкцию, число твэлов и газ (аргон, если хоть один твэл с аргоном).
  */
 public final class AssemblyJigBlockEntity extends FuelShopBlockEntity {
+    /** Подъёмник и приборы стапеля, Вт. */
+    @Override
+    protected double ratedPowerW() {
+        return 5.5e3;
+    }
+
     private FuelDesign design = FuelDesign.VVER_1000;
     private int loaded, assemblies;
     private double uKg, u235Kg, u234Kg, densityKg;

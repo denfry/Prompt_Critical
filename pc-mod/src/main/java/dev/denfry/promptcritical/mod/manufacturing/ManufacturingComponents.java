@@ -6,6 +6,7 @@ import dev.denfry.promptcritical.mod.PromptCritical;
 import dev.denfry.promptcritical.sim.manufacturing.PartDefect;
 import dev.denfry.promptcritical.sim.manufacturing.PartRoute;
 import dev.denfry.promptcritical.sim.manufacturing.PartSpec;
+import dev.denfry.promptcritical.sim.manufacturing.assembly.MachinePassport;
 import dev.denfry.promptcritical.sim.metallurgy.HeatTreatState;
 import io.netty.buffer.ByteBuf;
 import java.util.EnumMap;
@@ -74,6 +75,25 @@ public final class ManufacturingComponents {
     public static final DeferredHolder<DataComponentType<?>, DataComponentType<ElectricalData.Core>> STATOR_CORE =
             COMPONENTS.registerComponentType("stator_core", b -> b.persistent(ElectricalData.Core.CODEC)
                     .networkSynchronized(ByteBufCodecs.fromCodec(ElectricalData.Core.CODEC)));
+    /**
+     * Паспорт машины (18 §18.8.3): начальное состояние модели обслуживания 13. Декодер терпимый: значения вне
+     * допустимого диапазона прижимаются, а не роняют разбор.
+     */
+    public static final Codec<MachinePassport> MACHINE_PASSPORT_CODEC = RecordCodecBuilder.create(i -> i.group(
+            Codec.DOUBLE.optionalFieldOf("bearing_wear", 1.0).forGetter(MachinePassport::bearingWearFactor),
+            Codec.DOUBLE.optionalFieldOf("imbalance_mm_s", 0.0).forGetter(MachinePassport::imbalanceMmS),
+            Codec.DOUBLE.optionalFieldOf("misalignment_mm", 0.0).forGetter(MachinePassport::misalignmentMm),
+            Codec.DOUBLE.optionalFieldOf("seal_leak", 0.0).forGetter(MachinePassport::sealLeak),
+            Codec.DOUBLE.optionalFieldOf("flange_leak", 0.0).forGetter(MachinePassport::flangeLeak),
+            Codec.DOUBLE.optionalFieldOf("insulation_mohm", -1.0)
+                    .forGetter(p -> p.hasWinding() ? p.insulationMOhm() : -1.0),
+            Codec.DOUBLE.optionalFieldOf("efficiency", 1.0).forGetter(MachinePassport::efficiencyFactor),
+            Codec.INT.optionalFieldOf("score", 100).forGetter(MachinePassport::score)).apply(i,
+            ManufacturingComponents::decodePassport));
+    public static final DeferredHolder<DataComponentType<?>, DataComponentType<MachinePassport>> MACHINE_PASSPORT =
+            COMPONENTS.registerComponentType("machine_passport", b -> b.persistent(MACHINE_PASSPORT_CODEC)
+                    .networkSynchronized(ByteBufCodecs.fromCodec(MACHINE_PASSPORT_CODEC)));
+
     /** Намотанный статор (18 §18.6.9, §18.8.3). */
     public static final DeferredHolder<DataComponentType<?>, DataComponentType<ElectricalData.Wound>> STATOR =
             COMPONENTS.registerComponentType("stator", b -> b.persistent(ElectricalData.Wound.CODEC)
@@ -109,5 +129,17 @@ public final class ManufacturingComponents {
     private static <E extends Enum<E>> E enumOr(Class<E> type, String name, E fallback) {
         for (E e : type.getEnumConstants()) if (e.name().equals(name)) return e;
         return fallback;
+    }
+
+    static MachinePassport decodePassport(double wear, double imbalance, double misalign, double seal, double flange,
+            double insulation, double efficiency, int score) {
+        return new MachinePassport(finite(wear, 1, 0.05, 100), finite(imbalance, 0, 0, 100), finite(misalign, 0, 0, 10),
+                finite(seal, 0, 0, 10), finite(flange, 0, 0, 10),
+                Double.isFinite(insulation) && insulation > 0 ? Math.min(insulation, 1e6) : Double.NaN,
+                finite(efficiency, 1, 0.01, 1.05), Math.clamp(score, 0, 100));
+    }
+
+    private static double finite(double v, double fallback, double min, double max) {
+        return Double.isFinite(v) ? Math.clamp(v, min, max) : fallback;
     }
 }

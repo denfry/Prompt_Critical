@@ -42,6 +42,8 @@ import org.jetbrains.annotations.Nullable;
  * [BALANCE].
  */
 public final class NglFractionatorBlockEntity extends DeviceBlockEntity implements FoundryDevice, PanelHost {
+    /** Сырьевые насосы, насосы орошения и аппараты воздушного охлаждения, Вт. Розетка или силовой щит рядом; при недостатке установка работает медленнее. */
+    public static final double POWER_W = 90e3;
     public static final double FEED_LH = 2_000, STAGES = 15, LATENT_J_KG = 400e3, FUEL_J_PER_SM3 = 36e6, EFFICIENCY = 0.85;
     public static final double REFLUX_MIN = 0.5, REFLUX_MAX = 5, REFLUX_STEP = 0.5;
     public static final int MB = 8_000;
@@ -123,7 +125,7 @@ public final class NglFractionatorBlockEntity extends DeviceBlockEntity implemen
         double offSm3 = NglFractionator.Result.total(r.fuelGas()) * molPerL / WaterContent.MOL_PER_SM3;
         double heatJ = (reflux + 1) * (kg(r.fuelGas()) + kg(r.propane()) + kg(r.butane())) * molPerL * LATENT_J_KG;
         double fuelSm3PerL = heatJ / (EFFICIENCY * FUEL_J_PER_SM3);
-        double litresIn = Math.min(FEED_LH / 3600 * dt, feed.amount());
+        double litresIn = Math.min(FEED_LH / 3600 * dt * dev.denfry.promptcritical.mod.grid.MachinePower.supply(s, worldPosition, feed.amount() > 0 ? POWER_W : 0), feed.amount());
         litresIn = Math.min(litresIn, Math.min(propane.room() / Math.max(pL, 1e-9), Math.min(butane.room() / Math.max(bL, 1e-9),
                 gasoline.room() / Math.max(gL, 1e-9))));
         double net = fuelSm3PerL - offSm3;

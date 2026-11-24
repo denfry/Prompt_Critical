@@ -505,6 +505,12 @@ public final class SitePlans {
 
     @Nullable
     /** Кузница и машиностроение реального масштаба (18 §18.6–18.7); у {@link Map#of} не больше десяти пар. */
+    /** Сборка машин из деталей (18 §18.8.2): плита 3 × 3 м ≈ 2,5 т, портал с талью и опоры ≈ 0,5 т (оценки). */
+    private static final Map<String, Plan> ASSEMBLY_PLANS = Map.of(
+            "assembly_stand", plan("assembly_stand", PcBlocks.ASSEMBLY_STAND, 3.0,
+                    st("assembly_plate", 120, n(INGOT, 20), n(CONCRETE, 2)),
+                    st("assembly_hoist", 80, n(PLATE, 3), n(BEAM, 2))));
+
     private static final Map<String, Plan> SMITHY_PLANS = Map.of(
             // молот 2 cwt: колонна с цилиндрами ≈ 3,5 т, шабот ≈ 0,7 т (каталоги Massey; оценки)
             "power_hammer_real", plan("power_hammer_real", PcBlocks.POWER_HAMMER_REAL, 4.2,
@@ -559,12 +565,13 @@ public final class SitePlans {
         if (p == null) p = I0_SHOP_PLANS.get(id);
         if (p == null) p = STEAM_MINE_PLANS.get(id);
         if (p == null) p = SMITHY_PLANS.get(id);
+        if (p == null) p = ASSEMBLY_PLANS.get(id);
         return p != null ? p : NONFERROUS_PLANS.get(id);
     }
 
     public static Iterable<Plan> all() {
         return java.util.stream.Stream.of(PLANS, I0_PLANS, IRONMAKING_PLANS, POWER_PLANS, MINING_COKE_PLANS, I1_STEEL_PLANS, FOUNDRY_PLANS, I0_SHOP_PLANS,
-                        STEAM_MINE_PLANS, CARBON_PLANS, SMITHY_PLANS, NONFERROUS_PLANS)
+                        STEAM_MINE_PLANS, CARBON_PLANS, SMITHY_PLANS, ASSEMBLY_PLANS, NONFERROUS_PLANS)
                 .flatMap(m -> m.values().stream()).toList();
     }
 }

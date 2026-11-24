@@ -8,7 +8,6 @@ import java.util.WeakHashMap;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Holder;
 import net.minecraft.server.level.ServerLevel;
-import net.minecraft.tags.BiomeTags;
 import net.minecraft.world.level.biome.Biome;
 
 /**
@@ -29,9 +28,13 @@ public final class EnvironmentService {
     /** Погода в точке на высоте {@code heightM} над ней. */
     public static Environment.Sample sample(ServerLevel level, BlockPos pos, double heightM) {
         Holder<Biome> biome = level.getBiome(pos);
-        return environment(level).sample(level.getGameTime(), pos.getY(), heightM, roughness(biome),
-                Environment.climateC(biome.value().getBaseTemperature()), level.isRaining() && biome.value().hasPrecipitation(),
-                level.isThundering() && biome.value().hasPrecipitation());
+        // осадки — в точке, под открытым небом над ней: моды с местной погодой работают сами (16 §16.10.3)
+        // (снегопад isRainingAt не считает, а для облачности, ветра и влажности он такие же осадки)
+        BlockPos top = level.getHeightmapPos(net.minecraft.world.level.levelgen.Heightmap.Types.MOTION_BLOCKING, pos);
+        boolean rain = level.isRainingAt(top)
+                || level.isRaining() && biome.value().getPrecipitationAt(top) == Biome.Precipitation.SNOW;
+        return environment(level).sample(level.getGameTime(), pos.getY(), heightM, Environment.roughness(BiomeEnvironment.surfaceOf(biome)),
+                Environment.climateC(biome.value().getBaseTemperature()), rain, rain && level.isThundering());
     }
 
     /** Температура воды реки или пруда у {@code pos}, °C. */
@@ -43,19 +46,5 @@ public final class EnvironmentService {
     /** Средняя годовая температура климата в точке, К: столько держит порода под ней. */
     public static double climateK(ServerLevel level, BlockPos pos) {
         return Environment.climateC(level.getBiome(pos).value().getBaseTemperature()) + 273.15;
-    }
-
-    private static double roughness(Holder<Biome> b) {
-        Environment.Surface s;
-        if (b.is(BiomeTags.IS_OCEAN) || b.is(BiomeTags.IS_DEEP_OCEAN) || b.is(BiomeTags.IS_RIVER) || b.is(BiomeTags.IS_BEACH)) {
-            s = Environment.Surface.WATER;
-        } else if (b.is(BiomeTags.IS_FOREST) || b.is(BiomeTags.IS_TAIGA) || b.is(BiomeTags.IS_JUNGLE)) {
-            s = Environment.Surface.FOREST;
-        } else if (b.is(BiomeTags.IS_HILL) || b.is(BiomeTags.IS_MOUNTAIN) || b.is(BiomeTags.IS_SAVANNA)) {
-            s = Environment.Surface.SHRUB;
-        } else {
-            s = Environment.Surface.OPEN;
-        }
-        return Environment.roughness(s);
     }
 }
