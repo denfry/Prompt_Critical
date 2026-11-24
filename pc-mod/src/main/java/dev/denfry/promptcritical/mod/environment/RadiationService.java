@@ -214,8 +214,12 @@ public final class RadiationService {
             if (bqS <= 0) return;
         }
         var list = RELEASES.computeIfAbsent(level, l -> new HashMap<>()).computeIfAbsent(stack, k -> new java.util.ArrayList<>());
+        long now = level.getGameTime();
+        // новый эпизод выброса — для API аддонов; дальше источник лишь продлевает его раз в секунду
+        boolean fresh = list.stream().noneMatch(r -> r.nuclide == nuclide && r.until >= now);
         list.removeIf(r -> r.nuclide == nuclide);
-        list.add(new Release(nuclide, bqS, level.getGameTime() + HOLD_TICKS));
+        list.add(new Release(nuclide, bqS, now + HOLD_TICKS));
+        if (fresh) dev.denfry.promptcritical.mod.api.ApiEvents.release(level, stack, nuclide.name(), bqS);
     }
 
     /** Действующий выброс нуклида {@code nuclide} из точки {@code stack}, Бк/с; 0 — нет. */

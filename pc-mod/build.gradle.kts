@@ -52,6 +52,10 @@ repositories {
         name = "Simple Voice Chat API"
         content { includeGroup("de.maxhenkel.voicechat") }
     }
+    maven("https://maven.latvian.dev/releases") {
+        name = "KubeJS / Rhino"
+        content { includeGroup("dev.latvian.mods") }
+    }
 }
 
 val gametest: SourceSet by sourceSets.creating {
@@ -161,6 +165,10 @@ dependencies {
     compileOnly(libs.journeymap.api)
     // Маскировка речи шумом (16 §16.4.2): плагин Simple Voice Chat
     compileOnly(libs.voicechat.api)
+    // KubeJS (16 §16.11.1): мягкая зависимость. Плагин указан в kubejs.plugins.txt, его читает только KubeJS,
+    // так что без KubeJS классы compat.kubejs не загружаются. Транзитивные зависимости KubeJS для компиляции не нужны.
+    compileOnly(libs.kubejs) { isTransitive = false }
+    compileOnly(libs.rhino) { isTransitive = false }
 }
 
 tasks.processResources {
