@@ -4,7 +4,7 @@ import dev.denfry.promptcritical.api.ApiEvent;
 import dev.denfry.promptcritical.api.PromptCriticalApi;
 import dev.denfry.promptcritical.api.SimulationAccess;
 import dev.denfry.promptcritical.mod.PromptCritical;
-import dev.denfry.promptcritical.mod.api.DeviceStations;
+import dev.denfry.promptcritical.mod.api.ApiEvents;
 import dev.denfry.promptcritical.mod.binding.SimBindings;
 import dev.denfry.promptcritical.mod.binding.SimLevelBinding;
 import dev.denfry.promptcritical.mod.ironworks.IronworksComponents;
@@ -172,7 +172,8 @@ public final class ReactorGameTests {
             }
         }
         buildPile(h, true);
-        UUID station = DeviceStations.id(dim, h.absolutePos(DESK));
+        // станция — от действующей модели станций (04d §4d.9), а не от временной DeviceStations
+        UUID station = ApiEvents.stations().stationOf(h.getLevel(), h.absolutePos(DESK));
         BlockPos button = new BlockPos(X0 + N + 2, Y0, Z0);
         h.setBlock(button, PcBlocks.SCRAM_BUTTON.get().defaultBlockState());
         h.runAfterDelay(30, () -> {
