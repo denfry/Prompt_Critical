@@ -102,4 +102,36 @@ public final class Bor60GameTests {
                 })
                 .thenSucceed();
     }
+
+    /** Пуск с пульта БОР-60 только кнопками: взвод АЗ, извлечение регулирующих стержней — мощность растёт. */
+    @GameTest(template = TALL, timeoutTicks = 400)
+    public static void bor60StartsFromItsBoardButtons(GameTestHelper h) {
+        place(h, REACTOR, PcBlocks.BOR60_REACTOR_REAL.get());
+        loadCore(h);
+        double[] before = new double[2];
+        h.startSequence()
+                .thenIdle(40)
+                .thenExecute(() -> {
+                    SfrReactorBlockEntity be = bor(h);
+                    for (int id : new int[] {SfrPanels.B_RESET, SfrPanels.B_UP, SfrPanels.B_STOP, SfrPanels.B_DOWN})
+                        h.assertTrue(be.panelLayout().elements.stream().anyMatch(e -> e instanceof dev.denfry.promptcritical.mod.panel.PanelLayout.Button b && b.id() == id), "BOR-60 board has button " + id);
+                    var op = net.neoforged.neoforge.common.util.FakePlayerFactory.getMinecraft(h.getLevel());
+                    SodiumFastReactor r = be.reactor();
+                    be.onPanelButton(op, SfrPanels.B_RESET);
+                    h.assertTrue(r.trip() == SodiumFastReactor.Trip.NONE, "scram reset from the board, got " + r.trip());
+                    before[0] = r.power();
+                    before[1] = r.controlPosition();
+                    be.onPanelButton(op, SfrPanels.B_UP);
+                })
+                .thenIdle(40)
+                .thenExecute(() -> {
+                    var op = net.neoforged.neoforge.common.util.FakePlayerFactory.getMinecraft(h.getLevel());
+                    bor(h).onPanelButton(op, SfrPanels.B_STOP);
+                    SodiumFastReactor r = bor(h).reactor();
+                    h.assertTrue(r.controlPosition() < before[1], "control rods withdrawn: " + before[1] + " -> " + r.controlPosition());
+                    h.assertTrue(r.power() > before[0], "power rising: " + before[0] + " -> " + r.power());
+                })
+                .thenSucceed();
+    }
+
 }

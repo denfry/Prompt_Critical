@@ -26,6 +26,17 @@ public final class Vver70Panels {
     public static final int B_MCP_START = 40, B_MCP_STOP = 43;
     public static final int AZ_HOLD_MS = 1500;
 
+    /** Пуск с БПУ: взвод АЗ, снятие пусковой уставки 25 %, привод регулирующей группы (те же ключи, что у пульта PWR). */
+    private static final Tr RESET = PanelText.tr("npp.reset", "Cock", "Взвод"),
+            RESET_TIP = PanelText.tr("pwr.reset_tip", "Reset the trip and cock the scram bank (only with every cause gone, 10 s after)",
+                    "Сбросить АЗ и взвести аварийную группу (только когда все причины ушли, через 10 с)"),
+            LOW_FLUX = PanelText.tr("pwr.low_flux", "Permit", "Разреш."),
+            LOW_FLUX_TIP = PanelText.tr("pwr.low_flux_tip", "Lift the 25 % start-up power trip (allowed above 10 %)",
+                    "Снять пусковую уставку АЗ по мощности 25 % (разрешено выше 10 %)"),
+            UP = PanelText.tr("npp.rr_up", "▲", "▲"), STOP = PanelText.tr("npp.rr_stop", "■", "■"), DOWN = PanelText.tr("npp.rr_down", "▼", "▼"),
+            RG_UP_TIP = PanelText.tr("pwr.rg_up_tip", "Withdraw the control group (2 cm/s)", "Извлекать регулирующую группу (2 см/с)"),
+            RG_STOP_TIP = PanelText.tr("pwr.rg_stop_tip", "Stop the control group", "Остановить регулирующую группу"),
+            RG_DOWN_TIP = PanelText.tr("pwr.rg_down_tip", "Insert the control group", "Погружать регулирующую группу");
     private static final Tr PCT = PanelText.PERCENT, SEC = PanelText.tr("unit.s", "s", "с"), MPA = PanelText.MPA,
             N = PanelText.tr("npp.n", "Power", "Мощность"),
             T_PERIOD = PanelText.tr("npp.period", "Period", "Период"),
@@ -72,7 +83,12 @@ public final class Vver70Panels {
             .button(114, 188, 30, B_MCP_STOP + 1, OFF.get(), OFF_TIP.get(2))
             .button(148, 188, 30, B_MCP_START + 2, ON.get(3), ON_TIP.get(3))
             .button(182, 188, 30, B_MCP_STOP + 2, OFF.get(), OFF_TIP.get(3))
+            .button(12, 214, 30, PwrPanels.B_RESET, RESET.get(), RESET_TIP.get())
+            .button(46, 214, 30, PwrPanels.B_LOW_FLUX, LOW_FLUX.get(), LOW_FLUX_TIP.get())
             .holdButton(80, 214, 60, PwrPanels.B_SCRAM, AZ_HOLD_MS, AZ.get(), AZ_TIP.get())
+            .button(146, 214, 18, PwrPanels.B_RG_UP, UP.get(), RG_UP_TIP.get())
+            .button(166, 214, 18, PwrPanels.B_RG_STOP, STOP.get(), RG_STOP_TIP.get())
+            .button(186, 214, 18, PwrPanels.B_RG_DOWN, DOWN.get(), RG_DOWN_TIP.get())
             .noInventory()
             .build();
 

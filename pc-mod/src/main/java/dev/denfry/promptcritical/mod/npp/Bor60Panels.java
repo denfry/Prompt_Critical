@@ -37,7 +37,14 @@ public final class Bor60Panels {
             IHX = PanelText.tr("bor60.ihx", "IHX ΔT %s K · secondary %s → %s °C · steam %s kg/s", "ПТО ΔT %s K · 2К %s → %s °C · пар %s кг/с"),
             AZ = PanelText.tr("v70.az", "AZ", "АЗ"),
             AZ_TIP = PanelText.tr("v70.az_tip", "Lift the guard and hold for 1.5 s to scram the reactor",
-                    "Откинуть крышку и держать 1,5 с — аварийная защита реактора");
+                    "Откинуть крышку и держать 1,5 с — аварийная защита реактора"),
+            // пуск с пульта: взвод АЗ и привод регулирующих стержней (те же ключи, что у пульта БН)
+            RESET = PanelText.tr("npp.reset", "Cock", "Взвод"),
+            RESET_TIP = PanelText.tr("bwr.reset_tip", "Reset the scram (only with the cause gone and rods in)", "Сбросить АЗ (причина ушла, стержни внизу)"),
+            UP = PanelText.tr("npp.rr_up", "▲", "▲"), STOP = PanelText.tr("npp.rr_stop", "■", "■"), DOWN = PanelText.tr("npp.rr_down", "▼", "▼"),
+            UP_TIP = PanelText.tr("bwr.up_tip", "Withdraw the control rods", "Извлекать регулирующие стержни"),
+            STOP_TIP = PanelText.tr("bwr.stop_tip", "Stop the control rods", "Остановить регулирующие стержни"),
+            DOWN_TIP = PanelText.tr("bwr.down_tip", "Insert the control rods", "Вводить регулирующие стержни");
 
     private static final SodiumFastReactor.Design D = SodiumFastReactor.BOR60;
 
@@ -53,7 +60,11 @@ public final class Bor60Panels {
             .bar(12, 114, 196, SfrPanels.FLOW, 1, 120, 0xFFD0A040, FLOW1.get(), null)
             .bar(12, 134, 196, INT_FLOW, 1, 120, 0xFFC08030, FLOW2.get(), v -> FLOW2_TIP.get(v.raw(IHX_PUMPS)))
             .readout(12, 148, 196, Bor60Panels::ihx, null)
+            .button(12, 174, 36, SfrPanels.B_RESET, RESET.get(), RESET_TIP.get())
             .holdButton(72, 174, 76, SfrPanels.B_SCRAM, Vver70Panels.AZ_HOLD_MS, AZ.get(), AZ_TIP.get())
+            .button(154, 174, 18, SfrPanels.B_UP, UP.get(), UP_TIP.get())
+            .button(172, 174, 18, SfrPanels.B_STOP, STOP.get(), STOP_TIP.get())
+            .button(190, 174, 18, SfrPanels.B_DOWN, DOWN.get(), DOWN_TIP.get())
             .noInventory()
             .build();
 
