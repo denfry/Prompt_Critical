@@ -1,6 +1,10 @@
 package dev.denfry.promptcritical.mod.gametest;
 
+import dev.denfry.promptcritical.api.ApiEvent;
+import dev.denfry.promptcritical.api.PromptCriticalApi;
+import dev.denfry.promptcritical.api.SimulationAccess;
 import dev.denfry.promptcritical.mod.PromptCritical;
+import dev.denfry.promptcritical.mod.api.DeviceStations;
 import dev.denfry.promptcritical.mod.binding.SimBindings;
 import dev.denfry.promptcritical.mod.binding.SimLevelBinding;
 import dev.denfry.promptcritical.mod.ironworks.IronworksComponents;
@@ -16,6 +20,9 @@ import dev.denfry.promptcritical.sim.reactor.GraphitePile;
 import dev.denfry.promptcritical.sim.reactor.PileLayout;
 import dev.denfry.promptcritical.sim.reactor.PileTrip;
 import dev.denfry.promptcritical.sim.reactor.PileUnit;
+import java.util.List;
+import java.util.UUID;
+import java.util.concurrent.CopyOnWriteArrayList;
 import net.minecraft.core.BlockPos;
 import net.minecraft.gametest.framework.GameTest;
 import net.minecraft.gametest.framework.GameTestHelper;
@@ -39,6 +46,10 @@ public final class ReactorGameTests {
     private static final int ZIP_X = X0 + 3, CONTROL_X = X0 + 2, ROD_Z = Z0 + 3;
     private static final BlockPos DESK = new BlockPos(X0 - 1, Y0 + 2, Z0 + 2);
     private static final BlockPos COUNTER = new BlockPos(X0 + N, Y0 + 3, Z0 + 3);
+
+    /** Все события API за прогон: подписка одна на сервер, отписки в API нет. */
+    private static final List<ApiEvent> API_EVENTS = new CopyOnWriteArrayList<>();
+    private static volatile boolean apiSubscribed;
 
     private ReactorGameTests() {
     }
@@ -141,6 +152,45 @@ public final class ReactorGameTests {
                 h.assertTrue(p.trip() == PileTrip.MANUAL, "button scram, got " + p.trip());
                 h.assertTrue(p.zipInsertion() == 1.0, "zip rod fell in");
                 h.assertTrue(!p.windZip(), "no winding before reset");
+                h.succeed();
+            });
+        });
+    }
+
+    /**
+     * API аддонов (05 §5.8.1): АЗ котла с кнопки приходит подписчику {@link SimulationAccess} событием
+     * {@link ApiEvent.Trip} со станцией пульта, и тот же пульт читается через API тегами Lua.
+     */
+    @GameTest(template = LARGE, timeoutTicks = 300)
+    public static void scramReachesTheAddonApiAsATrip(GameTestHelper h) {
+        String dim = h.getLevel().dimension().location().toString();
+        SimulationAccess api = PromptCriticalApi.get().simulation(dim);
+        synchronized (API_EVENTS) {
+            if (!apiSubscribed) {
+                api.subscribeEvents(API_EVENTS::add);
+                apiSubscribed = true;
+            }
+        }
+        buildPile(h, true);
+        UUID station = DeviceStations.id(dim, h.absolutePos(DESK));
+        BlockPos button = new BlockPos(X0 + N + 2, Y0, Z0);
+        h.setBlock(button, PcBlocks.SCRAM_BUTTON.get().defaultBlockState());
+        h.runAfterDelay(30, () -> {
+            GraphitePile p = unit(h).pile();
+            p.setRodInsertion(new BlockPos(h.absolutePos(new BlockPos(ZIP_X, Y0 + N, ROD_Z))).asLong(), 0);
+            h.assertTrue(p.zipCocked(), "zip rod cocked by hand");
+            h.assertTrue(api.stations().contains(station), "the pile desk is a station of the API");
+            String trippedTag = api.tags(station).stream().filter(t -> t.endsWith("tripped")).findFirst().orElse(null);
+            h.assertTrue(trippedTag != null, "the desk shows its scram lamp as a tag, got " + api.tags(station));
+            h.setBlock(button.above(), Blocks.REDSTONE_BLOCK.defaultBlockState());
+            h.runAfterDelay(60, () -> {
+                h.assertTrue(p.trip() == PileTrip.MANUAL, "button scram, got " + p.trip());
+                ApiEvent.Trip trip = API_EVENTS.stream().filter(e -> e instanceof ApiEvent.Trip t && t.tripped() && t.stationId().equals(station))
+                        .map(e -> (ApiEvent.Trip) e).findFirst().orElse(null);
+                h.assertTrue(trip != null, "a Trip event for the desk's station, got " + API_EVENTS);
+                h.assertTrue(trip.dimension().equals(dim), "event dimension " + trip.dimension());
+                h.assertTrue(trip.device().startsWith("reactor_controller@"), "device id " + trip.device());
+                h.assertTrue(api.read(station, trippedTag).orElse(0.0) > 0.5, "the scram lamp reads lit through the API");
                 h.succeed();
             });
         });
