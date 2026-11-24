@@ -139,8 +139,14 @@ public final class PanelLayout {
     public record Caption(int x, int y, Component text) implements Element {
     }
 
-    /** Кнопка щита: {@code id} уходит хосту ({@link PanelHost#onPanelButton}). */
-    public record Button(int x, int y, int w, int id, Component label, @Nullable Component tip) implements Element {
+    /**
+     * Кнопка щита: {@code id} уходит хосту ({@link PanelHost#onPanelButton}). {@code holdMs} &gt; 0 — ключ под крышкой:
+     * срабатывает, только если его держать столько миллисекунд (АЗ, отключение блока).
+     */
+    public record Button(int x, int y, int w, int id, Component label, @Nullable Component tip, int holdMs) implements Element {
+        public Button(int x, int y, int w, int id, Component label, @Nullable Component tip) {
+            this(x, y, w, id, label, tip, 0);
+        }
     }
 
     /**
@@ -281,6 +287,12 @@ public final class PanelLayout {
 
         public Builder button(int x, int y, int w, int id, Component label, @Nullable Component tip) {
             elements.add(new Button(x, y, w, id, label, tip));
+            return this;
+        }
+
+        /** Ключ, который надо держать {@code holdMs} мс, чтобы он сработал. */
+        public Builder holdButton(int x, int y, int w, int id, int holdMs, Component label, @Nullable Component tip) {
+            elements.add(new Button(x, y, w, id, label, tip, holdMs));
             return this;
         }
 

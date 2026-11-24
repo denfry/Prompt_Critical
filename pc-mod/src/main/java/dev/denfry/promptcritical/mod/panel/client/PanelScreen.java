@@ -39,7 +39,7 @@ public final class PanelScreen extends AbstractContainerScreen<PanelMenu> {
         fit = PanelFit.of(layout, font, title);
         for (PanelLayout.Element e : layout.elements) {
             if (e instanceof PanelLayout.Button b) {
-                addRenderableWidget(new PanelButton(leftPos + b.x(), topPos + b.y(), b.w(), 16, b.label(), b.tip(),
+                addRenderableWidget(new PanelButton(leftPos + b.x(), topPos + b.y(), b.w(), 16, b.label(), b.tip(), b.holdMs(),
                         () -> click(b.id())));
             }
         }
