@@ -85,7 +85,10 @@ public final class SfrReactorBlockEntity extends DeviceBlockEntity implements de
             setChanged();
         }
     };
-    private final List<BlockPos> pumps = new ArrayList<>(), generators = new ArrayList<>();
+    private final List<BlockPos> pumps = new ArrayList<>(), generators = new ArrayList<>(), exchangers = new ArrayList<>();
+    /** ПГ, в котором вода течёт в натрий (учения или перегрев трубок): там же рвётся мембрана. */
+    @Nullable
+    private BlockPos leakingSg;
     private SodiumFastReactor.Trip lastTrip = SodiumFastReactor.Trip.MANUAL;
     private boolean discWas;
     private double lastRods = Double.NaN;
@@ -110,13 +113,26 @@ public final class SfrReactorBlockEntity extends DeviceBlockEntity implements de
         return reactor;
     }
 
+    /** БОР-60 реального масштаба: петлевая конструкция {@link SodiumFastReactor#BOR60} и свой пульт. */
+    public boolean bor60() {
+        return "bor60_reactor_real".equals(wholeModelId());
+    }
+
+    /** Конструкция по блоку: БОР-60 или бассейновый БН. */
+    public SodiumFastReactor.Design design() {
+        return bor60() ? SodiumFastReactor.BOR60 : SodiumFastReactor.DEFAULT;
+    }
+
     private void link(ServerLevel sl) {
         pumps.clear();
         generators.clear();
+        exchangers.clear();
         AABB box = new AABB(worldPosition).inflate(wholeModelId() != null ? LINK_RADIUS_REAL : LINK_RADIUS);
         for (PrimaryPumpBlockEntity p : Ironworks.blockEntities(sl, box, PrimaryPumpBlockEntity.class))
             if (pumps.size() < 2) pumps.add(p.getBlockPos());
         for (SteamGeneratorBlockEntity g : Ironworks.blockEntities(sl, box, SteamGeneratorBlockEntity.class)) generators.add(g.getBlockPos());
+        for (IhxBlockEntity x : Ironworks.blockEntities(sl, box, IhxBlockEntity.class))
+            if (exchangers.size() < SodiumFastReactor.BOR60.loops()) exchangers.add(x.getBlockPos());
     }
 
     @Override
@@ -133,17 +149,33 @@ public final class SfrReactorBlockEntity extends DeviceBlockEntity implements de
         double[] drive = new double[2];
         for (int i = 0; i < 2; i++)
             if (i < pumps.size() && level.getBlockEntity(pumps.get(i)) instanceof PrimaryPumpBlockEntity p) drive[i] = p.drive();
+        if (bor60()) {
+            // БОР-60: по ЦНН первого контура в каждой из двух петель — расход средний; второй контур гонят насосы при ПТО
+            int loops = r.design().loops(), pumping = 0;
+            for (BlockPos x : exchangers)
+                if (level.getBlockEntity(x) instanceof IhxBlockEntity ihx) {
+                    if (ihx.pumping()) pumping++;
+                    ihx.report(r.intermediateHotK() - 273.15, r.intermediateColdK() - 273.15);
+                }
+            drive = new double[] {(drive[0] + drive[1]) / loops, pumping / (double) loops};
+        }
         // учебный блэкаут: насосы обесточены, пар не отбирается, АЗ
         if (blackoutDrill) drive[0] = drive[1] = 0;
         r.setPumpDrive(drive[0], drive[1]);
         List<SteamGeneratorBlockEntity> out = new ArrayList<>();
         for (BlockPos p : generators)
             if (level.getBlockEntity(p) instanceof SteamGeneratorBlockEntity sg && !Double.isNaN(sg.secondaryK())) out.add(sg);
-        r.setSteamDemand(out.isEmpty() || blackoutDrill ? 0 : 1.1 * SodiumFastReactor.NOMINAL_W);
+        r.setSteamDemand(out.isEmpty() || blackoutDrill ? 0 : 1.1 * r.design().nominalW());
         AutomationUnit a = MechanismWiring.unit(level, simId(), AutomationKind.REACTOR_IO);
         r.setExternalTrip(blackoutDrill || a != null && a.loadEnergized(1));
         r.setPrimaryLeak(r.outletK() - 273.15 > CREEP_OUTLET_C ? PRIMARY_LEAK_KG_S : 0);
-        r.setSteamGeneratorLeak(r.intermediateHotK() - 273.15 > SG_STRESS_C ? SG_LEAK_KG_S : 0);
+        // вода в натрий: перегрев трубок ПГ или учения на ПГ БОР-60 (Shift + ПКМ по ПГ)
+        leakingSg = null;
+        for (BlockPos p : generators)
+            if (level.getBlockEntity(p) instanceof SteamGeneratorBlockEntity sg && sg.tubeLeakDrill()) leakingSg = p;
+        boolean stressed = r.intermediateHotK() - 273.15 > SG_STRESS_C;
+        if (stressed && leakingSg == null && !out.isEmpty()) leakingSg = out.get(0).getBlockPos();
+        r.setSteamGeneratorLeak(stressed || leakingSg != null ? SG_LEAK_KG_S : 0);
         r.step();
         if (run.update(SodiumFastReactor.DT * b.world().clock().kSlow(), r.power(), r.trip() != SodiumFastReactor.Trip.NONE && r.trip() != SodiumFastReactor.Trip.MANUAL))
             dev.denfry.promptcritical.mod.content.SimAchievements.nearby(sl, worldPosition, dev.denfry.promptcritical.mod.content.SimAchievements.HUNDRED_DAYS, "days", run.days());
@@ -158,11 +190,28 @@ public final class SfrReactorBlockEntity extends DeviceBlockEntity implements de
         }
         if (ticks % 20 == 0) {
             RadiationService.source(sl, worldPosition.getCenter().add(0, 1, 0),
-                    FissionSource.reactor(r.power() * SodiumFastReactor.NOMINAL_W, Math.max(0, r.thermalW() - r.power() * SodiumFastReactor.NOMINAL_W)));
+                    FissionSource.reactor(r.power() * r.design().nominalW(), Math.max(0, r.thermalW() - r.power() * r.design().nominalW())));
             accidents(sl, b, r);
+            syncRods(sl, r);
         }
         events(sl, r);
         if (ticks % 100 == 0) setChanged();
+    }
+
+    /** Указатели приводов СУЗ на цельной модели: клиенту — выведенная доля стержней, раз в секунду при изменении. */
+    private float rodsOut, rodsSent = -1;
+
+    private void syncRods(ServerLevel sl, SodiumFastReactor r) {
+        if (wholeModelId() == null) return;
+        rodsOut = (float) Math.max(0, Math.min(1, 1 - (r.scramPosition() + r.controlPosition()) / 2));
+        if (Math.abs(rodsOut - rodsSent) < 0.02f) return;
+        rodsSent = rodsOut;
+        sl.sendBlockUpdated(worldPosition, getBlockState(), getBlockState(), 2);
+    }
+
+    /** Выведенная доля стержней (0 — введены, 1 — выведены) для partial-модели указателей. */
+    public float rodsOut() {
+        return rodsOut;
     }
 
     /** Натриевый пожар и реакция натрий–вода: дым, огонь в {@code DamageBudget} и хлопок мембраны. */
@@ -178,12 +227,21 @@ public final class SfrReactorBlockEntity extends DeviceBlockEntity implements de
             sl.playSound(null, worldPosition, SoundEvents.FIRE_AMBIENT, SoundSource.BLOCKS, 1.5f, 0.7f);
         }
         if (r.ruptureDiscBurst() && !discWas) {
-            b.damage().submit(new DamageRequest(requestSeq++, simId(), null, DamageKind.OVERPRESSURE_BREACH, o,
-                    r.sodiumWaterW() * 10, 3, 2));
-            sl.sendParticles(ParticleTypes.CLOUD, worldPosition.getX() + 0.5, worldPosition.getY() + 2, worldPosition.getZ() + 0.5,
-                    40, 1.5, 1, 1.5, 0.1);
-            sl.playSound(null, worldPosition, SoundEvents.GENERIC_EXPLODE.value(), SoundSource.BLOCKS, 1.0f, 1.4f);
+            // мембрана на линии сброса ПГ: реакция натрий–вода выбрасывает водород и щёлочь, водород горит на выходе
+            BlockPos at = leakingSg != null ? leakingSg.above(7) : worldPosition.above(2);
+            b.damage().submit(new DamageRequest(requestSeq++, simId(), null, DamageKind.OVERPRESSURE_BREACH,
+                    new GridPos(at.getX(), at.getY(), at.getZ()), r.sodiumWaterW() * 10, 3, 2));
+            sl.sendParticles(ParticleTypes.CLOUD, at.getX() + 0.5, at.getY() + 0.5, at.getZ() + 0.5, 60, 1.5, 1, 1.5, 0.1);
+            if (leakingSg != null)
+                sl.sendParticles(ParticleTypes.FLAME, at.getX() + 0.5, at.getY() + 1, at.getZ() + 0.5, 20, 0.4, 0.6, 0.4, 0.05);
+            sl.playSound(null, at, SoundEvents.GENERIC_EXPLODE.value(), SoundSource.BLOCKS, 1.0f, 1.4f);
+            if (bor60())
+                for (ServerPlayer p : sl.getPlayers(p -> p.distanceToSqr(at.getCenter()) < 48 * 48))
+                    p.displayClientMessage(NppText.msg("na_water_disc").withStyle(ChatFormatting.RED), false);
         }
+        if (r.sodiumWaterW() > 0 && leakingSg != null)
+            // натрий–вода в ПГ: щелочной туман у патрубков
+            sl.sendParticles(ParticleTypes.WHITE_ASH, leakingSg.getX() + 0.5, leakingSg.getY() + 4, leakingSg.getZ() + 0.5, 12, 1, 2, 1, 0.01);
         discWas = r.ruptureDiscBurst();
     }
 
@@ -228,7 +286,7 @@ public final class SfrReactorBlockEntity extends DeviceBlockEntity implements de
         if (s.isEmpty()) return;
         FuelLot l = FuelLot.of(s);
         if (!mox(l)) return;
-        reactor = new SodiumFastReactor(l.heavyMetalKg(), l.pu() / l.heavyMetalKg());
+        reactor = new SodiumFastReactor(design(), l.heavyMetalKg(), l.pu() / l.heavyMetalKg());
         dev.denfry.promptcritical.mod.content.SimAchievements.once(this, dev.denfry.promptcritical.mod.content.SimAchievements.MOX_LOADED, "pu_kg", l.pu());
         s.shrink(1);
         fuel.setStackInSlot(SfrPanels.SLOT_FRESH, s);
@@ -308,7 +366,7 @@ public final class SfrReactorBlockEntity extends DeviceBlockEntity implements de
 
     @Override
     public PanelLayout panelLayout() {
-        return SfrPanels.REACTOR;
+        return bor60() ? Bor60Panels.BOARD : SfrPanels.REACTOR;
     }
 
     @Override
@@ -342,6 +400,16 @@ public final class SfrReactorBlockEntity extends DeviceBlockEntity implements de
         v[SfrPanels.DHR_KW] = (int) Math.round(r.dhrW() / 1e3);
         v[SfrPanels.CLAD_PERMIL] = (int) Math.round(r.claddingFailedFraction() * 1000);
         v[SfrPanels.BOIL_PCT] = (int) Math.round(r.boilingFraction() * 100);
+        if (r.sodiumFireW() > 0 || r.sodiumWaterW() > 0) v[SfrPanels.FLAGS] |= 1 << Bor60Panels.F_NA_LEAK;
+        if (v.length >= Bor60Panels.CHANNELS) {
+            v[Bor60Panels.ARGON_KPA] = (int) Math.round(r.argonPa() / 1e3);
+            v[Bor60Panels.INT_FLOW] = (int) Math.round(r.intermediateFlow() * 100);
+            v[Bor60Panels.IHX_DT] = (int) Math.round(r.outletK() - r.intermediateHotK());
+            v[Bor60Panels.INT_COLD_C] = (int) Math.round(r.intermediateColdK() - 273.15);
+            int pumping = 0;
+            for (BlockPos x : exchangers) if (level.getBlockEntity(x) instanceof IhxBlockEntity ihx && ihx.pumping()) pumping++;
+            v[Bor60Panels.IHX_PUMPS] = pumping;
+        }
     }
 
     @Override
@@ -417,6 +485,7 @@ public final class SfrReactorBlockEntity extends DeviceBlockEntity implements de
     public CompoundTag getUpdateTag(HolderLookup.Provider registries) {
         CompoundTag tag = super.getUpdateTag(registries);
         wiring.save(tag);
+        tag.putFloat("rods_out", rodsOut);
         return tag;
     }
 
@@ -448,10 +517,11 @@ public final class SfrReactorBlockEntity extends DeviceBlockEntity implements de
         blackoutDrill = tag.getBoolean("blackout_drill");
         if (tag.contains("fuel")) fuel.deserializeNBT(registries, tag.getCompound("fuel"));
         if (tag.contains("reactor") && tag.getDouble("hm") > 0 && tag.getDouble("pu0") > 0 && tag.getDouble("pu0") < 1) {
-            reactor = new SodiumFastReactor(tag.getDouble("hm"), tag.getDouble("pu0"));
+            reactor = new SodiumFastReactor(design(), tag.getDouble("hm"), tag.getDouble("pu0"));
             reactor.load(new TreeStateReader(NbtStateTrees.fromNbt(tag.getCompound("reactor"))));
             lastTrip = reactor.trip();
         }
+        if (tag.contains("rods_out")) rodsOut = tag.getFloat("rods_out");
         wiring.load(tag);
     }
 

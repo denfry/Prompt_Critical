@@ -200,7 +200,31 @@ public final class SitePlans {
             "vver70_refuelling_machine_real", plan("vver70_refuelling_machine_real", PcBlocks.VVER70_REFUELLING_MACHINE_REAL, 45,
                     st("rm_rails", 120, n(BEAM, 40)),
                     st("rm_bridge", 300, n(BEAM, 250)),
-                    st("rm_trolley", 240, n(PLATE, 100), n(PIPE, 60), n(WIRE, 200))));
+                    st("rm_trolley", 240, n(PLATE, 100), n(PIPE, 60), n(WIRE, 200))),
+            // БОР-60: бак ∅2,2 × 6 м с двойным корпусом ≈ 70 т, поворотные пробки с защитой ≈ 35 т, приводы СУЗ и
+            // линии ≈ 13 т (оценки)
+            "bor60_reactor_real", plan("bor60_reactor_real", PcBlocks.BOR60_REACTOR_REAL, 120,
+                    st("foundation", 160, n(CONCRETE, 40), n(BEAM, 50)),
+                    st("vessel", 400, n(INGOT, 500), n(PLATE, 200)),
+                    st("rotating_plugs", 300, n(INGOT, 250), n(PLATE, 100)),
+                    st("cps_drives", 240, n(PIPE, 100), n(WIRE, 300), n(PLATE, 50))),
+            // ПТО одной петли: корпус ≈ 8 т, трубный пучок ≈ 5 т, насос второго контура ≈ 1 т (оценки)
+            "bor60_ihx_real", plan("bor60_ihx_real", PcBlocks.BOR60_IHX_REAL, 15,
+                    st("foundation", 80, n(CONCRETE, 5), n(BEAM, 10)),
+                    st("shell", 200, n(PLATE, 60), n(INGOT, 20)),
+                    st("tubes", 200, n(PIPE, 100)),
+                    st("secondary_pump", 120, n(WIRE, 100))),
+            // вертикальный натриевый насос: корпус ≈ 12 т литья, двигатель и вал ≈ 7 т (оценки)
+            "bor60_primary_pump_real", plan("bor60_primary_pump_real", PcBlocks.BOR60_PRIMARY_PUMP_REAL, 20,
+                    st("foundation", 80, n(CONCRETE, 5), n(BEAM, 10)),
+                    st("casing", 200, n(INGOT, 120)),
+                    st("pump_motor", 200, n(WIRE, 200), n(PLATE, 30), n(INGOT, 20))),
+            // прямоточный ПГ: корпус ≈ 15 т, змеевики ≈ 10 т, линия сброса с мембраной ≈ 4 т (оценки)
+            "bor60_steam_generator_real", plan("bor60_steam_generator_real", PcBlocks.BOR60_STEAM_GENERATOR_REAL, 30,
+                    st("foundation", 80, n(CONCRETE, 5), n(BEAM, 10)),
+                    st("shell", 240, n(PLATE, 150)),
+                    st("tubes", 240, n(PIPE, 200)),
+                    st("sg_relief", 120, n(PIPE, 40), n(PLATE, 20))));
 
     /** Машины эры I0 реального масштаба. */
     private static final Map<String, Plan> I0_PLANS = Map.of(

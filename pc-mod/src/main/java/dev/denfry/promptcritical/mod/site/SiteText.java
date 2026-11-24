@@ -66,6 +66,16 @@ public final class SiteText {
         stage("npd_fm_columns", "rail, columns and hoists", "рельс, колонны и подъёмники");
         stage("npd_fm_head", "bridge, carriage and magazine head", "мост, тележка и головка с магазином");
         stage("npd_steam_drum", "steam drum, risers and downcomers", "барабан, подъёмные и опускные трубы");
+        drawing("bor60_reactor_real", "BOR-60 Fast Reactor (Dimitrovgrad)", "быстрого реактора БОР-60 (Димитровград)");
+        drawing("bor60_ihx_real", "BOR-60 Sodium-Sodium Intermediate Heat Exchanger", "промежуточного теплообменника натрий–натрий БОР-60");
+        drawing("bor60_primary_pump_real", "BOR-60 Primary Sodium Pump", "главного натриевого насоса БОР-60");
+        drawing("bor60_steam_generator_real", "BOR-60 Sodium-Water Steam Generator", "парогенератора натрий–вода БОР-60");
+        stage("rotating_plugs", "large and small rotating plugs with the reactor head shielding",
+                "большая и малая поворотные пробки с защитой крышки");
+        stage("cps_drives", "control rod drives, argon and cable lines", "приводы СУЗ, линии аргона и кабели");
+        stage("secondary_pump", "secondary sodium pump and its motor", "насос второго натриевого контура с двигателем");
+        stage("pump_motor", "pump motor, shaft and argon seal", "двигатель, вал и аргоновое уплотнение насоса");
+        stage("sg_relief", "sodium-water relief line with the rupture disc", "линия сброса натрий–вода с разрывной мембраной");
         drawing("bwr240_reactor", "BWR-240 Boiling Water Reactor", "кипящего реактора BWR-240");
         drawing("candu6_reactor", "CANDU 6 Reactor Assembly", "реакторной сборки CANDU 6");
         drawing("bn600_reactor", "BN-600 Sodium Fast Reactor", "реактора БН-600");

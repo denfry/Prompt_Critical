@@ -68,6 +68,15 @@ public final class WholePorts {
             // вода охлаждения из бассейна и в него, проём для ТВС в северной стене
             Map.entry("vver70_fuel_pool_real", List.of(p(-3, 6, 0, W), p(3, 6, 0, E), p(0, 7, -3, N))),
             Map.entry("vver70_refuelling_machine_real", List.of(p(4, 0, 6, E))),
+            // БОР-60: выход натрия на запад и восток, вход с севера и юга, аргон и кабели СУЗ сверху
+            Map.entry("bor60_reactor_real", List.of(p(-2, 4, 0, W), p(2, 4, 0, E), p(0, 4, -2, N), p(0, 4, 2, S), p(1, 8, 0, U),
+                    p(0, 8, 0, U))),
+            // первый контур вход/выход, второй контур сверху
+            Map.entry("bor60_ihx_real", List.of(p(-1, 6, 0, W), p(-1, 1, 0, W), p(0, 7, 0, U))),
+            // всас, напор, питание, аргон
+            Map.entry("bor60_primary_pump_real", List.of(p(0, 2, -1, N), p(0, 0, 1, S), p(1, 5, 0, E), p(-1, 5, 0, U))),
+            // натрий вход/выход, питательная вода, пар, линия сброса с мембраной
+            Map.entry("bor60_steam_generator_real", List.of(p(0, 8, -1, N), p(0, 0, -1, N), p(0, 1, 1, S), p(0, 8, 1, S), p(1, 7, 0, E))),
             Map.entry("bwr240_reactor", List.of(p(2, 6, 0, E), p(-2, 6, 0, W), p(2, 9, 0, E), p(0, 10, 2, S))),
             Map.entry("candu6_reactor", List.of(p(4, 10, -5, E), p(4, 10, 5, E))),
             Map.entry("bn600_reactor", List.of(p(7, 9, 0, E), p(7, 11, 0, E), p(0, 9, 7, S), p(0, 11, 7, S), p(0, 9, -7, N), p(0, 11, -7, N))),

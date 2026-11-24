@@ -237,6 +237,8 @@ public final class MachineLoads {
         // ВВЭР-70: насосы охлаждения и подпитки бассейна, приводы перегрузочной машины
         put(Load.ACTIVE_LV, dev.denfry.promptcritical.mod.npp.SpentFuelPoolBlockEntity.class);
         put(Load.ACTIVE_LV, dev.denfry.promptcritical.mod.npp.RefuellingMachineBlockEntity.class);
+        // БОР-60: электронасос второго натриевого контура при ПТО
+        put(Load.ACTIVE_LV, dev.denfry.promptcritical.mod.npp.IhxBlockEntity.class);
         put(Load.ACTIVE_LV, GasPlantBlockEntity.class);
         put(Load.ACTIVE_LV, HclFurnaceBlockEntity.class);
         put(Load.ACTIVE_LV, MethanolColumnBlockEntity.class);

@@ -14,18 +14,18 @@
   const SOVIET = { base: [122, 138, 126], frame: 'bakelite', accent: [30, 28, 26] };
   const CANADA = { base: [214, 206, 182], frame: 'blue', accent: [40, 84, 150] };
   const PANELS = {
-    vver70_bpu: { w: 220, h: 252, seed: 64101, style: SOVIET, els: [
+    vver70_bpu: { w: 220, h: 240, seed: 64101, style: SOVIET, els: [
       ['dial', 'reactor power, log %N', 12, 24, 48], ['dial', 'period', 66, 24, 48], ['dial', 'primary pressure 0-16 MPa', 120, 24, 48],
       ['glass', 'pressuriser level', 184, 24, 56],
-      ['bar', 'ARK group 1', 12, 104, 92], ['bar', 'ARK group 2', 116, 104, 92],
-      ['bar', 'ARK group 3', 12, 124, 92], ['bar', 'ARK group 4', 116, 124, 92],
-      ['bar', 'ARK group 5', 12, 144, 92], ['bar', 'ARK group 6', 116, 144, 92],
-      ['readout', 'loop 1 hot/cold', 12, 158, 62], ['readout', 'loop 2 hot/cold', 79, 158, 62], ['readout', 'loop 3 hot/cold', 146, 158, 62],
-      ['readout', 'boron concentration', 12, 176, 96], ['lamp', 'PZ-1', 116, 175], ['lamp', 'PZ-2', 162, 175],
-      ['button', 'MCP-1 start', 12, 198, 30], ['button', 'MCP-1 stop', 46, 198, 30],
-      ['button', 'MCP-2 start', 80, 198, 30], ['button', 'MCP-2 stop', 114, 198, 30],
-      ['button', 'MCP-3 start', 148, 198, 30], ['button', 'MCP-3 stop', 182, 198, 30],
-      ['guard', 'AZ (scram)', 80, 226, 60],
+      ['bar', 'ARK group 1', 12, 98, 92], ['bar', 'ARK group 2', 116, 98, 92],
+      ['bar', 'ARK group 3', 12, 116, 92], ['bar', 'ARK group 4', 116, 116, 92],
+      ['bar', 'ARK group 5', 12, 134, 92], ['bar', 'ARK group 6', 116, 134, 92],
+      ['readout', 'loop 1 hot/cold', 12, 148, 62], ['readout', 'loop 2 hot/cold', 79, 148, 62], ['readout', 'loop 3 hot/cold', 146, 148, 62],
+      ['readout', 'boron concentration', 12, 166, 96], ['lamp', 'PZ-1', 116, 165], ['lamp', 'PZ-2', 162, 165],
+      ['button', 'MCP-1 start', 12, 188, 30], ['button', 'MCP-1 stop', 46, 188, 30],
+      ['button', 'MCP-2 start', 80, 188, 30], ['button', 'MCP-2 stop', 114, 188, 30],
+      ['button', 'MCP-3 start', 148, 188, 30], ['button', 'MCP-3 stop', 182, 188, 30],
+      ['guard', 'AZ (scram)', 80, 214, 60],
     ] },
     candu_npd: { w: 220, h: 172, seed: 64111, style: CANADA, els: [
       ['glass', 'zone 1', 14, 26, 48], ['glass', 'zone 2', 36, 26, 48], ['glass', 'zone 3', 58, 26, 48],

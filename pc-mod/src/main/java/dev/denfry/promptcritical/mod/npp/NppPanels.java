@@ -115,7 +115,7 @@ public final class NppPanels {
     }
 
     public static List<PanelLayout> all() {
-        return List.of(REACTOR, PwrPanels.REACTOR, Vver70Panels.BPU, BwrPanels.REACTOR, CanduPanels.REACTOR, SfrPanels.REACTOR, NpdPanels.REACTOR);
+        return List.of(REACTOR, PwrPanels.REACTOR, Vver70Panels.BPU, BwrPanels.REACTOR, CanduPanels.REACTOR, SfrPanels.REACTOR, NpdPanels.REACTOR, Bor60Panels.BOARD);
     }
 
     private static Component status(PanelValues v) {
