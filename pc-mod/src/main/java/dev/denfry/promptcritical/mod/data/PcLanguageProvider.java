@@ -462,6 +462,10 @@ public final class PcLanguageProvider extends LanguageProvider {
         b("derrick_segment_real", "Drilling Derrick Section, 3 m", "Секция буровой вышки, 3 м");
         b("pumpjack_real", "SK-8 Beam Pumping Unit", "Станок-качалка СК-8");
         b("three_phase_separator_real", "NGS-1.6-2000 Three-Phase Separator", "Трёхфазный сепаратор НГС-1,6-2000");
+        b("mainline_pump_real", "NM 1250-260 Mainline Pump Unit", "Магистральный насосный агрегат НМ 1250-260");
+        b("line_heater_real", "PP-0.63 Line Heater", "Путевой подогреватель ПП-0,63");
+        b("oil_tank_real", "RVS-1000 Stock Tank", "Резервуар РВС-1000");
+        b("oil_tank_floating_real", "RVS-1000 Floating-Roof Tank", "Резервуар РВС-1000 с плавающей крышей");
         b("bop_annular", "Annular Preventer", "Кольцевой превентор");
         b("bop_ram", "Ram Preventer", "Плашечный превентор");
         b("logging_unit", "Logging Unit", "Каротажный подъёмник");

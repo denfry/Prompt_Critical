@@ -162,7 +162,7 @@ public class PigTrapBlockEntity extends DeviceBlockEntity implements FoundryDevi
 
     // ------------------------------------------------------------------ участок
 
-    static boolean pipe(BlockState s) {
+    public static boolean pipe(BlockState s) {
         var b = s.getBlock();
         return b instanceof FluidPipeBlock || b instanceof EncasedPipeBlock || b instanceof GlassFluidPipeBlock || b instanceof FluidValveBlock
                 || b instanceof SmartFluidPipeBlock || b instanceof PumpBlock;

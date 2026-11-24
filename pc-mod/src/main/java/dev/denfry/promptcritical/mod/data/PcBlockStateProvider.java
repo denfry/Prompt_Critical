@@ -430,7 +430,8 @@ public final class PcBlockStateProvider extends BlockStateProvider {
             case "acheson_furnace_real", "electrode_extruder_real", "baking_furnace_real" -> "whole_empty";
             case "power_hammer_real", "bloomery_real", "forge_hearth_real", "crank_press_real", "wire_mill_real", "sheet_mill_real", "notching_press_real", "winding_machine_real", "heating_furnace_real", "hardening_furnace_real", "assembly_stand",
                     "rotary_table_real", "drawworks_real", "mud_pump_real", "derrick_segment_real", "pumpjack_real",
-                    "three_phase_separator_real" -> "whole_empty";
+                    "three_phase_separator_real", "mainline_pump_real", "line_heater_real", "oil_tank_real",
+                    "oil_tank_floating_real" -> "whole_empty";
             case "portal_monitor_real", "hand_foot_monitor_real", "hot_cell_real", "spent_fuel_cask_real", "cask_transport_cart_real",
                  "dry_storage_module_real" -> "whole_empty";
             case "electrorefining_cell_real", "peirce_smith_converter_real", "reduction_pot_real", "bayer_digester_real",
