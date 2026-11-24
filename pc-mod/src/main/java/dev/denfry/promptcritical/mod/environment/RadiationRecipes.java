@@ -45,6 +45,7 @@ public final class RadiationRecipes extends RecipeProvider {
 
     @Override
     protected void buildRecipes(RecipeOutput out) {
+        radprot(out);
         // счётчик Гейгера — стеклянная трубка с газом, высокое напряжение — электронная лампа, корпус — латунь
         ShapedRecipeBuilder.shaped(RecipeCategory.TOOLS, PcItems.DOSIMETER.get())
                 .pattern("BGB").pattern("BEB").pattern("BRB").define('B', AllItems.BRASS_SHEET.get()).define('G', Items.GLASS)
@@ -180,5 +181,42 @@ public final class RadiationRecipes extends RecipeProvider {
         ShapedRecipeBuilder.shaped(RecipeCategory.MISC, PcBlocks.AIR_SUPPLY_PORT.get())
                 .pattern("P").pattern("I").pattern("P").define('P', pipe).define('I', iron)
                 .unlockedBy("has_fluid_pipe", has(pipe)).save(out, id("air_supply_port"));
+    }
+
+    /**
+     * Радзащита реального масштаба: плитки защиты крафтятся (это материал, а не машина), узлы строятся на стройплощадке
+     * по чертежам (SitePlans), чертёж — бумага вокруг старого прибора или материала узла. Бора в наборе предметов пока нет:
+     * его заменяет глина — бура (Na₂B₄O₇) добывается из глинистых эвапоритов [BALANCE: заменитель до своего предмета].
+     */
+    private static void radprot(RecipeOutput out) {
+        // магнетитовый бетон: заполнитель — магнетит вместо гравия, 3,6 г/см³ против 2,3
+        ShapedRecipeBuilder.shaped(RecipeCategory.BUILDING_BLOCKS, PcBlocks.SHIELD_HEAVY_CONCRETE_REAL.get(), 4)
+                .pattern("CMC").pattern("MCM").pattern("CMC").define('C', Items.GRAY_CONCRETE).define('M', PcItems.RAW_MAGNETITE.get())
+                .unlockedBy("has_raw_magnetite", has(PcItems.RAW_MAGNETITE.get())).save(out, id("shield_heavy_concrete_real"));
+        // шевронные кирпичи перекладкой свинцового блока, и обратно
+        ShapelessRecipeBuilder.shapeless(RecipeCategory.BUILDING_BLOCKS, PcBlocks.SHIELD_LEAD_BRICK_REAL.get())
+                .requires(PcBlocks.LEAD_BLOCK.get()).unlockedBy("has_lead_block", has(PcBlocks.LEAD_BLOCK.get())).save(out, id("shield_lead_brick_real"));
+        ShapelessRecipeBuilder.shapeless(RecipeCategory.BUILDING_BLOCKS, PcBlocks.LEAD_BLOCK.get())
+                .requires(PcBlocks.SHIELD_LEAD_BRICK_REAL.get()).unlockedBy("has_shield_lead_brick", has(PcBlocks.SHIELD_LEAD_BRICK_REAL.get()))
+                .save(out, id("lead_block_from_bricks"));
+        // бак: сварная нержавейка, вода, борная кислота
+        ShapedRecipeBuilder.shaped(RecipeCategory.BUILDING_BLOCKS, PcBlocks.SHIELD_BORATED_WATER_TANK_REAL.get())
+                .pattern("PPP").pattern("PWP").pattern("PBP").define('P', PcItems.STEEL_PLATE.get()).define('W', Items.WATER_BUCKET)
+                .define('B', Items.CLAY_BALL).unlockedBy("has_steel_plate", has(PcItems.STEEL_PLATE.get())).save(out, id("shield_borated_water_tank_real"));
+        ShapedRecipeBuilder.shaped(RecipeCategory.BUILDING_BLOCKS, PcBlocks.SHIELD_BORATED_PE_REAL.get(), 4)
+                .pattern("PPP").pattern("PBP").pattern("PPP").define('P', PcItems.POLYETHYLENE.get()).define('B', Items.CLAY_BALL)
+                .unlockedBy("has_polyethylene", has(PcItems.POLYETHYLENE.get())).save(out, id("shield_borated_pe_real"));
+        drawing(out, dev.denfry.promptcritical.mod.site.SiteRegistry.PORTAL_MONITOR_REAL_DRAWING.get(), PcBlocks.PORTAL_MONITOR.get(), "portal_monitor_real");
+        drawing(out, dev.denfry.promptcritical.mod.site.SiteRegistry.HAND_FOOT_MONITOR_REAL_DRAWING.get(), PcBlocks.HAND_FOOT_MONITOR.get(),
+                "hand_foot_monitor_real");
+        drawing(out, dev.denfry.promptcritical.mod.site.SiteRegistry.HOT_CELL_REAL_DRAWING.get(), PcBlocks.SHIELD_HEAVY_CONCRETE_REAL.get(), "hot_cell_real");
+        drawing(out, dev.denfry.promptcritical.mod.site.SiteRegistry.SPENT_FUEL_CASK_REAL_DRAWING.get(), PcBlocks.FUEL_RACK.get(), "spent_fuel_cask_real");
+        drawing(out, dev.denfry.promptcritical.mod.site.SiteRegistry.CASK_TRANSPORT_CART_REAL_DRAWING.get(), Items.RAIL, "cask_transport_cart_real");
+        drawing(out, dev.denfry.promptcritical.mod.site.SiteRegistry.DRY_STORAGE_MODULE_REAL_DRAWING.get(), Items.GRAY_CONCRETE, "dry_storage_module_real");
+    }
+
+    private static void drawing(RecipeOutput out, net.minecraft.world.item.Item drawing, net.minecraft.world.level.ItemLike core, String plan) {
+        ShapedRecipeBuilder.shaped(RecipeCategory.MISC, drawing).pattern("PPP").pattern("PMP").pattern("PPP").define('P', Items.PAPER)
+                .define('M', core).unlockedBy("has_core", has(core)).save(out, id(plan + "_drawing"));
     }
 }

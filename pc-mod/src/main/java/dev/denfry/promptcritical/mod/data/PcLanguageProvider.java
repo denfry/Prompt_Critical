@@ -346,6 +346,16 @@ public final class PcLanguageProvider extends LanguageProvider {
         i("spacer_grid", "Spacer Grid", "Дистанционирующая решётка");
         i("dosimeter_radiometer", "Dosimeter-Radiometer DKS-04", "Дозиметр-радиометр ДКС-04");
         b("lead_block", "Lead Shielding Block", "Свинцовый блок защиты");
+        b("portal_monitor_real", "Portal Contamination Monitor", "Портальная рама контроля загрязнения");
+        b("hand_foot_monitor_real", "Hand and Foot Monitor", "Установка контроля рук и ног");
+        b("hot_cell_real", "Hot Cell Operating Station", "Рабочее место горячей камеры");
+        b("spent_fuel_cask_real", "Spent Fuel Cask (CASTOR V/19 class)", "Контейнер ОЯТ (класса CASTOR V/19)");
+        b("cask_transport_cart_real", "Cask Transfer Cart", "Тележка контейнера ОЯТ");
+        b("dry_storage_module_real", "Dry Storage Module (NUHOMS class)", "Модуль сухого хранения (класса NUHOMS)");
+        b("shield_heavy_concrete_real", "Heavy Concrete Shielding (magnetite)", "Тяжёлый бетон защиты (магнетитовый)");
+        b("shield_lead_brick_real", "Lead Shielding Bricks", "Свинцовые кирпичи защиты");
+        b("shield_borated_water_tank_real", "Borated Water Shield Tank", "Бак защиты с борированной водой");
+        b("shield_borated_pe_real", "Borated Polyethylene Shielding", "Борированный полиэтилен защиты");
         b("helium_recovery_unit", "Helium Recovery Unit", "Гелиевая установка");
         b("fuel_rack", "Spent Fuel Pool Rack", "Стеллаж бассейна выдержки");
         b("ultrasonic_bath", "Ultrasonic Decontamination Bath", "Ультразвуковая ванна дезактивации");
@@ -1138,6 +1148,7 @@ public final class PcLanguageProvider extends LanguageProvider {
         b("instrument_vibration", "Vibration Transmitter", "Вибродатчик");
         MISC.putAll(dev.denfry.promptcritical.mod.acoustics.Acoustics.lang());
         MISC.putAll(dev.denfry.promptcritical.mod.radiation.RadiationBlocksText.lang());
+        MISC.putAll(dev.denfry.promptcritical.mod.radiation.RadProtText.lang());
         MISC.putAll(dev.denfry.promptcritical.mod.radiation.ContaminationText.lang());
         MISC.putAll(dev.denfry.promptcritical.mod.reprocessing.ReprocessingText.lang());
         MISC.putAll(dev.denfry.promptcritical.mod.waste.WasteText.lang());

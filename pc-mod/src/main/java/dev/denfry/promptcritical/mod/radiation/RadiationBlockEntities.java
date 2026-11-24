@@ -26,10 +26,23 @@ public final class RadiationBlockEntities {
             BLOCK_ENTITIES.register("decon_shower", () -> BlockEntityType.Builder.of(DeconShowerBlockEntity::new, PcBlocks.DECON_SHOWER.get()).build(null));
     public static final DeferredHolder<BlockEntityType<?>, BlockEntityType<HandFootMonitorBlockEntity>> HAND_FOOT_MONITOR =
             BLOCK_ENTITIES.register("hand_foot_monitor",
-                    () -> BlockEntityType.Builder.of(HandFootMonitorBlockEntity::new, PcBlocks.HAND_FOOT_MONITOR.get()).build(null));
+                    () -> BlockEntityType.Builder.of(HandFootMonitorBlockEntity::new, PcBlocks.HAND_FOOT_MONITOR.get(),
+                            PcBlocks.HAND_FOOT_MONITOR_REAL.get()).build(null));
     public static final DeferredHolder<BlockEntityType<?>, BlockEntityType<PortalMonitorBlockEntity>> PORTAL_MONITOR =
             BLOCK_ENTITIES.register("portal_monitor",
-                    () -> BlockEntityType.Builder.of(PortalMonitorBlockEntity::new, PcBlocks.PORTAL_MONITOR.get()).build(null));
+                    () -> BlockEntityType.Builder.of(PortalMonitorBlockEntity::new, PcBlocks.PORTAL_MONITOR.get(), PcBlocks.PORTAL_MONITOR_REAL.get()).build(null));
+    // радзащита реального масштаба
+    public static final DeferredHolder<BlockEntityType<?>, BlockEntityType<HotCellBlockEntity>> HOT_CELL =
+            BLOCK_ENTITIES.register("hot_cell", () -> BlockEntityType.Builder.of(HotCellBlockEntity::new, PcBlocks.HOT_CELL_REAL.get()).build(null));
+    public static final DeferredHolder<BlockEntityType<?>, BlockEntityType<SpentFuelCaskBlockEntity>> SPENT_FUEL_CASK =
+            BLOCK_ENTITIES.register("spent_fuel_cask",
+                    () -> BlockEntityType.Builder.of(SpentFuelCaskBlockEntity::new, PcBlocks.SPENT_FUEL_CASK_REAL.get()).build(null));
+    public static final DeferredHolder<BlockEntityType<?>, BlockEntityType<CaskCartBlockEntity>> CASK_CART =
+            BLOCK_ENTITIES.register("cask_transport_cart",
+                    () -> BlockEntityType.Builder.of(CaskCartBlockEntity::new, PcBlocks.CASK_TRANSPORT_CART_REAL.get()).build(null));
+    public static final DeferredHolder<BlockEntityType<?>, BlockEntityType<DryStorageModuleBlockEntity>> DRY_STORAGE_MODULE =
+            BLOCK_ENTITIES.register("dry_storage_module",
+                    () -> BlockEntityType.Builder.of(DryStorageModuleBlockEntity::new, PcBlocks.DRY_STORAGE_MODULE_REAL.get()).build(null));
 
     public static final DeferredHolder<BlockEntityType<?>, BlockEntityType<ZoneControllerBlockEntity>> ZONE_CONTROLLER =
             BLOCK_ENTITIES.register("zone_controller",
@@ -49,6 +62,9 @@ public final class RadiationBlockEntities {
             e.registerBlockEntity(Capabilities.ItemHandler.BLOCK, ULTRASONIC_BATH.get(), FoundryDevice::items);
             e.registerBlockEntity(Capabilities.FluidHandler.BLOCK, ULTRASONIC_BATH.get(), FoundryDevice::fluids);
             e.registerBlockEntity(Capabilities.FluidHandler.BLOCK, DECON_SHOWER.get(), FoundryDevice::fluids);
+            // шлюз горячей камеры и корзина открытого контейнера — для воронок и манипуляторов Create
+            e.registerBlockEntity(Capabilities.ItemHandler.BLOCK, HOT_CELL.get(), FoundryDevice::items);
+            e.registerBlockEntity(Capabilities.ItemHandler.BLOCK, SPENT_FUEL_CASK.get(), FoundryDevice::items);
         });
         ContaminationData.register(modBus);
         RadGear.register(modBus);

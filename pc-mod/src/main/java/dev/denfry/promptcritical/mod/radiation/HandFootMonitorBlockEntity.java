@@ -24,10 +24,16 @@ import org.jetbrains.annotations.Nullable;
  * Установка контроля рук и ног на выходе из зоны через санпропускник: ПКМ — ладони на датчики, ноги на
  * подставку. Руки сверяются с нормой для кожи, обувь — для спецобуви (НРБ-99/2009, табл. 8.9) по показанию зонда:
  * чего прибор не видит (ниже МДА), того для него нет.
+ *
+ * <p>Установка реального масштаба ({@code hand_foot_monitor_real}, по Mirion HandFoot-Fibre) при «грязно» включает
+ * красное табло и маячок ({@code powered}) на {@value #ALARM_TICKS} тиков.
  */
-public final class HandFootMonitorBlockEntity extends DeviceBlockEntity implements FoundryDevice {
+public final class HandFootMonitorBlockEntity extends DeviceBlockEntity implements FoundryDevice,
+        dev.denfry.promptcritical.mod.client.whole.RealScaleBlockEntity {
     /** Блоки детектирования и табло установки, Вт. Малая нагрузка 0,4 кВ: розетка, щит или ИБП рядом. */
     public static final double POWER_W = 100;
+    static final int ALARM_TICKS = 100;
+    private long alarmUntil = Long.MIN_VALUE;
     public HandFootMonitorBlockEntity(BlockPos pos, BlockState state) {
         super(RadiationBlockEntities.HAND_FOOT_MONITOR.get(), pos, state);
     }
@@ -55,6 +61,8 @@ public final class HandFootMonitorBlockEntity extends DeviceBlockEntity implemen
         }
         double r = worstRatio(p);
         if (r > 1) {
+            alarmUntil = level.getGameTime() + ALARM_TICKS;
+            setAlarm(true);
             p.displayClientMessage(ContaminationText.msg("monitor.dirty", ContaminationText.num(r)).withStyle(ChatFormatting.RED), false);
             level.playSound(null, worldPosition, SoundEvents.NOTE_BLOCK_BELL.value(), SoundSource.BLOCKS, 1f, 0.5f);
         } else {
@@ -66,6 +74,20 @@ public final class HandFootMonitorBlockEntity extends DeviceBlockEntity implemen
 
     @Override
     public void tickDevice() {
+        if (level != null && !level.isClientSide && level.getGameTime() % 10 == 0 && level.getGameTime() >= alarmUntil) setAlarm(false);
+    }
+
+    public boolean alarming() {
+        BlockState s = getBlockState();
+        return s.hasProperty(net.minecraft.world.level.block.state.properties.BlockStateProperties.POWERED)
+                && s.getValue(net.minecraft.world.level.block.state.properties.BlockStateProperties.POWERED);
+    }
+
+    private void setAlarm(boolean on) {
+        BlockState s = getBlockState();
+        var prop = net.minecraft.world.level.block.state.properties.BlockStateProperties.POWERED;
+        if (s.hasProperty(prop) && s.getValue(prop) != on)
+            level.setBlock(worldPosition, s.setValue(prop, on), net.minecraft.world.level.block.Block.UPDATE_CLIENTS);
     }
 
     @Override

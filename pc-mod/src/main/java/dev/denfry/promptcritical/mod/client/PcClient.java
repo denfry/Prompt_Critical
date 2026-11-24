@@ -40,6 +40,7 @@ public final class PcClient {
         dev.denfry.promptcritical.mod.mine.client.MineClient.register(modBus);
         dev.denfry.promptcritical.mod.grid.client.GridClient.register(modBus);
         dev.denfry.promptcritical.mod.npp.client.NppClient.register(modBus);
+        dev.denfry.promptcritical.mod.radiation.client.RadProtClient.register(modBus);
         dev.denfry.promptcritical.mod.fx.client.ProcessArtClient.register(modBus);
         dev.denfry.promptcritical.mod.automation.client.AutomationClient.register(modBus);
         dev.denfry.promptcritical.mod.chlor.client.ChlorClient.register(modBus);

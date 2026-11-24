@@ -34,8 +34,14 @@ import org.jetbrains.annotations.Nullable;
  * ({@link RadiationService#carried}), на расстоянии детектора {@value PortalMonitor#DETECTOR_M} м, и сравнивает счёт
  * с порогом фон + 5σ ({@link PortalMonitor}). Две колонны по сторонам одного прохода — пара, как у настоящих рам.
  * Тревога — звонок, сообщение и сигнал редстоуна, пока нарушитель в проходе и ещё {@value #HOLD_TICKS} тиков.
+ *
+ * <p>Рама реального масштаба ({@code portal_monitor_real}, по типу TPM-903B): проход — сама клетка контроллера между
+ * двумя колоннами, идут вдоль z. Её пластиковые сцинтилляторы видят и β: кроме γ несомого рама проверяет загрязнение
+ * рук и обуви по норме, как установка контроля рук и ног ({@link HandFootMonitorBlockEntity#worstRatio}), и тревожит
+ * по худшему.
  */
-public final class PortalMonitorBlockEntity extends DeviceBlockEntity implements FoundryDevice {
+public final class PortalMonitorBlockEntity extends DeviceBlockEntity implements FoundryDevice,
+        dev.denfry.promptcritical.mod.client.whole.RealScaleBlockEntity {
     /** Блоки детектирования и электроника портального монитора, Вт. Малая нагрузка 0,4 кВ: розетка, щит или ИБП рядом. */
     public static final double POWER_W = 200;
     static final int PERIOD_TICKS = 10, HOLD_TICKS = 40;
@@ -57,12 +63,19 @@ public final class PortalMonitorBlockEntity extends DeviceBlockEntity implements
         return PortalMonitor.STANDARD.ratio(backgroundUSvH, uSvH);
     }
 
-    /** Ячейка прохода перед лицевой стороной колонны, в рост человека. */
+    /** Ячейка прохода в рост человека: перед лицевой стороной колонны, у рамы реального масштаба — сама клетка контроллера. */
     public AABB gate() {
         Direction f = getBlockState().hasProperty(BlockStateProperties.HORIZONTAL_FACING)
                 ? getBlockState().getValue(BlockStateProperties.HORIZONTAL_FACING) : Direction.NORTH;
-        BlockPos cell = worldPosition.relative(f);
+        BlockPos cell = real() ? worldPosition : worldPosition.relative(f);
         return new AABB(cell).expandTowards(0, 1, 0);
+    }
+
+    /** Замер рамы: γ несомого, у рамы реального масштаба — и β-загрязнение рук и обуви; худшее в долях порога. */
+    double measure(Player p, long tick) {
+        double r = ratio(p, backgroundUSvH, tick);
+        if (real() && p instanceof net.minecraft.server.level.ServerPlayer sp) r = Math.max(r, HandFootMonitorBlockEntity.worstRatio(sp));
+        return r;
     }
 
     @Override
@@ -87,7 +100,7 @@ public final class PortalMonitorBlockEntity extends DeviceBlockEntity implements
     /** Замер игрока в проходе: вердикт один раз на проход, тревога держится, пока он внутри. */
     public void pass(Player p) {
         long now = level.getGameTime();
-        double r = ratio(p, backgroundUSvH, now);
+        double r = measure(p, now);
         lastRatio = r;
         if (r > 1) alarmUntil = now + HOLD_TICKS;
         // сигнал — сразу, даже если вердикт этому проходу уже вынесен: источник мог появиться в кармане в проходе
