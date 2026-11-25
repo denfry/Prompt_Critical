@@ -126,7 +126,53 @@ public final class ManufacturingText {
         msg("passport.flange", "Flange leak %s", "Течь по фланцам %s");
         msg("passport.insulation", "Winding insulation %s MΩ", "Изоляция обмотки %s МОм");
         msg("passport.efficiency", "Efficiency ×%s (core losses)", "КПД ×%s (потери в пакете)");
+        // контроль деталей (18 §18.6.10)
+        msg("inspect.no_part", "Hold the part to measure in your other hand", "Деталь для замера держите во второй руке");
+        msg("inspect.already", "This part is already inspected", "Эта деталь уже проверена");
+        msg("inspect.not_applicable.caliper", "The caliper cannot prove this fit: it is finer than IT12, take a micrometer",
+                "Штангенциркулем эту посадку не проверить: она точнее IT12, нужен микрометр");
+        msg("inspect.not_applicable.micrometer", "The fit is finer than IT6, beyond a shop micrometer",
+                "Посадка точнее IT6, цеховым микрометром её не проверить");
+        msg("inspect.not_applicable.hardness_tester", "The part was not heat treated, its hardness needs no check",
+                "Деталь без термообработки, твёрдость проверять не нужно");
+        msg("inspect.not_applicable.radiography", "Only castings and welded parts need radiography",
+                "Радиография нужна только отливкам и сварным деталям");
+        msg("inspect.tool_hint.caliper", "Use with a part in the other hand · reads to 0.1 mm, fits down to IT12",
+                "ПКМ с деталью во второй руке · отсчёт 0,1 мм, посадки до IT12");
+        msg("inspect.tool_hint.micrometer", "Use with a part in the other hand · reads to 0.01 mm, fits down to IT6",
+                "ПКМ с деталью во второй руке · отсчёт 0,01 мм, посадки до IT6");
+        msg("inspect.tool_hint.hardness_tester", "Use with a heat treated part in the other hand · HRC scale",
+                "ПКМ с термообработанной деталью во второй руке · шкала HRC");
+        msg("inspect.done", "%s · part inspected", "%s · деталь проверена");
+        msg("inspect.partial", "Measured: %s", "Измерено: %s");
+        msg("reading.dimension", "Size: IT%s, Ra %s µm", "Размер: IT%s, Ra %s мкм");
+        msg("reading.dimension_raw", "Size: as forged or cast, Ra %s µm", "Размер: без обработки, Ra %s мкм");
+        msg("reading.hardness", "Hardness: %s", "Твёрдость: %s");
+        msg("reading.internal_clean", "Film: no internal defects", "Снимок: внутренних дефектов нет");
+        msg("reading.internal", "Film: %s", "Снимок: %s");
     }
+
+    /** Показание одного замера детали. */
+    public static MutableComponent reading(PartSpec p, dev.denfry.promptcritical.sim.manufacturing.PartInspection.Check c) {
+        return switch (c) {
+            case DIMENSION -> p.itGrade() > 0 ? msg("reading.dimension", p.itGrade(), num(p.raUm()))
+                    : msg("reading.dimension_raw", num(p.raUm()));
+            case HARDNESS -> msg("reading.hardness", p.hardnessHrc() < 20 ? msg("hardness_soft") : msg("hardness", p.hardnessHrc()));
+            case INTERNAL -> {
+                MutableComponent found = null;
+                for (var e : p.defects().entrySet()) {
+                    if (!INTERNAL_DEFECTS.contains(e.getKey())) continue;
+                    MutableComponent d = msg("defect", msg("defect." + e.getKey().name().toLowerCase(Locale.ROOT)), e.getValue());
+                    found = found == null ? d : found.append(", ").append(d);
+                }
+                yield found == null ? msg("reading.internal_clean") : msg("reading.internal", found);
+            }
+        };
+    }
+
+    /** Дефекты, видимые на снимке, а не снаружи. */
+    private static final java.util.Set<PartDefect> INTERNAL_DEFECTS =
+            java.util.EnumSet.of(PartDefect.POROSITY, PartDefect.SLAG_INCLUSION, PartDefect.LACK_OF_FUSION, PartDefect.CRACK);
 
     private ManufacturingText() {
     }
@@ -272,10 +318,18 @@ public final class ManufacturingText {
 
     /** Строки подсказки детали: материал и маршрут всегда; измеренное только после проверки. */
     public static void tooltip(PartSpec p, List<Component> out) {
+        tooltip(p, 0, out);
+    }
+
+    /** То же с маской уже сделанных замеров: их показания видны до полной проверки. */
+    public static void tooltip(PartSpec p, int checks, List<Component> out) {
         out.add(msg("part", material(p.material()),
                 msg("route." + p.route().name().toLowerCase(Locale.ROOT))).withStyle(ChatFormatting.GRAY));
         if (!p.inspected()) {
             out.add(msg("not_inspected").withStyle(ChatFormatting.GRAY));
+            for (var c : dev.denfry.promptcritical.sim.manufacturing.PartInspection.Check.values())
+                if (dev.denfry.promptcritical.sim.manufacturing.PartInspection.done(checks, c))
+                    out.add(reading(p, c).withStyle(ChatFormatting.DARK_GRAY));
             return;
         }
         out.add(msg("heat_treat", msg("heat_treat." + p.heatTreat().name().toLowerCase(Locale.ROOT)))

@@ -17,7 +17,7 @@ public final class IsotopeText {
         put("camera_unloaded", "Source taken out of the camera", "Источник извлечён из дефектоскопа");
         put("camera_empty", "The camera has no source: sneak + use with a sealed Ir-192 or Co-60 source in the off hand",
                 "В дефектоскопе нет источника: Shift + ПКМ с закрытым источником Ir-192 или Co-60 во второй руке");
-        put("camera_needs", "Put a pipe in the off hand and a film in the inventory", "Нужна труба во второй руке и плёнка в инвентаре");
+        put("camera_needs", "Put a pipe, a casting or a welded part in the off hand and a film in the inventory", "Нужна труба, отливка или сварная деталь во второй руке и плёнка в инвентаре");
         put("camera_exposure", "Source out · exposure %s %% of %s s · release to wind it back",
                 "Источник выдвинут · экспозиция %s %% из %s с · отпустите, чтобы вернуть его");
         put("film_good", "Film developed: %s", "Плёнка проявлена: %s");

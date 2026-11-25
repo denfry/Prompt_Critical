@@ -317,6 +317,9 @@ public final class PcLanguageProvider extends LanguageProvider {
         i("brush_holder", "Brush Holder", "Щёткодержатель");
         i("slip_ring", "Slip Ring", "Контактное кольцо");
         i("tongs", "Smith's Tongs", "Кузнечные клещи");
+        i("caliper", "Vernier Caliper", "Штангенциркуль");
+        i("micrometer", "Micrometer", "Микрометр");
+        i("hardness_tester", "Portable Hardness Tester", "Переносной твердомер");
         i("wire", "Wire", "Проволока");
         i("electrical_sheet", "Electrical Steel Sheet", "Лист электротехнической стали");
         i("lamination", "Stator Lamination Bundle", "Пачка пластин статора");

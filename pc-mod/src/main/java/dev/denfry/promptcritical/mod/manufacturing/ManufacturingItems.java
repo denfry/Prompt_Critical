@@ -17,6 +17,13 @@ public final class ManufacturingItems {
     public static final DeferredItem<Item> SHAFT = ITEMS.registerSimpleItem("shaft", new Item.Properties().stacksTo(16));
 
     /** Кузнечные клещи: с ними горячая поковка в инвентаре не жжёт руки (18 §18.7). */
+    /** Измерительный инструмент контроля деталей (18 §18.6.10) [BALANCE: износ — число замеров]. */
+    public static final DeferredItem<MeasuringToolItem> CALIPER = ITEMS.register("caliper",
+            () -> new MeasuringToolItem(dev.denfry.promptcritical.sim.manufacturing.PartInspection.Tool.CALIPER, new Item.Properties().durability(400)));
+    public static final DeferredItem<MeasuringToolItem> MICROMETER = ITEMS.register("micrometer",
+            () -> new MeasuringToolItem(dev.denfry.promptcritical.sim.manufacturing.PartInspection.Tool.MICROMETER, new Item.Properties().durability(300)));
+    public static final DeferredItem<MeasuringToolItem> HARDNESS_TESTER = ITEMS.register("hardness_tester",
+            () -> new MeasuringToolItem(dev.denfry.promptcritical.sim.manufacturing.PartInspection.Tool.HARDNESS_TESTER, new Item.Properties().durability(200)));
     public static final DeferredItem<Item> TONGS = ITEMS.registerSimpleItem("tongs", new Item.Properties().stacksTo(1));
     /** Пруток или проволока с компонентом {@code wire} (18 §18.6.7). */
     public static final DeferredItem<WireItem> WIRE = ITEMS.register("wire", () -> new WireItem(new Item.Properties()));

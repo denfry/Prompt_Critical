@@ -75,6 +75,30 @@ public final class ManufacturingGameTests {
         h.succeed();
     }
 
+    /** 18 §18.6.10: обточенная закалённая отливка проверена, когда измерены размер, твёрдость и сделан снимок. */
+    @GameTest(template = SMALL)
+    public static void measuringToolsInspectACastingStepByStep(GameTestHelper h) {
+        var stack = withSpec(PartSpec.of("pump_casing", "grey_iron", PartRoute.CAST, HeatTreatState.QUENCHED_TEMPERED, 30, 11,
+                3.2, Map.of(PartDefect.POROSITY, 0.4)));
+        var r = dev.denfry.promptcritical.mod.manufacturing.PartInspector.measure(stack,
+                dev.denfry.promptcritical.sim.manufacturing.PartInspection.Tool.CALIPER);
+        h.assertValueEqual(r.outcome(), dev.denfry.promptcritical.mod.manufacturing.PartInspector.Outcome.NOT_APPLICABLE,
+                "caliper cannot prove IT11");
+        r = dev.denfry.promptcritical.mod.manufacturing.PartInspector.measure(stack,
+                dev.denfry.promptcritical.sim.manufacturing.PartInspection.Tool.MICROMETER);
+        h.assertValueEqual(r.outcome(), dev.denfry.promptcritical.mod.manufacturing.PartInspector.Outcome.MEASURED, "micrometer");
+        r = dev.denfry.promptcritical.mod.manufacturing.PartInspector.measure(stack,
+                dev.denfry.promptcritical.sim.manufacturing.PartInspection.Tool.HARDNESS_TESTER);
+        h.assertValueEqual(r.outcome(), dev.denfry.promptcritical.mod.manufacturing.PartInspector.Outcome.MEASURED, "hardness");
+        h.assertFalse(stack.get(ManufacturingComponents.PART_SPEC.get()).inspected(), "not yet inspected without film");
+        r = dev.denfry.promptcritical.mod.manufacturing.PartInspector.measure(stack,
+                dev.denfry.promptcritical.sim.manufacturing.PartInspection.Tool.RADIOGRAPHY);
+        h.assertValueEqual(r.outcome(), dev.denfry.promptcritical.mod.manufacturing.PartInspector.Outcome.INSPECTED, "film");
+        h.assertTrue(stack.get(ManufacturingComponents.PART_SPEC.get()).inspected(), "inspected");
+        h.assertFalse(stack.has(ManufacturingComponents.INSPECTION_CHECKS.get()), "check mask removed");
+        h.succeed();
+    }
+
     @GameTest(template = SMALL)
     public static void unknownDefectIsSkippedNotFatal(GameTestHelper h) {
         var tag = new CompoundTag();

@@ -99,6 +99,14 @@ public final class ManufacturingComponents {
             COMPONENTS.registerComponentType("stator", b -> b.persistent(ElectricalData.Wound.CODEC)
                     .networkSynchronized(ByteBufCodecs.fromCodec(ElectricalData.Wound.CODEC)));
 
+    /**
+     * Сделанные замеры детали до отметки «проверено» (18 §18.6.10): маска битов {@code PartInspection.Check}. Снимается,
+     * когда паспорт получает отметку.
+     */
+    public static final DeferredHolder<DataComponentType<?>, DataComponentType<Integer>> INSPECTION_CHECKS =
+            COMPONENTS.registerComponentType("inspection_checks", b -> b.persistent(Codec.INT)
+                    .networkSynchronized(ByteBufCodecs.VAR_INT));
+
     private ManufacturingComponents() {
     }
 

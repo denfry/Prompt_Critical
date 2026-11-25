@@ -108,7 +108,8 @@ public final class ManufacturingClient {
 
     private static void tooltip(ItemTooltipEvent event) {
         PartSpec p = event.getItemStack().get(ManufacturingComponents.PART_SPEC.get());
-        if (p != null) ManufacturingText.tooltip(p, event.getToolTip());
+        if (p != null) ManufacturingText.tooltip(p,
+                event.getItemStack().getOrDefault(ManufacturingComponents.INSPECTION_CHECKS.get(), 0), event.getToolTip());
         var passport = event.getItemStack().get(ManufacturingComponents.MACHINE_PASSPORT.get());
         if (passport != null) ManufacturingText.passportTooltip(passport, event.getToolTip());
         var w = event.getItemStack().get(dev.denfry.promptcritical.mod.manufacturing.ManufacturingComponents.WORKPIECE.get());

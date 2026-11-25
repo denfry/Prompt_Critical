@@ -30,3 +30,14 @@ The Assemble button takes the parts and starts a no-load run-in. Twenty seconds 
 - Pump casings, beds, valve bodies, pulleys and end covers are cast in the foundry and turned on the lathe. A turned casting becomes a part on the crafting table: turning gives IT11, turning plus drilling gives IT10.
 - Shafts are forged on the anvil, and impellers are cast.
 - Fasteners, bearings, couplings, springs and flanges are made from steel on the crafting table for now.
+
+## Inspection
+
+A new part says "Not inspected": its true grade, hardness and flaws are already in the passport, but nobody has measured them yet. Hold the part in your off hand and use a tool:
+
+- **Caliper.** Reads to 0.1 mm, enough to prove a fit down to IT12. Forged and as-cast sizes are fine; a turned casting at IT11 is too fine for it.
+- **Micrometer.** Reads to 0.01 mm and proves fits down to IT6.
+- **Hardness tester.** Needed only after heat treatment.
+- **Radiography camera.** Castings and welded parts need a film: pores, slag and lack of fusion hide inside the wall.
+
+Each reading shows in the tooltip at once. When the last check the part needs is done, the passport is marked inspected.

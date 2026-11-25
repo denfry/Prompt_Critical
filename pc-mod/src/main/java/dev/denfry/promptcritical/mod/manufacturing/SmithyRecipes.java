@@ -59,6 +59,21 @@ public final class SmithyRecipes extends RecipeProvider {
         ShapedRecipeBuilder.shaped(RecipeCategory.TOOLS, ManufacturingItems.TONGS.get())
                 .pattern("I I").pattern(" I ").pattern("S S").define('I', Items.IRON_INGOT).define('S', Items.STICK)
                 .unlockedBy("has_iron", has(Items.IRON_INGOT)).save(out, id("tongs"));
+        // измерительный инструмент (18 §18.6.10): штангенциркуль — стальные губки и шкала, микрометр — скоба и точный
+        // винт из закалённой стали в латунном барабане, твердомер — алмазный индентор в стальном корпусе с пружиной
+        ShapedRecipeBuilder.shaped(RecipeCategory.TOOLS, ManufacturingItems.CALIPER.get())
+                .pattern("PP ").pattern(" P ").pattern(" N ").define('P', dev.denfry.promptcritical.mod.registry.PcItems.STEEL_PLATE.get())
+                .define('N', Items.IRON_NUGGET)
+                .unlockedBy("has_plate", has(dev.denfry.promptcritical.mod.registry.PcItems.STEEL_PLATE.get())).save(out, id("caliper"));
+        ShapedRecipeBuilder.shaped(RecipeCategory.TOOLS, ManufacturingItems.MICROMETER.get())
+                .pattern("SP ").pattern("P C").pattern(" C ").define('S', dev.denfry.promptcritical.mod.registry.PcItems.STEEL_INGOT.get())
+                .define('P', dev.denfry.promptcritical.mod.registry.PcItems.STEEL_PLATE.get()).define('C', Items.COPPER_INGOT)
+                .unlockedBy("has_plate", has(dev.denfry.promptcritical.mod.registry.PcItems.STEEL_PLATE.get())).save(out, id("micrometer"));
+        ShapedRecipeBuilder.shaped(RecipeCategory.TOOLS, ManufacturingItems.HARDNESS_TESTER.get())
+                .pattern(" S ").pattern("PGP").pattern(" D ").define('S', ManufacturingItems.SPRING.get())
+                .define('P', dev.denfry.promptcritical.mod.registry.PcItems.STEEL_PLATE.get()).define('G', Items.CLOCK)
+                .define('D', Items.DIAMOND)
+                .unlockedBy("has_spring", has(ManufacturingItems.SPRING.get())).save(out, id("hardness_tester"));
         // волочильная доска: стальная доска с рядом отверстий на верстаке и ворот
         ShapedRecipeBuilder.shaped(RecipeCategory.MISC, PcBlocks.DRAW_PLATE.get())
                 .pattern("III").pattern("LCL").pattern("P P").define('I', Items.IRON_INGOT).define('L', Items.LEVER)

@@ -77,13 +77,23 @@ public final class RadiographyCameraItem extends Item {
             if (!level.isClientSide) player.displayClientMessage(IsotopeText.msg("camera_empty"), true);
             return InteractionResultHolder.fail(cam);
         }
-        if (off.get(SteelworksComponents.PIPE_SPEC.get()) == null || findFilm(player) < 0) {
+        if (off.get(SteelworksComponents.PIPE_SPEC.get()) == null && !partNeedsFilm(off) || findFilm(player) < 0) {
             if (!level.isClientSide) player.displayClientMessage(IsotopeText.msg("camera_needs"), true);
             return InteractionResultHolder.fail(cam);
         }
         player.startUsingItem(hand);
         return InteractionResultHolder.consume(cam);
     }
+
+    /** Деталь с паспортом, которой нужен снимок (отливка или сварная, 18 §18.6.10). */
+    private static boolean partNeedsFilm(ItemStack s) {
+        var spec = s.get(dev.denfry.promptcritical.mod.manufacturing.ManufacturingComponents.PART_SPEC.get());
+        return spec != null && !spec.inspected() && dev.denfry.promptcritical.sim.manufacturing.PartInspection.measure(
+                dev.denfry.promptcritical.sim.manufacturing.PartInspection.Tool.RADIOGRAPHY, spec) != null;
+    }
+
+    /** Просвечиваемая толщина детали, см: стенка отливки корпуса средней машины [BALANCE]. */
+    static final double PART_WALL_CM = 2;
 
     private static int findFilm(Player p) {
         var inv = p.getInventory();
@@ -103,7 +113,7 @@ public final class RadiographyCameraItem extends Item {
 
     /** Нужная экспозиция при этой трубе и источнике, тиков; бесконечность — нельзя. */
     static double neededTicks(PointSource src, @Nullable PipeSpec pipe) {
-        double wallCm = pipe == null ? 1 : pipe.wallM() * 100;
+        double wallCm = pipe == null ? PART_WALL_CM : pipe.wallM() * 100;
         return Radiography.exposureS(src, SOURCE_TO_FILM_M, wallCm, IsotopeComponents.filmExposureGy()) / ActivityData.GAME_S_PER_TICK;
     }
 
@@ -139,10 +149,14 @@ public final class RadiographyCameraItem extends Item {
         ItemStack pipeStack = p.getOffhandItem();
         var pipe = pipeStack.get(SteelworksComponents.PIPE_SPEC.get());
         int filmSlot = findFilm(p);
-        if (a == null || pipe == null || filmSlot < 0) return;
-        PipeSpec spec = pipe.spec();
+        if (a == null || filmSlot < 0) return;
         PointSource src = a.inventory(sl.getGameTime()).source();
         int used = getUseDuration(cam, entity) - timeLeft;
+        if (pipe == null) {
+            if (partNeedsFilm(pipeStack)) releaseOnPart(p, pipeStack, src, used, filmSlot);
+            return;
+        }
+        PipeSpec spec = pipe.spec();
         double gotGy = Radiography.kermaRateGyS(src, SOURCE_TO_FILM_M, spec.wallM() * 100) * used * ActivityData.GAME_S_PER_TICK;
         Radiography.Film film = Radiography.film(gotGy, IsotopeComponents.filmExposureGy());
         p.getInventory().getItem(filmSlot).shrink(1);
@@ -159,6 +173,20 @@ public final class RadiographyCameraItem extends Item {
         } else {
             p.displayClientMessage(IsotopeText.msg(film == Radiography.Film.UNDEREXPOSED ? "film_under" : "film_over"), true);
         }
+    }
+
+    /** Снимок детали (18 §18.6.10): годная плёнка закрывает замер INTERNAL в паспорте детали. */
+    private static void releaseOnPart(ServerPlayer p, ItemStack part, PointSource src, int used, int filmSlot) {
+        double gotGy = Radiography.kermaRateGyS(src, SOURCE_TO_FILM_M, PART_WALL_CM) * used * ActivityData.GAME_S_PER_TICK;
+        Radiography.Film film = Radiography.film(gotGy, IsotopeComponents.filmExposureGy());
+        p.getInventory().getItem(filmSlot).shrink(1);
+        if (film != Radiography.Film.GOOD) {
+            p.displayClientMessage(IsotopeText.msg(film == Radiography.Film.UNDEREXPOSED ? "film_under" : "film_over"), true);
+            return;
+        }
+        var r = dev.denfry.promptcritical.mod.manufacturing.PartInspector.measure(part,
+                dev.denfry.promptcritical.sim.manufacturing.PartInspection.Tool.RADIOGRAPHY);
+        if (r.message() != null) p.displayClientMessage(r.message(), false);
     }
 
     static Component filmText(DefectKind d) {
