@@ -4,6 +4,7 @@ import dev.denfry.promptcritical.sim.combustion.DieselEngine;
 import dev.denfry.promptcritical.sim.core.SimId;
 import dev.denfry.promptcritical.sim.core.StateReader;
 import dev.denfry.promptcritical.sim.core.StateWriter;
+import dev.denfry.promptcritical.sim.manufacturing.assembly.MachinePassport;
 import dev.denfry.promptcritical.sim.mechanics.ShaftInput;
 
 /**
@@ -68,6 +69,8 @@ public final class GeneratorUnit extends GridUnit {
     /** Состояние машины между сборками сети и в сохранении; {@code null} — машина новая (стоит). */
     double[] carried;
     double speedPu, shaftPowerW;
+    /** КПД по паспорту сборки к номиналу (18 §18.8.3); 1 — номинал. Задаёт мод, в сохранение не идёт. */
+    double passportEfficiency = 1;
     long tick;
     /** Скачок нагрузки на сеть Create от несинхронного включения, Вт; мод забирает его один раз. */
     double pendingShockW;
@@ -362,7 +365,25 @@ public final class GeneratorUnit extends GridUnit {
         double ws = Math.max(0, w);
         double t = driveTorque(ws);
         shaftPowerW = t * ws * ratedVa();
-        return (t - friction(ws)) * ws * ratedVa();
+        return (t - friction(ws) - passportLoss(t, ws)) * ws * ratedVa();
+    }
+
+    /**
+     * Добавочные потери в пакете стали от паспорта сборки (18 §18.8.3), о.е. момента: η_ном·(1 − k) от момента
+     * привода. Машина лучше номинала теряет меньше, но не меньше нуля: выигрыш не больше трения.
+     */
+    double passportLoss(double t, double w) {
+        return Math.max(-friction(w), t * MachinePassport.NOMINAL_WINDING_EFFICIENCY * (1 - passportEfficiency));
+    }
+
+    /** КПД по паспорту к номиналу, {@code MachinePassport.efficiencyFactor()}. */
+    public double passportEfficiency() {
+        return passportEfficiency;
+    }
+
+    public void setPassportEfficiency(double k) {
+        if (!(k > 0 && k <= 1.05)) throw new IllegalArgumentException("efficiency factor " + k);
+        passportEfficiency = k;
     }
 
     private static double friction(double w) {

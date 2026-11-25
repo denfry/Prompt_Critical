@@ -185,7 +185,10 @@ public class ShaftGeneratorBlockEntity extends KineticMachineBlockEntity<Generat
     @Override
     protected void serverTick(SimLevelBinding binding, GeneratorUnit u) {
         ticks++;
-        if (ticks % 20 == 1) u.setExciterPresent(exciterAdjacent());
+        if (ticks % 20 == 1) {
+            u.setExciterPresent(exciterAdjacent());
+            u.setPassportEfficiency(passportSlot().get().efficiencyFactor());
+        }
         double shock = u.takeShockW();
         if (shock > 0) {
             spikeStress(shock);

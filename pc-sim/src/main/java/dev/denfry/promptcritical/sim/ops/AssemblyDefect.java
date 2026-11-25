@@ -4,8 +4,9 @@ import dev.denfry.promptcritical.sim.core.StateReader;
 import dev.denfry.promptcritical.sim.core.StateWriter;
 
 /**
- * Дефект сборки из паспорта машины (18 §18.8.3): начальный дисбаланс, несоосность, течь уплотнения или прокладки.
- * Значение не растёт само; ремонт (балансировка, центровка, замена уплотнения) сбрасывает его в ноль.
+ * Дефект сборки из паспорта машины (18 §18.8.3): начальный дисбаланс, несоосность, течь уплотнения или прокладки,
+ * сопротивление изоляции обмотки. Значение не меняется само; ремонт (балансировка, центровка, замена уплотнения,
+ * перемотка) возвращает его к значению исправной машины ({@link MaintenanceFaultKind#normal()}).
  */
 public final class AssemblyDefect implements FaultSource {
     private final MaintenanceFaultKind kind;
@@ -29,7 +30,7 @@ public final class AssemblyDefect implements FaultSource {
 
     @Override
     public void repair() {
-        value = 0;
+        value = kind.normal();
     }
 
     void save(StateWriter out) {

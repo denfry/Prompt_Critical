@@ -84,6 +84,36 @@ class OpsPassportTest {
     }
 
     @Test
+    void windingInsulationFromThePassportStartsInsulationAgingAndRewindingRestoresIt() {
+        SimulationWorld w = world();
+        OpsSubsystem ops = w.subsystem(OpsSubsystem.class);
+        SimId gen = w.topology().addDevice("promptcritical:shaft_generator", new GridPos(0, 64, 0));
+        MachinePassport wet = new MachinePassport(1, 0, 0, 0, 0, 8, 0.97, 60);
+        OpsSubsystem.Unit u = ops.ensure(gen, UnitKind.SYNC_GENERATOR, 0, false, Set.of(), false, wet);
+        int row = OpsSubsystemTestRows.index(u, MaintenanceFaultKind.INSULATION_AGING);
+        assertThat(row).isNotNegative();
+        assertThat(u.panel().source(row).value()).isEqualTo(wet.insulationMOhm());
+        assertThat(MaintenanceFaultKind.INSULATION_AGING.severity(u.panel().source(row).value())).isEqualTo(2);
+
+        MutableStateTree saved = w.saveTree();
+        SimulationWorld c = world();
+        c.load(SimulationWorld.upgrade(saved, new MigrationRegistry()));
+        assertThat(c.stateHash()).isEqualTo(w.stateHash());
+
+        ops.repair(gen, row, null, false);                        // перемотка
+        assertThat(u.panel().source(row).value()).isEqualTo(MaintenanceFaultKind.INSULATION_AGING.normal());
+    }
+
+    @Test
+    void machineWithoutWindingGetsNoInsulationRow() {
+        SimulationWorld w = world();
+        OpsSubsystem ops = w.subsystem(OpsSubsystem.class);
+        SimId pump = w.topology().addDevice("promptcritical:mine_drainage_pump", new GridPos(0, 64, 0));
+        OpsSubsystem.Unit u = ops.ensure(pump, UnitKind.MINE_DRAINAGE_PUMP, 0, false, Set.of(), false, BAD);
+        assertThat(OpsSubsystemTestRows.index(u, MaintenanceFaultKind.INSULATION_AGING)).isNegative();
+    }
+
+    @Test
     void nominalPassportChangesNothing() {
         SimulationWorld w = world();
         OpsSubsystem ops = w.subsystem(OpsSubsystem.class);

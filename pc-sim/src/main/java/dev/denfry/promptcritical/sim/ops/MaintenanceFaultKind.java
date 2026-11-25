@@ -112,6 +112,11 @@ public enum MaintenanceFaultKind {
         return s;
     }
 
+    /** Значение исправной машины в единицах каталога: 0 у растущих, норма у падающих. */
+    public double normal() {
+        return normal;
+    }
+
     /** Нормированный износ s ∈ [0, 1]: 1 — на пороге КРИТИЧНО. */
     public double normalized(double x) {
         if (Double.isNaN(x)) return 0;

@@ -85,8 +85,9 @@ public final class MachineWear {
     }
 
     /**
-     * Начальное состояние из паспорта машины (18 §18.15.7): посадка подшипника и дефекты сборки. Вызывается один раз
-     * при установке; номинальный паспорт ничего не меняет.
+     * Начальное состояние из паспорта машины (18 §18.8.3, §18.15.7): посадка подшипника, дефекты сборки и начальное
+     * сопротивление изоляции обмотки ({@code INSULATION_AGING}). Вызывается один раз при установке; номинальный
+     * паспорт ничего не меняет.
      *
      * @return новые источники для щита обслуживания
      */
@@ -97,6 +98,7 @@ public final class MachineWear {
         addDefect(MaintenanceFaultKind.MISALIGNMENT, p.misalignmentMm(), added);
         addDefect(MaintenanceFaultKind.SEAL_LEAK, p.sealLeak(), added);
         addDefect(MaintenanceFaultKind.FLANGE_LEAK, p.flangeLeak(), added);
+        if (p.hasWinding()) addDefect(MaintenanceFaultKind.INSULATION_AGING, p.insulationMOhm(), added);
         return added;
     }
 

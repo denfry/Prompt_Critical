@@ -38,6 +38,12 @@ public record MachinePassport(double bearingWearFactor, double imbalanceMmS, dou
         return NOMINAL;
     }
 
+    /**
+     * КПД номинальной машины с обмоткой, к которому отнесён {@link #efficiencyFactor()}: двигатель или генератор
+     * сотен киловатт с потерями в стали и меди (18 §18.6.9).
+     */
+    public static final double NOMINAL_WINDING_EFFICIENCY = 0.87;
+
     public boolean hasWinding() {
         return !Double.isNaN(insulationMOhm);
     }

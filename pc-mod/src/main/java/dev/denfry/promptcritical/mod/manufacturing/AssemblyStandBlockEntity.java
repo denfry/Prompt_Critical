@@ -37,7 +37,7 @@ public final class AssemblyStandBlockEntity extends SmithyDevice {
     /** Обкатка на холостом ходу: 20 с реального времени [BALANCE]. */
     public static final int RUN_IN_TICKS = 400;
     /** Номинальный КПД двигателя 4А112М4 для пересчёта КПД статора в множитель паспорта (MF4, ГОСТ 19523). */
-    public static final double NOMINAL_MOTOR_EFFICIENCY = 0.87;
+    public static final double NOMINAL_MOTOR_EFFICIENCY = MachinePassport.NOMINAL_WINDING_EFFICIENCY;
     public static final AssemblyScorer.Balancing BALANCING = AssemblyScorer.Balancing.STATIC;
 
     /** Состояние позиции на щите. */
