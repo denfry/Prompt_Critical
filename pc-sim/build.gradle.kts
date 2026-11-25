@@ -82,3 +82,13 @@ tasks.register<JavaExec>("siteData") {
     javaLauncher = javaToolchains.launcherFor { languageVersion = JavaLanguageVersion.of(21) }
     args(rootProject.layout.projectDirectory.dir("site/data").asFile.absolutePath)
 }
+
+// Данные графиков ролика о реакторах: импульс TRIGA, АМ-1 без воды, ксеноновая яма, LOCA, АЧР. ./gradlew :pc-sim:videoData
+tasks.register<JavaExec>("videoData") {
+    group = "documentation"
+    description = "Writes pc-sim runs for the reactor video charts into art/film/youtube/reactors/data."
+    classpath = sourceSets.test.get().runtimeClasspath
+    mainClass = "dev.denfry.promptcritical.sim.scenario.VideoData"
+    javaLauncher = javaToolchains.launcherFor { languageVersion = JavaLanguageVersion.of(21) }
+    args(rootProject.layout.projectDirectory.dir("art/film/youtube/reactors/data").asFile.absolutePath)
+}
