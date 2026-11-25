@@ -24,6 +24,8 @@ public final class ManufacturingItems {
             () -> new MeasuringToolItem(dev.denfry.promptcritical.sim.manufacturing.PartInspection.Tool.MICROMETER, new Item.Properties().durability(300)));
     public static final DeferredItem<MeasuringToolItem> HARDNESS_TESTER = ITEMS.register("hardness_tester",
             () -> new MeasuringToolItem(dev.denfry.promptcritical.sim.manufacturing.PartInspection.Tool.HARDNESS_TESTER, new Item.Properties().durability(200)));
+    /** Слесарный напильник (18 §18.7): опиловка кованых деталей до IT13 [BALANCE: 120 деталей]. */
+    public static final DeferredItem<FileItem> FILE = ITEMS.register("file", () -> new FileItem(new Item.Properties().durability(120)));
     public static final DeferredItem<Item> TONGS = ITEMS.registerSimpleItem("tongs", new Item.Properties().stacksTo(1));
     /** Пруток или проволока с компонентом {@code wire} (18 §18.6.7). */
     public static final DeferredItem<WireItem> WIRE = ITEMS.register("wire", () -> new WireItem(new Item.Properties()));

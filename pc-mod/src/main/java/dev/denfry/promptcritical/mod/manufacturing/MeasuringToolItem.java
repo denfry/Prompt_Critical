@@ -34,7 +34,7 @@ public final class MeasuringToolItem extends Item {
         ItemStack self = player.getItemInHand(hand);
         if (hand != InteractionHand.MAIN_HAND) return InteractionResultHolder.pass(self);
         if (level.isClientSide) return InteractionResultHolder.success(self);
-        PartInspector.Result r = PartInspector.measure(player.getOffhandItem(), tool);
+        PartInspector.Result r = PartInspector.onOne(player, part -> PartInspector.measure(part, tool));
         if (r.message() != null) player.displayClientMessage(r.message(), false);
         boolean measured = r.outcome() == PartInspector.Outcome.MEASURED || r.outcome() == PartInspector.Outcome.INSPECTED;
         if (measured) self.hurtAndBreak(1, player, EquipmentSlot.MAINHAND);

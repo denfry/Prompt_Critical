@@ -37,6 +37,23 @@ public final class PartInspector {
         return new Result(Outcome.MEASURED, reading);
     }
 
+    /**
+     * Работа над одной деталью из стака во второй руке: остальные детали стака не меняются. Изменённая деталь
+     * остаётся во второй руке, если стак был из одной, иначе уходит в инвентарь.
+     */
+    public static <T> T onOne(net.minecraft.world.entity.player.Player player, java.util.function.Function<ItemStack, T> work) {
+        ItemStack off = player.getOffhandItem();
+        if (off.getCount() <= 1) return work.apply(off);
+        ItemStack one = off.copyWithCount(1);
+        ItemStack before = one.copy();
+        T r = work.apply(one);
+        if (!ItemStack.isSameItemSameComponents(before, one)) {
+            off.shrink(1);
+            if (!player.getInventory().add(one)) player.drop(one, false);
+        }
+        return r;
+    }
+
     static String key(PartInspection.Tool t) {
         return t.name().toLowerCase(java.util.Locale.ROOT);
     }

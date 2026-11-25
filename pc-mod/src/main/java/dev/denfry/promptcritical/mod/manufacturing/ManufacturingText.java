@@ -143,6 +143,13 @@ public final class ManufacturingText {
                 "ПКМ с деталью во второй руке · отсчёт 0,01 мм, посадки до IT6");
         msg("inspect.tool_hint.hardness_tester", "Use with a heat treated part in the other hand · HRC scale",
                 "ПКМ с термообработанной деталью во второй руке · шкала HRC");
+        msg("file.no_part", "Hold a forged part in your other hand", "Кованую деталь держите во второй руке");
+        msg("file.too_hard", "The file skids: the part is hardened, file it before quenching",
+                "Напильник скользит: деталь закалена, опиливают до закалки");
+        msg("file.already_fine", "The part is already finished finer than a file can", "Деталь уже обработана точнее, чем может напильник");
+        msg("file.done", "Filed to IT%s", "Опилено до IT%s");
+        msg("file.hint", "Use with a forged part in the other hand · IT13, Ra 6.3 µm · soft steel only",
+                "ПКМ с кованой деталью во второй руке · IT13, Ra 6,3 мкм · только незакалённая сталь");
         msg("inspect.done", "%s · part inspected", "%s · деталь проверена");
         msg("inspect.partial", "Measured: %s", "Измерено: %s");
         msg("reading.dimension", "Size: IT%s, Ra %s µm", "Размер: IT%s, Ra %s мкм");

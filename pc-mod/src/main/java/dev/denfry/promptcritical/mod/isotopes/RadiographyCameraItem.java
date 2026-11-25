@@ -184,8 +184,8 @@ public final class RadiographyCameraItem extends Item {
             p.displayClientMessage(IsotopeText.msg(film == Radiography.Film.UNDEREXPOSED ? "film_under" : "film_over"), true);
             return;
         }
-        var r = dev.denfry.promptcritical.mod.manufacturing.PartInspector.measure(part,
-                dev.denfry.promptcritical.sim.manufacturing.PartInspection.Tool.RADIOGRAPHY);
+        var r = dev.denfry.promptcritical.mod.manufacturing.PartInspector.onOne(p, one -> dev.denfry.promptcritical.mod.manufacturing
+                .PartInspector.measure(one, dev.denfry.promptcritical.sim.manufacturing.PartInspection.Tool.RADIOGRAPHY));
         if (r.message() != null) p.displayClientMessage(r.message(), false);
     }
 

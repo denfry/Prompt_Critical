@@ -99,6 +99,34 @@ public final class ManufacturingGameTests {
         h.succeed();
     }
 
+    /** 18 §18.7: напильник доводит одну кованую деталь из стака до IT13, закалённую не берёт. */
+    @GameTest(template = SMALL)
+    public static void fileFinishesOneForgedShaftOfAStack(GameTestHelper h) {
+        var player = net.neoforged.neoforge.common.util.FakePlayerFactory.getMinecraft(h.getLevel());
+        player.getInventory().clearContent();
+        var forged = PartSpec.of("shaft", "medium_carbon", PartRoute.FORGED, HeatTreatState.NORMALIZED, 20, 0, 25, Map.of());
+        var shafts = withSpec(forged);
+        shafts.setCount(2);
+        player.setItemInHand(net.minecraft.world.InteractionHand.OFF_HAND, shafts);
+        player.setItemInHand(net.minecraft.world.InteractionHand.MAIN_HAND,
+                new ItemStack(dev.denfry.promptcritical.mod.manufacturing.ManufacturingItems.FILE.get()));
+        var file = player.getMainHandItem();
+        h.assertTrue(file.use(h.getLevel(), player, net.minecraft.world.InteractionHand.MAIN_HAND).getResult().consumesAction(), "file used");
+        h.assertValueEqual(player.getOffhandItem().getCount(), 1, "one shaft left unfiled in the hand");
+        h.assertValueEqual(player.getOffhandItem().get(ManufacturingComponents.PART_SPEC.get()), forged, "unfiled passport");
+        ItemStack filed = ItemStack.EMPTY;
+        for (ItemStack s : player.getInventory().items) if (s.has(ManufacturingComponents.PART_SPEC.get())) filed = s;
+        h.assertValueEqual(filed.get(ManufacturingComponents.PART_SPEC.get()).itGrade(), 13, "filed to IT13");
+        h.assertValueEqual(file.getDamageValue(), 1, "file wears");
+
+        player.setItemInHand(net.minecraft.world.InteractionHand.OFF_HAND, withSpec(PartSpec.of("shaft", "medium_carbon",
+                PartRoute.FORGED, HeatTreatState.QUENCHED, 55, 0, 25, Map.of())));
+        h.assertFalse(file.use(h.getLevel(), player, net.minecraft.world.InteractionHand.MAIN_HAND).getResult().consumesAction(),
+                "hardened shaft refused");
+        player.getInventory().clearContent();
+        h.succeed();
+    }
+
     @GameTest(template = SMALL)
     public static void unknownDefectIsSkippedNotFatal(GameTestHelper h) {
         var tag = new CompoundTag();
