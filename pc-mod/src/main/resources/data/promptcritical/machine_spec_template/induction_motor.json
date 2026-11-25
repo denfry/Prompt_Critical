@@ -1,0 +1,13 @@
+{
+  "run_in": true,
+  "parts": [
+    {"role": "stator", "items": ["stator"], "aspects": ["winding"]},
+    {"role": "rotor", "items": ["rotor_core"], "aspects": ["rotor"]},
+    {"role": "shaft", "items": ["shaft", "keyed_shaft"], "it": 7, "min_hrc": 30,
+     "heat_treat": ["quenched_tempered"], "aspects": ["bearing_seat"]},
+    {"role": "bearings", "items": ["rolling_bearing"], "count": 2, "aspects": ["bearing"]},
+    {"role": "end_covers", "items": ["end_cover"], "count": 2},
+    {"role": "fan", "items": ["fan_wheel"]},
+    {"role": "fasteners", "items": ["fastener_kit"]}
+  ]
+}

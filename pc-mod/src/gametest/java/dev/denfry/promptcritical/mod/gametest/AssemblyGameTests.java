@@ -92,6 +92,29 @@ public final class AssemblyGameTests {
         });
     }
 
+    /** 18 §18.13 MF4–MF5: электродвигатель 0,4 кВ больше не крафтится, его собирают на стенде из статора и деталей. */
+    @GameTest(template = LARGE, timeoutTicks = AssemblyStandBlockEntity.RUN_IN_TICKS + 100)
+    public static void standAssemblesAnElectricMotor(GameTestHelper h) {
+        h.assertTrue(h.getLevel().getRecipeManager().byKey(PromptCritical.id("grid/electric_motor")).isEmpty(),
+                "no crafting recipe for the motor");
+        BlockPos at = new BlockPos(2, 2, 2);
+        h.setBlock(at, PcBlocks.ASSEMBLY_STAND.get().defaultBlockState());
+        AssemblyStandBlockEntity stand = h.getBlockEntity(at);
+        stand.selectSpec("promptcritical:electric_motor");
+        h.assertTrue(stand.spec() != null, "motor spec loaded from the datapack");
+        var inv = stand.panelItems();
+        inv.setStackInSlot(0, part(ManufacturingItems.STATOR.get(), 1));
+        inv.setStackInSlot(1, part(ManufacturingItems.ROTOR_CORE.get(), 1));
+        inv.setStackInSlot(2, part(PcItems.KEYED_SHAFT.get(), 1));
+        inv.setStackInSlot(3, part(ManufacturingItems.ROLLING_BEARING.get(), 2));
+        inv.setStackInSlot(4, part(ManufacturingItems.END_COVER.get(), 2));
+        inv.setStackInSlot(5, part(ManufacturingItems.FAN_WHEEL.get(), 1));
+        inv.setStackInSlot(6, part(ManufacturingItems.FASTENER_KIT.get(), 1));
+        h.assertTrue(stand.assemble(null), "assembled");
+        h.succeedWhen(() -> h.assertTrue(inv.getStackInSlot(AssemblyStandBlockEntity.OUTPUT_SLOT).is(PcBlocks.ELECTRIC_MOTOR.get().asItem()),
+                "motor after the run-in"));
+    }
+
     private static BlockState north(BlockState s) {
         return s.setValue(BlockStateProperties.HORIZONTAL_FACING, Direction.NORTH);
     }

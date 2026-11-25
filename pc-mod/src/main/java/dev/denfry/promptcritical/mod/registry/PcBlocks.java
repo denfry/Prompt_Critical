@@ -1354,7 +1354,7 @@ public final class PcBlocks {
      */
     public static java.util.Set<DeferredBlock<? extends net.minecraft.world.level.block.Block>> passportMachines() {
         return java.util.Set.of(MINE_DRAINAGE_PUMP, MINE_DRAINAGE_PUMP_GEARED, MAIN_MINE_FAN, GUIBAL_FAN, MINE_HOIST,
-                WINDING_ENGINE, STEAM_ENGINE_CYLINDER, SHAFT_GENERATOR, SHAFT_GENERATOR_REAL);
+                WINDING_ENGINE, STEAM_ENGINE_CYLINDER, SHAFT_GENERATOR, SHAFT_GENERATOR_REAL, ELECTRIC_MOTOR);
     }
 
     /** Кузница и машиностроение реального масштаба (18 §18.6–18.7). */

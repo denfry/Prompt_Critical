@@ -8,7 +8,7 @@ import dev.denfry.promptcritical.sim.core.SimId;
 import dev.denfry.promptcritical.sim.manufacturing.assembly.MachinePassport;
 import org.junit.jupiter.api.Test;
 
-/** КПД генератора на валу по паспорту сборки (18 §18.8.3). */
+/** КПД генератора на валу и двигателя по паспорту сборки (18 §18.8.3). */
 class GeneratorPassportTest {
     private static GeneratorUnit unit(double k) {
         GeneratorUnit u = new GeneratorUnit(SimId.of(SimId.Kind.DEVICE, 1));
@@ -38,5 +38,15 @@ class GeneratorPassportTest {
     void rejectsOutOfRangeFactor() {
         assertThatThrownBy(() -> unit(0)).isInstanceOf(IllegalArgumentException.class);
         assertThatThrownBy(() -> unit(1.2)).isInstanceOf(IllegalArgumentException.class);
+    }
+
+    @Test
+    void motorWithAPoorCoreTakesMoreFromTheGridForTheSameShaftLoad() {
+        MotorUnit m = new MotorUnit(SimId.of(SimId.Kind.DEVICE, 2));
+        assertThat(m.passportLossShare()).isZero();
+        m.setPassportEfficiency(0.9);
+        assertThat(m.passportLossShare()).isCloseTo(MachinePassport.NOMINAL_WINDING_EFFICIENCY * 0.1, offset(1e-12));
+        m.setPassportEfficiency(1.05);
+        assertThat(m.passportLossShare()).isZero();                 // лучше штатной модели не бывает
     }
 }

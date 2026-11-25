@@ -52,10 +52,14 @@ import org.jetbrains.annotations.Nullable;
  * 49, АЧР, 27, 51.
  */
 public class ElectricMotorBlockEntity extends GeneratingKineticBlockEntity implements DeviceHost, GridDevice, FoundryDevice,
-        PanelHost, WiredDevice, dev.denfry.promptcritical.mod.client.whole.WholeModelHost, dev.denfry.promptcritical.mod.boiler.ShaftSource {
+        PanelHost, WiredDevice, dev.denfry.promptcritical.mod.client.whole.WholeModelHost, dev.denfry.promptcritical.mod.boiler.ShaftSource,
+        dev.denfry.promptcritical.mod.manufacturing.PassportSlot.Holder {
     public static final BooleanProperty MV = PcProperties.MEDIUM_VOLTAGE;
     public static final int SLOTS = 2;
     private static final double HYSTERESIS = 0.02;
+    /** Паспорт сборки (18 §18.8.3): КПД пакета стали; номинальный у двигателей из мира до 1.2. */
+    private final dev.denfry.promptcritical.mod.manufacturing.PassportSlot passportSlot =
+            new dev.denfry.promptcritical.mod.manufacturing.PassportSlot();
 
     private final ItemStackHandler modules = new ItemStackHandler(SLOTS) {
         @Override
@@ -265,6 +269,7 @@ public class ElectricMotorBlockEntity extends GeneratingKineticBlockEntity imple
             load = wPerSu * Math.min(stress, capacity) * own / capacity;
         }
         u.setLoadPowerW(load);
+        if (ticks % 20 == 1) u.setPassportEfficiency(passportSlot.get().efficiencyFactor());
         if (ticks % 5 == 0) {
             setFlag(PcProperties.RUNNING, level4 > 0);
             setFlag(MV, u.mediumVoltage());
@@ -476,6 +481,7 @@ public class ElectricMotorBlockEntity extends GeneratingKineticBlockEntity imple
     @Override
     protected void write(CompoundTag tag, HolderLookup.Provider registries, boolean clientPacket) {
         super.write(tag, registries, clientPacket);
+        if (!clientPacket) passportSlot.save(tag, registries);
         if (!clientPacket) {
             tag.putLong("sim_id", simId.raw());
             tag.put("modules", modules.serializeNBT(registries));
@@ -489,6 +495,7 @@ public class ElectricMotorBlockEntity extends GeneratingKineticBlockEntity imple
     @Override
     protected void read(CompoundTag tag, HolderLookup.Provider registries, boolean clientPacket) {
         super.read(tag, registries, clientPacket);
+        if (!clientPacket) passportSlot.load(tag, registries);
         if (!clientPacket) {
             simId = new SimId(tag.getLong("sim_id"));
             if (tag.contains("modules")) modules.deserializeNBT(registries, tag.getCompound("modules"));
@@ -531,5 +538,22 @@ public class ElectricMotorBlockEntity extends GeneratingKineticBlockEntity imple
     @Nullable
     public AutomationUnit automationUnit(AutomationSubsystem automation) {
         return simId.isNone() ? null : automation.unit(simId, AutomationKind.MOTOR_IO);
+    }
+
+    @Override
+    public dev.denfry.promptcritical.mod.manufacturing.PassportSlot passportSlot() {
+        return passportSlot;
+    }
+
+    @Override
+    protected void applyImplicitComponents(DataComponentInput input) {
+        super.applyImplicitComponents(input);
+        passportSlot.set(input.get(dev.denfry.promptcritical.mod.manufacturing.ManufacturingComponents.MACHINE_PASSPORT.get()));
+    }
+
+    @Override
+    protected void collectImplicitComponents(net.minecraft.core.component.DataComponentMap.Builder builder) {
+        super.collectImplicitComponents(builder);
+        passportSlot.collect(builder);
     }
 }

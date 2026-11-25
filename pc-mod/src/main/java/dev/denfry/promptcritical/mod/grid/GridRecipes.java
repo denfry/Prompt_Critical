@@ -113,10 +113,8 @@ public final class GridRecipes extends RecipeProvider {
         ShapedRecipeBuilder.shaped(RecipeCategory.MISC, PcBlocks.GENERATOR_EXCITER.get()).pattern("BWB").pattern("WSW").pattern("BRB")
                 .define('B', AllItems.BRASS_INGOT.get()).define('W', wire).define('S', AllBlocks.SHAFT.get()).define('R', Items.REDSTONE)
                 .unlockedBy("has_generator", has(PcBlocks.SHAFT_GENERATOR.get())).save(out, id("generator_exciter"));
-        ShapedRecipeBuilder.shaped(RecipeCategory.MISC, PcBlocks.ELECTRIC_MOTOR.get()).pattern("IWI").pattern("WSW").pattern("ICI")
-                .define('I', PcItems.STEEL_PLATE.get()).define('W', wire).define('S', PcItems.KEYED_SHAFT.get())
-                .define('C', AllBlocks.ANDESITE_CASING.get())
-                .unlockedBy("has_wire", hasWire).save(out, id("electric_motor"));
+        // электродвигатель 0,4 кВ не крафтится: его собирают на сборочном стенде из статора, ротора, вала и подшипников
+        // (machine_spec/electric_motor, 18 §18.13 MF4–MF5)
         // чертежи генератора и двигателя реального масштаба: строятся на стройплощадке по массе прототипа (SitePlans)
         ShapedRecipeBuilder.shaped(RecipeCategory.MISC, dev.denfry.promptcritical.mod.site.SiteRegistry.SHAFT_GENERATOR_REAL_DRAWING.get())
                 .pattern("PPP").pattern("WSW").pattern(" B ").define('P', Items.PAPER).define('W', wire)

@@ -29,6 +29,8 @@ public final class MotorUnit extends GridUnit {
      */
     boolean uvRelease = true, uvArmed, uvTripped;
     double uvUnderS;
+    /** КПД по паспорту сборки к номиналу (18 §18.8.3); 1 — номинал. Задаёт мод, в сохранение не идёт. */
+    double passportEfficiency = 1;
 
     MotorUnit(SimId id) {
         super(id, 1);
@@ -161,6 +163,26 @@ public final class MotorUnit extends GridUnit {
         return ratedPowerW() * Math.min(1, v * v / 0.81);
     }
 
+    /** КПД по паспорту к номиналу, {@code MachinePassport.efficiencyFactor()}. */
+    public double passportEfficiency() {
+        return passportEfficiency;
+    }
+
+    public void setPassportEfficiency(double k) {
+        if (!(k > 0 && k <= 1.05)) throw new IllegalArgumentException("efficiency factor " + k);
+        passportEfficiency = k;
+    }
+
+    /**
+     * Добавочные потери в пакете стали по паспорту (18 §18.6.8, §18.8.3), доля нагрузки на валу: η_ном·(1 − k). Это
+     * момент, который двигатель тратит сверх штатной модели, поэтому сеть платит за него током и нагревом обмотки.
+     * Лучше номинала не бывает: штатная модель двигателя уже несёт номинальные потери.
+     */
+    double passportLossShare() {
+        return Math.max(0, dev.denfry.promptcritical.sim.manufacturing.assembly.MachinePassport.NOMINAL_WINDING_EFFICIENCY
+                * (1 - passportEfficiency));
+    }
+
     /** Скорость, ниже которой нагрузка идёт как у насоса или вентилятора, о.е. */
     static final double LOAD_KNEE_PU = 0.9;
 
@@ -171,8 +193,9 @@ public final class MotorUnit extends GridUnit {
      */
     double loadTorquePu() {
         double w = Math.max(0, speedPu());
-        double atKnee = loadPowerW / (ratedPowerW() * LOAD_KNEE_PU);
-        if (w >= LOAD_KNEE_PU) return loadPowerW / (ratedPowerW() * w);
+        double load = loadPowerW * (1 + passportLossShare());
+        double atKnee = load / (ratedPowerW() * LOAD_KNEE_PU);
+        if (w >= LOAD_KNEE_PU) return load / (ratedPowerW() * w);
         double r = w / LOAD_KNEE_PU;
         return atKnee * r * r;
     }
