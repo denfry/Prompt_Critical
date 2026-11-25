@@ -40,7 +40,35 @@ public final class MachineToolUnit implements FoundryUnit {
     public final ShaftInput shaft = new ShaftInput();
     private Machining.CuttingTool tool;
     private CastingSpec work;
+    /** Обточка детали с паспортом (18 §18.6.6): кованый вал; {@code null} — нет. Взаимоисключается с {@link #work}. */
+    private Turning turning;
     private double volumeLeft, spindleRpm, powerW;
+
+    /**
+     * Обточка детали: диаметр после обточки, мм, длина, мм, и материал резания. Кованый вал 18 §18.7 — Ø40 × 300 с
+     * припуском {@value #FORGED_ALLOWANCE_MM} мм на диаметр.
+     */
+    public record Turning(double diameterMm, double lengthMm, Machining.WorkMaterial material) {
+        public Turning {
+            if (!(diameterMm > 0) || !(lengthMm > 0) || material == null) throw new IllegalArgumentException("turning");
+        }
+
+        /** Объём припуска, мм³: кольцо от d + 2·z/2 до d по длине. */
+        double volumeMm3() {
+            double outer = diameterMm + FORGED_ALLOWANCE_MM;
+            return Math.PI / 4 * (outer * outer - diameterMm * diameterMm) * lengthMm;
+        }
+    }
+
+    /** Припуск поковки на диаметр под чистовую обточку, мм (ГОСТ 7505, поковки до 50 мм, класс точности Т4–Т5) [сверить]. */
+    public static final double FORGED_ALLOWANCE_MM = 3;
+    /**
+     * Твёрже этого быстрорежущий резец сталь не точит: закалённый вал доводят шлифованием (Справочник технолога-
+     * машиностроителя: точение Р6М5 — стали до HB 300 ≈ HRC 32; с запасом на мягкие резы [BALANCE: 35]).
+     */
+    public static final int MAX_TURN_HRC = 35;
+    /** Радиус при вершине токарного резца, мм (как у строгального, {@link Shaping#NOSE_RADIUS_MM}). */
+    public static final double LATHE_NOSE_RADIUS_MM = Shaping.NOSE_RADIUS_MM;
 
     public MachineToolUnit(Kind kind) {
         this.kind = kind;
@@ -60,7 +88,18 @@ public final class MachineToolUnit implements FoundryUnit {
         double rpm = shaft.rpm(ctx.tick());
         spindleRpm = rpm < MIN_RPM ? 0 : rpm * kind.gear;
         powerW = kind.ratedW * IDLE_SHARE * Math.min(1, spindleRpm / (64 * kind.gear));
-        if (spindleRpm <= 0 || work == null || volumeLeft <= 0 || tool == null || tool.dull()) return;
+        if (spindleRpm <= 0 || volumeLeft <= 0 || tool == null || tool.dull()) return;
+        if (turning != null) {
+            double pc = shop.machining().cut(ctx.dt(), tool, turning.material(), turning.diameterMm(), spindleRpm,
+                    kind.depthMm, kind.feedMmRev);
+            if (pc > 0) {
+                volumeLeft -= Machining.removalRateMm3S(kind.depthMm, kind.feedMmRev,
+                        Machining.cuttingSpeed(turning.diameterMm(), spindleRpm)) * ctx.dt();
+                powerW += pc;
+            }
+            return;
+        }
+        if (work == null) return;
         CastingGeometry g = CastingGeometry.of(work.kind());
         Machining.WorkMaterial m = Machining.WorkMaterial.of(CastAlloy.byId(work.alloyId()));
         double d = diameterMm(g);
@@ -88,9 +127,39 @@ public final class MachineToolUnit implements FoundryUnit {
                 && volumeMm3(CastingGeometry.of(c.kind())) > 0;
     }
 
+    /** Поставить деталь на обточку (только токарный); {@code false} — станок занят. */
+    public boolean loadTurning(Turning t) {
+        if (kind != Kind.LATHE || work != null || turning != null || t == null) return false;
+        turning = t;
+        volumeLeft = t.volumeMm3();
+        return true;
+    }
+
+    public Turning turning() {
+        return turning;
+    }
+
+    /** Обточка закончена. */
+    public boolean turningDone() {
+        return turning != null && volumeLeft <= 0;
+    }
+
+    /**
+     * Снять обточенную деталь: Ra по подаче и износу резца в момент съёма, мкм; NaN — обточка не закончена или её не
+     * было (незаконченная деталь снимается без изменений).
+     */
+    public double unloadTurning() {
+        if (turning == null) return Double.NaN;
+        boolean finished = volumeLeft <= 0;
+        turning = null;
+        volumeLeft = 0;
+        return finished ? SurfaceFinish.singlePointRaUm(kind.feedMmRev, LATHE_NOSE_RADIUS_MM, tool == null ? 0 : tool.wear())
+                : Double.NaN;
+    }
+
     /** Поставить заготовку; {@code false} — станок занят или отливка не подходит. */
     public boolean load(CastingSpec c) {
-        if (work != null || !accepts(c)) return false;
+        if (work != null || turning != null || !accepts(c)) return false;
         work = c;
         volumeLeft = volumeMm3(CastingGeometry.of(c.kind()));
         return true;
@@ -137,6 +206,7 @@ public final class MachineToolUnit implements FoundryUnit {
 
     /** Доля выполненной операции. */
     public double progress() {
+        if (turning != null) return Math.max(0, Math.min(1, 1 - volumeLeft / turning.volumeMm3()));
         if (work == null) return 0;
         double v = volumeMm3(CastingGeometry.of(work.kind()));
         return v > 0 ? Math.max(0, Math.min(1, 1 - volumeLeft / v)) : 1;
@@ -153,7 +223,7 @@ public final class MachineToolUnit implements FoundryUnit {
 
     /** Режет сейчас. */
     public boolean running() {
-        return spindleRpm > 0 && work != null && volumeLeft > 0 && tool != null && !tool.dull();
+        return spindleRpm > 0 && (work != null || turning != null) && volumeLeft > 0 && tool != null && !tool.dull();
     }
 
     @Override
@@ -171,6 +241,12 @@ public final class MachineToolUnit implements FoundryUnit {
             out.putInt("work_machined", work.machinedMask());
             out.putDouble("volume_left", volumeLeft);
         }
+        if (turning != null) {
+            out.putDouble("turn_d", turning.diameterMm());
+            out.putDouble("turn_l", turning.lengthMm());
+            out.putString("turn_m", turning.material().name());
+            out.putDouble("turn_left", volumeLeft);
+        }
     }
 
     @Override
@@ -183,6 +259,12 @@ public final class MachineToolUnit implements FoundryUnit {
                     in.getInt("work_dn"), CastingDefect.valueOf(in.getString("work_defect")), in.getInt("work_inspected"),
                     in.getLong("work_serial"), in.getInt("work_machined"));
             volumeLeft = in.getDouble("volume_left");
+        }
+        turning = null;
+        if (in.has("turn_d")) {
+            turning = new Turning(in.getDouble("turn_d"), in.getDouble("turn_l"),
+                    Machining.WorkMaterial.valueOf(in.getString("turn_m")));
+            volumeLeft = in.getDouble("turn_left");
         }
     }
 }

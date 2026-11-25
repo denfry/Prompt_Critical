@@ -39,6 +39,8 @@ public final class MachineToolBlockEntity extends PortKineticMachineBlockEntity<
 
     private final MachineToolUnit.Kind kind;
     private final MachineInventory inv = new MachineInventory(ROLES, this::valid, this::setChanged);
+    /** Деталь с паспортом на обточке (18 §18.6.6): кованый вал; пусто — нет. */
+    private ItemStack turningPart = ItemStack.EMPTY;
 
     private MachineToolBlockEntity(BlockEntityType<?> type, MachineToolUnit.Kind kind, BlockPos pos, BlockState state) {
         super(type, pos, state);
@@ -53,8 +55,37 @@ public final class MachineToolBlockEntity extends PortKineticMachineBlockEntity<
         return new MachineToolBlockEntity(FoundryBlockEntities.DRILL_PRESS.get(), MachineToolUnit.Kind.DRILL_PRESS, pos, state);
     }
 
+    /**
+     * Деталь с паспортом, которую токарный станок обтачивает: кованый незакалённый вал, ещё не обработанный точнее
+     * опиловки; {@code null} — не годится.
+     */
+    @Nullable
+    public MachineToolUnit.Turning turning(ItemStack s) {
+        if (kind != MachineToolUnit.Kind.LATHE || !s.is(dev.denfry.promptcritical.mod.manufacturing.ManufacturingItems.SHAFT.get())) return null;
+        var spec = s.get(dev.denfry.promptcritical.mod.manufacturing.ManufacturingComponents.PART_SPEC.get());
+        if (spec == null || spec.hardnessHrc() > MachineToolUnit.MAX_TURN_HRC
+                || spec.itGrade() != 0 && spec.itGrade() <= dev.denfry.promptcritical.sim.metallurgy.SurfaceFinish.itGrade(
+                        dev.denfry.promptcritical.sim.metallurgy.SurfaceFinish.RA_FLOOR_UM)) return null;
+        // кованый вал 18 §18.7: Ø40 × 300; марки стали режутся как сталь 45
+        return new MachineToolUnit.Turning(40, 300, dev.denfry.promptcritical.sim.metallurgy.Machining.WorkMaterial.STEEL_45);
+    }
+
+    /** Обточенный вал: квалитет и Ra по резцу, прежние замеры больше не годятся. */
+    public static ItemStack turned(ItemStack part, double raUm) {
+        ItemStack out = part.copyWithCount(1);
+        var spec = out.get(dev.denfry.promptcritical.mod.manufacturing.ManufacturingComponents.PART_SPEC.get());
+        if (spec == null || Double.isNaN(raUm)) return out;
+        out.set(dev.denfry.promptcritical.mod.manufacturing.ManufacturingComponents.PART_SPEC.get(),
+                new dev.denfry.promptcritical.sim.manufacturing.PartSpec(spec.kind(), spec.material(), spec.route(), spec.heatTreat(),
+                        spec.hardnessHrc(), dev.denfry.promptcritical.sim.metallurgy.SurfaceFinish.itGrade(raUm), raUm,
+                        spec.defects(), false));
+        out.remove(dev.denfry.promptcritical.mod.manufacturing.ManufacturingComponents.INSPECTION_CHECKS.get());
+        return out;
+    }
+
     private boolean valid(int slot, ItemStack s) {
         if (slot == 1) return s.is(PcItems.CUTTING_TOOL.get());
+        if (turning(s) != null) return true;
         CastingSpec c = s.get(FoundryComponents.CASTING_SPEC.get());
         return c != null && (c.machinedMask() & kind.operation) == 0 && c.defect() != CastingDefect.CHILL;
     }
@@ -90,7 +121,23 @@ public final class MachineToolBlockEntity extends PortKineticMachineBlockEntity<
         syncTool(u);
         ItemStack in = inv.getStackInSlot(0);
         CastingSpec c = in.get(FoundryComponents.CASTING_SPEC.get());
-        if (u.work() == null && c != null && u.load(c)) in.shrink(1);
+        MachineToolUnit.Turning t = in.isEmpty() ? null : turning(in);
+        if (u.work() == null && u.turning() == null && turningPart.isEmpty() && t != null && u.loadTurning(t)) {
+            turningPart = in.split(1);
+            setChanged();
+        } else if (u.work() == null && c != null && u.load(c)) in.shrink(1);
+        if (u.turningDone() && inv.outputFits(turned(turningPart, 1))) {
+            inv.output(turned(turningPart, u.unloadTurning()));
+            turningPart = ItemStack.EMPTY;
+            setChanged();
+        } else if (u.turning() == null && !turningPart.isEmpty()) {
+            // двойник потерял обточку (станок пересобран): деталь возвращается как была
+            if (inv.outputFits(turningPart)) {
+                inv.output(turningPart);
+                turningPart = ItemStack.EMPTY;
+                setChanged();
+            }
+        }
         if (u.done()) {
             ItemStack out = SandMoldBlockEntity.casting(u.work());
             if (inv.outputFits(out)) inv.output(SandMoldBlockEntity.casting(u.unload()));
@@ -122,7 +169,7 @@ public final class MachineToolBlockEntity extends PortKineticMachineBlockEntity<
 
     @Override
     public boolean accepts(ItemStack stack) {
-        return stack.is(PcItems.CUTTING_TOOL.get()) || stack.is(PcItems.CASTING.get());
+        return stack.is(PcItems.CUTTING_TOOL.get()) || stack.is(PcItems.CASTING.get()) || turning(stack) != null;
     }
 
     @Override
@@ -191,11 +238,14 @@ public final class MachineToolBlockEntity extends PortKineticMachineBlockEntity<
     protected void write(CompoundTag tag, HolderLookup.Provider registries, boolean clientPacket) {
         super.write(tag, registries, clientPacket);
         if (!clientPacket) tag.put("inventory", inv.save(registries));
+        if (!clientPacket && !turningPart.isEmpty()) tag.put("turning_part", turningPart.save(registries));
     }
 
     @Override
     protected void read(CompoundTag tag, HolderLookup.Provider registries, boolean clientPacket) {
         super.read(tag, registries, clientPacket);
         if (!clientPacket && tag.contains("inventory")) inv.load(registries, tag.getCompound("inventory"));
+        if (!clientPacket) turningPart = tag.contains("turning_part")
+                ? ItemStack.parseOptional(registries, tag.getCompound("turning_part")) : ItemStack.EMPTY;
     }
 }

@@ -233,6 +233,44 @@ class FoundryShopTest {
         assertThat(station.powerW()).isCloseTo(7_500 * 0.02, within(1e-9));
     }
 
+    /** 18 §18.6.6: кованый вал Ø40 × 300 обтачивается за припуск 3 мм, Ra — по подаче 0,25 и радиусу резца 1 мм. */
+    @Test
+    void latheTurnsAForgedShaftAndReportsItsFinish() {
+        MachineToolUnit lathe = unit(add(FoundrySubsystem.MACHINE_LATHE, 0));
+        var shaft = new MachineToolUnit.Turning(40, 300, Machining.WorkMaterial.STEEL_45);
+        assertThat(lathe.insertTool(0)).isTrue();
+        assertThat(lathe.loadTurning(shaft)).isTrue();
+        assertThat(lathe.load(new CastingSpec(CastingKind.VALVE_BODY, "gray_iron", 100, CastingDefect.NONE, 0, 1))).isFalse();
+        // припуск π/4·(43² − 40²)·300 ≈ 58 400 мм³; v_c = π·40·64/1000 ≈ 8 м/мин → 2·0,25·8 000/60 ≈ 67 мм³/с ≈ 870 с
+        run(600, spin(lathe.shaft, 64));
+        assertThat(lathe.turningDone()).isFalse();
+        assertThat(lathe.progress()).isBetween(0.6, 0.8);
+        run(400, spin(lathe.shaft, 64));
+        assertThat(lathe.turningDone()).isTrue();
+        double ra = lathe.unloadTurning();
+        // R_t = 0,25²/(8·1)·1000 ≈ 7,8 мкм, Ra ≈ 2 мкм у острого резца
+        assertThat(ra).isBetween(1.9, 2.5);
+        assertThat(SurfaceFinish.itGrade(ra)).isLessThan(13);
+        assertThat(lathe.turning()).isNull();
+        assertThat(lathe.unloadTurning()).isNaN();
+    }
+
+    @Test
+    void unfinishedTurningSurvivesSaveAndLoad() {
+        MachineToolUnit lathe = unit(add(FoundrySubsystem.MACHINE_LATHE, 0));
+        lathe.insertTool(0);
+        lathe.loadTurning(new MachineToolUnit.Turning(40, 300, Machining.WorkMaterial.STEEL_45));
+        run(100, spin(lathe.shaft, 64));
+        MutableStateTree saved = world.saveTree();
+        SimulationWorld copy = newWorld();
+        copy.load(SimulationWorld.upgrade(saved, new MigrationRegistry()));
+        assertThat(copy.stateHash()).isEqualTo(world.stateHash());
+        MachineToolUnit lathe2 = (MachineToolUnit) copy.subsystem(FoundrySubsystem.class).unit(world.topology().deviceAt(0));
+        assertThat(lathe2.turning()).isEqualTo(lathe.turning());
+        assertThat(lathe2.progress()).isEqualTo(lathe.progress());
+        copy.close();
+    }
+
     @Test
     void stateSurvivesSaveAndLoad() {
         CupolaUnit cupola = unit(add(FoundrySubsystem.CUPOLA, 0));

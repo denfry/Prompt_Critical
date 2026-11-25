@@ -174,6 +174,42 @@ public final class FoundryGameTests {
         });
     }
 
+    /**
+     * 18 §18.6.6: токарный берёт мягкий кованый вал по одному, закалённый не берёт; обточенный вал получает квалитет и
+     * Ra резца и теряет прежние замеры. Саму обточку (≈ 15 мин при 64 об/мин) проверяет FoundryShopTest.
+     */
+    @GameTest(template = LARGE, timeoutTicks = 200)
+    public static void latheTakesASoftForgedShaftAndWritesItsFinish(GameTestHelper h) {
+        BlockPos lathe = new BlockPos(6, 2, 6);
+        h.setBlock(lathe, facing(PcBlocks.MACHINE_LATHE.get().defaultBlockState(), Direction.NORTH));
+        motor(h, lathe.west(), Direction.EAST, 64);
+        insert(h, lathe, new ItemStack(PcItems.CUTTING_TOOL.get()));
+        var mc = dev.denfry.promptcritical.mod.manufacturing.ManufacturingComponents.PART_SPEC.get();
+        ItemStack soft = new ItemStack(dev.denfry.promptcritical.mod.manufacturing.ManufacturingItems.SHAFT.get(), 2);
+        var forged = dev.denfry.promptcritical.sim.manufacturing.PartSpec.of("shaft", "medium_carbon",
+                dev.denfry.promptcritical.sim.manufacturing.PartRoute.FORGED,
+                dev.denfry.promptcritical.sim.metallurgy.HeatTreatState.QUENCHED_TEMPERED, 30, 0, 25, java.util.Map.of()).inspect();
+        soft.set(mc, forged);
+        ItemStack hard = soft.copyWithCount(1);
+        hard.set(mc, dev.denfry.promptcritical.sim.manufacturing.PartSpec.of("shaft", "medium_carbon",
+                dev.denfry.promptcritical.sim.manufacturing.PartRoute.FORGED,
+                dev.denfry.promptcritical.sim.metallurgy.HeatTreatState.QUENCHED, 55, 0, 25, java.util.Map.of()));
+        h.assertTrue(items(h, lathe).insertItem(0, hard, true).getCount() == 1, "hardened shaft is refused");
+        insert(h, lathe, soft.copy());
+        var be = (dev.denfry.promptcritical.mod.foundry.MachineToolBlockEntity) h.getBlockEntity(lathe);
+        ItemStack done = dev.denfry.promptcritical.mod.foundry.MachineToolBlockEntity.turned(soft.copyWithCount(1), 2.0);
+        var spec = done.get(mc);
+        h.assertTrue(spec.itGrade() > 0 && spec.itGrade() < 13 && spec.raUm() <= 3.2, "turned grade and finish, got " + spec);
+        h.assertFalse(spec.inspected(), "turning voids the old inspection");
+        h.assertValueEqual(spec.heatTreat(), forged.heatTreat(), "heat treatment kept");
+        h.succeedWhen(() -> {
+            h.assertBlockProperty(lathe, PcProperties.RUNNING, true);
+            h.assertValueEqual(find(items(h, lathe), dev.denfry.promptcritical.mod.manufacturing.ManufacturingItems.SHAFT.get()).getCount(), 1,
+                    "one shaft on the lathe, one waiting");
+            h.assertTrue(be.turning(soft) != null, "soft shaft accepted");
+        });
+    }
+
     /** Вагранка на дутье выпускает чугун в форму на выбивной решётке; остывшая форма выбивается в отливку и смесь. */
     @GameTest(template = LARGE, timeoutTicks = 1600)
     public static void cupolaPoursAMoldThatTheGrateKnocksOut(GameTestHelper h) {

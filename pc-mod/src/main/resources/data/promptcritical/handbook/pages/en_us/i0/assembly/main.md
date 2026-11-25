@@ -28,7 +28,7 @@ The Assemble button takes the parts and starts a no-load run-in. Twenty seconds 
 ## Where the parts come from
 
 - Pump casings, beds, valve bodies, pulleys and end covers are cast in the foundry and turned on the lathe. A turned casting becomes a part on the crafting table: turning gives IT11, turning plus drilling gives IT10.
-- Shafts are forged on the anvil, and impellers are cast. Before you have a lathe, a file brings a soft forged shaft to IT13: it runs, but its bearing seat is rough, so the machine wears faster.
+- Shafts are forged on the anvil, and impellers are cast. Before you have a lathe, a file brings a soft forged shaft to IT13: it runs, but its bearing seat is rough, so the machine wears faster. The lathe turns a soft forged shaft (up to 35 HRC) to the grade its tool and feed give, about IT9. A keyed shaft from the milling machine and a gear cut from a casting carry the grade and finish of the machine that made them.
 - Fasteners, bearings, couplings, springs and flanges are made from steel on the crafting table for now.
 
 ## Inspection

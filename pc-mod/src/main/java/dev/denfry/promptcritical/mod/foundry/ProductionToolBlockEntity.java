@@ -119,7 +119,28 @@ public final class ProductionToolBlockEntity extends PortKineticMachineBlockEnti
         ItemStack s = new ItemStack(partItem(r.part()));
         s.set(FoundryComponents.MACHINED_FINISH.get(), new FoundryComponents.Finish(r.material().name().toLowerCase(Locale.ROOT),
                 (float) r.raUm(), r.itGrade()));
+        var spec = partSpec(r);
+        if (spec != null) s.set(dev.denfry.promptcritical.mod.manufacturing.ManufacturingComponents.PART_SPEC.get(), spec);
         return s;
+    }
+
+    /**
+     * Паспорт детали сборки (18 §18.4, §18.6.6): вал со шпоночным пазом из проката и шестерня из отливки идут на
+     * сборочный стенд с квалитетом и Ra станка. Плиты и направляющие — не детали сборки, паспорта у них нет.
+     */
+    @Nullable
+    static dev.denfry.promptcritical.sim.manufacturing.PartSpec partSpec(Result r) {
+        var route = r.part() == MachinedPart.KEYED_SHAFT ? dev.denfry.promptcritical.sim.manufacturing.PartRoute.ROLLED
+                : r.part() == MachinedPart.SPUR_GEAR ? dev.denfry.promptcritical.sim.manufacturing.PartRoute.CAST : null;
+        if (route == null) return null;
+        String material = switch (r.material()) {
+            case STEEL_45 -> "medium_carbon";
+            case CAST_IRON -> "gray_iron";
+            case ALUMINIUM -> "aluminium";
+        };
+        String kind = net.minecraft.core.registries.BuiltInRegistries.ITEM.getKey(partItem(r.part())).getPath();
+        return dev.denfry.promptcritical.sim.manufacturing.PartSpec.of(kind, material, route,
+                dev.denfry.promptcritical.sim.metallurgy.HeatTreatState.AS_ROLLED, 0, r.itGrade(), r.raUm(), java.util.Map.of());
     }
 
     public Kind kind() {
