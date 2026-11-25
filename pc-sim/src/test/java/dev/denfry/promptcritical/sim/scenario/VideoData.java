@@ -88,8 +88,8 @@ public final class VideoData {
 
     /**
      * AM-1 losing its water (04c §4c.8): half the channel water boils off over ten seconds. The water in the channels
-     * is an absorber in an over-moderated graphite lattice, so losing it takes reactivity away and power falls on its
-     * own, protection or not; the run keeps protection on, as the game does.
+     * is a real share of the moderator in the tight AM-1 lattice (the 1954 critical experiment, ChannelReactor notes),
+     * so losing it takes reactivity away and power falls on its own; the run keeps protection on, as the game does.
      */
     static String am1Voiding() {
         ChannelReactor r = am1HotCritical();
