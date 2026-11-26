@@ -187,8 +187,8 @@ def shots():
         # the hall fills with steam, the core is bared
         take("a03_steam", 10, [key(0, [96, -42, -293], c, 70), key(10, [93.5, -40, -291.5], c, 75)]),
         # under the vessel: the head fails and the melt pours into the dry cavity
-        take("a04_pour", 34, hold(34, 24, [100.5, -57, -296.6], [100.5, -57.2, -295.4], [100.5, -56.5, -300],
-                                  [100.5, -58, -300], (80, 75))),
+        take("a04_pour", 34, hold(34, 26, [100.5, -57, -296.6], [100.5, -57.2, -295.8], [100.5, -56.8, -300],
+                                  [100.5, -57.4, -300], (82, 78))),
         # the hydrogen burns in the hall
         take("a05_burn", 30, hold(30, 24, [91.5, -40, -291.5], [92.2, -40.4, -292.2], c, None, (80, 80))),
         # the corium on the cavity floor eats into the concrete
@@ -198,7 +198,8 @@ def shots():
         # run 2: no roof. Steam and smoke stand over the open hall, then the release leaves with the wind
         take("a10_open", 34, [key(0, [100.5, -10, -270], [100.5, -45, -300], 70),
                               key(34, [100.5, -14, -280], [100.5, -45, -302], 70)], run="open"),
-        take("a11_plume", 44, hold(44, 30, [60, -15, -250], [55, -5, -245], [100, -40, -300], [110, -40, -300], (70, 75)),
+        # (the wind takes the plume north-west: the camera stands south-west of its axis, the hall on the right)
+        take("a11_plume", 44, hold(44, 30, [15, -12, -282], [22, -4, -274], [75, -32, -325], [70, -26, -330], (75, 80)),
              run="open"),
         # teaser: dusk over the open hall, the camera rises away
         take("a90_teaser", 44, hold(44, 34, [100.5, -30, -285], [100.5, 10, -250], [100.5, -45, -300], None, (70, 75)),
