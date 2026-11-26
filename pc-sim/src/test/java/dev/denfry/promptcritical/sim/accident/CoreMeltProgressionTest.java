@@ -82,6 +82,29 @@ class CoreMeltProgressionTest {
         assertTrue(m.gamma() > 0.4, "Γ " + m.gamma());
     }
 
+    /**
+     * §4c.10.4: the trigger chance is per melt-entry event. The crust failure is one; the melt that keeps draining
+     * behind it, step by step, is a stream into a plenum already full of corium and rolls no new steam explosions.
+     */
+    @Test
+    void onlyTheCrustFailurePourCanTriggerASteamExplosion() {
+        for (long seed = 1; seed <= 40; seed++) {
+            CoreMeltProgression m = vver();
+            SplittableRandom r = new SplittableRandom(seed);
+            int explosions = 0, pours = 0;
+            for (double t = 0; t < 6 * 3600 && !m.vesselFailed(); t += DT) {
+                m.beginStep();
+                m.observeCladding(LossOfCoolantTransient.CLAD_MELT_K);
+                // the lower plenum stays full of water while the core above melts
+                m.step(DT, 2e6, 0, 0.3e6, 800, 800, LossOfCoolantTransient.CLAD_MELT_K, 0.1, T_SAT, r);
+                if (m.steamExplosionJ() > 0) explosions++;
+                if (m.stage() == CoreMeltProgression.Stage.LOWER_PLENUM_RELOCATION && m.stageEvent()) pours++;
+            }
+            assertEquals(1, pours, "one relocation, seed " + seed);
+            assertTrue(explosions <= 1, "at most one steam explosion per relocation, seed " + seed + ": " + explosions);
+        }
+    }
+
     /** At primary pressure the head fails 200 K cooler, and the ejected melt heats the containment directly. */
     @Test
     void highPressureFailureHeatsTheContainment() {

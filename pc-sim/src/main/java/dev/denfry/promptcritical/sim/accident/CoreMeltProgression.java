@@ -241,6 +241,9 @@ public final class CoreMeltProgression {
         // ── crust failure: the melt drains into the lower plenum ──
         if (!vesselFailed && (plenumKg > 0 || meltKg >= CRUST_FAILURE_MELT * coreKg) && meltKg > 1) {
             double pour = meltKg;
+            // §4c.10.4: the trigger is rolled per melt-entry event — the crust failure; the melt draining behind it
+            // step by step is a stream into a plenum already holding corium, not a new premixed pour
+            boolean entry = plenumKg == 0;
             meltKg = 0;
             plenumKg += pour;
             pourKg += pour;
@@ -248,7 +251,7 @@ public final class CoreMeltProgression {
             if (stage.ordinal() < Stage.LOWER_PLENUM_RELOCATION.ordinal()) headK = tSatK;
             setStage(Stage.LOWER_PLENUM_RELOCATION);
             boolean water = waterKg > 0.2 * plenumWaterKg;
-            if (water && random.nextDouble() < ReactivityInitiatedAccident.FCI_TRIGGER_PROB)
+            if (entry && water && random.nextDouble() < ReactivityInitiatedAccident.FCI_TRIGGER_PROB)
                 fciJ += ReactivityInitiatedAccident.fciEnergyJ(pour, random);
         }
 
