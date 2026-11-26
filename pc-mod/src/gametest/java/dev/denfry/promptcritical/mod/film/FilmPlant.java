@@ -86,7 +86,82 @@ public final class FilmPlant {
                 .then(scene("wind_park", FilmPlant::windPark))
                 .then(scene("load", FilmPlant::load))
                 .then(scene("volts", FilmPlant::volts))
-                .then(scene("unit", FilmPlant::unit))));
+                .then(scene("unit", FilmPlant::unit))
+                .then(scene("melt_ready", FilmPlant::meltReady))
+                .then(scene("loca", FilmPlant::loca))
+                .then(scene("h2", FilmPlant::hydrogen))
+                .then(scene("probe", FilmPlant::probe))
+                .then(scene("scan", FilmPlant::scan))));
+    }
+
+    /**
+     * ВВЭР с полной свежей зоной на половине мощности, как {@code SevereAccidentGameTests.meltdown}: дальше {@code loca}
+     * без САОЗ рядом ведёт зону к плавлению. Насосы в галерее не крутятся — защита глушит реактор, греет остаточное тепло.
+     */
+    private static String meltReady(ServerLevel level, BlockPos pos) {
+        PressurizedWaterReactor r = be(level, pos, PwrReactorBlockEntity.class).reactor();
+        double kg = FuelDesign.VVER_440.uKgPerAssembly(0.96, 0.044);
+        r.setRods(1, 1);
+        for (int i = 0; i < PressurizedWaterReactor.POSITIONS; i++) r.load(i, FuelDesign.VVER_440, kg, 0.044, 0.0003);
+        r.setThermalState(600, 573, 563);
+        r.equilibrate(0.5);
+        return "fresh core at 50 %";
+    }
+
+    /** Кнопка учебного разрыва дважды — двусторонний разрыв главного трубопровода (ReactorAccidentSystems.cycleDrill). */
+    private static String loca(ServerLevel level, BlockPos pos) {
+        PwrReactorBlockEntity b = be(level, pos, PwrReactorBlockEntity.class);
+        var player = net.neoforged.neoforge.common.util.FakePlayerFactory.getMinecraft(level);
+        b.onPanelButton(player, dev.denfry.promptcritical.mod.npp.PwrPanels.B_LOCA);
+        b.onPanelButton(player, dev.denfry.promptcritical.mod.npp.PwrPanels.B_LOCA);
+        // the guillotine break where the jet comes out (the first side nozzle, as the accident layer draws it): the
+        // pipe is torn off the nozzle and its two first metres are gone
+        var state = level.getBlockState(pos);
+        Direction facing = state.getValue(net.minecraft.world.level.block.state.properties.BlockStateProperties.HORIZONTAL_FACING);
+        String id = net.minecraft.core.registries.BuiltInRegistries.BLOCK.getKey(state.getBlock()).getPath();
+        int torn = 0;
+        for (var port : dev.denfry.promptcritical.mod.multiblock.WholePorts.of(id)) {
+            Direction face = dev.denfry.promptcritical.mod.multiblock.WholePorts.worldFace(facing, port);
+            if (face.getAxis().isVertical()) continue;
+            BlockPos p = dev.denfry.promptcritical.mod.multiblock.WholePorts.cell(pos, facing, port).relative(face);
+            for (int i = 0; i < 2 && level.getBlockState(p).getBlock().getDescriptionId().contains("pipe"); i++, p = p.relative(face)) {
+                level.destroyBlock(p, false);
+                torn++;
+            }
+            break;
+        }
+        return "large break, " + torn + " m of pipe torn off";
+    }
+
+    /** Оболочка вокруг реактора: закрыта ли и сколько в ней газового объёма. */
+    private static String scan(ServerLevel level, BlockPos pos) {
+        var s = dev.denfry.promptcritical.mod.npp.ContainmentScan.scan(level, pos);
+        return s == null ? "unloaded chunk" : (s.intact() ? "closed, " + s.volumeM3() + " m3 of gas, " + s.recombiners() + " PARs" : "open");
+    }
+
+    /**
+     * Водород в закрытой оболочке до 15 %, как {@code AccidentGameTests.hydrogenWaitsThenDetonatesInASmallContainment}:
+     * в комнате 5 м такая смесь уже за порогом перехода горения в детонацию (04c §4c.7.3). Воздух — при 40 °C.
+     */
+    private static String hydrogen(ServerLevel level, BlockPos pos) {
+        var acc = be(level, pos, PwrReactorBlockEntity.class).accident();
+        if (!acc.accident().hasContainment()) return "no closed containment around the reactor: " + acc.containment();
+        double airMol = 101_325.0 * acc.containment().volumeM3() / (8.314 * 313);
+        double h2Mol = acc.accident().containmentHydrogenKg() / 0.002016, f = 0.15;
+        double add = Math.max(0, (f * (airMol + h2Mol) - h2Mol) / (1 - f));
+        acc.accident().addContainmentHydrogen(add * 0.002016);
+        return String.format(java.util.Locale.ROOT, "+%.2f kg H2 in %d m3, regime %s", add * 0.002016,
+                acc.containment().volumeM3(), acc.accident().containmentRegime());
+    }
+
+    /** Показание радиометра загрязнённости по верхней грани блока — в чат игрокам рядом, как ПКМ радиометром. */
+    private static String probe(ServerLevel level, BlockPos pos) {
+        var c = dev.denfry.promptcritical.mod.radiation.ContaminationService.surface(level, pos);
+        var msg = dev.denfry.promptcritical.mod.radiation.ContaminationText.reading("block", c,
+                dev.denfry.promptcritical.sim.radiation.ContaminationLimits.Surface.PERMANENT_ROOM,
+                dev.denfry.promptcritical.mod.radiation.ContaminationService.PROBE);
+        for (var p : level.getPlayers(p -> p.distanceToSqr(pos.getCenter()) < 64 * 64)) p.displayClientMessage(msg, false);
+        return msg.getString();
     }
 
     private interface Scene {
