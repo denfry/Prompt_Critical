@@ -45,13 +45,30 @@ public final class FalloutService {
             var w = EnvironmentService.sample(level, BlockPos.containing(at), 10);
             double from = w.windDirRad(), u = Math.max(1, w.meanWindMs()) / 20;
             Vec3 wind = new Vec3(-Math.sin(from) * u, 0, Math.cos(from) * u);
-            int n = (int) Math.min(6, 1 + Math.log10(e.getValue()[0] / VISIBLE_BQ_S) * 2);
+            double decades = Math.log10(e.getValue()[0] / VISIBLE_BQ_S);
             var r = level.random;
+            var cosy = net.minecraft.core.particles.ParticleTypes.CAMPFIRE_COSY_SMOKE;
+            var signal = net.minecraft.core.particles.ParticleTypes.CAMPFIRE_SIGNAL_SMOKE;
+            var cloud = net.minecraft.core.particles.ParticleTypes.CLOUD;
+            // at the source: the steam column leaving the building
+            int n = (int) Math.min(16, 2 + decades * 4);
             for (int i = 0; i < n; i++)
-                dev.denfry.promptcritical.mod.fx.WorldFx.fly(level, i % 2 == 0 ? net.minecraft.core.particles.ParticleTypes.CAMPFIRE_COSY_SMOKE
-                                : net.minecraft.core.particles.ParticleTypes.CLOUD,
-                        at.add(r.nextGaussian() * 0.5, r.nextDouble(), r.nextGaussian() * 0.5),
-                        wind.scale(0.8 + 0.4 * r.nextDouble()).add(0, 0.03 + 0.03 * r.nextDouble(), 0));
+                dev.denfry.promptcritical.mod.fx.WorldFx.fly(level, i % 3 == 0 ? signal : i % 3 == 1 ? cosy : cloud,
+                        at.add(r.nextGaussian() * 0.8, r.nextDouble(), r.nextGaussian() * 0.8),
+                        wind.scale(0.8 + 0.4 * r.nextDouble()).add(0, 0.04 + 0.04 * r.nextDouble(), 0));
+            // down the wind: a smoke particle lives seconds and would never carry the cloud a hundred metres, so the
+            // plume already on its way is drawn where it is — wider and higher the farther it went (σy, σz of class D
+            // grow about as 0.08 x near the source), thinner as it spreads
+            int m = (int) Math.min(14, 1 + decades * 3);
+            double ux = wind.x / u, uz = wind.z / u;
+            for (int i = 0; i < m; i++) {
+                double x = 4 + 156 * r.nextDouble() * r.nextDouble();
+                double y = Math.min(30, 0.12 * x) + r.nextGaussian() * 0.05 * x;
+                double side = r.nextGaussian() * 0.08 * x;
+                Vec3 p = at.add(ux * x - uz * side, 2 + Math.max(0, y), uz * x + ux * side);
+                dev.denfry.promptcritical.mod.fx.WorldFx.fly(level, r.nextInt(3) == 0 ? cloud : signal, p,
+                        wind.scale(0.9 + 0.2 * r.nextDouble()).add(0, 0.01, 0));
+            }
         }
     }
 

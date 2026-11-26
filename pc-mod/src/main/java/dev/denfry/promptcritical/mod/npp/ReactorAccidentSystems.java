@@ -92,9 +92,19 @@ public final class ReactorAccidentSystems {
     private boolean sboAnnounced, locaAnnounced;
     private int releaseTicks;
     private double releaseBqS;
+    /** I-131 already let out of the open building by the gap and in-vessel release, Bq. */
+    private double releasedIodineBq, releasedCesiumBq;
+    /** 04c §4c.8.4 (а): gap release of halogens and alkali metals at cladding failure (NUREG-1465). */
+    static final double GAP_FRACTION = 0.05;
+    /** 04c §4c.8.4 (б): gap + early in-vessel release limits, halogens 0.40, alkali metals 0.30 (NUREG-1465 PWR). */
+    static final double HALOGEN_MAX = 0.40, ALKALI_MAX = 0.30;
+    /** Share of what the core has given up that leaves the building each second (a ~10 s holdup in the hall). */
+    static final double OPEN_RELEASE_PER_S = 0.1;
     private int ticks;
     /** Тики, пока расплав из прорванного днища ещё льётся струёй на дно шахты (видимый поток, не физика). */
     private int pourTicks;
+    /** Где струя расплава бьёт в пол шахты: лужа растекается отсюда, пока фронт MCCI уходит вниз. */
+    @org.jetbrains.annotations.Nullable private BlockPos pourAt;
 
     public ReactorAccidentSystems(PlantAccident.Design design) {
         this.accident = new PlantAccident(design);
@@ -304,7 +314,12 @@ public final class ReactorAccidentSystems {
             sl.playSound(null, pos, SoundEvents.FIRE_EXTINGUISH, SoundSource.BLOCKS, 1.5f, 0.5f);
             broadcast(sl, c, 96, NppText.msg("accident_uncovered").withStyle(ChatFormatting.DARK_RED));
         }
-        if (loca && accident.breakFlowKgS() > 0) breakJet(sl, pos);
+        // after the blowdown the decay heat keeps boiling the water left in the vessel and the steam leaves through
+        // the same break; once the core is dry only the hot gas of the oxidising cladding comes out of it
+        if (loca && !headFailed()) {
+            double steam = Math.max(accident.breakFlowKgS(), accident.boilOffKgS());
+            if (steam > 0 || accident.coreUncovered()) breakJet(sl, pos, steam);
+        }
         GridPos o = new GridPos(pos.getX(), pos.getY(), pos.getZ());
         if (accident.burnEvent()) {
             // R6: the burn goes through the consequence router; inside a closed containment the activity stays in
@@ -371,7 +386,8 @@ public final class ReactorAccidentSystems {
             coriumFront = underVessel(sl, pos).immutable();
             meltThrough(b, source, coriumFront);
             pourTicks = POUR_TICKS;
-            spread(sl, coriumFront, m.exVesselKg());
+            pourAt = coriumFront;
+            spread(sl, pourAt, m.exVesselKg());
             sl.playSound(null, coriumFront, SoundEvents.LAVA_POP, SoundSource.BLOCKS, 3f, 0.5f);
         }
         for (int i = 0; i < m.ablatedBlocks() && coriumFront != null; i++) {
@@ -384,6 +400,8 @@ public final class ReactorAccidentSystems {
         if (coriumFront != null && pourTicks > 0) {
             pourTicks--;
             pour(sl, pos, coriumFront);
+            // the melt keeps coming out of the head: the pool grows with the mass ex-vessel
+            if (pourAt != null && pourTicks % 20 == 0) spread(sl, pourAt, m.exVesselKg());
         }
         if (coriumFront != null && ticks % 20 == 0) {
             double share = Math.min(1, m.exVesselKg() / Math.max(1, m.exVesselKg() + m.lowerPlenumKg() + m.meltKg()));
@@ -406,8 +424,7 @@ public final class ReactorAccidentSystems {
      * — фасад): пароводяная смесь бьёт по направлению патрубка, часть воды проливается на пол, над местом течи
      * поднимается пар. Число частиц — от расхода течи; внутри закрытой оболочки пар ещё и заполняет помещение.
      */
-    private void breakJet(ServerLevel sl, BlockPos pos) {
-        double flow = accident.breakFlowKgS();
+    private void breakJet(ServerLevel sl, BlockPos pos, double flow) {
         var state = sl.getBlockState(pos);
         var hf = net.minecraft.world.level.block.state.properties.BlockStateProperties.HORIZONTAL_FACING;
         Direction facing = state.hasProperty(hf) ? state.getValue(hf) : Direction.NORTH;
@@ -426,6 +443,11 @@ public final class ReactorAccidentSystems {
             from = pos.getCenter().add(dir.scale(0.6));
         }
         var r = sl.random;
+        if (flow <= 0) {
+            // a dry core: a thin dark plume of hot gas and aerosol out of the break
+            if (ticks % 2 == 0) WorldFx.jet(sl, ParticleTypes.LARGE_SMOKE, from, dir.add(0, 0.3, 0), 0.15, 0.2, 2, r);
+            return;
+        }
         int n = (int) Math.min(48, 6 + Math.sqrt(flow) * 1.2);
         double speed = Math.min(1.6, 0.5 + Math.sqrt(flow) * 0.03);
         WorldFx.jet(sl, ParticleTypes.CLOUD, from, dir, speed, 0.18, n, r);
@@ -483,17 +505,25 @@ public final class ReactorAccidentSystems {
      * спирали от центра, только свободные и на твёрдом полу; стены шахты его держат.
      */
     private static void spread(ServerLevel sl, BlockPos front, double exVesselKg) {
-        int cells = (int) Math.min(SPREAD_MAX_CELLS, Math.round(exVesselKg / CORIUM_KG_M3 / SPREAD_DEPTH_M)) - 1;
         var pool = PcBlocks.CORIUM_POOL.get().defaultBlockState();
-        for (int ring = 1; ring <= 3 && cells > 0; ring++)
-            for (int dx = -ring; dx <= ring && cells > 0; dx++)
-                for (int dz = -ring; dz <= ring && cells > 0; dz++) {
+        // cells the mass covers 10 cm deep, less the pour point itself and what has already spread
+        int cells = (int) Math.min(SPREAD_MAX_CELLS, Math.round(exVesselKg / CORIUM_KG_M3 / SPREAD_DEPTH_M)) - 1;
+        java.util.List<BlockPos> free = new java.util.ArrayList<>();
+        for (int ring = 1; ring <= 3 && cells > 0; ring++) {
+            free.clear();
+            for (int dx = -ring; dx <= ring; dx++)
+                for (int dz = -ring; dz <= ring; dz++) {
                     if (Math.max(Math.abs(dx), Math.abs(dz)) != ring) continue;
                     BlockPos p = front.offset(dx, 0, dz);
-                    if (!sl.isLoaded(p) || !sl.getBlockState(p).isAir() || !pool.canSurvive(sl, p)) continue;
-                    sl.setBlock(p, pool, net.minecraft.world.level.block.Block.UPDATE_ALL);
-                    cells--;
+                    if (!sl.isLoaded(p)) continue;
+                    if (sl.getBlockState(p).is(pool.getBlock())) cells--;
+                    else if (sl.getBlockState(p).isAir() && pool.canSurvive(sl, p)) free.add(p);
                 }
+            // the melt runs out evenly round the pour, not row by row
+            net.minecraft.Util.shuffle(free, sl.random);
+            for (int i = 0; i < free.size() && cells > 0; i++, cells--)
+                sl.setBlock(free.get(i), pool, net.minecraft.world.level.block.Block.UPDATE_ALL);
+        }
     }
 
     /** Кориум в бетоне: газы абляции (CO2, пар) пузырят расплав и поднимаются дымом, корка светится. */
@@ -509,6 +539,11 @@ public final class ReactorAccidentSystems {
         for (ServerPlayer p : sl.getPlayers(p -> p.distanceToSqr(c) < (double) radius * radius)) p.displayClientMessage(msg, false);
     }
 
+    /** The lower head of a vessel plant has failed (channel reactors have no head). */
+    private boolean headFailed() {
+        return accident.melt() != null && accident.melt().vesselFailed();
+    }
+
     private void startRelease(int failed) {
         if (failed <= 0) return;
         releaseTicks = 60 * 20;
@@ -522,10 +557,22 @@ public final class ReactorAccidentSystems {
     public void radiation(ServerLevel sl, BlockPos pos, int failed) {
         if (ticks % 20 != 0) return;
         Vec3 top = pos.getCenter().add(0, 6, 0);
-        if (failed > 0 && accident.breakFlowKgS() > 0 && !accident.hasContainment()) {
-            double bqS = failed * I131_PER_FAILED_BQ / 600.0;
-            RadiationService.airRelease(sl, top, Emitter.I131, bqS);
-            RadiationService.airRelease(sl, top, Emitter.CS137, bqS * PwrReactorBlockEntity.CS137_PER_I131);
+        // an open building: what the failed fuel gives up leaves through the break while steam still carries it, or
+        // through the failed head. The gap release (5 % of the iodine of a failed assembly) grows to the early in-vessel
+        // limit (40 %) with the core's loss of geometry Γ — a stand-in for CORSOR-M's temperature-driven rate that keeps
+        // its end points (04c §4c.8.4)
+        boolean path = accident.breakFlowKgS() > 0 || accident.boilOffKgS() > 0 || accident.coreUncovered() || headFailed();
+        if (failed > 0 && path && !accident.hasContainment()) {
+            double inventory = failed * I131_PER_FAILED_BQ / GAP_FRACTION;
+            double gamma = accident.melt() != null ? accident.melt().gamma() : 0;
+            double iodine = Math.max(0, inventory * (GAP_FRACTION + (HALOGEN_MAX - GAP_FRACTION) * gamma) - releasedIodineBq)
+                    * OPEN_RELEASE_PER_S;
+            double cesium = Math.max(0, inventory * PwrReactorBlockEntity.CS137_PER_I131
+                    * (GAP_FRACTION + (ALKALI_MAX - GAP_FRACTION) * gamma) - releasedCesiumBq) * OPEN_RELEASE_PER_S;
+            releasedIodineBq += iodine;
+            releasedCesiumBq += cesium;
+            if (iodine > 0) RadiationService.airRelease(sl, top, Emitter.I131, iodine);
+            if (cesium > 0) RadiationService.airRelease(sl, top, Emitter.CS137, cesium);
         }
         if (releaseTicks > 0) {
             releaseTicks -= 20;
