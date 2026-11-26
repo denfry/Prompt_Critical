@@ -211,9 +211,16 @@ public final class SevereAccidentGameTests {
                     CoreMeltProgression m = pwr(h).accident().accident().melt();
                     h.assertTrue(m.vesselFailed(), "stage " + m.stage() + ", head " + m.lowerHeadK() + " K");
                 })
-                // the vessel's footprint reaches one block below the controller: the corium lands under it
-                .thenWaitUntil(() -> h.assertBlockPresent(PcBlocks.CORIUM.get(), REACTOR.below(2)))
+                // the vessel's footprint reaches one block below the controller; the melt falls through the dry cavity
+                // under it to the floor (the template's bottom layer is air too, the floor is the one under it)
+                .thenWaitUntil(() -> h.assertBlockPresent(PcBlocks.CORIUM.get(), REACTOR.below(3)))
                 .thenExecute(() -> {
+                    // the rest of the melt has spread over the cavity floor around the pour
+                    int pool = 0;
+                    for (int x = -3; x <= 3; x++)
+                        for (int z = -3; z <= 3; z++)
+                            if (h.getBlockState(REACTOR.offset(x, -3, z)).is(PcBlocks.CORIUM_POOL.get())) pool++;
+                    h.assertTrue(pool > 0, "corium spread around the pour");
                     PwrReactorBlockEntity r = pwr(h);
                     h.assertTrue(r.accident().coriumFront() != null, "corium tracked");
                     h.assertTrue(r.reactor().failedAssemblies() == PressurizedWaterReactor.POSITIONS, "every assembly failed");
@@ -240,6 +247,7 @@ public final class SevereAccidentGameTests {
                     h.assertFalse(m.vesselFailed(), "head holds at " + m.lowerHeadK() + " K");
                     h.assertTrue(m.lowerHeadK() < 600, "head cooled from outside: " + m.lowerHeadK());
                     h.assertBlockNotPresent(PcBlocks.CORIUM.get(), REACTOR.below(2));
+                    h.assertBlockNotPresent(PcBlocks.CORIUM.get(), REACTOR.below(3));
                 })
                 .thenSucceed();
     }
@@ -284,6 +292,31 @@ public final class SevereAccidentGameTests {
                 })
                 .thenWaitUntil(() -> h.assertTrue(held[0].accident().accident().containmentBreached(), "detonation tore the shell"))
                 .thenSucceed();
+    }
+
+    /**
+     * 04c M10: only the containment wall is airtight, but the free volume is the gas space. A 5×5×5 room with its lower
+     * two layers poured in concrete holds 75 m³ of gas, not 125; the same room without its walls is open.
+     */
+    @GameTest(template = LARGE)
+    public static void solidConcreteInsideTheShellIsNotFreeVolume(GameTestHelper h) {
+        for (int x = 3; x <= 9; x++)
+            for (int y = 1; y <= 7; y++)
+                for (int z = 3; z <= 9; z++)
+                    if (x == 3 || x == 9 || y == 1 || y == 7 || z == 3 || z == 9)
+                        h.setBlock(new BlockPos(x, y, z), PcBlocks.CONTAINMENT_WALL.get().defaultBlockState());
+                    else if (y <= 3) h.setBlock(new BlockPos(x, y, z), Blocks.GRAY_CONCRETE.defaultBlockState());
+        // the scan from a point of the room's air (the legacy reactor block is 3 x 3 x 6 and would not fit)
+        BlockPos inside = new BlockPos(6, 5, 6);
+        h.runAfterDelay(2, () -> {
+            var scan = dev.denfry.promptcritical.mod.npp.ContainmentScan.scan(h.getLevel(), h.absolutePos(inside));
+            h.assertTrue(scan != null && scan.intact(), "closed: " + scan);
+            h.assertTrue(scan.volumeM3() == 75, "gas space 75 m³: " + scan.volumeM3());
+            h.setBlock(new BlockPos(6, 7, 6), Blocks.AIR.defaultBlockState());
+            var open = dev.denfry.promptcritical.mod.npp.ContainmentScan.scan(h.getLevel(), h.absolutePos(inside));
+            h.assertTrue(open != null && !open.intact(), "a hole in the roof opens it: " + open);
+            h.succeed();
+        });
     }
 
     /** §4c.5.1 design mistake: a single cluster for the whole group — several β, failed and fragmented fuel. */
