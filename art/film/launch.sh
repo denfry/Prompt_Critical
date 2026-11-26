@@ -11,6 +11,9 @@ powershell -NoProfile -Command "Get-CimInstance Win32_Process -Filter \"Name='ja
 sleep 2
 : > "$log"
 nohup ./gradlew :pc-mod:runFilm -PquickPlay="$world" > "$log" 2>&1 &
+# the game window stays under every other window and never takes focus (the owner works on this machine meanwhile)
+here=$(dirname "$0")
+nohup powershell -NoProfile -ExecutionPolicy Bypass -File "$here/sink_window.ps1" -Seconds "$timeout" > /dev/null 2>&1 &
 
 marker='\[film\] player ready|BUILD FAILED|Crash report|Exception in thread "main"'
 for ((t = 0; t < timeout; t += 3)); do
