@@ -327,7 +327,9 @@ public final class ReactorAccidentSystems {
             boolean det = accident.burnRegime() == HydrogenCombustion.Regime.DETONATION;
             ConsequenceRouter.Routed r = ConsequenceRouter.route(det ? ConsequenceRouter.Event.HYDROGEN_DETONATION
                     : ConsequenceRouter.Event.HYDROGEN_BURN, requestSeq++, source, null, o, accident.burnEnergyJ(), true, failed > 0);
-            if (r.damage() != null) b.damage().submit(r.damage());
+            // a deflagration in a closed containment loads the shell with its AICC pressure — the breach check above
+            // carries that — and breaks nothing inside; a detonation, or a burn with no shell round it, does
+            if (r.damage() != null && (det || !accident.hasContainment())) b.damage().submit(r.damage());
             // the burn fills the free volume of the building: a fireball as big as the room, a blast only on detonation
             WorldFx.fireball(sl, c, roomRadius(), det ? 600 : 350, sl.random);
             if (det) WorldFx.blast(sl, c, accident.burnEnergyJ() * 0.1, sl.random);
@@ -458,7 +460,7 @@ public final class ReactorAccidentSystems {
             // steam rising over the break; once the core is bare the jet carries smoke of burning cladding with it
             Vec3 top = from.add(dir.scale(2.5));
             for (int i = 0, k = (int) Math.min(4, 1 + flow / 300); i < k; i++)
-                WorldFx.fly(sl, ParticleTypes.CAMPFIRE_SIGNAL_SMOKE, top.add(r.nextGaussian() * 0.8, 0, r.nextGaussian() * 0.8),
+                WorldFx.fly(sl, dev.denfry.promptcritical.mod.fx.PcParticles.STEAM_PUFF.get(), top.add(r.nextGaussian() * 0.8, 0, r.nextGaussian() * 0.8),
                         new Vec3(dir.x * 0.05, 0.07 + 0.05 * r.nextDouble(), dir.z * 0.05));
             if (accident.coreUncovered()) WorldFx.jet(sl, ParticleTypes.LARGE_SMOKE, from, dir, speed * 0.6, 0.25, 2, r);
         }
@@ -466,10 +468,10 @@ public final class ReactorAccidentSystems {
             // the building fills with steam
             double rr = roomRadius();
             Vec3 c = pos.getCenter();
-            for (int i = 0; i < 6; i++) {
+            for (int i = 0; i < 2; i++) {
                 Vec3 p = c.add(r.nextGaussian() * rr * 0.5, r.nextDouble() * rr * 0.8, r.nextGaussian() * rr * 0.5);
                 if (sl.getBlockState(BlockPos.containing(p)).isAir())
-                    WorldFx.fly(sl, ParticleTypes.CLOUD, p, new Vec3(r.nextGaussian() * 0.02, 0.01, r.nextGaussian() * 0.02));
+                    WorldFx.fly(sl, dev.denfry.promptcritical.mod.fx.PcParticles.STEAM_PUFF.get(), p, new Vec3(r.nextGaussian() * 0.02, 0.01, r.nextGaussian() * 0.02));
             }
         }
     }
@@ -530,7 +532,8 @@ public final class ReactorAccidentSystems {
     private static void mcci(ServerLevel sl, BlockPos front) {
         var r = sl.random;
         Vec3 c = front.getCenter().add(0, 0.6, 0);
-        WorldFx.fly(sl, ParticleTypes.CAMPFIRE_COSY_SMOKE, c.add(r.nextGaussian() * 0.4, 0, r.nextGaussian() * 0.4),
+        WorldFx.fly(sl, r.nextInt(4) == 0 ? dev.denfry.promptcritical.mod.fx.PcParticles.SMOKE_PUFF.get() : ParticleTypes.CAMPFIRE_COSY_SMOKE,
+                c.add(r.nextGaussian() * 0.4, 0, r.nextGaussian() * 0.4),
                 new Vec3(0, 0.05 + 0.04 * r.nextDouble(), 0));
         if (r.nextInt(3) == 0) WorldFx.send(sl, ParticleTypes.LAVA, c.x, c.y, c.z, 1, 0.3, 0, 0.3, 0);
     }
