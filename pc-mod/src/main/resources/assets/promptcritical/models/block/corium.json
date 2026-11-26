@@ -1,12 +1,13 @@
 {
 	"credit": "Made with Blockbench",
 	"textures": {
-		"particle": "promptcritical:block/corium",
-		"c": "promptcritical:block/corium"
+		"particle": "promptcritical:block/corium/crust",
+		"corium_crust": "promptcritical:block/corium/crust",
+		"corium_melt": "promptcritical:block/corium/melt"
 	},
 	"elements": [
 		{
-			"name": "glow_corium",
+			"name": "glow_body",
 			"from": [0, 0, 0],
 			"to": [16, 16, 16],
 			"rotation": {
@@ -17,27 +18,27 @@
 			"faces": {
 				"north": {
 					"uv": [0, 0, 16, 16],
-					"texture": "#c"
+					"texture": "#corium_crust"
 				},
 				"east": {
 					"uv": [0, 0, 16, 16],
-					"texture": "#c"
+					"texture": "#corium_crust"
 				},
 				"south": {
 					"uv": [0, 0, 16, 16],
-					"texture": "#c"
+					"texture": "#corium_crust"
 				},
 				"west": {
 					"uv": [0, 0, 16, 16],
-					"texture": "#c"
+					"texture": "#corium_crust"
 				},
 				"up": {
 					"uv": [0, 0, 16, 16],
-					"texture": "#c"
+					"texture": "#corium_melt"
 				},
 				"down": {
 					"uv": [0, 0, 16, 16],
-					"texture": "#c"
+					"texture": "#corium_crust"
 				}
 			},
 			"neoforge_data": {

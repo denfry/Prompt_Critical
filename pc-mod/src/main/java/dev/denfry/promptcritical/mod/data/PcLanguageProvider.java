@@ -918,6 +918,7 @@ public final class PcLanguageProvider extends LanguageProvider {
         MISC.put("block.promptcritical.heavy_water", new String[] {"Heavy Water", "Тяжёлая вода"});
         MISC.put("block.promptcritical.crude_oil", new String[] {"Spilt Crude Oil", "Разлитая нефть"});
         MISC.put("block.promptcritical.oil_slick", new String[] {"Oil Slick", "Нефтяная плёнка"});
+        MISC.put("block.promptcritical.corium_pool", new String[] {"Spread Corium", "Растёкшийся кориум"});
 
         MISC.put("itemGroup." + PromptCritical.MOD_ID, new String[] {"Prompt Critical", "Prompt Critical"});
         MISC.put("commands.promptcritical.debug.hash", new String[] {"State hash %s at tick %s", "Хеш состояния %s на тике %s"});

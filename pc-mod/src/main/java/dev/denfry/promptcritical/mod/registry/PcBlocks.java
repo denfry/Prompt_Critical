@@ -1121,6 +1121,10 @@ public final class PcBlocks {
     public static final DeferredBlock<PcBlock> CORIUM = block("corium", Properties.of().mapColor(MapColor.COLOR_ORANGE)
             .instrument(NoteBlockInstrument.BASEDRUM).requiresCorrectToolForDrops().strength(50.0f, 1200.0f).lightLevel(s -> 15)
             .pushReaction(PushReaction.BLOCK), Spec.of());
+    /** Кориум, растёкшийся по дну шахты; без предмета, кладёт слой аварий (04c §4c.10.5). */
+    public static final DeferredBlock<dev.denfry.promptcritical.mod.npp.CoriumPoolBlock> CORIUM_POOL = BLOCKS.registerBlock("corium_pool",
+            dev.denfry.promptcritical.mod.npp.CoriumPoolBlock::new, Properties.of().mapColor(MapColor.COLOR_ORANGE).strength(50.0f, 1200.0f)
+                    .lightLevel(s -> 15).noOcclusion().noLootTable().pushReaction(PushReaction.BLOCK).sound(SoundType.BASALT));
     public static final DeferredBlock<dev.denfry.promptcritical.mod.npp.ContainmentHatchBlock> CONTAINMENT_HATCH = withItem(
             BLOCKS.registerBlock("containment_hatch", dev.denfry.promptcritical.mod.npp.ContainmentHatchBlock::create, containment()));
     public static final DeferredBlock<PcBlock> HYDROGEN_RECOMBINER = block("hydrogen_recombiner", machine(), Spec.of());

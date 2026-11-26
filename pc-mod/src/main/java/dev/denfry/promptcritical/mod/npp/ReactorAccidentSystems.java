@@ -3,6 +3,7 @@ package dev.denfry.promptcritical.mod.npp;
 import dev.denfry.promptcritical.mod.binding.NbtStateTrees;
 import dev.denfry.promptcritical.mod.binding.SimLevelBinding;
 import dev.denfry.promptcritical.mod.environment.RadiationService;
+import dev.denfry.promptcritical.mod.fx.WorldFx;
 import dev.denfry.promptcritical.mod.ironworks.Ironworks;
 import dev.denfry.promptcritical.mod.registry.PcBlocks;
 import dev.denfry.promptcritical.sim.accident.CoreMeltProgression;
@@ -25,6 +26,7 @@ import java.util.Locale;
 import java.util.Map;
 import net.minecraft.ChatFormatting;
 import net.minecraft.core.BlockPos;
+import net.minecraft.core.Direction;
 import net.minecraft.core.particles.ParticleTypes;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.nbt.ListTag;
@@ -91,6 +93,8 @@ public final class ReactorAccidentSystems {
     private int releaseTicks;
     private double releaseBqS;
     private int ticks;
+    /** Тики, пока расплав из прорванного днища ещё льётся струёй на дно шахты (видимый поток, не физика). */
+    private int pourTicks;
 
     public ReactorAccidentSystems(PlantAccident.Design design) {
         this.accident = new PlantAccident(design);
@@ -183,8 +187,15 @@ public final class ReactorAccidentSystems {
     static BlockPos underVessel(ServerLevel sl, BlockPos center) {
         int minY = sl.getBlockState(center).getBlock() instanceof dev.denfry.promptcritical.mod.block.PcBlock pb
                 ? pb.spec().footprint().minY() : 0;
-        return center.below(1 - minY);
+        BlockPos p = center.below(1 - minY);
+        // a vessel hung over an open cavity: the melt falls through the air to lie on the cavity floor (or in its water)
+        for (int i = 0; i < CAVITY_DEPTH && sl.isLoaded(p.below()) && sl.getBlockState(p).isAir() && sl.getBlockState(p.below()).isAir(); i++)
+            p = p.below();
+        return p;
     }
+
+    /** Глубже этого под днищем дно шахты не ищется, блоков. */
+    static final int CAVITY_DEPTH = 16;
 
     public boolean cavityFlooded() {
         return cavityFlooded;
@@ -233,7 +244,7 @@ public final class ReactorAccidentSystems {
         if (r.damage() != null) b.damage().submit(r.damage());
         if (r.release() == ConsequenceRouter.ReleasePath.ENVIRONMENT) startRelease(failed);
         sl.playSound(null, at, SoundEvents.GENERIC_EXPLODE.value(), SoundSource.BLOCKS, 3f, 0.5f);
-        sl.sendParticles(ParticleTypes.EXPLOSION_EMITTER, at.getX() + 0.5, at.getY() + 0.5, at.getZ() + 0.5, 1, 0, 0, 0, 0);
+        WorldFx.blast(sl, at.getCenter(), energyJ, sl.random);
         broadcast(sl, at.getCenter(), 128, NppText.msg("fci", String.format(Locale.ROOT, "%.1f", energyJ / 1e6)).withStyle(ChatFormatting.DARK_RED));
     }
 
@@ -293,8 +304,7 @@ public final class ReactorAccidentSystems {
             sl.playSound(null, pos, SoundEvents.FIRE_EXTINGUISH, SoundSource.BLOCKS, 1.5f, 0.5f);
             broadcast(sl, c, 96, NppText.msg("accident_uncovered").withStyle(ChatFormatting.DARK_RED));
         }
-        if (loca && accident.breakFlowKgS() > 0 && ticks % 4 == 0)
-            sl.sendParticles(ParticleTypes.CLOUD, c.x, c.y, c.z, (int) Math.min(30, 2 + accident.breakFlowKgS() / 5), 1.5, 0.5, 1.5, 0.08);
+        if (loca && accident.breakFlowKgS() > 0) breakJet(sl, pos);
         GridPos o = new GridPos(pos.getX(), pos.getY(), pos.getZ());
         if (accident.burnEvent()) {
             // R6: the burn goes through the consequence router; inside a closed containment the activity stays in
@@ -303,6 +313,9 @@ public final class ReactorAccidentSystems {
             ConsequenceRouter.Routed r = ConsequenceRouter.route(det ? ConsequenceRouter.Event.HYDROGEN_DETONATION
                     : ConsequenceRouter.Event.HYDROGEN_BURN, requestSeq++, source, null, o, accident.burnEnergyJ(), true, failed > 0);
             if (r.damage() != null) b.damage().submit(r.damage());
+            // the burn fills the free volume of the building: a fireball as big as the room, a blast only on detonation
+            WorldFx.fireball(sl, c, roomRadius(), det ? 600 : 350, sl.random);
+            if (det) WorldFx.blast(sl, c, accident.burnEnergyJ() * 0.1, sl.random);
             sl.playSound(null, pos, SoundEvents.GENERIC_EXPLODE.value(), SoundSource.BLOCKS, det ? 4f : 3f, det ? 0.4f : 0.6f);
             broadcast(sl, c, 128, NppText.msg(det ? "accident_h2_detonation" : "accident_h2_burn",
                     String.format(Locale.ROOT, "%.0f", accident.burnEnergyJ() / 1e6)).withStyle(ChatFormatting.DARK_RED));
@@ -313,6 +326,7 @@ public final class ReactorAccidentSystems {
                     o, energy, false, failed > 0);
             if (r.damage() != null) b.damage().submit(r.damage());
             if (r.release() == ConsequenceRouter.ReleasePath.ENVIRONMENT) startRelease(failed);
+            WorldFx.blast(sl, c, energy, sl.random);
             sl.playSound(null, pos, SoundEvents.GENERIC_EXPLODE.value(), SoundSource.BLOCKS, 3f, 0.4f);
             broadcast(sl, c, 128, NppText.msg("accident_breach").withStyle(ChatFormatting.DARK_RED));
         }
@@ -356,6 +370,9 @@ public final class ReactorAccidentSystems {
                         .withStyle(ChatFormatting.DARK_RED));
             coriumFront = underVessel(sl, pos).immutable();
             meltThrough(b, source, coriumFront);
+            pourTicks = POUR_TICKS;
+            spread(sl, coriumFront, m.exVesselKg());
+            sl.playSound(null, coriumFront, SoundEvents.LAVA_POP, SoundSource.BLOCKS, 3f, 0.5f);
         }
         for (int i = 0; i < m.ablatedBlocks() && coriumFront != null; i++) {
             BlockPos next = coriumFront.below();
@@ -364,17 +381,128 @@ public final class ReactorAccidentSystems {
             meltThrough(b, source, coriumFront);
             broadcast(sl, c, 96, NppText.msg("melt_mcci", String.format(Locale.ROOT, "%.0f", m.ablatedM3())).withStyle(ChatFormatting.DARK_RED));
         }
+        if (coriumFront != null && pourTicks > 0) {
+            pourTicks--;
+            pour(sl, pos, coriumFront);
+        }
         if (coriumFront != null && ticks % 20 == 0) {
             double share = Math.min(1, m.exVesselKg() / Math.max(1, m.exVesselKg() + m.lowerPlenumKg() + m.meltKg()));
             RadiationService.source(sl, coriumFront.getCenter(), FissionSource.reactor(0, coreW * share));
-            sl.sendParticles(ParticleTypes.LAVA, coriumFront.getX() + 0.5, coriumFront.getY() + 1.0, coriumFront.getZ() + 0.5, 3, 0.3, 0.1, 0.3, 0);
         }
+        if (coriumFront != null && ticks % 2 == 0) mcci(sl, coriumFront);
     }
 
     /** One block of floor turned to corium through the budget ({@link DamageKind#MELT_THROUGH}). */
     private static void meltThrough(SimLevelBinding b, SimId source, BlockPos at) {
         GridPos o = new GridPos(at.getX(), at.getY(), at.getZ());
         b.damage().submit(new DamageRequest(requestSeq++, source, null, DamageKind.MELT_THROUGH, o, CoreMeltProgression.BLOCK_J, 0, 1));
+    }
+
+    /** Тиков видимой струи расплава после прорыва днища. */
+    static final int POUR_TICKS = 240;
+
+    /**
+     * Струя течи из патрубка главного трубопровода (у цельных моделей — первый боковой патрубок петли, у старых блоков
+     * — фасад): пароводяная смесь бьёт по направлению патрубка, часть воды проливается на пол, над местом течи
+     * поднимается пар. Число частиц — от расхода течи; внутри закрытой оболочки пар ещё и заполняет помещение.
+     */
+    private void breakJet(ServerLevel sl, BlockPos pos) {
+        double flow = accident.breakFlowKgS();
+        var state = sl.getBlockState(pos);
+        var hf = net.minecraft.world.level.block.state.properties.BlockStateProperties.HORIZONTAL_FACING;
+        Direction facing = state.hasProperty(hf) ? state.getValue(hf) : Direction.NORTH;
+        String id = net.minecraft.core.registries.BuiltInRegistries.BLOCK.getKey(state.getBlock()).getPath();
+        Vec3 from = null, dir = null;
+        for (var port : dev.denfry.promptcritical.mod.multiblock.WholePorts.of(id)) {
+            Direction face = dev.denfry.promptcritical.mod.multiblock.WholePorts.worldFace(facing, port);
+            if (face.getAxis().isVertical()) continue;
+            BlockPos cell = dev.denfry.promptcritical.mod.multiblock.WholePorts.cell(pos, facing, port);
+            dir = Vec3.atLowerCornerOf(face.getNormal());
+            from = cell.getCenter().add(dir.scale(0.6));
+            break;
+        }
+        if (from == null) {
+            dir = Vec3.atLowerCornerOf(facing.getNormal());
+            from = pos.getCenter().add(dir.scale(0.6));
+        }
+        var r = sl.random;
+        int n = (int) Math.min(48, 6 + Math.sqrt(flow) * 1.2);
+        double speed = Math.min(1.6, 0.5 + Math.sqrt(flow) * 0.03);
+        WorldFx.jet(sl, ParticleTypes.CLOUD, from, dir, speed, 0.18, n, r);
+        if (ticks % 2 == 0) {
+            // the water part of the flashing jet falls out of it onto the floor
+            WorldFx.jet(sl, ParticleTypes.FALLING_WATER, from, dir.add(0, -0.3, 0), speed * 0.5, 0.25, Math.max(2, n / 3), r);
+            WorldFx.jet(sl, ParticleTypes.SPLASH, from.add(dir.scale(2)).add(0, -2, 0), new Vec3(0, 1, 0), 0.2, 0.8, Math.max(2, n / 3), r);
+            // steam rising over the break; once the core is bare the jet carries smoke of burning cladding with it
+            Vec3 top = from.add(dir.scale(2.5));
+            for (int i = 0, k = (int) Math.min(4, 1 + flow / 300); i < k; i++)
+                WorldFx.fly(sl, ParticleTypes.CAMPFIRE_SIGNAL_SMOKE, top.add(r.nextGaussian() * 0.8, 0, r.nextGaussian() * 0.8),
+                        new Vec3(dir.x * 0.05, 0.07 + 0.05 * r.nextDouble(), dir.z * 0.05));
+            if (accident.coreUncovered()) WorldFx.jet(sl, ParticleTypes.LARGE_SMOKE, from, dir, speed * 0.6, 0.25, 2, r);
+        }
+        if (accident.hasContainment() && ticks % 3 == 0) {
+            // the building fills with steam
+            double rr = roomRadius();
+            Vec3 c = pos.getCenter();
+            for (int i = 0; i < 6; i++) {
+                Vec3 p = c.add(r.nextGaussian() * rr * 0.5, r.nextDouble() * rr * 0.8, r.nextGaussian() * rr * 0.5);
+                if (sl.getBlockState(BlockPos.containing(p)).isAir())
+                    WorldFx.fly(sl, ParticleTypes.CLOUD, p, new Vec3(r.nextGaussian() * 0.02, 0.01, r.nextGaussian() * 0.02));
+            }
+        }
+    }
+
+    /** Радиус шара того же объёма, что свободный объём оболочки, блоков; без оболочки — 6. */
+    private double roomRadius() {
+        int v = containment.intact() ? containment.volumeM3() : 0;
+        return v > 0 ? Math.min(20, Math.cbrt(3 * v / (4 * Math.PI))) : 6;
+    }
+
+    /** Расплав льётся из прорванного днища на дно шахты: светящаяся струя, брызги, пламя и дым над лужей. */
+    private void pour(ServerLevel sl, BlockPos pos, BlockPos front) {
+        int minY = sl.getBlockState(pos).getBlock() instanceof dev.denfry.promptcritical.mod.block.PcBlock pb ? pb.spec().footprint().minY() : 0;
+        double top = pos.getY() + minY, bottom = front.getY() + 1;
+        var r = sl.random;
+        double x = pos.getX() + 0.5, z = pos.getZ() + 0.5;
+        for (int i = 0; i < 6; i++) {
+            double y = bottom + r.nextDouble() * Math.max(0.5, top - bottom);
+            WorldFx.fly(sl, ParticleTypes.FALLING_LAVA, new Vec3(x + r.nextGaussian() * 0.15, y, z + r.nextGaussian() * 0.15), new Vec3(0, -0.6, 0));
+        }
+        WorldFx.send(sl, ParticleTypes.LAVA, front.getX() + 0.5, bottom, front.getZ() + 0.5, 4, 0.6, 0.1, 0.6, 0);
+        WorldFx.send(sl, ParticleTypes.FLAME, front.getX() + 0.5, bottom + 0.2, front.getZ() + 0.5, 6, 0.8, 0.2, 0.8, 0.03);
+        if (pourTicks % 5 == 0) sl.playSound(null, front, SoundEvents.LAVA_AMBIENT, SoundSource.BLOCKS, 2f, 0.6f);
+    }
+
+    /** Плотность оксидного кориума, кг/м³, и толщина слоя, которым он растекается по сухому полу, м (опыты VULCANO). */
+    static final double CORIUM_KG_M3 = 8_000, SPREAD_DEPTH_M = 0.1;
+    /** Больше этого клеток лужа не занимает. */
+    static final int SPREAD_MAX_CELLS = 24;
+
+    /**
+     * Вышедший из корпуса расплав растекается по полу шахты вокруг места падения слоем {@link #SPREAD_DEPTH_M}: клетки по
+     * спирали от центра, только свободные и на твёрдом полу; стены шахты его держат.
+     */
+    private static void spread(ServerLevel sl, BlockPos front, double exVesselKg) {
+        int cells = (int) Math.min(SPREAD_MAX_CELLS, Math.round(exVesselKg / CORIUM_KG_M3 / SPREAD_DEPTH_M)) - 1;
+        var pool = PcBlocks.CORIUM_POOL.get().defaultBlockState();
+        for (int ring = 1; ring <= 3 && cells > 0; ring++)
+            for (int dx = -ring; dx <= ring && cells > 0; dx++)
+                for (int dz = -ring; dz <= ring && cells > 0; dz++) {
+                    if (Math.max(Math.abs(dx), Math.abs(dz)) != ring) continue;
+                    BlockPos p = front.offset(dx, 0, dz);
+                    if (!sl.isLoaded(p) || !sl.getBlockState(p).isAir() || !pool.canSurvive(sl, p)) continue;
+                    sl.setBlock(p, pool, net.minecraft.world.level.block.Block.UPDATE_ALL);
+                    cells--;
+                }
+    }
+
+    /** Кориум в бетоне: газы абляции (CO2, пар) пузырят расплав и поднимаются дымом, корка светится. */
+    private static void mcci(ServerLevel sl, BlockPos front) {
+        var r = sl.random;
+        Vec3 c = front.getCenter().add(0, 0.6, 0);
+        WorldFx.fly(sl, ParticleTypes.CAMPFIRE_COSY_SMOKE, c.add(r.nextGaussian() * 0.4, 0, r.nextGaussian() * 0.4),
+                new Vec3(0, 0.05 + 0.04 * r.nextDouble(), 0));
+        if (r.nextInt(3) == 0) WorldFx.send(sl, ParticleTypes.LAVA, c.x, c.y, c.z, 1, 0.3, 0, 0.3, 0);
     }
 
     private static void broadcast(ServerLevel sl, Vec3 c, int radius, Component msg) {

@@ -175,7 +175,7 @@ public final class QueuedDamageBudget implements DamageBudget {
             } else {
                 boolean drop = e.drops < config.maxItemEntitiesPerEvent()
                         && Math.floor((e.applied + 1) * config.itemDropFraction()) > Math.floor(e.applied * config.itemDropFraction());
-                mutator.destroy(p, drop);
+                mutator.destroy(p, drop, o, e.request.kind());
                 if (drop) e.drops++;
                 e.applied++;
                 appliedTotal++;

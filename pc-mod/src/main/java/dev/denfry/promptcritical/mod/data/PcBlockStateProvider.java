@@ -95,6 +95,9 @@ public final class PcBlockStateProvider extends BlockStateProvider {
         simpleBlock(PcBlocks.MINE_WATER.get(), models().getBuilder("mine_water").texture("particle", modLoc("block/fluid/mine_water_still")));
         simpleBlock(PcBlocks.HEAVY_WATER.get(), models().getBuilder("heavy_water").texture("particle", modLoc("block/fluid/heavy_water_still")));
         simpleBlock(PcBlocks.CRUDE_OIL.get(), models().getBuilder("crude_oil").texture("particle", modLoc("block/fluid/crude_oil_still")));
+        // растёкшийся кориум без предмета: одна модель, повёрнутая случайно, чтобы лужа не повторялась плиткой
+        getVariantBuilder(PcBlocks.CORIUM_POOL.get()).partialState()
+                .setModels(ConfiguredModel.allYRotations(existing("corium_pool"), 0, false));
         // плёнка нефти без предмета: стадия выветривания — своя модель (09 §9.11.9)
         getVariantBuilder(PcBlocks.OIL_SLICK.get()).forAllStates(st -> {
             int age = st.getValue(dev.denfry.promptcritical.mod.hazard.SpillBlocks.OilSlickBlock.AGE);

@@ -25,6 +25,14 @@ public interface DamageBudget {
 
         void destroy(GridPos p, boolean dropItems);
 
+        /**
+         * Разрушить блок {@code p} событием {@code kind} с центром в {@code origin}: мир может показать, откуда пришёл
+         * удар (обломки разлетаются от центра взрыва). По умолчанию — как {@link #destroy(GridPos, boolean)}.
+         */
+        default void destroy(GridPos p, boolean dropItems, GridPos origin, DamageKind kind) {
+            destroy(p, dropItems);
+        }
+
         /** Заменить блок, например {@code "promptcritical:corium"}, {@code "minecraft:fire"}. */
         void replace(GridPos p, String blockId);
     }
