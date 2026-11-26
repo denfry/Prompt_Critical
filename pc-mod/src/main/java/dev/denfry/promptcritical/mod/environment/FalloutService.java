@@ -47,26 +47,25 @@ public final class FalloutService {
             Vec3 wind = new Vec3(-Math.sin(from) * u, 0, Math.cos(from) * u);
             double decades = Math.log10(e.getValue()[0] / VISIBLE_BQ_S);
             var r = level.random;
-            var cosy = net.minecraft.core.particles.ParticleTypes.CAMPFIRE_COSY_SMOKE;
-            var signal = net.minecraft.core.particles.ParticleTypes.CAMPFIRE_SIGNAL_SMOKE;
-            var cloud = net.minecraft.core.particles.ParticleTypes.CLOUD;
-            // at the source: the steam column leaving the building
-            int n = (int) Math.min(16, 2 + decades * 4);
+            var steam = dev.denfry.promptcritical.mod.fx.PcParticles.STEAM_PUFF.get();
+            var smoke = dev.denfry.promptcritical.mod.fx.PcParticles.SMOKE_PUFF.get();
+            // at the source: steam and aerosol leaving the building in big slow puffs that live 8..16 s
+            int n = (int) Math.min(6, 1 + decades * 1.5);
             for (int i = 0; i < n; i++)
-                dev.denfry.promptcritical.mod.fx.WorldFx.fly(level, i % 3 == 0 ? signal : i % 3 == 1 ? cosy : cloud,
-                        at.add(r.nextGaussian() * 0.8, r.nextDouble(), r.nextGaussian() * 0.8),
-                        wind.scale(0.8 + 0.4 * r.nextDouble()).add(0, 0.04 + 0.04 * r.nextDouble(), 0));
-            // down the wind: a smoke particle lives seconds and would never carry the cloud a hundred metres, so the
-            // plume already on its way is drawn where it is — wider and higher the farther it went (σy, σz of class D
-            // grow about as 0.08 x near the source), thinner as it spreads
-            int m = (int) Math.min(14, 1 + decades * 3);
+                dev.denfry.promptcritical.mod.fx.WorldFx.fly(level, i % 3 == 2 ? smoke : steam,
+                        at.add(r.nextGaussian() * 1.2, r.nextDouble() * 2, r.nextGaussian() * 1.2),
+                        wind.scale(0.8 + 0.4 * r.nextDouble()).add(0, 0.05 + 0.04 * r.nextDouble(), 0));
+            // down the wind: even a puff would not carry the cloud a hundred metres, so the plume already on its way is
+            // drawn where it is — wider and higher the farther it went (σy, σz of class D grow about as 0.08 x near the
+            // source), thinner as it spreads
+            int m = (int) Math.min(5, 1 + decades);
             double ux = wind.x / u, uz = wind.z / u;
             for (int i = 0; i < m; i++) {
-                double x = 4 + 156 * r.nextDouble() * r.nextDouble();
+                double x = 8 + 152 * r.nextDouble() * r.nextDouble();
                 double y = Math.min(30, 0.12 * x) + r.nextGaussian() * 0.05 * x;
                 double side = r.nextGaussian() * 0.08 * x;
-                Vec3 p = at.add(ux * x - uz * side, 2 + Math.max(0, y), uz * x + ux * side);
-                dev.denfry.promptcritical.mod.fx.WorldFx.fly(level, r.nextInt(3) == 0 ? cloud : signal, p,
+                Vec3 p = at.add(ux * x - uz * side, 3 + Math.max(0, y), uz * x + ux * side);
+                dev.denfry.promptcritical.mod.fx.WorldFx.fly(level, r.nextInt(3) == 0 ? smoke : steam, p,
                         wind.scale(0.9 + 0.2 * r.nextDouble()).add(0, 0.01, 0));
             }
         }

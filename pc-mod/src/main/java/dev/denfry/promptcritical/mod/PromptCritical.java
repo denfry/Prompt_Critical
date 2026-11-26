@@ -38,6 +38,7 @@ public final class PromptCritical {
     public PromptCritical(IEventBus modBus, ModContainer container) {
         container.registerConfig(ModConfig.Type.SERVER, ServerConfig.SPEC);
         PcBlocks.BLOCKS.register(modBus);
+        dev.denfry.promptcritical.mod.fx.PcParticles.PARTICLES.register(modBus);
         PcItems.ITEMS.register(modBus);
         PcBlockEntities.BLOCK_ENTITIES.register(modBus);
         PcDataComponents.COMPONENTS.register(modBus);

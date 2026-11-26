@@ -83,13 +83,13 @@ public final class WorldFx {
         for (int i = 0; i < ring; i++) {
             double a = r.nextDouble() * Math.PI * 2;
             Vec3 dir = new Vec3(Math.cos(a), 0.05 + 0.1 * r.nextDouble(), Math.sin(a));
-            fly(level, i % 3 == 0 ? ParticleTypes.CAMPFIRE_COSY_SMOKE : ParticleTypes.POOF, center.add(dir.scale(1.5)),
+            fly(level, i % 3 == 0 ? PcParticles.SMOKE_PUFF.get() : ParticleTypes.POOF, center.add(dir.scale(1.5)),
                     dir.scale(radius / 12 * (0.6 + 0.6 * r.nextDouble())));
         }
         // the mushroom of hot gas and dust rising over the site
         int column = (int) Math.min(120, 20 * scale);
         for (int i = 0; i < column; i++)
-            fly(level, ParticleTypes.CAMPFIRE_SIGNAL_SMOKE, center.add(r.nextGaussian() * radius * 0.2, r.nextDouble() * 2, r.nextGaussian() * radius * 0.2),
+            fly(level, i % 2 == 0 ? PcParticles.SMOKE_PUFF.get() : ParticleTypes.CAMPFIRE_SIGNAL_SMOKE, center.add(r.nextGaussian() * radius * 0.2, r.nextDouble() * 2, r.nextGaussian() * radius * 0.2),
                     new Vec3(r.nextGaussian() * 0.02, 0.12 + 0.1 * r.nextDouble(), r.nextGaussian() * 0.02));
     }
 
