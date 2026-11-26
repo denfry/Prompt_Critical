@@ -284,4 +284,49 @@ public final class ContaminationGameTests {
             h.succeed();
         });
     }
+
+    /**
+     * 04b §4b.9: a minute of Cs-137 released from a point leaves a fallout trace on the ground downwind and nothing
+     * upwind; iodine (gone in weeks) and krypton (a noble gas) are not kept on surfaces. The trace is cut at 10 m and
+     * cleaned up, so it does not reach the floors of neighbouring tests.
+     */
+    @GameTest(template = LARGE)
+    public static void releaseLeavesAFalloutTraceDownwind(GameTestHelper h) {
+        var level = h.getLevel();
+        Vec3 src = Vec3.atCenterOf(h.absolutePos(new BlockPos(6, 2, 6)));
+        var w = dev.denfry.promptcritical.mod.environment.EnvironmentService.sample(level, BlockPos.containing(src), 10);
+        double ux = -Math.sin(w.windDirRad()), uz = Math.cos(w.windDirRad());
+        try {
+            h.assertTrue(dev.denfry.promptcritical.mod.environment.FalloutService.deposit(level, src, Emitter.I131, 1e9, 60, 10) == 0,
+                    "iodine is not kept on surfaces");
+            h.assertTrue(dev.denfry.promptcritical.mod.environment.FalloutService.deposit(level, src, Emitter.KR85, 1e9, 60, 10) == 0,
+                    "krypton does not settle");
+            int cells = dev.denfry.promptcritical.mod.environment.FalloutService.deposit(level, src, Emitter.CS137, 1e9, 60, 10);
+            h.assertTrue(cells > 0, "trace cells " + cells);
+            double down = ground(level, src.x + 6 * ux, src.z + 6 * uz), up = ground(level, src.x - 6 * ux, src.z - 6 * uz);
+            h.assertTrue(down > ContaminationLimits.Surface.PERMANENT_ROOM.betaBqCm2(), "trace downwind " + down + " Bq/cm2");
+            h.assertTrue(up == 0, "nothing upwind: " + up);
+        } finally {
+            BlockPos c = BlockPos.containing(src);
+            for (int dx = -16; dx <= 16; dx++)
+                for (int dz = -16; dz <= 16; dz++) {
+                    int x = c.getX() + dx, z = c.getZ() + dz;
+                    int y = level.getHeight(net.minecraft.world.level.levelgen.Heightmap.Types.MOTION_BLOCKING_NO_LEAVES, x, z) - 1;
+                    ContaminationService.setSurface(level, new BlockPos(x, y, z), SurfaceContamination.NONE);
+                }
+        }
+        h.succeed();
+    }
+
+    /** β on the top faces in a 5×5 around the column at (x, z), Bq/cm². */
+    private static double ground(net.minecraft.server.level.ServerLevel level, double x, double z) {
+        double sum = 0;
+        for (int dx = -2; dx <= 2; dx++)
+            for (int dz = -2; dz <= 2; dz++) {
+                int bx = (int) Math.floor(x) + dx, bz = (int) Math.floor(z) + dz;
+                int y = level.getHeight(net.minecraft.world.level.levelgen.Heightmap.Types.MOTION_BLOCKING_NO_LEAVES, bx, bz) - 1;
+                sum += ContaminationService.surface(level, new BlockPos(bx, y, bz)).beta();
+            }
+        return sum;
+    }
 }

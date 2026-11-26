@@ -57,6 +57,20 @@ public final class RadiationService {
     }
 
     /** Выброс радионуклида в атмосферу из трубы: активность в секунду. */
+    /** Получатель действующих выбросов: точка выхода, нуклид, Бк/с. */
+    @FunctionalInterface
+    interface ReleaseVisitor {
+        void accept(Vec3 at, dev.denfry.promptcritical.sim.radiation.Emitter nuclide, double bqS);
+    }
+
+    /** Обходит действующие на {@code now} выбросы уровня (след выпадения, видимый шлейф). */
+    static void eachRelease(ServerLevel level, long now, ReleaseVisitor v) {
+        Map<Vec3, java.util.List<Release>> m = RELEASES.get(level);
+        if (m == null) return;
+        for (Map.Entry<Vec3, java.util.List<Release>> e : m.entrySet())
+            for (Release r : e.getValue()) if (r.until >= now) v.accept(e.getKey(), r.nuclide, r.bqS);
+    }
+
     private record Release(dev.denfry.promptcritical.sim.radiation.Emitter nuclide, double bqS, long until) {
     }
 
@@ -484,7 +498,9 @@ public final class RadiationService {
             rel.values().removeIf(java.util.List::isEmpty);
         }
         ContainerActivityScan.tick(level);
+        if (now % 2 == 0) FalloutService.plume(level, now);
         if (now % 20 != 0) return;
+        FalloutService.tick(level, now);
         gatherItems(level, now);
         SourceLedger.tick(level, now);
         for (ServerPlayer p : level.players()) {
