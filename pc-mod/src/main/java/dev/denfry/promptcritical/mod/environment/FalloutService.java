@@ -50,7 +50,7 @@ public final class FalloutService {
             var steam = dev.denfry.promptcritical.mod.fx.PcParticles.STEAM_PUFF.get();
             var smoke = dev.denfry.promptcritical.mod.fx.PcParticles.SMOKE_PUFF.get();
             // at the source: steam and aerosol leaving the building in big slow puffs that live 8..16 s
-            int n = (int) Math.min(6, 1 + decades * 1.5);
+            int n = (int) Math.min(10, 2 + decades * 2);
             for (int i = 0; i < n; i++)
                 dev.denfry.promptcritical.mod.fx.WorldFx.fly(level, i % 3 == 2 ? smoke : steam,
                         at.add(r.nextGaussian() * 1.2, r.nextDouble() * 2, r.nextGaussian() * 1.2),
@@ -58,10 +58,10 @@ public final class FalloutService {
             // down the wind: even a puff would not carry the cloud a hundred metres, so the plume already on its way is
             // drawn where it is — wider and higher the farther it went (σy, σz of class D grow about as 0.08 x near the
             // source), thinner as it spreads
-            int m = (int) Math.min(5, 1 + decades);
+            int m = (int) Math.min(12, 2 + decades * 2.5);
             double ux = wind.x / u, uz = wind.z / u;
             for (int i = 0; i < m; i++) {
-                double x = 8 + 152 * r.nextDouble() * r.nextDouble();
+                double x = 6 + 120 * r.nextDouble() * r.nextDouble();
                 double y = Math.min(30, 0.12 * x) + r.nextGaussian() * 0.05 * x;
                 double side = r.nextGaussian() * 0.08 * x;
                 Vec3 p = at.add(ux * x - uz * side, 3 + Math.max(0, y), uz * x + ux * side);

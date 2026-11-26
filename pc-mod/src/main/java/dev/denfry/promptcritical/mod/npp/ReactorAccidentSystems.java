@@ -331,7 +331,9 @@ public final class ReactorAccidentSystems {
             // carries that — and breaks nothing inside; a detonation, or a burn with no shell round it, does
             if (r.damage() != null && (det || !accident.hasContainment())) b.damage().submit(r.damage());
             // the burn fills the free volume of the building: a fireball as big as the room, a blast only on detonation
-            WorldFx.fireball(sl, c, roomRadius(), det ? 600 : 350, sl.random);
+            // the gas burns in the free volume of the hall over the vessel, not in the shaft round the controller
+            double rr = roomRadius();
+            WorldFx.fireball(sl, c.add(0, rr * 0.7, 0), rr, det ? 900 : 600, sl.random);
             if (det) WorldFx.blast(sl, c, accident.burnEnergyJ() * 0.1, sl.random);
             sl.playSound(null, pos, SoundEvents.GENERIC_EXPLODE.value(), SoundSource.BLOCKS, det ? 4f : 3f, det ? 0.4f : 0.6f);
             broadcast(sl, c, 128, NppText.msg(det ? "accident_h2_detonation" : "accident_h2_burn",

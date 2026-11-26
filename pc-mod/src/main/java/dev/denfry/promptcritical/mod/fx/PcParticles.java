@@ -20,6 +20,10 @@ public final class PcParticles {
     public static final DeferredHolder<ParticleType<?>, SimpleParticleType> SMOKE_PUFF = PARTICLES.register("smoke_puff",
             () -> new SimpleParticleType(true));
 
+    /** Светящийся клуб пламени горящего газа: раздувается за секунду-две, от жёлто-белого к тёмно-красному, гаснет. */
+    public static final DeferredHolder<ParticleType<?>, SimpleParticleType> FIRE_PUFF = PARTICLES.register("fire_puff",
+            () -> new SimpleParticleType(true));
+
     private PcParticles() {
     }
 }

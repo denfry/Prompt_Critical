@@ -3,7 +3,7 @@
     python art/tools/puff_particles.py
 
 Each blob is a few overlapping gaussian lumps with a value-noise edge, so the puffs of a cloud do not repeat one disc.
-Writes textures/particle/puff_0..3.png and particles/{steam,smoke}_puff.json of the mod.
+Writes textures/particle/puff_0..3.png and particles/{steam,smoke,fire}_puff.json of the mod.
 """
 import json
 import math
@@ -57,11 +57,11 @@ def main():
         puff(7100 + i).save(os.path.join(tex, f"puff_{i}.png"))
     par = os.path.join(ASSETS, "particles")
     os.makedirs(par, exist_ok=True)
-    for name in ("steam_puff", "smoke_puff"):
+    for name in ("steam_puff", "smoke_puff", "fire_puff"):
         with open(os.path.join(par, name + ".json"), "w", encoding="utf-8") as fh:
             json.dump({"textures": [f"promptcritical:puff_{i}" for i in range(4)]}, fh, indent=2)
             fh.write("\n")
-    print("4 puffs, 2 particle definitions")
+    print("4 puffs, 3 particle definitions")
 
 
 if __name__ == "__main__":

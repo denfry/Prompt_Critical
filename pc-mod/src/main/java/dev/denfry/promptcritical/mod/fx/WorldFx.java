@@ -61,7 +61,7 @@ public final class WorldFx {
             if (!level.getBlockState(m.set(p.x, p.y, p.z)).isAir()) continue;
             i++;
             Vec3 out = p.subtract(center).normalize().scale(0.15 + 0.2 * r.nextDouble());
-            fly(level, i % 5 == 0 ? ParticleTypes.EXPLOSION : i % 2 == 0 ? ParticleTypes.FLAME : ParticleTypes.LARGE_SMOKE, p, out);
+            fly(level, i % 7 == 0 ? ParticleTypes.EXPLOSION : i % 4 == 0 ? ParticleTypes.LARGE_SMOKE : PcParticles.FIRE_PUFF.get(), p, out);
         }
         send(level, ParticleTypes.FLASH, center.x, center.y, center.z, 1, 0, 0, 0, 0);
     }

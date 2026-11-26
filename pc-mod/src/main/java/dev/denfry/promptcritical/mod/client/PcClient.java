@@ -54,9 +54,11 @@ public final class PcClient {
         modBus.addListener(PcClient::renderers);
         modBus.addListener((net.neoforged.neoforge.client.event.RegisterParticleProvidersEvent e) -> {
             e.registerSpriteSet(dev.denfry.promptcritical.mod.fx.PcParticles.STEAM_PUFF.get(),
-                    s -> new dev.denfry.promptcritical.mod.fx.client.PuffParticle.Provider(s, false));
+                    s -> new dev.denfry.promptcritical.mod.fx.client.PuffParticle.Provider(s, dev.denfry.promptcritical.mod.fx.client.PuffParticle.Kind.STEAM));
             e.registerSpriteSet(dev.denfry.promptcritical.mod.fx.PcParticles.SMOKE_PUFF.get(),
-                    s -> new dev.denfry.promptcritical.mod.fx.client.PuffParticle.Provider(s, true));
+                    s -> new dev.denfry.promptcritical.mod.fx.client.PuffParticle.Provider(s, dev.denfry.promptcritical.mod.fx.client.PuffParticle.Kind.SMOKE));
+            e.registerSpriteSet(dev.denfry.promptcritical.mod.fx.PcParticles.FIRE_PUFF.get(),
+                    s -> new dev.denfry.promptcritical.mod.fx.client.PuffParticle.Provider(s, dev.denfry.promptcritical.mod.fx.client.PuffParticle.Kind.FIRE));
         });
         modBus.addListener(PcClient::screens);
     }
