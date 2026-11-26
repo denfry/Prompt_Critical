@@ -100,4 +100,13 @@ class AccidentModelsTest {
         assertEquals(DamageKind.OVERPRESSURE_BREACH, breach.damage().kind());
         assertNull(ConsequenceRouter.route(Event.HYDROGEN_BURN, 3, id, null, o, 0, false, false).damage());
     }
+
+    @Test
+    void aDeflagrationBreaksWithATenthOfItsEnergy() {
+        GridPos o = new GridPos(0, 64, 0);
+        SimId id = SimId.of(SimId.Kind.REACTOR, 1);
+        assertEquals(1.3e8, ConsequenceRouter.route(Event.HYDROGEN_BURN, 1, id, null, o, 1.3e9, true, true).damage().energyJ(), 1);
+        assertEquals(1.3e9, ConsequenceRouter.route(Event.HYDROGEN_DETONATION, 2, id, null, o, 1.3e9, true, true).damage().energyJ(), 1);
+        assertEquals(3e8, ConsequenceRouter.route(Event.VESSEL_RUPTURE, 3, id, null, o, 3e8, true, true).damage().energyJ(), 1);
+    }
 }
