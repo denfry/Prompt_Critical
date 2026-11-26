@@ -4,6 +4,9 @@
 
 a: the plant from the coal mine to the reactor, one shot per era.
 b: the rig drills into a gas cap: the kick on the driller's console, then the blowout at the wellhead.
+c: a VVER-70 loses its hot leg and station power: the core melts through the vessel, hydrogen burns, the containment
+   holds; the same plant with no roof lets the release go downwind; a teaser for the RBMK (footage of
+   art/film/shots_accident.py in pc-mod/run-film/film/accident).
 
 Cuts land on bars of the music (High-Energy Adventure Theme, main loop, 130 BPM, downbeat at 0): one bar = 1.846 s.
 Footage: the FilmRecorder shots from `shots_plant.py --shorts` (pc-mod/run-film/film/shorts); this script copies the
@@ -18,7 +21,8 @@ import sys
 
 BAR = 4 * 60 / 130
 HERE = os.path.dirname(os.path.abspath(__file__))
-FOOTAGE = os.path.join(HERE, "..", "..", "..", "..", "pc-mod", "run-film", "film", "shorts")
+FILM = os.path.join(HERE, "..", "..", "..", "..", "pc-mod", "run-film", "film")
+ROOT = os.path.join(HERE, "..", "..", "..", "..")
 END_BARS = 2
 
 # shot, bars, media offset (s), era code or None, (ru, en) caption, (ru, en) note or None
@@ -53,6 +57,25 @@ SHORTS = {
         # shot -> (seconds into the shot, ru, en): a red alarm plate
         "alarms": {"sb03_console": (1.8, "ГНВП", "KICK"), "sb04_blowout": (0.6, "ОТКРЫТЫЙ ФОНТАН", "BLOWOUT")},
     },
+    "c": {
+        "footage": "accident",
+        "shade": "light",   # dark interiors and a plume in the sky: a lighter scrim behind the text
+        "hook": (("Рвём главную трубу", "работающего реактора"), ("We tear the main pipe", "off a running reactor")),
+        "hook_sub": ("и отключаем всё питание станции", "and cut all station power"),
+        "shots": [
+            ("a01_hall", 3, 0.3, None, None, None),
+            ("a02_break", 2, 0.4, None, ("Течь 380 см²", "A 380 cm² break"), ("вода вскипает и уходит паром", "the water flashes to steam")),
+            ("a03_steam", 2, 2.0, None, ("Зона оголилась", "The core is bare"), ("оболочки твэлов лопаются", "fuel cladding bursts")),
+            ("a04_pour", 3, 17.8, None, ("Корпус проплавлен", "The vessel melts through"), ("кориум, около 2500 °C", "corium at about 2500 °C")),
+            ("a05_burn", 2, 17.0, None, ("Горит водород", "Hydrogen burns"), ("из циркония оболочек", "from the zirconium cladding")),
+            ("a06_corium", 2, 23.0, None, ("Кориум ест бетон", "Corium eats the concrete"), ("и даёт ещё водород", "and gives off more hydrogen")),
+            ("a07_held", 2, 26.0, None, ("Гермооболочка выдержала", "The containment held"), ("наружу ничего не вышло", "nothing got out")),
+            ("a10_open", 2, 20.0, None, ("А если крыши нет?", "And with no roof?"), ("как у первых станций", "like the first plants")),
+            ("a11_plume", 3, 24.0, None, ("Выброс уходит по ветру", "The release goes downwind"), ("и цезий-137 оседает на землю", "and caesium-137 settles on the ground")),
+            ("a90_teaser", 3, 30.0, None, ("У РБМК полной оболочки не было", "The RBMK had no full containment"), ("он следующий", "it is next")),
+        ],
+        "alarms": {"a02_break": (0.3, "РАЗРЫВ ТРУБЫ", "PIPE BREAK"), "a04_pour": (0.4, "ПРОПЛАВЛЕНИЕ", "MELT-THROUGH")},
+    },
 }
 
 T = {
@@ -66,15 +89,23 @@ def esc(s):
     return html.escape(s, quote=True)
 
 
-def stage(shots):
+def version():
+    with open(os.path.join(ROOT, "gradle.properties"), encoding="utf-8") as fh:
+        for line in fh:
+            if line.startswith("mod_version="):
+                return line.split("=", 1)[1].strip()
+    return ""
+
+
+def stage(shots, footage):
     """Copy the footage this short uses next to the composition (the render reads it from assets/footage)."""
     dst = os.path.join(HERE, "assets", "footage")
     os.makedirs(dst, exist_ok=True)
     for shot in shots:
-        src = os.path.join(FOOTAGE, shot + ".mp4")
+        src = os.path.join(FILM, footage, shot + ".mp4")
         out = os.path.join(dst, shot + ".mp4")
         if not os.path.exists(src):
-            sys.exit(f"missing footage {src}: record it with shots_plant.py --shorts")
+            sys.exit(f"missing footage {src}: record it (shots_plant.py --shorts, shots_accident.py)")
         if not os.path.exists(out) or os.path.getmtime(out) < os.path.getmtime(src):
             shutil.copy2(src, out)
 
@@ -82,7 +113,7 @@ def stage(shots):
 def build(which, lang):
     spec, t = SHORTS[which], T[lang]
     L = 0 if lang == "ru" else 1
-    stage([s[0] for s in spec["shots"]])
+    stage([s[0] for s in spec["shots"]], spec.get("footage", "shorts"))
     clips, overlays, js = [], [], []
     at = 0.0
     eras = which == "a"
@@ -135,7 +166,7 @@ def build(which, lang):
   <div class="grid-bg"></div>
   <img id="e-logo" src="assets/logo.png" alt="">
   <h2 class="e-title" id="e-title">PROMPT<br>CRITICAL</h2>
-  <p class="e-ver mono" id="e-ver">1.0.0-rc.1</p>
+  <p class="e-ver mono" id="e-ver">{esc(version())}</p>
   <p class="e-sub mono" id="e-sub">{esc(t["end_sub"])}</p>
   <p class="e-cta" id="e-cta">{esc(t["end_cta"])}</p>
 </section>''')
@@ -148,7 +179,7 @@ def build(which, lang):
         {"t": 0, "v": 0.9}, {"t": round(total - 1.5, 3), "v": 0.9}, {"t": round(total, 3), "v": 0}]}]}
     music = (f"<audio id=\"music\" src=\"assets/music.ogg\" data-start=\"0\" data-duration=\"{total:.4f}\" "
              f"data-track-index=\"9\" data-volume=\"0.9\" data-automation='{json.dumps(fade)}'></audio>")
-    page = (TEMPLATE.replace("%LANG%", lang).replace("%DUR%", f"{total:.4f}")
+    page = (TEMPLATE.replace("%LANG%", lang).replace("%SHADE%", spec.get("shade", "")).replace("%DUR%", f"{total:.4f}")
             .replace("%CLIPS%", "\n      ".join(clips)).replace("%OVERLAYS%", "\n".join(overlays))
             .replace("%MUSIC%", music).replace("%JS%", "\n      ".join(js)))
     with open(os.path.join(HERE, "index.html"), "w", encoding="utf-8") as fh:
@@ -175,6 +206,7 @@ TEMPLATE = """<!doctype html>
       .ov { position: absolute; inset: 0; }
       .ov::before { content: ""; position: absolute; inset: 0;
                     background: linear-gradient(180deg, rgba(20,17,13,0.35) 0%, rgba(20,17,13,0.7) 14%, rgba(20,17,13,0.6) 36%, rgba(20,17,13,0.75) 62%, rgba(20,17,13,0) 82%); }
+      .light .ov::before { background: linear-gradient(180deg, rgba(20,17,13,0.2) 0%, rgba(20,17,13,0.5) 30%, rgba(20,17,13,0.5) 55%, rgba(20,17,13,0) 75%); }
       .rule { height: 6px; width: 420px; background: var(--accent); transform-origin: left center; margin: 26px 0 22px; }
       /* hook: upper-middle, clear of the Shorts top bar */
       .hook { position: absolute; left: 130px; right: 150px; top: 340px; }
@@ -216,7 +248,7 @@ TEMPLATE = """<!doctype html>
     </style>
   </head>
   <body>
-    <div id="root" data-composition-id="main" data-start="0" data-duration="%DUR%" data-width="1080" data-height="1920">
+    <div id="root" class="%SHADE%" data-composition-id="main" data-start="0" data-duration="%DUR%" data-width="1080" data-height="1920">
       %CLIPS%
 %OVERLAYS%
       %MUSIC%

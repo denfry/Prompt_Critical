@@ -199,7 +199,7 @@ def shots():
         take("a10_open", 34, [key(0, [100.5, -10, -270], [100.5, -45, -300], 70),
                               key(34, [100.5, -14, -280], [100.5, -45, -302], 70)], run="open"),
         # (the wind takes the plume north-west: the camera stands south-west of its axis, the hall on the right)
-        take("a11_plume", 44, hold(44, 30, [15, -12, -282], [22, -4, -274], [75, -32, -325], [70, -26, -330], (75, 80)),
+        take("a11_plume", 44, hold(44, 30, [48, -22, -292], [42, -14, -284], [80, -34, -322], [74, -28, -330], (80, 85)),
              run="open"),
         # teaser: dusk over the open hall, the camera rises away
         take("a90_teaser", 44, hold(44, 34, [100.5, -30, -285], [100.5, 10, -250], [100.5, -45, -300], None, (70, 75)),
