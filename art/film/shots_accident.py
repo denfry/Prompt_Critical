@@ -62,6 +62,9 @@ def build():
     c = ["gamerule doDaylightCycle false", "gamerule doWeatherCycle false", "weather clear", "time set 6000",
          f"forceload add {x1 - 48} {z1 - 48} {x2 + 48} {z2 + 48}"]
     # the shell (hollow: its inside becomes air), then the basement under the slab, solid concrete
+    c.append("kill @e[type=minecraft:falling_block]")
+    # the melt of the last take may have eaten down through the basemat into the ground: give it back
+    c.append(f"fill {rx - 4} -63 {rz - 4} {rx + 4} -62 {rz + 4} minecraft:dirt")
     c.append(f"fill {x1} {y1} {z1} {x2} {y2} {z2} {PC}containment_wall hollow")
     c.append(f"fill {x1 + 1} {y1 + 1} {z1 + 1} {x2 - 1} {SLAB} {z2 - 1} minecraft:gray_concrete")
     tx1, ty1, tz1, tx2, ty2, tz2 = TOWER
@@ -70,10 +73,11 @@ def build():
     for bx1, bz1, bx2, bz2 in BOXES:
         c.append(f"fill {bx1} {SLAB + 1} {bz1} {bx2} {y2 - 1} {bz2} minecraft:gray_concrete")
     # the reactor shaft: 7 x 7 around the 5 x 5 vessel, from the cavity floor up through the slab
-    c.append(f"fill {rx - 3} {y1 + 1} {rz - 3} {rx + 3} {SLAB} {rz + 3} minecraft:air")
-    c.append(f"fill {rx - 3} {y1} {rz - 3} {rx + 3} {y1} {rz + 3} minecraft:smooth_stone")     # cavity floor
+    # (the shell under it stays: the basemat is the containment's floor, the cavity is lined on top of it)
+    c.append(f"fill {rx - 3} {y1 + 2} {rz - 3} {rx + 3} {SLAB} {rz + 3} minecraft:air")
+    c.append(f"fill {rx - 3} {y1 + 1} {rz - 3} {rx + 3} {y1 + 1} {rz + 3} minecraft:smooth_stone")     # cavity floor
     # inspection corridor from the south into the cavity, for the camera
-    c.append(f"fill {rx - 1} {y1 + 1} {rz + 4} {rx + 1} {y1 + 4} {z2 - 2} minecraft:air")
+    c.append(f"fill {rx - 1} {y1 + 2} {rz + 4} {rx + 1} {y1 + 5} {z2 - 2} minecraft:air")
     # the reactor and its three loops
     c.append(f"setblock {rx} {ry} {rz} {PC}vver70_reactor_real[facing=north]")
     y = SLAB + 1
@@ -119,7 +123,7 @@ def build():
     for lx, lz in ((TOWER[0] + 1, TOWER[2] + 1), (TOWER[3] - 1, TOWER[5] - 1)):
         c.append(f"execute if block {lx} {TOWER[4] - 1} {lz} minecraft:air run setblock {lx} {TOWER[4] - 1} {lz} minecraft:light[level=15]")
     for lx, lz in ((rx - 3 + 1, rz - 2), (rx + 2, rz + 2), (rx, rz + 6)):
-        c.append(f"execute if block {lx} {y1 + 3} {lz} minecraft:air run setblock {lx} {y1 + 3} {lz} minecraft:light[level=12]")
+        c.append(f"execute if block {lx} {y1 + 4} {lz} minecraft:air run setblock {lx} {y1 + 4} {lz} minecraft:light[level=12]")
     c.append("kill @e[type=item]")
     return c
 
@@ -128,8 +132,9 @@ def open_roof():
     """Run 2: no roof over the hall, as at Rheinsberg there was no full containment."""
     x1, y1, z1, x2, y2, z2 = HALL
     tx1, ty1, tz1, tx2, ty2, tz2 = TOWER
-    return [f"fill {x1} {y2} {z1} {x2} {y2} {z2} minecraft:air",
-            f"fill {tx1} {ty1} {tz1} {tx2} {ty2} {tz2} minecraft:air"]
+    # only the shell goes: the vessel head stands up through the roof into the tower
+    wall = f"minecraft:air replace {PC}containment_wall"
+    return [f"fill {x1} {y2} {z1} {x2} {y2} {z2} {wall}", f"fill {tx1} {ty1} {tz1} {tx2} {ty2} {tz2} {wall}"]
 
 
 def functions(world):
@@ -141,11 +146,84 @@ def functions(world):
         print(f"{name}: {len(cmds)} commands")
 
 
+# ---- shots ---------------------------------------------------------------------------------------------------------
+# Every take rebuilds the plant (the last take melted it) and brings the core to power; the hot leg tears 0.5 s into
+# the take and the take runs on through the accident, recording at 1:1 game time. The edit cuts the moments out of the
+# takes (settling the world before a take does not run the accident by a known number of ticks). Measured after the
+# break: claddings burst at about 1 s, the head fails and the hydrogen burns at 12..22 s (the takes differ), the melt
+# pours for 12 s more.
+RX, RY, RZ = R
+
+
+def key(t, pos, look, fov=70):
+    return {"t": t, "pos": [round(v, 2) for v in pos], "look": [round(v, 2) for v in look], "fov": fov, "roll": 0}
+
+
+def take(name, dur, keys, run="closed", brk=True, time=NOON, ease="inOut"):
+    setup = ["function filmset:accident_build"]
+    if run == "open":
+        setup.append("function filmset:accident_open")
+    setup += [f"film prime melt_ready {RX} {RY} {RZ}", "kill @e[type=minecraft:item]"]
+    ev = [{"t": 0.5, "cmd": f"film prime loca {RX} {RY} {RZ}"}] if brk else []
+    # concrete the burn knocks off lies about as items: not in the picture
+    ev += [{"t": t, "cmd": "kill @e[type=minecraft:item]"} for t in range(1, int(dur) + 1)]
+    return {"name": name, "duration": dur, "size": TALL, "scale": TALL, "time": time, "ease": ease, "gamma": 0.6,
+            "mode": "spectator", "settle": 60, "setup": setup, "keys": keys, "events": sorted(ev, key=lambda e: e["t"])}
+
+
+def hold(dur, t0, a, b, look_a, look_b=None, fov=(70, 70)):
+    """Keys that stand at a until t0, then move to b by the end."""
+    return [key(0, a, look_a, fov[0]), key(t0, a, look_a, fov[0]), key(dur, b, look_b or look_a, fov[1])]
+
+
+def shots():
+    c = [RX + 0.5, RY + 8, RZ + 0.5]            # the vessel at the nozzle ring
+    return [
+        # the plant as it runs: three loops round the vessel in the hall
+        take("a01_hall", 6, [key(0, [93, -40, -291.5], c, 75), key(6, [95.5, -41, -293.5], c, 70)], brk=False),
+        # the hot leg tears off its nozzle: the jet
+        take("a02_break", 6, [key(0, [103.5, -44, -307.5], [100.5, -46.5, -304], 65),
+                              key(6, [103, -44.5, -307], [100.5, -46.5, -304.5], 60)]),
+        # the hall fills with steam, the core is bared
+        take("a03_steam", 10, [key(0, [96, -42, -293], c, 70), key(10, [93.5, -40, -291.5], c, 75)]),
+        # under the vessel: the head fails and the melt pours into the dry cavity
+        take("a04_pour", 34, hold(34, 24, [100.5, -57, -296.6], [100.5, -57.2, -295.4], [100.5, -56.5, -300],
+                                  [100.5, -58, -300], (80, 75))),
+        # the hydrogen burns in the hall
+        take("a05_burn", 30, hold(30, 24, [91.5, -40, -291.5], [92.2, -40.4, -292.2], c, None, (80, 80))),
+        # the corium on the cavity floor eats into the concrete
+        take("a06_corium", 44, hold(44, 34, [101.5, -58, -295], [99.5, -58.3, -296], [100, -59.5, -300], None, (60, 55))),
+        # outside: the shell held, nothing comes out
+        take("a07_held", 36, hold(36, 26, [130, -30, -270], [124, -32, -266], [100, -45, -302], None, (60, 60))),
+        # run 2: no roof. Steam and smoke stand over the open hall, then the release leaves with the wind
+        take("a10_open", 34, [key(0, [100.5, -10, -270], [100.5, -45, -300], 70),
+                              key(34, [100.5, -14, -280], [100.5, -45, -302], 70)], run="open"),
+        take("a11_plume", 44, hold(44, 30, [60, -15, -250], [55, -5, -245], [100, -40, -300], [110, -40, -300], (70, 75)),
+             run="open"),
+        # teaser: dusk over the open hall, the camera rises away
+        take("a90_teaser", 44, hold(44, 34, [100.5, -30, -285], [100.5, 10, -250], [100.5, -45, -300], None, (70, 75)),
+             run="open", time=DUSK),
+    ]
+
+
 def main():
     if len(sys.argv) > 2 and sys.argv[2] == "functions":
         functions(sys.argv[1])
         return
-    sys.exit("shots: not written yet")
+    out, args = sys.argv[1], sys.argv[2:]
+    names = [a for a in args if not a.startswith("--")]
+    plan = shots()
+    if names:
+        plan = [s for s in plan if s["name"] in names]
+    if "--stills" in args:
+        for s in plan:
+            s["stills"] = True
+            s["fps"] = 2         # a storyboard: two frames a second are enough to judge the framing
+    total = sum(s["duration"] for s in plan)
+    doc = {"ffmpeg": shutil.which("ffmpeg") or "ffmpeg", "out": "film/accident", "quit": True, "fps": 60, "shots": plan}
+    with open(out, "w", encoding="utf-8") as fh:
+        json.dump(doc, fh, indent=1)
+    print(f"{out}: {len(plan)} shots, {total:.0f} s")
 
 
 if __name__ == "__main__":
