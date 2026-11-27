@@ -325,27 +325,36 @@ public final class ReactorAccidentSystems {
             // R6: the burn goes through the consequence router; inside a closed containment the activity stays in
             // a detonation hits with the Chapman–Jouguet pressure, twice the deflagration's (04c §4c.7.3)
             boolean det = accident.burnRegime() == HydrogenCombustion.Regime.DETONATION;
-            ConsequenceRouter.Routed r = ConsequenceRouter.route(det ? ConsequenceRouter.Event.HYDROGEN_DETONATION
-                    : ConsequenceRouter.Event.HYDROGEN_BURN, requestSeq++, source, null, o, accident.burnEnergyJ(), true, failed > 0);
-            // a deflagration in a closed containment loads the shell with its AICC pressure — the breach check above
-            // carries that — and breaks nothing inside; a detonation, or a burn with no shell round it, does
-            if (r.damage() != null && (det || !accident.hasContainment())) b.damage().submit(r.damage());
-            // the burn fills the free volume of the building: a fireball as big as the room, a blast only on detonation
             // the gas burns in the free volume of the hall over the vessel, not in the shaft round the controller
             double rr = roomRadius();
-            WorldFx.fireball(sl, c.add(0, rr * 0.7, 0), rr, det ? 900 : 600, sl.random);
-            if (det) WorldFx.blast(sl, c, accident.burnEnergyJ() * 0.1, sl.random);
+            Vec3 gas = c.add(0, rr * 0.7, 0);
+            GridPos at = new GridPos((int) Math.floor(gas.x), (int) Math.floor(gas.y), (int) Math.floor(gas.z));
+            ConsequenceRouter.Routed r = ConsequenceRouter.route(det ? ConsequenceRouter.Event.HYDROGEN_DETONATION
+                    : ConsequenceRouter.Event.HYDROGEN_BURN, requestSeq++, source, null, at, accident.burnEnergyJ(), true, failed > 0);
+            // a slow or complete deflagration in a closed containment loads the shell with its AICC pressure — the
+            // breach check carries that — and breaks nothing inside; an accelerated flame (from 10 %, §4c.7.3) drives
+            // pressure waves that wreck the equipment round it, a detonation does more, and a burn with no shell round
+            // it breaks the building
+            boolean fast = det || accident.burnRegime() == HydrogenCombustion.Regime.FAST_DEFLAGRATION;
+            if (r.damage() != null && (fast || !accident.hasContainment())) b.damage().submit(r.damage());
+            // the burn fills the free volume of the building: a fireball as big as the room, a blast only on detonation
+            BlockPos roof = shellAbove(sl, pos);
+            WorldFx.fireball(sl, gas, rr, roof != null ? roof.getY() : Integer.MAX_VALUE, det ? 900 : 600, sl.random);
+            if (det) WorldFx.blast(sl, gas, accident.burnEnergyJ() * 0.1, sl.random);
             sl.playSound(null, pos, SoundEvents.GENERIC_EXPLODE.value(), SoundSource.BLOCKS, det ? 4f : 3f, det ? 0.4f : 0.6f);
             broadcast(sl, c, 128, NppText.msg(det ? "accident_h2_detonation" : "accident_h2_burn",
                     String.format(Locale.ROOT, "%.0f", accident.burnEnergyJ() / 1e6)).withStyle(ChatFormatting.DARK_RED));
         }
         if (accident.breachEvent()) {
             double energy = Math.max(0, accident.design().containmentFailurePa() - PlantAccident.ATMOSPHERE_PA) * containment.volumeM3();
+            // the shell tears where it is: over the reactor, not in the shaft round the controller
+            BlockPos tear = shellAbove(sl, pos);
+            GridPos at = tear != null ? new GridPos(tear.getX(), tear.getY(), tear.getZ()) : o;
             ConsequenceRouter.Routed r = ConsequenceRouter.route(ConsequenceRouter.Event.CONTAINMENT_BREACH, requestSeq++, source, null,
-                    o, energy, false, failed > 0);
+                    at, energy, false, failed > 0);
             if (r.damage() != null) b.damage().submit(r.damage());
             if (r.release() == ConsequenceRouter.ReleasePath.ENVIRONMENT) startRelease(failed);
-            WorldFx.blast(sl, c, energy, sl.random);
+            WorldFx.blast(sl, tear != null ? tear.getCenter() : c, energy, sl.random);
             sl.playSound(null, pos, SoundEvents.GENERIC_EXPLODE.value(), SoundSource.BLOCKS, 3f, 0.4f);
             broadcast(sl, c, 128, NppText.msg("accident_breach").withStyle(ChatFormatting.DARK_RED));
         }
@@ -542,6 +551,18 @@ public final class ReactorAccidentSystems {
 
     private static void broadcast(ServerLevel sl, Vec3 c, int radius, Component msg) {
         for (ServerPlayer p : sl.getPlayers(p -> p.distanceToSqr(c) < (double) radius * radius)) p.displayClientMessage(msg, false);
+    }
+
+    /** The first containment boundary straight over the reactor (the roof of its hall), or null when none is near. */
+    @org.jetbrains.annotations.Nullable
+    static BlockPos shellAbove(ServerLevel sl, BlockPos pos) {
+        BlockPos.MutableBlockPos m = pos.mutable();
+        for (int i = 1; i <= ContainmentScan.RADIUS; i++) {
+            m.move(Direction.UP);
+            if (!sl.isLoaded(m)) return null;
+            if (ContainmentScan.isBoundary(sl.getBlockState(m))) return m.immutable();
+        }
+        return null;
     }
 
     /** The lower head of a vessel plant has failed (channel reactors have no head). */

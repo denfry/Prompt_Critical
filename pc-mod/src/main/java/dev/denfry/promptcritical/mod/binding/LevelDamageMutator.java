@@ -48,7 +48,13 @@ public final class LevelDamageMutator implements DamageBudget.BlockMutator, Dama
         BlockState s = level.getBlockState(pos);
         if (s.isAir()) return BlockInfo.AIR;
         boolean immune = s.is(PcTags.Blocks.DAMAGE_IMMUNE) || s.getDestroySpeed(level, pos) < 0;
-        return new BlockInfo(false, immune, s.getBlock().getExplosionResistance());
+        // a cell of a machine's model stands or falls with the machine: it resists as its anchor block does
+        var block = s.getBlock();
+        if (block instanceof dev.denfry.promptcritical.mod.multiblock.MultiblockPartBlock) {
+            BlockState anchor = level.getBlockState(dev.denfry.promptcritical.mod.multiblock.MultiblockPartBlock.anchor(s, pos));
+            if (!anchor.isAir()) block = anchor.getBlock();
+        }
+        return new BlockInfo(false, immune, block.getExplosionResistance());
     }
 
     @Override

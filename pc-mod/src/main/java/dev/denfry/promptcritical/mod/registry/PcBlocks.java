@@ -147,6 +147,15 @@ public final class PcBlocks {
                 .requiresCorrectToolForDrops().strength(3.0f, 3.0f);
     }
 
+    /**
+     * Реакторная установка реального масштаба: стальной корпус, шахта, металлоконструкции на сотни тонн. Удар, крошащий
+     * бетон и машины вокруг, её не сносит — стойкость к взрыву как у обсидиана; ломается она только расплавом
+     * (проплавление идёт мимо проверки стойкости).
+     */
+    private static Properties vessel() {
+        return machine().explosionResistance(1200f);
+    }
+
     private static Properties machine() {
         return Properties.of().mapColor(MapColor.METAL).requiresCorrectToolForDrops().strength(3.5f, 6.0f)
                 .sound(SoundType.METAL).noOcclusion().pushReaction(PushReaction.BLOCK);
@@ -1185,7 +1194,7 @@ public final class PcBlocks {
     // --- ВВЭР-70 (В-2, АЭС Райнсберг) в реальном масштабе: 265 МВт(т), три петли, газовый КД; контроллер под осью,
     // фасад на север (docs/research/2026-11-24-reactor-prototypes, шапки art/blockbench/core/vver70/*.author.js) ---
     public static final Footprint FP_VVER70_REACTOR = Footprint.tiled(-2, 2, 0, 18, -2, 2);
-    public static final DeferredBlock<PcDeviceBlock> VVER70_REACTOR_REAL = device("vver70_reactor_real", machine(),
+    public static final DeferredBlock<PcDeviceBlock> VVER70_REACTOR_REAL = device("vver70_reactor_real", vessel(),
             real(Spec.facing(), FP_VVER70_REACTOR), FoundryBlock.with(dev.denfry.promptcritical.mod.npp.PwrReactorBlockEntity::new));
     public static final Footprint FP_VVER70_STEAM_GENERATOR = Footprint.tiled(-1, 1, 0, 8, -1, 1);
     public static final DeferredBlock<PcDeviceBlock> VVER70_STEAM_GENERATOR_REAL = device("vver70_steam_generator_real", machine(),
@@ -1212,7 +1221,7 @@ public final class PcBlocks {
 
     /** БОР-60: корпус реактора 5 × 5 × 9 блоков (бак, поворотные пробки, приводы СУЗ сверху); контроллер в центре днища. */
     public static final Footprint FP_BOR60_REACTOR = Footprint.tiled(-2, 2, 0, 8, -2, 2);
-    public static final DeferredBlock<PcDeviceBlock> BOR60_REACTOR_REAL = device("bor60_reactor_real", machine(),
+    public static final DeferredBlock<PcDeviceBlock> BOR60_REACTOR_REAL = device("bor60_reactor_real", vessel(),
             real(Spec.facing(), FP_BOR60_REACTOR), FoundryBlock.with(dev.denfry.promptcritical.mod.npp.SfrReactorBlockEntity::new));
     /** Промежуточный теплообменник натрий–натрий одной петли БОР-60 с насосом второго контура. */
     public static final Footprint FP_BOR60_IHX = Footprint.tiled(-1, 1, 0, 7, -1, 1);
@@ -1246,7 +1255,7 @@ public final class PcBlocks {
      * приводами СУЗ снизу, площадка у фланца; 5×14×5, контроллер — под осью корпуса (docs/research/bwr-dimensions.md).
      */
     public static final Footprint FP_BWR240_REACTOR = Footprint.tiled(-2, 2, 0, 13, -2, 2);
-    public static final DeferredBlock<PcDeviceBlock> BWR240_REACTOR = device("bwr240_reactor", machine(),
+    public static final DeferredBlock<PcDeviceBlock> BWR240_REACTOR = device("bwr240_reactor", vessel(),
             Spec.facing(BlockStateProperties.LIT, BlockStateProperties.OPEN).segments(PcProperties.wholeSegments(FP_BWR240_REACTOR.segments().size()), FP_BWR240_REACTOR),
             FoundryBlock.with(dev.denfry.promptcritical.mod.npp.BwrReactorBlockEntity::new));
 
@@ -1256,14 +1265,14 @@ public final class PcBlocks {
      * контроллер — на полу под центром каландра (docs/research/candu-dimensions.md).
      */
     public static final Footprint FP_CANDU6_REACTOR = Footprint.tiled(-4, 4, 0, 12, -8, 6);
-    public static final DeferredBlock<PcDeviceBlock> CANDU6_REACTOR = device("candu6_reactor", machine(),
+    public static final DeferredBlock<PcDeviceBlock> CANDU6_REACTOR = device("candu6_reactor", vessel(),
             Spec.facing().segments(PcProperties.wholeSegments(FP_CANDU6_REACTOR.segments().size()), FP_CANDU6_REACTOR),
             FoundryBlock.with(dev.denfry.promptcritical.mod.npp.CanduReactorBlockEntity::new));
 
     // --- CANDU NPD (Rolphton, 1962) в реальном масштабе: 92 МВт(т), 132 канала, мощность — уровнем замедлителя,
     // останов — сбросом D₂O в бак; контроллеры и порты — шапки art/blockbench/core/candu_npd/*.author.js ---
     public static final Footprint FP_NPD_REACTOR = Footprint.tiled(-3, 3, 0, 6, -3, 3);
-    public static final DeferredBlock<PcDeviceBlock> NPD_REACTOR_REAL = device("candu_npd_reactor_real", machine(),
+    public static final DeferredBlock<PcDeviceBlock> NPD_REACTOR_REAL = device("candu_npd_reactor_real", vessel(),
             real(Spec.facing(), FP_NPD_REACTOR), FoundryBlock.with(dev.denfry.promptcritical.mod.npp.NpdReactorBlockEntity::new));
     public static final Footprint FP_NPD_FUELLING_MACHINE = Footprint.tiled(-3, 3, 0, 6, 0, 1);
     public static final DeferredBlock<PcDeviceBlock> NPD_FUELLING_MACHINE_REAL = device("candu_npd_fuelling_machine_real", machine(),
@@ -1290,7 +1299,7 @@ public final class PcBlocks {
      * (docs/research/bn600-dimensions.md).
      */
     public static final Footprint FP_BN600_REACTOR = Footprint.tiled(-7, 7, 0, 18, -7, 7);
-    public static final DeferredBlock<PcDeviceBlock> BN600_REACTOR = device("bn600_reactor", machine(),
+    public static final DeferredBlock<PcDeviceBlock> BN600_REACTOR = device("bn600_reactor", vessel(),
             Spec.facing().segments(PcProperties.wholeSegments(FP_BN600_REACTOR.segments().size()), FP_BN600_REACTOR),
             FoundryBlock.with(dev.denfry.promptcritical.mod.npp.SfrReactorBlockEntity::new));
 
@@ -1300,7 +1309,7 @@ public final class PcBlocks {
      * (docs/research/am1-dimensions.md).
      */
     public static final Footprint FP_AM1_REACTOR = Footprint.tiled(-3, 3, 0, 9, -3, 3);
-    public static final DeferredBlock<PcDeviceBlock> AM1_REACTOR = device("am1_reactor", machine(),
+    public static final DeferredBlock<PcDeviceBlock> AM1_REACTOR = device("am1_reactor", vessel(),
             Spec.facing().segments(PcProperties.wholeSegments(FP_AM1_REACTOR.segments().size()), FP_AM1_REACTOR),
             FoundryBlock.with(dev.denfry.promptcritical.mod.npp.PowerReactorBlockEntity::new));
 

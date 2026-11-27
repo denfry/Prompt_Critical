@@ -4,6 +4,7 @@
 
 a: the plant from the coal mine to the reactor, one shot per era.
 b: the rig drills into a gas cap: the kick on the driller's console, then the blowout at the wellhead.
+d: the same hall with its hydrogen at 15 %: a fast deflagration wrecks the hall, the containment holds (x01_blast).
 c: a VVER-70 loses its hot leg and station power: the core melts through the vessel, hydrogen burns, the containment
    holds; the same plant with no roof lets the release go downwind; a teaser for the RBMK (footage of
    art/film/shots_accident.py in pc-mod/run-film/film/accident).
@@ -75,6 +76,19 @@ SHORTS = {
             ("a90_teaser", 3, 30.0, None, ("У РБМК полной оболочки не было", "The RBMK had no full containment"), ("он следующий", "it is next")),
         ],
         "alarms": {"a02_break": (0.3, "РАЗРЫВ ТРУБЫ", "PIPE BREAK"), "a04_pour": (0.4, "ПРОПЛАВЛЕНИЕ", "MELT-THROUGH")},
+    },
+    "d": {
+        "footage": "accident",
+        "shade": "light",
+        "hook": (("Водород в оболочке:", "15 %"), ("Hydrogen in the shell:", "15 %")),
+        "hook_sub": ("ВВЭР-70", "VVER-70"),
+        # one take: the hall stands quiet under the hook, the gas burns at 4.5 s of the take as an accelerated flame
+        "shots": [
+            ("x01_blast", 2, 0.4, None, None, None),
+            ("x01_blast", 4, 0.4 + 2 * BAR, None, ("Быстрая дефлаграция", "Fast deflagration"),
+             ("зал разбит, оболочка выдержала", "the hall is wrecked, the shell held")),
+        ],
+        "alarms": {},
     },
 }
 

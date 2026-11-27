@@ -159,7 +159,7 @@ def key(t, pos, look, fov=70):
     return {"t": t, "pos": [round(v, 2) for v in pos], "look": [round(v, 2) for v in look], "fov": fov, "roll": 0}
 
 
-def take(name, dur, keys, run="closed", brk=True, time=NOON, ease="inOut"):
+def take(name, dur, keys, run="closed", brk=True, time=NOON, ease="inOut", events=()):
     setup = ["function filmset:accident_build"]
     if run == "open":
         setup.append("function filmset:accident_open")
@@ -167,8 +167,9 @@ def take(name, dur, keys, run="closed", brk=True, time=NOON, ease="inOut"):
     ev = [{"t": 0.5, "cmd": f"film prime loca {RX} {RY} {RZ}"}] if brk else []
     # concrete the burn knocks off lies about as items: not in the picture
     ev += [{"t": t, "cmd": "kill @e[type=minecraft:item]"} for t in range(1, int(dur) + 1)]
+    ev += list(events)
     return {"name": name, "duration": dur, "size": TALL, "scale": TALL, "time": time, "ease": ease, "gamma": 0.6,
-            "mode": "spectator", "settle": 60, "setup": setup, "keys": keys, "events": sorted(ev, key=lambda e: e["t"])}
+            "mode": "spectator", "settle": 140, "setup": setup, "keys": keys, "events": sorted(ev, key=lambda e: e["t"])}
 
 
 def hold(dur, t0, a, b, look_a, look_b=None, fov=(70, 70)):
@@ -201,6 +202,10 @@ def shots():
         # (the wind takes the plume north-west: the camera stands south-west of its axis, the hall on the right)
         take("a11_plume", 44, hold(44, 30, [48, -22, -292], [42, -14, -284], [80, -34, -322], [74, -28, -330], (80, 85)),
              run="open"),
+        # the other ending: hydrogen gathered to 15 % (the zirconium and hours of corium in concrete) burns as an
+        # accelerated flame that wrecks the hall inside while the shell holds
+        take("x01_blast", 14, hold(14, 4.5, [91.5, -40, -291.5], [92.5, -40.5, -292.5], [101, -45, -303], None, (85, 85)),
+             brk=False, events=[{"t": 4.5, "cmd": f"film prime h2 {RX} {RY} {RZ}"}]),
         # teaser: dusk over the open hall, the camera rises away
         take("a90_teaser", 44, hold(44, 34, [100.5, -30, -285], [100.5, 10, -250], [100.5, -45, -300], None, (70, 75)),
              run="open", time=DUSK),

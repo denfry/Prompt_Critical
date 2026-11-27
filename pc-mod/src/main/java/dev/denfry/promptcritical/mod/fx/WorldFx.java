@@ -54,10 +54,15 @@ public final class WorldFx {
      * только в свободных блоках (стены огонь не проходит).
      */
     public static void fireball(ServerLevel level, Vec3 center, double radius, int n, RandomSource r) {
+        fireball(level, center, radius, Integer.MAX_VALUE, n, r);
+    }
+
+    /** То же под потолком {@code ceilingY}: огонь не выходит над крышей здания, в котором горит газ. */
+    public static void fireball(ServerLevel level, Vec3 center, double radius, int ceilingY, int n, RandomSource r) {
         BlockPos.MutableBlockPos m = new BlockPos.MutableBlockPos();
         for (int i = 0, tries = 0; i < n && tries < 4 * n; tries++) {
             Vec3 p = center.add((r.nextDouble() * 2 - 1) * radius, (r.nextDouble() * 2 - 1) * radius, (r.nextDouble() * 2 - 1) * radius);
-            if (p.distanceToSqr(center) > radius * radius) continue;
+            if (p.distanceToSqr(center) > radius * radius || p.y >= ceilingY) continue;
             if (!level.getBlockState(m.set(p.x, p.y, p.z)).isAir()) continue;
             i++;
             Vec3 out = p.subtract(center).normalize().scale(0.15 + 0.2 * r.nextDouble());
